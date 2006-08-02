@@ -39,6 +39,7 @@
 
 [% PROCESS pageheader.html class = 'custom' thispage = thispage %]
 
+[% IF ! extended_browse %]
 <!-- home.html -->
 <table bgcolor="#EEEEEE" width='100%' cellspacing="0" cellpadding="0" border="0">
 	<tr>
@@ -46,7 +47,8 @@
 			[% IF browse_radio %]
 				[% "RADIO" | string %]
 			[% ELSE %]
-				[% "BROWSE" | string %][% END %]
+				[% "BROWSE" | string %] (<a href="[% webroot %]home.html?extended_browse=1&player=[% playerURI %]">[% "MORE" | string %]</a>)
+			[% END %]
 		</td>
 		<td align = 'right' valign = 'bottom'>
 			[% IF browse_radio %]
@@ -79,6 +81,84 @@
 		<td height="13"></td>
 	</tr>
 </table>
+[% ELSE %]
+<table bgcolor="#EEEEEE" width='100%' cellspacing="0" cellpadding="0" border="0">
+	<tr>
+		<td valign="middle" class = 'headertext'>
+		[% "BROWSE" | string %]
+		</td>
+	</tr>
+</table>
+
+<div class="homeMenuSection">
+	<ul>
+	[%- FOREACH link = additionalLinks.browse %]
+		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a></li>
+	[%- END %]
+	</ul>
+</div>
+
+<div class="homeMenuSection">
+	<div>[% "SEARCH" | string | upper %]</div>
+	<ul>
+	[%- FOREACH key = additionalLinks.search.keys %]
+		<li><a href="[% additionalLinks.search.$key | html %]player=[% playerURI %]">[% key | string %]</a></li>
+	[%- END %]
+	</ul>
+</div>
+
+<div class="homeMenuSection">
+	<div>[% "RADIO" | string | upper %]</div>
+	<ul>
+	[%- FOREACH key = additionalLinks.radio.keys %]
+		<li><a href="[% additionalLinks.radio.$key | html %]player=[% playerURI %]">[% key | string %]</a></li>
+	[%- END %]
+		<li><a href="tunein.html?player=[% playerURI %]">[% "RADIO_TUNEIN" | string %]</a></li>
+	</ul>	
+</div>
+
+[% IF not nosetup %]
+<div class="homeMenuSection">
+	<div>[% "SETTINGS" | string | upper %]</div>
+	<ul>
+	[%- IF not noserver %]
+		<li><a href="setup.html?page=SERVER_SETTINGS&amp;player=[% playerURI %]">[% "SERVER_SETTINGS" | string %]</a></li>
+	[%- END %]
+
+	[%- USE Clients; players = Clients.get("name"); FOREACH client = players; %]
+		<li><a href="setup.html?page=PLAYER_SETTINGS&amp;player=[% playerURI %]&amp;playerid=[% client.id | uri %]">[% "PLAYER_SETTINGS" | string %][% IF client.name %] [% "FOR" | string %] [% client.name %][% END %]</a></li>
+	[%- END %]
+
+	[%- FOREACH key = additionalLinks.settings.keys %]
+		<li><a href="[% additionalLinks.settings.$key | html %]player=[% playerURI %]">[% key | string %]</a></li>
+	[%- END %]
+	</ul>
+</div>
+[% END %]
+
+[% IF additionalLinks.plugins %]
+<div class="homeMenuSection">
+	<div>[% "PLUGINS" | string | upper %]</div>
+	<ul>
+		[%- FOREACH key = additionalLinks.plugins.keys %]
+			<li><a href="[% additionalLinks.plugins.$key | html %]player=[% playerURI %]">[% key | string %]</a></li>
+		[%- END %]
+	</ul>
+</div>
+[% END %]
+
+<div class="homeMenuSection">
+	<div>[% "HELP" | string | upper %]</div>
+	<ul>
+	[%- FOREACH link = additionalLinks.help %]
+		<li><a href="[% link.value | html %]player=[% playerURI %]" [% IF link.value.match('^http') %]target="_new"[% END %]>[% link.key | string %]</a></li>
+	[%- END %]
+	</ul>
+</div>
+<p>
+&nbsp;
+<p>
+[% END %]
 [% IF browse_radio %]
 [% PROCESS pagefooter.html %]
 [% ELSE %]
