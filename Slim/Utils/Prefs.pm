@@ -754,7 +754,7 @@ sub set {
 
 	# allow clients to specify the preference hash to modify
 	my $client = shift;
-	my $prefs = shift || \%prefs;
+	my $prefsRef = shift || \%prefs;
 	
 	my $oldvalue;
 
@@ -764,44 +764,44 @@ sub set {
 
 	if (defined $ind) {
 
-		if (defined $prefs->{$key}) {
-			if (ref $prefs->{$key} eq 'ARRAY') {
-				if (defined($prefs->{$key}[$ind]) && defined($value) && $value eq $prefs->{$key}[$ind]) {
+		if (defined $prefsRef->{$key}) {
+			if (ref $prefsRef->{$key} eq 'ARRAY') {
+				if (defined($prefsRef->{$key}[$ind]) && defined($value) && $value eq $prefsRef->{$key}[$ind]) {
 						return $value;
 				}
 
-				$oldvalue = $prefs->{$key}[$ind];
-				$prefs->{$key}[$ind] = $value;
-			} elsif (ref $prefs->{$key} eq 'HASH') {
-				if (defined($prefs->{$key}{$ind}) && defined($value) && $value eq $prefs->{$key}{$ind}) {
+				$oldvalue = $prefsRef->{$key}[$ind];
+				$prefsRef->{$key}[$ind] = $value;
+			} elsif (ref $prefsRef->{$key} eq 'HASH') {
+				if (defined($prefsRef->{$key}{$ind}) && defined($value) && $value eq $prefsRef->{$key}{$ind}) {
 						return $value;
 				}
 
-				$oldvalue = $prefs->{$key}{$ind};
-				$prefs->{$key}{$ind} = $value;
+				$oldvalue = $prefsRef->{$key}{$ind};
+				$prefsRef->{$key}{$ind} = $value;
 			}
 		} elsif ( $ind =~ /\D/ ) {
 			# Setting hash pref where no keys currently exist
-			$prefs->{$key}{$ind} = $value;
+			$prefsRef->{$key}{$ind} = $value;
 		} else {
 			# Setting array pref where no indexes currently exist
-			$prefs->{$key}[$ind] = $value;
+			$prefsRef->{$key}[$ind] = $value;
 		}
 
 	} elsif ($key =~ /(.+?)(\d+)$/) { 
 
 		# trying to set a member of an array pref directly
 		# re-call function the correct way
-		return set($1,$value,$2,$client,$prefs);
+		return set($1,$value,$2,$client,$prefsRef);
 
 	} else {
 
-		if (defined($prefs->{$key}) && defined($value) && $value eq $prefs->{$key}) {
+		if (defined($prefsRef->{$key}) && defined($value) && $value eq $prefsRef->{$key}) {
 				return $value;
 		}
 
-		$oldvalue = $prefs->{$key};
-		$prefs->{$key} = $value;
+		$oldvalue = $prefsRef->{$key};
+		$prefsRef->{$key} = $value;
 	}
 
 	onChange($key, $value, $ind, $client);
@@ -830,11 +830,9 @@ sub setArray {
 	my $key   = shift;
 	my $value = shift;
 	
-	my $prefs = \%prefs;
+	my $oldvalue = $prefs{$key};
 	
-	my $oldvalue = $prefs->{$key};
-	
-	$prefs->{$key} = $value;
+	$prefs{$key} = $value;
 	
 	onChange($key, $value);
 	
