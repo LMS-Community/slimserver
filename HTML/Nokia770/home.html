@@ -47,7 +47,7 @@
 			[% IF browse_radio %]
 				[% "RADIO" | string %]
 			[% ELSE %]
-				[% "BROWSE" | string %] (<a href="[% webroot %]home.html?extended_browse=1&player=[% playerURI %]">[% "MORE" | string %]</a>)
+				[% "BROWSE" | string %] <span class = 'pagebarheadertext'>(<a href="[% webroot %]home.html?extended_browse=1&player=[% playerURI %]">[% "MORE" | string %]</a>)</span>
 			[% END %]
 		</td>
 		<td align = 'right' valign = 'bottom'>
