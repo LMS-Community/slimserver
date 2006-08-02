@@ -387,3 +387,9 @@ div#addedToPlaylist{
 	border: 1px solid black;
 }
 
+.homeMenuSection {
+	float: left;
+}
+.homeContainer {
+	width: 100%;
+}

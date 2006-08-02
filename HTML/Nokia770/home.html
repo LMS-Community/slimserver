@@ -91,6 +91,7 @@
 </table>
 
 <div class="homeMenuSection">
+	<div>[% "BROWSE_MUSIC" | string | upper %]</div>
 	<ul>
 	[%- FOREACH link = additionalLinks.browse %]
 		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a></li>
@@ -99,6 +100,15 @@
 </div>
 
 <div class="homeMenuSection">
+	<div>[% "HELP" | string | upper %]</div>
+	<ul>
+	[%- FOREACH link = additionalLinks.help %]
+		<li><a href="[% link.value | html %]player=[% playerURI %]" [% IF link.value.match('^http') %]target="_new"[% END %]>[% link.key | string %]</a></li>
+	[%- END %]
+	</ul>
+</div>
+<!--
+<div class="homeMenuSection">
 	<div>[% "SEARCH" | string | upper %]</div>
 	<ul>
 	[%- FOREACH key = additionalLinks.search.keys %]
@@ -106,6 +116,7 @@
 	[%- END %]
 	</ul>
 </div>
+-->
 
 <div class="homeMenuSection">
 	<div>[% "RADIO" | string | upper %]</div>
@@ -147,14 +158,6 @@
 </div>
 [% END %]
 
-<div class="homeMenuSection">
-	<div>[% "HELP" | string | upper %]</div>
-	<ul>
-	[%- FOREACH link = additionalLinks.help %]
-		<li><a href="[% link.value | html %]player=[% playerURI %]" [% IF link.value.match('^http') %]target="_new"[% END %]>[% link.key | string %]</a></li>
-	[%- END %]
-	</ul>
-</div>
 <p>
 &nbsp;
 <p>
