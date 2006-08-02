@@ -386,3 +386,7 @@ div#addedToPlaylist{
         border: 1px solid black;
 }
 
+.homeMenuSection {
+        float: left;
+}
+
