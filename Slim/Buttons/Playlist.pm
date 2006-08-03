@@ -35,30 +35,37 @@ sub init {
 				$index++;
 				last if $pdm == $_;
 			}
+
 			$pdm = $index unless $index == -1;
-				
+
 			unless (defined $pdm) { $pdm = 1; };
 			unless (defined $buttonarg) { $buttonarg = 'toggle'; };
+
 			if ($button eq 'playdisp_toggle') {
+
 				my $playlistlen = Slim::Player::Playlist::count($client);
 
 				if (($playlistlen > 0) && (showingNowPlaying($client))) {
+
 					$pdm = ($pdm + 1) % ($client->prefGetArrayMax('playingDisplayModes') +1);
-					print "display mode: $pdm\n";
+
 				} elsif ($playlistlen > 0) {
+
 					browseplaylistindex($client,Slim::Player::Source::playingSongIndex($client));
 				}
+
 			} else {
 				if ($buttonarg && $buttonarg < ($client->prefGetArrayMax('playingDisplayModes') +1)) {
 					$pdm = $buttonarg;
 				}
 			}
-			
+
 			#find mode number at the new index, and save to the prefs
 			$client->param('animateTop',${[$client->prefGetArray('playingDisplayModes')]}[$pdm]);
 			$client->prefSet("playingDisplayMode", $pdm);
 			$client->update();
 		},
+
 		'knob' => sub {
 				my ($client,$funct,$functarg) = @_;
 				
@@ -69,9 +76,9 @@ sub init {
 					browseplaylistindex($client,$newindex);
 				}
 				
-				$client->param('showingnowplaying',0);
+				$client->param('showingnowplaying', 0);
 
-				msg("old: $oldindex new: $newindex is after setting:" . browseplaylistindex($client) . "\n");
+				$::d_ui && msgf("old: $oldindex new: $newindex is after setting: [%s]\n", browseplaylistindex($client));
 
 				if ($oldindex > $newindex) {
 					$client->pushUp();
