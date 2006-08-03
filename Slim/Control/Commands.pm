@@ -2082,6 +2082,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		# Setup the join mapping
 		if ($key =~ /^genre\./) {
 
+			$sort = $albumSort;
 			$joinMap{'genre'} = { 'genreTracks' => 'genre' };
 
 		} elsif ($key =~ /^album\./) {
