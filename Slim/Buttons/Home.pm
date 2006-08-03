@@ -470,23 +470,20 @@ sub jump {
 # disregarding home menu settings.
 sub jumpToMenu {
 	my $client = shift;
-	my $menu = shift;
-	my $depth = shift;
+	my $menu   = shift;
+	my $depth  = shift;
 
-	$depth = "" unless defined $depth;
-	
+	if (!defined $depth) {
+		$depth = '';
+	}
+
 	$client->curDepth($depth);
-	$client->curSelection($client->curDepth(),$menu);
+	$client->curSelection($client->curDepth, $menu);
 	
 	my $nextParams = Slim::Buttons::Home::getNextList($client);
 
-
 	if (exists $nextParams->{'listRef'}) {
-		Slim::Buttons::Common::pushModeLeft(
-			$client,
-			'INPUT.List',
-			$nextParams,
-		);
+		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', $nextParams);
 	} else {
 		homeExitHandler($client,"RIGHT");
 	}
@@ -494,18 +491,23 @@ sub jumpToMenu {
 
 sub homeheader {
 	my $client = $_[0];
-	my $line1;
-	
+
 	if ($client->isa("Slim::Player::SLIMP3")) {
-		$line1 = $client->string('SLIMP3_HOME');
+
+		return $client->string('SLIMP3_HOME');
+
         } elsif ($client->isa("Slim::Player::SoftSqueeze")) {
-                $line1 = $client->string('SOFTSQUEEZE_HOME');
+
+                return $client->string('SOFTSQUEEZE_HOME');
+
 	} elsif ($client->isa("Slim::Player::Transporter")) {
-		$line1 = $client->string('TRANSPORTER_HOME');
+
+		return $client->string('TRANSPORTER_HOME');
+
 	} else {
-		$line1 = $client->string('SQUEEZEBOX_HOME');
+
+		return $client->string('SQUEEZEBOX_HOME');
 	}
-	return $line1;
 }
 
 #######
