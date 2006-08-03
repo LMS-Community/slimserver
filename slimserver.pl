@@ -375,9 +375,6 @@ sub init {
 	$::d_server && msg("SlimServer Request init...\n");
 	Slim::Control::Request::init();
 	
-	$::d_server && msg("SlimServer IR init...\n");
-	Slim::Hardware::IR::init();
-	
 	$::d_server && msg("SlimServer Buttons init...\n");
 	Slim::Buttons::Common::init();
 
