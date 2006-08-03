@@ -116,6 +116,11 @@ sub installedPlugins {
 				next;
 			}
 
+			# Don't load the old Favorites plugin.
+			if ($plugin eq 'Favorites') {
+				next;
+			}
+
 			next if ($plugin =~ m/^\./i);
 
 			if ($plugin =~ s/(.+)\.pm$/$1/i) {
