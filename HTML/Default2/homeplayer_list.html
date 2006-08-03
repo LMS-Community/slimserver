@@ -1,7 +1,0 @@
-[% IF page == 'xml' %]
- <player playerid="[% playerid | uri %]" playername="[% playername | html %]"/>
-[% ELSE %]
-<li>&bull; <a onclick="parent.browseurl(&quot;setup.html?page=PLAYER_SETTINGS&amp;playerid=[% playerid | uri %]&quot;)">
-[% "PLAYER_SETTINGS" | string %][% IF playername %] [% "FOR" | string %] [% playername %][% END %]
-</a></li>
-[% END %]

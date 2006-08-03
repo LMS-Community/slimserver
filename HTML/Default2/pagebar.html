@@ -1,6 +1,0 @@
-[% IF pagesstart %]<a onclick="parent.browseurl('[% path %]?start=0&amp;[% otherparams | html %]')">[% "FIRST" | string %]</a> [% END %]
-[% IF pageprev %]<a onclick="parent.browseurl('[% path %]?start=[% pageprev %]&amp;[% otherparams | html %]')">[% "PREVIOUS" | string %]</a> [% END %]
-[% IF pageprev == '0' %]<a onclick="parent.browseurl('[% path %]?start=[% pageprev %]&amp;[% otherparams | html %]')">[% "PREVIOUS" | string %]</a> [% END %]
-[% pageslist %]
-[% IF pagenext %] <a onclick="parent.browseurl('[% path %]?start=[% pagenext %]&amp;[% otherparams | html %]')">[% "NEXT" | string %]</a> [% END %]
-[% IF pagesend %] <a onclick="parent.browseurl('[% path %]?start=[% pagesend %]&amp;[% otherparams | html %]')">[% "LAST" | string %]</a> [% END %]

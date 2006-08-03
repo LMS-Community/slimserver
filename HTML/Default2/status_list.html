@@ -1,9 +1,0 @@
-<playlistitem[% IF item.currentsong %] currentsong="currentsong"[% END ; IF itemobj.album == noAlbum %] noalbum="1"[% END %] albumid="[% itemobj.album.id %]">
- <title>[% itemobj.title | html %]</title>
- <artists>
-  [% FOREACH artistobj IN itemobj.artistsWithAttributes %]<artist id="[% artistobj.artist.id %]"[% IF artistobj.artist.name == noArtist %] no="1"[% END %]>[% artistobj.artist.name | html %]</artist>[% END %]
- </artists>
- <album>[% itemobj.album.title | html %][% IF itemobj.year %] ([% itemobj.year | html %])[% END %]</album>
- <url>[% itemobj.url | html %]</url>
- <coverart>[% itemobj.coverthumb | html %]</coverart>
-</playlistitem>
