@@ -1,11 +1,11 @@
 [%- pageicon = 'BROWSE_PLAYLISTS' -%]
-[%- pagetitle = 'PLUGIN_FAVORITES_MODULE_NAME' | string -%]
-[%- pwd_list = BLOCK -%]/ <a href="favorites_list.html?player=[% player | uri %]">[% "PLUGIN_FAVORITES_MODULE_NAME" | string %]</a> 
+[%- pagetitle = 'FAVORITES' | string -%]
+[%- pwd_list = BLOCK -%]/ <a href="favorites_list.html?player=[% player | uri %]">[% "FAVORITES" | string %]</a> 
 [% END -%]
 [%- PROCESS pageheader.html -%] 
 
 [% warning %]
-<!-- start plugins output -->
+
 [% WRAPPER contentcontainer %]
 	[% odd = 1 %]
 	[% FOREACH fav = titles %]
@@ -25,8 +25,9 @@
 			[% END %]
 		
 			[% WRAPPER playlink %]
-				href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=play&amp;p2=[% faves.$fav | uri %]&amp;player=[% player | uri %]"
+				href="[% webroot %][% statusroot %]?command=playlist&amp;subcommand=loadtracks&amp;favorite=[% faves.$fav | uri %]&amp;player=[% player | uri %]"
 			[% END %]
+
 		[% END %]
 	
 		[% WRAPPER contentitem controls = 'favcontrols' %]
@@ -34,5 +35,7 @@
 		[% END %]
 		[% odd = (not odd) %]
 	[% END %]
+
 [% END %]
+
 [% PROCESS pagefooter.html %]

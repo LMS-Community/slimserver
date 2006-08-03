@@ -17,6 +17,7 @@ use Slim::Utils::DateTime;
 use Slim::Utils::Misc;
 use Slim::Utils::PluginManager;
 use Slim::Display::Display;
+use Slim::Buttons::Favorites;
 use Slim::Buttons::SqueezeNetwork;
 use Slim::Buttons::XMLBrowser;
 use Slim::Buttons::Volume;
@@ -72,6 +73,7 @@ sub init {
 	Slim::Buttons::AlarmClock::init();
 	Slim::Buttons::BrowseDB::init();
 	Slim::Buttons::BrowseTree::init();
+	Slim::Buttons::Favorites::init();
 	Slim::Buttons::Information::init();
 	Slim::Buttons::Playlist::init();
 	Slim::Buttons::XMLBrowser::init();
@@ -438,6 +440,7 @@ our %functions = (
 		my $button = shift;
 		my $buttonarg = shift;
 		my $playdisp = undef;
+
 		if (mode($client) ne 'search') {
 			Slim::Buttons::Home::jumpToMenu($client,"SEARCH");
 			$client->update();
@@ -449,7 +452,7 @@ our %functions = (
 		my $button = shift;
 		my $buttonarg = shift;
 		my $playdisp = undef;
-		
+
 		setMode($client, 'home');
 		Slim::Buttons::Home::jumpToMenu($client,"BROWSE_MUSIC");
 		$client->update();
@@ -491,11 +494,11 @@ our %functions = (
 				}
 			}			
 
-		} elsif (mode($client) ne 'PLUGIN.Favorites') {
+		} elsif (mode($client) ne 'FAVORITES') {
 
-			Slim::Buttons::Common::setMode($client, 'home');
-			Slim::Buttons::Home::jump($client, 'PLUGIN.Favorites');
-			Slim::Buttons::Common::pushModeLeft($client, 'PLUGIN.Favorites');
+			setMode($client, 'home');
+			Slim::Buttons::Home::jump($client, 'FAVORITES');
+			Slim::Buttons::Common::pushModeLeft($client, 'FAVORITES');
 		}
 	},	
 	'repeat' => sub  {

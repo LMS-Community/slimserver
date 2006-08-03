@@ -19,6 +19,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages::Search;
 use Slim::Web::Pages::BrowseDB;
 use Slim::Web::Pages::BrowseTree;
+use Slim::Web::Pages::Favorites;
 use Slim::Web::Pages::Home;
 use Slim::Web::Pages::Status;
 use Slim::Web::Pages::Playlist;
@@ -56,6 +57,7 @@ sub init {
 	Slim::Web::Pages::Home->init();
 	Slim::Web::Pages::BrowseDB::init();
 	Slim::Web::Pages::BrowseTree::init();
+	Slim::Web::Pages::Favorites::init();
 	Slim::Web::Pages::Search::init();
 	Slim::Web::Pages::Status::init();
 	Slim::Web::Pages::EditPlaylist::init(); # must precede Playlist::init();

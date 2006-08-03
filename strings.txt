@@ -11824,6 +11824,38 @@ MIDWORDS_UPPER
 	DE	1
 	EN	0
 
+FAVORITES
+	DE	Favoriten
+	EN	Favorites
+	ES	Favoritas
+	FI	Suosikit
+	FR	Favoris
+	HE	מועדפים
+	IT	Favoriti
+	NL	Favorieten
+
+FAVORITES_NOT_DEFINED
+	DE	Favorit Nr. %s existiert nicht!
+	EN	Favorite #%s not defined.
+	ES	Favorita #%s no definida
+	FR	Favori n°%s non défini
+	NL	Favoriet #%s niet gedefinieerd.
+
+FAVORITES_NONE_DEFINED
+	DE	Es sind noch keine Favoriten definiert
+	EN	No Favorites exist
+	ES	No existen Favoritas
+	FI	Suosikkeja ei ole
+	FR	Aucun favori défini
+	NL	Er zijn geen favorieten
+
+FAVORITES_PLAYING
+	DE	Spiele Favorit Nr. %s...
+	EN	Playing favorite #%s
+	ES	Se está escuchando favorita #%s
+	FR	Lecture favori n°%s
+	NL	Speel favoriet #%s
+
 FAVORITES_FAVORITE_NUM
 	DE	Favorit Nr.
 	EN	Favorite #

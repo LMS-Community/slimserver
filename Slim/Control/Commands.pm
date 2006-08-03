@@ -1006,6 +1006,10 @@ sub playlistXtracksCommand {
 
 		@tracks = _playlistXtracksCommand_parseListRef($client, $what, $listref);
 
+	} elsif ($what =~ /favorite/i) {
+
+		@tracks = _playlistXtracksCommand_parseFavorite($client, $what, $listref);
+
 	} elsif ($what =~ /searchRef/i) {
 
 		@tracks = _playlistXtracksCommand_parseSearchRef($client, $what, $listref);
@@ -2211,6 +2215,58 @@ sub _playlistXtracksCommand_parseSearchRef {
 	}
 
 	return Slim::Schema->rs('Track')->search($cond, $attr)->distinct->all;
+}
+
+# Allow any URL to be a favorite - this includes things like iTunes playlists.
+sub _playlistXtracksCommand_parseFavorite {
+	my $client  = shift;
+	my $what    = shift;
+	my $url     = shift;
+
+	my $class   = 'Track';
+	my $obj     = undef;
+	my $terms   = undef;
+
+	$d_commands && msg("Commands::_playlistXtracksCommand_parseFavorite()\n");
+
+	# If coming from the web UI.
+	if ($what =~ /favorite=(.+?)\&/i) {
+		$url = Slim::Utils::Misc::unescape($1);
+	}
+
+	# Bug: 2569
+	# We need to ask for the right type of object.
+	# 
+	# Contributors, Genres & Albums have a url of:
+	# db:contributor.namesearch=BEATLES
+	#
+	# Remote playlists are Track objects, not Playlist objects.
+	if ($url =~ /^db:(\w+)\.(\w+)=(.+)/) {
+
+		$class = ucfirst($1);
+		$obj   = Slim::Schema->single($class, { $2 => Slim::Utils::Misc::unescape($3) });
+
+	} elsif (Slim::Music::Info::isPlaylist($url) && !Slim::Music::Info::isRemoteURL($url)) {
+
+		$class = 'Playlist';
+	}
+
+	# else we assume it's a track
+	if ($class eq 'Track' || $class eq 'Playlist') {
+
+		$obj = Slim::Schema->rs($class)->objectForUrl({
+			'url'      => $url,
+			'create'   => 1,
+			'readTags' => 1
+		});
+	}
+
+	if (blessed($obj)) {
+
+		$terms = sprintf('%s.id=%d', lc($class), $obj->id);
+	}
+
+	return _playlistXtracksCommand_parseSearchTerms($client, $terms);
 }
 
 sub _showCommand_done {

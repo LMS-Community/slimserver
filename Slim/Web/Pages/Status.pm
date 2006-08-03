@@ -41,7 +41,7 @@ sub status {
 	Slim::Web::Pages->addPlayerList($client, $params);
 
 	$params->{'refresh'} = Slim::Utils::Prefs::get('refreshRate');
-	
+
 	if (!defined($client)) {
 
 		# fixed faster rate for noclients
@@ -57,7 +57,7 @@ sub status {
 
 	my $current_player;
 	my $songcount = 0;
-	 
+
 	if (defined($client)) {
 
 		$songcount = Slim::Player::Playlist::count($client);
@@ -151,7 +151,7 @@ sub status {
 		$params->{'currentsong'} = Slim::Player::Source::playingSongIndex($client) + 1;
 		$params->{'thissongnum'} = Slim::Player::Source::playingSongIndex($client);
 		$params->{'songcount'}   = $songcount;
-		$params->{'itemobj'}    = Slim::Player::Playlist::song($client);
+		$params->{'itemobj'}     = Slim::Player::Playlist::song($client);
 		
 		Slim::Web::Pages->addSongInfo($client, $params, 1);
 

@@ -1,4 +1,4 @@
-package Plugins::Favorites::Plugin;
+package Slim::Buttons::Favorites;
 
 # $Id$
 #
@@ -11,7 +11,7 @@ package Plugins::Favorites::Plugin;
 # mode for displaying the details of a station or track.
 
 # Other modes are encouraged to use the details mode, called
-# 'PLUGIN.Favorites.details'.  To use it, setup a hash of params, and
+# 'Favorites.details'.  To use it, setup a hash of params, and
 # push into the mode.  The params hash must contain strings for
 # 'title' and 'url'.  You may also include an array of strings called
 # 'details'.  If included, each string in the details will be
@@ -42,8 +42,9 @@ my %mainModeFunctions = (
 		
 		my $listIndex = $client->param('listIndex');
 		my $urls      = $client->param('urls');
+		my $titles    = $client->param('listRef');
 
-		_addOrPlayFavoriteUrl($client, $urls->[$listIndex], $listIndex);
+		_addOrPlayFavoriteUrl($client, $urls->[$listIndex], $titles->[$listIndex], $listIndex);
 	},
 
 	'add' => sub {
@@ -51,63 +52,54 @@ my %mainModeFunctions = (
 
 		my $listIndex = $client->param('listIndex');
 		my $urls      = $client->param('urls');
+		my $titles    = $client->param('listRef');
 
-		_addOrPlayFavoriteUrl($client, $urls->[$listIndex], $listIndex, 'add');
+		_addOrPlayFavoriteUrl($client, $urls->[$listIndex], $titles->[$listIndex], $listIndex, 'add');
 	},
 );
 
 sub getDisplayName {
-	return 'PLUGIN_FAVORITES_MODULE_NAME';
+	return 'FAVORITES';
 }
 
-sub addMenu {
-	$::d_favorites && msg("Favorites Plugin: addMenu\n");
-	return "PLUGINS";
-}
+sub init {
+	$::d_favorites && msg("Favorites: init\n");
 
-# Web pages
+	Slim::Buttons::Common::addMode('FAVORITES', \%mainModeFunctions, \&setMode);
 
-sub webPages {
-	my %pages = ("favorites_list\.htm" => \&handleWebIndex);
+	# Slim::Buttons::Home::addMenuOption('FAVORITES', { 'useMode' => 'FAVORITES' });
 
-	if (grep {$_ eq 'Favorites::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages->addPageLinks("browse", { 'PLUGIN_FAVORITES_MODULE_NAME' => undef });
-	} else {
-		Slim::Web::Pages->addPageLinks("browse", { 'PLUGIN_FAVORITES_MODULE_NAME' => "plugins/Favorites/favorites_list.html" });
-	}
+	Slim::Buttons::Common::setFunction('playFavorite', \&playFavorite);
 
-	return (\%pages);
-}
-
-sub handleWebIndex {
-	my ($client, $params) = @_;
+	# register our functions
 	
-	$params->{'favList'} = {};
+#		  |requires Client
+#		  |  |is a Query
+#		  |  |  |has Tags
+#		  |  |  |  |Function to call
+#		  C  Q  T  F
+	Slim::Control::Request::addDispatch(['favorites', '_index', '_quantity'],  
+		[0, 1, 1, \&listQuery]);
+	Slim::Control::Request::addDispatch(['favorites', 'move', '_fromindex', '_toindex'],  
+		[0, 0, 0, \&moveCommand]);
+	Slim::Control::Request::addDispatch(['favorites', 'delete', '_index'],
+		[0, 0, 0, \&deleteCommand]);
+	Slim::Control::Request::addDispatch(['favorites', 'add', '_url', '_title'],
+		[0, 0, 0, \&addCommand]);
+}
 
-	my $favs   = Slim::Utils::Favorites->new($client);
-	my @titles = $favs->titles;
-	my @urls   = $favs->urls;
-	my $i      = 0;
+sub setMode {
+	my $client = shift;
+	my $method = shift;
 
-	if (scalar @titles) {
+	if ($method eq 'pop') {
 
-		$params->{'titles'} = \@titles;
-		$params->{'urls'}   = \@urls;
-
-		for (@titles) {
-			$params->{'faves'}{$_} = $urls[$i++];
+		if (!$context{$client}->{'blocking'}) {
+			Slim::Buttons::Common::popMode($client);
 		}
 
-	} else {
-
-		$params->{'warning'} = string('PLUGIN_FAVORITES_NONE_DEFINED');
+		return;
 	}
-
-	return Slim::Web::HTTP::filltemplatefile('plugins/Favorites/favorites_list.html', $params);
-}
-
-sub listFavorites {
-	my $client = shift;
 
 	my $favs   = Slim::Utils::Favorites->new($client);
 	my @titles = $favs->titles;
@@ -120,7 +112,7 @@ sub listFavorites {
 
 	my %params = (
 		stringHeader   => 1,
-		header         => 'PLUGIN_FAVORITES_MODULE_NAME',
+		header         => 'FAVORITES',
 		listRef        => \@titles,
 		callback       => \&mainModeCallback,
 		valueRef       => \$context{$client}->{mainModeIndex},
@@ -140,25 +132,8 @@ sub listFavorites {
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 }
 
-# the routines
-sub setMode {
-	my $client = shift;
-	my $method = shift;
-
-	if ($method eq 'pop') {
-
-		if (!$context{$client}->{'blocking'}) {
-			Slim::Buttons::Common::popMode($client);
-		}
-
-		return;
-	}
-
-	listFavorites($client);
-}
-
 sub mainModeCallback {
-	my ($client,$exittype) = @_;
+	my ($client, $exittype) = @_;
 
 	$exittype = uc($exittype);
 
@@ -180,7 +155,7 @@ sub mainModeCallback {
 
 	} else {
 
-		$client->bumpRight();
+		$client->bumpRight;
 	}
 }
 
@@ -212,121 +187,44 @@ sub playFavorite {
 	if (!$urls[$listIndex]) {
 
 		$client->showBriefly({
-			 'line' => [ sprintf($client->string('PLUGIN_FAVORITES_NOT_DEFINED'), $digit) ],
+			 'line' => [ sprintf($client->string('FAVORITES_NOT_DEFINED'), $digit) ],
 		});
 
 		return;
 	}
 
-	$::d_favorites && msg("Favorites Plugin: playing favorite number $digit, $titles[$listIndex]\n");
+	$::d_favorites && msg("Favorites: playing favorite number $digit, $titles[$listIndex]\n");
 
-	_addOrPlayFavoriteUrl($client, $urls[$listIndex], $listIndex);
+	_addOrPlayFavoriteUrl($client, $urls[$listIndex], $titles[$listIndex], $listIndex);
 }
 
-# Allow any URL to be a favorite - this includes things like iTunes playlists.
 sub _addOrPlayFavoriteUrl {
 	my $client  = shift;
 	my $url     = shift;
+	my $title   = shift;
 	my $index   = shift;
 	my $add     = shift || 0;
 
-	my $class   = 'Track';
-	my $obj     = undef;
-	my $title   = undef;
-	my $terms   = undef;
-	my $string  = $add ? 'PLUGIN_FAVORITES_ADDING' : 'PLUGIN_FAVORITES_PLAYING';
+	my $string  = $add ? 'FAVORITES_ADDING' : 'FAVORITES_PLAYING';
 	my $command = $add ? 'inserttracks' : 'loadtracks';
 
-	# Bug: 2569
-	# We need to ask for the right type of object.
-	# 
-	# Contributors, Genres & Albums have a url of:
-	# db:contributor.namesearch=BEATLES
-	#
-	# Years are once again special (ugh).
-	#
-	# Remote playlists are Track objects, not Playlist objects.
-	if ($url =~ /^db:(\w+)\.(\w+)=(.+)/) {
+	if (defined $index) {
 
-		$class = ucfirst($1);
-		$obj   = Slim::Schema->single($class, { $2 => Slim::Utils::Misc::unescape($3) });
-
-	} elsif ($url =~ /^db:album\.year=(.+)/) {
-
-		$class = 'Year';
-		$obj   = $1;
-
-	} elsif (Slim::Music::Info::isPlaylist($url) && !Slim::Music::Info::isRemoteURL($url)) {
-
-		$class = 'Playlist';
-	}
-
-	# else we assume it's a track
-	if ($class eq 'Track' || $class eq 'Playlist') {
-
-		$obj = Slim::Schema->rs($class)->objectForUrl({
-			'url'      => $url,
-			'create'   => 1,
-			'readTags' => 1
+		$client->showBriefly({
+			'line' => [ sprintf($client->string($string), $index+1), $title ],
 		});
 	}
 
-	my $blessed = blessed($obj);
-
-	if ($blessed && $blessed eq 'Slim::Schema::Track') {
-
-		$title = Slim::Music::Info::standardTitle($client, $obj),
-		$terms = sprintf('%s.id=%d', lc($class), $obj->id);
-
-	} elsif ($blessed) {
-
-		$title = $obj->name;
-		$terms = sprintf('%s.id=%d', lc($class), $obj->id);
-	}
-
-	$client->showBriefly({
-		'line' => [ sprintf($client->string($string), $index+1), $title ],
-	});
-
-	$::d_favorites && msg("Favorites Plugin: Calling $command on favorite [$url] with terms: [$terms]\n");
+	$::d_favorites && msg("Favorites: Calling $command on favorite [$title] ($url)\n");
 
 	if (!$add) {
 		$client->execute([ 'playlist', 'clear' ] );
 	}
 
-	$client->execute([ 'playlist', $command, $terms ]);
+	$client->execute([ 'playlist', $command, 'favorite', $url ]);
 }
 
-sub enabled {
-	return ($::VERSION ge '6.1');
-}
-
-sub initPlugin {
-	$::d_favorites && msg("Favorites Plugin: initPlugin\n");
-
-	Slim::Buttons::Common::addMode('PLUGIN.Favorites', \%mainModeFunctions, \&setMode);
-
-	#Slim::Buttons::Home::addMenuOption('FAVORITES', {'useMode' => 'PLUGIN.Favorites'});
-
-	Slim::Buttons::Common::setFunction('playFavorite', \&playFavorite);
-
-	# register our functions
-	
-#		  |requires Client
-#		  |  |is a Query
-#		  |  |  |has Tags
-#		  |  |  |  |Function to call
-#		  C  Q  T  F
-	Slim::Control::Request::addDispatch(['favorites', '_index', '_quantity'],  
-		[0, 1, 1, \&listQuery]);
-	Slim::Control::Request::addDispatch(['favorites', 'move', '_fromindex', '_toindex'],  
-		[0, 0, 0, \&moveCommand]);
-	Slim::Control::Request::addDispatch(['favorites', 'delete', '_index'],
-		[0, 0, 0, \&deleteCommand]);
-	Slim::Control::Request::addDispatch(['favorites', 'add', '_url', '_title'],
-		[0, 0, 0, \&addCommand]);
-}
-
+# These are all CLI commands
 # move from to command
 sub moveCommand {
 	my $request = shift;
@@ -440,48 +338,6 @@ sub listQuery {
 
 	$request->setStatusDone();
 }
-
-sub strings {
-	return "
-PLUGIN_FAVORITES_MODULE_NAME
-	DE	Favoriten
-	EN	Favorites
-	ES	Favoritas
-	FI	Suosikit
-	FR	Favoris
-	HE	מועדפים
-	IT	Favoriti
-	NL	Favorieten
-
-PLUGIN_FAVORITES_NOT_DEFINED
-	DE	Favorit Nr. %s existiert nicht!
-	EN	Favorite #%s not defined.
-	ES	Favorita #%s no definida
-	FR	Favori n°%s non défini
-	NL	Favoriet #%s niet gedefinieerd.
-
-PLUGIN_FAVORITES_NONE_DEFINED
-	DE	Es sind noch keine Favoriten definiert
-	EN	No Favorites exist
-	ES	No existen Favoritas
-	FI	Suosikkeja ei ole
-	FR	Aucun favori défini
-	NL	Er zijn geen favorieten
-
-PLUGIN_FAVORITES_PLAYING
-	DE	Spiele Favorit Nr. %s...
-	EN	Playing favorite #%s
-	ES	Se está escuchando favorita #%s
-	FR	Lecture favori n°%s
-	NL	Speel favoriet #%s
-
-PLUGIN_FAVORITES_ADDING
-	DE	Füge Favorit Nr. %s zur Wiedergabeliste hinzu...
-	EN	Adding favorite #%s
-	FR	Ajout favori n°%s
-	ES	Añadiendo favorita #%s
-	NL	Toevoegen favoriet #%s
-";}
 
 1;
 

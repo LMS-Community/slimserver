@@ -33,6 +33,7 @@ our $defaultPrefs = {
 		BROWSE_MUSIC
 		SEARCH
 		RandomPlay::Plugin
+		FAVORITES
 		SAVED_PLAYLISTS
 		RADIO
 		SETTINGS
@@ -57,6 +58,7 @@ our $defaultPrefs = {
 	'upgrade-6.1b1-script' => 1,
 	'upgrade-6.2-script'   => 1,
 	'upgrade-R4627-script' => 1,
+	'upgrade-R8775-script' => 1,
 	'volume'               => 50,
 	'syncBufferThreshold'  => 128,
 	'bufferThreshold'      => 255,
@@ -114,6 +116,7 @@ our %upgradeScripts = (
 			$client->prefPush('menuItem', 'SQUEEZENETWORK_CONNECT');
 		}
 	},
+
 	'6.2' => sub {
 		my $client = shift;
 		#kill all alarm settings
@@ -133,15 +136,19 @@ our %upgradeScripts = (
 			$client->prefSet('alarmvolume',[$alarmvolume,50,50,50,50,50,50,50]);
 		}
 	},
+
 	'R4627' => sub {
 		my $client = shift;
-		# Add RandomMix to home and clear unused prefs
 		my $menuItem = $client->prefGet('menuItem') || 0;
 		
+		# Add RandomMix to home and clear unused prefs
 		if (ref $menuItem eq 'ARRAY') {
+
 			my $insertPos = undef;
 			my $randomMixFound = 0;
+
 			for (my $i = 0; $i < @$menuItem; $i++) {
+
 				if (@$menuItem[$i] eq 'RandomPlay::Plugin') {
 					$randomMixFound = 1;
 					last;
@@ -150,16 +157,16 @@ our %upgradeScripts = (
 				}
 			}
 
-			if (! $randomMixFound) {
-				if ($insertPos != undef) {
+			if (!$randomMixFound) {
+
+				if (defined $insertPos) {
+
 					# Insert random mix after SEARCH
-					$menuItem = [(@$menuItem[0 .. $insertPos - 1],
-								  'RandomPlay::Plugin',
-								  @$menuItem[$insertPos .. scalar @$menuItem - 1]
-								)];
+					splice(@$menuItem, $insertPos, 0, 'RandomPlay::Plugin');
 				} else {
 					push (@$menuItem, 'RandomPlay::Plugin');
 				}
+
 				$client->prefSet('menuItem', $menuItem);
 			}
 
@@ -168,6 +175,42 @@ our %upgradeScripts = (
 			Slim::Utils::Prefs::delete('plugin_random_remove_old_tracks');
 		}
 	},
+
+	'R8775' => sub {
+		my $client = shift;
+		my $menuItem = $client->prefGet('menuItem') || 0;
+
+		# Add Favorites to home
+		if (ref($menuItem) ne 'ARRAY') {
+			return;
+		}
+
+		my $insertPos = undef;
+
+		# Insert Favorites before SAVED_PLAYLISTS
+		for (my $i = 0; $i < @$menuItem; $i++) {
+
+			if (@$menuItem[$i] eq 'FAVORITES') {
+
+				return;
+
+			} elsif (@$menuItem[$i] eq 'SAVED_PLAYLISTS') {
+
+				$insertPos = $i;
+			}
+		}
+
+		if (defined $insertPos) {
+
+			splice(@$menuItem, $insertPos, 0, 'FAVORITES');
+
+		} else {
+
+			push (@$menuItem, 'FAVORITES');
+		}
+
+		$client->prefSet('menuItem', $menuItem);
+	}
 );
 
 sub new {
@@ -640,9 +683,8 @@ sub mixerDisplay {
 	my $scale = $client->mixerConstant($feature,'scale');
 	
 	my $headerValue = $client->mixerConstant($feature,'balanced') ? 
-							int( ( ($featureValue - $mid) * $scale) + 0.5) :
-							int( ( $featureValue * $scale) + 0.5);
-
+		int( ( ($featureValue - $mid) * $scale) + 0.5) :
+		int( ( $featureValue * $scale) + 0.5);
 
 	if ($feature eq 'volume' && $featureValue <= 0) {
 		$headerValue = $client->string('MUTED');
@@ -656,14 +698,13 @@ sub mixerDisplay {
 	my $oldvisu = $client->modeParam('visu');
 	$client->modeParam('visu', [0]);
 
-	my @lines = Slim::Buttons::Input::Bar::lines($client, $featureValue, $featureHeader,
-													{
-														'min' => $client->mixerConstant($feature,'min'),
-														'mid' => $mid,
-														'max' => $client->mixerConstant($feature,'max'),
-														'noOverlay' => 1,
-													}
-												);
+	my @lines = Slim::Buttons::Input::Bar::lines($client, $featureValue, $featureHeader, {
+		'min' => $client->mixerConstant($feature,'min'),
+		'mid' => $mid,
+		'max' => $client->mixerConstant($feature,'max'),
+		'noOverlay' => 1,
+	});
+
 	# trim off any overlay for showBriefly
 	$client->display->showBriefly(@lines[0,1]);
 
