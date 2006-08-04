@@ -333,8 +333,6 @@ sub handleSubFeed {
 		$cache->set( $params->{'parentURL'} . '_parsedXML', $parent, $expires );
 	}
 	
-	warn Data::Dump::dump($parent);
-	
 	handleFeed( $parent, $params );
 }
 
