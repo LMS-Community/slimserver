@@ -1688,7 +1688,7 @@ sub _postCheckAttributes {
 			};
 
 			# Join on tracks with the same basename to determine a unique album.
-			if (!defined $disc || !defined $discc) {
+			if (!defined $disc && !defined $discc) {
 
 				$search->{'tracks.url'} = { 'like' => "$basename%" };
 
@@ -1703,7 +1703,7 @@ sub _postCheckAttributes {
 
 				while (my ($tag, $value) = each %{$search}) {
 
-					msg("--- $tag : $value\n") if defined $value;
+					msgf("--- $tag : %s\n", Data::Dump::dump($value));
 				}
 
 				if ($albumObj) {
@@ -1720,7 +1720,7 @@ sub _postCheckAttributes {
 			# album object is valid.
 			if ($albumObj && $checkDisc && !defined $isCompilation) {
 
-				my $matchTrack = $albumObj->tracks({ 'tracknum' => $track->tracknum });
+				my $matchTrack = $albumObj->tracks({ 'tracknum' => $track->tracknum })->first;
 
 				if (defined $matchTrack && dirname($matchTrack->url) ne dirname($track->url)) {
 
