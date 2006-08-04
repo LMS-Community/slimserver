@@ -743,13 +743,10 @@ sub variousArtistsAlbumCount {
 	my $find  = shift;
 
 	my %attr = ( 'group_by' => 'me.id' );
-	my @join = ( 'contributorAlbums' );
+	my @join = ();
 
 	# We always want to search for compilation
 	$find->{'me.compilation'} = 1;
-
-	# And the VA object.
-	$find->{'contributorAlbums.contributor'} = $class->variousArtistsObject->id;
 
 	if (exists $find->{'genre.id'}) {
 
@@ -759,11 +756,6 @@ sub variousArtistsAlbumCount {
 	} elsif (exists $find->{'genre.name'}) {
 
 		push @join, { 'tracks' => { 'genreTracks' => 'genre' } };
-	}
-
-	if (my $roles = $class->artistOnlyRoles) {
-
-		$find->{'contributorAlbums.role'} = { 'in' => $roles };
 	}
 
 	$attr{'join'} = \@join;
@@ -794,7 +786,7 @@ sub totalTime {
 # to identify albums which are compilations / various artist albums - by
 # virtue of having more than one artist.
 sub mergeVariousArtistsAlbums {
-        my $self = shift;
+	my $self = shift;
 
 	my $vaObjId = $self->variousArtistsObject->id;
 	my $role    = Slim::Schema::Contributor->typeToRole('ARTIST');
@@ -844,7 +836,8 @@ sub mergeVariousArtistsAlbums {
 			}
 		}
 
-		# Bug 2418 - If the tracks have a hardcoded artist of 'Various Artists' - mark the album as a compilation.
+		# Bug 2418 was fixed here -- but we don't do it anymore
+		# (hardcoded artist of 'Various Artists' making the album a compilation)
 		if (scalar values %trackArtists > 1) {
 
 			$markAsCompilation = 1;
@@ -864,20 +857,11 @@ sub mergeVariousArtistsAlbums {
 
 		if ($markAsCompilation) {
 
-			$::d_import && !$progress && msgf("Import: Marking album: [%s] as Various Artists.\n", $albumObj->title);
+			$::d_import && !$progress && msgf("Import: Marking album: [%s] as a compilation.\n", $albumObj->title);
 			$::d_info && $_dump_postprocess_logic && msg("--- Album is a VA\n");
 
 			$albumObj->compilation(1);
-			$albumObj->contributor($vaObjId);
 			$albumObj->update;
-
-			# And update the contributor_albums table.
-			$self->resultset('ContributorAlbum')->find_or_create({
-				'album'       => $albumObj->id,
-				'contributor' => $vaObjId,
-				'role'        => $role,
-			});
-
 		}
 
 		$progress->update if $progress;
@@ -1071,29 +1055,31 @@ sub _readTags {
 	return $attributesHash;
 }
 
-# The user may want to constrain their browse view by either or both of
-# 'composer' and 'track artists'.
+# The user may want to constrain their browse view by either or both of 'composer' and 'track artists'.
 sub artistOnlyRoles {
 	my $self  = shift;
-	my $find  = shift || {};
+	my @add   = shift || ();
 
 	my %roles = (
 		'ARTIST'      => 1,
 		'ALBUMARTIST' => 1,
 	);
 
+	# If the user has requested explict roles to be added, do so.
+	for my $role (@add) {
+
+		$roles{$role} = 1;
+	}
+
+	# And if the user has asked for ALL, give them it.
+	if ($roles{'ALL'}) {
+		return undef;
+	}
+
 	# Loop through each pref to see if the user wants to show that contributor role.
 	for my $role (Slim::Schema::Contributor->contributorRoles) {
 
-		my $pref = sprintf('%sInArtists', lc($role));
-
-		if (Slim::Utils::Prefs::get($pref)) {
-
-			$roles{$role} = 1;
-		}
-
-		# If the user has requested that a specific role be added.
-		if (exists $find->{'contributor.role'} && $find->{'contributor.role'} eq $role) {
+		if (Slim::Utils::Prefs::get(sprintf('%sInArtists', lc($role)))) {
 
 			$roles{$role} = 1;
 		}
@@ -1664,14 +1650,14 @@ sub _postCheckAttributes {
 			# the server behaviour changes depending on the track order!
 			# Maybe we need a preference?
 			my $search = {
-				'title' => $album,
+				'me.title' => $album,
 				#'year'  => $track->year,
 			};
 
 			# Add disc to the search criteria if needed
 			if ($checkDisc) {
 
-				$search->{'disc'} = $disc;
+				$search->{'me.disc'} = $disc;
 
 			} elsif ($discc && $discc > 1) {
 
@@ -1679,13 +1665,13 @@ sub _postCheckAttributes {
 				# groupdiscs mode, check discc if it exists,
 				# in the case where there are multiple albums
 				# of the same name by the same artist. bug3254
-				$search->{'discc'} = $discc;
+				$search->{'me.discc'} = $discc;
 			}
 
 			# Bug 3662 - Only check for undefined/null values if the
 			# values are undefined.
-			$search->{'disc'}  = undef if !defined $disc; 
-			$search->{'discc'} = undef if !defined $disc && !defined $discc;
+			$search->{'me.disc'}  = undef if !defined $disc; 
+			$search->{'me.discc'} = undef if !defined $disc && !defined $discc;
 
 			# If we have a compilation bit set - use that instead
 			# of trying to match on the artist. Having the
@@ -1694,16 +1680,22 @@ sub _postCheckAttributes {
 			if (defined $isCompilation) {
 
 				# in the database this is 0 or 1
-				$search->{'compilation'} = $isCompilation;
-
-			} else {
-
-				if (blessed($contributor)) {
-					$search->{'contributor'} = $contributor->id;
-				}
+				$search->{'me.compilation'} = $isCompilation;
 			}
 
-			$albumObj = $self->single('Album', $search);
+			my $attr = {
+				'group_by' => 'me.id',
+			};
+
+			# Join on tracks with the same basename to determine a unique album.
+			if (!defined $disc || !defined $discc) {
+
+				$search->{'tracks.url'} = { 'like' => "$basename%" };
+
+				$attr->{'join'} = 'tracks';
+			}
+
+			$albumObj = $self->search('Album', $search, $attr)->single;
 
 			if ($::d_info && $_dump_postprocess_logic) {
 
@@ -1728,8 +1720,7 @@ sub _postCheckAttributes {
 			# album object is valid.
 			if ($albumObj && $checkDisc && !defined $isCompilation) {
 
-				my %tracks     = map { $_->tracknum, $_ } $albumObj->tracks;
-				my $matchTrack = $tracks{ $track->tracknum };
+				my $matchTrack = $albumObj->tracks({ 'tracknum' => $track->tracknum });
 
 				if (defined $matchTrack && dirname($matchTrack->url) ne dirname($track->url)) {
 
@@ -1760,17 +1751,6 @@ sub _postCheckAttributes {
 		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $album);
 
 		my %set = ();
-
-		# Add an album artist if it exists.
-		# But set the album artist to various if there is no album artist.
-		if ($isCompilation && !$contributors->{'ALBUMARTIST'}) {
-
-			$set{'contributor'} = $self->variousArtistsObject->id;
-
-		} elsif (blessed($contributor)) {
-
-			$set{'contributor'} = $contributor->id;
-		}
 
 		# Always normalize the sort, as ALBUMSORT could come from a TSOA tag.
 		$set{'titlesort'}   = $sortable_title;
@@ -1873,14 +1853,6 @@ sub _postCheckAttributes {
 		while (my ($role, $contributorList) = each %{$contributors}) {
 
 			for my $contributorObj (@{$contributorList}) {
-
-				# XXXX - is this correct? VA albums need to be
-				# added to the contributor_album table somehow.
-				#
-				# Bug 3815 - Only set to VA if there isn't an explict ALBUMARTIST.
-				if ($isCompilation && !exists $contributors->{'ALBUMARTIST'}) {
-					$contributorObj = $self->variousArtistsObject;
-				}
 
 				$self->resultset('ContributorAlbum')->find_or_create({
 					'album'       => $albumObj->id,

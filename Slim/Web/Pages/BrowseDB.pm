@@ -46,7 +46,10 @@ sub browsedb {
 		$::d_info && msg("browsedb - invalid hierarchy: $hierarchy\n");
 	}
 
+	$::d_info && msg("\n");
+	$::d_info && msg("**********************************************\n");
 	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
+	$::d_info && msg("**********************************************\n");
 
 	# code further down expects the lcfirst version of the levels
 	my @levels = map { lcfirst($_) } split(',', $validHierarchies->{lc($hierarchy)});
@@ -75,20 +78,11 @@ sub browsedb {
 	}
 
 	# Build up a list of params to include in the href links.
-	my @attrs    = ();
+	my %attrs    = ();
 
 	my $rs       = Slim::Schema->rs($levelName);
 	my $topRS    = Slim::Schema->rs($levels[0]);
 	my $title    = $params->{'browseby'} = $topRS->title;
-
-	# XXXX - sort is not currently generated or used.
-	# The orderBy is used by the artwork/album sorting feature.
-	my ($filters, $cond, $sort) = $topRS->generateConditionsFromFilters({
-		'rs'      => $rs,
-		'level'   => $level,
-		'levels'  => \@levels,
-		'params'  => $params,
-	});
 
 	# This hash is reused later, during the main item list build
 	my %form = (
@@ -108,34 +102,47 @@ sub browsedb {
 		'orderBy'      => $orderBy,
 	};
 
-	# We want to include Compilations in the pwd, so we need the artist,
-	# but not in the actual search.
-	if (defined $filters->{'contributor.id'} && 
-	    defined $filters->{'album.compilation'} && $filters->{'album.compilation'} == 1) {
-
-		delete $filters->{'contributor.id'};
-
-		push @attrs, 'album.compilation=1';
-	}
-
 	# browsetree might pass this along - we want to keep it in the attrs
 	# for the breadcrumbs so cue sheets aren't edited. See bug: 1360
 	if (defined $params->{'noEdit'}) {
 
-		push @attrs, join('=', 'noEdit', $params->{'noEdit'});
+		$attrs{'noEdit'} = $params->{'noEdit'};
 	}
 
 	# editplaylist might pass this along - we want to keep it in the attrs
 	# for the pagebar and pwd_list so that we don't go into edit mode. Bug 2870
 	if (defined $params->{'saveCurrentPlaylist'}) {
 
-		push @attrs, join('=', 'saveCurrentPlaylist', $params->{'saveCurrentPlaylist'});
+		$attrs{'saveCurrentPlaylist'} = $params->{'saveCurrentPlaylist'};
 	}
 
 	# Generate the breadcrumb list for the current level.
 	for (my $i = 0; $i < $level ; $i++) {
 
 		my $attr = $levels[$i];
+
+		# we're at the contributor level, looking for compilations
+		# and no defined artist, we need add VA for the breadcrumb
+		if ($attr eq 'contributor') {
+
+			my $vaObjId = Slim::Schema->variousArtistsObject->id;
+
+			# we're at the contributor level, looking for compilations
+			# and no defined artist, we need add VA for the breadcrumb
+			if (defined $params->{'album.compilation'} && !defined $params->{'contributor.id'}) {
+
+				$params->{'contributor.id'} = $vaObjId;
+			}
+
+			if ($params->{'contributor.id'} && $params->{'contributor.id'} == $vaObjId) {
+
+				$attrs{'album.compilation'} = 1;
+
+				$::d_info && msg("browsedb - adding VA for breadcrumb\n");
+			}
+		}
+
+		$::d_info && msg("browsedb - breadcrumb level: [$i] attr: [$attr]\n");
 
 		for my $levelKey (grep { /^$attr/ } keys %{$params}) {
 
@@ -154,6 +161,13 @@ sub browsedb {
 				$searchKey = sprintf('%s.%s', $rs->{'attrs'}{'alias'}, $2);
 			}
 
+			# Don't try and look non-id items.
+			if ($searchKey !~ /\.id$/) {
+				next;
+			}
+
+			$::d_info && msg("browsedb - breadcrumb levelKey: [$levelKey] value: [$value]\n");
+
 			my $obj = $rs->search({ $searchKey => $value })->single;
 
 			if (blessed($obj) && $obj->can('name')) {
@@ -161,7 +175,7 @@ sub browsedb {
 				$value           = $obj->name;
 			}
 
-			push @attrs, join('=', $levelKey, $params->{$levelKey});
+			$attrs{$levelKey} = $params->{$levelKey};
 
 			push @{$params->{'pwd_list'}}, {
 				 'hreftype'     => 'browseDb',
@@ -169,11 +183,25 @@ sub browsedb {
 				 'hierarchy'    => $hierarchy,
 				 'level'        => $i+1,
 				 'orderBy'      => $orderBy,
-				 'attributes'   => (scalar(@attrs) ? ('&' . join("&", @attrs)) : ''),
+				 'attributes'   => _attributesToKeyValuePair(\%attrs),
 			}
 		}
 	}
-	
+
+	# We want to include Compilations in the pwd, so we need the
+	# artist, but not in the actual search.
+	# 
+	# This block needs to be after the pwd building.
+	if ($params->{'contributor.id'}) {
+
+		if ($params->{'contributor.id'} == Slim::Schema->variousArtistsObject->id) {
+
+			delete $params->{'contributor.id'};
+
+			$attrs{'album.compilation'} = 1;
+		}
+	}
+
 	# Bug 3311, disable editing for iTunes, MoodLogic, and MusicMagic playlists
 	if (ref $params->{'playlist'}) {
 
@@ -183,20 +211,37 @@ sub browsedb {
 		}
 	}
 
-	my $otherparams = join('&',
-		'player=' . Slim::Utils::Misc::escape($player || ''),
-		"hierarchy=$hierarchy",
-		"level=$level",
-		@attrs,
-	);
+	# otherParams is used by the page bar generator.
+	my %otherParams = %attrs;
+
+	if (defined $player) {
+		$otherParams{'player'}    = Slim::Utils::Misc::escape($player);
+	}
+
+	if (defined $hierarchy) {
+		$otherParams{'hierarchy'} = $hierarchy;
+	}
+
+	if (defined $level) {
+		$otherParams{'level'}     = $level;
+	}
 
 	if (defined $orderBy) {
-		$otherparams .= '&' . "orderBy=$orderBy";
+		$otherParams{'orderBy'}  = $orderBy;
 	}
 
 	if (defined $artwork) {
-		$otherparams .= '&' . "artwork=$artwork";
+		$otherParams{'artwork'}  = $artwork;
 	}
+
+	# XXXX - sort is not currently generated or used.
+	# The orderBy is used by the artwork/album sorting feature.
+	my ($filters, $cond, $sort) = $topRS->generateConditionsFromFilters({
+		'rs'      => $rs,
+		'level'   => $level,
+		'levels'  => \@levels,
+		'params'  => $params,
+	});
 
 	my $browseRS = $topRS->descend($filters, $cond, $orderBy, @levels[0..$level])->distinct;
 	my $count    = 0;
@@ -230,7 +275,7 @@ sub browsedb {
 			'results'      => $alphaitems ? $alphaitems : $browseRS,
 			'addAlpha'     => defined $alphaitems,
 			'path'         => $params->{'path'},
-			'otherParams'  => $otherparams,
+			'otherParams'  => _attributesToKeyValuePair(\%otherParams),
 			'start'        => $params->{'start'},
 			'perPage'      => $params->{'itemsPerPage'},
 		});
@@ -288,7 +333,7 @@ sub browsedb {
 		$form{'orderBy'}      = $nextLevelRS->orderBy;
 		$form{'odd'}          = ($itemCount + 1) % 2;
 		$form{'skinOverride'} = $params->{'skinOverride'};
-		$form{'attributes'}   = (scalar(@attrs) ? ('&' . join("&", @attrs)) : '');
+		$form{'attributes'}   = _attributesToKeyValuePair(\%attrs);
 
 		# For some queries - such as New Music - we want to
 		# get the list of tracks to play from the fieldInfo
@@ -306,12 +351,15 @@ sub browsedb {
 	if ($levelName eq 'contributor' && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
 		# Only show VA item if there's valid listings below the current level.
-		my %find = map { split /=/ } @attrs;
+		my %attributes = %attrs;
 
-		if (Slim::Schema->variousArtistsAlbumCount(\%find)) {
+		if (Slim::Schema->variousArtistsAlbumCount(\%attrs)) {
 
-			my $vaObj      = Slim::Schema->variousArtistsObject;
-			my @attributes = (@attrs, 'album.compilation=1', sprintf('contributor.id=%d', $vaObj->id));
+			$::d_info && msg("browsedb - VA added\n");
+
+			my $vaObj = Slim::Schema->variousArtistsObject;
+
+			$attributes{'album.compilation'} = 1;
 
 			push @{$params->{'browse_items'}}, {
 				'text'        => $vaObj->name,
@@ -321,7 +369,7 @@ sub browsedb {
 				'level'       => $level + 1,
 				'orderBy'     => $orderBy,
 				'odd'         => ($itemCount + 1) % 2,
-				'attributes'  => (scalar(@attributes) ? ('&' . join("&", @attributes, )) : ''),
+				'attributes'  => _attributesToKeyValuePair(\%attributes),
 			};
 
 			$itemCount++;
@@ -365,15 +413,12 @@ sub browsedb {
 			# If we're at the track level - only append the track
 			# id for each item - it's a unique value and doesn't
 			# need any joins.
-			if (lc($levelName) eq 'track') {
+			if (lc($levelName) ne 'track') {
 
-				$form{'attributes'}    = sprintf('&%s.id=%d', $attrName, $itemid);
-
-			} else {
-
-				$form{'attributes'}    = (scalar(@attrs) ? ('&' . join('&', @attrs)) : '') . '&' .
-					sprintf('%s.id=%d', $attrName, $itemid);
+				$form{'attributes'} = _attributesToKeyValuePair(\%attrs);
 			}
+
+			$form{'attributes'} .= sprintf('&%s.id=%d', $attrName, $itemid);
 
 			$item->displayAsHTML(\%form, $descend, $orderBy);
 
@@ -484,6 +529,21 @@ sub browseid3 {
 	$params->{'hierarchy'} = join(',', @hierarchy);
 
 	return browsedb($client, $params);
+}
+
+# Turn an array of attributes into a URI string
+# 
+# Use URI::Query instead?
+sub _attributesToKeyValuePair {
+	my $attrs = shift;
+	my @pairs = ();
+
+	for my $key (sort keys %{$attrs}) {
+
+		push @pairs, sprintf('%s=%s', $key, $attrs->{$key});
+	}
+
+	return sprintf('&%s', join('&', @pairs));
 }
 
 1;

@@ -69,7 +69,7 @@ sub typeToRole {
 	my $class = shift;
 	my $type  = shift;
 
-	return $contributorToRoleMap{$type};
+	return $contributorToRoleMap{$type} || $type;
 }
 
 sub displayAsHTML {

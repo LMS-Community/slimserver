@@ -2159,6 +2159,12 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			delete $find{'contributor.id'};
 		}
 
+		if ($find{'album.id'} && $find{'contributor.id'} && 
+			$find{'contributor.id'} == Slim::Schema->variousArtistsObject->id) {
+
+			delete $find{'contributor.id'};
+		}
+
 		if ($find{'playlist.id'}) {
 		
 			delete $find{'playlist.id'};

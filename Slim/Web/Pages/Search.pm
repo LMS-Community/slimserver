@@ -356,7 +356,8 @@ sub fillInSearchResults {
 
 		if ($type eq 'contributor') {
 
-			$form{'hierarchy'} = 'contributor,album,track';
+			$form{'attributes'} .= '&contributor.role=ALL';
+			$form{'hierarchy'}  = 'contributor,album,track';
 
 		} elsif ($type eq 'album') {
 

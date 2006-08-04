@@ -88,29 +88,39 @@ sub albumid {
 sub artist {
 	my $self = shift;
 
-	return $self->contributorsOfType('ARTIST')->single;
+	# Bug 3824 - check for both types, in the case that an ALBUMARTIST was set.
+	return $self->contributorsOfType('ARTIST')->single ||
+	       $self->contributorsOfType('TRACKARTIST')->single;
 }
 
 sub artists {
 	my $self = shift;
 
+	# XXXX - not sure who the callers are here, and if this should include
+	# TRACKARTISTS or not.
 	return $self->contributorsOfType('ARTIST')->all;
 }
 
 sub artistsWithAttributes {
 	my $self = shift;
 
-	my @artists = ();
+	my @objs = ();
 
-	for my $artist ($self->artists) {
+	for my $type (qw(ARTIST TRACKARTIST)) {
 
-		push @artists, {
-			'artist'     => $artist,
-			'attributes' => join('=', 'contributor.id', $artist->id),
-		};
+		for my $contributor ($self->contributorsOfType($type)->all) {
+
+			push @objs, {
+				'artist'     => $contributor,
+				'attributes' => join('&', 
+					join('=', 'contributor.id', $contributor->id),
+					join('=', 'contributor.role', $type),
+				),
+			};
+		}
 	}
 
-	return \@artists;
+	return \@objs;
 }
 
 sub composer {
@@ -337,15 +347,13 @@ sub path {
 }
 
 sub contributorsOfType {
-	my $self = shift;
-	my $type = shift;
+	my ($self, @types) = @_;
 
-	# Check for valid roles.
-	my $role = Slim::Schema::Contributor->typeToRole($type) || return ();
+	my @roles = map { Slim::Schema::Contributor->typeToRole($_) } @types;
 
 	return $self
-		->search_related('contributorTracks', { 'role' => $role })
-		->search_related('contributor');
+		->search_related('contributorTracks', { 'role' => { 'in' => \@roles } }, { 'order_by' => 'role desc' })
+		->search_related('contributor')->distinct;
 }
 
 sub contributorRoles {

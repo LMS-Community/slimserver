@@ -15,7 +15,6 @@ use Slim::Utils::Misc;
 	$class->add_columns(qw(
 		id
 		titlesort
-		contributor
 		compilation
 		year
 		artwork
@@ -31,14 +30,8 @@ use Slim::Utils::Misc;
 	$class->set_primary_key('id');
 	$class->add_unique_constraint('titlesearch' => [qw/id titlesearch/]);
 
-	$class->belongs_to('contributor' => 'Slim::Schema::Contributor');
-
-	$class->has_many(
-		'tracks' => 'Slim::Schema::Track', undef,
-		{ 'order_by' => [qw(disc tracknum titlesort)] }
-	);
-
-	$class->has_many('contributorAlbums' => 'Slim::Schema::ContributorAlbum');
+	$class->has_many('tracks'            => 'Slim::Schema::Track'            => 'album');
+	$class->has_many('contributorAlbums' => 'Slim::Schema::ContributorAlbum' => 'album');
 
 	if ($] > 5.007) {
 		$class->utf8_columns(qw/title titlesort/);
@@ -120,7 +113,7 @@ sub displayAsHTML {
 		# contributors in the album view.
 		# if ($form->{'hierarchy'} ne 'contributor,album,track') {
 
-			if (my $contributor = $self->contributor) {
+			if (my $contributor = $self->contributors->first) {
 
 				$form->{'artist'}        = $contributor;
 				#$form->{'includeArtist'} = defined $findCriteria->{'artist'} ? 0 : 1;
@@ -175,9 +168,9 @@ sub artists {
 
 	} elsif (scalar @artists == 0) {
 
-		$::d_info && msgf("\t\%artists == 0 && \$self->contributor - returning: [%s]\n", $self->contributor);
+		$::d_info && msgf("\t\%artists == 0 && \$self->contributor - returning: [%s]\n", $self->contributors);
 
-		@artists = $self->contributor;
+		@artists = $self->contributors;
 	}
 
 	return @artists;

@@ -76,15 +76,6 @@ sub browse {
 	my $sort = shift;
 
 	my @join = ();
-	my $roles = Slim::Schema->artistOnlyRoles;
-
-	# The user may not want to include all the composers / conductors
-	if ($roles) {
-
-		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
-
-		push @join, 'contributorAlbums';
-	}
 
 	# This sort/join logic is here to handle the 'Sort Browse Artwork'
 	# feature - which applies to albums, as artwork is just a view on the
@@ -103,12 +94,7 @@ sub browse {
 
 		if ($sort =~ /contributor/) {
 
-			# Only join contributorAlbums once.
-			if (!$roles) {
-				push @join, { 'contributorAlbums' => 'contributor' };
-			} else {
-				push @join, 'contributor';
-			}
+			push @join, { 'contributorAlbums' => 'contributor' };
 		}
 
 		if ($sort =~ /genre/) {

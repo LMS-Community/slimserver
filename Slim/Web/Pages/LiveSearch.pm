@@ -168,7 +168,7 @@ sub renderItem {
 
 	} elsif ($type eq 'contributor') {
 
-		$url = "browsedb.html?hierarchy=contributor,album,track\&amp;level=1\&amp;contributor.id=$id";
+		$url = "browsedb.html?hierarchy=contributor,album,track\&amp;level=1\&amp;contributor.id=$id&contributor.role=ALL";
 	}
 
 	push @xml,"<div class=\"$rowType\">\n<div class=\"browsedbListItem\">

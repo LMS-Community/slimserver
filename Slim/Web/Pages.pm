@@ -137,7 +137,7 @@ sub addLibraryStats {
 	if ($level eq 'album') {
 
 		$counts{'album'}       = $rs;
-		$counts{'contributor'} = $rs->search_related('contributor');
+		$counts{'contributor'} = $rs->search_related('contributorAlbums')->search_related('contributor');
 		$counts{'track'}       = $rs->search_related('tracks');
 
 	} elsif ($level eq 'contributor' && $previousLevel && $previousLevel eq 'genre') {
@@ -155,13 +155,17 @@ sub addLibraryStats {
 	} else {
 
 		$counts{'album'}       = Slim::Schema->resultset('Album')->browse;
-		$counts{'track'}       = Slim::Schema->resultset('Track')->browse({ 'me.audio' => 1 });
+		$counts{'track'}       = Slim::Schema->resultset('Track')->browse;
 		$counts{'contributor'} = Slim::Schema->resultset('Contributor')->browse;
 	}
 
 	$params->{'song_count'}   = $class->_lcPlural($counts{'track'}->distinct->count, 'SONG', 'SONGS');
 	$params->{'album_count'}  = $class->_lcPlural($counts{'album'}->distinct->count, 'ALBUM', 'ALBUMS');
 	$params->{'artist_count'} = $class->_lcPlural($counts{'contributor'}->distinct->count, 'ARTIST', 'ARTISTS');
+
+	$::d_sql && msgf("->addLibraryStats() found %d songs, %d albums & %d artists\n", 
+		$params->{'song_count'}, $params->{'album_count'}, $params->{'artist_count'}
+	);
 }
 
 sub addPlayerList {

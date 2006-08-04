@@ -53,7 +53,7 @@ sub searchNames {
 	};
 
 	# Bug: 2479 - Don't include roles if the user has them unchecked.
-	if (my $roles = Slim::Schema->artistOnlyRoles) {
+	if (my $roles = Slim::Schema->artistOnlyRoles('TRACKARTIST')) {
 
 		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
 		push @joins, 'contributorAlbums';
@@ -108,16 +108,23 @@ sub descendAlbum {
 		'order_by' => "concat('0', album.titlesort), album.disc",
 	};
 
-	if (my $roles = Slim::Schema->artistOnlyRoles) {
+	if (my $roles = Slim::Schema->artistOnlyRoles($find->{'contributor.role'})) {
 
 		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
 	}
 
 	# Bug: 2192 - Don't filter out compilation
 	# albums at the artist level - we want to see all of them for an artist.
-	if ($cond->{'me.id'} && $find->{'album.compilation'} && $find->{'album.compilation'} != 1) {
+	my $albumCond = {};
 
-		# $cond->{'album.compilation'} = $find->{'album.compilation'};
+	if (defined $find->{'album.compilation'}) {
+
+		if ($cond->{'me.id'} && $cond->{'me.id'} == Slim::Schema->variousArtistsObject->id) {
+
+			delete $cond->{'me.id'};
+		}
+
+		$albumCond->{'album.compilation'} = $find->{'album.compilation'};
 	}
 
 	$rs = $rs->search_related('contributorAlbums', $rs->fixupFindKeys($cond));
@@ -125,16 +132,11 @@ sub descendAlbum {
 	# Constrain on the genre if it exists.
 	if (my $genre = $find->{'genre.id'}) {
 
+		$albumCond->{'genreTracks.genre'} = $genre;
 		$attr->{'join'} = { 'tracks' => 'genreTracks' };
-
-		$rs = $rs->search_related('album', { 'genreTracks.genre' => $genre }, $attr);
-
-	} else {
-
-		$rs = $rs->search_related('album', {}, $attr);
 	}
 
-	return $rs
+	return $rs->search_related('album', $albumCond, $attr);
 }
 
 1;
