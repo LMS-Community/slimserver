@@ -359,19 +359,16 @@ sub _setMetadata {
 	}
 	
 	# Set duration and progress bar if available and this is not a broadcast stream
-	if ( my $secs = int( $wma->info('playtime_seconds' ) ) ) {
-		if ( $wma->info('flags') && $wma->info('flags')->{'broadcast'} != 1 ) {
-			if ( $secs > 0 ) {
-				my %cacheEntry = (
-					'SECS' => $secs,
-				);
-
-				Slim::Music::Info::updateCacheEntry( $url, \%cacheEntry );
-
-				# Set the duration so the progress bar appears	
-				$client->currentsongqueue()->[0]->{duration} = $secs;
-				
-				$::d_directstream && msg("Setting duration to $secs seconds from WMA metadata\n");
+	if ( $wma->info('playtime_seconds') ) {
+		if ( my $secs = int( $wma->info('playtime_seconds') ) ) {
+			if ( $wma->info('flags') && $wma->info('flags')->{'broadcast'} != 1 ) {
+				if ( $secs > 0 ) {
+					
+					$client->streamingProgressBar( {
+						'url' => $url,
+						'duration' => $secs,
+					} );
+				}
 			}
 		}
 	}
