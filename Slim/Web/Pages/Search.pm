@@ -268,7 +268,7 @@ sub advancedSearch {
 }
 
 sub fillInSearchResults {
-	my ($params, $rs, $qstring, $typeSeparator) = @_;
+	my ($params, $rs, $qstring, $advancedSearch) = @_;
 
 	my $player = $params->{'player'};
 	my $query  = $params->{'query'}  || '';
@@ -287,7 +287,7 @@ sub fillInSearchResults {
 			  join('&', @$qstring);
 
 	# Put in the type separator
-	if (!$typeSeparator && $count) {
+	if (!$advancedSearch && $count) {
 
 		# add reduced item for type headings
 		push @{$params->{'browse_items'}}, {
@@ -303,7 +303,7 @@ sub fillInSearchResults {
 
 		my $attributes = '';
 
-		if ($typeSeparator) {
+		if ($advancedSearch) {
 			$attributes = sprintf('&searchRef=search%sResults', ucfirst($type));
 		} else {
 			$attributes = sprintf('&%s.%s=%s', $type, $rs->searchColumn, $query);
@@ -317,26 +317,30 @@ sub fillInSearchResults {
 		};
 	}
 
-	my $offset = ($params->{'start'} || 0),
-	my $limit  = ($params->{'itemsPerPage'} || 10) - 1;
+	# No limit or pagebar on advanced search
+	if (!$advancedSearch) {
 
-	$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
+		my $offset = ($params->{'start'} || 0),
+		my $limit  = ($params->{'itemsPerPage'} || 10) - 1;
 
-		'itemCount'    => $params->{'numresults'},
-		'path'         => $params->{'path'},
-		'otherParams'  => $otherParams,
-		'start'        => $params->{'start'},
-		'perPage'      => $params->{'itemsPerPage'},
-	});
+		$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
 
-	$params->{'start'} = $params->{'pageinfo'}{'startitem'};
+			'itemCount'    => $params->{'numresults'},
+			'path'         => $params->{'path'},
+			'otherParams'  => $otherParams,
+			'start'        => $params->{'start'},
+			'perPage'      => $params->{'itemsPerPage'},
+		});
+
+		$params->{'start'} = $params->{'pageinfo'}{'startitem'};
 	
+		# Get just the items we need for this loop.
+		$rs = $rs->slice($offset, $limit);
+	}
+
 	my $itemCount  = 1;
 	my $lastAnchor = '';
 	my $descend    = $type eq 'track' ? 0 : 1;
-
-	# Get just the items we need for this loop.
-	$rs = $rs->slice($offset, $limit);
 
 	# This is very similar to a loop in Slim::Web::Pages::BrowseDB....
 	while (my $obj = $rs->next) {
