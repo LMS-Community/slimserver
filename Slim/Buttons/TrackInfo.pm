@@ -288,9 +288,11 @@ sub loadDataForTrack {
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (my $age = $track->modificationTime) {
-		push (@{$client->trackInfoLines}, $client->string('MODTIME').": $age");
-		push (@{$client->trackInfoContent}, undef);
+	if ( !Slim::Music::Info::isRemoteURL($track->url) ) {
+		if (my $age = $track->modificationTime) {
+			push (@{$client->trackInfoLines}, $client->string('MODTIME').": $age");
+			push (@{$client->trackInfoContent}, undef);
+		}
 	}
 
 	if (my $url = $track->url) {
@@ -388,8 +390,8 @@ sub listExitHandler {
 
 		my $selectionCriteria = {
 			'track.id'       => $track->id,
-			'album.id'       => $album->id,
-			'contributor.id' => $contributor->id,
+			'album.id'       => ( blessed $album ) ? $album->id : undef,
+			'contributor.id' => ( blessed $contributor ) ? $contributor->id : undef,
 		};
 
 		if ($curType eq 'ALBUM') {
