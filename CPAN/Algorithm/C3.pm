@@ -6,61 +6,97 @@ use warnings;
 
 use Carp 'confess';
 
-our $VERSION = '0.01';
-
-# this function is a perl-port of the 
-# python code on this page:
-#   http://www.python.org/2.3/mro.html
-sub _merge {                
-    my (@seqs) = @_;
-    my $class_being_merged = $seqs[0]->[0];
-    my @res; 
-    while (1) {
-        # remove all empty seqences
-        my @nonemptyseqs = (map { (@{$_} ? $_ : ()) } @seqs);
-        # return the list if we have no more no-empty sequences
-        return @res if not @nonemptyseqs; 
-        my $reject;
-        my $cand; # a canidate ..
-        foreach my $seq (@nonemptyseqs) {
-            $cand = $seq->[0]; # get the head of the list
-            my $nothead;            
-            foreach my $sub_seq (@nonemptyseqs) {
-                # XXX - this is instead of the python "in"
-                my %in_tail = (map { $_ => 1 } @{$sub_seq}[ 1 .. $#{$sub_seq} ]);
-                # NOTE:
-                # jump out as soon as we find one matching
-                # there is no reason not too. However, if 
-                # we find one, then just remove the '&& last'
-                ++$nothead && last if exists $in_tail{$cand};      
-            }
-            last unless $nothead; # leave the loop with our canidate ...
-            $reject = $cand;
-            $cand = undef;        # otherwise, reject it ...
-        }
-        die "Inconsistent hierarchy found while merging '$class_being_merged':\n\t" .
-            "current merge results [\n\t\t" . (join ",\n\t\t" => @res) . "\n\t]\n\t" .
-            "merging failed on '$reject'\n" if not $cand;
-        push @res => $cand;
-        # now loop through our non-empties and pop 
-        # off the head if it matches our canidate
-        foreach my $seq (@nonemptyseqs) {
-            shift @{$seq} if $seq->[0] eq $cand;
-        }
-    }
-}
+our $VERSION = '0.02';
 
 sub merge {
-    my ($root, $_parent_fetcher) = @_;
-    my $parent_fetcher = $_parent_fetcher;
-    unless (ref($parent_fetcher) && ref($parent_fetcher) eq 'CODE') {
-        $parent_fetcher = $root->can($_parent_fetcher) || confess "Could not find method $_parent_fetcher in $root";
-    } 
-    return _merge(
-        [ $root ],
-        (map { [ merge($_, $_parent_fetcher) ] } $root->$parent_fetcher()),
-        [ $parent_fetcher->($root) ],
-    );
+    my ($root, $parent_fetcher) = @_;
+
+    my @STACK;  # stack for simulating recursion
+    my %fcache; # cache of _fetcher results
+    my %mcache; # cache of merge do-block results
+
+    my $pfetcher_is_coderef = ref($parent_fetcher) eq 'CODE';
+
+    unless ($pfetcher_is_coderef or $root->can($parent_fetcher)) {
+        confess "Could not find method $parent_fetcher in $root";
+    }
+
+    my $current_root = $root;
+    my $current_parents = [ $root->$parent_fetcher ];
+    my $recurse_mergeout = [];
+    my $i = 0;
+
+    while(1) {
+        if($i < @$current_parents) {
+            my $new_root = $current_parents->[$i++];
+
+            unless ($pfetcher_is_coderef or $new_root->can($parent_fetcher)) {
+                confess "Could not find method $parent_fetcher in $new_root";
+            }
+
+            push(@STACK, [
+                $current_root,
+                $current_parents,
+                $recurse_mergeout,
+                $i,
+            ]);
+
+            $current_root = $new_root;
+            $current_parents = $fcache{$current_root} ||= [ $current_root->$parent_fetcher ];
+            $recurse_mergeout = [];
+            $i = 0;
+            next;
+        }
+
+        my $mergeout = $mcache{$current_root} ||= do {
+
+            # This do-block is the code formerly known as the function
+            # that was a perl-port of the python code at
+            # http://www.python.org/2.3/mro.html :)
+
+            # Initial set
+            my @seqs = ([$current_root], @$recurse_mergeout, $current_parents);
+
+            # Construct the tail-checking hash
+            my %tails;
+            foreach my $seq (@seqs) {
+                $tails{$_}++ for (@$seq[1..$#$seq]);
+            }
+
+            my @res;
+            while (1) {
+                my $cand;
+                my $winner;
+                foreach (@seqs) {
+                    next if !@$_;
+                    if(!$winner) {              # looking for a winner
+                        $cand = $_->[0];        # seq head is candidate
+                        next if $tails{$cand};  # he loses if in %tails
+                        push @res => $winner = $cand;
+                    }
+                    if($_->[0] eq $winner) {
+                        shift @$_;                # strip off our winner
+                        $tails{$_->[0]}-- if @$_; # keep %tails sane
+                    }
+                }
+                last if !$cand;
+                die q{Inconsistent hierarchy found while merging '}
+                    . $current_root . qq{':\n\t}
+                    . qq{current merge results [\n\t\t}
+                    . (join ",\n\t\t" => @res)
+                    . qq{\n\t]\n\t} . qq{merging failed on '$cand'\n}
+                  if !$winner;
+            }
+            \@res;
+        };
+
+        return @$mergeout if !@STACK;
+
+        ($current_root, $current_parents, $recurse_mergeout, $i)
+            = @{pop @STACK};
+
+        push(@$recurse_mergeout, $mergeout);
+    }
 }
 
 1;
@@ -188,9 +224,9 @@ is the B<Devel::Cover> report on this module's test suite.
  ------------------------ ------ ------ ------ ------ ------ ------ ------
  File                       stmt   bran   cond    sub    pod   time  total
  ------------------------ ------ ------ ------ ------ ------ ------ ------
- Algorithm/C3.pm           100.0  100.0   55.6  100.0  100.0  100.0   94.4
+ Algorithm/C3.pm           100.0  100.0  100.0  100.0  100.0  100.0  100.0
  ------------------------ ------ ------ ------ ------ ------ ------ ------
- Total                     100.0  100.0   55.6  100.0  100.0  100.0   94.4
+ Total                     100.0  100.0  100.0  100.0  100.0  100.0  100.0
  ------------------------ ------ ------ ------ ------ ------ ------ ------
 
 =head1 SEE ALSO
@@ -239,9 +275,11 @@ is the B<Devel::Cover> report on this module's test suite.
 
 =back 
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Stevan Little, E<lt>stevan@iinteractive.comE<gt>
+
+Brandon L. Black, E<lt>blblack@gmail.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
