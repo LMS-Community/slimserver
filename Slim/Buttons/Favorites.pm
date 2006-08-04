@@ -67,7 +67,7 @@ sub init {
 
 	Slim::Buttons::Common::addMode('FAVORITES', \%mainModeFunctions, \&setMode);
 
-	# Slim::Buttons::Home::addMenuOption('FAVORITES', { 'useMode' => 'FAVORITES' });
+	Slim::Buttons::Home::addMenuOption('FAVORITES', { 'useMode' => 'FAVORITES' });
 
 	Slim::Buttons::Common::setFunction('playFavorite', \&playFavorite);
 
