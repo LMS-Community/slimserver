@@ -281,7 +281,7 @@ sub getCurrentBitrate {
 		$url = $url->url;
 	}
 
-	return $currentBitrates{$url} || getBitrate($url) || undef;
+	return $currentBitrates{$url} || undef;
 }
 
 sub getBitrate {

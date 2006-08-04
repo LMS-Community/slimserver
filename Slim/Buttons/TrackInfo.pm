@@ -262,10 +262,10 @@ sub loadDataForTrack {
 		}
 	}
 
-	if ( my $bitrate = ( Slim::Music::Info::getCurrentBitrate($url) || $track->prettyBitRate ) ) {
+	if ( my $bitrate = ( Slim::Music::Info::getCurrentBitrate($track->url) || $track->prettyBitRate ) ) {
 		
 		if ( $bitrate > 0 ) {
-			my $undermax = Slim::Player::TranscodingHelper::underMax($client, $url);
+			my $undermax = Slim::Player::TranscodingHelper::underMax($client, $track->url);
 
 			my $rate = (defined $undermax && $undermax) ? $bitrate : Slim::Utils::Prefs::maxRate($client).$client->string('KBPS')." ABR";
 
@@ -308,8 +308,8 @@ sub loadDataForTrack {
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (Slim::Music::Info::isURL($url)) {
-		my $fav = Slim::Utils::Favorites->findByClientAndURL($client, $url);
+	if (Slim::Music::Info::isURL($track->url)) {
+		my $fav = Slim::Utils::Favorites->findByClientAndURL($client, $track->url);
 
 		if ($fav) {
 			$client->param('favorite', $fav->{'num'});
