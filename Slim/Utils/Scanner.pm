@@ -121,8 +121,9 @@ sub findFilesMatching {
 
 	my $files = $rule->in($topDir);
 	my $found = $args->{'foundItems'} || [];
-
-	for my $file (@{$files}) {
+	
+	# File::Find::Rule doesn't keep filenames properly sorted, so we sort them here
+	for my $file ( sort @{$files} ) {
 
 		# Only check for Windows Shortcuts on Windows.
 		# Are they named anything other than .lnk? I don't think so.
