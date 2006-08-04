@@ -63,12 +63,23 @@ sub setMode {
 		# RSS plugin on SN to log errors.
 		my $onSuccess = $client->param('onSuccess');
 		my $onFailure = $client->param('onFailure');
+		
+		# the item is passed as a param so we can get passthrough params
+		my $item = $client->param('item');
 
 		# give user feedback while loading
 		$client->block(
 			$client->string('XML_LOADING'),
 			$title || $url,
 		);
+		
+		# Some plugins may give us a callback we should use to get OPML data
+		# instead of fetching it ourselves.
+		if ( ref $url eq 'CODE' ) {
+			# get passthrough params if supplied
+			my $pt = $item->{'passthrough'} || [];
+			return $url->( $client, \&gotFeed, @{$pt} );
+		}
 		
 		Slim::Formats::XML->getFeedAsync( 
 			\&gotFeed,
@@ -311,7 +322,7 @@ sub gotOPML {
 			my $client = shift;
 			my $item   = shift;
 
-			my $hasItems = scalar @{$item->{'items'}};
+			my $hasItems = ( ref $item->{'items'} eq 'ARRAY' ) ? scalar @{$item->{'items'}} : 0;
 			my $isAudio  = ($item->{'type'} && $item->{'type'} eq 'audio') ? 1 : 0;
 			my $itemURL  = $item->{'url'}  || $item->{'value'};
 			my $title    = $item->{'name'} || $item->{'title'};
@@ -323,6 +334,7 @@ sub gotOPML {
 					'url'    => $itemURL,
 					'title'  => $title,
 					'header' => fitTitle( $client, $title ),
+					'item'   => $item,
 				);
 
 				if ($isAudio) {
@@ -728,6 +740,13 @@ sub playItem {
 			$client->string('XML_LOADING'),
 			$title || $url,
 		);
+		
+		# we may have a callback as URL
+		if ( ref $url eq 'CODE' ) {
+			# get passthrough params if supplied
+			my $pt = $item->{'passthrough'} || [];
+			return $url->( $client, \&gotPlaylist, @{$pt} );
+		}
 		
 		Slim::Formats::XML->getFeedAsync(
 			\&gotPlaylist,

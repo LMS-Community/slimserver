@@ -26,6 +26,7 @@ sub handleWebIndex {
 	my $search    = $args->{'search'};
 	my $expires   = $args->{'expires'};
 	my $asyncArgs = $args->{'args'};
+	my $item      = $args->{'item'} || {};
 	
 	# If the feed is already XML data (Podcast List), send it to handleFeed
 	if ( ref $feed eq 'HASH' ) {
@@ -38,6 +39,19 @@ sub handleWebIndex {
 			'args'    => $asyncArgs,
 		} );
 
+		return;
+	}
+	
+	# Handle plugins that want to use callbacks to fetch their own URLs
+	if ( ref $feed eq 'CODE' ) {
+		# get passthrough params if supplied
+		my $pt = $item->{'passthrough'} || [];
+		
+		# Passthrough all our web params
+		push @{$pt}, $asyncArgs;
+		
+		# first param is a $client object, but undef from webpages
+		$feed->( undef, \&handleFeed, @{$pt} );
 		return;
 	}
 
@@ -112,18 +126,28 @@ sub handleFeed {
 			# current cached feed
 			$subFeed->{'type'} ||= '';
 			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} ) {
+				
+				# Setup passthrough args
+				my $args = {
+					'url'          => $subFeed->{'url'},
+					'expires'      => $params->{'expires'},
+					'parent'       => $feed,
+					'parentURL'    => $params->{'parentURL'} || $params->{'url'},
+					'currentIndex' => \@crumbIndex,
+					'args'         => [ $client, $stash, $callback, $httpClient, $response ],
+				};
+				
+				if ( ref $subFeed->{'url'} eq 'CODE' ) {
+					my $pt = $subFeed->{'passthrough'} || [];
+					push @{$pt}, $args;
+					$subFeed->{'url'}->( undef, \&handleSubFeed, @{$pt} );
+					return;
+				}
 
 				Slim::Formats::XML->getFeedAsync(
 					\&handleSubFeed,
 					\&handleError,
-					{
-						'url'          => $subFeed->{'url'},
-						'expires'      => $params->{'expires'},
-						'parent'       => $feed,
-						'parentURL'    => $params->{'parentURL'} || $params->{'url'},
-						'currentIndex' => \@crumbIndex,
-						'args'         => [ $client, $stash, $callback, $httpClient, $response ],
-					},
+					$args,
 				);
 				return;
 			}
@@ -286,13 +310,30 @@ sub handleSubFeed {
 		$subFeed = $subFeed->{'items'}->[$i];
 	}
 	$subFeed->{'items'} = $feed->{'items'};
-	$subFeed->{'url'}   = undef;
 	
-	# re-cache the parsed XML to include the sub-feed
-	my $cache = Slim::Utils::Cache->new();
-	my $expires = $Slim::Formats::XML::XML_CACHE_TIME;
-	$::d_plugins && msg("Web::XML: re-caching parsed XML for $expires seconds\n");
-	$cache->set( $params->{'parentURL'} . '_parsedXML', $parent, $expires );
+	# No caching for callback-based plugins
+	# XXX: this is a bit slow as it has to re-fetch each level
+	if ( ref $subFeed->{'url'} eq 'CODE' ) {
+		
+		# Clear URL so it's not fetched again
+		$subFeed->{'url'} = undef;
+		
+		# Clear passthrough data as it won't be needed again
+		delete $subFeed->{'passthrough'};
+	}
+	else {
+		
+		# Clear URL so it's not fetched again
+		$subFeed->{'url'} = undef;
+		
+		# re-cache the parsed XML to include the sub-feed
+		my $cache = Slim::Utils::Cache->new();
+		my $expires = $Slim::Formats::XML::XML_CACHE_TIME;
+		$::d_plugins && msg("Web::XML: re-caching parsed XML for $expires seconds\n");
+		$cache->set( $params->{'parentURL'} . '_parsedXML', $parent, $expires );
+	}
+	
+	warn Data::Dump::dump($parent);
 	
 	handleFeed( $parent, $params );
 }
