@@ -328,7 +328,7 @@ sub killTimers {
 	my @killed = $normal->remove_items( sub {
 		my $timer = shift;
 		if ( $timer->{subptr} eq $subptr ) {
-			if ( $timer->{objRef} eq $objRef ) {
+			if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 				return 1;
 			}
 		}
@@ -348,7 +348,7 @@ sub killHighTimers {
 	my @killed = $high->remove_items( sub {
 		my $timer = shift;
 		if ( $timer->{subptr} eq $subptr ) {
-			if ( $timer->{objRef} eq $objRef ) {
+			if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 				return 1;
 			}
 		}
@@ -371,7 +371,7 @@ sub killOneTimer {
 	my @killed = $normal->remove_items( sub {
 		my $timer = shift;
 		if ( $timer->{subptr} eq $subptr ) {
-			if ( $timer->{objRef} eq $objRef ) {
+			if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 				return 1;
 			}
 		}
@@ -385,7 +385,7 @@ sub killOneTimer {
 	$high->remove_items( sub {
 		my $timer = shift;
 		if ( $timer->{subptr} eq $subptr ) {
-			if ( $timer->{objRef} eq $objRef ) {
+			if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 				return 1;
 			}
 		}
@@ -401,7 +401,7 @@ sub forgetTimer {
 	
 	$high->remove_items( sub {
 		my $timer = shift;
-		if ( $timer->{objRef} eq $objRef ) {
+		if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 			return 1;
 		}
 		return 0;
@@ -409,7 +409,7 @@ sub forgetTimer {
 	
 	$normal->remove_items( sub {
 		my $timer = shift;
-		if ( $timer->{objRef} eq $objRef ) {
+		if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 			return 1;
 		}
 		return 0;
@@ -441,7 +441,7 @@ sub firePendingTimer {
 	my @normal = $normal->peek_items( sub {
 		my $timer = shift;
 		if ( $timer->{subptr} eq $subptr ) {
-			if ( $timer->{objRef} eq $objRef ) {
+			if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 				return 1;
 			}
 		}
@@ -470,7 +470,7 @@ sub pendingTimers {
 	$high->peek_items( sub {
 		my $timer = shift;
 		if ( $timer->{subptr} eq $subptr ) {
-			if ( $timer->{objRef} eq $objRef ) {
+			if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 				$count++;
 			}
 		}
@@ -479,7 +479,7 @@ sub pendingTimers {
 	$normal->peek_items( sub {
 		my $timer = shift;
 		if ( $timer->{subptr} eq $subptr ) {
-			if ( $timer->{objRef} eq $objRef ) {
+			if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 				$count++;
 			}
 		}
