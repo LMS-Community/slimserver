@@ -122,7 +122,7 @@ sub getPlaylist {
 	my $currentSong = Slim::Player::Playlist::url($client);
 	my $currentMode = Slim::Player::Source::playmode($client);
 	 
-	return if ($currentSong !~ /^live365:/ || $currentMode ne 'play');
+	return if ($currentSong ne $url || $currentMode ne 'play');
 
 	# store the original title as a fallback, once.
 	${*$self}{live365_original_title} ||= Slim::Music::Info::getCurrentTitle( $client, $currentSong );
@@ -180,8 +180,14 @@ sub playlistLoaded {
 
 		$nextRefresh = $nowPlaying->{Refresh}->{content} || 60;
 		my @titleComponents = ();
-		if ($nowPlaying->{PlaylistEntry}->[0]->{Title}->{content}) {
-			push @titleComponents, $nowPlaying->{PlaylistEntry}->[0]->{Title}->{content};
+		if ( my $title = $nowPlaying->{PlaylistEntry}->[0]->{Title}->{content} ) {
+			if ( $title eq 'NONE' ) {
+				# no title, it's probably an ad, so display the description
+				push @titleComponents, $nowPlaying->{PlaylistEntry}->[0]->{desc}->{content};
+			}
+			else {
+				push @titleComponents, $title;
+			}
 		}
 		if ($nowPlaying->{PlaylistEntry}->[0]->{Artist}->{content}) {
 			push @titleComponents, $nowPlaying->{PlaylistEntry}->[0]->{Artist}->{content};
@@ -215,7 +221,7 @@ sub playlistLoaded {
 	my $currentSong = Slim::Player::Playlist::url($client);
 	my $currentMode = Slim::Player::Source::playmode($client);
 	 
-	return if ($currentSong !~ /^live365:/ || $currentMode ne 'play');
+	return if ($currentSong ne $url || $currentMode ne 'play');
 
 	if ( $nextRefresh and $currentSong =~ /^live365:/ and $currentMode eq 'play' ) {
 		Slim::Utils::Timers::setTimer(
