@@ -91,7 +91,7 @@ sub initPlugin {
 				setTimer($client);
 			
 			} elsif ($browseMenuChoices[$menuSelection{$client}] eq $client->string('PLUGIN_RESCAN_TIMER_TYPE')) {
-				my $value = Slim::Utils::Prefs::get("rescantype");
+				my $value = Slim::Utils::Prefs::get("rescan-type");
 				
 				my %params = (
 

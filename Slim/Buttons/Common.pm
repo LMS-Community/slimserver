@@ -573,7 +573,20 @@ our %functions = (
 	},
 	'sleep' => sub  {
 		my $client = shift;
-		my @sleepChoices = (0,15,30,45,60,90);
+		
+		# Bug: 2151 some extra stuff to add the option to sleep after the current song.
+		# first make sure we're playing, and its a valid song.
+		my $remaining;
+		if (Slim::Player::Source::playingSong($client) && $client->playmode =~ /play/) { 
+			my $dur = Slim::Player::Source::playingSongDuration($client);
+			
+			# calculate the time based remaining, in seconds then into fractional minutes.
+			$remaining = $dur - Slim::Player::Source::songTime($client);
+			$remaining = $remaining / 60;
+		}
+		
+		# add the 'after this song' option only if there is a defined value.
+		my @sleepChoices = $remaining ? (0, $remaining, 15,30,45,60,90) : (0,15,30,45,60,90);
 		my $i;
 		# find the next value for the sleep timer
 		for ($i = 0; $i <= $#sleepChoices; $i++) {
