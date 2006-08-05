@@ -568,12 +568,12 @@ sub currentSongLines {
 
 		$parts->{line}[1] = Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::url($client));
 
-		$parts->{overlay}[1] = $client->symbols(Slim::Display::Display::symbol('notesymbol'));
+		$parts->{overlay}[1] = $client->symbols('notesymbol');
 
 		# add in the progress bar and time...
 		$client->nowPlayingModeLines($parts);
 	}
-	
+
 	return $parts;
 }
 
@@ -622,7 +622,7 @@ sub nowPlayingModeLines {
 		# show both the bar and the time
 		my $leftLength = $display->measureText($parts->{line}[0], 1);
 		my $barlen = $displayWidth - $leftLength - $display->measureText($overlay, 1);
-		my $bar    = $display->symbols($client->progressBar($barlen, $fractioncomplete));
+		my $bar    = $display->symbols($client->progressBar($barlen, $fractioncomplete, ($showTime < 0)));
 
 		$overlay = $bar . $songtime;
 	}

@@ -467,7 +467,7 @@ sub sliderBar {}
 
 sub progressBar {
 	my $display = shift;
-	return $display->sliderBar(shift,(shift)*100,0);
+	return $display->sliderBar(shift,(shift)*100,0,undef,shift);
 }
 
 sub balanceBar {

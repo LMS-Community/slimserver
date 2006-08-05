@@ -524,11 +524,15 @@ sub measureText {
 # Draws a slider bar, bidirectional or single direction is possible.
 # $value should be pre-processed to be from 0-100
 # $midpoint specifies the position of the divider from 0-100 (use 0 for progressBar)
+# $reverse reverses fill for progressBar only (0 midpoint)
+
 sub sliderBar {
 	my $display = shift;
 	my $width = shift;
 	my $value = shift;
 	my $midpoint = shift;
+	my $fullstep = shift; # unused - only for text sliderBar
+	my $reverse = shift;
 
 	$midpoint = 0 unless defined $midpoint;
 
@@ -580,19 +584,20 @@ sub sliderBar {
 	for (my $i = $divider + 1; $i < $spaces; $i++) {
 		if ($value <= $midpoint) {
 			if ($i == $divider +1 || $i == $spaces - 1) {
-				$chart .= $prog1e;
+				$chart .= $reverse ? $prog1 : $prog1e;
 			} elsif ($i == $divider + 2 || $i == $spaces - 2) {
-				$chart .= $prog2e;
+				$chart .= $reverse ? $prog2 : $prog2e;
 			} else {
-				$chart .= $prog3e;
+				$chart .= $reverse ? $prog3 : $prog3e;
 			}
 		} else {
+			my $pos = $reverse ? ($i <= $dots) : ($i > $dots);
 			if ($i == $divider +1 || $i == $spaces - 1) {
-				$chart .= ($i > $dots) ? $prog1e : $prog1;
+				$chart .= $pos ? $prog1e : $prog1;
 			} elsif ($i == $divider + 2 || $i == $spaces - 2) {
-				$chart .= ($i > $dots) ? $prog2e : $prog2;
+				$chart .= $pos ? $prog2e : $prog2;
 			} else {
-				$chart .= ($i > $dots) ? $prog3e : $prog3;
+				$chart .= $pos ? $prog3e : $prog3;
 			}
 		}
 	}
