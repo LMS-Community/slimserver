@@ -36,15 +36,42 @@ my $d_watch_timers = 0;
 #
 # Timers are checked whenever we come out of select.
 
-# POE::XS::Queue::Array is a lot faster, but is still new and has some bugs
-my $HAS_XS = 0;
-use POE::Queue::Array;
+# Use POE::XS::Queue::Array >= 0.002 if available
+BEGIN {
+	my $hasXS;
 
-our $normal = ( $HAS_XS )
+	sub hasXS {
+		return $hasXS if defined $hasXS;
+	
+		$hasXS = 0;
+		eval {
+			require POE::XS::Queue::Array;
+			die if $POE::XS::Queue::Array::VERSION eq '0.001'; # 0.001 has memory leaks
+			$hasXS = 1;
+		};
+		if ($@) {
+			require POE::Queue::Array;
+		}
+	
+		return $hasXS;
+	}
+
+	# alias PQA's ITEM methods
+	if ( hasXS() ) {
+		*ITEM_ID      = \&POE::XS::Queue::Array::ITEM_ID;
+		*ITEM_PAYLOAD = \&POE::XS::Queue::Array::ITEM_PAYLOAD;
+	}
+	else {
+		*ITEM_ID      = \&POE::Queue::Array::ITEM_ID;
+		*ITEM_PAYLOAD = \&POE::Queue::Array::ITEM_PAYLOAD;
+	}
+}
+
+our $normal = ( hasXS() )
 	? POE::XS::Queue::Array->new()
 	: POE::Queue::Array->new();
 	
-our $high = ( $HAS_XS )
+our $high = ( hasXS() )
 	? POE::XS::Queue::Array->new()
 	: POE::Queue::Array->new();
   
