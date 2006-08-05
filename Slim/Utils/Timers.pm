@@ -47,6 +47,7 @@ BEGIN {
 		eval {
 			require POE::XS::Queue::Array;
 			die if $POE::XS::Queue::Array::VERSION eq '0.001'; # 0.001 has memory leaks
+			warn "*** Using POE::XS::Queue::Array for timers\n";
 			$hasXS = 1;
 		};
 		if ($@) {
@@ -255,7 +256,7 @@ sub listTimers {
 		my $name  = Slim::Utils::PerlRunTime::realNameForCodeRef( $timer->{'subptr'} );
 		my $diff  = $timer->{'when'} - $now;
 		
-		my $obj = $timer->{'objRef'};
+		my $obj = $timer->{'objRef'} || '';
 		if ( blessed $obj && $obj->isa('Slim::Player::Client') ) {
 			$obj = $obj->macaddress();
 		}
