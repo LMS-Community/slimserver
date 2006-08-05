@@ -322,7 +322,11 @@ sub setVisualizerMode() {
 	if (ref($screensaver_info{$mode}->{params}) eq 'ARRAY') {
 		$paramsRef = $screensaver_info{$mode}->{params};
 	} else {
-		$paramsRef = $screensaver_info{$mode}->{params}->{$client->model()};
+		if ($client->display->isa('Slim::Display::Transporter')) {
+			$paramsRef = $screensaver_info{$mode}->{params}->{'transporter'};
+		} elsif ($client->display->isa('Slim::Display::Squeezebox2')) {
+			$paramsRef = $screensaver_info{$mode}->{params}->{'squeezebox2'};
+		}
 	}
 	
 	$client->modeParam('visu', $paramsRef);
