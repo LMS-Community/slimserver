@@ -220,8 +220,15 @@ sub _addOrPlayFavoriteUrl {
 	if (!$add) {
 		$client->execute([ 'playlist', 'clear' ] );
 	}
-
-	$client->execute([ 'playlist', $command, 'favorite', $url ]);
+	
+	# remote URLs should go via play/add so they go through Scanner
+	if ( Slim::Music::Info::isRemoteURL($url) ) {
+		$command = $add ? 'add' : 'play';
+		$client->execute([ 'playlist', $command, $url, $title ]);
+	}
+	else {
+		$client->execute([ 'playlist', $command, 'favorite', $url ]);
+	}
 }
 
 # These are all CLI commands
