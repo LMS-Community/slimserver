@@ -35,7 +35,7 @@ my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transp
 my $forget_disconnected_time = 300; # disconnected clients will be forgotten unless they reconnect before this
 
 my $check_all_clients_time = 5; # how often to look for disconnected clients
-my $last_check;                 # last time check_all_clients ran
+my $check_time;                 # time scheduled for next check_all_clients
 
 my $slimproto_socket;
 
@@ -116,8 +116,8 @@ sub init {
 	Slim::Networking::Select::addRead($slimproto_socket, \&slimproto_accept);
 	
 	# Bug 2707, This timer checks for players that have gone away due to a power loss and disconnects them
-	$last_check = time();
-	Slim::Utils::Timers::setTimer( undef, Time::HiRes::time() + $check_all_clients_time, \&check_all_clients );
+	$check_time = time() + $check_all_clients_time;
+	Slim::Utils::Timers::setTimer( undef, $check_time, \&check_all_clients );
 
 	$::d_slimproto && msg "Squeezebox protocol listening on port $listenerport\n";	
 }
@@ -174,8 +174,6 @@ sub slimproto_accept {
 
 sub check_all_clients {
 
-	my $now = time();
-	
 	for my $client ( values %sock2client ) {
 		
 		# SoftSqueeze does not report status
@@ -187,13 +185,8 @@ sub check_all_clients {
 			next;
 		}
 		
-		# adjust in case the server is running slow
-		if ( $now - $last_check > $check_all_clients_time ) {
-			$now = $last_check + $check_all_clients_time;
-		}
-		
 		# check when we last heard a stat response from the player
-		my $last_heard = $now - $heartbeat{$client};
+		my $last_heard = $check_time - $heartbeat{$client};
 		
 		if ( $last_heard >= $check_all_clients_time * 2 ) {
 			$::d_slimproto && msgf("Haven't heard from %s in %d seconds, closing connection\n",
@@ -210,9 +203,9 @@ sub check_all_clients {
 		}
 	}
 
-	$last_check = $now;
+	$check_time = time() + $check_all_clients_time;
 
-	Slim::Utils::Timers::setTimer( undef, $now + $check_all_clients_time, \&check_all_clients );
+	Slim::Utils::Timers::setTimer( undef, $check_time, \&check_all_clients );
 }
 
 sub slimproto_close {
