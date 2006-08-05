@@ -44,8 +44,9 @@ sub setMode {
 	$client->update();
 
 	# kick ScreenSaver::ScreenSaver to switch to off screensaver
-	Slim::Utils::Timers::killTimers($client, \&Slim::Buttons::ScreenSaver::screenSaver);
-	Slim::Utils::Timers::setTimer($client, Time::HiRes::time(), \&Slim::Buttons::ScreenSaver::screenSaver);
+	if ( Slim::Utils::Timers::killTimers($client, \&Slim::Buttons::ScreenSaver::screenSaver) ) {
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time(), \&Slim::Buttons::ScreenSaver::screenSaver);
+	}
 }
 
 sub lines {
