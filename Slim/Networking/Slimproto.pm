@@ -34,9 +34,10 @@ my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transp
 
 my $forget_disconnected_time = 300; # disconnected clients will be forgotten unless they reconnect before this
 
-my $slimproto_socket;
+my $check_all_clients_time = 5; # how often to look for disconnected clients
+my $last_check;                 # last time check_all_clients ran
 
-my $last_check = 0; # last time check_all_clients ran
+my $slimproto_socket;
 
 our %ipport;		# ascii IP:PORT
 our %inputbuffer;  	# inefficiently append data here until we have a full slimproto frame
@@ -115,7 +116,8 @@ sub init {
 	Slim::Networking::Select::addRead($slimproto_socket, \&slimproto_accept);
 	
 	# Bug 2707, This timer checks for players that have gone away due to a power loss and disconnects them
-	Slim::Utils::Timers::setTimer( undef, Time::HiRes::time() + 5, \&check_all_clients );
+	$last_check = time();
+	Slim::Utils::Timers::setTimer( undef, Time::HiRes::time() + $check_all_clients_time, \&check_all_clients );
 
 	$::d_slimproto && msg "Squeezebox protocol listening on port $listenerport\n";	
 }
@@ -176,27 +178,42 @@ sub check_all_clients {
 	
 	for my $client ( values %sock2client ) {
 		
-		# check when we last heard a stat response from the player
-
-		my $last_heard = $now - ($heartbeat{ $client->id } || $now);
-
-		if ( $last_heard > 2 ) {
+		# SoftSqueeze does not report status
+		next if $client->isa('Slim::Player::SoftSqueeze');
+		
+		# skip if we haven't yet heard anything
+		if ( !defined $heartbeat{$client} ) {
 			$client->requestStatus();
+			next;
 		}
-
-		if ( $last_heard > 15 && ($now - $last_check) < 10 ) {
+		
+		# adjust in case the server is running slow
+		if ( $now - $last_check > $check_all_clients_time ) {
+			$now = $last_check + $check_all_clients_time;
+		}
+		
+		# check when we last heard a stat response from the player
+		my $last_heard = $now - $heartbeat{$client};
+		
+		if ( $last_heard >= $check_all_clients_time * 2 ) {
 			$::d_slimproto && msgf("Haven't heard from %s in %d seconds, closing connection\n",
 				$client->id,
 				$last_heard,
 			);
 			slimproto_close( $client->tcpsock );
+			next;
+		}
+
+		# force a status request if we haven't heard from the player in a short while
+		if ( $last_heard >= $check_all_clients_time / 2 ) {
+			$client->requestStatus();
 		}
 	}
 
 	$last_check = $now;
 
-	Slim::Utils::Timers::setTimer( undef, $now + 5, \&check_all_clients );
-}	
+	Slim::Utils::Timers::setTimer( undef, $now + $check_all_clients_time, \&check_all_clients );
+}
 
 sub slimproto_close {
 	my $clientsock = shift;
@@ -214,7 +231,7 @@ sub slimproto_close {
 
 	if ( my $client = $sock2client{$clientsock} ) {
 		
-		delete $heartbeat{ $client->id };
+		delete $heartbeat{$client};
 
 		# check client not already forgotten
 		if ( Slim::Player::Client::getClient( $client->id ) ) {
@@ -513,7 +530,7 @@ sub _stat_handler {
 	my $data_ref = shift;
 	
 	# update the heartbeat value for this player
-	$heartbeat{ $client->id } = time;
+	$heartbeat{$client} = time();
 
 	#struct status_struct {
 	#        u32_t event;
