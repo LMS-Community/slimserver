@@ -189,6 +189,18 @@ function refreshInfo(theData,force) {
 		hideElements(['nowplaying']);
 		showElements(['notplaying']);
 	}
+
+	if (parsedData['isplayer']) {
+		showElements(['playCtlffwd']);
+		showElements(['playCtlrew']);
+		showElements(['playCtlmute']);
+		showElements(['volumeControl']);
+	} else {
+		hideElements(['playCtlffwd']);
+		hideElements(['playCtlrew']);
+		hideElements(['playCtlmute']);
+		hideElements(['volumeControl']);
+	}
 	
 	// refresh cover art
 	if ($('coverartpath') && newsong) {

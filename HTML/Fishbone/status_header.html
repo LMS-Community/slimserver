@@ -44,10 +44,10 @@
 [% END %]
 
 [% BLOCK playctl %]
-	<td>
-			<a href="javascript:processPlayControls('[% command %]')">
-			<img id="playCtl[% img %]" class="gray" alt="[% img %]" title="[% img %]" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %].gif" border="1" width="[% width || 30 %]" height="[% height || 19 %]"><img id="playCtl[% img %]tan" class="tan" alt="[% img %]" title="[% img %]" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %]_tan.gif" width="[% width %]" height="[% height %]"></a>
-	</td>
+<td>
+	<a href="javascript:processPlayControls('[% command %]')">
+	<img id="playCtl[% img %]" class="gray" alt="[% img %]" title="[% img %]" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %].gif" border="1" width="[% width || 30 %]" height="[% height || 19 %]"><img id="playCtl[% img %]tan" class="tan" alt="[% img %]" title="[% img %]" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %]_tan.gif" width="[% width %]" height="[% height %]"></a>
+</td>
 [% END %]
 
 [% BLOCK remove %]
@@ -154,21 +154,20 @@
 						[% PROCESS playctl command='p0=play' img='play' width='42' height='43' condition=modeplay && rate == 'norm' -%]
 						[% PROCESS playctl command='p0=stop' img='stop' width='23' height='32' condition=modestop -%]
 					<td><table>
-						<tr>[% IF isplayer %]
-								[% PROCESS playctl command='p0=button&amp;p1=rew.hold' width='30' height='19' img='rew' condition=rate == 'rew' -%]
-								[% PROCESS playctl command='p0=button&amp;p1=fwd.hold' img='ffwd' condition=rate == 'ffwd' -%]
-						</tr><tr>[% END -%]
-								[% plusone = '%2B1' | uri -%][%- minusone = '%2D1' | uri -%]
-								[%- PROCESS playctl command="p0=playlist&amp;p1=jump&amp;p2=$minusone" width='30' height='19' img='back' condition='0' -%]
-								[%- PROCESS playctl command="p0=playlist&amp;p1=jump&amp;p2=$plusone" img='forward' condition='0' -%]
-								[% PROCESS playctl command='p0=pause' img='pause' condition=modepause -%]
-							[% IF isplayer %]
-								[% PROCESS playctl command='p0=button&amp;p1=muting' img='mute' condition=mute -%]
-							[% END -%]
+						<tr>
+							[% PROCESS playctl command='p0=button&amp;p1=rew.hold' width='30' height='19' img='rew' condition=rate == 'rew' -%]
+							[% PROCESS playctl command='p0=button&amp;p1=fwd.hold' img='ffwd' condition=rate == 'ffwd' -%]
+							<td></td><td></td>
+						</tr><tr>
+							[% plusone = '%2B1' | uri -%][%- minusone = '%2D1' | uri -%]
+							[%- PROCESS playctl command="p0=playlist&amp;p1=jump&amp;p2=$minusone" width='30' height='19' img='back' condition='0' -%]
+							[%- PROCESS playctl command="p0=playlist&amp;p1=jump&amp;p2=$plusone" img='forward' condition='0' -%]
+							[%- PROCESS playctl command='p0=pause' img='pause' condition=modepause -%]
+							[%- PROCESS playctl command='p0=button&amp;p1=muting' img='mute' condition=mute -%]
 						</tr>
 					</table></td>
 			</tr></table></div>
-			[% IF isplayer and not fixedVolume %]
+			[% IF not fixedVolume %]
 			<div id="volumeControl"><div class="volwidth">
 				[% PROCESS volumecontrol %]
 				<div id="volumeBarText">
