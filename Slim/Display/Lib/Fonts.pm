@@ -166,6 +166,12 @@ sub fontheight {
 	return $fontheight->{$fontname};
 }
 
+sub fontchars {
+	my $fontname = shift;
+	my $font = $fonts->{$fontname} || return 0;
+	return scalar(@$font);
+}
+
 # extent returns the number of rows high a font is rendered (useful for vertical scrolling)
 # based on char 0x1f, which is a bitmask of the valid rows.
 # negative values are for top-row fonts
