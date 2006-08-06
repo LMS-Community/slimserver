@@ -570,6 +570,12 @@ sub shouldLoop {
 	# Ask the client if the track is small enough for this
 	return 0 unless ($client->canLoop($audio_size));
 	
+	# Check with the protocol handler
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+	if ( $handler && $handler->can('shouldLoop') ) {
+		return $handler->shouldLoop($audio_size, $url);
+	}
+	
 	return 1;
 }
 
