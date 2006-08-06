@@ -504,9 +504,9 @@ sub overlayFunc {
 				),
 			);
 		}
-	} else {
-		return (undef,Slim::Display::Display::symbol('rightarrow'));
 	}
+	
+	return (undef,Slim::Display::Display::symbol('rightarrow'));
 
 };
 
