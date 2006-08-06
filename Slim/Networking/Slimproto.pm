@@ -231,17 +231,22 @@ sub slimproto_close {
 
 		# check client not already forgotten
 		if ( Slim::Player::Client::getClient( $client->id ) ) {
-
-			# set timer to forget client
-			Slim::Utils::Timers::setTimer($client, time() + $forget_disconnected_time, \&forget_disconnected_client);
-		
+			
 			# notify of disconnect
 			Slim::Control::Request::notifyFromArray($client, ['client', 'disconnect']);
-		
+			
 			# Bug 2707, If a synced player disconnects, unsync it temporarily
 			if ( Slim::Player::Sync::isSynced($client) ) {
 				$::d_sync && msg("Player disconnected, temporary unsync ". $client->id . "\n");
 				Slim::Player::Sync::unsync( $client, 1 );
+			}
+
+			# set timer to forget client
+			if ( $forget_disconnected_time ) {
+				Slim::Utils::Timers::setTimer($client, time() + $forget_disconnected_time, \&forget_disconnected_client);
+			}
+			else {
+				forget_disconnected_client($client);
 			}
 		}
 	}
