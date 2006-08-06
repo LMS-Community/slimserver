@@ -4,6 +4,7 @@ year|[% itemobj.year %]
 sleeptime|[% sleeptime %]
 rate|[% rate %]
 playermodel|[% playermodel %]
+isplayer|[% isplayer %]
 sync|[% sync %]
 by|[% "BY" | string %]
 

@@ -127,25 +127,27 @@ function refreshPlayControls(theData) {
 		}
 	}
 	
-	var controls = ['rew','ffwd'];
-	
-	for (var i=0; i < controls.length; i++) {
-		var objID = $('playCtl' + controls[i]);
+	if (parsedData['isplayer']) {
+		var controls = ['rew','ffwd'];
 		
-		if (parsedData['rate'] == controls[i]) {
-			objID.src = '[% webroot %]html/images/'+controls[i]+'_s'+curstyle+'.gif';
+		for (var i=0; i < controls.length; i++) {
+			var objID = $('playCtl' + controls[i]);
 			
+			if (parsedData['rate'] == controls[i]) {
+				objID.src = '[% webroot %]html/images/'+controls[i]+'_s'+curstyle+'.gif';
+				
+			} else {
+				objID.src = '[% webroot %]html/images/'+controls[i]+curstyle+'.gif';
+			}
+		}
+		
+		if (parsedData['mute'] == 1) {
+			if ($('playCtl' + 'mute').src.indexOf('_s') != -1) {$('playCtl' + 'mute').src = '[% webroot %]html/images/mute_s'+curstyle+'.gif';}
 		} else {
-			objID.src = '[% webroot %]html/images/'+controls[i]+curstyle+'.gif';
+			if ($('playCtl' + 'mute').src.indexOf('_s') == -1) {$('playCtl' + 'mute').src = '[% webroot %]html/images/mute'+curstyle+'.gif';}
 		}
 	}
-	
-	if (parsedData['mute'] == 1) {
-		if ($('playCtl' + 'mute').src.indexOf('_s') != -1) {$('playCtl' + 'mute').src = '[% webroot %]html/images/mute_s'+curstyle+'.gif';}
-	} else {
-		if ($('playCtl' + 'mute').src.indexOf('_s') == -1) {$('playCtl' + 'mute').src = '[% webroot %]html/images/mute'+curstyle+'.gif';}
-	}
-	
+
 	if (parsedData['playmode'] == 1) {
 		if (!mp) {refreshInfo(parsedData,1);}
 		mp = 1;
@@ -297,8 +299,11 @@ function refreshPlaylist(newPlayer) {
 
 function refreshAll(theData) {
 	var parsedData = fillDataHash(theData);
-
-	refreshVolume(parsedData);
+	
+	if (parsedData['isplayer']) {
+		refreshVolume(parsedData);
+	}
+	
 	refreshPlayControls(parsedData);
 	refreshInfo(parsedData);
 	refreshState(parsedData);
