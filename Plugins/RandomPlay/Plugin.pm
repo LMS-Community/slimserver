@@ -86,7 +86,7 @@ sub findAndAdd {
 
 	# Replace the current playlist with the first item / track or add it to end
 	my $request = $client->execute([
-		'playlist', $addOnly ? 'addtracks' : 'loadtracks', 'listRef', [ $obj ],
+		'playlist', $addOnly ? 'addtracks' : 'loadtracks', sprintf('%s.id=%d', $type, $obj->id)
 	]);
 
 	# indicate request source
