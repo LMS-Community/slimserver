@@ -174,6 +174,8 @@ sub slimproto_accept {
 
 sub check_all_clients {
 
+	my $now = time();
+
 	for my $client ( values %sock2client ) {
 		
 		# SoftSqueeze does not report status
@@ -186,9 +188,10 @@ sub check_all_clients {
 		}
 		
 		# check when we last heard a stat response from the player
-		my $last_heard = $check_time - $heartbeat{$client};
+		my $last_heard = $now - $heartbeat{$client};
 		
-		if ( $last_heard >= $check_all_clients_time * 2 ) {
+		# disconnect client if we haven't heard from it in 3 poll intervals and no time travel
+		if ( $last_heard >= $check_all_clients_time * 3 && $now - $check_time <= $check_all_clients_time ) {
 			$::d_slimproto && msgf("Haven't heard from %s in %d seconds, closing connection\n",
 				$client->id,
 				$last_heard,
@@ -203,7 +206,7 @@ sub check_all_clients {
 		}
 	}
 
-	$check_time = time() + $check_all_clients_time;
+	$check_time = $now + $check_all_clients_time;
 
 	Slim::Utils::Timers::setTimer( undef, $check_time, \&check_all_clients );
 }
