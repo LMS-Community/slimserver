@@ -622,7 +622,7 @@ sub nowPlayingModeLines {
 		# show both the bar and the time
 		my $leftLength = $display->measureText($parts->{line}[0], 1);
 		my $barlen = $displayWidth - $leftLength - $display->measureText($overlay, 1);
-		my $bar    = $display->symbols($client->progressBar($barlen, $fractioncomplete, ($showTime < 0)));
+		my $bar    = $display->symbols($client->progressBar($barlen, $fractioncomplete, ($showBar < 0)));
 
 		$overlay = $bar . $songtime;
 	}
