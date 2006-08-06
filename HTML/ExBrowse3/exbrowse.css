@@ -684,6 +684,11 @@ img.dragbutton {
         cursor: pointer;
 }
 
+td.searchHeader {
+	font-size: 13px;
+	color: white;
+}
+
 /*************\
  * Song Info *
 \*************/

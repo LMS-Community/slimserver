@@ -14,7 +14,7 @@
  [% ELSE %]
   <input type="text" id="searchquery" name="query" size="40" value="[% query %]"/>
  [% END %]
-  <input name="submit" type=submit class="stdclick" value=[% "SEARCH" | string %]/>
+  <input name="submit" type=submit class="stdclick" value="[% "SEARCH" | string %]"/>
   <input type="hidden" value="1" name="manualSearch"/>
   <input type="hidden" value="[% player %]" name="player"/>
  </form>
@@ -29,9 +29,12 @@
 [% IF searchlist_header %]
 <p>[% searchlist_header %][% "COLON" | string %]</p>
 [% END %] 
-
 <table>
- [% browse_list %] 
+ [% IF browse_items %]
+  [% FOREACH item = browse_items %]
+   [% PROCESS browsedbitems_list.html %]
+  [% END %]
+ [% END %]
 </table>
 
 </body>

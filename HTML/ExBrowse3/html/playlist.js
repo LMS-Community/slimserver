@@ -37,7 +37,7 @@ function updatePlaylist() {
 	var combolist = [ ];
 
 	for (var i = 0; i < playlistObj.length; i++) {
-		newitem = { title :
+		var newitem = { title :
 			(playlistObj[i].tracknum ?
 				(
 					(playlistObj[i].album && playlistObj[i].album.discc && playlistObj[i].album.disc) ?

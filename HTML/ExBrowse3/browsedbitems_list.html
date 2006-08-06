@@ -1,4 +1,16 @@
-[% ADD = "ADD" | string ; PLAY = "PLAY" | string %]<tr>
+[% ADD = "ADD" | string ; PLAY = "PLAY" | string -%]
+
+[% IF item.heading -%]
+
+ <tr>
+  <td class="searchHeader" colspan="2">
+   [% "$item.heading" _ "SMATCHING" | string %] "[% query %]"[% "COLON" | string %][% item.numresults %]
+  </td>
+ </tr>
+
+[%- ELSE -%]
+
+<tr>
  <td class="browselistbuttons">
   <img height="8" onclick="parent.doBrowseCommand('addtracks', '[% IF item.attributes; item.attributes|html;
   ELSE; 'track='; item.item; END %]')" src="[%webroot%]html/images/add.gif" alt="[%ADD%]" title="[%ADD%]"
@@ -36,3 +48,4 @@
  </td>
 </tr>
 
+[% END %]
