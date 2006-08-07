@@ -65,12 +65,9 @@ sub browsedb {
 	my $levelName = $levels[$level];
 
 	# Set the orderBy if requested
-	if ($levelName eq 'album' && $artwork) {
+	if ($levelName eq 'album') {
 
-		if (Slim::Utils::Prefs::get('sortBrowseArt') && !$orderBy) {
-
-			$orderBy = Slim::Utils::Prefs::get('sortBrowseArt');
-		}
+		$orderBy ||= 'album.titlesort';
 
 	} elsif ($levelName ne 'track') {
 
@@ -455,8 +452,9 @@ sub browsedb {
 	# Give players a bit of time.
 	main::idleStreams();
 
-	$params->{'descend'}   = $descend;
-	$params->{'levelName'} = lc($levelName);
+	$params->{'descend'}    = $descend;
+	$params->{'levelName'}  = lc($levelName);
+	$params->{'attributes'} = _attributesToKeyValuePair(\%attrs);
 
 	# Don't show stats when only showing playlists - extra queries that aren't needed.
 	#

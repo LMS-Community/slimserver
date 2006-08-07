@@ -1397,10 +1397,9 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['skin','itemsPerPage','refreshRate','coverArt','coverThumb',
-					'artfolder','thumbSize','sortBrowseArt']
-				}
+				'PrefOrder' => ['skin','itemsPerPage','refreshRate','coverArt','coverThumb','artfolder','thumbSize']
 			}
+		}
 		,'Prefs' => {
 			'skin'		=> {
 						'validate' => \&Slim::Utils::Validate::inHash
@@ -1441,19 +1440,6 @@ sub initSetupConfig {
 					'validate' => \&Slim::Utils::Validate::isInt
 					,'validateArgs' => [25,250,1,1]
 				}
-			,'sortBrowseArt' => {
-				'validate' => \&Slim::Utils::Validate::inHash,
-				'validateArgs' => [sub {return getSetupOptions('INTERFACE_SETTINGS','sortBrowseArt');},1],
-				'options' => {
-					'album.titlesort'                                     => 'SETUP_SORTBROWSEART_ALBUM',
-					'contributor.namesort,album.titlesort'                => 'SETUP_SORTBROWSEART_ARTISTALBUM',
-					'contributor.namesort,album.year,album.titlesort'     => 'SETUP_SORTBROWSEART_ARTISTYEARALBUM',
-					'album.year,album.titlesort'                          => 'SETUP_SORTBROWSEART_YEARALBUM',
-					'album.year,contributor.namesort,album.titlesort'     => 'SETUP_SORTBROWSEART_YEARARTISTALBUM',
-					'genre.namesort,album.titlesort'                      => 'SETUP_SORTBROWSEART_GENREALBUM',
-					'genre.namesort,contributor.namesort,album.titlesort' => 'SETUP_SORTBROWSEART_GENREARTISTALBUM',
-				},
-			}
 		}
 	}# end of setup{'INTERFACE_SETTINGS'} hash
 

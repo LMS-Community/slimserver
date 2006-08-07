@@ -1,5 +1,31 @@
 [% IF levelName == 'album' || levelName == 'age' %]
+
 <div class="viewSelect">
+
+[% IF levelName == 'album' %]
+
+	[% orderByList = {
+		'album.titlesort'                                     => 'ALBUM',
+		'album.year,album.titlesort'                          => 'SORT_YEARALBUM',
+		'album.year,contributor.namesort,album.titlesort'     => 'SORT_YEARARTISTALBUM',
+		'contributor.namesort,album.titlesort'                => 'SORT_ARTISTALBUM',
+		'contributor.namesort,album.year,album.titlesort'     => 'SORT_ARTISTYEARALBUM',
+		'genre.namesort,album.titlesort'                      => 'SORT_GENREALBUM',
+		'genre.namesort,contributor.namesort,album.titlesort' => 'SORT_GENREARTISTALBUM',
+	} %]
+
+	<label for="orderBy" class="stdlabel">[% "SORT_BY" | string %]</label>
+
+	<select class="stdedit" name="orderBy" onChange="chooseAlbumOrderBy(selectedIndex,options[selectedIndex].value)">
+
+	[% FOREACH orderType = orderByList.keys.sort %]
+		<option [% IF orderType == orderBy %]selected[% END %] value="[% orderType %]">[% orderByList.$orderType | string %]</option>
+	[% END %]
+
+	</select>
+
+[% END %]
+
 	[% IF controlGraphics %]
 		[% IF artwork %]<a href="javascript:toggleGalleryView(0);"><img src="html/images/list.png" alt='[% "SWITCH_TO_LIST" | string %]' title='[% "SWITCH_TO_LIST" | string %]'></a>
 		[% ELSE %]<a href="javascript:toggleGalleryView(1);"><img src="html/images/gallery.png" alt='[% "SWITCH_TO_GALLERY" | string %]' title='[% "SWITCH_TO_GALLERY" | string %]'></a>
@@ -10,4 +36,5 @@
 		[%- END %])
 	[% END %]
 </div>
+
 [% END %]

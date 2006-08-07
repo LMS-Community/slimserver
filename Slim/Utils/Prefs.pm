@@ -218,7 +218,6 @@ sub init {
 		'upgrade-6.5b1-2006-02-03-script' => 1,
 		'upgrade-6.5b1-2006-03-31-script' => 1,
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
-		'sortBrowseArt'     => 'album.titlesort',
 		'disabledextensionsaudio' => '',
 		'disabledextensionsplaylist' => '',
 	);
@@ -523,12 +522,6 @@ sub checkServerPrefs {
 	# Always Upgrade SQLite to MySQL
 	if ($prefs{'dbsource'} =~ /SQLite/) {
 		$prefs{'dbsource'} = $DEFAULT_DBSOURCE;
-	}
-
-	# Fixup old sortBrowseArt prefs. Ugh.
-	if ($prefs{'sortBrowseArt'} !~ /\./) {
-
-		$prefs{'sortBrowseArt'} = 'album.titlesort';
 	}
 
 	for my $version (sort keys %upgradeScripts) {

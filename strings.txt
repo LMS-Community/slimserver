@@ -12263,38 +12263,30 @@ SETUP_LARGETEXTFONT_1
 	IT	Moderno
 	NL	Modern
 
-SETUP_SORTBROWSEART
-	DE	Sortierreihenfolge für Plattenhüllen
-	EN	Browse By Artwork Order
+SORT_BY
+	EN	Sort By
 
-SETUP_SORTBROWSEART_DESC
-	DE	Wählen Sie die Standard Sortierreihenfolge, die beim Nachschlagen von Plattenhüllen verwendet werden soll.
-	EN	Choose the default order that the Artwork web page displays albums.
-
-SETUP_SORTBROWSEART_ALBUM
-	EN	Album
-
-SETUP_SORTBROWSEART_ARTISTALBUM
+SORT_ARTISTALBUM
 	DE	Interpret, Album
 	EN	Artist, Album
 
-SETUP_SORTBROWSEART_ARTISTYEARALBUM
+SORT_ARTISTYEARALBUM
 	DE	Interpret, Jahr, Album
 	EN	Artist, Year, Album
 
-SETUP_SORTBROWSEART_YEARALBUM
+SORT_YEARALBUM
 	DE	Jahr, Album
 	EN	Year, Album
 
-SETUP_SORTBROWSEART_YEARARTISTALBUM
+SORT_YEARARTISTALBUM
 	DE	Jahr, Artist, Album
 	EN	Year, Artist, Album
 
-SETUP_SORTBROWSEART_GENREALBUM
+SORT_GENREALBUM
 	DE	Stil, Album
 	EN	Genre, Album
 
-SETUP_SORTBROWSEART_GENREARTISTALBUM
+SORT_GENREARTISTALBUM
 	DE	Stil, Interpret, Album
 	EN	Genre, Artist, Album
 
