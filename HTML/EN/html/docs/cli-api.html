@@ -3,7 +3,11 @@
 [% techinfo = '1' %]
 [% PROCESS helpheader.html %]
 
-<h4>Introduction</h4>
+<p>
+	<a href="#SC">Experts, jump directly to the command index</a>
+</p>
+
+<h2>Introduction</h2>
 
 <p>
 	The SlimServer provides a command-line interface to the Slim Devices
@@ -118,18 +122,15 @@
 		Added the &quot;<a href="#subscribe">subscribe</a>&quot; command.
 	</li>
 	<li>
-		Added year as a filter criteria for the 
-		&quot;<a href="#titles">titles</a>&quot; and 
-		&quot;<a href="#albums">albums</a>&quot; queries.
-	</li>
-	<li>
-		Added the &quot;<a href="#title">remote</a>&quot; and 
+		Added the &quot;<a href="#cursonginfo">remote</a>&quot; and 
 		&quot;<a href="#playlistXinfo">playlist remote</a>&quot; queries.
 		Likewise, added the &quot;remote&quot; field to the 
-		<a href="#status">status</a>&quot; query.
+		<a href="#status">status</a>&quot;, <a href="#titles">titles</a>&quot;,
+		<a href="#playlists tracks">playlists tracks</a>&quot; and
+		<a href="#status">songinfo</a>&quot; queries.
 	</li>
 	<li>
-		Added the &quot;<a href="#title">current_title</a>&quot; query.
+		Added the &quot;<a href="#cursonginfo">current_title</a>&quot; query.
 		Likewise, added the &quot;current_title&quot; field to the 
 		<a href="#status">status</a>&quot; query.
 	</li>
@@ -162,14 +163,36 @@
 		to accept a list of comma-separated track_ids as parameter.
 	</li>
 	<li>
-		Updated command 
-		&quot;<a href="#albums">albums</a>&quot; 
-		to return additional information about albums (year, artwork_track, etc).
+		Updated query &quot;<a href="#albums">albums</a>&quot; 
+		to return additional information about albums (year, artwork_track,
+		etc), including the ability to sort the list by &quot;new&quot; (to
+		replicate the &quot;New Music&quot; web GUI browse mode). Also added
+		the ability to filter the list by &quot;year&quot; and 
+		&quot;track_id&quot;.
 	</li>
 	<li>
-		Brought the notion of contributors to the CLI.
-		- Query &quot;<a href="#genres">genres</a>&quot; accepts contributor_id 
-		- Query &quot;<a href="#albums">albums</a>&quot; accepts contributor_id 
+		Updated query &quot;<a href="#artists">artists</a>&quot; 
+		to return the &quot;Various Artists&quot; pseudo-artist. Also added
+		the ability to filter the list by &quot;year&quot; and 
+		&quot;track_id&quot;.
+	</li>
+	<li>
+		Updated queries <a href="#status">status</a>&quot;, 
+		<a href="#titles">titles</a>&quot;,
+		<a href="#playlists tracks">playlists tracks</a>&quot; and
+		<a href="#status">songinfo</a>&quot;
+		to return lyrics.
+	</li>
+	<li>
+		Updates queries &quot;<a href="#titles">titles</a>&quot; and 
+		&quot;<a href="#genres">genres</a>&quot; to accept a year as a filter 
+		criteria.
+	</li>
+	<li>
+		Updated the CLI for the latest player model, Transporter. Queries
+		&quot;<a href="#player model ?">player model ?</a>&quot; and 
+		&quot;<a href="#players">players</a>&quot; return 
+		&quot;transporter&quot; for Transporters.
 	</li>
 	<li>
 		0x00 is now a valid end of line / command separator. In addition, the
@@ -181,9 +204,9 @@
 		&quot;<a href="#mixerbass">mixer bass</a>&quot;, 
 		&quot;<a href="#mixertreble">mixer treble</a>&quot; and
 		&quot;<a href="#mixerpitch">mixer pitch</a>&quot;. These 3 options are
-		not (yet) supported on the most recent players, Squeezebox2 and 
-		Squeezebox3. Pitch is only supported by Squeezebox1 players; bass and 
-		treble are supported by SliMP3 and Squeezebox1 players.
+		not (yet) supported on the most recent players. Pitch is only supported
+		by Squeezebox1 players; bass and treble are supported by SliMP3 and 
+		Squeezebox1 players.
 	</li>
 	<li>
 		Changed &quot;<a href="#mixermuting">mixer muting</a>&quot; to be
@@ -241,29 +264,51 @@
 <hr>
 
 
-<h4>General command format</h4>
+<h3>
+	Command format
+</h3>
+<h4>
+	General command and query format
+</h4>
 
-<p>The format of the commands, queries and server replies is as follows:</p>
-
-<blockquote> <p><strong><code>[&lt;playerid&gt;] &lt;p0&gt; &lt;p1&gt;
-	... &lt;pN&gt; &lt;LF&gt;</code></strong></p> </blockquote>
-
-<p>where: </p> 
-
+<p>
+	The format of the commands, queries and server replies is as follows:
+</p>
+<blockquote>
+	<p>
+		<strong>
+			<code>
+				[&lt;playerid&gt;] 
+				&lt;p0&gt; 
+				&lt;p1&gt;
+				...
+				&lt;pN&gt; 
+				&lt;LF&gt;
+			</code>
+		</strong>
+	</p>
+</blockquote>
+<p>
+	where:
+</p> 
 <blockquote> 
-	<p><code>&lt;playerid&gt;</code> is the unique identifier for the
+	<p>
+		<code>&lt;playerid&gt;</code> is the unique identifier for the
 		player, usually (but not guaranteed to be) the MAC address of the
 		player. Some commands are global to the SlimServer and do not
 		require a <code>&lt;playerid&gt;</code>. For commands requiring it,
 		a random player will be selected by the SlimServer if the
 		<code>&lt;playerid&gt;</code> is omitted, and returned in the
 		server reply. <code>&lt;playerid&gt;</code> may be obtained by using
-		the &quot;player id&quot; or &quot;players&quot; command.</p>
-	<p><code>&lt;p0&gt;</code> through <code>&lt;pN&gt;</code> are
+		the &quot;player id&quot; or &quot;players&quot; queries.
+	</p>
+	<p>
+		<code>&lt;p0&gt;</code> through <code>&lt;pN&gt;</code> are
 		<em>positional</em> parameters. Pass a &quot;?&quot; to obtain a
 		value for that parameter in the SlimServer response (i.e. send a
 		query). Details of the parameters vary for each command as described
 		below.
+	</p>
 </blockquote>
 
 <p>Each parameter needs to be encoded using percent-style escaping, the
@@ -424,7 +469,7 @@
 
 
 
-<h4 id="Notes">Notes</h4>
+<h3 id="Notes">Notes</h3>
 <ul>
 	<li>The Security settings of the SlimServer preferences apply to CLI
 		connections when they are established. A change in security
@@ -536,7 +581,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 
 
 
-<h4>Supported Commands</h4>
+<h3 id="SC">
+	Supported Commands
+</h3>
 <p>
 	The supported commands are listed below, grouped by their scope:
 </p>
@@ -576,9 +623,47 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 	</li>
 </ul>
 
-<hr>
-<h4 id="GC">General commands and queries</h4>
 
+<!----------------------------------------------------------------------------->
+<!-- GENERAL COMMANDS                                                        -->
+<!----------------------------------------------------------------------------->
+
+<hr>
+<h2 id="GC">
+	General commands and queries
+</h2>
+<ul>
+	<li>
+		<strong><code><a href="#login">login</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#can">can</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#version">version</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#listen">listen</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#subscribe">subscribe</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#pref">pref</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#debug">debug</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#exit">exit</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#shutdown">shutdown</a></code></strong>
+	</li>
+</ul>
+
+
+<br>
 <p id="login">
 	<strong>
 		<code>
@@ -643,7 +728,169 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 </blockquote>
 
 <br>
+<p id="version">
+	<strong>
+		<code>
+			version
+		</code>
+	</strong>
+</p>
 <p>
+	The &quot;version&quot; query returns the server version number.<
+</p>
+<p>
+	Examples:
+</p>
+<blockquote>
+	<p>
+		Request: &quot;version ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;version 6.5&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="listen">
+	<strong>
+		<code>
+			listen
+			&lt;0|1|?&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;listen&quot; command enables to receive asynchronously internal
+	server commands (notifications) on the CLI connection. Notifications concern
+	all activity in the SlimServer, not just the activity triggered by the
+	command-line.  Use 0 to clear, 1 to set, ? to query, and no parameter to
+	toggle the listen state of the command-line connection. 
+	<br>
+	If only certain notifications are of interrest, consider using the 
+	&quot;<a href="#subscribe">subscribe</a>&quot; command
+	below. The &quot;listen&quot; command shares some of its internal
+	plumbing with &quot;subscribe&quot; so using &quot;subscribe xxx&quot; 
+	changes the list of echoed notifications from nothing or everything to only 
+	xxx.
+	<br>
+	Please consult section <a href="#NC">Notifications</a> for a list of 
+	possible notifications.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;listen 1&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;listen 1&lt;LF&gt;&quot;
+		<br>
+		&quot;04:20:00:12:23:45 mixer volume 25&lt;LF&gt;&quot;
+		<br>
+		&quot;04:20:00:12:23:45 pause&lt;LF&gt;&quot;
+		<br>
+		...
+	</p>
+</blockquote>
+
+<br>
+<p id="subscribe">
+	<strong>
+		<code>
+			subscribe
+			&lt;comma_separated_notification_list&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;subscribe&quot; command is similar to &quot;<a
+	href="#listen">listen</a>&quot; but echoes only a subset of the
+	notifications, indicated by a comma separated list. If no list is provided,
+	the notifications are turned off. This command shares some of its internal
+	plumbing with &quot;listen&quot; so using &quot;listen 0&quot; or
+	&quot;listen 1&quot; changes the list of echoed notifications (to nothing
+	and everything, respectively).
+	<br>
+	Please consult section <a href="#NC">Notifications</a> for a list of 
+	possible notifications.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;subscribe mixer,pause&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;subscribe mixer,pause&lt;LF&gt;&quot;
+		<br>
+		&quot;04:20:00:12:23:45 mixer volume 25&lt;LF&gt;&quot;
+		<br>
+		&quot;04:20:00:12:23:45 pause&lt;LF&gt;&quot;
+		<br>
+		...
+	</p>
+</blockquote>
+
+<br>
+<p id="pref">
+	<strong>
+		<code>
+			pref 
+			&lt;prefname&gt; 
+			&lt;prefvalue|?&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;pref&quot; command allows the caller to set and query the 
+	SlimServer's internal preference values. The following affect the 
+	behaviour of CLI queries and commands:
+	<ul>
+		<li>
+			<b>authorize</b>: Security enabled or not. If enabled, usage of
+			the &quot;<a href="#login">login</a>&quot; command is required.
+		</li>
+		<li>
+			<b>groupdiscs</b>: handling of multiple disc sets. Affects the 
+			&quot;<a href="#albums">albums</a>&quot; query.
+		</li>
+		<li>
+			<b>variousArtistAutoIdentification</b>: compilation artists are
+			listed as &quot;Various Artists&quot;. Affects the 
+			&quot;<a href="#artists">artists</a>&quot; query.
+		</li>
+		<li>
+			<b>splitList</b>: delimiter for multiple items in tags. Affects the
+			&quot;<a href="#genres">genres</a>&quot; query.
+		</li>
+		<li>
+			<b>composerInArtists</b>, <b>conductorInArtists</b>, 
+			<b>bandInArtists</b>: contributors considered artists. Affects the
+			&quot;<a href="#info total artists ?">info total artists ?</a>&quot;
+			query.
+		</li>
+	</ul>
+</p>
+<p>
+	Examples:
+</p>
+<blockquote>
+	<p>
+		Request: &quot;pref audiodir ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;pref audiodir 
+			%2fUsers%2fdean%2fDesktop%2ftest%20music&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;pref playlistdir 
+			%2fUsers%2fdean%2fplaylists&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;pref playlistdir 
+			%2fUsers%2fdean%2fplaylists&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="debug">
 	<strong>
 		<code>
 			debug 
@@ -685,177 +932,129 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 </blockquote>
 
 <br>
-<p id="listen">
+<p id="exit">
 	<strong>
 		<code>
-			listen
-			&lt;0|1|?&gt;
+			exit
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;listen&quot; command enables to receive asynchronously internal
-	server commands (notifications) on the CLI connection. Notifications concern
-	all activity in the SlimServer, not just the activity triggered by the
-	command-line.  Use 0 to clear, 1 to set, ? to query, and no parameter to
-	toggle the listen state of the command-line connection. 
-	<br>
-	If only certain notifications are of interrest, consider using the 
-	&quot;<a href="#subscribe">subscribe</a>&quot; command
-	below. The &quot;listen&quot; command shares some of its internal
-	plumbing with &quot;subscribe&quot; so using &quot;subscribe xxx&quot; 
-	changes the list of echoed notifications from nothing or everything to only 
-	xxx.
-	<br>
-	Please consult section <a href="#NC">Notifications</a> for a list of 
-	possible notifications.
+	The &quot;exit&quot; command closes the TCP connection with the server.
 </p>
 <p>
-	Examples:
+	Example:
 </p>
 <blockquote> 
 	<p>
-		Request: &quot;listen 1&lt;LF&gt;&quot;
+		Request: &quot;exit&lt;LF&gt;&quot;
 		<br>
-		Response:
+		Response: &quot;exit&lt;LF&gt;&quot;
 		<br>
-		listen 1&lt;LF&gt;
-		<br>
-		04:20:00:12:23:45 mixer volume 25&lt;LF&gt;
-		<br>
-		04:20:00:12:23:45 pause&lt;LF&gt;
-		<br>
-		...
+		(Connection terminated)
 	</p>
 </blockquote>
 
 <br>
-<p id="subscribe">
+<p id="shutdown">
 	<strong>
 		<code>
-			subscribe
-			&lt;comma_separated_notification_list&gt;
+			shutdown
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;subscribe&quot; command is similar to &quot;<a
-	href="#listen">listen</a>&quot; but echoes only a subset of the
-	notifications, indicated by a comma separated list. If no list is provided,
-	the notifications are turned off. This command shares some of its internal
-	plumbing with &quot;listen&quot; so using &quot;listen 0&quot; or
-	&quot;listen 1&quot; changes the list of echoed notifications (to nothing
-	and everything, respectively).
-	<br>
-	Please consult section <a href="#NC">Notifications</a> for a list of 
-	possible notifications.
+	The &quot;shutdown&quot; command shuts down the server. The CLI connection
+	is terminated. Note that, obviously, there is no symmetrical command to 
+	restart the server.
 </p>
 <p>
-	Examples:
+	Example:
 </p>
 <blockquote> 
 	<p>
-		Request: &quot;subscribe mixer,pause&lt;LF&gt;&quot;
+		Request: &quot;shutdown&lt;LF&gt;&quot;
 		<br>
-		Response:
+		Response: &quot;shutdown&lt;LF&gt;&quot;
 		<br>
-		subscribe mixer,pause&lt;LF&gt;
-		<br>
-		04:20:00:12:23:45 mixer volume 25&lt;LF&gt;
-		<br>
-		04:20:00:12:23:45 pause&lt;LF&gt;
-		<br>
-		...
+		(Connection terminated)
 	</p>
 </blockquote>
 
-<br>
-<p>
-	<strong>
-		<code>
-			pref 
-			&lt;prefname&gt; 
-			&lt;prefvalue|?&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;pref&quot; command allows the caller to set and query the 
-	SlimServer's internal preferences values.
-</p>
-<p>
-	Examples:
-</p>
-<blockquote>
-	<p>
-		Request: &quot;pref audiodir ?&lt;LF&gt;&quot;
-		<br>
-		Response: &quot;pref audiodir 
-			%2fUsers%2fdean%2fDesktop%2ftest%20music&lt;LF&gt;&quot;
-	</p>
-	<p>
-		Request: &quot;pref playlistdir 
-			%2fUsers%2fdean%2fplaylists&lt;LF&gt;&quot;
-		<br>
-		Response: &quot;pref playlistdir 
-			%2fUsers%2fdean%2fplaylists&lt;LF&gt;&quot;
-	</p>
-</blockquote>
 
-<br><p><strong><code>exit</code></strong><br></p>
-<p>The &quot;exit&quot; command closes the TCP connection with the server.</p>
-<p>Examples:</p>
-<blockquote> 
-  <p>Request: &quot;exit&lt;LF&gt;&quot;<br>
-    Response: &quot;exit&lt;LF&gt;&quot;<br>
-    (Connection terminated)</p>
-</blockquote>
-
-<br><p id="shutdown"><strong><code>shutdown</code></strong><br></p>
-<p>The &quot;shutdown&quot; command shuts down the server. The CLI connection
-   is terminated. Note that obviously, there is no symmetrical command to 
-   restart the server.</p>
-<p>Examples:</p>
-<blockquote> 
-  <p>Request: &quot;shutdown&lt;LF&gt;&quot;<br>
-    Response: &quot;shutdown&lt;LF&gt;&quot;<br>
-    (Connection terminated)</p>
-</blockquote>
-
-<br><p id="version"><strong><code>version</code></strong><br></p>
-<p>The &quot;version&quot; queries the server for its version number.</p>
-<p>Examples:</p>
-<blockquote> 
-  <p>Request: &quot;version ?&lt;LF&gt;&quot;<br>
-    Response: &quot;version 6.0.2&lt;LF&gt;&quot;<br></p>
-</blockquote>
-
+<!----------------------------------------------------------------------------->
+<!-- PLAYER COMMANDS                                                         -->
+<!----------------------------------------------------------------------------->
 <hr>
-<h4 id="PC">Players commands and queries</h4>
+<h2 id="PC">
+	Players commands and queries
+</h2>
+<ul>
+	<li>
+		<strong><code><a href="#player count ?">player count ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#player id ?">player id ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#player name ?">player name ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#player ip ?">player ip ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#player model ?">player model ?</a></code></strong>
+	</li>
+<!-- MISSING COMMANDS HERE ! -->
+	<li>
+		<strong><code><a href="#connected ?">connected ?</a></code></strong>
+	</li>
+</ul>
 
-<p><strong><code>player count ?</code></strong></p>
-<p>The &quot;player count&quot; command returns the number of players defined in the system.</p>
-<blockquote> 
-  <p> Request: &quot;player count ?&lt;LF&gt;&quot;<br>
-     Response: &quot;player count 2&lt;LF&gt;&quot;</p>
-</blockquote>
-
-<br>
-<p>
+<p id="player count ?">
 	<strong>
 		<code>
 			player
-			id 
-			&lt;playerindex|playerid&gt;
+			count
 			?
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;player id&quot; command returns the unique identifier of a player,
+	The &quot;player count ?&quot; query returns the number of players 
+	connected to the server.
+</p>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;player count ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;player count 2&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="player id ?">
+	<strong>
+		<code>
+			player
+			id 
+			&lt;playerindex&gt;
+			?
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;player id ?&quot; query returns the unique identifier of a player,
 	(&lt;playerid&gt; parameter of many CLI commands). For physical Slim Devices
 	players this is generally the MAC address. The IP address is used for remote
 	streams.
+</p>
+<p>
+	Example:
+</p>
 <blockquote> 
 	<p>
 		Request: &quot;player id 0 ?&lt;LF&gt;&quot;
@@ -864,25 +1063,61 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 	</p>
 </blockquote>
   
-<br><p><strong><code>player name &lt;playerindex|playerid&gt; ?</code></strong></p>
-<p>The &quot;player name&quot; command returns the human-readable name for the 
-  specified player. If the name has not been specified by the user in the Player 
-  Settings, then a default name will be used, usually the IP address.</p>
+<br>
+<p id="player name ?">
+	<strong>
+		<code>
+			player
+			name 
+			&lt;playerindex|playerid&gt;
+			?
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;player name ?&quot; query returns the human-readable name for the
+	specified player. If the name has not been specified by the user in the 
+	Player Settings, then a default name will be used, usually the IP address.
+</p>
+<p>
+	Example:
+</p>
 <blockquote> 
-  <p> Request: &quot;player name 0 ?&lt;LF&gt;&quot;<br>
-     Response: &quot;player name 0 Living Room&lt;LF&gt;&quot;</p>
+	<p>
+		Request: &quot;player name 0 ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;player name 0 Living Room&lt;LF&gt;&quot;
+	</p>
 </blockquote>
   
-<br><p><strong><code>player ip &lt;playerindex|playerid&gt; ?</code></strong></p>
-<p>The &quot;player ip&quot; command returns the IP address (along with port number) of the specified player.
-Note that the IP address and or port may change if the player reconnects or is rebooted.  Use the playerid to uniquely identify the player.</p>
+<br>
+<p id="player ip ?">
+	<strong>
+		<code>
+			player
+			ip 
+			&lt;playerindex|playerid&gt;
+			?
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;player ip ?&quot; query returns the IP address (along with port 
+	number) of the specified player.
+</p>
+<p>
+	Example:
+</p>
 <blockquote> 
-  <p> Request: &quot;player ip 0 ?&lt;LF&gt;&quot;<br>
-     Response: &quot;player ip 0 192.168.1.22:3483&lt;LF&gt;&quot;</p>
+	<p>
+		Request: &quot;player ip 0 ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;player ip 0 192.168.1.22:3483&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
 <br>
-<p>
+<p id="player model ?">
 	<strong>
 		<code>
 			player
@@ -893,10 +1128,13 @@ Note that the IP address and or port may change if the player reconnects or is r
 	</strong>
 </p>
 <p>
-	The &quot;player model&quot; command returns the model of the player, 
-	currently one of &quot;squeezebox2&quot;, &quot;squeezebox&quot;, 
-	&quot;slimp3&quot;, &quot;softsqueeze&quot;, or &quot;http&quot; (for
-	remote streaming connections).
+	The &quot;player model ?&quot; query returns the model of the player, 
+	currently one of &quot;transporter&quot;, &quot;squeezebox2&quot;, 
+	&quot;squeezebox&quot;, &quot;slimp3&quot;, &quot;softsqueeze&quot;, 
+	or &quot;http&quot; (for remote streaming connections).
+</p>
+<p>
+	Example:
 </p>
 <blockquote>
 	<p>
@@ -905,6 +1143,7 @@ Note that the IP address and or port may change if the player reconnects or is r
 		Response: &quot;player model squeezebox&lt;LF&gt;&quot;
 	</p>
 </blockquote>
+
 
 <br><p><strong><code>player displaytype &lt;playerindex|playerid&gt; ?</code></strong></p>
 <p>The &quot;player displaytype&quot; command returns the display model of the player. Graphical 
@@ -1003,7 +1242,7 @@ display types start with &quot;graphic-&quot;, non-graphical display type with &
 </blockquote>
 
 <br>
-<p>
+<p id="connected ?">
 	<strong>
 		<code>
 			&lt;playerid&gt;
@@ -1013,9 +1252,9 @@ display types start with &quot;graphic-&quot;, non-graphical display type with &
 	</strong>
 </p>
 <p>
-	Returns the connected state of the player.  HTTP and Squeezebox players
-	will indicate 1 or 0 depending on the state of the TCP connection to the
-	player. SLIMP3 players, since they use UDP, always return 1.
+	Returns the connected state of the player, 1 or 0 depending on the state of
+	the TCP connection to the player. SLIMP3 players, since they use UDP, 
+	always return 1.
 </p>
 <p>
 	Examples:
@@ -1072,21 +1311,42 @@ display types start with &quot;graphic-&quot;, non-graphical display type with &
   <p>Request: &quot;04:20:00:12:23:45 mixer muting&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer muting&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p id ="mixerbass"><strong>
-	<code>&lt;playerid&gt; mixer bass &lt;0 .. 100|-100 .. +100|?&gt;</code>
-</strong></p>
-<p>The &quot;mixer bass&quot; command returns or sets the current bass setting 
-   for the player. This is only supported by SliMP3 and SqueezeBox (SB1) 
-   players. For more information on the 0 to 100 scale, please refer to 
-   the &quot;<a href="#volume">mixer volume</a>&quot; command. </p>
-<p> Example: </p>
-<blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 mixer bass ?&lt;LF&gt;&quot;
-  <br>Response: &quot;04:20:00:12:23:45 mixer bass 98&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 mixer bass 25&lt;LF&gt;&quot;
-  <br>Response: &quot;04:20:00:12:23:45 mixer bass 25&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 mixer bass +10&lt;LF&gt;&quot;
-  <br>Response: &quot;04:20:00:12:23:45 mixer bass +10&lt;LF&gt;&quot;</p>
+<br>
+<p id ="mixerbass">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			mixer
+			bass 
+			&lt;0 .. 100|-100 .. +100|?&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;mixer bass&quot; command returns or sets the current bass setting 
+	for the player. This is only supported by SliMP3 and SqueezeBox (SB1) 
+	players. For more information on the 0 to 100 scale, please refer to 
+	the &quot;<a href="#volume">mixer volume</a>&quot; command.
+</p>
+<p>
+	Example:
+</p>
+<blockquote>
+	<p>
+		Request: &quot;04:20:00:12:23:45 mixer bass ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 mixer bass 98&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 mixer bass 25&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 mixer bass 25&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 mixer bass +10&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 mixer bass +10&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
 <br><p id="mixertreble"><strong>
@@ -1368,7 +1628,7 @@ preferences values.</p>
   <p>Request: &quot;04:20:00:12:23:45 playerpref doublesize ?&quot;<br>Response: &quot;04:20:00:12:23:45 playerpref doublesize 1&quot;</p>
   <p>Request: &quot;04:20:00:12:23:45 playerpref doublesize 0&quot;<br>Response: &quot;04:20:00:12:23:45 playerpref doublesize 0&quot;</p>
 </blockquote>
-
+<!-- doublesize -->
 <br><p id="button"><strong><code>&lt;playerid&gt; button &lt;buttoncode&gt;</code></strong></p>
 <p>The &quot;button&quot; command simulates a button press. Valid button codes correspond to the functions defined in the Default.map file.
 <p>Example:</p>
@@ -1515,7 +1775,7 @@ preferences values.</p>
 		</td>
 		<td>
 			Player unique identifier. Equivalent to 
-			&quot;player id &lt;playerindex&gt; ?&quot;.
+			&quot;<a href="#player id ?">player id ?</a>&quot;.
 		</td>
 	</tr>
 	<tr>
@@ -1524,7 +1784,7 @@ preferences values.</p>
 		</td>
 		<td>
 			Player IP and port. Equivalent to 
-			&quot;player ip &lt;playerindex&gt; ?&quot;.
+			&quot;<a href="#player ip ?">player ip ?</a>&quot;.
 		</td>
 	</tr>
 	<tr>
@@ -1533,7 +1793,7 @@ preferences values.</p>
 		</td>
 		<td>
 			Player name. Equivalent to 
-			&quot;player name &lt;playerindex&gt; ?&quot;.
+			&quot;<a href="#player name ?">player name ?</a>&quot;.
 		</td>
 	</tr>
 	<tr>
@@ -1542,7 +1802,7 @@ preferences values.</p>
 		</td>
 		<td>
 			Player model. Equivalent to 
-			&quot;player model &lt;playerindex&gt; ?&quot;.
+			&quot;<a href="#player model ?">player model ?</a>&quot;.
 		</td>
 	</tr>
 	<tr>
@@ -1761,9 +2021,69 @@ preferences values.</p>
 	&lt;LF&gt;&quot;</p>
 </blockquote>
 
+<!----------------------------------------------------------------------------->
+<!-- DATABASE COMMANDS                                                       -->
+<!----------------------------------------------------------------------------->
 <hr>
-<h4 id="DB">Database commands and queries</h4>
+<h2 id="DB">
+	Database commands and queries
+</h2>
+<ul>
+	<li>
+		<strong><code><a href="#rescan">rescan</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#wipecache">wipecache</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#info total genres ?">info total genres ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#info total artists ?">info total artists ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#info total albums ?">info total albums ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#info total songs ?">info total songs ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#genres">genres</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#artists">artists</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#albums">albums</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlists">playlists</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlists tracks">playlists tracks</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlists rename">playlists rename</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlists delete">playlists delete</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlists edit">playlists edit</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#songinfo">songinfo</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#titles">titles</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#search">search</a></code></strong>
+	</li>
+</ul>
 
+
+<br>
 <p id="rescan">
 	<strong>
 		<code>
@@ -1824,7 +2144,7 @@ preferences values.</p>
 </blockquote>
 
 <br>
-<p id="info total genres">
+<p id="info total genres ?">
 	<strong>
 		<code>
 			info
@@ -1850,7 +2170,7 @@ preferences values.</p>
 </blockquote>
 
 <br>
-<p id="info total artists">
+<p id="info total artists ?">
 	<strong>
 		<code>
 			info
@@ -1863,8 +2183,8 @@ preferences values.</p>
 <p>
 	The &quot;info total artists ?&quot; query returns the number of unique
 	artists in the server music database. The &quot;Composer, band and
-	orchestra in artists&quot; setting of the server determines which
-	contributors are considered &quot;artists&quot;.
+	orchestra in artists&quot; preference (Server Settings, Behavior) determines
+	which contributors are considered artists.
 </p>
 <p>
 	Examples:
@@ -1878,7 +2198,7 @@ preferences values.</p>
 </blockquote>
 
 <br>
-<p id="info total albums">
+<p id="info total albums ?">
 	<strong>
 		<code>
 			info
@@ -1904,7 +2224,7 @@ preferences values.</p>
 </blockquote>
 
 <br>
-<p id="info total songs">
+<p id="info total songs ?">
 	<strong>
 		<code>
 			info 
@@ -1944,15 +2264,15 @@ preferences values.</p>
 	The &quot;genres&quot; query returns all genres known by the server.
 	<br>
 	Note that the server supports multiple genres per track, depending
-	on the configuration of the &quot;Multiple items in tags&quot; parameter
-	in the &quot;Behavior&quot; tab of the server settings.
+	on the &quot;Multiple items in tags&quot; preference (Server Settings, 
+	Behavior).
 </p>
 <p>
 	Accepted tagged parameters:
 </p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="150">
+		<td width="100">
 			<b>Tag</b>
 		</td>
 		<td>
@@ -1970,12 +2290,11 @@ preferences values.</p>
 	</tr>
 	<tr>
 		<td>
-			contributor_id|artist_id
+			artist_id
 		</td>
 		<td>
-			Limit results to those genres proposed by the contributor
-			identified by &quot;contributor_id&quot;. &quot;artist_id&quot; is
-			also accepted.
+			Limit results to those genres proposed by the artist
+			identified by &quot;artist_id&quot;.
 		</td>
 	</tr>
 	<tr>
@@ -1993,8 +2312,16 @@ preferences values.</p>
 		</td>
 		<td>
 			Limit results to the genres of the track identified by 
-			&quot;track_id&quot;. If present, &quot;contributor_id&quot; and
-			&quot;album_id&quot; are ignored.
+			&quot;track_id&quot;. If present, other filters are ignored.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			year
+		</td>
+		<td>
+			Limit results to the genres of the tracks of the given
+			&quot;year&quot;.
 		</td>
 	</tr>
 	<tr>
@@ -2036,7 +2363,7 @@ preferences values.</p>
 		<td>
 			Number of results returned by the query. If no filter parameter is
 			present, this is the same value as returned by 
-			&quot;<a href="#info total genres">info total genres ?</a>&quot;.
+			&quot;<a href="#info total genres ?">info total genres ?</a>&quot;.
 		</td>
 	</tr>
 	<tr>
@@ -2086,67 +2413,154 @@ preferences values.</p>
 	</p>
 </blockquote>
 
-<br><p id="artists"><strong><code>artists &lt;start&gt; &lt;itemsPerResponse&gt; &lt;taggedParameters&gt;</code></strong></p>
-<p>The &quot;artists&quot; command returns all artists known by the SlimServer.</p>
-<p>Accepted tagged parameters:</p>
+
+<br>
+<p id="artists">
+	<strong>
+		<code>
+			artists
+			&lt;start&gt;
+			&lt;itemsPerResponse&gt;
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;artists&quot; query returns all artists known by the server.
+	The results of this query depend in part on the &quot;Compilations&quot;
+	preference (Server Settings, Behavior). The &quot;Various Artists&quot; 
+	pseudo-artist appears if the server groups compilations.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
+		<td width="100">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
 	</tr>
 	<tr>
-		<td>search</td>
-		<td>Search substring. The search is case insensitive and obeys the &quot;Search Within Words&quot; server parameter.</td>
+		<td>
+			search
+		</td>
+		<td>
+			Search substring. The search is case insensitive and obeys the 
+			&quot;Search Within Words&quot; server parameter.
+		</td>
 	</tr>
 	<tr>
-		<td>genre_id</td>
-		<td>Genre ID, to restrict the results to those artists with songs of that genre.</td>
+		<td>
+			genre_id
+		</td>
+		<td>
+			Genre ID, to restrict the results to those artists with songs of 
+			that genre.
+		</td>
 	</tr>
 	<tr>
-		<td>album_id</td>
-		<td>Album ID, to restrict the results to those artists with songs of that album.</td>
+		<td>
+			album_id
+		</td>
+		<td>
+			Album ID, to restrict the results to those artists with songs of 
+			that album.
+		</td>
 	</tr>
 	<tr>
-		<td>charset</td>
-		<td>Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.</td>
+		<td>
+			charset
+		</td>
+		<td>
+			Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.
+		</td>
 	</tr>
 </table>
-<p>Returned tagged parameters:</p>
+<p>
+	Returned tagged parameters:
+</p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
+		<td width="100">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
 	</tr>
 	<tr>
-		<td>rescan</td>
-		<td>Returned with value 1 if the SlimServer is still scanning the database. The results may therefore be incomplete.
-		Not returned if no scan is in progress.</td>
+		<td>
+			rescan
+		</td>
+		<td>
+			Returned with value 1 if the SlimServer is still scanning the 
+			database. The results may therefore be incomplete. Not returned if 
+			no scan is in progress.
+		</td>
 	</tr>
 	<tr>
-		<td>count</td>
-		<td>Number of results returned by the query. If no search string is present, this is the same value as returned by &quot;info total artists ?&quot;</td>
+		<td>
+			count
+		</td>
+		<td>
+			Number of results returned by the query. If no search string is 
+			present, this is the same value as returned by 
+			&quot;<a href="#info total artists ?">info total artists ?</a>&quot;
+		</td>
 	</tr>
 	<tr>
-		<td><em>For each artist:</em></td>
-		<td></td>
+		<td>
+			<em>For each artist:</em>
+		</td>
+		<td>
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;<b>id</b></td>
-		<td>Artist ID. Item delimiter.</td>
+		<td>
+			&nbsp;&nbsp;<b>id</b>
+		</td>
+		<td>
+			Artist ID. Item delimiter.
+		</td>
 	</tr>
 	<tr>
-		<td>&nbsp;&nbsp;artist</td>
-		<td>Artist name.</td>
+		<td>
+			&nbsp;&nbsp;artist
+		</td>
+		<td>
+			Artist name.
+		</td>
 	</tr>
 </table>
-<p>Example:</p>
+<p>
+	Example:
+</p>
 <blockquote> 
-  <p> Request: &quot;artists 0 5&lt;LF&gt;&quot;<br>
-  	 Response: artists 0 5 count:7 id:2 artist:Anastacia id:3 artist:Calogero id:4 artist:Evanescence id:5 artist:Leftfield%20%26%20Lydon id:18 artist:Llorca&lt;LF&gt;&quot;</p>
-  <p> Request: &quot;artists 0 5 genre_id:7&lt;LF&gt;&quot;<br>
-  	 Response: artists 0 5 genre_id:7 count:2 id:2 artist:Anastacia id:19 artist:Sarah%20Connor&lt;LF&gt;&quot;</p>
+	<p>
+		Request: &quot;artists 0 5&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;artists 0 5 count:7 
+		id:2 artist:Anastacia 
+		id:3 artist:Calogero 
+		id:4 artist:Evanescence 
+		id:5 artist:Leftfield%20%26%20Lydon 
+		id:18 artist:Llorca
+		&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;artists 0 5 genre_id:7&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;artists 0 5 genre_id:7 count:2 
+		id:2 artist:Anastacia 
+		id:19 artist:Sarah%20Connor
+		&lt;LF&gt;&quot;
+	</p>
 </blockquote>
+
 
 <br>
 <p id="albums">
@@ -2160,9 +2574,9 @@ preferences values.</p>
 	</strong>
 </p>
 <p>
-	The &quot;albums&quot; command returns all albums known by SlimServer.
+	The &quot;albums&quot; query returns all albums known by the server.
 	The results of this query depend in part on the &quot;Group discs&quot;
-	setting of SlimServer (Server settings, Behavior &quot;tab&quot;).
+	preference (Server Settings, Behavior).
 </p>
 <p>
 	Accepted tagged parameters:
@@ -2196,12 +2610,21 @@ preferences values.</p>
 	</tr>
 	<tr>
 		<td>
-			contributor_id|artist_id
+			artist_id
 		</td>
 		<td>
-			Contributor ID, to restrict the results to those albums having
-			&quot;contributor_id&quot; as primary contributor. 
-			&quot;artist_id&quot; is also accepted.
+			Artist ID, to restrict the results to those albums by
+			&quot;artist_id&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			track_id
+		</td>
+		<td>
+			Track ID, to restrict the results to the album of 
+			&quot;track_id&quot;. If specified, all other filters are
+			ignored.
 		</td>
 	</tr>
 	<tr>
@@ -2210,6 +2633,25 @@ preferences values.</p>
 		</td>
 		<td>
 			Year, to restrict the results to those albums of that year.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			compilation
+		</td>
+		<td>
+			Compilation, to restrict the results to those albums that are (1)
+			or aren't (0) compilations.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			sort
+		</td>
+		<td>
+			Sort order of the returned list of albums. One of &quot;album&quot;,
+			(the default) or &quot;new&quot; (which enables to replicate the
+			&quot;New Music&quot; browse mode of the web interface).
 		</td>
 	</tr>
 	<tr>
@@ -2236,8 +2678,8 @@ preferences values.</p>
 </p>
 <table border="0" spacing="50">
 	<tr>
-		<td></td>
-		<td width="100">
+		<td width="15"></td>
+		<td width="135">
 			<b>Tag</b>
 		</td>
 		<td>
@@ -2263,7 +2705,7 @@ preferences values.</p>
 		<td>
 			Number of results returned by the query. If no filter
 			is present, this is the same value as returned by 
-			&quot;info total albums ?&quot;
+			&quot;<a href="#info total albums ?">info total albums ?</a>&quot;
 		</td>
 	</tr>
 	<tr>
@@ -2292,18 +2734,6 @@ preferences values.</p>
 			Album name, including SlimServer's added &quot;(N of M)&quot; if
 			the server is set to group multi disc albums together. 
 			See tag &quot;title&quot; for the unmodified value.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			a
-		</td>
-		<td>
-			&nbsp;&nbsp;contributor_id
-		</td>
-		<td>
-			The album &quot;primary&quot; contributor, as determined by
-			the server (f.e. &quot;Various Artists&quot;).
 		</td>
 	</tr>
 	<tr>
@@ -2379,15 +2809,34 @@ preferences values.</p>
 		</td>
 	</tr>
 </table>
-<p>Example:</p>
-<blockquote> 
-  <p> Request: &quot;albums 0 4&lt;LF&gt;&quot;<br>
-  	 Response: &quot;albums 0 4 count:14 id:1 album:Amadeus%20(Disc%201%20of%202) id:4 album:Anastacia id:5 album:Bounce%20[Single] id:6 album:Fallen&lt;LF&gt;&quot;</p>
-  <p> Request: &quot;albums 0 5 genre_id:7&lt;LF&gt;&quot;<br>
-  	 Response: &quot;albums 0 5 genre_id:7 count:2  id:4 album:Anastacia  id:5 album:Bounce%20[Single]&lt;LF&gt;&quot;</p>
-  <p> Request: &quot;albums 0 5 artist_id:19&lt;LF&gt;&quot;<br>
-  	 Response: &quot;albums 0 5 artist_id:19 count:1 id:5 album:Bounce%20[Single]&lt;LF&gt;&quot;</p>
+<p>
+	Examples:
+</p>
+<blockquote>
+	<p>
+		Request: &quot;albums 0 4&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;albums 0 4 count:14 
+		id:1 album:Amadeus%20(Disc%201%20of%202) 
+		id:4 album:Anastacia 
+		id:5 album:Bounce%20[Single] 
+		id:6 album:Fallen&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;albums 0 5 genre_id:7&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;albums 0 5 genre_id:7 count:2
+		id:4 album:Anastacia 
+		id:5 album:Bounce%20[Single]&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;albums 0 5 artist_id:19&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;albums 0 5 artist_id:19 count:1 
+		id:5 album:Bounce%20[Single]&lt;LF&gt;&quot;
+	</p>
 </blockquote>
+
 
 <br>
 <p id="playlists">
@@ -2408,7 +2857,7 @@ preferences values.</p>
 </p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="150">
+		<td width="100">
 			<b>Tag</b>
 		</td>
 		<td>
@@ -2448,8 +2897,8 @@ preferences values.</p>
 </p>
 <table border="0" spacing="50">
 	<tr>
-		<td></td>
-		<td width="150">
+		<td width="10"></td>
+		<td width="90">
 			<b>Tag</b>
 		</td>
 		<td>
@@ -2553,7 +3002,7 @@ preferences values.</p>
 </p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="150"><b>Tag</b></td>
+		<td width="100"><b>Tag</b></td>
 		<td><b>Description</b></td>
 	</tr>
 	<tr>
@@ -2622,7 +3071,7 @@ preferences values.</p>
 </p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="150">
+		<td width="100">
 			<b>Tag</b>
 		</td>
 		<td>
@@ -2722,7 +3171,7 @@ preferences values.</p>
 </p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="150">
+		<td width="100">
 			<b>Tag</b>
 		</td>
 		<td>
@@ -2767,7 +3216,7 @@ preferences values.</p>
 </p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="150">
+		<td width="100">
 			<b>Tag</b>
 		</td>
 		<td>
@@ -2838,126 +3287,240 @@ preferences values.</p>
 </blockquote>
 
 <br>
-	<p id="songinfo">
-		<strong>
-			<code>songinfo &lt;start&gt; &lt;itemsPerResponse&gt;
-				&lt;taggedParameters&gt;
-			</code>
-		</strong>
-	</p>
-	<p>The &quot;songinfo&quot; command returns all the information on a song 
-	   known by the SlimServer. Please note that the &lt;start&gt; and 
-	   &lt;itemsPerResponse&gt; parameters apply to the individual data fields
-	   below and not, as they do in other extended CLI queries, to the number
-	   or songs (or artists, genres, etc.) returned; the 
-	   &quot;songinfo&quot; only ever returns information about a single song.</p>
-	<p>Accepted tagged parameters:</p>
+<p id="songinfo">
+	<strong>
+		<code>
+			songinfo 
+			&lt;start&gt;
+			&lt;itemsPerResponse&gt;
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;songinfo&quot; command returns all the information on a song 
+	known by the server. Please note that the &lt;start&gt; and 
+	&lt;itemsPerResponse&gt; parameters apply to the individual data fields
+	below and not, as they do in other extended CLI queries, to the number
+	or songs (or artists, genres, etc.) returned; the 
+	&quot;songinfo&quot; only ever returns information about a single song.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
 <table border="0" spacing="50">
 	<tr>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
+		<td width="100">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
 	</tr>
 	<tr>
-		<td>url</td>
-		<td>Song path as returned by other CLI commands. This is a mandatory 
-			parameter, except if &quot;track_id&quot; is provided.</td>
+		<td>
+			url
+		</td>
+		<td>
+			Song path as returned by other CLI commands. This is a mandatory 
+			parameter, except if &quot;track_id&quot; is provided.
+		</td>
 	</tr>
 	<tr>
-		<td>track_id</td>
-		<td>Track ID as returned by other CLI commands. This is a mandatory 
-			parameter, except if &quot;url&quot; is provided.</td>
+		<td>
+			track_id
+		</td>
+		<td>
+			Track ID as returned by other CLI commands. This is a mandatory 
+			parameter, except if &quot;url&quot; is provided.
+		</td>
 	</tr>
 	<tr>
-		<td>tags</td>
-		<td>Determines which tags are returned. Each returned tag is identified
+		<td>
+			tags
+		</td>
+		<td>
+			Determines which tags are returned. Each returned tag is identified
 			by a letter (see below). The default value is all info except the
-			url, depending on the given parameter.</td>
+			url, depending on the given parameter.
+		</td>
 	</tr>
 	<tr>
-		<td>charset</td>
-		<td>Character set to use to return data. See 
-			<a href="#Notes">charset notes</a> above.</td>
+		<td>
+			charset
+		</td>
+		<td>
+			Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.
+		</td>
 	</tr>
 </table>
-<p>Returned tagged parameters:</p>
+<p>
+	Returned tagged parameters:
+</p>
 <table border="0" spacing="50">
 	<tr>
-		<td></td>
-		<td width="100"><b>Tag</b></td>
-		<td><b>Description</b></td>
+		<td width="10">
+		</td>
+		<td width="90">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
 	</tr>
 	<tr>
-		<td></td>
-		<td>rescan</td>
-		<td>Returned with value 1 if the SlimServer is still scanning the 
+		<td>
+		</td>
+		<td>
+			rescan
+		</td>
+		<td>
+			Returned with value 1 if the SlimServer is still scanning the 
 			database. The results may therefore be incomplete.
-			Not returned if no scan is in progress.</td>
+			Not returned if no scan is in progress.
+		</td>
 	</tr>
 	<tr>
-		<td></td>
-		<td>count</td>
-		<td>Number of results returned by the query, that is, total number of 
-			elements to return for this song.</td>
+		<td>
+		</td>
+		<td>
+			count
+		</td>
+		<td>
+			Number of results returned by the query, that is, total number of 
+			elements to return for this song.
+		</td>
 	</tr>
 	<tr>
-		<td></td>
-		<td>id</td>
-		<td>Track ID.</td>
+		<td>
+		</td>
+		<td>
+			id
+		</td>
+		<td>
+			Track ID.
+		</td>
 	</tr>
 	<tr>
-		<td></td>
-		<td>title</td>
-		<td>Song title</td>
+		<td>
+		</td>
+		<td>
+			title
+		</td>
+		<td>
+			Song title
+		</td>
 	</tr>
 	<tr>
-		<td><b>g</b></td>
-		<td>genre</td>
-		<td>Genre name. Only if known.</td>
+		<td>
+			<b>g</b>
+		</td>
+		<td>
+			genre
+		</td>
+		<td>
+			Genre name. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>p</b></td>
-		<td>genre_id</td>
-		<td>Genre ID. Only if known.</td>
+		<td>
+			<b>p</b>
+		</td>
+		<td>
+			genre_id
+		</td>
+		<td>
+			Genre ID. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>a</b></td>
-		<td>artist</td>
-		<td>Artist name. Only if known.</td>
+		<td>
+			<b>a</b>
+		</td>
+		<td>
+			artist
+		</td>
+		<td>
+			Artist name. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>s</b></td>
-		<td>artist_id</td>
-		<td>Artist ID. Only if known.</td>
+		<td>
+			<b>s</b>
+		</td>
+		<td>
+			artist_id
+		</td>
+		<td>
+			Artist ID. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>c</b></td>
-		<td>composer</td>
-		<td>Composer name. Only if known.</td>
+		<td>
+			<b>c</b>
+		</td>
+		<td>
+			composer
+		</td>
+		<td>
+			Composer name. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>b</b></td>
-		<td>band</td>
-		<td>Band name. Only if known.</td>
+		<td>
+			<b>b</b>
+		</td>
+		<td>
+			band
+		</td>
+		<td>
+			Band name. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>h</b></td>		
-		<td>conductor</td>
-		<td>Conductor name. Only if known.</td>
+		<td>
+			<b>h</b>
+		</td>
+		<td>
+			conductor
+		</td>
+		<td>
+			Conductor name. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>l</b></td>
-		<td>album</td>
-		<td>Album name. Only if known.</td>
+		<td>
+			<b>l</b>
+		</td>
+		<td>
+			album
+		</td>
+		<td>
+			Album name. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>e</b></td>
-		<td>album_id</td>
-		<td>Album ID. Only if known.</td>
+		<td>
+			<b>e</b>
+		</td>
+		<td>
+			album_id
+		</td>
+		<td>
+			Album ID. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>d</b></td>
-		<td>duration</td>
-		<td>Song duration in seconds.</td>
+		<td>
+			<b>d</b>
+		</td>
+		<td>
+			duration
+		</td>
+		<td>
+			Song duration in seconds.
+		</td>
 	</tr>
 	<tr>
 		<td>
@@ -2982,73 +3545,172 @@ preferences values.</p>
 		</td>
 	</tr>
 	<tr>
-		<td><b>t</b></td>
-		<td>tracknum</td>
-		<td>Track number. Only if known.</td>
+		<td>
+			<b>t</b>
+		</td>
+		<td>
+			tracknum
+		</td>
+		<td>
+			Track number. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>y</b></td>
-		<td>year</td>
-		<td>Song year. Only if known.</td>
+		<td>
+			<b>y</b>
+		</td>
+		<td>
+			year
+		</td>
+		<td>
+			Song year. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>m</b></td>
-		<td>bpm</td>
-		<td>Beats per minute. Only if known.</td>
+		<td>
+			<b>m</b>
+		</td>
+		<td>
+			bpm
+		</td>
+		<td>
+			Beats per minute. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>k</b></td>
-		<td>comment</td>
-		<td>Song comments, if any.</td>
+		<td>
+			<b>k</b>
+		</td>
+		<td>
+			comment
+		</td>
+		<td>
+			Song comments, if any.
+		</td>
 	</tr>
 	<tr>
-		<td><b>o</b></td>
-		<td>type</td>
-		<td>Content type. Only if known.</td>
+		<td>
+			<b>o</b>
+		</td>
+		<td>
+			type
+		</td>
+		<td>
+			Content type. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>v</b></td>
-		<td>tagversion</td>
-		<td>Version of tag information in song file. Only if known.</td>
+		<td>
+			<b>v</b>
+		</td>
+		<td>
+			tagversion
+		</td>
+		<td>
+			Version of tag information in song file. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>r</b></td>
-		<td>bitrate</td>
-		<td>Song bitrate. Only if known.</td>
+		<td>
+			<b>r</b>
+		</td>
+		<td>
+			bitrate
+		</td>
+		<td>
+			Song bitrate. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>f</b></td>
-		<td>filesize</td>
-		<td>Song file length in bytes. Only if known.</td>
+		<td>
+			<b>f</b>
+		</td>
+		<td>
+			filesize
+		</td>
+		<td>
+			Song file length in bytes. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>z</b></td>
-		<td>drm</td>
-		<td>Digital rights information. Only if known.</td>
+		<td>
+			<b>z</b>
+		</td>
+		<td>
+			drm
+		</td>
+		<td>
+			Digital rights information. Only if known.
+		</td>
 	</tr>
 	<tr>
-		<td><b>j</b></td>
-		<td>coverart</td>
-		<td>1 if coverart is available for this song. Not listed otherwise.</td>
+		<td>
+			<b>j</b>
+		</td>
+		<td>
+			coverart
+		</td>
+		<td>
+			1 if coverart is available for this song. Not listed otherwise.
+		</td>
 	</tr>
 	<tr>
-		<td><b>n</b></td>
-		<td>modificationTime</td>
-		<td>Date and time song file was last changed.</td>
+		<td>
+			<b>n</b>
+		</td>
+		<td>
+			modificationTime
+		</td>
+		<td>
+			Date and time song file was last changed.
+		</td>
 	</tr>
 	<tr>
-		<td>u</td>
-		<td>url</td>
-		<td>Song file url. Used as &lt;item&gt; parameter for the &quot;playlist
-			add&quot; command, for example.</td>
+		<td>
+			<b>u</b>
+		</td>
+		<td>
+			url
+		</td>
+		<td>
+			Song file url.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>w</b>
+		</td>
+		<td>
+			lyrics
+		</td>
+		<td>
+			Lyrics. Only if known.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>x</b>
+		</td>
+		<td>
+			remote
+		</td>
+		<td>
+			Remote track.
+		</td>
 	</tr>
 </table>
-<p>Example:</p>
+<p>
+	Example:
+</p>
 <blockquote> 
-  <p> Request: &quot;songinfo 0 6 url:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%2520Outside%2520Alone.mp3&lt;LF&gt;&quot;<br>
-  	 Response: &quot;songinfo 0 6 url:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%2520Outside%2520Alone.mp3 count:6 
-  	 id:483 title:Left%20Outside%20Alone genre:Pop artist:Anastacia composer:D.%20Austin/G.%20Ballard album:Anastacia&lt;LF&gt;&quot;</p>
+	<p>
+		Request: &quot;songinfo 0 6 url:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%2520Outside%2520Alone.mp3&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;songinfo 0 6 url:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%2520Outside%2520Alone.mp3 count:6
+		id:483 title:Left%20Outside%20Alone genre:Pop artist:Anastacia composer:D.%20Austin/G.%20Ballard album:Anastacia&lt;LF&gt;&quot;
+	</p>
 </blockquote>
+
 
 <br>
 <p id="titles">
@@ -3070,14 +3732,10 @@ preferences values.</p>
 <table border="0" spacing="50">
 	<tr>
 		<td width="100">
-			<b>
-				Tag
-			</b>
+			<b>Tag</b>
 		</td>
 		<td>
-			<b>
-				Description
-			</b>
+			<b>Description</b>
 		</td>
 	</tr>
 	<tr>
@@ -3160,14 +3818,10 @@ preferences values.</p>
 <table border="0" spacing="50">
 	<tr>
 		<td width="100">
-			<b>
-				Tag
-			</b>
+			<b>Tag</b>
 		</td>
 		<td>
-			<b>
-				Description
-			</b>
+			<b>Description</b>
 		</td>
 	</tr>
 	<tr>
@@ -3187,14 +3841,13 @@ preferences values.</p>
 		<td>
 			Number of results returned by the query. If no search string or
 			album/artist/genre filter is present, this is the same value as 
-			returned by &quot;info total songs ?&quot;.
+			returned by 
+			&quot;<a href="#info total songs ?">info total songs ?</a>&quot;.
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<em>
-				For each title:
-			</em>
+			<em>For each title:</em>
 		</td>
 		<td>
 		</td>
@@ -3236,6 +3889,7 @@ preferences values.</p>
 		url:...&lt;LF&gt;&quot;
 	</p>
 </blockquote>
+
 
 <br>
 <p id="search">
@@ -3462,8 +4116,14 @@ preferences values.</p>
 </blockquote>
 
 
+<!----------------------------------------------------------------------------->
+<!-- PLAYLIST COMMANDS                                                       -->
+<!----------------------------------------------------------------------------->
+
 <hr>
-<h4 id="PL">Playlist commands and queries</h4>
+<h2 id="PL">
+	Playlist commands and queries
+</h2>
 
 <p id="play">
 	<strong>
@@ -3590,7 +4250,7 @@ preferences values.</p>
 </blockquote>
 
 <br>
-<p id="title">
+<p id="cursonginfo">
 	<strong>
 		<code>
 			&lt;playerid&gt; genre ?
@@ -4365,7 +5025,7 @@ in the saved playlists folder.</p>
 			signalstrength
 		</td>
 		<td>
-			Signal strength (only for Squeezeboxen).
+			Signal strength (only for Squeezeboxen and Transporters).
 		</td>
 	</tr>
 	<tr>
@@ -4638,8 +5298,14 @@ in the saved playlists folder.</p>
 </blockquote>
 
 
+<!----------------------------------------------------------------------------->
+<!-- NOTIFICATIONS                                                           -->
+<!----------------------------------------------------------------------------->
+
 <hr>
-<h4 id="NC">Notifications</h4>
+<h2 id="NC">
+	Notifications
+</h2>
 <p>
 	All commands listed in this document are notifications as well as being
 	commands and can be received when using &quot;listen 1&quot; (if they do not
@@ -4653,6 +5319,7 @@ in the saved playlists folder.</p>
 	with strange text representations.
 </p>
 
+<br>
 <p>
 	<strong>
 		<code>
@@ -4720,10 +5387,15 @@ in the saved playlists folder.</p>
 	&quot; information is provided for convenience).
 </p>
 
+
+<!----------------------------------------------------------------------------->
+<!-- PLUGIN COMMANDS                                                         -->
+<!----------------------------------------------------------------------------->
+
 <hr>
-<h4 id="PG">
+<h2 id="PG">
 	Plugins commands and queries
-</h4>
+</h2>
 <p>
 	The following command and queries are proposed by SlimServer plugins. The
 	plugin must be enabled in the SlimServer configuration for the commands
@@ -4731,11 +5403,25 @@ in the saved playlists folder.</p>
 	&quot;<a href="#can">can</a>&quot; to determine if the given command or
 	query is available.
 <p>
+<ul>
+	<li>
+		<strong><a href="#XMLBrowser">Slimdevices Picks, Shoutcast, Podcast, Live Music Archive, RadioIO & RSS</a></strong>
+	</li>
+	<li>
+		<strong><a href="#Live365">Live365</a></strong>
+	</li>
+	<li>
+		<strong><a href="#Favorites">Favorites</a></strong>
+	</li>
+	<li>
+		<strong><a href="#RandomPlay">RandomPlay</a></strong>
+	</li>
+</ul>
 
-
-<h5>
+<br>
+<h3 id="XMLBrowser">
 	Slimdevices Picks, Shoutcast, Podcast, Live Music Archive, RadioIO & RSS
-</h5>
+</h3>
 <p>
 	<strong>
 		<code>
@@ -4983,9 +5669,9 @@ in the saved playlists folder.</p>
 </blockquote>
 
 
-<h5>
+<h3 id="Live365">
 	Live365
-</h5>
+</h3>
 
 <p id="live365 genres">
 	<strong>
@@ -5154,7 +5840,8 @@ in the saved playlists folder.</p>
 			sort
 		</td>
 		<td>
-			Sort order of the returned list of stations. One of &quot;name&quot;, &quot;bitrate&quot;, &quot;rating&quot; or
+			Sort order of the returned list of stations. One of 
+			&quot;name&quot;, &quot;bitrate&quot;, &quot;rating&quot; or
 			&quot;listeners&quot;. If no parameter is given, the default set
 			in the web interface applies.
 		</td>
@@ -5399,7 +6086,9 @@ in the saved playlists folder.</p>
 
 
 
-<h5>Favorites</h5>
+<h3 id="Favorites">
+	Favorites
+</h3>
 
 <p>
 	<strong>
@@ -5540,8 +6229,11 @@ in the saved playlists folder.</p>
 </blockquote>
 
 
-<h5>RandomPlay</h5>
-<p>
+<h3 id="RandomPlay">
+	RandomPlay
+</h3>
+
+<p id="randomplay">
 	<strong>
 		<code>
 			&lt;playerid&gt;
@@ -5566,15 +6258,29 @@ in the saved playlists folder.</p>
 </blockquote>
 
 
+<!----------------------------------------------------------------------------->
+<!-- DEPRECATED COMMANDS                                                     -->
+<!----------------------------------------------------------------------------->
 
 <hr>
-<h4 id="DC">Deprecated commands and queries</h4>
+<h2 id="DC">
+	Deprecated commands and queries
+</h2>
 <p>
 	The following commands are still supported but their usage is not
-	recommended.
+	recommended:
 </p>
+<ul>
+	<li>
+		<strong><code><a href="#mode">mode</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlisttracks">playlisttracks</a></code></strong>
+	</li>
+</ul>
 
-<p id="dc_mode">
+<br>
+<p id="mode">
 	<strong>
 		<code>
 			&lt;playerid&gt;
@@ -5585,12 +6291,13 @@ in the saved playlists folder.</p>
 </p>
 <p>
 	The &quot;mode&quot; command allows to set the player playlist
-	mode directly. <b>It is deprecated</b>. &quot;mode play&quot; has been replaced
-	by &quot;<a href="#play">play</a>&quot; &quot;mode stop&quot; 
+	mode directly. <b>It is deprecated</b>. &quot;mode play&quot; has been 
+	replaced by &quot;<a href="#play">play</a>&quot; &quot;mode stop&quot; 
 	by &quot;<a href="#stop">stop</a>&quot; and &quot;mode pause&quot;
 	by &quot;<a href="#pause">pause 1</a>&quot;.
 </p>
 
+<br>
 <p id="playlisttracks">
 	<strong>
 		<code>

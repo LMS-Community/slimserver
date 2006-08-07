@@ -1,6 +1,6 @@
 package Slim::Control::Queries;
 
-# $Id: Command.pm 5121 2005-11-09 17:07:36Z dsully $
+# $Id:  $
 #
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -20,8 +20,6 @@ package Slim::Control::Queries;
 # There are no important differences between the code for a query and one for
 # a command. Please check the commented command in Commands.pm.
 
-
-
 use strict;
 
 use Scalar::Util qw(blessed);
@@ -32,24 +30,6 @@ use Slim::Utils::Alarms;
 use Slim::Utils::Unicode;
 
 my $d_queries = 0; # local debug flag
-
-our %searchMap = (
-
-	'artist' => 'contributor.namesearch',
-	'genre'  => 'me.namesearch',
-	'album'  => 'album.titlesearch',
-	'track'  => 'track.titlesearch',
-);
-
-our %searchMap2 = (
-
-	'artist' => 'contributor.namesearch',
-	'contributor'  => ['me.namesearch', 'me.namesort'],
-	'genre'        => ['me.namesearch', 'me.namesort'],
-	'album'        => ['me.titlesearch', 'me.titlesort'],
-	'track'  => 'track.titlesearch',
-);
-
 
 sub alarmsQuery {
 	my $request = shift;
@@ -124,6 +104,130 @@ sub alarmsQuery {
 }
 
 
+sub albumsQuery {
+	my $request = shift;
+
+	$d_queries && msg("albumsQuery()\n");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['albums']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $index         = $request->getParam('_index');
+	my $quantity      = $request->getParam('_quantity');
+	my $tags          = $request->getParam('tags');
+	my $search        = $request->getParam('search');
+	my $compilation   = $request->getParam('compilation');
+	my $contributorID = $request->getParam('artist_id');
+	my $genreID       = $request->getParam('genre_id');
+	my $trackID       = $request->getParam('track_id');
+	my $year          = $request->getParam('year');
+	my $sort          = $request->getParam('sort');
+			
+	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album'])) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	if (!defined $tags) {
+		$tags = 'l';
+	}
+	
+	# get them all by default
+	my $where = {};
+	my $attr = {};
+	
+	# Normalize and add any search parameters
+	if (defined $trackID) {
+		$where->{'tracks.id'} = $trackID;
+		push @{$attr->{'join'}}, 'tracks';
+	}
+	
+	# ignore everything if $track_id was specified
+	else {
+	
+		if ($sort eq 'new') {
+			$attr->{'order_by'} = 'tracks.timestamp desc, tracks.disc, tracks.tracknum, tracks.titlesort';
+			push @{$attr->{'join'}}, 'tracks';
+		}
+		
+		if (specified($search)) {
+			$where->{'me.titlesearch'} = {'like', Slim::Utils::Text::searchStringSplit($search)};
+		}
+		
+		if (defined $year) {
+			$where->{'me.year'} = $year;
+		}
+		
+		# Manage joins
+		if (defined $contributorID){
+		
+			# handle the case where we're asked for the VA id => return compilations
+			if ($contributorID == Slim::Schema->variousArtistsObject->id) {
+				$compilation = 1;
+			}
+			else {	
+				$where->{'contributorAlbums.contributor'} = $contributorID;
+				push @{$attr->{'join'}}, 'contributorAlbums';
+				$attr->{'distinct'} = 1;
+			}			
+		}
+	
+		if (defined $genreID){
+			$where->{'genreTracks.genre'} = $genreID;
+			push @{$attr->{'join'}}, {'tracks' => 'genreTracks'};
+			$attr->{'distinct'} = 1;
+		}
+	
+		if (defined $compilation) {
+			if ($compilation == 1) {
+				$where->{'me.compilation'} = 1;
+			}
+			if ($compilation == 0) {
+				$where->{'me.compilation'} = [ { 'is' => undef }, { '=' => 0 } ];
+			}
+		}
+	}
+	
+	# use the browse standard additions, sort and filters, and complete with 
+	# our stuff
+	my $rs = Slim::Schema->rs('Album')->browse->search($where, $attr);
+
+	my $count = $rs->count;
+
+	if (Slim::Music::Import->stillScanning()) {
+		$request->addResult('rescan', 1);
+	}
+
+	$request->addResult('count', $count);
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+
+		my $loopname = '@albums';
+		my $cnt = 0;
+
+		for my $eachitem ($rs->slice($start, $end)) {
+			$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
+			$tags =~ /l/ && $request->addResultLoop($loopname, $cnt, 'album', $eachitem->title);
+			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'year', $eachitem->year);
+			$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'artwork_track_id', $eachitem->artwork);
+			$tags =~ /t/ && $request->addResultLoop($loopname, $cnt, 'title', $eachitem->rawtitle);
+			$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'disc', $eachitem->disc);
+			$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'disccount', $eachitem->discc);
+			$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'compilation', $eachitem->compilation);
+			$cnt++;
+		}
+	}
+
+	$request->setStatusDone();
+}
+
+
 sub artistsQuery {
 	my $request = shift;
 
@@ -152,11 +256,15 @@ sub artistsQuery {
 		'order_by' => 'me.namesort',
 		'distinct' => 'me.id'
 	};
+	
+	# same for the VA search
+	my $where_va = {'me.compilation' => 1};
+	my $attr_va = {};
 
  	# Normalize any search parameters
  	if (specified($search)) {
  
- 		$where->{'me.namesearch'} = {'like', Slim::Web::Pages::Search::searchStringSplit($search)};
+ 		$where->{'me.namesearch'} = {'like', Slim::Utils::Text::searchStringSplit($search)};
  	}
 
 	# Manage joins 
@@ -168,250 +276,79 @@ sub artistsQuery {
 		if (defined $genreID) {
 			$where->{'genreTracks.genre'} = $genreID;
 			push @{$attr->{'join'}}, {'contributorTracks' => {'track' => 'genreTracks'}};
+			
+			$where_va->{'genreTracks.genre'} = $genreID;
+			push @{$attr_va->{'join'}}, {'tracks' => 'genreTracks'};
 		}
 		
 		if (defined $albumID || defined $year) {
+		
 			if (defined $albumID) {
 				$where->{'track.album'} = $albumID;
+				
+				$where_va->{'me.id'} = $albumID;
 			}
+			
 			if (defined $year) {
 				$where->{'track.year'} = $year;
+				
+				$where_va->{'track.year'} = $year;
 			}
+			
 			if (!defined $genreID) {
 				# don't need to add track again if we have a genre search
 				push @{$attr->{'join'}}, {'contributorTracks' => 'track'};
+
+				# same logic for VA search
+				if (defined $year) {
+					push @{$attr->{'join'}}, 'track';
+				}
 			}
 		}
 	}
-
+	
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult('rescan', 1);
 	}
 
 	my $rs = Slim::Schema->rs('Contributor')->browse->search($where, $attr);
 
-	my $count = $rs->count;
+	
+	# Various artist handling. Don't do if pref is off, or if we're
+	# searching, or if we have a track
+	my $count_va = 0;
+
+	if (Slim::Utils::Prefs::get('variousArtistAutoIdentification') &&
+		!defined $search && !defined $trackID) {
+
+		# Only show VA item if there are any
+		$count_va =  Slim::Schema->rs('Album')->search($where_va, $attr_va)->count;
+	}
+
+	my $count = $rs->count + ($count_va?1:0);
 
 	$request->addResult('count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
-	if ($valid) {
+	if ($valid || $count) {
 
 		my $loopname = '@artists';
 		my $cnt = 0;
 
+		# Various artist handling. Don't do if pref is off, or if we're
+		# searching, or if we have a track
+		if ($count_va) {
+			my $vaObj = Slim::Schema->variousArtistsObject;
+
+			$request->addResultLoop($loopname, $cnt, 'id', $vaObj->id);
+			$request->addResultLoop($loopname, $cnt, 'artist', $vaObj->name);
+			$cnt++;
+		}
+
 		for my $eachitem ($rs->slice($start, $end)) {
 			$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
 			$request->addResultLoop($loopname, $cnt, 'artist', $eachitem->name);
-			$cnt++;
-		}
-	}
-
-	$request->setStatusDone();
-}
-
-
-sub albumsQuery {
-	my $request = shift;
-
-	$d_queries && msg("albumsQuery()\n");
-
-	# check this is the correct query.
-	if ($request->isNotQuery([['albums']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	# get our parameters
-	my $index         = $request->getParam('_index');
-	my $quantity      = $request->getParam('_quantity');
-	my $tags          = $request->getParam('tags');
-	my $search        = $request->getParam('search');
-	my $artistID      = $request->getParam('artist_id');
-	my $contributorID = $request->getParam('contributor_id');
-	my $genreID       = $request->getParam('genre_id');
-	my $year          = $request->getParam('year');
-	
-	# we prefer to get contributor_id but accept artist_id
-	if (defined $artistID && !defined $contributorID) {
-		$contributorID = $artistID;
-	}
-		
-	if (!defined $tags) {
-		$tags = 'l';
-	}
-		
-	# get them all by default
-	my $where = {};
-	
-	# sort them
-	my $attr = {
-		order_by => 'me.titlesort, me.disc',
-	};
-
-	# Normalize and add any search parameters
-	if (specified($search)) {
-		$where->{'me.titlesearch'} = {'like', Slim::Web::Pages::Search::searchStringSplit($search)};
-	}
-	
-	if (defined $year) {
-		$where->{'me.year'} = $year;
-	}
-
-	if (defined $contributorID){
-		$where->{'me.contributor'} = $contributorID;
-	}
-
-	# Manage joins
-#	if (defined $contributorID){
-#		$where->{'contributor.id'} = $contributorID;
-#		$attr->{'join'} = {'genreTracks' => {'track' => {'contributorTracks' => 'contributor'}}};
-#		$attr->{'distinct'} = 1;
-#	}
-
-	if (defined $genreID){
-		$where->{'genre.id'} = $genreID;
-		$attr->{'join'} = {'tracks' => {'genreTracks' => 'genre'}};
-		$attr->{'distinct'} = 1;
-	}
-
-	if (Slim::Music::Import->stillScanning()) {
-		$request->addResult('rescan', 1);
-	}
-
-#	my $rs = Slim::Schema->resultset('Album')->search($where, $attr);
-	my $rs = Slim::Schema->resultset('Album')->browse($where);
-
-	my $count = $rs->count;
-
-	$request->addResult('count', $count);
-
-	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-
-	if ($valid) {
-
-		my $loopname = '@albums';
-		my $cnt = 0;
-
-		for my $eachitem ($rs->slice($start, $end)) {
-			$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
-			$tags =~ /l/ && $request->addResultLoop($loopname, $cnt, 'album', $eachitem->title);
-			$tags =~ /a/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'contributor_id', $eachitem->contributorid);
-			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'year', $eachitem->year);
-			$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'artwork_track_id', $eachitem->artwork);
-			$tags =~ /t/ && $request->addResultLoop($loopname, $cnt, 'title', $eachitem->rawtitle);
-			$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'disc', $eachitem->disc);
-			$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'disccount', $eachitem->discc);
-			$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'compilation', $eachitem->compilation);
-			$cnt++;
-		}
-	}
-
-	$request->setStatusDone();
-}
-
-
-sub contributorsQuery {
-	my $request = shift;
-
-	$d_queries && msg("contributorsQuery()\n");
-
-	# check this is the correct query.
-	if ($request->isNotQuery([['contributors']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	# get our parameters
-#	my $label    = $request->getRequest(0);
-	my $index    = $request->getParam('_index');
-	my $quantity = $request->getParam('_quantity');
-	my $search   = $request->getParam('search');
-#	my $genreID  = $request->getParam('genre_id');
-	my $artistID = $request->getParam('artist_id');
-	my $albumID  = $request->getParam('album_id');
-	my $role     = $request->getParam('role');
-	
-	# get them all by default
-	my $where    = {};
-	
-	# sort them
-	my $attr     = {
-		group_by => ['contributor.id', 'me.role'],
-		order_by => 'contributor.namesort',
-		join     => 'contributor',
-		prefetch => 'contributor',
-#		distinct => 1,
-	};
-
-#	chop($label);
-
-#	if ($label eq 'artist') {
-#		$label = 'contributor';
-#	}
-
-	# Normalize any search parameters
-	if (specified($search)) {
-
-#		$find->{$searchMap2{$label}->[0]} = Slim::Web::Pages::Search::searchStringSplit($search);
-		$where->{'contributor.namesearch'} = { 'like' => Slim::Web::Pages::Search::searchStringSplit($search) };
-	}
-
-	if (defined($role)) {
-		$where->{'me.role'} = $role;
-#		$attr->{'join'} = {'contributorTracks'};
-	}
-
-#	if (defined $genreID){
-
-#		$find->{'genre'} = $genreID;
-#	}
-
-	if (defined $artistID){
-		$where->{'contributor.id'} = $artistID;
-		$attr->{'join'} = {'genreTracks' => {'track' => {'contributorTracks' => 'contributor'}}};
-		$attr->{'distinct'} = 1;
-	}
-
-	if (defined $albumID){
-		$where->{'album.id'} = $albumID;
-		$attr->{'join'} = {'genreTracks' => {'track' => 'album'}};
-		$attr->{'distinct'} = 1;
-	}
-
-#	if ($label eq 'artist') {
-
-		# The user may not want to include all the composers/conductors
-#		if (my $roles = Slim::Schema->artistOnlyRoles) {
-
-#			$find->{'contributor_track.role'} = $roles;
-#		}
-#	}
-
-	if (Slim::Music::Import->stillScanning()) {
-		$request->addResult('rescan', 1);
-	}
-
-	my $rs = Slim::Schema->resultset('ContributorTrack')->search($where, $attr);
-
-	my $count = $rs->count;
-
-	$request->addResult('count', $count);
-
-	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-
-	if ($valid) {
-
-#		my $loopname = '@' . $label . 's';
-		my $loopname = '@contributors';
-		my $cnt = 0;
-
-		for my $eachitem ($rs->slice($start, $end)) {
-#			print Data::Dumper::Dumper($eachitem);
-			$request->addResultLoop($loopname, $cnt, 'id', $eachitem->contributor->id);
-			$request->addResultLoop($loopname, $cnt, 'contributor', $eachitem->contributor->name);
-			$request->addResultLoop($loopname, $cnt, 'role', $eachitem->role);
 			$cnt++;
 		}
 	}
@@ -442,7 +379,6 @@ sub cursonginfoQuery {
 
 		if ($method eq 'path') {
 			
-			$url = Slim::Utils::Unicode::utf8decode_locale(URI::Escape::uri_unescape($url));
 			$request->addResult("_$method", $url);
 
 		} elsif ($method eq 'remote') {
@@ -593,16 +529,11 @@ sub genresQuery {
 	my $quantity      = $request->getParam('_quantity');
 	my $search        = $request->getParam('search');
 	my $year          = $request->getParam('year');
-	my $artistID      = $request->getParam('artist_id');
-	my $contributorID = $request->getParam('contributor_id');
+	my $contributorID = $request->getParam('artist_id');
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
 	
-	# we prefer to get contributor_id but accept artist_id
-	if (defined $artistID && !defined $contributorID) {
-		$contributorID = $artistID;
-	}
-		
+	
 	# get them all by default
 	my $where = {};
 	
@@ -614,7 +545,7 @@ sub genresQuery {
 	# Normalize and add any search parameters
 	if (specified($search)) {
 
-		$where->{'me.namesearch'} = {'like', Slim::Web::Pages::Search::searchStringSplit($search)};
+		$where->{'me.namesearch'} = {'like', Slim::Utils::Text::searchStringSplit($search)};
 	}
 
 	# Manage joins
@@ -626,8 +557,16 @@ sub genresQuery {
 		# ignore those if we have a track. 
 		
 		if (defined $contributorID){
-			$where->{'contributorTracks.contributor'} = $contributorID;
-			push @{$attr->{'join'}}, {'genreTracks' => {'track' => 'contributorTracks'}};
+		
+			# handle the case where we're asked for the VA id => return compilations
+			if ($contributorID == Slim::Schema->variousArtistsObject->id) {
+				$where->{'album.compilation'} = 1;
+				push @{$attr->{'join'}}, {'genreTracks' => {'track' => 'album'}};
+			}
+			else {	
+				$where->{'contributorTracks.contributor'} = $contributorID;
+				push @{$attr->{'join'}}, {'genreTracks' => {'track' => 'contributorTracks'}};
+			}
 		}
 	
 		if (defined $albumID || defined $year){
@@ -696,7 +635,7 @@ sub infoTotalQuery {
 	}
 
 	if ($entity eq 'songs') {
-		$request->addResult("_$entity", Slim::Schema->count('Track', { 'me.audio' => 1 }));
+		$request->addResult("_$entity", Slim::Schema->rs('Track')->browse->count);
 	}
 	
 	$request->setStatusDone();
@@ -942,8 +881,7 @@ sub playlistXQuery {
 		$request->addResult("_$entity", Slim::Music::Info::standardTitle($client, $playlistObj));
 
 	} elsif ($entity eq 'url') {
-		my $result = Slim::Utils::Unicode::utf8decode_locale(
-			URI::Escape::uri_unescape($client->currentPlaylist()));
+		my $result = $client->currentPlaylist();
 		$request->addResult("_$entity", $result);
 
 	} elsif ($entity eq 'modified') {
@@ -953,8 +891,7 @@ sub playlistXQuery {
 		$request->addResult("_$entity", Slim::Player::Playlist::count($client));
 
 	} elsif ($entity eq 'path') {
-		my $result = Slim::Utils::Unicode::utf8decode_locale(
-			URI::Escape::uri_unescape(Slim::Player::Playlist::url($client, $index)));
+		my $result = Slim::Player::Playlist::url($client, $index);
 		$request->addResult("_$entity",  $result || 0);
 
 	} elsif ($entity eq 'remote') {
@@ -1078,7 +1015,7 @@ sub playlistsQuery {
 
 	# Normalize any search parameters
 	if (defined $search) {
-		$search = Slim::Web::Pages::Search::searchStringSplit($search);
+		$search = Slim::Utils::Text::searchStringSplit($search);
 	}
 
 	if (Slim::Music::Import->stillScanning()) {
@@ -1248,7 +1185,7 @@ sub searchQuery {
 	}
 
 	my $totalCount = 0;
-        my $search     = Slim::Web::Pages::Search::searchStringSplit($query);
+        my $search     = Slim::Utils::Text::searchStringSplit($query);
 	my %results    = ();
 	my @types      = Slim::Schema->searchTypes;
 
@@ -1352,6 +1289,7 @@ sub statusQuery {
 	my $SQ   = ($client->model() eq 'softsqueeze');
 	my $SB   = ($client->model() eq 'squeezebox');
 	my $SB2  = ($client->model() eq 'squeezebox2');
+	my $TS   = ($client->model() eq 'transporter');
 	my $RSC  = ($client->model() eq 'http');
 	
 	my $connected = $client->connected() || 0;
@@ -1373,7 +1311,7 @@ sub statusQuery {
 		$request->addResult("power", $power);
 	}
 	
-	if ($SB || $SB2) {
+	if ($SB || $SB2 || $TS) {
 		$request->addResult("signalstrength", ($client->signalStrength() || 0));
 	}
 	
@@ -1552,7 +1490,7 @@ sub songinfoQuery {
 		return;
 	}
 
-	my $tags  = 'abcdefghijklmnopqrstvwyz'; # all letter EXCEPT u AND x
+	my $tags  = 'abcdefghijklmnopqrstvwxyz'; # all letter EXCEPT u
 	my $track;
 
 	if (Slim::Music::Import->stillScanning()) {
@@ -1586,10 +1524,6 @@ sub songinfoQuery {
 	} else {
 
 		if (defined $url && Slim::Music::Info::isSong($url)){
-
-			if ($tags !~ /x/) {
-				$tags .= 'x';
-			}
 
 			$track = Slim::Schema->rs('Track')->objectForUrl($url)
 		}
@@ -1680,66 +1614,82 @@ sub titlesQuery {
 		return;
 	}
 
-	my $find  = {};
+	my $where  = {};
+	my $attr   = {};
 
-	my $sort  = 'me.titlesort';
-	my $tags  = 'gald';
+	my $tags   = 'gald';
 
 	# get our parameters
-	my $index    = $request->getParam('_index');
-	my $quantity = $request->getParam('_quantity');
-	my $tagsprm  = $request->getParam('tags');
-	my $sortprm  = $request->getParam('sort');
-	my $search   = $request->getParam('search');
-	my $genreID  = $request->getParam('genre_id');
-	my $artistID = $request->getParam('artist_id');
-	my $albumID  = $request->getParam('album_id');
-	my $year     = $request->getParam('year');
+	my $index         = $request->getParam('_index');
+	my $quantity      = $request->getParam('_quantity');
+	my $tagsprm       = $request->getParam('tags');
+	my $sort          = $request->getParam('sort');
+	my $search        = $request->getParam('search');
+	my $genreID       = $request->getParam('genre_id');
+	my $contributorID = $request->getParam('artist_id');
+	my $albumID       = $request->getParam('album_id');
+	my $year          = $request->getParam('year');
+
+	if ($request->paramNotOneOfIfDefined($sort, ['title', 'tracknum'])) {
+		$request->setStatusBadParams();
+		return;
+	}
 
 	# did we have override on the defaults?
 	# note that this is not equivalent to 
 	# $val = $param || $default;
 	# since when $default eq '' -> $val eq $param
-#	$sort = $sortprm if defined $sortprm;
 	$tags = $tagsprm if defined $tagsprm;
 
 	# Normalize any search parameters
-#	if (defined $searchMap{$label} && specified($search)) {
-#		$find->{ $searchMap{$label} } = Slim::Web::Pages::Search::searchStringSplit($search);
-#	}
-
-#	if (defined $genreID){
-#		$find->{'genre'} = $genreID;
-#	}
-
-#	if (defined $artistID){
-#		$find->{'artist'} = $artistID;
-#	}
+	if (specified($search)) {
+		$where->{'me.titlesearch'} = {'like' => Slim::Utils::Text::searchStringSplit($search)};
+	}
 
 	if (defined $albumID){
-		$find->{'me.album'} = $albumID;
+		$where->{'me.album'} = $albumID;
 	}
 
 	if (defined $year) {
-		$find->{'me.year'} = $year;
+		$where->{'me.year'} = $year;
 	}
 
-#	if ($sort eq "tracknum" && !($tags =~ /t/)) {
-#		$tags = $tags . "t";
-#	}
+	# Manage joins
+
+	if (defined $genreID){
+		$where->{'genreTracks.genre'} = $genreID;
+		push @{$attr->{'join'}}, 'genreTracks';
+#		$attr->{'distinct'} = 1;
+	}
+
+	if (defined $contributorID){
+	
+		# handle the case where we're asked for the VA id => return compilations
+		if ($contributorID == Slim::Schema->variousArtistsObject->id) {
+			$where->{'album.compilation'} = 1;
+			push @{$attr->{'join'}}, 'album';
+		}
+		else {	
+			$where->{'contributorTracks.contributor'} = $contributorID;
+			push @{$attr->{'join'}}, 'contributorTracks';
+		}
+	}
+
+	if ($sort eq "tracknum") {
+		if (!($tags =~ /t/)) {
+			$tags = $tags . "t";
+		}
+		$attr->{'order_by'} =  "me.disc, me.tracknum, concat('0', me.titlesort)";
+	}
+	else {
+		$attr->{'order_by'} =  "me.titlesort";
+	}
 
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult("rescan", 1);
 	}
 
-	# add this to get rid of playlists
-	$find->{'me.audio'} = 1;
-
-	my $rs = Slim::Schema->search('Track', $find, {
-		'order_by' => $sort,
-		#'distinct' => 'me.id',
-		'prefetch' => 'album',
-	});
+	my $rs = Slim::Schema->rs('Track')->search($where, $attr)->distinct;
 
 	my $count = $rs->count;
 
@@ -1855,7 +1805,7 @@ sub _songData {
 		#                                                  #tag 
 		  'i' => ['disc',             'disc'],             #disc
 		  'j' => ['coverart',         'coverArtExists'],   #thumb, cover
-		#                                                  #remote 
+		  'x' => ['remote',           'remote'],           #remote 
 		#                                                  #audio 
 		#                                                  #audio_size 
 		#                                                  #audio_offset
@@ -1878,7 +1828,7 @@ sub _songData {
 		#                                                  #playcount 
 		#                                                  #lastplayed 
 		#                                                  #lossless 
-		#                                                  #lyrics 
+		  'w' => ['lyrics',           'lyrics'],           #lyrics 
 		#                                                  #rating 
 		#                                                  #replay_gain 
 		#                                                  #replay_peak
@@ -1901,8 +1851,7 @@ sub _songData {
 
 		# Tag    Tag name             Track method         Track relationship
 		#--------------------------------------------------------------------
-		  'w' => ['undefined',        ''],
-		  'x' => ['undefined',        ''],
+
 	);
 
 
@@ -1934,157 +1883,6 @@ sub _songData {
 				}
 			}
 		}
-	
-# a artist(s)
-	#	if ($tags =~ /a/ && defined(my $arti = $track->genres)) {
-	#	}
-		
-# b band
-#		if ($tag eq 'b' && (my @bands = $track->band)) {
-#			$returnHash{'band'} = $bands[0];
-#			next;
-#		}
-
-# c composer
-#		if ($tag eq 'c' && (my @composers = $track->composer)) {
-#			$returnHash{'composer'} = $composers[0];
-#			next;
-#		}
-		
-# d duration
-#		if ($tag eq 'd' && defined(my $value = $track->secs)) {
-#			$returnHash{'duration'} = $value;
-#			next;
-#		}
-	
-# e album_id
-#		if (defined(my $album = $track->album)) {
-#			if ($tag eq 'e') {
-#				$returnHash{'album_id'} = $album->id;
-#				next;
-#			}
-#		}
-
-# f filesize
-#		if ($tag eq 'f' && defined(my $value = $track->filesize)) {
-#			$returnHash{'filesize'} = $value;
-#			next;
-#		}
-		
-# g genre
-#		if ($tag eq 'g' && defined(my $genres = $track->genres)) {
-#			while (my $genre = $genres->next) {
-#    			$returnHash{'genre'} = $genre->name;
-# 			}
-#			
-#			next;
-#		}
-		
-# h conductor
-#		if ($tag eq 'h' && (my @conductors = $track->conductor)) {
-#			$returnHash{'conductor'} = $conductors[0];
-#			next;
-#		}
-	
-# i disc
-#		if ($tag eq 'i' && defined(my $disc = $track->disc)) {
-#			$returnHash{'disc'} = $disc;
-#			next;
-#		}
-
-# j coverart
-#		if ($tag eq 'j' && $track->coverArt) {
-#			$returnHash{'coverart'} = 1;
-#			next;
-#		}
-
-# k comment
-#		if ($tag eq 'k' && defined(my $value = $track->comment)) {
-#			$returnHash{'comment'} = $value;
-#			next;
-#		}
-
-# l album
-
-# m bpm
-#		if ($tag eq 'm' && defined(my $value = $track->bpm)) {
-#			$returnHash{'bpm'} = $value;
-#			next;
-#		}
-
-# n modificationTime
-#		if ($tag eq 'n' && defined(my $value = $track->modificationTime)) {
-#			$returnHash{'modificationTime'} = $value;
-#			next;
-#		}
-
-# o type
-#		if ($tag eq 'o' && defined(my $value = $track->content_type)) {
-#			$returnHash{'type'} = Slim::Utils::Strings::string(uc($value));
-#			next;
-#		}
-
-# p genre_id
-#		if ($tag eq 'p' && defined(my $genre = $track->genre)) {
-#			if (defined(my $id = $genre->id)) {
-#				$returnHash{'genre_id'} = $id;
-#				next;
-#			}
-#		}
-
-# q disccount
-#		if (defined(my $album = $track->album)) {
-#			if ($tag eq 'q' && defined(my $discc = $album->discc)) {
-#				$returnHash{'disccount'} = $discc unless $discc eq '';
-#				next;
-#			}
-#		}
-
-# r bitrate
-#		if ($tag eq 'r' && defined(my $value = $track->bitrate)) {
-#			$returnHash{'bitrate'} = $value;
-#			next;
-#		}
-
-# s artist_id
-#		if ($tag eq 's' && defined(my $artist = $track->artist)) {
-#
-#			$returnHash{'artist_id'} = $artist->id;
-#			next;
-#		}
-
-# t tracknum
-#		if ($tag eq 'r' && defined(my $value = $track->tracknum)) {
-#			$returnHash{'tracknum'} = $value;
-#			next;
-#		}
-
-# u url
-#		if ($tag eq 'u' && defined(my $url = $track->url())) {
-#			$returnHash{'url'} = $url;
-#			next;
-#		}
-
-# v tagversion
-#		if ($tag eq 'v' && defined(my $value = $track->tagversion)) {
-#			$returnHash{'tagversion'} = $value;
-#			next;
-#		}
-
-# y year
-#		if ($tag eq 'y' && defined(my $value = $track->year)) {
-#			$returnHash{'year'} = $value;
-#			next;
-#		}
-
-# z drm
-#		if ($tag eq 'z' && defined(my $value = $track->drm)) {
-#			$returnHash{'drm'} = $value;
-#			next;
-#		}
-
-
-	
 	}
 
 	return \%returnHash;
