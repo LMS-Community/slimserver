@@ -685,7 +685,7 @@ sub new {
 	$client->[54] = undef; # epochirtime
 	$client->[55] = []; # modeStack
 	$client->[56] = []; # modeParameterStack
-	$client->[57] = undef; # lines
+	$client->[57] = undef; #unused
 	$client->[58] = []; # trackInfoLines
 	$client->[59] = []; # trackInfoContent
 	$client->[60] = {}; # lastID3Selection
@@ -1179,6 +1179,7 @@ sub block{}
 sub symbols{}
 sub unblock{}
 sub updateKnob{}
+sub lines {}
 
 sub pause {
 	my $client = shift;
@@ -1739,10 +1740,6 @@ sub modeParameterStack {
 	my $i;
 	@_ ? ($i = shift) : return $r->[56];
 	@_ ? ($r->[56]->[$i] = shift) : $r->[56]->[$i];
-}
-sub lines {
-	my $r = shift;
-	@_ ? ($r->[57] = shift) : $r->[57];
 }
 sub trackInfoLines {
 	my $r = shift;

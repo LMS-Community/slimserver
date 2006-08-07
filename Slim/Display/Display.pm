@@ -66,6 +66,8 @@ sub new {
 	$display->[7] = undef;    # lastVisMode
 	$display->[8] = undef;    # sbCallbackData
 	$display->[9] = undef;    # sbOldDisplay
+	$display->[10]= undef;    # lines function
+	$display->[11]= undef;    # line2periodic [Transporter only]
 
 	$display->resetDisplay(); # init render cache
 
@@ -119,6 +121,14 @@ sub sbOldDisplay {
 	my $r = shift;
 	@_ ? ($r->[9] = shift) : $r->[9];
 }
+sub lines {
+	my $r = shift;
+	@_ ? ($r->[10] = shift) : $r->[10];
+}
+sub lines2periodic {
+	my $r = shift;
+	@_ ? ($r->[11] = shift) : $r->[11];
+}
 
 
 ################################################################################################
@@ -143,7 +153,7 @@ sub update {
 	if (defined($lines)) {
 		$parts = $display->parseLines($lines);
 	} else {
-		my $linefunc = $client->lines();
+		my $linefunc = $display->lines();
 		$parts = $display->parseLines(&$linefunc($client));
 	}
 
@@ -385,7 +395,7 @@ sub curLines {
 		return undef;
 	}
 
-	my $linefunc = $client->lines();
+	my $linefunc = $display->lines();
 
 	if (defined $linefunc) {
 		return $display->parseLines(&$linefunc($client));
@@ -668,9 +678,6 @@ sub scrollUpdate {
 	}
 }
 
-sub resetDisplay {}
-sub killAnimation {}
-
 sub endAnimation {
 	# called after after an animation to redisplay current screen and initiate scrolling
 	my $display = shift;
@@ -682,8 +689,14 @@ sub endAnimation {
 	$display->update($screen);
 }	
 
+sub resetDisplay {}
+sub killAnimation {}
 sub fonts {}
 sub displayHeight {}
+sub showExtendedText {}
+sub modes() { [] }
+sub nmodes() { 0 }
+sub hasScreen2 { 0 }
 
 sub forgetDisplay {
 	my $display = shift;

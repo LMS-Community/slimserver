@@ -12322,3 +12322,18 @@ DIGITAL_INPUT_RCA_SPDIF
 	
 DIGITAL_INPUT_OPTICAL_SPDIF
 	EN	Optical S/PDIF
+
+VISUALIZER_EXTENDED_TEXT
+	EN	Extended Text Display
+
+VISUALIZER_VUMETER_AN
+	EN	Analogue VU Meter
+
+VISUALIZER_VUMETER_DIG
+	EN	Digital VU Meter
+
+SETUP_VISUALIZERMODE
+	EN	Visualizer Screen
+
+SETUP_VISUALIZERMODE_DESC
+	EN	The player can display visualizers or extended text information on the right hand screen. Choose which you wish to be displayed. The Visual button on the player will cycle through each of the options selected below.

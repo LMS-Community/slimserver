@@ -183,12 +183,13 @@ sub setMode {
 	$client->lines(\&lines);
 	# update client every second in this mode
 	$client->param('modeUpdateInterval', 1); # seconds
+	$client->param('screen2', 'screensaver');
 }
 
 sub lines {
 	my $client = shift;
 	$::d_time && msg("getting screensaver lines");
-	return $client->currentSongLines();
+	return Slim::Buttons::Playlist::lines($client);
 }
 
 1;

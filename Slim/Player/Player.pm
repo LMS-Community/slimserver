@@ -292,6 +292,7 @@ sub progressBar { shift->display->progressBar(@_); }
 sub balanceBar  { shift->display->balanceBar(@_); }
 sub fonts         { shift->display->fonts(@_); }
 sub displayHeight { shift->display->displayHeight(@_); }
+sub lines       { shift->display->lines(@_); }
 
 sub updateMode  { shift->display->updateMode(@_); }
 sub animateState{ shift->display->animateState(@_); }

@@ -124,8 +124,13 @@ sub init {
 			my $client = shift;
 			my $oldlines = $client->curLines();
 			Slim::Buttons::Home::jump($client, 'NOW_PLAYING');
-			Slim::Buttons::Common::setMode($client, 'home');
-			$client->pushRight($oldlines, $client->curLines());
+			while (Slim::Buttons::Common::popMode($client, 1)) {};
+			Slim::Buttons::Common::pushMode($client, 'home');
+			if ($client->display->showExtendedText()) {
+				$client->pushRight($oldlines, Slim::Buttons::Common::pushpopScreen2($client, 'playlist') );
+			} else {
+				$client->pushRight($oldlines, $client->curLines());
+			}
 		},
 		'right' => sub  {
 			my $client = shift;
@@ -133,14 +138,10 @@ sub init {
 			if ($playlistlen < 1) {
 				$client->bumpRight();
 			} else {
-				my $oldlines = $client->curLines();
-
-				Slim::Buttons::Common::pushMode($client, 'trackinfo', {
+				Slim::Buttons::Common::pushModeLeft($client, 'trackinfo', {
 					'track' => Slim::Player::Playlist::song($client, browseplaylistindex($client)),
 					'current' => browseplaylistindex($client) == Slim::Player::Source::playingSongIndex($client)
 				} );
-
-				$client->pushLeft($oldlines, $client->curLines());
 			}
 		},
 		'numberScroll' => sub  {
@@ -221,6 +222,7 @@ sub setMode {
 
 	# update client every second in this mode
 	$client->param('modeUpdateInterval', 1); # seconds
+	$client->param('screen2', 'playlist');   # this mode can use screen2
 }
 
 sub jump {
@@ -252,32 +254,48 @@ sub newTitle {
 sub lines {
 	my $client = shift;
 
-	my ($line1, $line2);
+	my ($parts, $line1, $line2);
 
 	if (showingNowPlaying($client) || (Slim::Player::Playlist::count($client) < 1)) {
-		return $client->currentSongLines();
+
+		$parts = $client->currentSongLines();
+
+	} else {
+
+		if ( browseplaylistindex($client) + 1 > Slim::Player::Playlist::count($client)) {
+			browseplaylistindex($client,Slim::Player::Playlist::count($client)-1)
+		}
+
+		$line1 = sprintf("%s (%d %s %d) ", 
+			$client->string('PLAYLIST'),
+			browseplaylistindex($client) + 1,
+			$client->string('OUT_OF'),
+			Slim::Player::Playlist::count($client)
+		);
+
+		$line2 = Slim::Music::Info::standardTitle(
+			$client,
+			Slim::Player::Playlist::song($client, browseplaylistindex($client))
+		);
+
+		$parts = {
+			'line'    => [ $line1, $line2 ],
+			'overlay' => [ undef, $client->symbols('notesymbol') ],
+		};
 	}
 
-	if ( browseplaylistindex($client) + 1 > Slim::Player::Playlist::count($client)) {
-		browseplaylistindex($client,Slim::Player::Playlist::count($client)-1)
+	if ($client->display->showExtendedText()) {
+		my $url = Slim::Player::Playlist::song($client, browseplaylistindex($client));
+
+		$parts->{'screen2'} ||= {
+			'line' => [ 
+						Slim::Music::TitleFormatter::infoFormat($url, 'ALBUM'),
+						Slim::Music::TitleFormatter::infoFormat($url, 'ARTIST')
+						],
+		};
 	}
 
-	$line1 = sprintf("%s (%d %s %d) ", 
-		$client->string('PLAYLIST'),
-		browseplaylistindex($client) + 1,
-		$client->string('OUT_OF'),
-		Slim::Player::Playlist::count($client)
-	);
-
-	$line2 = Slim::Music::Info::standardTitle(
-		$client,
-		Slim::Player::Playlist::song($client, browseplaylistindex($client))
-	);
-
-	return {
-		'line'    => [ $line1, $line2 ],
-		'overlay' => [ undef, $client->symbols('notesymbol') ]
-	};
+	return $parts;
 }
 
 sub showingNowPlaying {

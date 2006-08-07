@@ -27,7 +27,8 @@ our $defaultPrefs = {
 	'idleBrightness'      => 2,
 	'playingDisplayMode'  => 0,
 	'playingDisplayModes' => [0..5],
-	'visuMode'            => 0,
+	'visualMode'          => 0,
+	'visualModes'         => [0..5],
 };
 
 # Display modes for Transporter:
@@ -89,22 +90,61 @@ my $nmodes = $#modes;
 # Right channel parameters (not required for mono):
 #   11-18 - same as left channel parameters
 
-my $VISUALIZER_NONE = 0;
-my $VISUALIZER_VUMETER = 1;
-my $VISUALIZER_SPECTRUM_ANALYZER = 2;
-my $VISUALIZER_WAVEFORM = 3;
+use constant VISUALIZER_NONE => 0;
+use constant VISUALIZER_VUMETER => 1;
+use constant VISUALIZER_SPECTRUM_ANALYZER => 2;
+use constant VISUALIZER_WAVEFORM => 3;
 
 my @visualizers = (
-	[$VISUALIZER_NONE],
-	[$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0 + 320, 160, 0, 4, 1, 1, 1, 3, 160 + 320, 160, 1, 4, 1, 1, 1, 3],
-	[$VISUALIZER_VUMETER, 0, 1, 0 + 320, 160, 160 + 320, 160],
-	[$VISUALIZER_VUMETER, 0, 0, 20 + 320, 130, 170 + 320, 130]
+	{ desc => ['BLANK'],
+	  params => [VISUALIZER_NONE],
+    },
+	{ desc => ['VISUALIZER_EXTENDED_TEXT'],
+	  text => 1,
+	  params => [VISUALIZER_NONE],
+    },
+	{ desc => ['VISUALIZER_VUMETER_AN'],
+	  params => [VISUALIZER_VUMETER, 0, 1, 0 + 320, 160, 160 + 320, 160],
+    },
+	{ desc => ['VISUALIZER_VUMETER_DIG'],
+	  params => [VISUALIZER_VUMETER, 0, 0, 20 + 320, 130, 170 + 320, 130],
+    },
+	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER'],
+	  params => [VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0 + 320, 160, 0, 4, 1, 1, 1, 3, 160 + 320, 160, 1, 4, 1, 1, 1, 3],
+    },
+	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER', 'AND', 'VISUALIZER_EXTENDED_TEXT'],
+	  text => 1,
+	  params => [VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0 + 320, 160, 0, 4, 1, 1, 1, 3, 160 + 320, 160, 1, 4, 1, 1, 1, 3],
+    },
 );
+
+my $nvisualizers = $#visualizers;
+
+sub modes {
+	return \@modes;
+}
+
+sub nmodes {
+	return $nmodes;
+}
+
+sub visualizerModes {
+	return \@visualizers;
+}
+
+sub visualizerNModes {
+	return $nvisualizers;
+}
+
+sub hasScreen2 { 1 }
 
 sub init {
 	my $display = shift;
 	Slim::Utils::Prefs::initClientPrefs($display->client, $defaultPrefs);
 	$display->SUPER::init();
+
+	# register default handler for periodic screen2 updates on visual screen
+	$display->lines2periodic(\&Slim::Player::Player::currentSongLines);
 }
 
 sub resetDisplay {
@@ -188,14 +228,14 @@ sub pushBumpAnimate {
 	my $param1 = shift || 0;
 	my $param2 = shift || 0;
 
-	if ($render->{screen1}->{present} && $render->{screen2}->{present}) {
+	if ($render->{screen1}->{changed} && $render->{screen2}->{changed}) {
 		# animate both screens
 		my $twoScreen = ${$render->{screen1}->{bitsref}} . ${$render->{screen2}->{bitsref}};
 		$display->killAnimation(undef, 1);
 		$display->killAnimation(undef, 2);
 		$display->drawFrameBuf(\$twoScreen, 0, $trans, $param1);
 
-	} elsif ($render->{screen2}->{present}) {
+	} elsif ($render->{screen2}->{changed}) {
 		# animate screen 2 only
 		$display->killAnimation(undef, 2);
 		$display->drawFrameBuf($render->{screen2}->{bitsref}, 640, $trans, $param2);
@@ -210,53 +250,15 @@ sub pushBumpAnimate {
 	$display->updateMode(1);
 }
 
-sub modes {
-	return \@modes;
-}
-
-sub nmodes {
-	return $nmodes;
-}
-
-# Transporter visualizer stuff - moved here, but would like to tidy up
-
-# Moved to here as rest of visu code is here, but not used yet - embed in visualizer array?
-#sub visualizerOptions { 
-#	my $client = shift;
-#	my %options = (
-#		'0' => $client->string('NONE'),
-#		'1' => $client->string('PLUGIN_SCREENSAVER_VISUALIZER_SPECTRUM_ANALYZER'),
-#		'2' => $client->string('PLUGIN_SCREENSAVER_VISUALIZER_ANALOG_VUMETER') ,
-#		'3' => $client->string('PLUGIN_SCREENSAVER_VISUALIZER_DIGITAL_VUMETER') ,
-#	);
-#
-#	return \%options;
-#}
-
-# This could be removed if visualizer options are handled the same way as modes
-sub visualizerModes {
-	return scalar(@visualizers);
-}
-
 sub visualizerParams {
 	my $display = shift;
 	my $client = $display->client;
 
-	my $visu = $client->prefGet('visuMode');
+	my $visu = $client->prefGet('visualModes', $client->prefGet('visualMode')) || 0;
 	
 	$visu = 0 if (!$display->showVisualizer());
 	
-	if (!defined $visu || $visu < 0) { 
-		$visu = 0; 
-	}
-	
-	my $nmodes = $display->visualizerModes();
-	
-	if ($visu >= $nmodes) { 
-		$visu = $nmodes - 1;
-	}
-	
-	return $visualizers[$visu];
+	return $visualizers[$visu]{params};
 }
 
 sub visualizer {
@@ -270,6 +272,18 @@ sub showVisualizer {
 	my $display = shift;
 
 	return $display->client->power();
+}
+
+sub showExtendedText {
+	my $display = shift;
+	my $client = $display->client;
+
+	return 1 if ($client->param('visu'));
+	return 0 if (!$client->power());
+
+	my $visu = $client->prefGet('visualModes', $client->prefGet('visualMode')) || 0;
+	
+	return $visualizers[$visu]{text};
 }
 
 1;

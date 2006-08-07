@@ -101,7 +101,8 @@ sub searchExitHandler {
 		my $oldlines = $client->curLines();
 
 		Slim::Buttons::Home::jump($client, 'SEARCH');
-		Slim::Buttons::Common::setMode($client, 'home');
+		while (Slim::Buttons::Common::popMode($client, 1)) {};
+		Slim::Buttons::Common::pushMode($client, 'home');
 
 		$client->pushRight($oldlines, $client->curLines());
 

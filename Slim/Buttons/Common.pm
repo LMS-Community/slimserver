@@ -135,7 +135,7 @@ our %functions = (
 			return;
 		}
 		$client->execute(["playlist", "jump", "+1"]);
-		$client->showBriefly($client->currentSongLines());
+		$client->showBriefly($client->currentSongLines()) unless suppressStatus($client);
 	},
 	'rew' => sub  {
 		my $client = shift;
@@ -157,7 +157,7 @@ our %functions = (
 			$client->execute(["playlist", "jump", "+0", $noplay]);
 		}
 
-		$client->showBriefly($client->currentSongLines());
+		$client->showBriefly($client->currentSongLines()) unless suppressStatus($client);
 	},
 	
 	'jump' => sub  {
@@ -205,7 +205,7 @@ our %functions = (
 			$client->execute(["playlist", "jump", "+0", $noplay]);
 		}
 
-		$client->showBriefly($client->currentSongLines());
+		$client->showBriefly($client->currentSongLines()) unless suppressStatus($client);
 	},
 	'jumpinsong' => sub {
 		my ($client,$funct,$functarg) = @_;
@@ -259,7 +259,7 @@ our %functions = (
 #		if (Slim::Player::Source::playmode($client) eq 'play' && Slim::Player::Source::rate($client) != 1) {
 #			Slim::Player::Source::rate($client,1);
 #		}
-		$client->showBriefly($client->currentSongLines());
+		$client->showBriefly($client->currentSongLines()) unless suppressStatus($client);
 	},
 	'stop' => sub  {
 		my $client = shift;
@@ -417,21 +417,39 @@ our %functions = (
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
+		
+		my $visModes = $client->prefGetArrayMax('visualModes') + 1;
+		my $vm = $client->prefGet('visualMode');
 
-		my $vm = $client->prefGet('visuMode');
-
-		unless (defined $vm) { $vm = 1; };
+		if (!defined $vm || $vm > $visModes) { $vm = 0; };
+		
 		unless (defined $buttonarg) { $buttonarg = 'toggle'; };
 
 		if ($button eq 'visual_toggle') {
-			$vm = ($vm + 1) % $client->display->visualizerModes();
+			$vm = ($vm + 1) % $visModes;
 		} else {
-			if ($buttonarg && $buttonarg < $client->display->visualizerModes()) {
+			if (defined $buttonarg && $buttonarg < $visModes) {
 				$vm = $buttonarg;
 			}
 		}
 
-		$client->prefSet('visuMode', $vm);
+		$client->prefSet('visualMode', $vm);
+
+		my $screen2 = $client->param('screen2');
+
+		if ($client->display->showExtendedText()) {
+			if (!$screen2) {
+				$client->param('screen2', 'periodic');
+				startPeriodicUpdates($client);
+			}
+		} else {
+			if ($screen2) {
+				if ($screen2 eq 'periodic') {
+					$client->modeParam('screen2', undef);
+				}
+				$client->update( { 'screen2' => {} } );
+			}
+		}
 		$client->update();
 	},
 
@@ -1170,6 +1188,10 @@ sub pushMode {
 		msg("Couldn't push into new mode: [$setmode] !: $@\n");
 	}
 
+	if ($client->display->showExtendedText() && !$client->param('screen2')) {
+		$client->param('screen2', 'periodic');
+	}
+
 	# some modes require periodic updates
 	startPeriodicUpdates($client);
 	
@@ -1178,10 +1200,13 @@ sub pushMode {
 
 sub popMode {
 	my $client = shift;
+
 	if (scalar(@{$client->modeStack}) < 1) {
 		$client->updateKnob(1);
 		return undef;
 	}
+
+	my $oldscreen2 = $client->param('screen2');
 
 	my $oldMode = mode($client);
 
@@ -1206,9 +1231,26 @@ sub popMode {
 
 	$::d_ui && msg("popped to button mode: " . (mode($client) || 'empty!') . "\n");
 
-	$client->updateKnob(1);
+	if ($client->display->hasScreen2) {
+
+		my $suppressScreen2Update = shift;
+
+		if ($client->display->showExtendedText()) {
+			$client->param('screen2', 'periodic') unless ($client->param('screen2'));
+
+		} elsif ($client->param('screen2') eq 'periodic') {
+			$client->modeParam('screen2', undef);
+		}
+
+		if (!$suppressScreen2Update && $oldscreen2 && !$client->param('screen2')) {
+			$client->update( { 'screen2' => {} } );
+		}
+	}
+
 	# some modes require periodic updates
 	startPeriodicUpdates($client);
+
+	$client->updateKnob(1);
 	
 	return $oldMode
 }
@@ -1227,25 +1269,87 @@ sub pushModeLeft {
 	my $client = shift;
 	my $setmode = shift;
 	my $paramHashRef = shift;
+	my $display = $client->display();
 
-	my $oldlines = $client->curLines();
+	my $oldlines = $display->curLines();
 
-	pushMode($client, $setmode, $paramHashRef);
+	unless ($display->hasScreen2) {
+		
+		pushMode($client, $setmode, $paramHashRef);
 
-	if (!$client->param('handledTransition')) {
-		$client->pushLeft($oldlines, $client->curLines());
-		$client->param('handledTransition',0);
+		if (!$client->param('handledTransition')) {
+			$display->pushLeft($oldlines, $display->curLines());
+			$client->param('handledTransition',0);
+		}
+
+	} else {
+
+		my $oldscreen2 = $client->param('screen2');
+
+		pushMode($client, $setmode, $paramHashRef);
+
+		if (!$client->param('handledTransition')) {
+			$client->pushLeft($oldlines, pushpopScreen2($client, $oldscreen2));
+			$client->param('handledTransition',0);
+		}
 	}
 }
 
 sub popModeRight {
 	my $client = shift;
+	my $display = $client->display();
 
-	my $oldlines = $client->curLines();
+	my $oldlines = $display->curLines();
 
-	Slim::Buttons::Common::popMode($client);
+	unless ($display->hasScreen2) {
 
-	$client->pushRight($oldlines, $client->curLines());
+		Slim::Buttons::Common::popMode($client);
+
+		$display->pushRight($oldlines, $display->curLines());
+
+	} else {
+
+		my $oldscreen2 = $client->param('screen2');
+
+		Slim::Buttons::Common::popMode($client, 1);
+
+		$display->pushRight($oldlines, pushpopScreen2($client, $oldscreen2));
+	}
+}
+
+sub pushpopScreen2 {
+	my $client = shift;
+	my $oldscreen2 = shift;
+
+	my $display = $client->display;
+
+	my $newlines = $display->curLines();
+
+	my $newscreen2 = $client->param('screen2');
+
+	if ($newscreen2 && $newscreen2 eq 'periodic' && $oldscreen2 ne 'periodic') {
+		my $linesfunc = $client->display->lines2periodic();
+		$newlines->{'screen2'} = &$linesfunc($client);
+
+	} elsif ($oldscreen2 && !$newscreen2) {
+		$newlines->{'screen2'} = {};
+	}
+
+	return $newlines;
+}
+
+sub suppressStatus {
+	my $client = shift;
+
+	return undef unless $client->display->hasScreen2();
+
+	my $screen2 = $client->param('screen2');
+
+	if ($screen2 && $screen2 eq 'periodic') {
+		return 1;
+	}
+
+	return undef;
 }
 
 sub dateTime {
@@ -1256,16 +1360,18 @@ sub dateTime {
 	};
 }
 
-# if and only if the mode has set the modeUpdateInterval parameter,
-# call $client->update every modeUpdateInterval seconds.
 sub startPeriodicUpdates {
 	my $client = shift;
+
 	# unset any previous timers
 	Slim::Utils::Timers::killTimers($client, \&_periodicUpdate);
-	my $interval = $client->param('modeUpdateInterval');
-	return unless $interval;
 
-	my $time = Time::HiRes::time() + $interval;
+	my $interval = $client->param('modeUpdateInterval');
+	my $interval2 = ($client->param('screen2') eq 'periodic');
+
+	return unless ($interval || $interval2);
+
+	my $time = Time::HiRes::time() + ($interval || 0.05);
 	Slim::Utils::Timers::setTimer($client, $time, \&_periodicUpdate, $client);
 	$client->periodicUpdateTime($time);
 }
@@ -1274,24 +1380,25 @@ sub startPeriodicUpdates {
 sub syncPeriodicUpdates {
 	my $client = shift;
 	my $time = shift || Time::HiRes::time();
-	# unset any previous timers
-	Slim::Utils::Timers::killTimers($client, \&_periodicUpdate);
-	my $interval = $client->param('modeUpdateInterval');
-	return unless $interval;
 
-	Slim::Utils::Timers::setTimer($client, $time, \&_periodicUpdate, $client);
-	$client->periodicUpdateTime($time);
+	if (Slim::Utils::Timers::killTimers($client, \&_periodicUpdate)) {
+		Slim::Utils::Timers::setTimer($client, $time, \&_periodicUpdate, $client);
+		$client->periodicUpdateTime($time);
+	}
 }
 
 sub _periodicUpdate {
 	my $client = shift;
-	my $interval = $client->param('modeUpdateInterval');
-	# if interval is not set, we have left the mode that needed the update
-	return unless $interval;
+	my $update = $client->param('modeUpdateInterval');
+	my $update2 = ($client->param('screen2') eq 'periodic');
+
+	# if params not set then no longer required
+	return unless ($update || $update2);
 	
 	# schedule the next update time, skip if running late
 	my $time = $client->periodicUpdateTime();
 	my $timenow = Time::HiRes::time();
+	my $interval = $update || 1;
 
 	do {
 		$time += $interval;
@@ -1300,10 +1407,18 @@ sub _periodicUpdate {
 	Slim::Utils::Timers::setTimer($client, $time, \&_periodicUpdate, $client);
 	$client->periodicUpdateTime($time);
 
-	# do the update if there's no block on updates
-	$client->display->update() unless ($client->display->updateMode());
-}
+	unless ($client->display->updateMode()) {
+		# updates not blocked
 
+		if ($update) {
+			$client->display->update();
+		}
+
+		if ($update2 && !$client->display->animateState() && (my $linefunc = $client->display->lines2periodic()) ) {
+				$client->display->update({ 'screen2' => &$linefunc($client) });
+		}
+	}
+}
 
 
 1;

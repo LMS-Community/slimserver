@@ -123,6 +123,9 @@ sub initSetupConfig {
 
 					if ($client->isPlayer()) {
 						$pageref->{'GroupOrder'} = ['Default','TitleFormats','Display'];
+						if ($client->display->isa('Slim::Display::Transporter')) {
+							push @{$pageref->{'GroupOrder'}}, 'Visual';
+						}
 						if (scalar(keys %{Slim::Buttons::Common::hash_of_savers()}) > 0) {
 							push @{$pageref->{'GroupOrder'}}, 'ScreenSaver';
 						}
@@ -180,6 +183,20 @@ sub initSetupConfig {
 					,'GroupLine' => 1
 					,'GroupSub'  => 1
 				}
+			,'Visual' => {
+					'PrefOrder' => ['visualModes']
+					,'PrefsInTable' => 1
+					,'Suppress_PrefHead' => 1
+					,'Suppress_PrefDesc' => 1
+					,'Suppress_PrefLine' => 1
+					,'Suppress_PrefSub'  => 1
+					,'GroupHead' => 'SETUP_VISUALIZERMODE'
+					,'GroupDesc' => 'SETUP_VISUALIZERMODE_DESC'
+					,'GroupPrefHead' => '<tr><th>' . string('SETUP_CURRENT') . 
+										'</th><th></th><th>' . string('DISPLAY_SETTINGS') . '</th><th></th></tr>'
+					,'GroupLine' => 1
+					,'GroupSub'  => 1
+				}
 			,'ScreenSaver' => {
 				'PrefOrder' => ['screensaver','idlesaver','offsaver','screensavertimeout']
 				,'Suppress_PrefHead' => 1
@@ -217,6 +234,23 @@ sub initSetupConfig {
 							,'validateArgs' => [\&getPlayingDisplayModes,1]
 							,'validateAddClient' => 1
 							,'options' => \&getPlayingDisplayModes
+							,'optionSort' => 'NK'
+						}
+			,'visualMode'	=> {
+							'validate' => \&Slim::Utils::Validate::isInt
+						}
+			,'visualModes' 	=> {
+							'isArray' => 1
+							,'arrayAddExtra' => 1
+							,'arrayDeleteNull' => 1
+							,'arrayDeleteValue' => -1
+							,'arrayBasicValue' => 0
+							,'arrayCurrentPref' => 'visualMode'
+							,'inputTemplate' => 'setup_input_array_sel.html'
+							,'validate' => \&Slim::Utils::Validate::inHash
+							,'validateArgs' => [\&getVisualModes,1]
+							,'validateAddClient' => 1
+							,'options' => \&getVisualModes
 							,'optionSort' => 'NK'
 						}
 			,'titleFormat'		=> {
@@ -2149,6 +2183,24 @@ sub getPlayingDisplayModes {
 	my $modes = $client->display->modes();
 
 	foreach my $i (0..$client->display->nmodes()) {
+		my $desc = $modes->[$i]{'desc'};
+		foreach my $j (0..$#{$desc}){
+			$displayHash->{"$i"} .= ' ' if ($j > 0);
+			$displayHash->{"$i"} .= string(@{$desc}[$j]);
+		}
+	}
+	return $displayHash;
+}
+
+sub getVisualModes {
+	my $client = shift;
+	
+	return {} unless (defined $client && $client->display->isa('Slim::Display::Transporter'));
+	
+	my $displayHash = {	'-1' => ' '	};
+	my $modes = $client->display->visualizerModes();
+
+	foreach my $i (0..$client->display->visualizerNModes()) {
 		my $desc = $modes->[$i]{'desc'};
 		foreach my $j (0..$#{$desc}){
 			$displayHash->{"$i"} .= ' ' if ($j > 0);
