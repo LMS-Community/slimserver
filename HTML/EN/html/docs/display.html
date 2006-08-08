@@ -678,8 +678,85 @@ for an example of this for text custom characters].</p>
 <h4>Two Screen Displays</h4>
 
 <p>Transporter introduces two screens which may display text or
-visualizer.  Full details of how to make use of the second screen and
-manage the interaction with the visualizer will be added here once this
-is finalised.<p>
+visualizers.</p>
 
+<p>Modes may display text on two screens by returning the new display
+hash with a 'screen2' component.  If a mode returns both screens, it
+should also set the mode param 'screen2' to indicate to the server
+that it may need to clear screen2 when the mode exits.
+Include the following in the setMode function for the mode:</p>
+
+<pre>
+$client->param('screen2', 'mymodename');
+</pre>
+
+<p>Where 'mymodename' can be any string other than 'periodic' (which
+is reserved).</p>
+
+<p>A mode may choose to override the current visualizer mode and
+always use screen2.  In this case it should also set the 'visu' param in its
+setMode function to [0]:</p>
+
+<pre>
+$client->param('visu', [0]);
+</pre>
+
+<p>Alternatively the mode can check the current visualizer mode and
+only return screen2 information if it is in extended text mode.  To do
+this call:</p>
+
+<pre>
+$display->showExtendedText()  [$client->display->showExtendedText()]
+</pre>
+
+<p>This returns true if the player display supports 2 screens and it
+is in extended text mode at present.</p>
+
+<p>To check whether the current display has 2 screens, call the
+following:</p>
+
+<pre>
+$display->hasScreen2()        [$client->display->hasScreen2()]
+</pre>
+
+<p>If the player is showing extended text information and the current
+mode does not set the 'screen2' mode param, the server will display
+alternative information on the second screen.  In this mode, the right
+hand screen is updated once a second using the lines function registered
+with $client->lines2periodic().</p>
+
+<p>By default the Now Playing screen is registered with
+line2periodic.  It is possible to override this in a plugin by adding
+a notify callback to listen for new clients connecting and resetting
+the line2periodic function at this point.  For example:</p>
+
+<pre>
+sub initPlugin {
+    Slim::Control::Request::subscribe( \&newClient, [['client']], [['new']] );
+}
+
+sub newClient {
+    my $client = shift->client || return;
+    $client->lines2periodic(\&lines);
+}
+
+sub lines {
+    my $client = shift;
+    return {
+        'line' => [ 'top line', 'bottom line' ]
+    };
+}
+</pre>
+
+<p>Note that the lines function should return 'line', 'overlay',
+'center' etc components without specifying 'screen2'.  This is because
+the calling code will force them into a screen2 component.</p>
+
+<p>Caveat: A limitation of this mode at present is that if the
+text on the right hand screen scrolls, this prevents animated menu
+transitions on the left hand screen.  The left hand screen will still
+show the correct menu items, but will not perform the normal scrolling
+between menu items.</p>
+
+<p></p>
 [% PROCESS helpfooter.html %]
