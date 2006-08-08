@@ -190,16 +190,14 @@ function refreshInfo(theData,force) {
 		showElements(['notplaying']);
 	}
 
-	if (parsedData['isplayer']) {
-		showElements(['playCtlffwd']);
-		showElements(['playCtlrew']);
-		showElements(['playCtlmute']);
-		showElements(['volumeControl']);
-	} else {
-		hideElements(['playCtlffwd']);
-		hideElements(['playCtlrew']);
-		hideElements(['playCtlmute']);
-		hideElements(['volumeControl']);
+	var playeronly = ['playCtlffwd', 'playCtlrew', 'playCtlmute', 'volumeControl'];
+	for (var i=0; i < playeronly.length; i++) {
+		var key = elems[i];
+		if (parsedData['isplayer']) {
+			showElements([key]);
+		} else {
+			showElements([key]);
+		}
 	}
 	
 	// refresh cover art

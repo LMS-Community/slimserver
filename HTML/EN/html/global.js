@@ -46,9 +46,11 @@ Ajax.Responders.register(myGlobalHandlers);
 // action is the function to be called after the ajaxRequest.txt file is spit back
 function getStatusData(params, action) {
 	var requesttype = 'post';
+
 	if (window.XMLHttpRequest) {
 		requesttype = 'get';
 	}
+
 	var myAjax = new Ajax.Request(
 	url,
 	{
@@ -166,8 +168,8 @@ function refreshLibraryInfo() {
 }
 
 function displayLibraryInfo(theData) {
-        var myData = theData.responseText;
-        var homeParsedData = parseData(myData);
+	var myData = theData.responseText;
+	var homeParsedData = parseData(myData);
 	var libraryString = homeParsedData['song_count'] +', '+ homeParsedData['artist_count'] +', '+ homeParsedData['album_count'];
 	if ($('libraryInfo')) {
 		$('libraryInfo').innerHTML = libraryString;
@@ -190,7 +192,7 @@ function truncateAt(tableId, lastRow) {
 			tableObj.deleteRow(r);
 		}
 		return null;
-        }
+	}
 }
 
 // miniControls is for putting play/pause on any page. ajax request is made via status.html
