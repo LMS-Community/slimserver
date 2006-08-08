@@ -254,13 +254,14 @@ sub playRandom {
 		};
 
 		# Prevent items that have already been played from being played again
-		# Following doesn't work as it excludes tracks that haven't
-		# ever been played.  Need to be able to say NULL OR < startTime
-		# Additionally, this fails when multiple clients are playing
-		# random mixes.  -- Max
-		#if ($mixInfo{$client->id}->{'startTime'}) {
-		#	$find->{'lastPlayed'} = {'<' => $mixInfo{$client->id}->{'startTime'}};
-		#}
+		# This fails when multiple clients are playing random mixes. -- Max
+		if ($mixInfo{$client->id}->{'startTime'}) {
+
+			$find->{'lastPlayed'} = [
+				{ '=' => undef },
+				{ '<' => $mixInfo{$client->id}->{'startTime'} }
+			];
+		}
 
 		if ($type eq 'track' || $type eq 'year') {
 
