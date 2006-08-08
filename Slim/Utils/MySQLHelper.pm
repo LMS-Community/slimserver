@@ -131,6 +131,9 @@ sub createConfig {
            $template->process($ttConf, \%config, $output) || die $template->error;
 
 	$class->confFile($output);
+
+	# Bug: 3847 possibly - set permissions on the config file.
+	chmod(0660, $output);
 }
 
 sub startServer {
