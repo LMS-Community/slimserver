@@ -917,6 +917,9 @@ sub forgetClient {
 		Slim::Web::HTTP::forgetClient($client);
 		Slim::Utils::Timers::forgetTimer($client);
 		delete $clientHash{$client->id()};
+		
+		# stop watching this player
+		delete $Slim::Networking::Slimproto::heartbeat{ $client->id };
 	}	
 }
 

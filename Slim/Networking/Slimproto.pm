@@ -39,13 +39,13 @@ my $check_time;                 # time scheduled for next check_all_clients
 
 my $slimproto_socket;
 
-our %ipport;		# ascii IP:PORT
-our %inputbuffer;  	# inefficiently append data here until we have a full slimproto frame
-our %parser_state; 	# 'LENGTH', 'OP', or 'DATA'
+our %ipport;		     # ascii IP:PORT
+our %inputbuffer;  	     # inefficiently append data here until we have a full slimproto frame
+our %parser_state; 	     # 'LENGTH', 'OP', or 'DATA'
 our %parser_framelength; # total number of bytes for data frame
 our %parser_frametype;   # frame type eg "HELO", "IR  ", etc.
-our %sock2client;	# reference to client for each sonnected sock
-our %heartbeat;     # the last time we heard from a client
+our %sock2client;	     # reference to client for each sonnected sock
+our %heartbeat;          # the last time we heard from a client
 our %status;
 
 our %callbacks;
@@ -176,19 +176,26 @@ sub check_all_clients {
 
 	my $now = time();
 
-	for my $client ( values %sock2client ) {
+	for my $id ( keys %heartbeat ) {
 		
-		# SoftSqueeze does not report status
-		next if $client->isa('Slim::Player::SoftSqueeze');
+		my $client = Slim::Player::Client::getClient($id) || next;
+		
+		# SoftSqueeze does not report status (yet)
+		if ( $client->isa('Slim::Player::SoftSqueeze') ) {
+			delete $heartbeat{ $client->id };
+			next;
+		}
 		
 		# skip if we haven't yet heard anything
-		if ( !defined $heartbeat{$client} ) {
+		if ( !defined $heartbeat{ $client->id } ) {
 			$client->requestStatus();
 			next;
 		}
 		
+		$::d_slimproto && msgf("Checking if %s is still alive\n", $client->id);
+		
 		# check when we last heard a stat response from the player
-		my $last_heard = $now - $heartbeat{$client};
+		my $last_heard = $now - $heartbeat{ $client->id };
 		
 		# disconnect client if we haven't heard from it in 3 poll intervals and no time travel
 		if ( $last_heard >= $check_all_clients_time * 3 && $now - $check_time <= $check_all_clients_time ) {
@@ -227,7 +234,7 @@ sub slimproto_close {
 
 	if ( my $client = $sock2client{$clientsock} ) {
 		
-		delete $heartbeat{$client};
+		delete $heartbeat{ $client->id };
 
 		# check client not forgotten and this is the active slimproto socket for this client
 		if ( Slim::Player::Client::getClient( $client->id ) && $clientsock == $client->tcpsock ) {
@@ -531,7 +538,7 @@ sub _stat_handler {
 	my $data_ref = shift;
 	
 	# update the heartbeat value for this player
-	$heartbeat{$client} = time();
+	$heartbeat{ $client->id } = time();
 
 	#struct status_struct {
 	#        u32_t event;
@@ -649,10 +656,14 @@ sub _update_request_handler {
 	my $data_ref = shift;
 
 	# THIS IS ONLY FOR SDK5.X-BASED FIRMWARE OR LATER
-	$::d_slimproto && msg("Client requests firmware update");
+	$::d_slimproto && msg("Client requests firmware update\n");
 	$client->unblock();
 	Slim::Hardware::IR::forgetQueuedIR($client);
-	$client->upgradeFirmware();		
+	
+	# Bug 3881, stop watching this client
+	delete $heartbeat{ $client->id };
+	
+	$client->upgradeFirmware();
 }
 	
 sub _animation_complete_handler {
@@ -874,6 +885,9 @@ sub _hello_handler {
 		$client->audio_outputs_enable($client->power());
 		$client->volume($client->volume(), 
 			defined($client->tempVolume()));
+			
+		# add the player to the list of clients we're watching for signs of life
+		$heartbeat{ $client->id } = time();
 	}
 	return;
 }
