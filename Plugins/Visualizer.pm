@@ -68,12 +68,12 @@ my %screensaver_info = (
 #   4-5 - same as left channel parameters
 
 	'SCREENSAVER.visualizer_analog_vumeter' => {
-		name => 'PLUGIN_SCREENSAVER_VISUALIZER_ANALOG_VUMETER',
+		name => 'VISUALIZER_ANALOG_VUMETER',
 		params => [$VISUALIZER_VUMETER, 0, 1, 0, 160, 160, 160],
 		showtext => 0,
 	},
 	'SCREENSAVER.visualizer_digital_vumeter' => {
-		name => 'PLUGIN_SCREENSAVER_VISUALIZER_DIGITAL_VUMETER',
+		name => 'VISUALIZER_DIGITAL_VUMETER',
 		params => {
 				'transporter' =>     [$VISUALIZER_VUMETER, 0, 0, 20, 280, 340, 280],
 				'squeezebox2' => [$VISUALIZER_VUMETER, 0, 0, 20, 130, 170, 130],
@@ -107,29 +107,6 @@ PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
 	ES	Requiere Squeezebox2
 	IT	Necessita Squeezebox2/3
 	NL	Squeezebox2/3 nodig
-
-PLUGIN_SCREENSAVER_VISUALIZER_SPECTRUM_ANALYZER
-	EN	Spectrum Analyzer
-	ES	Analizador de Espectro
-	FR	Spectromètre
-	IT	Analizzatore di spettro
-	NL	Spectrum analyser
-
-PLUGIN_SCREENSAVER_VISUALIZER_ANALOG_VUMETER
-	DE	Analoger VU Meter
-	EN	Analog VU Meter
-	ES	VUmetro análogo
-	FI	Analoginen VU-mittari
-	IT	VU meter analogico
-	NL	Analoge VU meter
-
-PLUGIN_SCREENSAVER_VISUALIZER_DIGITAL_VUMETER
-	DE	Digitaler VU Meter
-	EN	Digital VU Meter
-	ES	VUmetro digital
-	FI	Digitaalinen VU-mittari
-	IT	VU meter digitale
-	NL	Digitale VU meter
 
 PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE
 	DE	RECHTS drücken zum Aktivieren des Bildschirmschoners
@@ -282,21 +259,21 @@ sub screenSaver {
 		\%screensaverFunctions,
 		\&setVisualizerMode,
 		\&leaveVisualizerMode,
-		'PLUGIN_SCREENSAVER_VISUALIZER_SPECTRUM_ANALYZER',
+		'VISUALIZER_SPECTRUM_ANALYZER',
 	);
 	Slim::Buttons::Common::addSaver(
 		'SCREENSAVER.visualizer_analog_vumeter',
 		\%screensaverFunctions,
 		\&setVisualizerMode,
 		\&leaveVisualizerMode,
-		'PLUGIN_SCREENSAVER_VISUALIZER_ANALOG_VUMETER',
+		'VISUALIZER_ANALOG_VUMETER',
 	);
 	Slim::Buttons::Common::addSaver(
 		'SCREENSAVER.visualizer_digital_vumeter',
 		\%screensaverFunctions,
 		\&setVisualizerMode,
 		\&leaveVisualizerMode,
-		'PLUGIN_SCREENSAVER_VISUALIZER_DIGITAL_VUMETER',
+		'VISUALIZER_DIGITAL_VUMETER',
 	);
 }
 

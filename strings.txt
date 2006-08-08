@@ -9618,16 +9618,6 @@ VISUALIZER_VUMETER_SMALL
 	NL	Kleine VU
 	ZH_CN	小音量表
 
-VISUALIZER_SPECTRUM_ANALYZER
-	CS	Frekvenční spektrum
-	EN	Spectrum
-	ES	Espectro
-	FI	Spektri
-	FR	Spectromètre
-	HE	ספקטרום
-	IT	Spettro
-	ZH_CN	音谱
-
 VISUALIZER_VUMETER
 	EN	VU Meter
 	ES	VU metro
@@ -12328,22 +12318,31 @@ VISUALIZER_EXTENDED_TEXT
 	DE	Erweiterte Textanzeige
 	EN	Extended Text Display
 
-VISUALIZER_VUMETER_AN
+VISUALIZER_SPECTRUM_ANALYZER
+	CS	Frekvenční spektrum
+	EN	Spectrum Analyzer
+	ES	Analizador de Espectro
+	FI	Spektri
+	FR	Spectromètre
+	IT	Analizzatore di spettro
+	NL	Spectrum analyser
+	ZH_CN	音谱
+
+VISUALIZER_ANALOG_VUMETER
 	DE	Analoger VU Meter
-	EN	Analogue VU Meter
+	EN	Analog VU Meter
 	ES	VUmetro análogo
 	FI	Analoginen VU-mittari
 	IT	VU meter analogico
 	NL	Analoge VU meter
 
-VISUALIZER_VUMETER_DIG
+VISUALIZER_DIGITAL_VUMETER
 	DE	Digitaler VU Meter
 	EN	Digital VU Meter
 	ES	VUmetro digital
 	FI	Digitaalinen VU-mittari
 	IT	VU meter digitale
 	NL	Digitale VU meter
-	EN	Digital VU Meter
 
 SETUP_VISUALIZERMODE
 	DE	Visualizer Bildschirm
