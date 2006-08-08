@@ -12264,6 +12264,7 @@ SETUP_LARGETEXTFONT_1
 	NL	Modern
 
 SORT_BY
+	DE	Sortieren nach
 	EN	Sort By
 
 SORT_ARTISTALBUM
@@ -12324,16 +12325,30 @@ DIGITAL_INPUT_OPTICAL_SPDIF
 	EN	Optical S/PDIF
 
 VISUALIZER_EXTENDED_TEXT
+	DE	Erweiterte Textanzeige
 	EN	Extended Text Display
 
 VISUALIZER_VUMETER_AN
+	DE	Analoger VU Meter
 	EN	Analogue VU Meter
+	ES	VUmetro análogo
+	FI	Analoginen VU-mittari
+	IT	VU meter analogico
+	NL	Analoge VU meter
 
 VISUALIZER_VUMETER_DIG
+	DE	Digitaler VU Meter
+	EN	Digital VU Meter
+	ES	VUmetro digital
+	FI	Digitaalinen VU-mittari
+	IT	VU meter digitale
+	NL	Digitale VU meter
 	EN	Digital VU Meter
 
 SETUP_VISUALIZERMODE
+	DE	Visualizer Bildschirm
 	EN	Visualizer Screen
 
 SETUP_VISUALIZERMODE_DESC
+	DE	Der Player can auf dem rechten Bildschirm Visualisierungen oder erweiterte Informationen anzeigen. Wählen Sie hier, was dargestellt werden soll. Mit dem "Visual" Knopf auf dem Player können Sie diese Wahl jederzeit ändern. 
 	EN	The player can display visualizers or extended text information on the right hand screen. Choose which you wish to be displayed. The Visual button on the player will cycle through each of the options selected below.
