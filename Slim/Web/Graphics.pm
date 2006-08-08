@@ -81,7 +81,7 @@ sub processCoverArtRequest {
 
 	if (blessed($obj) && $obj->can('coverArt')) {
 
-		$cacheKey = "$trackid-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour";	
+		$cacheKey = join('-', $trackid, $resizeMode, $requestedWidth, $requestedHeight, $requestedBackColour);
 
 		$::d_artwork && msg("  artwork cache key: $cacheKey\n");
 
