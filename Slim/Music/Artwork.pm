@@ -9,6 +9,7 @@ package Slim::Music::Artwork;
 
 use strict;
 
+use File::Basename qw(dirname);
 use File::Slurp;
 use File::Spec::Functions qw(:ALL);
 use Path::Class;
@@ -29,10 +30,32 @@ tie my %lastFile, 'Tie::Cache::LRU', 32;
 
 # Public class methods
 sub findArtwork {
-	my $class  = shift;
+	my $class = shift;
+	my $track = shift;
+
+	# Only look for track/album combos that don't already have artwork.
+	my $cond = {
+		'me.audio'      => 1,
+		'album.artwork' => { '=' => undef },
+	};
+
+	my $attr = {
+		'join'     => 'album',
+		'group_by' => 'album',
+	};
+
+	# If the user passed in a track (dir) object, match on that base directory.
+	if (blessed($track) && $track->content_type eq 'dir') {
+
+		$cond->{'me.url'} = { 'like' => sprintf('%s%%', $track->url) };
+
+	} elsif (blessed($track) && $track->audio) {
+
+		$cond->{'me.url'} = { 'like' => sprintf('%s%%', dirname($track->url)) };
+	}
 
 	# Find distinct albums to check for artwork.
-	my $tracks = Slim::Schema->search('Track', { 'audio' => 1 }, { 'group_by' => 'album' });
+	my $tracks = Slim::Schema->search('Track', $cond, $attr);
 
 	my $progress = undef;
 	my $count    = $tracks->count;

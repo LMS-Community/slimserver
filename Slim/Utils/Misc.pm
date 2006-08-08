@@ -741,6 +741,9 @@ sub findAndScanDirectoryTree {
 		});
 	}
 
+	# Bug: 3841 - check for new artwork
+	Slim::Music::Artwork->findArtwork($topLevelObj);
+
 	# Now read the raw directory and return it. This should always be really fast.
 	my $items = [ Slim::Music::Info::sortFilename( readDirectory($path) ) ];
 	my $count = scalar @$items;
