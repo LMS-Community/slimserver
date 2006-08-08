@@ -1366,13 +1366,20 @@ sub startPeriodicUpdates {
 	# unset any previous timers
 	Slim::Utils::Timers::killTimers($client, \&_periodicUpdate);
 
-	my $interval = $client->param('modeUpdateInterval');
-	my $interval2 = ($client->param('screen2') eq 'periodic');
+	my $interval  = $client->param('modeUpdateInterval');
+	my $interval2 = undef;
+
+	if ($client->param('screen2') && $client->param('screen2') eq 'periodic') {
+
+		$interval2 = 1;
+	}
 
 	return unless ($interval || $interval2);
 
 	my $time = Time::HiRes::time() + ($interval || 0.05);
+
 	Slim::Utils::Timers::setTimer($client, $time, \&_periodicUpdate, $client);
+
 	$client->periodicUpdateTime($time);
 }
 
