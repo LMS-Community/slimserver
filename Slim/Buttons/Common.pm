@@ -1389,15 +1389,21 @@ sub syncPeriodicUpdates {
 
 sub _periodicUpdate {
 	my $client = shift;
-	my $update = $client->param('modeUpdateInterval');
-	my $update2 = ($client->param('screen2') eq 'periodic');
+
+	my $update  = $client->param('modeUpdateInterval');
+	my $update2 = undef;
+
+	if ($client->param('screen2') && $client->param('screen2') eq 'periodic') {
+
+		$update2 = 1;
+	}
 
 	# if params not set then no longer required
 	return unless ($update || $update2);
-	
+
 	# schedule the next update time, skip if running late
-	my $time = $client->periodicUpdateTime();
-	my $timenow = Time::HiRes::time();
+	my $time     = $client->periodicUpdateTime();
+	my $timenow  = Time::HiRes::time();
 	my $interval = $update || 1;
 
 	do {
@@ -1405,21 +1411,22 @@ sub _periodicUpdate {
 	} while ($time < $timenow);
 
 	Slim::Utils::Timers::setTimer($client, $time, \&_periodicUpdate, $client);
+
 	$client->periodicUpdateTime($time);
 
-	unless ($client->display->updateMode()) {
-		# updates not blocked
+	if ($client->display->updateMode) {
+		return;
+	}
 
-		if ($update) {
-			$client->display->update();
-		}
+	# updates not blocked
+	if ($update) {
+		$client->display->update();
+	}
 
-		if ($update2 && !$client->display->animateState() && (my $linefunc = $client->display->lines2periodic()) ) {
-				$client->display->update({ 'screen2' => &$linefunc($client) });
-		}
+	if ($update2 && !$client->display->animateState() && (my $linefunc = $client->display->lines2periodic()) ) {
+		$client->display->update({ 'screen2' => &$linefunc($client) });
 	}
 }
-
 
 1;
 
