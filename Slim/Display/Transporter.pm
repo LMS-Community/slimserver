@@ -140,11 +140,12 @@ sub hasScreen2 { 1 }
 
 sub init {
 	my $display = shift;
-	Slim::Utils::Prefs::initClientPrefs($display->client, $defaultPrefs);
+	my $client = $display->client;
+	Slim::Utils::Prefs::initClientPrefs($client, $defaultPrefs);
 	$display->SUPER::init();
 
 	# register default handler for periodic screen2 updates on visual screen
-	$display->lines2periodic(\&Slim::Player::Player::currentSongLines);
+	$client->lines2periodic(\&Slim::Player::Player::currentSongLines);
 }
 
 sub resetDisplay {

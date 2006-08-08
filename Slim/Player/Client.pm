@@ -685,7 +685,7 @@ sub new {
 	$client->[54] = undef; # epochirtime
 	$client->[55] = []; # modeStack
 	$client->[56] = []; # modeParameterStack
-	$client->[57] = undef; #unused
+	$client->[57] = undef; # lines
 	$client->[58] = []; # trackInfoLines
 	$client->[59] = []; # trackInfoContent
 	$client->[60] = {}; # lastID3Selection
@@ -728,7 +728,7 @@ sub new {
 	$client->[98] = undef; # directurl
 	$client->[99] = undef; # directbody
 	$client->[100] = undef; # display object
-	$client->[101] = undef; # unused
+	$client->[101] = undef; # lines2periodic
 	$client->[102] = 0; # periodicUpdateTime
 	$client->[103] = undef; # unused
 	$client->[104] = undef; # unused
@@ -1182,7 +1182,6 @@ sub block{}
 sub symbols{}
 sub unblock{}
 sub updateKnob{}
-sub lines {}
 
 sub pause {
 	my $client = shift;
@@ -1744,6 +1743,10 @@ sub modeParameterStack {
 	@_ ? ($i = shift) : return $r->[56];
 	@_ ? ($r->[56]->[$i] = shift) : $r->[56]->[$i];
 }
+sub lines {
+	my $r = shift;
+	@_ ? ($r->[57] = shift) : $r->[57];
+}
 sub trackInfoLines {
 	my $r = shift;
 	my $i;
@@ -1945,6 +1948,11 @@ sub directBody {
 sub display {
 	my $r = shift;
 	@_ ? ($r->[100] = shift) : $r->[100];
+}
+
+sub lines2periodic {
+	my $r = shift;
+	@_ ? ($r->[101] = shift) : $r->[101];
 }
 
 sub periodicUpdateTime {

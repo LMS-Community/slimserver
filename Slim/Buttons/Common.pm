@@ -1328,7 +1328,7 @@ sub pushpopScreen2 {
 	my $newscreen2 = $client->param('screen2');
 
 	if ($newscreen2 && $newscreen2 eq 'periodic' && $oldscreen2 ne 'periodic') {
-		my $linesfunc = $client->display->lines2periodic();
+		my $linesfunc = $client->lines2periodic();
 		$newlines->{'screen2'} = &$linesfunc($client);
 
 	} elsif ($oldscreen2 && !$newscreen2) {
@@ -1430,7 +1430,7 @@ sub _periodicUpdate {
 		$client->display->update();
 	}
 
-	if ($update2 && !$client->display->animateState() && (my $linefunc = $client->display->lines2periodic()) ) {
+	if ($update2 && !$client->display->animateState() && (my $linefunc = $client->lines2periodic()) ) {
 		$client->display->update({ 'screen2' => &$linefunc($client) });
 	}
 }
