@@ -133,7 +133,8 @@ sub createConfig {
 	$class->confFile($output);
 
 	# Bug: 3847 possibly - set permissions on the config file.
-	chmod(0664, $output);
+	# Breaks all kinds of other things.
+	# chmod(0664, $output);
 }
 
 sub startServer {
