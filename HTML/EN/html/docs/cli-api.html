@@ -79,12 +79,12 @@
 		playlist information if appropriate.
 	</li>
 	<li>
-		Command &quot;<a href="#dc_mode">mode &lt;play|pause|stop&gt;</a>&quot;
+		Command &quot;<a href="#mode">mode &lt;play|pause|stop&gt;</a>&quot;
 		is deprecated. Please use commands 
 		&quot;<a href="#play">play</a>&quot;, 
 		&quot;<a href="#stop">stop</a>&quot; and
 		&quot;<a href="#pause">pause</a>&quot;. The query 
-		&quot;<a href="#mode">mode ?</a>&quot; is not affected by this change.
+		&quot;<a href="#mode ?">mode ?</a>&quot; is not affected by this change.
 	</li>
 	<li>
 		Query &quot;<a href="#playlisttracks">playlisttracks</a>&quot; is
@@ -1005,10 +1005,31 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 	<li>
 		<strong><code><a href="#player model ?">player model ?</a></code></strong>
 	</li>
-<!-- MISSING COMMANDS HERE ! -->
+	<li>
+		<strong><code><a href="#player displaytype ?">player displaytype ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#signalstrength ?">signalstrength ?</a></code></strong>
+	</li>
 	<li>
 		<strong><code><a href="#connected ?">connected ?</a></code></strong>
 	</li>
+	<li>
+		<strong><code><a href="#sleep">sleep</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#sync">sync</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#power">power</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#mixer volume">mixer volume</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#show">show</a></code></strong>
+	</li>
+<!-- MISSING COMMANDS HERE ! -->
 </ul>
 
 <p id="player count ?">
@@ -1144,80 +1165,35 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 	</p>
 </blockquote>
 
-
-<br><p><strong><code>player displaytype &lt;playerindex|playerid&gt; ?</code></strong></p>
-<p>The &quot;player displaytype&quot; command returns the display model of the player. Graphical 
-display types start with &quot;graphic-&quot;, non-graphical display type with &quot;noritake-&quot;.</p>
-<blockquote> 
-  <p> Request: &quot;player displaytype 0 ?&lt;LF&gt;&quot;<br>
-     Response: &quot;player displaytype 0 noritake-katakana&lt;LF&gt;&quot;</p>
-</blockquote>
-
-<br><p><strong><code>&lt;playerid&gt; sleep &lt;number|?&gt;</code></strong></p>
-<p>The &quot;sleep&quot; command specifies a number of seconds to continue playing 
-  before powering off the player. You may query the amount of time until the player 
-  sleeps by passing in a &quot;?&quot; parameter.</p>
-<p>Examples: </p>
-<blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 sleep ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sleep 105.3&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 sleep 300&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 sleep 300&lt;LF&gt;&quot;</p>
-</blockquote>
-
-<br><p id="sync">
-	<strong>
-		<code>&lt;playerid&gt; sync &lt;playerindex|playerid|-|?&gt;</code>
-	</strong>
-</p>
-<p>The &quot;sync&quot; command specifies the player to synchronise with the
-   given playerid. You may query which players are already synced with this
-   player by passing in a &quot;?&quot; parameter.  Multiple playerids are 
-   separated by a comma. If the player is not synced, &quot;-&quot; is returned.
-   To unsync a player, use the &quot;-&quot; parameter.</p>
-<p>Examples: </p>
-<blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 sync 1&lt;LF&gt;&quot;
-  	<br>Response: &quot;04:20:00:12:23:45 sync 1&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 sync ?&lt;LF&gt;&quot;
-  	<br>Response: &quot;04:20:00:12:23:45 sync 04:20:00:12:23:21&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 sync -&lt;LF&gt;&quot;
-  	<br>Response: &quot;04:20:00:12:23:45 sync -&lt;LF&gt;&quot;</p>
-</blockquote>
-
 <br>
-<p>
+<p id="player displaytype ?">
 	<strong>
 		<code>
-			&lt;playerid&gt;
-			power
-			&lt;0|1|?|&gt;
+			player
+			displaytype
+			&lt;playerindex|playerid&gt;
+			?
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;power&quot; command turns the player on or off. Use 0 to turn off, 
-	1 to turn on, ? to query and no parameter to toggle the power state of the 
-	player.
-	For remote streaming connections, the command does nothing and the query 
-	always returns 1.
+	The &quot;player displaytype ?&quot; query returns the display model of the
+	player. Graphical display types start with &quot;graphic-&quot;, 
+	non-graphical display type with &quot;noritake-&quot;.
 </p>
 <p>
-	Examples:
+	Example:
 </p>
-<blockquote> 
+<blockquote>
 	<p>
-		Request: &quot;04:20:00:12:23:45 power 1&lt;LF&gt;&quot;
+		Request: &quot;player displaytype 0 ?&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;04:20:00:12:23:45 power 1&lt;LF&gt;&quot;
-	</p>
-	<p>
-		Request: &quot;04:20:00:12:23:45 power ?&lt;LF&gt;&quot;
-		<br>
-		Response: &quot;04:20:00:12:23:45 power 1&lt;LF&gt;&quot;
+		Response: &quot;player displaytype 0 noritake-katakana&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 
 <br>
-<p>
+<p id="signalstrength ?">
 	<strong>
 		<code>
 			&lt;playerid&gt;
@@ -1231,7 +1207,7 @@ display types start with &quot;graphic-&quot;, non-graphical display type with &
 	Returns 0 if not connected wirelessly.
 </p>
 <p>
-	Examples:
+	Example:
 </p>
 <blockquote> 
 	<p>
@@ -1268,20 +1244,133 @@ display types start with &quot;graphic-&quot;, non-graphical display type with &
 </blockquote>
 
 <br>
-	<p id="volume">
-		<strong>
-	<code>&lt;playerid&gt; mixer volume &lt;0 .. 100|-100 .. +100|?&gt;</code>
-		</strong>
+<p id="sleep">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			sleep
+			&lt;number|?&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;sleep&quot; command specifies a number of seconds to continue 
+	playing before powering off the player. You may query the amount of time 
+	until the player sleeps by passing in &quot;?&quot;.</p>
+<p>
+	Examples:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;04:20:00:12:23:45 sleep ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 sleep 105.3&lt;LF&gt;&quot;
 	</p>
-<p>The &quot;mixer volume&quot; command returns or sets the current volume 
+	<p>
+		Request: &quot;04:20:00:12:23:45 sleep 300&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 sleep 300&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="sync">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			sync 
+			&lt;playerindex|playerid|-|?&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;sync&quot; command specifies the player to synchronise with the 
+	given playerid. The command accepts only one playerindex or playerid. 
+	To unsync the player, use the &quot;-&quot; parameter.
+	<br>
+	You may query which players are already synced with this player by passing 
+	in a &quot;?&quot; parameter.  Multiple playerids are separated by a comma. 
+	If the player is not synced, &quot;-&quot; is returned.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote>
+	<p>
+		Request: &quot;04:20:00:12:23:45 sync 1&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 sync 1&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 sync ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 sync 04:20:00:12:23:21&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 sync -&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 sync -&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="power">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			power
+			&lt;0|1|?|&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;power&quot; command turns the player on or off. Use 0 to turn off, 
+	1 to turn on, ? to query and no parameter to toggle the power state of the 
+	player.
+	<br>
+	For remote streaming connections, the command does nothing and the query 
+	always returns 1.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;04:20:00:12:23:45 power 1&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 power 1&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 power ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 power 1&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="mixer volume">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			mixer
+			volume
+			&lt;0 .. 100|-100 .. +100|?&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;mixer volume&quot; command returns or sets the current volume 
 	setting for the player. The scale is 0 to 100, in real numbers (i.e. 34.5 
 	is valid). If the player is muted, the volume is returned as a negative
 	value. Note that players display a 0 to 40 scale, that is, the 0..100 
 	volume divided by 2,5. Likewise, using the 
-	&quot;<a href="#button">button</a>&quot;command with &quot;volume_up&quot;
+	&quot;<a href="#button">button</a>&quot; command with &quot;volume_up&quot;
 	or &quot;volume_down&quot; parameters increases or decreases the volume by
-	2,5.</p>
-<p> Example: </p>
+	2,5.
+</p>
+<p>
+	Examples:
+</p>
 <blockquote> 
 	<p>
 		Request: &quot;04:20:00:12:23:45 mixer volume ?&lt;LF&gt;&quot;
@@ -1304,7 +1393,7 @@ display types start with &quot;graphic-&quot;, non-graphical display type with &
 	<strong><code>&lt;playerid&gt; mixer muting &lt;0|1|?|&gt;</code></strong></p>
 <p>The &quot;mixer muting&quot; command mutes or unmutes the player. Use 0 to 
 	unmute, 1 to mute, ? to query and no parameter to toggle the muting state 
-	of the player. Note also the &quot;<a href="#volume">mixer volume</a>&quot;
+	of the player. Note also the &quot;<a href="#mixer volume">mixer volume</a>&quot;
 	command returns a negative value if the player is muted.</p>
 <p> Example: </p>
 <blockquote> 
@@ -1326,7 +1415,7 @@ display types start with &quot;graphic-&quot;, non-graphical display type with &
 	The &quot;mixer bass&quot; command returns or sets the current bass setting 
 	for the player. This is only supported by SliMP3 and SqueezeBox (SB1) 
 	players. For more information on the 0 to 100 scale, please refer to 
-	the &quot;<a href="#volume">mixer volume</a>&quot; command.
+	the &quot;<a href="#mixer volume">mixer volume</a>&quot; command.
 </p>
 <p>
 	Example:
@@ -1355,7 +1444,7 @@ display types start with &quot;graphic-&quot;, non-graphical display type with &
 <p>The &quot;mixer treble&quot; command returns or sets the current treble 
    setting for the player. This is only supported by SliMP3 and SqueezeBox (SB1) 
    players. For more information on the 0 to 100 scale, please refer to 
-   the &quot;<a href="#volume">mixer volume</a>&quot; command. </p>
+   the &quot;<a href="#mixer volume">mixer volume</a>&quot; command. </p>
 <p> Example: </p><p> Example: </p>
 <blockquote> 
   <p>Request: &quot;04:20:00:12:23:45 mixer treble ?&lt;LF&gt;&quot;
@@ -4124,7 +4213,58 @@ preferences values.</p>
 <h2 id="PL">
 	Playlist commands and queries
 </h2>
+<ul>
+	<li>
+		<strong><code><a href="#play">play</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#stop">stop</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#pause">pause</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#mode ?">mode ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#time">time</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#cursonginfo">genre ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#cursonginfo">artist ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#cursonginfo">album ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#cursonginfo">title ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#cursonginfo">duration ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#cursonginfo">remote ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#cursonginfo">current_title ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#cursonginfo">path ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist play">playlist play</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist add">playlist add</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist insert">playlist insert</a></code></strong>
+	</li>
+</ul>
 
+<br>
 <p id="play">
 	<strong>
 		<code>
@@ -4135,6 +4275,9 @@ preferences values.</p>
 </p>
 <p>
 	The &quot;play&quot; command allows to start playing the current playlist.
+</p>
+<p>
+	Example:
 </p>
 <blockquote> 
 	<p>
@@ -4156,6 +4299,9 @@ preferences values.</p>
 <p>
 	The &quot;stop&quot; command allows to stop playing the current playlist.
 </p>
+<p>
+	Example:
+</p>
 <blockquote> 
 	<p>
 		Request:  &quot;04:20:00:12:23:45 stop&lt;LF&gt;&quot;
@@ -4175,6 +4321,9 @@ preferences values.</p>
 	</strong>
 </p>
 <p>
+	Example:
+</p>
+<p>
 	You may use &quot;pause 1&quot; to force the player to pause, 
 	&quot;pause 0&quot; to force the player to unpause and &quot;pause&quot; to
 	toggle the pause state.
@@ -4188,7 +4337,7 @@ preferences values.</p>
 </blockquote>
 
 <br>
-<p id="mode">
+<p id="mode ?">
 	<strong>
 		<code>
 			&lt;playerid&gt;
@@ -4202,6 +4351,9 @@ preferences values.</p>
 	one of &quot;play&quot;, &quot;stop&quot; or &quot;pause&quot;. If the
 	player is off, &quot;mode ?&quot; returned value is undefined.
 </p>
+<p>
+	Example:
+</p>
 <blockquote> 
  	<p>
  		Request:  &quot;04:20:00:12:23:45 mode ?&lt;LF&gt;&quot;
@@ -4211,7 +4363,7 @@ preferences values.</p>
 </blockquote>
 
 <br>
-<p>
+<p id="time">
 	<strong>
 		<code>
 			&lt;playerid&gt; 
@@ -4355,7 +4507,7 @@ preferences values.</p>
 	</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist add &lt;item&gt;</code></strong></p>
+<br><p id="playlist add"><strong><code>&lt;playerid&gt; playlist add &lt;item&gt;</code></strong></p>
 <p>The &quot;playlist add&quot; command adds the specified song URL, playlist or directory contents to the end of the current playlist. 
 Songs currently playing or already on the playlist are not affected.</p>
 <p>Examples:</p>
@@ -4364,7 +4516,7 @@ Songs currently playing or already on the playlist are not affected.</p>
 	<p>Request: &quot;04:20:00:12:23:45 playlist add /playlists/abba.m3u&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist add /playlists/abba.m3u&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist insert &lt;item&gt;</code></strong></p>
+<br><p id="playlist insert"><strong><code>&lt;playerid&gt; playlist insert &lt;item&gt;</code></strong></p>
 <p>The &quot;playlist insert&quot; command inserts the specified song URL, playlist or directory contents to be played immediately after the current song in the current playlist. 
 Any songs currently playing or already on the playlist are not affected.</p>
 <p>Examples:</p>
