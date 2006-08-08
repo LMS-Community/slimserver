@@ -192,7 +192,7 @@ function refreshInfo(theData,force) {
 
 	var playeronly = ['playCtlffwd', 'playCtlrew', 'playCtlmute', 'volumeControl'];
 	for (var i=0; i < playeronly.length; i++) {
-		var key = elems[i];
+		var key = playeronly[i];
 		if (parsedData['isplayer']) {
 			showElements([key]);
 		} else {
