@@ -200,12 +200,12 @@ sub render {
 							$sc->{"$c"."bits"}[$l] = '';
 							$sc->{"$c"."finish"}[$l] = 0 if ($c eq 'line');
 							$sc->{"$c"."start"}[$l] = $screensize if ($c eq 'overlay');
+							$changed = 1;
 						}
 					}
 				}
 
 				$sc->{fonts} = $sfonts;
-				$changed = 1;
 			}
 
 			if (!$scroll || $changed) { 
