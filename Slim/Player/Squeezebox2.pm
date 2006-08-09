@@ -31,7 +31,7 @@ use Slim::Utils::Unicode;
 our $defaultPrefs = {
 	'transitionType'		=> 0,
 	'transitionDuration'	=> 0,
-	'replayGainMode'		=> '3',
+	'replayGainMode'		=> '0',
 };
 
 # Keep track of direct stream redirects
