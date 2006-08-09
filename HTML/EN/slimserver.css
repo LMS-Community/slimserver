@@ -98,6 +98,17 @@ div#browsedbHeader {
 	position: relative;
 }
 
+.viewSelect
+{
+	float: right;
+	padding-right: 8px;
+	padding-top: 6px;
+}
+
+.viewSelect img {
+	vertical-align: middle;
+}
+
 .thumbnail {
 	padding: 0px;
 	text-align: center;

@@ -26,6 +26,11 @@ body {
 {
 	float: right;
 	padding-right: 8px;
+	padding-top: 6px;
+}
+
+.viewSelect img {
+	vertical-align: middle;
 }
 
 a {
@@ -280,6 +285,7 @@ div#topGraphicMenu3 #statusMessage {
 	padding-left: 7px;
 	padding-top: 6px;
 	color: #111;
+	float: left;
 }
 
 div#statusMessage form{

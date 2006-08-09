@@ -110,3 +110,13 @@ small {
 	clear: left;
 }
 
+.viewSelect
+{
+	float: right;
+	padding-right: 8px;
+	padding-top: 6px;
+}
+
+.viewSelect img {
+	vertical-align: middle;
+}
