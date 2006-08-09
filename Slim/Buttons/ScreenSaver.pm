@@ -131,6 +131,10 @@ sub screenSaver {
 	} else {
 		# do nothing - periodic updates handled per client where required
 	}
+
+	# Make sure this timer is never duplicated
+	Slim::Utils::Timers::killTimers($client, \&screenSaver);
+
 	# Call ourselves again after 1 second
 	Slim::Utils::Timers::setTimer($client, ($now + 1.0), \&screenSaver);
 }
