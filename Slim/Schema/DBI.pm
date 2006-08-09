@@ -17,7 +17,7 @@ my $dirtyCount = 0;
 {
 	my $class = __PACKAGE__;
 
-	my @components = qw(PK::Auto Core DB);
+	my @components = qw(PK::Auto Core);
 	
 	if ($] > 5.007) {
 		unshift @components, 'UTF8Columns';
