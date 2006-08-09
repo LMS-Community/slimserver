@@ -7,6 +7,7 @@ package Slim::Buttons::Input::List;
 # version 2.
 
 use strict;
+
 use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 use Slim::Display::Display;
@@ -21,102 +22,140 @@ our %functions = (
 	'up' => sub {
 			my ($client,$funct,$functarg) = @_;
 			changePos($client,-1,$funct);
-		}
-	,'down' => sub {
+	},
+
+	'down' => sub {
 			my ($client,$funct,$functarg) = @_;
 			changePos($client,1,$funct);
-		}
-	,'knob' => sub {
+	},
+
+	'knob' => sub {
 			my ($client,$funct,$functarg) = @_;
 			changePos($client, $client->knobPos() - $client->param('listIndex') ,$funct,);
-		}
-	,'numberScroll' => sub {
+	},
+
+	'numberScroll' => sub {
 			my ($client,$funct,$functarg) = @_;
-			my $isSorted = $client->param('isSorted');
+
+			my $isSorted  = $client->param('isSorted');
 			my $lookupRef = $client->param('lookupRef');
-			my $listRef = $client->param('listRef');
+			my $listRef   = $client->param('listRef');
+
 			my $numScrollRef;
+
 			if ($isSorted && uc($isSorted) eq 'E') {
+
 				# sorted by the external value
 				$numScrollRef = $client->param('externRef');
 			} else {
+
 				# not sorted or sorted by the internal value
 				$numScrollRef = $listRef;
 			}
+
 			my $newIndex = Slim::Buttons::Common::numberScroll($client, $functarg, $numScrollRef, $isSorted ? 1 : 0, $lookupRef);
+
 			if (defined $newIndex) {
+
 				$client->param('listIndex',$newIndex);
+
 				my $valueRef = $client->param('valueRef');
+
 				$$valueRef = $listRef->[$newIndex];
+
 				my $onChange = $client->param('onChange');
+
 				if (ref($onChange) eq 'CODE') {
 					my $onChangeArgs = $client->param('onChangeArgs');
 					my @args;
+
 					push @args, $client if $onChangeArgs =~ /c/i;
 					push @args, $$valueRef if $onChangeArgs =~ /v/i;
 					push @args, $newIndex if $onChangeArgs =~ /i/i;
 					$onChange->(@args);
 				}
 			}
+
 			$client->update;
-		}
+	},
+	
 	#call callback procedure
-	,'exit' => sub {
+	'exit' => sub {
 			my ($client,$funct,$functarg) = @_;
+
 			if (!defined($functarg) || $functarg eq '') {
 				$functarg = 'exit'
 			}
+
 			exitInput($client,$functarg);
-		}
-	,'passback' => sub {
+	},
+		
+	'passback' => sub {
 			my ($client,$funct,$functarg) = @_;
+
 			my $parentMode = $client->param('parentMode');
+
 			if (defined($parentMode)) {
 				Slim::Hardware::IR::executeButton($client,$client->lastirbutton,$client->lastirtime,$parentMode);
 			}
-		}
+	},
 );
 
 sub changePos {
 	my ($client, $dir, $funct) = @_;
-	my $listRef = $client->param('listRef');
+
+	my $listRef   = $client->param('listRef');
 	my $listIndex = $client->param('listIndex');
+
 	if ($client->param('noWrap')) {
 		#not wrapping and at end of list
+
 		if ($listIndex == 0 && $dir < 0) {
 			$client->bumpUp() if ($funct !~ /repeat/);
 			return;
 		}
+
 		if ($listIndex >= (scalar(@$listRef) - 1) && $dir > 0) {
 			$client->bumpDown() if ($funct !~ /repeat/);
 			return;
 		}
 	}
+
 	my $newposition = Slim::Buttons::Common::scroll($client, $dir, scalar(@$listRef), $listIndex);
 #	print "changepos: newpos: $newposition = scroll dir:$dir listindex: $listIndex\n";
 	
 	my $valueRef = $client->param('valueRef');
+
 	$$valueRef = $listRef->[$newposition];
 	$client->param('listIndex',$newposition);
+
 	my $onChange = $client->param('onChange');
+
 	if (ref($onChange) eq 'CODE') {
 		my $onChangeArgs = $client->param('onChangeArgs');
 		my @args;
+
 		push @args, $client if $onChangeArgs =~ /c/i;
 		push @args, $$valueRef if $onChangeArgs =~ /v/i;
 		push @args, $client->param('listIndex') if $onChangeArgs =~ /i/i;
+
 		$onChange->(@args);
 	}
 	
 	if (scalar(@$listRef) < 2) {
+
 		if ($dir < 0) {
 			$client->bumpUp() if ($funct !~ /repeat/);
+
 		} else {
 			$client->bumpDown() if ($funct !~ /repeat/);
 		}
+
 	} elsif ($newposition != $listIndex) {
+
 		if ($dir < 0) {
 			$client->pushUp();
+
 		} else {
 			$client->pushDown();
 		}
@@ -125,21 +164,27 @@ sub changePos {
 
 sub lines {
 	my $client = shift;
+
 	my ($line1, $line2);
 	my $listIndex = $client->param('listIndex');
 	my $listRef = $client->param('listRef');
+
 	if (!defined($listRef)) { return ('','');}
+
 	if ($listIndex && ($listIndex == scalar(@$listRef))) {
 		$client->param('listIndex',$listIndex-1);
 		$listIndex--;
 	}
 	
 	$line1 = getExtVal($client,$listRef->[$listIndex],$listIndex,'header');
+
 	if ($client->param('stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
 		$line1 = $client->string($line1);
 	}
+
 	if (scalar(@$listRef) == 0) {
 		$line2 = $client->string('EMPTY');
+
 	} else {
 
 		if ($client->param('headerAddCount')) {
@@ -154,6 +199,7 @@ sub lines {
 		}
 	}
 	my ($overlay1, $overlay2) = getExtVal($client,$listRef->[$listIndex],$listIndex,'overlayRef');
+
 	$overlay1 = $client->symbols($overlay1) if defined($overlay1);
 	$overlay2 = $client->symbols($overlay2) if defined($overlay2);
 	
@@ -167,26 +213,37 @@ sub lines {
 
 sub getExtVal {
 	my ($client, $value, $listIndex, $source) = @_;
+
 	my $extref = $client->param($source);
 	my $extval;
+
 	if (ref($extref) eq 'ARRAY') {
 		$extref = $extref->[$listIndex];
 	}
 
 	if (!ref($extref)) {
 		return $extref;
+	
 	} elsif (ref($extref) eq 'CODE') {
 		my @args;
 		my $argtype = $client->param($source . 'Args');
+	
 		push @args, $client if $argtype =~ /c/i;
 		push @args, $value if $argtype =~ /v/i;
 		push @args, $listIndex if $argtype =~ /i/i;
+	
 		return $extref->(@args);
+	
 	} elsif (ref($extref) eq 'HASH') {
+	
 		return $extref->{$value};
+	
 	} elsif (ref($extref) eq 'ARRAY') {
+	
 		return @$extref;
+	
 	} else {
+	
 		return undef;
 	}
 }
@@ -196,14 +253,18 @@ sub getFunctions {
 }
 
 sub setMode {
-	my $client = shift;
+	my $client    = shift;
 	my $setMethod = shift;
+	
 	#possibly skip the init if we are popping back to this mode
 	#if ($setMethod ne 'pop') {
+	
 		if (!init($client)) {
 			Slim::Buttons::Common::popModeRight($client);
 		}
+	
 	#}
+	
 	$client->lines(\&lines);
 }
 # set unsupplied parameters to the defaults
@@ -246,7 +307,9 @@ sub init {
 
 	if (!defined($client->param('parentMode'))) {
 		my $i = -2;
+
 		while ($client->modeStack->[$i] =~ /^INPUT./) { $i--; }
+
 		$client->param('parentMode',$client->modeStack->[$i]);
 	}
 
@@ -254,7 +317,7 @@ sub init {
 		$client->param('header',$client->string('SELECT_ITEM'));
 	}
 
-	my $listRef = $client->param('listRef');
+	my $listRef   = $client->param('listRef');
 	my $externRef = $client->param('externRef');
 
 	if (!defined $listRef && ref($externRef) eq 'ARRAY') {
@@ -343,17 +406,24 @@ sub init {
 
 sub exitInput {
 	my ($client,$exitType) = @_;
+
 	my $callbackFunct = $client->param('callback');
+
 	if (!defined($callbackFunct) || !(ref($callbackFunct) eq 'CODE')) {
+
 		if ($exitType eq 'right') {
 			$client->bumpRight();
+
 		} elsif ($exitType eq 'left') {
 			Slim::Buttons::Common::popModeRight($client);
+
 		} else {
 			Slim::Buttons::Common::popMode($client);
 		}
+
 		return;
 	}
+
 	$callbackFunct->(@_);
 }
 
