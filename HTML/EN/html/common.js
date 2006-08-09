@@ -95,7 +95,7 @@ function toggleGalleryView(artwork) {
 
 function chooseAlbumOrderBy(value, option)
 {
-	var url = '[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&amp;level=[% level %][% attributes %][% IF artwork %]&amp;artwork=1[% END %]&amp;player=[% playerURI %]';
+	var url = '[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %][% IF artwork %]&artwork=1[% END %]&player=[% playerURI %]';
 
 	if (option) {
 		url = url + '&orderBy=' + option;
