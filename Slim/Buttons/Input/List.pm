@@ -218,6 +218,7 @@ sub setMode {
 # valueRef =  # reference to value to be selected
 # callback = undef # function to call to exit mode
 # listIndex = 0 or position of valueRef in listRef
+# init = undef # function to init any number of params at calltime, accepts client as arg
 # noWrap = undef # whether or not the list wraps at the ends
 # externRef = undef
 # externRefArgs = CV # accepts C, V and I
@@ -236,72 +237,107 @@ sub setMode {
 
 sub init {
 	my $client = shift;
+
+	my $init = $client->param('init');
+
+	if ($init && (ref($init) eq 'CODE')) {
+		$init->($client);
+	}
+
 	if (!defined($client->param('parentMode'))) {
 		my $i = -2;
 		while ($client->modeStack->[$i] =~ /^INPUT./) { $i--; }
 		$client->param('parentMode',$client->modeStack->[$i]);
 	}
+
 	if (!defined($client->param('header'))) {
 		$client->param('header',$client->string('SELECT_ITEM'));
 	}
+
 	my $listRef = $client->param('listRef');
 	my $externRef = $client->param('externRef');
+
 	if (!defined $listRef && ref($externRef) eq 'ARRAY') {
 		$listRef = $externRef;
 		$client->param('listRef',$listRef);
 	}
+
 	if (!defined $externRef && ref($listRef) eq 'ARRAY') {
 		$externRef = $listRef;
 		$client->param('externRef',$externRef);
 	}
+
 	return undef if !defined($listRef);
+
 	my $isSorted = $client->param('isSorted');
 	my $lookupRef = $client->param('lookupRef');
+
 	if ($isSorted && ($isSorted !~ /[iIeElL]/ || (uc($isSorted) eq 'E' && ref($externRef) ne 'ARRAY') || (uc($isSorted) eq 'L' && ref($lookupRef) ne 'CODE'))) {
 		$client->param('isSorted',0);
 	}
+
 	my $listIndex = $client->param('listIndex');
 	my $valueRef = $client->param('valueRef');
+
 	if (!defined($listIndex) || (scalar(@$listRef) == 0)) {
+
 		$listIndex = 0;
+
 	} elsif ($listIndex > $#$listRef) {
+
 		$listIndex = $#$listRef;
 	}
+
 	while ($listIndex < 0) {
 		$listIndex += scalar(@$listRef);
 	}
+
 	if (!defined($valueRef) || (ref($valueRef) && !defined($$valueRef))) {
+
 		$$valueRef = $listRef->[$listIndex];
 		$client->param('valueRef',$valueRef);
+
 	} elsif (!ref($valueRef)) {
 		my $value = $valueRef;
+
 		$valueRef = \$value;
 		$client->param('valueRef',$valueRef);
 	}
+
 	if ((scalar(@$listRef) != 0) && $$valueRef ne $listRef->[$listIndex]) {
 		my $newIndex;
+
 		for ($newIndex = 0; $newIndex < scalar(@$listRef); $newIndex++) {
 			last if $$valueRef eq $listRef->[$newIndex];
 		}
+
 		if ($newIndex < scalar(@$listRef)) {
 			$listIndex = $newIndex;
+
 		} else {
+
 			$$valueRef = $listRef->[$listIndex];
 		}
 	}
+
 	$client->param('listIndex',$listIndex);
+
 	if (!defined($client->param('externRefArgs'))) {
 		$client->param('externRefArgs','CV');
 	}
+
 	if (!defined($client->param('overlayRefArgs'))) {
 		$client->param('overlayRefArgs','CV');
 	}
+
 	if (!defined($client->param('onChangeArgs'))) {
 		$client->param('onChangeArgs','CV');
 	}
+
 	if (!defined($client->param('headerArgs'))) {
 		$client->param('headerArgs','CV');
 	}
+
 	return 1;
 }
 
