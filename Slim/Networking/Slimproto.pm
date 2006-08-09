@@ -237,7 +237,7 @@ sub slimproto_close {
 		delete $heartbeat{ $client->id };
 
 		# check client not forgotten and this is the active slimproto socket for this client
-		if ( Slim::Player::Client::getClient( $client->id ) && $clientsock == $client->tcpsock ) {
+		if ( Slim::Player::Client::getClient( $client->id ) ) {
 			
 			# notify of disconnect
 			Slim::Control::Request::notifyFromArray($client, ['client', 'disconnect']);
