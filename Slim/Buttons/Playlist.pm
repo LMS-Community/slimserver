@@ -285,14 +285,15 @@ sub lines {
 	}
 
 	if ($client->display->showExtendedText()) {
-		my $url = Slim::Player::Playlist::song($client, browseplaylistindex($client));
+		my $song = Slim::Player::Playlist::song($client, browseplaylistindex($client));
 
 		$parts->{'screen2'} ||= {
 			'line' => [ 
-						Slim::Music::TitleFormatter::infoFormat($url, 'ALBUM'),
-						Slim::Music::TitleFormatter::infoFormat($url, 'ARTIST')
+						Slim::Music::Info::displayText($client, $song, 'ALBUM'),
+						Slim::Music::Info::displayText($client, $song, 'ARTIST')
 						],
 		};
+
 	}
 
 	return $parts;

@@ -730,7 +730,7 @@ sub new {
 	$client->[100] = undef; # display object
 	$client->[101] = undef; # lines2periodic
 	$client->[102] = 0; # periodicUpdateTime
-	$client->[103] = undef; # unused
+	$client->[103] = undef; # musicInfoTextCache
 	$client->[104] = undef; # unused
 	$client->[105] = undef; # unused
 	$client->[106] = undef; # knobPos
@@ -1958,6 +1958,11 @@ sub lines2periodic {
 sub periodicUpdateTime {
 	my $r = shift;
 	@_ ? ($r->[102] = shift) : $r->[102];
+}
+
+sub musicInfoTextCache {
+	my $r = shift;
+	@_ ? ($r->[103] = shift) : $r->[103];
 }
 
 sub scrollState {

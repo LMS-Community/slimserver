@@ -174,6 +174,10 @@ sub clearFormatDisplayCache {
 	%displayCache    = ();
 	%currentTitles   = ();
 	%currentBitrates = ();
+
+	foreach my $client ( Slim::Player::Client::clients() ) {
+		$client->musicInfoTextCache(undef);
+	}
 }
 
 sub updateCacheEntry {
@@ -479,6 +483,39 @@ sub standardTitle {
 	}
 
 	return $ref->{'display'};
+}
+
+# get display text for object by format, caches all formats for this url for this client
+sub displayText {
+	my $client = shift;
+	my $obj    = shift;
+	my $format = shift || 'TITLE';
+
+	return '' unless (blessed $obj && $obj->can('url'));
+
+	my $url = $obj->url;
+
+	my $cache = $client->musicInfoTextCache();
+
+	if ($cache->{'url'} && $url && $cache->{'url'} eq $url) {
+
+		if (exists $cache->{"$format"}) {
+			return $cache->{"$format"};
+		} else {
+			return $cache->{"$format"} = Slim::Music::TitleFormatter::infoFormat($obj, $format);
+		}
+
+	}
+
+	my $text = Slim::Music::TitleFormatter::infoFormat($obj, $format);	
+
+	$cache = {};
+	$cache->{'url'} = $url;
+	$cache->{"$format"} = $text;
+
+	$client->musicInfoTextCache($cache);
+
+	return $text;
 }
 
 #
