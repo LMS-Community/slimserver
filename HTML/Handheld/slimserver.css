@@ -112,9 +112,8 @@ small {
 
 .viewSelect
 {
+	white-space: nowrap;
 	float: right;
-	padding-right: 8px;
-	padding-top: 6px;
 }
 
 .viewSelect img {
