@@ -2220,7 +2220,8 @@ sub getFontOptions {
 	my $displayHeight = $client->displayHeight();
 
 	foreach my $f (@$fonts) {
-		if ($displayHeight == Slim::Display::Lib::Fonts::fontheight($f . '.2')) {
+		if ($displayHeight == Slim::Display::Lib::Fonts::fontheight($f . '.2') && 
+			Slim::Display::Lib::Fonts::fontchars($f . '.2') > 255 ) {
 			$allowedfonts{$f} = $f;
 		}
 	}
