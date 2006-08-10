@@ -228,26 +228,39 @@ sub init {
 						}
 
 						$client->param('listRef', \@externTF);
-						$client->param('initialValue', $client->prefGet('titleFormatCurr'));
 					}
 				},
-		
-				'TEXTSIZE'         => {
-					'useMode'      => 'INPUT.List',
-					'listRef'      => undef, #filled before changing modes
-					'externRef'    => \&_fontExists,
-					'header'       => 'TEXTSIZE',
-					'stringHeader' => 1,
-					'onChange'     => sub { $_[0]->textSize($_[1]) },
-					'onChangeArgs' => 'CV',
-					'initialValue' => sub { $_[0]->textSize() },
+
+				'TEXTSIZE'      => {
+					'useMode'      => 'INPUT.Choice',
+					'header'       => '{TEXTSIZE}{count}',
+					'onPlay'       => sub { 
+						$_[0]->textSize($_[1]->{'value'})
+					},
+					'onAdd'        => sub { 
+						$_[0]->textSize($_[1]->{'value'})
+					},
+					'onRight'      => sub { 
+						$_[0]->textSize($_[1]->{'value'})
+					},,
+					'pref'         => 'activeFont_curr',
+					'initialValue' => sub { shift->prefGet('activeFont_curr') },
 					'init'         => sub {
 						my $client = shift;
 
-						my @text   = (0..$client->maxTextSize);
+						my @fonts = ();
+						my $i        = 0;
 
-						$client->param('listRef', \@text);
-					},
+						for my $font ($client->prefGetArray('activeFont')) {
+
+							push @fonts, {
+								'name'  => $font,
+								'value' => $i++
+							};
+						}
+
+						$client->param('listRef', \@fonts);
+					}
 				},
 		
 				'SYNCHRONIZE' => {
@@ -420,25 +433,6 @@ sub executeCommand {
 	my $subcmd  = $client->param('subcommand');
 
 	$client->execute([$command, $subcmd, $value]);
-}
-
-sub _fontExists {
-	my $client = shift;
-	my $index  = shift;
-
-	my $fontname;
-
-	if ($client->display->isa('Slim::Display::Graphics')) {
-
-		$fontname = $client->display->fonts->{'line'}[1];
-		$fontname =~ s/(\.2)?//go;
-
-	} else {
-
-		$fontname = $client->textSize ? 'large' : 'small';
-	}
-
-	return Slim::Utils::Strings::stringExists($fontname) ? $client->string($fontname) : $fontname;
 }
 
 sub screensaverInit {
