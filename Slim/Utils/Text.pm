@@ -9,10 +9,10 @@ package Slim::Utils::Text;
 
 use strict;
 
-my %caseArticlesCache = ();
+our %caseArticlesCache = ();
 
 # Article list to ignore.
-my $ignoredArticles = undef;
+our $ignoredArticles = undef;
 
 sub ignorePunct {
 	my $s = shift || return undef;
@@ -90,6 +90,10 @@ sub ignoreCaseArticles {
 
 		# Remove characters beyond U+FFFF as MySQL doesn;t like them in TEXT fields
 		$caseArticlesCache{$s} =~ s/[\x{10000}-\x{10ffff}]//g;
+
+		# strip leading & trailing spaces
+		$caseArticlesCache{$s} =~ s/^ +//o;
+		$caseArticlesCache{$s} =~ s/ +$//o;
 	}
 
 	return $caseArticlesCache{$s};
@@ -99,6 +103,8 @@ sub clearCaseArticleCache {
 
 	%caseArticlesCache = ();
 	$ignoredArticles   = undef;
+
+	return scalar keys %caseArticlesCache == 0 ? 1 : 0;
 }
 
 sub searchStringSplit {
