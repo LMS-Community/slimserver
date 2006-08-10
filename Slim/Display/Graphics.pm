@@ -646,6 +646,10 @@ my %fontSymbols = (
 	'progress3'   => "\x09",
 	'cursor'	  => "\x0a",
 	'mixable'     => "\x0b",
+	'circle'      => "\x0c",
+	'filledcircle'=> "\x0d",
+	'square'      => "\x0e",
+	'filledsquare'=> "\x0f",
 	'bell'	      => "\x10",
 	'hardspace'   => "\x20",
 
