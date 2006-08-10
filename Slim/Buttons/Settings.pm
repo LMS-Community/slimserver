@@ -15,7 +15,7 @@ use Slim::Utils::Prefs;
 use Slim::Buttons::Information;
 
 # button functions for browse directory
-our @defaultSettingsChoices = qw(ALARM VOLUME REPEAT SHUFFLE TITLEFORMAT TEXTSIZE INFORMATION SCREENSAVERS);
+our @defaultSettingsChoices = qw(VOLUME REPEAT SHUFFLE TITLEFORMAT TEXTSIZE SCREENSAVERS);
 
 our @settingsChoices = ();
 our %current = ();
@@ -27,7 +27,7 @@ sub arrowFunc {
 };
 
 sub init {
-	Slim::Buttons::Common::addMode('settings',Slim::Buttons::Settings::getFunctions(),\&Slim::Buttons::Settings::setMode);
+	#Slim::Buttons::Common::addMode('settings',Slim::Buttons::Settings::getFunctions(),\&Slim::Buttons::Settings::setMode);
 
 	%functions = (
 		'right' => sub  {
@@ -42,250 +42,344 @@ sub init {
 		}
 	);
 
+	# Massive hash for all the Settings
 	%menuParams = (
 
-		'settings' => {
-			'listRef' => \@defaultSettingsChoices,
+		'SETTINGS'            => {
+			'listRef'         => \@defaultSettingsChoices,
 			'stringExternRef' => 1,
-			'header' => 'SETTINGS',
-			'stringHeader' => 1,
-			'headerAddCount' => 1,
-			'callback' => \&settingsExitHandler,
-			'overlayRef' => \&arrowFunc,
-			'overlayRefArgs' => '',
-		},
-
-		'settings/ALARM' => {
-			'useMode' => 'alarm'
-		},
-
-		'settings/VOLUME' => {
-			'useMode' => 'INPUT.Bar',
-			'header' => 'VOLUME',
-			'stringHeader' => 1,
-			'headerValue' => \&volumeValue,
-			'onChange' =>  \&executeCommand,
-			'command' => 'mixer',
-			'subcommand' => 'volume',
-			'initialValue' => sub { return $_[0]->volume() },
-		},
-
-		'settings/BASS' => {
-			'useMode' => 'INPUT.Bar',
-			'header' => 'BASS',
-			'stringHeader' => 1,
-			'headerValue' => 'scaled',
-			'mid' => 50,
-			'onChange' =>  \&executeCommand,
-			'command' => 'mixer',
-			'subcommand' => 'bass',
-			'initialValue' => sub { return $_[0]->bass() },
-		},
-
-		'settings/PITCH' => {
-			'useMode' => 'INPUT.Bar',
-			'header' => 'PITCH',
-			'stringHeader' => 1,
-			'headerValue' =>'unscaled',
-			'headerValueUnit' => '%',
-			'min' => 80,
-			'max' => 120,
-			'mid' => 100,
-			'midIsZero' => 0,
-			'increment' => 1,
-			'onChange' =>  \&executeCommand,
-			'command' => 'mixer',
-			'subcommand' => 'pitch',
-			'initialValue' => sub { return $_[0]->pitch() },
-		},
-
-		'settings/TREBLE' => {
-			'useMode' => 'INPUT.Bar',
-			'header' => 'TREBLE',
-			'stringHeader' => 1,
-			'headerValue' => 'scaled',
-			'mid' => 50,
-			'onChange' =>  \&executeCommand,
-			'command' => 'mixer',
-			'subcommand' => 'treble',
-			'initialValue' => sub { return $_[0]->treble() },
-		},
-
-		'settings/REPLAYGAIN' => {
-			'useMode' => 'INPUT.List',
-			'listRef' => [0,1,2,3],
-			'externRef' => [qw(REPLAYGAIN_DISABLED REPLAYGAIN_TRACK_GAIN REPLAYGAIN_ALBUM_GAIN REPLAYGAIN_SMART_GAIN)],
-			'stringExternRef' => 1,
-			'header' => 'REPLAYGAIN',
-			'headerAddCount' => 1,
-			'stringHeader' => 1,
-			'onChange' =>  \&setPref,
-			'pref' => "replayGainMode",
-			'initialValue' => sub { return $_[0]->prefGet('replayGainMode') },
-		},
-
-		'settings/REPEAT' => {
-			'useMode' => 'INPUT.List',
-			'listRef' => [0,1,2],
-			'externRef' => [qw(REPEAT_OFF REPEAT_ONE REPEAT_ALL)],
-			'stringExternRef' => 1,
-			'header' => 'REPEAT',
-			'stringHeader' => 1,
-			'onChange' =>  \&executeCommand,
-			'command' => 'playlist',
-			'subcommand' => 'repeat',
-			'initialValue' => \&Slim::Player::Playlist::repeat,
-		},
-
-		'settings/SHUFFLE' => {
-			'useMode' => 'INPUT.List',
-			'listRef' => [0,1,2],
-			'externRef' => [qw(SHUFFLE_OFF SHUFFLE_ON_SONGS SHUFFLE_ON_ALBUMS)],
-			'stringExternRef' => 1,
-			'header' => 'SHUFFLE',
-			'stringHeader' => 1,
-			'onChange' => \&executeCommand,
-			'command' => 'playlist',
-			'subcommand' => 'shuffle',
-			'initialValue' => \&Slim::Player::Playlist::shuffle,
-		},
-
-		'settings/TITLEFORMAT' => {
-			'useMode' => 'INPUT.List',
-			'listRef' => undef, # filled before changing modes
-			'listIndex' => undef, #filled before changing modes
-			'externRef' => undef, #filled before changing modes
-			'header' => 'TITLEFORMAT',
-			'stringHeader' => 1,
-			'onChange' => \&setPref,
-			'pref' => "titleFormatCurr",
-			'onChangeArgs' => 'CI',
-		},
-
-		'settings/TEXTSIZE' => {
-			'useMode' => 'INPUT.List',
-			'listRef' => undef, #filled before changing modes
-			'externRef' => \&_fontExists,
-			'header' => 'TEXTSIZE',
-			'stringHeader' => 1,
-			'onChange' => sub { $_[0]->textSize($_[1], 1) },
-			'onChangeArgs' => 'CV',
-			'initialValue' => sub { $_[0]->textSize() },
-		},
-
-		'settings/INFORMATION' => {
-			'useMode' => 'information'
-		},
-
-		'settings/SYNCHRONIZE' => {
-			'useMode' => 'synchronize'
-		},
-
-		#,'settings/PLAYER_NAME' => {
-		#	'useMode' => 'INPUT.Text'
-			#add more params here after the rest is working
-		#}
-
-		'settings/SETUP_TRANSITIONTYPE' => {
-			'useMode' => 'INPUT.List',
-			'listRef' => [0,1,2,3,4],
-			'externRef' => ['TRANSITION_NONE', 'TRANSITION_CROSSFADE', 'TRANSITION_FADE_IN', 'TRANSITION_FADE_OUT', 'TRANSITION_FADE_IN_OUT'],
-			'stringExternRef' => 1,
-			'onChange' => \&setPref,
-			'headerAddCount' => 1,
-			'pref' => "transitionType",
-			'header' => 'SETUP_TRANSITIONTYPE',
-			'stringHeader' => 1,
-			'initialValue' => 'transitionType',
-		},
+			'header'          => 'SETTINGS',
+			'stringHeader'    => 1,
+			'headerAddCount'  => 1,
+			'overlayRef'      => \&arrowFunc,
+			'overlayRefArgs'  => '',
+			'init'            => \&settingsMenu,
+			'submenus'        => {
 		
+				'VOLUME'           => {
+					'useMode'      => 'INPUT.Bar',
+					'header'       => 'VOLUME',
+					'stringHeader' => 1,
+					'headerValue'  => \&volumeValue,
+					'onChange'     =>  \&executeCommand,
+					'command'      => 'mixer',
+					'subcommand'   => 'volume',
+					'initialValue' => sub { return $_[0]->volume() },
+				},
 		
-		# Screensavers submenus
-		
-		'settings/SCREENSAVERS' => {
-			'useMode' => 'INPUT.List',
-			'listRef' => ['SETUP_SCREENSAVER', 'SETUP_OFFSAVER', 'SETUP_IDLESAVER'],
-			'callback' => \&screensaversExitHandler,
-			'stringExternRef' => 1,
-			'header' => 'SCREENSAVERS',
-			'stringHeader' => 1,
-			'headerAddCount' => 1,
-			'overlayRef' => \&arrowFunc,
-			'overlayRefArgs' => '',
-		},
+				'BASS'             => {
+					'useMode'      => 'INPUT.Bar',
+					'header'       => 'BASS',
+					'stringHeader' => 1,
+					'headerValue'  => 'scaled',
+					'mid'          => 50,
+					'onChange'     =>  \&executeCommand,
+					'command'      => 'mixer',
+					'subcommand'   => 'bass',
+					'initialValue' => sub { return $_[0]->bass() },
+					'condition'    => sub {
+										my $client = shift;
+										return $client->maxBass() - $client->minBass();
+					},
+				},
 
-		'settings/SCREENSAVERS/SETUP_SCREENSAVER' => {
-			'useMode' => 'INPUT.List',
-			'listRef' => undef,
-			'externRef' => undef,
-			'stringExternRef' => 1,
-			'headerAddCount' => 1,
-			'onChange' => \&setPref,
-			'pref' => "screensaver",
-			'header' => 'SETUP_SCREENSAVER',
-			'stringHeader' => 1,
-			'initialValue' => 'screensaver',
-		},
+				'PITCH'               => {
+					'useMode'         => 'INPUT.Bar',
+					'header'          => 'PITCH',
+					'stringHeader'    => 1,
+					'headerValue'     =>'unscaled',
+					'headerValueUnit' => '%',
+					'min'             => 80,
+					'max'             => 120,
+					'mid'             => 100,
+					'midIsZero'       => 0,
+					'increment'       => 1,
+					'onChange'        =>  \&executeCommand,
+					'command'         => 'mixer',
+					'subcommand'      => 'pitch',
+					'initialValue'    => sub { return $_[0]->pitch() },
+					'condition'       => sub {
+											my $client = shift;
+											return $client->maxPitch() - $client->minPitch();
+					},
+				},
 		
-		'settings/SCREENSAVERS/SETUP_OFFSAVER' => {
-			'useMode' => 'INPUT.List',
-			'listRef' => undef,
-			'externRef' => undef,
-			'stringExternRef' => 1,
-			'onChange' => \&setPref,
-			'headerAddCount' => 1,
-			'pref' => "offsaver",
-			'header' => 'SETUP_OFFSAVER',
-			'stringHeader' => 1,
-			'initialValue' => 'offsaver',
-		},
+				'TREBLE'           => {
+					'useMode'      => 'INPUT.Bar',
+					'header'       => 'TREBLE',
+					'stringHeader' => 1,
+					'headerValue'  => 'scaled',
+					'mid'          => 50,
+					'onChange'     =>  \&executeCommand,
+					'command'      => 'mixer',
+					'subcommand'   => 'treble',
+					'initialValue' => sub { return $_[0]->treble() },
+					'condition'   => sub {
+						my $client = shift;
+						return $client->maxTreble() - $client->minTreble();
+					},
+				},
+		
+				'REPLAYGAIN'       => {
+					'useMode'      => 'INPUT.Choice',
+					'listRef'      => [
+						{
+							name   => '{REPLAYGAIN_DISABLED}',
+							value  => 0,
+						},
+						{
+							name   => '{REPLAYGAIN_TRACK_GAIN}',
+							value  => 1,
+						},
+						{
+							name   => '{REPLAYGAIN_ALBUM_GAIN}',
+							value  => 2,
+						},
+						{
+							name   => '{REPLAYGAIN_SMART_GAIN}',
+							value  => 3,
+						},
+					],
+					'onPlay'       => \&setPref,
+					'onAdd'        => \&setPref,
+					'onRight'      => \&setPref,
+					'header'       => '{REPLAYGAIN}{count}',
+					'pref'            => "replayGainMode",
+					'initialValue'    => sub { return $_[0]->prefGet('replayGainMode') },
+					'condition'   => sub {
+						my $client = shift;
+						return $client->canDoReplayGain(0);
+					},
+				},
+		
+				'REPEAT'           => {
+					'useMode'      => 'INPUT.Choice',
+					'listRef'      => [
+						{
+							name   => '{REPEAT_OFF}',
+							value  => 0,
+						},
+						{
+							name   => '{REPEAT_ONE}',
+							value  => 1,
+						},
+						{
+							name   => '{REPEAT_ALL}',
+							value  => 2,
+						},
+					],
+					'onPlay'       => \&executeCommand,
+					'onAdd'        => \&executeCommand,
+					'onRight'      => \&executeCommand,
+					'header'       => '{REPEAT}{count}',
+					'pref'         => \&Slim::Player::Playlist::repeat,
+					'initialValue' => \&Slim::Player::Playlist::repeat,
+					'command'      => 'playlist',
+					'subcommand'   => 'repeat',
+				},
+		
+				'SHUFFLE'          => {
+					'useMode'      => 'INPUT.Choice',
+					'listRef'      => [
+						{
+							name   => '{SHUFFLE_OFF}',
+							value  => 0,
+						},
+						{
+							name   => '{SHUFFLE_ON_SONGS}',
+							value  => 1,
+						},
+						{
+							name   => '{SHUFFLE_ON_ALBUMS}',
+							value  => 2,
+						},
+					],
+					'onPlay'       => \&executeCommand,
+					'onAdd'        => \&executeCommand,
+					'onRight'      => \&executeCommand,
+					'header'       => '{SHUFFLE}{count}',
+					'pref'         => \&Slim::Player::Playlist::shuffle,
+					'initialValue' => \&Slim::Player::Playlist::shuffle,
+					'command'      => 'playlist',
+					'subcommand'   => 'shuffle',
+					'initialValue' => \&Slim::Player::Playlist::shuffle,
+				},
+		
+				'TITLEFORMAT'      => {
+					'useMode'      => 'INPUT.Choice',
+					'header'       => '{TITLEFORMAT}{count}',
+					'onPlay'       => \&setPref,
+					'onAdd'        => \&setPref,
+					'onRight'      => \&setPref,
+					'pref'         => 'titleFormatCurr',
+					'initialValue' => sub { shift->prefGet('titleFormatCurr') },
+					'init'         => sub {
+						my $client = shift;
 
-		'settings/SCREENSAVERS/SETUP_IDLESAVER' => {
-			'useMode' => 'INPUT.List',
-			'listRef' => undef,
-			'externRef' => undef,
-			'stringExternRef' => 1,
-			'onChange' => \&setPref,
-			'headerAddCount' => 1,
-			'pref' => "idlesaver",
-			'header' => 'SETUP_IDLESAVER',
-			'stringHeader' => 1,
-			'initialValue' => 'idlesaver',
-		},
+						my @externTF = ();
+						my $i        = 0;
+
+						for my $format ($client->prefGetArray('titleFormat')) {
+
+							push @externTF, {
+								'name'  => Slim::Utils::Prefs::getInd('titleFormat', $format),
+								'value' => $i++
+							};
+						}
+
+						$client->param('listRef', \@externTF);
+						$client->param('initialValue', $client->prefGet('titleFormatCurr'));
+					}
+				},
 		
-		'settings/DIGITAL_INPUT' => {
-			'useMode' => 'INPUT.Choice',
-			'listRef' => [
-				{
-					name => '{OFF}',
-					value => 0,
+				'TEXTSIZE'         => {
+					'useMode'      => 'INPUT.List',
+					'listRef'      => undef, #filled before changing modes
+					'externRef'    => \&_fontExists,
+					'header'       => 'TEXTSIZE',
+					'stringHeader' => 1,
+					'onChange'     => sub { $_[0]->textSize($_[1]) },
+					'onChangeArgs' => 'CV',
+					'initialValue' => sub { $_[0]->textSize() },
+					'init'         => sub {
+										my $client = shift;
+										my @text = (0..$client->maxTextSize);
+										$client->param('listRef', \@text);
+					},
 				},
-				{
-					name => '{DIGITAL_INPUT_BALANCED_AES}',
-					value => 1,
+		
+				'SYNCHRONIZE' => {
+					'useMode'   => 'synchronize',
+					'condition' => sub {
+						my $client = shift;
+
+						return Slim::Player::Sync::isSynced($client) || 
+							(scalar(Slim::Player::Sync::canSyncWith($client)) > 0);
+					},
 				},
-				{
-					name => '{DIGITAL_INPUT_BNC_SPDIF}',
-					value => 2,
+		
+				#,'settings/PLAYER_NAME' => {
+				#	'useMode' => 'INPUT.Text'
+					#add more params here after the rest is working
+				#}
+		
+				'SETUP_TRANSITIONTYPE' => {
+					'useMode'      => 'INPUT.Choice',
+					'listRef'      => [
+						{
+							name   => '{TRANSITION_NONE}',
+							value  => 0,
+						},
+						{
+							name   => '{TRANSITION_CROSSFADE}',
+							value  => 1,
+						},
+						{
+							name   => '{TRANSITION_FADE_IN}',
+							value  => 2,
+						},
+						{
+							name   => '{TRANSITION_FADE_OUT}',
+							value  => 3,
+						},
+						{
+							name   => '{TRANSITION_FADE_IN_OUT}',
+							value  => 4,
+						},
+					],
+					'onPlay'       => \&setPref,
+					'onAdd'        => \&setPref,
+					'onRight'      => \&setPref,
+					'header'       => '{SETUP_TRANSITIONTYPE}{count}',
+					'pref'         => 'transitionType',
+					'initialValue' => sub { return $_[0]->prefGet('transitionType') },
+					'condition'    => sub { return $_[0]->isa('Slim::Player::Squeezebox2') },
 				},
-				{
-					name => '{DIGITAL_INPUT_RCA_SPDIF}',
-					value => 3,
+
+				# Screensavers submenus
+				'SCREENSAVERS'        => {
+					'useMode'         => 'INPUT.List',
+					'listRef'         => ['SETUP_SCREENSAVER', 'SETUP_OFFSAVER', 'SETUP_IDLESAVER'],
+					'stringExternRef' => 1,
+					'header'          => 'SCREENSAVERS',
+					'stringHeader'    => 1,
+					'headerAddCount'  => 1,
+					'overlayRef'      => \&arrowFunc,
+					'overlayRefArgs'  => '',
+					'submenus'        => {
+	
+						'SETUP_SCREENSAVER' => {
+							'useMode'       => 'INPUT.Choice',
+							'onPlay'        => \&setPref,
+							'onAdd'         => \&setPref,
+							'onRight'       => \&setPref,
+							'pref'          => "screensaver",
+							'header'        => '{SETUP_SCREENSAVER}{count}',
+							'initialValue'  => sub { return $_[0]->prefGet('screensaver') },
+							'init'          => \&screensaverInit,
+						},
+						
+						'SETUP_OFFSAVER' => {
+							'useMode'       => 'INPUT.Choice',
+							'onPlay'        => \&setPref,
+							'onAdd'         => \&setPref,
+							'onRight'       => \&setPref,
+							'pref'          => "offsaver",
+							'header'        => '{SETUP_OFFSAVER}{count}',
+							'initialValue'  => sub { return $_[0]->prefGet('offsaver') },
+							'init'          => \&screensaverInit,
+						},
+				
+						'SETUP_IDLESAVER' => {
+							'useMode'       => 'INPUT.Choice',
+							'onPlay'        => \&setPref,
+							'onAdd'         => \&setPref,
+							'onRight'       => \&setPref,
+							'pref'          => "idlesaver",
+							'header'        => '{SETUP_IDLESAVER}{count}',
+							'initialValue'  => sub { return $_[0]->prefGet('idlesaver') },
+							'init'          => \&screensaverInit,
+						},
+					},
 				},
-				{
-					name => '{DIGITAL_INPUT_OPTICAL_SPDIF}',
-					value => 4,
+			
+				'DIGITAL_INPUT'       => {
+					'useMode'      => 'INPUT.Choice',
+					'listRef'      => [
+						{
+							name   => '{OFF}',
+							value  => 0,
+						},
+						{
+							name   => '{DIGITAL_INPUT_BALANCED_AES}',
+							value  => 1,
+						},
+						{
+							name   => '{DIGITAL_INPUT_BNC_SPDIF}',
+							value  => 2,
+						},
+						{
+							name   => '{DIGITAL_INPUT_RCA_SPDIF}',
+							value  => 3,
+						},
+						{
+							name   => '{DIGITAL_INPUT_OPTICAL_SPDIF}',
+							value  => 4,
+						},
+					],
+					'onPlay'       => \&updateDigitalInput,
+					'onAdd'        => \&updateDigitalInput,
+					'onRight'      => \&updateDigitalInput,
+					'header'       => '{DIGITAL_INPUT}{count}',
+					'pref'         => 'digitalInput',
+					'initialValue' => sub { return $_[0]->prefGet('digitalInput') },
+					'condition'    => sub { return $_[0]->isa('Slim::Player::Transporter') },
 				},
-			],
-			'onPlay' => \&updateDigitalInput,
-			'onAdd' => \&updateDigitalInput,
-			'onRight' => \&updateDigitalInput,
-			'header' => '{DIGITAL_INPUT}',
-			'overlayRef' => sub {
-					return [undef,Slim::Buttons::Common::checkBoxOverlay($_[0]->prefGet('digitalInput') eq $_[1]->{'value'})]
-				},
+			},
 		},
 	);
+	
+	Slim::Buttons::Home::addMenuOption('SETTINGS', $menuParams{'SETTINGS'});
 }
 
 sub updateDigitalInput {
@@ -295,13 +389,17 @@ sub updateDigitalInput {
 	my $data = pack('C', $input->{'value'});
 	$client->prefSet('digitalInput', $input->{'value'});
 	$client->sendFrame('audp', \$data);
-	$client->update;
 };
 
 sub setPref {
 	my $client = shift;
 	my $value = shift;
-	
+
+	# See the hash defines above. 
+	if (ref $value eq 'HASH') {
+		$value = $value->{'value'};
+	}
+
 	my $pref = $client->param('pref');
 	
 	$client->prefSet($pref,$value);
@@ -310,161 +408,71 @@ sub setPref {
 sub executeCommand {
 	my $client = shift;
 	my $value = shift;
-	
+
+	# See the hash defines above. 
+	if (ref $value eq 'HASH') {
+		$value = $value->{'value'};
+	}
+
 	my $command = $client->param('command');
 	my $subcmd  = $client->param('subcommand');
-	
+
 	$client->execute([$command, $subcmd, $value]);
 }
-	
+
 sub _fontExists {
 	my $client = shift;
-	
+	my $index  = shift;
+
 	my $fontname;
 
-	if ($client->display->isa( "Slim::Display::Graphics" )) {
-		$fontname = $client->display->fonts()->{line}[1];
+	if ($client->display->isa('Slim::Display::Graphics')) {
+
+		$fontname = $client->display->fonts->{'line'}[1];
 		$fontname =~ s/(\.2)?//go;
+
 	} else {
-		$fontname = $client->textSize() ? 'large' : 'small';
+
+		$fontname = $client->textSize ? 'large' : 'small';
 	}
 
 	return Slim::Utils::Strings::stringExists($fontname) ? $client->string($fontname) : $fontname;
 }
 
-sub settingsExitHandler {
-	my ($client,$exittype) = @_;
-	$exittype = uc($exittype);
-	if ($exittype eq 'LEFT') {
-		Slim::Buttons::Common::popModeRight($client);
-		
-	} elsif ($exittype eq 'RIGHT') {
-		my $nextmenu = 'settings/' . $client->param('listRef')->[$client->param('listIndex')];
-		if (exists($menuParams{$nextmenu})) {
-			my %nextParams = %{$menuParams{$nextmenu}};
-			
-			if (($nextParams{'useMode'} eq 'INPUT.List' || $nextParams{'useMode'} eq 'INPUT.Bar')  && exists($nextParams{'initialValue'})) {
-				#set up valueRef for current pref
-				my $value;
-				if (ref($nextParams{'initialValue'}) eq 'CODE') {
-					$value = $nextParams{'initialValue'}->($client);
-					
-				} else {
-					$value = $client->prefGet($nextParams{'initialValue'});
-				}
-				$nextParams{'valueRef'} = \$value;
-				
-			} 
-			
-			if ($nextmenu eq 'settings/TITLEFORMAT') {
-				my @titleFormat = $client->prefGetArray('titleFormat');
-				$nextParams{'listRef'} = \@titleFormat;
-				my @externTF = map {Slim::Utils::Prefs::getInd('titleFormat',$_)} @titleFormat;
-				$nextParams{'externRef'} = \@externTF;
-				$nextParams{'listIndex'} = $client->prefGet('titleFormatCurr');	
-				
-			} elsif ($nextmenu eq 'settings/TEXTSIZE') {
-				my @text = (0..$client->maxTextSize);
-				$nextParams{'listRef'} = \@text;
-			}
-			
-			Slim::Buttons::Common::pushModeLeft(
-				$client
-				,$nextParams{'useMode'}
-				,\%nextParams
-			);
-		} else {
-			$client->bumpRight();
-		}
-	} else {
-		return;
-	}
-}
-
-sub screensaversExitHandler {
-	my ($client,$exittype) = @_;
-	$exittype = uc($exittype);
-	if ($exittype eq 'LEFT') {
-		Slim::Buttons::Common::popModeRight($client);
-		
-	} elsif ($exittype eq 'RIGHT') {
-		my $nextmenu = 'settings/' . $current{$client} . '/' . $client->param('listRef')->[$client->param('listIndex')];
-		if (exists($menuParams{$nextmenu})) {
-			my %nextParams = %{$menuParams{$nextmenu}};
-			
-			my $value = $client->prefGet($nextParams{'initialValue'});
-			$nextParams{'valueRef'} = \$value;
-			
-			my %hash = %{&Slim::Buttons::Common::hash_of_savers};
-			my @modes = keys %hash;
-			my @names = values %hash;
-			$nextParams{'listRef'} = \@modes;
-			$nextParams{'externRef'} = \@names;
-
-			Slim::Buttons::Common::pushModeLeft(
-				$client
-				,$nextParams{'useMode'}
-				,\%nextParams
-			);
-		} else {
-			$client->bumpRight();
-		}
-	} else {
-		return;
-	}
-}
-
-sub getFunctions {
-	return \%functions;
-}
-
-sub setMode {
+sub screensaverInit {
 	my $client = shift;
-	my $method = shift;
-	if ($method eq 'pop') {
-		Slim::Buttons::Common::popMode($client);
-		return;
-	}
+	
+	my %hash  = %{&Slim::Buttons::Common::hash_of_savers};
+	my @savers;
+	
+	for (sort keys %hash) {
+	
+		push @savers, {
+			'name'  => "{".$hash{$_}."}",
+			'value' => $_,
+		};
 
-	$current{$client} = $defaultSettingsChoices[0] unless exists($current{$client});
-	my %params = %{$menuParams{'settings'}};
-	$params{'valueRef'} = \$current{$client};
+	}
+	
+	$client->param('listRef', \@savers);
+}
+
+sub settingsMenu {
+	my $client = shift;
 	
 	my @settingsChoices = @defaultSettingsChoices;
-	
-	if ($client->maxBass() - $client->minBass()) {
-		push @settingsChoices, 'BASS';
+	my $menu = $menuParams{'SETTINGS'}{'submenus'};
+
+	for my $setting ( keys %{$menu}) {
+
+		if ($menu->{$setting}->{'condition'} && &{$menu->{$setting}->{'condition'}}($client)) {
+			push @settingsChoices, $setting;
+		}
 	}
-	
-	if ($client->maxTreble() - $client->minTreble()) {
-		push @settingsChoices, 'TREBLE';
-	}
-	
-	if ($client->maxPitch() - $client->minPitch()) {
-		push @settingsChoices, 'PITCH';
-	}
-	
-	if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0)) {
-		push @settingsChoices, 'SYNCHRONIZE';
-	}
-	
-	if ($client->isa( "Slim::Player::Squeezebox2" )) {
-		push @settingsChoices, 'SETUP_TRANSITIONTYPE';
-	}
-	if ($client->isa( "Slim::Player::Transporter" )) {
-		push @settingsChoices, 'DIGITAL_INPUT';
-	}
-	
-	if ($client->canDoReplayGain(0)) {
-		push @settingsChoices, 'REPLAYGAIN';
-	}
-	
+
 	@settingsChoices = sort { $client->string($a) cmp $client->string($b) } @settingsChoices;
-	
-	
-	$params{'listRef'} = \@settingsChoices;
-	
-	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
+
+	$client->param('listRef', \@settingsChoices);
 }
 
 sub volumeValue {

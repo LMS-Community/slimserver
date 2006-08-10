@@ -69,7 +69,10 @@ sub init {
 
 	# Home must come first!
 	Slim::Buttons::Home::init();
-
+	
+	# Initialise main settings menu next
+	Slim::Buttons::Settings::init();
+	
 	Slim::Buttons::AlarmClock::init();
 	Slim::Buttons::BrowseDB::init();
 	Slim::Buttons::BrowseTree::init();
@@ -80,14 +83,13 @@ sub init {
 	Slim::Buttons::Power::init();
 	Slim::Buttons::ScreenSaver::init();
 	Slim::Buttons::Search::init();
-	Slim::Buttons::Settings::init();
 	Slim::Buttons::SqueezeNetwork::init();
 	Slim::Buttons::Synchronize::init();
 	Slim::Buttons::TrackInfo::init();
 	Slim::Buttons::RemoteTrackInfo::init();
 	Slim::Buttons::Volume::init();
 
-	$savers{'playlist'} = Slim::Utils::Strings::string('NOW_PLAYING');
+	$savers{'playlist'} = 'NOW_PLAYING';
 }
 
 sub addSaver {

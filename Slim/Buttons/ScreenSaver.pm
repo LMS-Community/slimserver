@@ -21,8 +21,8 @@ our %functions = ();
 
 sub init {
 
-	Slim::Buttons::Common::addSaver('screensaver', getFunctions(), \&setMode, undef, string('SCREENSAVER_JUMP_BACK_NAME'));
-	Slim::Buttons::Common::addSaver('nosaver', undef, undef, undef, string('SCREENSAVER_NONE'));
+	Slim::Buttons::Common::addSaver('screensaver', getFunctions(), \&setMode, undef, 'SCREENSAVER_JUMP_BACK_NAME');
+	Slim::Buttons::Common::addSaver('nosaver', undef, undef, undef, 'SCREENSAVER_NONE');
 
 	# Each button on the remote has a function:
 	%functions = (

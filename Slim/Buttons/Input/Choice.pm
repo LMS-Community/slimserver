@@ -32,7 +32,7 @@ Slim::Buttons::Common::addMode('INPUT.Choice', getFunctions(), \&setMode);
 # item could be hash, string or code
 sub getItem {
 	my $client = shift;
-	my $index = shift;
+	my $index  = shift;
 
 	if (!defined($index)) {
 		$index = $client->param('listIndex') || 0;
@@ -49,7 +49,7 @@ sub getItem {
 # so that takes priority.
 sub getItemName {
 	my $client = shift;
-	my $index = shift; # optional
+	my $index  = shift; # optional
 
 	if (!defined($index)) {
 
@@ -78,8 +78,8 @@ sub getItemName {
 # each item in our listref has a value
 sub getItemValue {
 	my $client = shift;
-	my $index = shift; # optional
-	my $item = getItem($client, $index);
+	my $index  = shift; # optional
+	my $item   = getItem($client, $index);
 
 	if (ref($item)) {
 		return $item->{'value'};
@@ -91,7 +91,7 @@ sub getItemValue {
 # some values can be mode-wide, or overridden at the list item level
 sub getParam {
 	my $client = shift;
-	my $name = shift;
+	my $name   = shift;
 
 	my $item = getItem($client);
 
@@ -113,7 +113,7 @@ sub getParam {
 # string)
 sub getExtVal {
 	my $client = shift;
-	my $value = shift;
+	my $value  = shift;
 
 	if (ref $value eq 'CODE') {
 
@@ -202,7 +202,7 @@ my %functions = (
 	'passback' => \&passback,
 	'play'     => sub { callCallback('onPlay', @_) },
 	'add'      => sub { callCallback('onAdd', @_)  },
-
+	
 	# right and left buttons is handled in exitInput
 
 	# add more explicit callbacks if necessary here.
@@ -230,9 +230,9 @@ sub passback {
 # allowing newer modes to take advantage of the explicit callback.
 sub callCallback {
 	my $callbackName = shift;
-	my $client = shift;
-	my $funct = shift;
-	my $functarg = shift;
+	my $client       = shift;
+	my $funct        = shift;
+	my $functarg     = shift;
 
 	my $valueRef = $client->param('valueRef');
 	my $callback = getParam($client, $callbackName);
@@ -245,7 +245,12 @@ sub callCallback {
 
 		if ($@) {
 			errorMsg("INPUT.Choice: Couldn't run callback: [$callbackName] : $@\n");
+		
+		} elsif (getParam($client,'pref')) {
+		
+			$client->update;
 		}
+
 
 	} else {
 
@@ -260,11 +265,13 @@ sub changePos {
 	my $listIndex = $client->param('listIndex');
 	
 	if ($client->param('noWrap')) {
+		
 		#not wrapping and at end of list
 		if ($listIndex == 0 && $dir < 0) {
 			$client->bumpUp() if ($funct !~ /repeat/);
 			return;
 		}
+		
 		if ($listIndex >= (scalar(@$listRef) - 1) && $dir > 0) {
 			$client->bumpDown() if ($funct !~ /repeat/);
 			return;
@@ -284,17 +291,21 @@ sub changePos {
 	}
 
 	if (scalar(@$listRef) < 2) {
+
 		if ($dir < 0) {
 			$client->bumpUp() if ($funct !~ /repeat/);
 		} else {
 			$client->bumpDown() if ($funct !~ /repeat/);
 		}
+
 	} elsif ($newposition != $listIndex) {
+
 		if ($dir < 0) {
 			$client->pushUp();
 		} else {
 			$client->pushDown();
 		}
+
 	}
 
 	# if unique mode name supplied, remember where client was browsing
@@ -317,10 +328,10 @@ sub changePos {
 # '{STRING}' will be replaced with STRING translated
 # '{count}' will be replaced with (m of N) (i.e. like addHeaderCount in List mode)
 sub formatString {
-	my $client = shift;
-	my $string = shift;
+	my $client    = shift;
+	my $string    = shift;
 	my $listIndex = shift;
-	my $listRef = shift;
+	my $listRef   = shift;
 
 	while ($string =~ /(.*?)\{(.*?)\}(.*)/) {
 
@@ -401,9 +412,16 @@ sub lines {
 	my $overlayref = getExtVal($client, getParam($client, 'overlayRef'));
 
 	if (ref($overlayref) eq 'ARRAY') {
+
 		($overlay1, $overlay2) = @$overlayref;
 		$overlay1 = $client->symbols($overlay1) if (defined($overlay1));
 		$overlay2 = $client->symbols($overlay2) if (defined($overlay2));
+		
+	} elsif (my $pref = getParam($client,'pref')) {
+		
+		# assume a single non-descending list of items, 'pref' item must be given in the params
+		my $val = ref $pref eq 'CODE' ? $pref->($client) : $client->prefGet($pref);
+		$overlay2 = Slim::Buttons::Common::checkBoxOverlay($val eq getItemValue($client));
 	}
 
 	my $parts = {
@@ -419,7 +437,7 @@ sub getFunctions {
 }
 
 sub setMode {
-	my $client = shift;
+	my $client    = shift;
 	my $setMethod = shift;
 
 	if (!init($client, $setMethod)) {
@@ -431,7 +449,7 @@ sub setMode {
 
 # set unsupplied values to defaults.
 sub init {
-	my $client = shift;
+	my $client    = shift;
 	my $setMethod = shift;
 
 	my $init = $client->param('init');
@@ -466,7 +484,7 @@ sub init {
 	if ($setMethod eq 'push') {
 
 		my $initialValue = getExtVal($client, getParam($client, 'initialValue'));
-
+		
 		# if initialValue not provided, use the one we saved
 		if (!$initialValue && $client->param("modeName")) {
 
@@ -521,8 +539,13 @@ sub exitInput {
 				my $lines = $onRight->($client, (defined($valueRef) ? ($$valueRef) : undef));
 
 				if (defined($lines) && (ref($lines) eq 'ARRAY')) {
+
 					# if onRight returns lines, show them.
 					$client->showBriefly($lines->[0], $lines->[1], undef, 1);
+
+				} elsif (getParam($client,'pref')) {
+		
+					$client->update;
 				}
 
 			} else {

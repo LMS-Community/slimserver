@@ -67,6 +67,12 @@ sub playlistName {
 sub init {
 
 	Slim::Buttons::Common::addMode('alarm', {}, \&setMode);
+	
+	Slim::Buttons::Home::addSubMenu('SETTINGS', 'ALARM', {
+															'useMode'   => 'alarm',
+															'condition' => sub {return 1},
+														 });
+	
 	setTimer();
 
 	# check if Random plugin is isntalled and not disabled.  create items for the special random playlists

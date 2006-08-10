@@ -62,10 +62,6 @@ sub init {
 		'NOW_PLAYING' => {
 			'useMode' => 'playlist'
 		},
-
-		'SETTINGS' => {
-			'useMode' => 'settings'
-		}
 	);
 
 	# This is also a big source of the inconsistency in "play" and "add" functions.
@@ -321,7 +317,6 @@ sub getMenu {
 sub homeExitHandler {
 	my ($client,$exittype) = @_;
 	$exittype = uc($exittype);
-
 
 	if ($exittype eq 'LEFT') {
 		if ($client->curDepth() ne "") {
