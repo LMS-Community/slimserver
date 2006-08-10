@@ -296,7 +296,7 @@ sub overlayFunc {
 		if ($nextParams{'useMode'} eq 'boolean') {
 			return (
 				undef,
-				Slim::Buttons::Common::checkBoxOverlay(
+				Slim::Buttons::Common::checkBoxOverlay($client,
 					$client->prefGet($saver) eq 'SCREENSAVER.snow'
 				),
 			);

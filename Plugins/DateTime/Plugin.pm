@@ -139,7 +139,7 @@ sub lines {
 	
 	my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
 	my $line2 = $client->string('SETUP_SCREENSAVER_USE');
-	my $overlay2 = Slim::Buttons::Common::checkBoxOverlay($client->prefGet($saver) eq 'SCREENSAVER.datetime');
+	my $overlay2 = Slim::Buttons::Common::checkBoxOverlay($client, $client->prefGet($saver) eq 'SCREENSAVER.datetime');
 	
 	return {
 		'line'    => [ $client->string('PLUGIN_SCREENSAVER_DATETIME'), $line2 ],

@@ -421,7 +421,7 @@ sub lines {
 		
 		# assume a single non-descending list of items, 'pref' item must be given in the params
 		my $val = ref $pref eq 'CODE' ? $pref->($client) : $client->prefGet($pref);
-		$overlay2 = Slim::Buttons::Common::checkBoxOverlay($val eq getItemValue($client));
+		$overlay2 = Slim::Buttons::Common::checkBoxOverlay($client, $val eq getItemValue($client));
 	}
 
 	my $parts = {

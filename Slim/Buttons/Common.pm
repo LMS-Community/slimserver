@@ -1126,8 +1126,21 @@ sub validMode {
 
 # standard UI feature enable/disable a setting
 sub checkBoxOverlay {
+	my $client = shift;
 	my $value = shift;
-	
+
+	unless (blessed($client) && $client->isa('Slim::Player::Client')) {
+
+		msg ("PLUGIN WARNING: plugins must now provide client when calling checkBoxOverlay\n");
+		bt();
+		$value = $client;
+
+	} elsif ($client->display->isa('Slim::Display::Graphics')) {
+
+		return $client->symbols( $value ? 'filledcircle' : 'circle' );
+
+	}
+
 	return $value ? "[X]" : "[ ]";
 }
 

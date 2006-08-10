@@ -504,7 +504,7 @@ sub overlayFunc {
 		if ($nextParams{'useMode'} eq 'boolean') {
 			return (
 				undef,
-				Slim::Buttons::Common::checkBoxOverlay(
+				Slim::Buttons::Common::checkBoxOverlay($client,
 					$client->prefGet($nextParams{'pref'},useWeekday($client,$nextParams{'pref'}))
 				),
 			);
