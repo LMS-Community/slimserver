@@ -18,6 +18,7 @@ use Slim::Music::Info;
 use Slim::Utils::Misc;
 
 our %functions = ();
+our $mixer;
 
 sub init {
 
@@ -30,11 +31,16 @@ sub init {
 		'hierarchy' => '',
 	};
 
-	Slim::Buttons::Common::addMode($mode, Slim::Buttons::BrowseTree::getFunctions(), \&Slim::Buttons::BrowseTree::setMode);
-
-	Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $name, $menu);
-	Slim::Buttons::Home::addMenuOption($name, $menu);
-
+	if (Slim::Utils::Prefs::get('audiodir')) {
+		Slim::Buttons::Common::addMode($mode, Slim::Buttons::BrowseTree::getFunctions(), \&Slim::Buttons::BrowseTree::setMode);
+	
+		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $name, $menu);
+		Slim::Buttons::Home::addMenuOption($name, $menu);
+	} else {
+		Slim::Buttons::Home::delSubMenu('BROWSE_MUSIC', $name, $menu);
+		Slim::Buttons::Home::delMenuOption($name, $menu);
+	}
+	
 	%functions = (
 		'play' => sub {
 			my $client = shift;
@@ -133,6 +139,61 @@ sub init {
 				}
 			}
 		},
+		
+		'create_mix' => sub  {
+			my $client = shift;
+
+			my $items       = $client->param('listRef');
+			my $listIndex   = $client->param('listIndex');
+			my $currentItem = $items->[$listIndex] || return;
+			my $descend     = Slim::Music::Info::isList($currentItem) ? 1 : 0;
+
+			my $Imports = Slim::Music::Import->importers;
+
+			my @mixers = ();
+
+# 			TODO: bug 3869 ir map uses play.hold for mixing.  we should add mixing from BMF where possible
+#			For now, we'll set this up to fall back to play.
+#			for my $import (keys %{$Imports}) {
+
+#				next if !$Imports->{$import}->{'mixer'};
+#				next if !$Imports->{$import}->{'use'};
+
+#				if (!$descend && $import->mixable($currentItem)) {
+#					push @mixers, $import;
+#				}
+#			}
+
+			if (scalar @mixers == 1) {
+				
+				$::d_plugins && msg("Running Mixer $mixers[0]\n");
+				&{$Imports->{$mixers[0]}->{'mixer'}}($client);
+				
+			} elsif (@mixers) {
+
+				# store existing browsedb params for use later.
+				my $params = {
+					'parentParams'    => $client->modeParameterStack(-1),
+					'listRef'         => \@mixers,
+					'externRef'       => sub { return $_[0]->string($_[1]->title) },
+					'externRefArgs'   => 'CV',
+					'header'          => 'CREATE_MIX',
+					'headerAddCount'  => 1,
+					'stringHeader'    => 1,
+					'callback'        => \&mixerExitHandler,
+					'overlayRef'      => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
+					'overlayRefArgs'  => '',
+					'valueRef'        => \$mixer,
+				};
+
+				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', $params);
+			
+			} else {
+			
+				# if we don't have mix generation, then just play
+				(getFunctions())->{'play'}($client);
+			}
+		}
 	);
 }
 
