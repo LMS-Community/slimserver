@@ -72,9 +72,9 @@ sub init {
 	Slim::Buttons::Common::addMode('information', getFunctions(), \&setMode);
 
 	Slim::Buttons::Home::addSubMenu('SETTINGS', 'INFORMATION', {
-																	'useMode'   => 'information',
-																	'condition' => sub {return 1},
-															   });
+		'useMode'   => 'information',
+		'condition' => sub { 1 },
+	});
 
 	# hash of parameters for the various menus, these will be passed to INPUT.List
 	# Some of the parameters aren't used by INPUT.List, but it is handy to let them be
@@ -332,6 +332,7 @@ sub updateSignalStrength {
 	
 		$client->update();
 	}
+
 	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&updateSignalStrength);
 }
 

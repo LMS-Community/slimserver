@@ -69,9 +69,9 @@ sub init {
 	Slim::Buttons::Common::addMode('alarm', {}, \&setMode);
 	
 	Slim::Buttons::Home::addSubMenu('SETTINGS', 'ALARM', {
-															'useMode'   => 'alarm',
-															'condition' => sub {return 1},
-														 });
+		'useMode'   => 'alarm',
+		'condition' => sub { 1 },
+	});
 	
 	setTimer();
 
@@ -131,10 +131,10 @@ sub init {
 		'alarm/ALARM_SET_VOLUME' => {
 			'useMode'       => 'INPUT.Bar',
 			'header'        => sub {
-								($_[0]->linesPerScreen == 1) ? 
-									$_[0]->string('ALARM_SET_VOLUME_SHORT') : 
-									$_[0]->string('ALARM_SET_VOLUME');
-								},
+				($_[0]->linesPerScreen == 1) ? 
+				$_[0]->string('ALARM_SET_VOLUME_SHORT') : 
+				$_[0]->string('ALARM_SET_VOLUME');
+			},
 			,'stringHeader' => 1,
 			,'headerArgs'   => 'C',
 			,'headerValue'  => \&Slim::Buttons::AlarmClock::volumeValue,
@@ -161,29 +161,29 @@ sub init {
 			'useMode'          => 'INPUT.List',
 			'listRef'          => [ 0..7 ],
 			'externRef'        => sub { 
-									my $client    = shift;
-									my $dayOfWeek = shift;
-					
-									my $dowString = $client->string("ALARM_DAY$dayOfWeek");
-					
-									if ($client->prefGet('alarm', $dayOfWeek)) {
-					
-										$dowString .= sprintf(" (%s)",
-											Slim::Buttons::Input::Time::timeString(
-												$client,
-												Slim::Buttons::Input::Time::timeDigits(
-													$client,
-													$client->prefGet('alarmtime', $dayOfWeek)
-												),
-												-1  # hide the cursor
-											) 
-										);
-									
-									} else {
-										$dowString .= sprintf(" (%s)", $client->string('MCOFF'));
-									}
-					
-									return $dowString;
+				my $client    = shift;
+				my $dayOfWeek = shift;
+
+				my $dowString = $client->string("ALARM_DAY$dayOfWeek");
+
+				if ($client->prefGet('alarm', $dayOfWeek)) {
+
+					$dowString .= sprintf(" (%s)",
+						Slim::Buttons::Input::Time::timeString(
+							$client,
+							Slim::Buttons::Input::Time::timeDigits(
+								$client,
+								$client->prefGet('alarmtime', $dayOfWeek)
+							),
+							-1  # hide the cursor
+						) 
+					);
+				
+				} else {
+					$dowString .= sprintf(" (%s)", $client->string('MCOFF'));
+				}
+
+				return $dowString;
 			},
 			'externRefArgs'    => 'CI',
 			'header'           => 'ALARM_WEEKDAYS',
@@ -349,8 +349,6 @@ sub alarmExitHandler {
 		} else {
 			$client->bumpRight();
 		}
-	} else {
-		return;
 	}
 }
 
@@ -408,8 +406,9 @@ sub checkAlarms {
 				my $playlist = $client->prefGet("alarmplaylist", $day);
 				
 				# if a random playlist option is chosen, make sure that the plugin is installed and enabled.
-				if ($specialPlaylists{$playlist} && ((grep {$_ eq 'RandomPlay::Plugin'} keys %{Slim::Utils::PluginManager::installedPlugins()}) 
-							&& !(grep {$_ eq 'RandomPlay::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')))) {
+				if ($specialPlaylists{$playlist} && 
+					((grep {$_ eq 'RandomPlay::Plugin'} keys %{Slim::Utils::PluginManager::installedPlugins()}) 
+					&& !(grep {$_ eq 'RandomPlay::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')))) {
 					
 					Plugins::RandomPlay::Plugin::playRandom($client,$specialPlaylists{$playlist});
 					
@@ -513,8 +512,7 @@ sub overlayFunc {
 	}
 	
 	return (undef,Slim::Display::Display::symbol('rightarrow'));
-
-};
+}
 
 sub lines {
 	my $client = shift;

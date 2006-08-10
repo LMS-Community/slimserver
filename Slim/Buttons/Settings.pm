@@ -78,8 +78,8 @@ sub init {
 					'subcommand'   => 'bass',
 					'initialValue' => sub { return $_[0]->bass() },
 					'condition'    => sub {
-										my $client = shift;
-										return $client->maxBass() - $client->minBass();
+						my $client = shift;
+						return $client->maxBass() - $client->minBass();
 					},
 				},
 
@@ -99,8 +99,8 @@ sub init {
 					'subcommand'      => 'pitch',
 					'initialValue'    => sub { return $_[0]->pitch() },
 					'condition'       => sub {
-											my $client = shift;
-											return $client->maxPitch() - $client->minPitch();
+						my $client = shift;
+						return $client->maxPitch() - $client->minPitch();
 					},
 				},
 		
@@ -242,9 +242,11 @@ sub init {
 					'onChangeArgs' => 'CV',
 					'initialValue' => sub { $_[0]->textSize() },
 					'init'         => sub {
-										my $client = shift;
-										my @text = (0..$client->maxTextSize);
-										$client->param('listRef', \@text);
+						my $client = shift;
+
+						my @text   = (0..$client->maxTextSize);
+
+						$client->param('listRef', \@text);
 					},
 				},
 		
@@ -478,30 +480,6 @@ sub settingsMenu {
 sub volumeValue {
 	my ($client,$arg) = @_;
 	return ' ('.($arg <= 0 ? $client->string('MUTED') : int($arg/100*40+0.5)).')';
-}
-
-# this is deprecated, warn and backtrace if anyone calls
-sub volumeLines {
-	msg("Somebody called volumeLines\n");
-	bt();
-}
-
-# this is deprecated, warn and backtrace if anyone calls
-sub pitchLines {
-	msg("Somebody called pitchLines\n");
-	bt();
-}
-
-# this is deprecated, warn and backtrace if anyone calls
-sub bassLines {
-	msg("Somebody called bassLines\n");
-	bt();
-}
-
-# this is deprecated, warn and backtrace if anyone calls
-sub trebleLines {
-	msg("Somebody called trebleLines\n");
-	bt();
 }
 
 1;
