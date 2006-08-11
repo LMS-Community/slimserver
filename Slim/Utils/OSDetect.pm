@@ -30,6 +30,13 @@ sub OS {
 # Figures out where the preferences file should be on our platform, and loads it.
 # also sets the global $detectedOS to 'unix' 'win'
 sub init {
+	my $newBin = shift;
+
+	# Allow the caller to pass in a new base dir (for test cases);
+	if (defined $newBin && -d $newBin) {
+		$Bin = $newBin;
+	}
+
 	if (!$detectedOS) {
 
 		$::d_os && Slim::Utils::Misc::msg("Auto-detecting OS: $^O\n");
