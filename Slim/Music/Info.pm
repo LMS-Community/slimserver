@@ -38,9 +38,11 @@ our %suffixes = ();
 our %slimTypes = ();
 
 # Make sure that these can't grow forever.
-tie our %displayCache, 'Tie::Cache::LRU', 64;
 tie our %currentTitles, 'Tie::Cache::LRU', 64;
 tie our %currentBitrates, 'Tie::Cache::LRU', 64;
+
+# text cache for non clients
+our $musicInfoTextCache = undef;
 
 our %currentTitleCallbacks = ();
 
@@ -171,9 +173,10 @@ sub playlistForClient {
 
 sub clearFormatDisplayCache {
 
-	%displayCache    = ();
 	%currentTitles   = ();
 	%currentBitrates = ();
+
+	$musicInfoTextCache = undef;
 
 	foreach my $client ( Slim::Player::Client::clients() ) {
 		$client->musicInfoTextCache(undef);
@@ -464,25 +467,8 @@ sub standardTitle {
 		# in array syntax this would be $titleFormat[$titleFormatWeb]
 		$format = Slim::Utils::Prefs::getInd("titleFormat", Slim::Utils::Prefs::get("titleFormatWeb"));
 	}
-	
-	# Client may not be defined, but we still want to use the cache.
-	$client ||= 'NOCLIENT';
 
-	my $ref = $displayCache{$client} ||= {
-		'fullpath' => '',
-		'format'   => '',
-	};
-
-	if ($fullpath ne $ref->{'fullpath'} || $format ne $ref->{'format'}) {
-
-		$ref = $displayCache{$client} = {
-			'fullpath' => $fullpath,
-			'format'   => $format,
-			'display'  => Slim::Music::TitleFormatter::infoFormat($track, $format, 'TITLE'),
-		};
-	}
-
-	return $ref->{'display'};
+	return displayText($client, $track, $format);
 }
 
 # get display text for object by format, caches all formats for this url for this client
@@ -495,7 +481,7 @@ sub displayText {
 
 	my $url = $obj->url;
 
-	my $cache = $client->musicInfoTextCache();
+	my $cache = $client ? $client->musicInfoTextCache() : $musicInfoTextCache;
 
 	if ($cache->{'url'} && $url && $cache->{'url'} eq $url) {
 
@@ -513,7 +499,7 @@ sub displayText {
 	$cache->{'url'} = $url;
 	$cache->{"$format"} = $text;
 
-	$client->musicInfoTextCache($cache);
+	$client ? $client->musicInfoTextCache($cache) : $musicInfoTextCache = $cache;
 
 	return $text;
 }
