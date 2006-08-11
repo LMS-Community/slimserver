@@ -104,7 +104,7 @@ sub clearCaseArticleCache {
 	%caseArticlesCache = ();
 	$ignoredArticles   = undef;
 
-	return scalar keys %caseArticlesCache == 0 ? 1 : 0;
+	return 1;
 }
 
 sub searchStringSplit {

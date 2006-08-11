@@ -49,6 +49,8 @@ sub init {
 	for my $lang (keys(%languages)) {
 		$languages{$lang} = languageName($lang);
 	}
+
+	return 1;
 }
 
 sub stringsDirs {
