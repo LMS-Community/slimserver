@@ -231,9 +231,25 @@ sub wipeDB {
 		);
 
 		$class->migrateDB;
+		$class->optimizeDB;
 	});
 
 	$::d_import && msg("Import: End schema_clear\n");
+}
+
+sub optimizeDB {
+	my $class = shift;
+
+	$::d_import && msg("Import: Start schema_optimize\n");
+
+	$class->txn_do(sub {
+
+		Slim::Utils::SQLHelper->executeSQLFile(
+			$class->driver, $class->storage->dbh, "schema_optimize.sql"
+		);
+	});
+
+	$::d_import && msg("Import: End schema_optimize\n");
 }
 
 sub migrateDB {

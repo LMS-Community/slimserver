@@ -175,6 +175,15 @@ sub startScan {
 	# Reset
 	$class->useFolderImporter(0);
 
+	# Always run an optimization pass at the end of our scan.
+	$::d_import && msg("Import: Starting Database optimization.\n");
+
+	$importsRunning{'dbOptimize'} = Time::HiRes::time();
+
+	Slim::Schema->optimizeDB;
+
+	$class->endImporter('dbOptimize');
+
 	$::d_import && msg("Import: Finished background scanning.\n");
 }
 
