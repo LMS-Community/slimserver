@@ -186,11 +186,10 @@ sub _format_request {
 		push @h, $k, $v;
 	} );
 	
+	# Add POST body if any
 	my $content_ref = $self->request->content_ref;
 	if ( ref $content_ref ) {
-		if ( my $length = length $$content_ref ) {
-			push @h, 'Content-Length' => $length;
-		}
+		push @h, $$content_ref;
 	}
 	
 	my $request = $self->socket->format_request(
@@ -198,11 +197,6 @@ sub _format_request {
 		$fullpath,
 		@h,
 	);
-	
-	# add POST body
-	if ( ref $content_ref ) {
-		$request .= $$content_ref;
-	}
 	
 	return \$request;
 }

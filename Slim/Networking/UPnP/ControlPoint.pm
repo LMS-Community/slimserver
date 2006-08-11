@@ -342,8 +342,7 @@ sub _soap_request {
 	my $service_type = $service->getservicetype();
 	my $soap_action = "\"" . $service_type . "#" . $action_name . "\"";
 
-	my $soap_content = qq{
-<?xml version="1.0" encoding="utf-8"?>
+	my $soap_content = qq{<?xml version="1.0" encoding="utf-8"?>
 <s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
 	<s:Body>
 		<u:$action_name xmlns:u="$service_type">
