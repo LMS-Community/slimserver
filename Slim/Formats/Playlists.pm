@@ -68,7 +68,7 @@ sub parseList {
 
 		if ($@) {
 
-			errorMsg("parseList: While running $playlistClass->read()\n");
+			errorMsg("parseList: While running \$playlistClass->read()\n");
 			errorMsg("$@\n");
 		}
 	}
@@ -132,7 +132,7 @@ sub writeList {
 
 		if ($@) {
 
-			errorMsg("writeList: While running $playlistClass->read()\n");
+			errorMsg("writeList: While running \$playlistClass->read()\n");
 			errorMsg("$@\n");
 		}
 	}
