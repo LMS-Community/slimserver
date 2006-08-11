@@ -46,8 +46,9 @@ sub volumeValue {
 sub volumeExitHandler {
 	my ($client,$exittype) = @_;
 	if ($exittype) { $exittype = uc($exittype); }
-	
+
 	if (!$exittype || $exittype eq 'LEFT') {
+		Slim::Utils::Timers::killTimers($client, \&_volumeIdleChecker);
 		Slim::Buttons::Common::popModeRight($client);
 	} elsif ($exittype eq 'RIGHT') {
 			$client->bumpRight();
@@ -74,8 +75,9 @@ sub getFunctions {
 sub setMode {
 	my $client = shift;
 	my $method = shift;
-	
+
 	if ($method eq 'pop') {
+		Slim::Utils::Timers::killTimers($client, \&_volumeIdleChecker);
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
