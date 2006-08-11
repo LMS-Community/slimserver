@@ -1,5 +1,5 @@
 #
-# $Id: https10.pm,v 1.2 2004/08/10 23:08:28 dean Exp $
+# $Id: https10.pm,v 1.2 2003/10/23 19:11:33 uid39246 Exp $
 
 use strict;
 

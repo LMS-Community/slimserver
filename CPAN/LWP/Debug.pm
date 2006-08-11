@@ -1,6 +1,6 @@
 package LWP::Debug;
 
-# $Id: Debug.pm,v 1.2 2004/08/10 23:08:18 dean Exp $
+# $Id: Debug.pm,v 1.15 2004/04/09 15:07:04 gisle Exp $
 
 require Exporter;
 @ISA = qw(Exporter);

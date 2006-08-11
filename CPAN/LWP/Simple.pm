@@ -1,6 +1,6 @@
 package LWP::Simple;
 
-# $Id: Simple.pm,v 1.2 2004/08/10 23:08:20 dean Exp $
+# $Id: Simple.pm,v 1.41 2004/05/21 09:11:55 gisle Exp $
 
 use strict;
 use vars qw($ua %loop_check $FULL_LWP @EXPORT @EXPORT_OK $VERSION);
@@ -16,7 +16,7 @@ require Exporter;
 use HTTP::Status;
 push(@EXPORT, @HTTP::Status::EXPORT);
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.41 $ =~ /(\d+)\.(\d+)/);
 $FULL_LWP++ if grep {lc($_) eq "http_proxy"} keys %ENV;
 
 

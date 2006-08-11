@@ -1,9 +1,9 @@
-# $Id: Negotiate.pm,v 1.2 2004/08/10 23:08:14 dean Exp $
+# $Id: Negotiate.pm,v 1.16 2005/12/06 13:51:46 gisle Exp $
 #
 
 package HTTP::Negotiate;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.16 $ =~ /(\d+)\.(\d+)/);
 sub Version { $VERSION; }
 
 require 5.002;
@@ -191,11 +191,11 @@ sub choose ($;$)
 		$DEBUG and print " -- No exact language match\n";
 		my $selected = undef;
 		for $al (keys %{ $accept{'language'} }) {
-		    if (substr($lang, 0, 1 + length($al)) eq "$al-") {
+		    if (index($al, "$lang-") == 0) {
 		        # $lang starting with $al isn't enough, or else
 		        #  Accept-Language: hu (Hungarian) would seem
 		        #  to accept a document in hup (Hupa)
-		        $DEBUG and print " -- $lang ISA $al\n";
+		        $DEBUG and print " -- $al ISA $lang\n";
 			$selected = $al unless defined $selected;
 			$selected = $al if length($al) > length($selected);
 		    }

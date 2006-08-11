@@ -1,11 +1,11 @@
 package HTTP::Daemon;
 
-# $Id: Daemon.pm,v 1.2 2004/08/10 23:08:14 dean Exp $
+# $Id: Daemon.pm,v 1.36 2004/12/11 14:13:16 gisle Exp $
 
 use strict;
 use vars qw($VERSION @ISA $PROTO $DEBUG);
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.36 $ =~ /(\d+)\.(\d+)/);
 
 use IO::Socket qw(AF_INET INADDR_ANY inet_ntoa);
 @ISA=qw(IO::Socket::INET);
@@ -40,7 +40,7 @@ sub accept
 sub url
 {
     my $self = shift;
-    my $url = "http://";
+    my $url = $self->_default_scheme . "://";
     my $addr = $self->sockaddr;
     if (!$addr || $addr eq INADDR_ANY) {
  	require Sys::Hostname;
@@ -50,9 +50,19 @@ sub url
 	$url .= gethostbyaddr($addr, AF_INET) || inet_ntoa($addr);
     }
     my $port = $self->sockport;
-    $url .= ":$port" if $port != 80;
+    $url .= ":$port" if $port != $self->_default_port;
     $url .= "/";
     $url;
+}
+
+
+sub _default_port {
+    80;
+}
+
+
+sub _default_scheme {
+    "http";
 }
 
 

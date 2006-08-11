@@ -1,10 +1,10 @@
 package HTTP::Response;
 
-# $Id: Response.pm,v 1.2 2004/08/10 23:08:15 dean Exp $
+# $Id: Response.pm,v 1.53 2005/12/06 13:19:09 gisle Exp $
 
 require HTTP::Message;
 @ISA = qw(HTTP::Message);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.53 $ =~ /(\d+)\.(\d+)/);
 
 use strict;
 use HTTP::Status ();
@@ -34,7 +34,13 @@ sub parse
     }
 
     my $self = $class->SUPER::parse($str);
-    my($protocol, $code, $message) = split(' ', $status_line, 3);
+    my($protocol, $code, $message);
+    if ($status_line =~ /^\d{3} /) {
+       # Looks like a response created by HTTP::Response->new
+       ($code, $message) = split(' ', $status_line, 2);
+    } else {
+       ($protocol, $code, $message) = split(' ', $status_line, 3);
+    }
     $self->protocol($protocol) if $protocol;
     $self->code($code) if defined($code);
     $self->message($message) if defined($message);
@@ -64,7 +70,7 @@ sub status_line
 {
     my $self = shift;
     my $code = $self->{'_rc'}  || "000";
-    my $mess = $self->{'_msg'} || HTTP::Status::status_message($code) || "?";
+    my $mess = $self->{'_msg'} || HTTP::Status::status_message($code) || "Unknown code";
     return "$code $mess";
 }
 
@@ -75,9 +81,20 @@ sub base
     my $base = $self->header('Content-Base')     ||  # used to be HTTP/1.1
                $self->header('Content-Location') ||  # HTTP/1.1
                $self->header('Base');                # HTTP/1.0
-    return $HTTP::URI_CLASS->new_abs($base, $self->request->uri);
-    # So yes, if $base is undef, the return value is effectively
-    # just a copy of $self->request->uri.
+    if ($base && $base =~ /^$URI::scheme_re:/o) {
+	# already absolute
+	return $HTTP::URI_CLASS->new($base);
+    }
+
+    my $req = $self->request;
+    if ($req) {
+        # if $base is undef here, the return value is effectively
+        # just a copy of $self->request->uri.
+        return $HTTP::URI_CLASS->new_abs($base, $req->uri);
+    }
+
+    # can't find an absolute base
+    return undef;
 }
 
 
@@ -88,15 +105,9 @@ sub as_string
     my($eol) = @_;
     $eol = "\n" unless defined $eol;
 
-    my $code = $self->code;
-    my $status_message = HTTP::Status::status_message($code) || "Unknown code";
-    my $message = $self->message || "";
-
-    my $status_line = "$code";
+    my $status_line = $self->status_line;
     my $proto = $self->protocol;
     $status_line = "$proto $status_line" if $proto;
-    $status_line .= " ($status_message)" if $status_message ne $message;
-    $status_line .= " $message";
 
     return join($eol, $status_line, $self->SUPER::as_string(@_));
 }
@@ -302,9 +313,14 @@ headers.
 
 =item $r->content( $content )
 
-This is used to get/set the content and it is inherited from the
+This is used to get/set the raw content and it is inherited from the
 C<HTTP::Message> base class.  See L<HTTP::Message> for details and
 other methods that can be used to access the content.
+
+=item $r->decoded_content( %options )
+
+This will return the content after any C<Content-Encoding> and
+charsets has been decoded.  See L<HTTP::Message> for details.
 
 =item $r->request
 
@@ -360,6 +376,9 @@ URI that was passed to $ua->request() method, because we might have
 received some redirect responses first.
 
 =back
+
+If neither of these sources provide an absolute URI, undef is
+returned.
 
 When the LWP protocol modules produce the HTTP::Response object, then
 any base URI embedded in the document (step 1) will already have

@@ -1,10 +1,10 @@
 package HTTP::Message;
 
-# $Id: Message.pm,v 1.2 2004/08/10 23:08:14 dean Exp $
+# $Id: Message.pm,v 1.57 2005/02/18 20:29:01 gisle Exp $
 
 use strict;
 use vars qw($VERSION $AUTOLOAD);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.57 $ =~ /(\d+)\.(\d+)/);
 
 require HTTP::Headers;
 require Carp;
@@ -45,7 +45,7 @@ sub parse
 
     my @hdr;
     while (1) {
-	if ($str =~ s/^([^ \t:]+)[ \t]*: ?(.*)\n?//) {
+	if ($str =~ s/^([^\s:]+)[ \t]*: ?(.*)\n?//) {
 	    push(@hdr, $1, $2);
 	    $hdr[-1] =~ s/\r\z//;
 	}
@@ -68,6 +68,7 @@ sub clone
     my $self  = shift;
     my $clone = HTTP::Message->new($self->headers,
 				   $self->content);
+    $clone->protocol($self->protocol);
     $clone;
 }
 
@@ -89,8 +90,8 @@ sub content  {
     if (defined(wantarray)) {
 	$self->_content unless exists $self->{_content};
 	my $old = $self->{_content};
-	&_set_content if @_ > 1;
 	$old = $$old if ref($old) eq "SCALAR";
+	&_set_content if @_ > 1;
 	return $old;
     }
 
@@ -104,11 +105,13 @@ sub content  {
 
 sub _set_content {
     my $self = $_[0];
-    if (ref($self->{_content}) eq "SCALAR") {
+    if (!ref($_[1]) && ref($self->{_content}) eq "SCALAR") {
 	${$self->{_content}} = $_[1];
     }
     else {
+	die "Can't set content to be a scalar reference" if ref($_[1]) eq "SCALAR";
 	$self->{_content} = $_[1];
+	delete $self->{_content_ref};
     }
     delete $self->{_parts} unless $_[2];
 }
@@ -141,14 +144,141 @@ sub content_ref
     $self->_content unless exists $self->{_content};
     delete $self->{_parts};
     my $old = \$self->{_content};
-    $old = $$old if ref($$old);
+    my $old_cref = $self->{_content_ref};
     if (@_) {
 	my $new = shift;
 	Carp::croak("Setting content_ref to a non-ref") unless ref($new);
+	delete $self->{_content};  # avoid modifying $$old
 	$self->{_content} = $new;
-	delete $self->{_parts};
+	$self->{_content_ref}++;
     }
+    $old = $$old if $old_cref;
     return $old;
+}
+
+
+sub decoded_content
+{
+    my($self, %opt) = @_;
+    my $content_ref;
+    my $content_ref_iscopy;
+
+    eval {
+
+	require HTTP::Headers::Util;
+	my($ct, %ct_param);
+	if (my @ct = HTTP::Headers::Util::split_header_words($self->header("Content-Type"))) {
+	    ($ct, undef, %ct_param) = @{$ct[-1]};
+	    $ct = lc($ct);
+
+	    die "Can't decode multipart content" if $ct =~ m,^multipart/,;
+	}
+
+	$content_ref = $self->content_ref;
+	die "Can't decode ref content" if ref($content_ref) ne "SCALAR";
+
+	if (my $h = $self->header("Content-Encoding")) {
+	    $h =~ s/^\s+//;
+	    $h =~ s/\s+$//;
+	    for my $ce (reverse split(/\s*,\s*/, lc($h))) {
+		next unless $ce || $ce eq "identity";
+		if ($ce eq "gzip" || $ce eq "x-gzip") {
+		    require Compress::Zlib;
+		    unless ($content_ref_iscopy) {
+			# memGunzip is documented to destroy its buffer argument
+			my $copy = $$content_ref;
+			$content_ref = \$copy;
+			$content_ref_iscopy++;
+		    }
+		    $content_ref = \Compress::Zlib::memGunzip($$content_ref);
+		    die "Can't gunzip content" unless defined $$content_ref;
+		}
+		elsif ($ce eq "x-bzip2") {
+		    require Compress::Bzip2;
+		    $content_ref = Compress::Bzip2::decompress($$content_ref);
+		    die "Can't bunzip content" unless defined $$content_ref;
+		    $content_ref_iscopy++;
+		}
+		elsif ($ce eq "deflate") {
+		    require Compress::Zlib;
+		    my $out = Compress::Zlib::uncompress($$content_ref);
+		    unless (defined $out) {
+			# "Content-Encoding: deflate" is supposed to mean the "zlib"
+                        # format of RFC 1950, but Microsoft got that wrong, so some
+                        # servers sends the raw compressed "deflate" data.  This
+                        # tries to inflate this format.
+			unless ($content_ref_iscopy) {
+			    # the $i->inflate method is documented to destroy its
+			    # buffer argument
+			    my $copy = $$content_ref;
+			    $content_ref = \$copy;
+			    $content_ref_iscopy++;
+			}
+
+			my($i, $status) = Compress::Zlib::inflateInit(
+			    WindowBits => -Compress::Zlib::MAX_WBITS(),
+                        );
+			my $OK = Compress::Zlib::Z_OK();
+			die "Can't init inflate object" unless $i && $status == $OK;
+			($out, $status) = $i->inflate($content_ref);
+			if ($status != Compress::Zlib::Z_STREAM_END()) {
+			    if ($status == $OK) {
+				$self->push_header("Client-Warning" =>
+				    "Content might be truncated; incomplete deflate stream");
+			    }
+			    else {
+				# something went bad, can't trust $out any more
+				$out = undef;
+			    }
+			}
+		    }
+		    die "Can't inflate content" unless defined $out;
+		    $content_ref = \$out;
+		    $content_ref_iscopy++;
+		}
+		elsif ($ce eq "compress" || $ce eq "x-compress") {
+		    die "Can't uncompress content";
+		}
+		elsif ($ce eq "base64") {  # not really C-T-E, but should be harmless
+		    require MIME::Base64;
+		    $content_ref = \MIME::Base64::decode($$content_ref);
+		    $content_ref_iscopy++;
+		}
+		elsif ($ce eq "quoted-printable") { # not really C-T-E, but should be harmless
+		    require MIME::QuotedPrint;
+		    $content_ref = \MIME::QuotedPrint::decode($$content_ref);
+		    $content_ref_iscopy++;
+		}
+		else {
+		    die "Don't know how to decode Content-Encoding '$ce'";
+		}
+	    }
+	}
+
+	if ($ct && $ct =~ m,^text/,,) {
+	    my $charset = $opt{charset} || $ct_param{charset} || $opt{default_charset} || "ISO-8859-1";
+	    $charset = lc($charset);
+	    if ($charset ne "none") {
+		require Encode;
+		if (do{my $v = $Encode::VERSION; $v =~ s/_//g; $v} < 2.0901 &&
+		    !$content_ref_iscopy)
+		{
+		    # LEAVE_SRC did not work before Encode-2.0901
+		    my $copy = $$content_ref;
+		    $content_ref = \$copy;
+		    $content_ref_iscopy++;
+		}
+		$content_ref = \Encode::decode($charset, $$content_ref,
+					       Encode::FB_CROAK() | Encode::LEAVE_SRC());
+	    }
+	}
+    };
+    if ($@) {
+	Carp::croak($@) if $opt{raise_error};
+	return undef;
+    }
+
+    return $opt{ref} ? $content_ref : $$content_ref;
 }
 
 
@@ -224,6 +354,7 @@ sub _stale_content {
     else {
 	# just invalidate cache
 	delete $self->{_content};
+	delete $self->{_content_ref};
     }
 }
 
@@ -414,9 +545,9 @@ but it will make your program a whole character shorter :-)
 
 =item $mess->content( $content )
 
-The content() method sets the content if an argument is given.  If no
+The content() method sets the raw content if an argument is given.  If no
 argument is given the content is not touched.  In either case the
-original content is returned.
+original raw content is returned.
 
 Note that the content should be a string of bytes.  Strings in perl
 can contain characters outside the range of a byte.  The C<Encode>
@@ -445,6 +576,41 @@ external source.  The content() and add_content() methods
 will automatically dereference scalar references passed this way.  For
 other references content() will return the reference itself and
 add_content() will refuse to do anything.
+
+=item $mess->decoded_content( %options )
+
+Returns the content with any C<Content-Encoding> undone and strings
+mapped to perl's Unicode strings.  If the C<Content-Encoding> or
+C<charset> of the message is unknown this method will fail by
+returning C<undef>.
+
+The following options can be specified.
+
+=over
+
+=item C<charset>
+
+This override the charset parameter for text content.  The value
+C<none> can used to suppress decoding of the charset.
+
+=item C<default_charset>
+
+This override the default charset of "ISO-8859-1".
+
+=item C<raise_error>
+
+If TRUE then raise an exception if not able to decode content.  Reason
+might be that the specified C<Content-Encoding> or C<charset> is not
+supported.  If this option is FALSE, then decode_content() will return
+C<undef> on errors, but will still set $@.
+
+=item C<ref>
+
+If TRUE then a reference to decoded content is returned.  This might
+be more efficient in cases where the decoded content is identical to
+the raw content as no data copying is required in this case.
+
+=back
 
 =item $mess->parts
 

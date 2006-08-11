@@ -1,10 +1,10 @@
 package LWP::Protocol;
 
-# $Id: Protocol.pm,v 1.2 2004/08/10 23:08:19 dean Exp $
+# $Id: Protocol.pm,v 1.43 2004/11/12 13:34:10 gisle Exp $
 
 require LWP::MemberMixin;
 @ISA = qw(LWP::MemberMixin);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.43 $ =~ /(\d+)\.(\d+)/);
 
 use strict;
 use Carp ();
@@ -137,7 +137,7 @@ sub collect
 		$parser->parse($$content) or undef($parser);
 	    }
 	    LWP::Debug::debug("read " . length($$content) . " bytes");
-	    print OUT $$content;
+	    print OUT $$content or die "Can't write to '$arg': $!";
 	    $content_size += length($$content);
 	    if (defined($max_size) && $content_size > $max_size) {
 		LWP::Debug::debug("Aborting because size limit exceeded");
@@ -147,7 +147,7 @@ sub collect
 		last;
 	    }
 	}
-	close(OUT);
+	close(OUT) or die "Can't write to '$arg': $!";
     }
     elsif (ref($arg) eq 'CODE') {
 	# read into callback

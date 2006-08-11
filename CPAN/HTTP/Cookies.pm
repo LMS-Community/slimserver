@@ -6,7 +6,7 @@ use HTTP::Headers::Util qw(split_header_words join_header_words);
 use LWP::Debug ();
 
 use vars qw($VERSION $EPOCH_OFFSET);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.39 $ =~ /(\d+)\.(\d+)/);
 
 # Legacy: because "use "HTTP::Cookies" used be the ONLY way
 #  to load the class HTTP::Cookies::Netscape.
@@ -217,6 +217,7 @@ sub extract_cookies
 	    my @cur;
 	    my $param;
 	    my $expires;
+	    my $first_param = 1;
 	    for $param (split(/;\s*/, $set)) {
 		my($k,$v) = split(/\s*=\s*/, $param, 2);
 		if (defined $v) {
@@ -227,8 +228,7 @@ sub extract_cookies
 		    $k =~ s/\s+$//;
 		    #print "$k => undef";
 		}
-		my $lc = lc($k);
-		if ($lc eq "expires") {
+		if (!$first_param && lc($k) eq "expires") {
 		    my $etime = str2time($v);
 		    if ($etime) {
 			push(@cur, "Max-Age" => str2time($v) - $now);
@@ -238,6 +238,7 @@ sub extract_cookies
 		else {
 		    push(@cur, $k => $v);
 		}
+		$first_param = 0;
 	    }
 	    next if $in_set2{$cur[0]};
 

@@ -1,6 +1,6 @@
 package Net::HTTP;
 
-# $Id: HTTP.pm,v 1.2 2004/08/10 23:08:29 dean Exp $
+# $Id: HTTP.pm,v 1.47 2005/12/06 12:02:22 gisle Exp $
 
 use strict;
 use vars qw($VERSION @ISA);
@@ -32,7 +32,7 @@ Net::HTTP - Low-level HTTP connection (client)
 =head1 SYNOPSIS
 
  use Net::HTTP;
- my $s = Net::HTTP->new(Host => "www.perl.com) || die $@;
+ my $s = Net::HTTP->new(Host => "www.perl.com") || die $@;
  $s->write_request(GET => "/", 'User-Agent' => "Mozilla/5.0");
  my($code, $mess, %h) = $s->read_response_headers;
 
@@ -87,7 +87,7 @@ connect, a C<Net:HTTP> object is returned.
 =item $s->host
 
 Get/set the default value of the C<Host> header to send.  The $host
-should not be set to an empty string (or C<undef>).
+must not be set to an empty string (or C<undef>) for HTTP/1.1.
 
 =item $s->keep_alive
 

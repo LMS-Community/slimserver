@@ -1,5 +1,5 @@
 #
-# $Id: file.pm,v 1.2 2004/08/10 23:08:23 dean Exp $
+# $Id: file.pm,v 1.23 2004/11/15 22:53:36 gisle Exp $
 
 package LWP::Protocol::file;
 
@@ -96,14 +96,13 @@ sub request
 	closedir(D);
 
 	# Make directory listing
+        my $pathe = $path . ( $^O eq 'MacOS' ? ':' : '/');
 	for (@files) {
-	    if($^O eq "MacOS") {
-		$_ .= "/" if -d "$path:$_";
-	    }
-	    else {
-		$_ .= "/" if -d "$path/$_";
-	    }
 	    my $furl = URI::Escape::uri_escape($_);
+            if ( -d "$pathe$_" ) {
+                $furl .= '/';
+                $_ .= '/';
+            }
 	    my $desc = HTML::Entities::encode($_);
 	    $_ = qq{<LI><A HREF="$furl">$desc</A>};
 	}

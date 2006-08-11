@@ -1,6 +1,6 @@
-package HTTP::Date;  # $Date: 2004/08/10 23:08:14 $
+package HTTP::Date;  # $Date: 2005/12/06 11:09:25 $
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.3 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.47 $ =~ /(\d+)\.(\d+)/);
 
 require 5.004;
 require Exporter;
@@ -39,14 +39,13 @@ sub str2time ($;$)
     # fast exit for strictly conforming string
     if ($str =~ /^[SMTWF][a-z][a-z], (\d\d) ([JFMAJSOND][a-z][a-z]) (\d\d\d\d) (\d\d):(\d\d):(\d\d) GMT$/) {
 	return eval {
-	    my $t = Time::Local::timegm($6, $5, $4, $1, $MoY{$2}-1, $3-1900);
+	    my $t = Time::Local::timegm($6, $5, $4, $1, $MoY{$2}-1, $3);
 	    $t < 0 ? undef : $t;
 	};
     }
 
     my @d = parse_date($str);
     return undef unless @d;
-    $d[0] -= 1900;  # year
     $d[1]--;        # month
 
     my $tz = pop(@d);
@@ -297,9 +296,10 @@ in this format is:
 =item str2time( $str [, $zone] )
 
 The str2time() function converts a string to machine time.  It returns
-C<undef> if the format of $str is unrecognized, or the time is outside
-the representable range.  The time formats recognized are the same as
-for parse_date().
+C<undef> if the format of $str is unrecognized, otherwise whatever the
+C<Time::Local> functions can make out of the parsed time.  Dates
+before the system's epoch may not work on all operating systems.  The
+time formats recognized are the same as for parse_date().
 
 The function also takes an optional second argument that specifies the
 default time zone to use when converting the date.  This parameter is

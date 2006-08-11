@@ -1,13 +1,13 @@
 package HTML::Form;
 
-# $Id: Form.pm 1152 2004-08-10 23:08:33Z dean $
+# $Id: Form.pm,v 1.54 2005/12/07 14:32:27 gisle Exp $
 
 use strict;
 use URI;
 use Carp ();
 
 use vars qw($VERSION);
-$VERSION = sprintf("%d.%03d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%03d", q$Revision: 1.54 $ =~ /(\d+)\.(\d+)/);
 
 my %form_tags = map {$_ => 1} qw(input textarea button select option);
 
@@ -58,46 +58,74 @@ The following methods are available:
 
 =over 4
 
-=item @forms = HTML::Form->parse( $html_document, $base_uri )
-
 =item @forms = HTML::Form->parse( $response )
+
+=item @forms = HTML::Form->parse( $html_document, $base )
+
+=item @forms = HTML::Form->parse( $html_document, %opt )
 
 The parse() class method will parse an HTML document and build up
 C<HTML::Form> objects for each <form> element found.  If called in scalar
 context only returns the first <form>.  Returns an empty list if there
 are no forms to be found.
 
-The $base_uri is the URI used to retrieve the $html_document.  It is
+The $base is the URI used to retrieve the $html_document.  It is
 needed to resolve relative action URIs.  If the document was retrieved
 with LWP then this this parameter is obtained from the
 $response->base() method, as shown by the following example:
 
     my $ua = LWP::UserAgent->new;
     my $response = $ua->get("http://www.example.com/form.html");
-    my @forms = HTML::Form->parse($response->content,
+    my @forms = HTML::Form->parse($response->decoded_content,
 				  $response->base);
 
 The parse() method can parse from an C<HTTP::Response> object
-directly, so the example above can be better written as:
+directly, so the example above can be more conveniently written as:
 
     my $ua = LWP::UserAgent->new;
     my $response = $ua->get("http://www.example.com/form.html");
     my @forms = HTML::Form->parse($response);
 
-Note that any object that implements a content_ref() and base() method
+Note that any object that implements a decoded_content() and base() method
 with similar behaviour as C<HTTP::Response> will do.
+
+Finally options might be passed in to control how the parse method
+behaves.  The following options are currently recognized:
+
+=over
+
+=item C<base>
+
+Another way to provide the base URI.
+
+=item C<verbose>
+
+Print messages to STDERR about any bad HTML form constructs found.
+
+=back
 
 =cut
 
 sub parse
 {
-    my($class, $html, $base_uri) = @_;
+    my $class = shift;
+    my $html = shift;
+    unshift(@_, "base") if @_ == 1;
+    my %opt = @_;
+
     require HTML::TokeParser;
-    my $p = HTML::TokeParser->new(ref($html) ? $html->content_ref : \$html);
+    my $p = HTML::TokeParser->new(ref($html) ? $html->decoded_content(ref => 1) : \$html);
     eval {
 	# optimization
-	$p->report_tags(qw(form input textarea select optgroup option keygen));
+	$p->report_tags(qw(form input textarea select optgroup option keygen label));
     };
+
+    my $base_uri = delete $opt{base};
+    my $verbose = delete $opt{verbose};
+
+    if ($^W) {
+	Carp::carp("Unrecognized option $_ in HTML::Form->parse") for sort keys %opt;
+    }
 
     unless (defined $base_uri) {
 	if (ref($html)) {
@@ -122,12 +150,37 @@ sub parse
 			     $attr->{'enctype'});
 	    $f->{attr} = $attr;
 	    push(@forms, $f);
+	    my(%labels, $current_label);
 	    while (my $t = $p->get_tag) {
 		my($tag, $attr) = @$t;
 		last if $tag eq "/form";
+
+		# if we are inside a label tag, then keep
+		# appending any text to the current label
+		if(defined $current_label) {
+		    $current_label = join " ",
+		        grep { defined and length }
+		        $current_label,
+		        $p->get_phrase;
+		}
+
 		if ($tag eq "input") {
+		    $attr->{value_name} =
+		        exists $attr->{id} && exists $labels{$attr->{id}} ? $labels{$attr->{id}} :
+			defined $current_label                            ?  $current_label      :
+		        $p->get_phrase;
+		}
+
+		if ($tag eq "label") {
+		    $current_label = $p->get_phrase;
+		    $labels{ $attr->{for} } = $current_label
+		        if exists $attr->{for};
+		}
+		elsif ($tag eq "/label") {
+		    $current_label = undef;
+		}
+		elsif ($tag eq "input") {
 		    my $type = delete $attr->{type} || "text";
-		    $attr->{value_name} = $p->get_phrase;
 		    $f->push_input($type, $attr);
 		}
 		elsif ($tag eq "textarea") {
@@ -164,7 +217,7 @@ sub parse
 			    $f->push_input("option", \%a);
 			}
 			else {
-			    Carp::carp("Bad <select> tag '$tag'") if $^W;
+			    warn("Bad <select> tag '$tag' in $base_uri\n") if $verbose;
 			    if ($tag eq "/form" ||
 				$tag eq "input" ||
 				$tag eq "textarea" ||
@@ -189,7 +242,7 @@ sub parse
 	    }
 	}
 	elsif ($form_tags{$tag}) {
-	    Carp::carp("<$tag> outside <form>") if $^W;
+	    warn("<$tag> outside <form> in $base_uri\n") if $verbose;
 	}
     }
     for (@forms) {
@@ -277,7 +330,7 @@ The $name should always be passed in lower case.
 Example:
 
    @f = HTML::Form->parse( $html, $foo );
-   @f = grep $_->attr("id") == "foo", @f;
+   @f = grep $_->attr("id") eq "foo", @f;
    die "No form named 'foo' found" unless @f;
    $foo = shift @f;
 
@@ -608,6 +661,7 @@ sub click
     for (@{$self->{'inputs'}}) {
         next unless $_->can("click");
         next if $name && $_->name ne $name;
+	next if $_->disabled;
 	return $_->click($self, @_);
     }
     Carp::croak("No clickable input with name $name") if $name;
@@ -980,14 +1034,14 @@ sub add_to_form
     return $self->SUPER::add_to_form($form)
 	if $type eq "checkbox";
 
-    if ($type eq "option" && $self->{multiple}) {
-	$self->{disabled} ||= $self->{option_disabled};
+    if ($type eq "option" && exists $self->{multiple}) {
+	$self->{disabled} ||= delete $self->{option_disabled};
 	return $self->SUPER::add_to_form($form);
     }
 
     die "Assert" if @{$self->{menu}} != 1;
     my $m = $self->{menu}[0];
-    $m->{disabled}++ if $self->{option_disabled};
+    $m->{disabled}++ if delete $self->{option_disabled};
 
     my $prev = $form->find_input($self->{name}, $self->{type});
     return $self->SUPER::add_to_form($form) unless $prev;
@@ -1004,6 +1058,29 @@ sub fixup
 	$self->{current} = 0;
     }
     $self->{menu}[$self->{current}]{seen}++ if exists $self->{current};
+}
+
+sub disabled
+{
+    my $self = shift;
+    my $type = $self->type;
+
+    my $old = $self->{disabled} || _menu_all_disabled(@{$self->{menu}});
+    if (@_) {
+	my $v = shift;
+	$self->{disabled} = $v;
+        for (@{$self->{menu}}) {
+            $_->{disabled} = $v;
+        }
+    }
+    return $old;
+}
+
+sub _menu_all_disabled {
+    for (@_) {
+	return 0 unless $_->{disabled};
+    }
+    return 1;
 }
 
 sub value
@@ -1160,11 +1237,11 @@ sub form_name_value
     my $self = shift;
     my $clicked = $self->{clicked};
     return unless $clicked;
-    my $name = $self->{name};
-    return unless defined $name;
     return if $self->{disabled};
-    return ("$name.x" => $clicked->[0],
-	    "$name.y" => $clicked->[1]
+    my $name = $self->{name};
+    $name = (defined($name) && length($name)) ? "$name." : "";
+    return ("${name}x" => $clicked->[0],
+	    "${name}y" => $clicked->[1]
 	   );
 }
 
@@ -1301,7 +1378,7 @@ L<LWP>, L<LWP::UserAgent>, L<HTML::Parser>
 
 =head1 COPYRIGHT
 
-Copyright 1998-2003 Gisle Aas.
+Copyright 1998-2005 Gisle Aas.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.

@@ -1,6 +1,6 @@
 package LWP::MemberMixin;
 
-# $Id: MemberMixin.pm,v 1.2 2004/08/10 23:08:19 dean Exp $
+# $Id: MemberMixin.pm,v 1.8 2004/04/09 15:07:04 gisle Exp $
 
 sub _elem
 {

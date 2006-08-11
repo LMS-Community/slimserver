@@ -1,9 +1,9 @@
 #
-# $Id: LWP.pm,v 1.2 2004/08/10 23:08:12 dean Exp $
+# $Id: LWP.pm,v 1.149 2005/12/08 12:06:22 gisle Exp $
 
 package LWP;
 
-$VERSION = "5.800";
+$VERSION = "5.805";
 sub Version { $VERSION; }
 
 require 5.005;
@@ -604,28 +604,30 @@ You might want to set it to C<URI::URL> for compatibility with old times.
 
 LWP was made possible by contributions from Adam Newby, Albert
 Dvornik, Alexandre Duret-Lutz, Andreas Gustafsson, Andreas König,
-Andrew Pimlott, Andy
-Lester, Ben Coleman, Benjamin Low, Ben Low, Ben Tilly, Blair Zajac,
-Bob Dalgleish, BooK, Brad Hughes, Brian J. Murrell, Brian McCauley,
-Charles C. Fu, Charles Lane, Chris Nandor, Christian Gilmore, Chris
-W. Unger, Craig Macdonald, Dale Couch, Dave Dunkin, Dave W. Smith,
-David Coppit, David Dick, David D. Kilzer, Doug MacEachern, Edward
-Avis, erik, Gary Shea, Gisle Aas, Graham Barr, Gurusamy Sarathy, Hans
-de Graaff, Harry Bochner, Hugo, Ilya Zakharevich, INOUE Yoshinari,
-Ivan Panchenko, Jack Shirazi, James Tillman, Jan Dubois, Jared Rhine,
-Jim Stern, John Klar, Johnny Lee, Josh Kronengold, Joshua Chamas,
-Joshua Hoblitt, Kartik Subbarao, Keiichiro Nagano, Ken Williams,
-KONISHI Katsuhiro, Lee T Lindley, Liam Quinn, Marc Hedlund, Marc
-Langheinrich, Mark D. Anderson, Marko Asplund, Mark Stosberg, Markus B
-Krüger, Markus Laker, Martijn Koster, Martin Thurn, Matthew Eldridge,
-Matt Sergeant, Michael A. Chase, Michael Quaranta, Michael Thompson,
-Mike Schilli, Nathan Torkington, Nicolai Langfeldt, Norton Allen, Olly
-Betts, Paul J. Schinder, peterm, Philip GuentherDaniel Buenzli, Pon
-Hwa Lin, Radu Greab, Randal L. Schwartz, Richard Chen, Robin Barker,
-Roy Fielding, Sander van Zoest, Sean M. Burke, shildreth, Slaven
-Rezic, Steve A Fink, Steve Hay, Steven Butler, Steve_Kilbane, Takanori
-Ugai, Thomas Lotterer, Tim Bunce, Tom Hughes, Tony Finch, Ville
-Skyttä, Ward Vandewege, William York, Yale Huang and Yitzchak Scott-Thoennes.
+Andrew Pimlott, Andy Lester, Ben Coleman, Benjamin Low, Ben Low, Ben
+Tilly, Blair Zajac, Bob Dalgleish, BooK, Brad Hughes, Brian
+J. Murrell, Brian McCauley, Charles C. Fu, Charles Lane, Chris Nandor,
+Christian Gilmore, Chris W. Unger, Craig Macdonald, Dale Couch, Dan
+Kubb, Dave Dunkin, Dave W. Smith, David Coppit, David Dick, David
+D. Kilzer, Doug MacEachern, Edward Avis, erik, Gary Shea, Gisle Aas,
+Graham Barr, Gurusamy Sarathy, Hans de Graaff, Harald Joerg, Harry
+Bochner, Hugo, Ilya Zakharevich, INOUE Yoshinari, Ivan Panchenko, Jack
+Shirazi, James Tillman, Jan Dubois, Jared Rhine, Jim Stern, Joao
+Lopes, John Klar, Johnny Lee, Josh Kronengold, Josh Rai, Joshua
+Chamas, Joshua Hoblitt, Kartik Subbarao, Keiichiro Nagano, Ken
+Williams, KONISHI Katsuhiro, Lee T Lindley, Liam Quinn, Marc Hedlund,
+Marc Langheinrich, Mark D. Anderson, Marko Asplund, Mark Stosberg,
+Markus B Krüger, Markus Laker, Martijn Koster, Martin Thurn, Matthew
+Eldridge, Matthew.van.Eerde, Matt Sergeant, Michael A. Chase, Michael
+Quaranta, Michael Thompson, Mike Schilli, Moshe Kaminsky, Nathan
+Torkington, Nicolai Langfeldt, Norton Allen, Olly Betts, Paul
+J. Schinder, peterm, Philip GuentherDaniel Buenzli, Pon Hwa Lin,
+Radoslaw Zielinski, Radu Greab, Randal L. Schwartz, Richard Chen,
+Robin Barker, Roy Fielding, Sander van Zoest, Sean M. Burke,
+shildreth, Slaven Rezic, Steve A Fink, Steve Hay, Steven Butler,
+Steve_Kilbane, Takanori Ugai, Thomas Lotterer, Tim Bunce, Tom Hughes,
+Tony Finch, Ville Skyttä, Ward Vandewege, William York, Yale Huang,
+and Yitzchak Scott-Thoennes.
 
 LWP owes a lot in motivation, design, and code, to the libwww-perl
 library for Perl4 by Roy Fielding, which included work from Alberto
@@ -637,7 +639,7 @@ libwww-perl-0.40 library for details.
 
 =head1 COPYRIGHT
 
-  Copyright 1995-2004, Gisle Aas
+  Copyright 1995-2005, Gisle Aas
   Copyright 1995, Martijn Koster
 
 This library is free software; you can redistribute it and/or

@@ -1,12 +1,12 @@
 package LWP::MediaTypes;
 
-# $Id: MediaTypes.pm,v 1.2 2004/08/10 23:08:19 dean Exp $
+# $Id: MediaTypes.pm,v 1.32 2004/11/17 11:04:09 gisle Exp $
 
 require Exporter;
 @ISA = qw(Exporter);
 @EXPORT = qw(guess_media_type media_suffix);
 @EXPORT_OK = qw(add_type add_encoding read_media_types);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.32 $ =~ /(\d+)\.(\d+)/);
 
 require LWP::Debug;
 use strict;
@@ -288,7 +288,7 @@ Example:
 
     read_media_types("conf/mime.types");
 
-=back 
+=back
 
 =head1 COPYRIGHT
 

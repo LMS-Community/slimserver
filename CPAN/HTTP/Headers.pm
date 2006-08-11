@@ -1,12 +1,12 @@
 package HTTP::Headers;
 
-# $Id: Headers.pm,v 1.2 2004/08/10 23:08:14 dean Exp $
+# $Id: Headers.pm,v 1.64 2005/12/08 12:11:48 gisle Exp $
 
 use strict;
 use Carp ();
 
 use vars qw($VERSION $TRANSLATE_UNDERSCORE);
-$VERSION = sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.64 $ =~ /(\d+)\.(\d+)/);
 
 # The $TRANSLATE_UNDERSCORE variable controls whether '_' can be used
 # as a replacement for '-' in header field names.
@@ -79,8 +79,11 @@ sub header
     my $self = shift;
     Carp::croak('Usage: $h->header($field, ...)') unless @_;
     my(@old);
-    while (my($field, $val) = splice(@_, 0, 2)) {
-	@old = $self->_header($field, $val);
+    my %seen;
+    while (@_) {
+	my $field = shift;
+        my $op = @_ ? ($seen{lc($field)}++ ? 'PUSH' : 'SET') : 'GET';
+	@old = $self->_header($field, shift, $op);
     }
     return @old if wantarray;
     return $old[0] if @old <= 1;
@@ -159,33 +162,39 @@ sub _header
     my $h = $self->{$field};
     my @old = ref($h) eq 'ARRAY' ? @$h : (defined($h) ? ($h) : ());
 
-    $op ||= "";
-    $val = undef if $op eq 'INIT' && @old;
-    if (defined($val)) {
-	my @new = ($op eq 'PUSH') ? @old : ();
-	if (ref($val) ne 'ARRAY') {
-	    push(@new, $val);
+    $op ||= defined($val) ? 'SET' : 'GET';
+    unless ($op eq 'GET' || ($op eq 'INIT' && @old)) {
+	if (defined($val)) {
+	    my @new = ($op eq 'PUSH') ? @old : ();
+	    if (ref($val) ne 'ARRAY') {
+		push(@new, $val);
+	    }
+	    else {
+		push(@new, @$val);
+	    }
+	    $self->{$field} = @new > 1 ? \@new : $new[0];
 	}
-	else {
-	    push(@new, @$val);
+	elsif ($op ne 'PUSH') {
+	    delete $self->{$field};
 	}
-	$self->{$field} = @new > 1 ? \@new : $new[0];
     }
     @old;
 }
 
 
-# Compare function which makes it easy to sort headers in the
-# recommended "Good Practice" order.
-sub _header_cmp
+sub _sorted_field_names
 {
-    ($header_order{$a} || 999) <=> ($header_order{$b} || 999) || $a cmp $b;
+    my $self = shift;
+    return sort {
+        ($header_order{$a} || 999) <=> ($header_order{$b} || 999) ||
+         $a cmp $b
+    } keys %$self
 }
 
 
 sub header_field_names {
     my $self = shift;
-    return map $standard_case{$_} || $_, sort _header_cmp keys %$self
+    return map $standard_case{$_} || $_, $self->_sorted_field_names
 	if wantarray;
     return keys %$self;
 }
@@ -195,7 +204,7 @@ sub scan
 {
     my($self, $sub) = @_;
     my $key;
-    foreach $key (sort _header_cmp keys %$self) {
+    foreach $key ($self->_sorted_field_names) {
         next if $key =~ /^_/;
 	my $vals = $self->{$key};
 	if (ref($vals) eq 'ARRAY') {
@@ -403,8 +412,9 @@ The header() method accepts multiple ($field => $value) pairs, which
 means that you can update several fields with a single invocation.
 
 The $value argument may be a plain string or a reference to an array
-of strings for a multi-valued field. If the $value is undefined or not
-given, then that header field will remain unchanged.
+of strings for a multi-valued field. If the $value is provided as
+C<undef> then the field is removed.  If the $value is not given, then
+that header field will remain unchanged.
 
 The old value (or values) of the last of the header fields is returned.
 If no such field exists C<undef> will be returned.
@@ -706,19 +716,9 @@ These field names are returned with the ':' intact for
 $h->header_field_names and the $h->scan callback, but the colons do
 not show in $h->as_string.
 
-=head1 BUGS
-
-In the argument list to the constructor or header() method, the same
-field name should not occur multiple times.  The result of doing so,
-it that only the last of these fields will be present in the header
-after the call.  All values ought to be kept.
-
-Passing a value of C<undef> to header() or any of the convenience
-methods, does not delete that field.  It ought to do that.
-
 =head1 COPYRIGHT
 
-Copyright 1995-2004 Gisle Aas.
+Copyright 1995-2005 Gisle Aas.
 
 This library is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.

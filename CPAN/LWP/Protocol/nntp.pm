@@ -1,5 +1,5 @@
 #
-# $Id: nntp.pm,v 1.2 2004/08/10 23:08:29 dean Exp $
+# $Id: nntp.pm,v 1.10 2005/10/31 15:10:33 gisle Exp $
 
 # Implementation of the Network News Transfer Protocol (RFC 977)
 #
@@ -34,7 +34,7 @@ sub request
     # Check that the scheme is as expected
     my $url = $request->url;
     my $scheme = $url->scheme;
-    unless ($scheme eq 'news') {
+    unless ($scheme eq 'news' || $scheme eq 'nntp') {
 	return HTTP::Response->new(&HTTP::Status::RC_INTERNAL_SERVER_ERROR,
 				   "LWP::Protocol::nntp::request called for '$scheme'");
     }
@@ -44,7 +44,7 @@ sub request
     unless ($method eq 'GET' || $method eq 'HEAD' || $method eq 'POST') {
 	return HTTP::Response->new(&HTTP::Status::RC_BAD_REQUEST,
 				   'Library does not allow method ' .
-				   "$method for 'news:' URLs");
+				   "$method for '$scheme:' URLs");
     }
 
     # extract the identifier and check against posting to an article
@@ -56,7 +56,7 @@ sub request
 				   "Can't post to an article <$groupart>");
     }
 
-    my $nntp = Net::NNTP->new(undef,
+    my $nntp = Net::NNTP->new($url->host,
 			      #Port    => 18574,
 			      Timeout => $timeout,
 			      #Debug   => 1,
@@ -73,39 +73,47 @@ sub request
     my $mess = $nntp->message;
     LWP::Debug::debug($mess);
 
-    # Try to extract server name from greating message.
+    # Try to extract server name from greeting message.
     # Don't know if this works well for a large class of servers, but
     # this works for our server.
     $mess =~ s/\s+ready\b.*//;
     $mess =~ s/^\S+\s+//;
     $response->header(Server => $mess);
 
-
     # First we handle posting of articles
     if ($method eq 'POST') {
-	return HTTP::Response->new(&HTTP::Status::RC_NOT_IMPLEMENTED,
-				   "POST not implemented yet");
+	$nntp->quit; $nntp = undef;
+	$response->code(&HTTP::Status::RC_NOT_IMPLEMENTED);
+	$response->message("POST not implemented yet");
+	return $response;
     }
 
     # The method must be "GET" or "HEAD" by now
     if (!$is_art) {
 	if (!$nntp->group($groupart)) {
-	    return HTTP::Response->new(&HTTP::Status::RC_NOT_FOUND,
-				       $nntp->message);
+	    $response->code(&HTTP::Status::RC_NOT_FOUND);
+	    $response->message($nntp->message);
 	}
-	return HTTP::Response->new(&HTTP::Status::RC_NOT_IMPLEMENTED,
-				   "GET newsgroup not implemented yet");
+	$nntp->quit; $nntp = undef;
+	# HEAD: just check if the group exists
+	if ($method eq 'GET' && $response->is_success) {
+	    $response->code(&HTTP::Status::RC_NOT_IMPLEMENTED);
+	    $response->message("GET newsgroup not implemented yet");
+	}
+	return $response;
     }
 
     # Send command to server to retrieve an article (or just the headers)
     my $get = $method eq 'HEAD' ? "head" : "article";
     my $art = $nntp->$get("<$groupart>");
     unless ($art) {
-	return HTTP::Response->new(&HTTP::Status::RC_NOT_FOUND,
-				   $nntp->message);
+	$nntp->quit; $nntp = undef;
+	$response->code(&HTTP::Status::RC_NOT_FOUND);
+	$response->message($nntp->message);
+	return $response;
     }
     LWP::Debug::debug($nntp->message);
-    
+
     # Parse headers
     my($key, $val);
     while ($_ = shift @$art) {
@@ -135,7 +143,7 @@ sub request
     $response = $self->collect_once($arg, $response, join("", @$art))
       if @$art;
 
-    # Say godbye to the server
+    # Say goodbye to the server
     $nntp->quit;
     $nntp = undef;
 
