@@ -27,28 +27,44 @@ sub registerParser {
 
 sub parseList {
 	my $class = shift;
-	my $list  = shift;
-	my $file  = shift;
+	my $url   = shift;
+	my $fh    = shift;
 	my $base  = shift;
 
 	# Allow the caller to pass a content type
-	my $type = shift || Slim::Music::Info::contentType($list);
+	my $type = shift || Slim::Music::Info::contentType($url);
 
 	# We want the real type from a internal playlist.
 	if ($type eq 'ssp') {
-		$type = Slim::Music::Info::typeFromSuffix($list);
+		$type = Slim::Music::Info::typeFromSuffix($url);
 	}
 
-	$::d_parse && msg("parseList (type: $type): $list\n");
+	$::d_parse && msg("parseList (type: $type): $url\n");
 
 	my @results = ();
+	my $closeFH = 0;
+
+	# If a filehandle wasn't passed in, open it.
+	if (!ref($fh) || !fileno($fh)) {
+
+		my $path = $url;
+
+		if (Slim::Music::Info::isURL($url)) {
+
+			$path = Slim::Utils::Misc::pathFromFileURL($url);
+		}
+
+		$fh = FileHandle->new($path);
+
+		$closeFH = 1;
+	}
 
 	if (my $playlistClass = Slim::Music::Info::classForFormat($type)) {
 
 		# Dynamically load the module in.
 		Slim::Music::Info::loadTagFormatForType($type);
 
-		@results = eval { $playlistClass->read($file, $base, $list) };
+		@results = eval { $playlistClass->read($fh, $base, $url) };
 
 		if ($@) {
 
@@ -59,32 +75,40 @@ sub parseList {
 	else {
 		# Try to guess what kind of playlist it is		
 		$::d_parse && msg("parseList: Unknown content type $type, trying to guess\n");
-		
-		my $content = read_file($file);
-		
+
+		my $content = read_file($fh);
+
 		# look for known strings that would indicate a certain content-type
 		if ( $content =~ /\[playlist\]/i ) {
+
 			$type = 'pls';
-		}
-		elsif ( $content =~ /(?:asx|\[Reference\])/i ) {
+
+		} elsif ( $content =~ /(?:asx|\[Reference\])/i ) {
+
 			$type = 'asx';
 		}
-		
+
 		if ( $type =~ /(?:asx|pls)/ ) {
 			# Re-parse using known content-type
-			$file->seek(0);
-			return $class->parseList( $list, $file, $base, $type );
+			$fh->seek(0);
+
+			return $class->parseList( $url, $fh, $base, $type );
 		}
-		
+
 		# no luck there, so just use URI::Find to look for URLs
-		
 		$::d_parse && msg("parseList: Couldn't guess, so trying to simply read all URLs from content\n");
-		
+
 		my $finder = URI::Find->new( sub {
 			my ( $uri, $orig_uri ) = @_;
 			push @results, $orig_uri;
 		} );
+
 		$finder->find(\$content);
+	}
+
+	# Don't leak
+	if ($closeFH) {
+		close($fh);
 	}
 
 	return wantarray() ? @results : $results[0];
