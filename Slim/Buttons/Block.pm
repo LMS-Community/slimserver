@@ -10,8 +10,10 @@ use Slim::Utils::Timers;
 use Slim::Utils::Misc;
 use Slim::Buttons::Common;
 
+use Storable;
+
 my $ticklength = .2;            # length of each tick, seconds
-my $tickdelay  =  2;            # number of updates before animation appears
+my $tickdelay  =  1;            # number of updates before animation appears
 my @tickchars  = ('|','/','-','\\');
 
 our %functions  = ();
@@ -49,8 +51,11 @@ sub block {
 
 	$client->blocklines( { 'static' => $static, 'parts' => $parts, 'ticks' => 0 } );
 
+	my $screen2mode = $client->param('screen2');
+
 	Slim::Buttons::Common::pushMode($client,'block');
 	$client->modeParam('block.name', $blockName);
+	$client->modeParam('screen2', $screen2mode);
 
 	if (defined $parts) {
 		$client->showBriefly($parts);
@@ -72,6 +77,7 @@ sub lines {
 
 	my $bdata = $client->blocklines();
 	my $parts = $bdata->{'parts'};
+	my $screen1;
 
 	if ($bdata->{'static'}) { return $parts };
 
@@ -82,6 +88,10 @@ sub lines {
 
 	# create state for graphics animation if it does not exist - do it here so only done when animation starts
 	unless (defined $bdata->{'pos'}) {
+
+		$bdata->{'parts'} = $parts = Storable::dclone($parts);
+
+		$screen1 = $parts->{'screen1'} ? $parts->{'screen1'} : $parts;
 		
 		if ($client->display->isa('Slim::Display::Graphics')) {
 			# For graphics players animation cycles through characters in one of the following fonts:
@@ -94,23 +104,32 @@ sub lines {
 			$bdata->{'vfd'} = $vfd;
 			$bdata->{'chars'} = $chars ? $chars - 1 : ($font = undef);
 			
-			if ($parts->{'fonts'} && $parts->{'fonts'}->{"$vfd"} && ref $parts->{'fonts'}->{"$vfd"} ne 'HASH') {
-				# expand font definition so we can redefine one component only
-				my $basefont = $parts->{'fonts'}->{"$vfd"};
-				my $sfonts = $parts->{'fonts'}->{"$vfd"} = {};
-				foreach my $c (qw(line overlay center)) {
-					foreach my $l (0..$client->display->renderCache()->{'maxLine'}) {
-						$sfonts->{"$c"}[$l] = $basefont . "." . ( $l + 1 );
+			if ($screen1->{'fonts'} && $screen1->{'fonts'}->{"$vfd"}) {
+				if (ref $screen1->{'fonts'}->{"$vfd"} ne 'HASH') {
+					# expand font definition so we can redefine one component only
+					my $basefont = $screen1->{'fonts'}->{"$vfd"};
+					my $sfonts = $screen1->{'fonts'}->{"$vfd"} = {};
+					foreach my $c (qw(line overlay center)) {
+						foreach my $l (0..$client->display->renderCache()->{'maxLine'}) {
+							$sfonts->{"$c"}[$l] = $basefont . "." . ( $l + 1 );
+						}
 					}
 				}
+			} elsif ($client->display->linesPerScreen == 1) {
+				# clear overlay so animation is seen
+				$screen1->{'overlay'}[1] = undef;
 			}
 			
-			$parts->{'fonts'}->{"$vfd"}->{'overlay'}[0] = $font;
+			$screen1->{'fonts'}->{"$vfd"}->{'overlay'}[0] = $font;
 			
 		}
 		
 		$bdata->{'pos'} = -1;
 		
+	} else {
+		
+		$screen1 = $parts->{'screen1'} ? $parts->{'screen1'} : $parts;
+
 	}
 	
 	if ($bdata->{'chars'}) {
@@ -118,13 +137,13 @@ sub lines {
 		my $pos = ($bdata->{'pos'} + 1) % $bdata->{'chars'};
 		my $vfd = $bdata->{'vfd'};
 		$bdata->{'pos'} = $pos;
-		$parts->{'overlay'}[0] = chr($pos + 1);
+		$screen1->{'overlay'}[0] = chr($pos + 1);
 		
 	} else {
 		
 		my $pos = int(Time::HiRes::time() / $ticklength) % (@tickchars);
 		
-		$parts->{overlay}[0] = $tickchars[$pos];
+		$screen1->{overlay}[0] = $tickchars[$pos];
 		
 	}
 
