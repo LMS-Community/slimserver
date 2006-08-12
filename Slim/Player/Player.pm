@@ -706,7 +706,7 @@ sub mixerDisplay {
 	});
 
 	# trim off any overlay for showBriefly
-	$client->display->showBriefly(@lines[0,1]);
+	$client->display->showBriefly(@lines[0,1], { 'name' => 'mixer' } );
 
 	$client->modeParam('visu', $oldvisu);	
 }

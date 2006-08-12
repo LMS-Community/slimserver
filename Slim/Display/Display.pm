@@ -66,6 +66,7 @@ sub new {
 	$display->[7] = undef;    # lastVisMode
 	$display->[8] = undef;    # sbCallbackData
 	$display->[9] = undef;    # sbOldDisplay
+	$display->[10]= undef;    # sbName
 
 	$display->resetDisplay(); # init render cache
 
@@ -118,6 +119,10 @@ sub sbCallbackData {
 sub sbOldDisplay {
 	my $r = shift;
 	@_ ? ($r->[9] = shift) : $r->[9];
+}
+sub sbName {
+	my $r = shift;
+	@_ ? ($r->[10] = shift) : $r->[10];
 }
 
 
@@ -202,7 +207,7 @@ sub showBriefly {
 	# return if update blocked
 	return if ($display->updateMode() == 2);
 
-	my ($parsed, $duration, $firstLine, $blockUpdate, $scrollToEnd, $brightness, $callback, $callbackargs);
+	my ($parsed, $duration, $firstLine, $blockUpdate, $scrollToEnd, $brightness, $callback, $callbackargs, $name);
 
 	my $parts = shift;
 	if (ref($parts) eq 'HASH') {
@@ -220,6 +225,7 @@ sub showBriefly {
 		$brightness   = $args->{'brightness'};   # brightness to display at
 		$callback     = $args->{'callback'};     # callback when showBriefly completes
 		$callbackargs = $args->{'callbackargs'}; # callback arguments
+		$name         = $args->{'name'};         # name - so caller can name who owns current showBriefly
 	} else {
 		$duration = $args || 1;
 		$firstLine   = shift;
@@ -228,6 +234,7 @@ sub showBriefly {
 		$brightness   = shift;
 		$callback     = shift;
 		$callbackargs = shift;
+		$name         = shift;
 	}
 
 	if ($firstLine && ($display->linesPerScreen() == 1)) {
@@ -256,9 +263,10 @@ sub showBriefly {
 		$callbackData->{'callback'} = $callback;
 		$callbackData->{'callbackargs'} = $callbackargs;
 	}
-	
+
 	$display->sbOldDisplay($oldDisplay);
 	$display->sbCallbackData($callbackData);
+	$display->sbName($name);
 
 	if (!$scrollToEnd || !$display->scrollData()) {
 		Slim::Utils::Timers::setTimer($display,Time::HiRes::time() + $duration, \&endAnimation);
@@ -267,6 +275,8 @@ sub showBriefly {
 
 sub endShowBriefly {
 	my $display = shift;
+
+	$display->sbName(undef);
 
 	my $callbackData = $display->sbCallbackData() || return;
 

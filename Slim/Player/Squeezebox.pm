@@ -269,7 +269,7 @@ sub quickstart {
 			$line2  = Slim::Music::Info::title( $url );
 		}
 		
-		$client->showBriefly( $line1, $line2, 0.5 );
+		$client->showBriefly( $line1, $line2, 0.5 ) unless $client->display->sbName();
 		
 		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + 0.125, \&quickstart );
 	}
