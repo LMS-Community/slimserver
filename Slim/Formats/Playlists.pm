@@ -44,19 +44,22 @@ sub parseList {
 	my @results = ();
 	my $closeFH = 0;
 
-	# If a filehandle wasn't passed in, open it.
-	if (!ref($fh) || !fileno($fh)) {
+	if ( !Slim::Music::Info::isRemoteURL($url) ) {
+		
+		# If a filehandle wasn't passed in, open it.
+		if (!ref($fh) || !fileno($fh)) {
 
-		my $path = $url;
+			my $path = $url;
 
-		if (Slim::Music::Info::isURL($url)) {
+			if (Slim::Music::Info::isFileURL($url)) {
 
-			$path = Slim::Utils::Misc::pathFromFileURL($url);
+				$path = Slim::Utils::Misc::pathFromFileURL($url);
+			}
+
+			$fh = FileHandle->new($path);
+
+			$closeFH = 1;
 		}
-
-		$fh = FileHandle->new($path);
-
-		$closeFH = 1;
 	}
 
 	if (my $playlistClass = Slim::Music::Info::classForFormat($type)) {
