@@ -11,7 +11,7 @@ use vars qw(@ISA $VERSION);
 use Text::ParseWords;
 
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$LastChangedRevision: 515 $)[1];
+$VERSION = (qw$LastChangedRevision: 582 $)[1];
 
 sub new {
 	my ($class, $self, $data, $offset) = @_;
@@ -64,7 +64,9 @@ sub rdatastr {
 sub _build_char_str_list {
 	my ($self, $rdata_string) = @_;
 	
-	my @words = shellwords($rdata_string);
+	my @words;
+
+	@words= shellwords($rdata_string) if $rdata_string;
 
 	$self->{'char_str_list'} = [];
 

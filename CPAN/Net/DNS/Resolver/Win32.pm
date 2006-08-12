@@ -9,11 +9,13 @@ use vars qw(@ISA $VERSION);
 use Net::DNS::Resolver::Base ();
 
 @ISA     = qw(Net::DNS::Resolver::Base);
-$VERSION = (qw$LastChangedRevision: 514 $)[1];
+$VERSION = (qw$LastChangedRevision: 588 $)[1];
 
 use Win32::Registry;
 
 sub init {
+  
+        my $debug=0;
 	my ($class) = @_;
 	
 	my $defaults = $class->defaults;
@@ -85,12 +87,41 @@ sub init {
 
 
 
+  # This code was introduced by Hanno Stock, see ticket 1193 dd May 19 2006
+  # 
+  # it should work on Win2K and XP and looks for the DNS services
+  # using the BIND key
+  # 
+
+  my $bind_linkage;
+  my @sorted_interfaces;
+	print ";; DNS: Getting sorted interface list\n" if $debug;
+  $main::HKEY_LOCAL_MACHINE->Open('SYSTEM\CurrentControlSet\Services\Tcpip\Linkage',
+   $bind_linkage);
+	if($bind_linkage){
+	  my $bind_linkage_list;
+	  my $type;
+	  $bind_linkage->QueryValueEx('Bind', $type, $bind_linkage_list);
+	  if($bind_linkage_list){
+	    @sorted_interfaces = split(m/[^\w{}\\-]+/s, $bind_linkage_list);
+	  }
+	  foreach my $interface (@sorted_interfaces){
+	    $interface =~ s/^\\device\\//i;
+	    print ";; DNS:Interface: $interface\n" if $debug;
+	  }
+	}
+
+
 	my $interfaces;
 	$resobj->Open("Interfaces", $interfaces);
 	if ($interfaces) {
-	    my @ifacelist;
+	  my @ifacelist;
+	  if(@sorted_interfaces){
+	    @ifacelist = @sorted_interfaces;
+	  }else{
 	    $interfaces->GetKeys(\@ifacelist);
-	    foreach my $iface (@ifacelist) {
+	  }
+	  foreach my $iface (@ifacelist) {
 		my $regiface;
 		$interfaces->Open($iface, $regiface);
 		

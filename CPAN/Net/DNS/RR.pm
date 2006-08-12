@@ -14,7 +14,7 @@ use Net::DNS;
 use Net::DNS::RR::Unknown;
 
 
-$VERSION = (qw$LastChangedRevision: 552 $)[1];
+$VERSION = (qw$LastChangedRevision: 593 $)[1];
 
 =head1 NAME
 
@@ -152,6 +152,22 @@ BEGIN {
 		      die $@;
 		    }
 		} 
+
+	 	eval { 
+		  local $SIG{'__DIE__'} = 'DEFAULT';
+		  require Net::DNS::RR::DLV; 
+		};
+
+		unless ($@) {
+		  $RR{'DLV'} =1;
+		} else {
+		  # Die only if we are dealing with a version for which DLV is 
+		  # available 
+		  die $@ if (
+			     defined ($Net::DNS::SEC::SVNVERSION) && 
+			     ( $Net::DNS::SEC::SVNVERSION > 591 )
+			    );
+		}
 
     }
 }

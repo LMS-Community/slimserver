@@ -41,7 +41,7 @@ BEGIN {
     @ISA     = qw(Exporter DynaLoader);
 
     
-    $VERSION = '0.57';
+    $VERSION = '0.58';
     $HAVE_XS = eval { 
 	local $SIG{'__DIE__'} = 'DEFAULT';
 	__PACKAGE__->bootstrap(); 1 
@@ -126,13 +126,12 @@ use Carp;
     'CERT'      => 37,      # RFC 2538
     'DNAME'     => 39,      # RFC 2672
     'OPT'       => 41,      # RFC 2671
-    # The following 4 RRs are impemented in Net::DNS::SEC
-    'DS'        => 43,      # RFC 4034
+    'DS'        => 43,      # RFC 4034   # in Net::DNS::SEC
     'SSHFP'     => 44,      # draft-ietf-secsh-dns (No RFC # yet at time of coding)
 #    'IPSECKEY'  => 45,      # RFC 4025
-    'RRSIG'     => 46,      # RFC 4034
-    'NSEC'      => 47,      # RFC 4034
-    'DNSKEY'    => 48,      # RFC 4034
+    'RRSIG'     => 46,      # RFC 4034 in Net::DNS::SEC
+    'NSEC'      => 47,      # RFC 4034 in Net::DNS::SEC
+    'DNSKEY'    => 48,      # RFC 4034 in Net::DNS::SEC
     'SPF'       => 99,      # rfc-schlitt-spf-classic-o2 (No RFC # yet at time of coding)
     'UINFO'     => 100,     # non-standard
     'UID'       => 101,     # non-standard
@@ -145,6 +144,7 @@ use Carp;
     'MAILB'     => 253,     # RFC 1035 (MB, MG, MR)
     'MAILA'     => 254,     # RFC 1035 (obsolete - see MX)
     'ANY'       => 255,     # RFC 1035
+    'DLV'       => 32769    # RFC 4431  in Net::DNS::SEC		
 );
 %typesbyval = reverse %typesbyname;
 
@@ -166,7 +166,7 @@ use Carp;
 sub typesbyname {
     my $name = uc shift;
 
-    return $typesbyname{$name} if $typesbyname{$name};
+    return $typesbyname{$name} if defined $typesbyname{$name};
 
     confess "Net::DNS::typesbyname() argument ($name) is not TYPE###" unless 
         $name =~ m/^\s*TYPE(\d+)\s*$/o;  

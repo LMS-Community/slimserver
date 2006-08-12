@@ -7,7 +7,7 @@ use Net::DNS::Resolver;
 
 use vars qw($VERSION @ISA);
 
-$VERSION = (qw$LastChangedRevision: 552 $)[1];
+$VERSION = (qw$LastChangedRevision: 591 $)[1];
 @ISA = qw(Net::DNS::Resolver);
 
 sub hints {
@@ -19,6 +19,7 @@ sub hints {
   } else {
     $self->nameservers(@hints);
   }
+
   print ";; verifying (root) zone...\n" if $self->{'debug'};
   # bind always asks one of the hint servers
   # for who it thinks is authoritative for
@@ -27,7 +28,7 @@ sub hints {
   
   $self->recurse(1); 
   my $packet=$self->query(".", "NS", "IN");
-
+  $self->recurse(0); 
   my %hints = ();
   if ($packet) {
     if (my @ans = $packet->answer) {
@@ -86,7 +87,7 @@ sub hints {
   }
   
   # Disable recursion flag.
-  $self->recurse(0);
+
   
   return $self->nameservers( map { @{ $_ } } values %{ $self->{'hints'} } );
 }

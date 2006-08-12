@@ -9,7 +9,7 @@ BEGIN {
 use vars qw(@ISA $VERSION);
 
 @ISA     = qw(Net::DNS::RR);
-$VERSION = (qw$LastChangedRevision: 548 $)[1];
+$VERSION = (qw$LastChangedRevision: 583 $)[1];
 
 
 
@@ -84,24 +84,13 @@ sub rr_rdata {
 
 	if (exists $self->{'priority'}) {
 		$rdata .= pack('n3', @{$self}{qw(priority weight port)});
-		$rdata .= $packet->dn_comp($self->{'target'}, $offset + length $rdata);
-	}
+		$rdata .=  $self->_name2wire ($self->{"target"});
 
-	return $rdata;
-}
-
-
-sub _canonicalRdata {
-	my $self  = shift;
-	my $rdata = '';
+	      }
 	
-	if (exists $self->{'priority'}) {
-		$rdata .= pack('n3', @{$self}{qw(priority weight port)});
-		$rdata .= $self->_name2wire($self->{'target'});
-	}
-
 	return $rdata;
 }
+
 
 1;
 __END__

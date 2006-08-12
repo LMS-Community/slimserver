@@ -7,10 +7,11 @@ BEGIN {
     eval { require bytes; }
 } 
 use vars qw(@ISA $VERSION);
+use Net::DNS::RR::TXT;
 
 
 @ISA     = qw(Net::DNS::RR::TXT);
-$VERSION = (qw$LastChangedRevision: 549 $)[1];
+$VERSION = (qw$LastChangedRevision: 580 $)[1];
 
 
 

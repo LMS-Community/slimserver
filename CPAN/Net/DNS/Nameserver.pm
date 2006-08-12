@@ -21,7 +21,7 @@ use constant	STATE_GOT_LENGTH => 2;
 use constant	STATE_SENDING => 3;
 use Net::IP qw(ip_is_ipv4 ip_is_ipv6 ip_normalize); 
 
-$VERSION = (qw$LastChangedRevision: 535 $)[1];
+$VERSION = (qw$LastChangedRevision: 590 $)[1];
 
 #@DEFAULT_ADDR is set in the BEGIN block 
 $DEFAULT_PORT=53;
@@ -372,10 +372,14 @@ sub udp_connection {
 
 	local $| = 1 if $self->{"Verbose"};
 	print "Writing response - " if $self->{"Verbose"};
-	# die() ?!??  I think we need something better. --robert
-	$sock->send($reply_data) or die "send: $!";
-	print "done\n" if $self->{"Verbose"};
-}
+
+	if ($sock->send($reply_data)) { # 
+	  print "done\n" if $self->{"Verbose"};
+	}
+	else {
+	  print "failed to send reply: $!\n" if $self->{"Verbose"};
+	}
+      }
 
 
 sub get_open_tcp {
