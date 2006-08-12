@@ -280,65 +280,119 @@ our %functions = (
 	},
 	'menu' => sub  {
 		my $client = shift;
-		my $button = shift;
+		my $button = shift || '';
 		my $buttonarg = shift;
-		
+
 		my $jump = $client->curSelection($client->curDepth());
-		
-		
+
 		Slim::Buttons::Common::setMode($client, 'home');
-		
+
 		if ($button eq 'menu_playlist') {
+
 			Slim::Buttons::Common::pushMode($client, 'playlist');
 			$jump = 'NOW_PLAYING';
+
 		} elsif ($button eq 'menu_browse_genre') {
-			Slim::Buttons::Common::pushMode($client, 'browsedb',{ 'hierarchy' => 'genre,artist,album,track', 'level' => 0 });
+
+			Slim::Buttons::Common::pushMode($client, 'browsedb', {
+				'hierarchy' => 'genre,artist,album,track',
+				'level'     => 0,
+			});
+
 			$jump = 'BROWSE_BY_GENRE';
+
 		} elsif ($button eq 'menu_browse_artist') {
-			Slim::Buttons::Common::pushMode($client, 'browsedb',{'hierarchy' => 'artist,album,track', 'level' => 0});
+
+			Slim::Buttons::Common::pushMode($client, 'browsedb', {
+				'hierarchy' => 'artist,album,track',
+				'level'     => 0,
+			});
+
 			$jump = 'BROWSE_BY_ARTIST';
+
 		} elsif ($button eq 'menu_browse_album') {
-			Slim::Buttons::Common::pushMode($client, 'browsedb', {'hierarchy' => 'album,track', 'level' => 0});
+
+			Slim::Buttons::Common::pushMode($client, 'browsedb', {
+				'hierarchy' => 'album,track',
+				'level'     => 0,
+			});
+
 			$jump = 'BROWSE_BY_ALBUM';
+
 		} elsif ($button eq 'menu_browse_song') {
-			Slim::Buttons::Common::pushMode($client, 'browsedb', {'hierarchy' => 'track', 'level' => 0});
+
+			Slim::Buttons::Common::pushMode($client, 'browsedb', {
+				'hierarchy' => 'track',
+				'level'     => 0,
+			});
+
 			$jump = 'BROWSE_BY_SONG';
+
 		} elsif ($button eq 'menu_browse_music') {
-			Slim::Buttons::Common::pushMode($client, 'browsetree', {'hierarchy' => ''});
+
+			Slim::Buttons::Common::pushMode($client, 'browsetree', {
+				'hierarchy' => '',
+			});
+
 			$jump = 'BROWSE_MUSIC_FOLDER';
+
 		} elsif ($button eq 'menu_synchronize') {
+
 			Slim::Buttons::Common::pushMode($client, 'settings');
+
 			$jump = 'SETTINGS';
+
 			Slim::Buttons::Common::pushModeLeft($client, 'synchronize');
+
 		} elsif ($button eq 'menu_search_artist') {
+
 			my %params = Slim::Buttons::Search::searchFor($client, 'ARTISTS');
-			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'},\%params);
+
+			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'}, \%params);
+
 			$jump = 'SEARCH_FOR_ARTISTS';
+
 		} elsif ($button eq 'menu_search_album') {
+
 			my %params = Slim::Buttons::Search::searchFor($client, 'ALBUMS');
-			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'},\%params);
+
+			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'}, \%params);
+
 			$jump = 'SEARCH_FOR_ALBUMS';
+
 		} elsif ($button eq 'menu_search_song') {
+
 			my %params = Slim::Buttons::Search::searchFor($client, 'SONGS');
-			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'},\%params);
+
+			Slim::Buttons::Common::pushModeLeft($client, $params{'useMode'}, \%params);
+
 			$jump = 'SEARCH_FOR_SONGS';
+
 		} elsif ($button eq 'menu_browse_playlists') {
-			Slim::Buttons::Common::pushMode($client, 'browsedb', {'hierarchy' => 'playlist,playlistTrack', 'level' => 0});
+
+			Slim::Buttons::Common::pushMode($client, 'browsedb', {
+				'hierarchy' => 'playlist,playlistTrack',
+				'level'     => 0,
+			});
+
 			$jump = 'SAVED_PLAYLISTS';
+
 		} elsif ($buttonarg =~ /^plugin/i) {
-			
+
 			if (exists($modes{$buttonarg})) {
 				Slim::Buttons::Common::pushMode($client, $buttonarg);
 			} else {
 				Slim::Buttons::Common::pushMode($client, 'plugins');
 			}
-			
+
 			$jump = 'PLUGINS';
+
 		} elsif ($button eq 'menu_settings') {
+
 			Slim::Buttons::Common::pushMode($client, 'settings');
 			$jump = 'SETTINGS';
 		}
-		
+
 		Slim::Buttons::Home::jump($client,$jump);
 		$client->update();
 	},
@@ -1251,13 +1305,16 @@ sub popMode {
 		my $suppressScreen2Update = shift;
 
 		if ($client->display->showExtendedText()) {
+
 			$client->param('screen2', 'periodic') unless ($client->param('screen2'));
 
 		} elsif ($client->param('screen2') eq 'periodic') {
+
 			$client->modeParam('screen2', undef);
 		}
 
 		if (!$suppressScreen2Update && $oldscreen2 && !$client->param('screen2')) {
+
 			$client->update( { 'screen2' => {} } );
 		}
 	}

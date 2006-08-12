@@ -149,7 +149,8 @@ sub albumsQuery {
 	# ignore everything if $track_id was specified
 	else {
 	
-		if ($sort eq 'new') {
+		if ($sort && $sort eq 'new') {
+
 			$attr->{'order_by'} = 'tracks.timestamp desc, tracks.disc, tracks.tracknum, tracks.titlesort';
 			push @{$attr->{'join'}}, 'tracks';
 		}
@@ -1675,10 +1676,12 @@ sub titlesQuery {
 		}
 	}
 
-	if ($sort eq "tracknum") {
+	if ($sort && $sort eq "tracknum") {
+
 		if (!($tags =~ /t/)) {
 			$tags = $tags . "t";
 		}
+
 		$attr->{'order_by'} =  "me.disc, me.tracknum, concat('0', me.titlesort)";
 	}
 	else {
