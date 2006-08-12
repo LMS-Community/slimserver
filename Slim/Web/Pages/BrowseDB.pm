@@ -378,6 +378,7 @@ sub browsedb {
 	if ($count) {
 
 		my $lastAnchor = '';
+		my $anchorText;
 		my $attrName   = lc($levelName);
 		my $firstItem  = undef;
 
@@ -417,9 +418,9 @@ sub browsedb {
 
 			$form{'attributes'} .= sprintf('&%s.id=%d', $attrName, $itemid);
 
-			$item->displayAsHTML(\%form, $descend, $orderBy);
+			$item->displayAsHTML(\%form, $descend, $orderBy, \$anchorText);
 
-			if (my $itemsort = $item->namesort) {
+			if (my $itemsort = $anchorText || $item->namesort ) {
 
 				my $anchor = substr($itemsort, 0, 1);
 

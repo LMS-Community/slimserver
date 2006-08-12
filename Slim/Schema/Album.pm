@@ -91,7 +91,7 @@ sub rawtitle {
 }
 
 sub displayAsHTML {
-	my ($self, $form, $descend, $sort) = @_;
+	my ($self, $form, $descend, $sort, $anchortextRef) = @_;
 
 	$form->{'text'}       = $self->title;
 	$form->{'coverThumb'} = $self->artwork || 0;
@@ -107,7 +107,9 @@ sub displayAsHTML {
 	}
 
 	# Show the artist in the album view
-	if (Slim::Utils::Prefs::get('showArtist') || ($sort && $sort =~ /^contributor\.namesort/)) {
+	my $showContributor = ($sort && $sort =~ /^contributor\.namesort/);
+
+	if (Slim::Utils::Prefs::get('showArtist') || $showContributor) {
 
 		# XXX - only show the contributor when there are multiple
 		# contributors in the album view.
@@ -118,6 +120,11 @@ sub displayAsHTML {
 				$form->{'artist'}        = $contributor;
 				#$form->{'includeArtist'} = defined $findCriteria->{'artist'} ? 0 : 1;
 				$form->{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
+				
+				if ($showContributor) {
+					# override default field for anchors with contributor.namesort
+					$$anchortextRef = $contributor->namesort;
+				}
 			}
 		# }
 	}
