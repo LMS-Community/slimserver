@@ -807,6 +807,10 @@ sub isAudioURL {
 		}
 	}
 
+	# alternatively check for the uri scheme being defined as type 'audio' in the suffixes hash
+	# this occurs if scheme: is defined in the suffix field of types.conf or a custom-types.conf, e.g.:
+	#  id scheme: ? audio
+	# it is used by plugins which know specific uri schemes to be audio, but protocol handler method is preferred
 	return ($url =~ /^([a-z0-9]+:)/ && defined($suffixes{$1}) && $slimTypes{$suffixes{$1}} eq 'audio');
 }
 
