@@ -798,9 +798,7 @@ sub musicmagic_mix {
 
 	} elsif ($playlist) {
 
-		my ($obj) = Slim::Schema->rs('Playlist')->objectForUrl({
-			'url' => $playlist,
-		});
+		my ($obj) = Slim::Schema->find('Playlist', $playlist);
 
 		if (blessed($obj) && $obj->can('musicmagic_mixable')) {
 
