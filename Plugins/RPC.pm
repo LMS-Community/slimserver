@@ -256,6 +256,7 @@ sub strings {
 PLUGIN_RPC
 	EN	XML-RPC/JSON-RPC Interface
 	ES	Interface XML-RPC/JSON-RPC
+	NL	XML-RPC/JSON-RPC interface
 ";
 }
 

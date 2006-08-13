@@ -380,10 +380,12 @@ PLUGIN_HEALTH_NETTEST_STOPTEST
 PLUGIN_HEALTH_PERF_SUMMARY
 	EN	Performance Summary
 	FR	Résumé
+	NL	Prestatie samenvatting
 
 PLUGIN_HEALTH_PERF_SUMMARY_DESC
 	EN	Please queue up several tracks to play on this player and start them playing.  Then press the Reset link below to clear the statistics and update this display.
 	FR	Ajoutez plusieurs morceaux à la liste de lecture de cette platine et jouez-les, puis cliquez sur le bouton Réinitialiser les compteurs ci-dessus pour mettre à jour les statistiques.
+	NL	Selecteer verschillende liedjes om achter elkaar af te spelen op deze speler en start het spelen.<BR> Druk dan op de Reset link hieronder om de statistieken leeg te maken en weer bij te werken.
 
 PLUGIN_HEALTH_PERF_RESET
 	EN	Reset
@@ -401,12 +403,15 @@ PLUGIN_HEALTH_WARNINGS
 
 PLUGIN_HEALTH_PERF_STATISTICS
 	EN	Performance Statistics
+	NL	Prestatiestatistieken
 
 PLUGIN_HEALTH_PLAYER
 	EN	Player Statistics
+	NL	Speler statistieken
 
 PLUGIN_HEALTH_SERVER
 	EN	Server Statistics
+	NL	Server statistieken
 
 PLUGIN_HEALTH_OK
 	EN	OK
@@ -505,6 +510,7 @@ PLUGIN_HEALTH_STREAM
 PLUGIN_HEALTH_SIGNAL
 	EN	Signal Strength
 	FR	Signal de la platine
+	NL	Signaalsterkte
 
 PLUGIN_HEALTH_BUFFER_LOW
 	EN	Low
@@ -590,39 +596,51 @@ PLUGIN_HEALTH_NORMAL
 
 PLUGIN_HEALTH_REFRESH
 	EN	Refresh
+	NL	Ververs
 
 PLUGIN_HEALTH_CLEAR
 	EN	Clear
+	NL	Legen
 
 PLUGIN_HEALTH_CLEAR_ALL
 	EN	Clear All
+	NL	Leeg alles
 
 PLUGIN_HEALTH_SET
 	EN	Set
+	NL	Instellen
 
 PLUGIN_HEALTH_SET_ALL
 	EN	Set All
+	NL	Alles instellen
 
 PLUGIN_HEALTH_WARNING_THRESHOLDS
 	EN	Warning Thresholds
+	NL	Waarschuwingsniveau
 
 PLUGIN_HEALTH_LOW
 	EN	Low
+	NL	Laag
 
 PLUGIN_HEALTH_HIGH
 	EN	High
+	NL	Hoog
 
 PLUGIN_HEALTH_BT
 	EN	Backtrace
+	NL	Terugtraceren
 
 PLUGIN_HEALTH_GRAPHS_DESC_PLAYER
 	EN	The server is currently collecting performance statistics for this player.  
+	NL	De server is op dit moment bezig om de prestatiegegevens op te halen voor deze speler.
 
 PLUGIN_HEALTH_GRAPHS_DESC_SERVER
 	EN	The server is currently collecting performance statistics for various internal server functions.  These graphs are intended to be used to help diagnose performance issues with the server and its plugins.
+	NL	De server is nu bezig om de prestatiegegevens te verzamelen voor diverse interne server functies. <BR>Deze grafieken zijn bedoeld om te helpen bij het analyseren van prestatieproblemen van de server en de plugins.
 
 PLUGIN_HEALTH_WARNING_DESC
 	EN	You may set warning thresholds for each measurement.  This will record in the server log whenever the threshold is exceeded.  The most recent log entries can be viewed <a href="/log.txt" target="log"><u>here</u></a>.
+	NL	Je kunt waarschuwingsniveaus instellen voor elke meetinstelling. Vervolgens wordt bijgehouden in de server log wanneer een waarschuwingsniveau is overschreden. <BR>De meest recente log kun je <a href="/log.txt" target="log"><u>hier</u></a> bekijken.
 
 PLUGIN_HEALTH_SIGNAL_DESC
 	EN	This graph shows the strength of the wireless signal received by your player.  Higher signal strength is better.  The player reports signal strength while it is playing.
@@ -647,62 +665,81 @@ PLUGIN_HEALTH_CONTROL_DESC
 PLUGIN_HEALTH_RESPONSE_DESC
 	EN	The response time of the server - the time between successive calls to select.  
 	FR	Ce graphique montre le laps de temps en secondes nécessaire au serveur pour répondre aux instructions de la ou des platine(s) connectée(s). Plus la valeur est basse, plus le serveur est réactif. Des valeurs supérieures à 1 seconde sont susceptibles d\'altérer les performances audio.    Les temps de réponse trop élevés peuvent être le résultat d\'autres tâches ou de tâches complexes en cours d\'éxécution sur le serveur.
+	NL	De responstijd van de server. De tijd tussen de successievelijk te selecteren calls.
 
 PLUGIN_HEALTH_SELECTTASK
 	EN	Select Task Duration
+	NL	Selecteer taakduur
 
 PLUGIN_HEALTH_SELECTTASK_DESC
 	EN	The length of time taken by each task run by select.
+	NL	De lengte in tijd die elke geselecteerde taak neemt.
 
 PLUGIN_HEALTH_SCHEDULERTASK
 	EN	Scheduler Task Duration
+	NL	Taakplanner taakduur
 
 PLUGIN_HEALTH_SCHEDULERTASK_DESC
 	EN	The length of time taken by each scheduled task.
+	NL	De lengte in tijd die elke geplande taak neemt.
 
 PLUGIN_HEALTH_TIMERTASK
 	EN	Timer Task Duration
+	NL	Timertaakduur
 
 PLUGIN_HEALTH_TIMERTASK_DESC
 	EN	The length of time taken by each timer task.
+	NL	De lengte in tijd genomen door elke timertaak.
 
 PLUGIN_HEALTH_TIMERLATE
 	EN	Timer Lateness
 	FR	Précision de la programmation
+	NL	Timerlaatheid
 
 PLUGIN_HEALTH_TIMERLATE_DESC
 	EN	The time between when a timer task was scheduled and when it is run.
 	FR	Le SlimServer utilise un mécanisme de programmation pour déclencher certaines tâches, comme la mise à jour de l\'interface utilisateur. Ce graphique montre le décalage en secondes entre le déclenchement programmé d\'une tâche et son déclenchement réel.    Deux tâches programmées ne pouvant s\'éxécuter simultanément, il est possible que certaines tâches soient déclenchées par le serveur après un délai d\'attente. Si celui-ci est trop important, la réactivité de l\'interface utilisateur peut en être affectée.
+	NL	De tijd tussen wanneer een timer taak was gepland en was uitgevoerd.
 
 PLUGIN_HEALTH_REQUEST
 	EN	Execute / Notification Task Duration
+	NL	Uitvoeren / notificatie taakduur
 
 PLUGIN_HEALTH_REQUEST_DESC
 	EN	The length of time taken by each execute command or notification callback.
+	NL	De lengte van de tijd bij elk uitgevoerde commando of terugroepnotificatie.
 
 PLUGIN_HEALTH_PAGEBUILD
 	EN	Web Page Build
+	NL	Web pagina opbouw
 
 PLUGIN_HEALTH_PAGEBUILD_DESC
 	EN	The length of time taken to build each web page.
+	NL	De tijd nodig om een webpagina op te bouwen.
 
 PLUGIN_HEALTH_IRQUEUE
 	EN	IR Queue Length
+	NL	Infrarood (IR) rij lengte
 
 PLUGIN_HEALTH_IRQUEUE_DESC
 	EN	The delay between an IR key press being received and being processed.
+	NL	Vertraging tussen een infrarood (IR) toetsdruk ontvangen en het verwerkt zijn.
 
 PLUGIN_HEALTH_DBACCESS
 	EN	Database Access
+	NL	Database toegang
 
 PLUGIN_HEALTH_DBACCESS_DESC
 	EN	The time taken for information to be retrieved from the database.
+	NL	De tijd om informatie op te halen uit de database.
 
 PLUGIN_HEALTH_PROCTEMPLATE
 	EN	Process Template
+	NL	Proces sjabloon
 
 PLUGIN_HEALTH_PROCTEMPLATE_DESC
 	EN	The time to process each Template Toolkit template when building web pages.
+	NL	De tijd om elk gereedschapsjabloon uit te voeren bij het opbouwen van webpagina\'s.
 '
 }
 

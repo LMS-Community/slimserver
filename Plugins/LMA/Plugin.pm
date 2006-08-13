@@ -101,6 +101,7 @@ sub strings {
 	return "
 PLUGIN_LMA_MODULE_NAME
 	EN	Live Music Archive
+	NL	Live muziek archief
 
 PLUGIN_LMA_LOADING
 	DE	Lade Live Music Archive...

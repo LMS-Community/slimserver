@@ -84,6 +84,7 @@ RHAPSODY
 PLUGIN_RHAPSODY_UNSUPPORTED
 	DE	Fehler: Rhapsody benötigt eine SB2 oder neuer
 	EN	Error: Rhapsody requires SB2 or higher
+	NL	Fout: Rhapsody heeft een SB2 of hoger nodig
 
 PLUGIN_RHAPSODY_ERROR_UNAUTH
 	DE	Rhapsody: Unberechtigte Anfrage.

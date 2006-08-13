@@ -679,6 +679,7 @@ sub strings {
 	return "
 PLUGIN_XPL
 	EN	xPL Interface
+	NL	xPL interface
 	
 SETUP_GROUP_XPL
 	DE	xPL Einstellungen
@@ -767,6 +768,7 @@ SETUP_XPLIR_CHOOSE
 	ES	Procesamiento Infra-rojo
 	FR	Traitement infrarouge :
 	JA	赤外線プロセシング:
+	NL	Infrarood verwerking:
 	NO	Infrarød håndtering:
 	SV	Infraröd, hantering:
 	ZH_CN	红外线处理：

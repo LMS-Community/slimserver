@@ -416,6 +416,7 @@ PLUGIN_RESCAN_TIMER_OFF
 PLUGIN_RESCAN_TIMER_TYPE
 	DE	Art des Scans
 	EN	Rescan Type
+	NL	Herscan type
 ^;
 }
 

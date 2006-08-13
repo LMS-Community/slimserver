@@ -1157,13 +1157,13 @@ PLUGIN_LIVE365_SEARCH_TAC
 	DE	Nach Interpret/Lied/Album suchen
 	EN	Search Artists/Tracks/CDs
 	ES	Buscar Artistas/Canciones/CDs
-	NL	Zoek Artiesten/Liedjes/CD's
+	NL	Zoek artiesten/liedjes/CD's
 
 PLUGIN_LIVE365_SEARCH_A
 	DE	Suche Interpret
 	EN	Search Artists
 	ES	Buscar Artistas
-	NL	Zoek Artiesten
+	NL	Zoek artiesten
 
 PLUGIN_LIVE365_SEARCH_T
 	DE	Suche Lieder
@@ -1175,7 +1175,7 @@ PLUGIN_LIVE365_SEARCH_C
 	DE	Suche Album
 	EN	Search Albums
 	ES	Buscar Discos
-	NL	Zoek Albums
+	NL	Zoek albums
 
 PLUGIN_LIVE365_SEARCH_E
 	DE	Nach Sender suchen
