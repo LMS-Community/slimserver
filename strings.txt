@@ -665,7 +665,7 @@ ADDING_TO_PLAYLIST
 	HE	גם זה אבל בסוף
 	IT	Accoda alla lista di esecuzione:
 	JA	プレイ リストに追加:
-	NL	Toevoegen aan playlist:
+	NL	Toevoegen aan einde playlist:
 	NO	Legger til i spilleliste:
 	PT	Adicionar ao fim da playlist
 	SV	Lägger till i låtlista:
