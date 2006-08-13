@@ -804,6 +804,11 @@ sub musicmagic_mix {
 
 			if ($obj->musicmagic_mixable) {
 
+				my $playlist = $obj->path;
+				if ($obj->url =~ /musicmagicplaylist:(.*?)$/) {
+					$playlist = Slim::Utils::Misc::unescape($1);
+				}
+
 				# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
 				$mix = getMix($client, $playlist, 'playlist');
 			}

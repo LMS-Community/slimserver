@@ -446,9 +446,10 @@ sub _updatePlaylist {
 
 	) } @{$songs} ];
 
-	$attributes{'CT'}    = 'mmp';
-	$attributes{'TAG'}   = 1;
-	$attributes{'VALID'} = 1;
+	$attributes{'CT'}                 = 'mmp';
+	$attributes{'TAG'}                = 1;
+	$attributes{'VALID'}              = 1;
+	$attributes{'MUSICMAGIC_MIXABLE'} = 1;
 
 	Slim::Music::Info::updateCacheEntry($url, \%attributes);
 }
