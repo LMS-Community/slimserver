@@ -38,6 +38,9 @@ use Slim::Utils::Misc;
 	}
 
 	$class->resultset_class('Slim::Schema::ResultSet::Album');
+
+	# Simple caching as artistsWithAttributes is expensive.
+	$class->mk_group_accessors('simple' => 'cachedArtistsWithAttributes');
 }
 
 sub url {
@@ -186,6 +189,10 @@ sub artists {
 sub artistsWithAttributes {
 	my $self = shift;
 
+	if ($self->cachedArtistsWithAttributes) {
+		return $self->cachedArtistsWithAttributes;
+	}
+
 	my @artists  = ();
 	my $vaString = Slim::Music::Info::variousArtistString();
 
@@ -203,6 +210,8 @@ sub artistsWithAttributes {
 			'attributes' => join('&', @attributes),
 		};
 	}
+
+	$self->cachedArtistsWithAttributes(\@artists);
 
 	return \@artists;
 }
