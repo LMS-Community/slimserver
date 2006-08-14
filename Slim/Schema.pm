@@ -518,7 +518,7 @@ sub newTrack {
 
 	# Playlists don't have years.
 	if ($source eq 'Playlist') {
-		delete $attributes{'YEAR'};
+		delete $attributeHash->{'YEAR'};
 	}
 
 	# Creating the track only wants lower case values from valid columns.
