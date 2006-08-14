@@ -106,6 +106,18 @@ sub setMode {
 	$client->param('modeUpdateInterval', 1); # seconds
 }
 
+sub initPlugin {
+	# Default to 0, which means that the server wide formats are used
+
+	unless (defined Slim::Utils::Prefs::get('screensaverDateFormat')) {
+		Slim::Utils::Prefs::set('screensaverDateFormat',0)
+	}
+
+	unless (defined Slim::Utils::Prefs::get('screensaverTimeFormat')) {
+		Slim::Utils::Prefs::set('screensaverTimeFormat',0)
+	}
+}
+
 our %functions = (
 	'up' => sub  {
 		my $client = shift;
