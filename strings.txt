@@ -426,6 +426,7 @@ PLAYLISTS
 	DE	Wiedergabelisten
 	EN	Playlists
 	FR	Listes de lecture
+	ES	Listas de temas
 
 PAUSED_ON
 	CS	Zapnuta pauza
@@ -1491,16 +1492,19 @@ PROBLEM_OPENING
 PROBLEM_OPENING_REMOTE_URL
 	DE	Fehler beim Öffnen der URL
 	EN	Error: Can't open remote URL
+	ES	Error: No se puede abrir la ULR remota
 	NL	Fout: kan URL niet op afstand niet openen
 
 PLAYLIST_NO_ITEMS_FOUND
 	DE	Fehler: Wiedergabeliste ist leer
 	EN	Error: No items found in playlist
+	ES	Error: No se encontraron items en la lista
 	NL	Fout: Geen items gevonden in de playlist
 
 PLAYLIST_PROBLEM_CONNECTING
 	DE	Fehler: Kann keine Verbindung herstellen
 	EN	Error: Can't connect to retrieve playlist
+	ES	Error: No se puede conectar para obtener la lista
 	NL	Fout: Kan geen connectie maken om playlist op te halen
 
 NO_PLAYLIST_DIR
@@ -1593,6 +1597,7 @@ ABOUT_SHORT
 WEB_XML_ERROR
 	DE	Beim Laden von %s trat ein Fehler auf: %s
 	EN	There was an error loading the remote feed for %s: (%s)
+	ES	Hubo un error al cargar el feed remoto de %s: (%s)
 	NL	Er was een laadfout van de feed op afstand gedurende %s: (%s)
 
 XML_ERROR
@@ -1650,6 +1655,7 @@ XML_ENCLOSURE
 XML_AUDIO_ENCLOSURES
 	DE	Audio Anhänge
 	EN	Audio Enclosures
+	ES	Enclosures de Audio
 	NL	Audio bijlage
 
 XML_FEED_DESCRIPTION
@@ -1661,16 +1667,19 @@ XML_FEED_DESCRIPTION
 XML_SUBTITLE
 	DE	Untertitel
 	EN	Subtitle
+	ES	Subt�tulo
 	NL	Subtitel
 
 XML_SUMMARY
 	DE	Zusammenfassung
 	EN	Summary
+	ES	Resumen
 	NL	Samenvatting
-	
+
 XML_EXPLICIT
 	DE	Anstössig
 	EN	Explicit
+	ES	Expl�cito
 	NL	Expliciet
 
 NUMBER_OF_LISTENERS
@@ -1683,11 +1692,13 @@ NUMBER_OF_LISTENERS
 DESCRIPTION
 	DE	Beschreibung
 	EN	Description
+	ES	Descripci�n
 	NL	Beschrijving
 
 SOURCE
 	DE	Quelle
 	EN	Source
+	ES	Fuente
 	NL	Bron
 
 #
@@ -2086,6 +2097,7 @@ SETUP_GROUP_ALARM
 SETUP_GROUP_ALARM_DESC
 	DE	Pro Player können bis zu 8 Wecker definiert werden: für jeden Wochentag einen, sowie einen täglichen, der jeden Tag aktiv ist. Sie können auch festlegen, dass der Wecker über 20 Sekunden eingeblendet wird.
 	EN	This player can have up to 8 alarms: one alarm that goes off every day and individual alarms for each day of the week. You may also choose to have the alarm fade in over 20 seconds.
+	ES	Este reproductor puede tener hasta 8 alarmas: una alarma que sirve para todos los d�as y una alarma individual para cada d�a de la semana. Tambi�n se puede elegir que la alarma empiece progresivamente los primeros 20 segundos.
 	FI	Tähän soittimeen voi määrittää kahdeksan hälytystä. Yksi päivittäinen hälytys ja yksittäisiä hälytyksiä mille tahansa viikon päivälle.
 	FR	La platine peut gérer jusqu'à 8 réveils indépendants : un réveil quotidien et un réveil pour chaque jour de la semaine.
 	HE	ניתן להגדיר 8 שעונים מעוררים שונים
@@ -2293,26 +2305,31 @@ STREAM_FORMAT
 SETUP_GROUP_FORMATS_EXTENSIONS
 	DE	Scanner-Einstellungen für Dateiendungen
 	EN	File Extensions Scanning Setup
+	ES	Configuraci�n de la B�squeda de Extensiones de Archivo
 	NL	Bestandsextensies scan instelling
 
 SETUP_DISABLEDEXTENSIONSAUDIO
 	DE	Deaktivierte Audio-Dateiendungen
 	EN	Disabled Audio File Extensions
+	ES	Extensiones de Archivos de Audio deshabilitadas.
 	NL	Uitgezette audio bestand extensies.
 
 SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	DE	SlimServer durchsucht die Musiksammlung nach allen unterstützten Dateitypen (Audiodateien und CUE Sheets). Falls Sie gezielt Dateitypen von der Benutzung durch SlimServer ausschliessen wollen, so geben Sie hier eine durch Komma getrennte Liste der Endungen an, z.B. cue, mp4, aac
 	EN	SlimServer will look in the Music Folder for all supported file types (audio files and cue sheets). To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: cue, mp4, aac
+	ES	SlimServer examinar� la Carpeta de M�sica teniendo en cuenta todos los formatos de archivo soportados (archivos de audio y cuesheets). Para deshabilitar tipos de archivo espec�ficos al examinar la Carpeta de M�sica, ingresar una lista de extensiones separadas por coma debajo. (Por ej. cue, mp4, etc)
 	NL	SlimServer kijkt in de muziekfolder naar alle ondersteunde bestandsformaten (audio bestanden en cue bestanden). <BR>Om specifieke bestandsformaten over te slaan bij het scannen naar muziek kun je een komma gescheiden lijst met extensies opnemen hieronder. Bijvoorbeeld: cue,mp4,aac
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST
 	DE	Deaktivierte Wiedergabelisten-Dateiendungen
 	EN	Disabled Playlist File Extensions
+	ES	Extensiones Deshabilitadas de Archivos de Listas
 	NL	Uitgezette playlist bestandsextensies
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
 	DE	SlimServer durchsucht den Wiedergabelisten-Ordner nach allen unterstützten Dateitypen (Wiedergabelisten und CUE Sheets). Falls Sie gezielt Dateitypen von der Benutzung durch SlimServer ausschliessen wollen, so geben Sie hier eine durch Komma getrennte Liste der Endungen an, z.B. m3u, pls, cue 
 	EN	SlimServer will look in the Playlist Folder for all supported file types (playlist files and cue sheets). To disable specific file types from being processed when scanning the Playlist Folder, enter a comma separated list of file extensions below. E.g.: m3u, pls, cue
+	ES	SlimServer examinar� la Carpeta de Listasa teniendo en cuenta todos los formatos de archivo soportados (archivos de listas y cuesheets). Para deshabilitar tipos de archivo espec�ficos al examinar la Carpeta de Listas, ingresar una lista de extensiones separadas por coma debajo. (Por ej. cue, mp4, etc)
 	NL	SlimServer kijkt in de playlistfolder naar alle ondersteunde bestandsformaten (playlist bestanden en cue bestanden). <BR>Om specifieke bestandsformaten over te slaan bij het scannen naar playlists kun je een komma gescheiden lijst met extensies opnemen hieronder. Bijvoorbeeld: m3u,pls,cue
 
 PLAYER_TYPE
@@ -3251,6 +3268,7 @@ SETUP_TITLEFORMAT_DESC
 SETUP_TITLEFORMAT_CHANGED
 	DE	Das Format wird für alle Geräte, die diese Einstellung verwenden, angepasst.
 	EN	Format will be changed for any clients using this setting
+	ES	El formato ser� cambiado en todos los clientes que utilicen esta configuraci�n
 	NL	Formaat wordt gewijzigd voor elke client die deze instelling gebruikt
 
 SETUP_ITUNESPLAYLISTFORMAT
@@ -3369,31 +3387,37 @@ SETUP_MMMFILTER_DESC
 SETUP_MMMMIXGENRE
 	DE	MusicMagic Mix Stil
 	EN	MusicMagic Mix Genre
+	ES	G�nero de mezcla de MusicMagic
 	NL	MusicMagic mix genre
 
 SETUP_MMMMIXGENRE_DESC
 	DE	Beschränken Sie den Mix auf die Musikstile des Seeds (Vorgabe: nein)
 	EN	Restrict mix to the genre of the seed (Default: no)
+	ES	Restringir la mezcla al g�nero de la canci�n inicial (Por defecto: no)
 	NL	Beperk mix tot het genre van bron (standaard: Nee)
 
 SETUP_MMMREJECTTYPE
 	DE	MusicMagic Ablehnungsart
 	EN	MusicMagic Reject Type
+	ES	Tipo de Rechazo en MusicMagic
 	NL	MusicMagic afkeurtype
 
 SETUP_MMMREJECTTYPE_DESC
 	DE	Definieren Sie die Einheit für die Ablehnungsgrösse. (Vorgabe: Lieder)
 	EN	Set the units for reject size. (Default: tracks)
+	ES	Establecer las unidades para el tama�o del rechazo. (Por Defecto: canciones/tracks)
 	NL	Stel de eenheid in voor de afkeurgrootte (standaard: liedjes).
 
 SETUP_MMMREJECTSIZE
 	DE	MusicMagic Ablehnungsgrösse
 	EN	MusicMagic Reject Size.
+	ES	Tama�o de Rechazo de MusicMagic
 	NL	MusicMagix afkeurgrootte.
 
 SETUP_MMMREJECTSIZE_DESC
 	DE	Definieren Sie die Anzahl an Einträgen, die übersprungen werden sollen, bevor ein Typ wiederholt wird.
 	EN	Set the number of items to skip before repeating a type. (Default: 12)
+	ES	Establecer el n�mero de items a saltearse antes de repetir un tipo. (Por defecto: 12)
 	NL	Stel het aantal items in dat overgeslagen wordt voordat een type herhaald wordt (standaard 12).
 
 SETUP_MMSHOST
@@ -3677,6 +3701,7 @@ SETUP_GUESSFILEFORMATS
 SETUP_GUESSFILEFORMATS_CHANGED
 	DE	Alle Dateien ohne Tags werden auf folgende Art und Weise verarbeitet.
 	EN	All files without tags will be processed this way
+	ES	Todos los archivos sin tags ser�n procesados de esta forma.
 	NL	Alle bestanden zonder tags zullen op deze manier verwerkt worden
 
 SETUP_GROUP_GUESSFILEFORMATS_DESC
@@ -5012,6 +5037,7 @@ SETUP_IDLESAVER
 SETUP_SCREENSAVER_USE
 	DE	Als Bildschirmschoner verwenden
 	EN	Use as current screensaver
+	ES	Utilizar como salvapantallas actual
 	NL	Gebruik als huidige schermbeveiliger
 
 SETUP_SCREENSAVER_CHOOSE
@@ -5643,64 +5669,76 @@ SETUP_ANIMATIONLEVEL_DESC
 SETUP_DISABLESTATISTICS
 	DE	Musiksammlungsstatistik
 	EN	Library Statistics
+	ES	Estad�sticas de la Colecci�n
 	FR	Statistiques bibliothèque
 	NL	Databasestatistieken
 
 SETUP_DISABLESTATISTICS_DESC
 	DE	Beim Anzeigen der SlimServer Startseite wird die ganze Musiksammlung durchsucht, um den Bestand anzeigen zu können. Wenn Sie diese Funktion deaktivieren, kann die Startseite schneller angezeigt werden.
 	EN	When the SlimServer front page comes up, it scans your music library to figure out your library statistics and displays them on the front page.  You can choose to disable this behavior, which will shorten the time it takes to initially open up the web interface, especially with a large music library.
+	ES	Cuando se muestra la pantalla incial de SlimServer, se recorre la colecci�n musical para obtener las estad�sticas de la colecci�n y mostrarlas en esta p�gina inicial. Se puede deshabilitar este comportamiento, lo cual minimizar� el tiempo que se necesita para abrir la interface web, especialmente con colecciones de gran tama�o.
 	FR	Lorsque la page d'accueil du SlimServer apparaît, celui-ci parcourt votre bibliothèque musicale afin d'afficher des statistiques. Vous pouvez désactiver ce comportement, ce qui réduira le temps nécessaire à l'affichage de la page d'accueil, surtout si la bibliothèque est importante.
 	NL	Bij het tonen van de SlimServer webpagina wordt je muziekcollectie gescand om de statistieken op te halen en te tonen op de webpagina. Deze statistieken (aantal liedjes, albums, etc.) kun je uitschakelen. Het laden van de webpagina gaat dan sneller. Vooral bij een grote muziekcollectie is dit van invloed.
 
 SETUP_DISABLE_STATISTICS
 	DE	Statistik nicht anzeigen
 	EN	Disable library statistics
+	ES	Deshabilitar estad�sticas de la colecci�n
 	FR	Désactiver l'affichage des statistiques
 	NL	Uitschakelen databasestatistieken
 
 SETUP_ENABLE_STATISTICS
 	DE	Statistik anzeigen
 	EN	Enable library statistics
+	ES	Habilitar estad�sticas de la colecci�n
 	FR	Activer l'affichage des statistiques
 	NL	Inschakelen databasestatistieken
-	
+
 SETUP_FORKEDWEB
 	EN	Webserver Forking (Mac OS X / Linux)
+	ES	Forking para Webserver (Mac OS X / Linux)
 	NL	Webserver forking (Mac OS X / Linux)
 
 SETUP_FORKEDWEB_DESC
 	DE	Um den Hauptprozess nicht zu blockieren, können einige Webseiten in Unterprozessen verarbeitet werden. Dies kommt vor allem bei Verwendung von Playern mit kleinen Puffern wie der Squeezebox1 zu Gute, da hier sonst Aussetzer bei der Musikwiedergabe auftreten können. Zudem wird das Scrollen auf dem Display und die Reaktionszeit auf die Fernbedienung verbessert. <b>Warnung:</b> Diese Funktion ist derzeit experimentell. Bei Problemen diese bitte im Beta Forum diskutieren.
 	EN	To avoid stalling the main process, certain web pages can be handled by a child process.  This will most benefit players will small buffers such as Squeezebox1 which can experience audio dropouts while using the web interface.  It will also provide smoother scrolling and IR response while accessing the web interface. <b>Warning:</b> This is currently an experimental feature, and some things may not work properly with this option enabled.  <b>Please do not report bugs experienced when this option is enabled to Bugzilla; use the Beta forum instead.</b>
+	ES	Para evitar recargar el proceso principal, ciertas p�ginas pueden ser servidas por un proceso hijo. Esto beneficiar� principalmente a los reproductores con buffer peque�o, tales como el Squeezebox1, que puede experimentar cortes mientras se utiliza la interface. Tamb�en suaviza el desplazamiento de texto y la respuesta del control remoto mientras se accede a la interface web. <b>Advertencia:</b> Esta es una caracter�stica experimental por el momento, y algunas cosas pueden no funcionar apropiadamanete cuando se habilita esta opci�n.  <b>Por favor, no reportar bugs en Bugzilla cuando se habilita esta opci�n; utilizar para esto el foro Beta.</b>
 	NL	Om het ophouden van het hoofdproces tegen te gaan kunnen sommige webpagina's door een separaat proces afgehandeld worden. Dit levert het meeste voordeel op voor spelers met een kleine buffer zoals Squeezebox1 die drop-outs kan geven terwijl je de webinterface gebruikt.<BR> Het geeft ook soepel bladeren met de IR afstandsbediening terwijl je de webinterface gebruikt. B>Waarschuwing:</B> Dit is nu een experimentele optie. Sommige dingen kunnen anders werken dan bedoeld bij het aanzetten van deze optie. <B>Open geen foutrapporten in Bugzilla. Gebruik het Beta forum daarvoor.</B>
 
 SETUP_FORKEDWEB_ENABLE
 	DE	Webserver Forking aktivieren
 	EN	Enable webserver forking
+	ES	Habilitar forking para webserver
 	NL	Aanzetten webserver forking
 
 SETUP_FORKEDWEB_DISABLE
 	DE	Webserver Forking deaktivieren
 	EN	Disable webserver forking
+	ES	Deshabilitar forking para webserver
 	NL	Uitzetten webserver forking
 
 SETUP_FORKEDSTREAMING
 	DE	Datenstrom Forking (Mac OS X / Linux)
 	EN	Audio Stream Forking (Mac OS X / Linux)
+	ES	Forking para Stream de Audio (Mac OS X / Linux)
 	NL	Audio datastroom forking (Mac OS X / Linux)
 
 SETUP_FORKEDSTREAMING_DESC
 	DE	Aktivieren dieser Option weist dem Datenstrom einen eigenen Prozess zu. Dies sollte die Wahrscheinlichkeit von Aussetzern massiv verringern. <b>Warnung:</b> Diese Funktion ist derzeit experimentell. Bei Problemen diese bitte im Beta Forum diskutieren.
 	EN	Enabling this option will provide a dedicated process to serve each audio stream to the player.  This should provide the ultimate in dropout protection.  <b>Warning:</b> This is currently an experimental feature, and some things may not work properly with this option enabled.  <b>Please do not report bugs experienced when this option is enabled to Bugzilla; use the Beta forum instead.</b>
+	ES	AL habilitar esta opci�n se crear� un proceso dedicada para cada conexi�n de audio al reproductor. Esto deber�a brindar la mayor protecci�n a cortes de audio. <b>Advertencia:</b> Esta es una caracter�stica experimental por el momento, y algunas cosas pueden no funcionar apropiadamanete cuando se habilita esta opci�n.  <b>Por favor, no reportar bugs en Bugzilla cuando se habilita esta opci�n; utilizar para esto el foro Beta.</b>
 	NL	Het aanzetten van deze optie geeft een eigen proces voor elke audiostroom naar een speler. Dit geeft de ultime beveiliging voor drop-out protectie. <B>Waarschuwing:</B> Dit is nu een experimentele optie. Sommige dingen kunnen anders werken dan bedoeld bij het aanzetten van deze optie. <B>Open geen foutrapporten in Bugzilla. Gebruik het Beta forum daarvoor.</B>
 
 SETUP_FORKEDSTREAMING_ENABLE
 	DE	Datenstrom Forking aktivieren
 	EN	Enable stream forking
+	ES	Habilitar Forking para Stream de Audio
 	NL	Aanzetten audiostroom forking
 
 SETUP_FORKEDSTREAMING_DISABLE
 	DE	Datenstrom Forking deaktivieren
 	EN	Disable stream forking
+	ES	Deshabilitar Forking para Stream de Audio
 	NL	Uitzetten audiostroom forking
 
 SETUP_LOOKFORARTWORK
@@ -6690,11 +6728,13 @@ LANGUAGE
 SETUP_DATASOURCE_1
 	DE	Sie müssen den Speicherort ihrer Musiksammlung definieren. Öffnen Sie den
 	EN	Your data source needs to be configured. Please open your web browser,
+	ES	La fuente de datos necesita ser configurada. Por favor abrir tu navegador,
 	NL	De databron moet geconfigureerd worden. Open je web browser.
 
 SETUP_DATASOURCE_2
 	DE	Browser mit folgender URL, und gehen Sie zu den "Server Einstellungen".
 	EN	go to the following URL, and click on the "Server Settings" link.
+	ES	ir a la siguiente URL, y hacer cl�ck en el link "Configuraci�n del Servidor".
 	NL	ga naar de volgende URL en klik op de "Server instellingen" link.
 
 SETUP_URL_WILL_BE
@@ -7643,6 +7683,7 @@ SAVED_PLAYLISTS
 
 SAVED_PLAYLISTS_DBL
 	DE	Wiedergabeliste
+	ES	Listas Guardadas
 	FR	Listes de lecture
 	JA	保存されたプレイリスト
 	SV	Låtlistor
@@ -8247,6 +8288,7 @@ BYTES
 SAMPLESIZE
 	DE	Sample Grösse
 	EN	Sample Size
+	ES	Tama�o de Muestra
 	NL	Steekproefgrootte
 
 BITS
@@ -8687,16 +8729,19 @@ LCSONGS
 GALLERY
 	DE	Gallerie-Ansicht
 	EN	Gallery
+	ES	Galer�a
 	NL	afbeeldingen
 
 SWITCH_TO_GALLERY
 	DE	Gallerie-Ansicht
 	EN	To Gallery View
+	ES	Ir a la Vista de Galer�a
 	NL	Naar afbeeldingen overzicht
 
 SWITCH_TO_LIST
 	DE	Listen-Ansicht
 	EN	To List View
+	ES	Ir a la Vista de Lista
 	NL	Naar lijst beeld
 
 BROWSE
@@ -8769,6 +8814,7 @@ BROWSE_BY_ARTIST
 	ZH_CN	浏览艺人
 
 BROWSE_BY_ARTIST_DBL
+	ES	Examinar por Artista
 	FR	Parcours artistes
 
 BROWSE_BY_ALBUM
@@ -8789,6 +8835,7 @@ BROWSE_BY_ALBUM
 	ZH_CN	浏览乐谱帖
 
 BROWSE_BY_ALBUM_DBL
+	ES	Examinar por �lbum
 	FR	Parcours albums
 
 BROWSE_BY_ARTWORK
@@ -8807,6 +8854,7 @@ BROWSE_BY_ARTWORK
 	ZH_CN	浏览图象
 
 BROWSE_BY_ARTWORK_DBL
+	ES	Examinar por Arte de Tapa
 	FR	Parcours pochettes
 
 BROWSE_NEW_MUSIC
@@ -8839,6 +8887,7 @@ BROWSE_BY_SONG
 	ZH_CN	浏览歌曲
 
 BROWSE_BY_SONG_DBL
+	ES	Examinar por canci�n
 	FR	Parcours morceaux
 
 BROWSE_BY_YEAR
@@ -9105,10 +9154,10 @@ DELETE_WARNING
 
 SCAN_WARNING
 	CS	SlimServer stále prohledává hudební archiv, takže se některé položky nyní nemusí zobrazit.
-	DE	Der SlimServer durchsucht immer noch ihr Musikverzeichnis. Deshalb werden einige Lieder in diesem Bereich noch nicht angezeigt.
 	DA	SlimServer gennemlæser stadig din musiksamling. Dette kan betyde at nogle sangtitler endnu ikke vises under dette område.
+	DE	Der SlimServer durchsucht immer noch ihr Musikverzeichnis. Deshalb werden einige Lieder in diesem Bereich noch nicht angezeigt.
 	EN	SlimServer is still scanning your music library, so some items may not appear in this area yet.
-	ES	El SlimServer está todavía recopilando la información sobre su colección musical, por lo que puede suceder que algunos items no aparezcan aqui aún.
+	ES	SlimServer est� todav�a recopilando la informaci�n sobre su colecci�n musical, por lo que puede suceder que algunos items no aparezcan aqui a�n.
 	FI	SlimServer lukee yhä musiikkikansiotasi. On mahdollista, että kaikkien kappaleiden tiedot eivät ole vielä päivittyneet.
 	FR	Le SlimServer n'a pas terminé de répertorier votre dossier de musique. Certains éléments peuvent ne pas apparaître dans la liste pour l'instant.
 	HE	זוהי רשימה חלקית מכיוון שהשרת עדיין סורק את ספריית המוזיקה, הזדיין בסבלנות
@@ -10517,6 +10566,7 @@ SEARCHFOR_SONGS
 	ZH_CN	搜查歌曲
 
 SEARCHFOR_SONGS_DBL
+	ES	Buscar Canciones
 	FR	Cherche morceaux
 
 SEARCHFOR_SONGTITLE
@@ -10589,6 +10639,7 @@ SEARCH_FOR_SONGS
 SEARCH_STREAMS
 	DE	Suchen
 	EN	Search
+	ES	Buscar
 	NL	Zoeken
 
 SEARCHING
@@ -10626,6 +10677,7 @@ FOUND
 NO_SEARCH_RESULTS
 	DE	Nichts gefunden
 	EN	No search results
+	ES	No hay resultados en la b�squeda
 	NL	Geen zoekresultaten
 
 CONTRIBUTORMATCHING
@@ -10725,7 +10777,7 @@ TRACKSMATCHING
 MORE
 	DE	Mehr
 	EN	More
-	ES	Mas
+	ES	M�s
 	NL	Meer
 
 MORE_MATCHES
@@ -10822,11 +10874,13 @@ MUSICMAGIC_MIX
 MUSICMAGIC_MOODS
 	DE	MusicMagic Stimmungs-Mix
 	EN	MusicMagic Mood Mix
+	ES	Mezcla de Ambiente de MusicMagic
 	NL	MugicMagic humeur mix
 
 CREATE_MIX
 	DE	Mix erstellen
 	EN	Create Mix
+	ES	Crear Mezcla
 	NL	Maak mix
 
 MOODLOGIC_INSTANT_MIX
@@ -10926,6 +10980,7 @@ MOODLOGIC_MOOD_6
 RADIO_TUNEIN
 	DE	Internet Adresse abspielen
 	EN	Tune In URL
+	ES	Sintonizar Radio
 	FR	Connexion radio
 	NL	Radio URL
 
@@ -11222,6 +11277,7 @@ SAVE_PLAYLIST
 PLAYLIST_OVERWRITE
 	DE	RECHTS drücken zum Überschreiben der existierenden Datei:
 	EN	Press RIGHT to replace existing playlist:
+	ES	Presionar DERECHA para reemplazar la lista existente:
 	NL	Druk -> om de bestaande playlist te vervangen:
 
 PLAYLIST_SAVE
@@ -11988,6 +12044,7 @@ SQUEEZENETWORK_SB2_REQUIRED
 UPNP_REQUEST_FAILED
 	DE	Die UPnP Anfrage fehlgeschlagen. Bitte UPnP Server überprüfen.
 	EN	UPnP request failed, please check the UPnP server.
+	ES	El requerimiento de UPnP fall�, por favor revisar el servidor de UPnP.
 	NL	UPnP verzoek lukte niet. Controleer je UPnP server.
 
 SETUP_SCROLLMODE
@@ -12122,6 +12179,7 @@ VARIOUSARTISTS
 TRACKARTIST
 	DE	Lied-Interpret
 	EN	Track Artist
+	ES	Artista del �lbum
 	NL	Artiest van liedje
 	ZH_CN	轨道艺人
 
@@ -12258,6 +12316,7 @@ ARTWORK
 ONE_BY_ONE_ARTWORK
 	DE	Plattenhüllen einzeln
 	EN	1-by-1 Artwork
+	ES	Arte de Tapa 1-a-1
 	NL	1-v-1 hoesjes
 
 OBJECT_RETRIEVAL_FAILURE
@@ -12306,84 +12365,102 @@ SETUP_LARGETEXTFONT_1
 SORT_BY
 	DE	Sortieren nach
 	EN	Sort By
+	ES	Ordenar Por
 	NL	Sorteer op
 
 SORT_ARTISTALBUM
 	DE	Interpret, Album
 	EN	Artist, Album
+	ES	Artista, �lbum
 	NL	Artiest, album
 
 SORT_ARTISTYEARALBUM
 	DE	Interpret, Jahr, Album
 	EN	Artist, Year, Album
+	ES	Artista, A�o, �lbum
 	NL	Artiest, jaar, album
 
 SORT_YEARALBUM
 	DE	Jahr, Album
 	EN	Year, Album
+	ES	A�o, �lbum
 	NL	Jaar, album
 
 SORT_YEARARTISTALBUM
 	DE	Jahr, Artist, Album
 	EN	Year, Artist, Album
+	ES	A�o, Artista, �lbum
 	NL	Jaar, artiest, album
 
 SORT_GENREALBUM
 	DE	Stil, Album
 	EN	Genre, Album
+	ES	G�nero, �lbum
 	NL	Genre, album
 
 SORT_GENREARTISTALBUM
 	DE	Stil, Interpret, Album
 	EN	Genre, Artist, Album
+	ES	G�nero, Artista, �lbum
 	NL	Genre, artiest, album
 
 SETUP_CLOCKSOURCE
 	DE	Tacktgeber
 	EN	Clock Source
+	ES	Fuente de Reloj
 	NL	Klok bron
 
 SETUP_CLOCKSOURCE_DESC
 	DE	Die Ausgänge des Transporters könne mit internen oder externen Quellen synchronisiert werden. Bitte wählen Sie.
 	EN	Transporter's outputs can be synchronized with internal or external sources. Choose a clock source below.
+	ES	Las salidas del Transporter pueden sincronizarse con fuentes internas o externas. Elegir una fuente de reloj debajo.
 	NL	Transporter's uitvoer kan gesynchroniseerd worden met interne of externe bronnen. Kies hieronder een bron.
 
 CLOCKSOURCE_INTERNAL
 	DE	Interner Taktgeber
 	EN	Internal Clock
+	ES	Reloj Interno
 	NL	Interne klok
 
 CLOCKSOURCE_WORD_CLOCK
 	EN	Word Clock Input
+	ES	Entrada de Palabra de Reloj
 	NL	Word klok invoer
 
 CLOCKSOURCE_SPDIF_SLAVE
 	EN	S/PDIF Input
+	ES	Entrada S/PDIF
 	NL	S/PDIF invoer
 
 DIGITAL_INPUT
 	EN	Digital Input
+	ES	Entrada Digital
 	NL	Digitale invoer
 
 DIGITAL_INPUT_BALANCED_AES
 	EN	Balanced AES/EBU
+	ES	AES/EBU Balanceada
 	NL	Gebalanceerde AES/EBU
 
 DIGITAL_INPUT_BNC_SPDIF
 	EN	BNC Coax S/PDIF
+	ES	S/PDIF BNC Coax 
 	NL	BNC coax S/PDIF
 
 DIGITAL_INPUT_RCA_SPDIF
 	EN	RCA Coax S/PDIF
+	ES	S/PDIF RCA Coax
 	NL	RCA coax S/PDIF
 
 DIGITAL_INPUT_OPTICAL_SPDIF
 	EN	Optical S/PDIF
+	ES	 S/PDIF �ptica
 	NL	Optische S/PDIF
 
 VISUALIZER_EXTENDED_TEXT
 	DE	Erweiterte Textanzeige
 	EN	Extended Text Display
+	ES	Display de Texto Extendido
 	NL	Uitgebreide tekstweergave
 
 VISUALIZER_SPECTRUM_ANALYZER
@@ -12415,10 +12492,12 @@ VISUALIZER_DIGITAL_VUMETER
 SETUP_VISUALIZERMODE
 	DE	Visualizer Bildschirm
 	EN	Visualizer Screen
+	ES	Pantalla de Visualizador
 	NL	Visualisatie scherm
 
 SETUP_VISUALIZERMODE_DESC
 	DE	Der Player can auf dem rechten Bildschirm Visualisierungen oder erweiterte Informationen anzeigen. Wählen Sie hier, was dargestellt werden soll. Mit dem "Visual" Knopf auf dem Player können Sie diese Wahl jederzeit ändern. 
 	EN	The player can display visualizers or extended text information on the right hand screen. Choose which you wish to be displayed. The Visual button on the player will cycle through each of the options selected below.
+	ES	El reproductor puede mostrar visualizadores o informaci�n de texto extendido en la pantalla de la derecha. Elegir el que se quiera mostrar. El bot�n Visual en el reproductor ir� pasando de una a otra entre las opciones elegidas debajo.
 	NL	De speler kan visualisaties of extra informatie tonen op het rechter scherm. Kies wat je getoond wilt hebben. <BR>The Visual toets op de speler zal de keuzes doorlopen die je hieronder kiest.
 
