@@ -593,10 +593,9 @@ sub updateOrCreate {
 	my $url   = blessed($track) && $track->can('get') ? $track->get('url') : URI->new($urlOrObj)->canonical->as_string;
 
 	if (!defined($url) || ref($url)) {
-		require Data::Dumper;
-		print Data::Dumper::Dumper($attributeHash);
 		errorMsg("updateOrCreate: No URL specified for updateOrCreate\n");
 		bt();
+		Data::Dump::dump($attributeHash) if !$::quiet;
 		return undef;
 	}
 

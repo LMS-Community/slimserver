@@ -30,6 +30,12 @@ sub setTracks {
 	my $tracks = shift;
 
 	# With playlists in the database - we want to make sure the playlist is consistent to the user.
+	my $autoCommit = Slim::Schema->storage->dbh->{'AutoCommit'};
+
+	if ($autoCommit) {
+		Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
+	}
+
 	Slim::Schema->txn_do(sub {
 
 		# Remove the old tracks associated with this playlist.
@@ -37,11 +43,19 @@ sub setTracks {
 
 		$self->_addTracksToPlaylist($tracks, 0);
 	});
+
+	Slim::Schema->storage->dbh->{'AutoCommit'} = $autoCommit;
 }
 
 sub appendTracks {
 	my $self   = shift;
 	my $tracks = shift;
+
+	my $autoCommit = Slim::Schema->storage->dbh->{'AutoCommit'};
+
+	if ($autoCommit) {
+		Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
+	}
 
 	Slim::Schema->txn_do(sub {
 
@@ -55,6 +69,8 @@ sub appendTracks {
 
 		$self->_addTracksToPlaylist($tracks, $max+1);
 	});
+
+	Slim::Schema->storage->dbh->{'AutoCommit'} = $autoCommit;
 }
 
 sub _addTracksToPlaylist {

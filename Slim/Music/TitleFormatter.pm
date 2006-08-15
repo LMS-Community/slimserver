@@ -274,6 +274,8 @@ sub init {
 
 		return (defined $output ? $output : '');
 	};
+
+	return 1;
 }
 
 sub addFormat {

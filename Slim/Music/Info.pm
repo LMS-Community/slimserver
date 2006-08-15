@@ -62,9 +62,13 @@ sub init {
 	require Slim::Schema;
 	Slim::Schema->init;
 
-	Slim::Music::TitleFormatter::init();
+	if (!Slim::Music::TitleFormatter::init()) {
+		return 0;
+	}
 
-	loadTypesConfig();
+	if (!loadTypesConfig()) {
+		return 0;
+	}
 
 	# Our loader classes for tag formats.
 	%tagClasses = (
@@ -95,6 +99,8 @@ sub init {
 		'http' => 'Slim::Formats::HTTP',
 		'mms'  => 'Slim::Formats::MMS',
 	);
+
+	return 1;
 }
 
 sub getCurrentDataStore {
@@ -110,7 +116,7 @@ sub loadTypesConfig {
 
 	# custom types file allowed at server root or root of plugin directories
 	for my $baseDir (Slim::Utils::OSDetect::dirsFor('types')) {
-	
+
 		push @typesFiles, catdir($baseDir, 'types.conf');
 		push @typesFiles, catdir($baseDir, 'custom-types.conf');
 	}
@@ -163,6 +169,13 @@ sub loadTypesConfig {
 			close $typesFile;
 		}
 	}
+
+	if (scalar keys %types > 0) {
+
+		return 1;
+	}
+
+	return 0;
 }
 
 sub playlistForClient {
@@ -181,6 +194,8 @@ sub clearFormatDisplayCache {
 	foreach my $client ( Slim::Player::Client::clients() ) {
 		$client->musicInfoTextCache(undef);
 	}
+
+	return 1;
 }
 
 sub updateCacheEntry {
@@ -189,15 +204,15 @@ sub updateCacheEntry {
 
 	if (!defined($url)) {
 		msg("No URL specified for updateCacheEntry\n");
-		msg(%{$cacheEntryHash});
 		bt();
+		Data::Dump::dump($cacheEntryHash) if !$::quiet;
 		return;
 	}
 
 	if (!isURL($url)) { 
 		msg("Non-URL passed to updateCacheEntry::info ($url)\n");
 		bt();
-		$url = Slim::Utils::Misc::fileURLFromPath($url); 
+		return;
 	}
 
 	my $list = $cacheEntryHash->{'LIST'} || [];
@@ -211,6 +226,8 @@ sub updateCacheEntry {
 
 		$playlist->setTracks($list);
 	}
+
+	return $playlist;
 }
 
 ##################################################################################
@@ -257,8 +274,11 @@ sub setContentType {
 sub title {
 	my $url = shift;
 
-	my $track = Slim::Schema->rs('Track')->updateOrCreate({
+	# Use objectForUrl, as updateOrCreate() without an attribute hash will
+	# guess tags on files, which is incorrect.
+	my $track = Slim::Schema->rs('Track')->objectForUrl({
 		'url'      => $url,
+		'create'   => 1,
 		'commit'   => 1,
 		'readTags' => isRemoteURL($url) ? 0 : 1,
 	});
@@ -278,6 +298,7 @@ sub setTitle {
 		'url'        => $url,
 		'attributes' => { 'TITLE' => $title },
 		'readTags'   => isRemoteURL($url) ? 0 : 1,
+		'commit'     => 1,
 	});
 }
 
@@ -306,19 +327,20 @@ sub setBitrate {
 	my $bitrate = shift;
 	my $vbr     = shift || undef;
 
-	Slim::Schema->rs('Track')->updateOrCreate({
+	my $track   = Slim::Schema->rs('Track')->updateOrCreate({
 		'url'        => $url,
+		'readTags'   => 1,
+		'commit'     => 1,
 		'attributes' => { 
 			'BITRATE'   => $bitrate,
 			'VBR_SCALE' => $vbr,
 		},
-		'readTags'   => 1,
 	});
 	
 	# Cache the bitrate string so it will appear in TrackInfo
-	my $mode = $vbr ? 'VBR' : 'CBR';
-	my $str = int ( $bitrate / 1000 ) . Slim::Utils::Strings::string('KBPS') . ' ' . $mode;
-	$currentBitrates{$url} = $str;
+	$currentBitrates{$url} = $track->prettyBitRate;
+
+	return 1;
 }
 
 sub setDuration {
@@ -327,10 +349,11 @@ sub setDuration {
 
 	Slim::Schema->rs('Track')->updateOrCreate({
 		'url'        => $url,
+		'readTags'   => 1,
+		'commit'     => 1,
 		'attributes' => { 
 			'SECS' => $duration,
 		},
-		'readTags'   => 1,
 	});
 }
 
@@ -345,13 +368,22 @@ sub getDuration {
 }
 
 sub setCurrentTitleChangeCallback {
-	my $callbackRef = shift;
-	$currentTitleCallbacks{$callbackRef} = $callbackRef;
+	my $callbackRef = shift || return;
+
+	if (ref($callbackRef) eq 'CODE') {
+
+		$currentTitleCallbacks{$callbackRef} = $callbackRef;
+
+		return 1;
+	}
+
+	return 0;
 }
 
 sub clearCurrentTitleChangeCallback {
-	my $callbackRef = shift;
-	$currentTitleCallbacks{$callbackRef} = undef;
+	my $callbackRef = shift || return;
+
+	delete $currentTitleCallbacks{$callbackRef};
 }
 
 sub setCurrentTitle {
@@ -361,8 +393,11 @@ sub setCurrentTitle {
 	if (($currentTitles{$url} || '') ne ($title || '')) {
 		no strict 'refs';
 		
-		for my $changecallback (values %currentTitleCallbacks) {
-			&$changecallback($url, $title);
+		for my $changeCallback (values %currentTitleCallbacks) {
+
+			if (ref($changeCallback) eq 'CODE') {
+				&$changeCallback($url, $title);
+			}
 		}
 	}
 
@@ -396,8 +431,11 @@ sub plainTitle {
 	$::d_info && msg("Plain title for: " . $file . "\n");
 
 	if (isRemoteURL($file)) {
+
 		$title = Slim::Utils::Misc::unescape($file);
+
 	} else {
+
 		if (isFileURL($file)) {
 			$file = Slim::Utils::Misc::pathFromFileURL($file);
 			$file = Slim::Utils::Unicode::utf8decode_locale($file);
@@ -409,7 +447,7 @@ sub plainTitle {
 		
 		# directories don't get the suffixes
 		if ($title && !($type && $type eq 'dir')) {
-				$title =~ s/\.[^. ]+$//;
+			$title =~ s/\.[^. ]+$//;
 		}
 	}
 
@@ -477,27 +515,28 @@ sub displayText {
 	my $obj    = shift;
 	my $format = shift || 'TITLE';
 
-	return '' unless (blessed $obj && $obj->can('url'));
+	if (!blessed($obj) || !$obj->can('url')) {
+		return '';
+	}
 
-	my $url = $obj->url;
-
+	my $url   = $obj->url;
 	my $cache = $client ? $client->musicInfoTextCache() : $musicInfoTextCache;
 
 	if ($cache->{'url'} && $url && $cache->{'url'} eq $url) {
 
-		if (exists $cache->{"$format"}) {
-			return $cache->{"$format"};
+		if (exists $cache->{$format}) {
+			return $cache->{$format};
 		} else {
-			return $cache->{"$format"} = Slim::Music::TitleFormatter::infoFormat($obj, $format);
+			return $cache->{$format} = Slim::Music::TitleFormatter::infoFormat($obj, $format);
 		}
-
 	}
 
 	my $text = Slim::Music::TitleFormatter::infoFormat($obj, $format);	
 
+	# Clear the cache first.
 	$cache = {};
-	$cache->{'url'} = $url;
-	$cache->{"$format"} = $text;
+	$cache->{'url'}   = $url;
+	$cache->{$format} = $text;
 
 	$client ? $client->musicInfoTextCache($cache) : $musicInfoTextCache = $cache;
 
@@ -592,8 +631,9 @@ sub cleanTrackNumber {
 	my $tracknumber = shift;
 
 	if (defined($tracknumber)) {
+
 		# extracts the first digits only sequence then converts it to int
-		$tracknumber =~ /(\d*)/;
+		$tracknumber =~ /(\d+)/;
 		$tracknumber = $1 ? int($1) : undef;
 	}
 	
@@ -604,13 +644,19 @@ sub fileName {
 	my $j = shift;
 
 	if (isFileURL($j)) {
+
 		$j = Slim::Utils::Misc::pathFromFileURL($j);
+
 		if ($j) {
 			$j = (splitdir($j))[-1];
 		}
+
 	} elsif (isRemoteURL($j)) {
+
 		$j = Slim::Utils::Misc::unescape($j);
+
 	} else {
+
 		$j = (splitdir($j))[-1];
 	}
 
@@ -738,7 +784,7 @@ sub isFile {
 	# check against types.conf
 	return 0 unless $suffixes{ lc((split /\./, $fullpath)[-1]) };
 
-	my $stat = (-f $fullpath && -r $fullpath ? 1 : 0);
+	my $stat = ((-f $fullpath && -r _) ? 1 : 0);
 
 	$::d_info && msgf("isFile(%s) == %d\n", $fullpath, (1 * $stat));
 
@@ -836,7 +882,7 @@ sub _isContentTypeHelper {
 
 			$type = $pathOrObj->content_type;
 
-		} else {
+		} elsif ($pathOrObj) {
 
 			$type = Slim::Schema->contentType($pathOrObj);
 		}
@@ -846,9 +892,13 @@ sub _isContentTypeHelper {
 }
 
 sub isType {
-	my $pathOrObj = shift || return 0;
+	my $pathOrObj = shift;
 	my $testType  = shift;
-	my $type      = shift || _isContentTypeHelper($pathOrObj);
+	my $type      = shift;
+
+	if (!$type) {
+		$type = _isContentTypeHelper($pathOrObj, $type);
+	}
 
 	if ($type && ($type eq $testType)) {
 		return 1;
@@ -902,7 +952,11 @@ sub isAIFF {
 
 sub isSong {
 	my $pathOrObj = shift;
-	my $type      = shift || _isContentTypeHelper($pathOrObj);
+	my $type      = shift;
+
+	if (!$type) {
+		$type = _isContentTypeHelper($pathOrObj, $type);
+	}
 
 	if ($type && $slimTypes{$type} && $slimTypes{$type} eq 'audio') {
 		return $type;
@@ -1129,8 +1183,8 @@ sub typeFromPath {
 			if (-f $filepath) {
 
 				if ($filepath =~ /\.lnk$/i && Slim::Utils::OSDetect::OS() eq 'win') {
-					require Win32::Shortcut;
-					if ((Win32::Shortcut->new($filepath)) ? 1 : 0) {
+
+					if (Win32::Shortcut->new($filepath)) {
 						$type = 'lnk';
 					}
 

@@ -904,8 +904,9 @@ sub bt {
 	if ($assertfile) {
 		open SRC, $assertfile;
 		my $line;
-		my $line_n=0;
-		$msg.="\nHere's the problem. $assertfile, line $assertline:\n\n";
+		my $line_n = 0;
+		$msg .= "\nHere's the problem. $assertfile, line $assertline:\n\n";
+
 		while ($line=<SRC>) {
 			$line_n++;
 			if (abs($assertline-$line_n) <=10) {
@@ -918,7 +919,7 @@ sub bt {
 
 	return $msg if $return;
 
-	&msg($msg);
+	msg($msg);
 }
 
 sub msg {
@@ -933,7 +934,9 @@ sub msg {
 			$now , ' ' , $entry );
 	}
 
-	print STDERR $entry;
+	if (!$::quiet) {
+		print STDERR $entry;
+	}
 	
 	if ($forceLog || Slim::Utils::Prefs::get('livelog')) {
 		 $Slim::Utils::Misc::log .= $entry;

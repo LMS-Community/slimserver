@@ -37,7 +37,8 @@ sub init {
 			'LocalAddr' => $main::localClientNetAddr,
 		) or do {
 
-			msg("Failed to detect server IP address. $!\n");
+			errorMsg("Failed to detect server IP address. $!\n");
+			return;
 		};
 
 		# Find my half of the connection

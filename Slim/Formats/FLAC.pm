@@ -23,6 +23,7 @@ use File::Basename;
 use MIME::Base64 qw(decode_base64);
 
 use Slim::Formats::Playlists::CUE;
+use Slim::Schema::Contributor;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
