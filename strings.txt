@@ -12501,3 +12501,36 @@ SETUP_VISUALIZERMODE_DESC
 	ES	El reproductor puede mostrar visualizadores o información de texto extendido en la pantalla de la derecha. Elegir el que se quiera mostrar. El botón Visual en el reproductor irá pasando de una a otra entre las opciones elegidas debajo.
 	NL	De speler kan visualisaties of extra informatie tonen op het rechter scherm. Kies wat je getoond wilt hebben. <BR>The Visual toets op de speler zal de keuzes doorlopen die je hieronder kiest.
 
+SETUP_SERVERPRIORITY
+	EN	Server Priority
+
+SETUP_SERVERPRIORITY_DESC
+	EN	You can specify the priority that SlimServer runs at.
+
+SETUP_SCANNERPRIORITY
+	EN	Scanner Priority
+
+SETUP_SCANNERPRIORITY_DESC
+	EN	You can specify the priority that the scanning process run at.
+
+SETUP_PRIORITY_DEFAULT
+	EN	Default Priority
+
+SETUP_PRIORITY_CURRENT
+	EN	Current Server Priority
+
+SETUP_PRIORITY_HIGH
+	EN	High
+
+SETUP_PRIORITY_ABOVE_NORMAL
+	EN	Above Normal
+
+SETUP_PRIORITY_NORMAL
+	EN	Normal
+
+SETUP_PRIORITY_BELOW_NORMAL
+	EN	Below Normal
+
+SETUP_PRIORITY_LOW
+	EN	Low
+

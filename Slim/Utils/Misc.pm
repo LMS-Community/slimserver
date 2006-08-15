@@ -113,12 +113,14 @@ sub findbin {
 sub setPriority {
 	my $priority = shift;
 
-	# By default, set the Windows priority to be NORMAL
-	# 
+	return unless (defined $priority && $priority ne "");
+
 	# For *nix, including OSX, set whatever priority the user gives us.
+	# For win32, translate the priority to a priority class and use that
+
 	if (Slim::Utils::OSDetect::OS() eq 'win') {
 
-		my ($priorityClass, $priorityClassName) = priorityClassFromPriority($priority || 0);
+		my ($priorityClass, $priorityClassName) = priorityClassFromPriority($priority);
 
 		my $getCurrentProcess = Win32::API->new('kernel32', 'GetCurrentProcess', ['V'], 'N');
 		my $setPriorityClass  = Win32::API->new('kernel32', 'SetPriorityClass',  ['N', 'N'], 'N');
@@ -141,12 +143,51 @@ sub setPriority {
 			}
 		}
 
-	} elsif ($priority) {
+	} else {
 
 		$::d_server && msg("SlimServer changing process priority to $priority\n");
 		eval { setpriority (0, 0, $priority); };
 	}
 }
+
+sub getPriority {
+
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
+
+		my $getCurrentProcess = Win32::API->new('kernel32', 'GetCurrentProcess', ['V'], 'N');
+		my $getPriorityClass  = Win32::API->new('kernel32', 'GetPriorityClass',  ['N'], 'N');
+
+		if (blessed($getPriorityClass) && blessed($getCurrentProcess)) {
+
+			my $processHandle = eval { $getCurrentProcess->Call(0) };
+
+			if (!$processHandle || $@) {
+
+				errorMsg("getPriority: Can't get process handle ($^E) [$@]\n");
+				return;
+			};
+
+			my $priorityClass = eval { $getPriorityClass->Call($processHandle) };
+
+			if ($@) {
+				errorMsg("getPriority: Couldn't get priority class ($^E) [$@]\n");
+			}
+
+			return priorityFromPriorityClass($priorityClass);
+		}
+
+	} else {
+		eval { getpriority (0, 0); };
+	}
+}
+
+# Translation between win32 and *nix priorities
+# is as follows:
+# -20  -  -16  HIGH
+# -15  -   -6  ABOVE NORMAL
+#  -5  -    4  NORMAL
+#   5  -   14  BELOW NORMAL
+#  15  -   20  LOW
 
 sub priorityClassFromPriority {
 	my $priority = shift;
@@ -164,6 +205,24 @@ sub priorityClassFromPriority {
 		return (0x00004000, "BELOW_NORMAL");
 	} else {
 		return (Win32::Process::IDLE_PRIORITY_CLASS(), "LOW");
+	}
+}
+
+sub priorityFromPriorityClass {
+	my $priorityClass = shift;
+
+	if ($priorityClass == 0x00000100) { # REALTIME
+		return -20;
+	} elsif ($priorityClass == Win32::Process::HIGH_PRIORITY_CLASS()) {
+		return -16;
+	} elsif ($priorityClass == 0x00008000) {
+		return -6;
+	} elsif ($priorityClass == 0x00004000) {
+		return 5;
+	} elsif ($priorityClass == Win32::Process::IDLE_PRIORITY_CLASS()) {
+		return 15;
+	} else {
+		return 0;
 	}
 }
 

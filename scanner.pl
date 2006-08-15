@@ -79,7 +79,12 @@ sub main {
 	# Bring up strings, database, etc.
 	initializeFrameworks();
 
-	Slim::Utils::Misc::setPriority($priority);
+	# Set priority, command line overrides pref
+	if (defined $priority) {
+		Slim::Utils::Misc::setPriority($priority);
+	} else {
+		Slim::Utils::Misc::setPriority( Slim::Utils::Prefs::get("scannerPriority") );
+	}
 
 	if (!$force && Slim::Music::Import->stillScanning) {
 

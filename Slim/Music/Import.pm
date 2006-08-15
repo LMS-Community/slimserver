@@ -64,6 +64,19 @@ sub launchScan {
 		}
 	}
 
+	# Set scanner priority.  Use the current server priority unless 
+	# scannerPriority has been specified.
+
+	my $scannerPriority = Slim::Utils::Prefs::get("scannerPriority");
+
+	unless (defined $scannerPriority && $scannerPriority ne "") {
+		$scannerPriority = Slim::Utils::Misc::getPriority();
+	}
+
+	if (defined $scannerPriority && $scannerPriority ne "") {
+		$args->{"priority=$scannerPriority"} = 1;
+	}
+
 	my @scanArgs = map { "--$_" } keys %{$args};
 
 	my $command  = "$Bin/scanner.pl";

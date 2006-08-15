@@ -333,7 +333,6 @@ sub init {
 	$::d_server && msg("SlimServer settings effective user and group if requested...\n");
 	changeEffectiveUserAndGroup();
 
-	Slim::Utils::Misc::setPriority($priority);
 
 	# do platform specific environment setup
 	# we have some special directories under OSX.
@@ -352,6 +351,13 @@ sub init {
 	# initialize slimserver subsystems
 	$::d_server && msg("SlimServer settings init...\n");
 	initSettings();
+
+	# Set priority, command line overrides pref
+	if (defined $priority) {
+		Slim::Utils::Misc::setPriority($priority);
+	} else {
+		Slim::Utils::Misc::setPriority( Slim::Utils::Prefs::get("serverPriority") );
+	}
 
 	$::d_server && msg("SlimServer strings init...\n");
 	Slim::Utils::Strings::init(catdir($Bin,'strings.txt'), "EN");
