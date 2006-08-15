@@ -148,6 +148,7 @@ use Slim::Utils::Timers;
 use Slim::Utils::MySQLHelper;
 use Slim::Networking::Slimproto;
 use Slim::Networking::SimpleAsyncHTTP;
+use Slim::Utils::Firmware;
 use Slim::Utils::UPnPMediaServer;
 
 use vars qw($VERSION $REVISION @AUTHORS);
@@ -371,6 +372,9 @@ sub init {
 
 	$::d_server && msg("SlimServer MySQL init...\n");
 	Slim::Utils::MySQLHelper->init();
+	
+	$::d_server && msg("Firmware init...\n");
+	Slim::Utils::Firmware->init;
 
 	$::d_server && msg("SlimServer Info init...\n");
 	Slim::Music::Info::init();
