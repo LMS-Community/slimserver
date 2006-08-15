@@ -1244,6 +1244,8 @@ sub pushMode {
 
 	push @{$client->modeParameterStack}, $paramHashRef;
 
+	push @{$client->modeVariableStack}, {};
+
 	my $newModeFunction = $modes{$setmode};
 
 	if (!$newModeFunction || ref($newModeFunction) ne "CODE") {
@@ -1290,6 +1292,7 @@ sub popMode {
 	
 	pop @{$client->modeStack};
 	pop @{$client->modeParameterStack};
+	pop @{$client->modeVariableStack};
 	$scrollClientHash->{$client}{scrollParams} = pop @{$scrollClientHash->{$client}{scrollParamsStack}};
 	
 	my $newmode = mode($client);
