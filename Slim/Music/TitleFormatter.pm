@@ -53,10 +53,12 @@ sub init {
 	$parsedFormats{'ALBUMSORT'} = sub {
 
 		my $output = '';
-		my $album = $_[0]->album();
+		my $album  = $_[0]->album();
+
 		if ($album) {
-			$output = $album->get_column('namesort');
+			$output = $album->namesort;
 		}
+
 		return (defined $output ? $output : '');
 	};
 
@@ -114,16 +116,23 @@ sub init {
 
 	$parsedFormats{'ARTISTSORT'} = sub {
 
-		my $output = '';
-		my $artist = $_[0]->artist();
-		if ($artist) {
-			$output = $artist->get_column('namesort');
+		my @output  = ();
+		my @artists = $_[0]->artists;
+
+		for my $artist (@artists) {
+
+			my $name = $artist->get_column('namesort');
+
+			next if $name eq Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST'));
+
+			push @output, $name;
 		}
-		return (defined $output ? $output : '');
+
+		return (scalar @output ? join(' & ', @output) : '');
 	};
 
 	# add other contributors
-	for my $attr (qw(composer conductor band genre)) {
+	for my $attr (qw(composer conductor band)) {
 
 		$parsedFormats{uc($attr)} = sub {
 
@@ -241,7 +250,7 @@ sub init {
 	};
 	
 	$parsedFormats{'CURRTIME'}  = sub {
-		Slim::Utils::DateTime::timeF();
+		return Slim::Utils::DateTime::timeF();
 	};
 	
 	# Add localized from/by
@@ -278,37 +287,44 @@ sub init {
 	return 1;
 }
 
+# This does not currently have any callers in the SlimServer tree.
 sub addFormat {
 	my $format = shift;
 	my $formatSubRef = shift;
-	
+
 	# only add format if it is not already defined
 	if (!defined $parsedFormats{$format}) {
+
 		$parsedFormats{$format} = $formatSubRef;
+
 		$::d_info && msg("Format $format added.\n");
+
+		if ($format !~ /\W/) {
+			# format is a single word, so make it an element
+			push @elements, $format;
+			$elemstring = join "|", @elements;
+			$elemRegex = qr/$elemstring/;
+		}
+
 	} else {
+
 		$::d_info && msg("Format $format already exists.\n");
 	}
-	
-	if ($format !~ /\W/) {
-		# format is a single word, so make it an element
-		push @elements, $format;
-		$elemstring = join "|", @elements;
-		$elemRegex = qr/$elemstring/;
-	}
+
+	return 1;
 }
 
 my %endbrackets = (
-		'(' => qr/(.+?)(\))/,
-		'[' => qr/(.+?)(\])/,
-		'{' => qr/(.+?)(\})/,
-		'"' => qr/(.+?)(")/, # " # syntax highlighters are easily confused
-		"'" => qr/(.+?)(')/, # ' # syntax highlighters are easily confused
-		);
+	'(' => qr/(.+?)(\))/,
+	'[' => qr/(.+?)(\])/,
+	'{' => qr/(.+?)(\})/,
+	'"' => qr/(.+?)(")/, # " # syntax highlighters are easily confused
+	"'" => qr/(.+?)(')/, # ' # syntax highlighters are easily confused
+);
 
 my $bracketstart = qr/(.*?)([{[("'])/; # '" # syntax highlighters are easily confused
 
-# The fillFormat routine takes a track and references to parsed data arrays describing
+# The _fillFormat routine takes a track and references to parsed data arrays describing
 # a desired information format and returns a string containing the formatted data.
 # The prefix array contains separator elements that should only be included in the output
 #   if the corresponding element contains data, and any element preceding it contained data.
@@ -320,30 +336,42 @@ my $bracketstart = qr/(.*?)([{[("'])/; # '" # syntax highlighters are easily con
 #   element contains data.
 # The data for each item is placed in the string in the order prefix + indprefix + element + suffix.
 
-sub fillFormat {
+sub _fillFormat {
 	my ($track, $prefix, $indprefix, $elemlookup, $suffix) = @_;
+
 	my $output = '';
 	my $hasPrev;
 	my $index = 0;
+
 	for my $elemref (@{$elemlookup}) {
+
 		my $elementtext = $elemref->($track);
-		if (defined($elementtext) && $elementtext gt '') {
+
+		if (defined($elementtext) && $elementtext !~ /^\s*$/) {
+
 			# The element had a value, so build this portion of the output.
 			# Add in the prefix only if some previous element also had a value
-			$output .= join('', ($hasPrev ? $prefix->[$index] : ''),
-					$indprefix->[$index],
-					$elementtext,
-					$suffix->[$index]);
+			$output .= join('',
+				($hasPrev ? $prefix->[$index] : ''),
+				$indprefix->[$index],
+				$elementtext,
+				$suffix->[$index],
+			);
+
 			$hasPrev ||= 1;
 		}
+
 		$index++;
 	}
+
 	return $output;
 }
 
-sub parseFormat {
+sub _parseFormat {
 	my $format = shift;
-	my $formatparsed = $format; # $format will be modified, so stash the original value
+
+	# $format will be modified, so stash the original value
+	my $formatparsed = $format;
 	my $newstr = '';
 	my (@parsed, @placeholders, @prefixes, @indprefixes, @elemlookups, @suffixes);
 
@@ -352,13 +380,18 @@ sub parseFormat {
 
 	# find bracketed items so that we can collapse them correctly
 	while ($format =~ s/$bracketstart//) {
+
 		$newstr .= $1 . $2;
+
 		my $endbracketRegex = $endbrackets{$2};
+
 		if ($format =~ s/$endbracketRegex//) {
+
 			push @placeholders, $1;
 			$newstr .= '_PLACEHOLDER_' . $2;
 		}
 	}
+
 	$format = $newstr . $format;
 
 	# break up format string into separators and elements
@@ -400,14 +433,19 @@ sub parseFormat {
 	# replace placeholders with their original values, and replace the element text with the
 	# code references to look up the value for the element.
 	my $index = 0;
+
 	for my $elem (@elemlookups) {
+
 		if ($elem eq '_PLACEHOLDER_') {
+
 			$elemlookups[$index] = shift @placeholders;
+
 			if ($index < $#prefixes) {
 				# move closing bracket from the prefix of the element following
 				# to the suffix of the current element
 				$suffixes[$index] = substr($prefixes[$index + 1],0,1,'');
 			}
+
 			if ($index) {
 				# move opening bracket from the prefix dependent on previous content
 				# to the independent prefix for this element, but only attempt this
@@ -416,18 +454,19 @@ sub parseFormat {
 				$indprefixes[$index] = substr($prefixes[$index],length($prefixes[$index]) - 1,1,'');
 			}
 		}
+
 		# replace element with code ref from parsed formats. If the element does not exist in
 		# the hash, it needs to be parsed and created.
-		$elemlookups[$index] = $parsedFormats{$elem} || parseFormat($elem);
+		$elemlookups[$index] = $parsedFormats{$elem} || _parseFormat($elem);
 		$index++;
 	}
 
 	$parsedFormats{$formatparsed} = sub {
 		my $track = shift;
 
-		return fillFormat($track, \@prefixes, \@indprefixes, \@elemlookups, \@suffixes);
+		return _fillFormat($track, \@prefixes, \@indprefixes, \@elemlookups, \@suffixes);
 	};
-	
+
 	return $parsedFormats{$formatparsed};
 }
 
@@ -456,7 +495,7 @@ sub infoFormat {
 	}
 
 	# use a safe format string if none specified
-	# Users can input strings in any locale - we need to convert that to
+	# Bug: 1146 - Users can input strings in any locale - we need to convert that to
 	# UTF-8 first, otherwise perl will segfault in the nasty regex below.
 	if ($str && $] > 5.007) {
 
@@ -471,7 +510,7 @@ sub infoFormat {
 	}
 
 	# Get the formatting function from the hash, or parse it
-	$format = $parsedFormats{$str} || parseFormat($str);
+	$format = $parsedFormats{$str} || _parseFormat($str);
 
 	$output = $format->($track) if ref($format) eq 'CODE';
 
@@ -481,6 +520,7 @@ sub infoFormat {
 		return infoFormat($track,$safestr);
 
 	} else {
+
 		$output =~ s/%([0-9a-fA-F][0-9a-fA-F])%/chr(hex($1))/eg;
 	}
 
