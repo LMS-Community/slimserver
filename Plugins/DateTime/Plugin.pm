@@ -53,8 +53,8 @@ SETUP_GROUP_DATETIME_DEFAULTDATE
 	NL	SlimServer standaard
 '};
 
-my $timeFormats = {"0" => "SETUP_GROUP_DATETIME_DEFAULTTIME", %{Slim::Utils::DateTime::timeFormats()}};
-my $dateFormats = {"0" => "SETUP_GROUP_DATETIME_DEFAULTDATE", %{Slim::Utils::DateTime::shortDateFormats()}, %{Slim::Utils::DateTime::longDateFormats()}};
+my $timeFormats = {'' => "SETUP_GROUP_DATETIME_DEFAULTTIME", %{Slim::Utils::DateTime::timeFormats()}};
+my $dateFormats = {'' => "SETUP_GROUP_DATETIME_DEFAULTDATE", %{Slim::Utils::DateTime::shortDateFormats()}, %{Slim::Utils::DateTime::longDateFormats()}};
 
 sub setupGroup {
 	my $client = shift;
@@ -77,11 +77,13 @@ sub setupGroup {
 						'validate' => \&Slim::Utils::Validate::inHash
 						,'validateArgs' => [$timeFormats,1]
 						,'options' => $timeFormats
+						,'optionSort' => 'K'
 					},
 			"screensaverDateFormat" => {
 						'validate' => \&Slim::Utils::Validate::inHash
 						,'validateArgs' => [$dateFormats,1]
 						,'options' => $dateFormats
+						,'optionSort' => 'K'
 					}
 	);
 	
@@ -107,14 +109,15 @@ sub setMode {
 }
 
 sub initPlugin {
-	# Default to 0, which means that the server wide formats are used
+	# Default to screensaverDateFormat, screensaverTimeFormat to '' or update from '0'
+	# Having screensaverDateFormat set to '' means that the server wide formats are used
 
-	unless (defined Slim::Utils::Prefs::get('screensaverDateFormat')) {
-		Slim::Utils::Prefs::set('screensaverDateFormat',0)
+	unless (Slim::Utils::Prefs::get('screensaverDateFormat')) {
+		Slim::Utils::Prefs::set('screensaverDateFormat','')
 	}
 
-	unless (defined Slim::Utils::Prefs::get('screensaverTimeFormat')) {
-		Slim::Utils::Prefs::set('screensaverTimeFormat',0)
+	unless (Slim::Utils::Prefs::get('screensaverTimeFormat')) {
+		Slim::Utils::Prefs::set('screensaverTimeFormat','')
 	}
 }
 
