@@ -8,7 +8,11 @@ package Slim::Formats::Movie;
 # version 2.
 
 use strict;
+use base qw(Slim::Formats);
+
 use MP4::Info;
+
+use Slim::Utils::Cache;
 use Slim::Utils::SoundCheck;
 
 my %tagMapping = (
@@ -17,8 +21,6 @@ my %tagMapping = (
 	'COVR'      => 'PIC',
 	'ENCRYPTED' => 'DRM',
 );
-
-my $tagCache = [];
 
 if ($] > 5.007) {
 
@@ -76,7 +78,7 @@ sub getTag {
 
 	delete $tags->{'META'};
 
-	$tagCache = [ $file, $tags ];
+	Slim::Utils::Cache->new->set($file, $tags, 60);
 
 	return $tags;
 }
@@ -86,14 +88,13 @@ sub getCoverArt {
 	my $file  = shift;
 
 	# Try to save a re-read
-	if ($tagCache->[0] && $tagCache->[0] eq $file && ref($tagCache->[1]) eq 'HASH') {
+	my $cache = Slim::Utils::Cache->new;
 
-		my $pic = $tagCache->[1]->{'PIC'};
+	if (my $tags = $cache->get($file)) {
 
-		# Don't leave anything around.
-		$tagCache = [];
+		$cache->remove($file);
 
-		return $pic;
+		return $tags->{'PIC'};
 	}
 
 	my $tags = MP4::Info::get_mp4tag($file) || {};

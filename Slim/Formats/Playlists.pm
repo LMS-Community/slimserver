@@ -14,6 +14,7 @@ use IO::String;
 use Scalar::Util qw(blessed);
 use URI::Find;
 
+use Slim::Formats;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
 
@@ -62,10 +63,10 @@ sub parseList {
 		}
 	}
 
-	if (my $playlistClass = Slim::Music::Info::classForFormat($type)) {
+	if (my $playlistClass = Slim::Formats->classForFormat($type)) {
 
 		# Dynamically load the module in.
-		Slim::Music::Info::loadTagFormatForType($type);
+		Slim::Formats->loadTagFormatForType($type);
 
 		@results = eval { $playlistClass->read($fh, $base, $url) };
 
@@ -123,10 +124,10 @@ sub writeList {
 	my $type    = Slim::Music::Info::typeFromSuffix($fullDir);
 	my @results = ();
 
-	if (my $playlistClass = Slim::Music::Info::classForFormat($type)) {
+	if (my $playlistClass = Slim::Formats->classForFormat($type)) {
 
 		# Dynamically load the module in.
-		Slim::Music::Info::loadTagFormatForType($type);
+		Slim::Formats->loadTagFormatForType($type);
 
 		@results = eval {
 

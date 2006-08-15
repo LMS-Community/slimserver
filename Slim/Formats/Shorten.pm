@@ -13,7 +13,9 @@ package Slim::Formats::Shorten;
 # NOTES:
 #   This code has only been tested on Linux.
 ###############################################################################
+
 use strict;
+use base qw(Slim::Formats);
 
 use Audio::Wav;
 use MP3::Info;

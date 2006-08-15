@@ -16,6 +16,7 @@ package Slim::Formats::FLAC;
 ###############################################################################
 
 use strict;
+use base qw(Slim::Formats);
 
 use Audio::FLAC::Header;
 use Fcntl qw(:seek);
@@ -24,6 +25,7 @@ use MIME::Base64 qw(decode_base64);
 
 use Slim::Formats::Playlists::CUE;
 use Slim::Schema::Contributor;
+use Slim::Utils::Cache;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
@@ -48,7 +50,6 @@ my %tagMapping = (
 );
 
 my @tagNames = (Slim::Schema::Contributor->contributorRoles, qw(ALBUM DISCNUMBER TITLE TRACKNUMBER DATE));
-my $tagCache = [];
 
 # peem id (http://flac.sf.net/id.html http://peem.iconoclast.net/)
 my $PEEM = 1885693293;
@@ -162,14 +163,14 @@ sub getCoverArt {
 	my $class = shift;
 	my $file  = shift;
 
-	if ($tagCache->[0] && $tagCache->[0] eq $file && ref($tagCache->[1]) eq 'HASH') {
+	my $cache = Slim::Utils::Cache->new;
 
-		my $artwork = $tagCache->[1]->{'ARTWORK'};
+	if (my $tags = $cache->get($file)) {
 
 		# Invalidate the cache
-		$tagCache = [];
+		$cache->remove($file);
 
-		return $artwork;
+		return $tags->{'ARTWORK'};
 	}
 
 	my $flac = Audio::FLAC::Header->new($file) || do {
@@ -200,7 +201,7 @@ sub getStandardTag {
 
 		if (exists $flac->{'ID3V2Tag'}) {
 
-			if (Slim::Music::Info::loadTagFormatForType('mp3')) {
+			if (Slim::Formats->loadTagFormatForType('mp3')) {
 
 				# Get the ID3V2 tag on there, sucka
 				$tags = MP3::Info::get_mp3tag($file, 2);
@@ -212,7 +213,7 @@ sub getStandardTag {
 	addInfoTags($flac, $tags);
 	addArtworkTags($flac, $tags);
 
-	$tagCache = [ $file, $tags ];
+	Slim::Utils::Cache->new->set($file, $tags, 60);
 
 	return $tags;
 }

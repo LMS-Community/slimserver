@@ -17,14 +17,15 @@ package Slim::Formats::Musepack;
 ###############################################################################
 
 use strict;
+use base qw(Slim::Formats);
+
 use Audio::APETags;
 use Audio::Musepack;
-use MP3::Info ();
 
 my %tagMapping = (
-	'TRACK'	=> 'TRACKNUM',
-	'DATE'		=> 'YEAR',
-	'DISCNUMBER'	=> 'DISC',
+	'TRACK'	     => 'TRACKNUM',
+	'DATE'       => 'YEAR',
+	'DISCNUMBER' => 'DISC',
 );
 
 # Given a file, return a hash of name value pairs,
@@ -55,9 +56,10 @@ sub getTag {
 
 	} else {
 
-		if (exists $mpc->{'ID3V2Tag'}) {
+		if (exists $mpc->{'ID3V2Tag'} && Slim::Formats->loadTagFormatForType('mp3')) {
+
 			# Get the ID3V2 tag on there, sucka
-			$tags = MP3::Info::get_mp3tag($file,2);
+			$tags = MP3::Info::get_mp3tag($file, 2);
 		}
 	}
 

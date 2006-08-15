@@ -8,12 +8,15 @@ package Slim::Formats::MP3;
 # version 2.
 
 use strict;
+use base qw(Slim::Formats);
+
 use Fcntl qw(:seek);
 use MP3::Info;
 use MPEG::Audio::Frame;
 
-use Slim::Utils::SoundCheck;
+use Slim::Utils::Cache;
 use Slim::Utils::Misc;
+use Slim::Utils::SoundCheck;
 
 my %tagMapping = (
 	'Unique file identifier'	=> 'MUSICBRAINZ_ID',
@@ -30,9 +33,6 @@ my %tagMapping = (
 	'MEDIA JUKEBOX: PEAK LEVEL'     => 'REPLAYGAIN_TRACK_PEAK',
 	'MEDIA JUKEBOX: ALBUM ARTIST'   => 'ALBUMARTIST',
 );
-
-# Allow us to reuse tag data when fetching artwork if we can.
-my $tagCache = [];
 
 {
 	# Don't try and convert anything to latin1
@@ -207,7 +207,7 @@ sub getTag {
 	}
 
 	# Allow getCoverArt to reuse what we just fetched.
-	$tagCache = [ $file, $info ];
+	Slim::Utils::Cache->new->set($file, $info, 60);
 
 	return $info;
 }
@@ -217,21 +217,18 @@ sub getCoverArt {
 	my $file  = shift || return undef;
 
 	# Try to save a re-read
-	if ($tagCache->[0] && $tagCache->[0] eq $file && ref($tagCache->[1]) eq 'HASH') {
+	my $cache = Slim::Utils::Cache->new;
 
-		my $pic = $tagCache->[1]->{'PIC'}->{'DATA'};
+	if (my $tags = $cache->get($file)) {
 
-		# Don't leave anything around.
-		$tagCache = [];
+		$cache->remove($file);
 
-		return $pic;
+		return $tags->{'PIC'}->{'DATA'};
 	}
 
 	my $tags = MP3::Info::get_mp3tag($file, 2) || {};
 
 	if (defined $tags->{'PIC'} && defined $tags->{'PIC'}->{'DATA'}) {
-
-		$tagCache = [ $file, $tags ];
 
 		return $tags->{'PIC'}->{'DATA'};
 	}

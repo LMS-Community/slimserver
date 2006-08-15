@@ -17,6 +17,8 @@ package Slim::Formats::APE;
 ###############################################################################
 
 use strict;
+use base qw(Slim::Formats);
+
 use Audio::APETags;
 use Audio::APE;
 use MP3::Info ();

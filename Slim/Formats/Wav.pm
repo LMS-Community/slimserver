@@ -8,6 +8,7 @@ package Slim::Formats::Wav;
 # version 2.
 
 use strict;
+use base qw(Slim::Formats);
 
 use Audio::Wav;
 use MP3::Info;
@@ -19,7 +20,7 @@ sub getTag {
 	my $file  = shift || return {};
 
 	# This hash will map the keys in the tag to their values.
-	my $tags = MP3::Info::get_mp3tag($file) || {};
+	my $tags  = MP3::Info::get_mp3tag($file) || {};
 
 	# bogus files are considered empty
 	$tags->{'SIZE'} ||= 0;

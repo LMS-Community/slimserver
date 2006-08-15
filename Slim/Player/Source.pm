@@ -28,6 +28,7 @@ BEGIN {
 	}
 }
 
+use Slim::Formats;
 use Slim::Control::Request;
 use Slim::Formats::Playlists;
 use Slim::Player::Pipeline;
@@ -1815,9 +1816,9 @@ sub streamClassForFormat {
 
 	my $streamFormat = $client->streamformat;
 
-	if (Slim::Music::Info::loadTagFormatForType($streamFormat)) {
+	if (Slim::Formats->loadTagFormatForType($streamFormat)) {
 
-		my $streamClass = Slim::Music::Info::classForFormat($streamFormat);
+		my $streamClass = Slim::Formats->classForFormat($streamFormat);
 
 		if ($streamClass && $streamClass->can('findFrameBoundaries')) {
 

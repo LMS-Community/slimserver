@@ -8,6 +8,8 @@ package Slim::Formats::AIFF;
 # version 2.
 
 use strict;
+use base qw(Slim::Formats);
+
 use MP3::Info;
 use Slim::Utils::SoundCheck;
 

@@ -244,7 +244,11 @@ sub tryModuleLoad {
 		}
 	}
 
-	return @failed;
+	if (wantarray) {
+		return @failed;
+	} else {
+		return scalar @failed ? 1 : 0;
+	}
 }
 
 sub sigint {

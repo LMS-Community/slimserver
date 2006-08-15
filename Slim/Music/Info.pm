@@ -15,6 +15,7 @@ use Path::Class;
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
 
+use Slim::Formats;
 use Slim::Music::TitleFormatter;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
@@ -52,9 +53,6 @@ tie our %isFile, 'Tie::Cache::LRU', 16;
 # No need to do this over and over again either.
 tie our %urlToTypeCache, 'Tie::Cache::LRU', 16;
 
-# Map our tag functions - so they can be dynamically loaded.
-our (%tagClasses, %loadedTagClasses);
-
 sub init {
 
 	# Allow external programs to use Slim::Utils::Misc, without needing
@@ -70,35 +68,9 @@ sub init {
 		return 0;
 	}
 
-	# Our loader classes for tag formats.
-	%tagClasses = (
-		'mp3' => 'Slim::Formats::MP3',
-		'mp2' => 'Slim::Formats::MP3',
-		'ogg' => 'Slim::Formats::Ogg',
-		'flc' => 'Slim::Formats::FLAC',
-		'wav' => 'Slim::Formats::Wav',
-		'aif' => 'Slim::Formats::AIFF',
-		'wma' => 'Slim::Formats::WMA',
-		'mov' => 'Slim::Formats::Movie',
-		'shn' => 'Slim::Formats::Shorten',
-		'mpc' => 'Slim::Formats::Musepack',
-		'ape' => 'Slim::Formats::APE',
-
-		# Playlist types
-		'asx' => 'Slim::Formats::Playlists::ASX',
-		'cue' => 'Slim::Formats::Playlists::CUE',
-		'm3u' => 'Slim::Formats::Playlists::M3U',
-		'pls' => 'Slim::Formats::Playlists::PLS',
-		'pod' => 'Slim::Formats::Playlists::XML',
-		'wax' => 'Slim::Formats::Playlists::ASX',
-		'wpl' => 'Slim::Formats::Playlists::WPL',
-		'xml' => 'Slim::Formats::Playlists::XML',
-		'xpf' => 'Slim::Formats::Playlists::XSPF',
-
-		# Remote types
-		'http' => 'Slim::Formats::HTTP',
-		'mms'  => 'Slim::Formats::MMS',
-	);
+	if (!Slim::Formats->init()) {
+		return 0;
+	}
 
 	return 1;
 }
@@ -1220,38 +1192,23 @@ sub typeFromPath {
 	return $type;
 }
 
-# Dynamically load the formats modules.
-sub loadTagFormatForType {
-	my $type  = shift;
-
-	return 1 if $loadedTagClasses{$type};
-
-	$::d_info && msg("Trying to load $tagClasses{$type}\n");
-
-	eval "require $tagClasses{$type}";
-
-	if ($@) {
-
-		msg("Couldn't load module: $tagClasses{$type} : [$@]\n");
-		bt();
-		return 0;
-
-	} else {
-
-		$loadedTagClasses{$type} = 1;
-		return 1;
-	}
-}
-
-sub classForFormat {
-	my $type  = shift;
-
-	return $tagClasses{$type};
-}
-
 sub variousArtistString {
 
 	return (Slim::Utils::Prefs::get('variousArtistsString') || string('VARIOUSARTISTS'));
+}
+
+sub loadTagFormatForType {
+	errorMsg("Slim::Music::Info::loadTagFormatForType() has been deprecated!\n");
+	errorMsg("Please notify the Plugin author to use Slim::Formats->loadTagFormatForType instead!\n");
+
+	return Slim::Formats->loadTagFormatForType(@_);
+}
+
+sub classForFormat {
+	errorMsg("Slim::Music::Info::classForFormat() has been deprecated!\n");
+	errorMsg("Please notify the Plugin author to use Slim::Formats->classForFormat instead!\n");
+
+	return Slim::Formats->classForFormat(@_);
 }
 
 sub infoFormat {

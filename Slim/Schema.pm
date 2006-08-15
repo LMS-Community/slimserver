@@ -19,6 +19,7 @@ use Storable;
 use Tie::Cache::LRU::Expires;
 use URI;
 
+use Slim::Formats;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::MySQLHelper;
@@ -500,7 +501,7 @@ sub newTrack {
 
 		$::d_info && msg("newTrack(): readTags is ". $args->{'readTags'}  ."\n");
 
-		$attributeHash = { %{$self->_readTags($url)}, %$attributeHash  };
+		$attributeHash = { %{Slim::Formats->readTags($url)}, %$attributeHash  };
 	}
 
 	# Abort early and don't add the track if it's DRM'd
@@ -628,7 +629,7 @@ sub updateOrCreate {
 		# But not for remote / non-audio files.
 		if ($readTags && $track->get('audio') && !$track->get('remote')) {
 
-			$attributeHash = { %{$self->_readTags($url)}, %$attributeHash  };
+			$attributeHash = { %{Slim::Formats->readTags($url)}, %$attributeHash  };
 		}
 
 		my $deferredAttributes;
@@ -947,132 +948,6 @@ sub forceCommit {
 			return;
 		}
 	}
-}
-
-sub _readTags {
-	my $self  = shift;
-	my $file  = shift;
-
-	my ($filepath, $attributesHash, $anchor);
-
-	if (!defined($file) || $file eq '') {
-		return {};
-	}
-
-#	$::d_info && msg("_readTags(): Reading tags for $file\n");
-
-	if (Slim::Music::Info::isFileURL($file)) {
-		$filepath = Slim::Utils::Misc::pathFromFileURL($file);
-		$anchor   = Slim::Utils::Misc::anchorFromURL($file);
-	} else {
-		$filepath = $file;
-	}
-
-	# get the type without updating the cache
-	my $type   = Slim::Music::Info::typeFromPath($filepath);
-	my $remote = Slim::Music::Info::isRemoteURL($file);
-
-	# Populate the DB with information for the remote URL now - and not at the time we play.
-	if (Slim::Music::Info::isSong($file, $type) && !$remote) {
-
-		# Extract tag and audio info per format
-		if (my $tagReaderClass = Slim::Music::Info::classForFormat($type)) {
-
-			# Dynamically load the module in.
-			Slim::Music::Info::loadTagFormatForType($type);
-
-			$attributesHash = eval { $tagReaderClass->getTag($filepath, $anchor) };
-		}
-
-		if ($@) {
-			errorMsg("Slim::Schema::_readTags: While trying to ->getTag($filepath) : $@\n");
-			bt();
-		}
-
-		$::d_info && !defined($attributesHash) && msg("_readTags(): No tags found for $filepath\n");
-
-		# Return early if we have a DRM track
-		if ($attributesHash->{'DRM'}) {
-			return $attributesHash;
-		}
-
-		# Turn the tag SET into DISC and DISCC if it looks like # or #/#
-		if ($attributesHash->{'SET'} and $attributesHash->{'SET'} =~ /(\d+)(?:\/(\d+))?/) {
-
-			# Strip leading 0s so that numeric compare at the db level works.
-			$attributesHash->{'DISC'}  = int($1);
-			$attributesHash->{'DISCC'} = int($2) if defined $2;
-		}
-
-		if (!defined $attributesHash->{'TITLE'}) {
-
-			$::d_info && msg("Info: no title found, using plain title for $file\n");
-			#$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
-			Slim::Music::Info::guessTags($file, $type, $attributesHash);
-		}
-
-		# fix the genre
-		if (defined($attributesHash->{'GENRE'}) && $attributesHash->{'GENRE'} =~ /^\((\d+)\)$/) {
-
-			# some programs (SoundJam) put their genres in as text digits surrounded by parens.
-			# in this case, look it up in the table and use the real value...
-			if ($INC{'MP3/Info.pm'} && defined($MP3::Info::mp3_genres[$1])) {
-
-				$attributesHash->{'GENRE'} = $MP3::Info::mp3_genres[$1];
-			}
-		}
-
-		# Mark it as audio in the database.
-		if (!defined $attributesHash->{'AUDIO'}) {
-
-			$attributesHash->{'AUDIO'} = 1;
-		}
-
-		# Set some defaults for the track if the tag reader didn't pull them.
-		for my $key (qw(DRM LOSSLESS)) {
-
-			$attributesHash->{$key} ||= 0;
-		}
-	}
-
-	# Last resort
-	if (!defined $attributesHash->{'TITLE'} || $attributesHash->{'TITLE'} =~ /^\s*$/) {
-
-		$::d_info && msg("Info: no title found, calculating title from url for $file\n");
-
-		$attributesHash->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
-	}
-
-	# Bug 2996 - check for multiple DISC tags.
-	if (ref($attributesHash->{'DISC'}) eq 'ARRAY') {
-
-		$attributesHash->{'DISC'} = $attributesHash->{'DISC'}->[0];
-	}
-
-	if (-e $filepath) {
-		# cache the file size & date
-		($attributesHash->{'FILESIZE'}, $attributesHash->{'TIMESTAMP'}) = (stat($filepath))[7,9];
-	}
-
-	# Only set if we couldn't read it from the file.
-	$attributesHash->{'CONTENT_TYPE'} ||= $type;
-
-	$::d_info && $_dump_tags && msg("_readTags(): Report for $file:\n");
-
-	# Bug: 2381 - FooBar2k seems to add UTF8 boms to their values.
-	# Bug: 3769 - Strip trailing nulls
-	while (my ($tag, $value) = each %{$attributesHash}) {
-
-		if (defined $attributesHash->{$tag}) {
-
-			$attributesHash->{$tag} =~ s/$Slim::Utils::Unicode::bomRE//;
-			$attributesHash->{$tag} =~ s/\000$//;
-		}
-		
-		$::d_info && $_dump_tags && $value && msg(". $tag : $value\n");
-	}
-
-	return $attributesHash;
 }
 
 # The user may want to constrain their browse view by either or both of 'composer' and 'track artists'.

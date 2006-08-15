@@ -8,6 +8,8 @@ package Slim::Formats::Ogg;
 # version 2.
 
 use strict;
+use base qw(Slim::Formats);
+
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 

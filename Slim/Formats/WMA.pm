@@ -8,16 +8,16 @@ package Slim::Formats::WMA;
 # version 2.
 
 use strict;
+use base qw(Slim::Formats);
+
 use Audio::WMA;
 
 my %tagMapping = (
-	'TRACKNUMBER'	=> 'TRACKNUM',
-	'ALBUMTITLE'	=> 'ALBUM',
-	'AUTHOR'	=> 'ARTIST',
-	'VBR'		=> 'VBR_SCALE',
+	'TRACKNUMBER' => 'TRACKNUM',
+	'ALBUMTITLE'  => 'ALBUM',
+	'AUTHOR'      => 'ARTIST',
+	'VBR'         => 'VBR_SCALE',
 );
-
-my $tagCache  = [];
 
 {
 	# WMA tags are stored as UTF-16 by default.
@@ -66,7 +66,7 @@ sub getTag {
 
 	$tags->{'STEREO'} = ($tags->{'CHANNELS'} && $tags->{'CHANNELS'} == 2) ? 1 : 0;
 	
-	$tagCache = [ $file, $tags ];
+	Slim::Utils::Cache->new->set($file, $tags, 60);
 
 	return $tags;
 }
@@ -76,14 +76,13 @@ sub getCoverArt {
 	my $file  = shift || return undef;
 
 	# Try to save a re-read
-	if ($tagCache->[0] && $tagCache->[0] eq $file && ref($tagCache->[1]) eq 'HASH') {
+	my $cache = Slim::Utils::Cache->new;
 
-		my $pic = $tagCache->[1]->{'PICTURE'}->{'DATA'};
+	if (my $tags = $cache->get($file)) {
 
-		# Don't leave anything around.
-		$tagCache = [];
+		$cache->remove($file);
 
-		return $pic;
+		return $tags->{'PICTURE'}->{'DATA'};
 	}
 
 	my $tags = $class->getTag($file);

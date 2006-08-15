@@ -16,6 +16,7 @@ use Path::Class;
 use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
 
+use Slim::Formats;
 use Slim::Music::Info;
 use Slim::Music::TitleFormatter;
 use Slim::Utils::Misc;
@@ -177,10 +178,10 @@ sub _readCoverArtTags {
 	if (blessed($track) && $track->can('audio') && $track->audio) {
 
 		my $ct          = Slim::Schema->contentType($track);
-		my $formatClass = Slim::Music::Info::classForFormat($ct);
+		my $formatClass = Slim::Formats->classForFormat($ct);
 		my $body        = undef;
 
-		if (Slim::Music::Info::loadTagFormatForType($ct) && $formatClass->can('getCoverArt')) {
+		if (Slim::Formats->loadTagFormatForType($ct) && $formatClass->can('getCoverArt')) {
 
 			$body = $formatClass->getCoverArt($file);
 		}
