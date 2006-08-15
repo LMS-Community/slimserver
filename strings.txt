@@ -12502,35 +12502,46 @@ SETUP_VISUALIZERMODE_DESC
 	NL	De speler kan visualisaties of extra informatie tonen op het rechter scherm. Kies wat je getoond wilt hebben. <BR>The Visual toets op de speler zal de keuzes doorlopen die je hieronder kiest.
 
 SETUP_SERVERPRIORITY
+	DE	Server Priorität
 	EN	Server Priority
 
 SETUP_SERVERPRIORITY_DESC
+	DE	Sie können die Priorität festlegen, mit welcher SlimServer ausgeführt wird.
 	EN	You can specify the priority that SlimServer runs at.
 
 SETUP_SCANNERPRIORITY
+	DE	Scanner Priorität
 	EN	Scanner Priority
 
 SETUP_SCANNERPRIORITY_DESC
+	DE	Sie können die Priorität festlegen, mit welcher der Scan-Prozess ausgeführt wird.
 	EN	You can specify the priority that the scanning process run at.
 
 SETUP_PRIORITY_DEFAULT
+	DE	Standard Priorität
 	EN	Default Priority
 
 SETUP_PRIORITY_CURRENT
+	DE	Aktuelle Server Priorität
 	EN	Current Server Priority
 
 SETUP_PRIORITY_HIGH
+	DE	Hoch
 	EN	High
 
 SETUP_PRIORITY_ABOVE_NORMAL
+	DE	Höher als normal
 	EN	Above Normal
 
 SETUP_PRIORITY_NORMAL
+	DE	Normal
 	EN	Normal
 
 SETUP_PRIORITY_BELOW_NORMAL
+	DE	Niedriger als normal 
 	EN	Below Normal
 
 SETUP_PRIORITY_LOW
+	DE	Niedrig
 	EN	Low
 
