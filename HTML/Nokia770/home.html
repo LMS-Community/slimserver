@@ -229,9 +229,10 @@
 
 [% BLOCK favorites %]
 	[% INCLUDE link_head %]
-		<a href="[% webroot %][% additionalLinks.browse.PLUGIN_FAVORITES_MODULE_NAME %]&player=[% playerURI %]" style="text-decoration:none">
+		[% FOR links IN additionalLinks %][% END %]
+		<a href="[% webroot %]favorites_list.html?player=[% playerURI %]" style="text-decoration:none">
 		<img src="html/images/smaller/favorites.gif" width="120" height="101" name="bild10" border="0" alt = 'favorites'></a>
-	[% INCLUDE link_foot title = 'PLUGIN_FAVORITES_MODULE_NAME' %]
+	[% INCLUDE link_foot title = 'FAVORITES' %]
 [% END %]
 
 [% BLOCK genre %]
