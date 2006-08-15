@@ -95,6 +95,7 @@ sub download {
 			unlink "$path.sha";
 			
 			open my $fh, '<', $path or fatal("Unable to read $path to verify firmware\n");
+			binmode $fh;
 			
 			my $sha1 = Digest::SHA1->new;
 			$sha1->addfile($fh);
