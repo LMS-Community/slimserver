@@ -552,8 +552,8 @@ sub readPlaylistBody {
 	my $title = $args->{'playlist'}->title;
 	for my $item ( @objects ) {
 		if ( blessed $item ) {
-			if ( !$item->title || $item->title =~ /^(?:http|mms)/i ) {
-				if ( $title =~ /^(?:http|mms)/ ) {
+			if ( !$item->title || Slim::Music::Info::isRemoteURL($item->title) ) {
+				if ( Slim::Music::Info::isRemoteURL($title) ) {
 					$item->title( $item->url );
 				}
 				else {
