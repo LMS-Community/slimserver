@@ -1219,6 +1219,8 @@ sub pushMode {
 
 	$::d_ui && msg("pushing button mode: $setmode\n");
 
+	my $oldscreen2 = $client->modeVariable('screen2');
+
 	my $oldmode = mode($client);
 
 	if ($oldmode) {
@@ -1262,12 +1264,14 @@ sub pushMode {
 	if ($client->display->hasScreen2) {
 		my $screen2 = $client->param('screen2');
 
-		# set mode variable screen2 so we can modify it later
 		if ($client->display->showExtendedText() && !$screen2) {
-			$client->modeVariable('screen2', 'periodic');
-		} else {
-			$client->modeVariable('screen2', $screen2);
-		}			
+			$screen2 = 'periodic';
+		} elsif ($screen2 eq 'inherit') {
+			$screen2 = $oldscreen2;
+		}
+
+		# set mode variable screen2 so we can modify it later
+		$client->modeVariable('screen2', $screen2);
 	}
 
 	# some modes require periodic updates

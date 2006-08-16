@@ -35,6 +35,7 @@ sub init {
 			'subcommand' => 'volume',
 			'initialValue' => sub { return $_[0]->volume() },
 			'callback' => \&volumeExitHandler,
+			'screen2' => 'inherit',
 		};
 }
 
@@ -81,6 +82,8 @@ sub setMode {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
+
+	$client->param('screen2', 'inherit');
 
 	Slim::Buttons::Common::pushMode($client,'INPUT.Bar',$params);
 	
