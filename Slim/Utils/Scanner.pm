@@ -119,9 +119,12 @@ sub findFilesMatching {
 	# thus duplicating tracks & albums, etc.
 	$rule->not_name(qr/\/\._/);
 
+	# Make sure we can read the file.
+	$rule->readable;
+
 	my $files = $rule->in($topDir);
 	my $found = $args->{'foundItems'} || [];
-	
+
 	# File::Find::Rule doesn't keep filenames properly sorted, so we sort them here
 	for my $file ( sort @{$files} ) {
 
