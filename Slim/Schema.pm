@@ -7,7 +7,25 @@ package Slim::Schema;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
+=head1 NAME
+
+Slim::Schema
+
+=head1 SYNOPSIS
+
+my $track = Slim::Schema->rs('Track')->objectForUrl($url);
+
+=head1 DESCRIPTION
+
+L<Slim::Schema> is the main entry point for all interactions with SlimServer's
+database backend. It provides an ORM abstraction layer on top of L<DBI>,
+acting as a subclass of L<DBIx::Class::Schema>.
+
+=cut
+
 use strict;
+use warnings;
+
 use base qw(DBIx::Class::Schema);
 
 use DBIx::Migration;
@@ -58,6 +76,23 @@ my %validHierarchies = ();
 
 our $initialized = 0;
 my $trackAttrs   = {};
+
+=head1 METHODS
+
+All methods below are class methods on L<Slim::Schema>. Please see
+L<DBIx::Class::Schema> for methods on the superclass.
+
+=head2 init( )
+
+Connect to the database as defined by dbsource, dbusername & dbpassword in the
+prefs file. Set via L<Slim::Utils::Prefs>.
+
+This method will also initialize the schema to the current version, and
+automatically upgrade older versions to the most recent.
+
+Must be called before any other actions. Generally from L<Slim::Music::Info>
+
+=cut
 
 sub init {
 	my $class = shift;
@@ -153,19 +188,28 @@ sub init {
 	$initialized = 1;
 }
 
+=head2 throw_exception( $self, $msg )
+
+Override L<DBIx::Class::Schema>'s throw_exception method to use our own error
+reporting via L<Slim::Utils::Misc::msg>.
+
+=cut
+
 sub throw_exception {
 	my ($self, $msg) = @_;
 
-	# XXXX - txn_do doesn't actually need to be called as an instance
-	# method. That check has been removed in -current. However, we'll just
-	# ignore it until we upgrade.
-	if ($msg ne 'Cannot execute txn_do as a class method') {
-
-		errorMsg($msg);
-		errorMsg("Backtrace follows:\n");
-		bt();
-	}
+	errorMsg($msg);
+	errorMsg("Backtrace follows:\n");
+	bt();
 }
+
+=head2 toggleDebug( 0 | 1 )
+
+Not so much a toggle, as an explict setting. Turn SQL debugging output on or
+off. Equivalent to setting DBIC_TRACE for L<DBIx::Class::Storage::DBI>, but
+run through L<Slim::Utils::Misc::msg>
+
+=cut
 
 sub toggleDebug {
 	my $class = shift;
@@ -186,6 +230,12 @@ sub toggleDebug {
 	}
 }
 
+=head2 disconnect()
+
+Disconnect from the database, and ununtialize the class.
+
+=cut
+
 sub disconnect {
 	my $class = shift;
 
@@ -194,11 +244,26 @@ sub disconnect {
 	$initialized = 0;
 }
 
+=head2 validHierarchies()
+
+Returns a hash ref of valid hierarchies that a user is allowed to traverse.
+
+Eg: genre,artist,album,track
+
+=cut
+
 sub validHierarchies {
 	my $class = shift;
 
 	return \%validHierarchies;
 }
+
+=head2 sourceInformation() 
+
+Returns in order: database driver name, DBI DSN string, username, password
+from the current settings.
+
+=cut
 
 sub sourceInformation {
 	my $class = shift;
@@ -220,6 +285,15 @@ sub sourceInformation {
 	return ($driver, $source, $username, $password);
 }
 
+=head2 wipeDB() 
+
+Wipes and reinitializes the database schema. Calls the schema_clear.sql script
+for the current database driver.
+
+WARNING - All data in the database will be dropped!
+
+=cut
+
 sub wipeDB {
 	my $class = shift;
 
@@ -238,6 +312,12 @@ sub wipeDB {
 	$::d_import && msg("Import: End schema_clear\n");
 }
 
+=head2 optimizeDB()
+
+Calls the schema_optimize.sql script for the current database driver.
+
+=cut
+
 sub optimizeDB {
 	my $class = shift;
 
@@ -252,6 +332,13 @@ sub optimizeDB {
 
 	$::d_import && msg("Import: End schema_optimize\n");
 }
+
+=head2 migrateDB()
+
+Migrates the current schema to the latest schema version as defined by the
+data files handed to L<DBIx::Migration>.
+
+=cut
 
 sub migrateDB {
 	my $class = shift;
@@ -271,12 +358,28 @@ sub migrateDB {
 	$::d_info && msgf("Connected to database $source - schema version: [%d]\n", $dbix->version);
 }
 
+=head2 rs( $class )
+
+Returns a L<DBIx::Class::ResultSet> for the specified class.
+
+A shortcut for resultset()
+
+=cut 
+
 sub rs {
 	my $class   = shift;
 	my $rsClass = shift;
 
 	return $class->resultset(ucfirst($rsClass), @_);
 }
+
+=head2 search( $class, $cond, $attr )
+
+Returns a L<DBIx::Class::ResultSet> for the specified class.
+
+A shortcut for resultset($class)->search($cond, $attr)
+
+=cut 
 
 sub search {
 	my $class   = shift;
@@ -285,6 +388,14 @@ sub search {
 	return $class->resultset(ucfirst($rsClass))->search(@_);
 }
 
+=head2 single( $class, $cond )
+
+Returns a single result from a search on the specified class' L<DBIx::Class::ResultSet>
+
+A shortcut for resultset($class)->single($cond)
+
+=cut 
+
 sub single {
 	my $class   = shift;
 	my $rsClass = shift;
@@ -292,12 +403,32 @@ sub single {
 	return $class->resultset(ucfirst($rsClass))->single(@_);
 }
 
+=head2 count( $class, $cond, $attr )
+
+Returns the count result from a search on the specified class' L<DBIx::Class::ResultSet>
+
+A shortcut for resultset($class)->count($cond, $attr)
+
+=cut 
+
 sub count {
 	my $class   = shift;
 	my $rsClass = shift;
 
 	return $class->resultset(ucfirst($rsClass))->count(@_);
 }
+
+=head2 find( $class, $cond, $attr )
+
+Returns an object result from a search on the specified class'
+L<DBIx::Class::ResultSet>. This find is done on the class' primary key.
+
+If the requested class is L<Slim::Schema::Track>, a validity check is dne
+before returning.
+
+Overrides L<DBIx::Class::ResultSet::find>
+
+=cut 
 
 sub find {
 	my $class   = shift;
@@ -319,12 +450,24 @@ sub find {
 	return $object;
 }
 
+=head2 searchTypes()
+
+Returns commmon searchable types - constant values: contributor, album, track.
+
+=cut
+
 # Return the common searchable types.
 sub searchTypes {
 	my $class = shift;
 
 	return qw(contributor album track);
 }
+
+=head2 lastRescanTime()
+
+Returns the last time the user ran a scan, or 0.
+
+=cut
 
 sub lastRescanTime {
 	my $class = shift;
@@ -334,10 +477,15 @@ sub lastRescanTime {
 	return blessed($last) ? $last->value : 0;
 }
 
-# Fetch the content type for a URL or Track Object.
-#
-# Try and be smart about the order of operations in order to avoid hitting the
-# database if we can get a simple file extension match.
+=head2 contentType( $urlOrObj ) 
+
+Fetch the content type for a URL or Track Object.
+
+Try and be smart about the order of operations in order to avoid hitting the
+database if we can get a simple file extension match.
+
+=cut
+
 sub contentType {
 	my ($self, $urlOrObj) = @_;
 
@@ -395,6 +543,50 @@ sub contentType {
 
 	return $contentType;
 }
+
+=head2 objectForUrl( $args )
+
+The workhorse for getting L<Slim::Schema::Track> or L<Slim::Schema::Playlist>
+objects from the database.
+
+Based on arguments, will try and search for the url in the database, or
+optionally create it if it does not already exist.
+
+Required $args:
+
+=over 4
+
+=item * 
+
+The URL to look for.
+
+=back
+
+Optional $args:
+
+=over 4
+
+=item * create
+
+Create the object (defaults to L<Slim::Schema::Track>) if it does not exist.
+
+=item * readTags
+
+Read metadata tags from the specified file or url.
+
+=item * commit
+
+Commit to the database (if not in AutoCommit mode).
+
+=item * playlist
+
+Find or create the object as a L<Slim::Schema::Playlist>.
+
+=back
+
+Returns a new L<Slim::Schema::Track> or L<Slim::Schema::Playlist> object on success.
+
+=cut
 
 sub objectForUrl {
 	my $self = shift;
@@ -462,6 +654,14 @@ sub objectForUrl {
 	return $track;
 }
 
+=head2 objectForId( $id )
+
+This method is deprecated and will be removed in SlimServer 6.6
+
+Please use L<find> instead.
+
+=cut
+
 sub objectForId {
 	my $self  = shift;
 
@@ -470,7 +670,46 @@ sub objectForId {
 	return $self->find(@_);
 }
 
-# Create a new track with the given attributes
+=head2 newTrack( $args )
+
+Create a new track with the given attributes.
+
+Required $args:
+
+=over 4
+
+=item * url
+
+The URL to create in the database.
+
+=back
+
+Optional $args:
+
+=over 4
+
+=item * attributes 
+
+A hash ref with data to populate the object.
+
+=item * readTags
+
+Read metadata tags from the specified file or url.
+
+=item * commit
+
+Commit to the database (if not in AutoCommit mode).
+
+=item * playlist
+
+Find or create the object as a L<Slim::Schema::Playlist>.
+
+=back
+
+Returns a new L<Slim::Schema::Track> or L<Slim::Schema::Playlist> object on success.
+
+=cut
+
 sub newTrack {
 	my $self = shift;
 	my $args = shift;
@@ -576,7 +815,50 @@ sub newTrack {
 	return $track;
 }
 
-# Update the attributes of a track or create one if one doesn't already exist.
+=head2 updateOrCreate( $args )
+
+Update the attributes of a track or create one if one doesn't already exist.
+
+Required $args:
+
+=over 4
+
+=item * url
+
+The URL to find or create in the database.
+
+=back
+
+Optional $args:
+
+=over 4
+
+=item * attributes
+
+A hash ref with data to populate the object.
+
+=item * readTags
+
+Read metadata tags from the specified file or url.
+
+=item * commit
+
+Commit to the database (if not in AutoCommit mode).
+
+=item * playlist
+
+Find or create the object as a L<Slim::Schema::Playlist>.
+
+=item * checkMTime
+
+Check to see if the track has changed, if not - don't update.
+
+=back
+
+Returns a new L<Slim::Schema::Track> or L<Slim::Schema::Playlist> object on success.
+
+=cut
+
 sub updateOrCreate {
 	my $self = shift;
 	my $args = shift;
@@ -679,6 +961,15 @@ sub updateOrCreate {
 	return $track;
 }
 
+=head2 cleanupStaleTrackEntries()
+
+Post-scan garbage collection routine. Checks for files that are in the
+database, but are not on disk. After the track check, runs
+L<Slim::Schema::DBI->removeStaleDBEntries> for each of Album, Contributor &
+Genre looking for and removing orphan entries in the database.
+
+=cut
+
 sub cleanupStaleTrackEntries {
 	my $self = shift;
 
@@ -728,6 +1019,12 @@ sub cleanupStaleTrackEntries {
 	return 1;
 }
 
+=head2 variousArtistsObject()
+
+Returns a singleton object representing the artist 'Various Artists'
+
+=cut
+
 sub variousArtistsObject {
 	my $self = shift;
 
@@ -757,8 +1054,13 @@ sub variousArtistsObject {
 	return $vaObj;
 }
 
-# Wrapper for the common case of checking the level below the current one
-# (always Albums), to see if any VA albums exist.
+=head2 variousArtistsAlbumCount( $find )
+
+Wrapper for the common case of checking the level below the current one
+(always Albums), to see if any Various Artists albums exist.
+
+=cut
+
 sub variousArtistsAlbumCount {
 	my $class = shift;
 	my $find  = shift;
@@ -784,11 +1086,23 @@ sub variousArtistsAlbumCount {
 	return $class->count('Album', $find, \%attr);
 }
 
+=head2 trackCount()
+
+Returns the number of local audio tracks in the database.
+
+=cut
+
 sub trackCount {
 	my $self = shift;
 
-	return $self->count('Track');
+	return $self->count('Track', { 'me.audio' => 1 });
 }
+
+=head2 totalTime()
+
+Returns the total (cumulative) time in seconds of all audio tracks in the database.
+
+=cut
 
 sub totalTime {
 	my $self = shift;
@@ -803,9 +1117,14 @@ sub totalTime {
 	})->single->get_column('sum');
 }
 
-# This is a post-process on the albums and contributor_tracks tables, in order
-# to identify albums which are compilations / various artist albums - by
-# virtue of having more than one artist.
+=head2 mergeVariousArtistsAlbums()
+
+Run a post-process on the albums and contributor_tracks tables, in order to
+identify albums which are compilations / various artist albums - by virtue of
+having more than one artist.
+
+=cut
+
 sub mergeVariousArtistsAlbums {
 	my $self = shift;
 
@@ -893,6 +1212,12 @@ sub mergeVariousArtistsAlbums {
 	Slim::Music::Import->endImporter('mergeVariousAlbums');
 }
 
+=head2 wipeCaches()
+
+Clears the lastTrack caches, and forces a database commit.
+
+=cut
+
 sub wipeCaches {
 	my $self = shift;
 
@@ -909,7 +1234,12 @@ sub wipeCaches {
 	$::d_import && msg("Import: Wiped all in-memory caches.\n");
 }
 
-# Wipe all data in the database
+=head2 wipeAllData()
+
+Wipe all data in the database. Encapsulates L<wipeDB> and L<wipeCaches>
+
+=cut
+
 sub wipeAllData {
 	my $self = shift;
 
@@ -924,7 +1254,12 @@ sub wipeAllData {
 	$::d_import && msg("Import: Wiped info database\n");
 }
 
-# Force a commit of the database
+=head2 forceCommit()
+
+Flush any pending database transactions to disk when not in AutoCommit mode.
+
+=cut
+
 sub forceCommit {
 	my $self = shift;
 
@@ -950,10 +1285,21 @@ sub forceCommit {
 	}
 }
 
-# The user may want to constrain their browse view by either or both of 'composer' and 'track artists'.
+=head2 artistOnlyRoles( @add );
+
+Return an array ref of valid roles as defined by
+L<Slim::Schema::Contributor::contributorRoles>, based on the user's current
+prefernces for including Composers, Conductors & Bands when browsing their
+audio collection via 'Contributors'.
+
+If a caller wishes to force an addition to the list of roles, pass in the
+additional roles.
+
+=cut
+
 sub artistOnlyRoles {
 	my $self  = shift;
-	my @add   = shift || ();
+	my @add   = @_;
 
 	my %roles = (
 		'ARTIST'      => 1,
@@ -1967,6 +2313,22 @@ sub _buildValidHierarchies {
 	
 	%validHierarchies = map {lc($_) => $_} @hierarchies;
 }
+
+=head1 SEE ALSO
+
+L<DBIx::Class>
+
+L<DBIx::Class::Schema>
+
+L<DBIx::Class::ResultSet>,
+
+L<Slim::Schema::Track>
+
+L<Slim::Schema::Playlist>
+
+L<Slim::Music::Info>
+
+L<DBIx::Migration>
 
 1;
 
