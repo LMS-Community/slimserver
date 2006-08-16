@@ -2,7 +2,7 @@ package Slim::Utils::PerlRunTime;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2005 Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -11,6 +11,22 @@ use strict;
 
 use B::Deparse;
 use Devel::Peek;
+
+=head1 NAME
+
+Slim::Utils::PerlRunTime
+
+=head1 DESCRIPTION
+
+Various Perl run time functions for inspecting variables & references.
+
+=head1 METHODS
+
+=head2 watchVariable( $var )
+
+Watch a variable using L<Tie::Watch>
+
+=cut
 
 # Use Tie::Watch to keep track of a variable, and report when it changes.
 sub watchVariable {
@@ -65,6 +81,12 @@ sub watchVariable {
 	);
 }
 
+=head2 deparseCoderef( $coderef )
+
+Use L<B::Deparse> to turn a $coderef into an approximation of the original code.
+
+=cut
+
 sub deparseCoderef {
 	my $coderef = shift;
 
@@ -76,6 +98,12 @@ sub deparseCoderef {
 	return "sub $name $body";
 }
 
+=head2 realNameForCodeRef( $coderef )
+
+Use L<Devel::Peek> find the original name of a non-anonymous $coderef.
+
+=cut
+
 sub realNameForCodeRef {
 	my $coderef = shift;
 
@@ -84,6 +112,12 @@ sub realNameForCodeRef {
 
 	return $name;
 }
+
+=head1 SEE ALSO
+
+L<B::Deparse>, L<Devel::Peek>
+
+=cut
 
 1;
 

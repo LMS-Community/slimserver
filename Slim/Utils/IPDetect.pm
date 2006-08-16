@@ -7,26 +7,46 @@ package Slim::Utils::IPDetect;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-# this package determines the IP address of the machine running the
-# server.
-
 use strict;
 use IO::Socket;
 use Slim::Utils::Misc;
 
 my $detectedIP = undef;
 
-# returns ip address of the machine we are running on.
+=head1 NAME
+
+Slim::Utils::IPDetect
+
+=head1 SYNOPSIS
+
+my $detectedIP = IP()
+
+=head1 DESCRIPTION
+
+Determines the IP address of the machine running the server.
+
+=head1 METHODS
+
+=head2 IP()
+
+Returns IP address of the machine we are running on.
+
+=head1 SEE ALSO
+
+L<IO::Socket>
+
+=cut
+
 sub IP {
 
 	if (!$detectedIP) { 
-		init(); 
+		_init(); 
 	}
 
 	return $detectedIP;
 }
 
-sub init {
+sub _init {
 
 	my $server = 'www.google.com:80';
 

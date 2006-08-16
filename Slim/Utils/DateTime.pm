@@ -1,6 +1,6 @@
 package Slim::Utils::DateTime;
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -11,11 +11,39 @@ use POSIX qw(strftime);
 
 use Slim::Utils::Unicode;
 
+=head1 NAME 
+
+Slim::Utils::DateTime
+
+=head1 SYNOPSIS
+
+my $longDate = Slim::Utils::DateTime::longDateF()
+
+=head1 DESCRIPTION
+
+A collection of date & time releated functions.
+
+Returns date & time information based on date & time prefs formatting settings.
+
+=head1 METHODS
+
+=cut
+
 # the following functions cleanup the date and time, specifically:
 # remove the leading zeros for single digit dates and hours
 # where a | is specified in the format
 
 # The LC_TIME is set in ::Unicode when we start.
+
+=head2 longDateF( $time, $format )
+
+Returns a string of the time passed (or current time if none passed),
+using the passed format (or pref: longdateFormat if not passed).
+
+Encoding is the current locale.
+
+=cut
+
 sub longDateF {
 	my $time = shift || time();
 	my $format = shift || Slim::Utils::Prefs::get('longdateFormat');
@@ -25,6 +53,15 @@ sub longDateF {
 
 	return Slim::Utils::Unicode::utf8decode_locale($date);
 }
+
+=head2 shortDateF( $time, $format )
+
+Returns a string of the time passed (or current time if none passed),
+using the passed format (or pref: shortdateFormat if not passed).
+
+Encoding is the current locale.
+
+=cut
 
 sub shortDateF {
 	my $time = shift || time();
@@ -36,6 +73,15 @@ sub shortDateF {
 	return Slim::Utils::Unicode::utf8decode_locale($date);
 }
 
+=head2 timeF( $time, $format )
+
+Returns a string of the time passed (or current time if none passed),
+using the passed format (or pref: timeFormat if not passed).
+
+Encoding is the current locale.
+
+=cut
+
 sub timeF {
 	my $ltime = shift || time();
 	my $format = shift || Slim::Utils::Prefs::get('timeFormat');
@@ -46,6 +92,12 @@ sub timeF {
 
 	return Slim::Utils::Unicode::utf8decode_locale($time);
 }
+
+=head2 fracSecToMinSec( $seconds )
+
+Turns seconds into min:sec
+
+=cut
 
 sub fracSecToMinSec {
 	my $seconds = shift;
@@ -63,6 +115,12 @@ sub fracSecToMinSec {
 									
 	return "$min:$sec.$frac";
 }
+
+=head2 timeFormats()
+
+Return a hash ref of default time formats.
+
+=cut
 
 sub timeFormats {
 	return {
@@ -97,6 +155,12 @@ sub timeFormats {
 	};
 }
 
+=head2 longDateFormats()
+
+Return a hash ref of default long date formats.
+
+=cut
+
 sub longDateFormats {
 	return {
 		# WWWW is the name of the day of the week
@@ -125,6 +189,12 @@ sub longDateFormats {
 	};
 }
 
+=head2 shortDateFormats()
+
+Return a hash ref of default short date formats.
+
+=cut
+
 sub shortDateFormats {
 	return {
 		# MM is the month of the year
@@ -148,5 +218,11 @@ sub shortDateFormats {
 		q(%Y/%m/%d) => q{YYYY/MM/DD},
 	};
 }
+
+=head1 SEE ALSO
+
+L<POSIX::strftime>
+
+=cut
 
 1;

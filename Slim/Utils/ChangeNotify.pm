@@ -1,8 +1,20 @@
 package Slim::Utils::ChangeNotify;
 
 # $Id$
-#
-# Class cluster for finding changed files.
+
+=head1 NAME
+
+Slim::Utils::ChangeNotify
+
+=head1 DESCRIPTION
+
+Class cluster for finding changed files.
+
+=head1 SEE ALSO
+
+L<Slim::Utils::ChangeNotify::Linux>, L<Slim::Utils::ChangeNotify::Win32>
+
+=cut
 
 use strict;
 

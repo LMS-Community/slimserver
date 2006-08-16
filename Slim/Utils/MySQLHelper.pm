@@ -2,8 +2,21 @@ package Slim::Utils::MySQLHelper;
 
 # $Id$
 
-# Helper class for bringing up the MySQL server, and installing the system
-# tables, etc.
+=head1 NAME
+
+Slim::Utils::MySQLHelper
+
+=head1 SYNOPSIS
+
+Slim::Utils::MySQLHelper->init
+
+=head1 DESCRIPTION
+
+Helper class for launching MySQL, installing the system tables, etc.
+
+=head1 METHODS
+
+=cut
 
 use strict;
 use base qw(Class::Data::Inheritable);
@@ -29,6 +42,12 @@ use Slim::Utils::SQLHelper;
                 $class->mk_classdata($accessor);
         }
 }
+
+=head2 init()
+
+Initializes the entire MySQL subsystem - creates the config file, and starts the server.
+
+=cut
 
 sub init {
 	my $class = shift;
@@ -91,6 +110,12 @@ sub init {
 	return 1;
 }
 
+=head2 createConfig( $cacheDir )
+
+Creates a MySQL config file from the L<my.tt> template in the MySQL directory.
+
+=cut
+
 sub createConfig {
 	my ($class, $cacheDir) = @_;
 
@@ -136,6 +161,14 @@ sub createConfig {
 	# Breaks all kinds of other things.
 	# chmod(0664, $output);
 }
+
+=head2 startServer()
+
+Bring up our private copy of MySQL server.
+
+This is a no-op if you are using a pre-configured copy of MySQL.
+
+=cut
 
 sub startServer {
 	my $class = shift;
@@ -201,6 +234,14 @@ sub startServer {
 
 	return 1;
 }
+
+=head2 stopServer()
+
+Bring down our private copy of MySQL server.
+
+This is a no-op if you are using a pre-configured copy of MySQL.
+
+=cut
 
 sub stopServer {
 	my $class = shift;
@@ -275,6 +316,12 @@ sub _checkForDeadProcess {
 	return 0;
 }
 
+=head2 createSystemTables()
+
+Create required MySQL system tables. See the L<MySQL/system.sql> file.
+
+=cut
+
 sub createSystemTables {
 	my $class = shift;
 
@@ -320,6 +367,12 @@ sub createSystemTables {
 	}
 }
 
+=head2 dbh()
+
+Returns a L<DBI> database handle, using the dbsource preference setting .
+
+=cut
+
 sub dbh {
 	my $class = shift;
 	my $dsn   = '';
@@ -338,6 +391,14 @@ sub dbh {
 
 	return eval { DBI->connect($dsn, undef, undef, { 'PrintError' => 0, 'RaiseError' => 0 }) };
 }
+
+=head2 createDatabase( $dbh )
+
+Creates the initial SlimServer database in MySQL.
+
+'CREATE DATABASE slimserver'
+
+=cut
 
 sub createDatabase {
 	my $class  = shift;
@@ -361,6 +422,12 @@ sub createDatabase {
 	}
 }
 
+=head2 mysqlVersion( $dbh )
+
+Returns the version of MySQL that the $dbh is connected to.
+
+=cut
+
 sub mysqlVersion {
 	my $class = shift;
 	my $dbh   = shift || return 0;
@@ -375,7 +442,12 @@ sub mysqlVersion {
 	return $mysqlVersion || 0;
 }
 
-# Shut down MySQL when the server is done..
+=head2 cleanup()
+
+Shut down MySQL when SlimServer is shut down.
+
+=cut
+
 sub cleanup {
 	my $class = shift;
 
@@ -383,6 +455,16 @@ sub cleanup {
 		$class->stopServer;
 	}
 }
+
+=head1 SEE ALSO
+
+L<DBI>
+
+L<DBD::mysql>
+
+L<http://www.mysql.com/>
+
+=cut
 
 1;
 

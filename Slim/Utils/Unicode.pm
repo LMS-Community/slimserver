@@ -1,20 +1,34 @@
 package Slim::Utils::Unicode;
 
 # $Id$
-#
-# This module is a wrapper around Encode:: functions, and comprises character
-# set guessing, encoding, decoding and translation. 
-#
-# Most of these functions are non-ops on perl < 5.8.x
-#
-# The recompose & decompose parts have been modified from Simon's defunct
-# Unicode::Decompose mdoule.
-#
-# Unicode characters that somehow become decomposed. Sometimes we'll see a URI
-# encoding such as: o%CC%88 - which is an o with diaeresis. The correct
-# (composed) version of this should be %C3%B6
-#
-# Proper documentation forthcoming.
+
+=head1 NAME
+
+Slim::Utils::Unicode
+
+=head1 SYNOPSIS
+
+my $utf8 = Slim::Utils::Unicode::utf8decode($string, 'iso-8859-1');
+
+my $enc  = Slim::Utils::Unicode::encodingFromString($string);
+
+=head1 DESCRIPTION
+
+This module is a wrapper around Encode:: functions, and comprises character
+set guessing, encoding, decoding and translation. 
+
+Most of these functions are non-ops on perl < 5.8.x
+
+The recompose & decompose parts have been modified from Simon's defunct
+Unicode::Decompose mdoule.
+
+Unicode characters that somehow become decomposed. Sometimes we'll see a URI
+encoding such as: o%CC%88 - which is an o with diaeresis. The correct
+(composed) version of this should be %C3%B6
+
+=head1 METHODS
+
+=cut
 
 use strict;
 use Fcntl qw(:seek);
@@ -391,13 +405,42 @@ our (
 	$decomposeRE = qr/($decomposeRE)/o;
 }
 
+=head2 currentLocale()
+
+Returns the current system locale. 
+
+On Windows, this is the current code page.
+
+On OS X, it's always utf-8.
+
+On *nix, this is LC_CTYPE. 
+
+=cut
+
 sub currentLocale {
 	return $lc_ctype;
 }
 
+=head2 utf8decode( $string )
+
+Decode the current string to UTF-8
+
+Return the newly decoded string.
+
+=cut
+
 sub utf8decode {
 	return utf8decode_guess(@_);
 }
+
+=head2 utf8decode_guess( $string, @encodings )
+
+Decode the current string to UTF-8, using @encodings to guess the encoding of
+the string if it is not known.
+
+Return the newly decoded string.
+
+=cut
 
 sub utf8decode_guess {
 	my ($string, @preferedEncodings) = @_;
@@ -434,6 +477,16 @@ sub utf8decode_guess {
 	return $string;
 }
 
+=head2 utf8decode_locale( $string )
+
+Decode the current string to UTF-8, using the current locale as the string's encoding.
+
+This is a no-op if the string is already encoded as UTF-8
+
+Return the newly decoded string.
+
+=cut
+
 sub utf8decode_locale {
 	my $string = shift;
 
@@ -444,6 +497,14 @@ sub utf8decode_locale {
 
 	return $string;
 }
+
+=head2 utf8encode( $string, $encoding )
+
+Encode the current UTF-8 string to the passed encoding.
+
+Return the newly encoded string.
+
+=cut
 
 sub utf8encode {
 	my $string   = shift;
@@ -478,10 +539,26 @@ sub utf8encode {
 	return $string;
 }
 
+=head2 utf8encode_locale( $string )
+
+Encode the current UTF-8 string to the current locale.
+
+Return the newly encoded string.
+
+=cut
+
 sub utf8encode_locale {
 
 	return utf8encode($_[0], $lc_ctype);
 }
+
+=head2 utf8off( $string )
+
+Turns off Perl's internal UTF-8 flag for the string.
+
+Returns the new string.
+
+=cut
 
 sub utf8off {
 	my $string = shift;
@@ -493,6 +570,14 @@ sub utf8off {
 	return $string;
 }
 
+=head2 utf8on( $string )
+
+Turns on Perl's internal UTF-8 flag for the string.
+
+Returns the new string.
+
+=cut
+
 sub utf8on {
 	my $string = shift;
 
@@ -503,6 +588,14 @@ sub utf8on {
 	return $string;
 }
 
+=head2 looks_like_ascii( $string )
+
+Returns true if the passed string is US-ASCII
+
+Returns false otherwise.
+
+=cut
+
 sub looks_like_ascii {
 	use bytes;
 
@@ -511,6 +604,14 @@ sub looks_like_ascii {
 	return 0;
 }
 
+=head2 looks_like_latin1( $string )
+
+Returns true if the passed string is ISO-8859-1
+
+Returns false otherwise.
+
+=cut
+
 sub looks_like_latin1 {
 	use bytes;
 
@@ -518,12 +619,28 @@ sub looks_like_latin1 {
 	return 0;
 }
 
+=head2 looks_like_cp1252( $string )
+
+Returns true if the passed string is Windows-1252
+
+Returns false otherwise.
+
+=cut
+
 sub looks_like_cp1252 {
 	use bytes;
 
 	return 1 if $_[0] !~ /[^\x00-\xFF]/;
 	return 0;
 }
+
+=head2 looks_like_utf8( $string )
+
+Returns true if the passed string is UTF-8
+
+Returns false otherwise.
+
+=cut
 
 sub looks_like_utf8 {
 	use bytes;
@@ -533,6 +650,14 @@ sub looks_like_utf8 {
 	return 0;
 }
 
+=head2 looks_like_utf16( $string )
+
+Returns true if the passed string is UTF-16
+
+Returns false otherwise.
+
+=cut
+
 sub looks_like_utf16 {
 	use bytes;
 
@@ -540,12 +665,26 @@ sub looks_like_utf16 {
 	return 0;
 }
 
+=head2 looks_like_utf32( $string )
+
+Returns true if the passed string is UTF-32
+
+Returns false otherwise.
+
+=cut
+
 sub looks_like_utf32 {
 	use bytes;
 
 	return 1 if $_[0] =~ /^(?:\x00\x00\xfe\xff|\xff\xfe\x00\x00)/;
 	return 0;
 }
+
+=head2 latin1toUTF8( $string )
+
+Returns a UTF-8 encoded string from a ISO-8859-1 string.
+
+=cut
 
 sub latin1toUTF8 {
 	my $data = shift;
@@ -561,6 +700,12 @@ sub latin1toUTF8 {
 
 	return $data;
 }
+
+=head2 utf8toLatin1( $string )
+
+Returns a ISO-8859-1 string from a UTF-8 encoded string.
+
+=cut
 
 sub utf8toLatin1 {
 	my $data = shift;
@@ -578,11 +723,27 @@ sub utf8toLatin1 {
 	return $data;
 }
 
+=head2 utf8toLatin1Transliterate( $string )
+
+Turn a UTF-8 string into it's US-ASCII equivalent.
+
+See L<Text::Unidecode>.
+
+=cut
+
 sub utf8toLatin1Transliterate {
 	my $data = shift;
 
 	return utf8toLatin1( Text::Unidecode::unidecode($data) );
 }
+
+=head2 encodingFromString( $string )
+
+Use a best guess effort to return the encoding of the passed string.
+
+Returns 'raw' if not: ascii, utf-32, utf-16, utf-8, iso-8859-1 or cp1252
+
+=cut
 
 sub encodingFromString {
 
@@ -616,6 +777,14 @@ sub encodingFromString {
 
 	return $encoding;
 }
+
+=head2 encodingFromFileHandle( $fh )
+
+Use a best guess effort to return the encoding of the passed file handle.
+
+Returns 'raw' if not: ascii, utf-32, utf-16, utf-8, iso-8859-1 or cp1252
+
+=cut
 
 sub encodingFromFileHandle {
 	my $fh = shift;
@@ -677,7 +846,14 @@ sub encodingFromFileHandle {
 	return encodingFromString($string);
 }
 
-# Handle either a filename or filehandle
+=head2 encodingFromFile( $fh )
+
+Use a best guess effort to return the encoding of the passed file name or file handle.
+
+Returns 'raw' if not: ascii, utf-32, utf-16, utf-8, iso-8859-1 or cp1252
+
+=cut
+
 sub encodingFromFile {
 	my $file = shift;
 
@@ -711,6 +887,12 @@ sub encodingFromFile {
 	return $encoding;
 }
 
+=head2 recomposeUnicode( $string )
+
+Recompose a decomposed UTF-8 string.
+
+=cut
+
 sub recomposeUnicode {
 	my $string = shift;
 
@@ -727,6 +909,12 @@ sub recomposeUnicode {
 
 	return $string;
 }
+
+=head2 decomposeUnicode( $string )
+
+Decompose a UTF-8 string.
+
+=cut
 
 sub decomposeUnicode {
 	my $string = shift;
@@ -745,6 +933,12 @@ sub decomposeUnicode {
 	return $string;
 }
 
+=head2 stripBOM( $string )
+
+Removes UTF-8, UTF-16 & UTF-32 Byte Order Marks and returns the string.
+
+=cut
+
 sub stripBOM {
 	my $string = shift;
 
@@ -758,7 +952,12 @@ sub stripBOM {
 	return $string;
 }
 
-# Alias Encode::decode
+=head2 decode( $encoding, $string )
+
+An alias for L<Encode::decode()>
+
+=cut
+
 sub decode {
 	my $encoding = shift;
 	my $string = shift;
@@ -768,7 +967,12 @@ sub decode {
 	return Encode::decode($encoding, $string);
 }
 
-# Alias Encode::encode
+=head2 encode( $encoding, $string )
+
+An alias for L<Encode::encode()>
+
+=cut
+
 sub encode {
 	my $encoding = shift;
 	my $string = shift;
@@ -778,12 +982,12 @@ sub encode {
 	return Encode::encode($encoding, $string);
 }
 
+=head1 SEE ALSO
+
+L<Encode>, L<Text::Unidecode>, L<File::BOM>
+
+=cut
+
 1;
 
 __END__
-
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

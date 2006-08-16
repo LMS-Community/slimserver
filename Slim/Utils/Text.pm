@@ -2,7 +2,7 @@ package Slim::Utils::Text;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -13,6 +13,26 @@ our %caseArticlesCache = ();
 
 # Article list to ignore.
 our $ignoredArticles = undef;
+
+=head1 NAME
+
+Slim::Utils::Text
+
+=head1 SYNOPSIS
+
+my $clean = Slim::Utils::Text::ignorePunct('foo! bar?');
+
+=head1 DESCRIPTION
+
+A collection of text mangling functions.
+
+=head1 METHODS
+
+=head2 ignorePunct( $string )
+
+Strips any punctuation, compacts multiple spaces, and removes leading & trailing whitespace.
+
+=cut
 
 sub ignorePunct {
 	my $s = shift || return undef;
@@ -28,6 +48,14 @@ sub ignorePunct {
 
 	return $s;
 }
+
+=head2 matchCase( $string )
+
+Translates lowercase US-ASCII and ISO-8859-1 to their uppercase equivalents.
+
+Also merges ISO-8859-1 strings like AE (\xC3\x86) into 'AE'.
+
+=cut
 
 sub matchCase {
 	my $s = shift || return undef;
@@ -51,6 +79,12 @@ sub matchCase {
 	return $s;
 }
 
+=head2 ignoreArticles( $string )
+
+Removes leading articles as defined by the 'ignoredarticles' preference.
+
+=cut
+
 sub ignoreArticles {
 	my $item = shift || return;
 
@@ -70,6 +104,13 @@ sub ignoreArticles {
 	return $item;
 }
 
+=head2 ignoreCaseArticles( $string )
+
+Runs L<ignoreArticles> and L<ignorePunct> on the passed string. Additionally,
+strip out characters beyond U+FFFF as MySQL doesn't like them in TEXT fields.
+
+=cut
+
 sub ignoreCaseArticles {
 	my $s = shift || return undef;
 
@@ -88,7 +129,7 @@ sub ignoreCaseArticles {
 
 		$caseArticlesCache{$s} = ignorePunct(ignoreArticles(uc($s)));
 
-		# Remove characters beyond U+FFFF as MySQL doesn;t like them in TEXT fields
+		# Remove characters beyond U+FFFF as MySQL doesn't like them in TEXT fields
 		$caseArticlesCache{$s} =~ s/[\x{10000}-\x{10ffff}]//g;
 
 		# strip leading & trailing spaces
@@ -99,6 +140,12 @@ sub ignoreCaseArticles {
 	return $caseArticlesCache{$s};
 }
 
+=head2 clearCaseArticleCache()
+
+Clear the internal cache for strings.
+
+=cut
+
 sub clearCaseArticleCache {
 
 	%caseArticlesCache = ();
@@ -106,6 +153,15 @@ sub clearCaseArticleCache {
 
 	return 1;
 }
+
+=head2 searchStringSplit( $string, $searchOnSubString )
+
+Returns an array ref of strings, suitable for being passed to to
+L<SQL::Abstract> as part of a LIKE SQL query. If the $searchOnSubString
+argument is passed, the result will look for matches like: *FOO*, instead of:
+'FOO*' and '* FOO*'
+
+=cut
 
 sub searchStringSplit {
 	my $search  = shift;

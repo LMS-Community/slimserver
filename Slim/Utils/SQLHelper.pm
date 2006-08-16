@@ -2,8 +2,34 @@ package Slim::Utils::SQLHelper;
 
 # $Id$
 
-# Utility functions to handle reading of SQL files and executing them on the
-# DB. This may be replaced by DBIx::Class's deploy functionality.
+=head1 NAME
+
+Slim::Utils::SQLHelper
+
+=head1 DESCRIPTION
+
+Utility functions to handle reading of SQL files and executing them on the DB.
+
+This may be replaced by DBIx::Class's deploy functionality.
+
+=head1 METHODS
+
+=head2 executeSQLFile( $driver, $dbh, $sqlFile )
+
+Run the commands as specified in the sqlFile.
+
+Valid commands are:
+
+ALTER, CREATE, USE, SET, INSERT, UPDATE, DELETE, DROP, SELECT, OPTIMIZE,
+TRUNCATE, UNLOCK, START, COMMIT
+
+=head1 SEE ALSO
+
+L<DBIx::Class>
+
+L<DBIx::Migration>
+
+=cut
 
 use strict;
 use File::Spec::Functions qw(:ALL);

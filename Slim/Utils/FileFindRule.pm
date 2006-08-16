@@ -2,7 +2,25 @@ package Slim::Utils::FileFindRule;
 
 # $Id$
 
-# Simple subclass to override ->in() and return an array ref.
+=head1 NAME
+
+Slim::Utils::FileFindRule
+
+=head1 DESCRIPTION
+
+Simple subclass to override L<File::Find::Rule>'s in() and return an array ref.
+
+=head1 METHODS
+
+=head2 in()
+
+Overrides L<File::Find::Rule>'s in() method.
+
+=head1 SEE ALSO
+
+L<File::Find::Rule>, L<Slim::Utils::Scanner>
+
+=cut
 
 use strict;
 use base qw(File::Find::Rule);
