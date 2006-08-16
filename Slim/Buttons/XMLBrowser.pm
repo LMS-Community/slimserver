@@ -302,6 +302,13 @@ sub gotOPML {
 			items  => [],
 		};
 	}
+	
+	# Add value keys to all items, so INPUT.Choice remembers state properly
+	for my $item ( @{ $opml->{'items'} || [] } ) {
+		if ( !defined $item->{'value'} ) {
+			$item->{'value'} = $item->{'name'};
+		}
+	}
 
 	my %params = (
 		'url'        => $url,
