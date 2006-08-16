@@ -10,7 +10,10 @@
 
 [%- BLOCK submenu -%]
 	<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="[% subtitleC %]">
-		<tr><td>[% PROCESS crumblist %][% PROCESS galleryselect.html %]</td></tr>
+		<tr>
+			<td>[% PROCESS crumblist %]</td>
+			<td align="right"><nobr>[% PROCESS galleryselect.html %]</nobr></td>
+		</tr>
 		[% content %]
 	</table>
 [%- END -%]
@@ -20,8 +23,6 @@
 [%- END -%]
 
 <body bgcolor="#FFFFFF" text="#666666" link="#333333" vlink="#333333" alink="#333333" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
-	<font face="arial,helvetica,sans-serif"><small>
-	
 	<table width="100%" bgcolor="#333333">
 		<tr>
 			<td><img src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" border="0" width="98" height="17"></td>
@@ -34,7 +35,6 @@
 							<option value="[% playerobj.id %]" [% IF player == playerobj.id %]SELECTED[% END %]>[% playerobj.name %]</option>
 						[% END %]
 						</select>
-						<input type="submit" value="&gt;" style="width: 18px;">
 					</form>
 				[% END %]
 			</td>

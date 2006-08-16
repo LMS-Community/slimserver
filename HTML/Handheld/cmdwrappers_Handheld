@@ -84,18 +84,18 @@
 
 [% BLOCK galleryitem %]
 [% odd = 1 %]
-<table class="floater" cellpadding="0" cellspacing="0" border="0">
-	<tr height="[% item.size +5 %]"><td width="[% item.size %]">
-[%- IF anchor %]
-	<a name="[% anchor | uri %]"></a>
-[%- END -%]
-		[% IF item.coverThumb %]<table border="0" cellspacing="1" cellpadding="0"><tr><td width="[% item.size %]"><a [% PROCESS browseDbItemHRef %]>[% PROCESS thumbnailItemImg height="$item.size" %]</a></td></tr></table>
-		[% ELSE %]<table border="0" cellspacing="0" cellpadding="0"><tr><td width="[% item.size %]"><a [% PROCESS browseDbItemHRef %]>[% PROCESS dummyItemImg height="$item.size" %]</a></td></tr></table>[% END %]
+<table class="floater" style="height:[% item.size + 25 %]; width:[% item.size + 5 %];" cellpadding="0" cellspacing="0" border="0">
+	<tr height="[% item.size + 5 %]"><td width="[% item.size %]">
+		[%- IF anchor %]
+			<a name="[% anchor | uri %]"></a>
+		[%- END -%]
+		[% IF item.coverThumb %]<a [% PROCESS browseDbItemHRef %]>[% PROCESS thumbnailItemImg height="$item.size" %]</a>
+		[% ELSE %]<a [% PROCESS browseDbItemHRef %]>[% PROCESS dummyItemImg height="$item.size" %]</a>[% END %]
 	</td></tr>
-	<tr height="20"><td>
-	<table cellspacing="0" border="0" align="left"><tr>
-		[%- PROCESS $controls -%]
-	</tr></table>
+	<tr><td>
+		<table cellspacing="0" border="0" align="left"><tr>
+			[%- PROCESS $controls -%]
+		</tr></table>
 	</td></tr>
 </table>
 [%- END %]
@@ -142,7 +142,7 @@
 
 [% BLOCK pagebar %]
 [%- IF NOT pageinfo.alphamap; PROCESS pagebarcalc pagesperbar = 11; END %]
-<tr><td>[% IF NOT pageinfo.alphamap %][% "PAGES" | string %][% "COLON" | string %][% END %]
+<tr><td colspan="2">[% IF NOT pageinfo.alphamap %][% "PAGES" | string %][% "COLON" | string %][% END %]
 [% IF pagesstart %]  <a href="[% pageinfo.path %]?start=0&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_first.gif" alt="[% "FIRST" | string %]" width="17" height="13" align="top"></a> [% END %]
 [% IF pagesprev || pagesprev == '0' %] <a href="[% pageinfo.path %]?start=[% pagesprev %]&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_prev.gif" alt="[% "PREVIOUS" | string %]" width="13" height="13" align="top"></a> [% END %]
 [%- IF pageinfo.alphamap %]

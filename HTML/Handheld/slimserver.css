@@ -28,6 +28,8 @@ table, td, tr, form, h4 {
 
 .floater {
 	float: left;
+	margin-top: 10px;
+	margin-right: 10px;
 }
 
 ul {
@@ -113,9 +115,4 @@ small {
 .viewSelect
 {
 	white-space: nowrap;
-	float: right;
-}
-
-.viewSelect img {
-	vertical-align: middle;
 }

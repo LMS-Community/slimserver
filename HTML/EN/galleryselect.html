@@ -14,7 +14,7 @@
 		'genre.namesort,contributor.namesort,album.titlesort' => 'SORT_GENREARTISTALBUM',
 	} %]
 
-	<label for="orderBy" class="stdlabel">[% "SORT_BY" | string %]</label>
+	[% IF NOT noLabel %]<label for="orderBy" class="stdlabel">[% "SORT_BY" | string %]</label>[% END %]
 
 	<select class="stdedit" name="orderBy" onChange="chooseAlbumOrderBy(selectedIndex,options[selectedIndex].value)">
 

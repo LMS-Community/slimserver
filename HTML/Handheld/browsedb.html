@@ -1,5 +1,5 @@
 	[% pagetitle = browseby | string %]
-	[% PROCESS pageheader.html noSubMenu="1" %]
+	[% PROCESS pageheader.html noSubMenu="1" noLabel="1" %]
 
 	[% WRAPPER submenu url='browsedb.html' arguments='hierarchy=playlist,playlistTrack&level=0' linktitle=pwd_list %]
 		[% IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %][% PROCESS pagebar addSummary = 1 %][% END %]
