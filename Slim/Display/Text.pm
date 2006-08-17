@@ -218,7 +218,7 @@ sub render {
 				$sc->{linefinish}[0] = Slim::Display::Display::lineLength($sc->{linetext}[0]);
 				$sc->{linefinish}[1] = Slim::Display::Display::lineLength($sc->{linetext}[1]);
 			}
-			if ($sc->{scroll} && ($sc->{scrollline} == $l)) {
+			if ($sc->{scroll} && ($sc->{scrollline} == $l || $double)) {
 				$sc->{scroll} = 0; $sc->{scrollline} = undef;
 			}
 			$sc->{changed} = 1;
@@ -231,7 +231,7 @@ sub render {
 				$sc->{linetext}[0] = '';
 				$sc->{linefinish}[0] = 0;
 			}
-			if ($sc->{scroll} && ($sc->{scrollline} == $l)) {
+			if ($sc->{scroll} && ($sc->{scrollline} == $l) || $double) {
 				$sc->{scroll} = 0; $sc->{scrollline} = undef;
 			}
 			$sc->{changed} = 1;
