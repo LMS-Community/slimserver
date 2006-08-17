@@ -118,12 +118,12 @@ small {
 }
 
 .hitlist_list3 {
-	width: 50px;
+	width: 60px;
 	text-align: right;
 	white-space: nowrap;
 }
 
-.hitlist_bar img {
+.hitlist_bar {
 	width:5px;
 	height:15px;
 }
