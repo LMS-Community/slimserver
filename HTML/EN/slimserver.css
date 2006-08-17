@@ -175,6 +175,21 @@ div#browsedbHeader {
 	width: 72%;
 }
 
+.hitlist_list1 {
+	width: 50%;
+}
+
+.hitlist_list2 {
+	width: 10%;
+	text-align: center;
+}
+
+.hitlist_list3 {
+	width: 10%;
+	text-align: right;
+	white-space: nowrap;
+}
+
 .playingSong {
 }
 

@@ -112,6 +112,22 @@ small {
 	clear: left;
 }
 
+.hitlist_list2 {
+	width: 20px;
+	text-align: center;
+}
+
+.hitlist_list3 {
+	width: 50px;
+	text-align: right;
+	white-space: nowrap;
+}
+
+.hitlist_bar img {
+	width:5px;
+	height:15px;
+}
+
 .viewSelect
 {
 	white-space: nowrap;

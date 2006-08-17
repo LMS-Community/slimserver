@@ -1,23 +1,22 @@
 [% pagetitle = "STATISTICS" | string %]
 [% pageHeaderMenu = pagetitle %]
 
-[% PROCESS pageheader.html noSubMenu="1" %]
-
-    <table cellspacing="0" border="0" cellpadding="4" width="100%">
-<tr><td align="center">	
-		<B>[% song_count %]</B>
-	  </td>
-	  <td align="center">
-		<B>[% album_count %]</B>
-</td></tr>
-<td align="center">	
-		<B>[% artist_count %]</B>
-	  </td>
-	  <td align="center">
-		<B>[% genre_count %]</B>
-</td>
+[% PROCESS pageheader.html %]
+	<table cellspacing="0" border="0" cellpadding="4" width="100%">
+		<tr><td align="center">	
+			<B>[% song_count %]</B>
+		</td>
+		<td align="center">
+			<B>[% album_count %]</B>
+		</td></tr>
+		<tr><td align="center">	
+			<B>[% artist_count %]</B>
+		</td>
+		<td align="center">
+			<B>[% genre_count %]</B>
+		</td></tr>
 	</table>
-    <p><hr></p>
+	<hr>
     <h4>[% "MOSTPLAYED" | string %][% "COLON" | string %]</h4>
     <table cellspacing="0" border="0" cellpadding="2" width="100%">
 		[% FOREACH item = browse_items %]
@@ -25,5 +24,4 @@
 			[% PROCESS hitlist_list.html %]
 		[% END %]
     </table>
-
 [% PROCESS pagefooter.html %]
