@@ -48,7 +48,11 @@ sub getFeedSync {
 		eval {
 			$xml = xmlToHash(\$content);
 		};
-		return $xml || 0;
+		if ($@) {
+			errorMsg("Failed to parse XML feed: $@\n");
+			return 0;
+		}
+		return $xml;
 	}
 
 	return 0;
@@ -444,29 +448,44 @@ sub xmlToHash {
 		$@ = "Invalid XML feed - didn't find <xml>!\n";
 
 	} else {
+		
+		# make 2 passes at parsing:
+		# 1. Parse content as-is
+		# 2. Try decoding invalid characters
+		for my $pass ( 1..2 ) {
+		
+			if ( $pass == 2 ) {
+				# Some feeds have invalid (usually Windows encoding) in a UTF-8 XML file.
+				my @lines = ();
 
-		# Some feeds have invalid (usually Windows encoding) in a UTF-8 XML file.
-		my @lines = ();
+				for my $line (split /\n/, $$content) {
 
-		for my $line (split /\n/, $$content) {
+					$line = Slim::Utils::Unicode::utf8decode_guess($line, 'utf8');
 
-			$line = Slim::Utils::Unicode::utf8decode_guess($line, 'utf8');
+					push @lines, $line;
+				}
 
-			push @lines, $line;
+				$content = join("\n", @lines);
+			}
+
+			eval {
+				# NB: \n required
+				local $SIG{'ALRM'} = sub { die "XMLin parsing timed out!\n" };
+
+				alarm $timeout;
+
+				# forcearray to treat items as array,
+				# keyattr => [] prevents id attrs from overriding
+				$xml = XMLin( ref $content ? $content : \$content, 'forcearray' => [qw(item outline)], 'keyattr' => []);
+			};
+			
+			if ($@) {
+				$::d_plugins && msg("Formats::XML: Pass $pass failed to parse: $@\n");
+			}
+			else {
+				last;
+			}
 		}
-
-		$content = join('', @lines);
-
-		eval {
-			# NB: \n required
-			local $SIG{'ALRM'} = sub { die "XMLin parsing timed out!\n" };
-
-			alarm $timeout;
-
-			# forcearray to treat items as array,
-			# keyattr => [] prevents id attrs from overriding
-			$xml = XMLin(\$content, 'forcearray' => [qw(item outline)], 'keyattr' => []);
-		};
 	}
 
 	# Always reset the alarm to 0.
