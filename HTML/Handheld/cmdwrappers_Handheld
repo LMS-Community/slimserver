@@ -84,16 +84,16 @@
 
 [% BLOCK galleryitem %]
 [% odd = 1 %]
-<table class="floater" style="height:[% item.size + 25 %]; width:[% item.size + 5 %];" cellpadding="0" cellspacing="0" border="0">
+<table class="floater" style="height:[% item.size + 15 %]; width:[% item.size + 5 %];" cellpadding="0" cellspacing="0" border="0">
 	<tr height="[% item.size + 5 %]"><td width="[% item.size %]">
 		[%- IF anchor %]
 			<a name="[% anchor | uri %]"></a>
 		[%- END -%]
-		[% IF item.coverThumb %]<a [% PROCESS browseDbItemHRef %]>[% PROCESS thumbnailItemImg height="$item.size" %]</a>
-		[% ELSE %]<a [% PROCESS browseDbItemHRef %]>[% PROCESS dummyItemImg height="$item.size" %]</a>[% END %]
+		[%- IF item.coverThumb %]<a [% PROCESS browseDbItemHRef %]>[% PROCESS thumbnailItemImg height="$item.size" %]</a>
+		[%- ELSE %]<a [% PROCESS browseDbItemHRef %]>[%- PROCESS dummyItemImg height="$item.size" -%]</a>[%- END -%]
 	</td></tr>
 	<tr><td>
-		<table cellspacing="0" border="0" align="left"><tr>
+		<table cellspacing="0" cellpadding="0" border="0" align="left"><tr>
 			[%- PROCESS $controls -%]
 		</tr></table>
 	</td></tr>
