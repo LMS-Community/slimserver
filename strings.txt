@@ -1436,9 +1436,11 @@ UPDATING_FIRMWARE_TRANSPORTER
 	SE	Uppdaterar spelarens mjukvara
 	
 FIRMWARE_MISSING
+	DE	Fehler: Firmware fehlt
 	EN	Error: Missing Firmware
 	
 FIRMWARE_MISSING_DESC
+	DE	Der Server kann keine Firmware aus dem Internet beziehen.
 	EN	Server can't connect to Internet to obtain firmware update.
 
 CONNECTING_FOR
@@ -12369,7 +12371,7 @@ SETUP_LARGETEXTFONT_1
 	NL	Modern
 
 SORT_BY
-	DE	Sortieren nach
+	DE	Sortierung
 	EN	Sort By
 	ES	Ordenar Por
 	NL	Sorteer op
