@@ -275,7 +275,7 @@ sub downloadAsyncError {
 	
 	# Clean up
 	my $path = catdir( $dir, $file ) . '.tmp';
-	#unlink $path if -e $path;
+	unlink $path if -e $path;
 	
 	msgf("Firmware: Failed to download %s (%s), will try again in 10 minutes.\n",
 		$http->url,
