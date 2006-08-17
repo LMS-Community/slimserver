@@ -1434,6 +1434,12 @@ UPDATING_FIRMWARE_TRANSPORTER
 	NO	Oppdaterer spillerens programvare ('firmware')
 	PT	Atualizando firmware ...
 	SE	Uppdaterar spelarens mjukvara
+	
+FIRMWARE_MISSING
+	EN	Error: Missing Firmware
+	
+FIRMWARE_MISSING_DESC
+	EN	Server can't connect to Internet to obtain firmware update.
 
 CONNECTING_FOR
 	CS	Připojuji ke hraní:

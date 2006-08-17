@@ -170,6 +170,18 @@ sub upgradeFirmware {
 
 	if (!-f $filename) {
 		warn("file does not exist: $filename\n");
+		
+		# XXX: This will require firmware 60
+		# $client->sendFrame('updn',\(' ')); # send upgrade done, to reset the player state
+		
+		# display an error message
+		$client->showBriefly( {
+			'line1' => $client->string( 'FIRMWARE_MISSING' ),
+			'line2' => $client->string( 'FIRMWARE_MISSING_DESC' ),
+		}, { 
+			'block' => 1, 'scroll' => 1, 'firstline' => 1,
+		} );
+		
 		return(0);
 	}
 	

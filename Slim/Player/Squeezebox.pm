@@ -361,12 +361,63 @@ sub needsUpgrade {
 
 	unless (-r $file && -s $file) {
 		$::d_firmware && msg ("$model v. $from could be upgraded to v. $to if the file existed.\n");
+		
+		# We now download firmware from the internet.  In the case of no internet connection
+		# we want to check if the file has appeared later.  This timer will check every 10 minutes
+		Slim::Utils::Timers::killOneTimer( $client, \&checkFirmwareUpgrade );
+		Slim::Utils::Timers::setTimer( $client, time() + 600, \&checkFirmwareUpgrade );
+		
+		# display an error message
+		$client->showBriefly( {
+			'line1' => $client->string( 'FIRMWARE_MISSING' ),
+			'line2' => $client->string( 'FIRMWARE_MISSING_DESC' ),
+		}, { 
+			'block' => 1, 'scroll' => 1, 'firstline' => 1,
+		} );
+		
 		return 0;
 	}
 
 	$::d_firmware && msg ("$model v. $from requires upgrade to $to\n");
 	return $to;
 
+}
+
+=head2 checkFirmwareUpgrade($client)
+
+This timer is run every 10 minutes if a client is out of date and a firmware file is not
+present in the Firmware directory.  Another timer in Slim::Utils::Firmware may have
+downloaded firmware in the background, so if the file has appeared, we will prompt
+the user to upgrade their firmware by holding BRIGHTNESS
+
+=cut
+
+sub checkFirmwareUpgrade {
+	my $client = shift;
+
+	if ( $client->needsUpgrade() ) {
+		
+		$::d_firmware && msg("Firmware file has appeared, prompting player to upgrade\n");
+				
+		# don't start playing if we're upgrading
+		$client->execute(['stop']);
+
+		# ask for an update if the player will do it automatically
+		$client->sendFrame('ureq');
+
+		$client->brightness($client->maxBrightness());
+		
+		$client->block( {
+			'line' => [ $client->string('PLAYER_NEEDS_UPGRADE_1'), $client->string('PLAYER_NEEDS_UPGRADE_2') ],
+			'fonts' => { 
+				'graphic-320x32' => 'light',
+				'graphic-280x16' => 'small',
+				'text'           => 2,
+			}
+		}, 'upgrade');
+	}
+	
+	# If the file is still missing, the timer will be reset by needsUpgrade
 }
 
 # the new way: use slimproto
