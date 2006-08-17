@@ -33,6 +33,14 @@ build-perl-modules script to run successfully, you must have You must have:
 
 --------------------------------------------------------------------------------
 
+Linux Notes (Debian/Ubuntu Install):
+
+	Please see the Wiki:
+
+	http://wiki.slimdevices.com/index.cgi?DebianPackage
+
+	for the latest install instructions.
+
 Linux Notes (RPM Install):
 
 	The Linux RPMs install the software under /usr/local/slimserver
