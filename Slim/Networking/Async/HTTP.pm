@@ -44,7 +44,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
 __PACKAGE__->mk_classaccessors( qw(
-	uri request response
+	uri request response saveAs fh
 ) );
 
 # Body buffer size
@@ -111,6 +111,11 @@ sub send_request {
 	
 	if ( $args->{maxRedirect} ) {
 		$self->maxRedirect( $args->{maxRedirect} );
+	}
+	
+	# option to save directly to a file
+	if ( $args->{saveAs} ) {
+		$self->saveAs( $args->{saveAs} );
 	}
 	
 	$self->request( 
@@ -333,9 +338,27 @@ sub _http_read_body {
 	my ( $socket, $self, $args ) = @_;
 	
 	my $result = $socket->read_entity_body( my $buf, $self->bufsize );
-
-	# Add buffer to Response object
-	$self->response->add_content( $buf );
+	
+	# Are we saving directly to a file?
+	if ( $self->saveAs && !$self->fh ) {
+		open my $fh, '>', $self->saveAs;
+		if ( !$fh ) {
+			return $self->_http_error( 'Unable to open ' . $self->saveAs . ' for writing', $args );
+		}
+		
+		$::d_http_async && msg("Async::HTTP: Writing response directly to " . $self->saveAs . "\n");
+		
+		$self->fh( $fh );
+	}
+	
+	if ( $self->saveAs ) {
+		# Write directly to a file
+		$self->fh->write( $buf, length $buf );
+	}
+	else {
+		# Add buffer to Response object
+		$self->response->add_content( $buf );
+	}
 	
 	# Does the caller want us to quit reading early (i.e. for mp3 frames)?
 	if ( $args->{readLimit} && length( $self->response->content ) >= $args->{readLimit} ) {
@@ -357,6 +380,7 @@ sub _http_read_body {
 		# if here, we've reached the end of the body
 		
 		# close and remove the socket
+		$self->fh->close if $self->fh;
 		$self->disconnect;
 		
 		$::d_http_async && msg("Async::HTTP: Body read\n");

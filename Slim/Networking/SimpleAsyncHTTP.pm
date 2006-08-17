@@ -141,7 +141,7 @@ sub _createHTTPRequest {
 	}
 
 	# request compressed data if we have zlib
-	if ( hasZlib() ) {
+	if ( hasZlib() && !$self->{params}->{saveAs} ) {
 		unshift @_, (
 			'Accept-Encoding' => 'gzip, deflate',
 		);
@@ -155,6 +155,7 @@ sub _createHTTPRequest {
 	$http->send_request( {
 		request     => $request,
 		maxRedirect => $self->{params}->{maxRedirect},
+		saveAs      => $self->{params}->{saveAs},
 		onError     => \&onError,
 		onBody      => \&onBody,
 		passthrough => [ $self ],
@@ -194,104 +195,107 @@ sub onBody {
 	$self->mess( $res->message );
 	$self->headers( $res->headers );
 	
-	# Check if we are cached and got a "Not Modified" response
-	if ( $self->cachedResponse && $res->code == 304) {
-		
-		$::d_http_async && msg("SimpleAsyncHTTP: Remote file not modified, using cached content\n");
-		
-		# update the cache time so we get another 5 minutes with no revalidation
-		my $cache = Slim::Utils::Cache->new();
-		$self->cachedResponse->{_time} = time;
-		my $expires = $self->cachedResponse->{_expires} || undef;
-		$cache->set( $self->url, $self->cachedResponse, $expires );
-		
-		return $self->sendCachedResponse();
-	}
-		
-	$self->contentRef( $res->content_ref );
+	if ( !$http->saveAs ) {
 	
-	# unzip if necessary
-	if ( hasZlib() ) {
-		if ( my $ce = $res->header('Content-Encoding') ) {
-			if ( $ce eq 'gzip' ) {
-				$::d_http_async && msg("Decompressing gzip'ed content\n");
-				# Formats::XML requires a scalar ref
-				$self->contentRef( \Compress::Zlib::memGunzip( $res->content_ref ) );
-			}
-			elsif ( $ce eq 'deflate' ) {
-				$::d_http_async && msg("Decompressing deflated content\n");
-				my $i = Compress::Zlib::inflateInit(
-					-WindowBits => -Compress::Zlib::MAX_WBITS(),
-				);
-				my $output = $i->inflate( $res->content_ref );
-				# Formats::XML requires a scalar ref
-				$self->contentRef( \$output );
+		# Check if we are cached and got a "Not Modified" response
+		if ( $self->cachedResponse && $res->code == 304) {
+		
+			$::d_http_async && msg("SimpleAsyncHTTP: Remote file not modified, using cached content\n");
+		
+			# update the cache time so we get another 5 minutes with no revalidation
+			my $cache = Slim::Utils::Cache->new();
+			$self->cachedResponse->{_time} = time;
+			my $expires = $self->cachedResponse->{_expires} || undef;
+			$cache->set( $self->url, $self->cachedResponse, $expires );
+		
+			return $self->sendCachedResponse();
+		}
+		
+		$self->contentRef( $res->content_ref );
+	
+		# unzip if necessary
+		if ( hasZlib() ) {
+			if ( my $ce = $res->header('Content-Encoding') ) {
+				if ( $ce eq 'gzip' ) {
+					$::d_http_async && msg("Decompressing gzip'ed content\n");
+					# Formats::XML requires a scalar ref
+					$self->contentRef( \Compress::Zlib::memGunzip( $res->content_ref ) );
+				}
+				elsif ( $ce eq 'deflate' ) {
+					$::d_http_async && msg("Decompressing deflated content\n");
+					my $i = Compress::Zlib::inflateInit(
+						-WindowBits => -Compress::Zlib::MAX_WBITS(),
+					);
+					my $output = $i->inflate( $res->content_ref );
+					# Formats::XML requires a scalar ref
+					$self->contentRef( \$output );
+				}
 			}
 		}
-	}
 		
-	# cache the response if requested
-	if ( $self->{params}->{cache} ) {
+		# cache the response if requested
+		if ( $self->{params}->{cache} ) {
 		
-		if ( Slim::Utils::Misc::shouldCacheURL( $self->url ) ) {
+			if ( Slim::Utils::Misc::shouldCacheURL( $self->url ) ) {
 		
-			my $cache = Slim::Utils::Cache->new();
+				my $cache = Slim::Utils::Cache->new();
 		
-			my $data = {
-				code    => $self->code,
-				mess    => $self->mess,
-				headers => $self->headers,
-				content => $self->content,
-				_time   => time,
-			};
+				my $data = {
+					code    => $self->code,
+					mess    => $self->mess,
+					headers => $self->headers,
+					content => $self->content,
+					_time   => time,
+				};
 		
-			# By default, cached content can live for at most 1 day, this helps control the
-			# size of the cache.  We use ETag/Last Modified to check for stale data during
-			# this time.
-			my $max = 60 * 60 * 24;
-			my $expires = $self->{params}->{expires} || $max;
-			my $no_cache;
+				# By default, cached content can live for at most 1 day, this helps control the
+				# size of the cache.  We use ETag/Last Modified to check for stale data during
+				# this time.
+				my $max = 60 * 60 * 24;
+				my $expires = $self->{params}->{expires} || $max;
+				my $no_cache;
 		
-			if ( $expires >= $max ) {
+				if ( $expires >= $max ) {
 			
-				# If we see max-age or an Expires header, use them
-				if ( my $cc = $res->header('Cache-Control') ) {
-					if ( $cc =~ /no-cache|must-revalidate/ ) {
+					# If we see max-age or an Expires header, use them
+					if ( my $cc = $res->header('Cache-Control') ) {
+						if ( $cc =~ /no-cache|must-revalidate/ ) {
+							$no_cache = 1;
+						}
+						elsif ( $cc =~ /max-age=(-?\d+)/ ) {
+							$expires = $1;
+						}
+					}			
+					elsif ( my $expire_date = $res->header('Expires') ) {
+						$expires = HTTP::Date::str2time($expire_date) - time;
+					}
+		
+					# If there is no ETag/Last Modified, don't cache
+					if (   $expires >= $max
+						&& !$res->last_modified
+						&& !$res->header('ETag')
+					) {
 						$no_cache = 1;
+						$::d_http_async && msgf("SimpleAsyncHTTP: Not caching [%s], no expiration set and missing cache headers\n",
+							$self->url,
+						);
 					}
-					elsif ( $cc =~ /max-age=(-?\d+)/ ) {
-						$expires = $1;
-					}
-				}			
-				elsif ( my $expire_date = $res->header('Expires') ) {
-					$expires = HTTP::Date::str2time($expire_date) - time;
 				}
 		
-				# If there is no ETag/Last Modified, don't cache
-				if (   $expires >= $max
-					&& !$res->last_modified
-					&& !$res->header('ETag')
-				) {
-					$no_cache = 1;
-					$::d_http_async && msgf("SimpleAsyncHTTP: Not caching [%s], no expiration set and missing cache headers\n",
+				if ( $expires < $max ) {
+					# if we have an explicit expiration time, we can avoid revalidation
+					$data->{_no_revalidate} = 1;
+				}
+		
+				if ( !$no_cache ) {
+					$data->{_expires} = $expires;
+					$cache->set( $self->url, $data, $expires );
+			
+					$::d_http_async && msgf("SimpleAsyncHTTP: Caching [%s] for %d seconds\n",
 						$self->url,
+						$expires,
 					);
 				}
-			}
-		
-			if ( $expires < $max ) {
-				# if we have an explicit expiration time, we can avoid revalidation
-				$data->{_no_revalidate} = 1;
-			}
-		
-			if ( !$no_cache ) {
-				$data->{_expires} = $expires;
-				$cache->set( $self->url, $data, $expires );
-			
-				$::d_http_async && msgf("SimpleAsyncHTTP: Caching [%s] for %d seconds\n",
-					$self->url,
-					$expires,
-				);
 			}
 		}
 	}
