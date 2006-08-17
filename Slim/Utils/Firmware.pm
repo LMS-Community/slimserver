@@ -49,7 +49,7 @@ our $dir = Slim::Utils::OSDetect::dirsFor('Firmware');
 our $base = 'http://update.slimdevices.com/update/firmware';
 
 # Check interval when firmware can't be downloaded
-our $CHECK_TIME = 60;
+our $CHECK_TIME = 600;
 
 =head2 init()
 
@@ -95,8 +95,7 @@ sub init {
 	for my $file ( keys %{$files} ) {
 		my $url = $base . '/' . $file;
 		
-		#$ok = download( $url, $file );
-		$ok = 0;
+		$ok = download( $url, $file );
 		
 		if ( !$ok ) {
 			# set a timer that will check again later on, and download this firmware in 
