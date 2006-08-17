@@ -1268,7 +1268,7 @@ sub pushMode {
 
 		if ($client->display->showExtendedText() && !$screen2) {
 			$screen2 = 'periodic';
-		} elsif ($screen2 eq 'inherit') {
+		} elsif ($screen2 && $screen2 eq 'inherit') {
 			$screen2 = $oldscreen2;
 		}
 
@@ -1320,11 +1320,13 @@ sub popMode {
 
 		my $suppressScreen2Update = shift;
 
+		my $screen2 = $client->modeVariable('screen2');
+
 		if ($client->display->showExtendedText()) {
 
-			$client->modeVariable('screen2', 'periodic') unless ($client->modeVariable('screen2'));
+			$client->modeVariable('screen2', 'periodic') unless $screen2;
 
-		} elsif ($client->modeVariable('screen2') eq 'periodic') {
+		} elsif ($screen2 && $screen2 eq 'periodic') {
 
 			$client->modeVariable('screen2', undef);
 		}
