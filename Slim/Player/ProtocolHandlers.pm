@@ -20,7 +20,7 @@ my %protocolHandlers = (
 	http     => qw(Slim::Player::Protocols::HTTP),
 	icy      => qw(Slim::Player::Protocols::HTTP),
 	mms      => qw(Slim::Player::Protocols::MMS),
-	rtsp     => 1,
+	rtsp     => 1, # XXX: Why is this 1?
 	file     => 0,
 	playlist => 0,
 );
@@ -91,7 +91,9 @@ sub handlerForURL {
 	}
 
 	# Load the handler when requested..
-	return $class->loadHandler($protocol);
+	my $handler = $class->loadHandler($protocol);
+	
+	return blessed $handler ? $handler : undef;
 }
 
 # Dynamically load in the protocol handler classes to save memory.
