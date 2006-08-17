@@ -2,7 +2,7 @@ package Slim::Player::Client;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -33,657 +33,94 @@ our $maxVolume = 100;
 # Use the access functions.
 our %clientHash = ();
 
-=head1 Object Definition
+=head1 NAME
+
+Slim::Player::Client
+
+=head1 DESCRIPTION
 
 The following object contains all the state that we keep about each player.
 
-=head1 Client variables id and version info
-
-=over
-
-=item
-
-_prefs() - type: hashref
-
-	A reference to the preferences for this client.
-
-=item 
-
-revision() - type: int
-
-	firmware rev
-
-		  0 = unknown,
-		1.2 = old (1.0, 1.1, 1.2),
-		1.3 = new streaming protocol,
-		2.0 = client sends MAC address, NEC IR codes supported
-
-=item
-
-macaddress() - type: string
-
-	client's MAC (V2.0 firmware)
-
-=item
-
-paddr() - type: sockaddr_in
-
-	Client's IP and port
-
-=back
-
-=head1 Client variables for slim protocol networking
-
-=over
-
-=item
-
-udpsock() - type: filehandle
-
-	the socket we should use to talk to this client
-
-=item
-
-tcpsock() - type: filehandle
-
-	the socket we should use to talk to this client
-
-=item
-
-RTT() - type: float
-
-	rtt estimate (seconds)
-
-=item
-
-prevwptr() - type: int
-
-	wptr at previous request - see protocol docs
-
-=item
-
-waitforstart() - type: bool
-
-	1 = we've sent the client the start command, and we're waiting for him to start a new stream
-
-=item
-
-readytosync() - type: bool
-
-	when starting a new synced stream, indicates whether this client is ready to be unpaused. 
-
-=item
-
-resync() - type: bool
-
-	1 if we are in the process of resyncing clients
-
-=back
-
-=head1 client variables for HTTP protocol clients
-
-=over
-
-=item
-
-streamingsocket() - type: filehandle
-
-	streaming socket for http clients
-
-=back
-
-=head1 client variables for song data
-
-=over
-
-=item
-
-audioFilehandle() - type: filehandle
-
-	The currently open MP3 file OR TCP stream
-
-=item
-
-audioFilehandleIsSocket() - type: bool
-
-	Becase Windows gets confused if you select on a regular file.
-
-=item
-
-chunks() - type: array
-
-	array of references to chunks of data to be sent to client.
-
-=item
-
-songStartStreamTime() - type: float
-
-	time offset at which we started streaming this song
-
-=item
-
-remoteStreamStartTime() - type: float
-
-	time we began playing the remote stream
-
-=item
-
-pauseTime() - type: float
-
-	time that we started pausing
-
-=back
-
-=head1 client variables for shoutcast meta information 
-
-=over
-
-=item
-
-shoutMetaPointer() - type: int
-
-	shoutcast metadata stream pointer
-
-=item
-
-shoutMetaInterval() - type: int
-
-	shoutcast metadata interval
-
-=back
-
-=head1 client variables for display
-
-=over
-
-=item
-
-prevline1() - type: string
-
-	what's currently on the the client's display, line 1
-
-=item
-
-prevline2() - type: string
-
-	and line 2
-
-=back
-
-=head1 client variables for current playlist and mode
-
-=over
-
-=item
-
-playlist() - type: array
-
-	playlist of songs  (when synced, use the master's)
-
-=item
-
-shufflelist() - type: array
-
-	array of indices into playlist which may be shuffled (when synced, use the master's)
-
-=item
-
-currentsong() - type: int
-
-	index into the playlist of the currently playing song (updated when reshuffled)
-
-=item
-
-playmode() - type: string
-
-	'stop', 'play', or 'pause'
-
-=item
-
-rate() - type: float
-
-	playback rate: 1 is normal, 0 is paused, 2 is ffwd, -1 is rew
-
-=item
-
-songBytes	() - type: int
-
-	number of bytes read from the current song
-
-=item
-
-currentplayingsong() - type: string
-
-	current song that's playing out from player.  May not be the same as in the playlist as the client's buffer plays out.
-
-=back
-
-=head1 client variables for sleep
-
-=over
-
-=item
-
-currentSleepTime() - type: int
-
-	what the sleep time is currently set to (in minutes)
-
-=item
-
-sleepTime() - type: int
-
-	time() value for when we'll sleep
-
-=back
-
-=head1 client variables for synchronzation
-
-=over
-
-=item
-
-master() - type: client
-
-	if we're synchronized, 'master' points to master client
-
-=item
-
-slaves() - type: clients
-
-	if we're a master, this is an array of slaves which are synced to us
-
-=item
-
-syncgroupid() - type: uniqueid
-
-	unique identifier for this sync group
-
-=back
-
-=head1 client variables are for IR processing
-
-=over
-
-=item
-
-lastirtime() - type: int
-
-	time at which we last received an IR code (in client's 625KHz ticks)
-
-=item
-
-lastircode() - type: string
-
-	the last IR command we received, so we can tell if a button's being held down
-
-=item
-
-lastircodebytes() - type: string
-
-	the last IR code we received, so we can tell if a button's being held down
-
-=item
-
-ticspersec() - type: int
-
-	number of IR tics per second
-
-=item
-
-startirhold() - type: string
-
-	the first time the button was pressed, so we can tell how long the button is held
-
-=item
-
-irtimediff() - type: float
-
-	calculated diff ir time
-
-=item
-
-irrepeattime() - type: float
-
-	calculated time for repeat codes
-
-=item
-
-epochirtime	() - type: int
-
-		epoch time that we last received an IR signal
-
-=back
-
-=head1 state for button navigation
-
-=over
-
-=item
-
-modeStack() - type: array
-
-	stack of current browse modes: 'playlist', 'browse', 'off', etc...
-
-=item
-
-modeParameterStack() - type: array
-
-	stack of hashes of mode parameters for previous modes
-
-=item
-
-modeVariableStack() - type: array
-
-	stack of hashes of mode variables for previous modes
-	(mode variables are guarenteed to not persit between mode instances, unlike mode params)
-
-=item
-
-lines() - type: function
-
-	reference to function to display lines for current mode
-
-=back
-
-=head1 Other
-
-The remainder are temporary and global client variables are for the various button display modes
-
-TODO - These don't belong in the client object
-
-=head1 trackinfo mode
-
-=over
-
-=item
-
-trackInfoLines() - type: strings
-
-	current trackinfo lines
-
-=item
-
-trackInfoContent() - type: strings
-
-	content type for trackinfo lines.
-
-=back
-
-=head1 browseid3 mode
-
-=over
-
-=item
-
-lastID3Selection() - type: hash
-
-	the item that was last selected for a given browse position
-
-=back
-
-=head1 blocked mode
-
-=over
-
-=item
-
-blocklines() - type: strings
-
-	what to display when we're blocked.
-
-=back
-
-=head1 home mode
-
-=over
-
-=item
-
-curSelection() - type: hash
-
-	currently selected item in player menu
-
-=back
-
-=head1 plugins mode
-
-=over
-
-=item
-
-pluginsSelection() - type: int
-
-	index into plugins list
-
-=back
-
-=head1 browse music folder mode
-
-=over
-
-=item
-
-pwd() - type: string
-
-	present directory, relative to $audiodir
-
-=item
-
-currentDirItem() - type: int
-
-	the index of the currently selected item (in @dirItems)
-
-=item
-
-numberOfDirItems() - type: int
-
-	size of @dirItems -  FIXME this is redundant, right?
-
-=item
-
-dirItems() - type: strings
-
-	list of file names in the current directory
-
-=item
-
-lastSelection() - type: hash
-
-	the curdiritem (integer) that was selected last time we were in each directory (string)
-
-=back
-
-=head1 search mode
-
-=over
-
-=item
-
-curDepth() - type: strings
-
-	string identifier for the current depth of home menu navigation tree (separator: -)
-
-=item
-
-searchFor() - type: string
-
-	what we are searching for from the remote: "ALBUMS", "ARTISTS", "SONGS"
-
-=item
-
-searchTerm() - type: array
-
-	of characters we are searching for
-
-=item
-
-searchCursor() - type: int
-
-	position of cursor (zero based)
-
-=item
-
-lastLetterIndex() - type: int
-
-	index into letters for each digit when using digits to type letters
-
-=item
-
-lastLetterDigit() - type: int
-
-	last digit hit while entering text
-
-=item
-
-lastLetterTime() - type: int
-
-	epoch time of previous letter
-
-=item
-
-lastDigitIndex() - type: int
-
-	the index number entered so far when directly entering an index number in a list
-
-=item
-
-lastDigitTime() - type: int
-
-	epoch time of previous digit
-
-=back
-
-=head1 synchronization mode
-
-=over
-
-=item
-
-syncSelection() - type: int
-
-	scroll selection while in the syncronization screen, 0 is to unsync
-
-=item
-
-syncSelections() - type: clients
-
-	addresses of possible syncable selections
-
-=back
-
-=head1 browse menu mode
-
-=over
-
-=item
-
-browseMenuSelection() - type: int
-
-	scroll selection when in browse menu
-
-=back
-
-=head1 settings menu mode
-
-=over
-
-=item
-
-settingsSelection() - type: int
-
-	scroll selection when in settings menu
-
-=back
+=head1 METHODS
 
 =cut
 
 our $defaultPrefs = {
-		'maxBitrate'			=> undef # will be set by the client device OR default to server pref when accessed.
-		,'alarmvolume'			=> [50,50,50,50,50,50,50,50]
-		,'alarmfadeseconds'		=> 0 # fade in alarm, 0 means disabled
-		,'alarm'				=> [0,0,0,0,0,0,0,0]
-		,'alarmtime'			=> [0,0,0,0,0,0,0,0]
-		,'alarmplaylist'		=> ['','','','','','','','']
-		,'lameQuality'			=> 9
-		,'playername'			=> undef
-		,'repeat'				=> 2
-		,'shuffle'				=> 0
-		,'titleFormat'			=> [5, 1, 3, 6]
-		,'titleFormatCurr'		=> 1
-	};
+	'maxBitrate'       => undef, # will be set by the client device OR default to server pref when accessed.
+	'alarmvolume'      => [50,50,50,50,50,50,50,50],
+	'alarmfadeseconds' => 0, # fade in alarm, 0 means disabled
+	'alarm'            => [0,0,0,0,0,0,0,0],
+	'alarmtime'        => [0,0,0,0,0,0,0,0],
+	'alarmplaylist'	   => ['','','','','','','',''],
+	'lameQuality'      => 9,
+	'playername'       => undef,
+	'repeat'           => 2,
+	'shuffle'          => 0,
+	'titleFormat'      => [5, 1, 3, 6],
+	'titleFormatCurr'  => 1,
+};
 
+# XXX - this is gross. Move to Class::Accessor or Object::InsideOut
 sub new {
 	my ($class, $id, $paddr) = @_;
 	
-	# if we haven't seen this client, initialialize a new one
-	my $client =[];	
+	# If we haven't seen this client, initialialize a new one
+	my $client = [];
 	my $clientAlreadyKnown = 0;
 	bless $client, $class;
 
-	$::d_protocol && msg("new client id: ($id)\n");
+	$::d_protocol && msg("New client connected: $id\n");
 
 	assert(!defined(getClient($id)));
 
-	$client->[0] = undef; # id 	
+	# The following indexes are unused:
+	# 2, 3, 8, 11, 12, 13, 16, 23, 24, 25, 26, 27, 33, 34, 53
+	# 64, 65, 66, 67, 68, 72, 82, 83, 94
 
-	$client->[1] = undef; # _prefs
-	# $client->[2] = undef; # unused
-	# $client->[3] = undef; # unused
+	$client->[0] = $id;
+	$client->[1] = Slim::Utils::Prefs::getClientPrefs($id); # _prefs
 
 	# client variables id and version info
-	$client->[4] = undef; # revision		int        firmware rev   0=unknown, 1.2 = old (1.0, 1.1, 1.2), 1.3 = new streaming protocol, 2.0 = client sends MAC address, NEC IR codes supported
-	$client->[5] = undef; # macaddress		string     client's MAC (V2.0 firmware)
-	$client->[6] = undef; # paddr			sockaddr_in client's ip and port
+	$client->[4] = undef; # revision
+	$client->[5] = undef; # macaddress
+	$client->[6] = $paddr; # paddr
 	
 	$client->[7] = undef; # startupPlaylistLoading
-	# $client->[8] = undef; # unused
 
 	# client hardware information
 	$client->[9] = undef; # udpsock
 	$client->[10] = undef; # tcpsock
-	$client->[11] = undef; # RTT
-	$client->[12] = undef; # prevwptr
-	$client->[13] = undef; # waitforstart
-	$client->[14] = undef; # readytosync
+	$client->[14] = 0; # readytosync
 	$client->[15] = undef; # streamformat
-	$client->[16] = undef; # resync
 	$client->[17] = undef; # streamingsocket
 	$client->[18] = undef; # audioFilehandle
 	$client->[19] = 0; # audioFilehandleIsSocket
 	$client->[20] = []; # chunks
-	$client->[21] = 0;  # songStartStreamTime
+	$client->[21] = 0; # songStartStreamTime
 	$client->[22] = 0; # remoteStreamStartTime
-	$client->[23] = undef; # shoutMetaPointer
-	$client->[24] = undef; # shoutMetaInterval
-	$client->[25] = undef; # unused
-	# $client->[26] = undef; # unused
-	# $client->[27] = undef; # unused
 	$client->[28] = []; # playlist
 	$client->[29] = []; # shufflelist
 	$client->[30] = []; # currentsongqueue
-	$client->[31] = undef; # playmode
-	$client->[32] = undef; # rate
-	$client->[33] = 0; # bufferThreshold
-	$client->[34] = undef; # unused
+	$client->[31] = 'stop'; # playmode
+	$client->[32] = 1; # rate
 	$client->[35] = 0; # outputBufferFullness
 	$client->[36] = undef; # irRefTime
 	$client->[37] = 0; # bytesReceived
-	$client->[38] = undef; # currentplayingsong
-	$client->[39] = undef; # currentSleepTime
-	$client->[40] = undef; # sleepTime
+	$client->[38] = ''; # currentplayingsong
+	$client->[39] = 0; # currentSleepTime
+	$client->[40] = 0; # sleepTime
 	$client->[41] = undef; # master
 	$client->[42] = []; # slaves
 	$client->[43] = undef; # syncgroupid
 	$client->[44] = undef; # password
 	$client->[45] = undef; # lastirbutton
-	$client->[46] = undef; # lastirtime
-	$client->[47] = undef; # lastircode
-	$client->[48] = undef; # lastircodebytes
-	$client->[50] = undef; # startirhold
-	$client->[51] = undef; # irtimediff
-	$client->[52] = undef; # irrepeattime
-	$client->[53] = undef; # showBrieflyData
-	$client->[54] = undef; # epochirtime
+	$client->[46] = 0; # lastirtime
+	$client->[47] = 0; # lastircode
+	$client->[48] = 0; # lastircodebytes
+	$client->[50] = 0; # startirhold
+	$client->[51] = 0; # irtimediff
+	$client->[52] = 0; # irrepeattime
+	$client->[54] = Time::HiRes::time(); # epochirtime
 	$client->[55] = []; # modeStack
 	$client->[56] = []; # modeParameterStack
 	$client->[57] = undef; # lines
@@ -693,27 +130,19 @@ sub new {
 	$client->[61] = undef; # blocklines
 	$client->[62] = {}; # curSelection
 	$client->[63] = undef; # pluginsSelection
-	$client->[64] = undef; # pwd
-	$client->[65] = undef; # currentDirItem
-	$client->[66] = undef; # numberOfDirItems
-	$client->[67] = []; # dirItems
-	$client->[68] =  {}; # lastSelection
 	$client->[69] = undef; # curDepth
 	$client->[70] = undef; # searchFor
 	$client->[71] = []; # searchTerm
-	$client->[72] = undef; # searchCursor
-	$client->[73] = undef; # lastLetterIndex
-	$client->[74] = undef; # lastLetterDigit
-	$client->[75] = undef; # lastLetterTime
+	$client->[73] = 0;  # lastLetterIndex
+	$client->[74] = ''; # lastLetterDigit
+	$client->[75] = 0;  # lastLetterTime
 	$client->[76] = Slim::Utils::PerfMon->new("Signal Strength ($id)", [10,20,30,40,50,60,70,80,90,100]);
 	$client->[77] = Slim::Utils::PerfMon->new("Buffer Fullness ($id)", [10,20,30,40,50,60,70,80,90,100]);
 	$client->[78] = Slim::Utils::PerfMon->new("Slimproto QLen ($id)", [1, 2, 5, 10, 20]);
 	$client->[79] = undef; # irRefTimeStored
 	$client->[80] = undef; # syncSelection
 	$client->[81] = []; # syncSelections
-	$client->[82] = undef; # browseMenuSelection
-	$client->[83] = undef; # settingsSelection
-	$client->[84] = undef; # songBytes
+	$client->[84] = 0; # songBytes
 	$client->[85] = 0; # pauseTime
 	$client->[87] = 0; # bytesReceivedOffset
 	$client->[88] = 0; # buffersize
@@ -722,7 +151,6 @@ sub new {
 	$client->[91] = undef; # currentPlaylist
 	$client->[92] = undef; # currentPlaylistModified
 	$client->[93] = undef; # songElapsedSeconds
-	$client->[94] = undef; # unused
 	# 95 is currentPlaylistRender
 	# 96 is currentPlaylistChangeTime
 	$client->[97] = undef; # tempVolume temporary volume setting
@@ -733,59 +161,15 @@ sub new {
 	$client->[102] = 0; # periodicUpdateTime
 	$client->[103] = undef; # musicInfoTextCache
 	$client->[104] = [];    # modeVariableStack
-	$client->[105] = undef; # unused
+	# 105 is scroll state
 	$client->[106] = undef; # knobPos
 	$client->[107] = undef; # knobTime
-	$client->[108] = undef; # lastDigitIndex
-	$client->[109] = undef; # lastDigitTime
+	$client->[108] = 0; # lastDigitIndex
+	$client->[109] = 0; # lastDigitTime
 	$client->[110] = undef; # lastSong (last URL played in this play session - a play session ends when the player is stopped or a track is skipped)
 	$client->[111] = {}; # pipe sockets used for parent/child communication
 
-	$::d_protocol && msg("New client connected: $id\n");
-	$client->lastirtime(0);
-	$client->lastircode(0);
-	$client->lastircodebytes(0);
-	$client->startirhold(0);
-	# initialize the irtime to the current time so that
-	# (re)connecting counts as activity (and we don't
-	# immediately switch into a screensaver).
-	my $now = Time::HiRes::time();
-	$client->epochirtime($now);
-	$client->irrepeattime(0);
-	$client->irtimediff(0);
-
-	$client->id($id);
-	$client->_prefs(Slim::Utils::Prefs::getClientPrefs($client->id()));
-	$client->prevwptr(-1);
-	$client->pwd('');  # start browsing at the root MP3 directory
-
-	$client->lastircode('');
-
-	$client->lastLetterIndex(0);
-	$client->lastLetterDigit('');
-	$client->lastLetterTime(0);
-
-	$client->lastDigitIndex(0);
-	$client->lastDigitTime(0);
-
-	$client->playmode("stop");
-	$client->rate(1);
-
-	$client->songBytes(0);
-	$client->currentplayingsong("");
-
-	$client->readytosync(0);
-
-	$client->currentSleepTime(0);
-	$client->sleepTime(0);
-
-	$client->RTT(.5);
-
-	$client->searchCursor(0);
-
 	$clientHash{$id} = $client;
-
-	$client->paddr($paddr);
 
 	Slim::Control::Request::notifyFromArray($client, ['client', 'new']);
 
@@ -804,41 +188,61 @@ sub init {
 	}
 }
 
+=head1 FUNCTIONS
 
-###################
-# Accessors for the list of known clients
+Accessors for the list of known clients. These are functions, and do not need
+clients passed. They should be moved to be class methods.
 
-# returns all clients
+=head2 clients()
+
+Returns an array of all client objects.
+
+=cut
+
 sub clients {
 	return values %clientHash;
 }
 
-# returns the number of known clients
+=head2 clientCount()
+
+Returns the number of known clients.
+
+=cut
+
 sub clientCount {
 	return scalar(keys %clientHash);
 }
 
-# return IP info of all clients
+=head2 clientIPs()
+
+Return IP info of all clients. This is an ip:port string.
+
+=cut
+
 sub clientIPs {
-	my @players;
-	foreach my $client (values %clientHash) {
-		push @players, $client->ipport();
-	}
-	return @players;
+	return map { $_->ipport } clients();
 }
 
-# returns a random client
+=head2 clientRandom()
+
+Returns a random client object.
+
+=cut
+
 sub clientRandom {
 
 	# the "randomness" of this is limited to the hashing mysteries
-	
 	return (values %clientHash)[0];
 }
 
-###################
-# Client methods
+=head1 CLIENT (INSTANCE) METHODS
 
-# returns ip:port
+=head2 ipport( $client )
+
+Returns a string in the form of 'ip:port'.
+
+=cut
+
 sub ipport {
 	my $client = shift;
 
@@ -847,21 +251,36 @@ sub ipport {
 	return Slim::Utils::Network::paddr2ipaddress($client->paddr);
 }
 
-# returns IP address
+=head2 ip( $client )
+
+Returns the client's IP address.
+
+=cut
+
 sub ip {
 	return (split(':',shift->ipport))[0];
 }
 
-# returns port
+=head2 port( $client )
+
+Returns the client's port.
+
+=cut
+
 sub port {
 	return (split(':',shift->ipport))[1];
 }
 
-sub name {
-	my $client = shift;
-	my $name = shift;
+=head2 name( $client, [ $name ] )
 
-	return unless $client;
+Get the playername for the client. Optionally set the playername if $name was passed.
+
+=cut
+
+sub name {
+	my $client = shift || return;
+	my $name   = shift;
+
 	if (defined $name) {
 
 		$client->prefSet("playername", $name);
@@ -870,7 +289,7 @@ sub name {
 
 		$name = $client->prefGet("playername");
 	}
-	
+
 	if (!defined $name) {
 		$name = defaultName($client);
 	}
@@ -878,10 +297,21 @@ sub name {
 	return $name;
 }
 
+=head2 defaultName( $client )
+
+Returns the default name for the client (IP address)
+
+=cut
+
 sub defaultName {
-	my ($name) = split(':', ipport(shift));
-	return $name;
+	return shift->ip;
 }
+
+=head2 debug( $client, @msg )
+
+Log a debug message for this client.
+
+=cut
 
 sub debug {
 	my $self = shift;
@@ -907,6 +337,13 @@ sub getClient {
 
 	return($ret);
 }
+
+=head2 forgetClient( $client )
+
+Removes the client from the server's watchlist. The client will not show up in
+the WebUI, nor will any it's timers be serviced anymore until it reconnects.
+
+=cut
 
 sub forgetClient {
 	my $client = shift;
@@ -1047,16 +484,51 @@ sub canDirectStream { return 0; }
 sub canLoop { return 0; }
 sub canDoReplayGain { return 0; }
 
-# mixerConstant returns the requested aspect of a given mixer feature
-# Supported features: volume, pitch, bass, treble
-# Supported aspects: min       - the minimum setting of the feature
-#                    max       - the maximum setting of the feature
-#                    mid       - the midpoint of the feature, if important
-#                    scale     - the multiplier for display of the feature value
-#                    increment - The inverse of scale  
-#                    balanced  - whether to bias the displayed value by the mid value
-# TODO allow different player types to have their own scale and increment, when SB2 has better resolution
-# uncomment the increments below
+=head2 mixerConstant( $client, $feature, $aspect )
+
+Returns the requested aspect of a given mixer feature.
+
+Supported features: volume, pitch, bass & treble.
+
+Supported aspects:
+
+=over 4
+
+=item * min
+
+The minimum setting of the feature.
+
+=back
+
+=over 4
+
+=item * max
+
+The maximum setting of the feature.
+
+=item * mid
+
+The midpoint of the feature, if important.
+
+=item * scale
+
+The multiplier for display of the feature value.
+
+=item * increment
+
+The inverse of scale.
+
+=item * balanced.
+
+Whether to bias the displayed value by the mid value.
+
+=back
+
+TODO allow different player types to have their own scale and increment, when
+SB2 has better resolution uncomment the increments below
+
+=cut
+
 sub mixerConstant {
 	my ($client, $feature, $aspect) = @_;
 	my ($scale, $increment);
@@ -1129,7 +601,6 @@ sub tempVolume {
 	my $r = shift;
 	return $r->[97];
 }
-
 
 sub treble {
 	my ($client, $treble) = @_;
@@ -1284,13 +755,13 @@ sub pref {
 	my $value = shift;
 
 	my $ind = undef;
-	
+
 	return undef unless defined $pref;
-	
+
 	if (ref($pref) eq "ARRAY") {
 		($pref,$ind) = @$pref;
 	}
-	
+
 	if (defined $value) {
 		return $client->prefSet($pref,$value,$ind);
 	} else {
@@ -1302,7 +773,7 @@ sub prefGet {
 	my $client = shift;
 	my $pref = shift;
 	my $ind = shift;
-	
+
 	if (defined $ind) {
 		$client->prefGetInd($pref,$ind);
 	} else {
@@ -1403,6 +874,14 @@ sub prefIsDefined {
 # using wrappers for methods which involve changing the preference
 # so that we don't have to worry about writing out the preferences
 
+=head2 prefSet( $client, $prefName, $value, $index )
+
+Sets the client preference to the specified value.
+
+See L<Slim::Utils::Prefs::set>
+
+=cut
+
 sub prefSet {
 	my $client = shift;
 	my $pref = shift;
@@ -1412,6 +891,12 @@ sub prefSet {
 	return Slim::Utils::Prefs::set($pref,$value,$ind,$client,$client->_prefs());
 }
 
+=head2 prefPush( $client, $prefName, $value )
+
+Appends the value to the specified client array preference.
+
+=cut
+
 sub prefPush {
 	my $client = shift;
 	my $pref = shift;
@@ -1419,6 +904,12 @@ sub prefPush {
 	
 	Slim::Utils::Prefs::push($pref,$value,$client->_prefs());
 }
+
+=head2 prefDelete( $client, $prefName, $index )
+
+Removes a client pref specified by the name and index.
+
+=cut
 
 sub prefDelete {
 	my $client = shift;
@@ -1428,12 +919,29 @@ sub prefDelete {
 	Slim::Utils::Prefs::delete($pref,$ind,$client->_prefs());
 }
 
+=head2 masterOrSelf( $client )
+
+See L<Slim::Player::Sync> for more information.
+
+Returns the the master L<Slim::Player::Client> object if one exists, otherwise
+returns ourself.
+
+=cut
+
 sub masterOrSelf {
 	Slim::Player::Sync::masterOrSelf(@_)
 }
 
 sub requestStatus {
 }
+
+=head2 contentTypeSupported( $client, $type )
+
+Returns true if the player natively supports the content type.
+
+Returns false otherwise.
+
+=cut
 
 sub contentTypeSupported {
 	my $client = shift;
@@ -1446,13 +954,49 @@ sub contentTypeSupported {
 	return 0;
 }
 
+=head2 shouldLoop( $client )
+
+Tells the client to loop on the track in the player itself. Only valid for
+Alarms and other short audio segments. Squeezebox v2, v3 & Transporter.
+
+=cut
+
 sub shouldLoop {
 	my $client = shift;
 
 	return 0;
 }
 
-# Given bitrate and content-length of a stream, display a progress bar
+=head2 streamingProgressBar( $client, \%args )
+
+Given bitrate and content-length of a stream, display a progress bar
+
+Valid arguments are:
+
+=over 4
+
+=item * url
+
+Required.
+
+=item * duration
+
+Specified directly - IE: from a plugin.
+
+=back
+
+=over 4
+
+=item * bitrate
+
+=item * length
+
+Duration can be calculatd from bitrate + length.
+
+=back
+
+=cut
+
 sub streamingProgressBar {
 	my ( $client, $args ) = @_;
 	
@@ -1505,7 +1049,12 @@ sub streamingProgressBar {
 	}
 }
 
-# Send an IPC message to our parent process
+=head2 sendParent( $client, $msg )
+
+Send an IPC message to our parent process. Used for forked streaming.
+
+=cut
+
 sub sendParent {
 	my ( $client, $msg ) = @_;
 	
@@ -1517,7 +1066,12 @@ sub sendParent {
 	}
 }
 
-# Send an IPC message to our child process
+=head2 sendChild( $client, $msg )
+
+Send an IPC message to our child process. Used for forked streaming.
+
+=cut
+
 sub sendChild {
 	my ( $client, $msg ) = @_;
 	
@@ -1529,22 +1083,55 @@ sub sendChild {
 	}
 }
 
-# data accessors
+=head2 id()
+
+Returns the client ID - in the form of a MAC Address.
+
+=cut
 
 sub id {
 	my $r = shift;
 	@_ ? ($r->[0] = shift) : $r->[0];
 }
+
 # the _prefs method should not be used to access individual prefs
 # use the pref* methods for working with client prefs
 sub _prefs {
 	my $r = shift;
 	@_ ? ($r->[1] = shift) : $r->[1];
 }
+
+=head2 revision()
+
+Returns the firmware revision of the client.
+
+=over 4
+
+=item * 0
+
+Unknown
+
+item * 1.2
+
+Old (1.0, 1.1, 1.2),
+
+item * 1.3
+
+New streaming protocol (Squeezebox v1?)
+
+=item * 2.0
+
+Client sends MAC address, NEC IR codes supported
+
+=back
+
+=cut
+
 sub revision {
 	my $r = shift;
 	@_ ? ($r->[4] = shift) : $r->[4];
 }
+
 sub macaddress {
 	my $r = shift;
 	@_ ? ($r->[5] = shift) : $r->[5];
@@ -1553,30 +1140,22 @@ sub paddr {
 	my $r = shift;
 	@_ ? ($r->[6] = shift) : $r->[6];
 }
+
 sub startupPlaylistLoading {
 	my $r = shift;
 	@_ ? ($r->[7] = shift) : $r->[7];
 }
+
 sub udpsock {
 	my $r = shift;
 	@_ ? ($r->[9] = shift) : $r->[9];
 }
+
 sub tcpsock {
 	my $r = shift;
 	@_ ? ($r->[10] = shift) : $r->[10];
 }
-sub RTT {
-	my $r = shift;
-	@_ ? ($r->[11] = shift) : $r->[11];
-}
-sub prevwptr {
-	my $r = shift;
-	@_ ? ($r->[12] = shift) : $r->[12];
-}
-sub waitforstart {
-	my $r = shift;
-	@_ ? ($r->[13] = shift) : $r->[13];
-}
+
 sub readytosync {
 	my $r = shift;
 	@_ ? ($r->[14] = shift) : $r->[14];
@@ -1587,74 +1166,68 @@ sub streamformat {
 	@_ ? ($r->[15] = shift) : $r->[15];
 }
 
-sub resync {
-	my $r = shift;
-	@_ ? ($r->[16] = shift) : $r->[16];
-}
 sub streamingsocket {
 	my $r = shift;
 	@_ ? ($r->[17] = shift) : $r->[17];
 }
+
 sub audioFilehandle {
 	my $r = shift;
 	@_ ? ($r->[18] = shift) : $r->[18];
 }
+
 sub audioFilehandleIsSocket {
 	my $r = shift;
 	@_ ? ($r->[19] = shift) : $r->[19];
 }
+
 sub chunks {
 	my $r = shift;
 	my $i;
 	@_ ? ($i = shift) : return $r->[20];
 	@_ ? ($r->[20]->[$i] = shift) : $r->[20]->[$i];
 }
+
 sub songStartStreamTime {
 	my $r = shift;
 	@_ ? ($r->[21] = shift) : $r->[21];
 }
+
 sub remoteStreamStartTime {
 	my $r = shift;
 	@_ ? ($r->[22] = shift) : $r->[22];
 }
-sub shoutMetaPointer {
-	my $r = shift;
-	@_ ? ($r->[23] = shift) : $r->[23];
-}
-sub shoutMetaInterval {
-	my $r = shift;
-	@_ ? ($r->[24] = shift) : $r->[24];
-}
+
+
 sub playlist {
 	my $r = shift;
 	my $i;
 	@_ ? ($i = shift) : return $r->[28];
 	@_ ? ($r->[28]->[$i] = shift) : $r->[28]->[$i];
 }
+
 sub shufflelist {
 	my $r = shift;
 	my $i;
 	@_ ? ($i = shift) : return $r->[29];
 	@_ ? ($r->[29]->[$i] = shift) : $r->[29]->[$i];
 }
+
 sub currentsongqueue {
 	my $r = shift;
 	my $i;
 	@_ ? ($i = shift) : return $r->[30];
 	@_ ? ($r->[30]->[$i] = shift) : $r->[30]->[$i];
 }
+
 sub playmode {
 	my $r = shift;
 	@_ ? ($r->[31] = shift) : $r->[31];
 }
+
 sub rate {
 	my $r = shift;
 	@_ ? ($r->[32] = shift) : $r->[32];
-}
-
-sub bufferThreshold {
-	my $r = shift;
-	@_ ? ($r->[33] = shift) : $r->[33];
 }
 
 sub outputBufferFullness {
@@ -1681,204 +1254,200 @@ sub currentSleepTime {
 	my $r = shift;
 	@_ ? ($r->[39] = shift) : $r->[39];
 }
+
 sub sleepTime {
 	my $r = shift;
 	@_ ? ($r->[40] = shift) : $r->[40];
 }
+
 sub master {
 	my $r = shift;
 	@_ ? ($r->[41] = shift) : $r->[41];
 }
+
 sub slaves {
 	my $r = shift;
 	my $i;
 	@_ ? ($i = shift) : return $r->[42];
 	@_ ? ($r->[42]->[$i] = shift) : $r->[42]->[$i];
 }
+
 sub syncgroupid {
 	my $r = shift;
 	@_ ? ($r->[43] = shift) : $r->[43];
 }
+
 sub password {
 	my $r = shift;
 	@_ ? ($r->[44] = shift) : $r->[44];
 }
+
 sub lastirbutton {
 	my $r = shift;
 	@_ ? ($r->[45] = shift) : $r->[45];
 }
+
 sub lastirtime {
 	my $r = shift;
 	@_ ? ($r->[46] = shift) : $r->[46];
 }
+
 sub lastircode {
 	my $r = shift;
 	@_ ? ($r->[47] = shift) : $r->[47];
 }
+
 sub lastircodebytes {
 	my $r = shift;
 	@_ ? ($r->[48] = shift) : $r->[48];
 }
+
 sub startirhold {
 	my $r = shift;
 	@_ ? ($r->[50] = shift) : $r->[50];
 }
+
 sub irtimediff {
 	my $r = shift;
 	@_ ? ($r->[51] = shift) : $r->[51];
 }
+
 sub irrepeattime {
 	my $r = shift;
 	@_ ? ($r->[52] = shift) : $r->[52];
 }
-sub showBrieflyData {
-	my $r = shift;
-	@_ ? ($r->[53] = shift) : $r->[53];
-}
+
 sub epochirtime {
 	my $r = shift;
 	@_ ? ($r->[54] = shift) : $r->[54];
 }
+
 sub modeStack {
 	my $r = shift;
 	my $i;
 	@_ ? ($i = shift) : return $r->[55];
 	@_ ? ($r->[55]->[$i] = shift) : $r->[55]->[$i];
 }
+
 sub modeParameterStack {
 	my $r = shift;
 	my $i;
 	@_ ? ($i = shift) : return $r->[56];
 	@_ ? ($r->[56]->[$i] = shift) : $r->[56]->[$i];
 }
+
 sub lines {
 	my $r = shift;
 	@_ ? ($r->[57] = shift) : $r->[57];
 }
+
 sub trackInfoLines {
 	my $r = shift;
 	my $i;
 	@_ ? ($i = shift) : return $r->[58];
 	@_ ? ($r->[58]->[$i] = shift) : $r->[58]->[$i];
 }
+
 sub trackInfoContent {
 	my $r = shift;
 	my $i;
 	@_ ? ($i = shift) : return $r->[59];
 	@_ ? ($r->[59]->[$i] = shift) : $r->[59]->[$i];
 }
+
 sub lastID3Selection {
 	my $r = shift;
 	my $i;
 	@_ ? ($i = shift) : return $r->[60];
 	@_ ? ($r->[60]->{$i} = shift) : $r->[60]->{$i};
 }
+
 sub blocklines {
 	my $r = shift;
 	@_ ? ($r->[61] = shift) : $r->[61];
 }
+
 sub curSelection {
 	my $r = shift;
 	my $i;
 	@_ ? ($i = shift) : return $r->[62];
 	@_ ? ($r->[62]->{$i} = shift) : $r->[62]->{$i};
 }
+
 sub pluginsSelection {
 	my $r = shift;
 	@_ ? ($r->[63] = shift) : $r->[63];
 }
-sub pwd {
-	my $r = shift;
-	@_ ? ($r->[64] = shift) : $r->[64];
-}
-sub currentDirItem {
-	my $r = shift;
-	@_ ? ($r->[65] = shift) : $r->[65];
-}
-sub numberOfDirItems {
-	my $r = shift;
-	@_ ? ($r->[66] = shift) : $r->[66];
-}
-sub dirItems {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[67];
-	@_ ? ($r->[67]->[$i] = shift) : $r->[67]->[$i];
-}
-sub lastSelection {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[68];
-	@_ ? ($r->[68]->{$i} = shift) : $r->[68]->{$i};
-}
+
 sub curDepth {
 	my $r = shift;
 	@_ ? ($r->[69] = shift) : $r->[69];
 }
+
 sub searchFor {
 	my $r = shift;
 	@_ ? ($r->[70] = shift) : $r->[70];
 }
+
 sub searchTerm {
 	my $r = shift;
 	my $i;
 	@_ ? ($i = shift) : return $r->[71];
 	@_ ? ($r->[71]->[$i] = shift) : $r->[71]->[$i];
 }
-sub searchCursor {
-	my $r = shift;
-	@_ ? ($r->[72] = shift) : $r->[72];
-}
+
 sub lastLetterIndex {
 	my $r = shift;
 	@_ ? ($r->[73] = shift) : $r->[73];
 }
+
 sub lastLetterDigit {
 	my $r = shift;
 	@_ ? ($r->[74] = shift) : $r->[74];
 }
+
 sub lastLetterTime {
 	my $r = shift;
 	@_ ? ($r->[75] = shift) : $r->[75];
 }
+
 sub signalStrengthLog {
 	my $r = shift;
 	@_ ? ($r->[76]->log(shift)) : $r->[76];
 }
+
 sub bufferFullnessLog {
 	my $r = shift;
 	@_ ? ($r->[77]->log(shift)) : $r->[77];
 }
+
 sub slimprotoQLenLog {
 	my $r = shift;
 	@_ ? ($r->[78]->log(shift)) : $r->[78];
 }
+
 sub irRefTimeStored {
 	my $r = shift;
 	@_ ? ($r->[79] = shift) : $r->[79];
 }
+
 sub syncSelection {
 	my $r = shift;
 	@_ ? ($r->[80] = shift) : $r->[80];
 }
+
 sub syncSelections {
 	my $r = shift;
 	my $i;
 	@_ ? ($i = shift) : return $r->[81];
 	@_ ? ($r->[81]->[$i] = shift) : $r->[81]->[$i];
 }
-sub browseMenuSelection {
-	my $r = shift;
-	@_ ? ($r->[82] = shift) : $r->[82];
-}
-sub settingsSelection {
-	my $r = shift;
-	@_ ? ($r->[83] = shift) : $r->[83];
-}
+
 sub songBytes {
 	my $r = shift;
 	@_ ? ($r->[84] = shift) : $r->[84];
 }
+
 sub pauseTime {
 	my $r = shift;
 	@_ ? ($r->[85] = shift) : $r->[85];
