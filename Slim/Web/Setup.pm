@@ -1244,7 +1244,7 @@ sub initSetupConfig {
 			},
 
 			'Default' => {
-				'PrefOrder' => ['audiodir', 'playlistdir', 'serverPriority','scannerPriority', undef],
+				'PrefOrder' => ['audiodir', 'playlistdir', undef],
 			},
 
 			'Rescan' => {
@@ -1289,39 +1289,6 @@ sub initSetupConfig {
 				'changeIntro'  => 'SETUP_PLAYLISTDIR_OK',
 				'rejectMsg'    => 'SETUP_BAD_DIRECTORY',
 				'PrefSize'     => 'large',
-			},
-
-			'serverPriority' => {
-				'validate' => \&Slim::Utils::Validate::inList,
-				'validateArgs' => ['', -20 .. 20],
-				'onChange' => sub { Slim::Utils::Misc::setPriority( Slim::Utils::Prefs::get("serverPriority") ); },
-				'optionSort' => sub {$a eq "" ? -1 : ($b eq "" ? 1 : $a <=> $b)},
-				'options' => {
-					''   => 'SETUP_PRIORITY_DEFAULT',
-					map {$_ => $_ . " " . Slim::Utils::Strings::getString({
-						-16 => 'SETUP_PRIORITY_HIGH',
-						-6 => 'SETUP_PRIORITY_ABOVE_NORMAL',
-						0 => 'SETUP_PRIORITY_NORMAL',
-						5 => 'SETUP_PRIORITY_BELOW_NORMAL',
-						15 => 'SETUP_PRIORITY_LOW'
-						}->{$_} || "") } (-20 .. 20)
-				}
-			},
-
-			'scannerPriority' => {
-				'validate' => \&Slim::Utils::Validate::inList,
-				'validateArgs' => ['', -20 .. 20],
-				'optionSort' => sub {$a eq "" ? -1 : ($b eq "" ? 1 : $a <=> $b)},
-				'options' => {
-					''   => 'SETUP_PRIORITY_CURRENT',
-					map {$_ => $_ . " " . Slim::Utils::Strings::getString({
-						-16 => 'SETUP_PRIORITY_HIGH',
-						-6 => 'SETUP_PRIORITY_ABOVE_NORMAL',
-						0 => 'SETUP_PRIORITY_NORMAL',
-						5 => 'SETUP_PRIORITY_BELOW_NORMAL',
-						15 => 'SETUP_PRIORITY_LOW'
-						}->{$_} || "") } (-20 .. 20)
-				}
 			},
 
 			'rescan' => {
@@ -2015,6 +1982,8 @@ sub initSetupConfig {
 					disableStatistics
 					itemsPerPass
 					prefsWriteDelay
+					serverPriority
+					scannerPriority
 				)],
 			},
 		},
@@ -2051,7 +2020,41 @@ sub initSetupConfig {
 					'1' => 'SETUP_FORKEDSTREAMING_ENABLE',
 					'0' => 'SETUP_FORKEDSTREAMING_DISABLE',
 				},
-			},				
+			},
+
+			'serverPriority' => {
+				'validate' => \&Slim::Utils::Validate::inList,
+				'validateArgs' => ['', -20 .. 20],
+				'onChange' => sub { Slim::Utils::Misc::setPriority( Slim::Utils::Prefs::get("serverPriority") ); },
+				'optionSort' => sub {$a eq "" ? -1 : ($b eq "" ? 1 : $a <=> $b)},
+				'options' => {
+					''   => 'SETUP_PRIORITY_DEFAULT',
+					map {$_ => $_ . " " . Slim::Utils::Strings::getString({
+						-16 => 'SETUP_PRIORITY_HIGH',
+						-6 => 'SETUP_PRIORITY_ABOVE_NORMAL',
+						0 => 'SETUP_PRIORITY_NORMAL',
+						5 => 'SETUP_PRIORITY_BELOW_NORMAL',
+						15 => 'SETUP_PRIORITY_LOW'
+						}->{$_} || "") } (-20 .. 20)
+				}
+			},
+
+			'scannerPriority' => {
+				'validate' => \&Slim::Utils::Validate::inList,
+				'validateArgs' => ['', -20 .. 20],
+				'optionSort' => sub {$a eq "" ? -1 : ($b eq "" ? 1 : $a <=> $b)},
+				'options' => {
+					''   => 'SETUP_PRIORITY_CURRENT',
+					map {$_ => $_ . " " . Slim::Utils::Strings::getString({
+						-16 => 'SETUP_PRIORITY_HIGH',
+						-6 => 'SETUP_PRIORITY_ABOVE_NORMAL',
+						0 => 'SETUP_PRIORITY_NORMAL',
+						5 => 'SETUP_PRIORITY_BELOW_NORMAL',
+						15 => 'SETUP_PRIORITY_LOW'
+						}->{$_} || "") } (-20 .. 20)
+				}
+			},
+
 		},
 	} #end of setup{'performance'} hash
 	,'NETWORK_SETTINGS' => {
