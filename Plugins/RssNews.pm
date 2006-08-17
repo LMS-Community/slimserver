@@ -24,7 +24,6 @@ use Slim::Formats::XML;
 use Slim::Utils::Cache;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
-use Slim::Web::XMLBrowser;
 
 # Default feed list
 my @default_feeds = (
@@ -193,32 +192,6 @@ sub setMode {
 	);
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
-}
-
-sub webPages {
-	my $title = 'PLUGIN_RSSNEWS';
-	
-	if (grep {$_ eq 'RssNews'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages->addPageLinks('plugins', { $title => undef });
-	} else {
-		Slim::Web::Pages->addPageLinks('plugins', { $title => 'plugins/RssNews/index.html' });
-	}
-
-	my %pages = ( 
-		'index.html' => sub {
-			# Get OPML list of feeds from cache
-			my $cache = Slim::Utils::Cache->new();
-			my $opml = $cache->get( 'rss_opml' );
-			Slim::Web::XMLBrowser->handleWebIndex( {
-				feed    => $opml,
-				title   => $title,
-				expires => $refresh_sec,
-				args    => \@_
-			} );
-		},
-	);
-	
-	return \%pages;
 }
 
 sub cliQuery {
