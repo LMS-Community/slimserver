@@ -37,7 +37,8 @@ sub findArtwork {
 	# Only look for track/album combos that don't already have artwork.
 	my $cond = {
 		'me.audio'      => 1,
-		'album.artwork' => { '=' => undef },
+		'me.timestamp'  => { '>=' => Slim::Schema->lastRescanTime },
+		'album.artwork' => { '='  => undef },
 	};
 
 	my $attr = {

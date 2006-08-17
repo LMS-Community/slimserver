@@ -799,10 +799,14 @@ sub findAndScanDirectoryTree {
 			'url'       => $path,
 			'recursive' => 0,
 		});
-	}
 
-	# Bug: 3841 - check for new artwork
-	Slim::Music::Artwork->findArtwork($topLevelObj);
+		# Bug: 3841 - check for new artwork
+		# But don't search at the root level.
+		if ($path ne Slim::Utils::Prefs::get('audiodir')) {
+
+			Slim::Music::Artwork->findArtwork($topLevelObj);
+		}
+	}
 
 	# Now read the raw directory and return it. This should always be really fast.
 	my $items = [ Slim::Music::Info::sortFilename( readDirectory($path) ) ];
