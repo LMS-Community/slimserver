@@ -2,11 +2,11 @@
   <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %]width="50%">
       [% PROCESS trackinfo %]
   </td>
-  <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %] align="right" width="10%">  
+  <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %] align="center" width="10%">  
     ([% item.song_count %])  
   </td>
   <td [% IF odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not odd %]class="even" bgcolor="#FFFFFF"[% END %] align="right" width="10%">      
-    <img src="html/bar_small_first.gif">[% item.song_bar %]
+    <nobr><img src="html/bar_small_first.gif">[% item.song_bar %]</nobr>
   </td>
 </tr>
 
