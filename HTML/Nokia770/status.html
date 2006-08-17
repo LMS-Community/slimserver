@@ -183,7 +183,9 @@
 			<a href="http://google.com" id = 'artist_link' style="text-decoration:none">
 			<span id = 'artist'></span>
 			</a>
-                        <span id = '[% "PLUGIN_BIOGRAPHY" | string | replace('\s+', '_') %]' class = 'supertinytext'></span>
+			[% bio = "PLUGIN_BIOGRAPHY" | getstring; IF bio != "PLUGIN_BIOGRAPHY" %]
+                   <span id = '[% bio | replace('\s+', '_') %]' class = 'supertinytext'></span>
+			[% END %]
 			</td>
 		</tr>
 		<tr>
@@ -192,7 +194,9 @@
 			<a href="http://google.com" id = 'album_link' style="text-decoration:none">
 			<span id = 'album'></span>
 			</a>
-			<span id = '[% "PLUGIN_ALBUMREVIEW" | string | replace('\s+', '_') %]' class = 'supertinytext'></span>
+			[% albumReview = "PLUGIN_ALBUMREVIEW" | getstring; IF albumReview != "PLUGIN_ALBUMREVIEW" %]
+				<span id = '[% albumReview | replace('\s+', '_') %]' class = 'supertinytext'></span>
+			[% END %]
 			</td>
 		</tr>
 		<tr>
@@ -349,6 +353,8 @@ onclick="document.prev.src = 'html/images/larger/prev_active.gif'; playerButtonC
 	<div id = 'streaminfo' style = 'display: none;'>
 		<p>[% "REMOTE_STREAMING" | string %]:<br>
 		<span id = 'streamtitle' class = 'playingitemtext'></span>
-                <span id = 'Stream[% "PLUGIN_BIOGRAPHY" | string | replace('\s+', '_') %]' class = 'supertinytext'></span>
+		[% hasBio = "PLUGIN_BIOGRAPHY" | getstring; IF hasBio != "PLUGIN_BIOGRAPHY" %]
+           <span id = 'Stream[% hasBio | replace('\s+', '_') %]' class = 'supertinytext'></span>
+        [% END %]
 	</div>
 [% END %]

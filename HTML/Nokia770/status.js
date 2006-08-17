@@ -110,11 +110,15 @@ function refreshAll(theData) {
 	url = 'status.html';
 }
 
+[%-
+	biography   = "PLUGIN_BIOGRAPHY" | getstring;
+	albumReview = "PLUGIN_ALBUMREVIEW" | getstring;
+-%]
 function refreshPlugins(theData) {
 	var myData = theData.responseText;
 	var homeParsedData = parseData(myData);
 	// create Plugin links, if applicable
-	var pluginDivs = [ '[% "PLUGIN_BIOGRAPHY" | string %]', '[% "PLUGIN_ALBUMREVIEW" | string | replace('\s+', '_') %]' ];
+	var pluginDivs = [ [% IF biography != "PLUGIN_BIOGRAPHY"; "'"; biography | replace('\s+', '_'); "',"; END; %] [% IF albumReview != "PLUGIN_ALBUMREVIEW"; "'"; albumReview | replace('\s+', '_'); "'"; END; %] ];
 	pluginDivs.each( function (thisDiv) {
 		if (homeParsedData[thisDiv].match(/\w/)) {
 			var linkName = thisDiv.replace('_',' ');
