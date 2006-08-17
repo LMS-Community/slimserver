@@ -1011,8 +1011,9 @@ sub shouldCacheURL {
 	# If the host doesn't start with a number, cache it
 	return 1 if $host !~ /^\d/;
 	
-	my $ip = Net::IP->new($host);
-	return 0 if $ip->iptype eq 'PRIVATE';
+	if ( my $ip = Net::IP->new($host) ) {
+		return 0 if $ip->iptype eq 'PRIVATE';
+	}
 	
 	return 1;
 }
