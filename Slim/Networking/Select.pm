@@ -2,7 +2,7 @@ package Slim::Networking::Select;
 
 # $Id$
 
-# SlimServer Copyright (c) 2003-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2003-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -23,13 +23,31 @@ BEGIN {
 	}
 }
 
+=head1 NAME
+
+Slim::Networking::Select
+
+=head1 SYNOPSIS
+
+Slim::Utils::Select::addRead( $socket, \&callback )
+
+=head1 DESCRIPTION
+
+This module encapsulates all select() related code, handled by SlimServer's main loop.
+
+Usually, you'll want to use higher such as L<Slim::Networking::Async::HTTP>.
+
+=head1 FUNCTIONS
+
+=cut
+
 our $callbacks  = {};
 our %writeQueue = ();
 
 our $selects = {
-	'read'    => IO::Select->new, # vectors used for normal select
-	'write'   => IO::Select->new,
-	'error'   => IO::Select->new,
+	'read'     => IO::Select->new, # vectors used for normal select
+	'write'    => IO::Select->new,
+	'error'    => IO::Select->new,
 	'is_read'  => IO::Select->new, # alternatives for select within idleStreams
 	'is_write' => IO::Select->new,
 	'is_error' => IO::Select->new,
@@ -42,30 +60,72 @@ my $endSelectTime;
 
 my $selectInstance = 0;
 
+=head2 addRead( $sock, $callback )
+
+Add a socket to the select loop for reading.
+
+$callback will be notified when the socket is readable.
+
+=cut
+
 sub addRead {
 
 	_updateSelect('read', @_);
 }
+
+=head2 removeRead( $sock )
+
+Remove a socket from the select loop and callback notification for reading.
+
+=cut
 
 sub removeRead {
 	
 	_updateSelect('read', shift);
 }
 
+=head2 addWrite( $sock, $callback )
+
+Add a socket to the select loop for writing.
+
+$callback will be notified when the socket is writable..
+
+=cut
+
 sub addWrite {
 
 	_updateSelect('write', @_);
 }
+
+=head2 removeWrite( $sock )
+
+Remove a socket from the select loop and callback notification for write.
+
+=cut
 
 sub removeWrite {
 	
 	_updateSelect('write', shift);
 }
 
+=head2 addError( $sock, $callback )
+
+Add a socket to the select loop for error checking.
+
+$callback will be notified when the socket has an error.
+
+=cut
+
 sub addError {
 
 	_updateSelect('error', @_);
 }
+
+=head2 removeError( $sock )
+
+Remove a socket from the select loop and callback notification for errors.
+
+=cut
 
 sub removeError {
 	
@@ -123,6 +183,15 @@ sub _updateSelect {
 		);
 	}
 }
+
+=head2 select( $selectTime, [ $idleStreams ] )
+
+Services all sockets currently in the select loop. Callbacks will be notified
+when a socket is readable, writable or has an error.
+
+The only callers are slimserver.pl::idle() and slimserver.pl::idleStreams()
+
+=cut
 
 sub select {
 	my $select_time = shift;
@@ -186,6 +255,15 @@ sub select {
 	return $count;
 }
 
+=head2 writeNoBlock( $socket, $chunkRef )
+
+Send a chunk of data out on $socket without blocking.
+
+If multiple syswrites are required to send out the entire $chunkRef, multiple
+calls to L<Slim::Networking::Select::select()> will handle it.
+
+=cut
+
 sub writeNoBlock {
 	my $socket = shift;
 	my $chunkRef = shift;
@@ -242,6 +320,15 @@ sub writeNoBlock {
 	} 
 }
 
+=head2 writeNoBlockQLen( $socket )
+
+Returns the number of chunks in the queue which have not been written out to
+$socket.
+
+Returns -1 if there are no chunks to be written.
+
+=cut
+
 sub writeNoBlockQLen {
 	my $socket = shift;
 
@@ -253,6 +340,12 @@ sub writeNoBlockQLen {
 	return -1;
 }
 
+=head2 removeWriteNoBlockQ( $socket )
+
+Remove $socket and any associated chunks from being sent.
+
+=cut
+
 sub removeWriteNoBlockQ {
 	my $socket = shift;
 	
@@ -263,6 +356,16 @@ sub removeWriteNoBlockQ {
 		delete($writeQueue{$socket});
 	}
 }
+
+=head1 SEE ALSO
+
+L<IO::Select>
+
+L<Slim::Networking::Async::HTTP>
+
+L<Slim::Networking::Slimproto>
+
+=cut
 
 1;
 
