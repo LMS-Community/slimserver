@@ -705,6 +705,15 @@ sub stream {
 				$::d_directstream && msg("This player supports direct streaming for $url as $server_url, let's do it.\n");
 		
 				my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($server_url);
+				
+				# If a proxy server is set, change ip/port
+				my $proxy = Slim::Utils::Prefs::get('webproxy');
+				if ( $proxy ) {
+					my ($pserver, $pport) = split /:/, $proxy;
+					$server = $pserver;
+					$port   = $pport;
+				}
+				
 				my ($name, $liases, $addrtype, $length, @addrs) = gethostbyname($server);
 				if ($port && $addrs[0]) {
 					$server_port = $port;

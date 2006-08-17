@@ -50,13 +50,10 @@ sub requestString {
 
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
  
+	# Use full path for proxy servers
 	my $proxy = Slim::Utils::Prefs::get('webproxy');
-
-	# Proxy not supported for direct streaming
-	if ( defined $client && !$client->canDirectStream($url) ) {
-		if ($proxy && $server ne 'localhost' && $server ne '127.0.0.1') {
-			$path = "http://$server:$port$path";
-		}
+	if ( $proxy && $server !~ /(?:localhost|127.0.0.1)/ ) {
+		$path = "http://$server:$port$path";
 	}
 
 	my $type = $post ? 'POST' : 'GET';
