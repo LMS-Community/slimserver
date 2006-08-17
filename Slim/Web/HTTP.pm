@@ -641,7 +641,11 @@ sub processURL {
 	if ($client && $client->isa("Slim::Player::SLIMP3")) {
 
 		$params->{'playermodel'} = 'slimp3';
+	} elsif ($client && $client->isa("Slim::Player::Transporter")) {
+
+		$params->{'playermodel'} = 'transporter';
 	} else {
+
 		$params->{'playermodel'} = 'squeezebox';
 	}
 
@@ -700,6 +704,14 @@ sub generateHTTPResponse {
 
 		$params->{'artwork'} = 1 unless defined $params->{'artwork'};
 	}
+
+	# Check for the album order cookie.
+	if ($params->{'cookies'}->{'SlimServer-orderBy'} && 
+	    $params->{'cookies'}->{'SlimServer-orderBy'}->value) {
+
+		$params->{'orderBy'} = $params->{'cookies'}->{'SlimServer-orderBy'}->value unless defined $params->{'orderBy'};
+	}
+
 
 	if (Slim::Web::Graphics::serverResizesArt()) {
 		$params->{'serverResizesArt'} = 1;

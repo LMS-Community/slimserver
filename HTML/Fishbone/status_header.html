@@ -73,8 +73,8 @@
 		<div id="mastHead">
 			<div id="playerlogo">
 				<span id="squeezeboxlogo" [% IF playermodel == 'slimp3' %]style="display:none"[% END %]>
-					<img class="gray" src="[% webroot %]html/images/squeezebox_logo.small.gif" alt="Squeezebox" title="Squeezebox" width="98" height="17">
-					<img class="tan" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" alt="Squeezebox" title="Squeezebox" width="98" height="17">
+					<img class="gray" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" alt="[% playermodel %]" title="[% playermodel %]" width="98" height="17">
+					<img class="tan" src="[% webroot %]html/images/[% playermodel %]_logo.small_tan.gif" alt="[% playermodel %]" title="[% playermodel %]" width="98" height="17">
 				</span>
 				<span id="slimp3logo" [% IF playermodel != 'slimp3' %]style="display:none"[% END %]>
 					<img class="gray" src="[% webroot %]html/images/slimp3_logo.small.gif" alt="SliMP3" title="SliMP3" width="98" height="17">
@@ -208,7 +208,7 @@
 				([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])[% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
 			</div>
 			<div id="playlistLinks">
-				[% img = '' %][% IF cansave %][% PROCESS savePlaylistLink %] / [% END %]
+				[% img = '' %]<span id="saveplaylist">[% IF cansave %][% PROCESS savePlaylistLink %] / [% END %]</span>
 				[% PROCESS downloadPlaylistLink %] /
 				[% PROCESS clearPlaylistLink %]
 			</div>
