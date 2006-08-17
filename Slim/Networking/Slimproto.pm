@@ -910,10 +910,15 @@ sub _knob_handler {
 	my $data_ref = shift;
 
 	# handle knob movement
-	my ($time, $position) = unpack( 'NNN', $$data_ref);
-	
+	my ($time, $position) = unpack('NN', $$data_ref);
+
+	# Perl doesn't have an unsigned network long format.
+	if ($position == 4294967295) {
+		$position = -1;
+	}
+
 	my $oldPos = $client->knobPos();
-		
+
 	$::d_slimproto && msg("knob position: $position (old: $oldPos) time: $time\n");
 
 	$client->knobPos($position);

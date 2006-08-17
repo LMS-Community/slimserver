@@ -67,102 +67,154 @@ sub init {
 		},
 
 		'knob' => sub {
-				my ($client,$funct,$functarg) = @_;
-				
+				my ($client, $funct, $functarg) = @_;
+
 				my $newindex = $client->knobPos();
 				my $oldindex = browseplaylistindex($client);
-				
+
 				if ($oldindex != $newindex) {
 					browseplaylistindex($client,$newindex);
 				}
-				
+
 				$client->param('showingnowplaying', 0);
 
-				$::d_ui && msgf("old: $oldindex new: $newindex is after setting: [%s]\n", browseplaylistindex($client));
+				$::d_ui && msgf("funct: [$funct] old: $oldindex new: $newindex is after setting: [%s]\n", browseplaylistindex($client));
 
-				if ($oldindex > $newindex) {
-					$client->pushUp();
+				my ($songcount) = Slim::Player::Playlist::count($client);
+
+				if ($songcount < 2 && $oldindex == 0 && $newindex == -1) {
+
+					$client->bumpDown;
+
+				} elsif ($songcount < 2 && $oldindex == -1 && $newindex == 0) {
+
+					$client->bumpUp;
+
+				} elsif ($oldindex > $newindex) {
+
+					$client->pushUp;
+
 				} elsif ($oldindex < $newindex) {
-					$client->pushDown();
+
+					$client->pushDown;
 				}
 		},
+
 		'up' => sub  {
 			my $client = shift;
 			my $button = shift;
 			my $inc = shift || 1;
-			my($songcount) = Slim::Player::Playlist::count($client);
+
+			my ($songcount) = Slim::Player::Playlist::count($client);
+
 			if ($songcount < 2) {
+
 				$client->bumpUp() if ($button !~ /repeat/);
+
 			} else {
+
 				$client->param('showingnowplaying',0);
 				$inc = ($inc =~ /\D/) ? -1 : -$inc;
+
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $songcount, browseplaylistindex($client));
+
 				if ($newposition != browseplaylistindex($client)) {
+
 					browseplaylistindex($client,$newposition);
 					$client->pushUp();
 				}
 			}
 		},
+
 		'down' => sub  {
 			my $client = shift;
 			my $button = shift;
 			my $inc = shift || 1;
-			my($songcount) = Slim::Player::Playlist::count($client);
+
+			my ($songcount) = Slim::Player::Playlist::count($client);
+
 			if ($songcount < 2) {
+
 				$client->bumpDown() if ($button !~ /repeat/);
+
 			} else {
+
 				$client->param('showingnowplaying',0);
-				if ($inc =~ /\D/) {$inc = 1}
+
+				if ($inc =~ /\D/) {
+					$inc = 1;
+				}
+
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $songcount, browseplaylistindex($client));
+
 				if ($newposition != browseplaylistindex($client)) {
 					browseplaylistindex($client,$newposition);
 					$client->pushDown();
 				}
 			}
 		},
+
 		'left' => sub  {
 			my $client = shift;
+
 			my $oldlines = $client->curLines();
+
 			Slim::Buttons::Home::jump($client, 'NOW_PLAYING');
+
 			while (Slim::Buttons::Common::popMode($client, 1)) {};
+
 			Slim::Buttons::Common::pushMode($client, 'home');
+
 			if ($client->display->showExtendedText()) {
+
 				$client->pushRight($oldlines, Slim::Buttons::Common::pushpopScreen2($client, 'playlist') );
+
 			} else {
+
 				$client->pushRight($oldlines, $client->curLines());
 			}
 		},
+
 		'right' => sub  {
-			my $client = shift;
+			my $client      = shift;
 			my $playlistlen = Slim::Player::Playlist::count($client);
+
 			if ($playlistlen < 1) {
+
 				$client->bumpRight();
+
 			} else {
+
 				Slim::Buttons::Common::pushModeLeft($client, 'trackinfo', {
 					'track' => Slim::Player::Playlist::song($client, browseplaylistindex($client)),
 					'current' => browseplaylistindex($client) == Slim::Player::Source::playingSongIndex($client)
-				} );
+				});
 			}
 		},
+
 		'numberScroll' => sub  {
 			my $client = shift;
 			my $button = shift;
 			my $digit = shift;
 			my $newposition;
-			
+
 			# do an unsorted jump
 			$newposition = Slim::Buttons::Common::numberScroll($client, $digit, Slim::Player::Playlist::shuffleList($client), 0);
-			
+
 			# reset showingnowplaying status, since this command overrides the automatic states
 			$client->param('showingnowplaying',0);
-			
+
 			# set browse location to the new index, proportional based on the number pressed
 			browseplaylistindex($client,$newposition);
+
 			$client->update();	
 		},
+
 		'add' => sub  {
 			my $client = shift;
+
 			if (Slim::Player::Playlist::count($client) > 0) {
+
 				# rec button deletes an entry if you are browsing the playlist...
 				my $songtitle = Slim::Music::Info::standardTitle($client, 
 					Slim::Player::Playlist::song($client, browseplaylistindex($client))
@@ -191,17 +243,27 @@ sub init {
 
 		'play' => sub  {
 			my $client = shift;
+
 			if (showingNowPlaying($client)) {
+
 				if (Slim::Player::Source::playmode($client) eq 'pause') {
+
 					$client->execute(["pause"]);
+
 				} elsif (Slim::Player::Source::rate($client) != 1) {
+
 					$client->execute(["rate", 1]);
+
 				} else {
+
 					$client->execute(["playlist", "jump", browseplaylistindex($client)]);
-				}	
+				}
+
 			} else {
+
 				$client->execute(["playlist", "jump", browseplaylistindex($client)]);
 			}
+
 			$client->update();
 		}
 	);
@@ -289,9 +351,9 @@ sub lines {
 
 		$parts->{'screen2'} ||= {
 			'line' => [ 
-						Slim::Music::Info::displayText($client, $song, 'ALBUM'),
-						Slim::Music::Info::displayText($client, $song, 'ARTIST')
-						],
+				Slim::Music::Info::displayText($client, $song, 'ALBUM'),
+				Slim::Music::Info::displayText($client, $song, 'ARTIST')
+			],
 		};
 
 	}

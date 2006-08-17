@@ -8,6 +8,8 @@ package Slim::Buttons::Common;
 # version 2.
 
 use strict;
+use warnings;
+
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use Scalar::Util qw(blessed);
