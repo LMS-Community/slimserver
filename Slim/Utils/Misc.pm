@@ -16,6 +16,7 @@ use Cwd ();
 use File::Spec::Functions qw(:ALL);
 use File::Which ();
 use FindBin qw($Bin);
+use Net::IP;
 use POSIX qw(strftime);
 use Scalar::Util qw(blessed);
 use Time::HiRes;
@@ -989,6 +990,31 @@ sub arrayDiff {
 	}
 
 	return \%diff;
+}
+
+# Bug 3147, don't cache things (HTTP responses, parsed XML)
+# that come from file URLs or places on the local network
+sub shouldCacheURL {
+	my $url = shift;
+	
+	# No caching for file:// URLs
+	return 0 if Slim::Music::Info::isFileURL($url);
+	
+	# No caching for local network hosts
+	# This is determined by either:
+	# 1. No dot in hostname
+	# 2. host is a private IP address type
+	my $host = URI->new($url)->host;
+	
+	return 0 if $host !~ /\./;
+	
+	# If the host doesn't start with a number, cache it
+	return 1 if $host !~ /^\d/;
+	
+	my $ip = Net::IP->new($host);
+	return 0 if $ip->iptype eq 'PRIVATE';
+	
+	return 1;
 }
 
 1;

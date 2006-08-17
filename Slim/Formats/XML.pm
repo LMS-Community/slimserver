@@ -44,7 +44,11 @@ sub getFeedSync {
 
 		return 0 unless defined $content;
 
-		return xmlToHash(\$content);
+		my $xml;
+		eval {
+			$xml = xmlToHash(\$content);
+		};
+		return $xml || 0;
 	}
 
 	return 0;
@@ -131,9 +135,16 @@ sub gotViaHTTP {
 	}
 	
 	# Cache the parsed XML
-	my $cache = Slim::Utils::Cache->new();
-	$::d_plugins && msg("Formats::XML: caching parsed XML for $XML_CACHE_TIME seconds\n");
-	$cache->set( $http->url() . '_parsedXML', $feed, $XML_CACHE_TIME );
+	if ( Slim::Utils::Misc::shouldCacheURL( $http->url ) ) {
+		my $cache = Slim::Utils::Cache->new();
+		$::d_plugins && msg("Formats::XML: caching parsed XML for $XML_CACHE_TIME seconds\n");
+		$cache->set( $http->url() . '_parsedXML', $feed, $XML_CACHE_TIME );
+	}
+	else {
+		$::d_plugins && msgf("Formats::XML: not caching parsed XML for %s, appears to be a local resource\n",
+			$http->url,
+		);
+	}
 
 	# call cb
 	my $cb = $params->{'cb'};
