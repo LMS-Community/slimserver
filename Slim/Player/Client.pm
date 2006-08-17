@@ -198,12 +198,6 @@ shoutMetaInterval() - type: int
 
 =item
 
-currBrightness() - type: int
-
-	current brightness setting of the client's VFD display, range 0..4
-
-=item
-
 prevline1() - type: string
 
 	what's currently on the the client's display, line 1
@@ -661,7 +655,7 @@ sub new {
 	$client->[22] = 0; # remoteStreamStartTime
 	$client->[23] = undef; # shoutMetaPointer
 	$client->[24] = undef; # shoutMetaInterval
-	$client->[25] = undef; # currBrightness
+	$client->[25] = undef; # unused
 	# $client->[26] = undef; # unused
 	# $client->[27] = undef; # unused
 	$client->[28] = []; # playlist
@@ -788,8 +782,6 @@ sub new {
 	$client->RTT(.5);
 
 	$client->searchCursor(0);
-
-	$client->currBrightness(1);
 
 	$clientHash{$id} = $client;
 
@@ -1189,6 +1181,9 @@ sub block{}
 sub symbols{}
 sub unblock{}
 sub updateKnob{}
+sub prevline1 {}
+sub prevline2 {}
+sub currBrightness {}
 
 sub pause {
 	my $client = shift;
@@ -1630,12 +1625,6 @@ sub shoutMetaInterval {
 	my $r = shift;
 	@_ ? ($r->[24] = shift) : $r->[24];
 }
-sub currBrightness {
-	my $r = shift;
-	@_ ? ($r->[25] = shift) : $r->[25];
-}
-sub prevline1 {}
-sub prevline2 {}
 sub playlist {
 	my $r = shift;
 	my $i;
@@ -1989,11 +1978,6 @@ sub modeVariableStack {
 	my $i;
 	@_ ? ($i = shift) : return $r->[104];
 	@_ ? ($r->[104]->[$i] = shift) : $r->[104]->[$i];
-}
-
-sub scrollState {
-	my $r = shift;
-	@_ ? ($r->[105] = shift) : $r->[105];
 }
 
 sub knobPos {

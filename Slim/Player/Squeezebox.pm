@@ -433,7 +433,7 @@ sub upgradeFirmware_SDK5 {
 	$client->modeParam('visu',[0]);
 
 	# force brightness to dim if off
-	if ($client->currBrightness() == 0) { $client->brightness(1); }
+	if ($client->display->currBrightness() == 0) { $client->display->brightness(1); }
 
 	open FS, $filename || return("Open failed for: $filename\n");
 

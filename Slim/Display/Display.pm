@@ -62,7 +62,7 @@ sub new {
 	$display->[3] = [0, 0, 0];# scrollState - element 1 = screen1
 	$display->[4] = {};       # renderCache
 	$display->[5] = [];       # scrollData - element 1 = screen1
-	$display->[6] = undef;    # currBrightness
+	$display->[6] = 1;        # currBrightness
 	$display->[7] = undef;    # lastVisMode
 	$display->[8] = undef;    # sbCallbackData
 	$display->[9] = undef;    # sbOldDisplay
