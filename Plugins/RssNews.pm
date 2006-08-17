@@ -199,9 +199,9 @@ sub webPages {
 	my $title = 'PLUGIN_RSSNEWS';
 	
 	if (grep {$_ eq 'RssNews'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages::addLinks('plugins', { $title => undef });
+		Slim::Web::Pages->addPageLinks('plugins', { $title => undef });
 	} else {
-		Slim::Web::Pages::addLinks('plugins', { $title => 'plugins/RssNews/index.html' });
+		Slim::Web::Pages->addPageLinks('plugins', { $title => 'plugins/RssNews/index.html' });
 	}
 
 	my %pages = ( 
