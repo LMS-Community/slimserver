@@ -327,6 +327,11 @@ sub render {
 			} elsif ($sc->{linefinish}[$l] <= $sc->{overlaystart}[$l] ) {
 				# no need to scroll - assemble line + pad + overlay
 				$bits |= $sc->{linebits}[$l] . chr(0) x ($sc->{overlaystart}[$l] - $sc->{linefinish}[$l]) . $sc->{overlaybits}[$l];
+				if ($sc->{scroll} && $sc->{scrollline} == $l) {
+					# previously scrolling same text on this line but no longer needed - probably due to overlay change
+					$sc->{scroll} = 0;
+					$sc->{scrolline} = undef;
+				}
 
 			} elsif (!$scroll || $l == 0 || ($sc->{scroll} && $sc->{scrollline} != $l)) {
 				# scrolling not enabled, line 0 or already scrolling for another line - truncate line
