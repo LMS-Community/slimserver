@@ -364,7 +364,7 @@ sub _parseASFFilePropertiesObject {
 	$info{'max_packet_size'}	= unpack('V', $self->_readAndIncrementOffset($DWORD));
 	$info{'max_bitrate'}		= unpack('V', $self->_readAndIncrementOffset($DWORD));
 
-	$info{'bitrate'}		= $info{'max_bitrate'};
+	$info{'bitrate'}		= ($info{'filesize'} * 8) / $info{'playtime_seconds'};
 
 	$self->{'INFO'}			= \%info;
 }
@@ -577,7 +577,8 @@ sub _parseWavFormat {
 		'codec'           => _RIFFwFormatTagLookup($wFormatTag),
 		'channels'        => unpack('v', substr($data,  2, $WORD)),
 		'sample_rate'     => unpack('v', substr($data,  4, $DWORD)),
-		'bitrate'         => unpack('v', substr($data,  8, $DWORD)) * 8,
+		# See bitrate in _parseASFFilePropertiesObject() for the correct calculation.
+		#'bitrate'         => unpack('v', substr($data,  8, $DWORD)) * 8,
 		'bits_per_sample' => unpack('v', substr($data, 14, $WORD)),
 	);
 
