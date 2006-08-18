@@ -101,6 +101,10 @@ sub hasExternalClock {
 	return 1;
 }
 
+sub hasPreAmp {
+        return 0;
+}
+
 1;
 
 
