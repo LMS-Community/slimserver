@@ -91,6 +91,10 @@ sub getDisplayName {
 	return 'PLUGIN_XPL';
 }
 
+sub enabled {
+	return ($::VERSION ge '6.5');
+}
+
 # plugin: manage the CLI preference
 sub setupGroup {
 	my $client = shift;
