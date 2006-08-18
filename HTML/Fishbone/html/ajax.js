@@ -262,18 +262,24 @@ function refreshInfo(theData,force) {
 		} else {
 			hideElements(['albuminfo', 'albumhref']);
 		}
+		
 		if(parsedData['artist']) {
 			showElements(['artistinfo', 'artisthtml']);
 			refreshElement('artisthtml', parsedData['artisthtml']);
 		} else {
 			hideElements(['artistinfo', 'artisthtml']);
 		}
-		if(parsedData['playermodel'] == 'squeezebox') {
-			showElements(['squeezeboxlogo']);
-			hideElements(['slimp3logo']);
-		} else {
-			hideElements(['squeezeboxlogo']);
-			showElements(['slimp3logo']);
+		
+		var activestyle = getActiveStyleSheet();
+		var curstyle = '';
+	
+		if (activestyle != null && activestyle.indexOf('Tan') != -1) {
+			objID = $('playCtl' + controls[i]+'tan');
+			curstyle = '_tan';
+		}
+		
+		if(parsedData['playermodel']) {
+			$('logoimage' + curstyle).src = '[% webroot %]html/images/' + parsedData['playermodel'] + '_logo.small' + curstyle + '.gif';
 		}
 	}
 	return true;
