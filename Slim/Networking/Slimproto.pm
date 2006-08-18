@@ -192,7 +192,7 @@ sub check_all_clients {
 			next;
 		}
 		
-		$::d_slimproto && msgf("Checking if %s is still alive\n", $client->id);
+		$::d_slimproto_v && msgf("Checking if %s is still alive\n", $client->id);
 		
 		# check when we last heard a stat response from the player
 		my $last_heard = $now - $heartbeat{ $client->id };
@@ -622,7 +622,7 @@ sub _stat_handler {
 
 # TODO make a "verbose" option for this
 #		0 &&
-	$::d_slimproto && msg($client->id() . " Squeezebox stream status:\n".
+	$::d_slimproto_v && msg($client->id() . " Squeezebox stream status:\n".
 		"	event_code:      $status{$client}->{'event_code'}\n".
 #		"	num_crlf:        $status{$client}->{'num_crlf'}\n".
 #		"	mas_initiliazed: $status{$client}->{'mas_initialized'}\n".
@@ -637,7 +637,7 @@ sub _stat_handler {
 #		"	signal_strength: $status{$client}->{'signal_strength'}\n".
 		"	jiffies:         $status{$client}->{'jiffies'}\n".
 	"");
-	$::d_slimproto && defined($status{$client}->{'output_buffer_size'}) && msg("".
+	$::d_slimproto_v && defined($status{$client}->{'output_buffer_size'}) && msg("".
 	"	output size:     $status{$client}->{'output_buffer_size'}\n".
 	"	output fullness: $status{$client}->{'output_buffer_fullness'}\n".
 	"	elapsed seconds: $status{$client}->{'elapsed_seconds'}\n".
