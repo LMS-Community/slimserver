@@ -130,6 +130,12 @@ sub requestString {
 	if ( $client && $client->lastSong() =~ /(?:wma|rhr)$/ ) {
 		$mode = "SessionContinue";
 	}
+	
+	# Use full path for proxy servers
+	my $proxy = Slim::Utils::Prefs::get('webproxy');
+	if ( $proxy ) {
+		$path = "http://$host:$port$path";
+	}
 
 	my @headers = (
 		"GET $path HTTP/1.0",
@@ -218,7 +224,7 @@ sub parseDirectHeaders {
 
 	foreach my $header (@headers) {
 
-		$::d_directstream && msg("header: " . $header . "\n");
+		$::d_directstream && msg("Rhapsody header: " . $header . "\n");
 
 		if ($header =~ /^Content-Type:\s*(.*)/i) {
 			$mimeType = $1;
@@ -252,6 +258,11 @@ sub parseDirectHeaders {
 		$frame .= $encType . $encParams;
 
 		$client->sendFrame('rhap', \$frame);
+	}
+	
+	# clear duration information for this URL if we're playing radio
+	if ( $url =~ /rhr$/ ) {
+		Slim::Music::Info::setDuration( $url, 0 );
 	}
 
 	return (undef, undef, 0, '', $contentType, $length, $body);
@@ -306,6 +317,9 @@ sub parseDirectBody {
 			my $client = shift;
 			Slim::Music::Info::setCurrentTitle( $url, Slim::Music::Info::standardTitle($client, $tracks[0]) );
 		} );
+		
+		# change the format of this URL back to wma so $client->stream doesn't think it's m3u
+		Slim::Music::Info::setContentType( $url, 'wma' );
 		
 		return ($url);
 	}

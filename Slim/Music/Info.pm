@@ -1178,7 +1178,16 @@ sub typeFromPath {
 	}
 
 	if (!defined($type) || $type eq 'unk') {
+		
 		$type = $defaultType;
+		
+		# check with the protocol handler
+		if ( isRemoteURL($fullpath) ) {
+			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($fullpath);
+			if ( $handler && $handler->can('getFormatForURL') ) {
+				$type = $handler->getFormatForURL($fullpath);
+			}
+		}	
 	}
 
 	# Don't cache remote URL types, as they may change.
