@@ -1461,11 +1461,13 @@ CONNECTING_FOR
 BUFFERING
 	DE	Fülle Puffer
 	EN	Buffering
+	ES	Llenando el buffer...
 	NL	Bufferen
 
 WAITING_TO_SYNC
 	DE	Warte auf Synchronisierung...
 	EN	Waiting to sync...
+	ES	Esperando sincronización...
 	NL	Wachten op sync...
 
 PROBLEM_CONNECTING
@@ -1714,8 +1716,9 @@ SOURCE
 # General strings for the setup pages
 
 SETUP_BAD_PAGE_SUGGEST
-	DE	Erweiter Adresse um page=SERVER_SETTINGS.
+	DE	Erweitern Sie die Adresse um page=SERVER_SETTINGS.
 	EN	Try adding page=SERVER_SETTINGS.
+	ES	Intentar añadiendo page=SERVER_SETTINGS.
 	NL	Probeer page=SERVER_SETTINGS toe te voegen.
 
 #
@@ -12512,44 +12515,54 @@ SETUP_VISUALIZERMODE_DESC
 SETUP_SERVERPRIORITY
 	DE	Server Priorität
 	EN	Server Priority
+	ES	Prioridad del servidor
 
 SETUP_SERVERPRIORITY_DESC
 	DE	Sie können die Priorität festlegen, mit welcher SlimServer ausgeführt wird.
 	EN	You can specify the priority that SlimServer runs at.
+	ES	Se puede especificar la prioridad con la que correrá SlimServer.
 
 SETUP_SCANNERPRIORITY
 	DE	Scanner Priorität
 	EN	Scanner Priority
+	ES	Prioridad de la recopilación /
 
 SETUP_SCANNERPRIORITY_DESC
 	DE	Sie können die Priorität festlegen, mit welcher der Scan-Prozess ausgeführt wird.
 	EN	You can specify the priority that the scanning process run at.
+	ES	Se puede especificar la prioridad con la que correrá la recopilación.
 
 SETUP_PRIORITY_DEFAULT
 	DE	Standard Priorität
 	EN	Default Priority
+	ES	Prioridad por defecto
 
 SETUP_PRIORITY_CURRENT
 	DE	Aktuelle Server Priorität
 	EN	Current Server Priority
+	ES	Prioridad Actual del Servidor
 
 SETUP_PRIORITY_HIGH
 	DE	Hoch
 	EN	High
+	ES	Alta
 
 SETUP_PRIORITY_ABOVE_NORMAL
 	DE	Höher als normal
 	EN	Above Normal
+	ES	Mas Alta de lo Normal
 
 SETUP_PRIORITY_NORMAL
 	DE	Normal
 	EN	Normal
+	ES	Normal
 
 SETUP_PRIORITY_BELOW_NORMAL
 	DE	Niedriger als normal 
 	EN	Below Normal
+	ES	Debajo de lo Normal
 
 SETUP_PRIORITY_LOW
 	DE	Niedrig
 	EN	Low
-
+	ES	Baja
