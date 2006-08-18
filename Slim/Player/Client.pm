@@ -328,7 +328,9 @@ sub getClient {
 
 	# Try a brute for match for the client.
 	if (!defined($ret)) {
-		while (my ($key, $value) = each(%clientHash)) {
+#		while (my ($key, $value) = each(%clientHash)) {
+
+   		 for my $value ( values %clientHash ) {
 			return $value if (ipport($value) eq $id);
 			return $value if (ip($value) eq $id);
 			return $value if (name($value) eq $id);
