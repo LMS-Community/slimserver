@@ -7,6 +7,7 @@ package Slim::Networking::Select;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
+use warnings;
 use strict;
 use IO::Select;
 
@@ -137,11 +138,9 @@ sub _updateSelect {
 	
 	return unless defined $sock;
 
-	my $fileno = fileno($sock);
-
 	if ($callback) {
 
-		$callbacks->{$type}->{$fileno} = $callback;
+		$callbacks->{$type}->{$sock} = $callback;
 
 		if (!$selects->{$type}->exists($sock)) {
 
@@ -165,7 +164,7 @@ sub _updateSelect {
 
 	} else {
 
-		delete $callbacks->{$type}->{$fileno};
+		delete $callbacks->{$type}->{$sock};
 
 		if ($selects->{$type}->exists($sock)) {
 
@@ -221,7 +220,7 @@ sub select {
 
 		foreach my $sock (@$handle) {
 
-			my $callback = $callbacks->{$type}->{fileno($sock)};
+			my $callback = $callbacks->{$type}->{$sock};
 
 			if (defined $callback && ref($callback) eq 'CODE') {
 				
