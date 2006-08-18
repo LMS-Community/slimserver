@@ -356,6 +356,7 @@ sub fillInSearchResults {
 			'level'        => 1,
 			'artwork'      => 0,
 			'attributes'   => sprintf('&%s.id=%d', $type, $obj->id),
+			$type          => $obj->id,
 		);
 
 		if ($type eq 'contributor') {

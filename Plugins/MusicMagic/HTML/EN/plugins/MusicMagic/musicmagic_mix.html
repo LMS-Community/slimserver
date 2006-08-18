@@ -2,6 +2,7 @@
 [%- pagetitle = "MUSICMAGIC_MIX" | string -%]
 [%- PROCESS pageheader.html %] 
 
+[% IF warn %]<p>[% warn | string %] [% END %]
 [% IF browselist_header %][% browselist_header %][% END %]
 [% IF browselist_pagebar %]<p>[% browselist_pagebar %]</p>[% END %]
 

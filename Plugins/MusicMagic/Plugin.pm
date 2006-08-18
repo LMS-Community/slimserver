@@ -873,7 +873,9 @@ sub musicmagic_mix {
 	} else {
 
 		$::d_musicmagic && msg('MusicMagic: no/unknown type specified for mix\n');
-		return 1;
+
+		# allow a valid page return, but report an empty mix
+		$params->{'warn'} = $client->string('EMPTY');
 	}
 
 	if (defined $mix && ref $mix eq "ARRAY" && defined $client) {
@@ -899,6 +901,10 @@ sub musicmagic_mix {
 		};
 
 		$itemnumber++;
+	} else {
+		
+		# no mixed items, report empty.
+		$params->{'warn'} = $client->string('EMPTY');
 	}
 
 	for my $item (@$mix) {
