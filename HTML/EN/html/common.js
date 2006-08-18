@@ -100,7 +100,7 @@ function chooseAlbumOrderBy(value, option)
 	if (option) {
 		url = url + '&orderBy=' + option;
 	}
-
+	setCookie( 'SlimServer-orderBy', option );
 	window.location = url;
 }
 

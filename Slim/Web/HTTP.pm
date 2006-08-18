@@ -707,7 +707,7 @@ sub generateHTTPResponse {
 
 	# Check for the album order cookie.
 	if ($params->{'cookies'}->{'SlimServer-orderBy'} && 
-	    $params->{'cookies'}->{'SlimServer-orderBy'}->value) {
+		$params->{'cookies'}->{'SlimServer-orderBy'}->value) {
 
 		$params->{'orderBy'} = $params->{'cookies'}->{'SlimServer-orderBy'}->value unless defined $params->{'orderBy'};
 	}
