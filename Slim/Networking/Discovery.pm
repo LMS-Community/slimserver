@@ -7,13 +7,27 @@ package Slim::Networking::Discovery;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-# This module implements a UDP discovery protocol, used by all Slim Devices hardware.
-
 use strict;
 use IO::Socket;
 
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
+
+=head1 NAME
+
+Slim::Networking::Discovery
+
+=head1 DESCRIPTION
+
+This module implements a UDP discovery protocol, used by all Slim Devices hardware.
+
+=head1 FUNCTIONS
+
+=head2 serverHostname()
+
+Return a 17 character hostname, suitable for display on a client device.
+
+=cut
 
 sub serverHostname {
 	my $hostname = Slim::Utils::Network::hostName();
@@ -35,7 +49,14 @@ sub serverHostname {
 	return $hostname;
 }
 
-# Say hello to a client
+=head2 sayHello( $udpsock, $paddr )
+
+Say hello to a client.
+
+Send the client on the other end of the $udpsock a hello packet.
+
+=cut
+
 sub sayHello {
 	my ($udpsock, $paddr) = @_;
 
@@ -44,7 +65,12 @@ sub sayHello {
 	$udpsock->send( 'h'. pack('C', 0) x 17, 0, $paddr);
 }
 
-# We received a discovery request
+=head2 gotDiscoveryRequest( $udpsock, $clientpaddr, $deviceid, $revision, $mac )
+
+Respond to a response packet from a client device, sending it the hostname we found.
+
+=cut
+
 sub gotDiscoveryRequest {
 	my ($udpsock, $clientpaddr, $deviceid, $revision, $mac) = @_;
 
@@ -75,5 +101,13 @@ sub gotDiscoveryRequest {
 
 	$::d_protocol && msg("gotDiscoveryRequest: Sent discovery response.\n");
 }
+
+=head1 SEE ALSO
+
+L<Slim::Networking::UDP>
+
+L<Slim::Networking::SliMP3::Protocol>
+
+=cut
 
 1;

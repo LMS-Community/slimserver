@@ -7,13 +7,21 @@ package Slim::Formats::FLAC;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-###############################################################################
-# FILE: Slim::Formats::FLAC.pm
-#
-# DESCRIPTION:
-#   Extract FLAC tag information and store in a hash for easy retrieval.
-#
-###############################################################################
+=head1 NAME
+
+Slim::Formats::FLAC
+
+=head1 SYNOPSIS
+
+my $tags = Slim::Formats::FLAC->getTag( $filename );
+
+=head1 DESCRIPTION
+
+Read tags & cue sheets embedded in FLAC files.
+
+=head1 METHODS
+
+=cut
 
 use strict;
 use base qw(Slim::Formats);
@@ -58,8 +66,14 @@ my $PEEM = 1885693293;
 # as PIC1 + artwork. So the raw data is +4 from the beginning.
 my $ESCIENT_ARTWORK = 1163084622;
 
-# Choose between returning a standard tag
-# or parsing through an embedded cuesheet
+=head2 getTag( $filename )
+
+Extract and return audio information & any embedded metadata found.
+
+Choose between returning a standard tag or parsing through an embedded cuesheet.
+
+=cut
+
 sub getTag {
 	my $class  = shift;
 	my $file   = shift || return {};
@@ -71,16 +85,15 @@ sub getTag {
 		return {};
 	};
 
-	my $tags = getStandardTag($file, $flac);
+	my $tags = $class->_getStandardTag($file, $flac);
 	my $cuesheet = $flac->cuesheet();
 
 	# Handle all the UTF-8 decoding into perl's native format.
 	# basefile tags first
-	_decodeUTF8($tags);
+	$class->_decodeUTF8($tags);
 
 	# if there's no embedded cuesheet, then we're either a single song
 	# or we have pseudo CDTEXT in the external cuesheet.
-
 	unless (@$cuesheet > 0) {
 
 		# no embedded cuesheet.
@@ -106,7 +119,7 @@ sub getTag {
 	my $tracks = Slim::Formats::Playlists::CUE->parse($cuesheet, dirname($file), 1);
 
 	# suck in metadata for all these tags
-	my $items = getSubFileTags($flac, $tracks);
+	my $items = $class->_getSubFileTags($flac, $tracks);
 
 	# fallback if we can't parse metadata
 	if ($items < 1) {
@@ -136,7 +149,7 @@ sub getTag {
 
 		# Handle all the UTF-8 decoding into perl's native format.
 		# for each track
-		_decodeUTF8($track);
+		$class->_decodeUTF8($track);
 
 		Slim::Formats::Playlists::CUE->processAnchor($track);
 
@@ -158,6 +171,12 @@ sub getTag {
 
 	return $tags;
 }
+
+=head2 getCoverArt( $filename )
+
+Return any cover art embedded in the FLAC file's metadata.
+
+=cut
 
 sub getCoverArt {
 	my $class = shift;
@@ -187,9 +206,8 @@ sub getCoverArt {
 
 # Given a file, return a hash of name value pairs,
 # where each name is a tag name.
-sub getStandardTag {
-	my $file = shift;
-	my $flac = shift;
+sub _getStandardTag {
+	my ($class, $file, $flac) = @_;
 
 	my $tags = $flac->tags() || {};
 
@@ -209,17 +227,17 @@ sub getStandardTag {
 		}
 	}
 
-	doTagMapping($tags);
-	addInfoTags($flac, $tags);
-	addArtworkTags($flac, $tags);
+	$class->_doTagMapping($tags);
+	$class->_addInfoTags($flac, $tags);
+	$class->_addArtworkTags($flac, $tags);
 
 	Slim::Utils::Cache->new->set($file, $tags, 60);
 
 	return $tags;
 }
 
-sub doTagMapping {
-	my $tags = shift;
+sub _doTagMapping {
+	my ($class, $tags) = @_;
 
 	# map the existing tag names to the expected tag names
 	while (my ($old,$new) = each %tagMapping) {
@@ -237,11 +255,12 @@ sub doTagMapping {
 	}
 }
 
-sub addInfoTags {
-	my $flac = shift;
-	my $tags = shift;
+sub _addInfoTags {
+	my ($class, $flac, $tags) = @_;
 
-	return unless defined $tags;
+	if (!defined $tags || ref($tags) ne 'HASH') {
+		return;
+	}
 
 	# add more information to these tags
 	# these are not tags, but calculated values from the streaminfo
@@ -265,8 +284,8 @@ sub addInfoTags {
 	$tags->{'TIME'}	    = sprintf "%.2d:%.2d", @{$tags}{'MM', 'SS'};
 }
 
-sub addArtworkTags {
-	my ($flac, $tags) = @_;
+sub _addArtworkTags {
+	my ($class, $flac, $tags) = @_;
 
 	# As seen in J.River Media Center FLAC files.
 	if ($tags->{'COVERART'}) {
@@ -285,9 +304,8 @@ sub addArtworkTags {
 	return $tags;
 }
 
-sub getSubFileTags {
-	my $flac   = shift;
-	my $tracks = shift;
+sub _getSubFileTags {
+	my ($class, $flac, $tracks) = @_;
 
 	my $items  = 0;
 
@@ -298,27 +316,27 @@ sub getSubFileTags {
 	# a de-facto standard emerges, unused ones can be dropped.
 
 	# parse embedded xml metadata
-	$items = getXMLTags($flac, $tracks);
+	$items = $class->_getXMLTags($flac, $tracks);
 	return $items if $items > 0;
 
 	# look for numbered vorbis comments
-	$items = getNumberedVCs($flac, $tracks);
+	$items = $class->_getNumberedVCs($flac, $tracks);
 	return $items if $items > 0;
 
 	# parse cddb style metadata
-	$items = getCDDBTags($flac, $tracks);
+	$items = $class->_getCDDBTags($flac, $tracks);
 	return $items if $items > 0;
 
 	# parse cuesheet stuffed into a vorbis comment
-	$items = getCUEinVCs($flac, $tracks);
+	$items = $class->_getCUEinVCs($flac, $tracks);
 	return $items if $items > 0;
 
 	# try parsing stacked vorbis comments
-	$items = getStackedVCs($flac, $tracks);
+	$items = $class->_getStackedVCs($flac, $tracks);
 	return $items if $items > 0;
 
 	# This won't yield good results - but without it, we regress from 6.0.2
-	my $tags = getStandardTag($flac->{'FILENAME'}, $flac);
+	my $tags = $class->_getStandardTag($flac->{'FILENAME'}, $flac);
 
 	if (scalar keys %$tags) {
 
@@ -339,9 +357,8 @@ sub getSubFileTags {
 	return 0;
 }
 
-sub getXMLTags {
-	my $flac   = shift;
-	my $tracks = shift;
+sub _getXMLTags {
+	my ($class, $flac, $tracks) = @_;
 
 	# parse xml based metadata (musicbrainz rdf for example)
 	# retrieve the xml content from the flac
@@ -380,7 +397,8 @@ sub getXMLTags {
 	return 0 unless @albumList > 0;
 
 	my $defaultTags = {};
-	addInfoTags($flac, $defaultTags);
+
+	$class->_addInfoTags($flac, $defaultTags);
 
 	# parse the individual albums to get list of tracks, etc.
 	my $albumHash = {};
@@ -489,18 +507,18 @@ sub getXMLTags {
 					$::d_parse && msg("    ARTIST: " . $tracks->{$cuesheetTrack}->{'ARTIST'} . "\n");
 				}
 			}
-			
+
 			%{$tracks->{$cuesheetTrack}} = (%{$defaultTags}, %{$tracks->{$cuesheetTrack}});
-			doTagMapping($tracks->{$cuesheetTrack});
+
+			$class->_doTagMapping($tracks->{$cuesheetTrack});
 		}
 	}
 
 	return $cuesheetTrack;
 }
 
-sub getNumberedVCs {
-	my $flac   = shift;
-	my $tracks = shift;
+sub _getNumberedVCs {
+	my ($class, $flac, $tracks) = @_;
 
 	# parse numbered vorbis comments
 	# this looks for parenthetical numbers on comment keys, and
@@ -557,7 +575,8 @@ sub getNumberedVCs {
 	# ok, let's see which tags apply to us
 
 	my $defaultTags = {};
-	addInfoTags($flac, $defaultTags);
+
+	$class->_addInfoTags($flac, $defaultTags);
 
 	for my $tag (@$rawTags) {
 
@@ -588,17 +607,19 @@ sub getNumberedVCs {
 
 	# merge in the global tags
 	for (my $num = 1; $num <= $titletags; $num++) {
+
 		%{$tracks->{$num}} = (%{$defaultTags}, %{$tracks->{$num}});
-		doTagMapping($tracks->{$num});
+
+		$class->_doTagMapping($tracks->{$num});
+
 		$tracks->{$num}->{'TRACKNUM'} = $num unless exists $tracks->{$num}->{'TRACKNUM'};
 	}
 
 	return $titletags;
 }
 
-sub getCDDBTags {
-	my $flac   = shift;
-	my $tracks = shift;
+sub _getCDDBTags {
+	my ($class, $flac, $tracks) = @_;
 
 	my $items = 0;
 
@@ -673,20 +694,21 @@ sub getCDDBTags {
 		}
 	}
 
-	addInfoTags($flac, $tags);
+	$class->_addInfoTags($flac, $tags);
 
 	# merge in the global tags
 	for my $key (keys %$tracks) {
+
 		%{$tracks->{$key}} = (%{$tags}, %{$tracks->{$key}});
-		doTagMapping($tracks->{$key});
+
+		$class->_doTagMapping($tracks->{$key});
 	}
 
 	return $items;
 }
 
-sub getCUEinVCs {
-	my $flac   = shift;
-	my $tracks = shift;
+sub _getCUEinVCs {
+	my ($class, $flac, $tracks) = @_;
 
 	my $items  = 0;
 
@@ -715,7 +737,7 @@ sub getCUEinVCs {
 	# don't pass $metadata through addInfoTags() or it'll decodeUTF8 too many times
 	my $infoTags = {};
 
-	addInfoTags($flac, $infoTags);
+	$class->_addInfoTags($flac, $infoTags);
 
 	# merge the existing track data and cuesheet metadata
 	for my $key (keys %$tracks) {
@@ -737,16 +759,16 @@ sub getCUEinVCs {
 			}
 		}
 
-		doTagMapping($tracks->{$key});
+		$class->_doTagMapping($tracks->{$key});
+
 		$items++;
 	}
 
 	return $items;
 }
 
-sub getStackedVCs {
-	my $flac   = shift;
-	my $tracks = shift;
+sub _getStackedVCs {
+	my ($class, $flac, $tracks) = @_;
 
 	my $items  = 0;
 
@@ -790,7 +812,8 @@ sub getStackedVCs {
 
 	my $tempTags = {};
 	my $defaultTags = {};
-	addInfoTags($flac, $defaultTags);
+
+	$class->_addInfoTags($flac, $defaultTags);
 
 	for my $tag (@$rawTags) {
 
@@ -811,7 +834,8 @@ sub getStackedVCs {
 
 				# set the tags on the track
 				%{$tracks->{$items}} = (%{$tracks->{$items}}, %{$defaultTags});
-				doTagMapping($tracks->{$items});
+
+				$class->_doTagMapping($tracks->{$items});
 
 				if (!exists $tracks->{$items}->{'TRACKNUM'}) {
 					$tracks->{$items}->{'TRACKNUM'} = $items;
@@ -826,8 +850,10 @@ sub getStackedVCs {
 
 	# process the final track
 	$items++;
+
 	%{$tracks->{$items}} = (%{$tracks->{$items}}, %{$defaultTags}, %{$tempTags});
-	doTagMapping($tracks->{$items});
+
+	$class->_doTagMapping($tracks->{$items});
 
 	if (!exists $tracks->{$items}->{'TRACKNUM'}) {
 		$tracks->{$items}->{'TRACKNUM'} = $items;
@@ -837,7 +863,7 @@ sub getStackedVCs {
 }
 
 sub _decodeUTF8 {
-	my $tags = shift;
+	my ($class, $tags) = @_;
 
 	# Do the UTF-8 handling here, after all the different types of tags are read.
 	for my $tag (@tagNames) {
@@ -986,17 +1012,14 @@ my $HEADERLEN   = 16;
 my $MAXDISTANCE = 18448;  # frame header size (16 bytes) + 4608 stereo 16-bit samples (higher than 4608 is possible, but not done)
 
 # seekNextFrame:
-# starts seeking from $startoffset (bytes relative to beginning of file) until 
-# it finds the next valid frame header. Returns the offset of the first and last
-# bytes of the frame if any is found, otherwise (0,0).
 #
 # when scanning forward ($direction=1), simply detects the next frame header.
 #
 # when scanning backwards ($direction=-1), returns the next frame header whose
 # frame length is within the distance scanned (so that when scanning backwards 
 # from EOF, it skips any truncated frame at the end of block.
-#
-sub seekNextFrame {
+
+sub _seekNextFrame {
 	my ($class, $fh, $startoffset, $direction) = @_;
 
 	use bytes;
@@ -1061,6 +1084,18 @@ sub seekNextFrame {
 	return 0;
 }
 
+=head2 findFrameBoundaries( $fh, $offset, $seek )
+
+Starts seeking from $offset (bytes relative to beginning of file) until it
+finds the next valid frame header. Returns the offset of the first and last
+bytes of the frame if any is found, otherwise (0, 0).
+
+If the caller does not request an array context, only the first (start) position is returned.
+
+The only caller is L<Slim::Player::Source> at this time.
+
+=cut
+
 sub findFrameBoundaries {
 	my ($class, $fh, $offset, $seek) = @_;
 
@@ -1069,7 +1104,7 @@ sub findFrameBoundaries {
 		return wantarray ? (0, 0) : 0;
 	}
 
-	my $start = $class->seekNextFrame($fh, $offset, 1);
+	my $start = $class->_seekNextFrame($fh, $offset, 1);
 	my $end   = 0;
 
 	if (defined $seek) {
@@ -1081,5 +1116,19 @@ sub findFrameBoundaries {
 
 	return wantarray ? ($start, $end) : $start;
 }
+
+=head1 SEE ALSO
+
+L<Slim::Formats>
+
+L<Slim::Formats::Playlists::CUE>
+
+L<Slim::Player::Source>
+
+L<Audio::FLAC::Header>
+
+L<MP3::Info>
+
+=cut
 
 1;

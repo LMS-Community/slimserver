@@ -2,19 +2,34 @@ package Slim::Formats::APE;
 
 # $Id: APE.pm 5405 2005-12-14 22:02:37Z dean $
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-###############################################################################
-# FILE: Slim::Formats::Musepack.pm
-#
-# DESCRIPTION:
-#   Extract APE tag information from a Monkey's Audio file and store in a hash for 
-#   easy retrieval.
-#
-###############################################################################
+=head1 NAME
+
+Slim::Formats::APE
+
+=head1 SYNOPSIS
+
+my $tags = Slim::Formats::APE->getTag( $filename );
+
+=head1 DESCRIPTION
+
+Read tags embedded in Monkey's Audio (APE) files.
+
+=head1 METHODS
+
+=head2 getTag( $filename )
+
+Extract and return audio information & any embedded metadata found.
+
+=head1 SEE ALSO
+
+L<Slim::Formats>, L<Audio::APETags>, L<Audio::APE>, L<MP3::Info>
+
+=cut
 
 use strict;
 use base qw(Slim::Formats);

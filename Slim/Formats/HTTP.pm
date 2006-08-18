@@ -2,12 +2,22 @@ package Slim::Formats::HTTP;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2005 Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Slim Devices Inc.
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms of the GNU General Public License, version 2.  
 
-# This is a base class for remote stream formats to pull their metadata.
+=head1 NAME
+
+Slim::Formats::HTTP
+
+=head1 DESCRIPTION
+
+This is a base class for remote stream formats to pull their metadata.
+
+=head1 METHODS
+
+=cut
 
 use strict;
 use base qw(Slim::Formats::RemoteStream);
@@ -20,7 +30,12 @@ use Slim::Utils::Unicode;
 
 use constant DEFAULT_TYPE => 'mp3';
 
-# Class constructor for just reading metadata from the stream / remote playlist
+=head2 getTag( $url )
+
+Class constructor for just reading metadata from the stream / remote playlist.
+
+=cut
+
 sub getTag {
 	my $class = shift;
 	my $url   = shift || return {};
@@ -36,11 +51,23 @@ sub getTag {
 	return $self->request($args);
 }
 
+=head2 getFormatForURL()
+
+Returns the type of of stream we are checking (mp3, wma, etc)
+
+=cut
+
 sub getFormatForURL {
 	my $class = shift;
 
 	return DEFAULT_TYPE;
 }
+
+=head2 requestString( $client, $url, [ $post ] )
+
+Generate a HTTP request string suitable for sending to a HTTP server.
+
+=cut
 
 sub requestString {
 	my $self   = shift;
@@ -92,6 +119,15 @@ sub requestString {
 
 	return $request;
 }
+
+=head2 parseHeaders( @headers )
+
+Parse the response headers from an HTTP request, and set instance variables
+based on items in the response, eg: bitrate, content type.
+
+Updates the client's streamingProgressBar with the correct duration.
+
+=cut
 
 sub parseHeaders {
 	my $self    = shift;
@@ -186,6 +222,12 @@ sub parseHeaders {
 		}
 	}
 }
+
+=head1 SEE ALSO
+
+L<Slim::Formats::RemoteStream>
+
+=cut
 
 1;
 

@@ -23,6 +23,22 @@ my $init = 0;
 # dump tags found/processed
 my $_dump_tags = 0;
 
+=head1 NAME
+
+Slim::Formats
+
+=head1 SYNOPSIS
+
+my $tags = Slim::Formats->readTags( $file );
+
+=head1 METHODS
+
+=head2 init()
+
+Initialze the Formats/Metadata reading classes and subsystem.
+
+=cut
+
 sub init {
 	my $class = shift;
 
@@ -60,14 +76,21 @@ sub init {
 		'mms'  => 'Slim::Formats::MMS',
 	);
 
-	$class->mk_classdata('tagCache' => []);
-
 	$init = 1;
 
 	return 1;
 }
 
-# Dynamically load the formats modules.
+=head2 loadTagFormatForType( $type )
+
+Dynamically load the class needed to read the passed file type. 
+
+Returns true on success, false on failure.
+
+Example: Slim::Formats->loadTagFormatForType('flc');
+
+=cut
+
 sub loadTagFormatForType {
 	my $class = shift;
 	my $type  = shift;
@@ -93,6 +116,12 @@ sub loadTagFormatForType {
 	}
 }
 
+=head2 classForFormat( $type )
+
+Returns the class associated with the passed file type.
+
+=cut
+
 sub classForFormat {
 	my $class = shift;
 	my $type  = shift;
@@ -102,7 +131,12 @@ sub classForFormat {
 	return $tagClasses{$type};
 }
 
-# Read the tags for any file we're handed.
+=head2 readTags( $filename )
+
+Read and return the tags for any file we're handed.
+
+=cut
+
 sub readTags {
 	my $class = shift;
 	my $file  = shift || return {};

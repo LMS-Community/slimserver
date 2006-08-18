@@ -13,6 +13,30 @@ use base qw(Slim::Formats);
 use MP3::Info;
 use Slim::Utils::SoundCheck;
 
+=head1 NAME
+
+Slim::Formats::AIFF
+
+=head1 SYNOPSIS
+
+my $tags = Slim::Formats::AIFF->getTag( $filename );
+
+=head1 DESCRIPTION
+
+Read tags embedded in AIFF files.
+
+=head1 METHODS
+
+=head2 getTag( $filename )
+
+Extract and return audio information & any embedded metadata found.
+
+=head1 SEE ALSO
+
+L<Slim::Formats>, L<Slim::Utils::SoundCheck>, L<MP3::Info>
+
+=cut
+
 sub getTag {
 	my $class = shift;
 	my $file  = shift || return {};
