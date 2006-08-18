@@ -407,6 +407,10 @@ sub cursonginfoQuery {
 
 					$request->addResult("_$method", $track->secs() || 0);
 
+				} elsif ($method eq 'album' || $method eq 'artist' || $method eq 'genre') {
+
+					$request->addResult("_$method", $track->$method->name || 0);
+
 				} else {
 
 					$request->addResult("_$method", $track->$method() || 0);
@@ -912,9 +916,15 @@ sub playlistXQuery {
 
 			# Just call the method on Track
 			if ($entity eq 'duration') {
+
 				$request->addResult("_$entity", $track->secs());
-			}
-			else {
+			
+			} elsif ($entity eq 'album' || $entity eq 'artist' || $entity eq 'genre') {
+
+				$request->addResult("_$entity", $track->$entity->name || 0);
+
+			} else {
+
 				$request->addResult("_$entity", $track->$entity());
 			}
 		}
