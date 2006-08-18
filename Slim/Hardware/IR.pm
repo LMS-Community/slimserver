@@ -178,6 +178,8 @@ sub IRFileDirs {
 
 #returns a reference to a hash of filenames/external names
 sub irfiles {
+	my $client = shift;
+
 	my %irfilelist = ();
 
 	for my $irfiledir (IRFileDirs()) {
@@ -187,6 +189,10 @@ sub irfiles {
 		for my $irfile ( sort(readdir(DIR)) ) {
 
 			next unless $irfile =~ /(.+)\.ir$/;
+			
+			# NOTE: client isn't required here, but if it's been sent from setup
+			# Don't show front panel ir set for non-transporter clients
+			next if (defined ($client) && !$client->isa('Slim::Player::Transporter') && ($1 eq 'Front_Panel'));
 
 			$::d_ir && msg(" irfile entry: $irfile\n");
 			my $path = catdir($irfiledir,$irfile);
@@ -231,7 +237,7 @@ sub mapfiles {
 		for my $mapfile ( sort(readdir(DIR)) ) {
 
 			next unless $mapfile =~ /(.+)\.map$/;
-
+			
 			$::d_ir && msg(" key mapping file entry: $mapfile\n");
 
 			if ($1 eq defaultMap()) {

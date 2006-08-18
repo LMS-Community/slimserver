@@ -1139,7 +1139,7 @@ sub initSetupConfig {
 				}
 				my $i = 0;
 				my %irsets = map {$_ => 1} $client->prefGetArray('disabledirsets');
-				foreach my $irset (sort(keys %{Slim::Hardware::IR::irfiles()})) {
+				foreach my $irset (sort(keys %{Slim::Hardware::IR::irfiles($client)})) {
 					if (exists $paramref->{"irsetlist$i"} && $paramref->{"irsetlist$i"} == (exists $irsets{$irset} ? 0 : 1)) {
 						delete $paramref->{"irsetlist$i"};
 					}
@@ -1156,7 +1156,7 @@ sub initSetupConfig {
 				my $i = 0;
 				my %irsets = map {$_ => 1} $client->prefGetArray('disabledirsets');
 				$client->prefDelete('disabledirsets');
-				foreach my $irset (sort(keys %{Slim::Hardware::IR::irfiles()})) {
+				foreach my $irset (sort(keys %{Slim::Hardware::IR::irfiles($client)})) {
 					if (!exists $paramref->{"irsetlist$i"}) {
 						$paramref->{"irsetlist$i"} = exists $irsets{$irset} ? 0 : 1;
 					}
@@ -1203,7 +1203,7 @@ sub initSetupConfig {
 							my ($client,$value,$key) = @_;
 							return if (!defined($client));
 							if ($key =~ /\D+(\d+)$/) {
-								return Slim::Hardware::IR::irfileName((sort(keys %{Slim::Hardware::IR::irfiles()}))[$1]);
+								return Slim::Hardware::IR::irfileName((sort(keys %{Slim::Hardware::IR::irfiles($client)}))[$1]);
 							} else {
 								return $value;
 							}
