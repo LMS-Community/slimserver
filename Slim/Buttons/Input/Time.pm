@@ -30,7 +30,10 @@ our %functions = (
 		}
 	,'knob' => sub {
 			my ($client,$funct,$functarg) = @_;
-			# todo: make work with knob!
+
+			my @timedigits = timeDigits($client, $client->param('valueRef'));
+
+			scroll($client, $client->knobPos() - $timedigits[$client->param('cursorPos')]);
 		}
 	#moving one position to the left, exiting on leftmost position
 	,'left' => sub {
@@ -194,7 +197,14 @@ sub setMode {
 	if (!init($client)) {
 		Slim::Buttons::Common::popModeRight($client);
 	}
+
 	$client->lines(\&lines);
+
+	# The knob on Transporter needs to be prepopulated with list lengths
+	# for proper scrolling.
+	my @timedigits = timeDigits($client, $client->param('valueRef'));
+
+	prepKnob($client, \@timedigits);
 }
 
 # set unsupplied parameters to the defaults
@@ -339,6 +349,10 @@ sub moveCursor {
 	}
 	$client->param('cursorPos',$cursorPos);
 	$client->update();
+	
+	my @timedigits = timeDigits($client,$client->param('valueRef'));
+	prepKnob($client,\@timedigits);
+
 	return;
 }
 
@@ -356,6 +370,50 @@ sub scroll {
 		$onChange->(@args);
 	}
 	$client->update();
+}
+
+sub prepKnob {
+	my ($client,$digits) = @_;
+	
+	my $ampm = (Slim::Utils::Prefs::get('timeFormat') =~ /%p/);
+	my $c    = $client->param('cursorPos');
+	
+	if ($c == 0) {
+		$client->param('listLen', $ampm ? 2 : 3);
+	} elsif ($c == 1) {
+		$client->param('listLen', $ampm ? ($digits->[0] ? 3 : 10) : ($digits->[0] == 2 ? 4 : 10));
+	} elsif ($c == 2) { 
+		$client->param('listLen', 6);
+	} elsif ($c == 3) { 
+		$client->param('listLen', 10);
+	} elsif ($c == 4) { 
+		$client->param('listLen', 2);
+	}
+
+	$client->param('listIndex',$digits->[$c]);
+
+	$client->updateKnob(1);
+}
+
+sub prepKnob {
+	my ($client,$digits) = @_;
+	
+	my $ampm = (Slim::Utils::Prefs::get('timeFormat') =~ /%p/);
+	my $c    = $client->param('cursorPos');
+	
+	if ($c == 0) {
+		$client->param('listLen',$ampm ? 2 : 3);
+	} elsif ($c == 1) {
+		$client->param('listLen', $ampm ? ($digits->[0] ? 3 : 10) : ($digits->[0] == 2 ? 4 : 10));
+	} elsif ($c == 2) { 
+		$client->param('listLen',6);
+	} elsif ($c == 3) { 
+		$client->param('listLen',10);
+	} elsif ($c == 4) { 
+		$client->param('listLen',2);
+	}
+	$client->param('listIndex',$digits->[$c]);
+	$client->updateKnob(1);
 }
 
 sub scrollTime {
