@@ -395,27 +395,6 @@ sub prepKnob {
 	$client->updateKnob(1);
 }
 
-sub prepKnob {
-	my ($client,$digits) = @_;
-	
-	my $ampm = (Slim::Utils::Prefs::get('timeFormat') =~ /%p/);
-	my $c    = $client->param('cursorPos');
-	
-	if ($c == 0) {
-		$client->param('listLen',$ampm ? 2 : 3);
-	} elsif ($c == 1) {
-		$client->param('listLen', $ampm ? ($digits->[0] ? 3 : 10) : ($digits->[0] == 2 ? 4 : 10));
-	} elsif ($c == 2) { 
-		$client->param('listLen',6);
-	} elsif ($c == 3) { 
-		$client->param('listLen',10);
-	} elsif ($c == 4) { 
-		$client->param('listLen',2);
-	}
-	$client->param('listIndex',$digits->[$c]);
-	$client->updateKnob(1);
-}
-
 sub scrollTime {
 	my ($client,$dir,$valueRef,$c) = @_;
 	
