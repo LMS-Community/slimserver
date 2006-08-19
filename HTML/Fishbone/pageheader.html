@@ -151,13 +151,13 @@
 [% ELSE %]
 [% IF newVersion %]<br>[% newVersion %]<br>[% END %]
 [% UNLESS nodiv %]<div class="list">[% END %]
-[% IF pagetitle %]<div class="largeAttribute">[% pagetitle %][% IF artwork && (levelName == 'album' || levelName == 'age')%] [% "GALLERY" | string %][% END %]</div>[% END %]
+[% IF pagetitle %]<div class="largeAttribute" id="pagetitle">[% pagetitle %][% IF artwork && (levelName == 'album' || levelName == 'age')%] [% "GALLERY" | string %][% END %]</div>[% END %]
 	
 [% PROCESS galleryselect.html %]
 	
 [% UNLESS pwd_list %]
 	[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu -%][% END %]
-	[%- PROCESS crumblist IF pwd_list %][% UNLESS pageHeaderMenu %]<br>[% END %]
+	<div id="pwdlist">[%- PROCESS crumblist IF pwd_list %][% UNLESS pageHeaderMenu %]</div>[% END %]
 [% pageHeaderInfo %]
 [% UNLESS noHR %]<hr>[% END %]
 [% END %]

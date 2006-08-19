@@ -122,6 +122,14 @@ div#browsedbHeader {
 	margin-left:0px;
 }
 
+div#pwdlist {
+	clear: left;
+}
+
+div#pagetitle {
+	float: left;
+}
+
 .browsedbListItem {
 	position: relative;
 	padding: 0px;
