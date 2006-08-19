@@ -137,9 +137,7 @@ sub getposturl() {
 	
 	$location_url = $dev->getlocation();
 	$url_base = $dev->geturlbase();
-
-	# CPAN version clobbers the supplied ctrl_url value, bug has been reported
-	$ctrl_url ||= $this->getcontrolurl();
+	$ctrl_url = $this->getcontrolurl();
 
 	#print "$location_url\n";
 	#print "$url_base\n";
@@ -156,11 +154,7 @@ sub getposturl() {
 		}
 		else {
 			if ($location_url =~ m/http:\/\/([0-9a-z.]+)[:]*([0-9]*)\/(.*)/i) {
-				if (defined($3) && 0 < length($3)) {
-					$ctrl_url = "http:\/\/" . $1 . ":" . $2 . $ctrl_url;
-				} else {
-					$ctrl_url = "http:\/\/" . $1 . ":" . $2 . "\/" . $ctrl_url;
-				}
+				$ctrl_url = "http:\/\/" . $1 . ":" . $2 . "\/" . $ctrl_url;
 			} else {
 				$ctrl_url = $location_url .  $ctrl_url;
 			}

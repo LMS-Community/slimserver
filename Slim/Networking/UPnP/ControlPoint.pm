@@ -337,9 +337,7 @@ sub _soap_request {
 	
 	my $service = $device->getservicebyname( $action_arg->{service} );
 
-	my $ctrl_url = $service->getcontrolurl();
-	$ctrl_url    = "/$ctrl_url" unless $ctrl_url =~ /^\//; # some services don't include the leading slash (i.e. MusicIP)
-	$ctrl_url    = $service->getposturl( $ctrl_url );
+	my $ctrl_url = $service->getposturl();
 	
 	my $service_type = $service->getservicetype();
 	my $soap_action = "\"" . $service_type . "#" . $action_name . "\"";
