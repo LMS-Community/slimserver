@@ -904,7 +904,6 @@ sub _button_handler {
 	$::d_slimproto && msg("hard button: $button time: $time\n");
 } 
 
-
 sub _knob_handler {
 	my $client = shift;
 	my $data_ref = shift;
@@ -923,6 +922,11 @@ sub _knob_handler {
 
 	$client->knobPos($position);
 	$client->knobTime($time);
+	
+	#BUG 3545: Remote IR sometimes registers an irhold time.  Since the Kno
+	# doesn't work on repeat timers, we have to reset it here to reactivate 
+	# control of Slim::Buttons::Common::scroll by the knob
+	Slim::Hardware::IR::resetHoldStart($client);
 	
 	Slim::Hardware::IR::executeButton($client, 'knob', $time, undef, 1);
 }
