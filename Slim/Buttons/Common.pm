@@ -471,7 +471,6 @@ our %functions = (
 		}
 	},
 	'visual' => sub {
-		# toggle display mod for now playing...
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
@@ -492,22 +491,9 @@ our %functions = (
 		}
 
 		$client->prefSet('visualMode', $vm);
-
-		my $screen2 = $client->modeVariable('screen2');
-
-		if ($client->display->showExtendedText()) {
-			if (!$screen2) {
-				$client->modeVariable('screen2', 'periodic');
-				startPeriodicUpdates($client);
-			}
-		} else {
-			if ($screen2) {
-				if ($screen2 eq 'periodic') {
-					$client->modeVariable('screen2', undef);
-				}
-				$client->update( { 'screen2' => {} } );
-			}
-		}
+		
+		updateScreen2Mode($client);
+		
 		$client->update();
 	},
 
@@ -1426,6 +1412,26 @@ sub pushpopScreen2 {
 	}
 
 	return $newlines;
+}
+
+sub updateScreen2Mode {
+	my $client = shift || return;
+
+	my $screen2 = $client->modeVariable('screen2');
+
+	if ($client->display->showExtendedText()) {
+		if (!$screen2) {
+			$client->modeVariable('screen2', 'periodic');
+			startPeriodicUpdates($client);
+		}
+	} else {
+		if ($screen2) {
+			if ($screen2 eq 'periodic') {
+				$client->modeVariable('screen2', undef);
+			}
+			$client->update( { 'screen2' => {} } );
+		}
+	}
 }
 
 sub suppressStatus {

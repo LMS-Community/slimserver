@@ -357,6 +357,18 @@ sub init {
 						},
 					},
 				},
+
+				'SETUP_VISUALIZERMODE'         => {
+					'useMode'      => 'INPUT.Choice',
+					'onPlay'       => \&updateVisualMode,
+					'onAdd'        => \&updateVisualMode,
+					'onRight'      => \&updateVisualMode,
+					'header'       => '{SETUP_VISUALIZERMODE}{count}',
+					'pref'         => 'visualMode',
+					'initialValue' => sub { return $_[0]->prefGet('visualMode') },
+					'condition'    => sub { return $_[0]->display->isa('Slim::Display::Transporter') },
+					'init'          => \&visualInit,
+				},
 			
 				'DIGITAL_INPUT'       => {
 					'useMode'      => 'INPUT.Choice',
@@ -475,6 +487,42 @@ sub volumeValue {
 	my ($client,$arg) = @_;
 	return ' ('.($arg <= 0 ? $client->string('MUTED') : int($arg/100*40+0.5)).')';
 }
+
+sub visualInit {
+	my $client = shift;
+	my $modes = $client->prefGet('visualModes');
+	my $modeDefs = $client->display->visualizerModes();
+
+	my @visualModes;
+	my $i = 0;	
+
+	foreach my $mode (@$modes) {
+
+		my $desc = $modeDefs->[$mode]{'desc'};
+		my $name = '';
+
+		foreach my $j (0..$#{$desc}){
+			$name .= ' ' if ($j > 0);
+			$name .= Slim::Utils::Strings::string(@{$desc}[$j]);
+		}
+
+		push @visualModes, {
+			name  => $name,
+			value => $i++,
+		};
+	}
+	
+	$client->param('listRef', \@visualModes);
+}
+
+sub updateVisualMode {
+	my $client = shift;
+	my $value = shift;
+
+	$client->prefSet('visualMode', $value->{'value'});
+	Slim::Buttons::Common::updateScreen2Mode($client);
+};
+
 
 1;
 

@@ -238,6 +238,7 @@ sub initSetupConfig {
 						}
 			,'visualMode'	=> {
 							'validate' => \&Slim::Utils::Validate::isInt
+							,'onChange' => \&Slim::Buttons::Common::updateScreen2Mode
 						}
 			,'visualModes' 	=> {
 							'isArray' => 1
