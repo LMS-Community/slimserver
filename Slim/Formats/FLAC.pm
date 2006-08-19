@@ -199,7 +199,7 @@ sub getCoverArt {
 
 	my $tags = $flac->tags() || {};
 
-	addArtworkTags($flac, $tags);
+	$class->_addArtworkTags($flac, $tags);
 
 	return $tags->{'ARTWORK'};
 }
