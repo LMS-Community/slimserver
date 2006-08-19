@@ -21,20 +21,12 @@
 </p>
 [% END %]
 
-[%
-IF playlist.title && playlist.title == "'UNTITLED' | string ";
-  SET saveButtonName = "SAVE" ;
-ELSE ;
-  SET saveButtonName = "RENAME" ;
-END
-%]
-
 [% UNLESS noEdit %]
 <p>
- [% saveButtonName | string %] [% "THIS_PLAYLIST_AS" | string %]<br>
+ [% "SAVE" | string %] [% "THIS_PLAYLIST_AS" | string %]<br>
  <form method="get" action="edit_playlist.html">
   <input name="newname" value="[% IF newname; newname; ELSE; playlist.title; END %]" size="40"/>
-  <input name="submit" type="submit" value="[% saveButtonName | string %]"/>
+  <input name="submit" type="submit" value="[% "SAVE" | string %]"/>
   <input type="hidden" name="renamePlaylist" value="1"/>
   <input type="hidden" name="playlist.id" value="[% playlist.id %]"/>
   <input type="hidden" value="[% player %]" name="player"/>

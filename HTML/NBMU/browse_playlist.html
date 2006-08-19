@@ -51,17 +51,11 @@
       <hr>
       [% END %]
 
-	[% IF playlist.title && playlist.title == untitledString %]
-		[% SET saveButtonName = "SAVE" %]
-	[% ELSE %]
-		[% SET saveButtonName = "RENAME" %]
-	[% END %]
-
 	[% UNLESS noEdit %]
 	<p>
 		<form method="get" action="edit_playlist.html"><table><tr>
 			<td>[% "NAME" | string %] <input name="newname" value="[% IF newname; newname; ELSE; playlist.title; END %]" size="40"></td>
-			<td><input name="submit" type=submit value="[% saveButtonName | string %]" onclick='this.form.renamePlaylist.value=1'></td>
+			<td><input name="submit" type=submit value="[% "SAVE" | string %]" onclick='this.form.renamePlaylist.value=1'></td>
 			<td><input type="submit" value="[% "EDIT" | string %]" onclick='this.form.editPlaylist.value=1'></td>
 			[% IF playlist.title && playlist.title != untitledString %]
 				<td><input type="submit" value="[% "DELETE" | string %]" onclick='this.form.deletePlaylist.value=1'></td>

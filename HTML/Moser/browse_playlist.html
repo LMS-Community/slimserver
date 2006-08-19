@@ -10,12 +10,6 @@
       <b>[% "NOTE" | string %]</b> [% "DELETE_WARNING" | string %]
     </div>
    [%- END %]
-
-   [% IF playlist.title && playlist.title == untitledString %]
-      [% SET savebuttonname = "SAVE" %]
-   [% ELSE %]
-      [% SET savebuttonname = "RENAME" %]
-   [% END %]
    
    [% UNLESS noEdit %]
    [%- IF playlist.title %]
@@ -26,7 +20,7 @@
       <input type="hidden" name="editPlaylist" value="0">
       <input type="hidden" name="deletePlaylist" value="0">
       <input type="hidden" name="playlist.id" value="[% playlist.id %]">
-      <input type=submit class="stdclick" value="[% savebuttonname | string %]" onclick='this.form.renamePlaylist.value=1'>
+      <input type=submit class="stdclick" value="[% "SAVE" | string %]" onclick='this.form.renamePlaylist.value=1'>
       <input type="submit" class="stdclick" value="[% "EDIT" | string %]" onclick='this.form.editPlaylist.value=1'>
       [% IF playlist.title && playlist.title != untitledString %]
          <input type="submit" class="stdclick" value="[% "DELETE" | string %]" onclick='this.form.deletePlaylist.value=1'>
