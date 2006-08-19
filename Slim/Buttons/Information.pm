@@ -312,7 +312,7 @@ sub playerModel {
 	
 	# special case for squeezebox v3 (can't use in $client->model due to some images
 	# expecting "squeezebox" for v1-3)
-	if ($client->macaddress =~ /^00:04:20((:\w\w){3})/) {
+	if ($client->model =~ /squeezebox/ && $client->macaddress =~ /^00:04:20((:\w\w){3})/) {
 		my $id = $1;
 		$id =~ s/://g;
 		if ($id gt "060000") {
