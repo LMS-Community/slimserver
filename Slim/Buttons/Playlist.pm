@@ -61,7 +61,6 @@ sub init {
 			}
 
 			#find mode number at the new index, and save to the prefs
-			$client->param('animateTop',${[$client->prefGetArray('playingDisplayModes')]}[$pdm]);
 			$client->prefSet("playingDisplayMode", $pdm);
 			$client->update();
 		},
