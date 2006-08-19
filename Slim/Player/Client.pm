@@ -160,7 +160,7 @@ sub new {
 	$client->[101] = undef; # lines2periodic
 	$client->[102] = 0; # periodicUpdateTime
 	$client->[103] = undef; # musicInfoTextCache
-	$client->[104] = [];    # modeVariableStack
+	$client->[104] = [ {} ];# modeVariableStack
 	# 105 is scroll state
 	$client->[106] = undef; # knobPos
 	$client->[107] = undef; # knobTime
