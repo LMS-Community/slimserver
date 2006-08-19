@@ -137,7 +137,9 @@ sub getposturl() {
 	
 	$location_url = $dev->getlocation();
 	$url_base = $dev->geturlbase();
-	$ctrl_url = $this->getcontrolurl();
+
+	# CPAN version clobbers the supplied ctrl_url value, bug has been reported
+	$ctrl_url ||= $this->getcontrolurl();
 
 	#print "$location_url\n";
 	#print "$url_base\n";
