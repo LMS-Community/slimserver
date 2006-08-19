@@ -1109,7 +1109,7 @@ sub findFrameBoundaries {
 
 	if (defined $seek) {
 
-		$end = $class->seekNextFrame($fh, $offset + $seek, -1);
+		$end = $class->_seekNextFrame($fh, $offset + $seek, -1);
 
 		return ($start, $end);
 	}
