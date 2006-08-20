@@ -1438,10 +1438,12 @@ UPDATING_FIRMWARE_TRANSPORTER
 FIRMWARE_MISSING
 	DE	Fehler: Firmware fehlt
 	EN	Error: Missing Firmware
-	
+	ES	Error: No se encuentra Firmware
+
 FIRMWARE_MISSING_DESC
 	DE	Der Server kann keine Firmware aus dem Internet beziehen.
 	EN	Server can't connect to Internet to obtain firmware update.
+	ES	El server no puede conectarse a Internet para obtener la actualización de firmware.
 
 CONNECTING_FOR
 	CS	Připojuji ke hraní:
