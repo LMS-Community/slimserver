@@ -117,8 +117,33 @@ sub gotContainer {
 		} );
 		
 		$params->{start} = $params->{pageinfo}->{startitem};
+		
+		my $count = 0;
 
-		my $count = 0;		
+		# Add an All Songs link if we have any songs in this list
+		for my $item ( @{$items} ) {
+			if ( $item->{url} ) {
+				
+				my $href 
+					= 'browseupnp.html?device=' . uri_escape($device)
+					. '&hierarchy=' . $hierarchy
+					. '&player=' . uri_escape($player);
+				
+				push @{ $params->{browse_items} }, {
+					hierarchy   => undef,
+					showplayall => 1,
+					playallhref => $href . '&cmd=playall',
+					addallhref  => $href . '&cmd=addall',
+					text        => string('ALL_SONGS'),
+					odd         => $count % 2,
+				};
+				
+				$count++;
+				
+				last;
+			}
+		}
+				
 		for my $item ( @{$items} ) {
 			
 			my $hier = uri_escape( join( '/', $hierarchy, $item->{id} ) );
@@ -152,6 +177,22 @@ sub gotContainer {
 			};
 			
 			$count++;
+		}				
+	}
+	
+	# Handle Play All/Add All commands
+	if ( defined $container->{children} && $params->{cmd} && $client ) {
+		my @urls;
+		
+		for my $item ( @{ $container->{children} } ) {
+			push @urls, $item->{url} if $item->{url};
+		}
+		
+		if ( $params->{cmd} eq 'playall' ) {
+			$client->execute([ 'playlist', 'loadtracks', 'listref', \@urls ]);
+		}
+		else {
+			$client->execute([ 'playlist', 'addtracks', 'listref', \@urls ]);
 		}
 	}
 	

@@ -10,15 +10,18 @@ END;
 	</div>
 [% ELSE %]
 	[% WRAPPER $contentwrapper
-			controls = 'browsecontrols'
-			itemobj = item.itemobj
-			attributes = item.attributes
-			odd = item.odd
-			mixerlinks = item.mixerlinks
-			anchor = item.anchor 
+			controls    = 'browsecontrols'
+			itemobj     = item.itemobj
+			attributes  = item.attributes
+			odd         = item.odd
+			mixerlinks  = item.mixerlinks
+			anchor      = item.anchor 
 			showdescend = item.showdescend
-			showplay = item.showplay
-			href = item.href %]
+			showplay    = item.showplay
+			showplayall = item.showplayall
+			playallhref = item.playallhref
+			addallhref  = item.addallhref
+			href        = item.href %]
 		
 	[% PROCESS iteminfo %]
 	[% END %]
