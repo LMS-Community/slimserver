@@ -114,7 +114,7 @@ sub idle {
 	} else {
 		# discard all queued IR for this client as they are potentially stale
 		forgetQueuedIR($client);
-		$::d_ir && msgf("Discarded stale IR for client: %s\n", $client->id());
+		$::d_ir && msgf("IR: Discarded stale IR for client: %s\n", $client->id());
 		return 1;
 	}
 		
@@ -194,7 +194,7 @@ sub irfiles {
 			# Don't show front panel ir set for non-transporter clients
 			next if (defined ($client) && !$client->isa('Slim::Player::Transporter') && ($1 eq 'Front_Panel'));
 
-			$::d_ir && msg(" irfile entry: $irfile\n");
+			$::d_ir && msg("IR:  irfile entry: $irfile\n");
 			my $path = catdir($irfiledir,$irfile);
 
 			$irfilelist{$irfile} = $1;
@@ -238,7 +238,7 @@ sub mapfiles {
 
 			next unless $mapfile =~ /(.+)\.map$/;
 			
-			$::d_ir && msg(" key mapping file entry: $mapfile\n");
+			$::d_ir && msg("IR:  key mapping file entry: $mapfile\n");
 
 			if ($1 eq defaultMap()) {
 						$maplist{$mapfile} = Slim::Utils::Strings::string('DEFAULT_MAP');
@@ -282,9 +282,9 @@ sub IRPath {
 sub loadMapFile {
 	my $mapfile = shift;
 	my $mode;
-	$::d_ir && msg(" key mapping file entry: $mapfile\n");
+	$::d_ir && msg("IR:  key mapping file entry: $mapfile\n");
 	my $path = -r $mapfile ? $mapfile : IRPath($mapfile);
-	$::d_ir && msg("opening map file $path\n");
+	$::d_ir && msg("IR: opening map file $path\n");
 	if (-r $path) {
 		delete $irMap{$mapfile};
 		open(MAP, $path);
@@ -309,14 +309,14 @@ sub loadMapFile {
 		}
 		close(MAP);
 	} else {
-		$::d_ir && msg("failed to open $path\n");
+		$::d_ir && msg("IR: failed to open $path\n");
 	}
 }
 
 sub loadIRFile {
 	my $irfile = shift;
 	my $irpath = -r $irfile ? $irfile : IRPath($irfile);
-	$::d_ir && msg("opening IR file $irfile\n");
+	$::d_ir && msg("IR: opening IR file $irfile\n");
 	if (-r $irpath) {
 		delete $irCodes{$irfile};
 		open(IRCODES, $irpath);
@@ -331,7 +331,7 @@ sub loadIRFile {
 		}
 		close(IRCODES);
 	} else {
-		$::d_ir && msg("failed to open $irfile\n");
+		$::d_ir && msg("IR: failed to open $irfile\n");
 	}
 }	
 
@@ -382,7 +382,7 @@ sub lookup {
 		
 		for my $irset (keys %enabled) {
 			if (defined $irCodes{$irset}{$code}) {
-				$::d_ir && msg("found button $irCodes{$irset}{$code} for $code\n");
+				$::d_ir && msg("IR: found button $irCodes{$irset}{$code} for $code\n");
 				$code = $irCodes{$irset}{$code};
 				last;
 			}
@@ -394,7 +394,7 @@ sub lookup {
 		$client->lastirbutton($code);
 		return lookupFunction($client,$code);
 	} else {
-		$::d_ir && msg("irCode not present\n");
+		$::d_ir && msg("IR:  irCode not present\n");
 		return '';
 	}
 }
@@ -415,31 +415,31 @@ sub lookupFunction {
 #	assert($code); # FIXME: somhow we keep getting here with no $code.
 
 	if (defined $irMap{$map}{$mode}{$code}) {
-		$::d_ir && msg("found function " . $irMap{$map}{$mode}{$code} . " for button $code in mode $mode from map $map\n");
+		$::d_ir && msg("IR: found function " . $irMap{$map}{$mode}{$code} . " for button $code in mode $mode from map $map\n");
 		return $irMap{$map}{$mode}{$code};
 	
 	} elsif (defined $irMap{$defaultMapFile}{$mode}{$code}) {
-		$::d_ir && msg("found function " . $irMap{$defaultMapFile}{$mode}{$code} . " for button $code in mode $mode from map " . defaultMap() . "\n");
+		$::d_ir && msg("IR: found function " . $irMap{$defaultMapFile}{$mode}{$code} . " for button $code in mode $mode from map " . defaultMap() . "\n");
 		return $irMap{$defaultMapFile}{$mode}{$code};
 	
 	} elsif ($mode =~ /(.+)\..+/ && defined $irMap{$map}{lc($1)}{$code}) {
-		$::d_ir && msg("found function " . $irMap{$map}{lc($1)}{$code} . " for button $code in mode class ".lc($1)." from map $map\n");
+		$::d_ir && msg("IR: found function " . $irMap{$map}{lc($1)}{$code} . " for button $code in mode class ".lc($1)." from map $map\n");
 		return $irMap{$map}{lc($1)}{$code};
 	
 	} elsif ($mode =~ /(.+)\..+/ && defined$irMap{$defaultMapFile}{lc($1)}{$code}) {
-		$::d_ir && msg("found function " . $irMap{$defaultMapFile}{lc($1)}{$code} . " for button $code in mode class ".lc($1)." from map " . defaultMap() . "\n");
+		$::d_ir && msg("IR: found function " . $irMap{$defaultMapFile}{lc($1)}{$code} . " for button $code in mode class ".lc($1)." from map " . defaultMap() . "\n");
 		return $irMap{$defaultMapFile}{lc($1)}{$code};			
 	
 	} elsif (defined $irMap{$map}{'common'}{$code}) {
-		$::d_ir && msg("found function " . $irMap{$map}{'common'}{$code} . " for button $code in mode common from map $map\n");
+		$::d_ir && msg("IR: found function " . $irMap{$map}{'common'}{$code} . " for button $code in mode common from map $map\n");
 		return $irMap{$map}{'common'}{$code};
 	
 	} elsif (defined $irMap{$defaultMapFile}{'common'}{$code}) {
-		$::d_ir && msg("found function " . $irMap{$defaultMapFile}{'common'}{$code} . " for button $code in mode common from map " . defaultMap() . "\n");
+		$::d_ir && msg("IR: found function " . $irMap{$defaultMapFile}{'common'}{$code} . " for button $code in mode common from map " . defaultMap() . "\n");
 		return $irMap{$defaultMapFile}{'common'}{$code};
 	}
 	
-	$::d_ir && msg("irCode not defined: $code\n");
+	$::d_ir && msg("IR: irCode not defined: $code\n");
 	return '';
 }
 
@@ -519,7 +519,7 @@ sub processIR {
 		
 
 	if ($irCodeBytes eq "00000000") {
-		$::d_ir && msg("Ignoring spurious null repeat code.\n");
+		$::d_ir && msg("IR: Ignoring spurious null repeat code.\n");
 		return;
 	}
 
@@ -534,14 +534,14 @@ sub processIR {
 	my $timediff = $irTime - $client->lastirtime();
 	if ($timediff < 0) {$timediff += (0xffffffff / $client->ticspersec());}
 
-	if (($timediff < $Slim::Hardware::IR::IRMINTIME) && ($irCodeBytes ne $client->lastircodebytes)) {
+	if (($code !~ /(.*?)\.(up|down)$/) && ($timediff < $Slim::Hardware::IR::IRMINTIME) && ($irCodeBytes ne $client->lastircodebytes)) {
 		#received oddball code in middle of repeat sequence, drop it
-		$::d_ir && msg("Received $irCodeBytes while expecting " . $client->lastircodebytes . ", dropping code\n");
+		$::d_ir && msg("IR: Received $irCodeBytes while expecting " . $client->lastircodebytes . ", dropping code\n");
 		return;
 	}
 	
 	if ($timediff == 0) { 
-		$::d_ir && msg("Received duplicate IR timestamp: $irTime - ignoring\n");
+		$::d_ir && msg("IR: Received duplicate IR timestamp: $irTime - ignoring\n");
 		return;
 	}
 	
@@ -550,35 +550,108 @@ sub processIR {
 	$client->lastirtime($irTime);
 
 	if ($::d_ir) {
-		msg("$irCodeBytes\t$irTime\t".Time::HiRes::time()."\n");
+		msg("IR: $irCodeBytes\t$irTime\t".Time::HiRes::time()."\n");
 	}
 
+	if ($code =~ /(.*?)\.(up|down)$/) {
 
-	if (($irCodeBytes eq ($client->lastircodebytes())) #same button press as last one
+		$::d_ir && msg("IR: Front panel code detected, processing $code\n");
+		$client->startirhold($irTime);
+		$client->lastircodebytes($irCodeBytes);
+		$client->irrepeattime(0);
+		processFrontPanel($client, $1, $2, $irTime);
+
+	} elsif (($irCodeBytes eq ($client->lastircodebytes())) #same button press as last one
 		&& ( ($client->irtimediff < $Slim::Hardware::IR::IRMINTIME) #within the minimum time to be considered a repeat
 			|| (($client->irtimediff < $client->irrepeattime * 2.02) #or within 2% of twice the repeat time
 				&& ($client->irtimediff > $client->irrepeattime * 1.98))) #indicating that a repeat code was missed
 		) {
+
 		holdCode($client,$irCodeBytes);
 		repeatCode($client,$irCodeBytes);
+
 		if (!$client->irrepeattime || ($client->irtimediff > 0 && $client->irtimediff < $client->irrepeattime)) {
 			#repeat time not yet set or last time diff less than current estimate
 			#of repeat time (excluding time diffs less than 0, from out of order packets)
 			$client->irrepeattime($client->irtimediff)
 		}
+
 	} else {
 		$client->startirhold($irTime);
 		$client->lastircodebytes($irCodeBytes);
 		$client->irrepeattime(0);
+
 		my $noTimer = Slim::Utils::Timers::firePendingTimer($client,\&checkRelease);
+
 		unless ($noTimer) {
 			Slim::Utils::Timers::setTimer($client,Time::HiRes::time()+($Slim::Hardware::IR::IRSINGLETIME),\&checkRelease
 						,'single',$irTime,$irCodeBytes,$irTime + $Slim::Hardware::IR::IRSINGLETIME)
 		}
+
 		my $irCode  = lookup($client,$irCodeBytes);
-		$::d_ir && msg("irCode = [$irCode] timer = [$irTime] timediff = [" . $client->irtimediff . "] last = [".$client->lastircode()."]\n");
+
+		$::d_ir && msg("IR: irCode = [$irCode] timer = [$irTime] timediff = [" . $client->irtimediff . "] last = [".$client->lastircode()."]\n");
 		processCode($client, $irCode, $irTime);
 	}
+}
+
+sub processFrontPanel {
+	my $client = shift;
+	my $code   = shift;
+	my $dir    = shift;
+	my $irTime = shift;
+
+	if ($dir eq 'down') {
+		$::d_ir && msg("IR: Front panel button press: $code\n");
+
+		my $irCode  = lookupFunction($client,$code);
+
+		$client->lastirbutton($code);
+		processCode($client,$irCode,$irTime);
+
+		# start timing for hold time, preparing the .hold event for later.
+		Slim::Utils::Timers::setTimer($client,Time::HiRes::time()+($Slim::Hardware::IR::IRHOLDTIME), \&fireHold, $1.'.hold', $client->lastirtime);
+
+	} else {
+		my $timediff = $irTime - $client->lastirtime();
+		
+		$::d_ir && msg("IR: Front panel button release after $timediff: $code\n");
+		
+		my $irCode;
+
+		# When the button is held longer than the time needed for a .hold event, we also follow up with a .hold_release when the button is released.
+		if ($timediff > $Slim::Hardware::IR::IRHOLDTIME) {
+
+			$irCode = lookupFunction($client,$code.'.hold_release');
+			$client->lastirbutton($code.'.hold_release');
+			processCode( $client,$irCode, $client->lastirtime);
+
+		} else {
+
+			# When releasing before the hold time, fire the event with the .single modifier.
+			$irCode = lookupFunction($client,$code.'.single');
+			$client->lastirbutton($code.'.single');
+			processCode($client,$irCode,$irTime);
+
+		}
+	}
+}
+
+sub fireHold {
+	my $client = shift;
+	my $irCode = shift;
+	my $irTime = shift;
+
+	my $last = lookupCodeBytes($client,$client->lastircodebytes);
+	
+	# block the .hold event if we know that the button has been released already.
+	return if ($last =~ /\.up$/);
+	
+	$::d_ir && msg("IR: Hold Time Expired - irCode = [$irCode] timer = [$irTime] timediff = [" . $client->irtimediff . "] last = [".$last."]\n");
+	
+	# must set lastirbutton so that button functions like 'passback' will work.
+	$client->lastirbutton($irCode);
+	processCode($client, $irCode, $irTime);
 }
 
 # utility functions used externally
@@ -607,8 +680,6 @@ sub setLastIRTime {
 	$client->epochirtime(shift);
 }
 
-#
-#
 sub releaseCode {
 	my $client = shift;
 	my $irCodeBytes = shift;
@@ -647,7 +718,7 @@ sub repeatCode {
 	my $irCodeBytes = shift;
 
 	my $ircode = lookup($client,$irCodeBytes, 'repeat');
-	$::d_ir && msg("irCode = [$ircode] timer = [" . $client->lastirtime . "] timediff = [" . $client->irtimediff . "] last = [".$client->lastircode()."]\n");
+	$::d_ir && msg("IR: irCode = [$ircode] timer = [" . $client->lastirtime . "] timediff = [" . $client->irtimediff . "] last = [".$client->lastircode()."]\n");
 	if ($ircode) {
 		processCode( $client, $ircode, $client->lastirtime);
 	}
@@ -703,7 +774,6 @@ sub holdTime {
 	return $holdtime;
 }
 
-
 #
 # calls the appropriate handler for the specified button.
 #
@@ -720,7 +790,7 @@ sub executeButton {
 		$irCode = $button;
 	}
 	
-	$::d_ir && msg("trying to execute button: $irCode\n");
+	$::d_ir && msg("IR: trying to execute button: $irCode\n");
 
 	if ($irCode !~ "brightness" && $irCode ne "dead" && ($irCode ne "0" || !defined $time)) {
 		setLastIRTime($client, Time::HiRes::time());
@@ -733,17 +803,18 @@ sub executeButton {
 	if (my ($subref,$subarg) = Slim::Buttons::Common::getFunction($client,$irCode,$mode) ) {
 
 		unless (defined $subref or ref($subref)) {
-			die "Subroutine for irCode: [$irCode] does not exist!";
+			errorMsg("Subroutine for irCode: [$irCode] does not exist!\n");
+			return;
 		}
 		
 		Slim::Buttons::ScreenSaver::wakeup($client, $client->lastircode());
 			
 		no strict 'refs';
-		$::d_ir && msg("executing button: $irCode\n");
+		$::d_ir && msg("IR: executing button: $irCode\n");
 		&$subref($client,$irCode,$subarg);
 
 	} else {
-		$::d_ir && msg("button $irCode not implemented in this mode\n");
+		$::d_ir && msg("IR: button $irCode not implemented in this mode\n");
 	}
 }
 
