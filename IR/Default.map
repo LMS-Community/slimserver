@@ -193,6 +193,8 @@ bassdown.*				= dead
 bassup.*				= dead
 trebledown.*			= dead
 trebleup.*				= dead
+volumemode.*			= dead
+visual.*				= dead
 
 [block]
 # When the player is blocked during a long operations, most buttons are dead
