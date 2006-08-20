@@ -22,12 +22,16 @@ our %functions = (
 	#change character at cursorPos (both up and down)
 	'up' => sub {
 			my ($client,$funct,$functarg) = @_;
+
 			scroll($client,1);
 		}
+
 	,'down' => sub {
 			my ($client,$funct,$functarg) = @_;
+
 			scroll($client,-1);
 		}
+
 	,'knob' => sub {
 			my ($client,$funct,$functarg) = @_;
 
@@ -35,22 +39,28 @@ our %functions = (
 
 			scroll($client, $client->knobPos() - $timedigits[$client->param('cursorPos')]);
 		}
+
 	#moving one position to the left, exiting on leftmost position
 	,'left' => sub {
 			my ($client,$funct,$functarg) = @_;
 			Slim::Utils::Timers::killTimers($client, \&nextChar);
+
 			my $cursorPos = $client->param('cursorPos');
 			$cursorPos--;
+
 			if ($cursorPos < 0) {
 				exitInput($client,'left');
 				return;
 			}
+
 			$client->param('cursorPos',$cursorPos);
 			$client->update();
 		}
+
 	#advance to next character, exiting if last char is right arrow
 	,'right' => sub {
 			my ($client,$funct,$functarg) = @_;
+
 			Slim::Utils::Timers::killTimers($client, \&nextChar);
 			moveCursor($client,1,1);
 		}
@@ -58,13 +68,17 @@ our %functions = (
 	,'cursor' => sub {
 			my ($client,$funct,$functarg) = @_;
 			Slim::Utils::Timers::killTimers($client, \&nextChar);
+
 			my $increment = $functarg =~ m/_(\d+)$/;
 			$increment = $increment || 1;
+
 			if ($functarg =~ m/^left/i) {
 				$increment = -$increment;
 			}
+
 			moveCursor($client,$increment,0);
 		}
+
 	#use numbers to enter characters
 	,'numberLetter' => sub {
 			my ($client,$button,$digit) = @_;
@@ -87,32 +101,46 @@ our %functions = (
 
 			my $max = 9;
 			if ($c == 0) {
+
 				$max = ($ampm ? 1 : 2);
 				$h0 = $digit unless ($digit > $max);
+
 				if ($ampm) {
+
 					if ($h0 == 1 && $h1 > 2) {
 						$h1 = 2;
 					}
+
 				} else {
+
 					if ($h0 == 2 && $h1 > 3) {
 						$h1 = 3;
 					}
 				}
+
 			} elsif ($c == 1) {
+
 				if ($ampm) {
+
 					if ($h0 == 1) {
 						$max = 2;
 					}
+
 				} else {
+
 					if ($h0 == 2) {
 						$max = 3;
 					}
 				}
+
 				$h1 = $digit unless ($digit > $max);
+
 			} elsif ($c == 2) {
 				$m0 = $digit unless ($digit > 5);
+
 			} elsif ($c == 3) {
 				$m1 = $digit unless ($digit > 9);
+
 			} elsif ($c == 4) {
 				$p = $digit unless ($digit > 1);
 			}
@@ -122,8 +150,10 @@ our %functions = (
 			}
 			
 			if ($ampm && $h0 && $h1 == 2) {
+
 				if ($p) {
 					$p = 0;
+
 				} else {
 					$h0 = 0; 
 					$h1 = 0;
@@ -136,9 +166,11 @@ our %functions = (
 			
 			#update the display
 			my $onChange = $client->param('onChange');
+
 			if (ref($onChange) eq 'CODE') {
 				my $onChangeArgs = $client->param('onChangeArgs');
 				my @args;
+
 				push @args, $client if $onChangeArgs =~ /c/i;
 				push @args, $$valueRef if $onChangeArgs =~ /v/i;
 				$onChange->(@args);
@@ -146,18 +178,24 @@ our %functions = (
 			
 			$client->update();
 		}
+
 	#call callback procedure
 	,'exit' => sub {
 			my ($client,$funct,$functarg) = @_;
+
 			Slim::Utils::Timers::killTimers($client, \&nextChar);
+
 			if (!defined($functarg) || $functarg eq '') {
 				$functarg = 'exit'
 			}
+
 			exitInput($client,$functarg);
 		}
+
 	,'passback' => sub {
 			my ($client,$funct,$functarg) = @_;
 			my $parentMode = $client->param('parentMode');
+
 			if (defined($parentMode)) {
 				Slim::Hardware::IR::executeButton($client,$client->lastirbutton,$client->lastirtime,$parentMode);
 			}
@@ -223,28 +261,36 @@ sub init {
 	
 	if (!defined($client->param('parentMode'))) {
 		my $i = -2;
+
 		while ($client->modeStack->[$i] =~ /^INPUT./) { $i--; }
 		$client->param('parentMode',$client->modeStack->[$i]);
 	}
+
 	if (!defined($client->param('header'))) {
 		$client->param('header','Enter Time:');
 	}
+
 	if (!defined($client->param('noScroll'))) {
 		$client->param('noScroll',1)
 	}
+
 	if (!defined($client->param('cursorPos'))) {
 		$client->param('cursorPos',0)
 	}
+
 	if (!defined($client->param('onChangeArgs'))) {
 		$client->param('onChangeArgs','CV');
 	}
 	
 	my $valueRef = $client->param('valueRef');
+
 	if (!defined($valueRef)) {
 		$$valueRef = '';
 		$client->param('valueRef',$valueRef);
+
 	} elsif (!ref($valueRef)) {
 		my $value = $valueRef;
+
 		$valueRef = \$value;
 		$client->param('valueRef',$valueRef);
 	}
@@ -259,6 +305,7 @@ sub timeDigits {
 
 	if (ref($timeRef))  {
 		$time = $$timeRef || 0;
+
 	} else {
 		$time = $timeRef || 0;
 	}
@@ -269,7 +316,9 @@ sub timeDigits {
 
 	if (Slim::Utils::Prefs::get('timeFormat') =~ /%p/) {
 		$p = 'AM';
+
 		if ($h > 11) { $h -= 12; $p = 'PM'; }
+
 		if ($h == 0) { $h = 12; }
 	} #else { $p = " "; };
 
@@ -301,6 +350,7 @@ sub timeString {
 	my ($client, $h0, $h1, $m0, $m1, $p, $c) = @_;
 		
 	my $cs = $client->symbols('cursorpos');
+
 	$c = $c || $client->param('cursorPos') || 0;
 	
 	my $timestring = ($c == 0 ? $cs : '') . ((defined($p) && $h0 == 0) ? ' ' : $h0) . ($c == 1 ? $cs : '') . $h1 . ":" . ($c == 2 ? $cs : '') .  $m0 . ($c == 3 ? $cs : '') . $m1 . " " . ($c == 4 ? $cs : '') . (defined($p) ? $p : '');
@@ -317,7 +367,9 @@ sub exitInput {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
+
 	$callbackFunct->(@_);
+
 	return;
 }
 
@@ -335,18 +387,23 @@ sub moveCursor {
 	my $cursorPos = $client->param('cursorPos');
 
 	$cursorPos += $increment;
+
 	if ($cursorPos < 0) {
 		$cursorPos = 0;
+
 		if ($client->param('cursorPos') == 0) {
 			exitInput($client,'left');
 			return;
 		}
 	}
+
 	my $charIndex;
+
 	if ($cursorPos > ((Slim::Utils::Prefs::get('timeFormat') =~ /%p/) ? 4 : 3)) {
 		exitInput($client,'right');
 		return;
 	}
+
 	$client->param('cursorPos',$cursorPos);
 	$client->update();
 	
@@ -365,10 +422,12 @@ sub scroll {
 	if (ref($onChange) eq 'CODE') {
 		my $onChangeArgs = $client->param('onChangeArgs');
 		my @args;
+
 		push @args, $client if $onChangeArgs =~ /c/i;
 		push @args, $time if $onChangeArgs =~ /v/i;
 		$onChange->(@args);
 	}
+
 	$client->update();
 }
 
@@ -380,12 +439,16 @@ sub prepKnob {
 	
 	if ($c == 0) {
 		$client->param('listLen', $ampm ? 2 : 3);
+
 	} elsif ($c == 1) {
 		$client->param('listLen', $ampm ? ($digits->[0] ? 3 : 10) : ($digits->[0] == 2 ? 4 : 10));
+
 	} elsif ($c == 2) { 
 		$client->param('listLen', 6);
+
 	} elsif ($c == 3) { 
 		$client->param('listLen', 10);
+
 	} elsif ($c == 4) { 
 		$client->param('listLen', 2);
 	}
@@ -401,10 +464,12 @@ sub scrollTime {
 	$c = $client->param('cursorPos') unless defined $c;
 	
 	if (defined $valueRef) {
+
 		if (!ref $valueRef) {
 			my $value = $valueRef;
 			$valueRef = \$value;
 		}
+
 	} else {
 		$valueRef = $client->param('valueRef');
 	}
@@ -427,27 +492,35 @@ sub scrollTime {
 				$h1 = 0;
 			}
 		} else {
+
 			if ($h0 == 2 && $h1 > 3) {
 				$h1 = 0;
 			}
 		}
 	} elsif ($c == 1) {
 		my $max = $ampm ? ($h0 ? 3 : 10) : ($h0 == 2 ? 4 : 10);
+
 		$h1 = Slim::Buttons::Common::scroll($client, $dir, $max, $h1);
+
 		if ($ampm && $h1 == 0 && $h0 == 0) {
 			$h1 = $dir > 0 ? 1 : ($max - 1);
 		}
+
 	} elsif ($c == 2) { 
 		$m0 = Slim::Buttons::Common::scroll($client, $dir, 6, $m0);
+
 	} elsif ($c == 3) { 
 		$m1 = Slim::Buttons::Common::scroll($client, $dir, 10, $m1);
+
 	} elsif ($c == 4) { 
 		$p = Slim::Buttons::Common::scroll($client, +1, 2, $p);
 	}
 
 	if ($ampm && $h0 && $h1 == 2) {
+
 		if ($p) {
 			$p = 0;
+
 		} else {
 			$h0 = 0; 
 			$h1 = 0;
