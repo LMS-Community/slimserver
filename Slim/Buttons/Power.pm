@@ -40,6 +40,7 @@ sub setMode {
 	
 	# disable visualizer in this mode
 	$client->modeParam('visu',[0]);
+	$client->modeParam('screen2', 'power');
 
 	$client->update();
 
