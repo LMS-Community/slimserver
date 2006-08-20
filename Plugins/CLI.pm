@@ -1076,6 +1076,7 @@ sub strings {
 PLUGIN_CLI
 	EN	Command Line Interface (CLI)
 	ES	Interface de Línea de Comando (CLI)
+	FR	Interface Ligne de commande (CLI)
 	NL	Commandoregel interface (CLI)
 
 PLUGIN_CLI_DESC

@@ -683,7 +683,7 @@ sub strings {
 	return "
 PLUGIN_XPL
 	EN	xPL Interface
-	NL	xPL interface
+	FR	Interface xPL
 	
 SETUP_GROUP_XPL
 	DE	xPL Einstellungen

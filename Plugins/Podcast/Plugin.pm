@@ -394,6 +394,7 @@ PODCAST_NOTHING_TO_PLAY
 	DE	Nichts zu spielen
 	EN	Nothing to play
 	ES	Nada para escuchar
+	FR	Rien à lire
 	IT	Niente da riprodurre
 	NL	Niets om af te spelen
 

@@ -95,6 +95,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_3
 	DE	Dichtes Schneegestöber
 	EN	Whiteout
 	ES	Resplandor Blanco
+	FR	Tout blanc
 	NL	Zware sneeuwstorm
 
 PLUGIN_SCREENSAVER_SNOW_STYLE
@@ -102,14 +103,14 @@ PLUGIN_SCREENSAVER_SNOW_STYLE
 	EN	Style of snow when on
 	ES	Estilo de nieve on
 	FI	Lumen tyyli kun päällä
-	FR	Type neige on
+	FR	Type neige (ON)
 	NL	Sneeuwstijl wanneer aan
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_OFF
 	DE	Schneetyp aus
 	EN	Style of snow when off
 	ES	Estilo de nieve off
-	FR	Type neige off
+	FR	Type neige (OFF)
 	NL	Sneeuwstijl wanneer uit
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
@@ -160,6 +161,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_6
 	DE	Frohe Feiertage!
 	EN	Season\'s Greetings
 	ES	Saludos para las Fiestas
+	FR	Voeux
 	NL	Wensen voor de feestdagen
 
 PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS
@@ -186,24 +188,28 @@ PLUGIN_SCREENSAVER_SNOW_WORD_2
 	DE	UND EIN GUTES
 	EN	AND A VERY
 	ES	Y UN MUY
+	FR	ET
 	NL	en een heel
 
 PLUGIN_SCREENSAVER_SNOW_WORD_3
 	DE	GLÜCKLICHES
 	EN	HAPPY
 	ES	PRÓSPERO
+	FR	BONNE
 	NL	gelukkig
 
 PLUGIN_SCREENSAVER_SNOW_WORD_4
 	DE	NEUES JAHR!
 	EN	NEW YEAR !
 	ES	AÑO NUEVO !
+	FR	ANNÉE !
 	NL	nieuw jaar!
 
 PLUGIN_SCREENSAVER_SNOW_SORRY
 	DE	Sorry, Schnee funktioniert auf diesem Gerät nicht.
 	EN	Sorry, Snow doesn\'t work with this player.
 	ES	Lo siento, la Nieve no funciona en este reproductor.
+	FR	Désolé, Neige ne fonctionne pas sur cette platine.
 	IT	Scusa, Neve non funziona con questo lettore.
 	NL	Sorry, Sneeuw werkt niet met deze speler.
 '};

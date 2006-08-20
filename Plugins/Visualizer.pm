@@ -99,12 +99,14 @@ PLUGIN_SCREENSAVER_VISUALIZER
 	EN	Visualizer Screensaver
 	ES	Salvapantallas de Visualizador
 	FI	Visualisointi ruudunsäästäjä
+	FR	Ecran de veille Visualisation
 	NL	Visualisatie schermbeveiliger
 
 PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
 	DE	Benötigt Squeezebox2
 	EN	Needs Squeezebox2
 	ES	Requiere Squeezebox2
+	FR	Squeezebox2 requise
 	IT	Necessita Squeezebox2/3
 	NL	Squeezebox2/3 nodig
 
@@ -128,6 +130,7 @@ PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	DE	Standard Bildschirmschoner
 	EN	Default screenaver
 	ES	Salvapantallas por defecto
+	FR	Ecran de veille par défaut
 	IT	Salvaschermo di default
 	NL	Standaard schermbeveiliger
 '};

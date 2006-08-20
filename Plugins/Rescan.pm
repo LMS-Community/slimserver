@@ -343,7 +343,7 @@ PLUGIN_RESCAN_RESCANNING
 	EN	Server now rescanning...
 	ES	El server está recopilando...
 	FI	Palvelin lukee hakemistojen sisältöä...
-	FR	En cours...
+	FR	Répertoriage en cours...
 	NL	Server bezig met herscannen...
 
 PLUGIN_RESCAN_PRESS_PLAY
@@ -352,6 +352,7 @@ PLUGIN_RESCAN_PRESS_PLAY
 	EN	Press PLAY to rescan now.
 	ES	Presionar PLAY para recopilar ahora.
 	FI	Paina "PLAY" lukeaksesi hakemiston sisältö nyt.
+	FR	Appuyez sur PLAY pour répertorier
 	NL	Druk op PLAY voor nu herscannen.
 
 PLUGIN_RESCAN_TIMER_NAME
@@ -359,7 +360,7 @@ PLUGIN_RESCAN_TIMER_NAME
 	DE	Automatisches Durchsuchen
 	EN	Rescan Timer
 	ES	Timer de Recopilación
-	FR	Répertorier musique :
+	FR	Répertorier musique
 	HE	מצב התוסף
 	NL	Herscan timer
 
@@ -368,7 +369,7 @@ PLUGIN_RESCAN_TIMER_SET
 	DE	Startzeit für erneutes Durchsuchen
 	EN	Set Rescan Time
 	ES	Establecer Horario de Recopilación
-	FR	Heure d'activation :
+	FR	Heure répertoriage
 	HE	שעת הסריקה
 	NL	Stel herscan tijd in
 
@@ -377,6 +378,7 @@ PLUGIN_RESCAN_TIMER_TURNING_OFF
 	DE	Automatisches Durchsuchen deaktivieren...
 	EN	Turning rescan timer off...
 	ES	Apagando el timer de recopilación...
+	FR	Activation répertoriage...
 	HE	מכבה טיימר סריקה
 	NL	Uitzetten herscan timer...
 
@@ -385,6 +387,7 @@ PLUGIN_RESCAN_TIMER_TURNING_ON
 	DE	Automatisches Durchsuchen aktivieren...
 	EN	Turning rescan timer on...
 	ES	Encendiendo el timer de recopilación...
+	FR	Désactivation répertoriage...
 	HE	מדליק טיימר סריקה
 	NL	Aanzetten herscan timer...
 
@@ -393,6 +396,7 @@ PLUGIN_RESCAN_TIMER_ON
 	DE	Automatisches Durchsuchen EIN
 	EN	Rescan Timer ON
 	ES	Timer de Recopilación ENCENDIDO
+	FR	Répertoriage activé
 	HE	הדלק סריקת ספרייה אוטומטית
 	NL	Herscan timer AAN
 
@@ -410,12 +414,14 @@ PLUGIN_RESCAN_TIMER_OFF
 	DE	Automatisches Durchsuchen AUS
 	EN	Rescan Timer OFF
 	ES	Timer de Recopilación APAGADO
+	FR	Répertoriage désactivé
 	HE	כבה סריקת ספרייה אוטומטית
 	NL	Herscan timer UIT
 
 PLUGIN_RESCAN_TIMER_TYPE
 	DE	Art des Scans
 	EN	Rescan Type
+	FR	Type répertoriage
 	NL	Herscan type
 ^;
 }

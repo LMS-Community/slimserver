@@ -706,6 +706,7 @@ PLUGIN_RSSNEWS_ADD_NEW
 	DE	Neuer Newsfeed -->
 	EN	Add new feed -->
 	ES	Añadir nuevo feed -->
+	FR	Ajouter flux -->
 	IT	Aggiungi un nuovo feed -->
 	NL	Voeg nieuwe feed toe -->
 
@@ -713,12 +714,14 @@ PLUGIN_RSSNEWS_WAIT
 	DE	Bitte warten...
 	EN	Please wait, requesting feed...
 	ES	Por favor esperar, solicitando...
+	FR	Patientez, connexion au flux...
 	NL	Bezig met ophalen...
 
 PLUGIN_RSSNEWS_ERROR
 	DE	Fehler beim Laden des RSS Feeds
 	EN	Failed to retrieve RSS feed
 	ES	Fallo al recuperar feed de RSS
+	FR	Impossible de charger le flux
 	IT	Errore nella ricerca di feed RSS
 	NL	Fout bij ophalen RSS feed
 
@@ -726,6 +729,7 @@ PLUGIN_RSSNEWS_NO_DESCRIPTION
 	DE	Keine Beschreibung verfügbar
 	EN	Description not available
 	ES	Descripción no disponible
+	FR	Pas de description
 	IT	Descrizione non disponibile
 	NL	Beschrijving niet aanwezig
 
@@ -734,23 +738,27 @@ PLUGIN_RSSNEWS_NO_TITLE
 	DE	Kein Titel verfübar
 	EN	Title not available
 	ES	Título no disponible
+	FR	Pas de titre
 	IT	Titolo non disponibile
 	NL	Titel niet beschikbaar
 
 PLUGIN_RSSNEWS_SCREENSAVER
 	EN	RSS News Ticker
 	ES	Ticker de Noticias RSS
+	FR	Aggrégateur RSS
 	NL	RSS nieuwsberichten
 
 PLUGIN_RSSNEWS_NAME
 	EN	RSS News Ticker
 	ES	Ticker de Noticias RSS
+	FR	Aggrégateur RSS
 	NL	RSS nieuwsberichten
 
 PLUGIN_RSSNEWS_SCREENSAVER_SETTINGS
 	DE	RSS News Bildschirmschoner Einstellunge
 	EN	RSS News Screensaver Settings
 	ES	Confugarión de Salvapantallas de Noticias RSS
+	FR	Paramètres Ecran de veille Aggrégateur RSS
 	NL	Instellingen RSS nieuws schermbeveiliger
 
 PLUGIN_RSSNEWS_SCREENSAVER_ACTIVATE
@@ -801,12 +809,14 @@ PLUGIN_RSSNEWS_ERROR_IN_FEED
 	DE	Fehler beim Parsen dess RSS Feeds
 	EN	Error parsing RSS feed
 	ES	Error analizando feed de RSS
+	FR	Erreur de lecture du flux
 	NL	Fout bij decoderen RSS feed
 
 PLUGIN_RSSNEWS_LOADING_FEED
 	DE	RSS Feed wird geladen...
 	EN	Loading RSS feed...
 	ES	Cargando feed de RSS
+	FR	Chargement flux...
 	NL	Laden RSS feed...
 
 SETUP_GROUP_PLUGIN_RSSNEWS_DESC

@@ -337,44 +337,54 @@ PLUGIN_HEALTH_PERF_DISABLE
 PLUGIN_HEALTH_NETTEST
 	EN	Network Test
 	ES	Test de Red
+	FR	Test réseau
 	NL	Netwerk test
 
 PLUGIN_HEALTH_NETTEST_SELECT_RATE
 	EN	Press Up/Down to select rate
 	ES	Elegir tasa: pres. Arriba/Abajo
+	FR	Haut/Bas pour changer le taux
 	NL	Selecteer snelheid met op/neer
 
 PLUGIN_HEALTH_NETTEST_NOT_SUPPORTED
 	EN	Not Supported on this Player
 	ES	No soportado en este Reproductor
+	FR	Non supporté sur cette platine
 	NL	Niet ondersteund op deze speler
 
 PLUGIN_HEALTH_NETTEST_DESC1
 	EN	You may test the network performance between your server and this player.  This will enable you to confirm the highest data rate that your network will support and identify network problems.  To start a test select one of the data rates below.<p><b>Warning</b> Running a network test will stop all other activity for this player including streaming.
+	FR	Vous pouvez tester les performances du réseau entre le serveur et cette platine afin de déterminer le débit maximum supporté par votre réseau et/ou diagnostiquer des problèmes réseau. Pour lancer un test, sélectionnez un débit ci-dessous.    Note : le lancement d\'un test réseau arrêtera toutes les fonctions en cours sur la platine, y compris la diffusion à distance.
 	NL	Je kunt de netwerkprestatie tussen je server en deze speler testen. Hiermee kun je zien wat de hoogste snelheid is die je netwerk ondersteunt en om problemen te identificeren. Om de test te starten kies je een testsnelheid.  <br>  <b>Waarschuwing</b> Tijdens de netwerktest stoppen alle andere activiteiten van de speler, ook het streamen.
 
 PLUGIN_HEALTH_NETTEST_DESC2
 	EN	You are currently running a network test on this player.  This disables reporting other player statistics.  You may change the test rate by selecting a new rate above.  To stop the test and return to other player performance information select Stop Test above.<p>The graph below records the percentage of the test rate which is sucessfully sent to the player.  It is updated once per second with the performance measured over the last second.  The result for the last second and long term average at this rate are also shown on the player display while a test is running.  Leave the test running for a period of time at a fixed rate.  The graph will record how frequently the network performance drops below 100% at this rate.
+	FR	Vous être actuellement en train d\'effectuer un test réseau sur cette platine. L\'envoi d\'autres statistiques depuis cette platine est temporairement désactivé. Vous pouvez modifier le débit de test en sélectionnant une valeur ci-dessus. Pour arrêter le test et revenir à l\'état précédent, cliquez sur Arrêter le test.    Le graphique ci-dessous indique le pourcentage du débit de test qui est correctement reçu par la platine. Il est mis à jour une fois par seconde avec les valeurs mesurées lors de la seconde écoulée. Le résultat de la dernière seconde mesurée ainsi que la moyenne à long terme ("Avg") sont également indiqués sur l\'afficheur de la platine durant le test.
 	NL	Je laat nu een netwerk test lopen voor deze speler. Andere spelerstatistieken zijn nu uitgeschakeld. Je kunt de testsnelheid wijzigen door hierboven een andere testsnelheid te kiezen. Om de test te stoppen en terug te keren naar de andere spelerstatistieken selecteer je Stop test hierboven.  <br>  De grafiek hieronder toont het percentage van de testsnelheid dat succesvol is verstuurd naar de speler. Elke seconde wordt het resultaat van de laatste seconde bijgewerkt. Het resultaat van de laatste seconde en het resultaat over een langere periode worden ook getoond op het scherm van de speler. Laat de test een tijdje lopen op een gekozen testsnelheid. De grafiek zal registreren hoe frequent de netwerksnelheid onder de 100% komt.
 
 PLUGIN_HEALTH_NETTEST_DESC3
 	EN	The highest test rate which achieves 100% indicates the maximum rate you can stream at.  If this is below the bitrate of your files you should consider configuring bitrate limiting for this player.<p>A Squeezebox2/3 attached to a wired network should be able to achieve at least 3000 kbps at 100% (Squeezebox1 1500 kbps).  A player attached to a wireless network may also reach up to this rate depending on your wireless network.  Rates significantly below this indicate poor network performance.  Wireless networks may record occasional lower percentages due to interference.  Use the graph above to understand how your network performs.  If the rate drops frequently you should investigate your network.
+	FR	La valeur de débit de test la plus élevée à atteindre 100 % est le débit le plus élevé auquel votre équipement peut assurer la Diffusion à distance. Si cette valeur est inférieure au débit d\'encodage de vos fichiers audio, il est préférable de modifier la Limite de transcodage pour cette platine.    Notez qu\'une Squeezebox2/3 connectée à un réseau filaire doit normalement atteindre au moins 3000 Kbps à 100 % (1500 Kbps pour une Squeezebox1). Une platine connectée à un réseau sans-fil peut théoriquement atteindre ces mêmes valeurs, hors baisse de débit dûes à des interférences, si votre réseau est correctement configuré. Des taux nettement inférieurs indiquent probablement un problème réseau.
 	NL	De hoogste testsnelheid waar je 100% haalt is de maximale snelheid waarmee je een stream kunt sturen. Als dit onder de bitrate is van je bestanden moet je overwegen om een bitrate limiet in te stellen.  <br> Een Squeezebox2/3 verbonden via een bedraad netwerk moet op zijn minst 3000 kbps op 100% halen (Squeezebox 1 1500 kbps). Een speler gekoppeld aan een draadloos netwerk kan ook deze snelheid halen, afhankelijk van je draadloze netwerk. Snelheden die significant onder de bovenstaande waarden liggen wijzen op een slechte netwerkperformance. Draadloze netwerken kunnen af en toe lagere percentages geven door interferentie. Gebruik de bovenstaande grafiek om na te gaan hoe je netwerkperformance is. Als de snelheid regelmatig laag is moet je het netwerk controleren.
 
 PLUGIN_HEALTH_NETTEST_PLAYERNOTSUPPORTED
 	EN	Network tests are not supported on this player.
+	FR	Les tests réseau ne sont pas supportés par cette platine.
 	NL	Netwerk testen zijn niet ondersteund op deze speler.
 
 PLUGIN_HEALTH_NETTEST_CURRENTRATE
 	EN	Current Test Rate
+	FR	Débit de test actif
 	NL	Huidige testsnelheid
 
 PLUGIN_HEALTH_NETTEST_TESTRATE
 	EN	Test Rate
+	FR	Débit de test
 	NL	Testsnelheid
 
 PLUGIN_HEALTH_NETTEST_STOPTEST
 	EN	Stop Test
+	FR	Arrêter le test
 	NL	Stop test
 
 PLUGIN_HEALTH_PERF_SUMMARY
@@ -384,15 +394,17 @@ PLUGIN_HEALTH_PERF_SUMMARY
 
 PLUGIN_HEALTH_PERF_SUMMARY_DESC
 	EN	Please queue up several tracks to play on this player and start them playing.  Then press the Reset link below to clear the statistics and update this display.
-	FR	Ajoutez plusieurs morceaux à la liste de lecture de cette platine et jouez-les, puis cliquez sur le bouton Réinitialiser les compteurs ci-dessus pour mettre à jour les statistiques.
+	FR	Ajoutez plusieurs morceaux à la liste de lecture de cette platine et jouez-les, puis cliquez sur le bouton Réinitialiser ci-dessus pour mettre à jour les statistiques.
 	NL	Selecteer verschillende liedjes om achter elkaar af te spelen op deze speler en start het spelen.<BR> Druk dan op de Reset link hieronder om de statistieken leeg te maken en weer bij te werken.
 
 PLUGIN_HEALTH_PERF_RESET
 	EN	Reset
+	FR	Réinitialiser
 
 PLUGIN_HEALTH_SUMMARY
 	EN	Summary
 	ES	Sumario
+	FR	Résumé
 	NL	Samenvatting
 
 PLUGIN_HEALTH_WARNINGS
@@ -403,14 +415,17 @@ PLUGIN_HEALTH_WARNINGS
 
 PLUGIN_HEALTH_PERF_STATISTICS
 	EN	Performance Statistics
+	FR	Statistiques performance
 	NL	Prestatiestatistieken
 
 PLUGIN_HEALTH_PLAYER
 	EN	Player Statistics
+	FR	Statistiques platine
 	NL	Speler statistieken
 
 PLUGIN_HEALTH_SERVER
 	EN	Server Statistics
+	FR	Statistiques serveur
 	NL	Server statistieken
 
 PLUGIN_HEALTH_OK
@@ -596,50 +611,62 @@ PLUGIN_HEALTH_NORMAL
 
 PLUGIN_HEALTH_REFRESH
 	EN	Refresh
+	FR	Actualiser
 	NL	Ververs
 
 PLUGIN_HEALTH_CLEAR
 	EN	Clear
+	FR	Réinitialiser
 	NL	Legen
 
 PLUGIN_HEALTH_CLEAR_ALL
 	EN	Clear All
+	FR	Réinitialiser tout
 	NL	Leeg alles
 
 PLUGIN_HEALTH_SET
 	EN	Set
+	FR	Modifier
 	NL	Instellen
 
 PLUGIN_HEALTH_SET_ALL
 	EN	Set All
+	FR	Modifier tout
 	NL	Alles instellen
 
 PLUGIN_HEALTH_WARNING_THRESHOLDS
 	EN	Warning Thresholds
+	FR	Seuils d\'alerte
 	NL	Waarschuwingsniveau
 
 PLUGIN_HEALTH_LOW
 	EN	Low
+	FR	Bas
 	NL	Laag
 
 PLUGIN_HEALTH_HIGH
 	EN	High
+	FR	Haut
 	NL	Hoog
 
 PLUGIN_HEALTH_BT
 	EN	Backtrace
+	FR	Traçage
 	NL	Terugtraceren
 
 PLUGIN_HEALTH_GRAPHS_DESC_PLAYER
 	EN	The server is currently collecting performance statistics for this player.  
+	FR	Le serveur est actuellement en train de collecter des statistiques de performance pour cette platine.
 	NL	De server is op dit moment bezig om de prestatiegegevens op te halen voor deze speler.
 
 PLUGIN_HEALTH_GRAPHS_DESC_SERVER
 	EN	The server is currently collecting performance statistics for various internal server functions.  These graphs are intended to be used to help diagnose performance issues with the server and its plugins.
+	FR	Le serveur est actuellement en train de collecter des statistiques de performance pour différentes fonctions internes du serveur. Ces graphiques permettent de diagnostiques d\'éventuels problèmes de performance avec le serveur et/ou les modules d\'extension.
 	NL	De server is nu bezig om de prestatiegegevens te verzamelen voor diverse interne server functies. <BR>Deze grafieken zijn bedoeld om te helpen bij het analyseren van prestatieproblemen van de server en de plugins.
 
 PLUGIN_HEALTH_WARNING_DESC
 	EN	You may set warning thresholds for each measurement.  This will record in the server log whenever the threshold is exceeded.  The most recent log entries can be viewed <a href="/log.txt" target="log"><u>here</u></a>.
+	FR	Vous pouvez fixer des seuils d\'alerte pour chaque mesure. Ceux-ci seront enregistrés dans le log du serveur s\'ils sont atteints. Vous pouvez visualiser le contenu le plus récent du log <a href="/log.txt">ici</a>.
 	NL	Je kunt waarschuwingsniveaus instellen voor elke meetinstelling. Vervolgens wordt bijgehouden in de server log wanneer een waarschuwingsniveau is overschreden. <BR>De meest recente log kun je <a href="/log.txt" target="log"><u>hier</u></a> bekijken.
 
 PLUGIN_HEALTH_SIGNAL_DESC
@@ -669,26 +696,32 @@ PLUGIN_HEALTH_RESPONSE_DESC
 
 PLUGIN_HEALTH_SELECTTASK
 	EN	Select Task Duration
+	FR	Durée tâche sélectionnée
 	NL	Selecteer taakduur
 
 PLUGIN_HEALTH_SELECTTASK_DESC
 	EN	The length of time taken by each task run by select.
+	FR	La durée écoulée pour chaque tâche sélectionnée.
 	NL	De lengte in tijd die elke geselecteerde taak neemt.
 
 PLUGIN_HEALTH_SCHEDULERTASK
 	EN	Scheduler Task Duration
+	FR	Durée tâche planifiée
 	NL	Taakplanner taakduur
 
 PLUGIN_HEALTH_SCHEDULERTASK_DESC
 	EN	The length of time taken by each scheduled task.
+	FR	La durée écoulée pour chaque tâche planifiée.
 	NL	De lengte in tijd die elke geplande taak neemt.
 
 PLUGIN_HEALTH_TIMERTASK
 	EN	Timer Task Duration
+	FR	Durée tâche automatique
 	NL	Timertaakduur
 
 PLUGIN_HEALTH_TIMERTASK_DESC
 	EN	The length of time taken by each timer task.
+	FR	La durée de chaque tâche automatique.
 	NL	De lengte in tijd genomen door elke timertaak.
 
 PLUGIN_HEALTH_TIMERLATE
@@ -703,42 +736,52 @@ PLUGIN_HEALTH_TIMERLATE_DESC
 
 PLUGIN_HEALTH_REQUEST
 	EN	Execute / Notification Task Duration
+	FR	Durée exécution/notification
 	NL	Uitvoeren / notificatie taakduur
 
 PLUGIN_HEALTH_REQUEST_DESC
 	EN	The length of time taken by each execute command or notification callback.
+	FR	La durée écoulée pour chaque commande d\'exécution ou rappel de notification.
 	NL	De lengte van de tijd bij elk uitgevoerde commando of terugroepnotificatie.
 
 PLUGIN_HEALTH_PAGEBUILD
 	EN	Web Page Build
+	FR	Génération page web
 	NL	Web pagina opbouw
 
 PLUGIN_HEALTH_PAGEBUILD_DESC
 	EN	The length of time taken to build each web page.
+	FR	La durée écoulée pour générer chaque page web.
 	NL	De tijd nodig om een webpagina op te bouwen.
 
 PLUGIN_HEALTH_IRQUEUE
 	EN	IR Queue Length
+	FR	Taille queue IR
 	NL	Infrarood (IR) rij lengte
 
 PLUGIN_HEALTH_IRQUEUE_DESC
 	EN	The delay between an IR key press being received and being processed.
+	FR	Le délai entre l\'émision d\'une commande infrarouge et son exécution.
 	NL	Vertraging tussen een infrarood (IR) toetsdruk ontvangen en het verwerkt zijn.
 
 PLUGIN_HEALTH_DBACCESS
 	EN	Database Access
+	FR	Accès base de données
 	NL	Database toegang
 
 PLUGIN_HEALTH_DBACCESS_DESC
 	EN	The time taken for information to be retrieved from the database.
+	FR	Le temps écoulé pour accéder à une information depuis la base de données.
 	NL	De tijd om informatie op te halen uit de database.
 
 PLUGIN_HEALTH_PROCTEMPLATE
 	EN	Process Template
+	FR	Exécution Template
 	NL	Proces sjabloon
 
 PLUGIN_HEALTH_PROCTEMPLATE_DESC
 	EN	The time to process each Template Toolkit template when building web pages.
+	FR	La durée d\'exécution de chaque Template Toolkit lors de la génération d\'une page web.
 	NL	De tijd om elk gereedschapsjabloon uit te voeren bij het opbouwen van webpagina\'s.
 '
 }

@@ -839,6 +839,7 @@ PLUGIN_RANDOM_DISABLED
 	DE	Zufalls Mix angehalten
 	EN	Random Mix Stopped
 	ES	Mezcla al Azar Detenida
+	FR	Mix aléatoire arrêté
 	HE	מיקס אקראי מופסק
 	NL	Willekeurige mix gestopt
 
@@ -854,12 +855,14 @@ PLUGIN_RANDOM_TRACK_PLAYING
 	DE	Spiele zufällige Liederauswahl
 	EN	Playing Random Songs
 	ES	Reproduciendo Canciones al Azar
+	FR	Lecture morceaux aléatoires
 	NL	Afspelen willekeurige liedjes
 
 PLUGIN_RANDOM_TRACK_DISABLE
 	DE	keine Lieder mehr hinzuzufügen
 	EN	stop adding songs
 	ES	dejar de añadir canciones
+	FR	ne plus ajouter de morceaux
 	NL	Stop toevoegen liedjes
 
 PLUGIN_RANDOM_ALBUM
@@ -874,17 +877,20 @@ PLUGIN_RANDOM_ALBUM_ITEM
 	DE	Zufälliges Album
 	EN	Random Album
 	ES	Álbum al Azar
+	FR	Album aléatoire
 	NL	Willekeurig album
 
 PLUGIN_RANDOM_ALBUM_PLAYING
 	DE	Spiele zufällige Albenauswahl
 	EN	Playing Random Albums
 	ES	Reproduciendo Álbumes al Azar
+	FR	Lecture albums aléatoires
 	NL	Afspelen willekeurige albums
 
 PLUGIN_RANDOM_ALBUM_DISABLE
 	DE	keine Alben mehr hinzuzufügen
 	EN	stop adding albums
+	FR	ne plus ajouter d'albums
 	NL	Stoppen toevoegen albums
 
 PLUGIN_RANDOM_CONTRIBUTOR
@@ -899,18 +905,21 @@ PLUGIN_RANDOM_CONTRIBUTOR_ITEM
 	DE	Zufälliger Interpret
 	EN	Random Artist
 	ES	Artista al Azar
+	FR	Artiste aléatoire
 	NL	Willekeurige artiesten
 
 PLUGIN_RANDOM_CONTRIBUTOR_PLAYING
 	DE	Spiele zufälligen Interpreten
 	EN	Playing Random Artists
 	ES	Reproduciendo Artistas al Azar
+	FR	Lecture artistes aléatoires
 	NL	Afspelen willekeurige artiesten
 
 PLUGIN_RANDOM_CONTRIBUTOR_DISABLE
 	DE	keine Interpreten mehr hinzuzufügen
 	EN	stop adding artists
 	ES	dejar de añadir artistas
+	FR	ne plus ajouter d'artistes
 	NL	Stop toevoegen artiesten
 
 PLUGIN_RANDOM_YEAR
@@ -924,18 +933,21 @@ PLUGIN_RANDOM_YEAR_ITEM
 	DE	Zufälliger Jahrgang
 	EN	Random Year
 	ES	Año al Azar
+	FR	Année aléatoire
 	NL	Willekeurig jaar
 
 PLUGIN_RANDOM_YEAR_PLAYING
 	DE	Spiele zufälligen Jahrgang
 	EN	Playing Random Years
 	ES	Reproduciendo Años al Azar
+	FR	Lecture années aléatoires
 	NL	Afspelen willekeurige jaren
 
 PLUGIN_RANDOM_YEAR_DISABLE
 	DE	keine Jahrgänge mehr hinzuzufügen
 	EN	stop adding years
 	ES	dejar de añadir años
+	FR	ne plus ajouter d'années
 	NL	Stop toevoegen jaren
 
 PLUGIN_RANDOM_GENRE_FILTER
@@ -1040,17 +1052,20 @@ PLUGIN_RANDOM_AFTER_NUM_OLD_TRACKS
 PLUGIN_RANDOM_CONTINUOUS_MODE
 	DE	Neue Objekte ergänzen, wenn alte fertig gespielt sind
 	EN	Add new items when old ones finish
+	FR	Continuer à ajouter de nouveaux morceaux
 	NL	Voeg nieuwe items toe zodra oude eindigen
 
 PLUGIN_RANDOM_GENERAL_HELP
 	DE	Sie können jederzeit Lieder aus dem Mix entfernen oder neue hinzufügen. Um den Zufallsmix anzuhalten löschen Sie bitte die Wiedergabeliste oder klicken, um
 	EN	You can add or remove songs from your mix at any time. To stop a random mix, clear your playlist or click to
 	ES	Se puede añadir o eliminar canciones de la mezcla en cualquier momento. Para detener una mezcla al azar, limpiar la lista o presionar
+	FR	Vous pouvez ajouter ou supprimer des morceaux de votre mix à tout moment. Pour arrêter un mix aléatoire, effacez votre liste de lecture ou cliquez  ici pour
 	NL	Je kunt op elk moment liedjes toevoegen bij of verwijderen uit je mix. Om de willekeurige mix te stoppen maak je de playlist leeg of klik op
 
 PLUGIN_RANDOM_PRESS_RIGHT
 	DE	RECHTS drücken um
 	EN	Press RIGHT to
+	FR	Appuyez sur DROITE pour
 	NL	Druk -> om
 EOF
 
