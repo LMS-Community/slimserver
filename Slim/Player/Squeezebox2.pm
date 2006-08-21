@@ -33,15 +33,17 @@ use Slim::Utils::Unicode;
 our $defaultPrefs = {
 	'transitionType'		=> 0,
 	'transitionDuration'	=> 0,
-	'replayGainMode'		=> '0',
+	'replayGainMode'		=> 0,
 };
 
 # Keep track of direct stream redirects
-	 our $redirects = {};
+our $redirects = {};
 
-my @WMA_FILE_PROPERTIES_OBJECT_GUID = (0x8c, 0xab, 0xdc, 0xa1, 0xa9, 0x47, 0x11, 0xcf, 0x8e, 0xe4, 0x00, 0xc0, 0x0c, 0x20, 0x53, 0x65);
-my @WMA_CONTENT_DESCRIPTION_OBJECT_GUID = (0x75, 0xB2, 0x26, 0x33, 0x66, 0x8E, 0x11, 0xCF, 0xA6, 0xD9, 0x00, 0xAA, 0x00, 0x62, 0xCE, 0x6C);
+# WMA GUIDs we want to have the player send back to us
+my @WMA_FILE_PROPERTIES_OBJECT_GUID              = (0x8c, 0xab, 0xdc, 0xa1, 0xa9, 0x47, 0x11, 0xcf, 0x8e, 0xe4, 0x00, 0xc0, 0x0c, 0x20, 0x53, 0x65);
+my @WMA_CONTENT_DESCRIPTION_OBJECT_GUID          = (0x75, 0xB2, 0x26, 0x33, 0x66, 0x8E, 0x11, 0xCF, 0xA6, 0xD9, 0x00, 0xAA, 0x00, 0x62, 0xCE, 0x6C);
 my @WMA_EXTENDED_CONTENT_DESCRIPTION_OBJECT_GUID = (0xd2, 0xd0, 0xa4, 0x40, 0xe3, 0x07, 0x11, 0xd2, 0x97, 0xf0, 0x00, 0xa0, 0xc9, 0x5e, 0xa8, 0x50);
+my @WMA_STREAM_BITRATE_PROPERTIES_OBJECT_GUID    = (0x7b, 0xf8, 0x75, 0xce, 0x46, 0x8d, 0x11, 0xd1, 0x8d, 0x82, 0x00, 0x60, 0x97, 0xc9, 0xa2, 0xb2);
 
 sub new {
 	my $class = shift;
@@ -355,36 +357,41 @@ sub directHeaders {
 				$bitrate = Slim::Music::Info::getBitrate( $url );
 			}
 			
-			# See if we have an existing track object with duration info for this stream.
-			if ( my $secs = Slim::Music::Info::getDuration($url) ) {
+			# WMA handles duration based on metadata
+			if ( $contentType ne 'wma' ) {
 				
-				# Display progress bar
-				$client->streamingProgressBar( {
-					'url'      => $url,
-					'duration' => $secs,
-				} );
-			}
-			else {
-			
-				if ( $bitrate > 0 && $length > 0 ) {
-					# if we know the bitrate and length of a stream, display a progress bar
-					if ( $bitrate < 1000 ) {
-						$bitrate *= 1000;
-					}
+				# See if we have an existing track object with duration info for this stream.
+				if ( my $secs = Slim::Music::Info::getDuration($url) ) {
+				
+					# Display progress bar
 					$client->streamingProgressBar( {
-						'url'     => $url,
-						'bitrate' => $bitrate,
-						'length'  => $length,
+						'url'      => $url,
+						'duration' => $secs,
 					} );
+				}
+				else {
+			
+					if ( $bitrate > 0 && $length > 0 ) {
+						# if we know the bitrate and length of a stream, display a progress bar
+						if ( $bitrate < 1000 ) {
+							$bitrate *= 1000;
+						}
+						$client->streamingProgressBar( {
+							'url'     => $url,
+							'bitrate' => $bitrate,
+							'length'  => $length,
+						} );
+					}
 				}
 			}
 
 			$::d_directstream && msg("got a stream type:: $contentType  bitrate: $bitrate  title: $title\n");
 
 			if ($contentType eq 'wma') {
-			    push @guids, @WMA_FILE_PROPERTIES_OBJECT_GUID;
-			    push @guids, @WMA_CONTENT_DESCRIPTION_OBJECT_GUID;
-			    push @guids, @WMA_EXTENDED_CONTENT_DESCRIPTION_OBJECT_GUID;
+				push @guids, @WMA_FILE_PROPERTIES_OBJECT_GUID;
+				push @guids, @WMA_CONTENT_DESCRIPTION_OBJECT_GUID;
+				push @guids, @WMA_EXTENDED_CONTENT_DESCRIPTION_OBJECT_GUID;
+				push @guids, @WMA_STREAM_BITRATE_PROPERTIES_OBJECT_GUID;
 
 			    $guids_length = $#guids;
 
