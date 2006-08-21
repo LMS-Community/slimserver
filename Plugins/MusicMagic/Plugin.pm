@@ -875,7 +875,7 @@ sub musicmagic_mix {
 		$::d_musicmagic && msg('MusicMagic: no/unknown type specified for mix\n');
 
 		# allow a valid page return, but report an empty mix
-		$params->{'warn'} = $client->string('EMPTY');
+		$params->{'warn'} = Slim::Utils::Strings::string('EMPTY');
 	}
 
 	if (defined $mix && ref $mix eq "ARRAY" && defined $client) {
