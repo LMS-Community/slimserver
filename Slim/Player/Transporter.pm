@@ -27,14 +27,16 @@ use Slim::Utils::Unicode;
 
 
 our $defaultPrefs = {
-	'clockSource'		=> 0,
-	'digitalInput'		=> 0,
+	'clockSource'  => 0,
+	'digitalInput' => 0,
 };
 
 sub init {
 	my $client = shift;
+
 	# make sure any preferences unique to this client may not have set are set to the default
-	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
+	Slim::Utils::Prefs::initClientPrefs($client, $defaultPrefs);
+
 	$client->SUPER::init();
 }
 
@@ -43,10 +45,14 @@ sub reconnect {
 	$client->SUPER::reconnect(@_);
 
 	$client->updateClockSource();
+
+	# Update the knob in reconnect - as that's the last function that is
+	# called when a new or pre-existing client connects to the server.
+	$client->updateKnob(1);
 }
 
 sub updateClockSource {
-    my $client = shift;
+	my $client = shift;
 
 	my $data = pack('C', $client->prefGet("clockSource"));
 	$client->sendFrame('audc', \$data);	
@@ -63,31 +69,37 @@ sub updateKnob {
 
 		my $listRef = $client->param('listRef');
 
-		if ($listRef) {
+		if (ref($listRef) eq 'ARRAY') {
 			$listLen = scalar(@$listRef);
 		}			
 	}
 
-	my $knobPos = $client->knobPos();
-	my $knobSync = $client->knobSync();
+	my $knobPos  = $client->knobPos || 0;
+	my $knobSync = $client->knobSync;
 
-	if (defined $listIndex && defined $knobPos && (($listIndex == $knobPos) || $forceSend)) {
+	if (defined $listIndex && (($listIndex == $knobPos) || $forceSend)) {
 
 		my $parambytes;
 
 		if (defined $listLen) {
-			my $flags = 0;
-			my $width = 0;
-			my $height = 0;
+		    	my $flags  = 0;
+		    	my $width  = 0;
+		    	my $height = 0;
 
-			$client->knobSync(++$knobSync);
+			$client->knobSync( (++$knobSync) & 0xFF);
+
 			$parambytes = pack "NNCcnc", $listIndex, $listLen, $knobSync, $flags, $width, $height;
+
+			$::d_ui && msg("sending new knob position- listIndex: $listIndex with knobPos: $knobPos of $listLen sync: $knobSync\n");
+
 		} else {
+
 			$parambytes = pack "N", $listIndex;
+
+			$::d_ui && msg("sending new knob position- listIndex: $listIndex\n");
 		}
 
-		$::d_ui && msg("sending new knob position: $listIndex with knobpos: $knobPos of $listLen sync: $knobSync\n");
-		$client->sendFrame('knob', \$parambytes);	
+		$client->sendFrame('knob', \$parambytes);
 
 	} else {
 
@@ -97,7 +109,7 @@ sub updateKnob {
 
 sub model {
 	return 'transporter';
-};
+}
 
 sub hasExternalClock {
 	return 1;
@@ -109,8 +121,4 @@ sub hasPreAmp {
 
 1;
 
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:
+__END__

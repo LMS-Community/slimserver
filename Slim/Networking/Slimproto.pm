@@ -772,11 +772,11 @@ sub _hello_handler {
 
 		if ($bitmapped) {
 
-				$display_class = 'Slim::Display::SqueezeboxG';
+			$display_class = 'Slim::Display::SqueezeboxG';
 
 		} else {
 
-				$display_class = 'Slim::Display::Text';
+			$display_class = 'Slim::Display::Text';
 		}
 
 	} elsif ($deviceids[$deviceid] eq 'softsqueeze') {
@@ -805,10 +805,10 @@ sub _hello_handler {
 		$::d_slimproto && msg("change display for $client_class to $display_class\n");
 		$client->display->forgetDisplay();
 
-		eval "use $display_class"; 
+		Slim::bootstrap::tryModuleLoad($display_class);
 
 		if ($@) {
-			msg("Couldn't load module: $display_class: [$@] - THIS IS FATAL\n");
+			errorMsg("Couldn't load module: $display_class: [$@] - THIS IS FATAL\n");
 			bt();
 			$@ = '';
 		}
@@ -817,6 +817,7 @@ sub _hello_handler {
 	}
 
 	if (!defined($client)) {
+
 		$::d_slimproto && msg("creating new client, id:$id ipport: $ipport{$s}\n");
 
 		$client = $client_class->new(
@@ -826,20 +827,22 @@ sub _hello_handler {
 			$s		# tcp sock
 		);
 
-		eval "use $display_class"; 
+		Slim::bootstrap::tryModuleLoad($display_class);
 
 		if ($@) {
-			msg("Couldn't load module: $display_class: [$@] - THIS IS FATAL\n");
+			errorMsg("Couldn't load module: $display_class: [$@] - THIS IS FATAL\n");
 			bt();
 			$@ = '';
 		}
-			
+
 		$client->display( $display_class->new($client) );
 
 		$client->macaddress($mac);
-		$client->init();
+		$client->init;
 		$client->reconnect($paddr, $revision, $s, 0);  # don't "reconnect" if the player is new.
+
 	} else {
+
 		$::d_slimproto && msg("hello from existing client: $id on ipport: $ipport{$s}\n");
 
 		my $oldsock = $client->tcpsock();
@@ -847,7 +850,7 @@ sub _hello_handler {
 		if (defined($oldsock) && exists($sock2client{$oldsock})) {
 		
 			$::d_slimproto && msg("closing previous socket to client: $id on ipport: ".
-								  inet_ntoa($oldsock->peeraddr).":".$oldsock->peerport."\n" );
+				inet_ntoa($oldsock->peeraddr).":".$oldsock->peerport."\n" );
 
 			slimproto_close($client->tcpsock());
 		}
@@ -856,10 +859,11 @@ sub _hello_handler {
 
 		$client->reconnect($paddr, $revision, $s, $reconnect, $bytes_received);
 	}
-	
-	$sock2client{$s}=$client;
-	
+
+	$sock2client{$s} = $client;
+
 	if ($client->needsUpgrade()) {
+
 		# don't start playing if we're upgrading
 		$client->execute(['stop']);
 
@@ -876,20 +880,21 @@ sub _hello_handler {
 				'text'           => 2,
 			}
 		}, 'upgrade');
+
 	} else {
+
 		# workaround to handle multiple firmware versions causing blocking modes to stack
 		while (Slim::Buttons::Common::mode($client) eq 'block') {
 			$client->unblock();
 		}
+
 		# make sure volume is set, without changing temp setting
 		$client->audio_outputs_enable($client->power());
-		$client->volume($client->volume(), 
-			defined($client->tempVolume()));
+		$client->volume($client->volume(), defined($client->tempVolume()));
 			
 		# add the player to the list of clients we're watching for signs of life
 		$heartbeat{ $client->id } = time();
 	}
-	return;
 }
 
 sub _button_handler {
@@ -916,7 +921,7 @@ sub _knob_handler {
 		$position = -($position & 0x7FFFFFFF);
 	}
 
-	my $oldPos = $client->knobPos();
+	my $oldPos   = $client->knobPos();
 	my $knobSync = $client->knobSync();
 
 	if ($knobSync != $sync) {
@@ -924,14 +929,14 @@ sub _knob_handler {
 		return;
 	}
 
+	$::d_slimproto && msgf("knob position: $position (old: %s) time: $time\n", defined $oldPos ? $oldPos : 'undef');
 
-	$::d_slimproto && msg("knob position: $position (old: $oldPos) time: $time\n");
 	$client->knobPos($position);
 	$client->knobTime($time);
 	
-	#BUG 3545: Remote IR sometimes registers an irhold time.  Since the Knob
-	# doesn't work on repeat timers, we have to reset it here to reactivate 
-	# control of Slim::Buttons::Common::scroll by the knob
+	# Bug 3545: Remote IR sometimes registers an irhold time. Since the
+	# Knob doesn't work on repeat timers, we have to reset it here to
+	# reactivate control of Slim::Buttons::Common::scroll by the knob
 	Slim::Hardware::IR::resetHoldStart($client);
 	
 	Slim::Hardware::IR::executeButton($client, 'knob', $time, undef, 1);

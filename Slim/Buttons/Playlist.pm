@@ -51,7 +51,7 @@ sub init {
 
 				} elsif ($playlistlen > 0) {
 
-					browseplaylistindex($client,Slim::Player::Source::playingSongIndex($client));
+					browseplaylistindex($client, Slim::Player::Source::playingSongIndex($client));
 				}
 
 			} else {
@@ -119,7 +119,7 @@ sub init {
 
 				if ($newposition != browseplaylistindex($client)) {
 
-					browseplaylistindex($client,$newposition);
+					browseplaylistindex($client, $newposition);
 					$client->pushUp();
 				}
 			}
@@ -275,9 +275,13 @@ sub getFunctions {
 
 sub setMode {
 	my $client = shift;
-	my $how = shift;
+	my $how    = shift;
+
 	$client->lines(\&lines);
-	if ($how ne 'pop') { jump($client); }
+
+	if ($how ne 'pop') {
+		jump($client);
+	}
 
 	browseplaylistindex($client);
 
@@ -291,10 +295,11 @@ sub jump {
 	my $pos = shift;
 	
 	if (showingNowPlaying($client) || ! defined browseplaylistindex($client)) {
+
 		if (!defined($pos)) { 
 			$pos = Slim::Player::Source::playingSongIndex($client);
 		}
-		
+
 		$::d_playlist && msg("Playlist: Jumping to song index: $pos\n");
 
 		browseplaylistindex($client,$pos);
@@ -388,7 +393,13 @@ sub browseplaylistindex {
 	}
 	
 	# update list length for the knob.  ### HACK ATTACK ###
-	$client->param('listLen', Slim::Player::Playlist::count($client));
+	#
+	# Only do so when we're updating the listIndex though.
+	# See Bug: 3561
+	if (defined $playlistindex) {
+
+		$client->param('listLen', Slim::Player::Playlist::count($client));
+	}
 	
 	# get (and optionally set) the browseplaylistindex parameter that's kept in param stack
 	return $client->param('listIndex', $playlistindex);
