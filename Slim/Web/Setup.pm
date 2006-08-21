@@ -1310,6 +1310,8 @@ sub initSetupConfig {
 						$rescanType = [qw(rescan playlists)];
 					}
 
+					$::d_scan && msgf("Setup::rescan - initiating scan of type: [%s]\n", $rescanType->[0]);
+
 					Slim::Control::Request::executeRequest($client, $rescanType);
 				},
 				'inputTemplate' => 'setup_input_submit.html',
@@ -1674,6 +1676,8 @@ sub initSetupConfig {
 				'onChange' => sub {
 					my $client = shift;
 
+					$::d_scan && msgf("Setup::ignoredarticles changed - initiating scan of type: [wipecache]\n");
+
 					Slim::Control::Request::executeRequest($client, ['wipecache']);
 				},
 			},
@@ -1683,6 +1687,8 @@ sub initSetupConfig {
 				'PrefSize' => 'large',
 				'onChange' => sub {
 					my $client = shift;
+
+					$::d_scan && msgf("Setup::splitList changed - initiating scan of type: [wipecache]\n");
 
 					Slim::Control::Request::executeRequest($client, ['wipecache']);
 				},
@@ -1790,6 +1796,8 @@ sub initSetupConfig {
 				'validate' => \&Slim::Utils::Validate::trueFalse,
 				'onChange' => sub {
 					my $client = shift;
+
+					$::d_scan && msgf("Setup::groupdiscs changed - initiating scan of type: [wipecache]\n");
 
 					Slim::Control::Request::executeRequest($client, ['wipecache']);
 				},

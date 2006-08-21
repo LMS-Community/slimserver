@@ -243,6 +243,8 @@ sub checkScanTimer {
 
 			if ($time == $scantime && !Slim::Music::Import->stillScanning()) {
 
+				$::d_scan && msgf("checkScanTimer - initiating scan of type: [%s]\n", $rescanType->[0]);
+
 				Slim::Control::Request::executeRequest(undef, $rescanType);
 			}
 		}

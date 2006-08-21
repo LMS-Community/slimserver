@@ -938,7 +938,9 @@ sub checkDataSource {
 
 		if (Slim::Schema->count('Track') == 0) {
 
-			 Slim::Control::Request::executeRequest(undef, ['rescan']);
+			$::d_scan && msg("checkDataSource - no tracks in the database, initiating scan.\n");
+
+			Slim::Control::Request::executeRequest(undef, ['wipecache']);
 		}
 	}
 }
