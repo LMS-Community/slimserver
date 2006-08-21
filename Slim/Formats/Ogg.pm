@@ -137,7 +137,7 @@ sub getTag {
 
 		$tags->{'VBR_SCALE'} = 0;
 	}
-	
+
 	$tags->{'OFFSET'}   =  0; # the header is an important part of the file. don't skip it
 
 	return $tags;
@@ -153,7 +153,8 @@ bitrate.
 =cut
 
 sub scanBitrate {
-	my $fh = shift;
+	my $class = shift;
+	my $fh    = shift;
 	
 	my $ogg;
 	

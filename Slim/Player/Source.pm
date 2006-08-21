@@ -328,12 +328,12 @@ sub playmode {
 	# Some protocol handlers don't allow pausing of active streams.
 	# We check if that's the case before continuing.
 	if ($newmode eq "pause" && defined($currentURL)) {
+
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($currentURL);
-		if ($handler && 
-			$handler->can("canDoAction") &&
-			!$handler->canDoAction($client, 
-								   $currentURL, 
-								   'pause')) {
+
+		if ($handler && $handler->can("canDoAction") &&
+			!$handler->canDoAction($client, $currentURL, 'pause')) {
+
 			$::d_source && msg("Protocol handler doesn't allow pausing.  Let's try stopping.\n");
 			return playmode($client, "stop", $seekoffset);
 		}
@@ -477,6 +477,7 @@ sub playmode {
 			my $currentSong = Slim::Player::Playlist::song($client, streamingSongIndex($client));
 			
 			if ( ref $currentSong ) {
+
 				if ( $currentSong->can('url') ) {
 					$currentSong = $currentSong->url;
 				}
@@ -717,9 +718,9 @@ sub gototime {
 		$::d_source && msg("gototime: relative jump $newtime from current time $oldtime\n");
 		$newtime += $oldtime;
 	}
-	
+
 	my $newoffset = time2offset($client, $newtime);
-	
+
 	if ($rangecheck) {
 		if ($newoffset > $songLengthInBytes) {
 			$newoffset = $songLengthInBytes;

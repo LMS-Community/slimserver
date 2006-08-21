@@ -1126,7 +1126,7 @@ so we use this to set the track duaration value.
 =cut
 
 sub scanBitrate {
-	my ( $fh, $url ) = @_;
+	my ( $class, $fh, $url ) = @_;
 	
 	my $flac = Audio::FLAC::Header->new( $fh->filename ) || do {
 

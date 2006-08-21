@@ -10,6 +10,10 @@ package Slim::Utils::Scanner;
 
 Slim::Utils::Scanner
 
+=head1 SYNOPSIS
+
+Slim::Utils::Scanner->scanPathOrURL({ 'url' => $url });
+
 =head1 DESCRIPTION
 
 This class implements a number of class methods to scan directories,
@@ -32,10 +36,8 @@ use IO::String;
 use Path::Class;
 use Scalar::Util qw(blessed);
 
-use Slim::Formats::FLAC;
+use Slim::Formats;
 use Slim::Formats::Playlists;
-use Slim::Formats::MP3;
-use Slim::Formats::Ogg;
 use Slim::Music::Info;
 use Slim::Player::ProtocolHandlers;
 use Slim::Networking::Async::HTTP;
@@ -90,7 +92,7 @@ sub scanPathOrURL {
 
 =head2 findFilesMatching( $topDir, $args )
 
-Starting at $topDir, uses Slim::Utils::FileFindRule to find any files matching 
+Starting at $topDir, uses L<Slim::Utils::FileFindRule> to find any files matching 
 our list of supported files.
 
 =cut
@@ -192,7 +194,7 @@ sub findFilesMatching {
 
 =head2 findFilesForRescan( $topDir, $args )
 
-Wrapper around findNewAndChangedFiles(), so that other callers (iTunes,
+Wrapper around L<findNewAndChangedFiles>(), so that other callers (iTunes,
 MusicMagic can reuse the logic.
 
 =cut
@@ -293,12 +295,12 @@ sub scanDirectory {
 	# Give the user a progress indicator if available.
 	my $progress = Slim::Utils::ProgressBar->new({ 'total' => scalar @{$files} });
 
+	# If we're starting with a clean db - don't bother with searching for a track
+	my $method   = $::wipe ? 'newTrack' : 'updateOrCreate';
+
 	for my $file (@{$files}) {
 
 		my $url = Slim::Utils::Misc::fileURLFromPath($file);
-
-		# If we're starting with a clean db - don't bother with searching for a track
-		my $method = $::wipe ? 'newTrack' : 'updateOrCreate';
 
 		if (Slim::Music::Info::isSong($url)) {
 
@@ -634,7 +636,7 @@ sub readPlaylistBody {
 
 =head2 scanPlaylistFileHandle( $playlist, $playlistFH )
 
-Scan a playlist filehandle using Slim::Formats::Playlists.
+Scan a playlist filehandle using L<Slim::Formats::Playlists>.
 
 =cut
 
@@ -773,24 +775,23 @@ sub scanPlaylistURLs {
 =head2 scanBitrate( $fh, $contentType, $url )
 
 Scan a remote stream for bitrate information using a temporary file.
-Supports MP3, Ogg, and FLAC streams.
+
+Currently supports MP3, Ogg, and FLAC streams (any format class that implements 'scanBitrate')
 
 =cut
 
 sub scanBitrate {
 	my ( $fh, $contentType, $url ) = @_;
-	
-	if ( $contentType eq 'mp3' ) {
-		return Slim::Formats::MP3::scanBitrate( $fh, $url );
+
+	my $formatClass = Slim::Formats->classForFormat($contentType);
+
+	if (Slim::Formats->loadTagFormatForType($contentType) && $formatClass->can('scanBitrate')) {
+
+		return $formatClass->scanBitrate( $fh, $url );
 	}
-	elsif ( $contentType eq 'ogg' ) {
-		return Slim::Formats::Ogg::scanBitrate( $fh, $url );
-	}
-	elsif ( $contentType eq 'flc' ) {
-		return Slim::Formats::FLAC::scanBitrate( $fh, $url );
-	}
-	
+
 	$::d_scan && msg("scanBitrate: Unable to scan content-type: $contentType\n");
+
 	return (-1, undef);
 }
 

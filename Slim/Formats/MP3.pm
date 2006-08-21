@@ -357,8 +357,9 @@ each frame and calculate an average bitrate for all frames found.
 =cut
 
 sub scanBitrate {
-	my $fh = shift;
-	
+	my $class = shift;
+	my $fh    = shift;
+
 	# Check if first frame has a Xing VBR header
 	# This will allow full files streamed from places like LMA or UPnP servers
 	# to have accurate bitrate/length information
@@ -426,6 +427,7 @@ sub scanBitrate {
 	}
 	
 	$::d_scan && msg("MP3 scanBitrate: Unable to find any MP3 frames in stream\n");
+
 	return (-1, undef);
 }	
 
