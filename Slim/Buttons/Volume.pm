@@ -1,4 +1,3 @@
-
 package Slim::Buttons::Volume;
 
 # SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
@@ -15,44 +14,50 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Buttons::Information;
 
-
-our $params;
-our %functions = ();
+my $params    = {};
+my %functions = ();
 my $AUTO_EXIT_TIME = 3.0; # seconds to leave volume automatically
 
 sub init {
-	Slim::Buttons::Common::addMode('volume',Slim::Buttons::Volume::getFunctions(),\&Slim::Buttons::Volume::setMode);
+	Slim::Buttons::Common::addMode('volume', Slim::Buttons::Volume::getFunctions(), \&Slim::Buttons::Volume::setMode);
 
-	%functions = (
-	);
-	
+	%functions = ();
+
 	$params = {
-			'header' => 'VOLUME',
-			'stringHeader' => 1,
-			'headerValue' => \&volumeValue,
-			'onChange' =>  \&executeCommand,
-			'command' => 'mixer',
-			'subcommand' => 'volume',
-			'initialValue' => sub { return $_[0]->volume() },
-			'callback' => \&volumeExitHandler,
-			'screen2' => 'inherit',
-		};
+		'header'       => 'VOLUME',
+		'stringHeader' => 1,
+		'headerValue'  => \&volumeValue,
+		'onChange'     => \&executeCommand,
+		'command'      => 'mixer',
+		'subcommand'   => 'volume',
+		'initialValue' => sub { return $_[0]->volume() },
+		'callback'     => \&volumeExitHandler,
+		'screen2'      => 'inherit',
+	};
 }
 
 sub volumeValue {
-	my ($client,$arg) = @_;
+	my ($client, $arg) = @_;
+
 	return ' ('.($arg <= 0 ? $client->string('MUTED') : int($arg/100*40+0.5)).')';
 }
 
 sub volumeExitHandler {
-	my ($client,$exittype) = @_;
-	if ($exittype) { $exittype = uc($exittype); }
+	my ($client, $exittype) = @_;
+
+	if ($exittype) {
+		$exittype = uc($exittype);
+	}
 
 	if (!$exittype || $exittype eq 'LEFT') {
+
 		Slim::Utils::Timers::killTimers($client, \&_volumeIdleChecker);
 		Slim::Buttons::Common::popModeRight($client);
+
 	} elsif ($exittype eq 'RIGHT') {
-			$client->bumpRight();
+
+		$client->bumpRight();
+
 	} else {
 		return;
 	}
@@ -68,7 +73,6 @@ sub executeCommand {
 	$client->execute([$command, $subcmd, $value]);
 }
 	
-
 sub getFunctions {
 	return \%functions;
 }
@@ -86,10 +90,11 @@ sub setMode {
 	$client->param('screen2', 'inherit');
 
 	my $value = $params->{'initialValue'}->($client);
+
 	$params->{'valueRef'} = \$value;
 
-	Slim::Buttons::Common::pushMode($client,'INPUT.Bar',$params);
-	
+	Slim::Buttons::Common::pushMode($client, 'INPUT.Bar', $params);
+
 	_volumeIdleChecker($client);
 }
 
@@ -97,12 +102,13 @@ sub _volumeIdleChecker {
 	my $client = shift;
 
 	if (Time::HiRes::time() - Slim::Hardware::IR::lastIRTime($client) < $AUTO_EXIT_TIME) {
+
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1.0, \&_volumeIdleChecker, $client);
+
 	} else {
+
 		volumeExitHandler($client);
 	}
 }
-
-
 
 1;
