@@ -2,15 +2,25 @@ package Slim::Utils::Scanner;
 
 # $Id$
 #
-# SlimServer Copyright (c) 2001-2005 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, version 2.
 
-# This file implements a number of class methods to scan directories,
-# playlists & remote "files" and add them to our data store.
-#
-# It is meant to be simple and straightforward. Short methods that do what
-# they say and no more.
+=head1 NAME
+
+Slim::Utils::Scanner
+
+=head1 DESCRIPTION
+
+This class implements a number of class methods to scan directories,
+playlists & remote "files" and add them to our data store.
+
+It is meant to be simple and straightforward. Short methods that do what
+they say and no more.
+
+=head1 METHODS
+
+=cut
 
 use strict;
 use base qw(Class::Data::Inheritable);
@@ -19,11 +29,13 @@ use FileHandle;
 use File::Basename qw(basename);
 use HTTP::Request;
 use IO::String;
-use MPEG::Audio::Frame;
 use Path::Class;
 use Scalar::Util qw(blessed);
 
+use Slim::Formats::FLAC;
 use Slim::Formats::Playlists;
+use Slim::Formats::MP3;
+use Slim::Formats::Ogg;
 use Slim::Music::Info;
 use Slim::Player::ProtocolHandlers;
 use Slim::Networking::Async::HTTP;
@@ -31,10 +43,13 @@ use Slim::Utils::FileFindRule;
 use Slim::Utils::Misc;
 use Slim::Utils::ProgressBar;
 
-# Constant Bitrates
-our %cbr = map { $_ => 1 } qw(32 40 48 56 64 80 96 112 128 160 192 224 256 320);
+=head2 scanPathOrURL( { url => $url, callback => $callback, ... } )
 
-# Handle any type of URI thrown at us.
+Scan any local or remote URL.  When finished, calls back to $callback with
+an arrayref of items that were found.
+
+=cut
+
 sub scanPathOrURL {
 	my ($class, $args) = @_;
 
@@ -72,6 +87,13 @@ sub scanPathOrURL {
 		return $cb->( $foundItems || [] );
 	}
 }
+
+=head2 findFilesMatching( $topDir, $args )
+
+Starting at $topDir, uses Slim::Utils::FileFindRule to find any files matching 
+our list of supported files.
+
+=cut
 
 sub findFilesMatching {
 	my $class  = shift;
@@ -168,8 +190,13 @@ sub findFilesMatching {
 	return $found;
 }
 
-# Wrapper around findNewAndChangedFiles(), so that other callers (iTunes,
-# MusicMagic can reuse the logic.
+=head2 findFilesForRescan( $topDir, $args )
+
+Wrapper around findNewAndChangedFiles(), so that other callers (iTunes,
+MusicMagic can reuse the logic.
+
+=cut
+
 sub findFilesForRescan {
 	my $class  = shift;
 	my $topDir = shift;
@@ -182,6 +209,12 @@ sub findFilesForRescan {
 
 	return $class->findNewAndChangedFiles($onDisk, $inDB);
 }
+
+=head2 findNewAndChangedFiles( $onDisk, $inDB )
+
+Compares file list between disk and database to generate rescan list.
+
+=cut
 
 sub findNewAndChangedFiles {
 	my $class  = shift;
@@ -212,7 +245,12 @@ sub findNewAndChangedFiles {
 	return [ keys %{$found} ];
 }
 
-# Scan a directory on disk, and depending on the type of file, add it to the database.
+=head2 scanDirectory( $args, $return )
+
+Scan a directory on disk, and depending on the type of file, add it to the database.
+
+=cut
+
 sub scanDirectory {
 	my $class  = shift;
 	my $args   = shift;
@@ -308,6 +346,12 @@ sub scanDirectory {
 	return $foundItems;
 }
 
+=head2 scanRemoteURL( $args )
+
+Scan a remote URL, determine its content-type, and handle it as either audio or a playlist.
+
+=cut
+
 sub scanRemoteURL {
 	my $class = shift;
 	my $args  = shift;
@@ -400,6 +444,12 @@ sub scanRemoteURL {
 	} );
 }
 
+=head2 readRemoteHeaders( $http, $args, $originalURL )
+
+Async callback from scanRemoteURL.  The remote headers are read to determine the content-type.
+
+=cut
+
 sub readRemoteHeaders {
 	my ( $http, $args, $originalURL ) = @_;
 	
@@ -482,7 +532,7 @@ sub readRemoteHeaders {
 						
 						my $io = IO::String->new( $http->response->content_ref );
 						
-						my ($bitrate, $vbr) = scanBitrate($io);
+						my ($bitrate, $vbr) = scanBitrate( $io, 'mp3' );
 
 						Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
 					},
@@ -521,6 +571,13 @@ sub readRemoteHeaders {
 		} );
 	}
 }
+
+=head2 readPlaylistBody( $http, $args )
+
+Async callback from readRemoteHeaders.  If the URL was determined to be a playlist, this
+method hands off the playlist body to scanPlaylistFileHandle().
+
+=cut
 
 sub readPlaylistBody {
 	my ( $http, $args ) = @_;
@@ -574,6 +631,12 @@ sub readPlaylistBody {
 		return $cb->( $foundItems, @{$pt} );
 	}
 }
+
+=head2 scanPlaylistFileHandle( $playlist, $playlistFH )
+
+Scan a playlist filehandle using Slim::Formats::Playlists.
+
+=cut
 
 sub scanPlaylistFileHandle {
 	my $class      = shift;
@@ -649,6 +712,12 @@ sub scanPlaylistFileHandle {
 	return wantarray ? @playlistTracks : \@playlistTracks;
 }
 
+=head2 scanPlaylistURLs ( $foundItems, $args, $toScan, $error )
+
+Recursively scan nested playlist URLs until we find an audio file or reach our recursion limit.
+
+=cut
+
 sub scanPlaylistURLs {
 	my ( $foundItems, $args, $toScan, $error ) = @_;
 	
@@ -701,76 +770,27 @@ sub scanPlaylistURLs {
 	}
 }
 
+=head2 scanBitrate( $fh, $contentType, $url )
+
+Scan a remote stream for bitrate information using a temporary file.
+Supports MP3, Ogg, and FLAC streams.
+
+=cut
+
 sub scanBitrate {
-	my $io = shift;
+	my ( $fh, $contentType, $url ) = @_;
 	
-	# Check if first frame has a Xing VBR header
-	# This will allow full files streamed from places like LMA or UPnP servers
-	# to have accurate bitrate/length information
-	my $frame = MPEG::Audio::Frame->read( $io );
-	if ( $frame && $frame->content =~ /(Xing.*)/ ) {
-		my $xing = IO::String->new( $1 );
-		my $vbr  = {};
-		my $off  = 4;
-		
-		# Xing parsing code from MP3::Info
-		my $unpack_head = sub { unpack('l', pack('L', unpack('N', $_[0]))) };
-
-		seek $xing, $off, 0;
-		read $xing, my $flags, 4;
-		$off += 4;
-		$vbr->{flags} = $unpack_head->($flags);
-		
-		if ( $vbr->{flags} & 1 ) {
-			seek $xing, $off, 0;
-			read $xing, my $bytes, 4;
-			$off += 4;
-			$vbr->{frames} = $unpack_head->($bytes);
-		}
-
-		if ( $vbr->{flags} & 2 ) {
-			seek $xing, $off, 0;
-			read $xing, my $bytes, 4;
-			$off += 4;
-			$vbr->{bytes} = $unpack_head->($bytes);
-		}
-		
-		my $mfs = $frame->sample / ( $frame->version ? 144000 : 72000 );
-		my $bitrate = sprintf "%.0f", $vbr->{bytes} / $vbr->{frames} * $mfs;
-		
-		$::d_scan && msg("scanBitrate: Found Xing VBR header in stream, bitrate: $bitrate kbps VBR\n");
-		
-		return ($bitrate * 1000, 1);
+	if ( $contentType eq 'mp3' ) {
+		return Slim::Formats::MP3::scanBitrate( $fh, $url );
+	}
+	elsif ( $contentType eq 'ogg' ) {
+		return Slim::Formats::Ogg::scanBitrate( $fh, $url );
+	}
+	elsif ( $contentType eq 'flc' ) {
+		return Slim::Formats::FLAC::scanBitrate( $fh, $url );
 	}
 	
-	# No Xing header, take an average of frame bitrates
-
-	my @bitrates;
-	my ($avg, $sum) = (0, 0);
-	
-	seek $io, 0, 0;
-	while ( my $frame = MPEG::Audio::Frame->read( $io ) ) {
-		
-		# Sample all frames to try to see if we're VBR or not
-		if ( $frame->bitrate ) {
-			push @bitrates, $frame->bitrate;
-			$sum += $frame->bitrate;
-			$avg = int( $sum / @bitrates );
-		}
-	}
-
-	if ( $avg ) {			
-		my $vbr = undef;
-		if ( !$cbr{$avg} ) {
-			$vbr = 1;
-		}
-		
-		$::d_scan && msg("scanBitrate: Read average bitrate from stream: $avg " . ( $vbr ? 'VBR' : 'CBR' ) . "\n");
-		
-		return ($avg * 1000, $vbr);
-	}
-	
-	$::d_scan && msg("scanBitrate: Unable to find any MP3 frames in stream\n");
+	$::d_scan && msg("scanBitrate: Unable to scan content-type: $contentType\n");
 	return (-1, undef);
 }
 

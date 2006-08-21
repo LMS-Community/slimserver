@@ -2,15 +2,32 @@ package Slim::Formats::MP3;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
+
+=head1 NAME
+
+Slim::Formats::MP3
+
+=head1 SYNOPSIS
+
+my $tags = Slim::Formats::MP3->getTag( $filename );
+
+=head1 DESCRIPTION
+
+Read tags & metadata embedded in MP3 files.
+
+=head1 METHODS
+
+=cut
 
 use strict;
 use base qw(Slim::Formats);
 
 use Fcntl qw(:seek);
+use IO::String;
 use MP3::Info;
 use MPEG::Audio::Frame;
 
@@ -33,6 +50,9 @@ my %tagMapping = (
 	'MEDIA JUKEBOX: PEAK LEVEL'     => 'REPLAYGAIN_TRACK_PEAK',
 	'MEDIA JUKEBOX: ALBUM ARTIST'   => 'ALBUMARTIST',
 );
+
+# Constant Bitrates
+our %cbr = map { $_ => 1 } qw(32 40 48 56 64 80 96 112 128 160 192 224 256 320);
 
 {
 	# Don't try and convert anything to latin1
@@ -88,6 +108,12 @@ my %tagMapping = (
 	$MP3::Info::v2_to_v1_names{'TCP'}  = 'COMPILATION';
 	$MP3::Info::v2_to_v1_names{'TCMP'} = 'COMPILATION';
 }
+
+=head2 getTag( $filename )
+
+Extract and return audio information & any embedded metadata found.
+
+=cut
 
 sub getTag {
 	my $class = shift;
@@ -212,6 +238,12 @@ sub getTag {
 	return $info;
 }
 
+=head2 getCoverArt( $filename )
+
+Extract and return cover image from the file.
+
+=cut
+
 sub getCoverArt {
 	my $class = shift;
 	my $file  = shift || return undef;
@@ -236,6 +268,12 @@ sub getCoverArt {
 	return undef;
 }
 
+=head2 doTagMapping( $tags )
+
+Map bad tag names to correct ones.
+
+=cut
+
 sub doTagMapping {
 	my $tags = shift;
 
@@ -246,6 +284,12 @@ sub doTagMapping {
 		}
 	}
 }
+
+=head2 findFrameBoundaries( $fh, $offset, $seek )
+
+Locate MP3 frame boundaries when seeking through a file.
+
+=cut
 
 sub findFrameBoundaries {
 	my ($class, $fh, $offset, $seek) = @_;
@@ -302,5 +346,87 @@ sub findFrameBoundaries {
 		return wantarray ? ($start, $end) : $start;
 	}
 }
+
+=head2 scanBitrate( $fh )
+
+Scans a file and returns just the bitrate and VBR setting.  This is used
+to determine the bitrate for remote streams.  We first look for a Xing VBR
+header which gives us accurate VBR bitrates.  If this isn't found, we parse
+each frame and calculate an average bitrate for all frames found.
+
+=cut
+
+sub scanBitrate {
+	my $fh = shift;
+	
+	# Check if first frame has a Xing VBR header
+	# This will allow full files streamed from places like LMA or UPnP servers
+	# to have accurate bitrate/length information
+	my $frame = MPEG::Audio::Frame->read( $fh );
+	if ( $frame && $frame->content =~ /(Xing.*)/ ) {
+		my $xing = IO::String->new( $1 );
+		my $vbr  = {};
+		my $off  = 4;
+		
+		# Xing parsing code from MP3::Info
+		my $unpack_head = sub { unpack('l', pack('L', unpack('N', $_[0]))) };
+
+		seek $xing, $off, 0;
+		read $xing, my $flags, 4;
+		$off += 4;
+		$vbr->{flags} = $unpack_head->($flags);
+		
+		if ( $vbr->{flags} & 1 ) {
+			seek $xing, $off, 0;
+			read $xing, my $bytes, 4;
+			$off += 4;
+			$vbr->{frames} = $unpack_head->($bytes);
+		}
+
+		if ( $vbr->{flags} & 2 ) {
+			seek $xing, $off, 0;
+			read $xing, my $bytes, 4;
+			$off += 4;
+			$vbr->{bytes} = $unpack_head->($bytes);
+		}
+		
+		my $mfs = $frame->sample / ( $frame->version ? 144000 : 72000 );
+		my $bitrate = sprintf "%.0f", $vbr->{bytes} / $vbr->{frames} * $mfs;
+		
+		$::d_scan && msg("MP3 scanBitrate: Found Xing VBR header in stream, bitrate: $bitrate kbps VBR\n");
+		
+		return ($bitrate * 1000, 1);
+	}
+	
+	# No Xing header, take an average of frame bitrates
+
+	my @bitrates;
+	my ($avg, $sum) = (0, 0);
+	
+	seek $fh, 0, 0;
+	while ( my $frame = MPEG::Audio::Frame->read( $fh ) ) {
+		
+		# Sample all frames to try to see if we're VBR or not
+		if ( $frame->bitrate ) {
+			push @bitrates, $frame->bitrate;
+			$sum += $frame->bitrate;
+			$avg = int( $sum / @bitrates );
+		}
+	}
+
+	if ( $avg ) {			
+		my $vbr = undef;
+		if ( !$cbr{$avg} ) {
+			$vbr = 1;
+		}
+		
+		$::d_scan && msg("MP3 scanBitrate: Read average bitrate from stream: $avg " . ( $vbr ? 'VBR' : 'CBR' ) . "\n");
+		
+		return ($avg * 1000, $vbr);
+	}
+	
+	$::d_scan && msg("MP3 scanBitrate: Unable to find any MP3 frames in stream\n");
+	return (-1, undef);
+}	
 
 1;

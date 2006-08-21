@@ -2,10 +2,26 @@ package Slim::Formats::Ogg;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
+
+=head1 NAME
+
+Slim::Formats::Ogg
+
+=head1 SYNOPSIS
+
+my $tags = Slim::Formats::Ogg->getTag( $filename );
+
+=head1 DESCRIPTION
+
+Read tags & metadata embedded in Ogg Vorbis files.
+
+=head1 METHODS
+
+=cut
 
 use strict;
 use base qw(Slim::Formats);
@@ -28,8 +44,12 @@ my %tagMapping = (
 	'MUSICBRAINZ_TRMID'		=> 'MUSICBRAINZ_TRM_ID',
 );
 
-# Given a file, return a hash of name value pairs,
-# where each name is a tag name.
+=head2 getTag( $filename )
+
+Extract and return audio information & any embedded metadata found.
+
+=cut
+
 sub getTag {
 	my $class = shift;
 	my $file  = shift || return {};
@@ -121,6 +141,46 @@ sub getTag {
 	$tags->{'OFFSET'}   =  0; # the header is an important part of the file. don't skip it
 
 	return $tags;
+}
+
+=head2 scanBitrate( $fh )
+
+Scans a file and returns just the bitrate and VBR setting.  This is used
+to determine the bitrate for remote streams.  This method is not very accurate
+for Ogg files because we only know the nominal bitrate value, not the actual average
+bitrate.
+
+=cut
+
+sub scanBitrate {
+	my $fh = shift;
+	
+	my $ogg;
+	
+	# some ogg files can blow up - especially if they are invalid.
+	eval {
+		local $^W = 0;
+		$ogg = Ogg::Vorbis::Header::PurePerl->new( $fh->filename );
+	};
+	if ( !$ogg || $@ ) {
+		$::d_scan && msg("Ogg scanBitrate: Unable to parse Ogg stream\n");
+		return (-1, undef);
+	}
+	
+	my $vbr = 0;
+	if (defined $ogg->info('bitrate_upper') && defined $ogg->info('bitrate_lower')) {
+		if ($ogg->info('bitrate_upper') != $ogg->info('bitrate_lower')) {
+			$vbr = 1;
+		}
+	}
+	
+	if ( my $bitrate = $ogg->info('bitrate_nominal') ) {
+		$::d_scan && msg("Ogg scanBitrate: Found bitrate header: $bitrate kbps " . ( $vbr ? 'VBR' : 'CBR' ) . "\n");
+		return ( $bitrate, $vbr );
+	}
+	
+	$::d_scan && msg("Ogg scanBitrate: Unable to read bitrate from stream\n");
+	return (-1, undef);
 }
 
 1;

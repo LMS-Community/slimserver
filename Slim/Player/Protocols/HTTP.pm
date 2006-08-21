@@ -248,6 +248,8 @@ sub sysread {
 			}
 		}
 	}
+	
+	# XXX: Add scanBitrate support for non-directstreaming Ogg and FLAC
 
 	return $readLength;
 }
@@ -255,11 +257,11 @@ sub sysread {
 sub parseDirectBody {
 	my ( $class, $client, $url, $body ) = @_;
 	
-	$::d_directstream && msgf( "parseDirectBody: Parsing %d bytes for MP3 frames\n", length($body) );
-
-	my $io = IO::String->new(\$body);
+	$::d_directstream && msg( "parseDirectBody: Parsing body for bitrate\n");
 	
-	my ($bitrate, $vbr) = Slim::Utils::Scanner::scanBitrate($io);
+	my $contentType = Slim::Music::Info::contentType($url);
+
+	my ($bitrate, $vbr) = Slim::Utils::Scanner::scanBitrate( $body, $contentType, $url );
 	if ( $bitrate ) {
 		Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
 	}

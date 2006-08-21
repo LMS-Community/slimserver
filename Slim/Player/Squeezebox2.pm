@@ -17,8 +17,10 @@ use strict;
 use base qw(Slim::Player::Squeezebox);
 
 use File::Spec::Functions qw(:ALL);
+use File::Temp;
 use IO::Socket;
 use MIME::Base64;
+use Scalar::Util qw(blessed);
 
 use Slim::Formats::Playlists;
 use Slim::Player::Player;
@@ -350,7 +352,7 @@ sub directHeaders {
 			
 			# Bitrate may have been set in Scanner by reading the mp3 stream
 			if ( !$bitrate ) {
-				$bitrate = Slim::Music::Info::getCurrentBitrate( $url );
+				$bitrate = Slim::Music::Info::getBitrate( $url );
 			}
 			
 			# See if we have an existing track object with duration info for this stream.
@@ -404,17 +406,17 @@ sub directHeaders {
 			} elsif ($body || Slim::Music::Info::isList($url)) {
 
 				$::d_directstream && msg("Direct stream is list, get body to explode\n");
-				$client->directBody('');
+				$client->directBody(undef);
 
 				# we've got a playlist in all likelyhood, have the player send it to us
 				$client->sendFrame('body', \(pack('N', $length)));
 				
-			} elsif ( $contentType eq 'mp3' && !$bitrate ) {
+			} elsif ( $contentType =~ /^(?:mp3|ogg|flc)$/ && !defined $bitrate ) {
 				
-				# if we're streaming mp3 audio and don't know the bitrate, request some body data
-				$::d_directstream && msg("MP3 stream with unknown bitrate, requesting body from player to parse\n");
+				# if we're streaming mp3, ogg or flac audio and don't know the bitrate, request some body data
+				$::d_directstream && msg("MP3/Ogg/FLAC stream with unknown bitrate, requesting body from player to parse\n");
 				
-				$client->sendFrame( 'body', \(pack('N', 8 * 1024)) );
+				$client->sendFrame( 'body', \(pack( 'N', 16 * 1024 )) );
 
 			} elsif ($client->contentTypeSupported($contentType)) {
 				
@@ -464,7 +466,14 @@ sub directBodyFrame {
 			}
 		}
 		else {
-			$client->directBody($client->directBody() . $body);
+			# save direct body to a temporary file
+			if ( !blessed $client->directBody ) {
+				my $fh = File::Temp->new();
+				$client->directBody( $fh );
+				$::d_directstream && msg("directBodyFrame: Saving to temp file: " . $fh->filename . "\n");
+			}
+			
+			$client->directBody->write( $body, length($body) );
 		}
 	} else {
 		$::d_directstream && msg("empty body means we should parse what we have for " . $client->directURL() . "\n");
@@ -472,22 +481,21 @@ sub directBodyFrame {
 	}
 
 	if ($done) {
-		if (length($client->directBody())) {
+		if ( defined $client->directBody ) {
 
 			my @items;
 			# done getting body of playlist, let's parse it!
 			# If the protocol handler knows how to parse it, give
 			# it a chance, else we parse based on the type we know
 			# already.
-			if ($handler && $handler->can('parseDirectBody')) {
-				@items = $handler->parseDirectBody($client, $url, $client->directBody());
+			if ( $handler && $handler->can('parseDirectBody') ) {
+				@items = $handler->parseDirectBody( $client, $url, $client->directBody );
 			}
 			else {
-				my $io = IO::String->new($client->directBody());
-				@items = Slim::Formats::Playlists->parseList($url, $io);
+				@items = Slim::Formats::Playlists->parseList( $url, $client->directBody );
 			}
 	
-			if (@items && scalar(@items)) { 
+			if ( scalar @items ) { 
 				Slim::Player::Source::explodeSong($client, \@items);
 				Slim::Player::Source::playmode($client, 'play');
 			} else {
@@ -496,12 +504,12 @@ sub directBodyFrame {
 				$client->failedDirectStream( $client->string('PLAYLIST_NO_ITEMS_FOUND') );
 			}
 
-			$client->directBody('');
+			$client->directBody(undef); # Will also remove the temporary file
 		} else {
 			$::d_directstream && msg("actually, the body was empty.  Got nobody...\n");
 		}
 	}
-} 
+}
 
 sub directMetadata {
 	my $client = shift;

@@ -1117,6 +1117,35 @@ sub findFrameBoundaries {
 	return wantarray ? ($start, $end) : $start;
 }
 
+=head2 scanBitrate( $fh, $url )
+
+Intended to scan the bitrate of a remote stream, although for FLAC this data
+is not accurate, but we can get the duration of the remote file from the header,
+so we use this to set the track duaration value.
+
+=cut
+
+sub scanBitrate {
+	my ( $fh, $url ) = @_;
+	
+	my $flac = Audio::FLAC::Header->new( $fh->filename ) || do {
+
+		$::d_scan && msg("FLAC scanBitrate: Unable to parse FLAC stream\n");
+		return (-1, undef);
+	};
+	
+	# The bitrate from parsing a short FLAC header is wrong, but we can get the
+	# correct track length from trackTotalLengthSeconds
+	if ( my $secs = $flac->{trackTotalLengthSeconds} ) {
+		$::d_scan && msg("FLAC scanBitrate: Read duration from stream: $secs seconds\n");
+		Slim::Music::Info::setDuration( $url, $secs );
+	}
+
+	# FLAC bitrate is not accurate with a small header file, so don't bother
+	
+	return (-1, undef);
+}
+
 =head1 SEE ALSO
 
 L<Slim::Formats>
