@@ -394,9 +394,9 @@ sub browseplaylistindex {
 	
 	# update list length for the knob.  ### HACK ATTACK ###
 	#
-	# Only do so when we're updating the listIndex though.
+	# Only do when we are in mode playlist
 	# See Bug: 3561
-	if (defined $playlistindex) {
+	if (Slim::Buttons::Common::mode($client) eq 'playlist') {
 
 		$client->param('listLen', Slim::Player::Playlist::count($client));
 	}
