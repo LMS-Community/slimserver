@@ -12,6 +12,8 @@ use base qw(Slim::Formats);
 
 use Audio::WMA;
 
+use Slim::Utils::Cache;
+
 my %tagMapping = (
 	'TRACKNUMBER' => 'TRACKNUM',
 	'ALBUMTITLE'  => 'ALBUM',

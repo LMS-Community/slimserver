@@ -12,7 +12,7 @@ use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 use Slim::Display::Display;
 
-Slim::Buttons::Common::addMode('INPUT.List',getFunctions(),\&setMode);
+Slim::Buttons::Common::addMode('INPUT.List', getFunctions(), \&setMode);
 
 ###########################
 #Button mode specific junk#
@@ -20,84 +20,88 @@ Slim::Buttons::Common::addMode('INPUT.List',getFunctions(),\&setMode);
 our %functions = (
 	#change character at cursorPos (both up and down)
 	'up' => sub {
-			my ($client,$funct,$functarg) = @_;
-			changePos($client,-1,$funct);
+		my ($client, $funct, $functarg) = @_;
+
+		changePos($client, -1, $funct);
 	},
 
 	'down' => sub {
-			my ($client,$funct,$functarg) = @_;
-			changePos($client,1,$funct);
+		my ($client, $funct, $functarg) = @_;
+
+		changePos($client, 1, $funct);
 	},
 
 	'knob' => sub {
-			my ($client,$funct,$functarg) = @_;
-			changePos($client, $client->knobPos() - $client->param('listIndex'), $funct);
+		my ($client, $funct, $functarg) = @_;
+
+		changePos($client, $client->knobPos - $client->param('listIndex'), $funct);
 	},
 
 	'numberScroll' => sub {
-			my ($client,$funct,$functarg) = @_;
+		my ($client, $funct, $functarg) = @_;
 
-			my $isSorted  = $client->param('isSorted');
-			my $lookupRef = $client->param('lookupRef');
-			my $listRef   = $client->param('listRef');
+		my $isSorted  = $client->param('isSorted');
+		my $lookupRef = $client->param('lookupRef');
+		my $listRef   = $client->param('listRef');
 
-			my $numScrollRef;
+		my $numScrollRef;
 
-			if ($isSorted && uc($isSorted) eq 'E') {
+		if ($isSorted && uc($isSorted) eq 'E') {
 
-				# sorted by the external value
-				$numScrollRef = $client->param('externRef');
-			} else {
+			# sorted by the external value
+			$numScrollRef = $client->param('externRef');
 
-				# not sorted or sorted by the internal value
-				$numScrollRef = $listRef;
+		} else {
+
+			# not sorted or sorted by the internal value
+			$numScrollRef = $listRef;
+		}
+
+		my $newIndex = Slim::Buttons::Common::numberScroll($client, $functarg, $numScrollRef, $isSorted ? 1 : 0, $lookupRef);
+
+		if (defined $newIndex) {
+
+			$client->param('listIndex',$newIndex);
+
+			my $valueRef = $client->param('valueRef');
+
+			$$valueRef = $listRef->[$newIndex];
+
+			my $onChange = $client->param('onChange');
+
+			if (ref($onChange) eq 'CODE') {
+				my $onChangeArgs = $client->param('onChangeArgs');
+				my @args;
+
+				push @args, $client if $onChangeArgs =~ /c/i;
+				push @args, $$valueRef if $onChangeArgs =~ /v/i;
+				push @args, $newIndex if $onChangeArgs =~ /i/i;
+				$onChange->(@args);
 			}
+		}
 
-			my $newIndex = Slim::Buttons::Common::numberScroll($client, $functarg, $numScrollRef, $isSorted ? 1 : 0, $lookupRef);
-
-			if (defined $newIndex) {
-
-				$client->param('listIndex',$newIndex);
-
-				my $valueRef = $client->param('valueRef');
-
-				$$valueRef = $listRef->[$newIndex];
-
-				my $onChange = $client->param('onChange');
-
-				if (ref($onChange) eq 'CODE') {
-					my $onChangeArgs = $client->param('onChangeArgs');
-					my @args;
-
-					push @args, $client if $onChangeArgs =~ /c/i;
-					push @args, $$valueRef if $onChangeArgs =~ /v/i;
-					push @args, $newIndex if $onChangeArgs =~ /i/i;
-					$onChange->(@args);
-				}
-			}
-
-			$client->update;
+		$client->update;
 	},
 	
 	#call callback procedure
 	'exit' => sub {
-			my ($client,$funct,$functarg) = @_;
+		my ($client, $funct, $functarg) = @_;
 
-			if (!defined($functarg) || $functarg eq '') {
-				$functarg = 'exit'
-			}
+		if (!$functarg) {
+			$functarg = 'exit'
+		}
 
-			exitInput($client,$functarg);
+		exitInput($client, $functarg);
 	},
 		
 	'passback' => sub {
-			my ($client,$funct,$functarg) = @_;
+		my ($client, $funct, $functarg) = @_;
 
-			my $parentMode = $client->param('parentMode');
+		my $parentMode = $client->param('parentMode');
 
-			if (defined($parentMode)) {
-				Slim::Hardware::IR::executeButton($client,$client->lastirbutton,$client->lastirtime,$parentMode);
-			}
+		if (defined($parentMode)) {
+			Slim::Hardware::IR::executeButton($client,$client->lastirbutton,$client->lastirtime,$parentMode);
+		}
 	},
 );
 
@@ -108,8 +112,8 @@ sub changePos {
 	my $listIndex = $client->param('listIndex');
 
 	if ($client->param('noWrap')) {
-		#not wrapping and at end of list
 
+		# not wrapping and at end of list
 		if ($listIndex == 0 && $dir < 0) {
 			$client->bumpUp() if ($funct !~ /repeat/);
 			return;
@@ -123,12 +127,13 @@ sub changePos {
 
 	my $newposition = Slim::Buttons::Common::scroll($client, $dir, scalar(@$listRef), $listIndex);
 
-	$::d_ui && msg("changepos: newpos: $newposition = scroll dir:$dir listindex: $listIndex\n");
+	$::d_ui && msgf("changepos: newpos: $newposition = scroll dir:$dir listIndex: $listIndex listLen: %d\n", scalar(@$listRef));
 
 	my $valueRef = $client->param('valueRef');
 
 	$$valueRef = $listRef->[$newposition];
-	$client->param('listIndex',$newposition);
+
+	$client->param('listIndex', $newposition);
 
 	my $onChange = $client->param('onChange');
 

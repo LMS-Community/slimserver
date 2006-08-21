@@ -322,14 +322,16 @@ sub power {
 	$resume =~ /(.*)Off-(.*)On/;
 	my ($resumeOff, $resumeOn) = ($1,$2);
 
-	unless ($on) {
+	if (!$on) {
+
 		# turning player off - move to off mode and unsync/pause/stop player
-  
 		$client->killAnimation();
 		$client->brightness($client->prefGet("powerOffBrightness"));
+
 		Slim::Buttons::Common::setMode($client, 'off');
 
-	    my $sync = $client->prefGet('syncPower');
+		my $sync = $client->prefGet('syncPower');
+
 		if (defined $sync && $sync == 0) {
 			$::d_sync && msg("Temporary Unsync ".$client->id()."\n");
 			Slim::Player::Sync::unsync($client,1);
@@ -356,8 +358,8 @@ sub power {
 		$client->audio_outputs_enable(0);
 
 	} else {
-		# turning player on - reset mode & brightness, display welcome and sync/start playing
 
+		# turning player on - reset mode & brightness, display welcome and sync/start playing
 		$client->audio_outputs_enable(1);
 
 		$client->update( { 'screen1' => {}, 'screen2' => {} } );
@@ -381,7 +383,7 @@ sub power {
 		
 		$client->showBriefly( {
 			'center' => [ $oneline ? undef : $client->string('WELCOME_TO_' . $client->model),
-						  $oneline ? $client->string($client->model) : $client->string('FREE_YOUR_MUSIC') ]
+				$oneline ? $client->string($client->model) : $client->string('FREE_YOUR_MUSIC') ]
 		}, undef, undef, 1);
 
 		# check if there is a sync group to restore

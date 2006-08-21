@@ -228,7 +228,7 @@ sub scanDirectory {
 	# Create a Path::Class::Dir object for later use.
 	my $topDir = dir($args->{'url'});
 
-	if ($::d_scan) {
+	if (1 || $::d_scan) {
 
 		msg("About to look for files in $topDir\n");
 		msgf("For files with extensions in: [%s]\n", Slim::Music::Info::validTypeExtensions($args->{'types'}) );

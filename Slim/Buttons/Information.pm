@@ -319,6 +319,7 @@ sub playerModel {
 			return "Squeezebox v3";
 		}
 	}
+
 	return $client->model;
 }
 

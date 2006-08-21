@@ -84,19 +84,27 @@ sub reconnect {
 	# paused, then stop.
 
 	if (!$reconnect) {
+
 		if ($client->playmode() eq 'play') {
+
 			# If bytes_received was sent and we're dealing 
 			# with a seekable source, just resume streaming
 			# else stop and restart.    
-			if (!$bytes_received ||
-			    $client->audioFilehandleIsSocket()) {
+
+			if (!$bytes_received || $client->audioFilehandleIsSocket()) {
+
 				Slim::Player::Source::playmode($client, "stop");
 				$bytes_received = 0;
 			}
+
 			Slim::Player::Source::playmode($client, "play", $bytes_received);
+
 		} elsif ($client->playmode() eq 'pause') {
+
 			Slim::Player::Source::playmode($client, "stop");
+
 		} elsif ($client->playmode() eq 'stop') {
+
 			# Ensure that a new client is stopped, but only on newer sb2s
 			if ($client->isa('Slim::Player::Squeezebox2') && $revision > 8) {
 				$client->stop();

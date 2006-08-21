@@ -1272,7 +1272,11 @@ sub popMode {
 	my $client = shift;
 
 	if (scalar(@{$client->modeStack}) < 1) {
+
 		$client->updateKnob(1);
+
+		$::d_ui && msg("popMode: nothing on the modeStack - updatingKnob & returning.\n");
+
 		return undef;
 	}
 
