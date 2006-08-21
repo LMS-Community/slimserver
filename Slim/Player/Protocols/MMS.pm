@@ -322,11 +322,17 @@ sub parseDirectBody {
 		
 		my $wma  = Audio::WMA->new($io) || return ();
 		
+		if ( !ref $wma->stream ) {
+			# some stations don't have stream objects, and we can't play them
+			# Example: http://ms.radio-canada.ca/liverci_en
+			return ();
+		}
+		
 		# Look through all available streams and select the one with the highest bitrate
 		my $bitrate = 0;
 		for my $stream ( @{ $wma->stream } ) {
 			next unless defined $stream->{'streamNumber'};
-			
+		
 			if ( $stream->{'bitrate'} > $bitrate ) {
 				$stream_nums{$url} = $stream->{'streamNumber'};
 				$bitrate = $stream->{'bitrate'};
@@ -402,7 +408,7 @@ sub _setMetadata {
 				if ( $secs > 0 ) {
 					
 					$client->streamingProgressBar( {
-						'url' => $url,
+						'url'      => $url,
 						'duration' => $secs,
 					} );
 				}
