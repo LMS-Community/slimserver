@@ -901,10 +901,11 @@ sub musicmagic_mix {
 		};
 
 		$itemnumber++;
+
 	} else {
 		
 		# no mixed items, report empty.
-		$params->{'warn'} = $client->string('EMPTY');
+		$params->{'warn'} = Slim::Utils::Strings::string('EMPTY');
 	}
 
 	for my $item (@$mix) {
