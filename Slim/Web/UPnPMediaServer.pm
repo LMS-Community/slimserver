@@ -105,11 +105,11 @@ sub gotContainer {
 			'hierarchy=' . uri_escape($hierarchy),
 		);
 		
-		# Get the itemCount value from the parent's childCount
-		my $parent = Slim::Utils::UPnPMediaServer::getItemInfo( $device, $levels[-1] ) || {};
+		# Get the itemCount value from the TotalMatches field
+		my $totalMatches = Slim::Utils::UPnPMediaServer::getTotalMatches( $device, $levels[-1] );
 		
 		$params->{pageinfo} = Slim::Web::Pages->pageInfo( {
-			itemCount   => $parent->{childCount} || scalar @{$items},
+			itemCount   => $totalMatches || scalar @{$items},
 			path        => $params->{path},
 			otherParams => $otherparams,
 			start       => $params->{start},
@@ -201,7 +201,7 @@ sub gotContainer {
 	if ( $params->{metadata} ) {
 		
 		# Item detail view
-		$params->{itemobj} = $params->{browse_items}->[0]->{itemobj};
+		$params->{itemobj} = $params->{browse_items}->[0]->{itemobj} || $params->{browse_items}->[1]->{itemobj};
 		
 		# Remove the last crumbtail item's link
 		delete $params->{pwd_list}->[-1]->{href};

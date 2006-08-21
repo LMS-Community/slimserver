@@ -205,26 +205,26 @@ sub gotContainer {
 				my $node = $1;
 			
 				my ($title, $id, $type, $url, $childCount);
-				if ($node =~ /<dc:title>(.*?)<\/dc:title>/s) {
+				if ( $node =~ m{<dc:title[^>]*>([^<]+)</dc:title>} ) {
 					$title = HTML::Entities::decode($1);
 					# some Rhapsody titles contain '??'
 					$title =~ s/\?\?/ /g;
 				}
-				if ($node =~ /id="(.*?)"/s) {
+				if ( $node =~ /id="([^"]+)"/ ) {
 					$id = $1;
 				}
-				if ($node =~ /childCount="(.*?)"/s) {
+				if ( $node =~ /childCount="([^"]+)"/ ) {
 					$childCount = $1;
 				}
-				if ($node =~ /<res(.*?)>(.*?)<\/res>/s) {
-					$url = $2;
+				if ( $node =~ m{<res[^>]*>([^<]+)</res>} ) {
+					$url = $1;
 				}
 
 				my $props = {
-					'title'      => $title,
-					'id'         => $id,
-					'childCount' => $childCount,
-					'url'        => $url,
+					title      => $title,
+					id         => $id,
+					childCount => $childCount,
+					url        => $url,
 				};
 			
 				# item info is cached for use in building crumb trails in the web UI
@@ -248,19 +248,19 @@ sub gotContainer {
 							
 							my ($title, $id, $type, $url);
 
-							if ($node =~ /<dc:title>(.*?)<\/dc:title>/s) {
+							if ( $node =~ m{<dc:title[^>]*>([^<]+)</dc:title>} ) {
 								$title = HTML::Entities::decode($1);
 								# some Rhapsody titles contain '??'
 								$title =~ s/\?\?/ /g;
 							}
-							if ($node =~ /<upnp:class>(.*?)<\/upnp:class>/s) {
+							if ( $node =~ m{<upnp:class>([^<]+)</upnp:class>} ) {
 								$type = $1;
 							}
-							if ($node =~ /id="(.*?)"/s) {
+							if ( $node =~ /id="([^"]+)"/ ) {
 								$id = $1;
 							}
-							if ($node =~ /<res(.*?)>(.*?)<\/res>/s) {
-								$url = $2;
+							if ( $node =~ m{<res[^>]*>([^<]+)</res>} ) {
+								$url = $1;
 							}
 							
 							my $props = {
@@ -271,7 +271,7 @@ sub gotContainer {
 							};
 							
 							# grab all other namespace items
-							my %otherItems = $node =~ /<\w+:(\w+)>(.*?)<\/\w+:/sg;
+							my %otherItems = $node =~ m{<\w+:(\w+)>([^<]+)</\w+:}g;
 							for my $key ( keys %otherItems ) {
 								next if $key =~ /(?:title|class)/;	# we already grabbed these above
 								$props->{$key} = HTML::Entities::decode( $otherItems{$key} );
@@ -285,7 +285,19 @@ sub gotContainer {
 
 							push @children, $props;
 						}
+						elsif ( $chunk =~ m{<TotalMatches>([^<]+)</TotalMatches>} ) {
+							# total browse results, used for building pagination links
+							my $matches = $1;
+							my $id      = $args->{id};
+							$cache->set( "upnp_total_matches_${udn}_${id}", $matches, '1 hour' );
+						}
 					}
+				}
+				elsif ( $chunk =~ m{<TotalMatches>([^<]+)</TotalMatches>} ) {
+					# total browse results, used for building pagination links
+					my $matches = $1;
+					my $id      = $args->{id};
+					$cache->set( "upnp_total_matches_${udn}_${id}", $matches, '1 hour' );
 				}
 			}
 		}
@@ -328,6 +340,14 @@ sub getItemInfo {
 
 	my $cache = Slim::Utils::Cache->new;
 	return $cache->get( "upnp_item_info_${udn}_${id}");
+}
+
+sub getTotalMatches {
+	my $udn = shift;
+	my $id  = shift;
+
+	my $cache = Slim::Utils::Cache->new;
+	return $cache->get( "upnp_total_matches_${udn}_${id}");
 }
 
 sub gotBlurb {
