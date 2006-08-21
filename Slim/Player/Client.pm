@@ -168,6 +168,7 @@ sub new {
 	$client->[109] = 0; # lastDigitTime
 	$client->[110] = undef; # lastSong (last URL played in this play session - a play session ends when the player is stopped or a track is skipped)
 	$client->[111] = {}; # pipe sockets used for parent/child communication
+	$client->[112] = undef; # knobSync
 
 	$clientHash{$id} = $client;
 
@@ -1579,6 +1580,11 @@ sub lastSong {
 sub pipes {
 	my $r = shift;
 	@_ ? ($r->[111] = shift) : $r->[111];
+}
+
+sub knobSync {
+	my $r = shift;
+	@_ ? ($r->[112] = shift) : $r->[112];
 }
 
 1;

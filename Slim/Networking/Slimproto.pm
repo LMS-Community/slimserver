@@ -909,21 +909,27 @@ sub _knob_handler {
 	my $data_ref = shift;
 
 	# handle knob movement
-	my ($time, $position) = unpack('NN', $$data_ref);
+	my ($time, $position, $sync) = unpack('NNC', $$data_ref);
 
 	# Perl doesn't have an unsigned network long format.
-	if ($position == 4294967295) {
-		$position = -1;
+	if ($position & 1<<31) {
+		$position = -($position & 0x7FFFFFFF);
 	}
 
 	my $oldPos = $client->knobPos();
+	my $knobSync = $client->knobSync();
+
+	if ($knobSync != $sync) {
+		$::d_slimproto && msg("stale knob sync code: $position (old: $oldPos) time: $time sync: $sync\n");
+		return;
+	}
+
 
 	$::d_slimproto && msg("knob position: $position (old: $oldPos) time: $time\n");
-
 	$client->knobPos($position);
 	$client->knobTime($time);
 	
-	#BUG 3545: Remote IR sometimes registers an irhold time.  Since the Kno
+	#BUG 3545: Remote IR sometimes registers an irhold time.  Since the Knob
 	# doesn't work on repeat timers, we have to reset it here to reactivate 
 	# control of Slim::Buttons::Common::scroll by the knob
 	Slim::Hardware::IR::resetHoldStart($client);
