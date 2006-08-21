@@ -105,8 +105,8 @@ sub reconnect {
 
 		} elsif ($client->playmode() eq 'stop') {
 
-			# Ensure that a new client is stopped, but only on newer sb2s
-			if ($client->isa('Slim::Player::Squeezebox2') && $revision > 8) {
+			# Ensure that a new client is stopped, but only on sb2s
+			if ( $client->isa('Slim::Player::Squeezebox2') ) {
 				$client->stop();
 			}
 		}
