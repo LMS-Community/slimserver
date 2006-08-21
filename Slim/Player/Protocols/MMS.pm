@@ -302,7 +302,7 @@ sub parseDirectBody {
 	my $client      = shift;
 	my $url         = shift;
 	my $body        = shift;
-
+	
 	my $io = IO::String->new($body);
 
 	$::d_directstream && msg("parseDirectBody: MMS protocol handler received response body\n");
@@ -322,15 +322,30 @@ sub parseDirectBody {
 		
 		my $wma  = Audio::WMA->new($io) || return ();
 		
-		my $stream = $wma->stream(0) || return ();
-
-		return unless defined($stream->{'flags_raw'});
-
-		$stream_nums{$url} = $stream->{'flags_raw'} & 0x007F;
-
-		$::d_directstream && msg("Parsed body as WMA header.\n");
+		# Look through all available streams and select the one with the highest bitrate
+		my $bitrate = 0;
+		for my $stream ( @{ $wma->stream } ) {
+			next unless defined $stream->{'streamNumber'};
+			
+			if ( $stream->{'bitrate'} > $bitrate ) {
+				$stream_nums{$url} = $stream->{'streamNumber'};
+				$bitrate = $stream->{'bitrate'};
+			}
+		}
 		
-		_setMetadata( $client, $url, $wma );
+		if ( !$bitrate ) {
+			# maybe we couldn't parse bitrate information, so just use the first stream
+			$stream_nums{$url} = $wma->stream(0)->{'streamNumber'};
+		}
+		
+		return unless $stream_nums{$url};
+
+		$::d_directstream && msgf("Parsed body as WMA header. Going to play stream #%d, bitrate: %d kbps\n",
+			$stream_nums{$url},
+			int($bitrate / 1000),
+		);
+		
+		_setMetadata( $client, $url, $wma, $stream_nums{$url} );
 
 		return $url;
 	}
@@ -349,14 +364,35 @@ sub parseMetadata {
 }
 
 sub _setMetadata {
-	my ( $client, $url, $wma ) = @_;
+	my ( $client, $url, $wma, $streamNumber ) = @_;
 	
-	# Set bitrate if available
-	if ( my $bitrate = $wma->info('bitrate') ) {
+	# Bitrate method 1: from parseDirectBody, we have the whole WMA object
+	if ( $streamNumber ) {
+		for my $stream ( @{ $wma->stream } ) {
+			if ( $stream->{'streamNumber'} == $streamNumber ) {
+				if ( my $bitrate = $stream->{'bitrate'} ) {
+					my $kbps = int( $bitrate / 1000 );
+					my $vbr  = $wma->tags('vbr') || undef;
+					Slim::Music::Info::setBitrate( $url, $kbps * 1000, $vbr );
+					$::d_directstream && msg("Setting bitrate to $kbps from WMA metadata\n");
+				}
+				last;
+			}
+		}
+	}
+	elsif ( ref $wma->{'BITRATES'} ) {
+		# method 2: from parseMetadata, we only have the bitrate info, use the highest bitrate
+		my $bitrates = $wma->{'BITRATES'};
+		my $bitrate  = 0;
+		for my $stream ( keys %{ $bitrates } ) {
+			if ( $bitrates->{$stream} > $bitrate ) {
+				$bitrate = $bitrates->{$stream};
+			}
+		}
 		my $kbps = int( $bitrate / 1000 );
 		my $vbr  = $wma->tags('vbr') || undef;
 		Slim::Music::Info::setBitrate( $url, $kbps * 1000, $vbr );
-		$::d_directstream && msg("Setting bitrate to $kbps from WMA metadata\n");
+		$::d_directstream && msg("Setting bitrate to $kbps from WMA bitrate properties object\n");
 	}
 	
 	# Set duration and progress bar if available and this is not a broadcast stream

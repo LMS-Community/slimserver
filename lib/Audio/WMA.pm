@@ -266,6 +266,12 @@ sub _parseWMAHeader {
 				$self->_parseASFStreamPropertiesObject(0);
 				next;
 			}
+			
+			if ($nextObjectGUIDName eq 'ASF_Stream_Bitrate_Properties_Object') {
+
+				$self->_parseASFStreamBitratePropertiesObject();
+				next;
+			}
 
 			if ($nextObjectGUIDName eq 'ASF_Header_Extension_Object') {
 
@@ -280,6 +286,9 @@ sub _parseWMAHeader {
 
 	# Now work on the subtypes.
 	for my $stream (@{$self->{'STREAM'}}) {
+		
+		# insert stream bitrate
+		$stream->{'bitrate'} = $self->{'BITRATES'}->{ $stream->{'streamNumber'} };
 
 		if ($reversedGUIDs{ $stream->{'stream_type_guid'} } eq 'ASF_Audio_Media') {
 
@@ -521,7 +530,7 @@ sub _parseASFStreamPropertiesObject {
 	$stream{'type_data_length'}   = unpack('v', $self->$method($DWORD));
 	$stream{'error_data_length'}  = unpack('v', $self->$method($DWORD));
 	$stream{'flags_raw'}          = unpack('v', $self->$method($WORD));
-	$streamNumber                 = $stream{'flags_raw'} & 0x007F;
+	$stream{'streamNumber'}       = $stream{'flags_raw'} & 0x007F;
 	$stream{'flags'}{'encrypted'} = ($stream{'flags_raw'} & 0x8000);
 
 	# Skip the DWORD
@@ -531,6 +540,24 @@ sub _parseASFStreamPropertiesObject {
 	$stream{'error_correct_data'} = $self->$method($stream{'error_data_length'});
 
 	push @{$self->{'STREAM'}}, \%stream;
+}
+
+sub _parseASFStreamBitratePropertiesObject {
+	my $self = shift;
+	
+	my $bitrates = {};
+	
+	my $count = unpack('v', $self->_readAndIncrementOffset($WORD));
+	
+	# Read each bitrate record
+	for ( 1..$count ) {
+		my $stream  = unpack('v', $self->_readAndIncrementOffset($WORD)) & 0x007F;
+		my $bitrate = unpack('V', $self->_readAndIncrementOffset($DWORD));
+		
+		$bitrates->{$stream} = $bitrate;
+	}
+	
+	$self->{'BITRATES'} = $bitrates;
 }
 
 sub _parseASFAudioMediaObject {
@@ -872,6 +899,7 @@ sub _knownParsers {
 	return (
 		'ASF_File_Properties_Object'              => \&_parseASFFilePropertiesObject,
 		'ASF_Content_Description_Object'          => \&_parseASFContentDescriptionObject,
+		'ASF_Stream_Bitrate_Properties_Object'    => \&_parseASFStreamBitratePropertiesObject,
 		
 		# We don't currently use most of these, so no point in spending time parsing them
 		#'ASF_Extended_Content_Description_Object' => \&_parseASFExtendedContentDescriptionObject,
