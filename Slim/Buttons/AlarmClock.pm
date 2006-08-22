@@ -4,10 +4,21 @@
 #
 # This code is derived from code with the following copyright message:
 #
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
+
+=head1 NAME
+
+Slim::Buttons::AlarmClock
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::AlarmClock> is a module for setting and triggering an
+alarm clock function for SlimServer..
+
+=cut
 
 package Slim::Buttons::AlarmClock;
 
@@ -62,6 +73,17 @@ sub playlistName {
 			? $_[0]->string($_[1]) 
 			: Slim::Music::Info::standardTitle($_[0],$_[1]->url);
 }
+
+=head1 METHODS
+
+=head2 init( )
+
+This method registers the alarm clock mode with Slimserver, and defines the functions for interaction
+ while setting the alarm clock.
+
+Generally only called from L<Slim::Buttons::Common>
+
+=cut
 
 # some initialization code, adding modes for this module
 sub init {
@@ -357,6 +379,15 @@ sub setTimer {
 	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&checkAlarms);
 }
 
+=head2 checkAlarms ( )
+
+This function periodically compares the alarm clock preferences for each client. If a match is found,
+then the alarm is triggered to match the user specified preferences for playlist, and volume.  If the preferred
+playlist fails, the alarm will attempt to play the current playlist (if any) as a failsafe.  Two seconds after the
+trigger, the server will display a short visual message to indicate that an alarm has begun the playback.
+
+=cut
+
 sub checkAlarms {
 	my ($sec,$min,$hour,$mday,$mon,$year,$wday) = localtime(time);
 
@@ -551,6 +582,13 @@ sub alarmHeader {
 	return $line1;
 }
 
+=head2 getSpecialPlaylists( )
+
+This is a function to return a reference to the options for various Random mix playlists, and other special playlists
+that may come along. Other modules may make use of this call to benefit from any changes in future.
+
+=cut
+
 sub getSpecialPlaylists {
 	return \%specialPlaylists;
 }
@@ -559,6 +597,14 @@ sub volumeValue {
 	my ($client,$arg) = @_;
 	return ' ('.($arg <= 0 ? $client->string('MUTED') : int($arg/100*40+0.5)).')';
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Utils::Timers>
+
+=cut
 
 1;
 

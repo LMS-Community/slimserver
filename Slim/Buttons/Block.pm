@@ -1,9 +1,28 @@
 package Slim::Buttons::Block;
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
+
+=head1 NAME
+
+Slim::Buttons::Block
+
+=head1 SYNOPSIS
+
+Slim::Buttons::Playlist::block($client,$lineref);
+
+Slim::Buttons::Playlist::unblock($client);
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Block> is a mode for locking out further remote control interaction 
+until a longer process has compeleted.  It is also used to provide feedback to the user
+in the form of an apropriate message and animated display during the wait for a long operation to
+complete.
+
+=cut
 
 use strict;
 use Slim::Utils::Timers;
@@ -17,6 +36,16 @@ my $tickdelay  =  1;            # number of updates before animation appears
 my @tickchars  = ('|','/','-','\\');
 
 our %functions  = ();
+
+=head1 METHODS
+
+=head2 init( )
+
+The init() function registers the block mode with the server.
+
+Generally only called from L<Slim::Buttons::Common>
+
+=cut
 
 # Don't do this at compile time - not at run time
 sub init {
@@ -34,6 +63,12 @@ sub setMode {
 	$client->modeParam('modeUpdateInterval', $ticklength) unless ($client->blocklines()->{'static'});
 }
 
+=head2 block( $client, $line1)
+
+Starts the block mode on the specified client.  The required $line argument is a reference to 
+a display hash for any information required on the screen while blocking.
+
+=cut
 sub block {
 	my $client = shift;
 	my $line1 = shift;
@@ -62,9 +97,16 @@ sub block {
 	}
 }
 
+=head2 unblock( $client)
+
+Releases the provided client from block mode. 
+
+=cut
 sub unblock {
 	my $client = shift;
+	
 	Slim::Buttons::ScreenSaver::wakeup($client);
+	
 	if (Slim::Buttons::Common::mode($client) eq 'block') {
 		Slim::Buttons::Common::popMode($client);
 	}
@@ -149,6 +191,18 @@ sub lines {
 
 	return($parts);
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Display::Display>
+
+L<Slim::Display::Graphics>
+
+L<Slim::Utils::Timers>
+
+=cut
 
 1;
 
