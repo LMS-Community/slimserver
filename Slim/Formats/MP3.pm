@@ -396,7 +396,7 @@ sub scanBitrate {
 			},
 		});
 		
-		$::d_directstream && msg("MP3 scanBitrate: Read ID3 tags from stream: " . Data::Dump::dump(\%tags) . "\n");
+		$::d_scan && msg("MP3 scanBitrate: Read ID3 tags from stream: " . Data::Dump::dump(\%tags) . "\n");
 		
 		my $title = $tags{TITLE};
 		$title .= ' - ' . $tags{ARTIST} if $tags{ARTIST};
