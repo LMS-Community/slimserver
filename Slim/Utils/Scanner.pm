@@ -363,18 +363,20 @@ sub scanRemoteURL {
 	my $class = shift;
 	my $args  = shift;
 	
+	# passthrough is here to support recursive scanRemoteURL calls from scanPlaylistURLs
 	my $cb    = $args->{'callback'} || sub {};
+	my $pt    = $args->{'passthrough'} || [];
 	my $url   = $args->{'url'};
 	
 	my $foundItems = [];
 
 	if ( !$url ) {
-		return $cb->( $foundItems );
+		return $cb->( $foundItems, @{$pt} );
 	}
 
 	if ( !Slim::Music::Info::isRemoteURL($url) ) {
 
-		return $cb->( $foundItems );
+		return $cb->( $foundItems, @{$pt} );
 	}
 
 	if ( Slim::Music::Info::isAudioURL($url) ) {
@@ -389,7 +391,7 @@ sub scanRemoteURL {
 		
 		push @{$foundItems}, $track;
 
-		return $cb->( $foundItems );
+		return $cb->( $foundItems, @{$pt} );
 	}
 	
 	my $originalURL = $url;
@@ -415,7 +417,8 @@ sub scanRemoteURL {
 		# check if protocol is supported on the current player (only for Rhapsody at the moment)
 		if ( $args->{'client'} && $handler && $handler->can('isUnsupported') ) {
 			if ( my $error = $handler->isUnsupported( $args->{'client'}->model ) ) {
-				return $cb->( $foundItems, $error );
+				push @{$pt}, $error;
+				return $cb->( $foundItems, @{$pt} );
 			}
 		}
 		
@@ -442,7 +445,8 @@ sub scanRemoteURL {
 
 			errorMsg("scanRemoteURL: Can't connect to remote server to retrieve playlist: $error.\n");
 
-			return $cb->( $foundItems, 'PLAYLIST_PROBLEM_CONNECTING' );
+			push @{$pt}, 'PLAYLIST_PROBLEM_CONNECTING';
+			return $cb->( $foundItems, @{$pt} );
 		},
 		'passthrough' => [ $args, $originalURL ],
 	} );
@@ -458,6 +462,7 @@ sub readRemoteHeaders {
 	my ( $http, $args, $originalURL ) = @_;
 	
 	my $cb = $args->{'callback'};
+	my $pt = $args->{'passthrough'} || [];
 
 	my $url = $http->request->uri->as_string;
 
@@ -567,12 +572,13 @@ sub readRemoteHeaders {
 			scanWMAStream( {
 				'url'         => $url,
 				'callback'    => $cb,
+				'passthrough' => $pt,
 				'foundItems'  => $foundItems,
 			} );
 		}
 		else {
 			
-			return $cb->( $foundItems );
+			return $cb->( $foundItems, @{$pt} );
 		}
 	}
 	else {
@@ -624,8 +630,11 @@ sub scanPlaylist {
 
 	# report an error if the playlist contained no items
 	my $cb = $args->{'callback'};
+	my $pt = $args->{'passthrough'} || [];
+	
 	if ( !@objects ) {
-		return $cb->( $foundItems, 'PLAYLIST_NO_ITEMS_FOUND' );
+		push @{$pt},  'PLAYLIST_NO_ITEMS_FOUND';
+		return $cb->( $foundItems, @{$pt} );
 	}
 	else {
 		push @{$foundItems}, @objects;
@@ -655,8 +664,7 @@ sub scanPlaylist {
 		return scanPlaylistURLs( $foundItems, $args );
 	}
 	else {
-		my $cb = $args->{'callback'};
-		return $cb->( $foundItems );
+		return $cb->( $foundItems, @{$pt} );
 	}
 }
 
@@ -750,6 +758,7 @@ sub scanPlaylistURLs {
 	my ( $foundItems, $args, $toScan, $error ) = @_;
 	
 	my $cb = $args->{'callback'};
+	my $pt = $args->{'passthrough'} || [];
 	
 	my $offset = 0;
 	for my $item ( @{$foundItems} ) {
@@ -768,6 +777,7 @@ sub scanPlaylistURLs {
 				scanWMAStream( {
 					'url'         => $item->url,
 					'callback'    => $cb,
+					'passthrough' => $pt,
 					'foundItems'  => $foundItems,
 				} );
 				
@@ -775,7 +785,7 @@ sub scanPlaylistURLs {
 			}
 			else {
 			
-				return $cb->( $foundItems );
+				return $cb->( $foundItems, @{$pt} );
 			}
 		}
 		$offset++;
@@ -790,7 +800,8 @@ sub scanPlaylistURLs {
 	
 	if ( $args->{'loopCount'} > 5 ) {
 		$::d_parse && msg("scanPlaylistURLs: recursion limit reached, giving up\n");
-		return $cb->( [], 'PLAYLIST_NO_ITEMS_FOUND' );
+		push @{$pt}, 'PLAYLIST_NO_ITEMS_FOUND';
+		return $cb->( [], @{$pt} );
 	}
 	
 	$args->{'loopCount'}++;
@@ -807,7 +818,8 @@ sub scanPlaylistURLs {
 	}
 	else {
 		# no more items left to scan and no audio found, return error
-		return $cb->( $foundItems, 'PLAYLIST_NO_ITEMS_FOUND' );
+		push @{$pt}, 'PLAYLIST_NO_ITEMS_FOUND';
+		return $cb->( $foundItems, @{$pt} );
 	}
 }
 
@@ -967,9 +979,10 @@ sub scanWMAStreamDone {
 	
 	# All done
 	my $cb         = $args->{'callback'};
+	my $pt         = $args->{'passthrough'} || [];
 	my $foundItems = $args->{'foundItems'};
 	
-	return $cb->( $foundItems );
+	return $cb->( $foundItems, @{$pt} );
 }
 
 sub scanWMAStreamError {
@@ -983,6 +996,7 @@ sub scanWMAStreamError {
 	}
 	
 	my $cb         = $args->{'callback'};
+	my $pt         = $args->{'passthrough'} || [];
 	my $foundItems = $args->{'foundItems'};
 	
 	# Our error was on the first stream in foundItems, so remove it
@@ -992,14 +1006,16 @@ sub scanWMAStreamError {
 	if ( @{$foundItems} ) {
 		$::d_scan && msgf("scanWMA: Trying next stream: %s\n", $foundItems->[0]->url);
 		return scanWMAStream( {
-			'url'        => $foundItems->[0]->url,
-			'callback'   => $cb,
-			'foundItems' => $foundItems,
+			'url'         => $foundItems->[0]->url,
+			'callback'    => $cb,
+			'passthrough' => $pt,
+			'foundItems'  => $foundItems,
 		} );
 	}
 	
 	# Callback with no foundItems, as we had an error
-	return $cb->( $foundItems, $error );
+	push @{$pt}, $error;
+	return $cb->( [], @{$pt} );
 }
 
 sub _skipWindowsHiddenFiles {
