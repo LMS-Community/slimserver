@@ -86,7 +86,8 @@ sub scanPathOrURL {
 		# Non-async directory scan
 		my $foundItems = $class->scanDirectory( $args, 'return' );
 
-		return $cb->( $foundItems || [] );
+		# Bug: 3078 - propagate an error message to the caller
+		return $cb->( $foundItems || [], scalar @{$foundItems} ? undef : 'PLAYLIST_EMPTY' );
 	}
 }
 
