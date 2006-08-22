@@ -3,13 +3,13 @@ package Plugins::MoodLogic::Importer;
 # $Id$
 
 use strict;
+use File::Spec::Functions qw(catfile);
+use Scalar::Util qw(blessed);
 
+use Plugins::MoodLogic::Common;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Misc;
-use File::Spec::Functions qw(catfile);
-
-use Plugins::MoodLogic::Common;
 
 my $initialized = 0;
 
@@ -425,19 +425,16 @@ sub processPlaylists {
 	while (defined $playlist && !$playlist->EOF) {
 
 		my $name = defined $playlist->Fields('name') ? $playlist->Fields('name')->value : "Unnamed";
-		my %cacheEntry = ();
-		my $url = 'moodlogicplaylist:' . Slim::Utils::Misc::escape($name);
+		my $url  = 'moodlogicplaylist:' . Slim::Utils::Misc::escape($name);
 
 		$::d_moodlogic && msg("MoodLogic: Found MoodLogic Playlist: $url\n");
 
 		# add this playlist to our playlist library
-		$cacheEntry{'TITLE'} =  $prefix . $name . $suffix;
-		$cacheEntry{'LIST'} = getPlaylistItems($playlist);
-		$cacheEntry{'CT'} = 'mlp';
-		$cacheEntry{'TAG'} = 1;
-		$cacheEntry{'VALID'} = '1';
-
-		Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
+		Slim::Music::Info::updateCacheEntry($url, {
+			'TITLE' => join('', $prefix, $name, $suffix),
+			'LIST'  => getPlaylistItems($playlist),
+			'CT'    => 'mlp',
+		});
 
 		$playlist->MoveNext unless $playlist->EOF;
 	}
@@ -445,17 +442,36 @@ sub processPlaylists {
 
 sub getPlaylistItems {
 	my $playlist = shift;
-	my $item = $playlist->Fields('name')->value;
-	my @list;
-	
-	while (!$playlist->EOF && defined($playlist->Fields('name')->value) && ($playlist->Fields('name')->value eq $item)) {
-		push @list,Slim::Utils::Misc::fileURLFromPath(catfile($playlist->Fields('volume')->value.$playlist->Fields('path')->value,$playlist->Fields('filename')->value));
+
+	if (!blessed($playlist) || !$playlist->can('Fields')) {
+		return [];
+	}
+
+	my $name = $playlist->Fields('name');
+
+	# Bug: 3962
+	if (!blessed($name) || !$name->can('value')) {
+		return [];
+	}
+
+	my $item = $name->value;
+	my @list = ();
+
+	while (!$playlist->EOF && defined($playlist->Fields('name')->value) &&
+		($playlist->Fields('name')->value eq $item)) {
+
+		push @list, Slim::Utils::Misc::fileURLFromPath(catfile(
+			$playlist->Fields('volume')->value . $playlist->Fields('path')->value,
+			$playlist->Fields('filename')->value
+		));
+
 		$playlist->MoveNext;
 	}
+
 	$::d_moodlogic && msg("MoodLogic: adding ". scalar(@list)." items\n");
+
 	return \@list;
 }
-
 
 1;
 
