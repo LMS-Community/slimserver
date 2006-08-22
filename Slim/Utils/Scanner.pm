@@ -529,13 +529,13 @@ sub readRemoteHeaders {
 				$::d_scan && msg("scanRemoteURL: scanning mp3 stream for bitrate\n");
 				
 				$http->read_body( {
-					'readLimit'   => 8 * 1024,
+					'readLimit'   => 16 * 1024,
 					'onBody'      => sub {
 						my $http = shift;
 						
 						my $io = IO::String->new( $http->response->content_ref );
 						
-						my ($bitrate, $vbr) = scanBitrate( $io, 'mp3' );
+						my ($bitrate, $vbr) = scanBitrate( $io, 'mp3', $url );
 
 						Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
 					},

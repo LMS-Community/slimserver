@@ -354,11 +354,56 @@ to determine the bitrate for remote streams.  We first look for a Xing VBR
 header which gives us accurate VBR bitrates.  If this isn't found, we parse
 each frame and calculate an average bitrate for all frames found.
 
+We also look for any ID3 tags and set the title based on any that are found.
+
 =cut
 
 sub scanBitrate {
 	my $class = shift;
 	my $fh    = shift;
+	my $url   = shift;
+	
+	# We can also read ID3 tags from this header to use for title information
+	my %tags;
+	if ( !MP3::Info::_get_v2tag( $fh, 2, 0, \%tags ) ) {
+
+		# Only use v1 tags if there are no v2 tags.
+		MP3::Info::_get_v1tag( $fh, \%tags );
+	}
+	
+	if ( $tags{TITLE} ) {
+		
+		# Strip out any nulls.
+		for my $key ( keys %tags ) {
+
+			if ( defined $tags{$key} ) {
+				$tags{$key} =~ s/\000+.*//g;
+				$tags{$key} =~ s/\s+$//;
+			}
+		}
+		
+		# XXX: Schema ignores ARTIST, ALBUM, YEAR, and GENRE for remote URLs
+		# so we have to format our title info manually.
+		Slim::Schema->rs('Track')->updateOrCreate({
+			url        => $url,
+			attributes => {
+				TITLE   => $tags{TITLE},
+				ARTIST  => $tags{ARTIST},
+				ALBUM   => $tags{ALBUM},
+				YEAR    => $tags{YEAR},
+				GENRE   => $tags{GENRE},
+				COMMENT => $tags{COMMENT},
+			},
+		});
+		
+		$::d_directstream && msg("MP3 scanBitrate: Read ID3 tags from stream: " . Data::Dump::dump(\%tags) . "\n");
+		
+		my $title = $tags{TITLE};
+		$title .= ' - ' . $tags{ARTIST} if $tags{ARTIST};
+		$title .= ' - ' . $tags{ALBUM}  if $tags{ALBUM};
+		
+		Slim::Music::Info::setCurrentTitle( $url, $title );
+	}
 
 	# Check if first frame has a Xing VBR header
 	# This will allow full files streamed from places like LMA or UPnP servers
