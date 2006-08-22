@@ -1524,6 +1524,7 @@ PLAYLIST_PROBLEM_CONNECTING
 	NL	Fout: Kan geen connectie maken om playlist op te halen
 
 ASF_UNABLE_TO_PARSE
+	DE	Fehler: kann ASF Stream nicht lesen
 	EN	Error: Unable to parse ASF audio stream
 
 NO_PLAYLIST_DIR
@@ -2960,9 +2961,11 @@ SETUP_PREAMPVOLUMECONTROL_DESC
 	NL	Dit is een secundaire volume instelling die alleen van toepassing is voor de analoge uitgang. Geef de demping op in decibels. De waarde is van 0.0 tot 63.0 in 0.5 dB stappen. De standaard is 0 (voor vol volume). <br>WAARSCHUWING: Indien je versterker krachtig genoeg is om je luidsprekers op te blazen, dan is een receiver, voorversterker of line-demper nog steeds nodig als beveiligingsmaatregel.
 
 SETUP_MAXWMARATE
+	DE	Maximale WMA Stream Bitrate
 	EN	Maximum WMA Stream Bitrate
 
 SETUP_MAXWMARATE_DESC
+	DE	Manche WMA Streams können unterschiedliche Bitraten enthalten. Standardmässig wähle SlimServer die höchste verfügbare Bitrate. Dies kann bei langsameren Internet-Verbindungen zu Problemen führen. Daher können Sie hier die maximale Bitrate, die verwendet werden soll, festlegen.
 	EN	Some WMA streams have multiple bitrates available for streaming.  By default, SlimServer will select the highest bitrate stream available, but if you have a slower Internet connection, you may set a lower value here to limit the maximum rate that can be chosen from these multiple rate streams.
 
 SETUP_MAXBITRATE
