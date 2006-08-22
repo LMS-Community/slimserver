@@ -164,7 +164,7 @@ sub addSaver {
 	}
 }
 
-=head2 hash_of_saver ( )
+=head2 hash_of_savers ( )
 
 Taking no arguments, this function returns a reference to teh current hash of screensavers. Called from settings routines
 in Slim::Web::Setup and Slim::Buttons::Settings
@@ -1087,6 +1087,7 @@ $setting is a scalar value for the new mixer setting.  Optionally it may be the 
 value either up or down.  
 
 Holding the IR button causes the up or down adjustment to accelerate the longer the button is held.
+
 =cut
 
 sub mixer {
