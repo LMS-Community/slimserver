@@ -208,6 +208,17 @@ sub getConvertCommand {
 		@supportedformats = qw(aif wav mp3);
 	}
 
+	# Switch Apple Lossless files from a CT of 'mov' to 'alc' for
+	# conversion purposes, so we can use 'alac' if it's available.
+	# 
+	# Bug: 2095
+	if ($type eq 'mov' && blessed($track) && $track->lossless) {
+
+		$::d_source && msg("getConvertCommand: track is alac - updating type!\n");
+
+		$type = 'alc';
+	}
+
 	foreach my $checkFormat (@supportedformats) {
 
 		my @profiles = ();

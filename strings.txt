@@ -8083,6 +8083,9 @@ MP3
 MP2
 	EN	MP2
 
+ALC
+	EN	Apple Lossless
+
 MOV
 	DE	Apple AAC- oder Film-Datei
 	DA	Apple AAC eller film
