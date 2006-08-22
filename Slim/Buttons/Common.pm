@@ -2,10 +2,37 @@ package Slim::Buttons::Common;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
+
+=head1 NAME
+
+Slim::Buttons::Common
+
+=head1 SYNOPSIS
+
+Slim::Buttons::Common::addMode('mymodename', getFunctions(), \&setMode);
+
+Slim::Buttons::Common::addSaver('screensaver', getFunctions(), \&setMode, undef, 'SCREENSAVER_JUMP_BACK_NAME');
+
+Slim::Buttons::Common::pushModeLeft($client,'mymodename');
+
+Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
+
+Slim::Buttons::Common::popModeRight($client);
+
+Slim::Buttons::Common::popMode($client);
+
+Slim::Buttons::Common::scroll($client, $dir, 6, $m0);
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Common> is the central collection of functions for accessing and manipulating the Player UI state machine.  
+This includes navigating menus, registering and managing player modes, and accessing core UI widgets.
+
+=cut
 
 use strict;
 use warnings;
@@ -65,6 +92,14 @@ my $holdTimeBeforeScroll = 0.300;
 
 our $scrollClientHash = {};
 
+=head1 METHODS
+
+=head2 init( )
+
+This method must be called before all other Slim::Buttons::* modules.  It initialises all other SlimServer core button modules and registers the "Now Playing" screensaver.
+
+=cut
+
 # The address of the function hash is set at run time rather than compile time
 # so initialize the modeFunctions hash here
 sub init {
@@ -94,6 +129,24 @@ sub init {
 	$savers{'playlist'} = 'NOW_PLAYING';
 }
 
+=head2 addSaver ( $name, [ $buttonFunctions ], [ $setModeFunction ], [ $leaveModeFunction ], $displayName )
+
+This function registers a screensaver mode.  The required $name argument should be a unique string,
+identifying the mode, $displayName is also required and must be a valid string token (all caps, with
+localised translations) for identifying the friendly name of the screensaver.
+
+Optional $buttonFunctions is a reference the routine to call for accessing the reference to the button
+functions used while operating in the screensaver.  This is only required if the screensaver makes use
+ of any custom functions not found in this module.
+
+$setModeFunction is an optional reference to the modes setMode function call, which sets up the required
+state for the screensaver mode. This is not required if the screensaver is only for display or makes use
+of existing INPUT.* modes.
+
+$leaveModeFunction is an optional reference to a routine to run when exiting the screensaver mode.
+
+=cut
+
 sub addSaver {
 	my $name = shift;
 	my $buttonFunctions = shift;
@@ -111,21 +164,43 @@ sub addSaver {
 	}
 }
 
+=head2 hash_of_saver ( )
+
+Taking no arguments, this function returns a reference to teh current hash of screensavers. Called from settings routines
+in Slim::Web::Setup and Slim::Buttons::Settings
+
+=cut
+
 sub hash_of_savers {
 	return \%savers;
 }
 
-sub addMode {
- 	my $name = shift;
- 	my $buttonFunctions = shift;
- 	my $setModeFunction = shift;
- 	my $leaveModeFunction = shift;
+=head2 addMode ( )
 
- 	$modeFunctions{$name} = $buttonFunctions;
- 	$modes{$name} = $setModeFunction;
- 	$leaveMode{$name} = $leaveModeFunction;
+Register new modes with the server. $name must be a uniqe string to identify the player mode. 
+
+Optional $buttonFunctions is a reference the routine to call for accessing the reference to the button
+functions used while operating in the screensaver.  This is only required if the screensaver makes use
+ of any custom functions not found in this module.
+
+$setModeFunction is an optional reference to the modes setMode function call, which sets up the required
+state for the screensaver mode. This is not required if the screensaver is only for display or makes use
+of existing INPUT.* modes.
+
+$leaveModeFunction is an optional reference to a routine to run when exiting the screensaver mode.
+
+=cut
+sub addMode {
+	my $name = shift;
+	my $buttonFunctions = shift;
+	my $setModeFunction = shift;
+	my $leaveModeFunction = shift;
+
+	$modeFunctions{$name} = $buttonFunctions;
+	$modes{$name} = $setModeFunction;
+	$leaveMode{$name} = $leaveModeFunction;
 }
- 	
+	
 # Common functions for more than one mode:
 our %functions = (
 	'dead' => sub  {},
@@ -811,6 +886,20 @@ sub scroll {
 	scroll_dynamic(@_);
 }
 
+=head2 scrollDynamic ( $client, $direction, $listlength, $currentPosition)
+
+This is a common UI function for moving up or down through a list, accelerating as the scrolling continues.
+Four arguments are required:
+The $client object
+$direction is typically either 1 or -1, but any positive or negative number will properly decide direction
+$listlength is the total number of items in the current list
+$currentPosition is the zero-indexed position of the current item shown on the player screen, from which the scroll 
+is required to move.
+
+The IR holdtime triggers acceleration of the scrolling effect.
+
+=cut
+
 sub scroll_dynamic {
 	my $client = shift;
 	my $direction = shift;
@@ -892,7 +981,7 @@ sub scroll_dynamic {
 		$scrollParams->{lastPosition} = $X; # Retain the last floating
 		                                    # point value of $X
 		                                    # because it's needed to
-   		                                    # maintain the proper
+		                                    # maintain the proper
 		                                    # acceleration when
 		                                    # $minimumVelocity is
 		                                    # small and not much
@@ -987,6 +1076,18 @@ sub scroll_getInitialScrollParams {
 
 	return $result;
 }
+
+=head2 mixer ( $client, $feature, $setting)
+
+Update audio mixer settings
+
+$client object is required.
+$feature argument is a string to determine which of teh mixer settings is to be changed: bass/treble/pitch where applicable
+$setting is a scalar value for the new mixer setting.  Optionally it may be the string 'up' or 'down to adjust the current
+value either up or down.  
+
+Holding the IR button causes the up or down adjustment to accelerate the longer the button is held.
+=cut
 
 sub mixer {
 	my $client = shift;
@@ -1152,6 +1253,14 @@ sub firstIndexOf
 
 }
 
+=head2 mode ( $client)
+
+Return the unique string name for the current player mode.
+
+Required argument is the $client object for which the current mode information is desired.
+
+=cut
+
 sub mode {
 	my $client = shift;
 
@@ -1160,11 +1269,30 @@ sub mode {
 	return $client->modeStack(-1);
 }
 
+=head2 validMode ( $client)
+
+Given a string, returns true or false if the given string is a match for a valid, registered player mode.
+
+=cut
+
 sub validMode {
 	my $mode = shift;
 
 	return exists $modes{$mode} ? 1 : 0;
 }
+
+=head2 checkBoxOverlay ( $client, $value)
+
+Update audio mixer settings
+
+This is a standard UI widget for showing a single selected item in a list, or a true/false state of a setting
+
+If the $client argument is a valid client object, graphics capable players will show a 'radio button'-style ui.
+Otherwise, an text-based check box will be marked wtih an X for true and empty for false.
+
+The $value argument is a boolean result provided by the caller to determine if the box is checked or not.
+
+=cut
 
 # standard UI feature enable/disable a setting
 sub checkBoxOverlay {
@@ -1186,6 +1314,7 @@ sub checkBoxOverlay {
 	return $value ? "[X]" : "[ ]";
 }
 
+
 sub param {
 	my $client = shift;
 	return $client->param(@_);
@@ -1196,10 +1325,17 @@ sub paramOrPref {
 	return $client->paramOrPref(@_);
 }
 
-# pushMode takes the following parameters:
-#   client - reference to a client structure
-#   setmode - name of mode we are pushing into
-#   paramHashRef - reference to a hash containing the parameters for that mode
+=head2 pushMode ( $client, $setmode, [ $paramHashRef ])
+
+Push the next mode onto the client's mode stack.
+
+pushMode takes the following parameters:
+   client - reference to a client structure
+   setmode - name of mode we are pushing into
+   paramHashRef - optional reference to a hash containing the parameters for that mode. 
+      If no preset params are required, this arg is not required.
+
+=cut
 sub pushMode {
 	my $client = shift;
 	my $setmode = shift;
@@ -1268,6 +1404,15 @@ sub pushMode {
 	$client->updateKnob(1);
 }
 
+=head2 popMode ( $client, $setmode, [ $paramHashRef ])
+
+Pop's the current mode from the mode stack, and returns the player to the previous mode on the stack.
+
+Only the $client object or structure is a required argument for popMode.
+
+If the mode stack is empty, this function only updates the knob parameters and exits.
+
+=cut
 sub popMode {
 	my $client = shift;
 
@@ -1534,6 +1679,19 @@ sub _periodicUpdate {
 		$client->display->update({ 'screen2' => &$linefunc($client) });
 	}
 }
+
+=head1 SEE ALSO
+
+L<Scalar::Util>
+
+L<Slim::Utils::PluginManager>
+
+L<Slim::Display::Display>
+
+L<Slim::Buttons::*>
+
+=cut
+
 
 1;
 
