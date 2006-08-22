@@ -2,10 +2,25 @@ package Slim::Buttons::Playlist;
 
 # $Id$
 
-# Slim Server Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# Slim Server Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
+
+=head1 NAME
+
+Slim::Buttons::Playlist
+
+=head1 SYNOPSIS
+
+Slim::Buttons::Playlist::jump($client,$index);
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Playlist> is contains functions for browsing the current playlist, and displaying the information 
+on a Slim Devices player display.
+
+=cut
 
 use strict;
 use File::Spec::Functions qw(:ALL);
@@ -14,6 +29,17 @@ use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 
 our %functions = ();
+
+=head1 METHODS
+
+=head2 init( )
+
+This method registers the playlist mode with Slimserver, and defines any functions for interaction
+ while a player is operating in this mode..
+
+Generally only called from L<Slim::Buttons::Common>
+
+=cut
 
 sub init {
 	Slim::Buttons::Common::addMode('playlist', getFunctions(), \&setMode);
@@ -273,6 +299,17 @@ sub getFunctions {
 	return \%functions;
 }
 
+=head2 setMode( $client, [ $how ])
+
+setMode() is a required function for any Slimserver player mode.  This is the entry point for a mode and defines any parameters required for 
+a clean starting point. The function may also set up the reference to the applicable lines function for the player display.
+
+Requires: $client
+
+The optional argument $how is a string indicating the method of arrival to this mode: either 'push' or 'pop'.
+
+=cut
+
 sub setMode {
 	my $client = shift;
 	my $how    = shift;
@@ -289,6 +326,15 @@ sub setMode {
 	$client->param('modeUpdateInterval', 1); # seconds
 	$client->param('screen2', 'playlist');   # this mode can use screen2
 }
+
+
+=head2 jump( $client, [ $pos ])
+
+Allows an arbitrary jump to any track in the current playist. 
+
+The optional argument, $pos set the zero-based index target for the jump.  If not specified, jump will go to current track.
+
+=cut
 
 sub jump {
 	my $client = shift;
@@ -365,6 +411,15 @@ sub lines {
 	return $parts;
 }
 
+=head2 showingNowPlaying( $client )
+
+Check if the information currently displayed on a player is the currently playing song. Showing the "current track" 
+of the current playlist is a special case.  This function can be used to determine whether or not to display the additional
+information that might be shown for the current track.
+
+=cut
+
+
 sub showingNowPlaying {
 	my $client = shift;
 
@@ -382,6 +437,16 @@ sub showingNowPlaying {
 
 	return $client->param('showingnowplaying',$nowshowing || $wasshowing);
 }
+
+
+=head2 browseplaylistindex( $client, [ $playlistindex ])
+
+Get and optionally set the currently viewed position in the curren playlist.  The index is zero-based and should only be set
+when in playlist mode. Callers outside this module may want to get the current index if they operate on any tracks in the current playlist.
+
+The optional argument, $playlistindex sets the zero-based position for browsing the current playlist.
+
+=cut
 
 sub browseplaylistindex {
 	my $client = shift;
@@ -409,6 +474,12 @@ sub browseplaylistindex {
 sub nowPlayingModeLines {
 	shift->nowPlayingModeLines(shift);
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+=cut
 
 1;
 
