@@ -90,6 +90,8 @@ sub setMode {
 	my %modeParams = %$params;
 	$modeParams{'valueRef'} = $client->volume();
 
+	$client->param('screen2', 'inherit');
+
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Bar', \%modeParams);
 
 	_volumeIdleChecker($client);
