@@ -540,7 +540,7 @@ sub failedDirectStream {
 	my $client = shift;
 	my $error  = shift;
 	my $url = $client->directURL();
-	$::d_directstream && msg("Oh, well failed to do a direct stream for: $url\n");
+	$::d_directstream && msg("Oh, well failed to do a direct stream for: $url [$error]\n");
 	$client->directURL(undef);
 	$client->directBody(undef);	
 

@@ -2,10 +2,10 @@ package Slim::Player::Protocols::MMS;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
-# version 2.  
+# version 2.
 
 use strict;
 use base qw(Slim::Player::Pipeline);
@@ -17,20 +17,17 @@ use IO::Socket qw(:DEFAULT :crlf);
 use Slim::Formats::Playlists;
 use Slim::Player::Source;
 use Slim::Player::TranscodingHelper;
+use Slim::Utils::Cache;
 use Slim::Utils::Misc;
 
-# The following are class variables, since they hold state used during
-# the direct streaming process. Currently protocol handlers can serve
-# a dual role. An instance of a protocol handler (a socket suclass)
-# can be used for server side streaming. Class methods are used to
-# help with client side direct streaming. In the future, we may want
-# to split the two into different classes - the socket version and the
-# protocol parsing version. For now we live with the ugliness of both
-# roles in the same package.
-our %stream_nums  = ();
-our %parser_state = ();
-
 use constant DEFAULT_TYPE => 'wma';
+
+=head2 new ( $class, $args )
+
+Create a new instance of the MMS protocol handler, only for transcoding using wmadec or
+another command-line tool.
+
+=cut
 
 sub new {
 	my $class = shift;
@@ -133,26 +130,28 @@ sub requestString {
 		"Pragma: xClientGUID={" . randomGUID() . "}",
 	);
 
-	# HTTP interaction with WM radio servers actually involves two separate
-	# connections. The first is a request for the ASF header. We use it
-	# to determine which stream number to request. Once we have the stream
-	# number we can request the stream itself.
-	if (defined($stream_nums{$url})) {
-
-		push @headers, (
-			"Pragma: no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=2,max-duration=0",
-			"Pragma: xPlayStrm=1",
-			"Pragma: stream-switch-count=1",
-			"Pragma: stream-switch-entry=ffff:" . $stream_nums{$url} . ":0",
-		);
-
-	} else {
-
-		push @headers, (
-			 "Pragma: no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=1,max-duration=0", 
-			 "Connection: Close",
-		);
+	# Cache always uses mms URLs
+	my $mmsURL = $url;
+	$mmsURL    =~ s/^http/mms/;
+	
+	my $cache     = Slim::Utils::Cache->instance;
+	my $streamNum = $cache->get( 'wma_streamNum_' . $mmsURL );
+	my $wma       = $cache->get( 'wma_metadata_'  . $mmsURL );
+	
+	# Just in case, use stream #1
+	$streamNum ||= 1;
+	
+	# Handle our metadata
+	if ( $wma ) {
+		setMetadata( $client, $url, $wma, $streamNum );
 	}
+
+	push @headers, (
+		"Pragma: no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=2,max-duration=0",
+		"Pragma: xPlayStrm=1",
+		"Pragma: stream-switch-count=1",
+		"Pragma: stream-switch-entry=ffff:" . $streamNum . ":0 ",
+	);
 
 	# make the request
 	return join($CRLF, @headers, $CRLF);
@@ -164,216 +163,28 @@ sub getFormatForURL {
 	return DEFAULT_TYPE;
 }
 
-sub parseHeaders {
-	my $self = shift;
-	my $url  = shift;
-
-	return $self->parseDirectHeaders('noclient', $url, @_);
-}
-
-sub parseDirectHeaders {
-	my $self    = shift;
-	my $client  = shift;
-	my $url     = shift;
-	my @headers = @_;
-
-	my ($contentType, $mimeType, $length, $body);
-
-	foreach my $header (@headers) {
-
-		$header =~ s/[\r\n]+$//;
-
-		$::d_directstream && msg("header: " . $header . "\n");
-
-		if ($header =~ /^Content-Type:\s*(.*)/i) {
-			$mimeType = $1;
-		}
-
-		if ($header =~ /^Content-Length:\s*(.*)/i) {
-			$length = $1;
-		}
-	}
-
-	if (($mimeType eq "application/octet-stream") ||
-		($mimeType eq "application/x-mms-framed") ||
-		($mimeType eq "application/vnd.ms.wms-hdr.asfv1")) {
-
-		$::d_directstream && msg("it looks like a WMA file\n");
-
-		$contentType = 'wma';
-
-	} else {
-
-		# Assume (and this may not be correct) that anything else
-		# is an asx redirector.
-
-		$::d_directstream && msg("it looks like an ASX redirector\n");
-
-		$contentType = 'asx';
-	}
-
-	# If we don't yet have the stream number for this URL, ask
-	# for the header first.
-	if (!defined $stream_nums{$url}) {
-
-		$body = 1;
-		
-		# If the length of the ASF header isn't specified, then
-		# ask for say 30K...most headers will be signficantly smaller.
-		if (!$length) {
-			$length = 30 * 1024;
-		}
-
-		# XXX - why is this a global?
-		$parser_state{$client}{"chunk_remaining"} = 0;
-		$parser_state{$client}{"header_length"}   = 0;
-		$parser_state{$client}{"bytes_received"}  = 0;
-	}
-
-	return (undef, undef, 0, '', $contentType, $length, $body);
-}
-
-sub handleBodyFrame {
-	my $classOrSelf = shift;
-	my $client      = shift || 'noclient';
-	my $frame       = shift;
-
-	my $remaining   = length($frame);
-	my $position    = 0;
-	
-	# We may have an ASX playlist instead of WMA audio
-	if ( $frame =~ /asx/i ) {
-		$client->directBody( $client->directBody() . $frame );
-		return 0;
-	}
-
-	while ($remaining) {
-
-		if (!$parser_state{$client}{"chunk_remaining"}) {
-
-			my $chunkType = unpack('v', substr($frame, $position, 2));
-
-			if ($chunkType != 0x4824) {
-				return 1;
-			}
-
-			my $chunkLength = unpack('v', substr($frame, $position+2, 2));
-
-			$position  += 12;
-			$remaining -= 12;
-
-			$parser_state{$client}{"chunk_remaining"} = $chunkLength - 8;
-		}
-
-		my $size = $parser_state{$client}{"chunk_remaining"} || 0;
-
-		if ($size >= $remaining) {
-			$size = $remaining;
-		}
-
-		$client->directBody($client->directBody() . substr($frame, $position, $size));
-
-		$position  += $size;
-		$remaining -= $size;
-
-		$parser_state{$client}{"chunk_remaining"} -= $size;
-		$parser_state{$client}{"bytes_received"}  += $size;
-	}
-
-	if (!$parser_state{$client}{"header_length"} &&
-		$parser_state{$client}{"bytes_received"} > 24) {
-
-		# The extra 50 bytes is the header of the data atom
-		$parser_state{$client}{"header_length"} = unpack('V', substr($client->directBody(), 16, 8) ) + 50;
-	}
-
-	if ($parser_state{$client}{"header_length"} &&
-
-		$parser_state{$client}{"bytes_received"} >= $parser_state{$client}{"header_length"}) {
-
-		return 1;
-	}
-
-	return 0;
-}
-
-sub parseDirectBody {
-	my $classOrSelf = shift;
-	my $client      = shift;
-	my $url         = shift;
-	my $body        = shift;
-	
-	my $io = IO::String->new($body);
-
-	$::d_directstream && msg("parseDirectBody: MMS protocol handler received response body\n");
-	
-	# If it's a WMA header, then parse to get the stream number.
-	# We return the URL again, but this time we will connect to
-	# play back.
-	if ($body =~ /ASX/ || $body =~ /References/ || $body =~ m|://|) {
-
-		$::d_directstream && msg("parseDirectBody: Treating [$url] as playlist.\n");
-
-		return Slim::Formats::Playlists->parseList($url, $io);
-
-	} else {
-
-		$::d_directstream && msg("parseDirectBody: Parsing WMA Header info from: [$url]\n");
-		
-		my $wma  = Audio::WMA->new($io) || return ();
-		
-		if ( !ref $wma->stream ) {
-			# some stations don't have stream objects, and we can't play them
-			# Example: http://ms.radio-canada.ca/liverci_en
-			return ();
-		}
-		
-		# Look through all available streams and select the one with the highest bitrate
-		my $bitrate = 0;
-		for my $stream ( @{ $wma->stream } ) {
-			next unless defined $stream->{'streamNumber'};
-		
-			if ( $stream->{'bitrate'} > $bitrate ) {
-				$stream_nums{$url} = $stream->{'streamNumber'};
-				$bitrate = $stream->{'bitrate'};
-			}
-		}
-		
-		if ( !$bitrate ) {
-			# maybe we couldn't parse bitrate information, so just use the first stream
-			$stream_nums{$url} = $wma->stream(0)->{'streamNumber'};
-		}
-		
-		return unless $stream_nums{$url};
-
-		$::d_directstream && msgf("Parsed body as WMA header. Going to play stream #%d, bitrate: %d kbps\n",
-			$stream_nums{$url},
-			int($bitrate / 1000),
-		);
-		
-		_setMetadata( $client, $url, $wma, $stream_nums{$url} );
-
-		return $url;
-	}
-}
-
 sub parseMetadata {
-	my $client = shift;
-	my $url = shift;
-	my $metadata = shift;
+	my ( $client, $url, $metadata ) = @_;
 	
 	my $wma = Audio::WMA->parseObject( $metadata );
+	
+	# Cache always uses mms URLs
+	my $mmsURL = $url;
+	$mmsURL    =~ s/^http/mms/;
+	
+	my $cache     = Slim::Utils::Cache->instance;
+	my $streamNum = $cache->get( 'wma_streamNum_' . $mmsURL );
 
-	_setMetadata( $client, $url, $wma );
+	setMetadata( $client, $url, $wma, $streamNum || 1 );
 	
 	return;
 }
 
-sub _setMetadata {
+sub setMetadata {
 	my ( $client, $url, $wma, $streamNumber ) = @_;
 	
 	# Bitrate method 1: from parseDirectBody, we have the whole WMA object
-	if ( $streamNumber ) {
+	if ( $streamNumber && ref $wma->stream ) {
 		for my $stream ( @{ $wma->stream } ) {
 			if ( $stream->{'streamNumber'} == $streamNumber ) {
 				if ( my $bitrate = $stream->{'bitrate'} ) {
@@ -387,11 +198,11 @@ sub _setMetadata {
 		}
 	}
 	elsif ( ref $wma->{'BITRATES'} ) {
-		# method 2: from parseMetadata, we only have the bitrate info, use the highest bitrate
+		# method 2: from parseMetadata
 		my $bitrates = $wma->{'BITRATES'};
 		my $bitrate  = 0;
 		for my $stream ( keys %{ $bitrates } ) {
-			if ( $bitrates->{$stream} > $bitrate ) {
+			if ( $stream == $streamNumber ) {
 				$bitrate = $bitrates->{$stream};
 			}
 		}

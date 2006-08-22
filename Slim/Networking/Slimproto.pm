@@ -519,7 +519,7 @@ sub _disco_handler {
 	$::d_slimproto && msg("Squeezebox got disconnection on the data channel why: ". $reasons{$reason} . " \n");
 	
 	if ($reason) {
-		$client->failedDirectStream();
+		$client->failedDirectStream( $reasons{$reason} );
 	}
 }
 

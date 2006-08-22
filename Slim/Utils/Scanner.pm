@@ -29,6 +29,7 @@ they say and no more.
 use strict;
 use base qw(Class::Data::Inheritable);
 
+use Audio::WMA;
 use FileHandle;
 use File::Basename qw(basename);
 use HTTP::Request;
@@ -41,9 +42,12 @@ use Slim::Formats::Playlists;
 use Slim::Music::Info;
 use Slim::Player::ProtocolHandlers;
 use Slim::Networking::Async::HTTP;
+use Slim::Networking::SimpleAsyncHTTP;
+use Slim::Utils::Cache;
 use Slim::Utils::FileFindRule;
 use Slim::Utils::Misc;
 use Slim::Utils::ProgressBar;
+use Slim::Utils::Strings;
 
 =head2 scanPathOrURL( { url => $url, callback => $callback, ... } )
 
@@ -360,18 +364,17 @@ sub scanRemoteURL {
 	my $args  = shift;
 	
 	my $cb    = $args->{'callback'} || sub {};
-	my $pt    = $args->{'passthrough'} || [];
 	my $url   = $args->{'url'};
 	
 	my $foundItems = [];
 
 	if ( !$url ) {
-		return $cb->( $foundItems, @{$pt} );
+		return $cb->( $foundItems );
 	}
 
 	if ( !Slim::Music::Info::isRemoteURL($url) ) {
 
-		return $cb->( $foundItems, @{$pt} );
+		return $cb->( $foundItems );
 	}
 
 	if ( Slim::Music::Info::isAudioURL($url) ) {
@@ -386,7 +389,7 @@ sub scanRemoteURL {
 		
 		push @{$foundItems}, $track;
 
-		return $cb->( $foundItems, @{$pt} );
+		return $cb->( $foundItems );
 	}
 	
 	my $originalURL = $url;
@@ -412,8 +415,7 @@ sub scanRemoteURL {
 		# check if protocol is supported on the current player (only for Rhapsody at the moment)
 		if ( $args->{'client'} && $handler && $handler->can('isUnsupported') ) {
 			if ( my $error = $handler->isUnsupported( $args->{'client'}->model ) ) {
-				push @{$pt}, $error;
-				return $cb->( $foundItems, @{$pt} );
+				return $cb->( $foundItems, $error );
 			}
 		}
 		
@@ -440,8 +442,7 @@ sub scanRemoteURL {
 
 			errorMsg("scanRemoteURL: Can't connect to remote server to retrieve playlist: $error.\n");
 
-			push @{$pt}, 'PLAYLIST_PROBLEM_CONNECTING';
-			return $cb->( $foundItems, @{$pt} );
+			return $cb->( $foundItems, 'PLAYLIST_PROBLEM_CONNECTING' );
 		},
 		'passthrough' => [ $args, $originalURL ],
 	} );
@@ -457,7 +458,6 @@ sub readRemoteHeaders {
 	my ( $http, $args, $originalURL ) = @_;
 	
 	my $cb = $args->{'callback'};
-	my $pt = $args->{'passthrough'} || [];
 
 	my $url = $http->request->uri->as_string;
 
@@ -505,7 +505,7 @@ sub readRemoteHeaders {
 	# type while loading.
 	if ( Slim::Music::Info::isSong($track) ) {
 
-		$::d_scan && msg("scanRemoteURL: found that $url is audio\n");
+		$::d_scan && msg("scanRemoteURL: found that $url is audio [$type]\n");
 		
 		# If we redirected, we need to update the title on the final URL to match
 		# the title for the original URL
@@ -556,7 +556,24 @@ sub readRemoteHeaders {
 		}
 		
 		my $foundItems = [ $track ];
-		return $cb->( $foundItems, @{$pt} );
+		
+		# Bug 3980
+		# On WMA streams, we need to make an initial request to determine the stream
+		# number to use, and we also grab various metadata during this request
+		# This prevents the player from needing to make 2 requests for each WMA stream
+		
+		if ( $type eq 'wma' ) {
+			
+			scanWMAStream( {
+				'url'         => $url,
+				'callback'    => $cb,
+				'foundItems'  => $foundItems,
+			} );
+		}
+		else {
+			
+			return $cb->( $foundItems );
+		}
 	}
 	else {
 		
@@ -585,21 +602,30 @@ method hands off the playlist body to scanPlaylistFileHandle().
 sub readPlaylistBody {
 	my ( $http, $args ) = @_;
 	
-	my $cb = $args->{'callback'};
-	my $pt = $args->{'passthrough'} || [];
+	$http->disconnect;
+	
+	scanPlaylist( $http->response->content_ref, $args );
+}
+
+=head2 scanPlaylist( $contentRef, $args )
+
+Scan a scalar ref for playlist items.
+
+=cut
+	
+sub scanPlaylist {
+	my ( $contentRef, $args ) = @_;
 	
 	my $foundItems = [];
 	
-	$http->disconnect;
-	
-	my $playlistFH = IO::String->new( $http->response->content_ref );
+	my $playlistFH = IO::String->new( $contentRef );
 	
 	my @objects = __PACKAGE__->scanPlaylistFileHandle( $args->{'playlist'}, $playlistFH );
 
 	# report an error if the playlist contained no items
+	my $cb = $args->{'callback'};
 	if ( !@objects ) {
-		push @{$pt}, 'PLAYLIST_NO_ITEMS_FOUND';
-		return $cb->( $foundItems, @{$pt} );
+		return $cb->( $foundItems, 'PLAYLIST_NO_ITEMS_FOUND' );
 	}
 	else {
 		push @{$foundItems}, @objects;
@@ -630,8 +656,7 @@ sub readPlaylistBody {
 	}
 	else {
 		my $cb = $args->{'callback'};
-		my $pt = $args->{'passthrough'} || [];
-		return $cb->( $foundItems, @{$pt} );
+		return $cb->( $foundItems );
 	}
 }
 
@@ -725,18 +750,33 @@ sub scanPlaylistURLs {
 	my ( $foundItems, $args, $toScan, $error ) = @_;
 	
 	my $cb = $args->{'callback'};
-	my $pt = $args->{'passthrough'} || [];
 	
 	my $offset = 0;
 	for my $item ( @{$foundItems} ) {
 		if ( Slim::Music::Info::isAudioURL( $item->url ) || Slim::Music::Info::isSong( $item ) ) {
 			# we finally found an audio URL, so we're done
-			$::d_scan && msgf( "scanPlaylistURLs: Found an audio URL: %s\n", $item->url );
+			$::d_scan && msgf( "scanPlaylistURLs: Found an audio URL: %s [%s]\n",
+				$item->url,
+				$item->content_type,
+			);
 			
 			# return a list with the first found audio URL at the top
 			unshift @{$foundItems}, splice @{$foundItems}, $offset, 1;
+
+			if ( $item->content_type eq 'wma' ) {
+				
+				scanWMAStream( {
+					'url'         => $item->url,
+					'callback'    => $cb,
+					'foundItems'  => $foundItems,
+				} );
+				
+				return;
+			}
+			else {
 			
-			return $cb->( $foundItems, @{$pt} );
+				return $cb->( $foundItems );
+			}
 		}
 		$offset++;
 	}
@@ -750,8 +790,7 @@ sub scanPlaylistURLs {
 	
 	if ( $args->{'loopCount'} > 5 ) {
 		$::d_parse && msg("scanPlaylistURLs: recursion limit reached, giving up\n");
-		push @{$pt}, 'PLAYLIST_NO_ITEMS_FOUND';
-		return $cb->( [], @{$pt} );
+		return $cb->( [], 'PLAYLIST_NO_ITEMS_FOUND' );
 	}
 	
 	$args->{'loopCount'}++;
@@ -768,8 +807,7 @@ sub scanPlaylistURLs {
 	}
 	else {
 		# no more items left to scan and no audio found, return error
-		push @{$pt}, 'PLAYLIST_NO_ITEMS_FOUND';
-		return $cb->( $foundItems, @{$pt} );
+		return $cb->( $foundItems, 'PLAYLIST_NO_ITEMS_FOUND' );
 	}
 }
 
@@ -794,6 +832,174 @@ sub scanBitrate {
 	$::d_scan && msg("scanBitrate: Unable to scan content-type: $contentType\n");
 
 	return (-1, undef);
+}
+
+=head2 scanWMAStream( { url => $url, callback => $callback } )
+
+Make the initial WMA stream request to determine stream number and cache
+the result for use by the direct streaming code in Protocols::MMS.
+
+=cut
+
+sub scanWMAStream {
+	my $args = shift;
+	
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		\&scanWMAStreamDone,
+		\&scanWMAStreamError,
+		{
+			args => $args,
+		},
+	);
+	
+	my %headers = (		
+		Accept       => '*/*',
+		'User-Agent' => 'NSPlayer/4.1.0.3856',
+		Pragma       => 'xClientGUID={' . Slim::Player::Protocols::MMS::randomGUID(). '}',
+		Pragma       => 'no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=1,max-duration=0',
+		Connection   => 'close',
+	);
+	
+	my $url = $args->{'url'};
+	$url =~ s/^mms/http/;
+	
+	$http->get( $url, %headers );
+}
+
+=head2 scanWMAStreamDone( $http )
+
+Callback from scanWMAStream that parses the ASF header data.  For reference see
+http://avifile.sourceforge.net/asf-1.0.htm
+
+=cut
+
+sub scanWMAStreamDone {
+	my $http = shift;
+	my $args = $http->params('args');
+	
+	# Check content-type of stream to make sure it's audio
+	my $type = $http->headers->header('Content-Type');
+	
+	if (   $type ne 'application/octet-stream'
+		&& $type ne 'application/x-mms-framed' 
+		&& $type ne 'application/vnd.ms.wms-hdr.asfv1'
+	) {
+		# It's not audio, treat it as ASX redirector
+		$::d_scan && msgf("scanWMA: Stream returned non-audio content-type: $type, treating as ASX redirector\n");
+		
+		# Re-fetch as a playlist.
+		$args->{'playlist'} = Slim::Schema->rs('Playlist')->objectForUrl({
+			'url'          => $args->{'url'},
+			'content_type' => 'asx',
+		});
+		
+		return scanPlaylist( $http->contentRef, $args );
+	}
+	
+	# parse the ASF header data
+	my $header = $http->content;
+	
+	my $chunkType = unpack 'v', substr($header, 0, 2);
+	if ( $chunkType != 0x4824 ) {
+		return scanWMAStreamError( $http, 'ASF_UNABLE_TO_PARSE' );
+	}
+	
+	my $chunkLength = unpack 'v', substr($header, 2, 2);
+	
+	# skip to the body data
+	my $io = IO::String->new( substr($header, 12, $chunkLength) );
+	
+	my $wma = Audio::WMA->new($io);
+	
+	$::d_scan && msg("WMA header data: " . Data::Dump::dump($wma) . "\n");
+	
+	if ( !$wma ) {
+		return scanWMAStreamError( $http, 'ASF_UNABLE_TO_PARSE' );
+	}
+	
+	my $streamNum = 1;
+	
+	# Some ASF streams appear to have no stream objects (mms://ms1.capitalinteractive.co.uk/fm_high)
+	# I think it's safe to just assume stream #1 in this case
+	if ( ref $wma->stream ) {
+		
+		# Look through all available streams and select the one with the highest bitrate still below
+		# the user's preferred max bitrate
+		# XXX: Playing stream IDs > 1 seems to be broken, firmware bug?
+		my $max = Slim::Utils::Prefs::get('maxWMArate') || 9999;
+	
+		my $bitrate = 0;
+		for my $stream ( @{ $wma->stream } ) {
+			next unless defined $stream->{'streamNumber'};
+		
+			my $streamBitrate = int($stream->{'bitrate'} / 1000);
+		
+			$::d_scan && msgf("scanWMA: Available stream: #%d, %d kbps\n",
+				$stream->{'streamNumber'},
+				$streamBitrate,
+			);
+
+			if ( $stream->{'bitrate'} > $bitrate && $max >= $streamBitrate ) {
+				$streamNum = $stream->{'streamNumber'};
+				$bitrate   = $stream->{'bitrate'};
+			}
+		}
+	
+		if ( !$bitrate ) {
+			# maybe we couldn't parse bitrate information, so just use the first stream
+			$streamNum = $wma->stream(0)->{'streamNumber'};
+		}
+
+		$::d_scan && msgf("scanWMA: Will play stream #%d, bitrate: %s kbps\n",
+			$streamNum,
+			$bitrate ? int($bitrate / 1000) : 'unknown',
+		);
+	}
+	
+	# Always cache with mms URL prefix
+	my $mmsURL = $args->{'url'};
+	$mmsURL =~ s/^http/mms/;
+	
+	# Cache this metadata for the MMS protocol handler to use
+	my $cache = Slim::Utils::Cache->instance;
+	$cache->set( 'wma_streamNum_' . $mmsURL, $streamNum,      '1 day' );	
+	$cache->set( 'wma_metadata_'  . $mmsURL, $wma,            '1 day' );
+	
+	# All done
+	my $cb         = $args->{'callback'};
+	my $foundItems = $args->{'foundItems'};
+	
+	return $cb->( $foundItems );
+}
+
+sub scanWMAStreamError {
+	my ( $http, $error ) = @_;
+	my $args = $http->params('args');
+	
+	$::d_scan && msg("scanWMA Error: $error\n");
+	
+	if ( !Slim::Utils::Strings::stringExists($error) ) {
+		$error = 'PROBLEM_CONNECTING';
+	}
+	
+	my $cb         = $args->{'callback'};
+	my $foundItems = $args->{'foundItems'};
+	
+	# Our error was on the first stream in foundItems, so remove it
+	shift @{$foundItems};
+	
+	# If there are other streams in foundItems, try them
+	if ( @{$foundItems} ) {
+		$::d_scan && msgf("scanWMA: Trying next stream: %s\n", $foundItems->[0]->url);
+		return scanWMAStream( {
+			'url'        => $foundItems->[0]->url,
+			'callback'   => $cb,
+			'foundItems' => $foundItems,
+		} );
+	}
+	
+	# Callback with no foundItems, as we had an error
+	return $cb->( $foundItems, $error );
 }
 
 sub _skipWindowsHiddenFiles {

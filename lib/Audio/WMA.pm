@@ -57,10 +57,10 @@ sub new {
 
 	unless (ref $file) {
 		close  $self->{'fileHandle'};
-		delete $self->{'fileHandle'};
-
 		close  FILE;
 	}
+	
+	delete $self->{'fileHandle'};
 
 	return $self;
 }

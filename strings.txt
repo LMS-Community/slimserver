@@ -1523,6 +1523,9 @@ PLAYLIST_PROBLEM_CONNECTING
 	ES	Error: No se puede conectar para obtener la lista
 	NL	Fout: Kan geen connectie maken om playlist op te halen
 
+ASF_UNABLE_TO_PARSE
+	EN	Error: Unable to parse ASF audio stream
+
 NO_PLAYLIST_DIR
 	CS	Chyba: Není uložen žádný playlist.
 	DA	Problem: Der findes ingen folder med gemte playlister.
@@ -2955,6 +2958,12 @@ SETUP_PREAMPVOLUMECONTROL_DESC
 	HE	במידה והנגן משמש כקדם מגבר, ניתן להנמיך את עצמת השמע ביציאות האנאלוגיות ולהתאימם למגבר
 	IT	Questo e' un controllo di volume secondario che si applica solo alle uscite analogiche dello Squeezebox. Inserisci la quantita' di attenuazone in decibel. L'intervallo va da 0.0 a 63.0 in passi da 0.5. Di default e' 0 (volume massimo). ATTENZIONE: l'amplificatore potrebbe danneggiare le casse in caso di volume elevato; per sicurezza utilizza un ampli integrato, un preamplificatore o un attenuatore di linea!
 	NL	Dit is een secundaire volume instelling die alleen van toepassing is voor de analoge uitgang. Geef de demping op in decibels. De waarde is van 0.0 tot 63.0 in 0.5 dB stappen. De standaard is 0 (voor vol volume). <br>WAARSCHUWING: Indien je versterker krachtig genoeg is om je luidsprekers op te blazen, dan is een receiver, voorversterker of line-demper nog steeds nodig als beveiligingsmaatregel.
+
+SETUP_MAXWMARATE
+	EN	Maximum WMA Stream Bitrate
+
+SETUP_MAXWMARATE_DESC
+	EN	Some WMA streams have multiple bitrates available for streaming.  By default, SlimServer will select the highest bitrate stream available, but if you have a slower Internet connection, you may set a lower value here to limit the maximum rate that can be chosen from these multiple rate streams.
 
 SETUP_MAXBITRATE
 	DE	Bitraten-Beschränkung
