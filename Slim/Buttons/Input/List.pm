@@ -228,28 +228,31 @@ sub getExtVal {
 	}
 
 	if (!ref($extref)) {
+
 		return $extref;
 	
 	} elsif (ref($extref) eq 'CODE') {
-		my @args;
+
+		my @args = ();
+
 		my $argtype = $client->param($source . 'Args');
 	
-		push @args, $client if $argtype =~ /c/i;
-		push @args, $value if $argtype =~ /v/i;
+		push @args, $client    if $argtype =~ /c/i;
+		push @args, $value     if $argtype =~ /v/i;
 		push @args, $listIndex if $argtype =~ /i/i;
 	
 		return $extref->(@args);
-	
+
 	} elsif (ref($extref) eq 'HASH') {
-	
+
 		return $extref->{$value};
-	
+
 	} elsif (ref($extref) eq 'ARRAY') {
-	
+
 		return @$extref;
-	
+
 	} else {
-	
+
 		return undef;
 	}
 }
