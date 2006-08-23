@@ -222,6 +222,8 @@ sub init {
 		'disabledextensionsplaylist' => '',
 		'serverPriority' => '',
 		'scannerPriority' => '0',
+		'bufferSecs' => 3,
+		'maxWMArate' => 9999,
 	);
 
 	# The following hash contains functions that are executed when the pref corresponding to

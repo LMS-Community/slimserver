@@ -2072,7 +2072,7 @@ sub initSetupConfig {
 		,'GroupOrder' => ['Default','TCP_Params']
 		,'Groups' => {
 			'Default' => {
-					'PrefOrder' => ['webproxy','httpport','remotestreamtimeout', 'maxWMArate']
+					'PrefOrder' => ['webproxy','httpport','bufferSecs','remotestreamtimeout', 'maxWMArate']
 				}
 			,'TCP_Params' => {
 					'PrefOrder' => ['tcpReadMaximum','tcpWriteMaximum','udpChunkSize']
@@ -2106,6 +2106,10 @@ sub initSetupConfig {
 			,'mDNSname'	=> {
 							'PrefSize' => 'medium'
 					}
+			,'bufferSecs' => {
+						'validate'   => \&Slim::Utils::Validate::isInt,
+						'validateArgs' => [1,30,1,30],
+					}							
 			,'remotestreamtimeout' => {
 						'validate' => \&Slim::Utils::Validate::isInt
 						,'validateArgs' => [1,undef,1]

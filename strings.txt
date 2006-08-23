@@ -2963,6 +2963,12 @@ SETUP_PREAMPVOLUMECONTROL_DESC
 	IT	Questo e' un controllo di volume secondario che si applica solo alle uscite analogiche dello Squeezebox. Inserisci la quantita' di attenuazone in decibel. L'intervallo va da 0.0 a 63.0 in passi da 0.5. Di default e' 0 (volume massimo). ATTENZIONE: l'amplificatore potrebbe danneggiare le casse in caso di volume elevato; per sicurezza utilizza un ampli integrato, un preamplificatore o un attenuatore di linea!
 	NL	Dit is een secundaire volume instelling die alleen van toepassing is voor de analoge uitgang. Geef de demping op in decibels. De waarde is van 0.0 tot 63.0 in 0.5 dB stappen. De standaard is 0 (voor vol volume). <br>WAARSCHUWING: Indien je versterker krachtig genoeg is om je luidsprekers op te blazen, dan is een receiver, voorversterker of line-demper nog steeds nodig als beveiligingsmaatregel.
 
+SETUP_BUFFERSECS
+	EN	Radio Station Buffer Seconds
+
+SETUP_BUFFERSECS_DESC
+	EN	When playing an Internet stream, the player buffers a small amount of data before beginning playback.  Specify the amount of audio data to buffer, in seconds from 1 to 30.  The default value is 3 seconds.  If you experience stuttering audio, increasing this value may help.
+
 SETUP_MAXWMARATE
 	DE	Maximale WMA Stream Bitrate
 	EN	Maximum WMA Stream Bitrate

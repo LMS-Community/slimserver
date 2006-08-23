@@ -227,12 +227,20 @@ sub flush {
 sub quickstart {
 	my $client = shift;
 	
+	my $url = Slim::Player::Playlist::url( $client, Slim::Player::Source::streamingSongIndex($client) );
+	
 	$client->requestStatus();
 	
 	my $fullness = $client->bufferFullness();
 	
 	# begin playback once we have this much data in the buffer
 	my $threshold = 20 * 1024;
+	
+	# If we know the bitrate of the stream, we instead buffer a certain number of seconds of audio
+	if ( my $bitrate = Slim::Music::Info::getBitrate($url) ) {
+		my $bufferSecs = Slim::Utils::Prefs::get('bufferSecs') || 3;
+		$threshold     = int($bitrate / 8) * $bufferSecs;
+	}
 
 	# Resume if we've hit the threshold, unless synced (sync unpauses all clients together)
 	if ( $fullness >= $threshold && !Slim::Player::Sync::isSynced($client) ) {
@@ -273,7 +281,6 @@ sub quickstart {
 		
 		# Find the track title
 		if ( $client->linesPerScreen() > 1 ) {
-			my $url = Slim::Player::Playlist::url( $client, Slim::Player::Source::streamingSongIndex($client) );
 			$line2  = Slim::Music::Info::title( $url );
 		}
 		
@@ -691,7 +698,11 @@ sub stream {
 			}
 		}
 		
-		# default to mp3
+		if ( !$format && $command eq 's' ) {
+			warn "*** WARNING: stream('s') called with no format, defaulting to mp3 decoder, url: $url\n";
+			bt();
+		}
+		
 		$format ||= 'mp3';
 		
 		if ($format eq 'wav') {
@@ -715,7 +726,7 @@ sub stream {
 			$pcmendian = '?';
 			$pcmchannels = '?';
 			$outputThreshold = 0;
-		} elsif ($format eq 'wma') {
+		} elsif ( $format =~ /(?:wma|asx)/ ) {
 			$formatbyte = 'w';
 			# Commandeer the unused pcmsamplesize field
 			# to indicate whether the data coming in is
@@ -749,6 +760,13 @@ sub stream {
 			$pcmendian = '?';
 			$pcmchannels = '?';
 			$outputThreshold = 0;
+			
+			# XXX: The use of mp3 as default has been known to cause the mp3 decoder to be used for
+			# other audio types, resulting in static. 
+			if ( $format ne 'mp3' ) {
+				warn "*** WARNING: mp3 decoder used for format: $format, url: $url\n";
+				bt();
+			}
 		}
 		
 		my $request_string = '';
