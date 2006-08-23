@@ -137,6 +137,32 @@ SERVER_VERSION
 	SV	SlimServer-version
 	ZH_CN	SlimServer版本
 
+PERL_VERSION
+	CS	Verze Perl
+	DE	Perl Version
+	EN	Perl Version
+	ES	Versión del Perl
+	FR	Version du Perl
+	IT	Versione Perl
+	NL	Perl versie
+	NO	Perl versjon
+	PT	Versão do Perl
+	SV	Perl-version
+	ZH_CN	Perlr版本
+
+MYSQL_VERSION
+	CS	Verze MySQL
+	DE	MySQL Version
+	EN	MySQL Version
+	ES	Versión del MySQL
+	FR	Version du MySQL
+	IT	Versione MySQL
+	NL	MySQL versie
+	NO	MySQL versjon
+	PT	Versão do MySQL
+	SV	MySQL-version
+	ZH_CN	MySQLr版本
+
 PLAYER_VERSION
 	CS	Verze firmwaru přehrávače
 	DA	Afspiller version

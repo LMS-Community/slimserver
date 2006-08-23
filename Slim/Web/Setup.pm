@@ -1263,7 +1263,8 @@ sub initSetupConfig {
 		'preEval'  => sub {
 			my ($client, $paramref, $pageref) = @_;
 
-			$paramref->{'versionInfo'} = Slim::Utils::Misc::settingsDiagString() . "\n<p>";
+			my @versions = Slim::Utils::Misc::settingsDiagString();
+			$paramref->{'versionInfo'} = join( "<br />\n", @versions ) . "\n<p>";
 			$paramref->{'newVersion'}  = $::newVersion;
 		},
 

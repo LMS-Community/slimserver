@@ -442,6 +442,21 @@ sub mysqlVersion {
 	return $mysqlVersion || 0;
 }
 
+=head2 mysqlVersionLong( $dbh )
+
+Returns the long version string, i.e. 5.0.22-standard
+
+=cut
+
+sub mysqlVersionLong {
+	my $class = shift;
+	my $dbh   = shift || return 0;
+
+	my ($mysqlVersion) = $dbh->selectrow_array( 'SELECT version()' );
+
+	return $mysqlVersion || 0;
+}	
+
 =head2 cleanup()
 
 Shut down MySQL when SlimServer is shut down.

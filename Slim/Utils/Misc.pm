@@ -12,6 +12,7 @@ use base qw(Exporter);
 
 our @EXPORT = qw(assert bt msg msgf watchDog errorMsg specified);
 
+use Config;
 use Cwd ();
 use File::Spec::Functions qw(:ALL);
 use File::Which ();
@@ -859,9 +860,11 @@ sub userAgentString {
 sub settingsDiagString {
 
 	my $osDetails = Slim::Utils::OSDetect::details();
+	
+	my @diagString;
 
 	# We masquerade as iTunes for radio stations that really want it.
-	my $diagString = sprintf("%s%s %s - %s - %s - %s - %s",
+	push @diagString, sprintf("%s%s %s - %s - %s - %s - %s",
 
 		Slim::Utils::Strings::string('SERVER_VERSION'),
 		Slim::Utils::Strings::string('COLON'),
@@ -871,8 +874,25 @@ sub settingsDiagString {
 		Slim::Utils::Prefs::get('language'),
 		Slim::Utils::Unicode::currentLocale(),
 	);
+	
+	# Also display the Perl version and MySQL version
+	push @diagString, sprintf("%s%s v%s %s",
+	
+		Slim::Utils::Strings::string('PERL_VERSION'),
+		Slim::Utils::Strings::string('COLON'),
+		$Config{'version'},
+		$Config{'archname'},
+	);
+	
+	my $mysqlVersion = Slim::Utils::MySQLHelper->mysqlVersionLong( Slim::Schema->storage->dbh );
+	push @diagString, sprintf("%s%s %s",
+	
+		Slim::Utils::Strings::string('MYSQL_VERSION'),
+		Slim::Utils::Strings::string('COLON'),
+		$mysqlVersion,
+	);
 
-	return $diagString;
+	return wantarray ? @diagString : join ( ', ', @diagString );
 }
 
 sub assert {
