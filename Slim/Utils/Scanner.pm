@@ -868,7 +868,11 @@ sub scanWMAStream {
 		my $cb         = $args->{'callback'};
 		my $pt         = $args->{'passthrough'} || [];
 		my $foundItems = $args->{'foundItems'};
-
+		
+		# Always return WMA URLs using MMS prefix so correct direct stream headers are used
+		$foundItems->[0]->url( $mmsURL );
+		$foundItems->[0]->update;
+		
 		return $cb->( $foundItems, @{$pt} );
 	}
 	
@@ -987,6 +991,10 @@ sub scanWMAStreamDone {
 	my $cache = Slim::Utils::Cache->instance;
 	$cache->set( 'wma_streamNum_' . $mmsURL, $streamNum,      '1 day' );	
 	$cache->set( 'wma_metadata_'  . $mmsURL, $wma,            '1 day' );
+	
+	# Always return WMA URLs using MMS prefix so correct direct stream headers are used
+	$args->{'FoundItems'}->[0]->url( $mmsURL );
+	$args->{'FoundItems'}->[0]->update;
 	
 	# All done
 	my $cb         = $args->{'callback'};
