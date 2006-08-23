@@ -736,11 +736,17 @@ sub playItem {
 
 		my $string; 
 		if ($action eq 'add') {
-			$string = 'ADDING_TO_PLAYLIST';
+
+			$string = $client->string('ADDING_TO_PLAYLIST');
+
 		} else {
+
 			if (Slim::Player::Playlist::shuffle($client)) {
-				$string = 'PLAYING_RANDOMLY_FROM';
+
+				$string = $client->string('PLAYING_RANDOMLY_FROM');
+
 			} else {
+
 				$string = $client->string('NOW_PLAYING') . ' (' . $client->string('CONNECTING_FOR') . ')';
 			}
 		}
