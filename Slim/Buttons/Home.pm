@@ -9,6 +9,17 @@ package Slim::Buttons::Home;
 
 Slim::Buttons::Home
 
+=head1 SYNOPSIS
+
+	Slim::Buttons::Home::addSubMenu('SETTINGS', 'ALARM', {
+		'useMode'   => 'alarm',
+		'condition' => sub { 1 },
+	});
+	
+	Slim::Buttons::Home::getHomeChoices($client);
+	
+	Slim::Buttons::Home::jumpToMenu($client,"BROWSE_MUSIC");
+
 =head1 DESCRIPTION
 
 L<Slim::Buttons::Home> is a SlimServer module for creating and
@@ -551,7 +562,7 @@ sub jump {
 	}
 }
 
-=head2 jump( $client, $menu, $depth)
+=head2 jumpToMenu( $client, $menu, $depth)
 
 Forces a pushMode to a  specific target menu item within the home menu tree 
 disregarding home menu settings.  $menu is a string identifying the unique menu 
@@ -586,6 +597,13 @@ sub jumpToMenu {
 	}
 }
 
+=head2 homeheader( $client )
+
+Set top line text for home menu, based on player model.
+Requires $client object.
+
+=cut
+
 sub homeheader {
 	my $client = $_[0];
 
@@ -610,6 +628,13 @@ sub homeheader {
 #######
 #	Routines for generating settings options.
 #######
+
+=head2 menuOptions( $client )
+
+Return a hash of the currently available menu options for the home menu of the supplied $client.
+
+=cut
+
 sub menuOptions {
 	my $client = shift;
 
@@ -633,6 +658,13 @@ sub menuOptions {
 	return %menuChoices;
 }
 
+=head2 unusedMenuOptions( $client )
+
+Return a sorted list of menu item names that are available but not currently
+chosen for the home menu of the provided $client.
+
+=cut
+
 sub unusedMenuOptions {
 	my $client = shift;
 
@@ -655,10 +687,25 @@ sub unusedMenuOptions {
 	return sort { $menuChoices{$a} cmp $menuChoices{$b} } keys %menuChoices;
 }
 
+
+=head2 getHomeChoices( $client )
+
+Takes a $client object as an argument and returns a array reference to the currently selected 
+menu items for the home menu of the supplied client.
+
+=cut
+
 sub getHomeChoices {
 	my $client = shift;
 	return \@{$homeChoices{$client}};
 }
+
+=head2 updateMenu( $client )
+
+This function takes a $client object and refreshes that clients menu options.  Called
+from setup when menu options are changed, or when some prefs may affect available menu options.
+
+=cut
 
 sub updateMenu {
 	my $client = shift;
