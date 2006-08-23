@@ -114,7 +114,7 @@ my @visualizers = (
     },
 	{ desc => ['VISUALIZER_SPECTRUM_ANALYZER', 'AND', 'VISUALIZER_EXTENDED_TEXT'],
 	  text => 1,
-	  params => [VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0 + 320, 160, 0, 4, 1, 1, 1, 3, 160 + 320, 160, 1, 4, 1, 1, 1, 3],
+	  params => [VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0 + 320, 160, 0, 4, 1, 1, 1, 1, 160 + 320, 160, 1, 4, 1, 1, 1, 1],
     },
 );
 
