@@ -76,13 +76,13 @@ sub updateKnob {
 
 	my $knobPos  = $client->knobPos || 0;
 	my $knobSync = $client->knobSync;
+	my $flags    = $client->param('knobFlags') || 0;
 
 	if (defined $listIndex && (($listIndex == $knobPos) || $forceSend)) {
 
 		my $parambytes;
 
 		if (defined $listLen) {
-		    	my $flags  = 0;
 		    	my $width  = 0;
 		    	my $height = 0;
 
@@ -90,7 +90,9 @@ sub updateKnob {
 
 			$parambytes = pack "NNCcnc", $listIndex, $listLen, $knobSync, $flags, $width, $height;
 
-			$::d_ui && msg("sending new knob position- listIndex: $listIndex with knobPos: $knobPos of $listLen sync: $knobSync\n");
+			$::d_ui && msgf("sending new knob position- listIndex: %d with knobPos: %d of %d sync: %d flags: %d\n",
+				$listIndex, $knobPos, $listLen, $knobSync, $flags,
+			);
 
 		} else {
 

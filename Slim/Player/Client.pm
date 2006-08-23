@@ -33,6 +33,9 @@ our $maxVolume = 100;
 # Use the access functions.
 our %clientHash = ();
 
+use constant KNOB_NOWRAP => 0x01;
+use constant KNOB_NOACCELERATION => 0x02;
+
 =head1 NAME
 
 Slim::Player::Client

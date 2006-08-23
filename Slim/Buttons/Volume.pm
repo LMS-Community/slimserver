@@ -97,8 +97,15 @@ sub setMode {
 		return;
 	}
 
+	# Make a copy, so we don't modify our parent's mode params.
 	my %modeParams = %$params;
-	$modeParams{'valueRef'} = $client->volume();
+
+	$modeParams{'valueRef'}  = $client->volume();
+
+	# Bug: 2093 - Don't let the knob wrap or have acceleration when
+	# setting the volume.
+	$modeParams{'knobFlags'} = Slim::Player::Client::KNOB_NOWRAP() |
+                                   Slim::Player::Client::KNOB_NOACCELERATION();
 
 	$client->param('screen2', 'inherit');
 
