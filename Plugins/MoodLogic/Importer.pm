@@ -426,15 +426,24 @@ sub processPlaylists {
 
 		my $name = defined $playlist->Fields('name') ? $playlist->Fields('name')->value : "Unnamed";
 		my $url  = 'moodlogicplaylist:' . Slim::Utils::Misc::escape($name);
+		my $list = getPlaylistItems($playlist);
 
-		$::d_moodlogic && msg("MoodLogic: Found MoodLogic Playlist: $url\n");
+		if (ref($list) eq 'ARRAY' && scalar @$list > 0) {
 
-		# add this playlist to our playlist library
-		Slim::Music::Info::updateCacheEntry($url, {
-			'TITLE' => join('', $prefix, $name, $suffix),
-			'LIST'  => getPlaylistItems($playlist),
-			'CT'    => 'mlp',
-		});
+			$::d_moodlogic && msg("MoodLogic: Found MoodLogic Playlist: $url\n");
+
+			# add this playlist to our playlist library
+			Slim::Music::Info::updateCacheEntry($url, {
+				'TITLE' => join('', $prefix, $name, $suffix),
+				'LIST'  => $list,
+				'CT'    => 'mlp',
+			});
+
+		} else {
+
+			$::d_moodlogic && msg("MoodLogic: playlist [$name] has no entries!\n");
+
+		}
 
 		$playlist->MoveNext unless $playlist->EOF;
 	}
