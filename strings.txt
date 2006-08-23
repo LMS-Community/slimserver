@@ -1448,6 +1448,9 @@ FIRMWARE_MISSING_DESC
 	EN	Server can't connect to Internet to obtain firmware update.
 	ES	El server no puede conectarse a Internet para obtener la actualización de firmware.
 
+CHECKING_STREAM
+	EN	Checking stream...
+
 CONNECTING_FOR
 	CS	Připojuji ke hraní:
 	DE	Verbinde...

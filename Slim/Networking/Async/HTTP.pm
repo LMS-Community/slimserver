@@ -42,6 +42,7 @@ use URI;
 use Slim::Networking::Async::Socket::HTTP;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
+use Slim::Utils::Timers;
 
 __PACKAGE__->mk_classaccessors( qw(
 	uri request response saveAs fh
@@ -221,6 +222,8 @@ sub read_body {
 sub _http_socket_error {
 	my ( $socket, $self, $args ) = @_;
 	
+	Slim::Utils::Timers::killTimers( $socket, \&_http_socket_error );
+	
 	$self->disconnect;
 	
 	return $self->_http_error( "Error on HTTP socket: $!", $args );
@@ -230,6 +233,8 @@ sub _http_error {
 	my ( $self, $error, $args ) = @_;
 	
 	$self->disconnect;
+	
+	$::d_http_async && msg("Async::HTTP: Error: $error\n");
 
 	if ( my $ecb = $args->{onError} ) {
 		my $passthrough = $args->{passthrough} || [];
@@ -329,6 +334,10 @@ sub _http_read {
 		# if not, keep going and read the body
 		$self->socket->set( passthrough => [ $self, $args ] );
 		
+		# Timer in case the server never sends any body data
+		my $timeout = Slim::Utils::Prefs::get('remotestreamtimeout') || 10;
+		Slim::Utils::Timers::setTimer( $self->socket, Time::HiRes::time() + $timeout, \&_http_socket_error, $self, $args );
+		
 		Slim::Networking::Select::addError( $self->socket, \&_http_socket_error );
 		Slim::Networking::Select::addRead( $self->socket, \&_http_read_body );
 	}
@@ -337,7 +346,12 @@ sub _http_read {
 sub _http_read_body {
 	my ( $socket, $self, $args ) = @_;
 	
+	Slim::Utils::Timers::killTimers( $socket, \&_http_socket_error );
+	Slim::Utils::Timers::killTimers( $socket, \&_http_read_timeout );
+	
 	my $result = $socket->read_entity_body( my $buf, $self->bufsize );
+	
+	$::d_http_async && $result && msgf("Async::HTTP: Read body: %d bytes\n", $result);
 	
 	# Are we saving directly to a file?
 	if ( $self->saveAs && !$self->fh ) {
@@ -389,6 +403,31 @@ sub _http_read_body {
 			my $passthrough = $args->{passthrough} || [];
 			$cb->( $self, @{$passthrough} );
 		}
+	}
+	else {
+		# More body data to read
+		
+		# Some servers may never send EOF, but we want to return whatever data we've read
+		my $timeout = Slim::Utils::Prefs::get('remotestreamtimeout') || 10;
+		Slim::Utils::Timers::setTimer( $socket, Time::HiRes::time() + $timeout, \&_http_read_timeout, $self, $args );
+	}
+}
+
+sub _http_read_timeout {
+	my ( $socket, $self, $args ) = @_;
+	
+	$::d_http_async && msg("Async::HTTP: Timed out waiting for more body data, returning what we have\n");
+	
+	Slim::Networking::Select::removeError( $socket );
+	Slim::Networking::Select::removeRead( $socket );
+	
+	# close and remove the socket
+	$self->fh->close if $self->fh;
+	$self->disconnect;
+	
+	if ( my $cb = $args->{onBody} ) {
+		my $passthrough = $args->{passthrough} || [];
+		$cb->( $self, @{$passthrough} );
 	}
 }
 

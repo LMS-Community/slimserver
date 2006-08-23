@@ -915,6 +915,17 @@ sub playlistXitemCommand {
 		});
 
 	} else {
+		
+		# Display some feedback for the player on remote URLs
+		if ( Slim::Music::Info::isRemoteURL($path) ) {
+			my $line1 = $client->string('NOW_PLAYING') . ' (' . $client->string('CHECKING_STREAM') . ')';
+			my $line2 = Slim::Music::Info::title($path) || $path;
+			if ( $client->linesPerScreen() == 1 ) {
+				$line2 = $client->string('CHECKING_STREAM');
+			}
+			my $timeout = Slim::Utils::Prefs::get('remotestreamtimeout') || 10;
+			$client->showBriefly( $line1, $line2, $timeout + 5 );
+		}			
 
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'      => $path,

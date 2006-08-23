@@ -42,7 +42,6 @@ use Slim::Formats::Playlists;
 use Slim::Music::Info;
 use Slim::Player::ProtocolHandlers;
 use Slim::Networking::Async::HTTP;
-use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Cache;
 use Slim::Utils::FileFindRule;
 use Slim::Utils::Misc;
@@ -856,26 +855,39 @@ the result for use by the direct streaming code in Protocols::MMS.
 sub scanWMAStream {
 	my $args = shift;
 	
-	my $http = Slim::Networking::SimpleAsyncHTTP->new(
-		\&scanWMAStreamDone,
-		\&scanWMAStreamError,
-		{
-			args => $args,
-		},
-	);
-	
-	my %headers = (		
-		Accept       => '*/*',
-		'User-Agent' => 'NSPlayer/4.1.0.3856',
-		Pragma       => 'xClientGUID={' . Slim::Player::Protocols::MMS::randomGUID(). '}',
-		Pragma       => 'no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=1,max-duration=0',
-		Connection   => 'close',
-	);
-	
 	my $url = $args->{'url'};
 	$url =~ s/^mms/http/;
 	
-	$http->get( $url, %headers );
+	# If we've already cached the result of scanning this URL, we can skip this step
+	# XXX: SN note: this cache should be per-user for stream number selection
+	my $mmsURL = $args->{'url'};
+	$mmsURL =~ s/^http/mms/;
+	
+	my $cache = Slim::Utils::Cache->instance;
+	if ( $cache->get( 'wma_streamNum_' . $mmsURL ) ) {
+		my $cb         = $args->{'callback'};
+		my $pt         = $args->{'passthrough'} || [];
+		my $foundItems = $args->{'foundItems'};
+
+		return $cb->( $foundItems, @{$pt} );
+	}
+	
+	my $request = HTTP::Request->new( GET => $url );
+	
+	my $h = $request->headers;
+	$h->header( Accept => '*/*' );
+	$h->header( 'User-Agent' => 'NSPlayer/4.1.0.3856' );
+	$h->header( Pragma => 'xClientGUID={' . Slim::Player::Protocols::MMS::randomGUID(). '}' );
+	$h->header( Pragma => 'no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=1,max-duration=0' );
+	$h->header( Connection => 'close' );
+	
+	my $http = Slim::Networking::Async::HTTP->new();
+	$http->send_request( {
+		'request'     => $request,
+		'onBody'      => \&scanWMAStreamDone,
+		'onError'     => \&scanWMAStreamError,
+		'passthrough' => [ $args ],
+	} );
 }
 
 =head2 scanWMAStreamDone( $http )
@@ -886,11 +898,10 @@ http://avifile.sourceforge.net/asf-1.0.htm
 =cut
 
 sub scanWMAStreamDone {
-	my $http = shift;
-	my $args = $http->params('args');
+	my ( $http, $args ) = @_;
 	
 	# Check content-type of stream to make sure it's audio
-	my $type = $http->headers->header('Content-Type');
+	my $type = $http->response->headers->header('Content-Type');
 	
 	if (   $type ne 'application/octet-stream'
 		&& $type ne 'application/x-mms-framed' 
@@ -905,11 +916,11 @@ sub scanWMAStreamDone {
 			'content_type' => 'asx',
 		});
 		
-		return scanPlaylist( $http->contentRef, $args );
+		return scanPlaylist( $http->response->content_ref, $args );
 	}
 	
 	# parse the ASF header data
-	my $header = $http->content;
+	my $header = $http->response->content;
 	
 	my $chunkType = unpack 'v', substr($header, 0, 2);
 	if ( $chunkType != 0x4824 ) {
