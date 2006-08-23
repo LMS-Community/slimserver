@@ -858,24 +858,6 @@ sub scanWMAStream {
 	my $url = $args->{'url'};
 	$url =~ s/^mms/http/;
 	
-	# If we've already cached the result of scanning this URL, we can skip this step
-	# XXX: SN note: this cache should be per-user for stream number selection
-	my $mmsURL = $args->{'url'};
-	$mmsURL =~ s/^http/mms/;
-	
-	my $cache = Slim::Utils::Cache->instance;
-	if ( $cache->get( 'wma_streamNum_' . $mmsURL ) ) {
-		my $cb         = $args->{'callback'};
-		my $pt         = $args->{'passthrough'} || [];
-		my $foundItems = $args->{'foundItems'};
-		
-		# Always return WMA URLs using MMS prefix so correct direct stream headers are used
-		$foundItems->[0]->url( $mmsURL );
-		$foundItems->[0]->update;
-		
-		return $cb->( $foundItems, @{$pt} );
-	}
-	
 	my $request = HTTP::Request->new( GET => $url );
 	
 	my $h = $request->headers;
