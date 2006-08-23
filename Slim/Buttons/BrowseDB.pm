@@ -210,7 +210,7 @@ sub init {
 				# find out if this item is part of a container, such as an album or playlist previously selected.
 				my $container = 0;
 
-				if ($levels[$level-1] =~ /^(?:playlist|album)$/ && grep { /playlist|album\.id/ } keys %{$findCriteria}) {
+				if ($levels[$level-1] =~ /^(?:playlist|album)$/ && grep { /playlist|me|album\.id/ } keys %{$findCriteria}) {
 					$container = 1;
 				}
 
