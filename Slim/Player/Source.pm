@@ -793,8 +793,14 @@ sub gototime {
 		
 		my $paused = ( Slim::Player::Sync::isSynced($client) ) ? 1 : 0;
 
-		$everybuddy->play($paused, $client->streamformat(),
-				Slim::Player::Playlist::song($client));
+		$everybuddy->play(
+			$paused,
+			$client->streamformat(),
+			Slim::Player::Playlist::song($client),
+			0,
+			$client->shouldLoop,
+			Slim::Player::ReplayGain->fetchGainMode($client),
+		);
 
 		$everybuddy->playmode("play");
 	}
