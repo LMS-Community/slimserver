@@ -898,9 +898,10 @@ sub scanWMAStreamDone {
 		
 		# Re-fetch as a playlist.
 		$args->{'playlist'} = Slim::Schema->rs('Playlist')->objectForUrl({
-			'url'          => $args->{'url'},
-			'content_type' => 'asx',
+			'url' => $args->{'url'},
 		});
+		$args->{'playlist'}->content_type('asx');
+		$args->{'playlist'}->update;
 		
 		return scanPlaylist( $http->response->content_ref, $args );
 	}

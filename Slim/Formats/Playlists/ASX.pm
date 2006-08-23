@@ -26,83 +26,34 @@ sub read {
 
 	# First try for version 3.0 ASX
 	if ($content =~ /<ASX/i) {
-
-		no warnings;
-
-		# Deal with the common parsing problem of unescaped ampersands
-		# found in many ASX files on the web.
-		$content =~ s/&(?!(#|amp;|quot;|lt;|gt;|apos;))/&amp;/g;
-
-		# Convert all tags to upper case as ASX allows mixed case tags, XML does not!
-		$content =~ s{(<[^\s>]+)}{\U$1\E}mg;
-
-		my $parsed = eval {
-			# We need to send a ProtocolEncoding option to XML::Parser,
-			# but XML::Simple carps at it. Unfortunately, we don't 
-			# have a choice - we can't change the XML, as the
-			# XML::Simple warning suggests.
-			XMLin(\$content, ForceArray => ['ENTRY', 'REF', 'ENTRYREF']);
-		};
-
-		if ($@) {
-			errorMsg("ASX->read: Couldn't parse XML: [$content] - got error: [$@]\n");
-			$parsed = {};
-		}
 		
+		# Forget trying to parse this as XML, all we care about are REF and ENTRYREF elements
 		$::d_parse && msg("parsing ASX: $file url: [$url]\n");
-
-		my $entries = $parsed->{'ENTRY'} || $parsed->{'REPEAT'}->{'ENTRY'} || $parsed->{'ENTRYREF'};
-
-		if (!defined $entries || !ref($entries) || scalar @$entries == 0) {
-
-			return @items;
-		}	
 		
-		for my $entry (@$entries) {
+		my @refs      = $content =~ m{<ref\s+href\s*=\s*"([^"]+)"}ig;
+		my @entryrefs = $content =~ m{<entryref\s+href\s*=\s*"([^"]+)"}ig;
+		
+		for my $href ( @refs, @entryrefs ) {
 			
-			my $title = $entry->{'TITLE'};
-			my $refs  = $entry->{'REF'};
+			# Bug 3160 (partial)
+			# 'ref' tags should refer to audio content, so we need to force
+			# the use of the MMS protocol handler by making sure the URI starts with mms
+			$href =~ s/^http/mms/;
 			
-			# ENTRYREF items are links to other ASX files
-			if ( $parsed->{'ENTRYREF'} ) {
-				$refs = $parsed->{'ENTRYREF'};
-			}
+			$::d_parse && msg("Found an entry: $href\n");
+			
+			# We've found URLs in ASX files that should be
+			# escaped to be legal - specifically, they contain
+			# spaces. For now, deal with this specific case.
+			# If this seems to happen in other ways, maybe we
+			# should URL escape before continuing.
+			$href =~ s/ /%20/;
+			
+			$href = Slim::Utils::Misc::fixPath($href, $baseDir);
 
-			$::d_parse && msg("Found an entry title: $title\n");
+			if ($class->playlistEntryIsValid($href, $url)) {
 
-			if (defined($refs)) {
-				
-				for my $ref (@$refs) {
-
-					my $href = $ref->{'href'} || $ref->{'Href'} || $ref->{'HREF'};
-					
-					# Bug 3160 (partial)
-					# 'ref' tags should refer to audio content, so we need to force
-					# the use of the MMS protocol handler by making sure the URI starts with mms
-					$href =~ s/^http/mms/;
-
-					if ( $href ) {
-						
-						# We've found URLs in ASX files that should be
-						# escaped to be legal - specifically, they contain
-						# spaces. For now, deal with this specific case.
-						# If this seems to happen in other ways, maybe we
-						# should URL escape before continuing.
-						$href =~ s/ /%20/;
-						
-						$href = Slim::Utils::Misc::fixPath($href, $baseDir);
-
-						if ($class->playlistEntryIsValid($href, $url)) {
-
-							push @items, $class->_updateMetaData( $href, {
-								'TITLE' => $title,
-							} );
-						}
-					}
-				}
-				
-				# don't continue looping if we had an entryref tag
-				last if $parsed->{'ENTRYREF'};
+				push @items, $class->_updateMetaData($href);
 			}
 		}
 	}
