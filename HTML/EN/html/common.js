@@ -83,7 +83,7 @@ function toggleGalleryView(artwork) {
 	[% IF setuplinks %]
 		[% FOREACH setuplink = setuplinks %]
 		case "[% setuplink.key %]":
-			url = "[% setuplink.value %]"
+			url = "[% webroot %][% setuplink.value %]"
 			page = "[% setuplink.key %]"
 			suffix = "page=" + page
 			[% IF cookie %]homestring = "[% setuplink.key | string %]"
