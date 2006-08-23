@@ -340,12 +340,14 @@ sub bumpRight {
 
 sub bumpDown {
 	my $display = shift;
-	$display->pushBumpAnimate($display->render($display->renderCache()), 'U');
+	my $render = $display->render($display->renderCache());
+	$display->pushBumpAnimate($render, 'U', $render->{screen1}->{extent});
 }
 
 sub bumpUp {
 	my $display = shift;
-	$display->pushBumpAnimate($display->render($display->renderCache()), 'D');
+	my $render = $display->render($display->renderCache());
+	$display->pushBumpAnimate($render, 'D', $render->{screen1}->{extent});
 }
 
 sub pushBumpAnimate {

@@ -222,6 +222,18 @@ sub pushDown {
 	$display->pushBumpAnimate($render, 'd', $render->{screen1}->{extent}, $render->{screen2}->{extent});
 }
 
+sub bumpDown {
+	my $display = shift;
+	my $render = $display->render($display->renderCache());
+	$display->pushBumpAnimate($render, 'U', $render->{screen1}->{extent}, $render->{screen2}->{extent});
+}
+
+sub bumpUp {
+	my $display = shift;
+	my $render = $display->render($display->renderCache());
+	$display->pushBumpAnimate($render, 'D', $render->{screen1}->{extent}, $render->{screen2}->{extent});
+}
+
 sub pushBumpAnimate {
 	my $display = shift;
 	my $render = shift;
