@@ -1,10 +1,48 @@
 package Slim::Buttons::Input::List;
 
 # $Id$
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License,
-# version 2.
+
+=head1 COPYRIGHT
+
+ SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License,
+ version 2.
+
+=head1 NAME
+
+Slim::Buttons::Input::List
+
+=head1 SYNOPSIS
+
+ my %params = (
+	'stringHeader'   => 1,
+	'header'         => 'FAVORITES',
+	'listRef'        => \@titles,
+	'callback'       => \&mainModeCallback,
+	'valueRef'       => \$context{$client}->{mainModeIndex},
+	'externRef'      => sub {return $_[1] || $_[0]->string('EMPTY')},
+	'headerAddCount' => scalar (@urls) ? 1 : 0,
+	'urls'           => \@urls,
+	'parentMode'     => Slim::Buttons::Common::mode($client),
+	'overlayRef'     => sub {
+		if (scalar @urls) {
+			return (undef,Slim::Display::Display::symbol('notesymbol'));
+		} else {
+			return undef;
+		}
+	},
+ );
+
+ Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Input::List> is a reusable SlimServer module, creating a 
+generic framework UI for navigating through a List of items, with configurable
+display parameters and entry/leave points.
+
+=cut
 
 use strict;
 
@@ -435,5 +473,17 @@ sub exitInput {
 
 	$callbackFunct->(@_);
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Utils::Timers>
+
+L<Slim::Buttons::Settings>
+
+L<Slim::Buttons::BrowseDB>
+
+=cut
 
 1;

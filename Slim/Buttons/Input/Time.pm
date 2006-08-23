@@ -2,10 +2,43 @@ package Slim::Buttons::Input::Time;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License,
-# version 2.
+=head1 COPYRIGHT
+
+ SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License,
+ version 2.
+
+=head1 NAME
+
+Slim::Buttons::Input::Time
+
+=head1 SYNOPSIS
+
+ my %params = (
+			'header'       => 'ALARM_SET',
+			'stringHeader' => 1,
+			'initialValue' => sub { return $_[0]->prefGet("alarmtime", weekDay($_[0])) },
+			'cursorPos'    => 0,
+			'callback'     => \&exitSetHandler,
+			'onChange'     => sub { $_[0]->prefSet('alarmtime', $_[1], weekDay($_[0])) },
+			'onChangeArgs' => 'CV',
+			);
+
+ my $value = $nextParams{'initialValue'}->($client);
+
+ $params{'valueRef'} = \$value;
+
+Slim::Buttons::Common::pushMode($client, 'INPUT.Bar', \%params);
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Input::Time> is a reusable SlimServer module to create a standard UI
+for entering Time formatted strings.  This is a slimmed down variation of Input::Text 
+with custom handling for limting characters based on the timeFormat server preference
+and typicall formatting of time strings. Callers include Sli::Buttons::AlarmCLock
+
+=cut
 
 use strict;
 
@@ -245,17 +278,25 @@ sub setMode {
 	prepKnob($client, \@timedigits);
 }
 
-# set unsupplied parameters to the defaults
-# header = 'Enter Text:' # message displayed on top line
-# valueRef = \"" # string to be edited
-# cursorPos = len($$valueRef) # position within string actively being edited
-# callback = undef # function to call to exit mode
-# parentMode = $client->modeStack->[-2]
-	# mode to which to pass button presses mapped to the passback function
-	# defaults to mode in second to last position on call stack (which is
-	# the mode that called INPUT.Text)
-# onChange = undef
-# onChangeArgs = CV
+=head1 METHODS
+
+=head2 init( )
+
+This function sets up the params for INPUT.Time.  The optional params and their defaults are:
+
+ 'header'       = 'Enter Time:'   # message displayed on top line
+ 'valueRef'     = \""             # string to be edited
+ 'cursorPos'    = len($$valueRef) # position within string actively being edited
+ 'callback'     = undef           # function to call to exit mode
+ 'parentMode'   = $client->modeStack->[-2]
+				 mode to which to pass button presses mapped to the passback function
+				 defaults to mode in second to last position on call stack (which is
+				 the mode that called INPUT.Text)
+ 'onChange'     = undef           # subroutine reference called when the value changes
+ 'onChangeArgs' = CV              # arguments provided to onChange subroutine, C= client object, V= current value
+
+=cut
+
 sub init {
 	my $client = shift;
 	
@@ -268,10 +309,6 @@ sub init {
 
 	if (!defined($client->param('header'))) {
 		$client->param('header','Enter Time:');
-	}
-
-	if (!defined($client->param('noScroll'))) {
-		$client->param('noScroll',1)
 	}
 
 	if (!defined($client->param('cursorPos'))) {
@@ -531,6 +568,14 @@ sub scrollTime {
 	
 	return $$valueRef;
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Buttons::AlarmClock>
+
+=cut
 
 1;
 

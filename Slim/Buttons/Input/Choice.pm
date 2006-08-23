@@ -2,21 +2,54 @@ package Slim::Buttons::Input::Choice;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2005 Sean Adams, Slim Devices Inc.
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License,
-# version 2.
+=head1 COPYRIGHT
 
-# This mode is modelled after INPUT.List, but more "electric", in that
-# most mode params can be either hard values or subroutines to be
-# invoked at run time.  More documentation coming soon.
+ SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License,
+ version 2.
 
-# The name Choice comes from its original use, creating a mode where
-# the user could choose amoung several options.  But some top-level
-# were selectable, while others led to further options.  This required
-# custom behavior for some of the options.  This mode allows for such
-# custom behavior.  While the name remains "Choice", this is useful
-# for creating just about any kind of mode.
+=head1 NAME
+
+Slim::Buttons::Input::Choice
+
+=head1 SYNOPSIS
+
+ my %params = (
+	header   => $client->param('header') || ($title . ' {count}'),
+	listRef  => \@list,
+	url      => $url,
+	title    => $title,
+	favorite => $favorite ? $favorite->{'num'} : undef,
+
+	# play music when play is pressed
+	onPlay => sub {
+		;
+	},
+
+	onAdd => sub {
+
+	},
+	
+	onRight => $client->param('onRight'), # passthrough
+ );
+
+ Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);;
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Input::Choice> is modelled after INPUT.List, but more "electric", in that
+most mode params can be either hard values or subroutines to be
+invoked at run time.  More documentation coming soon.
+
+The name Choice comes from its original use, creating a mode where
+the user could choose amoung several options.  But some top-level
+were selectable, while others led to further options.  This required
+custom behavior for some of the options.  This mode allows for such
+custom behavior.  While the name remains "Choice", this is useful
+for creating just about any kind of mode.
+
+=cut
 
 use strict;
 use Slim::Buttons::Common;
@@ -566,5 +599,15 @@ sub exitInput {
 		$callbackFunct->(@_);
 	}
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Player::Client>
+
+L<Slim::Buttons::Settings>
+
+=cut
 
 1;

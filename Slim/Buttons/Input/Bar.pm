@@ -2,10 +2,58 @@ package Slim::Buttons::Input::Bar;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License,
-# version 2.
+=head1 COPYRIGHT
+
+ SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
+ This program is free software; you can redistribute it and/or
+ modify it under the terms of the GNU General Public License,
+ version 2.
+
+=head1 NAME
+
+Slim::Buttons::Home
+
+=head1 SYNOPSIS
+
+$params->{'valueRef'} = \$value;
+
+Slim::Buttons::Common::pushMode($client, 'INPUT.Bar', $params);
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Home> is a SlimServer module for creating and
+navigating a configurable multilevel menu structure.
+
+Avilable Parameters and their defaults:
+
+ 'header'          = ''    # message displayed on top line, can be a scalar, a code ref,
+                           # or an array ref to a list of scalars or code refs
+ 'headerArgs'      = CV    # accepts C, and V, determines if the $client(C) and or the $valueRef(V) 
+                          # are sent to the above codeRef
+ 'stringHeader'    = undef # if true, put the value of header through the string function
+                           # before displaying it.
+ 'headerValue'     = undef
+	set to 'scaled' to show the current value modified by the increment in parentheses
+	set to 'unscaled' to show the current value in parentheses
+	set to a codeRef which returns a string to be shown after the standard header
+ 'headerValueArgs' = CV    # accepts C, and V
+ 'headerValueUnit' = ''    # Set to a units symbol to be displayed before the closing paren
+ 'valueRef'        =       # reference to value to be selected
+ 'callback'        = undef # function to call to exit mode
+ 'overlayRef'      = undef # reference to subroutine to set any overlay display conditions.
+ 'overlayRefArgs'  = CV    # accepts C, and V
+ 'onChange'        = undef # code reference to execute when the valueRef is changed
+ 'onChangeArgs'    = CV    # accepts C, and V
+ 'min'             = 0     # minimum value for slider scale
+ 'max'             = 100   # maximum value for slider scale
+ 'mid'             = 0     # midpoint value for marking the division point for a balance bar.
+ 'midIsZero'       = 1     # set to 0 if you don't want the mid value to be interpreted as zero
+ 'incremen't       = 2.5   # step value for each bar character or button press.
+ 'barOnDouble'     = 0     # set to 1 if the bar is preferred when using large text.
+ 'smoothing'       = 0     # set to 1 if you want the character display to use custom chars to 
+                           # smooth the movement of the bar.
+
+=cut
 
 use strict;
 
@@ -18,35 +66,6 @@ my %functions = ();
 # XXXX - This should this be in init() - but we don't init Input methods
 # before trying to use them.
 Slim::Buttons::Common::addMode('INPUT.Bar', getFunctions(), \&setMode);
-
-# set unsupplied parameters to the defaults
-# header = '' # message displayed on top line, can be a scalar, a code ref,
-# or an array ref to a list of scalars or code refs
-#
-# headerArgs = CV
-# stringHeader = undef # if true, put the value of header through the string function
-# before displaying it.
-#
-# headerValue = undef
-# 	set to 'scaled' to show the current value modified by the increment in parentheses
-#	set to 'unscaled' to show the current value in parentheses
-# 	set to a codeRef which returns a string to be shown after the standard header
-#
-# headerValueArgs = CV
-# headerValueUnit = '' # Set to a units symbol to be displayed before the closing paren
-# valueRef =  # reference to value to be selected
-# callback = undef # function to call to exit mode
-# overlayRef = undef
-# overlayRefArgs = CV
-# onChange = undef
-# onChangeArgs = CV
-# min = 0 # minimum value for slider scale
-# max = 100 #maximum value for slider scale
-# mid = 0 # midpoint value for marking the division point for a balance bar.
-# midIsZero = 1 # set to 0 if you don't want the mid value to be interpreted as zero
-# increment = 2.5 # step value for each bar character or button press.
-# barOnDouble = 0 # set to 1 if the bar is preferred when using large text.
-# smoothing = 0 # set to 1 if you want the character display to use custom chars to smooth the movement of the bar.
 
 sub init {
 	my $client = shift;
@@ -440,5 +459,15 @@ sub exitInput {
 
 	$callbackFunct->(@_);
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Buttons::Settings>
+
+L<Slim::Display::Display>
+
+=cut
 
 1;
