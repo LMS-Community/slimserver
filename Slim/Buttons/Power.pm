@@ -2,10 +2,22 @@ package Slim::Buttons::Power;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
+
+=head1 NAME
+
+Slim::Buttons::Power
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Power> is a SlimServer module to add an 'off' mode.
+Slim Devices players are never truly off, instead entering and leaving this 
+mode in reaction to the power button.
+
+=cut
 
 use strict;
 use File::Spec::Functions qw(:ALL);
@@ -53,6 +65,14 @@ sub setMode {
 sub lines {
 	return { 'screen1' => {}, 'screen2' => {} };
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Utils::Timers>
+
+=cut
 
 1;
 

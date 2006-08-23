@@ -1,12 +1,25 @@
+package Slim::Buttons::SqueezeNetwork;
+
 # This code is derived from code with the following copyright message:
 #
-# SlimServer Copyright (C) 2005 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (C) 2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
-use strict;
 
-package Slim::Buttons::SqueezeNetwork;
+=head1 NAME
+
+Slim::Buttons::SqueezeNetwork
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons:SqueezeNetwork> is simple module to offer a UI
+for breaking a player's connection with SlimServer in order to reconnect 
+to SqueezeNetwork.
+
+=cut
+
+use strict;
 
 use Slim::Control::Request;
 use Slim::Utils::Timers;
@@ -108,6 +121,12 @@ sub connectSqueezeNetwork {
 	}
 }
 
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+=cut
 
 1;
 

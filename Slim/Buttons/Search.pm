@@ -2,10 +2,23 @@ package Slim::Buttons::Search;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
+
+=head1 NAME
+
+Slim::Buttons::Search
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Search> is a SlimServer module to create a UI for searching
+the user track database.  Seach by ARTIST, ALBUM and SONGS is added to the home 
+menu structure as well as options for adding to the top level.  Search input uses the 
+INPUT.Text mode.
+
+=cut
 
 use strict;
 use File::Spec::Functions qw(:ALL);
@@ -213,6 +226,16 @@ sub searchTerm {
 
 	return [ $term, "% $term" ];
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Buttons::Input::Text>
+
+L<Slim::Player::Client>
+
+=cut
 
 1;
 

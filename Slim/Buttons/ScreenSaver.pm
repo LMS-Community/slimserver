@@ -2,10 +2,21 @@ package Slim::Buttons::ScreenSaver;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
+
+=head1 NAME
+
+Slim::Buttons::ScreenSaver
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::ScreenSaver> is a SlimServer module to register basic core screensavers and to handle
+moving the player in and out of screensaver modes.
+
+=cut
 
 use strict;
 use File::Spec::Functions qw(:ALL);
@@ -192,6 +203,14 @@ sub lines {
 	$::d_time && msg("getting screensaver lines");
 	return Slim::Buttons::Playlist::lines($client);
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Hardware::IR>
+
+=cut
 
 1;
 

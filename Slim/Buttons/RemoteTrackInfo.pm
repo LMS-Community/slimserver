@@ -2,10 +2,21 @@ package Slim::Buttons::RemoteTrackInfo;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2005 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
+
+=head1 NAME
+
+Slim::Buttons::RemoteTrackInfo
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::RemoteTrackInfo> is a SlimServer module to create a UI for viewing information 
+about remote tracks.
+
+=cut
 
 use strict;
 use Slim::Buttons::Common;
@@ -86,14 +97,14 @@ sub setMode {
 
 	# now use another mode for the heavy lifting
 	my %params = (
-		header => $client->param('header') || ($title . ' {count}'),
-		listRef => \@list,
-		url => $url,
-		title => $title,
-		favorite => $favorite ? $favorite->{'num'} : undef,
+		'header'   => $client->param('header') || ($title . ' {count}'),
+		'listRef'  => \@list,
+		'url'      => $url,
+		'title'    => $title,
+		'favorite' => $favorite ? $favorite->{'num'} : undef,
 
 		# play music when play is pressed
-		onPlay => sub {
+		'onPlay'   => sub {
 			my $client = shift;
 
 			my $station = $client->param('url');
@@ -101,7 +112,7 @@ sub setMode {
 			$client->execute( [ 'playlist', 'play', $station ] );
 		},
 
-		onAdd => sub {
+		'onAdd'    => sub {
 			my $client = shift;
 
 			my $station = $client->param('url');
@@ -109,10 +120,16 @@ sub setMode {
 			$client->execute( [ 'playlist', 'add', $station ] );
 		},
 
-		onRight => $client->param('onRight'), # passthrough
+		'onRigh'   => $client->param('onRight'), # passthrough
 	);
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+=cut
 
 1;

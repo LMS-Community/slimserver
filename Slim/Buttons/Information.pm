@@ -3,26 +3,8 @@ package Slim::Buttons::Information;
 #	$Id$
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
-#
 #	Copyright (c) 2003 Cursor Software Limited.
 #	All rights reserved.
-#
-#	----------------------------------------------------------------------
-#
-#	SlimServer, player library and module information.
-#
-#	Displays various bits of information relating to the SlimServer,
-#	the current player, the music library and the installed plug-in
-#	modules.
-#
-#	Scroll through the information items using the up/down buttons.
-#	If you see a "->" symbol then you may press RIGHT to move into
-#	a sub-menu.  Press LEFT to move out of a sub-menu.
-#
-#	This module incorporates the code from the "Plugins::Statistics"
-#	and "Plugins::PluginInfo" modules, which you may now delete.
-#
-#	----------------------------------------------------------------------
 #
 #	This program is free software; you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
@@ -39,7 +21,25 @@ package Slim::Buttons::Information;
 #	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
 #	02111-1307 USA
 #
-#
+
+=head1 NAME
+
+Slim::Buttons::Information
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Information> is a SlimServer module to display player library
+and module information.
+
+Displays various bits of information relating to the SlimServer,
+the current player, the music library and the installed plug-in
+modules.
+
+Scroll through the information items using the up/down buttons.
+If you see a "->" symbol then you may press RIGHT to move into
+a sub-menu.  Press LEFT to move out of a sub-menu.
+
+=cut
 
 use strict;
 
@@ -340,6 +340,18 @@ sub updateSignalStrength {
 sub getFunctions {
 	\%functions;
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Music::Info>
+
+L<Slim::Utils::Misc>
+
+L<Slim::Utils::Network>
+
+=cut
 
 1;
 

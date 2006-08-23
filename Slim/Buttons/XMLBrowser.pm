@@ -8,8 +8,17 @@ package Slim::Buttons::XMLBrowser;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-# This file create the 'xmlbrowser' mode.  The mode allows users to scroll
-# through Podcast entries, RSS & OPML Outlines and play audio enclosures. 
+=head1 NAME
+
+Slim::Buttons::XMLBrowser
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::XMLBrowser> creates the 'xmlbrowser' mode.  The mode allows users to scroll
+through Podcast entries, RSS & OPML Outlines and play audio enclosures. 
+
+
+=cut
 
 use strict;
 
@@ -1101,5 +1110,15 @@ sub _cliQuery_error {
 
 	$request->setStatusDone();	
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Control::Request>
+
+L<Slim::Formats::XML>
+
+=cut
 
 1;

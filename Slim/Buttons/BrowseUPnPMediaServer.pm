@@ -1,11 +1,20 @@
 package Slim::Buttons::BrowseUPnPMediaServer;
 
-# SlimServer Copyright (c) 2001-2005 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-# Player UI for UPnP servers
+=head1 NAME
+
+Slim::Buttons::BrowseUPnPMediaServer
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::BrowseUPnPMediaServer> is a SlimServer module for 
+browsing services provided by UPnP servers
+
+=cut
 
 use strict;
 
@@ -184,5 +193,13 @@ sub listOverlayCallback {
 
 	return [ undef, $overlay ];
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Utils::UPnPMediaServer>
+
+=cut
 
 1;

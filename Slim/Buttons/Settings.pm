@@ -1,9 +1,21 @@
 package Slim::Buttons::Settings;
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
+
+=head1 NAME
+
+Slim::Buttons::Settings
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Settings> is a wrapper module to handle the UI for the player settings.
+Each settings parameters are collected by this module for sending to various INPUT.* modes
+to select, set, and read player preferences.
+
+=cut
 
 use strict;
 use File::Spec::Functions qw(:ALL);
@@ -523,6 +535,19 @@ sub updateVisualMode {
 	Slim::Buttons::Common::updateScreen2Mode($client);
 };
 
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Buttons::Input::Choice>
+
+L<Slim::Buttons::Input::List>
+
+L<Slim::Buttons::Input::Bar>
+
+L<Slim::Utils::Prefs>
+
+=cut
 
 1;
 

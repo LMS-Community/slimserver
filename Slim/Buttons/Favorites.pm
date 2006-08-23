@@ -7,16 +7,26 @@ package Slim::Buttons::Favorites;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-# This module defines both a mode for listing all favorites, and a
-# mode for displaying the details of a station or track.
 
-# Other modes are encouraged to use the details mode, called
-# 'Favorites.details'.  To use it, setup a hash of params, and
-# push into the mode.  The params hash must contain strings for
-# 'title' and 'url'.  You may also include an array of strings called
-# 'details'.  If included, each string in the details will be
-# displayed as well.  The mode also adds a line allowing the user to
-# add the url to his/her favorites.
+=head1 NAME
+
+Slim::Buttons::Favorites
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Favorites> is a SlimServer module which defines
+both a mode for listing all favorites, and a mode for displaying the
+details of a station or track.
+
+Other modes are encouraged to use the details mode, called
+'Favorites.details'.  To use it, setup a hash of params, and
+push into the mode.  The params hash must contain strings for
+'title' and 'url'.  You may also include an array of strings called
+'details'.  If included, each string in the details will be
+displayed as well.  The mode also adds a line allowing the user to
+add the url to his/her favorites.
+
+=cut
 
 use strict;
 use File::Spec::Functions qw(:ALL);
@@ -111,16 +121,16 @@ sub setMode {
 	}
 
 	my %params = (
-		stringHeader   => 1,
-		header         => 'FAVORITES',
-		listRef        => \@titles,
-		callback       => \&mainModeCallback,
-		valueRef       => \$context{$client}->{mainModeIndex},
-		externRef      => sub {return $_[1] || $_[0]->string('EMPTY')},
-		headerAddCount => scalar (@urls) ? 1 : 0,
-		urls           => \@urls,
-		parentMode     => Slim::Buttons::Common::mode($client),
-		overlayRef     => sub {
+		'stringHeader'   => 1,
+		'header'         => 'FAVORITES',
+		'listRef'        => \@titles,
+		'callback'       => \&mainModeCallback,
+		'valueRef'       => \$context{$client}->{mainModeIndex},
+		'externRef'      => sub {return $_[1] || $_[0]->string('EMPTY')},
+		'headerAddCount' => scalar (@urls) ? 1 : 0,
+		'urls'           => \@urls,
+		'parentMode'     => Slim::Buttons::Common::mode($client),
+		'overlayRef'     => sub {
 			if (scalar @urls) {
 				return (undef,Slim::Display::Display::symbol('notesymbol'));
 			} else {
@@ -345,6 +355,14 @@ sub listQuery {
 
 	$request->setStatusDone();
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Utils::Favorites>
+
+=cut
 
 1;
 

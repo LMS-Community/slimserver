@@ -5,6 +5,16 @@ package Slim::Buttons::Volume;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
+=head1 NAME
+
+Slim::Buttons::Volume
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Volume> is the module for creating a 'volume' mode to handle the volume setting UI.
+
+=cut
+
 use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
@@ -109,5 +119,13 @@ sub _volumeIdleChecker {
 		volumeExitHandler($client);
 	}
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Utils::Prefs>
+
+=cut
 
 1;

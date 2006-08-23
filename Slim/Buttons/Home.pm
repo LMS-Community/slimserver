@@ -1,9 +1,20 @@
 package Slim::Buttons::Home;
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
+
+=head1 NAME
+
+Slim::Buttons::Home
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Home> is a SlimServer module for creating and
+navigating a configurable multilevel menu structure.
+
+=cut
 
 use strict;
 use File::Spec::Functions qw(:ALL);
@@ -20,6 +31,15 @@ our %home = ();
 our %defaultParams = ();
 our %homeChoices;
 our %functions = ();
+
+=head1 METHODS
+
+=head2 init( )
+
+Register 'home' mode, the top level navigation menu. Other modules and plugins may add menuitems to the home
+menu, allowing users to change the order and selection of items in the home menu.
+
+=cut
 
 sub init {
 	Slim::Buttons::Common::addMode('home',getFunctions(),\&setMode);
@@ -92,7 +112,7 @@ sub init {
 				# so it is necessary to get a reference to it from a function outside of the hash
 				Slim::Buttons::Common::pushModeLeft($client,'playlist');
 
-			} elsif (($client->curSelection($client->curDepth()) eq 'BROWSE_BY_GENRE')  ||
+			} elsif  (($client->curSelection($client->curDepth()) eq 'BROWSE_BY_GENRE')  ||
 					  ($client->curSelection($client->curDepth()) eq 'BROWSE_BY_ARTIST') ||
 					  ($client->curSelection($client->curDepth()) eq 'BROWSE_BY_ALBUM')  ||
 					  ($client->curSelection($client->curDepth()) eq 'BROWSE_NEW_MUSIC')  ||
@@ -135,9 +155,15 @@ sub init {
 # Home Hash Manipulation Functions
 ######################################################################
 #
-# Adds a submenu item to the supplied menuOption.  A reference to a hash containing the
-# submenu data must be supplied.  If the supplied menuOption does not exist, a new menuOption 
-# will be created 
+
+=head2 addSubMenu( $menu,$submenuname,$submenuref)
+
+Adds a submenu item to the supplied menuOption.  A reference to a hash containing the
+submenu data must be supplied.  If the supplied menuOption does not exist, a new menuOption 
+will be created 
+
+=cut
+
 sub addSubMenu {
 	my ($menu,$submenuname,$submenuref) = @_;
 
@@ -157,15 +183,18 @@ sub addSubMenu {
 	if (!defined $submenuref) {
 		
 		if (exists $home{$menu}{'submenus'}{$submenuname}) {
+
 			$::d_plugins && msg("Deleting $submenuname from menu: $menu\n");
 			
 			delete $home{$menu}{'submenus'}{$submenuname};
 			
 			if (not keys %{$home{$menu}{'submenus'}}) {
+
 				delete $home{$menu}{'submenus'};
 				delete $home{$menu};
 				$::d_plugins && msg("Deleting empty $menu submenu\n");
 				delSubMenu("PLUGINS",$menu);
+
 			}
 			
 		}
@@ -177,22 +206,31 @@ sub addSubMenu {
 	return;
 }
 
-# Deletes a subMenu from a menuOption
+=head2 delSubMenu( $menu,$submenuname)
+
+Takes two strings, deleting the menu indicated by $submenuname from the menu named by $menu.
+
+=cut
+
 sub delSubMenu {
 	my ($menu,$submenuname) = @_;
 	
 	#$::d_plugins && msg("deleting $submenuname from $menu\n");
 	
-	unless (exists $home{$menu}{'submenus'}) {
+	if (!exists $home{$menu}{'submenus'}) {
 		return;
 	}
-	unless (defined $submenuname) {
+
+	if (!defined $submenuname) {
 		warn "No submenu information supplied!\n";
 		bt();
 		return;
 	}
+
 	if (exists $home{$menu}{'submenus'}{$submenuname}) {
+
 			delete $home{$menu}{'submenus'}{$submenuname};
+
 			if (not keys %{$home{$menu}{'submenus'}}) {
 				delete $home{$menu}{'submenus'};
 				delSubMenu("PLUGINS",$menu);
@@ -202,8 +240,15 @@ sub delSubMenu {
 	return;
 }
 
-# Create a new menuOption for the top level.  This creates a new menu option at the top level,
-# which can be enabled of disabled per player.
+
+=head2 addMenuOption( $menu,$menuref)
+
+Create a new menuOption for the top level.  This creates a new menu option at the top level,
+which can be enabled or disabled per player. Takes $menu as a string identifying the menu name, and $menuref, 
+which is a reference to the hash of menu parameters.
+
+=cut
+
 sub addMenuOption {
 	my ($menu,$menuref) = @_;
 	
@@ -214,6 +259,12 @@ sub addMenuOption {
 	
 	$home{$menu} = $menuref;
 }
+
+=head2 delMenuOption( $option)
+
+Removes the menu named by $option from the list of available menu items to add/remove from the top level.
+
+=cut
 
 sub delMenuOption {
 	my $option = shift;
@@ -235,26 +286,31 @@ sub setMode {
 	my $method = shift;
 	
 	if ($method eq 'pop') {
+
 		Slim::Buttons::Common::popMode($client);
 		updateMenu($client);
 		$client->curDepth('');
+
 		if (!defined($client->curSelection($client->curDepth()))) {
 			$client->curSelection($client->curDepth(),$homeChoices{$client}->[0]);
 		}
+
 		return;
 	}
 	
 	updateMenu($client);
+
 	$client->curDepth('');
+
 	if (!defined($client->curSelection($client->curDepth()))) {
 		$client->curSelection($client->curDepth(),$homeChoices{$client}->[0]);
 	}
 	
-	my %params = %defaultParams;
-	$params{'header'} = \&homeheader;
-	$params{'listRef'} = \@{$homeChoices{$client}};
+	my %params          = %defaultParams;
+	$params{'header'}   = \&homeheader;
+	$params{'listRef'}  = \@{$homeChoices{$client}};
 	$params{'valueRef'} = \${$client->curSelection()}{$client->curDepth()};
-	$params{'curMenu'} = $client->curDepth();
+	$params{'curMenu'}  = $client->curDepth();
 	
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
 }
@@ -267,8 +323,10 @@ sub getLastDepth {
 	}
 	
 	my @depth = split(/-/,$client->curDepth());
+
 	#dropping last item in depth reference, gives the previous depth.
 	pop @depth;
+
 	my $last = join("-",@depth);
 	return $last;
 }
@@ -278,9 +336,11 @@ sub getNextList {
 	my $client = shift;
 	
 	my $next = getCurrentList($client);
+
 	# return chosen Top Level item
 	if ($client->curDepth() eq "") {
 		return $next->{$client->curSelection($client->curDepth())};
+
 	} else {
 		#return sub-level items
 		return $next->{'submenus'}->{$client->curSelection($client->curDepth())};
@@ -319,17 +379,22 @@ sub homeExitHandler {
 	$exittype = uc($exittype);
 
 	if ($exittype eq 'LEFT') {
+
 		if ($client->curDepth() ne "") {
+
 			$client->curDepth(getLastDepth($client));
 			
 			# call jump in case top level has changed.
 			#jump($client,$client->curSelection($client->curDepth()));
 			Slim::Buttons::Common::popModeRight($client);
+
 		} else {
+
 			# We've hit the home root
 			$client->curDepth("");
 			updateMenu($client);
 			$client->bumpLeft();
+
 		}
 	
 	} elsif ($exittype eq 'RIGHT') {
@@ -337,8 +402,10 @@ sub homeExitHandler {
 		
 		# map default selection in case no onChange was done in INPUT.List
 		if (!defined($nextmenu)) { 
+
 			$nextmenu = ${$client->param('valueRef')};
 			$client->curSelection($client->curDepth(),$nextmenu);
+
 		}
 		
 		unless (defined $nextmenu) {
@@ -348,11 +415,14 @@ sub homeExitHandler {
 		
 		my $nextParams;
 		# some menus might need function return values for params, so test here and grab
+		
 		if (ref(getNextList($client)) eq 'CODE') {
 			$nextParams = {&getNextList($client)->($client)};
+
 		} elsif (getNextList($client)) { 
 			$nextParams = &getNextList($client);
 		}
+		
 		if (exists ($nextParams->{'submenus'})) {
 			my %params = %defaultParams;
 			
@@ -366,42 +436,56 @@ sub homeExitHandler {
 			$params{'curMenu'} = $client->curDepth();
 			
 			$params{'valueRef'} = \${$client->curSelection()}{$client->curDepth()};
+			
 			# If the ExitHandler is changing, backtrack the pointer for when we return home.
 			if (exists $nextParams->{'callback'}) {$client->curDepth(getLastDepth($client));}
+			
 			# merge next list params over the default params where they exist.
 			@params{keys %{$nextParams}} = values %{$nextParams};
+			
 			Slim::Buttons::Common::pushModeLeft(
 				$client
 				,'INPUT.List'
 				,\%params
 			);
+		
 		# if here are no submenus, check for the way out.
 		} elsif (exists($nextParams->{'useMode'})) {
+
 			if (ref($nextParams->{'useMode'}) eq 'CODE') {
 				$nextParams->{'useMode'}->($client);
+
 			} else {
 				my %params = %$nextParams;
+
 				if (($nextParams->{'useMode'} eq 'INPUT.List' || $nextParams->{'useMode'} eq 'INPUT.Bar')  && exists($nextParams->{'initialValue'})) {
 					#set up valueRef for current pref
 					my $value;
+
 					if (ref($nextParams->{'initialValue'}) eq 'CODE') {
 						$value = $nextParams->{'initialValue'}->($client);
+
 					} else {
 						$value = $client->prefGet($nextParams->{'initialValue'});
 					}
+
 					$params{'valueRef'} = \$value;
 				}
+
 				Slim::Buttons::Common::pushModeLeft(
 					$client,
 					$nextParams->{'useMode'},
 					\%params,
 				);
 			}
+
 		} elsif (Slim::Buttons::Common::validMode("PLUGIN.".$nextmenu)){
 			Slim::Buttons::Common::pushModeLeft($client,"PLUGIN.".$nextmenu);
+
 		} else {
 			$client->bumpRight();
 		}
+
 	} else {
 		return;
 	}
@@ -439,9 +523,15 @@ sub createList {
 	return \@list;
 }
 
-# Set a specific item from the list of chosen top level items.
-# if the given item does not exist, default to the first item
-# from the home menu pref for the current player
+
+=head2 jump( $client, $item)
+
+Immediately move to a specific menu item from the list of chosen top level items.
+A string, $item identifies the target menu item. If the given item does not exist,
+defaults to the first item from the home menu pref for the current player.
+
+=cut
+
 sub jump {
 	my $client = shift;
 	my $item = shift;
@@ -461,8 +551,16 @@ sub jump {
 	}
 }
 
-# PushMode to a  specific target pointer within the home menu tree 
-# disregarding home menu settings.
+=head2 jump( $client, $menu, $depth)
+
+Forces a pushMode to a  specific target menu item within the home menu tree 
+disregarding home menu settings.  $menu is a string identifying the unique menu 
+node, while $depth is a string made up of the path of menu items taken, joined by "-".
+
+This operates on the player given by the $client structure provided.
+
+=cut
+
 sub jumpToMenu {
 	my $client = shift;
 	my $menu   = shift;
@@ -478,9 +576,13 @@ sub jumpToMenu {
 	my $nextParams = Slim::Buttons::Home::getNextList($client);
 
 	if (exists $nextParams->{'listRef'}) {
+
 		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', $nextParams);
+
 	} else {
+
 		homeExitHandler($client,"RIGHT");
+
 	}
 }
 
@@ -491,9 +593,9 @@ sub homeheader {
 
 		return $client->string('SLIMP3_HOME');
 
-        } elsif ($client->isa("Slim::Player::SoftSqueeze")) {
+	} elsif ($client->isa("Slim::Player::SoftSqueeze")) {
 
-                return $client->string('SOFTSQUEEZE_HOME');
+		return $client->string('SOFTSQUEEZE_HOME');
 
 	} elsif ($client->isa("Slim::Player::Transporter")) {
 
@@ -510,29 +612,39 @@ sub homeheader {
 #######
 sub menuOptions {
 	my $client = shift;
+
 	my %menuChoices = ();
+
 	$menuChoices{""} = "";
 	
 	for my $menuOption (sort keys %home) {
+
 		if ($menuOption eq 'BROWSE_MUSIC_FOLDER' && !Slim::Utils::Prefs::get('audiodir')) {
 			next;
 		}
+
 		if ($menuOption eq 'SAVED_PLAYLISTS' && !Slim::Utils::Prefs::get('playlistdir')) {
 			next;
 		}
+
 		$menuChoices{$menuOption} = $client->string($menuOption);
 	}
+
 	return %menuChoices;
 }
 
 sub unusedMenuOptions {
 	my $client = shift;
+
 	my %menuChoices = menuOptions($client);
+
 	delete $menuChoices{""};
 
 	my $pluginsRef = Slim::Utils::PluginManager::installedPlugins();
+
 	for my $plugin (values %{$pluginsRef}) {
 		next unless defined $plugin;
+
 		delete $menuChoices{$plugin} if defined $menuChoices{$plugin};
 	}
 
@@ -576,6 +688,12 @@ sub updateMenu {
 	$client->param('listRef', \@home);
 }
  
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+=cut
+
 1;
 
 __END__

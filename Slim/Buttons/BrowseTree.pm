@@ -2,10 +2,22 @@ package Slim::Buttons::BrowseTree;
 
 # $Id$
 
-# SlimServer Copyright (C) 2001-2005 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (C) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
+
+=head1 NAME
+
+Slim::Buttons::BrowseTree
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::BrowseTree> is a SlimServer module for browsing through a
+folder structure and displaying information about music files on a Slim
+Devices Player display.
+
+=cut
 
 use strict;
 use Scalar::Util qw(blessed);
@@ -19,6 +31,15 @@ use Slim::Utils::Misc;
 
 our %functions = ();
 our $mixer;
+
+=head1 METHODS
+
+=head2 init( )
+
+When a music folder preference exists for Slimserver, init will create a menu item for Browse Music Folder and register the required mode
+init() also creates the function hash for the required button handling whiel in 'browsetree' mode.
+
+=cut
 
 sub init {
 
@@ -201,6 +222,14 @@ sub getFunctions {
 	return \%functions;
 }
 
+=head2 browseTreeExitCallback( $client, $exittype)
+
+When returning from INPUT>List mode used by browse tree for list navigation, the browseTreeExitCallback function is called, with the $client structure
+and the string to identify the $exittype from INPUT.List. (usually either 'LEFT' or 'RIGHT').  The callback then updates the params required and moves
+to the next appropriate level of the folder structure.  At the track level, navigating right enters 'trackinfo' mode.
+
+=cut
+
 # Callback invoked by INPUT.List when we're going to leave this mode
 sub browseTreeExitCallback {
 	my ($client, $exittype) = @_;
@@ -257,8 +286,14 @@ sub browseTreeExitCallback {
 	}
 }
 
-# Method invoked by INPUT.List to map an item in the list
-# to a display name.
+=head2 browseTreeExitCallback( $client, $item, $index)
+
+Method invoked by INPUT.List to map an item in the list to a display name.
+This requires the $client structure as well as a reference to the selected item, or a url, plus the zero-referenced $index
+for the position in the current list of items.
+
+=cut
+
 sub browseTreeItemName {
 	my ($client, $item, $index) = @_;
 
@@ -289,8 +324,12 @@ sub browseTreeItemName {
 	return Slim::Utils::Unicode::utf8on( Slim::Music::Info::fileName($item->url) );
 }
 
-# Method invoked by INPUT.List to map an item in the list
-# to overlay characters.
+=head2 browseTreeExitCallback( $client, $item)
+
+Method invoked by INPUT.List to map an item in the list to overlay characters.
+
+=cut
+
 sub browseTreeOverlay {
 	my $client = shift;
 	my $item   = shift || return;
@@ -310,6 +349,12 @@ sub browseTreeOverlay {
 
 	return ($overlay1, $overlay2);
 }
+
+=head2 browseTreeExitCallback( $client, $item)
+
+Method invoked by Slim::Buttons::Common to preset the required parameters and enter the 'browsetree' mode.
+
+=cut
 
 sub setMode {
 	my $client = shift;
@@ -395,6 +440,16 @@ sub setMode {
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Buttons::TrackInfo>
+
+L<Slim::Music::Info>
+
+=cut
 
 1;
 

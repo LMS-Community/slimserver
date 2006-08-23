@@ -1,12 +1,23 @@
 package Slim::Buttons::TrackInfo;
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
 # Displays the extra track information screen that is got into by pressing right on an item 
 # in the now playing screen.
+
+=head1 NAME
+
+Slim::Buttons::TrackInfo
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::TrackInfo> is a module to handle the player UI for 
+a list of information about a track in the local library.
+
+=cut
 
 use strict;
 use Scalar::Util qw(blessed);
@@ -500,6 +511,12 @@ sub overlay {
 
 	return ($overlay1, $overlay2);
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+=cut
 
 1;
 

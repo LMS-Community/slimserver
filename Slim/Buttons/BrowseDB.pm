@@ -2,10 +2,22 @@ package Slim::Buttons::BrowseDB;
 
 # $Id$
 
-# SlimServer Copyright (C) 2001-2005 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (C) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
+
+=head1 NAME
+
+Slim::Buttons::BrowseDB
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::BrowseTree> is a SlimServer module which adds several
+modes for browsing a music collection using a variety of 'hierarchies' and 
+music metadata stored in a database.
+
+=cut
 
 use strict;
 use Scalar::Util qw(blessed);
@@ -19,6 +31,15 @@ use Slim::Utils::Misc;
 
 our %functions = ();
 our $mixer;
+
+=head1 METHODS
+
+=head2 init( )
+
+Create menu items for entering each hierarchy, starting with Browse by- New Music, Genre, Artist, Year and browse playlists.
+Registers the generic 'browsedb' mode used by all of the hierarchies.
+
+=cut
 
 # Code to browse music folder by ID3 information.
 sub init {
@@ -189,7 +210,7 @@ sub init {
 				# find out if this item is part of a container, such as an album or playlist previously selected.
 				my $container = 0;
 
-				if ($levels[$level-1] =~ /^(?:playlist|album)$/ && grep { /playlist|me\.id/ } keys %{$findCriteria}) {
+				if ($levels[$level-1] =~ /^(?:playlist|album)$/ && grep { /playlist|album\.id/ } keys %{$findCriteria}) {
 					$container = 1;
 				}
 
@@ -273,6 +294,14 @@ sub init {
 	);
 }
 
+=head2 mixerExitHandler( $client, $exittype)
+
+Special List exist handler for triggering a mixer.  Mixers are specialised plugins that will generate playlist information based
+on a given seed.  The $client param is required, as well as the $exittype string.  Plugins that wish to use the mixer AIP must register an 
+Importer with a mixer function.
+
+=cut
+
 sub mixerExitHandler {
 	my ($client, $exittype) = @_;
 
@@ -302,7 +331,13 @@ sub getFunctions {
 	return \%functions;
 }
 
-# Callback invoked by INPUT.List when we're going to leave this mode
+=head2 browsedbExitCallback( $client, $exittype)
+
+Callback invoked by INPUT.List when we're going to leave the 'browsedb' mode or 
+move to the next level of the current hierarchy.
+
+=cut
+
 sub browsedbExitCallback {
 	my ($client,$exittype) = @_;
 	$exittype = uc($exittype);
@@ -846,6 +881,18 @@ sub searchTerm {
 
 	return $t;
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Common>
+
+L<Slim::Buttons::TrackInfo>
+
+L<Slim::Music::Import>
+
+L<Slim::Schema>
+
+=cut
 
 1;
 
