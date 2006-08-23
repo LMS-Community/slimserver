@@ -163,7 +163,7 @@ sub addLibraryStats {
 	$params->{'album_count'}  = $class->_lcPlural($counts{'album'}->distinct->count, 'ALBUM', 'ALBUMS');
 	$params->{'artist_count'} = $class->_lcPlural($counts{'contributor'}->distinct->count, 'ARTIST', 'ARTISTS');
 
-	$::d_sql && msgf("->addLibraryStats() found %d songs, %d albums & %d artists\n", 
+	$::d_sql && msgf("->addLibraryStats() found %s, %s & %s\n", 
 		$params->{'song_count'}, $params->{'album_count'}, $params->{'artist_count'}
 	);
 }

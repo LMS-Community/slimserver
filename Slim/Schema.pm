@@ -170,21 +170,6 @@ sub init {
 
 	$class->_buildValidHierarchies;
 
-	# XXXX - Leave this in for a few days to let the Year table be built -
-	# then remove it.
-	if (Slim::Schema->count('Track') && !Slim::Schema->count('Year')) {
-
-		my $albums = Slim::Schema->search('Album', {}, { 'group_by' => 'year' });
-
-		while (my $album = $albums->next) {
-
-			if ($album->year && $album->year =~ /^\d+$/) {
-
-				Slim::Schema->rs('Year')->find_or_create({ 'id' => $album->year });
-			}
-		}
-	}
-
 	$initialized = 1;
 }
 
@@ -2116,8 +2101,10 @@ sub _postCheckAttributes {
 	# Save any changes - such as album.
 	$track->update;
 
-	# Years are special
-	if (defined $track->year && $track->year =~ /^\d+$/) {
+	# Years have their own lookup table.
+	# Bug: 3911 - don't add years for tracks without albums.
+	if (defined $track->year && $track->year =~ /^\d+$/ && 
+		blessed($albumObj) && $albumObj->title ne string('NO_ALBUM')) {
 
 		Slim::Schema->rs('Year')->find_or_create({ 'id' => $track->year });
 	}
