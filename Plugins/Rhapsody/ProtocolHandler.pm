@@ -3,6 +3,7 @@ package Plugins::Rhapsody::ProtocolHandler;
 use strict;
 use base  qw(Slim::Player::Protocols::HTTP);
 
+use File::Slurp qw(read_file);
 use IO::Socket qw(:DEFAULT :crlf);
 
 use Slim::Formats::Playlists::M3U;
@@ -275,7 +276,9 @@ sub parseDirectBody {
 	my $classOrSelf = shift;
 	my $client      = shift;
 	my $url         = shift;
-	my $body        = shift;
+	
+	# Read in the temporary file since we need to modify it
+	my $body = read_file( $client->directBody );
 	
 	# Note: Rhapsody never sends back audio body data for security purposes,
 	# so this only needs to worry about processing playlists

@@ -566,7 +566,7 @@ sub readRemoteHeaders {
 		# number to use, and we also grab various metadata during this request
 		# This prevents the player from needing to make 2 requests for each WMA stream
 		
-		if ( $type eq 'wma' ) {
+		if ( $type eq 'wma' && $url =~ /^(?:http|mms)/ ) {
 			
 			scanWMAStream( {
 				'url'         => $url,
@@ -771,7 +771,7 @@ sub scanPlaylistURLs {
 			# return a list with the first found audio URL at the top
 			unshift @{$foundItems}, splice @{$foundItems}, $offset, 1;
 
-			if ( $item->content_type eq 'wma' ) {
+			if ( $item->content_type eq 'wma' && $item->url =~ /^(?:http|mms)/ ) {
 				
 				scanWMAStream( {
 					'url'         => $item->url,
@@ -997,8 +997,7 @@ sub scanWMAStreamDone {
 }
 
 sub scanWMAStreamError {
-	my ( $http, $error ) = @_;
-	my $args = $http->params('args');
+	my ( $http, $error, $args ) = @_;
 	
 	$::d_scan && msg("scanWMA Error: $error\n");
 	

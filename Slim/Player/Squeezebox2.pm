@@ -489,6 +489,9 @@ sub directBodyFrame {
 
 	if ($done) {
 		if ( defined $client->directBody ) {
+			
+			# seek back to the front of the file
+			$client->directBody->seek( 0, 0 );
 
 			my @items;
 			# done getting body of playlist, let's parse it!
