@@ -47,7 +47,6 @@ BEGIN {
 		eval {
 			require POE::XS::Queue::Array;
 			die if $POE::XS::Queue::Array::VERSION eq '0.001'; # 0.001 has memory leaks
-			warn "*** Using POE::XS::Queue::Array for timers\n";
 			$hasXS = 1;
 		};
 		if ($@) {
