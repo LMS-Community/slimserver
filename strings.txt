@@ -1449,6 +1449,7 @@ FIRMWARE_MISSING_DESC
 	ES	El server no puede conectarse a Internet para obtener la actualización de firmware.
 
 CHECKING_STREAM
+	DE	Überprüfe Datenstrom...
 	EN	Checking stream...
 
 CONNECTING_FOR
@@ -2964,9 +2965,11 @@ SETUP_PREAMPVOLUMECONTROL_DESC
 	NL	Dit is een secundaire volume instelling die alleen van toepassing is voor de analoge uitgang. Geef de demping op in decibels. De waarde is van 0.0 tot 63.0 in 0.5 dB stappen. De standaard is 0 (voor vol volume). <br>WAARSCHUWING: Indien je versterker krachtig genoeg is om je luidsprekers op te blazen, dan is een receiver, voorversterker of line-demper nog steeds nodig als beveiligingsmaatregel.
 
 SETUP_BUFFERSECS
+	DE	Puffergrösse für Internet Radio
 	EN	Radio Station Buffer Seconds
 
 SETUP_BUFFERSECS_DESC
+	DE	Wenn Internet Radiostationen wiedergegeben werden, puffert der Player eine geringe Datenmenge, bevor er die Wiedergabe startet. Geben Sie die Anzahl Sekunden an, die in den Puffer geladen werden sollen (1-30 Sekunden). Vorgabewert ist 3 Sekunden. Falls Sie eine stotternde Wiedergabe feststellen, so kann das Erhöhen dieses Wertes helfen.
 	EN	When playing an Internet stream, the player buffers a small amount of data before beginning playback.  Specify the amount of audio data to buffer, in seconds from 1 to 30.  The default value is 3 seconds.  If you experience stuttering audio, increasing this value may help.
 
 SETUP_MAXWMARATE
