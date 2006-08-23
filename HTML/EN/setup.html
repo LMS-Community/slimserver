@@ -1,6 +1,6 @@
 [% FILTER null %]
 [% pwd_list = BLOCK %]
-	[% IF playerid %][% "PLAYER_SETTINGS" | string %][% ELSE %][% "SERVER_SETTINGS" | string %][%END %]
+	[% IF playerid %][% "PLAYER_SETTINGS" | string %] [% IF playername %][% "FOR" | string %] [% playername %][% END %][% ELSE %][% "SERVER_SETTINGS" | string %][%END %]
 [% END %]
 [% pageHeaderInfo = BLOCK %]
 	[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]

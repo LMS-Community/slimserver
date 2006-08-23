@@ -320,7 +320,10 @@ sub initSetupConfig {
 						$pageref->{'GroupOrder'}[2] = undef;
 						$pageref->{'GroupOrder'}[6] = undef;
 					}
-
+					
+					if (!$paramref->{'playername'}) {
+						$paramref->{'playername'} = $client->name();
+					}
 				}
 		,'postChange' => sub {
 					my ($client,$paramref,$pageref) = @_;
@@ -602,6 +605,10 @@ sub initSetupConfig {
 					}
 					$pageref->{'Prefs'}{'pluginItem'}{'arrayMax'} = $i - 1;
 					$pageref->{'Prefs'}{'pluginItemAction'}{'arrayMax'} = $i - 1;
+					
+					if (!$paramref->{'playername'}) {
+						$paramref->{'playername'} = $client->name();
+					}
 				}
 		,'postChange' => sub {
 					my ($client,$paramref,$pageref) = @_;
@@ -889,6 +896,10 @@ sub initSetupConfig {
 					}
 					else {
 						$pageref->{'Groups'}{'Digital'}{'PrefOrder'}[3] = undef;
+					}
+					
+					if (!$paramref->{'playername'}) {
+						$paramref->{'playername'} = $client->name();
 					}
 		}
 		,'postChange' => sub {
