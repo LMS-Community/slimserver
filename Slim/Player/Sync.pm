@@ -343,6 +343,8 @@ sub checkSync {
 		return;
 	}
 	
+	return if $client->playmode eq 'stop';
+	
 	my @group = ($client, syncedWith($client));
 	
 	# if we're synced and waiting for the group's buffers to fill,

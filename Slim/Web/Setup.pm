@@ -900,6 +900,17 @@ sub initSetupConfig {
 							if (Slim::Player::Sync::isSynced($client)) {
 								my $master = Slim::Player::Sync::master($client);
 								$paramref->{'synchronize'} = $master->id();
+							} elsif ( my $syncgroupid = $client->prefGet('syncgroupid') ) {
+								# Bug 3284, we want to show powered off players that will resync when turned on
+								my @players = Slim::Player::Client::clients();
+								foreach my $other (@players) {
+									next if $other eq $client;
+									my $othersyncgroupid = Slim::Utils::Prefs::clientGet($other,'syncgroupid');
+									if ( $syncgroupid == $othersyncgroupid ) {
+										$paramref->{'synchronize'} = $other->id;
+										last;
+									}
+								}
 							} else {
 								$paramref->{'synchronize'} = -1;
 							}
@@ -1017,9 +1028,18 @@ sub initSetupConfig {
 									return if (!defined($client));
 									if (Slim::Player::Sync::isSynced($client)) {
 										return $client->id();
-									} else {
-										return -1;
+									} elsif ( my $syncgroupid = $client->prefGet('syncgroupid') ) {
+										# Bug 3284, we want to show powered off players that will resync when turned on
+										my @players = Slim::Player::Client::clients();
+										foreach my $other (@players) {
+											next if $other eq $client;
+											my $othersyncgroupid = Slim::Utils::Prefs::clientGet($other,'syncgroupid');
+											if ( $syncgroupid == $othersyncgroupid ) {
+												return $other->id;
+											}
+										}
 									}
+									return -1;
 								}
 							,'onChange' => sub {
 									my ($client,$changeref,$paramref,$pageref) = @_;
