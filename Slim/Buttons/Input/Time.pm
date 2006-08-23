@@ -278,7 +278,7 @@ sub setMode {
 
 =head1 METHODS
 
-=head2 init( )
+=head2 init( $client)
 
 This function sets up the params for INPUT.Time.  The optional params and their defaults are:
 
@@ -333,6 +333,14 @@ sub init {
 	return 1;
 }
 
+=head2 timeDigits( $client, $timeRef)
+
+This function converts a unix time value to the individual values for hours, minutes and am/pm
+
+Takes as arguments, the $client object/structure and a reference to the scalar time value.
+
+=cut
+
 sub timeDigits {
 	my $client = shift;
 	my $timeRef = shift;
@@ -369,6 +377,14 @@ sub timeDigits {
 	return ($h0, $h1, $m0, $m1, $p);
 }
 
+=head2 timeDigitsToTime( $h0, $h1, $m0, $m1, $p)
+
+This function converts discreet time digits into a scalar time value.  It is the reverse of timeDigits()
+
+Takes as arguments, the hour ($h0, $h1), minute ($m0, $m1) and whether time is am or pm if applicable ($p)
+
+=cut
+
 sub timeDigitsToTime {
 	my ($h0, $h1, $m0, $m1, $p) = @_;
 
@@ -380,6 +396,17 @@ sub timeDigitsToTime {
 
 	return $time;
 }
+
+
+=head2 timeString( $client, $h0, $h1, $m0, $m1, $p, $c)
+
+This function converts the discrete time digits into a time string for use with a player display hash.
+
+Takes as arguments, the hour ($h0, $h1), minute ($m0, $m1) and whether time is am or pm if applicable ($p)
+
+$c is the current cursor position for redering in teh display
+
+=cut
 
 sub timeString {
 	my ($client, $h0, $h1, $m0, $m1, $p, $c) = @_;
@@ -466,6 +493,15 @@ sub scroll {
 	$client->update();
 }
 
+=head2 prepKnob( $client, $client,$digits)
+
+This function is required for updating the Transporter knob.  The knob extents are based on the listLen param, 
+which changes in this mode depending on which column of the time display is being adjusted.
+
+Takes as arguments, the $client structure and a reference to the array of discret digits returned by timeDigits.
+
+=cut
+
 sub prepKnob {
 	my ($client,$digits) = @_;
 	
@@ -492,6 +528,19 @@ sub prepKnob {
 
 	$client->updateKnob(1);
 }
+
+=head2 scrollTime( $client,$dir,$valueRef,$c)
+
+Specialized scroll routine similar to Slim::Buttons::Common::scroll, but made specifically to handle the nature of 
+a formatted time string. Handles invalid values in time ranges gracefully when digits wrap.
+
+Takes the $client object as the first argument.
+
+$dir specifies the direction to scroll. 
+$valueRef is a reference to the scalar time value.
+$c specifies the current cursor position where the digit is intended to scrol.
+
+=cut
 
 sub scrollTime {
 	my ($client,$dir,$valueRef,$c) = @_;
