@@ -993,8 +993,8 @@ sub scanWMAStreamDone {
 	$cache->set( 'wma_metadata_'  . $mmsURL, $wma,            '1 day' );
 	
 	# Always return WMA URLs using MMS prefix so correct direct stream headers are used
-	$args->{'FoundItems'}->[0]->url( $mmsURL );
-	$args->{'FoundItems'}->[0]->update;
+	$args->{'foundItems'}->[0]->url( $mmsURL );
+	$args->{'foundItems'}->[0]->update;
 	
 	# All done
 	my $cb         = $args->{'callback'};
