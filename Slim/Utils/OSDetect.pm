@@ -201,7 +201,7 @@ sub details {
 
  The Debian package has some specific differences for file locations.
  This routine needs no args, and returns 1 if Debian distro is detected, with
- a clear sign that the .deb package has been isntalled, 0 if not.
+ a clear sign that the .deb package has been installed, 0 if not.
 
 =cut
 
