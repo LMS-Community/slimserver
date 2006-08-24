@@ -1,6 +1,6 @@
 package Slim::Control::Command;
 
-# SlimServer Copyright (C) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (C) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -12,7 +12,8 @@ Slim::Buttons::Command
 =head1 DESCRIPTION
 
 L<Slim::Buttons::Command>
-
+ Legacy support for Command Line Interface.  Please use Request.pm class for new work.
+ 
 =cut
 
 use strict;
@@ -22,15 +23,22 @@ use Slim::Utils::Misc qw(msg errorMsg);
 
 our %executeCallbacks = ();
 
-# execute - did all the hard work, thanks. 
-# PLEASE USE THE REQUEST.PM CLASS
-# takes:
-#   a client reference
-#   a reference to an array of parameters
-#   a reference to a callback function
-#   a list of callback function args
-#
-# returns an array containing the given parameters
+=head1 METHODS
+
+=head2 execute( $client, $parrayref, $callback, @callbackargs )
+
+ execute - did all the hard work, thanks. 
+ PLEASE USE THE REQUEST.PM CLASS
+ takes:
+   a client reference
+   a reference to an array of parameters
+   a reference to a callback function
+   a list of callback function args
+
+ returns an array containing the given parameters
+
+=cut
+
 sub execute {
 
 	return Slim::Control::Request::executeLegacy(@_);
@@ -86,7 +94,7 @@ sub executeCallback {
 
 =head1 SEE ALSO
 
-
+L<Slim::Control::Request.pm>
 
 =cut
 
