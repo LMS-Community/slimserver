@@ -1,4 +1,4 @@
-# AlarmClock.pm by Kevin Deane-Freeman (kevindf@shaw.ca) March 2003
+# AlarmClock.pm by Kevin Deane-Freeman March 2003
 # Adapted from code by Lukas Hinsch
 # Updated by Dean Blackketter
 #
