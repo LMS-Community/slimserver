@@ -2,10 +2,31 @@ package Slim::Utils::Misc;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
+
+=head1 NAME
+
+Slim::Utils::Misc
+
+=head1 SYNOPSIS
+
+use Slim::Utils::Misc qw(msg errorMsg);
+
+msg("This is a log message\n");
+
+=head1 EXPORTS
+
+assert, bt, msg, msgf, watchDog, errorMsg, specified
+
+=head1 DESCRIPTION
+
+L<Slim::Utils::Misc> serves as a collection of miscellaneous utility 
+ functions useful throughout slimserver and third party plugins.
+
+=cut
 
 use strict;
 use base qw(Exporter);
@@ -51,6 +72,14 @@ our %fileToPathCache = ();
 
 # Cache our user agent string.
 my $userAgentString;
+
+=head1 METHODS
+
+=head2 findbin( $executable)
+
+	Little bit of magic to find the executable program given by the string $executable.
+
+=cut
 
 sub findbin {
 	my $executable = shift;
@@ -112,6 +141,12 @@ sub findbin {
 	return $path;	
 }
 
+=head2 setPriority( $priority)
+
+	
+
+=cut
+
 sub setPriority {
 	my $priority = shift;
 
@@ -151,6 +186,12 @@ sub setPriority {
 		eval { setpriority (0, 0, $priority); };
 	}
 }
+
+=head2 getPriority( )
+
+	
+
+=cut
 
 sub getPriority {
 
@@ -228,6 +269,12 @@ sub priorityFromPriorityClass {
 	}
 }
 
+=head2 pathFromWinShortcut( $)
+
+	Return the filepath for a given windows shortcut
+
+=cut
+
 sub pathFromWinShortcut {
 	my $fullpath = pathFromFileURL(shift);
 
@@ -269,11 +316,25 @@ sub pathFromWinShortcut {
 	return $path;
 }
 
+=head2 fileURLFromWinShortcut( $shortcut)
+
+	Special case to convert a windows shortcut to a normalised file:// url.
+
+=cut
+
 sub fileURLFromWinShortcut {
 	my $shortcut = shift;
 
 	return fixPath(pathFromWinShortcut($shortcut));
 }
+
+=head2 pathFromFileURL( $url, [ $noCache ])
+
+	Given a file::// style url, return the filepath to the caller
+
+	If the option $noCache argument is set, the result is  not cached
+
+=cut
 
 sub pathFromFileURL {
 	my $url     = shift;
@@ -340,6 +401,12 @@ sub pathFromFileURL {
 
 	return $file;
 }
+
+=head2 fileURLFromPath( $path)
+
+	Create file:// url from a supplied $path
+
+=cut
 
 sub fileURLFromPath {
 	my $path = shift;
@@ -417,10 +484,12 @@ sub stripAnchorFromURL {
 	return $url;
 }
 
-#################################################################################
-#
-# split a URL into (host, port, path)
-#
+=head2 crackURL( $string)
+
+	Split a URL $string into (host, port, path)
+
+=cut
+
 sub crackURL {
 	my ($string) = @_;
 
@@ -445,8 +514,14 @@ sub crackURL {
 	return ($host, $port, $path, $user, $password);
 }
 
-# fixPathCase makes sure that we are using the actual casing of paths in
-# a case-insensitive but case preserving filesystem.
+
+=head2 fixPathCase( $path)
+
+	fixPathCase makes sure that we are using the actual casing of paths in
+	a case-insensitive but case preserving filesystem.
+
+=cut
+
 sub fixPathCase {
 	my $path = shift;
 	my $orig = $path;
@@ -470,11 +545,16 @@ sub fixPathCase {
 	return $path || $orig;
 }
 		
+
+=head2 fixPath( $file, $base)
+
+	fixPath takes relative file paths and puts the base path in the beginning
+	to make them full paths, if possible.
+	URLs are left alone
+
+=cut
+
 # there's not really a better way to do this..
-# fixPath takes relative file paths and puts the base path in the beginning
-# to make them full paths, if possible.
-# URLs are left alone
-        
 sub fixPath {
 	my $file = shift || return;
 	my $base = shift;
@@ -615,9 +695,21 @@ sub stripRel {
 	return $file;
 }
 
+=head2 inAudioFolder( $)
+
+	Check if argument is an item contained in the music folder tree
+
+=cut
+
 sub inAudioFolder {
 	return _checkInFolder(shift, 'audiodir');
 }
+
+=head2 inPlaylistFolder( $)
+
+	Check if argument is an item contained in the playlist folder tree
+
+=cut
 
 sub inPlaylistFolder {
 	return _checkInFolder(shift, 'playlistdir');
@@ -668,6 +760,13 @@ my %_ignoredItems = (
 	'RECYCLER' => 1,
 	'Recycled' => 1,
 );
+
+=head2 readDirectory( $dirname, [ $validRE ])
+
+	Return the contents of a directory $dirname as an array.  Optionally return only 
+	those items that match a regular expression given by $validRE
+
+=cut
 
 sub readDirectory {
 	my $dirname  = shift;
@@ -733,6 +832,12 @@ sub readDirectory {
 	
 	return sort(@diritems);
 }
+
+=head2 findAndScanDirectoryTree( $levels, [ $urlOrObj ])
+
+	
+
+=cut
 
 sub findAndScanDirectoryTree {
 	my $levels   = shift;
@@ -835,7 +940,12 @@ sub fracSecToMinSec {
 }
 
 
-# Utility functions for strings we send out to the world.
+=head2 userAgentString( )
+
+	Utility functions for strings we send out to the world.
+
+=cut
+
 sub userAgentString {
 
 	if (defined $userAgentString) {
@@ -856,6 +966,12 @@ sub userAgentString {
 
 	return $userAgentString;
 }
+
+=head2 settingsDiagString( )
+
+	
+
+=cut
 
 sub settingsDiagString {
 
@@ -895,6 +1011,12 @@ sub settingsDiagString {
 	return wantarray ? @diagString : join ( ', ', @diagString );
 }
 
+=head2 assert ( $exp, $msg )
+
+	If $exp is not defined and a true value, then dump the string $msg to the log and call bt()
+
+=cut
+
 sub assert {
 	my $exp = shift;
 	my $msg = shift;
@@ -905,6 +1027,17 @@ sub assert {
 	
 	bt();
 }
+
+=head2 bt( [ $return ] )
+
+	Useful for tracking the source of a problem during the execution of slimserver.
+	use bt() to output in the log a list of function calls leading up to the point 
+	where bt() has been used.
+
+	Optional argument $return, if set, will pass the combined message string back to the
+	caller instead of to the log.
+
+=cut
 
 sub bt {
 	my $return = shift || 0;
@@ -925,7 +1058,7 @@ sub bt {
 			$assertline = $line;			
 		}
 	}
-        
+	
 	if ($assertfile) {
 		open SRC, $assertfile;
 		my $line;
@@ -946,6 +1079,14 @@ sub bt {
 
 	msg($msg);
 }
+
+=head2 msg( $entry, [ $forceLog ], [ $suppressTimestamp ])
+
+	Outputs an entry to the slimserver log file. 
+	$entry is a string for the log.
+	optional argument $suppressTimestamp can be set to remove the event timestamp from the long entry.
+
+=cut
 
 sub msg {
 	use bytes;
@@ -969,11 +1110,23 @@ sub msg {
 	}
 }
 
+=head2 msgf( $format, @_)
+
+	uses Perl's sprintf to output the args to the log with the formatting specified by the $format argument.
+
+=cut
+
 sub msgf {
 	my $format = shift;
 
 	msg(sprintf($format, @_));
 }
+
+=head2 errorMsg( $msg)
+
+	Output formatting for more severe messages in the log
+
+=cut
 
 sub errorMsg {
 	my $msg = shift;
@@ -981,6 +1134,12 @@ sub errorMsg {
 	# Force an error message & write to the log.
 	msg("ERROR: $msg\n", 1);
 }
+
+=head2 delimitThousands( $len)
+
+	Split a numeric string using the style of the server preferred language.
+
+=cut
 
 sub delimitThousands {
 	my $len = shift || return 0; 
@@ -991,7 +1150,12 @@ sub delimitThousands {
 	return $len;
 }
 
-# defined, but does not contain a *
+=head2 specified( $i)
+
+	Defined, but does not contain a *
+
+=cut
+
 sub specified {
 	my $i = shift;
 
@@ -999,6 +1163,12 @@ sub specified {
 	return 0 unless defined $i;
 	return $i !~ /\*/;
 }
+
+=head2 arrayDiff( $left, $right)
+
+	
+
+=cut
 
 sub arrayDiff {
 	my ($left, $right) = @_;
@@ -1016,8 +1186,13 @@ sub arrayDiff {
 	return \%diff;
 }
 
-# Bug 3147, don't cache things (HTTP responses, parsed XML)
-# that come from file URLs or places on the local network
+=head2 shouldCacheURL( $url)
+
+	Bug 3147, don't cache things (HTTP responses, parsed XML)
+	that come from file URLs or places on the local network
+
+=cut
+
 sub shouldCacheURL {
 	my $url = shift;
 	
@@ -1041,6 +1216,16 @@ sub shouldCacheURL {
 	
 	return 1;
 }
+
+=head1 SEE ALSO
+
+L<Slim::Music::Info>
+
+L<Slim::Utils::Strings>, L<Slim::Utils::Unicode>
+
+L<URI>, L<URI::file>, L<URI::Escape>
+
+=cut
 
 1;
 
