@@ -2,12 +2,40 @@ package Slim::Utils::Timers;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
+=head1 NAME
+
+Slim::Utils::Timers
+
+=head1 SYNOPSIS
+
+    # Run someCode( $client, @args ) in 20 seconds
+    Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + 20, \&someCode, @args );
+
+    # On second thought, don't run it
+    Slim::Utils::Timers::killTimers( $client, \&someCode );
+
+=head1 DESCRIPTION
+
+Schedule functions to run at some point in the future.
+
+Two classes of timers exist - Normal timers and High Priority timers.  High timers are used by
+animation routines to ensure smooth animation even when other normal timers may be
+scheduled to run.
+
+High timers are also allowed to run any time main::idleStreams() is called, so long-running
+tasks should call main::idleStreams() to yield time to animation and audio streaming.
+
+=head1 METHODS
+
+=cut
+
 use strict;
+use warnings;
 
 use Scalar::Util qw(blessed);
 
@@ -16,25 +44,7 @@ use Slim::Utils::PerfMon;
 use Slim::Utils::PerlRunTime;
 
 # Set to enable a list of all timers every 5 seconds
-my $d_watch_timers = 0;
-
-# Timers are stored in a list of hashes containing:
-# - the time at which the timer should fire, 
-# - a reference to an object
-# - a reference to the function,
-# - and a list of arguments.
-
-# Two classes of timer exist - Normal timers and High Priority timers
-# - High priority timers that are due are always execute first, even if a normal timer 
-#   is due at an earlier time.
-# - Functions assigned for callback on a normal timer may call ::idleStreams
-# - Any normal timers which are due will not be executed if another normal timer is
-#   currently being executed.
-# - High priority timers are only blocked from execution if another High Priority
-#   timer is executing (this should not occur).  They are intended for animation
-#   routines which should run within ::idleStreams.
-#
-# Timers are checked whenever we come out of select.
+our $d_watch_timers = 0;
 
 # Use POE::XS::Queue::Array >= 0.002 if available
 BEGIN {
@@ -83,9 +93,13 @@ our $timerTask = Slim::Utils::PerfMon->new('Timer Task', [0.002, 0.005, 0.01, 0.
 
 $d_watch_timers && setTimer( undef, time + 5, \&listTimers );
 
-#
-# Call any pending timers which have now elapsed.
-#
+=head2 checkTimers()
+
+Called from the main idle loop, checkTimers runs all high priority timers 
+or at most one normal timer.
+
+=cut
+
 sub checkTimers {
 
 	# check High Priority timers first (animation)
@@ -119,12 +133,11 @@ sub checkTimers {
 			msg("[high] firing $name " . ($now - $high_timer->{'when'}) . " late.\n");
 		}
 			
-		if ( $high_subptr ) {
-			no strict 'refs';	
-			&$high_subptr($high_objRef, @{$high_args});
+		if ( $high_subptr ) {	
+			$high_subptr->($high_objRef, @{$high_args});
 		}
 		else {
-			msg("[high] no subptr: " . Data::Dumper::Dumper($high_timer));
+			msg("[high] no subptr: " . Data::Dump::Dump($high_timer));
 		}
 
 		$nextHigh = $high->get_next_priority();
@@ -166,27 +179,28 @@ sub checkTimers {
 		$::perfmon && $timerLate->log($now - $timer->{'when'});
 			
 		if ( $subptr ) {
-			no strict 'refs';
-			&$subptr($objRef, @{$args});
+			$subptr->($objRef, @{$args});
 		}
 		else {
-			msg("Normal timer with no subptr: " . Data::Dumper::Dumper($timer));
+			msg("Normal timer with no subptr: " . Data::Dump::dump($timer));
 		}
 
 		$::perfmon && $timerTask->log(Time::HiRes::time() - $now) && 
 			msg(sprintf("    %s\n", Slim::Utils::PerlRunTime::realNameForCodeRef($subptr)), undef, 1);
-
-		$nextNormal = $normal->get_next_priority();
 
 	}
 
 	$checkingNormalTimers = 0;
 }
 
-#
-# Adjust all timers time by a given delta
-# Called when time skips backwards and we need to adjust the timers respectively.
-#
+=head2 adjustAllTimers( $delta )
+
+If the server's clock goes backwards (DST, NTP drift adjustments, etc)
+this function is called to adjust all timers by the amount the clock was
+changed by.
+
+=cut
+
 sub adjustAllTimers {
 	my $delta = shift;
 	
@@ -201,10 +215,14 @@ sub adjustAllTimers {
 	}
 }
 
-#
-# Return the time until the next timer is set to go off, 0 if overdue
-# Return nothing if there are no timers
-#
+=head2 nextTimer()
+
+Returns the time until the next scheduled timer, 0 if overdue, or
+undef if there are no timers.  This is used by the
+main loop to determine how long to wait in select().
+
+=cut
+
 sub nextTimer {
 	
 	my $nextHigh   = $high->get_next_priority();
@@ -225,9 +243,12 @@ sub nextTimer {
 	return $delta;
 }	
 
-#
-#  For debugging - prints out a list of all pending timers
-#
+=head2 listTimers()
+
+Lists all pending timers in an easy-to-read format for debugging.
+
+=cut
+
 sub listTimers {
 	msgf( "High timers: (%d)\n", $high->get_item_count );
 	
@@ -266,11 +287,12 @@ sub listTimers {
 	$d_watch_timers && setTimer( undef, time + 5, \&listTimers );
 }
 
-#
-#  Schedule a High Priority timer to fire after $when, calling $subptr with
-#  arguments $objRef and @args.  Returns a reference to the timer so that it can
-#  be killed specifically later.
-#
+=head2 setHighTimer( $obj, $when, $coderef, @args )
+
+Schedule a high priority timer.  See setTimer for documentation.
+
+=cut
+
 sub setHighTimer {
 	my ($objRef, $when, $subptr, @args) = @_;
 
@@ -299,11 +321,35 @@ sub setHighTimer {
 	return $newtimer;
 }
 
-#
-#  Schedule a Normal Priority timer to fire after $when, calling $subptr with
-#  arguments $objRef and @args.  Returns a reference to the timer so that it can
-#  be killed specifically later.
-#
+=head2 setTimer( $obj, $when, $coderef, @args )
+
+Schedule a normal priority timer.  Returns a reference to the internal timer
+object.  This can be passed to killSpecific to remove this specific timer.
+
+=over 4
+
+=item obj
+
+$obj can be any value you would like passed to $coderef as the first argument.
+
+=item when
+
+A hi-res epoch time value for when the timer should fire.  Typically, this is set
+with Time::HiRes::time() + $seconds.
+
+=item coderef
+
+A code reference that will be run when the timer fires.  It is passed $obj as the first
+argument, followed by any other arguments specified.
+
+=item args
+
+An array of any other arguments to be passed to $coderef.
+
+=back
+
+=cut
+
 sub setTimer {
 	my ($objRef, $when, $subptr, @args) = @_;
 
@@ -345,52 +391,80 @@ sub setTimer {
 	return $newtimer;
 }
 
-#
-# Throw out any pending Normal timers that match the objRef and the subroutine
-#
+=head2 killTimers ( $obj, $coderef )
+
+Remove all normal timers that match the $obj and $coderef.  Returns the number
+of timers removed.
+
+=cut
+
 sub killTimers {
-	my $objRef = shift || return;
+	my $objRef = shift;
 	my $subptr = shift || return;
 	
 	my @killed = $normal->remove_items( sub {
 		my $timer = shift;
 		if ( $timer->{subptr} eq $subptr ) {
-			if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
+			if ( !defined $objRef && !defined $timer->{objRef} ) {
+				return 1;
+			}
+			elsif ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 				return 1;
 			}
 		}
 		return 0;	
 	} );
 	
+	if ( $::d_time && @killed ) {
+		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef( $subptr );
+		msg("[norm] Killed " . scalar @killed . " timer(s) for $objRef / $name\n");
+	}
+	
 	return scalar @killed;
 }
 
-#
-# Throw out any pending High timers that match the objRef and the subroutine
-#
+=head2 killHighTimers ( $obj, $coderef )
+
+Remove all high timers that match the $obj and $coderef.  Returns the number
+of timers removed.
+
+=cut
+
 sub killHighTimers {
-	my $objRef = shift || return;
+	my $objRef = shift;
 	my $subptr = shift || return;
 
 	my @killed = $high->remove_items( sub {
 		my $timer = shift;
 		if ( $timer->{subptr} eq $subptr ) {
-			if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
+			if ( !defined $objRef && !defined $timer->{objRef} ) {
+				return 1;
+			}
+			elsif ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 				return 1;
 			}
 		}
 		return 0;	
 	} );
+	
+	if ( $::d_time && @killed ) {
+		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef( $subptr );
+		msg("[high] Killed " . scalar @killed . " timer(s) for $objRef / $name\n");
+	}
 
 	return scalar @killed;
 }
 
-#
-# Throw out any pending timers (Normal or High) that match the objRef and the 
-# subroutine. Optimized version to use when callers knows a single timer matches.
-#
+=head2 killOneTimer( $obj, $coderef )
+
+Remove at most one normal or high timer.  If you know there is only one timer
+that will match, this method is slightly faster than killTimers.  Returns 1 if
+the timer was removed, 0 if the timer could not be found.
+
+=cut
+
 sub killOneTimer {
-	my $objRef = shift || return;
+	my $objRef = shift;
 	my $subptr = shift || return;
 	
 	# This method is only used by normal timers, so check those first
@@ -398,66 +472,117 @@ sub killOneTimer {
 	my @killed = $normal->remove_items( sub {
 		my $timer = shift;
 		if ( $timer->{subptr} eq $subptr ) {
-			if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
+			if ( !defined $objRef && !defined $timer->{objRef} ) {
+				return 1;
+			}
+			elsif ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 				return 1;
 			}
 		}
 		return 0;
 	}, 1 );
 	
-	return if @killed;
+	return 1 if @killed;
 	
 	# If not found, look in high timers
 	
-	$high->remove_items( sub {
+	@killed = $high->remove_items( sub {
 		my $timer = shift;
 		if ( $timer->{subptr} eq $subptr ) {
-			if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
+			if ( !defined $objRef && !defined $timer->{objRef} ) {
+				return 1;
+			}
+			elsif ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 				return 1;
 			}
 		}
 		return 0;
 	}, 1 );
+	
+	return @killed ? 1 : 0;
 }
 
-#
-# Throw out all pending timers (Normal or High) matching the objRef.
-#
+=head2 forgetTimer( $obj )
+
+Remove all timers that match $obj.  Can be used to quickly clear all timers
+for a specific $client, for example.  Returns the number of timers killed.
+
+=cut
+
 sub forgetTimer {
 	my $objRef = shift;
 	
-	$high->remove_items( sub {
+	my @killed = $high->remove_items( sub {
 		my $timer = shift;
-		if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
+		if ( !defined $objRef && !defined $timer->{objRef} ) {
+			return 1;
+		}
+		elsif ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 			return 1;
 		}
 		return 0;
 	} );
 	
-	$normal->remove_items( sub {
+	my @killed2 = $normal->remove_items( sub {
 		my $timer = shift;
-		if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
+		if ( !defined $objRef && !defined $timer->{objRef} ) {
+			return 1;
+		}
+		elsif ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 			return 1;
 		}
 		return 0;
-	} );	
+	} );
+	
+	my $total = 0 + scalar @killed + scalar @killed2;
+	
+	return $total;
 }
 
-#
-# Kill a specific timer
-#
+=head2 killSpecific( $timer )
+
+Takes the $timer returned by setTimer or setHighTimer
+and removes that specific timer.  Returns 1 if the timer was
+removed, 0 if the timer could not be found.
+
+=cut
+
 sub killSpecific {
 	my $timer = shift;
+	
+	my @killed = $high->remove_items( sub {
+		my $t = shift;
+		return 1 if $timer eq $t;
+	}, 1 );
+	
+	if ( $::d_time && @killed ) {
+		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef( $timer->{subptr} );
+		msg("killSpecific: Removed high timer $name\n");
+	}
 
-	return
-		$high->remove_items( sub { $timer == shift } )
-		||
-		$normal->remove_items( sub { $timer == shift } );
+	return 1 if @killed;
+	
+	@killed = $normal->remove_items( sub {
+		my $t = shift;
+		return 1 if $timer eq $t;
+	}, 1 );
+	
+	if ( $::d_time && @killed ) {
+		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef( $timer->{subptr} );
+		msg("killSpecific: Removed normal timer $name\n");
+	}
+	
+	return @killed ? 1 : 0;
 }
 
-#
-# Fire the first timer matching a client/subptr
-#
+=head2 firePendingTimer( $obj, $coderef )
+
+Immediately run the specified timer, if it exists.  The timer is then removed
+so it will not run at it's previously scheduled time. Returns the return value
+of $coderef or undef if the timer does not exist.
+
+=cut
+
 sub firePendingTimer {
 	my $objRef = shift;
 	my $subptr = shift;
@@ -468,7 +593,10 @@ sub firePendingTimer {
 	my @normal = $normal->peek_items( sub {
 		my $timer = shift;
 		if ( $timer->{subptr} eq $subptr ) {
-			if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
+			if ( !defined $objRef && !defined $timer->{objRef} ) {
+				return 1;
+			}
+			elsif ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 				return 1;
 			}
 		}
@@ -481,23 +609,34 @@ sub firePendingTimer {
 	}
 	
 	if (defined $foundTimer) {
-		return &$subptr($objRef, @{$foundTimer->{'args'}});
+		return $subptr->( $objRef, @{ $foundTimer->{args} } );
 	}
+	
+	return;
 }
 
+=head2 pendingTimers( $obj, $coderef )
+
+Returns the total number of pending timers matching $obj and $coderef.
+
+=cut
+
 #
-# This method is not used by anything in trunk, but at least one plugin relies
+# Note: This method is not used by anything in trunk, but at least one plugin relies
 # on it (ShutdownServer)
 #
 sub pendingTimers {
 	my $objRef = shift;
-	my $subptr = shift;
+	my $subptr = shift || return 0;
 	my $count = 0;
 	
 	$high->peek_items( sub {
 		my $timer = shift;
 		if ( $timer->{subptr} eq $subptr ) {
-			if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
+			if ( !defined $objRef && !defined $timer->{objRef} ) {
+				$count++;
+			}
+			elsif ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 				$count++;
 			}
 		}
@@ -506,7 +645,10 @@ sub pendingTimers {
 	$normal->peek_items( sub {
 		my $timer = shift;
 		if ( $timer->{subptr} eq $subptr ) {
-			if ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
+			if ( !defined $objRef && !defined $timer->{objRef} ) {
+				$count++;
+			}
+			elsif ( $timer->{objRef} && $timer->{objRef} eq $objRef ) {
 				$count++;
 			}
 		}
@@ -518,3 +660,11 @@ sub pendingTimers {
 1;
 
 __END__
+
+=head1 SEE ALSO
+
+This module uses L<POE::XS::Queue::Array> as the underlying timer data structure.
+
+See L<POE::Queue> for documentation.
+
+=cut
