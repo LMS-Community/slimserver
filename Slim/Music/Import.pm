@@ -330,15 +330,14 @@ sub stillScanning {
 
 	my $running  = blessed($class->scanningProcess) && $class->scanningProcess->alive ? 1 : 0;
 
-	if ($running || $scanning) {
+	if ($running && $scanning) {
 		return 1;
 	}
 
 	return 0;
 }
+
 =head1 SEE ALSO
-
-
 
 =cut
 
