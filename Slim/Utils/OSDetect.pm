@@ -7,6 +7,26 @@ package Slim::Utils::OSDetect;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
+=head1 NAME
+
+Slim::Utils::OSDetect
+
+=head1 DESCRIPTION
+
+L<Slim::Utils::OSDetect> handles Operating System Specific details.
+
+=head1 SYNOPSIS
+
+	for my $baseDir (Slim::Utils::OSDetect::dirsFor('types')) {
+
+		push @typesFiles, catdir($baseDir, 'types.conf');
+		push @typesFiles, catdir($baseDir, 'custom-types.conf');
+	}
+	
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
+
+=cut
+
 use strict;
 use Config;
 use File::Spec::Functions qw(:ALL);
@@ -22,13 +42,26 @@ BEGIN {
 my $detectedOS = undef;
 my %osDetails  = ();
 
+=head1 METHODS
+
+=head2 OS( )
+
+returns a string to indicate the detected operating system currently running slimserver.
+
+=cut
+
 sub OS {
 	if (!$detectedOS) { init(); }
 	return $detectedOS;
 }
 
-# Figures out where the preferences file should be on our platform, and loads it.
-# also sets the global $detectedOS to 'unix' 'win'
+=head2 init( $newBin)
+
+ Figures out where the preferences file should be on our platform, and loads it.
+ also sets the global $detectedOS to 'unix' 'win', or 'mac'
+
+=cut
+
 sub init {
 	my $newBin = shift;
 
@@ -74,7 +107,14 @@ sub init {
 	}
 }
 
-# Return OS Specific directories.
+=head2 dirsFor( $dir)
+
+ Return OS Specific directories.
+ Argument $dir is a string to indicate which of the slimserver directories
+ we need information for.
+
+=cut
+
 sub dirsFor {
 	my $dir     = shift;
 
@@ -156,6 +196,14 @@ sub dirsFor {
 sub details {
 	return \%osDetails;
 }
+
+=head2 isDebian( )
+
+ The Debian package has some specific differences for file locations.
+ This routine needs no args, and returns 1 if Debian distro is detected, with
+ a clear sign that the .deb package has been isntalled, 0 if not.
+
+=cut
 
 sub isDebian {
 
