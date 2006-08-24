@@ -8,362 +8,382 @@ package Slim::Control::Request;
 # This class implements a generic request mechanism for SlimServer.
 # More documentation is provided below the table of commands & queries
 
-######################################################################################################################################################################
-# COMMANDS & QUERIES LIST
-######################################################################################################################################################################
-#
-# This table lists all supported commands and queries with their parameters. 
-#
-# C     P0             P1                          P2                          P3               P4       P5
-######################################################################################################################################################################
+=head1 NAME
 
-#### GENERAL ####
-# N    debug           <debugflag>                 <0|1|?|>
-# N    pref            <prefname>                  <prefvalue|?>
-# N    version         ?
-# N    stopserver
+Slim::Buttons::Request
+
+=head1 DESCRIPTION
+
+ This class implements a generic request mechanism for SlimServer.
+ This new mechanism supplants (and hopefully) improves over the "legacy"
+ mechanisms that used to be provided by Slim::Control::Command. Where 
+ appropriate, the Request class provides hooks supporting this legacy.
+ This is why, for example, the debug flag for this code is $::d_command.
 
 
-#### DATABASE ####
-# N    rescan          <|playlists|?>
-# N    wipecache
-
-# N    albums          <startindex>                <numitems>                  <tagged parameters>
-# N    artists         <startindex>                <numitems>                  <tagged parameters>
-# N    genres          <startindex>                <numitems>                  <tagged parameters>
-# N    info            total                       genres|artists|albums|songs ?
-# N    songinfo        <startindex>                <numitems>                  <tagged parameters>
-# N    titles          <startindex>                <numitems>                  <tagged parameters>
-
-# N    playlists       <startindex>                <numitems>                  <tagged parameters>
-# N    playlists       tracks                      <startindex>                <numitems>       <tagged parameters>
-# N    playlists       edit                        <tagged parameters>
-
-#### PLAYERS ####
-# Y    alarm           <tagged parameters>
-# Y    button          <buttoncode>
-# Y    client          forget
-# Y    display         <line1>                     <line2>                       <duration>
-# Y    ir              <ircode>                    <time>
-# Y    mixer           volume                      <0..100|-100..+100|?>
-# Y    mixer           bass                        <0..100|-100..+100|?>
-# Y    mixer           treble                      <0..100|-100..+100|?>
-# Y    mixer           pitch                       <80..120|-100..+100|?>
-# Y    mixer           muting                      <|?>
-# Y    playerpref      <prefname>                  <prefvalue|?>
-# Y    power           <0|1|?|>
-# Y    sleep           <0..n|?>
-# Y    sync            <playerindex|playerid|-|?>
-# Y    mode            ?
-
-# Y    alarms          <startindex>                <numitems>                  <tagged parameters>
-# Y    signalstrength  ?
-# Y    connected       ?
-# Y    display         ?                           ?
-# Y    displaynow      ?                           ?
-# Y    show
-# N    player          count                       ?
-# N    player          ip                          <index or ID>               ?
-# N    player          id|address                  <index or ID>               ?
-# N    player          name                        <index or ID>               ?
-# N    player          model                       <index or ID>               ?
-# N    player          displaytype                 <index or ID>               ?
-# N    players         <startindex>                <numitems>                  <tagged parameters>
+ The general mechansim is to create a Request object and execute it. There
+ is an option of specifying a callback function, to be called once the 
+ request is executed. In addition, external code can be notified of command
+ execution (see NOTIFICATIONS below).
 
 
-#### PLAYLISTS ####
-# Y    pause           <0|1|>
-# Y    play
-# Y    playlist        add|append                  <item> (item can be a song, playlist or directory)
-# Y    playlist        addalbum                    <genre>                     <artist>         <album>  <songtitle>
-# Y    playlist        addtracks                   <searchterms>    
-# Y    playlist        clear
-# Y    playlist        delete                      <index>
-# Y    playlist        deletealbum                 <genre>                     <artist>         <album>  <songtitle>
-# Y    playlist        deleteitem                  <item> (item can be a song, playlist or directory)
-# Y    playlist        deletetracks                <searchterms>   
-# Y    playlist        index|jump                  <index|?>
-# Y    playlist        insert|insertlist           <item> (item can be a song, playlist or directory)
-# Y    playlist        insertalbum                 <genre>                     <artist>         <album>  <songtitle>
-# Y    playlist        inserttracks                <searchterms>    
-# Y    playlist        loadalbum|playalbum         <genre>                     <artist>         <album>  <songtitle>
-# Y    playlist        loadtracks                  <searchterms>    
-# Y    playlist        move                        <fromindex>                 <toindex>
-# Y    playlist        play|load|resume            <item> (item can be a song, playlist or directory)
-# Y    playlist        playtracks                  <searchterms>    
-# Y    playlist        repeat                      <0|1|2|?|>
-# Y    playlist        shuffle                     <0|1|2|?|>
-# Y    playlist        save                        <name>
-# Y    playlist        zap                         <index>
-# Y    playlistcontrol <tagged parameters>
-# Y    rate            <rate|?>
-# Y    stop
-# Y    time            <0..n|-n|+n|?>
+ Function "Slim::Control::Request::executeRequest" accepts the usual parameters
+ of client, command array and callback params, and returns the request object.
+ This command can be used in place of "Slim::Control::Command::execute", but
+ it does not return the array as execute did. If you need the array returned,
+ use "executeLegacy".
 
-# Y    artist          ?
-# Y    album           ?
-# Y    duration        ?
-# Y    genre           ?
-# Y    title           ?
-# Y    path            ?
-# Y    current_title   ?
-# Y    remote          ?
+ Slim::Control::Request::executeRequest($client, ['stop']);
+ my @result = Slim::Control::Request::executeLegacy($client, ['playlist', 'save']);
 
-# Y    playlist        tracks                      ?
-
-# Y    playlist        genre                       <index>                     ?
-# Y    playlist        artist                      <index>                     ?
-# Y    playlist        album                       <index>                     ?
-# Y    playlist        title                       <index>                     ?
-# Y    playlist        duration                    <index>                     ?
-# Y    playlist        path                        <index>                     ?
-# Y    playlist        remote                      <index>                     ?
-
-# Y    status          <startindex>                <numitems>                  <tagged parameters>
-
-# Y    playlist        name                        ?
-# Y    playlist        url                         ?
-# Y    playlist        modified                    ?
-# Y    playlist        playlistsinfo               <tagged parameters>
-
-# DEPRECATED (BUT STILL SUPPORTED)
-# Y    mode            <play|pause|stop>
-# Y    gototime        <0..n|-n|+n|?>
-# N    playlisttracks  <startindex>                <numitems>                  <tagged parameters>
+=cut
 
 
-#### NOTIFICATION ####
-# The following 'terms' are used for notifications 
+#####################################################################################################################################################################
 
-# Y    client          disconnect
-# Y    client          new
-# Y    client          reconnect
-# Y    playlist        load_done
-# Y    playlist        newsong                     <current_title>
-# Y    playlist        open                        <url>
-# Y    playlist        sync
-# Y    playlist        cant_open                   <url>
-# N    rescan          done
-# Y    unknownir       <ircode>                    <timestamp>
+=head1 COMMANDS & QUERIES LIST
 
-#### PLUGINS ####
+ This table lists all supported commands and queries with their parameters. 
 
-# Plugins can call addDispatch (see below) to add their own commands to this
-# table.
+ C     P0             P1                          P2                          P3               P4       P5
 
-######################################################################################################################################################################
+=cut
+
+#####################################################################################################################################################################
+
+=head2 GENERAL
+
+ N    debug           <debugflag>                 <0|1|?|>
+ N    pref            <prefname>                  <prefvalue|?>
+ N    version         ?
+ N    stopserver
+
+=head2 DATABASE
+
+ N    rescan          <|playlists|?>
+ N    wipecache
+ 
+ N    albums          <startindex>                <numitems>                  <tagged parameters>
+ N    artists         <startindex>                <numitems>                  <tagged parameters>
+ N    genres          <startindex>                <numitems>                  <tagged parameters>
+ N    info            total                       genres|artists|albums|songs ?
+ N    songinfo        <startindex>                <numitems>                  <tagged parameters>
+ N    titles          <startindex>                <numitems>                  <tagged parameters>
+ 
+ N    playlists       <startindex>                <numitems>                  <tagged parameters>
+ N    playlists       tracks                      <startindex>                <numitems>       <tagged parameters>
+ N    playlists       edit                        <tagged parameters>
+
+=head2 PLAYERS
 
 
-# ABOUT THIS CLASS
-#
-# This class implements a generic request mechanism for SlimServer.
-# This new mechanism supplants (and hopefully) improves over the "legacy"
-# mechanisms that used to be provided by Slim::Control::Command. Where 
-# appropriate, the Request class provides hooks supporting this legacy.
-# This is why, for example, the debug flag for this code is $::d_command.
-#
-#
-# The general mechansim is to create a Request object and execute it. There
-# is an option of specifying a callback function, to be called once the 
-# request is executed. In addition, external code can be notified of command
-# execution (see NOTIFICATIONS below).
-#
-#
-# Function "Slim::Control::Request::executeRequest" accepts the usual parameters
-# of client, command array and callback params, and returns the request object.
-# This command can be used in place of "Slim::Control::Command::execute", but
-# it does not return the array as execute did. If you need the array returned,
-# use "executeLegacy".
-#
-# Slim::Control::Request::executeRequest($client, ['stop']);
-# my @result = Slim::Control::Request::executeLegacy($client, ['playlist', 'save']);
-#
-#
-# REQUESTS
-#
-# Requests are object that embodies all data related to performing an action or
-# a query.
-#
-# ** client ID **          
-#   Requests store the client ID, if any, to which it applies
-#     my $clientid = $request->clientid();   # read
-#     $request->clientid($client->id());     # set
-#
-#   Methods are provided for convenience using a client, in particular all 
-#   executeXXXX calls
-#     my $client = $request->client();       # read
-#     $request->client($client);             # set
-#
-#   Some requests require a client to operate. This is encoded in the
-#   request for error detection. These calls are unlikely to be useful to 
-#   users of the class but mentioned here for completeness.
-#     if ($request->needClient()) { ...      # read
-#     $request->needClient(1);               # set
-#
-# ** type **
-#   Requests are commands that do something or queries that change nothing but
-#   mainly return data. They are differentiated mainly for performance reasons,
-#   for example queries are NOT notified. These calls are unlikely to be useful
-#   to users of the class but mentioned here for completeness.
-#     if ($request->query()) {...            # read
-#     $request->query(1);                    # set
-#
-# ** request name **
-#   For historical reasons, command names are composed of multiple terms, f.e.
-#   "playlist save" or "info total genres", represented as an array. This
-#   convention was kept, mainly because of the amount of code relying on it.
-#   The request name is therefore represented as an array, that you can access
-#   using the getRequest method
-#     $request->getRequest(0);               # read the first term f.e. "playlist"
-#     $request->getRequest(1);               # read 2nd term, f.e. "save"
-#     my $cnt = $request->getRequestCount(); # number of terms
-#     my $str = $request->getRequestString();# string of all terms, f.e. "playlist save"
-#
-#   Normally, creating the request is performed through the execute calls or by
-#   calling new with an array that is parsed by the code here to match the
-#   available commands and automatically assign parameters. The following
-#   method is unlikely to be useful to users of this class, but is mentioned
-#   for completeness.
-#     $request->addRequest($term);           # add a term to the request
-#
-# ** parameters **
-#   The parsing performed on the array names all parameters, positional or
-#   tagged. Positional parameters are assigned a name from the addDispatch table,
-#   and any extra parameters are added as "_pX", where X is the position in the
-#   array. Tagged parameters are named by their tags, obviously.
-#   As a consequence, users of the class only access parameter by name
-#     $request->getParam('_index');          # get the '_index' param
-#     $request->getParam('_p4');             # get the '_p4' param (auto named)
-#     $request->getParam('cmd');             # get a tagged param
-#
-#   Here again, routines used to add parameters are normally not used
-#   by users of this class, but for completeness
-#     $request->addParamPos($value);         # adds positional parameter
-#     $request->addParam($key, $value);      # adds named parameter
-#   
-# ** results **
-#   Queries, but some commands as well, do add results to a request. Results
-#   are either single data points (f.e. how many elements where inserted) or 
-#   loops (i.e. data for song 1, data being a list of single data point, data for
-#   song 2, etc).
-#   Results are named like parameters. Obviously results are only available 
-#   once the request has been executed (without errors)
-#     my $data = $request->getResult('_value');
-#                                            # get a result
-#
-#   There can be multiple loops in the results. Each loop is named and starts
-#   with a '@'.
-#     my $looped = $request->getResultLoop('@songs', 0, '_value');
-#                                            # get first '_value' result in
-#                                            # loop '@songs'
-#
-#
-# NOTIFICATIONS
-#
-# The Request mechanism can notify "subscriber" functions of successful
-# command request execution (not of queries). Callback functions have a single
-# parameter corresponding to the request object.
-# Optionally, the subscribe routine accepts a filter, which limits calls to the
-# subscriber callback to those requests matching the filter. The filter is
-# in the form of an array ref containing arrays refs (one per dispatch level) 
-# containing lists of desirable commands (easier to code than explain, see
-# examples below).
-# Note that notifications are performed asynchronously from the corresponding
-# requests. Notifications are queued and performed when time allows.
-#
-# Example
-#
-# Slim::Control::Request::subscribe( \&myCallbackFunction, 
-#                                     [['playlist']]);
-# -> myCallbackFunction will be called for any command starting with 'playlist'
-# in the table below ('playlist save', playlist loadtracks', etc).
-#
-# Slim::Control::Request::subscribe( \&myCallbackFunction, 
-#				                      [['playlist'], ['save', 'clear']]);
-# -> myCallbackFunction will be called for commands "playlist save" and
-# "playlist clear", but not for "playlist loadtracks".
-#
-# In both cases, myCallbackFunction must be defined as:
-# sub myCallbackFunction {
-#      my $request = shift;
-#
-#      # do something useful here
-#      # use the methods of $request to find all information on the
-#      # request.
-#
-#      my $client = $request->client();
-#
-#      my $cmd = $request->getRequestString();
-#
-#      msg("myCallbackFunction called for cmd $cmd\n");
-# }
-#
-#
-# WRITING COMMANDS & QUERIES, PLUGINS
-#
-# This sections provides a rough guide to writing commands and queries.
-#
-# Plugins are welcomed to add their own commands to the dispatch table. The
-# commands or queries are therefore automatically available in the CLI. Plugin
-# authors shall document their commands and queries as they see fit. Plugins
-# delivered with the server are documented in the cli API document.
-#
-#
-# Adding a command
-#
-# To add a command to the dispatch table, use the addDispatch method. If the
-# method is part of SlimServer itself, please add it to the init method below
-# and update the comment table at the top of the document. 
-# In a plugin, call the method from your initPlugin subroutine.
-#
-#  Slim::Control::Request::addDispatch([<TERMS>], [<DEFINITION>]);
-#
-# <TERMS> is a list of the name of the command or query AND positional 
-# parameters. (Strictly speaking, the function expects 2 array references).
-# The name of the request can be one or more words, like "playlist clear" or
-# "info total genres ?". They have to be array elements, so look like:
-#
-#      addDispatch(['info', 'total', 'genres', '?'], ...
-#
-# The request mechanism uses the first array to match requests to definitions.
-# There are 3 possibilities: '?' matches itself, but is not added as a param
-# (the idea is that the result replaces it). Anything starting with '_' is a 
-# parameter: something can be provided to give it a value: it is added to the 
-# request as a named parameter. Anything else much match itself and is 
-# considered part of the request.
-# Order matter we well: first request name, then named parameters, then ?.
-# 
-#       addDispatch(['playlist', 'artist', '_index', '?'], ...
-#
-#   -> ['playlist', 'artist', 'whatever', '?'] OK
-#   -> ['playlist', 'artist', '33',       '?'] OK
-#   -> ['playlist', 'artist', '?']             NOK (missing param)
-#   -> ['playlist', 'artist', '33']            NOK (missing ?)
-#
-#
-# The second array <DEFINITION> contains information about the request:
-#  array[0]: flag indicating if the request requires a client. If enabled,
-#            the request will not proceed if the client is invalid or undef.
-#  array[1]: flag indicating if the request is a query. If enabled, the request
-#            is not notified.
-#  array[2]: flag indicating if the request has tagged parameters (in the form
-#            'tag:value'. If enabled the request will look for them while
-#            parsing the input.
-#  array[3]: function reference. Please refer to Commands.pm and Queries.pm for
-#            examples.
-#
-# For updates or new server commands, the table format below is the preferred
-# choice. In a plugin, the following form may be used:
-#
-#        |requires Client
-#        |  |is a Query
-#        |  |  |has Tags
-#        |  |  |  |Function to call
-#        C  Q  T  F
-#
-#   Slim::Control::Request::addDispatch(['can'], 
-#       [0, 1, 0, \&canQuery]);
+ Y    alarm           <tagged parameters>
+ Y    button          <buttoncode>
+ Y    client          forget
+ Y    display         <line1>                     <line2>                       <duration>
+ Y    ir              <ircode>                    <time>
+ Y    mixer           volume                      <0..100|-100..+100|?>
+ Y    mixer           bass                        <0..100|-100..+100|?>
+ Y    mixer           treble                      <0..100|-100..+100|?>
+ Y    mixer           pitch                       <80..120|-100..+100|?>
+ Y    mixer           muting                      <|?>
+ Y    playerpref      <prefname>                  <prefvalue|?>
+ Y    power           <0|1|?|>
+ Y    sleep           <0..n|?>
+ Y    sync            <playerindex|playerid|-|?>
+ Y    mode            ?
+ 
+ Y    alarms          <startindex>                <numitems>                  <tagged parameters>
+ Y    signalstrength  ?
+ Y    connected       ?
+ Y    display         ?                           ?
+ Y    displaynow      ?                           ?
+ Y    show
+ N    player          count                       ?
+ N    player          ip                          <index or ID>               ?
+ N    player          id|address                  <index or ID>               ?
+ N    player          name                        <index or ID>               ?
+ N    player          model                       <index or ID>               ?
+ N    player          displaytype                 <index or ID>               ?
+ N    players         <startindex>                <numitems>                  <tagged parameters>
 
+
+=head2 PLAYLISTS
+
+ Y    pause           <0|1|>
+ Y    play
+ Y    playlist        add|append                  <item> (item can be a song, playlist or directory)
+ Y    playlist        addalbum                    <genre>                     <artist>         <album>  <songtitle>
+ Y    playlist        addtracks                   <searchterms>    
+ Y    playlist        clear
+ Y    playlist        delete                      <index>
+ Y    playlist        deletealbum                 <genre>                     <artist>         <album>  <songtitle>
+ Y    playlist        deleteitem                  <item> (item can be a song, playlist or directory)
+ Y    playlist        deletetracks                <searchterms>   
+ Y    playlist        index|jump                  <index|?>
+ Y    playlist        insert|insertlist           <item> (item can be a song, playlist or directory)
+ Y    playlist        insertalbum                 <genre>                     <artist>         <album>  <songtitle>
+ Y    playlist        inserttracks                <searchterms>    
+ Y    playlist        loadalbum|playalbum         <genre>                     <artist>         <album>  <songtitle>
+ Y    playlist        loadtracks                  <searchterms>    
+ Y    playlist        move                        <fromindex>                 <toindex>
+ Y    playlist        play|load|resume            <item> (item can be a song, playlist or directory)
+ Y    playlist        playtracks                  <searchterms>    
+ Y    playlist        repeat                      <0|1|2|?|>
+ Y    playlist        shuffle                     <0|1|2|?|>
+ Y    playlist        save                        <name>
+ Y    playlist        zap                         <index>
+ Y    playlistcontrol <tagged parameters>
+ Y    rate            <rate|?>
+ Y    stop
+ Y    time            <0..n|-n|+n|?>
+ 
+ Y    artist          ?
+ Y    album           ?
+ Y    duration        ?
+ Y    genre           ?
+ Y    title           ?
+ Y    path            ?
+ Y    current_title   ?
+ Y    remote          ?
+ 
+ Y    playlist        tracks                      ?
+ 
+ Y    playlist        genre                       <index>                     ?
+ Y    playlist        artist                      <index>                     ?
+ Y    playlist        album                       <index>                     ?
+ Y    playlist        title                       <index>                     ?
+ Y    playlist        duration                    <index>                     ?
+ Y    playlist        path                        <index>                     ?
+ Y    playlist        remote                      <index>                     ?
+ 
+ Y    status          <startindex>                <numitems>                  <tagged parameters>
+ 
+ Y    playlist        name                        ?
+ Y    playlist        url                         ?
+ Y    playlist        modified                    ?
+ Y    playlist        playlistsinfo               <tagged parameters>
+ 
+ DEPRECATED (BUT STILL SUPPORTED)
+ Y    mode            <play|pause|stop>
+ Y    gototime        <0..n|-n|+n|?>
+ N    playlisttracks  <startindex>                <numitems>                  <tagged parameters>
+
+
+=head2 NOTIFICATION
+
+ The following 'terms' are used for notifications 
+
+ Y    client          disconnect
+ Y    client          new
+ Y    client          reconnect
+ Y    playlist        load_done
+ Y    playlist        newsong                     <current_title>
+ Y    playlist        open                        <url>
+ Y    playlist        sync
+ Y    playlist        cant_open                   <url>
+ N    rescan          done
+ Y    unknownir       <ircode>                    <timestamp>
+
+=head2 PLUGINS
+
+ Plugins can call addDispatch (see below) to add their own commands to this
+ table.
+
+=cut
+
+#####################################################################################################################################################################
+
+=head1 REQUESTS
+
+ Requests are object that embodies all data related to performing an action or
+ a query.
+
+=head2 ** client ID **          
+
+   Requests store the client ID, if any, to which it applies
+     my $clientid = $request->clientid();   # read
+     $request->clientid($client->id());     # set
+
+   Methods are provided for convenience using a client, in particular all 
+   executeXXXX calls
+     my $client = $request->client();       # read
+     $request->client($client);             # set
+
+   Some requests require a client to operate. This is encoded in the
+   request for error detection. These calls are unlikely to be useful to 
+   users of the class but mentioned here for completeness.
+     if ($request->needClient()) { ...      # read
+     $request->needClient(1);               # set
+
+=head2 ** type **
+
+   Requests are commands that do something or queries that change nothing but
+   mainly return data. They are differentiated mainly for performance reasons,
+   for example queries are NOT notified. These calls are unlikely to be useful
+   to users of the class but mentioned here for completeness.
+     if ($request->query()) {...            # read
+     $request->query(1);                    # set
+
+=head2 ** request name **
+
+   For historical reasons, command names are composed of multiple terms, f.e.
+   "playlist save" or "info total genres", represented as an array. This
+   convention was kept, mainly because of the amount of code relying on it.
+   The request name is therefore represented as an array, that you can access
+   using the getRequest method
+     $request->getRequest(0);               # read the first term f.e. "playlist"
+     $request->getRequest(1);               # read 2nd term, f.e. "save"
+     my $cnt = $request->getRequestCount(); # number of terms
+     my $str = $request->getRequestString();# string of all terms, f.e. "playlist save"
+
+   Normally, creating the request is performed through the execute calls or by
+   calling new with an array that is parsed by the code here to match the
+   available commands and automatically assign parameters. The following
+   method is unlikely to be useful to users of this class, but is mentioned
+   for completeness.
+     $request->addRequest($term);           # add a term to the request
+
+=head2 ** parameters **
+
+   The parsing performed on the array names all parameters, positional or
+   tagged. Positional parameters are assigned a name from the addDispatch table,
+   and any extra parameters are added as "_pX", where X is the position in the
+   array. Tagged parameters are named by their tags, obviously.
+   As a consequence, users of the class only access parameter by name
+     $request->getParam('_index');          # get the '_index' param
+     $request->getParam('_p4');             # get the '_p4' param (auto named)
+     $request->getParam('cmd');             # get a tagged param
+
+   Here again, routines used to add parameters are normally not used
+   by users of this class, but for completeness
+     $request->addParamPos($value);         # adds positional parameter
+     $request->addParam($key, $value);      # adds named parameter
+
+=head2 ** results **
+
+   Queries, but some commands as well, do add results to a request. Results
+   are either single data points (f.e. how many elements where inserted) or 
+   loops (i.e. data for song 1, data being a list of single data point, data for
+   song 2, etc).
+   Results are named like parameters. Obviously results are only available 
+   once the request has been executed (without errors)
+     my $data = $request->getResult('_value');
+                                            # get a result
+
+   There can be multiple loops in the results. Each loop is named and starts
+   with a '@'.
+     my $looped = $request->getResultLoop('@songs', 0, '_value');
+                                            # get first '_value' result in
+                                            # loop '@songs'
+
+
+=head1 NOTIFICATIONS
+
+ The Request mechanism can notify "subscriber" functions of successful
+ command request execution (not of queries). Callback functions have a single
+ parameter corresponding to the request object.
+ Optionally, the subscribe routine accepts a filter, which limits calls to the
+ subscriber callback to those requests matching the filter. The filter is
+ in the form of an array ref containing arrays refs (one per dispatch level) 
+ containing lists of desirable commands (easier to code than explain, see
+ examples below).
+ Note that notifications are performed asynchronously from the corresponding
+ requests. Notifications are queued and performed when time allows.
+
+=head2 Example
+
+ Slim::Control::Request::subscribe( \&myCallbackFunction, 
+                                     [['playlist']]);
+ -> myCallbackFunction will be called for any command starting with 'playlist'
+ in the table below ('playlist save', playlist loadtracks', etc).
+
+ Slim::Control::Request::subscribe( \&myCallbackFunction, 
+				                      [['playlist'], ['save', 'clear']]);
+ -> myCallbackFunction will be called for commands "playlist save" and
+ "playlist clear", but not for "playlist loadtracks".
+
+ In both cases, myCallbackFunction must be defined as:
+ sub myCallbackFunction {
+      my $request = shift;
+
+      # do something useful here
+      # use the methods of $request to find all information on the
+      # request.
+
+      my $client = $request->client();
+
+      my $cmd = $request->getRequestString();
+
+      msg("myCallbackFunction called for cmd $cmd\n");
+ }
+
+
+=head1 WRITING COMMANDS & QUERIES, PLUGINS
+
+=head2 This sections provides a rough guide to writing commands and queries.
+
+ Plugins are welcomed to add their own commands to the dispatch table. The
+ commands or queries are therefore automatically available in the CLI. Plugin
+ authors shall document their commands and queries as they see fit. Plugins
+ delivered with the server are documented in the cli API document.
+
+=head2 Adding a command
+
+ To add a command to the dispatch table, use the addDispatch method. If the
+ method is part of SlimServer itself, please add it to the init method below
+ and update the comment table at the top of the document. 
+ In a plugin, call the method from your initPlugin subroutine.
+
+  Slim::Control::Request::addDispatch([<TERMS>], [<DEFINITION>]);
+
+ <TERMS> is a list of the name of the command or query AND positional 
+ parameters. (Strictly speaking, the function expects 2 array references).
+ The name of the request can be one or more words, like "playlist clear" or
+ "info total genres ?". They have to be array elements, so look like:
+
+      addDispatch(['info', 'total', 'genres', '?'], ...
+
+ The request mechanism uses the first array to match requests to definitions.
+ There are 3 possibilities: '?' matches itself, but is not added as a param
+ (the idea is that the result replaces it). Anything starting with '_' is a 
+ parameter: something can be provided to give it a value: it is added to the 
+ request as a named parameter. Anything else much match itself and is 
+ considered part of the request.
+ Order matter we well: first request name, then named parameters, then ?.
+ 
+       addDispatch(['playlist', 'artist', '_index', '?'], ...
+
+   -> ['playlist', 'artist', 'whatever', '?'] OK
+   -> ['playlist', 'artist', '33',       '?'] OK
+   -> ['playlist', 'artist', '?']             NOK (missing param)
+   -> ['playlist', 'artist', '33']            NOK (missing ?)
+
+
+ The second array <DEFINITION> contains information about the request:
+  array[0]: flag indicating if the request requires a client. If enabled,
+            the request will not proceed if the client is invalid or undef.
+  array[1]: flag indicating if the request is a query. If enabled, the request
+            is not notified.
+  array[2]: flag indicating if the request has tagged parameters (in the form
+            'tag:value'. If enabled the request will look for them while
+            parsing the input.
+  array[3]: function reference. Please refer to Commands.pm and Queries.pm for
+            examples.
+
+ For updates or new server commands, the table format below is the preferred
+ choice. In a plugin, the following form may be used:
+
+        |requires Client
+        |  |is a Query
+        |  |  |has Tags
+        |  |  |  |Function to call
+        C  Q  T  F
+
+   Slim::Control::Request::addDispatch(['can'], 
+       [0, 1, 0, \&canQuery]);
+
+=cut
 
 use strict;
 
@@ -1962,6 +1982,11 @@ sub __parse {
 	}
 }
 
+=head1 SEE ALSO
+
+
+
+=cut
 
 1;
 

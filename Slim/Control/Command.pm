@@ -5,6 +5,16 @@ package Slim::Control::Command;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
+=head1 NAME
+
+Slim::Buttons::Command
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Command>
+
+=cut
+
 use strict;
 
 use Slim::Control::Request;
@@ -73,5 +83,11 @@ sub executeCallback {
 	Slim::Control::Request::notifyFromArray($client, $paramsRef, "no no no") 
 		if !defined $dontcallDispatch;
 }
+
+=head1 SEE ALSO
+
+
+
+=cut
 
 1;

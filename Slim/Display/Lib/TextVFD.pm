@@ -5,9 +5,19 @@ package Slim::Display::Lib::TextVFD;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 #
-# $Id: VFD.pm 5033 2005-11-04 19:38:24Z dsully $
+# $Id$
 #
-# Library functions for text based displays
+
+=head1 NAME
+
+Slim::Display::Lib::TextVFD
+
+=head1 DESCRIPTION
+
+L<Slim::Display::Lib::TextVFD>
+ Library functions for text based displays
+
+=cut
 
 use strict;
 use Slim::Utils::Misc;
@@ -1026,6 +1036,11 @@ sub doubleSize {
 	
 	return ($newline1, $newline2);
 }
+=head1 SEE ALSO
+
+
+
+=cut
 
 1;
 

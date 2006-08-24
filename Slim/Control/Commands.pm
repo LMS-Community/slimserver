@@ -1,8 +1,8 @@
 package Slim::Control::Commands;
 
-# $Id: Command.pm 5121 2005-11-09 17:07:36Z dsully $
+# $Id: Commands.pm 5121 2005-11-09 17:07:36Z dsully $
 #
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006  Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -14,13 +14,20 @@ package Slim::Control::Commands;
 
 ################################################################################
 
-# This module implements most SlimServer commands and is designed to 
-# be exclusively called through Request.pm and the mechanisms it defines.
+=head1 NAME
 
-# The code for the "alarm" command is heavily commented and corresponds to
-# a "model" synchronous command.
-# Check CLI handling code in the Shoutcast plugin for an asynchronous command.
+Slim::Buttons::Commands
 
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Commands> implements most SlimServer commands and is designed to 
+ be exclusively called through Request.pm and the mechanisms it defines.
+
+ The code for the "alarm" command is heavily commented and corresponds to
+ a "model" synchronous command.
+ Check CLI handling code in the Shoutcast plugin for an asynchronous command.
+
+=cut
 
 use strict;
 
@@ -2298,6 +2305,11 @@ sub _showCommand_done {
 	$request->setStatusDone();
 }
 
+=head1 SEE ALSO
+
+L<Slim::Buttons::Command>
+
+=cut
 
 1;
 

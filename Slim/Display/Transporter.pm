@@ -7,10 +7,19 @@ package Slim::Display::Transporter;
 
 # $Id$
 
-# Display class for Transporter display
-#  - 2 screens
-#  - 320 x 32 pixel displays 
-#  - client side animations
+=head1 NAME
+
+Slim::Display::Transporter
+
+=head1 DESCRIPTION
+
+L<Slim::Display::Transporter>
+ Display class for Transporter display
+  - 2 screens
+  - 320 x 32 pixel displays 
+  - client side animations
+
+=cut
 
 use strict;
 
@@ -298,6 +307,11 @@ sub showExtendedText {
 	
 	return $visualizers[$visu]{text};
 }
+=head1 SEE ALSO
+
+L<Slim::Display::Squeezebox2>
+
+=cut
 
 1;
 

@@ -7,8 +7,17 @@ package Slim::Display::NoDisplay;
 
 # $Id$
 
-# Display class for clients with no display, e.g. http streaming sessions
-#  - used to stub out common display methods in Display::Display
+=head1 NAME
+
+Slim::Display::NoDisplay
+
+=head1 DESCRIPTION
+
+L<Slim::Display::NoDisplay>
+ Display class for clients with no display, e.g. http streaming sessions
+  - used to stub out common display methods in Display::Display
+
+=cut
 
 use base qw(Slim::Display::Display);
 
@@ -34,6 +43,12 @@ sub scrollUpdate {}
 sub killAnimation {}
 sub resetDisplay {}
 sub endAnimation {}
+
+=head1 SEE ALSO
+
+L<Slim::Display::Display>
+
+=cut
 
 1;
 

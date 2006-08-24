@@ -7,9 +7,18 @@ package Slim::Display::Squeezebox2;
 
 # $Id$
 
-# Display class for Squeezebox 2/3 class display
-#  - 320 x 32 pixel display
-#  - client side animations
+=head1 NAME
+
+Slim::Display::Squeezebox2
+
+=head1 DESCRIPTION
+
+L<Slim::Display::Squeezebox2>
+ Display class for Squeezebox 2/3 class display
+  - 320 x 32 pixel display
+  - client side animations
+
+=cut
 
 use strict;
 
@@ -402,6 +411,11 @@ sub doubleString {
 
 	return Slim::Utils::Strings::doubleString($string, Slim::Utils::Strings::getLanguage());
 }
+=head1 SEE ALSO
+
+L<Slim::Display::Graphics>
+
+=cut
 
 1;
 

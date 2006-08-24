@@ -2,10 +2,20 @@ package Slim::Music::PlaylistFolderScan;
 
 # $Id
 #
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006  Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
+
+=head1 NAME
+
+Slim::Music::PlaylistFolderScan
+
+=head1 DESCRIPTION
+
+L<Slim::Music::PlaylistFolderScan>
+
+=cut
 
 use strict;
 use base qw(Class::Data::Inheritable);
@@ -83,6 +93,11 @@ sub doneScanning {
 
 	Slim::Music::Import->endImporter('PLAYLIST');
 }
+=head1 SEE ALSO
+
+
+
+=cut
 
 1;
 

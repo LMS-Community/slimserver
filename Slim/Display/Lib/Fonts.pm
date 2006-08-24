@@ -7,11 +7,21 @@ package Slim::Display::Lib::Fonts;
 #
 # $Id$
 #
-# Library functions to provide bitmapped fonts for graphics displays
-#  - parses bitmaps into font data structure and stores as fontcache
-#  - returns bitmap render of a specific string
-#  - supports Unicode characters via True Type
-#  - supports Hebrew via Locale::Hebrew
+
+=head1 NAME
+
+Slim::Display::Lib::Fonts
+
+=head1 DESCRIPTION
+
+L<Slim::Display::Lib::Fonts>
+ Library functions to provide bitmapped fonts for graphics displays
+  - parses bitmaps into font data structure and stores as fontcache
+  - returns bitmap render of a specific string
+  - supports Unicode characters via True Type
+  - supports Hebrew via Locale::Hebrew
+
+=cut
 
 use strict;
 use File::Spec::Functions qw(catdir);
@@ -595,6 +605,11 @@ sub parseBMP {
 
 	return (\@font, $biHeight);
 }
+=head1 SEE ALSO
+
+
+
+=cut
 
 1;
 

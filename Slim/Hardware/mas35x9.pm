@@ -2,10 +2,20 @@ package Slim::Hardware::mas35x9;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006  Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
+
+=head1 NAME
+
+Slim::Hardware::mas35x9
+
+=head1 DESCRIPTION
+
+L<Slim::Hardware::mas35x9>
+
+=cut
 
 use strict;
 

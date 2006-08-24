@@ -2,7 +2,7 @@ package Slim::Control::Queries;
 
 # $Id:  $
 #
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006  Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -14,11 +14,19 @@ package Slim::Control::Queries;
 
 ################################################################################
 
-# This module implements most SlimServer queries and is designed to 
-# be exclusively called through Request.pm and the mechanisms it defines.
+=head1 NAME
 
-# There are no important differences between the code for a query and one for
-# a command. Please check the commented command in Commands.pm.
+Slim::Buttons::Queries
+
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Queries> implements most SlimServer queries and is designed to 
+ be exclusively called through Request.pm and the mechanisms it defines.
+
+ There are no important differences between the code for a query and one for
+ a command. Please check the commented command in Commands.pm.
+
+=cut
 
 use strict;
 
@@ -1900,6 +1908,12 @@ sub _songData {
 
 	return \%returnHash;
 }
+
+=head1 SEE ALSO
+
+L<Slim::Buttons::Command>
+
+=cut
 
 1;
 

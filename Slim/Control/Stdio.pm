@@ -1,6 +1,6 @@
 package Slim::Control::Stdio;
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006  Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -17,11 +17,17 @@ use Slim::Utils::Misc;
 
 use vars qw($stdin);
 
+=head1 NAME
 
-# This module provides a command-line interface to the server via STDIN/STDOUT.
-# see the documentation in Request.pm for details on the commands
-# This does not support shell like escaping. See the CLI documentation.
+Slim::Buttons::Stdio
 
+=head1 DESCRIPTION
+
+L<Slim::Buttons::Stdio> provides a command-line interface to the server via STDIN/STDOUT.
+	see the documentation in Request.pm for details on the commands
+	This does not support shell like escaping. See the CLI documentation.
+
+=cut
 
 my $stdout;
 my $curline = "";
@@ -122,8 +128,11 @@ sub array_to_string {
 	return join " ",  @elements;
 }
 
+=head1 SEE ALSO
 
+L<Slim::Buttons::Request>
 
+=cut
 
 1;
 

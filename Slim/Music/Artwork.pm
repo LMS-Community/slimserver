@@ -2,10 +2,20 @@ package Slim::Music::Artwork;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006  Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
+
+=head1 NAME
+
+Slim::Music::Artwork
+
+=head1 DESCRIPTION
+
+L<Slim::Music::Artwork>
+
+=cut
 
 use strict;
 
@@ -328,5 +338,10 @@ sub _readCoverArtFiles {
 
 	return undef;
 }
+=head1 SEE ALSO
+
+
+
+=cut
 
 1;

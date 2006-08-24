@@ -2,10 +2,20 @@ package Slim::Music::MusicFolderScan;
 
 # $Id
 #
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006  Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
+
+=head1 NAME
+
+Slim::Music::MusicFolderScan
+
+=head1 DESCRIPTION
+
+L<Music::MusicFolderScan>
+
+=cut
 
 use strict;
 use base qw(Class::Data::Inheritable);
@@ -73,6 +83,11 @@ sub startScan {
 
 	Slim::Music::Import->endImporter($class);
 }
+=head1 SEE ALSO
+
+
+
+=cut
 
 1;
 

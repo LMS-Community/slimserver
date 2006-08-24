@@ -7,8 +7,17 @@ package Slim::Display::Graphics;
 
 # $Id$
 
-# Graphics display base class - Contains common display code for all graphics displays
-# New display objects should be created as subclasses of this class
+=head1 NAME
+
+Slim::Display::Graphics
+
+=head1 DESCRIPTION
+
+L<Slim::Display::Graphics>
+ Graphics display base class - Contains common display code for all graphics displays
+ New display objects should be created as subclasses of this class
+
+=cut
 
 use strict;
 
@@ -705,6 +714,13 @@ sub setCustomChar {
 		$fontSymbols{$symbol} = $char;
 	}
 }
+=head1 SEE ALSO
+
+L<Slim::Display::Display>
+
+L<Slim::Display::Lib::Fonts>
+
+=cut
 
 1;
 

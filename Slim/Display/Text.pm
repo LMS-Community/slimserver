@@ -7,9 +7,18 @@ package Slim::Display::Text;
 
 # $Id$
 
-# Display code for text (character) based displays: Slimp3, SB1
-#  - 40 character x 2 lines
-#  - server side animation
+=head1 NAME
+
+Slim::Display::Text
+
+=head1 DESCRIPTION
+
+L<Slim::Display::Text>
+ Display code for text (character) based displays: Slimp3, SB1
+  - 40 character x 2 lines
+  - server side animation
+
+=cut
 
 use strict;
 
@@ -764,6 +773,13 @@ sub sliderBar {
 sub setCustomChar {
 	Slim::Display::Lib::TextVFD::setCustomChar(@_);
 }
+=head1 SEE ALSO
+
+L<Slim::Display::Display>
+
+L<Slim::Display::Lib::TextVFD>
+
+=cut
 
 1;
 

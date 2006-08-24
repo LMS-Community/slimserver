@@ -7,6 +7,16 @@ package Slim::Music::TitleFormatter;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
+=head1 NAME
+
+Slim::Music::TitleFormatter
+
+=head1 DESCRIPTION
+
+L<Slim::Music::TitleFormatter>
+
+=cut
+
 use strict;
 
 use File::Spec::Functions qw(:ALL);
@@ -526,6 +536,11 @@ sub infoFormat {
 
 	return $output;
 }
+=head1 SEE ALSO
+
+
+
+=cut
 
 1;
 

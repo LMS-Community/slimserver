@@ -7,9 +7,18 @@ package Slim::Display::SqueezeboxG;
 
 # $Id$
 
-# Display class for Squeezebox 1 Graphics class display
-#  - 280 x 16 display
-#  - no client side animations
+=head1 NAME
+
+Slim::Display::SqueezeboxG
+
+=head1 DESCRIPTION
+
+L<Slim::Display::SqueezeboxG>
+ Display class for Squeezebox 1 Graphics class display
+  - 280 x 16 display
+  - no client side animations
+
+=cut
 
 use strict;
 
@@ -266,6 +275,11 @@ sub killAnimation {
 	$display->updateMode(0);
 	$display->endShowBriefly if ($animate == 5);
 }
+=head1 SEE ALSO
+
+L<Slim::Display::Graphics>
+
+=cut
 
 1;
 

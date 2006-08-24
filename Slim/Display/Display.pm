@@ -7,7 +7,16 @@ package Slim::Display::Display;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-# Base for display class - contains display functions common to all display types
+=head1 NAME
+
+Slim::Display::Display
+
+=head1 DESCRIPTION
+
+L<Slim::Display::Display>
+ Base for display class - contains display functions common to all display types
+
+=cut
 
 use strict;
 
@@ -834,6 +843,11 @@ sub subString {
 	return $newstring;
 }
 
+=head1 SEE ALSO
+
+
+
+=cut
 
 1;
 
