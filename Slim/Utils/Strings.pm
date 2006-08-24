@@ -9,7 +9,7 @@ package Slim::Utils::Strings;
 
 =head1 NAME
 
-Slim::Formats::AIFF
+Slim::Utils::Strings
 
 =head1 SYNOPSIS
 
@@ -21,7 +21,8 @@ my $localstring = Slim::Utils::Strings('EMPTY');
  international translation.  
 
 =head1 EXPORTS
- string()
+
+string()
 
 =cut
 
