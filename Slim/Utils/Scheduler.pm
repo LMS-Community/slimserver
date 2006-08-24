@@ -7,24 +7,39 @@ package Slim::Utils::Scheduler;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-# This module implements a simple scheduler for cooperative multitasking 
-#
-# XXXXX - The main server does not use this code anymore, since scanning has
-# been split into a separate process. 3rd party plugins, such as LazySearch &
-# Trackstat, which need to do background processing of the database set tasks
-# for the scheduler. XXXX
-#
-# If you need to do something that will run for more than a few milliseconds,
-# write it as a function which works on the task incrementally, returning 1 when
-# it has more work to do, 0 when finished.
-#
-# Then add it to the list of background tasks using add_task, giving a pointer to
-# your function and a list of arguments. 
-#
-# Background tasks should be run whenever the server has extra time on its hands, ie,
-# when we'd otherwise be sitting in select. To run background tasks, call run_tasks,
-# passing as the argument the amount of time (in seconds; 0.1 or less is
-# recommended) that you want to spend on them.
+
+=head1 NAME
+
+Slim::Utils::Scheduler
+
+=head1 SYNOPSIS
+
+Slim::Utils::Scheduler::add_task(\&scanFunction);
+
+Slim::Utils::Scheduler::remove_task(\&scanFunction);
+
+=head1 DESCRIPTION
+
+ This module implements a simple scheduler for cooperative multitasking 
+
+ XXXXX - The main server does not use this code anymore, since scanning has
+ been split into a separate process. 3rd party plugins, such as LazySearch &
+ Trackstat, which need to do background processing of the database set tasks
+ for the scheduler. XXXX
+
+ If you need to do something that will run for more than a few milliseconds,
+ write it as a function which works on the task incrementally, returning 1 when
+ it has more work to do, 0 when finished.
+
+ Then add it to the list of background tasks using add_task, giving a pointer to
+ your function and a list of arguments. 
+
+ Background tasks should be run whenever the server has extra time on its hands, ie,
+ when we'd otherwise be sitting in select. To run background tasks, call run_tasks,
+ passing as the argument the amount of time (in seconds; 0.1 or less is
+ recommended) that you want to spend on them.
+
+=cut
 
 use strict;
 
@@ -37,6 +52,16 @@ my $lastpass = 0;
 
 our $schedulerTask = Slim::Utils::PerfMon->new('Scheduler Task', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]), 1;
 
+=head1 METHODS
+
+=head2 add_task( @task)
+
+ Add a new task to the scheduler. Takes an array for task identifier.  First element is a 
+ code reference to the sheduled subroutine.  Subsequent elements are the args required by 
+ the newly scheduled task.
+
+=cut
+
 sub add_task {
 	my @task = @_;
 
@@ -44,6 +69,16 @@ sub add_task {
 
 	push @background_tasks, \@task;
 }
+
+=head2 remove_task( $taskref, [ @taskargs ])
+
+ Remove a task from teh scheduler.  The first argument is the 
+ reference to the scheduled function
+ 
+ Optionally, the arguments required when starting the scheduled task are
+ included for identifying the correct task.
+
+=cut
 
 sub remove_task {
 	my ($taskref, @taskargs) = @_;
@@ -68,8 +103,14 @@ sub remove_task {
 	}			
 }
 
-# run one background task
-# returns 0 if there is nothing to run
+
+=head2 run_tasks( )
+
+ run one background task
+ returns 0 if there is nothing to run
+
+=cut
+
 sub run_tasks {
 	return 0 if scalar !@background_tasks;
 
