@@ -69,8 +69,12 @@ our %functions = (
 
 	'knob' => sub {
 		my ($client, $funct, $functarg) = @_;
+		
+		my $dir = $client->knobPos - $client->param('listIndex');
+		$dir    = 1  if $dir < -1;
+		$dir    = -1 if $dir > 1;
 
-		changePos($client, $client->knobPos - $client->param('listIndex'), $funct);
+		changePos($client, $dir, $funct);
 	},
 
 	'numberScroll' => sub {
