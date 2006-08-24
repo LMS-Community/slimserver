@@ -181,8 +181,13 @@ my %functions = (
 		changePos($client, 1, $funct);
 	},
 	'knob' => sub {
-			my ($client,$funct,$functarg) = @_;
-			changePos($client, $client->knobPos() - $client->param('listIndex') ,$funct,);
+		my ($client,$funct,$functarg) = @_;
+
+		my $dir = $client->knobPos - $client->param('listIndex');
+		$dir    = 1  if $dir < -1;
+		$dir    = -1 if $dir > 1;
+
+		changePos($client, $dir, $funct);
 	},
 	'numberScroll' => sub {
 		my ($client, $funct, $functarg) = @_;
@@ -310,6 +315,9 @@ sub changePos {
 	}
 
 	my $newposition = Slim::Buttons::Common::scroll($client, $dir, scalar(@$listRef), $listIndex);
+	
+	$::d_ui && msgf("changepos: newpos: $newposition = scroll dir:$dir listIndex: $listIndex listLen: %d\n", scalar(@$listRef));
+	
 	my $valueRef = $client->param('valueRef');
 
 	$$valueRef = $listRef->[$newposition];
