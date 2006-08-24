@@ -204,128 +204,196 @@ sub addMode {
 # Common functions for more than one mode:
 our %functions = (
 	'dead' => sub  {},
+
 	'fwd' => sub  {
 		my $client = shift;
+
 		# ignore if we aren't playing anything or if we're scanning
 		my $playlistlen = Slim::Player::Playlist::count($client);
 		my $rate = Slim::Player::Source::rate($client);
-		
+
 		if ($playlistlen == 0 || ($rate != 0 && $rate != 1)) {
 			return;
 		}
+
 		$client->execute(["playlist", "jump", "+1"]);
 		$client->showBriefly($client->currentSongLines()) unless suppressStatus($client);
 	},
+
 	'rew' => sub  {
 		my $client = shift;
+
 		# ignore if we aren't playing anything or if we're scanning
 		my $playlistlen = Slim::Player::Playlist::count($client);
 		my $rate = Slim::Player::Source::rate($client);
-		
+
 		if ($playlistlen == 0 || ($rate != 0 && $rate != 1)) {
 			return;
 		}
 
 		my $noplay = Slim::Player::Source::playmode($client) eq 'pause';
 
-		#either starts the same song over, or the previous one, depending on whether we jumped back.
-		if (Time::HiRes::time() - Slim::Hardware::IR::lastIRTime($client) < 1.0) {  #  less than second, jump back to the previous song
+		# either starts the same song over, or the previous one, depending on whether we jumped back.
+		if (Time::HiRes::time() - Slim::Hardware::IR::lastIRTime($client) < 1.0) {
+
+			# less than second, jump back to the previous song
 			$client->execute(["playlist", "jump", "-1", $noplay]);
+
 		} else {
+
 			# otherwise, restart this song.
 			$client->execute(["playlist", "jump", "+0", $noplay]);
 		}
 
 		$client->showBriefly($client->currentSongLines()) unless suppressStatus($client);
 	},
-	
+
 	'jump' => sub  {
-		my $client = shift;
-		my $funct = shift;
+		my $client   = shift;
+		my $funct    = shift;
 		my $functarg = shift;
+
 		# ignore if we aren't playing anything or if we're scanning
 		my $playlistlen = Slim::Player::Playlist::count($client);
-		my $rate = Slim::Player::Source::rate($client);
-		
-		if (!defined $functarg) { $functarg = ''; }
+		my $rate        = Slim::Player::Source::rate($client);
 
 		if ($playlistlen == 0) {
 			return;
 		}
+
+		if (!defined $functarg) {
+			$functarg = '';
+		}
+
 		# ignore if we're scanning that way already			
 		if ($rate > 1 && $functarg eq 'fwd') {
 			return;
 		}
+
 		if ($rate < 0 && $functarg eq 'rew') {
 			return;
 		}
+
 		# if we aren't scanning that way, then use it to stop scanning  and just play.
 		if ($rate != 0 && $rate != 1) {
+
 			$client->execute(["play"]);
+
 			return;	
 		}
-		
-		my $noplay = Slim::Player::Source::playmode($client) eq 'pause';
-		#either starts the same song over, or the previous one, or the next one depending on whether/how we jumped
 
+		my $noplay = Slim::Player::Source::playmode($client) eq 'pause';
+
+		# either starts the same song over, or the previous one, or
+		# the next one depending on whether/how we jumped
 		if ($functarg eq 'rew') { 
+
 			my $now = Time::HiRes::time();
+
 			if (Slim::Player::Source::songTime($client) < 5 || Slim::Player::Source::playmode($client) eq "stop") {
-				#jump back a song if stopped, invalid songtime, or current song has been playing less
-				#than 5 seconds (use modetime instead of now when paused)
+
+				# jump back a song if stopped, invalid
+				# songtime, or current song has been playing
+				# less than 5 seconds (use modetime instead of now when paused)
 				$client->execute(["playlist", "jump", "-1", $noplay]);
-			} else { #restart current song
+
+			} else {
+
+				#restart current song
 				$client->execute(["playlist", "jump", "+0", $noplay]);
 			}
-			
-		} elsif ($functarg eq 'fwd') { # jump to next song
+
+		} elsif ($functarg eq 'fwd') {
+
+			# jump to next song
 			$client->execute(["playlist", "jump", "+1", $noplay]);
-		} else { #restart current song
+
+		} else {
+
+			#restart current song
 			$client->execute(["playlist", "jump", "+0", $noplay]);
 		}
 
 		$client->showBriefly($client->currentSongLines()) unless suppressStatus($client);
 	},
+
 	'jumpinsong' => sub {
-		my ($client,$funct,$functarg) = @_;
-		my $dir;
+		my ($client, $funct, $functarg) = @_;
+
+		my $dir     = 0;
 		my $timeinc = 1;
+
 		if (!defined $functarg) {
+
 			return;
+
 		} elsif ($functarg =~ /(.+?)_(\d+)_(\d+)/) {
+
 			$dir = ($1 eq 'fwd' ? '+' : '-') . "$2";
+
 		} elsif ($functarg eq 'fwd') {
+
 			$dir = "+$timeinc";
+
 		} elsif ($functarg eq 'rew') {
+
 			$dir = "-$timeinc";
+
 		} else {
+
 			return;
 		}
+
 		$client->execute(['gototime', $dir]);
 	},
+
 	'scan' => sub {
-		my ($client,$funct,$functarg) = @_;
+		my ($client, $funct, $functarg) = @_;
+
 		my $rate = Slim::Player::Source::rate($client);
+
 		if (!defined $functarg) {
+
 			return;
+
 		} elsif ($functarg eq 'fwd') {
+
 			Slim::Buttons::Common::pushMode($client, 'playlist');
-			if ($rate < 0) { $rate = 1; }
-			return if abs($rate) == $SCAN_RATE_MAX_MULTIPLIER;
+
+			if ($rate < 0) {
+				$rate = 1;
+			}
+
+			if (abs($rate) == $SCAN_RATE_MAX_MULTIPLIER) {
+				return;
+			}
+
 			$client->execute(['rate', $rate * $SCAN_RATE_MULTIPLIER]);
+
 		} elsif ($functarg eq 'rew') {
+
 			Slim::Buttons::Common::pushMode($client, 'playlist');
-			if ($rate > 0) { $rate = 1; }
-			return if abs($rate) == $SCAN_RATE_MAX_MULTIPLIER;
+
+			if ($rate > 0) {
+				$rate = 1;
+			}
+
+			if (abs($rate) == $SCAN_RATE_MAX_MULTIPLIER) {
+				return;
+			}
+
 			$client->execute(['rate', -abs($rate * $SCAN_RATE_MULTIPLIER)]);
 		}
-		$client->update();
 
+		$client->update();
 	},
+
 	'pause' => sub  {
 		my $client = shift;
+
 		# ignore if we aren't playing anything
 		my $playlistlen = Slim::Player::Playlist::count($client);
+
 		if ($playlistlen == 0) {
 			return;
 		}
@@ -334,27 +402,35 @@ our %functions = (
 		my $wantmode = (Slim::Player::Source::playmode($client) eq 'pause') ? '0' : '1';
 
 		$client->execute(["pause", $wantmode]);
-# Fred: done in the command
-#		if (Slim::Player::Source::playmode($client) eq 'play' && Slim::Player::Source::rate($client) != 1) {
-#			Slim::Player::Source::rate($client,1);
-#		}
+
 		$client->showBriefly($client->currentSongLines()) unless suppressStatus($client);
 	},
+
 	'stop' => sub  {
 		my $client = shift;
+
 		if (Slim::Player::Playlist::count($client) == 0) {
+
 			$client->showBriefly($client->string('PLAYLIST_EMPTY'), "");
+
 		} else {
+
 			$client->execute(["stop"]);
+
 			Slim::Buttons::Common::pushMode($client, 'playlist');
+
 			$client->showBriefly($client->string('STOPPING'), "");
 		}
 	},
+
 	'menu_pop' => sub  {
 		my $client = shift;
+
 		Slim::Buttons::Common::popMode($client);
+
 		$client->update();
 	},
+
 	'menu' => sub  {
 		my $client = shift;
 		my $button = shift || '';
@@ -471,104 +547,148 @@ our %functions = (
 		}
 
 		Slim::Buttons::Home::jump($client,$jump);
+
 		$client->update();
 	},
+
 	'brightness' => sub  {
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
 		
-		my $brightmode;
 		my $mode = Slim::Buttons::Common::mode($client);
 
 		if (!defined $buttonarg || ($mode eq 'block' && $client->modeParam('block.name') eq 'upgrade')) {
 			return;
 		}
-		
-		if ($client->power()) {
+
+		my $brightmode = 'powerOffBrightness';
+
+		if ($client->power) {
+
 			$brightmode = 'powerOnBrightness';
-			
-			if (($mode eq $client->prefGet('screensaver') ||
-					$mode eq $client->prefGet('idlesaver') || 
-						$client->prefGet('autobrightness')) 
-						&&
-						(	Slim::Hardware::IR::lastIRTime($client) &&
-							Slim::Hardware::IR::lastIRTime($client) < Time::HiRes::time() - $client->prefGet("screensavertimeout")
-						)
-					) {
-						
-				$brightmode = 'idleBrightness';
-			
+
+			my $lastIR  = Slim::Hardware::IR::lastIRTime($client);
+			my $saver   = 0;
+			my $timeout = Time::HiRes::time() - $client->prefGet('screensavertimeout');
+
+			if ($mode eq $client->prefGet('screensaver') ||
+			    $mode eq $client->prefGet('idlesaver')) {
+
+				$saver = 1;
 			}
-		} else {
-			$brightmode = 'powerOffBrightness';
+
+			if (($saver || $client->prefGet('autobrightness')) && ($lastIR && $lastIR < $timeout)) {
+
+				$brightmode = 'idleBrightness';
+			}
 		}
-		
+
 		$::d_ui && msg("UI: Brightness using $brightmode during mode: $mode\n");
+
 		my $newBrightness;
+
 		if ($buttonarg eq 'toggle') {
+
 			$newBrightness = $client->brightness() - 1;
+
 			if ($newBrightness < 0) {
+
 				$newBrightness = $client->maxBrightness();
 			}
+
 		} else {
-			$newBrightness = ($buttonarg eq 'down') ? $client->brightness() - 1 : $client->brightness() + 1;
-			if ($newBrightness > $client->maxBrightness()) { $newBrightness = $client->maxBrightness();}
-			if ($newBrightness < 0) { $newBrightness = 0;}
+
+			if ($buttonarg eq 'down') {
+
+				$newBrightness = $client->brightness() - 1;
+
+			} else {
+	
+				$newBrightness = $client->brightness() + 1;
+			}
+
+			if ($newBrightness > $client->maxBrightness()) {
+
+				$newBrightness = $client->maxBrightness();
+			}
+
+			if ($newBrightness < 0) {
+				$newBrightness = 0;
+			}
 		}
 
 		$client->prefSet($brightmode, $newBrightness);
+
 		$client->brightness($newBrightness);
 	},
+
 	'playdisp' => sub  {
-		my $client = shift;
-		my $button = shift;
+		my $client    = shift;
+		my $button    = shift;
 		my $buttonarg = shift;
-		my $playdisp = undef;
+		my $playdisp  = undef;
+
 		if (mode($client) eq 'playlist') {
-			Slim::Buttons::Playlist::playdisp($client,$button, $buttonarg);
+
+			Slim::Buttons::Playlist::playdisp($client, $button, $buttonarg);
 			return;
 		}
-		unless (defined $buttonarg) { $buttonarg = 'toggle'; };
+
+		if (!defined $buttonarg) {
+			$buttonarg = 'toggle';
+		}
+
 		if ($buttonarg eq 'toggle') {
+
 			$::d_ui && msg("Switching to playlist view\n");
+
 			if (Slim::Player::Playlist::count($client) == 0) {
+
 				$client->showBriefly($client->string('PLAYLIST_EMPTY'), "");
+
 			} else {
+
 				Slim::Buttons::Common::setMode($client, 'home');
 				Slim::Buttons::Home::jump($client, 'playlist');
 				Slim::Buttons::Common::pushModeLeft($client, 'playlist');
 			}
-		} else {
-			if ($buttonarg =~ /^[0-5]$/) {
-				$client->prefSet("playingDisplayMode", $buttonarg);
-			}
+
+		} elsif ($buttonarg =~ /^[0-5]$/) {
+
+			$client->prefSet("playingDisplayMode", $buttonarg);
 		}
 	},
+
 	'visual' => sub {
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
 		
 		my $visModes = $client->prefGetArrayMax('visualModes') + 1;
-		my $vm = $client->prefGet('visualMode');
+		my $vm       = $client->prefGet('visualMode');
 
-		if (!defined $vm || $vm > $visModes) { $vm = 0; };
+		if (!defined $vm || $vm > $visModes) {
+			$vm = 0;
+		}
 		
-		unless (defined $buttonarg) { $buttonarg = 'toggle'; };
+		if (!defined $buttonarg) {
+			$buttonarg = 'toggle';
+		}
 
 		if ($button eq 'visual_toggle') {
+
 			$vm = ($vm + 1) % $visModes;
-		} else {
-			if (defined $buttonarg && $buttonarg < $visModes) {
-				$vm = $buttonarg;
-			}
+
+		} elsif (defined $buttonarg && $buttonarg < $visModes) {
+
+			$vm = $buttonarg;
 		}
 
 		$client->prefSet('visualMode', $vm);
-		
+
 		updateScreen2Mode($client);
-		
+
 		$client->update();
 	},
 
@@ -579,10 +699,10 @@ our %functions = (
 		my $playdisp = undef;
 
 		if (mode($client) ne 'search') {
-			Slim::Buttons::Home::jumpToMenu($client,"SEARCH");
+			Slim::Buttons::Home::jumpToMenu($client, "SEARCH");
 			$client->update();
 		}
-	},	
+	},
 
 	'browse' => sub  {
 		my $client = shift;
@@ -591,7 +711,9 @@ our %functions = (
 		my $playdisp = undef;
 
 		setMode($client, 'home');
-		Slim::Buttons::Home::jumpToMenu($client,"BROWSE_MUSIC");
+
+		Slim::Buttons::Home::jumpToMenu($client, "BROWSE_MUSIC");
+
 		$client->update();
 	},
 
@@ -600,7 +722,7 @@ our %functions = (
 		my $button    = shift;
 		my $buttonarg = shift;
 		my $playdisp  = undef;
-		
+
 		if (defined $buttonarg && $buttonarg eq "add") {
 
 			my $list = $client->param('listRef');
@@ -637,27 +759,39 @@ our %functions = (
 			Slim::Buttons::Home::jump($client, 'FAVORITES');
 			Slim::Buttons::Common::pushModeLeft($client, 'FAVORITES');
 		}
-	},	
+	},
+
+	# pressing recall toggles the repeat.
 	'repeat' => sub  {
-		# pressing recall toggles the repeat.
-		my $client = shift;
-		my $button = shift;
+		my $client    = shift;
+		my $button    = shift;
 		my $buttonarg = shift;
-		my $repeat = undef;
+		my $repeat    = undef;
+
 		if (defined $buttonarg && $buttonarg =~ /^[0-2]$/) {
 			$repeat = $buttonarg;
 		}
+
 		$client->execute(["playlist", "repeat", $repeat]);
+
 		# display the fact that we are (not) repeating
+
 		if (Slim::Player::Playlist::repeat($client) == 0) {
+
 			$client->showBriefly($client->string('REPEAT_OFF'), "");
+
 		} elsif (Slim::Player::Playlist::repeat($client) == 1) {
+
 			$client->showBriefly($client->string('REPEAT_ONE'), "");
+
 		} elsif (Slim::Player::Playlist::repeat($client) == 2) {
+
 			$client->showBriefly($client->string('REPEAT_ALL'), "");
 		}
 	},
 
+	# XXXX This mode is used by the Transporter knob - _NOT_ by the remote
+	# volume buttons, which are defined below. They should be combined.
 	'volumemode' => sub {
 		my $client = shift;
 		my $button = shift;
@@ -674,67 +808,77 @@ our %functions = (
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
-		
-		mixer($client,'volume',$buttonarg);
-	},
 
+		mixer($client, 'volume', $buttonarg);
+	},
 
 	'pitch' => sub {
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
 
-		mixer($client,'pitch',$buttonarg);
+		mixer($client, 'pitch', $buttonarg);
 	},
+
 	'bass' => sub {
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
 
-		mixer($client,'bass',$buttonarg);
+		mixer($client, 'bass', $buttonarg);
 	},
+
 	'treble' => sub {
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
 
-		mixer($client,'treble',$buttonarg);
+		mixer($client, 'treble', $buttonarg);
 	},
+
 	'muting' => sub  {
 		my $client = shift;
-		
+
 		# try to avoid toggle commands, they make life difficult for listeners
 		my $mute = !($client->prefGet("mute"));
-		
+
 		$client->execute(["mixer", "muting", $mute]);
 	},
+
 	'sleep' => sub  {
 		my $client = shift;
 		
 		# Bug: 2151 some extra stuff to add the option to sleep after the current song.
 		# first make sure we're playing, and its a valid song.
 		my $remaining;
+
 		if (Slim::Player::Source::playingSong($client) && $client->playmode =~ /play/) { 
+
 			my $dur = Slim::Player::Source::playingSongDuration($client);
-			
+
 			# calculate the time based remaining, in seconds then into fractional minutes.
 			$remaining = $dur - Slim::Player::Source::songTime($client);
 			$remaining = $remaining / 60;
 		}
-		
+
 		# add the 'after this song' option only if there is a defined value.
 		my @sleepChoices = $remaining ? (0, $remaining, 15,30,45,60,90) : (0,15,30,45,60,90);
-		my $i;
+		my $i = 0;
+
 		# find the next value for the sleep timer
 		for ($i = 0; $i <= $#sleepChoices; $i++) {
+
 			if ( $sleepChoices[$i] > $client->currentSleepTime() ) {
 				last;
 			}
 		}
+
 		if ($i > $#sleepChoices) {
 			$i = 0;
 		}
+
 		my $sleepTime = $sleepChoices[$i];
+
 		if ($sleepTime == 0) {
 			$client->showBriefly($client->string('CANCEL_SLEEP') , '');
 		} else {
@@ -743,6 +887,7 @@ our %functions = (
 
 		$client->execute(["sleep", $sleepTime * 60]);
 	},
+
 	'power' => sub  {
 		my $client = shift;
 		my $button = shift;
@@ -756,86 +901,131 @@ our %functions = (
 		} else {
 			$power = $client->power() ? 0 : 1;
 		}
+
 		$client->execute(["power", $power]);
 	},
+
 	'shuffle' => sub  {
 		my $client = shift;
 		my $button = shift;
 		my $shuffle = undef;
+
 		if ($button eq 'shuffle_on') {
 			$shuffle = 1;
 		} elsif ($button eq 'shuffle_off') {
 			$shuffle = 0;
 		}
+
 		$client->execute(["playlist", "shuffle" , $shuffle]);
 		
 		if (Slim::Player::Playlist::shuffle($client) == 2) {
-				$client->showBriefly($client->string('SHUFFLE_ON_ALBUMS'), "");
+
+			$client->showBriefly($client->string('SHUFFLE_ON_ALBUMS'), "");
+
 		} elsif (Slim::Player::Playlist::shuffle($client) == 1) {
-				$client->showBriefly($client->string('SHUFFLE_ON_SONGS'), "");
+
+			$client->showBriefly($client->string('SHUFFLE_ON_SONGS'), "");
+
 		} else {
-				$client->showBriefly($client->string('SHUFFLE_OFF'), "");
+
+			$client->showBriefly($client->string('SHUFFLE_OFF'), "");
 		}
 	},
+
 	'titleFormat' => sub  {
-		# rotate the titleFormat
 		my $client = shift;
-		$client->prefSet("titleFormatCurr"
-				, ($client->prefGet("titleFormatCurr") + 1) % ($client->prefGetArrayMax("titleFormat") + 1));
+
+		# rotate the titleFormat
+		$client->prefSet("titleFormatCurr" , 
+			($client->prefGet("titleFormatCurr") + 1) %
+			($client->prefGetArrayMax("titleFormat") + 1)
+		);
+
 		$client->update();
 	},
+
  	'datetime' => sub  {
+		my $client = shift;
+
  		# briefly display the time/date
- 		shift->showBriefly(dateTime(),3);
+ 		$client->showBriefly(dateTime(), 3);
  	},
+
 	'textsize' => sub  {
 		my $client = shift;
 		my $button = shift;
+
 		my $doublesize = $client->textSize;
+
 		if ($button eq 'textsize_large') {
+
 			$doublesize = $client->maxTextSize;
+
 		} elsif ($button eq 'textsize_medium') {
+
 			$doublesize = 1;
+
 		} elsif ($button eq 'textsize_small') {
+
 			$doublesize = 0;
+
 		} elsif ($button eq 'textsize_toggle') {
+
 			$doublesize++;
 		}
-		
+
 		if ($doublesize && $doublesize > $client->maxTextSize) {
 			$doublesize = 0;
 		}
-	
+
 		$client->textSize($doublesize);
 		$client->update();
 	},
+
 	'clearPlaylist' => sub {
 		my $client = shift;
+
 		$client->showBriefly($client->string('CLEARING_PLAYLIST'), '');
+
 		$client->execute(['playlist', 'clear']);
 	},
+
 	'modefunction' => sub {
-		my ($client,$funct,$functarg) = @_;
+		my ($client, $funct, $functarg) = @_;
+
 		return if !$functarg;
-		my ($mode,$modefunct) = split('->',$functarg,2);
+
+		# XXXX - WTF?
+		my ($mode,$modefunct) = split('->', $functarg, 2);
+
 		return if !exists($modeFunctions{$mode});
+
 		my $coderef = $modeFunctions{$mode}{$modefunct};
 		my $modefunctarg;
+
  		if (!$coderef && ($modefunct =~ /(.+?)_(.+)/) && ($coderef = $modeFunctions{$mode}{$1})) {
  			$modefunctarg = $2;
  		}
-		&$coderef($client,$modefunct,$modefunctarg) if $coderef;
-	}
-	,'changeMap' => sub {
-		my ($client,$funct,$functarg) = @_;
-		return if !$functarg;
-		my $mapref = Slim::Hardware::IR::mapfiles();
-		my %maps = reverse %$mapref;
-		return if !exists($maps{$functarg});
-		$client->prefSet('irmap',$maps{$functarg});
-		$client->showBriefly($client->string('SETUP_IRMAP') . ':', $functarg);
-	}
 
+		&$coderef($client,$modefunct,$modefunctarg) if $coderef;
+	},
+
+	'changeMap' => sub {
+		my ($client, $funct, $functarg) = @_;
+
+		return if !$functarg;
+
+		my $mapref = Slim::Hardware::IR::mapfiles();
+		my %maps   = reverse %$mapref;
+
+		if (!exists($maps{$functarg})) {
+			return;
+		}
+
+		$client->prefSet('irmap',$maps{$functarg});
+
+		$client->showBriefly($client->string('SETUP_IRMAP') . ':', $functarg);
+	},
 );
 
 sub getFunction {
@@ -843,23 +1033,40 @@ sub getFunction {
  	my $function = shift;
  	my $clientMode = shift;
  	my $coderef;
- 	
+
  	$clientMode = mode($client) unless defined($clientMode);
+
 	if ($coderef = $modeFunctions{$clientMode}{$function}) {
+
  		return $coderef;
+
  	} elsif (($function =~ /(.+?)_(.+)/) && ($coderef = $modeFunctions{$clientMode}{$1})) {
- 		return $coderef,$2;
+
+ 		return ($coderef, $2);
+
  	} elsif ($coderef = $functions{$function}) {
+
  		return $coderef;
+
  	} elsif (($function =~ /(.+?)_(.+)/) && ($coderef = $functions{$1})) {
- 		return $coderef,$2
+
+ 		return ($coderef, $2)
+
  	} else {
- 		return;
- 	}
+
+		return;
+	}
 }
 
-# setFunction enables a Plugin to affect all common modes.
-# (originally added to allow Favorites plugin to make holding a number be a shortcut to playing a users favorite station.)
+=head2 setFunction( $mapping, $function )
+
+setFunction enables a Plugin to affect all common modes. 
+
+Originally added to allow Favorites plugin to make holding a number be a
+shortcut to playing a users favorite station.
+
+=cut
+
 sub setFunction {
 	my $mapping = shift;
 	my $function = shift;
@@ -867,14 +1074,15 @@ sub setFunction {
 	$functions{$mapping} = $function;
 }
 
-
 sub pushButton {
 	my $sub = shift;
 	my $client = shift;
 
 	no strict 'refs';
-	my ($subref,$subarg) = getFunction($client,$sub);
-	&$subref($client,$sub,$subarg);
+
+	my ($subref, $subarg) = getFunction($client,$sub);
+
+	&$subref($client, $sub, $subarg);
 }
 
 # DEPRECATED: Use Slim::Input::Time instead
@@ -886,15 +1094,22 @@ sub scroll {
 	scroll_dynamic(@_);
 }
 
-=head2 scrollDynamic ( $client, $direction, $listlength, $currentPosition)
+=head2 scrollDynamic ( $client, $direction, $listlength, $currentPosition )
 
-This is a common UI function for moving up or down through a list, accelerating as the scrolling continues.
+This is a common UI function for moving up or down through a list,
+accelerating as the scrolling continues.
+
 Four arguments are required:
+
 The $client object
-$direction is typically either 1 or -1, but any positive or negative number will properly decide direction
+
+$direction is typically either 1 or -1, but any positive or negative number
+will properly decide direction
+
 $listlength is the total number of items in the current list
-$currentPosition is the zero-indexed position of the current item shown on the player screen, from which the scroll 
-is required to move.
+
+$currentPosition is the zero-indexed position of the current item shown on the
+player screen, from which the scroll is required to move.
 
 The IR holdtime triggers acceleration of the scrolling effect.
 

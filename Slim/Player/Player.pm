@@ -663,62 +663,74 @@ sub textSongTime {
 	my $min = int(($delta - $hrs * 60 * 60) / 60);
 	my $sec = $delta - ($hrs * 60 * 60 + $min * 60);
 	
-	my $time;
 	if ($hrs) {
-		$time = sprintf("%s%d:%02d:%02d", $sign, $hrs, $min, $sec);
+
+		return sprintf("%s%d:%02d:%02d", $sign, $hrs, $min, $sec);
+
 	} else {
-		$time = sprintf("%s%02d:%02d", $sign, $min, $sec);
+
+		return sprintf("%s%02d:%02d", $sign, $min, $sec);
 	}
-	return $time;
 }
 
 sub mixerDisplay {
 	my $client = shift;
 	my $feature = shift;
 	
-	return unless $feature =~ /(?:volume|pitch|bass|treble)/;
+	if ($feature !~ /(?:volume|pitch|bass|treble)/) {
+		return;
+	}
 
 	my $featureValue = $client->prefGet($feature);
-	return unless defined $featureValue;
 
-	my $featureHeader;
-	my $mid   = $client->mixerConstant($feature,'mid');
-	my $scale = $client->mixerConstant($feature,'scale');
-	
-	my $headerValue = $client->mixerConstant($feature,'balanced') ? 
-		int( ( ($featureValue - $mid) * $scale) + 0.5) :
-		int( ( $featureValue * $scale) + 0.5);
+	if (!defined $featureValue) {
+		return;
+	}
+
+	my $mid   = $client->mixerConstant($feature, 'mid');
+	my $scale = $client->mixerConstant($feature, 'scale');
+
+	my $headerValue = '';
+
+	if ($client->mixerConstant($feature, 'balanced')) {
+
+		$headerValue = int( ( ($featureValue - $mid) * $scale) + 0.5);
+
+	} else {
+
+		$headerValue = int( ( $featureValue * $scale) + 0.5);
+	}
 
 	if ($feature eq 'volume' && $featureValue <= 0) {
+
 		$headerValue = $client->string('MUTED');
+
 	} elsif ($feature eq 'pitch') {
+
 		$headerValue .= '%';
 	}
-	
-	$featureHeader = $client->string(uc($feature)) . " ($headerValue)";
 
-	# hack attack: turn off visualizer when showing volume, etc.
+	my $featureHeader = $client->string(uc($feature)) . " ($headerValue)";
+
+	# XXXX hack attack: turn off visualizer when showing volume, etc.
 	my $oldvisu = $client->modeParam('visu');
+
 	$client->modeParam('visu', [0]);
 
-	my @lines = Slim::Buttons::Input::Bar::lines($client, $featureValue, $featureHeader, {
-		'min' => $client->mixerConstant($feature,'min'),
-		'mid' => $mid,
-		'max' => $client->mixerConstant($feature,'max'),
+	my $parts = Slim::Buttons::Input::Bar::lines($client, $featureValue, $featureHeader, {
+		'min'       => $client->mixerConstant($feature, 'min'),
+		'mid'       => $mid,
+		'max'       => $client->mixerConstant($feature, 'max'),
 		'noOverlay' => 1,
 	});
 
 	# trim off any overlay for showBriefly
-	$client->display->showBriefly(@lines[0,1], { 'name' => 'mixer' } );
+	$client->display->showBriefly($parts, { 'name' => 'mixer' } );
 
+	# Turn the visualizer back to it's old value.
 	$client->modeParam('visu', $oldvisu);	
 }
 
 1;
 
 __END__
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

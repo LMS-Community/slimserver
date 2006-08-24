@@ -1412,6 +1412,8 @@ sub execute {
 	}
 	
 	# call the execute function
+	my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($self->{'_func'});
+
 	if (my $funcPtr = $self->{'_func'}) {
 
 		# notify for commands
@@ -1424,7 +1426,7 @@ sub execute {
 		eval { &{$funcPtr}($self) };
 
 		if ($@) {
-			errorMsg("Request: Error when trying to run function coderef: [$@]\n");
+			errorMsg("Request: Error when trying to run function coderef [$funcName]: [$@]\n");
 			$self->setStatusBadDispatch();
 			$self->dump('Request');
 		}
@@ -1433,8 +1435,7 @@ sub execute {
 	# contine execution unless the Request is still work in progress (async)...
 	$self->executeDone() unless $self->isStatusProcessing();
 
-	$::perfmon && $now && $requestTask->log(Time::HiRes::time() - $now) &&
-		msg(sprintf("    Execute: %s\n", Slim::Utils::PerlRunTime::realNameForCodeRef($self->{'_func'})), undef, 1);
+	$::perfmon && $now && $requestTask->log(Time::HiRes::time() - $now) && msg("    Execute: $funcName\n");
 }
 
 # perform end of execution, calling the callback etc...

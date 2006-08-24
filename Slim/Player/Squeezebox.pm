@@ -160,19 +160,19 @@ sub play {
 	$client->stream('s', $paused, $format, $url, $reconnect, $loop, $replay_gain);
 
 	# make sure volume is set, without changing temp setting
-	$client->volume($client->volume(),
-					defined($client->tempVolume()));
+	$client->volume($client->volume(), defined($client->tempVolume()));
 
 	# if this is a remote stream, start playback as soon as we have enough buffer filled
 	my $quickstart = Slim::Music::Info::isRemoteURL($url) ? 0.125 : undef;
 
 	Slim::Utils::Timers::killTimers($client, \&quickstart);
+
 	if ($quickstart) {
 		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + $quickstart, \&quickstart );
 	}
-	
+
 	$client->lastSong($url);
-	
+
 	return 1;
 }
 

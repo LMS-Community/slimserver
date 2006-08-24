@@ -46,7 +46,7 @@ Avilable Parameters and their defaults:
  'max'             = 100   # maximum value for slider scale
  'mid'             = 0     # midpoint value for marking the division point for a balance bar.
  'midIsZero'       = 1     # set to 0 if you don't want the mid value to be interpreted as zero
- 'incremen't       = 2.5   # step value for each bar character or button press.
+ 'increment'       = 2.5   # step value for each bar character or button press.
  'barOnDouble'     = 0     # set to 1 if the bar is preferred when using large text.
  'smoothing'       = 0     # set to 1 if you want the character display to use custom chars to 
                            # smooth the movement of the bar.
@@ -103,9 +103,9 @@ sub init {
 		}
 	}
 	
-	my $min = $client->param('min');
-	my $mid = $client->param('mid');
-	my $max = $client->param('max');
+	my $min  = $client->param('min');
+	my $mid  = $client->param('mid');
+	my $max  = $client->param('max');
 	my $step = $client->param('increment');
 
 	my $listRef = [];

@@ -784,23 +784,26 @@ sub holdTime {
 	return $holdtime;
 }
 
-#
-# calls the appropriate handler for the specified button.
-#
+=head2 executeButton( $client, $button, $time, $mode, $orFunction )
+
+Calls the appropriate handler for the specified button.
+
+=cut
+
 sub executeButton {
 	my $client = shift;
 	my $button = shift;
 	my $time = shift;
 	my $mode = shift;
-	my $orFunction = shift; #allow function names as $button
+	my $orFunction = shift; # allow function names as $button
 
 	my $irCode = lookupFunction($client, $button, $mode);
-	
+
 	if ($orFunction && (!defined $irCode || $irCode eq '')) {
 		$irCode = $button;
 	}
-	
-	$::d_ir && msg("IR: trying to execute button: $irCode\n");
+
+	$::d_ir && msg("IR: trying to execute button: [$irCode]\n");
 
 	if ($irCode !~ "brightness" && $irCode ne "dead" && ($irCode ne "0" || !defined $time)) {
 		setLastIRTime($client, Time::HiRes::time());
@@ -810,20 +813,24 @@ sub executeButton {
 		$client->lastirtime(0);
 	}
 
-	if (my ($subref,$subarg) = Slim::Buttons::Common::getFunction($client,$irCode,$mode) ) {
+	if (my ($subref, $subarg) = Slim::Buttons::Common::getFunction($client, $irCode, $mode) ) {
 
-		unless (defined $subref or ref($subref)) {
+		if (!defined $subref || ref($subref) ne 'CODE') {
+
 			errorMsg("Subroutine for irCode: [$irCode] does not exist!\n");
 			return;
 		}
-		
-		Slim::Buttons::ScreenSaver::wakeup($client, $client->lastircode());
-			
+
+		Slim::Buttons::ScreenSaver::wakeup($client, $client->lastircode);
+
 		no strict 'refs';
+
 		$::d_ir && msg("IR: executing button: $irCode\n");
+
 		&$subref($client,$irCode,$subarg);
 
 	} else {
+
 		$::d_ir && msg("IR: button $irCode not implemented in this mode\n");
 	}
 }
@@ -836,6 +843,7 @@ sub processCode {
 	$client->lastircode($irCode);
 	$client->execute(['button', $irCode, $irTime, 1]);
 }
+
 =head1 SEE ALSO
 
 L<Time::HiRes>

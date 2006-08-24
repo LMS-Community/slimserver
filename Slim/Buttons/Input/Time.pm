@@ -13,19 +13,19 @@ Slim::Buttons::Input::Time
 
 =head1 SYNOPSIS
 
- my %params = (
-			'header'       => 'ALARM_SET',
-			'stringHeader' => 1,
-			'initialValue' => sub { return $_[0]->prefGet("alarmtime", weekDay($_[0])) },
-			'cursorPos'    => 0,
-			'callback'     => \&exitSetHandler,
-			'onChange'     => sub { $_[0]->prefSet('alarmtime', $_[1], weekDay($_[0])) },
-			'onChangeArgs' => 'CV',
-			);
+my %params = (
+  'header'       => 'ALARM_SET',
+  'stringHeader' => 1,
+  'initialValue' => sub { return $_[0]->prefGet("alarmtime", weekDay($_[0])) },
+  'cursorPos'    => 0,
+  'callback'     => \&exitSetHandler,
+  'onChange'     => sub { $_[0]->prefSet('alarmtime', $_[1], weekDay($_[0])) },
+  'onChangeArgs' => 'CV',
+);
 
- my $value = $nextParams{'initialValue'}->($client);
+my $value = $nextParams{'initialValue'}->($client);
 
- $params{'valueRef'} = \$value;
+$params{'valueRef'} = \$value;
 
 Slim::Buttons::Common::pushMode($client, 'INPUT.Bar', \%params);
 
@@ -469,10 +469,7 @@ sub moveCursor {
 	$client->param('cursorPos',$cursorPos);
 	$client->update();
 	
-	my @timedigits = timeDigits($client,$client->param('valueRef'));
-	prepKnob($client,\@timedigits);
-
-	return;
+	prepKnob($client, [ timeDigits($client,$client->param('valueRef')) ]);
 }
 
 sub scroll {
@@ -493,7 +490,7 @@ sub scroll {
 	$client->update();
 }
 
-=head2 prepKnob( $client, $client,$digits)
+=head2 prepKnob( $client, $client, $digits )
 
 This function is required for updating the Transporter knob.  The knob extents are based on the listLen param, 
 which changes in this mode depending on which column of the time display is being adjusted.
@@ -503,7 +500,7 @@ Takes as arguments, the $client structure and a reference to the array of discre
 =cut
 
 sub prepKnob {
-	my ($client,$digits) = @_;
+	my ($client, $digits) = @_;
 	
 	my $ampm = (Slim::Utils::Prefs::get('timeFormat') =~ /%p/);
 	my $c    = $client->param('cursorPos');
@@ -524,7 +521,7 @@ sub prepKnob {
 		$client->param('listLen', 2);
 	}
 
-	$client->param('listIndex',$digits->[$c]);
+	$client->param('listIndex', $digits->[$c]);
 
 	$client->updateKnob(1);
 }
