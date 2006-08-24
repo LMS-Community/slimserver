@@ -2,10 +2,27 @@ package Slim::Utils::Validate;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
+
+=head1 NAME
+
+Slim::Utils::Validate
+
+=head1 DESCRIPTION
+
+L<Slim::Utils::Validate> provides validation checks for web ui preference inputs.
+ All functions take the user input as the first argument, $val
+
+=head1 SYNOPSIS
+
+ 'validate' => \&Slim::Utils::Validate::trueFalse,
+ 
+ return Slim::Utils::Validate::isInt($arg);
+
+=cut
 
 use strict;
 
@@ -15,11 +32,26 @@ use Slim::Utils::Network;
 ######################################################################
 # Validation Functions
 ######################################################################
+
+=head1 METHODS
+
+=head2 acceptAll( $val)
+
+ Very simple, return the input $val every time.
+
+=cut
+
 sub acceptAll {
 	my $val = shift;
 
 	return $val;
 }
+
+=head2 trueFalse( $val)
+
+ Boolean test on $val,  return 1 if true, 0 otherwise.
+
+=cut
 
 sub trueFalse {
 	# use the perl idea of true and false.
@@ -32,6 +64,16 @@ sub trueFalse {
 		return 0;
 	}
 }
+
+=head2 isInt( $val, [ $low ], [ $high ], [ $setLow ], [ $setHigh ])
+
+ Return $val if $val is an integer. Return nothing if not.
+ Caller can optionall set integer limits of $low and $high.
+
+ If $val is below $low then function will return undef, or the value of $low if the argument $setLow is 1
+ If $val is above $high then function will return undef, or the value of $high if the argument $setHigh is 1
+
+=cut
 
 sub isInt {
 	my ($val,$low,$high,$setLow,$setHigh) = @_;
@@ -61,6 +103,13 @@ sub isInt {
 	return $val;
 }
 
+=head2 port( $val)
+
+Returns the integer $val only if it is an integer in the range of valid TCPIP ports (1024-65535), or 0
+Any other value for $val will return undefined.
+
+=cut
+
 sub port {
 	my $val = shift;
 
@@ -84,6 +133,15 @@ sub port {
 	return $val;
 }
 
+=head2 hostNameOrIPAndPort( $val)
+
+ Accepts any  string that matches the format of an IP and Port, or a hostname and port
+ ie 127.0.0.1:9000, or slimdevices.com:9000
+ 
+ empty entry validates as empty value
+
+=cut
+
 sub hostNameOrIPAndPort {
 	my $val = shift || return '';
 
@@ -104,6 +162,13 @@ sub hostNameOrIPAndPort {
 
 	return $val;
 }
+
+=head2 IPPort( $val)
+
+ Accepts any  string that matches the format of an IP and Port
+ ie 127.0.0.1:9000
+
+=cut
 
 sub IPPort {
 	my $val = shift;
@@ -127,6 +192,18 @@ sub IPPort {
 
 	return $val;
 }
+
+=head2 number( $val, [ $low ], [ $high ], [ $setLow ], [ $setHigh ])
+
+ Return $val if $val is  real number. Return nothing if not.
+ Caller can optionally set limits of $low and $high.
+
+ If $val is below $low then function will return undef, or the value of $low if the argument $setLow is 1
+ If $val is above $high then function will return undef, or the value of $high if the argument $setHigh is 1
+
+ Scientific notation is not supported by this function.
+
+=cut
 
 sub number {
 	my ($val,$low,$high,$setLow,$setHigh) = @_;
@@ -157,6 +234,12 @@ sub number {
 	return $val;
 }
 
+=head2 inList( $val, @valList)
+
+ Determine if the input $val is contained within a list of valid choices given by the @valList argument
+ 
+=cut
+
 sub inList {
 	my ($val,@valList) = @_;
 	my $inList = 0;
@@ -174,6 +257,12 @@ sub inList {
 	}
 }
 
+=head2 isTime( $val)
+
+ determine if the input string, $val matches known valid Time formats.
+ 
+=cut
+
 sub isTime {
 	my $val = shift;
 
@@ -185,8 +274,15 @@ sub isTime {
 	}
 }
 
-# determines if the value is one of the keys of the supplied hash
-# the hash is supplied in the form of a reference either to a hash, or to code which returns a hash
+=head2 isHash( $val, $ref, $codereturnsref, $client)
+
+ determines if the value is one of the keys of the supplied hash
+ the hash is supplied in the form of a reference either to a hash, or to code which returns a hash
+
+ $codereturnsref should be set to 1 if $ref is to code that returns a hash reference
+
+=cut
+
 sub inHash {
 	my $val = shift;
 	my $ref = shift;
@@ -216,13 +312,37 @@ sub inHash {
 	}
 }
 
+=head2 isFile( $val)
+
+ Validate that input $val the string refering to a valid file.
+ Otherwise, return a localized error string.
+ Optional $allowEmpty agrument will return valid for blank input if set.
+
+=cut
+
 sub isFile {
 	return _isValidPath('file', @_, 'SETUP_BAD_FILE');
 }
 
+=head2 isAudioDir( $val)
+
+ Validate that input $val the string refering to a valid directory.
+ Otherwise, return a localized error string.
+ Optional $allowEmpty agrument will return valid for blank input if set.
+
+=cut
+
 sub isAudioDir {
 	return _isValidPath('dir', @_, 'SETUP_BAD_DIRECTORY');
 }
+
+=head2 isDir( $val)
+
+ Validate that input $val the string refering to a valid directory
+ Otherwise, return a localized error string.
+ Optional $allowEmpty agrument will return valid for blank input if set.
+
+=cut
 
 sub isDir {
 	return _isValidPath('dir', @_, 'SETUP_BAD_DIRECTORY');
@@ -255,6 +375,13 @@ sub _isValidPath {
 	}
 }
 
+=head2 hasText( $val, [ $defaultText ])
+
+ If the input $val is an alphanumeric string, return the value.
+ In all other cases, return undefined or an optional $defaultText string
+
+=cut
+
 sub hasText {
 	my $val = shift; # value to validate
 	my $defaultText = shift; #value to use if nothing in the $val param
@@ -265,6 +392,12 @@ sub hasText {
 		return $defaultText;
 	}
 }
+
+=head2 password( $val)
+
+ Validate password input and obscure all else.
+
+=cut
 
 sub password {
 	my $val = shift;
@@ -293,7 +426,12 @@ sub isFormat {
 	}
 }
 
-# Verify allowed hosts is in somewhat proper format, always prepend 127.0.0.1 if not there
+=head2 allowedHosts( $val)
+
+ Verify allowed hosts is in somewhat proper format, always prepend 127.0.0.1 if not there
+
+=cut
+
 sub allowedHosts {
 	my $val = shift;
 
@@ -305,6 +443,12 @@ sub allowedHosts {
 		return $val;
 	}
 }
+
+=head1 SEE ALSO
+
+L<Slim::Web::Setup>
+
+=cut
 
 1;
 
