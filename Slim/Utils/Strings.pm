@@ -7,6 +7,24 @@ package Slim::Utils::Strings;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
+=head1 NAME
+
+Slim::Formats::AIFF
+
+=head1 SYNOPSIS
+
+my $localstring = Slim::Utils::Strings('EMPTY');
+
+=head1 DESCRIPTION
+
+ Global localization module.  Handles the reading of strings.txt for 
+ international translation.  
+
+=head1 EXPORTS
+ string()
+
+=cut
+
 use strict;
 use base qw(Exporter);
 
@@ -23,14 +41,18 @@ our %strings   = ();
 our %languages = ();
 our $failsafe_language = 'EN';
 
-#
-# Initializes the module
-#
-# When a new string is added in strings.txt, it will probably take 
-# a while before someome gets around to translating it. $failsafe_language
-# is the fallback. If a string is not available in the user's
-# preferred language (current_lang), then this is the one we'll return in it's place.
-#
+=head1 METHODS
+
+=head2 init( )
+
+ Initializes the module
+
+ When a new string is added in strings.txt, it will probably take 
+ a while before someome gets around to translating it. $failsafe_language
+ is the fallback. If a string is not available in the user's
+ preferred language (current_lang), then this is the one we'll return in it's place.
+
+=cut
 
 sub init {
 	my $usr_strings;
@@ -72,9 +94,12 @@ sub stringsFiles {
 	return @stringsFiles;
 }
 
-#
-# Loads a file containing strings
-#
+=head2 load_strings_file( $file )
+
+ Loads a file containing strings. Takes the filpath as an argument.
+
+=cut
+
 sub load_strings_file {
 	my $file = shift;
 
@@ -125,7 +150,12 @@ sub load_strings_file {
 	addStrings(\$strings);
 }
 
-# Add a single string with a pointer to another string.
+=head2 addStringPointer( $name, $pointer )
+
+ Add a single string with a pointer to another string.
+
+=cut
+
 sub addStringPointer {
 	my $name    = shift;
 	my $pointer = shift;
@@ -232,11 +262,17 @@ sub hashref_of_strings {
 	return \%strings;
 }
 
-# Returns a string in the requested language
-#
-# We can pass in a language to override the default.
-# Currently used for falling back to English when the selected language is a
-# non-latin1 language such as Japanese.
+=head2 string( $stringname, [ $language ], [ $dontwarn] )
+
+ Returns a string in the requested language
+
+ We can pass in a language to override the default.
+ Currently used for falling back to English when the selected language is a
+ non-latin1 language such as Japanese.
+ 
+ $dontwarn argument will suppress warnings about missing strings if set.
+
+=cut
 
 sub string {
 	my $stringname = uc(shift);
@@ -271,7 +307,12 @@ sub string {
 	return '';
 }
 
-# like string() above, but returns the string token if the string does not exist
+=head2 getString( $string )
+
+ like string() above, but returns the string token if the string does not exist
+
+=cut
+
 sub getString {
 	my $string = shift;
 
@@ -281,9 +322,11 @@ sub getString {
 	return $parsed ? $parsed : $string;
 }
 
-#
-# Returns a string for doublesize mode in the requested language
-#
+=head2 doubleString( $stringname, [ $language ] )
+
+ Returns a string for doublesize mode in the requested language
+
+=cut
 
 sub doubleString {
 	my $stringname = uc(shift);
@@ -294,9 +337,12 @@ sub doubleString {
 	return string($stringname.'_DBL', $language, 1) || string($stringname, $language);
 }
 
-#
-# Returns 1 if the requested string exists, 0 if not
-#
+=head2 stringExists( $stringname, [ $language ] )
+
+ Returns 1 if the requested string exists, 0 if not
+ caller may provide a specific $language instead of the current preference.
+
+=cut
 
 sub stringExists {
 	my $stringname = uc(shift) || return 0;
@@ -305,7 +351,12 @@ sub stringExists {
 	return ($strings{$stringname}->{$language} || $strings{$stringname}->{$failsafe_language}) ? 1 : 0;
 }
 
-# "Pointer chase" a string - useful for plugins where we don't have $client yet.
+=head2 resolveString( $string, $language )
+
+ "Pointer chase" a string - useful for plugins where we don't have $client yet.
+
+=cut
+
 sub resolveString {
 	my $string   = shift;
 	my $language = shift || Slim::Utils::Prefs::get('language');
@@ -324,12 +375,15 @@ sub resolveString {
 	return $value;
 }
 
-#
-# Sets the language in which strings will be returned
-#
-# returns 1 if the language is available, otherwise returns 0
-# and current_lang is unchanged.
-#
+=head2 setLanguage( $lang )
+
+ Sets the language in which strings will be returned
+ returns 1 if the language is available, otherwise returns 0
+ and current_lang is unchanged. Argument is a two-character string
+ to indicate language
+
+=cut
+
 sub setLanguage {
 	my $lang = shift;
 	
@@ -353,9 +407,12 @@ sub languageName {
 	return $strings{'LANGUAGE_CHOICES'}->{$lang};
 }
 
-#
-# Returns the failsafe language:
-#
+=head2 failsafeLanguage( )
+
+ Returns the failsafe language
+
+=cut
+
 sub failsafeLanguage {
 	return $failsafe_language;
 }
