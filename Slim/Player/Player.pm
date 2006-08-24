@@ -717,7 +717,7 @@ sub mixerDisplay {
 
 	$client->modeParam('visu', [0]);
 
-	my $parts = Slim::Buttons::Input::Bar::lines($client, $featureValue, $featureHeader, {
+	my @lines = Slim::Buttons::Input::Bar::lines($client, $featureValue, $featureHeader, {
 		'min'       => $client->mixerConstant($feature, 'min'),
 		'mid'       => $mid,
 		'max'       => $client->mixerConstant($feature, 'max'),
@@ -725,7 +725,7 @@ sub mixerDisplay {
 	});
 
 	# trim off any overlay for showBriefly
-	$client->display->showBriefly($parts, { 'name' => 'mixer' } );
+	$client->display->showBriefly(@lines[0,1], { 'name' => 'mixer' } );
 
 	# Turn the visualizer back to it's old value.
 	$client->modeParam('visu', $oldvisu);	
