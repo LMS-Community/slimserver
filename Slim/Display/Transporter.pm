@@ -34,9 +34,9 @@ our $defaultPrefs = {
 	'idleFont'            => [qw(light standard full)],
 	'idleFont_curr'       => 1,
 	'idleBrightness'      => 2,
-	'playingDisplayMode'  => 0,
+	'playingDisplayMode'  => 5,
 	'playingDisplayModes' => [0..5],
-	'visualMode'          => 0,
+	'visualMode'          => 2,
 	'visualModes'         => [0..5],
 };
 
