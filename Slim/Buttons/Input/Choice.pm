@@ -50,6 +50,8 @@ for creating just about any kind of mode.
 =cut
 
 use strict;
+use warnings;
+
 use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 use Slim::Display::Display;
@@ -182,12 +184,21 @@ my %functions = (
 	},
 	'knob' => sub {
 		my ($client,$funct,$functarg) = @_;
-
+		
 		my $dir = $client->knobPos - $client->param('listIndex');
-		$dir    = 1  if $dir < -1;
-		$dir    = -1 if $dir > 1;
 
-		changePos($client, $dir, $funct);
+		# Make sure wrap-around pushes in the right direction
+		my $pushDir;
+		my $numItems = scalar @{ $client->param('listRef') };
+		if ( $client->knobPos == 0 && abs($dir) == ( $numItems - 1 ) ) {
+			# wraparound from bottom to top
+			$pushDir = 'down';
+		} elsif ( $client->knobPos == ( $numItems - 1 ) && abs($dir) == ( $numItems - 1 ) ) {
+			# wraparound from top to bottom
+			$pushDir = 'up';
+		}
+
+		changePos($client, $dir, $funct, $pushDir);
 	},
 	'numberScroll' => sub {
 		my ($client, $funct, $functarg) = @_;
@@ -295,7 +306,7 @@ sub callCallback {
 }
 
 sub changePos {
-	my ($client, $dir, $funct) = @_;
+	my ($client, $dir, $funct, $pushDir) = @_;
 
 	my $listRef   = $client->param('listRef');
 	my $listIndex = $client->param('listIndex');
@@ -338,10 +349,20 @@ sub changePos {
 		}
 
 	} elsif ($newposition != $listIndex) {
-
-		if ($dir < 0) {
+		
+		$pushDir ||= '';
+		
+		if ($pushDir eq 'up')  {
+			
+			$client->pushUp();
+		} elsif ($pushDir eq 'down') {
+			
+			$client->pushDown();
+		} elsif ($dir < 0)  {
+			
 			$client->pushUp();
 		} else {
+			
 			$client->pushDown();
 		}
 
