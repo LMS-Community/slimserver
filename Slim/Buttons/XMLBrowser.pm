@@ -343,7 +343,23 @@ sub gotOPML {
 			my $itemURL  = $item->{'url'}  || $item->{'value'};
 			my $title    = $item->{'name'} || $item->{'title'};
 
-			if ($itemURL && !$hasItems) {
+			if ( $item->{'search'} ) {
+				
+				my %params = (
+					'header'          => $params->{'feedTitle'} . ' - ' . $client->string('SEARCH_STREAMS'),
+					'cursorPos'       => 0,
+					'charsRef'        => 'UPPER',
+					'numberLetterRef' => 'UPPER',
+					'callback'        => \&handleSearch,
+					'overlayRef'      => sub {
+						return (undef, $client->symbols('rightarrow'))
+					},
+					'_search'         => $item->{'search'},
+				);
+				
+				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Text', \%params);
+			}
+			elsif ( $itemURL && !$hasItems ) {
 
 				# follow a link
 				my %params = (
@@ -391,23 +407,7 @@ sub gotOPML {
 				}
 
 			}
-			elsif ( $item->{'search'} ) {
-				
-				my %params = (
-					'header'          => $params->{'feedTitle'} . ' - ' . $client->string('SEARCH_STREAMS'),
-					'cursorPos'       => 0,
-					'charsRef'        => 'UPPER',
-					'numberLetterRef' => 'UPPER',
-					'callback'        => \&handleSearch,
-					'overlayRef'      => sub {
-						return (undef, $client->symbols('rightarrow'))
-					},
-					'_search'         => $item->{'search'},
-				);
-				
-				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Text', \%params);
-			}
-			elsif ($hasItems && ref($item->{'items'}) eq 'ARRAY') {
+			elsif ( $hasItems && ref($item->{'items'}) eq 'ARRAY' ) {
 
 				# recurse into OPML item
 				gotOPML($client, $client->param('url'), $item);
