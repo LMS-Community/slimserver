@@ -72,8 +72,8 @@ sub init {
 					'useMode'      => 'INPUT.Bar',
 					'header'       => 'VOLUME',
 					'stringHeader' => 1,
-					'headerValue'  => \&volumeValue,
-					'onChange'     =>  \&executeCommand,
+					'headerValue'  => sub { return $_[0]->volumeString($_[1]) },
+					'onChange'     => \&executeCommand,
 					'command'      => 'mixer',
 					'subcommand'   => 'volume',
 					'initialValue' => sub { return $_[0]->volume() },
@@ -85,7 +85,7 @@ sub init {
 					'stringHeader' => 1,
 					'headerValue'  => 'scaled',
 					'mid'          => 50,
-					'onChange'     =>  \&executeCommand,
+					'onChange'     => \&executeCommand,
 					'command'      => 'mixer',
 					'subcommand'   => 'bass',
 					'initialValue' => sub { return $_[0]->bass() },
@@ -486,6 +486,7 @@ sub settingsMenu {
 	for my $setting ( keys %{$menu}) {
 
 		if ($menu->{$setting}->{'condition'} && &{$menu->{$setting}->{'condition'}}($client)) {
+
 			push @settingsChoices, $setting;
 		}
 	}
@@ -493,11 +494,6 @@ sub settingsMenu {
 	@settingsChoices = sort { $client->string($a) cmp $client->string($b) } @settingsChoices;
 
 	$client->param('listRef', \@settingsChoices);
-}
-
-sub volumeValue {
-	my ($client,$arg) = @_;
-	return ' ('.($arg <= 0 ? $client->string('MUTED') : int($arg/100*40+0.5)).')';
 }
 
 sub visualInit {

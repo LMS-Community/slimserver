@@ -27,7 +27,7 @@ my $value = $nextParams{'initialValue'}->($client);
 
 $params{'valueRef'} = \$value;
 
-Slim::Buttons::Common::pushMode($client, 'INPUT.Bar', \%params);
+Slim::Buttons::Common::pushMode($client, 'INPUT.Time', \%params);
 
 =head1 DESCRIPTION
 

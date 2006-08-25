@@ -522,9 +522,11 @@ sub currentSongLines {
 		if (Slim::Player::Source::playmode($client) eq "pause") {
 
 			if ( $playlistlen == 1 ) {
+
 				$parts->{line}[0] = $client->string('PAUSED');
-			}
-			else {
+
+			} else {
+
 				$parts->{line}[0] = sprintf(
 					$client->string('PAUSED')." (%d %s %d) ",
 					Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
@@ -683,6 +685,7 @@ sub mixerDisplay {
 
 	my $featureValue = $client->prefGet($feature);
 
+	# Check for undefined - 0 is a valid value.
 	if (!defined $featureValue) {
 		return;
 	}
@@ -694,23 +697,23 @@ sub mixerDisplay {
 
 	if ($client->mixerConstant($feature, 'balanced')) {
 
-		$headerValue = int( ( ($featureValue - $mid) * $scale) + 0.5);
+		$headerValue = sprintf(' (%d)', int((($featureValue - $mid) * $scale) + 0.5));
+
+	} elsif ($feature eq 'volume') {
+
+		$headerValue = $client->volumeString($featureValue);
 
 	} else {
 
-		$headerValue = int( ( $featureValue * $scale) + 0.5);
+		$headerValue = sprintf(' (%d)', int(($featureValue * $scale) + 0.5));
 	}
 
-	if ($feature eq 'volume' && $featureValue <= 0) {
-
-		$headerValue = $client->string('MUTED');
-
-	} elsif ($feature eq 'pitch') {
+	if ($feature eq 'pitch') {
 
 		$headerValue .= '%';
 	}
 
-	my $featureHeader = $client->string(uc($feature)) . " ($headerValue)";
+	my $featureHeader = join('', $client->string(uc($feature)), $headerValue);
 
 	# XXXX hack attack: turn off visualizer when showing volume, etc.
 	my $oldvisu = $client->modeParam('visu');

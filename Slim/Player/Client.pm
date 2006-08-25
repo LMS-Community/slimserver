@@ -538,6 +538,7 @@ SB2 has better resolution uncomment the increments below
 sub mixerConstant {
 	my ($client, $feature, $aspect) = @_;
 	my ($scale, $increment);
+
 #	if ($client->displayWidth() > 100) {
 #		$scale = 1;
 #		$increment = 1;
@@ -545,58 +546,104 @@ sub mixerConstant {
 		$increment = 2.5;
 		$scale = 0.4;
 # 	}
+
 	if ($feature eq 'volume') {
+
 		return $client->maxVolume() if $aspect eq 'max';
 		return $client->minVolume() if $aspect eq 'min';
 		return $client->minVolume() if $aspect eq 'mid';
 		return $scale if $aspect eq 'scale';
 		return $increment if $aspect eq 'increment';
 		return 0 if $aspect eq 'balanced';
+
 	} elsif ($feature eq 'pitch') {
+
 		return $client->maxPitch() if $aspect eq 'max';
 		return $client->minPitch() if $aspect eq 'min';
 		return ( ( $client->maxPitch() + $client->minPitch() ) / 2 ) if $aspect eq 'mid';
 		return 1 if $aspect eq 'scale';
 		return 1 if $aspect eq 'increment';
 		return 0 if $aspect eq 'balanced';
+
 	} elsif ($feature eq 'bass') {
+
 		return $client->maxBass() if $aspect eq 'max';
 		return $client->minBass() if $aspect eq 'min';
 		return ( ( $client->maxBass() + $client->minBass() ) / 2 ) if $aspect eq 'mid';
 		return $scale if $aspect eq 'scale';
 		return $increment if $aspect eq 'increment';
 		return 1 if $aspect eq 'balanced';
+
 	} elsif ($feature eq 'treble') {
+
 		return $client->maxTreble() if $aspect eq 'max';
 		return $client->minTreble() if $aspect eq 'min';
 		return ( ( $client->maxTreble() + $client->minTreble() ) / 2 ) if $aspect eq 'mid';
 		return $scale if $aspect eq 'scale';
 		return $increment if $aspect eq 'increment';
 		return 1 if $aspect eq 'balanced';
-	} else {
-		return undef;
 	}
+
+	return undef;
+}
+
+=head2 volumeString( $client, $volume )
+
+Returns a pretty string for the current volume value.
+
+On Transporter units, this is in dB, with 100 steps.
+
+Other clients, are in 40 steps.
+
+=cut
+
+sub volumeString {
+	my ($client, $volume) = @_;
+
+	my $value = int((($volume / 100) * 40) + 0.5);
+
+	if ($volume <= 0) {
+
+		$value = $client->string('MUTED');
+	}
+
+	return sprintf(' (%d)', $value);
 }
 
 sub volume {
 	my ($client, $volume, $temp) = @_;
 
 	if (defined($volume)) {
-		if ($volume > $client->maxVolume()) { $volume = $client->maxVolume(); }
-		if ($volume < $client->minVolume()) { $volume = $client->minVolume(); }
+
+		if ($volume > $client->maxVolume) {
+			$volume = $client->maxVolume;
+		}
+
+		if ($volume < $client->minVolume) {
+			$volume = $client->minVolume;
+		}
+
 		if ($temp) {
+
 			$client->[97] = $volume;
+
 		} else {
+
 			# persist only if $temp not set
 			Slim::Utils::Prefs::clientSet($client, "volume", $volume);
+
 			# forget any previous temporary volume
 			$client->[97] = undef;
 		}
 	}
+
 	# return the current volume, whether temporary or persisted
-	if (defined($client->tempVolume())) {
-		return $client->tempVolume();
+	if (defined $client->tempVolume) {
+
+		return $client->tempVolume;
+
 	} else {
+
 		return Slim::Utils::Prefs::clientGet($client, "volume");
 	}
 }

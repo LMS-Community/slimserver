@@ -792,11 +792,12 @@ our %functions = (
 
 	# XXXX This mode is used by the Transporter knob - _NOT_ by the remote
 	# volume buttons, which are defined below. They should be combined.
+	# See Slim::Buttons::Volume
 	'volumemode' => sub {
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
-		
+
 		if ($client->param('parentMode') && $client->param('parentMode') eq 'volume') {
 			popModeRight($client);
 		} else {

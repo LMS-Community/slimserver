@@ -157,19 +157,17 @@ sub init {
 				$_[0]->string('ALARM_SET_VOLUME_SHORT') : 
 				$_[0]->string('ALARM_SET_VOLUME');
 			},
-			,'stringHeader' => 1,
-			,'headerArgs'   => 'C',
-			,'headerValue'  => \&Slim::Buttons::AlarmClock::volumeValue,
-			,'onChange'     => sub { $_[0]->prefSet("alarmvolume", $_[1], weekDay($_[0])) },
-			'initialValue'  => sub { return $_[0]->prefGet("alarmvolume", weekDay($_[0])) },
+			'stringHeader' => 1,
+			'headerArgs'   => 'C',
+			'headerValue'  => sub { return $_[0]->volumeString($_[1]) },
+			'onChange'     => sub { $_[0]->prefSet("alarmvolume", $_[1], weekDay($_[0])) },
+			'initialValue' => sub { return $_[0]->prefGet("alarmvolume", weekDay($_[0])) },
 		},
 
 		'alarm/ALARM_SELECT_PLAYLIST' => {
 			'useMode'        => 'INPUT.List',
 			'listRef'        => undef,
-			'externRef'      => sub { 
-									return playlistName(@_);
-								},
+			'externRef'      => sub { return playlistName(@_) },
 			'externRefArgs'  => 'CV',
 			'header'         => 'ALARM_SELECT_PLAYLIST',
 			'headerAddCount' => 1,
@@ -591,11 +589,6 @@ that may come along. Other modules may make use of this call to benefit from any
 
 sub getSpecialPlaylists {
 	return \%specialPlaylists;
-}
-
-sub volumeValue {
-	my ($client,$arg) = @_;
-	return ' ('.($arg <= 0 ? $client->string('MUTED') : int($arg/100*40+0.5)).')';
 }
 
 =head1 SEE ALSO

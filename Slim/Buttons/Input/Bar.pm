@@ -92,6 +92,9 @@ sub init {
 		'overlayRefArgs'  => 'CV',
 		'headerValueArgs' => 'CV',
 		'headerValueUnit' => '',
+
+		# Bug: 2093 - Don't let the knob wrap or have acceleration when in INPUT.Bar mode.
+		'knobFlags'       => Slim::Player::Client::KNOB_NOWRAP() | Slim::Player::Client::KNOB_NOACCELERATION(),
 	);
 
 	# Set our defaults for this mode.
@@ -113,8 +116,7 @@ sub init {
 
 	for (my $i = $min; $i <= $max; $i = $i + $step) {
 
-		$listRef->[$j] = $i;
-		$j++;
+		$listRef->[$j++] = $i;
 	}
 
 	$client->param('listRef', $listRef);
@@ -410,7 +412,6 @@ sub lines {
 
 	return ($line1, $line2, @overlay);
 }
-
 
 sub getFunctions {
 	return \%functions;
