@@ -607,7 +607,7 @@ sub volumeString {
 		$value = $client->string('MUTED');
 	}
 
-	return sprintf(' (%d)', $value);
+	return " ($value)";
 }
 
 sub volume {

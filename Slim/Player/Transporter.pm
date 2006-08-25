@@ -121,19 +121,6 @@ sub hasPreAmp {
         return 0;
 }
 
-sub mixerConstant {
-	my ($client, $feature, $aspect) = @_;
-
-	if ($feature eq 'volume') {
-
-		if ($aspect eq 'scale' || $aspect eq 'increment') {
-			return 1;
-		}
-	}
-
-	return $client->SUPER::mixerConstant($feature, $aspect);
-}
-
 sub volumeString {
 	my ($client, $volume) = @_;
 

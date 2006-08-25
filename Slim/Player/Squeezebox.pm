@@ -1018,6 +1018,33 @@ sub volume {
 	return $volume;
 }
 
+sub mixerConstant {
+	my ($client, $feature, $aspect) = @_;
+
+	# Return 1 for increment so that we can have a range of 0 - 100.
+	# Char based displays only have 0 - 40, so the mixerConstant defined
+	# in Slim::Player::Client with an increment of 2.5 is correct.
+	if ($feature eq 'volume' && !$client->display->isa('Slim::Display::Text')) {
+
+		if ($aspect eq 'scale' || $aspect eq 'increment') {
+			return 1;
+		}
+	}
+
+	return $client->SUPER::mixerConstant($feature, $aspect);
+}
+
+sub volumeString {
+	my ($client, $volume) = @_;
+
+	if ($volume <= 0) {
+
+		return sprintf(' (%s)', $client->string('MUTED'));
+	}
+
+	return " ($volume)";
+}
+
 sub bass {
 	my $client = shift;
 	my $newbass = shift;
