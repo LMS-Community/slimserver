@@ -16,16 +16,16 @@ package Slim::Control::Commands;
 
 =head1 NAME
 
-Slim::Buttons::Commands
+Slim::Control::Commands
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Commands> implements most SlimServer commands and is designed to 
- be exclusively called through Request.pm and the mechanisms it defines.
+Implements most SlimServer commands and is designed to be exclusively called
+through Request.pm and the mechanisms it defines.
 
- The code for the "alarm" command is heavily commented and corresponds to
- a "model" synchronous command.
- Check CLI handling code in the Shoutcast plugin for an asynchronous command.
+The code for the "alarm" command is heavily commented and corresponds to a
+"model" synchronous command.  Check CLI handling code in the Shoutcast plugin
+for an asynchronous command.
 
 =cut
 
@@ -234,11 +234,11 @@ sub displayCommand {
 	}
 	
 	Slim::Buttons::ScreenSaver::wakeup($client);
+
 	$client->showBriefly($line1, $line2, $duration, $p4);
 	
 	$request->setStatusDone();
 }
-
 
 sub irCommand {
 	my $request = shift;
@@ -1731,19 +1731,15 @@ sub showCommand {
 	}
 
 	# call showBriefly for the magic!
-	$client->showBriefly(	$hash, 
-							$duration, 
-							0, 			# line2 is single line
-							1, 			# block updates
-							1,			# scroll to end
-							$brightness,# brightness
-										# callback function
-							\&Slim::Control::Commands::_showCommand_done,
-										# callback arguments
-							{
-								'request' => $request,
-							}
-						);
+	$client->showBriefly($hash, 
+		$duration, 
+		0,  # line2 is single line
+		1,  # block updates
+		1,  # scroll to end
+		$brightness,
+		\&Slim::Control::Commands::_showCommand_done,
+		{ 'request' => $request }
+	);
 
 	# we're not done yet
 	$request->setStatusProcessing();
@@ -2188,6 +2184,14 @@ sub _playlistXtracksCommand_parseSearchTerms {
 			delete $find{'playlist.id'};
 		}
 
+		# If we have an album and a year - remove the year, since
+		# there is no explict relationship between Track and Year.
+		if ($find{'album.id'} && $find{'year.id'}) {
+
+			delete $find{'year.id'};
+			delete $joinMap{'year'};
+		}
+
 		# Bug: 3629 - if we're sorting by album - be sure to include it in the join table.
 		if ($sort && $sort eq $albumSort) {
 			$joinMap{'album'} = 'album';
@@ -2307,7 +2311,7 @@ sub _showCommand_done {
 
 =head1 SEE ALSO
 
-L<Slim::Buttons::Command>
+L<Slim::Buttons::Common>
 
 =cut
 
