@@ -83,24 +83,23 @@ sub enabled {
 }
 
 sub shutdownPlugin {
+
 	# turn off checker
 	#Slim::Utils::Timers::killTimers(0, \&checker);
-	
-	# remove playlists
-	
+
 	# disable protocol handler?
 	Slim::Player::ProtocolHandlers->registerHandler('musicmaglaylist', 0);
-	
+
 	$initialized = 0;
 
 	# delGroups, categories and prefs
 	Slim::Web::Setup::delCategory('MUSICMAGIC');
 	Slim::Web::Setup::delGroup('SERVER_SETTINGS','musicmagic',1);
-	
-	# set importer to not use, but only for this session.
-	# leave server pref as is to support reenabling the features, 
-	# without needing a forced rescan
-	#Slim::Music::Import->useImporter('Plugins::MusicMagic::Plugin',0);
+
+	# set importer to not use, but only for this session. leave server
+	# pref as is to support reenabling the features, without needing a
+	# forced rescan
+	Slim::Music::Import->useImporter('Plugins::MusicMagic::Plugin', 0);
 }
 
 sub initPlugin {
@@ -159,10 +158,8 @@ sub initPlugin {
 			'mixer'     => \&mixerFunction,
 			'setup'     => \&addGroups,
 			'mixerlink' => \&mixerlink,
-			'use'       => 1,
+			'use'       => Slim::Utils::Prefs::get($class->prefName),
 		});
-
-		Slim::Music::Import->useImporter($class, Slim::Utils::Prefs::get($class->prefName));
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
 
@@ -981,7 +978,7 @@ sub setupUse {
 					Slim::Buttons::Home::updateMenu($client);
 				}
 
-				Slim::Music::Import->useImporter('Plugins::MusicMagic::Plugin',$changeref->{'musicmagic'}{'new'});
+				Slim::Music::Import->useImporter('Plugins::MusicMagic::Plugin', $changeref->{'musicmagic'}{'new'});
 			},
 
 			'optionSort' => 'KR',

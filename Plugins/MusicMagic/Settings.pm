@@ -49,8 +49,8 @@ sub init {
 			'headerAddCount'  => 1,
 			'callback'        => \&settingsExitHandler,
 			'overlayRef'      => sub {
-						return (undef,Slim::Display::Display::symbol('rightarrow'));
-					},
+				return (undef,Slim::Display::Display::symbol('rightarrow'));
+			},
 			'overlayRefArgs'  => 'C',
 		},
 		
@@ -75,10 +75,10 @@ sub init {
 			'stringHeader'   => 1,
 			'listRef'        => [0,1,2],
 			'externRef'      => {
-					'0' => Slim::Utils::Strings::string('MMMMIXTYPE_TRACKS'),
-					'1' => Slim::Utils::Strings::string('MMMMIXTYPE_MIN'),
-					'2' => Slim::Utils::Strings::string('MMMMIXTYPE_MBYTES'),
-				},
+				'0' => Slim::Utils::Strings::string('MMMMIXTYPE_TRACKS'),
+				'1' => Slim::Utils::Strings::string('MMMMIXTYPE_MIN'),
+				'2' => Slim::Utils::Strings::string('MMMMIXTYPE_MBYTES'),
+			},
 			'onChange'       => \&setPref,
 			'pref'           => "MMMMixType",
 			'initialValue'   => "MMMStyle",
@@ -134,9 +134,9 @@ sub init {
 			'stringHeader'   => 1,
 			'listRef'        => [0,1],
 			'externRef'      => {
-					'0' => Slim::Utils::Strings::string('NO'),
-					'1' => Slim::Utils::Strings::string('YES'),
-				},
+				'0' => Slim::Utils::Strings::string('NO'),
+				'1' => Slim::Utils::Strings::string('YES'),
+			},
 			'onChange'       => \&setPref,
 			'pref'           => "MMMMixGenre",
 			'initialValue'   => "MMMMixGenre",
@@ -150,10 +150,10 @@ sub init {
 			'stringHeader'   => 1,
 			'listRef'        => [0,1,2],
 			'externRef'      => {
-					'0' => Slim::Utils::Strings::string('MMMMIXTYPE_TRACKS'),
-					'1' => Slim::Utils::Strings::string('MMMMIXTYPE_MIN'),
-					'2' => Slim::Utils::Strings::string('MMMMIXTYPE_MBYTES'),
-				},
+				'0' => Slim::Utils::Strings::string('MMMMIXTYPE_TRACKS'),
+				'1' => Slim::Utils::Strings::string('MMMMIXTYPE_MIN'),
+				'2' => Slim::Utils::Strings::string('MMMMIXTYPE_MBYTES'),
+			},
 			'onChange'       => \&setPref,
 			'pref'           => "MMMRejectType",
 			'initialValue'   => "MMMRejectType",

@@ -49,10 +49,9 @@ sub canUseMoodLogic {
 }
 
 sub shutdownPlugin {
+
 	# turn off checker
 	Slim::Utils::Timers::killTimers(0, \&checker);
-	
-	# remove playlists
 	
 	# disable protocol handler
 	Slim::Player::ProtocolHandlers->registerHandler('moodlogicplaylist', 0);
@@ -68,8 +67,7 @@ sub shutdownPlugin {
 	Slim::Web::Setup::delGroup('SERVER_SETTINGS','moodlogic',1);
 	
 	# set importer to not use
-	#Slim::Utils::Prefs::set('moodlogic', 0);
-	Slim::Music::Import->useImporter('Plugins::MoodLogic::Plugin',0);
+	Slim::Music::Import->useImporter('Plugins::MoodLogic::Plugin', 0);
 }
 
 sub prefName {
@@ -166,10 +164,9 @@ sub initPlugin {
 		'mixer'     => \&mixerFunction,
 		'setup'     => \&addGroups,
 		'mixerlink' => \&mixerlink,
-		'use'       => 1,
+		'use'       => Slim::Utils::Prefs::get($class->prefName),
 	});
 
-	Slim::Music::Import->useImporter($class, Slim::Utils::Prefs::get($class->prefName));
 	addGroups();
 
 	Plugins::MoodLogic::InstantMix::init();

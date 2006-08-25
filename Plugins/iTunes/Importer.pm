@@ -66,9 +66,8 @@ sub initPlugin {
 	Slim::Music::Import->addImporter($class, {
 		'reset'        => \&resetState,
 		'playlistOnly' => 1,
+		'use'          => Slim::Utils::Prefs::get('itunes'),
 	});
-
-	Slim::Music::Import->useImporter($class, Slim::Utils::Prefs::get('itunes'));
 
 	Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
 

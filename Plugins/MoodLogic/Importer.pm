@@ -71,32 +71,6 @@ sub canUseMoodLogic {
 	return (Slim::Utils::OSDetect::OS() eq 'win' && initPlugin());
 }
 
-sub shutdownPlugin {
-	my $class    = shift;
-	
-	# turn off checker
-	Slim::Utils::Timers::killTimers(0, \&checker);
-	
-	# remove playlists
-	
-	# disable protocol handler
-	Slim::Player::ProtocolHandlers->registerHandler('moodlogicplaylist', 0);
-
-	# reset last scan time
-
-	$lastMusicLibraryFinishTime = undef;
-
-	$initialized = 0;
-	
-	# delGroups, categories and prefs
-	Slim::Web::Setup::delCategory('MOODLOGIC');
-	Slim::Web::Setup::delGroup('SERVER_SETTINGS','moodlogic',1);
-	
-	# set importer to not use
-	#Slim::Utils::Prefs::set('moodlogic', 0);
-	Slim::Music::Import->useImporter($class,0);
-}
-
 sub initPlugin {
 	my $class    = shift;
 

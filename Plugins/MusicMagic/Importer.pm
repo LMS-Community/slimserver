@@ -12,6 +12,7 @@ use Socket qw($LF);
 
 use Plugins::MusicMagic::Common;
 
+use Slim::Music::Import;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
@@ -62,18 +63,6 @@ sub canUseMusicMagic {
 	return $initialized || $class->initPlugin();
 }
 
-sub shutdownPlugin {
-	my $class = shift;
-
-	# reset last scan time
-	Slim::Utils::Prefs::set('MMMlastMusicLibraryFinishTime',undef);
-
-	# set importer to not use, but only for this session.
-	# leave server pref as is to support reenabling the features, 
-	# without needing a forced rescan
-	Slim::Music::Import->useImporter($class, 0);
-}
-
 sub initPlugin {
 	my $class = shift;
 
@@ -107,9 +96,8 @@ sub initPlugin {
 
 		Slim::Music::Import->addImporter($class, {
 			'playlistOnly' => 1,
+			'use'          => Slim::Utils::Prefs::get('musicmagic'),
 		});
-		
-		Slim::Music::Import->useImporter($class, Slim::Utils::Prefs::get('musicmagic'));
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
 

@@ -37,7 +37,7 @@ sub initPlugin {
 
 	Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
 
-	Slim::Music::Import->addImporter('ITUNES', { 'use' => 1 });
+	Slim::Music::Import->addImporter($class, { 'use' => 1 });
 
 	$class->initialized(1);
 
@@ -57,7 +57,7 @@ sub shutdownPlugin {
 	Slim::Web::Setup::delGroup('SERVER_SETTINGS','itunes',1);
 
 	# set importer to not use
-	Slim::Utils::Prefs::set('itunes', 0);
+	Slim::Music::Import->useImporter($class, 0);
 }
 
 sub addGroups {
@@ -103,8 +103,7 @@ sub setupUse {
 					Slim::Buttons::Home::updateMenu($tempClient);
 				}
 
-				#XXXX - need to be fixed for the new scanner world.
-				Slim::Music::Import->useImporter('ITUNES', $changeref->{'itunes'}{'new'});
+				Slim::Music::Import->useImporter('Plugin::iTunes::Plugin', $changeref->{'itunes'}{'new'});
 			},
 
 			'optionSort' => 'KR',

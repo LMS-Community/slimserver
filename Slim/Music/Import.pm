@@ -9,9 +9,29 @@ package Slim::Music::Import;
 
 Slim::Music::Import
 
+=head1 SYNOPSIS
+
+	my $class = 'Plugins::iTunes::Importer';
+
+	# Make an importer available for use.
+	Slim::Music::Import->addImporter($class);
+
+	# Turn the importer on or off
+	Slim::Music::Import->useImporter($class, Slim::Utils::Prefs::get('itunes'));
+
+	# Start a serial scan of all importers.
+	Slim::Music::Import->startScan;
+
+	if (Slim::Music::Import->stillScanning) {
+		...
+	}
+
 =head1 DESCRIPTION
 
-L<Slim::Music::Import>
+This class controls the actual running of the Importers as defined by a
+caller. The process is serial, and is run via the L<scanner.pl> program.
+
+=head1 METHODS
 
 =cut
 
@@ -42,6 +62,14 @@ our %importsRunning = ();
 our %Importers      = ();
 
 my $folderScanClass = 'Slim::Music::MusicFolderScan';
+
+=head2 launchScan( \%args )
+
+Launch the external (forked) scanning process.
+
+\%args can include any of the arguments the scanning process can accept.
+
+=cut
 
 sub launchScan {
 	my ($class, $args) = @_;
@@ -118,6 +146,13 @@ sub launchScan {
 	return 1;
 }
 
+=head2 checkScanningStatus( )
+
+If we're still scanning, start a timer process to notify any subscribers of a
+'rescan done' status.
+
+=cut
+
 sub checkScanningStatus {
 	my $class = shift || __PACKAGE__;
 
@@ -134,18 +169,23 @@ sub checkScanningStatus {
 	}
 }
 
-# Force a rescan of all the importers.
-# This is called by the scanner.pl helper program.
+=head2 startScan( )
+
+Start a scan of all used importers.
+
+This is called by the scanner.pl helper program.
+
+=cut
+
 sub startScan {
 	my $class  = shift;
-	my $import = shift;
 
 	# If we are scanning a music folder, do that first - as we'll gather
 	# the most information from files that way and subsequent importers
 	# need to do less work.
 	if ($Importers{$folderScanClass} && !$class->scanPlaylistsOnly) {
 
-		$class->runImporter($folderScanClass, $import);
+		$class->runImporter($folderScanClass);
 
 		$class->useFolderImporter(1);
 	}
@@ -161,10 +201,13 @@ sub startScan {
 		# These importers all implement 'playlist only' scanning.
 		# See bug: 1892
 		if ($class->scanPlaylistsOnly && !$Importers{$importer}->{'playlistOnly'}) {
+
+			$::d_import && msg("Import: Skipping [$importer] - it doesn't implement playlistOnly scanning!\n");
+
 			next;
 		}
 
-		$class->runImporter($importer, $import);
+		$class->runImporter($importer);
 	}
 
 	$class->scanPlaylistsOnly(0);
@@ -210,13 +253,53 @@ sub startScan {
 	$::d_import && msg("Import: Finished background scanning.\n");
 }
 
+=head2 deleteImporter( $importer )
+
+Removes a importer from the list of available importers.
+
+=cut
+
 sub deleteImporter {
 	my ($class, $importer) = @_;
 
 	delete $Importers{$importer};
 }
 
-# addImporter takes hash ref of named function refs.
+=head2 addImporter( $importer, \%params )
+
+Add an importer to the system. Valid params are:
+
+=over 4
+
+=item * use => 1 | 0
+
+Shortcut to use / not use an importer. Same functionality as L<useImporter>.
+
+=item * setup => \&addGroups
+
+Code reference to the web setup function.
+
+=item * reset => \&code
+
+Code reference to reset the state of the importer.
+
+=item * playlistOnly => 1 | 0
+
+True if the importer supports scanning playlists only.
+
+=item * mixer => \&mixerFunction
+
+Generate a mix using criteria from the client's parentParams or
+modeParamStack.
+
+=item * mixerlink => \&mixerlink
+
+Generate an HTML link for invoking the mixer.
+
+=back
+
+=cut
+
 sub addImporter {
 	my ($class, $importer, $params) = @_;
 
@@ -225,22 +308,37 @@ sub addImporter {
 	$::d_import && msgf("Import: Adding %s Scan\n", $importer);
 }
 
+=head2 runImporter( $importer )
+
+Calls the importer's startScan() method, and adds a start time to the list of
+running importers.
+
+=cut
+
 sub runImporter {
-	my ($class, $importer, $import) = @_;
+	my ($class, $importer) = @_;
 
 	if ($Importers{$importer}->{'use'}) {
 
-		if (!defined $import || (defined $import && ($importer eq $import))) {
+		$importsRunning{$importer} = Time::HiRes::time();
 
-			$importsRunning{$importer} = Time::HiRes::time();
+		# rescan each enabled Import, or scan the newly enabled Import
+		$::d_import && msgf("Import: Starting %s scan\n", $importer);
 
-			# rescan each enabled Import, or scan the newly enabled Import
-			$::d_import && msgf("Import: Starting %s scan\n", $importer);
+		$importer->startScan;
 
-			$importer->startScan;
-		}
+		return 1;
 	}
+
+	return 0;
 }
+
+=head2 countImporters( )
+
+Returns a count of all added and available importers. Excludes
+L<Slim::Music::MusicFolderScan>, as it is our base importer.
+
+=cut
 
 sub countImporters {
 	my $class = shift;
@@ -258,19 +356,31 @@ sub countImporters {
 	return $count;
 }
 
+=head2 resetSetupGroups( )
+
+Run the 'setup' function as defined by each importer.
+
+=cut
+
 sub resetSetupGroups {
 	my $class = shift;
 
-	$class->walkImporterListForFunction('setup');
+	$class->_walkImporterListForFunction('setup');
 }
+
+=head2 resetImporters( )
+
+Run the 'reset' function as defined by each importer.
+
+=cut
 
 sub resetImporters {
 	my $class = shift;
 
-	$class->walkImporterListForFunction('reset');
+	$class->_walkImporterListForFunction('reset');
 }
 
-sub walkImporterListForFunction {
+sub _walkImporterListForFunction {
 	my $class    = shift;
 	my $function = shift;
 
@@ -282,11 +392,23 @@ sub walkImporterListForFunction {
 	}
 }
 
+=head2 importers( )
+
+Return a hash reference to the list of added importers.
+
+=cut
+
 sub importers {
 	my $class = shift;
 
 	return \%Importers;
 }
+
+=head2 useImporter( $importer, $trueOrFalse )
+
+Tell the server to use / not use a previously added importer.
+
+=cut
 
 sub useImporter {
 	my ($class, $importer, $newValue) = @_;
@@ -305,8 +427,12 @@ sub useImporter {
 	}
 }
 
-# End the main importers, such as Music Dir, iTunes, etc - and call
-# post-processing steps in order if required.
+=head2 endImporter( $importer )
+
+Removes the given importer from the running importers list.
+
+=cut
+
 sub endImporter {
 	my ($class, $importer) = @_;
 
@@ -317,8 +443,18 @@ sub endImporter {
 		);
 
 		delete $importsRunning{$importer};
+
+		return 1;
 	}
+
+	return 0;
 }
+
+=head2 stillScanning( )
+
+Returns true if the server is still scanning your library. False otherwise.
+
+=cut
 
 sub stillScanning {
 	my $class    = shift;
@@ -338,6 +474,18 @@ sub stillScanning {
 }
 
 =head1 SEE ALSO
+
+L<Slim::Music::MusicFolderScan>
+
+L<Slim::Music::PlaylistFolderScan>
+
+L<Plugins::iTunes::Importer>
+
+L<Plugins::MusicMagic::Importer>
+
+L<Plugins::MoodLogic::Importer>
+
+L<Proc::Background>
 
 =cut
 
