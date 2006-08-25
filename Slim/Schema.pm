@@ -1526,7 +1526,7 @@ sub _preCheckAttributes {
 
 	# Don't insert non-numeric YEAR fields into the database. Bug: 2610
 	# Same for DISC - Bug 2821
-	for my $tag (qw(YEAR DISC DISCC)) {
+	for my $tag (qw(YEAR DISC DISCC BPM)) {
 
 		if (defined $attributes->{$tag} && $attributes->{$tag} !~ /^\d+$/) {
 
