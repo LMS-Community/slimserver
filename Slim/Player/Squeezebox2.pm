@@ -371,7 +371,7 @@ sub directHeaders {
 				}
 				else {
 			
-					if ( $bitrate && $length && $bitrate > 0 && $length > 0 ) {
+					if ( $bitrate && $length && $bitrate > 0 && $length > 0 && !$client->shouldLoop($length) ) {
 						# if we know the bitrate and length of a stream, display a progress bar
 						if ( $bitrate < 1000 ) {
 							$bitrate *= 1000;
@@ -491,7 +491,7 @@ sub directBodyFrame {
 		if ( defined $client->directBody ) {
 			
 			# seek back to the front of the file
-			$client->directBody->seek( 0, 0 );
+			seek $client->directBody, 0, 0;
 
 			my @items;
 			# done getting body of playlist, let's parse it!
