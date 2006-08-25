@@ -157,7 +157,7 @@ sub setupGroup {
 
 sub strings
 {
-	return "
+	return qq^
 PLUGIN_RADIOTIME_MODULE_NAME
 	EN	RadioGuide™ by radiotime™
 
@@ -165,16 +165,20 @@ PLUGIN_RADIOTIME_MODULE_TITLE
 	EN	radiotime™
 	
 PLUGIN_RADIOTIME_LOADING
+	DE	Lade RadioGuide™ by radiotime™...
 	EN	Loading RadioGuide™ by radiotime™...
 	
 SETUP_GROUP_PLUGIN_RADIOTIME_DESC
+	DE	Benutzen Sie <a href='http://www.radiotime.com' target='_new'>radiotime.com</a>, um die interessantesten lokalen und globalen Radiostationen zu finden: Talk, Sport, Musik oder Religion - alles <b>gratis</b>.
 	EN	Use <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> to find your favorite local and global talk, sports, religious, and music radio — all <b>free</b>.
 
 SETUP_PLUGIN_RADIOTIME_USERNAME
+	DE	Geben Sie ihren RadioTime Benutzernamen ein.
 	EN	Enter your RadioTime username.
 
 SETUP_PLUGIN_RADIOTIME_USERNAME_DESC
+	DE	Erstellen Sie auf <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> <b>gratis</b> einen Benutzer-Account. Fügen Sie Sender oder Sendungen zu ihrer "My Radio" Liste hinzu und hören Sie sie auf Squeezebox oder Transporter.
 	EN	Visit <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> to sign up for <b>free</b>.  Add stations and shows to My Radio then listen on your Squeezebox or Transporter.
-";}
+^;}
 
 1;
