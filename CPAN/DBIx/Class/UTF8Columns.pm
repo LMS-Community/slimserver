@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use base qw/DBIx::Class/;
 
-use Encode;
+use utf8;
 
 __PACKAGE__->mk_classdata( '_utf8_columns' );
 
@@ -60,8 +60,8 @@ sub get_column {
 
     my $cols = $self->_utf8_columns;
     if ( $cols and defined $value and $cols->{$column} ) {
-        Encode::_utf8_on($value) unless Encode::is_utf8($value);
-    }
+        utf8::decode($value) unless utf8::is_utf8($value);
+   }
 
     $value;
 }
@@ -75,7 +75,7 @@ sub get_columns {
     my %data = $self->next::method(@_);
 
     foreach my $col (grep { defined $data{$_} } keys %{ $self->_utf8_columns || {} }) {
-        Encode::_utf8_on($data{$col}) unless Encode::is_utf8($data{$col});
+        utf8::decode($data{$col}) unless utf8::is_utf8($data{$col});
     }
 
     %data;
@@ -90,7 +90,7 @@ sub store_column {
 
     my $cols = $self->_utf8_columns;
     if ( $cols and defined $value and $cols->{$column} ) {
-        Encode::_utf8_off($value) if Encode::is_utf8($value);
+        utf8::encode($value) if utf8::is_utf8($value);
     }
 
     $self->next::method( $column, $value );

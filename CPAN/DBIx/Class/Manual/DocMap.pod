@@ -8,6 +8,8 @@ DBIx::Class::Manual::DocMap - What documentation do we have?
 
 =item L<DBIx::Class::Manual> - User's Manual overview.
 
+=item L<DBIx::Class::Manual::FAQ> - Frequently Asked Questions, gathered from IRC and the mailing list.
+
 =item L<DBIx::Class::Manual::Intro> - Introduction to setting up and using DBIx::Class.
 
 =item L<DBIx::Class::Manual::Example> - Full example Schema.
@@ -36,11 +38,13 @@ DBIx::Class::Manual::DocMap - What documentation do we have?
 
 =item L<DBIx::Class::PK::Auto> - Magically retrieve auto-incrementing fields.
 
-=item L<DBIx::Class::Core> - Set of standard components.
+=item L<DBIx::Class::Core> - Set of standard components to load.
 
 =item L<DBIx::Class::Serialize::Storable> - ?
 
 =item L<DBIx::Class::InflateColumn> - Making objects out of your columns.
+
+=item L<DBIx::Class::InflateColumn::DateTime> - Magically turn your datetime or timestamp columns into DateTime objects.
 
 =item L<DBIx::Class::PK> - Dealing with primary keys.
 
@@ -55,6 +59,8 @@ DBIx::Class::Manual::DocMap - What documentation do we have?
 =over 4
 
 =item L<DBIx::Class::ResultSet> - Selecting and manipulating sets.
+
+=item L<DBIx::Class::ResultSetColumn> - Perform operations on entire columns of a ResultSet.
 
 =item L<DBIx::Class::Row> - Dealing with actual data.
 

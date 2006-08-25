@@ -13,7 +13,7 @@ sub component_base_class { 'DBIx::Class' }
 # i.e. first release of 0.XX *must* be 0.XX000. This avoids fBSD ports
 # brain damage and presumably various other packaging systems too
 
-$VERSION = '0.07000';
+$VERSION = '0.07001';
 
 sub MODIFY_CODE_ATTRIBUTES {
     my ($class,$code,@attrs) = @_;
@@ -226,11 +226,15 @@ scotty: Scotty Allen <scotty@scottyallen.com>
 
 sszabo: Stephan Szabo <sszabo@bigpanda.com>
 
+zamolxes: Bogdan Lucaciu <bogdan@wiz.ro>
+
 Todd Lipcon
 
 wdh: Will Hawes
 
 gphat: Cory G Watson <gphat@cpan.org>
+
+dyfrgi: Michael Leuchtenmurg <michael@slashhome.org>
 
 =head1 LICENSE
 

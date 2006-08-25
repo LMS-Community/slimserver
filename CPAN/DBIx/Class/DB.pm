@@ -93,7 +93,8 @@ register themselves with it.
 
 sub setup_schema_instance {
   my $class = shift;
-  my $schema = bless({}, 'DBIx::Class::Schema');
+  my $schema = {};
+  bless $schema, 'DBIx::Class::Schema';
   $class->mk_classdata('schema_instance' => $schema);
 }
 

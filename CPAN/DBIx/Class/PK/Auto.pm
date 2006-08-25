@@ -42,13 +42,15 @@ sub insert {
   my ($self, @rest) = @_;
   my $ret = $self->next::method(@rest);
 
-  my ($pri, $too_many) = grep { !defined $self->get_column($_) } $self->primary_columns;
+  my ($pri, $too_many) = grep { !defined $self->get_column($_) || 
+                                    ref($self->get_column($_)) eq 'SCALAR'} $self->primary_columns;
   return $ret unless defined $pri; # if all primaries are already populated, skip auto-inc
   $self->throw_exception( "More than one possible key found for auto-inc on ".ref $self )
     if defined $too_many;
 
   my $storage = $self->result_source->storage;
-  $self->throw_exception( "Missing primary key but Storage doesn't support last_insert_id" ) unless $storage->can('last_insert_id');
+  $self->throw_exception( "Missing primary key but Storage doesn't support last_insert_id" )
+    unless $storage->can('last_insert_id');
   my $id = $storage->last_insert_id($self->result_source,$pri);
   $self->throw_exception( "Can't get last insert id" ) unless $id;
   $self->store_column($pri => $id);

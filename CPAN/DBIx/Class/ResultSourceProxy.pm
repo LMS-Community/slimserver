@@ -8,6 +8,7 @@ use base qw/DBIx::Class/;
 
 sub iterator_class  { shift->result_source_instance->resultset_class(@_) }
 sub resultset_class { shift->result_source_instance->resultset_class(@_) }
+sub result_class { shift->result_source_instance->result_class(@_) }
 sub source_name { shift->result_source_instance->source_name(@_) }
 
 sub resultset_attributes {
@@ -26,22 +27,19 @@ sub add_columns {
 *add_column = \&add_columns;
 
 sub has_column {
-  my ($self, $column) = @_;
-  return $self->result_source_instance->has_column($column);
+  shift->result_source_instance->has_column(@_);
 }
 
 sub column_info {
-  my ($self, $column) = @_;
-  return $self->result_source_instance->column_info($column);
+  shift->result_source_instance->column_info(@_);
 }
 
-
 sub columns {
-  return shift->result_source_instance->columns(@_);
+  shift->result_source_instance->columns(@_);
 }
 
 sub remove_columns {
-  return shift->result_source_instance->remove_columns(@_);
+  shift->result_source_instance->remove_columns(@_);
 }
 
 *remove_column = \&remove_columns;

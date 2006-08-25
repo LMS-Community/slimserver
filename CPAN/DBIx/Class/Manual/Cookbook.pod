@@ -419,6 +419,17 @@ Deletes only the book named Titanic by the author in $author.
 
   my $author->delete_related('books', { name => 'Titanic' });
 
+=head3 Ordering a relationship result set
+
+If you always want a relation to be ordered, you can specify this when you 
+create the relationship.
+
+To order C<< $book->pages >> by descending page_number.
+
+  Book->has_many('pages' => 'Page', 'book', { order_by => \'page_number DESC'} );
+
+
+
 =head2 Transactions
 
 As of version 0.04001, there is improved transaction support in
@@ -873,5 +884,122 @@ If you are using PK::Auto, this is straightforward:
 
 If you are not using autoincrementing primary keys, this will probably
 not work, but then you already know the value of the last primary key anyway.
+
+=head2 Dynamic Sub-classing DBIx::Class proxy classes 
+(AKA multi-class object inflation from one table) 
+ 
+L<DBIx::Class> classes are proxy classes, therefore some different techniques 
+need to be employed for more than basic subclassing.  In this example we have  
+a single user table that carries a boolean bit for admin.  We would like  
+like to give the admin users objects(L<DBIx::Class::Row>) the same methods as  
+a regular user but also special admin only methods.  It doesn't make sense to  
+create two seperate proxy-class files for this.  We would be copying all the  
+user methods into the Admin class.  There is a cleaner way to accomplish this. 
+
+Overriding the C<inflate_results()> method within the User proxy-class gives 
+us the effect we want.  This method is called by L<DBIx::Class::ResultSet> when  
+inflating a result from storage.  So we grab the object being returned, inspect 
+the values we are looking for, bless it if it's an admin object, and then  
+return it.  Running the test file below will confirm this works. 
+ 
+B<Schema Definition> 
+ 
+    package DB::Schema; 
+     
+    use base qw/DBIx::Class::Schema/; 
+ 
+    __PACKAGE__->load_classes(qw/User/); 
+ 
+ 
+B<Proxy-Class definitions> 
+ 
+    package DB::Schema::User; 
+     
+    use strict; 
+    use warnings; 
+    use base qw/DBIx::Class/; 
+     
+    ### Defined what our admin class is for ensure_class_loaded 
+    my $admin_class = __PACKAGE__ . '::Admin'; 
+     
+    __PACKAGE__->load_components(qw/PK::Auto Core/); 
+     
+    __PACKAGE__->table('users'); 
+     
+    __PACKAGE__->add_columns(qw/user_id   email    password  
+                                firstname lastname active 
+                                admin/); 
+     
+    __PACKAGE__->set_primary_key('user_id'); 
+     
+    sub inflate_result { 
+        my $self = shift;  
+        my $ret = $self->next::method(@_); 
+        if( $ret->admin ) {### If this is an admin rebless for extra functions  
+            $self->ensure_class_loaded( $admin_class ); 
+            bless $ret, $admin_class; 
+        } 
+        return $ret; 
+    } 
+     
+    sub hello { 
+        print "I am a regular user.\n"; 
+        return ; 
+    } 
+     
+     
+    package DB::Schema::User::Admin; 
+     
+    use strict; 
+    use warnings; 
+    use base qw/DB::Schema::User/; 
+     
+    sub hello 
+    { 
+        print "I am an admin.\n"; 
+        return; 
+    } 
+     
+    sub do_admin_stuff 
+    { 
+        print "I am doing admin stuff\n"; 
+        return ; 
+    } 
+ 
+B<Test File> test.pl 
+ 
+    use warnings; 
+    use strict; 
+    use DB::Schema; 
+     
+    my $user_data = { email    => 'someguy@place.com',  
+                      password => 'pass1',  
+                      admin    => 0 }; 
+                           
+    my $admin_data = { email    => 'someadmin@adminplace.com',  
+                       password => 'pass2',  
+                       admin    => 1 }; 
+                           
+    my $schema = DB::Schema->connection('dbi:Pg:dbname=test'); 
+     
+    $schema->resultset('User')->create( $user_data ); 
+    $schema->resultset('User')->create( $admin_data ); 
+     
+    ### Now we search for them 
+    my $user = $schema->resultset('User')->single( $user_data ); 
+    my $admin = $schema->resultset('User')->single( $admin_data ); 
+     
+    print ref $user, "\n"; 
+    print ref $admin, "\n"; 
+     
+    print $user->password , "\n"; # pass1 
+    print $admin->password , "\n";# pass2; inherited from User 
+    print $user->hello , "\n";# I am a regular user. 
+    print $admin->hello, "\n";# I am an admin. 
+ 
+    ### The statement below will NOT print 
+    print "I can do admin stuff\n" if $user->can('do_admin_stuff'); 
+    ### The statement below will print 
+    print "I can do admin stuff\n" if $admin->can('do_admin_stuff'); 
 
 =cut

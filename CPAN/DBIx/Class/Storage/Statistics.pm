@@ -30,7 +30,8 @@ Returns a new L<DBIx::Class::Storage::Statistics> object.
 
 =cut
 sub new {
-    my $self = bless({}, ref($_[0]) || $_[0]);
+    my $self = {};
+    bless $self, (ref($_[0]) || $_[0]);
 
     return $self;
 }

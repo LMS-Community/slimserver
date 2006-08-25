@@ -16,7 +16,8 @@ use base 'DBIx::Class';
 
 =head1 DESCRIPTION
 
-A convenience class used to perform operations on a specific column of a resultset.
+A convenience class used to perform operations on a specific column of
+a resultset.
 
 =cut
 
@@ -26,7 +27,8 @@ A convenience class used to perform operations on a specific column of a results
 
   my $obj = DBIx::Class::ResultSetColumn->new($rs, $column);
 
-Creates a new resultset column object from the resultset and column passed as params
+Creates a new resultset column object from the resultset and column
+passed as params. Used internally by L<DBIx::Class::ResultSet/get_column>.
 
 =cut
 
@@ -52,9 +54,11 @@ sub new {
 
 =back
 
-Returns the next value of the column in the resultset (C<undef> is there is none).
+Returns the next value of the column in the resultset (or C<undef> if
+there is none).
 
-Much like $rs->next but just returning the one value
+Much like L<DBIx::Class::ResultSet/next> but just returning the 
+one value.
 
 =cut
 
@@ -76,9 +80,11 @@ sub next {
 
 =back
 
-Returns all values of the column in the resultset (C<undef> is there are none).
+Returns all values of the column in the resultset (or C<undef> if
+there are none).
 
-Much like $rs->all but returns values rather than row objects
+Much like L<DBIx::Class::ResultSet/all> but returns values rather
+than row objects.
 
 =cut
 
@@ -97,7 +103,10 @@ sub all {
 
 =back
 
-Wrapper for ->func. Returns the lowest value of the column in the resultset (C<undef> is there are none).
+  my $first_year = $year_col->min();
+
+Wrapper for ->func. Returns the lowest value of the column in the
+resultset (or C<undef> if there are none).
 
 =cut
 
@@ -116,7 +125,10 @@ sub min {
 
 =back
 
-Wrapper for ->func. Returns the highest value of the column in the resultset (C<undef> is there are none).
+  my $last_year = $year_col->max();
+
+Wrapper for ->func. Returns the highest value of the column in the
+resultset (or C<undef> if there are none).
 
 =cut
 
@@ -135,7 +147,10 @@ sub max {
 
 =back
 
-Wrapper for ->func. Returns the sum of all the values in the column of the resultset. Use on varchar-like columns at your own risk.
+  my $total = $prices_col->sum();
+
+Wrapper for ->func. Returns the sum of all the values in the column of
+the resultset. Use on varchar-like columns at your own risk.
 
 =cut
 
@@ -154,12 +169,13 @@ sub sum {
 
 =back
 
-Runs a query using the function on the column and returns the value. For example 
   $rs = $schema->resultset("CD")->search({});
   $length = $rs->get_column('title')->func('LENGTH');
 
-Produces the following SQL
-  SELECT LENGTH( title ) from cd me
+Runs a query using the function on the column and returns the
+value. Produces the following SQL:
+
+  SELECT LENGTH( title ) FROM cd me
 
 =cut
 
@@ -176,6 +192,8 @@ sub func {
 =head1 AUTHORS
 
 Luke Saunders <luke.saunders@gmail.com>
+
+Jess Robinson
 
 =head1 LICENSE
 

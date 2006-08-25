@@ -45,7 +45,10 @@ Creates a new ResultSource object.  Not normally called directly by end users.
 sub new {
   my ($class, $attrs) = @_;
   $class = ref $class if ref $class;
-  my $new = bless({ %{$attrs || {}}, _resultset => undef }, $class);
+
+  my $new = { %{$attrs || {}}, _resultset => undef };
+  bless $new, $class;
+
   $new->{resultset_class} ||= 'DBIx::Class::ResultSet';
   $new->{resultset_attributes} = { %{$new->{resultset_attributes} || {}} };
   $new->{_ordered_columns} = [ @{$new->{_ordered_columns}||[]}];
@@ -188,7 +191,7 @@ sub column_info {
     my $info;
     my $lc_info;
     # eval for the case of storage without table
-    eval { $info = $self->storage->columns_info_for( $self->from, keys %{$self->_columns} ) };
+    eval { $info = $self->storage->columns_info_for( $self->from ) };
     unless ($@) {
       for my $realcol ( keys %{$info} ) {
         $lc_info->{lc $realcol} = $info->{$realcol};

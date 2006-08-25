@@ -95,12 +95,6 @@ sub new {
 
   $attrs->{alias} ||= 'me';
 
-  # XXXX 
-  # Use a named hash here and bless afterwards to avoid a huge performance hit 
-  # in perl 5.8.8-5+ FC5 and later, and possibly other distributions. 
-  # 
-  # See https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=196836
-  # for more information. 
   my $self = {
     result_source => $source,
     result_class => $attrs->{result_class} || $source->result_class,
@@ -177,15 +171,17 @@ sub search_rs {
   $attrs = pop(@_) if @_ > 1 and ref $_[$#_] eq 'HASH';
   my $our_attrs = { %{$self->{attrs}} };
   my $having = delete $our_attrs->{having};
+  my $where = delete $our_attrs->{where};
+
+  my $new_attrs = { %{$our_attrs}, %{$attrs} };
 
   # merge new attrs into inherited
   foreach my $key (qw/join prefetch/) {
     next unless exists $attrs->{$key};
-    $our_attrs->{$key} = $self->_merge_attr($our_attrs->{$key}, delete $attrs->{$key});
+    $new_attrs->{$key} = $self->_merge_attr($our_attrs->{$key}, $attrs->{$key});
   }
-  
-  my $new_attrs = { %{$our_attrs}, %{$attrs} };
-  my $where = (@_
+
+  my $cond = (@_
     ? (
         (@_ == 1 || ref $_[0] eq "HASH")
           ? shift
@@ -208,6 +204,17 @@ sub search_rs {
             ]
           }
         : $where);
+  }
+  if (defined $cond) {
+    $new_attrs->{where} = (
+      defined $new_attrs->{where}
+        ? { '-and' => [
+              map {
+                ref $_ eq 'ARRAY' ? [ -or => $_ ] : $_
+              } $cond, $new_attrs->{where}
+            ]
+          }
+        : $cond);
   }
 
   if (defined $having) {
@@ -291,6 +298,9 @@ If the C<key> is specified as C<primary>, it searches only on the primary key.
 If no C<key> is specified, it searches on all unique constraints defined on the
 source, including the primary key.
 
+If your table does not have a primary key, you B<must> provide a value for the
+C<key> attribute matching one of the unique constraints on the source.
+
 See also L</find_or_create> and L</update_or_create>. For information on how to
 declare unique constraints, see
 L<DBIx::Class::ResultSource/add_unique_constraint>.
@@ -306,7 +316,7 @@ sub find {
     ? $self->result_source->unique_constraint_columns($attrs->{key})
     : $self->result_source->primary_columns;
   $self->throw_exception(
-    "Can't find unless a primary key or unique constraint is defined"
+    "Can't find unless a primary key is defined or unique constraint is specified"
   ) unless @cols;
 
   # Parse out a hashref from input
@@ -326,9 +336,13 @@ sub find {
 
   my @unique_queries = $self->_unique_queries($input_query, $attrs);
 
-  # Handle cases where the ResultSet defines the query, or where the user is
-  # abusing find
-  my $query = @unique_queries ? \@unique_queries : $input_query;
+  # Build the final query: Default to the disjunction of the unique queries,
+  # but allow the input query in case the ResultSet defines the query or the
+  # user is abusing find
+  my $alias = exists $attrs->{alias} ? $attrs->{alias} : $self->{attrs}{alias};
+  my $query = @unique_queries
+    ? [ map { $self->_add_alias($_, $alias) } @unique_queries ]
+    : $self->_add_alias($input_query, $alias);
 
   # Run the query
   if (keys %$attrs) {
@@ -342,6 +356,22 @@ sub find {
   }
 }
 
+# _add_alias
+#
+# Add the specified alias to the specified query hash. A copy is made so the
+# original query is not modified.
+
+sub _add_alias {
+  my ($self, $query, $alias) = @_;
+
+  my %aliased = %$query;
+  foreach my $col (grep { ! m/\./ } keys %aliased) {
+    $aliased{"$alias.$col"} = delete $aliased{$col};
+  }
+
+  return \%aliased;
+}
+
 # _unique_queries
 #
 # Build a list of queries which satisfy unique constraints.
@@ -349,7 +379,6 @@ sub find {
 sub _unique_queries {
   my ($self, $query, $attrs) = @_;
 
-  my $alias = $self->{attrs}{alias};
   my @constraint_names = exists $attrs->{key}
     ? ($attrs->{key})
     : $self->result_source->unique_constraint_names;
@@ -361,11 +390,6 @@ sub _unique_queries {
 
     my $num_query = scalar keys %$unique_query;
     next unless $num_query;
-
-    # Add the ResultSet's alias
-    foreach my $col (grep { ! m/\./ } keys %$unique_query) {
-      $unique_query->{"$alias.$col"} = delete $unique_query->{$col};
-    }
 
     # XXX: Assuming quite a bit about $self->{attrs}{where}
     my $num_cols = scalar @unique_cols;
@@ -569,7 +593,7 @@ sub _collapse_query {
 
   my $max_length = $rs->get_column('length')->max;
 
-Returns a ResultSetColumn instance for $column based on $self
+Returns a L<DBIx::Class::ResultSetColumn> instance for a column of the ResultSet.
 
 =cut
 
@@ -1096,7 +1120,7 @@ sub update_all {
 
 Deletes the contents of the resultset from its result source. Note that this
 will not run DBIC cascade triggers. See L</delete_all> if you need triggers
-to run.
+to run. See also L<DBIx::Class::Row/delete>.
 
 =cut
 
@@ -1197,14 +1221,69 @@ sub new_result {
   $self->throw_exception(
     "Can't abstract implicit construct, condition not a hash"
   ) if ($self->{cond} && !(ref $self->{cond} eq 'HASH'));
-  my %new = %$values;
+
   my $alias = $self->{attrs}{alias};
-  foreach my $key (keys %{$self->{cond}||{}}) {
-    $new{$1} = $self->{cond}{$key} if ($key =~ m/^(?:\Q${alias}.\E)?([^.]+)$/);
-  }
+  my $collapsed_cond = $self->{cond} ? $self->_collapse_cond($self->{cond}) : {};
+  my %new = (
+    %{ $self->_remove_alias($values, $alias) },
+    %{ $self->_remove_alias($collapsed_cond, $alias) },
+  );
+
   my $obj = $self->result_class->new(\%new);
   $obj->result_source($self->result_source) if $obj->can('result_source');
   return $obj;
+}
+
+# _collapse_cond
+#
+# Recursively collapse the condition.
+
+sub _collapse_cond {
+  my ($self, $cond, $collapsed) = @_;
+
+  $collapsed ||= {};
+
+  if (ref $cond eq 'ARRAY') {
+    foreach my $subcond (@$cond) {
+      next unless ref $subcond;  # -or
+#      warn "ARRAY: " . Dumper $subcond;
+      $collapsed = $self->_collapse_cond($subcond, $collapsed);
+    }
+  }
+  elsif (ref $cond eq 'HASH') {
+    if (keys %$cond and (keys %$cond)[0] eq '-and') {
+      foreach my $subcond (@{$cond->{-and}}) {
+#        warn "HASH: " . Dumper $subcond;
+        $collapsed = $self->_collapse_cond($subcond, $collapsed);
+      }
+    }
+    else {
+#      warn "LEAF: " . Dumper $cond;
+      foreach my $col (keys %$cond) {
+        my $value = $cond->{$col};
+        $collapsed->{$col} = $value;
+      }
+    }
+  }
+
+  return $collapsed;
+}
+
+# _remove_alias
+#
+# Remove the specified alias from the specified query hash. A copy is made so
+# the original query is not modified.
+
+sub _remove_alias {
+  my ($self, $query, $alias) = @_;
+
+  my %unaliased = %{ $query || {} };
+  foreach my $key (keys %unaliased) {
+    $unaliased{$1} = delete $unaliased{$key}
+      if $key =~ m/^(?:\Q$alias\E\.)?([^.]+)$/;
+  }
+
+  return \%unaliased;
 }
 
 =head2 find_or_new
@@ -1347,7 +1426,7 @@ sub update_or_create {
   my $attrs = (@_ > 1 && ref $_[$#_] eq 'HASH' ? pop(@_) : {});
   my $cond = ref $_[0] eq 'HASH' ? shift : {@_};
 
-  my $row = $self->find($cond);
+  my $row = $self->find($cond, $attrs);
   if (defined $row) {
     $row->update($cond);
     return $row;
@@ -1560,11 +1639,13 @@ sub _resolved_attrs {
 
   my $collapse = $attrs->{collapse} || {};
   if (my $prefetch = delete $attrs->{prefetch}) {
+    $prefetch = $self->_merge_attr({}, $prefetch);
     my @pre_order;
+    my $seen = $attrs->{seen_join} || {};
     foreach my $p (ref $prefetch eq 'ARRAY' ? @$prefetch : ($prefetch)) {
       # bring joins back to level of current class
       my @prefetch = $source->resolve_prefetch(
-        $p, $alias, { %{$attrs->{seen_join}||{}} }, \@pre_order, $collapse
+        $p, $alias, $seen, \@pre_order, $collapse
       );
       push(@{$attrs->{select}}, map { $_->[0] } @prefetch);
       push(@{$attrs->{as}}, map { $_->[1] } @prefetch);
@@ -1810,6 +1891,19 @@ For example:
     }
   );
 
+You need to use the relationship (not the table) name in  conditions, 
+because they are aliased as such. The current table is aliased as "me", so 
+you need to use me.column_name in order to avoid ambiguity. For example:
+
+  # Get CDs from 1984 with a 'Foo' track 
+  my $rs = $schema->resultset('CD')->search(
+    { 
+      'me.year' => 1984,
+      'tracks.name' => 'Foo'
+    },
+    { join => 'tracks' }
+  );
+  
 If the same join is supplied twice, it will be aliased to <rel>_2 (and
 similarly for a third time). For e.g.
 

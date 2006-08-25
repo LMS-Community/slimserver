@@ -21,8 +21,8 @@ How Do I:
 =item .. create a database to use?
 
 First, choose a database. For testing/experimenting, we reccommend
-L<DBD::SQLite>, which is a self-contained small database. (i.e. all
-you need to do is to install the DBD from CPAN, and it's usable).
+L<DBD::SQLite>, which is a self-contained small database (i.e. all you
+need to do is to install L<DBD::SQLite> from CPAN, and it's usable).
 
 Next, spend some time defining which data you need to store, and how
 it relates to the other data you have. For some help on normalisation,
@@ -40,16 +40,16 @@ manually, and the one on creating tables from your schema.
 
 =item .. use DBIx::Class with L<Catalyst>?
 
-Install L<Catalyst::Model::DBIC::Schema> from CPAN. See it's
+Install L<Catalyst::Model::DBIC::Schema> from CPAN. See its
 documentation, or below, for further details.
 
 =item .. set up my DBIx::Class classes automatically from my database?
 
-Install L<DBIx::Class::Schema::Loader> from CPAN, and read it's documentation. 
+Install L<DBIx::Class::Schema::Loader> from CPAN, and read its documentation.
 
 =item .. set up my DBIx::Class classes manually?
 
-Look at the L<DBIx::Class::Manual::Example>, come back here if you get lost.
+Look at the L<DBIx::Class::Manual::Example> and come back here if you get lost.
 
 =item .. create my database tables from my DBIx::Class schema?
 
@@ -77,23 +77,30 @@ lot later.
 
 =item .. tell DBIx::Class about relationships between my tables?
 
-There are a vareity of relationship types that come pre-defined for you to use. These are all listed in L<DBIx::Class::Relationship>. If you need a non-standard type, or more information, look in L<DBIx::Class::Relationship::Base>.
+There are a vareity of relationship types that come pre-defined for
+you to use.  These are all listed in L<DBIx::Class::Relationship>. If
+you need a non-standard type, or more information, look in
+L<DBIx::Class::Relationship::Base>.
 
 =item .. define a one-to-many relationship?
 
-This is called a C<has_many> relationship on the one side, and a C<belongs_to> relationship on the many side. Currently these need to be set up individually on each side. See L<DBIx::Class::Relationship> for details.
+This is called a C<has_many> relationship on the one side, and a
+C<belongs_to> relationship on the many side. Currently these need to
+be set up individually on each side. See L<DBIx::Class::Relationship>
+for details.
 
 =item .. define a relationship where this table contains another table's primary key? (foreign key)
 
-Create a C<belongs_to> relationship for the field containing the foreign key. L<DBIx::Class::Relationship/belongs_to>.
+Create a C<belongs_to> relationship for the field containing the
+foreign key.  See L<DBIx::Class::Relationship/belongs_to>.
 
 =item .. define a foreign key relationship where the key field may contain NULL?  
 
-Just create a C<belongs_to> relationship, as above. If
-the column is NULL then the inflation to the foreign object will not
-happen. This has a side effect of not always fetching all the relevant
-data, if you use a nullable foreign-key relationship in a JOIN, then
-you probably want to set the join_type to 'left'.
+Just create a C<belongs_to> relationship, as above. If the column is
+NULL then the inflation to the foreign object will not happen. This
+has a side effect of not always fetching all the relevant data, if you
+use a nullable foreign-key relationship in a JOIN, then you probably
+want to set the C<join_type> to C<left>.
 
 =item .. define a relationship where the key consists of more than one column?
 
@@ -110,12 +117,13 @@ Read the documentation on L<DBIx::Class::Relationship/many_to_many>.
 
 By default, DBIx::Class cascades deletes and updates across
 C<has_many> relationships. If your database already does this (and
-probably better), turn it off by supplying C<< cascade_delete => 0 >> in
-the relationship attributes. See L<DBIx::Class::Relationship::Base>.
+that is probably better), turn it off by supplying C<< cascade_delete => 0 >>
+in the relationship attributes. See L<DBIx::Class::Relationship::Base>.
 
 =item .. use a relationship?
 
-Use it's name. An accessor is created using the name. See examples in L<DBIx::Class::Manual::Cookbook/Using relationships>.
+Use its name. An accessor is created using the name. See examples in
+L<DBIx::Class::Manual::Cookbook/Using relationships>.
 
 =back
 
@@ -126,9 +134,8 @@ Use it's name. An accessor is created using the name. See examples in L<DBIx::Cl
 =item .. search for data?
 
 Create a C<$schema> object, as mentioned above in ".. connect to my
-database". Find the
-L<ResultSet|DBIx::Class::Manual::Glossary/ResultSet> that you want
-to search in, and call C<search> on it. See
+database". Find the L<ResultSet|DBIx::Class::Manual::Glossary/ResultSet>
+that you want to search in, and call C<search> on it. See
 L<DBIx::Class::ResultSet/search>.
 
 =item .. search using database functions?
@@ -146,15 +153,16 @@ so:
 
 =item .. sort the results of my search?
 
-Supply a list of columns you want to sort by, to the C<order_by>
-attribute, see L<DBIx::Class::ResultSet/order_by>.
+Supply a list of columns you want to sort by to the C<order_by>
+attribute. See L<DBIx::Class::ResultSet/order_by>.
 
 =item .. sort my results based on fields I've aliased using C<as>?
 
 You don't. You'll need to supply the same functions/expressions to
-C<order_by>, as you did to C<select>. 
+C<order_by>, as you did to C<select>.
 
-To get "fieldname AS alias" in your SQL, you'll need to supply a literal chunk of SQL in your C<select> attribute, such as:
+To get "fieldname AS alias" in your SQL, you'll need to supply a
+literal chunk of SQL in your C<select> attribute, such as:
 
  ->search({}, { select => [ \'now() AS currenttime'] })
 
@@ -182,12 +190,12 @@ Then you can use the alias in your C<group_by> attribute.
 The first argument to C<search> is a hashref of accessor names and
 values to filter them by, for example:
 
- ->search({'created_time' => { '>=', '2006-06-01 00:00:00'} })
+ ->search({'created_time' => { '>=', '2006-06-01 00:00:00' } })
 
 Note that to use a function here you need to make the whole value into
 a scalar reference:
 
- ->search({'created_time' => \'>= yesterday() })
+ ->search({'created_time' => \'>= yesterday()' })
 
 =item .. search in several tables simultaneously?
 
@@ -197,7 +205,7 @@ then supply the name of the relationship to the C<join> attribute in
 your search, for example when searching in the Books table for all the
 books by the author "Fred Bloggs":
 
- ->search({'authors.name' => 'Fred Bloggs'}, { join => 'authors'})
+ ->search({'authors.name' => 'Fred Bloggs'}, { join => 'authors' })
 
 The type of join created in your SQL depends on the type of
 relationship between the two tables, see L<DBIx::Class::Relationship>
@@ -207,8 +215,8 @@ for the join used by each relationship.
 
 Currently, L<DBIx::Class> can only create join conditions using
 equality, so you're probably better off creating a C<view> in your
-database, and using that as your source. A C<view> is a stored SQL query,
-which can be accessed similarly to a table, see your database
+database, and using that as your source. A C<view> is a stored SQL
+query, which can be accessed similarly to a table, see your database
 documentation for details.
 
 =item .. search using greater-than or less-than and database functions?
@@ -227,7 +235,7 @@ and not:
 =item .. find more help on constructing searches?
 
 Behind the scenes, DBIx::Class uses L<SQL::Abstract> to help construct
-it's SQL searches. So if you fail to find help in the
+its SQL searches. So if you fail to find help in the
 L<DBIx::Class::Manual::Cookbook>, try looking in the SQL::Abstract
 documentation.
 
@@ -280,7 +288,7 @@ the rows at once.
 To stop the column name from being quoted, you'll need to supply a
 scalar reference:
 
- ->update({ somecolumn => '\othercolumn'})
+ ->update({ somecolumn => \'othercolumn' })
 
 =back
 
@@ -294,10 +302,12 @@ You can add your own data accessors to your classes.
 
 =item How do I use DBIx::Class objects in my TT templates?
 
-Like normal objects, mostly. However you need to watch out for TTs
-calling methods in list context, this means that when calling
-relationship accessors you will not get resultsets, but a list of all
-the related objects.
+Like normal objects, mostly. However you need to watch out for TT
+calling methods in list context. When calling relationship accessors
+you will not get resultsets, but a list of all the related objects.
+
+Starting with version 0.07, you can use L<DBIx::Class::ResultSet/search_rs>
+to work around this issue.
 
 =item See the SQL statements my code is producing?
 
@@ -311,6 +321,6 @@ L<DBIx::Class> runs the actual SQL statement as late as possible, thus
 if you create a resultset using C<search> in scalar context, no query
 is executed. You can create further resultset refinements by calling
 search again or relationship accessors. The SQL query is only run when
-you ask the resultset for an actual Row object.
+you ask the resultset for an actual row object.
 
 =back

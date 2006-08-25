@@ -113,33 +113,34 @@ See L<DBIx::Class::Relationship::Base> for a list of valid attributes.
   $obj->author($new_author_obj);
 
 Creates a relationship where the calling class stores the foreign class's
-primary key in one (or more) of its columns. If $cond is a column name
+primary key in one (or more) of its columns. If C<$cond> is a column name
 instead of a join condition hash, that is used as the name of the column
-holding the foreign key. If $cond is not given, the relname is used as
+holding the foreign key. If C<$cond> is not given, the relname is used as
 the column name.
 
-If the relationship is optional - ie the column containing the foreign
+If the relationship is optional - i.e. the column containing the foreign
 key can be NULL - then the belongs_to relationship does the right
-thing - so in the example above C<$obj->author> would return C<undef>.
+thing - so in the example above C<$obj-E<gt>author> would return C<undef>.
 However in this case you would probably want to set the C<join_type>
 attribute so that a C<LEFT JOIN> is done, which makes complex
 resultsets involving C<join> or C<prefetch> operations work correctly.
-The modified declaration is shown below:-
+The modified declaration is shown below:
 
-  # in a Book class (where Author has many Books)
+  # in a Book class (where Author has_many Books)
   __PACKAGE__->belongs_to(author => 'My::DBIC::Schema::Author',
                           'author', {join_type => 'left'});
 
 
-Cascading deletes are off per default on a C<belongs_to> relationship, to turn
-them on, pass C<< cascade_delete => 1 >> in the $attr hashref.
+Cascading deletes are off by default on a C<belongs_to>
+relationship. To turn them on, pass C<< cascade_delete => 1 >>
+in the $attr hashref.
 
 NOTE: If you are used to L<Class::DBI> relationships, this is the equivalent
 of C<has_a>.
 
 =head2 has_many
 
-  # in an Author class (where Author has many Books)
+  # in an Author class (where Author has_many Books)
   My::DBIC::Schema::Author->has_many(books => 'My::DBIC::Schema::Book', 'author');
   my $booklist = $obj->books;
   my $booklist = $obj->books({
@@ -155,21 +156,22 @@ of C<has_a>.
 Creates a one-to-many relationship, where the corresponding elements of the
 foreign class store the calling class's primary key in one (or more) of its
 columns. You should pass the name of the column in the foreign class as the
-$cond argument, or specify a complete join condition.
+C<$cond> argument, or specify a complete join condition.
 
 Three methods are created when you create a has_many relationship.  The first
 method is the expected accessor method.  The second is almost exactly the same
 as the accessor method but "_rs" is added to the end of the method name.  This
 method works just like the normal accessor, except that it returns a resultset
 no matter what, even in list context. The third method, named
-C<< add_to_<relname> >>, will also be added to your Row items, this allows
+C<< add_to_<relname> >>, will also be added to your Row items; this allows
 you to insert new related items, using the same mechanism as in
 L<DBIx::Class::Relationship::Base/"create_related">.
 
 If you delete an object in a class with a C<has_many> relationship, all
-the related objects will be deleted as well. However, any database-level
-cascade or restrict will take precedence. To turn this behavior off, pass
-C<< cascade_delete => 0 >> in the $attr hashref.
+the related objects will be deleted as well.  To turn this behaviour off,
+pass C<< cascade_delete => 0 >> in the C<$attr> hashref. However, any
+database-level cascade or restrict will take precedence over a
+DBIx-Class-based cascading delete.
 
 =head2 might_have
 
@@ -179,12 +181,13 @@ C<< cascade_delete => 0 >> in the $attr hashref.
 
 Creates an optional one-to-one relationship with a class, where the foreign
 class stores our primary key in one of its columns. Defaults to the primary
-key of the foreign class unless $cond specifies a column or join condition.
+key of the foreign class unless C<$cond> specifies a column or join condition.
 
 If you update or delete an object in a class with a C<might_have>
-relationship, the related object will be updated or deleted as well.
-Any database-level update or delete constraints will override this behaviour.
-To turn off this behavior, add C<< cascade_delete => 0 >> to the $attr hashref.
+relationship, the related object will be updated or deleted as well. To
+turn off this behavior, add C<< cascade_delete => 0 >> to the C<$attr>
+hashref. Any database-level update or delete constraints will override
+this behavior.
 
 =head2 has_one
 
@@ -217,7 +220,7 @@ left join.
   My::DBIC::Schema::Actor->many_to_many( roles => 'actor_roles',
                                          'role' );
 
-Creates a accessors bridging two relationships; not strictly a relationship in
+Creates accessors bridging two relationships; not strictly a relationship in
 its own right, although the accessor will return a resultset or collection of
 objects just as a has_many would.
 

@@ -313,6 +313,11 @@ if called or an object or classdata called _$name if called on a class.
 sub set_component_class {
   my ($self, $set, $val) = @_;
   eval "require $val";
+  if ($@) {
+      my $val_path = $val;
+      $val_path =~ s{::}{/}g;
+      carp $@ unless $@ =~ /^Can't locate $val_path\.pm/;
+  }
   if (ref $self) {
       return $self->{$set} = $val;
   } else {

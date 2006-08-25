@@ -625,7 +625,9 @@ copy.
 
 sub clone {
   my ($self) = @_;
-  my $clone = bless({ (ref $self ? %$self : ()) }, ref $self || $self);
+  my $clone = { (ref $self ? %$self : ()) };
+  bless $clone, (ref $self || $self);
+
   foreach my $moniker ($self->sources) {
     my $source = $self->source($moniker);
     my $new = $source->new($source);
@@ -692,7 +694,7 @@ sub throw_exception {
 
 =over 4
 
-=item Arguments: $sqlt_args
+=item Arguments: $sqlt_args, $dir
 
 =back
 
@@ -708,9 +710,9 @@ produced include a DROP TABLE statement for each table created.
 =cut
 
 sub deploy {
-  my ($self, $sqltargs) = @_;
+  my ($self, $sqltargs, $dir) = @_;
   $self->throw_exception("Can't deploy without storage") unless $self->storage;
-  $self->storage->deploy($self, undef, $sqltargs);
+  $self->storage->deploy($self, undef, $sqltargs, $dir);
 }
 
 =head2 create_ddl_dir (EXPERIMENTAL)
@@ -729,8 +731,7 @@ across all databases, or fully handle complex relationships.
 
 =cut
 
-sub create_ddl_dir
-{
+sub create_ddl_dir {
   my $self = shift;
 
   $self->throw_exception("Can't create_ddl_dir without storage") unless $self->storage;
@@ -746,8 +747,7 @@ intended for direct end user use.
 
 =cut
 
-sub ddl_filename
-{
+sub ddl_filename {
     my ($self, $type, $dir, $version) = @_;
 
     my $filename = ref($self);
@@ -768,4 +768,3 @@ Matt S. Trout <mst@shadowcatsystems.co.uk>
 You may distribute this code under the same terms as Perl itself.
 
 =cut
-

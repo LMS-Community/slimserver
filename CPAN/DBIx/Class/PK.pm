@@ -20,11 +20,6 @@ depending on them.
 
 =cut
 
-sub _ident_cond {
-  my ($class) = @_;
-  return join(" AND ", map { "$_ = ?" } $class->primary_columns);
-}
-
 sub _ident_values {
   my ($self) = @_;
   return (map { $self->{_column_data}{$_} } $self->primary_columns);

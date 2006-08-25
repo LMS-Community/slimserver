@@ -29,10 +29,36 @@ sub new {
   $self;
 }
 
+sub _RowNumberOver {
+  my ($self, $sql, $order, $rows, $offset ) = @_;
+
+  $offset += 1;
+  my $last = $rows + $offset;
+  my ( $order_by ) = $self->_order_by( $order );
+
+  $sql = <<"";
+SELECT * FROM
+(
+   SELECT Q1.*, ROW_NUMBER() OVER( ) AS ROW_NUM FROM (
+      $sql
+      $order_by
+   ) Q1
+) Q2
+WHERE ROW_NUM BETWEEN $offset AND $last
+
+  return $sql;
+}
+
+
 # While we're at it, this should make LIMIT queries more efficient,
 #  without digging into things too deeply
 sub _find_syntax {
   my ($self, $syntax) = @_;
+  my $dbhname = eval { $syntax->{Driver}->{Name}} || '';
+  if(ref($self) && $dbhname && $dbhname eq 'DB2') {
+    return 'RowNumberOver';
+  }
+
   $self->{_cached_syntax} ||= $self->SUPER::_find_syntax($syntax);
 }
 
@@ -275,7 +301,9 @@ This class represents the connection to the database
 =cut
 
 sub new {
-  my $new = bless({}, ref $_[0] || $_[0]);
+  my $new = {};
+  bless $new, (ref $_[0] || $_[0]);
+
   $new->cursor("DBIx::Class::Storage::DBI::Cursor");
   $new->transaction_depth(0);
 
@@ -852,14 +880,13 @@ sub columns_info_for {
 
   if ($dbh->can('column_info')) {
     my %result;
-    my $old_raise_err = $dbh->{RaiseError};
-    my $old_print_err = $dbh->{PrintError};
-    $dbh->{RaiseError} = 1;
-    $dbh->{PrintError} = 0;
+    local $dbh->{RaiseError} = 1;
+    local $dbh->{PrintError} = 0;
     eval {
       my ($schema,$tab) = $table =~ /^(.+?)\.(.+)$/ ? ($1,$2) : (undef,$table);
       my $sth = $dbh->column_info( undef,$schema, $tab, '%' );
       $sth->execute();
+
       while ( my $info = $sth->fetchrow_hashref() ){
         my %column_info;
         $column_info{data_type}   = $info->{TYPE_NAME};
@@ -872,9 +899,7 @@ sub columns_info_for {
         $result{$col_name} = \%column_info;
       }
     };
-    $dbh->{RaiseError} = $old_raise_err;
-    $dbh->{PrintError} = $old_print_err;
-    return \%result if !$@;
+    return \%result if !$@ && scalar keys %result;
   }
 
   my %result;
@@ -1043,8 +1068,8 @@ L<DBIx::Class::Schema/deploy>.
 =cut
 
 sub deploy {
-  my ($self, $schema, $type, $sqltargs) = @_;
-  foreach my $statement ( $self->deployment_statements($schema, $type, undef, undef, { no_comments => 1, %{ $sqltargs || {} } } ) ) {
+  my ($self, $schema, $type, $sqltargs, $dir) = @_;
+  foreach my $statement ( $self->deployment_statements($schema, $type, undef, $dir, { no_comments => 1, %{ $sqltargs || {} } } ) ) {
     for ( split(";\n", $statement)) {
       next if($_ =~ /^--/);
       next if(!$_);
@@ -1093,7 +1118,17 @@ sub build_datetime_parser {
   return $type;
 }
 
-sub DESTROY { shift->disconnect }
+sub DESTROY {
+  # NOTE: if there's a merge conflict here when -current is pushed
+  #  back to trunk, take -current's version and ignore this trunk one :)
+  my $self = shift;
+
+  if($self->_dbh && $self->_conn_pid != $$) {
+    $self->_dbh->{InactiveDestroy} = 1;
+  }
+
+  $self->_dbh(undef);
+}
 
 1;
 

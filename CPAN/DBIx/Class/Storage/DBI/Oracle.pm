@@ -38,6 +38,13 @@ sub get_autoinc_seq {
   croak "Unable to find a sequence INSERT trigger on table '" . $source->name . "'.";
 }
 
+sub columns_info_for {
+  my ($self, $table) = @_;
+
+  $self->next::method($self, uc($table));
+}
+
+
 1;
 
 =head1 NAME
