@@ -1560,7 +1560,7 @@ sub pushMode {
 
 	$::d_ui && msg("pushing button mode: $setmode\n");
 
-	my $oldscreen2 = $client->modeVariable('screen2');
+	my $oldscreen2 = $client->modeParam('screen2active');
 
 	my $oldmode = mode($client);
 
@@ -1587,8 +1587,6 @@ sub pushMode {
 
 	push @{$client->modeParameterStack}, $paramHashRef;
 
-	push @{$client->modeVariableStack}, {};
-
 	my $newModeFunction = $modes{$setmode};
 
 	if (!$newModeFunction || ref($newModeFunction) ne "CODE") {
@@ -1611,8 +1609,8 @@ sub pushMode {
 			$screen2 = $oldscreen2;
 		}
 
-		# set mode variable screen2 so we can modify it later
-		$client->modeVariable('screen2', $screen2);
+		# set active param so we can modify it later
+		$client->modeParam('screen2active', $screen2);
 	}
 
 	# some modes require periodic updates
@@ -1642,7 +1640,7 @@ sub popMode {
 		return undef;
 	}
 
-	my $oldscreen2 = $client->modeVariable('screen2');
+	my $oldscreen2 = $client->modeParam('screen2active');
 
 	my $oldMode = mode($client);
 
@@ -1657,7 +1655,6 @@ sub popMode {
 	
 	pop @{$client->modeStack};
 	pop @{$client->modeParameterStack};
-	pop @{$client->modeVariableStack};
 	$scrollClientHash->{$client}{scrollParams} = pop @{$scrollClientHash->{$client}{scrollParamsStack}};
 	
 	my $newmode = mode($client);
@@ -1672,18 +1669,18 @@ sub popMode {
 
 		my $suppressScreen2Update = shift;
 
-		my $screen2 = $client->modeVariable('screen2');
+		my $screen2 = $client->modeParam('screen2active');
 
 		if ($client->display->showExtendedText()) {
 
-			$client->modeVariable('screen2', 'periodic') unless $screen2;
+			$client->modeParam('screen2active', 'periodic') unless $screen2;
 
 		} elsif ($screen2 && $screen2 eq 'periodic') {
 
-			$client->modeVariable('screen2', undef);
+			$client->modeParam('screen2active', undef);
 		}
 
-		if (!$suppressScreen2Update && $oldscreen2 && !$client->modeVariable('screen2')) {
+		if (!$suppressScreen2Update && $oldscreen2 && !$client->modeParam('screen2active')) {
 
 			$client->update( { 'screen2' => {} } );
 		}
@@ -1726,7 +1723,7 @@ sub pushModeLeft {
 
 	} else {
 
-		my $oldscreen2 = $client->modeVariable('screen2');
+		my $oldscreen2 = $client->modeParam('screen2active');
 
 		pushMode($client, $setmode, $paramHashRef);
 
@@ -1751,7 +1748,7 @@ sub popModeRight {
 
 	} else {
 
-		my $oldscreen2 = $client->modeVariable('screen2');
+		my $oldscreen2 = $client->modeParam('screen2active');
 
 		Slim::Buttons::Common::popMode($client, 1);
 
@@ -1767,7 +1764,7 @@ sub pushpopScreen2 {
 
 	my $newlines = $display->curLines();
 
-	my $newscreen2 = $client->modeVariable('screen2');
+	my $newscreen2 = $client->modeParam('screen2active');
 
 	if ($newscreen2 && $newscreen2 eq 'periodic' && $oldscreen2 ne 'periodic') {
 		my $linesfunc = $client->lines2periodic();
@@ -1783,17 +1780,17 @@ sub pushpopScreen2 {
 sub updateScreen2Mode {
 	my $client = shift || return;
 
-	my $screen2 = $client->modeVariable('screen2');
+	my $screen2 = $client->modeParam('screen2active');
 
 	if ($client->display->showExtendedText()) {
 		if (!$screen2) {
-			$client->modeVariable('screen2', 'periodic');
+			$client->modeParam('screen2active', 'periodic');
 			startPeriodicUpdates($client);
 		}
 	} else {
 		if ($screen2) {
 			if ($screen2 eq 'periodic') {
-				$client->modeVariable('screen2', undef);
+				$client->modeParam('screen2active', undef);
 			}
 			$client->update( { 'screen2' => {} } );
 		}
@@ -1805,7 +1802,7 @@ sub suppressStatus {
 
 	return undef unless $client->display->hasScreen2();
 
-	my $screen2 = $client->modeVariable('screen2');
+	my $screen2 = $client->modeParam('screen2active');
 
 	if ($screen2 && $screen2 eq 'periodic') {
 		return 1;
@@ -1831,7 +1828,7 @@ sub startPeriodicUpdates {
 	my $interval  = $client->param('modeUpdateInterval');
 	my $interval2 = undef;
 
-	if ($client->modeVariable('screen2') && $client->modeVariable('screen2') eq 'periodic') {
+	if ($client->modeParam('screen2active') && $client->modeParam('screen2active') eq 'periodic') {
 
 		$interval2 = 1;
 	}
@@ -1862,7 +1859,7 @@ sub _periodicUpdate {
 	my $update  = $client->param('modeUpdateInterval');
 	my $update2 = undef;
 
-	if ($client->modeVariable('screen2') && $client->modeVariable('screen2') eq 'periodic') {
+	if ($client->modeParam('screen2active') && $client->modeParam('screen2active') eq 'periodic') {
 
 		$update2 = 1;
 	}

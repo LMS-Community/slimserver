@@ -163,7 +163,7 @@ sub new {
 	$client->[101] = undef; # lines2periodic
 	$client->[102] = 0; # periodicUpdateTime
 	$client->[103] = undef; # musicInfoTextCache
-	$client->[104] = [ {} ];# modeVariableStack
+	$client->[104] = undef; # unused
 	# 105 is scroll state
 	$client->[106] = undef; # knobPos
 	$client->[107] = undef; # knobTime
@@ -757,22 +757,10 @@ sub param {
 }
 
 # this is a replacement for param that allows you to pass undef to clear a parameter
-# NB mode parameters may persist between instances of a mode.  They should therefore not be used
-# for state which should not persist between instances of a mode - use modeVariable instead
 sub modeParam {
 	my $client = shift;
 	my $name   = shift;
 	my $mode   = $client->modeParameterStack(-1) || return undef;
-
-	@_ ? ($mode->{$name} = shift) : $mode->{$name};
-}
-
-# Mode variables are accessed by this function.  Mode variables are used for state which should not
-# persist between instances of a mode
-sub modeVariable {
-	my $client = shift;
-	my $name   = shift;
-	my $mode   = $client->modeVariableStack(-1) || return undef;
 
 	@_ ? ($mode->{$name} = shift) : $mode->{$name};
 }
@@ -1593,13 +1581,6 @@ sub periodicUpdateTime {
 sub musicInfoTextCache {
 	my $r = shift;
 	@_ ? ($r->[103] = shift) : $r->[103];
-}
-
-sub modeVariableStack {
-	my $r = shift;
-	my $i;
-	@_ ? ($i = shift) : return $r->[104];
-	@_ ? ($r->[104]->[$i] = shift) : $r->[104]->[$i];
 }
 
 sub knobPos {
