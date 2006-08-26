@@ -161,6 +161,7 @@ sub render {
 	# force initialisation of cache if size = 0 (used to init cache)
 	if ($sc->{ssize} != 40) {
 		$sc->{ssize} = 40;
+		$sc->{double} = 0;
 		$sc->{changed} = 1;
 	}
 
@@ -182,7 +183,7 @@ sub render {
 		$double = $screen->{double};
 	}
 	if (!defined($double)) { $double = $display->textSize() ? 1 : 0; }
-	
+
 	if ($double != $sc->{double}) {
 		$sc->{double} = $double;
 		$sc->{changed} = 1;
