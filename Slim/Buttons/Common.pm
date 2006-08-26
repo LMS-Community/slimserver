@@ -1766,7 +1766,7 @@ sub pushpopScreen2 {
 
 	my $newscreen2 = $client->modeParam('screen2active');
 
-	if ($newscreen2 && $newscreen2 eq 'periodic' && $oldscreen2 ne 'periodic') {
+	if ($newscreen2 && $newscreen2 eq 'periodic' && (!$oldscreen2 || $oldscreen2 ne 'periodic')) {
 		my $linesfunc = $client->lines2periodic();
 		$newlines->{'screen2'} = &$linesfunc($client);
 
