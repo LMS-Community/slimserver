@@ -364,6 +364,7 @@ sub playcontrolCommand {
 	my $client = $request->client();
 	my $cmd    = $request->getRequest(0);
 	my $param  = $request->getRequest(1);
+	my $newvalue = $request->getParam('_newvalue');
 	
 	# which state are we in?
 	my $curmode = Slim::Player::Source::playmode($client);
@@ -377,15 +378,15 @@ sub playcontrolCommand {
 		# we want to go to $param if the command is mode
 		$wantmode = $param;
 		# and for pause we want 1
-		$param = 1;
+		$newvalue = 1;
 	}
 	
 	if ($cmd eq 'pause') {
 		
 		# pause 1, pause 0 and pause (toggle) are all supported, figure out which
 		# one we want...
-		if (defined $param) {
-			$wantmode = $param ? 'pause' : 'play';
+		if (defined $newvalue) {
+			$wantmode = $newvalue ? 'pause' : 'play';
 		} else {
 			$wantmode = ($curmode eq 'pause') ? 'play' : 'pause';
 		}
