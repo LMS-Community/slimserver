@@ -161,10 +161,28 @@ div#pagetitle {
 	text-align: center;
 	overflow: hidden;
 	color: #999;
+	display: none;
 }
 
 .artworkText A {
 	color : white ! important;
+}
+
+#showText {
+	float: right;
+}
+
+#hideText {
+	display: none;
+	float: right;
+}
+
+.pageHeaderInfo {
+	float: left;
+}
+
+.headerhr {
+	clear: left;
 }
 
 .thumbwrap {
@@ -325,6 +343,7 @@ DIV {
 HR {
 	border : 0;
 	border-bottom:2px solid #bbb;
+	clear: left;
 }
 
 TH {
