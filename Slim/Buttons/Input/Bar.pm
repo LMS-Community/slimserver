@@ -95,6 +95,8 @@ sub init {
 
 		# Bug: 2093 - Don't let the knob wrap or have acceleration when in INPUT.Bar mode.
 		'knobFlags'       => Slim::Player::Client::KNOB_NOWRAP() | Slim::Player::Client::KNOB_NOACCELERATION(),
+		'knobWidth'	  => 100,
+		'knobHeight'	  => 1,
 	);
 
 	# Set our defaults for this mode.

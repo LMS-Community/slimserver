@@ -382,36 +382,36 @@ sub init {
 					'init'          => \&visualInit,
 				},
 			
-				'DIGITAL_INPUT'       => {
+				'AUDIO_SOURCE'       => {
 					'useMode'      => 'INPUT.Choice',
 					'listRef'      => [
 						{
-							name   => '{OFF}',
+							name   => '{AUDIO_SOURCE_NETWORK}',
 							value  => 0,
 						},
 						{
-							name   => '{DIGITAL_INPUT_BALANCED_AES}',
+							name   => '{AUDIO_SOURCE_BALANCED_AES}',
 							value  => 1,
 						},
 						{
-							name   => '{DIGITAL_INPUT_BNC_SPDIF}',
+							name   => '{AUDIO_SOURCE_BNC_SPDIF}',
 							value  => 2,
 						},
 						{
-							name   => '{DIGITAL_INPUT_RCA_SPDIF}',
+							name   => '{AUDIO_SOURCE_RCA_SPDIF}',
 							value  => 3,
 						},
 						{
-							name   => '{DIGITAL_INPUT_OPTICAL_SPDIF}',
+							name   => '{AUDIO_SOURCE_OPTICAL_SPDIF}',
 							value  => 4,
 						},
 					],
-					'onPlay'       => \&updateDigitalInput,
-					'onAdd'        => \&updateDigitalInput,
-					'onRight'      => \&updateDigitalInput,
-					'header'       => '{DIGITAL_INPUT}{count}',
-					'pref'         => 'digitalInput',
-					'initialValue' => sub { return $_[0]->prefGet('digitalInput') },
+					'onPlay'       => \&updateAudioSource,
+					'onAdd'        => \&updateAudioSource,
+					'onRight'      => \&updateAudioSource,
+					'header'       => '{AUDIO_SOURCE}{count}',
+					'pref'         => 'audioSource',
+					'initialValue' => sub { return $_[0]->prefGet('audioSource') },
 					'condition'    => sub { return $_[0]->isa('Slim::Player::Transporter') },
 				},
 			},
@@ -421,12 +421,12 @@ sub init {
 	Slim::Buttons::Home::addMenuOption('SETTINGS', $menuParams{'SETTINGS'});
 }
 
-sub updateDigitalInput {
+sub updateAudioSource {
 	my $client = shift;
 	my $input = shift;
 
 	my $data = pack('C', $input->{'value'});
-	$client->prefSet('digitalInput', $input->{'value'});
+	$client->prefSet('audioSource', $input->{'value'});
 	$client->sendFrame('audp', \$data);
 };
 

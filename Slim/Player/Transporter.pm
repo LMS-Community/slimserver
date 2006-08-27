@@ -28,7 +28,7 @@ use Slim::Utils::Unicode;
 
 our $defaultPrefs = {
 	'clockSource'  => 0,
-	'digitalInput' => 0,
+	'audioSource' => 0,
 };
 
 sub init {
@@ -77,15 +77,14 @@ sub updateKnob {
 	my $knobPos  = $client->knobPos || 0;
 	my $knobSync = $client->knobSync;
 	my $flags    = $client->param('knobFlags') || 0;
+	my $width    = $client->param('knobWidth') || 0;
+	my $height    = $client->param('knobHeight') || 0;
 
 	if (defined $listIndex && (($listIndex == $knobPos) || $forceSend)) {
 
 		my $parambytes;
 
 		if (defined $listLen) {
-		    	my $width  = 0;
-		    	my $height = 0;
-
 			$client->knobSync( (++$knobSync) & 0xFF);
 
 			$parambytes = pack "NNCcnc", $listIndex, $listLen, $knobSync, $flags, $width, $height;
