@@ -870,6 +870,7 @@ sub scanWMAStream {
 	my $http = Slim::Networking::Async::HTTP->new();
 	$http->send_request( {
 		'request'     => $request,
+		'readLimit'   => 16 * 1024,
 		'onBody'      => \&scanWMAStreamDone,
 		'onError'     => \&scanWMAStreamError,
 		'passthrough' => [ $args ],
@@ -892,6 +893,7 @@ sub scanWMAStreamDone {
 	if (   $type ne 'application/octet-stream'
 		&& $type ne 'application/x-mms-framed' 
 		&& $type ne 'application/vnd.ms.wms-hdr.asfv1'
+		&& $type ne 'audio/x-ms-wma'
 	) {
 		# It's not audio, treat it as ASX redirector
 		$::d_scan && msgf("scanWMA: Stream returned non-audio content-type: $type, treating as ASX redirector\n");
@@ -911,7 +913,7 @@ sub scanWMAStreamDone {
 	
 	my $chunkType = unpack 'v', substr($header, 0, 2);
 	if ( $chunkType != 0x4824 ) {
-		return scanWMAStreamError( $http, 'ASF_UNABLE_TO_PARSE' );
+		return scanWMAStreamError( $http, 'ASF_UNABLE_TO_PARSE', $args );
 	}
 	
 	my $chunkLength = unpack 'v', substr($header, 2, 2);
@@ -924,7 +926,7 @@ sub scanWMAStreamDone {
 	$::d_scan && msg("WMA header data: " . Data::Dump::dump($wma) . "\n");
 	
 	if ( !$wma ) {
-		return scanWMAStreamError( $http, 'ASF_UNABLE_TO_PARSE' );
+		return scanWMAStreamError( $http, 'ASF_UNABLE_TO_PARSE', $args );
 	}
 	
 	my $streamNum = 1;
