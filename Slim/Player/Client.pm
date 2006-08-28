@@ -708,6 +708,7 @@ sub updateKnob{}
 sub prevline1 {}
 sub prevline2 {}
 sub currBrightness {}
+sub linesPerScreen {}
 
 sub pause {
 	my $client = shift;
