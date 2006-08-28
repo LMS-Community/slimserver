@@ -766,5 +766,45 @@ transitions on the left hand screen.  The left hand screen will still
 show the correct menu items, but will not perform the normal scrolling
 between menu items.</p>
 
+<hr></hr>
+<h4>Custom Server Mode Displays</h4>
+
+<p>6.5 supports custom lines functions for the volume display and
+playlist mode.  This allows a plugin to alter the built in screen
+displays for changing volume and playlist/now playing displays.</p>
+
+<p>A plugin should register alternative lines function at client
+connect time with the client methods customVolumeLines and
+customPlaylistLines.  For example:</p>
+
+<pre>
+sub initPlugin {
+    Slim::Control::Request::subscribe( \&newClient, [['client']], [['new']] );
+}
+
+sub newClient {
+    my $client = shift->client || return;
+    $client->customVolumeLines( \&volumeLines );
+    $client->customPlaylistLines( \&playlistLines );
+}
+
+sub volumeLines {
+    my $client = shift;
+    my $vol = shift;
+
+    if (!defined $vol && $client->param('valueRef')) {
+        $vol = ${$client->param('valueRef')};
+    }
+
+    # $vol is a value 0..100
+}
+
+sub playlistLines {
+    my $client = shift;
+
+    # see Slim::Buttons::Playlist::lines for details
+}
+</pre>
+
 <p></p>
 [% PROCESS helpfooter.html %]
