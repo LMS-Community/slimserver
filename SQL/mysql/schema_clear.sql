@@ -27,7 +27,4 @@ DELETE FROM unreadable_tracks;
 
 UPDATE metainformation SET value = 0 WHERE name = 'lastRescanTime';
 
--- Clear the migration table so the schema is recreated
-DELETE FROM dbix_migration;
-
 SET foreign_key_checks = 1;
