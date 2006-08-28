@@ -172,7 +172,9 @@ function displayLibraryInfo(theData) {
 	var homeParsedData = parseData(myData);
 	var libraryString = homeParsedData['song_count'] +', '+ homeParsedData['artist_count'] +', '+ homeParsedData['album_count'];
 	if ($('libraryInfo')) {
-		$('libraryInfo').innerHTML = libraryString;
+		if (homeParsedData['song_count'] != '0') {
+			$('libraryInfo').innerHTML = libraryString;
+		}
 	}
 }
 
