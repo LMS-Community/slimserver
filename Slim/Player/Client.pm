@@ -78,7 +78,7 @@ sub new {
 
 	# The following indexes are unused:
 	# 2, 3, 8, 11, 12, 13, 16, 23, 24, 25, 26, 27, 33, 34, 53
-	# 64, 65, 66, 67, 68, 72, 82, 83, 94
+	# 64, 65, 66, 67, 68, 72, 82, 83
 
 	$client->[0] = $id;
 	$client->[1] = Slim::Utils::Prefs::getClientPrefs($id); # _prefs
@@ -154,6 +154,7 @@ sub new {
 	$client->[91] = undef; # currentPlaylist
 	$client->[92] = undef; # currentPlaylistModified
 	$client->[93] = undef; # songElapsedSeconds
+	$client->[94] = undef; # customPlaylistLines
 	# 95 is currentPlaylistRender
 	# 96 is currentPlaylistChangeTime
 	$client->[97] = undef; # tempVolume temporary volume setting
@@ -1541,6 +1542,11 @@ sub currentPlaylistModified {
 sub songElapsedSeconds {
 	my $r = shift;
 	@_ ? ($r->[93] = shift) : $r->[93];
+}
+
+sub customPlaylistLines {
+	my $r = shift;
+	@_ ? ($r->[94] = shift) : $r->[94];
 }
 
 sub currentPlaylistRender {

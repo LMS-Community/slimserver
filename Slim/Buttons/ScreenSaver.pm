@@ -191,17 +191,14 @@ sub wakeup {
 
 sub setMode {
 	my $client = shift;
+
 	$::d_time && msg("going into screensaver mode");
-	$client->lines(\&lines);
+
+	$client->lines( $client->customPlaylistLines() || \&Slim::Buttons::Playlist::lines );
+
 	# update client every second in this mode
 	$client->param('modeUpdateInterval', 1); # seconds
 	$client->param('screen2', 'screensaver');
-}
-
-sub lines {
-	my $client = shift;
-	$::d_time && msg("getting screensaver lines");
-	return Slim::Buttons::Playlist::lines($client);
 }
 
 =head1 SEE ALSO

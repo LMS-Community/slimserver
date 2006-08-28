@@ -314,7 +314,7 @@ sub setMode {
 	my $client = shift;
 	my $how    = shift;
 
-	$client->lines(\&lines);
+	$client->lines( $client->customPlaylistLines() || \&lines );
 
 	if ($how ne 'pop') {
 		jump($client);
@@ -368,7 +368,9 @@ sub lines {
 
 	my ($parts, $line1, $line2);
 
-	if (showingNowPlaying($client) || (Slim::Player::Playlist::count($client) < 1)) {
+	my $nowPlaying = showingNowPlaying($client);
+
+	if ($nowPlaying || (Slim::Player::Playlist::count($client) < 1)) {
 
 		$parts = $client->currentSongLines();
 
@@ -397,7 +399,7 @@ sub lines {
 	}
 
 	if ($client->display->showExtendedText()) {
-		my $song = Slim::Player::Playlist::song($client, browseplaylistindex($client));
+		my $song = Slim::Player::Playlist::song($client, $nowPlaying ? undef : browseplaylistindex($client) );
 
 		$parts->{'screen2'} ||= {
 			'line' => [ 
