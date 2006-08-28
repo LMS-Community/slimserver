@@ -889,17 +889,9 @@ the result for use by the direct streaming code in Protocols::MMS.
 sub scanWMAStream {
 	my $args = shift;
 	
-	my $url = $args->{'url'};
-	$url =~ s/^mms/http/;
+	my $request = HTTP::Request->new( GET => $args->{'url'} );
 	
-	my $request = HTTP::Request->new( GET => $url );
-	
-	my $h = $request->headers;
-	$h->header( Accept => '*/*' );
-	$h->header( 'User-Agent' => 'NSPlayer/4.1.0.3856' );
-	$h->header( Pragma => 'xClientGUID={' . Slim::Player::Protocols::MMS::randomGUID(). '}' );
-	$h->header( Pragma => 'no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=1,max-duration=0' );
-	$h->header( Connection => 'close' );
+	addWMAHeaders( $request );
 	
 	my $http = Slim::Networking::Async::HTTP->new();
 	$http->send_request( {
