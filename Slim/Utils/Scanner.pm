@@ -399,16 +399,8 @@ sub scanRemoteURL {
 	
 	# Use WMP headers for MMS protocol URLs or ASF/ASX/WMA URLs
 	if ( $url =~ /(?:^mms|\.asf|\.asx|\.wma)/i ) {
-		$url =~ s/^mms/http/;
 		
-		$request->uri( $url );
-		
-		my $h = $request->headers;
-		$h->header( Accept => '*/*' );
-		$h->header( 'User-Agent' => 'NSPlayer/4.1.0.3856' );
-		$h->header( Pragma => 'xClientGUID={' . Slim::Player::Protocols::MMS::randomGUID(). '}' );
-		$h->header( Pragma => 'no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=1,max-duration=0' );
-		$h->header( Connection => 'close' );
+		addWMAHeaders( $request );
 	}
 	elsif ( $url !~ /^http/ ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
@@ -438,6 +430,7 @@ sub scanRemoteURL {
 	my $http = Slim::Networking::Async::HTTP->new();
 	$http->send_request( {
 		'request'     => $request,
+		'onRedirect'  => \&handleRedirect,
 		'onHeaders'   => \&readRemoteHeaders,
 		'onError'     => sub {
 			my ( $http, $error ) = @_;
@@ -449,6 +442,47 @@ sub scanRemoteURL {
 		},
 		'passthrough' => [ $args, $originalURL ],
 	} );
+}
+
+=head2 addWMAHeaders( $request )
+
+Adds Windows Media Player headers to the HTTP request.
+
+=cut
+
+sub addWMAHeaders {
+	my $request = shift;
+	
+	my $url = $request->uri->as_string;
+	$url =~ s/^mms/http/;
+	
+	$request->uri( $url );
+	
+	my $h = $request->headers;
+	$h->header( Accept => '*/*' );
+	$h->header( 'User-Agent' => 'NSPlayer/4.1.0.3856' );
+	$h->header( Pragma => 'xClientGUID={' . Slim::Player::Protocols::MMS::randomGUID(). '}' );
+	$h->header( Pragma => 'no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=1,max-duration=0' );
+	$h->header( Connection => 'close' );
+}
+
+=head2 handleRedirect( $http, $url )
+
+Callback when Async::HTTP encounters a redirect.  If a server (RadioTime) 
+redirects to an mms:// protocol URL we need to rewrite the link and set proper headers.
+
+=cut
+
+sub handleRedirect {
+	my $request = shift;
+	
+	if ( $request->uri =~ /^mms/ ) {
+		$::d_scan && msg("scanRemoteURL: Server redirected to MMS URL: " . $request->uri . ", adding WMA headers\n");
+		
+		addWMAHeaders( $request );
+	}
+	
+	return $request;
 }
 
 =head2 readRemoteHeaders( $http, $args, $originalURL )

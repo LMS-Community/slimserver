@@ -303,6 +303,11 @@ sub _http_read {
 				$::d_http_async && msgf("Async::HTTP: Redirecting to %s\n",
 					$self->request->uri->as_string,
 				);
+				
+				# Does the caller want to modify redirecting URLs?
+				if ( $args->{onRedirect} ) {
+					$args->{onRedirect}->( $self->request );
+				}
 			
 				$self->send_request( {
 					request => $self->request,
