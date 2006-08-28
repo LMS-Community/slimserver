@@ -97,6 +97,7 @@ sub init {
 		'knobFlags'       => Slim::Player::Client::KNOB_NOWRAP() | Slim::Player::Client::KNOB_NOACCELERATION(),
 		'knobWidth'	  => 100,
 		'knobHeight'	  => 1,
+		'knobBackgroundForce' => 15,
 	);
 
 	# Set our defaults for this mode.
