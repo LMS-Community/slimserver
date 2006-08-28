@@ -124,12 +124,21 @@ sub hasPreAmp {
 sub volumeString {
 	my ($client, $volume) = @_;
 
-	if ($volume <= 0) {
+	if ($client->display->isa('Slim::Display::Transporter')) {
 
-		return sprintf(' (%s)', $client->string('MUTED'));
+		if ($volume <= 0) {
+
+			return sprintf(' (%s)', $client->string('MUTED'));
+		}
+
+		return sprintf(' (%.2f dB)', -abs(($volume / 2) - 50));
+
+	} else {
+
+		return $client->SUPER::volumeString($volume);
+
 	}
 
-	return sprintf(' (%.2f dB)', -abs(($volume / 2) - 50));
 }
 
 1;

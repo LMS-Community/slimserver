@@ -694,6 +694,7 @@ sub mixerDisplay {
 	my $scale = $client->mixerConstant($feature, 'scale');
 
 	my $headerValue = '';
+	my $parts;
 
 	if ($client->mixerConstant($feature, 'balanced')) {
 
@@ -701,7 +702,15 @@ sub mixerDisplay {
 
 	} elsif ($feature eq 'volume') {
 
-		$headerValue = $client->volumeString($featureValue);
+		if (my $linefunc = $client->customVolumeLines()) {
+
+			$parts = &$linefunc($client, $featureValue);
+
+		} else {
+			
+			$headerValue = $client->volumeString($featureValue);
+
+		}
 
 	} else {
 
@@ -720,15 +729,14 @@ sub mixerDisplay {
 
 	$client->modeParam('visu', [0]);
 
-	my @lines = Slim::Buttons::Input::Bar::lines($client, $featureValue, $featureHeader, {
+	$parts ||= Slim::Buttons::Input::Bar::lines($client, $featureValue, $featureHeader, {
 		'min'       => $client->mixerConstant($feature, 'min'),
 		'mid'       => $mid,
 		'max'       => $client->mixerConstant($feature, 'max'),
 		'noOverlay' => 1,
 	});
 
-	# trim off any overlay for showBriefly
-	$client->display->showBriefly(@lines[0,1], { 'name' => 'mixer' } );
+	$client->display->showBriefly($parts, { 'name' => 'mixer' } );
 
 	# Turn the visualizer back to it's old value.
 	$client->modeParam('visu', $oldvisu);	

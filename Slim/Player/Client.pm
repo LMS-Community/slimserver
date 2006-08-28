@@ -163,7 +163,7 @@ sub new {
 	$client->[101] = undef; # lines2periodic
 	$client->[102] = 0; # periodicUpdateTime
 	$client->[103] = undef; # musicInfoTextCache
-	$client->[104] = undef; # unused
+	$client->[104] = undef; # customVolumeLines
 	# 105 is scroll state
 	$client->[106] = undef; # knobPos
 	$client->[107] = undef; # knobTime
@@ -1582,6 +1582,11 @@ sub periodicUpdateTime {
 sub musicInfoTextCache {
 	my $r = shift;
 	@_ ? ($r->[103] = shift) : $r->[103];
+}
+
+sub customVolumeLines {
+	my $r = shift;
+	@_ ? ($r->[104] = shift) : $r->[104];
 }
 
 sub knobPos {

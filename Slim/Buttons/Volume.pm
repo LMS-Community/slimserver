@@ -76,8 +76,9 @@ sub setMode {
 		'initialValue' => sub { return $_[0]->volume },
 		'valueRef'     => $client->volume,
 		'callback'     => \&volumeExitHandler,
-		'screen2'      => 'inherit',
 		'increment'    => 1,
+		'lines'        => $client->customVolumeLines(),
+		'screen2'      => 'inherit',
 	});
 
 	_volumeIdleChecker($client);
