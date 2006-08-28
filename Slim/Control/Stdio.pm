@@ -19,11 +19,11 @@ use vars qw($stdin);
 
 =head1 NAME
 
-Slim::Buttons::Stdio
+Slim::Control::Stdio
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Stdio> provides a command-line interface to the server via STDIN/STDOUT.
+L<Slim::Control::Stdio> provides a command-line interface to the server via STDIN/STDOUT.
 	see the documentation in Request.pm for details on the commands
 	This does not support shell like escaping. See the CLI documentation.
 
@@ -130,7 +130,7 @@ sub array_to_string {
 
 =head1 SEE ALSO
 
-L<Slim::Buttons::Request>
+L<Slim::Control::Request>
 
 =cut
 

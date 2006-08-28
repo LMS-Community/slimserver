@@ -9,7 +9,7 @@ package Slim::Buttons::Input::Bar;
 
 =head1 NAME
 
-Slim::Buttons::Home
+Slim::Buttons::Input::Bar
 
 =head1 SYNOPSIS
 

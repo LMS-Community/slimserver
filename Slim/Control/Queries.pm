@@ -16,11 +16,11 @@ package Slim::Control::Queries;
 
 =head1 NAME
 
-Slim::Buttons::Queries
+Slim::Control::Queries
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Queries> implements most SlimServer queries and is designed to 
+L<Slim::Control::Queries> implements most SlimServer queries and is designed to 
  be exclusively called through Request.pm and the mechanisms it defines.
 
  There are no important differences between the code for a query and one for
@@ -1911,7 +1911,7 @@ sub _songData {
 
 =head1 SEE ALSO
 
-L<Slim::Buttons::Command>
+L<Slim::Control::Request.pm>
 
 =cut
 

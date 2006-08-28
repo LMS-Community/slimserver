@@ -2312,7 +2312,7 @@ sub _showCommand_done {
 
 =head1 SEE ALSO
 
-L<Slim::Buttons::Common>
+L<Slim::Control::Request.pm>
 
 =cut
 

@@ -13,7 +13,7 @@ Slim::Buttons::Volume
 
 =head1 DESCRIPTION
 
-Creat a 'volume' mode to handle the volume setting when a user presses the
+Creates a 'volume' mode to handle the volume setting when a user presses the
 Volume button on a Transporter unit. Volume changes when using the remote are
 handled by L<Slim::Player::Player::mixerDisplay>.
 

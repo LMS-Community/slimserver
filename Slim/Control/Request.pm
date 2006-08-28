@@ -10,7 +10,7 @@ package Slim::Control::Request;
 
 =head1 NAME
 
-Slim::Buttons::Request
+Slim::Control::Request
 
 =head1 DESCRIPTION
 

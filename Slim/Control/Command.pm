@@ -7,11 +7,11 @@ package Slim::Control::Command;
 
 =head1 NAME
 
-Slim::Buttons::Command
+Slim::Control::Command
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Command>
+L<Slim::Control::Command>
  Legacy support for Command Line Interface.  Please use Request.pm class for new work.
  
 =cut
