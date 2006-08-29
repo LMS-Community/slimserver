@@ -138,8 +138,7 @@ sub status {
 			$params->{'treble'}    = int($client->treble() + 0.5);
 			$params->{'pitch'}     = int($client->pitch() + 0.5);
 
-			my $sleep = $client->sleepTime() - Time::HiRes::time();
-			$params->{'sleep'} = $sleep < 0 ? 0 : int($sleep/60);
+			$params->{'sleep'} = $client->prettySleepTime();
 		}
 		
 		$params->{'fixedVolume'} = !$client->prefGet('digitalVolumeControl');
