@@ -44,10 +44,29 @@
 
  
 <hr>
+<h4>Changes starting from SlimServer 7.0</h4>
+<p>
+	The following syntax changes apply to the CLI in SlimServer 7.0. <b>These 
+	changes may impact CLI clients.</b>
+</p>
+<ul>
+	<li>
+	</li>
+</ul>
+<p>
+	The following changes or new commands & queries are available starting with
+	SlimServer 7.0. These changes should not have any impact on existing 
+	clients:
+</p>
+<ul>
+	<li>
+	</li>
+</ul>
+
 <h4>Changes starting from SlimServer 6.5</h4>
 <p>
-	The following syntax changes apply to the CLI in SlimServer 6.5. <b>These 
-	changes may impact CLI clients.</b>
+	The following changes or new commands are available starting with
+	SlimServer 6.5:
 </p>
 <ul>
 	<li>
@@ -91,13 +110,6 @@
 		deprecated and replaced by the 
 		&quot;<a href="#playlists tracks">playlists tracks</a>&quot; query.
 	</li>
-</ul>
-<p>
-	The following changes or new commands & queries are available starting with
-	SlimServer 6.5. These changes should not have any impact on existing 
-	clients:
-</p>
-<ul>
 	<li>
 		Added the ability for plugins to define CLI commands and queries. In
 		particular, all Internet Radio plugins now have CLI support. Please
@@ -229,35 +241,6 @@
 	<li>
 		Updated the &quot;<a href="#status">status</a>&quot; query to return
 		correct information in case the player is a remote streaming connection.
-	</li>
-</ul>
-
-<h4>Changes starting from SlimServer 6.2</h4>
-<p>
-	The following changes or new commands are available starting with
-	SlimServer 6.2:
-</p>
-<ul>
-	<li>
-		Changed &quot;<a href="#playlists">playlists</a>&quot; command to return
-		IDs for playlists. The new &quot;<a
-		href="#playlists tracks">playlists tracks</a>&quot; query returns the
-		playlist tracks. Finally, command &quot;<a
-		href="#playlistcontrol">playlistcontrol</a>&quot; now accepts a
-		playlist_id parameter.
-	</li>
-	<li>
-		Added optional &quot;charset&quot; parameter to all extended queries, 
-		allowing them to return data in something different than utf8. See the 
-		<a href="#Notes">charset notes</a>.
-	</li>
-	<li>
-		Changed &quot;<a href="#rescan">rescan</a>&quot; command to enable 
-    	rescanning only the playlists.
-    </li>
-	<li>
-		&quot;<a href="#listen">listen</a>&quot; now supports a query mode:
-		&quot;listen ?&quot;.
 	</li>
 </ul>
 
@@ -5557,7 +5540,7 @@ in the saved playlists folder.</p>
 <p>
 <ul>
 	<li>
-		<strong><a href="#XMLBrowser">Slimdevices Picks, Shoutcast, Podcast, Live Music Archive, RadioIO & RSS</a></strong>
+		<strong><a href="#XMLBrowser">Slimdevices Picks, Shoutcast, Podcast, Live Music Archive, RadioGuide, RadioIO & RSS</a></strong>
 	</li>
 	<li>
 		<strong><a href="#Live365">Live365</a></strong>
@@ -5572,12 +5555,12 @@ in the saved playlists folder.</p>
 
 <br>
 <h3 id="XMLBrowser">
-	Slimdevices Picks, Shoutcast, Podcast, Live Music Archive, RadioIO & RSS
+	Slimdevices Picks, Shoutcast, Podcast, Live Music Archive, RadioGuide, RadioIO & RSS
 </h3>
 <p>
 	<strong>
 		<code>
-			&lt;picks|podcast|lma|shoutcast|rss|radioio&gt;
+			&lt;picks|podcast|lma|shoutcast|rss|radioio|radiotime&gt;
 			items
 			&lt;start&gt;
 			&lt;itemsPerResponse&gt;
