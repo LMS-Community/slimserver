@@ -385,7 +385,7 @@ sub playcontrolCommand {
 		
 		# pause 1, pause 0 and pause (toggle) are all supported, figure out which
 		# one we want...
-		if (defined $newvalue) {
+		if ($newvalue) {
 			$wantmode = $newvalue ? 'pause' : 'play';
 		} else {
 			$wantmode = ($curmode eq 'pause') ? 'play' : 'pause';
