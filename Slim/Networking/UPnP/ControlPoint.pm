@@ -61,7 +61,12 @@ MX: $mx
 		LocalPort => $Net::UPnP::SSDP_PORT,
 		ReuseAddr => 1,
 	);
-	
+
+	if ( !$sock ) {
+		warn "UPnP: Failed to initialize multicast socket, disabling UPnP.\n";
+		return;
+	}
+
 	# listen for multicasts on this socket
 	$sock->mcast_add( $mcast_addr );
 	
