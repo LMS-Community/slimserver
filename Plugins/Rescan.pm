@@ -13,6 +13,7 @@ package Plugins::Rescan;
 
 use strict;
 use Slim::Control::Request;
+use Slim::Utils::Misc qw(msgf);
 use Time::HiRes;
 
 our $interval = 1; # check every x seconds
