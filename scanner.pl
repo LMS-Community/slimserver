@@ -322,6 +322,8 @@ sub cleanup {
 	}
 }
 
+sub idleStreams {}
+
 main();
 
 __END__
