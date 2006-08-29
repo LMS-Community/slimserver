@@ -725,6 +725,37 @@ sub resume {
 	$client->pauseTime(undef);
 }
 
+=head2 prettySleepTime( $client )
+
+Returns a pretty string for the current sleep time.
+
+Normally we simply return the time in minutes.
+
+For the case of stopping after the current song, 
+a friendly string is returned.
+
+=cut
+
+sub prettySleepTime {
+	my $client = shift;
+	
+	
+	my $sleeptime = $client->sleepTime() - Time::HiRes::time();
+	my $sleepstring = "";
+	
+	if ($client->sleepTime) {
+		
+		# assumes that remaining time was under 15 minutes.  might need to check against every default value just to cover all cases.
+		if ($client->currentSleepTime < 15) {
+			$sleepstring = join(' ',$client->string('SLEEPING_AT'),$client->string('END_OF_SONG'));
+		} else {
+			$sleepstring = join(" " ,$client->string('SLEEPING_IN'),int($sleeptime/60),$client->string('MINUTES'));
+		}
+	}
+	
+	return $sleepstring;
+}
+
 sub flush {}
 
 sub power {}

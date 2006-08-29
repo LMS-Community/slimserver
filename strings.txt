@@ -956,6 +956,15 @@ SLEEPING_IN
 	SV	Insomning om
 	ZH_CN	倒数熄机进行中
 
+END_OF_SONG
+	EN	end of song
+
+SLEEP
+	EN	Sleep
+
+SLEEPING_AT
+	EN	Sleeping at
+
 POWERING_OFF
 	CS	Přecházím do standby...
 	DE	Wird ausgeschaltet...

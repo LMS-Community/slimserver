@@ -87,10 +87,9 @@ function refreshSleepTime(theData) {
 	var parsedData = fillDataHash(theData);
 
 	if (parsedData['sleeptime'] && parsedData['sleeptime'] != 0) {
-		showElements(['sleeptime'],'inline');
-		refreshElement('sleeptime', "("+parsedData['sleeptime']+")");
+		refreshElement('sleeptime', parsedData['sleep']);
 	} else {
-		hideElements(['sleeptime']);
+		refreshElement('sleeptime', '[% "SLEEP" | string %]');
 	}
 }
 

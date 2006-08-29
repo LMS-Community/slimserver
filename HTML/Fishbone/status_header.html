@@ -82,7 +82,7 @@
 					 / </span>
 				[% END %]
 				[% IF mode != 'off' %]
-					<span id="sleeplink"><A href="javascript:processSleepLink('p0=button&amp;p1=sleep');">Sleep</a><span id='sleeptime'>[% IF sleeptime %] ([% sleep %])[% END %]</span>
+					<span id="sleeplink"><A href="javascript:processSleepLink('p0=button&amp;p1=sleep');"><span id='sleeptime'>[% IF sleeptime %][% sleep %][% ELSE %][% "SLEEP" | string %][% END %]</span></a>
 				[% END %][% IF mode != 'off' %] / [% END %]</span>
 				[% IF not nosetup  %]<a href="setup.html?page=PLAYER_SETTINGS&amp;player=[% playerURI %]&amp;playerid=[% playerURI %]" target="browser">[% "SETTINGS" | string %]</a>
 				[%- END -%]

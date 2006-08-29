@@ -880,13 +880,13 @@ our %functions = (
 
 		my $sleepTime = $sleepChoices[$i];
 
+		$client->execute(["sleep", $sleepTime * 60]);
+
 		if ($sleepTime == 0) {
 			$client->showBriefly($client->string('CANCEL_SLEEP') , '');
 		} else {
-			$client->showBriefly($client->string('SLEEPING_IN') . ' ' . $sleepTime . ' ' . $client->string('MINUTES'),'');
+			$client->showBriefly($client->prettySleepTime,'');
 		}
-
-		$client->execute(["sleep", $sleepTime * 60]);
 	},
 
 	'power' => sub  {
