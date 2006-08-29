@@ -144,6 +144,10 @@ function ProgressUpdate(mp,curstyle) {
 	if (_progressAt == 1) {
 		doRefresh();
 		inc = 0;
+		if (!mp) {
+			_progressAt = 0;
+			refreshPlaylist();
+		}
 	}
 	
 	if (document.all) {
