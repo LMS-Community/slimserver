@@ -23,7 +23,7 @@
 
 	[% END %]
 [% END -%]
-<a href="[% webroot %]status_header.html?p0=[% p0 %]&amp;p1=[% p1 %]&amp;p2=[% p2 %]&amp;player=[% playerURI %]" class="[% divID %]"><span class="[% divID %]">[% linkName %]</span></a>
+<a href="[% webroot %]status_header.html?p0=[% p0 %]&amp;[%- IF p1.defined && p1 != '' %]p1=[% p1 %]&amp;[% END %][%- IF p2.defined && p2 != '' %]p2=[% p2 %]&amp;[% END %]player=[% playerURI %]" class="[% divID %]"><span class="[% divID %]">[% linkName %]</span></a>
 [%- END %]
 
 <div id="topGraphicBox">
