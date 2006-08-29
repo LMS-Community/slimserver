@@ -202,17 +202,14 @@ sub toggleDebug {
 
 	$class->storage->debug($debug);
 
-	if ($::LogTimestamp) {
+	$class->storage->debugcb(sub {
 
-		$class->storage->debugcb(sub {
+		#if ($_[0] eq 'SELECT') {
+		#	Slim::Utils::Misc::bt();
+		#}
 
-			#if ($_[0] eq 'SELECT') {
-			#	Slim::Utils::Misc::bt();
-			#}
-
-			Slim::Utils::Misc::msg($_[1]);
-		});
-	}
+		Slim::Utils::Misc::msg($_[1]);
+	});
 }
 
 =head2 disconnect()
