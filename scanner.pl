@@ -123,46 +123,86 @@ sub main {
 
 	$::d_server && msg("SlimServer done init...\n");
 
-	# Start our transaction for the entire scan - this will enable an
-	# atomic commit at the end.
+	# Flag the database as being scanned.
+	setIsScanning(1);
+
+	if ($cleanup) {
+		Slim::Music::Import->cleanupDatabase(1);
+	}
+
+	# Take the db out of autocommit mode - this makes for a much faster scan.
 	Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
 
-	Slim::Schema->txn_do(sub {
+	if ($wipe) {
 
-		setIsScanning(1);
+		eval { Slim::Schema->txn_do(sub { Slim::Schema->wipeAllData }) };
 
-		if ($wipe) {
-			Slim::Schema->wipeAllData;
+		if ($@) {
+			errorMsg("Scanner: Failed when calling Slim::Schema->wipeAllData: [$@]\n");
+			errorMsg("Scanner: This is a fatal error. Exiting\n");
+			exit(-1);
+		}
+	}
+
+	# Don't wrap the below in a transaction - we want to have the server
+	# periodically update the db. This is probably better than a giant
+	# commit at the end, but is debatable.
+	# 
+	# NB: Slim::Schema::throw_exception really isn't right now - it's just
+	# printing an error and bt(). Once the server can handle & log
+	# exceptions properly, it should croak(), so the exception is
+	# propagated to the higher levels.
+	#
+	# We've been passed an explict path or URL - deal with that.
+	if (scalar @ARGV) {
+
+		for my $url (@ARGV) {
+
+			eval { Slim::Utils::Scanner->scanPathOrURL({ 'url' => $url }) };
 		}
 
-		if ($cleanup) {
-			Slim::Music::Import->cleanupDatabase(1);
-		}
+	} else {
 
-		# We've been passed an explict path or URL - deal with that.
-		if (scalar @ARGV) {
+		# Otherwise just use our Importers to scan.
+		eval {
+			Slim::Music::Import->resetImporters;
+			Slim::Music::Import->runScan;
+		};
+	}
 
-			for my $url (@ARGV) {
+	if ($@) {
 
-				Slim::Utils::Scanner->scanPathOrURL({ 'url' => $url });
-			}
+		errorMsg("Scanner: Failed when running main scan: [$@]\n");
+		errorMsg("Scanner: Skipping post-process & Not updating lastRescanTime!\n");
+
+	} else {
+
+		# Run mergeVariousArtists, artwork scan, etc.
+		eval { Slim::Schema->txn_do(sub { Slim::Music::Import->runScanPostProcessing }) }; 
+
+		if ($@) {
+
+			errorMsg("Scanner: Failed when running scan post-process: [$@]\n");
+			errorMsg("Scanner: Not updating lastRescanTime!\n");
 
 		} else {
 
-			# Otherwise just use our Importers to scan.
-			Slim::Music::Import->resetImporters;
-			Slim::Music::Import->startScan;
-		}
+			eval { Slim::Schema->txn_do(sub {
 
-		my $lastRescan = Slim::Schema->rs('MetaInformation')->find_or_create({
-			'name' => 'lastRescanTime'
-		});
+				my $lastRescan = Slim::Schema->rs('MetaInformation')->find_or_create({
+					'name' => 'lastRescanTime'
+				});
 
-		if ($lastRescan) {
-			$lastRescan->value(time);
-			$lastRescan->update;
+				$lastRescan->value(time);
+				$lastRescan->update;
+			}) };
+
+			if ($@) {
+				errorMsg("Scanner: Failed to update lastRescanTime: [$@]\n");
+				errorMsg("Scanner: You may encounter problems next rescan!\n");
+			}
 		}
-	});
+	}
 
 	# Wipe templates if they exist.
 	rmtree( catdir(Slim::Utils::Prefs::get('cachedir'), 'templates') );
@@ -200,17 +240,20 @@ sub initializeFrameworks {
 sub setIsScanning {
 	my $value = shift;
 
-	Slim::Schema->txn_do(sub {
+	eval { Slim::Schema->txn_do(sub {
 
 		my $isScanning = Slim::Schema->rs('MetaInformation')->find_or_create({
 			'name' => 'isScanning'
 		});
 
-		if ($isScanning) {
-			$isScanning->value($value);
-			$isScanning->update;
-		}
-	});
+		$isScanning->value($value);
+		$isScanning->update;
+	}) };
+
+	if ($@) {
+
+		errorMsg("Scanner: Failed to update isScanning: [$@]\n");
+	}
 }
 
 sub usage {

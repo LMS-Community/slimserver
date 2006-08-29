@@ -13,8 +13,6 @@ Slim::Music::MusicFolderScan
 
 =head1 DESCRIPTION
 
-L<Music::MusicFolderScan>
-
 =cut
 
 use strict;
@@ -83,9 +81,10 @@ sub startScan {
 
 	Slim::Music::Import->endImporter($class);
 }
+
 =head1 SEE ALSO
 
-
+L<Slim::Music::Import>
 
 =cut
 

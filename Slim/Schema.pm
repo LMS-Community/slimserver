@@ -284,15 +284,21 @@ sub wipeDB {
 
 	$::d_import && msg("Import: Start schema_clear\n");
 
-	$class->txn_do(sub {
+	eval { 
+		$class->txn_do(sub {
 
-		Slim::Utils::SQLHelper->executeSQLFile(
-			$class->driver, $class->storage->dbh, "schema_clear.sql"
-		);
+			Slim::Utils::SQLHelper->executeSQLFile(
+				$class->driver, $class->storage->dbh, "schema_clear.sql"
+			);
 
-		$class->migrateDB;
-		$class->optimizeDB;
-	});
+			$class->migrateDB;
+			$class->optimizeDB;
+		});
+	};
+
+	if ($@) {
+		errorMsg("wipeDB: Failed to clear & migrate schema: [$@]\n");
+	}
 
 	$::d_import && msg("Import: End schema_clear\n");
 }
@@ -308,12 +314,18 @@ sub optimizeDB {
 
 	$::d_import && msg("Import: Start schema_optimize\n");
 
-	$class->txn_do(sub {
+	eval {
+		$class->txn_do(sub {
 
-		Slim::Utils::SQLHelper->executeSQLFile(
-			$class->driver, $class->storage->dbh, "schema_optimize.sql"
-		);
-	});
+			Slim::Utils::SQLHelper->executeSQLFile(
+				$class->driver, $class->storage->dbh, "schema_optimize.sql"
+			);
+		});
+	};
+
+	if ($@) {
+		errorMsg("optimizeDB: Failed to optimize schema: [$@]\n");
+	}
 
 	$::d_import && msg("Import: End schema_optimize\n");
 }

@@ -290,7 +290,12 @@ sub coverArt {
 	# If we didn't already store an artwork value - look harder.
 	if (!$artwork || $artwork eq 1 || !$body) {
 
-		($body, $contentType, $path) = Slim::Music::Artwork->readCoverArt($self, $artType);
+		# readCoverArt calls into the Format classes, which can throw an error. 
+		($body, $contentType, $path) = eval { Slim::Music::Artwork->readCoverArt($self, $artType) };
+
+		if ($@) {
+			errorMsg("coverArt: Exception when trying to call readCoverArt() for [$url] : [$@]\n");
+		}
 	}
 
 	# kick this back up to the webserver so we can set last-modified

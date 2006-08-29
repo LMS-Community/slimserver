@@ -20,7 +20,8 @@ Slim::Music::Import
 	Slim::Music::Import->useImporter($class, Slim::Utils::Prefs::get('itunes'));
 
 	# Start a serial scan of all importers.
-	Slim::Music::Import->startScan;
+	Slim::Music::Import->runScan;
+	Slim::Music::Import->runScanPostProcessing;
 
 	if (Slim::Music::Import->stillScanning) {
 		...
@@ -169,7 +170,7 @@ sub checkScanningStatus {
 	}
 }
 
-=head2 startScan( )
+=head2 runScan( )
 
 Start a scan of all used importers.
 
@@ -177,7 +178,7 @@ This is called by the scanner.pl helper program.
 
 =cut
 
-sub startScan {
+sub runScan {
 	my $class  = shift;
 
 	# If we are scanning a music folder, do that first - as we'll gather
@@ -211,6 +212,21 @@ sub startScan {
 	}
 
 	$class->scanPlaylistsOnly(0);
+
+	return 1;
+}
+
+=head2 runScanPostProcessing( )
+
+This is called by the scanner.pl helper program.
+
+Run the post-scan processing. This includes merging Various Artists albums,
+finding artwork, cleaning stale db entries, and optimizing the database.
+
+=cut
+
+sub runScanPostProcessing {
+	my $class  = shift;
 
 	# Auto-identify VA/Compilation albums
 	$::d_import && msg("Import: Starting mergeVariousArtistsAlbums().\n");
@@ -251,6 +267,8 @@ sub startScan {
 	$class->endImporter('dbOptimize');
 
 	$::d_import && msg("Import: Finished background scanning.\n");
+
+	return 1;
 }
 
 =head2 deleteImporter( $importer )

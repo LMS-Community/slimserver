@@ -36,13 +36,19 @@ sub setTracks {
 		Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
 	}
 
-	Slim::Schema->txn_do(sub {
+	eval {
+		Slim::Schema->txn_do(sub {
 
-		# Remove the old tracks associated with this playlist.
-		$self->playlist_tracks->delete;
+			# Remove the old tracks associated with this playlist.
+			$self->playlist_tracks->delete;
 
-		$self->_addTracksToPlaylist($tracks, 0);
-	});
+			$self->_addTracksToPlaylist($tracks, 0);
+		});
+	};
+
+	if ($@) {
+		errorMsg("setTracks: Failed to add tracks to playlist: [$@]\n");
+	}
 
 	Slim::Schema->storage->dbh->{'AutoCommit'} = $autoCommit;
 }
@@ -57,18 +63,24 @@ sub appendTracks {
 		Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
 	}
 
-	Slim::Schema->txn_do(sub {
+	eval {
+		Slim::Schema->txn_do(sub {
 
-		# Get the current max track in the DB
-		my $max = $self->search_related('playlist_tracks', undef, {
+			# Get the current max track in the DB
+			my $max = $self->search_related('playlist_tracks', undef, {
 
-			'select' => [ \'MAX(position)' ],
-			'as'     => [ 'maxPosition' ],
+				'select' => [ \'MAX(position)' ],
+				'as'     => [ 'maxPosition' ],
 
-		})->single->get_column('maxPosition');
+			})->single->get_column('maxPosition');
 
-		$self->_addTracksToPlaylist($tracks, $max+1);
-	});
+			$self->_addTracksToPlaylist($tracks, $max+1);
+		});
+	};
+
+	if ($@) {
+		errorMsg("appendTracks: Failed to add tracks to playlist: [$@]\n");
+	}
 
 	Slim::Schema->storage->dbh->{'AutoCommit'} = $autoCommit;
 }
