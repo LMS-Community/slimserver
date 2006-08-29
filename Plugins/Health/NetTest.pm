@@ -72,6 +72,10 @@ sub setMode {
 
 	$client->modeParam('Health.NetTest', $params);
 
+	# clear screen2 and stop other things displaying on it
+	$client->modeParam('screen2', 'nettest');
+	$client->update( { 'screen2' => {} } );
+
 	$client->lines(\&lines);
 
 	# start display functions after delay [to allow push animation to complete]
