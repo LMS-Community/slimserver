@@ -957,12 +957,15 @@ SLEEPING_IN
 	ZH_CN	倒数熄机进行中
 
 END_OF_SONG
+	DE	Liedende
 	EN	end of song
 
 SLEEP
+	DE	Schlafmodus
 	EN	Sleep
 
 SLEEPING_AT
+	DE	Schlafmodus am
 	EN	Sleeping at
 
 POWERING_OFF
@@ -12557,9 +12560,11 @@ CLOCKSOURCE_SPDIF_SLAVE
 	NL	S/PDIF invoer
 
 AUDIO_SOURCE
+	DE	Audio Quelle
 	EN	Audio Source
 
 AUDIO_SOURCE_NETWORK
+	DE	Netzwerk
 	EN	Network
 
 AUDIO_SOURCE_BALANCED_AES
