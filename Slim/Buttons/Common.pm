@@ -172,7 +172,10 @@ in Slim::Web::Setup and Slim::Buttons::Settings
 =cut
 
 sub hash_of_savers {
-	return \%savers;
+
+	my %saversCopy = %savers;
+
+	return \%saversCopy;
 }
 
 =head2 addMode ( )
