@@ -78,7 +78,7 @@ sub new {
 
 	# The following indexes are unused:
 	# 2, 3, 8, 11, 12, 13, 16, 23, 24, 25, 26, 27, 33, 34, 53
-	# 64, 65, 66, 67, 68, 72, 82, 83
+	# 64, 65, 66, 67, 68, 72, 82,
 
 	$client->[0] = $id;
 	$client->[1] = Slim::Utils::Prefs::getClientPrefs($id); # _prefs
@@ -145,6 +145,7 @@ sub new {
 	$client->[79] = undef; # irRefTimeStored
 	$client->[80] = undef; # syncSelection
 	$client->[81] = []; # syncSelections
+	$client->[83] = undef; # suppressStatus
 	$client->[84] = 0; # songBytes
 	$client->[85] = 0; # pauseTime
 	$client->[87] = 0; # bytesReceivedOffset
@@ -1515,6 +1516,11 @@ sub syncSelections {
 	my $i;
 	@_ ? ($i = shift) : return $r->[81];
 	@_ ? ($r->[81]->[$i] = shift) : $r->[81]->[$i];
+}
+
+sub suppressStatus {
+	my $r = shift;
+	@_ ? ($r->[83] = shift) : $r->[83];
 }
 
 sub songBytes {

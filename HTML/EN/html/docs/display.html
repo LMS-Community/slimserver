@@ -775,7 +775,11 @@ displays for changing volume and playlist/now playing displays.</p>
 
 <p>A plugin should register alternative lines function at client
 connect time with the client methods customVolumeLines and
-customPlaylistLines.  For example:</p>
+customPlaylistLines.</p>
+
+<p>To avoid server status messages appearing on top of a custom
+screen, a plugin can also turn off the common play/stop/pause status
+messages by setting $client->suppressStatus().</p>
 
 <pre>
 sub initPlugin {
@@ -786,6 +790,7 @@ sub newClient {
     my $client = shift->client || return;
     $client->customVolumeLines( \&volumeLines );
     $client->customPlaylistLines( \&playlistLines );
+    $client->suppressStatus(1);
 }
 
 sub volumeLines {

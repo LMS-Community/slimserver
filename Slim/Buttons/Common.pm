@@ -419,7 +419,7 @@ our %functions = (
 
 			Slim::Buttons::Common::pushMode($client, 'playlist');
 
-			$client->showBriefly($client->string('STOPPING'), "");
+			$client->showBriefly($client->string('STOPPING'), "") unless suppressStatus($client);
 		}
 	},
 
@@ -1799,6 +1799,10 @@ sub updateScreen2Mode {
 
 sub suppressStatus {
 	my $client = shift;
+
+	my $suppress = $client->suppressStatus();
+
+	return $suppress if (defined ($suppress));
 
 	return undef unless $client->display->hasScreen2();
 
