@@ -1,0 +1,25 @@
+[% pagetitle = 'SQUEEZENETWORK'; pageicon = 'RADIO' %]
+[% pwd_list = BLOCK %]
+[% "SQUEEZENETWORK_SWITCH" | string %]
+[% END %]
+[% PROCESS pageheader.html %]
+
+[% IF playername %]
+<script language="JavaScript">
+	setTimeout( "loadSN()", 2000 );
+	
+	function loadSN() {
+		parent.location = 'http://www.squeezenetwork.com';
+	}
+</script>
+[% END %]
+
+<p>
+[% IF playername %]
+[% playername; "COLON" | string; " "; "SQUEEZENETWORK_SWITCHING" | string %]
+[% ELSE %]
+[% "NO_PLAYER_FOUND" | string %]
+[% END %]
+</p>
+
+[% PROCESS pagefooter.html %]
