@@ -199,7 +199,7 @@ sub gotContainer {
 		while ( my $chunk = <$io> ) {
 			
 			# This can be slow if we have a huge file to process, so give back some time
-			main::idleStreams( 0, 1 );
+			main::idleStreams();
 			
 			if ( $chunk =~ /<container(.*?)<\/container>/sg ) {
 				my $node = $1;
@@ -241,7 +241,7 @@ sub gotContainer {
 					while ( my $itemChunk = <$io> ) {
 						
 						# This can be slow if we have a huge file to process, so give back some time
-						main::idleStreams( 0, 1 );
+						main::idleStreams();
 						
 						if ( $itemChunk =~ /<item(.*?)<\/item>/sg ) {
 							my $node = $1;

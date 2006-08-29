@@ -1435,7 +1435,7 @@ sub execute {
 	# contine execution unless the Request is still work in progress (async)...
 	$self->executeDone() unless $self->isStatusProcessing();
 
-	$::perfmon && $now && $requestTask->log(Time::HiRes::time() - $now) && msg("    Execute: $funcName\n");
+	$::perfmon && $now && $requestTask->log(Time::HiRes::time() - $now) && msg("    Execute: $funcName\n", undef, 1);
 }
 
 # perform end of execution, calling the callback etc...

@@ -101,6 +101,9 @@ sub _addTracksToPlaylist {
 				position => $position++
 			});
 		}
+
+		# updating playlist can take several seconds - maintain streaming 
+		main::idleStreams();
 	}
 }
 
