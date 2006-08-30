@@ -256,7 +256,7 @@ sub init {
 				next if !$Imports->{$import}->{'mixer'};
 				next if !$Imports->{$import}->{'use'};
 
-				if ($import->mixable($currentItem)) {
+				if (eval {$import->mixable($currentItem)}) {
 					push @mixers, $import;
 				}
 			}
