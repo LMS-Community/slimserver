@@ -312,7 +312,7 @@ function refreshPlaylist(newPlayer) {
 	}
 }
 
-function refreshAll(theData) {
+function refreshAll(theData,force) {
 	var parsedData = fillDataHash(theData);
 	
 	if (parsedData['isplayer']) {
@@ -320,15 +320,14 @@ function refreshAll(theData) {
 	}
 	
 	refreshPlayControls(parsedData);
-	refreshInfo(parsedData);
+	refreshInfo(parsedData,force);
 	refreshState(parsedData);
 }
 
 // handle the player change, force a new set of info
 function refreshNewPlayer(theData) {
 	var parsedData = fillDataHash(theData);
-	refreshInfo(parsedData,1);
-	refreshAll(parsedData);
+	refreshAll(parsedData,1);
 }
 
 function fillDataHash(theData) {

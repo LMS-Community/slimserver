@@ -81,9 +81,10 @@
 					<span id="unsync"><a href="[% statusroot %]?p0=sync&p1=-&player=[% playerURI %]">[% "UNSYNC" | string %]</a>
 					 / </span>
 				[% END %]
-				[% IF mode != 'off' %]
-					<span id="sleeplink"><A href="javascript:processSleepLink('p0=button&amp;p1=sleep');"><span id='sleeptime'>[% IF sleeptime %][% sleep %][% ELSE %][% "SLEEP" | string %][% END %]</span></a>
-				[% END %][% IF mode != 'off' %] / [% END %]</span>
+				
+				<span id="sleeplink"><A href="javascript:processSleepLink('p0=button&amp;p1=sleep');"><span id='sleeptime'>[% IF sleeptime %][% sleep %][% ELSE %][% "SLEEP" | string %][% END %]</span></a>
+				 / </span>
+				
 				[% IF not nosetup  %]<a href="setup.html?page=PLAYER_SETTINGS&amp;player=[% playerURI %]&amp;playerid=[% playerURI %]" target="browser">[% "SETTINGS" | string %]</a>
 				[%- END -%]
 				[%- IF not undock -%] /
