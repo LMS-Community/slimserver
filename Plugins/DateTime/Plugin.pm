@@ -239,10 +239,12 @@ sub screensaverDateTimelines {
 		'fonts'  => $fontDef,
 	};
 	
-	if ($client->display->hasScreen2 && $client->display->linesPerScreen == 1) {
-		$display->{'screen2'}->{'center'} = [undef,Slim::Utils::DateTime::longDateF(undef,Slim::Utils::Prefs::get('screensaverDateFormat'))];
-	} else {
-		$client->update( { 'screen2' => {} } );
+	if ($client->display->hasScreen2) {
+		if ($client->display->linesPerScreen == 1) {
+			$display->{'screen2'}->{'center'} = [undef,Slim::Utils::DateTime::longDateF(undef,Slim::Utils::Prefs::get('screensaverDateFormat'))];
+		} else {
+			$display->{'screen2'} = {};
+		}
 	}
 
 	return $display;
