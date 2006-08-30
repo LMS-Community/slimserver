@@ -51,14 +51,14 @@ sub enabled {
 	# make sure if we're sent a client object that it is the transporter hardware
 	# if no client is provided, we don't care, so send back enabled so that the PluginManager
 	# knows we're alive.
-	return $client? blessed($client) eq 'Slim::Player::Transporter' : 1;
+	return $client? $client->hasDigitalInputs() : 1;
 };
 
 sub updateDigitalInput {
 	my $client = shift;
-	my $input = shift;
+	my $valueRef = shift;
 
-	my $data = pack('C', $input);
+	my $data = pack('C', $valueRef->{value});
 	$client->sendFrame('audp', \$data);	
 };
 
@@ -76,7 +76,7 @@ sub setMode {
 		'header'     => '{PLUGIN_DIGITAL_INPUT} {count}',
 		'listRef'    => \@digital_inputs,
 		'modeName'   => 'Digital Input Plugin',
-		'onPlay'     => \&updateAudioSource,
+		'onPlay'     => \&updateDigitalInput,
 		'onAdd'      => sub {},
 
 		'overlayRef' => [
