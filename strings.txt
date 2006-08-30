@@ -12682,9 +12682,11 @@ SETUP_PRIORITY_LOW
 	FR	Basse
 
 SETUP_DIGITALOUTPUTENCODING
+	DE	Kodierung des digitalen Ausgangs
 	EN	Digital Output Encoding
 
 SETUP_DIGITALOUTPUTENCODING_DESC
+	DE	Sie können für den digitalen Ausgang zwischen S/PDIF und AES/BEU wählen.
 	EN	You can choose between S/PDIF and AES/BEU encoding for the digital outputs.
 
 DIGITALOUTPUTENCODING_SPDIF
@@ -12694,37 +12696,49 @@ DIGITALOUTPUTENCODING_AESEBU
 	EN	AES/EBU
 
 SETUP_WORDCLOCKOUTPUT
+	DE	Word Clock auf S/PDIF Ausgängen
 	EN	Word Clock On S/PDIF Outputs
 
 SETUP_WORDCLOCKOUTPUT_DESC
+	DE	Wenn die digitalen Eingänge verwendet werden, kann der Transporter das Signal direkt durchreichen oder auf den S/PDIF Ausgängen ein Word Clock Signal generieren.
 	EN	When using the digital inputs, Transporter can pass the signal through or generate a word clock signal on the S/PDIF outputs.
 
 WORDCLOCKOUTPUT_GENERATECLOCK
+	DE	Word Clock generieren
 	EN	Generate word clock
 
 WORDCLOCKOUTPUT_PASSTHROUGH
+	DE	Signal durchreichen
 	EN	Digital passthrough
 
 SETUP_POWEROFFDAC
+	DE	DAC ausschalten
 	EN	Power Off DAC
 
 SETUP_POWEROFFDAC_DESC
+	DE	Wenn der Transporter ausgeschaltet wird kann der Digital/Analog Wandler (DAC) deaktiviert werden.
 	EN	When Transporter is is powered off the digital-to-analog converter can be disabled.
 
 POWEROFFDAC_ALWAYSON
+	DE	DAC immer aktiv
 	EN	DAC always on
 
 POWEROFFDAC_WHENOFF
+	DE	DAC beim Ausschalten deaktivieren
 	EN	Power down DAC when off
 
 SETUP_POLARITYINVERSION
+	DE	Polarität umkehren
 	EN	Polarity Inversion
 
 SETUP_POLARITYINVERSION_DESC
+	DE	Transporter kann die Polarität des Audiosignals umkehren.
 	EN	Transporter can invert the polarity of the audio signal.
 
 POLARITYINVERSION_NORMAL
+	DE	Normale Polarität
 	EN	Normal polarity
 
 POLARITYINVERSION_INVERTED
+	DE	Umgekehrte Polarität
 	EN	Inverted polarity
