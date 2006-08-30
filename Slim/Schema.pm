@@ -1901,6 +1901,13 @@ sub _postCheckAttributes {
 				# in the case where there are multiple albums
 				# of the same name by the same artist. bug3254
 				$search->{'me.discc'} = $discc;
+
+			} elsif (defined $disc && !defined $discc) {
+
+				# Bug 3920 - In the case where there's two
+				# albums of the same name, but one is
+				# multidisc _without_ having a discc set.
+				$search->{'me.disc'} = { '!=' => undef };
 			}
 
 			# Bug 3662 - Only check for undefined/null values if the
