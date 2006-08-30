@@ -62,6 +62,13 @@ sub init {
 	$client->SUPER::init();
 }
 
+sub reconnect {
+	my $client = shift;
+	$client->SUPER::reconnect(@_);
+
+	$client->getPlayerSetting('playername');
+}
+
 sub maxBass { 50 };
 sub minBass { 50 };
 sub maxTreble { 50 };
@@ -649,6 +656,86 @@ sub audio_outputs_enable {
 	# spdif enable / dac enable
 	my $data = pack('CC', $enabled, $enabled);
 	$client->sendFrame('aude', \$data);
+}
+
+
+# The following settings are sync'd between the player firmware and slimserver
+our $pref_settings = {
+	'playername' => {
+		firmwareid => 0,
+		pack => 'Z*',
+	},
+    	'digitalOutputEncoding' => {
+		firmwareid => 1,
+		pack => 'C',
+	},
+    	'wordClockOutput' => {
+		firmwareid => 2,
+		pack => 'C',
+	},
+    	'powerOffDac' => {
+		firmwareid => 3,
+		pack => 'C',
+	},
+};
+
+# Request a pref from the player firmware
+sub getPlayerSetting {
+	my $client = shift;
+	my $pref = shift;
+
+	$::d_prefs && msg("getPlayerSetting $pref\n");
+
+	my $currpref = $pref_settings->{$pref};
+
+	my $data = pack('C', $currpref->{firmwareid});
+	$client->sendFrame('setd', \$data);
+}
+
+# Update a pref in the player firmware
+sub setPlayerSetting {
+	my $client = shift;
+	my $pref = shift;
+	my $value = shift;
+
+	$::d_prefs && msg("setPlayerSetting $pref = $value\n");
+
+	my $currpref = $pref_settings->{$pref};
+
+	my $data = pack('C'.$currpref->{pack}, $currpref->{firmwareid}, $value);
+	$client->sendFrame('setd', \$data);
+}
+
+# Allow the firmware to update a pref in slimserver
+sub playerSettingsFrame {
+	my $client = shift;
+	my $data_ref = shift;
+
+	my $id = unpack('C', $$data_ref);
+
+	while (my ($pref, $currpref) = each %$pref_settings) {
+		next unless ($currpref->{firmwareid} == $id);
+
+		my $value = (unpack('C'.$currpref->{pack}, $$data_ref))[1];
+		$value = undef if (length($value) == 0);
+
+		$::d_prefs && msg("playerSettingsFrame $pref = $value\n");
+
+		$client->SUPER::prefSet($pref, $value);
+	}
+}
+
+sub prefSet {
+	my $client = shift;
+	my $pref = shift;
+	my $value = shift;
+	my $ind = shift;
+
+	if (exists $pref_settings->{$pref}) {
+		$client->setPlayerSetting($pref, $value);
+	}
+
+	$client->SUPER::prefSet($pref, $value, $ind);
 }
 
 1;

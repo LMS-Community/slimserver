@@ -12566,11 +12566,6 @@ CLOCKSOURCE_WORD_CLOCK
 	ES	Entrada de Palabra de Reloj
 	NL	Word klok invoer
 
-CLOCKSOURCE_SPDIF_SLAVE
-	EN	S/PDIF Input
-	ES	Entrada S/PDIF
-	NL	S/PDIF invoer
-
 VISUALIZER_EXTENDED_TEXT
 	DE	Erweiterte Textanzeige
 	EN	Extended Text Display
@@ -12686,3 +12681,50 @@ SETUP_PRIORITY_LOW
 	ES	Baja
 	FR	Basse
 
+SETUP_DIGITALOUTPUTENCODING
+	EN	Digital Output Encoding
+
+SETUP_DIGITALOUTPUTENCODING_DESC
+	EN	You can choose between S/PDIF and AES/BEU encoding for the digital outputs.
+
+DIGITALOUTPUTENCODING_SPDIF
+	EN	S/PDIF
+
+DIGITALOUTPUTENCODING_AESEBU
+	EN	AES/EBU
+
+SETUP_WORDCLOCKOUTPUT
+	EN	Word Clock On S/PDIF Outputs
+
+SETUP_WORDCLOCKOUTPUT_DESC
+	EN	When using the digital inputs, Transporter can pass the signal through or generate a word clock signal on the S/PDIF outputs.
+
+WORDCLOCKOUTPUT_GENERATECLOCK
+	EN	Generate word clock
+
+WORDCLOCKOUTPUT_PASSTHROUGH
+	EN	Digital passthrough
+
+SETUP_POWEROFFDAC
+	EN	Power Off DAC
+
+SETUP_POWEROFFDAC_DESC
+	EN	When Transporter is is powered off the digital-to-analog converter can be disabled.
+
+POWEROFFDAC_ALWAYSON
+	EN	DAC always on
+
+POWEROFFDAC_WHENOFF
+	EN	Power down DAC when off
+
+SETUP_POLARITYINVERSION
+	EN	Polarity Inversion
+
+SETUP_POLARITYINVERSION_DESC
+	EN	Transporter can invert the polarity of the audio signal.
+
+POLARITYINVERSION_NORMAL
+	EN	Normal polarity
+
+POLARITYINVERSION_INVERTED
+	EN	Inverted polarity

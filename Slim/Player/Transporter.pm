@@ -29,6 +29,10 @@ use Slim::Utils::Unicode;
 our $defaultPrefs = {
 	'clockSource'  => 0,
 	'audioSource' => 0,
+	'digitalOutputEncoding' => 0,
+	'wordClockOutput' => 0,
+	'powerOffDac' => 0,
+	'polarityInversion' => 0,
 	'menuItem'             => [qw(
 		NOW_PLAYING
 		BROWSE_MUSIC
@@ -56,6 +60,10 @@ sub reconnect {
 	my $client = shift;
 	$client->SUPER::reconnect(@_);
 
+	$client->getPlayerSetting('digitalOutputEncoding');
+	$client->getPlayerSetting('wordClockOutput');
+	$client->getPlayerSetting('powerOffDac');
+
 	$client->updateClockSource();
 
 	# Update the knob in reconnect - as that's the last function that is
@@ -68,6 +76,15 @@ sub updateClockSource {
 
 	my $data = pack('C', $client->prefGet("clockSource"));
 	$client->sendFrame('audc', \$data);	
+}
+
+sub updateDigitalOutputEncoding {
+}
+
+sub updateWordClockOutput {
+}
+
+sub updatePowerOffDac {
 }
 
 sub updateKnob {
@@ -125,7 +142,23 @@ sub model {
 	return 'transporter';
 }
 
+sub hasDigitalIn {
+	return 1;
+}
+
 sub hasExternalClock {
+	return 1;
+}
+
+sub hasAesbeu() {
+    	return 1;
+}
+
+sub hasPowerControl() {
+	return 1;
+}
+
+sub hasPolarityInversion() {
 	return 1;
 }
 

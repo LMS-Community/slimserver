@@ -644,8 +644,10 @@ sub opened {
 #	u8_t spdif_enable;	// [1]  '0' = auto, '1' = on, '2' = off
 #	u8_t transition_period;	// [1]	seconds over which transition should happen
 #	u8_t transition_type;	// [1]	'0' = none, '1' = crossfade, '2' = fade in, '3' = fade out, '4' fade in & fade out
-#	u8_t flags;		// [1]	0x80 - loop infinitely, 0x40 - stream
-#                               //      without restarting decoder
+#	u8_t flags;		// [1]	0x80 - loop infinitely
+#                               //      0x40 - stream without restarting decoder
+#				//	0x01 - polarity inversion left
+#				//	0x02 - polarity inversion right
 #	u8_t output_threshold;	// [1]	Amount of output buffer data before playback starts in tenths of second.
 #	u8_t reserved;		// [1]	reserved
 #	u32_t replay_gain;	// [4]	replay gain in 16.16 fixed point, 0 means none
@@ -842,6 +844,8 @@ sub stream {
 		my $flags = 0;
 		$flags |= 0x40 if $reconnect;
 		$flags |= 0x80 if $loop;
+		$flags |= ($client->prefGet('polarityInversion') || 0);
+
 		$::d_slimproto && msg("flags: $flags\n");
 		my $frame = pack 'aaaaaaaCCCaCCCNnN', (
 			$command,	# command

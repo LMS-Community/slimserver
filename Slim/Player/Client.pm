@@ -473,6 +473,10 @@ sub signalStrength {
 sub hasDigitalOut() { return 0; }
 sub hasPreAmp() { return 0; }
 sub hasExternalClock() { return 0; }
+sub hasDigitalIn() { return 0; }
+sub hasAesbeu() { return 0; }
+sub hasPowerControl() { return 0; }
+sub hasPolarityInversion() { return 0; }
 
 sub maxBrightness() { return undef; }
 

@@ -70,6 +70,7 @@ our %message_handlers = (
 	'META' => \&_http_metadata_handler,
 	'RAWI' => \&_raw_ir_handler,
 	'RESP' => \&_http_response_handler,
+	'SETD' => \&_settings_handler,
 	'STAT' => \&_stat_handler,
 	'UREQ' => \&_update_request_handler,
 );
@@ -940,6 +941,15 @@ sub _knob_handler {
 	Slim::Hardware::IR::resetHoldStart($client);
 	
 	Slim::Hardware::IR::executeButton($client, 'knob', $time, undef, 1);
+}
+
+sub _settings_handler {
+    my $client = shift;
+    my $data_ref = shift;
+
+    if ($client->can('directBodyFrame')) {
+	$client->playerSettingsFrame($data_ref);
+    }
 }
 
 1;

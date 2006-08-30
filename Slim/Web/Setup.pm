@@ -849,6 +849,13 @@ sub initSetupConfig {
 						$pageref->{'GroupOrder'}[0] = undef;
 					}
 					
+					if ($client && $client->hasPowerControl()) {
+						$pageref->{'Groups'}{'Power'}{'PrefOrder'}[1] = 'powerOffDac';
+					}
+					else {
+						$pageref->{'Groups'}{'Power'}{'PrefOrder'}[1] = undef;
+					}										
+
 					if ($client && $client->hasPreAmp()) {
 						$pageref->{'Groups'}{'Digital'}{'PrefOrder'}[1] = 'preampVolumeControl';
 					} else {
@@ -867,15 +874,42 @@ sub initSetupConfig {
 						$pageref->{'GroupOrder'}[3] = undef;
 					}
 					
-					if (Slim::Utils::Misc::findbin('lame')) {
-						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = 'SETUP_LAME_FOUND';
-						$pageref->{'GroupOrder'}[4] = 'Quality';
+					if ($client && $client->hasDigitalIn()) {
+						$pageref->{'GroupOrder'}[4] = 'Input';
 					} else {
-						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = 'SETUP_LAME_NOT_FOUND';
 						$pageref->{'GroupOrder'}[4] = undef;
 					}
+
+					if ($client && $client->hasAesbeu()) {
+						$pageref->{'Groups'}{'Digital'}{'PrefOrder'}[3] = 'digitalOutputEncoding';
+					}
+					else {
+						$pageref->{'Groups'}{'Digital'}{'PrefOrder'}[3] = undef;
+					}					
+
+					if ($client && $client->hasExternalClock()) {
+						$pageref->{'Groups'}{'Digital'}{'PrefOrder'}[4] = 'clockSource';
+					}
+					else {
+						$pageref->{'Groups'}{'Digital'}{'PrefOrder'}[4] = undef;
+					}
+										
+					if ($client && $client->hasPolarityInversion()) {
+						$pageref->{'Groups'}{'Digital'}{'PrefOrder'}[5] = 'polarityInversion';
+					}
+					else {
+						$pageref->{'Groups'}{'Digital'}{'PrefOrder'}[5] = undef;
+					}
+										
+					if (Slim::Utils::Misc::findbin('lame')) {
+						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = 'SETUP_LAME_FOUND';
+						$pageref->{'GroupOrder'}[5] = 'Quality';
+					} else {
+						$pageref->{'Prefs'}{'lame'}{'PrefDesc'} = 'SETUP_LAME_NOT_FOUND';
+						$pageref->{'GroupOrder'}[5] = undef;
+					}
 					
-					$pageref->{'GroupOrder'}[5] ='Format';
+					$pageref->{'GroupOrder'}[6] ='Format';
 					my @formats = $client->formats();
 					if ($formats[0] ne 'mp3') {
 						$pageref->{'Groups'}{'Format'}{'GroupDesc'} = 'SETUP_MAXBITRATE_DESC';
@@ -886,18 +920,11 @@ sub initSetupConfig {
 					}
 
 					if ($client->canDoReplayGain(0)) {
-						$pageref->{'GroupOrder'}[6] = 'ReplayGain';
+						$pageref->{'GroupOrder'}[7] = 'ReplayGain';
 					} else {
-						$pageref->{'GroupOrder'}[6] = undef;
+						$pageref->{'GroupOrder'}[7] = undef;
 					}
 
-					if ($client && $client->hasExternalClock()) {
-						$pageref->{'Groups'}{'Digital'}{'PrefOrder'}[3] = 'clockSource';
-					}
-					else {
-						$pageref->{'Groups'}{'Digital'}{'PrefOrder'}[3] = undef;
-					}
-					
 					if (!$paramref->{'playername'}) {
 						$paramref->{'playername'} = $client->name();
 					}
@@ -932,7 +959,7 @@ sub initSetupConfig {
 		,'GroupOrder' => [undef,'PowerOn',undef,undef,undef,undef]
 		,'Groups' => {
 			'PowerOn' => {
-					'PrefOrder' => ['powerOnResume']
+					'PrefOrder' => ['powerOnResume','powerOffDac']
 				}
 			,'Format' => {
 					'PrefOrder' => ['lame','maxBitrate']
@@ -950,7 +977,10 @@ sub initSetupConfig {
 					'PrefOrder' => ['synchronize','syncVolume','syncPower']
 				}
 			,'Digital' => {
-					'PrefOrder' => ['digitalVolumeControl','preampVolumeControl','mp3SilencePrelude','clockSource']
+					'PrefOrder' => ['digitalVolumeControl','preampVolumeControl','mp3SilencePrelude','digitalOutputEncoding','clockSource','polarityInversion']
+				}
+			,'Input' => {
+					'PrefOrder' => ['wordClockOutput']
 				}
 			,'Transition' => {
 					'PrefOrder' => ['transitionType', 'transitionDuration']
@@ -1112,12 +1142,15 @@ sub initSetupConfig {
 						}
 			,'clockSource' => {
 							'validate' => \&Slim::Utils::Validate::isInt
-							,'validateArgs' => [0,2,0,0]
+							,'validateArgs' => [0,5,0,0]
 							,'optionSort' => 'NK'
 							,'options' => {
 									'0' => 'CLOCKSOURCE_INTERNAL',
 									'1' => 'CLOCKSOURCE_WORD_CLOCK',
-									'2' => 'CLOCKSOURCE_SPDIF_SLAVE',
+									'2' => 'AUDIO_SOURCE_BALANCED_AES',
+									'3' => 'AUDIO_SOURCE_BNC_SPDIF',
+									'4' => 'AUDIO_SOURCE_RCA_SPDIF',
+									'5' => 'AUDIO_SOURCE_OPTICAL_SPDIF',
 								}
 							,'onChange' => sub {
 								my $client = shift;
@@ -1154,6 +1187,51 @@ sub initSetupConfig {
 									'3' => 'REPLAYGAIN_SMART_GAIN',
 								},
 						}
+			,'digitalOutputEncoding' => {
+							'validate' => \&Slim::Utils::Validate::trueFalse
+							,'options' => {
+									'0' => 'DIGITALOUTPUTENCODING_SPDIF',
+									'1' => 'DIGITALOUTPUTENCODING_AESEBU',
+							}
+							,'onChange' => sub {
+								my $client = shift;
+								$client->updateDigitalOutputEncoding();
+							}
+			}
+			,'wordClockOutput' => {
+							'validate' => \&Slim::Utils::Validate::trueFalse
+							,'options' => {
+									'1' => 'WORDCLOCKOUTPUT_GENERATECLOCK',
+									'0' => 'WORDCLOCKOUTPUT_PASSTHROUGH',
+							}
+							,'onChange' => sub {
+								my $client = shift;
+								$client->updateWordClockOutput();
+							}
+			}
+			,'powerOffDac' => {
+							'validate' => \&Slim::Utils::Validate::trueFalse
+							,'options' => {
+									'0' => 'POWEROFFDAC_ALWAYSON',
+									'1' => 'POWEROFFDAC_WHENOFF',
+							}
+							,'onChange' => sub {
+								my $client = shift;
+								$client->updatePowerOffDac();
+							}
+			}
+			,'polarityInversion' => {
+							'validate' => \&Slim::Utils::Validate::isInt
+							,'validateArgs' => [0,3,0,3]
+							,'options' => {
+									'0' => 'POLARITYINVERSION_NORMAL',
+									'3' => 'POLARITYINVERSION_INVERTED',
+							}
+							,'onChange' => sub {
+								my $client = shift;
+								$client->volume($client->volume());
+							}
+			}
 		}
 	}
 	,'REMOTE_SETTINGS' => {
