@@ -4,7 +4,6 @@ package Plugins::MoodLogic::Importer;
 
 use strict;
 use File::Spec::Functions qw(catfile);
-use Scalar::Util qw(blessed);
 
 use Plugins::MoodLogic::Common;
 use Slim::Utils::OSDetect;
@@ -207,7 +206,6 @@ sub startScan {
 sub doneScanning {
 	my $class = shift;
 
-	$rs->Close;
 	$conn->Close;
 
 	$::d_moodlogic && msg("MoodLogic: done Scanning\n");
@@ -249,6 +247,9 @@ sub exportFunction {
 	$::d_moodlogic && msg("MoodLogic: Begin song scan for ".$count." tracks. \n");
 
 	$class->exportSongs($count);
+
+	$rs->Close;
+	
 	$class->exportPlaylists;
 }
 
@@ -364,22 +365,35 @@ sub exportContribGenres {
 sub exportPlaylists {
 	my $class = shift;
 
-	$playlist   = Win32::OLE->new("ADODB.Recordset");
-	$auto   = Win32::OLE->new("ADODB.Recordset");
+	if (!defined $conn) {
+		$conn = Win32::OLE->new("ADODB.Connection");
 
-	#PLAYLIST QUERY
-	eval {$playlist->Open('Select tblPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename  From "tblPlaylist", "tblPlaylistSong", "tblMediaObject" where "tblPlaylist"."playlistId" = "tblPlaylistSong"."playlistId" AND "tblPlaylistSong"."songId" = "tblMediaObject"."songId" order by tblPlaylist.playlistId,tblPlaylistSong.playOrder', $conn, 1, 1);};
+		$::d_moodlogic && msg("MoodLogic: Opening Object Link...\n");
+
+		$conn->Open('PROVIDER=MSDASQL;DRIVER={Microsoft Access Driver (*.mdb)};DBQ='.$mixer->{JetFilePublic}.';UID=;PWD=F8F4E734E2CAE6B;');
+	}
+	
+	$playlist   = Win32::OLE->new("ADODB.Recordset");
+	$auto       = Win32::OLE->new("ADODB.Recordset");
+
+	# PLAYLIST QUERY
+	eval {
+		$playlist->Open('Select tblPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename  From "tblPlaylist", "tblPlaylistSong", "tblMediaObject" where "tblPlaylist"."playlistId" = "tblPlaylistSong"."playlistId" AND "tblPlaylistSong"."songId" = "tblMediaObject"."songId" order by tblPlaylist.playlistId,tblPlaylistSong.playOrder', $conn, 1, 1);
+	};
 	
 	if ($@) {
 		$::d_moodlogic && msg("MoodLogic: No Playlists Found: $@\n");
 	} else {
 		$class->processPlaylists($playlist);
-		$playlist->Close;
+		#$playlist->Close;
 	}
-	
+
 	# AUTO PLAYLIST QUERY: 
 	local $Win32::OLE::Warn = 0;
-	eval {$auto->Open('Select tblAutoPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename From "tblAutoPlaylist", "tblAutoPlaylistSong", "tblMediaObject" where "tblAutoPlaylist"."playlistId" = tblAutoPlaylistSong.playlistId AND tblAutoPlaylistSong.songId = tblMediaObject.songId order by tblAutoPlaylist.playlistId,tblAutoPlaylistSong.playOrder', $conn, 1, 1);};
+
+	eval {
+		$auto->Open('Select tblAutoPlaylist.name, tblMediaObject.volume, tblMediaObject.path, tblMediaObject.filename From "tblAutoPlaylist", "tblAutoPlaylistSong", "tblMediaObject" where "tblAutoPlaylist"."playlistId" = "tblAutoPlaylistSong"."playlistId" AND "tblAutoPlaylistSong"."songId" = "tblMediaObject"."songId" order by tblAutoPlaylist.playlistId,tblAutoPlaylistSong.playOrder', $conn, 1, 1);
+	};
 
 	if (Win32::OLE->LastError) {
 		$::d_moodlogic && msg("MoodLogic: No AutoPlaylists Found\n");
@@ -426,17 +440,7 @@ sub processPlaylists {
 sub getPlaylistItems {
 	my $playlist = shift;
 
-	if (!blessed($playlist) || !$playlist->can('Fields')) {
-		return [];
-	}
-
 	my $name = $playlist->Fields('name');
-
-	# Bug: 3962
-	if (!blessed($name) || !$name->can('value')) {
-		return [];
-	}
-
 	my $item = $name->value;
 	my @list = ();
 
