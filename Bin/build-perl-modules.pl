@@ -57,6 +57,11 @@ my %packageOptions = (
 
 		'env' => [qw(DBI-1.50/blib/lib: DBI-1.50/blib/arch)],
 	},
+	
+	'YAML-Syck-0.64' => {
+	
+		'Makefile.PL' => ' < y',
+	},
 );
 
 sub main {
