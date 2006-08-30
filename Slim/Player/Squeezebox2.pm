@@ -194,9 +194,7 @@ sub upgradeFirmware {
 			'callback'  => sub {
 				# send upgrade done when the error message is done being displayed.  updn causes the
 				# player to disconnect and reconnect, so if we do this too early the message gets lost
-				
-				# XXX: Uncomment when firmware 60 is out
-				# $client->sendFrame('updn',\(' '));
+				$client->sendFrame('updn',\(' '));
 			},
 		} );
 
