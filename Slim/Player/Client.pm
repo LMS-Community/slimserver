@@ -754,7 +754,7 @@ sub prettySleepTime {
 		if ($client->currentSleepTime < 15) {
 			$sleepstring = join(' ',$client->string('SLEEPING_AT'),$client->string('END_OF_SONG'));
 		} else {
-			$sleepstring = join(" " ,$client->string('SLEEPING_IN'),int($sleeptime/60),$client->string('MINUTES'));
+			$sleepstring = join(" " ,$client->string('SLEEPING_IN'),int($sleeptime/60)+1,$client->string('MINUTES'));
 		}
 	}
 	
