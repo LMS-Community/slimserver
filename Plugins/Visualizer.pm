@@ -69,7 +69,10 @@ my %screensaver_info = (
 
 	'SCREENSAVER.visualizer_analog_vumeter' => {
 		name => 'VISUALIZER_ANALOG_VUMETER',
-		params => [$VISUALIZER_VUMETER, 0, 1, 0, 160, 160, 160],
+		params => {
+				'transporter' => [$VISUALIZER_VUMETER, 0, 1, 0 + 320, 160, 160 + 320, 160],
+				'squeezebox2' => [$VISUALIZER_VUMETER, 0, 1, 0, 160, 160, 160],
+			},
 		showtext => 0,
 	},
 	'SCREENSAVER.visualizer_digital_vumeter' => {
@@ -310,6 +313,10 @@ sub setVisualizerMode() {
 	}
 	
 	$client->modeParam('visu', $paramsRef);
+
+	# visualiser uses screen 2 - blank it and turn off other screen two displays
+	$client->update( { 'screen2' => {} } );
+	$client->modeParam('screen2', 'visualizer');
 
 	$client->lines(\&screensaverLines);
 

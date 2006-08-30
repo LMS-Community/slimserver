@@ -15,6 +15,8 @@ package Slim::Player::Player;
 
 use strict;
 
+use Scalar::Util qw(blessed);
+
 use Slim::Player::Client;
 use Slim::Utils::Misc;
 use Slim::Hardware::IR;
@@ -740,6 +742,7 @@ sub mixerDisplay {
 
 	my $headerValue = '';
 	my $parts;
+	my $oldvisu;
 
 	if ($client->mixerConstant($feature, 'balanced')) {
 
@@ -769,10 +772,11 @@ sub mixerDisplay {
 
 	my $featureHeader = join('', $client->string(uc($feature)), $headerValue);
 
-	# XXXX hack attack: turn off visualizer when showing volume, etc.
-	my $oldvisu = $client->modeParam('visu');
-
-	$client->modeParam('visu', [0]);
+	if (blessed($client->display) eq 'Slim::Display::Squeezebox2') {
+		# XXXX hack attack: turn off visualizer when showing volume, etc.		
+		$oldvisu = $client->modeParam('visu');
+		$client->modeParam('visu', [0]);
+	}
 
 	$parts ||= Slim::Buttons::Input::Bar::lines($client, $featureValue, $featureHeader, {
 		'min'       => $client->mixerConstant($feature, 'min'),
@@ -784,7 +788,9 @@ sub mixerDisplay {
 	$client->display->showBriefly($parts, { 'name' => 'mixer' } );
 
 	# Turn the visualizer back to it's old value.
-	$client->modeParam('visu', $oldvisu);	
+	if (defined $oldvisu) {
+		$client->modeParam('visu', $oldvisu);
+	}
 }
 
 1;
