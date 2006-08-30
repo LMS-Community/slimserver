@@ -153,7 +153,8 @@ sub init {
 						},
 					],
 					'onPlay'       => \&setPref,
-					'onAdd'        => sub {},
+					'onAdd'        => \&setPref,
+					'onRight'      => \&setPref,
 					'header'       => '{REPLAYGAIN}{count}',
 					'pref'            => "replayGainMode",
 					'initialValue'    => sub { return $_[0]->prefGet('replayGainMode') },
@@ -180,7 +181,8 @@ sub init {
 						},
 					],
 					'onPlay'       => \&executeCommand,
-					'onAdd'        => sub {},
+					'onAdd'        => \&executeCommand,
+					'onRight'      => \&executeCommand,
 					'header'       => '{REPEAT}{count}',
 					'pref'         => sub { Slim::Player::Playlist::repeat(shift) },
 					'initialValue' => sub { Slim::Player::Playlist::repeat(shift) },
@@ -205,7 +207,8 @@ sub init {
 						},
 					],
 					'onPlay'       => \&executeCommand,
-					'onAdd'        => sub {},
+					'onAdd'        => \&executeCommand,
+					'onRight'      => \&executeCommand,
 					'header'       => '{SHUFFLE}{count}',
 					'pref'         => sub{ return Slim::Player::Playlist::shuffle(shift)},
 					'initialValue' => sub{ return Slim::Player::Playlist::shuffle(shift)},
@@ -217,7 +220,8 @@ sub init {
 					'useMode'      => 'INPUT.Choice',
 					'header'       => '{TITLEFORMAT}{count}',
 					'onPlay'       => \&setPref,
-					'onAdd'        => sub {},
+					'onAdd'        => \&setPref,
+					'onRight'      => \&setPref,
 					'pref'         => 'titleFormatCurr',
 					'initialValue' => sub { shift->prefGet('titleFormatCurr') },
 					'init'         => sub {
@@ -244,7 +248,12 @@ sub init {
 					'onPlay'       => sub { 
 						$_[0]->textSize($_[1]->{'value'})
 					},
-					'onAdd'        => sub {},
+					'onAdd'        => sub { 
+						$_[0]->textSize($_[1]->{'value'})
+					},
+					'onRight'      => sub { 
+						$_[0]->textSize($_[1]->{'value'})
+					},,
 					'pref'         => 'activeFont_curr',
 					'initialValue' => sub { shift->prefGet('activeFont_curr') },
 					'init'         => sub {
@@ -305,7 +314,8 @@ sub init {
 						},
 					],
 					'onPlay'       => \&setPref,
-					'onAdd'        => sub {},
+					'onAdd'        => \&setPref,
+					'onRight'      => \&setPref,
 					'header'       => '{SETUP_TRANSITIONTYPE}{count}',
 					'pref'         => 'transitionType',
 					'initialValue' => sub { return $_[0]->prefGet('transitionType') },
@@ -327,7 +337,8 @@ sub init {
 						'SETUP_SCREENSAVER' => {
 							'useMode'       => 'INPUT.Choice',
 							'onPlay'        => \&setPref,
-							'onAdd'        => sub {},
+							'onAdd'         => \&setPref,
+							'onRight'       => \&setPref,
 							'pref'          => "screensaver",
 							'header'        => '{SETUP_SCREENSAVER}{count}',
 							'initialValue'  => sub { return $_[0]->prefGet('screensaver') },
@@ -337,7 +348,8 @@ sub init {
 						'SETUP_OFFSAVER' => {
 							'useMode'       => 'INPUT.Choice',
 							'onPlay'        => \&setPref,
-							'onAdd'        => sub {},
+							'onAdd'         => \&setPref,
+							'onRight'       => \&setPref,
 							'pref'          => "offsaver",
 							'header'        => '{SETUP_OFFSAVER}{count}',
 							'initialValue'  => sub { return $_[0]->prefGet('offsaver') },
@@ -347,7 +359,8 @@ sub init {
 						'SETUP_IDLESAVER' => {
 							'useMode'       => 'INPUT.Choice',
 							'onPlay'        => \&setPref,
-							'onAdd'        => sub {},
+							'onAdd'         => \&setPref,
+							'onRight'       => \&setPref,
 							'pref'          => "idlesaver",
 							'header'        => '{SETUP_IDLESAVER}{count}',
 							'initialValue'  => sub { return $_[0]->prefGet('idlesaver') },
@@ -359,7 +372,8 @@ sub init {
 				'SETUP_VISUALIZERMODE'         => {
 					'useMode'      => 'INPUT.Choice',
 					'onPlay'       => \&updateVisualMode,
-					'onAdd'        => sub {},
+					'onAdd'        => \&updateVisualMode,
+					'onRight'      => \&updateVisualMode,
 					'header'       => '{SETUP_VISUALIZERMODE}{count}',
 					'pref'         => 'visualMode',
 					'initialValue' => sub { return $_[0]->prefGet('visualMode') },
