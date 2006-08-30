@@ -226,6 +226,10 @@ sub gotContainer {
 					childCount => $childCount,
 					url        => $url,
 				};
+
+				if ($url) {
+					Slim::Music::Info::setTitle($url, $title);
+				}
 			
 				# item info is cached for use in building crumb trails in the web UI
 				$cache->set( "upnp_item_info_${udn}_${id}", $props, '1 hour' );
