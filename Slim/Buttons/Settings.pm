@@ -380,53 +380,12 @@ sub init {
 					'condition'    => sub { return $_[0]->display->isa('Slim::Display::Transporter') },
 					'init'          => \&visualInit,
 				},
-			
-				'AUDIO_SOURCE'       => {
-					'useMode'      => 'INPUT.Choice',
-					'listRef'      => [
-						{
-							name   => '{AUDIO_SOURCE_NETWORK}',
-							value  => 0,
-						},
-						{
-							name   => '{AUDIO_SOURCE_BALANCED_AES}',
-							value  => 1,
-						},
-						{
-							name   => '{AUDIO_SOURCE_BNC_SPDIF}',
-							value  => 2,
-						},
-						{
-							name   => '{AUDIO_SOURCE_RCA_SPDIF}',
-							value  => 3,
-						},
-						{
-							name   => '{AUDIO_SOURCE_OPTICAL_SPDIF}',
-							value  => 4,
-						},
-					],
-					'onPlay'       => \&updateAudioSource,
-					'onAdd'        => sub {},
-					'header'       => '{AUDIO_SOURCE}{count}',
-					'pref'         => 'audioSource',
-					'initialValue' => sub { return $_[0]->prefGet('audioSource') },
-					'condition'    => sub { return $_[0]->isa('Slim::Player::Transporter') },
-				},
 			},
 		},
 	);
 	
 	Slim::Buttons::Home::addMenuOption('SETTINGS', $menuParams{'SETTINGS'});
 }
-
-sub updateAudioSource {
-	my $client = shift;
-	my $input = shift;
-
-	my $data = pack('C', $input->{'value'});
-	$client->prefSet('audioSource', $input->{'value'});
-	$client->sendFrame('audp', \$data);
-};
 
 sub setPref {
 	my $client = shift;

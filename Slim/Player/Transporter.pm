@@ -29,6 +29,18 @@ use Slim::Utils::Unicode;
 our $defaultPrefs = {
 	'clockSource'  => 0,
 	'audioSource' => 0,
+	'menuItem'             => [qw(
+		NOW_PLAYING
+		BROWSE_MUSIC
+		SEARCH
+		RandomPlay::Plugin
+		FAVORITES
+		SAVED_PLAYLISTS
+		RADIO
+		DigitalInput::Plugin
+		SETTINGS
+		PLUGINS
+	)],
 };
 
 sub init {

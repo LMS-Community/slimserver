@@ -14,10 +14,13 @@ package Slim::Player::Player;
 #
 
 use strict;
+
 use Slim::Player::Client;
 use Slim::Utils::Misc;
 use Slim::Hardware::IR;
 use Slim::Buttons::SqueezeNetwork;
+
+use Scalar::Util qw(blessed);
 
 use base qw(Slim::Player::Client);
 
@@ -59,6 +62,7 @@ our $defaultPrefs = {
 	'upgrade-6.2-script'   => 1,
 	'upgrade-R4627-script' => 1,
 	'upgrade-R8775-script' => 1,
+	'upgrade-R9279-script' => 1,
 	'volume'               => 50,
 	'syncBufferThreshold'  => 128,
 	'bufferThreshold'      => 255,
@@ -210,7 +214,48 @@ our %upgradeScripts = (
 		}
 
 		$client->prefSet('menuItem', $menuItem);
-	}
+	},
+	
+	'R9279' => sub {
+		my $client = shift;
+		my $menuItem = $client->prefGet('menuItem') || 0;
+
+		# Add Favorites to home
+		if (ref($menuItem) ne 'ARRAY') {
+			return;
+		}
+		
+		# DigitalInput menu item for Transporter only
+		if (blessed($client) ne 'Slim::Player::Transporter') {
+			return;
+		}
+
+		my $insertPos = undef;
+
+		# Insert DigitalInput before SETTINGS
+		for (my $i = 0; $i < @$menuItem; $i++) {
+
+			if (@$menuItem[$i] eq 'DigitalInput::Plugin') {
+
+				return;
+
+			} elsif (@$menuItem[$i] eq 'SETTINGS') {
+
+				$insertPos = $i;
+			}
+		}
+
+		if (defined $insertPos) {
+
+			splice(@$menuItem, $insertPos, 0, 'DigitalInput::Plugin');
+
+		} else {
+
+			push (@$menuItem, 'DigitalInput::Plugin');
+		}
+
+		$client->prefSet('menuItem', $menuItem);
+	},
 );
 
 sub new {

@@ -12571,35 +12571,6 @@ CLOCKSOURCE_SPDIF_SLAVE
 	ES	Entrada S/PDIF
 	NL	S/PDIF invoer
 
-AUDIO_SOURCE
-	DE	Audio Quelle
-	EN	Audio Source
-
-AUDIO_SOURCE_NETWORK
-	DE	Netzwerk
-	EN	Network
-
-AUDIO_SOURCE_BALANCED_AES
-	EN	Balanced AES/EBU
-	ES	AES/EBU Balanceada
-	FR	AES/EBU symÃ©trique
-	NL	Gebalanceerde AES/EBU
-
-AUDIO_SOURCE_BNC_SPDIF
-	EN	BNC Coax S/PDIF
-	ES	S/PDIF BNC Coax 
-	FR	S/PDIF coaxial BNC
-	NL	BNC coax S/PDIF
-
-AUDIO_SOURCE_RCA_SPDIF
-	EN	RCA Coax S/PDIF
-	ES	S/PDIF RCA Coax
-	FR	S/PDIF coaxial RCA
-	NL	RCA coax S/PDIF
-
-AUDIO_SOURCE_OPTICAL_SPDIF
-	EN	Optical S/PDIF (TOSLINK)
-
 VISUALIZER_EXTENDED_TEXT
 	DE	Erweiterte Textanzeige
 	EN	Extended Text Display

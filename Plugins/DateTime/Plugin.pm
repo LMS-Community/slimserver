@@ -232,12 +232,20 @@ sub screensaverDateTimelines {
 	my $nextUpdate = $client->periodicUpdateTime();
 	Slim::Buttons::Common::syncPeriodicUpdates($client, int($nextUpdate)) if (($nextUpdate - int($nextUpdate)) > 0.01);
 
-	return {
+	my $display = {
 		'center' => [ Slim::Utils::DateTime::longDateF(undef,Slim::Utils::Prefs::get('screensaverDateFormat')),
 				  Slim::Utils::DateTime::timeF(undef,Slim::Utils::Prefs::get('screensaverTimeFormat')), ],
 		'overlay'=> [ ($alarmOn ? $client->symbols('bell') : undef) ],
 		'fonts'  => $fontDef,
 	};
+	
+	if ($client->display->hasScreen2 && $client->display->linesPerScreen == 1) {
+		$display->{'screen2'}->{'center'} = [undef,Slim::Utils::DateTime::longDateF(undef,Slim::Utils::Prefs::get('screensaverDateFormat'))];
+	} else {
+		$client->update( { 'screen2' => {} } );
+	}
+
+	return $display;
 }
 
 1;
