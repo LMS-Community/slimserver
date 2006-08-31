@@ -118,12 +118,19 @@ div#browsedbList {
 	height: auto;
 }
 
+.viewSelect
+{
+	float: right;
+	padding-top: 0px;
+}
+
 div#browsedbHeader {
 	margin-left:0px;
 }
 
 div#pwdlist {
 	clear: left;
+	float: left;
 }
 
 div#pagetitle {
