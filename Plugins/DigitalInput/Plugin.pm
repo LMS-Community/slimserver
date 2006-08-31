@@ -23,24 +23,24 @@ sub initPlugin {
 
 	@digital_inputs = (
 		{
-			name => '{PLUGIN_DIGITAL_INPUT_NETWORK}',
-			value => 0,
+			'name'  => '{PLUGIN_DIGITAL_INPUT_NETWORK}',
+			'value' => 0,
 		},
 		{
-			name => '{PLUGIN_DIGITAL_INPUT_BALANCED_AES}',
-			value => 1,
+			'name'  => '{PLUGIN_DIGITAL_INPUT_BALANCED_AES}',
+			'value' => 1,
 		},
 		{
-			name => '{PLUGIN_DIGITAL_INPUT_BNC_SPDIF}',
-			value => 2,
+			'name'  => '{PLUGIN_DIGITAL_INPUT_BNC_SPDIF}',
+			'value' => 2,
 		},
 		{
-			name => '{PLUGIN_DIGITAL_INPUT_RCA_SPDIF}',
-			value => 3,
+			'name'  => '{PLUGIN_DIGITAL_INPUT_RCA_SPDIF}',
+			'value' => 3,
 		},
 		{
-			name => '{PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF}',
-			value => 4,
+			'name'  => '{PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF}',
+			'value' => 4,
 		},
 	);
 }
@@ -48,9 +48,8 @@ sub initPlugin {
 sub enabled {
 	my $client = shift;
 	
-	# make sure if we're sent a client object that it is the transporter hardware
-	# if no client is provided, we don't care, so send back enabled so that the PluginManager
-	# knows we're alive.
+	# make sure this is only validated when the provided client has digital inputs.
+	# when the client isn't given, we only need to report that the plugin is alive.
 	return $client? $client->hasDigitalInputs() : 1;
 };
 
@@ -58,8 +57,28 @@ sub updateDigitalInput {
 	my $client = shift;
 	my $valueRef = shift;
 
-	my $data = pack('C', $valueRef->{value});
-	$client->sendFrame('audp', \$data);	
+	$client->prefSet('digitalInput', $valueRef->{'value'});
+	my $data = pack('C', $valueRef->{'value'});
+	$client->sendFrame('audp', \$data);
+
+	my $string = 'NOW_PLAYING_FROM';
+	my $line1;
+	my $line2;
+	
+	if ($client->linesPerScreen() == 1) {
+
+		$line2 = $client->doubleString($string);
+
+	} else {
+
+		$line1 = $client->string($string);
+		$line2 = Slim::Buttons::Input::Choice::formatString($client, $valueRef->{'name'});
+	}
+	
+	$client->showBriefly( {
+		'line'    => [ $line1, $line2 ],
+		'overlay' => [ undef, $client->symbols('notesymbol') ]
+	});
 };
 
 sub setMode {
@@ -73,13 +92,16 @@ sub setMode {
 
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
-		'header'     => '{PLUGIN_DIGITAL_INPUT} {count}',
-		'listRef'    => \@digital_inputs,
-		'modeName'   => 'Digital Input Plugin',
-		'onPlay'     => \&updateDigitalInput,
-		'onAdd'      => sub {},
-
-		'overlayRef' => [
+		'header'       => '{PLUGIN_DIGITAL_INPUT} {count}',
+		'listRef'      => \@digital_inputs,
+		'modeName'     => 'Digital Input Plugin',
+		'onPlay'       => \&updateDigitalInput,
+		
+		# temporarily required for checkbox overlay until digital url scheme is in place.
+		#'pref'         => 'digitalInput',
+		#'initialValue' => sub { return $_[0]->prefGet('digitalInput');},
+		
+		'overlayRef'   => [
 			undef,
 			Slim::Display::Display::symbol('notesymbol') 
 		],
