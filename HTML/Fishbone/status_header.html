@@ -68,7 +68,7 @@
 		-->
 	</script>[% END %]
 </head>
-<body bgcolor="#FFFFFF" style="margin: 0" topmargin="0" leftmargin="0" rightmargin="0" [% IF NOT undock %]onload="refreshPlaylist('[% playerURI %]');"[% END %]>
+<body bgcolor="#FFFFFF" style="margin: 0" topmargin="0" leftmargin="0" rightmargin="0" [% IF NOT undock %]onload="refreshPlaylist('[% playerURI %]');doRefresh();"[% END %]>
 	<div ID="header">
 		<div id="mastHead">
 			<div id="playerlogo">
@@ -203,7 +203,7 @@
 				([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])[% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
 			</div>
 			<div id="playlistLinks">
-				[% img = '' %]<span id="saveplaylist">[% IF cansave %][% PROCESS savePlaylistLink %] / [% END %]</span>
+				[% img = '' %]<span id="saveplaylist" style="display:none";>[% PROCESS savePlaylistLink %] / </span>
 				[% PROCESS downloadPlaylistLink %] /
 				[% PROCESS clearPlaylistLink %]
 			</div>

@@ -47,6 +47,12 @@ function refreshState(theData) {
 		hideElements(['unsync']);
 	}
 	
+	if (parsedData['cansave']) {
+		showElements(['saveplaylist'],'inline');
+	} else {
+		hideElements(['saveplaylist']);
+	}
+	
 	return true;
 }
 
@@ -167,7 +173,7 @@ function refreshInfo(theData,force) {
 	var newsong = 1;
 
 	if (force != 1) {
-		if (a[1] == parsedData['songtitleid']) {newsong = 0;}
+		if (a == null || a[1] == parsedData['songtitleid']) {newsong = 0;}
 	}
 	
 	var elems = ['thissongnum', 'playtextmode', 'songcount'];
@@ -176,9 +182,11 @@ function refreshInfo(theData,force) {
 		refreshElement('songtitle', parsedData['songtitle']);
 		refreshPlaylist(player);
 	}
+	
 	if (parsedData['streamtitle']) {
 		refreshElement('songtitle', parsedData['streamtitle']);
 	}
+	
 	if (parsedData['durationseconds']) updateTime(parsedData['songtime'],parsedData['durationseconds']);
 
 	if (parsedData['thissongnum']) {
