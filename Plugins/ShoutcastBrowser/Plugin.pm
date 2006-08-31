@@ -12,6 +12,7 @@ use Slim::Web::XMLBrowser;
 
 my $FEED   = 'http://content.us.squeezenetwork.com:8080/shoutcast/index.opml';
 my $SEARCH = 'http://www.squeezenetwork.com/api/opensearch/shoutcast/opensearch.xml';
+my $cli_next;
 
 sub enabled {
 	return ($::VERSION ge '6.3');
@@ -31,7 +32,8 @@ sub initPlugin {
         [0, 1, 1, \&cliQuery]);
 	Slim::Control::Request::addDispatch(['shoutcast', 'playlist', '_method' ],
 		[1, 1, 1, \&cliQuery]);
-
+	$cli_next=Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
+		[0, 1, 1, \&cliRadiosQuery]);
 }
 
 sub getDisplayName {
@@ -76,6 +78,22 @@ sub cliQuery {
 	$::d_plugins && msg("Shoutcast: cliQuery()\n");
 	
 	Slim::Buttons::XMLBrowser::cliQuery('shoutcast', $FEED, $request);
+}
+
+sub cliRadiosQuery {
+	my $request = shift;
+	
+	$::d_plugins && msg("Shoutcast: cliRadiosQuery()\n");
+	
+	# what we want the query to report about ourself
+	my $data = {
+		'cmd' => 'shoutcast',                    # cmd label
+		'name' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+		'type' => 'xmlbrowser',              # type
+	};
+	
+	# let our super duper function do all the hard work
+	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
 }
 
 sub webPages {

@@ -112,7 +112,8 @@
 	</li>
 	<li>
 		Added the ability for plugins to define CLI commands and queries. In
-		particular, all Internet Radio plugins now have CLI support. Please
+		particular, all Internet Radio plugins now have CLI support, along with
+		a convienent &quot;<a href="#radios">radios</a>&quot; query. Please
 		refer to <a href="#PG">Plugins</a></strong> section.
 	</li>
 	<li>
@@ -5536,9 +5537,14 @@ in the saved playlists folder.</p>
 	plugin must be enabled in the SlimServer configuration for the commands
 	and queries to be available to the CLI client. Please use query 
 	&quot;<a href="#can">can</a>&quot; to determine if the given command or
-	query is available.
+	query is available. Query &quot;<a href="#radios">radios</a>&quot; can
+	alternatively be used to get a list of available radio station plugin CLI 
+	queries.
 <p>
 <ul>
+	<li>
+		<strong><code><a href="#radios">radios</a></code></strong>
+	</li>
 	<li>
 		<strong><a href="#XMLBrowser">Slimdevices Picks, Shoutcast, Podcast, Live Music Archive, RadioGuide, RadioIO & RSS</a></strong>
 	</li>
@@ -5552,6 +5558,117 @@ in the saved playlists folder.</p>
 		<strong><a href="#RandomPlay">RandomPlay</a></strong>
 	</li>
 </ul>
+
+<br>
+<p id="radios">
+	<strong>
+		<code>
+			radios
+			&lt;start&gt;
+			&lt;itemsPerResponse&gt;
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;radios&quot; query returns all radio type plugins enabled in
+	the server. This command enables the client to present a top level
+	&quot;Radio&quot; menu easily, without hardcoding the plugins nor 
+	worrying about them being enabled.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			charset
+		</td>
+		<td>
+			Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.
+		</td>
+	</tr>
+</table>
+<p>
+	Returned tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			count
+		</td>
+		<td>
+			Number of results returned by the query.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<em>For each radio plugin:</em>
+		</td>
+		<td>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;<b>cmd</b>
+		</td>
+		<td>
+			Command, one of &quot;picks&quot;, &quot;podcast&quot;, 
+			&quot;lma&quot;, &quot;shoutcast&quot;, &quot;radioio&quot;, 
+			&quot;radiotime&quot; or &quot;live365&quot;. Item delimiter. <br>
+			This corresponds to the respective queries below.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;name
+		</td>
+		<td>
+			Radio plugin full display name, for example 
+			&quot;Live Music Archive&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;type
+		</td>
+		<td>
+			Type of the API of the radio plugin, one of &quot;xmlbrowser&quot;
+			or &quot;live365&quot;.
+		</td>
+	</tr>
+</table>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+  		Request: &quot;radios 0 2&lt;LF&gt;&quot;
+  		<br>
+		Response: &quot;radios 0 2 count:2 
+		cmd:radiotime name:RadioGuide type:xmlbrowser 
+		cmd:shoutcast name:SHOUTcast%20Internet%20Radio type:xmlbrowser
+		&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
 
 <br>
 <h3 id="XMLBrowser">

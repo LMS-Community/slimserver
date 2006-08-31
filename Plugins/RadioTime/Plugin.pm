@@ -23,6 +23,7 @@ use Slim::Utils::Strings qw( string );
 use Slim::Web::XMLBrowser;
 
 my $FEED = 'http://opml.radiotime.com/Index.aspx';
+my $cli_next;
 
 sub enabled {
 	return ($::VERSION ge '6.5');
@@ -42,6 +43,8 @@ sub initPlugin {
         [0, 1, 1, \&cliQuery]);
 	Slim::Control::Request::addDispatch(['radiotime', 'playlist', '_method' ],
 		[1, 1, 1, \&cliQuery]);
+	$cli_next=Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
+		[0, 1, 1, \&cliRadiosQuery]);
 }
 
 sub addMenu {
@@ -133,6 +136,22 @@ sub cliQuery {
 	$::d_plugins && msg("RadioTime: cliQuery()\n");
 	
 	Slim::Buttons::XMLBrowser::cliQuery('radiotime', radioTimeURL(), $request);
+}
+
+sub cliRadiosQuery {
+	my $request = shift;
+	
+	$::d_plugins && msg("RadioTime: cliRadiosQuery()\n");
+	
+	# what we want the query to report about ourself
+	my $data = {
+		'cmd' => 'radiotime',                    # cmd label
+		'name' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+		'type' => 'xmlbrowser',              # type
+	};
+	
+	# let our super duper function do all the hard work
+	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
 }
 
 sub setupGroup {

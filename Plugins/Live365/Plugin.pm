@@ -52,6 +52,8 @@ our $searchModeIdx = 0;
 our %searchString;
 our @statusText;
 
+my $cli_next;
+
 sub addMenu {
 	return "RADIO";
 }
@@ -929,7 +931,9 @@ sub initPlugin {
 		 [0, 1, 1, \&Plugins::Live365::Web::cli_stationsQuery]);
 	Slim::Control::Request::addDispatch(['live365', 'playlist', '_mode'],  
 		 [1, 0, 1, \&Plugins::Live365::Web::cli_playlistCommand]);
-	
+	$cli_next=Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
+		 [0, 1, 1, \&cli_radiosQuery]);
+
 	%channelModeFunctions = (
 		'play' => sub {
 			my $client = shift;
@@ -943,6 +947,22 @@ sub initPlugin {
 			playOrAddCurrentStation($client, 0);
 		}
 	);
+}
+
+sub cli_radiosQuery {
+	my $request = shift;
+	
+	$::d_plugins && msg("Live365: cli_radiosQuery()\n");
+	
+	# what we want the query to report about ourself
+	my $data = {
+		'cmd' => 'live365',                    # cmd label
+		'name' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+		'type' => 'live365',              # type
+	};
+	
+	# let our super duper function do all the hard work
+	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
 }
 
 # }}}

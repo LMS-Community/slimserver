@@ -670,8 +670,10 @@ sub addDispatch {
 		}
 	}
 	
-	# return what we replaced, if any
-	return $oldDR;
+	# return replaced funcptr, if any
+	if (defined $oldDR) {
+		return $oldDR->[3];
+	}
 }
 
 # add a subscriber to be notified of requests
@@ -1168,6 +1170,16 @@ sub addResult {
 	${$self->{'_results'}}{$key} = $val;
 }
 
+sub setResultFirst {
+	my $self = shift;
+	my $key = shift;
+	my $val = shift;
+
+	#${$self->{'_results'}}{$key} = $val;
+	
+	(tied %{$self->{'_results'}})->first($key => $val);
+}
+
 sub addResultLoop {
 	my $self = shift;
 	my $loop = shift;
@@ -1219,6 +1231,31 @@ sub setResultLoopHash {
 	}
 	
 	${$self->{'_results'}}{$loop}->[$loopidx] = $hashRef;
+}
+
+sub sliceResultLoop {
+	my $self     = shift;
+	my $loop     = shift;
+	my $start    = shift;
+	my $quantity = shift || 0;
+	
+	if ($loop !~ /^@.*/) {
+		$loop = '@' . $loop;
+	}
+	
+	if (defined ${$self->{'_results'}}{$loop}) {
+		
+#		my @sliced = ${$self->{'_results'}}{$loop}->[$from..$to];
+#		msg (scalar @sliced . "\n");
+#		${$self->{'_results'}}{$loop} = \@sliced;
+
+		if ($start) {
+			splice ( @{${$self->{'_results'}}{$loop}} , 0, $start);
+		}
+		if ($quantity) {
+			splice ( @{${$self->{'_results'}}{$loop}} , $quantity);
+		}
+	}
 }
 
 sub getResult {

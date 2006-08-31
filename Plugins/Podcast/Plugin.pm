@@ -38,6 +38,7 @@ our @default_feeds = (
 
 our @feeds = ();
 our %feed_names; # cache of feed names
+my $cli_next;
 
 sub enabled {
 	return ($::VERSION ge '6.3');
@@ -64,6 +65,8 @@ sub initPlugin {
         [0, 1, 1, \&cliQuery]);
 	Slim::Control::Request::addDispatch(['podcast', 'playlist', '_method' ],
 		[1, 1, 1, \&cliQuery]);
+	$cli_next=Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
+		[0, 1, 1, \&cliRadiosQuery]);
 
 
 	# No prefs set or we've had a version change and they weren't modified, 
@@ -213,6 +216,21 @@ sub cliQuery {
 	Slim::Buttons::XMLBrowser::cliQuery('podcast', $opml, $request);
 }
 
+sub cliRadiosQuery {
+	my $request = shift;
+	
+	$::d_plugins && msg("Podcast: cliRadiosQuery()\n");
+	
+	# what we want the query to report about ourself
+	my $data = {
+		'cmd' => 'podcast',                    # cmd label
+		'name' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+		'type' => 'xmlbrowser',              # type
+	};
+	
+	# let our super duper function do all the hard work
+	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
+}
 
 # Update the hashref of podcast feeds for use with the web UI
 sub updateOPMLCache {

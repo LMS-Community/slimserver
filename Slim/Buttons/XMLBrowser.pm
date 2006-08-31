@@ -1057,10 +1057,6 @@ sub _cliQuery_done {
 								}
 							}
 						}
-						elsif ($data =~ 'type' && $item->{$data} =~ 'link') {
-								$request->addResultLoop($loopname, $cnt, 'hasitems', 1) if !$hasItems;
-								$hasItems++;
-						}
 						# Only add value if different from url
 						elsif ($data eq 'value') {
 							$request->addResultLoop($loopname, $cnt, $data, $item->{$data}) if ($item->{$data} ne $item->{'url'});
@@ -1073,6 +1069,7 @@ sub _cliQuery_done {
 							$request->addResultLoop($loopname, $cnt, $data, $item->{$data});
 						}
 					}
+					$request->addResultLoop($loopname, $cnt, 'hasitems', 1) if !$hasItems;
 					$cnt++;
 				}
 			}

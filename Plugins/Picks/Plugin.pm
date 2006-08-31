@@ -13,6 +13,7 @@ use Slim::Utils::Misc;
 use Slim::Web::XMLBrowser;
 
 my $FEED = 'http://www.slimdevices.com/picks/radio.opml';
+my $cli_next;
 
 sub enabled {
 	return ($::VERSION ge '6.3');
@@ -32,6 +33,8 @@ sub initPlugin {
         [0, 1, 1, \&cliQuery]);
 	Slim::Control::Request::addDispatch(['picks', 'playlist', '_method' ],
 		[1, 1, 1, \&cliQuery]);
+	$cli_next=Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
+		[0, 1, 1, \&cliRadiosQuery]);
 
 }
 
@@ -82,6 +85,22 @@ sub cliQuery {
 	$::d_plugins && msg("Picks: cliQuery()\n");
 	
 	Slim::Buttons::XMLBrowser::cliQuery('picks', $FEED, $request);
+}
+
+sub cliRadiosQuery {
+	my $request = shift;
+	
+	$::d_plugins && msg("Picks: cliRadiosQuery()\n");
+	
+	# what we want the query to report about ourself
+	my $data = {
+		'cmd' => 'picks',                    # cmd label
+		'name' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+		'type' => 'xmlbrowser',              # type
+	};
+	
+	# let our super duper function do all the hard work
+	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
 }
 
 sub webPages {

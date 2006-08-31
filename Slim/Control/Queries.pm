@@ -1752,6 +1752,65 @@ sub versionQuery {
 	$request->setStatusDone();
 }
 
+
+################################################################################
+# Special queries
+################################################################################
+
+sub dynamicAutoQuery {
+	my $request = shift;
+	my $query   = shift || return;
+	my $funcptr = shift;
+	my $data    = shift || return;
+	
+	$d_queries && msg("dynamicAutoQuery()\n");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([[$query]])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $index         = $request->getParam('_index');
+	my $quantity      = $request->getParam('_quantity') || 0;
+
+	my $loop = '@' . $query . 's';
+
+	if ($quantity) {
+
+		# add the data to the results
+		my $cnt = $request->getResultLoopCount($loop) || 0;		
+		$request->setResultLoopHash($loop, $cnt, $data);
+		
+		# more to jump to?
+		if (defined $funcptr && ref($funcptr) eq 'CODE') {
+			
+			eval { &{$funcptr}($request) };
+	
+			if ($@) {
+				errorMsg("dynamicAutoQuery: Error when trying to run function coderef: [$@]\n");
+				$request->setStatusBadDispatch();
+				$request->dump('Request');
+			}
+	
+		}
+		
+		# we have everybody, now slice & count
+		else {
+			
+			$request->sliceResultLoop($loop, $index, $quantity);
+			$request->setResultFirst('count', $request->getResultLoopCount($loop));
+			$request->setStatusDone();	
+		}
+	}
+	else {
+		$request->setStatusDone();	
+	}
+}
+
+
+
 ################################################################################
 # Helper functions
 ################################################################################
@@ -1908,6 +1967,7 @@ sub _songData {
 
 	return \%returnHash;
 }
+
 
 =head1 SEE ALSO
 

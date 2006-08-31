@@ -26,6 +26,7 @@ use Slim::Web::XMLBrowser;
 use Plugins::RadioIO::ProtocolHandler;
 
 my $FEED = 'http://www.radioio.com/opml/channelsLOGIN.php?device=Squeezebox&speed=high';
+my $cli_next;
 
 sub enabled {
 	return ($::VERSION ge '6.3');
@@ -48,6 +49,8 @@ sub initPlugin {
         [0, 1, 1, \&cliQuery]);
 	Slim::Control::Request::addDispatch(['radioio', 'playlist', '_method' ],
 		[1, 1, 1, \&cliQuery]);
+	$cli_next=Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
+		[0, 1, 1, \&cliRadiosQuery]);
 }
 
 sub addMenu {
@@ -141,6 +144,22 @@ sub cliQuery {
 	$::d_plugins && msg("RadioIO: cliQuery()\n");
 	
 	Slim::Buttons::XMLBrowser::cliQuery('radioio', radioIOURL(), $request);
+}
+
+sub cliRadiosQuery {
+	my $request = shift;
+	
+	$::d_plugins && msg("RadioIO: cliRadiosQuery()\n");
+	
+	# what we want the query to report about ourself
+	my $data = {
+		'cmd' => 'radioio',                    # cmd label
+		'name' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+		'type' => 'xmlbrowser',              # type
+	};
+	
+	# let our super duper function do all the hard work
+	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
 }
 
 sub setupGroup {
