@@ -405,7 +405,7 @@ sub directHeaders {
 				push @guids, @WMA_EXTENDED_CONTENT_DESCRIPTION_OBJECT_GUID;
 				push @guids, @WMA_STREAM_BITRATE_PROPERTIES_OBJECT_GUID;
 
-			    $guids_length = $#guids;
+			    $guids_length = scalar @guids;
 
 			    # sending a length of -1 will return all wma header objects
 			    # for debugging
