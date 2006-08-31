@@ -540,7 +540,7 @@ sub browsedbItemName {
 
 		return Slim::Music::Info::standardTitle($client, $item);
 
-	} elsif ($levels[$level] eq 'album') {
+	} elsif ($levels[$level] eq 'album' || $levels[$level] eq 'age') {
 
 		my @name         = $item->name;
 		my $findCriteria = $client->param('findCriteria') || {};
