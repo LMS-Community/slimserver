@@ -741,8 +741,7 @@ sub mixerDisplay {
 	my $scale = $client->mixerConstant($feature, 'scale');
 
 	my $headerValue = '';
-	my $parts;
-	my $oldvisu;
+	my ($parts, $oldvisu, $savedvisu);
 
 	if ($client->mixerConstant($feature, 'balanced')) {
 
@@ -775,6 +774,7 @@ sub mixerDisplay {
 	if (blessed($client->display) eq 'Slim::Display::Squeezebox2') {
 		# XXXX hack attack: turn off visualizer when showing volume, etc.		
 		$oldvisu = $client->modeParam('visu');
+		$savedvisu = 1;
 		$client->modeParam('visu', [0]);
 	}
 
@@ -788,7 +788,7 @@ sub mixerDisplay {
 	$client->display->showBriefly($parts, { 'name' => 'mixer' } );
 
 	# Turn the visualizer back to it's old value.
-	if (defined $oldvisu) {
+	if ($savedvisu) {
 		$client->modeParam('visu', $oldvisu);
 	}
 }
