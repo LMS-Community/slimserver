@@ -1,9 +1,8 @@
-# This code is derived from code with the following copyright message:
-#
-# SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
+
 use strict;
 
 ###########################################
@@ -61,8 +60,7 @@ my $timeFormats = {'' => "SETUP_GROUP_DATETIME_DEFAULTTIME", %{Slim::Utils::Date
 my $dateFormats = {'' => "SETUP_GROUP_DATETIME_DEFAULTDATE", %{Slim::Utils::DateTime::shortDateFormats()}, %{Slim::Utils::DateTime::longDateFormats()}};
 
 sub setupGroup {
-	my $client = shift;
-	
+
 	my %setupGroup = (
 		'PrefOrder' => ['screensaverDateFormat','screensaverTimeFormat']
 		,'PrefsInTable' => 1
@@ -77,23 +75,21 @@ sub setupGroup {
 	);
 
 	my %setupPrefs = (
-			"screensaverTimeFormat" => {
-						'validate' => \&Slim::Utils::Validate::inHash
-						,'validateArgs' => [$timeFormats,1]
-						,'options' => $timeFormats
-						,'optionSort' => 'K'
-					},
-			"screensaverDateFormat" => {
-						'validate' => \&Slim::Utils::Validate::inHash
-						,'validateArgs' => [$dateFormats,1]
-						,'options' => $dateFormats
-						,'optionSort' => 'K'
-					}
-	);
+		"screensaverTimeFormat" => {
+			'validate' => \&Slim::Utils::Validate::inHash
+			,'validateArgs' => [$timeFormats,1]
+			,'options' => $timeFormats
+			,'optionSort' => 'K'
+		},
+		
+		"screensaverDateFormat" => {
+			'validate' => \&Slim::Utils::Validate::inHash
+			,'validateArgs' => [$dateFormats,1]
+			,'options' => $dateFormats
+			,'optionSort' => 'K'
+		},
 	
 	return (\%setupGroup, \%setupPrefs);
-
-	
 }
 
 ##################################################
@@ -239,13 +235,14 @@ sub screensaverDateTimelines {
 		'fonts'  => $fontDef,
 	};
 	
-	if ($client->display->hasScreen2) {
-		if ($client->display->linesPerScreen == 1) {
-			$display->{'screen2'}->{'center'} = [undef,Slim::Utils::DateTime::longDateF(undef,Slim::Utils::Prefs::get('screensaverDateFormat'))];
-		} else {
-			$display->{'screen2'} = {};
-		}
-	}
+# BUG 3964: comment out until Dean has a final word on the UI for this.	
+# 	if ($client->display->hasScreen2) {
+# 		if ($client->display->linesPerScreen == 1) {
+# 			$display->{'screen2'}->{'center'} = [undef,Slim::Utils::DateTime::longDateF(undef,Slim::Utils::Prefs::get('screensaverDateFormat'))];
+# 		} else {
+# 			$display->{'screen2'} = {};
+# 		}
+# 	}
 
 	return $display;
 }
