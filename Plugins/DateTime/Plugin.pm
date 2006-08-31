@@ -88,6 +88,7 @@ sub setupGroup {
 			,'options' => $dateFormats
 			,'optionSort' => 'K'
 		},
+	);
 	
 	return (\%setupGroup, \%setupPrefs);
 }
