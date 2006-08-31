@@ -736,4 +736,23 @@ sub prefSet {
 	$client->SUPER::prefSet($pref, $value, $ind);
 }
 
+sub pcm_sample_rates {
+	my $client = shift;
+	my $sample_rate = shift;
+
+    	my %pcm_sample_rates = ( 8000 => '5',
+				 11000 => '0',
+				 12000 => '6',
+				 22000 => '1',
+				 24000 => '8',
+				 32000 => '2',
+				 44100 => '3',
+				 48000 => '4',
+				 70000 => '7',
+				 96000 => '9',			 
+				 );
+
+	return $pcm_sample_rates{$sample_rate} || '3';
+}
+
 1;

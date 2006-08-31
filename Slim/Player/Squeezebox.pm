@@ -637,7 +637,7 @@ sub opened {
 #	u8_t autostart;		// [1]	'0' = don't auto-start, '1' = auto-start, '2' = direct streaming
 #	u8_t mode;		// [1]	'm' = mpeg bitstream, 'p' = PCM
 #	u8_t pcm_sample_size;	// [1]	'0' = 8, '1' = 16, '2' = 24, '3' = 32
-#	u8_t pcm_sample_rate;	// [1]	'0' = 11kHz, '1' = 22, '2' = 32, '3' = 44.1, '4' = 48
+#	u8_t pcm_sample_rate;	// [1]	'0' = 11kHz, '1' = 22, '2' = 32, '3' = 44.1, '4' = 48, '5' = 8, '6' = 12, '7' = 16, '8' = 24, '9' = 96
 #	u8_t pcm_channels;	// [1]	'1' = mono, '2' = stereo
 #	u8_t pcm_endianness;	// [1]	'0' = big, '1' = little
 #	u8_t threshold;		// [1]	Kb of input buffer data before we autostart or notify the server of buffer fullness
@@ -708,16 +708,24 @@ sub stream {
 		$format ||= 'mp3';
 		
 		if ($format eq 'wav') {
+			my $track = Slim::Schema->rs('Track')->objectForUrl({
+				'url' => $url,
+			});
+
 			$formatbyte = 'p';
-			$pcmsamplesize = '1';
-			$pcmsamplerate = '3';
+			$pcmsamplesize = $client->pcm_sample_sizes($track->samplesize);
+			$pcmsamplerate = $client->pcm_sample_rates($track->samplerate);
 			$pcmendian = '1';
 			$pcmchannels = '2';
 			$outputThreshold = 0;
 		} elsif ($format eq 'aif') {
+			my $track = Slim::Schema->rs('Track')->objectForUrl({
+				'url' => $url,
+			});
+
 			$formatbyte = 'p';
-			$pcmsamplesize = '1';
-			$pcmsamplerate = '3';
+			$pcmsamplesize = $client->pcm_sample_sizes($track->samplesize);
+			$pcmsamplerate = $client->pcm_sample_rates($track->samplerate);
 			$pcmendian = '0';
 			$pcmchannels = '2';
 			$outputThreshold = 0;
@@ -879,6 +887,33 @@ sub stream {
 			$client->sendPitch($client->pitch());
 		}
 	}
+}
+
+sub pcm_sample_sizes {
+	my $client = shift;
+	my $sample_size = shift;
+
+	my %pcm_sample_sizes = ( 8 => '0',
+				 16 => '1',
+				 24 => '2',
+				 32 => '4',
+				 );
+
+	return $pcm_sample_sizes{$sample_size} || '1';
+}
+
+sub pcm_sample_rates {
+	my $client = shift;
+	my $sample_rate = shift;
+
+    	my %pcm_sample_rates = ( 11000 => '0',				 
+				 22000 => '1',				 
+				 32000 => '2',
+				 44100 => '3',
+				 48000 => '4',
+				 );
+
+	return $pcm_sample_rates{$sample_rate} || '3';
 }
 
 sub sendFrame {
