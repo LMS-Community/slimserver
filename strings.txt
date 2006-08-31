@@ -2827,7 +2827,7 @@ SETUP_SYNCHRONIZE_OK
 
 SETUP_SYNCVOLUME_ON
 	CS	Synchronizovat hlasitost přehrávače
-	DE	Player-Lautsärke synchronisieren
+	DE	Player-Lautstärke synchronisieren
 	DA	Synkroniser afspillerens lydstyrke
 	EN	Sync player's volume
 	ES	Sincronizar el volumen del reproductor
@@ -3031,7 +3031,7 @@ SETUP_MAXBITRATE
 	ZH_CN	限制比特率
 
 SETUP_MAXBITRATE_DESC
-	DE	SlimServer kann ihre WAV/AIFF oder MP3 Dateien automatisch während des Abspielens in eine geringere Bitrate umwandeln. Das ist hilfreich, wenn Sie ihren Player übers Internet mit dem SlimServer verbinden oder Probleme mit dem Wireless LAN haben. Sie können die maximale Bitrate definieren, die der SlimServer zu ihrem Player streamen soll. MP3 Lieder, die mit einer geringeren Bitrate kodiert sind, werden nicht umgewandelt. Falls Sie "Keine Einschränkung" wählen, so werden MP3 Dateien nicht konvertiert und andere Dateitypen als unkomprimiertes PCM Audio gestreamt.
+	DE	SlimServer kann ihre WAV/AIFF oder MP3 Dateien automatisch während der Wiedergabe in eine geringere Bitrate umwandeln. Das ist hilfreich, wenn Sie ihren Player übers Internet mit dem SlimServer verbinden oder Probleme mit dem Wireless LAN haben. Sie können die maximale Bitrate definieren, die der SlimServer zu ihrem Player streamen soll. MP3 Lieder, die mit einer geringeren Bitrate kodiert sind, werden nicht umgewandelt. Falls Sie "Keine Einschränkung" wählen, so werden MP3 Dateien nicht konvertiert und andere Dateitypen als unkomprimiertes PCM Audio gestreamt.
 	EN	SlimServer can automatically convert your music files to WAV/AIFF or MP3 on-the-fly to lower the bitrate of the data streamed to your player.  This is useful if you are connecting your player to SlimServer across the Internet or are having intermittent problems using a wireless network.  You can choose the maximum bitrate that SlimServer will stream to your player.  MP3 songs encoded at a bitrate lower than below won't be converted.  If you choose No Limit, SlimServer will stream your MP3 files without conversion and your other file types as uncompressed PCM audio.
 	ES	SlimServer puede convertir automaticamente los archivos de música a WAV/AIFF o MP3 en-el-momento para reducir la tasa de transmisión hacia el reproductor. Esto es útil si se conecta  el reproductor al SlimServer a través de internet o se encuentran problemas intermitentes utilizando una red inalámbrica. Se puede elegir la tasa de transmisión máxima que el SlimServer usará para transmitir hacia el reproductor. Las canciones MP3 codificadas a una tasa menor, no serán convertidas. Si se elige Sin Límite, SlimServer transmitirá los archivos MP3 sin conversión y los archivos de otros formatos como audio PCM sin compresión.
 	FR	Le SlimServer peut convertir automatiquement et à la volée vos fichiers de musique en WAV/AIFF ou MP3 afin de limiter le débit binaire envoyé à votre platine. Ce réglage est utile lorsque vous vous connectez au SlimServer depuis l'internet ou via un réseau sans fil défectueux. Vous pouvez spécifier le débit maximum envoyé par le SlimServer à votre platine. Les fichiers MP3 encodés à un débit inférieur ne seront pas transcodés. Si vous choisissez Pas de limite, le SlimServer enverra les fichiers MP3 sans transcodage et les autres types de fichiers au format PCM audio non compressé.
@@ -3043,7 +3043,7 @@ SETUP_MAXBITRATE_DESC
 	ZH_CN	SlimServer可以将您的音乐文件自动并即时转换成WAV/AIFF或MP3格式，以降低流出到播放机的比特率。如果您的播放机与SlimServer的联系横跨互联网或您的无线网络有堵塞的问题存在，这个功能将会提供很好的帮助。您可以选择SlimServer流出到播放机的最大比特率。如果MP3歌曲原有比特率低于如下则不被转换。如果您选择不限制比特率，SlimServer将不会对您的MP3文件流出到播放机前进行任何转换。其他文件类型也会以未压缩的PCM音像格式流出到播放机。
 
 SETUP_MP3BITRATE_DESC
-	DE	SlimServer kann ihre MP3 Dateien automatisch während des Abspielens in andere Formate als MP3 umwandeln. SlimServer kann MP3 Dateien auch mit einer geringeren Bitrate neu kodieren. Das ist hilfreich, wenn Sie ihren Player übers Internet mit dem SlimServer verbinden oder Probleme mit dem Wireless LAN haben. Sie können die maximale Bitrate definieren, die der SlimServer zu ihrem Player streamen soll. MP3 Lieder, die mit einer geringeren Bitrate kodiert sind, werden nicht umgewandelt.
+	DE	SlimServer kann ihre MP3 Dateien automatisch während der Wiedergabe in andere Formate als MP3 umwandeln. SlimServer kann MP3 Dateien auch mit einer geringeren Bitrate neu kodieren. Das ist hilfreich, wenn Sie ihren Player übers Internet mit dem SlimServer verbinden oder Probleme mit dem Wireless LAN haben. Sie können die maximale Bitrate definieren, die der SlimServer zu ihrem Player streamen soll. MP3 Lieder, die mit einer geringeren Bitrate kodiert sind, werden nicht umgewandelt.
 	EN	SlimServer can automatically convert your music files to MP3 on-the-fly to play back other formats than MP3.  SlimServer can also recompress your MP3 files to lower the bitrate of the data streamed to your player.  This is useful if you are connecting your player to SlimServer across the Internet or are having intermittent problems using a wireless network.  You can choose the maximum bitrate that SlimServer will stream to your player.  MP3 songs encoded at a bitrate lower than below won't be converted.
 	ES	SlimServer puede convertir automaticamente los archivos de música a MP3 en-el-momento para reproducir otros formatos, ademas de MP3. Slimserver puede tambien recomprimir para reducir la tasa de transmisión hacia el reproductor. Esto es útil si se conecta  el reproductor al SlimServer a través de internet o se encuentran problemas intermitentes utilizando una red inalámbrica. Se puede elegir la tasa de transmisión máxima que el SlimServer usará para transmitir hacia el reproductor. Las canciones MP3 codificadas a una tasa menor, no serán convertidas. 
 	FR	Le SlimServer peut encoder automatiquement et à la volée vos fichiers de musique non-MP3 au format MP3, ainsi que ré-encoder vos fichiers MP3 existants afin de réduire le débit binaire envoyé à votre platine. Ce réglage est utile lorsque vous vous connectez au SlimServer depuis l'internet ou via un réseau sans fil défectueux. Vous pouvez spécifier le débit maximum envoyé par le SlimServer à votre platine. Les fichiers MP3 encodés à un débit inférieur ne seront pas transcodés.
@@ -3587,7 +3587,7 @@ SETUP_MMMPLAYERSETTINGS
 	ZH_CN	MusicMagic播放机上各个混音的设置
 
 SETUP_MMMPLAYERSETTINGS_DESC
-	DE	Sie können jedem Player ermöglichen, vor dem Generieren eines Mixes die MusicMagic Mix Einstellungen zu bearbeiten. Die Player spezifischen Einstellungen haben gebenüber den Server weiten Einstellungen Vorrang und bleiben aktiv, bis sie vom Player her wieder verändert werden. Falls Sie lieber ohne Umwege einen Mix basierend auf den Server-Einstellungen erstellen wollen, dann deaktivieren Sie diese Option.
+	DE	Sie können jedem Player ermöglichen, vor dem Generieren eines Mixes die MusicMagic Mix Einstellungen zu bearbeiten. Die Player spezifischen Einstellungen haben gegenüber den Server weiten Einstellungen Vorrang und bleiben aktiv, bis sie vom Player her wieder verändert werden. Falls Sie lieber ohne Umwege einen Mix basierend auf den Server-Einstellungen erstellen wollen, dann deaktivieren Sie diese Option.
 	EN	You may choose to give each player access to the musicmagic mix settings before generating a mix.  Any player-chosen settings will override the server settings and remain, until they are changed again from the player. If you wish to skip directly to creating a mix, using existing player/server settings only, then choose no.
 	ES	Se puede elegir el dar a cada reproductor acceso a la configuración de mezcla de MusicMagic antes de generar una mezcla. Cualquier configuración elegida desde un reproductor tendrá prioridad sobre la configuración en el servidor y se conservará hasta que sea modificada nuevamente desde el reproductor. Si se quiere saltar directamente a la creación de una mezcla, usando únicamente la configuración existente del reproductor/servidor, entonces elegir no.
 	NL	Je kunt ervoor kiezen om elke speler toegang te geven voor het generen van een mix. Elke spelerinstelling zal voorgaan boven serverinstellingen en blijven totdat ze opnieuw gewijzigd zijn in de speler. Als dit je wilt overslaan om direct een mix te maken met de huidige speler/server instellingen, kies dan Nee.
@@ -4396,7 +4396,7 @@ SETUP_MUSICMAGIC
 	ZH_CN	MusicMagic
 
 SETUP_MUSICMAGIC_DESC
-	DE	SlimServer kann MusicMagic als Quelle für Titel- und Musikstilinformationen verwenden. Das Programm erlaubt es zudem, Mixe in abhängigkeit von Musikstil, Interpret oder Charakteristik der Musikstücke zu erstellen. Kreuzen Sie die Checkbox unten an, um MusicMagics Informationen zu importieren.
+	DE	SlimServer kann MusicMagic als Quelle für Titel- und Musikstilinformationen verwenden. Das Programm erlaubt es zudem, Mixe in Abhängigkeit von Musikstil, Interpret oder Charakteristik der Musikstücke zu erstellen. Kreuzen Sie die Checkbox unten an, um MusicMagics Informationen zu importieren.
 	EN	SlimServer can use your MusicMagic program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level. Check the box below to import your MusicMagic Library information.
 	ES	El SlimServer puede utilizar el programa MusicMagic como fuente para obtener la información de género y título. Además se pueden generar mezclas instantáneas a nivel de género, artista y canción. Marcar la opción debajo para importar la información de la colección de MusicMagic.
 	NL	SlimServer kan het MusicMatch programma gebruiken als bron voor titel en genre informatie. Ook kun je instant mixen op genre, artiest en liedje niveau. Markeer het selectievakje hieronder om je MusicMatch muziekcollectie te importeren.
@@ -4934,7 +4934,7 @@ SETUP_HTTPPORT_DESC
 
 SETUP_HTTPPORT_OK
 	CS	Nyní bude používán port:
-	DE	Verwender Port:
+	DE	Verwendeter Port:
 	DA	Anvender nu dette port-nummer:
 	EN	Now using port:
 	ES	Utilizando puerto:
@@ -5257,7 +5257,7 @@ SETUP_DISPLAYTEXTTIMEOUT
 
 SETUP_DISPLAYTEXTTIMEOUT_DESC
 	CS	Pokud zadávate text, například pro vyhledávání, přehrávač se přesune po určité době na další písmeno. Zde můžete nastavit tuto prodlevu.
-	DE	Wenn Sie einen Suchtext eingeben, dann wird der Player nach einer gewissen Zeit zum nächsten Buchstaben wechseln. Ändern Sie hier die Wartezeit zwischen zwei Tastendrucken.
+	DE	Wenn Sie einen Suchtext eingeben, dann wird der Player nach einer gewissen Zeit zum nächsten Buchstaben wechseln. Ändern Sie hier die Wartezeit zwischen dem Drücken zweier Tasten.
 	DA	Når du indtaster tekst til en søgning vil SlimServer gå videre til næste bogstav efter det nedenfor angivne antal sekunder.
 	EN	When you are entering text for a search, the player will move on to the next letter after some amount of time. You can change the duration of this wait below.
 	ES	Cuando se ingresa el texto para una búsqueda, el reproductor se moverá a la letra siguiente después de un intervalo de tiempo. Se puede cambiar la duración de este intervalo debajo.
@@ -5731,7 +5731,7 @@ SETUP_BROWSEAGELIMIT
 
 SETUP_BROWSEAGELIMIT_DESC
 	CS	Vyberte počet zobrazovaných skladeb při pocházení novinkami. Defaultně je nastaveno 100.
-	DE	Geben Sie an, wieviele Lieder die Liste der neuen Musikstücke enthalten soll. Vorgabe ist 100.
+	DE	Geben Sie an, wie viele Lieder die Liste der neuen Musikstücke enthalten soll. Vorgabe ist 100.
 	EN	Choose the number of tracks to display when browsing for new music. Default is 100
 	ES	Elegir el número de temas a mostrar cuendo se examina Música Nueva. Por defecto es 100
 	FR	Spécifiez le nombre d'éléments à afficher dans la rubrique Nouveautés. Le nombre par défaut est 100.
@@ -5897,7 +5897,7 @@ SETUP_ITEMSPERPASS
 	ZH_CN	每次扫描层的项目建立数量
 
 SETUP_ITEMSPERPASS_DESC
-	DE	Um eine Unterbrechung der Musik zu verhindern, bildet SlimServer lange Listen in mehreren Durchgängen. Diese Einstellung definiert, wieviele Elemente pro Durchgang verarbeitet werden.
+	DE	Um eine Unterbrechung der Musik zu verhindern, bildet SlimServer lange Listen in mehreren Durchgängen. Diese Einstellung definiert, wie viele Elemente pro Durchgang verarbeitet werden.
 	EN	To avoid interrupting the music, SlimServer builds long lists in chunks. This setting determines how many items to build in a single pass.
 	ES	Pare evitar interrumpir la música, Slimserver arma listas largas de a bloques. Esta opción determina cuántos items serán incorporados en una sola pasada.
 	FR	Pour ne pas interrompre la musique, le SlimServer génère les listes longues en plusieurs passes. Ce réglage détermine le nombre d'éléments générés à chaque passe.
@@ -6384,7 +6384,7 @@ SETUP_ALLOWEDHOSTS
 
 SETUP_FILTERRULE_DESC
 	CS	Jestliže zapnete blokování, zde vypište adresy, zekterých je možno na SlimServer přistupovat.    <br>  V polích se mohou používat IP adresy, zástupný znak *, rozsahy adres a jednotlivé adresy oddělené čárkou. Například:      <br>  <b>10.1.2.2</b> povolí přístup z adresy 10.1.2.2   <br>  <b>10.1.2.*</b> povolí přístup z jakékoliv adresy začínající na  10.1.2.  <br>  <b>10.1.2.2-50</b> povolí přístup z adres v rozsahu  10.1.2.2 - 10.1.2.50  <br>  Nakonec, několikanásobné adresy mohou být definovány jednoduše výčtem oddělovaným čárkou, jako <b>10.1.1.1, 192.168.1.*, 10.1.2.2-50</b>  <br>  Speciální adresa 127.0.0 povoluje připojit se internetovému prohlížeči k SlimServeru běžícím na stejném počítači.
-	DE	Wenn Sie das Blockieren aktiviert haben, dann können Sie IP-Adressen angeben, denen Sie die Verbindung zu ihrem SlimServer dennoch gestatten möchten.<br><br>Dieses Feld akzeptiert eine Liste spezifischer IP-Adressen. Verwenden Sie * als Wildcard und trennen Sie unterschiedliche IP-Adressen durch Komma. Zum Beispiel:<BR><BR><B>10.1.2.2</B> gestattet nur 10.1.2.2 eine Verbindung.<BR><BR><B>10.1.2.*</B> gestattet allen IP-Adressen, die mit 10.1.2. beginnen, den Zugriff.<BR><BR><B>10.1.2.2-50</B> erlaubt 10.1.2.2 - 10.1.2.50 die Verbindung.<BR><BR>Zusätzlich können mehrere Einträge durch Kommas kombiniert werden. Z.B.:<B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>Die spezielle IP-Adresse 127.0.0.1 gestattet einem Webbrowser die Verbindung mit dem SlimServer auf dem gleichen Computer.
+	DE	Wenn Sie das Blockieren aktiviert haben, dann können Sie IP-Adressen angeben, denen Sie die Verbindung zu ihrem SlimServer dennoch gestatten möchten.<br><br>Dieses Feld akzeptiert eine Liste spezifischer IP-Adressen. Verwenden Sie * als Wildcard und trennen Sie unterschiedliche IP-Adressen durch Komma. Zum Beispiel:<BR><BR><B>10.1.2.2</B> gestattet nur 10.1.2.2 eine Verbindung.<BR><BR><B>10.1.2.*</B> gestattet allen IP-Adressen, die mit 10.1.2. beginnen, den Zugriff.<BR><BR><B>10.1.2.2-50</B> erlaubt 10.1.2.2 - 10.1.2.50 die Verbindung.<BR><BR>Zusätzlich können mehrere Einträge durch Kommas kombiniert werden. Z.B.:<B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>Die spezielle IP-Adresse 127.0.0.1 gestattet einem Web-Browser die Verbindung mit dem SlimServer auf dem gleichen Computer.
 	EN	If you have turned on blocking you can enter the addresses that you'd like to allow to connect to SlimServer.<br><br>This field accepts a list of specific IP addresses, * style wildcards, and IP address ranges in a comma separated list. For example:<BR><BR><B>10.1.2.2</B> will allow only 10.1.2.2 to connect<BR><BR><B>10.1.2.*</B> will allow anything with an IP address that be the 10.1.2.x addresses.<BR><BR><B>10.1.2.2-50</B> will allow IP addresses in the range 10.1.2.2 - 10.1.2.50 to connect.<BR><BR>Finally, multiple entries can be combined with commas, like this <B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>The special IP address 127.0.0.1 allows a web browser to connect to SlimServer running on that same computer.
 	ES	Si se se ha activado el bloqueo, se pueden ingresar direcciones desde las que se desea permitir la conexión al SlimServer.<br><br>Este campo acepta un lista de direcciones IP específicas, wildcards al estilo *, y rangos de direcciones IP, en una lista separada por comas. Por ejemplo: <BR><BR><B>10.1.2.2</B> sólo permitirá conectarse a 10.1.2.2<BR><BR><B>10.1.2.*</B> permitirá la conexión desde cualquier dirección de la forma 10.1.2.X. <BR><BR><B>10.1.2.2-50</B> permitirá conexiones desde direcciones IP pertenecientes al rango 10.1.2.2 - 10.1.2.50. <BR><BR>Finalmente, entradas múltiples pueden combinarse con comas, de esta forma: <B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR> La dirección IP especial 127.0.0.1 permite al navegador conectarse al SlimServer que está corriendo en su misma computadora. 
 	FR	Si vous avez activé le bloquage, vous pouvez saisir l'adresse IP des utilisateurs qui peuvent accéder au SlimServer.<br><br>Cette zone de saisie reçoit des adresses IP spécifiques, le caractère joker * et des intervalles d'adresses IP, le tout séparé par des virgules.<br>Exemples :<br><br>10.1.2.2 permet uniquement cette adresse<br>10.1.2.* permet toutes les adresses dont les trois premières composantes sont 10, 1 et 2<br>10.1.2.2-50 permet toutes les adresses comprises dans l'intervalle 10.1.2.2 à 10.1.2.50 inclusivement<br>10.1.2.2,10.1.3.*,10.1.4.2-50 permet l'adresse 10.1.2.2, toutes les adreses commençant par 10.1.3 ainsi que les adresses dans l'intervalle 10.1.4.2 à 10.1.4.50.
@@ -6572,7 +6572,7 @@ SETUP_PASSWORD
 
 SETUP_DONT_CACHE
 	CS	Necachovat
-	DE	Nicht Zwischenspeichern
+	DE	Nicht zwischenspeichern
 	DA	Cache ikke
 	EN	Don't Cache
 	ES	No usar Cache
@@ -8832,14 +8832,14 @@ LCSONGS
 	ZH_CN	歌曲
 
 GALLERY
-	DE	Gallerie-Ansicht
+	DE	Galerie
 	EN	Gallery
 	ES	Galería
 	FR	(Diaporama)
 	NL	afbeeldingen
 
 SWITCH_TO_GALLERY
-	DE	Gallerie-Ansicht
+	DE	Galerie-Ansicht
 	EN	To Gallery View
 	ES	Ir a la Vista de Galería
 	FR	Mode Diaporama
@@ -9797,7 +9797,7 @@ CHOOSE_PLAYING_DISPLAY_MODE
 
 VISUALIZER_SPECTRUM_ANALYZER_SMALL
 	CS	Malé spektrum
-	DE	Kleines Spectrum
+	DE	Kleines Spektrum
 	EN	Small Spectrum
 	ES	Espectro pequeño
 	FI	Pieni spektri
@@ -10010,7 +10010,7 @@ SCREENSAVER_TIMEOUT
 
 DISPLAYTEXT_TIMEOUT
 	CS	Nastavení časové prodlevy, po které přehrávač skočí při zadávání textu na další písmeno.
-	DE	Wenn Sie Text für eine Suche eingeben, wird der Player nach einer gewissen Zeit zum nächsten Buchstaben springen. Bestimmen Sie hier die Wartezeit zwischen zwei Tastendrucken.
+	DE	Wenn Sie Text für eine Suche eingeben, wird der Player nach einer gewissen Zeit zum nächsten Buchstaben springen. Bestimmen Sie hier die Wartezeit zwischen dem Drücken zweier Tasten.
 	DA	Når du indtaster tekst til en søgning vil SlimServer gå videre til næste bogstav efter det nedenfor angivne antal sekunder.
 	EN	When you are entering text for a search, the player will move on to the next letter after some amount of time. You can change the duration of this wait below.
 	ES	Cuando se está ingresando text para una búsqueda, el reproductor se moverá a la letra siguiente despues de un cierto intervalo. Se puede cambiar la duración de esta espera debajo.
@@ -11783,7 +11783,7 @@ INFORMATION_HOSTNAME
 	ZH_CN	主机名字
 
 INFORMATION_HOSTIP
-	DE	Host IP Addresse
+	DE	Host IP Adresse
 	EN	Host IP Address
 	ES	Dirección IP de Host
 	FI	Palvelimen IP osoite
@@ -12542,7 +12542,7 @@ SORT_GENREARTISTALBUM
 	NL	Genre, artiest, album
 
 SETUP_CLOCKSOURCE
-	DE	Tacktgeber
+	DE	Taktgeber
 	EN	Clock Source
 	ES	Fuente de Reloj
 	FR	Source horloge
@@ -12609,7 +12609,7 @@ SETUP_VISUALIZERMODE
 	NL	Visualisatie scherm
 
 SETUP_VISUALIZERMODE_DESC
-	DE	Der Player can auf dem rechten Bildschirm Visualisierungen oder erweiterte Informationen anzeigen. Wählen Sie hier, was dargestellt werden soll. Mit dem "Visual" Knopf auf dem Player können Sie diese Wahl jederzeit ändern. 
+	DE	Der Player kann auf dem rechten Bildschirm Visualisierungen oder erweiterte Informationen anzeigen. Wählen Sie hier, was dargestellt werden soll. Mit dem "Visual" Knopf auf dem Player können Sie diese Wahl jederzeit ändern. 
 	EN	The player can display visualizers or extended text information on the right hand screen. Choose which you wish to be displayed. The Visual button on the player will cycle through each of the options selected below.
 	ES	El reproductor puede mostrar visualizadores o información de texto extendido en la pantalla de la derecha. Elegir el que se quiera mostrar. El botón Visual en el reproductor irá pasando de una a otra entre las opciones elegidas debajo.
 	FR	La platine peut afficher diffÃ©rents mode de visualisation ou des informations texte Ã©tendues sur la droite de l'Ã©cran. Choisissez le mode de visualisation que vous voulez afficher. Le bouton Visualisation sur la platine permet de parcourir tous les modes de visualisation sÃ©lectionnÃ©s ci-dessous.
