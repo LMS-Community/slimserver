@@ -22,8 +22,6 @@ use Slim::Utils::Misc;
 use Slim::Hardware::IR;
 use Slim::Buttons::SqueezeNetwork;
 
-use Scalar::Util qw(blessed);
-
 use base qw(Slim::Player::Client);
 
 our $defaultPrefs = {
