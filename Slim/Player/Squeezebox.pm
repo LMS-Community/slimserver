@@ -818,7 +818,17 @@ sub stream {
 					$::d_directstream && msg("setting up direct stream ($server_ip:$server_port) autostart: $autostart.\n");
 					$::d_directstream && msg("request string: $request_string\n");
 					$client->directURL($url);
-				}			
+				}
+				
+				if ( $format =~ /(?:wma|asx)/ ) {
+					# Bug 3981, For WMA streams, we send the streamid using the pcmsamplerate field
+					# so the firmware knows which stream to play
+					$pcmsamplerate = chr(1);
+					
+					if ( my ($streamNum) = $request_string =~ /ffff:(\d+):0/ ) {
+						$pcmsamplerate = chr($streamNum);
+					}
+				}
 	
 			} else {
 				my $path = '/stream.mp3?player='.$client->id;
