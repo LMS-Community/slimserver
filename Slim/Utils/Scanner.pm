@@ -973,7 +973,6 @@ sub scanWMAStreamDone {
 		
 		# Look through all available streams and select the one with the highest bitrate still below
 		# the user's preferred max bitrate
-		# XXX: Playing stream IDs > 1 seems to be broken, firmware bug?
 		my $max = Slim::Utils::Prefs::get('maxWMArate') || 9999;
 	
 		my $bitrate = 0;
