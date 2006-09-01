@@ -338,7 +338,7 @@ sub mixerCommand {
 			if ($eachclient->prefGet('syncVolume')) {
 				$eachclient->prefSet($entity, $newval);
 				$eachclient->$entity($newval);
-				Slim::Display::Display::volumeDisplay($eachclient) if $entity eq 'volume';
+				$eachclient->mixerDisplay('volume') if $entity eq 'volume';
 			}
 		}
 	}
