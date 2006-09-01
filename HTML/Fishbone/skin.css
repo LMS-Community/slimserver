@@ -185,7 +185,10 @@ div#pagetitle {
 }
 
 .pageHeaderInfo {
+	left: 0px;
 	float: left;
+	clear: left;
+	margin-right: 2px;
 }
 
 .headerhr {
@@ -240,11 +243,6 @@ div#pagetitle {
 	position: relative;
 	margin-left:2px;
 	margin-top:5px;
-}
-
-#pageHeaderInfo {
-	margin-left: 2px;
-	float: left;
 }
 
 .settingSection .groupHead {

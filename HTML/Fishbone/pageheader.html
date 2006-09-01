@@ -158,8 +158,8 @@
 [% UNLESS pwd_list %]
 	[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu -%][% END %]
 	<div id="pwdlist">[%- PROCESS crumblist IF pwd_list %][% UNLESS pageHeaderMenu %]</div>[% END %]
-<span class="pageHeaderInfo">[% pageHeaderInfo %]</span>
 [% IF artwork && (levelName == 'album' || levelName == 'age') -%]<span id="showText">(<a href="javascript:toggleText();">Show Text</a>)</span><span id="hideText">(<a href="javascript:toggleText();">Hide Text</a>)</span>[%- END %]
+<span class="pageHeaderInfo">[% pageHeaderInfo %]</span>
 
 [% UNLESS noHR %]<span class="headerhr"><hr></span>[% END %]
 [% END %]
