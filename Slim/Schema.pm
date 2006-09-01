@@ -1345,7 +1345,7 @@ sub _retrieveTrack {
 	my $dirname = dirname($url);
 	my $source  = $playlist ? 'Playlist' : 'Track';
 
-	if (defined $self->lastTrackURL && $url eq $self->lastTrackURL) {
+	if (!$playlist && defined $self->lastTrackURL && $url eq $self->lastTrackURL) {
 
 		$track = $self->lastTrack->{$dirname};
 
