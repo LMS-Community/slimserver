@@ -603,6 +603,7 @@ sub readRemoteHeaders {
 		if ( $type eq 'wma' && $url =~ /^(?:http|mms)/ ) {
 			
 			scanWMAStream( {
+				'client'      => $args->{'client'},
 				'url'         => $url,
 				'callback'    => $cb,
 				'passthrough' => $pt,
@@ -808,6 +809,7 @@ sub scanPlaylistURLs {
 			if ( $item->content_type eq 'wma' && $item->url =~ /^(?:http|mms)/ ) {
 				
 				scanWMAStream( {
+					'client'      => $args->{'client'},
 					'url'         => $item->url,
 					'callback'    => $cb,
 					'passthrough' => $pt,
@@ -1043,6 +1045,7 @@ sub scanWMAStreamError {
 	if ( @{$foundItems} ) {
 		$::d_scan && msgf("scanWMA: Trying next stream: %s\n", $foundItems->[0]->url);
 		return scanWMAStream( {
+			'client'      => $args->{'client'},
 			'url'         => $foundItems->[0]->url,
 			'callback'    => $cb,
 			'passthrough' => $pt,
