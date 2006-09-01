@@ -143,9 +143,11 @@ sub songTime {
 
 	my $client = Slim::Player::Sync::masterOrSelf(shift);
 
-	my $rate	  	= $client->rate();
-	my $songtime = $client->songElapsedSeconds();
-	my $startStream	  	= $client->songStartStreamTime();
+	my $rate        = $client->rate();
+	my $songtime    = $client->songElapsedSeconds();
+	my $startStream = $client->songStartStreamTime();
+
+	$::d_source && msg("songTime: rate:$rate -songtime:$songtime -startStream:$startStream\n");
 
 	return $songtime+$startStream if $rate == 1 && defined($songtime);
 
@@ -734,6 +736,10 @@ sub gototime {
 	$::d_source && msg("gototime: going to time $newtime\n");
 
 	# skip to the previous or next track as necessary
+	# XXXX FIXME
+	# Fred Sept 1 2006: does not seem to be possible for time2offset to return
+	# an offset outside the song. (Apparently, findFrameBoundaries can't do
+	# that), so the code below is useless.
 	if ($newoffset > $songLengthInBytes) {
 
 		my $rate = rate($client);
@@ -1100,6 +1106,10 @@ sub trackStartEvent {
 		$::d_source && msg("Song " . $last_song->{index} . " had already started, so it's not longer in the queue\n");
 		pop @{$queue};
 		$last_song = $queue->[-1];
+
+		# reset value used to calculate time in song if we change song.
+		# This works because gototime cannot skip song, otherwise it wouldn't.
+		$client->songStartStreamTime(0);
 	}
 	
 	if (defined($last_song)) {
@@ -1110,7 +1120,6 @@ sub trackStartEvent {
 	$client->currentPlaylistChangeTime(time());
 	Slim::Player::Playlist::refreshPlaylist($client);
 	Slim::Control::Request::notifyFromArray($client, ['playlist', 'newsong']);
-
 
 	$::d_source && msg("Song queue is now " . join(',', map { $_->{index} } @$queue) . "\n");
 }
@@ -1176,12 +1185,15 @@ sub closeSong {
 	$client->directURL(undef);
 }
 
+# this is called by opensong before opening the new song. Because of the 
+# buffer, this happens 20 secs or so before the new song can be heard. All
+# counters used for "time display" should not be cleared at that time.
 sub resetSong {
 	my $client = shift;
 
-	# at the end of a song, reset the song time
+	$::d_source && msg("resetSong\n");
+
 	$client->songBytes(0);
-	$client->songStartStreamTime(0);
 	$client->bytesReceivedOffset($client->bytesReceived());
 	$client->trickSegmentRemaining(0);
 	
