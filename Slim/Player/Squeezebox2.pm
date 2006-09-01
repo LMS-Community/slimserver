@@ -719,7 +719,11 @@ sub playerSettingsFrame {
 
 		$::d_prefs && msg("playerSettingsFrame $pref = $value\n");
 
-		$client->SUPER::prefSet($pref, $value);
+		if (!defined $value) {
+			$client->setPlayerSetting($pref, $client->prefGet($pref));
+		} else {
+			$client->SUPER::prefSet($pref, $value);
+		}
 	}
 }
 
