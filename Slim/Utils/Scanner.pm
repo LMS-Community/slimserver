@@ -776,7 +776,7 @@ sub scanPlaylistFileHandle {
 
 	if ( $::d_scan ) {
 		msgf( "scanPlaylistFileHandle: found %d items in playlist:\n", scalar @playlistTracks );
-		map { msgf( "  %s\n", $_->url ) } @playlistTracks;
+		map { msgf( "  %s\n", blessed $_ ? $_->url : '' ) } @playlistTracks;
 	}
 
 	return wantarray ? @playlistTracks : \@playlistTracks;
