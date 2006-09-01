@@ -287,21 +287,23 @@ function setLink(lnk) {
 	lnk.href=getHomeCookie('SlimServer-Browserpage') + "&player=" + getPlayer('SlimServer-player');
 }
 
-function toggleText() {
+function toggleText(set) {
 	for (var i=0; i < document.getElementsByTagName("div").length; i++) {
-	//for (var i=0; i < 20; i++) {
 
 		var thisdiv = document.getElementsByTagName("div")[i];
 
 		if (thisdiv.className == 'artworkText') {
 
-			if (thisdiv.style.display ==  '' || thisdiv.style.display == 'none') {
+			if ((thisdiv.style.display ==  '') || (thisdiv.style.display == 'none') 
+					|| (set && getCookie('SlimServer-fishbone-showtext'))) {
 				thisdiv.style.display = 'inline';
+				setCookie('SlimServer-fishbone-showtext',1);
 				document.getElementById('showText').style.display = 'none';
 				document.getElementById('hideText').style.display = 'inline';
 
 			} else {
 				thisdiv.style.display = 'none';
+				setCookie('SlimServer-fishbone-showtext',0);
 				document.getElementById('hideText').style.display = 'none';
 				document.getElementById('showText').style.display = 'inline';
 			}
