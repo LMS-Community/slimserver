@@ -990,7 +990,7 @@ POWER
 	DE	Power
 	EN	Power
 	ES	Encendido
-	FR	Ãtat
+	FR	État
 	HE	הדלקה
 	JA	パワー
 	SV	Strömförsörjning
@@ -2382,28 +2382,28 @@ SETUP_DISABLEDEXTENSIONSAUDIO
 	DE	Deaktivierte Audio-Dateiendungen
 	EN	Disabled Audio File Extensions
 	ES	Extensiones de Archivos de Audio deshabilitadas.
-	FR	Types de fichier ignorÃ©s
+	FR	Types de fichier ignorés
 	NL	Uitgezette audio bestand extensies.
 
 SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	DE	SlimServer durchsucht die Musiksammlung nach allen unterstützten Dateitypen (Audiodateien und CUE Sheets). Falls Sie gezielt Dateitypen von der Benutzung durch SlimServer ausschliessen wollen, so geben Sie hier eine durch Komma getrennte Liste der Endungen an, z.B. cue, mp4, aac
 	EN	SlimServer will look in the Music Folder for all supported file types (audio files and cue sheets). To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: cue, mp4, aac
 	ES	SlimServer examinará la Carpeta de Música teniendo en cuenta todos los formatos de archivo soportados (archivos de audio y cuesheets). Para deshabilitar tipos de archivo específicos al examinar la Carpeta de Música, ingresar una lista de extensiones separadas por coma debajo. (Por ej. cue, mp4, etc)
-	FR	Le SlimServer examinera dans votre dossier de musique tous les types de fichier audio supportÃ©s (fichiers et listes de lecture ou "cue sheets"). Pour exclure un type de fichier audio du parcours du dossier de musique, vous pouvez entrer ci-aprÃ¨s la liste des extensions Ã  ignorer, sÃ©parÃ©es par une virgule (par ex. : cue, mp4, aac)
+	FR	Le SlimServer examinera dans votre dossier de musique tous les types de fichier audio supportés (fichiers et listes de lecture ou "cue sheets"). Pour exclure un type de fichier audio du parcours du dossier de musique, vous pouvez entrer ci-après la liste des extensions à ignorer, séparées par une virgule (par ex. : cue, mp4, aac)
 	NL	SlimServer kijkt in de muziekfolder naar alle ondersteunde bestandsformaten (audio bestanden en cue bestanden). <BR>Om specifieke bestandsformaten over te slaan bij het scannen naar muziek kun je een komma gescheiden lijst met extensies opnemen hieronder. Bijvoorbeeld: cue,mp4,aac
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST
 	DE	Deaktivierte Wiedergabelisten-Dateiendungen
 	EN	Disabled Playlist File Extensions
 	ES	Extensiones Deshabilitadas de Archivos de Listas
-	FR	Types de liste de lecture ignorÃ©s
+	FR	Types de liste de lecture ignorés
 	NL	Uitgezette playlist bestandsextensies
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
 	DE	SlimServer durchsucht den Wiedergabelisten-Ordner nach allen unterstützten Dateitypen (Wiedergabelisten und CUE Sheets). Falls Sie gezielt Dateitypen von der Benutzung durch SlimServer ausschliessen wollen, so geben Sie hier eine durch Komma getrennte Liste der Endungen an, z.B. m3u, pls, cue 
 	EN	SlimServer will look in the Playlist Folder for all supported file types (playlist files and cue sheets). To disable specific file types from being processed when scanning the Playlist Folder, enter a comma separated list of file extensions below. E.g.: m3u, pls, cue
 	ES	SlimServer examinará la Carpeta de Listasa teniendo en cuenta todos los formatos de archivo soportados (archivos de listas y cuesheets). Para deshabilitar tipos de archivo específicos al examinar la Carpeta de Listas, ingresar una lista de extensiones separadas por coma debajo. (Por ej. cue, mp4, etc)
-	FR	Le SlimServer examinera dans votre dossier de listes de lecture tous les types de fichier audio supportÃ©s (listes de lecture et "cue sheets"). Pour exclure un type de fichier audio du parcours du dossier de listes de lecture, vous pouvez entrer ci-aprÃ¨s la liste des extensions Ã  ignorer, sÃ©parÃ©es par une virgule (par ex. : m3u, pls, cue)
+	FR	Le SlimServer examinera dans votre dossier de listes de lecture tous les types de fichier audio supportés (listes de lecture et "cue sheets"). Pour exclure un type de fichier audio du parcours du dossier de listes de lecture, vous pouvez entrer ci-après la liste des extensions à ignorer, séparées par une virgule (par ex. : m3u, pls, cue)
 	NL	SlimServer kijkt in de playlistfolder naar alle ondersteunde bestandsformaten (playlist bestanden en cue bestanden). <BR>Om specifieke bestandsformaten over te slaan bij het scannen naar playlists kun je een komma gescheiden lijst met extensies opnemen hieronder. Bijvoorbeeld: m3u,pls,cue
 
 PLAYER_TYPE
@@ -3105,7 +3105,7 @@ LAME0
 	EN	Highest Quality, very slow
 	ES	Mejor calidad posible, muy lento
 	FI	Korkein laatu, hyvin hidas
-	FR	QualitÃ© optimale, lent
+	FR	Qualité optimale, lent
 	IT	Migliore qualita', molto lento
 	NL	Hoogste kwaliteit, zeer langzaam
 	SV	Högsta kvalitet, långsamt
@@ -3117,7 +3117,7 @@ LAME9
 	EN	Poor Quality, but fast
 	ES	Baja calidad, pero rápido
 	FI	Huono laatu, mutta nopea
-	FR	QualitÃ© moyenne, rapide
+	FR	Qualité moyenne, rapide
 	IT	Mediocre qualita', ma veloce
 	NL	Slechte kwaliteit, maar snel
 	SV	Lägsta kvalitet, snabbt
@@ -3127,7 +3127,7 @@ SETUP_LAMEQUALITY
 	DE	LAME Qualitätsstufe
 	EN	LAME Quality Level
 	ES	Nivel de Calidad de LAME
-	FR	Niveau de qualitÃ© LAME
+	FR	Niveau de qualité LAME
 	IT	Livello qualita' in LAME
 	NL	LAME kwaliteitsniveau
 	SV	LAME kvalitetsnivå
@@ -3137,7 +3137,7 @@ SETUP_LAMEQUALITY_DESC
 	DE	Der LAME MP3 Kodierer kann verwendet werden, um Musik für das Streaming in MP3 umzuwandeln. Definieren Sie LAMEs Ausgabequalität mit einem Wert von 0 bis 9. 9 ist der Standardwert, welcher eine sehr gute Wiedergabe bei hohen Bitraten gewährleistet, den Prozessor aber am wenigsten belastet. 0 ist die höchste Qualität, kann aber ihren Rechner ausbremsen. Es ist möglich, dass ein Rechner, auf welchem die SlimServer Software läuft, nicht genügend rechenstark ist, um höhere Qualitätseinstellungen zu verarbeiten.
 	EN	The LAME MP3 encoder may be used to convert your music to MP3 format for streaming.  You can adjust the quality setting for LAME in the range 0 to 9.  9 is the default setting, which sounds very good at high bit rates and and uses the least amount of computing power. 0 is the highest quality, but may slow your computer down.  Some computers running SlimServer may not be able to convert fast enough with higher quality settings.
 	ES	El codificador de MP3 LAME puede utilizarse para convertir música a formato MP3 para transmisión. Se puede ajustar el nivel de calidad de LAME en un rango de 0 a 9. 9 es el valor por defecto, el cual suena muy bien a niveles altos de tasa de bits y utiliza la menor cantidad de recursos de computadora. 0 es la calidad más alta, pero puede afectar la perfomance de la computadora. Algunas computadoras que están corriendo SlimServer pueden no convertir lo suficientemente rápido con niveles de calidad superiores.
-	FR	L'encodeur MP3 LAME peut Ãªtre utilisÃ© pour convertir vos fichiers audio au format MP3 pour la diffusion Ã  distance. Vous pouvez ajuster le niveau de qualitÃ© utilisÃ© par LAME de 0 Ã  9 (la valeur par dÃ©faut est 9, ce qui donne des rÃ©sultats acceptables Ã  des taux d'encodage Ã©levÃ©s et Ã©conomise au maximum les ressources systÃ¨me ; 0 est le niveau de qualitÃ© optimal mais risque de ralentir sensiblement le serveur sur des machines moins performantes).
+	FR	L'encodeur MP3 LAME peut être utilisé pour convertir vos fichiers audio au format MP3 pour la diffusion à distance. Vous pouvez ajuster le niveau de qualité utilisé par LAME de 0 à 9 (la valeur par défaut est 9, ce qui donne des résultats acceptables à des taux d'encodage élevés et économise au maximum les ressources système ; 0 est le niveau de qualité optimal mais risque de ralentir sensiblement le serveur sur des machines moins performantes).
 	NL	Het lame MP3 codeerprogramma kan gebruikt worden om je muziek naar MP3 te converteren voor het streamen naar de speler. Je kunt de kwaliteit instellen met een waarde tussen 0 en 9. 9 is de standaard waarde en klinkt heel goed bij hoge bitrates en gebruikt de minste rekenkracht van de server. 0 is de hoogste kwaliteit maar kan je server langzamer maken. Sommige computers waarop SlimServer draait zijn niet krachtig genoeg om te converteren met een hoge kwaliteitsinstelling.
 	ZH_CN	LAME MP3编码器可用来转换您的音乐成MP3格式流出。您能在0至9的设置范围内调节LAME MP3编码器的输出质量。缺省值为5的设置以高比特率编码的音效会相當的好，同时计算量也較小。0是最高质量，但其高计算量可能对计算机的性能表现造成负面影响。有一些运行SlimServer的计算机也许不足以迅速的应付更加优质的LAME设置。
 
@@ -3251,7 +3251,7 @@ SETUP_TRANSITIONTYPE_DESC
 	DE	Die Squeezebox kann zwischen Liedern überblenden, entweder per Crossfading beider Lieder, oder indem der eine aus-, der andere eingeblendet wird. Wählen Sie die Art der Überblendung.
 	EN	Squeezebox can gradually transition between songs, either by crossfading between them, or by fading songs in or out. Choose the type of crossfade you would like.
 	ES	Squeezebox puede hacer hacer una transición gradual entre canciones, ya sea haciendo un crossfading entre ellas, o haciendo fade in o fade out en las canciones. Elegir el tipo de transición que se desea.
-	FR	La Squeezebox peut jouer deux morceaux contigus avec un effet de transition (ou "fondu"), soit un fondu enchaÃ®nÃ©, soit une combinaison de fondu descendant et/ou ascendant. Choisissez le type de transition que vous dÃ©sirez.
+	FR	La Squeezebox peut jouer deux morceaux contigus avec un effet de transition (ou "fondu"), soit un fondu enchaîné, soit une combinaison de fondu descendant et/ou ascendant. Choisissez le type de transition que vous désirez.
 	HE	ניתן לקבוע כיצד הנגן יעבור משיר לשיר
 	IT	Lo Squeezebox puo' gradualmente passare tra i brani, sia sfumando tra il precedente ed il successivo, sia dissolvendo in entrata o in uscita. Scegli il tipo di transizione che desideri.
 	NL	Squeezebox kan naadloze overgangen maken tussen  liedjes. Dit kan door crossfading tussen de liedjes of door de liedjes uit en in te faden. Kies het type van crossfade die je wilt.
@@ -3262,7 +3262,7 @@ SETUP_TRANSITIONDURATION
 	DE	Dauer der Überblendung
 	EN	Crossfade duration
 	ES	Duración de la transición
-	FR	DurÃ©e transition
+	FR	Durée transition
 	HE	אורך המיזוג
 	IT	Durata dissolvenza
 	NL	Crossfade tijdsduur
@@ -3273,7 +3273,7 @@ SETUP_TRANSITIONDURATION_DESC
 	DE	Definieren Sie die Dauer der Überblendung zwischen Liedern (in Sekunden).
 	EN	Enter the amount of time to take to crossfade between songs, in seconds.  The maximum is 10 seconds.
 	ES	Ingresar la cantidad de tiempo que se utilizará para la transición entre canciones, en segundos.
-	FR	Entrez la durÃ©e de l'effet de transition entre deux morceaux en secondes. Le maximum est de 10 secondes.
+	FR	Entrez la durée de l'effet de transition entre deux morceaux en secondes. Le maximum est de 10 secondes.
 	HE	קבע פרק זמן בו השיר הנכנס והשיר היוצא חופפים
 	IT	Inserisci, in secondi, la durata delle transizioni tra i brani. La durata massima e' 10 secondi.
 	NL	Geef op in seconden hoe lang een crossfade mag duren tussen liedjes. Het maximum is 10 seconden.
@@ -3283,7 +3283,7 @@ TRANSITION_NONE
 	DE	Keine
 	EN	None
 	ES	Ninguna
-	FR	DÃ©sactivÃ©
+	FR	Désactivé
 	HE	רגיל
 	IT	Nessuna
 	NL	Geen
@@ -3291,7 +3291,7 @@ TRANSITION_NONE
 
 TRANSITION_CROSSFADE
 	EN	Crossfade
-	FR	Fondu enchaÃ®nÃ©
+	FR	Fondu enchaîné
 	HE	מזג בין השירים
 	IT	Dissolvenza
 	ZH_CN	音像同时淡出淡入
@@ -4234,7 +4234,7 @@ RESCANNING_SHORT
 	EN	Rescanning Music Library...
 	ES	Recopilando la colección musical...
 	FI	Lukee musiikkikirjastoa uudelleen...
-	FR	RÃ©pertoriage en cours...
+	FR	Répertoriage en cours...
 	IT	Rianalisi della raccolta musicale.
 	NL	Opnieuw scannen muziekcollectie...
 	ZH_CN	重新扫描音乐库中...
@@ -4685,7 +4685,7 @@ SETUP_MMSPORT_DESC
 	DE	Das MusicMagic Service API erlaubt die Wahl des HTTP Ports für die API-Anfragen. Geben Sie hier bitte die Portnummer ein, die in den MusicMagic Mixer Einstellungen definiert ist.
 	EN	The MusicMagic Service API allows the selection of an http port to use for queries to the MusicMagic API. Enter the port number here to match the setting you have chosen in MusicMagic Mixer settings.
 	ES	La API de Servicios de MusicMagic permite elegir un puerto http para utilizar en consultas a la API de MusicMagic. Ingresar el número de puerto aquí para que coincida con el que se eligió en la configuración del Mezclador de MusicMagic.
-	FR	La bibliothÃ¨que de fonctions de service MusicMagic permet la sÃ©lection d'un port HTTP pour les requÃªtes. Vous devez entrer ici le numÃ©ro de port spÃ©cifiÃ© dans les paramÃ¨tres MusicMagic Mixer.
+	FR	La bibliothèque de fonctions de service MusicMagic permet la sélection d'un port HTTP pour les requêtes. Vous devez entrer ici le numéro de port spécifié dans les paramètres MusicMagic Mixer.
 	NL	De MusicMagic service API heeft de mogelijkheid om een HTTP poort te gebruiken voor vragen aan de MusicMagic API. Geef het poortnummer op dat je in MusicMagic Mixer hebt gekozen.
 	ZH_CN	您可以通过MusicMagic的服务应用程序接口来选择用来询问MusicMagic应用程序接口的http端口。请在此输入匹配您在MusicMagic里已设置好的端口号。
 
@@ -9832,7 +9832,7 @@ VISUALIZER_VUMETER
 	EN	VU Meter
 	ES	VU metro
 	FI	VU-mittari
-	FR	VUmÃ¨tre
+	FR	VUmètre
 	NL	VU meter
 	ZH_CN	音量表
 
@@ -10797,7 +10797,7 @@ NO_SEARCH_RESULTS
 	DE	Nichts gefunden
 	EN	No search results
 	ES	No hay resultados en la búsqueda
-	FR	Pas de rÃ©sultat
+	FR	Pas de résultat
 	NL	Geen zoekresultaten
 
 CONTRIBUTORMATCHING
@@ -10905,7 +10905,7 @@ MORE_MATCHES
 	EN	More matches...
 	ES	Más coincidencias...
 	FI	Lisää vastaavuuksia
-	FR	Plus de rÃ©sultats...
+	FR	Plus de résultats...
 	NL	Meer overeenkomsten...
 	ZH_CN	更多匹配
 
@@ -11139,7 +11139,7 @@ RADIO_TUNED_IN
 	DE	Die folgende Station wurde angewählt:
 	EN	Tuned into station:
 	ES	Estación sintonizada:
-	FR	ConnectÃ© Ã  :
+	FR	Connecté à :
 	IT	Sintonizzata stazione:
 	NL	Ingestelde zender:
 
@@ -11786,7 +11786,7 @@ INFORMATION_HOSTNAME
 	EN	Hostname
 	ES	Nombre de Host
 	FI	Laitenimi
-	FR	Nom d'hÃ´te
+	FR	Nom d'hôte
 	IT	Nome host
 	NL	Hostnaam
 	ZH_CN	主机名字
@@ -11796,7 +11796,7 @@ INFORMATION_HOSTIP
 	EN	Host IP Address
 	ES	Dirección IP de Host
 	FI	Palvelimen IP osoite
-	FR	Adresse IP hÃ´te
+	FR	Adresse IP hôte
 	HE	כתובת שרת
 	IT	Indirizzo IP host
 	NL	Host IP adres
@@ -12161,13 +12161,13 @@ SQUEEZENETWORK_CONNECTING
 SQUEEZENETWORK_SWITCH
 	DE	Zum SqueezeNetwork verbinden
 	EN	Switch to SqueezeNetwork
-	FR	Se connecter ‡ SqueezeNetwork
+	FR	Se connecter à SqueezeNetwork
 	NL	Wisselen naar SqueezeNetwork
 
 SQUEEZENETWORK_SWITCHING
 	DE	Verbinde zum SqueezeNetwork...
 	EN	Switching to SqueezeNetwork, please wait...
-	FR	Connexion ‡ SqueezeNetwork, veuillez patienter...
+	FR	Connexion à SqueezeNetwork, veuillez patienter...
 	NL	Wisselen naar SqueezeNetwork, even wachten...
 
 SQUEEZENETWORK_SB2_REQUIRED
@@ -12521,21 +12521,21 @@ SORT_ARTISTYEARALBUM
 	DE	Interpret, Jahr, Album
 	EN	Artist, Year, Album
 	ES	Artista, Año, Álbum
-	FR	Artiste, AnnÃ©e, Album
+	FR	Artiste, Année, Album
 	NL	Artiest, jaar, album
 
 SORT_YEARALBUM
 	DE	Jahr, Album
 	EN	Year, Album
 	ES	Año, Álbum
-	FR	AnnÃ©e, Album
+	FR	Année, Album
 	NL	Jaar, album
 
 SORT_YEARARTISTALBUM
 	DE	Jahr, Artist, Album
 	EN	Year, Artist, Album
 	ES	Año, Artista, Álbum
-	FR	AnnÃ©e, Artiste, Album
+	FR	Année, Artiste, Album
 	NL	Jaar, artiest, album
 
 SORT_GENREALBUM
@@ -12562,7 +12562,7 @@ SETUP_CLOCKSOURCE_DESC
 	DE	Die Ausgänge des Transporters könne mit internen oder externen Quellen synchronisiert werden. Bitte wählen Sie.
 	EN	Transporter's outputs can be synchronized with internal or external sources. Choose a clock source below.
 	ES	Las salidas del Transporter pueden sincronizarse con fuentes internas o externas. Elegir una fuente de reloj debajo.
-	FR	Les sorties audio du Transporter peuvent Ãªtre synchronisÃ©es avec des sources internes ou externes. Choisissez ci-dessous la source de l'horloge.
+	FR	Les sorties audio du Transporter peuvent être synchronisées avec des sources internes ou externes. Choisissez ci-dessous la source de l'horloge.
 	NL	Transporter's uitvoer kan gesynchroniseerd worden met interne of externe bronnen. Kies hieronder een bron.
 
 CLOCKSOURCE_INTERNAL
@@ -12580,7 +12580,7 @@ VISUALIZER_EXTENDED_TEXT
 	DE	Erweiterte Textanzeige
 	EN	Extended Text Display
 	ES	Display de Texto Extendido
-	FR	Infos texte Ã©tendues
+	FR	Infos texte étendues
 	NL	Uitgebreide tekstweergave
 
 VISUALIZER_SPECTRUM_ANALYZER
@@ -12598,7 +12598,7 @@ VISUALIZER_ANALOG_VUMETER
 	EN	Analog VU Meter
 	ES	VUmetro análogo
 	FI	Analoginen VU-mittari
-	FR	VUmÃ¨tre analogique
+	FR	VUmètre analogique
 	IT	VU meter analogico
 	NL	Analoge VU meter
 
@@ -12607,7 +12607,7 @@ VISUALIZER_DIGITAL_VUMETER
 	EN	Digital VU Meter
 	ES	VUmetro digital
 	FI	Digitaalinen VU-mittari
-	FR	VUmÃ¨tre numÃ©rique
+	FR	VUmètre numérique
 	IT	VU meter digitale
 	NL	Digitale VU meter
 
@@ -12622,56 +12622,56 @@ SETUP_VISUALIZERMODE_DESC
 	DE	Der Player kann auf dem rechten Bildschirm Visualisierungen oder erweiterte Informationen anzeigen. Wählen Sie hier, was dargestellt werden soll. Mit dem "Visual" Knopf auf dem Player können Sie diese Wahl jederzeit ändern. 
 	EN	The player can display visualizers or extended text information on the right hand screen. Choose which you wish to be displayed. The Visual button on the player will cycle through each of the options selected below.
 	ES	El reproductor puede mostrar visualizadores o información de texto extendido en la pantalla de la derecha. Elegir el que se quiera mostrar. El botón Visual en el reproductor irá pasando de una a otra entre las opciones elegidas debajo.
-	FR	La platine peut afficher diffÃ©rents mode de visualisation ou des informations texte Ã©tendues sur la droite de l'Ã©cran. Choisissez le mode de visualisation que vous voulez afficher. Le bouton Visualisation sur la platine permet de parcourir tous les modes de visualisation sÃ©lectionnÃ©s ci-dessous.
+	FR	La platine peut afficher différents mode de visualisation ou des informations texte étendues sur la droite de l'écran. Choisissez le mode de visualisation que vous voulez afficher. Le bouton Visualisation sur la platine permet de parcourir tous les modes de visualisation sélectionnés ci-dessous.
 	NL	De speler kan visualisaties of extra informatie tonen op het rechter scherm. Kies wat je getoond wilt hebben. <BR>The Visual toets op de speler zal de keuzes doorlopen die je hieronder kiest.
 
 SETUP_SERVERPRIORITY
 	DE	Server Priorität
 	EN	Server Priority
 	ES	Prioridad del servidor
-	FR	PrioritÃ© serveur
+	FR	Priorité serveur
 	NL	Server prioriteit
 
 SETUP_SERVERPRIORITY_DESC
 	DE	Sie können die Priorität festlegen, mit welcher SlimServer ausgeführt wird.
 	EN	You can specify the priority that SlimServer runs at.
 	ES	Se puede especificar la prioridad con la que correrá SlimServer.
-	FR	Vous pouvez fixer le niveau de prioritÃ© du SlimServer.
+	FR	Vous pouvez fixer le niveau de priorité du SlimServer.
 	NL	Je kunt de prioriteit specificeren van SlimServer binnen je server.
 
 SETUP_SCANNERPRIORITY
 	DE	Scanner Priorität
 	EN	Scanner Priority
 	ES	Prioridad de la recopilación /
-	FR	PrioritÃ© rÃ©pertoriage
+	FR	Priorité répertoriage
 	NL	Scanner prioriteit
 
 SETUP_SCANNERPRIORITY_DESC
 	DE	Sie können die Priorität festlegen, mit welcher der Scan-Prozess ausgeführt wird.
 	EN	You can specify the priority that the scanning process run at.
 	ES	Se puede especificar la prioridad con la que correrá la recopilación.
-	FR	Vous pouvez fixer le niveau de prioritÃ© du processus de rÃ©pertoriage.
+	FR	Vous pouvez fixer le niveau de priorité du processus de répertoriage.
 	NL	Je kunt de prioriteit specificeren voor het scannen van nieuwe en gewijzigde muziek.
 
 SETUP_PRIORITY_DEFAULT
 	DE	Standard Priorität
 	EN	Default Priority
 	ES	Prioridad por defecto
-	FR	PrioritÃ© par dÃ©faut
+	FR	Priorité par défaut
 	NL	Standaard prioriteit
 
 SETUP_PRIORITY_CURRENT
 	DE	Aktuelle Server Priorität
 	EN	Current Server Priority
 	ES	Prioridad Actual del Servidor
-	FR	PrioritÃ© serveur actuelle
+	FR	Priorité serveur actuelle
 	NL	Huidige serverprioriteit
 
 SETUP_PRIORITY_HIGH
 	DE	Hoch
 	EN	High
 	ES	Alta
-	FR	ElevÃ©e
+	FR	Elevée
 	NL	Hoog
 
 SETUP_PRIORITY_ABOVE_NORMAL

@@ -684,6 +684,7 @@ sub strings {
 PLUGIN_XPL
 	EN	xPL Interface
 	FR	Interface xPL
+	NL	xPL interface
 	
 SETUP_GROUP_XPL
 	DE	xPL Einstellungen
