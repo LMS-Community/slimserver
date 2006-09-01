@@ -50,7 +50,7 @@ sub enabled {
 	
 	# make sure this is only validated when the provided client has digital inputs.
 	# when the client isn't given, we only need to report that the plugin is alive.
-	return $client? $client->hasDigitalInputs() : 1;
+	return $client? $client->hasDigitalIn() : 1;
 };
 
 sub updateDigitalInput {

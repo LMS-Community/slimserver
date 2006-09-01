@@ -141,6 +141,11 @@ sub init {
 
 					return ($client->signalStrength() . '%') 
 				},
+				sub {
+					my $client = shift;
+
+					return ($client->voltage() . 'VAC') 
+				},
 			],
 
 			'menuName' => 'player'
@@ -248,7 +253,7 @@ sub mainExitHandler {
 	my ($client,$exittype) = @_;
 	$exittype = uc($exittype);
 
-	Slim::Utils::Timers::killTimers($client,\&updateSignalStrength);
+	Slim::Utils::Timers::killTimers($client,\&updateClientStatus);
 	if ($exittype eq 'LEFT') {
 
 		Slim::Buttons::Common::popModeRight($client);
@@ -271,7 +276,11 @@ sub mainExitHandler {
 			my @nextList = @player_list;
 			if (defined($client->signalStrength())) {
 				push @nextList, 'PLAYER_SIGNAL_STRENGTH';
-				Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&updateSignalStrength);
+				Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&updateClientStatus);
+			}
+			if (defined($client->voltage())) {
+				push @nextList, 'PLAYER_VOLTAGE';
+				Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&updateClientStatus);
 			}
 			$nextParams{'listRef'} = \@nextList;
 		}
@@ -290,7 +299,7 @@ sub setMode {
 	my $method = shift;
 
 	if ($method eq 'pop') {
-		Slim::Utils::Timers::killTimers($client, \&updateSignalStrength);
+		Slim::Utils::Timers::killTimers($client, \&updateClientStatus);
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
@@ -323,18 +332,19 @@ sub playerModel {
 	return $client->model;
 }
 
-sub updateSignalStrength {
+sub updateClientStatus {
 	my $client = shift;				
 
 	if (Slim::Buttons::Common::mode($client) eq 'INPUT.List' &&
 	    Slim::Buttons::Common::param($client, 'parentMode') eq 'information' &&
-	    ${Slim::Buttons::Common::param($client, 'valueRef')} eq 'PLAYER_SIGNAL_STRENGTH') {
+	    (${Slim::Buttons::Common::param($client, 'valueRef')} eq 'PLAYER_SIGNAL_STRENGTH' ||
+	     ${Slim::Buttons::Common::param($client, 'valueRef')} eq 'PLAYER_VOLTAGE')) {
 		$client->requestStatus();
 	
 		$client->update();
 	}
 
-	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&updateSignalStrength);
+	Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&updateClientStatus);
 }
 
 sub getFunctions {

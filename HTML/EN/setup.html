@@ -29,5 +29,6 @@
   [% IF ipaddress %]<p>[% "PLAYER_IP_ADDRESS" | string %] [% ipaddress %]</p>[% END %]
   [% IF macaddress %]<p>[% "PLAYER_MAC_ADDRESS" | string %] [% macaddress %]</p>[% END %] 
   [% IF signalstrength %]<p>[% "INFORMATION_PLAYER_SIGNAL_STRENGTH" | string %][% "COLON" | string %] [% signalstrength %]%</p>[% END %] 
+  [% IF voltage %]<p>[% "INFORMATION_PLAYER_VOLTAGE" | string %][% "COLON" | string %] [% voltage %]VAC</p>[% END %] 
   <p></p>
 [% PROCESS pagefooter.html %]

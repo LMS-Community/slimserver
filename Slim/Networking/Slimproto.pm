@@ -419,6 +419,16 @@ sub signalStrength {
 	}
 }
 
+sub voltage {
+	my $client = shift;
+
+	if (exists($status{$client}) && ($status{$client}->{'voltage'} > 0)) {
+		return $status{$client}->{'voltage'};
+	} else {
+		return undef;
+	}
+}
+
 sub fullness {
 	my $client = shift;
 	my $value  = shift;
@@ -554,6 +564,7 @@ sub _stat_handler {
 	#        u32_t output_buffer_size;
 	#        u32_t output_buffer_fullness;
 	#        u32_t elapsed_seconds;
+	#        u16_t voltage;
 	#
 	
 	# event types:
@@ -588,7 +599,8 @@ sub _stat_handler {
 		$status{$client}->{'output_buffer_size'},
 		$status{$client}->{'output_buffer_fullness'},
 		$status{$client}->{'elapsed_seconds'},
-	) = unpack ('a4CCCNNNNnNNNN', $$data_ref);
+		$status{$client}->{'voltage'},
+	) = unpack ('a4CCCNNNNnNNNNn', $$data_ref);
 	
 	
 	$status{$client}->{'bytes_received'} = $status{$client}->{'bytes_received_H'} * 2**32 + $status{$client}->{'bytes_received_L'}; 

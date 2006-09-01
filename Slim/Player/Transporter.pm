@@ -166,6 +166,10 @@ sub hasPreAmp {
         return 0;
 }
 
+sub voltage {
+	return Slim::Networking::Slimproto::voltage(@_);
+}
+
 sub volumeString {
 	my ($client, $volume) = @_;
 

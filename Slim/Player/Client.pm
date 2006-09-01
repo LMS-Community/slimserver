@@ -470,6 +470,10 @@ sub signalStrength {
 	return undef;
 }
 
+sub voltage {
+	return undef;
+}
+
 sub hasDigitalOut() { return 0; }
 sub hasPreAmp() { return 0; }
 sub hasExternalClock() { return 0; }

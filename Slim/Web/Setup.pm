@@ -149,6 +149,7 @@ sub initSetupConfig {
 					$paramref->{'ipaddress'} = $client->ipport();
 					$paramref->{'macaddress'} = $client->macaddress;
 					$paramref->{'signalstrength'} = $client->signalStrength;
+					$paramref->{'voltage'} = $client->voltage();
 
 					$client->update();
 				}
