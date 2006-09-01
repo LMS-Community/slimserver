@@ -146,8 +146,8 @@ sub songTime {
 	my $rate        = $client->rate();
 	my $songtime    = $client->songElapsedSeconds();
 	my $startStream = $client->songStartStreamTime();
-
-	$::d_source && msg("songTime: rate:$rate -songtime:$songtime -startStream:$startStream\n");
+	
+	$::d_source_v && msg("songTime: rate:$rate -songtime:$songtime -startStream:$startStream\n");
 
 	return $songtime+$startStream if $rate == 1 && defined($songtime);
 
