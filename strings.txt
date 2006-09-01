@@ -959,6 +959,7 @@ SLEEPING_IN
 END_OF_SONG
 	DE	Liedende
 	EN	end of song
+	NL	Einde liedje
 
 SLEEP
 	DE	Schlafmodus
@@ -1480,15 +1481,18 @@ FIRMWARE_MISSING
 	DE	Fehler: Firmware fehlt
 	EN	Error: Missing Firmware
 	ES	Error: No se encuentra Firmware
+	NL	Fout: Firmware mist
 
 FIRMWARE_MISSING_DESC
 	DE	Der Server kann keine Firmware aus dem Internet beziehen.
 	EN	Server can't connect to Internet to obtain firmware update.
 	ES	El server no puede conectarse a Internet para obtener la actualización de firmware.
+	NL	Server kan geen connectie maken naar Internet om de bijgewerkte firmware op te halen.
 
 CHECKING_STREAM
 	DE	Überprüfe Datenstrom...
 	EN	Checking stream...
+	NL	Controleren stream...
 
 CONNECTING_FOR
 	CS	Připojuji ke hraní:
@@ -1568,6 +1572,7 @@ PLAYLIST_PROBLEM_CONNECTING
 ASF_UNABLE_TO_PARSE
 	DE	Fehler: kann ASF Stream nicht lesen
 	EN	Error: Unable to parse ASF audio stream
+	NL	Fout: decoderen ASF audio mislukt
 
 NO_PLAYLIST_DIR
 	CS	Chyba: Není uložen žádný playlist.
@@ -1847,8 +1852,8 @@ SETUP_GROUP_TCP_PARAMS_DESC
 
 SETUP_GROUP_TITLEFORMATS_DESC
 	CS	Toto jsou formáty dostupné ve výběrech v nastavení přehrávačů. Pro vymazání formátu,  vymažte stávající formát a nahraďte jej novým, nebo nechte prízdné.  Dostupné proměnné jsou: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time)  Elementy mohou být odděleny čímkoliv (nebo ničím). Oddělovače jsou pouze použity, pokud jsou datové elementy přednastaveny.  Aktuální formát bude použit také pro zobrazení na webovém rozhraní.
-	DE	Die verfügbaren Formate sind für die obige Selektion sowie für die Player Einstellung. Zum Entfernen eines Formates löschen Sie die Textbox, zum Erstellen eines Formates fügen Sie den Text in ein leeres Feld ein. Verfügbare Datenelemente sind: CT (Art des Inhalts), TITLE, BAND (Band/Orchestra), GENRE, TRACKNUM, FS (Dateigröße), ARTIST (Interpret), ALBUM, COMMENT, YEAR, SECS (Gesamtsekunden), DURATION (Minuten und Sekunden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (Name des Volumens), PATH, FILE, EXT (Dateierweiterung), LONGDATE (Aktuelles Datum, lang), SHORTDATE (Aktuelles Datum, kurz), CURRTIME(Aktuelle Zeit).
 	DA	Dette er sangtitel-formaterne, der er tilgængelige både ovenfor og i afspiller-indstillingerne. Tøm indholdet i en teksboks for at fjerne formatet. For at tilføje et format indtastes tekst i den tomme tekstboks nederst. Tilgængelige elementer er: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
+	DE	Die verfügbaren Formate sind für die obige Selektion sowie für die Player Einstellung. Zum Entfernen eines Formates löschen Sie die Textbox, zum Erstellen eines Formates fügen Sie den Text in ein leeres Feld ein. Verfügbare Datenelemente sind: CT (Art des Inhalts), TITLE, BAND (Band/Orchestra), GENRE, TRACKNUM, FS (Dateigröße), ARTIST (Interpret), ALBUM, COMMENT, YEAR, SECS (Gesamtsekunden), DURATION (Minuten und Sekunden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (Name des Volumens), PATH, FILE, EXT (Dateierweiterung), LONGDATE (Aktuelles Datum, lang), SHORTDATE (Aktuelles Datum, kurz), CURRTIME(Aktuelle Zeit).
 	EN	These are the formats available for selection both above and in the player setup. To remove a format, clear the text box, to enter a new format, place it in the empty one. Available data elements are: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
 	ES	Estos son los formatos disponibles para elegir arriba y tambien en la configuración del reproductor. Para borrar un formato, vacíe la casilla. Para introducir un formato nuevo, póngalo en la casilla vacía. Los elementos disponibles son: CT (tipo de contenido), TITLE (nombre de la canción), GENRE (género), TRACKNUM (índice de la canción en su álbum), FS (tamaño del archivo), ARTIST (artista), ALBUM (álbum), COMMENT (comentarios), YEAR (año), SECS (duración de la canción en segundos), DURATION (duración de la canción en minutos y segundos), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME, PATH (camino al archivo), FILE (nombre del archivo), EXT (extensión del archivo), LONGDATE (la fecha en formato largo), SHORTDATE (la fecha en formato corto), CURRTIME (la hora actual). Los elementos pueden ser separados por lo que quiera, incluso nada. Los separadores se usarán solamente si los valores son definidos.<br>La selección actual es la que se usará en la interfaz web.
 	FI	Seuraavat kentät ovat käytössäsi sekä yllä, että soittimen asetuksissa. Poistaaksesi kentän, tyhjennä teksi laatikosta, lisätäksesi uuden kentän, syötä teksi tyhjään laatikkoon. Vaihtoehtoja ovat: CT (sisältötyyppi), TITLE, GENRE, TRACKNUM (kappaleen numero kokonaislukuna), FS (tiedoston koko), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (sekunnit), DURATION (minuutit ja sekunnit), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (äänenvoimakkuuden säätö), PATH, FILE, EXT (tiedoston pääte), LONGDATE (päiväys, pitkä esitystapa), SHORTDATE (päiväys, lyhyt esitystapa), CURRTIME(aika). Kentät voidaan erottaa toisistaan millä tahansa erottimella. Erottimia käytetään vain mikäli tietokenttiä on valittuna.<br>Tämänhetkistä valintaa tullaan käyttämään WWW-sivuilla.
@@ -1856,7 +1861,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 	HE	בחר כיצד יוצג שם השיר
 	IT	Questi sono i formati tra cui poter scegliere sia qui che nelle impostazioni del lettore. Per rimuovere un formato, cancella il testo della casella, per inserirne uno nuovo, inseriscilo in una casella vuota. Gli elementi disponibili come dati sono: CT (tipo di contenuto), TITLE, GENRE, TRACKNUM (numero di traccia come numero intero), FS (dimensione file), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (secondi totali), DURATION (in minuti e secondi), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (nome del volume), PATH, FILE, EXT (estensione del file), LONGDATE (data corrente, lunga), SHORTDATE (data corrente, corta), CURRTIME (ora attuale). Gli elementi possono essere separati da qualsiasi carattere (o da niente). I separatori sono usati solo se sono presenti elementi. La selezione in uso e' il formato che verra' usato sulle pagine web.
 	JA	これらは上記とプレーヤーセットアップに利用できるフォーマットです。フォーマットを削除するには、テキストボックスをクリアし、新しいフォーマットを加えるには空のテキストボックスに入れてください。利用できるデータは： CT（コンテントタイプ）、TITLE（タイトル）、GENRE（ジャンル）、TRACKNUM(トラックナンバー)、FS（ファイルサイズ）、ARTIST（アーチスト)、ALBUM（アルバム)、COMMENT（コメント)、YEAR（年）、SECS（総秒数）、DURATION（長さ)、VBR_SCALE（vbr/cbr）、BITRATE（ビットレート)、TAGSIZE（タグサイズ）、VOLUME（ボリューム名）、PATH（パス）、FILE（ファイル)、EXT（拡張子）、LONGDATE（長い日付）、SHORTDATE（短い日付)、CURRTIME（現在の時間）。各データは何で区分してもかまいません。<br>現在のフォーマット選択はウェブ上で使われているものと同じです。
-	NL	Dit zijn de beschikbare formaten voor zowel hierboven als in de Speler instellingen. Leeg het invoerveld om een formaat te verwijderen. Om een formaat toe te voegen, voer deze in in een leeg invoerveld. <br>Beschikbare data elementen zijn: CT (content type), TITLE, GENRE, TRACKNUM, FS (bestandsgrootte), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (totaal seconden), DURATION (minuten en seconden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (album naam), PATH, FILE, EXT (file extention), LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME (huidige tijd). De elementen kunnen door alles (of niets) gescheiden geworden. Scheidingstekens worden alleen gebruikt als de data elementen aanwezig zijn.<br>Het op dit moment geselecteerde formaat zal worden gebruikt op de web pagina's.
+	NL	Dit zijn de beschikbare formaten voor zowel hierboven als in de Speler instellingen. Leeg het invoerveld om een formaat te verwijderen. Om een formaat toe te voegen, voer deze in in een leeg invoerveld. <br>Beschikbare data elementen zijn: <BR>CT (content type), TITLE, GENRE, TRACKNUM, FS (bestandsgrootte), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (totaal seconden), DURATION (minuten en seconden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (album naam), PATH, FILE, EXT (file extention), LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME (huidige tijd). <BR>De elementen kunnen door alles (of niets) gescheiden geworden. Scheidingstekens worden alleen gebruikt als de data elementen aanwezig zijn.<br>Het op dit moment geselecteerde formaat zal worden gebruikt op de web pagina's.
 	NO	Dette er tilgjengelige for web-interfacet og selve spilleren. For å fjerne et format, tøm boksen. For å legge til et format, skriv det i en tom boks. Tilgengelige elementer: CT (innholds type), TITLE, GENRE, TRACKNUM (spor nummer), FS (filstørrelse), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (totalt antall sekunder), DURATION (minutter og sekunder), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volumnavn), PATH, FILE, EXT (filending), LONGDATE (dagens dato, langt), SHORTDATE (dagens dato, kort), CURRTIME (klokkeslett nå). Elementer kan skilles med ethvert tegn (eller ingen). Skilletegnet vises bare om dataelementet finnes. Det valgte formatet er det som blir brukt på websidene.
 	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no cliente. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
 	SV	Dessa är de tillgängliga formaten för webgränssnittet och själva spelaren. För att ta bort ett format, töm textboxen. För att lägga till ett nytt format, skriv i en tom textbox. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT(kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME, PATH, FILE, EXT (filändelse), LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera dataelementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget tecken alls). Skiljetecken visas endast om dataelementet existerar. Det valda formatet är det som kommer användas på websidorna.
@@ -3005,18 +3010,22 @@ SETUP_PREAMPVOLUMECONTROL_DESC
 SETUP_BUFFERSECS
 	DE	Puffergrösse für Internet Radio
 	EN	Radio Station Buffer Seconds
+	NL	Radio station buffertijd (seconden)
 
 SETUP_BUFFERSECS_DESC
 	DE	Wenn Internet Radiostationen wiedergegeben werden, puffert der Player eine geringe Datenmenge, bevor er die Wiedergabe startet. Geben Sie die Anzahl Sekunden an, die in den Puffer geladen werden sollen (1-30 Sekunden). Vorgabewert ist 3 Sekunden. Falls Sie eine stotternde Wiedergabe feststellen, so kann das Erhöhen dieses Wertes helfen.
 	EN	When playing an Internet stream, the player buffers a small amount of data before beginning playback.  Specify the amount of audio data to buffer, in seconds from 1 to 30.  The default value is 3 seconds.  If you experience stuttering audio, increasing this value may help.
+	NL	Bij het spelen van een Internet stream buffert de speler een kleine hoeveelheid data voordat het spelen start. Specificeer de hoeveelheid bufferdata in seconden speeltijd. Minimum is 1 en maximum is 30 seconden. De standaardwaarde is 3 seconden. Als je haperende audio ervaart, dan kan het vergroten van de buffer helpen.
 
 SETUP_MAXWMARATE
 	DE	Maximale WMA Stream Bitrate
 	EN	Maximum WMA Stream Bitrate
+	NL	Maximum WMA stream bitrate
 
 SETUP_MAXWMARATE_DESC
 	DE	Manche WMA Streams können unterschiedliche Bitraten enthalten. Standardmässig wähle SlimServer die höchste verfügbare Bitrate. Dies kann bei langsameren Internet-Verbindungen zu Problemen führen. Daher können Sie hier die maximale Bitrate, die verwendet werden soll, festlegen.
 	EN	Some WMA streams have multiple bitrates available for streaming.  By default, SlimServer will select the highest bitrate stream available, but if you have a slower Internet connection, you may set a lower value here to limit the maximum rate that can be chosen from these multiple rate streams.
+	NL	Sommige WMA streams zijn beschikbaar in meerdere kwaliteiten (bitrates). Standaard selecteert SlimServer de hoogst beschikbare bitrate. Als je een langzamere Internetverbinding hebt kun je een lagere bitrate kiezen om de streams te limiteren. Dan kun je alleen bitrates kiezen die lager zijn dan dit maximum.
 
 SETUP_MAXBITRATE
 	DE	Bitraten-Beschränkung
@@ -12304,6 +12313,7 @@ VARIOUSARTISTS
 	FI	Eri Esittäjiä
 	FR	Artistes divers
 	IT	Artisti Vari
+	NL	Diverse artiesten
 	ZH_CN	多位艺人
 
 TRACKARTIST
@@ -12620,66 +12630,77 @@ SETUP_SERVERPRIORITY
 	EN	Server Priority
 	ES	Prioridad del servidor
 	FR	PrioritÃ© serveur
+	NL	Server prioriteit
 
 SETUP_SERVERPRIORITY_DESC
 	DE	Sie können die Priorität festlegen, mit welcher SlimServer ausgeführt wird.
 	EN	You can specify the priority that SlimServer runs at.
 	ES	Se puede especificar la prioridad con la que correrá SlimServer.
 	FR	Vous pouvez fixer le niveau de prioritÃ© du SlimServer.
+	NL	Je kunt de prioriteit specificeren van SlimServer binnen je server.
 
 SETUP_SCANNERPRIORITY
 	DE	Scanner Priorität
 	EN	Scanner Priority
 	ES	Prioridad de la recopilación /
 	FR	PrioritÃ© rÃ©pertoriage
+	NL	Scanner prioriteit
 
 SETUP_SCANNERPRIORITY_DESC
 	DE	Sie können die Priorität festlegen, mit welcher der Scan-Prozess ausgeführt wird.
 	EN	You can specify the priority that the scanning process run at.
 	ES	Se puede especificar la prioridad con la que correrá la recopilación.
 	FR	Vous pouvez fixer le niveau de prioritÃ© du processus de rÃ©pertoriage.
+	NL	Je kunt de prioriteit specificeren voor het scannen van nieuwe en gewijzigde muziek.
 
 SETUP_PRIORITY_DEFAULT
 	DE	Standard Priorität
 	EN	Default Priority
 	ES	Prioridad por defecto
 	FR	PrioritÃ© par dÃ©faut
+	NL	Standaard prioriteit
 
 SETUP_PRIORITY_CURRENT
 	DE	Aktuelle Server Priorität
 	EN	Current Server Priority
 	ES	Prioridad Actual del Servidor
 	FR	PrioritÃ© serveur actuelle
+	NL	Huidige serverprioriteit
 
 SETUP_PRIORITY_HIGH
 	DE	Hoch
 	EN	High
 	ES	Alta
 	FR	ElevÃ©e
+	NL	Hoog
 
 SETUP_PRIORITY_ABOVE_NORMAL
 	DE	Höher als normal
 	EN	Above Normal
 	ES	Mas Alta de lo Normal
 	FR	Au-dessus de la normale
+	NL	Boven normaal
 
 SETUP_PRIORITY_NORMAL
 	DE	Normal
 	EN	Normal
 	ES	Normal
 	FR	Normale
+	NL	Normaal
 
 SETUP_PRIORITY_BELOW_NORMAL
 	DE	Niedriger als normal 
 	EN	Below Normal
 	ES	Debajo de lo Normal
 	FR	Sous la normale
+	NL	Onder normaal
 
 SETUP_PRIORITY_LOW
 	DE	Niedrig
 	EN	Low
 	ES	Baja
 	FR	Basse
+	NL	Laag
 
 SETUP_DIGITALOUTPUTENCODING
 	DE	Kodierung des digitalen Ausgangs
