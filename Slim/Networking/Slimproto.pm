@@ -162,7 +162,7 @@ sub slimproto_accept {
 	$parser_framelength{$clientsock} = 0;
 	$inputbuffer{$clientsock}='';
 
-	Slim::Networking::Select::addRead($clientsock, \&client_readable);
+	Slim::Networking::Select::addRead($clientsock, \&client_readable, 1); # processed during idleStreams
 	Slim::Networking::Select::addError($clientsock, \&slimproto_close);
 
 	$::d_slimproto && msg ("Slimproto accepted connection from: [" .  $ipport{$clientsock} . "]\n");
