@@ -159,7 +159,15 @@ sub init {
 			'listRef' => [qw(VERSION DIAGSTRING SERVER_PORT SERVER_HTTP HOSTNAME HOSTIP CLIENTS)],
 			'externRef' => \&infoDisplay,
 			'externRefArgs' => 'CV',
-			'formatRef' => [undef, undef, undef, \&Slim::Utils::Misc::delimitThousands],
+			'formatRef' => [
+				undef,
+				undef,
+				undef,
+				undef,
+				undef,
+				undef,
+				\&Slim::Utils::Misc::delimitThousands,
+			],
 
 			'valueFunctRef' => [
 				sub { $::VERSION },
