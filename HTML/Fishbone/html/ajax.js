@@ -180,7 +180,7 @@ function refreshInfo(theData,force) {
 	if (newsong) {
 		elems.push('songtitle');
 		refreshElement('songtitle', parsedData['songtitle']);
-		playlistChecker(parsedData);
+		playlistChecker();
 	}
 	
 	if (parsedData['streamtitle']) {
@@ -314,6 +314,7 @@ function refreshPlaylist(newPlayer) {
 			
 			newloc=newloc.replace(playerExp, '=' + newPlayer);
 			newloc=newloc.replace(/&start=\d+&/, '&');
+			newloc=newloc.replace(/#\d+/, '#currentsong');
 			plloc.replace(newloc);
 			//DumperPopup([plloc,plloc.search.replace(playerExp, '='+newPlayer),plloc.search.replace(/&d=\d+/, '')]);
 		}
