@@ -758,11 +758,14 @@ A.linkbtn:link {
 	color : white ! important;
 }
 
-#currentListItem
+.currentListItem
 {
 	background:#333;
 	border-top:solid 1px #EE3823;
 	border-bottom:solid 1px #EE3823;
+	position: relative;
+	padding: 0px;
+	padding-right: 100px;
 }
 
 .listinghead

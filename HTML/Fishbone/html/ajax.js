@@ -103,7 +103,7 @@ function processPlayControls(param) {
 	getStatusData(param + "&player="+player+"&ajaxRequest=1", refreshPlayControls);
 }
 
-function refreshPlayControls(theData) {
+function refreshPlayControls(theData,force) {
 	var parsedData = fillDataHash(theData);
 	
 	var controls = ['stop', 'play', 'pause'];
@@ -154,7 +154,7 @@ function refreshPlayControls(theData) {
 	}
 
 	if (parsedData['playmode'] == 1) {
-		if (!mp) {refreshInfo(parsedData,1);}
+		refreshInfo(parsedData,force);
 		mp = 1;
 	} else {
 		mp = 0;
@@ -180,7 +180,7 @@ function refreshInfo(theData,force) {
 	if (newsong) {
 		elems.push('songtitle');
 		refreshElement('songtitle', parsedData['songtitle']);
-		refreshPlaylist(player);
+		playlistChecker(parsedData);
 	}
 	
 	if (parsedData['streamtitle']) {
@@ -288,6 +288,7 @@ function refreshInfo(theData,force) {
 		if(parsedData['playermodel']) {
 			$('logoimage' + curstyle).src = '[% webroot %]html/images/' + parsedData['playermodel'] + '_logo.small' + curstyle + '.gif';
 		}
+		playlistChecker();
 	}
 	return true;
 }
@@ -310,7 +311,9 @@ function refreshPlaylist(newPlayer) {
 			
 			var newloc = plloc.protocol + '//' + plloc.host + plloc.pathname
 				+ plloc.search.replace(/&d=\d+/, '') + '&d=' + new Date().getTime() + plloc.hash;
+			
 			newloc=newloc.replace(playerExp, '=' + newPlayer);
+			newloc=newloc.replace(/&start=\d+&/, '&');
 			plloc.replace(newloc);
 			//DumperPopup([plloc,plloc.search.replace(playerExp, '='+newPlayer),plloc.search.replace(/&d=\d+/, '')]);
 		}
@@ -320,6 +323,34 @@ function refreshPlaylist(newPlayer) {
 	}
 }
 
+var last;
+var first;
+function currentSong(theData) {
+	var parsedData = fillDataHash(theData);
+
+	var doc = parent.playlist.document;
+	var found = 1;
+	
+	if (first == null || first == parsedData['first_item']) {
+		first = parsedData['first_item'];
+		
+		for (var i = parsedData['first_item']; i <= parsedData['last_item']; i++) {
+				
+				if (i == parsedData['currentsongnum']) {
+					doc.getElementById('playlistitem' + i).className = "currentListItem";
+					found = 0;
+				} else {
+					doc.getElementById('playlistitem' + i).className = "browsedbListItem";
+				}
+		}
+	} else {
+		first = parsedData['first_item'];
+		playlistChecker(first);
+	}
+	
+	doc.location.hash = parsedData['currentsongnum'];
+}
+
 function refreshAll(theData,force) {
 	var parsedData = fillDataHash(theData);
 	
@@ -327,7 +358,7 @@ function refreshAll(theData,force) {
 		refreshVolume(parsedData);
 	}
 	
-	refreshPlayControls(parsedData);
+	refreshPlayControls(parsedData,force);
 	refreshInfo(parsedData,force);
 	refreshState(parsedData);
 }
@@ -336,6 +367,7 @@ function refreshAll(theData,force) {
 function refreshNewPlayer(theData) {
 	var parsedData = fillDataHash(theData);
 	refreshAll(parsedData,1);
+	refreshInfo(parsedData,force);
 }
 
 function fillDataHash(theData) {
@@ -347,4 +379,17 @@ function fillDataHash(theData) {
 		returnData = parseData(myData);
 	}
 	return returnData;
+}
+
+function playlistChecker(start) {
+	var prev_url = url;
+	url = 'playlist.html';
+	var args = 'player='+player+'&ajaxRequest=1'; 
+	if(start != null && start != '') {
+		//alert([start != '', start == null]);
+		refreshPlaylist();
+		args = args + "&start="+start;
+	}
+	getStatusData(args, currentSong);
+	url = prev_url;
 }
