@@ -131,7 +131,7 @@ function refreshPlayControls(theData,force) {
 			objID.src = '[% webroot %]html/images/'+controls[i]+curstyle+'.gif';
 		}
 	}
-	
+
 	if (parsedData['isplayer']) {
 		var controls = ['rew','ffwd'];
 		
@@ -310,11 +310,11 @@ function refreshPlaylist(newPlayer) {
 			var plloc = top.frames.playlist.location;
 			
 			var newloc = plloc.protocol + '//' + plloc.host + plloc.pathname
-				+ plloc.search.replace(/&d=\d+/, '') + '&d=' + new Date().getTime() + plloc.hash;
+				+ plloc.search.replace(/&d=\d+/, '') + '&d=' + new Date().getTime();
 			
 			newloc=newloc.replace(playerExp, '=' + newPlayer);
 			newloc=newloc.replace(/&start=\d+&/, '&');
-			newloc=newloc.replace(/#\d+/, '#currentsong');
+			newloc=newloc + '#currentsong';
 			plloc.replace(newloc);
 			//DumperPopup([plloc,plloc.search.replace(playerExp, '='+newPlayer),plloc.search.replace(/&d=\d+/, '')]);
 		}

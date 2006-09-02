@@ -118,9 +118,9 @@ function refreshHrefElement (item,data,rpl) {
 	
 	var myString = new String($(item).innerHTML);
 	var rString = rpl + data + "&amp;player";
-	var rExp= new RegExp(rpl + ".+?&amp;player","i");
+	var rExp= new RegExp(rpl + ".*?&amp;player","i");
 	//safari hack
-	if (rExp.exec(myString) == null) rExp= new RegExp(rpl + ".+?&player","i");
+	if (rExp.exec(myString) == null) rExp= new RegExp(rpl + ".*?&player","i");
 	$(item).innerHTML = myString.replace(rExp, rString);
 }
 

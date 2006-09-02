@@ -16,13 +16,13 @@
 			
 			document.write('<frameset cols="50%,*" framespacing="2" border="2">' );
 			document.write('<frameset name="home" ID="home" border="0" frameborder="no" framespacing="0" rows="55,*">');
-			document.write('<frame name="header" ID="header" scrolling="no" src="home.html?player='+cPlayer+'&page='+ getPage() +'">');
+			document.write('<frame name="header" ID="header" scrolling="no" src="home.html?player'+cPlayer+'&page='+ getPage() +'">');
 			document.write('<frame name="browser" ID="browser" src="' + getHomeCookie('SlimServer-Browserpage') +'&player'+cPlayer + '">');
 			document.write('<\/frameset>');
 			
 			document.write('<frameset name="player_frame" ID="player_frame" border="0" frameborder="no" framespacing="0" rows="260,*">');
 			document.write('<frame ID="status" name="status" scrolling="no" src="status_header.html?player'+cPlayer+'">');
-			document.write('<frame ID="playlist" name="playlist" src="playlist.html?player='+cPlayer+'">');
+			document.write('<frame ID="playlist" name="playlist" src="playlist.html?player'+cPlayer+'">');
 			document.write('<\/frameset>');
 			document.write('<\/frameset>');
 			document.close();

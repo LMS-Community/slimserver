@@ -18,7 +18,7 @@ var playerExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 
 function changePlayer(player_List) {
 	player = player_List.options[player_List.selectedIndex].value;
-	setCookie('SlimServer-player',"="+player);
+	setCookie('SlimServer-player', '=' + player);
 	player = escape(player);
 	
 	var newPlayer = "=" + player;
