@@ -645,6 +645,8 @@ sub nextChunk {
 	my $chunk;
 	my $len;
 
+	return if !$client;
+
 	# if there's a chunk in the queue, then use it.
 	if (ref($client->chunks) eq 'ARRAY' && scalar(@{$client->chunks})) {
 

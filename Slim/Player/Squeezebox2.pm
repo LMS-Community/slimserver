@@ -201,7 +201,7 @@ sub upgradeFirmware {
 		return(0);
 	}
 	
-	$client->execute(["stop"]);
+	$client->stop();
 
 	$::d_firmware && msg("using new update mechanism: $filename\n");
 
