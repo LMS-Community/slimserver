@@ -88,7 +88,9 @@ function refresh() {
 	[% END %]
 
 	<h4>[% "PLUGIN_HEALTH_PERF_STATISTICS" | string %]</h4>
-	<p><a href="[% webroot %]plugins/Health/player.html?player=[% player | uri	%]">[% "PLUGIN_HEALTH_PLAYER" | string %] : [% playername %]</a></p>
+	[% IF player %]
+		<p><a href="[% webroot %]plugins/Health/player.html?player=[% player | uri	%]">[% "PLUGIN_HEALTH_PLAYER" | string %] : [% playername %]</a></p>
+	[% END %]
 	<p><a href="[% webroot %]plugins/Health/server.html?player=[% player | uri %]">[% "PLUGIN_HEALTH_SERVER" | string %]</a></p>
 	<p><a href="[% webroot %]plugins/Health/index.html?perf=off">[% "PLUGIN_HEALTH_PERF_DISABLE" | string %]</a></p>
     <p></p>

@@ -274,7 +274,7 @@ sub handleGraphs {
 
 	foreach my $mon (@perfmonLogs) {
 
-		next if ($type ne $mon->{'type'});
+		next if ($type ne $mon->{'type'} || $type eq 'player' && !$client);
 
 		my $monitor = ($type eq 'server') ? ${$mon->{'monitor'}} : $mon->{'monitor'}($client);
 
@@ -298,7 +298,7 @@ sub handleGraphs {
 		};
 	}
 
-	$params->{'playername'} = $client->name();
+	$params->{'playername'} = $client->name() if $client;
 	$params->{'type'} = $type;
 	$params->{'graphs'} = \@graphs;
 
