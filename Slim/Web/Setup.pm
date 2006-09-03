@@ -851,10 +851,10 @@ sub initSetupConfig {
 					}
 					
 					if ($client && $client->hasPowerControl()) {
-						$pageref->{'Groups'}{'Power'}{'PrefOrder'}[1] = 'powerOffDac';
+						$pageref->{'Groups'}{'PowerOn'}{'PrefOrder'}[1] = 'powerOffDac';
 					}
 					else {
-						$pageref->{'Groups'}{'Power'}{'PrefOrder'}[1] = undef;
+						$pageref->{'Groups'}{'PowerOn'}{'PrefOrder'}[1] = undef;
 					}										
 
 					if ($client && $client->hasPreAmp()) {
