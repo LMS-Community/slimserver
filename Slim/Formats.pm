@@ -243,12 +243,26 @@ sub readTags {
 
 	# Bug: 2381 - FooBar2k seems to add UTF8 boms to their values.
 	# Bug: 3769 - Strip trailing nulls
+	# Bug: 3998 - Strip UTF-16 BOMs from multiple genres (or other values).
 	while (my ($tag, $value) = each %{$tags}) {
 
 		if (defined $tags->{$tag}) {
 
-			$tags->{$tag} =~ s/$Slim::Utils::Unicode::bomRE//;
-			$tags->{$tag} =~ s/\000$//;
+			use bytes;
+
+			if (ref($tags->{$tag}) eq 'ARRAY') {
+
+				for (my $i = 0; $i < scalar @{$tags->{$tag}}; $i++) {
+
+					$tags->{$tag}->[$i] =~ s/$Slim::Utils::Unicode::bomRE//;
+					$tags->{$tag}->[$i] =~ s/\000$//;
+				}
+
+			} else {
+
+				$tags->{$tag} =~ s/$Slim::Utils::Unicode::bomRE//;
+				$tags->{$tag} =~ s/\000$//;
+			}
 		}
 		
 		$::d_info && $_dump_tags && $value && msg(". $tag : $value\n");
