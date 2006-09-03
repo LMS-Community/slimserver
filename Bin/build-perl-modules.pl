@@ -57,11 +57,6 @@ my %packageOptions = (
 
 		'env' => [qw(DBI-1.50/blib/lib: DBI-1.50/blib/arch)],
 	},
-	
-	'YAML-Syck-0.64' => {
-	
-		'Makefile.PL' => ' < y',
-	},
 );
 
 sub main {
@@ -107,6 +102,9 @@ sub main {
 
 	# Let the build process use modules installed already:
 	$ENV{'PERL5LIB'} = "$slimServerPath/CPAN";
+
+	# Tell MakeMaker to always use the default when prompted.
+	$ENV{'PERL_MM_USE_DEFAULT'} = 1;
 
 	# This is where the binaries will end up.
 	my $cpanDest = "$slimServerPath/CPAN/arch/$version/$archname/auto";
@@ -238,6 +236,8 @@ sub main {
 		unless (-f 'Makefile') {
 			die "There was a problem creating Makefile - exiting!\n";
 		}
+
+		exit;
 
 		print "Building..\n";
 		`make`;	
