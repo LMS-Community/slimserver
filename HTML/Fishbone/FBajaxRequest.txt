@@ -15,3 +15,5 @@ coverartpath|
 [%- IF coverThumb -%][% coverThumb %]
 [%- ELSE -%][% webroot %]html/images/cover.png
 [% END %]
+
+playlistTime|[% currentPlaylistChangeTime %]

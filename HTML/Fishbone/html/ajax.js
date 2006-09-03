@@ -333,22 +333,26 @@ function currentSong(theData) {
 	var doc = parent.playlist.document;
 	var found = 1;
 	
-	if (first == null || first == parsedData['first_item']) {
-		first = parsedData['first_item'];
-		
-		for (var i = parsedData['first_item']; i <= parsedData['last_item']; i++) {
-				
-				if (i == parsedData['currentsongnum']) {
-					doc.getElementById('playlistitem' + i).className = "currentListItem";
-					found = 0;
-				} else {
-					doc.getElementById('playlistitem' + i).className = "browsedbListItem";
-				}
+	//if (parsedData['playlistTime'] >= int(new Date().getTime() / 1000) - 2) {
+	//	refreshPlaylist();
+	//} else {
+		if (first == null || first == parsedData['first_item']) {
+			first = parsedData['first_item'];
+			
+			for (var i = parsedData['first_item']; i <= parsedData['last_item']; i++) {
+					
+					if (i == parsedData['currentsongnum']) {
+						doc.getElementById('playlistitem' + i).className = "currentListItem";
+						found = 0;
+					} else {
+						doc.getElementById('playlistitem' + i).className = "browsedbListItem";
+					}
+			}
+		} else {
+			first = parsedData['first_item'];
+			//playlistChecker(first);
 		}
-	} else {
-		first = parsedData['first_item'];
-		playlistChecker(first);
-	}
+	//}
 	
 	doc.location.hash = parsedData['currentsongnum'];
 }
