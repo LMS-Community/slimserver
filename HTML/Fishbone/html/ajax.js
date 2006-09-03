@@ -180,7 +180,8 @@ function refreshInfo(theData,force) {
 	if (newsong) {
 		elems.push('songtitle');
 		refreshElement('songtitle', parsedData['songtitle']);
-		playlistChecker();
+		refreshPlaylist();
+		//playlistChecker();
 	}
 	
 	if (parsedData['streamtitle']) {
@@ -385,7 +386,8 @@ function fillDataHash(theData) {
 function playlistChecker(start) {
 	var prev_url = url;
 	url = 'playlist.html';
-	var args = 'player='+player+'&ajaxRequest=1'; 
+	var args = 'player='+player+'&ajaxRequest=1';
+	
 	if(start != null && start != '') {
 		//alert([start != '', start == null]);
 		refreshPlaylist();
