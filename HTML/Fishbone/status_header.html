@@ -68,6 +68,7 @@
 		-->
 	</script>[% END %]
 </head>
+
 <body bgcolor="#FFFFFF" style="margin: 0" topmargin="0" leftmargin="0" rightmargin="0" [% IF NOT undock %]onload="refreshPlaylist('[% playerURI %]');doRefresh();"[% END %]>
 	<div ID="header">
 		<div id="mastHead">
@@ -77,10 +78,9 @@
 			</div>
 			<div id="playerlinks">
 			[% IF undock %]<span id="inc"></span>  [% END %]
-				[% IF sync %]
-					<span id="unsync"><a href="[% statusroot %]?p0=sync&p1=-&player=[% playerURI %]">[% "UNSYNC" | string %]</a>
-					 / </span>
-				[% END %]
+				
+				<span id="unsync">[% IF sync %]<a href="[% statusroot %]?p0=sync&p1=-&player=[% playerURI %]">[% "UNSYNC" | string %]</a>
+				 / [% END %]</span>
 				
 				<span id="sleeplink"><A href="javascript:processSleepLink('p0=button&amp;p1=sleep');"><span id='sleeptime'>[% IF sleeptime %][% sleep %][% ELSE %][% "SLEEP" | string %][% END %]</span></a>
 				 / </span>
