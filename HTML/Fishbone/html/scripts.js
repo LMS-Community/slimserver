@@ -284,7 +284,7 @@ function selectLink(lnk,reset) {
 }
 
 function setLink(lnk) {
-	lnk.href=getHomeCookie('SlimServer-Browserpage') + "&player=" + getPlayer('SlimServer-player');
+	lnk.href=getHomeCookie('SlimServer-Browserpage') + "&player" + getPlayer('SlimServer-player');
 }
 
 function toggleText(set) {
