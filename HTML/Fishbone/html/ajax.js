@@ -289,7 +289,7 @@ function refreshInfo(theData,force) {
 		if(parsedData['playermodel']) {
 			$('logoimage' + curstyle).src = '[% webroot %]html/images/' + parsedData['playermodel'] + '_logo.small' + curstyle + '.gif';
 		}
-		playlistChecker();
+		//playlistChecker();
 	}
 	return true;
 }
