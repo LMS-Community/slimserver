@@ -752,7 +752,7 @@ sub stream {
 			else {
 				$pcmsamplesize = '0';
 			}
-			$pcmsamplerate = '?';
+			$pcmsamplerate = chr(1);
 			$pcmendian = '?';
 			$pcmchannels = '?';
 			$outputThreshold = 10;
@@ -823,8 +823,6 @@ sub stream {
 				if ( $format =~ /(?:wma|asx)/ ) {
 					# Bug 3981, For WMA streams, we send the streamid using the pcmsamplerate field
 					# so the firmware knows which stream to play
-					$pcmsamplerate = chr(1);
-					
 					if ( my ($streamNum) = $request_string =~ /ffff:(\d+):0/ ) {
 						$pcmsamplerate = chr($streamNum);
 					}
