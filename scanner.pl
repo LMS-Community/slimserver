@@ -45,6 +45,7 @@ sub main {
 	our ($d_startup, $d_info, $d_remotestream, $d_parse, $d_scan, $d_sql, $d_itunes, $d_server, $d_import, $d_moodlogic, $d_musicmagic);
 	our ($rescan, $playlists, $wipe, $itunes, $musicmagic, $moodlogic, $force, $cleanup, $prefsFile, $progress, $priority);
 
+	our $logfile;
 	our $LogTimestamp = 1;
 
 	GetOptions(
@@ -69,12 +70,17 @@ sub main {
 		'prefsfile=s'  => \$prefsFile,
 		'progress'     => \$progress,
 		'priority=i'   => \$priority,
+		'logfile=s'    => \$logfile,
+		'LogTimestamp!'=> \$LogTimestamp,
 	);
 
 	if (!$rescan && !$wipe && !$playlists && !$musicmagic && !$moodlogic && !$itunes && !scalar @ARGV) {
 		usage();
 		exit;
 	}
+
+	# Open the log file, if any.
+	Slim::Utils::Misc::openLogFile($logfile);
 
 	# Bring up strings, database, etc.
 	initializeFrameworks();
@@ -273,6 +279,7 @@ Command line options:
 	--progress    Show a progress bar of the scan.
 	--prefsfile   Specify an alternate prefs file.
 	--priority    set process priority from -20 (high) to 20 (low)
+	--logfile     Send all debugging messages to the specified logfile.
 
 Debug flags:
 

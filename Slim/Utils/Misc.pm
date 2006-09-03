@@ -1080,6 +1080,32 @@ sub bt {
 	msg($msg);
 }
 
+=head2 openLogFile( $logfile )
+
+Opens a log file for writing in appending mode.
+
+=cut
+
+sub openLogFile {
+	my $logfile = shift || return;
+
+	my $logfilename = $logfile;
+
+	if (substr($logfile, 0, 1) ne "|") {
+		$logfilename = ">>" . $logfile;
+	}
+
+	if ($::stdio) {
+
+		open(STDERR, $logfilename) || die "Can't write to $logfilename: $!";
+
+	} else {
+
+		open(STDOUT, $logfilename) || die "Can't write to $logfilename: $!";
+		open(STDERR, '>&STDOUT')   || die "Can't dup stdout: $!";
+	}
+}
+
 =head2 msg( $entry, [ $forceLog ], [ $suppressTimestamp ])
 
 	Outputs an entry to the slimserver log file. 

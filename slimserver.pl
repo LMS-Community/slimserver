@@ -310,30 +310,12 @@ sub init {
 
 		save_pid_file();
 
-		if (defined $logfile) {
-
-			my $logfilename = $logfile;
-
-			if (substr($logfile, 0, 1) ne "|") {
-				$logfilename = ">>" . $logfile;
-			}
-
-			if ($stdio) {
-
-				open(STDERR, $logfilename) || die "Can't write to $logfilename: $!";
-
-			} else {
-
-				open(STDOUT, $logfilename) || die "Can't write to $logfilename: $!";
-				open(STDERR, '>&STDOUT')   || die "Can't dup stdout: $!";
-			}
-		}
-	};
+		Slim::Utils::Misc::openLogFile($logfile);
+	}
 
 	# Change UID/GID after the pid & logfiles have been opened.
 	$::d_server && msg("SlimServer settings effective user and group if requested...\n");
 	changeEffectiveUserAndGroup();
-
 
 	# do platform specific environment setup
 	# we have some special directories under OSX.
