@@ -964,10 +964,12 @@ END_OF_SONG
 SLEEP
 	DE	Schlafmodus
 	EN	Sleep
+	NL	Slapen
 
 SLEEPING_AT
 	DE	Schlafmodus am
 	EN	Sleeping at
+	NL	Slapen op
 
 POWERING_OFF
 	CS	Přecházím do standby...
@@ -993,6 +995,7 @@ POWER
 	FR	État
 	HE	הדלקה
 	JA	パワー
+	NL	Voeding
 	SV	Strömförsörjning
 	ZH_CN	电源开关
 
@@ -3629,6 +3632,7 @@ FOLDER
 	ES	Carpeta
 	FI	Kansio
 	IT	Cartella
+	NL	Map
 	ZH_CN	文件夹
 
 ITUNES
@@ -12705,10 +12709,12 @@ SETUP_PRIORITY_LOW
 SETUP_DIGITALOUTPUTENCODING
 	DE	Kodierung des digitalen Ausgangs
 	EN	Digital Output Encoding
+	NL	Digitale uitvoer codering
 
 SETUP_DIGITALOUTPUTENCODING_DESC
 	DE	Sie können für den digitalen Ausgang zwischen S/PDIF und AES/BEU wählen.
 	EN	You can choose between S/PDIF and AES/BEU encoding for the digital outputs.
+	NL	Je kunt kiezen tussen S/PDIF en AES/BEU codering voor de digitale uitvoeren.
 
 DIGITALOUTPUTENCODING_SPDIF
 	EN	S/PDIF
@@ -12719,50 +12725,62 @@ DIGITALOUTPUTENCODING_AESEBU
 SETUP_WORDCLOCKOUTPUT
 	DE	Word Clock auf S/PDIF Ausgängen
 	EN	Word Clock On S/PDIF Outputs
+	NL	Woordklok op S/PDIF uitvoeren
 
 SETUP_WORDCLOCKOUTPUT_DESC
 	DE	Wenn die digitalen Eingänge verwendet werden, kann der Transporter das Signal direkt durchreichen oder auf den S/PDIF Ausgängen ein Word Clock Signal generieren.
 	EN	When using the digital inputs, Transporter can pass the signal through or generate a word clock signal on the S/PDIF outputs.
+	NL	Bij gebruik van de digitale invoer kan de Transporter het signaal doorlaten of een woordklok signaal genereren op de S/PDIF uitvoeren.
 
 WORDCLOCKOUTPUT_GENERATECLOCK
 	DE	Word Clock generieren
 	EN	Generate word clock
+	NL	Genereer woordklok
 
 WORDCLOCKOUTPUT_PASSTHROUGH
 	DE	Signal durchreichen
 	EN	Digital passthrough
+	NL	Digitaal doorlaten
 
 SETUP_POWEROFFDAC
 	DE	DAC ausschalten
 	EN	Power Off DAC
+	NL	Uitzetten DAC
 
 SETUP_POWEROFFDAC_DESC
 	DE	Wenn der Transporter ausgeschaltet wird kann der Digital/Analog Wandler (DAC) deaktiviert werden.
 	EN	When Transporter is is powered off the digital-to-analog converter can be disabled.
+	NL	Wanneer de Transporter uit staat kan de digitale naar analoge omzetter uitgezet worden.
 
 POWEROFFDAC_ALWAYSON
 	DE	DAC immer aktiv
 	EN	DAC always on
+	NL	DAC altijd aan
 
 POWEROFFDAC_WHENOFF
 	DE	DAC beim Ausschalten deaktivieren
 	EN	Power down DAC when off
+	NL	Zet DAC uit wanneer uit
 
 SETUP_POLARITYINVERSION
 	DE	Polarität umkehren
 	EN	Polarity Inversion
+	NL	Polariteitinversie
 
 SETUP_POLARITYINVERSION_DESC
 	DE	Transporter kann die Polarität des Audiosignals umkehren.
 	EN	Transporter can invert the polarity of the audio signal.
+	NL	De Transporter kan de polariteit inverteren van het audio signaal.
 
 POLARITYINVERSION_NORMAL
 	DE	Normale Polarität
 	EN	Normal polarity
+	NL	Normale polariteit
 
 POLARITYINVERSION_INVERTED
 	DE	Umgekehrte Polarität
 	EN	Inverted polarity
+	NL	Omgekeerde polariteit
 
 INFORMATION_PLAYER_VOLTAGE
 	EN	Voltage
