@@ -110,58 +110,6 @@ sub initPlugin {
 	return $initialized;
 }
 
-sub isMusicLibraryFileChanged {
-
-	my $fileMTime = get("http://$MMSHost:$MMSport/api/cacheid?contents");
-	my $MMMstatus = get("http://$MMSHost:$MMSport/api/getStatus");
-
-	if ($::d_musicmagic) {
-		msg("MusicMagic: read cacheid of $fileMTime");
-		msg("MusicMagic: got status - $MMMstatus");
-	}
-
-	chomp($fileMTime);
-	chomp($MMMstatus);
-
-	# Only say "yes" if it has been more than one minute since we last finished scanning
-	# and the file mod time has changed since we last scanned. Note that if we are
-	# just starting, $lastMusicLibraryDate is undef, so both $fileMTime
-	# will be greater than 0 and time()-0 will be greater than 180 :-)
-	my $oldTime = Slim::Utils::Prefs::get('MMMlastMusicMagicLibraryDate') || 0;
-	my $lastMusicLibraryFinishTime = Slim::Utils::Prefs::get('MMMlastMusicLibraryFinishTime') || 0;
-
-	if ($fileMTime > $oldTime) {
-
-		my $musicMagicScanInterval = Slim::Utils::Prefs::get('musicmagicscaninterval');
-
-		if ($::d_musicmagic) {
-
-			msg("MusicMagic: music library has changed! Details:\n");
-			msg("\tCacheid - $fileMTime\n");
-			msg("\tLastCacheid - $oldTime\n");
-			msg("\tReload Interval - $musicMagicScanInterval\n");
-			msg("\tLast Scan - $lastMusicLibraryFinishTime\n");
-		}
-		
-		if (!$musicMagicScanInterval) {
-
-			# only scan if musicmagicscaninterval is non-zero.
-			$::d_musicmagic && msg("MusicMagic: Scan Interval set to 0, rescanning disabled\n");
-
-			return 0;
-		}
-
-		if (time - $lastMusicLibraryFinishTime > $musicMagicScanInterval) {
-
-			return 1;
-		}
-
-		$::d_musicmagic && msg("MusicMagic: waiting for $musicMagicScanInterval seconds to pass before rescanning\n");
-	}
-
-	return 0;
-}
-
 sub startScan {
 	my $class = shift;
 

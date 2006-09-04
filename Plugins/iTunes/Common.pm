@@ -255,32 +255,6 @@ sub isMusicLibraryFileChanged {
 	return 0;
 }
 
-sub checker {
-	my $class = shift;
-	my $firstTime = shift || 0;
-
-	if (!Slim::Utils::Prefs::get('itunes')) {
-
-		return 0;
-	}
-
-	if (!$firstTime && !$class->stillScanning && $class->isMusicLibraryFileChanged) {
-		#startScan();
-	}
-
-	# make sure we aren't doing this more than once...
-	#Slim::Utils::Timers::killTimers(0, \&checker);
-
-	#my $interval = Slim::Utils::Prefs::get('itunesscaninterval') || 3600;
-
-	# the very first time, we do want to scan right away
-	#if ( $firstTime ) {
-	#	$interval = 10;
-	#}
-
-	#Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&checker);
-}
-
 sub normalize_location {
 	my $class    = shift;
 	my $location = shift;

@@ -52,7 +52,7 @@ sub shutdownPlugin {
 
 	# turn off checker
 	Slim::Utils::Timers::killTimers(0, \&checker);
-	
+
 	# disable protocol handler
 	Slim::Player::ProtocolHandlers->registerHandler('moodlogicplaylist', 0);
 
@@ -93,6 +93,8 @@ sub mixable {
 }
 
 sub initPlugin {
+	my $class = shift;
+
 	return 1 if $initialized; 
 	return 0 if Slim::Utils::OSDetect::OS() ne 'win';
 	
@@ -157,8 +159,6 @@ sub initPlugin {
 	#Slim::Utils::Strings::addStrings($strings);
 	Slim::Player::ProtocolHandlers->registerHandler("moodlogicplaylist", "0");
 	
-	my $class = __PACKAGE__;
-
 	# addImporter for Plugins, may include mixer function, setup function, mixerlink reference and use on/off.
 	Slim::Music::Import->addImporter($class, {
 		'mixer'     => \&mixerFunction,
@@ -175,14 +175,19 @@ sub initPlugin {
 
 	$initialized = 1;
 
+	checker($initialized);
+
 	return $initialized;
 }
 
 sub addGroups {
-	my ($groupRef,$prefRef) = &setupUse();
-	Slim::Web::Setup::addGroup('SERVER_SETTINGS','moodlogic',$groupRef,undef,$prefRef);
-	Slim::Web::Setup::addChildren('SERVER_SETTINGS','MOODLOGIC');
-	Slim::Web::Setup::addCategory('MOODLOGIC',&setupCategory);
+	my ($groupRef,$prefRef) = setupUse();
+
+	Slim::Web::Setup::addGroup('SERVER_SETTINGS', 'moodlogic', $groupRef, undef, $prefRef);
+
+	Slim::Web::Setup::addChildren('SERVER_SETTINGS', 'MOODLOGIC');
+
+	Slim::Web::Setup::addCategory('MOODLOGIC', setupCategory());
 }
 
 sub checker {
@@ -190,18 +195,55 @@ sub checker {
 
 	if (!Slim::Utils::Prefs::get('moodlogic')) {
 		return;
+	}
+	
+	if (!$firstTime && !Slim::Music::Import->stillScanning && isMusicLibraryFileChanged()) {
 
+		Slim::Control::Request::executeRequest(undef, ['rescan']);
 	}
-	
-	if (!$firstTime && !Slim::Music::Import->stillScanning && Plugins::MoodLogic::Importer::isMusicLibraryFileChanged()) {
-		startScan();
-	}
-	
+
 	# make sure we aren't doing this more than once...
 	Slim::Utils::Timers::killTimers(0, \&checker);
 
 	# Call ourselves again after 5 seconds
 	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 5.0), \&checker);
+}
+
+sub isMusicLibraryFileChanged {
+	my $file = $mixer->{JetFilePublic};
+
+	my $fileMTime = (stat $file)[9];
+	
+	# Only say "yes" if it has been more than one minute since we last finished scanning
+	# and the file mod time has changed since we last scanned. Note that if we are
+	# just starting, $lastMusicLibraryDate is undef, so both $fileMTime
+	# will be greater than 0 and time()-0 will be greater than 180 :-)
+	if ($file && $fileMTime > Slim::Utils::Prefs::get('lastMoodLogicLibraryDate')) {
+
+		my $moodlogicscaninterval = Slim::Utils::Prefs::get('moodlogicscaninterval');
+
+		$::d_moodlogic && msg("MoodLogic: music library has changed!\n");
+
+		if (!$moodlogicscaninterval) {
+			
+			# only scan if moodlogicscaninterval is non-zero.
+			$::d_moodlogic && msg("MoodLogic: Scan Interval set to 0, rescanning disabled\n");
+
+			return 0;
+		}
+
+		if (!$lastMusicLibraryFinishTime) {
+			return 1;
+		}
+		
+		if (time() - $lastMusicLibraryFinishTime > $moodlogicscaninterval) {
+			return 1;
+		}
+
+		$::d_moodlogic && msg("MoodLogic: waiting for $moodlogicscaninterval seconds to pass before rescanning\n");
+	}
+	
+	return 0;
 }
 
 sub getMoodWheel {

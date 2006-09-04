@@ -40,12 +40,16 @@ sub initPlugin {
 	Slim::Music::Import->addImporter($class, { 'use' => 1 });
 
 	$class->initialized(1);
+	$class->checker(1);
 
 	return 1;
 }
 
 sub shutdownPlugin {
 	my $class = shift;
+
+	# turn off checker
+	Slim::Utils::Timers::killTimers(0, \&checker);
 
 	# disable protocol handler
 	Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
@@ -58,6 +62,33 @@ sub shutdownPlugin {
 
 	# set importer to not use
 	Slim::Music::Import->useImporter($class, 0);
+}
+
+sub checker {
+	my $class     = shift;
+	my $firstTime = shift || 0;
+
+	if (!Slim::Utils::Prefs::get('itunes')) {
+
+		return 0;
+	}
+
+	if (!$firstTime && !Slim::Music::Import->stillScanning && $class->isMusicLibraryFileChanged) {
+
+		Slim::Control::Request::executeRequest(undef, ['rescan']);
+	}
+
+	# make sure we aren't doing this more than once...
+	Slim::Utils::Timers::killTimers(0, \&checker);
+
+	my $interval = Slim::Utils::Prefs::get('itunesscaninterval') || 3600;
+
+	# the very first time, we do want to scan right away
+	if ($firstTime) {
+		$interval = 10;
+	}
+
+	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&checker);
 }
 
 sub addGroups {

@@ -148,40 +148,6 @@ sub initPlugin {
 	return $initialized;
 }
 
-sub isMusicLibraryFileChanged {
-	my $file = $mixer->{JetFilePublic};
-
-	my $fileMTime = (stat $file)[9];
-	
-	# Only say "yes" if it has been more than one minute since we last finished scanning
-	# and the file mod time has changed since we last scanned. Note that if we are
-	# just starting, $lastMusicLibraryDate is undef, so both $fileMTime
-	# will be greater than 0 and time()-0 will be greater than 180 :-)
-	if ($file && $fileMTime > Slim::Utils::Prefs::get('lastMoodLogicLibraryDate')) {
-		my $moodlogicscaninterval = Slim::Utils::Prefs::get('moodlogicscaninterval');
-		
-		$::d_moodlogic && msg("MoodLogic: music library has changed!\n");
-		
-		unless ($moodlogicscaninterval) {
-			
-			# only scan if moodlogicscaninterval is non-zero.
-			$::d_moodlogic && msg("MoodLogic: Scan Interval set to 0, rescanning disabled\n");
-
-			return 0;
-		}
-
-		return 1 if (!$lastMusicLibraryFinishTime);
-		
-		if (time() - $lastMusicLibraryFinishTime > $moodlogicscaninterval) {
-			return 1;
-		} else {
-			$::d_moodlogic && msg("MoodLogic: waiting for $moodlogicscaninterval seconds to pass before rescanning\n");
-		}
-	}
-	
-	return 0;
-}
-
 sub startScan {
 	my $class = shift;
 	

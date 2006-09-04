@@ -85,7 +85,7 @@ sub enabled {
 sub shutdownPlugin {
 
 	# turn off checker
-	#Slim::Utils::Timers::killTimers(0, \&checker);
+	Slim::Utils::Timers::killTimers(0, \&checker);
 
 	# disable protocol handler?
 	Slim::Player::ProtocolHandlers->registerHandler('musicmaglaylist', 0);
@@ -149,9 +149,7 @@ sub initPlugin {
 		# Note: Check version restrictions if any
 		$initialized = $content;
 
-		#checker($initialized);
-
-		my $class = __PACKAGE__;
+		checker($initialized);
 
 		# addImporter for Plugins, may include mixer function, setup function, mixerlink reference and use on/off.
 		Slim::Music::Import->addImporter($class, {
@@ -166,11 +164,14 @@ sub initPlugin {
 		addGroups();
 
 		if (scalar @{grabMoods()}) {
+
 			Slim::Buttons::Common::addMode('musicmagic_moods', {}, \&setMoodMode);
+
 			Slim::Buttons::Home::addMenuOption('MUSICMAGIC_MOODS', {
 				'useMode'  => 'musicmagic_moods',
 				'mood'     => 'none',
 			});
+
 			Slim::Web::Pages->addPageLinks("browse", {
 				'MUSICMAGIC_MOODS' => "plugins/MusicMagic/musicmagic_moods.html"
 			});
@@ -187,8 +188,8 @@ sub initPlugin {
 
 sub defaultMap {
 	#Slim::Buttons::Common::addMode('musicmagic_mix', \%mixFunctions);
-	Slim::Hardware::IR::addModeDefaultMapping('musicmagic_mix',\%mixMap);
-	return undef;
+
+	Slim::Hardware::IR::addModeDefaultMapping('musicmagic_mix', \%mixMap);
 }
 
 sub playMix {
@@ -200,15 +201,22 @@ sub playMix {
 	my $playAddInsert;
 	
 	if ($append == 1) {
+
 		$line1 = $client->string('ADDING_TO_PLAYLIST');
 		$playAddInsert = 'addtracks';
+
 	} elsif ($append == 2) {
+
 		$line1 = $client->string('INSERT_TO_PLAYLIST');
 		$playAddInsert = 'inserttracks';
+
 	} elsif (Slim::Player::Playlist::shuffle($client)) {
+
 		$line1 = $client->string('PLAYING_RANDOMLY_FROM');
 		$playAddInsert = 'playtracks';
+
 	} else {
+
 		$line1 = $client->string('NOW_PLAYING_FROM');
 		$playAddInsert = 'playtracks';
 	}
@@ -225,11 +233,12 @@ sub playMix {
 }
 
 sub addGroups {
-	my $category = &setupCategory;
+	my $category = setupCategory();
 
 	Slim::Web::Setup::addCategory('MUSICMAGIC',$category);
 	
-	my ($groupRef,$prefRef) = &setupUse();
+	my ($groupRef, $prefRef) = setupUse();
+
 	Slim::Web::Setup::addGroup('SERVER_SETTINGS', 'musicmagic', $groupRef, undef, $prefRef);
 
 	Slim::Web::Setup::addChildren('SERVER_SETTINGS', 'MUSICMAGIC');
@@ -302,10 +311,9 @@ sub checker {
 		return;
 	}
 
-	my $change = 0;
-
 	if (!$firstTime && !Slim::Music::Import->stillScanning && isMusicLibraryFileChanged()) {
-		startScan();
+
+		Slim::Control::Request::executeRequest(undef, ['rescan']);
 	}
 
 	# make sure we aren't doing this more than once...
