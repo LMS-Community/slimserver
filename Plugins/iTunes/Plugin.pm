@@ -73,7 +73,7 @@ sub checker {
 		return 0;
 	}
 
-	if (!$firstTime && !Slim::Music::Import->stillScanning && $class->isMusicLibraryFileChanged) {
+	if (!$firstTime && !Slim::Music::Import->stillScanning && __PACKAGE__->isMusicLibraryFileChanged) {
 
 		Slim::Control::Request::executeRequest(undef, ['rescan']);
 	}
