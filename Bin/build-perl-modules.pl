@@ -237,8 +237,6 @@ sub main {
 			die "There was a problem creating Makefile - exiting!\n";
 		}
 
-		exit;
-
 		print "Building..\n";
 		`make`;	
 
