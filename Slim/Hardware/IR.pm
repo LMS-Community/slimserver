@@ -620,7 +620,7 @@ sub processFrontPanel {
 		processCode($client,$irCode,$irTime);
 
 		# start timing for hold time, preparing the .hold event for later.
-		Slim::Utils::Timers::setTimer($client,Time::HiRes::time()+($Slim::Hardware::IR::IRHOLDTIME), \&fireHold, $1.'.hold', $client->lastirtime);
+		Slim::Utils::Timers::setTimer($client,Time::HiRes::time()+($Slim::Hardware::IR::IRHOLDTIME), \&fireHold, $code.'.hold', $client->lastirtime);
 
 	} else {
 		my $timediff = $irTime - $client->lastirtime();
