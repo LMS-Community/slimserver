@@ -696,6 +696,8 @@ sub setPlayerSetting {
 	my $pref = shift;
 	my $value = shift;
 
+	return if !defined $value;
+
 	$::d_prefs && msg("setPlayerSetting $pref = $value\n");
 
 	my $currpref = $pref_settings->{$pref};
