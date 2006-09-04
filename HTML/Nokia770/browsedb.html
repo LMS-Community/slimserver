@@ -27,9 +27,10 @@
 		<a href="browsetree.html?player=[% playerURI %]"><font class="pagebartext">[% "HERE" | string %]</a>.</font>
 	[% END %]
 [% END %]
+[% PROCESS galleryselect.html %]
 <table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#EEEEEE">
-	<tr>
-		<td>&nbsp;&nbsp;[% PROCESS crumblist noHomeLink = 1%]</td>
+		<td valign = 'top'>&nbsp;&nbsp;[% PROCESS crumblist noHomeLink = 1%]
+		</td>
 	</tr>
 	<tr>
 		<td class="pagebartext">
