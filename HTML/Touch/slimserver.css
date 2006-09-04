@@ -374,6 +374,13 @@ div#systemNotWorking{
 	z-index: 12;
 }
 
+div#gallerySelect {
+        position: fixed;
+        left: 30;
+        top: 45;
+        z-index: 12;
+}
+
 div#addedToPlaylist{
         position: fixed;
         z-index: 100;
