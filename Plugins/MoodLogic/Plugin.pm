@@ -39,13 +39,13 @@ sub getDisplayName {
 }
 
 sub enabled {
-	return ($::VERSION ge '6.1') && Slim::Utils::OSDetect::OS() eq 'win' && initPlugin();
+	return ($::VERSION ge '6.1') && Slim::Utils::OSDetect::OS() eq 'win' && __PACKAGE__->initPlugin();
 }
 
 sub canUseMoodLogic {
 	my $class = shift;
 
-	return (Slim::Utils::OSDetect::OS() eq 'win' && initPlugin());
+	return (Slim::Utils::OSDetect::OS() eq 'win' && __PACKAGE__->initPlugin());
 }
 
 sub shutdownPlugin {
