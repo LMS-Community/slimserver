@@ -72,7 +72,7 @@
 					[%# IF browseby == 'BROWSE_BY_ARTWORK' && level == 0 %]
 					[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age') %]
 						[% IF loop.index mod 6 == 1 || loop.first %]<tr>[% END %]
-						[% IF loop.first %][% ELSE %]
+						[% IF loop.first && contributor.id < 1 %][% ELSE %]
 						<td>
 						[% PROCESS browsedb_artwork.html %]
 						</td>
