@@ -5,7 +5,8 @@
 		[% IF not nofolder %]
 			[% INCLUDE music_folder %]
 		[% END %]
-		[% INCLUDE artwork %]
+		[%# INCLUDE artwork %]
+		[% INCLUDE albums %]
 		[% INCLUDE artist %]
 		[% INCLUDE new_music %]
 		[% INCLUDE random_mix %]
@@ -14,12 +15,11 @@
 		<td height="20"></td>
 	</tr>
 	<tr>
-		[% INCLUDE albums %]
 		[% INCLUDE ajax_artwork %]
 		[% INCLUDE playlists %]
 		[% INCLUDE genre %]
-		[%# INCLUDE statistics %]
 		[% INCLUDE favorites %]
+		[% INCLUDE statistics %]
 	</tr>
 [% END %]
 
