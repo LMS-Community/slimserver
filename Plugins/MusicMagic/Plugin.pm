@@ -71,7 +71,7 @@ sub useMusicMagic {
 }
 
 sub canUseMusicMagic {
-	return $initialized || initPlugin();
+	return $initialized || __PACKAGE__->initPlugin();
 }
 
 sub getDisplayName {
@@ -79,7 +79,7 @@ sub getDisplayName {
 }
 
 sub enabled {
-	return ($::VERSION ge '6.1') && initPlugin();
+	return ($::VERSION ge '6.1') && __PACKAGE__->initPlugin();
 }
 
 sub shutdownPlugin {
