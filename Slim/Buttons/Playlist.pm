@@ -96,8 +96,12 @@ sub init {
 
 				my $newindex = $client->knobPos();
 				my $oldindex = browseplaylistindex($client);
+				my $songcount = Slim::Player::Playlist::count($client);
 
-				if ($oldindex != $newindex) {
+				# XXXX assume list is long enough for wrapround to only occur when:
+				my $wrap = (abs($newindex - $oldindex) > $songcount / 2); 
+
+				if ($oldindex != $newindex && $songcount > 1) {
 					browseplaylistindex($client,$newindex);
 				}
 
@@ -105,21 +109,23 @@ sub init {
 
 				$::d_ui && msgf("funct: [$funct] old: $oldindex new: $newindex is after setting: [%s]\n", browseplaylistindex($client));
 
-				my ($songcount) = Slim::Player::Playlist::count($client);
+				if ($songcount < 2) {
+					
+					if ($newindex < 0) {
 
-				if ($songcount < 2 && $oldindex == 0 && $newindex == -1) {
+						$client->bumpDown;
 
-					$client->bumpDown;
+					} elsif ($newindex > 0) {
 
-				} elsif ($songcount < 2 && $oldindex == -1 && $newindex == 0) {
+						$client->bumpUp;
 
-					$client->bumpUp;
+					}
 
-				} elsif ($oldindex > $newindex) {
+				} elsif ($oldindex > $newindex && !$wrap || $oldindex < $newindex && $wrap) {
 
 					$client->pushUp;
 
-				} elsif ($oldindex < $newindex) {
+				} else {
 
 					$client->pushDown;
 				}
@@ -460,12 +466,11 @@ sub browseplaylistindex {
 	}
 	
 	# update list length for the knob.  ### HACK ATTACK ###
-	#
-	# Only do when we are in mode playlist
-	# See Bug: 3561
+	# - only do when we are in mode playlist - see bug: 3561
+	# - use length of 1 for both 1 item lists and empty playlists
 	if (Slim::Buttons::Common::mode($client) eq 'playlist') {
 
-		$client->param('listLen', Slim::Player::Playlist::count($client));
+		$client->param('listLen', Slim::Player::Playlist::count($client) || 1);
 	}
 	
 	# get (and optionally set) the browseplaylistindex parameter that's kept in param stack
