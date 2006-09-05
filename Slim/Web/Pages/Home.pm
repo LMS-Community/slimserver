@@ -20,6 +20,8 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^home\.(?:htm|xml)/, sub {$class->home(@_)});
 	Slim::Web::HTTP::addPageFunction(qr/^index\.(?:htm|xml)/, sub {$class->home(@_)});
 	Slim::Web::HTTP::addPageFunction(qr/^squeezenetwork\.(?:htm|xml)/, sub {$class->squeezeNetwork(@_)});
+	
+	$class->addPageLinks("plugins", {'SQUEEZENETWORK_SWITCH' => 'squeezenetwork.html'});
 
 	$class->addPageLinks("help",{'GETTING_STARTED' => "html/docs/quickstart.html"});
 	$class->addPageLinks("help",{'PLAYER_SETUP' => "html/docs/ipconfig.html"});
@@ -52,10 +54,6 @@ sub home {
 	if (!exists $Slim::Web::Pages::additionalLinks{"search"}) {
 		$class->addPageLinks("search", {'SEARCHMUSIC' => "livesearch.html"});
 		$class->addPageLinks("search", {'ADVANCEDSEARCH' => "advanced_search.html"});
-	}
-	
-	if (!exists $Slim::Web::Pages::additionalLinks{"plugins"}) {
-		$class->addPageLinks("plugins", {'SQUEEZENETWORK_SWITCH' => 'squeezenetwork.html'});
 	}
 
 	if (!exists $Slim::Web::Pages::additionalLinks{"help"}) {
