@@ -131,7 +131,7 @@ sub gotViaHTTP {
 		return;
 	}
 
-	if (!$feed) {
+	if ( !ref $feed || ref $feed ne 'HASH' ) {
 		# call ecb
 		my $ecb = $params->{'ecb'};
 		$ecb->( '{PARSE_ERROR}', $params->{'params'} );
