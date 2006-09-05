@@ -483,8 +483,8 @@ sub getNextFeed {
 	
 	if ( !$client->param( 'PLUGIN.RssNews.current_feed' ) ) {
 		$client->update( {
-			'line1' => $client->string('PLUGIN_RSSNEWS'),
-			'line2' => $client->string('PLUGIN_RSSNEWS_WAIT'),
+			'line' => [ $client->string('PLUGIN_RSSNEWS'),
+						$client->string('PLUGIN_RSSNEWS_WAIT') ],
 		} );
 	}
 	
@@ -525,8 +525,8 @@ sub gotError {
 		
 		if ( $client->param('PLUGIN.RssNews.screensaver_mode') ) {
 			$client->update( {
-				'line1' => $client->string('PLUGIN_RSSNEWS'),
-				'line2' => $client->string('PLUGIN_RSSNEWS_ERROR'),
+				'line' => [ $client->string('PLUGIN_RSSNEWS'),
+							$client->string('PLUGIN_RSSNEWS_ERROR') ],
 			} );
 		}
 	}
