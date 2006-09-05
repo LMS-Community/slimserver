@@ -522,6 +522,13 @@ sub gotError {
 	
 	if ( $errors == scalar @feeds ) {
 		$::d_plugins && msg("RSS: All feeds failed, giving up\n");
+		
+		if ( $client->param('PLUGIN.RssNews.screensaver_mode') ) {
+			$client->update( {
+				'line1' => $client->string('PLUGIN_RSSNEWS'),
+				'line2' => $client->string('PLUGIN_RSSNEWS_ERROR'),
+			} );
+		}
 	}
 	else {	
 		getNextFeed( $client );
