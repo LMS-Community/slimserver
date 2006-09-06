@@ -992,7 +992,7 @@ sub settingsDiagString {
 	);
 	
 	# Also display the Perl version and MySQL version
-	push @diagString, sprintf("%s%s v%s %s",
+	push @diagString, sprintf("%s%s %s %s",
 	
 		Slim::Utils::Strings::string('PERL_VERSION'),
 		Slim::Utils::Strings::string('COLON'),
