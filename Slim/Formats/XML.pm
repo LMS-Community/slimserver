@@ -210,7 +210,7 @@ sub parseRSS {
 		my $url = $image->{'url'};
 		
 		# some Podcasts have the image URL in the link tag
-		if ( !$url && $image->{'link'} =~ /(jpg|gif|png)$/i ) {
+		if ( !$url && $image->{'link'} && $image->{'link'} =~ /(jpg|gif|png)$/i ) {
 			$url = $image->{'link'};
 		}
 		
