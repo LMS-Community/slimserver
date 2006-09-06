@@ -826,8 +826,7 @@ sub generateHTTPResponse {
 		$metaDataBytes{$httpClient} = - length($headers);
 		
 		# fork for streaming
-		# XXX: May revisit this post-6.5, for now it's not quite stable
-		if ( 0 && $^O !~ /Win32/ && Slim::Utils::Prefs::get('forkedStreaming') ) {
+		if ( $^O !~ /Win32/ && Slim::Utils::Prefs::get('forkedStreaming') ) {
 			
 			# This doesn't support synced players at the moment
 			if ( !Slim::Player::Sync::isSynced($client) ) {
