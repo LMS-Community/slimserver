@@ -708,27 +708,45 @@ sub stream {
 		$format ||= 'mp3';
 		
 		if ($format eq 'wav') {
-			my $track = Slim::Schema->rs('Track')->objectForUrl({
-				'url' => $url,
-			});
-
 			$formatbyte = 'p';
-			$pcmsamplesize = $client->pcm_sample_sizes($track->samplesize);
-			$pcmsamplerate = $client->pcm_sample_rates($track->samplerate);
+			$pcmsamplesize = '1';
+			$pcmsamplerate = '3';
 			$pcmendian = '1';
 			$pcmchannels = '2';
 			$outputThreshold = 0;
+
+			if ($url) {
+
+				my $track = Slim::Schema->rs('Track')->objectForUrl({
+					'url' => $url,
+		       		});
+
+				$pcmsamplesize = $client->pcm_sample_sizes($track);
+				$pcmsamplerate = $client->pcm_sample_rates($track);
+			}
+
 		} elsif ($format eq 'aif') {
 			my $track = Slim::Schema->rs('Track')->objectForUrl({
 				'url' => $url,
 			});
 
 			$formatbyte = 'p';
-			$pcmsamplesize = $client->pcm_sample_sizes($track->samplesize);
-			$pcmsamplerate = $client->pcm_sample_rates($track->samplerate);
+			$pcmsamplesize = '1';
+			$pcmsamplerate = '3';
 			$pcmendian = '0';
 			$pcmchannels = '2';
 			$outputThreshold = 0;
+
+			if ($url) {
+
+				my $track = Slim::Schema->rs('Track')->objectForUrl({
+					'url' => $url,
+		       		});
+
+				$pcmsamplesize = $client->pcm_sample_sizes($track);
+				$pcmsamplerate = $client->pcm_sample_rates($track);
+			 }
+
 		} elsif ($format eq 'flc') {
 			$formatbyte = 'f';
 			$pcmsamplesize = '?';
@@ -736,6 +754,21 @@ sub stream {
 			$pcmendian = '?';
 			$pcmchannels = '?';
 			$outputThreshold = 0;
+
+			# Only on Squeezebox2/3, threshold the output buffer for
+			# downsampled 96kHz flac.
+			if ($url) {
+
+				my $track = Slim::Schema->rs('Track')->objectForUrl({
+					'url' => $url,
+				});
+
+				if ($client->model() eq 'squeezebox2' &&
+				    $track && $track->samplerate() == 96000) {
+			    		$outputThreshold = 20;
+				}
+			}
+
 		} elsif ( $format =~ /(?:wma|asx)/ ) {
 			$formatbyte = 'w';
 			# Commandeer the unused pcmsamplesize field
@@ -899,7 +932,7 @@ sub stream {
 
 sub pcm_sample_sizes {
 	my $client = shift;
-	my $sample_size = shift;
+	my $track = shift;
 
 	my %pcm_sample_sizes = ( 8 => '0',
 				 16 => '1',
@@ -907,12 +940,12 @@ sub pcm_sample_sizes {
 				 32 => '4',
 				 );
 
-	return $pcm_sample_sizes{$sample_size} || '1';
+	return $pcm_sample_sizes{$track->samplesize()} || '1';
 }
 
 sub pcm_sample_rates {
 	my $client = shift;
-	my $sample_rate = shift;
+	my $track = shift;
 
     	my %pcm_sample_rates = ( 11000 => '0',				 
 				 22000 => '1',				 
@@ -921,7 +954,7 @@ sub pcm_sample_rates {
 				 48000 => '4',
 				 );
 
-	return $pcm_sample_rates{$sample_rate} || '3';
+	return $pcm_sample_rates{$track->samplerate()} || '3';
 }
 
 sub sendFrame {

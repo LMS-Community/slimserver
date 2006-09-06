@@ -137,6 +137,12 @@
 			</li>
 		[% END %]
 	
+		[% IF itemobj.samplesize %] 
+			<li><div class="songInfoTitle">[% "SAMPLESIZE" | string; "COLON" | string %]</div>
+				<div class="songInfoText">[% itemobj.samplesize | html %] [% "BITS" | string %]</div>
+			</li>
+		[% END %]
+	
 		[% IF itemobj.bpm %]
 			<li><div class="songInfoTitle">[% "BPM" | string; "COLON" | string %]</div>
 				<div class="songInfoText">[% itemobj.bpm | html %]</div>

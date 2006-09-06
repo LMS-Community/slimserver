@@ -744,7 +744,7 @@ sub prefSet {
 
 sub pcm_sample_rates {
 	my $client = shift;
-	my $sample_rate = shift;
+	my $track = shift;
 
     	my %pcm_sample_rates = ( 8000 => '5',
 				 11000 => '0',
@@ -758,7 +758,7 @@ sub pcm_sample_rates {
 				 96000 => '9',			 
 				 );
 
-	return $pcm_sample_rates{$sample_rate} || '3';
+	return $pcm_sample_rates{$track->samplerate()} || '3';
 }
 
 1;
