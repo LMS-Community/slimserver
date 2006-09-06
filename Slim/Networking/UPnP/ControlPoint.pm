@@ -344,13 +344,20 @@ sub _soap_request {
 
 	my $ctrl_url = $service->getposturl();
 	
+	# Make sure we don't have double-slashes in the URL
+	my $uri = URI->new($ctrl_url)->canonical;
+	my $path_query = $uri->path_query;
+	$path_query =~ s{//}{/}g;
+	$uri->path_query($path_query);
+	$ctrl_url = $uri->as_string;
+	
 	my $service_type = $service->getservicetype();
 	my $soap_action = "\"" . $service_type . "#" . $action_name . "\"";
 
 	my $soap_content = qq{<?xml version="1.0" encoding="utf-8"?>
-<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-	<s:Body>
-		<u:$action_name xmlns:u="$service_type">
+<s:Envelope s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
+   <s:Body>
+      <u:$action_name xmlns:u="$service_type">
 };
 
 	if ( ref $action_arg ) {
@@ -361,18 +368,20 @@ sub _soap_request {
 			next if $arg_name !~ /^[A-Z]/;
 			
 			if ( length($arg_value) <= 0 ) {
-				$soap_content .= qq{			<$arg_name />} . "\n";
+				$soap_content .= qq{         <$arg_name />} . "\n";
 				next;
 			}
-			$soap_content .= qq{			<$arg_name>$arg_value</$arg_name>} . "\n";
+			$soap_content .= qq{         <$arg_name>$arg_value</$arg_name>} . "\n";
 		}
 	}
 
-	$soap_content .= qq{
-		</u:$action_name>
-	</s:Body>
+	$soap_content .= qq{      </u:$action_name>
+   </s:Body>
 </s:Envelope>
 };
+
+	# Make sure we have correct line-endings
+	$soap_content =~ s/\r?\n/\r\n/g;
 
 	return ( $ctrl_url, $soap_action, $soap_content );
 }

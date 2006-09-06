@@ -11,6 +11,7 @@ use strict;
 use warnings;
 
 use HTML::Entities;
+use Tie::LLHash;
 use URI::Escape qw(uri_escape);
 
 use Slim::Buttons::BrowseUPnPMediaServer;
@@ -166,11 +167,12 @@ sub removeDeviceMenus {
 sub loadContainer {
 	my $args = shift;
 	
-	Slim::Networking::UPnP::ControlPoint->browse( {
+	# Retarded servers such as Windows Media Connect require a certain order of XML elements (!)
+	tie my %args, 'Tie::LLHash', (
 		udn            => $args->{udn},
 		service        => 'urn:schemas-upnp-org:service:ContentDirectory:1',
 		
-		# SOAP params
+		# SOAP params, they MUST be in this order
 		ObjectID       => $args->{id} || 0,
 		BrowseFlag     => $args->{method} || 'BrowseDirectChildren',
 		Filter         => '*',
@@ -180,7 +182,9 @@ sub loadContainer {
 		
 		callback       => \&gotContainer,
 		passthrough    => [ $args ],
-	} );
+	);
+	
+	Slim::Networking::UPnP::ControlPoint->browse( \%args );
 }
 
 sub gotContainer {
