@@ -250,3 +250,15 @@
 <tr><td height = '[% buffer %]'>&nbsp;</tr>
 </table>
 [% END -%]
+
+[% BLOCK iteminfo %]
+        [% IF item.descend %][% IF item.hierarchy %]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% item.text | html %]</a>
+        [% IF item.showYear && item.year %]<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END %]
+                <!-- Include the artist for the album view -->
+                [% IF item.artist.name && item.artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
+
+        [% ELSE %]
+                [% PROCESS trackinfo %]
+        [% END %]
+[% END %]
+
