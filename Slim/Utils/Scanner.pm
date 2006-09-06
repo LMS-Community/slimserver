@@ -922,6 +922,7 @@ sub scanWMAStreamDone {
 		&& $type ne 'application/x-mms-framed' 
 		&& $type ne 'application/vnd.ms.wms-hdr.asfv1'
 		&& $type ne 'audio/x-ms-wma'
+		&& $type ne 'audio/asf'
 	) {
 		# It's not audio, treat it as ASX redirector
 		$::d_scan && msgf("scanWMA: Stream returned non-audio content-type: $type, treating as ASX redirector\n");
