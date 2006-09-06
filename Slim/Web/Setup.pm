@@ -2134,13 +2134,14 @@ sub initSetupConfig {
 				},
 			},
 			
-			'forkedStreaming' => {
-				'validate' => \&Slim::Utils::Validate::trueFalse,
-				'options'  => {
-					'1' => 'SETUP_FORKEDSTREAMING_ENABLE',
-					'0' => 'SETUP_FORKEDSTREAMING_DISABLE',
-				},
-			},
+			# XXX: May revisit this post-6.5, for now it's not quite stable
+			#'forkedStreaming' => {
+			#	'validate' => \&Slim::Utils::Validate::trueFalse,
+			#	'options'  => {
+			#		'1' => 'SETUP_FORKEDSTREAMING_ENABLE',
+			#		'0' => 'SETUP_FORKEDSTREAMING_DISABLE',
+			#	},
+			#},
 
 			'serverPriority' => {
 				'validate' => \&Slim::Utils::Validate::inList,
@@ -2315,8 +2316,8 @@ sub initSetupConfig {
 	# Add forking performance options for non-Windows
 	if ( $^O !~ /Win32/ ) {
 		push @{ $setup{'PERFORMANCE_SETTINGS'}->{'Groups'}->{'Default'}->{'PrefOrder'} },
-			'forkedWeb',
-			'forkedStreaming';
+			'forkedWeb';
+			#'forkedStreaming';
 	}
 
 	# This hack pulls the --d_* debug keys from the main package and sets
