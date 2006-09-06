@@ -30,6 +30,15 @@ sub new {
 	return $client;
 }
 
+sub reconnect {
+	my $client = shift;
+	$client->SUPER::reconnect(@_);
+
+	# Update the knob in reconnect - as that's the last function that is
+	# called when a new or pre-existing client connects to the server.
+	$client->updateKnob(1);
+}
+
 sub model {
 	return 'softsqueeze';
 }
@@ -59,6 +68,26 @@ sub needsUpgrade {
 }
 
 sub maxTransitionDuration {
+	return 0;
+}
+
+sub hasDigitalIn {
+	return 0;
+}
+
+sub hasExternalClock {
+	return 0;
+}
+
+sub hasAesbeu() {
+    	return 0;
+}
+
+sub hasPowerControl() {
+	return 0;
+}
+
+sub hasPolarityInversion() {
 	return 0;
 }
 
