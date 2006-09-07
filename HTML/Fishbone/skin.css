@@ -176,11 +176,13 @@ div#pagetitle {
 }
 
 #showText {
+	clear: right;
 	float: right;
 }
 
 #hideText {
 	display: none;
+	clear: right;
 	float: right;
 }
 
@@ -189,6 +191,7 @@ div#pagetitle {
 	float: left;
 	clear: left;
 	margin-right: 2px;
+	width: 97%;
 }
 
 .headerhr {
