@@ -14,13 +14,14 @@
   [% END %]
  </p>
 [% END %] 
-
 <table>
 [%
 IF browse_items;
 	FOREACH item = browse_items;
 		IF browseby == 'BROWSE_BY_ARTWORK' && level == 0;
 			PROCESS browsedb_artwork.html;
+		ELSIF browseby == 'MUSIC';
+			PROCESS browsetree_list.html;
 		ELSE;
 			PROCESS browsedbitems_list.html;
 		END;

@@ -20,6 +20,8 @@ var lastCoverArt, currentSong, songCount;
 
 var curRep, curShuf;
 
+var coverartEl;
+
 function doBrowseCommand(cmd, args) {
 	var cmds;
 
@@ -39,7 +41,7 @@ function doBrowseCommand(cmd, args) {
 		} else {
 			for (var i = 0; i < carr.length; i++) {
 				var cp = carr[i].split('=');
-				cmds.push(cp[0] + '_id:' + cp[1]);
+				cmds.push(cp[0].replace(".id", "_id") + ':' + cp[1]);
 			}
 		}
 	}
@@ -82,6 +84,8 @@ function timetostr(t) {
 }
 
 function updateProgressBar() {
+	if (!progressbar) return;
+
 	if (curPlayMode == "play" || curPlayMode == "pause") {
 		progressbar.setValue(progressAt / progressEnd * 50);
 		if (progressEnd == 0) {
@@ -179,18 +183,20 @@ function updateStatus() {
 
 	playstringtext.setText(playstring);
 
-	if (playlistObj[currentSong] && playlistObj[currentSong].cover) {
-		if (playlistObj[currentSong].id != lastCoverArt) {
-			document.getElementById("coverart").src = "/music/" + playlistObj[currentSong].id + "/thumb.jpg";
-			lastCoverArt = playlistObj[currentSong].id;
+	if (coverartEl) {
+		if (playlistObj[currentSong] && playlistObj[currentSong].cover) {
+			if (playlistObj[currentSong].id != lastCoverArt) {
+				coverartEl.src = "/music/" + playlistObj[currentSong].id + "/thumb.jpg";
+				lastCoverArt = playlistObj[currentSong].id;
+			}
+			coverartEl.style.display = "block";
+			$("playtext").style.left = "120px";
+			$("playtext").style.width = "270px";
+		} else {
+			coverartEl.style.display = "none";
+			$("playtext").style.left = "10px";
+			$("playtext").style.width = "380px";
 		}
-		document.getElementById("coverart").style.display = "block";
-		document.getElementById("playtext").style.left = "120px";
-		document.getElementById("playtext").style.width = "270px";
-	} else {
-		document.getElementById("coverart").style.display = "none";
-		document.getElementById("playtext").style.left = "10px";
-		document.getElementById("playtext").style.width = "380px";
 	}
 
 	progressEndText = timetostr(progressEnd);
@@ -238,8 +244,10 @@ function getStatusResponse(statusobj) {
 	curShuf = so['playlist shuffle'];
 	for (var i = 0; i < 3; i++) shufflebuttons[i].setState(i == curShuf);
 
-	powerbuttons[0].setState(so.power == 0);
-	powerbuttons[1].setState(so.power == 1);
+	if (powerbuttons[0].setState) {
+		powerbuttons[0].setState(so.power == 0);
+		powerbuttons[1].setState(so.power == 1);
+	}
 
 	volumebar.setValue(so['mixer volume'] / 10);
 
@@ -286,7 +294,9 @@ function initStatusControls() {
 		ss.call("slim.doCommand", [ curPlayer, [ "playlist", "jump", "-1" ] ], true);
 	});
 
-	prevbutton.useKey(90); // z
+	if (prevbutton.useKey) {
+		prevbutton.useKey(90); // z
+	}
 
 	nextbutton = new JXTK2.Button("nextbutton", function() {
 		currentSong++;
@@ -316,9 +326,12 @@ function initStatusControls() {
 	artisttext = new JXTK2.Textbox("artist");
 	albumtext = new JXTK2.Textbox("album");
 
-	document.getElementById("coverart").style.display = "none";
-	document.getElementById("playtext").style.left = "10px";
-	document.getElementById("playtext").style.width = "380px";
+	coverartEl = $("coverart");
+	if (coverartEl) {
+		coverartEl.style.display = "none";
+		coverartEl.style.left = "10px";
+		$("playtext").style.width = "380px";
+	}
 
 	volumebar = new JXTK2.ButtonBar("volume");
 	volumebar.populate("IMG", 11, "html/images/volpixel_t.gif", 4, 2);
@@ -328,18 +341,21 @@ function initStatusControls() {
 		ss.call("slim.doCommand", [ curPlayer, [ "mixer", "volume", cv * 10 ] ], true);
 	});
 
-	progressbar = new JXTK2.ButtonBar("progressbar");
-	progressbar.populate("IMG", 50, "html/images/pixel.gif");
-	progressbar.addClickHandler(function (button) {
-		var pos = Math.floor(playlistObj[currentSong].secs * button.index / 50);
-		progressAt = pos;
-		curPlayMode = "play";
-		updateStatus();
-		ss.queueCall("slim.doCommand", [ curPlayer, [ "time", pos ] ], true);
-		ss.call("slim.doCommand", [ curPlayer, [ "mixer", "volume", volumebar.getValue() * 10 ] ], true);
-	});
+	if ($("progressbar")) {
+		progressbar = new JXTK2.ButtonBar("progressbar");
+		progressbar.populate("IMG", 50, "html/images/pixel.gif");
+		progressbar.addClickHandler(function (button) {
+			var pos = Math.floor(playlistObj[currentSong].secs * button.index / 50);
+			progressAt = pos;
+			curPlayMode = "play";
+			updateStatus();
+			ss.queueCall("slim.doCommand", [ curPlayer, [ "time", pos ] ], true);
+			ss.call("slim.doCommand", [ curPlayer, [ "mixer", "volume", volumebar.getValue() * 10 ] ], true);
+		});
 
-	progresstext = new JXTK2.Textbox("progresstext");
+
+		progresstext = new JXTK2.Textbox("progresstext");
+	}
 
 	JXTK2.Key.registerKey(61, incVolume);  // = (firefox)
 	JXTK2.Key.registerKey(187, incVolume); // = (others)
