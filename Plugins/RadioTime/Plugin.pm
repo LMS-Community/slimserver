@@ -178,16 +178,16 @@ sub strings
 {
 	return qq^
 PLUGIN_RADIOTIME_MODULE_NAME
-	EN	RadioGuide™ by radiotime™
-	NL	RadioGuide™ door radiotime™
+	EN	RadioGuide by radiotime
+	NL	RadioGuide door radiotime
 
 PLUGIN_RADIOTIME_MODULE_TITLE
-	EN	radiotime™
+	EN	radiotime
 	
 PLUGIN_RADIOTIME_LOADING
-	DE	Lade RadioGuide™ by radiotime™...
-	EN	Loading RadioGuide™ by radiotime™...
-	NL	Laden RadioGuide™ door radiotime™...
+	DE	Lade RadioGuide by radiotime...
+	EN	Loading RadioGuide by radiotime...
+	NL	Laden RadioGuide door radiotime...
 	
 SETUP_GROUP_PLUGIN_RADIOTIME_DESC
 	DE	Benutzen Sie <a href='http://www.radiotime.com' target='_new'>radiotime.com</a>, um die interessantesten lokalen und globalen Radiostationen zu finden: Talk, Sport, Musik oder Religion - alles <b>gratis</b>.
