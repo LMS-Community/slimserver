@@ -167,7 +167,7 @@ JXTK2.ComboList = function (element, buttonsDiv, rowInitFunc) {
 		}
 
 		if (newlist.length < list.length) {
-			extras = list.length - baselength;
+			var extras = list.length - baselength;
 			for (var i = 0; i < extras; i++) {
 				el.removeChild(el.childNodes[baselength]);
 			}

@@ -2,6 +2,16 @@
 
 Array.prototype['__(JSONArray)__'] = true;
 
+if (!window['$']) {
+	window['$'] = function(el) {
+		if (typeof el == 'string') {
+			return document.getElementById(el);
+		} else {
+			return el;
+		}
+	}
+}
+
 var JXTK2 = {
 	version : function() {
 		return '2.0.0';
