@@ -63,6 +63,9 @@ my $screensaver_items_per_feed;
 # Please do not lower this value. It prevents excessive queries to the RSS.
 my $refresh_sec = 60 * 60;
 
+# per-client screensaver state information
+my $savers = {};
+
 sub enabled {
 	return ($::VERSION ge '6.3');
 }
@@ -306,9 +309,8 @@ sub updateFeedNames {
 	# verbose debug
 	if ($::d_plugins) {
 
-		require Data::Dumper;
 		msg("RSS: updateFeedNames urls:\n");
-		msg(Data::Dumper::Dumper(\@feedURLPrefs));
+		msg(Data::Dump::dump(\@feedURLPrefs));
 	}
 
 	# case 1: we're reverting to default
@@ -427,9 +429,11 @@ sub setScreensaverRssNewsMode {
 	my $client = shift;
 
 	# init params
-	$client->param('PLUGIN.RssNews.newfeed', 1);
-	$client->param('PLUGIN.RssNews.line1', 0);
-	$client->param('PLUGIN.RssNews.screensaver_mode', 1);
+	$savers->{$client} = {
+		newfeed  => 1,
+		line1    => 0,
+	};
+
 	$client->lines(\&blankLines);
 
 	# start tickerUpdate in future after updates() caused by server mode change
@@ -447,13 +451,15 @@ sub leaveScreenSaverRssNews {
 	Slim::Utils::Timers::killTimers($client, \&tickerUpdate);
 	Slim::Utils::Timers::killTimers($client, \&tickerUpdateCheck);
 
-	$client->param('PLUGIN.RssNews.screensaver_mode', 0);
+	delete $savers->{$client};
+	
+	$::d_plugins && msg("RSS: Left screensaver mode\n");
 }
 
 sub tickerUpdate {
 	my $client = shift;
 
-	if ( $client->param('PLUGIN.RssNews.newfeed') ) {
+	if ( $savers->{$client}->{newfeed} ) {
 		# we need to fetch the next feed
 		getNextFeed( $client );
 	}
@@ -466,25 +472,27 @@ sub getNextFeed {
 	my $client = shift;
 	
 	# select the next feed and fetch it
-	my $index = $client->param('PLUGIN.RssNews.feed_index') || 0;
+	my $index = $savers->{$client}->{feed_index} || 0;
 	$index++;
 	
 	if ( $index > scalar @feeds ) {
 		$index = 1;
 		# reset error count after looping around to the beginning
-		$client->param( 'PLUGIN.RssNews.feed_error', 0 );
+		$savers->{$client}->{feed_error} = 0;
 	}
 	
-	$client->param( 'PLUGIN.RssNews.feed_index', $index );
+	$savers->{$client}->{feed_index} = $index;
 	
 	my $url = $feeds[$index - 1]->{'value'};
 	
 	$::d_plugins && msg("RSS: Fetching next feed: $url\n");
 	
-	if ( !$client->param( 'PLUGIN.RssNews.current_feed' ) ) {
+	if ( !$savers->{$client}->{current_feed} ) {
 		$client->update( {
-			'line' => [ $client->string('PLUGIN_RSSNEWS'),
-						$client->string('PLUGIN_RSSNEWS_WAIT') ],
+			'line' => [ 
+				$client->string('PLUGIN_RSSNEWS'),
+				$client->string('PLUGIN_RSSNEWS_WAIT')
+			],
 		} );
 	}
 	
@@ -503,7 +511,12 @@ sub gotNextFeed {
 	my ( $feed, $params ) = @_;
 	my $client = $params->{'client'};
 	
-	$client->param( 'PLUGIN.RssNews.current_feed', $feed );
+	# Bug 3860, If the user left screensaver mode while we were fetching the feed, cancel out
+	if ( !exists $savers->{$client} ) {
+		return;
+	}
+	
+	$savers->{$client}->{current_feed} = $feed;
 	
 	tickerUpdateContinue( $client );
 }
@@ -512,23 +525,26 @@ sub gotError {
 	my ( $error, $params ) = @_;
 	my $client = $params->{'client'};
 	
+	# Bug 3860, If the user left screensaver mode while we were fetching the feed, cancel out
+	if ( !exists $savers->{$client} ) {
+		return;
+	}
+	
 	# Bug 1664, skip broken feeds in screensaver mode
 	
 	$::d_plugins && msg("RSS: Error loading feed: $error, skipping\n");
 	
-	my $errors = $client->param( 'PLUGIN.RssNews.feed_error' ) || 0;
+	my $errors = $savers->{$client}->{feed_error} || 0;
 	$errors++;
-	$client->param( 'PLUGIN.RssNews.feed_error', $errors );
+	$savers->{$client}->{feed_error} = $errors;
 	
 	if ( $errors == scalar @feeds ) {
 		$::d_plugins && msg("RSS: All feeds failed, giving up\n");
 		
-		if ( $client->param('PLUGIN.RssNews.screensaver_mode') ) {
-			$client->update( {
-				'line' => [ $client->string('PLUGIN_RSSNEWS'),
-							$client->string('PLUGIN_RSSNEWS_ERROR') ],
-			} );
-		}
+		$client->update( {
+			'line' => [ $client->string('PLUGIN_RSSNEWS'),
+						$client->string('PLUGIN_RSSNEWS_ERROR') ],
+		} );
 	}
 	else {	
 		getNextFeed( $client );
@@ -537,14 +553,19 @@ sub gotError {
 
 sub tickerUpdateContinue {
 	my $client = shift;
-			
-	$client->param('PLUGIN.RssNews.line1', 0);
+	
+	# Bug 3860, If the user left screensaver mode, cancel out
+	if ( !exists $savers->{$client} ) {
+		return;
+	}
+	
+	$savers->{$client}->{line1} = 0;
 
 	# add item to ticker
 	$client->update( tickerLines($client) );
 
 	my ($complete, $queue) = $client->scrollTickerTimeLeft();
-	my $newfeed = $client->param('PLUGIN.RssNews.newfeed');
+	my $newfeed = $savers->{$client}->{current_feed};
 
 	# schedule for next item as soon as queue drains if same feed or after ticker completes if new feed
 	my $next = $newfeed ? $complete : $queue;
@@ -573,7 +594,7 @@ sub blankLines {
 	my $client = shift;
 
 	my $parts = {
-		'line'   => [ $client->param('PLUGIN.RssNews.line1') || '' ],
+		'line'   => [ $savers->{$client}->{line1} || '' ],
 		'ticker' => [],
 	};
 
@@ -597,12 +618,12 @@ sub tickerLines {
 	my $new_feed_next = 0; # use new feed next call
 
 	# the current RSS feed
-	my $feed = $client->param('PLUGIN.RssNews.current_feed');
+	my $feed = $savers->{$client}->{current_feed};
 
 	assert( ref $feed eq 'HASH', "current rss feed not set\n");
 
 	# the current item within each feed.
-	my $current_items = $client->param('PLUGIN.RssNews.current_items');
+	my $current_items = $savers->{$client}->{current_items};
 
 	if ( !defined $current_items ) {
 
@@ -683,8 +704,8 @@ sub tickerLines {
 			'ticker' => [ undef, $line2 ],
 		};
 
-		$client->param( 'PLUGIN.RssNews.line1', $line1 );
-		$client->param( 'PLUGIN.RssNews.current_items', $current_items );
+		$savers->{$client}->{line1} = $line1;
+		$savers->{$client}->{current_items} = $current_items;
 	}
 	else {
 
@@ -695,7 +716,7 @@ sub tickerLines {
 		$new_feed_next = 1;
 	}
 
-	$client->param( 'PLUGIN.RssNews.newfeed', $new_feed_next );
+	$savers->{$client}->{newfeed} = $new_feed_next;
 
 	return $parts;
 }
