@@ -181,12 +181,6 @@ sub check_all_clients {
 		
 		my $client = Slim::Player::Client::getClient($id) || next;
 		
-		# SoftSqueeze does not report status (yet)
-		if ( $client->isa('Slim::Player::SoftSqueeze') ) {
-			delete $heartbeat{ $client->id };
-			next;
-		}
-		
 		# skip if we haven't yet heard anything
 		if ( !defined $heartbeat{ $client->id } ) {
 			$client->requestStatus();
