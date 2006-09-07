@@ -175,6 +175,13 @@ sub parseMetadata {
 
 sub canDirectStream {
 	my ($classOrSelf, $client, $url) = @_;
+	
+	# When synced, we don't direct stream so that the server can proxy a single
+	# stream for all players
+	if ( Slim::Player::Sync::isSynced($client) ) {
+		$::d_directstream && msgf("[%s] Not direct streaming because player is synced\n", $client->id);
+		return 0;
+	}
 
 	# Check the available types - direct stream MP3, but not Ogg.
 	my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand($client, $url);
