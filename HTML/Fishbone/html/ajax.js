@@ -1,6 +1,7 @@
 var player = '[% playerURI %]';
 var url = 'status_header.html';
 var mp = 0;
+var currentID = 0;
 
 [% PROCESS html/global.js %]
 
@@ -180,8 +181,8 @@ function refreshInfo(theData,force) {
 	if (newsong) {
 		elems.push('songtitle');
 		refreshElement('songtitle', parsedData['songtitle']);
-		refreshPlaylist();
-		//playlistChecker();
+		//refreshPlaylist();
+		playlistChecker();
 	}
 	
 	if (parsedData['streamtitle']) {
@@ -241,6 +242,7 @@ function refreshInfo(theData,force) {
 		refreshHrefElement('removeartisthref',parsedData['artist'],"p3=");
 		refreshHrefElement('songtitlehref',parsedData['songtitleid'],"item=");
 		refreshHrefElement('zaphref',parsedData['thissongnum']-1,"p2=");
+		currentID = parsedData['songtitleid'];
 	}
 
 	//refresh text elements
@@ -289,7 +291,7 @@ function refreshInfo(theData,force) {
 		if(parsedData['playermodel']) {
 			$('logoimage' + curstyle).src = '[% webroot %]html/images/' + parsedData['playermodel'] + '_logo.small' + curstyle + '.gif';
 		}
-		//playlistChecker();
+		playlistChecker();
 	}
 	return true;
 }
@@ -331,26 +333,43 @@ function currentSong(theData) {
 	var parsedData = fillDataHash(theData);
 
 	var doc = parent.playlist.document;
-	var found = 1;
+	var found = 0;
+	var refresh = 0;
 	
 	//if (parsedData['playlistTime'] >= int(new Date().getTime() / 1000) - 2) {
 	//	refreshPlaylist();
 	//} else {
 		if (first == null || first == parsedData['first_item']) {
 			first = parsedData['first_item'];
-			
+						
 			for (var i = parsedData['first_item']; i <= parsedData['last_item']; i++) {
-					
 					if (i == parsedData['currentsongnum']) {
 						doc.getElementById('playlistitem' + i).className = "currentListItem";
-						found = 0;
+						found = parsedData['item_'+i];
 					} else {
 						doc.getElementById('playlistitem' + i).className = "browsedbListItem";
 					}
+					
+					var myString = new String(doc.getElementById('playlistitem' + i).innerHTML);
+					var rExp= new RegExp("item=(.*?)&amp;player","i");
+					if (rExp.exec(myString) == null) {rExp= new RegExp("item=(.*?)&player","i");}
+					var a = rExp.exec(myString);
+					
+					if (a[1] != parsedData['item_'+i]) {
+						//alert([a[1],i,parsedData['item_'+i]]);
+						refresh = 1;
+					}
 			}
+			if (currentID != found) {
+				refreshPlaylist();
+			} 
 		} else {
 			first = parsedData['first_item'];
-			//playlistChecker(first);
+			playlistChecker(first);
+		}
+		
+		if (refresh != 0) {
+			refreshPlaylist();
 		}
 	//}
 	

@@ -146,7 +146,7 @@ function ProgressUpdate(mp,curstyle) {
 		inc = 0;
 		if (!mp) {
 			_progressAt = 0;
-			refreshPlaylist();
+			//refreshPlaylist();
 		}
 	}
 	
@@ -294,8 +294,9 @@ function toggleText(set) {
 
 		if (thisdiv.className == 'artworkText') {
 
-			if ((thisdiv.style.display ==  '') || (thisdiv.style.display == 'none') 
-					|| (set && getCookie('SlimServer-fishbone-showtext'))) {
+			if ((set != 1 && thisdiv.style.display ==  '') || (thisdiv.style.display == 'none') 
+					|| (set == 1 && getCookie('SlimServer-fishbone-showtext') == 1)) {
+				
 				thisdiv.style.display = 'inline';
 				setCookie('SlimServer-fishbone-showtext',1);
 				document.getElementById('showText').style.display = 'none';
