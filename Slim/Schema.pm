@@ -1057,7 +1057,10 @@ Wrapper for the common case of checking the level below the current one
 
 sub variousArtistsAlbumCount {
 	my $class = shift;
-	my $find  = shift;
+
+	# Bug 3983, 4059: clone the provided hash reference so we don't mung further
+	# processing outside this function.
+	my $find  = Storable::dclone(shift);
 
 	my %attr = ( 'group_by' => 'me.id' );
 	my @join = ();

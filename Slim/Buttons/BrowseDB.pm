@@ -768,7 +768,7 @@ sub setMode {
 	if ($levels[$level] eq 'contributor' && !$search && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
 
 		# Only show VA if there exists valid data below this level.
-		if (Slim::Schema->variousArtistsAlbumCount(Storable::dclone($filters))) {
+		if (Slim::Schema->variousArtistsAlbumCount($filters)) {
 
 			unshift @items, Slim::Schema->variousArtistsObject;
 		}
