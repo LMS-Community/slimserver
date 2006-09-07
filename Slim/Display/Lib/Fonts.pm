@@ -14,12 +14,19 @@ Slim::Display::Lib::Fonts
 
 =head1 DESCRIPTION
 
-L<Slim::Display::Lib::Fonts>
- Library functions to provide bitmapped fonts for graphics displays
-  - parses bitmaps into font data structure and stores as fontcache
-  - returns bitmap render of a specific string
-  - supports Unicode characters via True Type
-  - supports Hebrew via Locale::Hebrew
+Library functions to provide bitmapped fonts for graphics displays.
+
+=over 4
+
+=item * Parses bitmaps into font data structure and stores as fontcache
+
+=item * Returns bitmap render of a specific string
+
+=item * Supports Unicode characters via True Type
+
+=item * Supports Hebrew via L<Locale::Hebrew>
+
+=back
 
 =cut
 
@@ -61,6 +68,10 @@ my ($gd, $GDBlack, $GDWhite, $TTFFontFile, $useTTFCache, $useTTF);
 
 # Keep a cache of up to 256 characters at a time.
 tie my %TTFCache, 'Tie::Cache::LRU', 256;
+
+# Bug 3535 - perl < 5.8.5 uses a different Bidi property class.
+my $bidiR = ($] <= 5.008004) ? qr/\p{BidiR}/ : qr/\p{BidiClass:R}/;
+my $bidiL = ($] <= 5.008004) ? qr/\p{BidiL}/ : qr/\p{BidiClass:L}/;
 
 # Font size & Offsets -- Optimized for the free Japanese TrueType font
 # 'sazanami-gothic' from 'waka'.
@@ -234,20 +245,23 @@ sub string {
 	if (max(@ords) > 255) {
 
 		if ($useTTFNow) {
+
 			# convert to upper case if fontname is in list of uc fonts
 			if ($font2uc{$defaultFontname}) {
 				$string = uc($string);
 				@ords = ();
 			}
+
 			# flip BiDi R text and decide if scrolling should be reversed
-			if ($canUseHebrew && $string =~ /\p{BidiClass:R}/) {
-				$reverse = ($string !~ /\p{BidiClass:L}/);
+			if ($canUseHebrew && $string =~ $bidiR) {
+				$reverse = ($string !~ $bidiL);
 				$string = Locale::Hebrew::hebrewflip($string);
 				@ords = ();
 			}
 			@ords = unpack($unpackTemplate, $string) unless @ords;
 
 		} else {
+
 			# fall back to transliteration for people who don't have the font installed.
 			@ords = unpack($unpackTemplate, Slim::Utils::Unicode::utf8toLatin1Transliterate($string));
 		}
