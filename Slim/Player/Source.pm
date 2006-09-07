@@ -55,6 +55,7 @@ sub init {
 	Slim::Networking::Slimproto::setEventCallback('STMu', \&underrun);
 	Slim::Networking::Slimproto::setEventCallback('STMd', \&decoderUnderrun);
 	Slim::Networking::Slimproto::setEventCallback('STMs', \&trackStartEvent);
+	Slim::Networking::Slimproto::setEventCallback('STMn', \&notSupported);
 }
 
 # rate can be negative for rew, zero for pause, 1 for playback and greater than one for ffwd
@@ -618,6 +619,14 @@ sub underrun {
 #		Slim::Control::Command::executeCallback($client, ['stop']);
 		Slim::Control::Request::notifyFromArray($client, ['stop']);
 	}
+}
+
+sub notSupported {
+	my $client = shift || return;
+	
+	$::d_source && msg("Error: Decoder does not support file format, skipping track\n");
+	
+	errorOpening($client);
 }
 
 sub skipahead {
