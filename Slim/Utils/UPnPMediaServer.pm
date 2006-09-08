@@ -18,6 +18,7 @@ use Slim::Buttons::BrowseUPnPMediaServer;
 use Slim::Web::UPnPMediaServer;
 use Slim::Networking::Select;
 use Slim::Networking::UPnP::ControlPoint;
+use Slim::Utils::IPDetect;
 use Slim::Utils::Misc;
 
 our $registeredCallbacks = [];
@@ -222,6 +223,12 @@ sub gotContainer {
 				}
 				if ( $node =~ m{<res[^>]*>([^<]+)</res>} ) {
 					$url = $1;
+					
+					# If the UPnP server is running on the same PC as SlimServer, URL may be localhost
+					if ( my ($host) = $url =~ /(127.0.0.1|localhost)/ ) {
+						my $realIP = Slim::Utils::IPDetect::IP();
+						$url       =~ s/$host/$realIP/;
+					}
 				}
 
 				my $props = {
@@ -269,6 +276,12 @@ sub gotContainer {
 							}
 							if ( $node =~ m{<res[^>]*>([^<]+)</res>} ) {
 								$url = $1;
+								
+								# If the UPnP server is running on the same PC as SlimServer, URL may be localhost
+								if ( my ($host) = $url =~ /(127.0.0.1|localhost)/ ) {
+									my $realIP = Slim::Utils::IPDetect::IP();
+									$url       =~ s/$host/$realIP/;
+								}
 							}
 							
 							my $props = {
