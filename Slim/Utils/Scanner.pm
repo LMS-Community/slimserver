@@ -796,6 +796,9 @@ sub scanPlaylistURLs {
 	
 	my $offset = 0;
 	for my $item ( @{$foundItems} ) {
+		
+		next if !blessed $item;
+		
 		if ( Slim::Music::Info::isAudioURL( $item->url ) || Slim::Music::Info::isSong( $item ) ) {
 			# we finally found an audio URL, so we're done
 			$::d_scan && msgf( "scanPlaylistURLs: Found an audio URL: %s [%s]\n",
@@ -871,7 +874,7 @@ sub scanBitrate {
 
 	my $formatClass = Slim::Formats->classForFormat($contentType);
 
-	if (Slim::Formats->loadTagFormatForType($contentType) && $formatClass->can('scanBitrate')) {
+	if ($formatClass && Slim::Formats->loadTagFormatForType($contentType) && $formatClass->can('scanBitrate')) {
 
 		return $formatClass->scanBitrate( $fh, $url );
 	}
