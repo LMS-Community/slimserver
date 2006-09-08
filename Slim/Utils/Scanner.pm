@@ -141,6 +141,9 @@ sub findFilesMatching {
 	# Don't include old Shoutcast recently played items.
 	$rule->not_name(qr/ShoutcastBrowser_Recently_Played/);
 
+	# OS X leaves around turd files - ignore them.
+	$rule->not_name(qr/\.Apple(?:Single|Double)/i);
+
 	# iTunes 4.x makes binary metadata files with the format of: ._filename.ext
 	# In the same directory as the real audio files. Ignore those, so we
 	# don't create bogus tracks and try to guess names based off the file,
