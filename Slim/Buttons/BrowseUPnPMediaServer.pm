@@ -80,6 +80,13 @@ sub gotContainer {
 
 	my $children = $container->{'children'} || [];
 	
+	# Add value keys to all items, so INPUT.Choice remembers state properly
+	for my $item ( @{$children} ) {
+		if ( !defined $item->{value} ) {
+			$item->{value} = $item->{id};
+		}
+	}
+	
 	# if we got metadata, use remotetrackinfo
 	if ( $browse eq 'BrowseMetadata' ) {
 		
