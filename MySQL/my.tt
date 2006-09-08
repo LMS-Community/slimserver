@@ -12,7 +12,7 @@ skip-grant-tables
 
 basedir               = [% basedir %]
 datadir               = [% datadir %]
-language              = [% basedir %]
+language              = [% language %]
 port                  = [% port || 9092 %]
 socket                = [% socket %]
 innodb_fast_shutdown  = 1

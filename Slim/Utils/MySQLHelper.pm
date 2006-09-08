@@ -123,10 +123,18 @@ sub createConfig {
 	my $output = catdir($cacheDir, 'my.cnf');
 
 	my %config = (
-		'basedir' => $class->mysqlDir,
-		'datadir' => catdir($cacheDir, 'MySQL'),
-		'socket'  => $class->socketFile,
+		'basedir'  => $class->mysqlDir,
+		'language' => $class->mysqlDir,
+		'datadir'  => catdir($cacheDir, 'MySQL'),
+		'socket'   => $class->socketFile,
 	);
+
+	# Because we use the system MySQL, we need to point to the right
+	# directory for the errmsg. files. Default to english.
+	if (Slim::Utils::OSDetect::isDebian()) {
+
+		$config{'language'} = '/usr/share/mysql/english';
+	}
 
 	# If there's no data dir setup - that also means we need to create the system tables.
 	if (!-d $config{'datadir'}) {
