@@ -12712,15 +12712,27 @@ SETUP_DIGITALOUTPUTENCODING
 	NL	Digitale uitvoer codering
 
 SETUP_DIGITALOUTPUTENCODING_DESC
-	DE	Sie können für den digitalen Ausgang zwischen S/PDIF und AES/BEU wählen.
-	EN	You can choose between S/PDIF and AES/BEU encoding for the digital outputs.
-	NL	Je kunt kiezen tussen S/PDIF en AES/BEU codering voor de digitale uitvoeren.
+	DE	Sie können für den digitalen Ausgang zwischen S/PDIF und AES/EBU wählen.
+	EN	You can choose between S/PDIF and AES/EBU encoding for the digital outputs.
+	NL	Je kunt kiezen tussen S/PDIF en AES/EBU codering voor de digitale uitvoeren.
 
 DIGITALOUTPUTENCODING_SPDIF
 	EN	S/PDIF
 
 DIGITALOUTPUTENCODING_AESEBU
 	EN	AES/EBU
+	
+AUDIO_SOURCE_BALANCED_AES
+	EN	Balanced AES/EBU
+
+AUDIO_SOURCE_BNC_SPDIF
+	EN	BNC Coax S/PDIF
+
+AUDIO_SOURCE_RCA_SPDIF
+	EN	RCA Coax S/PDIF
+
+AUDIO_SOURCE_OPTICAL_SPDIF
+	EN	Optical S/PDIF (TOSLINK)
 
 SETUP_WORDCLOCKOUTPUT
 	DE	Word Clock auf S/PDIF Ausgängen
