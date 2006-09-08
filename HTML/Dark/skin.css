@@ -50,7 +50,7 @@ A:link, A:visited {
 }
 
 A:hover, A.selected {
-    font-weight : bold;
+    text-decoration : underline;
 }
 
 div#homeMenu {
