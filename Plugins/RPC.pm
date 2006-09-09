@@ -91,7 +91,7 @@ sub getPlaylist {
 		my %data  = $track->get_columns;
 
 		$data{'contributors'} = \@contribList;
-		$data{'album'}        = { $track->album->get_columns };
+		$data{'album'}        = { $track->album->get_columns } if $track->album;
 
 		push @returnArray, \%data;
 	}
