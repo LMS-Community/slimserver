@@ -170,8 +170,9 @@ sub searchStringSplit {
 	$searchSubString = defined $searchSubString ? $searchSubString : Slim::Utils::Prefs::get('searchSubString');
 
 	# normalize the string
+	$search = Slim::Utils::Unicode::utf8decode_locale($search);
 	$search = ignoreCaseArticles($search);
-	
+
 	my @strings = ();
 
 	# Don't split - causes an explict AND, which is what we want.. I think.
