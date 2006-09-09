@@ -362,8 +362,9 @@ sub setMode {
 		return;
 	}
 
+	# Show a blocking animation
 	$client->block({
-		'line' => [ $client->string('MUSIC'), $client->string('MUSIC') ],
+		'line' => [ $client->string('LOADING_BROWSE_MUSIC_FOLDER') ],
 		'fonts' => {
 			'graphic-320x32' => 'light',
 			'graphic-280x16' => 'small',
@@ -372,7 +373,7 @@ sub setMode {
 	});
 
 	# Parse the hierarchy list into an array
-	my $hierarchy = $client->param('hierarchy');
+	my $hierarchy = $client->param('hierarchy') || '';
 	my @levels    = split(/\//, $hierarchy);
 
 	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree(\@levels);
