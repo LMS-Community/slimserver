@@ -210,6 +210,10 @@ function getStatusPeriodically() {
 	setTimeout(getStatusPeriodically, 10000);
 }
 
+function getStatusSoon() {
+	setTimeout(getStatus, 1000);
+}
+
 function getStatus() {
 	if (!curPlayer) return;
 

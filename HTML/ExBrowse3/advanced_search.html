@@ -1,4 +1,4 @@
-[% PROCESS header.html pwd="yes" nokbd="yes" %]
+[% PROCESS header.html pwd="yes" nokbd="yes" clink="0" %]
 
 [% MACRO logicalSelectionBlock BLOCK %]
 <select name="[% name %]">
@@ -20,7 +20,7 @@
 <div id="pwd">
  [% IF searchlist_pagebar %]
  <span class="pagebar">[% searchlist_pagebar %]</span>
- [% END %]<a onclick="parent.browseurl('advanced_search.html?');">[% "ADVANCEDSEARCH" | string %]</a> /
+ [% END %]<a href="advanced_search.html?">[% "ADVANCEDSEARCH" | string %]</a> /
 </div>
 
 <div align="center">

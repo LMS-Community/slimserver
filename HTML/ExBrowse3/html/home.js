@@ -15,7 +15,11 @@ function browseurl(loc, clink, isreplace) {
 		if (clink == undefined) clink = "0";
 		top.frames.browseframe.location.href = webroot + "html/blank.html?pwd=" + escape(loc.getAttribute('pwd')) + "&clink=" + clink;
 	} else {
-		var newurl = webroot + loc + "&player=" + escape(curPlayer);
+		var newurl = loc + "&player=" + escape(curPlayer);
+
+		if (loc.substr(0, 7) != "http://") {
+			newurl = webroot + newurl;
+		}
 
 		if (isreplace) {
 			top.frames.browseframe.location.replace(newurl);
@@ -25,7 +29,38 @@ function browseurl(loc, clink, isreplace) {
 	}
 }
 
-function pullpwd(clink, isfake) {
+function browse_href_fix(tdoc, sourceUrl) {
+	/* Updates all <a href> tags to use browseurl() */
+	if (!tdoc) tdoc = document;
+
+	if (!sourceUrl) sourceUrl = tdoc.location.href;
+	var pluginMatch = sourceUrl.match(/\/plugins\/[a-zA-Z]*\//);
+
+	var aList = tdoc.getElementsByTagName("a");
+	var aListLen = aList.length;
+	for (var i = 0; i < aListLen; i++) {
+		var el = aList[i];
+		if (!el.getAttribute("href")) continue;
+
+		if (pluginMatch) {
+			var href = el.getAttribute("href");
+			if (href.substr(0, 7) != "http://" && href[0] != "/") {
+				href = webroot + pluginMatch + href;
+			}
+			el.setAttribute("href", href);
+		}
+
+		el.onclick = function() {
+			browseurl(this.getAttribute("href"));
+			return false;
+		}
+	}
+}
+
+function pullpwd(clink, isfake, tdoc) {
+
+	if (tdoc) browse_href_fix(tdoc);
+
 	if (typeof clink == "number") {
 		for (var j = 0; j < homelinks.length; j++) {
 			homelinks[j].setState(clink == j);
@@ -41,7 +76,10 @@ function pullpwd(clink, isfake) {
 	}
 
 	var text = top.frames.browseframe.document.getElementById("pwd").innerHTML;
-	document.getElementById("toppwd").innerHTML = text;
+	$("toppwd").innerHTML = text;
+	if (tdoc) {
+		browse_href_fix($("toppwd"), tdoc.location.href);
+	}
 }
 
 function updatePlayer(nosub) {
@@ -80,6 +118,8 @@ function goradio() {
 }
 
 function initHome() {
+	browse_href_fix();
+
 	playercookie = new JXTK2.Cookie("ExBrowse2Player");
 
 	curPlayer = playercookie.getValue();

@@ -128,7 +128,7 @@
 
   <ul class="browselike">
    [% IF additionalLinks.help; FOREACH link = additionalLinks.help %]
-    <li><a onclick="browseurl('[% link.value %]')">[% link.key | string %]</a></li>
+    <li><a href="[% link.value %]">[% link.key | string %]</a></li>
    [% END; END %]
   </ul>
  </div>
@@ -136,9 +136,9 @@
  <div id="radioframe" pwd="&lt;a onclick='goradio()'&gt;[% "RADIO" | string %]&lt;/a&gt; /">
   <ul class="browselike">
    [% IF additionalLinks.radio; FOREACH link = additionalLinks.radio %]
-    <li><a onclick="browseurl('[% link.value %]')">[% link.key | string %]</a></li>
+    <li><a href="[% link.value %]">[% link.key | string %]</a></li>
    [% END; END %]
-   <li><a onclick="browseurl('tunein.html?')">[% "RADIO_TUNEIN" | string %]</a></li>
+   <li><a href="tunein.html">[% "RADIO_TUNEIN" | string %]</a></li>
   </ul>
  </div>
 </div>

@@ -16,4 +16,4 @@
  <script type="text/javascript" src="[% webroot %]html/toolmanx/events.js"></script>
  <script type="text/javascript" src="[% webroot ; scripts %]"></script>[% END %]
 </head>
-<body onload="if(parent.pullpwd)parent.pullpwd([% clink %])" onkeydown="[% IF nokbd %]return true[% ELSE %]parent.handlekey(event)[% END %]">
+<body onload="if(parent.pullpwd)parent.pullpwd([% IF clink;clink;ELSE;"0";END %],0,document)" onkeydown="[% IF nokbd %]return true[% ELSE %]parent.handlekey(event)[% END %]">
