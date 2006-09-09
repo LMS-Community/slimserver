@@ -364,12 +364,7 @@ sub setMode {
 
 	# Show a blocking animation
 	$client->block({
-		'line' => [ $client->string('LOADING_BROWSE_MUSIC_FOLDER') ],
-		'fonts' => {
-			'graphic-320x32' => 'light',
-			'graphic-280x16' => 'small',
-			'text'           => 2,
-		}
+		'line' => [ $client->string( $client->linesPerScreen() == 1 ? 'LOADING' : 'LOADING_BROWSE_MUSIC_FOLDER' ) ],
 	});
 
 	# Parse the hierarchy list into an array
