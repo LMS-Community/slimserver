@@ -2079,6 +2079,12 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 	while (my ($key, $value) = each %{$terms}) {
 
+		# Bug: 4063 - don't enforce contributor.role when coming from
+		# the web UI's search.
+		if ($key eq 'contributor.role') {
+			next;
+		}
+
 		# Bug: 3582 - reconstitute from 0 for album.compilation.
 		if ($key eq 'album.compilation' && $value == 0) {
 
