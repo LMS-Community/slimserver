@@ -196,7 +196,6 @@ sub sync {
 	# Save Status to Prefs file
 	saveSyncPrefs($client);
 	
-#	Slim::Control::Command::executeCallback($client, ['playlist','sync']);
 	Slim::Control::Request::notifyFromArray($client, ['playlist', 'sync']);
 }
 

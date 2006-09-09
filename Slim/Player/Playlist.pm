@@ -10,7 +10,6 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use Scalar::Util qw(blessed);
 
-use Slim::Control::Command;
 use Slim::Formats::Playlists::M3U;
 use Slim::Player::Source;
 use Slim::Player::Sync;
@@ -126,12 +125,6 @@ sub repeat {
 	
 	return $client->prefGet("repeat");
 }
-
-# NOTE:
-#
-# If you are trying to control playback, try to use Slim::Control::Command::execute() instead of 
-# calling the functions below.
-#
 
 sub copyPlaylist {
 	my $toClient   = shift;

@@ -614,9 +614,6 @@ sub underrun {
 		Slim::Player::Playlist::refreshPlaylist($client);
 		$client->update();
 		
-		# Not sure we can safely go through execute for the call to stop here
-		# use execute callback...
-#		Slim::Control::Command::executeCallback($client, ['stop']);
 		Slim::Control::Request::notifyFromArray($client, ['stop']);
 	}
 }

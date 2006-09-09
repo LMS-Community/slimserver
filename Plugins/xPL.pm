@@ -78,7 +78,6 @@ sub initPlugin {
 	Slim::Networking::Select::addRead($xpl_socket, \&readxpl);
 	sendxplhbeat();
 	
-#	Slim::Control::Command::setExecuteCallback(\&Plugins::xPL::xplExecuteCallback);
 	Slim::Control::Request::subscribe(\&Plugins::xPL::xplExecuteCallback);
 }
 

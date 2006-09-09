@@ -14,27 +14,19 @@ Slim::Control::Request
 
 =head1 DESCRIPTION
 
- This class implements a generic request mechanism for SlimServer.
- This new mechanism supplants (and hopefully) improves over the "legacy"
- mechanisms that used to be provided by Slim::Control::Command. Where 
- appropriate, the Request class provides hooks supporting this legacy.
- This is why, for example, the debug flag for this code is $::d_command.
+This class implements a generic request mechanism for SlimServer.
 
+The general mechansim is to create a Request object and execute it. There is
+an option of specifying a callback function, to be called once the request is
+executed. In addition, external code can be notified of command execution (see
+NOTIFICATIONS below).
 
- The general mechansim is to create a Request object and execute it. There
- is an option of specifying a callback function, to be called once the 
- request is executed. In addition, external code can be notified of command
- execution (see NOTIFICATIONS below).
+Function "Slim::Control::Request::executeRequest" accepts the usual parameters
+of client, command array and callback params, and returns the request object.
 
+Slim::Control::Request::executeRequest($client, ['stop']);
 
- Function "Slim::Control::Request::executeRequest" accepts the usual parameters
- of client, command array and callback params, and returns the request object.
- This command can be used in place of "Slim::Control::Command::execute", but
- it does not return the array as execute did. If you need the array returned,
- use "executeLegacy".
-
- Slim::Control::Request::executeRequest($client, ['stop']);
- my @result = Slim::Control::Request::executeLegacy($client, ['playlist', 'save']);
+my @result = Slim::Control::Request::executeLegacy($client, ['playlist', 'save']);
 
 =cut
 
@@ -402,9 +394,6 @@ our %subscribers = ();          # contains the clients to the notification
                                 # mechanism
 
 our @notificationQueue;         # contains the Requests waiting to be notified
-
-my $callExecuteCallback = 0;    # flag to know if we must call the legacy
-                                # Slim::Control::Command::executeCallback
 
 my $d_notify = 0;               # local debug flag for notifications. Note that
                                 # $::d_command must be enabled as well.
@@ -1622,21 +1611,6 @@ sub notify {
 
 		}
 	}
-	
-	# if we must call executeCallback (there are entries in its queue) and
-	# this is not where we're been called from, render as Array and call
-	# executeCallback with the array.
-	# The reason for the first parameter is that renderAsArray is somewhat
-	# expensive and we try to avoid it if we can.
-	# The reason for the second parameter is simply to avoid a infinite loop...
-	if ($callExecuteCallback && !defined $dontcallExecuteCallback) {
-		my @params = $self->renderAsArray();
-		Slim::Control::Command::executeCallback(
-			$self->client(),
-			\@params,
-			"not again"
-			);
-	}
 }
 
 # handle encoding for external commands
@@ -1733,13 +1707,6 @@ sub renderAsArray {
  	}
 	
 	return @returnArray;
-}
-
-# called from Slim::Control::Command::set/clearExecuteCallback, this 
-# lets us know if there are entries in the queue and consequently, if 
-# we should call the legacy routine.
-sub needToCallExecuteCallback {
-	$callExecuteCallback = shift;
 }
 
 ################################################################################
