@@ -89,7 +89,16 @@ sub loadModules {
 
 	} else {
 
+		# NB: The user may be on a platform who's perl reports a
+		# different x86 version than we've supplied - but it may work
+		# anyways.
+		my $arch = $Config::Config{'archname'};
+		   $arch =~ s/^i[3456]86-/i386-/;
+		   $arch =~ s/gnu-//;
+
 		@SlimINC = (
+			catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch),
+			catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch, 'auto'),
 			catdir($libPath,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}),
 			catdir($libPath,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}, 'auto'),
 			catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}),
@@ -209,7 +218,18 @@ sub tryModuleLoad {
 
 		eval "use $module";
 
+		# NB: YAML::Syck has a local $@; in it's BEGIN, so if XSLoader
+		# or Dynaloader fails, the module still appears to load. Try
+		# to run a function to see if it's really been loaded.
+		if ($module eq 'YAML::Syck') {
+
+			eval { no warnings; YAML::Syck::Dump({}) };
+		}
+
 		if ($@) {
+
+			$d_startup && warn "Module [$module] failed to load: [$@]\n";
+
 			push @failed, $module;
 
 			@newModules = grep { !$oldINC{$_} } keys %INC;
@@ -257,7 +277,7 @@ sub sigint {
 	$sigINTcalled = 1;
 
 	if ( !$Slim::Web::HTTP::inChild ) {
-		main::cleanup();
+		main::cleanup() if defined &main::cleanup;
 	}
 
 	exit();
@@ -266,7 +286,7 @@ sub sigint {
 sub sigterm {
 	$::d_server && Slim::Utils::Misc::msg("Got sigterm.\n");
 
-	main::cleanup();
+	main::cleanup() if defined &main::cleanup;
 
 	exit();
 }
@@ -278,7 +298,7 @@ sub ignoresigquit {
 sub sigquit {
 	$::d_server && Slim::Utils::Misc::msg("Got sigquit.\n");
 
-	main::cleanup();
+	main::cleanup() if defined &main::cleanup;
 
 	exit();
 }
