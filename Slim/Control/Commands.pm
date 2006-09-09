@@ -2191,6 +2191,11 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 			delete $find{'year.id'};
 			delete $joinMap{'year'};
+
+		} elsif ($find{'year.id'}) {
+
+			$find{'album.year'} = delete $find{'year.id'};
+			delete $joinMap{'year'};
 		}
 
 		# Bug: 3629 - if we're sorting by album - be sure to include it in the join table.

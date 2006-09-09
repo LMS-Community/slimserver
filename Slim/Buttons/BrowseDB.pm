@@ -210,12 +210,15 @@ sub init {
 				# find out if this item is part of a container, such as an album or playlist previously selected.
 				my $container = 0;
 
-				if ($levels[$level-1] =~ /^(?:playlist|album)$/ && grep { /playlist|me|album\.id/ } keys %{$findCriteria}) {
+				if ($levels[$level-1] =~ /^(?:playlist|album|age)$/ && 
+					grep { /^(?:playlist|me|album|age)\.id$/ } keys %{$findCriteria}) {
+
 					$container = 1;
 				}
 
 				# In some cases just deal with the song individually
 				if ($addorinsert || !$container || !Slim::Utils::Prefs::get('playtrackalbum')) {
+
 					$command = 'playtracks';
 					$command = 'addtracks'    if $addorinsert == 1;
 					$command = 'inserttracks' if $addorinsert == 2;
