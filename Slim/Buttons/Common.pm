@@ -46,6 +46,7 @@ use Slim::Utils::DateTime;
 use Slim::Utils::Misc;
 use Slim::Utils::PluginManager;
 use Slim::Display::Display;
+use Slim::Buttons::Block;
 use Slim::Buttons::Favorites;
 use Slim::Buttons::SqueezeNetwork;
 use Slim::Buttons::XMLBrowser;
@@ -96,7 +97,9 @@ our $scrollClientHash = {};
 
 =head2 init( )
 
-This method must be called before all other Slim::Buttons::* modules.  It initialises all other SlimServer core button modules and registers the "Now Playing" screensaver.
+This method must be called before all other Slim::Buttons::* modules.  It
+initialises all other SlimServer core button modules and registers the "Now
+Playing" screensaver.
 
 =cut
 
@@ -111,6 +114,7 @@ sub init {
 	Slim::Buttons::Settings::init();
 	
 	Slim::Buttons::AlarmClock::init();
+	Slim::Buttons::Block::init();
 	Slim::Buttons::BrowseDB::init();
 	Slim::Buttons::BrowseTree::init();
 	Slim::Buttons::Favorites::init();
