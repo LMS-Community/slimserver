@@ -138,6 +138,47 @@ sub updateKnob {
 	}
 }
 
+sub knobListPos {
+	my $client = shift;
+	my $curPos = shift || $client->param('listIndex');
+	my $listLen = shift || $client->param('listLen') || scalar @{ $client->param('listRef') };
+
+	my $newPos = $client->knobPos();
+
+	my ($direction, $wrap);
+
+	if ($listLen == 1) {
+
+		# knob return negative value anti-clockwise and +1 for clockwise
+		$direction = $newPos > 0 ? 'up' : 'down';
+		$newPos = $curPos;
+
+	} elsif ($listLen == 2) {
+
+		# knob returns pos + 2 for list of 2 items when moving anti-clockwise
+		if ($newPos > 1) {
+			$newPos = $newPos - 2;
+			$direction = 'up';
+		} else {
+			$direction = 'down';
+		}
+
+	} else {
+
+		# assume movement of more than 1/2 of list means wrapping round
+		my $wrap = (abs($newPos - $curPos) > $listLen / 2); 
+		
+		if ($newPos > $curPos && !$wrap || $newPos < $curPos && $wrap) {
+			$direction = 'down';
+		} else {
+			$direction = 'up';
+		}
+		
+	}
+
+	return ($newPos, $newPos - $curPos, $direction, $wrap);
+}
+
 sub model {
 	return 'transporter';
 }

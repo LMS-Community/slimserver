@@ -94,12 +94,10 @@ sub init {
 		'knob' => sub {
 				my ($client, $funct, $functarg) = @_;
 
-				my $newindex = $client->knobPos();
 				my $oldindex = browseplaylistindex($client);
 				my $songcount = Slim::Player::Playlist::count($client);
 
-				# XXXX assume list is long enough for wrapround to only occur when:
-				my $wrap = (abs($newindex - $oldindex) > $songcount / 2); 
+				my ($newindex, $dir, $pushDir, $wrap) = $client->knobListPos($oldindex, $songcount || 1);
 
 				if ($oldindex != $newindex && $songcount > 1) {
 					browseplaylistindex($client,$newindex);
@@ -111,23 +109,12 @@ sub init {
 
 				if ($songcount < 2) {
 					
-					if ($newindex < 0) {
-
-						$client->bumpDown;
-
-					} elsif ($newindex > 0) {
-
-						$client->bumpUp;
-
-					}
-
-				} elsif ($oldindex > $newindex && !$wrap || $oldindex < $newindex && $wrap) {
-
-					$client->pushUp;
+					$pushDir eq 'up' ? $client->bumpUp : $client->bumpDown;
 
 				} else {
 
-					$client->pushDown;
+					$pushDir eq 'up' ? $client->pushUp : $client->pushDown;
+
 				}
 		},
 

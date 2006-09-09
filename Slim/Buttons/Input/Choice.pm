@@ -184,20 +184,9 @@ my %functions = (
 	},
 	'knob' => sub {
 		my ($client,$funct,$functarg) = @_;
+
+		my ($newPos, $dir, $pushDir, $wrap) = $client->knobListPos();
 		
-		my $dir = $client->knobPos - $client->param('listIndex');
-
-		# Make sure wrap-around pushes in the right direction
-		my $pushDir;
-		my $numItems = scalar @{ $client->param('listRef') };
-		if ( $client->knobPos == 0 && abs($dir) == ( $numItems - 1 ) ) {
-			# wraparound from bottom to top
-			$pushDir = 'down';
-		} elsif ( $client->knobPos == ( $numItems - 1 ) && abs($dir) == ( $numItems - 1 ) ) {
-			# wraparound from top to bottom
-			$pushDir = 'up';
-		}
-
 		changePos($client, $dir, $funct, $pushDir);
 	},
 	'numberScroll' => sub {
