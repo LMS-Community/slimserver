@@ -427,8 +427,12 @@ sub power {
 		my $oneline = ($client->linesPerScreen() == 1);
 		
 		$client->showBriefly( {
-			'center' => [ $oneline ? undef : $client->string('WELCOME_TO_' . $client->model),
-				$oneline ? $client->string($client->model) : $client->string('FREE_YOUR_MUSIC') ]
+			'center' => [ $client->string('WELCOME_TO_' . $client->model), $client->string('FREE_YOUR_MUSIC') ],
+			'fonts' => { 
+					'graphic-320x32' => 'standard',
+					'graphic-280x16' => 'medium',
+					'text'           => 2,
+				},
 		}, undef, undef, 1);
 
 		# check if there is a sync group to restore
