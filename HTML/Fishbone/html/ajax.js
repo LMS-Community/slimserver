@@ -181,8 +181,7 @@ function refreshInfo(theData,force) {
 	if (newsong) {
 		elems.push('songtitle');
 		refreshElement('songtitle', parsedData['songtitle']);
-		//refreshPlaylist();
-		playlistChecker();
+		//playlistChecker();
 	}
 	
 	if (parsedData['streamtitle']) {
@@ -336,44 +335,51 @@ function currentSong(theData) {
 	var found = 0;
 	var refresh = 0;
 	
-	//if (parsedData['playlistTime'] >= int(new Date().getTime() / 1000) - 2) {
-	//	refreshPlaylist();
-	//} else {
-		if (first == null || first == parsedData['first_item']) {
-			first = parsedData['first_item'];
-						
-			for (var i = parsedData['first_item']; i <= parsedData['last_item']; i++) {
-					if (i == parsedData['currentsongnum']) {
-						doc.getElementById('playlistitem' + i).className = "currentListItem";
-						found = parsedData['item_'+i];
-					} else {
-						doc.getElementById('playlistitem' + i).className = "browsedbListItem";
-					}
-					
-					var myString = new String(doc.getElementById('playlistitem' + i).innerHTML);
-					var rExp= new RegExp("item=(.*?)&amp;player","i");
-					if (rExp.exec(myString) == null) {rExp= new RegExp("item=(.*?)&player","i");}
-					var a = rExp.exec(myString);
-					
-					if (a[1] != parsedData['item_'+i]) {
-						//alert([a[1],i,parsedData['item_'+i]]);
-						refresh = 1;
-					}
+	//alert(["first: "+first, "parsed: "+parsedData['first_item']]);
+	if (first == null || first == parsedData['first_item']) {
+		first = parsedData['first_item'];
+
+		for (var i = first; i <= parsedData['last_item']; i++) {
+			
+			// make sure we have matching item counts, refresh if not.
+			if (item = doc.getElementById('playlistitem' + i)) {
+				if (i == parsedData['currentsongnum']) {
+					item.className = "currentListItem";
+					found = parsedData['item_'+i];
+				} else {
+					item.className = "browsedbListItem";
+				}
+			
+				// Check the id's of each item, refresh if any don't match.
+				var myString = new String(doc.getElementById('playlistitem' + i).innerHTML);
+				var rExp= new RegExp("item=(.*?)&amp;player","i");
+				if (rExp.exec(myString) == null) {rExp= new RegExp("item=(.*?)&player","i");}
+				var a = rExp.exec(myString);
+				
+				//alert(["i:"+i,"a:"+a[1],"parse:"+parsedData['item_'+i], "found:"+found, "refresh:"+refresh, "current:"+currentID]);
+				if (a == null || a[1] != parsedData['item_'+i]) {
+					//alert([a[1],i,parsedData['item_'+i]]);
+					refresh = 1;
+				}
+			} else {
+				refresh = 1;
 			}
-			if (currentID != found) {
-				refreshPlaylist();
-			} 
-		} else {
-			first = parsedData['first_item'];
-			playlistChecker(first);
 		}
-		
-		if (refresh != 0) {
-			refreshPlaylist();
-		}
-	//}
-	
-	doc.location.hash = parsedData['currentsongnum'];
+
+		// refresh the playlist if we're not finding the current song
+		if (currentID != found) {
+			refresh = 1;
+		} 
+	} else {
+		first = parsedData['first_item'];
+		playlistChecker(first);
+	}
+
+	if (refresh != 0) {
+		refreshPlaylist();
+	} else {
+		doc.location.hash = parsedData['currentsongnum'];
+	}
 }
 
 function refreshAll(theData,force) {
@@ -412,7 +418,7 @@ function playlistChecker(start) {
 	var args = 'player='+player+'&ajaxRequest=1';
 	
 	if(start != null && start != '') {
-		//alert([start != '', start == null]);
+		//alert([start != '', start == null, start]);
 		refreshPlaylist();
 		args = args + "&start="+start;
 	}
