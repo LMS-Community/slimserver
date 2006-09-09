@@ -214,6 +214,8 @@ sub isMusicLibraryFileChanged {
 
 	my $fileMTime = (stat $file)[9];
 	
+	$::d_moodlogic && msg("MoodLogic: read library status of $fileMTime\n");
+	
 	# Only say "yes" if it has been more than one minute since we last finished scanning
 	# and the file mod time has changed since we last scanned. Note that if we are
 	# just starting, $lastMusicLibraryDate is undef, so both $fileMTime

@@ -254,7 +254,7 @@ sub isMusicLibraryFileChanged {
 
 	my $fileMTime = $http->content;
 	
-	$::d_musicmagic && msg("MusicMagic: read cacheid of $fileMTime");
+	$::d_musicmagic && msg("MusicMagic: read cacheid of $fileMTime\n");
 
 	$http->close;
 
@@ -319,7 +319,7 @@ sub checker {
 	# make sure we aren't doing this more than once...
 	Slim::Utils::Timers::killTimers(0, \&checker);
 
-	# Call ourselves again after 60 seconds
+	# Call ourselves again after 120 seconds
 	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 120), \&checker);
 }
 
