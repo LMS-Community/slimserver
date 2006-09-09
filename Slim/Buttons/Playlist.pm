@@ -448,7 +448,6 @@ sub browseplaylistindex {
 	my $playlistindex = shift;
 
 	if ( $::d_playlist && defined($playlistindex) ) {
-		bt();
 		msg("new playlistindex: $playlistindex\n");
 	}
 	
