@@ -75,10 +75,17 @@ Launch the external (forked) scanning process.
 sub launchScan {
 	my ($class, $args) = @_;
 
-	# Pass along the prefs file - might need to do this for other flags,
-	# such as logfile as well.
+	# Pass along the prefsfile & logfile flags to the scanner.
 	if (defined $::prefsfile && -r $::prefsfile) {
 		$args->{"prefsfile=$::prefsfile"} = 1;
+	}
+
+	if (defined $::logfile) {
+		$args->{"logfile=$::logfile"} = 1;
+	}
+
+	if (defined $::noLogTimestamp ) {
+		$args->{'noLogTimestamp'} = 1;
 	}
 
 	# Ugh - need real logging via Log::Log4perl
