@@ -57,8 +57,18 @@ our %enabled = ();
 # since we just jump into INPUT.List, we don't need any functions of our own
 our %functions = ();
 
-# array for internal values of the player submenu
+# array for internal values of the player submenu which can be added to
 our @player_list = ('PLAYER_NAME','PLAYER_MODEL','FIRMWARE','PLAYER_IP','PLAYER_PORT','PLAYER_MAC');
+
+# array of value functions for player submenu which can be added to
+our @player_func = (
+	sub { shift->name },
+	sub { return playerModel(shift) },
+	sub { shift->revision },
+	sub { shift->ip },
+	sub { shift->port },
+	sub { uc(shift->macaddress) },
+);
 
 # hash of current locations in the menu structure
 # This is keyed by the $client object, then the second level
@@ -126,28 +136,10 @@ sub init {
 			'header' => 'INFORMATION_MENU_PLAYER',
 			'stringHeader' => 1,
 			'headerAddCount' => 1,
-			'listRef' => \@player_list,
+			'listRef' => [],       # this is replaced in mainExitHandler
 			'externRef' => \&infoDisplay,
 			'externRefArgs' => 'CV',
-			'valueFunctRef' => [
-				sub { shift->name },
-				sub { return playerModel(shift) },
-				sub { shift->revision },
-				sub { shift->ip },
-				sub { shift->port },
-				sub { uc(shift->macaddress) },
-				sub {
-					my $client = shift;
-
-					return ($client->signalStrength() . '%') 
-				},
-				sub {
-					my $client = shift;
-
-					return ($client->voltage() . 'VAC') 
-				},
-			],
-
+			'valueFunctRef' => [], # this is replaced in mainExitHandler
 			'menuName' => 'player'
 		},
 
@@ -282,15 +274,19 @@ sub mainExitHandler {
 
 		if ($nextmenu eq catdir('main','player')) {
 			my @nextList = @player_list;
+			my @nextValueFunc = @player_func;
 			if (defined($client->signalStrength())) {
 				push @nextList, 'PLAYER_SIGNAL_STRENGTH';
+				push @nextValueFunc, sub { return (shift->signalStrength() . '%') };
 				Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&updateClientStatus);
 			}
 			if (defined($client->voltage())) {
 				push @nextList, 'PLAYER_VOLTAGE';
+				push @nextValueFunc, sub { return (shift->voltage() . 'VAC') };
 				Slim::Utils::Timers::setTimer($client,Time::HiRes::time() + 1,\&updateClientStatus);
 			}
 			$nextParams{'listRef'} = \@nextList;
+			$nextParams{'valueFunctRef'} = \@nextValueFunc;
 		}
 
 		Slim::Buttons::Common::pushModeLeft($client, "INPUT.List", \%nextParams);
