@@ -22,7 +22,6 @@ Devices Player display.
 use strict;
 use Scalar::Util qw(blessed);
 
-use Slim::Buttons::Block;
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;
@@ -42,8 +41,6 @@ init() also creates the function hash for the required button handling whiel in 
 =cut
 
 sub init {
-
-	Slim::Buttons::Block::init();
 
 	my $name = 'BROWSE_MUSIC_FOLDER';
 	my $mode = 'browsetree';
@@ -365,6 +362,15 @@ sub setMode {
 		return;
 	}
 
+	$client->block({
+		'line' => [ $client->string('MUSIC'), $client->string('MUSIC') ],
+		'fonts' => {
+			'graphic-320x32' => 'light',
+			'graphic-280x16' => 'small',
+			'text'           => 2,
+		}
+	});
+
 	# Parse the hierarchy list into an array
 	my $hierarchy = $client->param('hierarchy');
 	my @levels    = split(/\//, $hierarchy);
@@ -437,6 +443,8 @@ sub setMode {
 				$items->[$index]->titlesort : Slim::Utils::Text::ignoreCaseArticles($items->[$index]);
 		},
 	);
+
+	$client->unblock;
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 }

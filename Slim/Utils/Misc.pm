@@ -823,6 +823,11 @@ sub readDirectory {
 			}
 		}
 
+		# call idle streams to service timers - used for blocking animation.
+		if (scalar @diritems % 3) {
+			main::idleStreams();
+		}
+
 		push @diritems, $item;
 	}
 

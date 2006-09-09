@@ -1306,7 +1306,9 @@ sub artistOnlyRoles {
 	# If the user has requested explict roles to be added, do so.
 	for my $role (@add) {
 
-		$roles{$role} = 1;
+		if ($role) {
+			$roles{$role} = 1;
+		}
 	}
 
 	# And if the user has asked for ALL, give them it.
