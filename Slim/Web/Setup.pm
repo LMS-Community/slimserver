@@ -111,8 +111,8 @@ our @newPlayerChildren;
 
 sub initSetupConfig {
 	%setup = (
-	'PLAYER_SETTINGS' => {
-		'title' => string('PLAYER_SETTINGS') #may be modified in postChange to reflect player name
+	'BASIC_PLAYER_SETTINGS' => {
+		'title' => string('BASIC_PLAYER_SETTINGS') #may be modified in postChange to reflect player name
 		,'children' => []
 		,'GroupOrder' => []
 		,'isClient' => 1
@@ -295,7 +295,7 @@ sub initSetupConfig {
 
 	,'DISPLAY_SETTINGS' => {
 		'title' => string('DISPLAY_SETTINGS')
-		,'parent' => 'PLAYER_SETTINGS'
+		,'parent' => 'BASIC_PLAYER_SETTINGS'
 		,'isClient' => 1
 		,'GroupOrder' => [undef,undef,undef,'ScrollMode','ScrollPause','ScrollRate', undef]
 		,'preEval' => sub {
@@ -586,7 +586,7 @@ sub initSetupConfig {
 	}
 	,'MENU_SETTINGS' => {
 		'title' => string('MENU_SETTINGS')
-		,'parent' => 'PLAYER_SETTINGS'
+		,'parent' => 'BASIC_PLAYER_SETTINGS'
 		,'isClient' => 1
 		,'GroupOrder' => ['MenuItems','NonMenuItems','Plugins']
 		,'preEval' => sub {
@@ -795,7 +795,7 @@ sub initSetupConfig {
 	}
 	,'ALARM_SETTINGS' => {
 		'title' => string('ALARM_SETTINGS')
-		,'parent' => 'PLAYER_SETTINGS'
+		,'parent' => 'BASIC_PLAYER_SETTINGS'
 		,'isClient' => 1
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
@@ -837,7 +837,7 @@ sub initSetupConfig {
 	}
 	,'AUDIO_SETTINGS' => {
 		'title' => string('AUDIO_SETTINGS')
-		,'parent' => 'PLAYER_SETTINGS'
+		,'parent' => 'BASIC_PLAYER_SETTINGS'
 		,'isClient' => 1
 		,'preEval' => sub {
 
@@ -1237,7 +1237,7 @@ sub initSetupConfig {
 	}
 	,'REMOTE_SETTINGS' => {
 		'title' => string('REMOTE_SETTINGS')
-		,'parent' => 'PLAYER_SETTINGS'
+		,'parent' => 'BASIC_PLAYER_SETTINGS'
 		,'isClient' => 1
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
@@ -1324,7 +1324,7 @@ sub initSetupConfig {
 	}
 	,'PLAYER_PLUGINS' => {
 		'title' => string('PLUGINS')
-		,'parent' => 'PLAYER_SETTINGS'
+		,'parent' => 'BASIC_PLAYER_SETTINGS'
 		,'isClient' => 1
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
@@ -1333,10 +1333,10 @@ sub initSetupConfig {
 			}
 	} # end of setup{'ADDITIONAL_PLAYER'} hash
 
-	,'SERVER_SETTINGS' => {
+	,'BASIC_SERVER_SETTINGS' => {
 
-		'children' => [qw(SERVER_SETTINGS INTERFACE_SETTINGS BEHAVIOR_SETTINGS FORMATS_SETTINGS FORMATTING_SETTINGS SECURITY_SETTINGS PERFORMANCE_SETTINGS NETWORK_SETTINGS DEBUGGING_SETTINGS)],
-		'title'    => string('SERVER_SETTINGS'),
+		'children' => [qw(BASIC_SERVER_SETTINGS INTERFACE_SETTINGS BEHAVIOR_SETTINGS FORMATS_SETTINGS FORMATTING_SETTINGS SECURITY_SETTINGS PERFORMANCE_SETTINGS NETWORK_SETTINGS DEBUGGING_SETTINGS)],
+		'title'    => string('BASIC_SERVER_SETTINGS'),
 		'singleChildLinkText' => string('ADDITIONAL_SERVER_SETTINGS'),
 
 		'preEval'  => sub {
@@ -1449,7 +1449,7 @@ sub initSetupConfig {
 
 	,'PLUGINS' => {
 		'title' => string('PLUGINS')
-		,'parent' => 'SERVER_SETTINGS'
+		,'parent' => 'BASIC_SERVER_SETTINGS'
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
 				$pageref->{'Prefs'}{'pluginlist'}{'arrayMax'} = fillPluginsList($client, $paramref);
@@ -1499,7 +1499,7 @@ sub initSetupConfig {
 		} #end of setup{'PLUGINS'}
 	,'RADIO' => {
 		'title' => string('RADIO')
-		,'parent' => 'SERVER_SETTINGS'
+		,'parent' => 'BASIC_SERVER_SETTINGS'
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
 				$pageref->{'Prefs'}{'pluginlist'}{'arrayMax'} = fillPluginsList($client, $paramref, 'RADIO');
@@ -1541,7 +1541,7 @@ sub initSetupConfig {
 		} #end of setup{'RADIO'}
 	,'INTERFACE_SETTINGS' => {
 		'title' => string('INTERFACE_SETTINGS')
-		,'parent' => 'SERVER_SETTINGS'
+		,'parent' => 'BASIC_SERVER_SETTINGS'
 		,'GroupOrder' => ['Default']
 		,'Groups' => {
 			'Default' => {
@@ -1593,7 +1593,7 @@ sub initSetupConfig {
 
 	,'FORMATS_SETTINGS' => {
 		'title' => string('FORMATS_SETTINGS')
-		,'parent' => 'SERVER_SETTINGS'
+		,'parent' => 'BASIC_SERVER_SETTINGS'
 		,'preEval' => sub {
 			my ($client,$paramref,$pageref) = @_;
 			my $i = 0;
@@ -1737,7 +1737,7 @@ sub initSetupConfig {
 
 	,'BEHAVIOR_SETTINGS' => {
 		'title' => string('BEHAVIOR_SETTINGS'),
-		'parent' => 'SERVER_SETTINGS',
+		'parent' => 'BASIC_SERVER_SETTINGS',
 		'GroupOrder' => [qw(DisplayInArtists VariousArtists Default)],
 		'Groups' => {
 	
@@ -1923,7 +1923,7 @@ sub initSetupConfig {
 
 	,'FORMATTING_SETTINGS' => {
 		'title' => string('FORMATTING_SETTINGS')
-		,'parent' => 'SERVER_SETTINGS'
+		,'parent' => 'BASIC_SERVER_SETTINGS'
 		,'GroupOrder' => ['Default','TitleFormats','GuessFileFormats']
 		,'Groups' => {
 			'Default' => {
@@ -2029,7 +2029,7 @@ sub initSetupConfig {
 		} #end of setup{'FORMATTING_SETTINGS'} hash
 	,'SECURITY_SETTINGS' => {
 		'title' => string('SECURITY_SETTINGS')
-		,'parent' => 'SERVER_SETTINGS'
+		,'parent' => 'BASIC_SERVER_SETTINGS'
 		,'GroupOrder' => ['BasicAuth','Default']
 		,'Groups' => {
 			'Default' => {
@@ -2093,7 +2093,7 @@ sub initSetupConfig {
 		} #end of setup{'security'} hash
 	,'PERFORMANCE_SETTINGS' => {
 		'title' => string('PERFORMANCE_SETTINGS'),
-		'parent' => 'SERVER_SETTINGS',
+		'parent' => 'BASIC_SERVER_SETTINGS',
 		'GroupOrder' => ['Default'],
 		'Groups' => {
 
@@ -2179,7 +2179,7 @@ sub initSetupConfig {
 	} #end of setup{'performance'} hash
 	,'NETWORK_SETTINGS' => {
 		'title' => string('NETWORK_SETTINGS')
-		,'parent' => 'SERVER_SETTINGS'
+		,'parent' => 'BASIC_SERVER_SETTINGS'
 		,'GroupOrder' => ['Default','TCP_Params']
 		,'Groups' => {
 			'Default' => {
@@ -2256,7 +2256,7 @@ sub initSetupConfig {
 		} #end of setup{'network'} hash
 	,'DEBUGGING_SETTINGS' => {
 		'title' => string('DEBUGGING_SETTINGS')
-		,'parent' => 'SERVER_SETTINGS'
+		,'parent' => 'BASIC_SERVER_SETTINGS'
 		,'postChange' => sub {
 					my ($client,$paramref,$pageref) = @_;
 					no strict 'refs';
@@ -2332,12 +2332,12 @@ sub initSetupConfig {
 
 	if (scalar(keys %{Slim::Utils::PluginManager::installedPlugins()})) {
 		
-		Slim::Web::Setup::addChildren('SERVER_SETTINGS','PLUGINS');
+		Slim::Web::Setup::addChildren('BASIC_SERVER_SETTINGS','PLUGINS');
 
 		# XXX This should be added conditionally based on whether there
 		# are any radio plugins. We need to find a place to make that
 		# check *after* plugins have been correctly initialized.
-		Slim::Web::Setup::addChildren('SERVER_SETTINGS','RADIO');
+		Slim::Web::Setup::addChildren('BASIC_SERVER_SETTINGS','RADIO');
 	}
 }
 
@@ -2538,13 +2538,13 @@ sub playerChildren {
 
 	if ($client->isPlayer()) {
 
-		$pageref->{'children'} = ['PLAYER_SETTINGS','MENU_SETTINGS','DISPLAY_SETTINGS','ALARM_SETTINGS','AUDIO_SETTINGS','REMOTE_SETTINGS'];
+		$pageref->{'children'} = ['BASIC_PLAYER_SETTINGS','MENU_SETTINGS','DISPLAY_SETTINGS','ALARM_SETTINGS','AUDIO_SETTINGS','REMOTE_SETTINGS'];
 		push @{$pageref->{'children'}},@newPlayerChildren;
 		if (scalar(keys %{Slim::Utils::PluginManager::playerPlugins()})) {
 			push @{$pageref->{'children'}}, 'PLAYER_PLUGINS';
 		}
 	} else {
-		$pageref->{'children'} = ['PLAYER_SETTINGS','ALARM_SETTINGS','AUDIO_SETTINGS'];
+		$pageref->{'children'} = ['BASIC_PLAYER_SETTINGS','ALARM_SETTINGS','AUDIO_SETTINGS'];
 	}
 	
 }
@@ -2617,7 +2617,7 @@ sub setup_HTTP {
 	my $changed;
 	my $rejected;
 	
-	if ($::nosetup || ($::noserver && $paramref->{'page'} eq 'SERVER_SETTINGS')) {
+	if ($::nosetup || ($::noserver && $paramref->{'page'} eq 'BASIC_SERVER_SETTINGS')) {
 		$response->code(RC_FORBIDDEN);
 		return Slim::Web::HTTP::filltemplatefile('html/errors/403.html',$paramref);
 	}
@@ -2868,8 +2868,8 @@ sub buildLinks {
 	for my $page (@pages) {
 		
 		# Don't include in the sorted list, let skins include or not and where they want.
-		next if $page eq "SERVER_SETTINGS";
-		next if $page eq "PLAYER_SETTINGS";
+		next if $page eq "BASIC_SERVER_SETTINGS";
+		next if $page eq "BASIC_PLAYER_SETTINGS";
 		
 		# Grab player tabs.  
 		# TODO do this on startup only and allow plugins to add themselves

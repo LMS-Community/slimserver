@@ -35,8 +35,8 @@ my $defaultMapFile;
 # If time between IR commands is greater than this, then the code is considered a new button press
 $Slim::Hardware::IR::IRMINTIME  = 0.140;
 
-# 512 ms
-$Slim::Hardware::IR::IRHOLDTIME  = 0.512;
+# bumped up to a full second, to help the heavy handed.
+$Slim::Hardware::IR::IRHOLDTIME  = 1.0;
 
 # 256 ms
 $Slim::Hardware::IR::IRSINGLETIME = 0.256;

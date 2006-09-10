@@ -453,9 +453,9 @@ sub playmode {
 
 		if ($newmode eq "stop") {
 
-			$everyclient->currentplayingsong("");
-
 			$::d_source && msg("Stopping and clearing out old chunks for client " . $everyclient->id() . "\n");
+			
+			$everyclient->currentplayingsong("");
 
 			@{$everyclient->chunks} = ();
 
@@ -489,13 +489,15 @@ sub playmode {
 			my $paused = ( Slim::Player::Sync::isSynced($everyclient) ) ? 1 : 0;
 			
 			$everyclient->play(
-				$paused,
-				$master->streamformat(),
-				$currentSong,
-				(defined($seekoffset) && $seekoffset > 0),
-				$master->shouldLoop,
-				Slim::Player::ReplayGain->fetchGainMode($master),
-			);
+								{ 
+								'paused' => Slim::Player::Sync::isSynced($everyclient), 
+								'format' => $master->streamformat(), 
+								'url' => $currentSong, 
+								'reconnect' => (defined($seekoffset) && $seekoffset > 0), 
+								'loop' => $master->shouldLoop, 
+								'replay_gain' => Slim::Player::ReplayGain->fetchGainMode($master)
+								}
+							);
 
 		} elsif ($newmode eq "pause") {
 
@@ -809,13 +811,13 @@ sub gototime {
 		my $paused = ( Slim::Player::Sync::isSynced($client) ) ? 1 : 0;
 
 		$everybuddy->play(
-			$paused,
-			$client->streamformat(),
-			Slim::Player::Playlist::song($client),
-			0,
-			$client->shouldLoop,
-			Slim::Player::ReplayGain->fetchGainMode($client),
-		);
+							{ 
+								'paused' => $paused, 
+								'format' => $client->streamformat(), 
+								'url' => Slim::Player::Playlist::song($client), 
+								'replay_gain' => Slim::Player::ReplayGain->fetchGainMode($client)
+							}
+						);
 
 		$everybuddy->playmode("play");
 	}
@@ -1215,6 +1217,7 @@ sub errorOpening {
 
 	if ($client->reportsTrackStart()) {
 		$::d_source && msg("Error opening current track, so mark it as already played\n");
+		bt();
 		markStreamingTrackAsPlayed($client);
 	}
 	
@@ -1404,8 +1407,7 @@ sub openSong {
 					return openSong($client);
 
 				} else {
-	
-					$::d_source && msg("openSong: don't know how to handle content for [$fullpath]\n");
+					$::d_source && msg("openSong: don't know how to handle content for [$fullpath] type $contentType\n");
 
 					$sock->close();
 					$sock = undef;

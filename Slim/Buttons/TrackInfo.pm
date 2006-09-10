@@ -294,6 +294,11 @@ sub loadDataForTrack {
 		push (@{$client->trackInfoContent}, undef);
 	}
 
+	if ($track->samplesize) {
+		push (@{$client->trackInfoLines}, $client->string('SAMPLESIZE') . ": " . $track->samplesize . " " . $client->string('BITS'));
+		push (@{$client->trackInfoContent}, undef);
+	}
+
 	if (my $len = $track->filesize) {
 		push (@{$client->trackInfoLines}, $client->string('FILELENGTH') . ": " . Slim::Utils::Misc::delimitThousands($len));
 		push (@{$client->trackInfoContent}, undef);

@@ -1,6 +1,6 @@
 [% FILTER null %]
 [% pwd_list = BLOCK %]
-	[% IF playerid %][% "PLAYER_SETTINGS" | string %] [% IF playername %][% "FOR" | string %] [% playername %][% END %][% ELSE %][% "SERVER_SETTINGS" | string %][%END %]
+	[% IF playerid %][% "PLAYER_SETTINGS" | string %] [% IF playername %][% "FOR" | string %] [% playername %][% END %][% ELSE %][% "SERVER_SETTINGS" | string %][%END %] / [% page | string %]
 [% END %]
 [% pageHeaderInfo = BLOCK %]
 	[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
@@ -18,17 +18,19 @@
     <input type=hidden value="[% page %]" name="page">
     [% GroupList %] 
   </form>
-  [% IF page == 'PLAYER_SETTINGS' %] 
-  <div class="prefHead">[% "FORGET_PLAYER" | string %]</div>
-  <div class="prefDesc">[% "FORGET_PLAYER_DESC" | string %]</div>
+  [% IF page == 'BASIC_PLAYER_SETTINGS' %] 
+  <div class="settingSection">
+    <div class="prefHead">[% "FORGET_PLAYER" | string %]</div>
+    <div class="prefDesc">[% "FORGET_PLAYER_DESC" | string %]</div>
   <p><a href="[% webroot %]index.html?command=client&amp;subcommand=forget&amp;playerid=[% playerid | uri %]&amp;player=[% playerid | uri %]" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a></p>
-  <hr>
-  [% END %] 
+    <div class="prefHead">[% "INFORMATION_MENU_PLAYER" | string %]</div>
   [% IF versionInfo %]<p>[% versionInfo %]</p>[% END %]
   [% IF newVersion %]<p>[% newVersion %]</p>[% END %]
   [% IF ipaddress %]<p>[% "PLAYER_IP_ADDRESS" | string %] [% ipaddress %]</p>[% END %]
   [% IF macaddress %]<p>[% "PLAYER_MAC_ADDRESS" | string %] [% macaddress %]</p>[% END %] 
   [% IF signalstrength %]<p>[% "INFORMATION_PLAYER_SIGNAL_STRENGTH" | string %][% "COLON" | string %] [% signalstrength %]%</p>[% END %] 
   [% IF voltage %]<p>[% "INFORMATION_PLAYER_VOLTAGE" | string %][% "COLON" | string %] [% voltage %]VAC</p>[% END %] 
+    </div>
+  [% END %]
   <p></p>
 [% PROCESS pagefooter.html %]

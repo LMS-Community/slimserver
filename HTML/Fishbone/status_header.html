@@ -85,7 +85,7 @@
 				<span id="sleeplink"><A href="javascript:processSleepLink('p0=button&amp;p1=sleep');"><span id='sleeptime'>[% IF sleeptime %][% sleep %][% ELSE %][% "SLEEP" | string %][% END %]</span></a>
 				 / </span>
 				
-				[% IF not nosetup  %]<a href="setup.html?page=PLAYER_SETTINGS&amp;player=[% playerURI %]&amp;playerid=[% playerURI %]" target="browser">[% "SETTINGS" | string %]</a>
+				[% IF not nosetup  %]<a href="setup.html?page=BASIC_SERVER_SETTINGS&amp;player=[% playerURI %]&amp;playerid=[% playerURI %]" target="browser">[% "SETTINGS" | string %]</a>
 				[%- END -%]
 				[%- IF not undock -%] /
 				<a href="javascript:openRemote()">Undock</a>

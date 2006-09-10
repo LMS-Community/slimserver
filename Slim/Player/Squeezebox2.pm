@@ -420,7 +420,12 @@ sub directHeaders {
 				$redirects->{ $redir } = $url;			
 				
 				$client->stop();
-				$client->play(Slim::Player::Sync::isSynced($client), ($client->masterOrSelf())->streamformat(), $redir); 
+
+				$client->play( 
+						 { 'paused' => Slim::Player::Sync::isSynced($client), 
+						   'format' => ($client->masterOrSelf())->streamformat(), 
+						   'url' => $redir }
+					);
 
 			} elsif ($body || Slim::Music::Info::isList($url)) {
 

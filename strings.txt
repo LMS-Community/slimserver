@@ -1037,7 +1037,7 @@ ALARM_ON
 	CS	Budík zapnut
 	DE	An (Drücken Sie RECHTS um auszuschalten)
 	DA	Til (Tryk HØJRE for at slå fra)
-	EN	On (Press RIGHT to turn off)
+	EN	On (Go right to turn off)
 	ES	Encendido (Presionar DERECHA para apagar)
 	FI	Päälle (paina OIKEALLE sammuttaaksesi)
 	FR	Activé (Appuyer sur DROITE pour désactiver)
@@ -1054,7 +1054,7 @@ ALARM_OFF
 	CS	Budík vypnut (Stiskni PRAVÉ tlačítko pro zapnutí)
 	DE	Aus (Drücken Sie RECHTS um anzuschalten)
 	DA	Fra (Tryk HØJRE for at slå til)
-	EN	Off (Press RIGHT to turn on)
+	EN	Off (Go right to turn on)
 	ES	Apagado (Presionar DERECHA para encender)
 	FI	Pois päältä (paina OIKEALLE laittaaksesi päälle)
 	FR	Désactivé (Appuyer sur DROITE pour activer)
@@ -3614,7 +3614,7 @@ SETUP_MMMSETTINGS
 
 MUSICMAGIC_MIXRIGHT
 	DE	(Zum Mixen RECHTS drücken)
-	EN	(Press RIGHT to Mix)
+	EN	(Go right to Mix)
 	ES	(Presionar DERECHA para Mezclar)
 	NL	(Druk -> om te mixen)
 	ZH_CN	（按右方向键开始混音）
@@ -9365,6 +9365,9 @@ PLAYER_SETTINGS
 	SV	Spelarinställningar
 	ZH_CN	播放机设置
 
+BASIC_PLAYER_SETTINGS
+	EN	Basic Settings
+
 ALARM_SETTINGS
 	CS	Budík nastavení
 	DE	Wecker
@@ -9441,6 +9444,9 @@ PLAYERIR_SETTINGS
 	PT	Configurações de Infravermelhos
 	SV	IR-inställningar
 	ZH_CN	红外线设置
+
+BASIC_SERVER_SETTINGS
+	EN	Basic Settings
 
 SERVER_SETTINGS
 	CS	Nastavení serveru
@@ -10342,7 +10348,7 @@ PLAYER_NEEDS_UPGRADE_1
 PLAYER_NEEDS_UPGRADE_2
 	CS	Stiskněte a držte tlačítko Jas pro zahájení.
 	DE	Halten Sie BRIGHTNESS gedrückt, um den Vorgang zu starten.
-	EN	Press and hold BRIGHTNESS key to begin.
+	EN	Press and hold BRIGHTNESS to begin.
 	ES	Presione y mantenga presionado el botón de BRIGHTNESS (Luminosidad) para comenzar.
 	FI	Pidä BRIGHTNESS näppäintä pohjassa aloittaaksesi.
 	FR	Appuyez sur BRIGHTNESS et laissez appuyé pour lancer la mise à jour
@@ -10917,7 +10923,7 @@ SYNC_WITH
 	CS	Zmáčkněte tlačítko DOPRAVA pro synchornizaci s:
 	DE	RECHTS drücken zum synchronisieren mit:
 	DA	Tryk HØJRE for at synkronisere med:
-	EN	Press RIGHT to sync with:
+	EN	Go right to sync with:
 	ES	Presionar DERECHA para sincronizar con:
 	FI	Paina RIGHT uudelleen saattaaksesi ajan tasalle:
 	FR	Appuyer sur RIGHT pour se synchroniser avec :
@@ -10934,7 +10940,7 @@ UNSYNC_WITH
 	CS	Stiskněte 'DOPRAVA' pro zrušení synchronizace
 	DE	RECHTS drücken zum Aufheben der Synchronisation:
 	DA	Tryk HØJRE igen for at afslutte synkronisering med:
-	EN	Press RIGHT to unsync with:
+	EN	Go right to unsync with:
 	ES	Presionar DERECHA para desincronizar con:
 	FI	Paina RIGHT uudelleen poistaaksesi tasaustiedon:
 	FR	Appuyer sur RIGHT pour se désynchroniser d'avec :
@@ -11403,7 +11409,7 @@ SAVE_PLAYLIST
 
 PLAYLIST_OVERWRITE
 	DE	RECHTS drücken zum Überschreiben der existierenden Datei:
-	EN	Press RIGHT to replace existing playlist:
+	EN	Go right to replace existing playlist:
 	ES	Presionar DERECHA para reemplazar la lista existente:
 	FR	Appuyez sur DROITE pour remplacer la liste de lecture existante :
 	NL	Druk -> om de bestaande playlist te vervangen:
@@ -11411,7 +11417,7 @@ PLAYLIST_OVERWRITE
 PLAYLIST_SAVE
 	CS	Stiskněte znovu tlačítko DOPRAVA, uložíte aktuální playlist jako:
 	DE	Zum Speichern der Wiedergabeliste RECHTS drücken:
-	EN	Press RIGHT again to save playlist as:
+	EN	Right again to save playlist as:
 	ES	Presionar DERECHA para guardar la lista como:
 	FI	Paina OIKEALLE uudestaan tallentaaksesi soittolistan nimellä:
 	FR	Appuyez à nouveau sur DROITE pour sauver la liste de lecture sous :
@@ -12093,7 +12099,7 @@ FAVORITES_FAVORITE_NUM
 
 FAVORITES_RIGHT_TO_DELETE
 	DE	 (RECHTS zum löschen)
-	EN	 (RIGHT to delete)
+	EN	 (Go right to delete)
 	ES	(RIGHT para eliminar)
 	FI	(OIKEALLE poistaaksesi)
 	FR	(DROITE pour supprimer)
@@ -12113,7 +12119,7 @@ FAVORITES_NOT_A_FAVORITE
 
 FAVORITES_RIGHT_TO_ADD
 	DE	RECHTS drücken um den Favoriten zuzuordnen
-	EN	Press RIGHT to add to favorites
+	EN	Go right to add to favorites
 	ES	Presionar RIGHT para añadir a favoritas
 	FI	Paina oikealle lisätäksesi suosikkeihin
 	FR	Appuyez sur DROITE pour ajouter aux favoris

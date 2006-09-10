@@ -117,11 +117,11 @@ function chooseSettings(value,option)
 		case "HOME":
 			url = "[% webroot %]home.html?"
 		break
-		case "PLAYER_SETTINGS":
-			url = "[% webroot %]setup.html?page=PLAYER_SETTINGS&amp;playerid=[% playerid | uri %]"
+		case "BASIC_PLAYER_SETTINGS":
+			url = "[% webroot %]setup.html?page=BASIC_PLAYER_SETTINGS&amp;playerid=[% playerid | uri %]"
 		break
-		case "SERVER_SETTINGS":
-			url = "[% webroot %]setup.html?page=SERVER_SETTINGS&amp;"
+		case "BASIC_SERVER_SETTINGS":
+			url = "[% webroot %]setup.html?page=BASIC_SERVER_SETTINGS&amp;"
 		break
 	}
 

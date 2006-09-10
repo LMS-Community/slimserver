@@ -150,20 +150,15 @@ sub decoder {
 
 sub play {
 	my $client = shift;
-	my $paused = shift;
-	my $format = shift;
-	my $url = shift;
-	my $reconnect = shift;
-	my $loop = shift;
-	my $replay_gain = shift;
+	my $params = shift;
 
-	$client->stream('s', $paused, $format, $url, $reconnect, $loop, $replay_gain);
+	$client->stream('s', $params );
 
 	# make sure volume is set, without changing temp setting
 	$client->volume($client->volume(), defined($client->tempVolume()));
 
 	# if this is a remote stream, start playback as soon as we have enough buffer filled
-	my $quickstart = Slim::Music::Info::isRemoteURL($url) ? 0.125 : undef;
+	my $quickstart = Slim::Music::Info::isRemoteURL($params->{url}) ? 0.125 : undef;
 
 	Slim::Utils::Timers::killTimers($client, \&quickstart);
 
@@ -171,7 +166,7 @@ sub play {
 		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + $quickstart, \&quickstart );
 	}
 
-	$client->lastSong($url);
+	$client->lastSong($params->{url});
 
 	return 1;
 }
@@ -657,22 +652,24 @@ sub opened {
 #				// [24]
 #
 sub stream {
-	my ($client, $command, $paused, $format, $url, $reconnect, $loop, $replay_gain) = @_;
+	my ($client, $command, $params) = @_;
+
+	my $format = $params->{format};
 
 	if ($client->opened()) {
-		$::d_slimproto && msg("*************stream called: $command paused: $paused format: $format url: $url\n");
+		$::d_slimproto && msg("*************stream called: $command paused: $params->{paused} format: $format url: $params->{url}\n");
 		$::d_slimproto && bt();
 		my $autostart;
 		
 		# autostart off when pausing or stopping, otherwise 75%
-		if ($paused || $command =~ /^[pq]$/) {
+		if ($params->{paused} || $command =~ /^[pq]$/) {
 			$autostart = 0;
 		} else {
 			$autostart = 1;
 		}
 
 		my $bufferThreshold;
-		if ($paused) {
+		if ($params->{paused}) {
 			$bufferThreshold = $client->prefGet('syncBufferThreshold');
 		}
 		else {
@@ -687,7 +684,7 @@ sub stream {
 		my $outputThreshold;
 
 		my $handler;
-		my $server_url = $client->canDirectStream($url);
+		my $server_url = $client->canDirectStream($params->{url});
 		if ($server_url) {
 
 			$handler = Slim::Player::ProtocolHandlers->handlerForURL($server_url);
@@ -701,7 +698,7 @@ sub stream {
 		}
 		
 		if ( !$format && $command eq 's' ) {
-			warn "*** WARNING: stream('s') called with no format, defaulting to mp3 decoder, url: $url\n";
+			warn "*** WARNING: stream('s') called with no format, defaulting to mp3 decoder, url: $params->{url}\n";
 			bt();
 		}
 		
@@ -715,10 +712,10 @@ sub stream {
 			$pcmchannels = '2';
 			$outputThreshold = 0;
 
-			if ($url) {
+			if ($params->{url}) {
 
 				my $track = Slim::Schema->rs('Track')->objectForUrl({
-					'url' => $url,
+					'url' => $params->{url},
 		       		});
 
 				$pcmsamplesize = $client->pcm_sample_sizes($track);
@@ -727,7 +724,7 @@ sub stream {
 
 		} elsif ($format eq 'aif') {
 			my $track = Slim::Schema->rs('Track')->objectForUrl({
-				'url' => $url,
+				'url' => $params->{url},
 			});
 
 			$formatbyte = 'p';
@@ -737,10 +734,10 @@ sub stream {
 			$pcmchannels = '2';
 			$outputThreshold = 0;
 
-			if ($url) {
+			if ($params->{url}) {
 
 				my $track = Slim::Schema->rs('Track')->objectForUrl({
-					'url' => $url,
+					'url' => $params->{url},
 		       		});
 
 				$pcmsamplesize = $client->pcm_sample_sizes($track);
@@ -757,10 +754,10 @@ sub stream {
 
 			# Only on Squeezebox2/3, threshold the output buffer for
 			# downsampled 96kHz flac.
-			if ($url) {
+			if ($params->{url}) {
 
 				my $track = Slim::Schema->rs('Track')->objectForUrl({
-					'url' => $url,
+					'url' => $params->{url},
 				});
 
 				if ($client->model() eq 'squeezebox2' &&
@@ -807,7 +804,7 @@ sub stream {
 			# XXX: The use of mp3 as default has been known to cause the mp3 decoder to be used for
 			# other audio types, resulting in static. 
 			if ( $format ne 'mp3' ) {
-				warn "*** WARNING: mp3 decoder used for format: $format, url: $url\n";
+				warn "*** WARNING: mp3 decoder used for format: $format, url: $params->{url}\n";
 				bt();
 			}
 		}
@@ -822,7 +819,7 @@ sub stream {
 			
 			if ($server_url) {
 				
-				$::d_directstream && msg("This player supports direct streaming for $url as $server_url, let's do it.\n");
+				$::d_directstream && msg("This player supports direct streaming for $params->{url} as $server_url, let's do it.\n");
 		
 				my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($server_url);
 				
@@ -850,7 +847,7 @@ sub stream {
 				} else {
 					$::d_directstream && msg("setting up direct stream ($server_ip:$server_port) autostart: $autostart.\n");
 					$::d_directstream && msg("request string: $request_string\n");
-					$client->directURL($url);
+					$client->directURL($params->{url});
 				}
 				
 				if ( $format =~ /(?:wma|asx)/ ) {
@@ -891,8 +888,8 @@ sub stream {
 		$::d_slimproto && msg("starting with decoder with format: $formatbyte autostart: $autostart threshold: $bufferThreshold samplesize: $pcmsamplesize samplerate: $pcmsamplerate endian: $pcmendian channels: $pcmchannels\n");
 
 		my $flags = 0;
-		$flags |= 0x40 if $reconnect;
-		$flags |= 0x80 if $loop;
+		$flags |= 0x40 if $params->{reconnect};
+		$flags |= 0x80 if $params->{loop};
 		$flags |= ($client->prefGet('polarityInversion') || 0);
 
 		$::d_slimproto && msg("flags: $flags\n");
@@ -911,7 +908,7 @@ sub stream {
 			$flags,		# flags	     
 			$outputThreshold,
 			0,		# reserved
-			$client->canDoReplayGain($replay_gain),		
+			$client->canDoReplayGain($params->{replay_gain}),		
 			$server_port || Slim::Utils::Prefs::get('httpport'),  # use slim server's IP
 			$server_ip || 0,
 		);

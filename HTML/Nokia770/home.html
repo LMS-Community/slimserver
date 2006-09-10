@@ -133,11 +133,11 @@
 	<div>[% "SETTINGS" | string | upper %]</div>
 	<ul>
 	[%- IF not noserver %]
-		<li><a href="setup.html?page=SERVER_SETTINGS&amp;player=[% playerURI %]">[% "SERVER_SETTINGS" | string %]</a></li>
+		<li><a href="setup.html?page=BASIC_SERVER_SETTINGS&amp;player=[% playerURI %]">[% "SERVER_SETTINGS" | string %]</a></li>
 	[%- END %]
 
 	[%- USE Clients; players = Clients.get("name"); FOREACH client = players; %]
-		<li><a href="setup.html?page=PLAYER_SETTINGS&amp;player=[% playerURI %]&amp;playerid=[% client.id | uri %]">[% "PLAYER_SETTINGS" | string %][% IF client.name %] [% "FOR" | string %] [% client.name %][% END %]</a></li>
+		<li><a href="setup.html?page=BASIC_PLAYER_SETTINGS&amp;player=[% playerURI %]&amp;playerid=[% client.id | uri %]">[% "PLAYER_SETTINGS" | string %][% IF client.name %] [% "FOR" | string %] [% client.name %][% END %]</a></li>
 	[%- END %]
 
 	[%- FOREACH key = additionalLinks.settings.keys %]
@@ -187,8 +187,8 @@
 	<tr>
 		<td align="right">
 			<a href="[% webroot %]html/about.html" class = 'statusbartext'>[% "ABOUT_SHORT" | string %]</a>&nbsp;|&nbsp;
-			<a href="[% webroot %]setup.html?player=[% playerURI %]&page=SERVER_SETTINGS" class = "statusbartext">[% "SERVER_SETTINGS" | string %]</a>&nbsp;|&nbsp;
-			<a class = 'statusbartext' href="[% webroot %]setup.html?page=PLAYER_SETTINGS&player=[% playerURI %]&playerid=[% playerURI %]">[% "PLAYER_SETTINGS" | string %]</a>
+			<a href="[% webroot %]setup.html?player=[% playerURI %]&page=BASIC_SERVER_SETTINGS" class = "statusbartext">[% "SERVER_SETTINGS" | string %]</a>&nbsp;|&nbsp;
+			<a class = 'statusbartext' href="[% webroot %]setup.html?page=BASIC_PLAYER_SETTINGS&player=[% playerURI %]&playerid=[% playerURI %]">[% "PLAYER_SETTINGS" | string %]</a>
 		</td>
 		<td width="4"></td>
 	</tr>

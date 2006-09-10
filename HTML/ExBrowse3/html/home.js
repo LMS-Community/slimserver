@@ -133,10 +133,10 @@ function initHome() {
 		homelinks = new Array(
 			new JXTK2.Button("homebrowse", gobrowse),
 			new JXTK2.Button("homessettings", function() {
-				browseurl("setup.html?page=SERVER_SETTINGS");
+				browseurl("setup.html?page=BASIC_SERVER_SETTINGS");
 			}),
 			new JXTK2.Button("homepsettings", function() {
-				browseurl("setup.html?page=PLAYER_SETTINGS&playerid=" + escape(curPlayer));
+				browseurl("setup.html?page=BASIC_PLAYER_SETTINGS&playerid=" + escape(curPlayer));
 			}),
 			new JXTK2.Button("homehelp", gohelp)
 		);
