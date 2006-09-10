@@ -9366,6 +9366,7 @@ PLAYER_SETTINGS
 	ZH_CN	播放机设置
 
 BASIC_PLAYER_SETTINGS
+	DE	Grundeinstellungen
 	EN	Basic Settings
 
 ALARM_SETTINGS
@@ -9446,6 +9447,7 @@ PLAYERIR_SETTINGS
 	ZH_CN	红外线设置
 
 BASIC_SERVER_SETTINGS
+	DE	Grundeinstellungen
 	EN	Basic Settings
 
 SERVER_SETTINGS
@@ -12801,10 +12803,13 @@ POLARITYINVERSION_INVERTED
 	NL	Omgekeerde polariteit
 
 INFORMATION_PLAYER_VOLTAGE
+	DE	Spannung
 	EN	Voltage
 
 LOADING_BROWSE_MUSIC_FOLDER
+	DE	Lade Musikverzeichnis...
 	EN	Loading Music Folder...
 
 LOADING
+	DE	Lade...
 	EN	Loading...
