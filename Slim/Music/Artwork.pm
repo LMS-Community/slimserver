@@ -27,6 +27,7 @@ use Scalar::Util qw(blessed);
 use Tie::Cache::LRU;
 
 use Slim::Formats;
+use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Music::TitleFormatter;
 use Slim::Utils::Misc;
@@ -47,7 +48,7 @@ sub findArtwork {
 	# Only look for track/album combos that don't already have artwork.
 	my $cond = {
 		'me.audio'      => 1,
-		'me.timestamp'  => { '>=' => Slim::Schema->lastRescanTime },
+		'me.timestamp'  => { '>=' => Slim::Music::Import->lastScanTime },
 		'album.artwork' => { '='  => undef },
 	};
 

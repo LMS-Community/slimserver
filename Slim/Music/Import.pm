@@ -177,6 +177,43 @@ sub checkScanningStatus {
 	}
 }
 
+=head2 lastScanTime()
+
+Returns the last time the user ran a scan, or 0.
+
+=cut
+
+sub lastScanTime {
+	my $class = shift;
+	my $name  = shift || 'lastRescanTime';
+
+	my $last  = Slim::Schema->single('MetaInformation', { 'name' => $name });
+
+	return blessed($last) ? $last->value : 0;
+}
+
+=head2 setLastScanTime()
+
+Set the last scan time.
+
+=cut
+
+sub setLastScanTime {
+	my $class = shift;
+	my $name  = shift || 'lastRescanTime';
+	my $value = shift || time;
+
+	eval { Slim::Schema->txn_do(sub {
+
+		my $last = Slim::Schema->rs('MetaInformation')->find_or_create({
+			'name' => $name
+		});
+
+		$last->value($value);
+		$last->update;
+	}) };
+}
+
 =head2 runScan( )
 
 Start a scan of all used importers.

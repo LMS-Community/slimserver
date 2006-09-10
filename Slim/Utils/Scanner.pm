@@ -238,7 +238,7 @@ sub findNewAndChangedFiles {
 	# * That have changed - are in the db, but timestamp or size is different.
 	#
 	# Generate a list of files that are on disk, but are not in the database.
-	my $last  = Slim::Schema->lastRescanTime;
+	my $last  = Slim::Music::Import->lastScanTime;
 	my $found = Slim::Utils::Misc::arrayDiff($onDisk, $inDB);
 
 	# Check the file list against the last rescan time to determine changed files.

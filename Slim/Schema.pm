@@ -457,20 +457,6 @@ sub searchTypes {
 	return qw(contributor album track);
 }
 
-=head2 lastRescanTime()
-
-Returns the last time the user ran a scan, or 0.
-
-=cut
-
-sub lastRescanTime {
-	my $class = shift;
-
-	my $last  = $class->single('MetaInformation', { 'name' => 'lastRescanTime' });
-
-	return blessed($last) ? $last->value : 0;
-}
-
 =head2 contentType( $urlOrObj ) 
 
 Fetch the content type for a URL or Track Object.

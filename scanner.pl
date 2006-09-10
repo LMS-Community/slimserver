@@ -171,7 +171,11 @@ sub main {
 
 		# Otherwise just use our Importers to scan.
 		eval {
-			Slim::Music::Import->resetImporters;
+
+			if ($wipe) {
+				Slim::Music::Import->resetImporters;
+			}
+
 			Slim::Music::Import->runScan;
 		};
 	}
@@ -193,15 +197,7 @@ sub main {
 
 		} else {
 
-			eval { Slim::Schema->txn_do(sub {
-
-				my $lastRescan = Slim::Schema->rs('MetaInformation')->find_or_create({
-					'name' => 'lastRescanTime'
-				});
-
-				$lastRescan->value(time);
-				$lastRescan->update;
-			}) };
+			Slim::Music::Import->setLastScanTime;
 
 			if ($@) {
 				errorMsg("Scanner: Failed to update lastRescanTime: [$@]\n");

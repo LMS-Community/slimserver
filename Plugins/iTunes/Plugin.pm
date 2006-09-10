@@ -88,6 +88,8 @@ sub checker {
 		$interval = 10;
 	}
 
+	$::d_itunes && msg("iTunes: Setting checker for $interval seconds from now.\n");
+
 	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&checker);
 }
 

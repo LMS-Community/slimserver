@@ -83,8 +83,7 @@ sub resetState {
 
 	$lastITunesMusicLibraryDate = -1;
 
-	# set to -1 to force all the tracks to be updated.
-	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $lastITunesMusicLibraryDate);
+	Slim::Music::Import->setLastScanTime('iTunesLastLibraryChange', -1);
 }
 
 sub getTotalTrackCount {
@@ -178,15 +177,11 @@ sub doneScanning {
 
 	$lastMusicLibraryFinishTime = time();
 
-	# Set the last change time for the next go-round.
-	my $file  = $class->findMusicLibraryFile;
-	my $mtime = (stat($file))[9];
-
 	if ($::d_itunes) {
 		msgf("iTunes: scan completed in %d seconds.\n", (time() - $iTunesScanStartTime));
 	}
 
-	Slim::Utils::Prefs::set('lastITunesMusicLibraryDate', $currentITunesMusicLibraryDate);
+	Slim::Music::Import->setLastScanTime('iTunesLastLibraryChange', $currentITunesMusicLibraryDate);
 
 	Slim::Music::Import->endImporter($class);
 }

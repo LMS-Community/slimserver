@@ -210,45 +210,56 @@ sub findMusicLibraryFile {
 }
 
 sub isMusicLibraryFileChanged {
-	my $class = shift;
+	my $class     = shift;
 
-	my $file      = $class->findMusicLibraryFile();
+	my $file      = $class->findMusicLibraryFile() || return;
 	my $fileMTime = (stat $file)[9];
 
-	# Set this so others can use it without going through Prefs in a tight loop.
-	$class->lastITunesMusicLibraryDate( Slim::Utils::Prefs::get('lastITunesMusicLibraryDate') );
-	
 	# Only say "yes" if it has been more than one minute since we last finished scanning
 	# and the file mod time has changed since we last scanned. Note that if we are
-	# just starting, lastITunesMusicLibraryDate is undef, so both $fileMTime
+	# just starting, iTunesLastLibraryChange is undef, so both $fileMTime
 	# will be greater than 0 and time()-0 will be greater than 180 :-)
-	if ($file && $fileMTime > $class->lastITunesMusicLibraryDate) {
+	my $lastScanTime     = Slim::Music::Import->lastScanTime;
+	my $lastiTunesChange = Slim::Music::Import->lastScanTime('iTunesLastLibraryChange');
 
-		my $itunesScanInterval = Slim::Utils::Prefs::get('itunesscaninterval');
+	# Set this so others can use it without going through the DB in a tight loop.
+	$class->lastITunesMusicLibraryDate($lastiTunesChange);
 
-		$::d_itunes && msgf("iTunes: music library has changed: %s\n", 
-			scalar localtime($class->lastITunesMusicLibraryDate)
-		);
-		
-		if (!$itunesScanInterval) {
+	if ($fileMTime > $lastiTunesChange) {
+
+		my $scanInterval = Slim::Utils::Prefs::get('itunesscaninterval');
+
+		if ($::d_itunes) {
+
+			msgf("iTunes: lastiTunesChange: [%s]\n", scalar localtime($lastiTunesChange));
+			msgf("iTunes: lastScanTime    : [$lastScanTime]\n");
+			msgf("iTunes: scanInterval    : [$scanInterval]\n");
+		}
+
+		if (!$scanInterval) {
 			
 			# only scan if itunesscaninterval is non-zero.
-			$::d_itunes && msg("iTunes: Scan Interval set to 0, rescanning disabled\n");
+			$::d_itunes && msg("iTunes: Scan Interval set to 0, rescanning disabled.\n");
 
 			return 0;
 		}
 
-		if (!$class->lastMusicLibraryFinishTime) {
+		if (!$lastScanTime) {
+
+			$::d_itunes && msg("iTunes: lastScanTime is 0: Will start scanning.\n");
+
 			return 1;
 		}
 
-		if (time() - $class->lastMusicLibraryFinishTime > $itunesScanInterval) {
+		if ((time - $lastScanTime) > $scanInterval) {
+
+			$::d_itunes && msg("iTunes: (time - lastScanTime) > scanInterval: Will start scanning.\n");
 
 			return 1;
 
 		} else {
 
-			$::d_itunes && msg("iTunes: waiting for $itunesScanInterval seconds to pass before rescanning\n");
+			$::d_itunes && msg("iTunes: waiting for $scanInterval seconds to pass before rescanning\n");
 		}
 	}
 

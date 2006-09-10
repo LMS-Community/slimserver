@@ -21,7 +21,6 @@ my $browser;
 my %genre_hash = ();
 my $isauto = 1;
 
-my $lastMusicLibraryFinishTime = undef;
 my $last_error = 0;
 my $mixer;
 
@@ -138,6 +137,7 @@ sub initPlugin {
 	Slim::Player::ProtocolHandlers->registerHandler("moodlogicplaylist", "0");
 
 	Slim::Music::Import->addImporter($class, {
+		'reset'        => \&resetState,
 		'playlistOnly' => 1,
 	});
 
@@ -146,6 +146,13 @@ sub initPlugin {
 	$initialized = 1;
 
 	return $initialized;
+}
+
+sub resetState {
+
+	$::d_musicmagic && msg("MusicMagic: Resetting Last Library Change Time.\n");
+
+	Slim::Music::Import->setLastScanTime('MLLastLibraryChange', 0);
 }
 
 sub startScan {
@@ -177,11 +184,9 @@ sub doneScanning {
 	$::d_moodlogic && msg("MoodLogic: done Scanning\n");
 
 	%genre_hash = ();
-	
-	$lastMusicLibraryFinishTime = time();
 
-	Slim::Utils::Prefs::set('lastMoodLogicLibraryDate',(stat $mixer->{JetFilePublic})[9]);
-	
+	Slim::Music::Import->setLastScanTime('MLLastLibraryChange', (stat $mixer->{'JetFilePublic'})[9]);
+
 	Slim::Music::Import->endImporter($class);
 }
 

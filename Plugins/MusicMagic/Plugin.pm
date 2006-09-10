@@ -253,7 +253,9 @@ sub isMusicLibraryFileChanged {
 	}) || return 0;
 
 	my $fileMTime = $http->content;
-	
+
+	chomp($fileMTime);
+
 	$::d_musicmagic && msg("MusicMagic: read cacheid of $fileMTime\n");
 
 	$http->close;
@@ -263,44 +265,48 @@ sub isMusicLibraryFileChanged {
 		'create' => 0,
 		'timeout' => 5,
 	}) || return 0;
-	
-	my $MMMstatus = $http->content;
-	
-	$::d_musicmagic && msg("MusicMagic: got status - $MMMstatus");
+
+	$::d_musicmagic && msgf("MusicMagic: got status - %s", $http->content);
 
 	$http->close;
 
 	# Only say "yes" if it has been more than one minute since we last finished scanning
 	# and the file mod time has changed since we last scanned. Note that if we are
-	# just starting, $lastMusicLibraryDate is undef, so both $fileMTime
+	# just starting, $lastMMMChange is undef, so both $fileMTime
 	# will be greater than 0 and time()-0 will be greater than 180 :-)
-	my $oldTime = Slim::Utils::Prefs::get('MMMlastMusicMagicLibraryDate') || 0;
-	my $lastMusicLibraryFinishTime = Slim::Utils::Prefs::get('MMMlastMusicLibraryFinishTime') || 0;
+	my $lastScanTime  = Slim::Music::Import->lastScanTime;
+	my $lastMMMChange = Slim::Music::Import->lastScanTime('MMMLastLibraryChange');
 
-	if ($fileMTime > $oldTime) {
+	if ($fileMTime > $lastMMMChange) {
 
-		my $musicmagicscaninterval = Slim::Utils::Prefs::get('musicmagicscaninterval');
+		my $scanInterval = Slim::Utils::Prefs::get('musicmagicscaninterval');
 
-		$::d_musicmagic && msg("MusicMagic: music library has changed!\n");
-		
-		$::d_musicmagic && msg("	MusicMagic Details: \n\t\tCacheid - $fileMTime\t\tLastCacheid - $oldTime\n\t\tReload Interval - $musicmagicscaninterval\n\t\tLast Scan - $lastMusicLibraryFinishTime\n");
-		
-		unless ($musicmagicscaninterval) {
-			
+		if ($::d_musicmagic) {
+
+			msg("MusicMagic: music library has changed!\n");
+			msg("Details: \n");
+			msg("\tCurrCacheID  - $fileMTime\n");
+			msg("\tLastCacheID  - $lastMMMChange\n");
+			msg("\tInterval     - $scanInterval\n");
+			msg("\tLastScanTime - $lastScanTime\n");
+		}
+
+		if (!$scanInterval) {
+
 			# only scan if musicmagicscaninterval is non-zero.
 			$::d_musicmagic && msg("MusicMagic: Scan Interval set to 0, rescanning disabled\n");
 
 			return 0;
 		}
-		
-		if (time - $lastMusicLibraryFinishTime > $musicmagicscaninterval) {
+
+		if ((time - $lastScanTime) > $scanInterval) {
 
 			return 1;
 		}
 
-		$::d_musicmagic && msg("MusicMagic: waiting for $musicmagicscaninterval seconds to pass before rescanning\n");
+		$::d_musicmagic && msg("MusicMagic: waiting for $scanInterval seconds to pass before rescanning\n");
 	}
-	
+
 	return 0;
 }
 

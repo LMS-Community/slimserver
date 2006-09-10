@@ -24,8 +24,6 @@ our @mood_names;
 our %mood_hash;
 my $last_error = 0;
 
-my $lastMusicLibraryFinishTime = undef;
-
 sub strings {
 	return '';
 }
@@ -56,12 +54,8 @@ sub shutdownPlugin {
 	# disable protocol handler
 	Slim::Player::ProtocolHandlers->registerHandler('moodlogicplaylist', 0);
 
-	# reset last scan time
-
-	$lastMusicLibraryFinishTime = undef;
-
 	$initialized = 0;
-	
+
 	# delGroups, categories and prefs
 	Slim::Web::Setup::delCategory('MOODLOGIC');
 	Slim::Web::Setup::delGroup('SERVER_SETTINGS','moodlogic',1);
@@ -210,39 +204,42 @@ sub checker {
 }
 
 sub isMusicLibraryFileChanged {
-	my $file = $mixer->{JetFilePublic};
 
+	my $file      = $mixer->{'JetFilePublic'} || return 0;
 	my $fileMTime = (stat $file)[9];
-	
+
 	$::d_moodlogic && msg("MoodLogic: read library status of $fileMTime\n");
-	
+
 	# Only say "yes" if it has been more than one minute since we last finished scanning
 	# and the file mod time has changed since we last scanned. Note that if we are
-	# just starting, $lastMusicLibraryDate is undef, so both $fileMTime
+	# just starting, $lastMLChange is undef, so both $fileMTime
 	# will be greater than 0 and time()-0 will be greater than 180 :-)
-	if ($file && $fileMTime > Slim::Utils::Prefs::get('lastMoodLogicLibraryDate')) {
+	my $lastScanTime = Slim::Music::Import->lastScanTime;
+	my $lastMLChange = Slim::Music::Import->lastScanTime('MLLastLibraryChange');
 
-		my $moodlogicscaninterval = Slim::Utils::Prefs::get('moodlogicscaninterval');
+	if ($fileMTime > $lastMLChange) {
 
 		$::d_moodlogic && msg("MoodLogic: music library has changed!\n");
 
-		if (!$moodlogicscaninterval) {
-			
+		my $scanInterval = Slim::Utils::Prefs::get('moodlogicscaninterval');
+
+		if (!$scanInterval) {
+
 			# only scan if moodlogicscaninterval is non-zero.
 			$::d_moodlogic && msg("MoodLogic: Scan Interval set to 0, rescanning disabled\n");
 
 			return 0;
 		}
 
-		if (!$lastMusicLibraryFinishTime) {
-			return 1;
-		}
-		
-		if (time() - $lastMusicLibraryFinishTime > $moodlogicscaninterval) {
+		if (!$lastScanTime) {
 			return 1;
 		}
 
-		$::d_moodlogic && msg("MoodLogic: waiting for $moodlogicscaninterval seconds to pass before rescanning\n");
+		if ((time - $lastScanTime) > $scanInterval) {
+			return 1;
+		}
+
+		$::d_moodlogic && msg("MoodLogic: waiting for $scanInterval seconds to pass before rescanning\n");
 	}
 	
 	return 0;
