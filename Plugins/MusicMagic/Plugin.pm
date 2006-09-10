@@ -94,7 +94,7 @@ sub shutdownPlugin {
 
 	# delGroups, categories and prefs
 	Slim::Web::Setup::delCategory('MUSICMAGIC');
-	Slim::Web::Setup::delGroup('SERVER_SETTINGS','musicmagic',1);
+	Slim::Web::Setup::delGroup('BASIC_SERVER_SETTINGS','musicmagic',1);
 
 	# set importer to not use, but only for this session. leave server
 	# pref as is to support reenabling the features, without needing a
@@ -239,9 +239,9 @@ sub addGroups {
 	
 	my ($groupRef, $prefRef) = setupUse();
 
-	Slim::Web::Setup::addGroup('SERVER_SETTINGS', 'musicmagic', $groupRef, undef, $prefRef);
+	Slim::Web::Setup::addGroup('BASIC_SERVER_SETTINGS', 'musicmagic', $groupRef, undef, $prefRef);
 
-	Slim::Web::Setup::addChildren('SERVER_SETTINGS', 'MUSICMAGIC');
+	Slim::Web::Setup::addChildren('BASIC_SERVER_SETTINGS', 'MUSICMAGIC');
 }
 
 sub isMusicLibraryFileChanged {
@@ -1035,7 +1035,7 @@ sub setupCategory {
 	my %setupCategory = (
 
 		'title' => Slim::Utils::Strings::string('SETUP_MUSICMAGIC'),
-		'parent' => 'SERVER_SETTINGS',
+		'parent' => 'BASIC_SERVER_SETTINGS',
 		'GroupOrder' => ['Default','MusicMagicPlaylistFormat'],
 		'Groups' => {
 
