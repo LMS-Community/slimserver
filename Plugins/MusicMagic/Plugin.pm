@@ -1007,7 +1007,7 @@ sub setupGroup {
 	my $category = setupCategory();
 	my $group    = playerGroup();
 
-	$category->{'parent'}     = 'PLAYER_SETTINGS';
+	$category->{'parent'}     = 'BASIC_PLAYER_SETTINGS';
 	$category->{'GroupOrder'} = ['Default'];
 	$category->{'Groups'}     = $group->{'Groups'};
 	

@@ -445,7 +445,7 @@ sub addSetupGroups {
 		if ($groupRef && $prefRef && exists($plugins{$plugin})) {
 			my %params = (
 				'title'      => $plugins{$plugin}->{'name'},
-				'parent'     => 'SERVER_SETTINGS',
+				'parent'     => 'BASIC_SERVER_SETTINGS',
 				'Groups'     => { 'Default' => $groupRef },
 				'GroupOrder' => ['Default'],
 				'Prefs'      => $prefRef
@@ -460,7 +460,7 @@ sub addSetupGroups {
 			if (defined $isClient && $isClient) {
 				if ($menu eq 'PLUGINS') {
 					$menu = 'PLAYER_PLUGINS';
-					$params{'parent'} = 'PLAYER_SETTINGS';
+					$params{'parent'} = 'BASIC_PLAYER_SETTINGS';
 					#Slim::Web::Pages->addPageLinks("playerplugin",{"$plugins{$plugin}->{'name'}"  => "setup.html?page=$plugins{$plugin}->{'name'}"});
 				}
 				$playerplugins{$plugins{$plugin}->{'name'}} = not exists $disabledplugins{$plugin};
