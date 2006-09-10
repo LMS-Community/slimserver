@@ -362,16 +362,18 @@ sub setMode {
 		return;
 	}
 
-	# Show a blocking animation
-	# $client->block({
-	#	'line' => [ $client->string( $client->linesPerScreen() == 1 ? 'LOADING' : 'LOADING_BROWSE_MUSIC_FOLDER' ) ],
-	# });
-
 	# Parse the hierarchy list into an array
 	my $hierarchy = $client->param('hierarchy') || '';
 	my @levels    = split(/\//, $hierarchy);
 
+	# Show a blocking animation
+	$client->block({
+		'line' => [ $client->string( $client->linesPerScreen() == 1 ? 'LOADING' : 'LOADING_BROWSE_MUSIC_FOLDER' ) ],
+	});
+
 	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree(\@levels);
+
+	$client->unblock;
 
 	# Next get the first line of the mode
 	my @headers = ();
@@ -439,8 +441,6 @@ sub setMode {
 				$items->[$index]->titlesort : Slim::Utils::Text::ignoreCaseArticles($items->[$index]);
 		},
 	);
-
-	#$client->unblock;
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 }
