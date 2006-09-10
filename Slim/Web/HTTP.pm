@@ -2019,7 +2019,7 @@ sub _getFileContent {
 
 	$::d_http && msg("reading http file for ($skin $path)\n");
 
-	my $skinpath = fixHttpPath($skin, $path);
+	my $skinpath = fixHttpPath($skin, $path) || return;
 
 	open($template, $skinpath . '.' . lc(Slim::Utils::Prefs::get('language'))) || open($template, $skinpath);
 	($inode, $size, $mtime) = (stat($template))[1,7,9];
