@@ -22,7 +22,7 @@ use Slim::Utils::Misc;
 sub tracks {
 	my $self = shift;
 
-	return $self->playlist_tracks(undef, { 'order_by' => 'me.position' })->search_related('track' => @_)->distinct;
+	return $self->playlist_tracks(undef, { 'order_by' => 'me.position' })->search_related('track' => @_);
 }
 
 sub setTracks {

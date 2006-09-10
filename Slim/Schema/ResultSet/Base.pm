@@ -200,6 +200,13 @@ sub descend {
 			#$rs = $rs->$method($find, $condForLevel, $sortForLevel);
 			$rs = $rs->$method($find, $condForLevel, undef);
 		}
+
+		# Bug: 3798 - Don't call distinct on playlistTrack's, as it's
+		# desirable to have the same track in the playlist multiple times.
+		if ($level ne 'PlaylistTrack') {
+
+			$rs = $rs->distinct;
+		}
 	}
 
 	return $rs;

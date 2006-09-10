@@ -713,7 +713,7 @@ sub setMode {
 
 		# Bug: 3654 Pass a copy of the find ref, so we don't modify it.
 		# This isn't an issue for the webUI, as it reconstructs $find every time.
-		$topRS = $topRS->descend(Storable::dclone($filters), Storable::dclone($find), $sort, @levels[0..$level])->distinct;
+		$topRS = $topRS->descend(Storable::dclone($filters), Storable::dclone($find), $sort, @levels[0..$level]);
 
 		if ($levels[$level] eq 'age') {
 

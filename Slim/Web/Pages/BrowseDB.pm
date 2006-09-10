@@ -240,7 +240,7 @@ sub browsedb {
 		'params'  => $params,
 	});
 
-	my $browseRS = $topRS->descend($filters, $cond, $orderBy, @levels[0..$level])->distinct;
+	my $browseRS = $topRS->descend($filters, $cond, $orderBy, @levels[0..$level]);
 	my $count    = 0;
 	my $start    = 0;
 	my $end      = 0;
