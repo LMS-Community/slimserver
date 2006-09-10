@@ -363,9 +363,9 @@ sub setMode {
 	}
 
 	# Show a blocking animation
-	$client->block({
-		'line' => [ $client->string( $client->linesPerScreen() == 1 ? 'LOADING' : 'LOADING_BROWSE_MUSIC_FOLDER' ) ],
-	});
+	# $client->block({
+	#	'line' => [ $client->string( $client->linesPerScreen() == 1 ? 'LOADING' : 'LOADING_BROWSE_MUSIC_FOLDER' ) ],
+	# });
 
 	# Parse the hierarchy list into an array
 	my $hierarchy = $client->param('hierarchy') || '';
@@ -440,7 +440,7 @@ sub setMode {
 		},
 	);
 
-	$client->unblock;
+	#$client->unblock;
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 }
@@ -458,9 +458,3 @@ L<Slim::Music::Info>
 1;
 
 __END__
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:
-
