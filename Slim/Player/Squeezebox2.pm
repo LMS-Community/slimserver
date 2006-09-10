@@ -421,11 +421,11 @@ sub directHeaders {
 				
 				$client->stop();
 
-				$client->play( 
-						 { 'paused' => Slim::Player::Sync::isSynced($client), 
-						   'format' => ($client->masterOrSelf())->streamformat(), 
-						   'url' => $redir }
-					);
+				$client->play({
+					'paused' => Slim::Player::Sync::isSynced($client), 
+					'format' => ($client->masterOrSelf())->streamformat(), 
+					'url'    => $redir,
+				});
 
 			} elsif ($body || Slim::Music::Info::isList($url)) {
 

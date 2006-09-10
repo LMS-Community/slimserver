@@ -488,16 +488,14 @@ sub playmode {
 			
 			my $paused = ( Slim::Player::Sync::isSynced($everyclient) ) ? 1 : 0;
 			
-			$everyclient->play(
-								{ 
-								'paused' => Slim::Player::Sync::isSynced($everyclient), 
-								'format' => $master->streamformat(), 
-								'url' => $currentSong, 
-								'reconnect' => (defined($seekoffset) && $seekoffset > 0), 
-								'loop' => $master->shouldLoop, 
-								'replay_gain' => Slim::Player::ReplayGain->fetchGainMode($master)
-								}
-							);
+			$everyclient->play({ 
+				'paused'      => Slim::Player::Sync::isSynced($everyclient), 
+				'format'      => $master->streamformat(), 
+				'url'         => $currentSong, 
+				'reconnect'   => (defined($seekoffset) && $seekoffset > 0), 
+				'loop'        => $master->shouldLoop, 
+				'replay_gain' => Slim::Player::ReplayGain->fetchGainMode($master)
+			});
 
 		} elsif ($newmode eq "pause") {
 
@@ -810,14 +808,12 @@ sub gototime {
 		
 		my $paused = ( Slim::Player::Sync::isSynced($client) ) ? 1 : 0;
 
-		$everybuddy->play(
-							{ 
-								'paused' => $paused, 
-								'format' => $client->streamformat(), 
-								'url' => Slim::Player::Playlist::song($client), 
-								'replay_gain' => Slim::Player::ReplayGain->fetchGainMode($client)
-							}
-						);
+		$everybuddy->play({ 
+			'paused'      => $paused, 
+			'format'      => $client->streamformat(), 
+			'url'         => Slim::Player::Playlist::song($client), 
+			'replay_gain' => Slim::Player::ReplayGain->fetchGainMode($client)
+		});
 
 		$everybuddy->playmode("play");
 	}
