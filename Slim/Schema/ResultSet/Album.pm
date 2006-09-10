@@ -102,14 +102,7 @@ sub browse {
 			push @join, { 'tracks' => { 'genreTracks' => 'genre' } };
 		}
 
-		# Turn all occurences of album into me, since this is an Album RS
-		$sort =~ s/(album)\./me./g;
-		$sort =~ s/(\w+?.\w+?sort)/concat('0', $1)/g;
-
-		# Always append disc
-		if ($sort !~ /me\.disc/) {
-			$sort .= ', me.disc';
-		}
+		$sort = $self->fixupSortKeys($sort);
 	}
 
 	# Bug: 2563 - force a numeric compare on an alphanumeric column.
@@ -126,9 +119,12 @@ sub descendTrack {
 	my $cond = shift;
 	my $sort = shift;
 
-	if (!$sort) {
-		$sort = "concat('0', me.titlesort), tracks.disc, tracks.tracknum, concat('0', tracks.titlesort)";
-	}
+	# Create a "clean" resultset, without any joins on it - since we'll
+	# just want information from the album.
+	my $rs = $self->result_source->resultset;
+
+	# Force a specified sort order right now, since Track's aren't sortable.
+	$sort = "concat('0', me.titlesort), tracks.disc, tracks.tracknum, concat('0', tracks.titlesort)";
 
 	my $attr = {
 		'order_by' => $sort,
@@ -165,10 +161,6 @@ sub descendTrack {
 			$cond->{"me.$1"} = $value;
 		}
 	}
-
-	# Create a "clean" resultset, without any joins on it - since we'll
-	# just want information from the album.
-	my $rs = $self->result_source->resultset;
 
 	return $rs->search_related('tracks', $rs->fixupFindKeys($cond), $attr);
 }

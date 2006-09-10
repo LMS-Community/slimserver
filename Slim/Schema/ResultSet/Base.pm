@@ -50,6 +50,49 @@ sub fixupFindKeys {
 	return $find;
 }
 
+sub fixupSortKeys {
+	my $self = shift;
+	my $sort = shift;
+
+	my $match = lc($self->result_class);
+	   $match =~ s/^.+:://;
+
+	my @keys  = ();
+
+	for my $key (split /,/, $sort) {
+
+		if ($key =~ /^$match\.(\w+)$/) {
+
+			push @keys, sprintf('%s.%s', $self->{'attrs'}{'alias'}, $1);
+
+		} else {
+
+			push @keys, $key;
+		}
+	}
+
+	my $fixed = join(',', @keys);
+
+	# Always turn namesearch into the concat version.
+	if ($fixed =~ /\w+?.\w+?sort/ && $fixed !~ /concat/) {
+
+		$fixed =~ s/(\w+?.\w+?sort)/concat('0', $1)/g;
+	}
+
+	# Always append disc for albums & tracks.
+	if ($match =~ /^(?:album|track)$/ && $fixed !~ /me\.disc/) {
+
+		$fixed .= ',me.disc';
+	}
+
+	if ($::d_sql) {
+		msg("fixupSortKeys: fixed: [$sort]\n");
+		msg("fixupSortKeys  into : [$fixed]\n");
+	}
+
+	return $fixed;
+}
+
 sub generateConditionsFromFilters {
 	my ($self, $attrs) = @_;
 
@@ -195,10 +238,7 @@ sub descend {
 			my $method = "descend${level}";
 			$::d_sql && msg("Calling method: [$method]\n");
 
-			# XXX - Don't pass $sortForLevel to descend* right
-			# now, as they can't handle it yet.
-			#$rs = $rs->$method($find, $condForLevel, $sortForLevel);
-			$rs = $rs->$method($find, $condForLevel, undef);
+			$rs = $rs->$method($find, $condForLevel, $sortForLevel);
 		}
 
 		# Bug: 3798 - Don't call distinct on playlistTrack's, as it's

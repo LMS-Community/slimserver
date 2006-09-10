@@ -103,9 +103,20 @@ sub descendAlbum {
 	my ($self, $find, $cond, $sort) = @_;
 
 	# Create a clean resultset
-	my $rs     = $self->result_source->resultset;
-	my $attr   = {
-		'order_by' => "concat('0', album.titlesort), album.disc",
+	my $rs = $self->result_source->resultset;
+
+	# Handle sort's from the web UI.
+	if ($sort) {
+
+		$sort = $rs->fixupSortKeys($sort);
+
+	} else {
+
+		$sort = "concat('0', album.titlesort), album.disc";
+	}
+
+	my $attr = {
+		'order_by' => $sort,
 	};
 
 	if (my $roles = Slim::Schema->artistOnlyRoles($find->{'contributor.role'})) {
@@ -134,6 +145,12 @@ sub descendAlbum {
 
 		$albumCond->{'genreTracks.genre'} = $genre;
 		$attr->{'join'} = { 'tracks' => 'genreTracks' };
+	}
+
+	# Full on genre join will override the above if we need to search on the genre name.
+	if ($sort =~ /genre\./) {
+
+		$attr->{'join'} = { 'tracks' => { 'genreTracks' => 'genre' } };
 	}
 
 	return $rs->search_related('album', $albumCond, $attr);
