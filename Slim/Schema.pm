@@ -105,7 +105,7 @@ sub init {
 	$class->connection($source, $username, $password, { 
 		RaiseError => 1,
 		AutoCommit => 1,
-		PrintError => 1,
+		PrintError => 0,
 		Taint      => 1,
 
 	}) or do {
@@ -129,6 +129,29 @@ sub init {
 	if (Slim::Utils::MySQLHelper->mysqlVersion($dbh) > 4.0) {
 
 		eval { $dbh->do('SET NAMES UTF8;') };
+	}
+
+	# Bug: 4076
+	# If a user was using MySQL with 6.3.x (unsupported), their
+	# metainformation table won't be dropped with the schema_1_up.sql
+	# file, since the metainformation table doesn't get dropped to
+	# maintain state. We need to wipe the DB and start over.
+	eval {
+		no warnings;
+
+		$dbh->do('SELECT name FROM metainformation') || die $dbh->errstr;
+	};
+
+	# If we couldn't select our new 'name' column, then drop the
+	# metainformation (and possibly dbix_migration, if the db is in a
+	# wierd state), so that the migrateDB call below will update the schema.
+	if ($@) {
+		msg("Warning: Migrating from 6.3.x used with MySQL!\n");
+
+		eval {
+			$dbh->do('DROP TABLE IF EXISTS metainformation');
+			$dbh->do('DROP TABLE IF EXISTS dbix_migration');
+		}
 	}
 
 	$class->migrateDB;
@@ -281,11 +304,13 @@ sub wipeDB {
 
 	$::d_import && msg("Import: Start schema_clear\n");
 
+	my ($driver) = $class->sourceInformation;
+
 	eval { 
 		$class->txn_do(sub {
 
 			Slim::Utils::SQLHelper->executeSQLFile(
-				$class->driver, $class->storage->dbh, "schema_clear.sql"
+				$driver, $class->storage->dbh, "schema_clear.sql"
 			);
 
 			$class->migrateDB;
@@ -311,11 +336,13 @@ sub optimizeDB {
 
 	$::d_import && msg("Import: Start schema_optimize\n");
 
+	my ($driver) = $class->sourceInformation;
+
 	eval {
 		$class->txn_do(sub {
 
 			Slim::Utils::SQLHelper->executeSQLFile(
-				$class->driver, $class->storage->dbh, "schema_optimize.sql"
+				$driver, $class->storage->dbh, "schema_optimize.sql"
 			);
 		});
 	};
