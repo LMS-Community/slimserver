@@ -1664,9 +1664,14 @@ sub popMode {
 	pop @{$client->modeParameterStack};
 	$scrollClientHash->{$client}{scrollParams} = pop @{$scrollClientHash->{$client}{scrollParamsStack}};
 	
-	my $newmode = mode($client);
-	if ($newmode) {
-		my $fun = $modes{$newmode};
+	my $newMode = mode($client);
+
+	# Block mode is special.  Avoid running setmode again when leaving block mode as this 
+	# can cause confusion (eq. broken play in BMF)
+	if ($newMode && $oldMode ne 'block') {
+
+		my $fun = $modes{$newMode};
+
 		&$fun($client,'pop');
 	}
 
