@@ -967,7 +967,7 @@ sub setupUse {
 
 	my %setupGroup = (
 		'PrefOrder'         => ['musicmagic'],
-		'PrefsInTable'      => 1,
+		'PrefsInTable'      => 0,
 		'Suppress_PrefLine' => 1,
 		'Suppress_PrefSub'  => 1,
 		'GroupLine'         => 1,
