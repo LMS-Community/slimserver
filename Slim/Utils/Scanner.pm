@@ -186,7 +186,13 @@ sub findFilesMatching {
 
 				$::d_scan && msg("findFilesMatching: Following Windows Shortcut to: $url\n");
 
-				$class->findFilesMatching($file, { 'foundItems' => $found });
+				# Bug 4027 - pass along the types & recursion
+				# flags. The perils of recursive methods.
+				$class->findFilesMatching($file, {
+					'foundItems' => $found,
+					'recursive'  => $args->{'recursive'},
+					'types'      => $args->{'types'},
+				});
 
 				next;
 			}
@@ -767,9 +773,7 @@ sub scanPlaylistFileHandle {
 	# in our Browse Playlist view either.
 	my $ct = Slim::Schema->contentType($playlist);
 
-	if (Slim::Music::Info::isFileURL($url) && 
-	    Slim::Utils::Misc::inPlaylistFolder($url) &&
-		$url !~ /ShoutcastBrowser_Recently_Played/) {
+	if (Slim::Music::Info::isFileURL($url) && Slim::Utils::Misc::inPlaylistFolder($url)) {
 
 		$ct = 'ssp';
 	}
