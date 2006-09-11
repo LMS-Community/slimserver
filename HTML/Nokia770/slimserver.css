@@ -231,6 +231,15 @@ div#topbar {
 	width: 100%;
 }
 
+div#playerSelect {
+	z-index: 11;
+	position: fixed;
+	right: 0;
+	top: 0;
+	height: 20;
+	overflow: visible;
+}
+
 div#menu {
 	position: fixed;
 	top: 25;
@@ -398,4 +407,10 @@ div#addedToPlaylist{
 }
 .homeContainer {
 	width: 100%;
+}
+
+.playerSelect {
+	font-size: 14px; 
+	background: #666666; 
+	color: white;
 }

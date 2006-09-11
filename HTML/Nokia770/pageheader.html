@@ -29,6 +29,11 @@
 	<td width = '55px'>&nbsp;</td>
       <td valign = 'top'><a href = 'http://slimdevices.com' title = 'slimdevices website'><img src="[% webroot %]html/images/[% playermodel %]_logo.gif" border="0" alt = 'slimdevices website' height = '19'></a>
       </td>
+</td></tr>
+</table>
+<div id = 'playerSelect'>
+<table bgcolor="#333333">
+	<tr>
 	<td align = 'right' class = 'smallwhitetext'>
 [% IF player_chooser_list %]
 	<form method="get">[% "CURRENT_PLAYER" | string %]
@@ -56,8 +61,8 @@
 		[% FOREACH playerobj IN players %][% IF player == playerobj.id %][% "CURRENT_PLAYER" | string %] [% playerobj.name %][% END %][% END %]
 	[% END %]
 [% END %]
-</td></tr>
-</table>
+</td></tr></table>
+</div>
 </div>
 <!-- /Element pageheader.html -->
 [% PROCESS menu.html thispage = thispage %]
