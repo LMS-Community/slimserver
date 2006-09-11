@@ -20,16 +20,21 @@
   </form>
   [% IF page == 'BASIC_PLAYER_SETTINGS' %] 
   <div class="settingSection">
-    <div class="prefHead">[% "FORGET_PLAYER" | string %]</div>
+    <div class="prefHead">[% "FORGET_PLAYER" | string | upper %]</div>
     <div class="prefDesc">[% "FORGET_PLAYER_DESC" | string %]</div>
   <p><a href="[% webroot %]index.html?command=client&amp;subcommand=forget&amp;playerid=[% playerid | uri %]&amp;player=[% playerid | uri %]" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a></p>
-    <div class="prefHead">[% "INFORMATION_MENU_PLAYER" | string %]</div>
-  [% IF versionInfo %]<p>[% versionInfo %]</p>[% END %]
-  [% IF newVersion %]<p>[% newVersion %]</p>[% END %]
+    <div class="prefHead">[% "INFORMATION_MENU_PLAYER" | string | upper %]</div>
   [% IF ipaddress %]<p>[% "PLAYER_IP_ADDRESS" | string %] [% ipaddress %]</p>[% END %]
   [% IF macaddress %]<p>[% "PLAYER_MAC_ADDRESS" | string %] [% macaddress %]</p>[% END %] 
   [% IF signalstrength %]<p>[% "INFORMATION_PLAYER_SIGNAL_STRENGTH" | string %][% "COLON" | string %] [% signalstrength %]%</p>[% END %] 
   [% IF voltage %]<p>[% "INFORMATION_PLAYER_VOLTAGE" | string %][% "COLON" | string %] [% voltage %]VAC</p>[% END %] 
+    </div>
+  [% END %]
+  [% IF page == 'BASIC_SERVER_SETTINGS' %] 
+  <div class="settingSection">
+    <div class="prefHead">[% "INFORMATION_MENU_SERVER" | string | upper %]</div>
+  [% IF versionInfo %]<p>[% versionInfo %]</p>[% END %]
+  [% IF newVersion %]<p>[% newVersion %]</p>[% END %]
     </div>
   [% END %]
   <p></p>
