@@ -222,11 +222,14 @@ A.linkbtn:link {
 
 }
 
-#currentListItem
+.currentListItem
 {
 	background:#ffe580;
-	border-top:solid 2px #EE3823;
-	border-bottom:solid 2px #EE3823;
+	border-top:solid 1px #EE3823;
+	border-bottom:solid 1px #EE3823;
+	position: relative;
+	padding: 0px;
+	padding-right: 100px;
 }
 
 .listinghead
