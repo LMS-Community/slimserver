@@ -110,7 +110,7 @@ sub vfdmodel {
 
 sub play {
 	my $client = shift;
-	my $paused = shift;
+	my $params = shift;
 	
 	# make sure volume is set, without changing temp setting
 	$client->volume($client->volume(),
@@ -129,7 +129,7 @@ sub play {
 	# is still processing the i2c commands we just sent.
 	select(undef,undef,undef,.05);
 
-	Slim::Networking::SliMP3::Stream::newStream($client, $paused);
+	Slim::Networking::SliMP3::Stream::newStream($client, $params->{'paused'});
 	return 1;
 }
 

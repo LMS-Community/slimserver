@@ -489,7 +489,7 @@ sub playmode {
 			my $paused = ( Slim::Player::Sync::isSynced($everyclient) ) ? 1 : 0;
 			
 			$everyclient->play({ 
-				'paused'      => Slim::Player::Sync::isSynced($everyclient), 
+				'paused'      => $paused, 
 				'format'      => $master->streamformat(), 
 				'url'         => $currentSong, 
 				'reconnect'   => (defined($seekoffset) && $seekoffset > 0), 

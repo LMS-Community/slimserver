@@ -66,7 +66,7 @@ my $empty = '';
 sub newStream {
 	my ($client, $paused) = @_;
 	
-	$::d_stream && msg( $client->id() ." new stream" . ($paused ? "paused" : "") . "\n");
+	$::d_stream && msg( $client->id() ." new stream " . ($paused ? "paused" : "") . "\n");
 		
 	if ($paused) {
 		$streamState{$client} = 'paused';
