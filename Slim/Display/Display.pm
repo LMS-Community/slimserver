@@ -455,7 +455,7 @@ sub parseLines {
 		$bits |= $1;
 	}
 
-	$line1 = $display->symbols($line1);
+	$line1 = $display->symbols($line1) || '';
 	($line1, $line2) = split("\x1elinebreak\x1e", $line1);
 
 	if (!defined($line2)) { $line2 = '';}
