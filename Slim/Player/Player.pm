@@ -346,6 +346,9 @@ sub scrollState { shift->display->scrollState(@_); }
 sub block       { Slim::Buttons::Block::block(@_); }
 sub unblock     { Slim::Buttons::Block::unblock(@_); }
 
+sub string      { shift->display->string(@_); }
+sub doubleString{ shift->display->doubleString(@_); }
+
 sub isPlayer {
 	return 1;
 }

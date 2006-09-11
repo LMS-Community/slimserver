@@ -770,9 +770,8 @@ sub flush {}
 
 sub power {}
 
-# string processing is display object specific
-sub string       { shift->display->string(@_); }
-sub doubleString { shift->display->doubleString(@_); }
+sub string {}
+sub doubleString {}
 
 sub maxTransitionDuration {
 	return 0;
