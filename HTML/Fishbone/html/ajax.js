@@ -120,6 +120,10 @@ function refreshPlayControls(theData,force) {
 	for (var i=0; i < controls.length; i++) {
 		var objID = $('playCtl' + controls[i]);
 		
+		if (curstyle == '_tan') {
+			objID = $('playCtl' + controls[i] + 'tan');
+		}
+
 		if (parsedData['playmode'] == i) {
 			objID.src = '[% webroot %]html/images/'+controls[i]+'_s'+curstyle+'.gif';
 			
@@ -139,6 +143,10 @@ function refreshPlayControls(theData,force) {
 		for (var i=0; i < controls.length; i++) {
 			var objID = $('playCtl' + controls[i]);
 			
+			if (curstyle == '_tan') {
+				objID = $('playCtl' + controls[i] + 'tan');
+			}
+			
 			if (parsedData['rate'] == controls[i]) {
 				objID.src = '[% webroot %]html/images/'+controls[i]+'_s'+curstyle+'.gif';
 				
@@ -155,11 +163,11 @@ function refreshPlayControls(theData,force) {
 	}
 
 	if (parsedData['playmode'] == 1) {
-		refreshInfo(parsedData,force);
 		mp = 1;
 	} else {
 		mp = 0;
 	}
+	refreshInfo(parsedData,force);
 }
 
 // refresh song and artwork
@@ -177,6 +185,13 @@ function refreshInfo(theData,force) {
 		if (a == null || a[1] == parsedData['songtitleid']) {newsong = 0;}
 	}
 	
+	var activestyle = getActiveStyleSheet();
+	var curstyle = '';
+
+	if (activestyle != null && activestyle.indexOf('Tan') != -1) {
+		curstyle = '_tan';
+	}
+	
 	var elems = ['thissongnum', 'playtextmode', 'songcount'];
 	if (newsong) {
 		elems.push('songtitle');
@@ -188,7 +203,7 @@ function refreshInfo(theData,force) {
 		refreshElement('songtitle', parsedData['streamtitle']);
 	}
 	
-	if (parsedData['durationseconds']) updateTime(parsedData['songtime'],parsedData['durationseconds']);
+	if (parsedData['durationseconds']) updateTime(parsedData['songtime'],parsedData['durationseconds'], curstyle);
 
 	if (parsedData['thissongnum']) {
 		hideElements(['notplaying']);
@@ -201,6 +216,10 @@ function refreshInfo(theData,force) {
 	var playeronly = ['playCtlffwd', 'playCtlrew', 'playCtlmute', 'volumeControl'];
 	for (var i=0; i < playeronly.length; i++) {
 		var key = playeronly[i];
+		if (i < (playeronly.length -1) && curstyle == '_tan') {
+			key = playeronly[i] + 'tan';
+		}
+		
 		if (parsedData['isplayer']) {
 			showElements([key]);
 		} else {
@@ -277,14 +296,6 @@ function refreshInfo(theData,force) {
 			refreshElement('artisthtml', parsedData['artisthtml']);
 		} else {
 			hideElements(['artistinfo', 'artisthtml']);
-		}
-		
-		var activestyle = getActiveStyleSheet();
-		var curstyle = '';
-	
-		if (activestyle != null && activestyle.indexOf('Tan') != -1) {
-			objID = $('playCtl' + controls[i]+'tan');
-			curstyle = '_tan';
 		}
 		
 		if(parsedData['playermodel']) {

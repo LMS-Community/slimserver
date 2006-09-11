@@ -11,7 +11,8 @@ var inc = 0;
 
 // progressBar variables
 var _progressEnd = 0;
-var _progressAt = 0
+var _progressAt = 0;
+var _curstyle = '';
 
 // regex to match player id, mac and ip format.
 var playerExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
@@ -114,17 +115,23 @@ function insertProgressBar(mp,end,at) {
 }
 
 // update at and end times for the next progress update.
-function updateTime(at,end) {
+function updateTime(at,end, style) {
 	_progressAt = at;
 	_progressEnd = end;
+
+	if (style == '_tan') {
+		_curstyle = 'tan';
+	} else {
+		_curstyle = '';
+	}
 }
 	
 
 // Update the progress dialog with the current state
-function ProgressUpdate(mp,curstyle) {
+function ProgressUpdate(mp) {
 
 	if ($('playCtlplay') != null) {
-		if ($('playCtlplay').src.indexOf('_s') != -1) {
+		if ($('playCtlplay'+_curstyle).src.indexOf('_s') != -1) {
 			mp = 1;
 			if ($("progressBar").src.indexOf('_s') != -1) {$("progressBar").src = '[% webroot %]html/images/pixel.green.gif'}
 
