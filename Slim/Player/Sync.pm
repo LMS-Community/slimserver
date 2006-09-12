@@ -8,7 +8,7 @@ package Slim::Player::Sync;
 # version 2.
 
 use strict;
-
+use Scalar::Util qw(blessed);
 use Slim::Utils::Misc;
 
 #
@@ -307,7 +307,8 @@ sub isSyncedWith {
 sub canSyncWith {
 	my $client = shift;
 	my @buddies = ();
-	if ($client->isPlayer()) {
+
+	if (blessed($client) && $client->isPlayer()) {
 		foreach my $otherclient (Slim::Player::Client::clients()) {
 			next if ($client eq $otherclient);					# skip ourself
 			next if (!$otherclient->isPlayer());  # we only sync hardware devices
