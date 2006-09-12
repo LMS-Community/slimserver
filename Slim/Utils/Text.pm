@@ -39,7 +39,8 @@ sub ignorePunct {
 
 	my $orig = $s;
 
-	$s =~ s/\p{IsPunct}/ /go;
+	# Not sure what char class includes 
+	$s =~ s/[\p{IsPunct};=+<>\$]/ /go;
 	$s =~ s/  +/ /go; # compact multiple spaces, "L.A. Mix" -> "L A Mix", not "L A  Mix"
 	$s =~ s/^ +//o; # zap leading/trailing spaces.
 	$s =~ s/ +$//o;
