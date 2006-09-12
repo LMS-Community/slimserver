@@ -447,6 +447,7 @@ sub loadFonts {
 		my $cacheOK = 1;
 
 		$::d_graphics && msg( "Retrieving font data from font cache: $fontCache\n");
+
 		eval { $fonts = retrieve($fontCache); };
 		
 		$::d_graphics && $@ && msg(" Tried loading fonts: $@\n");
@@ -470,7 +471,7 @@ sub loadFonts {
 		}
 
 		# check for version of fontcache
-		if ($fonts->{version} != $fontCacheVersion){
+		if (!$fonts->{version} || !$fontCacheVersion || $fonts->{version} != $fontCacheVersion) {
 			$cacheOK = 0;
 		}
 
