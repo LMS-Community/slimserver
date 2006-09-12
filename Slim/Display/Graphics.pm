@@ -98,6 +98,7 @@ sub render {
 		#  line            - array of cached lines
 		#  overlay         - array of cached overlays
 		#  center          - array of cached centers
+		#  bits            - bitmap for screen (if included in last render) else undef
 		#  linebits        - array of bitmaps for cached lines
 		#  overlaybits     - array of bitmaps for cached overlays
 		#  centerbits      - array of bitmaps for cached centers
@@ -414,9 +415,12 @@ sub render {
 		}
 
 		# Bitmaps
-		if (defined($screen->{bits}) && length($screen->{bits})) { 
+		if (defined($screen->{bits}) && length($screen->{bits})) {
 			$bits |= substr($screen->{bits}, 0, $screensize);
+			$sc->{bits} = $screen->{bits} unless $rerender;
 			$sc->{changed} = 1;
+		} else {
+			$sc->{bits} = undef;
 		}
 
 		$sc->{bitsref} = \$bits;
