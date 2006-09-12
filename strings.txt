@@ -142,6 +142,7 @@ PERL_VERSION
 	DE	Perl Version
 	EN	Perl Version
 	ES	Versión del Perl
+	FI	Perl versio
 	FR	Version du Perl
 	IT	Versione Perl
 	NL	Perl versie
@@ -155,6 +156,7 @@ MYSQL_VERSION
 	DE	MySQL Version
 	EN	MySQL Version
 	ES	Versión del MySQL
+	FI	MySQL versio
 	FR	Version du MySQL
 	IT	Versione MySQL
 	NL	MySQL versie
@@ -205,7 +207,7 @@ SLIMP3_HOME
 	DA	Hovedmenu
 	EN	SLIMP3 Home
 	ES	Inicio SLIMP3
-	FI	SLIMP3 Alkuun
+	FI	SLIMP3 Valikko
 	FR	Menu SLIMP3
 	HE	ברוכים המאזינים
 	JA	SLIMP3 ホーム
@@ -220,7 +222,7 @@ SQUEEZEBOX_HOME
 	DA	Squeezebox Hovedmenu
 	EN	Squeezebox Home
 	ES	Inicio Squeezebox
-	FI	Squeezebox Alkuun
+	FI	Squeezebox Valikko
 	FR	Menu Squeezebox
 	HE	ברוכים המאזינים
 	IT	Pagina iniziale Squeezebox
@@ -236,7 +238,7 @@ SQUEEZEBOX2_HOME
 	DA	Squeezebox Hovedmenu
 	EN	Squeezebox Home
 	ES	Inicio Squeezebox
-	FI	Squeezebox Alku
+	FI	Squeezebox Valikko
 	FR	Menu Squeezebox
 	IT	Pagina iniziale Squeezebox
 	JA	Squeezebox �ーム
@@ -251,7 +253,7 @@ TRANSPORTER_HOME
 	DK	Transporter Hovedmenu
 	EN	Transporter Home
 	ES	Inicio Transporter
-	FI	Transporter Alkuun
+	FI	Transporter Valikko
 	FR	Menu Transporter
 	JP	Transporter �ーム
 	NL	Transporter Hoofdmenu
@@ -264,7 +266,7 @@ SOFTSQUEEZE_HOME
 	DA	SoftSqueeze Hovedmenu
 	EN	SoftSqueeze Home
 	ES	Inicio SoftSqueeze
-	FI	SoftSqueeze Alkuun
+	FI	SoftSqueeze Valikko
 	FR	Menu SoftSqueeze
 	HE	ברוכים המאזינים
 	JA	SoftSqueeze ホーム
@@ -409,6 +411,7 @@ RADIO
 	DA	Internet radio
 	EN	Internet Radio
 	ES	Radio por Internet
+	FI	Internet radio
 	FR	Radio Internet
 	HE	רדיו אינטרנט
 	IT	Radio su Internet
@@ -964,6 +967,7 @@ END_OF_SONG
 SLEEP
 	DE	Schlafmodus
 	EN	Sleep
+	FI	Unikytkin
 	NL	Slapen
 
 SLEEPING_AT
@@ -7218,7 +7222,7 @@ OFF
 	DA	fra
 	EN	off
 	ES	apagado
-	FI	pois päälltä
+	FI	pois
 	FR	éteint
 	HE	לא פעיל
 	IT	No
@@ -8331,7 +8335,7 @@ NO_ALBUM
 	DA	Intet album
 	EN	No Album
 	ES	Sin Álbum
-	FI	Ei albumia
+	FI	Ei levyä
 	FR	Pas d'album
 	JA	アルバムなし
 	NL	Geen album
@@ -8635,7 +8639,7 @@ LCALBUMS
 	DA	albums
 	EN	albums
 	ES	álbumes
-	FI	albumia
+	FI	levyä
 	FR	albums
 	HE	אלבומים
 	JA	アルバム
@@ -8683,7 +8687,7 @@ ALL_ALBUMS
 	DA	Alle albums
 	EN	All Albums
 	ES	Todos los Álbumes
-	FI	Kaikki albumit
+	FI	Kaikki levyt
 	FR	Tous les albums
 	HE	כל האלבומים
 	IT	Tutti gli albums
@@ -8777,6 +8781,7 @@ ITEMS
 	CS	Položky
 	DE	Einträge
 	EN	Items
+	FI	Näytetään
 	FR	Eléments
 	HE	פריטים
 	IT	Voci
@@ -10661,7 +10666,7 @@ SEARCHFOR_ALBUMS
 	DA	Søg efter Albums
 	EN	Search For Albums
 	ES	Buscar Álbumes
-	FI	Hae albumin nimellä
+	FI	Hae levyä nimellä
 	FR	Rechercher des albums
 	IT	Ricerca album
 	JA	アルバムを検索する
@@ -12335,7 +12340,7 @@ ALBUMARTIST
 	DE	Album-Interpret
 	EN	Album Artist
 	ES	Artista del Álbum
-	FI	Albumin artisti
+	FI	Levyn esittäjä
 	IT	Album dell'artista
 	NL	Album artiest
 	ZH_CN	乐谱帖艺人
@@ -12359,7 +12364,7 @@ SETUP_USEBANDASALBUMARTIST_1
 	DE	Alben bei der Band aufführen
 	EN	List albums by band
 	ES	Listar álbumes por banda
-	FI	Listaa albumit yhtyeittäin
+	FI	Listaa levyt esittäjittäin
 	FR	Lister les albums par groupe
 	IT	Elenca gli album per gruppo
 	NL	Toon albums per band
@@ -12368,7 +12373,7 @@ SETUP_USEBANDASALBUMARTIST_0
 	DE	Alben bei allen Interpreten des Albums aufführen
 	EN	List albums by all artists for that album
 	ES	Listar álbumes con todos los artistas de ese álbum
-	FI	Listaa albumit kaikkien albumin artistien perusteella
+	FI	Listaa levyt kaikkien levyn esittäjien perusteella
 	FR	Lister les albums par tous les artistes
 	IT	Elenca gli album sotto ogni artista di quell'album
 	NL	Toon albums bij alle artiesten voor dat album
