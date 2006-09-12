@@ -344,7 +344,7 @@ sub gotOPML {
 			my $title    = $item->{'name'} || $item->{'title'};
 			
 			# Allow text-only items that RadioTime uses
-			if ( $item->{'type'} eq 'text' ) {
+			if ( $item->{'type'} && $item->{'type'} eq 'text' ) {
 				undef $itemURL;
 			}
 			
@@ -496,7 +496,7 @@ sub overlaySymbol {
 		$overlay .= Slim::Display::Display::symbol('notesymbol');
 	}
 
-	if ( $item->{'type'} ne 'text' && ( hasDescription($item) || hasLink($item) ) ) {
+	if ( $item->{'type'} && $item->{'type'} ne 'text' && ( hasDescription($item) || hasLink($item) ) ) {
 
 		$overlay .= Slim::Display::Display::symbol('rightarrow');
 	}
