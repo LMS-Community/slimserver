@@ -1,9 +1,7 @@
 [% PROCESS header.html pwd="yes" nokbd="yes" %]
 
 <div id="pwd">
- [% IF browselist_pagebar %]
- <span class="pagebar">[% browselist_pagebar %]</span>[% END %]
- [% pwd_list %]
+ [% IF pagebar; PROCESS pagebar; END; pwd_list %]
 </div>
  
 [% IF warn %]

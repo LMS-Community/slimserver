@@ -1,9 +1,7 @@
 [% PROCESS header.html pwd="yes" clink="0" %]
 
 <div id="pwd">
- [% IF browselist_pagebar %]
- <span class="pagebar">[% browselist_pagebar %]</span>
- [% END ; PROCESS crumblist %]
+ [% IF hasPagebar; PROCESS pagebar; END; PROCESS crumblist %]
 </div>
 
 [% IF warn %]
