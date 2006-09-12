@@ -1238,7 +1238,7 @@ sub playlistcontrolCommand {
 		@tracks = Slim::Schema->search('Track', $find, {
 			'order_by' => 'me.disc, me.tracknum, me.titlesort',
 			'join'     => \@joins,
-		})->all;
+		})->distinct->all;
 	}
 
 	# don't call Xtracks if we got no songs
