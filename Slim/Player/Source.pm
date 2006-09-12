@@ -20,11 +20,12 @@ use bytes;
 
 BEGIN {
 	if ($^O =~ /Win32/) {
+		*EINTR       = sub () { 10004 };
 		*EWOULDBLOCK = sub () { 10035 };
 		*EINPROGRESS = sub () { 10036 };
 	} else {
 		require Errno;
-		import Errno qw(EWOULDBLOCK EINPROGRESS);
+		import Errno qw(EWOULDBLOCK EINPROGRESS EINTR);
 	}
 }
 
@@ -502,7 +503,7 @@ sub playmode {
 			# since we can't count on the accuracy of the fade
 			# timers, we unfade them all, but the master calls
 			# back to pause everybody
-			if ($everyclient eq $client) {
+			if ($everyclient->id eq $client->id) {
 				$everyclient->fade_volume(-$FADEVOLUME, \&pauseSynced, [$client]);
 			} else {
 				$everyclient->fade_volume(-$FADEVOLUME);
@@ -1774,12 +1775,20 @@ sub readNextChunk {
 
 			if (!defined($readlen)) { 
 
-				if ($! != EWOULDBLOCK) {
-					$::d_source && msg("readlen undef: ($!)" . ($! + 0) . "\n"); 
-					$endofsong = 1; 
-				} else {
+				if ($! == EWOULDBLOCK) {
+
 					$::d_source_v && msg("would have blocked, will try again later\n");
 					return undef;	
+
+				} elsif ($! == EINTR) {
+
+					$::d_source && msg("Got EINTR - will try again later.\n"); 
+					return undef;
+
+				} else {
+
+					$::d_source && msg("readlen undef: ($!)" . ($! + 0) . "\n"); 
+					$endofsong = 1; 
 				}	
 
 			} elsif ($readlen == 0) { 
