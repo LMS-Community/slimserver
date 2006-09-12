@@ -586,7 +586,8 @@ sub handleEndElement {
 		$inPlaylistArray = 0;
 
 		# Don't bother with 'Library' - it's not a real playlist
-		if (defined $item{'TITLE'} && $item{'TITLE'} ne 'Library') {
+		# iTunes 7.0 adds 'Music' as a playlist - we don't want that either.
+		if (defined $item{'TITLE'} && $item{'TITLE'} !~ /^(?:Library|Music)$/) {
 
 			$::d_itunes && msg("iTunes: got a playlist array of " . scalar(@{$item{'LIST'}}) . " items\n");
 
