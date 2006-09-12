@@ -752,7 +752,7 @@ sub modifyPlaylistCallback {
 			}
 
 			if ($savecurrsong) {
-				Slim::Utils::Prefs::clientSet($eachclient, 'currentSong', $currsong);
+				$eachclient->prefSet('currentSong', $currsong);
 			}
 		}
 
