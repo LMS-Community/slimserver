@@ -30,11 +30,11 @@
   [% IF voltage %]<p>[% "INFORMATION_PLAYER_VOLTAGE" | string %][% "COLON" | string %] [% voltage %]VAC</p>[% END %] 
     </div>
   [% END %]
-  [% IF page == 'BASIC_SERVER_SETTINGS' %] 
-  <div class="settingSection">
-    <div class="prefHead">[% "INFORMATION_MENU_SERVER" | string | upper %]</div>
-  [% IF versionInfo %]<p>[% versionInfo %]</p>[% END %]
-  [% IF newVersion %]<p>[% newVersion %]</p>[% END %]
+  [% IF versionInfo %]
+    <div class="settingSection">
+    <div class="groupHead">[% "INFORMATION_DIAGSTRING" | string | upper  %]</div>
+	<p>[% versionInfo %]</p>
+ 	[% IF newVersion %]<p>[% newVersion %]</p>[% END %]
     </div>
   [% END %]
   <p></p>
