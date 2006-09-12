@@ -116,13 +116,11 @@ function insertProgressBar(mp,end,at) {
 
 // update at and end times for the next progress update.
 function updateTime(at,end, style) {
-	_progressAt = at;
+	_progressAt  = at;
 	_progressEnd = end;
-
-	if (style == '_tan') {
-		_curstyle = 'tan';
-	} else {
-		_curstyle = '';
+	
+	if (style != null) {
+		_curstyle    = style;
 	}
 }
 	
@@ -131,7 +129,7 @@ function updateTime(at,end, style) {
 function ProgressUpdate(mp) {
 
 	if ($('playCtlplay') != null) {
-		if ($('playCtlplay'+_curstyle).src.indexOf('_s') != -1) {
+		if ($('playCtlplay'+ _curstyle).src.indexOf('_s') != -1) {
 			mp = 1;
 			if ($("progressBar").src.indexOf('_s') != -1) {$("progressBar").src = '[% webroot %]html/images/pixel.green.gif'}
 

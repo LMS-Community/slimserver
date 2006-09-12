@@ -113,17 +113,12 @@ function refreshPlayControls(theData,force) {
 	var curstyle = '';
 	
 	if (activestyle != null && activestyle.indexOf('Tan') != -1) {
-		objID = $('playCtl' + controls[i]+'tan');
 		curstyle = '_tan';
 	}
 
 	for (var i=0; i < controls.length; i++) {
-		var objID = $('playCtl' + controls[i]);
+		var objID = $('playCtl' + controls[i] + curstyle);
 		
-		if (curstyle == '_tan') {
-			objID = $('playCtl' + controls[i] + 'tan');
-		}
-
 		if (parsedData['playmode'] == i) {
 			objID.src = '[% webroot %]html/images/'+controls[i]+'_s'+curstyle+'.gif';
 			
@@ -141,11 +136,7 @@ function refreshPlayControls(theData,force) {
 		var controls = ['rew','ffwd'];
 		
 		for (var i=0; i < controls.length; i++) {
-			var objID = $('playCtl' + controls[i]);
-			
-			if (curstyle == '_tan') {
-				objID = $('playCtl' + controls[i] + 'tan');
-			}
+			var objID = $('playCtl' + controls[i] + curstyle);
 			
 			if (parsedData['rate'] == controls[i]) {
 				objID.src = '[% webroot %]html/images/'+controls[i]+'_s'+curstyle+'.gif';
@@ -167,12 +158,21 @@ function refreshPlayControls(theData,force) {
 	} else {
 		mp = 0;
 	}
-	refreshInfo(parsedData,force);
+	refreshInfo(parsedData, force, curstyle);
 }
 
 // refresh song and artwork
-function refreshInfo(theData,force) {
+function refreshInfo(theData, force, curstyle) {
 	var parsedData = fillDataHash(theData);
+
+	if (curstyle == null) {
+		var activestyle = getActiveStyleSheet();
+		var curstyle = '';
+		
+		if (activestyle != null && activestyle.indexOf('Tan') != -1) {
+			curstyle = '_tan';
+		}
+	}
 
 	refreshSleepTime(parsedData);
 	var myString = new String($('songtitlehref').innerHTML);
@@ -183,13 +183,6 @@ function refreshInfo(theData,force) {
 
 	if (force != 1) {
 		if (a == null || a[1] == parsedData['songtitleid']) {newsong = 0;}
-	}
-	
-	var activestyle = getActiveStyleSheet();
-	var curstyle = '';
-
-	if (activestyle != null && activestyle.indexOf('Tan') != -1) {
-		curstyle = '_tan';
 	}
 	
 	var elems = ['thissongnum', 'playtextmode', 'songcount'];
@@ -396,31 +389,27 @@ function currentSong(theData) {
 function refreshAll(theData,force) {
 	var parsedData = fillDataHash(theData);
 	
-	if (parsedData['isplayer']) {
-		refreshVolume(parsedData);
+	if (parsedData['player_id']) {
+		hideElements(['waiting']);
+		
+		if (parsedData['isplayer']) {
+			refreshVolume(parsedData);
+		}
+		
+		refreshPlayControls(parsedData,force);
+		refreshState(parsedData);
+	} else {
+		showElements(['waiting'],'inline');
+		updateTime(0,0);
 	}
-	
-	refreshPlayControls(parsedData,force);
-	refreshInfo(parsedData,force);
-	refreshState(parsedData);
+
 }
 
 // handle the player change, force a new set of info
 function refreshNewPlayer(theData) {
 	var parsedData = fillDataHash(theData);
 	refreshAll(parsedData,1);
-	refreshInfo(parsedData,force);
-}
-
-function fillDataHash(theData) {
-	var returnData = null;
-	if (theData['player_id']) { 
-		return theData;
-	} else {
-		var myData = theData.responseText;
-		returnData = parseData(myData);
-	}
-	return returnData;
+	//refreshInfo(parsedData,force);
 }
 
 function playlistChecker(start) {

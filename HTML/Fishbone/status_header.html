@@ -46,7 +46,7 @@
 [% BLOCK playctl %]
 <td>
 	<a href="javascript:processPlayControls('[% command %]')">
-	<img id="playCtl[% img %]" class="gray" alt="[% img %]" title="[% img %]" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %].gif" border="1" width="[% width || 30 %]" height="[% height || 19 %]"><img id="playCtl[% img %]tan" class="tan" alt="[% img %]" title="[% img %]" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %]_tan.gif" width="[% width %]" height="[% height %]"></a>
+	<img id="playCtl[% img %]" class="gray" alt="[% img %]" title="[% img %]" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %].gif" border="1" width="[% width || 30 %]" height="[% height || 19 %]"><img id="playCtl[% img %]_tan" class="tan" alt="[% img %]" title="[% img %]" src="[% webroot %]html/images/[% img %][% IF condition %]_s[% END %]_tan.gif" width="[% width %]" height="[% height %]"></a>
 </td>
 [% END %]
 
@@ -75,6 +75,9 @@
 			<div id="playerlogo">
 				<img id="logoimage" class="gray" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" alt="[% playermodel %]" title="[% playermodel %]" width="98" height="17">
 				<img id="logoimage_tan" class="tan" src="[% webroot %]html/images/[% playermodel %]_logo.small_tan.gif" alt="[% playermodel %]" title="[% playermodel %]" width="98" height="17">
+			</div>
+			<div id="waiting">
+				[% "CONNECTING_FOR" | string | upper %].
 			</div>
 			<div id="playerlinks">
 			[% IF undock %]<span id="inc"></span>  [% END %]
