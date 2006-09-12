@@ -677,7 +677,7 @@ sub displayFeedDescription {
 		};
 	}
 
-	push @lines, '{XML_URL}: ' . $client->param('url');
+	push @lines, '{URL}: ' . $client->param('url');
 
 	$feed->{'lastBuildDate'}  && push @lines, '{XML_DATE}: ' . $feed->{'lastBuildDate'};
 	$feed->{'managingEditor'} && push @lines, '{XML_EDITOR}: ' . $feed->{'managingEditor'};
