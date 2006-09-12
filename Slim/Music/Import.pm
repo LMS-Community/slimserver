@@ -149,7 +149,7 @@ sub launchScan {
 	);
 
 	# Set a timer to check on the scanning process.
-	$class->checkScanningStatus;
+	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 30), \&checkScanningStatus);
 
 	return 1;
 }

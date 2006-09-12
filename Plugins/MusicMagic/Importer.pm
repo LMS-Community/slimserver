@@ -282,7 +282,7 @@ sub processSong {
 		$attributes{'MUSICMAGIC_MIXABLE'} = 1;
 	}
 
-	# $::d_musicmagic && msg("MusicMagic: Exporting song: $songInfo{'file'}\n");
+	$::d_musicmagic && msg("MusicMagic: Exporting song: $songInfo{'file'}\n");
 
 	# Both Linux & Windows need conversion to the current charset.
 	if (Slim::Utils::OSDetect::OS() ne 'mac') {

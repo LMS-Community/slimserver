@@ -41,6 +41,8 @@ sub Install {
 
 	my($Username,$Password);
 
+	use Getopt::Long;
+
 	Getopt::Long::GetOptions(
 		'username=s' => \$Username,
 		'password=s' => \$Password,

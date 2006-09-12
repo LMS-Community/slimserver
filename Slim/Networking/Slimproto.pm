@@ -945,7 +945,7 @@ sub _knob_handler {
 	# Knob doesn't work on repeat timers, we have to reset it here to
 	# reactivate control of Slim::Buttons::Common::scroll by the knob
 	Slim::Hardware::IR::resetHoldStart($client);
-	
+
 	Slim::Hardware::IR::executeButton($client, 'knob', $time, undef, 1);
 }
 

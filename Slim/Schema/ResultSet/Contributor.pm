@@ -128,6 +128,10 @@ sub descendAlbum {
 	# albums at the artist level - we want to see all of them for an artist.
 	my $albumCond = {};
 
+	# Make run fixupFindKeys before trying to check/delete me.id,
+	# otherwise it will be contributor.id still.
+	$cond = $rs->fixupFindKeys($cond);
+
 	if (defined $find->{'album.compilation'}) {
 
 		if ($cond->{'me.id'} && $cond->{'me.id'} == Slim::Schema->variousArtistsObject->id) {
@@ -138,7 +142,8 @@ sub descendAlbum {
 		$albumCond->{'album.compilation'} = $find->{'album.compilation'};
 	}
 
-	$rs = $rs->search_related('contributorAlbums', $rs->fixupFindKeys($cond));
+	# Pull in the album join.
+	$rs = $rs->search_related('contributorAlbums', $cond);
 
 	# Constrain on the genre if it exists.
 	if (my $genre = $find->{'genre.id'}) {
