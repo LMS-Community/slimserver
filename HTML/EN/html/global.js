@@ -62,6 +62,34 @@ function getStatusData(params, action) {
 	});
 }
 
+function getHeadData(params, action) {
+	var requesttype = 'head';
+
+	var myAjax = new Ajax.Request(
+	url,
+	{
+		method: requesttype,
+		postBody: params,
+		parameters: params,
+		onComplete: action,
+		requestHeaders:['Referer', document.location.href]
+	});
+}
+
+
+// Parse the raw data and return the requested hash.
+// if data is already parsed, just return unprocessed.
+function fillDataHash(theData) {
+	var returnData = null;
+	if (theData['player_id']) { 
+		return theData;
+	} else {
+		var myData = theData.responseText;
+		returnData = parseData(myData);
+	}
+	return returnData;
+}
+
 // doRefresh
 // refreshes all elements on the page with ajaxRequest
 // refreshAll needs to be defined in the page specific javascript file 
