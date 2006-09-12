@@ -186,10 +186,10 @@ sub playRandom {
 
 	$::d_plugins && msg("RandomPlay: playRandom called with type $type\n");
 
-	if (!$mixInfo{$client->id}) {
+	if (!$mixInfo{$client->masterOrSelf->id}) {
 		
 		#init hash for each new client
-		$mixInfo{$client->id}->{'type'} = undef;
+		$mixInfo{$client->masterOrSelf->id}->{'type'} = undef;
 	}
 	
 	$type ||= 'track';
@@ -201,7 +201,7 @@ sub playRandom {
 	# If this is a new mix, store the start time
 	my $startTime = undef;
 
-	if ($continuousMode && $type && (!$mixInfo{$client->id}->{'type'} || $mixInfo{$client->id}->{'type'} ne $type)) {
+	if ($continuousMode && $type && (!$mixInfo{$client->masterOrSelf->id}->{'type'} || $mixInfo{$client->masterOrSelf->id}->{'type'} ne $type)) {
 		$startTime = time();
 	}
 
@@ -230,7 +230,7 @@ sub playRandom {
 			$::d_plugins && msgf("RandomPlay: $songsRemaining items remaining so not adding new track\n");
 		}
 
-	} elsif ($type ne 'disable' && ($type ne $mixInfo{$client->id}->{'type'} || ! $addOnly || $songsRemaining <= 0)) {
+	} elsif ($type ne 'disable' && ($type ne $mixInfo{$client->masterOrSelf->id}->{'type'} || ! $addOnly || $songsRemaining <= 0)) {
 
 		# Old artist/album/year is finished or new random mix started.  Add a new one
 		$numItems = 1;
@@ -255,11 +255,11 @@ sub playRandom {
 
 		# Prevent items that have already been played from being played again
 		# This fails when multiple clients are playing random mixes. -- Max
-		if ($mixInfo{$client->id}->{'startTime'}) {
+		if ($mixInfo{$client->masterOrSelf->id}->{'startTime'}) {
 
 			$find->{'lastPlayed'} = [
 				{ '=' => undef },
-				{ '<' => $mixInfo{$client->id}->{'startTime'} }
+				{ '<' => $mixInfo{$client->masterOrSelf->id}->{'startTime'} }
 			];
 		}
 
@@ -316,7 +316,7 @@ sub playRandom {
 
 		# Do a show briefly the first time things are added, or every time a new album/artist/year
 		# is added
-		if (!$addOnly || $type ne $mixInfo{$client->id}->{'type'} || $type ne 'track') {
+		if (!$addOnly || $type ne $mixInfo{$client->masterOrSelf->id}->{'type'} || $type ne 'track') {
 
 			if ($type eq 'track') {
 				$string = $client->string("PLUGIN_RANDOM_TRACK");
@@ -351,7 +351,7 @@ sub playRandom {
                                  string('PLUGIN_RANDOM_DISABLED'));
 		}
 
-		$mixInfo{$client->id} = undef;
+		$mixInfo{$client->masterOrSelf->id} = undef;
 
 	} else {
 
@@ -365,8 +365,8 @@ sub playRandom {
 			# Record current mix type and the time it was started.
 			# Do this last to prevent menu items changing too soon
 			$::d_plugins && msgf("RandomPlay: New mix started at %i\n", $startTime);
-			$mixInfo{$client->id}->{'type'} = $type;
-			$mixInfo{$client->id}->{'startTime'} = $startTime;
+			$mixInfo{$client->masterOrSelf->id}->{'type'} = $type;
+			$mixInfo{$client->masterOrSelf->id}->{'startTime'} = $startTime;
 		}
 	}
 }
@@ -387,16 +387,16 @@ sub getDisplayText {
 	}
 
 	# if showing the current mode, show altered string
-	if (defined $mixInfo{$client->id}->{'type'} && $item eq $mixInfo{$client->id}->{'type'}) {
+	if (defined $mixInfo{$client->masterOrSelf->id}->{'type'} && $item eq $mixInfo{$client->masterOrSelf->id}->{'type'}) {
 
 		return string($displayText{$item} . '_PLAYING');
 		
 	# if a mode is active, handle the temporarily added disable option
-	} elsif ($item eq 'disable' && $mixInfo{$client->id}) {
+	} elsif ($item eq 'disable' && $mixInfo{$client->masterOrSelf->id}) {
 
 		return join(' ',
 			string('PLUGIN_RANDOM_PRESS_RIGHT'),
-			string('PLUGIN_RANDOM_' . uc($mixInfo{$client->id}->{'type'}) . '_DISABLE')
+			string('PLUGIN_RANDOM_' . uc($mixInfo{$client->masterOrSelf->id}->{'type'}) . '_DISABLE')
 		);
 
 	} else {
@@ -494,7 +494,7 @@ sub handlePlayOrAdd {
 
 			pop @$listRef;
 
-		} elsif (!$mixInfo{$client->id}) {
+		} elsif (!$mixInfo{$client->masterOrSelf->id}) {
 
 			# only add disable option if starting a mode from idle state
 			push @$listRef, 'disable';
@@ -503,7 +503,7 @@ sub handlePlayOrAdd {
 		$client->param('listRef', $listRef);
 
 		# Clear any current mix type in case user is restarting an already playing mix
-		$mixInfo{$client->id}->{'type'} = undef;
+		$mixInfo{$client->masterOrSelf->id}->{'type'} = undef;
 
 		# Go go go!
 		playRandom($client, $item, $add);
@@ -565,7 +565,7 @@ sub setMode {
 	);
 
 	# if we have an active mode, temporarily add the disable option to the list.
-	if ($mixInfo{$client->id} && $mixInfo{$client->id}->{'type'}) {
+	if ($mixInfo{$client->masterOrSelf->id} && $mixInfo{$client->masterOrSelf->id}->{'type'}) {
 		push @{$params{'listRef'}}, 'disable';
 	}
 
@@ -581,7 +581,7 @@ sub commandCallback {
 		return;
 	}
 
-	if (!defined $client || !defined $mixInfo{$client->id}->{'type'}) {
+	if (!defined $client || !defined $mixInfo{$client->masterOrSelf->id}->{'type'}) {
 		# This is nothing unexpected - some events don't provide $client
 		# e.g. rescan
 		return;
@@ -589,7 +589,7 @@ sub commandCallback {
 
 	if ($::d_plugins) {
 		msgf("RandomPlay: received command %s\n", $request->getRequestString);
-		msgf("RandomPlay: while in mode: %s, from %s\n", $mixInfo{$client->id}->{'type'}, $client->name);
+		msgf("RandomPlay: while in mode: %s, from %s\n", $mixInfo{$client->masterOrSelf->id}->{'type'}, $client->name);
 	}
 
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client);
@@ -621,7 +621,7 @@ sub commandCallback {
 			}
 		}
 
-		playRandom($client, $mixInfo{$client->id}->{'type'}, 1);
+		playRandom($client, $mixInfo{$client->masterOrSelf->id}->{'type'}, 1);
 
 	} elsif ($request->isCommand([['playlist'], [keys %stopcommands]])) {
 
@@ -745,7 +745,7 @@ sub handleWebList {
 		$params->{'pluginRandomNumTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
 		$params->{'pluginRandomNumOldTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
 		$params->{'pluginRandomContinuousMode'} = Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks');
-		$params->{'pluginRandomNowPlaying'} = $mixInfo{$client->id}->{'type'};
+		$params->{'pluginRandomNowPlaying'} = $mixInfo{$client->masterOrSelf->id}->{'type'};
 	}
 	
 	return Slim::Web::HTTP::filltemplatefile($htmlTemplate, $params);
