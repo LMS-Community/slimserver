@@ -58,5 +58,26 @@
   -%]
 [%- END -%]
 
-
+[% BLOCK crumblist -%]
+[%- FOREACH item = pwd_list.list -%]
+  [%- PROCESS crumblistitem -%] /
 [% END -%]
+[%- END %]
+
+[% BLOCK crumblistitem -%]
+[%- IF item.title -%]
+<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title %]</a>
+[%- ELSE -%]
+[% item | replace('^\s*/','') %]
+[%- END -%]
+[%- END %]
+
+[% BLOCK browseDbItemHRef -%]
+href="browsedb.html?hierarchy=[% item.hierarchy %]&amp;level=[% item.level ; item.attributes | html %]"
+[%- END %]
+
+[% BLOCK browseTreeItemHRef -%]
+onclick="browseurl('browsetree.html?hierarchy=[% item.hierarchy %]&amp;player=[% playerURI %]')"
+[%- END %]
+
+[%- END -%]

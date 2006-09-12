@@ -30,7 +30,8 @@ onclick="parent.doBrowseCommand('loadtracks', '[% IF item.attributes; item.attri
    [% IF item.hierarchy %]<a onclick="parent.browseurl(&quot;[% item.hreftype | lower %].html?hierarchy=[% item.hierarchy %]&amp;level=[%item.level;item.attributes|html%]&quot;)">[% END %]
     [% item.text | html %]
    </a>
-   [% IF item.level == 1 && item.includeArtist && item.artist != noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
+   [% IF item.showYear && item.year %] ([% item.year %])[% END %]
+   [% IF item.artist.name && item.artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
   [% ELSE %]
    [% IF item %]
     <a onclick="parent.browseurl(&quot;songinfo.html?item=[% item.itemobj.id %]&quot;)">

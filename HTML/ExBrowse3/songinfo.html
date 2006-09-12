@@ -17,9 +17,13 @@
 		<tr>
 			<td class="infotitlecol"> [% role | upper | string %][% "COLON" | string %] </td>
 			<td>
-			[% FOREACH contributor = contributors.sort %]
-				<a onclick="parent.browseurl('browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=[%contributor.id%]')">[% contributor.name | html %]</a>
-			[% END %]
+			[% contributorsHTML = [] ;
+			FOREACH contributor = contributors.sort ;
+				cnameHTML = contributor.name | html ;
+				contributorsHTML.push("<a onclick=\"parent.browseurl('browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=$contributor.id')\">$cnameHTML</a>") ;
+			END ;
+			contributorsHTML.join(", ")
+			%]
 			</td>
 		</tr>
 	[% END %]
