@@ -1,3 +1,7 @@
+[%- IF ajaxRequest -%]
+	<pre>
+	</pre>
+[%- ELSE -%]
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -6,10 +10,12 @@
 	[% IF player_name; name = player_name | html; END -%]
 	[% pagetitle = pagetitle _ ' ' _ name %]
 	[% PROCESS standardheader.html %]
+	<script type="text/javascript" src="[% webroot %]html/prototype.js" ></script>
+	<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/global.js %]</script>
 	[% PROCESS html/common.js %]
 </head>
 
-<body onload="doLoad();">
+<body onload="doLoad(1);">
 
 [% BLOCK statusLink -%]
 [% FILTER null %]
@@ -203,3 +209,4 @@
 
 </body>
 </html>
+[% END %]

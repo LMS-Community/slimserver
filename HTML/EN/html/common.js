@@ -1,5 +1,6 @@
 <script language="JavaScript" type="text/javascript">
 <!-- Start Hiding the Script
+var url = "[% statusroot %]";
 
 function to_currentsong() {
 	if (window.location.hash == '' || navigator.appName=="Microsoft Internet Explorer") {
@@ -47,9 +48,13 @@ function toggleGalleryView(artwork) {
 }
 
 [% IF refresh %]
-	function doLoad() {
+	function doLoad(useAjax) {
 	
-		setTimeout( "refresh()", [% refresh %]*1000);
+		if (useAjax == 1) {
+			setTimeout( "ajaxRefresh()", [% refresh %]*1000);
+		} else {
+			setTimeout( "refresh()", [% refresh %]*1000);
+		}
 		try {
 			if (parent.playlist.location.host != '') {
 				// Putting a time-dependant string in the URL seems to be the only way to make Safari
@@ -78,6 +83,19 @@ function toggleGalleryView(artwork) {
 		window.location.replace("[% statusroot %]?player=[% player | uri %]");
 	}
 [% END %]
+
+function ajaxRefresh() {
+	var args = 'player='+player+'&ajaxRequest=1';
+	getHeadData(args, ajaxCallback);
+}
+
+function ajaxCallback(theData) {
+	if (theData.status == 200){
+		refresh();
+	} else {
+		setTimeout( "ajaxRefresh()", 60*1000);
+	}
+}
 
 [% BLOCK addSetupCaseLinks %]
 	[% IF setuplinks %]
@@ -188,8 +206,13 @@ function resize(src,width)
 	}
 
 [% IF warn %]
-	function doLoad() {
-		setTimeout( "refresh()", 300*1000);
+	function doLoad(useAjax) {
+		
+		if (useAjax == 1) {
+			setTimeout( "ajaxRefresh()", 300*1000);
+		} else {
+			setTimeout( "refresh()", 300*1000);
+		}
 	}
 		
 	function refresh() {
