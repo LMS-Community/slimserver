@@ -947,6 +947,8 @@ sub _knob_handler {
 	Slim::Hardware::IR::resetHoldStart($client);
 
 	Slim::Hardware::IR::executeButton($client, 'knob', $time, undef, 1);
+
+	$client->sendFrame('knoa');
 }
 
 sub _settings_handler {
