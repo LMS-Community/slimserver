@@ -143,7 +143,7 @@ PERL_VERSION
 	EN	Perl Version
 	ES	Versión del Perl
 	FI	Perl versio
-	FR	Version du Perl
+	FR	Version de Perl
 	IT	Versione Perl
 	NL	Perl versie
 	NO	Perl versjon
@@ -157,7 +157,7 @@ MYSQL_VERSION
 	EN	MySQL Version
 	ES	Versión del MySQL
 	FI	MySQL versio
-	FR	Version du MySQL
+	FR	Version de MySQL
 	IT	Versione MySQL
 	NL	MySQL versie
 	NO	MySQL versjon
@@ -737,6 +737,7 @@ INSERT_TO_PLAYLIST_DBL
 	EN	Adding
 	ES	Añadiendo
 	FI	Lisätään
+	FR	Ajout
 	HE	מוסיף לרשימת ניגון
 	IT	Aggiungi
 	NL	Aan het toevoegen
@@ -782,6 +783,7 @@ PLAYING_RANDOMLY_FROM_DBL
 	EN	Play shuffled
 	ES	Reproducir al azar
 	FI	Satunnaissoitto
+	FR	Aléatoire
 	HE	נגן מעורבב
 	IT	Riproduci casualmente
 	NL	Speel willekeurig
@@ -1499,6 +1501,7 @@ FIRMWARE_MISSING_DESC
 CHECKING_STREAM
 	DE	Überprüfe Datenstrom...
 	EN	Checking stream...
+	FR	Vérif. flux...
 	NL	Controleren stream...
 
 CONNECTING_FOR
@@ -3013,21 +3016,25 @@ SETUP_PREAMPVOLUMECONTROL_DESC
 SETUP_BUFFERSECS
 	DE	Puffergrösse für Internet Radio
 	EN	Radio Station Buffer Seconds
+	FR	Taille du tampon radio
 	NL	Radio station buffertijd (seconden)
 
 SETUP_BUFFERSECS_DESC
 	DE	Wenn Internet Radiostationen wiedergegeben werden, puffert der Player eine geringe Datenmenge, bevor er die Wiedergabe startet. Geben Sie die Anzahl Sekunden an, die in den Puffer geladen werden sollen (1-30 Sekunden). Vorgabewert ist 3 Sekunden. Falls Sie eine stotternde Wiedergabe feststellen, so kann das Erhöhen dieses Wertes helfen.
 	EN	When playing an Internet stream, the player buffers a small amount of data before beginning playback.  Specify the amount of audio data to buffer, in seconds from 1 to 30.  The default value is 3 seconds.  If you experience stuttering audio, increasing this value may help.
+	FR	Lors de la connexion à un flux Internet, la platine utilise un tampon audio avant de débuter la lecture. Vous pouvez spécifier la taille en secondes (1 à 30) de ce tampon. La valeur par défaut est de 3 secondes. Si vous subissez des coupures audio, augmentez cette valeur.
 	NL	Bij het spelen van een Internet stream buffert de speler een kleine hoeveelheid data voordat het spelen start. Specificeer de hoeveelheid bufferdata in seconden speeltijd. Minimum is 1 en maximum is 30 seconden. De standaardwaarde is 3 seconden. Als je haperende audio ervaart, dan kan het vergroten van de buffer helpen.
 
 SETUP_MAXWMARATE
 	DE	Maximale WMA Stream Bitrate
 	EN	Maximum WMA Stream Bitrate
+	FR	Limite de débit du flux WMA
 	NL	Maximum WMA stream bitrate
 
 SETUP_MAXWMARATE_DESC
 	DE	Manche WMA Streams können unterschiedliche Bitraten enthalten. Standardmässig wähle SlimServer die höchste verfügbare Bitrate. Dies kann bei langsameren Internet-Verbindungen zu Problemen führen. Daher können Sie hier die maximale Bitrate, die verwendet werden soll, festlegen.
 	EN	Some WMA streams have multiple bitrates available for streaming.  By default, SlimServer will select the highest bitrate stream available, but if you have a slower Internet connection, you may set a lower value here to limit the maximum rate that can be chosen from these multiple rate streams.
+	FR	Certains flux WMA sont disponibles en plusieurs débits binaires ; par défaut, le SlimServer choisira le débit le plus élevé disponible. Si votre connexion Internet ne le supporte pas, vous pouvez spécifier ici le débit maximum à utiliser.
 	NL	Sommige WMA streams zijn beschikbaar in meerdere kwaliteiten (bitrates). Standaard selecteert SlimServer de hoogst beschikbare bitrate. Als je een langzamere Internetverbinding hebt kun je een lagere bitrate kiezen om de streams te limiteren. Dan kun je alleen bitrates kiezen die lager zijn dan dit maximum.
 
 SETUP_MAXBITRATE
@@ -8916,7 +8923,7 @@ BROWSE_BY_GENRE
 	ZH_CN	浏览音乐风格
 
 BROWSE_BY_GENRE_DBL
-	FR	Parcours genre
+	FR	Genres
 
 BROWSE_BY_ARTIST
 	CS	Procházet podle interpretů
@@ -8937,7 +8944,7 @@ BROWSE_BY_ARTIST
 
 BROWSE_BY_ARTIST_DBL
 	ES	Examinar por Artista
-	FR	Parcours artistes
+	FR	Artistes
 
 BROWSE_BY_ALBUM
 	CS	Procházet podle alb
@@ -8958,7 +8965,7 @@ BROWSE_BY_ALBUM
 
 BROWSE_BY_ALBUM_DBL
 	ES	Examinar por Álbum
-	FR	Parcours albums
+	FR	Albums
 
 BROWSE_BY_ARTWORK
 	CS	Procházet podle obalů
@@ -8977,7 +8984,7 @@ BROWSE_BY_ARTWORK
 
 BROWSE_BY_ARTWORK_DBL
 	ES	Examinar por Arte de Tapa
-	FR	Parcours pochettes
+	FR	Pochettes
 
 BROWSE_NEW_MUSIC
 	CS	Procházet novinky
@@ -9010,7 +9017,7 @@ BROWSE_BY_SONG
 
 BROWSE_BY_SONG_DBL
 	ES	Examinar por canción
-	FR	Parcours morceaux
+	FR	Morceaux
 
 BROWSE_BY_YEAR
 	CS	Procházet podle roku vydání
@@ -9369,6 +9376,7 @@ PLAYER_SETTINGS
 BASIC_PLAYER_SETTINGS
 	DE	Grundeinstellungen
 	EN	Basic Settings
+	FR	Réglages de base
 
 ALARM_SETTINGS
 	CS	Budík nastavení
@@ -9450,6 +9458,7 @@ PLAYERIR_SETTINGS
 BASIC_SERVER_SETTINGS
 	DE	Grundeinstellungen
 	EN	Basic Settings
+	FR	Réglages de base
 
 SERVER_SETTINGS
 	CS	Nastavení serveru
@@ -12723,6 +12732,7 @@ SETUP_DIGITALOUTPUTENCODING
 SETUP_DIGITALOUTPUTENCODING_DESC
 	DE	Sie können für den digitalen Ausgang zwischen S/PDIF und AES/EBU wählen.
 	EN	You can choose between S/PDIF and AES/EBU encoding for the digital outputs.
+	FR	Vous pouvez choisir le format utilisé par les sorties numériques (S/PDIF ou AES/EBU).
 	NL	Je kunt kiezen tussen S/PDIF en AES/EBU codering voor de digitale uitvoeren.
 
 DIGITALOUTPUTENCODING_SPDIF
