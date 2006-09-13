@@ -46,6 +46,18 @@ our %functions = (
 		Slim::Utils::Timers::killTimers($client, \&updateDisplay);
 		updateDisplay($client, $params);
 	},
+
+	'knob' => sub {
+		my ($client, $funct, $functarg) = @_;
+
+		my $test = $client->knobPos;
+
+		my $params = $client->modeParam('Health.NetTest') || return;
+		setTest($client, $test, undef, $params);
+		Slim::Utils::Timers::killTimers($client, \&updateDisplay);
+		updateDisplay($client, $params);
+	},
+
 );
 
 sub setMode {
@@ -55,6 +67,12 @@ sub setMode {
 		$client->lines(\&errorLines);
 		return;
 	} 
+
+	if ($client->isa('Slim::Player::Transporter')) {
+		$client->param('listLen', scalar(@testRates));
+		$client->param('listIndex', 0);
+		$client->updateKnob(1);
+	}
 
 	$client->execute(["stop"]); # ensure this player is not streaming
 
