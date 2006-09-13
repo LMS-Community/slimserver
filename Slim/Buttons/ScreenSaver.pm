@@ -102,7 +102,9 @@ sub screenSaver {
 		# don't change modes when none (just dim) is the screensaver.
 	} elsif ($timeout && 
 			$irtime < $now - $timeout && 
-			$mode ne $saver &&
+			( ($mode ne $saver) || 
+			 # in case the saver is 'now playing' and we're browsing another song
+			 ($mode eq 'playlist' && !Slim::Buttons::Playlist::showingNowPlaying($client)) ) &&
 			$mode ne 'screensaver' && # just in case it falls into default, we dont want recursive pushModes
 			$mode ne 'block' &&
 			$client->power()) {
