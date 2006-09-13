@@ -191,6 +191,7 @@ sub strings {
 
 	return '
 PLUGIN_DIGITAL_INPUT
+	DE	Digitaler Eingang
 	EN	Digital Input
 
 PLUGIN_DIGITAL_INPUT_BALANCED_AES
@@ -215,6 +216,7 @@ PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF
 	EN	Optical S/PDIF (TOSLINK)
 
 PLUGIN_DIGITAL_INPUT_CHOOSE_BELOW
+	DE	Wählen Sie einen digitalen Eingang:
 	EN	Choose a Digital Input option below:
 '};
 
