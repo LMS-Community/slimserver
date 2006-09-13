@@ -53,6 +53,17 @@ sub initPlugin {
 			}
 		},
 
+		'knob' => sub  {
+			my $client = shift;
+			my ($newPos, $dir, $pushDir, $wrap) = $client->knobListPos($menuSelection{$client}, $#browseMenuChoices);
+			my $newposition = Slim::Buttons::Common::scroll($client, $dir, ($#browseMenuChoices + 1), $menuSelection{$client});
+
+			if ($newposition != $menuSelection{$client}) {
+				$menuSelection{$client} =$newposition;
+				$pushDir eq 'up' ? $client->pushUp : $client->pushDown;
+			}
+		},
+
 		'left' => sub  {
 			my $client = shift;
 			Slim::Buttons::Common::popModeRight($client);
@@ -145,8 +156,11 @@ sub setMode {
 		$client->string('PLUGIN_RESCAN_PRESS_PLAY'),
 	);
 
+	$client->param('listLen', scalar(@browseMenuChoices));
+
 	unless (defined($menuSelection{$client})) {
 		$menuSelection{$client} = 0;
+		$client->param('listIndex', 0);
 	}
 
 	$client->lines(\&lines);
