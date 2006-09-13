@@ -49,7 +49,7 @@ Generally only called from L<Slim::Buttons::Common>
 
 sub init {
 
-	Slim::Buttons::Common::addMode('block', getFunctions(), \&setMode);
+	Slim::Buttons::Common::addMode('block', getFunctions(), \&setMode, \&exitMode);
 }
 
 # Each button on the remote has a function:
@@ -60,12 +60,24 @@ sub getFunctions {
 sub setMode {
 	my $client = shift;
 
+	# store current lines function so it can be replaced when block mode is popped
+	# this is required as popping block mode does not call the setMode of the previous mode
+	$client->modeParam('oldLines', $client->lines );
+
 	$client->lines(\&lines);
 
 	if (!$client->blocklines()->{'static'}) {
 
 		$client->modeParam('modeUpdateInterval', $ticklength);
 	}
+}
+
+sub exitMode {
+	my $client = shift;
+
+	# restore previous lines and display screen
+	$client->lines( $client->modeParam('oldLines') );
+	$client->update();
 }
 
 =head2 block( $client, $line1 )
