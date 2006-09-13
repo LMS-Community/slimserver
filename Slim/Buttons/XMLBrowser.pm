@@ -495,8 +495,10 @@ sub overlaySymbol {
 
 		$overlay .= Slim::Display::Display::symbol('notesymbol');
 	}
+	
+	$item->{'type'} ||= ''; # avoid warning but still display right arrow
 
-	if ( $item->{'type'} && $item->{'type'} ne 'text' && ( hasDescription($item) || hasLink($item) ) ) {
+	if ( $item->{'type'} ne 'text' && ( hasDescription($item) || hasLink($item) ) ) {
 
 		$overlay .= Slim::Display::Display::symbol('rightarrow');
 	}
