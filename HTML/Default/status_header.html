@@ -62,18 +62,18 @@
 
 			<div class="attributeBold">[% "VOLUME" | string | upper %][% "COLON" | string %]&nbsp;</div>
 
-			[%- FOREACH vol = [0,10,20,30,40,50,60,70,80,90,100] %]
+			[%- FOREACH vol = [0,10,20,30,40,50,60,70,80,90,100] -%]
 
-				[% PROCESS statusLink 
+				[%- PROCESS statusLink 
 					p0         = 'mixer'
 					p1         = 'volume'
 					p2         = vol
 					link       = loop.count
 					divID      = (!loop.first && (volume > loop.prev) && (volume <= vol)) ? 'valueSelected' : 'valueBold'
 					linkString = ''
-				%]
+				-%]
 
-			[% END %]
+			[%- END -%]
 		</div>
 		[% END %]
 

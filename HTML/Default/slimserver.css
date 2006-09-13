@@ -91,8 +91,8 @@ a:hover {
 
 .valueBold, .valueSelected, .bar {
 	color: #c5c5c5;
-	padding-right: 1.25px;
-	padding-left: 1.25px;
+	padding-right: 1px;
+	padding-left: 1px;
 	display: inline;
 	white-space: nowrap;
 }
