@@ -18,69 +18,39 @@ our %functions = ();
 
 sub init {
 
-	Slim::Buttons::Common::addMode('moodlogic_mood_wheel', getFunctions(), \&setMode);
+	Slim::Buttons::Common::addMode('moodlogic_mood_wheel', undef, \&setMode);
+}
 
-	%functions = (
-		
-		'up' => sub  {
-			my $client = shift;
-			my $button = shift;
-			my $count = scalar @browseMoodChoices;
-			
-			if ($count < 2) {
-				$client->bumpUp() if ($button !~ /repeat/);
-			} else {
-				my $newposition = Slim::Buttons::Common::scroll(
-					$client, -1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index')
-				);
+sub moodExitHandler {
+	my ($client,$exittype) = @_;
+	
+	$exittype = uc($exittype);
 
-				setSelection($client, 'mood_wheel_index', $newposition);
-				$client->pushUp();
-			}
-		},
-		
-		'down' => sub  {
-			my $client = shift;
-			my $button = shift;
-			my $count = scalar @browseMoodChoices;
+	if ($exittype eq 'LEFT') {
 
-			if ($count < 2) {
-				$client->bumpDown() if ($button !~ /repeat/);
-			} else {
-				my $newposition = Slim::Buttons::Common::scroll(
-					$client, +1, ($#browseMoodChoices + 1), selection($client, 'mood_wheel_index')
-				);
-				setSelection($client, 'mood_wheel_index', $newposition);
-				$client->pushDown();
-			}
-		},
-		
-		'left' => sub  {
-			my $client = shift;
-			Slim::Buttons::Common::popModeRight($client);
-		},
-		
-		'right' => sub  {
-			my $client = shift;
-		
-			Slim::Buttons::Common::pushModeLeft($client, 'moodlogic_variety_combo', {
+		Slim::Buttons::Common::popModeRight($client);
+
+	} elsif ($exittype eq 'RIGHT') {
+
+		my $valueref = $client->param('valueRef');
+
+		Slim::Buttons::Common::pushModeLeft($client, 'moodlogic_variety_combo', {
 
 				'genre'  => $client->param( 'genre'),
 				'artist' => $client->param( 'artist'),
-				'mood'   => $browseMoodChoices[selection($client, 'mood_wheel_index')]
+				'mood'   => $$valueref,
 			});
-			
-		}
-	);
-}
-
-sub getFunctions {
-	return \%functions;
+	}
 }
 
 sub setMode {
 	my $client = shift;
-	my $push   = shift;
+	my $method   = shift;
+
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
 
 	my $genre  = $client->param('genre');
 	my $artist = $client->param('artist');
@@ -97,11 +67,23 @@ sub setMode {
 		die 'no/unknown type specified for mood wheel';
 	}
 
-	if ($push eq "push") {
+	if ($method eq "push") {
 		setSelection($client, 'mood_wheel_index', 0);
 	}
 	
-	$client->lines(\&lines);
+	my %params = (
+		'listRef'        => \@browseMoodChoices,
+		'header'         => 'MOODLOGIC_SELECT_MOOD',
+		'headerAddCount' => 1,
+		'stringHeader'   => 1,
+		'callback'       => \&moodExitHandler,
+		'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
+		'overlayRefArgs' => '',
+		'genre'          => $genre,
+		'artist'         => $artist,
+	);
+		
+	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 }
 
 #

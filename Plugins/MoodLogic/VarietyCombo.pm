@@ -73,7 +73,7 @@ sub init {
 			my $track  = $client->param('song');
 			my $artist = $client->param('artist');
 			my $genre  = $client->param('genre');
-			
+
 			if (defined $track) {
 
 				$instantMix = Plugins::MoodLogic::Plugin::getMix($track->moodlogic_id, undef, 'song');
@@ -121,8 +121,76 @@ sub getFunctions {
 
 sub setMode {
 	my $client = shift;
+	my $method = shift;
 	
-	$client->lines(\&lines);
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
+	
+	my $variety = Slim::Utils::Prefs::get('varietyCombo');
+	
+	Slim::Buttons::Common::pushMode($client, 'INPUT.Bar', {
+		'header'       => 'SETUP_VARIETYCOMBO',
+		'stringHeader' => 1,
+		'headerValue'  => sub { return " (".$_[1].")"; },
+		'onChange'     => sub {
+				Slim::Utils::Prefs::set('varietyCombo', $_[1])}
+			,
+		'initialValue' => \$variety,
+		'valueRef'     => \$variety,
+		'callback'     => \&varietyExitHandler,
+		'increment'    => 1,
+		'screen2'      => 'inherit',
+		'mood'         => $client->param('mood'),
+		'track'        => $client->param('song'),
+		'artist'       => $client->param('artist'),
+		'genre'        => $client->param('genre'),
+	});
+}
+
+
+sub varietyExitHandler {
+	my ($client,$exittype) = @_;
+	
+	$exittype = uc($exittype);
+
+	if ($exittype eq 'LEFT') {
+
+		Slim::Buttons::Common::popModeRight($client);
+
+	} elsif ($exittype eq 'RIGHT') {
+	
+		my $instantMix;
+	
+		my $mood   = $client->param('mood');
+		my $track  = $client->param('song');
+		my $artist = $client->param('artist');
+		my $genre  = $client->param('genre');
+	
+		if (defined $track) {
+	
+			$instantMix = Plugins::MoodLogic::Plugin::getMix($track->moodlogic_id, undef, 'song');
+	
+		} elsif (defined $mood && defined $artist) {
+	
+			$instantMix = Plugins::MoodLogic::Plugin::getMix($artist->moodlogic_id, $mood, 'artist');
+	
+		} elsif (defined $mood && defined $genre) {
+	
+			$instantMix = Plugins::MoodLogic::Plugin::getMix($genre->moodlogic_id, $mood, 'genre');
+		}
+	
+		if (scalar @$instantMix) {
+	
+			Slim::Buttons::Common::pushMode($client, 'moodlogic_instant_mix', { 'mix' => $instantMix });
+			specialPushLeft($client, 0);
+	
+		} else {
+	
+			$client->bumpRight()
+		}
+	}
 }
 
 #
@@ -160,18 +228,17 @@ sub specialPushLeft {
 	
 	if ($step == 0) {
 
-		Slim::Buttons::Common::pushMode($client, 'block');
-		$client->pushLeft(undef, { 'line1' => $mixer });
+		$client->block({'line' => [$mixer] });
 		Slim::Utils::Timers::setTimer($client,$when,\&specialPushLeft,$step+1);
 
 	} elsif ($step == 3) {
 
-		Slim::Buttons::Common::popMode($client);
-		$client->pushLeft({ 'line1' => $mixer."..." }, undef);
+		$client->unblock;
+		$client->pushLeft({ 'line' => [$mixer."..."] }, undef);
 
 	} else {
 
-		$client->update( { 'line1' => $mixer.("." x $step) } );
+		$client->update( { 'line' => [$mixer.("." x $step) ]} );
 		Slim::Utils::Timers::setTimer($client,$when,\&specialPushLeft,$step+1);
 	}
 }

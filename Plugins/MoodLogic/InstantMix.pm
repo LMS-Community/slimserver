@@ -23,45 +23,6 @@ sub init {
 	Slim::Buttons::Common::addMode('moodlogic_instant_mix', getFunctions(), \&setMode);
 
 	%functions = (
-		'up' => sub  {
-			my $client = shift;
-			my $button;
-			my $count = scalar @instantMix;
-			
-			if ($count < 2) {
-				$client->bumpUp() if ($button !~ /repeat/);
-			} else {
-				my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#instantMix + 1), selection($client, 'instant_mix_index'));
-				setSelection($client, 'instant_mix_index', $newposition);
-				$client->pushUp();
-			}
-		},
-		
-		'down' => sub  {
-			my $client = shift;
-			my $button = shift;
-			my $count = scalar @instantMix;
-
-			if ($count < 2) {
-				$client->bumpDown() if ($button !~ /repeat/);;
-			} else {
-				my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#instantMix + 1), selection($client, 'instant_mix_index'));
-				setSelection($client, 'instant_mix_index', $newposition);
-				$client->pushDown();
-			}
-		},
-		
-		'left' => sub  {
-			my $client = shift;
-			Slim::Buttons::Common::popModeRight($client);
-		},
-		
-		'right' => sub  {
-			my $client = shift;
-
-			Slim::Buttons::Common::pushMode($client, 'trackinfo', {'track' => $instantMix[selection($client, 'instant_mix_index')]});
-			$client->pushLeft();
-		},
 		'play' => sub  {
 			my $client = shift;
 			my $button = shift;
@@ -99,9 +60,14 @@ sub getFunctions {
 
 sub setMode {
 	my $client = shift;
-	my $push = shift;
+	my $method = shift;
 	
-	if ($push eq "push") {
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
+	
+	if ($method eq "push") {
 		setSelection($client, 'instant_mix_index', 0);
 		
 		if (defined $client->param( 'mix')) {
@@ -109,24 +75,37 @@ sub setMode {
 		}
 	}
 
-	$client->lines(\&lines);
+	my %params = (
+		'listRef'        => \@instantMix,
+		'externRef'      => \&Slim::Music::Info::standardTitle,
+		'header'         => 'MOODLOGIC_INSTANT_MIX',
+		'headerAddCount' => 1,
+		'stringHeader'   => 1,
+		'callback'       => \&mixExitHandler,
+		'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
+		'overlayRefArgs' => '',
+	);
+		
+	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 }
 
-# figure out the lines to be put up to display
-sub lines {
-	my $client = shift;
-
-	my $line1 = $client->string('MOODLOGIC_INSTANT_MIX');
+sub mixExitHandler {
+	my ($client,$exittype) = @_;
 	
-	$line1 .= sprintf(" (%d ".$client->string('OUT_OF')." %s)", selection($client, 'instant_mix_index') + 1, scalar @instantMix);
+	$exittype = uc($exittype);
 
-	my $line2 = Slim::Music::TitleFormatter::infoFormat($instantMix[selection($client, 'instant_mix_index')], 'TITLE (ARTIST)', 'TITLE');
+	if ($exittype eq 'LEFT') {
 
-	return {
-		'line1'    => $line1,
-		'line2'    => $line2,
-		'overlay2' => $client->symbols('rightarrow'),
-	};
+		Slim::Buttons::Common::popModeRight($client);
+
+	} elsif ($exittype eq 'RIGHT') {
+
+		my $valueref = $client->param('valueRef');
+
+		Slim::Buttons::Common::pushMode($client, 'trackinfo', { 'track' => $$valueref });
+
+		$client->pushLeft();
+	}
 }
 
 #	get the current selection parameter from the parameter stack
