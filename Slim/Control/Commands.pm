@@ -1040,10 +1040,15 @@ sub playlistXtracksCommand {
 
 	my $size  = scalar(@tracks);
 	my $playListSize = Slim::Player::Playlist::count($client);
-	
+
 	# Bug 4092, if we have a single remote URL in a playlist, send it to the non-tracks command for scanning
 	# XXX: Playlists with multiple remote URLs are a trickier problem to solve, people should really not do this!
-	if ( $size == 1 && !$delete && Slim::Music::Info::isRemoteURL( $tracks[0]->url ) ) {
+	#
+	# Don't do this check for the digital input source though.
+	# It masquerades as a direct streaming protocol handler.
+	if ( $size == 1 && !$delete && $tracks[0]->content_type ne 'src' &&
+		Slim::Music::Info::isRemoteURL( $tracks[0]->url ) ) {
+
 		$cmd =~ s/tracks//;
 		$client->execute([ 'playlist', $cmd, $tracks[0] ]);
 		$request->setStatusDone(); # XXX: Is this needed?

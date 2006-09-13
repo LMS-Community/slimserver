@@ -12824,3 +12824,6 @@ LOADING_BROWSE_MUSIC_FOLDER
 LOADING
 	DE	Lade...
 	EN	Loading...
+
+SRC
+	EN	Digital Input Source

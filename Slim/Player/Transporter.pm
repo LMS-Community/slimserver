@@ -71,6 +71,44 @@ sub reconnect {
 	$client->updateKnob(1);
 }
 
+sub play {
+	my ($client, $params) = @_;
+
+	# If the url to play is a source: value, that means the Digital Inputs
+	# are being used. The DigitalInput plugin handles setting the audp
+	# value for those. If the user then goes and pressed play on a
+	# standard file:// or http:// URL, we need to set the value back to 0,
+	# IE: input from the network.
+	if ($params->{'url'}) {
+
+		if ($params->{'url'} =~ /^source:/) {
+
+			$::d_source && msg("Transporter::play - Got source: url [$params->{'url'}]\n");
+
+			if ($INC{'Plugins/DigitalInput/Plugin.pm'}) {
+
+				my $value = Plugins::DigitalInput::Plugin::valueForSourceName($params->{'url'});
+
+				$::d_source && msg("Transporter::play - Setting DigitalInput to $value\n");
+
+				$client->prefSet('digitalInput', $value);
+				$client->sendFrame('audp', \pack('C', $value));
+			}
+
+			return 1;
+
+		} else {
+
+			$::d_source && msg("Transporter::play - setting DigitalInput to 0 for [$params->{'url'}]\n");
+
+			$client->prefSet('digitalInput', 0);
+			$client->sendFrame('audp', \pack('C', 0));
+		}
+	}
+
+	return $client->SUPER::play($params);
+}
+
 sub updateClockSource {
 	my $client = shift;
 

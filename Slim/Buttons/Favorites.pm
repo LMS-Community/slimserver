@@ -225,18 +225,26 @@ sub _addOrPlayFavoriteUrl {
 		});
 	}
 
-	$::d_favorites && msg("Favorites: Calling $command on favorite [$title] ($url)\n");
-
 	if (!$add) {
 		$client->execute([ 'playlist', 'clear' ] );
 	}
 	
 	# remote URLs should go via play/add so they go through Scanner
-	if ( Slim::Music::Info::isRemoteURL($url) ) {
+	# 
+	# NB: Transporter digital source: URLs are special. They are
+	# implemented as a ProtocolHandler, but are not remote streams.
+	if ( Slim::Music::Info::isRemoteURL($url) && $url !~ /^source:/ ) {
+
 		$command = $add ? 'add' : 'play';
+
+		$::d_favorites && msg("Favorites: Calling $command on favorite [$title] ($url)\n");
+
 		$client->execute([ 'playlist', $command, $url, $title ]);
-	}
-	else {
+
+	} else {
+
+		$::d_favorites && msg("Favorites: Calling $command on favorite [$title] ($url)\n");
+
 		$client->execute([ 'playlist', $command, 'favorite', $url ]);
 	}
 }

@@ -1,0 +1,48 @@
+[%- pagetitle = 'PLUGIN_DIGITAL_INPUT' | string; pageicon = 'PLUGIN_DIGITAL_INPUT' -%]
+[%- pwd_list = BLOCK -%]/
+	<a href="[% webroot %]plugins/DigitalInput/digitalinput_list.html?player=[% player | uri %]">
+		[% "PLUGIN_DIGITAL_INPUT" | string %]
+	</a>
+[% END -%]
+[%- pageHeaderInfo = BLOCK %]
+
+		<strong>[% "NOW_PLAYING" | string %][% "COLON" | string %]</strong>
+		<span class="exboldnowplaying">[% digitalInputCurrent %]</span>
+
+[% END -%]
+[%- PROCESS pageheader.html %]
+
+[%# Following block generates links that submit the form if javascript is enabled.  This allows
+     users to make setting changes then click on a new mix without having to press the submit button. %]
+[% BLOCK href %]
+href="[% webroot %]plugins/DigitalInput/digitalinput_set.html?type=[% type %]&player=[% player | uri %]"
+		 onclick='refreshStatus(); return true;'
+[% END %]
+
+[% BLOCK digitalselection %]
+		[% WRAPPER playlink noTarget=1 %]
+			[% PROCESS href %]
+		[% END %]
+[% END %]
+
+[% IF player == '' %]
+	<p>[% "NO_PLAYER_FOUND" | string %]</p>
+[% ELSE %]
+
+		<p>[% "PLUGIN_DIGITAL_INPUT_CHOOSE_BELOW" | string %]</p>
+
+		[% odd = 1 %]
+		[% FOREACH type IN ['', 'BALANCED_AES','BNC_SPDIF','RCA_SPDIF', 'OPTICAL_SPDIF'] %]
+
+			[% UNLESS type; NEXT; END %]
+
+			[% BLOCK controls %]
+				[% PROCESS digitalselection type="$loop.index" %]
+			[% END %]
+			[%- WRAPPER contentitem controls='controls' %]
+				[% 'PLUGIN_DIGITAL_INPUT_' _ type | string %]
+			[% END %]
+			[% odd = (not odd) %]
+		[% END %]
+[% END %]
+[% PROCESS pagefooter.html %]
