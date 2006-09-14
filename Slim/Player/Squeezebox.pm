@@ -1119,7 +1119,7 @@ sub volumeString {
 		return sprintf(' (%s)', $client->string('MUTED'));
 	}
 
-	return " ($volume)";
+	return sprintf(' (%i)', $volume);
 }
 
 sub bass {
