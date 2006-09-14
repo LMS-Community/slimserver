@@ -522,6 +522,15 @@ sub stillScanning {
 	my $class    = shift;
 	my $imports  = scalar keys %importsRunning;
 
+	# NB: Some plugins call this, but haven't updated to use class based calling.
+	if (!$class) {
+
+		$class = __PACKAGE__;
+
+		msg("Warning: Caller needs to updated to use ->stillScanning, not ::stillScanning()!\n");
+		bt();
+	}
+
 	# Check and see if there is a flag in the database, and the process is alive.
 	my $scanRS   = Slim::Schema->single('MetaInformation', { 'name' => 'isScanning' });
 	my $scanning = blessed($scanRS) ? $scanRS->value : 0;
