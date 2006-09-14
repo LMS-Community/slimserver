@@ -9,6 +9,8 @@ var itemsPerCall = 50;
 
 function getPlaylistInit() {
 	// get the playlist, then go back to continue loading the page
+	if (!curPlayer) return;
+
 	getPlaylist(mainload);
 	return { async: true };
 }

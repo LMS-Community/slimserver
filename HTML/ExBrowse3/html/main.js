@@ -69,7 +69,11 @@ function getPlayerListContinue(res) {
         playerlistbox.update(players);
         playerlistbox.selectIndex(indexToSelect);
 
-	if (!curPlayer && players[indexToSelect]) curPlayer = players[indexToSelect].id;
+	if (players.length == 0) {
+		curPlayer = false;
+	} else if (!curPlayer && players[indexToSelect]) {
+		curPlayer = players[indexToSelect].id;
+	}
 }
 
 function getStrings() {
