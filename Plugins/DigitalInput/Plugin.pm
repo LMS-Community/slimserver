@@ -199,7 +199,7 @@ sub strings {
 
 	return '
 PLUGIN_DIGITAL_INPUT
-	DE	Digitaler Eingang
+	DE	Digitale Eingänge
 	EN	Digital Inputs
 
 PLUGIN_DIGITAL_INPUT_BALANCED_AES
