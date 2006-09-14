@@ -50,7 +50,7 @@ my %screensaver_info = (
 #   11-18 - same as left channel parameters
 
 	'SCREENSAVER.visualizer_spectrum' => {
-		name => 'PLUGIN_SCREENSAVER_VISUALIZER_SPECTRUM_ANALYZER',
+		name => 'VISUALIZER_SPECTRUM_ANALYZER',
 		params => {
 				'transporter' =>     [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 320, 0, 4, 1, 1, 1, 3, 320, 320, 1, 4, 1, 1, 1, 3],
 				'squeezebox2' => [$VISUALIZER_SPECTRUM_ANALYZER, 0, 0, 0x10000, 0, 160, 0, 4, 1, 1, 1, 3, 160, 160, 1, 4, 1, 1, 1, 3],
@@ -141,93 +141,55 @@ PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 ##################################################
 ### Screensaver configuration mode
 ##################################################
-
-our %configFunctions = (
-	'up' => sub  {
-		my $client = shift;
-		my $newpos = Slim::Buttons::Common::scroll(
-								$client,
-								-1,
-								scalar(@{$client_context{$client}->{list}}),
-								$client_context{$client}->{position},
-								);
-		if ($client_context{$client}->{position} != $newpos) {
-			$client_context{$client}->{position} = $newpos;
-			$client->pushUp();
-		}
-	},
-	'down' => sub  {
-		my $client = shift;
-		my $newpos = Slim::Buttons::Common::scroll(
-								$client,
-								1,
-								scalar(@{$client_context{$client}->{list}}),
-								$client_context{$client}->{position},
-								);
-		if ($client_context{$client}->{position} != $newpos) {
-			$client_context{$client}->{position} = $newpos;
-			$client->pushDown();
-		}
-	},
-	'left' => sub  {
-		my $client = shift;
-		Slim::Buttons::Common::popModeRight($client);
-	},
-	'right' => sub  {
-		my $client = shift;
-
-		my $screensaver = $client_context{$client}->{list}->[$client_context{$client}->{position}];
-		my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
-		
-		if ($client->prefGet($saver) ne $screensaver) {
-			$client->prefSet($saver,$screensaver);
-		} else {
-			$client->prefSet($saver,$Slim::Player::Player::defaultPrefs->{$saver});
-		}
-		$client->update();
-	}
-);
-
-sub configLines {
-	my $client = shift;
-	
-	my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
-	
-	my $item = $client_context{$client}->{list}->[$client_context{$client}->{position}];
-
-	$line1 = $client->string('PLUGIN_SCREENSAVER_VISUALIZER');
-	$line2 = $client->string($screensaver_info{$item}->{name});
-	my $overlay2 = Slim::Buttons::Common::checkBoxOverlay($client, $client->prefGet($saver) eq $item);
-
-	return {
-		'line'    => [ $line1, $line2 ],
-		'overlay' => [ undef, $overlay2 ],
-	};
-}
+our %functions = ();
 
 sub getFunctions {
-	return \%configFunctions;
+	return \%functions;
 }
 
 sub setMode {
 	my $client = shift;
+	my $method = shift;
 
-	my $cursaver = $client->prefGet('screensaver');
-	$client_context{$client}->{screensaver} = $cursaver;
-	if (grep $_ eq $cursaver, @visualizer_screensavers) {
-		$client_context{$client}->{list} = [ @visualizer_screensavers, 'screensaver' ];
-	}
-	else {
-		$client_context{$client}->{list} = [ @visualizer_screensavers ];
-	}
-	unless (defined($client_context{$client}->{position}) &&
-			$client_context{$client}->{position} < scalar(@{$client_context{$client}->{list}})) {
-		$client_context{$client}->{position} = 0;
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
 	}
 
-	$client->lines(\&configLines);
+	my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
+	
+	my %params = (
+		'header'       => '{PLUGIN_SCREENSAVER_VISUALIZER}{count}',
+		'onPlay'         => \&setVis,
+		'onAdd'          => \&setVis,
+		'onRight'        => \&setVis,
+		'pref'           => $saver,
+		'initialValue'   => sub { return $_[0]->prefGet($saver) },
+	);
+		
+	my @externTF = ();
+	
+	for my $format (@visualizer_screensavers) {
+
+		push @externTF, {
+			'name'  => '{'.$screensaver_info{$format}->{name}.'}',
+			'value' => $format,
+		};
+	}
+
+	$params{'listRef'} = \@externTF;
+	
+	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
 }
 
+sub setVis {
+	my $client = shift;
+	my $value  = shift;
+
+	my $pref = $client->param('pref');
+	
+	$client->prefSet($pref,$value->{'value'});
+}
 
 ##################################################
 ### Screensaver display mode
@@ -283,13 +245,13 @@ sub screenSaver {
 	);
 }
 
-sub leaveVisualizerMode() {
+sub leaveVisualizerMode {
 	my $client = shift;
 	Slim::Utils::Timers::killTimers($client, \&_pushoff);
 	Slim::Utils::Timers::killTimers($client, \&_pushon);
 }
 
-sub setVisualizerMode() {
+sub setVisualizerMode {
 	my $client = shift;
 	my $method = shift;
 
