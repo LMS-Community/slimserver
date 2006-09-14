@@ -555,6 +555,10 @@ sub mute {
 sub hasDigitalOut {
 	return 0;
 }
+
+sub hasVolumeControl {
+	return 1;
+}
 	
 sub sendFrame {};
 

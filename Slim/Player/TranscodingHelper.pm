@@ -281,6 +281,7 @@ sub getConvertCommand {
 
 	if (!defined $command) {
 		$::d_source && msg("******* Error:  Didn't find any command matches for type: $type format: $format ******\n");
+		$format = $type;
 	} else {
 		$::d_source && msg("Matched Format: $format Type: $type Command: $command \n");
 	}

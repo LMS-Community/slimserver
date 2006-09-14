@@ -889,6 +889,12 @@ sub isType {
 	}
 }
 
+sub isDigitalInput {
+	my $pathOrObj = shift;
+
+	return isType($pathOrObj, 'src', @_);
+}
+
 sub isWinShortcut {
 	my $pathOrObj = shift;
 

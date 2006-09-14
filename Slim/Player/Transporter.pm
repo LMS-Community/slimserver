@@ -93,6 +93,7 @@ sub play {
 
 				$client->prefSet('digitalInput', $value);
 				$client->sendFrame('audp', \pack('C', $value));
+				Slim::Player::Source::trackStartEvent($client);
 			}
 
 			return 1;
@@ -219,6 +220,13 @@ sub knobListPos {
 
 sub model {
 	return 'transporter';
+}
+
+sub hasVolumeControl {
+	my $client = shift;
+	
+	return ( !Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::song($client)) );
+
 }
 
 sub hasDigitalIn {

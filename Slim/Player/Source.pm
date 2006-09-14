@@ -581,6 +581,10 @@ sub decoderUnderrun {
 
 	$::d_source && msg($client->id() . ": Decoder underrun while this mode: " . $client->playmode() . "\n");
 	
+	# in the case that we're starting up a digital input, 
+	# we want to defer until the output underruns, not the decoder
+	return if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::song($client, nextsong($client))));
+
 	if (!Slim::Player::Sync::isSynced($client) &&
 		($client->rate() == 0 || $client->rate() == 1) &&
 		($client->playmode eq 'playout-play')) {
@@ -957,7 +961,7 @@ sub gotoNext {
 
 			$::d_source && msg(
 				"opening next song (old format: $oldstreamformat, " .
-				"new: $newstreamformat) current playmode: " . playmode($client) . "\n"
+				"new: $newstreamformat) current playmode: " . $client->playmode() . "\n"
 			);
 			
 			streamingSongIndex($client, $nextsong);

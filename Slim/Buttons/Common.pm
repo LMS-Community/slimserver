@@ -805,6 +805,8 @@ our %functions = (
 		my $button = shift;
 		my $buttonarg = shift;
 
+		return if (!$client->hasVolumeControl());
+		
 		if ($client->param('parentMode') && $client->param('parentMode') eq 'volume') {
 			popModeRight($client);
 		} else {
@@ -816,6 +818,8 @@ our %functions = (
 		my $client = shift;
 		my $button = shift;
 		my $buttonarg = shift;
+
+		return if (!$client->hasVolumeControl());
 
 		mixer($client, 'volume', $buttonarg);
 	},
