@@ -172,5 +172,5 @@ function loadHome() {
 
 
 function chooseSettings(option, value) {
-	browseurl("setup.html?page=" + value);
+	browseurl("setup.html?page=" + value + "&playerid=" + escape(curPlayer));
 }
