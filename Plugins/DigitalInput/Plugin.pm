@@ -192,7 +192,7 @@ sub strings {
 	return '
 PLUGIN_DIGITAL_INPUT
 	DE	Digitaler Eingang
-	EN	Digital Input
+	EN	Digital Inputs
 
 PLUGIN_DIGITAL_INPUT_BALANCED_AES
 	EN	Balanced AES/EBU
