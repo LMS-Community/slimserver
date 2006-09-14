@@ -33,95 +33,6 @@ sub enabled {
 sub initPlugin {
 
 	%functions = (
-		'up' => sub  {
-			my $client = shift;
-			my $newposition = Slim::Buttons::Common::scroll($client, -1, ($#browseMenuChoices + 1), $menuSelection{$client});
-
-			if ($newposition != $menuSelection{$client}) {
-				$menuSelection{$client} =$newposition;
-				$client->pushUp();
-			}
-		},
-
-		'down' => sub  {
-			my $client = shift;
-			my $newposition = Slim::Buttons::Common::scroll($client, +1, ($#browseMenuChoices + 1), $menuSelection{$client});
-
-			if ($newposition != $menuSelection{$client}) {
-				$menuSelection{$client} =$newposition;
-				$client->pushDown();
-			}
-		},
-
-		'knob' => sub  {
-			my $client = shift;
-			my ($newPos, $dir, $pushDir, $wrap) = $client->knobListPos($menuSelection{$client}, $#browseMenuChoices);
-			my $newposition = Slim::Buttons::Common::scroll($client, $dir, ($#browseMenuChoices + 1), $menuSelection{$client});
-
-			if ($newposition != $menuSelection{$client}) {
-				$menuSelection{$client} =$newposition;
-				$pushDir eq 'up' ? $client->pushUp : $client->pushDown;
-			}
-		},
-
-		'left' => sub  {
-			my $client = shift;
-			Slim::Buttons::Common::popModeRight($client);
-		},
-
-		'right' => sub  {
-			my $client = shift;
-
-			if ($browseMenuChoices[$menuSelection{$client}] eq $client->string('PLUGIN_RESCAN_TIMER_SET')) {
-				my $value = Slim::Utils::Prefs::get("rescan-time");
-				
-				my %params = (
-					'header' => $client->string('PLUGIN_RESCAN_TIMER_SET'),
-					'valueRef' => \$value,
-					'cursorPos' => 1,
-					'pref' => 'rescan-time',
-					'callback' => \&settingsExitHandler
-				);
-				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Time',\%params);
-
-			} elsif ($browseMenuChoices[$menuSelection{$client}] eq $client->string('PLUGIN_RESCAN_TIMER_OFF')) {
-
-				Slim::Utils::Prefs::set("rescan-scheduled", 1);
-				$browseMenuChoices[$menuSelection{$client}] = $client->string('PLUGIN_RESCAN_TIMER_ON');
-				$client->showBriefly( {
-				    'line1' => $client->string('PLUGIN_RESCAN_TIMER_TURNING_ON'),
-				});
-				setTimer($client);
-
-			} elsif ($browseMenuChoices[$menuSelection{$client}] eq $client->string('PLUGIN_RESCAN_TIMER_ON')) {
-
-				Slim::Utils::Prefs::set("rescan-scheduled", 0);
-				$browseMenuChoices[$menuSelection{$client}] = $client->string('PLUGIN_RESCAN_TIMER_OFF');
-				$client->showBriefly( {
-				    'line' => [ $client->string('PLUGIN_RESCAN_TIMER_TURNING_OFF') ]
-				});
-				setTimer($client);
-			
-			} elsif ($browseMenuChoices[$menuSelection{$client}] eq $client->string('PLUGIN_RESCAN_TIMER_TYPE')) {
-				my $value = Slim::Utils::Prefs::get("rescan-type");
-				
-				my %params = (
-
-					'header' => 'PLUGIN_RESCAN_TIMER_TYPE',
-					'headerAddCount' => 1,
-					'stringHeader' => 1,
-					'listRef' => ['1rescan','2wipedb','3playlist'],
-					'externRef' => [qw(SETUP_STANDARDRESCAN SETUP_WIPEDB SETUP_PLAYLISTRESCAN)],
-					'stringExternRef' => 1,
-					'valueRef' => \$value,
-					'cursorPos' => 1,
-					'pref' => 'rescan-type',
-					'callback' => \&settingsExitHandler,
-				);
-				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List',\%params);
-			}
-		},
-
 		'play' => sub {
 			my $client = shift;
 
@@ -131,7 +42,7 @@ sub initPlugin {
 				$client->execute(\@pargs, undef, undef);
 
 				$client->showBriefly( {
-				    'line' => [ $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
+					'line' => [ $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
 								$client->string('PLUGIN_RESCAN_RESCANNING') ]
 				});
 
@@ -148,46 +59,113 @@ sub initPlugin {
 
 sub setMode {
 	my $client = shift;
+	my $method = shift;
 
-	@browseMenuChoices = (
-		$client->string('PLUGIN_RESCAN_TIMER_SET'),
-		$client->string('PLUGIN_RESCAN_TIMER_OFF'),
-		$client->string('PLUGIN_RESCAN_TIMER_TYPE'),
-		$client->string('PLUGIN_RESCAN_PRESS_PLAY'),
-	);
-
-	$client->param('listLen', scalar(@browseMenuChoices));
-
-	unless (defined($menuSelection{$client})) {
-		$menuSelection{$client} = 0;
-		$client->param('listIndex', 0);
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
 	}
 
-	$client->lines(\&lines);
+	@browseMenuChoices = (
+		'PLUGIN_RESCAN_TIMER_SET',
+		'PLUGIN_RESCAN_TIMER_OFF',
+		'PLUGIN_RESCAN_TIMER_TYPE',
+		'PLUGIN_RESCAN_PRESS_PLAY',
+	);
 
 	# get previous alarm time or set a default
 	unless (defined Slim::Utils::Prefs::get("rescan-time")) {
 
 		Slim::Utils::Prefs::set("rescan-time", 9 * 60 * 60 );
 	}
+	
+	my %params = (
+		'listRef'        => \@browseMenuChoices,
+		'externRef'      => sub {
+				my $client = shift;
+				my $value  = shift;
+				
+				if (Slim::Utils::Prefs::get("rescan-scheduled") && $value eq 'PLUGIN_RESCAN_TIMER_OFF') {
+
+					return $client->string('PLUGIN_RESCAN_TIMER_ON');
+				} else {
+					return $client->string($value);
+				}
+			},
+		'externRefArgs'  => 'CV',
+		'header'         => 'PLUGIN_RESCAN_MUSIC_LIBRARY',
+		'headerAddCount' => 1,
+		'stringHeader'   => 1,
+		'callback'       => \&rescanExitHandler,
+		'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
+		'overlayRefArgs' => '',
+	);
+		
+	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 }
 
-sub lines {
-	my $client = shift;
+sub rescanExitHandler {
+	my ($client,$exittype) = @_;
+	
+	$exittype = uc($exittype);
 
-	my $timeFormat = Slim::Utils::Prefs::get("timeFormat");
+	if ($exittype eq 'LEFT') {
 
-	if (Slim::Utils::Prefs::get("rescan-scheduled") && 
-		$browseMenuChoices[$menuSelection{$client}] eq $client->string('PLUGIN_RESCAN_TIMER_OFF')) {
+		Slim::Buttons::Common::popModeRight($client);
 
-		$browseMenuChoices[$menuSelection{$client}] = $client->string('PLUGIN_RESCAN_TIMER_ON');
+	} elsif ($exittype eq 'RIGHT') {
+		my $valueref = $client->param('valueRef');
+	
+		if ($$valueref eq 'PLUGIN_RESCAN_TIMER_SET') {
+			my $value = Slim::Utils::Prefs::get("rescan-time");
+			
+			my %params = (
+				'header' => $client->string('PLUGIN_RESCAN_TIMER_SET'),
+				'valueRef' => \$value,
+				'cursorPos' => 1,
+				'pref' => 'rescan-time',
+				'callback' => \&settingsExitHandler
+			);
+			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Time',\%params);
+	
+		} elsif ($$valueref eq 'PLUGIN_RESCAN_TIMER_OFF') {
+	
+			Slim::Utils::Prefs::set("rescan-scheduled", 1);
+			$$valueref = 'PLUGIN_RESCAN_TIMER_ON';
+			$client->showBriefly( {
+				'line1' => $client->string('PLUGIN_RESCAN_TIMER_TURNING_ON'),
+			});
+			setTimer($client);
+	
+		} elsif ($$valueref eq 'PLUGIN_RESCAN_TIMER_ON') {
+	
+			Slim::Utils::Prefs::set("rescan-scheduled", 0);
+			$$valueref = 'PLUGIN_RESCAN_TIMER_OFF';
+			$client->showBriefly( {
+				'line' => [ $client->string('PLUGIN_RESCAN_TIMER_TURNING_OFF') ]
+			});
+			setTimer($client);
+		
+		} elsif ($$valueref eq 'PLUGIN_RESCAN_TIMER_TYPE') {
+			my $value = Slim::Utils::Prefs::get("rescan-type");
+			
+			my %params = (
+	
+				'header' => 'PLUGIN_RESCAN_TIMER_TYPE',
+				'headerAddCount' => 1,
+				'stringHeader' => 1,
+				'listRef' => ['1rescan','2wipedb','3playlist'],
+				'externRef' => [qw(SETUP_STANDARDRESCAN SETUP_WIPEDB SETUP_PLAYLISTRESCAN)],
+				'stringExternRef' => 1,
+				'valueRef' => \$value,
+				'cursorPos' => 1,
+				'pref' => 'rescan-type',
+				'callback' => \&settingsExitHandler,
+			);
+
+			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List',\%params);
+		}
 	}
-
-	return {
-	    'line' => [ $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
-					$browseMenuChoices[$menuSelection{$client}] || '' ],
-	    'overlay' => [ undef, $client->symbols('rightarrow') ],
-	};
 }
 
 sub settingsExitHandler {
