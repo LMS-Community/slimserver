@@ -67,8 +67,6 @@ sub setMode {
 	}
 	
 	if ($method eq "push") {
-		setSelection($client, 'instant_mix_index', 0);
-		
 		if (defined $client->param( 'mix')) {
 			@instantMix = @{$client->param('mix')};
 		}
