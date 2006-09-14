@@ -26,6 +26,7 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
+use Slim::Control::Request;
 use Slim::Utils::Misc;
 
 our %functions = ();
@@ -45,6 +46,9 @@ sub init {
 	Slim::Buttons::Common::addMode('playlist', getFunctions(), \&setMode);
 	
 	Slim::Music::Info::setCurrentTitleChangeCallback(\&Slim::Buttons::Playlist::newTitle);
+	
+	# Bug 4065, Watch for changes to the playlist that require a knob update
+	Slim::Control::Request::subscribe( \&knobPlaylistCallback, [['playlist']] );
 
 	# Each button on the remote has a function:
 	%functions = (
@@ -461,6 +465,22 @@ sub browseplaylistindex {
 	
 	# get (and optionally set) the browseplaylistindex parameter that's kept in param stack
 	return $client->param('listIndex', $playlistindex);
+}
+
+=head2 knobPlaylistCallback( $request )
+
+Watches for any playlist changes that require the knob's state to be updated
+
+=cut
+
+sub knobPlaylistCallback {
+	my $request = shift;
+	my $client  = $request->client();
+	
+	return unless defined $client;
+	return unless showingNowPlaying($client);
+	
+	$client->updateKnob(1);
 }
 
 # DEPRECATED: for compatibility only, use $client->nowPlayingModeLines();
