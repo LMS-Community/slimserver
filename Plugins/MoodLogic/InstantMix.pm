@@ -107,33 +107,6 @@ sub mixExitHandler {
 	}
 }
 
-#	get the current selection parameter from the parameter stack
-sub selection {
-	my $client = shift;
-	my $index = shift;
-
-	my $value = $client->param( $index);
-
-	if (defined $value  && $value eq '__undefined') {
-		undef $value;
-	}
-
-	return $value;
-}
-
-#	set the current selection parameter from the parameter stack
-sub setSelection {
-	my $client = shift;
-	my $index = shift;
-	my $value = shift;
-
-	if (!defined $value) {
-		$value = '__undefined';
-	}
-
-	$client->param( $index, $value);
-}
-
 1;
 
 __END__

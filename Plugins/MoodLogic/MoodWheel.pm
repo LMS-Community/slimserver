@@ -64,13 +64,10 @@ sub setMode {
 		@browseMoodChoices = @{Plugins::MoodLogic::Plugin::getMoodWheel($artist->moodlogic_id, 'artist')};
 
 	} else {
-		die 'no/unknown type specified for mood wheel';
+	
+		$::d_moodlogic && msg("MoodLogic: no/unknown type specified for mood wheel\n");
 	}
 
-	if ($method eq "push") {
-		setSelection($client, 'mood_wheel_index', 0);
-	}
-	
 	my %params = (
 		'listRef'        => \@browseMoodChoices,
 		'header'         => 'MOODLOGIC_SELECT_MOOD',
@@ -84,51 +81,6 @@ sub setMode {
 	);
 		
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
-}
-
-#
-# figure out the lines to be put up to display
-#
-sub lines {
-	my $client = shift;
-	my ($line1, $line2);
-
-	$line1 = $client->string('MOODLOGIC_SELECT_MOOD');
-	$line1 .= sprintf(" (%d %s %s)", selection($client, 'mood_wheel_index') + 1, $client->string('OUT_OF'), scalar @browseMoodChoices);
-	$line2 = $browseMoodChoices[selection($client, 'mood_wheel_index')];
-
-	return {
-		'line1'    => $line1,
-		'line2'    => $line2, 
-		'overlay2' => $client->symbols('rightarrow'),
-	};
-}
-
-#	get the current selection parameter from the parameter stack
-sub selection {
-	my $client = shift;
-	my $index = shift;
-
-	my $value = $client->param( $index);
-
-	if (defined $value  && $value eq '__undefined') {
-		undef $value;
-	}
-
-	return $value;
-}
-
-#	set the current selection parameter from the parameter stack
-sub setSelection {
-	my $client = shift;
-	my $index = shift;
-	my $value = shift;
-
-	if (!defined $value) {
-		$value = '__undefined';
-	}
-
-	$client->param( $index, $value);
 }
 
 1;

@@ -117,7 +117,6 @@ sub specialPushLeft {
 
 	} elsif ($step == 3) {
 
-		#$client->unblock;
 		$client->pushLeft({ 'line' => [$mixer."..."]});
 
 	} else {
