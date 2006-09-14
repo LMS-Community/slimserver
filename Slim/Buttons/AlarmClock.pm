@@ -165,16 +165,37 @@ sub init {
 		},
 
 		'alarm/ALARM_SELECT_PLAYLIST' => {
-			'useMode'        => 'INPUT.List',
+			'useMode'        => 'INPUT.Choice',
 			'listRef'        => undef,
-			'externRef'      => sub { return playlistName(@_) },
-			'externRefArgs'  => 'CV',
-			'header'         => 'ALARM_SELECT_PLAYLIST',
-			'headerAddCount' => 1,
+			'header'         => '{ALARM_SELECT_PLAYLIST} {count}',
 			'stringHeader'   => 1,
-			'onChange'       => sub { $_[0]->prefSet("alarmplaylist", exists $specialPlaylists{$_[1]} ? $_[1] : $_[1]->url,weekDay($_[0]))},
-			'onChangeArgs'   => 'CV',
+			'name'           => sub { playlistName(@_) },
+			'onRight'        => sub { 
+				my ( $client, $item ) = @_;
+				
+				$client->prefSet(
+					"alarmplaylist", 
+					exists $specialPlaylists{$_[1]} ? $_[1] : $_[1]->url,
+					weekDay($_[0])
+				);
+				$client->update();
+			},
 			'initialValue'   => sub { return $_[0]->prefGet("alarmplaylist", weekDay($_[0])) },
+			'overlayRef'     => sub {
+				my ( $client, $item ) = @_;
+				my $overlay;
+				
+				$item = ( ref $item ) ? $item->url : $item;
+
+				if ( $item eq $client->prefGet( "alarmplaylist", weekDay($client) ) ) {
+					$overlay = Slim::Buttons::Common::checkBoxOverlay( $client, 1 );
+				}
+				else {
+					$overlay = Slim::Buttons::Common::checkBoxOverlay( $client, 0 );
+				}
+				
+				return [undef, $overlay];
+			},
 		},
 		
 		'alarm/ALARM_WEEKDAYS' => {
@@ -340,6 +361,11 @@ sub alarmExitHandler {
 				if ($nextmenu eq 'alarm/ALARM_SELECT_PLAYLIST') {
 
 					my @playlists = Slim::Schema->rs('Playlist')->getPlaylists;
+					
+					# This is ugly, add a value item to each playlist object so INPUT.Choice remembers selection
+					for my $playlist (@playlists) {
+						$playlist->{'value'} = $playlist->url;
+					}
 
 					$nextParams{'listRef'} = [ @playlists, keys %specialPlaylists];
 				}
