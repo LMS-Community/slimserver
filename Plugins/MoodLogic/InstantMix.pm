@@ -39,11 +39,10 @@ sub init {
 			}
 			$line2 = $client->string('MOODLOGIC_INSTANT_MIX');
 			
-			$client->showBriefly( {
-				'line1'    => $line1,
-				'line2'    => $line2,
-				'overlay2' => $client->symbols('notesymbol'),
-			});
+			$client->showBriefly({
+				'line'    => [ $line1, $line2] ,
+				'overlay' => [ $client->symbols('notesymbol'),],
+			}, { 'duration' => 2});
 			
 			$client->execute(["playlist", $append ? "append" : "play", $instantMix[0]]);
 			

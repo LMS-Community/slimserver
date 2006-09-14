@@ -224,10 +224,9 @@ sub playMix {
 	my $line2 = $client->param('stringHeader') ? $client->string($client->param('header')) : $client->param('header');
 	
 	$client->showBriefly({
-		'line1'    => $line1,
-		'line2'    => $line2,
-		'overlay2' => $client->symbols('notesymbol'),
-	});
+		'line'    => [ $line1, $line2] ,
+		'overlay' => [ $client->symbols('notesymbol'),],
+	}, { 'duration' => 2});
 
 	$client->execute(["playlist", $playAddInsert, "listref", $client->param('listRef')]);
 }
