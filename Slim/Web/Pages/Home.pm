@@ -96,6 +96,11 @@ sub home {
 		$params->{'player_list'} .= ${Slim::Web::HTTP::filltemplatefile("homeplayer_list.html", \%listform)};
 	}
 
+	# More leakage from the DigitalInput 'plugin'
+	#
+	# If our current player has digital inputs, show the menu.
+	eval { Plugins::DigitalInput::Plugin::webPages($client->hasDigitalIn) };
+
 	Slim::Utils::PluginManager::addSetupGroups();
 	$params->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
 

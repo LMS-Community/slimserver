@@ -160,7 +160,9 @@ function switchPlayer(player_List) {
 	parent.playlist.location="playlist.html?player"+newPlayer;
 	window.location="status_header.html?player"+newPlayer;
 	
-	if (doc.location.href.indexOf('setup') == -1) {
+	if (doc.location.href.indexOf('setup') == -1 &&
+	    doc.location.href.indexOf('home')  == -1) {
+
 		for (var j=0;j < doc.document.links.length; j++) {
 			var myString = new String(doc.document.links[j].href);
 			var rString = newPlayer;
@@ -168,13 +170,18 @@ function switchPlayer(player_List) {
 
 			doc.document.links[j].href = myString.replace(rExp, rString);
 		}
+
 	} else {
+
 	[% END %]
 		myString = new String(doc.location.href);
 		var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 
 		doc.location=myString.replace(rExp, newPlayer);
-	[% IF browserTarget %]}[% END %]
+
+	[% IF browserTarget %]
+	}
+	[% END %]
 }
 
 function setCookie(name, value) {

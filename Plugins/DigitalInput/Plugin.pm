@@ -137,7 +137,10 @@ sub getFunctions {
 	return {};
 }
 
+# This plugin leaks into the main server, Slim::Web::Pages::Home() needs to
+# call this function to decide to show the Digital Input menu or not.
 sub webPages {
+	my $hasDigitalInput = shift;
 
 	my %pages = (
 		"digitalinput_list\.(?:htm|xml)" => \&handleWebList,
@@ -147,6 +150,11 @@ sub webPages {
 	my $value = 'plugins/DigitalInput/digitalinput_list.html';
 
 	if (grep { /^DigitalInput::Plugin$/ } Slim::Utils::Prefs::getArray('disabledplugins')) {
+
+		$value = undef;
+	}
+
+	if (!$hasDigitalInput) {
 
 		$value = undef;
 	}

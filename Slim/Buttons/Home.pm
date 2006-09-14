@@ -528,6 +528,12 @@ sub createList {
 			 keys %{$params->{'submenus'}}) {
 
 		next if exists $disabledplugins{$sub};
+
+		# Leakage of the DigitalInput plugin..
+		if ($sub eq 'PLUGIN_DIGITAL_INPUT' && !$client->hasDigitalIn) {
+			next;
+		}
+
 		push @list, $sub;
 	}
 
