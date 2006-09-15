@@ -79,20 +79,23 @@ sub play {
 	# value for those. If the user then goes and pressed play on a
 	# standard file:// or http:// URL, we need to set the value back to 0,
 	# IE: input from the network.
-	if ($params->{'url'}) {
+	
+	my $url = $params->{'url'};
+	if ($url) {
 
-		if ($params->{'url'} =~ /^source:/) {
+		if (Slim::Music::Info::isDigitalInput($url)) {
 
-			$::d_source && msg("Transporter::play - Got source: url [$params->{'url'}]\n");
+			$::d_source && msg("Transporter::play - Got source: url [$url]\n");
 
 			if ($INC{'Plugins/DigitalInput/Plugin.pm'}) {
 
-				my $value = Plugins::DigitalInput::Plugin::valueForSourceName($params->{'url'});
+				my $value = Plugins::DigitalInput::Plugin::valueForSourceName($url);
 
 				$::d_source && msg("Transporter::play - Setting DigitalInput to $value\n");
 
 				$client->prefSet('digitalInput', $value);
 				$client->sendFrame('audp', \pack('C', $value));
+				$client->directURL($url);
 				Slim::Player::Source::trackStartEvent($client);
 			}
 
@@ -100,7 +103,7 @@ sub play {
 
 		} else {
 
-			$::d_source && msg("Transporter::play - setting DigitalInput to 0 for [$params->{'url'}]\n");
+			$::d_source && msg("Transporter::play - setting DigitalInput to 0 for [$url]\n");
 
 			$client->prefSet('digitalInput', 0);
 			$client->sendFrame('audp', \pack('C', 0));
@@ -108,6 +111,31 @@ sub play {
 	}
 
 	return $client->SUPER::play($params);
+}
+
+sub power {
+	my ($client, $on) = @_;
+
+	# can't use the result below because power is sometimes called recursively through other display functions
+	my $was = $client->prefGet('power');
+	
+	my $result = $client->SUPER::power($on);
+
+	if (defined($on) && $was != $on) {
+		print " was: $was now: $on\n";
+	
+		# if we're turning off, then disable the digital input.
+		if ($on) {
+			# if we're turning on and the current song is a digital input, then start playing.
+			if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::url($client))) {
+				$client->execute(["play"]);
+			}
+		} else {
+			$client->prefSet('digitalInput', 0);
+			$client->sendFrame('audp', \pack('C', 0));
+		}
+	}
+	return $result;	
 }
 
 sub updateClockSource {
