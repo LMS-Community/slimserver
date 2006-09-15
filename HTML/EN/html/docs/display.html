@@ -648,7 +648,7 @@ within display strings via $client->symbols('character name').</p>
 <p>For example:</p>
 
 <pre>
-Slim::Player::SqueezeboxG::setCustomChar( 'my-icon', "\x02", 'icon.1' );
+Slim::Player::Graphics::setCustomChar( 'my-icon', "\x02", 'icon.1' );
 </pre>
 
 <p>This registers the symbol name 'my-icon' for character "\x02" within the font file
@@ -669,7 +669,7 @@ specific font within the display hash and not register the font name
 as part of the custom character name.</p>
 
 <pre>
-Slim::Player::SqueezeboxG::setCustomChar( 'my-icon', "\x02" );
+Slim::Player::Graphics::setCustomChar( 'my-icon', "\x02" );
 
 $display = {
     'overlay' => [ $client->symbols('my-icon') ],
@@ -677,7 +677,7 @@ $display = {
 };
 </pre>
 
-<p>Note: Slim::Player::SqueezeboxG::setCustomChar should only be
+<p>Note: Slim::Player::Graphics::setCustomChar should only be
 called once a graphics player is attached - e.g. by calling from the
 setMode of a plugin if it has not been previously called [see SlimTris
 for an example of this for text custom characters].</p>
