@@ -808,9 +808,11 @@ sub _hello_handler {
 		$client = undef;
 	}
 
-	if (defined $client && blessed($client->display) && blessed($client->display) ne $display_class) {
-		$::d_slimproto && msg("change display for $client_class to $display_class\n");
-		$client->display->forgetDisplay();
+	if ( defined $client ) {
+		if ( blessed($client->display) && blessed($client->display) ne $display_class ) {
+			$::d_slimproto && msg("change display for $client_class to $display_class\n");
+			$client->display->forgetDisplay();
+		}
 
 		Slim::bootstrap::tryModuleLoad($display_class);
 
