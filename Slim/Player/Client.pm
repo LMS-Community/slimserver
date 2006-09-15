@@ -641,7 +641,7 @@ sub volume {
 		} else {
 
 			# persist only if $temp not set
-			Slim::Utils::Prefs::clientSet($client, "volume", $volume);
+			$client->prefSet("volume", $volume);
 
 			# forget any previous temporary volume
 			$client->[97] = undef;
@@ -655,7 +655,7 @@ sub volume {
 
 	} else {
 
-		return Slim::Utils::Prefs::clientGet($client, "volume");
+		return $client->prefGet("volume");
 	}
 }
 
