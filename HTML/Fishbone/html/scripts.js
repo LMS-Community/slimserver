@@ -31,18 +31,27 @@ function changePlayer(player_List) {
 	var args = 'player='+player+'&ajaxRequest=1';
 	getStatusData(args, refreshNewPlayer);
 	
+	var newpage = '';
+	var rExp= new RegExp("&page=(.*?)$");
+	
 	if (parent.browser.location.href.indexOf('setup') == -1) {
 		newHref(parent.browser.document,newPlayer);
-		newHref(parent.header.document,newPlayer);
+		//newHref(parent.header.document,newPlayer);
 		newValue(parent.browser.document,newPlayer);
-
 	} else {
+		newpage = '';
 		browseURL = new String(parent.browser.location.href);
 		parent.browser.location=browseURL.replace(playerExp, newPlayer);
 	}
 
+	var myString = getHomeCookie('SlimServer-Browserpage');
+	//alert([rExp.exec(myString),myString,parent.browser.location.href]);
+	newpage = "&page=" + rExp.exec(myString)[1];
+
 	headerURL = new String(parent.header.location.href);
-	parent.header.location=headerURL.replace(playerExp, newPlayer);
+	newloc = headerURL.replace(playerExp, newPlayer);
+	//alert([newloc.replace(/&page=(.*?)$/,newpage)]);
+	parent.header.location = newloc.replace(/&page=(.*?)$/,newpage);
 }
 
 // change form values to correct player
