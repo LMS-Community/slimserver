@@ -113,7 +113,11 @@ sub init {
 
 				if ($songcount < 2) {
 					
-					$pushDir eq 'up' ? $client->bumpUp : $client->bumpDown;
+					if ($pushDir) {
+
+						$pushDir eq 'up' ? $client->bumpUp : $client->bumpDown;
+
+					}
 
 				} else {
 

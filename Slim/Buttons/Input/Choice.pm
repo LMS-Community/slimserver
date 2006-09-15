@@ -187,7 +187,7 @@ my %functions = (
 
 		my ($newPos, $dir, $pushDir, $wrap) = $client->knobListPos();
 		
-		changePos($client, $dir, $funct, $pushDir);
+		changePos($client, $dir, $funct, $pushDir) if $pushDir;
 	},
 	'numberScroll' => sub {
 		my ($client, $funct, $functarg) = @_;

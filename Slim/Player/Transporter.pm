@@ -180,7 +180,13 @@ sub knobListPos {
 	if ($listLen == 1) {
 
 		# knob return negative value anti-clockwise and +1 for clockwise
-		$direction = $newPos > 0 ? 'up' : 'down';
+		# set direction only if a bump is required otherwise leave as undef
+		if ($newPos > 0) {
+			$direction = 'up';
+		} elsif($newPos < 0) {
+			$direction = 'down';
+		}
+
 		$newPos = $curPos;
 
 	} elsif ($listLen == 2) {
