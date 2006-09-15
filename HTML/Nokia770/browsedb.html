@@ -28,6 +28,7 @@
 	[% END %]
 [% END %]
 [% PROCESS galleryselect.html %]
+<div id = 'crumblist'>
 <table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#EEEEEE">
 		<td valign = 'top'>&nbsp;&nbsp;[% PROCESS crumblist noHomeLink = 1%]
 		</td>
@@ -40,6 +41,10 @@
 		</td>
 	</tr>
 </table>
+</div>
+
+<!-- need about 40px of space to deal with fixed crumblist-->
+<table><tr><td height = '40'>&nbsp;</td></tr></table>
 
 [% IF level == 0 && artwork == 2 %]
 <div id = 'last_cover' style = "display: none;">

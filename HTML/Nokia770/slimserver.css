@@ -384,11 +384,23 @@ div#systemNotWorking{
 	top: 25;
 	z-index: 12;
 }
+div#galleryToggle {
+        position: fixed;
+        left: 20;
+        top: 40;
+        z-index: 12;
+}
 div#gallerySelect {
 	position: fixed;
-	left: 20;
-	top: 30;
+	right: 10;
+	top: 85;
 	z-index: 12;
+}
+div#crumblist {
+	position: fixed;
+	left: 0;
+	top: 80;
+	z-index: 11;
 }
 div#addedToPlaylist{
 	position: fixed;

@@ -1,12 +1,12 @@
-[% IF levelName == 'album' || levelName == 'age' || levelName == 'contributor' %]
+[%# IF levelName == 'album' || levelName == 'age' || levelName == 'contributor' %]
+[% IF levelName == 'album' || levelName == 'age' %]
 
 [% IF artwork < 2 %]
-<div id = 'gallerySelect'>
 [%# skip this section for now %]
-[% IF levelName == 'foobar' %]
 
 [% IF levelName == 'album' %]
 
+<div id = 'gallerySelect'>
 	[% orderByList = {
 		'album.titlesort'                                     => 'ALBUM',
 		'album.year,album.titlesort'                          => 'SORT_YEARALBUM',
@@ -26,11 +26,12 @@
 	[% END %]
 
 	</select>
+</div>
 
-[% END %]
 [% END %]
 
 	[% IF controlGraphics %]
+<div id = 'galleryToggle'>
 		[% IF artwork %]<a href="javascript:toggleGalleryView(0);"><img src="html/images/list.png" alt='[% "SWITCH_TO_LIST" | string %]' title='[% "SWITCH_TO_LIST" | string %]'></a>
 		[% ELSE %]<a href="javascript:toggleGalleryView(1);"><img src="html/images/gallery.png" alt='[% "SWITCH_TO_GALLERY" | string %]' title='[% "SWITCH_TO_GALLERY" | string %]'></a>
 		[% END %]
