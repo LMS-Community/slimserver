@@ -146,8 +146,8 @@ sub updateClockSource {
 }
 
 sub updateKnob {
-	my $client    = shift;
-	my $forceSend = shift || 0;
+	my $client  = shift;
+	my $newList = shift || 0;
 
 	my $listIndex = $client->param('listIndex');
 	my $listLen   = $client->param('listLen');
@@ -168,11 +168,12 @@ sub updateKnob {
 	my $height   = $client->param('knobHeight') || 0;
 	my $backForce = $client->param('knobBackgroundForce') || 0;
 
-	if (defined $listIndex && (($listIndex == $knobPos) || $forceSend)) {
+	if (defined $listIndex && (($listIndex != $knobPos) || $newList)) {
 
 		my $parambytes;
 
-		if (defined $listLen) {
+		if ($newList) {
+
 			$client->knobSync( (++$knobSync) & 0xFF);
 
 			$parambytes = pack "NNCcncc", $listIndex, $listLen, $knobSync, $flags, $width, $height, $backForce;

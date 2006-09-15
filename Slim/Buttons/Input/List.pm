@@ -176,6 +176,8 @@ sub changePos {
 
 	my $onChange = $client->param('onChange');
 
+	$client->updateKnob();
+
 	if (ref($onChange) eq 'CODE') {
 		my $onChangeArgs = $client->param('onChangeArgs');
 		my @args;

@@ -148,6 +148,7 @@ sub init {
 
 					browseplaylistindex($client, $newposition);
 					$client->pushUp();
+					$client->updateKnob();
 				}
 			}
 		},
@@ -176,6 +177,7 @@ sub init {
 				if ($newposition != browseplaylistindex($client)) {
 					browseplaylistindex($client,$newposition);
 					$client->pushDown();
+					$client->updateKnob();
 				}
 			}
 		},

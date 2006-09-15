@@ -323,6 +323,8 @@ sub changePos {
 	$$valueRef = $listRef->[$newposition];
 	$client->param('listIndex',$newposition);
 
+	$client->updateKnob();
+
 	my $onChange = getParam($client,'onChange');
 
 	if (ref($onChange) eq 'CODE') {
