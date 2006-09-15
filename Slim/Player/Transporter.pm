@@ -122,7 +122,6 @@ sub power {
 	my $result = $client->SUPER::power($on);
 
 	if (defined($on) && $was != $on) {
-		print " was: $was now: $on\n";
 	
 		# if we're turning off, then disable the digital input.
 		if ($on) {
