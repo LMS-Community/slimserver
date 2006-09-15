@@ -345,6 +345,12 @@ sub handleTrack {
 		$cacheEntry{'COMPOSER'} = $curTrack->{'Composer'};
 		$cacheEntry{'TRACKNUM'} = $curTrack->{'Track Number'};
 
+		# iTunes 7.x adds support for Album Artist.
+		if ($curTrack->{'Album Artist'}) {
+
+			$cacheEntry{'ALBUMARTIST'} = $curTrack->{'Album Artist'};
+		}
+
 		my $discNum   = $curTrack->{'Disc Number'};
 		my $discCount = $curTrack->{'Disc Count'};
 
