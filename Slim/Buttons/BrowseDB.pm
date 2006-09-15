@@ -810,17 +810,18 @@ sub setMode {
 
 		# Entering from trackinfo, so we need to set the selected item
 		my $selection = $selectionCriteria->{sprintf('%s.id', $levels[$level])} || -1;
-		my $j = scalar @items;
+		my $j = 0;
 
 		# search for matching selection in reverse order, so if not found we end up at item 0.
 		for my $item (@items) {
-
-			$j--;
-			last if blessed($item) && $selection == $item->id;
+			
+			if (blessed($item) && $selection == $item->id) {
+				$listIndex = $j;
+				last;
+			}
+			
+			$j++;
 		}
-		
-		# set index to matching item from this level
-		$listIndex = $j;
 
 	} else {
 
