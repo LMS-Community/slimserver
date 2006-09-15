@@ -12774,24 +12774,28 @@ WORDCLOCKOUTPUT_PASSTHROUGH
 	NL	Digitaal doorlaten
 
 SETUP_POWEROFFDAC
-	DE	DAC ausschalten
-	EN	Power Off DAC
-	NL	Uitzetten DAC
+	EN	Power Off AUDIO
 
 SETUP_POWEROFFDAC_DESC
-	DE	Wenn der Transporter ausgeschaltet wird kann der Digital/Analog Wandler (DAC) deaktiviert werden.
-	EN	When Transporter is is powered off the digital-to-analog converter can be disabled.
-	NL	Wanneer de Transporter uit staat kan de digitale naar analoge omzetter uitgezet worden.
+	EN	When Transporter is turned off the audio section can be completely powered down.  Powering down the audio section may cause an audible pop.
 
 POWEROFFDAC_ALWAYSON
-	DE	DAC immer aktiv
-	EN	DAC always on
-	NL	DAC altijd aan
+	EN	Audio always on
 
 POWEROFFDAC_WHENOFF
-	DE	DAC beim Ausschalten deaktivieren
-	EN	Power down DAC when off
-	NL	Zet DAC uit wanneer uit
+	EN	Power down audio when off
+
+SETUP_DISABLEDAC
+	EN	Turn Off Audio
+
+SETUP_DISABLEDAC_DESC
+	EN	When Squeezebox is turned off the digital-to-analog converter and digital outputs can be disabled.  Disabling the outputs may cause an audible pop or noise in some receivers.
+
+DISABLEDAC_ALWAYSON
+	EN	Outputs always on
+
+DISABLEDAC_WHENOFF
+	EN	Disable outputs when off
 
 SETUP_POLARITYINVERSION
 	DE	Polarität umkehren

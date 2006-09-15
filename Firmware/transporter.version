@@ -3,8 +3,8 @@
 # from        to
 # from1..from2 to
 
-1..15 15
+1..16 16
 
 # future versions may be downgraded to this one
-* 15
+* 16
 

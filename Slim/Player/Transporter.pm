@@ -117,15 +117,6 @@ sub updateClockSource {
 	$client->sendFrame('audc', \$data);	
 }
 
-sub updateDigitalOutputEncoding {
-}
-
-sub updateWordClockOutput {
-}
-
-sub updatePowerOffDac {
-}
-
 sub updateKnob {
 	my $client    = shift;
 	my $forceSend = shift || 0;
@@ -243,6 +234,10 @@ sub hasAesbeu() {
 
 sub hasPowerControl() {
 	return 1;
+}
+
+sub hasDisableDac() {
+	return 0;
 }
 
 sub hasPolarityInversion() {

@@ -34,6 +34,7 @@ our $defaultPrefs = {
 	'transitionType'		=> 0,
 	'transitionDuration'	=> 0,
 	'replayGainMode'		=> 0,
+	'disableDac'			=> 0,
 };
 
 # Keep track of direct stream redirects
@@ -67,6 +68,7 @@ sub reconnect {
 	$client->SUPER::reconnect(@_);
 
 	$client->getPlayerSetting('playername');
+	$client->getPlayerSetting('disableDac');
 }
 
 sub maxBass { 50 };
@@ -652,6 +654,10 @@ sub hasPreAmp {
 	return 1;
 }
 
+sub hasDisableDac() {
+	return 1;
+}
+
 sub audio_outputs_enable { 
 	my $client = shift;
 	my $enabled = shift;
@@ -676,8 +682,12 @@ our $pref_settings = {
 		firmwareid => 2,
 		pack => 'C',
 	},
-    	'powerOffDac' => {
+    	'powerOffDac' => { # (Transporter only)
 		firmwareid => 3,
+		pack => 'C',
+	},
+    	'disableDac' => { # (Squezebox2/3 only)
+		firmwareid => 4,
 		pack => 'C',
 	},
 };

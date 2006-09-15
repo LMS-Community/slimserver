@@ -857,6 +857,13 @@ sub initSetupConfig {
 						$pageref->{'Groups'}{'PowerOn'}{'PrefOrder'}[1] = undef;
 					}										
 
+					if ($client && $client->hasDisableDac()) {
+						$pageref->{'Groups'}{'PowerOn'}{'PrefOrder'}[2] = 'disableDac';
+					}
+					else {
+						$pageref->{'Groups'}{'PowerOn'}{'PrefOrder'}[2] = undef;
+					}										
+
 					if ($client && $client->hasPreAmp()) {
 						$pageref->{'Groups'}{'Digital'}{'PrefOrder'}[1] = 'preampVolumeControl';
 					} else {
@@ -960,7 +967,7 @@ sub initSetupConfig {
 		,'GroupOrder' => [undef,'PowerOn',undef,undef,undef,undef]
 		,'Groups' => {
 			'PowerOn' => {
-					'PrefOrder' => ['powerOnResume','powerOffDac']
+					'PrefOrder' => ['powerOnResume','powerOffDac','disableDac']
 				}
 			,'Format' => {
 					'PrefOrder' => ['lame','maxBitrate']
@@ -1194,20 +1201,12 @@ sub initSetupConfig {
 									'0' => 'DIGITALOUTPUTENCODING_SPDIF',
 									'1' => 'DIGITALOUTPUTENCODING_AESEBU',
 							}
-							,'onChange' => sub {
-								my $client = shift;
-								$client->updateDigitalOutputEncoding();
-							}
 			}
 			,'wordClockOutput' => {
 							'validate' => \&Slim::Utils::Validate::trueFalse
 							,'options' => {
 									'1' => 'WORDCLOCKOUTPUT_GENERATECLOCK',
 									'0' => 'WORDCLOCKOUTPUT_PASSTHROUGH',
-							}
-							,'onChange' => sub {
-								my $client = shift;
-								$client->updateWordClockOutput();
 							}
 			}
 			,'powerOffDac' => {
@@ -1216,9 +1215,12 @@ sub initSetupConfig {
 									'0' => 'POWEROFFDAC_ALWAYSON',
 									'1' => 'POWEROFFDAC_WHENOFF',
 							}
-							,'onChange' => sub {
-								my $client = shift;
-								$client->updatePowerOffDac();
+			}
+			,'disableDac' => {
+							'validate' => \&Slim::Utils::Validate::trueFalse
+							,'options' => {
+									'0' => 'DISABLEDAC_ALWAYSON',
+									'1' => 'DISABLEDAC_WHENOFF',
 							}
 			}
 			,'polarityInversion' => {
