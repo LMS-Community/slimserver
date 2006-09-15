@@ -1691,12 +1691,13 @@ sub _postCheckAttributes {
 
 	if (defined $attributes->{'COMPILATION'}) {
 
-		if ($attributes->{'COMPILATION'} =~ /^yes$/i || $attributes->{'COMPILATION'} == 1) {
+		# Use eq instead of == here, otherwise perl will warn.
+		if ($attributes->{'COMPILATION'} =~ /^yes$/i || $attributes->{'COMPILATION'} eq 1) {
 
 			$isCompilation = 1;
 			$::d_info && $_dump_postprocess_logic && msg("-- Track is a compilation\n");
 
-		} elsif ($attributes->{'COMPILATION'} =~ /^no$/i || $attributes->{'COMPILATION'} == 0) {
+		} elsif ($attributes->{'COMPILATION'} =~ /^no$/i || $attributes->{'COMPILATION'} eq 0) {
 
 			$isCompilation = 0;
 			$::d_info && $_dump_postprocess_logic && msg("-- Track is NOT a compilation\n");
@@ -1715,20 +1716,33 @@ sub _postCheckAttributes {
 	# Genre addition. If there's no genre for this track, and no 'No Genre' object, create one.
 	my $genre = $attributes->{'GENRE'};
 
-	if ($create && $isLocal && !$genre && (!defined $_unknownGenre || ref($_unknownGenre) ne 'Slim::Schema::Genre')) {
+	if ($create && $isLocal && !$genre && !blessed($_unknownGenre)) {
 
-		$_unknownGenre = $self->resultset('Genre')->update_or_create({
-			'name'       => string('NO_GENRE'),
-			'namesort'   => Slim::Utils::Text::ignoreCaseArticles(string('NO_GENRE')),
-			'namesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_GENRE')),
-		}, { 'key' => 'namesearch' });
+		my $genreName = string('NO_GENRE');
 
-		Slim::Schema::Genre->add($_unknownGenre->name, $track);
+		# Bug 3949 - Not sure how this can fail, but it can.
+		$_unknownGenre = eval {
 
-		$::d_info && $_dump_postprocess_logic && msgf("-- Created NO GENRE (id: [%d])\n", $_unknownGenre->id);
-		$::d_info && $_dump_postprocess_logic && msg("-- Track has no genre\n");
+			$self->resultset('Genre')->update_or_create({
+				'name'       => $genreName,
+				'namesort'   => Slim::Utils::Text::ignoreCaseArticles($genreName),
+				'namesearch' => Slim::Utils::Text::ignoreCaseArticles($genreName),
+			}, { 'key' => 'namesearch' });
+		};
 
-	} elsif ($create && $isLocal && !$genre) {
+		if ($@) {
+			errorMsg("Couldn't create genre: [$genreName]: [$@]\n");
+		}
+
+		if (blessed($_unknownGenre) && $_unknownGenre->can('name')) {
+
+			Slim::Schema::Genre->add($_unknownGenre->name, $track);
+
+			$::d_info && $_dump_postprocess_logic && msgf("-- Created NO GENRE (id: [%d])\n", $_unknownGenre->id);
+			$::d_info && $_dump_postprocess_logic && msg("-- Track has no genre\n");
+		}
+
+	} elsif ($create && $isLocal && !$genre && blessed($_unknownGenre)) {
 
 		Slim::Schema::Genre->add($_unknownGenre->name, $track);
 
