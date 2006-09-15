@@ -648,10 +648,10 @@ within display strings via $client->symbols('character name').</p>
 <p>For example:</p>
 
 <pre>
-Slim::Player::Graphics::setCustomChar( 'my-icon', "\x02", 'icon.1' );
+Slim::Player::Graphics::setCustomChar( 'my-icon', chr(2), 'icon.1' );
 </pre>
 
-<p>This registers the symbol name 'my-icon' for character "\x02" within the font file
+<p>This registers the symbol name 'my-icon' for character chr(2) within the font file
 'icon.1'.  This may then be included within a display using:<p>
 
 <pre>
@@ -669,7 +669,7 @@ specific font within the display hash and not register the font name
 as part of the custom character name.</p>
 
 <pre>
-Slim::Player::Graphics::setCustomChar( 'my-icon', "\x02" );
+Slim::Player::Graphics::setCustomChar( 'my-icon', chr(2) );
 
 $display = {
     'overlay' => [ $client->symbols('my-icon') ],
