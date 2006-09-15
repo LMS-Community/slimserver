@@ -98,6 +98,24 @@ sub updateDigitalInput {
 		},
 	});
 
+	my $line1;
+	my $line2;
+	
+	if ($client->linesPerScreen == 1) {
+
+		$line2 = $client->doubleString('NOW_PLAYING_FROM');
+
+	} else {
+
+		$line1 = $client->string('NOW_PLAYING_FROM');
+		$line2 = $name;
+	};
+
+	$client->showBriefly({
+		'line'    => [ $line1, $line2 ],
+		'overlay' => [ undef, $client->symbols('notesymbol') ],
+	});
+
 	if (blessed($obj)) {
 
 		$client->prefSet('digitalInput', $value);
