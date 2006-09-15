@@ -3502,7 +3502,7 @@ SETUP_MMMFILTER_DESC
 	ZH_CN	您可以利用MusicMagic设立过滤器，并且从这表中选择应用在SlimServer内MusicMagic混音的那些过滤器。
 
 SETUP_MMMMIXGENRE
-	DE	MusicMagic Mix Stil
+	DE	MusicMagic Mix Musikstil
 	EN	MusicMagic Mix Genre
 	ES	Género de mezcla de MusicMagic
 	NL	MusicMagic mix genre
