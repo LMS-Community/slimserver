@@ -42,7 +42,7 @@ function changePlayer(player_List) {
 	}
 
 	headerURL = new String(parent.header.location.href);
-	//parent.header.location=headerURL.replace(playerExp, newPlayer);
+	parent.header.location=headerURL.replace(playerExp, newPlayer);
 }
 
 // change form values to correct player
@@ -213,6 +213,8 @@ function getPlayer(Player)
 	plyr = getCookie(Player);
 
 	if (!plyr) return "";
+	
+	if (plyr.indexOf("=") == -1) plyr = "=" + plyr;
 
 	return plyr;
 }
