@@ -1,3 +1,4 @@
+[% IF NOT optionOnly %]
 [%- FILTER null %]
 [% BLOCK addBrowseLinks %]
 	[% IF links %]
@@ -101,8 +102,9 @@
 <![endif]-->
 </head>
 <body bgcolor="#FFFFFF" topmargin="0" leftmargin="0" rightmargin="0" [% bodyscript %]>
+[% END %]
 
-[% IF home %]
+[% IF home %][% IF NOT optionOnly %]
 <div id="masthead">
 	<div id="SDlogo">
 			<a href="http://www.slimdevices.com/" target="slimdevices"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices"></a>
@@ -118,7 +120,7 @@
 	</div>
 </div>
 
-<div id="menuHeader">
+<div id="menuHeader">[% END %]
 	<FORM id="browseForm" name="browser" action="javascript: return false;" target="header">
 		<SELECT NAME="browse" class="stdedit" style="width:17em;" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
 			<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
@@ -140,14 +142,14 @@
 		</SELECT>
 		<input type=hidden value="[% page %]" name="page">
 	</FORM>
-	
+	[% IF NOT optionOnly %]
 	<FORM id="HeaderSearchForm" name=searcher action="javascript: return false;" onSubmit="doSearch(query.value);">
 		[% "SEARCH" | string %]
 		<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="15">
 		<input type=hidden value="[% player %]" name="player">
 		<input type=hidden value="[% page %]" name="page">
 	</FORM>
-</div>
+</div>[% END %]
 [% ELSE %]
 [% IF newVersion %]<br>[% newVersion %]<br>[% END %]
 [% UNLESS nodiv %]<div class="list">[% END %]

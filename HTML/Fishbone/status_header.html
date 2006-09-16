@@ -69,7 +69,7 @@
 	</script>[% END %]
 </head>
 
-<body bgcolor="#FFFFFF" style="margin: 0" topmargin="0" leftmargin="0" rightmargin="0" [% IF NOT undock %]onload="refreshPlaylist('[% playerURI %]');doRefresh();"[% END %]>
+<body bgcolor="#FFFFFF" style="margin: 0" topmargin="0" leftmargin="0" rightmargin="0" [% IF NOT undock %]onload="refreshPlaylist('[% playerURI %]');doAjaxRefresh();"[% END %]>
 	<div ID="header">
 		<div id="mastHead">
 			<div id="playerlogo">

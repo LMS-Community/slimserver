@@ -36,7 +36,7 @@ function changePlayer(player_List) {
 	
 	if (parent.browser.location.href.indexOf('setup') == -1) {
 		newHref(parent.browser.document,newPlayer);
-		//newHref(parent.header.document,newPlayer);
+		newHref(parent.header.document,newPlayer);
 		newValue(parent.browser.document,newPlayer);
 	} else {
 		newpage = '';
@@ -51,7 +51,9 @@ function changePlayer(player_List) {
 	headerURL = new String(parent.header.location.href);
 	newloc = headerURL.replace(playerExp, newPlayer);
 	//alert([newloc.replace(/&page=(.*?)$/,newpage)]);
-	parent.header.location = newloc.replace(/&page=(.*?)$/,newpage);
+	if (document.all) {
+		parent.header.location = newloc.replace(/&page=(.*?)$/,newpage);
+	}
 }
 
 // change form values to correct player
@@ -156,7 +158,7 @@ function ProgressUpdate(mp) {
 	[% IF undock %]refreshElement('inc',inc);[% END %]
 
 	if (_progressAt == 1) {
-		doRefresh();
+		doAjaxRefresh();
 		inc = 0;
 		if (!mp) {
 			_progressAt = 0;
@@ -174,7 +176,7 @@ function ProgressUpdate(mp) {
 	}
 	
 	if (inc == 10) {
-		doRefresh();
+		doAjaxRefresh();
 		inc = 0;
 	}
 

@@ -5,8 +5,13 @@ var currentID = 0;
 
 [% PROCESS html/global.js %]
 
+function doAjaxRefresh() {
+	var args = 'player='+player+'&ajaxRequest=1&s='+Math.random();
+	getStatusData(args, refreshAll);
+}
+
 function processState(param) {
-	getStatusData(param + "&player="+player+"&ajaxRequest=1", refreshState);
+	getStatusData(param + "&player="+player+"&ajaxRequest=1&s="+Math.random(), refreshState);
 }
 
 function refreshState(theData) {
@@ -60,11 +65,11 @@ function refreshState(theData) {
 function processBarClick (num) {
 	var pos = parseInt((_progressEnd/20) * (num - 0.5));
 	var param = 'p0=time&p1='+pos+'&player='+player;
-	getStatusData(param + "&ajaxRequest=1", refreshInfo);
+	getStatusData(param + "&ajaxRequest=1&s="+Math.random(), refreshInfo);
 }
 
 function processVolume(param) {
-	getStatusData(param + "&player="+player+"&ajaxRequest=1", refreshVolume);
+	getStatusData(param + "&player="+player+"&ajaxRequest=1&s="+Math.random(), refreshVolume);
 }
 
 function refreshVolume(theData) {
@@ -87,7 +92,7 @@ function refreshVolume(theData) {
 }
 
 function processSleepLink(param) {
-	getStatusData(param + "&player="+player+"&ajaxRequest=1", refreshSleepTime);
+	getStatusData(param + "&player="+player+"&ajaxRequest=1&s="+Math.random(), refreshSleepTime);
 }
 
 function refreshSleepTime(theData) {
@@ -101,7 +106,7 @@ function refreshSleepTime(theData) {
 }
 
 function processPlayControls(param) {
-	getStatusData(param + "&player="+player+"&ajaxRequest=1", refreshPlayControls);
+	getStatusData(param + "&player="+player+"&ajaxRequest=1&s="+Math.random(), refreshPlayControls);
 }
 
 function refreshPlayControls(theData,force) {
@@ -164,6 +169,10 @@ function refreshPlayControls(theData,force) {
 // refresh song and artwork
 function refreshInfo(theData, force, curstyle) {
 	var parsedData = fillDataHash(theData);
+	
+	if (parsedData['player_id']) {
+		hideElements(['waiting']);
+	}
 
 	if (curstyle == null) {
 		var activestyle = getActiveStyleSheet();
@@ -301,7 +310,7 @@ function refreshInfo(theData, force, curstyle) {
 
 // reload undock window
 function refreshUndock() {
-	var args = 'player=[% playerURI %]&ajaxRequest=1';
+	var args = 'player=[% playerURI %]&ajaxRequest=1&s='+Math.random();
 	getStatusData(args, refreshAll);
 	//window.location.replace('status.html?player='+player+'&undock=1');
 }
@@ -405,17 +414,89 @@ function refreshAll(theData,force) {
 
 }
 
+var homeloc;
+var playerExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
+
 // handle the player change, force a new set of info
 function refreshNewPlayer(theData) {
 	var parsedData = fillDataHash(theData);
 	refreshAll(parsedData,1);
 	//refreshInfo(parsedData,force);
+	
+	var headerURL = new String(parent.header.location.href);
+	homeloc = headerURL.replace(playerExp, parsedData['player_id']);
+	if (!document.all) {
+		//load(newloc+"&optionOnly=1",'browseForm');
+		//parent.header.document.getElementById('browseForm').innerHTML = ' Fetching data...';
+		getOptionData("&optionOnly=1"+ '&d=' + Math.random(), optionDone);
+	}
+}
+
+function ahah(url, target) {
+	//parent.header.document.getElementById(target).innerHTML = ' Fetching data...';
+	if (window.XMLHttpRequest) {
+		req = new XMLHttpRequest();
+	} else if (window.ActiveXObject) {
+		req = new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	if (req != undefined) {
+		req.onreadystatechange = function() {ahahDone(url, target);};
+		req.open("GET", url + '&d=' + new Date().getTime(), true);
+		req.setRequestHeader( "If-Modified-Since", "Sat, 1 Jan 2000 00:00:00 GMT" );
+		req.setRequestHeader( "Referer", document.location.href );
+		req.send(null);
+	}
+}
+
+function optionDone(req) {
+	//alert(req.responseText);
+	if (req.readyState == 4) { // only if req is "loaded"
+
+		if (req.responseText) { // only if "OK"
+			parent.header.document.getElementById('browseForm').innerHTML = req.responseText;
+		} else {
+			parent.header.document.getElementById('browseForm').innerHTML = " Error:\n"+ req.status + "\n" +req.statusText;
+		}
+	}
+}
+
+function getOptionData(params, action) {
+	var requesttype = 'post';
+
+	//if (window.XMLHttpRequest) {
+		requesttype = 'get';
+	//}
+
+	var myAjax = new Ajax.Request(
+	homeloc,
+	{
+		method: requesttype,
+		postBody: params,
+		parameters: params,
+		onComplete: action,
+		requestHeaders:['Referer', document.location.href]
+	});
+}
+
+function ahahDone(url, target) {
+	if (req.readyState == 4) { // only if req is "loaded"
+		if (req.status == 200 && req.responseText) { // only if "OK"
+			parent.header.document.getElementById(target).innerHTML = req.responseText;
+		} else {
+			parent.header.document.getElementById(target).innerHTML=" AHAH Error:\n"+ req.status + "\n" +req.statusText;
+		}
+	}
+}
+
+function load(name, div) {
+	ahah(name,div);
+	return false;
 }
 
 function playlistChecker(start) {
 	var prev_url = url;
 	url = 'playlist.html';
-	var args = 'player='+player+'&ajaxRequest=1';
+	var args = 'player='+player+'&ajaxRequest=1&s='+Math.random();
 	
 	if(start != null && start != '') {
 		//alert([start != '', start == null, start]);
