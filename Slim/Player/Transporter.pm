@@ -148,12 +148,12 @@ sub updateKnob {
 	my $client  = shift;
 	my $newList = shift || 0;
 
-	my $listIndex = $client->param('listIndex');
-	my $listLen   = $client->param('listLen');
+	my $listIndex = $client->modeParam('listIndex');
+	my $listLen   = $client->modeParam('listLen');
 
 	if (!$listLen) {
 
-		my $listRef = $client->param('listRef');
+		my $listRef = $client->modeParam('listRef');
 
 		if (ref($listRef) eq 'ARRAY') {
 			$listLen = scalar(@$listRef);
@@ -162,10 +162,10 @@ sub updateKnob {
 
 	my $knobPos  = $client->knobPos || 0;
 	my $knobSync = $client->knobSync;
-	my $flags    = $client->param('knobFlags') || 0;
-	my $width    = $client->param('knobWidth') || 0;
-	my $height   = $client->param('knobHeight') || 0;
-	my $backForce = $client->param('knobBackgroundForce') || 0;
+	my $flags    = $client->modeParam('knobFlags') || 0;
+	my $width    = $client->modeParam('knobWidth') || 0;
+	my $height   = $client->modeParam('knobHeight') || 0;
+	my $backForce = $client->modeParam('knobBackgroundForce') || 0;
 
 	if (defined $listIndex && (($listIndex != $knobPos) || $newList)) {
 
@@ -198,8 +198,8 @@ sub updateKnob {
 
 sub knobListPos {
 	my $client = shift;
-	my $curPos = shift || $client->param('listIndex');
-	my $listLen = shift || $client->param('listLen') || scalar @{ $client->param('listRef') };
+	my $curPos = shift || $client->modeParam('listIndex');
+	my $listLen = shift || $client->modeParam('listLen') || scalar @{ $client->modeParam('listRef') };
 
 	my $newPos = $client->knobPos();
 

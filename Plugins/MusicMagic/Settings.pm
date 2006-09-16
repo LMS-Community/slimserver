@@ -21,7 +21,7 @@ sub init {
 	%functions = (
 		'right' => sub  {
 			my ($client,$funct,$functarg) = @_;
-			if (defined($client->param('useMode'))) {
+			if (defined($client->modeParam('useMode'))) {
 				#in a submenu of settings, which is passing back a button press
 				Slim::Buttons::Common::popMode($client);
 				Plugins::MusicMagic::Plugin::mixerFunction($client,1);
@@ -182,7 +182,7 @@ sub setPref {
 	my $client = shift;
 	my $value = shift;
 	
-	my $pref = $client->param('pref');
+	my $pref = $client->modeParam('pref');
 	
 	$client->prefSet($pref,$value);
 }
@@ -191,8 +191,8 @@ sub executeCommand {
 	my $client = shift;
 	my $value = shift;
 	
-	my $command = $client->param('command');
-	my $subcmd  = $client->param('subcommand');
+	my $command = $client->modeParam('command');
+	my $subcmd  = $client->modeParam('subcommand');
 	
 	$client->execute([$command, $subcmd, $value]);
 }
@@ -204,13 +204,13 @@ sub settingsExitHandler {
 		Slim::Buttons::Common::popModeRight($client);
 	} elsif ($exittype eq 'RIGHT') {
 		my $nextmenu = 'MMMsettings/'.$current{$client};
-		if (defined($client->param('useMode'))) {
+		if (defined($client->modeParam('useMode'))) {
 			#in a submenu of settings and exiting right.
 			Plugins::MusicMagic::Plugin::mixerFunction($client,1);
 		} elsif (exists($menuParams{$nextmenu})) {
 			my %nextParams = %{$menuParams{$nextmenu}};
 			$nextParams{'callback'} = \&settingsExitHandler;
-			$nextParams{'parentParams'} = $client->param('parentParams');
+			$nextParams{'parentParams'} = $client->modeParam('parentParams');
 			if (($nextParams{'useMode'} eq 'INPUT.List' || $nextParams{'useMode'} eq 'INPUT.Bar')  && exists($nextParams{'initialValue'})) {
 				#set up valueRef for current pref
 				my $value;
@@ -258,7 +258,7 @@ sub setMode {
 	$current{$client}       = $defaultSettingsChoices[0] unless exists($current{$client});
 	my %params              = %{$menuParams{'MMMsettings'}};
 	$params{'valueRef'}     = \$current{$client};
-	$params{'parentParams'} = $client->param('parentParams');
+	$params{'parentParams'} = $client->modeParam('parentParams');
 	
 	my @settingsChoices     = @defaultSettingsChoices;
 	

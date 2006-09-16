@@ -186,7 +186,7 @@ sub setVis {
 	my $client = shift;
 	my $value  = shift;
 
-	my $pref = $client->param('pref');
+	my $pref = $client->modeParam('pref');
 	
 	$client->prefSet($pref,$value->{'value'});
 }

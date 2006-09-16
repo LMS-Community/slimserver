@@ -414,7 +414,7 @@ sub homeExitHandler {
 		# map default selection in case no onChange was done in INPUT.List
 		if (!defined($nextmenu)) { 
 
-			$nextmenu = ${$client->param('valueRef')};
+			$nextmenu = ${$client->modeParam('valueRef')};
 			$client->curSelection($client->curDepth(),$nextmenu);
 
 		}
@@ -738,7 +738,7 @@ sub updateMenu {
 
 	$homeChoices{$client} = \@home;
 
-	$client->param('listRef', \@home);
+	$client->modeParam('listRef', \@home);
 }
  
 =head1 SEE ALSO

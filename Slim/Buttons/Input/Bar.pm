@@ -68,7 +68,7 @@ Slim::Buttons::Common::addMode('INPUT.Bar', getFunctions(), \&setMode);
 sub init {
 	my $client = shift;
 
-	if (!defined($client->param('parentMode'))) {
+	if (!defined($client->modeParam('parentMode'))) {
 
 		my $i = -2;
 
@@ -76,7 +76,7 @@ sub init {
 			$i--;
 		}
 
-		$client->param('parentMode', $client->modeStack->[$i]);
+		$client->modeParam('parentMode', $client->modeStack->[$i]);
 	}
 
 	my %initValues = (
@@ -103,16 +103,16 @@ sub init {
 	# Set our defaults for this mode.
 	for my $name (keys %initValues) {
 
-		if (!defined $client->param($name)) {
+		if (!defined $client->modeParam($name)) {
 
-			$client->param($name, $initValues{$name});
+			$client->modeParam($name, $initValues{$name});
 		}
 	}
 	
-	my $min  = $client->param('min');
-	my $mid  = $client->param('mid');
-	my $max  = $client->param('max');
-	my $step = $client->param('increment');
+	my $min  = $client->modeParam('min');
+	my $mid  = $client->modeParam('mid');
+	my $max  = $client->modeParam('max');
+	my $step = $client->modeParam('increment');
 
 	my $listRef = [];
 	my $j = 0;
@@ -122,10 +122,10 @@ sub init {
 		$listRef->[$j++] = $i;
 	}
 
-	$client->param('listRef', $listRef);
+	$client->modeParam('listRef', $listRef);
 
-	my $listIndex = $client->param('listIndex');
-	my $valueRef  = $client->param('valueRef');
+	my $listIndex = $client->modeParam('listIndex');
+	my $valueRef  = $client->modeParam('valueRef');
 
 	if (!defined($listIndex)) {
 
@@ -143,14 +143,14 @@ sub init {
 	if (!defined($valueRef)) {
 
 		$$valueRef = $listRef->[$listIndex];
-		$client->param('valueRef', $valueRef);
+		$client->modeParam('valueRef', $valueRef);
 
 	} elsif (!ref($valueRef)) {
 
 		my $value = $valueRef;
 		$valueRef = \$value;
 
-		$client->param('valueRef', $valueRef);
+		$client->modeParam('valueRef', $valueRef);
 	}
 
 	if ($$valueRef != $listRef->[$listIndex]) {
@@ -169,17 +169,17 @@ sub init {
 		}
 	}
 
-	$client->param('listIndex', $listIndex);
+	$client->modeParam('listIndex', $listIndex);
 
-	my $headerValue = lc($client->param('headerValue') || '');
+	my $headerValue = lc($client->modeParam('headerValue') || '');
 
 	if ($headerValue eq 'scaled') {
 
-		$client->param('headerValue',\&scaledValue);
+		$client->modeParam('headerValue',\&scaledValue);
 
 	} elsif ($headerValue eq 'unscaled') {
 
-		$client->param('headerValue',\&unscaledValue);
+		$client->modeParam('headerValue',\&unscaledValue);
 	}
 
 	# change character at cursorPos (both up and down)
@@ -201,13 +201,13 @@ sub init {
 			my ($client, $funct, $functarg) = @_;
 			
 			my $knobPos   = $client->knobPos();
-			my $listIndex = $client->param('listIndex');
+			my $listIndex = $client->modeParam('listIndex');
 			
 			$::d_ui && msg("got a knob event for the bar: knobpos: $knobPos listindex: $listIndex\n");
 
 			changePos($client, $knobPos - $listIndex, $funct);
 
-			$::d_ui && msgf("new listindex: %d\n", $client->param('listIndex'));
+			$::d_ui && msgf("new listindex: %d\n", $client->modeParam('listIndex'));
 		},
 
 		# call callback procedure
@@ -224,7 +224,7 @@ sub init {
 		'passback' => sub {
 			my ($client, $funct, $functarg) = @_;
 
-			my $parentMode = $client->param('parentMode');
+			my $parentMode = $client->modeParam('parentMode');
 
 			if (defined $parentMode) {
 				Slim::Hardware::IR::executeButton($client, $client->lastirbutton, $client->lastirtime, $parentMode);
@@ -239,16 +239,16 @@ sub scaledValue {
 	my $client = shift;
 	my $value  = shift;
 
-	if ($client->param('midIsZero')) {
-		$value -= $client->param('mid');
+	if ($client->modeParam('midIsZero')) {
+		$value -= $client->modeParam('mid');
 	}
 
-	my $increment = $client->param('increment');
+	my $increment = $client->modeParam('increment');
 
 	$value /= $increment if $increment;
 	$value = int($value + 0.5);
 
-	my $unit = $client->param('headerValueUnit');
+	my $unit = $client->modeParam('headerValueUnit');
 
 	if (!defined $unit) {
 		$unit = '';
@@ -261,13 +261,13 @@ sub unscaledValue {
 	my $client = shift;
 	my $value  = shift;
 
-	if ($client->param('midIsZero')) {
-		$value -= $client->param('mid');
+	if ($client->modeParam('midIsZero')) {
+		$value -= $client->modeParam('mid');
 	}
 
 	$value = int($value + 0.5);
 
-	my $unit = $client->param('headerValueUnit');
+	my $unit = $client->modeParam('headerValueUnit');
 
 	if (!defined $unit) {
 		$unit = '';
@@ -279,8 +279,8 @@ sub unscaledValue {
 sub changePos {
 	my ($client, $dir, $funct) = @_;
 
-	my $listRef   = $client->param('listRef');
-	my $listIndex = $client->param('listIndex');
+	my $listRef   = $client->modeParam('listRef');
+	my $listIndex = $client->modeParam('listIndex');
 
 	if (($listIndex == 0 && $dir < 0) || ($listIndex == (scalar(@$listRef) - 1) && $dir > 0)) {
 
@@ -290,9 +290,9 @@ sub changePos {
 	
 	my $accel = 8; # Hz/sec
 	my $rate  = 50; # Hz
-	my $mid   = $client->param('mid')||0;
-	my $min   = $client->param('min')||0;
-	my $max   = $client->param('max')||100;
+	my $mid   = $client->modeParam('mid')||0;
+	my $min   = $client->modeParam('min')||0;
+	my $max   = $client->modeParam('max')||100;
 
 	my $midpoint = ($mid-$min)/($max-$min)*(scalar(@$listRef) - 1);
 
@@ -326,16 +326,16 @@ sub changePos {
 	$newposition = scalar(@$listRef) -1 if $newposition > scalar(@$listRef) -1;
 	$newposition = 0 if $newposition < 0;
 
-	my $valueRef = $client->param('valueRef');
+	my $valueRef = $client->modeParam('valueRef');
 	$$valueRef   = $listRef->[$newposition];
 
-	$client->param('listIndex', int($newposition));
+	$client->modeParam('listIndex', int($newposition));
 
-	my $onChange = $client->param('onChange');
+	my $onChange = $client->modeParam('onChange');
 
 	if (ref($onChange) eq 'CODE') {
 
-		my $onChangeArgs = $client->param('onChangeArgs');
+		my $onChangeArgs = $client->modeParam('onChangeArgs');
 		my @args = ();
 
 		push @args, $client if $onChangeArgs =~ /c/i;
@@ -362,13 +362,13 @@ sub lines {
 
 	my ($line1, $line2);
 
-	my $valueRef = $client->param('valueRef');
+	my $valueRef = $client->modeParam('valueRef');
 
 	if (defined $value) {
 		$valueRef = \$value;
 	}
 
-	my $listIndex = $client->param('listIndex');
+	my $listIndex = $client->modeParam('listIndex');
 
 	if (defined $header) {
 
@@ -378,29 +378,29 @@ sub lines {
 
 		$line1 = Slim::Buttons::Input::List::getExtVal($client, $$valueRef, $listIndex, 'header');
 
-		if ($client->param('stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
+		if ($client->modeParam('stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
 
 			$line1 = $client->string($line1);
 		}
 
-		if (ref $client->param('headerValue') eq "CODE") {
+		if (ref $client->modeParam('headerValue') eq "CODE") {
 
 			$line1 .= Slim::Buttons::Input::List::getExtVal($client, $$valueRef, $listIndex, 'headerValue');
 		}
 	}
 	
-	$min = $client->param('min') || 0 unless defined $min;
-	$mid = $client->param('mid') || 0 unless defined $mid;
-	$max = $client->param('max') || 100 unless defined $max;
+	$min = $client->modeParam('min') || 0 unless defined $min;
+	$mid = $client->modeParam('mid') || 0 unless defined $mid;
+	$max = $client->modeParam('max') || 100 unless defined $max;
 
 	my $val = $max == $min ? 0 : int(($$valueRef - $min)*100/($max-$min));
-	my $fullstep = 1 unless $client->param('smoothing');
+	my $fullstep = 1 unless $client->modeParam('smoothing');
 
 	$line2 = $client->sliderBar($client->displayWidth(), $val,$max == $min ? 0 :($mid-$min)/($max-$min)*100,$fullstep);
 
 	if ($client->linesPerScreen() == 1) {
 
-		if ($client->param('barOnDouble')) {
+		if ($client->modeParam('barOnDouble')) {
 
 			$line1 = $line2;
 			$line2 = '';
@@ -441,13 +441,13 @@ sub setMode {
 		}
 	#}
 
-	$client->lines( $client->param('lines') || \&lines );
+	$client->lines( $client->modeParam('lines') || \&lines );
 }
 
 sub exitInput {
 	my ($client, $exitType) = @_;
 
-	my $callbackFunct = $client->param('callback');
+	my $callbackFunct = $client->modeParam('callback');
 
 	if (!defined($callbackFunct) || !(ref($callbackFunct) eq 'CODE')) {
 

@@ -107,7 +107,7 @@ sub init {
 					browseplaylistindex($client,$newindex);
 				}
 
-				$client->param('showingnowplaying', 0);
+				$client->modeParam('showingnowplaying', 0);
 
 				$::d_ui && msgf("funct: [$funct] old: $oldindex new: $newindex is after setting: [%s]\n", browseplaylistindex($client));
 
@@ -139,7 +139,7 @@ sub init {
 
 			} else {
 
-				$client->param('showingnowplaying',0);
+				$client->modeParam('showingnowplaying',0);
 				$inc = ($inc =~ /\D/) ? -1 : -$inc;
 
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $songcount, browseplaylistindex($client));
@@ -166,7 +166,7 @@ sub init {
 
 			} else {
 
-				$client->param('showingnowplaying',0);
+				$client->modeParam('showingnowplaying',0);
 
 				if ($inc =~ /\D/) {
 					$inc = 1;
@@ -230,7 +230,7 @@ sub init {
 			$newposition = Slim::Buttons::Common::numberScroll($client, $digit, Slim::Player::Playlist::shuffleList($client), 0);
 
 			# reset showingnowplaying status, since this command overrides the automatic states
-			$client->param('showingnowplaying',0);
+			$client->modeParam('showingnowplaying',0);
 
 			# set browse location to the new index, proportional based on the number pressed
 			browseplaylistindex($client,$newposition);
@@ -326,8 +326,8 @@ sub setMode {
 	browseplaylistindex($client);
 
 	# update client every second in this mode
-	$client->param('modeUpdateInterval', 1); # seconds
-	$client->param('screen2', 'playlist');   # this mode can use screen2
+	$client->modeParam('modeUpdateInterval', 1); # seconds
+	$client->modeParam('screen2', 'playlist');   # this mode can use screen2
 }
 
 
@@ -438,9 +438,9 @@ sub showingNowPlaying {
 		)
 	);
 
-	my $wasshowing = $client->param('showingnowplaying');
+	my $wasshowing = $client->modeParam('showingnowplaying');
 
-	return $client->param('showingnowplaying',$nowshowing || $wasshowing);
+	return $client->modeParam('showingnowplaying',$nowshowing || $wasshowing);
 }
 
 
@@ -455,10 +455,9 @@ The optional argument, $playlistindex sets the zero-based position for browsing 
 
 sub browseplaylistindex {
 	my $client = shift;
-	my $playlistindex = shift;
 
-	if ( $::d_playlist && defined($playlistindex) ) {
-		msg("new playlistindex: $playlistindex\n");
+	if ( $::d_playlist && @_ && defined($_[0])) {
+		msg("new playlistindex: $_[0]\n");
 	}
 	
 	# update list length for the knob.  ### HACK ATTACK ###
@@ -466,11 +465,16 @@ sub browseplaylistindex {
 	# - use length of 1 for both 1 item lists and empty playlists
 	if (Slim::Buttons::Common::mode($client) eq 'playlist') {
 
-		$client->param('listLen', Slim::Player::Playlist::count($client) || 1);
+		$client->modeParam('listLen', Slim::Player::Playlist::count($client) || 1);
+	} elsif ($::d_client) {
+		
+		errorMsg("Call to Slim::Buttons::Playlist::browseplaylistindex when not in playlist mode\n");
+		bt();
 	}
-	
+
+	unshift @_, 'listIndex';
 	# get (and optionally set) the browseplaylistindex parameter that's kept in param stack
-	return $client->param('listIndex', $playlistindex);
+	return $client->modeParam(@_);
 }
 
 =head2 knobPlaylistCallback( $request )

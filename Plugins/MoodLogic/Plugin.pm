@@ -274,7 +274,7 @@ sub mixerFunction {
 	my $client = shift;
 	
 	# look for parentParams (needed when multiple mixers have been used)
-	my $paramref = defined $client->param('parentParams') ? $client->param('parentParams') : $client->modeParameterStack(-1);
+	my $paramref = defined $client->modeParam('parentParams') ? $client->modeParam('parentParams') : $client->modeParameterStack(-1);
 	my $listIndex = $paramref->{'listIndex'};
 
 	my $items = $paramref->{'listRef'};
@@ -567,7 +567,7 @@ sub instant_mix {
 	if (defined $items && ref $items eq "ARRAY" && defined $client) {
 		# We'll be using this to play the entire mix using 
 		# playlist (add|play|load|insert)tracks listref=moodlogic_mix
-		$client->param('moodlogic_mix',$items);
+		$client->modeParam('moodlogic_mix',$items);
 	} else {
 		$items = [];
 	}

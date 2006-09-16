@@ -35,20 +35,20 @@ sub setMode {
 	my $client = shift;
 	my $method = shift;
 
-	my $device = $client->param('device');
+	my $device = $client->modeParam('device');
 	if ( $method eq 'pop' || !defined $device ) {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
 
-	my $id = $client->param('containerId') || 0;
+	my $id = $client->modeParam('containerId') || 0;
 	
 	my $browse = 'BrowseDirectChildren';
-	if ( $client->param('metadata') ) {
+	if ( $client->modeParam('metadata') ) {
 		$browse = 'BrowseMetadata';
 	}
 	
-	my $title = $client->param('title');
+	my $title = $client->modeParam('title');
 	HTML::Entities::decode($title);
 	
 	# give user feedback while loading

@@ -732,11 +732,11 @@ our %functions = (
 
 		if (defined $buttonarg && $buttonarg eq "add") {
 
-			my $list = $client->param('listRef');
+			my $list = $client->modeParam('listRef');
 
 			if ($list) {
 			
-				my $obj = $list->[$client->param('listIndex')];
+				my $obj = $list->[$client->modeParam('listIndex')];
 				
 				if (blessed($obj) && $obj->can('url')) {
 
@@ -807,7 +807,7 @@ our %functions = (
 
 		return if (!$client->hasVolumeControl());
 		
-		if ($client->param('parentMode') && $client->param('parentMode') eq 'volume') {
+		if ($client->modeParam('parentMode') && $client->modeParam('parentMode') eq 'volume') {
 			popModeRight($client);
 		} else {
 			pushModeLeft($client, 'volume');
@@ -1545,7 +1545,7 @@ sub checkBoxOverlay {
 
 sub param {
 	my $client = shift;
-	return $client->param(@_);
+	return $client->modeParam(@_);
 }
 
 sub paramOrPref {
@@ -1612,7 +1612,7 @@ sub pushMode {
 	}
 
 	if ($client->display->hasScreen2) {
-		my $screen2 = $client->param('screen2');
+		my $screen2 = $client->modeParam('screen2');
 
 		if ($client->display->showExtendedText() && !$screen2) {
 			$screen2 = 'periodic';
@@ -1732,9 +1732,9 @@ sub pushModeLeft {
 		
 		pushMode($client, $setmode, $paramHashRef);
 
-		if (!$client->param('handledTransition')) {
+		if (!$client->modeParam('handledTransition')) {
 			$display->pushLeft($oldlines, $display->curLines());
-			$client->param('handledTransition',0);
+			$client->modeParam('handledTransition',0);
 		}
 
 	} else {
@@ -1743,9 +1743,9 @@ sub pushModeLeft {
 
 		pushMode($client, $setmode, $paramHashRef);
 
-		if (!$client->param('handledTransition')) {
+		if (!$client->modeParam('handledTransition')) {
 			$client->pushLeft($oldlines, pushpopScreen2($client, $oldscreen2));
-			$client->param('handledTransition',0);
+			$client->modeParam('handledTransition',0);
 		}
 	}
 }
@@ -1845,7 +1845,7 @@ sub startPeriodicUpdates {
 	# unset any previous timers
 	Slim::Utils::Timers::killTimers($client, \&_periodicUpdate);
 
-	my $interval  = $client->param('modeUpdateInterval');
+	my $interval  = $client->modeParam('modeUpdateInterval');
 	my $interval2 = undef;
 
 	if ($client->modeParam('screen2active') && $client->modeParam('screen2active') eq 'periodic') {
@@ -1876,7 +1876,7 @@ sub syncPeriodicUpdates {
 sub _periodicUpdate {
 	my $client = shift;
 
-	my $update  = $client->param('modeUpdateInterval');
+	my $update  = $client->modeParam('modeUpdateInterval');
 	my $update2 = undef;
 
 	if ($client->modeParam('screen2active') && $client->modeParam('screen2active') eq 'periodic') {

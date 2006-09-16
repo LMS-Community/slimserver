@@ -104,7 +104,7 @@ sub block {
 
 	$client->blocklines( { 'static' => $static, 'parts' => $parts, 'ticks' => 0 } );
 
-	my $screen2mode = $client->param('screen2');
+	my $screen2mode = $client->modeParam('screen2');
 
 	Slim::Buttons::Common::pushMode($client, 'block');
 

@@ -106,11 +106,11 @@ sub init {
 			my $button = shift;
 			my $addorinsert = shift || 0;
 
-			my $items       = $client->param('listRef');
-			my $listIndex   = $client->param('listIndex');
+			my $items       = $client->modeParam('listRef');
+			my $listIndex   = $client->modeParam('listIndex');
 			my $currentItem = $items->[$listIndex] || return;
 
-			if ($client->param('header') eq 'CREATE_MIX') {
+			if ($client->modeParam('header') eq 'CREATE_MIX') {
 
 				# Bug 3459: short circuit for mixers
 				mixerExitHandler($client, 'RIGHT');
@@ -157,11 +157,11 @@ sub init {
 				'overlay' => [ undef, $client->symbols('notesymbol') ],
 			});
 
-			my $hierarchy    = $client->param('hierarchy');
-			my $level        = $client->param('level');
-			my $descend      = $client->param('descend');
-			my $findCriteria = $client->param('findCriteria');
-			my $search       = $client->param('search');
+			my $hierarchy    = $client->modeParam('hierarchy');
+			my $level        = $client->modeParam('level');
+			my $descend      = $client->modeParam('descend');
+			my $findCriteria = $client->modeParam('findCriteria');
+			my $search       = $client->modeParam('search');
 
 			my @levels       = split(',', $hierarchy);
 			my $all          = !blessed($currentItem);
@@ -246,8 +246,8 @@ sub init {
 		'create_mix' => sub  {
 			my $client = shift;
 
-			my $items       = $client->param('listRef');
-			my $listIndex   = $client->param('listIndex');
+			my $items       = $client->modeParam('listRef');
+			my $listIndex   = $client->modeParam('listIndex');
 			my $currentItem = $items->[$listIndex] || return;
 
 			my $Imports = Slim::Music::Import->importers;
@@ -346,7 +346,7 @@ sub browsedbExitCallback {
 	$exittype = uc($exittype);
 
 	# Set the last selection position within the list
-	my $listIndex = $client->param('listIndex');
+	my $listIndex = $client->modeParam('listIndex');
 
 	# Left means pop out of this mode
 	if ($exittype eq 'LEFT') {
@@ -356,10 +356,10 @@ sub browsedbExitCallback {
 	# Right means select the current item
 	} elsif ($exittype eq 'RIGHT') {
 
-		my $items       = $client->param('listRef');
-		my $hierarchy   = $client->param('hierarchy');
-		my $level       = $client->param('level');
-		my $descend     = $client->param('descend');
+		my $items       = $client->modeParam('listRef');
+		my $hierarchy   = $client->modeParam('hierarchy');
+		my $level       = $client->modeParam('level');
+		my $descend     = $client->modeParam('descend');
 
 		my $currentItem = $items->[$listIndex];
 		my @levels      = split(',', $hierarchy);
@@ -390,8 +390,8 @@ sub browsedbExitCallback {
 
 		} elsif ($currentItem eq 'FAVORITE') {
 
-			my $num   = $client->param('favorite');
-			my $track = Slim::Schema->find('Track', $client->param('findCriteria')->{'playlist'});
+			my $num   = $client->modeParam('favorite');
+			my $track = Slim::Schema->find('Track', $client->modeParam('findCriteria')->{'playlist'});
 
 			if (!blessed($track) || !$track->can('title')) {
 
@@ -408,7 +408,7 @@ sub browsedbExitCallback {
 
 				$client->showBriefly($client->string('FAVORITES_ADDING'), $track->title);
 
-				$client->param('favorite', $num);
+				$client->modeParam('favorite', $num);
 
 			} else {
 
@@ -416,14 +416,14 @@ sub browsedbExitCallback {
 
 				$client->showBriefly($client->string('FAVORITES_DELETING'), $track->title);
 
-				$client->param('favorite', -1);
+				$client->modeParam('favorite', -1);
 			}
 
 		} elsif ($descend || $all) {
 
 			# If we're dealing with a container or an ALL list
-			my $findCriteria      = Storable::dclone($client->param('findCriteria'));
-			my $selectionCriteria = $client->param('selectionCriteria');
+			my $findCriteria      = Storable::dclone($client->modeParam('findCriteria'));
+			my $selectionCriteria = $client->modeParam('selectionCriteria');
 			my $field             = $levels[$level];
 
 			# Include the current item in the find criteria for the next level down.
@@ -449,7 +449,7 @@ sub browsedbExitCallback {
 			# Only include the search terms (i.e. those associated with
 			# an actual text search) if we're dealing with the ALL case.
 			if ($all) {
-				$params{'search'} = $client->param('search');
+				$params{'search'} = $client->modeParam('search');
 			}
 
 			# Push recursively in to the same mode for the next level down.
@@ -474,8 +474,8 @@ sub browsedbItemName {
 	my $item   = shift;
 	my $index  = shift;
 
-	my $hierarchy = $client->param('hierarchy');
-	my $level     = $client->param('level');
+	my $hierarchy = $client->modeParam('hierarchy');
+	my $level     = $client->modeParam('level');
 
 	my @levels    = split(',', $hierarchy);
 	
@@ -502,7 +502,7 @@ sub browsedbItemName {
 	# special case favorites line, which must be determined dynamically
 	if (!$blessed && $item eq 'FAVORITE') {
 
-		if ((my $num = $client->param('favorite')) < 0) {
+		if ((my $num = $client->modeParam('favorite')) < 0) {
 			$item = $client->string('FAVORITES_RIGHT_TO_ADD');
 		} else {
 			$item = $client->string('FAVORITES_FAVORITE_NUM') . "$num " . $client->string('FAVORITES_RIGHT_TO_DELETE');
@@ -521,7 +521,7 @@ sub browsedbItemName {
 			return $item->name;
 		}
 
-		my $items  = $client->param('listRef');
+		my $items  = $client->modeParam('listRef');
 		my $field  = $levels[$level];
 		my $newObj = Slim::Schema->find($field, $item);
 
@@ -531,7 +531,7 @@ sub browsedbItemName {
 
 		} elsif (blessed($newObj) && $newObj->can('id')) {
 
-			${$client->param('valueRef')} = $items->[$index] = $item = $newObj;
+			${$client->modeParam('valueRef')} = $items->[$index] = $item = $newObj;
 
 		} else {
 
@@ -546,7 +546,7 @@ sub browsedbItemName {
 	} elsif ($levels[$level] eq 'album' || $levels[$level] eq 'age') {
 
 		my @name         = $item->name;
-		my $findCriteria = $client->param('findCriteria') || {};
+		my $findCriteria = $client->modeParam('findCriteria') || {};
 
 		if (Slim::Utils::Prefs::get('showYear') && !$findCriteria->{'year.id'}) {
 
@@ -593,8 +593,8 @@ sub browsedbOverlay {
 
 	my ($overlay1, $overlay2);
 
-	my $hierarchy = $client->param('hierarchy');
-	my $level     = $client->param('level') || 0;
+	my $hierarchy = $client->modeParam('hierarchy');
+	my $level     = $client->modeParam('level') || 0;
 	my @levels    = split(',', $hierarchy);
 
 	# No overlay if the list is empty
@@ -629,7 +629,7 @@ sub browsedbOverlay {
 		}
 	}
 
-	if ($client->param('descend')) {
+	if ($client->modeParam('descend')) {
 		$overlay2 = Slim::Display::Display::symbol('rightarrow');
 	} else {
 		$overlay2 = Slim::Display::Display::symbol('notesymbol');
@@ -647,9 +647,9 @@ sub setMode {
 		return;
 	}
 
-	my $hierarchy = $client->param('hierarchy');
-	my $level     = $client->param('level') || 0;
-	my $search    = $client->param('search');
+	my $hierarchy = $client->modeParam('hierarchy');
+	my $level     = $client->modeParam('level') || 0;
+	my $search    = $client->modeParam('search');
 
 	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
 
@@ -676,7 +676,7 @@ sub setMode {
 		'rs'      => $rs,
 		'level'   => $level,
 		'levels'  => \@levels,
-		'params'  => ($client->param('findCriteria') || {}),
+		'params'  => ($client->modeParam('findCriteria') || {}),
 	});
 
 	# Build up the names for the top line
@@ -788,9 +788,9 @@ sub setMode {
 			my $fav = Slim::Utils::Favorites->findByClientAndURL($client, $track);
 
 			if ($fav) {
-				$client->param('favorite', $fav->{'num'});
+				$client->modeParam('favorite', $fav->{'num'});
 			} else {
-				$client->param('favorite', -1);
+				$client->modeParam('favorite', -1);
 			}
 
 			push @items, 'FAVORITE';
@@ -806,7 +806,7 @@ sub setMode {
 
 		$listIndex = 0;
 
-	} elsif ($selectionCriteria = $client->param('selectionCriteria')) {
+	} elsif ($selectionCriteria = $client->modeParam('selectionCriteria')) {
 
 		# Entering from trackinfo, so we need to set the selected item
 		my $selection = $selectionCriteria->{sprintf('%s.id', $levels[$level])} || -1;
@@ -854,7 +854,7 @@ sub setMode {
 		selectionKey      => $selectionKey,
 		findCriteria      => $filters,
 		selectionCriteria => $selectionCriteria,
-		favorite          => $client->param('favorite'),
+		favorite          => $client->modeParam('favorite'),
 	);
 
 	# If this is a list of containers (e.g. albums, artists, genres)

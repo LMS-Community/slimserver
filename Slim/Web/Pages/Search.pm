@@ -259,7 +259,7 @@ sub advancedSearch {
 		# stash parameters used to generate this query, so if the user
 		# wants to play All Songs, we can run it again, but without
 		# keeping all the tracks in memory twice.
-		$client->param('searchTrackResults', { 'cond' => \%query, 'attr' => \%attrs });
+		$client->modeParam('searchTrackResults', { 'cond' => \%query, 'attr' => \%attrs });
 	}
 
 	fillInSearchResults($params, $rs, \@qstring, 1);

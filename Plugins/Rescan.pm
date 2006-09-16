@@ -114,7 +114,7 @@ sub rescanExitHandler {
 		Slim::Buttons::Common::popModeRight($client);
 
 	} elsif ($exittype eq 'RIGHT') {
-		my $valueref = $client->param('valueRef');
+		my $valueref = $client->modeParam('valueRef');
 	
 		if ($$valueref eq 'PLUGIN_RESCAN_TIMER_SET') {
 			my $value = Slim::Utils::Prefs::get("rescan-time");
@@ -175,7 +175,7 @@ sub settingsExitHandler {
 
 	if ($exittype eq 'LEFT') {
 
-		Slim::Utils::Prefs::set($client->param('pref'),${$client->param('valueRef')});
+		Slim::Utils::Prefs::set($client->modeParam('pref'),${$client->modeParam('valueRef')});
 
 		Slim::Buttons::Common::popModeRight($client);
 

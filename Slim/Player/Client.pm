@@ -783,10 +783,16 @@ sub reportsTrackStart {
 	return 0;
 }
 
+# deprecated in favor of modeParam
 sub param {
 	my $client = shift;
 	my $name   = shift;
 	my $value  = shift;
+
+	if ($::d_client) {
+		errorMsg("Use of \$client->param is deprecated, use \$client->modeParam instead\n");
+		bt();
+	}
 
 	my $mode   = $client->modeParameterStack(-1) || return undef;
 

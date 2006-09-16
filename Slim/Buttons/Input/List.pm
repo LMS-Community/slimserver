@@ -79,16 +79,16 @@ our %functions = (
 	'numberScroll' => sub {
 		my ($client, $funct, $functarg) = @_;
 
-		my $isSorted  = $client->param('isSorted');
-		my $lookupRef = $client->param('lookupRef');
-		my $listRef   = $client->param('listRef');
+		my $isSorted  = $client->modeParam('isSorted');
+		my $lookupRef = $client->modeParam('lookupRef');
+		my $listRef   = $client->modeParam('listRef');
 
 		my $numScrollRef;
 
 		if ($isSorted && uc($isSorted) eq 'E') {
 
 			# sorted by the external value
-			$numScrollRef = $client->param('externRef');
+			$numScrollRef = $client->modeParam('externRef');
 
 		} else {
 
@@ -100,16 +100,16 @@ our %functions = (
 
 		if (defined $newIndex) {
 
-			$client->param('listIndex',$newIndex);
+			$client->modeParam('listIndex',$newIndex);
 
-			my $valueRef = $client->param('valueRef');
+			my $valueRef = $client->modeParam('valueRef');
 
 			$$valueRef = $listRef->[$newIndex];
 
-			my $onChange = $client->param('onChange');
+			my $onChange = $client->modeParam('onChange');
 
 			if (ref($onChange) eq 'CODE') {
-				my $onChangeArgs = $client->param('onChangeArgs');
+				my $onChangeArgs = $client->modeParam('onChangeArgs');
 				my @args;
 
 				push @args, $client if $onChangeArgs =~ /c/i;
@@ -136,7 +136,7 @@ our %functions = (
 	'passback' => sub {
 		my ($client, $funct, $functarg) = @_;
 
-		my $parentMode = $client->param('parentMode');
+		my $parentMode = $client->modeParam('parentMode');
 
 		if (defined($parentMode)) {
 			Slim::Hardware::IR::executeButton($client,$client->lastirbutton,$client->lastirtime,$parentMode);
@@ -147,10 +147,10 @@ our %functions = (
 sub changePos {
 	my ($client, $dir, $funct, $pushDir) = @_;
 
-	my $listRef   = $client->param('listRef');
-	my $listIndex = $client->param('listIndex');
+	my $listRef   = $client->modeParam('listRef');
+	my $listIndex = $client->modeParam('listIndex');
 
-	if ($client->param('noWrap')) {
+	if ($client->modeParam('noWrap')) {
 
 		# not wrapping and at end of list
 		if ($listIndex == 0 && $dir < 0) {
@@ -168,23 +168,23 @@ sub changePos {
 
 	$::d_ui && msgf("changepos: newpos: $newposition = scroll dir:$dir listIndex: $listIndex listLen: %d\n", scalar(@$listRef));
 
-	my $valueRef = $client->param('valueRef');
+	my $valueRef = $client->modeParam('valueRef');
 
 	$$valueRef = $listRef->[$newposition];
 
-	$client->param('listIndex', $newposition);
+	$client->modeParam('listIndex', $newposition);
 
-	my $onChange = $client->param('onChange');
+	my $onChange = $client->modeParam('onChange');
 
 	$client->updateKnob();
 
 	if (ref($onChange) eq 'CODE') {
-		my $onChangeArgs = $client->param('onChangeArgs');
+		my $onChangeArgs = $client->modeParam('onChangeArgs');
 		my @args;
 
 		push @args, $client if $onChangeArgs =~ /c/i;
 		push @args, $$valueRef if $onChangeArgs =~ /v/i;
-		push @args, $client->param('listIndex') if $onChangeArgs =~ /i/i;
+		push @args, $client->modeParam('listIndex') if $onChangeArgs =~ /i/i;
 
 		$onChange->(@args);
 	}
@@ -222,19 +222,19 @@ sub lines {
 	my $client = shift;
 
 	my ($line1, $line2);
-	my $listIndex = $client->param('listIndex');
-	my $listRef = $client->param('listRef');
+	my $listIndex = $client->modeParam('listIndex');
+	my $listRef = $client->modeParam('listRef');
 
 	if (!defined($listRef)) { return ('','');}
 
 	if ($listIndex && ($listIndex == scalar(@$listRef))) {
-		$client->param('listIndex',$listIndex-1);
+		$client->modeParam('listIndex',$listIndex-1);
 		$listIndex--;
 	}
 	
 	$line1 = getExtVal($client,$listRef->[$listIndex],$listIndex,'header');
 
-	if ($client->param('stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
+	if ($client->modeParam('stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
 		$line1 = $client->string($line1);
 	}
 
@@ -243,14 +243,14 @@ sub lines {
 
 	} else {
 
-		if ($client->param('headerAddCount')) {
+		if ($client->modeParam('headerAddCount')) {
 			$line1 .= ' (' . ($listIndex + 1)
 				. ' ' . $client->string('OF') .' ' . scalar(@$listRef) . ')';
 		}
 
 		$line2 = getExtVal($client,$listRef->[$listIndex],$listIndex,'externRef');
 
-		if ($client->param('stringExternRef') && Slim::Utils::Strings::stringExists($line2)) {
+		if ($client->modeParam('stringExternRef') && Slim::Utils::Strings::stringExists($line2)) {
 			$line2 = $client->linesPerScreen() == 1 ? $client->doubleString($line2) : $client->string($line2);
 		}
 	}
@@ -270,7 +270,7 @@ sub lines {
 sub getExtVal {
 	my ($client, $value, $listIndex, $source) = @_;
 
-	my $extref = $client->param($source);
+	my $extref = $client->modeParam($source);
 	my $extval;
 
 	if (ref($extref) eq 'ARRAY') {
@@ -285,7 +285,7 @@ sub getExtVal {
 
 		my @args = ();
 
-		my $argtype = $client->param($source . 'Args');
+		my $argtype = $client->modeParam($source . 'Args');
 	
 		push @args, $client    if $argtype =~ /c/i;
 		push @args, $value     if $argtype =~ /v/i;
@@ -358,48 +358,48 @@ sub setMode {
 sub init {
 	my $client = shift;
 
-	my $init = $client->param('init');
+	my $init = $client->modeParam('init');
 
 	if ($init && (ref($init) eq 'CODE')) {
 		$init->($client);
 	}
 
-	if (!defined($client->param('parentMode'))) {
+	if (!defined($client->modeParam('parentMode'))) {
 		my $i = -2;
 
 		while ($client->modeStack->[$i] =~ /^INPUT./) { $i--; }
 
-		$client->param('parentMode',$client->modeStack->[$i]);
+		$client->modeParam('parentMode',$client->modeStack->[$i]);
 	}
 
-	if (!defined($client->param('header'))) {
-		$client->param('header',$client->string('SELECT_ITEM'));
+	if (!defined($client->modeParam('header'))) {
+		$client->modeParam('header',$client->string('SELECT_ITEM'));
 	}
 
-	my $listRef   = $client->param('listRef');
-	my $externRef = $client->param('externRef');
+	my $listRef   = $client->modeParam('listRef');
+	my $externRef = $client->modeParam('externRef');
 
 	if (!defined $listRef && ref($externRef) eq 'ARRAY') {
 		$listRef = $externRef;
-		$client->param('listRef',$listRef);
+		$client->modeParam('listRef',$listRef);
 	}
 
 	if (!defined $externRef && ref($listRef) eq 'ARRAY') {
 		$externRef = $listRef;
-		$client->param('externRef',$externRef);
+		$client->modeParam('externRef',$externRef);
 	}
 
 	return undef if !defined($listRef);
 
-	my $isSorted = $client->param('isSorted');
-	my $lookupRef = $client->param('lookupRef');
+	my $isSorted = $client->modeParam('isSorted');
+	my $lookupRef = $client->modeParam('lookupRef');
 
 	if ($isSorted && ($isSorted !~ /[iIeElL]/ || (uc($isSorted) eq 'E' && ref($externRef) ne 'ARRAY') || (uc($isSorted) eq 'L' && ref($lookupRef) ne 'CODE'))) {
-		$client->param('isSorted',0);
+		$client->modeParam('isSorted',0);
 	}
 
-	my $listIndex = $client->param('listIndex');
-	my $valueRef = $client->param('valueRef');
+	my $listIndex = $client->modeParam('listIndex');
+	my $valueRef = $client->modeParam('valueRef');
 
 	if (!defined($listIndex) || (scalar(@$listRef) == 0)) {
 
@@ -417,13 +417,13 @@ sub init {
 	if (!defined($valueRef) || (ref($valueRef) && !defined($$valueRef))) {
 
 		$$valueRef = $listRef->[$listIndex];
-		$client->param('valueRef',$valueRef);
+		$client->modeParam('valueRef',$valueRef);
 
 	} elsif (!ref($valueRef)) {
 		my $value = $valueRef;
 
 		$valueRef = \$value;
-		$client->param('valueRef',$valueRef);
+		$client->modeParam('valueRef',$valueRef);
 	}
 
 	if ((scalar(@$listRef) != 0) && $$valueRef ne $listRef->[$listIndex]) {
@@ -442,22 +442,22 @@ sub init {
 		}
 	}
 
-	$client->param('listIndex',$listIndex);
+	$client->modeParam('listIndex',$listIndex);
 
-	if (!defined($client->param('externRefArgs'))) {
-		$client->param('externRefArgs','CV');
+	if (!defined($client->modeParam('externRefArgs'))) {
+		$client->modeParam('externRefArgs','CV');
 	}
 
-	if (!defined($client->param('overlayRefArgs'))) {
-		$client->param('overlayRefArgs','CV');
+	if (!defined($client->modeParam('overlayRefArgs'))) {
+		$client->modeParam('overlayRefArgs','CV');
 	}
 
-	if (!defined($client->param('onChangeArgs'))) {
-		$client->param('onChangeArgs','CV');
+	if (!defined($client->modeParam('onChangeArgs'))) {
+		$client->modeParam('onChangeArgs','CV');
 	}
 
-	if (!defined($client->param('headerArgs'))) {
-		$client->param('headerArgs','CV');
+	if (!defined($client->modeParam('headerArgs'))) {
+		$client->modeParam('headerArgs','CV');
 	}
 
 	return 1;
@@ -466,7 +466,7 @@ sub init {
 sub exitInput {
 	my ($client,$exitType) = @_;
 
-	my $callbackFunct = $client->param('callback');
+	my $callbackFunct = $client->modeParam('callback');
 
 	if (!defined($callbackFunct) || !(ref($callbackFunct) eq 'CODE')) {
 

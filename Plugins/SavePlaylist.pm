@@ -65,7 +65,7 @@ sub setMode {
 	} elsif ($push ne 'push') {
 		my $playlist = '';
 	
-	} elsif ($client->param('playlist') ne '') {
+	} elsif ($client->modeParam('playlist') ne '') {
 		# don't do anything if we have a playlist name, since this means we've done the text entry
 	
 	} else {

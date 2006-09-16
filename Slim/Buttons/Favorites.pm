@@ -50,9 +50,9 @@ my %mainModeFunctions = (
 	'play' => sub {
 		my $client    = shift;
 		
-		my $listIndex = $client->param('listIndex');
-		my $urls      = $client->param('urls');
-		my $titles    = $client->param('listRef');
+		my $listIndex = $client->modeParam('listIndex');
+		my $urls      = $client->modeParam('urls');
+		my $titles    = $client->modeParam('listRef');
 
 		_addOrPlayFavoriteUrl($client, $urls->[$listIndex], $titles->[$listIndex], $listIndex);
 	},
@@ -60,9 +60,9 @@ my %mainModeFunctions = (
 	'add' => sub {
 		my $client    = shift;
 
-		my $listIndex = $client->param('listIndex');
-		my $urls      = $client->param('urls');
-		my $titles    = $client->param('listRef');
+		my $listIndex = $client->modeParam('listIndex');
+		my $urls      = $client->modeParam('urls');
+		my $titles    = $client->modeParam('listRef');
 
 		_addOrPlayFavoriteUrl($client, $urls->[$listIndex], $titles->[$listIndex], $listIndex, 'add');
 	},
@@ -153,8 +153,8 @@ sub mainModeCallback {
 
 	} elsif ($exittype eq 'RIGHT') {
 
-		my $listIndex = $client->param('listIndex');
-		my $urls      = $client->param('urls');
+		my $listIndex = $client->modeParam('listIndex');
+		my $urls      = $client->modeParam('urls');
 
 		my %params = (
 			title => $context{$client}->{'mainModeIndex'},

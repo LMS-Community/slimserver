@@ -66,9 +66,9 @@ our %functions = (
 	,'knob' => sub {
 			my ($client,$funct,$functarg) = @_;
 
-			my @timedigits = timeDigits($client, $client->param('valueRef'));
+			my @timedigits = timeDigits($client, $client->modeParam('valueRef'));
 
-			scroll($client, $client->knobPos() - $timedigits[$client->param('cursorPos')]);
+			scroll($client, $client->knobPos() - $timedigits[$client->modeParam('cursorPos')]);
 		}
 
 	#moving one position to the left, exiting on leftmost position
@@ -76,7 +76,7 @@ our %functions = (
 			my ($client,$funct,$functarg) = @_;
 			Slim::Utils::Timers::killTimers($client, \&nextChar);
 
-			my $cursorPos = $client->param('cursorPos');
+			my $cursorPos = $client->modeParam('cursorPos');
 			$cursorPos--;
 
 			if ($cursorPos < 0) {
@@ -84,7 +84,7 @@ our %functions = (
 				return;
 			}
 
-			$client->param('cursorPos',$cursorPos);
+			$client->modeParam('cursorPos',$cursorPos);
 			$client->update();
 		}
 
@@ -121,12 +121,12 @@ our %functions = (
 				nextChar($client);
 			}
 			
-			my $valueRef = $client->param('valueRef');
+			my $valueRef = $client->modeParam('valueRef');
 			my ($h0, $h1, $m0, $m1, $p) = timeDigits($client,$valueRef);
 
 			$p = (defined $p && $p eq 'PM') ? 1 : 0;
 			
-			my $c = $client->param('cursorPos');
+			my $c = $client->modeParam('cursorPos');
 
 			my $ampm = (Slim::Utils::Prefs::get('timeFormat') =~ /%p/);
 
@@ -196,10 +196,10 @@ our %functions = (
 			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + Slim::Utils::Prefs::get("displaytexttimeout"), \&nextChar);
 			
 			#update the display
-			my $onChange = $client->param('onChange');
+			my $onChange = $client->modeParam('onChange');
 
 			if (ref($onChange) eq 'CODE') {
-				my $onChangeArgs = $client->param('onChangeArgs');
+				my $onChangeArgs = $client->modeParam('onChangeArgs');
 				my @args;
 
 				push @args, $client if $onChangeArgs =~ /c/i;
@@ -225,7 +225,7 @@ our %functions = (
 
 	,'passback' => sub {
 			my ($client,$funct,$functarg) = @_;
-			my $parentMode = $client->param('parentMode');
+			my $parentMode = $client->modeParam('parentMode');
 
 			if (defined($parentMode)) {
 				Slim::Hardware::IR::executeButton($client,$client->lastirbutton,$client->lastirtime,$parentMode);
@@ -238,13 +238,13 @@ sub lines {
 	
 	my ($line1, $line2);
 	
-	$line1 = $client->param('header');
+	$line1 = $client->modeParam('header');
 
-	if ($client->param('stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
+	if ($client->modeParam('stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
 		$line1 = $client->string($line1);
 	}
 	
-	my $timestring = timeString($client,timeDigits($client,$client->param('valueRef')));
+	my $timestring = timeString($client,timeDigits($client,$client->modeParam('valueRef')));
 	
 	if (!defined($timestring)) { return ( {} ); }
 	$line2 = $timestring;
@@ -271,7 +271,7 @@ sub setMode {
 
 	# The knob on Transporter needs to be prepopulated with list lengths
 	# for proper scrolling.
-	my @timedigits = timeDigits($client, $client->param('valueRef'));
+	my @timedigits = timeDigits($client, $client->modeParam('valueRef'));
 
 	prepKnob($client, \@timedigits);
 }
@@ -298,36 +298,36 @@ This function sets up the params for INPUT.Time.  The optional params and their 
 sub init {
 	my $client = shift;
 	
-	if (!defined($client->param('parentMode'))) {
+	if (!defined($client->modeParam('parentMode'))) {
 		my $i = -2;
 
 		while ($client->modeStack->[$i] =~ /^INPUT./) { $i--; }
-		$client->param('parentMode',$client->modeStack->[$i]);
+		$client->modeParam('parentMode',$client->modeStack->[$i]);
 	}
 
-	if (!defined($client->param('header'))) {
-		$client->param('header','Enter Time:');
+	if (!defined($client->modeParam('header'))) {
+		$client->modeParam('header','Enter Time:');
 	}
 
-	if (!defined($client->param('cursorPos'))) {
-		$client->param('cursorPos',0)
+	if (!defined($client->modeParam('cursorPos'))) {
+		$client->modeParam('cursorPos',0)
 	}
 
-	if (!defined($client->param('onChangeArgs'))) {
-		$client->param('onChangeArgs','CV');
+	if (!defined($client->modeParam('onChangeArgs'))) {
+		$client->modeParam('onChangeArgs','CV');
 	}
 	
-	my $valueRef = $client->param('valueRef');
+	my $valueRef = $client->modeParam('valueRef');
 
 	if (!defined($valueRef)) {
 		$$valueRef = '';
-		$client->param('valueRef',$valueRef);
+		$client->modeParam('valueRef',$valueRef);
 
 	} elsif (!ref($valueRef)) {
 		my $value = $valueRef;
 
 		$valueRef = \$value;
-		$client->param('valueRef',$valueRef);
+		$client->modeParam('valueRef',$valueRef);
 	}
 
 	return 1;
@@ -413,7 +413,7 @@ sub timeString {
 		
 	my $cs = $client->symbols('cursorpos');
 
-	$c = $c || $client->param('cursorPos') || 0;
+	$c = $c || $client->modeParam('cursorPos') || 0;
 	
 	my $timestring = ($c == 0 ? $cs : '') . ((defined($p) && $h0 == 0) ? ' ' : $h0) . ($c == 1 ? $cs : '') . $h1 . ":" . ($c == 2 ? $cs : '') .  $m0 . ($c == 3 ? $cs : '') . $m1 . " " . ($c == 4 ? $cs : '') . (defined($p) ? $p : '');
 
@@ -423,7 +423,7 @@ sub timeString {
 sub exitInput {
 	my ($client,$exitType) = @_;
 	
-	my $callbackFunct = $client->param('callback');
+	my $callbackFunct = $client->modeParam('callback');
 	
 	if (!defined($callbackFunct) || !(ref($callbackFunct) eq 'CODE')) {
 		Slim::Buttons::Common::popMode($client);
@@ -446,14 +446,14 @@ sub moveCursor {
 	my $client = shift;
 	my $increment = shift || 1;
 	
-	my $cursorPos = $client->param('cursorPos');
+	my $cursorPos = $client->modeParam('cursorPos');
 
 	$cursorPos += $increment;
 
 	if ($cursorPos < 0) {
 		$cursorPos = 0;
 
-		if ($client->param('cursorPos') == 0) {
+		if ($client->modeParam('cursorPos') == 0) {
 			exitInput($client,'left');
 			return;
 		}
@@ -466,20 +466,20 @@ sub moveCursor {
 		return;
 	}
 
-	$client->param('cursorPos',$cursorPos);
+	$client->modeParam('cursorPos',$cursorPos);
 	$client->update();
 	
-	prepKnob($client, [ timeDigits($client,$client->param('valueRef')) ]);
+	prepKnob($client, [ timeDigits($client,$client->modeParam('valueRef')) ]);
 }
 
 sub scroll {
 	my ($client,$dir) = @_;
 	
 	my $time = scrollTime($client,$dir);
-	my $onChange = $client->param('onChange');
+	my $onChange = $client->modeParam('onChange');
 	
 	if (ref($onChange) eq 'CODE') {
-		my $onChangeArgs = $client->param('onChangeArgs');
+		my $onChangeArgs = $client->modeParam('onChangeArgs');
 		my @args;
 
 		push @args, $client if $onChangeArgs =~ /c/i;
@@ -503,25 +503,25 @@ sub prepKnob {
 	my ($client, $digits) = @_;
 	
 	my $ampm = (Slim::Utils::Prefs::get('timeFormat') =~ /%p/);
-	my $c    = $client->param('cursorPos');
+	my $c    = $client->modeParam('cursorPos');
 	
 	if ($c == 0) {
-		$client->param('listLen', $ampm ? 2 : 3);
+		$client->modeParam('listLen', $ampm ? 2 : 3);
 
 	} elsif ($c == 1) {
-		$client->param('listLen', $ampm ? ($digits->[0] ? 3 : 10) : ($digits->[0] == 2 ? 4 : 10));
+		$client->modeParam('listLen', $ampm ? ($digits->[0] ? 3 : 10) : ($digits->[0] == 2 ? 4 : 10));
 
 	} elsif ($c == 2) { 
-		$client->param('listLen', 6);
+		$client->modeParam('listLen', 6);
 
 	} elsif ($c == 3) { 
-		$client->param('listLen', 10);
+		$client->modeParam('listLen', 10);
 
 	} elsif ($c == 4) { 
-		$client->param('listLen', 2);
+		$client->modeParam('listLen', 2);
 	}
 
-	$client->param('listIndex', $digits->[$c]);
+	$client->modeParam('listIndex', $digits->[$c]);
 
 	$client->updateKnob(1);
 }
@@ -542,7 +542,7 @@ $c specifies the current cursor position where the digit is intended to scrol.
 sub scrollTime {
 	my ($client,$dir,$valueRef,$c) = @_;
 	
-	$c = $client->param('cursorPos') unless defined $c;
+	$c = $client->modeParam('cursorPos') unless defined $c;
 	
 	if (defined $valueRef) {
 
@@ -552,7 +552,7 @@ sub scrollTime {
 		}
 
 	} else {
-		$valueRef = $client->param('valueRef');
+		$valueRef = $client->modeParam('valueRef');
 	}
 	
 	my ($h0, $h1, $m0, $m1, $p) = timeDigits($client,$valueRef);

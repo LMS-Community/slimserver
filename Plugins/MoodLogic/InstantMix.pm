@@ -67,8 +67,8 @@ sub setMode {
 	}
 	
 	if ($method eq "push") {
-		if (defined $client->param( 'mix')) {
-			@instantMix = @{$client->param('mix')};
+		if (defined $client->modeParam( 'mix')) {
+			@instantMix = @{$client->modeParam('mix')};
 		}
 	}
 
@@ -97,7 +97,7 @@ sub mixExitHandler {
 
 	} elsif ($exittype eq 'RIGHT') {
 
-		my $valueref = $client->param('valueRef');
+		my $valueref = $client->modeParam('valueRef');
 
 		Slim::Buttons::Common::pushMode($client, 'trackinfo', { 'track' => $$valueref });
 

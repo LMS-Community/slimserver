@@ -100,13 +100,13 @@ our %functions = (
 			my ($client, $funct, $functarg) = @_;
 			if (defaultHandler($client)) {return};
 			my $knobPos   = $client->knobPos();
-			if ($knobPos > $client->param('listIndex')) {
+			if ($knobPos > $client->modeParam('listIndex')) {
 				rotate(1);
-			} elsif ($knobPos < $client->param('listIndex')) {
+			} elsif ($knobPos < $client->modeParam('listIndex')) {
 				rotate(-1);
 			}
 			$client->update();
-			$client->param('listIndex', $knobPos);			
+			$client->modeParam('listIndex', $knobPos);			
 	},
 
 	'left' => sub  {
@@ -325,13 +325,13 @@ sub setMode {
 	if ($customchar) {
 		loadCustomChars($client);
 	}
-	$client->param('modeUpdateInterval', 1);
+	$client->modeParam('modeUpdateInterval', 1);
 
-	$client->param('knobFlags', Slim::Player::Client::KNOB_NOACCELERATION());
-	$client->param('knobWidth', 4);
-	$client->param('knobHeight', 25);
-	$client->param('listIndex', 1000);
-	$client->param('listLen', 0);
+	$client->modeParam('knobFlags', Slim::Player::Client::KNOB_NOACCELERATION());
+	$client->modeParam('knobWidth', 4);
+	$client->modeParam('knobHeight', 25);
+	$client->modeParam('listIndex', 1000);
+	$client->modeParam('listLen', 0);
 
 	$client->lines(\&lines);
 }

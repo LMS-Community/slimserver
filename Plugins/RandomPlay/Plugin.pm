@@ -488,7 +488,7 @@ sub handlePlayOrAdd {
 	# reconstruct the list of options, adding and removing the 'disable' option where applicable
 	if ($item ne 'genreFilter') {
 
-		my $listRef = $client->param('listRef');
+		my $listRef = $client->modeParam('listRef');
 
 		if ($item eq 'disable') {
 
@@ -500,7 +500,7 @@ sub handlePlayOrAdd {
 			push @$listRef, 'disable';
 		}
 
-		$client->param('listRef', $listRef);
+		$client->modeParam('listRef', $listRef);
 
 		# Clear any current mix type in case user is restarting an already playing mix
 		$mixInfo{$client->masterOrSelf->id}->{'type'} = undef;

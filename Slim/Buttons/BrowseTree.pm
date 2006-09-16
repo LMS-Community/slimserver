@@ -65,8 +65,8 @@ sub init {
 			my $button = shift;
 			my $addorinsert = shift || 0;
 
-			my $items       = $client->param('listRef');
-			my $listIndex   = $client->param('listIndex');
+			my $items       = $client->modeParam('listRef');
+			my $listIndex   = $client->modeParam('listIndex');
 			my $currentItem = $items->[$listIndex] || return;
 			my $descend     = Slim::Music::Info::isList($currentItem) ? 1 : 0;
 
@@ -134,7 +134,7 @@ sub init {
 				for my $i (reverse (0..scalar @{$items}-1)) {
 
 					if (!ref $items->[$i]) {
-						$items->[$i] =  Slim::Utils::Misc::fixPath($items->[$i], $client->param('topLevelPath'));
+						$items->[$i] =  Slim::Utils::Misc::fixPath($items->[$i], $client->modeParam('topLevelPath'));
 					}
 
 					unless (Slim::Music::Info::isSong($items->[$i])) {
@@ -161,8 +161,8 @@ sub init {
 		'create_mix' => sub  {
 			my $client = shift;
 
-			my $items       = $client->param('listRef');
-			my $listIndex   = $client->param('listIndex');
+			my $items       = $client->modeParam('listRef');
+			my $listIndex   = $client->modeParam('listIndex');
 			my $currentItem = $items->[$listIndex] || return;
 			my $descend     = Slim::Music::Info::isList($currentItem) ? 1 : 0;
 
@@ -245,11 +245,11 @@ sub browseTreeExitCallback {
 		return;
 	}
 
-	my $currentItem = ${$client->param('valueRef')};
+	my $currentItem = ${$client->modeParam('valueRef')};
 
 	my $descend     = Slim::Music::Info::isList($currentItem) ? 1 : 0;
 
-	my @levels      = split(/\//, $client->param('hierarchy'));
+	my @levels      = split(/\//, $client->modeParam('hierarchy'));
 
 	if (!defined $currentItem) {
 
@@ -298,14 +298,14 @@ sub browseTreeItemName {
 
 		# Dynamically pull the object from the DB. This prevents us from
 		# having to do so at initial load time of possibly hundreds of items.
-		my $url = Slim::Utils::Misc::fixPath($item, $client->param('topLevelPath')) || return;
+		my $url = Slim::Utils::Misc::fixPath($item, $client->modeParam('topLevelPath')) || return;
 
 		if (Slim::Music::Info::isWinShortcut($url)) {
 
 			$url = Slim::Utils::Misc::fileURLFromWinShortcut($url);
 		}
 
-		my $items = $client->param('listRef');
+		my $items = $client->modeParam('listRef');
 
 		my $track = Slim::Schema->rs('Track')->objectForUrl({
 			'url'      => $url,
@@ -315,7 +315,7 @@ sub browseTreeItemName {
 
 		}) || return $url;
 
-		${$client->param('valueRef')} = $item = $items->[$index] = $track;
+		${$client->modeParam('valueRef')} = $item = $items->[$index] = $track;
 	}
 
 	return Slim::Utils::Unicode::utf8on( Slim::Music::Info::fileName($item->url) );
@@ -363,7 +363,7 @@ sub setMode {
 	}
 
 	# Parse the hierarchy list into an array
-	my $hierarchy = $client->param('hierarchy') || '';
+	my $hierarchy = $client->modeParam('hierarchy') || '';
 	my @levels    = split(/\//, $hierarchy);
 
 	# Show a blocking animation

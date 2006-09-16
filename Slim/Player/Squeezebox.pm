@@ -49,7 +49,7 @@ sub periodicScreenRefresh {
 	my $client = shift;
 	my $display = $client->display;
 
-	$display->update() unless ($display->updateMode() || $display->scrollState() == 2 || $client->param('modeUpdateInterval'));
+	$display->update() unless ($display->updateMode() || $display->scrollState() == 2 || $client->modeParam('modeUpdateInterval'));
 
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&periodicScreenRefresh);
 }

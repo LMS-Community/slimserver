@@ -14,7 +14,7 @@ Slim::Buttons::Input::Choice
 =head1 SYNOPSIS
 
  my %params = (
-	header   => $client->param('header') || ($title . ' {count}'),
+	header   => $client->modeParam('header') || ($title . ' {count}'),
 	listRef  => \@list,
 	url      => $url,
 	title    => $title,
@@ -29,7 +29,7 @@ Slim::Buttons::Input::Choice
 
 	},
 	
-	onRight => $client->param('onRight'), # passthrough
+	onRight => $client->modeParam('onRight'), # passthrough
  );
 
  Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);;
@@ -68,10 +68,10 @@ sub getItem {
 	my $index  = shift;
 
 	if (!defined($index)) {
-		$index = $client->param('listIndex') || 0;
+		$index = $client->modeParam('listIndex') || 0;
 	}
 
-	my $listref = $client->param('listRef');
+	my $listref = $client->modeParam('listRef');
 
 	return $listref->[$index];
 }
@@ -101,8 +101,8 @@ sub getItemName {
 	}
 	
 	# use lookupRef to find the item name if available
-	if ( my $lookup = $client->param('lookupRef') ) {
-		return $lookup->( $client->param('listIndex') || 0 );
+	if ( my $lookup = $client->modeParam('lookupRef') ) {
+		return $lookup->( $client->modeParam('listIndex') || 0 );
 	}
 
 	return $item;
@@ -135,7 +135,7 @@ sub getParam {
 		}
 	}
 
-	return $client->param($name);
+	return $client->modeParam($name);
 }
 
 # Most of the data required by this mode can be either a hard value,
@@ -192,21 +192,21 @@ my %functions = (
 	'numberScroll' => sub {
 		my ($client, $funct, $functarg) = @_;
 
-		my $listRef = $client->param('listRef');
+		my $listRef = $client->modeParam('listRef');
 
 		my $newIndex = Slim::Buttons::Common::numberScroll(
 			$client,
 			$functarg,
 			$listRef,
-			$client->param('isSorted') ? 1 : 0,
-			$client->param('lookupRef'),
+			$client->modeParam('isSorted') ? 1 : 0,
+			$client->modeParam('lookupRef'),
 		);
 
 		if (defined $newIndex) {
 
-			$client->param('listIndex', $newIndex);
+			$client->modeParam('listIndex', $newIndex);
 
-			my $valueRef = $client->param('valueRef');
+			my $valueRef = $client->modeParam('valueRef');
 			  $$valueRef = $listRef->[$newIndex];
 
 			my $onChange = getParam($client, 'onChange');
@@ -248,7 +248,7 @@ my %functions = (
 sub passback {
 	my ($client, $funct, $functarg) = @_;
 
-	my $parentMode = $client->param('parentMode');
+	my $parentMode = $client->modeParam('parentMode');
 
 	if (defined($parentMode)) {
 
@@ -270,7 +270,7 @@ sub callCallback {
 	my $funct        = shift;
 	my $functarg     = shift;
 
-	my $valueRef = $client->param('valueRef');
+	my $valueRef = $client->modeParam('valueRef');
 	my $callback = getParam($client, $callbackName);
 
 	if (ref($callback) eq 'CODE') {
@@ -297,10 +297,10 @@ sub callCallback {
 sub changePos {
 	my ($client, $dir, $funct, $pushDir) = @_;
 
-	my $listRef   = $client->param('listRef');
-	my $listIndex = $client->param('listIndex');
+	my $listRef   = $client->modeParam('listRef');
+	my $listIndex = $client->modeParam('listIndex');
 	
-	if ($client->param('noWrap')) {
+	if ($client->modeParam('noWrap')) {
 		
 		#not wrapping and at end of list
 		if ($listIndex == 0 && $dir < 0) {
@@ -318,10 +318,10 @@ sub changePos {
 	
 	$::d_ui && msgf("changepos: newpos: $newposition = scroll dir:$dir listIndex: $listIndex listLen: %d\n", scalar(@$listRef));
 	
-	my $valueRef = $client->param('valueRef');
+	my $valueRef = $client->modeParam('valueRef');
 
 	$$valueRef = $listRef->[$newposition];
-	$client->param('listIndex',$newposition);
+	$client->modeParam('listIndex',$newposition);
 
 	$client->updateKnob();
 
@@ -360,7 +360,7 @@ sub changePos {
 	}
 
 	# if unique mode name supplied, remember where client was browsing
-	if ($client->param("modeName") && $$valueRef) {
+	if ($client->modeParam("modeName") && $$valueRef) {
 
 		my $value = $$valueRef;
 
@@ -368,7 +368,7 @@ sub changePos {
 			$value = $value->{'value'};
 		}
 
-		$browseCache{$client}{$client->param("modeName")} = $value;
+		$browseCache{$client}{$client->modeParam("modeName")} = $value;
 	}
 }
 
@@ -402,8 +402,8 @@ sub lines {
 	my $client = shift;
 	my ($line1, $line2);
 
-	my $listIndex = $client->param('listIndex');
-	my $listRef   = $client->param('listRef');
+	my $listIndex = $client->modeParam('listIndex');
+	my $listRef   = $client->modeParam('listRef');
 
 	if (!defined($listRef)) {
 
@@ -411,7 +411,7 @@ sub lines {
 	}
 
 	if ($listIndex == scalar(@$listRef)) {
-		$client->param('listIndex',$listIndex-1);
+		$client->modeParam('listIndex',$listIndex-1);
 		$listIndex--;
 	}
 
@@ -436,7 +436,7 @@ sub lines {
 		# callers should include {count} in header
 		if (getParam($client,'headerAddCount')) {
 			msg("INPUT.Choice: headerAddCount is deprecated. " .
-				$client->param('headerAddCount'));
+				$client->modeParam('headerAddCount'));
 			bt();
 			$line1 .= ' (' . ($listIndex + 1)
 			. ' ' . $client->string('OF') .' ' . scalar(@$listRef) . ')';
@@ -503,13 +503,13 @@ sub init {
 	my $client    = shift;
 	my $setMethod = shift;
 
-	my $init = $client->param('init');
+	my $init = $client->modeParam('init');
 
 	if ($init && (ref($init) eq 'CODE')) {
 		$init->($client);
 	}
 
-	if (!defined($client->param('parentMode'))) {
+	if (!defined($client->modeParam('parentMode'))) {
 
 		my $i = -2;
 
@@ -517,29 +517,29 @@ sub init {
 			$i--;
 		}
 
-		$client->param('parentMode', $client->modeStack->[$i]);
+		$client->modeParam('parentMode', $client->modeStack->[$i]);
 	}
 
-	if (!defined($client->param('header'))) {
+	if (!defined($client->modeParam('header'))) {
 
-		$client->param('header',$client->string('SELECT_ITEM'));
+		$client->modeParam('header',$client->string('SELECT_ITEM'));
 	}
 
-	my $listRef = $client->param('listRef');
+	my $listRef = $client->modeParam('listRef');
 
 	return undef if !defined($listRef);
 
 	# observe initial value only if pushing modes, not popping.
-	my $listIndex = $client->param('listIndex') || 0;
+	my $listIndex = $client->modeParam('listIndex') || 0;
 
 	if ($setMethod eq 'push') {
 
 		my $initialValue = getExtVal($client, getParam($client, 'initialValue'));
 		
 		# if initialValue not provided, use the one we saved
-		if (!$initialValue && $client->param("modeName")) {
+		if (!$initialValue && $client->modeParam("modeName")) {
 
-			$initialValue = $browseCache{$client}{$client->param("modeName")};
+			$initialValue = $browseCache{$client}{$client->modeParam("modeName")};
 		}
 
 		if ($initialValue) {
@@ -558,11 +558,11 @@ sub init {
 	}
 
 	# valueRef stuff copied from INPUT.List.  Is it really necessary?
-	$client->param('listIndex', $listIndex);
+	$client->modeParam('listIndex', $listIndex);
 
 	# Take a copy of the current value;
 	my $valueRef = $listRef->[$listIndex];
-	$client->param('valueRef', \$valueRef);
+	$client->modeParam('valueRef', \$valueRef);
 
 	return 1;
 }
@@ -585,7 +585,7 @@ sub exitInput {
 
 			if (defined($onRight) && (ref($onRight) eq 'CODE')) {
 
-				$valueRef = $client->param('valueRef');
+				$valueRef = $client->modeParam('valueRef');
 
 				my $lines = $onRight->($client, (defined($valueRef) ? ($$valueRef) : undef));
 

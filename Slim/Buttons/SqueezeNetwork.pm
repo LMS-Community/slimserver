@@ -67,7 +67,7 @@ sub setMode {
 				      \&connectSqueezeNetwork);
 
 	# this flag prevents disconnect if user has popped out of this mode
-	$client->param('squeezenetwork.connect', 1);
+	$client->modeParam('squeezenetwork.connect', 1);
 }
 
 our %functions = (
@@ -123,7 +123,7 @@ sub connectSqueezeNetwork {
 	my $client = shift;
 
 	# don't disconnect unless we're still in this mode.
-	return unless ($client->param('squeezenetwork.connect'));
+	return unless ($client->modeParam('squeezenetwork.connect'));
 
 	if (clientIsCapable($client)) {
 		my $host = pack('N',1);  # 1 is squeezenetwork
@@ -152,7 +152,7 @@ sub connectSNtest {
 		sub {
 			my $client = shift;
 			
-			return unless $client->param('squeezenetwork.connect');
+			return unless $client->modeParam('squeezenetwork.connect');
 			
 			my $host = pack 'N', 0x439B6B04;
 			$client->sendFrame('serv', \$host);
@@ -165,7 +165,7 @@ sub connectSNtest {
 	);
 	
 	# this flag prevents disconnect if user has popped out of this mode
-	$client->param('squeezenetwork.connect', 1);
+	$client->modeParam('squeezenetwork.connect', 1);
 }
 
 =head1 SEE ALSO

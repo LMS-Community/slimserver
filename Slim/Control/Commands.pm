@@ -2239,7 +2239,7 @@ sub _playlistXtracksCommand_parseListRef {
 	$d_commands && msg("Commands::_playlistXtracksCommand_parseListRef()\n");
 
 	if ($term =~ /listref=(\w+)&?/i) {
-		$listRef = $client->param($1);
+		$listRef = $client->modeParam($1);
 	}
 
 	if (defined $listRef && ref $listRef eq "ARRAY") {
@@ -2256,7 +2256,7 @@ sub _playlistXtracksCommand_parseSearchRef {
 	$d_commands && msg("Commands::_playlistXtracksCommand_parseSearchRef()\n");
 
 	if ($term =~ /searchRef=(\w+)&?/i) {
-		$searchRef = $client->param($1);
+		$searchRef = $client->modeParam($1);
 	}
 
 	my $cond = $searchRef->{'cond'} || {};

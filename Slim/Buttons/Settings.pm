@@ -44,7 +44,7 @@ sub init {
 	%functions = (
 		'right' => sub  {
 			my ($client,$funct,$functarg) = @_;
-			if (defined($client->param('useMode'))) {
+			if (defined($client->modeParam('useMode'))) {
 				#in a submenu of settings, which is passing back a button press
 				$client->bumpRight();
 			} else {
@@ -238,7 +238,7 @@ sub init {
 							};
 						}
 
-						$client->param('listRef', \@externTF);
+						$client->modeParam('listRef', \@externTF);
 					}
 				},
 
@@ -270,7 +270,7 @@ sub init {
 							};
 						}
 
-						$client->param('listRef', \@fonts);
+						$client->modeParam('listRef', \@fonts);
 					}
 				},
 		
@@ -396,7 +396,7 @@ sub setPref {
 		$value = $value->{'value'};
 	}
 
-	my $pref = $client->param('pref');
+	my $pref = $client->modeParam('pref');
 	
 	$client->prefSet($pref,$value);
 }
@@ -410,8 +410,8 @@ sub executeCommand {
 		$value = $value->{'value'};
 	}
 
-	my $command = $client->param('command');
-	my $subcmd  = $client->param('subcommand');
+	my $command = $client->modeParam('command');
+	my $subcmd  = $client->modeParam('subcommand');
 
 	$client->execute([$command, $subcmd, $value]);
 }
@@ -431,7 +431,7 @@ sub screensaverInit {
 
 	}
 	
-	$client->param('listRef', \@savers);
+	$client->modeParam('listRef', \@savers);
 }
 
 sub settingsMenu {
@@ -450,7 +450,7 @@ sub settingsMenu {
 
 	@settingsChoices = sort { $client->string($a) cmp $client->string($b) } @settingsChoices;
 
-	$client->param('listRef', \@settingsChoices);
+	$client->modeParam('listRef', \@settingsChoices);
 }
 
 sub visualInit {
@@ -477,7 +477,7 @@ sub visualInit {
 		};
 	}
 	
-	$client->param('listRef', \@visualModes);
+	$client->modeParam('listRef', \@visualModes);
 }
 
 sub updateVisualMode {

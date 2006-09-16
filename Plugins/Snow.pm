@@ -295,7 +295,7 @@ sub overlayFunc {
 	
 	my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
 	
-	my $nextmenu = 'snow/' . $client->param('listRef')->[$client->param('listIndex')];
+	my $nextmenu = 'snow/' . $client->modeParam('listRef')->[$client->modeParam('listIndex')];
 	if (exists($menuParams{$nextmenu})) {
 		my %nextParams = %{$menuParams{$nextmenu}};
 		
@@ -361,7 +361,7 @@ sub snowExitHandler {
 our %functions = (
 	'right' => sub  {
 		my ($client,$funct,$functarg) = @_;
-		if (defined($client->param('useMode'))) {
+		if (defined($client->modeParam('useMode'))) {
 			#in a submenu of settings, which is passing back a button press
 			$client->bumpRight();
 		} else {
@@ -398,7 +398,7 @@ sub setMode {
 	$params{'valueRef'} = \$snow{$client}->{current};
 
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
-	$client->param('modeUpdateInterval', 0.25);
+	$client->modeParam('modeUpdateInterval', 0.25);
 }
 
 ###################################################################
@@ -441,7 +441,7 @@ sub getScreensaverSnowFunctions {
 
 sub setScreensaverSnowMode {
 	my $client = shift;
-	$client->param('modeUpdateInterval', 0.25);
+	$client->modeParam('modeUpdateInterval', 0.25);
 	$client->lines(\&screensaverSnowlines);
 	
 	#$snow{$client}->{wasDoubleSize} = $client->textSize;

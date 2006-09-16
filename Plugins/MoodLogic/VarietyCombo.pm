@@ -49,10 +49,10 @@ sub setMode {
 		'callback'     => \&varietyExitHandler,
 		'increment'    => 1,
 		'screen2'      => 'inherit',
-		'mood'         => $client->param('mood'),
-		'track'        => $client->param('song'),
-		'artist'       => $client->param('artist'),
-		'genre'        => $client->param('genre'),
+		'mood'         => $client->modeParam('mood'),
+		'track'        => $client->modeParam('song'),
+		'artist'       => $client->modeParam('artist'),
+		'genre'        => $client->modeParam('genre'),
 	});
 }
 
@@ -70,10 +70,10 @@ sub varietyExitHandler {
 	
 		my $instantMix;
 	
-		my $mood   = $client->param('mood');
-		my $track  = $client->param('song');
-		my $artist = $client->param('artist');
-		my $genre  = $client->param('genre');
+		my $mood   = $client->modeParam('mood');
+		my $track  = $client->modeParam('song');
+		my $artist = $client->modeParam('artist');
+		my $genre  = $client->modeParam('genre');
 	
 		if (defined $track) {
 	

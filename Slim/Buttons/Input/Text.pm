@@ -112,7 +112,7 @@ our %functions = (
 	
 	,'knob' => sub {
 			my ($client,$funct,$functarg) = @_;
-			changeChar($client, $client->knobPos() - $client->param('listIndex'));
+			changeChar($client, $client->knobPos() - $client->modeParam('listIndex'));
 		}
 	
 	#delete current, moving one position to the left, exiting on leftmost position
@@ -123,8 +123,8 @@ our %functions = (
 
 			$client->lastLetterTime(0);
 
-			my $valueRef  = $client->param('valueRef');
-			my $cursorPos = $client->param('cursorPos');
+			my $valueRef  = $client->modeParam('valueRef');
+			my $cursorPos = $client->modeParam('cursorPos');
 
 			Slim::Display::Display::subString($$valueRef,$cursorPos,1,'');
 			$cursorPos--;
@@ -136,8 +136,8 @@ our %functions = (
 
 			checkCursorDisplay($client,$cursorPos);
 
-			$client->param('cursorPos',$cursorPos);
-			$client->param('listIndex',charIndex($client->param('charsRef'),Slim::Display::Display::subString($$valueRef,$cursorPos,1)));
+			$client->modeParam('cursorPos',$cursorPos);
+			$client->modeParam('listIndex',charIndex($client->modeParam('charsRef'),Slim::Display::Display::subString($$valueRef,$cursorPos,1)));
 			$client->update();
 		}
 	
@@ -148,8 +148,8 @@ our %functions = (
 			
 			Slim::Utils::Timers::killTimers($client, \&nextChar);
 
-			my $valueRef  = $client->param('valueRef');
-			my $cursorPos = $client->param('cursorPos');
+			my $valueRef  = $client->modeParam('valueRef');
+			my $cursorPos = $client->modeParam('cursorPos');
 
 			Slim::Display::Display::subString($$valueRef,$cursorPos,1,'');
 
@@ -160,12 +160,12 @@ our %functions = (
 
 			if ($cursorPos == Slim::Display::Display::lineLength($$valueRef)) { 
 				$cursorPos--; 
-				$client->param('cursorPos',$cursorPos);
+				$client->modeParam('cursorPos',$cursorPos);
 			}
 
 			checkCursorDisplay($client,$cursorPos);
 
-			$client->param('listIndex',charIndex($client->param('charsRef'),Slim::Display::Display::subString($$valueRef,$cursorPos,1)));
+			$client->modeParam('listIndex',charIndex($client->modeParam('charsRef'),Slim::Display::Display::subString($$valueRef,$cursorPos,1)));
 			$client->update();
 		}
 	
@@ -178,8 +178,8 @@ our %functions = (
 			#reset last letter time to reset the character cycling.
 			$client->lastLetterTime(0);
 
-			my $valueRef  = $client->param('valueRef');
-			my $cursorPos = $client->param('cursorPos');
+			my $valueRef  = $client->modeParam('valueRef');
+			my $cursorPos = $client->modeParam('cursorPos');
 
 			if (Slim::Display::Display::subString($$valueRef,$cursorPos,1) eq $rightarrow) {
 				exitInput($client,'nextChar');
@@ -222,14 +222,14 @@ our %functions = (
 				$increment = -$increment;
 			}
 
-			my $displayPos   = $client->param('displayPos');
-			my $displayPos2X = $client->param('displayPos2X');
+			my $displayPos   = $client->modeParam('displayPos');
+			my $displayPos2X = $client->modeParam('displayPos2X');
 
 			if ($displayPos != $displayPos2X && ($client->linesPerScreen() == 1)) {
 				$displayPos = $displayPos2X;
 			}
 
-			my $valueEnd = Slim::Display::Display::lineLength(${$client->param('valueRef')}) - 1;
+			my $valueEnd = Slim::Display::Display::lineLength(${$client->modeParam('valueRef')}) - 1;
 
 			if ($displayPos == $valueEnd && $increment > 0) {
 				exitInput($client,'scroll_right');
@@ -250,8 +250,8 @@ our %functions = (
 				$displayPos = 0;
 			}
 
-			$client->param('displayPos',$displayPos);
-			$client->param('displayPos2X',$displayPos);
+			$client->modeParam('displayPos',$displayPos);
+			$client->modeParam('displayPos2X',$displayPos);
 			$client->update();
 		}
 	
@@ -264,13 +264,13 @@ our %functions = (
 			my $char = validateChar($client,$functarg);
 
 			if (!defined($char)) {
-				my $charsRef = $client->param('charsRef');
+				my $charsRef = $client->modeParam('charsRef');
 
-				$char = $charsRef->[($client->param('rightIndex') == 0) ? 1 : 0];
+				$char = $charsRef->[($client->modeParam('rightIndex') == 0) ? 1 : 0];
 			}
 
-			my $valueRef  = $client->param('valueRef');
-			my $cursorPos = $client->param('cursorPos');
+			my $valueRef  = $client->modeParam('valueRef');
+			my $cursorPos = $client->modeParam('cursorPos');
 
 			checkCursorDisplay($client,$cursorPos);
 
@@ -284,18 +284,18 @@ our %functions = (
 
 			Slim::Utils::Timers::killTimers($client, \&nextChar);
 
-			my $charIndex = $client->param('rightIndex');
+			my $charIndex = $client->modeParam('rightIndex');
 			$charIndex = ($charIndex == -1) ? 0 : $charIndex;
 
-			my $valueRef = $client->param('valueRef');
-			my $charsRef = $client->param('charsRef');
+			my $valueRef = $client->modeParam('valueRef');
+			my $charsRef = $client->modeParam('charsRef');
 
 			$$valueRef = $charsRef->[$charIndex];
 
-			$client->param('listIndex',$charIndex);
-			$client->param('cursorPos',0);
-			$client->param('displayPos',0);
-			$client->param('displayPos2X',0);
+			$client->modeParam('listIndex',$charIndex);
+			$client->modeParam('cursorPos',0);
+			$client->modeParam('displayPos',0);
+			$client->modeParam('displayPos2X',0);
 			$client->update();
 		}
 	
@@ -310,15 +310,15 @@ our %functions = (
 				nextChar($client);
 			}
 
-			my $char      = validateChar($client,Slim::Buttons::Common::numberLetter($client, $functarg, $client->param('numberLetterRef')));
-			my $valueRef  = $client->param('valueRef');
-			my $cursorPos = $client->param('cursorPos');
+			my $char      = validateChar($client,Slim::Buttons::Common::numberLetter($client, $functarg, $client->modeParam('numberLetterRef')));
+			my $valueRef  = $client->modeParam('valueRef');
+			my $cursorPos = $client->modeParam('cursorPos');
 
 			Slim::Display::Display::subString($$valueRef,$cursorPos,1,$char);
 
-			my $charIndex = charIndex($client->param('charsRef'),Slim::Display::Display::subString($$valueRef,$cursorPos));
+			my $charIndex = charIndex($client->modeParam('charsRef'),Slim::Display::Display::subString($$valueRef,$cursorPos));
 
-			$client->param('listIndex',$charIndex);
+			$client->modeParam('listIndex',$charIndex);
 
 			# set up a timer to automatically skip ahead
 			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + Slim::Utils::Prefs::get("displaytexttimeout"), \&nextChar);
@@ -337,8 +337,8 @@ our %functions = (
 
 			return unless defined($char);
 
-			my $valueRef  = $client->param('valueRef');
-			my $cursorPos = $client->param('cursorPos');
+			my $valueRef  = $client->modeParam('valueRef');
+			my $cursorPos = $client->modeParam('cursorPos');
 
 			Slim::Display::Display::subString($$valueRef,$cursorPos,1,$char);
 			nextChar($client);
@@ -359,7 +359,7 @@ our %functions = (
 	,'passback' => sub {
 			my ($client,$funct,$functarg) = @_;
 
-			my $parentMode = $client->param('parentMode');
+			my $parentMode = $client->modeParam('parentMode');
 
 			if (defined($parentMode)) {
 				Slim::Hardware::IR::executeButton($client,$client->lastirbutton,$client->lastirtime,$parentMode);
@@ -374,23 +374,23 @@ sub lines {
 	my $line1 = Slim::Buttons::Input::List::getExtVal($client,undef,undef,'header');
 	my $line2;
 
-	if ($client->param('stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
+	if ($client->modeParam('stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
 		$line1 = $client->string($line1);
 	}
 
-	my $valueRef  = $client->param('valueRef') || return ('','');
-	my $cursorPos = $client->param('cursorPos');
+	my $valueRef  = $client->modeParam('valueRef') || return ('','');
+	my $cursorPos = $client->modeParam('cursorPos');
 
 	my $displayPos;
 
 	if (!($client->linesPerScreen() == 1)) {
-		$displayPos = $client->param('displayPos');
+		$displayPos = $client->modeParam('displayPos');
 
 	} else {
 
-		$displayPos = $client->param('displayPos2X');
+		$displayPos = $client->modeParam('displayPos2X');
 
-		if (my $doublereplaceref = $client->param('doublesizeReplace')) {
+		if (my $doublereplaceref = $client->modeParam('doublesizeReplace')) {
 
 			while (my ($find, $replace) = each %$doublereplaceref) {
 
@@ -454,97 +454,97 @@ This function sets up the params for INPUT.Text.  The optional params and their 
 sub init {
 	my $client = shift;
 
-	if (!defined($client->param('parentMode'))) {
+	if (!defined($client->modeParam('parentMode'))) {
 		my $i = -2;
 		while ($client->modeStack->[$i] =~ /^INPUT./) { $i--; }
-		$client->param('parentMode',$client->modeStack->[$i]);
+		$client->modeParam('parentMode',$client->modeStack->[$i]);
 	}
 
-	if (!defined($client->param('header'))) {
-		$client->param('header','Enter Text:');
+	if (!defined($client->modeParam('header'))) {
+		$client->modeParam('header','Enter Text:');
 	}
 
 	#check for charsref options and set defaults if needed.
-	my $charsRef = $client->param('charsRef');
+	my $charsRef = $client->modeParam('charsRef');
 
 	if (!defined($charsRef)) {
-		$client->param('charsRef',\@UpperChars);
+		$client->modeParam('charsRef',\@UpperChars);
 
 	} elsif (ref($charsRef) ne 'ARRAY') {
 
 		if (uc($charsRef) eq 'UPPER') {
-			$client->param('charsRef',\@UpperChars);
+			$client->modeParam('charsRef',\@UpperChars);
 
 		} elsif (uc($charsRef) eq 'BOTH') {
-			$client->param('charsRef',\@BothChars);
+			$client->modeParam('charsRef',\@BothChars);
 
 		} else {
-			$client->param('charsRef',\@UpperChars);
+			$client->modeParam('charsRef',\@UpperChars);
 		}
 	}
 
-	$charsRef = $client->param('charsRef');
-	$client->param('listLen', $#$charsRef + 1);
+	$charsRef = $client->modeParam('charsRef');
+	$client->modeParam('listLen', $#$charsRef + 1);
 	
 	cleanArray($charsRef);
 
 	# check for numberLetterRef and set defaults if needed
-	my $numberLetterRef = $client->param('numberLetterRef');
+	my $numberLetterRef = $client->modeParam('numberLetterRef');
 
 	if (!defined($numberLetterRef)) {
-		$client->param('numberLetterRef',\@numberLettersMixed);
+		$client->modeParam('numberLetterRef',\@numberLettersMixed);
 
 	} elsif (ref($numberLetterRef) ne 'ARRAY') {
 
 		if (uc($numberLetterRef) eq 'UPPER') {
-			$client->param('numberLetterRef',\@numberLettersUpper);
+			$client->modeParam('numberLetterRef',\@numberLettersUpper);
 
 		} else {
-			$client->param('numberLetterRef',\@numberLettersMixed);
+			$client->modeParam('numberLetterRef',\@numberLettersMixed);
 		}
 	}
 
 	# cannot directly clean multidimensional array, this may need to be done in future
 	#cleanArray($numberLetterRef);
 	my $rightIndex = charIndex($charsRef,$rightarrow);
-	$client->param('rightIndex',$rightIndex);
+	$client->modeParam('rightIndex',$rightIndex);
 
-	my $valueRef = $client->param('valueRef');
+	my $valueRef = $client->modeParam('valueRef');
 
 	if (!defined($valueRef)) {
 		$$valueRef = '';
-		$client->param('valueRef',$valueRef);
+		$client->modeParam('valueRef',$valueRef);
 
 	} elsif (!ref($valueRef)) {
 		my $value = $valueRef;
 
 		$valueRef = \$value;
-		$client->param('valueRef',$valueRef);
+		$client->modeParam('valueRef',$valueRef);
 	}
 
 	$$valueRef = cleanString($$valueRef,$charsRef);
 
-	my $cursorPos = $client->param('cursorPos');
+	my $cursorPos = $client->modeParam('cursorPos');
 	my $valueRefLen = Slim::Display::Display::lineLength($$valueRef);
 
 	if (!defined($cursorPos) || $cursorPos > $valueRefLen || $cursorPos < 0) {
 		$cursorPos = $valueRefLen;
-		$client->param('cursorPos',$cursorPos);
+		$client->modeParam('cursorPos',$cursorPos);
 	}
 
-	$client->param('displayPos',(($cursorPos < ($client->displayWidth/2)) ? 0 : $cursorPos - (($client->displayWidth/2)-1)));
-	$client->param('displayPos2X',(($cursorPos < $DOUBLEWIDTH) ? 0 : $cursorPos - $DOUBLEWIDTH));
+	$client->modeParam('displayPos',(($cursorPos < ($client->displayWidth/2)) ? 0 : $cursorPos - (($client->displayWidth/2)-1)));
+	$client->modeParam('displayPos2X',(($cursorPos < $DOUBLEWIDTH) ? 0 : $cursorPos - $DOUBLEWIDTH));
 
-	my $charIndex = $client->param('listIndex');
+	my $charIndex = $client->modeParam('listIndex');
 
 	if ($cursorPos == $valueRefLen) {
 
 		if (!defined($charIndex) || $charIndex < 0 || $charIndex > $#$charsRef) {
 			$charIndex = ($rightIndex >= 0) ? $rightIndex : 0;
-			$client->param('listIndex',$charIndex);
+			$client->modeParam('listIndex',$charIndex);
 		}
 
-		$$valueRef .= ($client->param('charsRef'))->[$charIndex];
+		$$valueRef .= ($client->modeParam('charsRef'))->[$charIndex];
 
 	} else {
 		$charIndex = charIndex($charsRef,Slim::Display::Display::subString($$valueRef,$cursorPos,1));
@@ -554,7 +554,7 @@ sub init {
 			#some debug message here
 		}
 
-		$client->param('listIndex',$charIndex);
+		$client->modeParam('listIndex',$charIndex);
 	}
 }
 
@@ -563,12 +563,12 @@ sub changeChar {
 
 	Slim::Utils::Timers::killTimers($client, \&nextChar);
 
-	my $charsRef  = $client->param('charsRef');
-	my $charIndex = Slim::Buttons::Common::scroll($client, $dir, scalar(@{$charsRef}), $client->param('listIndex'));
-	my $valueRef  = $client->param('valueRef');
-	my $cursorPos = $client->param('cursorPos');
+	my $charsRef  = $client->modeParam('charsRef');
+	my $charIndex = Slim::Buttons::Common::scroll($client, $dir, scalar(@{$charsRef}), $client->modeParam('listIndex'));
+	my $valueRef  = $client->modeParam('valueRef');
+	my $cursorPos = $client->modeParam('cursorPos');
 
-	if ($charIndex == $client->param('rightIndex') && $cursorPos != (Slim::Display::Display::lineLength($$valueRef) - 1)) {
+	if ($charIndex == $client->modeParam('rightIndex') && $cursorPos != (Slim::Display::Display::lineLength($$valueRef) - 1)) {
 
 		#only allow right arrow in last position
 		if ($dir < 0) {
@@ -591,7 +591,7 @@ sub changeChar {
 
 	checkCursorDisplay($client,$cursorPos);
 	
-	$client->param('listIndex',$charIndex);
+	$client->modeParam('listIndex',$charIndex);
 	$client->update();
 }
 
@@ -648,7 +648,7 @@ sub validateChar {
 
 	return undef unless defined($char);
 
-	my $charsRef = $client->param('charsRef');
+	my $charsRef = $client->modeParam('charsRef');
 
 	if ($char =~ /^sp/i) {
 		$char = ' ';
@@ -668,7 +668,7 @@ sub validateChar {
 sub exitInput {
 	my ($client,$exitType) = @_;
 
-	my $callbackFunct = $client->param('callback');
+	my $callbackFunct = $client->modeParam('callback');
 
 	if (!defined($callbackFunct) || !(ref($callbackFunct) eq 'CODE')) {
 
@@ -694,9 +694,9 @@ sub moveCursor {
 	my $addChar   = shift;
 	my $forceMove = shift;
 	
-	my $valueRef = $client->param('valueRef');
+	my $valueRef = $client->modeParam('valueRef');
 
-	my $cursorPos = $client->param('cursorPos');
+	my $cursorPos = $client->modeParam('cursorPos');
 
 	my $valueLen = Slim::Display::Display::lineLength($$valueRef);
 
@@ -710,15 +710,15 @@ sub moveCursor {
 	if ($cursorPos < 0) {
 		$cursorPos = 0;
 
-		if ($client->param('cursorPos') == 0) {
+		if ($client->modeParam('cursorPos') == 0) {
 			exitInput($client,'cursor_left');
 			return;
 		}
 
 	}
 
-	my $rightIndex = $client->param('rightIndex');
-	my $charsRef = $client->param('charsRef');
+	my $rightIndex = $client->modeParam('rightIndex');
+	my $charsRef = $client->modeParam('charsRef');
 
 	if (!defined $charsRef) {
 		# server will crash if no charsRef from here.  
@@ -746,8 +746,8 @@ sub moveCursor {
 
 	checkCursorDisplay($client,$cursorPos);
 
-	$client->param('listIndex',$charIndex);
-	$client->param('cursorPos',$cursorPos);
+	$client->modeParam('listIndex',$charIndex);
+	$client->modeParam('cursorPos',$cursorPos);
 	$client->update();
 
 	return;
@@ -757,9 +757,9 @@ sub checkCursorDisplay {
 	my $client = shift;
 	my $cursorPos = shift;
 
-	my $displayPos = $client->linesPerScreen() == 1 ? $client->param('displayPos2X') : $client->param('displayPos');
+	my $displayPos = $client->linesPerScreen() == 1 ? $client->modeParam('displayPos2X') : $client->modeParam('displayPos');
 
-	my $valueRef = $client->param('valueRef');
+	my $valueRef = $client->modeParam('valueRef');
 
 	my $line = Slim::Display::Display::subString($$valueRef,$displayPos,$client->displayWidth);
 
@@ -769,17 +769,17 @@ sub checkCursorDisplay {
 		$displayPos += 1;
 
 		$client->linesPerScreen() == 1 ? 
-			$client->param('displayPos2X',$displayPos)
+			$client->modeParam('displayPos2X',$displayPos)
 		 : 
-			$client->param('displayPos',$displayPos);
+			$client->modeParam('displayPos',$displayPos);
 
 	} elsif ($cursorPos < $displayPos) {
 		$displayPos = $cursorPos;
 
 		$client->linesPerScreen() == 1 ? 
-			$client->param('displayPos2X',$displayPos)
+			$client->modeParam('displayPos2X',$displayPos)
 		 : 
-			$client->param('displayPos',$displayPos);
+			$client->modeParam('displayPos',$displayPos);
 	}
 }
 

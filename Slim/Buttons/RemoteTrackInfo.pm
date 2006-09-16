@@ -37,18 +37,18 @@ sub setMode {
 		return;
 	}
 
-	my $url  = $client->param('url');
+	my $url  = $client->modeParam('url');
 	my @list = ();
 
 	# TODO: use client specific title format?
-	my $title = $client->param('title') || Slim::Music::Info::standardTitle($client, $url);
+	my $title = $client->modeParam('title') || Slim::Music::Info::standardTitle($client, $url);
 
-	push @list, "{TITLE}: $title" unless $client->param('hideTitle');
+	push @list, "{TITLE}: $title" unless $client->modeParam('hideTitle');
 
-	push @list, "{URL}: $url" unless $client->param('hideURL');
+	push @list, "{URL}: $url" unless $client->modeParam('hideURL');
 
 	# include any special (plugin-specific details)
-	my $details = $client->param('details');
+	my $details = $client->modeParam('details');
 
 	for my $item (@{$details}) {
 		push @list, $item;
@@ -68,7 +68,7 @@ sub setMode {
 			name => sub {
 				my $client = shift;
 
-				my $num = $client->param('favorite');
+				my $num = $client->modeParam('favorite');
 				if ($num) {
 					return "{FAVORITES_FAVORITE_NUM}$num {FAVORITES_RIGHT_TO_DELETE}";
 				} else {
@@ -78,15 +78,15 @@ sub setMode {
 
 			onRight => sub {
 				my $client = shift;
-				my $num = $client->param('favorite');
+				my $num = $client->modeParam('favorite');
 				if ($num) {
-					Slim::Utils::Favorites->deleteByClientAndURL($client, $client->param('url'));
-					$client->param('favorite', 0);
-					$client->showBriefly($client->string('FAVORITES_DELETING'), $client->param('title'));
+					Slim::Utils::Favorites->deleteByClientAndURL($client, $client->modeParam('url'));
+					$client->modeParam('favorite', 0);
+					$client->showBriefly($client->string('FAVORITES_DELETING'), $client->modeParam('title'));
 				} else {
 					$num = Slim::Utils::Favorites->clientAdd($client, $url, $title);
-					$client->param('favorite', $num);
-					$client->showBriefly($client->string('FAVORITES_ADDING'), $client->param('title'));
+					$client->modeParam('favorite', $num);
+					$client->showBriefly($client->string('FAVORITES_ADDING'), $client->modeParam('title'));
 				}
 			}
 		};
@@ -97,7 +97,7 @@ sub setMode {
 
 	# now use another mode for the heavy lifting
 	my %params = (
-		'header'   => $client->param('header') || ($title . ' {count}'),
+		'header'   => $client->modeParam('header') || ($title . ' {count}'),
 		'listRef'  => \@list,
 		'url'      => $url,
 		'title'    => $title,
@@ -107,7 +107,7 @@ sub setMode {
 		'onPlay'   => sub {
 			my $client = shift;
 
-			my $station = $client->param('url');
+			my $station = $client->modeParam('url');
 
 			$client->execute( [ 'playlist', 'play', $station ] );
 		},
@@ -115,7 +115,7 @@ sub setMode {
 		'onAdd'    => sub {
 			my $client = shift;
 
-			my $station = $client->param('url');
+			my $station = $client->modeParam('url');
 
 			$client->execute( [ 'playlist', 'add', $station ] );
 		},

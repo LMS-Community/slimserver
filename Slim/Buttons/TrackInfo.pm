@@ -78,7 +78,7 @@ sub playOrAdd {
 		$command = "loadtracks";
 	}
 
-	my $curItem = $client->trackInfoContent->[$client->param('listIndex')];
+	my $curItem = $client->trackInfoContent->[$client->modeParam('listIndex')];
 
 	if (!defined $curItem) {
 		Slim::Buttons::Common::popModeRight($client);
@@ -157,9 +157,9 @@ sub setMode {
 		'callback'       => \&listExitHandler,
 
 		# carry some params forward
-		'track'          => $client->param('track'),
-		'current'        => $client->param('current'),
-		'favorite'       => $client->param('favorite'),
+		'track'          => $client->modeParam('track'),
+		'current'        => $client->modeParam('current'),
+		'favorite'       => $client->modeParam('favorite'),
 	);
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
@@ -168,8 +168,9 @@ sub setMode {
 # get (and optionally set) the track URL
 sub track {
 	my $client = shift;
-
-	return $client->param('track', shift);
+	
+	unshift @_, 'track';
+	return $client->modeParam(@_);
 }
 
 sub loadDataForTrack {
@@ -282,7 +283,7 @@ sub loadDataForTrack {
 
 			push (@{$client->trackInfoLines}, 
 				$client->string('BITRATE').": $bitrate " .
-					(($client->param( 'current') && (defined $undermax && !$undermax)) 
+					(($client->modeParam( 'current') && (defined $undermax && !$undermax)) 
 						? '('.$client->string('CONVERTED_TO').' '.$rate.')' : ''));
 
 			push (@{$client->trackInfoContent}, undef);
@@ -330,9 +331,9 @@ sub loadDataForTrack {
 		my $fav = Slim::Utils::Favorites->findByClientAndURL($client, $track->url);
 
 		if ($fav) {
-			$client->param('favorite', $fav->{'num'});
+			$client->modeParam('favorite', $fav->{'num'});
 		} else {
-			$client->param('favorite', -1);
+			$client->modeParam('favorite', -1);
 		}
 
 		push (@{$client->trackInfoLines}, 'FAVORITE'); # replaced in lines()
@@ -357,7 +358,7 @@ sub listExitHandler {
 		my $push     = 1;
 
 		# Look up if this is an artist, album, year etc
-		my $curItem  = $client->trackInfoContent->[$client->param('listIndex')] || '';
+		my $curItem  = $client->trackInfoContent->[$client->modeParam('listIndex')] || '';
 		my $oldlines = $client->curLines();
 
 		# Get object for currently being browsed song from the datasource
@@ -451,7 +452,7 @@ sub listExitHandler {
 
 		} elsif ($curType eq 'FAVORITE') {
 
-			my $num = $client->param('favorite');
+			my $num = $client->modeParam('favorite');
 
 			if ($num < 0) {
 
@@ -459,7 +460,7 @@ sub listExitHandler {
 
 				$client->showBriefly($client->string('FAVORITES_ADDING'), $track->title);
 
-				$client->param('favorite', $num);
+				$client->modeParam('favorite', $num);
 
 			} else {
 
@@ -467,7 +468,7 @@ sub listExitHandler {
 
 				$client->showBriefly($client->string('FAVORITES_DELETING'), $track->title);
 
-				$client->param('favorite', -1);
+				$client->modeParam('favorite', -1);
 			}
 
 			$push = 0;
@@ -492,7 +493,7 @@ sub infoLine {
 
 	# special case favorites line, which must be determined dynamically
 	if ($line2 eq 'FAVORITE') {
-		if ((my $num = $client->param('favorite')) < 0) {
+		if ((my $num = $client->modeParam('favorite')) < 0) {
 			$line2 = $client->string('FAVORITES_RIGHT_TO_ADD');
 		} else {
 			$line2 = $client->string('FAVORITES_FAVORITE_NUM') . "$num " . $client->string('FAVORITES_RIGHT_TO_DELETE');

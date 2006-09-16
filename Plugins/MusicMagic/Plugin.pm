@@ -221,14 +221,14 @@ sub playMix {
 		$playAddInsert = 'playtracks';
 	}
 
-	my $line2 = $client->param('stringHeader') ? $client->string($client->param('header')) : $client->param('header');
+	my $line2 = $client->modeParam('stringHeader') ? $client->string($client->modeParam('header')) : $client->modeParam('header');
 	
 	$client->showBriefly({
 		'line'    => [ $line1, $line2] ,
 		'overlay' => [ $client->symbols('notesymbol'),],
 	}, { 'duration' => 2});
 
-	$client->execute(["playlist", $playAddInsert, "listref", $client->param('listRef')]);
+	$client->execute(["playlist", $playAddInsert, "listref", $client->modeParam('listRef')]);
 }
 
 sub addGroups {
@@ -505,7 +505,7 @@ sub mixerFunction {
 	my ($client, $noSettings) = @_;
 
 	# look for parentParams (needed when multiple mixers have been used)
-	my $paramref = defined $client->param('parentParams') ? $client->param('parentParams') : $client->modeParameterStack(-1);
+	my $paramref = defined $client->modeParam('parentParams') ? $client->modeParam('parentParams') : $client->modeParameterStack(-1);
 	
 	# if prefs say to offer player settings, and we're not already in that mode, then go into settings.
 	if (Slim::Utils::Prefs::get('MMMPlayerSettings') && !$noSettings) {
@@ -622,7 +622,7 @@ sub mixExitHandler {
 
 	} elsif ($exittype eq 'RIGHT') {
 
-		my $valueref = $client->param('valueRef');
+		my $valueref = $client->modeParam('valueRef');
 
 		Slim::Buttons::Common::pushMode($client, 'trackinfo', { 'track' => $$valueref });
 
@@ -891,7 +891,7 @@ sub musicmagic_mix {
 	if (defined $mix && ref $mix eq "ARRAY" && defined $client) {
 		# We'll be using this to play the entire mix using 
 		# playlist (add|play|load|insert)tracks listref=musicmagic_mix
-		$client->param('musicmagic_mix',$mix);
+		$client->modeParam('musicmagic_mix',$mix);
 	} else {
 		$mix = [];
 	}

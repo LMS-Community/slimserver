@@ -52,7 +52,7 @@ sub weekDay {
 	
 	return unless $client;
 	
-	my $day = $client->param('day');
+	my $day = $client->modeParam('day');
 
 	if (defined $day) {
 		return ${$day};
@@ -253,7 +253,7 @@ sub setMode {
 	my @alarmChoices = @defaultAlarmChoices;
 	
 	# entering alarm settings, add the fade timing global pref unless already there
-	if (!defined $client->param('day')) {
+	if (!defined $client->modeParam('day')) {
 		push @alarmChoices, 'ALARM_FADE' unless $alarmChoices[-1] eq 'ALARM_FADE';
 	
 	# remove for weekday pref menus
@@ -264,7 +264,7 @@ sub setMode {
 	}
 
 	$params{'listRef'} = \@alarmChoices;
-	$params{'day'} = $client->param('day');
+	$params{'day'} = $client->modeParam('day');
 	
 	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
 }
@@ -283,10 +283,10 @@ sub weekdayExitHandler {
 	} elsif ($exittype eq 'RIGHT') {
 
 		my %params = (
-			'day' => $client->param('valueRef'),
+			'day' => $client->modeParam('valueRef'),
 		);
 		
-		if (${$client->param('valueRef')}) {
+		if (${$client->modeParam('valueRef')}) {
 			Slim::Buttons::Common::pushModeLeft($client,'alarm', \%params);
 		} else {
 			$client->bumpRight();
@@ -313,7 +313,7 @@ sub exitSetHandler {
 
 	if ($exittype eq 'LEFT' || $exittype eq 'PLAY') {
 
-		$client->prefSet("alarmtime", ${$client->param('valueRef')}, weekDay($client));
+		$client->prefSet("alarmtime", ${$client->modeParam('valueRef')}, weekDay($client));
 
 		Slim::Buttons::Common::popModeRight($client);
 
@@ -332,7 +332,7 @@ sub alarmExitHandler {
 		Slim::Buttons::Common::popModeRight($client);
 		
 	} elsif ($exittype eq 'RIGHT') {
-		my $nextmenu = 'alarm/' . $client->param('listRef')->[$client->param('listIndex')];
+		my $nextmenu = 'alarm/' . $client->modeParam('listRef')->[$client->modeParam('listIndex')];
 		if (exists($menuParams{$nextmenu})) {
 			my %nextParams = %{$menuParams{$nextmenu}};
 			
@@ -552,7 +552,7 @@ sub visibleAlarm {
 sub overlayFunc {
 	my $client = shift;
 	
-	my $nextmenu = 'alarm/' . $client->param('listRef')->[$client->param('listIndex')];
+	my $nextmenu = 'alarm/' . $client->modeParam('listRef')->[$client->modeParam('listIndex')];
 	if (exists($menuParams{$nextmenu})) {
 		my %nextParams = %{$menuParams{$nextmenu}};
 		

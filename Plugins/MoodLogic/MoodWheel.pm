@@ -32,12 +32,12 @@ sub moodExitHandler {
 
 	} elsif ($exittype eq 'RIGHT') {
 
-		my $valueref = $client->param('valueRef');
+		my $valueref = $client->modeParam('valueRef');
 
 		Slim::Buttons::Common::pushModeLeft($client, 'moodlogic_variety_combo', {
 
-				'genre'  => $client->param( 'genre'),
-				'artist' => $client->param( 'artist'),
+				'genre'  => $client->modeParam( 'genre'),
+				'artist' => $client->modeParam( 'artist'),
 				'mood'   => $$valueref,
 			});
 	}
@@ -52,8 +52,8 @@ sub setMode {
 		return;
 	}
 
-	my $genre  = $client->param('genre');
-	my $artist = $client->param('artist');
+	my $genre  = $client->modeParam('genre');
+	my $artist = $client->modeParam('artist');
 
 	if (defined $genre) {
 

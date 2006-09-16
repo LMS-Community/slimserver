@@ -199,8 +199,8 @@ sub setMode {
 	$client->lines( $client->customPlaylistLines() || \&Slim::Buttons::Playlist::lines );
 
 	# update client every second in this mode
-	$client->param('modeUpdateInterval', 1); # seconds
-	$client->param('screen2', 'screensaver');
+	$client->modeParam('modeUpdateInterval', 1); # seconds
+	$client->modeParam('screen2', 'screensaver');
 }
 
 =head1 SEE ALSO

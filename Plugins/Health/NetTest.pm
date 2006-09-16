@@ -69,8 +69,8 @@ sub setMode {
 	} 
 
 	if ($client->isa('Slim::Player::Transporter')) {
-		$client->param('listLen', scalar(@testRates));
-		$client->param('listIndex', 0);
+		$client->modeParam('listLen', scalar(@testRates));
+		$client->modeParam('listIndex', 0);
 		$client->updateKnob(1);
 	}
 

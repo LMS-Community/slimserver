@@ -208,9 +208,9 @@ sub timeFormat {
 sub infoDisplay {
 	my ($client,$value) = @_;
 
-	my $listIndex     = $client->param('listIndex');
-	my $formatRef     = $client->param('formatRef');
-	my $valueFunctRef = $client->param('valueFunctRef');
+	my $listIndex     = $client->modeParam('listIndex');
+	my $formatRef     = $client->modeParam('formatRef');
+	my $valueFunctRef = $client->modeParam('valueFunctRef');
 
 	if (defined($formatRef) && defined($formatRef->[$listIndex])) {
 		return $client->string('INFORMATION_' . uc($value)) . ': '

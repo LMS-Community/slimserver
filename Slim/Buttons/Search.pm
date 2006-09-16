@@ -121,7 +121,7 @@ sub searchExitHandler {
 
 	} elsif ($exitType eq 'RIGHT') {
 
-		my $current = $client->param('valueRef');
+		my $current = $client->modeParam('valueRef');
 
 		my %nextParams = searchFor($client, $$current) ;
 

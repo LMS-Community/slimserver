@@ -201,6 +201,8 @@ sub removeTrack {
 		}
 	}
 
+	# browseplaylistindex could return a non-sensical number if we are not in playlist mode
+	# this is due to it being a wrapper around $client->modeParam('listIndex')
 	refreshPlaylist($client,Slim::Buttons::Playlist::showingNowPlaying($client) ?
 		undef : 
 		Slim::Buttons::Playlist::browseplaylistindex($client));

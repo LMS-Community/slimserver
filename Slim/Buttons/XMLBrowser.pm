@@ -44,9 +44,9 @@ sub setMode {
 		return;
 	}
 
-	my $title  = $client->param('title');
-	my $url    = $client->param('url');
-	my $search = $client->param('search');
+	my $title  = $client->modeParam('title');
+	my $url    = $client->modeParam('url');
+	my $search = $client->modeParam('search');
 
 	# if no url, error
 	if (!$url) {
@@ -66,15 +66,15 @@ sub setMode {
 	} else {
 		
 		# Grab expires param here, as the block will change the param stack
-		my $expires = $client->param('expires');
+		my $expires = $client->modeParam('expires');
 		
 		# Callbacks to report success/failure of feeds.  This is used by the
 		# RSS plugin on SN to log errors.
-		my $onSuccess = $client->param('onSuccess');
-		my $onFailure = $client->param('onFailure');
+		my $onSuccess = $client->modeParam('onSuccess');
+		my $onFailure = $client->modeParam('onFailure');
 		
 		# the item is passed as a param so we can get passthrough params
-		my $item = $client->param('item');
+		my $item = $client->modeParam('item');
 
 		# give user feedback while loading
 		$client->block(
@@ -205,7 +205,7 @@ sub gotRSS {
 			'onRight'    => sub {
 				my $client = shift;
 				my $item   = shift;
-				displayFeedDescription($client, $client->param('feed'));
+				displayFeedDescription($client, $client->modeParam('feed'));
 			},
 
 			# play all enclosures...
@@ -213,15 +213,15 @@ sub gotRSS {
 				my $client = shift;
 				
 				Slim::Music::Info::setTitle( 
-					$client->param('url'),
-					$client->param('feed')->{'title'},
+					$client->modeParam('url'),
+					$client->modeParam('feed')->{'title'},
 				);
 
 				# play this feed as a playlist
 				$client->execute(
 					[ 'playlist', 'play',
-					$client->param('url'),
-					$client->param('feed')->{'title'},
+					$client->modeParam('url'),
+					$client->modeParam('feed')->{'title'},
 				] );
 			},
 
@@ -229,15 +229,15 @@ sub gotRSS {
 				my $client = shift;
 				
 				Slim::Music::Info::setTitle( 
-					$client->param('url'),
-					$client->param('feed')->{'title'},
+					$client->modeParam('url'),
+					$client->modeParam('feed')->{'title'},
 				);				
 
 				# addthis feed as a playlist
 				$client->execute(
 					[ 'playlist', 'add',
-					$client->param('url'),
-					$client->param('feed')->{'title'},
+					$client->modeParam('url'),
+					$client->modeParam('feed')->{'title'},
 				] );
 			},
 
@@ -415,7 +415,7 @@ sub gotOPML {
 			elsif ( $hasItems && ref($item->{'items'}) eq 'ARRAY' ) {
 
 				# recurse into OPML item
-				gotOPML($client, $client->param('url'), $item);
+				gotOPML($client, $client->modeParam('url'), $item);
 
 			}
 			else {
@@ -454,8 +454,8 @@ sub handleSearch {
 	}
 	elsif ( $exitType eq 'NEXTCHAR' ) {
 		
-		my $searchURL    = $client->param('_search');
-		my $searchString = ${ $client->param('valueRef') };
+		my $searchURL    = $client->modeParam('_search');
+		my $searchString = ${ $client->modeParam('valueRef') };
 		
 		# Don't allow null search string
 		my $rightarrow = Slim::Display::Display::symbol('rightarrow');
@@ -609,7 +609,7 @@ sub displayItemDescription {
 			'details'   => \@lines,
 			'onRight'   => sub {
 				my $client = shift;
-				my $item = $client->param('item');
+				my $item = $client->modeParam('item');
 				displayItemLink($client, $item);
 			},
 			'hideTitle' => 1,
@@ -628,19 +628,19 @@ sub displayItemDescription {
 
 			'onRight' => sub {
 				my $client = shift;
-				my $item   = $client->param('item');
+				my $item   = $client->modeParam('item');
 				displayItemLink($client, $item);
 			},
 
 			'onPlay'  => sub {
 				my $client = shift;
-				my $item   = $client->param('item');
+				my $item   = $client->modeParam('item');
 				playItem($client, $item);
 			},
 
 			'onAdd'   => sub {
 				my $client = shift;
-				my $item   = $client->param('item');
+				my $item   = $client->modeParam('item');
 				playItem($client, $item, 'add');
 			},
 		);
@@ -679,7 +679,7 @@ sub displayFeedDescription {
 		};
 	}
 
-	push @lines, '{URL}: ' . $client->param('url');
+	push @lines, '{URL}: ' . $client->modeParam('url');
 
 	$feed->{'lastBuildDate'}  && push @lines, '{XML_DATE}: ' . $feed->{'lastBuildDate'};
 	$feed->{'managingEditor'} && push @lines, '{XML_EDITOR}: ' . $feed->{'managingEditor'};
@@ -688,7 +688,7 @@ sub displayFeedDescription {
 	# even a line to play all enclosures
 
 	my %params = (
-		'url'       => $client->param('url'),
+		'url'       => $client->modeParam('url'),
 		'title'     => $feed->{'title'},
 		'feed'      => $feed,
 		'header'    => fitTitle( $client, $feed->{'title'} ),
@@ -797,7 +797,7 @@ sub playItem {
 	elsif ( ref($item->{'items'}) eq 'ARRAY' && scalar @{$item->{'items'}} ) {
 
 		# it's not an audio item, so recurse into OPML item
-		gotOPML($client, $client->param('url'), $item);
+		gotOPML($client, $client->modeParam('url'), $item);
 	}
 	else {
 

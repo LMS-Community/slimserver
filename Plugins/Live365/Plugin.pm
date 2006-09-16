@@ -202,7 +202,7 @@ MAINMODE: {
 		my ($client,$exitType) = @_;
 	
 		$exitType = uc($exitType);
-		my $selection = ${$client->param('valueRef')};
+		my $selection = ${$client->modeParam('valueRef')};
 	
 		if ($exitType eq 'LEFT') {
 			Slim::Buttons::Common::popModeRight($client);
@@ -455,7 +455,7 @@ GENREMODE: {
 		my ($client,$exitType) = @_;
 	
 		$exitType = uc($exitType);
-		my $selection = ${$client->param('valueRef')};
+		my $selection = ${$client->modeParam('valueRef')};
 	
 		if ($exitType eq 'LEFT') {
 				$live365->{$client}->stopLoading();
@@ -466,7 +466,7 @@ GENREMODE: {
 					return;
 				}
 		
-				my $genrePointer = ${$client->param('valueRef')};
+				my $genrePointer = ${$client->modeParam('valueRef')};
 				
 				my $stationParams = {
 					'genre'			=> $genrePointer->[1],
@@ -504,7 +504,7 @@ CHANNELMODE: {
 		
 		$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_DIRECTORY' );
 
-		my $source = $client->param('source');
+		my $source = $client->modeParam('source');
 		if (defined($source) && $source eq 'PLUGIN_LIVE365_PRESETS') {
 			$live365->{$client}->clearStationDirectory();
 			$live365->{$client}->loadMemberPresets($source,
@@ -518,7 +518,7 @@ CHANNELMODE: {
 
 			my $pointer = defined($source) ? $live365->{$client}->getChannelModePointer($source) || 0 : 0;
 
-			my $stationParams = $client->param('stationParams');
+			my $stationParams = $client->modeParam('stationParams');
 
 			# If the last position within the station list is greater than
 			# the default number of rows to retrieve, get enough so that
@@ -546,7 +546,7 @@ CHANNELMODE: {
 	sub channelModeLoad {
 		my $client = shift;
 	
-		my $source = $client->param('source');
+		my $source = $client->modeParam('source');
 		
 		# Check if the current pointer for the source mode is greater than
 		# the number of stations currently loaded. If so, clip it.
@@ -610,7 +610,7 @@ CHANNELMODE: {
 		my ($client,$exitType) = @_;
 	
 		$exitType = uc($exitType);
-		my $selection = ${$client->param('valueRef')};
+		my $selection = ${$client->modeParam('valueRef')};
 	
 		if ($exitType eq 'LEFT') {
 				$live365->{$client}->stopLoading();
@@ -621,7 +621,7 @@ CHANNELMODE: {
 					return;
 				}
 		
-				my $source = $client->param( 'source');
+				my $source = $client->modeParam( 'source');
 	
 				if (defined($source)) {
 					$live365->{$client}->setChannelModePointer($source, 
@@ -635,7 +635,7 @@ CHANNELMODE: {
 	sub channelModeError {
 		my $client = shift;
 	
-		my $source = $client->param( 'source');
+		my $source = $client->modeParam( 'source');
 	
 		$live365->{$client}->clearBlockingStatus();
 	
@@ -807,7 +807,7 @@ SEARCHMODE: {
 		if ($exitType eq 'LEFT') {
 			Slim::Buttons::Common::popModeRight($client);
 		} else {
-			my $type = ${$client->param('valueRef')}->[1];
+			my $type = ${$client->modeParam('valueRef')}->[1];
 
 			Slim::Buttons::Common::pushModeLeft( $client, 'INPUT.Text',
 				{
@@ -831,7 +831,7 @@ SEARCHMODE: {
 	
 		my $arrow = Slim::Display::Display::symbol('rightarrow');
 		$searchString{$client} =~ s/$arrow//;
-		my $searchfields = $client->param('searchfields');
+		my $searchfields = $client->modeParam('searchfields');
 	
 		ExitEventType: {
 			$::d_plugins && msg( "Live365.doSearch exit input mode: '$exitType'\n" );

@@ -106,7 +106,7 @@ sub setMode {
 	$client->lines(\&lines);
 
 	# setting this param will call client->update() frequently
-	$client->param('modeUpdateInterval', 1); # seconds
+	$client->modeParam('modeUpdateInterval', 1); # seconds
 }
 
 sub initPlugin {
@@ -210,7 +210,7 @@ sub setScreensaverDateTimeMode() {
 	$client->lines(\&screensaverDateTimelines);
 
 	# setting this param will call client->update() frequently
-	$client->param('modeUpdateInterval', 1); # seconds
+	$client->modeParam('modeUpdateInterval', 1); # seconds
 }
 
 

@@ -80,7 +80,7 @@ sub setMode {
 	Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
 
 	# we'll handle the push in a callback
-	$client->param('handledTransition',1);
+	$client->modeParam('handledTransition',1);
 }
 
 sub radioTimeURL {
