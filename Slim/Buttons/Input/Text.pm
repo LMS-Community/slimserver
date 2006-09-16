@@ -593,6 +593,7 @@ sub changeChar {
 	
 	$client->modeParam('listIndex',$charIndex);
 	$client->update();
+	$client->updateKnob();
 }
 
 #find the position of the character in the character array

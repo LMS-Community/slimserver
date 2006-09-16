@@ -331,6 +331,8 @@ sub changePos {
 
 	$client->modeParam('listIndex', int($newposition));
 
+	$client->updateKnob();
+
 	my $onChange = $client->modeParam('onChange');
 
 	if (ref($onChange) eq 'CODE') {
