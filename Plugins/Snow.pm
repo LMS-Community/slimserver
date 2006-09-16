@@ -67,7 +67,7 @@ PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
 	EN	Snow Screensaver: Quantity of snow
 	ES	Salvapantallas de Nieve: Cantidad de nieve
 	FR	Ecran de veille neige: Intensité
-	NL	Sneeuw schermbeveiliger: Hoeveelheid sneeuw
+	NL	Sneeuw schermbeveiliger: hoeveelheid sneeuw
 
 PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
 	DE	Ein paar Schneeflocken
@@ -118,7 +118,7 @@ PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
 	EN	Snow Screensaver: Style of snow
 	ES	Salvapantallas de Nieve: Estilo de nieve
 	FR	Ecran de veille Neige: Type
-	NL	Sneeuw schermbeveiliger: Sneeuwstijl
+	NL	Sneeuw schermbeveiliger: sneeuwstijl
 
 PLUGIN_SCREENSAVER_SNOW_STYLE_1
 	DE	Es läuft gerade... mit Schnee im Hintergrund
@@ -211,7 +211,7 @@ PLUGIN_SCREENSAVER_SNOW_SORRY
 	ES	Lo siento, la Nieve no funciona en este reproductor.
 	FR	Désolé, Neige ne fonctionne pas sur cette platine.
 	IT	Scusa, Neve non funziona con questo lettore.
-	NL	Sorry, Sneeuw werkt niet met deze speler.
+	NL	Sorry, sneeuw werkt niet met deze speler.
 '};
 
 ##################################################

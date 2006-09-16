@@ -2488,7 +2488,7 @@ SETUP_PLAYERNAME
 	FR	Nom de la platine
 	HE	שם הנגן
 	JA	プレーヤー名
-	NL	Player Naam
+	NL	Spelernaam
 	NO	Spillernavn
 	PT	Nome do Cliente
 	SV	Spelarnamn

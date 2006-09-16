@@ -979,7 +979,7 @@ PLUGIN_RANDOM_CHOOSE_BELOW
 	ES	Elegir una mezcla al azar de mósica de tu colección:
 	FR	Sélectionnez un mix aléatoire de morceaux tirés de votre collection :
 	HE	בחר מיקס אקראי
-	NL	Kies een willekeurige mix van je muziek collectie:
+	NL	Kies een willekeurige mix van je muziekcollectie:
 
 PLUGIN_RANDOM_TRACK_WEB
 	DE	Zufällige Lieder

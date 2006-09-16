@@ -114,7 +114,7 @@ PLUGIN_RHAPSODY_ERROR_STALE
 PLUGIN_RHAPSODY_ERROR_INTERNAL
 	DE	Rhapsody: Interner Serverfehler, bitte überprüfen Sie die Rhapsody Anwendung.
 	EN	Rhapsody: Internal server error, please check the Rhapsody application.
-	NL	Rhapsody: Interne serverfout, controleer het Rhapsody programma.
+	NL	Rhapsody: Interne serverfout. Controleer het Rhapsody programma.
 ";
 }
 

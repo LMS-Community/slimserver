@@ -1110,7 +1110,7 @@ SETUP_CLIPORT_DESC
 	HE	פורט זה משמש לשליטה על נגנים
 	IT	Puoi cambiare il numero della porta usata dall'interfaccia a linea di comando per controllare il lettore. (Imposta a zero per disabilitare l'interfaccia a linea di comando).
 	JA	プレーヤーをコントロールする、コマンドライン インターフェースに使われるポートナンバーを変更することができます。
-	NL	Je kunt het poortnummer aanpassen dat gebruikt wordt om de player via een Opdrachtprompt interface te bedienen. Zet dit poortnummer op 0 (nul) als je de Opdrachtprompt interface wilt uitschakelen.
+	NL	Je kunt het poortnummer aanpassen dat gebruikt wordt om de player via een opdrachtprompt interface te bedienen.
 	NO	Du kan endre portnummeret som brukes for å kontrollere din spiller via et terminalgrensesnitt.
 	PT	Pode mudar o número da porta para ligação da interface de linha de comando do player.
 	SV	Du kan ändra portnumret som används för att kontrollera din spelare via ett terminalgränssnitt.
@@ -1125,7 +1125,7 @@ SETUP_CLIPORT_OK
 	FR	L'interface en ligne de commande utilise maintenant le port :
 	IT	E' attualmente in uso la seguente porta per l'interfaccia a linea di comando:
 	JA	現在コマンドライン インターフェースには、以下のポートが使われています:
-	NL	De volgende poort wordt gebruikt voor de Opdrachtprompt interface:
+	NL	De volgende poort wordt gebruikt voor de opdrachtprompt interface:
 	NO	Bruker nå følgende portnummer for terminalgrensesnitt:
 	PT	A porta para acesso via linha de comando é
 	SV	Använder nu följande portnummer för terminalgränssnittet:

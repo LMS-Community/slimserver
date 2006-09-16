@@ -219,6 +219,7 @@ sub strings {
 PLUGIN_DIGITAL_INPUT
 	DE	Digitale Eingänge
 	EN	Digital Inputs
+	NL	Digitale invoer
 
 PLUGIN_DIGITAL_INPUT_BALANCED_AES
 	EN	Balanced AES/EBU
@@ -239,11 +240,14 @@ PLUGIN_DIGITAL_INPUT_RCA_SPDIF
 	NL	RCA coax S/PDIF
 	
 PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF
+	DE	Optisch S/PDIF (TOSLINK)
 	EN	Optical S/PDIF (TOSLINK)
+	NL	Optische S/PDIF (TOSLINK)
 
 PLUGIN_DIGITAL_INPUT_CHOOSE_BELOW
 	DE	Wählen Sie einen digitalen Eingang:
 	EN	Choose a Digital Input option below:
+	NL	Kies hieronder een digitale invoeroptie:
 '};
 
 1;

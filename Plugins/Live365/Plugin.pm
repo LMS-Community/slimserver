@@ -979,25 +979,26 @@ PLUGIN_LIVE365_LOGOUT
 	DE	Abmelden
 	EN	Log out
 	ES	Desconectarse
-	NL	Log uit
+	NL	Afmelden
 
 PLUGIN_LIVE365_LOGIN
 	CS	Přihlásit
 	DE	Anmelden
 	EN	Log in
 	ES	Conectarse
+	NL	Aanmelden
 
 PLUGIN_LIVE365_NOT_LOGGED_IN
 	DE	Nicht bei Live365 angemeldet
 	EN	Not logged in to Live365
 	ES	No se ha ingresado a Live365
-	NL	Niet ingelogd bij Live365
+	NL	Niet aangemeld bij Live365
 
 PLUGIN_LIVE365_NO_CREDENTIALS
 	DE	Keine Live365 Anmeldeinformationen
 	EN	No Live365 account information
 	ES	No existe información de cuenta para Live365
-	NL	Geen Live365 account informatie
+	NL	Geen Live365 gebruikersinformatie
 
 PLUGIN_LIVE365_LOGIN_SUCCESS
 	DE	Erfolgreich
@@ -1016,7 +1017,7 @@ PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
 	DE	Problem beim Anmelden
 	EN	Login problem
 	ES	Problema de conexión
-	NL	Login probleem
+	NL	Aanmeldprobleem
 
 PLUGIN_LIVE365_LOGIN_ERROR_ACTION
 	DE	Unbekannter Vorgang
@@ -1034,7 +1035,7 @@ PLUGIN_LIVE365_LOGIN_ERROR_SESSION
 	DE	Sitzung abgelaufen. Bitte neu anmelden.
 	EN	Session no longer valid. Log in again.
 	ES	La sesión ya no es válida. Conectate nuevamente.
-	NL	Sessie niet langer geldig. Log opnieuw in.
+	NL	Sessie niet langer geldig. Meld opnieuw aan.
 
 PLUGIN_LIVE365_LOGIN_ERROR_HTTP
 	DE	Problem mit Live365 Website. Bitte neu versuchen.
@@ -1213,7 +1214,7 @@ PLUGIN_LIVE365_SEARCH_H
 	DE	Nach Broadcaster suchen
 	EN	Search Broadcasters
 	ES	Buscar emisoras
-	NL	Zoek broadcasters
+	NL	Zoek omroepen
 
 SETUP_GROUP_PLUGIN_LIVE365
 	EN	Live365 Internet Radio
@@ -1370,6 +1371,7 @@ STATIONSMATCHING
 	DE	Passende Sender
 	EN	Stations matching
 	ES	Estaciones coinciden
+	NL	Bij elkaar passende stations
 
 LOCATIONSMATCHING
 	DE	Passende Region

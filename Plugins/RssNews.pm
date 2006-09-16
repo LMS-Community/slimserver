@@ -736,7 +736,7 @@ PLUGIN_RSSNEWS_ADD_NEW
 	ES	Añadir nuevo feed -->
 	FR	Ajouter flux -->
 	IT	Aggiungi un nuovo feed -->
-	NL	Voeg nieuwe feed toe -->
+	NL	Voeg nieuw kanaal toe -->
 
 PLUGIN_RSSNEWS_WAIT
 	DE	Bitte warten...
@@ -751,7 +751,7 @@ PLUGIN_RSSNEWS_ERROR
 	ES	Fallo al recuperar feed de RSS
 	FR	Impossible de charger le flux
 	IT	Errore nella ricerca di feed RSS
-	NL	Fout bij ophalen RSS feed
+	NL	Fout bij ophalen RSS kanaal
 
 PLUGIN_RSSNEWS_NO_DESCRIPTION
 	DE	Keine Beschreibung verfügbar
@@ -838,14 +838,14 @@ PLUGIN_RSSNEWS_ERROR_IN_FEED
 	EN	Error parsing RSS feed
 	ES	Error analizando feed de RSS
 	FR	Erreur de lecture du flux
-	NL	Fout bij decoderen RSS feed
+	NL	Fout bij decoderen RSS kanaal
 
 PLUGIN_RSSNEWS_LOADING_FEED
 	DE	RSS Feed wird geladen...
 	EN	Loading RSS feed...
 	ES	Cargando feed de RSS
 	FR	Chargement flux...
-	NL	Laden RSS feed...
+	NL	Laden RSS kanaal...
 
 SETUP_GROUP_PLUGIN_RSSNEWS_DESC
 	DE	Das RSS News Ticker Plugin kann verwendet werden, um RSS Feeds zu durchsuchen und lesen. Die folgenden Einstellungen helfen ihnen beim Definieren der anzuzeigenden RSS Feeds, und wie diese dargestellt werden sollen. Klicken Sie auf Ändern, um die Änderungen zu aktivieren.
@@ -853,7 +853,7 @@ SETUP_GROUP_PLUGIN_RSSNEWS_DESC
 	ES	El plugin de Ticker de Noticias RSS puede utilizarse para buscar y mostrar artículos de feeds de RSS. Las preferencias debajo pueden utilizarse para elegir que feed utilizar y controlar como se muestra. Presionar el botón Cambiar cuando se haya finalizado.
 	FR	Le module d'extension Aggrégateur RSS vous permet de parcourir et d'afficher le contenu de flux RSS. Les paramètres ci-dessous permettent de sélectionner les flux RSS et de modifier leur affichage sur la platine. Cliquez sur Modifier une fois les changements effectués.
 	IT	Il plugin RSS News Ticker puo' essere usato per sfogliare e visualizzare argomenti dai feed RSS. Le preferenze piu' sotto possono essere usate per determinare quali feed RSS usare e controllare come vengono visualizzati. Premi il bottone Cambia quando hai finito.
-	NL	De RSS nieuwsberichten plugin gebruik je voor het koppensnellen van RSS feeds en het bekijken van RSS feeds. De instellingen gebruik je om te bepalen welke RSS feeds je wilt zien en hoe ze getoond worden. Klik op veranderen wanneer je klaar bent.
+	NL	De RSS nieuwsberichten plugin gebruik je voor het koppensnellen van RSS kanelen en het bekijken van RSS kanalen. De instellingen gebruik je om te bepalen welke RSS kanalen je wilt zien en hoe ze getoond worden. Klik op Veranderen wanneer je klaar bent.
 
 SETUP_PLUGIN_RSSNEWS_FEEDS
 	DE	RSS Feeds ändern
@@ -861,7 +861,7 @@ SETUP_PLUGIN_RSSNEWS_FEEDS
 	ES	Modificar feeds de RSS
 	FR	Modifier les flux RSS
 	IT	Modifica i feed RSS
-	NL	Wijzig RSS feeds
+	NL	Wijzig RSS kanalen
 
 SETUP_PLUGIN_RSSNEWS_FEEDS_DESC
 	DE	Dies ist die Liste der anzuzeigenden RSS Feeds. Um einen neuen zu abonnieren, tippen Sie einfach dessen URL in eine leere Zeile. Um einen Feed zu entfernen, löschen Sie dessen URL. Bestehende URLs können im entsprechenden Feld bearbeitet werden. Klicken Sie auf Ändern, um die Änderungen zu aktivieren.
@@ -869,7 +869,7 @@ SETUP_PLUGIN_RSSNEWS_FEEDS_DESC
 	ES	Esta es la lista de feeds de RSS. Para añadir un nuevo feed, escribir la URL en la línea vacía. Para elminar uno, simplemente borrar la URL de la línea correspondiente. Para cambiar la URL de un feed existente, editar el texto correspondiente. Hacer click en Cambiar cuando se haya finalizado.
 	FR	Ceci est la liste des flux RSS à afficher. Pour ajouter un flux, tapez son URL sur une ligne vide. Pour supprimer un flux, effacer l'URL de la ligne correspondante. Pour changer l'URL d'un flux existant, modifiez la ligne correspondante. Cliquez sur Modifier une fois les changements effectués.
 	IT	Questa e' la lista dei feed RSS da visualizzare. Per aggiungerne uno nuovo, digita la sua URL in una linea vuota. Per rimuoverne uno, cancella semplicemente la URL dalla linea corrispondente. Per cambiare la URL di un feed esistente, modifica il contenuto del testo. Premi il bottone Cambia quando hai finito.
-	NL	Dit is de lijst van RSS feeds. Om een nieuwe toe te voegen type je de URL op een lege regel. Om een RSS feed te verwijderen maak je de regel leeg. Om een URL te wijzigen wijzig je de tekst. Klik op Veranderen als de wijzigingen compleet zijn.
+	NL	Dit is de lijst van RSS kanalen. Om een nieuwe toe te voegen type je de URL op een lege regel. Om een RSS kanaal te verwijderen maak je de regel leeg. Om een URL te wijzigen wijzig je de tekst. Klik op Veranderen als de wijzigingen compleet zijn.
 
 SETUP_PLUGIN_RSSNEWS_RESET
 	DE	Standard Feeds wieder herstellen
@@ -877,7 +877,7 @@ SETUP_PLUGIN_RSSNEWS_RESET
 	ES	Reestablecer feeds de RSS por defecto
 	FR	Rétablir les flux RSS par défaut
 	IT	Reimposta i feed RSS di default
-	NL	Herstel standaard RSS feeds
+	NL	Herstel standaard RSS kanalen
 
 SETUP_PLUGIN_RSSNEWS_RESET_DESC
 	DE	Klicken Sie auf den Reset Knopf, um die Standard RSS Feeds zu reaktivieren.
@@ -885,13 +885,13 @@ SETUP_PLUGIN_RSSNEWS_RESET_DESC
 	ES	Presionar el botón de Restablecer para volver al conjunto de valores por defecto de feeds de RSS.
 	FR	Cliquez sur Défaut pour rétablir la liste par défaut des flux RSS.
 	IT	Premi il bottone Reset per ritornare al set iniziale di feed RSS.
-	NL	Klik op Herstel om de standaard RSS feeds te herstellen.
+	NL	Klik op Herstel om de standaard RSS kanalen te herstellen.
 
 PLUGIN_RSSNEWS_RESETTING
 	DE	RSS Feeds wurden auf Standardwerte zurückgesetzt.
 	EN	Resetting to default RSS Feeds.
 	ES	Reestableciendo el feed  de RSS por defecto
-	NL	Standaard RSS feeds herstellen.
+	NL	Standaard RSS kanalen herstellen.
 
 SETUP_PLUGIN_RSSNEWS_RESET_BUTTON
 	CS	Resetovat
@@ -915,7 +915,7 @@ SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC
 	ES	El número máximo de elementos mostrados, para cada feed, mientras el salvapantallas está activo. Un valor más alto implica que el salvapantal>las mostrará más elementos antes de pasar al próximo feed.
 	FR	Le nombre maximum d'éléments affichés pour chaque flux RSS lorsque l'écran de veille est actif. Un nombre plus élevé signifie que l'écran de veille affichera plus d'éléments avant de passer au flux suivant.
 	IT	E' il numero massimo di argomenti visualizzati per ogni feed mentre il salvaschermo e' attivo. Un valore piu' grande implica che il salvaschermo visualizzera' piu' argomenti prima di passare al prossimo feed.
-	NL	Het maximum aantal te tonen items per feed terwijl de schermbeveiliger actief is. Een hogere waarde laat meer items van een feed zien voordat naar het volgende kanaal gesprongen wordt.
+	NL	Het maximum aantal te tonen items per kanaal terwijl de schermbeveiliger actief is. Een hogere waarde laat meer items van een kanaal zien voordat naar het volgende kanaal gesprongen wordt.
 
 SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_CHOOSE
 	CS	Položek na kanál
@@ -932,7 +932,7 @@ SETUP_PLUGIN_RSSNEWS_FEEDS_CHANGE
 	ES	Lista de feeds de RSS modificada.
 	FR	Liste des flux RSS modifiée.
 	IT	Lista dei feed RSS cambiata.
-	NL	RSS feeds lijst gewijzigd.
+	NL	RSS kanalenlijst gewijzigd.
 !
 
 }

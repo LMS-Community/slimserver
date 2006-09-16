@@ -344,7 +344,7 @@ PLUGIN_HEALTH_NETTEST_SELECT_RATE
 	EN	Press Up/Down to select rate
 	ES	Elegir tasa: pres. Arriba/Abajo
 	FR	Haut/Bas pour changer le taux
-	NL	Selecteer snelheid met op/neer
+	NL	Druk op op/neer om de snelheid te selecteren
 
 PLUGIN_HEALTH_NETTEST_NOT_SUPPORTED
 	EN	Not Supported on this Player
@@ -395,11 +395,12 @@ PLUGIN_HEALTH_PERF_SUMMARY
 PLUGIN_HEALTH_PERF_SUMMARY_DESC
 	EN	Please queue up several tracks to play on this player and start them playing.  Then press the Reset link below to clear the statistics and update this display.
 	FR	Ajoutez plusieurs morceaux à la liste de lecture de cette platine et jouez-les, puis cliquez sur le bouton Réinitialiser ci-dessus pour mettre à jour les statistiques.
-	NL	Selecteer verschillende liedjes om achter elkaar af te spelen op deze speler en start het spelen.<BR> Druk dan op de Reset link hieronder om de statistieken leeg te maken en weer bij te werken.
+	NL	Selecteer verschillende liedjes om achter elkaar af te spelen op deze speler en start het spelen.<BR> Druk vervolgens op de Legen link hieronder om de statistieken leeg te maken en weer bij te werken.
 
 PLUGIN_HEALTH_PERF_RESET
 	EN	Reset
 	FR	Réinitialiser
+	NL	Legen
 
 PLUGIN_HEALTH_SUMMARY
 	EN	Summary
@@ -421,7 +422,7 @@ PLUGIN_HEALTH_PERF_STATISTICS
 PLUGIN_HEALTH_PLAYER
 	EN	Player Statistics
 	FR	Statistiques platine
-	NL	Speler statistieken
+	NL	Spelerstatistieken
 
 PLUGIN_HEALTH_SERVER
 	EN	Server Statistics
@@ -469,7 +470,7 @@ PLUGIN_HEALTH_CONTROLFAIL_DESC
 PLUGIN_HEALTH_STREAMINACTIVE_DESC
 	EN	There is currently no active connection for streaming to this player.  A connection is required to stream a file to your player.  Squeezebox2/3 may close the streaming connection towards the end of a track once it is transfered to the buffer within the player.  This is not cause for concern.<p>If you experiencing problems playing files and never see an active streaming connection, then this may indicate a network problem.  Please check that your network and/or server firewall do not block connections to TCP port 9000.
 	FR	Il n\'y a actuellement aucune connexion de flux active pour cette platine. Une connexion de flux est requise lors de la lecture d\'un fichier depuis le serveur (mais pas lors de la lecture d\'un flux distant sur une Squeezebox2).    Si vous tentez de lire un fichier local sur cette platine, ceci indique un problème réseau. Vérifiez l\'intégrité de votre réseau et/ou que votre pare-feu ne bloque pas le port TCP 9000.
-	NL	Er is op dit moment geen actieve connectie voor het streamen naar deze speler. Een connectie is altijd nodig om bestanden te spelen vanaf de server (maar niet als je een radiostream op afstand gebruikt bij een Squeezebox2 of 3)  <br>  Als je een lokaal bestand probeert af te spelen dan wijst dit op een netwerkprobleem. Controleer of je netwerk en/of server firewall niet TCP poort 9000 blokkeren.
+	NL	Er is op dit moment geen actieve connectie voor het streamen naar deze speler. Een connectie is nodig om een bestand af te spelen op je speler. Squeezebox2/3 kunnen de connectie sluiten bij het einde van een liedje zodra het bestand in de buffer staat. Dit is normaal gedrag. <BR>Als je problemen hebt met het afspelen van bestanden en je ziet nooit een connectie dan kan dit wijzen op een netwerkprobleem. Controleer of je netwerk en/of server firewall geen connecties blokkeren naar TCP poort 9000.
 
 PLUGIN_HEALTH_SIGNAL_INTERMIT
 	EN	Good, but Intermittent Drops
@@ -546,7 +547,7 @@ PLUGIN_HEALTH_BUFFER_LOW_DESC2
 	ES	El buffer de reproducción de este reproductor tiene, ocasionalmente, niveles por debajo del ideal. Este es un Squeezebox2/3 y por lo tanto es esperable que el buffer se vacíe al final de cada pista. Se puede recibir esta advertencia si se están reproduciendo muchas pistas de corta duración. Si se escuchan interrupciones de audio, por favor, controlar la potencia de señal de red.
 	FR	Le tampon de lecture de cette platine tombe occasionnellement à un niveau plus bas que la normale. La platine étant une Squeezebox2, il est normal que le tampon se vide à la fin de chaque morceau. Il est possible que cette alerte apparaisse si vous jouez un grand nombre de morceaux courts. Si le flux audio s\'interrompt, vérifiez l\'intégrité de votre réseau.
 	HE	לנגן יש בעיות לקבל מידע מהשרת. בדוק רשת
-	NL	De afspeelbuffer van deze speler is af en toe minder gevuld dan in de ideale situatie. Dit is een Squeezebox2. Daar mag het bufferniveau laag zijn aan het einde van een liedje. Je kunt deze waarschuwing krijgen als je veel korte liedjes afspeelt. Controleer de netwerksignaalsterkte als je haperingen hoort in het geluid.
+	NL	De afspeelbuffer van deze speler is af en toe minder gevuld dan in de ideale situatie. Dit is een Squeezebox2/3. Daar mag het bufferniveau laag zijn aan het einde van een liedje. Je kunt deze waarschuwing krijgen als je veel korte liedjes afspeelt. Controleer de netwerksignaalsterkte als je haperingen hoort in het geluid.
 
 PLUGIN_HEALTH_BUFFER
 	EN	Buffer Fullness
@@ -586,7 +587,7 @@ PLUGIN_HEALTH_RESPONSE_INTERMIT_DESC
 	ES	El tiempo de respuesta del servidor es ocasionalmente más alto que el deseado. Esto puede causar interrupciones audio, especialmente en los reproductores Slimp3 y Squeezebox1. Puede deberse a una carga de procesos de fondo, o a que una tarea de Slimserver está tomando más tiempo que el normal.
 	FR	Le temps de réponse du serveur est anormalement élevé par intermittence, ce qui peut causer des coupures audio, notamment avec un SLIMP3 ou une Squeezebox1. Ceci peut être causé par une charge élevée ou une opération complexe sur le serveur.
 	HE	זמן התגובה של השרת ארוך מהרצוי, בדוק אם השרת עמוס
-	NL	De serverreactietijd is af en toe lager dan gewenst. Dit kan audio haperingen veroorzaken, zeker bij de Slimp3 en Squeezebox1 spelers. De oorzaak kunnen de overige programma\'s zijn die op je server draaien of een SlimServer taak die langer duurt dan normaal.
+	NL	De serverreactietijd is af en toe lager dan gewenst. Dit kan audio haperingen veroorzaken. Zeker bij Slimp3 en Squeezebox1 spelers. De oorzaak kunnen overige programma\'s zijn die op je server draaien of een SlimServer taak die langer duurt dan normaal.
 
 PLUGIN_HEALTH_RESPONSE_POOR
 	EN	Poor Response
@@ -600,7 +601,7 @@ PLUGIN_HEALTH_RESPONSE_POOR_DESC
 	ES	El tiempo de respuesta del servidor es regularmente más bajo que los niveles de perfomance normales. Esto puede causar interrupciones de  audio, especialmente en los reproductores Slimp3 y Squeezebox1. Por favor, verificar la perfomance del servidor. Si esto está OK, entonces verificar que Slimserver no está corriendo tareas intensivas (por ej. recopilando la colección musical) o que algón plugin no está causando esto.
 	FR	Le temps de réponse du serveur est anormalement élevé, ce qui peut causer des coupures audio, notamment avec un SLIMP3 ou une Squeezebox1. Vérifiez les performances de votre serveur. Si celles-ci sont normales, assurez-vous qu\'un module d\'extension ou une tâche complexe (comme le répertoriage de la bibliothèque musicale) n\'est pas à l\'origine du problème.
 	HE	זמן התגובה של השרת ארוך מהרצוי, בדוק אם השרת עמוס
-	NL	De serverreactietijd is regelmatig lager dan gewenst. Dit kan audio haperingen veroorzaken, zeker bij de Slimp3 en Squeezebox1 spelers. Controleer de prestatie van je server. Is die goed, controleer dan of SlimServer geen intensieve taken draait (zoals scannen van de muziekcollectie) of dat een plugin dit veroorzaakt.
+	NL	De serverreactietijd is regelmatig lager dan gewenst. Dit kan audio haperingen veroorzaken. Zeker bij Slimp3 en Squeezebox1 spelers. Controleer de prestatie van je server. Is die goed, controleer dan of SlimServer geen intensieve taken draait (zoals scannen van de muziekcollectie) of dat een plugin dit veroorzaakt.
 
 PLUGIN_HEALTH_NORMAL
 	EN	This player is performing normally.
@@ -680,7 +681,7 @@ PLUGIN_HEALTH_BUFFER_DESC
 	ES	Este gráfico muestra el llenado del buffer del reproductor. Cuanto más lleno esté mejor es. Notar que el buffer solo se llena cuando el reproductor está reproduciendo pistas.    Squeezebox1 utiliza un buffer pequeño y se espera que permanezca lleno mientras se reproduce. Si este valor cae a 0 se producirán interrupciones en el audio. Esto se debe muy probablemente a problemas de red.    Squeezebox2/3 utiliza un buffer grande. Este se vacía (vuelve a 0) al final de cada pista y luego se llena nuevamente para la próxima pista. Solo debería precupar el caso en que el llenado del buffer no tiene un nivel alto durante la mayoría del tiempo en que se esta reproduciendo una pista.    El reproducir streams remotos puede producir que el buffer tenga un nivel de llenado bajo, ya que el reproductor necesitas esperar que lleguen datos del servidor remoto. Esto no es causa para preocuparse.
 	FR	Ce graphique montre le taux de remplissage du tampon de la platine. Plus le tampon est rempli, moins le flux audio risque d\'être interrompu. Notez que le tampon n\'est rempli que lors de la lecture.    La Squeezebox1 utilise un tampon réduit qui reste normalement rempli durant toute la lecture. Si le taux de remplissage tombe à 0, typiquement à cause d\'un problème réseau, le flux audio sera interrompu.    La Squeezebox2 utilise un tampon plus important, qui se vide à la fin de chaque morceau et se remplit à nouveau au début du suivant. Un taux de remplissage fluctuant est donc normal.    La lecture de flux à distance peut générer des taux de remplissage du tampon peu élevés lorsque la platine est en attente de données de la part du serveur distant ; ce comportement est normal.
 	HE	תצוגה גרפית של סטטיסטיקות
-	NL	Deze grafiek toont bufferniveau. Hoger niveau is beter. De buffer is alleen gevuld tijdens het afspelen van muziek.  <br>Squeezebox1 gebruikt een kleine buffer die normaal gesproken altijd vol is. Als het niveau naar 0 gaat zal er hapering in het geluid optreden. Dit komt vaak door netwerkproblemen.  <br>Squeezebox2/3 gebruikt een grote buffer. Hier loopt het bufferniveau naar 0 toe aan het einde van een liedje en vult zich weer aan het begin van het volgende liedje. Alleen als de buffer de meeste tijd niet gevuld is tijdens het spelen moet je actie nemen.  <br>Het spelen van streams op afstand (Internet radio) geeft een laag bufferniveau omdat de speler moet wachten op de server op afstand. Dit is geen gevolg van problemen.
+	NL	Deze grafiek toont het bufferniveau. Een hoger niveau is beter. De buffer is alleen gevuld tijdens het afspelen van muziek.  <br>Squeezebox1 gebruikt een kleine buffer die normaal gesproken altijd vol is. Als het niveau naar 0 gaat zal er hapering in het geluid optreden. Dit komt vaak door netwerkproblemen.  <br>Squeezebox2/3 gebruikt een grote buffer. Hier loopt het bufferniveau naar 0 toe aan het einde van een liedje en vult zich weer aan het begin van het volgende liedje. Alleen als de buffer de meeste tijd niet gevuld is tijdens het spelen moet je actie nemen.  <br>Het spelen van streams op afstand (Internet radio) geeft een laag bufferniveau omdat de speler moet wachten op de server op afstand. Dit is geen gevolg van problemen.
 
 PLUGIN_HEALTH_CONTROL_DESC
 	EN	This graph shows the number of messages queued up to send to the player over the control connection.  A measurement is taken every time a new message is sent to the player.  Values above 1-2 indicate potential network congestion or that the player has become disconnected.
@@ -692,7 +693,7 @@ PLUGIN_HEALTH_CONTROL_DESC
 PLUGIN_HEALTH_RESPONSE_DESC
 	EN	The response time of the server - the time between successive calls to select.  
 	FR	Ce graphique montre le laps de temps en secondes nécessaire au serveur pour répondre aux instructions de la ou des platine(s) connectée(s). Plus la valeur est basse, plus le serveur est réactif. Des valeurs supérieures à 1 seconde sont susceptibles d\'altérer les performances audio.    Les temps de réponse trop élevés peuvent être le résultat d\'autres tâches ou de tâches complexes en cours d\'éxécution sur le serveur.
-	NL	De responstijd van de server. De tijd tussen de successievelijk te selecteren calls.
+	NL	De responstijd van de server. De tijdsduur tussen achtereenvolgende aanroepen.
 
 PLUGIN_HEALTH_SELECTTASK
 	EN	Select Task Duration
@@ -702,7 +703,7 @@ PLUGIN_HEALTH_SELECTTASK
 PLUGIN_HEALTH_SELECTTASK_DESC
 	EN	The length of time taken by each task run by select.
 	FR	La durée écoulée pour chaque tâche sélectionnée.
-	NL	De lengte in tijd die elke geselecteerde taak neemt.
+	NL	De tijdsduur die elke geselecteerde taak neemt.
 
 PLUGIN_HEALTH_SCHEDULERTASK
 	EN	Scheduler Task Duration
@@ -712,7 +713,7 @@ PLUGIN_HEALTH_SCHEDULERTASK
 PLUGIN_HEALTH_SCHEDULERTASK_DESC
 	EN	The length of time taken by each scheduled task.
 	FR	La durée écoulée pour chaque tâche planifiée.
-	NL	De lengte in tijd die elke geplande taak neemt.
+	NL	De tijdsduur die elke geplande taak neemt.
 
 PLUGIN_HEALTH_TIMERTASK
 	EN	Timer Task Duration
@@ -722,7 +723,7 @@ PLUGIN_HEALTH_TIMERTASK
 PLUGIN_HEALTH_TIMERTASK_DESC
 	EN	The length of time taken by each timer task.
 	FR	La durée de chaque tâche automatique.
-	NL	De lengte in tijd genomen door elke timertaak.
+	NL	De tijdsduur ingenomen door elke timertaak.
 
 PLUGIN_HEALTH_TIMERLATE
 	EN	Timer Lateness
@@ -732,7 +733,7 @@ PLUGIN_HEALTH_TIMERLATE
 PLUGIN_HEALTH_TIMERLATE_DESC
 	EN	The time between when a timer task was scheduled and when it is run.
 	FR	Le SlimServer utilise un mécanisme de programmation pour déclencher certaines tâches, comme la mise à jour de l\'interface utilisateur. Ce graphique montre le décalage en secondes entre le déclenchement programmé d\'une tâche et son déclenchement réel.    Deux tâches programmées ne pouvant s\'éxécuter simultanément, il est possible que certaines tâches soient déclenchées par le serveur après un délai d\'attente. Si celui-ci est trop important, la réactivité de l\'interface utilisateur peut en être affectée.
-	NL	De tijd tussen wanneer een timer taak was gepland en was uitgevoerd.
+	NL	De tijdsduur tussen wanneer een timer taak was gepland en was uitgevoerd.
 
 PLUGIN_HEALTH_REQUEST
 	EN	Execute / Notification Task Duration
@@ -742,12 +743,12 @@ PLUGIN_HEALTH_REQUEST
 PLUGIN_HEALTH_REQUEST_DESC
 	EN	The length of time taken by each execute command or notification callback.
 	FR	La durée écoulée pour chaque commande d\'exécution ou rappel de notification.
-	NL	De lengte van de tijd bij elk uitgevoerde commando of terugroepnotificatie.
+	NL	De tijdsduur van elk uitgevoerde commando of terugroepnotificatie.
 
 PLUGIN_HEALTH_PAGEBUILD
 	EN	Web Page Build
 	FR	Génération page web
-	NL	Web pagina opbouw
+	NL	Webpagina opbouw
 
 PLUGIN_HEALTH_PAGEBUILD_DESC
 	EN	The length of time taken to build each web page.
@@ -772,7 +773,7 @@ PLUGIN_HEALTH_DBACCESS
 PLUGIN_HEALTH_DBACCESS_DESC
 	EN	The time taken for information to be retrieved from the database.
 	FR	Le temps écoulé pour accéder à une information depuis la base de données.
-	NL	De tijd om informatie op te halen uit de database.
+	NL	De tijdsduur om informatie op te halen uit de database.
 
 PLUGIN_HEALTH_PROCTEMPLATE
 	EN	Process Template
