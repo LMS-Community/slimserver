@@ -421,51 +421,30 @@ var playerExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 function refreshNewPlayer(theData) {
 	var parsedData = fillDataHash(theData);
 	refreshAll(parsedData,1);
-	//refreshInfo(parsedData,force);
 	
 	var headerURL = new String(parent.header.location.href);
 	homeloc = headerURL.replace(playerExp, parsedData['player_id']);
-	if (!document.all) {
-		//load(newloc+"&optionOnly=1",'browseForm');
+	
+	if (!document.all) { // some versions of IE just dont like div's being filled :(
 		//parent.header.document.getElementById('browseForm').innerHTML = ' Fetching data...';
 		getOptionData("&optionOnly=1"+ '&d=' + Math.random(), optionDone);
 	}
 }
 
-function ahah(url, target) {
-	//parent.header.document.getElementById(target).innerHTML = ' Fetching data...';
-	if (window.XMLHttpRequest) {
-		req = new XMLHttpRequest();
-	} else if (window.ActiveXObject) {
-		req = new ActiveXObject("Microsoft.XMLHTTP");
-	}
-	if (req != undefined) {
-		req.onreadystatechange = function() {ahahDone(url, target);};
-		req.open("GET", url + '&d=' + new Date().getTime(), true);
-		req.setRequestHeader( "If-Modified-Since", "Sat, 1 Jan 2000 00:00:00 GMT" );
-		req.setRequestHeader( "Referer", document.location.href );
-		req.send(null);
-	}
-}
-
 function optionDone(req) {
-	//alert(req.responseText);
+	
 	if (req.readyState == 4) { // only if req is "loaded"
 
 		if (req.responseText) { // only if "OK"
 			parent.header.document.getElementById('browseForm').innerHTML = req.responseText;
 		} else {
-			parent.header.document.getElementById('browseForm').innerHTML = " Error:\n"+ req.status + "\n" +req.statusText;
+			//parent.header.document.getElementById('browseForm').innerHTML = " Error:\n"+ req.status + "\n" +req.statusText;
 		}
 	}
 }
 
 function getOptionData(params, action) {
-	var requesttype = 'post';
-
-	//if (window.XMLHttpRequest) {
-		requesttype = 'get';
-	//}
+	var requesttype = 'get';
 
 	var myAjax = new Ajax.Request(
 	homeloc,
@@ -478,28 +457,12 @@ function getOptionData(params, action) {
 	});
 }
 
-function ahahDone(url, target) {
-	if (req.readyState == 4) { // only if req is "loaded"
-		if (req.status == 200 && req.responseText) { // only if "OK"
-			parent.header.document.getElementById(target).innerHTML = req.responseText;
-		} else {
-			parent.header.document.getElementById(target).innerHTML=" AHAH Error:\n"+ req.status + "\n" +req.statusText;
-		}
-	}
-}
-
-function load(name, div) {
-	ahah(name,div);
-	return false;
-}
-
 function playlistChecker(start) {
 	var prev_url = url;
 	url = 'playlist.html';
 	var args = 'player='+player+'&ajaxRequest=1&s='+Math.random();
 	
 	if(start != null && start != '') {
-		//alert([start != '', start == null, start]);
 		refreshPlaylist();
 		args = args + "&start="+start;
 	}

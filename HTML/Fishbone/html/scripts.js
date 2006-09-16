@@ -24,9 +24,7 @@ function changePlayer(player_List) {
 	
 	var newPlayer = "=" + player;
 	newHref(parent.frames[2].document,newPlayer);
-	//parent.playlist.location="playlist.html?player" + newPlayer;
 	refreshPlaylist(player);
-	//alert([newPlayer,parent.playlist.location])
 	
 	var args = 'player='+player+'&ajaxRequest=1';
 	getStatusData(args, refreshNewPlayer);
@@ -45,13 +43,12 @@ function changePlayer(player_List) {
 	}
 
 	var myString = getHomeCookie('SlimServer-Browserpage');
-	//alert([rExp.exec(myString),myString,parent.browser.location.href]);
 	newpage = "&page=" + rExp.exec(myString)[1];
 
 	headerURL = new String(parent.header.location.href);
 	newloc = headerURL.replace(playerExp, newPlayer);
-	//alert([newloc.replace(/&page=(.*?)$/,newpage)]);
-	if (document.all) {
+	
+	if (document.all) { //certain versions of IE will just have to reload the header
 		parent.header.location = newloc.replace(/&page=(.*?)$/,newpage);
 	}
 }
@@ -224,7 +221,6 @@ function getPlayer(Player)
 	plyr = getCookie(Player);
 
 	if (!plyr) return "";
-	
 	if (plyr.indexOf("=") == -1) plyr = "=" + plyr;
 
 	return plyr;
