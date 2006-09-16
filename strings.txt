@@ -54,7 +54,7 @@ BASE_SKIN
 	FR	Light
 	HE	ממשק בסיסי
 	JA	ライト
-	NL	Light
+	NL	Licht
 	NO	Lys
 	PT	Leve
 	SV	Lätt-utseende
@@ -90,8 +90,8 @@ DEFAULT_MAP
 
 HIT_RELOAD
 	CS	Klikněte pro obnovení a zobrazení nového skinu.
-	DE	<a href="/" target="_top">Klicken Sie hier</a>, um den neuen Skin zu aktivieren.
 	DA	<a href="/" target="_top">Genindlæs denne side</a> for at opdatere layoutet.
+	DE	<a href="/" target="_top">Klicken Sie hier</a>, um den neuen Skin zu aktivieren.
 	EN	<a href="/" target="_top">Click here</a> to refresh and see the new skin.
 	ES	<a href="/" target="_top">Actualice esta página para ver el estilo nuevo.</a>
 	FI	<a href="/" target="_top">Lataa sivu uudelleen nähdäksesi uuden ulkoasun.</a>
@@ -99,7 +99,7 @@ HIT_RELOAD
 	HE	<a href="/" target="_top">לחץ לטעינה מחודשת של חדשות</a>
 	IT	Premi qui per ricaricare la pagina e vedere il nuovo aspetto.
 	JA	<a href="/" target="_top">ここ</a>をクリックして更新し、新しいスキンを見る
-	NL	<a href="/" target="_top">Klik hier</a> om de nieuwe skin te tonen
+	NL	<a href="/" target="_top">Klik hier</a> om het nieuwe uiterlijk te tonen.
 	NO	<a href="/" target="_top">Trykk her</a> or å oppdatere med nytt utseende.
 	PT	<a href="/" target="_top">Actualize esta página para activar o novo tema.</a>
 	SV	<a href="/" target="_top">Klicka här</a> för att ladda om sidan med det nya utseendet.
@@ -256,7 +256,7 @@ TRANSPORTER_HOME
 	FI	Transporter Valikko
 	FR	Menu Transporter
 	JP	Transporter �ーム
-	NL	Transporter Hoofdmenu
+	NL	Transporter hoofdmenu
 	NO	Transporter Hjem
 	PT	Início Transporter
 	SE	Transporter huvudmeny
@@ -716,8 +716,8 @@ ADDING_TO_PLAYLIST_DBL
 
 INSERT_TO_PLAYLIST
 	CS	Přidat do seznamu:
-	DE	Einfügen und als nächstes spielen:
 	DA	Tilføjer til afspilning næste gang:
+	DE	Einfügen und als nächstes spielen:
 	EN	Adding to play next:
 	ES	Añadiendo como próxima canción:
 	FI	Lisätään seuraavaksi soitettavaksi:
@@ -725,7 +725,7 @@ INSERT_TO_PLAYLIST
 	HE	הוסף לרשימת ניגון
 	IT	Aggiungi come brano successivo:
 	JA	プレイ リストの次の曲に追加:
-	NL	Toevoegen aan playlist:
+	NL	Toevoegen om als volgende te spelen:
 	NO	Legger til som neste:
 	PT	Adicionar e tocar a seguir
 	SV	Lägger till som nästa låt:
@@ -745,8 +745,8 @@ INSERT_TO_PLAYLIST_DBL
 
 STOPPING
 	CS	Zastavuji...
-	DE	Stopp
 	DA	Stopper
+	DE	Stopp
 	EN	Stopping
 	ES	Parando
 	FI	Pysähtyy
@@ -754,7 +754,7 @@ STOPPING
 	HE	עוצר
 	IT	Stop
 	JA	停止
-	NL	Stop
+	NL	Stoppen
 	NO	Stopper
 	PT	Parado
 	SV	Stoppar
@@ -840,15 +840,15 @@ PLAYLIST_EMPTY
 
 BROWSING_MUSIC
 	CS	Procházet muziku...
-	DE	Durchsuchen der Musik...
 	DA	Gennemser musik
+	DE	Durchsuchen der Musik...
 	EN	Browsing music...
 	ES	Navegando por música...
 	FI	Selaa musiikkia...
 	FR	Parcours des morceaux...
 	IT	Scorro i brani...
 	JA	曲をブラウズしています...
-	NL	Door muziek aan het bladeren ...
+	NL	Door muziek bladeren...
 	NO	Blar gjennom musikk...
 	PT	Lista de músicas...
 	SV	Bläddrar...
@@ -856,8 +856,8 @@ BROWSING_MUSIC
 
 NOW_PLAYING_FROM
 	CS	Právě se hraje z
-	DE	Starte Wiedergabe von:
 	DA	Spiller nu fra:
+	DE	Starte Wiedergabe von:
 	EN	Now playing from:
 	ES	Reproduciendo de:
 	FI	Soitetaan:
@@ -865,7 +865,7 @@ NOW_PLAYING_FROM
 	HE	מנגן מ
 	IT	Riproduzione in corso da:
 	JA	現在再生中:
-	NL	Speelt nu af van:
+	NL	Speelt nu van:
 	NO	Spiller fra:
 	PT	A tocar de
 	SV	Nu spelas:
@@ -933,14 +933,14 @@ REPEAT_ALL
 
 CANCEL_SLEEP
 	CS	Sleep zrušen.
-	DE	Schlafmodus abgebrochen
 	DA	Slumrefunktion fravalgt.
+	DE	Schlafmodus abgebrochen
 	EN	Sleep cancelled.
 	ES	No se dormirá
 	FI	Unikytkin peruutettu.
 	FR	Mise en veille annulée
 	JA	スリープ キャンセル
-	NL	Sluimermodus uit
+	NL	Sluimermodus uit.
 	NO	Sovefunksjon avslått.
 	PT	Inactividade cancelada
 	SV	Insomning avbruten
@@ -1092,8 +1092,8 @@ ALARM_SELECT_PLAYLIST
 
 ALARM_SET_VOLUME
 	CS	Nastavit hlasitost buzení
-	DE	Wecker Lautstärke
 	DA	Indstil volume for alarmen
+	DE	Wecker Lautstärke
 	EN	Alarm Volume
 	ES	Establecer volumen de alarma
 	FI	Hälytyksen äänenvoimakkuus
@@ -1101,7 +1101,7 @@ ALARM_SET_VOLUME
 	HE	עוצמת שעון מעורר
 	IT	Volume sveglia
 	JA	アラーム ボリュームをセットして下さい
-	NL	Kies het wekvolume
+	NL	Kies wekvolume
 	NO	Sett Alarm volum
 	PT	Mudar Volume do Alarme
 	SV	Välj volym för väckning
@@ -1208,7 +1208,7 @@ ALARM_WEEKDAYS
 	FR	Réveils semaine
 	HE	שעון מעורר יומי
 	IT	Sveglia settimanale
-	NL	Weekdag wektijden
+	NL	wektijd weekdagen
 	SV	Larm Veckodagar
 	ZH_CN	周日闹钟
 
@@ -1323,6 +1323,7 @@ SQUEEZEBOX
 
 SQUEEZEBOX2
 	EN	Squeezebox2/v3
+	NL	Squeezebox2/3
 
 TRANSPORTER
 	EN	Transporter
@@ -1506,14 +1507,14 @@ CHECKING_STREAM
 
 CONNECTING_FOR
 	CS	Připojuji ke hraní:
-	DE	Verbinde...
 	DA	Forbinder for afspilning:
+	DE	Verbinde...
 	EN	Connecting...
 	ES	Conectando a:
 	FI	Yhdistetään soittaakseni:
 	FR	Connexion à :
 	JA	接続しています:
-	NL	Verbinden voor afspelen van:
+	NL	Verbinden...
 	NO	Kobler til for å spille:
 	PT	Ligando a
 	SV	Ansluter för uppspelning:
@@ -1819,7 +1820,7 @@ SETUP_GROUP_BRIGHTNESS_DESC
 	HE	הגדרת בהירות התצוגה במצבי מערכת שונים
 	IT	La luminosita' dello schermo del lettore puo' essere impostata per quando e' acceso, spento o inattivo (salvaschermo). Puo' anche essere regolata automaticamente quando premi un pulsante, riproduci un brano o rimane inattivo per un po'. Puoi anche scegliere di disabilitare questo automatismo.
 	JA	パワーオン・オフ時、スクリーンセーバー時のプレーヤーのディスプレイの明るさを調節できます
-	NL	De helderheid van het spelerscherm kun je apart instellen voor als de speler aan staat, standby ('uit') staat of in ruststand (schermbeveiliger). <BR>De helderheid kun je ook instellen voor wanneer je op een toets drukt, start met afspelen of de speler met rust laat voor een tijdje. Je kunt kiezen om dit automatische gedrag uit te schakelen.
+	NL	De helderheid van het spelerscherm kun je apart instellen voor als de speler aan staat, uit staat ('standby') staat of in ruststand (schermbeveiliger). <BR>De helderheid kun je ook instellen voor wanneer je op een toets drukt, start met afspelen of de speler met rust laat voor een tijdje. Je kunt kiezen om dit automatische gedrag uit te schakelen.
 	SV	Ljusstyrkan på spelarens skärm kan ställas in oberoende för lägena av, på och vänteläge. Ljusstyrkan kan också justeras automatiskt vid knapptryckning, vid start eller slut på sång, eller efter förinställd tid av oaktivitet. Du kan också välja att stänga av denna automatik.
 	ZH_CN	播放机显示屏可以根据不同的操作状态如开机、关机、或屏幕保护程序进行时设置不同的明亮度。播放机也会随着按键、开始播放音乐等活动而自行调节显示屏明亮度。用户可选择是否采用此项自动明亮度调节功能。
 
@@ -1867,7 +1868,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 	HE	בחר כיצד יוצג שם השיר
 	IT	Questi sono i formati tra cui poter scegliere sia qui che nelle impostazioni del lettore. Per rimuovere un formato, cancella il testo della casella, per inserirne uno nuovo, inseriscilo in una casella vuota. Gli elementi disponibili come dati sono: CT (tipo di contenuto), TITLE, GENRE, TRACKNUM (numero di traccia come numero intero), FS (dimensione file), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (secondi totali), DURATION (in minuti e secondi), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (nome del volume), PATH, FILE, EXT (estensione del file), LONGDATE (data corrente, lunga), SHORTDATE (data corrente, corta), CURRTIME (ora attuale). Gli elementi possono essere separati da qualsiasi carattere (o da niente). I separatori sono usati solo se sono presenti elementi. La selezione in uso e' il formato che verra' usato sulle pagine web.
 	JA	これらは上記とプレーヤーセットアップに利用できるフォーマットです。フォーマットを削除するには、テキストボックスをクリアし、新しいフォーマットを加えるには空のテキストボックスに入れてください。利用できるデータは： CT（コンテントタイプ）、TITLE（タイトル）、GENRE（ジャンル）、TRACKNUM(トラックナンバー)、FS（ファイルサイズ）、ARTIST（アーチスト)、ALBUM（アルバム)、COMMENT（コメント)、YEAR（年）、SECS（総秒数）、DURATION（長さ)、VBR_SCALE（vbr/cbr）、BITRATE（ビットレート)、TAGSIZE（タグサイズ）、VOLUME（ボリューム名）、PATH（パス）、FILE（ファイル)、EXT（拡張子）、LONGDATE（長い日付）、SHORTDATE（短い日付)、CURRTIME（現在の時間）。各データは何で区分してもかまいません。<br>現在のフォーマット選択はウェブ上で使われているものと同じです。
-	NL	Dit zijn de beschikbare formaten voor zowel hierboven als in de Speler instellingen. Leeg het invoerveld om een formaat te verwijderen. Om een formaat toe te voegen, voer deze in in een leeg invoerveld. <br>Beschikbare data elementen zijn: <BR>CT (content type), TITLE, GENRE, TRACKNUM, FS (bestandsgrootte), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (totaal seconden), DURATION (minuten en seconden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (album naam), PATH, FILE, EXT (file extention), LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME (huidige tijd). <BR>De elementen kunnen door alles (of niets) gescheiden geworden. Scheidingstekens worden alleen gebruikt als de data elementen aanwezig zijn.<br>Het op dit moment geselecteerde formaat zal worden gebruikt op de web pagina's.
+	NL	Dit zijn de beschikbare formaten voor zowel hierboven als in de Speler instellingen. Leeg het invoerveld om een formaat te verwijderen. Om een formaat toe te voegen, voer deze in in een leeg invoerveld. <br>Beschikbare data elementen zijn: <BR>CT (content type), TITLE, GENRE, TRACKNUM, FS (bestandsgrootte), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (totaal seconden), DURATION (minuten en seconden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (album naam), PATH, FILE, EXT (file extention), LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME (huidige tijd). <BR>De elementen kunnen door alles (of niets) gescheiden geworden. Scheidingstekens worden alleen gebruikt als de data elementen aanwezig zijn.<br>Het op dit moment geselecteerde formaat zal worden gebruikt op de webpagina's.
 	NO	Dette er tilgjengelige for web-interfacet og selve spilleren. For å fjerne et format, tøm boksen. For å legge til et format, skriv det i en tom boks. Tilgengelige elementer: CT (innholds type), TITLE, GENRE, TRACKNUM (spor nummer), FS (filstørrelse), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (totalt antall sekunder), DURATION (minutter og sekunder), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volumnavn), PATH, FILE, EXT (filending), LONGDATE (dagens dato, langt), SHORTDATE (dagens dato, kort), CURRTIME (klokkeslett nå). Elementer kan skilles med ethvert tegn (eller ingen). Skilletegnet vises bare om dataelementet finnes. Det valgte formatet er det som blir brukt på websidene.
 	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no cliente. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
 	SV	Dessa är de tillgängliga formaten för webgränssnittet och själva spelaren. För att ta bort ett format, töm textboxen. För att lägga till ett nytt format, skriv i en tom textbox. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT(kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME, PATH, FILE, EXT (filändelse), LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera dataelementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget tecken alls). Skiljetecken visas endast om dataelementet existerar. Det valda formatet är det som kommer användas på websidorna.
@@ -1990,7 +1991,7 @@ SETUP_IDLEFONT
 	HE	גופן בחוסר פעילות
 	IT	Carattere in Standby
 	JA	スタンバイフォント
-	NL	Standby font
+	NL	Font indien uitgeschakeld
 	SV	Typsnitt i viloläge
 	ZH_CN	备用字体
 
@@ -2004,7 +2005,7 @@ SETUP_IDLEFONT_DESC
 	HE	בחר את סוג הגופן בחוסר פעילות
 	IT	Quando il lettore e' in standby, puoi usare il tasto SIZE del telecomando o il bottone piu' sotto per passare tra i caratteri per la visualizzazione dell'orologio. Puoi scegliere l'ordine in cui appaiono usando il menu' piu' sotto.
 	JA	リモコンのSIZEボタンを押して、プレーヤーがスタンバイ状態時の時計機能のフォントサイズを変えることができます。サイズが変わる順序を以下のメニューで指定できます。
-	NL	Wanneer de speler in standby staat kun je het font in te stellen voor de klok. Gebruik de SIZE toets op de afstandsbediening of klik een keuzerondje aan hieronder gebruiken om het font te kiezen. Je kunt de volgorde van tonen bepalen met de menu's hieronder.
+	NL	Wanneer de speler uit staat ('standby') staat kun je het font instellen voor de klok. Gebruik de SIZE toets op de afstandsbediening of klik een keuzerondje aan hieronder gebruiken om het font te kiezen. Je kunt de volgorde van tonen bepalen met de menu's hieronder.
 	SV	När en spelare är i vänteläge kan du använda SIZE-knappen på fjärrkontrollen eller knapparna nedan för att växla typsnitt. Du kan även kontrollera den ordning som typsnitt visas i. 
 	ZH_CN	当播放机在备用状态时，您可使用遥控器的大小按钮或如下的无线电按钮设定播放机时间显示的字体大小。您可在如下的菜单设定它们出现的排序。
 
@@ -2047,7 +2048,7 @@ SETUP_OFFDISPLAYSIZE
 	HE	גודל טקסט במצב כבוי
 	IT	Dimensione del testo in Standby
 	JA	スタンドバイ時のテキストサイズ
-	NL	Standby tekstgrootte
+	NL	Tekstgrootte indien uitgeschakeld
 	NO	Tekststørrelse i standby modus
 	PT	Tamanho do Texto ao Desligar
 	SV	Textstorlek i standby-läge
@@ -2086,7 +2087,7 @@ SETUP_SCROLLPAUSE_DESC
 	HE	קבע את משך ההשהייה לפני גילגול הטקסט
 	IT	Puoi regolare la pausa di tempo che il lettore antepone allo scorrimento orizzontale del testo sullo schermo. Inserisci un valore, in secondi, per la quantita' di tempo da attendere prima, o tra, lo scorrimento. Inserisci zero per non attendere ed iniziare immediatamente lo scorrimento. 3.6 secondi sono il valore di default.
 	JA	ディスプレイスクロール開始までの時間を調節することができます。秒数を入力してください。「０」とすると、すぐに開始します。出荷時設定は3.6秒です。
-	NL	Je kunt de hoeveelheid tijd specificeren die de speler wacht voordat het lopen van de tekst start. Voer een waarde in (seconden) voor de hoeveelheid tijd. Voer 0 in om helemaal niet te pauzeren en de tekst direct te laten lopen. 3.6 seconden is de standaard waarde.
+	NL	Je kunt de hoeveelheid tijd specificeren die de speler wacht voordat het lopen van de tekst start. Voer een waarde in (seconden) voor de tijdsduur van het wachten tot het lopen start of tussen het opnieuw lopen. Voer 0 in om helemaal niet te pauzeren en de tekst direct te laten lopen. 3.6 seconden is de standaard waarde.
 	SV	Fördröjning innan scrollning av långa texter börjar. Multipel av 0.9 fungerar bäst. 0.001 rekommenderas som lägsta värde.
 	ZH_CN	您可调整播放机开始进行横跨文字卷动前的等待值。输入一个以秒为单位的等待值为在卷动之前或在卷动之间的等待时间。如要立刻进行卷动请输入零为等待值。缺省值为3.6秒。
 
@@ -2228,15 +2229,15 @@ SETUP_GROUP_PLUGINS
 
 SETUP_GROUP_PLUGINS_DESC
 	CS	SlimSever obsahuje některé zvláštní schopnosti. Tyto schopnosti mu dodávají moduly - pluginy, které můžet používat pomocí ovladače. Můžete povolit, nebo zakázat libovolně pluginy z jejich adresáře. K aktivaci/deaktivaci použijte ovládací prvek u jména pluginu. <br>Také můžete zvolit, kdy se mají pluginy načítat, zda pouze při procházení voleb Pluginy v menu, nebo při startování serveru. Defaultně je nastaveno pouze při startu. Pro uložení změn klikněte na tlačítko 'Změnit'.
-	DE	SlimServer beinhaltet ein paar Plugins, die Sie zum Menü hinzufügen können. Sie können die Plugins im Plugin-Verzeichnis hinzufügen oder löschen. Um ein Extra zu aktivieren, klicken Sie auf die Auswahlbox. Sie können den Player auch so konfigurieren, dass er bei jedem Öffnen des Plugin Menüs erneut nach Plugins sucht. Zum Deaktivieren deaktivieren Sie die Box. Klicken Sie auf "Ändern" zum Speichern der Einstellung.
 	DA	SlimServer inkluderer nogle ekstra funktioner, grupperet i moduler, som du kan anvende via din fjernbetjening. Modulerne ligger i Plugins-mappen og kan aktiveres eller deaktiveres individuelt. Aktiver moduler ved at afkrydse dem nedenfor, deaktiver moduler ved at fjerne afkrydsningen. Tryk Gem for at gemme dine ændringer.
+	DE	SlimServer beinhaltet ein paar Plugins, die Sie zum Menü hinzufügen können. Sie können die Plugins im Plugin-Verzeichnis hinzufügen oder löschen. Um ein Extra zu aktivieren, klicken Sie auf die Auswahlbox. Sie können den Player auch so konfigurieren, dass er bei jedem Öffnen des Plugin Menüs erneut nach Plugins sucht. Zum Deaktivieren deaktivieren Sie die Box. Klicken Sie auf "Ändern" zum Speichern der Einstellung.
 	EN	SlimServer includes some extra features, called Plugins, that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. You may choose to have the server scan for plugins each time you navigate to the player plugins menu or the plugins settings. Default is to load on startup only.  To save your changes, click Change.
 	ES	SlimServer incluye algunas características extra, llamadas Plugins, que se pueden utilizar con el control remoto. Se puede habilitar o deshabilitar plugins individuales en la carpeta de Plugins. Para habilitar, tildar junto al nombre debajo. Para deshabilitar, destildar. Se puede hacer que el servidor busque los plugins cada vez que se navega por el menu de plugins del reproductor o la configuración de los plugins. Por defecto solo se lo hace al momento del inicio del servidor. Para guardar los cambios, hacer click en Cambiar.
 	FR	Vous pouvez sélectionner des fonctionnalités supplémentaires de la platine, appelées Modules d'extension, disponibles à l'aide de la télécommande. Ces fonctionnalités sont situées dans le dossier Plugins. Pour activer un module d'extension, cocher la case correspondante. Pour le désactiver, décochez la case.
 	HE	ניתן להגדיר אילו תוספים פעילים, ואת מדיניות הטעינה שלהם
 	IT	Lo SlimServer include caratteristiche aggiuntive, chiamate Plugins, che puoi usare con il telecomando. Puoi scegliere di abilitare o disabilitare i singoli Plugins nell'elenco dei Plugins. Per abilitarli metti un segno di spunta di fianco a ciascun nome qui sotto. Per disabilitarli cancella la spunta. Puoi scegliere che il server ricerchi i Plugins ogni volta che navighi nel menu dei Plugins o nella configurazione degli stessi. Di default vengono caricati solo all'avvio. Per salvare i cambiamenti, premi Cambia.
 	JA	SlimServerには、リモートコントロールで使えるプラグインがあります。プラグインのディレクトリで選んでください。プレーヤーのプラグインメニューを見るたびに新しいプラグインをスキャンするようにも設定できます。出荷時設定はスタートアップの時だけにスキャンするようになっています。変更をセーブするには｢変更」をクリックして下さい。
-	NL	SlimServer geeft de mogelijkheid om extra functies te koppelen aan de afstandsbediening. Deze functies vind je terug in de plugins folder. Om een functie te activeren zet het vinkje aan naast de plugin. Om de plugin uit te schakelen verwijder je het vinkje. Om de wijzigingen op te slaan klik je op de knop Veranderen.
+	NL	SlimServer geeft de mogelijkheid om extra functies te koppelen aan de afstandsbediening. Je kunt individuele plugins aan of uitzetten. <BR>Om een plugin aan te zetten markeer je deze. Om een plugin te uit te zetten haal je de markering weg. <BR>Je kunt de server instellen om plugins te scannen zodra je naar het plugin menu of de plugin instellingen gaat. De standaard is om alleen plugins te scannen bij het opstarten van de server. Om je wijzigingen te bewaren klik je op Veranderen.
 	NO	SlimServer inneholder en del tilleggsfunksjoner, Plugins, som du kan benytte deg av med fjernkontrollen. Disse kan aktiveres eller deaktiveres individuelt. For å aktivere en Plugin, merk den. For å deaktivere en Plugin, fjern merket. For å lagre endringene, velg "Endre".
 	PT	O cliente SlimServer inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
 	SV	SlimServer inkluderar tilläggs-funktioner som du kan konfigurera och/eller använda via din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras var för sig. Kryssa i rutan bredvid tillägget nedan för att aktivera ett tillägg. Ta bort krysset när du vill avaktivera ett tillägg. Spara dina ändringar genom att klicka på "Ändra".
@@ -2396,7 +2397,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	EN	SlimServer will look in the Music Folder for all supported file types (audio files and cue sheets). To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: cue, mp4, aac
 	ES	SlimServer examinará la Carpeta de Música teniendo en cuenta todos los formatos de archivo soportados (archivos de audio y cuesheets). Para deshabilitar tipos de archivo específicos al examinar la Carpeta de Música, ingresar una lista de extensiones separadas por coma debajo. (Por ej. cue, mp4, etc)
 	FR	Le SlimServer examinera dans votre dossier de musique tous les types de fichier audio supportés (fichiers et listes de lecture ou "cue sheets"). Pour exclure un type de fichier audio du parcours du dossier de musique, vous pouvez entrer ci-après la liste des extensions à ignorer, séparées par une virgule (par ex. : cue, mp4, aac)
-	NL	SlimServer kijkt in de muziekfolder naar alle ondersteunde bestandsformaten (audio bestanden en cue bestanden). <BR>Om specifieke bestandsformaten over te slaan bij het scannen naar muziek kun je een komma gescheiden lijst met extensies opnemen hieronder. Bijvoorbeeld: cue,mp4,aac
+	NL	SlimServer kijkt in de muziekfolder naar alle ondersteunde bestandsformaten (audio bestanden en cue bestanden). <BR>Om specifieke bestandsformaten over te slaan bij het scannen naar muziek kun je een komma gescheiden lijst met extensies opnemen hieronder. Bijvoorbeeld: cue, mp4, aac
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST
 	DE	Deaktivierte Wiedergabelisten-Dateiendungen
@@ -2511,8 +2512,8 @@ SETUP_PLAYERNAME_OK
 
 SETUP_PLAYERNAME_DESC
 	CS	Můžete dát přehrávači jméno pod kterým se bude zde zobrazovat v tomto webovém rozhraní.
-	DE	Sie können dem Player einen Namen geben, um ihn besser von den anderen unterscheiden zu können.
 	DA	Du kan give denne afspiller et navn som vil blive brugt til at identificere afspilleren på disse web-sider.
+	DE	Sie können dem Player einen Namen geben, um ihn besser von den anderen unterscheiden zu können.
 	EN	You can give this player a name that will be used to identify the player on these web pages.
 	ES	Se puede asignar un nombre para identificar este reproductor en la interfaz web.
 	FI	Voit antaa nimen, jonka avulla soitin voidaan yhdistää näillä WWW-sivuilla.
@@ -2520,7 +2521,7 @@ SETUP_PLAYERNAME_DESC
 	HE	בחר שם לנגן
 	IT	Puoi attribuire un nome al lettore che sara' usato per identificarlo su queste pagine web.
 	JA	複数のプレーヤーを使う場合、それぞれに名前を付けて区別することができます。
-	NL	Je kunt deze speler een naam geven die zal worden gebruikt om de speler te identificeren op de web pagina's.
+	NL	Je kunt deze speler een naam geven die zal worden gebruikt om de speler te identificeren op de webpagina's.
 	NO	Du kan gi denne spilleren et navn som vil brukes til å identifisere spilleren på disse web-sidene.
 	PT	Pode escolher um nome para identificar este cliente nas páginas web do servidor.
 	SV	Du kan ange ett namn för spelaren. Namnet användas sedan för att identifiera spelaren på dessa websidor.
@@ -2703,8 +2704,8 @@ SETUP_ALARM
 
 SETUP_ALARMVOLUME
 	CS	Nastavení hlasitosti buzení (0-100)
-	DE	Wecker Lautstärke (0-100)
 	DA	Indstil volume for alarmen (0-100)
+	DE	Wecker Lautstärke (0-100)
 	EN	Alarm Volume (0-100)
 	ES	Establecer Volumen de Alarma (0-100)
 	FI	Herätyksen äänenvoimakkuus (0-100)
@@ -2712,7 +2713,7 @@ SETUP_ALARMVOLUME
 	HE	עצמת שמע
 	IT	Volume sveglia (0-100)
 	JA	アラームのボリュームをセットして下さい (0-100)
-	NL	Kies het wekvolume (0-100)
+	NL	Kies wekvolume (0-100)
 	NO	Sett Alarm volum (0-100)
 	PT	Mudar Volume do Alarme (0-100)
 	SV	Välj volym för väckning (0-100)
@@ -3498,7 +3499,7 @@ SETUP_MMMFILTER_DESC
 	DE	In MusicMagic können Sie Filtersets unter einem Namen abspeichern. Wählen Sie hier eines dieser Sets, das auf die MusicMagic Mixes im SlimServer angewendet werden soll.
 	EN	You can create named sets of filter conditions in MusicMagic and choose from the list here to apply those filters to MusicMagic Mixes in SlimServer.
 	ES	Se puede dar un nombre a conjuntos de condiciones de filtro creadas en MusicMagic y elegir de esta lista para aplicar esos filtros a las Mezclas de MusicMagic en SlimServer.
-	NL	Je kunt filtersets met condities maken in MusicMagic. Kies vanuit de lijst hier de filtersets om toe te voegen in SlimServer.
+	NL	Je kunt filtersets met condities maken in MusicMagic. Kies vanuit de lijst hier de filtersets om toe te voegen in SlimServer voor MusicMagic mixes.
 	ZH_CN	您可以利用MusicMagic设立过滤器，并且从这表中选择应用在SlimServer内MusicMagic混音的那些过滤器。
 
 SETUP_MMMMIXGENRE
@@ -3623,7 +3624,7 @@ MUSICMAGIC_MIXRIGHT
 	DE	(Zum Mixen RECHTS drücken)
 	EN	(Go right to Mix)
 	ES	(Presionar DERECHA para Mezclar)
-	NL	(Druk -> om te mixen)
+	NL	(Druk -> voor mix)
 	ZH_CN	（按右方向键开始混音）
 
 MOODLOGIC_MIXING
@@ -3639,7 +3640,7 @@ FOLDER
 	ES	Carpeta
 	FI	Kansio
 	IT	Cartella
-	NL	Map
+	NL	Folder
 	ZH_CN	文件夹
 
 ITUNES
@@ -3780,7 +3781,7 @@ SETUP_SHOWYEAR_DESC
 	HE	בחר האם להציג שנת האלבום לצד שמו
 	IT	Puoi scegliere di visualizzare l'anno quando scorri per album o copertine. Quando abilitato, l'anno dell'album verra' mostrato di fianco al titolo dell'album.
 	JA	アルバムまたはアートワークで検索する時に、アルバム年を表示することができます。アルバムタイトルの横に表示されます。
-	NL	Je kunt kiezen om het jaar te laten zien bij bekijken op album of hoesjes. Indien actief zal het jaar getoond worden naast de albumtitel.
+	NL	Je kunt kiezen om het jaar te laten zien bij bekijken op albums of hoesafbeeldingen. Indien actief zal het jaar getoond worden naast de albumtitel.
 	ZH_CN	您可以选择通过浏览乐谱帖或浏览乐谱帖图象时是否一同显示乐谱帖的年份。当您选择一同显示时，年份信息将显示在乐谱帖标题旁边。
 
 SETUP_SHOWARTIST
@@ -4009,7 +4010,7 @@ SETUP_AUDIODIR_DESC
 	HE	ספריית קבצי המוזיקה אותה השרת יסרוק באופן קבוע ואשר תהווה בסיס לספריית המוזיקה
 	IT	Puoi indicare una cartella contenente file musicali che lo SlimServer analizzera' e aggiungera' alla tua libreria musicale. Inserisci il percorso della cartella qui' sotto. Puoi lasciare il campo vuoto se stai importando la libreria musicale da iTunes o MoodLogic.
 	JA	SlimServerが検索するフォルダーを指定することができます。iTunesまたはムードロジックの情報を利用する場合はブランクで構いません。
-	NL	Je kunt de map specificeren waarin de muziekbestanden staan die SlimServer scant en toevoegt aan de muziekcollectie. Je kunt dit veld leeg laten als je muziek importeert vanuit iTunes of Moodlogic.
+	NL	Je kunt de folder specificeren waarin de muziekbestanden staan die SlimServer scant en toevoegt aan de muziekcollectie. Je kunt dit veld leeg laten als je muziek importeert vanuit iTunes of Moodlogic.
 	SV	Du kan ange en mapp som SlimServer kommer scanna för att lägga till musik till ditt bibliotek. Ange läget nedan. Om du importerar MoodLogic eller iTunes behöver ingenting anges.
 	ZH_CN	您可以指定SlimServer所扫描和用来增加您的音乐库的音乐文件夹。请在以下的资料栏内输入此文件夹的完整路径。如果您从iTunes或MoodLogic引进您音乐库信息，您可以让此资料栏空白。
 
@@ -4083,21 +4084,21 @@ SETUP_BAD_FILE
 	ES	Upsss - "%s" no parece ser un tipo de archivo válido. Intente de nuevo.
 	FR	"%s" ne semble pas être un fichier valide. Ré-essayez.
 	JA	"%s"は正しいファイルではありません。もう一度入力してください。
-	NL	Oeps - "%s" lijkt geen valide bestand. Probeer opnieuw.
+	NL	Oeps! - "%s" lijkt geen geldig bestand. Probeer opnieuw.
 	SV	Oops - "%s" verkar inte vara en giltig fil. Försök igen.
 	ZH_CN	"%s"似乎不是一个合法文件。请再次尝试。
 
 SETUP_BAD_DIRECTORY
 	CS	Chyba: "%s" není platný adresář. Zkuste to znovu.
-	DE	Ups! "%s" ist kein gültiges Verzeichnis. Bitte versuchen Sie es noch einmal.
 	DA	Desværre, "%s" er ikke en brugbar folder. Prøv en anden.
+	DE	Ups! "%s" ist kein gültiges Verzeichnis. Bitte versuchen Sie es noch einmal.
 	EN	Oops - "%s" doesn't seem to be a valid directory. Try again.
 	ES	Upsss! La carpeta "%s" no es válida. Intente de nuevo.
 	FI	Hups! - "%s" ei ole hakemisto. Yritä uudelleen.
 	FR	Le répertoire "%s" n'est pas valide. Ré-essayez.
 	IT	Oops - "%s" non sembra essere un percorso valido. Riprova.
 	JA	"%s"は正しいフォルダーではありません。もう一度入力してください。
-	NL	Oeps! "%s" is geen geldige folder. Probeer opnieuw.
+	NL	Oeps! "%s" lijkt geen geldige folder. Probeer opnieuw.
 	NO	Huffda, "%s" er ikke en gyldig katalog. Forsøk igjen.
 	PT	A Pasta "%s" não é válida. Tente de novo.
 	SV	"%s" verkar inte vara en godkänd mapp. Försök igen.
@@ -4468,7 +4469,7 @@ SETUP_INSTANTMIXMAX
 	ES	Número Máximo por Mezcla Instantánea
 	FR	Nombre maximum de morceaux par Mix
 	JA	インスタント ミックス 最大数
-	NL	Instant mix maximum aantal
+	NL	Maximum aantal instant mix
 	NO	Maks antall for hurtigmiks
 	SV	Max antal låtar för "Instant Mix"
 	ZH_CN	即时混音最多次数
@@ -4553,8 +4554,8 @@ SETUP_SKIN
 
 SETUP_SKIN_DESC
 	CS	Z následujícího seznamu můžete vybrat vzhled neboli 'skin' tohoto webového rozhraní.
-	DE	Sie können einen Skin für ihr Web-Interface aus der folgenden Liste auswählen.
 	DA	Du kan her vælge et layout ("skin") for web-interfacet.
+	DE	Sie können einen Skin für ihr Web-Interface aus der folgenden Liste auswählen.
 	EN	You can choose a look or "skin" for the web interface from the list below.
 	ES	Puede elegir un estilo para la interfaz web de esta lista:
 	FI	Allaolevasta valikosta voit valita miltä käyttöliittymä näyttää.
@@ -4562,7 +4563,7 @@ SETUP_SKIN_DESC
 	HE	בחר ממשק לתצוגת האינטרנט
 	IT	Puoi scegliere un aspetto (o "skin") per l'interfaccia web dalla lista qui' sotto.
 	JA	ウェブインターフェースの外観または「スキン」を以下から選ぶことができます。
-	NL	Je kunt uit de onderstaande lijst een look of "skin" kiezen voor de web interface.
+	NL	Je kunt uit de onderstaande lijst een uiterlijk kiezen voor de web interface.
 	NO	Velg et utseende ('skin') for webgrensesnittet fra listen:
 	PT	Existem vários temas visuais para a interface WEB. Pode escolher na lista abaixo.
 	SV	Välj ett utseende för webgränssnittet ('skin') från listan nedan:
@@ -4570,14 +4571,14 @@ SETUP_SKIN_DESC
 
 SETUP_SKIN_OK
 	CS	Aktuální skin je nyní:
-	DE	Ihr aktueller Skin:
 	DA	Det valgte layout er:
+	DE	Ihr aktueller Skin:
 	EN	Your skin is now:
 	ES	Estilo seleccionado:
 	FI	Käyttöliittymävalintasi on:
 	FR	L'interface utilise maintenant :
 	JA	選択されている外観は:
-	NL	De nieuwe skin is nu:
+	NL	Het nieuwe uiterlijk is nu:
 	NO	Det valgte utseendet er:
 	PT	O tema escolhido é
 	SV	Det nyvalda utseendet är:
@@ -4598,14 +4599,14 @@ SETUP_PLUGINS
 	ZH_CN	插件程序
 
 SETUP_PLUGINS_DESC
-	DE	SlimServer enthält ein paar Plugins, inklusive einiger Spiele, die Sie mit ihrer Fernbedienung bedienen können. Verwenden Sie die unten stehende Auswahl, um die Plugins dem Menü ihres Slim Players hinzuzufügen oder zu entfernen.
 	DA	SlimServer inkluderer nogle ekstra funktioner (Moduler), såsom spil, som du kan anvende med din fjernbetjening. Marker nedenfor om du ønsker adgang til Modul-menuen fra Slim-hovedmenuen.
+	DE	SlimServer enthält ein paar Plugins, inklusive einiger Spiele, die Sie mit ihrer Fernbedienung bedienen können. Verwenden Sie die unten stehende Auswahl, um die Plugins dem Menü ihres Slim Players hinzuzufügen oder zu entfernen.
 	EN	SlimServer includes some extra features, including some games, you can use with your remote. Use the menu below to add or remove the Plugins menu from your Home.
 	ES	SlimServer incluye algunas caracter´siticas extra, incluyendo algunod juegos, que se pueden utilizar con el control remoto. Usar el menu debajo para añadir o eliminar el menu de Plugins del menu de Inicio.
 	FR	Le SlimServer comprend des fonctionnalités supplémentaires, dont des jeux, que vous pouvez utiliser avec votre télécommande. Utilisez le menu ci-dessous pour ajouter ou retirer le menu Modules d'extension de votre Menu principal.
 	IT	Lo SlimServer include alcune caratteristiche extra, tra cui alcuni giochi, che puoi utilizzare con il telecomando. Usa il menu qui sotto per aggiungere o eliminare i Plugins dal menu' principale.
 	JA	SlimServerは、ゲーム等、いくつかの追加機能があります。下のメニューを使って、それらプラグインの追加・削除ができます。
-	NL	SlimServer heeft de mogelijkheid om extra functionaliteiten (plugins) toe te voegen. Deze kun je bedienen via de afstandsbediening. Zet een vinkje voor de plugins die wilt toevoegen aan het menu. Haal het vinkje weg om de plugin te verwijderen. Klik op de knop Veranderen om de wijzigingen te bewaren.
+	NL	Slimserver heeft een aantal extra mogelijkheden die je kunt kiezen met de afstandsbediening waaronder een aantal spelletjes. Je kunt het menu hieronder gebruiken om plugins toe te voegen of te verwijderen van het hoofdmenu.
 	NO	SlimServer inkluderer mange tillegg, f.eks noen spill, som du kan benytte deg av med din fjernkontroll. Benytt menyen nedenfor for å legge til eller ta bort Plugins-menyen fra fin Hovedmeny.
 	PT	O SlimServer inclui algumas funcionalidades extras, tais como alguns jogos, que podem ser usados com o controlo remoto. Use o menu abaixo para adicionar ou remover os menus extra do cliente.
 	SV	SlimServer inkluderar några tillägg, t.ex några spel, som du kan använda med din fjärrkontroll. Använd menyn nedan för att lägga till eller ta bort Tilläggs-menyn from din Huvudmeny.
@@ -4726,7 +4727,7 @@ SETUP_ITUNESSCANINTERVAL_DESC
 	EN	When your iTunes Music Library changes SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your iTunes Music Library again. A value of zero disables the reload.
 	ES	Cuando la iTunes Music Library cambie, SlimServer importará automáticamente la información de esa colección. Se puede especificar el mínimo intervalo de tiempo (en segundos) que SlimServer esperará antes de recargar nuevamente la iTunes Music Library. Usar un valor 0 deshabilita la recarga.
 	FR	Le SlimServer importe automatiquement les changements apportés à votre bibliothèque iTunes. Vous pouvez spécifier le délai minimum en secondes avant que le SlimServer actualise la bibliothèque iTunes. La valeur zéro désactive cette fonctionnalité.
-	NL	Indien je iTunes muziekcollectie wijzigt zal SlimServer automatisch de informatie opnieuw importeren. Je kunt de minimum tijd specificeren (in seconden) dat SlimServer zal wachten voor het opnieuw importeren van je iTunes muziekcollectie. Een waarde van 0 seconden schakelt het herladen uit.
+	NL	Indien je iTunes muziekcollectie wijzigt zal SlimServer automatisch de informatie opnieuw importeren. Je kunt de minimum tijd specificeren (in seconden) die SlimServer zal wachten voor het opnieuw importeren van je iTunes muziekcollectie. Een waarde van 0 seconden schakelt het herladen uit.
 	ZH_CN	当您的iTunes音乐库改变时，SlimServer将自动地引进最新音乐库信息。您可以指定SlimServer再装您的iTunes数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_ITUNESSCANINTERVAL_OK
@@ -4756,7 +4757,7 @@ SETUP_ITUNES_LIBRARY_XML_PATH_DESC
 	ES	Si se va a especificar la ubicación de la iTunes Music Library, ingresar aquí el camino hacia el archivo iTunes Music Library.xml ,incluyendo el nombre completo del archivo.
 	FR	Si vous avez choisi de spécifier l'emplacement de votre bibliothèque iTunes, entrez le chemin de votre fichier iTunes Music Library.xml ci-dessous, nom de fichier inclus.
 	JA	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここにファイル名を含めてxmlファイルへのパスを入力してください。
-	NL	Indien je de locatie van je iTunes muziekcollectie specificeert, typ dan de pad naar de iTunes collectie Library.xml hier inclusief de gehele bestandsnaam.
+	NL	Indien iTunes draait op een andere computer dan SlimServer kun je hier een expliciet pad opgeven naar het iTunes Music Library.xml bestand. Laat dit veld leeg als iTunes draait op dezelfde computer als SlimServer.
 	SV	Om du valt att specificera läget av ditt iTunes musikbibliotek manuellt anger du läget här, inklusive hela filnamnet
 	ZH_CN	如果您选择指定iTunes音乐库的地点，请在此输入iTunes Music Library.xml文件的路径及其文件名。
 
@@ -4777,14 +4778,14 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 	ES	Si se va a especificar la ubicación de la iTunes Music Library, ingresar el camino, incluyendo el nombre de la carpeta que contiene a iTunes Music.
 	FR	Si vous avez choisi de spécifier l'emplacement de votre bibliothèque iTunes, entrez le chemin de celle-ci ci-dessous, nom de dossier inclus.
 	JA	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここに該当フォルダーへのパスを入力してください。
-	NL	Indien je de locatie van je iTunes muziekcollectie specificeert, typ dan de padnaam inclusief de foldernaam waar je iTunes muziek staat.
+	NL	Indien iTunes draait op een andere computer dan SlimServer kun je hier een expliciet pad opgeven naar de iTunes muziekfolder. Laat dit veld leeg als iTunes draait op dezelfde computer als SlimServer.
 	SV	Om du valt att specificera iTunes anger du läget på ditt iTunes musikbibliotek här
 	ZH_CN	如果您选择指定iTunes音乐库的地点，请在此输入存有您iTunes音乐的文件夹名及其路径。
 
 SETUP_COVERART
 	CS	Nastavení názvů souborů pro obaly alb
-	DE	Plattenhüllen
 	DA	Cover-billeder
+	DE	Plattenhüllen
 	EN	Artwork
 	ES	Arte de tapa
 	FI	Kansikuvat
@@ -4792,7 +4793,7 @@ SETUP_COVERART
 	HE	עטיפות דיסקים
 	IT	Copertine
 	JA	アートワーク
-	NL	Hoesjes
+	NL	Hoesafbeeldingen
 	NO	Platecover
 	PT	Capa Álbum
 	SV	Albumomslag
@@ -4800,8 +4801,8 @@ SETUP_COVERART
 
 SETUP_COVERART_DESC
 	CS	Obrázky s náhledy obalů alb, pokud jsou dostupné, jsou zobrazovány na stránce s informacemi o albu, nebo obsažené skladbě. Tyto náhledy jsou uloženy v ID3 tagu pro každou skladbu, nebo je nastaven soubor ve stejném adresáři, jako jsou soubory skladeb. Soubory obrázku se mohou jmenovat "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", nebo "thumb.jpg". Zde můžete určita další dodatečné názvy souborů, které budou brány jako obrázky náhledů alb. Můžete specifikovat rozdílné názvy pro náhledy a pro zobrazení v plné velikosti. Prefix pro tuto volbu je %, za ním následuje volba stejná jako jsou volby pro formát názvu skladby (např. %ARTIST - ALBUM  will look for Artist - Album.jpg to fit the artist and album information found.
-	DE	Bilder der Plattenhülle werden, falls vorhanden, beim Anschauen der Album- oder Titelinformationen angezeigt. Sie befinden sich in den ID3 Tags für einen einzelnen Titel oder im selben Verzeichnis, wie die Titel Dateien.  Per Voreinstellung werden Dateien mit den folgenden Namen benutzt: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", "thumb.jpg".  Sie können einen zusätzlichen Dateinamen für die Plattencover festlegen und unterschiedliche Namen für kleine und grosse Bilder verwenden. Verwenden Sie % als Prefix um dieselben Elemente wie für Titelinformationen zu verwenden. So wird z.B. %ARTIST - %ALBUM nach einer Datei "Artist - Album.jpg" passend zum aktuellen Musikstück suchen.
 	DA	Billeder fra covers vises når du vælger albums eller sang information. Cover-billederne hentes fra ID3-tagget i de enkelte sange eller fra mappen hvori sangene er placeret. Som standard indlæses følgende grafikfiler, hvis der ikke er et billede i ID3-tagget: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" eller "thumb.jpg". Du kan angive yderligere filnavne der skal anvendes. Du kan endvidere angive forskellige filnavne for billeder i fuld størrelse og mindre størrelse.
+	DE	Bilder der Plattenhülle werden, falls vorhanden, beim Anschauen der Album- oder Titelinformationen angezeigt. Sie befinden sich in den ID3 Tags für einen einzelnen Titel oder im selben Verzeichnis, wie die Titel Dateien.  Per Voreinstellung werden Dateien mit den folgenden Namen benutzt: "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", "thumb.jpg".  Sie können einen zusätzlichen Dateinamen für die Plattencover festlegen und unterschiedliche Namen für kleine und grosse Bilder verwenden. Verwenden Sie % als Prefix um dieselben Elemente wie für Titelinformationen zu verwenden. So wird z.B. %ARTIST - %ALBUM nach einer Datei "Artist - Album.jpg" passend zum aktuellen Musikstück suchen.
 	EN	Images of album artwork, when available, are displayed when viewing an album or song information.  Artwork images are found in the ID3 tags for individual songs or can reside in the same folder as song files.  By default, images named "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", or "thumb.jpg" are used.  You can specify an additional file name to use for album art images. You can specify different file names for thumbnail or full size images. Prefix the option with % and you can follow it with any string made up of the same elements available for Title Formats (eq %ARTIST - ALBUM, will look for Artist - Album.jpg to fit the artist and album information found.
 	ES	Las imágenes del Arte de Tapa, cuando están disponibles, se muestran al estar viendo un álbum o información de una canción. Las imágenes de Arte de Tapa se encuentran en los tags ID3 de canciones individuales, o pueden encontrarse en la misma carpeta que los archivos de canciones. Por defecto, se utilizan las imágenes llamadas "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", o "thumb.jpg". Se pueden especificar nombres de archivo adicionales para imágenes de Arte de Tapa de álbumes. Se pueden especificar nombres de archivo diferentes para imágenes de Arte de Tapa de álbumes o muestras de imágenes. Se puede poner % como prefijo y completarlo con cualquier linea de texto que utilice los mismos elementos que los utilizados en el formato de Títulos (ej %ARTISTA - ALBUM, buscará el par Artista - Album.jpg que coincida con la información de artista y álbum encontrada.
 	FI	Kansikuvat näytetään (jos niitä on) kun albumin tai kappaleen tietoja katsellaan. Kansikuvat haetaan joko ID3 otsikoista, tai samassa hakemistossa olevista kuvatiedostoista. Oletusarvoisesti palvelin etsii kuvia  "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" tai "thumb.jpg" nimillä. Voit myö määritellä muita tiedostonimiä kansikuville. Jos lisäät option eteen %-merkin, voit käyttää mitä tahansa otsikkokenttiä. Esim. %ARTIST - ALBUM, etsii tiedostoja, joissa nimi on muotoa Artist - album.jpg
@@ -4809,7 +4810,7 @@ SETUP_COVERART_DESC
 	HE	מומלץ בחום לא לגעת. נגעת נסעת, ובהצלחה
 	IT	Le immagini delle copertine, se disponibili, sono visualizzate assieme all'album o alle informazioni sul brano. Le copertine possono essere inserite all'interno delle tag ID3 di ogni singolo brano o possono risiedere nella stessa cartella dei file dei brani. Per default, le immagini possono essere denominate "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", o "thumb.jpg".  Puoi usare anche un nome alternativo da usare per le immagini delle copertine. Puoi usare nomi differenti per le miniature o per l'immagine intera. Anteponi il segno % a qualsiasi stringa composta dagli stessi elementi disponibili per il formato Titolo (es. %ARTIST - ALBUM, cerchera' il file "Artist - Album.jpg" che corrisponde alle informazioni sull'artista e album trovato).
 	JA	アルバムのアートワークがある場合には、アルバム/曲情報を見るときに表示されます。アートワーク イメージはそれぞれの曲のID3タグか、曲のファイルと同じフォルダーに入っています。工場出荷設定では"cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", "thumb.jpg" が使われています。これらアルバム アートワークのファイル名は変更することができます。例えば%ARTIST - ALBUM, は Artist - Album.jpg を探します。
-	NL	Indien er een afbeelding beschikbaar is van een hoesje wordt deze getoond als je een album bekijkt of informatie over een liedje opvraagt. Deze afbeeldingen worden opgegeven in de ID3 tag voor liedjes of staan in dezelfde map als de muziekbestanden. <br>  Standaard gebruikt de server de bestanden "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" en "thumb.jpg". Aanvullende bestandsnamen kun je opgeven. Dit kan afzonderlijk voor verkleinde afbeeldingen (thumbmails) en voor volledige afbeeldingen. Je kunt een voorvoegsel % gebruiken gevolgd door de tekst zoals gebruikt bij Titelformaten (bijvoorbeeld %ARTIST - ALBUM, zal zoeken naar Artiest - Album.jpg om artiest en album informatie te vinden).
+	NL	Indien er een hoesjesafbeelding beschikbaar is wordt deze getoond als je een album bekijkt of informatie over een liedje opvraagt. Deze afbeeldingen staan in de ID3 tag van een muziekbestand of staan in dezelfde folder als de muziekbestanden. <br>  Standaard gebruikt de server de bestanden "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" en "thumb.jpg". Aanvullende bestandsnamen kun je opgeven. Dit kan afzonderlijk voor verkleinde afbeeldingen (thumbmails) en voor volledige afbeeldingen. Je kunt een voorvoegsel % gebruiken gevolgd door de tekst zoals gebruikt bij Titelformaten (bijvoorbeeld %ARTIST - ALBUM, zal zoeken naar Artiest - Album.jpg om artiest en album informatie te vinden).
 	NO	Platecover kan vises sammen med informasjon om sanger. Disse bildene kan lagres i ID3-tag, eller lagres som en separat fil i samme folder som låta. Bildefiler med navn "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", eller "thumb.jpg" brukes som standard. Du kan angi andre mulige navn på disse album-filene, og også angi egne navn på filer med thumbnail bilder. Bruk Prefix % og samme elementer som er tilgjengelige for Tittelformat. (f.eks: %ARTIST - ALBUM.jpg søker etter filer med funnet verdier for artist og album.)
 	PT	As imagens da capa do álbum, quando disponíveis, são mostradas na visualização da informação do álbum ou da música. As capas dos álbuns poderão estar integradas nas "tags ID3" do próprio ficheiro, ou em ficheiros separados na pasta dos ficheiros de música. Por omissão, serão usados os nomes de ficheiros "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Pode especificar nomes de ficheiros adicionais para a imagem da capa do álbum. Pode especificar nomes diferentes para a miniatura ou para a imagem completa.
 	SV	Bilder på albumomslag kan visas samtidigt med information om sånger. Dessa bilder kan lagras i ID3-tag, eller lagras som separat fil i samma mapp som låten. Bildfiler med namnen "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", eller "thumb.jpg" används  standardmässigt. Du kan ange andra möjliga namn på dessa aalbum-grafik-filer, och även ange separata filnamn för tumnagelsstora bilder. Använd Prefix % och samma element som är tillgängliga för Titelformat. (Exempel: %ARTIST - ALBUM.jpg söker efter filer med det funna värdet på Artist och Album.)
@@ -4857,7 +4858,7 @@ SETUP_COVERTHUMB_DESC
 	FR	Pour afficher les vignettes dans le mode Parcourir les pochettes, le SlimServer utilise par défaut le même fichier image que pour les pochettes ; toutefois vous pouvez spécifier un autre fichier ici.
 	HE	נגעת? מגיע לך
 	IT	Per sfogliare le miniature delle copertine, il server cerchera' il file di default indicato sopra e quindi nelle tag ID3. Comunque, se desideri utilizzare la possibilita' di un nome file modificabile o specificarne uno di tua scelta, inseriscilo qui.
-	NL	Bij "Bekijk op hoezen" zal de server naar dezelfde standaard bestanden zoeken als hierboven en in de ID3 informatie. Indien je de optie met variabelen wilt gebruiken of je eigen bestandsnaam wilt specificeren moet je dat hier doen.
+	NL	Bij "Bekijk op hoezen" zal de server naar dezelfde standaard bestanden zoeken als hierboven en in de ID3 informatie. Indien je de optie met variabelen wilt gebruiken of je eigen bestandsnaam wilt specificeren kun je dat hier doen.
 	ZH_CN	在浏览图像指图方面，伺服器将根据上述的缺省图像文件和在ID3标签内搜查。但是，如果您决定使用变量文件名功能，或运用您指定的文件名，请在此输入。
 
 SETUP_COVERTHUMB_OK
@@ -4954,15 +4955,15 @@ SETUP_HTTPPORT_DESC
 
 SETUP_HTTPPORT_OK
 	CS	Nyní bude používán port:
-	DE	Verwendeter Port:
 	DA	Anvender nu dette port-nummer:
+	DE	Verwendeter Port:
 	EN	Now using port:
 	ES	Utilizando puerto:
 	FI	Porttinumero on:
 	FR	Utiliser le port :
 	IT	E' attualmente in uso la porta:
 	JA	現在のポートナンバー :
-	NL	De gebruikte poort is:
+	NL	Nu gebruikte poort:
 	NO	Brukes nå portnummer:
 	PT	A porta é
 	SV	Använder nu portnummer:
@@ -4991,7 +4992,7 @@ SETUP_SAVESHUFFLED_DESC
 	HE	האופן בו תשמר רשימת הניגון
 	IT	Quando scegli di salvare una lista di esecuzione ed e' stata riprodotta casualmente, puoi decidere se salvarla nell'ordine in cui i brani sono stati aggiunti originariamente oppure nell'ordine casuale.
 	JA	ランダムにされたプレイリストを保存することも、元の順序で保存することも選択できます。
-	NL	Indien je een playlist wilt bewaren, kun je kiezen om hem te bewaren in de originele volgorde waarin de liedjes toegevoegd zijn of in een willekeurige ("Shuffled") volgorde.
+	NL	Indien je een playlist wilt bewaren, kun je kiezen om hem te bewaren in de originele volgorde waarin de liedjes toegevoegd zijn of in een willekeurige volgorde.
 	NO	Når du velger å spare en spilleliste som har blitt blandet, kan du angi om den skal spares i original rekkefølge eller blandet.
 	SV	När du väljer att spara en låtlista som blivit 'blandad', kan du ange om den ska sparas i orginalordning eller blandad
 	ZH_CN	当您选择保存播放表时，并且它已随机抽样，您能选择根据歌曲在播放表生成时的原来次序或随机抽样后的次序来保存。
@@ -5042,14 +5043,14 @@ SETUP_CHECKVERSION
 
 SETUP_CHECKVERSION_DESC
 	CS	SlimServer se může každý den automaticky připojit k www.slimdevice.com a kontrolovat, zda je dostupná akutualizace software. Pakliže ani, server zobrazi  hlášku na webovém rozhraní.
-	DE	Der Server kann automatisch jeden Tag Verbindung mit www.slimdevices.com aufnehmen und prüfen, ob eine neue Software Version vorhanden ist. Falls ja, erscheint eine Meldung im SlimServer Web Interface.
 	DA	Serveren kan automatisk forbinde til www.slimdevices.com hver dag for at checke om der er kommet en opdateret version af softwaren. Hvis der er, vises en besked i Slim-webinterfacet.
+	DE	Der Server kann automatisch jeden Tag Verbindung mit www.slimdevices.com aufnehmen und prüfen, ob eine neue Software Version vorhanden ist. Falls ja, erscheint eine Meldung im SlimServer Web Interface.
 	EN	The server can automatically connect to www.slimdevices.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in SlimServer's web interface.
 	ES	El servidor puede conectarse automáticamente a www.slimdevices.com todos los días y ver si existe una versión más actualizada disponible. Si existe, entonces un mensaje aparecerá en la interfaz web de SlimServer. 
 	FR	Le SlimServer peut se connecter tous les jours à www.slimdevices.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Un message dans l'interface web signale cette disponibilité le cas échéant.
 	IT	Il server puo' collegarsi automaticamente al sito www.slimdevices.com ogni giorno e verificare se disponibile una versione aggiornata del software. Se si', apparira' un messaggio all'interno dell'interfaccia web dello SlimServer.
 	JA	サーバーソフトウェアは、毎日www.slimdevices.comに接続してアップデートを確認します。アップデート バージョンがある場合には、その旨メッセージが出ます。
-	NL	De server kan elke dag automatisch verbinding maken met www.slimdevices.com om te kijken of er een nieuwere versie is van het serverprogramma. Als dat zo is, zal dit getoond worden in de web pagina van SlimServer.
+	NL	De server kan elke dag automatisch verbinding maken met www.slimdevices.com om te kijken of er een nieuwere versie is van het serverprogramma. Als dat zo is, zal dit getoond worden in de webpagina van SlimServer.
 	NO	Serveren kan automatisk sjekke www.slimdevices.com hver dag etter en nyere versjon av programvaren. Om en nyere versjon finnes, blir dette meddelt i webgrensesnittet.
 	PT	O servidor poderá ligar-se automaticamente a www.slimdevices.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.
 	SV	Servern kan automatiskt koppla upp sig mot www.slimdevices.com varje dag för att kontrollera om en nyare version av mjukvaran finns tillgänglig. Om nyare version finns, kommer ett meddelande visas i web-gränssnittet.
@@ -5195,7 +5196,7 @@ SETUP_OFFSAVER_CHOOSE
 	FR	Ecran de veille lorsque la platine est éteinte :
 	HE	בחר שומר מסך כאשר הנגן כבוי
 	IT	Scegli un salvaschermo da usare quando spento:
-	NL	Kies een schermbeveiliger wanneer de speler op standby staat:
+	NL	Kies een schermbeveiliger wanneer de speler uit staat:
 	ZH_CN	请选择一个在关机时应用的屏幕保护程序：
 
 SETUP_SCREENSAVER_DESC
@@ -5206,7 +5207,7 @@ SETUP_SCREENSAVER_DESC
 	FR	Vous pouvez sélectionner un écran de veille à afficher après un certain temps d'inactivité de la télécommande. Vous pouvez choisir la durée d'inactivité ainsi que le type d'écran de veille à afficher selon que la platine est en lecture, arrêtée ou éteinte.
 	HE	בחר סוג שומר מסך בפעילויות שונות
 	IT	Puoi scegliere un salvaschermo che visualizzi informazioni dopo un certo periodo di tempo di inattivita' del telecomando. Puoi scegliere l'attesa prima di attivare il salvaschermo. Puoi anche scegliere differenti salvaschermo a seconda che il lettore stia riproducendo musica, sia fermo oppure sia spento.
-	NL	Je kunt schermbeveiligers gebruiken om informatie te tonen op het scherm nadat de afstandsbediening enige tijd niet is gebruikt. Je kunt verschillende schermbeveiligers kiezen afhankelijk van of de speler audio aan het spelen is, gestopt is of in standby staat.
+	NL	Je kunt schermbeveiligers gebruiken om informatie te tonen op het scherm nadat de afstandsbediening enige tijd niet is gebruikt. Je kunt verschillende schermbeveiligers kiezen afhankelijk van of de speler audio aan het spelen is, gestopt is of uit staat.
 	ZH_CN	您可以通过遥控器选择在播放机非活动状态时以屏幕保护程序来显示信息。您可以设定屏幕保护程序介入前的等候时间。并且设定播放机在不同状态下如播放时、停止播放时、或关机时应用不同屏幕保护程序。
 
 SETUP_SCREENSAVERTIMEOUT_CHOOSE
@@ -5706,7 +5707,7 @@ SETUP_SPLITLIST_DESC
 	FR	Le SlimServer peut extraire plusieurs noms d'artistes, titres d'albums ou genres des repères ID3 de vos fichiers musicaux. Si le SlimServer détecte l'un des caractères ci-dessous dans les répères ID3, il créera une entrée différente pour chaque élément présent - par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le répère ID3 "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas". Si vous modifiez ce réglage, votre dossier de musique sera répertorié à nouveau.
 	HE	מדיניות שימוש בתגים מרובים לשיר
 	IT	Lo SlimServer puo' estrarre piu' di un artista, titolo di album o genere dalle tag inserite all'interno dei file musicali. Se lo SlimServer trova nelle tag qualsiasi parola o carattere indicato sotto, creera' una voce separata per ogniuno di essi. Per esempio, se inserisci un punto e virgola nella lista qui sotto, un brano con la tag relativa all'artista "Gino Paoli; Ornella Vanoni", apparira' nell'elenco artisti sia come "Gino Paoli" che "Ornella Vanoni".
-	NL	SlimServer kan meerdere artiesten, album titels en genres uitlichten uit muziekbestanden. Indien SlimServer een van de onderstaande woorden of karakters vindt in de tags zal SlimServer deze als separator gebruiken om meerdere titels in de lijsten te zetten. Bijvoorbeeld: Als je een puntkomma in de lijst hieronder zet zal een artiest tag "J. S. Bach;Michael Tilson Thomas" twee artiesten opleveren in de lijsten: "J. S. Bach" en "Michael Tilson Thomas".
+	NL	SlimServer kan meerdere artiesten, album titels en genres uitlichten uit muziekbestanden. Indien SlimServer een van de onderstaande woorden of karakters vindt in de tags zal SlimServer deze als separator gebruiken om meerdere titels in de lijsten te zetten. Bijvoorbeeld: Als je een puntkomma in de lijst hieronder zet zal een artiest tag "J. S. Bach;Michael Tilson Thomas" twee artiesten opleveren in de lijsten: "J. S. Bach" en "Michael Tilson Thomas". <BR>Het wijzigen van deze instelling start het opnieuw scannen van de muziekcollectie.
 	NO	SlimServer kan lese ut multiple artister, album titler og genre fra taggene i musikkfilene dine. Dersom SlimServer finner noen av tegnene nedenfor i taggene, vil den lage individuelle oppføringer for hvert av elementene. F.eks, hvis du putter et semikolon i listen nedenfor, vil en samg med artist taggen "J. S. Back;Michael Tilson Thomas" listes under artister både med "J. S. Bach" og "Michael Tilson Thomas". Endrer du denne verdien, scannes musikkfolderen på nytt.
 	SV	SlimServer kan läsa multipla artister, album och genres från taggarna i dina musikfiler. Om SlimServer finner något av tecknen nedan i taggarna, skapas individuella låtar för vart och ett. Exempelvis: "J. S. Back;Michael Tilson Thomas" listes under artister både med "J. S. Bach" och "Michael Tilson Thomas" som artist. Ändrar du detta värde scannas din musikmapp på nytt
 
@@ -5793,7 +5794,7 @@ SETUP_DISABLESTATISTICS
 	EN	Library Statistics
 	ES	Estadísticas de la Colección
 	FR	Statistiques bibliothèque
-	NL	Databasestatistieken
+	NL	Muziekcollectiestatistieken
 
 SETUP_DISABLESTATISTICS_DESC
 	DE	Beim Anzeigen der SlimServer Startseite wird die ganze Musiksammlung durchsucht, um den Bestand anzeigen zu können. Wenn Sie diese Funktion deaktivieren, kann die Startseite schneller angezeigt werden.
@@ -5807,14 +5808,14 @@ SETUP_DISABLE_STATISTICS
 	EN	Disable library statistics
 	ES	Deshabilitar estadísticas de la colección
 	FR	Désactiver l'affichage des statistiques
-	NL	Uitschakelen databasestatistieken
+	NL	Uitschakelen muziekcollectiestatistieken
 
 SETUP_ENABLE_STATISTICS
 	DE	Statistik anzeigen
 	EN	Enable library statistics
 	ES	Habilitar estadísticas de la colección
 	FR	Activer l'affichage des statistiques
-	NL	Inschakelen databasestatistieken
+	NL	Inschakelen muziekcollectiestatistieken
 
 SETUP_FORKEDWEB
 	EN	Webserver Forking (Mac OS X / Linux)
@@ -6188,13 +6189,13 @@ SETUP_UDPCHUNKSIZE
 	ZH_CN	最大UDP数据大小
 
 SETUP_UDPCHUNKSIZE_CHOOSE
-	DE	Maximale Anzahl Bytes an Audiodaten, die in UDP-Paketen zum Player geschickt werden (nur SLIMP3):
 	DA	Maksimum antal bytes audiodata der sendes til afspilleren i en UDP-pakke (SLIMP3):
+	DE	Maximale Anzahl Bytes an Audiodaten, die in UDP-Paketen zum Player geschickt werden (nur SLIMP3):
 	EN	Maximum number of bytes of audio data to send to player in a UDP packet (SLIMP3 only):
 	ES	Máximo número de bytes de datos de audio a enviar al reproductor en un paquete UDP (solo SLIMP3):
 	FR	Nombre maximum d'octets de données audio à envoyer à la platine par paquet UDP :
 	JA	UDPパケットでプレーヤーに送信するオーディオデータの最大バイト数（SLIMP3のみ）:
-	NL	Maximaal aantal bytes audio data dat in een UDP pakket naar de speler wordt gestuurd (SLIMP3):
+	NL	Maximaal aantal bytes audio data dat in een UDP pakket naar de speler wordt gestuurd (alleen SLIMP3):
 	NO	Maksimalt antall bytes med lyd data å sende til spilleren i en UDP pakke (SLIMP3):
 	PT	Máximo de bytes de dados áudio a enviar ao cliente por pacote UDP (SLIMP):
 	SV	Maximalt antal bytes ljud-data att skicka till spelaren i ett UDP-paket (SLIMP3):
@@ -6411,7 +6412,7 @@ SETUP_FILTERRULE_DESC
 	HE	ניתן לציין רשימת כתובות, המופרדות בפסיקים, להם תותר גישה. מותר גם שימוש ב * לציון קבוצת כתובות
 	IT	Se hai abilitato il blocco, puoi inserire gli indirizzi ai quali permettere la connessione allo SlimServer.  Questo campo accetta una lista di specifici indirizzi IP, il carattere jolly *, ed intervalli di indirizzi IP in una lista separata da virgole. Per esempio:    10.1.2.2 accettera' la connessione solo da 10.1.2.2    10.1.2.* accettera' la connessione a tutti gli indirizzi che iniziano con 10.1.2.x    10.1.2.2-50 accettera' la connessione degli indirizzi IP nell'intervallo 10.1.2.2 e 10.1.2.50    Per finire, piu' voci possono essere unite con virgole, come queste:  10.1.2.2,172.16.1.*,192.168.1-255.*    L'indirizzo IP speciale 127.0.0.1 permette al browser di connettersi allo SlimServer in funzione su quello stesso computer.
 	JA	ブロックする、と指定したのであれば、SlimServerに接続を許可するIPアドレスを指定することができます。<br><br>このフィールドはIPアドレスを入力することができます。*を使ってワイルドカード指定もできます。例えば、<BR><BR><B>10.1.2.2</B>は、10.1.2.2のみに接続を許可しますが、<BR><BR><B>10.1.2.*</B>は、10.1.2.xのどのアドレスでも許可します。<BR><BR><B>10.1.2.2-50</B>であれば、10.1.2.2から10.1.2.50のアドレスが許可されます。<BR><BR>最後に、複数のアドレスは以下のように、コンマで区切って入力できます。<B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>127.0.0.1という特別なアドレスは、ウェブブラウザーがSlimServerに接続する時に接続を可能にします。
-	NL	Indien je 'Blokkeren' hebt ingesteld kun je de adressen ingeven die je toegang wil geven tot de SlimServer.<br><br>Dit veld accepteert een lijst van specifieke IP adressen, wildcards zoals '*' en IP adres bereiken in een door komma's gescheiden lijst. Bijvoorbeeld:<br><br><b>10.1.2.2</b> zal enkel verbindingen toestaan vanaf adres 10.1.2.2<br><br><b>10.1.2.*</b> laat elk adres toe dat begint met 10.1.2.<br><br><b>10.1.2.2-50</b> verleent alle adressen tussen 10.1.2.2 en 10.1.2.50 toegang.<br><br>Tenslotte kunnen meerdere adressen gecombineerd worden in een door komma's gescheiden lijst, zoals in <b>10.1.2.2,172.16.1.*,192.168.1-255.*</b><br><br>Het speciale adres 127.0.0.1 geeft toegang aan browsers die op de server zelf draaien.
+	NL	Indien je 'Blokkeren' hebt ingesteld kun je de adressen ingeven die je toegang wil geven tot de SlimServer.<br><br>Dit veld accepteert een lijst van specifieke IP adressen, wildcards zoals '*' en IP adres bereiken in een door komma's gescheiden lijst. Bijvoorbeeld:<br><br><b>10.1.2.2</b> zal enkel verbindingen toestaan vanaf adres 10.1.2.2<br><br><b>10.1.2.*</b> laat elk adres toe dat begint met 10.1.2.x adressen.<br><br><b>10.1.2.2-50</b> verleent alle adressen tussen 10.1.2.2 en 10.1.2.50 toegang.<br><br>Tenslotte kunnen meerdere adressen gecombineerd worden in een door komma's gescheiden lijst, zoals in <b>10.1.2.2,172.16.1.*,192.168.1-255.*</b><br><br>Het speciale adres 127.0.0.1 geeft toegang aan browsers die op de server zelf draaien.
 	NO	Hvis du har aktivert blokkering kan du liste de IP-adresser du vil tillate skal kunne koble seg til SlimServer.<br><br>Dette feltet aksepterer en komma-separert liste med IP-adresser som f.eks:<br><br><b>10.1.2.2</b> vil bare tillate 10.1.2.2 å koble til<br><br><b>10.1.2.*</b> vil tillate alle IP-adresser av formatet 10.1.2.*<br><br><b<10.1.2.2-50</b> vil tillate IP-adresser i området 10.1.2.2 til 10.1.2.50<br><br>Ulike typer kan kombineres med komma slik: <b>10.1.2.2,172.61.1.*,192.168.1-255.*</b><br><br>IP-adressen 127.0.0.1 tillater web browsere å koble til SlimServer som kjøres lokalt på maskinen.
 	PT	Se activar o bloqueio por IP de origem, introduza aqui os endereços com permissões para ligar ao SlimServer.<br><br>Este campo aceita uma lista de endereços IP, redes (usando o caractér "*"), e segmentos de rede (usando "endereço-endereço"), separados por vírgulas. Por exemplo
 	SV	Om du har aktiverat blockering kan du skriva in de IP-adresser du vill tillåta för anslutning till SlimServer.<br><br>Detta fält accepterar en komma-separerad lista med urval enligt följande exempel:<br><br><b>10.1.2.2</b> tillåter endast 10.1.2.2 att ansluta<br><br><b>10.1.2.*</b> tillåter alla med en IP-adress som börjar med 10.1.2 att ansluta.<br><br><b>10.1.2.2-50</b> tillåter alla IP-adresser mellan 10.1.2.2 och 10.1.2.50 att ansluta.<br><br>Flera olika typer kan kombineras, som t.ex <b>10.1.2.2,172.16.1.*,192.168.1-255.*</b><br><br>Den speciella IP-adressen 127.0.0.1 (localhost) tillåter alltid en webläsare på samma dator som SlimServer att ansluta.
@@ -6660,13 +6661,13 @@ SETUP_SCREEN_WIPES
 
 SETUP_FULL_ANIMATION
 	CS	Plná animace
-	DE	Volle Animation
 	DA	Fuld animation
+	DE	Volle Animation
 	EN	Full animation
 	ES	Animación Completa
 	FR	Toutes les animations
 	JA	アニメーション全て
-	NL	Alle animaties
+	NL	Volledige animaties
 	NO	Alle animasjoner
 	PT	Animação Completa
 	SV	alla animeringar
@@ -6731,15 +6732,15 @@ SETUP_MDNSNAME_OK
 	ZH_CN	此伺服器的Bonjour名：
 
 SETUP_MDNSNAME_DESC
-	DE	Sie können einen Namen für diesen Server zur Verwendung mit Bonjour auswählen. Lassen Sie das Feld leer, um Bonjour zu deaktivieren. Um die Änderungen zu aktivieren, muss der Server neu gestartet werden.
 	DA	Du kan vælge at angive et Rendezvouz-navn for denne server. Lad feltet være tomt for at slå Rendezvouz-understøttelse fra. SlimServer skal genstartes før denne indstilling har effekt.
+	DE	Sie können einen Namen für diesen Server zur Verwendung mit Bonjour auswählen. Lassen Sie das Feld leer, um Bonjour zu deaktivieren. Um die Änderungen zu aktivieren, muss der Server neu gestartet werden.
 	EN	You can choose a name for this server to be used with Bonjour.  Leave this field blank to disable Bonjour advertising of SlimServer.  You will need to restart the server to see the effect of these changes.
 	ES	Se puede elegir que nombra utilizará este reproductor para Bonjour. Dejar este campo en blanco para deshabilitar avisos comerciales de Bonjour en el Slimserver. Se deberá reiniciar el servidor para que estos cambios tengan efecto.
 	FR	Vous pouvez choisir un nom de serveur reconnu par Bonjour.
 	HE	שם השרת עבור רנדוו
 	IT	Puoi scegliere un nome per questo server da utilizzare con Bonjour. Lascia il campo vuoto per disabilitare il riconoscimento dello SlimServer da parte di Bonjour. Devi far ripartire il server perche' il cambiamento abbia effetto.
 	JA	ランデブーをお使いの時に、このサーバーに名前をつけることができます。このフィールドを空欄にしますと、ランデブー機能が無効になります。この変更にはサーバーの再起動が必要となります。
-	NL	Je kunt een naam voor deze server kiezen die gebruikt zal worden met de Rendez-vousfunctie van SlimServer.
+	NL	Je kunt een naam voor deze server kiezen die gebruikt zal worden met de Rendez-vousfunctie van SlimServer. Je moet SlimServer herstarten om de wijzigingen door te voeren.
 	NO	Du kan oppgi et Bonjournavn for denne serveren
 	PT	Pode escolher um nome Bonjour para este servidor
 	SV	Du kan ange ett Bonjour-namn för denna server
@@ -6964,8 +6965,8 @@ CURRENT_PLAYER
 
 NOW_PLAYING_ON
 	CS	Nyní hraje na serveru v
-	DE	Aktuell spielt von
 	DA	Afspiller nu på player
+	DE	Aktuell spielt von
 	EN	Now playing on the player at
 	ES	Se está escuchando en 
 	FI	Soittaa kappaletta
@@ -6973,7 +6974,7 @@ NOW_PLAYING_ON
 	HE	מנגן בנגן
 	IT	Riproduzione in corso su Slim Player a
 	JA	プレーヤーで現在再生中
-	NL	Speelt nu af op de speler van
+	NL	Speelt nu op de speler van
 	NO	Spilles nå på Slim Player
 	PT	A tocar no cliente Slim Player em
 	SV	Spelas nu på Slim Player
@@ -7533,15 +7534,15 @@ TREBLE
 
 BASS
 	CS	Basy
-	DE	Bass
 	DA	Bas
+	DE	Bass
 	EN	Bass
 	ES	Graves
 	FI	Basso
 	FR	Graves
 	IT	Bassi
 	JA	低音
-	NL	Laag
+	NL	Bas
 	NO	Bass
 	PT	Graves
 	SV	Bas
@@ -7584,7 +7585,7 @@ OFFDISPLAYSIZE
 	FR	Taille du texte en veille
 	IT	Dimensione del testo in Standby
 	JA	スタンドバイ状態でのテキストサイズ
-	NL	Standby tekstgrootte
+	NL	Tekstgrootte indien uitgeschakeld
 	NO	Tekststørrelse i standby modus
 	PT	Tamanho do Texto ao Desligar
 	SV	Textstorlek i standby-läge
@@ -8093,7 +8094,7 @@ DISC
 	FR	Disque
 	IT	Disco
 	JA	ディスク
-	NL	Plaat
+	NL	CD
 	NO	Plate
 	PT	Disco
 	SV	Skiva
@@ -8157,14 +8158,14 @@ ALC
 	EN	Apple Lossless
 
 MOV
-	DE	Apple AAC- oder Film-Datei
 	DA	Apple AAC eller film
+	DE	Apple AAC- oder Film-Datei
 	EN	Apple AAC, Lossless or Movie File
 	ES	AAC, Lossless or archivo tipo Movie de Apple
 	FI	Apple AAC, Häviötön tai Elokuvatiedosto
 	FR	Apple AAC ou film
 	JA	アップルAAC、ロスレスまたはムービーファイル
-	NL	Apple AAC of film
+	NL	Apple AAC, lossless of film
 	NO	Apple AAC eller film
 	PT	Apple AAC of Ficheiro Movie
 	SV	Apple AAC eller film
@@ -9050,8 +9051,8 @@ BROWSE_MUSIC_FOLDER
 
 SYNCHRONIZE
 	CS	Synchronizovat
-	DE	Synchronisieren
 	DA	Synkronisér
+	DE	Synchronisieren
 	EN	Synchronize
 	ES	Sincronizar
 	FI	Saata ajantasalle
@@ -9059,7 +9060,7 @@ SYNCHRONIZE
 	HE	סינכרון
 	IT	Sincronizza
 	JA	シンクロする
-	NL	Synchronizeren
+	NL	Synchroniseren
 	NO	Synkroniser
 	PT	Sincroninar
 	SV	Synkronisera
@@ -9225,8 +9226,8 @@ MOSTPLAYED
 
 SONG_INFO
 	CS	Informace o skladbě
-	DE	Titelinformation
 	DA	Information
+	DE	Titelinformation
 	EN	Song Info
 	ES	Info de la canción
 	FI	Kappaleen tiedot
@@ -9234,7 +9235,7 @@ SONG_INFO
 	HE	מידע על השיר
 	IT	Informazioni brano
 	JA	曲の情報
-	NL	Informatie over het Nummer
+	NL	Informatie over het liedje
 	NO	Sanginfo
 	PT	Informação da Música
 	SV	Låtinfo
@@ -9278,7 +9279,7 @@ DELETE_WARNING
 	FI	Oletko varma, että haluat poistaa? Valitse 'Vahvista poisto' poistaaksesi soittolistasi.
 	HE	האם אתה בטוח שברצונך למחוק
 	IT	Sei sicuro di cancellare? Spunta "conferma cancellazione" e poi Cancella per cancellare la lista di esecuzione.
-	NL	Weet je zeker dat je wilt verwijderen? Markeer 'Bevestig verwijderen' om de playlists te verwijderen.
+	NL	Weet je zeker dat je wilt verwijderen? Markeer 'Bevestig verwijderen' om de playlist te verwijderen.
 	ZH_CN	您确定要删除吗？请选择《确定删除》来删除您的播放表。
 
 SCAN_WARNING
@@ -9358,8 +9359,8 @@ FOR
 
 PLAYER_SETTINGS
 	CS	Nastavení přehrávače
-	DE	Player Einstellungen
 	DA	Afspiller-indstillinger
+	DE	Player Einstellungen
 	EN	Player Settings
 	ES	Configuración del reproductor
 	FI	Soittimen asetukset
@@ -9367,7 +9368,7 @@ PLAYER_SETTINGS
 	HE	הגדרות הנגן
 	IT	Impostazioni lettore
 	JA	プレーヤーセッティング
-	NL	Instellingen van de speler
+	NL	Spelerinstellingen
 	NO	Spiller instillinger
 	PT	Configurações do Cliente
 	SV	Spelarinställningar
@@ -9377,6 +9378,7 @@ BASIC_PLAYER_SETTINGS
 	DE	Grundeinstellungen
 	EN	Basic Settings
 	FR	Réglages de base
+	NL	Basis instellingen
 
 ALARM_SETTINGS
 	CS	Budík nastavení
@@ -9459,6 +9461,7 @@ BASIC_SERVER_SETTINGS
 	DE	Grundeinstellungen
 	EN	Basic Settings
 	FR	Réglages de base
+	NL	Basis instellingen
 
 SERVER_SETTINGS
 	CS	Nastavení serveru
@@ -9629,15 +9632,15 @@ NETWORK_SETTINGS
 	ZH_CN	网络
 
 SETUP_GROUP_DEBUG_DESC
-	DE	SlimServer kennt einige Debugging Einstellungen, um die Aufzeichnung von Informationen zu den Aktivitäten des Servers zu ermöglichen. Wählen Sie die Kategorien, die Sie interessieren, und drücken Sie Ändern, um die Aufzeichnung zu starten. Die aktuellsten Daten können <a href="/log.txt" target="log">hier</a> angeschaut werden.
 	DA	SlimServer har et antal fejlsøgnings-indstillinger der kan benyttes til at logge detaljerede informationer omkring serverens arbejde. Afkryds de elementer du ønsker at logge og klik Gem for at begynde logning. Du kan se de nyeste log-informationer <a href="/log.txt" target="log">her</a>.
+	DE	SlimServer kennt einige Debugging Einstellungen, um die Aufzeichnung von Informationen zu den Aktivitäten des Servers zu ermöglichen. Wählen Sie die Kategorien, die Sie interessieren, und drücken Sie Ändern, um die Aufzeichnung zu starten. Die aktuellsten Daten können <a href="/log.txt" target="log">hier</a> angeschaut werden.
 	EN	SlimServer has a number of debugging settings that can be used to record detailed information about the server's operation.  Check off the items that you'd like logged for display and click Change to start logging that information.  You can view the most recent log entries <a href="/log.txt" target="log">here</a>.
 	ES	El SlimServer posee varias opciones de depuración que pueden utilizarse para guardar información detallada acerca del funcionamiento del servidor. Activar los items que se desea incluir en el log y haga click en Cambiar para comenzar a registrar esa información. Se pueden ver las entradas más recientes del log <a href="/log.txt" target="log">aquí</a>.
 	FR	Le SlimServer dispose de réglages de mise au point qui permettent d'enregistrer des informations détaillées sur son fonctionnement. Sélectionnez ci-dessous les éléments que vous voulez enregistrer. Les enregistrements les plus récents sont disponibles <a href="/log.txt" target="log">ici</a>.
 	HE	במידה ויש חשש שהשרת אינו מתפקד כראוי, ניתן להפעיל הודעות שגיאה לעזרה
 	IT	Lo SlimServer ha un numero di impostazioni di debugging (eliminazione degli errori) che possono essere usati per registrare informazioni dettagliate sulle operazioni del server. Spunta gli argomenti che desideri registrare per poi visualizzare e premi Cambia per iniziare la registrazione delle informazioni. Puoi visualizzare le registrazioni piu' recenti qui.
 	JA	SlimServerには、サーバーの状態に関する詳細な情報を記録する様々なデバッグセッティングがあります。記録して表示したいアイテムをチェックして「変更」をクリックして下さい。<a href="/log.txt" target="log">ここ</a>をクリックして最新のログを見ることができます。
-	NL	SlimServer heeft een aantal debuginstellingen die gebruikt kunnen worden om gedetailleerde informatie over de werking van de server kunnen verzamelen. Vink de items aan die je in de log wilt zien. Klik op de knop Veranderen om het loggen te starten. Je kunt de meest recente loginformatie <a href="/log.txt" target="log">hier</a> zien.
+	NL	SlimServer heeft een aantal instellingen voor het opsporen van fouten die gebruikt kunnen worden om gedetailleerde informatie over de werking van de server kunnen verzamelen. Vink de items aan die je in de log wilt zien. Klik op de knop Veranderen om het loggen te starten. Je kunt de meest recente loginformatie <a href="/log.txt" target="log">hier</a> zien.
 	NO	SlimServer har et antall feilsøkingsinnstillinger som kan benyttes for å lagre detaljert informasjon om serverens virksomhet. Fyll ut de punkter som du vil logge for visning og klikk Endre for å starte loggingen med endringene. Du kan vise de siste lagrede logger <a href="/log.txt" target="log">her</a>
 	PT	O SlimServer tem várias opções de depuração que poderão ser usadas para gravar informação detalhada acerca das operações do servidor. Active as opções que deseja que sejam guardadas e selecione "Mudar" para começar a guardar a informação. Poderá ver as entradas mais recentes <a href="/log.txt" target="log">aqui</a>.
 	SV	SlimServer har ett antal felsökningsinställningar som kan användas för att spara detaljerad information om serverns funktion. Fyll i de punkter som du skulle vilja logga för visning och klicka Ändra för att starta loggningen av de valda punkterna. Du kan visa de senast sparade loggningarna <a href="/log.txt" target="log">här</a>.
@@ -9645,14 +9648,14 @@ SETUP_GROUP_DEBUG_DESC
 
 DEBUGGING_SETTINGS
 	CS	Krokování
-	DE	Fehlerbeseitigung
 	DA	Fejlsøgning
+	DE	Fehlerbeseitigung
 	EN	Debugging
 	ES	Depuración
 	FR	Mise au point
 	HE	בעיות
 	JA	デバッグ
-	NL	Debuggen
+	NL	Fouten opsporen
 	NO	Feilsøking
 	PT	Depuramento
 	SV	Felsökning
@@ -9711,8 +9714,8 @@ PLAYER_MAC_ADDRESS
 
 CHOOSE_NAME_DESCRIPTION
 	CS	Můžete dát přehrávači jméno pod kterým se bude zde zobrazovat.
-	DE	Sie können dem Player einen Namen geben.
 	DA	Du kan give denne afspillet et navn som vil blive brugt til at identificere denne afspiller på disse web-sider.
+	DE	Sie können dem Player einen Namen geben.
 	EN	You can give this player a name that will be used to identify the player.
 	ES	Puede dar un nombre a este reproductor para identificarlo en la interfaz web.
 	FI	Voit antaa nimen, jonka avulla soitin voidaan yhdistää näillä WWW-sivuilla.
@@ -9720,7 +9723,7 @@ CHOOSE_NAME_DESCRIPTION
 	HE	בחר שם שישמש לזיהוי הנגן
 	IT	Puoi attribuire un nome al lettore che sara' usato per identificarlo.
 	JA	このプレーヤーに名前をつけることができます。
-	NL	Je kunt deze speler een naam geven om de speler te herkenbaar te maken op de web pagina's.
+	NL	Je kunt deze speler een naam geven om de speler te herkenbaar te maken op de webpagina's.
 	NO	Du kan gi denne spilleren et navn som kommer til å brukes for å identifisere den i webgrensesnittet.
 	PT	Pode definir um nome para este cliente de forma a identificá-lo.
 	SV	Du kan ge denna spelare ett namn som kommer att användas för att identifiera den i webgränssnittet.
@@ -9728,8 +9731,8 @@ CHOOSE_NAME_DESCRIPTION
 
 CHOOSE_A_NAME
 	CS	Jméno přehrávače:
-	DE	Wählen Sie einen Namen für diesen Player:
 	DA	Afspiller-navn:
+	DE	Wählen Sie einen Namen für diesen Player:
 	EN	Player name:
 	ES	Elija un nombre para este reproductor:
 	FI	Soittimen nimi:
@@ -9737,7 +9740,7 @@ CHOOSE_A_NAME
 	HE	בחר שם
 	IT	Nome lettore:
 	JA	プレーヤーの名前 :
-	NL	Naam van deze speler:
+	NL	Naam speler:
 	NO	Spillernavn:
 	PT	Escolha um nome para este cliente
 	SV	Namn:
@@ -9960,8 +9963,8 @@ FORGET_PLAYER
 
 FORGET_PLAYER_DESC
 	CS	Jestliže nechcete, aby byl aktuální přehrávač nadále registrován v SlimServeru, můžete ho odregistrovat.
-	DE	Wenn Sie den Player nicht weiter verwenden möchten oder der Player doppelt vorkommt, können Sie ihn aus der Serverliste löschen.
 	DA	Hvis du ikke længere anvender denne afspiller eller afspilleren optræder to gange i listen over afspillere kan du vælge, at serveren skal glemme denne afspiller.
+	DE	Wenn Sie den Player nicht weiter verwenden möchten oder der Player doppelt vorkommt, können Sie ihn aus der Serverliste löschen.
 	EN	If you no longer are using this player or this player appears twice in your list of players, you can choose to have the server forget about this player.
 	ES	Si ya no se está utilizando este reproductor, o el mismo aparece dos veces en la lista de reproductores, se puede indicar al servidor que se olvide de este reproductor.
 	FI	Mikäli et enää käytä soitinta tai se näkyy kahdesti listassa, voit unohtaa soittimen tällä valinnalla.
@@ -9969,7 +9972,7 @@ FORGET_PLAYER_DESC
 	HE	במידה ואינך משתמש עוד בנגן זה או אם הוא מופיע פעמיים ניתן למחוק אותו
 	IT	Se non stai piu' utilizzando questo lettore o se appare due volte nella lista dei lettori in uso, puoi scegliere di far ignorare questo lettore al server.
 	JA	このプレーヤーをもう使用していない場合、あるいは、このプレーヤーが2つリストに載っている場合、このプレーヤーを消去することができます。
-	NL	Als je deze speler niet langer gebruikt, of deze speler komt twee keer voor in de lijst van spelers, kun je de server deze speler laten 'vergeten'.
+	NL	Als je deze speler niet langer gebruikt of als deze speler twee keer voorkomt in de lijst van spelers, kun je de server deze speler laten 'vergeten'.
 	NO	Om du ikke bruker denne spilleren eller om den finnes to ganger i listen over spillere, kan du be serveren glemme denne spilleren.
 	PT	Se não usar mais este cliente (nome ou IP), ou se o cliente aparecer várias vezes, pode "esquecê-lo".
 	SV	Om du inte använder denna spelare eller om denna spelare finns två gånger i din lista över spelare, så kan du välja att servern skall glömma denna spelare.
@@ -10089,14 +10092,14 @@ MINUTES
 
 CURRENT_WEB_SKIN
 	CS	Aktuální skin:
-	DE	Aktueller Web-Skin:
 	DA	Aktivt web-layout:
+	DE	Aktueller Web-Skin:
 	EN	Current web skin:
 	ES	Estilo actual del skin de web:
 	FI	WWW-ulkoasu:
 	FR	Interface web courante :
 	JA	現在のウェブ外観
-	NL	Huidige web skin:
+	NL	Huidige web uiterlijk:
 	NO	Aktivt webutseende:
 	PT	Tema Web actual
 	SV	Aktuellt webutseende (skin):
@@ -10212,7 +10215,7 @@ TRANSPORTER_MUSIC_PLAYER
 	FI	Transporter soitin
 	FR	Platine Transporter
 	JP	Transporterプレーヤー
-	NL	Transporter Muziek Speler
+	NL	Transporter muziekspeler
 	NO	Transporter Musik Player
 	PT	Leitor de Música Transporter
 	SE	Transporter musikspelare
@@ -10283,8 +10286,8 @@ DELETE
 
 NO_PLAYER_FOUND
 	CS	Váš přehrávač nebyl nalezen.
-	DE	Kein Player gefunden.
 	DA	Din afspiller kunne ikke findes.
+	DE	Kein Player gefunden.
 	EN	Your player was not found.
 	ES	No se ha encontrado ningún reproductor
 	FI	Soitinta ei löytynyt.
@@ -10292,7 +10295,7 @@ NO_PLAYER_FOUND
 	HE	לא נמצא נגן
 	IT	Il Tuo lettore non e' stato trovato.
 	JA	プレーヤーが見つかりません。
-	NL	Geen speler gevonden
+	NL	Je speler was niet gevonden.
 	NO	Kunne ikke finne din spiller
 	PT	Não foi encontrado nenhum cliente.
 	SV	Din spelare kunde inte hittas.
@@ -10300,8 +10303,8 @@ NO_PLAYER_FOUND
 
 NO_PLAYER_DETAILS
 	CS	<p><b>Pakliže používáte Squeezebox:</b></p><li> Ujistěte se, že je Váš přehrávač připojen a že máte správně nastavená síťová nastavení. Klikněte na tlačítko 'Obnovit' jestliže je přehrávač připojen.</li>  <br>  <p><b>Pokud nepoužíváte Squeezebox:</p></b>   <li>Můžete poslouchat obsah hudebního archivu použitím SoftSqueeze - softwarové verze Squeezeboxu.</li>  <li>Můžet také použít softwarový MP3 přehrávač (jako je WinAmp, MusicJukebox, Windows Media Player, nebo iTunes)  a poslouchat Váš hudební archiv otevřením URL: http://localhost:9000/stream.mp3 v přehrávači.</li>
-	DE	<b>Sie besitzen eine Squeezebox oder einen Transporter:</b><ul><li>Überprüfen Sie, ob der Player korrekt eingesteckt ist und die Netzwerkeinstellungen stimmen. Drücken Sie auf "Aktualisierung" im Menü ihres Browser, sobald der Player angeschlossen ist.</ul><p><b>Sie besitzen weder Squeezebox noch Transporter:</b><ul><li>Sie können mit <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, einer Software-Version der Squeezebox, ihre Musiksammlung anhören.<li>Verwenden Sie eine Software zur Wiedergabe von MP3-Streams (z.B. WinAmp oder iTunes), um über die folgende URL auf den SlimServer zugreifen zu können: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	DA	Kontroller at din afspiller er sluttet til og at dens netværksindstillinger er korrekte. Tryk F5 (Refresh/Genindlæs) i din web-browser for at prøve at forbinde til afspilleren igen.
+	DE	<b>Sie besitzen eine Squeezebox oder einen Transporter:</b><ul><li>Überprüfen Sie, ob der Player korrekt eingesteckt ist und die Netzwerkeinstellungen stimmen. Drücken Sie auf "Aktualisierung" im Menü ihres Browser, sobald der Player angeschlossen ist.</ul><p><b>Sie besitzen weder Squeezebox noch Transporter:</b><ul><li>Sie können mit <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, einer Software-Version der Squeezebox, ihre Musiksammlung anhören.<li>Verwenden Sie eine Software zur Wiedergabe von MP3-Streams (z.B. WinAmp oder iTunes), um über die folgende URL auf den SlimServer zugreifen zu können: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	EN	<b>If you own a Squeezebox or Transporter:</b><ul><li>Make sure that your player is plugged in and its networking settings are correct. Click the Refresh button once your player is connected.</ul><p><b>If you do not own a Squeezebox or Transporter:</b><ul><li>You can listen to your music library using <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, a software version of Squeezebox.<li>You can use MP3 player software (such as WinAmp or iTunes) to listen to your music library with SlimServer by connecting to this URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	ES	<b>Si posee un Squeezebox:</b><ul><li>Asegurarse que el reproductor esta conectado y su configuración de red sea correcta. Hacer Click en el botón de Actualizar una vez que el reproductor este conectado.</ul><p><b>Si no posee un Squeezebox:</b><ul><li>Se puede escuchar la colección musical utilizando <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, una versión en software de Squeezebox.<li>Se puede utilizar un reproductor en software de MP3 (como WinAmp o iTunes) para escuchar su colección musical con SlimServer, conectandose a esta URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>	
 	FI	<td><b>Jos omistat Squeezeboxin:</b>  <ul>  <li>Varmista, että soittimesi on kytketty verkkoon ja että verkkoasetuksesi ovat oikein. Kun soittimesi on kytketty verkkoon, paina "Refresh" nappulaa</ul>  <p>  <b>Jos et omista Squeezeboxia:</b>  <ul><li>  Voit kuunnella musiikkikirjastosi sisältöä ohjelmallisella versiolla Squeezeboxista: <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>  <li>Voit myös käyttää median toistoohjelmistoja (kuten WinAmp tai iTunes) kuunnellaksesi musiikkikirjastoasi Slimserverin kautta ottamalla yhteyttä osoitteeseen:<a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul> </td>
@@ -10309,7 +10312,7 @@ NO_PLAYER_DETAILS
 	HE	אין פרטי נגן
 	IT	Se possiedi uno Squeezebox:    - Accertati che il tuo lettore sia collegato e le impostazioni di rete corrette. Premi il bottone Aggiorna non appena il tuo lettore e' connesso.    Se non possiedi uno Squeezebox:    - Puoi ascoltare la tua raccolta musicale usando lo SoftSqueeze, la versione software dello Squeezebox.  - Puoi usare un lettore MP3 software (come WinAmp o iTunes) per ascoltare la tua libreria musicale con lo SlimServer collegandoti a questa URL:  http://localhost:9000/stream.mp3
 	JA	プレーヤーがつながれ、ネットワークセッティングが正しいことを確認してください。「更新」を押して、プレーヤへの接続を再度試みてください。
-	NL	<b>Als je een Squeezebox hebt:  </b><ul><li>Zorg ervoor dat je speler aan het netwerk is aangesloten en dat de netwerk instellingen goed zijn. Druk op de Vernieuwen knop in je browser om opnieuw contact te maken met de speler.</ul>  <b>  Als je geen Squeezebox hebt:  </b><ul><li>Je kunt naar je muziek luisteren met SoftSqueeze, een software versie van de Squeezebox.  <li>  Je kunt MP3 speler programma's (zoals WinAmp of iTunes) gebruiken om naar je muziek te luisteren met SlimServer. Gebruik de volgende URL om connectie te maken:  <br>  http://localhost:9000/stream.mp3  <br>Waarbij localhost het IP adres is van je SlimServer.</ul>
+	NL	<b>Als je een Squeezebox of Transporter hebt:  </b><ul><li>Zorg ervoor dat je speler aan het netwerk is aangesloten en dat de netwerk instellingen goed zijn. Druk op de vernieuwen knop in je browser om opnieuw contact te maken met de speler.</ul>  <b>  Als je geen Squeezebox of Transporter hebt:  </b><ul><li>Je kunt naar je muziek luisteren met SoftSqueeze, de software versie van de Squeezebox.  <li>  Je kunt MP3 speler programma's (zoals WinAmp of iTunes) gebruiken om naar je muziek te luisteren met SlimServer. Gebruik de volgende URL om connectie te maken:  <br>  http://localhost:9000/stream.mp3  <br>Waarbij localhost het IP adres is van je SlimServer.</ul>
 	NO	Sørg for spilleren din er på, koblet til og har riktige nettverksinnstillinger. Trykk på F5 (oppdater/refresh) i din webbrowser for å prøve å koble opp mot spilleren igjen.
 	PT	Verifique se o cliente está ligado e se as configurações da rede estão correctas. Actualize esta página para verificar de novo a presença do leitor.
 	SV	Se till att din spelare är påslagen, inkopplad och har korrekta nätverksinställningar. Tryck på F5 (Uppdatera/Refresh) i din webläsare för att försöka koppla upp mot din spelare igen.
@@ -10338,7 +10341,7 @@ PLAYER_NEEDS_UPGRADE_DETAILS
 	HE	הנגן זקוק לעדכון קושחה. לחץ על בהירות מספר שניות
 	IT	Il software dello Squeezebox puo' essere aggiornato ad una versione piu' recente. Mantieni premuto il tasto BRIGHTNESS sul telecomando fino all'indicazione sullo schermo dello Squeezebox di inizio aggiornamento. L'operazione impieghera' pochi secondi.
 	JA	Squeezeboxのソフトウェアのアップデートが必要です。アップデートを開始したことがディスプレーに表示されるまで、リモートのBRIGHTNESSボタンを押しつづけてください。アップデートは数秒で割ります。
-	NL	De software in je Squeezebox moet bijgewerkt worden naar de laatste versie. Houd de BRIGHTNESS toets op de afstandsbediening ingedrukt totdat het scherm aangeeft dat het bijwerken is begonnen.
+	NL	De software in je Squeezebox moet bijgewerkt worden naar de laatste versie. Houd de BRIGHTNESS toets op de afstandsbediening ingedrukt totdat het scherm aangeeft dat het bijwerken is begonnen. Het bijwerken neemt enige tijd in beslag.
 	NO	Programvaren i spilleren din trenger å oppdateres til siste versjon. Trykk og hold nede Brightness-knappen på Slim fjernkontrollen til oppdateringen automatisk startes. Oppdateringen tar bare noen sekunder.
 	SV	Mjukvara i din spelare behöver uppdateras till senaste version. Tryck och håll ned Brightness-knappen på Slim-fjärrkontrollen tills uppdatering inleds automatiskt. Uppdateringen tar endast några sekunder.
 	ZH_CN	您的Squeezebox播放机韧件需要更新到最新的版本。请按握遥控器上的光亮度按钮直到Squeezebox显示更新的开始。更新韧件只需几秒钟。
@@ -10380,7 +10383,7 @@ PLAYER_UPGRADE_INSTRUCTIONS
 	HE	לחץ בהירות מספר שניות ואז העתק את כתובת הרשת
 	IT	Se l'indirizzo IP del tuo lettore non appare sullo schermo, mantieni premuto il tasto LUMINOSITA' finche' non appare. Quindi inserisci l'indirizzo IP visualizzato sullo schermo qui:
 	JA	もしプレーヤーのIPアドレスが画面に表示されなければ、表示されるまでBRIGHTNESSボタンを押しつづけてください。そして、ここにIPアドレスを入力してください :
-	NL	Als het IP adres van je speler niet op het scherm staat, druk en blijf drukken op BRIGHTNESS totdat het er wel staat. Voer dan het IP adres hier in op het scherm:
+	NL	Als het IP adres van je speler niet op het scherm staat, druk dan en blijf dan drukken op BRIGHTNESS totdat het er wel staat. Voer dan het IP adres hier in op het scherm:
 	NO	Om spilleren ikke viser IP adresse, trykk og hold nede BRIGHTNESS på din Slim fjernkontroll til IP adressen vises. Skriv inn IP adressen her:
 	SV	Om din spelare inte visar IP-adress, tryck och håll ned BRIGHTNESS på din Slim-fjärrkontroll tills IP-adress visas. Mata in denna IP-adress här:
 	ZH_CN	如果播放机屏幕上没有显示播放机的IP地址，请按握光亮度按钮直到它先是为止。然后输入显示在此的IP地址：
@@ -10420,7 +10423,7 @@ CHECKVERSION_PROBLEM
 	FI	SlimServerin päivityksiä etsittäessä tapahtui virhe. (Virhekoodi %s)
 	FR	Une erreur s'est produite pendant la recherche de mises à jour du SlimServer (code erreur %s)
 	IT	Si e' verficato un errore durante la ricerca di aggiornamenti per lo SlimServer (Codice d'errore %s)
-	NL	Er is een fout opgetreden tijdens het controleren van op nieuwe versie van SlimServer. (Fout code %s)
+	NL	Er is een fout opgetreden tijdens het controleren op een nieuwe SlimServer versie. (Fout code %s)
 	ZH_CN	当与SlimServer查证韧件更新时出现错误。（Error code %s）
 
 CHECKVERSION_ERROR
@@ -10469,7 +10472,7 @@ CSRF_ERROR_INFO
 	EN	In order to request this URL from a Bookmark/Favorite, or some means other than following a link from the SlimServer web interface, you will need to use a URL with a \"cauth\" security parameter. If you received this error when following a link from the SlimServer web interface, you will want to make sure your web browser software (including proxy servers and spyware/privacy software) is allowing \"Referer\" headers to be sent. Below is the appropriate URL for the URL you attempted.
 	ES	A fin de requerir esta URL desde un Señalador(Marcador)/Favorito, o de alguna otra forma que no sea seguir un link desde la interfaz web de SlimServer, se necesitará utilizar una URL con un parámetro de seguridad \"cauth\". Si se recibió este error al seguir un link desde la interfaz web de SlimServer, habrá que asegurarse que el software del navegador (incluyendo servidores proxy y software de spyware/privacidad) permite mandar headers \"Referer\". Debajo se muestra la URL apropiada para la URL que se intentó acceder.
 	HE	שגיאת התחזות
-	NL	Om deze URL op te vragen vanaf een Bookmark of Favoriet, of met een andere manier dan het volgen van een link op de SlimServer website moet je een URL gebruiken met een \"cauth\" beveiligingsparameter. Als je deze URL opvraagt door het volgen van een link op de SlimServer website moet je controleren of je browser (inclusief proxyservers, anti spyware of privacy programma's) het toestaat om een \"Referer\" header te verzenden. Hieronder staat de correcte URL voor de URL die je probeerde.
+	NL	Om deze URL op te vragen vanaf een bookmark of favoriet of met een andere manier dan het volgen van een link op de SlimServer webpagina moet je een URL gebruiken met een \"cauth\" beveiligingsparameter. Als je deze URL opvraagt door het volgen van een link op de SlimServer webpagina moet je controleren of je browser (inclusief proxyservers, anti spyware of privacy programma's) het toestaat om een \"Referer\" header te verzenden. Hieronder staat de correcte URL voor de URL die je probeerde.
 	ZH_CN	如果要从Bookmark/Favorite或其他方法请求这URL（从SlimServer网界面跟随链接除外），您将需要使用以\"cauth \"为安全参数的URL。如果您从SlimServer网界面跟随链接而出现错误，您需要确定您的浏览器软件（包括网代理伺服器和spyware/privacy软件）允许发送\"Referer\"倒坠。下面是您试图访问的URL的正确的URL。
 
 CSRF_ERROR_MEDIUM
@@ -10477,7 +10480,7 @@ CSRF_ERROR_MEDIUM
 	EN	<p>Because your CSRF protection level is set at 'MEDIUM', you can use the same &quot;;cauth=&quot; value for any URL; this means you should be more careful who you share your URLs with.</p>
 	ES	<p>Debido a que el nivel de protección CSRF se ha establecido como 'MEDIO', se puede utuliuza rel mismo valor &quot;;cauth=&quot; para cualquier URL; esto significa que se debe ser muy cuidadoso sobre con quien compartir las URLs.</p>
 	HE	מכיוון שהגדרות הבטחון הם בינוני, היה זהיר בהפצת כתובות רשת למוסיקה שלך
-	NL	Omdat je CSRF beveiliging is ingesteld als 'Gemiddeld', kun je dezelfde ";cauth=" waarde gebruiken voor elke URL. Dit betekent dat je voorzichtiger moet zijn aan wie je de URL's bekend maakt.
+	NL	Omdat je CSRF beveiliging is ingesteld als 'Gemiddeld' kun je dezelfde ";cauth=" waarde gebruiken voor elke URL. Dit betekent dat je voorzichtiger moet zijn aan wie je de URL's bekend maakt.
 	ZH_CN	<p>由于您的CSRF保护水平被设置在'中等'，您可以在任何URL使用同样的&quot;;cauth=&quot;值；这意味着您应该在与别人分享您的URLs时更加小心。
 
 CLICK_HERE
@@ -10824,15 +10827,15 @@ NO_SEARCH_RESULTS
 
 CONTRIBUTORMATCHING
 	CS	Interpreti, kterří obsahují
-	DE	Passender Interpret
 	DA	Matchende kunstnere
+	DE	Passender Interpret
 	EN	Artist matching
 	ES	Artista encontrado
 	FI	Esittäjät, jotka vastaavat hakua
 	FR	Artiste trouvé
 	IT	Artista corrispondente
 	JA	アーチスト照合
-	NL	Zoekresultaten artiesten
+	NL	Zoekresultaten artiest
 	NO	Artister som traff
 	PT	Artistas encontrados
 	SV	Artister som matchar
@@ -10967,14 +10970,14 @@ UNSYNC_WITH
 
 MOODLOGIC_SELECT_MOOD
 	CS	Vyber Mood pro Tvůj Mix
-	DE	Wählen Sie eine Stimmung für ihren Mix
 	DA	Vælg en stemning for dit mix
+	DE	Wählen Sie eine Stimmung für ihren Mix
 	EN	Select a Mood for your Mix
 	ES	Elegir un ambiente para la Mezcla
 	FI	Valitse sekoituksesi tunnelma
 	FR	Sélectionnez une ambiance pour votre mix
 	JA	ミックス用にムードを選んでください
-	NL	Kies een sfeer voor de mix
+	NL	Kies een sfeer voor je mix
 	NO	Velg stemning (MoodLogic) for din blanding
 	PT	Seleccione um ambiente para a mistura
 	SV	Välj stämning (MoodLogic) för din mix
@@ -11055,6 +11058,7 @@ MOODLOGIC_MOOD_1
 	FI	Iloinen
 	FR	Rythmé
 	JA	アップビート
+	NL	Upbeat
 	NO	Tempo
 	ZH_CN	活泼
 
@@ -11085,14 +11089,14 @@ MOODLOGIC_MOOD_3
 
 MOODLOGIC_MOOD_4
 	CS	Modrý
-	DE	Trist
 	DA	Trist
+	DE	Trist
 	EN	Blue
 	ES	Triste
 	FI	Surullinen
 	FR	Blues
 	JA	ブルー
-	NL	Blue
+	NL	Triest
 	NO	Blå
 	PT	Azul
 	ZH_CN	蓝调
@@ -11141,7 +11145,7 @@ RADIO_TUNEIN_DESC
 	ES	Si ya conoce la URL de la estación que se quiere escuchar, ingrésela debajo y presione en el botón "Sintonizar". Se puede ingresar la URL tanto del stream de la radio (ej. http://62.49.59.50:8000) o el archivo de lista que apunta a ese stream (ej. http://www.hitzradio.com/hitzradio.pls).
 	FR	Si vous connaissez l'URL d'une station de radio, vous pouvez l'entrer ci-dessous et cliquer sur Connecter pour l'écouter. Vous pouvez utiliser l'URL du flux lui-même (par ex. http://62.49.59.50:8000) ou de la liste de lecture pointant vers le flux (par ex. http://www.hitzradio.com/hitzradio.pls).
 	IT	Se gia' conosci l'URL della stazione che vuoi ascoltare, inseriscila piu' sotto e premi il tasto "Sintonizza". Puoi inserire l'URL sia dello stesso stream radio (es. http://62.49.59.50:8000) sia il file della lista di esecuzione che punta allo stream stesso (es. http://www.hitzradio.com/hitzradio.pls).
-	NL	Indien je de URL al weet van de zender die je wilt beluisteren, kun je het hieronder ingeven. Klik dan op de "Instellen" toets.  Je kunt de URL gebruiken van de radio stream zelf (bijv. http://62.49.59.50:8000) of de playlist dat naar de radio stream verwijst (bijv. http://www.hitzradio.com/hitzradio.pls).
+	NL	Indien je de URL al weet van de zender die je wilt beluisteren kun je die hieronder ingeven. Klik vervolgens op de "Instellen" toets.  Je kunt de URL gebruiken van de radio stream zelf (bijv. http://62.49.59.50:8000) of de playlist dat naar de radio stream verwijst (bijv. http://www.hitzradio.com/hitzradio.pls).
 
 RADIO_TUNEIN_RADIOURL
 	EN	Radio URL:
@@ -11200,8 +11204,8 @@ HELP_REMOTE
 
 TECHNICAL_INFORMATION
 	CS	Technické informace
-	DE	Technische Informationen
 	DA	Teknisk information (Engelsk)
+	DE	Technische Informationen
 	EN	Technical Information
 	ES	Información técnica
 	FI	Tekninen tieto
@@ -11209,7 +11213,7 @@ TECHNICAL_INFORMATION
 	HE	מידע טכני
 	IT	Informazioni tecniche
 	JA	テクニカルインフォメーション
-	NL	Technische Informatie
+	NL	Technische informatie
 	NO	Teknisk informasjon
 	PT	Informação Técnica
 	SV	Teknisk information
@@ -11283,8 +11287,8 @@ REMOTE_STREAMING
 
 PLAYER_SETUP
 	CS	Nastavení přehrávače
-	DE	Player Konfiguration
 	DA	Afspiller-indstillinger (Engelsk)
+	DE	Player Konfiguration
 	EN	Player Setup
 	ES	Configuración
 	FI	Soittimen asennus
@@ -11292,7 +11296,7 @@ PLAYER_SETUP
 	HE	הפעלת הנגן
 	IT	Installazione lettore
 	JA	プレーヤーセットアップ
-	NL	Instellingen van de speler
+	NL	Spelerinstellingen
 	NO	Spiller instillinger
 	PT	Configurações dos Clientes
 	SV	Installation av spelare
@@ -11848,7 +11852,7 @@ INFORMATION_DISABLED
 	HE	אין מידע
 	IT	DISABILITATO
 	JA	無効
-	NL	ONMOGELIJK
+	NL	UIT
 	NO	Deaktivert
 	SV	Avaktiverad
 	ZH_CN	已撤销
@@ -12295,7 +12299,7 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
 	FI	Voit valita näkyvätkö kokoelmalevyt yksittäisten artistien alla vai "Eri Esittäjiä" otsikon alla
 	FR	Vous pouvez spécifier si le contenu des albums de compilation apparait ensemble sous "Artistes divers" ou indépendamment sous chaque nom d'artiste.
 	IT	Puoi decidere di inserire gli album di compilation tutti assieme sotto "Artisti vari" o mostrarli sotto ogni voce di artista della compilation.
-	NL	Je kunt kiezen om verzamelalbums te tonen bij "Various Artists" of ze te tonen bij elke artiest in het verzamelalbum.
+	NL	Je kunt kiezen om verzamelalbums te tonen bij "Diverse artiesten" of ze te tonen bij elke artiest in het verzamelalbum.
 	ZH_CN	您可以让合辑出现在"Various Artists"或让它出现在属于个别艺人中。
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1
@@ -12325,7 +12329,7 @@ SETUP_VARIOUSARTISTSSTRING_DESC
 	FI	Kun kokoelmalevyt on ryhmitelty yhteen, ne näkyvät oletusarvoisesti "Eri Esittäiä" otsikon alla. Voit vaihtaa tämän otsikon alla
 	FR	Lorsque le contenu des compilations est groupé, il apparaît par défaut sous le nom "Artistes divers". Vous pouvez spécifier un autre nom ci-dessous.
 	IT	Quando gli album di compilation sono raggruppati assieme, per default appaiono sotto "Artisti Vari". Puoi cambiare la denominazione piu' sotto.
-	NL	Wanneer verzamelalbums bij elkaar gegroepeerd zijn komen ze standaard terecht bij "Various Artists". Je  kunt die naam hieronder wijzigen.
+	NL	Wanneer verzamelalbums bij elkaar gegroepeerd zijn komen ze standaard terecht bij "Diverse artiesten". Je  kunt die naam hieronder wijzigen.
 	ZH_CN	当把合辑组合在一起时，它们会出现在"Various Artists"中。您可以把这缺省名换掉。
 
 VARIOUSARTISTS
@@ -12393,7 +12397,7 @@ LYRICS
 	ES	Letras
 	FI	Sanoitukset
 	FR	Paroles
-	NL	Songteksten
+	NL	Tekst liedje
 
 SETUP_POWERONRESUME
 	DE	Startverhalten
@@ -12474,13 +12478,13 @@ ARTWORK
 	FI	Kansikuvat
 	FR	Pochette
 	IT	Copertina
-	NL	Hoesjes
+	NL	Hoesafbeeldingen
 
 ONE_BY_ONE_ARTWORK
 	DE	Plattenhüllen einzeln
 	EN	1-by-1 Artwork
 	ES	Arte de Tapa 1-a-1
-	NL	1-v-1 hoesjes
+	NL	1-voor-1 Hoesafbeeldingen
 
 OBJECT_RETRIEVAL_FAILURE
 	DE	SlimServer konnte die von ihnen gewünschte Ressource nicht finden.
@@ -12784,6 +12788,7 @@ POWEROFFDAC_ALWAYSON
 
 POWEROFFDAC_WHENOFF
 	EN	Power down audio when off
+	NL	Zet DAC uit bij speler uit
 
 SETUP_DISABLEDAC
 	EN	Turn Off Audio
@@ -12800,7 +12805,7 @@ DISABLEDAC_WHENOFF
 SETUP_POLARITYINVERSION
 	DE	Polarität umkehren
 	EN	Polarity Inversion
-	NL	Polariteitinversie
+	NL	Polariteitsinversie
 
 SETUP_POLARITYINVERSION_DESC
 	DE	Transporter kann die Polarität des Audiosignals umkehren.
@@ -12824,10 +12829,14 @@ INFORMATION_PLAYER_VOLTAGE
 LOADING_BROWSE_MUSIC_FOLDER
 	DE	Lade Musikverzeichnis...
 	EN	Loading Music Folder...
+	NL	Laden muziekfolder...
 
 LOADING
 	DE	Lade...
 	EN	Loading...
+	NL	Laden...
 
 SRC
 	EN	Digital Input Source
+	NL	Digitale invoerbron
+
