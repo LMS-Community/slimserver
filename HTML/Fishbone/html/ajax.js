@@ -294,7 +294,8 @@ function refreshInfo(theData, force, curstyle) {
 		}
 		
 		if(parsedData['artist']) {
-			showElements(['artistinfo', 'artisthtml']);
+			showElements(['artistinfo']);
+			showElements(['artisthtml'], 'inline');
 			refreshElement('artisthtml', parsedData['artisthtml']);
 		} else {
 			hideElements(['artistinfo', 'artisthtml']);
@@ -331,7 +332,6 @@ function refreshPlaylist(newPlayer) {
 			newloc=newloc.replace(/&start=\d+&/, '&');
 			newloc=newloc + '#currentsong';
 			plloc.replace(newloc);
-			//DumperPopup([plloc,plloc.search.replace(playerExp, '='+newPlayer),plloc.search.replace(/&d=\d+/, '')]);
 		}
 	}
 	catch (err) {
@@ -348,7 +348,6 @@ function currentSong(theData) {
 	var found = 0;
 	var refresh = 0;
 	
-	//alert(["first: "+first, "parsed: "+parsedData['first_item']]);
 	if (first == null || first == parsedData['first_item']) {
 		first = parsedData['first_item'];
 
@@ -369,9 +368,7 @@ function currentSong(theData) {
 				if (rExp.exec(myString) == null) {rExp= new RegExp("item=(.*?)&player","i");}
 				var a = rExp.exec(myString);
 				
-				//alert(["i:"+i,"a:"+a[1],"parse:"+parsedData['item_'+i], "found:"+found, "refresh:"+refresh, "current:"+currentID]);
 				if (a == null || a[1] != parsedData['item_'+i]) {
-					//alert([a[1],i,parsedData['item_'+i]]);
 					refresh = 1;
 				}
 			} else {

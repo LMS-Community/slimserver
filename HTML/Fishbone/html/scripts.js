@@ -26,7 +26,7 @@ function changePlayer(player_List) {
 	newHref(parent.frames[2].document,newPlayer);
 	refreshPlaylist(player);
 	
-	var args = 'player='+player+'&ajaxRequest=1';
+	var args = 'player='+player+'&ajaxRequest=1&s='+Math.random();
 	getStatusData(args, refreshNewPlayer);
 	
 	var newpage = '';
