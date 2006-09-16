@@ -241,7 +241,6 @@ function getHomeCookie(Name)
 
 	if (!url || m) return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
 
-
 	return url;
 }
 
