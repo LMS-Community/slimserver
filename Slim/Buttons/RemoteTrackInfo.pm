@@ -120,7 +120,7 @@ sub setMode {
 			$client->execute( [ 'playlist', 'add', $station ] );
 		},
 
-		'onRigh'   => $client->param('onRight'), # passthrough
+		'onRight'   => $client->param('onRight'), # passthrough
 	);
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
