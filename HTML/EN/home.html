@@ -45,8 +45,8 @@
 <div class="homeMenuSection">
 	<div>[% "RADIO" | string | upper %]</div>
 	<ul>
-	[%- FOREACH key = additionalLinks.radio.keys %]
-		<li><a href="[% additionalLinks.radio.$key | html %]player=[% playerURI %]">[% key | string %]</a></li>
+	[%- FOREACH link = additionalLinks.radio %]
+		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a></li>
 	[%- END %]
 		<li><a href="tunein.html?player=[% playerURI %]">[% "RADIO_TUNEIN" | string %]</a></li>
 	</ul>	
@@ -75,8 +75,8 @@
 <div class="homeMenuSection">
 	<div>[% "PLUGINS" | string | upper %]</div>
 	<ul>
-		[%- FOREACH key = additionalLinks.plugins.keys %]
-			<li><a href="[% additionalLinks.plugins.$key | html %]player=[% playerURI %]">[% key | string %]</a></li>
+		[%- FOREACH link = additionalLinks.plugins %]
+			<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a></li>
 		[%- END %]
 	</ul>
 </div>
