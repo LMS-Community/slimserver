@@ -487,6 +487,10 @@ sub scroll {
 		$onChange->(@args);
 	}
 
+	my @timedigits = timeDigits($client, $client->modeParam('valueRef'));
+	$client->modeParam('listIndex', $timedigits[$client->modeParam('cursorPos')]);
+	$client->updateKnob();
+
 	$client->update();
 }
 

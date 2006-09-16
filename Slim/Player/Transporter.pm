@@ -190,6 +190,8 @@ sub updateKnob {
 
 		$client->sendFrame('knob', \$parambytes);
 
+		$client->knobPos($listIndex);
+
 	} else {
 
 		$::d_ui && msg("skipping sending redundant knob position\n");
