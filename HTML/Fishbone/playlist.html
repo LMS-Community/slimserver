@@ -7,6 +7,16 @@
 <html>
 	<head>
 		[% PROCESS customheader.html %]
+		
+<!--[if IE]>
+<style type="text/css">
+	body {width: 97%;}
+	.playlistControls {
+		padding-right: 8px;
+	}
+</style>
+<![endif]-->
+
 	</head>
 	<body bgcolor="#000000" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:to_currentsong();">
 	[% IF playercount == '0' %]

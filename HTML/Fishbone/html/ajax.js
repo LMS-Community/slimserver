@@ -354,14 +354,17 @@ function currentSong(theData) {
 		for (var i = first; i <= parsedData['last_item']; i++) {
 			
 			// make sure we have matching item counts, refresh if not.
-			if (item = doc.getElementById('playlistitem' + i)) {
+			var item = doc.getElementById('playlistitem' + i);
+			
+			if (item) {
+				
 				if (i == parsedData['currentsongnum']) {
 					item.className = "currentListItem";
 					found = parsedData['item_'+i];
 				} else {
 					item.className = "browsedbListItem";
 				}
-			
+				
 				// Check the id's of each item, refresh if any don't match.
 				var myString = new String(doc.getElementById('playlistitem' + i).innerHTML);
 				var rExp= new RegExp("item=(.*?)&amp;player","i");
