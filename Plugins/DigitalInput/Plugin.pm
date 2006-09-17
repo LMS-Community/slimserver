@@ -117,11 +117,6 @@ sub updateDigitalInput {
 	});
 
 	if (blessed($obj)) {
-
-		$client->prefSet('digitalInput', $value);
-		$client->sendFrame('audp', \pack('C', $value));
-
-		# Always clear the current playlist for Digital Inputs
 		$client->execute([ 'playlist', 'clear' ] );
 		$client->execute([ 'playlist', 'playtracks', 'listRef', [ $obj ] ]);
 	}

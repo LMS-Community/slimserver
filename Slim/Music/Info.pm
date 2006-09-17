@@ -827,6 +827,10 @@ sub isAudioURL {
 	# return true if url scheme (http: etc) defined as audio in types
 	my $url = shift;
 	
+	if (isDigitalInput($url)) {
+		return 1;
+	}
+	
 	# Let the protocol handler determine audio status
 	if ( $url !~ /^(?:http|mms)/ ) {
 		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );

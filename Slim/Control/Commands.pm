@@ -925,7 +925,7 @@ sub playlistXitemCommand {
 	} else {
 		
 		# Display some feedback for the player on remote URLs
-		if ( Slim::Music::Info::isRemoteURL($path) ) {
+		if ( Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path)) {
 			my $line1 = $client->string('NOW_PLAYING') . ' (' . $client->string('CHECKING_STREAM') . ')';
 			my $line2 = Slim::Music::Info::title($path) || $path;
 			if ( $client->linesPerScreen() == 1 ) {
