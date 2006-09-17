@@ -12778,29 +12778,43 @@ WORDCLOCKOUTPUT_PASSTHROUGH
 	NL	Digitaal doorlaten
 
 SETUP_POWEROFFDAC
+	DE	Audio vom Strom trennen
 	EN	Power Off AUDIO
 
 SETUP_POWEROFFDAC_DESC
+	DE	Wenn der Transporter ausgeschaltet wird, so kann auch der ganze Audioteil vom Strom getrennt werden. Dies kann allerdings ein hörbares Knack-Geräusch provozieren.
 	EN	When Transporter is turned off the audio section can be completely powered down.  Powering down the audio section may cause an audible pop.
+	NL	Wanneer de Transporter uit is kan het audiogedeelte compleet uitgezet worden. Het uitzetten van het audiogedeelte kan een hoorbaar pop-geluid veroorzaken.
 
 POWEROFFDAC_ALWAYSON
+	DE	Audio nie trennen
 	EN	Audio always on
+	NL	Audio altijd aan
 
 POWEROFFDAC_WHENOFF
+	DE	Audio beim Ausschalten trennen
 	EN	Power down audio when off
 	NL	Zet DAC uit bij speler uit
 
 SETUP_DISABLEDAC
+	DE	Audio ausschalten
 	EN	Turn Off Audio
+	NL	Uitzetten geluid
 
 SETUP_DISABLEDAC_DESC
+	DE	Wenn der Transporter ausgeschaltet wird, so können auch der Digital/Analog-Wandler und die digitalen Ausgänge deaktiviert werden. Das Deaktivieren der digitalen Ausgänge kann auf gewissen Verstärkern zu hörbaren Störgeräuschen führen.
 	EN	When Squeezebox is turned off the digital-to-analog converter and digital outputs can be disabled.  Disabling the outputs may cause an audible pop or noise in some receivers.
+	NL	Wanneer de Squeezbox uit is kun je de digitale naar analoog omzetter en de digitale uitvoer uitgezetten. Uitzetten van de uitvoer kan een hoorbaar pop-geluid of ruis geven in sommige receivers.
 
 DISABLEDAC_ALWAYSON
+	DE	Ausgänge nie deaktivieren
 	EN	Outputs always on
+	NL	Uitvoer altijd aan
 
 DISABLEDAC_WHENOFF
+	DE	Ausgänge beim Ausschalten deaktivieren
 	EN	Disable outputs when off
+	NL	Zet uitvoer uit wanneer speler uit is
 
 SETUP_POLARITYINVERSION
 	DE	Polarität umkehren
