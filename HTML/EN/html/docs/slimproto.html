@@ -5,10 +5,10 @@
 
 <h4>SlimProto  Protocol</h4>
 
-<p>The SlimProto  protocol is the new protocol developed for the squeezebox and replaces the SLIMP3 one. 
+<p>The SlimProto  protocol is the new protocol developed for the Squeezebox and Transporter and replaces the SLIMP3 one. 
 It is designed to allow the players to communicate effectively over WANs as well as LANs.</p>
 
-<p>This document describes the SlimProto for Squeezebox firmware versions 20 and above.
+<p>This document describes SlimProto for firmware versions 20 and above.
 
 <p>The server listens on TCP port 3483 for connections by players. To register a player with the server, they exchange "helo"s and than any of the commands below are valid.</p>
 <p>The client also listens on UDP port 3483 for SlimProto commands from the server it has already established a TCP connection with.</p>
@@ -48,7 +48,7 @@ It is designed to allow the players to communicate effectively over WANs as well
 <p><b>Format:</b></p>
 
 <table border=1 cellpadding=2>
-<tr><td>DeviceID</td><td>1 byte</td><td>The Device ID of the player. '2' is the squeezebox</td></tr>
+<tr><td>DeviceID</td><td>1 byte</td><td>The Device ID of the player. '2' is Squeezebox</td></tr>
 <tr><td>Revision</td><td>1 byte</td><td>A number specifying the firmware revsison</td></tr>
 <tr><td>MAC 0-5</td><td>6 bytes</td><td>The player's MAC address</td></tr>
 <tr><td>WLanChannelList</td><td>2 bytes</td><td>A list of 802.11 channels that are enabled on a given device as a 
