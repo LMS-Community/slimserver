@@ -122,6 +122,8 @@ sub reconnect {
 
 	$client->brightness($client->prefGet($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 
+	$client->update( { 'screen1' => {}, 'screen2' => {} } );
+
 	$client->update();	
 	$client->display->visualizer(1) if ($client->display->isa('Slim::Display::Squeezebox2'));
 }
