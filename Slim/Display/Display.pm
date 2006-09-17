@@ -706,6 +706,7 @@ sub showExtendedText {}
 sub modes() { [] }
 sub nmodes() { 0 }
 sub hasScreen2 { 0 }
+sub vfdmodel {}
 
 sub forgetDisplay {
 	my $display = shift;

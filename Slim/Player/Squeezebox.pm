@@ -140,10 +140,6 @@ sub ticspersec {
 	return 1000;
 }
 
-sub vfdmodel {
-	return 'noritake-european';
-}
-
 sub decoder {
 	return 'mas35x9';
 }

@@ -43,6 +43,7 @@ sub scrollUpdate {}
 sub killAnimation {}
 sub resetDisplay {}
 sub endAnimation {}
+sub vfdmodel { 'http' }
 
 =head1 SEE ALSO
 

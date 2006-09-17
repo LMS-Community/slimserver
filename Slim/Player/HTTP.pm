@@ -64,7 +64,6 @@ sub bufferFullness	{ 0 }
 sub formats		{ 'mp3' }
 sub model		{ 'http' }
 sub decoder		{ 'http' }
-sub vfdmodel		{ 'http' }
 sub vfd			{ undef }
 
 sub power {

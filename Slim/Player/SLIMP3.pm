@@ -90,24 +90,6 @@ sub decoder {
 	return 'mas3507d';
 }
 
-sub vfdmodel {
-	my $client = shift;
-	if ($client->revision >= 2.2) {
-		my $mac = $client->macaddress();
-		if ($mac eq '00:04:20:03:04:e0') {
-			return 'futaba-latin1';
-		} elsif ($mac eq '00:04:20:02:07:6e' ||
-				$mac =~ /^00:04:20:04:1/ ||
-				$mac =~ /^00:04:20:00:/	) {
-			return 'noritake-european';
-		} else {
-			return 'noritake-katakana';
-		}
-	} else {
-		return 'noritake-katakana';
-	}		
-}
-
 sub play {
 	my $client = shift;
 	my $params = shift;

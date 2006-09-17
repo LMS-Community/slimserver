@@ -338,6 +338,7 @@ sub balanceBar  { shift->display->balanceBar(@_); }
 sub fonts         { shift->display->fonts(@_); }
 sub displayHeight { shift->display->displayHeight(@_); }
 sub currBrightness { shift->display->currBrightness(@_); }
+sub vfdmodel    { shift->display->vfdmodel(@_); }
 
 sub updateMode  { shift->display->updateMode(@_); }
 sub animateState{ shift->display->animateState(@_); }
