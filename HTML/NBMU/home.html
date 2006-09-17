@@ -88,7 +88,7 @@
 [% IF additionalLinks.help %]
     [% FOREACH link = additionalLinks.help %]
     <li>
- 		<a href="[% link.value %]player=[% playerURI %]" [% IF link.value.match('^http') %]target="_new"[% END %]>[% link.key | string %]</a>
+ 		<a href="[% link.value %][% IF NOT link.value.match('^http') %]player=[% playerURI %][% END %]" [% IF link.value.match('^http') %]target="_new"[% END %]>[% link.key | string %]</a>
  	</li>
     [% END %]
 [% END %]

@@ -29,7 +29,7 @@ sub init {
 	$class->addPageLinks("help",{'HELP_REMOTE' => "html/help_remote.html"});
 	$class->addPageLinks("help",{'HELP_RADIO' => "html/docs/radio.html"});
 	$class->addPageLinks("help",{'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
-	$class->addPageLinks("help",{'FAQ' => "http://faq.slimdevices.com/"});
+	$class->addPageLinks("help",{'FAQ' => "http://faq.slimdevices.com/"},1);
 	$class->addPageLinks("help",{'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
 	$class->addPageLinks("help",{'TECHNICAL_INFORMATION' => "html/docs/index.html"});
 }

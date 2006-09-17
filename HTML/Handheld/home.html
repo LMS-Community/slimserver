@@ -9,7 +9,7 @@
 	    	[% END %]
 		[% END %]
 		[% IF additionalmenu.text %]
-	   		<li><a href="[% additionalmenu.link %]?player=[% playerURI %]">[% additionalmenu.text | string %]</a></li>
+	   		<li><a href="[% additionalmenu.link %]?[% IF NOT additionalmenu.link.value.match('^http') %]player=[% playerURI %][% END %]">[% additionalmenu.text | string %]</a></li>
 		[% END %]
 		</ul>
 	[% END %]
