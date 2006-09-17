@@ -85,32 +85,47 @@ sub play {
 
 		if (Slim::Music::Info::isDigitalInput($url)) {
 
-			$::d_source && msg("Transporter::play - Got source: url [$url]\n");
-
-			if ($INC{'Plugins/DigitalInput/Plugin.pm'}) {
-
-				my $value = Plugins::DigitalInput::Plugin::valueForSourceName($url);
-
-				$::d_source && msg("Transporter::play - Setting DigitalInput to $value\n");
-
-				$client->prefSet('digitalInput', $value);
-				$client->sendFrame('audp', \pack('C', $value));
-				$client->directURL($url);
-				Slim::Player::Source::trackStartEvent($client);
-			}
+			$client->setDigitalInput($url);
+			$client->directURL($url);
+			Slim::Player::Source::trackStartEvent($client);
 
 			return 1;
 
 		} else {
-
 			$::d_source && msg("Transporter::play - setting DigitalInput to 0 for [$url]\n");
-
-			$client->prefSet('digitalInput', 0);
-			$client->sendFrame('audp', \pack('C', 0));
+			$client->setDigitalInput(0);
 		}
 	}
 
 	return $client->SUPER::play($params);
+}
+
+
+sub pause {
+	my $client = shift;
+
+	$client->SUPER::pause(@_);
+	if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::url($client))) {
+		$client->setDigitalInput(0);	
+	}
+}
+
+sub stop {
+	my $client = shift;
+	$client->SUPER::stop(@_);
+
+	if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::url($client))) {
+		$client->setDigitalInput(0);	
+	}
+}
+
+sub resume {
+	my $client = shift;
+	$client->SUPER::resume(@_);
+
+	if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::url($client))) {
+		$client->setDigitalInput(Slim::Player::Playlist::url($client));	
+	}
 }
 
 sub power {
@@ -121,20 +136,34 @@ sub power {
 	
 	my $result = $client->SUPER::power($on);
 
-	if (defined($on) && $was != $on) {
-	
-		# if we're turning off, then disable the digital input.
-		if ($on) {
-			# if we're turning on and the current song is a digital input, then start playing.
-			if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::url($client))) {
-				$client->execute(["play"]);
-			}
-		} else {
-			$client->prefSet('digitalInput', 0);
-			$client->sendFrame('audp', \pack('C', 0));
+	# if we're turning on and the current song is a digital input, then start playing.
+	if (defined($on) && $on && !$was) {
+		if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::url($client))) {
+			$client->execute(["play"]);
 		}
 	}
+	
 	return $result;	
+}
+
+sub setDigitalInput {
+	my $client = shift;
+	my $input = shift;
+
+	# convert a source: url to a number, otherwise, just use the number
+	if (Slim::Music::Info::isDigitalInput($input)) {
+	
+		$::d_source && msg("Transporter::setDigitalInput - Got source: url [$input]\n");
+
+		if ($INC{'Plugins/DigitalInput/Plugin.pm'}) {
+			$input = Plugins::DigitalInput::Plugin::valueForSourceName($input);
+		}
+	}
+
+	$::d_source && msg("Transporter switching to digital input $input\n");
+	
+	$client->prefSet('digitalInput', $input);
+	$client->sendFrame('audp', \pack('C', $input));
 }
 
 sub updateClockSource {
