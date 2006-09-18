@@ -1236,7 +1236,10 @@ sub wipeCaches {
 	%contentTypeCache = ();
 
 	# clear the references to these singletons
-	$vaObj            = undef;
+	$vaObj          = undef;
+	$_unknownArtist = '';
+	$_unknownGenre  = '';
+	$_unknownAlbum  = '';
 
 	$self->lastTrackURL('');
 	$self->lastTrack({});
@@ -1252,11 +1255,6 @@ Wipe all data in the database. Encapsulates L<wipeDB> and L<wipeCaches>
 
 sub wipeAllData {
 	my $self = shift;
-
-	# clear the references to these singletons
-	$_unknownArtist = '';
-	$_unknownGenre  = '';
-	$_unknownAlbum  = '';
 
 	$self->wipeCaches;
 	$self->wipeDB;

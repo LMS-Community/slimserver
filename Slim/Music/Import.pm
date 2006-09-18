@@ -173,6 +173,9 @@ sub checkScanningStatus {
 
 	} else {
 
+		# Clear caches, like the vaObj, etc after scanning has been finished.
+		Slim::Schema->wipeCaches;
+
 		Slim::Control::Request::notifyFromArray(undef, [qw(rescan done)]);
 	}
 }
