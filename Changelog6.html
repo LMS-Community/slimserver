@@ -4,44 +4,45 @@
 	<li>Firmware updates:
 	<ul>
 		<li>Uodate to Firmware 64 for Squeezebox2/Squeezebox v3.
-		<ul>
-			<li>Added option to disable DAC and digital outputs in power off mode. By default both outputs are always on.<li>
-		</ul>
+			<ul>
+				<li>Added option to disable DAC and digital outputs in power off mode. By default both outputs are always on.<li>
+			</ul>
+		</li>
 		<li>Update to Firmware 63 for Squeezebox2/Squeezebox v3.
-		<ul>
-			<li>Possible fix for Bug 2283 (MAC Corruption)</li>
-		</ul>
-
+			<ul>
+				<li>Possible fix for Bug 2283 (MAC Corruption)</li>
+			</ul>
+		</li>
 		<li>Update to Firmware 62 for Squeezebox2/Squeezebox v3.
-		<ul>
-			<li>Downsampling of 96kHz FLAC and WAV</li>
-			<li>Bug fixes</li>
-		</ul>
+			<ul>
+				<li>Downsampling of 96kHz FLAC and WAV</li>
+				<li>Bug fixes</li>
+			</ul>
 		</li>
 		<li>Update to Firmware 61 for Squeezebox2/Squeezebox v3.
-		<ul>
-			<li>Allow custom VU meter graphics to be uploaded to the firmware.</li>
-			<li>Bug fixes</li>
-		</ul>
+			<ul>
+				<li>Allow custom VU meter graphics to be uploaded to the firmware.</li>
+				<li>Bug fixes</li>
+			</ul>
 		</li>
 		<li>Update to Firmware 60 for Squeezebox2/Squeezebox v3.
-		<ul>
-			<li>Bug fixes</li>
-		</ul>
+			<ul>
+				<li>Bug fixes</li>
+			</ul>
 		</li>
 		<li>Update to Firmware 59 for Squeezebox2/Squeezebox v3.
-		<ul>
-			<li>Bug fixes</li>
-		</ul>
+			<ul>
+				<li>Bug fixes</li>
+			</ul>
 		</li>
 		<li>Update to Firmware 58 for Squeezebox2/Squeezebox v3.
-		<ul>
-			<li>Native Ogg support</li>
-			<li>Digital outputs are disabled in during setup and power-off mode.</li>
-			<li>Allow the squeezebox network settings to be password protected. This can be enabled from the "Current settings" menu in the squeezebox setup menus.</li>
-			<li>Various DHCP bug fixes and enhancements.</li>
-			<li>Wireless Ad-hoc networks can now use the 802.11g extended rates. The official spec for Ad Hoc networks limits the data rate to 11Mb/s, so depending on your wireless adapter in your PC you may not see the increased speed.</li>
-		</ul>
+			<ul>
+				<li>Native Ogg support</li>
+				<li>Digital outputs are disabled in during setup and power-off mode.</li>
+				<li>Allow the squeezebox network settings to be password protected. This can be enabled from the "Current settings" menu in the squeezebox setup menus.</li>
+				<li>Various DHCP bug fixes and enhancements.</li>
+				<li>Wireless Ad-hoc networks can now use the 802.11g extended rates. The official spec for Ad Hoc networks limits the data rate to 11Mb/s, so depending on your wireless adapter in your PC you may not see the increased speed.</li>
+			</ul>
 		</li>
 	</ul>
 	<br />
@@ -65,13 +66,10 @@
 
 	<li>Internet Radio:
 	<ul>
-		<li>Podcast Browser / OPML Browser renamed to XMLBrowser.</li>
-		<li>New Slim Devices Picks plugin: allows browsing of our hierarchy</li>
-		<li>Live Music Archive plugin is included by default</li>
-		<li>Fix ogg radio streaming - a station is sending back application/ogg</li>
-		<li>Shoutcast: Don't list AACPlus stations.</li>
-		<li>Live365: password encoding fix.</li>
-		<li>New RadioGuide plugin: millions of hours of listening organized and provided by radiotime.com</li>
+		<li>New plugin: RadioGuide by radiotime.com.</li>
+		<li>Support for alternate bitrates in WMA streams.</li>
+		<li>Better bitrate detection for MP3 and WMA streams.</li>
+		<li>Remote MP3 files will use ID3 tags for artist/album/title when available.</li>
 	</ul>
 	<br />
 
@@ -91,7 +89,7 @@
 	<li>Performance:
 	<ul>
 		<li>Extended patch from mwphoto:  Thumbs and cover art can be dynamically resized by passing parameters in the url.</li>
-		<li>Scanning now happens in a separate process from the main server.
+		<li>Scanning now happens in a separate process from the main server.</li>
 	</ul>
 	<br />
 
@@ -126,6 +124,7 @@
 	<li>Audio Browsing:
 	<ul>
 		<li>Don't display DRM'd tracks.</li>
+		<li>Support for generic UPnP AV Media Servers.  They can be browsed and supported file types can be streamed from them.</li>
 	</ul>
 	<br />
 
@@ -492,7 +491,6 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3733">#3733</a> - crash in trunk nightly 7/17: Can't call method &quot;filledRectangle&quot; on an undefined value at /usr/local/slimserver/Slim/Display/Graphics.pm line 262.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3736">#3736</a> - player select drop-down on Handheld skin is broken on main page</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3738">#3738</a> - &quot;status&quot; returns stringified hash as album name</li>
- 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3743">#3743</a> - fullscreen operations on softsqueeze allows the window to move</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3746">#3746</a> - lock code randomly set during firmware update</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3750">#3750</a> - Numeric page bar missing links</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3752">#3752</a> - FW58 cannot find Slimserver if static IP is used.</li>
@@ -549,7 +547,6 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3867">#3867</a> - Rescan.pm misdisplay of scan type</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3869">#3869</a> - holding play button (rather than a quick tap) while browsing music folder, doesn't play</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3870">#3870</a> - Nokia770 skin doesn't show tooltip for unknown album artwork</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3871">#3871</a> - Softsqueeze ignores 'stat' command</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3872">#3872</a> - 110V relay constantly toggeling</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3874">#3874</a> - fishbone skin does not refresh playlist correctly</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3877">#3877</a> - Volume control display only appears very briefly when remote stream connecting</li>
@@ -566,7 +563,6 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3911">#3911</a> - Browse Years has years listed with 0 albums with 0 songs by 0 artists</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3913">#3913</a> - Slimserver skipping over songs - readlen undef</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3914">#3914</a> - 'Play other songs in album or directory' broken</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3915">#3915</a> - Softsqueeze animation on screen 2 clears screen 1</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3920">#3920</a> - Multi-disk album mixed with single disc album of same name</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3921">#3921</a> - Alpha page bar does not show Hebrew characters properly</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3925">#3925</a> - Query Artist and Album via CLI shows wrong data</li>
@@ -631,6 +627,21 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4108">#4108</a> - Digital Input plugin should only appear on Transporters</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4109">#4109</a> - Alarm playlist selection does not appear to stick</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4127">#4127</a> - need to handle cr only line endings in pls parser</li>
+	</ul>
+</ul>
+
+<h2><a name="v6.3.1" id="v6.3.1"></a>Version 6.3.1 - 2006-07-17</h2>
+<ul>
+	<li>Bug Fixes:
+	<ul>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3553">#3553</a> - SlimServer scan goes into an infinite loop with a directory named " "</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3662">#3662</a> - Disc # = 1 ignored in multi-dics sets</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3681">#3681</a> - [REGRESSION] symlinks are improperly URL-encoded</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3682">#3682</a> - [REGRESSION] symlinks wrongly display target instead of source name</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3683">#3683</a> - [REGRESSION] cannot browse symlinked directories</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3687">#3687</a> - Playlist crash with Rhapsody content</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3704">#3704</a> - 'Browse' lists always start at top option..</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3706">#3706</a> - Slim Server and rhapsody Crash</li>
 	</ul>
 </ul>
 
