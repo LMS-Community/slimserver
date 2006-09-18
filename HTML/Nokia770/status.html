@@ -180,9 +180,9 @@
 		<tr>
 			<td class="normaltext" valign = 'top' height = '35' nowrap>[% "ARTIST" | string %][% "COLON" | string %]</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap >
-			<a href="http://google.com" id = 'artist_link' style="text-decoration:none">
+			<!--<a href="http://google.com" id = 'artist_link' style="text-decoration:none">-->
 			<span id = 'artist'></span>
-			</a>
+			<!--</a>-->
 			[% bio = "PLUGIN_BIOGRAPHY" | getstring; IF bio != "PLUGIN_BIOGRAPHY" %]
                    <span id = '[% bio | replace('\s+', '_') %]' class = 'supertinytext'></span>
 			[% END %]
