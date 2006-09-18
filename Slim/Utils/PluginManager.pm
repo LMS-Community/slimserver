@@ -30,7 +30,17 @@ my @pluginDirs = ();
 my @pluginRootDirs = ();
 my %plugins = ();
 my %playerplugins = ();
-my %brokenplugins = ();
+
+# Bug: 4082 - Populate brokenplugins with the names of old plugins from
+# previous SlimServer releases.
+my %brokenplugins = (
+	'ShoutcastBrowser' => 1,
+	'Live365'          => 1,
+	'RadioIO'          => 1,
+	'Picks'            => 1,
+	'iTunes'           => 1,
+	'RandomPlay'       => 1,
+);
 
 {
 	@pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
@@ -185,7 +195,7 @@ sub canPlugin {
 	my $fullname = "Plugins::$plugin";
 	$::d_plugins && msg("Requiring $fullname plugin.\n");	
 
-	eval "use $fullname";
+	Slim::bootstrap::tryModuleLoad($fullname);
 
 	if ($@) {
 		$::d_plugins && msg("Can't require $fullname for Plugins menu: " . $@);
@@ -292,11 +302,13 @@ sub addMenus {
 	return unless defined $plugins{$plugin}->{'name'};
 	
 	my %params = (
-			'useMode' => "PLUGIN.$plugin",
-			'header'  => $plugins{$plugin}->{'name'}
-		);
+		'useMode' => "PLUGIN.$plugin",
+		'header'  => $plugins{$plugin}->{'name'}
+	);
 	
-	if (exists $disabledPlugins->{$plugin} || !(UNIVERSAL::can("Plugins::${plugin}","setMode") && UNIVERSAL::can("Plugins::${plugin}","getFunctions"))) {
+	if (exists $disabledPlugins->{$plugin} || 
+		!(UNIVERSAL::can("Plugins::${plugin}","setMode") && UNIVERSAL::can("Plugins::${plugin}","getFunctions"))) {
+
 		Slim::Buttons::Home::addSubMenu("PLUGINS", $plugins{$plugin}->{'name'}, undef);
 		Slim::Buttons::Home::addMenuOption($plugins{$plugin}->{'name'}, undef);
 	}
