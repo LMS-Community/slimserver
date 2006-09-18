@@ -45,6 +45,9 @@ sub read {
 
 		$data = Slim::Utils::Unicode::utf8decode_guess($data, $enc);
 	}
+	
+	# Bug 4127, make sure we have proper line-endings
+	$data =~ s/\r\n?/\n/g;
 
 	for my $line (split(/$CRLF/, $data)) {
 
