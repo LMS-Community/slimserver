@@ -80,6 +80,7 @@ songtitleid|[% itemobj.id %]
 artistid|[% itemobj.artist.id %]
 albumid|[% itemobj.album.id %]
 genreid|[% itemobj.genre.id %]
+artisthtml|[% PROCESS artistsAsHTML.html noby=1 %]
 
 # mm:ss length of song
 duration|[% itemobj.duration %]
