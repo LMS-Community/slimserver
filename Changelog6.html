@@ -3,46 +3,33 @@
 <ul>
 	<li>Firmware updates:
 	<ul>
+		<li>Firmware 17 for Transporter.
+		<ul>
+			<li>Flac 24/96 playback
+			<li>Clock source: Internal clock, Word clock, Balanced AES/EBU, BNC S/PDIF, RCA S/PDIF, Optical S/PDIF (TOSLINK)
+			<li>Digital output encoding: S/PDIF or AES/BEU
+			<li>Digital inputs: Balanced AES/EBU, BNC S/PDIF, RCA S/PDIF, Optical S/PDIF (TOSLINK)
+			<li>Support for two displays, including push and bump animations
+			<li>Front panel support, including buttons and the knob
+			<li>Setting for Word clock on S/PDIF outputs
+			<li>Setting for Polarity inversion
+			<li>Setting to power down DAC when off
+			<li>Auto sensing 110V/230V power supply
+			<li>RS232 interface
+			<li>IR interface 
+		</ul>
 		<li>Update to Firmware 64 for Squeezebox2/Squeezebox v3.
-			<ul>
-				<li>Added option to disable DAC and digital outputs in power off mode. By default both outputs are always on.<li>
-			</ul>
-		</li>
-		<li>Update to Firmware 63 for Squeezebox2/Squeezebox v3.
-			<ul>
-				<li>Possible fix for Bug 2283 (MAC Corruption)</li>
-			</ul>
-		</li>
-		<li>Update to Firmware 62 for Squeezebox2/Squeezebox v3.
-			<ul>
-				<li>Downsampling of 96kHz FLAC and WAV</li>
-				<li>Bug fixes</li>
-			</ul>
-		</li>
-		<li>Update to Firmware 61 for Squeezebox2/Squeezebox v3.
-			<ul>
-				<li>Allow custom VU meter graphics to be uploaded to the firmware.</li>
-				<li>Bug fixes</li>
-			</ul>
-		</li>
-		<li>Update to Firmware 60 for Squeezebox2/Squeezebox v3.
-			<ul>
-				<li>Bug fixes</li>
-			</ul>
-		</li>
-		<li>Update to Firmware 59 for Squeezebox2/Squeezebox v3.
-			<ul>
-				<li>Bug fixes</li>
-			</ul>
-		</li>
-		<li>Update to Firmware 58 for Squeezebox2/Squeezebox v3.
-			<ul>
-				<li>Native Ogg support</li>
-				<li>Digital outputs are disabled in during setup and power-off mode.</li>
-				<li>Allow the squeezebox network settings to be password protected. This can be enabled from the "Current settings" menu in the squeezebox setup menus.</li>
-				<li>Various DHCP bug fixes and enhancements.</li>
-				<li>Wireless Ad-hoc networks can now use the 802.11g extended rates. The official spec for Ad Hoc networks limits the data rate to 11Mb/s, so depending on your wireless adapter in your PC you may not see the increased speed.</li>
-			</ul>
+		<ul>
+			<li>Native Ogg support</li>
+			<li>Downsampling of 96kHz FLAC and WAV.</li>
+			<li>Added option to disable DAC and digital outputs in power off mode. By default both outputs are always on.<li>
+			<li>Fixed WAV playback for various bitrates and sample sizes.</li>
+			<li>Allow custom VU meter graphics to be uploaded to the firmware.</li>
+			<li>Various DHCP bug fixes and enhancements.</li>
+			<li>Allow the squeezebox network settings to be password protected. This can be enabled from the "Current settings" menu in the squeezebox setup menus.</li>
+			<li>Wireless Ad-hoc networks can now use the 802.11g extended rates. The official spec for Ad Hoc networks limits the data rate to 11Mb/s, so depending on your wireless adapter in your PC you may not see the increased speed.</li>
+			<li>Possible fix for Bug 2283 (MAC Corruption)</li>
+		</ul>
 		</li>
 	</ul>
 	<br />
@@ -509,6 +496,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3769">#3769</a> - Duplicate band entry in Browse Artists</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3776">#3776</a> - Dublicate breadcumb links in browse Years</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3780">#3780</a> - Artist links lead to all tracks in library</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3784">#3784</a> - Auto-sensing Power Amp will never switch off when Squeezebox is connected</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3786">#3786</a> - Browse Genre contains ARRAY(0xnnnnnnn) entries</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3788">#3788</a> - Alarm settings don't allow the selection of an Itunes Playlist</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3793">#3793</a> - Can't play "All Songs" from search result page</li>
