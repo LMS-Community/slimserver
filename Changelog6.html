@@ -77,7 +77,6 @@
 	<ul>
 		<li>Updated all skins to be CSS based, allowing HTML fragment reuse, and faster loading.</li>
 		<li>Added Ben Klass' excellent Nokia770 skin.</li>
-		<li>Change ExBrowse3 / JXTK2 to use asynchronous XMLHttpRequests whenever possible</li>
 		<li>Change Fishbone to remove songinfo icon.  Song title now links there, and the playlist index number, instead, jumps to the track.</li>
 		<li>Fishbone skin now has just a little bit of Ajax.  Now Playing and Undock window now updated in teh background.</li>
 		<li>Now possible to browse albums at any level with the gallery view, using Artwork=1 parameter in the URL</li>
@@ -90,13 +89,14 @@
 	<ul>
 		<li>Extended patch from mwphoto:  Thumbs and cover art can be dynamically resized by passing parameters in the url.</li>
 		<li>Scanning now happens in a separate process from the main server.</li>
+		<li>Slower web pages can optionally be run in a separate process on Linux and Mac OS X.</li>
 	</ul>
 	<br />
 
 	<li>Player UI:
 	<ul>
 		<li>Patch from Chris Key: Number entry jumps directly to the given index using multiple button presses within the text entry timeout, deprecates the proportional jumps</li>
-		<li>Experimental UI change to remvoe the word Browse when it's redundant.  Feedback welcome.</li>
+		<li>Experimental UI change to remove the word Browse when it's redundant.  Feedback welcome.</li>
 		<li>Include discrete power on/off for folks who are using smart remotes like Harmony's</li>
 		<li>Increase delay required for press and hold.  Too many folks have heavy thumbs.</li>
 	</ul>
