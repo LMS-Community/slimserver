@@ -826,6 +826,9 @@ sub playlistXitemCommand {
 		return;
 	}
 
+	$::d_command && msg("Commands::playlistXitemCommand: cmd: $cmd\n");
+	$::d_command && msg("Commands::playlistXitemCommand: cmd: $item\n");
+
 	my $jumpToIndex; # This should be undef - see bug 2085
 	my $results;
 
@@ -834,6 +837,8 @@ sub playlistXitemCommand {
 	# Strip off leading and trailing whitespace. PEBKAC
 	$url =~ s/^\s*//;
 	$url =~ s/\s*$//;
+
+	$::d_command && msg("Commands::playlistXitemCommand: url: $url\n");
 
 	my $path = $url;
 
@@ -863,6 +868,8 @@ sub playlistXitemCommand {
 		$path = Slim::Utils::Misc::unescape($path);
 	}
 
+	$::d_command && msg("Commands::playlistXitemCommand: path: $path\n");
+
 	if ($cmd =~ /^(play|load|resume)$/) {
 
 		Slim::Player::Source::playmode($client, 'stop');
@@ -870,12 +877,16 @@ sub playlistXitemCommand {
 
 		$client->currentPlaylist( Slim::Utils::Misc::fixPath($path) );
 
+		$::d_command && msg("Commands::playlistXitemCommand: currentPlaylist:" .  Slim::Utils::Misc::fixPath($path) . "\n");
+
 		$client->currentPlaylistModified(0);
 
 	} elsif ($cmd =~ /^(add|append)$/) {
 
 		$client->currentPlaylist( Slim::Utils::Misc::fixPath($path) );
 		$client->currentPlaylistModified(1);
+
+		$::d_command && msg("Commands::playlistXitemCommand: currentPlaylist:" .  Slim::Utils::Misc::fixPath($path) . "\n");
 
 	} else {
 
@@ -885,6 +896,7 @@ sub playlistXitemCommand {
 	if (!Slim::Music::Info::isRemoteURL($path) && Slim::Music::Info::isFileURL($path)) {
 
 		$path = Slim::Utils::Misc::pathFromFileURL($path);
+		$::d_command && msg("Commands::playlistXitemCommand: path: $path\n");
 	}
 
 	if ($cmd =~ /^(play|load)$/) { 
@@ -895,11 +907,15 @@ sub playlistXitemCommand {
 
 		$jumpToIndex = Slim::Formats::Playlists::M3U->readCurTrackForM3U($path);
 	}
-					
+
+	$::d_command && msg("Commands::playlistXitemCommand: jumpToIndex: $jumpToIndex\n");
+
 	if ($cmd =~ /^(insert|insertlist)$/) {
 
 		my $playListSize = Slim::Player::Playlist::count($client);
 		my @dirItems     = ();
+
+		$::d_command && msg("Commands::playlistXitemCommand: inserting, playListSize: $playListSize\n");
 
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'      => $path,
@@ -926,14 +942,20 @@ sub playlistXitemCommand {
 		
 		# Display some feedback for the player on remote URLs
 		if ( Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path)) {
+		
+			$::d_command && msg("Commands::playlistXitemCommand: Display some feedback for the player on remote URLs\n");
+			
 			my $line1 = $client->string('NOW_PLAYING') . ' (' . $client->string('CHECKING_STREAM') . ')';
 			my $line2 = Slim::Music::Info::title($path) || $path;
+			
 			if ( $client->linesPerScreen() == 1 ) {
+			
 				$line2 = $client->string('CHECKING_STREAM');
 			}
+			
 			my $timeout = Slim::Utils::Prefs::get('remotestreamtimeout') || 10;
 			$client->showBriefly( $line1, $line2, $timeout + 5 );
-		}			
+		}
 
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'      => $path,
@@ -959,11 +981,14 @@ sub playlistXitemCommand {
 		});
 
 	}
+	$::d_command && msg("Commands::playlistXitemCommand: done\n");
 }
 
 # Called after insert/load async callbacks are finished
 sub playlistXitemCommand_done {
 	my ( $client, $request, $path ) = @_;
+
+	$::d_command && msg("Commands::playlistXitemCommand_done()\n");
 
 	# The callback, if any, will be called by _load/_insert_done, so
 	# don't call it now
