@@ -113,7 +113,7 @@ sub screenSaver {
 		# and we're not off or blocked
 		if ($saver eq 'playlist') {
 			if ($mode eq 'playlist') {
-				Slim::Buttons::Playlist::jump($client);
+				Slim::Buttons::Playlist::browseplaylistindex($client, Slim::Player::Source::playingSongIndex($client));
 			} else {
 				Slim::Buttons::Common::pushMode($client,'playlist');
 			}
