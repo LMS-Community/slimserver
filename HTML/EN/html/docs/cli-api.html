@@ -202,10 +202,12 @@
 		criteria.
 	</li>
 	<li>
-		Updated the CLI for the latest player model, Transporter. Queries
+		Updated the CLI for the latest player model, <b>Transporter</b>. Queries
 		&quot;<a href="#player model ?">player model ?</a>&quot; and 
 		&quot;<a href="#players">players</a>&quot; return 
-		&quot;transporter&quot; for Transporters.
+		&quot;transporter&quot; for Transporters. <br>
+		See also the <a href="#Notes">notes</a> for information about management
+		of Transporter digital inputs.
 	</li>
 	<li>
 		0x00 is now a valid end of line / command separator. In addition, the
@@ -560,6 +562,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 		To get a useable path (that you can use with your file system), you will
 		need to unescape the field twice. Also note the URLs are not translated
 		into Unicode (or into any other charset requested). 
+	</li>
+
+	<li>
+		<b>Transporter Digital Inputs</b><br>
+		Transporter Digital Inputs are handled as remote streams, with a 
+		URL starting with <code>source:</code> followed by &quot;aes-ebu&quot;,
+		&quot;bnc-spdif&quot;, &quot;toslink&quot; or &quot;rca-spdif&quot;.<br>
+		To set Transporter to the TOSLINK input, use &quot;&lt;playerid&gt;
+		playlist play source:toslink&lt;LF&gt;&quot;.<br>
+		When set to a digital input, Transporter reports the URL scheme above
+		to the various path, url or status queries.
 	</li>
 </ul>
 
