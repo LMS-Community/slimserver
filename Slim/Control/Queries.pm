@@ -1675,6 +1675,8 @@ sub titlesQuery {
 
 	# we don't want client playlists
 	$where->{'me.content_type'} = {'!=', 'cpl'};
+	# we don't want transporter sources...
+	$where->{'me.content_type'} = {'!=', 'src'};
 
 	# Manage joins
 
@@ -1760,11 +1762,45 @@ sub versionQuery {
 # Special queries
 ################################################################################
 
+=head2 dynamicAutoQuery( $request, $query, $funcptr, $data )
+
+ This function is a helper function for any query that needs to poll enabled
+ plugins. In particular, this is used to implement the CLI radios query,
+ that returns all enabled radios plugins. This function is best understood
+ by looking as well in the code used in the plugins.
+ 
+ Each plugins does in initPlugin (edited for clarity):
+ 
+    $funcptr = addDispatch(['radios'], [0, 1, 1, \&cli_radiosQuery]);
+ 
+ For the first plugin, $funcptr will be undef. For all the subsequent ones
+ $funcptr will point to the preceding plugin cli_radiosQuery() function.
+ 
+ The cli_radiosQuery function looks like:
+ 
+    sub cli_radiosQuery {
+      my $request = shift;
+      
+      my $data = {
+         #...
+      };
+ 
+      dynamicAutoQuery($request, 'radios', $funcptr, $data);
+    }
+ 
+ The plugin only defines a hash with its own data and calls dynamicAutoQuery.
+ 
+ dynamicAutoQuery will call each plugin function recursively and add the
+ data to the request results. It checks $funcptr for undefined to know if
+ more plugins are to be called or not.
+ 
+=cut
+
 sub dynamicAutoQuery {
-	my $request = shift;
-	my $query   = shift || return;
-	my $funcptr = shift;
-	my $data    = shift || return;
+	my $request = shift;                       # the request we're handling
+	my $query   = shift || return;             # query name
+	my $funcptr = shift;                       # data returned by addDispatch
+	my $data    = shift || return;             # data to add to results
 	
 	$d_queries && msg("dynamicAutoQuery()\n");
 
@@ -1775,40 +1811,48 @@ sub dynamicAutoQuery {
 	}
 
 	# get our parameters
-	my $index         = $request->getParam('_index');
-	my $quantity      = $request->getParam('_quantity') || 0;
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity') || 0;
 
+	# we have multiple times the same resultset, so we need a loop, named
+	# after the query name (this is never printed, it's just used to distinguish
+	# loops in the same request results.
 	my $loop = '@' . $query . 's';
 
+	# if the caller asked for results in the query ("radios 0 0" returns 
+	# immediately)
 	if ($quantity) {
 
 		# add the data to the results
-		my $cnt = $request->getResultLoopCount($loop) || 0;		
+		my $cnt = $request->getResultLoopCount($loop) || 0;
 		$request->setResultLoopHash($loop, $cnt, $data);
 		
 		# more to jump to?
+		# note we carefully check $funcptr is not a lemon
 		if (defined $funcptr && ref($funcptr) eq 'CODE') {
 			
 			eval { &{$funcptr}($request) };
 	
+			# arrange for some useful logging if we fail
 			if ($@) {
 				errorMsg("dynamicAutoQuery: Error when trying to run function coderef: [$@]\n");
 				$request->setStatusBadDispatch();
 				$request->dump('Request');
 			}
-	
 		}
 		
-		# we have everybody, now slice & count
+		# $funcptr is undefined, we have everybody, now slice & count
 		else {
 			
 			$request->sliceResultLoop($loop, $index, $quantity);
 			$request->setResultFirst('count', $request->getResultLoopCount($loop));
-			$request->setStatusDone();	
+			
+			# don't forget to call that to trigger notifications, if any
+			$request->setStatusDone();
 		}
 	}
 	else {
-		$request->setStatusDone();	
+		$request->setStatusDone();
 	}
 }
 

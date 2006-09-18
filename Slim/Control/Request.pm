@@ -375,6 +375,28 @@ my @result = Slim::Control::Request::executeLegacy($client, ['playlist', 'save']
    Slim::Control::Request::addDispatch(['can'], 
        [0, 1, 0, \&canQuery]);
 
+=head2 Grabbing a command
+
+ Some plugins may require to replace or otherwise complete a built in command of
+ the server (or a command added by another plugin that happened to load before).
+ 
+ The addDispatch call will return the function pointer of any existing 
+ command it replaces. There is no check on the <DEFINITION> array.
+ 
+ So for example, a plugin could replace the "volume" command with the 
+ following code example:
+ 
+   my $original_func = addDispatch(['mixer', 'volume', '_newvalue'],
+       [1, 0, 0, \&new_mixerVolumeCommand]);
+   
+ Please perform all relevant checks in the new function and check the 
+ original code for any twists to take into account, like synced players.
+ Your code should either end up calling $request->setStatusDone OR call the
+ original function, maybe after some parameter doctoring.
+ 
+ The function dynamicAutoQuery() in Queries.pm is a good example of this 
+ technique.
+
 =cut
 
 use strict;
