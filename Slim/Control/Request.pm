@@ -1639,7 +1639,7 @@ sub notify {
 sub fixEncoding {
 	my $self = shift || return;
 	
-	my $encoding = ${$self->{'_params'}}{'charset'} || 'utf8';
+	my $encoding = ${$self->{'_params'}}{'charset'} || return;
 
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
 
