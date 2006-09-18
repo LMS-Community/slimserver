@@ -216,5 +216,9 @@
 </div>
 [%- END %]
 
+[% BLOCK optionItem %]
+<option [% IF selected %]selected[% END %] value="[% key | utf8decode | html %]">[% value | html %]</option>
+[%- END %]
+
 [%# This is the end, never put anything below this next END or the FILTER will not work %]
 [% END -%] 
