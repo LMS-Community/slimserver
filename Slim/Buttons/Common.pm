@@ -638,7 +638,7 @@ our %functions = (
 
 		if (mode($client) eq 'playlist') {
 
-			Slim::Buttons::Playlist::playdisp($client, $button, $buttonarg);
+			Slim::Buttons::Playlist::jump($client);
 			return;
 		}
 
