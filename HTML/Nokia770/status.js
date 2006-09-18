@@ -285,10 +285,10 @@ function refreshOtherElements(theData) {
 	// refresh song info
 	var songinfoArray = new Array();
 	songinfoArray[songinfoArray.length] = {name: 'songtitle', stub:'songinfo.html?item='};
-	//songinfoArray[songinfoArray.length] = {name: 'artist', stub:'browsedb.html?hierarchy=album,track&level=1&contributor.id='};
+	songinfoArray[songinfoArray.length] = {name: 'artist', stub:'browsedb.html?hierarchy=album,track&level=1&contributor.id='};
 	songinfoArray[songinfoArray.length] = {name: 'album', stub:'browsedb.html?hierarchy=album,track&level=2&album.id='};
 	songinfoArray[songinfoArray.length] = {name: 'genre', stub:'browsedb.html?hierarchy=genre,album,track&level=1&genre.id='};
-	refreshElement('artist',parsedData['artisthtml']);
+	//refreshElement('artist',parsedData['artisttext']);
 
 	songinfoArray.each(function(key) {
 		var thisName = key.name;
