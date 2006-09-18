@@ -12,6 +12,8 @@ package Slim::Schema::Storage;
 use strict;
 use base qw(DBIx::Class::Storage::DBI::mysql);
 
+use Carp::Clan qw/DBIx::Class/;
+
 use Slim::Utils::Misc;
 
 our $dbAccess = Slim::Utils::PerfMon->new('Database Access', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5], 1);
@@ -22,17 +24,10 @@ sub throw_exception {
 	errorMsg($msg);
 	errorMsg("Backtrace follows:\n");
 	bt();
-}
 
-# XXXX - hack to work around a bug in DBIx::Class 0.06xxx
-sub _populate_dbh {
-	my $self  = shift;
-	my $class = ref($self);
-
-	$self->next::method(@_);
-	bless($self, $class);
-
-	return;
+	# Need to propagate the real error so that DBIx::Class::Storage will
+	# do the right thing and reconnect to the DB.
+	croak($msg);
 }
 
 sub select { 
