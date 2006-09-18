@@ -30,6 +30,7 @@ use Slim::Control::Request;
 use Slim::Utils::Misc;
 
 our %functions = ();
+my %playlistParams = ();
 
 =head1 METHODS
 
@@ -43,7 +44,7 @@ Generally only called from L<Slim::Buttons::Common>
 =cut
 
 sub init {
-	Slim::Buttons::Common::addMode('playlist', getFunctions(), \&setMode);
+	Slim::Buttons::Common::addMode('playlist', getFunctions(), \&setMode, \&exitMode);
 	
 	Slim::Music::Info::setCurrentTitleChangeCallback(\&Slim::Buttons::Playlist::newTitle);
 	
@@ -105,9 +106,8 @@ sub init {
 
 				if ($oldindex != $newindex && $songcount > 1) {
 					browseplaylistindex($client,$newindex);
+					showingNowPlaying($client, 0);
 				}
-
-				$client->modeParam('showingnowplaying', 0);
 
 				$::d_ui && msgf("funct: [$funct] old: $oldindex new: $newindex is after setting: [%s]\n", browseplaylistindex($client));
 
@@ -147,6 +147,8 @@ sub init {
 				if ($newposition != browseplaylistindex($client)) {
 
 					browseplaylistindex($client, $newposition);
+					showingNowPlaying($client, 0);
+
 					$client->pushUp();
 					$client->updateKnob();
 				}
@@ -166,8 +168,6 @@ sub init {
 
 			} else {
 
-				$client->modeParam('showingnowplaying',0);
-
 				if ($inc =~ /\D/) {
 					$inc = 1;
 				}
@@ -175,7 +175,10 @@ sub init {
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $songcount, browseplaylistindex($client));
 
 				if ($newposition != browseplaylistindex($client)) {
+
 					browseplaylistindex($client,$newposition);
+					showingNowPlaying($client, 0);
+
 					$client->pushDown();
 					$client->updateKnob();
 				}
@@ -229,11 +232,11 @@ sub init {
 			# do an unsorted jump
 			$newposition = Slim::Buttons::Common::numberScroll($client, $digit, Slim::Player::Playlist::shuffleList($client), 0);
 
-			# reset showingnowplaying status, since this command overrides the automatic states
-			$client->modeParam('showingnowplaying',0);
-
 			# set browse location to the new index, proportional based on the number pressed
 			browseplaylistindex($client,$newposition);
+			
+			# reset showingnowplaying status
+			showingNowPlaying($client, 0);
 
 			$client->update();	
 		},
@@ -324,12 +327,36 @@ sub setMode {
 	}
 
 	browseplaylistindex($client);
+	showingNowPlaying($client);
+	
 
 	# update client every second in this mode
 	$client->modeParam('modeUpdateInterval', 1); # seconds
 	$client->modeParam('screen2', 'playlist');   # this mode can use screen2
 }
 
+=head2 exitMode( $client, [ $how ])
+
+Requires: $client
+
+The optional argument $how is a string indicating the method of arrival to this mode: either 'push' or 'pop'.
+
+If we are pushing out of the playlist mode, stash a reference to the modeParams so that browseplaylistindex
+and showingNowPlaying can reference them.  Delete the reference when playlist mode is removed from the mode
+stack.
+
+=cut
+
+sub exitMode {
+	my $client = shift;
+	my $how    = shift;
+
+	if ($how eq 'push') {
+		$playlistParams{$client} = $client->modeParams();
+	} else {
+		delete $playlistParams{$client};
+	}
+}
 
 =head2 jump( $client, [ $pos ])
 
@@ -343,14 +370,13 @@ sub jump {
 	my $client = shift;
 	my $pos = shift;
 	
-	if (showingNowPlaying($client) || ! defined browseplaylistindex($client)) {
-
+	if (showingNowPlaying($client)) {
 		if (!defined($pos)) { 
 			$pos = Slim::Player::Source::playingSongIndex($client);
 		}
-
+	
 		$::d_playlist && msg("Playlist: Jumping to song index: $pos\n");
-
+	
 		browseplaylistindex($client,$pos);
 	}
 }
@@ -416,17 +442,23 @@ sub lines {
 	return $parts;
 }
 
-=head2 showingNowPlaying( $client )
+=head2 showingNowPlaying( $client, [$wasshowing] )
 
 Check if the information currently displayed on a player is the currently playing song. Showing the "current track" 
 of the current playlist is a special case.  This function can be used to determine whether or not to display the additional
 information that might be shown for the current track.
+
+This function will update the showingnowplaying param to match the current state.
+
+If the optional $wasshowing parameter is supplied, it overrides the previous value of the showingnowplaying param.
+This prevents being locked onto the currently playing song if a deliberate move is done.
 
 =cut
 
 
 sub showingNowPlaying {
 	my $client = shift;
+	my $wasshowing;
 
 	# special case of playlist mode, to indicate when server needs to
 	# display the now playing details.  This includes playlist mode and
@@ -438,9 +470,30 @@ sub showingNowPlaying {
 		)
 	);
 
-	my $wasshowing = $client->modeParam('showingnowplaying');
+	if (Slim::Buttons::Common::mode($client) eq 'playlist') {
 
-	return $client->modeParam('showingnowplaying',$nowshowing || $wasshowing);
+		$wasshowing = @_ ? shift : $client->modeParam('showingnowplaying');
+
+		if ($wasshowing && !$nowshowing) {
+			# make sure listIndex stays at the correct track
+			browseplaylistindex($client, Slim::Player::Source::playingSongIndex($client));
+		}
+
+		return $client->modeParam('showingnowplaying',$nowshowing || $wasshowing);
+	} elsif (defined $playlistParams{$client}) {
+
+		$wasshowing = @_ ? shift : $playlistParams{$client}->{'showingnowplaying'};
+		
+		if ($nowshowing && !$wasshowing) {
+			# make sure listIndex stays at the correct track
+			browseplaylistindex($client, Slim::Player::Source::playingSongIndex($client));
+		}
+
+		return $playlistParams{$client}->{'showingnowplaying'} = ($nowshowing || $wasshowing);
+	} else {
+		# if no playlist mode is on the stack, then always claim to be showing now playing
+		return 1;
+	}
 }
 
 
@@ -466,15 +519,19 @@ sub browseplaylistindex {
 	if (Slim::Buttons::Common::mode($client) eq 'playlist') {
 
 		$client->modeParam('listLen', Slim::Player::Playlist::count($client) || 1);
-	} elsif ($::d_client) {
-		
-		errorMsg("Call to Slim::Buttons::Playlist::browseplaylistindex when not in playlist mode\n");
-		bt();
+		if (@_ || defined($client->modeParam('listIndex'))) {
+			unshift @_, 'listIndex';
+			# get (and optionally set) the browseplaylistindex parameter that's kept in param stack
+			return $client->modeParam(@_);
+		} else {
+			return $client->modeParam('listIndex',Slim::Player::Source::playingSongIndex($client));
+		}
+	} elsif (defined $playlistParams{$client}) {
+		return @_ ? $playlistParams{$client}->{'listIndex'} = shift : $playlistParams{$client}->{'listIndex'};
+	} else {
+		return Slim::Player::Source::playingSongIndex($client);
 	}
-
-	unshift @_, 'listIndex';
-	# get (and optionally set) the browseplaylistindex parameter that's kept in param stack
-	return $client->modeParam(@_);
+	
 }
 
 =head2 knobPlaylistCallback( $request )
@@ -487,10 +544,10 @@ sub knobPlaylistCallback {
 	my $request = shift;
 	my $client  = $request->client();
 	
-	return unless defined $client;
-	return unless showingNowPlaying($client);
-	
-	$client->updateKnob(1);
+	if (defined $client && Slim::Buttons::Common::mode($client) eq 'playlist') {
+		browseplaylistindex($client);
+		$client->updateKnob(1);
+	}
 }
 
 # DEPRECATED: for compatibility only, use $client->nowPlayingModeLines();

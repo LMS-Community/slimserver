@@ -815,6 +815,17 @@ sub modeParam {
 	@_ ? ($mode->{$name} = shift) : $mode->{$name};
 }
 
+sub modeParams {
+	my $client = shift;
+	
+	@_ ? $client->modeParameterStack()->[-1] = shift : $client->modeParameterStack()->[-1];
+}
+
+sub getMode {
+	my $client = shift;
+	return $client->modeStack(-1);
+}
+
 sub paramOrPref {
 	my $client = shift;
 	my $name   = shift;
