@@ -301,7 +301,7 @@ sub volume {
 		return $volume;
 	    }
 	else {
-	    return $client->SUPER::volume($newvolume);
+	    return $client->SUPER::volume($newvolume, @_);
 	}
 }
 
