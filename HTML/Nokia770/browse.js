@@ -1,6 +1,7 @@
 var url = 'status.html';
 
 [% PROCESS html/global.js %]
+[% PROCESS skin_global.js %]
 
 function addItem(args) {
 	getStatusData(args, showAdded);
@@ -39,24 +40,6 @@ function toggleGalleryView(artwork) {
 			thisdoc.location=myString.replace(rExp, "");
 		}
 	}
-}
-
-function chooseAlbumOrderBy(value, option)
-{
-        var url = '[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %][% IF artwork %]&artwork=1[% END %]&player=[% playerURI %]'; 
-        if (option) {
-                url = url + '&orderBy=' + option;
-        }
-        setCookie( 'SlimServer-orderBy', option );
-        window.location = url;
-}
-
-function setCookie(name, value) {
-        var expires = new Date();
-        expires.setTime(expires.getTime() + 1000*60*60*24*365);
-        document.cookie =
-                name + "=" + escape(value) +
-                ((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
 }
 
 window.onload= function() {

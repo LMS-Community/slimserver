@@ -1,7 +1,7 @@
 [%# IF levelName == 'album' || levelName == 'age' || levelName == 'contributor' %]
 [% IF levelName == 'album' || levelName == 'age' %]
 
-[% IF artwork < 2 %]
+[% IF artwork < 3 %]
 [%# skip this section for now %]
 
 [% IF levelName == 'album' %]
@@ -19,7 +19,7 @@
 
 	[% IF NOT noLabel %]<label for="orderBy" class="stdlabel">[% "SORT_BY" | string %]</label>[% END %]
 
-	<select class="stdedit" name="orderBy" onChange="chooseAlbumOrderBy(selectedIndex,options[selectedIndex].value)">
+	<select class="stdedit" name="orderBy" onChange="chooseAlbumOrderBy(selectedIndex,options[selectedIndex].value,[% artwork %])">
 
 	[% FOREACH orderType = orderByList.keys.sort %]
 		<option [% IF orderType == orderBy %]selected[% END %] value="[% orderType %]">[% orderByList.$orderType | string %]</option>
@@ -30,6 +30,7 @@
 
 [% END %]
 
+[% IF artwork < 2 %]
 	[% IF controlGraphics %]
 <div id = 'galleryToggle'>
 		[% IF artwork %]<a href="javascript:toggleGalleryView(0);"><img src="html/images/list.png" alt='[% "SWITCH_TO_LIST" | string %]' title='[% "SWITCH_TO_LIST" | string %]'></a>
@@ -41,6 +42,7 @@
 		[%- END %])
 	[% END %]
 </div>
+[% END %]
 
 [% END %]
 [% END %]

@@ -10,6 +10,7 @@ var blankRequest = 'hierarchy=album,track&level=0&artwork=2&player=00%3A04%3A20%
 var thisAlbum, thatAlbum;
 
 [% PROCESS html/global.js %]
+[% PROCESS skin_global.js %]
 
 // parses the data if it has not been done already
 function fillDataHash(theData) {
