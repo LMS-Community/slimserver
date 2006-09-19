@@ -1694,16 +1694,13 @@ sub rescanCommand {
 	if (!Slim::Music::Import->stillScanning()) {
 
 		my %args = (
-			'rescan' => 1,
+			'rescan'  => 1,
+			'cleanup' => 1,
 		);
 
 		if ($playlistsOnly) {
 
 			$args{'playlists'} = 1;
-
-		} else {
-
-			$args{'cleanup'} = 1;
 		}
 
 		Slim::Music::Import->launchScan(\%args);
