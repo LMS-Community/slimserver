@@ -1365,12 +1365,14 @@ TACMATCHING
 	DE	Passende Interpreten/Titel/Alben
 	EN	Tracks/Artists/CDs matching
 	ES	Canciones/Artistas/CDs coincidentes
+	IT	Tracce/Artisti/CD corrispondenti
 	NL	Liedjes/Artiesten/CD's matchen
 
 STATIONSMATCHING
 	DE	Passende Sender
 	EN	Stations matching
 	ES	Estaciones coinciden
+	IT	Stazioni corrispondenti a
 	NL	Bij elkaar passende stations
 
 LOCATIONSMATCHING
@@ -1378,6 +1380,7 @@ LOCATIONSMATCHING
 	EN	Locations matching
 	ES	Ubicaciones coincidentes
 	FI	Täsmäävät sijainnit
+	IT	Locazioni corrispondenti a
 	NL	Locatie matching
 
 BROADCASTERSMATCHING
@@ -1385,6 +1388,7 @@ BROADCASTERSMATCHING
 	EN	Broadcasters matching
 	ES	Emisoras coincidentes
 	FI	Lähettäjät jotka täsmäävät
+	IT	Emittenti corrispondenti a
 	NL	Omroep matching
 
 PLUGIN_LIVE365_NO_INFO

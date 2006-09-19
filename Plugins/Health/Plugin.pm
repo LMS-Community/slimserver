@@ -338,6 +338,7 @@ PLUGIN_HEALTH_NETTEST
 	EN	Network Test
 	ES	Test de Red
 	FR	Test réseau
+	IT	Verifica Rete
 	NL	Netwerk test
 
 PLUGIN_HEALTH_NETTEST_SELECT_RATE
@@ -370,6 +371,7 @@ PLUGIN_HEALTH_NETTEST_DESC3
 PLUGIN_HEALTH_NETTEST_PLAYERNOTSUPPORTED
 	EN	Network tests are not supported on this player.
 	FR	Les tests réseau ne sont pas supportés par cette platine.
+	IT	Le verifiche della Rete non sono supportate da questo lettore.
 	NL	Netwerk testen zijn niet ondersteund op deze speler.
 
 PLUGIN_HEALTH_NETTEST_CURRENTRATE
@@ -668,6 +670,7 @@ PLUGIN_HEALTH_GRAPHS_DESC_SERVER
 PLUGIN_HEALTH_WARNING_DESC
 	EN	You may set warning thresholds for each measurement.  This will record in the server log whenever the threshold is exceeded.  The most recent log entries can be viewed <a href="/log.txt" target="log"><u>here</u></a>.
 	FR	Vous pouvez fixer des seuils d\'alerte pour chaque mesure. Ceux-ci seront enregistrés dans le log du serveur s\'ils sont atteints. Vous pouvez visualiser le contenu le plus récent du log <a href="/log.txt">ici</a>.
+	IT	Puoi impostare delle soglie d\'allarme per ogni misurazione. Il superamento di questa soglia verra\' registrato nel registro del server. Le voci piu\' recenti del registro possono essere visualizzate qui.
 	NL	Je kunt waarschuwingsniveaus instellen voor elke meetinstelling. Vervolgens wordt bijgehouden in de server log wanneer een waarschuwingsniveau is overschreden. <BR>De meest recente log kun je <a href="/log.txt" target="log"><u>hier</u></a> bekijken.
 
 PLUGIN_HEALTH_SIGNAL_DESC

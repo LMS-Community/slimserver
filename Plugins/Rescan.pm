@@ -330,6 +330,7 @@ PLUGIN_RESCAN_MUSIC_LIBRARY
 	FI	Sekoitukseen haluamasi tyylilajit:
 	FR	Répertorier musique
 	HE	תוסף סריקת הסיפריה
+	IT	Rianalisi della libreria musicale
 	NL	Opnieuw scannen muziekcollectie
 
 PLUGIN_RESCAN_RESCANNING

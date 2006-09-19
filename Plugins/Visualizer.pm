@@ -103,6 +103,7 @@ PLUGIN_SCREENSAVER_VISUALIZER
 	ES	Salvapantallas de Visualizador
 	FI	Visualisointi ruudunsäästäjä
 	FR	Ecran de veille Visualisation
+	IT	Salvaschermo grafici
 	NL	Visualisatie schermbeveiliger
 
 PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2

@@ -14,13 +14,13 @@
 
 CREDITS
 	CS	Roman Smetak
-	DE	Melkon Torosyan, Thorsten Faltings, Michael Herger
 	DA	Ulrik Mehr, Morten Fischer-Madsen
+	DE	Melkon Torosyan, Thorsten Faltings, Michael Herger
 	ES	Andy Spiers, Néstor Spedalieri
 	FI	Tomi Tuominen, Jarkko Ahonen
 	FR	Serge Froment, Cédric Blancher, Terry Adams, Nicolas Guillemain
 	HE	Avi Stone
-	IT	Marco Barbieri, Riccardo Raponi
+	IT	Riccardo Raponi
 	JA	Ken Hokugo
 	NL	Terry Adams, Patrick van Zweden, Carel Bast, Lieven Hollevoet, Willem Oepkes
 	NO	Øyvind L. Eggen, Georg Engstrand
@@ -97,7 +97,7 @@ HIT_RELOAD
 	FI	<a href="/" target="_top">Lataa sivu uudelleen nähdäksesi uuden ulkoasun.</a>
 	FR	<a href="/" target="_top">Cliquez ici</a> pour afficher la nouvelle interface.
 	HE	<a href="/" target="_top">לחץ לטעינה מחודשת של חדשות</a>
-	IT	Premi qui per ricaricare la pagina e vedere il nuovo aspetto.
+	IT	<a href="/" target="_top">Premi qui</a> per ricaricare la pagina e vedere il nuovo aspetto.
 	JA	<a href="/" target="_top">ここ</a>をクリックして更新し、新しいスキンを見る
 	NL	<a href="/" target="_top">Klik hier</a> om het nieuwe uiterlijk te tonen.
 	NO	<a href="/" target="_top">Trykk her</a> or å oppdatere med nytt utseende.
@@ -191,6 +191,7 @@ ABOUT_SLIMDEVICES
 	FI	Yleistä Slimdevicesista
 	FR	A propos de Slim Devices
 	HE	Slim Devices אודות
+	IT	A proposito della Slim Devices
 	JA	スリムデバイス社について
 	NL	Over Slim Devices
 	NO	Om Slim Devices
@@ -537,12 +538,13 @@ NOW_REWINDING
 
 EVERYTHING
 	CS	Cokoliv
-	DE	Alles
 	DA	Alt
+	DE	Alles
 	EN	Everything
 	ES	Todo
 	FI	kaikki
 	FR	Tout
+	IT	Tutto
 	JA	すべて
 	NL	Alles
 	NO	Alt
@@ -939,6 +941,7 @@ CANCEL_SLEEP
 	ES	No se dormirá
 	FI	Unikytkin peruutettu.
 	FR	Mise en veille annulée
+	IT	Sleep cancellato
 	JA	スリープ キャンセル
 	NL	Sluimermodus uit.
 	NO	Sovefunksjon avslått.
@@ -964,6 +967,7 @@ SLEEPING_IN
 END_OF_SONG
 	DE	Liedende
 	EN	end of song
+	IT	Fine del brano
 	NL	Einde liedje
 
 SLEEP
@@ -1000,6 +1004,7 @@ POWER
 	ES	Encendido
 	FR	État
 	HE	הדלקה
+	IT	Acceso
 	JA	パワー
 	NL	Voeding
 	SV	Strömförsörjning
@@ -1129,6 +1134,7 @@ ALARM_FADE
 	DE	Wecker einblenden
 	EN	Fade Alarms In
 	FR	Volume progressif
+	IT	Sveglia graduale
 	NL	Fade wekalarm in
 
 ALARM_SET_ENTRY
@@ -1491,12 +1497,14 @@ FIRMWARE_MISSING
 	DE	Fehler: Firmware fehlt
 	EN	Error: Missing Firmware
 	ES	Error: No se encuentra Firmware
+	IT	Errore: Firmware non trovato
 	NL	Fout: Firmware mist
 
 FIRMWARE_MISSING_DESC
 	DE	Der Server kann keine Firmware aus dem Internet beziehen.
 	EN	Server can't connect to Internet to obtain firmware update.
 	ES	El server no puede conectarse a Internet para obtener la actualización de firmware.
+	IT	Il Server non riesce a connettersi ad Internet per ottenere il firmware aggiornato.
 	NL	Server kan geen connectie maken naar Internet om de bijgewerkte firmware op te halen.
 
 CHECKING_STREAM
@@ -1513,6 +1521,7 @@ CONNECTING_FOR
 	ES	Conectando a:
 	FI	Yhdistetään soittaakseni:
 	FR	Connexion à :
+	IT	In connessione...
 	JA	接続しています:
 	NL	Verbinden...
 	NO	Kobler til for å spille:
@@ -1666,6 +1675,7 @@ ABOUT_SHORT
 	ES	Acerca de
 	FR	A propos
 	HE	אודות
+	IT	A proposito di
 	JA	...について
 	NL	Over
 	PT	Sobre ...
@@ -1768,6 +1778,7 @@ DESCRIPTION
 	DE	Beschreibung
 	EN	Description
 	ES	Descripción
+	IT	Descrizione
 	NL	Beschrijving
 
 SOURCE
@@ -2383,6 +2394,7 @@ SETUP_GROUP_FORMATS_EXTENSIONS
 	EN	File Extensions Scanning Setup
 	ES	Configuración de la Búsqueda de Extensiones de Archivo
 	FR	Exclusion des types de fichier
+	IT	Impostazione analisi estensione file.
 	NL	Bestandsextensies scan instelling
 
 SETUP_DISABLEDEXTENSIONSAUDIO
@@ -2390,6 +2402,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO
 	EN	Disabled Audio File Extensions
 	ES	Extensiones de Archivos de Audio deshabilitadas.
 	FR	Types de fichier ignorés
+	IT	Disabilita estensioni file audio
 	NL	Uitgezette audio bestand extensies.
 
 SETUP_DISABLEDEXTENSIONSAUDIO_DESC
@@ -2397,6 +2410,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	EN	SlimServer will look in the Music Folder for all supported file types (audio files and cue sheets). To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: cue, mp4, aac
 	ES	SlimServer examinará la Carpeta de Música teniendo en cuenta todos los formatos de archivo soportados (archivos de audio y cuesheets). Para deshabilitar tipos de archivo específicos al examinar la Carpeta de Música, ingresar una lista de extensiones separadas por coma debajo. (Por ej. cue, mp4, etc)
 	FR	Le SlimServer examinera dans votre dossier de musique tous les types de fichier audio supportés (fichiers et listes de lecture ou "cue sheets"). Pour exclure un type de fichier audio du parcours du dossier de musique, vous pouvez entrer ci-après la liste des extensions à ignorer, séparées par une virgule (par ex. : cue, mp4, aac)
+	IT	Lo Slimserver cercherà nella cartella Musica tutti i tipi di file supportati (file audio e cue sheets). Per scartare specifici tipi di file dalla ricerca all'interno della cartella Musica, inserisci una lista di estensioni separate da una virgola. Es.: cue, mp4, aac
 	NL	SlimServer kijkt in de muziekfolder naar alle ondersteunde bestandsformaten (audio bestanden en cue bestanden). <BR>Om specifieke bestandsformaten over te slaan bij het scannen naar muziek kun je een komma gescheiden lijst met extensies opnemen hieronder. Bijvoorbeeld: cue, mp4, aac
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST
@@ -2404,6 +2418,7 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST
 	EN	Disabled Playlist File Extensions
 	ES	Extensiones Deshabilitadas de Archivos de Listas
 	FR	Types de liste de lecture ignorés
+	IT	Disabilita estensioni liste di esecuzione
 	NL	Uitgezette playlist bestandsextensies
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
@@ -2411,6 +2426,7 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
 	EN	SlimServer will look in the Playlist Folder for all supported file types (playlist files and cue sheets). To disable specific file types from being processed when scanning the Playlist Folder, enter a comma separated list of file extensions below. E.g.: m3u, pls, cue
 	ES	SlimServer examinará la Carpeta de Listasa teniendo en cuenta todos los formatos de archivo soportados (archivos de listas y cuesheets). Para deshabilitar tipos de archivo específicos al examinar la Carpeta de Listas, ingresar una lista de extensiones separadas por coma debajo. (Por ej. cue, mp4, etc)
 	FR	Le SlimServer examinera dans votre dossier de listes de lecture tous les types de fichier audio supportés (listes de lecture et "cue sheets"). Pour exclure un type de fichier audio du parcours du dossier de listes de lecture, vous pouvez entrer ci-après la liste des extensions à ignorer, séparées par une virgule (par ex. : m3u, pls, cue)
+	IT	Lo Slimserver cercherà nella cartella Liste di esecuzione tutti i tipi di file supportati (playlist e cue sheets). Per scartare specifici tipi di file dalla ricerca all'interno della cartella Liste di distribuzione, inserisci una lista di estensioni separate da una virgola. Es.: m3u, pls, cue
 	NL	SlimServer kijkt in de playlistfolder naar alle ondersteunde bestandsformaten (playlist bestanden en cue bestanden). <BR>Om specifieke bestandsformaten over te slaan bij het scannen naar playlists kun je een komma gescheiden lijst met extensies opnemen hieronder. Bijvoorbeeld: m3u,pls,cue
 
 PLAYER_TYPE
@@ -2420,6 +2436,7 @@ PLAYER_TYPE
 	ES	Tipo de Reproductor
 	FI	Soittimen tyyppi
 	FR	Type platine
+	IT	Tipo lettore
 	JA	プレーヤー タイプ
 	NL	Spelertype
 	NO	Spillertype
@@ -2434,6 +2451,7 @@ PLAYER_ID
 	FI	Soittimen tunniste
 	FR	ID platine
 	HE	זהות הנגן
+	IT	Identificativo lettore
 	JA	プレーヤーID
 	NL	Speler ID
 	NO	Spiller ID
@@ -2487,6 +2505,7 @@ SETUP_PLAYERNAME
 	FI	Player Nimi
 	FR	Nom de la platine
 	HE	שם הנגן
+	IT	Nome Lettore
 	JA	プレーヤー名
 	NL	Spelernaam
 	NO	Spillernavn
@@ -2496,13 +2515,14 @@ SETUP_PLAYERNAME
 
 SETUP_PLAYERNAME_OK
 	CS	Nový název pro tento přehrávač je:
-	DE	Der neue Name für diesen Player ist:
 	DA	Det nye navn for afspilleren er:
+	DE	Der neue Name für diesen Player ist:
 	EN	The new name for this player is:
 	ES	El nuevo nombre para este reproductor es:
 	FI	Uuden soittimen nimi on:
 	FR	Le nouveau nom de la platine est :
 	HE	שם נגן חדש
+	IT	Il nuovo nome per questo lettore è:
 	JA	プレーヤーの新しい名前は:
 	NL	De nieuwe naam voor deze speler is:
 	NO	Spillerens nye navn er:
@@ -2749,12 +2769,13 @@ SETUP_PLAYINGDISPLAYMODE
 	ZH_CN	播放中的信息
 
 SETUP_PLAYINGDISPLAYMODE_OK
-	DE	Das Display zeigt nun den Fortschritt des aktuell abgespielten Titels an:
 	DA	Afspilleren vil nu vise status for afspilningen således:
+	DE	Das Display zeigt nun den Fortschritt des aktuell abgespielten Titels an:
 	EN	The display will now show the progress of the currently playing song as:
 	ES	La pantalla mostrará el progreso de la canción actual como:
 	FI	Näyttö kuvaa soivan kappaleen kulumista:
 	FR	L'écran affichera le déroulement de la lecture du morceau avec :
+	IT	Lo schermo ora mostrerà l'avanzamento del brano come:
 	JA	ディスプレイは曲の進行を以下のように表示します:
 	NL	Het scherm zal nu de voortgang van het huidige liedje als volgt laten zien:
 	NO	Displayet viser nå status for sangen som spilles slik:
@@ -2796,12 +2817,13 @@ SETUP_SYNCHRONIZE
 	ZH_CN	同步
 
 SETUP_SYNCHRONIZE_DESC
-	DE	Der Player kann mit anderen Playern synchronisiert werden, um simultan dieselbe Musik zu spielen. Wählen Sie den Player aus der Liste der vorhandenen Synchronisations-Gruppen, mit dem Sie synchronisieren möchten. Wählen Sie den aktuellen Player um die Synchronisation zu stoppen.
 	DA	Afspilleren kan synkronisers med andre afspillere, således at alle afspillerne spiller samme musik samtidigt. Vælg de afspillere du vil synkronisere med fra listen over tilgængelige synkroniseringsgrupper. Vælg Ingen synkronisering for at stoppe synkroniseringen.
+	DE	Der Player kann mit anderen Playern synchronisiert werden, um simultan dieselbe Musik zu spielen. Wählen Sie den Player aus der Liste der vorhandenen Synchronisations-Gruppen, mit dem Sie synchronisieren möchten. Wählen Sie den aktuellen Player um die Synchronisation zu stoppen.
 	EN	The player can be synchronized with other players, enabling them to play the same music simultaneously. Choose the players you would like to synchronize with from the list of available synchronization groups. Choose No Synchronization to stop synchronization.
 	ES	El reproductor puede sincronizarse con otros reproductores, permitiéndoles reproducir la misma música simultánemanente. Se debe elegir los reproductores que se queire sincronizar de la lista de groupos de sincronización disponibles. Elegir Sin Sincronización para detener la sincronización.
 	FR	La platine peut se synchroniser avec d'autres platines pour jouer la même musique que ceux-ci. Choisissez les platines avec lesquels vous voulez vous synchroniser à partir de la liste des groupes de synchronisation. Choisissez le nom de la platine courante pour annuler la synchronisation.
 	HE	ניתן לסנכרן נגן זה עם נגנים אחרים
+	IT	Il lettore puo' essere sincronizzato con altri lettori, in modo da riprodurre la stessa musica contemporaneamente. Scegli il lettore con il quale vuoi sincronizzarti dal gruppo di dispositivi disponibili. Scegli Nessuna sincronizzazione per interrompere la sincronizzazione.
 	JA	プレーヤーは他のプレーヤーとシンクロし、同じ曲を同時に再生することができます。シンクロさせるプレーヤーを選ぶか、シンクロなしを選んでください。
 	NL	De speler kan gesynchroniseerd worden met andere spelers. De spelers geven dan dezelfde muziek weer. Kies de spelers waarmee gesynchroniseerd moet worden uit de lijst van beschikbare synchronisatiegroepen. Kies 'Geen synchronisatie' om deze functie te annuleren.
 	NO	Spilleren kan synkroniseres med andre spillere slik at de spiller samme musikken samtidig. Velg spillerene du ønsker å synkronisere med fra listen of synkroniserings grupper. Velg Ingen Synkronisering for å stoppe synkroniseringen.
@@ -2825,11 +2847,12 @@ SETUP_NO_SYNCHRONIZATION
 	ZH_CN	不要同步
 
 SETUP_SYNCHRONIZE_OK
-	DE	Hinzufügen zur Synchronisations-Gruppe:
 	DA	Tilslutter synkroniseringsgruppen:
+	DE	Hinzufügen zur Synchronisations-Gruppe:
 	EN	Joining synchronization group:
 	ES	Sumaándose al grupo de sincronización:
 	FR	Ajouter au groupe de synchronisation :
+	IT	Collega al gruppo di sincronizzazione:
 	JA	シンクログループに入れる:
 	NL	Toevoegen aan synchronisatiegroep:
 	NO	Blir med i synkroniseringsgruppe:
@@ -2904,6 +2927,7 @@ SETUP_SYNCPOWER_ON
 	EN	Power off/on with group
 	ES	Encender/Apagar en grupo
 	FR	Allumer/éteindre avec groupe
+	IT	Spegni/accendi in gruppo
 	JA	グループでパワー オン・オフをシンクロさせる
 	NL	Zet in groep uit/aan
 	NO	Strøm av/på med gruppe
@@ -2915,6 +2939,7 @@ SETUP_SYNCPOWER_OFF
 	EN	Power off/on separately
 	ES	Encender/Apagar en forma separada
 	FR	Allumer/éteindre indépendamment
+	IT	Spegni/accendi separatamente
 	JA	パワー オン・オフは独立させる
 	NL	Zet apart uit/aan
 	NO	Strøm av/på alene
@@ -2926,6 +2951,7 @@ SETUP_SYNCPOWER
 	EN	Synchronize Power
 	ES	Sincronizar encendido
 	FR	Synchroniser la mise en marche
+	IT	Sincronizza accensione
 	JA	電源オン・オフをシンクロさせる
 	NL	Synchroniseer aan/uit
 	NO	Synkroniser strøm på/av
@@ -2938,6 +2964,7 @@ SETUP_SYNCPOWER_DESC
 	ES	Se puede elegir que este reproductor se apague solo, o se apague como parte del grupo de reproductores sincronizados. Elegir la opción y ahcer click en Cambiar.
 	FR	Vous pouvez choisir que cette platine s'allume et s'éteigne indépendamment ou simultanément avec un groupe d'autres platines.
 	HE	ניתן לבחור אם נגן זה כבה בפני עצמו או כחלק מהקבוצה עימה הו מסונכרן
+	IT	Puoi scegliere di spegnere questo lettore in maniera autonoma o di spegnerlo assieme agli altri lettori appartenenti al gruppo. Effettua la selezione in basso e premi Cambia.
 	JA	プレーヤーの電源を独立でオフにことも、グループでオフにすることもできます。以下で選択してください。
 	NL	Je kunt kiezen om de speler individueel uit te zetten, of uit te zetten als deel van een groep  met alle andere spelers in die groep. Maak een selectie hieronder en klik op de knop Veranderen.
 	NO	Du kan velge å la denne spilleren slå seg av alene, eller samkjørt i gruppen med de andre spillerene. Velg nedenfor og trykk Endre.
@@ -3018,24 +3045,28 @@ SETUP_BUFFERSECS
 	DE	Puffergrösse für Internet Radio
 	EN	Radio Station Buffer Seconds
 	FR	Taille du tampon radio
+	IT	Memoria buffer in secondi per le stazioni radio
 	NL	Radio station buffertijd (seconden)
 
 SETUP_BUFFERSECS_DESC
 	DE	Wenn Internet Radiostationen wiedergegeben werden, puffert der Player eine geringe Datenmenge, bevor er die Wiedergabe startet. Geben Sie die Anzahl Sekunden an, die in den Puffer geladen werden sollen (1-30 Sekunden). Vorgabewert ist 3 Sekunden. Falls Sie eine stotternde Wiedergabe feststellen, so kann das Erhöhen dieses Wertes helfen.
 	EN	When playing an Internet stream, the player buffers a small amount of data before beginning playback.  Specify the amount of audio data to buffer, in seconds from 1 to 30.  The default value is 3 seconds.  If you experience stuttering audio, increasing this value may help.
 	FR	Lors de la connexion à un flux Internet, la platine utilise un tampon audio avant de débuter la lecture. Vous pouvez spécifier la taille en secondes (1 à 30) de ce tampon. La valeur par défaut est de 3 secondes. Si vous subissez des coupures audio, augmentez cette valeur.
+	IT	Nella riproduzione di un flusso Internet, il lettore memorizza una piccola quantità di dati prima di iniziare la riproduzione. Specifica la quantità di dati audio da memorizzare, in secondi da 1 a 30. Il valore standard è 3 secondi. Se verifichi inceppamenti nell'audio, aumentare questo valore potrebbe essere d'aiuto.
 	NL	Bij het spelen van een Internet stream buffert de speler een kleine hoeveelheid data voordat het spelen start. Specificeer de hoeveelheid bufferdata in seconden speeltijd. Minimum is 1 en maximum is 30 seconden. De standaardwaarde is 3 seconden. Als je haperende audio ervaart, dan kan het vergroten van de buffer helpen.
 
 SETUP_MAXWMARATE
 	DE	Maximale WMA Stream Bitrate
 	EN	Maximum WMA Stream Bitrate
 	FR	Limite de débit du flux WMA
+	IT	Bitrate massimo per flussi WMA
 	NL	Maximum WMA stream bitrate
 
 SETUP_MAXWMARATE_DESC
 	DE	Manche WMA Streams können unterschiedliche Bitraten enthalten. Standardmässig wähle SlimServer die höchste verfügbare Bitrate. Dies kann bei langsameren Internet-Verbindungen zu Problemen führen. Daher können Sie hier die maximale Bitrate, die verwendet werden soll, festlegen.
 	EN	Some WMA streams have multiple bitrates available for streaming.  By default, SlimServer will select the highest bitrate stream available, but if you have a slower Internet connection, you may set a lower value here to limit the maximum rate that can be chosen from these multiple rate streams.
 	FR	Certains flux WMA sont disponibles en plusieurs débits binaires ; par défaut, le SlimServer choisira le débit le plus élevé disponible. Si votre connexion Internet ne le supporte pas, vous pouvez spécifier ici le débit maximum à utiliser.
+	IT	Alcuni flussi WMA sono disponibili per lo scaricamento con bitrate multipli. Per dafault, lo Slimserver sceglierà il flusso con il bitrate più alto, ma se disponi di una connessione lenta a Internet, puoi impostare qui un valore più basso per limitare la velocità massima nella scelta di questi flussi multipli.
 	NL	Sommige WMA streams zijn beschikbaar in meerdere kwaliteiten (bitrates). Standaard selecteert SlimServer de hoogst beschikbare bitrate. Als je een langzamere Internetverbinding hebt kun je een lagere bitrate kiezen om de streams te limiteren. Dan kun je alleen bitrates kiezen die lager zijn dan dit maximum.
 
 SETUP_MAXBITRATE
@@ -3092,7 +3123,7 @@ SETUP_LAME_NOT_FOUND
 	ES	(<b>Note</b>: El codificador LAME parece no estar instalado en el sistema. SlimServer necesita el codificador de MP3 LAME instalado en el sistema para realizar la conversión a MP3. Se puede encontrar más acerca de LAME <a href="http://lame.sourceforge.net/">aquí</a>.)
 	FR	(<b>N.B.</b> : LAME ne semble pas être installé sur votre système. Le SlimServer a besoin de LAME pour l'encodage au format MP3. Plus d'infos sur LAME <a href="http://lame.sourceforge.net/">ici</a>.)
 	HE	הערה: לביצוע ההמרות השרת משתמש ב LAME
-	IT	(Note: Non sembra che LAME sia installato. SlimServer necessita che l'encoder LAME MP3 sia installato per procedere alla conversione in MP3. Puoi trovare informazioni sul LAME qui http://lame.sourceforge.net/).
+	IT	(<b>Note</b>: Non sembra che LAME sia installato. SlimServer necessita che l'encoder LAME MP3 sia installato per procedere alla conversione in MP3. Puoi trovare informazioni sul LAME qui <a href="http://lame.sourceforge.net/">here</a>).
 	JA	(<b>注意</b>: LAMEがインストールされていないようです。MP3に変換するためにはSlimServerはLAMEをインストールする必要があります。LAMEについては<href="http://lame.sourceforge.net/">ここ</a>をクリックして下さい。)
 	NL	(Opmerking: Het lijkt erop dat je LAME niet ge&iuml;nstalleerd hebt. SlimServer heeft het LAME MP3 codeerprogramma nodig voor conversie naar MP3. Je kunt meer informatie over lame <a href="http://lame.sourceforge.net/">hier</a> vinden).
 	SV	(<b>Notera</b>: LAME verkar inte vara installerat i ditt system. SlimServer behöver använda LAME MP3-kodaren för att konvertera till MP3.  Läs mer om LAME <a href="http://lame.sourceforge.net/">här</a>.)
@@ -3149,6 +3180,7 @@ SETUP_LAMEQUALITY_DESC
 	EN	The LAME MP3 encoder may be used to convert your music to MP3 format for streaming.  You can adjust the quality setting for LAME in the range 0 to 9.  9 is the default setting, which sounds very good at high bit rates and and uses the least amount of computing power. 0 is the highest quality, but may slow your computer down.  Some computers running SlimServer may not be able to convert fast enough with higher quality settings.
 	ES	El codificador de MP3 LAME puede utilizarse para convertir música a formato MP3 para transmisión. Se puede ajustar el nivel de calidad de LAME en un rango de 0 a 9. 9 es el valor por defecto, el cual suena muy bien a niveles altos de tasa de bits y utiliza la menor cantidad de recursos de computadora. 0 es la calidad más alta, pero puede afectar la perfomance de la computadora. Algunas computadoras que están corriendo SlimServer pueden no convertir lo suficientemente rápido con niveles de calidad superiores.
 	FR	L'encodeur MP3 LAME peut être utilisé pour convertir vos fichiers audio au format MP3 pour la diffusion à distance. Vous pouvez ajuster le niveau de qualité utilisé par LAME de 0 à 9 (la valeur par défaut est 9, ce qui donne des résultats acceptables à des taux d'encodage élevés et économise au maximum les ressources système ; 0 est le niveau de qualité optimal mais risque de ralentir sensiblement le serveur sur des machines moins performantes).
+	IT	L'encoder LAME MP3 puo' essere usato per convertire la tua musica nel formato MP3 per l'invio al lettore. Puoi regolare l'impostazione della qualita' da 0 a 9. 9 e' l'impostazione standard che da' una resa molto buona ad alti bit rate ed utilizza il minimo delle capacita' del processore. 0 e' la qualita' massima ma potrebbe rallentare il tuo computer. Alcuni computer su cui gira lo Slimserver potrebbero non riuscire a convertire abbastanza velocemente con l'impostazione di qualita' piu' alta.
 	NL	Het lame MP3 codeerprogramma kan gebruikt worden om je muziek naar MP3 te converteren voor het streamen naar de speler. Je kunt de kwaliteit instellen met een waarde tussen 0 en 9. 9 is de standaard waarde en klinkt heel goed bij hoge bitrates en gebruikt de minste rekenkracht van de server. 0 is de hoogste kwaliteit maar kan je server langzamer maken. Sommige computers waarop SlimServer draait zijn niet krachtig genoeg om te converteren met een hoge kwaliteitsinstelling.
 	ZH_CN	LAME MP3编码器可用来转换您的音乐成MP3格式流出。您能在0至9的设置范围内调节LAME MP3编码器的输出质量。缺省值为5的设置以高比特率编码的音效会相當的好，同时计算量也較小。0是最高质量，但其高计算量可能对计算机的性能表现造成负面影响。有一些运行SlimServer的计算机也许不足以迅速的应付更加优质的LAME设置。
 
@@ -3406,6 +3438,7 @@ SETUP_ITUNESPLAYLISTFORMAT_DESC
 	EN	This option determines the format used when importing iTunes playlists.
 	ES	Esta opción determina el formato utilizado cuando se importan listas de iTunes.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture iTunes.
+	IT	Questa opzione determina il formato usato nell'importazione delle liste di esecuzione di iTunes.
 	JA	このオプションでは、iTunesプレイリストをインポートする時に使われるフォーマットを決めます。
 	NL	Deze optie bepaalt het te gebruiken formaat bij het importeren van iTunes playlists.
 	NO	Denne innstillingen avgjør hvliket format som brukes ved import av iTunes spillelister.
@@ -3701,6 +3734,7 @@ SETUP_ITUNESPLAYLISTPREFIX_CHOOSE
 	EN	Prefix:
 	ES	Prefijo:
 	FR	Préfixe :
+	IT	Prefisso:
 	JA	プレフィックス:
 	NL	Voorvoegsel:
 	NO	Prefix:
@@ -3712,6 +3746,7 @@ SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE
 	EN	Suffix:
 	ES	Sufijo:
 	FR	Suffixe :
+	IT	Suffisso:
 	JA	サフィックス:
 	NL	Achtervoegsel:
 	NO	Suffix:
@@ -3750,6 +3785,7 @@ SETUP_ITUNESPLAYLISTPREFIX
 	DE	Der Prefix für iTunes Wiedergabelisten wurde geändert auf:
 	EN	iTunes playlist prefix changed to:
 	ES	Prefijo de listas de iTunes cambiado a:
+	IT	Prefisso delle liste di esecuzione di iTunes modificato in:
 	NL	iTunes playlist voorvoegsel wijzigt in:
 	ZH_CN	iTunes播放表前缀被改为：
 
@@ -3757,6 +3793,7 @@ SETUP_ITUNESPLAYLISTSUFFIX
 	DE	Der Suffix für iTunes Wiedergabelisten wurde geändert auf:
 	EN	iTunes playlist suffix changed to:
 	ES	Sufijo de listas de iTunes cambiado a:
+	IT	Suffisso delle liste di esecuzione di iTunes modificato in:
 	NL	iTunes playlist achtervoegsel wijzigt in:
 	ZH_CN	iTunes播放表词尾被改为：
 
@@ -4334,6 +4371,7 @@ SETUP_ITUNES_DESC
 	EN	SlimServer can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. Check the box below if you want to import your iTunes Music Library information.
 	ES	El SlimServer puede utilizar las listas y colección musical de iTunes. Cualquier cambio en iTunes se reflejará en el reproductor. Marcar la opción debajo si se quiere importar la información de la colección musical de iTunes.
 	FR	Le SlimServer peut utiliser votre bibliothèque et vos listes de lecture iTunes. Les modifications que vous apporterez dans iTunes seront répercutées sur votre platine. Cochez la case ci-dessous pour importer les données de votre bibliothèque iTunes.
+	IT	Lo Slimserver può usare la tua libreria musicale e le liste di esecuzione di iTunes. Qualsiasi cambiamento apportato in iTunes si rifletterà nl tuo lettore. Spunta il riquadro più sotto se vuoi importare le tue informazioni della libreria musicale di iTunes.
 	JA	SlimServerはiTunesの音楽ライブラリーとプレイリストを使用することができます。iTunesにおける変更はプレーヤーに反映されます。iTunesの音楽ライブラリー情報を利用するには、以下の項目をチェックしてください。
 	NL	SlimServer kan gebruik maken van je iTunes muziekcollectie. Elke wijziging die je maakt in iTunes zal doorwerken naar je speler. Selecteer de box hieronder als je de iTunes muziekcollectie informatie wilt importeren.
 	SV	SlimServer kan använda ditt iTunes-bibliotek och -låtlistor. Alla förändringar som görs via iTunes kommer att få genomslag i din spelare. Klicka i rutan nedan om du vill importera iTunes-informationen.
@@ -4716,6 +4754,7 @@ SETUP_ITUNESSCANINTERVAL
 	EN	iTunes Reload Interval
 	ES	Intervalo de recarga de iTunes
 	FR	Délai d'actualisation iTunes
+	IT	Intervallo di ricaricamento di iTunes
 	JA	iTunes更新時間
 	NL	iTunes herlaad interval
 	NO	iTunes Oppdateringsintervall
@@ -4727,6 +4766,7 @@ SETUP_ITUNESSCANINTERVAL_DESC
 	EN	When your iTunes Music Library changes SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your iTunes Music Library again. A value of zero disables the reload.
 	ES	Cuando la iTunes Music Library cambie, SlimServer importará automáticamente la información de esa colección. Se puede especificar el mínimo intervalo de tiempo (en segundos) que SlimServer esperará antes de recargar nuevamente la iTunes Music Library. Usar un valor 0 deshabilita la recarga.
 	FR	Le SlimServer importe automatiquement les changements apportés à votre bibliothèque iTunes. Vous pouvez spécifier le délai minimum en secondes avant que le SlimServer actualise la bibliothèque iTunes. La valeur zéro désactive cette fonctionnalité.
+	IT	Quando cambia la tua libreria musicale di iTunes, Slimserver importa automaticamente le informazioni modificate. Puoi specificare il periodo minimo (in secondi) che lo Slimserver attenderà prima di ricaricare la libreria musicale di iTunes. Un valore pari a zero disabiliterà questa funzionalità.
 	NL	Indien je iTunes muziekcollectie wijzigt zal SlimServer automatisch de informatie opnieuw importeren. Je kunt de minimum tijd specificeren (in seconden) die SlimServer zal wachten voor het opnieuw importeren van je iTunes muziekcollectie. Een waarde van 0 seconden schakelt het herladen uit.
 	ZH_CN	当您的iTunes音乐库改变时，SlimServer将自动地引进最新音乐库信息。您可以指定SlimServer再装您的iTunes数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
@@ -4735,6 +4775,7 @@ SETUP_ITUNESSCANINTERVAL_OK
 	EN	Minimum iTunes Music Library reload time:
 	ES	Tiempo mínimo para recarga de iTunes Music Library:
 	FR	Délai minimum d'actualisation bibliothèque iTunes :
+	IT	Intervallo minimo di ricaricamento della libreria musicale di iTunes:
 	JA	iTunes 音楽ライブラリー更新時間:
 	NL	Minimum iTunes muziekcollectie herlaad tijd:
 	NO	Minimum iTunes Musikkbibliotek oppdaterings tid:
@@ -4746,6 +4787,7 @@ SETUP_ITUNES_LIBRARY_XML_PATH
 	EN	iTunes Music Library.xml Location
 	ES	Ubicación del archivo iTunes Music Library.xml
 	FR	Emplacement de iTunes Music Library.xml
+	IT	Posizione della libreria.xml musicale di iTunes
 	JA	iTunes音楽ライブラリー xmlファイルの場所
 	NL	iTunes muziekcollectie Library.xml locatie
 	SV	Läge för filen "iTunes Music Library.xml"
@@ -4756,6 +4798,7 @@ SETUP_ITUNES_LIBRARY_XML_PATH_DESC
 	EN	If you are running iTunes on a different computer than SlimServer, you may specify an explicit path to the iTunes Music Library.xml file here.  Leave this blank if you are running iTunes on the same computer as SlimServer.
 	ES	Si se va a especificar la ubicación de la iTunes Music Library, ingresar aquí el camino hacia el archivo iTunes Music Library.xml ,incluyendo el nombre completo del archivo.
 	FR	Si vous avez choisi de spécifier l'emplacement de votre bibliothèque iTunes, entrez le chemin de votre fichier iTunes Music Library.xml ci-dessous, nom de fichier inclus.
+	IT	Se stai usando iTunes su un computer diverso da quello dello Slimserver, puoi indicare qui un indirizzo specifico alla cartella Musica.xml di iTunes. Lascia in bianco se iTunes gira sullo stesso computer dello Slimserver.
 	JA	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここにファイル名を含めてxmlファイルへのパスを入力してください。
 	NL	Indien iTunes draait op een andere computer dan SlimServer kun je hier een expliciet pad opgeven naar het iTunes Music Library.xml bestand. Laat dit veld leeg als iTunes draait op dezelfde computer als SlimServer.
 	SV	Om du valt att specificera läget av ditt iTunes musikbibliotek manuellt anger du läget här, inklusive hela filnamnet
@@ -4766,6 +4809,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH
 	EN	iTunes Music Folder
 	ES	Carpeta de Música de iTunes
 	FR	Dossier musique iTunes
+	IT	Cartella musicale di iTunes
 	JA	iTunes音楽フォルダー
 	NL	iTunes muziekfolder
 	SV	iTunes musikbibliotek
@@ -4777,6 +4821,7 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 	EN	If you are running iTunes on a different computer than SlimServer, you may specify an explicit path to the iTunes Music folder here.  Leave this blank if you are running iTunes on the same computer as SlimServer.
 	ES	Si se va a especificar la ubicación de la iTunes Music Library, ingresar el camino, incluyendo el nombre de la carpeta que contiene a iTunes Music.
 	FR	Si vous avez choisi de spécifier l'emplacement de votre bibliothèque iTunes, entrez le chemin de celle-ci ci-dessous, nom de dossier inclus.
+	IT	Se stai usando iTunes su un computer diverso da quello dello Slimserver, puoi indicare qui un indirizzo specifico alla cartella Musica di iTunes. Lascia in bianco se iTunes gira sullo stesso computer dello Slimserver.
 	JA	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここに該当フォルダーへのパスを入力してください。
 	NL	Indien iTunes draait op een andere computer dan SlimServer kun je hier een expliciet pad opgeven naar de iTunes muziekfolder. Laat dit veld leeg als iTunes draait op dezelfde computer als SlimServer.
 	SV	Om du valt att specificera iTunes anger du läget på ditt iTunes musikbibliotek här
@@ -5092,6 +5137,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS
 	DE	Deaktivierte Lieder in iTunes
 	EN	Unchecked Songs in iTunes
 	ES	Canciones No Marcadas en iTunes
+	IT	Brani non selezionati in iTunes
 	NL	Niet gemarkeerde liedjes in iTunes
 	ZH_CN	在iTunes中未经由复选框筛选的歌曲
 
@@ -5099,6 +5145,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
 	DE	Standardmässig werden Lieder, bei welchen Sie in iTunes die Checkbox deaktivieren, in SlimServer nicht aufgeführt. Sie können dieses Verhalten hier ändern.
 	EN	By default, when you remove the check mark next to a song in iTunes, that song won't appear when you browse your music with SlimServer. You can change that behavior below.
 	ES	Por defecto, cuando se remueve la marca al lado de una canción en iTunes, esa canción no aparecerá cuando se examine la música con SlimServer. Se puede cambiar ese comportamiento debajo.
+	IT	Di default, quando rimuovi il segno di spunta di fianco ad un brano in iTunes, quello stesso brano non figurerà quando sfoglierai la musica con lo Slimserver. Puoi modificare il comportamento più sotto.
 	NL	Standaard zal een liedje niet bij Bekijk muziek te zien zijn als je het vinkje weghaald bij het liedje in iTunes. Je kunt dat gedrag hieronder instellen.
 	ZH_CN	根据缺省规定，当您去除iTunes歌曲旁边复选框的标志，该首歌曲就不会在您浏览SlimServer的音乐时出现。您可以在如下选择是否要遵照此缺省规定。
 
@@ -5107,6 +5154,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_1
 	EN	Include all songs
 	ES	Incluir todas las canciones
 	FI	Sisällytä kaikki kappaleet
+	IT	Includi tutti i brani
 	NL	Voeg alle liedjes toe
 	ZH_CN	包括所有歌曲在内
 
@@ -5115,6 +5163,7 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_0
 	EN	Don't include unchecked songs
 	ES	No incluir las canciones no marcadas
 	FI	Älä sisällytä valitsemattomia kappaleita
+	IT	Non includere i brani non selezionati
 	NL	Niet gemarkeerde liedjes niet toevoegen.
 	ZH_CN	不要包括未经由复选框筛选的歌曲
 
@@ -5794,6 +5843,7 @@ SETUP_DISABLESTATISTICS
 	EN	Library Statistics
 	ES	Estadísticas de la Colección
 	FR	Statistiques bibliothèque
+	IT	Statistiche libreria
 	NL	Muziekcollectiestatistieken
 
 SETUP_DISABLESTATISTICS_DESC
@@ -5801,6 +5851,7 @@ SETUP_DISABLESTATISTICS_DESC
 	EN	When the SlimServer front page comes up, it scans your music library to figure out your library statistics and displays them on the front page.  You can choose to disable this behavior, which will shorten the time it takes to initially open up the web interface, especially with a large music library.
 	ES	Cuando se muestra la pantalla incial de SlimServer, se recorre la colección musical para obtener las estadísticas de la colección y mostrarlas en esta página inicial. Se puede deshabilitar este comportamiento, lo cual minimizará el tiempo que se necesita para abrir la interface web, especialmente con colecciones de gran tamaño.
 	FR	Lorsque la page d'accueil du SlimServer apparaît, celui-ci parcourt votre bibliothèque musicale afin d'afficher des statistiques. Vous pouvez désactiver ce comportement, ce qui réduira le temps nécessaire à l'affichage de la page d'accueil, surtout si la bibliothèque est importante.
+	IT	All'apertura della pagina principale, lo Slimserver analizza la libreria musicale per calcolarne le dimensioni e mostrarle all'inizio della pagina. Puoi scegliere di disabilitare questa modalita' che velocizzera' l'apertura dell'interfaccia web, specialmente con una ampia libreria musicale.
 	NL	Bij het tonen van de SlimServer webpagina wordt je muziekcollectie gescand om de statistieken op te halen en te tonen op de webpagina. Deze statistieken (aantal liedjes, albums, etc.) kun je uitschakelen. Het laden van de webpagina gaat dan sneller. Vooral bij een grote muziekcollectie is dit van invloed.
 
 SETUP_DISABLE_STATISTICS
@@ -5808,6 +5859,7 @@ SETUP_DISABLE_STATISTICS
 	EN	Disable library statistics
 	ES	Deshabilitar estadísticas de la colección
 	FR	Désactiver l'affichage des statistiques
+	IT	Disabilita statistiche libreria
 	NL	Uitschakelen muziekcollectiestatistieken
 
 SETUP_ENABLE_STATISTICS
@@ -5815,6 +5867,7 @@ SETUP_ENABLE_STATISTICS
 	EN	Enable library statistics
 	ES	Habilitar estadísticas de la colección
 	FR	Activer l'affichage des statistiques
+	IT	Abilita statistiche libreria
 	NL	Inschakelen muziekcollectiestatistieken
 
 SETUP_FORKEDWEB
@@ -5850,6 +5903,7 @@ SETUP_FORKEDSTREAMING_DESC
 	DE	Aktivieren dieser Option weist dem Datenstrom einen eigenen Prozess zu. Dies sollte die Wahrscheinlichkeit von Aussetzern massiv verringern. <b>Warnung:</b> Diese Funktion ist derzeit experimentell. Bei Problemen diese bitte im Beta Forum diskutieren.
 	EN	Enabling this option will provide a dedicated process to serve each audio stream to the player.  This should provide the ultimate in dropout protection.  <b>Warning:</b> This is currently an experimental feature, and some things may not work properly with this option enabled.  <b>Please do not report bugs experienced when this option is enabled to Bugzilla; use the Beta forum instead.</b>
 	ES	AL habilitar esta opción se creará un proceso dedicada para cada conexión de audio al reproductor. Esto debería brindar la mayor protección a cortes de audio. <b>Advertencia:</b> Esta es una característica experimental por el momento, y algunas cosas pueden no funcionar apropiadamanete cuando se habilita esta opción.  <b>Por favor, no reportar bugs en Bugzilla cuando se habilita esta opción; utilizar para esto el foro Beta.</b>
+	IT	Abilitando questa opzione si disporrà di un processo dedicato alla trasmissione di ogni flusso audio al lettore. Ciò dovrebbe permettere la più avanzata protezione dalle interruzioni. <b>Attenzione:</b> Questa è attualmente una caratteristica sperimentale, e qualche cosa potrebbe non funzionare correttamente con questa funzione abilitata. <b>Per favore non riportate in Bugzilla bachi sperimentati con questa opzione attivata: usate piuttosto il forum Beta.</b>
 	NL	Het aanzetten van deze optie geeft een eigen proces voor elke audiostroom naar een speler. Dit geeft de ultime beveiliging voor drop-out protectie. <B>Waarschuwing:</B> Dit is nu een experimentele optie. Sommige dingen kunnen anders werken dan bedoeld bij het aanzetten van deze optie. <B>Open geen foutrapporten in Bugzilla. Gebruik het Beta forum daarvoor.</B>
 
 SETUP_FORKEDSTREAMING_ENABLE
@@ -6194,6 +6248,7 @@ SETUP_UDPCHUNKSIZE_CHOOSE
 	EN	Maximum number of bytes of audio data to send to player in a UDP packet (SLIMP3 only):
 	ES	Máximo número de bytes de datos de audio a enviar al reproductor en un paquete UDP (solo SLIMP3):
 	FR	Nombre maximum d'octets de données audio à envoyer à la platine par paquet UDP :
+	IT	Numero massimo di bytes di dati audio da inviare in pacchetti UDP (solo per SLIMP3):
 	JA	UDPパケットでプレーヤーに送信するオーディオデータの最大バイト数（SLIMP3のみ）:
 	NL	Maximaal aantal bytes audio data dat in een UDP pakket naar de speler wordt gestuurd (alleen SLIMP3):
 	NO	Maksimalt antall bytes med lyd data å sende til spilleren i en UDP pakke (SLIMP3):
@@ -6288,7 +6343,7 @@ SETUP_CSRFPROTECTIONLEVEL_DESC
 	ES	Para protegerse contra amenazas de seguridad de &quot;Cross Site Request Forgery&quot; (CSRF), SlimServer utiliza un análisis especial para requerimientos de HTTP que contengan funciones que puedan hacer cambios en tu sistema o manipular las listas de temas o reproductores. Se puede elegir el nivel de análisis a ser utilizado por el servidor. El valor por defecto es Medio. <a href="html/docs/http.html#csrf">Ver Sección de Ayuda</a> Para ver más detalles. more details.
 	FR	Pour se protéger contre les risques de sécurité de type "Cross Site Request Forgery" (CSRF), le SlimServer applique une vérification supplémentaire aux requêtes HTTP susceptibles d'altérer le système ou de manipuler des listes de lecture ou des platines. Vous pouvez spécifier le niveau de cette vérification. La valeur par défaut est Moyenne. Référez-vous à l'Aide pour plus d'informations.
 	HE	רמת בדיקת בקשות התחברות
-	IT	Per proteggersi da minacce alla sicurezza come i "Cross Site Request Forgery" (CSRF), lo SlimServer effettua un controllo accurato alle richieste HTTP per quelle funzioni che possono applicare cambiamenti al sistema, manipolare le liste di esecuzione o al lettore. Puoi scegliere il livello di controllo usato dal server. Di default e' Medio. Vedi la Sezione Aiuto per maggiori dettagli.
+	IT	Per proteggersi da minacce alla sicurezza come i "Cross Site Request Forgery" (CSRF), lo SlimServer effettua un controllo accurato alle richieste HTTP per quelle funzioni che possono applicare cambiamenti al sistema, manipolare le liste di esecuzione o al lettore. Puoi scegliere il livello di controllo usato dal server. Di default e' Medio. <a href="html/docs/http.html#csrf">Vedi la Sezione Aiuto</a> per maggiori dettagli.
 	NL	Om te beschermen tegen "Cross Site Request Forgery" (CSRF) beveiligingsgevaren, voert SlimServer onderzoek uit op HTTP verzoeken die je systeem, playlists of player kunnen wijzigen. Je kunt het niveau van onderzoek kiezen in de server. De standaard is Gemiddeld. Zie de <a href="html/docs/http.html#csrf">help sectie</a> voor meer details.    
 	ZH_CN	为了免受&quot;CSRF&quot;安全威胁，SlimServer会向那些可能变动您的系统或操作播放表的HTTP请求特别察视。您可以选择此察视的严密程度。缺省为中等。详情请参阅<a href="html/docs/http.html#csrf">帮助部分</a>。
 
@@ -6410,7 +6465,7 @@ SETUP_FILTERRULE_DESC
 	ES	Si se se ha activado el bloqueo, se pueden ingresar direcciones desde las que se desea permitir la conexión al SlimServer.<br><br>Este campo acepta un lista de direcciones IP específicas, wildcards al estilo *, y rangos de direcciones IP, en una lista separada por comas. Por ejemplo: <BR><BR><B>10.1.2.2</B> sólo permitirá conectarse a 10.1.2.2<BR><BR><B>10.1.2.*</B> permitirá la conexión desde cualquier dirección de la forma 10.1.2.X. <BR><BR><B>10.1.2.2-50</B> permitirá conexiones desde direcciones IP pertenecientes al rango 10.1.2.2 - 10.1.2.50. <BR><BR>Finalmente, entradas múltiples pueden combinarse con comas, de esta forma: <B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR> La dirección IP especial 127.0.0.1 permite al navegador conectarse al SlimServer que está corriendo en su misma computadora. 
 	FR	Si vous avez activé le bloquage, vous pouvez saisir l'adresse IP des utilisateurs qui peuvent accéder au SlimServer.<br><br>Cette zone de saisie reçoit des adresses IP spécifiques, le caractère joker * et des intervalles d'adresses IP, le tout séparé par des virgules.<br>Exemples :<br><br>10.1.2.2 permet uniquement cette adresse<br>10.1.2.* permet toutes les adresses dont les trois premières composantes sont 10, 1 et 2<br>10.1.2.2-50 permet toutes les adresses comprises dans l'intervalle 10.1.2.2 à 10.1.2.50 inclusivement<br>10.1.2.2,10.1.3.*,10.1.4.2-50 permet l'adresse 10.1.2.2, toutes les adreses commençant par 10.1.3 ainsi que les adresses dans l'intervalle 10.1.4.2 à 10.1.4.50.
 	HE	ניתן לציין רשימת כתובות, המופרדות בפסיקים, להם תותר גישה. מותר גם שימוש ב * לציון קבוצת כתובות
-	IT	Se hai abilitato il blocco, puoi inserire gli indirizzi ai quali permettere la connessione allo SlimServer.  Questo campo accetta una lista di specifici indirizzi IP, il carattere jolly *, ed intervalli di indirizzi IP in una lista separata da virgole. Per esempio:    10.1.2.2 accettera' la connessione solo da 10.1.2.2    10.1.2.* accettera' la connessione a tutti gli indirizzi che iniziano con 10.1.2.x    10.1.2.2-50 accettera' la connessione degli indirizzi IP nell'intervallo 10.1.2.2 e 10.1.2.50    Per finire, piu' voci possono essere unite con virgole, come queste:  10.1.2.2,172.16.1.*,192.168.1-255.*    L'indirizzo IP speciale 127.0.0.1 permette al browser di connettersi allo SlimServer in funzione su quello stesso computer.
+	IT	Se hai abilitato il blocco, puoi inserire gli indirizzi ai quali permettere la connessione allo SlimServer.<br><br>Questo campo accetta una lista di specifici indirizzi IP, il carattere jolly *, ed intervalli di indirizzi IP in una lista separata da virgole. Per esempio:<BR><BR><B>10.1.2.2</B>accettera' la connessione solo da 10.1.2.2<BR><BR><B>10.1.2.*</B>accettera' la connessione a tutti gli indirizzi che iniziano con 10.1.2.x<BR><BR><B>10.1.2.2-50</B>accettera' la connessione degli indirizzi IP nell'intervallo 10.1.2.2 e 10.1.2.50<BR><BR>Per finire, piu' voci possono essere unite con virgole, come queste: <B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>L'indirizzo IP speciale 127.0.0.1 permette al browser di connettersi allo SlimServer in funzione su quello stesso computer.
 	JA	ブロックする、と指定したのであれば、SlimServerに接続を許可するIPアドレスを指定することができます。<br><br>このフィールドはIPアドレスを入力することができます。*を使ってワイルドカード指定もできます。例えば、<BR><BR><B>10.1.2.2</B>は、10.1.2.2のみに接続を許可しますが、<BR><BR><B>10.1.2.*</B>は、10.1.2.xのどのアドレスでも許可します。<BR><BR><B>10.1.2.2-50</B>であれば、10.1.2.2から10.1.2.50のアドレスが許可されます。<BR><BR>最後に、複数のアドレスは以下のように、コンマで区切って入力できます。<B>10.1.2.2,172.16.1.*,192.168.1-255.*</B><BR><BR>127.0.0.1という特別なアドレスは、ウェブブラウザーがSlimServerに接続する時に接続を可能にします。
 	NL	Indien je 'Blokkeren' hebt ingesteld kun je de adressen ingeven die je toegang wil geven tot de SlimServer.<br><br>Dit veld accepteert een lijst van specifieke IP adressen, wildcards zoals '*' en IP adres bereiken in een door komma's gescheiden lijst. Bijvoorbeeld:<br><br><b>10.1.2.2</b> zal enkel verbindingen toestaan vanaf adres 10.1.2.2<br><br><b>10.1.2.*</b> laat elk adres toe dat begint met 10.1.2.x adressen.<br><br><b>10.1.2.2-50</b> verleent alle adressen tussen 10.1.2.2 en 10.1.2.50 toegang.<br><br>Tenslotte kunnen meerdere adressen gecombineerd worden in een door komma's gescheiden lijst, zoals in <b>10.1.2.2,172.16.1.*,192.168.1-255.*</b><br><br>Het speciale adres 127.0.0.1 geeft toegang aan browsers die op de server zelf draaien.
 	NO	Hvis du har aktivert blokkering kan du liste de IP-adresser du vil tillate skal kunne koble seg til SlimServer.<br><br>Dette feltet aksepterer en komma-separert liste med IP-adresser som f.eks:<br><br><b>10.1.2.2</b> vil bare tillate 10.1.2.2 å koble til<br><br><b>10.1.2.*</b> vil tillate alle IP-adresser av formatet 10.1.2.*<br><br><b<10.1.2.2-50</b> vil tillate IP-adresser i området 10.1.2.2 til 10.1.2.50<br><br>Ulike typer kan kombineres med komma slik: <b>10.1.2.2,172.61.1.*,192.168.1-255.*</b><br><br>IP-adressen 127.0.0.1 tillater web browsere å koble til SlimServer som kjøres lokalt på maskinen.
@@ -6939,6 +6994,7 @@ PLAYER
 	FI	Soittimen
 	FR	Platine
 	HE	נגן
+	IT	Lettore
 	JA	プレーヤー
 	NL	Speler
 	NO	Spiller
@@ -6982,14 +7038,14 @@ NOW_PLAYING_ON
 
 SKIP
 	CS	Přeskočit
-	DE	Überspringen
 	DA	Næste
+	DE	Überspringen
 	EN	Skip
 	ES	Siguiente
 	FI	Seuraava
 	FR	Suivant
 	HE	דלג
-	IT	Salta
+	IT	Prossimo brano
 	JA	スキップ
 	NL	Volgende
 	NO	Hopp over
@@ -6999,12 +7055,13 @@ SKIP
 
 FFWD
 	CS	Rychle dopředu
-	DE	Vorwärtsspulen
 	DA	Spol frem
+	DE	Vorwärtsspulen
 	EN	Fast Forward
 	ES	Avance rápido
 	FI	Pikakelaus eteenpäin
 	FR	Avance rapide
+	IT	Avanti veloce
 	JA	早送り
 	NL	Vooruitspoelen
 	NO	Spol forover
@@ -7029,14 +7086,14 @@ REW
 
 PLAY
 	CS	Hrát
-	DE	Abspielen
 	DA	Afspil
+	DE	Abspielen
 	EN	Play
 	ES	Poner
 	FI	Soita
 	FR	Lecture
 	HE	נגן
-	IT	Suona
+	IT	Play
 	JA	再生
 	NL	Afspelen
 	NO	Spill
@@ -7110,14 +7167,14 @@ PAUSE
 	ZH_CN	暂停
 
 STOP
-	DE	Stopp
 	DA	Stop
+	DE	Stopp
 	EN	Stop
 	ES	Parar
 	FI	Pysäytä
 	FR	Arrêt
 	HE	עצור
-	IT	Ferma
+	IT	Stop
 	JA	停止
 	NL	Stop
 	NO	Stopp
@@ -7127,14 +7184,14 @@ STOP
 
 STOPPED
 	CS	Zastaveno
-	DE	Gestoppt
 	DA	Stop
+	DE	Gestoppt
 	EN	Stopped
 	ES	Parado
 	FI	Pysähtynyt
 	FR	Arrêté
 	HE	לא מנגן
-	IT	Ferma
+	IT	Stop
 	JA	停止
 	NL	Gestopt
 	NO	Stopp
@@ -7178,12 +7235,13 @@ ONE
 
 MCONE
 	CS	Jeden
-	DE	Eins
 	DA	Denne
+	DE	Eins
 	EN	One
 	ES	Uno
 	FI	Yksi
 	FR	Un
+	IT	Uno
 	JA	1曲
 	NL	Een
 	NO	En
@@ -7593,12 +7651,13 @@ OFFDISPLAYSIZE
 
 LARGE
 	CS	Veliký
-	DE	Gross
 	DA	Stor
+	DE	Gross
 	EN	Large
 	ES	Grande
 	FI	Iso
 	FR	Grand
+	IT	Largo
 	JA	大
 	NL	Groot
 	NO	Stor
@@ -7716,13 +7775,13 @@ CURRENT_PLAYLIST
 
 DOWNLOAD
 	CS	Stáhnout
-	DE	Herunterladen
 	DA	Hent
+	DE	Herunterladen
 	EN	Download
 	ES	Descargar
 	FI	Lataa
 	FR	Télécharger
-	IT	Scarica
+	IT	Download
 	JA	ダウンロード
 	NL	Laden
 	NO	Last ned
@@ -8102,13 +8161,14 @@ DISC
 
 LENGTH
 	CS	Délka
-	DE	Dauer
 	DA	Varighed
+	DE	Dauer
 	EN	Duration
 	ES	Duración
 	FI	Kesto
 	FR	Durée
 	HE	אורך
+	IT	Durata
 	JA	長さ（時間）
 	NL	Duur
 	NO	Lengde
@@ -8202,6 +8262,7 @@ SHN
 
 WMA
 	EN	Windows Media
+	IT	Windows Media Audio
 	NL	Windows media
 
 MMS
@@ -8460,6 +8521,7 @@ DRM
 	EN	This file is locked by Digital Rights Management
 	ES	Este archivo está protegido por DRM ( Digital Rights Management - Manejo de Derechos Digitales)
 	FR	Ce fichier est protégé par DRM (Digital Rights Management)
+	IT	Questo file e' protetto da DRM (Digital Rights Management)
 	JA	このファイルはDigital Rights Managementによりロックされています
 	NL	Dit bestand is geblokkeerd door Digital Rights Management (DRM)
 	ZH_CN	此文件经由数码版权管理锁定
@@ -8526,6 +8588,7 @@ TAGVERSION
 	EN	ID3 Tag Version
 	ES	Versión de TAG ID3
 	FR	Version ID3
+	IT	Versione TAG ID3
 	JA	ID3タグ バージョン
 	NL	ID3 tag versie
 	NO	ID3 Tag Versjon
@@ -8772,12 +8835,13 @@ WITH
 
 PAGES
 	CS	Stránek
-	DE	Seiten
 	DA	Sider
+	DE	Seiten
 	EN	Pages
 	ES	Páginas
 	FI	Sivuja
 	FR	Pages
+	IT	Pagine
 	JA	ページ
 	NL	Pagina's
 	NO	Sider
@@ -8858,6 +8922,7 @@ GALLERY
 	EN	Gallery
 	ES	Galería
 	FR	(Diaporama)
+	IT	Galleria
 	NL	afbeeldingen
 
 SWITCH_TO_GALLERY
@@ -8865,6 +8930,7 @@ SWITCH_TO_GALLERY
 	EN	To Gallery View
 	ES	Ir a la Vista de Galería
 	FR	Mode Diaporama
+	IT	Vista Galleria
 	NL	Naar afbeeldingen overzicht
 
 SWITCH_TO_LIST
@@ -8872,6 +8938,7 @@ SWITCH_TO_LIST
 	EN	To List View
 	ES	Ir a la Vista de Lista
 	FR	Mode Liste
+	IT	Vista Lista
 	NL	Naar lijst beeld
 
 BROWSE
@@ -9073,7 +9140,7 @@ NOT_SYNCHRONIZED
 	ES	No Sincronizado
 	FI	Ei synkronoitu
 	FR	Non synchronisé
-	IT	Non sincronizzato
+	IT	Nessuna sincronizzazione
 	NL	Niet gesynchroniseerd
 	SV	Inte synkroniserad
 	ZH_CN	不同步
@@ -9638,7 +9705,7 @@ SETUP_GROUP_DEBUG_DESC
 	ES	El SlimServer posee varias opciones de depuración que pueden utilizarse para guardar información detallada acerca del funcionamiento del servidor. Activar los items que se desea incluir en el log y haga click en Cambiar para comenzar a registrar esa información. Se pueden ver las entradas más recientes del log <a href="/log.txt" target="log">aquí</a>.
 	FR	Le SlimServer dispose de réglages de mise au point qui permettent d'enregistrer des informations détaillées sur son fonctionnement. Sélectionnez ci-dessous les éléments que vous voulez enregistrer. Les enregistrements les plus récents sont disponibles <a href="/log.txt" target="log">ici</a>.
 	HE	במידה ויש חשש שהשרת אינו מתפקד כראוי, ניתן להפעיל הודעות שגיאה לעזרה
-	IT	Lo SlimServer ha un numero di impostazioni di debugging (eliminazione degli errori) che possono essere usati per registrare informazioni dettagliate sulle operazioni del server. Spunta gli argomenti che desideri registrare per poi visualizzare e premi Cambia per iniziare la registrazione delle informazioni. Puoi visualizzare le registrazioni piu' recenti qui.
+	IT	Lo SlimServer ha un numero di impostazioni di debugging (eliminazione degli errori) che possono essere usati per registrare informazioni dettagliate sulle operazioni del server. Spunta gli argomenti che desideri registrare per poi visualizzare e premi Cambia per iniziare la registrazione delle informazioni. Puoi visualizzare le registrazioni piu' recenti <a href="/log.txt" target="log">qui</a>.
 	JA	SlimServerには、サーバーの状態に関する詳細な情報を記録する様々なデバッグセッティングがあります。記録して表示したいアイテムをチェックして「変更」をクリックして下さい。<a href="/log.txt" target="log">ここ</a>をクリックして最新のログを見ることができます。
 	NL	SlimServer heeft een aantal instellingen voor het opsporen van fouten die gebruikt kunnen worden om gedetailleerde informatie over de werking van de server kunnen verzamelen. Vink de items aan die je in de log wilt zien. Klik op de knop Veranderen om het loggen te starten. Je kunt de meest recente loginformatie <a href="/log.txt" target="log">hier</a> zien.
 	NO	SlimServer har et antall feilsøkingsinnstillinger som kan benyttes for å lagre detaljert informasjon om serverens virksomhet. Fyll ut de punkter som du vil logge for visning og klikk Endre for å starte loggingen med endringene. Du kan vise de siste lagrede logger <a href="/log.txt" target="log">her</a>
@@ -9897,12 +9964,13 @@ ELAPSED
 
 PROGRESS_BAR
 	CS	Stavová lišta
-	DE	Verlaufsanzeige
 	DA	Tids-bjælke
+	DE	Verlaufsanzeige
 	EN	Progress Bar
 	ES	Indicador de progreso
 	FI	Graafinen esitys
 	FR	Un graphique de progression
+	IT	Barra di avanzamento
 	JA	プログレスバー
 	NL	Voortgangsindicator
 	NO	Tidssøyle
@@ -10061,13 +10129,14 @@ DISPLAYTEXT_TIMEOUT
 
 SECONDS
 	CS	sekund
-	DE	Sekunden
 	DA	sekunder
+	DE	Sekunden
 	EN	seconds
 	ES	segundos
 	FI	sekuntia
 	FR	secondes
 	HE	שניות
+	IT	secondi
 	JA	秒
 	NL	seconden
 	NO	sekunder
@@ -10077,12 +10146,13 @@ SECONDS
 
 MINUTES
 	CS	minut
-	DE	Minuten
 	DA	minutter
+	DE	Minuten
 	EN	minutes
 	ES	minutos
 	FI	minuutit
 	FR	minutes
+	IT	minuti
 	JA	分
 	NL	minuten
 	NO	minutter
@@ -10098,6 +10168,7 @@ CURRENT_WEB_SKIN
 	ES	Estilo actual del skin de web:
 	FI	WWW-ulkoasu:
 	FR	Interface web courante :
+	IT	Interfaccia web in uso:
 	JA	現在のウェブ外観
 	NL	Huidige web uiterlijk:
 	NO	Aktivt webutseende:
@@ -10107,12 +10178,13 @@ CURRENT_WEB_SKIN
 
 DISPLAY_PLUGINS
 	CS	Zobrazit plugin menu na SlimPlayeru:
-	DE	Anzeigen des Plugins Menü auf dem Slim Player:
 	DA	Viser Modul-menuen på SlimServer:
+	DE	Anzeigen des Plugins Menü auf dem Slim Player:
 	EN	Display the Plugins menu on the Slim player:
 	ES	Mostrar en menú de Plugins en el reproductor Slim:
 	FI	Näytä plugin valikko soittimella:
 	FR	Afficher le menu Module d'extensions sur la platine Slim :
+	IT	Mostra il menu Plugins sul lettore Slimdevices:
 	JA	プラグインのメニューをプレーヤーに表示する :
 	NL	Toon het plugins menu op de SlimServer:
 	NO	Vis tilleggsmenyen på Slim spilleren:
@@ -10151,13 +10223,14 @@ NO_PLUGINS
 	ZH_CN	没有插件程序可利用
 
 MUSIC_PLAYER
-	DE	Musik Player
 	DA	Afspiller
+	DE	Musik Player
 	EN	Music Player
 	ES	Reproductor de Música
 	FI	Soitin
 	FR	Platine
 	HE	נגן מוסיקה
+	IT	Lettore musicale
 	JA	プレーヤー
 	NL	Muziekspeler
 	NO	Musik Player
@@ -10166,12 +10239,13 @@ MUSIC_PLAYER
 	ZH_CN	播放机
 
 SLIMP3_MUSIC_PLAYER
-	DE	SLIMP3 Musik Player
 	DA	SLIMP3-afspiller
+	DE	SLIMP3 Musik Player
 	EN	SLIMP3 Music Player
 	ES	Reproductor de Música SLIMP3 
 	FI	SLIMP3 soitin
 	FR	Platine SLIMP3
+	IT	Lettore Musicale SLIMP3
 	JA	SLIMP3プレーヤー
 	NL	SLIMP3 muziekspeler
 	NO	SLIMP3 Musikk Spiller
@@ -10180,12 +10254,13 @@ SLIMP3_MUSIC_PLAYER
 	ZH_CN	SLIMP3播放机
 
 SQUEEZEBOX_MUSIC_PLAYER
-	DE	Squeezebox Musik Player
 	DA	Squeezebox-afspiller
+	DE	Squeezebox Musik Player
 	EN	Squeezebox Music Player
 	ES	Reproductor de Música Squeezebox 
 	FI	Squeezebox soitin
 	FR	Platine Squeezebox
+	IT	Lettore Musicale Squeezebox
 	JA	Squeezeboxプレーヤー
 	NL	Squeezebox muziekspeler
 	NO	Squeezebox Musik Player
@@ -10194,12 +10269,13 @@ SQUEEZEBOX_MUSIC_PLAYER
 	ZH_CN	Squeezebox播放机
 
 SQUEEZEBOX2_MUSIC_PLAYER
-	DE	Squeezebox Musik Player
 	DA	Squeezebox-afspiller
+	DE	Squeezebox Musik Player
 	EN	Squeezebox Music Player
 	ES	Reproductor de Música Squeezebox 
 	FI	Squeezebox soitin
 	FR	Platine Squeezebox
+	IT	Lettore Musicale Squeezebox
 	JA	Squeezeboxプレーヤー
 	NL	Squeezebox muziekspeler
 	NO	Squeezebox Musik Player
@@ -10214,6 +10290,7 @@ TRANSPORTER_MUSIC_PLAYER
 	ES	Reproductor de Música Transporter 
 	FI	Transporter soitin
 	FR	Platine Transporter
+	IT	Lettore Musicale Transporter
 	JP	Transporterプレーヤー
 	NL	Transporter muziekspeler
 	NO	Transporter Musik Player
@@ -10221,12 +10298,13 @@ TRANSPORTER_MUSIC_PLAYER
 	SE	Transporter musikspelare
 
 SOFTSQUEEZE_MUSIC_PLAYER
-	DE	SoftSqueeze Musik Player
 	DA	SoftSqueeze-afspiller
+	DE	SoftSqueeze Musik Player
 	EN	SoftSqueeze Music Player
 	ES	Reproductor de Música SoftSqueeze 
 	FI	SoftSqueeze musiikkisoitin
 	FR	Platine SoftSqueeze
+	IT	Lettore Musicale SoftSqueeze
 	JA	SoftSqueezeプレーヤー
 	NL	SoftSqueeze muziekspeler
 	NO	SoftSqueeze Musik Player
@@ -10310,7 +10388,7 @@ NO_PLAYER_DETAILS
 	FI	<td><b>Jos omistat Squeezeboxin:</b>  <ul>  <li>Varmista, että soittimesi on kytketty verkkoon ja että verkkoasetuksesi ovat oikein. Kun soittimesi on kytketty verkkoon, paina "Refresh" nappulaa</ul>  <p>  <b>Jos et omista Squeezeboxia:</b>  <ul><li>  Voit kuunnella musiikkikirjastosi sisältöä ohjelmallisella versiolla Squeezeboxista: <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>  <li>Voit myös käyttää median toistoohjelmistoja (kuten WinAmp tai iTunes) kuunnellaksesi musiikkikirjastoasi Slimserverin kautta ottamalla yhteyttä osoitteeseen:<a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul> </td>
 	FR	Assurez-vous que votre platine est branchée et que ses réglages de réseau sont valides. Cliquez sur le bouton "Actualiser" de votre navigateur pour vérifier de nouveau la présence de la platine.
 	HE	אין פרטי נגן
-	IT	Se possiedi uno Squeezebox:    - Accertati che il tuo lettore sia collegato e le impostazioni di rete corrette. Premi il bottone Aggiorna non appena il tuo lettore e' connesso.    Se non possiedi uno Squeezebox:    - Puoi ascoltare la tua raccolta musicale usando lo SoftSqueeze, la versione software dello Squeezebox.  - Puoi usare un lettore MP3 software (come WinAmp o iTunes) per ascoltare la tua libreria musicale con lo SlimServer collegandoti a questa URL:  http://localhost:9000/stream.mp3
+	IT	<b>Se possiedi uno Squeezebox:</b><ul><li>Accertati che il tuo lettore sia collegato e le impostazioni di rete corrette. Premi il bottone Aggiorna non appena il tuo lettore e' connesso.</ul><p><b>Se non possiedi uno Squeezebox:</b><ul><li>Puoi ascoltare la tua raccolta musicale usando lo<a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, la versione software dello Squeezebox.<li>Puoi usare un lettore MP3 software (come WinAmp o iTunes) per ascoltare la tua libreria musicale con lo SlimServer collegandoti a questa URL:<a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	JA	プレーヤーがつながれ、ネットワークセッティングが正しいことを確認してください。「更新」を押して、プレーヤへの接続を再度試みてください。
 	NL	<b>Als je een Squeezebox of Transporter hebt:  </b><ul><li>Zorg ervoor dat je speler aan het netwerk is aangesloten en dat de netwerk instellingen goed zijn. Druk op de vernieuwen knop in je browser om opnieuw contact te maken met de speler.</ul>  <b>  Als je geen Squeezebox of Transporter hebt:  </b><ul><li>Je kunt naar je muziek luisteren met SoftSqueeze, de software versie van de Squeezebox.  <li>  Je kunt MP3 speler programma's (zoals WinAmp of iTunes) gebruiken om naar je muziek te luisteren met SlimServer. Gebruik de volgende URL om connectie te maken:  <br>  http://localhost:9000/stream.mp3  <br>Waarbij localhost het IP adres is van je SlimServer.</ul>
 	NO	Sørg for spilleren din er på, koblet til og har riktige nettverksinnstillinger. Trykk på F5 (oppdater/refresh) i din webbrowser for å prøve å koble opp mot spilleren igjen.
@@ -10325,6 +10403,7 @@ PLAYER_NEEDS_UPGRADE
 	ES	Se requiere actualización del software del Squeezebox
 	FI	Tarvitaan SqueezeBox ohjelmiston päivitys
 	FR	Mise à jour du logiciel Squeezebox nécessaire
+	IT	E' richiesto l'aggiornamento software dello Squeezebox
 	JA	Squeezeboxソフトウェアのアップデートが必要です
 	NL	Squeezebox programma bijwerken nodig
 	NO	Programvaren i spilleren din må oppdateres
@@ -10542,12 +10621,13 @@ MUTE
 
 LCMUTED
 	CS	ztišeno
-	DE	Stumm geschaltet
 	DA	stille
+	DE	Stumm geschaltet
 	EN	muted
 	ES	silenciado
 	FI	hiljennetty
 	FR	silence
+	IT	Silenziato
 	JA	ミュート
 	NL	gedempt
 	NO	stille
@@ -10784,6 +10864,7 @@ SEARCH_STREAMS
 	EN	Search
 	ES	Buscar
 	FR	Recherche
+	IT	Cerca
 	NL	Zoeken
 
 SEARCHING
@@ -10823,6 +10904,7 @@ NO_SEARCH_RESULTS
 	EN	No search results
 	ES	No hay resultados en la búsqueda
 	FR	Pas de résultat
+	IT	Nessuna voce trovata
 	NL	Geen zoekresultaten
 
 CONTRIBUTORMATCHING
@@ -10833,7 +10915,7 @@ CONTRIBUTORMATCHING
 	ES	Artista encontrado
 	FI	Esittäjät, jotka vastaavat hakua
 	FR	Artiste trouvé
-	IT	Artista corrispondente
+	IT	Artista corrispondente a
 	JA	アーチスト照合
 	NL	Zoekresultaten artiest
 	NO	Artister som traff
@@ -10843,13 +10925,13 @@ CONTRIBUTORMATCHING
 
 CONTRIBUTORSMATCHING
 	CS	Interpet obsahuje
-	DE	Passende Interpreten
 	DA	Matchende kunstnere
+	DE	Passende Interpreten
 	EN	Artists matching
 	ES	Artistas encontrados
 	FI	Esittäjät, jotka vastaavat hakua
 	FR	Artistes trouvés
-	IT	Artisti corrispondenti
+	IT	Artisti corrispondenti a
 	JA	アーチスト照合
 	NL	Zoekresultaten artiesten
 	NO	Artister som traff
@@ -10859,13 +10941,13 @@ CONTRIBUTORSMATCHING
 
 ALBUMMATCHING
 	CS	Alb která obsahují
-	DE	Passendes Album
 	DA	Matchende albums
+	DE	Passendes Album
 	EN	Album matching
 	ES	Álbum encontrado
 	FI	Levyt, jotka vastaavat hakua
 	FR	Album trouvé
-	IT	Corrispondente Album
+	IT	Album corrispondente a
 	JA	アルバム照合
 	NL	Zoekresultaten albums
 	NO	Album som traff
@@ -10875,13 +10957,14 @@ ALBUMMATCHING
 
 ALBUMSMATCHING
 	CS	Alba, která obsahují
-	DE	Passende Alben
 	DA	Matchende albums
+	DE	Passende Alben
 	EN	Albums matching
 	ES	Álbumes encontrados
 	FI	Levyt, jotka vastaavat hakua
 	FR	Albums trouvés
 	HE	חיפוש אלבומים
+	IT	Album corrispondenti a
 	JA	アルバム照合
 	NL	Zoekresultaten albums
 	NO	Album som traff
@@ -10891,12 +10974,13 @@ ALBUMSMATCHING
 
 TRACKMATCHING
 	CS	Názvů skladeb, které obsahují
-	DE	Passender Titel
 	DA	Matchende sangtitler
+	DE	Passender Titel
 	EN	Song title matching
 	ES	Canción encontrada
 	FI	Kappaleet, jotka vastaavat hakua
 	FR	Morceau trouvé
+	IT	Titolo corripondente a
 	JA	曲タイトル照合
 	NL	Zoekresultaten liedjes
 	NO	Sanger som traff
@@ -10906,12 +10990,13 @@ TRACKMATCHING
 
 TRACKSMATCHING
 	CS	Názvů skladeb, které obsahují
-	DE	Passende Titel
 	DA	Matchende sangtitler
+	DE	Passende Titel
 	EN	Song titles matching
 	ES	Canciones encontradas
 	FI	Kappaleet, jotka vastaavat hakua
 	FR	Morceaux trouvés
+	IT	Titoli corrispondenti a
 	JA	曲タイトル照合
 	NL	Zoekresultaten liedjes
 	NO	Sanger som traff
@@ -11129,6 +11214,7 @@ RADIO_TUNEIN
 	EN	Tune In URL
 	ES	Sintonizar Radio
 	FR	Connexion radio
+	IT	Sintonizza URL
 	NL	Radio URL
 
 RADIO_TUNEIN_NOW
@@ -11358,6 +11444,7 @@ DONE_EDITING
 	ES	Edición finalizada
 	FI	Muokkaus on valmis
 	FR	Modification effectuée
+	IT	Variazioni concluse
 	JA	編集完了
 	NL	Wijzigen klaar
 	NO	Endring utført
@@ -12094,6 +12181,7 @@ FAVORITES_NONE_DEFINED
 	ES	No existen Favoritas
 	FI	Suosikkeja ei ole
 	FR	Aucun favori défini
+	IT	Non esistono Favoriti
 	NL	Er zijn geen favorieten
 
 FAVORITES_PLAYING
@@ -12188,12 +12276,14 @@ SQUEEZENETWORK_SWITCH
 	DE	Zum SqueezeNetwork verbinden
 	EN	Switch to SqueezeNetwork
 	FR	Se connecter à SqueezeNetwork
+	IT	Passa a SqueezeNetwork
 	NL	Wisselen naar SqueezeNetwork
 
 SQUEEZENETWORK_SWITCHING
 	DE	Verbinde zum SqueezeNetwork...
 	EN	Switching to SqueezeNetwork, please wait...
 	FR	Connexion à SqueezeNetwork, veuillez patienter...
+	IT	Trasferimento sulla SqueezeNetwork, attendi prego...
 	NL	Wisselen naar SqueezeNetwork, even wachten...
 
 SQUEEZENETWORK_SB2_REQUIRED
@@ -12397,6 +12487,7 @@ LYRICS
 	ES	Letras
 	FI	Sanoitukset
 	FR	Paroles
+	IT	Testi
 	NL	Tekst liedje
 
 SETUP_POWERONRESUME
@@ -12589,17 +12680,20 @@ SETUP_CLOCKSOURCE_DESC
 	EN	Transporter's outputs can be synchronized with internal or external sources. Choose a clock source below.
 	ES	Las salidas del Transporter pueden sincronizarse con fuentes internas o externas. Elegir una fuente de reloj debajo.
 	FR	Les sorties audio du Transporter peuvent être synchronisées avec des sources internes ou externes. Choisissez ci-dessous la source de l'horloge.
+	IT	Le uscite del Transporter possono essere sincronizzate con una sorgente interna o esterna. Scegli la sorgente di temporizzazione piu' sotto.
 	NL	Transporter's uitvoer kan gesynchroniseerd worden met interne of externe bronnen. Kies hieronder een bron.
 
 CLOCKSOURCE_INTERNAL
 	DE	Interner Taktgeber
 	EN	Internal Clock
 	ES	Reloj Interno
+	IT	Orologio interno
 	NL	Interne klok
 
 CLOCKSOURCE_WORD_CLOCK
 	EN	Word Clock Input
 	ES	Entrada de Palabra de Reloj
+	IT	Orologio mondiale
 	NL	Word klok invoer
 
 VISUALIZER_EXTENDED_TEXT
@@ -12649,6 +12743,7 @@ SETUP_VISUALIZERMODE_DESC
 	EN	The player can display visualizers or extended text information on the right hand screen. Choose which you wish to be displayed. The Visual button on the player will cycle through each of the options selected below.
 	ES	El reproductor puede mostrar visualizadores o información de texto extendido en la pantalla de la derecha. Elegir el que se quiera mostrar. El botón Visual en el reproductor irá pasando de una a otra entre las opciones elegidas debajo.
 	FR	La platine peut afficher différents mode de visualisation ou des informations texte étendues sur la droite de l'écran. Choisissez le mode de visualisation que vous voulez afficher. Le bouton Visualisation sur la platine permet de parcourir tous les modes de visualisation sélectionnés ci-dessous.
+	IT	Il lettore può mostrare testo o grafica sullo schermo di destra. Scegli ciò che preferisci sia visualizzato. Il bottone Visual sul lettore visualizzerà ciclicamente le opzioni selezionate più sotto.
 	NL	De speler kan visualisaties of extra informatie tonen op het rechter scherm. Kies wat je getoond wilt hebben. <BR>The Visual toets op de speler zal de keuzes doorlopen die je hieronder kiest.
 
 SETUP_SERVERPRIORITY
@@ -12656,6 +12751,7 @@ SETUP_SERVERPRIORITY
 	EN	Server Priority
 	ES	Prioridad del servidor
 	FR	Priorité serveur
+	IT	Priorità server
 	NL	Server prioriteit
 
 SETUP_SERVERPRIORITY_DESC
@@ -12663,6 +12759,7 @@ SETUP_SERVERPRIORITY_DESC
 	EN	You can specify the priority that SlimServer runs at.
 	ES	Se puede especificar la prioridad con la que correrá SlimServer.
 	FR	Vous pouvez fixer le niveau de priorité du SlimServer.
+	IT	Puoi specificare la priorità attribuita allo Slimserver.
 	NL	Je kunt de prioriteit specificeren van SlimServer binnen je server.
 
 SETUP_SCANNERPRIORITY
@@ -12670,6 +12767,7 @@ SETUP_SCANNERPRIORITY
 	EN	Scanner Priority
 	ES	Prioridad de la recopilación /
 	FR	Priorité répertoriage
+	IT	Priorità scansione
 	NL	Scanner prioriteit
 
 SETUP_SCANNERPRIORITY_DESC
@@ -12677,6 +12775,7 @@ SETUP_SCANNERPRIORITY_DESC
 	EN	You can specify the priority that the scanning process run at.
 	ES	Se puede especificar la prioridad con la que correrá la recopilación.
 	FR	Vous pouvez fixer le niveau de priorité du processus de répertoriage.
+	IT	Puoi specificare la priorità attribuita al processo di scansione.
 	NL	Je kunt de prioriteit specificeren voor het scannen van nieuwe en gewijzigde muziek.
 
 SETUP_PRIORITY_DEFAULT
@@ -12684,6 +12783,7 @@ SETUP_PRIORITY_DEFAULT
 	EN	Default Priority
 	ES	Prioridad por defecto
 	FR	Priorité par défaut
+	IT	Priorità di default
 	NL	Standaard prioriteit
 
 SETUP_PRIORITY_CURRENT
@@ -12691,6 +12791,7 @@ SETUP_PRIORITY_CURRENT
 	EN	Current Server Priority
 	ES	Prioridad Actual del Servidor
 	FR	Priorité serveur actuelle
+	IT	Priorità server in uso
 	NL	Huidige serverprioriteit
 
 SETUP_PRIORITY_HIGH
@@ -12698,6 +12799,7 @@ SETUP_PRIORITY_HIGH
 	EN	High
 	ES	Alta
 	FR	Elevée
+	IT	Alta
 	NL	Hoog
 
 SETUP_PRIORITY_ABOVE_NORMAL
@@ -12705,6 +12807,7 @@ SETUP_PRIORITY_ABOVE_NORMAL
 	EN	Above Normal
 	ES	Mas Alta de lo Normal
 	FR	Au-dessus de la normale
+	IT	Sopra il normale
 	NL	Boven normaal
 
 SETUP_PRIORITY_NORMAL
@@ -12712,6 +12815,7 @@ SETUP_PRIORITY_NORMAL
 	EN	Normal
 	ES	Normal
 	FR	Normale
+	IT	Normale
 	NL	Normaal
 
 SETUP_PRIORITY_BELOW_NORMAL
@@ -12719,6 +12823,7 @@ SETUP_PRIORITY_BELOW_NORMAL
 	EN	Below Normal
 	ES	Debajo de lo Normal
 	FR	Sous la normale
+	IT	Sotto il normale
 	NL	Onder normaal
 
 SETUP_PRIORITY_LOW
@@ -12726,6 +12831,7 @@ SETUP_PRIORITY_LOW
 	EN	Low
 	ES	Baja
 	FR	Basse
+	IT	Bassa
 	NL	Laag
 
 SETUP_DIGITALOUTPUTENCODING
@@ -12747,15 +12853,19 @@ DIGITALOUTPUTENCODING_AESEBU
 	
 AUDIO_SOURCE_BALANCED_AES
 	EN	Balanced AES/EBU
+	IT	Bilanciata AES/EBU
 
 AUDIO_SOURCE_BNC_SPDIF
 	EN	BNC Coax S/PDIF
+	IT	BNC S/PDIF Coassiale
 
 AUDIO_SOURCE_RCA_SPDIF
 	EN	RCA Coax S/PDIF
+	IT	RCA S/PDIF Coassiale
 
 AUDIO_SOURCE_OPTICAL_SPDIF
 	EN	Optical S/PDIF (TOSLINK)
+	IT	S/PDIF Ottica (Toslink)
 
 SETUP_WORDCLOCKOUTPUT
 	DE	Word Clock auf S/PDIF Ausgängen
@@ -12780,20 +12890,24 @@ WORDCLOCKOUTPUT_PASSTHROUGH
 SETUP_POWEROFFDAC
 	DE	Audio vom Strom trennen
 	EN	Power Off AUDIO
+	IT	Spegni DAC
 
 SETUP_POWEROFFDAC_DESC
 	DE	Wenn der Transporter ausgeschaltet wird, so kann auch der ganze Audioteil vom Strom getrennt werden. Dies kann allerdings ein hörbares Knack-Geräusch provozieren.
 	EN	When Transporter is turned off the audio section can be completely powered down.  Powering down the audio section may cause an audible pop.
+	IT	Quando il Transporter è spento, il convertitore digitale/analogico può essere disattivato.
 	NL	Wanneer de Transporter uit is kan het audiogedeelte compleet uitgezet worden. Het uitzetten van het audiogedeelte kan een hoorbaar pop-geluid veroorzaken.
 
 POWEROFFDAC_ALWAYSON
 	DE	Audio nie trennen
 	EN	Audio always on
+	IT	DAC sempre acceso
 	NL	Audio altijd aan
 
 POWEROFFDAC_WHENOFF
 	DE	Audio beim Ausschalten trennen
 	EN	Power down audio when off
+	IT	Spegni DAC quando spento
 	NL	Zet DAC uit bij speler uit
 
 SETUP_DISABLEDAC
@@ -12839,6 +12953,7 @@ POLARITYINVERSION_INVERTED
 INFORMATION_PLAYER_VOLTAGE
 	DE	Spannung
 	EN	Voltage
+	IT	Voltaggio
 
 LOADING_BROWSE_MUSIC_FOLDER
 	DE	Lade Musikverzeichnis...
