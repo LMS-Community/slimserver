@@ -114,49 +114,22 @@ sub init {
 
 		'play' => sub  {
 			my $client = shift;
-		
+
 			if ($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
 
 				$client->execute(['play']);
 
-				# The address of the %functions hash changes from compile time to run time
-				# so it is necessary to get a reference to it from a function outside of the hash
-				Slim::Buttons::Common::pushModeLeft($client,'playlist');
+				Slim::Buttons::Common::pushModeLeft($client, 'playlist');
 
-			} elsif  (($client->curSelection($client->curDepth()) eq 'BROWSE_BY_GENRE')  ||
-					  ($client->curSelection($client->curDepth()) eq 'BROWSE_BY_ARTIST') ||
-					  ($client->curSelection($client->curDepth()) eq 'BROWSE_BY_ALBUM')  ||
-					  ($client->curSelection($client->curDepth()) eq 'BROWSE_NEW_MUSIC')  ||
-					  ($client->curSelection($client->curDepth()) eq 'BROWSE_BY_SONG')) {
+			} elsif ($client->curSelection($client->curDepth) =~ /^(?:BROWSE_|SAVED_PLAYLISTS)/) {
 
-				if (Slim::Player::Playlist::shuffle($client)) {
-
-					Slim::Buttons::Block::block($client, $client->string('PLAYING_RANDOMLY'), $client->string('EVERYTHING'));
-
-				} else {
-
-					Slim::Buttons::Block::block($client, $client->string('NOW_PLAYING'), $client->string('EVERYTHING'));
-				}
-
-				my $command = [qw(playlist loadtracks)];
-
-				# Hand a special command if we only want to play new music.
-				if ($client->curSelection($client->curDepth()) eq 'BROWSE_NEW_MUSIC') {
-
-					my $limit = Slim::Utils::Prefs::get('browseagelimit');
-
-					$command = ['playlist', 'loadtracks', {
-						'sort'   => 'age',
-						'offset' => 0,
-						'limit'  => $limit,
-					} ];
-				}
-
-				$client->execute($command, \&Slim::Buttons::Block::unblock, [$client]);
+				# If we're in a Browse mode and the user
+				# presses play, just go right, per Dean
+				Slim::Buttons::Input::List::exitInput($client, 'right');
 
 			} else {
 
-				Slim::Buttons::Common::pushModeLeft($client,'playlist');
+				Slim::Buttons::Common::pushModeLeft($client, 'playlist');
 			}
 		},
 	);
