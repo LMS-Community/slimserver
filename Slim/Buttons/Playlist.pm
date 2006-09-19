@@ -470,7 +470,7 @@ sub showingNowPlaying {
 		)
 	);
 
-	if (Slim::Buttons::Common::mode($client) eq 'playlist') {
+	if (defined Slim::Buttons::Common::mode($client) && Slim::Buttons::Common::mode($client) eq 'playlist') {
 
 		$wasshowing = @_ ? shift : $client->modeParam('showingnowplaying');
 
@@ -516,7 +516,7 @@ sub browseplaylistindex {
 	# update list length for the knob.  ### HACK ATTACK ###
 	# - only do when we are in mode playlist - see bug: 3561
 	# - use length of 1 for both 1 item lists and empty playlists
-	if (Slim::Buttons::Common::mode($client) eq 'playlist') {
+	if (defined Slim::Buttons::Common::mode($client) && Slim::Buttons::Common::mode($client) eq 'playlist') {
 
 		$client->modeParam('listLen', Slim::Player::Playlist::count($client) || 1);
 		if (@_ || defined($client->modeParam('listIndex'))) {
@@ -544,7 +544,7 @@ sub knobPlaylistCallback {
 	my $request = shift;
 	my $client  = $request->client();
 	
-	if (defined $client && Slim::Buttons::Common::mode($client) eq 'playlist') {
+	if (defined $client && defined Slim::Buttons::Common::mode($client) && Slim::Buttons::Common::mode($client) eq 'playlist') {
 		browseplaylistindex($client);
 		$client->updateKnob(1);
 	}
