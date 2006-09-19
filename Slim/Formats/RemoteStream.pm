@@ -130,6 +130,7 @@ sub request {
 	my $request = $self->requestString($args->{'client'}, $url, $post);
 	
 	${*$self}{'client'} = $args->{'client'};
+	${*$self}{'create'} = $args->{'create'};
 	
 	$::d_remotestream && msg("Request: \n$request\n");
 
@@ -193,6 +194,7 @@ sub request {
 			'url'     => $redir,
 			'infoUrl' => $self->infoUrl,
 			'post'    => $post,
+			'create'  => $args->{'create'},
 		});
 	}
 

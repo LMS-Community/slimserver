@@ -140,13 +140,21 @@ sub parseHeaders {
 		if ($header =~ /^(?:ic[ey]-name|x-audiocast-name):\s*(.+)$CRLF$/i) {
 
 			${*$self}{'title'} = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
-			Slim::Music::Info::setCurrentTitle( $self->url, $self->title );
+
+			if (!defined ${*$self}{'create'} || ${*$self}{'create'} != 0) {
+
+				Slim::Music::Info::setCurrentTitle( $self->url, $self->title );
+			}
 		}
 
 		if ($header =~ /^(?:icy-br|x-audiocast-bitrate):\s*(.+)$CRLF$/i) {
 
 			${*$self}{'bitrate'} = $1 * 1000;
-			Slim::Music::Info::setBitrate( $self->infoUrl, $self->bitrate );
+
+			if (!defined ${*$self}{'create'} || ${*$self}{'create'} != 0) {
+
+				Slim::Music::Info::setBitrate( $self->infoUrl, $self->bitrate );
+			}
 			
 			$::d_remotestream && msgf("parseHeaders: Bitrate for %s set to %d\n",
 				$self->infoUrl,
@@ -176,7 +184,12 @@ sub parseHeaders {
 			}
 			
 			${*$self}{'contentType'} = $contentType;
-			Slim::Music::Info::setContentType( $self->url, $self->contentType );
+
+			# If create => 0 was passed, don't set the CT.
+			if (!defined ${*$self}{'create'} || ${*$self}{'create'} != 0) {
+
+				Slim::Music::Info::setContentType( $self->url, $self->contentType );
+			}
 		}
 		
 		if ($header =~ /^Content-Length:\s*(.*)$CRLF$/i) {
