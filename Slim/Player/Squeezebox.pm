@@ -19,10 +19,14 @@ use MIME::Base64;
 use base qw(Slim::Player::Player);
 use Scalar::Util qw(blessed);
 
+use Slim::Hardware::IR;
 use Slim::Hardware::mas35x9;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
+
+# Track when clients begin to buffer streams
+our $buffering = {};
 
 BEGIN {
 	if ($^O =~ /Win32/) {
@@ -161,6 +165,7 @@ sub play {
 	Slim::Utils::Timers::killTimers($client, \&quickstart);
 
 	if ($quickstart) {
+		$buffering->{$client} = Time::HiRes::time(); # track when we started buffering
 		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + $quickstart, \&quickstart );
 	}
 
@@ -175,6 +180,8 @@ sub play {
 sub resume {
 	my $client = shift;
 
+	delete $buffering->{$client};
+	
 	Slim::Utils::Timers::killTimers($client, \&quickstart);
 
 	$client->stream('u');
@@ -188,6 +195,8 @@ sub resume {
 sub pause {
 	my $client = shift;
 
+	delete $buffering->{$client};
+
 	Slim::Utils::Timers::killTimers($client, \&quickstart);
 
 	$client->stream('p');
@@ -197,6 +206,8 @@ sub pause {
 
 sub stop {
 	my $client = shift;
+	
+	delete $buffering->{$client};
 
 	Slim::Utils::Timers::killTimers($client, \&quickstart);
 
@@ -209,6 +220,8 @@ sub stop {
 
 sub flush {
 	my $client = shift;
+	
+	delete $buffering->{$client};
 
 	Slim::Utils::Timers::killTimers($client, \&quickstart);
 
@@ -277,7 +290,11 @@ sub quickstart {
 			$line2  = Slim::Music::Info::title( $url );
 		}
 		
-		$client->showBriefly( $line1, $line2, 0.5 ) unless $client->display->sbName();
+		# Only show buffering status if no user activity on player
+		my $lastIR = Slim::Hardware::IR::lastIRTime($client) || 0;
+		if ( $lastIR < $buffering->{$client} ) {
+			$client->showBriefly( $line1, $line2, 0.5 ) unless $client->display->sbName();
+		}
 		
 		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + 0.125, \&quickstart );
 	}
