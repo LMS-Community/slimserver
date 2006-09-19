@@ -428,13 +428,29 @@ sub lines {
 	}
 
 	if ($client->display->showExtendedText()) {
+		
+		my ($s2line1, $s2line2);
+
 		my $song = Slim::Player::Playlist::song($client, $nowPlaying ? undef : browseplaylistindex($client) );
 
+		if ($song && $song->isRemoteURL) {
+
+			my $currentTitle = Slim::Music::Info::getCurrentTitle($client, $song->url);
+			my $title = Slim::Music::Info::displayText($client, $song, 'TITLE');
+
+			if ( ($currentTitle || '') ne ($title || '') && !Slim::Music::Info::isURL($title) ) {
+				$s2line2 = $title;
+			}
+
+		} else {
+
+			$s2line1 = Slim::Music::Info::displayText($client, $song, 'ALBUM');
+			$s2line2 = Slim::Music::Info::displayText($client, $song, 'ARTIST');
+
+		}
+
 		$parts->{'screen2'} ||= {
-			'line' => [ 
-				Slim::Music::Info::displayText($client, $song, 'ALBUM'),
-				Slim::Music::Info::displayText($client, $song, 'ARTIST')
-			],
+			'line' => [ $s2line1, $s2line2 ],
 		};
 
 	}
