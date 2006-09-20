@@ -9745,6 +9745,9 @@ CHANGE
 	SV	Ändra
 	ZH_CN	更动
 
+SERVER_IP_ADDRESS
+	EN	Server IP address
+
 PLAYER_IP_ADDRESS
 	CS	IP adresa tohoto přehrávače je:
 	DE	Die IP-Adresse für diesen Player ist:

@@ -167,7 +167,7 @@ sub init {
 				sub { 3483 },
 				sub { Slim::Utils::Prefs::get('httpport') },
 				\&Slim::Utils::Network::hostName,
-				sub { $main::httpaddr || Slim::Utils::Network::hostAddr() || '127.0.0.1'; },
+				\&Slim::Utils::Network::serverAddr,
 				\&Slim::Player::Client::clientCount,
 			],
 

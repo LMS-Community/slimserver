@@ -160,7 +160,7 @@ sub hostAddr {
 	return @hostAddr;
 }
 
-=head2 hostName()
+=head2 hostName( )
 
 Returns the name of the local host.
 
@@ -168,6 +168,29 @@ Returns the name of the local host.
 
 sub hostName {
 	return hostname();
+}
+
+=head2 serverAddr( )
+
+Returns the IP that the server is bound to.
+
+=cut
+
+sub serverAddr {
+
+	if ($main::httpaddr) {
+		return $main::httpaddr;
+	}
+
+	my $ip = Slim::Utils::IPDetect::IP();
+
+	if ($ip) {
+		return $ip;
+	}
+
+	my @addrs = Slim::Utils::Network::hostAddr();
+
+	return $addrs[1] || $addrs[0] || '127.0.0.1';
 }
 
 =head2 hostToAddr( $host )

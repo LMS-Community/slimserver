@@ -996,6 +996,13 @@ sub settingsDiagString {
 		Slim::Utils::Unicode::currentLocale(),
 	);
 	
+	push @diagString, sprintf("%s%s %s",
+
+		Slim::Utils::Strings::string('SERVER_IP_ADDRESS'),
+		Slim::Utils::Strings::string('COLON'),
+		Slim::Utils::Network::serverAddr(),
+	);
+
 	# Also display the Perl version and MySQL version
 	push @diagString, sprintf("%s%s %s %s",
 	
