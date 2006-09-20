@@ -399,7 +399,10 @@ function refreshAll(theData,force) {
 	var parsedData = fillDataHash(theData);
 	
 	if (parsedData['player_id']) {
-		hideElements(['waiting']);
+		if ($('waiting').style.display == 'inline') {
+			hideElements(['waiting']);
+			force = 1;
+		}
 		
 		if (parsedData['isplayer']) {
 			refreshVolume(parsedData);
