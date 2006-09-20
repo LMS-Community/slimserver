@@ -47,17 +47,6 @@ sub setMode {
 
 	# Stop the player before disconnecting
 	Slim::Control::Request::executeRequest($client, ['stop']);
-	
-	# XXX: Temporarily point Transporters to sntest
-	if ( $client->model eq 'transporter' ) {
-		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', {
-			header     => '{SQUEEZENETWORK}',
-			listRef    => [ 'NOTE: As a Transporter beta user, you will be connected to the beta version of SqueezeNetwork. Visit http://sntest.slimdevices.com:3000. Press RIGHT to continue...' ],
-			onRight    => \&connectSNtest,
-			overlayRef => [ undef, Slim::Display::Display::symbol('rightarrow') ],			
-		} );
-		return;
-	}
 
 	$client->lines(\&lines);
 
@@ -136,36 +125,6 @@ sub connectSqueezeNetwork {
 			$client,
 			['client', 'forget']);
 	}
-}
-
-# XXX: Temporary
-sub connectSNtest {
-	my $client = shift;
-	
-	$client->lines(\&lines);
-
-	# we want to disconnect, but not immediately, because that
-	# makes the UI jerky.  Postpone disconnect for a short while
-	Slim::Utils::Timers::setTimer(
-		$client, 
-		Time::HiRes::time() + 1,
-		sub {
-			my $client = shift;
-			
-			return unless $client->modeParam('squeezenetwork.connect');
-			
-			my $host = pack 'N', 0x439B6B04;
-			$client->sendFrame('serv', \$host);
-			
-			# if message recieved, client has disconnected
-			Slim::Control::Request::executeRequest(
-				$client,
-				['client', 'forget']);
-		},
-	);
-	
-	# this flag prevents disconnect if user has popped out of this mode
-	$client->modeParam('squeezenetwork.connect', 1);
 }
 
 =head1 SEE ALSO
