@@ -29,7 +29,7 @@ use vars qw(
 
 $VERSION = '1.10';
 
-my $debug = 0;
+my $debug = 1;
 
 
 =head1 NAME
@@ -428,6 +428,7 @@ sub parse_container
     while (tell $fh < $end)
     {
 	$err = parse_atom($fh, $level, $end-(tell $fh), $tags);
+	print "XXX: $err - $@\n";
 	return $err if $err;
     }
     if (tell $fh != $end)
@@ -448,6 +449,12 @@ sub parse_atom
     my ($header, $size, $id, $err);
     if (read ($fh, $header, 8) != 8)
     {
+	# XXXX - temporary fix for bug 4151
+	# ALAC files with artwork have changed.
+	if (length($header) == 2 && $header eq "\0\0") {
+		return 0;
+	}
+
 	$@ = 'Premature eof';
 	return -1;
     }
@@ -729,7 +736,7 @@ sub parse_data
 	$type &= 255;
 	$data = substr ($data, 16, $size);
     }
-    printf "  %sType=$type, Size=$size, $data\n", ' 'x(2*$level) if $debug;
+    #printf "  %sType=$type, Size=$size, $data\n", ' 'x(2*$level) if $debug;
 
     if ($id eq 'COVR')
     {
