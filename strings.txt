@@ -9746,6 +9746,7 @@ CHANGE
 	ZH_CN	更动
 
 SERVER_IP_ADDRESS
+	DE	Server IP Adresse
 	EN	Server IP address
 
 PLAYER_IP_ADDRESS
