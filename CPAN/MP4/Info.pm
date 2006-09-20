@@ -29,7 +29,7 @@ use vars qw(
 
 $VERSION = '1.10';
 
-my $debug = 1;
+my $debug = 0;
 
 
 =head1 NAME
@@ -428,7 +428,6 @@ sub parse_container
     while (tell $fh < $end)
     {
 	$err = parse_atom($fh, $level, $end-(tell $fh), $tags);
-	print "XXX: $err - $@\n";
 	return $err if $err;
     }
     if (tell $fh != $end)
@@ -736,7 +735,7 @@ sub parse_data
 	$type &= 255;
 	$data = substr ($data, 16, $size);
     }
-    #printf "  %sType=$type, Size=$size, $data\n", ' 'x(2*$level) if $debug;
+    printf "  %sType=$type, Size=$size, $data\n", ' 'x(2*$level) if $debug;
 
     if ($id eq 'COVR')
     {
