@@ -878,14 +878,21 @@ sub _hello_handler {
 		$client->sendFrame('ureq');
 
 		$client->brightness($client->maxBrightness());
+
+		# turn of visualizers and screen2 display
+		$client->modeParam('visu', [0]);
+		$client->modeParam('screen2active', undef);
 		
 		$client->block( {
-			'line' => [ string('PLAYER_NEEDS_UPGRADE_1'), string('PLAYER_NEEDS_UPGRADE_2') ],
-			'fonts' => { 
-				'graphic-320x32' => 'light',
-				'graphic-280x16' => 'small',
-				'text'           => 2,
-			}
+			'screen1' => {
+				'line' => [ string('PLAYER_NEEDS_UPGRADE_1'), string('PLAYER_NEEDS_UPGRADE_2') ],
+				'fonts' => { 
+					'graphic-320x32' => 'light',
+					'graphic-280x16' => 'small',
+					'text'           => 2,
+				}
+			},
+			'screen2' => {},
 		}, 'upgrade');
 
 	} else {

@@ -60,6 +60,8 @@ sub getFunctions {
 sub setMode {
 	my $client = shift;
 
+	$client->modeParam('screen2', 'inherit');
+
 	# store current lines function so it can be replaced when block mode is popped
 	# this is required as popping block mode does not call the setMode of the previous mode
 	$client->modeParam('oldLines', $client->lines );
@@ -104,12 +106,9 @@ sub block {
 
 	$client->blocklines( { 'static' => $static, 'parts' => $parts, 'ticks' => 0 } );
 
-	my $screen2mode = $client->modeParam('screen2');
-
 	Slim::Buttons::Common::pushMode($client, 'block');
 
 	$client->modeParam('block.name', $blockName);
-	$client->modeParam('screen2', $screen2mode);
 
 	if (ref($parts) eq 'HASH') {
 
