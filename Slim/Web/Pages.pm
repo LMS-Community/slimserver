@@ -45,7 +45,7 @@ sub init {
 	# pull in the memory usage module if requested.
 	if ($::d_memory) {
 
-		eval "use Slim::Utils::MemoryUsage";
+		Slim::bootstrap::tryModuleLoad('Slim::Utils::MemoryUsage');
 
 		if ($@) {
 			print "Couldn't load Slim::Utils::MemoryUsage - error: [$@]\n";
@@ -63,15 +63,6 @@ sub init {
 	Slim::Web::Pages::EditPlaylist::init(); # must precede Playlist::init();
 	Slim::Web::Pages::Playlist::init();
 	Slim::Web::Pages::History::init();
-}
-
-### DEPRECATED stub for third party plugins
-sub addLinks {
-	msg("Slim::Web::Pages::addLinks() has been deprecated in favor of 
-	     Slim::Web::Pages->addPageLinks. Please update your calls!\n");
-	Slim::Utils::Misc::bt();
-	
-	return Slim::Web::Pages->addPageLinks(@_);
 }
 
 sub _lcPlural {

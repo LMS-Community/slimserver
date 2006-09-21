@@ -566,11 +566,6 @@ sub knobPlaylistCallback {
 	}
 }
 
-# DEPRECATED: for compatibility only, use $client->nowPlayingModeLines();
-sub nowPlayingModeLines {
-	shift->nowPlayingModeLines(shift);
-}
-
 =head1 SEE ALSO
 
 L<Slim::Buttons::Common>

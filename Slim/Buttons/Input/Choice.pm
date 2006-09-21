@@ -419,43 +419,15 @@ sub lines {
 
 	$line1 = formatString($client, $header, $listIndex, $listRef);
 
-	# deprecated.
-	# callers should insert {STRING} into their header
-	if (getParam($client,'stringHeader') && Slim::Utils::Strings::stringExists($line1)) {
-
-		$line1 = $client->string($line1);
-	}
-
 	if (scalar(@$listRef) == 0) {
 
 		$line2 = $client->string('EMPTY');
 
 	} else {
 
-		# deprecated
-		# callers should include {count} in header
-		if (getParam($client,'headerAddCount')) {
-			msg("INPUT.Choice: headerAddCount is deprecated. " .
-				$client->modeParam('headerAddCount'));
-			bt();
-			$line1 .= ' (' . ($listIndex + 1)
-			. ' ' . $client->string('OF') .' ' . scalar(@$listRef) . ')';
-		}
-
 		$line2 = getExtVal($client, getItemName($client));
 
-		# deprecated. don't set stringName or stringHeader, put strings
-		# to be translated within curly brackets instead
-		if (getParam($client,'stringName') && 
-
-			Slim::Utils::Strings::stringExists($line2)) {
-
-			$line2 = $client->linesPerScreen() == 1 ? $client->doubleString($line2) : $client->string($line2);
-
-		} else {
-
-			$line2 = formatString($client, $line2, $listIndex, $listRef);
-		}
+		$line2 = formatString($client, $line2, $listIndex, $listRef);
 	}
 
 	my ($overlay1, $overlay2);

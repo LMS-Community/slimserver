@@ -506,17 +506,13 @@ sub shutdownPlugin {
 	my $plugin = shift;
 	no strict 'refs';
 
-	if (UNIVERSAL::can("Plugins::$plugin", "disablePlugin")) {
-		msg("disablePlugin() is deprecated! Please use shutdownPlugin() instead. (Plugins::$plugin)\n");
-		eval { &{"Plugins::${plugin}::disablePlugin"}() };
-	}
-
 	# We use shutdownPlugin() instead of the more succinct
 	# shutdown() because it's less likely to cause backward
 	# compatibility problems.
 	if (UNIVERSAL::can("Plugins::$plugin", "shutdownPlugin")) {
 		eval { &{"Plugins::${plugin}::shutdownPlugin"}() };
 	}
+
 	$plugins{$plugin}{'initialized'} = 0 if (defined $plugins{$plugin});
 }
 

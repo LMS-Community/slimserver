@@ -661,22 +661,6 @@ sub objectForUrl {
 	return $track;
 }
 
-=head2 objectForId( $id )
-
-This method is deprecated and will be removed in SlimServer 6.6
-
-Please use L<find> instead.
-
-=cut
-
-sub objectForId {
-	my $self  = shift;
-
-	msg("Warning: objectForId is deprecated. Please use ->find instead.\n");
-
-	return $self->find(@_);
-}
-
 =head2 newTrack( $args )
 
 Create a new track with the given attributes.

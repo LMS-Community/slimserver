@@ -85,12 +85,6 @@ sub init {
 	return 1;
 }
 
-sub getCurrentDataStore {
-	msg("Warning: Slim::Music::Info::getCurrentDataStore() is deprecated. Please use Slim::Schema directly.\n");
-
-	return 'Slim::Schema';
-}
-
 sub loadTypesConfig {
 	my @typesFiles = ();
 
@@ -1226,29 +1220,7 @@ sub variousArtistString {
 	return (Slim::Utils::Prefs::get('variousArtistsString') || string('VARIOUSARTISTS'));
 }
 
-sub loadTagFormatForType {
-	errorMsg("Slim::Music::Info::loadTagFormatForType() has been deprecated!\n");
-	errorMsg("Please notify the Plugin author to use Slim::Formats->loadTagFormatForType instead!\n");
-
-	return Slim::Formats->loadTagFormatForType(@_);
-}
-
-sub classForFormat {
-	errorMsg("Slim::Music::Info::classForFormat() has been deprecated!\n");
-	errorMsg("Please notify the Plugin author to use Slim::Formats->classForFormat instead!\n");
-
-	return Slim::Formats->classForFormat(@_);
-}
-
-sub infoFormat {
-
-	errorMsg("Slim::Music::Info::infoFormat() has been deprecated!\n");
-	errorMsg("Please notify the Plugin author to use Slim::Music::TitleFormatter::infoFormat() instead!\n");
-
-	return Slim::Music::TitleFormatter::infoFormat(@_);
-}
 =head1 SEE ALSO
-
 
 
 =cut
@@ -1256,9 +1228,3 @@ sub infoFormat {
 1;
 
 __END__
-
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

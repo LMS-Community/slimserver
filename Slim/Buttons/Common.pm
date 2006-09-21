@@ -1097,11 +1097,6 @@ sub pushButton {
 	&$subref($client, $sub, $subarg);
 }
 
-# DEPRECATED: Use Slim::Input::Time instead
-sub timeDigits {
-	Slim::Buttons::Input::Time::timeDigits(shift,shift);
-}
-
 sub scroll {
 	scroll_dynamic(@_);
 }

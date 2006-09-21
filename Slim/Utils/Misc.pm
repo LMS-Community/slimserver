@@ -926,28 +926,9 @@ sub findAndScanDirectoryTree {
 	return ($topLevelObj, $items, $count);
 }
 
-
-# Deprecated, use Slim::Utils::DateTime instead
-sub longDateF {
-	return Slim::Utils::DateTime::longDateF(@_);
-}
-
-sub shortDateF {
-	return Slim::Utils::DateTime::shortDateF(@_);
-}
-
-sub timeF {
-	return Slim::Utils::DateTime::timeF(@_);
-}
-
-sub fracSecToMinSec {
-	return Slim::Utils::DateTime::fracSecToMinSec(@_);
-}
-
-
 =head2 userAgentString( )
 
-	Utility functions for strings we send out to the world.
+Utility functions for strings we send out to the world.
 
 =cut
 
