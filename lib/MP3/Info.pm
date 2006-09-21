@@ -1186,7 +1186,7 @@ sub _get_v2tagdata {
 
 		# iTunes is stupid and sticks ID3v2.2 3 byte frames in a
 		# ID3v2.3 or 2.4 header. Ignore tags with a space in them.
-		if ($bytes !~ /^([A-Z0-9 ]{$num})/) {
+		if ($bytes !~ /^([A-Z0-9\? ]{$num})/) {
 			return;
 		}
 
