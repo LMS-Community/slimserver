@@ -449,8 +449,8 @@ sub parse_atom
     if (read ($fh, $header, 8) != 8)
     {
 	# XXXX - temporary fix for bug 4151
-	# ALAC files with artwork have changed.
-	if (length($header) == 2 && $header eq "\0\0") {
+	# AAC & ALAC files with artwork have changed.
+	if ($header =~ /^\000+$/) {
 		return 0;
 	}
 
@@ -735,7 +735,7 @@ sub parse_data
 	$type &= 255;
 	$data = substr ($data, 16, $size);
     }
-    printf "  %sType=$type, Size=$size, $data\n", ' 'x(2*$level) if $debug;
+    printf "  %sType=$type, Size=$size\n", ' 'x(2*$level) if $debug;
 
     if ($id eq 'COVR')
     {
