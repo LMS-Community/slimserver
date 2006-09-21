@@ -1,19 +1,33 @@
 package Slim::Networking::mDNS;
 
+# $Id$
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
+use base qw(Class::Data::Inheritable);
+
+use FindBin qw($Bin);
+use File::Slurp;
+use File::Spec::Functions qw(:ALL);
+use Proc::Background;
+
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
-use FindBin qw($Bin);
-use File::Spec::Functions qw(:ALL);
+{
+	my $class = __PACKAGE__;
+
+	for my $accessor (qw(confFile pidFile processObj isInitialized)) {
+
+		$class->mk_classdata($accessor);
+	}
+
+	$class->isInitialized(0);
+}
  
-my $confFile;
-my $pidFile;
-my $init = 0;
 my %services = ();
 
 sub init {
@@ -23,28 +37,28 @@ sub init {
 
 	my $cacheDir = Slim::Utils::Prefs::get('cachedir');
 
-	unless (-d $cacheDir) {
+	if (!-d $cacheDir) {
 
 		$::d_mdns && msg("mDNS: cachedir [$cacheDir] isn't set or writeable\n");
 		return;
 	}
 
-	$confFile = catfile($cacheDir, 'mDNS.conf');
-	$pidFile  = catfile($cacheDir, 'mDNS.pid');
+	$class->confFile(catfile($cacheDir, 'mDNS.conf'));
+	$class->pidFile(catfile($cacheDir, 'mDNS.pid'));
 
-	$init = 1;
+	$class->isInitialized(1);
 }
 
 sub addService {
 	my ($class, $service, $port) = @_;
 
-	unless ($init) {
-		return unless $class->init;
+	if (!$class->isInitialized) {
+		return if !$class->init;
 	}
 
 	my $name = Slim::Utils::Prefs::get('mDNSname');
 
-	if (!defined $name || $name eq '') {
+	if (!$name) {
 
 		$::d_mdns && msg("mDNS: Blank name, skipping service: $service - TXT - $port\n");
 
@@ -53,15 +67,14 @@ sub addService {
 		$::d_mdns && msg("mDNS: Adding service: $name - $service - TXT - $port\n");
 
 		$services{$service} = [ $name, $port ];
-
 	}
 }
 
 sub removeService {
 	my ($class, $service) = @_;
 
-	unless ($init) {
-		return unless $class->init;
+	if (!$class->isInitialized) {
+		return if !$class->init;
 	}
 
 	$::d_mdns && msg("mDNS: Removing service: $service\n");
@@ -72,24 +85,24 @@ sub removeService {
 sub startAdvertising {
 	my $class = shift;
 
-	my $mDNSBin = Slim::Utils::Misc::findbin('mDNSResponderPosix');
+	$::d_mdns && msg("mDNS: startAdvertising - building config.\n");
 
-	unless ($mDNSBin) {
+	my $mDNSBin = Slim::Utils::Misc::findbin('mDNSResponderPosix') || do {
 
 		$::d_mdns && msg("mDNS: Couldn't find mDNSResponderPosix binary! Aborting!\n");
 		return;
 	};
 
-	unless ($init) {
-		return unless $class->init;
+	if (!$class->isInitialized) {
+		return if !$class->init;
 	}
 
 	# Remove any existing configs
 	$class->stopAdvertising;
 
-	open(CONF, ">$confFile") or do {
-		
-		$::d_mdns && msg("mDNS: Couldn't open $confFile for appending!: $!\n");
+	open(CONF, '>', $class->confFile) or do {
+
+		$::d_mdns && msgf("mDNS: Couldn't open %s for appending!: $!\n", $class->confFile);
 		return;
 	};
 
@@ -107,17 +120,25 @@ sub startAdvertising {
 
 	close(CONF);
 
-	if (-z $confFile) {
+	if (-z $class->confFile) {
 
 		$::d_mdns && msg("mDNS: Config has 0 size - disabling mDNS\n");
 		return;
 	}
 
-	my $command = sprintf("%s -d -f %s -P %s", $mDNSBin, $confFile, $pidFile);
+	my $command = join(' ', (
+		$mDNSBin,
+		sprintf('-f %s', $class->confFile),
+		sprintf('-P %s', $class->pidFile)
+	));
 
-	$::d_mdns && msg("mDNS: About to run: $command\n");
+	$::d_mdns && msgf("mDNS: About to run: $command\n");
 
-	return system($command);
+	$class->processObj( Proc::Background->new($command) );
+
+	$::d_mdns && msgf("Process is alive: [%d] with pid: [%d]\n",
+		$class->processObj->alive, $class->processObj->pid
+	);
 }
 
 sub stopAdvertising {
@@ -125,38 +146,48 @@ sub stopAdvertising {
 
 	$::d_mdns && msg("mDNS: stopAdvertising()\n");
 
-	if (!$pidFile || !-f $pidFile) {
+	if (!$class->pidFile || !-f $class->pidFile) {
 
 		$::d_mdns && msg("mDNS: No PID file.\n");
 		return;
 	}
 
-	open(PID, $pidFile) or do {
+	my $dead = 0;
+	my $pid  = undef;
 
-		$::d_mdns && msg("mDNS: Couldn't read PID file.\n");
-		return;
-	};
+	if ($class->processObj && $class->processObj->alive) {
 
-	my $pid = <PID>;
-	close(PID);
+		$class->processObj->die;
 
-	my $ret = kill "KILL", $pid;
+		if (!$class->processObj->alive) {
+			$dead = 1;
 
-	if ($ret) {
-		$::d_mdns && msg("mDNS: Killed PID: $pid\n");
-
-		unlink $confFile;
-		unlink $pidFile;
+			$class->processObj(undef);
+		}
 	}
 
-	return $ret;
+	if (-f $class->pidFile || !$dead) {
+
+		$pid  = read_file($class->pidFile);	
+
+		if ($pid) {
+			$dead = kill('KILL', $pid);
+		}
+	}
+	
+	if ($dead) {
+
+		if ($pid) {
+			$::d_mdns && msg("mDNS: Killed PID: $pid\n");
+		}
+
+		unlink($class->confFile);
+		unlink($class->pidFile);
+	}
+
+	return $dead;
 }
 
 1;
 
 __END__
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:
