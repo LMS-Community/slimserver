@@ -423,3 +423,29 @@ div#addedToPlaylist{
         background: #666666;
         color: white;
 }
+
+.keyboardButton {
+	FONT-SIZE:12pt;
+	FONT-FAMILY: Verdana;
+	COLOR: #666666;
+	background-image:url(html/images/buttonKB.gif);
+	BORDER-LEFT: black 0pt none;
+	BORDER-RIGHT: black 0pt none;
+	BORDER-TOP: black 0pt none;
+	BORDER-BOTTOM: black 0pt none;
+	WIDTH: 55;
+	HEIGHT: 36;
+}
+
+.keyboardSpace {
+	FONT-SIZE:12pt;
+	FONT-FAMILY: Verdana;
+	COLOR: #666666;
+	background-image:url(html/images/buttonSpace.gif);
+	BORDER-LEFT: black 0pt none;
+	BORDER-RIGHT: black 0pt none;
+	BORDER-TOP: black 0pt none;
+	BORDER-BOTTOM: black 0pt none;
+	WIDTH: 222;
+	HEIGHT: 36;
+}
