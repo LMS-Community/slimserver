@@ -15,18 +15,8 @@ use base qw(IO::Socket::INET);
 use IO::Socket qw(:DEFAULT :crlf);
 use IO::Select;
 
-BEGIN {
-	if ($^O =~ /Win32/) {
-		*EWOULDBLOCK = sub () { 10035 };
-		*EINPROGRESS = sub () { 10036 };
-
-	} else {
-		require Errno;
-		import Errno qw(EWOULDBLOCK EINPROGRESS);
-	}
-}
-
 use Slim::Music::Info;
+use Slim::Utils::Errno;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::Prefs;

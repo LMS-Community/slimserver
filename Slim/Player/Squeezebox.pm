@@ -9,14 +9,15 @@ package Slim::Player::Squeezebox;
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
+
 use strict;
+use warnings;
+
+use base qw(Slim::Player::Player);
 
 use File::Spec::Functions qw(:ALL);
 use IO::Socket;
 use MIME::Base64;
-
-use base qw(Slim::Player::Player);
 use Scalar::Util qw(blessed);
 
 use Slim::Hardware::IR;
@@ -27,16 +28,6 @@ use Slim::Utils::Network;
 
 # Track when clients begin to buffer streams
 our $buffering = {};
-
-BEGIN {
-	if ($^O =~ /Win32/) {
-		*EWOULDBLOCK = sub () { 10035 };
-		*EINPROGRESS = sub () { 10036 };
-	} else {
-		require Errno;
-		import Errno qw(EWOULDBLOCK EINPROGRESS);
-	}
-}
 
 # We inherit new() completely from our parent class.
 

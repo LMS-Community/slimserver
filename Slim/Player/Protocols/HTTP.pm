@@ -13,19 +13,9 @@ use base qw(Slim::Formats::HTTP);
 use File::Spec::Functions qw(:ALL);
 use IO::String;
 
-BEGIN {
-	if ($^O =~ /Win32/) {
-		*EWOULDBLOCK = sub () { 10035 };
-		*EINPROGRESS = sub () { 10036 };
-
-	} else {
-		require Errno;
-		import Errno qw(EWOULDBLOCK EINPROGRESS);
-	}
-}
-
 use Slim::Music::Info;
 use Slim::Player::TranscodingHelper;
+use Slim::Utils::Errno;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 

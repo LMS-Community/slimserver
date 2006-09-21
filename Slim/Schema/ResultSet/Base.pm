@@ -137,11 +137,10 @@ sub generateConditionsFromFilters {
 	}
 
 	if ($::d_sql) {
-		eval "use Data::Dumper";
 		msg("levelMap:\n");
-		print Data::Dumper::Dumper(\%levelMap);
+		Data::Dump::dump(\%levelMap);
 		msg("filters:\n");
-		print Data::Dumper::Dumper(\%filters);
+		Data::Dump::dump(\%filters);
 	}
 
 	# Turn parameters in the form of: album.sort into the appropriate sort
@@ -189,7 +188,7 @@ sub generateConditionsFromFilters {
 
 	if ($::d_sql) {
 		msg("find:\n");
-		print Data::Dumper::Dumper(\%find);
+		Data::Dump::dump(\%find);
 	}
 
 	return (\%filters, \%find, \%sort);

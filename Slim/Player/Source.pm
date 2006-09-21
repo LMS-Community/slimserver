@@ -7,27 +7,17 @@ package Slim::Player::Source;
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
+use bytes;
 use strict;
+use warnings;
 
+use Fcntl qw(SEEK_CUR);
 use File::Spec::Functions qw(:ALL);
 use FileHandle;
 use FindBin qw($Bin);
 use IO::Socket qw(:DEFAULT :crlf);
 use Scalar::Util qw(blessed);
 use Time::HiRes;
-use Fcntl qw(SEEK_CUR);
-use bytes;
-
-BEGIN {
-	if ($^O =~ /Win32/) {
-		*EINTR       = sub () { 10004 };
-		*EWOULDBLOCK = sub () { 10035 };
-		*EINPROGRESS = sub () { 10036 };
-	} else {
-		require Errno;
-		import Errno qw(EWOULDBLOCK EINPROGRESS EINTR);
-	}
-}
 
 use Slim::Formats;
 use Slim::Control::Request;
@@ -36,6 +26,7 @@ use Slim::Player::Pipeline;
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::ReplayGain;
 use Slim::Player::TranscodingHelper;
+use Slim::Utils::Errno;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::OSDetect;
@@ -1777,6 +1768,11 @@ sub readNextChunk {
 					$::d_source && msg("Got EINTR - will try again later.\n"); 
 					return undef;
 
+	                        } elsif ($! == ECHILD) {
+
+  	                                $::d_source && msg("Got ECHILD - will try again later.\n");
+  	                                return undef;
+
 				} else {
 
 					$::d_source && msg("readlen undef: ($!)" . ($! + 0) . "\n"); 
@@ -1869,17 +1865,6 @@ sub pauseSynced {
 	}
 }
 
-sub openRemoteStream {
-	warn "Slim::Player::openRemoteStream is deprecated. Please use Slim::Player::ProtocolHandlers->openRemoteStream()\n";
-
-	return Slim::Player::ProtocolHandlers->openRemoteStream(@_);
-}
-
 1;
 
 __END__
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

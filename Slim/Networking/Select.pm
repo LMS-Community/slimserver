@@ -7,22 +7,13 @@ package Slim::Networking::Select;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-use warnings;
 use strict;
+use warnings;
 use IO::Select;
 
+use Slim::Utils::Errno;
 use Slim::Utils::Misc;
 use Slim::Utils::PerfMon;
-
-BEGIN {
-	if ($^O =~ /Win32/) {
-		*EWOULDBLOCK = sub () { 10035 };
-		*EINPROGRESS = sub () { 10036 };
-	} else {
-		require Errno;
-		import Errno qw(EWOULDBLOCK EINPROGRESS);
-	}
-}
 
 =head1 NAME
 

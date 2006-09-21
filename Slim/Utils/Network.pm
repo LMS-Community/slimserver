@@ -31,21 +31,9 @@ use Socket qw(inet_ntoa inet_aton);
 use Symbol qw(qualify_to_ref);
 use Time::HiRes;
 
-#
+use Slim::Utils::Errno;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
-
-BEGIN {
-	if ($^O =~ /Win32/) {
-		*EINTR       = sub () { 10004 };
-		*EWOULDBLOCK = sub () { 10035 };
-		*EINPROGRESS = sub () { 10036 };
-
-	} else {
-		require Errno;
-		import Errno qw(EWOULDBLOCK EINPROGRESS EINTR);
-	}
-}
 
 =head2 blocking( $sock, [0 | 1] )
 

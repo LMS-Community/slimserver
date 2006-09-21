@@ -16,19 +16,10 @@ use IPC::Open2;
 use IO::Handle;
 use POSIX qw(:sys_wait_h);
 
+use Slim::Utils::Errno;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::OSDetect;
-
-BEGIN {
-	if ($^O =~ /Win32/) {
-		*EWOULDBLOCK = sub () { 10035 };
-		*EINPROGRESS = sub () { 10036 };
-	} else {
-		require Errno;
-		import Errno qw(EWOULDBLOCK EINPROGRESS);
-	}
-}
 
 sub new {
 	my $class = shift;
@@ -82,7 +73,7 @@ sub new {
 
 		my $processObj;
 
-		eval "use Win32::Process";
+		Slim::bootstrap::tryModuleLoad('Win32::Process');
 
 		if ($@ || !Win32::Process::Create(
 			$processObj, Slim::Utils::Misc::findbin("socketwrapper"), $newcommand, 0, 0x20, ".")

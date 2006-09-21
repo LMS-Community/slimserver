@@ -34,26 +34,17 @@ use Slim::Networking::mDNS;
 use Slim::Networking::Select;
 use Slim::Player::HTTP;
 use Slim::Music::Info;
-use Slim::Web::Pages;
-use Slim::Web::Graphics;
-
+use Slim::Utils::Errno;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
+use Slim::Web::Pages;
+use Slim::Web::Graphics;
 
-
-# constants
 BEGIN {
-	if ($^O =~ /Win32/) {
-		*EWOULDBLOCK = sub () { 10035 };
-		*EINPROGRESS = sub () { 10036 };
-	} else {
-		require Errno;
-		import Errno qw(EWOULDBLOCK EINPROGRESS);
-	}
-	
+
 	# Use our custom Template::Context subclass
 	$Template::Config::CONTEXT = 'Slim::Web::Template::Context';
 }
@@ -121,7 +112,7 @@ sub init {
 	push @templateDirs, Slim::Utils::OSDetect::dirsFor('HTML');
 
 	# Try and use the faster XS module if it's available.
-	eval { require Template::Stash::XS };
+	Slim::bootstrap::tryModuleLoad('Template::Stash::XS');
 
 	if ($@) {
 
@@ -142,22 +133,6 @@ sub init {
 	if (Slim::Utils::Prefs::get('httpport')) {
 		Slim::Web::HTTP::openport(Slim::Utils::Prefs::get('httpport'), $::httpaddr, $Bin);
 	}
-}
-
-sub escape {
-	msg("Slim::Web::HTTP::escape has been deprecated in favor of 
-	     Slim::Utils::Misc::escape(). Please update your calls!\n");
-	Slim::Utils::Misc::bt();
-
-	return Slim::Utils::Misc::escape(@_);
-}
-
-sub unescape {
-	msg("Slim::Web::HTTP::unescape has been deprecated in favor of 
-	     Slim::Utils::Misc::unescape(). Please update your calls!\n");
-	Slim::Utils::Misc::bt();
-	
-	return Slim::Utils::Misc::unescape(@_);
 }
 
 sub openport {
@@ -2044,13 +2019,6 @@ sub _getFileContent {
 	}
 	
 	return (\$content, $mtime, $inode, $size);
-}
-
-sub HomeURL {
-	msg("Info: Slim::Web::HTTP::HomeURL is deprecated. Please call Slim::Utils::Prefs::homeURL() instead.\n");
-	bt(); 
-
-	return Slim::Utils::Prefs::homeURL();
 }
 
 sub HTMLTemplateDirs {
