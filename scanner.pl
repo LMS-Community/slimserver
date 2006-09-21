@@ -302,7 +302,7 @@ EOF
 sub initClass {
 	my $class = shift;
 
-	eval "use $class";
+	Slim::bootstrap::tryModuleLoad($class);
 
 	if ($@) {
 		errorMsg("Couldn't load $class: $@\n");

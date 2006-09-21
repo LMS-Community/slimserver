@@ -105,12 +105,16 @@ sub findLibraryFromPlist {
 
 sub findLibraryFromRegistry {
 	my $class = shift;
+	my $path  = undef;
 
-	my $path = undef;
+	if (Slim::Utils::OSDetect::OS() ne 'win') {
+		return;
+	}
 
-	return if Slim::Utils::OSDetect::OS() ne 'win';
+	Slim::bootstrap::tryModuleLoad('Win32::Registry');
 
-	if (!eval "use Win32::Registry;") {
+	if (!$@) {
+
 		my $folder;
 
 		if ($::HKEY_CURRENT_USER && $::HKEY_CURRENT_USER->Open("Software\\Microsoft\\Windows"
@@ -133,7 +137,7 @@ sub findLibraryFromRegistry {
 			}
 		}
 	}
-	
+
 	return $path;
 }
 

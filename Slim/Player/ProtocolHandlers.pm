@@ -105,7 +105,7 @@ sub loadHandler {
 
 	if ($handlerClass && !$loadedHandlers{$handlerClass}) {
 
-		eval "use $handlerClass";
+		Slim::bootstrap::tryModuleLoad($handlerClass);
 
 		if ($@) {
 			errorMsg("loadHandler: Couldn't load class: [$handlerClass] - [$@]\n");

@@ -39,7 +39,7 @@ sub new {
 
 		$::d_protocol && msg("Loading module: $module\n");
 
-		eval "use $module";
+		Slim::bootstrap::tryModuleLoad($module);
 
 		if ($@) {
 			msg("Couldn't load module: $module for SLIMP3: [$@] - THIS IS FATAL\n");

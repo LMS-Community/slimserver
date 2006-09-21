@@ -357,7 +357,9 @@ sub defaultAudioDir {
 
 	} elsif (Slim::Utils::OSDetect::OS() eq 'win') {
 
-		if (!eval "use Win32::Registry;") {
+		Slim::bootstrap::tryModuleLoad('Win32::Registry');
+
+		if (!$@) {
 
 			my $folder;
 

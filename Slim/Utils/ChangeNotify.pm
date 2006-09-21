@@ -35,7 +35,7 @@ sub new {
 		$loader = 'Slim::Utils::ChangeNotify::Win32';
 	}
 
-	eval "use $loader";
+	Slim::bootstrap::tryModuleLoad($loader);
 
 	if ($@ && $@ =~ /Can't/) {
 

@@ -37,13 +37,13 @@ use Scalar::Util qw(blessed);
 
 my $dumperClass;
 {
-	eval 'use Data::TreeDumper ()';
+	Slim::bootstrap::tryModuleLoad('Data::TreeDumper');
 
 	if ($@ !~ /Can't locate/) {
 		$dumperClass = 'Data::TreeDumper';
 	} else {
 		$@ = '';
-		eval 'use Data::Dumper ()';
+		Slim::bootstrap::tryModuleLoad('Data::Dumper');
 		$dumperClass = 'Data::Dumper';
 	}
 }
@@ -858,7 +858,7 @@ sub noh_b_deparse {
 	no strict 'refs';
 
 	# Deparse is a memory hog
-	eval "use B::Deparse ()";
+	Slim::bootstrap::tryModuleLoad('B::Deparse');
 
 	my $deparse = B::Deparse->new('-si8T');
 	my $body = $deparse->coderef2text(\&{$name});
