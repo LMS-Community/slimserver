@@ -25,8 +25,14 @@ build-perl-modules script to run successfully, you must have You must have:
 - Perl 5.8.3 or greater, and the required development libs (if any; some
   platforms put this in a separate package, such as 'libperl-dev')
 
-- For DBD::mysql to build properly, the MySQL client libs - http://www.mysql.com/
-  This might also be a package on your system, such as libdbd-mysql-perl
+- MySQL 4.1.xx or 5.0.xx. Included as a binary with SlimServer for Windows 
+  NT/2000/XP, Linux (i386) and Mac OS X.
+
+  This might also be a package on your system, such as mysql-server &
+  libdbd-mysql-perl (for the supporting libraries).
+
+  For information about using MySQL with other operating systems, see our Wiki at:
+  http://wiki.slimdevices.com/
 
 - For XML::Parser to build properly - http://expat.sourceforge.net/
   This might also be a package on your system, such as expat-dev, libexpat-dev, etc.
@@ -92,6 +98,9 @@ FreeBSD Notes:
 	slimserver daemon. There is no requirement that the slimserver daemon
 	execute with extensive priviledges. As always, executing the perl programs
 	as "root" is not good security practice.
+
+	You will also need MySQL installed - preferrably 5.0.xx or higher.
+	Both the server itself (in your $PATH) and the development libraries.
 
 --------------------------------------------------------------------------------
 
