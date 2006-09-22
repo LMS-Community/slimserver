@@ -240,7 +240,10 @@ sub tryModuleLoad {
 
 		if ($@) {
 
-			$d_startup && warn "Module [$module] failed to load: [$@]\n";
+			if ($d_startup || ($::d_plugins && $module =~ /^Plugins::/)) {
+
+				warn "Module [$module] failed to load: [$@]\n";
+			}
 
 			# NB: More FC5 / SELinux - in case the above chcon doesn't work.
 			if ($@ =~ /cannot restore segment prot after reloc/) {
