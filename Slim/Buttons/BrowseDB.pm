@@ -391,7 +391,7 @@ sub browsedbExitCallback {
 		} elsif ($currentItem eq 'FAVORITE') {
 
 			my $num   = $client->modeParam('favorite');
-			my $track = Slim::Schema->find('Track', $client->modeParam('findCriteria')->{'playlist'});
+			my $track = Slim::Schema->find('Track', $client->modeParam('findCriteria')->{'playlist.id'});
 
 			if (!blessed($track) || !$track->can('title')) {
 
@@ -781,7 +781,7 @@ sub setMode {
 	# let the user add a favorite for this playlist.
 	if ($levels[$level-1] eq 'playlist') {
 
-		my $track = Slim::Schema->find('Track', $filters->{'playlist'});
+		my $track = Slim::Schema->find('Track', $filters->{'playlist.id'});
 
 		if (blessed($track) && $track->can('id')) {
 		
