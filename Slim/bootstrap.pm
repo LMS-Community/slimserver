@@ -20,7 +20,17 @@ use File::Spec::Functions qw(:ALL);
 use POSIX ":sys_wait_h";
 use Symbol;
 
-# This begin statement contains some trickery to deal with modules
+BEGIN {
+	# Don't allow the server to be started as root.
+	# MySQL can't be run as root, and it's generally a bad idea anyways.
+	if ($^O ne 'MSWin32' && $> == 0) {
+
+		print "* Error: SlimServer must not be run as root! Exiting! *\n";
+		exit;
+	}
+}
+
+# loadModules contains some trickery to deal with modules
 # that need to load XS code. Previously, we would check in a module
 # under CPAN/arch/$VERSION/auto/... including it's binary parts and
 # the pure perl parts. This got to be messy and unwieldly, as we have
