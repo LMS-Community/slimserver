@@ -555,7 +555,7 @@ sub _parseCueSheet {
 
 	# First field in block is the Media Catalog Number
 	my $catalog   = substr($tmpBlock,0,128);
-	$catalog =~ s/\x00.*$//gs; # trim nulls off of the end
+	$catalog =~ s/\x00*.*$//gs; # trim nulls off of the end
 
 	push (@$cuesheet, "CATALOG $catalog\n") if length($catalog) > 0;
 	$tmpBlock     = substr($tmpBlock,128);
@@ -640,7 +640,7 @@ sub _parseCueSheet {
 		$seenTracknumber{$tracknum} = 1;
 
 		my $isrc = substr($tmpBlock,9,12);
-		   $isrc =~ s/\x00.*$//;
+		   $isrc =~ s/\x00*.*$//;
 
 		if ((length($isrc) != 0) && (length($isrc) != 12)) {
 			warn "Invalid ISRC code $isrc\n";
