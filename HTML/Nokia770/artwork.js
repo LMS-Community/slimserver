@@ -24,16 +24,37 @@ function fillDataHash(theData) {
 	}
 }
 
+function emptyFunction() {
+}
+
 function showArrows(firstOne, secondOne, lastOne) {
 	if (firstOne == '1') {
-		Element.hide('last_cover');
-		Element.show('next_cover');
+		if ($('last_cover_click')) {
+			$('last_cover_click').onclick = emptyFunction;
+			$('last_cover_click').src = '[% webroot %]html/images/rew.gif';
+		}
+		if ($('next_cover_click')) {
+			$('next_cover_click').onclick = nextCover;
+			$('next_cover_click').src = '[% webroot %]html/images/ffw_active.gif';
+		}
 	} else if (secondOne == lastOne) {
-		Element.show('last_cover');
-		Element.hide('next_cover');
+		if ($('last_cover_click')) {
+			$('last_cover_click').onclick = lastCover;
+			$('last_cover_click').src = '[% webroot %]html/images/rew_active.gif';
+		}
+		if ($('next_cover_click')) {
+			$('next_cover_click').onclick = emptyFunction;
+			$('next_cover_click').src = '[% webroot %]html/images/ffw.gif';
+		}
 	} else {
-		Element.show('last_cover');
-		Element.show('next_cover');
+		if ($('last_cover_click')) {
+			$('last_cover_click').onclick = lastCover;
+			$('last_cover_click').src = '[% webroot %]html/images/rew_active.gif';
+		}
+		if ($('next_cover_click')) {
+			$('next_cover_click').onclick = nextCover;
+			$('next_cover_click').src = '[% webroot %]html/images/ffw_active.gif';
+		}
 	}
 }
 

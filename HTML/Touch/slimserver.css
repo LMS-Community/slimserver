@@ -338,7 +338,8 @@ div#progressbar_overlay {
 }
 
 div#last_cover {
-	position: absolute;
+	position: relative;
+	float: left;
 	left: 10;
 	width: 60;
 	top: 150;
@@ -346,22 +347,25 @@ div#last_cover {
 }
 
 div#cover1 {
-	position: absolute;
-	left: 75;
+	position: relative;
+	float: left;
+	left: 20;
 	width: 300;
 	top: 50;
 }
 
 div#cover2 {
-	position: absolute;
-	left: 395;
+	position: relative;
+	float: left;
+	left: 20;
 	width: 300;
 	top: 50;
 }
 
 div#next_cover{
-	position: absolute;
-	left: 705;
+	position: relative;
+	float: left;
+	left: 20;
 	width: 60;
 	top: 150;
 	border: 1px solid black;

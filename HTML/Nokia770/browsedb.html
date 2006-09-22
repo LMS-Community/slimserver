@@ -47,8 +47,8 @@
 <table><tr><td height = '40'>&nbsp;</td></tr></table>
 
 [% IF level == 0 && artwork == 2 %]
-<div id = 'last_cover' style = "display: none;">
-	<img src = '[% webroot %]html/images/rew_active.gif' onClick = 'javascript:lastCover();'>
+<div id = 'last_cover'>
+	<img src = '[% webroot %]html/images/rew_active.gif' id = 'last_cover_click' >
 </div>
 <div id = 'cover1'>
 	<!--first cover here-->[% INCLUDE coverTable cover = 1 %]
@@ -57,7 +57,7 @@
 	<!--second cover here-->[% INCLUDE coverTable cover = 2 %]
 </div>
 <div id = 'next_cover'>
-	<img src = '[% webroot %]html/images/ffw_active.gif' onClick = 'javascript:nextCover();'>
+	<img src = '[% webroot %]html/images/ffw_active.gif' id = 'next_cover_click'>
 </div>
 [% ELSE %]
 
