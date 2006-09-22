@@ -22,6 +22,7 @@
 package Plugins::Live365::ProtocolHandler;
 
 use strict;
+use Slim::Utils::Cache;
 use Slim::Utils::Misc qw( msg );
 use Slim::Utils::Timers;
 use Slim::Player::Playlist;
@@ -76,6 +77,21 @@ sub new {
 	return $self;
 }
 
+sub notifyOnRedirect {
+	my ( $self, $originalURL, $redirURL ) = @_;
+	
+	# Live365 redirects like so:
+	# http://www.live365.com/play/rocklandusa?sessionid=foo:bar ->
+	# http://216.235.81.102:15072/play?membername=foo&session=...
+	
+	# Scanner calls this method with the new URL so we can cache it
+	# for use in canDirectStream
+	
+	$::d_plugins && msg("Live365: Caching redirect URL: $redirURL\n");
+	
+	Slim::Utils::Cache->new->set( "live365_$originalURL", $redirURL, '1 hour' );
+}
+
 sub canDirectStream {
 	my ($self, $client, $url) = @_;
 
@@ -110,6 +126,11 @@ sub canDirectStream {
 			( $self, $handle, $url, $isVIP )
 		);
 	}
+	
+	# Get the real URL from cache
+	if ( my $cachedURL = Slim::Utils::Cache->new->get( "live365_$url" ) ) {
+		$realURL = $cachedURL;
+	}
 
 	return $realURL;
 }
@@ -140,16 +161,6 @@ sub getPlaylist {
 		handle => $handle,
 		isVIP => $isVIP
 	});
-}
-
-sub isAudioURL {
-	my ( $class, $url ) = @_;
-	
-	if ( $url =~ m{^live365://www.live365.com/play/[^/?]+.*$} ) {
-	    return 1;
-	}
-	
-	return;
 }
 
 sub playlistLoaded {

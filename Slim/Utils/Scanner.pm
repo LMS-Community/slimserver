@@ -557,6 +557,21 @@ sub readRemoteHeaders {
 		# If we redirected, we need to update the title on the final URL to match
 		# the title for the original URL
 		if ( $url ne $originalURL ) {
+			
+			# On a redirect, the protocol handler may want to know about the new URL
+			# This is used by Live365 to get the correct stream URL
+			if ( $originalURL !~ /^(?:http|mms)/ ) {
+				my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $originalURL );
+				if ( $handler && $handler->can('notifyOnRedirect') ) {
+					$handler->notifyOnRedirect( $originalURL, $url );
+					
+					# reset the URL back to the original URL
+					$url = $originalURL;
+					$track->url($url);
+					$track->update;
+				}
+			}
+			
 			my $title = Slim::Music::Info::title( $originalURL );
 			Slim::Music::Info::setTitle( $url, $title );
 			Slim::Music::Info::setCurrentTitle( $url, $title );
