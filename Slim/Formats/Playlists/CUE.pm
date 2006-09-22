@@ -67,6 +67,16 @@ sub parse {
 
 			$cuesheet->{uc($1)} = $2;
 
+		} elsif ($line =~ /^(?:REM\s+)?(DATE)\s+(.*)/i) {
+
+			# EAC CUE sheet has REM DATE not REM YEAR, and no quotes
+			$cuesheet->{uc($1)} = $2;
+
+		} elsif ($line =~ /^(?:REM\s+)?(GENRE)\s+(.*)/i) {
+
+			# Single worded GENRE doesn't have quotes
+			$cuesheet->{uc($1)} = $2;
+
 		} elsif ($line =~ /^(?:REM\s+)?(REPLAYGAIN_ALBUM_GAIN)\s+(.*)dB/i) {
 
 			$cuesheet->{uc($1)} = $2;
