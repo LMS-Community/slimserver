@@ -64,7 +64,7 @@ sub parseDirectBody {
 
 	# Need to tell the parser that the playlist is in pls format.
 	my $pls   = Plugins::RadioIO::Plugin::getHTTPURL($url);
-	my @items = Slim::Formats::Parse::parseList($pls, $io);
+	my @items = Slim::Formats::Playlists->parseList($pls, $io);
 
 	return () unless scalar(@items);
 
