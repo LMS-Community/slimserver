@@ -11,9 +11,9 @@ Slim::Buttons::Block
 
 =head1 SYNOPSIS
 
-Slim::Buttons::Playlist::block($client,$lineref);
+Slim::Buttons::Block::block($client,$lineref);
 
-Slim::Buttons::Playlist::unblock($client);
+Slim::Buttons::Block::unblock($client);
 
 =head1 DESCRIPTION
 
