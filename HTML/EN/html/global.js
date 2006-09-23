@@ -62,11 +62,15 @@ function getStatusData(params, action) {
 	});
 }
 
-function getHeadData(params, action) {
-	var requesttype = 'head';
+function ajaxPing(params, action) {
+	var requesttype = 'post';
+
+	if (window.XMLHttpRequest) {
+		requesttype = 'get';
+	}
 
 	var myAjax = new Ajax.Request(
-	url,
+	'ping.html',
 	{
 		method: requesttype,
 		postBody: params,

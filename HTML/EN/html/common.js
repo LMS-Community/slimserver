@@ -85,14 +85,24 @@ function toggleGalleryView(artwork) {
 [% END %]
 
 function ajaxRefresh() {
-	var args = 'player='+player+'&ajaxRequest=1';
-	getHeadData(args, ajaxCallback);
+
+	// add a random number to the params as IE loves to cache the heck out of 
+	var args = 'd=' + Math.random();
+	ajaxPing(args, ajaxCallback);
 }
 
 function ajaxCallback(theData) {
-	if (theData.status == 200){
-		refresh();
+	
+	// firefox needs to know we have a reponse first
+	if (theData.responseText) {
+	
+		// then make sure response is ok
+		if (theData.status == 200){
+			refresh();
+		}
 	} else {
+	
+		// do another background ping every 60 seconds
 		setTimeout( "ajaxRefresh()", 60*1000);
 	}
 }

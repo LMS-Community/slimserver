@@ -41,6 +41,7 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^setup\.(?:htm|xml)/,\&Slim::Web::Setup::setup_HTTP);
 	Slim::Web::HTTP::addPageFunction(qr/^tunein\.(?:htm|xml)/,\&tuneIn);
 	Slim::Web::HTTP::addPageFunction(qr/^update_firmware\.(?:htm|xml)/,\&update_firmware);
+	Slim::Web::HTTP::addPageFunction(qr/^ping\.(?:htm|xml)/,\&ping);
 
 	# pull in the memory usage module if requested.
 	if ($::d_memory) {
@@ -554,6 +555,12 @@ sub update_firmware {
 sub tuneIn {
 	my ($client, $params) = @_;
 	return Slim::Web::HTTP::filltemplatefile('tunein.html', $params);
+}
+
+# Handler for a very small 'are you alive' page for background check of server status
+sub ping {
+	my ($client, $params) = @_;
+	return Slim::Web::HTTP::filltemplatefile('ping.html', $params);
 }
 
 1;
