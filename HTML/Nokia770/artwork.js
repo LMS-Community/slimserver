@@ -2,7 +2,6 @@ var url = '[% webroot %]browsedb.html';
 var parsedData;
 var artistHrefTemplate = '[% webroot %]browsedb.html?hierarchy=album,track&amp;contributor.id=ARTIST&amp;level=1&player=[% playerURI %]';
 var albumHrefTemplate = '[% webroot %]browsedb.html?hierarchy=album,track&level=1&album.id=ALBUM&player=[% playerURI %]';
-var thumbHrefTemplate = '/music/COVER/thumb_250x250_f_000000.jpg';
 var playAlbumTemplate = '[% webroot %]status.html?command=playlist&subcommand=loadtracks&album.id=ALBUM&player=[% playerURI %]';
 var addAlbumTemplate = '[% webroot %]playlist.html?command=playlist&subcommand=addtracks&album.id=ALBUM&player=[% playerURI %]';
 var blankRequest = 'hierarchy=album,track&level=0&artwork=2&player=00%3A04%3A20%3A05%3A1b%3A82&artwork=1&start=[% start %]&ajaxRequest=1';
@@ -11,6 +10,8 @@ var thisAlbum, thatAlbum;
 
 [% PROCESS html/global.js %]
 [% PROCESS skin_global.js %]
+
+var thumbHrefTemplate = '/music/COVER/thumb_'+thumbSize+'x'+thumbSize+'_f_000000.jpg';
 
 // parses the data if it has not been done already
 function fillDataHash(theData) {
@@ -112,6 +113,30 @@ function artworkBrowse(urlArgs, thisId, thatId) {
 	thisAlbum = thisId;
 	thatAlbum = thatId;
 	getStatusData(urlArgs, refreshThumbs);
+}
+
+function enlargeThumbs() {
+	if (thumbSize == 700) {
+		return;
+	} else {
+		thumbSize = thumbSize + 50;
+		resizeThumbs();
+	}
+}
+
+function shrinkThumbs() {
+	if (thumbSize == 50) {
+		return;
+	} else {
+		thumbSize = thumbSize - 50;
+		resizeThumbs();
+	}
+}
+
+function resizeThumbs() {
+	thumbHrefTemplate = '/music/COVER/thumb_'+thumbSize+'x'+thumbSize+'_f_000000.jpg';
+	refreshThumbs(parsedData);
+	setCookie( 'SlimServer-thumbSize', thumbSize );
 }
 
 window.onload= function() {
