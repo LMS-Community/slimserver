@@ -3045,6 +3045,10 @@ sub skins {
 			next if $forUI && $dir =~ /^x/;
 			next if !-d catdir($templatedir, $dir);
 
+			# BUG 4171: Disable dead Default2 skin, in case it was left lying around
+			next if $dir =~ /^(?:Default2)$/i;
+
+
 			$::d_http && msg(" skin entry: $dir\n");
 			
 			if ($dir eq Slim::Web::HTTP::defaultSkin()) {

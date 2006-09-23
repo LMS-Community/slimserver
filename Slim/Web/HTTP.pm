@@ -238,11 +238,20 @@ sub acceptHTTP {
 
 sub isaSkin {
 	my $name = shift;
+	
+	# BUG 4171: Default2 is gone, so redirect to Default.
+	if ($name =~ /^(?:Default2)$/i) {
+		$name = 'Default';
+	}
+	
 	my %skins = Slim::Web::Setup::skins();
+	
 	for my $skin (keys %skins) {
 		return $skin if $name =~ /^($skin)$/i;
 	}
-	return undef;
+	
+	$::d_http && msg("HTTP: no matching skin, falling back to default\n");
+	return 'Default';
 }
 
 # Handle an HTTP request
@@ -1937,6 +1946,9 @@ sub _generateContentFromFile {
 	my ($type, $path, $params) = @_;
 
 	my $skin = $params->{'skinOverride'} || Slim::Utils::Prefs::get('skin');
+
+	# BUG 4171:  only generate from valid skins, falling back on default if invalid.
+	$skin = isaSkin($skin);
 
 	$::d_http && msg("generating from $path\n");
 
