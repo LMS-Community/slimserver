@@ -1,3 +1,4 @@
+var thumbSize = [% IF thumbSize %][% thumbSize %][% ELSE %]250[% END %];
 function chooseAlbumOrderBy(value, option, artwork)
 {
 	if (!artwork) {
