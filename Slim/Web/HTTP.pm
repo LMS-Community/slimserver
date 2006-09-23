@@ -696,6 +696,12 @@ sub generateHTTPResponse {
 		$params->{'orderBy'} = $params->{'cookies'}->{'SlimServer-orderBy'}->value unless defined $params->{'orderBy'};
 	}
 
+        # Check for thumbSize cookie (for Touch, 1-by-1 artwork enlarge/shrink feature)
+	if (	$params->{'cookies'}->{'SlimServer-thumbSize'} &&
+		$params->{'cookies'}->{'SlimServer-thumbSize'}->value) {
+
+			$params->{'thumbSize'} = $params->{'cookies'}->{'SlimServer-thumbSize'}->value unless defined $params->{'thumbSize'};
+	}
 
 	if (Slim::Web::Graphics::serverResizesArt()) {
 		$params->{'serverResizesArt'} = 1;
