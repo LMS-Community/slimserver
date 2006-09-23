@@ -789,7 +789,7 @@ SEARCHMODE: {
 										if( my $APImessage = $live365->{$client}->status() ) {
 											return $_[0]->string( $APImessage )
 										} else {
-											return $_[1][0];
+											return $_[0]->string($_[1][0]);
 										}
 									},
 				'externRefArgs'  => 'CV',
