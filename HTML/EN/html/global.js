@@ -70,7 +70,7 @@ function ajaxPing(params, action) {
 	}
 
 	var myAjax = new Ajax.Request(
-	'ping.html',
+	'html/ping.html',
 	{
 		method: requesttype,
 		postBody: params,

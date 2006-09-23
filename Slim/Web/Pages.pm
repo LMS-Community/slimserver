@@ -557,12 +557,6 @@ sub tuneIn {
 	return Slim::Web::HTTP::filltemplatefile('tunein.html', $params);
 }
 
-# Handler for a very small 'are you alive' page for background check of server status
-sub ping {
-	my ($client, $params) = @_;
-	return Slim::Web::HTTP::filltemplatefile('ping.html', $params);
-}
-
 1;
 
 __END__
