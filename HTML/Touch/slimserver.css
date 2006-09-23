@@ -346,12 +346,15 @@ div#last_cover {
 	border: 1px solid black;
 }
 
+div#resizeThumbs {
+	float:right;
+}
+
 div#cover1 {
-	position: relative;
+	position: absolute;
 	float: left;
 	left: 20;
-	width: 300;
-	top: 50;
+	top: 70;
 }
 
 div#cover2 {
@@ -452,4 +455,8 @@ div#addedToPlaylist{
 	BORDER-BOTTOM: black 0pt none;
 	WIDTH: 222;
 	HEIGHT: 36;
+}
+
+.thinborder {
+	border: 1px solid black;
 }
