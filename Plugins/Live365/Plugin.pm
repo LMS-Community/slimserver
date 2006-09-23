@@ -604,7 +604,7 @@ CHANNELMODE: {
 			'onChangeArgs' => 'CV',
 			'callback'       => \&channelExitHandler,
 			'overlayRef'     => sub {
-									return (undef, Slim::Display::Display::symbol('rightarrow'));
+									return (undef, Slim::Display::Display::symbol('notesymbol'));
 								},
 			}
 		);
