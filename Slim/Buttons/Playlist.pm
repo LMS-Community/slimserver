@@ -17,7 +17,7 @@ Slim::Buttons::Playlist::jump($client,$index);
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Playlist> is contains functions for browsing the current playlist, and displaying the information 
+L<Slim::Buttons::Playlist> contains functions for browsing the current playlist, and displaying the information 
 on a Slim Devices player display.
 
 =cut
@@ -106,7 +106,7 @@ sub init {
 
 				if ($oldindex != $newindex && $songcount > 1) {
 					browseplaylistindex($client,$newindex);
-					showingNowPlaying($client, 0);
+					playlistNowPlaying($client, 0);
 				}
 
 				$::d_ui && msgf("funct: [$funct] old: $oldindex new: $newindex is after setting: [%s]\n", browseplaylistindex($client));
@@ -139,7 +139,6 @@ sub init {
 
 			} else {
 
-				$client->modeParam('showingnowplaying',0);
 				$inc = ($inc =~ /\D/) ? -1 : -$inc;
 
 				my $newposition = Slim::Buttons::Common::scroll($client, $inc, $songcount, browseplaylistindex($client));
@@ -147,7 +146,7 @@ sub init {
 				if ($newposition != browseplaylistindex($client)) {
 
 					browseplaylistindex($client, $newposition);
-					showingNowPlaying($client, 0);
+					playlistNowPlaying($client, 0);
 
 					$client->pushUp();
 					$client->updateKnob();
@@ -177,7 +176,7 @@ sub init {
 				if ($newposition != browseplaylistindex($client)) {
 
 					browseplaylistindex($client,$newposition);
-					showingNowPlaying($client, 0);
+					playlistNowPlaying($client, 0);
 
 					$client->pushDown();
 					$client->updateKnob();
@@ -236,7 +235,7 @@ sub init {
 			browseplaylistindex($client,$newposition);
 			
 			# reset showingnowplaying status
-			showingNowPlaying($client, 0);
+			playlistNowPlaying($client, 0);
 
 			$client->update();	
 		},
@@ -327,7 +326,7 @@ sub setMode {
 	}
 
 	browseplaylistindex($client);
-	showingNowPlaying($client);
+	playlistNowPlaying($client);
 	
 
 	# update client every second in this mode
@@ -342,7 +341,7 @@ Requires: $client
 The optional argument $how is a string indicating the method of arrival to this mode: either 'push' or 'pop'.
 
 If we are pushing out of the playlist mode, stash a reference to the modeParams so that browseplaylistindex
-and showingNowPlaying can reference them.  Delete the reference when playlist mode is removed from the mode
+and playlistNowPlaying can reference them.  Delete the reference when playlist mode is removed from the mode
 stack.
 
 =cut
@@ -370,7 +369,7 @@ sub jump {
 	my $client = shift;
 	my $pos = shift;
 	
-	if (showingNowPlaying($client)) {
+	if (playlistNowPlaying($client)) {
 		if (!defined($pos)) { 
 			$pos = Slim::Player::Source::playingSongIndex($client);
 		}
@@ -458,33 +457,35 @@ sub lines {
 	return $parts;
 }
 
-=head2 showingNowPlaying( $client, [$wasshowing] )
+=head2 showingNowPlaying( $client )
 
-Check if the information currently displayed on a player is the currently playing song. Showing the "current track" 
-of the current playlist is a special case.  This function can be used to determine whether or not to display the additional
-information that might be shown for the current track.
-
-This function will update the showingnowplaying param to match the current state.
-
-If the optional $wasshowing parameter is supplied, it overrides the previous value of the showingnowplaying param.
-This prevents being locked onto the currently playing song if a deliberate move is done.
+Check if the information currently displayed on a player is the currently playing song.
 
 =cut
 
-
 sub showingNowPlaying {
+	my $client = shift;
+
+	return ( defined Slim::Buttons::Common::mode($client) && 
+			 ( (Slim::Buttons::Common::mode($client) eq 'screensaver') || 
+			   ((Slim::Buttons::Common::mode($client) eq 'playlist') && 
+			   ((browseplaylistindex($client)|| 0) == Slim::Player::Source::playingSongIndex($client)) )) );
+}
+
+
+=head2 playlistNowPlaying( $client, [ $wasshowing ] )
+
+Internal function used by jump and other functions which manipulate the currently playing song in this mode.  Returns whether player is currently showing now playing or was showing it previously.
+
+This function will update the showingnowplaying param to match the current state. If the optional $wasshowing parameter is supplied, it overrides the previous value of the nowplaying param. This prevents being locked onto the currently playing song if a deliberate move is done.
+
+=cut
+
+sub playlistNowPlaying {
 	my $client = shift;
 	my $wasshowing;
 
-	# special case of playlist mode, to indicate when server needs to
-	# display the now playing details.  This includes playlist mode and
-	# now playing (jump back on wake) screensaver.
-	my $nowshowing = ( defined Slim::Buttons::Common::mode($client) && (
-			(Slim::Buttons::Common::mode($client) eq 'screensaver') || 
-			((Slim::Buttons::Common::mode($client) eq 'playlist') && 
-				((browseplaylistindex($client)|| 0) == Slim::Player::Source::playingSongIndex($client)))
-		)
-	);
+	my $nowshowing = showingNowPlaying($client);
 
 	if (defined Slim::Buttons::Common::mode($client) && Slim::Buttons::Common::mode($client) eq 'playlist') {
 
@@ -496,6 +497,7 @@ sub showingNowPlaying {
 		}
 
 		return $client->modeParam('showingnowplaying',$nowshowing || $wasshowing);
+
 	} elsif (defined $playlistParams{$client}) {
 
 		$wasshowing = @_ ? shift : $playlistParams{$client}->{'showingnowplaying'};
@@ -506,16 +508,19 @@ sub showingNowPlaying {
 		}
 
 		return $playlistParams{$client}->{'showingnowplaying'} = ($nowshowing || $wasshowing);
+
 	} else {
+
 		# if no playlist mode is on the stack, then always claim to be showing now playing
 		return 1;
+
 	}
 }
 
 
 =head2 browseplaylistindex( $client, [ $playlistindex ])
 
-Get and optionally set the currently viewed position in the curren playlist.  The index is zero-based and should only be set
+Get and optionally set the currently viewed position in the current playlist.  The index is zero-based and should only be set
 when in playlist mode. Callers outside this module may want to get the current index if they operate on any tracks in the current playlist.
 
 The optional argument, $playlistindex sets the zero-based position for browsing the current playlist.
