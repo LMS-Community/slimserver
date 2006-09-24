@@ -711,7 +711,6 @@ sub vfdmodel {}
 sub forgetDisplay {
 	my $display = shift;
 	Slim::Utils::Timers::forgetTimer($display);
-	$display->client->display(undef);
 }
 
 our $failsafeLanguage     = Slim::Utils::Strings::failsafeLanguage();
