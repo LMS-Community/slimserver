@@ -1438,7 +1438,7 @@ WELCOME_TO_SOFTSQUEEZE
 FREE_YOUR_MUSIC
 	CS	Svobodu Tvojí muzice
 	DA	Lyt til din musik!
-	EN	Free the ewoks! 
+	EN	Free your music
 	ES	Libera tu música
 	FI	Vapauta musiikkisi
 	FR	Libérez votre musique
