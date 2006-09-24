@@ -814,12 +814,6 @@ sub _hello_handler {
 
 		Slim::bootstrap::tryModuleLoad($display_class);
 
-		if ($@) {
-			errorMsg("Couldn't load module: $display_class: [$@] - THIS IS FATAL\n");
-			bt();
-			$@ = '';
-		}
-
 		$client->display( $display_class->new($client) );
 	}
 
@@ -835,12 +829,6 @@ sub _hello_handler {
 		);
 
 		Slim::bootstrap::tryModuleLoad($display_class);
-
-		if ($@) {
-			errorMsg("Couldn't load module: $display_class: [$@] - THIS IS FATAL\n");
-			bt();
-			$@ = '';
-		}
 
 		$client->display( $display_class->new($client) );
 

@@ -250,7 +250,7 @@ sub tryModuleLoad {
 
 		if ($@) {
 
-			if ($d_startup || ($::d_plugins && $module =~ /^Plugins::/)) {
+			if ($d_startup || $module =~ /^Slim::Display::/ || ($::d_plugins && $module =~ /^Plugins::/)) {
 
 				warn "Module [$module] failed to load: [$@]\n";
 			}
