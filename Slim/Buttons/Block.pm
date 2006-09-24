@@ -79,7 +79,8 @@ sub exitMode {
 
 	# restore previous lines and display screen
 	$client->lines( $client->modeParam('oldLines') );
-	$client->update();
+
+	$client->update() if $client->modeParam('block.updatedscreen');
 }
 
 =head2 block( $client, $line1 )
@@ -109,11 +110,6 @@ sub block {
 	Slim::Buttons::Common::pushMode($client, 'block');
 
 	$client->modeParam('block.name', $blockName);
-
-	if (ref($parts) eq 'HASH') {
-
-		$client->showBriefly($parts);
-	}
 }
 
 =head2 unblock( $client )
@@ -141,6 +137,8 @@ sub lines {
 	my $parts = $bdata->{'parts'};
 	my $screen1;
 
+	$client->modeParam('block.updatedscreen', 1);
+	
 	if ($bdata->{'static'}) {
 
 		return $parts
