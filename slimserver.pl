@@ -862,68 +862,69 @@ sub changeEffectiveUserAndGroup {
 	# MySQL can't be run as root, and it's generally a bad idea anyways.
 	#
 	# See if there's a slimserver user we can switch to.
-	my $testUser = 'slimserver';
-	my $uid      = getpwnam($testUser);
+	if ($> == 0 && !$user) {
 
-	if ($> == 0 && (!defined $uid || $uid == 0)) {
+		my $testUser = 'slimserver';
+		my $uid      = getpwnam($testUser);
 
-		# Don't allow the server to be started as root.
-		# MySQL can't be run as root, and it's generally a bad idea anyways.
-		print "* Error: SlimServer must not be run as root! Exiting! *\n";
-		exit;
+		if ($> == 0 && (!defined $uid || $uid == 0)) {
 
-	} else {
+			# Don't allow the server to be started as root.
+			# MySQL can't be run as root, and it's generally a bad idea anyways.
+			print "* Error: SlimServer must not be run as root! Exiting! *\n";
+			exit;
 
-		$user = $testUser;
+		} else {
+
+			$user = $testUser;
+		}
 	}
 
 	# Do we want to change the effective user or group?
-	if (!defined($user) && !defined($group)) {
+	if (defined($user) || defined($group)) {
 
-		return;
-	}
-
-	# Can only change effective UID/GID if root
-	if ($> != 0) {
-		my $uname = getpwuid($>);
-		print STDERR "Current user is $uname\n";
-		print STDERR "Must run as root to change effective user or group.\n";
-		die "Aborting";
-	}
-
-	# Change effective group ID if necessary
-	# Need to do this while still root, so do group first
-	if (defined($group)) {
-
-		my $gid = getgrnam($group);
-
-		if (!defined $gid) {
-			die "Group $group not found.\n";
+		# Can only change effective UID/GID if root
+		if ($> != 0) {
+			my $uname = getpwuid($>);
+			print STDERR "Current user is $uname\n";
+			print STDERR "Must run as root to change effective user or group.\n";
+			die "Aborting";
 		}
 
-		$) = $gid;
+		# Change effective group ID if necessary
+		# Need to do this while still root, so do group first
+		if (defined($group)) {
 
-		# $) is a space separated list that begins with the effective gid then lists
-		# any supplementary group IDs, so compare against that.  On some systems
-		# no supplementary group IDs are present at system startup or at all.
-		if ( $) !~ /^$gid\b/) {
-			die "Unable to set effective group(s) to $group ($gid) is: $): $!\n";
+			my $gid = getgrnam($group);
+
+			if (!defined $gid) {
+				die "Group $group not found.\n";
+			}
+
+			$) = $gid;
+
+			# $) is a space separated list that begins with the effective gid then lists
+			# any supplementary group IDs, so compare against that.  On some systems
+			# no supplementary group IDs are present at system startup or at all.
+			if ( $) !~ /^$gid\b/) {
+				die "Unable to set effective group(s) to $group ($gid) is: $): $!\n";
+			}
 		}
-	}
 
-	# Change effective user ID if necessary
-	if (defined($user)) {
+		# Change effective user ID if necessary
+		if (defined($user)) {
 
-		my $uid = getpwnam($user);
+			my $uid = getpwnam($user);
 
-		if (!defined ($uid)) {
-			die "User $user not found.\n";
-		}
+			if (!defined ($uid)) {
+				die "User $user not found.\n";
+			}
 
-		$> = $uid;
+			$> = $uid;
 
-		if ($> != $uid) {
-			die "Unable to set effective user to $user, ($uid)!\n";
+			if ($> != $uid) {
+				die "Unable to set effective user to $user, ($uid)!\n";
+			}
 		}
 	}
 }
