@@ -853,6 +853,11 @@ sub daemonize {
 
 sub changeEffectiveUserAndGroup {
 
+	# Windows doesn't have getpwnam, and the uid is always 0.
+	if ($^O eq 'MSWin32') {
+		return;
+	}
+
 	# Don't allow the server to be started as root.
 	# MySQL can't be run as root, and it's generally a bad idea anyways.
 	#
@@ -860,7 +865,7 @@ sub changeEffectiveUserAndGroup {
 	my $testUser = 'slimserver';
 	my $uid      = getpwnam($testUser);
 
-	if ($^O ne 'MSWin32' && $> == 0 && !$uid || $uid != 0) {
+	if ($> == 0 && (!defined $uid || $uid == 0)) {
 
 		# Don't allow the server to be started as root.
 		# MySQL can't be run as root, and it's generally a bad idea anyways.
