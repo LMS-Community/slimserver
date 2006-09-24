@@ -1438,7 +1438,7 @@ WELCOME_TO_SOFTSQUEEZE
 FREE_YOUR_MUSIC
 	CS	Svobodu Tvojí muzice
 	DA	Lyt til din musik!
-	EN	Free your music
+	EN	Free the ewoks! 
 	ES	Libera tu música
 	FI	Vapauta musiikkisi
 	FR	Libérez votre musique
@@ -2786,7 +2786,7 @@ SETUP_PLAYINGDISPLAYMODE_OK
 SETUP_PLAYINGDISPLAYMODE_DESC
 	DE	Der Player kann den Zeitverlauf des aktuellen Titels anzeigen. Wählen Sie das Anzeigeformat.
 	DA	Afspilleren kan vise statusinformation omkring afspilningen når den spiller. Vælg hvilken information du ønsker vist.
-	EN	The player can display information on the progress of a song as it's playing. Choose the information you wish to be displayed.
+	EN	The player can display information on the progress of a song as it's playing. You can select the information that you wish to be displayed by default, and can enable or disable the modes that you wish to be made available. You can cycle through these modes by pressing Now Playing on the remote repeatedly.
 	ES	Puede mostrarse información del progreso de la canción mientras se está escuchando. Elija la información que quiere ver.
 	FI	Soitin voi näyttää tietoa kappaleen etenemisestä. Valitse, mitä tietoa haluat näytettävän.
 	FR	La platine peut afficher la progression de la lecture du morceau en cours de différentes manières. Choisissez les informations que vous voulez voir apparaître.
@@ -5251,7 +5251,7 @@ SETUP_OFFSAVER_CHOOSE
 SETUP_SCREENSAVER_DESC
 	CS	Můžete zvolit spořič k zobrazení informací v době kdy přehrávač neovládáte. Můžete nastavit dobu neaktivity, po které se spořič zobrazí. Můžete si také vybrat různé spořiče, pro různé stavy přehrávače: hraje, je zastaven, vypnut apod.
 	DE	Sie können einen Bildschirmschoner wählen, der nach einiger Zeit der Inaktivität aktiviert wird. Wählen Sie die Zeit, die ohne Eingabe verstreichen muss, bevor der Bildschirmschoner aktiv wird. Auch können Sie aus unterschiedliche Bildschirmschoner für die Zustände Wiedergabe, gestoppt und ausgeschaltet definieren.
-	EN	You can choose screensavers to display information after some duration of inactivity from the remote control.  You can choose and the duration to wait before enabling the screensaver. You can also choose different screensavers depending on if the player is playing audio, stopped, or powered off.
+	EN	You can choose screensavers to display information after some duration of inactivity from the remote control.  You can choose the duration to wait before enabling the screensaver. You can also choose different screensavers depending on if the player is playing audio, stopped, or powered off.
 	ES	Se pueden elegir salvapantallas que muestren información despues de algún tiempo de inactividad, desde el control remoto. Se puede elegir la duración de la espera antes de habilitar el salvapantalla. También se pueden elegir diferentes salvapantallas de acuerdo a si el reproductor está tocando, está parado, o apagado.
 	FR	Vous pouvez sélectionner un écran de veille à afficher après un certain temps d'inactivité de la télécommande. Vous pouvez choisir la durée d'inactivité ainsi que le type d'écran de veille à afficher selon que la platine est en lecture, arrêtée ou éteinte.
 	HE	בחר סוג שומר מסך בפעילויות שונות
