@@ -117,13 +117,16 @@ my @modes = (
 my $nmodes = $#modes;
 
 our $defaultPrefs = {
+	'idleBrightness'      => 2,
+	'playingDisplayMode'  => 5,
+	'playingDisplayModes' => [0..11]
+};
+
+our $defaultFontPrefs = {
 	'activeFont'          => [qw(light standard full)],
 	'activeFont_curr'     => 1,
 	'idleFont'            => [qw(light standard full)],
 	'idleFont_curr'       => 1,
-	'idleBrightness'      => 2,
-	'playingDisplayMode'  => 5,
-	'playingDisplayModes' => [0..11]
 };
 
 sub init {
@@ -136,7 +139,11 @@ sub init {
 	}
 
 	Slim::Utils::Prefs::initClientPrefs($display->client, $defaultPrefs);
+	Slim::Utils::Prefs::initClientPrefs($display->client, $defaultFontPrefs);
+
 	$display->SUPER::init();
+
+	$display->validateFonts($defaultFontPrefs);
 }
 
 sub resetDisplay {

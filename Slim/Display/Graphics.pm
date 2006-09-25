@@ -41,6 +41,31 @@ sub init {
 	$display->SUPER::init();
 }
 
+sub validateFonts {
+	# validate that all fonts defined by the prefs for this player are of the correct height for player
+	# otherwise reset to the default fonts [prevents display corruption for softsqueeze when switching emulations]
+	my $display = shift;
+	my $defaultFontPrefs = shift;
+
+	my $client = $display->client;
+	my $height = $display->displayHeight;
+
+	my $fontsOK = 1;
+
+	foreach my $font (@{$client->prefGet('activeFont')}, @{$client->prefGet('idleFont')}) {
+		my $fontheight = Slim::Display::Lib::Fonts::fontheight($font.".2");
+		if (!$fontheight || $fontheight != $height) {
+			$fontsOK = 0;
+		}
+	}
+
+	unless ($fontsOK) {
+		foreach my $pref (keys %{$defaultFontPrefs}) {
+			$client->prefSet($pref, $defaultFontPrefs->{$pref});
+		}
+	}
+}
+
 sub linesPerScreen {
 	my $display = shift;
 	my $fonts = $display->fonts();

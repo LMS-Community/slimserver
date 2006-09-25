@@ -30,13 +30,16 @@ my $display_maxLine = 1; # render up to 2 lines [0..$display_maxLine]
 my $GRAPHICS_FRAMEBUF_LIVE = (1 * 280 * 2);
 
 our $defaultPrefs = {
+	'idleBrightness'      => 2,
+	'playingDisplayMode'  => 0,
+	'playingDisplayModes' => [0..5]
+};
+
+our $defaultFontPrefs = {
 	'activeFont'          => [qw(small medium large huge)],
 	'activeFont_curr'     => 1,
 	'idleFont'            => [qw(small medium large huge)],
 	'idleFont_curr'       => 1,
-	'idleBrightness'      => 2,
-	'playingDisplayMode'  => 0,
-	'playingDisplayModes' => [0..5]
 };
 
 # Display Modes
@@ -77,7 +80,11 @@ sub init {
 	}
 
 	Slim::Utils::Prefs::initClientPrefs($display->client, $defaultPrefs);
+	Slim::Utils::Prefs::initClientPrefs($display->client, $defaultFontPrefs);
+
 	$display->SUPER::init();
+
+	$display->validateFonts($defaultFontPrefs);
 }
 
 sub resetDisplay {

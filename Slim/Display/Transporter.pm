@@ -29,10 +29,6 @@ use base qw(Slim::Display::Squeezebox2);
 my $display_maxLine = 2; # render up to 3 lines [0..$display_maxLine]
 
 our $defaultPrefs = {
-	'activeFont'          => [qw(light standard full)],
-	'activeFont_curr'     => 1,
-	'idleFont'            => [qw(light standard full)],
-	'idleFont_curr'       => 1,
 	'idleBrightness'      => 2,
 	'playingDisplayMode'  => 5,
 	'playingDisplayModes' => [0..5],
