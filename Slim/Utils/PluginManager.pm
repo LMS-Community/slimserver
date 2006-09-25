@@ -18,6 +18,7 @@ use strict;
 use File::Basename qw(dirname);
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
+use Path::Class;
 
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
@@ -53,6 +54,35 @@ my %brokenplugins = (
 	# directory. @INC needs the path one level up. IE:
 	# /usr/share/slimserver, so that modules can be loaded properly
 	unshift @INC, (map { dirname($_) } @pluginDirs);
+
+	# Bug 4169
+	# Remove non-EN HTML paths for core plugins
+	my @corePlugins = qw(Live365 MoodLogic MusicMagic RandomPlay);
+
+	for my $path (@pluginDirs) {
+
+		for my $plugin (@corePlugins) {
+
+			my $htmlDir = catdir($path, $plugin, 'HTML');
+			my $okDir   = catdir($path, $plugin, 'HTML', 'EN');
+
+			if (!-d $htmlDir) {
+				next;
+			}
+
+			my $dir = dir($htmlDir);
+
+			for my $subDir ($dir->children) {
+
+				if ($subDir ne $okDir && $subDir->is_dir) {
+
+					$::d_plugin && msg("Removing old non-EN HTML files from core Plugins: [$subDir]\n");
+
+					$subDir->rmtree;				
+				}
+			}
+		}
+	}
 }
 
 sub pluginDirs {
