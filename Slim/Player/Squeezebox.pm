@@ -281,9 +281,11 @@ sub quickstart {
 			$line2  = Slim::Music::Info::title( $url );
 		}
 		
-		# Only show buffering status if no user activity on player
-		my $lastIR = Slim::Hardware::IR::lastIRTime($client) || 0;
-		if ( $lastIR < $buffering->{$client} ) {
+		# Only show buffering status if no user activity on player or we're on the Now Playing screen
+		my $nowPlaying = Slim::Buttons::Playlist::showingNowPlaying($client);
+		my $lastIR     = Slim::Hardware::IR::lastIRTime($client) || 0;
+		
+		if ( $nowPlaying || $lastIR < $buffering->{$client} ) {
 			$client->showBriefly( $line1, $line2, 0.5 ) unless $client->display->sbName();
 		}
 		
