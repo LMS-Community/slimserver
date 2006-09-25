@@ -2784,7 +2784,7 @@ SETUP_PLAYINGDISPLAYMODE_OK
 	ZH_CN	显示屏现在将显示当前播放歌曲的进度：
 
 SETUP_PLAYINGDISPLAYMODE_DESC
-	DE	Der Player kann den Zeitverlauf des aktuellen Titels anzeigen. Wählen Sie das Anzeigeformat.
+	DE	Der Player kann während der Wiedergabe den Zeitverlauf des aktuellen Titels anzeigen. Sie können die Informationen auswählen, die standardmässig angezeigt werden sollen. Zusätzlich können Sie weitere Darstellungen auswählen, die zur Verfügung stehen sollen. Mit der Fernsteuerung können Sie zwischen diesen wechseln, indem Sie wiederholt die NOW PLAYING Taste drücken.
 	DA	Afspilleren kan vise statusinformation omkring afspilningen når den spiller. Vælg hvilken information du ønsker vist.
 	EN	The player can display information on the progress of a song as it's playing. You can select the information that you wish to be displayed by default, and can enable or disable the modes that you wish to be made available. You can cycle through these modes by pressing Now Playing on the remote repeatedly.
 	ES	Puede mostrarse información del progreso de la canción mientras se está escuchando. Elija la información que quiere ver.
@@ -5214,7 +5214,7 @@ SETUP_SCREENSAVER_USE
 
 SETUP_SCREENSAVER_CHOOSE
 	CS	Vyberte spořič pro dobu, kdy přehrávač hraje:
-	DE	Wählen Sie einen Bildschirmschoner
+	DE	Während Wiedergabe:
 	EN	Choose a screensaver to use when playing:
 	ES	Elegir un salvapantalla para utilizar cuando se está escuchando:
 	FR	Ecran de veille lorsque la platine est en lecture :
@@ -5228,7 +5228,7 @@ SETUP_SCREENSAVER_CHOOSE
 
 SETUP_IDLESAVER_CHOOSE
 	CS	Vyberte spořič pro dobu, kdy přehrávač nehraje.
-	DE	Wählen Sie den Bildschirmschoner, der bei Inaktivität angezeigt wird:
+	DE	Bei Inaktivität:
 	EN	Choose a screensaver to use when not playing:
 	ES	Elegir un salvapantalla para utilizar cuando no se está escuchando:
 	FR	Ecran de veille lorsque la platine est arrêtée :
@@ -5239,7 +5239,7 @@ SETUP_IDLESAVER_CHOOSE
 
 SETUP_OFFSAVER_CHOOSE
 	CS	Vyberte spořič pro dobu, kdy bude přehrávač vypnut:
-	DE	Wählen Sie den Bildschirmschoner, der in ausgeschaltetem Zustand angezeigt wird:
+	DE	Wenn ausgeschaltet:
 	EN	Choose a screensaver to use when powered off:
 	ES	Elegir un salvapantalla para utilizar cuando está apagado:
 	FR	Ecran de veille lorsque la platine est éteinte :
@@ -5250,7 +5250,7 @@ SETUP_OFFSAVER_CHOOSE
 
 SETUP_SCREENSAVER_DESC
 	CS	Můžete zvolit spořič k zobrazení informací v době kdy přehrávač neovládáte. Můžete nastavit dobu neaktivity, po které se spořič zobrazí. Můžete si také vybrat různé spořiče, pro různé stavy přehrávače: hraje, je zastaven, vypnut apod.
-	DE	Sie können einen Bildschirmschoner wählen, der nach einiger Zeit der Inaktivität aktiviert wird. Wählen Sie die Zeit, die ohne Eingabe verstreichen muss, bevor der Bildschirmschoner aktiv wird. Auch können Sie aus unterschiedliche Bildschirmschoner für die Zustände Wiedergabe, gestoppt und ausgeschaltet definieren.
+	DE	Nach einer bestimmten Zeit ohne Aktivität an einem Knopf kann der Player Informationen als Bildschirmschoner anzeigen. Es stehen unterschiedliche Bildschirmschoner zur Verfügung, je nachdem, ob Musik wiedergegeben wird oder nicht, oder ob das Gerät ausgeschaltet ist. Ebenso können Sie die Wartezeit vor dem Einsetzen des Bildschirmschoners definieren.
 	EN	After a period of inactivity from the remote control, the player can display various information as "screensavers". You can choose different screensavers to show, depending on whether the player is playing or not, or if it is powered off. You can also choose the amount of time to wait before enabling these screensavers.
 	ES	Se pueden elegir salvapantallas que muestren información despues de algún tiempo de inactividad, desde el control remoto. Se puede elegir la duración de la espera antes de habilitar el salvapantalla. También se pueden elegir diferentes salvapantallas de acuerdo a si el reproductor está tocando, está parado, o apagado.
 	FR	Vous pouvez sélectionner un écran de veille à afficher après un certain temps d'inactivité de la télécommande. Vous pouvez choisir la durée d'inactivité ainsi que le type d'écran de veille à afficher selon que la platine est en lecture, arrêtée ou éteinte.
@@ -5261,7 +5261,7 @@ SETUP_SCREENSAVER_DESC
 
 SETUP_SCREENSAVERTIMEOUT_CHOOSE
 	CS	Prodlení spořiče v sekundách:
-	DE	Wartezeit des Bildschirmschoners in Sekunden:
+	DE	Wartezeit des Bildschirmschoners:
 	DA	Ventetid for pauseskærm i sekunder:
 	EN	Screensaver delay time in seconds:
 	ES	Tiempo de espera antes de mostrar salvapantalla (seg.):
