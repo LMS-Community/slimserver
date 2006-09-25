@@ -15,6 +15,7 @@ package Plugins::RadioIO::Plugin;
 use strict;
 
 use MIME::Base64;
+use URI::Escape qw(uri_escape);
 
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
@@ -106,7 +107,7 @@ sub radioIOURL {
 	my $url = $FEED;
 	
 	if ( $username && $password ) {
-		$url .= "&membername=$username&pw=" . decode_base64( $password );
+		$url .= '&membername=' . uri_escape($username) . '&pw=' . uri_escape( decode_base64( $password ) );
 	}
 	
 	return $url;
