@@ -156,7 +156,7 @@ sub getTag {
 
 	# we'll always have $info, as it's machine generated.
 	if (scalar keys %tags && scalar keys %{$info}) {
-		%$info = (%$info, %tags);
+		%$info = (%tags, %$info);
 	}
 
 	# Strip out any nulls.
