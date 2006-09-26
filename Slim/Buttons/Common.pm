@@ -732,33 +732,91 @@ our %functions = (
 
 		if (defined $buttonarg && $buttonarg eq "add") {
 
+			# First lets try for a listRef from INPUT.*
 			my $list = $client->modeParam('listRef');
-
+			my $obj;
+			my $title;
+			my $url;
+			
+			# If there is a list, try grabbing the current index.
 			if ($list) {
 			
-				my $obj = $list->[$client->modeParam('listIndex')];
+				$obj = $list->[$client->modeParam('listIndex')];
+			
+			# hack to grab currently browsed item from current playlist (needs to use INPUT.List at some point)
+			} elsif (mode($client) eq 'playlist') {
+			
+				$obj = Slim::Player::Playlist::song($client, Slim::Buttons::Playlist::browseplaylistindex($client));
+			}
+			
+			# if that doesn't work, perhaps we have a track param from something like trackinfo
+			if (!blessed($obj) && $client->modeParam('track')) {
+			
+				$obj = $client->modeParam('track');
+			
+			# specific HACK for Live365
+			} elsif(Slim::Player::ProtocolHandlers->handlerForURL('live365://') && (Plugins::Live365::Plugin::getLive365($client))) {
+
+				my $live365 = Plugins::Live365::Plugin::getLive365($client);
+				my $station = $live365->getCurrentStation();
+				
+				$title = $station->{STATION_TITLE};
+				$url   = $station->{STATION_ADDRESS};
+				
+				# fix url to activate protocol handler
+				$url =~ s/http\:/live365\:/;
+			}
+			
+			# start with the object if we have one
+			if ($obj && !$url) {
 				
 				if (blessed($obj) && $obj->can('url')) {
-
-					my $title;
-
-					if ($obj->can('name')) {
-						$title = $obj->name;
-					} else {
-						$title = Slim::Music::Info::standardTitle($client, $obj);
-					}
-	
-					if ($title) {
-						Slim::Utils::Favorites->clientAdd($client, $obj, $title);
-						$client->showBriefly($client->string('FAVORITES_ADDING'), $title);
-					}
-
-				} else {
-
-					$::d_favorites && msg("list item is not an object, not adding favorite\n");
-					$::d_favorites && msg(Data::Dumper::Dumper($obj));
+					$url = $obj->url;
+				
+				# xml browser uses hash lists with url and name values.
+				} elsif (ref($obj) eq 'HASH') {
+					
+					$url = $obj->{'url'};
 				}
-			}			
+				
+				if (blessed($obj) && $obj->can('name')) {
+
+					$title = $obj->name;
+				}elsif (ref($obj) eq 'HASH') {
+
+					$title = $obj->{'name'} || $obj->{'title'};
+				} else {
+					
+					# failing specified name values, try the db title
+					$title = Slim::Music::Info::standardTitle($client, $obj);
+				}
+			} 
+			
+			# remoteTrackInfo uses url and title params for lists.
+			if ($client->modeParam('url') && !$url) {
+				
+				$url   = $client->modeParam('url');
+				$title = $client->modeParam('title');
+			}
+
+			if ($url && $title) {
+				Slim::Utils::Favorites->clientAdd($client, $url, $title);
+				$client->showBriefly($client->string('FAVORITES_ADDING'), $title);
+			
+			# if all of that fails, send the debug with a best guess helper for tracing back
+			} else {
+
+				if ($::d_favorites) { 
+					msg("Favorites: no valid url found, not adding favorite\n");
+					
+					if ($obj) {
+						msg(Data::Dumper::Dumper($obj));
+					
+					} else {
+						Slim::Utils::Misc::bt();
+					}
+				}
+			}
 
 		} elsif (mode($client) ne 'FAVORITES') {
 
@@ -874,7 +932,7 @@ our %functions = (
 		}
 
 		# add the 'after this song' option only if there is a defined value.
-		my @sleepChoices = $remaining ? (0, $remaining, 15,30,45,60,90) : (0,15,30,45,60,90);
+		my @sleepChoices = $remaining ? sort(0, $remaining, 15,30,45,60,90) : (0,15,30,45,60,90);
 		my $i = 0;
 
 		# find the next value for the sleep timer

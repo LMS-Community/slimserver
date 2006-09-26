@@ -893,6 +893,16 @@ sub webPages {
 	return (\%pages, undef);
 }
 
+sub getLive365 {
+	my $client = shift;
+	
+	if ( defined $live365->{$client} ) {
+		return $live365->{$client};
+	} else {
+		return undef;
+	}
+}
+
 sub initPlugin {
 	$::d_plugins && msg("Live365: initPlugin()\n");
 
