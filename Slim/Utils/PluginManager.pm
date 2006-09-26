@@ -74,7 +74,7 @@ my %brokenplugins = (
 
 			for my $subDir ($dir->children) {
 
-				if ($subDir ne $okDir && $subDir->is_dir) {
+				if ($subDir ne $okDir && $subDir->is_dir && $subDir !~ /^\.svn/) {
 
 					$::d_plugin && msg("Removing old non-EN HTML files from core Plugins: [$subDir]\n");
 
