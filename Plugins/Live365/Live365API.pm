@@ -559,7 +559,10 @@ sub stationErrorSub {
 	my $errorSub = $http->params('errorSub');
 
 	$self->{asyncHTTP} = undef;
-	&$errorSub($client);
+	
+	if ( $errorSub && ref $errorSub eq 'CODE' ) {
+		$errorSub->($client);
+	}
 }
 
 sub clearStationDirectory {
