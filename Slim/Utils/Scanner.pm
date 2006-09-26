@@ -821,6 +821,10 @@ sub scanPlaylistURLs {
 		
 		next if !blessed $item;
 		
+		# Ignore Windows Media .nsc files, these are definition files for multicast streams
+		# http://en.wikipedia.org/wiki/Windows_Media_Station
+		next if $item->content_type eq 'wma' && $item->url =~ /\.nsc$/i;
+		
 		if ( Slim::Music::Info::isAudioURL( $item->url ) || Slim::Music::Info::isSong( $item ) ) {
 			# we finally found an audio URL, so we're done
 			$::d_scan && msgf( "scanPlaylistURLs: Found an audio URL: %s [%s]\n",
