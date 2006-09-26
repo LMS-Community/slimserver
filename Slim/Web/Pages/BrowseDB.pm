@@ -174,14 +174,17 @@ sub browsedb {
 
 			$attrs{$levelKey} = $params->{$levelKey};
 
+			# Don't include the orderBy when the next level's
+			# (track) orderBy include me.* otherwise the
+			# breadcrumb link will be bogus.
 			push @{$params->{'pwd_list'}}, {
 				 'hreftype'     => 'browseDb',
 				 'title'        => $value,
 				 'hierarchy'    => $hierarchy,
 				 'level'        => $i+1,
-				 'orderBy'      => $orderBy,
+				 'orderBy'      => ($orderBy =~ /\bme\./ ? '' : $orderBy),
 				 'attributes'   => _attributesToKeyValuePair(\%attrs),
-			}
+			};
 		}
 	}
 
