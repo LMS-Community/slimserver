@@ -227,6 +227,7 @@ sub authLoadSub {
 	$self->{asyncHTTP} = undef;
 
 	if(!defined $http->contentRef) {
+		$::d_plugins && msg("Live365API: No content received from api_login.cgi\n");
 		&$callback($client, {'status' => 6, 'silent' => $silent}); # PLUGIN_LIVE365_LOGIN_ERROR_HTTP
 		return;  
 	}
@@ -234,6 +235,7 @@ sub authLoadSub {
 	my $resp = eval { XMLin($http->contentRef) }; 
 
 	if ($@) {
+		$::d_plugins && msg("Live365API: XML parsing error on api_login.cgi: $@\n");
 		&$callback($client, {'status' => 2, 'silent' => $silent}); # PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
 		return;  
 	}
@@ -250,13 +252,16 @@ sub authLoadSub {
 }
 
 sub authErrorSub {
-	my $http = shift;
+	my ( $http, $error ) = @_;
 	my $self = $http->params('self');
 	my $client = $http->params('client');
 	my $callback = $http->params('callback');
 	my $silent = $http->params('silent');
 
 	$self->{asyncHTTP} = undef;
+	
+	$::d_plugins && msg("Live365API: Error on api_login.cgi: $error\n");
+	
 	&$callback($client, {'status' => 6, 'silent' => $silent}); # PLUGIN_LIVE365_LOGIN_ERROR_HTTP
 }
 
