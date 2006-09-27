@@ -932,7 +932,7 @@ our %functions = (
 		}
 
 		# add the 'after this song' option only if there is a defined value.
-		my @sleepChoices = $remaining ? sort(0, $remaining, 15,30,45,60,90) : (0,15,30,45,60,90);
+		my @sleepChoices = $remaining ? sort({$a <=> $b} (0, $remaining, 15,30,45,60,90)) : (0,15,30,45,60,90);
 		my $i = 0;
 
 		# find the next value for the sleep timer

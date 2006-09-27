@@ -755,10 +755,13 @@ sub prettySleepTime {
 	my $sleeptime = $client->sleepTime() - Time::HiRes::time();
 	my $sleepstring = "";
 	
+	my $dur = Slim::Player::Source::playingSongDuration($client);
+	my $remaining = $dur - Slim::Player::Source::songTime($client);
+	
 	if ($client->sleepTime) {
 		
-		# assumes that remaining time was under 15 minutes.  might need to check against every default value just to cover all cases.
-		if ($client->currentSleepTime < 15) {
+		# check against remaining time to see if sleep time matches within 1 second.
+		if (int($sleeptime + 0.5) == int($remaining)) {
 			$sleepstring = join(' ',$client->string('SLEEPING_AT'),$client->string('END_OF_SONG'));
 		} else {
 			$sleepstring = join(" " ,$client->string('SLEEPING_IN'),int($sleeptime/60)+1,$client->string('MINUTES'));
