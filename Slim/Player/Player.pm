@@ -565,6 +565,8 @@ sub sendFrame {};
 
 sub currentSongLines {
 	my $client = shift;
+	my $suppressScreen2 = shift;
+
 	my $parts;
 	
 	my $playlistlen = Slim::Player::Playlist::count($client);
@@ -628,12 +630,41 @@ sub currentSongLines {
 			}
 		} 
 
-		$parts->{line}[1] = Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::url($client));
+		my $currentTitle = Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::url($client));
+
+		$parts->{line}[1] = $currentTitle;
 
 		$parts->{overlay}[1] = $client->symbols('notesymbol');
 
 		# add in the progress bar and time...
 		$client->nowPlayingModeLines($parts);
+
+		# add screen2 information if required
+		if ($client->display->showExtendedText() && !$suppressScreen2) {
+			
+			my ($s2line1, $s2line2);
+
+			my $song = Slim::Player::Playlist::song($client);
+
+			if ($song && $song->isRemoteURL) {
+
+				my $title = Slim::Music::Info::displayText($client, $song, 'TITLE');
+
+				if ( ($currentTitle || '') ne ($title || '') && !Slim::Music::Info::isURL($title) ) {
+					$s2line2 = $title;
+				}
+
+			} else {
+
+				$s2line1 = Slim::Music::Info::displayText($client, $song, 'ALBUM');
+				$s2line2 = Slim::Music::Info::displayText($client, $song, 'ARTIST');
+
+			}
+
+			$parts->{'screen2'} = {
+				'line' => [ $s2line1, $s2line2 ],
+			};
+		}
 	}
 
 	return $parts;

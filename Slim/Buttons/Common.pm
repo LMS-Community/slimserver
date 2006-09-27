@@ -1963,7 +1963,7 @@ sub _periodicUpdate {
 	}
 
 	if ($update2 && !$client->display->animateState() && (my $linefunc = $client->lines2periodic()) ) {
-		$client->display->update({ 'screen2' => &$linefunc($client) });
+		$client->display->update({ 'screen2' => &$linefunc($client, 1) });
 	}
 }
 

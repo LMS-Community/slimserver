@@ -394,7 +394,7 @@ sub newTitle {
 sub lines {
 	my $client = shift;
 
-	my ($parts, $line1, $line2);
+	my $parts;
 
 	my $nowPlaying = showingNowPlaying($client);
 
@@ -408,49 +408,38 @@ sub lines {
 			browseplaylistindex($client,Slim::Player::Playlist::count($client)-1)
 		}
 
-		$line1 = sprintf("%s (%d %s %d) ", 
+		my $line1 = sprintf("%s (%d %s %d) ", 
 			$client->string('PLAYLIST'),
 			browseplaylistindex($client) + 1,
 			$client->string('OUT_OF'),
 			Slim::Player::Playlist::count($client)
 		);
 
-		$line2 = Slim::Music::Info::standardTitle(
-			$client,
-			Slim::Player::Playlist::song($client, browseplaylistindex($client))
-		);
-
+		my $song = Slim::Player::Playlist::song($client, browseplaylistindex($client) );
+		
 		$parts = {
-			'line'    => [ $line1, $line2 ],
+			'line'    => [ $line1, Slim::Music::Info::standardTitle($client, $song) ],
 			'overlay' => [ undef, $client->symbols('notesymbol') ],
 		};
-	}
 
-	if ($client->display->showExtendedText()) {
-		
-		my ($s2line1, $s2line2);
+		if ($client->display->showExtendedText()) {
+			
+			if ($song && !($song->isRemoteURL)) {
 
-		my $song = Slim::Player::Playlist::song($client, $nowPlaying ? undef : browseplaylistindex($client) );
+				$parts->{'screen2'} = {
+					'line' => [ 
+					   Slim::Music::Info::displayText($client, $song, 'ALBUM'),
+					   Slim::Music::Info::displayText($client, $song, 'ARTIST'),
+					]
+				};
 
-		if ($song && $song->isRemoteURL) {
+			} else {
 
-			my $currentTitle = Slim::Music::Info::getCurrentTitle($client, $song->url);
-			my $title = Slim::Music::Info::displayText($client, $song, 'TITLE');
+				$parts->{'screen2'} = {};
 
-			if ( ($currentTitle || '') ne ($title || '') && !Slim::Music::Info::isURL($title) ) {
-				$s2line2 = $title;
 			}
 
-		} else {
-
-			$s2line1 = Slim::Music::Info::displayText($client, $song, 'ALBUM');
-			$s2line2 = Slim::Music::Info::displayText($client, $song, 'ARTIST');
-
 		}
-
-		$parts->{'screen2'} ||= {
-			'line' => [ $s2line1, $s2line2 ],
-		};
 
 	}
 

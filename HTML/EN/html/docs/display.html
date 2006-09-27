@@ -760,11 +760,9 @@ sub lines {
 'center' etc components without specifying 'screen2'.  This is because
 the calling code will force them into a screen2 component.</p>
 
-<p>Caveat: A limitation of this mode at present is that if the
-text on the right hand screen scrolls, this prevents animated menu
-transitions on the left hand screen.  The left hand screen will still
-show the correct menu items, but will not perform the normal scrolling
-between menu items.</p>
+<p>Note also that the lines function registered for lines2periodic
+will be called with a second parameter of '1'.  This is a flag used
+internally to the server and should be ignored.</p>
 
 <hr></hr>
 <h4>Custom Server Mode Displays</h4>
