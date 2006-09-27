@@ -263,9 +263,15 @@ sub processSong {
 	$attributes{'AUDIO'} = 1;
 	$attributes{'SECS'}  = $songInfo{'seconds'} if $songInfo{'seconds'};
 
-	for my $key (qw(album artist genre name)) {
+	# Bug 3318
+	# MiP 1.6+ encode filenames as UTF-8, even on Windows.
+	# So we need to turn the string from MiP to UTF-8, which then gets
+	# turned into the local charset below with utf8encode_locale
+	for my $key (qw(album artist genre name file)) {
 
-		next if !$songInfo{$key};
+		if (!$songInfo{$key}) {
+			next;
+		}
 
 		my $enc = Slim::Utils::Unicode::encodingFromString($songInfo{$key});
 
