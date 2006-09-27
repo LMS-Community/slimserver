@@ -121,6 +121,9 @@ sub getTag {
 
 	open(my $fh, $file) or return {};
 
+	# Bug: 4071 - Windows is lame.
+	binmode($fh);
+
 	# This is somewhat messy - Use a customized version of MP3::Info's
 	# get_mp3tag, as we need custom logic.
 	my (%tags, %ape) = ();
@@ -135,7 +138,9 @@ sub getTag {
 	# Always add on any APE tags at the end. It may have ReplayGain data.
 	if (MP3::Info::_parse_ape_tag($fh, -s $file, \%ape)) {
 
-		%tags = (%tags, %ape);
+		if (scalar keys %ape) {
+			%tags = (%tags, %ape);
+		}
 	}
 
 	# Now fetch the audio header information.
