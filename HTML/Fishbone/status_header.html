@@ -134,7 +134,7 @@
 			<div id="nowplaying" [% IF NOT currentsong %]style="display:none;"[% END %]>
 				<div class="label">[% IF modeplay  %][% status = "PLAYING"    %][% END %][% IF modepause %][% status = "PAUSED_ON"  %][% END %][% IF modestop  %][% status = "STOPPED_ON" %][% END %]
 				<span id="playtextmode">[% IF currentsong %][% status | string %][% END %]</span>
-				<span id="thissongnum">[% IF currentsong %][% currentsong %][% END %]</span><span id="outof">&nbsp;[% "OUT_OF" | string %]&nbsp;</span><span id="songcount">[% IF songcount %][% songcount %][% END %]</span>&nbsp;<span id="zaphref">[% IF currentsong %]<a class="label" href="[% statusroot %]?p0=playlist&amp;p1=zap&amp;p2=[% thissongnum %]&amp;player=[% playerURI %]" title='Move to Zapped playlist'>[zap]</a>[% END %]</span>[% IF currentsong %][% "COLON" | string %][% END %]</div>
+				<span id="thissongnum">[% IF currentsong %][% currentsong %][% END %]</span><span id="outof">&nbsp;[% "OUT_OF" | string %]&nbsp;</span><span id="songcount">[% IF songcount %][% songcount %][% END %]</span>&nbsp;<span id="zaphref"><a class="label" href="[% statusroot %]?p0=playlist&amp;p1=zap&amp;p2=[% thissongnum %]&amp;player=[% playerURI %]" title='Move to Zapped playlist'>[zap]</a></span>[% "COLON" | string %]</div>
 				<div id="songtitlehref" class="currentSongData"><a class="songtitle" [% songinfoHRef %] target="browser"><span id="songtitle">[% songtitle %]</span></a>
 				&nbsp;<span id="duration">[% IF itemobj.duration %]([% itemobj.duration | html %])[% END %]</span>&nbsp;<span id="bitrate">[% IF bitrate %]([% bitrate %])[% END %]</span></div>
 				

@@ -190,10 +190,11 @@ function refreshInfo(theData, force, curstyle) {
 	var a = rExp.exec(myString);
 	var newsong = 1;
 
-	if (force != 1) {
+	if (force != 1 && !(parsedData['songtitleid'] && $('nowplaying').style.display == 'none')) {
 		if (a == null || a[1] == parsedData['songtitleid']) {newsong = 0;}
 	}
 	
+	//alert([newsong,parsedData['songtitleid'] ,$('nowplaying').style.display]);
 	var elems = ['thissongnum', 'playtextmode', 'songcount'];
 	if (newsong) {
 		elems.push('songtitle');
@@ -256,12 +257,12 @@ function refreshInfo(theData, force, curstyle) {
 	
 	// refresh href content
 	if (newsong) {
-		refreshHrefElement('albumhref',parsedData['albumid'],"album.id=");
-		refreshHrefElement('coverhref',parsedData['albumid'],"album.id=");
-		refreshHrefElement('removealbumhref',parsedData['album'],"p4=");
-		refreshHrefElement('removeartisthref',parsedData['artist'],"p3=");
-		refreshHrefElement('songtitlehref',parsedData['songtitleid'],"item=");
-		refreshHrefElement('zaphref',parsedData['thissongnum']-1,"p2=");
+		refreshHrefElement('albumhref', parsedData['albumid'],"album.id=");
+		refreshHrefElement('coverhref', parsedData['albumid'],"album.id=");
+		refreshHrefElement('removealbumhref', parsedData['album'],"p4=");
+		refreshHrefElement('removeartisthref', parsedData['artist'],"p3=");
+		refreshHrefElement('songtitlehref', parsedData['songtitleid'],"item=");
+		refreshHrefElement('zaphref', parsedData['thissongnum']-1,"p2=");
 		currentID = parsedData['songtitleid'];
 	}
 
