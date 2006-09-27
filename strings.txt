@@ -12821,7 +12821,7 @@ SETUP_SERVERPRIORITY
 	FR	Priorité serveur
 	IT	Priorità server
 	NL	Server prioriteit
-	ZH_CN   SlimServer服务器流程优先值
+	ZH_CN	SlimServer服务器流程优先值
 
 SETUP_SERVERPRIORITY_DESC
 	DE	Sie können die Priorität festlegen, mit welcher SlimServer ausgeführt wird.
@@ -12835,7 +12835,7 @@ SETUP_SERVERPRIORITY_DESC
 SETUP_SCANNERPRIORITY
 	DE	Scanner Priorität
 	EN	Scanner Priority
-	ES	Prioridad de la recopilación /
+	ES	Prioridad de la recopilación
 	FR	Priorité répertoriage
 	IT	Priorità scansione
 	NL	Scanner prioriteit
