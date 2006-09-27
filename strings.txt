@@ -149,7 +149,7 @@ PERL_VERSION
 	NO	Perl versjon
 	PT	Versão do Perl
 	SV	Perl-version
-	ZH_CN	Perlr版本
+	ZH_CN	Perl版本
 
 MYSQL_VERSION
 	CS	Verze MySQL
@@ -419,7 +419,7 @@ RADIO
 	JA	インターネットラジオ
 	NL	Internet radio
 	SV	Internetradio
-	ZH_CN	互联网电台
+	ZH_CN	互联网收音机
 
 GAMES
 	CS	Hry
@@ -457,6 +457,7 @@ PLAYLISTS
 	EN	Playlists
 	FR	Listes de lecture
 	ES	Listas de temas
+	ZH_CN	播放表
 
 PAUSED_ON
 	CS	Zapnuta pauza
@@ -947,7 +948,7 @@ CANCEL_SLEEP
 	NO	Sovefunksjon avslått.
 	PT	Inactividade cancelada
 	SV	Insomning avbruten
-	ZH_CN	倒数熄机功能已消除
+	ZH_CN	倒数关机功能已消除
 
 SLEEPING_IN
 	CS	Sleep za
@@ -962,24 +963,27 @@ SLEEPING_IN
 	NO	Sovner om
 	PT	Inactivo dentro de
 	SV	Insomning om
-	ZH_CN	倒数熄机进行中
+	ZH_CN	关机倒数进行中
 
 END_OF_SONG
 	DE	Liedende
 	EN	end of song
 	IT	Fine del brano
 	NL	Einde liedje
+	ZH_CN	歌曲结束
 
 SLEEP
 	DE	Schlafmodus
 	EN	Sleep
 	FI	Unikytkin
 	NL	Slapen
+	ZH_CN	睡眠状态
 
 SLEEPING_AT
 	DE	Schlafmodus am
 	EN	Sleeping at
 	NL	Slapen op
+	ZH_CN	进入睡眠状态
 
 POWERING_OFF
 	CS	Přecházím do standby...
@@ -1042,7 +1046,7 @@ ALARM_SET
 	NO	Sett Alarm Tid
 	PT	Acertar Alarme
 	SV	Ställ väckningstid
-	ZH_CN	设置闹钟
+	ZH_CN	配置闹钟
 
 ALARM_ON
 	CS	Budík zapnut
@@ -1059,7 +1063,7 @@ ALARM_ON
 	NO	På (Trykk HØYRE for å slå av)
 	PT	Ligado (Prima DIREITA para desligar)
 	SV	På (Tryck HÖGER för att avaktivera)
-	ZH_CN	激活（撤销请按右方向键）
+	ZH_CN	启用（撤销请按右方向键）
 
 ALARM_OFF
 	CS	Budík vypnut (Stiskni PRAVÉ tlačítko pro zapnutí)
@@ -1093,7 +1097,7 @@ ALARM_SELECT_PLAYLIST
 	NO	Velg Spilleliste for Alarm
 	PT	Escolha a Playlist para o Alarme
 	SV	Välj låtlista för väckning
-	ZH_CN	请选择当闹钟用的播放表
+	ZH_CN	可当闹钟用的播放表
 
 ALARM_SET_VOLUME
 	CS	Nastavit hlasitost buzení
@@ -1110,7 +1114,7 @@ ALARM_SET_VOLUME
 	NO	Sett Alarm volum
 	PT	Mudar Volume do Alarme
 	SV	Välj volym för väckning
-	ZH_CN	设置闹钟音量
+	ZH_CN	配置闹钟音量
 
 ALARM_SET_VOLUME_SHORT
 	CS	Hlasitost
@@ -1136,6 +1140,7 @@ ALARM_FADE
 	FR	Volume progressif
 	IT	Sveglia graduale
 	NL	Fade wekalarm in
+	ZH_CN	闹钟缓慢切入
 
 ALARM_SET_ENTRY
 	CS	Čas buzení
@@ -1152,7 +1157,7 @@ ALARM_SET_ENTRY
 	NO	Sett Alarm tid
 	PT	Hora do Alarme
 	SV	Ställ väckningstid
-	ZH_CN	闹钟时间设置
+	ZH_CN	闹钟时间配置
 
 ALARM_TURNING_ON
 	CS	Zapnout buzení...
@@ -1169,7 +1174,7 @@ ALARM_TURNING_ON
 	NO	Slår på alarm...
 	PT	A ligar o alarme...
 	SV	Aktiverar väckarklocka...
-	ZH_CN	正在激活闹钟功能...
+	ZH_CN	正在启用闹钟功能...
 
 ALARM_TURNING_OFF
 	CS	Vypnout buzení...
@@ -1229,6 +1234,7 @@ ALARM_DAY0
 	IT	Ogni giorno
 	NL	Elke dag
 	SV	Varje Dag
+	ZH_CN	每一天
 
 ALARM_DAY1
 	DA	Mandag
@@ -1418,6 +1424,7 @@ WELCOME_TO_TRANSPORTER
 	NO	Velkommen til Transporter
 	PT	Bem-vindo ao Transporter
 	SE	Välkommen till Transporter
+	ZH_CN	欢迎使用Transporter
 
 WELCOME_TO_SOFTSQUEEZE
 	CS	Vítejte v SoftSqueeze
@@ -1448,7 +1455,7 @@ FREE_YOUR_MUSIC
 	NO	Sett musikken din fri
 	PT	Liberte a sua música
 	SV	Frige din musik
-	ZH_CN	解放您的音乐！
+	ZH_CN	释放您的音乐！
 
 UPDATING_FIRMWARE_SQUEEZEBOX
 	CS	Aktualizuji Squeezebox firmware.
@@ -1492,6 +1499,7 @@ UPDATING_FIRMWARE_TRANSPORTER
 	NO	Oppdaterer spillerens programvare ('firmware')
 	PT	Atualizando firmware ...
 	SE	Uppdaterar spelarens mjukvara
+	ZH_CN	更新Transporter韧件
 	
 FIRMWARE_MISSING
 	DE	Fehler: Firmware fehlt
@@ -1499,6 +1507,7 @@ FIRMWARE_MISSING
 	ES	Error: No se encuentra Firmware
 	IT	Errore: Firmware non trovato
 	NL	Fout: Firmware mist
+	ZH_CN	失误：韧件丢失
 
 FIRMWARE_MISSING_DESC
 	DE	Der Server kann keine Firmware aus dem Internet beziehen.
@@ -1506,12 +1515,14 @@ FIRMWARE_MISSING_DESC
 	ES	El server no puede conectarse a Internet para obtener la actualización de firmware.
 	IT	Il Server non riesce a connettersi ad Internet per ottenere il firmware aggiornato.
 	NL	Server kan geen connectie maken naar Internet om de bijgewerkte firmware op te halen.
+	ZH_CN	服务器无法连接互联网并取得韧件更新。
 
 CHECKING_STREAM
 	DE	Überprüfe Datenstrom...
 	EN	Checking stream...
 	FR	Vérif. flux...
 	NL	Controleren stream...
+	ZH_CN	检查频流
 
 CONNECTING_FOR
 	CS	Připojuji ke hraní:
@@ -1534,6 +1545,7 @@ BUFFERING
 	EN	Buffering
 	ES	Llenando el buffer...
 	NL	Bufferen
+	ZH_CN	缓冲装载中
 
 WAITING_TO_SYNC
 	DE	Warte auf Synchronisierung...
@@ -1541,6 +1553,7 @@ WAITING_TO_SYNC
 	ES	Esperando sincronización...
 	FR	Attente synchro...
 	NL	Wachten op sync...
+	ZH_CN	等待同步
 
 PROBLEM_CONNECTING
 	CS	Chyba: nelze se připojit k serveru:
@@ -1576,23 +1589,27 @@ PROBLEM_OPENING_REMOTE_URL
 	EN	Error: Can't open remote URL
 	ES	Error: No se puede abrir la ULR remota
 	NL	Fout: kan URL niet op afstand niet openen
+	ZH_CN	失误：无法连接网址
 
 PLAYLIST_NO_ITEMS_FOUND
 	DE	Fehler: Wiedergabeliste ist leer
 	EN	Error: No items found in playlist
 	ES	Error: No se encontraron items en la lista
 	NL	Fout: Geen items gevonden in de playlist
+	ZH_CN	失误：播放表为空
 
 PLAYLIST_PROBLEM_CONNECTING
 	DE	Fehler: Kann keine Verbindung herstellen
 	EN	Error: Can't connect to retrieve playlist
 	ES	Error: No se puede conectar para obtener la lista
 	NL	Fout: Kan geen connectie maken om playlist op te halen
+	ZH_CN	失误：无法取得播放表
 
 ASF_UNABLE_TO_PARSE
 	DE	Fehler: kann ASF Stream nicht lesen
 	EN	Error: Unable to parse ASF audio stream
 	NL	Fout: decoderen ASF audio mislukt
+	ZH_CN	失误：无法解析音频流
 
 NO_PLAYLIST_DIR
 	CS	Chyba: Není uložen žádný playlist.
@@ -1621,7 +1638,7 @@ NO_PLAYLIST_DIR_MORE
 	JA	サーバー セッティングを調整して下さい
 	NL	Ga naar serverinstellingen om dit te corrigeren.
 	SV	Ändra serverinställningar för att korrigera detta
-	ZH_CN	请参考伺服器设置以便修正
+	ZH_CN	请参考服务器配置以便修正
 
 HOME
 	CS	Hlavní menu
@@ -1665,7 +1682,7 @@ SERVER
 	NO	Server
 	PT	Servidor
 	SV	Server
-	ZH_CN	伺服器
+	ZH_CN	服务器
 
 ABOUT_SHORT
 	CS	O programu
@@ -1687,24 +1704,28 @@ WEB_XML_ERROR
 	EN	There was an error loading the remote feed for %s: (%s)
 	ES	Hubo un error al cargar el feed remoto de %s: (%s)
 	NL	Er was een laadfout van de feed op afstand gedurende %s: (%s)
+	ZH_CN	载入远方信息时发生失误%s: (%s)
 
 XML_ERROR
 	DE	Fehler
 	EN	Error
 	IT	Errore
 	NL	Fout
+	ZH_CN	失误
 
 XML_ERROR
 	DE	Fehler
 	EN	Error
 	IT	Errore
 	NL	Fout
+	ZH_CN	失误
 
 XML_GET_FAILED
 	DE	Fehler beim Auslesen
 	EN	Failed to parse
 	ES	Error de parse
 	NL	Decoderen podcast mislukte
+	ZH_CN	解析失误
 
 XML_LOADING
 	DE	Hole Casts...
@@ -1713,11 +1734,13 @@ XML_LOADING
 	FI	Haetaan...
 	FR	Chargement...
 	NL	Ophalen...
+	ZH_CN	读取中
 
 XML_LINK
 	EN	Link
 	IT	Collegamento
 	ES	Vínculo
+	ZH_CN	链
 
 XML_DATE
 	DE	Datum
@@ -1725,47 +1748,55 @@ XML_DATE
 	ES	Fecha
 	IT	Data
 	NL	Datum
+	ZH_CN	日期
 
 XML_EDITOR
 	DE	Herausgeber
 	EN	Editor
 	FR	Edition
 	NL	Redacteur
+	ZH_CN	编辑
 
 XML_ENCLOSURE
 	DE	Anhang
 	EN	Enclosure
 	NL	Bijlage
+	ZH_CN	框架
 
 XML_AUDIO_ENCLOSURES
 	DE	Audio Anhänge
 	EN	Audio Enclosures
 	ES	Enclosures de Audio
 	NL	Audio bijlage
+	ZH_CN	音频框架
 
 XML_FEED_DESCRIPTION
 	DE	Über diesen Feed
 	EN	About this feed
 	ES	Acerca de este feed
 	NL	Over deze feed
+	ZH_CN	关于这饲址
 
 XML_SUBTITLE
 	DE	Untertitel
 	EN	Subtitle
 	ES	Subtítulo
 	NL	Subtitel
+	ZH_CN	字幕
 
 XML_SUMMARY
 	DE	Zusammenfassung
 	EN	Summary
 	ES	Resumen
 	NL	Samenvatting
+	ZH_CN	简介
 
 XML_EXPLICIT
 	DE	Anstössig
 	EN	Explicit
 	ES	Explícito
 	NL	Expliciet
+	ZH_CN	说明
 
 NUMBER_OF_LISTENERS
 	DE	Anzahl Hörer
@@ -1773,6 +1804,7 @@ NUMBER_OF_LISTENERS
 	ES	Número de oyentes
 	IT	Numero di ascoltatori
 	NL	Aantal luisteraars
+	ZH_CN	听众数量
 
 DESCRIPTION
 	DE	Beschreibung
@@ -1780,12 +1812,14 @@ DESCRIPTION
 	ES	Descripción
 	IT	Descrizione
 	NL	Beschrijving
+	ZH_CN	陈述
 
 SOURCE
 	DE	Quelle
 	EN	Source
 	ES	Fuente
 	NL	Bron
+	ZH_CN	源头
 
 #
 # Setup page strings
@@ -1796,6 +1830,7 @@ SETUP_BAD_PAGE_SUGGEST
 	EN	Try adding page=SERVER_SETTINGS.
 	ES	Intentar añadiendo page=SERVER_SETTINGS.
 	NL	Probeer page=SERVER_SETTINGS toe te voegen.
+	ZH_CN	尝试配置page=SERVER_SETTINGS
 
 #
 # Setup Group strings
@@ -1818,7 +1853,7 @@ SETUP_GROUP_BRIGHTNESS
 	NO	Lysstyrke
 	PT	Brilho
 	SV	Ljusstyrka
-	ZH_CN	明亮度
+	ZH_CN	光亮度
 
 SETUP_GROUP_BRIGHTNESS_DESC
 	CS	Jas displeje přehrávače může být nastaven pro  různé stavy přehrávače: zapnut, vypnut, nehraje. Může být také nastaven automaticky když zmáčknete tlačítko, začnete přehrávat skladbu, nebo necháte přehrávač chvíli bez ovládání. Je možno také vypnout toto automatické chování.
@@ -1833,7 +1868,7 @@ SETUP_GROUP_BRIGHTNESS_DESC
 	JA	パワーオン・オフ時、スクリーンセーバー時のプレーヤーのディスプレイの明るさを調節できます
 	NL	De helderheid van het spelerscherm kun je apart instellen voor als de speler aan staat, uit staat ('standby') staat of in ruststand (schermbeveiliger). <BR>De helderheid kun je ook instellen voor wanneer je op een toets drukt, start met afspelen of de speler met rust laat voor een tijdje. Je kunt kiezen om dit automatische gedrag uit te schakelen.
 	SV	Ljusstyrkan på spelarens skärm kan ställas in oberoende för lägena av, på och vänteläge. Ljusstyrkan kan också justeras automatiskt vid knapptryckning, vid start eller slut på sång, eller efter förinställd tid av oaktivitet. Du kan också välja att stänga av denna automatik.
-	ZH_CN	播放机显示屏可以根据不同的操作状态如开机、关机、或屏幕保护程序进行时设置不同的明亮度。播放机也会随着按键、开始播放音乐等活动而自行调节显示屏明亮度。用户可选择是否采用此项自动明亮度调节功能。
+	ZH_CN	播放机显示屏可以根据不同的操作状态如开机、关机、或屏幕保护程序进行时设置不同的光亮度。播放机也会随着按键、开始播放音乐等活动而自行调节显示屏光亮度。用户可选择是否采用此项自动光亮度调节功能。
 
 SETUP_GROUP_TCP_PARAMS
 	CS	Nastavení TCP/IP
@@ -1866,7 +1901,7 @@ SETUP_GROUP_TCP_PARAMS_DESC
 	NO	Disse innstillingene justerer TCP nettverket for serveren.
 	PT	Estas configurações ajustam os parâmetros de rede TCP do servidor.
 	SV	Detta är inställningar för nätverksprotokollet TCP.
-	ZH_CN	适用于调节伺服器上TCP/IP网络参数的设置。
+	ZH_CN	适用于调节服务器上TCP/IP网络参数的配置。
 
 SETUP_GROUP_TITLEFORMATS_DESC
 	CS	Toto jsou formáty dostupné ve výběrech v nastavení přehrávačů. Pro vymazání formátu,  vymažte stávající formát a nahraďte jej novým, nebo nechte prízdné.  Dostupné proměnné jsou: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time)  Elementy mohou být odděleny čímkoliv (nebo ničím). Oddělovače jsou pouze použity, pokud jsou datové elementy přednastaveny.  Aktuální formát bude použit také pro zobrazení na webovém rozhraní.
@@ -1883,7 +1918,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 	NO	Dette er tilgjengelige for web-interfacet og selve spilleren. For å fjerne et format, tøm boksen. For å legge til et format, skriv det i en tom boks. Tilgengelige elementer: CT (innholds type), TITLE, GENRE, TRACKNUM (spor nummer), FS (filstørrelse), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (totalt antall sekunder), DURATION (minutter og sekunder), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volumnavn), PATH, FILE, EXT (filending), LONGDATE (dagens dato, langt), SHORTDATE (dagens dato, kort), CURRTIME (klokkeslett nå). Elementer kan skilles med ethvert tegn (eller ingen). Skilletegnet vises bare om dataelementet finnes. Det valgte formatet er det som blir brukt på websidene.
 	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no cliente. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
 	SV	Dessa är de tillgängliga formaten för webgränssnittet och själva spelaren. För att ta bort ett format, töm textboxen. För att lägga till ett nytt format, skriv i en tom textbox. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT(kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME, PATH, FILE, EXT (filändelse), LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera dataelementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget tecken alls). Skiljetecken visas endast om dataelementet existerar. Det valda formatet är det som kommer användas på websidorna.
-	ZH_CN	以上或播放机设置内皆设有各类不同的显示格式可供选择。如要除去某个格式，便清除其属复选框中的标记。您也可在空的资料栏中输入新格式。可用基本资料包括CT（内容类别）、TITLE（曲目）、GENRE（音乐风格）、TRACKNUM（轨道序号）、FS（文件大小）、ARTIST（演唱者）、ALBUM（乐谱帖）、COMMENT（注解）、YEAR（年份）、SECS（总秒数）、DURATION（总长度）、VBR_SCALE (vbr/cbr)、BITRATE（比特率）、TAGSIZE（标签大小）、VOLUME（卷名）、PATH（路径）、FILE（文件名）、EXT（扩展名）、LONGDATE（今日日期，完整）、SHORTDATE（今日日期，缩写）、CURRTIME（现在时间）。基本资料可使用任何方式区分。<br>当前的格式便是网页所应用的格式。
+	ZH_CN	以上或播放机设置内皆设有各类不同的显示格式可供选择。如要除去某个格式，便清除其属复选框中的标记。您也可在空的资料栏中输入新格式。可用基本资料包括CT（内容类别）、TITLE（曲目）、GENRE（乐种）、TRACKNUM（音轨序号）、FS（文件大小）、ARTIST（艺人）、ALBUM（专辑）、COMMENT（注解）、YEAR（年份）、SECS（总秒数）、DURATION（总长度）、VBR_SCALE (vbr/cbr)、BITRATE（比特率）、TAGSIZE（标签大小）、VOLUME（卷名）、PATH（路径）、FILE（文件名）、EXT（扩展名）、LONGDATE（今日日期，完整）、SHORTDATE（今日日期，缩写）、CURRTIME（现在时间）。基本资料可使用任何方式区分。<br>当前的格式便是网页所应用的格式。
 
 SETUP_GROUP_MENUITEMS
 	CS	Hlavní menu
@@ -2252,7 +2287,7 @@ SETUP_GROUP_PLUGINS_DESC
 	NO	SlimServer inneholder en del tilleggsfunksjoner, Plugins, som du kan benytte deg av med fjernkontrollen. Disse kan aktiveres eller deaktiveres individuelt. For å aktivere en Plugin, merk den. For å deaktivere en Plugin, fjern merket. For å lagre endringene, velg "Endre".
 	PT	O cliente SlimServer inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
 	SV	SlimServer inkluderar tilläggs-funktioner som du kan konfigurera och/eller använda via din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras var för sig. Kryssa i rutan bredvid tillägget nedan för att aktivera ett tillägg. Ta bort krysset när du vill avaktivera ett tillägg. Spara dina ändringar genom att klicka på "Ändra".
-	ZH_CN	SlimServer设有一些称为插件程序(Plugins)的额外功能。这些功能都可通过遥控器操控。您可选择激活或撤销在Plugins目录下的各类插件程序。如要激活某个插件程序，请在其复选框中标记。如要撤销某个插件程序，请清除其复选框中的标记。您可选择是否让伺服器在每当漫游到插件程序的菜单或设置时进行插件程序扫瞄。在伺服器启动时装载插件程序为缺省。请点击《更动》以保存您所作的设定。
+	ZH_CN	SlimServer设有一些称为插件程序(Plugins)的额外功能。这些功能都可通过遥控器操控。您可选择激活或撤销在Plugins目录下的各类插件程序。如要激活某个插件程序，请在其复选框中标记。如要撤销某个插件程序，请清除其复选框中的标记。您可选择是否让服务器在每当漫游到插件程序的菜单或设置时进行插件程序扫瞄。在服务器启动时装载插件程序为缺省。请点击《更动》以保存您所作的设定。
 
 SETUP_PLUGINS-ONTHEFLY
 	CS	Načítat pluginy za běhu
@@ -2396,6 +2431,7 @@ SETUP_GROUP_FORMATS_EXTENSIONS
 	FR	Exclusion des types de fichier
 	IT	Impostazione analisi estensione file.
 	NL	Bestandsextensies scan instelling
+	ZH_CN	文件扩展名扫描配置
 
 SETUP_DISABLEDEXTENSIONSAUDIO
 	DE	Deaktivierte Audio-Dateiendungen
@@ -2404,6 +2440,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO
 	FR	Types de fichier ignorés
 	IT	Disabilita estensioni file audio
 	NL	Uitgezette audio bestand extensies.
+	ZH_CN	撤销音频文件扩展名
 
 SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	DE	SlimServer durchsucht die Musiksammlung nach allen unterstützten Dateitypen (Audiodateien und CUE Sheets). Falls Sie gezielt Dateitypen von der Benutzung durch SlimServer ausschliessen wollen, so geben Sie hier eine durch Komma getrennte Liste der Endungen an, z.B. cue, mp4, aac
@@ -2420,6 +2457,7 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST
 	FR	Types de liste de lecture ignorés
 	IT	Disabilita estensioni liste di esecuzione
 	NL	Uitgezette playlist bestandsextensies
+	ZH_CN	撤销播放表文件扩展名
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
 	DE	SlimServer durchsucht den Wiedergabelisten-Ordner nach allen unterstützten Dateitypen (Wiedergabelisten und CUE Sheets). Falls Sie gezielt Dateitypen von der Benutzung durch SlimServer ausschliessen wollen, so geben Sie hier eine durch Komma getrennte Liste der Endungen an, z.B. m3u, pls, cue 
@@ -2578,7 +2616,7 @@ SETUP_POWERONBRIGHTNESS
 	NO	Lysstyrke når på
 	PT	Brilho quando Ligado
 	SV	Ljusstyrka i påslaget läge
-	ZH_CN	开机时的明亮度
+	ZH_CN	开机时的光亮度
 
 SETUP_POWERONBRIGHTNESS_CHOOSE
 	CS	Jas pro 'zapnuto':
@@ -2595,7 +2633,7 @@ SETUP_POWERONBRIGHTNESS_CHOOSE
 	NO	Lysstyrke når på:
 	PT	Brilho quando Ligado
 	SV	Ljusstyrka i påslaget läge:
-	ZH_CN	开机时的明亮度：
+	ZH_CN	开机时的光亮度：
 
 SETUP_POWEROFFBRIGHTNESS
 	CS	Jas pro 'vypnuto'
@@ -2611,7 +2649,7 @@ SETUP_POWEROFFBRIGHTNESS
 	NO	Lysstyrke når av
 	PT	Brilho quando Desligado
 	SV	Ljusstyrka i avslaget läge
-	ZH_CN	关机时的明亮度
+	ZH_CN	关机时的光亮度
 
 SETUP_POWEROFFBRIGHTNESS_CHOOSE
 	CS	Jas pro 'vypnuto':
@@ -2628,7 +2666,7 @@ SETUP_POWEROFFBRIGHTNESS_CHOOSE
 	NO	Lysstyrke når av:
 	PT	Brilho quando Desligado
 	SV	Ljusstyrka i avslaget läge:
-	ZH_CN	关机时的明亮度：
+	ZH_CN	关机时的光亮度：
 
 SETUP_IDLEBRIGHTNESS
 	CS	Jas pro stav 'nečinný'
@@ -2640,7 +2678,7 @@ SETUP_IDLEBRIGHTNESS
 	JA	アイドル時の明るさ
 	NL	Helderheid in ruststand
 	SV	Ljusstyrka i viloläge
-	ZH_CN	空闲时的明亮度
+	ZH_CN	空闲时的光亮度
 
 SETUP_IDLEBRIGHTNESS_CHOOSE
 	CS	Jas pro stav 'nečinný':
@@ -2653,7 +2691,7 @@ SETUP_IDLEBRIGHTNESS_CHOOSE
 	JA	アイドル時の明るさ:
 	NL	Helderheid in rust:
 	SV	Ljusstyrka i viloläge
-	ZH_CN	空闲时的明亮度：
+	ZH_CN	空闲时的光亮度：
 
 SETUP_AUTOBRIGHTNESS_CHOOSE
 	CS	Automaticjý jas displeje:
@@ -2669,7 +2707,7 @@ SETUP_AUTOBRIGHTNESS_CHOOSE
 	NO	Vis lysstyrke automatisk:
 	PT	Brilho Automático:
 	SV	Automatisk ljusstyrka:
-	ZH_CN	自动调节显示屏明亮度：
+	ZH_CN	自动调节显示屏光亮度：
 
 SETUP_AUTOBRIGHTNESS_OFF
 	CS	Nastavit jas ručně
@@ -2686,7 +2724,7 @@ SETUP_AUTOBRIGHTNESS_OFF
 	NO	Juster lysstyrke manuelt
 	PT	Ajustar o Brilho Manualmente
 	SV	Ändra ljusstyrka manuellt
-	ZH_CN	手工调节显示屏明亮度
+	ZH_CN	手工调节显示屏光亮度
 
 SETUP_AUTOBRIGHTNESS_ON
 	CS	Nastavit jas automaticky
@@ -2703,7 +2741,7 @@ SETUP_AUTOBRIGHTNESS_ON
 	NO	Juster lysstyrke automatisk
 	PT	Ajustar o Brilho Automaticamente
 	SV	Ändra ljusstyrka automatiskt
-	ZH_CN	自动调节显示屏明亮度
+	ZH_CN	自动调节显示屏光亮度
 
 SETUP_ALARM
 	CS	Budík
@@ -2766,7 +2804,7 @@ SETUP_PLAYINGDISPLAYMODE
 	JA	現在再生中の曲の情報
 	NL	"Speelt nu" informatie
 	SV	Information i läge "Nu spelas"
-	ZH_CN	播放中的信息
+	ZH_CN	播放中信息
 
 SETUP_PLAYINGDISPLAYMODE_OK
 	DA	Afspilleren vil nu vise status for afspilningen således:
@@ -10048,7 +10086,7 @@ FORGET_PLAYER_DESC
 	NO	Om du ikke bruker denne spilleren eller om den finnes to ganger i listen over spillere, kan du be serveren glemme denne spilleren.
 	PT	Se não usar mais este cliente (nome ou IP), ou se o cliente aparecer várias vezes, pode "esquecê-lo".
 	SV	Om du inte använder denna spelare eller om denna spelare finns två gånger i din lista över spelare, så kan du välja att servern skall glömma denna spelare.
-	ZH_CN	如果您不再使用这个播放机或这个播放机重复出现，您可以选择让伺服器遗忘这个播放机。
+	ZH_CN	如果您不再使用这个播放机或这个播放机重复出现，您可以选择让服务器遗忘这个播放机。
 
 FORGET_PLAYER_LINK
 	CS	Neregistrovat tento přehrávač
@@ -10096,7 +10134,7 @@ PORT_NUMBER
 	NO	Du kan endre portnummeret som brukes for å nå webserveren fra en browser. (Standard er 9000)
 	PT	A porta para acesso via navegador web. (por omissão, a 9000)
 	SV	Du kan ändra portnumret som används för att nå webservern från en webläsare. (Standardvärdet är 9000)
-	ZH_CN	您可以更改浏览器访问伺服器用的端口号。（缺省为9000）。
+	ZH_CN	您可以更改浏览器访问服务器用的端口号。（缺省为9000）。
 
 SCREENSAVER_TIMEOUT
 	CS	Přehrávač  ukazuje automaticky aktuálně přehrávanou skladbu po zadtavení dálkovým ovladačem. Můžete změnit prodlevu po které to udělá. Nastavíte li prodlevu na nulu, nebude automaticky ukazovat aktuální skladbu.
@@ -12156,7 +12194,7 @@ WMA_NO_CONVERT_CMD
 	FR	Erreur conversion WMA - v�rifiez le type fichier
 	IT	Errore nella conversione WMA - Controlla il tipo di file.
 	NL	WMA converteerfout - controleer bestandstype
-	ZH_CN	WMA转换错误-请检查文件种类
+	ZH_CN	WMA转换错误-请检查文件格式
 
 MIDWORDS_UPPER
 	DE	1
@@ -12282,6 +12320,7 @@ SQUEEZENETWORK_SWITCH
 	FR	Se connecter à SqueezeNetwork
 	IT	Passa a SqueezeNetwork
 	NL	Wisselen naar SqueezeNetwork
+	ZH_CN	切换到SqueezeNetwork
 
 SQUEEZENETWORK_SWITCHING
 	DE	Verbinde zum SqueezeNetwork...
@@ -12289,6 +12328,7 @@ SQUEEZENETWORK_SWITCHING
 	FR	Connexion à SqueezeNetwork, veuillez patienter...
 	IT	Trasferimento sulla SqueezeNetwork, attendi prego...
 	NL	Wisselen naar SqueezeNetwork, even wachten...
+	ZH_CN	正在切换到SqueezeNetwork，请稍等。
 
 SQUEEZENETWORK_SB2_REQUIRED
 	DE	Diese Funktion benötigt eine Squeezebox2 oder neuer.
@@ -12305,6 +12345,7 @@ UPNP_REQUEST_FAILED
 	EN	UPnP request failed, please check the UPnP server.
 	ES	El requerimiento de UPnP falló, por favor revisar el servidor de UPnP.
 	NL	UPnP verzoek lukte niet. Controleer je UPnP server.
+	ZH_CN	UPnP请求失败，请检查UPnP服务器。
 
 SETUP_SCROLLMODE
 	DE	Scroll Modus
@@ -12441,7 +12482,7 @@ TRACKARTIST
 	EN	Track Artist
 	ES	Artista del Álbum
 	NL	Artiest van liedje
-	ZH_CN	轨道艺人
+	ZH_CN	音轨艺人
 
 ALBUMARTIST
 	DE	Album-Interpret
@@ -12450,7 +12491,7 @@ ALBUMARTIST
 	FI	Levyn esittäjä
 	IT	Album dell'artista
 	NL	Album artiest
-	ZH_CN	乐谱帖艺人
+	ZH_CN	专辑艺人
 
 UNSYNC
 	DE	Synchronisation aufheben
@@ -12475,6 +12516,7 @@ SETUP_USEBANDASALBUMARTIST_1
 	FR	Lister les albums par groupe
 	IT	Elenca gli album per gruppo
 	NL	Toon albums per band
+	ZH_CN	专辑按团体列出
 
 SETUP_USEBANDASALBUMARTIST_0
 	DE	Alben bei allen Interpreten des Albums aufführen
@@ -12484,6 +12526,7 @@ SETUP_USEBANDASALBUMARTIST_0
 	FR	Lister les albums par tous les artistes
 	IT	Elenca gli album sotto ogni artista di quell'album
 	NL	Toon albums bij alle artiesten voor dat album
+	ZH_CN	专辑按艺人列出
 
 LYRICS
 	DE	Liedertexte
@@ -12493,6 +12536,7 @@ LYRICS
 	FR	Paroles
 	IT	Testi
 	NL	Tekst liedje
+	ZH_CN	歌词
 
 SETUP_POWERONRESUME
 	DE	Startverhalten
@@ -12574,6 +12618,7 @@ ARTWORK
 	FR	Pochette
 	IT	Copertina
 	NL	Hoesafbeeldingen
+	ZH_CN	封面图
 
 ONE_BY_ONE_ARTWORK
 	DE	Plattenhüllen einzeln
@@ -12597,6 +12642,7 @@ SETUP_LARGETEXTFONT
 	FR	Grande police
 	IT	Carattere per testo grande
 	NL	Grote tekst font
+	ZH_CN	大字体
 
 SETUP_LARGETEXTFONT_DESC
 	DE	Wählen Sie, welche Schrift Sie bei doppelter Grösse anzeigen wollen
@@ -12606,6 +12652,7 @@ SETUP_LARGETEXTFONT_DESC
 	FR	Choisissez la police utilisée en mode texte de grande taille.
 	IT	Scegli quale carattere usare quando visualizzi testo grande.
 	NL	Kies welk font je wilt gebruiken wanneer je grote tekst wil gebruiken.
+	ZH_CN	选择在显示较大文字时您想要使用的字体。
 
 SETUP_LARGETEXTFONT_0
 	DE	Klassisch
@@ -12615,6 +12662,7 @@ SETUP_LARGETEXTFONT_0
 	FR	Classique
 	IT	Classico
 	NL	Klassiek
+	ZH_CN	典型
 
 SETUP_LARGETEXTFONT_1
 	EN	Modern
@@ -12623,6 +12671,7 @@ SETUP_LARGETEXTFONT_1
 	FR	Moderne
 	IT	Moderno
 	NL	Modern
+	ZH_CN	现代
 
 SORT_BY
 	DE	Sortierung
@@ -12630,6 +12679,7 @@ SORT_BY
 	ES	Ordenar Por
 	FR	Trier par
 	NL	Sorteer op
+	ZH_CN	排序按
 
 SORT_ARTISTALBUM
 	DE	Interpret, Album
@@ -12637,6 +12687,7 @@ SORT_ARTISTALBUM
 	ES	Artista, Álbum
 	FR	Artiste, Album
 	NL	Artiest, album
+	ZH_CN	艺人，专辑
 
 SORT_ARTISTYEARALBUM
 	DE	Interpret, Jahr, Album
@@ -12644,6 +12695,7 @@ SORT_ARTISTYEARALBUM
 	ES	Artista, Año, Álbum
 	FR	Artiste, Année, Album
 	NL	Artiest, jaar, album
+	ZH_CN	一人，年份，专辑
 
 SORT_YEARALBUM
 	DE	Jahr, Album
@@ -12651,6 +12703,7 @@ SORT_YEARALBUM
 	ES	Año, Álbum
 	FR	Année, Album
 	NL	Jaar, album
+	ZH_CN	年份，专辑
 
 SORT_YEARARTISTALBUM
 	DE	Jahr, Artist, Album
@@ -12658,12 +12711,14 @@ SORT_YEARARTISTALBUM
 	ES	Año, Artista, Álbum
 	FR	Année, Artiste, Album
 	NL	Jaar, artiest, album
+	ZH_CN	年份，艺人，专辑
 
 SORT_GENREALBUM
 	DE	Stil, Album
 	EN	Genre, Album
 	ES	Género, Álbum
 	NL	Genre, album
+	ZH_CN	风格，专辑
 
 SORT_GENREARTISTALBUM
 	DE	Stil, Interpret, Album
@@ -12671,6 +12726,7 @@ SORT_GENREARTISTALBUM
 	ES	Género, Artista, Álbum
 	FR	Genre, Artiste, Album
 	NL	Genre, artiest, album
+	ZH_CN	风格，艺人，专辑
 
 SETUP_CLOCKSOURCE
 	DE	Taktgeber
@@ -12678,6 +12734,7 @@ SETUP_CLOCKSOURCE
 	ES	Fuente de Reloj
 	FR	Source horloge
 	NL	Klok bron
+	ZH_CN	时钟源头
 
 SETUP_CLOCKSOURCE_DESC
 	DE	Die Ausgänge des Transporters könne mit internen oder externen Quellen synchronisiert werden. Bitte wählen Sie.
@@ -12686,6 +12743,7 @@ SETUP_CLOCKSOURCE_DESC
 	FR	Les sorties audio du Transporter peuvent être synchronisées avec des sources internes ou externes. Choisissez ci-dessous la source de l'horloge.
 	IT	Le uscite del Transporter possono essere sincronizzate con una sorgente interna o esterna. Scegli la sorgente di temporizzazione piu' sotto.
 	NL	Transporter's uitvoer kan gesynchroniseerd worden met interne of externe bronnen. Kies hieronder een bron.
+	ZH_CN	Transporter的输出可以和内置或外来的时钟源进行同步。在下列选择一个时钟源。
 
 CLOCKSOURCE_INTERNAL
 	DE	Interner Taktgeber
@@ -12693,12 +12751,14 @@ CLOCKSOURCE_INTERNAL
 	ES	Reloj Interno
 	IT	Orologio interno
 	NL	Interne klok
+	ZH_CN	内置时钟
 
 CLOCKSOURCE_WORD_CLOCK
 	EN	Word Clock Input
 	ES	Entrada de Palabra de Reloj
 	IT	Orologio mondiale
 	NL	Word klok invoer
+	ZH_CN	字形时钟输入
 
 VISUALIZER_EXTENDED_TEXT
 	DE	Erweiterte Textanzeige
@@ -12706,6 +12766,7 @@ VISUALIZER_EXTENDED_TEXT
 	ES	Display de Texto Extendido
 	FR	Infos texte étendues
 	NL	Uitgebreide tekstweergave
+	ZH_CN	扩展显示
 
 VISUALIZER_SPECTRUM_ANALYZER
 	CS	Frekvenční spektrum
@@ -12715,7 +12776,7 @@ VISUALIZER_SPECTRUM_ANALYZER
 	FR	Spectromètre
 	IT	Analizzatore di spettro
 	NL	Spectrum analyser
-	ZH_CN	音谱
+	ZH_CN	音谱分析器
 
 VISUALIZER_ANALOG_VUMETER
 	DE	Analoger VU Meter
@@ -12725,6 +12786,7 @@ VISUALIZER_ANALOG_VUMETER
 	FR	VUmètre analogique
 	IT	VU meter analogico
 	NL	Analoge VU meter
+	ZH_CN	模拟VU表
 
 VISUALIZER_DIGITAL_VUMETER
 	DE	Digitaler VU Meter
@@ -12734,6 +12796,7 @@ VISUALIZER_DIGITAL_VUMETER
 	FR	VUmètre numérique
 	IT	VU meter digitale
 	NL	Digitale VU meter
+	ZH_CN	数码VU表
 
 SETUP_VISUALIZERMODE
 	DE	Visualizer Bildschirm
@@ -12741,6 +12804,7 @@ SETUP_VISUALIZERMODE
 	ES	Pantalla de Visualizador
 	FR	Mode visualisation
 	NL	Visualisatie scherm
+	ZH_CN	视像屏幕
 
 SETUP_VISUALIZERMODE_DESC
 	DE	Der Player kann auf dem rechten Bildschirm Visualisierungen oder erweiterte Informationen anzeigen. Wählen Sie hier, was dargestellt werden soll. Mit dem "Visual" Knopf auf dem Player können Sie diese Wahl jederzeit ändern. 
@@ -12757,6 +12821,7 @@ SETUP_SERVERPRIORITY
 	FR	Priorité serveur
 	IT	Priorità server
 	NL	Server prioriteit
+	ZH_CN   SlimServer服务器流程优先值
 
 SETUP_SERVERPRIORITY_DESC
 	DE	Sie können die Priorität festlegen, mit welcher SlimServer ausgeführt wird.
@@ -12765,6 +12830,7 @@ SETUP_SERVERPRIORITY_DESC
 	FR	Vous pouvez fixer le niveau de priorité du SlimServer.
 	IT	Puoi specificare la priorità attribuita allo Slimserver.
 	NL	Je kunt de prioriteit specificeren van SlimServer binnen je server.
+	ZH_CN	您可以配置SlimServer服务器流程的优先设置。
 
 SETUP_SCANNERPRIORITY
 	DE	Scanner Priorität
@@ -12773,6 +12839,7 @@ SETUP_SCANNERPRIORITY
 	FR	Priorité répertoriage
 	IT	Priorità scansione
 	NL	Scanner prioriteit
+	ZH_CN	扫描流程优先值
 
 SETUP_SCANNERPRIORITY_DESC
 	DE	Sie können die Priorität festlegen, mit welcher der Scan-Prozess ausgeführt wird.
@@ -12781,6 +12848,7 @@ SETUP_SCANNERPRIORITY_DESC
 	FR	Vous pouvez fixer le niveau de priorité du processus de répertoriage.
 	IT	Puoi specificare la priorità attribuita al processo di scansione.
 	NL	Je kunt de prioriteit specificeren voor het scannen van nieuwe en gewijzigde muziek.
+	ZH_CN	您可以配置扫描流程的优先设置。
 
 SETUP_PRIORITY_DEFAULT
 	DE	Standard Priorität
@@ -12789,6 +12857,7 @@ SETUP_PRIORITY_DEFAULT
 	FR	Priorité par défaut
 	IT	Priorità di default
 	NL	Standaard prioriteit
+	ZH_CN	确省优先
 
 SETUP_PRIORITY_CURRENT
 	DE	Aktuelle Server Priorität
@@ -12797,6 +12866,7 @@ SETUP_PRIORITY_CURRENT
 	FR	Priorité serveur actuelle
 	IT	Priorità server in uso
 	NL	Huidige serverprioriteit
+	ZH_CN	现有服务器优先设置
 
 SETUP_PRIORITY_HIGH
 	DE	Hoch
@@ -12805,6 +12875,7 @@ SETUP_PRIORITY_HIGH
 	FR	Elevée
 	IT	Alta
 	NL	Hoog
+	ZH_CN	高
 
 SETUP_PRIORITY_ABOVE_NORMAL
 	DE	Höher als normal
@@ -12813,6 +12884,7 @@ SETUP_PRIORITY_ABOVE_NORMAL
 	FR	Au-dessus de la normale
 	IT	Sopra il normale
 	NL	Boven normaal
+	ZH_CN	中高
 
 SETUP_PRIORITY_NORMAL
 	DE	Normal
@@ -12821,6 +12893,7 @@ SETUP_PRIORITY_NORMAL
 	FR	Normale
 	IT	Normale
 	NL	Normaal
+	ZH_CN	中
 
 SETUP_PRIORITY_BELOW_NORMAL
 	DE	Niedriger als normal 
@@ -12829,6 +12902,7 @@ SETUP_PRIORITY_BELOW_NORMAL
 	FR	Sous la normale
 	IT	Sotto il normale
 	NL	Onder normaal
+	ZH_CN	中低
 
 SETUP_PRIORITY_LOW
 	DE	Niedrig
@@ -12837,139 +12911,170 @@ SETUP_PRIORITY_LOW
 	FR	Basse
 	IT	Bassa
 	NL	Laag
+	ZH_CN	低
 
 SETUP_DIGITALOUTPUTENCODING
 	DE	Kodierung des digitalen Ausgangs
 	EN	Digital Output Encoding
 	NL	Digitale uitvoer codering
+	ZH_CN	数码输出编码
 
 SETUP_DIGITALOUTPUTENCODING_DESC
 	DE	Sie können für den digitalen Ausgang zwischen S/PDIF und AES/EBU wählen.
 	EN	You can choose between S/PDIF and AES/EBU encoding for the digital outputs.
 	FR	Vous pouvez choisir le format utilisé par les sorties numériques (S/PDIF ou AES/EBU).
 	NL	Je kunt kiezen tussen S/PDIF en AES/EBU codering voor de digitale uitvoeren.
+	ZH_CN	您可以选择使用S/PDIF或AES/EBU编码作为数码输出。
 
 DIGITALOUTPUTENCODING_SPDIF
 	EN	S/PDIF
+	ZH_CN	S/PDIF
+	ZH_CN	S/PDIF
 
 DIGITALOUTPUTENCODING_AESEBU
 	EN	AES/EBU
+	ZH_CN	AES/EBU
+	ZH_CN	AES/EBU
 	
 AUDIO_SOURCE_BALANCED_AES
 	EN	Balanced AES/EBU
 	IT	Bilanciata AES/EBU
+	ZH_CN	平衡AES/EBU
 
 AUDIO_SOURCE_BNC_SPDIF
 	EN	BNC Coax S/PDIF
 	IT	BNC S/PDIF Coassiale
+	ZH_CN	BNC S/PDIF电接口
 
 AUDIO_SOURCE_RCA_SPDIF
 	EN	RCA Coax S/PDIF
 	IT	RCA S/PDIF Coassiale
+	ZH_CN	RCA S/PDIF电接口
 
 AUDIO_SOURCE_OPTICAL_SPDIF
 	EN	Optical S/PDIF (TOSLINK)
 	IT	S/PDIF Ottica (Toslink)
+	ZH_CN	S/PDIF(TOSLINK)光接口
 
 SETUP_WORDCLOCKOUTPUT
 	DE	Word Clock auf S/PDIF Ausgängen
 	EN	Word Clock On S/PDIF Outputs
 	NL	Woordklok op S/PDIF uitvoeren
+	ZH_CN	S/PDIF输出产生字形时钟信息
 
 SETUP_WORDCLOCKOUTPUT_DESC
 	DE	Wenn die digitalen Eingänge verwendet werden, kann der Transporter das Signal direkt durchreichen oder auf den S/PDIF Ausgängen ein Word Clock Signal generieren.
 	EN	When using the digital inputs, Transporter can pass the signal through or generate a word clock signal on the S/PDIF outputs.
 	NL	Bij gebruik van de digitale invoer kan de Transporter het signaal doorlaten of een woordklok signaal genereren op de S/PDIF uitvoeren.
+	ZH_CN	当使用数码输入时，Transporter可将信息进行直通或在S/PDIF输出产生字形时钟信息。
 
 WORDCLOCKOUTPUT_GENERATECLOCK
 	DE	Word Clock generieren
 	EN	Generate word clock
 	NL	Genereer woordklok
+	ZH_CN	产生字形时钟
 
 WORDCLOCKOUTPUT_PASSTHROUGH
 	DE	Signal durchreichen
 	EN	Digital passthrough
 	NL	Digitaal doorlaten
+	ZH_CN	数码直通
 
 SETUP_POWEROFFDAC
 	DE	Audio vom Strom trennen
 	EN	Power Off AUDIO
 	IT	Spegni DAC
+	ZH_CN	关闭数模转换器输出
 
 SETUP_POWEROFFDAC_DESC
 	DE	Wenn der Transporter ausgeschaltet wird, so kann auch der ganze Audioteil vom Strom getrennt werden. Dies kann allerdings ein hörbares Knack-Geräusch provozieren.
 	EN	When Transporter is turned off the audio section can be completely powered down.  Powering down the audio section may cause an audible pop.
 	IT	Quando il Transporter è spento, il convertitore digitale/analogico può essere disattivato.
 	NL	Wanneer de Transporter uit is kan het audiogedeelte compleet uitgezet worden. Het uitzetten van het audiogedeelte kan een hoorbaar pop-geluid veroorzaken.
+	ZH_CN	在关掉Transporter时您可将其数模转换器关闭。关闭数模转换器可能在一些连接器材上产生一些噪音。
 
 POWEROFFDAC_ALWAYSON
 	DE	Audio nie trennen
 	EN	Audio always on
 	IT	DAC sempre acceso
 	NL	Audio altijd aan
+	ZH_CN	数模转换器输出持久启动
 
 POWEROFFDAC_WHENOFF
 	DE	Audio beim Ausschalten trennen
 	EN	Power down audio when off
 	IT	Spegni DAC quando spento
 	NL	Zet DAC uit bij speler uit
+	ZH_CN	关机时也把数模转换器输出一同关闭
 
 SETUP_DISABLEDAC
 	DE	Audio ausschalten
 	EN	Turn Off Audio
 	NL	Uitzetten geluid
+	ZH_CN	关闭数模转换器输出
 
 SETUP_DISABLEDAC_DESC
 	DE	Wenn der Transporter ausgeschaltet wird, so können auch der Digital/Analog-Wandler und die digitalen Ausgänge deaktiviert werden. Das Deaktivieren der digitalen Ausgänge kann auf gewissen Verstärkern zu hörbaren Störgeräuschen führen.
 	EN	When Squeezebox is turned off the digital-to-analog converter and digital outputs can be disabled.  Disabling the outputs may cause an audible pop or noise in some receivers.
 	NL	Wanneer de Squeezbox uit is kun je de digitale naar analoog omzetter en de digitale uitvoer uitgezetten. Uitzetten van de uitvoer kan een hoorbaar pop-geluid of ruis geven in sommige receivers.
+	ZH_CN	在关掉Squeezebox时您可将其数模转换器关闭。关闭数模转换器可能在一些连接器材上产生一些噪音。
 
 DISABLEDAC_ALWAYSON
 	DE	Ausgänge nie deaktivieren
 	EN	Outputs always on
 	NL	Uitvoer altijd aan
+	ZH_CN	输出持久启动
 
 DISABLEDAC_WHENOFF
 	DE	Ausgänge beim Ausschalten deaktivieren
 	EN	Disable outputs when off
 	NL	Zet uitvoer uit wanneer speler uit is
+	ZH_CN	关机后撤销输出
 
 SETUP_POLARITYINVERSION
 	DE	Polarität umkehren
 	EN	Polarity Inversion
 	NL	Polariteitsinversie
+	ZH_CN	电极转换
 
 SETUP_POLARITYINVERSION_DESC
 	DE	Transporter kann die Polarität des Audiosignals umkehren.
 	EN	Transporter can invert the polarity of the audio signal.
 	NL	De Transporter kan de polariteit inverteren van het audio signaal.
+	ZH_CN	Transporter可以将音频信号的电极加以转换。
 
 POLARITYINVERSION_NORMAL
 	DE	Normale Polarität
 	EN	Normal polarity
 	NL	Normale polariteit
+	ZH_CN	电极正常
 
 POLARITYINVERSION_INVERTED
 	DE	Umgekehrte Polarität
 	EN	Inverted polarity
 	NL	Omgekeerde polariteit
+	ZH_CN	电极反转
 
 INFORMATION_PLAYER_VOLTAGE
 	DE	Spannung
 	EN	Voltage
 	IT	Voltaggio
+	ZH_CN	伏特
 
 LOADING_BROWSE_MUSIC_FOLDER
 	DE	Lade Musikverzeichnis...
 	EN	Loading Music Folder...
 	NL	Laden muziekfolder...
+	ZH_CN	音乐文件夹装载中
 
 LOADING
 	DE	Lade...
 	EN	Loading...
 	NL	Laden...
+	ZH_CN	装载中
 
 SRC
 	EN	Digital Input Source
 	NL	Digitale invoerbron
+	ZH_CN	数码输入源
 
