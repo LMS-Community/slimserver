@@ -115,13 +115,14 @@ sub init {
 		'play' => sub  {
 			my $client = shift;
 
-			if ($client->curSelection($client->curDepth()) eq 'NOW_PLAYING') {
+			my $selection = $client->curSelection($client->curDepth());
+			if ($selection eq 'NOW_PLAYING') {
 
 				$client->execute(['play']);
 
 				Slim::Buttons::Common::pushModeLeft($client, 'playlist');
 
-			} elsif ($client->curSelection($client->curDepth) =~ /^(?:BROWSE_|SAVED_PLAYLISTS)/) {
+			} elsif ($selection =~ /^(?:BROWSE_|SAVED_PLAYLISTS)/ && $selection !~ /^(?:BROWSE_MUSIC$)/) {
 
 				# If we're in a Browse mode and the user
 				# presses play, just go right, per Dean
