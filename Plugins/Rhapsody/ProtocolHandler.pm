@@ -34,8 +34,17 @@ sub canDirectStream {
 	
 	$url = _verifyPort( $url );
 	
+	if ( $url =~ /\.rhr$/ ) {
+		# Watch for playlist commands for radio mode
+		Slim::Control::Request::subscribe( 
+			\&playlistCallback, 
+			[['playlist'], ['repeat', 'newsong']],
+		);
+		return $url;
+	}
+	
 	# Direct stream supported for audio files but not playlists
-	return $url if $url =~ /(?:rhr|wma)$/;
+	return $url if $url =~ /\.wma$/;
 
 	return;
 }
@@ -95,8 +104,6 @@ sub requestString {
 		$rhapURL =~ s/^http/rhap/;
 		
 		if ( my $trackURL = $radioTracks{ $client->id }->{$rhapURL} ) {
-			
-			delete $radioTracks{ $client->id }->{$rhapURL};
 			
 			# direct stream the audio file
 			$url = $trackURL;
@@ -305,22 +312,7 @@ sub parseDirectBody {
 		for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client) ) {
 			$radioTracks{ $everybuddy->id }->{$url} = $trackURL;
 		}
-		
-		# Set title on a timer so it doesn't appear too early
-		my $elapsed  = $client->songElapsedSeconds;
-		my $tracklen = 
-			( $client->currentsongqueue->[-1] ) 
-			? $client->currentsongqueue->[-1]->{'duration'}
-			: $client->currentsongqueue->[0]->{'duration'};
-			
-		my $showIn = $tracklen - $elapsed;
-		my $showAt = time + ( $showIn || 0 );
-		
-		Slim::Utils::Timers::setTimer( $client, $showAt, sub {
-			my $client = shift;
-			Slim::Music::Info::setCurrentTitle( $url, Slim::Music::Info::standardTitle($client, $tracks[0]) );
-		} );
-		
+
 		# change the format of this URL back to wma so $client->stream doesn't think it's m3u
 		Slim::Music::Info::setContentType( $url, 'wma' );
 		
@@ -328,6 +320,42 @@ sub parseDirectBody {
 	}
 
 	return @tracks;
+}
+
+sub playlistCallback {
+	my $request = shift;
+	my $client  = $request->client();
+	my $p1      = $request->getRequest(1);
+	
+	return unless defined $client;
+	
+	# check that user is still using Rhapsody Radio
+	my $url = Slim::Player::Playlist::url($client);
+	
+	if ( !$url || $url !~ /\.rhr$/ ) {
+		# stop listening for playback eventss
+		Slim::Control::Request::unsubscribe( \&playlistCallback );
+		return;
+	}
+	
+	# The user has changed the repeat setting.  Radio requires a repeat
+	# setting of '2' (repeat all) to work properly
+	if ( $p1 eq 'repeat' ) {
+		$::d_plugins && msg("Rhapsody: Radio mode, user changed repeat setting, forcing back to 2\n");
+		
+		Slim::Player::Playlist::repeat( $client, 2 );
+		
+		if ( $client->playmode =~ /playout/ ) {
+			$client->playmode( 'playout-play' );
+		}
+	}
+	elsif ( $p1 eq 'newsong' ) {
+		# A new song has started playing.  We use this to change titles
+		my $trackURL = delete $radioTracks{ $client->id }->{$url};
+		my $title    = Slim::Music::Info::standardTitle( $client, $trackURL );
+		
+		Slim::Music::Info::setCurrentTitle( $url, $title );
+	}
 }
 
 sub canDoAction {
