@@ -122,8 +122,10 @@ sub init {
 
 				Slim::Buttons::Common::pushModeLeft($client, 'playlist');
 
-			} elsif ($selection =~ /^(?:BROWSE_|SAVED_PLAYLISTS)/ && $selection !~ /^(?:BROWSE_MUSIC$)/) {
-
+			} elsif ($selection eq 'SAVED_PLAYLISTS'
+						|| ($selection =~ /^BROWSE_/
+							&& $selection ne 'BROWSE_MUSIC')) {
+							
 				# If we're in a Browse mode and the user
 				# presses play, just go right, per Dean
 				Slim::Buttons::Input::List::exitInput($client, 'right');
