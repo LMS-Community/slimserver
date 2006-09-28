@@ -938,6 +938,17 @@ our %functions = (
 		# find the next value for the sleep timer
 		for ($i = 0; $i <= $#sleepChoices; $i++) {
 
+			# case of remaining time matching a defined time within same range as used in prettySleepTime.
+			if ( int($remaining + 0.5) == int($sleepChoices[$i] + 0.5)) {
+				
+				#don't skip if this is the last entry, but reset the redundant entries to end of song.
+				$sleepChoices[$i] = $remaining;
+				if ($i != $#sleepChoices) {
+					$i++;
+					$sleepChoices[$i] = $remaining;
+				}
+			}
+			
 			if ( $sleepChoices[$i] > $client->currentSleepTime() ) {
 				last;
 			}
@@ -947,6 +958,7 @@ our %functions = (
 			$i = 0;
 		}
 
+		# if remaining time matches the sleeptime to within a minute, set as remaining time
 		my $sleepTime = $sleepChoices[$i];
 
 		$client->execute(["sleep", $sleepTime * 60]);

@@ -755,13 +755,13 @@ sub prettySleepTime {
 	my $sleeptime = $client->sleepTime() - Time::HiRes::time();
 	my $sleepstring = "";
 	
-	my $dur = Slim::Player::Source::playingSongDuration($client);
-	my $remaining = $dur - Slim::Player::Source::songTime($client);
-	
+	my $dur = Slim::Player::Source::playingSongDuration($client) || 0;
+	my $remaining = $dur - Slim::Player::Source::songTime($client) || 0;
+
 	if ($client->sleepTime) {
 		
-		# check against remaining time to see if sleep time matches within 2 seconds.
-		if (int($sleeptime/2 + 0.5) == int($remaining/2 + 0.5)) {
+		# check against remaining time to see if sleep time matches within a minute.
+		if (int($sleeptime/60 + 0.5) == int($remaining/60 + 0.5)) {
 			$sleepstring = join(' ',$client->string('SLEEPING_AT'),$client->string('END_OF_SONG'));
 		} else {
 			$sleepstring = join(" " ,$client->string('SLEEPING_IN'),int($sleeptime/60)+1,$client->string('MINUTES'));
