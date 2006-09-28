@@ -129,15 +129,15 @@ sub main {
 
 	$::d_server && msg("SlimServer done init...\n");
 
+	# Take the db out of autocommit mode - this makes for a much faster scan.
+	Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
+
 	# Flag the database as being scanned.
-	setIsScanning(1);
+	Slim::Music::Import->setIsScanning(1);
 
 	if ($cleanup) {
 		Slim::Music::Import->cleanupDatabase(1);
 	}
-
-	# Take the db out of autocommit mode - this makes for a much faster scan.
-	Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
 
 	if ($wipe) {
 
@@ -239,25 +239,6 @@ sub initializeFrameworks {
 	Slim::Music::Info::init();
 }
 
-sub setIsScanning {
-	my $value = shift;
-
-	eval { Slim::Schema->txn_do(sub {
-
-		my $isScanning = Slim::Schema->rs('MetaInformation')->find_or_create({
-			'name' => 'isScanning'
-		});
-
-		$isScanning->value($value);
-		$isScanning->update;
-	}) };
-
-	if ($@) {
-
-		errorMsg("Scanner: Failed to update isScanning: [$@]\n");
-	}
-}
-
 sub usage {
 	print <<EOF;
 Usage: $0 [debug options] [--rescan] [--wipe] [--itunes] [--musicmagic] [--moodlogic] <path or URL>
@@ -313,12 +294,12 @@ sub initClass {
 
 sub cleanup {
 
-	$::d_server && msg("SlimServer cleaning up.\n");
+	$::d_server && msg("SlimServer scanner cleaning up.\n");
 
 	# Make sure to flush anything in the database to disk.
 	if ($INC{'Slim/Schema.pm'}) {
 
-		setIsScanning(0);
+		Slim::Music::Import->setIsScanning(0);
 
 		Slim::Schema->forceCommit;
 		Slim::Schema->disconnect;

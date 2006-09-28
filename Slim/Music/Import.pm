@@ -148,8 +148,11 @@ sub launchScan {
 		Proc::Background->new($command, @scanArgs)
 	);
 
+	# Update a DB flag, so the server knows we're scanning.
+	$class->setIsScanning(1);
+
 	# Set a timer to check on the scanning process.
-	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 30), \&checkScanningStatus);
+	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 5), \&checkScanningStatus);
 
 	return 1;
 }
@@ -169,7 +172,7 @@ sub checkScanningStatus {
 	# Run again if we're still scanning.
 	if ($class->stillScanning) {
 
-		Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 60), \&checkScanningStatus);
+		Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 5), \&checkScanningStatus);
 
 	} else {
 
@@ -215,6 +218,32 @@ sub setLastScanTime {
 		$last->value($value);
 		$last->update;
 	}) };
+}
+
+=head2 setIsScanning( )
+
+Set a flag in the DB to true or false if the scanner is running.
+
+=cut
+
+sub setIsScanning {
+	my $class = shift;
+	my $value = shift;
+
+	eval { Slim::Schema->txn_do(sub {
+
+		my $isScanning = Slim::Schema->rs('MetaInformation')->find_or_create({
+			'name' => 'isScanning'
+		});
+
+		$isScanning->value($value);
+		$isScanning->update;
+	}) };
+
+	if ($@) {
+
+		errorMsg("Scanner: Failed to update isScanning: [$@]\n");
+	}
 }
 
 =head2 runScan( )
