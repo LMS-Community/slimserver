@@ -760,8 +760,8 @@ sub prettySleepTime {
 	
 	if ($client->sleepTime) {
 		
-		# check against remaining time to see if sleep time matches within 1 second.
-		if (int($sleeptime + 0.5) == int($remaining)) {
+		# check against remaining time to see if sleep time matches within 2 seconds.
+		if (int($sleeptime/2 + 0.5) == int($remaining/2 + 0.5)) {
 			$sleepstring = join(' ',$client->string('SLEEPING_AT'),$client->string('END_OF_SONG'));
 		} else {
 			$sleepstring = join(" " ,$client->string('SLEEPING_IN'),int($sleeptime/60)+1,$client->string('MINUTES'));
