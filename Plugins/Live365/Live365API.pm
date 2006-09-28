@@ -233,6 +233,8 @@ sub authLoadSub {
 	}
 
 	my $resp = eval { XMLin($http->contentRef) }; 
+	
+	$::d_plugins && msg("Live365API: Login XML: " . Data::Dump::dump($resp) . "\n");
 
 	if ($@) {
 		$::d_plugins && msg("Live365API: XML parsing error on api_login.cgi: $@\n");
