@@ -245,13 +245,16 @@ sub playRandom {
 
 		Slim::Player::Playlist::shuffle($client, 0);
 
+		my $find = {};
+
 		# Initialize find to only include user's selected genres.  If they've deselected
 		# all genres, this clause will be ignored by find, so all genres will be used.
 		my $filteredGenres = getFilteredGenres($client);
 
-		my $find = {
-			'genreTracks.genre' => { 'in' => $filteredGenres }
-		};
+		if (ref($filteredGenres) eq 'ARRAY' && scalar @$filteredGenres > 0) {
+
+			$find->{'genreTracks.genre'} = { 'in' => $filteredGenres };
+		}
 
 		# Prevent items that have already been played from being played again
 		# This fails when multiple clients are playing random mixes. -- Max
