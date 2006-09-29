@@ -42,32 +42,58 @@ sub getDisplayName {
 sub findAndAdd {
 	my ($client, $type, $find, $limit, $addOnly) = @_;
 
-	$::d_plugins && msg("RandomPlay: Starting random selection of $limit items for type: $type\n");
+	$::d_plugins && msgf("RandomPlay: Starting random selection of %s items for type: $type\n", defined($limit) ? $limit : 'unlimited');
 
 	my @joins  = ();
 
 	# Pull in the right tables to do our searches
 	if ($type eq 'track' || $type eq 'year') {
 
-		push @joins, 'genreTracks';
+		if ($find->{'genreTracks.genre'}) {
+
+			push @joins, 'genreTracks';
+		}
 
 	} elsif ($type eq 'album') {
 
-		push @joins, { 'tracks' => 'genreTracks' };
+		if ($find->{'genreTracks.genre'}) {
+
+			push @joins, { 'tracks' => 'genreTracks' };
+
+		} else {
+
+			push @joins, 'tracks';
+		}
 
 	} elsif ($type eq 'contributor') {
 
-		push @joins, { 'contributorTracks' => { 'track' => 'genreTracks' } };
+		if ($find->{'genreTracks.genre'}) {
+
+			push @joins, { 'contributorTracks' => { 'track' => 'genreTracks' } };
+
+		} else {
+
+			push @joins, { 'contributorTracks' => 'track' };
+		}
 	}
 
 	# Search the database for the number of track we need. Use MySQL's
 	# RAND() function to get back a random list. Restrict by the genre's we've selected.
-	my @results = Slim::Schema->rs($type)->search($find, {
+	my @results = ();
+	my $rs      = Slim::Schema->rs($type)->search($find, {
 
 		'order_by' => \'RAND()',
 		'join'     => \@joins,
+	});
 
-	})->slice(0, ($limit-1));
+	if ($limit) {
+
+		@results = $rs->slice(0, ($limit-1));
+
+	} else {
+
+		@results = $rs->all;
+	}
 
 	$::d_plugins && msgf("RandomPlay: Find returned %i items\n", scalar @results);
 
@@ -165,14 +191,20 @@ sub getFilteredGenres {
 }
 
 sub getRandomYear {
-	my $filteredGenresRef = shift;
-	
+	my $filteredGenres = shift;
+
 	$::d_plugins && msg("RandomPlay: Starting random year selection\n");
 
-	my $year = Slim::Schema->rs('Track')->single(
-		{ 'genreTracks.genre' => $filteredGenresRef },
-		{ 'order_by' => \'RAND()', 'join' => 'genreTracks' }
-	)->year;
+	my %cond = ();
+	my %attr = ( 'order_by' => \'RAND()' );
+
+	if (ref($filteredGenres) eq 'ARRAY' && scalar @$filteredGenres > 0) {
+
+		$cond{'genreTracks.genre'} = $filteredGenres;
+		$attr{'join'}              = 'genreTracks';
+	}
+
+	my $year = Slim::Schema->rs('Track')->search(\%cond, \%attr)->single->year;
 
 	$::d_plugins && msg("RandomPlay: Selected year $year\n");
 
@@ -290,9 +322,13 @@ sub playRandom {
 				# random year to a genre.
 				my $year;
 
-				if($type eq 'year') {
+				if ($type eq 'year') {
+
 					$year = getRandomYear($filteredGenres);
-					$find->{'year'} = $year;
+
+					if ($year) {
+						$find->{'year'} = $year;
+					}
 				}
 
 				if ($i == 1) {
