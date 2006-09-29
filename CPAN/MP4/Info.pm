@@ -27,7 +27,7 @@ use vars qw(
 		all	=> [@EXPORT, @EXPORT_OK]
 	       );
 
-$VERSION = '1.10';
+$VERSION = '1.11';
 
 my $debug = 0;
 
@@ -156,7 +156,7 @@ The following keys may be defined:
 	APID	Apple Store ID
 	ART	Artist
 	CMT	Comment
-	COVR	Album art (typically jpeg data)
+	COVR	Album art (typically JPEG or PNG data)
 	CPIL	Compilation (boolean)
 	CPRT	Copyright statement
 	DAY	Year
@@ -377,6 +377,9 @@ sub parse_file
     close ($fh);
     return $err if $err;
 
+    # remaining get_mp4tag() stuff
+    $tags->{CPIL}     = 0                unless defined ($tags->{CPIL});
+
     # MP3::Info compatibility
     $tags->{TITLE}    = $tags->{NAM}     if defined ($tags->{NAM});
     $tags->{ARTIST}   = $tags->{ART}     if defined ($tags->{ART});
@@ -389,10 +392,14 @@ sub parse_file
     # remaining get_mp4info() stuff
     $tags->{VERSION}  = 4;
     $tags->{LAYER}    = 1                if defined ($tags->{FREQUENCY});
-    $tags->{BITRATE}  = int (0.5 + $tags->{SIZE} / (($tags->{MM}*60+$tags->{SS}+$tags->{MS}/1000)*128))
-	if (defined($tags->{SIZE}) && defined($tags->{MS}));	# A bit bogus
-    $tags->{COPYRIGHT}= 1                if defined ($tags->{CPRT});
+    $tags->{COPYRIGHT}= (defined ($tags->{CPRT}) ? 1 : 0);
     $tags->{ENCRYPTED}= 0                unless defined ($tags->{ENCRYPTED});
+
+    # Returns actual (not requested) bitrate
+    if (defined($tags->{SIZE}) && $tags->{SIZE} && defined($tags->{SECS}) && ($tags->{MM}+$tags->{SS}+$tags->{MS}))
+    {
+	$tags->{BITRATE}  = int (0.5 + $tags->{SIZE} / (($tags->{MM}*60+$tags->{SS}+$tags->{MS}/1000)*128))
+    }
 
     # Post process '---' container
     if ($tags->{MEAN} && ref($tags->{MEAN}) eq 'ARRAY')
@@ -445,15 +452,9 @@ sub parse_container
 sub parse_atom
 {
     my ($fh, $level, $parentsize, $tags) = @_;
-    my ($header, $size, $id, $err);
+    my ($header, $size, $id, $err, $pos);
     if (read ($fh, $header, 8) != 8)
     {
-	# XXXX - temporary fix for bug 4151
-	# AAC & ALAC files with artwork have changed.
-	if ($header =~ /^\000+$/) {
-		return 0;
-	}
-
 	$@ = 'Premature eof';
 	return -1;
     }
@@ -461,10 +462,11 @@ sub parse_atom
     ($size,$id) = unpack 'Na4', $header;
     if ($size==0)
     {
-	# Special zero-sized atom at top-level means we're done (14496-12 S4.2)
-	return 0 if $level==1;
-	$@ = 'Parse error';
-	return -1;
+	# Zero-sized atom extends to eof (14496-12:2004 S4.2)
+	$pos=tell($fh);
+	seek $fh, 0, 2;
+	$size = tell($fh) - $pos;	# Error if parent size doesn't match
+	seek $fh, $pos, 0;
     }
     elsif ($size == 1)
     {
@@ -849,7 +851,7 @@ Jonathan Harris E<lt>jhar@cpan.orgE<gt>.
 
 Chris Nandor E<lt>pudge@pobox.comE<gt> for writing L<MP3::Info|MP3::Info>
 
-Dan Sully for cover art and iTunes/aacgain metadata patches.
+Dan Sully at Slim Devices for cover art and iTunes/aacgain metadata patches.
 
 =head1 SEE ALSO
 
@@ -888,7 +890,7 @@ L<http://search.cpan.org/~cnandor/MP3-Info/>
 
 =head1 COPYRIGHT and LICENSE
 
-Copyright (c) 2004, 2005, Jonathan Harris E<lt>jhar@cpan.orgE<gt>
+Copyright (c) 2004, 2005, 2006, Jonathan Harris E<lt>jhar@cpan.orgE<gt>
 
 This program is free software; you can redistribute it and/or modify it
 under the the same terms as Perl itself.
