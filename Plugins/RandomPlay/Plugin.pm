@@ -282,8 +282,12 @@ sub playRandom {
 		# Initialize find to only include user's selected genres.  If they've deselected
 		# all genres, this clause will be ignored by find, so all genres will be used.
 		my $filteredGenres = getFilteredGenres($client);
+		my $excludedGenres = getFilteredGenres($client, 1);
 
-		if (ref($filteredGenres) eq 'ARRAY' && scalar @$filteredGenres > 0) {
+		# Only look for genre tracks if we have some, but not all
+		# genres selected. Or no genres selected.
+		if ((scalar @$filteredGenres > 0 && scalar @$excludedGenres != 0) || 
+		     scalar @$filteredGenres != 0 && scalar @$excludedGenres > 0) {
 
 			$find->{'genreTracks.genre'} = { 'in' => $filteredGenres };
 		}
