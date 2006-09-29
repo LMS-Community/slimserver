@@ -70,7 +70,7 @@ sub parse {
 		} elsif ($line =~ /^(?:REM\s+)?(DATE)\s+(.*)/i) {
 
 			# EAC CUE sheet has REM DATE not REM YEAR, and no quotes
-			$cuesheet->{uc($1)} = $2;
+			$cuesheet->{'YEAR'} = $2;
 
 		} elsif ($line =~ /^(?:REM\s+)?(GENRE)\s+(.*)/i) {
 
