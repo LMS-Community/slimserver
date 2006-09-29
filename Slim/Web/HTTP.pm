@@ -1953,9 +1953,11 @@ sub _generateContentFromFile {
 
 	my $skin = $params->{'skinOverride'} || Slim::Utils::Prefs::get('skin');
 
-	# BUG 4171:  only generate from valid skins, falling back on default if invalid.
-	$skin = isaSkin($skin);
-
+	# Default2 is gone, so redirect to Default.
+	if ($skin =~ /^(?:Default2)$/i) {
+		$skin = 'Default';
+	}
+	
 	$::d_http && msg("generating from $path\n");
 
 	# Make sure we have a skin template for fixHttpPath to use.
