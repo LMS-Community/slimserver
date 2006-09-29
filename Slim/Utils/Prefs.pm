@@ -872,7 +872,7 @@ sub maxRate {
 	# override the saved or default bitrate if a transcodeBitrate has been set via HTTP parameter
 	$rate = $client->prefGet('transcodeBitrate') || $rate;
 
-	$::d_source && msgf("Setting maxBitRate for %s to: %d\n", $client->name(), $rate);
+	$::d_source && $rate != 0 && msgf("Setting maxBitRate for %s to: %d\n", $client->name(), $rate);
 	
 	return $rate if $soloRate;
 	
