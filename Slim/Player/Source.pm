@@ -1204,6 +1204,9 @@ sub errorOpening {
 	my $line1 = shift || $client->string('PROBLEM_OPENING');
 	my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, streamingSongIndex($client)));
 	
+	my $url = Slim::Player::Playlist::url($client, streamingSongIndex($client));
+	Slim::Control::Request::notifyFromArray($client, ['playlist', 'cant_open', $url, $line1]);
+	
 	$client->showBriefly($line1, $line2, 5, 1, 1);
 }
 

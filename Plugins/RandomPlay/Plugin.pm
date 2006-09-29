@@ -591,6 +591,13 @@ sub commandCallback {
 		msgf("RandomPlay: received command %s\n", $request->getRequestString);
 		msgf("RandomPlay: while in mode: %s, from %s\n", $mixInfo{$client->masterOrSelf->id}->{'type'}, $client->name);
 	}
+	
+	# Bug 3696, If the last track in the playlist failed, restart play
+	if ( $request->isCommand([['playlist'], ['cant_open']]) && $client->playmode !~ /play/ ) {
+		$::d_plugins && msg("RandomPlay: Last track failed, restarting\n");
+		playRandom($client, $mixInfo{$client->masterOrSelf->id}->{'type'});
+		return;
+	}		
 
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client);
 
@@ -648,7 +655,7 @@ sub initPlugin {
 
 	# set up our subscription
 	Slim::Control::Request::subscribe(\&commandCallback, 
-		[['playlist'], ['newsong', 'delete', keys %stopcommands]]);
+		[['playlist'], ['newsong', 'delete', 'cant_open', keys %stopcommands]]);
 
 	# Regenerate the genre map after a rescan.
 	Slim::Control::Request::subscribe(\&generateGenreNameMap, [['rescan'], ['done']]);
