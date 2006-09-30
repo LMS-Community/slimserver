@@ -306,6 +306,9 @@ function refreshInfo(theData, force, curstyle) {
 			$('logoimage' + curstyle).src = '[% webroot %]html/images/' + parsedData['playermodel'] + '_logo.small' + curstyle + '.gif';
 		}
 		playlistChecker();
+		
+		//also do a secondary check 10s into songs.
+		setTimeout( "playlistChecker()", 10*1000);
 	}
 	return true;
 }
