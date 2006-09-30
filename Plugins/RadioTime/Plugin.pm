@@ -101,6 +101,13 @@ sub radioTimeURL {
 		$url .= '?username=' . uri_escape($username);
 	}
 	
+	# RadioTime's listing defaults to giving us mp3 and wma streams.
+	# If AlienBBC is installed we can ask for Real streams too.
+	if ( exists $INC{'Plugins/Alien/Plugin.pm'} ) {
+		$url .= ( $url =~ /\?/ ) ? '&' : '?';
+		$url .= 'Filters=mp3,wma,real';
+	}
+	
 	return $url;
 }
 
