@@ -376,19 +376,20 @@ GETMORE:
 			if ($handler_ref && ref($handler_ref) eq 'CODE') {
 				
 				my $client = $sock2client{$s};
-			
-				if (!defined($client)) {
-					if ($op eq 'HELO') {
-						$handler_ref->($s, \$inputbuffer{$s});
-					} else {
+				
+				if ($op eq 'HELO') {
+					$handler_ref->($s, \$inputbuffer{$s});
+				}
+				else {
+					if (!defined($client)) {
 						msg("client_readable: Client not found for slimproto msg op: $op\n");
+					} else {
+						$handler_ref->($client, \$inputbuffer{$s});
 					}
-				} else {
-					$handler_ref->($client, \$inputbuffer{$s});
-				}		
+				}
 			} else {
 				$::d_slimproto && msg("Unknown slimproto op: $op\n");
-			}	
+			}
 
 			$inputbuffer{$s} = '';
 			$parser_frametype{$s} = '';
