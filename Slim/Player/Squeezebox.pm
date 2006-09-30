@@ -728,6 +728,7 @@ sub stream {
 
 				$pcmsamplesize = $client->pcm_sample_sizes($track);
 				$pcmsamplerate = $client->pcm_sample_rates($track);
+				$pcmchannels = $track->channels() || '2';
 			}
 
 		} elsif ($format eq 'aif') {
@@ -750,6 +751,7 @@ sub stream {
 
 				$pcmsamplesize = $client->pcm_sample_sizes($track);
 				$pcmsamplerate = $client->pcm_sample_rates($track);
+				$pcmchannels = $track->channels() || '2';
 			 }
 
 		} elsif ($format eq 'flc') {
