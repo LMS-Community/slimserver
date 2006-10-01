@@ -931,22 +931,16 @@ our %functions = (
 			$remaining = $remaining / 60;
 		}
 
-		# add the 'after this song' option only if there is a defined value.
-		my @sleepChoices = $remaining ? sort({$a <=> $b} (0, $remaining, 15,30,45,60,90)) : (0,15,30,45,60,90);
+		my @sleepChoices = (0,15,30,45,60,90);
 		my $i = 0;
 
 		# find the next value for the sleep timer
 		for ($i = 0; $i <= $#sleepChoices; $i++) {
-
-			# case of remaining time matching a defined time within same range as used in prettySleepTime.
-			if ( int($remaining + 0.5) == int($sleepChoices[$i] + 0.5)) {
+			
+			# if remaining time is close to a default value, replace the default.
+			if ( int($remaining + 0.5) == $sleepChoices[$i]) {
 				
-				#don't skip if this is the last entry, but reset the redundant entries to end of song.
 				$sleepChoices[$i] = $remaining;
-				if ($i != $#sleepChoices) {
-					$i++;
-					$sleepChoices[$i] = $remaining;
-				}
 			}
 			
 			if ( $sleepChoices[$i] > $client->currentSleepTime() ) {
@@ -954,12 +948,23 @@ our %functions = (
 			}
 		}
 
+		my $sleepTime = 0;
 		if ($i > $#sleepChoices) {
-			$i = 0;
-		}
+		
+			# set to remaining time if it's longer than the highest sleep option, 
+			# and not already set at a time longer than the highest sleep option.
+			$sleepTime = $remaining > $sleepChoices[-1] && 
+							$client->currentSleepTime <= $sleepChoices[-1] ? $remaining : 0;
+			
+		# case of remaining time being in between the current sleep time and the next default option.
+		} elsif ($remaining > $client->currentSleepTime && $remaining < $sleepChoices[$i]) {
+			
+			$sleepTime = $remaining;
+		} else {
 
-		# if remaining time matches the sleeptime to within a minute, set as remaining time
-		my $sleepTime = $sleepChoices[$i];
+			# all else fails, go with the default next option
+			$sleepTime = $sleepChoices[$i];
+		}
 
 		$client->execute(["sleep", $sleepTime * 60]);
 
