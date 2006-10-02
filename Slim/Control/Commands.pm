@@ -1218,7 +1218,25 @@ sub playlistcontrolCommand {
 	# find the songs
 	my @tracks = ();
 
-	if (defined(my $playlist_id = $request->getParam('playlist_id'))) {
+	# Bug: 2373 - allow the user to specify a playlist name
+	my $playlist_id = 0;
+
+	if (defined(my $playlist_name = $request->getParam('playlist_name'))) {
+
+		my $playlistObj = Slim::Schema->single('Playlist', { 'title' => $playlist_name });
+
+		if (blessed($playlistObj)) {
+
+			$playlist_id = $playlistObj->id;
+		}
+	}
+
+	if (!$playlist_id && $request->getParam('playlist_id')) {
+
+		$playlist_id = $request->getParam('playlist_id');
+	}
+
+	if ($playlist_id) {
 
 		# Special case...
 		my $playlist = Slim::Schema->find('Playlist', $playlist_id);
