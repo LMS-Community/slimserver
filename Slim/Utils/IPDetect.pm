@@ -8,10 +8,12 @@ package Slim::Utils::IPDetect;
 # version 2.
 
 use strict;
-use IO::Socket;
+use Socket;
+use Symbol;
 use Slim::Utils::Misc;
 
 my $detectedIP = undef;
+my $localhost  = '127.0.0.1';
 
 =head1 NAME
 
@@ -48,24 +50,73 @@ sub IP {
 
 sub _init {
 
-	my $server = 'www.google.com:80';
+	if ($detectedIP) {
+		return;
+	}
 
-	if (!$detectedIP) {
+	# This code used to try and connect to www.google.com:80 in order to
+	# find the local IP address.
+	# 
+	# Thanks to trick from Bill Fenner, trying to use a UDP socket won't
+	# send any packets out over the network, but will cause the routing
+	# table to do a lookup, so we can find our address. Don't use a high
+	# level abstraction like IO::Socket, as it dies when connect() fails.
+	#
+	# time.nist.gov - though it doesn't really matter.
+	my $raddr = '192.43.244.18';
+	my $rport = 123;
 
-		my $socket = IO::Socket::INET->new(
-			'PeerAddr'  => $server,
-			'LocalAddr' => $main::localClientNetAddr,
-		) or do {
+	my $proto = (getprotobyname('udp'))[2];
+	my $pname = (getprotobynumber($proto))[0];
+	my $sock  = Symbol::gensym();
 
-			errorMsg("Failed to detect server IP address. $!\n");
+	my $iaddr = inet_aton($raddr) || do {
+
+		msg("Warning: Couldn't call inet_aton($raddr) - falling back to $localhost\n");
+
+		$detectedIP = $localhost;
+
+		return;
+	};
+
+	my $paddr = sockaddr_in($rport, $iaddr);
+
+	socket($sock, PF_INET, SOCK_DGRAM, $proto) || do {
+
+		msg("Warning: Couldn't call socket(PF_INET, SOCK_DGRAM, \$proto) - falling back to $localhost\n");
+
+		$detectedIP = $localhost;
+
+		return;
+	};
+
+	if ($main::localClientNetAddr && $main::localClientNetAddr =~ /^[\d\.]+$/) {
+
+		my $laddr = inet_aton($main::localClientNetAddr) || INADDR_ANY;
+
+		bind($sock, pack_sockaddr_in(0, $laddr)) or do {
+
+			msg("Warning: Couldn't call bind(pack_sockaddr_in(0, \$laddr) - falling back to $localhost\n");
+
+			$detectedIP = $localhost;
+
 			return;
 		};
-
-		# Find my half of the connection
-		my ($port, $address) = sockaddr_in( (getsockname($socket))[0] );
-
-		$detectedIP = inet_ntoa($address);
 	}
+
+	connect($sock, $paddr) || do {
+
+		msg("Warning: Couldn't call connect() - falling back to $localhost\n");
+
+		$detectedIP = $localhost;
+
+		return;
+	};
+
+	# Find my half of the connection
+	my ($port, $address) = sockaddr_in( (getsockname($sock))[0] );
+
+	$detectedIP = inet_ntoa($address);
 }
 
 1;
