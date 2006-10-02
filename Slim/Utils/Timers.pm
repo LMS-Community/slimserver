@@ -137,7 +137,7 @@ sub checkTimers {
 			$high_subptr->($high_objRef, @{$high_args});
 		}
 		else {
-			msg("[high] no subptr: " . Data::Dump::Dump($high_timer));
+			msg("[high] no subptr: " . Data::Dump::dump($high_timer));
 		}
 
 		$nextHigh = $high->get_next_priority();
