@@ -15,12 +15,15 @@ use Plugins::MusicMagic::Common;
 use Slim::Music::Import;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Misc;
+use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 
 my $initialized = 0;
 my $MMMVersion  = 0;
 my $MMSHost;
 my $MMSport;
+
+my $OS = Slim::Utils::OSDetect::OS();
 
 sub useMusicMagic {
 	my $class    = shift;
@@ -267,7 +270,16 @@ sub processSong {
 	# MiP 1.6+ encode filenames as UTF-8, even on Windows.
 	# So we need to turn the string from MiP to UTF-8, which then gets
 	# turned into the local charset below with utf8encode_locale
-	for my $key (qw(album artist genre name file)) {
+	# 
+	# This breaks Linux however, so only do it on Windows & OS X
+	@keys  = qw(album artist genre name);
+
+	if ($OS eq 'mac' || $OS eq 'win') {
+
+		push @keys, 'file';
+	}
+
+	for my $key (@keys) {
 
 		if (!$songInfo{$key}) {
 			next;
@@ -291,7 +303,7 @@ sub processSong {
 	$::d_musicmagic && msg("MusicMagic: Exporting song: $songInfo{'file'}\n");
 
 	# Both Linux & Windows need conversion to the current charset.
-	if (Slim::Utils::OSDetect::OS() ne 'mac') {
+	if ($OS ne 'mac') {
 		$songInfo{'file'} = Slim::Utils::Unicode::utf8encode_locale($songInfo{'file'});
 	}
 
