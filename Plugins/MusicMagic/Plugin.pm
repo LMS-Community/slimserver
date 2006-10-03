@@ -9,10 +9,13 @@ use Scalar::Util qw(blessed);
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Misc;
+use Slim::Utils::OSDetect;
 use Slim::Utils::Strings;
 
 use Plugins::MusicMagic::Common;
 use Plugins::MusicMagic::Settings;
+
+my $OS = Slim::Utils::OSDetect::OS();
 
 my $initialized = 0;
 my $MMSHost;
@@ -724,10 +727,12 @@ sub getMix {
 	# Bug: 1938 - Don't encode to UTF-8 before escaping on Mac & Win
 	# We might need to do the same on Linux, but I can't get UTF-8 files
 	# to show up properly in MMM right now.
-	if (Slim::Utils::OSDetect::OS() eq 'win' || Slim::Utils::OSDetect::OS() eq 'mac') {
+	if ($OS eq 'win' || $OS eq 'mac') {
 
 		$mixArgs = URI::Escape::uri_escape($mixArgs);
+
 	} else {
+
 		$mixArgs = Slim::Utils::Misc::escape($mixArgs);
 	}
 	
@@ -738,7 +743,7 @@ sub getMix {
 		'create' => 0,
 	});
 
-	unless ($http) {
+	if (!$http) {
 		# NYI
 		$::d_musicmagic && msg("Musicmagic Error - Couldn't get mix: $mixArgs\&$argString\n");
 		return @mix;
@@ -750,6 +755,14 @@ sub getMix {
 	$http->close;
 
 	for (my $j = 0; $j < $count; $j++) {
+
+		# Bug 4281 - need to convert from UTF-8 on Windows.
+		if ($OS eq 'win') {
+
+			my $enc = Slim::Utils::Unicode::encodingFromString($songs[$j]);
+
+			$songs[$j] = Slim::Utils::Unicode::utf8decode_guess($songs[$j], $enc);
+		}
 
 		my $newPath = Plugins::MusicMagic::Common::convertPath($songs[$j]);
 
