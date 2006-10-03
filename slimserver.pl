@@ -84,7 +84,6 @@ BEGIN {
 
 		unlink("$Bin/CPAN/MP3/Info.pm");
 		unlink("$Bin/CPAN/DBIx/ContextualFetch.pm");
-		unlink("$Bin/CPAN/XML/Simple.pm");
 	}
 };
 
