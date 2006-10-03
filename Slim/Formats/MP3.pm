@@ -180,7 +180,7 @@ sub getTag {
 		return undef;
 	}
 
-	my ($start, $end) = $class->findFrameBoundaries($fh, $info->{'OFFSET'}, $info->{'SIZE'});
+	my ($start, $end) = $class->findFrameBoundaries($fh, 0, $info->{'SIZE'});
 
 	if ($start) {
 		$info->{'OFFSET'} = $start;
