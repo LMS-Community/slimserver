@@ -272,7 +272,7 @@ sub processSong {
 	# turned into the local charset below with utf8encode_locale
 	# 
 	# This breaks Linux however, so only do it on Windows & OS X
-	@keys  = qw(album artist genre name);
+	my @keys  = qw(album artist genre name);
 
 	if ($OS eq 'mac' || $OS eq 'win') {
 
