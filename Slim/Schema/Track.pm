@@ -96,9 +96,8 @@ sub artist {
 sub artists {
 	my $self = shift;
 
-	# XXXX - not sure who the callers are here, and if this should include
-	# TRACKARTISTS or not.
-	return $self->contributorsOfType('ARTIST')->all;
+	# Bug 4024 - include both ARTIST & TRACKARTIST here.
+	return $self->contributorsOfType(qw(ARTIST TRACKARTIST))->all;
 }
 
 sub artistsWithAttributes {
