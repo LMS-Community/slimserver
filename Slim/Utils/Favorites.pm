@@ -129,6 +129,97 @@ sub findByClientAndURL {
 	}
 }
 
+sub addCurrentItem {
+	my $class  = shift;
+	my $client = shift;
+	
+	# First lets try for a listRef from INPUT.*
+	my $list = $client->modeParam('listRef');
+	my $obj;
+	my $title;
+	my $url;
+	
+	# If there is a list, try grabbing the current index.
+	if ($list) {
+	
+		$obj = $list->[$client->modeParam('listIndex')];
+	
+	# hack to grab currently browsed item from current playlist (needs to use INPUT.List at some point)
+	} elsif (mode($client) eq 'playlist') {
+	
+		$obj = Slim::Player::Playlist::song($client, Slim::Buttons::Playlist::browseplaylistindex($client));
+	}
+	
+	# if that doesn't work, perhaps we have a track param from something like trackinfo
+	if (!blessed($obj) && $client->modeParam('track')) {
+	
+		$obj = $client->modeParam('track');
+	
+	# specific HACK for Live365
+	} elsif(Slim::Player::ProtocolHandlers->handlerForURL('live365://') && (Plugins::Live365::Plugin::getLive365($client))) {
+
+		my $live365 = Plugins::Live365::Plugin::getLive365($client);
+		my $station = $live365->getCurrentStation();
+		
+		$title = $station->{STATION_TITLE};
+		$url   = $station->{STATION_ADDRESS};
+		
+		# fix url to activate protocol handler
+		$url =~ s/http\:/live365\:/;
+	}
+	
+	# start with the object if we have one
+	if ($obj && !$url) {
+		
+		if (blessed($obj) && $obj->can('url')) {
+			$url = $obj->url;
+		
+		# xml browser uses hash lists with url and name values.
+		} elsif (ref($obj) eq 'HASH') {
+			
+			$url = $obj->{'url'};
+		}
+		
+		if (blessed($obj) && $obj->can('name')) {
+
+			$title = $obj->name;
+		}elsif (ref($obj) eq 'HASH') {
+
+			$title = $obj->{'name'} || $obj->{'title'};
+		} else {
+			
+			# failing specified name values, try the db title
+			$title = Slim::Music::Info::standardTitle($client, $obj);
+		}
+	} 
+	
+	# remoteTrackInfo uses url and title params for lists.
+	if ($client->modeParam('url') && !$url) {
+		
+		$url   = $client->modeParam('url');
+		$title = $client->modeParam('title');
+	}
+
+	if ($url && $title) {
+		$class->clientAdd($client, $url, $title);
+		$client->showBriefly($client->string('FAVORITES_ADDING'), $title);
+	
+	# if all of that fails, send the debug with a best guess helper for tracing back
+	} else {
+
+		if ($::d_favorites) { 
+			msg("Favorites: no valid url found, not adding favorite\n");
+			
+			if ($obj) {
+				msg(Data::Dumper::Dumper($obj));
+			
+			} else {
+				Slim::Utils::Misc::bt();
+			}
+		}
+	}
+}
+
 sub moveItem {
 	my $class  = shift;
 	my $client = shift;
