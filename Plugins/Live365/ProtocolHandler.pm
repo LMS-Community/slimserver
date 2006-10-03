@@ -23,7 +23,7 @@ package Plugins::Live365::ProtocolHandler;
 
 use strict;
 use Slim::Utils::Cache;
-use Slim::Utils::Misc qw( msg );
+use Slim::Utils::Misc;
 use Slim::Utils::Timers;
 use Slim::Player::Playlist;
 use Slim::Player::Source;
