@@ -732,7 +732,7 @@ our %functions = (
 
 		if (defined $buttonarg && $buttonarg eq "add") {
 
-			Slim::Utils::Favorites->addCurrentItem();
+			Slim::Utils::Favorites->addCurrentItem($client);
 
 		} elsif (mode($client) ne 'FAVORITES') {
 
