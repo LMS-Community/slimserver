@@ -1,4 +1,4 @@
-# $Id: Simple.pm,v 1.1 2004/07/16 12:55:13 dean Exp $
+# $Id: Simple.pm,v 1.28 2006/10/03 01:07:48 grantm Exp $
 
 package XML::Simple;
 
@@ -53,7 +53,7 @@ use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $PREFERRED_PARSER);
 @ISA               = qw(Exporter);
 @EXPORT            = qw(XMLin XMLout);
 @EXPORT_OK         = qw(xml_in xml_out);
-$VERSION           = '2.12';
+$VERSION           = '2.15';
 $PREFERRED_PARSER  = undef;
 
 my $StrictMode     = 0;
@@ -219,8 +219,6 @@ sub XMLin {
   # Parsing is required, so let's get on with it
 
   my $tree =  $self->build_tree($filename, ref($string) ? $string : \$string);
-
-  # Don't leak
   undef($string);
 
   # Now work some magic on the resulting parse tree
@@ -242,20 +240,21 @@ sub XMLin {
 
 
 ##############################################################################
-# Method: build_tree()
+#Method: build_tree()
 #
 # This routine will be called if there is no suitable pre-parsed tree in a
 # cache.  It parses the XML and returns an XML::Parser 'Tree' style data
 # structure (summarised in the comments for the collapse() routine below).
 #
-# XML::Simple requires the services of another module that knows how to
-# parse XML.  If XML::SAX is installed, the default SAX parser will be used,
+# XML::Simple requires the services of another module that knows how to parse
+# XML.  If XML::SAX is installed, the default SAX parser will be used,
 # otherwise XML::Parser will be used.
 #
 # This routine expects to be passed a 'string' as argument 1 or a filename as
-# argument 2.  The 'string' might be a string of XML or it might be a 
-# reference to an IO::Handle.  (This non-intuitive mess results in part from
-# the way XML::Parser works but that's really no excuse).
+# argument 2.  The 'string' might be a string of XML (passed by reference to
+# save memory) or it might be a reference to an IO::Handle.  (This
+# non-intuitive mess results in part from the way XML::Parser works but that's
+# really no excuse).
 #
 
 sub build_tree {
@@ -360,9 +359,13 @@ sub StorableSave {
 
   require Storable;           # We didn't need it until now
 
-  # If the following line fails for you, your Storable.pm is old - upgrade
-  
-  Storable::lock_nstore($data, $cachefile);
+  if ('VMS' eq $^O) {
+    Storable::nstore($data, $cachefile);
+  }
+  else {
+    # If the following line fails for you, your Storable.pm is old - upgrade
+    Storable::lock_nstore($data, $cachefile);
+  }
   
 }
 
@@ -386,7 +389,12 @@ sub StorableRestore {
 
   require Storable;           # We didn't need it until now
   
-  return(Storable::lock_retrieve($cachefile));
+  if ('VMS' eq $^O) {
+    return(Storable::retrieve($cachefile));
+  }
+  else {
+    return(Storable::lock_retrieve($cachefile));
+  }
   
 }
 
@@ -539,7 +547,12 @@ sub XMLout {
 
   if($self->{opt}->{outputfile}) {
     if(ref($self->{opt}->{outputfile})) {
-      return($self->{opt}->{outputfile}->print($xml));
+      my $fh = $self->{opt}->{outputfile};
+      if(UNIVERSAL::isa($fh, 'GLOB') and !UNIVERSAL::can($fh, 'print')) {
+        eval { require IO::Handle; };
+        croak $@ if $@;
+      }
+      return($fh->print($xml));
     }
     else {
       local(*OUT);
@@ -767,7 +780,7 @@ sub handle_options  {
   }
 
 
-  # Special cleanup for {foldattr} which could be arrayref or hashref
+  # Special cleanup for {valueattr} which could be arrayref or hashref
 
   if(exists($opt->{valueattr})) {
     if(ref($opt->{valueattr}) eq 'ARRAY') {
@@ -887,7 +900,7 @@ sub collapse {
 
   if(my $var = $self->{_var_values}) {
     while(my($key, $val) = each(%$attr)) {
-      $val =~ s{\$\{(\w+)\}}{ $self->get_var($1) }ge;
+      $val =~ s{\$\{([\w.]+)\}}{ $self->get_var($1) }ge;
       $attr->{$key} = $val;
     }
   }
@@ -1249,6 +1262,7 @@ sub value_to_xml {
 
   my $nl = "\n";
 
+  my $is_root = $indent eq '' ? 1 : 0;   # Warning, dirty hack!
   if($self->{opt}->{noindent}) {
     $indent = '';
     $nl     = '';
@@ -1281,7 +1295,7 @@ sub value_to_xml {
   if(UNIVERSAL::isa($ref, 'HASH')      # It is a hash
      and keys %$ref                    # and it's not empty
      and $self->{opt}->{keyattr}       # and folding is enabled
-     and $indent                       # and its not the root element
+     and !$is_root                     # and its not the root element
   ) {
     $ref = $self->hash_to_array($name, $ref);
   }
@@ -1298,6 +1312,7 @@ sub value_to_xml {
     # Reintermediate grouped values if applicable
 
     if($self->{opt}->{grouptags}) {
+      $ref = $self->copy_hash($ref);
       while(my($key, $val) = each %$ref) {
         if($self->{opt}->{grouptags}->{$key}) {
           $ref->{$key} = { $self->{opt}->{grouptags}->{$key} => $val };
@@ -1311,7 +1326,7 @@ sub value_to_xml {
     my $nsdecls = '';
     my $default_ns_uri;
     if($self->{nsup}) {
-      $ref = { %$ref };                # Make a copy before we mess with it
+      $ref = $self->copy_hash($ref);
       $self->{nsup}->push_context();
 
       # Look for default namespace declaration first
@@ -1375,6 +1390,7 @@ sub value_to_xml {
         my $value = $ref->{$key};
         next if(substr($key, 0, 1) eq '-');
         if(!defined($value)) {
+          next if $self->{opt}->{suppressempty};
           unless(exists($self->{opt}->{suppressempty})
              and !defined($self->{opt}->{suppressempty})
           ) {
@@ -1384,7 +1400,7 @@ sub value_to_xml {
             $text_content = '';
           }
           else {
-            $value = {};
+            $value = exists($self->{opt}->{suppressempty}) ? {} : '';
           }
         }
 
@@ -1447,6 +1463,7 @@ sub value_to_xml {
 
   elsif(UNIVERSAL::isa($ref, 'ARRAY')) {
     foreach $value (@$ref) {
+      next if !defined($value) and $self->{opt}->{suppressempty};
       if(!ref($value)) {
         push @result,
              $indent, '<', $name, '>',
@@ -1575,8 +1592,9 @@ sub hash_to_array {
 
     if(ref($self->{opt}->{keyattr}) eq 'HASH') {
       return($hashref) unless(defined($self->{opt}->{keyattr}->{$parent}));
-      push(@$arrayref, { $self->{opt}->{keyattr}->{$parent}->[0] => $key,
-                         %$value });
+      push @$arrayref, $self->copy_hash(
+        $value, $self->{opt}->{keyattr}->{$parent}->[0] => $key
+      );
     }
     else {
       push(@$arrayref, { $self->{opt}->{keyattr}->[0] => $key, %$value });
@@ -1586,6 +1604,22 @@ sub hash_to_array {
   return($arrayref);
 }
 
+
+##############################################################################
+# Method: copy_hash()
+#
+# Helper routine for hash_to_array().  When unfolding a hash of hashes into
+# an array of hashes, we need to copy the key from the outer hash into the
+# inner hash.  This routine makes a copy of the original hash so we don't
+# destroy the original data structure.  You might wish to override this
+# method if you're using tied hashes and don't want them to get untied.
+#
+
+sub copy_hash {
+  my($self, $orig, @extra) = @_;
+
+  return { @extra, %$orig };
+}
 
 ##############################################################################
 # Methods required for building trees from SAX events
@@ -2158,6 +2192,9 @@ It will return this simpler structure:
     searchpath => [ '/usr/bin', '/usr/local/bin', '/usr/X11/bin' ]
   }
 
+The grouping element (C<< <searchpath> >> in the example) must not contain any
+attributes or elements other than the grouped element.
+
 You can specify multiple 'grouping element' to 'grouped element' mappings in
 the same hashref.  If this option is combined with C<KeyAttr>, the array
 folding will occur first and then the grouped element names will be eliminated.
@@ -2409,10 +2446,14 @@ wish to write the XML to a file, simply supply the filename using the
 'OutputFile' option.  
 
 This option also accepts an IO handle object - especially useful in Perl 5.8.0 
-and later for writing out in an encoding other than UTF-8, eg:
+and later for output using an encoding other than UTF-8, eg:
 
   open my $fh, '>:encoding(iso-8859-1)', $path or die "open($path): $!";
   XMLout($ref, OutputFile => $fh);
+
+Note, XML::Simple does not require that the object you pass in to the
+OutputFile option inherits from L<IO::Handle> - it simply assumes the object
+supports a C<print> method.
 
 =head2 ParserOpts => [ XML::Parser Options ] I<# in - don't use this>
 
@@ -2457,10 +2498,11 @@ string will cause empty elements to be represented as the undefined value or
 the empty string respectively.  The latter two alternatives are a little
 easier to test for in your code than a hash with no keys.
 
-The option also controls what C<XMLout()> does with undefined values.
-Setting the option to undef causes undefined values to be output as
-empty elements (rather than empty attributes), it also suppresses the
-generation of warnings about undefined values.
+The option also controls what C<XMLout()> does with undefined values.  Setting
+the option to undef causes undefined values to be output as empty elements
+(rather than empty attributes), it also suppresses the generation of warnings
+about undefined values.  Setting the option to a true value (eg: 1) causes
+undefined values to be skipped altogether on output.
 
 =head2 ValueAttr => [ names ] I<# in - handy>
 
@@ -2509,6 +2551,8 @@ A 'variable' is any text of the form C<${name}> which occurs in an attribute
 value or in the text content of an element.  If 'name' matches a key in the
 supplied hashref, C<${name}> will be replaced with the corresponding value from
 the hashref.  If no matching key is found, the variable will not be replaced.
+Names must match the regex: C<[\w.]+> (ie: only 'word' characters and dots are
+allowed).
 
 =head2 VarAttr => 'attr_name' I<# in - handy>
 
