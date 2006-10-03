@@ -49,7 +49,7 @@ sub read {
 	# Bug 4127, make sure we have proper line-endings
 	$data =~ s/\r\n?/\n/g;
 
-	for my $line (split(/$CRLF/, $data)) {
+	for my $line (split(/\n/, $data)) {
 
 		$::d_parse && msg("Parsing line: $line\n");
 
