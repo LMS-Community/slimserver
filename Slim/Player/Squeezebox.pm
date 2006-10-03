@@ -424,14 +424,21 @@ sub checkFirmwareUpgrade {
 		$client->sendFrame('ureq');
 
 		$client->brightness($client->maxBrightness());
+
+		# turn of visualizers and screen2 display
+		$client->modeParam('visu', [0]);
+		$client->modeParam('screen2active', undef);
 		
 		$client->block( {
-			'line' => [ $client->string('PLAYER_NEEDS_UPGRADE_1'), $client->string('PLAYER_NEEDS_UPGRADE_2') ],
-			'fonts' => { 
-				'graphic-320x32' => 'light',
-				'graphic-280x16' => 'small',
-				'text'           => 2,
-			}
+			'screen1' => {
+				'line' => [ $client->string('PLAYER_NEEDS_UPGRADE_1'), $client->string('PLAYER_NEEDS_UPGRADE_2') ],
+				'fonts' => { 
+					'graphic-320x32' => 'light',
+					'graphic-280x16' => 'small',
+					'text'           => 2,
+				},
+			},
+			'screen2' => {},
 		}, 'upgrade');
 	}
 	
