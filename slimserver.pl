@@ -11,7 +11,7 @@
 # GNU General Public License for more details.
 #
 
-require 5.006_000;
+require 5.008_001;
 use strict;
 use warnings;
 
