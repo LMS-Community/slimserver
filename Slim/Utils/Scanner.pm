@@ -921,7 +921,6 @@ sub scanWMAStream {
 	my $args = shift;
 	
 	# Make sure we don't send any bad URLs through
-	$args->{'url'} = 'httpt://wm-live.abacast.com/arabian_radio-dubai92-24';
 	if ( $args->{'url'} !~ /^http:/ ) {
 		my $error = 'Invalid URL: ' . $args->{'url'};
 		scanWMAStreamError( undef, $error, $args );
