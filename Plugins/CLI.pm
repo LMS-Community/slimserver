@@ -121,7 +121,6 @@ sub setupGroup {
 	return (\%setupGroup, \%setupPrefs);
 }
 
-
 # plugin: shutdown the CLI
 sub shutdownPlugin {
 
@@ -139,6 +138,9 @@ sub shutdownPlugin {
 	
 	# close the socket
 	cli_socket_close();
+
+	# and restart mDNS without the cli port.
+	Slim::Networking::mDNS->startAdvertising;
 }
 
 # plugin strings at the end of the file
@@ -176,7 +178,6 @@ sub cli_socket_open {
 	}
 }
 
-
 # open or change our socket
 sub cli_socket_change {
 
@@ -198,6 +199,8 @@ sub cli_socket_change {
 		if ($newport) {
 			cli_socket_open($newport);
 		}
+
+		Slim::Networking::mDNS->startAdvertising;
 	}
 }
 

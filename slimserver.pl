@@ -400,14 +400,14 @@ sub init {
 	$::d_server && msg("SlimServer HTTP init...\n");
 	Slim::Web::HTTP::init();
 
-	$::d_server && msg("mDNS startAdvertising...\n");
-	Slim::Networking::mDNS->startAdvertising;
-
 	$::d_server && msg("Source conversion init..\n");
 	Slim::Player::Source::init();
 
 	$::d_server && msg("SlimServer Plugins init...\n");
 	Slim::Utils::PluginManager::init();
+
+	$::d_server && msg("mDNS startAdvertising...\n");
+	Slim::Networking::mDNS->startAdvertising;
 
 	$::d_server && msg("SlimServer checkDataSource...\n");
 	checkDataSource();

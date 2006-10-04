@@ -161,11 +161,13 @@ sub openport {
 }
 
 sub adjustHTTPPort {
+
 	# do this on a timer so current page can be updated first and it executed outside select
 	Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 0.5, \&_adjustHTTPPortCallback);
 }
 
 sub _adjustHTTPPortCallback {
+
 	# if we've already opened a socket, let's close it
 	if ($openedport) {
 
@@ -181,7 +183,11 @@ sub _adjustHTTPPortCallback {
 
 	# open new port if specified
 	if (Slim::Utils::Prefs::get('httpport')) {
+
 		Slim::Web::HTTP::openport(Slim::Utils::Prefs::get('httpport'), $::httpaddr, $Bin);
+
+		# Need to restart mDNS after changing the HTTP port.
+		Slim::Networking::mDNS->startAdvertising;
 	}
 }
 
