@@ -671,7 +671,7 @@ sub removePlaylistFromDisk {
 sub newSongPlaylistCallback {
 	my $request = shift;
 	
-	my $client = $request->client();
+	my $client = $request->client() || return;
 
 	my $playlist = '';
 
