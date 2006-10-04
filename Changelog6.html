@@ -1,7 +1,16 @@
 <h2><a name="v6.5.1" id="v6.5.1"></a>Version 6.5.1 - 2006-MM-DD</h2>
 
 <ul>
+	<li>Firmware 65 for Squeezebox2/3 and Firmware 19 for Transporter</li>
+	<ul>
+		<li>Gapless MP3 playback</li>
+		<li>Bug fixes</li>
+	</ul>
+	<br />
+
 	<li>Bug Fixes:
+	<ul>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=1026">#1026</a> - Implement gapless playback for MP3</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2985">#2985</a> - WMA transcoded to WAV truncated (not gapless)</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3044">#3044</a> - Lyrics do not display with line spacing correctly (again)</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=3318">#3318</a> - MusicMagic: Songs with national chars get duplicated</li>
@@ -11,11 +20,16 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4071">#4071</a> - Band Names in mp3 Tags don't always work</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4077">#4077</a> - CUE files YEAR and GENRE not always working</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4099">#4099</a> - Playlists with multiple radio streams don't display/load</li>
- 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4135">#4135</a> - WAV format files play incorrectly</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4116">#4116</a> - &quot;Rescan done&quot; sent prematurely (before rescan is done!)</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4122">#4122</a> - Current Settings -> Slimserver shows wrong server</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4123">#4123</a> - &quot;Turn Off DAC&quot; formatted unusually</li>
+ 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4135">#4135</a> - WAV format files play incorrectly</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4140">#4140</a> - Problem with the scanner parsing cue sheets in6.5b3</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4141">#4141</a> - After using the remote the knob performs a demag cycle</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4142">#4142</a> - ExBrowse3 does not work with Safari</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4144">#4144</a> - Need volume control on player-only DAC mode</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4149">#4149</a> - Display buffering feedback on Now Playing screen even after IR</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4152">#4152</a> - WPN802 firmware other than original release, Squeezebox fails to connect via wireless</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4156">#4156</a> - slimtray should install the service if it's not already installed when starting</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4168">#4168</a> - Live365 plugin fails in 6.5.0</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4169">#4169</a> - Core Plugins need all non EN HTML paths removed when upgrading from pre-6.5</li>
@@ -32,33 +46,34 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4221">#4221</a> - 6.5 crashes on artist breadcrumb</li>
  		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4228">#4228</a> - Fishbone skin status doesn't update from an empty playlist</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4237">#4237</a> - in Help > Internet Radio there is a dead link to Settings</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4242">#4242</a> - changing the name of a player while it's playing audio causes a skip</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4245">#4245</a> - Pressing PLAY on top level browse pushes right</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4270">#4270</a> - Server Information on SB - two items muddled up</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4281">#4281</a> - Mix do not work with accented characters in filenames and paths</li>
-	<ul>
+	</ul>
 </ul>
 
 <h2><a name="v6.5.0" id="v6.5.0"></a>Version 6.5.0 - 2006-09-19</h2>
 
 <ul>
-	<li>Firmware updates:
+	<li>Firmware updates:</li>
 	<ul>
-		<li>Firmware 18 for Transporter.
+		<li>Firmware 18 for Transporter.</li>
 		<ul>
-			<li>Flac 24/96 playback
-			<li>Clock source: Internal clock, Word clock, Balanced AES/EBU, BNC S/PDIF, RCA S/PDIF, Optical S/PDIF (TOSLINK)
-			<li>Digital output encoding: S/PDIF or AES/BEU
-			<li>Digital inputs: Balanced AES/EBU, BNC S/PDIF, RCA S/PDIF, Optical S/PDIF (TOSLINK)
-			<li>Support for two displays, including push and bump animations
-			<li>Front panel support, including buttons and the knob
-			<li>Setting for Word clock on S/PDIF outputs
-			<li>Setting for Polarity inversion
-			<li>Setting to power down DAC when off
-			<li>Auto sensing 110V/230V power supply
-			<li>RS232 interface
-			<li>IR interface 
+			<li>Flac 24/96 playback</li>
+			<li>Clock source: Internal clock, Word clock, Balanced AES/EBU, BNC S/PDIF, RCA S/PDIF, Optical S/PDIF (TOSLINK)</li>
+			<li>Digital output encoding: S/PDIF or AES/BEU</li>
+			<li>Digital inputs: Balanced AES/EBU, BNC S/PDIF, RCA S/PDIF, Optical S/PDIF (TOSLINK)</li>
+			<li>Support for two displays, including push and bump animations</li>
+			<li>Front panel support, including buttons and the knob</li>
+			<li>Setting for Word clock on S/PDIF outputs</li>
+			<li>Setting for Polarity inversion</li>
+			<li>Setting to power down DAC when off</li>
+			<li>Auto sensing 110V/230V power supply</li>
+			<li>RS232 interface</li>
+			<li>IR interface</li>
 		</ul>
-		<li>Update to Firmware 64 for Squeezebox2/Squeezebox v3.
+		<li>Update to Firmware 64 for Squeezebox2/Squeezebox v3.</li>
 		<ul>
 			<li>Native Ogg support</li>
 			<li>Downsampling of 96kHz FLAC and WAV.</li>

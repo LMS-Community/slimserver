@@ -237,6 +237,13 @@ sub stop {
 	# values.
 	$client->songElapsedSeconds(0);
 	$client->outputBufferFullness(0);
+
+	# update pending pref changes in the firmware
+	foreach my $pref (keys %{$client->pendingPrefChanges()}) {
+
+	    $client->setPlayerSetting($pref, $client->prefGet($pref));
+
+	}
 }
 
 sub songElapsedSeconds {
@@ -717,8 +724,19 @@ sub setPlayerSetting {
 
 	my $currpref = $pref_settings->{$pref};
 
-	my $data = pack('C'.$currpref->{pack}, $currpref->{firmwareid}, $value);
-	$client->sendFrame('setd', \$data);
+	if ($client->playmode() eq 'stop') {
+
+		my $data = pack('C'.$currpref->{pack}, $currpref->{firmwareid}, $value);
+		$client->sendFrame('setd', \$data);
+
+	}
+	else {
+
+		# we can't update the pref's while playing, cache this change for later
+		$::d_prefs && msg("setPlayerSeting pending change for $pref\n");
+		$client->pendingPrefChanges()->{$pref}++;
+
+	}
 }
 
 # Allow the firmware to update a pref in slimserver

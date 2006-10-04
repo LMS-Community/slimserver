@@ -278,33 +278,6 @@ sub model {
 	return 'transporter';
 }
 
-sub volume {
-	my $client = shift;
-	my $newvolume = shift;
-
-	if (defined($newvolume) && Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::song($client))) {
-		my $volume = $client->Slim::Player::Client::volume($newvolume, @_);
-
-	    	my $db = ($newvolume - 100)/2;	
-		my $newGain = 0;
-
-		if ($db >= -48) {
-		    my $floatmult = 10 ** ($db/20);
-		    $newGain = int($floatmult * 255);
-		}
-
-		$newGain = 255 if ($newGain > 255);
-
-		my $data = pack('NNCCNN', 0, 0, $client->prefGet("digitalVolumeControl"), 0, $newGain, $newGain);
-		$client->sendFrame('audg', \$data);
-
-		return $volume;
-	    }
-	else {
-	    return $client->SUPER::volume($newvolume, @_);
-	}
-}
-
 sub hasDigitalIn {
 	return 1;
 }
