@@ -920,16 +920,16 @@ the result for use by the direct streaming code in Protocols::MMS.
 sub scanWMAStream {
 	my $args = shift;
 	
+	my $request = HTTP::Request->new( GET => $args->{'url'} );
+	
+	addWMAHeaders( $request );
+	
 	# Make sure we don't send any bad URLs through
-	if ( $args->{'url'} !~ /^http:/ ) {
+	if ( $request->uri->as_string !~ /^http:/ ) {
 		my $error = 'Invalid URL: ' . $args->{'url'};
 		scanWMAStreamError( undef, $error, $args );
 		return;
 	}
-	
-	my $request = HTTP::Request->new( GET => $args->{'url'} );
-	
-	addWMAHeaders( $request );
 	
 	my $http = Slim::Networking::Async::HTTP->new();
 	$http->send_request( {
