@@ -857,7 +857,7 @@ sub scanPlaylistURLs {
 	
 	$toScan ||= [];
 	
-	push @{$toScan}, map { $_->url } @{$foundItems};
+	push @{$toScan}, map { $_->url } grep { blessed($_) } @{$foundItems};
 	
 	# This counter makes sure we don't go into an infinite loop
 	$args->{'loopCount'} ||= 0;
