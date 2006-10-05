@@ -41,7 +41,21 @@ L<Cache::Cache> and L<Cache::FileCache>.
 use strict;
 use base qw(Class::Singleton);
 use Cache::FileCache ();
+use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
+use Slim::Utils::Timers;
+
+my $PURGE_INTERVAL = 3600;
+
+sub init {
+	my $class = shift;
+	
+	# Clean up the cache at startup
+	__PACKAGE__->new->purge();
+	
+	# And continue to clean it up regularly
+	Slim::Utils::Timers::setTimer( undef, time() + $PURGE_INTERVAL, \&cleanup );
+}
 
 sub new { shift->instance(@_) }
 
@@ -49,11 +63,10 @@ sub _new_instance {
 	my $class = shift;
 	
 	my $cache = Cache::FileCache->new( {
-		namespace           => 'FileCache',
-		default_expires_in  => $Cache::FileCache::EXPIRES_NEVER,
-		cache_root          => Slim::Utils::Prefs::get('cachedir'),
-		directory_umask     => umask(),
-		auto_purge_interval => '1 hour',
+		namespace          => 'FileCache',
+		default_expires_in => $Cache::FileCache::EXPIRES_NEVER,
+		cache_root         => Slim::Utils::Prefs::get('cachedir'),
+		directory_umask    => umask(),
 	} );
 	
 	my $self = bless {
@@ -76,6 +89,38 @@ sub _new_instance {
 	}
 	
 	return $self;
+}
+
+sub cleanup {
+	
+	# Use the same method the Scheduler uses to run only when idle
+	my $busy;
+	
+	for my $client ( Slim::Player::Client::clients() ) {
+
+		if (Slim::Player::Source::playmode($client) eq 'play' && 
+		    $client->isPlayer() && 
+		    $client->usage() < 0.5) {
+
+			$busy = 1;
+			last;
+		}
+	}
+	
+	if ( !$busy ) {
+		$::d_server && msg("Cache: Cleaning up expired items...\n");
+	
+		__PACKAGE__->new->purge();
+	
+		$::d_server && msg("Cache: Done\n");
+		
+		Slim::Utils::Timers::setTimer( undef, time() + $PURGE_INTERVAL, \&cleanup );
+	}
+	else {
+		# try again soon
+		$::d_server && msg("Cache: Skipping cleanup, server is busy\n");
+		Slim::Utils::Timers::setTimer( undef, time() + ($PURGE_INTERVAL / 6), \&cleanup );
+	}	
 }
 
 1;

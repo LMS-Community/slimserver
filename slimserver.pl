@@ -138,6 +138,7 @@ use Slim::Utils::OSDetect;
 use Slim::Player::Playlist;
 use Slim::Player::Sync;
 use Slim::Player::Source;
+use Slim::Utils::Cache;
 use Slim::Utils::Prefs;
 use Slim::Utils::Scanner;
 use Slim::Utils::Scheduler;
@@ -391,6 +392,9 @@ sub init {
 
 	$::d_server && msg("Async Networking init...\n");
 	Slim::Networking::Async->init;
+	
+	$::d_server && msg("Cache init, cleaning up FileCache...\n");
+	Slim::Utils::Cache->init;
 	
 	unless ( $noupnp ) {
 		$::d_server && msg("UPnP init...\n");
