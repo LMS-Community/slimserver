@@ -80,9 +80,14 @@ a:hover {
 	white-space: nowrap;
 }
 
-#currentPlaylistLabel, #currentPlaylistCommands {
+#currentPlaylistLabel {
 	position: relative;
 	left: 9px;
+}
+
+#currentPlaylistCommands {
+	position: absolute;
+	right: 9px;
 }
 
 .homeMenuSection div, .settingSection div, #playingStatus, #currentPlaylistLabel {
