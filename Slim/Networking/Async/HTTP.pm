@@ -125,7 +125,7 @@ sub send_request {
 		HTTP::Request->new( $args->{method} => $args->{url} )
 	);
 	
-	if ( $self->request->uri !~ /^http:/i ) {
+	if ( $self->request->uri !~ /^https?:/i ) {
 		my $error = 'Cannot request non-HTTP URL ' . $self->request->uri;
 		return $self->_http_error( $error, $args );
 	}
