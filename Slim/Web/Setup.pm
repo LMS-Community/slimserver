@@ -2584,11 +2584,6 @@ sub hash_of_prefs {
 	my $pref = shift;
 	my %prefsHash;
 	
-	# hack around a race condition at startup
-	if (!Slim::Utils::Prefs::getArrayMax($pref)) {
-		return;
-	};
-	
 	$prefsHash{'-1'} = ' '; #used to delete a title format from the list
 	my $i = 0;
 	foreach my $item (Slim::Utils::Prefs::getArray($pref)) {
