@@ -642,8 +642,8 @@ sub _parseASFExtendedStreamPropertiesObject {
 	);
 
 	for (my $s = 0; $s < $ext{'streamNameCount'}; $s++) {
-
-		my $language = unpack('v', $self->_readAndIncrementInlineOffset($WORD));
+		
+		my $language = unpack('v', $self->_readAndIncrementInlineOffset($WORD)) || last;
 		my $length   = unpack('v', $self->_readAndIncrementInlineOffset($WORD));
 
 		$self->_readAndIncrementInlineOffset($length);
@@ -651,8 +651,8 @@ sub _parseASFExtendedStreamPropertiesObject {
 	}
 
 	for (my $p = 0; $p < $ext{'payloadExtensionCount'}; $p++) {
-
-		$self->_readAndIncrementInlineOffset(18);
+		
+		$self->_readAndIncrementInlineOffset(18) || last;
 		my $length = unpack('V', $self->_readAndIncrementInlineOffset($DWORD));
 
 		$self->_readAndIncrementInlineOffset($length);
@@ -1118,6 +1118,8 @@ sub _byteStringToGUID {
 	my @byteString	= split //, shift;
 
 	my $guidString;
+	
+	return unless @byteString;
 
 	# this reverses _guidToByteString.
 	$guidString  = sprintf("%02X", ord($byteString[3]));
