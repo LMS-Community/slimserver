@@ -974,16 +974,16 @@ sub scanWMAStreamDone {
 	}
 	
 	# parse the ASF header data
-	my $header = $http->response->content;
 	
 	# The header may be at the front of the file, if the remote
 	# WMA file is not a live stream
-	my $io  = IO::String->new($header);
+	my $io  = IO::String->new( $http->response->content_ref );
 	my $wma = Audio::WMA->new($io);
 	
 	if ( !$wma || !ref $wma->stream ) {
 		
 		# it's probably a live stream, the WMA header is offset
+		my $header = $http->response->content;
 		my $chunkType = unpack 'v', substr($header, 0, 2);
 		if ( $chunkType != 0x4824 ) {
 			return scanWMAStreamError( $http, 'ASF_UNABLE_TO_PARSE', $args );
@@ -992,7 +992,8 @@ sub scanWMAStreamDone {
 		my $chunkLength = unpack 'v', substr($header, 2, 2);
 	
 		# skip to the body data
-		$io  = IO::String->new( substr($header, 12, $chunkLength) );
+		my $body = substr($header, 12, $chunkLength);
+		$io->open(\$body);
 		$wma = Audio::WMA->new($io);
 	
 		if ( !$wma ) {
