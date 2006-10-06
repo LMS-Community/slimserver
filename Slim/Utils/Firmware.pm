@@ -93,7 +93,7 @@ sub init {
 	
 	my $ok = 1;
 	for my $file ( keys %{$files} ) {
-		my $url = $base . '/' . $file;
+		my $url = $base . '/' . $::VERSION . '/' . $file;
 		
 		$ok = download( $url, $file );
 		
@@ -181,7 +181,7 @@ sub downloadAsync {
 	my $file = shift;
 	
 	# URL to download
-	my $url = $base . '/' . $file;
+	my $url = $base . '/' . $::VERSION . '/' . $file;
 	
 	# File to save it in, we use a tmp file so we can check SHA
 	my $path = catdir( $dir, $file ) . '.tmp';
