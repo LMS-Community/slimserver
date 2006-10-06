@@ -931,6 +931,8 @@ sub scanWMAStream {
 		return;
 	}
 	
+	$::d_scan && msg("scanWMA: Checking stream at " . $request->uri . "\n");
+	
 	my $http = Slim::Networking::Async::HTTP->new();
 	$http->send_request( {
 		'request'     => $request,
@@ -960,17 +962,38 @@ sub scanWMAStreamDone {
 		&& $type ne 'audio/x-ms-wma'
 		&& $type ne 'audio/asf'
 	) {
-		# It's not audio, treat it as ASX redirector
-		$::d_scan && msgf("scanWMA: Stream returned non-audio content-type: $type, treating as ASX redirector\n");
+		# It's not audio, treat it as ASX playlist, but only if there are no other streams in the playlist
+		if ( scalar @{ $args->{'foundItems'} } == 1 ) {
+			$::d_scan && msgf("scanWMA: Stream returned non-audio content-type: $type, treating as ASX playlist\n");
 		
-		# Re-fetch as a playlist.
-		$args->{'playlist'} = Slim::Schema->rs('Playlist')->objectForUrl({
-			'url' => $args->{'url'},
-		});
-		$args->{'playlist'}->content_type('asx');
-		$args->{'playlist'}->update;
+			# Re-fetch as a playlist.
+			$args->{'playlist'} = Slim::Schema->rs('Playlist')->objectForUrl({
+				'url' => $args->{'url'},
+			});
+			$args->{'playlist'}->content_type('asx');
+			$args->{'playlist'}->update;
 		
-		return scanPlaylist( $http->response->content_ref, $args );
+			scanPlaylist( $http->response->content_ref, $args );
+			
+			return;
+		}
+		else {
+			# Skip the stream with the bad content-type, and try the next stream
+			$::d_scan && msg("scanWMA: Stream returned non-audio content-type: $type, skipping to next stream\n");
+			
+			shift @{ $args->{'foundItems'} };
+			my $next = $args->{'foundItems'}->[0];
+			
+			scanWMAStream( {
+				'client'      => $args->{'client'},
+				'url'         => $next->url,
+				'callback'    => $args->{'callback'},
+				'passthrough' => $args->{'pt'},
+				'foundItems'  => $args->{'foundItems'},
+			} );
+			
+			return;
+		}
 	}
 	
 	# parse the ASF header data
