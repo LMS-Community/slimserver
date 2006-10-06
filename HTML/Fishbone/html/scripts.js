@@ -35,7 +35,7 @@ function changePlayer(player_List) {
 	if (parent.browser.location.href.indexOf('setup') == -1) {
 		newHref(parent.browser.document,newPlayer);
 		newHref(parent.header.document,newPlayer);
-		newValue(parent.browser.document,newPlayer);
+		newValue(parent.browser.document,unescape(player));
 	} else {
 		newpage = '';
 		browseURL = new String(parent.browser.location.href);
@@ -43,25 +43,13 @@ function changePlayer(player_List) {
 	}
 
 	var myString = getHomeCookie('SlimServer-Browserpage');
-	newpage = "&page=" + rExp.exec(myString)[1];
+	if (rExp.exec(myString)) newpage = "&page=" + rExp.exec(myString)[1];
 
 	headerURL = new String(parent.header.location.href);
 	newloc = headerURL.replace(playerExp, newPlayer);
 	
 	if (document.all) { //certain versions of IE will just have to reload the header
 		parent.header.location = newloc.replace(/&page=(.*?)$/,newpage);
-	}
-}
-
-// change form values to correct player
-function newValue(doc,plyr) {
-	for (var j=0;j < doc.forms.length; j++){
-
-		if (doc.forms[j].player) {
-			var myString = new String(doc.forms[j].player.value);
-			var rString = plyr;
-			doc.forms[j].player.value = myString.replace(playerExp, rString);
-		}
 	}
 }
 

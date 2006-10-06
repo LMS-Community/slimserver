@@ -11,7 +11,7 @@ function to_currentsong() {
 function refreshStatus() {
 	for (var i=0; i < parent.frames.length; i++) {
 		if (parent.frames[i].name == "status" && parent.frames[i].location.pathname != '') {
-			parent.frames[i].location.replace(parent.frames[i].location.pathname + "?player=[% player | uri %]");
+			parent.frames[i].location.replace(parent.frames[i].location.pathname);
 		}
 	}
 }
@@ -159,7 +159,9 @@ function chooseSettings(value,option)
 }
 
 function switchPlayer(player_List) {
-	var newPlayer = "=" + player_List.options[player_List.selectedIndex].value;
+	var player = player_List.options[player_List.selectedIndex].value;
+	var newPlayer = "=" + player;
+	
 	setCookie( 'SlimServer-player', player_List.options[player_List.selectedIndex].value );
 	var doc = this;
 	
@@ -181,6 +183,9 @@ function switchPlayer(player_List) {
 			doc.document.links[j].href = myString.replace(rExp, rString);
 		}
 
+		// deal with form values.
+		newValue(doc.document,player);
+
 	} else {
 
 	[% END %]
@@ -193,6 +198,18 @@ function switchPlayer(player_List) {
 	}
 	[% END %]
 }
+
+// change form values to correct player
+function newValue(doc,plyr) {
+
+	for (var j=0;j < doc.forms.length; j++){
+
+		if (doc.forms[j].player) {
+			doc.forms[j].player.value = plyr;
+		}
+	}
+}
+
 
 function setCookie(name, value) {
 	var expires = new Date();
