@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS metainformation (
   name  varchar(255) NOT NULL DEFAULT '',
   value varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (name)
-) TYPE=InnoDB CHARACTER SET utf8;
+) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 --
 -- Table: rescans
@@ -23,7 +23,7 @@ CREATE TABLE rescans (
   start_time int(10) unsigned,
   end_time int(10) unsigned,
   PRIMARY KEY (id)
-) TYPE=InnoDB CHARACTER SET utf8;
+) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 --
 -- Table: unreadable_tracks
@@ -36,7 +36,7 @@ CREATE TABLE unreadable_tracks (
   reason text NOT NULL,
   PRIMARY KEY (id),
   INDEX unreadableRescanIndex (rescan)
-) TYPE=InnoDB CHARACTER SET utf8;
+) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 --
 -- Table: tracks
@@ -106,7 +106,7 @@ CREATE TABLE tracks (
   PRIMARY KEY (id),
 --  UNIQUE KEY (url),
   FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE CASCADE
-) TYPE=InnoDB CHARACTER SET utf8;
+) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 --
 -- Table: playlist_track
@@ -123,7 +123,7 @@ CREATE TABLE playlist_track (
   INDEX playlistIndex (playlist),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`playlist`) REFERENCES `tracks` (`id`) ON DELETE CASCADE
-) TYPE=InnoDB CHARACTER SET utf8;
+) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 --
 -- Table: albums
@@ -154,7 +154,7 @@ CREATE TABLE albums (
   INDEX albumsDiscCountIndex (discc),
   INDEX albumsArtworkIndex (artwork),
   PRIMARY KEY (id)
-) TYPE=InnoDB CHARACTER SET utf8;
+) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 --
 -- Table: years
@@ -163,7 +163,7 @@ DROP TABLE IF EXISTS years;
 CREATE TABLE years (
   id smallint(5) unsigned,
   PRIMARY KEY (id)
-) TYPE=InnoDB CHARACTER SET utf8;
+) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 --
 -- Table: contributors
@@ -184,7 +184,7 @@ CREATE TABLE contributors (
   INDEX contributorsSearchIndex (namesearch(255)),
   INDEX contributorsCustomSearchIndex (customsearch(255)),
   PRIMARY KEY (id)
-) TYPE=InnoDB CHARACTER SET utf8;
+) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 --
 -- Table: contributor_track
@@ -200,7 +200,7 @@ CREATE TABLE contributor_track (
   PRIMARY KEY (role,contributor,track),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE CASCADE 
-) TYPE=InnoDB CHARACTER SET utf8;
+) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 --
 -- Table: contributor_album
@@ -216,7 +216,7 @@ CREATE TABLE contributor_album (
   PRIMARY KEY (role,contributor,album),
   FOREIGN KEY (`album`) REFERENCES `albums` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`contributor`) REFERENCES `contributors` (`id`) ON DELETE CASCADE
-) TYPE=InnoDB CHARACTER SET utf8;
+) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 --
 -- Table: genres
@@ -236,7 +236,7 @@ CREATE TABLE genres (
   INDEX genreSearchIndex (namesearch(255)),
   INDEX genreCustomSearchIndex (customsearch(255)),
   PRIMARY KEY (id)
-) TYPE=InnoDB CHARACTER SET utf8;
+) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 --
 -- Table: genre_track
@@ -250,7 +250,7 @@ CREATE TABLE genre_track (
   PRIMARY KEY (genre,track),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`genre`) REFERENCES `genres` (`id`) ON DELETE CASCADE
-) TYPE=InnoDB CHARACTER SET utf8;
+) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 --
 -- Table: comments
@@ -263,7 +263,7 @@ CREATE TABLE comments (
   PRIMARY KEY (id),
   INDEX trackIndex (track),
   FOREIGN KEY (`track`) REFERENCES `tracks` (`id`) ON DELETE CASCADE
-) TYPE=InnoDB CHARACTER SET utf8;
+) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 
 --
 -- Table: pluginversion
@@ -274,4 +274,4 @@ CREATE TABLE pluginversion (
   name varchar(255),
   version  int(10) unsigned,
   PRIMARY KEY (id)
-) TYPE=InnoDB CHARACTER SET utf8;
+) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;

@@ -10,4 +10,4 @@ SET foreign_key_checks = 0;
 CREATE TABLE IF NOT EXISTS years (
   id smallint(5) unsigned,
   PRIMARY KEY (id)
-) TYPE=InnoDB CHARACTER SET utf8;
+) TYPE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci;
