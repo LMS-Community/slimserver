@@ -1476,14 +1476,14 @@ sub get_mp3info {
 		return undef;
 	}
 
-	if (not -s $file) {
-		$@ = "File is empty";
-		return undef;
-	}
-
 	if (ref $file) { # filehandle passed
 		$fh = $file;
 	} else {
+		if (not -s $file) {
+			$@ = "File is empty";
+			return undef;
+		}
+		
 		if (not open $fh, '<', $file) {
 			$@ = "Can't open $file: $!";
 			return undef;
@@ -1547,7 +1547,9 @@ sub get_mp3info {
 	}
 
 	my $vbr = _get_vbr($fh, $h, \$off);
-
+	
+	my $lame = _get_lame($fh, $h, \$off);
+	
 	seek $fh, 0, SEEK_END;
 	$eof = tell $fh;
 	seek $fh, -128, SEEK_END;
@@ -1566,11 +1568,11 @@ sub get_mp3info {
 	$h->{size} = $eof - $off;
 	$h->{offset} = $off;
 
-	return _get_info($h, $vbr);
+	return _get_info($h, $vbr, $lame);
 }
 
 sub _get_info {
-	my($h, $vbr) = @_;
+	my($h, $vbr, $lame) = @_;
 	my $i;
 
 	# No bitrate or sample rate? Something's wrong.
@@ -1619,6 +1621,10 @@ sub _get_info {
 	# should we just return if ! FRAMES?
 	$i->{FRAME_LENGTH}	= int($h->{size} / $i->{FRAMES}) if $i->{FRAMES};
 	$i->{FREQUENCY}		= $frequency_tbl[3 * $h->{IDR} + $h->{sampling_freq}];
+	
+	if ($lame) {
+		$i->{LAME} = $lame;
+	}
 
 	return $i;
 }
@@ -1704,7 +1710,7 @@ sub _get_vbr {
 	}
 
 	_vbr_seek($fh, \$off, \$bytes);
-	return unless $bytes eq 'Xing';
+	return unless $bytes =~ /(?:Xing|Info)/;
 
 	_vbr_seek($fh, \$off, \$bytes);
 	$vbr{flags} = _unpack_head($bytes);
@@ -1734,6 +1740,33 @@ sub _get_vbr {
 
 	$$roff = $off;
 	return \%vbr;
+}
+
+# Read LAME info tag
+# http://gabriel.mp3-tech.org/mp3infotag.html
+sub _get_lame {
+	my($fh, $h, $roff) = @_;
+	
+	my($off, $bytes, @bytes, %lame);
+
+	$off = $$roff;
+	
+	# Encode version, 9 bytes
+	_vbr_seek($fh, \$off, \$bytes, 9);
+	$lame{encoder_version} = $bytes;
+
+	return unless $bytes =~ /^LAME/;
+
+	# There's some stuff here but it's not too useful
+	_vbr_seek($fh, \$off, \$bytes, 12);
+	
+	# Encoder delays (used for gapless decoding)
+	_vbr_seek($fh, \$off, \$bytes, 3);
+	my $bin = unpack 'B*', $bytes;
+	$lame{start_delay} = unpack('N', pack('B32', substr('0' x 32 . substr($bin, 0, 12), -32)));
+	$lame{end_padding} = unpack('N', pack('B32', substr('0' x 32 . substr($bin, 12, 12), -32)));
+	
+	return \%lame;
 }
 
 # _get_v2head(file handle, start offset in file);

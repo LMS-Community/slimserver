@@ -182,7 +182,7 @@ sub getTag {
 
 	my ($start, $end) = $class->findFrameBoundaries($fh, 0, $info->{'SIZE'});
 
-	if ($start) {
+	if ( defined $start ) {
 		$info->{'OFFSET'} = $start;
 
 		if ($end) {
@@ -298,6 +298,8 @@ Locate MP3 frame boundaries when seeking through a file.
 
 sub findFrameBoundaries {
 	my ($class, $fh, $offset, $seek) = @_;
+	
+	binmode $fh;
 
 	my ($start, $end) = (0, 0);
 
@@ -350,6 +352,35 @@ sub findFrameBoundaries {
 	} else {
 		return wantarray ? ($start, $end) : $start;
 	}
+}
+
+=head2 getFrame( $fh )
+
+Returns the first MPEG::Audio::Frame object found in the given filehandle.
+
+=cut
+
+sub getFrame {
+	my ( $class, $fh ) = @_;
+
+	binmode $fh;
+	
+	my $offset = tell $fh;
+		
+	# dup the filehandle, as MPEG::Audio::Frame uses read(), and not sysread()
+	open(my $mpeg, '<&=', $fh) or do {
+		errorMsg("getFrames: Couldn't dup filehandle!\n");
+		return;
+	};
+	
+	my $frame = MPEG::Audio::Frame->read($mpeg);
+	
+	# Seek back to where we started
+	seek $fh, $offset, 0;
+	
+	close $mpeg;
+	
+	return $frame;
 }
 
 =head2 scanBitrate( $fh )

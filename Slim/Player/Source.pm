@@ -1493,6 +1493,35 @@ sub openSong {
 					};
 					$offset -= $seekoffset;
 				}
+				
+				if ( $::d_source && $format eq 'mp3' ) {
+					# report whether the track should play back gapless or not
+					
+					my $streamClass = streamClassForFormat($client, 'mp3');
+					my $frame       = $streamClass->getFrame( $client->audioFilehandle );
+					
+					# Look for the LAME header and delay data in the frame
+					my $io = IO::String->new( \$frame->asbin );
+					
+					if ( my $info = MP3::Info::get_mp3info($io) ) {
+						if ( $info->{LAME} ) {
+							$::d_source && msg('MP3 file was encoded with ' . $info->{LAME}->{encoder_version} . "\n");
+							
+							if ( $info->{LAME}->{start_delay} ) {
+								$::d_source && msgf("MP3 file contains encoder delay information (%d/%d), will be played gapless\n",
+									$info->{LAME}->{start_delay},
+									$info->{LAME}->{end_padding},
+								);
+							}
+							else {
+								$::d_source && msg("MP3 file does not contain encoder delay information, will not play back gapless\n");
+							}
+						}
+						else {
+							$::d_source && msg("MP3 file was not encoded with LAME, will not play back gapless\n");
+						}
+					}
+				}
 
 				# pipe is a socket
 				if (-p $filepath) {
@@ -1838,9 +1867,9 @@ bail:
 }
 
 sub streamClassForFormat {
-	my $client = shift;
+	my ( $client, $streamFormat ) = @_;
 
-	my $streamFormat = $client->streamformat;
+	$streamFormat ||= $client->streamformat;
 
 	if (Slim::Formats->loadTagFormatForType($streamFormat)) {
 
