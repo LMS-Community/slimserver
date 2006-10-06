@@ -107,9 +107,12 @@ sub block {
 
 	$client->blocklines( { 'static' => $static, 'parts' => $parts, 'ticks' => 0 } );
 
+	my $visu = $client->modeParam('visu');
+
 	Slim::Buttons::Common::pushMode($client, 'block');
 
 	$client->modeParam('block.name', $blockName);
+	$client->modeParam('visu', $visu);
 }
 
 =head2 unblock( $client )
