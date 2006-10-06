@@ -15,10 +15,11 @@ use Audio::WMA;
 use Slim::Utils::Cache;
 
 my %tagMapping = (
-	'TRACKNUMBER' => 'TRACKNUM',
-	'ALBUMTITLE'  => 'ALBUM',
-	'AUTHOR'      => 'ARTIST',
-	'VBR'         => 'VBR_SCALE',
+	'TRACKNUMBER'        => 'TRACKNUM',
+	'ALBUMTITLE'         => 'ALBUM',
+	'AUTHOR'             => 'ARTIST',
+	'VBR'                => 'VBR_SCALE',
+	'PARTOFACOMPILATION' => 'COMPILATION',
 );
 
 {
