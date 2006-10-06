@@ -324,7 +324,7 @@ sub mixerCommand {
 		}
 	} else {
 		my $newval;
-		my $oldval = $client->$entity();
+		my $oldval = $client->prefGet($entity);
 
 		if ($newvalue =~ /^[\+\-]/) {
 			$newval = $oldval + $newvalue;
@@ -332,7 +332,13 @@ sub mixerCommand {
 			$newval = $newvalue;
 		}
 
-		$newval = $client->$entity($newval);
+		if ($entity eq 'volume' && defined $client->tempVolume && $client->tempVolume == 0 && $oldval > 0) {
+			# only set pref as volume is temporarily set to 0
+			$client->prefSet('volume', $newval) if ($newval <= $client->maxVolume);
+		} else {
+			# change current setting - this will also set the pref
+			$newval = $client->$entity($newval);
+		}
 
 		for my $eachclient (@buddies) {
 			if ($eachclient->prefGet('syncVolume')) {

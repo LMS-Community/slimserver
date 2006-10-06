@@ -1891,9 +1891,6 @@ sub pauseSynced {
 
 		$everyclient->pause();
 
-		# Bug 2314 - restore the volume
-		# Bug 3904 - revert this change until a better solution can be found.
-		# $everyclient->volume($everyclient->prefGet("volume"));
 	}
 }
 
