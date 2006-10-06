@@ -76,7 +76,12 @@ sub new {
 		Slim::bootstrap::tryModuleLoad('Win32::Process');
 
 		if ($@ || !Win32::Process::Create(
-			$processObj, Slim::Utils::Misc::findbin("socketwrapper"), $newcommand, 0, 0x20, ".")
+			$processObj,
+			Slim::Utils::Misc::findbin("socketwrapper"),
+			$newcommand,
+			0,
+			Win32::Process::CREATE_NO_WINDOW | Win32::Process::NORMAL_PRIORITY_CLASS,
+			".")
 		) {
 
 			$::d_source && msg "Couldn't create socketwrapper process\n";

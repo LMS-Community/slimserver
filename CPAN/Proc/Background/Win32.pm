@@ -78,7 +78,7 @@ sub _new {
 			     $args[0],
 			     "@args",
 			     0,
-			     NORMAL_PRIORITY_CLASS,
+			     CREATE_NO_WINDOW | NORMAL_PRIORITY_CLASS,
 			     '.')) {
     $self->{_pid}    = $os_obj->GetProcessID;
     $self->{_os_obj} = $os_obj;
