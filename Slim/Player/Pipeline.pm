@@ -80,7 +80,7 @@ sub new {
 			Slim::Utils::Misc::findbin("socketwrapper"),
 			$newcommand,
 			0,
-			Win32::Process::CREATE_NO_WINDOW | Win32::Process::NORMAL_PRIORITY_CLASS,
+			Win32::Process::CREATE_NO_WINDOW() | Win32::Process::NORMAL_PRIORITY_CLASS(),
 			".")
 		) {
 
