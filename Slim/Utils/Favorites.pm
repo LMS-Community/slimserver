@@ -145,27 +145,30 @@ sub addCurrentItem {
 		$obj = $list->[$client->modeParam('listIndex')];
 	
 	# hack to grab currently browsed item from current playlist (needs to use INPUT.List at some point)
-	} elsif (mode($client) eq 'playlist') {
+	} elsif (Slim::Buttons::Common::mode($client) eq 'playlist') {
 	
 		$obj = Slim::Player::Playlist::song($client, Slim::Buttons::Playlist::browseplaylistindex($client));
 	}
 	
 	# if that doesn't work, perhaps we have a track param from something like trackinfo
-	if (!blessed($obj) && $client->modeParam('track')) {
+	if (!blessed($obj)) {
+		
+		if ($client->modeParam('track')) {
 	
-		$obj = $client->modeParam('track');
+			$obj = $client->modeParam('track');
 	
-	# specific HACK for Live365
-	} elsif(Slim::Player::ProtocolHandlers->handlerForURL('live365://') && (Plugins::Live365::Plugin::getLive365($client))) {
+		# specific HACK for Live365
+		} elsif(Slim::Player::ProtocolHandlers->handlerForURL('live365://') && (Plugins::Live365::Plugin::getLive365($client))) {
 
-		my $live365 = Plugins::Live365::Plugin::getLive365($client);
-		my $station = $live365->getCurrentStation();
-		
-		$title = $station->{STATION_TITLE};
-		$url   = $station->{STATION_ADDRESS};
-		
-		# fix url to activate protocol handler
-		$url =~ s/http\:/live365\:/;
+			my $live365 = Plugins::Live365::Plugin::getLive365($client);
+			my $station = $live365->getCurrentStation();
+			
+			$title = $station->{STATION_TITLE};
+			$url   = $station->{STATION_ADDRESS};
+			
+			# fix url to activate protocol handler
+			$url =~ s/http\:/live365\:/;
+		}
 	}
 	
 	# start with the object if we have one
@@ -183,13 +186,16 @@ sub addCurrentItem {
 		if (blessed($obj) && $obj->can('name')) {
 
 			$title = $obj->name;
-		}elsif (ref($obj) eq 'HASH') {
+		} elsif (ref($obj) eq 'HASH') {
 
 			$title = $obj->{'name'} || $obj->{'title'};
-		} else {
+		}
+		
+		if (!$title) {
 			
 			# failing specified name values, try the db title
-			$title = Slim::Music::Info::standardTitle($client, $obj);
+			$title = Slim::Music::Info::standardTitle($client, $obj) 
+					|| Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::url($client));
 		}
 	} 
 	
