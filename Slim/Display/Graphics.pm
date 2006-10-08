@@ -283,7 +283,9 @@ sub render {
 				if (defined($screen->{overlay}[$l]) && 
 					(!defined($sc->{overlay}[$l]) || ($screen->{overlay}[$l] ne $sc->{overlay}[$l]))) {
 					$sc->{overlay}[$l] = $screen->{overlay}[$l];
-					$sc->{overlaybits}[$l] = Slim::Display::Lib::Fonts::string($sfonts->{overlay}[$l]||$dfonts->{overlay}[$l], "\x00" . $screen->{overlay}[$l]);
+					my $overlay;
+					{ no bytes; $overlay = "\x00" . $sc->{overlay}[$l]; }
+					$sc->{overlaybits}[$l] = Slim::Display::Lib::Fonts::string($sfonts->{overlay}[$l]||$dfonts->{overlay}[$l], $overlay);
 					if (length($sc->{overlaybits}[$l]) > $screensize ) {
 						$sc->{overlaybits}[$l] = substr($sc->{overlaybits}[$l], 0, $screensize);
 					}
