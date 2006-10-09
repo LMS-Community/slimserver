@@ -173,7 +173,8 @@
 	<li>
 		Updated command 
 		&quot;<a href="#playlistcontrol">playlistcontrol</a>&quot; 
-		to accept a list of comma-separated track_ids as parameter.
+		to accept a list of comma-separated track_ids as parameter as well
+		as a playlist name.
 	</li>
 	<li>
 		Updated query &quot;<a href="#albums">albums</a>&quot; 
@@ -5134,6 +5135,12 @@ in the saved playlists folder.</p>
 		<td>Playlist ID, to restrict the results to this playlist_id. If this
 		    parameter is provided, then any genre_id, artist_id, album_id and/or
 		    track_id parameter is ignored.</td>
+	</tr>
+	<tr>
+		<td>playlist_name</td>
+		<td>Playlist name, to restrict the results to this playlist_name. If this
+		    parameter is provided, then any genre_id, artist_id, album_id,
+		    track_id and/or playlist_id parameter is ignored.</td>
 	</tr>
 </table>
 <p>Returned tagged parameters:</p>
