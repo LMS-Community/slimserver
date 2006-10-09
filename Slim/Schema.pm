@@ -253,7 +253,7 @@ sub disconnect {
 
 Returns a hash ref of valid hierarchies that a user is allowed to traverse.
 
-Eg: genre,artist,album,track
+Eg: genre,contributor,album,track
 
 =cut
 

@@ -455,7 +455,7 @@ our %functions = (
 		} elsif ($button eq 'menu_browse_genre') {
 
 			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy' => 'genre,artist,album,track',
+				'hierarchy' => 'genre,contributor,album,track',
 				'level'     => 0,
 			});
 
@@ -464,7 +464,7 @@ our %functions = (
 		} elsif ($button eq 'menu_browse_artist') {
 
 			Slim::Buttons::Common::pushMode($client, 'browsedb', {
-				'hierarchy' => 'artist,album,track',
+				'hierarchy' => 'contributor,album,track',
 				'level'     => 0,
 			});
 
