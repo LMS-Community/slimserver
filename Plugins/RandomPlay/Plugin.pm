@@ -152,11 +152,11 @@ sub getGenres {
 		my $id   = $genre->id;
 		my $ena  = 1;
 
-		if (grep { $_ eq $id } @exclude) {
+		if (grep { $_ eq $name } @exclude) {
 			$ena = 0;
 		}
 
-		$clientGenres{$id} = {
+		$clientGenres{$name} = {
 			'id'      => $id,
 			'name'    => $name,
 			'enabled' => $ena,
@@ -170,20 +170,23 @@ sub getGenres {
 
 # Returns an array of the non-excluded genres in the db
 sub getFilteredGenres {
-	my ($client, $returnExcluded) = @_;
+	my ($client, $returnExcluded, $namesOnly) = @_;
 
 	my @filteredGenres = ();
 	my @excludedGenres = ();
+	
+	# use second arg to set what values we return. we may need list of ids or names
+	my $value = $namesOnly ? 'name' : 'id';
 
 	# If $returnExcluded, just return the current state of excluded genres
 	my $clientGenres = $returnExcluded ? $genres{$client} : getGenres($client);
 
-	for my $id (keys %{$clientGenres}) {
+	for my $genre (keys %{$clientGenres}) {
 
-		if ($clientGenres->{$id}->{'enabled'}) {
-			push (@filteredGenres, $id) if !$returnExcluded;
+		if ($clientGenres->{$genre}->{'enabled'}) {
+			push (@filteredGenres, $clientGenres->{$genre}->{$value}) if !$returnExcluded;
 		} else {
-			push (@excludedGenres, $id) if $returnExcluded;
+			push (@excludedGenres, $clientGenres->{$genre}->{$value}) if $returnExcluded;
 		}
 	}
 
@@ -379,7 +382,7 @@ sub playRandom {
 		#$client->currentPlaylist($string);
 		
 		# Never show random as modified, since its a living playlist
-		$client->currentPlaylistModified(0);		
+		$client->currentPlaylistModified(0);
 	}
 
 	if ($type eq 'disable') {
@@ -391,7 +394,7 @@ sub playRandom {
 		if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
 
 			$client->showBriefly(string('PLUGIN_RANDOM'), 
-                                 string('PLUGIN_RANDOM_DISABLED'));
+								string('PLUGIN_RANDOM_DISABLED'));
 		}
 
 		$mixInfo{$client->masterOrSelf->id} = undef;
@@ -476,9 +479,9 @@ sub getGenreOverlay {
 		# This item should be ticked if all the genres are selected
 		my $genresEnabled = 0;
 
-		for my $id (keys %{$genres}) {
+		for my $genre (keys %{$genres}) {
 
-			if ($genres->{$id}->{'enabled'}) {
+			if ($genres->{$genre}->{'enabled'}) {
 				$genresEnabled++;
 			}
 		}
@@ -488,14 +491,10 @@ sub getGenreOverlay {
 
 	} else {
 
-		$rv = $genres->{$item->{'id'}}->{'enabled'};
+		$rv = $genres->{$item->{'name'}}->{'enabled'};
 	}
 
-	if ($rv) {
-		return [undef, '[X]'];
-	} else {
-		return [undef, '[ ]'];
-	}
+	return [undef, Slim::Buttons::Common::checkBoxOverlay($client, $rv)];
 }
 
 # Toggle the exclude state of a genre in the select genres mode
@@ -514,10 +513,10 @@ sub toggleGenreState {
 	} else {
 
 		# Toggle the selected state of the current item
-		$genres{$client}->{$item->{'id'}}->{'enabled'} = ! $genres{$client}->{$item->{'id'}}->{'enabled'};
+		$genres{$client}->{$item->{'name'}}->{'enabled'} = ! $genres{$client}->{$item->{'name'}}->{'enabled'};
 	}
 
-	Slim::Utils::Prefs::set('plugin_random_exclude_genres', getFilteredGenres($client, 1));
+	Slim::Utils::Prefs::set('plugin_random_exclude_genres', getFilteredGenres($client, 1, 1));
 
 	$client->update;
 }
@@ -583,11 +582,15 @@ sub setMode {
 				my @listRef = ({
 					name => $client->string('PLUGIN_RANDOM_SELECT_ALL'),
 					# Mark the fact that isn't really a genre
-					selectAll => 1
+					selectAll => 1,
+					value     => 1,
 				});
 
 				# Add the genres
 				foreach my $genre (sort keys %genreList) {
+					
+					# HACK: add 'value' so that INPUT.Choice won't complain as much. nasty setup there.
+					$genreList{$genre}->{'value'} = $genreList{$genre}->{'id'};
 					push @listRef, $genreList{$genre};
 				}
 
@@ -819,9 +822,9 @@ sub handleWebSettings {
 	my $genres = getGenres($client);
 
 	# %$params will contain a key called genre_<genre id> for each ticked checkbox on the page
-	foreach my $genre (keys %{$params}) {
+	for my $genre (keys %{$genres}) {
 
-		if ($genre =~ s/^genre_//) {
+		if ($params->{'genre_'.$genres->{$genre}->{'id'}}) {
 			delete($genres->{$genre});
 		}
 	}
