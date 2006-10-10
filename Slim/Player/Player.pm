@@ -472,56 +472,47 @@ sub minBass {	return 0; }
 # fade the volume up or down
 # $fade = number of seconds to fade 100% (positive to fade up, negative to fade down) 
 # $callback is function reference to be called when the fade is complete
-our %fvolume;  # keep temporary fade volume for each client
 
 sub fade_volume {
-	my($client, $fade, $callback, $callbackargs) = @_;
+	my ($client, $fade, $callback, $callbackargs) = @_;
 
-	$::d_ui && msg("entering fade_volume:  fade: $fade to $fvolume{$client}\n");
+	my $int = 0.05; # interval between volume updates
+
+	my $vol = abs($client->prefGet("volume"));
 	
-	my $faderate = 20;  # how often do we send updated fade volume commands per second
-	
-	Slim::Utils::Timers::killTimers($client, \&fade_volume);
-	
-	my $vol = $client->prefGet("volume");
-	my $mute = $client->prefGet("mute");
-	
-	if ($vol < 0) {
-		# correct volume if mute volume is stored
-		$vol = -$vol;
-	}
-	
-	if (($fade == 0) ||
-		($vol < 0 && $fade < 0)) {
-		# the volume is muted or fade is instantaneous, don't fade.
-		$callback && (&$callback(@$callbackargs));
-		return;
-	}
+	Slim::Utils::Timers::killHighTimers($client, \&_fadeVolumeUpdate);
 
-	# on the first pass, set temporary fade volume
-	if(!$fvolume{$client} && $fade > 0) {
-		# fading up, start volume at 0
-		$fvolume{$client} = 0;
-	} elsif(!$fvolume{$client}) {
-		# fading down, start volume at current volume
-		$fvolume{$client} = $vol;
-	}
+	$client->_fadeVolumeUpdate( {
+		'startVol' => ($fade > 0) ? 0 : $vol,
+		'endVol'   => ($fade > 0) ? $vol : 0,
+		'startTime'=> Time::HiRes::time(),
+		'int'      => $int,
+		'rate'     => ($vol && $fade) ? $vol / $fade : 0,
+		'cb'       => $callback,
+		'cbargs'   => $callbackargs,
+	} );
+}
 
-	$fvolume{$client} += $client->maxVolume() * (1/$faderate) / $fade; # fade volume
+sub _fadeVolumeUpdate {
+	my $client = shift;
+	my $f = shift;
 
-	if ($fvolume{$client} < 0) { $fvolume{$client} = 0; };
-	if ($fvolume{$client} > $vol) { $fvolume{$client} = $vol; };
+	my $now = Time::HiRes::time();
 
-	$client->volume($fvolume{$client},1); # set volume
+	# new vol based on time since fade started to minise impact of timers firing late
+	$f->{'vol'} = $f->{'startVol'} + ($now - $f->{'startTime'}) * $f->{'rate'};
 
-	if (($fvolume{$client} == 0 && $fade < 0) || ($fvolume{$client} == $vol && $fade > 0)) {	
-		# done fading
-		$::d_ui && msg("fade_volume done.  fade: $fade to $fvolume{$client} (vol: $vol)\n");
-		$fvolume{$client} = 0; # reset temporary fade volume 
-		$callback && (&$callback(@$callbackargs));
+	my $rate = $f->{'rate'};
+
+	if (!$rate || $rate < 0 && $f->{'vol'} < $f->{'endVol'} || $rate > 0 && $f->{'vol'} > $f->{'endVol'}) {
+		# reached end of fade
+		$client->volume($f->{'endVol'}, 1);
+		if ($f->{'cb'}) {
+			&{$f->{'cb'}}(@{$f->{'cbargs'}});
+		}
 	} else {
-		$::d_ui && msg("fade_volume - setting volume to $fvolume{$client} (originally $vol)\n");
-		Slim::Utils::Timers::setTimer($client, Time::HiRes::time()+ (1/$faderate), \&fade_volume, ($fade, $callback, $callbackargs));
+		$client->volume($f->{'vol'}, 1);
+		Slim::Utils::Timers::setHighTimer($client, $now + $f->{'int'}, \&_fadeVolumeUpdate, $f);
 	}
 }
 
