@@ -1547,6 +1547,9 @@ BUFFERING
 	NL	Bufferen
 	ZH_CN	缓冲装载中
 
+REBUFFERING
+	EN	Rebuffering...
+
 WAITING_TO_SYNC
 	DE	Warte auf Synchronisierung...
 	EN	Waiting to sync...

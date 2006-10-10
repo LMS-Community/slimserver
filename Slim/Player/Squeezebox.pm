@@ -222,7 +222,8 @@ sub flush {
 }
 
 sub quickstart {
-	my $client = shift;
+	my $client   = shift;
+	my $rebuffer = shift || 0; # Are we rebuffering an existing stream?
 	
 	my $url = Slim::Player::Playlist::url( $client, Slim::Player::Source::streamingSongIndex($client) );
 	
@@ -237,6 +238,15 @@ sub quickstart {
 	if ( my $bitrate = Slim::Music::Info::getBitrate($url) ) {
 		my $bufferSecs = Slim::Utils::Prefs::get('bufferSecs') || 3;
 		$threshold     = int($bitrate / 8) * $bufferSecs;
+	}
+	
+	if ( $rebuffer ) {
+		# Change the threshold to a precentage of buffer size
+		$threshold = int( $client->bufferSize() * ( $rebuffer / 100 ) );
+		$::d_source && msg("Quickstart: Rebuffering to $rebuffer%... $fullness / $threshold\n");
+	}
+	else {	
+		$::d_source && msg("Quickstart: Buffering... $fullness / $threshold\n");
 	}
 
 	# Resume if we've hit the threshold, unless synced (sync unpauses all clients together)
@@ -265,7 +275,8 @@ sub quickstart {
 				$status = $client->string('WAITING_TO_SYNC');
 			}
 			else {
-				$status = $client->string('BUFFERING') . ' ' . $percent . '%';
+				my $string = $rebuffer ? 'REBUFFERING' : 'BUFFERING';
+				$status = $client->string($string) . ' ' . $percent . '%';
 			}
 			
 			$line1 = $client->string('NOW_PLAYING') . ' (' . $status . ')';
@@ -289,7 +300,7 @@ sub quickstart {
 			$client->showBriefly( $line1, $line2, 0.5 ) unless $client->display->sbName();
 		}
 		
-		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + 0.125, \&quickstart );
+		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + 0.125, \&quickstart, $rebuffer );
 	}
 }
 

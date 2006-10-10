@@ -47,6 +47,7 @@ sub init {
 	Slim::Networking::Slimproto::setEventCallback('STMu', \&underrun);
 	Slim::Networking::Slimproto::setEventCallback('STMd', \&decoderUnderrun);
 	Slim::Networking::Slimproto::setEventCallback('STMs', \&trackStartEvent);
+	Slim::Networking::Slimproto::setEventCallback('STMt', \&checkFullness);
 	Slim::Networking::Slimproto::setEventCallback('STMn', \&notSupported);
 }
 
@@ -609,6 +610,30 @@ sub underrun {
 		$client->update();
 		
 		Slim::Control::Request::notifyFromArray($client, ['stop']);
+	}
+}
+
+sub checkFullness {
+	my $client = shift || return;
+	
+	# If a stream falls to below 1% buffer fullness and we 
+	# have played at least 10 seconds, rebuffer the stream
+	my $fullness = int( Slim::Networking::Slimproto::fullness($client) / $client->bufferSize() * 100);
+	
+	my $songTime = songTime($client);
+	
+	if ( $fullness <= 1 && $songTime > 10 ) {
+		$::d_source && msg("Buffer fullness dropped to $fullness%, pausing to rebuffer\n");
+		
+		$client->pause();
+		
+		# Use the quickstart timer to wait until we've rebuffered enough
+		Slim::Utils::Timers::setTimer( 
+			$client, 
+			Time::HiRes::time() + 0.125, 
+			\&Slim::Player::Squeezebox::quickstart, 
+			5, # signals quickstart what percentage to rebuffer to
+		);
 	}
 }
 
