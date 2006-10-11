@@ -616,6 +616,12 @@ sub underrun {
 sub checkFullness {
 	my $client = shift || return;
 	
+	# Only do this for remote streams
+	my $url = Slim::Player::Playlist::url($client);
+	if ( !$url || !Slim::Music::Info::isRemoteURL($url) ) {
+		return;
+	}
+	
 	# If a stream falls to below 1% buffer fullness and we 
 	# have played at least 10 seconds, rebuffer the stream
 	my $fullness = int( Slim::Networking::Slimproto::fullness($client) / $client->bufferSize() * 100);

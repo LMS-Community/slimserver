@@ -261,10 +261,11 @@ sub quickstart {
 		my ( $line1, $line2 );
 		
 		if ( $percent == 0 ) {
-			$line1 = $client->string('NOW_PLAYING') . ' (' . $client->string('CONNECTING_FOR') . ')';
+			my $string = $rebuffer ? 'REBUFFERING' : 'CONNECTING_FOR';
+			$line1 = $client->string('NOW_PLAYING') . ' (' . $client->string($string) . ')';
 			
 			if ( $client->linesPerScreen() == 1 ) {
-				$line2 = $client->string('CONNECTING_FOR');
+				$line2 = $client->string($string);
 			}
 		}
 		else {

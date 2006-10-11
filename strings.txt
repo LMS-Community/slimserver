@@ -3096,12 +3096,11 @@ SETUP_BUFFERSECS
 	ZH_CN	收音机频道缓冲秒数
 
 SETUP_BUFFERSECS_DESC
-	DE	Wenn Internet Radiostationen wiedergegeben werden, puffert der Player eine geringe Datenmenge, bevor er die Wiedergabe startet. Geben Sie die Anzahl Sekunden an, die in den Puffer geladen werden sollen (1-30 Sekunden). Vorgabewert ist 3 Sekunden. Falls Sie eine stotternde Wiedergabe feststellen, so kann das Erhöhen dieses Wertes helfen.
-	EN	When playing an Internet stream, the player buffers a small amount of data before beginning playback.  Specify the amount of audio data to buffer, in seconds from 1 to 30.  The default value is 3 seconds.  If you experience stuttering audio, increasing this value may help.
-	FR	Lors de la connexion à un flux Internet, la platine utilise un tampon audio avant de débuter la lecture. Vous pouvez spécifier la taille en secondes (1 à 30) de ce tampon. La valeur par défaut est de 3 secondes. Si vous subissez des coupures audio, augmentez cette valeur.
-	IT	Nella riproduzione di un flusso Internet, il lettore memorizza una piccola quantità di dati prima di iniziare la riproduzione. Specifica la quantità di dati audio da memorizzare, in secondi da 1 a 30. Il valore standard è 3 secondi. Se verifichi inceppamenti nell'audio, aumentare questo valore potrebbe essere d'aiuto.
-	NL	Bij het spelen van een Internet stream buffert de speler een kleine hoeveelheid data voordat het spelen start. Specificeer de hoeveelheid bufferdata in seconden speeltijd. Minimum is 1 en maximum is 30 seconden. De standaardwaarde is 3 seconden. Als je haperende audio ervaart, dan kan het vergroten van de buffer helpen.
-	ZH_CN	当播放互联网频流时，播放机会在播放前进行少量的数据缓冲。以秒为单位在1至30的范围内配置音频缓冲量。确省值为3秒。增加此值对音频输出不顺畅的状况会有帮助。
+	DE	Wenn Internet Radiostationen wiedergegeben werden, puffert der Player eine geringe Datenmenge, bevor er die Wiedergabe startet. Geben Sie die Anzahl Sekunden an, die in den Puffer geladen werden sollen (3-30 Sekunden). Vorgabewert ist 3 Sekunden. Falls Sie eine stotternde Wiedergabe feststellen, so kann das Erhöhen dieses Wertes helfen.
+	EN	When playing an Internet stream, the player buffers a small amount of data before beginning playback.  Specify the amount of audio data to buffer, in seconds from 3 to 30.  The default value is 3 seconds.  If you experience stuttering audio, increasing this value may help.
+	FR	Lors de la connexion Ã  un flux Internet, la platine utilise un tampon audio avant de débuter la lecture. Vous pouvez spécifier la taille en secondes (3 Ã  30) de ce tampon. La valeur par défaut est de 3 secondes. Si vous subissez des coupures audio, augmentez cette valeur.
+	IT	Nella riproduzione di un flusso Internet, il lettore memorizza una piccola quantitÃ  di dati prima di iniziare la riproduzione. Specifica la quantitÃ  di dati audio da memorizzare, in secondi da 3 a 30. Il valore standard Ã¨ 3 secondi. Se verifichi inceppamenti nell'audio, aumentare questo valore potrebbe essere d'aiuto.
+	NL	Bij het spelen van een Internet stream buffert de speler een kleine hoeveelheid data voordat het spelen start. Specificeer de hoeveelheid bufferdata in seconden speeltijd. Minimum is 3 en maximum is 30 seconden. De standaardwaarde is 3 seconden. Als je haperende audio ervaart, dan kan het vergroten van de buffer helpen.
 
 SETUP_MAXWMARATE
 	DE	Maximale WMA Stream Bitrate
