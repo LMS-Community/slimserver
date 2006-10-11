@@ -694,6 +694,16 @@ sub nowPlayingModeLines {
 	
 	if ($showFullness) {
 		$songtime = ' ' . int($fractioncomplete * 100 + 0.5)."%";
+		
+		# for remote streams where we know the bitrate, 
+		# show the number of seconds of audio in the buffer instead of a percentage
+		my $url = Slim::Player::Playlist::url($client);
+		if ( Slim::Music::Info::isRemoteURL($url) ) {
+			if ( my $bitrate = Slim::Music::Info::getBitrate($url) ) {
+				$songtime  = ' ' . sprintf( "%.1f", $client->bufferFullness() / ( int($bitrate / 8) ) );
+				$songtime .= ' ' . $client->string('SECONDS');
+			}
+		}
 	} elsif ($showTime) { 
 		$songtime = ' ' . $client->textSongTime($showTime < 0);
 	}
