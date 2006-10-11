@@ -1548,6 +1548,7 @@ BUFFERING
 	ZH_CN	缓冲装载中
 
 REBUFFERING
+	DE	Aktualisiere Puffer...
 	EN	Rebuffering...
 
 WAITING_TO_SYNC
