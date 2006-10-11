@@ -630,16 +630,8 @@ sub checkFullness {
 	my $fullness = $client->bufferFullness();
 	my $songTime = songTime($client);
 	
-	# We want the buffer to contain the same amount of data required by quickstart
-	my $threshold = 20 * 1024;
-	
-	# If we know the bitrate of the stream, we instead buffer a certain number of seconds of audio
-	if ( my $bitrate = Slim::Music::Info::getBitrate($url) ) {
-		my $bufferSecs = Slim::Utils::Prefs::get('bufferSecs') || 3;
-		$threshold     = int($bitrate / 8) * $bufferSecs;
-	}
-	
-	if ( $fullness < $threshold && $songTime > 10 ) {
+	# If the buffer is empty, rebuffer	
+	if ( !$fullness && $songTime > 30 ) {
 		$::d_source && msg("Buffered audio dropped to $fullness bytes, pausing to rebuffer\n");
 		
 		$client->pause();
