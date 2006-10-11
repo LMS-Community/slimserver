@@ -4,13 +4,20 @@
 	<li>Firmware 65 for Squeezebox2/3 and Firmware 19 for Transporter</li>
 	<ul>
 		<li>Gapless MP3 playback for files encoded with LAME.  Please do a complete wipe and rescan of your library to enable this.</li>
-		<li>Bug fixes</li>
+		<li>Bug fixes.</li>
 	</ul>
 	<br />
 
 	<li>Cache:
 	<ul>
 		<li>In previous versions, SlimServer's FileCache directory was not cleaned out on a regular basis, and may have grown to a large size over time.  Please note that the first time you run 6.5.1, there may be a slight delay while expired entries in the FileCache directory are cleaned out.  This delay will only occur once.</li>
+	</ul>
+	<br />
+
+	<li>Internet Radio:
+	<ul>
+		<li>While playing a radio station, if the buffer runs out, the stream will pause and rebuffer for a few seconds.  This helps prevent stuttering audio.  If you get a lot of rebuffering messages, try increasing your Radio Station Buffer Seconds value under Server Settings -> Network to a value such as 10 seconds.</li>
+		<li>The Show Buffer Fullness option (Player Settings -> Now Playing Information) has been changed to display the number of seconds of audio in the buffer when listening to radio streams.  This gives a better idea of a stream's performance and the effect of changing the Radio Station Buffer Seconds value.</li>
 	</ul>
 	<br />
 
