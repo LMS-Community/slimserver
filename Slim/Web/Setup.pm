@@ -2221,7 +2221,7 @@ sub initSetupConfig {
 					}
 			,'bufferSecs' => {
 						'validate'   => \&Slim::Utils::Validate::isInt,
-						'validateArgs' => [1,30,1,30],
+						'validateArgs' => [3,30,1,1],
 					}							
 			,'remotestreamtimeout' => {
 						'validate' => \&Slim::Utils::Validate::isInt
