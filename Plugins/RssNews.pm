@@ -565,7 +565,7 @@ sub tickerUpdateContinue {
 	$client->update( tickerLines($client) );
 
 	my ($complete, $queue) = $client->scrollTickerTimeLeft();
-	my $newfeed = $savers->{$client}->{current_feed};
+	my $newfeed = $savers->{$client}->{newfeed};
 
 	# schedule for next item as soon as queue drains if same feed or after ticker completes if new feed
 	my $next = $newfeed ? $complete : $queue;
