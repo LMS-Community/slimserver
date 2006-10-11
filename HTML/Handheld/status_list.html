@@ -1,5 +1,5 @@
 	<tr bgcolor="[% PROCESS oddOrEvenC odd = item.odd %]">
-		<td width="100%">
+		<td width="100%"[% IF item.currentsong %] class="currentListItem"[% END %]>
 			[% PROCESS trackinfo %]
 		</td>
 		[% PROCESS playlistcontrols
