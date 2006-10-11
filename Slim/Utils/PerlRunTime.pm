@@ -8,8 +8,6 @@ package Slim::Utils::PerlRunTime;
 # version 2.
 
 use strict;
-
-use B::Deparse;
 use Devel::Peek;
 
 =head1 NAME
@@ -89,6 +87,8 @@ Use L<B::Deparse> to turn a $coderef into an approximation of the original code.
 
 sub deparseCoderef {
 	my $coderef = shift;
+
+	require B::Deparse;
 
 	my $deparse = B::Deparse->new('-si8T') || return 0;
 

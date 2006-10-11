@@ -432,9 +432,7 @@ our $requestTask = Slim::Utils::PerfMon->new('Request Task', [0.002, 0.005, 0.01
 sub init {
 
 	# Allow deparsing of code ref function names.
-	if ($::d_command && $d_notify) {
-		require Slim::Utils::PerlRunTime;
-	}
+	Slim::bootstrap::tryModuleLoad('Slim::Utils::PerlRunTime');
 
 ######################################################################################################################################################################
 #                                                                                                       |requires Client
@@ -754,7 +752,7 @@ sub executeRequest {
 		(blessed($client) ? $client->id() : undef), 
 		$parrayref
 	);
-	
+
 	if (defined $request && $request->isStatusDispatchable()) {
 		
 		# add callback params
@@ -1573,6 +1571,13 @@ sub callback {
 			# else use the provided arguments
 			} else {
 
+				# This is a hack to make passing back of the "@p" array work. But limit it to
+				# generateHTTPResponse, as Jonas Salling is the only caller.
+				if (Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr) =~ /::generateHTTPResponse$/) {
+
+					push @$args, [ $self->renderAsArray ];
+				}
+
 				eval { &$funcPtr(@$args) };
 
 				if ($@) { 
@@ -1892,7 +1897,7 @@ sub __parse {
 		}
 
 		$debug && msg("..Trying to match [$match]\n");
-		$debug && print Data::Dumper::Dumper($DBp);
+		$debug && Data::Dump::dump($DBp);
 
 		# our verb does not match in the hash 
 		if (!defined $DBp->{$match}) {

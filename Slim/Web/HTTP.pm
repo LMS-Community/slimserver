@@ -948,6 +948,8 @@ sub generateHTTPResponse {
 		$response->header("Refresh" => "30; url=$path");
 		$response->header("Content-Type" => "text/plain; charset=utf-8");
 
+		# This code is deprecated. Jonas Salling is the only user
+		# anymore, and we're trying to move him to use the CLI.
 		buildStatusHeaders($client, $response, $p);
 
 		if ($path =~ /status/) {
@@ -2071,13 +2073,12 @@ sub fixHttpPath {
 }
 
 sub buildStatusHeaders {
-	my $client   = shift;
-	my $response = shift;
-	my $p = shift;
+	my ($client, $response, $p) = @_;
 
-	my %headers;
+	my %headers = ();
 	
 	if ($client) {
+
 		# send headers
 		%headers = ( 
 			"x-player"		=> $client->id(),
@@ -2085,12 +2086,6 @@ sub buildStatusHeaders {
 			"x-playertracks" 	=> Slim::Player::Playlist::count($client),
 			"x-playershuffle" 	=> Slim::Player::Playlist::shuffle($client) ? "1" : "0",
 			"x-playerrepeat" 	=> Slim::Player::Playlist::repeat($client),
-	
-			# unsupported yet
-		#	"x-playerbalance" => "0",
-		#	"x-playerbase" => "0",
-		#	"x-playertreble" => "0",
-		#	"x-playersleep" => "0",
 		);
 		
 		if ($client->isPlayer()) {
@@ -2099,7 +2094,7 @@ sub buildStatusHeaders {
 			$headers{"x-playermode"}   = Slim::Buttons::Common::mode($client) eq "power" ? "off" : Slim::Player::Source::playmode($client);
 	
 			my $sleep = $client->sleepTime() - Time::HiRes::time();
-	
+
 			$headers{"x-playersleep"}  = $sleep < 0 ? 0 : int($sleep/60);
 		}	
 		
@@ -2137,19 +2132,20 @@ sub buildStatusHeaders {
 			}
 		}
 	}
-	
+
 	# include returned parameters
-	my $i = 0;
-	foreach my $pn (@$p) {
-		$headers{"x-p$i"} = $pn;
-		$i++;
+	for (my $i = 0; $i < scalar @$p; $i++) {
+
+		$headers{"x-p$i"} = $p->[$i];
 	}
 	
 	# simple quoted printable encoding
 	while (my ($key, $value) = each %headers) {
+
 		if (defined($value) && length($value)) {
 
-			if ($] > 5.007) {
+			if ($] > 5.007 && Slim::Utils::Unicode::encodingFromString($value) ne 'ascii') {
+
 				$value = Slim::Utils::Unicode::utf8encode($value, 'iso-8859-1');
 				$value = encode_qp($value);
 			}
