@@ -198,7 +198,7 @@ sub main {
 
 			LWP::Simple::getstore("$SOURCE/$package?view=auto", $package);
 
-		} elsif ($downloadUsing eq 'curl') {
+		} elsif ($downloadUsing =~ /curl$/) {
 
 			`$downloadUsing --silent -o $package $SOURCE/$package?view=auto`;
 
