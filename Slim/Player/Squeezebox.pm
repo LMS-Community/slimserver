@@ -240,14 +240,7 @@ sub quickstart {
 		$threshold     = int($bitrate / 8) * $bufferSecs;
 	}
 	
-	if ( $rebuffer ) {
-		# Change the threshold to a precentage of buffer size
-		$threshold = int( $client->bufferSize() * ( $rebuffer / 100 ) );
-		$::d_source && msg("Quickstart: Rebuffering to $rebuffer%... $fullness / $threshold\n");
-	}
-	else {	
-		$::d_source && msg("Quickstart: Buffering... $fullness / $threshold\n");
-	}
+	$::d_source && msg("Quickstart: Buffering... $fullness / $threshold\n");
 
 	# Resume if we've hit the threshold, unless synced (sync unpauses all clients together)
 	if ( $fullness >= $threshold && !Slim::Player::Sync::isSynced($client) ) {

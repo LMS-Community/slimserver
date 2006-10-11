@@ -622,14 +622,25 @@ sub checkFullness {
 		return;
 	}
 	
-	# If a stream falls to below 1% buffer fullness and we 
-	# have played at least 10 seconds, rebuffer the stream
-	my $fullness = int( Slim::Networking::Slimproto::fullness($client) / $client->bufferSize() * 100);
+	# Softsqueeze doesn't report buffer fullness the same as hardware
+	if ( $client->isa('Slim::Player::SoftSqueeze') ) {
+		return;
+	}
 	
+	my $fullness = $client->bufferFullness();
 	my $songTime = songTime($client);
 	
-	if ( $fullness <= 1 && $songTime > 10 ) {
-		$::d_source && msg("Buffer fullness dropped to $fullness%, pausing to rebuffer\n");
+	# We want the buffer to contain the same amount of data required by quickstart
+	my $threshold = 20 * 1024;
+	
+	# If we know the bitrate of the stream, we instead buffer a certain number of seconds of audio
+	if ( my $bitrate = Slim::Music::Info::getBitrate($url) ) {
+		my $bufferSecs = Slim::Utils::Prefs::get('bufferSecs') || 3;
+		$threshold     = int($bitrate / 8) * $bufferSecs;
+	}
+	
+	if ( $fullness < $threshold && $songTime > 10 ) {
+		$::d_source && msg("Buffered audio dropped to $fullness bytes, pausing to rebuffer\n");
 		
 		$client->pause();
 		
@@ -638,7 +649,7 @@ sub checkFullness {
 			$client, 
 			Time::HiRes::time() + 0.125, 
 			\&Slim::Player::Squeezebox::quickstart, 
-			5, # signals quickstart what percentage to rebuffer to
+			1, # signals quickstart we are in rebuffering mode
 		);
 	}
 }
