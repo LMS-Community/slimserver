@@ -68,7 +68,7 @@ sub setMode {
 
 	$client->lines(\&lines);
 
-	if (!$client->blocklines()->{'static'}) {
+	if ($client->blocklines() && !$client->blocklines()->{'static'}) {
 
 		$client->modeParam('modeUpdateInterval', $ticklength);
 	}
@@ -126,6 +126,8 @@ sub unblock {
 
 	Slim::Buttons::ScreenSaver::wakeup($client);
 
+	$client->blocklines(undef);
+
 	if (Slim::Buttons::Common::mode($client) eq 'block') {
 		Slim::Buttons::Common::popMode($client);
 	}
@@ -136,7 +138,7 @@ sub unblock {
 sub lines {
 	my $client = shift;
 
-	my $bdata = $client->blocklines();
+	my $bdata = $client->blocklines() || return {};
 	my $parts = $bdata->{'parts'};
 	my $screen1;
 
