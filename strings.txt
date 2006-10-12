@@ -589,7 +589,7 @@ PLAYING_RANDOMLY
 
 OUT_OF
 	CS	z
-	DE	aus
+	DE	von
 	DA	af
 	EN	of
 	ES	de
