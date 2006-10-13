@@ -630,6 +630,14 @@ sub checkFullness {
 	my $fullness = $client->bufferFullness();
 	my $songTime = songTime($client);
 	
+	# If we're near the end of a song, don't rebuffer, this can break crossfade mode
+	my $song = playingSong($client);
+	if ( my $duration = $song->{duration} ) {
+		if ( $duration - $songTime <= 10 ) {
+			return;
+		}
+	}
+	
 	# If the buffer is empty, rebuffer	
 	if ( !$fullness && $songTime > 30 ) {
 		$::d_source && msg("Buffered audio dropped to $fullness bytes, pausing to rebuffer\n");
