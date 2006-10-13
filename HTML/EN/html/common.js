@@ -1,6 +1,6 @@
-[% IF NOT path.match('setup') %]
 <script language="JavaScript" type="text/javascript">
 <!-- Start Hiding the Script
+[% IF NOT path.match('setup') %]
 var url = "[% statusroot %]";
 
 function to_currentsong() {
@@ -133,32 +133,6 @@ function chooseAlbumOrderBy(value, option)
 	window.location = url;
 }
 
-function chooseSettings(value,option)
-{
-	var url;
-
-	switch(option)
-	{
-		[% IF playerid -%][% PROCESS addSetupCaseLinks setuplinks=additionalLinks.playersetup  %]
-						 [%# PROCESS addSetupCaseLinks setuplinks=additionalLinks.playerplugin %]
-		[%- ELSE -%][% PROCESS addSetupCaseLinks setuplinks=additionalLinks.setup   %]
-				  [%# PROCESS addSetupCaseLinks setuplinks=additionalLinks.plugin %][%- END %]
-		case "HOME":
-			url = "[% webroot %]home.html?"
-		break
-		case "BASIC_PLAYER_SETTINGS":
-			url = "[% webroot %]setup.html?page=BASIC_PLAYER_SETTINGS&amp;playerid=[% playerid | uri %]"
-		break
-		case "BASIC_SERVER_SETTINGS":
-			url = "[% webroot %]setup.html?page=BASIC_SERVER_SETTINGS&amp;"
-		break
-	}
-
-	if (option) {
-		window.location = url + 'player=[% playerURI %][% IF playerid %]&playerid=[% playerid | uri %][% END %]';
-	}
-}
-
 function switchPlayer(player_List) {
 	var player = player_List.options[player_List.selectedIndex].value;
 	var newPlayer = "=" + player;
@@ -253,8 +227,34 @@ function resize(src,width)
 	function refresh() {
 		window.location.replace("home.html?player=[% player | uri %]");
 	}
-[% END %]	
+[% END %]
+[% ELSE %]	
+function chooseSettings(value,option)
+{
+	var url;
 
+	switch(option)
+	{
+		[% IF playerid -%][% PROCESS addSetupCaseLinks setuplinks=additionalLinks.playersetup  %]
+						 [%# PROCESS addSetupCaseLinks setuplinks=additionalLinks.playerplugin %]
+		[%- ELSE -%][% PROCESS addSetupCaseLinks setuplinks=additionalLinks.setup   %]
+				  [%# PROCESS addSetupCaseLinks setuplinks=additionalLinks.plugin %][%- END %]
+		case "HOME":
+			url = "[% webroot %]home.html?"
+		break
+		case "BASIC_PLAYER_SETTINGS":
+			url = "[% webroot %]setup.html?page=BASIC_PLAYER_SETTINGS&amp;playerid=[% playerid | uri %]"
+		break
+		case "BASIC_SERVER_SETTINGS":
+			url = "[% webroot %]setup.html?page=BASIC_SERVER_SETTINGS&amp;"
+		break
+	}
+
+	if (option) {
+		window.location = url + 'player=[% playerURI %][% IF playerid %]&playerid=[% playerid | uri %][% END %]';
+	}
+}
+
+[% END %]
 // Stop Hiding script --->
 </script>
-[% END %]
