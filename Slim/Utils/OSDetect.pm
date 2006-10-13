@@ -260,15 +260,19 @@ sub initDetailsForOSX {
 
 sub initDetailsForLinux {
 
-	$osDetails{'os'}     = 'Linux';
+	$osDetails{'os'} = 'Linux';
 
 	if (-f '/etc/debian_version') {
 
 		$osDetails{'osName'} = 'Debian';
 
-	} elsif (-f '/etc/redhat_release') {
+	} elsif (-f '/etc/redhat_release' || -f '/etc/redhat-release') {
 
 		$osDetails{'osName'} = 'RedHat';
+
+	} elsif (-f '/etc/fedora-release') {
+
+		$osDetails{'osName'} = 'Fedora Core';
 
 	} else {
 
