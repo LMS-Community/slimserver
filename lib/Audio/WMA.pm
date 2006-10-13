@@ -373,7 +373,7 @@ sub _parseASFFilePropertiesObject {
 	$info{'max_packet_size'}	= unpack('V', $self->_readAndIncrementOffset($DWORD));
 	$info{'max_bitrate'}		= unpack('V', $self->_readAndIncrementOffset($DWORD));
 
-	$info{'bitrate'}		= ($info{'filesize'} * 8) / $info{'playtime_seconds'};
+	$info{'bitrate'}		= ($info{'playtime_seconds'}) ? ($info{'filesize'} * 8) / $info{'playtime_seconds'} : undef;
 
 	$self->{'INFO'}			= \%info;
 }
