@@ -54,6 +54,11 @@ sub normStringTodB {
 	$tag =~ s/^\s*//g;
 	$tag =~ s/\s*$//g;
 
+	# Bug: 4346 - can't parse empty strings.
+	if (!$tag) {
+		return;
+	}
+
 	my @values = map { oct(sprintf('0x%s', $_)) } split(/\s+/, $tag);
 
 	return sprintf('%.2f dB', normValueToDBChange(maxNormValue(@values), 1000));
