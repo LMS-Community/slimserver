@@ -320,8 +320,8 @@ sub fillInSearchResults {
 	# No limit or pagebar on advanced search
 	if (!$advancedSearch) {
 
-		my $offset = ($params->{'start'} || 0),
-		my $limit  = ($params->{'itemsPerPage'} || 10) - 1;
+		my $offset = ($params->{'start'} || 0);
+		my $limit  = $offset + ($params->{'itemsPerPage'} || 10) - 1;
 
 		$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
 
