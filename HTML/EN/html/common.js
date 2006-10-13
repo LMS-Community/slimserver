@@ -1,3 +1,4 @@
+[% IF NOT path.match('setup') %]
 <script language="JavaScript" type="text/javascript">
 <!-- Start Hiding the Script
 var url = "[% statusroot %]";
@@ -256,3 +257,4 @@ function resize(src,width)
 
 // Stop Hiding script --->
 </script>
+[% END %]
