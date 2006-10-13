@@ -46,6 +46,15 @@ sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
 	$form->{'text'} = $self->name;
+	
+	my $Imports = Slim::Music::Import->importers;
+	
+	for my $mixer (keys %{$Imports}) {
+	
+	if (defined $Imports->{$mixer}->{'mixerlink'}) {
+		&{$Imports->{$mixer}->{'mixerlink'}}($self, $form, $descend); 	 
+		}
+	}
 }
 
 1;
