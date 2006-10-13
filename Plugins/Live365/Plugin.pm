@@ -548,7 +548,7 @@ CHANNELMODE: {
 	};
 	
 	sub channelModeLoad {
-		my $client = shift;
+		my $client = shift || return;
 	
 		my $source = $client->modeParam('source');
 		
