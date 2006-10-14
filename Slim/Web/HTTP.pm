@@ -702,7 +702,7 @@ sub generateHTTPResponse {
 		$params->{'orderBy'} = $params->{'cookies'}->{'SlimServer-orderBy'}->value unless defined $params->{'orderBy'};
 	}
 
-        # Check for thumbSize cookie (for Touch, 1-by-1 artwork enlarge/shrink feature)
+	# Check for thumbSize cookie (for Touch, 1-by-1 artwork enlarge/shrink feature)
 	if (	$params->{'cookies'}->{'SlimServer-thumbSize'} &&
 		$params->{'cookies'}->{'SlimServer-thumbSize'}->value) {
 
@@ -878,7 +878,7 @@ sub generateHTTPResponse {
 
 		($body, $mtime, $inode, $size, $contentType) = Slim::Web::Graphics::processCoverArtRequest($client, $path);
 
-	} elsif ($path =~ /music\/(\d+)\/download$/) {
+	} elsif ($path =~ /music\/(\d+)\/download/) {
 
 		my $obj = Slim::Schema->find('Track', $1);
 
