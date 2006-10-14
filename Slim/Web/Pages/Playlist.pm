@@ -158,9 +158,9 @@ sub playlist {
 			$form{'currentsong'} = "current";
 
 			if (Slim::Music::Info::isRemoteURL($track)) {
-				$form{'title'} = Slim::Music::Info::standardTitle(undef, $track);
+				$form{'title'} = Slim::Music::Info::standardTitle(undef, $track) || $track->url;
 			} else {
-				$form{'title'} = Slim::Music::Info::getCurrentTitle(undef, $track);
+				$form{'title'} = Slim::Music::Info::getCurrentTitle(undef, $track->url);
 			}
 
 		} else {

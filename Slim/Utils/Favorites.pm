@@ -194,8 +194,7 @@ sub addCurrentItem {
 		if (!$title) {
 			
 			# failing specified name values, try the db title
-			$title = Slim::Music::Info::standardTitle($client, $obj) 
-					|| Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::url($client));
+			$title = Slim::Music::Info::standardTitle($client, $obj) || $url;
 		}
 	} 
 	
