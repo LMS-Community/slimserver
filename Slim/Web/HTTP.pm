@@ -940,7 +940,7 @@ sub generateHTTPResponse {
 			($body, $mtime, $inode, $size) = getStaticContent($path, $params);
 		}
 
-	} elsif ($path =~ /status\.txt/ || $path =~ /log\.txt/) {
+	} elsif ($path =~ /(status)\.txt/ || $path =~ /(log)\.txt/) {
 
 		# if the HTTP client has asked for a text file, then always return the text on the display
 		$contentType = "text/plain";
@@ -950,7 +950,7 @@ sub generateHTTPResponse {
 
 		# This code is deprecated. Jonas Salling is the only user
 		# anymore, and we're trying to move him to use the CLI.
-		buildStatusHeaders($client, $response, $p);
+		buildStatusHeaders($client, $response, $p) if $1 eq 'status';
 
 		if ($path =~ /status/) {
 
