@@ -437,6 +437,7 @@ sub power {
 					'graphic-280x16' => 'medium',
 					'text'           => 2,
 				},
+			'screen2' => {},
 		}, undef, undef, 1);
 
 		# check if there is a sync group to restore

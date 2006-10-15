@@ -1886,17 +1886,14 @@ sub _periodicUpdate {
 
 	$client->periodicUpdateTime($time);
 
-	if ($client->display->updateMode) {
-		return;
+	my $display = $client->display;
+
+	if ($update && !$display->updateMode) {
+		$display->update();
 	}
 
-	# updates not blocked
-	if ($update) {
-		$client->display->update();
-	}
-
-	if ($update2 && !$client->display->animateState() && (my $linefunc = $client->lines2periodic()) ) {
-		$client->display->update({ 'screen2' => &$linefunc($client, 1) });
+	if ($update2 && (!$display->updateMode || $display->screen2updateOK) && (my $linefunc = $client->lines2periodic()) ) {
+		$client->display->update({ 'screen2' => &$linefunc($client, 1) }, undef, 1);
 	}
 }
 

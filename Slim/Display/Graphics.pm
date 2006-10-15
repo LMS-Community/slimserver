@@ -89,6 +89,7 @@ sub render {
 	my $display = shift;
 	my $parts = shift;
 	my $scroll = shift || 0; # 0 = no scroll, 1 = wrapped scroll if line too long, 2 = non wrapped scroll
+	my $s2periodic = shift;  # this render is for a periodic screen 2 update - suppress some state changes
 	my $client = $display->client;
 
 	if ((ref($parts) ne 'HASH')) {
@@ -166,7 +167,7 @@ sub render {
 		# reset flags per render
 		$sc->{newscroll} = 0;
 		$sc->{changed} = 0;
-		$sc->{present} = 0 unless $rerender;
+		$sc->{present} = 0 unless ($rerender || $s2periodic);
 
 		# reset cache for screen if screensize or default font has changed
 		if ($screensize != $sc->{ssize} || $newDefaultFont) {

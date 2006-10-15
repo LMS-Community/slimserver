@@ -24,12 +24,16 @@ use Slim::Utils::Misc;
 use Slim::Utils::Timers;
 
 # Display routines use the following state variables: 
-#   $display->updateMode() and $display->animateState(), $display->scrollState()
+#   $display->updateMode(), $display->screen2updateOK(), $display->animateState(), $display->scrollState()
 #
 # updateMode: (single value for all screens)
 #   0 = normal
 #   1 = periodic updates are blocked
 #   2 = all updates are blocked
+#
+# screen2updateOK: single value for second screen to allow periodic update to screen 2 while updateMode set
+#   0 = use status of updateMode
+#   1 = allow periodic updates of screen2 to bypass updateMode check [animation or showBriefly on screen 1 only]
 #
 # animateState: (single value for all screens)         Slimp3/SB1      SB1G      SB2/3/Transporter   
 #   0 = no animation                                        x             x        x
@@ -76,6 +80,7 @@ sub new {
 	$display->[8] = undef;    # sbCallbackData
 	$display->[9] = undef;    # sbOldDisplay
 	$display->[10]= undef;    # sbName
+	$display->[11]= 0;        # screen2updateOK
 
 	$display->resetDisplay(); # init render cache
 
@@ -133,7 +138,10 @@ sub sbName {
 	my $r = shift;
 	@_ ? ($r->[10] = shift) : $r->[10];
 }
-
+sub screen2updateOK {
+	my $r = shift;
+	@_ ? ($r->[11] = shift) : $r->[11];
+}
 
 ################################################################################################
 
@@ -141,17 +149,9 @@ sub sbName {
 sub update {
 	my $display = shift;
 	my $lines   = shift;
-
+	my $scrollMode = shift;	# 0 = normal scroll, 1 = scroll once only, 2 = no scroll, 3 = scroll once and end
+	my $s2periodic = shift; # flag to indicate called by peridic update for screen 2 [to bypass some state checks]
 	my $client  = $display->client;
-
-	# 0 = normal scroll, 1 = scroll once only, 2 = no scroll, 3 = scroll once and end
-	my $scrollMode = shift || $client->paramOrPref('scrollMode') || 0;
-
-	# return if updates are blocked
-	return if ($display->updateMode() == 2);
-
-	# clear any server side animations or pending updates, don't kill scrolling
-	$display->killAnimation(1) if ($display->animateState() > 0);
 
 	my $parts;
 	if (defined($lines)) {
@@ -161,13 +161,32 @@ sub update {
 		$parts = $display->parseLines(&$linefunc($client));
 	}
 
+	unless ($s2periodic && $display->screen2updateOK) {
+
+		# return if updates are blocked
+		return if ($display->updateMode() == 2);
+
+		# clear any server side animations or pending updates, don't kill scrolling
+		$display->killAnimation(1) if ($display->animateState() > 0);
+
+	} elsif ($display->sbOldDisplay()) {
+
+		# replace any stored screen 2 for show briefly
+		$display->sbOldDisplay()->{'screen2'} = $parts->{'screen2'};
+
+	}
+
+	if (!defined $scrollMode) {
+		$scrollMode = $client->paramOrPref('scrollMode') || 0;
+	}
+
 	my ($scroll, $scrollonce);
 	if    ($scrollMode == 0) { $scroll = 1; $scrollonce = 0; }
 	elsif ($scrollMode == 1) { $scroll = 1; $scrollonce = 1; }
 	elsif ($scrollMode == 2) { $scroll = 0; $scrollonce = 0; }
 	elsif ($scrollMode == 3) { $scroll = 2; $scrollonce = 2; }
 
-	my $render = $display->render($parts, $scroll);
+	my $render = $display->render($parts, $scroll, $s2periodic);
 
 	foreach my $screenNo (1..$render->{screens}) {
 		
@@ -204,7 +223,7 @@ sub update {
 	}
 
 	# return any old display if stored
-	$display->returnOldDisplay($render) if $display->sbOldDisplay();
+	$display->returnOldDisplay($render) if (!$s2periodic && $display->sbOldDisplay());
 }
 
 # show text briefly and then return to original display
@@ -255,6 +274,7 @@ sub showBriefly {
 
 	$display->update($parsed, $scrollToEnd ? 3 : undef);
 	
+	$display->screen2updateOK( ($oldDisplay->{'screen2'} && !$parsed->{'screen2'} && !$display->updateMode) ? 1 : 0 );
 	$display->updateMode( $blockUpdate ? 2 : 1 );
 	$display->animateState(5);
 
@@ -694,6 +714,7 @@ sub endAnimation {
 	my $screen = ($animate <= 3) ? $display->renderCache() : undef;
 	$display->animateState(0);
 	$display->updateMode(0);
+	$display->screen2updateOK(0);
 	$display->endShowBriefly() if ($animate == 5);
 	$display->update($screen);
 }	

@@ -385,7 +385,7 @@ sub clientAnimationComplete {
 	my $display = shift;
 
 	$display->animateState(2);
-	$display->updateMode(1);
+	$display->updateMode(0);
 	Slim::Utils::Timers::setTimer($display, Time::HiRes::time() + 0.5, \&Slim::Display::Display::update, $display->renderCache());
 }
 
@@ -401,6 +401,7 @@ sub killAnimation {
 	$display->scrollStop($screenNo) if (($display->scrollState($screenNo) > 0) && !$exceptScroll);
 	$display->animateState(0);
 	$display->updateMode(0);
+	$display->screen2updateOK(0);
 	$display->endShowBriefly() if ($animate == 5);
 }
 

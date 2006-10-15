@@ -262,6 +262,7 @@ sub pushBumpAnimate {
 		# animate screen 1 only
 		$display->killAnimation(undef, 1);
 		$display->drawFrameBuf($render->{screen1}->{bitsref}, 0, $trans, $param1);
+		$display->screen2updateOK(1);
 	}
 
 	$display->animateState(1);
