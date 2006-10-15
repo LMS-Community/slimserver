@@ -115,7 +115,7 @@
 	
 		[% IF itemobj.lyrics %] 
 			<li><div class="songInfoTitle">[% "LYRICS" | string; "COLON" | string %]</div>
-				<div class="songInfoText">[% itemobj.lyrics | html | html_para %]</div>
+				<div class="songInfoText">[% itemobj.lyrics | html_line_break | html_para %]</div>
 			</li>
 		[% END %]
 	
