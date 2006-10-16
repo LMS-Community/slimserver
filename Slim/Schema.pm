@@ -1602,6 +1602,12 @@ sub _preCheckAttributes {
 
 	$attributes->{'COMMENT'} = $comments;
 
+	# Bug: 4282 - we've seen multiple lyrics tags
+	if ($attributes->{'LYRICS'} && ref($attributes->{'LYRICS'}) eq 'ARRAY') {
+
+		$attributes->{'LYRICS'} = join("\n", @{$attributes->{'LYRICS'}});
+	}
+
 	# Normalize ARTISTSORT in Contributor->add() the tag may need to be split. See bug #295
 	#
 	# Push these back until we have a Track object.
@@ -2024,6 +2030,11 @@ sub _postCheckAttributes {
 
 			my $shortTag = lc($gainTag);
 			   $shortTag =~ s/^replaygain_album_(\w+)$/replay_$1/;
+
+			# Only update if the existing value is undefined.
+			if (defined $albumObj->$shortTag) {
+				next;
+			}
 
 			if ($attributes->{$gainTag}) {
 

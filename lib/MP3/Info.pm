@@ -1852,7 +1852,10 @@ sub _get_v2head {
 			$v2h->{crc_present}      = $bits[15];
 			my $padding_size;
 			for my $i (0..3) {
-				$padding_size += $bytes[2 + $i] * $bytesize ** $i;
+
+				if (defined $bytes[2 + $i]) {
+					$padding_size += $bytes[2 + $i] * $bytesize ** $i;
+				}
 			}
 			$ext_data = substr $bytes, 6, $v2h->{ext_header_size} - $padding_size;
 		}

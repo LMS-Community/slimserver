@@ -129,7 +129,11 @@ sub getTag {
 	my (%tags, %ape) = ();
 
 	# Always take a v2 tag if we have it.
-	if (!MP3::Info::_get_v2tag($fh, 2, 0, \%tags)) {
+	MP3::Info::_get_v2tag($fh, 2, 0, \%tags);
+
+	# If the only tag is TAGVERSION, that means we didn't parse the ID3v2
+	# tag properly, or it's bogus. Look for a ID3v1 tag.
+	if (scalar keys %tags <= 1 && defined $tags{'TAGVERSION'}) {
 
 		# Only use v1 tags if there are no v2 tags.
 		MP3::Info::_get_v1tag($fh, \%tags);
