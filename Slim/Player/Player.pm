@@ -565,8 +565,11 @@ sub currentSongLines {
 
 	if ($playlistlen < 1) {
 
-		$parts->{line}[0] = $client->string('NOW_PLAYING');
-		$parts->{line}[1] = $client->string('NOTHING');
+		$parts = { 'line' => [ $client->string('NOW_PLAYING'), $client->string('NOTHING') ] };
+
+		if ($client->display->showExtendedText() && !$suppressScreen2) {
+			$parts->{'screen2'} = {};
+		}
 
 	} else {
 
