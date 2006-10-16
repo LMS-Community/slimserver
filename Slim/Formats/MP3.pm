@@ -133,7 +133,7 @@ sub getTag {
 
 	# If the only tag is TAGVERSION, that means we didn't parse the ID3v2
 	# tag properly, or it's bogus. Look for a ID3v1 tag.
-	if (scalar keys %tags <= 1 && defined $tags{'TAGVERSION'}) {
+	if ((!scalar keys %tags) || (scalar keys %tags == 1 && defined $tags{'TAGVERSION'})) {
 
 		# Only use v1 tags if there are no v2 tags.
 		MP3::Info::_get_v1tag($fh, \%tags);
