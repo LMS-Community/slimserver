@@ -1545,6 +1545,8 @@ sub get_mp3info {
 			return undef;
 		}
 	}
+	
+	$h->{offset} = $off;
 
 	my $vbr = _get_vbr($fh, $h, \$off);
 	
@@ -1566,7 +1568,6 @@ sub get_mp3info {
 	_close($file, $fh);
 
 	$h->{size} = $eof - $off;
-	$h->{offset} = $off;
 
 	return _get_info($h, $vbr, $lame);
 }
