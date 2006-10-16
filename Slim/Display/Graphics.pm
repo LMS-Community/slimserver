@@ -371,7 +371,7 @@ sub render {
 					$sc->{scrolline} = undef;
 				}
 
-			} elsif (!$scroll || $l == 0 || ($sc->{scroll} && $sc->{scrollline} != $l)) {
+			} elsif (!$scroll || $l == 0 || ($sc->{scroll} && $sc->{scrollline} != $l) || ($s2periodic && $screen1) ) {
 				# scrolling not enabled, line 0 or already scrolling for another line - truncate line
 				if (!$sc->{linereverse}[$l]) {
 					$bits |= substr($sc->{linebits}[$l], 0, $sc->{overlaystart}[$l]). $sc->{overlaybits}[$l];
