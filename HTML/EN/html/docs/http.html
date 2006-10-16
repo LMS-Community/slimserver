@@ -348,7 +348,7 @@ If you are using custom software to make the HTTP requests, simply make sure the
 </dd>
 </dt>
 <dt><em>&quot;cauth&quot; URL parameter presented and valid</em>
-<dd>If you're using a Bookmark/Favorite, no Referer rewuest header is sent. 
+<dd>If you're using a Bookmark/Favorite, no Referer request header is sent. 
 In such a case, SlimServer cannot tell if your request is legitimate, or your browser following an &lt;IMG&gt; tag in a hostile web page or HTML email. 
 In such cases, you will see a &quot;403 Forbidden&quot; error page. 
 On this page you'll see a URL similar to what you requested, but with a &quot;;cauth=&quot; parameter added to the end, e.g. when denying a bookmarked request for <code>http://10.0.1.201:9000/status.html?p0=rescan</code>, SlimServer will offer you a clickable link with a URL like <br><br>
@@ -376,7 +376,7 @@ This also makes it more difficult for an attacker to trick your SlimServer into 
 </dt>
 </dl>
 <h4>Multiple Players</h4>
-<p>Finally, if more than one player is connected to the system, you can specify that player with a unique player identifier for the device being controlled. This unique identifyer is generated when the player connects. This identifier may be in the form of an IP address or MAC address, depending on the kind of client that's connecting.</p>
+<p>Finally, if more than one player is connected to the system, you can specify that player with a unique player identifier for the device being controlled. This unique identifier is generated when the player connects. This identifier may be in the form of an IP address or MAC address, depending on the kind of client that's connecting.</p>
 
 <p>For example, the following pauses the player and then returns the status as an HTML page for the player at IP address 10.0.1.202:</p>
 <pre>http://10.0.1.201:9000/status.html?p0=pause&amp;p1=1&amp;player=10.0.1.202</pre>

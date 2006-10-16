@@ -1,16 +1,16 @@
 [% pageicon = 'help' %]
 [% pagetitle = 'REMOTE_STREAMING' | string %]
 [% PROCESS helpheader.html %]
-<p>The SlimServer was designed to stream mp3 files to a Slim Devices' network music player.  However, it can also steam the same files over the Internet to MP3 software player such as Winamp and iTunes.
+<p>The SlimServer was designed to stream mp3 files to a Slim Devices' network music player.  However, it can also stream the same files over the Internet to an MP3 software player such as Winamp and iTunes.
 
 <p>For the sake of discussion, the computer running the SlimServer will be called the remote machine.
 
 <p>First install and start the SlimServer software on this machine.
-Make sure it is reachable over the Internet.  If not, you will need to open 9000 port on your router.
+Make sure it is reachable over the Internet.  If not, you will need to open port 900 on your router.
 
 <p>Now, use the following instructions:
 <ol>
-<li>Open the stream called http://localhost:9000/stream.mp3 in your MP3 software player.  (Replace "localhost" with the IP address of the remote computer). This will inform the SlimServer that the software player is ready to receive a stream.
+<li>Open the stream called http://localhost:9000/stream.mp3 in your MP3 software player.  (Replace "localhost" with the IP address of the remote computer.) This will inform the SlimServer that the software player is ready to receive a stream.
 
 <li>Open the web interface of the SlimServer running on the remote computer by opening the web page http://localhost:9000 (Replace "localhost" with the IP address of the remote computer). You will notice a "player" corresponding to the IP address of the computer with the MP3 software player. 
 
