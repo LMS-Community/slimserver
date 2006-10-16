@@ -1550,6 +1550,7 @@ BUFFERING
 REBUFFERING
 	DE	Aktualisiere Puffer...
 	EN	Rebuffering...
+	NL	Opnieuw bufferen...
 
 WAITING_TO_SYNC
 	DE	Warte auf Synchronisierung...
@@ -9827,6 +9828,7 @@ CHANGE
 SERVER_IP_ADDRESS
 	DE	Server IP Adresse
 	EN	Server IP address
+	NL	Server IP adres
 
 PLAYER_IP_ADDRESS
 	CS	IP adresa tohoto přehrávače je:
@@ -13042,6 +13044,7 @@ SETUP_POWEROFFDAC
 	DE	Audio vom Strom trennen
 	EN	Power Off AUDIO
 	IT	Spegni DAC
+	NL	Uitzetten Audio
 	ZH_CN	关闭数模转换器输出
 
 SETUP_POWEROFFDAC_DESC
