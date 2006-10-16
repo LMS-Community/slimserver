@@ -77,7 +77,12 @@
 					[%# IF browseby == 'BROWSE_BY_ARTWORK' && level == 0 %]
 					[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age') %]
 						[% IF loop.index mod 6 == 1 || loop.first %]<tr>[% END %]
-						[% IF loop.first && contributor.id < 1 %][% ELSE %]
+						[% IF loop.first && contributor.id < 1 %]
+							<td colspan = '2'>
+							<table>
+							[% PROCESS browsedbitems_list.html rowClass = 'even' %]
+							</table>
+							<td colspan = '4'>&nbsp;</td></tr><tr>[% ELSE %]
 						<td>
 						[% PROCESS browsedb_artwork.html %]
 						</td>

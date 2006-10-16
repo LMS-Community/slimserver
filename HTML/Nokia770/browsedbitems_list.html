@@ -4,7 +4,7 @@
 	[% "$item.heading" _ "SMATCHING" | string %] "[% query %]"[% "COLON" | string %][% item.numresults %]
 	</div>
 [% ELSE %]
-<tr [% IF item.odd %]class="odd"[% ELSE %]class="even"[% END %]>
+<tr [% IF rowClass %]class = "[% rowClass %]"[% ELSIF item.odd %]class="odd"[% ELSE %]class="even"[% END %]>
 	<td width = '80'>
 		<table width = '100%' class = 'noborder'>
 		<tr>
