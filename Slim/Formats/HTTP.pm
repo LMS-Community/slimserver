@@ -143,7 +143,8 @@ sub parseHeaders {
 
 			if (!defined ${*$self}{'create'} || ${*$self}{'create'} != 0) {
 
-				Slim::Music::Info::setCurrentTitle( $self->url, $self->title );
+				# Bug 4316: set title in DB if not already set
+				Slim::Music::Info::setTitle( $self->url, $self->title ) if !$self->title;
 			}
 		}
 
