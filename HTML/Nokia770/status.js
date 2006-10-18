@@ -308,7 +308,7 @@ function refreshOtherElements(theData) {
 	songinfoArray[songinfoArray.length] = {name: 'songtitle', stub:'songinfo.html?item='};
 	//songinfoArray[songinfoArray.length] = {name: 'artist', stub:'browsedb.html?hierarchy=album,track&level=1&contributor.id='};
 	songinfoArray[songinfoArray.length] = {name: 'album', stub:'browsedb.html?hierarchy=album,track&level=2&album.id='};
-	songinfoArray[songinfoArray.length] = {name: 'genre', stub:'browsedb.html?hierarchy=genre,album,track&level=1&genre.id='};
+	songinfoArray[songinfoArray.length] = {name: 'genre', stub:'browsedb.html?hierarchy=genre,contributor,album,track&level=1&genre.id='};
 	refreshElement('artist',parsedData['artisthtml']);
 
 	songinfoArray.each(function(key) {
