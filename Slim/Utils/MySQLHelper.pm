@@ -392,7 +392,7 @@ sub dbh {
 
 	} else {
 
-		$dsn = sprintf('dbi:mysql:mysql_socket=%s', $class->socketFile);
+		$dsn = sprintf('dbi:mysql:mysql_read_default_file=%s', $class->confFile );
 	}
 
 	$^W = 0;

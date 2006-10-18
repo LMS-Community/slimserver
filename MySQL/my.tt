@@ -27,3 +27,6 @@ sort_buffer_size      = 512K
 net_buffer_length     = 8K
 read_buffer_size      = 256K
 read_rnd_buffer_size  = 512K
+
+[client]
+socket                = [% socket %]
