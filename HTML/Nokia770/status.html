@@ -278,9 +278,11 @@ onclick="document.prev.src = 'html/images/larger/prev_active.gif'; playerButtonC
 
 [% BLOCK volume_settings %]
 	[% IF isplayer %]
-<table class = 'thinborder' width = '100%' cellpadding = '3' bgcolor = 'white'>
+<div id = 'volumeOSD' style="display:none;"></div>
+<table class = 'thinborder' width = '100%' cellpadding = '3' bgcolor = 'white' border = '0'>
 	<tr>
-	<td valign="bottom" width="100"><img src="html/images/vol_symbol.gif" title = 'volume settings'></td>
+
+	<td valign="bottom" width="100"><img src="html/images/vol_symbol2.gif" title = 'volume settings'></td>
 
 	<td width="25" onclick='volumeControl("0","p0=mixer&p1=volume&p2=0&player=[% playerURI %]&start=[% start %]&ajaxRequest=1");' valign="bottom">
 	<img src="html/images/off_symbol.gif" id = 'bar_active_0' border="0" width="20" style="display:[% IF volume == 0 %]block[% ELSE %]none[% END %];" title = 'muted'>
@@ -288,13 +290,27 @@ onclick="document.prev.src = 'html/images/larger/prev_active.gif'; playerButtonC
 	</td>
 	[% vol= [20, 35, 50, 75, 80, 85, 90, 95, 100]  %]
 	[% FOREACH level IN vol %]
-	<td width="25" onclick='volumeControl("[% level %]","p0=mixer&p1=volume&p2=[% level %]&player=[% playerURI %]&start=[% start %]&ajaxRequest=1");' valign="bottom">
-	<img src="html/images/bar_active.gif" id = 'bar_active_[% level %]' border="0" width="20" height="[% loop.count*4 %]" style="display:[% IF volume >= level %]block[% ELSE %]none[% END %];">
-	<img src="html/images/bar.gif" id = 'bar_[% level %]' border="0" width="20" [% IF level != 0 %]height="[% loop.count*4 %]"[% END %] style="display:[% IF volume >= level %]none[% ELSE %]block[% END %];">
+	<td width="25" onclick='volumeControl("[% level %]");' valign="bottom">
+	<img src="html/images/bar_active.gif" id = 'bar_active_[% level %]' border="0" width="20" height="[% loop.count*4 %]" style="display:[% IF volume >= level %]block[% ELSE %]none[% END %];" title = 'set volume to [% level %]'>
+	<img src="html/images/bar.gif" id = 'bar_[% level %]' border="0" width="20" [% IF level != 0 %]height="[% loop.count*4 %]"[% END %] style="display:[% IF volume >= level %]none[% ELSE %]block[% END %];" title = 'set volume to [% level %]'>
 	</td>
+
 	[% END %]
+	<td valign = 'bottom'>
+	<table>
+	<tr>
+		<td onclick = 'adjustVolume("1");'>
+		<img src="html/images/volume_up.gif" id = 'volume_up' border="0" height="15" width = '15' title = 'volume up one'>
+		</td>
 	</tr>
-</table>
+	<tr>
+		<td>
+	<img src="html/images/volume_down.gif" onclick = 'adjustVolume("-1");' id = 'volume_down' border="0" width = '15' height="15" title = 'volume down one'>
+		</td>
+	</tr>
+	</table>
+	</td>
+</tr></table>
 	[% ELSE %]
 	<span class = 'smalltext'>volume settings not available for this player</span>
 	[% END %]

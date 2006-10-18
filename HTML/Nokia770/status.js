@@ -5,6 +5,7 @@ var _progressBarWidth = 788;
 var p = 1;
 var inc = 0;
 var intervalID = false;
+var incr;
 
 [% PROCESS html/global.js %]
 var args = 'player='+player+'&ajaxRequest=1';
@@ -186,6 +187,25 @@ function refreshVolumeControl(theData) {
 	});
 }
 
+function adjustVolume(level) {
+	incr = level;
+	var param = 'ajaxRequest=1&player=[% playerURI %]';
+	getStatusData(param,volumeMicroControl);
+}
+
+function volumeMicroControl(theData) {
+	var parsedData = fillDataHash(theData);
+	var level = parseInt(parsedData['volume']) + parseInt(incr);
+	if (level > 100) {
+		level = 100;
+	} else if (level < 0) {
+		level = 0;
+	}
+	showVolumeOSD(level, 500);
+	var param = 'p0=mixer&p1=volume&p2='+level+'&player=[% playerURI %]&start=[% start %]&ajaxRequest=1';
+	getStatusData(param,refreshVolumeControl);
+}
+
 function refreshPlayerStatus(theData) {
 	var parsedData = fillDataHash(theData);
 	var controls = ['playtextmode', 'thissongnum', 'songcount'];
@@ -199,7 +219,8 @@ function refreshPlayerStatus(theData) {
 	}
 }
 
-function volumeControl(level, param) {
+function volumeControl(level) {
+	var param = 'p0=mixer&p1=volume&p2='+level+'&player=[% playerURI %]&start=[% start %]&ajaxRequest=1';
 	getStatusData(param,refreshVolumeControl);
 }
 

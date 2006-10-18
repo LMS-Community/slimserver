@@ -5,6 +5,15 @@
 [% IF browseby == 'BROWSE_BY_ARTWORK' && level == 0 %][% pageType = 'artwork' %][% END %]
 	[% PROCESS ajaxRequest.txt page = pageType %]
         </pre>
+[% ELSIF artwork == 4 %]
+[% IF browse_items %]
+<div id = 'closeAlbumInfo' style="float: right;"><img src = "[% webroot %]html/images/close.gif" onClick = "javascript:hideAlbumInfo();"></div>
+[% FOREACH item = browse_items %]
+        <table width = '100%'>
+           [% PROCESS browsedbitems_list.html textClass = 'supertinytext' %]
+        </table>
+[% END %]
+[% END %]
 [%- ELSE -%]
 <!-- browsedb.html -->
 [%- title = BLOCK %]
@@ -47,6 +56,10 @@
 <table><tr><td height = '40'>&nbsp;</td></tr></table>
 
 [% IF level == 0 && artwork == 2 %]
+<div id = 'albumInfo' style="display:none;">
+	<div id = 'trackInfo'></div>
+</div>
+
 <div id = 'last_cover'>
 	<img src = '[% webroot %]html/images/rew_active.gif' id = 'last_cover_click' >
 </div>
@@ -59,6 +72,8 @@
 <div id = 'next_cover'>
 	<img src = '[% webroot %]html/images/ffw_active.gif' id = 'next_cover_click'>
 </div>
+
+
 [% ELSE %]
 
 <table width = '100%' class = 'noborder' bgcolor = 'white'>
@@ -122,17 +137,17 @@
 <table id = 'cover_table_[% cover %]' align = 'center'>
 <tr>	
 	<td colspan = 2><table class = 'thinborder'><tr><td height = '250' width = '250'>
-	<img src = "[% webroot %]html/images/cover.png" border = '0' id = 'thumb_[% cover %]'>
+	<img src = "[% webroot %]html/images/cover.png" border = '0' id = 'thumb_[% cover %]' [%# onClick = 'popUpAlbumInfo("[% cover %]");' %]>
 	</td></tr></table></td>
 </tr>
 <tr height = '30' valign = 'top'>
 	<td width = '40'>
 		<table><tr>
 			<td class="listing" align="center">
-			<a href="http://google.com" id = 'play_[% cover %]'><img src="[% webroot %]html/images/play.this.gif" border=0 height="20" alt='Play' title='Play'></a>
+			<a id = 'play_[% cover %]'><img src="[% webroot %]html/images/play.this.gif" border=0 height="20" alt='Play' title='Play'></a>
 			</td>
 			<td class="listing" align="center">
-			<a href="http://google.com" id = 'add_[% cover %]'><img src="[% webroot %]html/images/add.gif" border=0 height="20" alt='Next' title='Next'></a>
+			<a id = 'add_[% cover %]'><img src="[% webroot %]html/images/add.gif" border=0 height="20" alt='Next' title='Next'></a>
 			</td>
 		</tr></table>
 	</td>

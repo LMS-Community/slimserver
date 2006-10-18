@@ -402,7 +402,20 @@ div#crumblist {
 	top: 80;
 	z-index: 11;
 }
-div#addedToPlaylist{
+
+div#OSD{
+	position: fixed;
+	z-index: 100;
+	top: 280;
+	right: 20;
+	background-color: white;
+	color: black;
+	font-weight: bold;
+	padding: 5px;
+	border: 1px solid black;
+}
+
+div#volumeOSD{
 	position: fixed;
 	z-index: 100;
 	top: 240;
@@ -414,6 +427,24 @@ div#addedToPlaylist{
 	border: 1px solid black;
 }
 
+div#albumInfo {
+        position: fixed;
+        z-index: 99;
+        top: 140;
+        left: 300;
+	width: 300;
+	bottom: 40;
+        background-color: white;
+        color: black;
+        padding: 5px;
+        border: 1px solid black;
+	overflow: scroll;
+}
+
+div#closeAlbumInfo {
+	position: relative;
+	float: right;
+}
 .homeMenuSection {
 	float: left;
 }

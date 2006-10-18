@@ -145,6 +145,13 @@ function refreshHref (element, value) {
 	}
 }
 
+// enters message sent to OSD div (typically still needs to be made visible with a different function)
+function changeOSD(message) {
+        if ($('OSD')) {
+                $('OSD').innerHTML = message;
+        }
+}
+
 // changes some part of a query in an href of id 'item', finding based on 'rpl', and replacing with 'data'
 function refreshHrefElement (item,data,rpl) {
 	
@@ -239,9 +246,40 @@ function miniControls(action) {
 	url = old_url;
 }
 
+// send a message and number of milliseconds duration to the OSD div
+function showVolumeOSD(message, duration) {
+	var msDuration = parseInt(duration, 10);
+        if ($('volumeOSD')) {
+		$('volumeOSD').innerHTML = '';
+                $('volumeOSD').style.display = 'block';
+		$('volumeOSD').innerHTML = message;
+        }
+        var intervalID = setTimeout(hideVolumeOSD, msDuration);
+}
+
+function hideVolumeOSD() {
+        if ($('volumeOSD')) {
+                $('volumeOSD').style.display = 'none';
+        }
+
+}
+
+function showAdded() {
+	if ($('OSD')) {
+		$('OSD').style.display = 'block';
+	}
+	var intervalID = setTimeout("hideAdded()", 2000);
+}
+
+function hideAdded() {
+	if ($('OSD')) {
+		$('OSD').style.display = 'none';
+	}
+}
 // put global.js functions here that you want to be run after the page loads
 // requires a window.onLoad function in the js script that calls global.js
 // see Nokia770/browse.js for example
 function globalOnload() {
 	refreshLibraryInfo();
 }
+

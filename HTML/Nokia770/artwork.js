@@ -6,12 +6,21 @@ var playAlbumTemplate = '[% webroot %]status.html?command=playlist&subcommand=lo
 var addAlbumTemplate = '[% webroot %]playlist.html?command=playlist&subcommand=addtracks&album.id=ALBUM&player=[% playerURI %]';
 var blankRequest = 'hierarchy=album,track&level=0&artwork=2&player=00%3A04%3A20%3A05%3A1b%3A82&artwork=1&start=[% start %]&ajaxRequest=1';
 
-var thisAlbum, thatAlbum;
+var pAT = 'javascript:changeOSD("AlBuM now playing"); addItem("command=playlist&subcommand=loadtracks&album.id=ALBUM&player=[% playerURI %]")';
+var aAT = 'javascript:changeOSD("AlBuM added to end of playlist"); addItem("command=playlist&subcommand=addtracks&album.id=ALBUM&player=[% playerURI %]")';
+
+var thisAlbum, thatAlbum, clickedItem;
 
 [% PROCESS html/global.js %]
 [% PROCESS skin_global.js %]
 
 var thumbHrefTemplate = '/music/COVER/thumb_'+thumbSize+'x'+thumbSize+'_f_000000.jpg';
+
+function addItem(args) {
+	url = '[% webroot %]status.html';
+        getStatusData(args, showAdded);
+	url = '[% webroot %]browsedb.html';
+}
 
 // parses the data if it has not been done already
 function fillDataHash(theData) {
@@ -26,6 +35,7 @@ function fillDataHash(theData) {
 }
 
 function emptyFunction() {
+	return true;
 }
 
 function showArrows(firstOne, secondOne, lastOne) {
@@ -62,6 +72,7 @@ function showArrows(firstOne, secondOne, lastOne) {
 function refreshThumbs(theData) {
 	parsedData = fillDataHash(theData);
 	showArrows(thisAlbum, thatAlbum, parsedData['last']);
+	hideAlbumInfo();
 	refreshThumb(parsedData, '1', thisAlbum);
 	refreshThumb(parsedData, '2', thatAlbum);
 }
@@ -71,21 +82,30 @@ function refreshThumb(theData, whichOne, thatOne) {
 	var thumbId = 'thumb_' + whichOne;
 	var thumbKey = 'coverthumb_' + thatOne;
 	var albumKey = 'albumid_' + thatOne;
+	var albumTextKey = 'album_' + thatOne;
+	var artistTextKey = 'artist_' + thatOne;
 	var playId = 'play_' + whichOne;
 	var addId = 'add_' + whichOne;
 	var thatThumb = parsedData[thumbKey];
 	var thatAlbum = parsedData[albumKey];
+	var artistAlbum = parsedData[artistTextKey] + ' - ' + parsedData[albumTextKey];
 	if ($(thumbId)) {
 		var thumbHref = thumbHrefTemplate.replace('COVER', thatThumb);
 		$(thumbId).src = thumbHref;
 	}
 	if ($(playId)) {
-		var playHref = playAlbumTemplate.replace('ALBUM', thatAlbum);
+		//var playHref = playAlbumTemplate.replace('ALBUM', thatAlbum);
+		var playHref = pAT.replace('ALBUM', thatAlbum);
+		playHref = playHref.replace('AlBuM', artistAlbum);
 		refreshHref(playId, playHref);
+		//$(playId).onclick = playHref;
 	}
 	if ($(addId)) {
-		var addHref = addAlbumTemplate.replace('ALBUM', thatAlbum);
+		//var addHref = addAlbumTemplate.replace('ALBUM', thatAlbum);
+		var addHref = aAT.replace('ALBUM', thatAlbum);
+		addHref = addHref.replace('AlBuM', artistAlbum);
 		refreshHref(addId, addHref);
+		//$(addId).onclick = addHref;
 	}
 	var textKeys = [ 'artist_', 'album_' ];
 	for (var i = 0; i < textKeys.length; i++) {
@@ -95,6 +115,54 @@ function refreshThumb(theData, whichOne, thatOne) {
 			$(thisIdKey).innerHTML = parsedData[thisDataKey];
 		}
 	}
+}
+
+function popUpAlbumInfo(thisOne) {
+	if (thisOne == 1) {
+		clickedItem = thisAlbum;
+	} else {
+		clickedItem = thatAlbum;
+	}
+	var albumKey = 'albumid_' + clickedItem;
+	var lookupId = parsedData[albumKey];
+	
+	// here we go-- get the album track details via an ajax call
+	// pop up a list of the tracks in an inline div, including play/add buttons next to tracks
+	// add a close button for the div to hide it
+	if ($('albumInfo')) {
+		$('trackInfo').innerHTML = '';
+		Element.show('albumInfo');
+		var newArgs = 'artwork=4&hierarchy=album,track&level=1&player=[% playerURI %]&album.id='+parseInt(lookupId);
+		//var newArgs = 'artwork=4&orderBy=contributor.namesort,album.titlesor&album,track&level=1&&album.id='+parseInt(lookupId);
+		getStatusData(newArgs,updateTrackInfo);
+	}
+}
+
+function updateTrackInfo(theData) {
+	var myData = theData.responseText;
+       	var showDivs = [ 'albumInfo', 'trackInfo', 'closeAlbumInfo' ];
+        showDivs.each(function(key) {
+		if ($(key)) {
+			Element.setStyle(key, { border: '1px solid black' } );
+			Element.show(key);
+		}
+	});
+	if ($('trackInfo')) {
+		$('trackInfo').innerHTML = myData;
+	}
+}
+
+function hideAlbumInfo() {
+	if ($('trackInfo')) {
+		$('trackInfo').innerHTML = '';
+	}
+        var hideDivs = [ 'albumInfo', 'trackInfo', 'closeAlbumInfo' ];
+        hideDivs.each(function(key) {
+                if ($(key)) {
+			Element.setStyle(key, { border: '0px'} );
+			Element.hide(key);
+                }
+        });
 }
 
 function lastCover() {
