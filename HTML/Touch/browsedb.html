@@ -57,8 +57,8 @@
 
 [% IF level == 0 && artwork == 2 %]
 <div id = 'resizeThumbs'>
-<a href = 'javascript:enlargeThumbs();'>Enlarge</a> | 
-<a href = 'javascript:shrinkThumbs();'>Shrink</a>
+<a href = 'javascript:shrinkThumbs();'>[% "SHRINK" | string %]</a> |
+<a href = 'javascript:enlargeThumbs();'>[% "ENLARGE" | string %]</a>
 </div>
 <div id = 'cover1'>
 <table >

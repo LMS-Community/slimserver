@@ -6,8 +6,8 @@ var playAlbumTemplate = '[% webroot %]status.html?command=playlist&subcommand=lo
 var addAlbumTemplate = '[% webroot %]playlist.html?command=playlist&subcommand=addtracks&album.id=ALBUM&player=[% playerURI %]';
 var blankRequest = 'hierarchy=album,track&level=0&artwork=2&player=00%3A04%3A20%3A05%3A1b%3A82&artwork=1&start=[% start %]&ajaxRequest=1';
 
-var pAT = 'javascript:changeOSD("AlBuM now playing"); addItem("command=playlist&subcommand=loadtracks&album.id=ALBUM&player=[% playerURI %]")';
-var aAT = 'javascript:changeOSD("AlBuM added to end of playlist"); addItem("command=playlist&subcommand=addtracks&album.id=ALBUM&player=[% playerURI %]")';
+var pAT = 'javascript:changeOSD("AlBuM [% "NOW_PLAYING" | string %]"); addItem("command=playlist&subcommand=loadtracks&album.id=ALBUM&player=[% playerURI %]")';
+var aAT = 'javascript:changeOSD("[% "ADDING_TO_PLAYLIST" | string %] AlBuM"); addItem("command=playlist&subcommand=addtracks&album.id=ALBUM&player=[% playerURI %]")';
 
 var thisAlbum, thatAlbum, clickedItem;
 
