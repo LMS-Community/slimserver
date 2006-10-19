@@ -4,6 +4,16 @@
 	<head>
 		[% PROCESS standardheader.html %]
 		[% PROCESS html/common.js %]
+
+		<!--[if IE]>
+		<style type="text/css">
+			.thumbwrap li, .thumbwrap {
+				display: inline;
+				height: 0;
+				he\ight: auto;
+			}
+		</style>
+		<![endif]-->
 	</head>
 	<body  [% bodyscript %]>
 	[% IF pagetitle %]<div class="largeAttribute">[% pagetitle %][% IF artwork && (levelName == 'album' || levelName == 'age') %] [% "GALLERY" | string %][% END %]</div>[% END %]
