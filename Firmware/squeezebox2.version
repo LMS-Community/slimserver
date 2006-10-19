@@ -3,7 +3,7 @@
 # from        to
 # from1..from2 to
 
-1..66 66
+1..67 67
 
 # future versions may be downgraded to this one
-* 66
+* 67
