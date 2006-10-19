@@ -1,8 +1,8 @@
 BODY {
-    font-size : 9pt;
-    background : Black;
-    font-family : Verdana, Arial;
-    color : White;
+	font-size : 9pt;
+	background : Black;
+	font-family : Verdana, Arial;
+	color : White;
 }
 
 H3 {
@@ -12,7 +12,6 @@ H3 {
 	margin:0in; 
 	margin-bottom:6pt;	
 }
-
 
 TD, P, DIV, A {
 	font-size : 9pt;
@@ -31,26 +30,26 @@ A {
 
 
 TH {
-    background : #CFCFCF;
-    font-size : 10pt;
-    text-align : center;
-    font-weight : bold;	
+	background : #CFCFCF;
+	font-size : 10pt;
+	text-align : center;
+	font-weight : bold;	
 }
 
 .odd {
-    background : #444444;
+	background : #444444;
 }
 
 .even {
-    background : #666666;
+	background : #666666;
 }
 
 A:link, A:visited {
-    color : Yellow;
+	color : Yellow;
 }
 
 A:hover, A.selected {
-    text-decoration : underline;
+	text-decoration : underline;
 }
 
 div#homeMenu {
@@ -65,4 +64,9 @@ div#homeMenu {
 
 img {
 	margin: 0px;
+	border: 0px;
+}
+
+#statusMessage {
+	color: white;
 }
