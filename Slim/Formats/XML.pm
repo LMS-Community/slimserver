@@ -179,6 +179,11 @@ sub parseXMLIntoFeed {
 
 		# its OPML outline
 		return parseOPML($xml);
+		
+	} elsif ($xml && $xml->{'entry'}) {
+		
+		# It's Atom
+		return parseAtom($xml);
 
 	} elsif ($xml) {
 
@@ -282,6 +287,51 @@ sub parseRSS {
 		push @{$feed{'items'}}, \%item;
 	}
 	
+	return \%feed;
+}
+
+# Parse Atom feeds into the same format as RSS
+sub parseAtom {
+	my $xml = shift;
+	
+	my %feed = (
+		'type'           => 'rss',
+		'items'          => [],
+		'title'          => unescapeAndTrim($xml->{'title'}),
+		'description'    => unescapeAndTrim( $xml->{'subtitle'} || $xml->{'tagline'} ),
+		'lastBuildDate'  => unescapeAndTrim( $xml->{'updated'} || $xml->{'modified'} ),
+		'managingEditor' => unescapeAndTrim($xml->{'author'}),
+		'xmlns:slim'     => unescapeAndTrim($xml->{'xmlsns:slim'}),
+	);
+	
+	# look for an image
+	if ( $xml->{'logo'} ) {
+		$feed{'image'} = $xml->{'logo'};
+	}
+	
+	my $count = 1;
+	
+	my $items = $xml->{'entry'} || [];
+
+	for my $itemXML ( @{$items} ) {
+		
+		my %item = (
+			'description' => unescapeAndTrim($itemXML->{'summary'}),
+			'title'       => unescapeAndTrim($itemXML->{'title'}),
+			'link'        => unescapeAndTrim($itemXML->{'link'}),
+			'slim:link'   => unescapeAndTrim($itemXML->{'slim:link'}),
+			'pubdate'     => unescapeAndTrim($itemXML->{'updated'}),
+			# image is included in each item due to the way XMLBrowser works
+			'image'       => $feed{'image'},
+		);
+
+		# this is a convencience for using INPUT.Choice later.
+		# it expects each item in it list to have some 'value'
+		$item{'value'} = $count++;
+
+		push @{ $feed{'items'} }, \%item;
+	}
+
 	return \%feed;
 }
 
@@ -477,7 +527,7 @@ sub xmlToHash {
 
 				# forcearray to treat items as array,
 				# keyattr => [] prevents id attrs from overriding
-				$xml = XMLin( ref $content ? $content : \$content, 'forcearray' => [qw(item outline)], 'keyattr' => []);
+				$xml = XMLin( ref $content ? $content : \$content, 'forcearray' => [qw(item outline entry)], 'keyattr' => []);
 			};
 			
 			if ($@) {
