@@ -149,7 +149,7 @@ PERL_VERSION
 	NO	Perl versjon
 	PT	Versão do Perl
 	SV	Perl-version
-	ZH_CN	Perlr版本
+	ZH_CN	Perl版本
 
 MYSQL_VERSION
 	CS	Verze MySQL
@@ -419,7 +419,7 @@ RADIO
 	JA	インターネットラジオ
 	NL	Internet radio
 	SV	Internetradio
-	ZH_CN	互联网电台
+	ZH_CN	互联网收音机
 
 GAMES
 	CS	Hry
@@ -457,6 +457,7 @@ PLAYLISTS
 	EN	Playlists
 	FR	Listes de lecture
 	ES	Listas de temas
+	ZH_CN	播放表
 
 PAUSED_ON
 	CS	Zapnuta pauza
@@ -588,7 +589,7 @@ PLAYING_RANDOMLY
 
 OUT_OF
 	CS	z
-	DE	aus
+	DE	von
 	DA	af
 	EN	of
 	ES	de
@@ -947,7 +948,7 @@ CANCEL_SLEEP
 	NO	Sovefunksjon avslått.
 	PT	Inactividade cancelada
 	SV	Insomning avbruten
-	ZH_CN	倒数熄机功能已消除
+	ZH_CN	倒数关机功能已消除
 
 SLEEPING_IN
 	CS	Sleep za
@@ -962,24 +963,27 @@ SLEEPING_IN
 	NO	Sovner om
 	PT	Inactivo dentro de
 	SV	Insomning om
-	ZH_CN	倒数熄机进行中
+	ZH_CN	关机倒数进行中
 
 END_OF_SONG
 	DE	Liedende
 	EN	end of song
 	IT	Fine del brano
 	NL	Einde liedje
+	ZH_CN	歌曲结束
 
 SLEEP
 	DE	Schlafmodus
 	EN	Sleep
 	FI	Unikytkin
 	NL	Slapen
+	ZH_CN	睡眠状态
 
 SLEEPING_AT
 	DE	Schlafmodus am
 	EN	Sleeping at
 	NL	Slapen op
+	ZH_CN	进入睡眠状态
 
 POWERING_OFF
 	CS	Přecházím do standby...
@@ -1042,7 +1046,7 @@ ALARM_SET
 	NO	Sett Alarm Tid
 	PT	Acertar Alarme
 	SV	Ställ väckningstid
-	ZH_CN	设置闹钟
+	ZH_CN	配置闹钟
 
 ALARM_ON
 	CS	Budík zapnut
@@ -1059,7 +1063,7 @@ ALARM_ON
 	NO	På (Trykk HØYRE for å slå av)
 	PT	Ligado (Prima DIREITA para desligar)
 	SV	På (Tryck HÖGER för att avaktivera)
-	ZH_CN	激活（撤销请按右方向键）
+	ZH_CN	启用（撤销请按右方向键）
 
 ALARM_OFF
 	CS	Budík vypnut (Stiskni PRAVÉ tlačítko pro zapnutí)
@@ -1093,7 +1097,7 @@ ALARM_SELECT_PLAYLIST
 	NO	Velg Spilleliste for Alarm
 	PT	Escolha a Playlist para o Alarme
 	SV	Välj låtlista för väckning
-	ZH_CN	请选择当闹钟用的播放表
+	ZH_CN	可当闹钟用的播放表
 
 ALARM_SET_VOLUME
 	CS	Nastavit hlasitost buzení
@@ -1110,7 +1114,7 @@ ALARM_SET_VOLUME
 	NO	Sett Alarm volum
 	PT	Mudar Volume do Alarme
 	SV	Välj volym för väckning
-	ZH_CN	设置闹钟音量
+	ZH_CN	配置闹钟音量
 
 ALARM_SET_VOLUME_SHORT
 	CS	Hlasitost
@@ -1136,6 +1140,7 @@ ALARM_FADE
 	FR	Volume progressif
 	IT	Sveglia graduale
 	NL	Fade wekalarm in
+	ZH_CN	闹钟缓慢切入
 
 ALARM_SET_ENTRY
 	CS	Čas buzení
@@ -1152,7 +1157,7 @@ ALARM_SET_ENTRY
 	NO	Sett Alarm tid
 	PT	Hora do Alarme
 	SV	Ställ väckningstid
-	ZH_CN	闹钟时间设置
+	ZH_CN	闹钟时间配置
 
 ALARM_TURNING_ON
 	CS	Zapnout buzení...
@@ -1169,7 +1174,7 @@ ALARM_TURNING_ON
 	NO	Slår på alarm...
 	PT	A ligar o alarme...
 	SV	Aktiverar väckarklocka...
-	ZH_CN	正在激活闹钟功能...
+	ZH_CN	正在启用闹钟功能...
 
 ALARM_TURNING_OFF
 	CS	Vypnout buzení...
@@ -1229,6 +1234,7 @@ ALARM_DAY0
 	IT	Ogni giorno
 	NL	Elke dag
 	SV	Varje Dag
+	ZH_CN	每一天
 
 ALARM_DAY1
 	DA	Mandag
@@ -1418,6 +1424,7 @@ WELCOME_TO_TRANSPORTER
 	NO	Velkommen til Transporter
 	PT	Bem-vindo ao Transporter
 	SE	Välkommen till Transporter
+	ZH_CN	欢迎使用Transporter
 
 WELCOME_TO_SOFTSQUEEZE
 	CS	Vítejte v SoftSqueeze
@@ -1448,7 +1455,7 @@ FREE_YOUR_MUSIC
 	NO	Sett musikken din fri
 	PT	Liberte a sua música
 	SV	Frige din musik
-	ZH_CN	解放您的音乐！
+	ZH_CN	释放您的音乐！
 
 UPDATING_FIRMWARE_SQUEEZEBOX
 	CS	Aktualizuji Squeezebox firmware.
@@ -1492,6 +1499,7 @@ UPDATING_FIRMWARE_TRANSPORTER
 	NO	Oppdaterer spillerens programvare ('firmware')
 	PT	Atualizando firmware ...
 	SE	Uppdaterar spelarens mjukvara
+	ZH_CN	更新Transporter韧件
 	
 FIRMWARE_MISSING
 	DE	Fehler: Firmware fehlt
@@ -1499,6 +1507,7 @@ FIRMWARE_MISSING
 	ES	Error: No se encuentra Firmware
 	IT	Errore: Firmware non trovato
 	NL	Fout: Firmware mist
+	ZH_CN	失误：韧件丢失
 
 FIRMWARE_MISSING_DESC
 	DE	Der Server kann keine Firmware aus dem Internet beziehen.
@@ -1506,12 +1515,14 @@ FIRMWARE_MISSING_DESC
 	ES	El server no puede conectarse a Internet para obtener la actualización de firmware.
 	IT	Il Server non riesce a connettersi ad Internet per ottenere il firmware aggiornato.
 	NL	Server kan geen connectie maken naar Internet om de bijgewerkte firmware op te halen.
+	ZH_CN	服务器无法连接互联网并取得韧件更新。
 
 CHECKING_STREAM
 	DE	Überprüfe Datenstrom...
 	EN	Checking stream...
 	FR	Vérif. flux...
 	NL	Controleren stream...
+	ZH_CN	检查频流
 
 CONNECTING_FOR
 	CS	Připojuji ke hraní:
@@ -1534,6 +1545,12 @@ BUFFERING
 	EN	Buffering
 	ES	Llenando el buffer...
 	NL	Bufferen
+	ZH_CN	缓冲装载中
+
+REBUFFERING
+	DE	Aktualisiere Puffer...
+	EN	Rebuffering...
+	NL	Opnieuw bufferen...
 
 WAITING_TO_SYNC
 	DE	Warte auf Synchronisierung...
@@ -1541,6 +1558,7 @@ WAITING_TO_SYNC
 	ES	Esperando sincronización...
 	FR	Attente synchro...
 	NL	Wachten op sync...
+	ZH_CN	等待同步
 
 PROBLEM_CONNECTING
 	CS	Chyba: nelze se připojit k serveru:
@@ -1576,23 +1594,27 @@ PROBLEM_OPENING_REMOTE_URL
 	EN	Error: Can't open remote URL
 	ES	Error: No se puede abrir la ULR remota
 	NL	Fout: kan URL niet op afstand niet openen
+	ZH_CN	失误：无法连接网址
 
 PLAYLIST_NO_ITEMS_FOUND
 	DE	Fehler: Wiedergabeliste ist leer
 	EN	Error: No items found in playlist
 	ES	Error: No se encontraron items en la lista
 	NL	Fout: Geen items gevonden in de playlist
+	ZH_CN	失误：播放表为空
 
 PLAYLIST_PROBLEM_CONNECTING
 	DE	Fehler: Kann keine Verbindung herstellen
 	EN	Error: Can't connect to retrieve playlist
 	ES	Error: No se puede conectar para obtener la lista
 	NL	Fout: Kan geen connectie maken om playlist op te halen
+	ZH_CN	失误：无法取得播放表
 
 ASF_UNABLE_TO_PARSE
 	DE	Fehler: kann ASF Stream nicht lesen
 	EN	Error: Unable to parse ASF audio stream
 	NL	Fout: decoderen ASF audio mislukt
+	ZH_CN	失误：无法解析音频流
 
 NO_PLAYLIST_DIR
 	CS	Chyba: Není uložen žádný playlist.
@@ -1621,7 +1643,7 @@ NO_PLAYLIST_DIR_MORE
 	JA	サーバー セッティングを調整して下さい
 	NL	Ga naar serverinstellingen om dit te corrigeren.
 	SV	Ändra serverinställningar för att korrigera detta
-	ZH_CN	请参考伺服器设置以便修正
+	ZH_CN	请参考服务器配置以便修正
 
 HOME
 	CS	Hlavní menu
@@ -1665,7 +1687,7 @@ SERVER
 	NO	Server
 	PT	Servidor
 	SV	Server
-	ZH_CN	伺服器
+	ZH_CN	服务器
 
 ABOUT_SHORT
 	CS	O programu
@@ -1687,24 +1709,28 @@ WEB_XML_ERROR
 	EN	There was an error loading the remote feed for %s: (%s)
 	ES	Hubo un error al cargar el feed remoto de %s: (%s)
 	NL	Er was een laadfout van de feed op afstand gedurende %s: (%s)
+	ZH_CN	载入远方信息时发生失误%s: (%s)
 
 XML_ERROR
 	DE	Fehler
 	EN	Error
 	IT	Errore
 	NL	Fout
+	ZH_CN	失误
 
 XML_ERROR
 	DE	Fehler
 	EN	Error
 	IT	Errore
 	NL	Fout
+	ZH_CN	失误
 
 XML_GET_FAILED
 	DE	Fehler beim Auslesen
 	EN	Failed to parse
 	ES	Error de parse
 	NL	Decoderen podcast mislukte
+	ZH_CN	解析失误
 
 XML_LOADING
 	DE	Hole Casts...
@@ -1713,11 +1739,13 @@ XML_LOADING
 	FI	Haetaan...
 	FR	Chargement...
 	NL	Ophalen...
+	ZH_CN	读取中
 
 XML_LINK
 	EN	Link
 	IT	Collegamento
 	ES	Vínculo
+	ZH_CN	链路
 
 XML_DATE
 	DE	Datum
@@ -1725,47 +1753,55 @@ XML_DATE
 	ES	Fecha
 	IT	Data
 	NL	Datum
+	ZH_CN	日期
 
 XML_EDITOR
 	DE	Herausgeber
 	EN	Editor
 	FR	Edition
 	NL	Redacteur
+	ZH_CN	编辑
 
 XML_ENCLOSURE
 	DE	Anhang
 	EN	Enclosure
 	NL	Bijlage
+	ZH_CN	框架
 
 XML_AUDIO_ENCLOSURES
 	DE	Audio Anhänge
 	EN	Audio Enclosures
 	ES	Enclosures de Audio
 	NL	Audio bijlage
+	ZH_CN	音频框架
 
 XML_FEED_DESCRIPTION
 	DE	Über diesen Feed
 	EN	About this feed
 	ES	Acerca de este feed
 	NL	Over deze feed
+	ZH_CN	关于这饲址
 
 XML_SUBTITLE
 	DE	Untertitel
 	EN	Subtitle
 	ES	Subtítulo
 	NL	Subtitel
+	ZH_CN	字幕
 
 XML_SUMMARY
 	DE	Zusammenfassung
 	EN	Summary
 	ES	Resumen
 	NL	Samenvatting
+	ZH_CN	简介
 
 XML_EXPLICIT
 	DE	Anstössig
 	EN	Explicit
 	ES	Explícito
 	NL	Expliciet
+	ZH_CN	说明
 
 NUMBER_OF_LISTENERS
 	DE	Anzahl Hörer
@@ -1773,6 +1809,7 @@ NUMBER_OF_LISTENERS
 	ES	Número de oyentes
 	IT	Numero di ascoltatori
 	NL	Aantal luisteraars
+	ZH_CN	听众数量
 
 DESCRIPTION
 	DE	Beschreibung
@@ -1780,12 +1817,14 @@ DESCRIPTION
 	ES	Descripción
 	IT	Descrizione
 	NL	Beschrijving
+	ZH_CN	陈述
 
 SOURCE
 	DE	Quelle
 	EN	Source
 	ES	Fuente
 	NL	Bron
+	ZH_CN	源头
 
 #
 # Setup page strings
@@ -1796,6 +1835,7 @@ SETUP_BAD_PAGE_SUGGEST
 	EN	Try adding page=SERVER_SETTINGS.
 	ES	Intentar añadiendo page=SERVER_SETTINGS.
 	NL	Probeer page=SERVER_SETTINGS toe te voegen.
+	ZH_CN	尝试配置page=SERVER_SETTINGS
 
 #
 # Setup Group strings
@@ -1818,7 +1858,7 @@ SETUP_GROUP_BRIGHTNESS
 	NO	Lysstyrke
 	PT	Brilho
 	SV	Ljusstyrka
-	ZH_CN	明亮度
+	ZH_CN	光亮度
 
 SETUP_GROUP_BRIGHTNESS_DESC
 	CS	Jas displeje přehrávače může být nastaven pro  různé stavy přehrávače: zapnut, vypnut, nehraje. Může být také nastaven automaticky když zmáčknete tlačítko, začnete přehrávat skladbu, nebo necháte přehrávač chvíli bez ovládání. Je možno také vypnout toto automatické chování.
@@ -1833,7 +1873,7 @@ SETUP_GROUP_BRIGHTNESS_DESC
 	JA	パワーオン・オフ時、スクリーンセーバー時のプレーヤーのディスプレイの明るさを調節できます
 	NL	De helderheid van het spelerscherm kun je apart instellen voor als de speler aan staat, uit staat ('standby') staat of in ruststand (schermbeveiliger). <BR>De helderheid kun je ook instellen voor wanneer je op een toets drukt, start met afspelen of de speler met rust laat voor een tijdje. Je kunt kiezen om dit automatische gedrag uit te schakelen.
 	SV	Ljusstyrkan på spelarens skärm kan ställas in oberoende för lägena av, på och vänteläge. Ljusstyrkan kan också justeras automatiskt vid knapptryckning, vid start eller slut på sång, eller efter förinställd tid av oaktivitet. Du kan också välja att stänga av denna automatik.
-	ZH_CN	播放机显示屏可以根据不同的操作状态如开机、关机、或屏幕保护程序进行时设置不同的明亮度。播放机也会随着按键、开始播放音乐等活动而自行调节显示屏明亮度。用户可选择是否采用此项自动明亮度调节功能。
+	ZH_CN	播放机显示屏可以根据不同的操作状态如开机、关机、或屏幕保护程序进行时设置不同的光亮度。播放机也会随着按键、开始播放音乐等活动而自行调节显示屏光亮度。用户可选择是否采用此项自动光亮度调节功能。
 
 SETUP_GROUP_TCP_PARAMS
 	CS	Nastavení TCP/IP
@@ -1866,7 +1906,7 @@ SETUP_GROUP_TCP_PARAMS_DESC
 	NO	Disse innstillingene justerer TCP nettverket for serveren.
 	PT	Estas configurações ajustam os parâmetros de rede TCP do servidor.
 	SV	Detta är inställningar för nätverksprotokollet TCP.
-	ZH_CN	适用于调节伺服器上TCP/IP网络参数的设置。
+	ZH_CN	适用于调节服务器上TCP/IP网络参数的配置。
 
 SETUP_GROUP_TITLEFORMATS_DESC
 	CS	Toto jsou formáty dostupné ve výběrech v nastavení přehrávačů. Pro vymazání formátu,  vymažte stávající formát a nahraďte jej novým, nebo nechte prízdné.  Dostupné proměnné jsou: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time)  Elementy mohou být odděleny čímkoliv (nebo ničím). Oddělovače jsou pouze použity, pokud jsou datové elementy přednastaveny.  Aktuální formát bude použit také pro zobrazení na webovém rozhraní.
@@ -1883,7 +1923,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 	NO	Dette er tilgjengelige for web-interfacet og selve spilleren. For å fjerne et format, tøm boksen. For å legge til et format, skriv det i en tom boks. Tilgengelige elementer: CT (innholds type), TITLE, GENRE, TRACKNUM (spor nummer), FS (filstørrelse), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (totalt antall sekunder), DURATION (minutter og sekunder), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volumnavn), PATH, FILE, EXT (filending), LONGDATE (dagens dato, langt), SHORTDATE (dagens dato, kort), CURRTIME (klokkeslett nå). Elementer kan skilles med ethvert tegn (eller ingen). Skilletegnet vises bare om dataelementet finnes. Det valgte formatet er det som blir brukt på websidene.
 	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no cliente. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
 	SV	Dessa är de tillgängliga formaten för webgränssnittet och själva spelaren. För att ta bort ett format, töm textboxen. För att lägga till ett nytt format, skriv i en tom textbox. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT(kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME, PATH, FILE, EXT (filändelse), LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera dataelementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget tecken alls). Skiljetecken visas endast om dataelementet existerar. Det valda formatet är det som kommer användas på websidorna.
-	ZH_CN	以上或播放机设置内皆设有各类不同的显示格式可供选择。如要除去某个格式，便清除其属复选框中的标记。您也可在空的资料栏中输入新格式。可用基本资料包括CT（内容类别）、TITLE（曲目）、GENRE（音乐风格）、TRACKNUM（轨道序号）、FS（文件大小）、ARTIST（演唱者）、ALBUM（乐谱帖）、COMMENT（注解）、YEAR（年份）、SECS（总秒数）、DURATION（总长度）、VBR_SCALE (vbr/cbr)、BITRATE（比特率）、TAGSIZE（标签大小）、VOLUME（卷名）、PATH（路径）、FILE（文件名）、EXT（扩展名）、LONGDATE（今日日期，完整）、SHORTDATE（今日日期，缩写）、CURRTIME（现在时间）。基本资料可使用任何方式区分。<br>当前的格式便是网页所应用的格式。
+	ZH_CN	以上或播放机设置内皆设有各类不同的显示格式可供选择。如要除去某个格式，便清除其属复选框中的标记。您也可在空的资料栏中输入新格式。可用基本资料包括CT（内容类别）、TITLE（曲目）、GENRE（曲风）、TRACKNUM（音轨序号）、FS（文件大小）、ARTIST（艺人）、ALBUM（专辑）、COMMENT（注解）、YEAR（年份）、SECS（总秒数）、DURATION（总长度）、VBR_SCALE (vbr/cbr)、BITRATE（比特率）、TAGSIZE（标签大小）、VOLUME（卷名）、PATH（路径）、FILE（文件名）、EXT（扩展名）、LONGDATE（日期，完整）、SHORTDATE（日期，缩写）、CURRTIME（现在时间）。基本资料可使用任何方式区分。<br>当前的格式便是网页所应用的格式。
 
 SETUP_GROUP_MENUITEMS
 	CS	Hlavní menu
@@ -2138,7 +2178,7 @@ SETUP_SCROLLRATE_DESC
 	NL	Je kunt de snelheid instellen waarmee de tekst over het scherm loopt. De snelheid geeft de tijd aan tussen schermwijzigingen.  <br>Op een speler met grafisch scherm kan dit gespecificeerd worden in combinatie met de hoeveelheid pixels die per keer versprongen moet worden om de snelheid en kwaliteit van de tekstloop in te stellen.  <br>Op een speler met een karakter scherm geeft deze instelling de tijd aan om het volgende karakter te tonen.  <br>Voer een waarde in seconden in. Lagere waarden laten de tekst sneller lopen. 0.15 seconden is de standaardwaarde voor tekst met een enkele regelhoogte. 0.1 seconden is de standaardwaarde voor tekst met dubbele regelhoogte.
 	NO	Du kan justere tiden spilleren venter før den scroller til neste bokstav i teksten på displayet. Skriv inn verdien i sekunder. Lavt nummer scroller fortere. 0.15 sekunder er standard.
 	SV	Tid mellan rullande scroll-bilder. O.15 är standardvärdet. Värden mellan 0 och 1 kan sättas för att öka eller minska scroll-tempot
-	ZH_CN	您可以调节卷动文字横跨屏幕的速度。卷动速度也代表了显示刷新之间所需的时间。在设有图形显示屏的播放机，这个设置可与卷动映像点的设置一并进行调节已达到您所要求的显示速度和质量（文字将根据卷动映像点和卷动速度的设定组合进行卷动）。在设有字符显示屏的播放机这个设定表示卷动到下一个字符前所需的时间。输入一个以秒为单位的值，为更新之间的时间。小值使卷动更加快速。单行缺省值为0.15秒，双行缺省值为0.1秒。
+	ZH_CN	您可以调节文字横向卷动的速度。卷动速度也代表了显示刷新之间所需的时间。在设有图形显示屏的播放机，这个设置可与卷动映像点的设置一并进行调节已达到您所要求的显示速度和质量（文字将根据卷动映像点和卷动速度的设定组合进行卷动）。在设有字符显示屏的播放机这个设定表示卷动到下一个字符前所需的时间。输入一个以秒为单位的值，为更新之间的时间。小值使卷动更加快速。单行缺省值为0.15秒，双行缺省值为0.1秒。
 
 DOUBLE-LINE
 	CS	Dvojnásobná velikost
@@ -2190,6 +2230,7 @@ SETUP_GROUP_ALARM_DESC
 	HE	ניתן להגדיר 8 שעונים מעוררים שונים
 	IT	Questo lettore puo' avere sino ad 8 sveglie: una sveglia quotidiana e sveglie per ogni singolo giorno della settimana.
 	NL	Deze speler kan tot 8 wektijden hebben: één wektijd die elke dag af gaat en een individuele wektijd voor elke dag van de week.
+	ZH_CN	此播放机设有8个闹钟设置：其中1个可每天启动，其他7个分为周一至周日使用。您可以选择让闹钟在20秒内淡入。
 
 SETUP_GROUP_IRSETS
 	CS	Dálkové ovládání
@@ -2252,7 +2293,7 @@ SETUP_GROUP_PLUGINS_DESC
 	NO	SlimServer inneholder en del tilleggsfunksjoner, Plugins, som du kan benytte deg av med fjernkontrollen. Disse kan aktiveres eller deaktiveres individuelt. For å aktivere en Plugin, merk den. For å deaktivere en Plugin, fjern merket. For å lagre endringene, velg "Endre".
 	PT	O cliente SlimServer inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
 	SV	SlimServer inkluderar tilläggs-funktioner som du kan konfigurera och/eller använda via din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras var för sig. Kryssa i rutan bredvid tillägget nedan för att aktivera ett tillägg. Ta bort krysset när du vill avaktivera ett tillägg. Spara dina ändringar genom att klicka på "Ändra".
-	ZH_CN	SlimServer设有一些称为插件程序(Plugins)的额外功能。这些功能都可通过遥控器操控。您可选择激活或撤销在Plugins目录下的各类插件程序。如要激活某个插件程序，请在其复选框中标记。如要撤销某个插件程序，请清除其复选框中的标记。您可选择是否让伺服器在每当漫游到插件程序的菜单或设置时进行插件程序扫瞄。在伺服器启动时装载插件程序为缺省。请点击《更动》以保存您所作的设定。
+	ZH_CN	SlimServer设有一些称为插件程序(Plugins)的额外功能。这些功能都可通过遥控器操控。您可选择激活或撤销在Plugins目录下的各类插件程序。如要激活某个插件程序，请在其复选框中标记。如要撤销某个插件程序，请清除其复选框中的标记。您可选择是否让服务器在每当漫游到插件程序的菜单或设置时进行插件程序扫瞄。在服务器启动时装载插件程序为缺省。请点击《更动》以保存您所作的设定。
 
 SETUP_PLUGINS-ONTHEFLY
 	CS	Načítat pluginy za běhu
@@ -2332,7 +2373,7 @@ SETUP_FORMATSLIST_CHANGE
 	NO	Innstillingen er endret.
 	PT	A opção mudou.
 	SV	Inställning är ändrad.
-	ZH_CN	已更动设置。
+	ZH_CN	更动设置完成。
 
 SETUP_FORMATSLIST_MISSING_BINARY
 	CS	Požadovaný binární soubor nenalezen:
@@ -2387,7 +2428,7 @@ STREAM_FORMAT
 	NL	Stream formaat
 	NO	Streamingformat
 	SV	Format för strömmande ljud
-	ZH_CN	流出格式
+	ZH_CN	频流格式
 
 SETUP_GROUP_FORMATS_EXTENSIONS
 	DE	Scanner-Einstellungen für Dateiendungen
@@ -2396,6 +2437,7 @@ SETUP_GROUP_FORMATS_EXTENSIONS
 	FR	Exclusion des types de fichier
 	IT	Impostazione analisi estensione file.
 	NL	Bestandsextensies scan instelling
+	ZH_CN	文件扩展名扫描配置
 
 SETUP_DISABLEDEXTENSIONSAUDIO
 	DE	Deaktivierte Audio-Dateiendungen
@@ -2404,6 +2446,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO
 	FR	Types de fichier ignorés
 	IT	Disabilita estensioni file audio
 	NL	Uitgezette audio bestand extensies.
+	ZH_CN	撤销音频文件扩展名
 
 SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	DE	SlimServer durchsucht die Musiksammlung nach allen unterstützten Dateitypen (Audiodateien und CUE Sheets). Falls Sie gezielt Dateitypen von der Benutzung durch SlimServer ausschliessen wollen, so geben Sie hier eine durch Komma getrennte Liste der Endungen an, z.B. cue, mp4, aac
@@ -2412,6 +2455,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	FR	Le SlimServer examinera dans votre dossier de musique tous les types de fichier audio supportés (fichiers et listes de lecture ou "cue sheets"). Pour exclure un type de fichier audio du parcours du dossier de musique, vous pouvez entrer ci-après la liste des extensions à ignorer, séparées par une virgule (par ex. : cue, mp4, aac)
 	IT	Lo Slimserver cercherà nella cartella Musica tutti i tipi di file supportati (file audio e cue sheets). Per scartare specifici tipi di file dalla ricerca all'interno della cartella Musica, inserisci una lista di estensioni separate da una virgola. Es.: cue, mp4, aac
 	NL	SlimServer kijkt in de muziekfolder naar alle ondersteunde bestandsformaten (audio bestanden en cue bestanden). <BR>Om specifieke bestandsformaten over te slaan bij het scannen naar muziek kun je een komma gescheiden lijst met extensies opnemen hieronder. Bijvoorbeeld: cue, mp4, aac
+	ZH_CN	SlimServer会在音乐文件夹内寻找各式所支持的音频或cue sheet文件。 如想要把某些格式除外，便在以下输入其格式扩展名，以逗号为分隔。例如: cue, mp4, aac
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST
 	DE	Deaktivierte Wiedergabelisten-Dateiendungen
@@ -2420,6 +2464,7 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST
 	FR	Types de liste de lecture ignorés
 	IT	Disabilita estensioni liste di esecuzione
 	NL	Uitgezette playlist bestandsextensies
+	ZH_CN	撤销播放表文件扩展名
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
 	DE	SlimServer durchsucht den Wiedergabelisten-Ordner nach allen unterstützten Dateitypen (Wiedergabelisten und CUE Sheets). Falls Sie gezielt Dateitypen von der Benutzung durch SlimServer ausschliessen wollen, so geben Sie hier eine durch Komma getrennte Liste der Endungen an, z.B. m3u, pls, cue 
@@ -2428,6 +2473,7 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
 	FR	Le SlimServer examinera dans votre dossier de listes de lecture tous les types de fichier audio supportés (listes de lecture et "cue sheets"). Pour exclure un type de fichier audio du parcours du dossier de listes de lecture, vous pouvez entrer ci-après la liste des extensions à ignorer, séparées par une virgule (par ex. : m3u, pls, cue)
 	IT	Lo Slimserver cercherà nella cartella Liste di esecuzione tutti i tipi di file supportati (playlist e cue sheets). Per scartare specifici tipi di file dalla ricerca all'interno della cartella Liste di distribuzione, inserisci una lista di estensioni separate da una virgola. Es.: m3u, pls, cue
 	NL	SlimServer kijkt in de playlistfolder naar alle ondersteunde bestandsformaten (playlist bestanden en cue bestanden). <BR>Om specifieke bestandsformaten over te slaan bij het scannen naar playlists kun je een komma gescheiden lijst met extensies opnemen hieronder. Bijvoorbeeld: m3u,pls,cue
+	ZH_CN	SlimServer会在播放表文件夹内寻找各式所支持的播放表或cue sheet文件。 如想要把某些格式除外，便在以下输入其格式扩展名，以逗号为分隔。例如: m3u, pls, cue
 
 PLAYER_TYPE
 	CS	Typ přehrávače
@@ -2483,7 +2529,7 @@ DECODER
 	IT	Decodificatore
 	JA	デコーダー
 	SV	Avkodare
-	ZH_CN	密码译解器
+	ZH_CN	译解器
 
 #
 # Setup preference strings
@@ -2578,7 +2624,7 @@ SETUP_POWERONBRIGHTNESS
 	NO	Lysstyrke når på
 	PT	Brilho quando Ligado
 	SV	Ljusstyrka i påslaget läge
-	ZH_CN	开机时的明亮度
+	ZH_CN	开机时的光亮度
 
 SETUP_POWERONBRIGHTNESS_CHOOSE
 	CS	Jas pro 'zapnuto':
@@ -2595,7 +2641,7 @@ SETUP_POWERONBRIGHTNESS_CHOOSE
 	NO	Lysstyrke når på:
 	PT	Brilho quando Ligado
 	SV	Ljusstyrka i påslaget läge:
-	ZH_CN	开机时的明亮度：
+	ZH_CN	开机时的光亮度：
 
 SETUP_POWEROFFBRIGHTNESS
 	CS	Jas pro 'vypnuto'
@@ -2611,7 +2657,7 @@ SETUP_POWEROFFBRIGHTNESS
 	NO	Lysstyrke når av
 	PT	Brilho quando Desligado
 	SV	Ljusstyrka i avslaget läge
-	ZH_CN	关机时的明亮度
+	ZH_CN	关机时的光亮度
 
 SETUP_POWEROFFBRIGHTNESS_CHOOSE
 	CS	Jas pro 'vypnuto':
@@ -2628,7 +2674,7 @@ SETUP_POWEROFFBRIGHTNESS_CHOOSE
 	NO	Lysstyrke når av:
 	PT	Brilho quando Desligado
 	SV	Ljusstyrka i avslaget läge:
-	ZH_CN	关机时的明亮度：
+	ZH_CN	关机时的光亮度：
 
 SETUP_IDLEBRIGHTNESS
 	CS	Jas pro stav 'nečinný'
@@ -2640,7 +2686,7 @@ SETUP_IDLEBRIGHTNESS
 	JA	アイドル時の明るさ
 	NL	Helderheid in ruststand
 	SV	Ljusstyrka i viloläge
-	ZH_CN	空闲时的明亮度
+	ZH_CN	空闲时的光亮度
 
 SETUP_IDLEBRIGHTNESS_CHOOSE
 	CS	Jas pro stav 'nečinný':
@@ -2653,7 +2699,7 @@ SETUP_IDLEBRIGHTNESS_CHOOSE
 	JA	アイドル時の明るさ:
 	NL	Helderheid in rust:
 	SV	Ljusstyrka i viloläge
-	ZH_CN	空闲时的明亮度：
+	ZH_CN	空闲时的光亮度：
 
 SETUP_AUTOBRIGHTNESS_CHOOSE
 	CS	Automaticjý jas displeje:
@@ -2669,7 +2715,7 @@ SETUP_AUTOBRIGHTNESS_CHOOSE
 	NO	Vis lysstyrke automatisk:
 	PT	Brilho Automático:
 	SV	Automatisk ljusstyrka:
-	ZH_CN	自动调节显示屏明亮度：
+	ZH_CN	自动调节显示屏光亮度：
 
 SETUP_AUTOBRIGHTNESS_OFF
 	CS	Nastavit jas ručně
@@ -2686,7 +2732,7 @@ SETUP_AUTOBRIGHTNESS_OFF
 	NO	Juster lysstyrke manuelt
 	PT	Ajustar o Brilho Manualmente
 	SV	Ändra ljusstyrka manuellt
-	ZH_CN	手工调节显示屏明亮度
+	ZH_CN	手工调节显示屏光亮度
 
 SETUP_AUTOBRIGHTNESS_ON
 	CS	Nastavit jas automaticky
@@ -2703,7 +2749,7 @@ SETUP_AUTOBRIGHTNESS_ON
 	NO	Juster lysstyrke automatisk
 	PT	Ajustar o Brilho Automaticamente
 	SV	Ändra ljusstyrka automatiskt
-	ZH_CN	自动调节显示屏明亮度
+	ZH_CN	自动调节显示屏光亮度
 
 SETUP_ALARM
 	CS	Budík
@@ -2766,7 +2812,7 @@ SETUP_PLAYINGDISPLAYMODE
 	JA	現在再生中の曲の情報
 	NL	"Speelt nu" informatie
 	SV	Information i läge "Nu spelas"
-	ZH_CN	播放中的信息
+	ZH_CN	播放中信息
 
 SETUP_PLAYINGDISPLAYMODE_OK
 	DA	Afspilleren vil nu vise status for afspilningen således:
@@ -3032,6 +3078,7 @@ SETUP_PREAMPVOLUMECONTROL
 	HE	עוצמת שמע בשימוש כקדם מגבר
 	IT	Controllo volume preamplificatore
 	NL	Voorversterker volume-instelling
+	ZH_CN	前级音量控制
 
 SETUP_PREAMPVOLUMECONTROL_DESC
 	DE	Dieser Lautstärkeregler beeinflusst nur die analogen Ausgänge der Squeezebox. Geben Sie die Dämpfung in Dezibel ein. Der Bereich geht von 0.0 bis 63.0 in 0.5 Dezibel Schritten. Voreinstellung ist 0 (volle Lautstärke). ACHTUNG: falls Ihr Verstärker stark genug ist, um Schaden an Lautstärkern, Vorverstärkern etc. anzurichten, so sollte diese Einstellung als Sicherheitsvorkehrung unbedingt benutzt werden!
@@ -3040,6 +3087,7 @@ SETUP_PREAMPVOLUMECONTROL_DESC
 	HE	במידה והנגן משמש כקדם מגבר, ניתן להנמיך את עצמת השמע ביציאות האנאלוגיות ולהתאימם למגבר
 	IT	Questo e' un controllo di volume secondario che si applica solo alle uscite analogiche dello Squeezebox. Inserisci la quantita' di attenuazone in decibel. L'intervallo va da 0.0 a 63.0 in passi da 0.5. Di default e' 0 (volume massimo). ATTENZIONE: l'amplificatore potrebbe danneggiare le casse in caso di volume elevato; per sicurezza utilizza un ampli integrato, un preamplificatore o un attenuatore di linea!
 	NL	Dit is een secundaire volume instelling die alleen van toepassing is voor de analoge uitgang. Geef de demping op in decibels. De waarde is van 0.0 tot 63.0 in 0.5 dB stappen. De standaard is 0 (voor vol volume). <br>WAARSCHUWING: Indien je versterker krachtig genoeg is om je luidsprekers op te blazen, dan is een receiver, voorversterker of line-demper nog steeds nodig als beveiligingsmaatregel.
+	ZH_CN	这项功能是针对Squeezebox模拟输出音量的控制。以分贝为单位输入减益比量。设置范围为0.0至63.0，间隔为0.5分贝。确省为0（最大音量）。
 
 SETUP_BUFFERSECS
 	DE	Puffergrösse für Internet Radio
@@ -3047,13 +3095,14 @@ SETUP_BUFFERSECS
 	FR	Taille du tampon radio
 	IT	Memoria buffer in secondi per le stazioni radio
 	NL	Radio station buffertijd (seconden)
+	ZH_CN	收音机频道缓冲秒数
 
 SETUP_BUFFERSECS_DESC
-	DE	Wenn Internet Radiostationen wiedergegeben werden, puffert der Player eine geringe Datenmenge, bevor er die Wiedergabe startet. Geben Sie die Anzahl Sekunden an, die in den Puffer geladen werden sollen (1-30 Sekunden). Vorgabewert ist 3 Sekunden. Falls Sie eine stotternde Wiedergabe feststellen, so kann das Erhöhen dieses Wertes helfen.
-	EN	When playing an Internet stream, the player buffers a small amount of data before beginning playback.  Specify the amount of audio data to buffer, in seconds from 1 to 30.  The default value is 3 seconds.  If you experience stuttering audio, increasing this value may help.
-	FR	Lors de la connexion à un flux Internet, la platine utilise un tampon audio avant de débuter la lecture. Vous pouvez spécifier la taille en secondes (1 à 30) de ce tampon. La valeur par défaut est de 3 secondes. Si vous subissez des coupures audio, augmentez cette valeur.
-	IT	Nella riproduzione di un flusso Internet, il lettore memorizza una piccola quantità di dati prima di iniziare la riproduzione. Specifica la quantità di dati audio da memorizzare, in secondi da 1 a 30. Il valore standard è 3 secondi. Se verifichi inceppamenti nell'audio, aumentare questo valore potrebbe essere d'aiuto.
-	NL	Bij het spelen van een Internet stream buffert de speler een kleine hoeveelheid data voordat het spelen start. Specificeer de hoeveelheid bufferdata in seconden speeltijd. Minimum is 1 en maximum is 30 seconden. De standaardwaarde is 3 seconden. Als je haperende audio ervaart, dan kan het vergroten van de buffer helpen.
+	DE	Wenn Internet Radiostationen wiedergegeben werden, puffert der Player eine geringe Datenmenge, bevor er die Wiedergabe startet. Geben Sie die Anzahl Sekunden an, die in den Puffer geladen werden sollen (3-30 Sekunden). Vorgabewert ist 3 Sekunden. Falls Sie eine stotternde Wiedergabe feststellen, so kann das Erhöhen dieses Wertes helfen.
+	EN	When playing an Internet stream, the player buffers a small amount of data before beginning playback.  Specify the amount of audio data to buffer, in seconds from 3 to 30.  The default value is 3 seconds.  If you experience stuttering audio, increasing this value may help.
+	FR	Lors de la connexion Ã  un flux Internet, la platine utilise un tampon audio avant de débuter la lecture. Vous pouvez spécifier la taille en secondes (3 Ã  30) de ce tampon. La valeur par défaut est de 3 secondes. Si vous subissez des coupures audio, augmentez cette valeur.
+	IT	Nella riproduzione di un flusso Internet, il lettore memorizza una piccola quantitÃ  di dati prima di iniziare la riproduzione. Specifica la quantitÃ  di dati audio da memorizzare, in secondi da 3 a 30. Il valore standard Ã¨ 3 secondi. Se verifichi inceppamenti nell'audio, aumentare questo valore potrebbe essere d'aiuto.
+	NL	Bij het spelen van een Internet stream buffert de speler een kleine hoeveelheid data voordat het spelen start. Specificeer de hoeveelheid bufferdata in seconden speeltijd. Minimum is 3 en maximum is 30 seconden. De standaardwaarde is 3 seconden. Als je haperende audio ervaart, dan kan het vergroten van de buffer helpen.
 
 SETUP_MAXWMARATE
 	DE	Maximale WMA Stream Bitrate
@@ -3061,6 +3110,7 @@ SETUP_MAXWMARATE
 	FR	Limite de débit du flux WMA
 	IT	Bitrate massimo per flussi WMA
 	NL	Maximum WMA stream bitrate
+	ZH_CN	最高WMA频流比特率
 
 SETUP_MAXWMARATE_DESC
 	DE	Manche WMA Streams können unterschiedliche Bitraten enthalten. Standardmässig wähle SlimServer die höchste verfügbare Bitrate. Dies kann bei langsameren Internet-Verbindungen zu Problemen führen. Daher können Sie hier die maximale Bitrate, die verwendet werden soll, festlegen.
@@ -3091,7 +3141,7 @@ SETUP_MAXBITRATE_DESC
 	JA	SlimServerは、自動的にあなたの音楽ファイルをWAV/AIFFまたはMP3に変換します。ビットレートの最大値を設定することができます。｢制限なし」を選択しますと、元のファイル通りのビットレートで再生されます。
 	NL	SlimServer kan automatisch je muziekbestanden converteren naar WAV/AIFF of MP3 om met een lagere bitrate je speler aan te sturen. Dit is handig als de speler via het Internet connectie maakt met je server of als je af en toe netwerkproblemen hebt met een draadloos netwerk.<br>Je kunt de maximum bitrate kiezen die SlimServer naar je speler streamt. MP3 bestanden met een lagere bitrate zullen niet geconverteerd worden. Indien je "Geen limiet" kiest zal SlimServer zonder conversie de audio en alle andere bestandstype zoals ongecomprimeerde PCM audio streamen.
 	SV	SlimServer kan automatiskt och löpande konvertera dina musikfiler till WAV/AIFF eller MP3 för att sända lägre bitkodningstakt till din spelare. Detta är användbart om du kopplar till din SlimServer över Internet, eller emellanåt har problem med överföring via trådlöst nätverk. Du kan bestämma vilken maximal bitkodningstakt Slimserver ska sända till din spelare. MP3-filer ursprungligen kodade i lägre takt kommer inte att kodas om. Om du väljer "Ingen begräsning" kommer SlimServer sända dina MP3-filer utan omkodning och övriga filtyper i det okomprimerade PCM-audio-formatet.
-	ZH_CN	SlimServer可以将您的音乐文件自动并即时转换成WAV/AIFF或MP3格式，以降低流出到播放机的比特率。如果您的播放机与SlimServer的联系横跨互联网或您的无线网络有堵塞的问题存在，这个功能将会提供很好的帮助。您可以选择SlimServer流出到播放机的最大比特率。如果MP3歌曲原有比特率低于如下则不被转换。如果您选择不限制比特率，SlimServer将不会对您的MP3文件流出到播放机前进行任何转换。其他文件类型也会以未压缩的PCM音像格式流出到播放机。
+	ZH_CN	SlimServer可以将您的音乐文件自动并即时转换成WAV/AIFF或MP3格式，以降低流出到播放机的比特率。如果您的播放机与SlimServer的联系经过互联网或您的无线网络有堵塞的问题存在，这个功能将会提供很好的帮助。您可以选择SlimServer流出到播放机的最大比特率。如果MP3歌曲原有比特率低于如下则不被转换。如果您选择不限制比特率，SlimServer将不会对您的MP3文件流出到播放机前进行任何转换。其他文件类型也会以未压缩的PCM音像格式流出到播放机。
 
 SETUP_MP3BITRATE_DESC
 	DE	SlimServer kann ihre MP3 Dateien automatisch während der Wiedergabe in andere Formate als MP3 umwandeln. SlimServer kann MP3 Dateien auch mit einer geringeren Bitrate neu kodieren. Das ist hilfreich, wenn Sie ihren Player übers Internet mit dem SlimServer verbinden oder Probleme mit dem Wireless LAN haben. Sie können die maximale Bitrate definieren, die der SlimServer zu ihrem Player streamen soll. MP3 Lieder, die mit einer geringeren Bitrate kodiert sind, werden nicht umgewandelt.
@@ -3182,7 +3232,7 @@ SETUP_LAMEQUALITY_DESC
 	FR	L'encodeur MP3 LAME peut être utilisé pour convertir vos fichiers audio au format MP3 pour la diffusion à distance. Vous pouvez ajuster le niveau de qualité utilisé par LAME de 0 à 9 (la valeur par défaut est 9, ce qui donne des résultats acceptables à des taux d'encodage élevés et économise au maximum les ressources système ; 0 est le niveau de qualité optimal mais risque de ralentir sensiblement le serveur sur des machines moins performantes).
 	IT	L'encoder LAME MP3 puo' essere usato per convertire la tua musica nel formato MP3 per l'invio al lettore. Puoi regolare l'impostazione della qualita' da 0 a 9. 9 e' l'impostazione standard che da' una resa molto buona ad alti bit rate ed utilizza il minimo delle capacita' del processore. 0 e' la qualita' massima ma potrebbe rallentare il tuo computer. Alcuni computer su cui gira lo Slimserver potrebbero non riuscire a convertire abbastanza velocemente con l'impostazione di qualita' piu' alta.
 	NL	Het lame MP3 codeerprogramma kan gebruikt worden om je muziek naar MP3 te converteren voor het streamen naar de speler. Je kunt de kwaliteit instellen met een waarde tussen 0 en 9. 9 is de standaard waarde en klinkt heel goed bij hoge bitrates en gebruikt de minste rekenkracht van de server. 0 is de hoogste kwaliteit maar kan je server langzamer maken. Sommige computers waarop SlimServer draait zijn niet krachtig genoeg om te converteren met een hoge kwaliteitsinstelling.
-	ZH_CN	LAME MP3编码器可用来转换您的音乐成MP3格式流出。您能在0至9的设置范围内调节LAME MP3编码器的输出质量。缺省值为5的设置以高比特率编码的音效会相當的好，同时计算量也較小。0是最高质量，但其高计算量可能对计算机的性能表现造成负面影响。有一些运行SlimServer的计算机也许不足以迅速的应付更加优质的LAME设置。
+	ZH_CN	LAME MP3编码器可将您的音乐转换成MP3格式流出。您能在0至9的设置范围内调节LAME MP3编码器的输出质量。缺省值为5的设置以高比特率编码的音效会相當的好，同时计算量也較小。0是最高质量，但其高计算量可能对计算机的性能表现造成负面影响。有一些运行SlimServer的计算机也许不足以迅速的应付更加优质的LAME设置。
 
 SETUP_MP3SILENCEPRELUDE
 	DE	Audio Startzeit
@@ -3194,7 +3244,7 @@ SETUP_MP3SILENCEPRELUDE
 	JA	オーディオ スタートアップ タイム
 	NL	Audio opstarttijd
 	SV	Audio start-fördröjning
-	ZH_CN	音像开始的时间
+	ZH_CN	音频开始的时间
 
 SETUP_MP3SILENCEPRELUDE_DESC
 	DE	Einige Verstärker und D/A-Konverter brauchen etwas zusätzliche Zeit, um die Dekodierung zu beginnen, wenn der Player MP3 Daten wiedergibt. Definieren Sie hier die Wartezeit in Sekunden, die nach dem Druck auf Play abgewartet werden soll. Vorgabewert ist 0, ein Wert von 0.25 Sekunden funktioniert mit den meisten Verstärkern.
@@ -3206,7 +3256,7 @@ SETUP_MP3SILENCEPRELUDE_DESC
 	JA	いくつかのレシーバーやD/Aコンバーターは、MP3を再生する際にデジタル信号をデコードし始めるのに時間がかかることがあります。どれくらいのスタートアップタイムが必要か、秒数で入力してください。標準は0になっています。0.25秒あればほとんどの機器で対応可能です。
 	NL	Sommige audio receivers en D/A converteerders hebben extra tijd nodig om het decoderen van audio te starten van de speler bij het afspelen van MP3 audio. Je kunt de tijd specificeren in seconden om te wachten met het verzenden van MP3 audio na het drukken op de Play toets. De standaard waarde is 0, een waarde van 0.25 seconden werkt voor veel receivers.
 	SV	Vissa förstärkare och D/A-omvandlare behöver lite extra tid för att inleda avkodning av MP3-ljud. Du kan ange hur lång fördröjning (i sekunder) som som ska gälla från det att du trycker Play tills det att MP3-ljud börjar sändas. Standard-värdet är 0. Värdet 0.25 fungerar bra med många förstärkare.
-	ZH_CN	当播放MP3音像时，一些音像接收器和数字模拟转换器开始对播放机的输出进行转换前需要一些额外的等待时间。您可以以秒为单位指定在按播放键后何时开始发送MP3音像。缺省值为0。0.25秒的值对许多接收器都已相当足够。
+	ZH_CN	当播放MP3音频时，一些音频接收器和数模转换器开始对播放机的输出进行转换前需要一些额外的等待时间。您可以以秒为单位指定在按播放键后何时开始发送MP3音频。缺省值为0。0.25秒的值对许多接收器都已相当足够。
 
 SETUP_REPLAYGAINMODE
 	DE	Lautstärken-Normalisierung (Replay Gain)
@@ -3216,6 +3266,7 @@ SETUP_REPLAYGAINMODE
 	HE	התאמת עוצמת שמע
 	IT	Regolazione del Volume / Replay Gain
 	NL	Volume aanpassing/Replay Gain
+	ZH_CN	音量调整/重播增益
 
 SETUP_REPLAYGAINMODE_DESC
 	DE	Lieder können Informationen zur Normalisierung der Lautstärke enthalten ("Replay Gain"). Diese können dafür verwendet werden, dass Lieder und Alben alle ähnlich Laut wiedergegeben  werden. Der Player kann diese Informationen auswerten. "Lieder Normalisierung" sorgt dafür, dass alle Lieder gleich laut wiedergegeben werden. "Album Normalisierung" tut dies für verschiedene Alben, belässt aber die Lautstärken-Differenzen zwischen Liedern eines Albums. "Intelligente" Normalisierung verwendet Album Normalisierung, wenn aufeinanderfolgende Lieder eines Albums wiedergegeben werden, oder Lieder Normalisierung bei gemischten Wiedergabelisten.
@@ -3234,6 +3285,7 @@ REPLAYGAIN_DISABLED
 	HE	לא תודה
 	IT	Disabilita regolazione volume
 	NL	Schakel volume aanpassing uit
+	ZH_CN	关闭音量调整
 
 REPLAYGAIN_TRACK_GAIN
 	DE	Lieder Normalisierung verwenden (wenn möglich)
@@ -3243,6 +3295,7 @@ REPLAYGAIN_TRACK_GAIN
 	HE	לפי שיר
 	IT	Usa Track Gain (se presente)
 	NL	Gebruik liedjes volume aanpassing (indien aanwezig)
+	ZH_CN	利用音轨增益（如有）
 
 REPLAYGAIN_ALBUM_GAIN
 	DE	Album Normalisierung verwenden (wenn möglich)
@@ -3252,6 +3305,7 @@ REPLAYGAIN_ALBUM_GAIN
 	HE	לפי אלבום
 	IT	Usa Album Gain (se presente)
 	NL	Gebruik album volume aanpassing (indien aanwezig)
+	ZH_CN	利用专辑增益（如有）
 
 REPLAYGAIN_SMART_GAIN
 	DE	"Intelligente" Normalisierung verwenden
@@ -3261,6 +3315,7 @@ REPLAYGAIN_SMART_GAIN
 	HE	לפי שיר ואלבום
 	IT	Seleziona "Smart" Gain
 	NL	"Slimme" aanpassing selectie
+	ZH_CN	智慧型增益选择
 
 REPLAYGAIN
 	DE	Lautstärken-Normalisierung
@@ -3270,6 +3325,7 @@ REPLAYGAIN
 	HE	התאמת עוצמת שמע
 	IT	Regolazione volume
 	NL	Volume aanpassing
+	ZH_CN	音量调整
 
 ALBUMREPLAYGAIN
 	DE	Album Lautstärken-Normalisierung
@@ -3280,6 +3336,7 @@ ALBUMREPLAYGAIN
 	HE	התאמת עוצמת שמע אלבום
 	IT	Regolazione volume album
 	NL	Album volume-aanpassing
+	ZH_CN	专辑音量调整
 
 SETUP_TRANSITIONTYPE
 	DE	Überblendung
@@ -3288,7 +3345,7 @@ SETUP_TRANSITIONTYPE
 	FR	Transitions
 	HE	מעבר בין שירים
 	IT	Dissolvenza
-	ZH_CN	音像同时淡出淡入
+	ZH_CN	音频同时淡出淡入
 
 SETUP_TRANSITIONTYPE_DESC
 	DE	Der Player kann zwischen Liedern überblenden, entweder per Crossfading beider Lieder, oder indem der eine aus-, der andere eingeblendet wird. Wählen Sie die Art der Überblendung.
@@ -3298,7 +3355,7 @@ SETUP_TRANSITIONTYPE_DESC
 	HE	ניתן לקבוע כיצד הנגן יעבור משיר לשיר
 	IT	Lo Squeezebox puo' gradualmente passare tra i brani, sia sfumando tra il precedente ed il successivo, sia dissolvendo in entrata o in uscita. Scegli il tipo di transizione che desideri.
 	NL	Squeezebox kan naadloze overgangen maken tussen  liedjes. Dit kan door crossfading tussen de liedjes of door de liedjes uit en in te faden. Kies het type van crossfade die je wilt.
-	ZH_CN	Squeezebox能在歌曲之间逐渐转折。两首歌曲能交互或进行个别的淡出淡入。请选择您想要的音像同时淡出淡入模式。
+	ZH_CN	Squeezebox能在歌曲之间逐渐转折。两首歌曲能交互或进行个别的淡出淡入。请选择您想要的音频同时淡出淡入模式。
 
 SETUP_TRANSITIONDURATION
 	CS	Délka trvání prolnutí
@@ -3309,7 +3366,7 @@ SETUP_TRANSITIONDURATION
 	HE	אורך המיזוג
 	IT	Durata dissolvenza
 	NL	Crossfade tijdsduur
-	ZH_CN	音像同时淡出淡入的持久时间
+	ZH_CN	音频同时淡出淡入的持久时间
 
 SETUP_TRANSITIONDURATION_DESC
 	CS	Zadejte hodntou pro mezeru mezi skladbami v sekundách. Macimální hodnota je 10 sekund.
@@ -3320,7 +3377,7 @@ SETUP_TRANSITIONDURATION_DESC
 	HE	קבע פרק זמן בו השיר הנכנס והשיר היוצא חופפים
 	IT	Inserisci, in secondi, la durata delle transizioni tra i brani. La durata massima e' 10 secondi.
 	NL	Geef op in seconden hoe lang een crossfade mag duren tussen liedjes. Het maximum is 10 seconden.
-	ZH_CN	请以秒为单位输入在歌曲之间音像同时淡出淡入的持久时间。最大值为10秒。
+	ZH_CN	请以秒为单位输入在歌曲之间音频同时淡出淡入的持久时间。最大值为10秒。
 
 TRANSITION_NONE
 	DE	Keine
@@ -3337,7 +3394,7 @@ TRANSITION_CROSSFADE
 	FR	Fondu enchaîné
 	HE	מזג בין השירים
 	IT	Dissolvenza
-	ZH_CN	音像同时淡出淡入
+	ZH_CN	音频同时淡出淡入
 
 TRANSITION_FADE_IN
 	CS	Zesílení
@@ -3346,7 +3403,7 @@ TRANSITION_FADE_IN
 	FR	Fondu ascendant
 	HE	הגבר בתחילת שיר
 	IT	In entrata
-	ZH_CN	音像淡入
+	ZH_CN	音频淡入
 
 TRANSITION_FADE_OUT
 	CS	Zeslabení
@@ -3356,7 +3413,7 @@ TRANSITION_FADE_OUT
 	HE	הנמך בסוף שיר	
 	IT	In uscita
 	NL	Fade uit
-	ZH_CN	音像淡出
+	ZH_CN	音频淡出
 
 TRANSITION_FADE_IN_OUT
 	CS	Mixování
@@ -3367,7 +3424,7 @@ TRANSITION_FADE_IN_OUT
 	HE	הנמך בסוף שיר והגבר בתחילת שיר
 	IT	In entrata e in uscita
 	NL	Fade in en uit
-	ZH_CN	音像同时淡出淡入
+	ZH_CN	音频同时淡出淡入
 
 SETUP_TITLEFORMATCURR
 	CS	Aktuální formát názvu skladby
@@ -3420,6 +3477,7 @@ SETUP_TITLEFORMAT_CHANGED
 	EN	Format will be changed for any clients using this setting
 	ES	El formato será cambiado en todos los clientes que utilicen esta configuración
 	NL	Formaat wordt gewijzigd voor elke client die deze instelling gebruikt
+	ZH_CN	所有利用此配置的Client格式将会转变
 
 SETUP_ITUNESPLAYLISTFORMAT
 	CS	Formát playlistu iTunes
@@ -3443,7 +3501,7 @@ SETUP_ITUNESPLAYLISTFORMAT_DESC
 	NL	Deze optie bepaalt het te gebruiken formaat bij het importeren van iTunes playlists.
 	NO	Denne innstillingen avgjør hvliket format som brukes ved import av iTunes spillelister.
 	SV	Denna inställning avgör vilket format som används vid import av iTunes-låtlistor
-	ZH_CN	这个选项决定了引进iTunes播放表所使用的格式。
+	ZH_CN	这个选项决定了导入iTunes播放表所使用的格式。
 
 ITUNES_PODCASTS
 	EN	iTunes Podcasts
@@ -3471,48 +3529,48 @@ SETUP_MOODLOGICPLAYLISTFORMAT_DESC
 	NL	Deze optie bepaalt het te gebruiken formaat bij het importeren van Moodlogic playlists.
 	NO	Denne innstillingen avgjør hvilket format som brukes ved import av MoodLogic spillelister.
 	SV	Denna inställning styr format vid import av MoodLogic-låtlistor
-	ZH_CN	这个选项决定了引进MoodLogic播放表所使用的格式。
+	ZH_CN	这个选项决定了导入MoodLogic播放表所使用的格式。
 
 SETUP_MUSICMAGICPLAYLISTFORMAT
-	DE	MusicMagic Wiedergabelisten Format
-	EN	MusicMagic Playlist Format
-	ES	Formato de Lista de MusicMagic
-	FR	Format des listes de lecture MusicMagic
-	NL	MusicMagic playlistformaat
-	NO	MusicMagic spilleliste format
-	SV	MusicMagic låtlistsformat
-	ZH_CN	MusicMagic播放表格式
+	DE	MusicIP Wiedergabelisten Format
+	EN	MusicIP Playlist Format
+	ES	Formato de Lista de MusicIP
+	FR	Format des listes de lecture MusicIP
+	NL	MusicIP playlistformaat
+	NO	MusicIP spilleliste format
+	SV	MusicIP låtlistsformat
+	ZH_CN	MusicIP播放表格式
 
 SETUP_MUSICMAGICPLAYLISTFORMAT_DESC
-	DE	Diese Option definiert das Format, in welcher MusicMagic Wiedergabelisten importiert werden.
-	EN	This option determines the format used when importing MusicMagic playlists.
-	ES	Esta opción determina el formato utilizado cuando se importan listas de MusicMagic.
-	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture MusicMagic.
-	NL	Deze optie bepaalt het te gebruiken formaat bij het importeren van MusicMagic playlists.
-	NO	Denne innstillingen avgjør hvilket format som brukes ved import av MusicMagic spillelister.
-	SV	Denna inställning styr format vid import av MusicMagic-låtlistor
-	ZH_CN	这个选项决定了引进MusicMagic播放表所使用的格式。
+	DE	Diese Option definiert das Format, in welcher MusicIP Wiedergabelisten importiert werden.
+	EN	This option determines the format used when importing MusicIP playlists.
+	ES	Esta opción determina el formato utilizado cuando se importan listas de MusicIP.
+	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture MusicIP.
+	NL	Deze optie bepaalt het te gebruiken formaat bij het importeren van MusicIP playlists.
+	NO	Denne innstillingen avgjør hvilket format som brukes ved import av MusicIP spillelister.
+	SV	Denna inställning styr format vid import av MusicIP-låtlistor
+	ZH_CN	这个选项决定了导入MusicIP播放表所使用的格式。
 
 SETUP_MMMMIXTYPE
-	DE	MusicMagic Mix Typ
-	EN	MusicMagic Mix Type
-	ES	Tipo de mezcla de MusicMagic
-	NL	MusicMagic Mix type
-	ZH_CN	MusicMagic混音类型
+	DE	MusicIP Mix Typ
+	EN	MusicIP Mix Type
+	ES	Tipo de mezcla de MusicIP
+	NL	MusicIP Mix type
+	ZH_CN	MusicIP混音类型
 
 SETUP_MMMMIXTYPE_DESC
-	DE	Die Grösse des gewünschten MusicMagic Mixes kann über drei Grössen definiert werden: Anzahl Lieder, Länge in Minuten oder Anzahl Megabytes. (Vorgabe: Länge)
-	EN	Your MusicMagic Mix size may be set by the number of three types: Tracks, Minutes, MegaBytes (default tracks)
-	ES	La tamaño de la mezcla de MusicMagic puede establecerse utilizando 3 valores: Pistas, Minutos, MegaBytes (por defecto se utiliza Pistas)
-	NL	Je MusicMagic mixgrootte kun je instellen op drie types: liedjes, minuten, Megabytes (standaard liedjes)
-	ZH_CN	您的MusicMagic混音大小可从三种数量设置做选择：轨道、分钟、兆字节（缺省轨道）
+	DE	Die Grösse des gewünschten MusicIP Mixes kann über drei Grössen definiert werden: Anzahl Lieder, Länge in Minuten oder Anzahl Megabytes. (Vorgabe: Länge)
+	EN	Your MusicIP Mix size may be set by the number of three types: Tracks, Minutes, MegaBytes (default tracks)
+	ES	La tamaño de la mezcla de MusicIP puede establecerse utilizando 3 valores: Pistas, Minutos, MegaBytes (por defecto se utiliza Pistas)
+	NL	Je MusicIP mixgrootte kun je instellen op drie types: liedjes, minuten, Megabytes (standaard liedjes)
+	ZH_CN	您的MusicIP混音量可从三种数量设置做选择：轨道、分钟、兆字节（缺省轨道）
 
 SETUP_MMMSIZE
-	DE	MusicMagic Mix Grösse
-	EN	MusicMagic Mix Size
-	ES	Tamaño de mezcla de MusicMagic
-	NL	MusicMagic Mix grootte
-	ZH_CN	MusicMagic混音大小
+	DE	MusicIP Mix Grösse
+	EN	MusicIP Mix Size
+	ES	Tamaño de mezcla de MusicIP
+	NL	MusicIP Mix grootte
+	ZH_CN	MusicIP混音量
 
 SETUP_MMMSIZE_DESC
 	CS	Vyberte Mix Size
@@ -3520,90 +3578,96 @@ SETUP_MMMSIZE_DESC
 	EN	Choose Mix Size
 	ES	Elegir tamaño de Mezcla
 	NL	Kies mixgrootte
-	ZH_CN	请选择MusicMagic混音大小
+	ZH_CN	请选择MusicIP混音量
 
 SETUP_MMMFILTER
-	EN	MusicMagic Mix Filter
-	ES	Filtro de Mezcla de MusicMagic
-	NL	MusicMagic Mix filter
-	ZH_CN	MusicMagic混音过滤器
+	EN	MusicIP Mix Filter
+	ES	Filtro de Mezcla de MusicIP
+	NL	MusicIP Mix filter
+	ZH_CN	MusicIP混音过滤器
 
 SETUP_MMMFILTER_DESC
-	DE	In MusicMagic können Sie Filtersets unter einem Namen abspeichern. Wählen Sie hier eines dieser Sets, das auf die MusicMagic Mixes im SlimServer angewendet werden soll.
-	EN	You can create named sets of filter conditions in MusicMagic and choose from the list here to apply those filters to MusicMagic Mixes in SlimServer.
-	ES	Se puede dar un nombre a conjuntos de condiciones de filtro creadas en MusicMagic y elegir de esta lista para aplicar esos filtros a las Mezclas de MusicMagic en SlimServer.
-	NL	Je kunt filtersets met condities maken in MusicMagic. Kies vanuit de lijst hier de filtersets om toe te voegen in SlimServer voor MusicMagic mixes.
-	ZH_CN	您可以利用MusicMagic设立过滤器，并且从这表中选择应用在SlimServer内MusicMagic混音的那些过滤器。
+	DE	In MusicIP können Sie Filtersets unter einem Namen abspeichern. Wählen Sie hier eines dieser Sets, das auf die MusicIP Mixes im SlimServer angewendet werden soll.
+	EN	You can create named sets of filter conditions in MusicIP and choose from the list here to apply those filters to MusicIP Mixes in SlimServer.
+	ES	Se puede dar un nombre a conjuntos de condiciones de filtro creadas en MusicIP y elegir de esta lista para aplicar esos filtros a las Mezclas de MusicIP en SlimServer.
+	NL	Je kunt filtersets met condities maken in MusicIP. Kies vanuit de lijst hier de filtersets om toe te voegen in SlimServer voor MusicIP mixes.
+	ZH_CN	您可以利用MusicIP设立过滤器，并且从这表中选择应用在SlimServer内MusicIP混音的那些过滤器。
 
 SETUP_MMMMIXGENRE
-	DE	MusicMagic Mix Musikstil
-	EN	MusicMagic Mix Genre
-	ES	Género de mezcla de MusicMagic
-	NL	MusicMagic mix genre
+	DE	MusicIP Mix Musikstil
+	EN	MusicIP Mix Genre
+	ES	Género de mezcla de MusicIP
+	NL	MusicIP mix genre
+	ZH_CN	MusicIP混音曲风
 
 SETUP_MMMMIXGENRE_DESC
 	DE	Beschränken Sie den Mix auf die Musikstile des Seeds (Vorgabe: nein)
 	EN	Restrict mix to the genre of the seed (Default: no)
 	ES	Restringir la mezcla al género de la canción inicial (Por defecto: no)
 	NL	Beperk mix tot het genre van bron (standaard: Nee)
+	ZH_CN	将混音限制于种子的曲风（确省：不）
 
 SETUP_MMMREJECTTYPE
-	DE	MusicMagic Ablehnungsart
-	EN	MusicMagic Reject Type
-	ES	Tipo de Rechazo en MusicMagic
-	NL	MusicMagic afkeurtype
+	DE	MusicIP Ablehnungsart
+	EN	MusicIP Reject Type
+	ES	Tipo de Rechazo en MusicIP
+	NL	MusicIP afkeurtype
+	ZH_CN	MusicIP拒绝种类
 
 SETUP_MMMREJECTTYPE_DESC
 	DE	Definieren Sie die Einheit für die Ablehnungsgrösse. (Vorgabe: Lieder)
 	EN	Set the units for reject size. (Default: tracks)
 	ES	Establecer las unidades para el tamaño del rechazo. (Por Defecto: canciones/tracks)
 	NL	Stel de eenheid in voor de afkeurgrootte (standaard: liedjes).
+	ZH_CN	配置拒绝量单位（确省：音轨）
 
 SETUP_MMMREJECTSIZE
-	DE	MusicMagic Ablehnungsgrösse
-	EN	MusicMagic Reject Size.
-	ES	Tamaño de Rechazo de MusicMagic
+	DE	MusicIP Ablehnungsgrösse
+	EN	MusicIP Reject Size.
+	ES	Tamaño de Rechazo de MusicIP
 	NL	MusicMagix afkeurgrootte.
+	ZH_CN	MusicIP拒绝量
 
 SETUP_MMMREJECTSIZE_DESC
 	DE	Definieren Sie die Anzahl an Einträgen, die übersprungen werden sollen, bevor ein Typ wiederholt wird.
 	EN	Set the number of items to skip before repeating a type. (Default: 12)
 	ES	Establecer el número de items a saltearse antes de repetir un tipo. (Por defecto: 12)
 	NL	Stel het aantal items in dat overgeslagen wordt voordat een type herhaald wordt (standaard 12).
+	ZH_CN	配置重播一类别前跳过的数量（确省:12)
 
 SETUP_MMSHOST
-	EN	MusicMagic HTTP Host
-	ES	Host HTTP de MusicMagic
-	NL	MusicMagic HTTP host
-	ZH_CN	MusicMagic HTTP主机
+	EN	MusicIP HTTP Host
+	ES	Host HTTP de MusicIP
+	NL	MusicIP HTTP host
+	ZH_CN	MusicIP HTTP主机
 
 SETUP_MMSHOST_DESC
-	DE	Wählen Sie den Rechnernamen oder die IP Adresse des MusicMagic Servers
-	EN	Choose the hostname or ip of the remote or local MusicMagic server
-	ES	Elegir el nombre de host o dirección ip del servidor  MusicMagic, local o remoto
-	NL	Kies een hostnaam of IP adres van de lokale MusicMagic server of die op afstand.
-	ZH_CN	请选择主机名或远程或本地的MusicMagic伺服器的IP地址
+	DE	Wählen Sie den Rechnernamen oder die IP Adresse des MusicIP Servers
+	EN	Choose the hostname or ip of the remote or local MusicIP server
+	ES	Elegir el nombre de host o dirección ip del servidor  MusicIP, local o remoto
+	NL	Kies een hostnaam of IP adres van de lokale MusicIP server of die op afstand.
+	ZH_CN	请选择主机名或远程或本地的MusicIP服务器的IP地址
 
 SETUP_MMSREMOTEROOT
-	DE	MusicMagic Hauptverzeichnis
-	EN	MusicMagic Remote Root
-	ES	Raíz (Root) Remota de MusicMagic
-	NL	MusicMagic root op afstand
-	ZH_CN	MusicMagic远程根
+	DE	MusicIP Hauptverzeichnis
+	EN	MusicIP Remote Root
+	ES	Raíz (Root) Remota de MusicIP
+	NL	MusicIP root op afstand
+	ZH_CN	MusicIP远程根
 
 SETUP_MMSREMOTEROOT_DESC
-	DE	Geben Sie das Hauptverzeichnis der Musiksammlung auf dem entfernten MusicMagic Server an. Dies wird verwendet, um die Pfade des entfernten Rechners auf die lokalen abzubilden.
-	EN	Enter the root filesystem of the music libary on the remote MusicMagic server.  This is used to convert remote paths to local paths.
-	ES	Ingresar el filesystem raiz de la colección musical en el servidor remoto de MusicMagic. Esto se utiliza para convertir paths remotos en paths locales.
-	NL	Voer het root bestandssysteem in van de muziek database in de MusicMagic server. Dit wordt gebruikt om de bestandspaden op afstand te converteren naar de lokale bestandspaden.
-	ZH_CN	请输入远程MusicMagic伺服器音乐库的根部文件系统。这是用来将转换远程路经转为本地路径。
+	DE	Geben Sie das Hauptverzeichnis der Musiksammlung auf dem entfernten MusicIP Server an. Dies wird verwendet, um die Pfade des entfernten Rechners auf die lokalen abzubilden.
+	EN	Enter the root filesystem of the music libary on the remote MusicIP server.  This is used to convert remote paths to local paths.
+	ES	Ingresar el filesystem raiz de la colección musical en el servidor remoto de MusicIP. Esto se utiliza para convertir paths remotos en paths locales.
+	NL	Voer het root bestandssysteem in van de muziek database in de MusicIP server. Dit wordt gebruikt om de bestandspaden op afstand te converteren naar de lokale bestandspaden.
+	ZH_CN	请输入远程MusicIP服务器音乐库的根部文件系统。这是用来将转换远程路经转为本地路径。
 
 SETUP_MMMSTYLE
-	DE	MusicMagic Mix Stil
-	EN	MusicMagic Mix Style
-	ES	Estilo de mezcla de MusicMagic
-	NL	MusicMagic Mix stijl
-	ZH_CN	MusicMagic混音风格
+	DE	MusicIP Mix Stil
+	EN	MusicIP Mix Style
+	ES	Estilo de mezcla de MusicIP
+	NL	MusicIP Mix stijl
+	ZH_CN	MusicIP混音风格
 
 SETUP_MMMSTYLE_DESC
 	DE	Wie ähnlich muss der Stil des Interpreten sein (0=nicht berücksichtigen (Vorgabe), 200=sehr ähnlich)
@@ -3613,11 +3677,11 @@ SETUP_MMMSTYLE_DESC
 	ZH_CN	有多接近艺人的风格 （0=不理睬（缺省），200=严格）
 
 SETUP_MMMVARIETY
-	DE	MusicMagic Mix Vielseitigkeit
-	EN	MusicMagic Mix Variety
-	ES	Variedad de Mezcla de MusicMagic
-	NL	MusicMagic Mix gevarieerdheid
-	ZH_CN	MusicMagic混音品种变化
+	DE	MusicIP Mix Vielseitigkeit
+	EN	MusicIP Mix Variety
+	ES	Variedad de Mezcla de MusicIP
+	NL	MusicIP Mix gevarieerdheid
+	ZH_CN	MusicIP混音品种变化
 
 SETUP_MMMVARIETY_DESC
 	DE	Wie vielseitig soll der Mix sein (0 = weniger (Vorgabe), 9 = mehr)
@@ -3627,31 +3691,31 @@ SETUP_MMMVARIETY_DESC
 	ZH_CN	混音的变化程度 （0=少（缺省），9=多）
 
 MUSICMAGIC_MIXING
-	EN	MusicMagic Mixing
-	ES	Mezcla MusicMagic
-	NL	MusicMagic mixing
-	ZH_CN	MusicMagic混音
+	EN	MusicIP Mixing
+	ES	Mezcla MusicIP
+	NL	MusicIP mixing
+	ZH_CN	MusicIP混音
 
 SETUP_MMMPLAYERSETTINGS
-	DE	MusicMagic Einstellungen für alle Mixe
-	EN	Musicmagic Player Settings for Each Mix
-	ES	Configuración de Reproductor MusicMagic para Cada Mezcla
-	NL	MusicMagic speler instellingen voor elke mix
-	ZH_CN	MusicMagic播放机上各个混音的设置
+	DE	MusicIP Einstellungen für alle Mixe
+	EN	MusicIP Player Settings for Each Mix
+	ES	Configuración de Reproductor MusicIP para Cada Mezcla
+	NL	MusicIP speler instellingen voor elke mix
+	ZH_CN	MusicIP播放机上各个混音的设置
 
 SETUP_MMMPLAYERSETTINGS_DESC
-	DE	Sie können jedem Player ermöglichen, vor dem Generieren eines Mixes die MusicMagic Mix Einstellungen zu bearbeiten. Die Player spezifischen Einstellungen haben gegenüber den Server weiten Einstellungen Vorrang und bleiben aktiv, bis sie vom Player her wieder verändert werden. Falls Sie lieber ohne Umwege einen Mix basierend auf den Server-Einstellungen erstellen wollen, dann deaktivieren Sie diese Option.
-	EN	You may choose to give each player access to the musicmagic mix settings before generating a mix.  Any player-chosen settings will override the server settings and remain, until they are changed again from the player. If you wish to skip directly to creating a mix, using existing player/server settings only, then choose no.
-	ES	Se puede elegir el dar a cada reproductor acceso a la configuración de mezcla de MusicMagic antes de generar una mezcla. Cualquier configuración elegida desde un reproductor tendrá prioridad sobre la configuración en el servidor y se conservará hasta que sea modificada nuevamente desde el reproductor. Si se quiere saltar directamente a la creación de una mezcla, usando únicamente la configuración existente del reproductor/servidor, entonces elegir no.
+	DE	Sie können jedem Player ermöglichen, vor dem Generieren eines Mixes die MusicIP Mix Einstellungen zu bearbeiten. Die Player spezifischen Einstellungen haben gegenüber den Server weiten Einstellungen Vorrang und bleiben aktiv, bis sie vom Player her wieder verändert werden. Falls Sie lieber ohne Umwege einen Mix basierend auf den Server-Einstellungen erstellen wollen, dann deaktivieren Sie diese Option.
+	EN	You may choose to give each player access to the MusicIP mix settings before generating a mix.  Any player-chosen settings will override the server settings and remain, until they are changed again from the player. If you wish to skip directly to creating a mix, using existing player/server settings only, then choose no.
+	ES	Se puede elegir el dar a cada reproductor acceso a la configuración de mezcla de MusicIP antes de generar una mezcla. Cualquier configuración elegida desde un reproductor tendrá prioridad sobre la configuración en el servidor y se conservará hasta que sea modificada nuevamente desde el reproductor. Si se quiere saltar directamente a la creación de una mezcla, usando únicamente la configuración existente del reproductor/servidor, entonces elegir no.
 	NL	Je kunt ervoor kiezen om elke speler toegang te geven voor het generen van een mix. Elke spelerinstelling zal voorgaan boven serverinstellingen en blijven totdat ze opnieuw gewijzigd zijn in de speler. Als dit je wilt overslaan om direct een mix te maken met de huidige speler/server instellingen, kies dan Nee.
-	ZH_CN	您可以选择在生成混音之前让每一个播放机都拥有访问MusicMagic混音设置的特权。任何播放机上的特定设置将藐视伺服器上的设置，直到他们再由播放机上被修改。如果您希望跳过并单以现有的播放机/伺服器设置生成混音，请选择「不」。
+	ZH_CN	您可以选择在生成混音之前让每一个播放机都拥有访问MusicIP混音设置的特权。任何播放机上的特定设置将藐视服务器上的设置，直到他们再由播放机上被修改。如果您希望跳过并单以现有的播放机/伺服器设置生成混音，请选择「不」。
 
 SETUP_MMMSETTINGS
-	DE	MusicMagic Mix Einstellungen
-	EN	MusicMagic Mix Settings
-	ES	Configuración de Mezcla de MusicMagic
-	NL	MusicMagic Mix instellingen
-	ZH_CN	MusicMagic混音设置
+	DE	MusicIP Mix Einstellungen
+	EN	MusicIP Mix Settings
+	ES	Configuración de Mezcla de MusicIP
+	NL	MusicIP Mix instellingen
+	ZH_CN	MusicIP混音设置
 
 MUSICMAGIC_MIXRIGHT
 	DE	(Zum Mixen RECHTS drücken)
@@ -3705,7 +3769,7 @@ MOODLOGIC
 	EN	MoodLogic
 
 MUSICMAGIC
-	EN	MusicMagic
+	EN	MusicIP
 
 SETUP_MOODLOGICPLAYLISTPREFIX_CHOOSE
 	DE	Prefix:
@@ -3768,18 +3832,18 @@ SETUP_MOODLOGICPLAYLISTSUFFIX
 	ZH_CN	MoodLogic播放表词尾被改为：
 
 SETUP_MUSICMAGICPLAYLISTPREFIX
-	DE	Der Prefix für MusicMagic Wiedergabelisten wurde geändert auf:
-	EN	MusicMagic playlist prefix changed to:
-	ES	Prefijo de listas de MusicMagic cambiado a:
-	NL	MusicMagic playlist voorvoegsel wijzigt in:
-	ZH_CN	MusicMagic播放表前缀被改为：
+	DE	Der Prefix für MusicIP Wiedergabelisten wurde geändert auf:
+	EN	MusicIP playlist prefix changed to:
+	ES	Prefijo de listas de MusicIP cambiado a:
+	NL	MusicIP playlist voorvoegsel wijzigt in:
+	ZH_CN	MusicIP播放表前缀被改为：
 
 SETUP_MUSICMAGICPLAYLISTSUFFIX
-	DE	Der Suffix für MusicMagic Wiedergabelisten wurde geändert auf:
-	EN	MusicMagic playlist suffix changed to:
-	ES	Sufijo de listas de MusicMagic cambiado a:
-	NL	MusicMagic playlist achtervoegsel wijzigt in:
-	ZH_CN	MusicMagic播放表词尾被改为：
+	DE	Der Suffix für MusicIP Wiedergabelisten wurde geändert auf:
+	EN	MusicIP playlist suffix changed to:
+	ES	Sufijo de listas de MusicIP cambiado a:
+	NL	MusicIP playlist achtervoegsel wijzigt in:
+	ZH_CN	MusicIP播放表词尾被改为：
 
 SETUP_ITUNESPLAYLISTPREFIX
 	DE	Der Prefix für iTunes Wiedergabelisten wurde geändert auf:
@@ -3807,7 +3871,7 @@ SETUP_SHOWYEAR
 	IT	Visualizza Anno assieme agli Album
 	JA	アルバム年を表示する
 	NL	Toon jaar bij albums
-	ZH_CN	年份与乐谱帖一同显示
+	ZH_CN	年份与专辑一同显示
 
 SETUP_SHOWYEAR_DESC
 	CS	Můžete vybrat, zda se mají při procházení podle alb nebo obalů zobrazovat spolu s názvy alb i roky vydání. Pokud tuto volbu aktivujete bude rok zobrazen za názvem alba.
@@ -3819,7 +3883,7 @@ SETUP_SHOWYEAR_DESC
 	IT	Puoi scegliere di visualizzare l'anno quando scorri per album o copertine. Quando abilitato, l'anno dell'album verra' mostrato di fianco al titolo dell'album.
 	JA	アルバムまたはアートワークで検索する時に、アルバム年を表示することができます。アルバムタイトルの横に表示されます。
 	NL	Je kunt kiezen om het jaar te laten zien bij bekijken op albums of hoesafbeeldingen. Indien actief zal het jaar getoond worden naast de albumtitel.
-	ZH_CN	您可以选择通过浏览乐谱帖或浏览乐谱帖图象时是否一同显示乐谱帖的年份。当您选择一同显示时，年份信息将显示在乐谱帖标题旁边。
+	ZH_CN	您可以选择通过浏览专辑或浏览专辑图象时是否一同显示专辑的年份。当您选择一同显示时，年份信息将显示在专辑标题旁边。
 
 SETUP_SHOWARTIST
 	DE	Interpreten beim Durchsuchen der Alben anzeigen
@@ -3829,7 +3893,7 @@ SETUP_SHOWARTIST
 	HE	הצגת שם האומן לצד שם האלבום
 	IT	Visualizza Artista assieme agli Album
 	NL	Toon artiestnaam bij albums
-	ZH_CN	艺人与乐谱帖一同显示
+	ZH_CN	艺人与专辑一同显示
 
 SETUP_SHOWARTIST_DESC
 	DE	Sie können den Interpreten eines Albums anzeigen lassen, wenn Sie nach Album nachschlagen. Er wird neben dem Albumtitel angezeigt.
@@ -3839,7 +3903,7 @@ SETUP_SHOWARTIST_DESC
 	HE	בחר האם להציג שם אמן לצד שם האלבום
 	IT	Puoi scegliere di visualizzare l'artista quando scorri per album. Quando abilitato, l'artista dell'album verra' mostrato di fianco al titolo dell'album.
 	NL	Je kunt kiezen om de artiestnaam te laten zien bij "Bekijk op album". Indien actief zullen de artiestnamen getoond worden naast de albumtitel.
-	ZH_CN	您可以选择通过浏览乐谱帖时是否一同显示有关的艺人。当您选择一同显示时，有关艺人将显示在乐谱帖标题旁边。
+	ZH_CN	您可以选择通过浏览专辑时是否一同显示有关的艺人。当您选择一同显示时，有关艺人将显示在专辑标题旁边。
 
 SETUP_GUESSFILEFORMATS
 	DE	Tag Format erraten
@@ -3859,6 +3923,7 @@ SETUP_GUESSFILEFORMATS_CHANGED
 	EN	All files without tags will be processed this way
 	ES	Todos los archivos sin tags serán procesados de esta forma.
 	NL	Alle bestanden zonder tags zullen op deze manier verwerkt worden
+	ZH_CN	所有无标签文件将会如此处理
 
 SETUP_GROUP_GUESSFILEFORMATS_DESC
 	CS	Pro formáty souborl, které nemají smysluplné tagy, může se pokusit server nahradit tyko tagy pomocí názvu souboru a jeho cesty. Použitím stejných promněnných jako ve vobe formát skladeb je možné vytvořit předpis pro konverzi názvu souboru do jména tak aby server vytvářel pokud možno dobrou náhražku tagů. priorita se volí pořadím níže. První platný vzorec bude použit.
@@ -3872,7 +3937,7 @@ SETUP_GROUP_GUESSFILEFORMATS_DESC
 	NL	Voor bestanden die geen juiste taginformatie hebben kan de server de tags raden door de folder- en bestandsnamen te gebruiken. Door dezelfde variabelen als bij "Titelformaat" te gebruiken kun je een patroon maken dat correspondeert met de bestandsnaamconventie die je gebruikt. Met dit patroon kan de server raden wat de tags moeten zijn. De prioriteit is in de volgorde hieronder. Het eerste correcte patroon wordt gebruikt.
 	NO	For filer som ikke har forståelig metadata tagger kan serveren gjette ved å bruke fil- og folderinformasjon. Ved å bruke samme variabler som for låt-format kan du skape et mønster som passer måten filene dine er navngitt. Listen er i prioritert rekkefølge. Det første mønster som passer blir brukt.
 	SV	För filer som inte har rimliga metadata (taggar), kan servern gissa genom att använda fil- och mappinformation. Genom att använda samma variabler som för Låt-format kan du skapa mönster som passar det sätt dina filer är namngivna. Prioritet enligt listan nedan; första mönster-matchning används.
-	ZH_CN	那些没有合理标签的文件,您可以让伺服器凭着使用路径和文件名为基础进行标签猜测。您可以使用和标题格式一样的变量来建立匹配您的文件命名惯例的样式，以方便伺服器对标签的猜测。优先权将取决于下列的排序。第一个被匹配的样式将被接受使用。
+	ZH_CN	那些没有合理标签的文件,您可以让服务器凭着使用路径和文件名为基础进行标签猜测。您可以使用和标题格式一样的变量来建立匹配您的文件命名惯例的样式，以方便服务器对标签的猜测。优先权将取决于下列的排序。第一个被匹配的样式将被接受使用。
 
 SETUP_IRMAP
 	CS	Funkce tlačítek dálkového ovládání
@@ -3900,7 +3965,7 @@ SETUP_IRMAP_DESC
 	NO	Du kan velge mellom ulike funksjonsgrupper. Disse gruppene angir hva en spesiell knapp på fjernkontrollen har for funksjon. "Standard" grupper en den som er beskrevet i dokumentasjonen.
 	PT	Pode escolher entre vários mapas de botões do seu controlo remoto. Estes mapas associam botões do controlo remoto a determinadas funções. O mapa "Padrão" é o que está descrito na documentação.
 	SV	Du kan välja mellan olika funktionsgrupper. Dessa grupper anger vad en speciell knapp på fjärrkontroller har för speciell funktion. "Standard"-gruppen är den som beskrivs i manualen.
-	ZH_CN	您可以从中选择遥控键的功能组合。《标准》设置的描述可在文献中找到。
+	ZH_CN	您可以从中选择遥控键的功能组合。《标准》设置的描述可在手册中找到。
 
 SETUP_IRSETLIST_OK
 	CS	Dálkové ovladače:
@@ -3929,7 +3994,7 @@ SETUP_IRSETLIST_CHANGE
 	NO	Innstillingen for %s er endret.
 	PT	A opção para %s mudou.
 	SV	Inställningen för %s är ändrad.
-	ZH_CN	%s设置已被更改。
+	ZH_CN	%s设置已更改。
 
 SETUP_PLUGINLIST_OK
 	CS	Pluginy:
@@ -3956,7 +4021,7 @@ SETUP_PLUGINLIST_CHANGE
 	NO	Innstilling for %s er endret.
 	PT	A opção para %s mudou.
 	SV	Inställning for %s är ändrad.
-	ZH_CN	%s设置已被更改。
+	ZH_CN	%s设置已更改。
 
 SETUP_PASSWORD_CHANGED
 	DE	Das Passwort wurde geändert.
@@ -3970,7 +4035,7 @@ SETUP_PASSWORD_CHANGED
 	NO	Passordet har blitt endret.
 	PT	A palavra chave foi alterada.
 	SV	Lösenordet har ändrats.
-	ZH_CN	密码已被更改。
+	ZH_CN	密码已更改。
 
 # Server Settings
 SETUP_LANGUAGE
@@ -4049,7 +4114,7 @@ SETUP_AUDIODIR_DESC
 	JA	SlimServerが検索するフォルダーを指定することができます。iTunesまたはムードロジックの情報を利用する場合はブランクで構いません。
 	NL	Je kunt de folder specificeren waarin de muziekbestanden staan die SlimServer scant en toevoegt aan de muziekcollectie. Je kunt dit veld leeg laten als je muziek importeert vanuit iTunes of Moodlogic.
 	SV	Du kan ange en mapp som SlimServer kommer scanna för att lägga till musik till ditt bibliotek. Ange läget nedan. Om du importerar MoodLogic eller iTunes behöver ingenting anges.
-	ZH_CN	您可以指定SlimServer所扫描和用来增加您的音乐库的音乐文件夹。请在以下的资料栏内输入此文件夹的完整路径。如果您从iTunes或MoodLogic引进您音乐库信息，您可以让此资料栏空白。
+	ZH_CN	您可以指定SlimServer所扫描和用来增加您的音乐库的音乐文件夹。请在以下的资料栏内输入此文件夹的完整路径。如果您从iTunes或MoodLogic导入您音乐库信息，您可以让此资料栏空白。
 
 SETUP_AUDIODIR_OK
 	CS	SlimServer použije cestu k složce s hudebním archivem:
@@ -4065,7 +4130,7 @@ SETUP_AUDIODIR_OK
 	NO	Ok, bruker:
 	PT	O servidor irã usar a seguinte directoria para os ficheiros áudio
 	SV	Använder nu följande sökväg till dina MP3-filer:
-	ZH_CN	伺服器将使用这路径访问您的音乐文件：
+	ZH_CN	服务器将使用这路径访问您的音乐文件：
 
 SETUP_PLAYLISTDIR
 	CS	Složka s playlisty
@@ -4097,7 +4162,7 @@ SETUP_ARTFOLDER
 	NL	Hoesafbeeldingen folder
 	NO	Folder for platecover
 	SV	Grafikmapp
-	ZH_CN	图象文件夹
+	ZH_CN	封面图象文件夹
 
 SETUP_ARTFOLDER_DESC
 	CS	Můžete zvolit způsob ukládání obrázků obalů alb do zvláštního adresáře. Tuto volbu aktivujete použitím názvů souborů výše. Zadejte lokaci, kam se mají obrázky obalů ukládat. I přes použití této volby bude server stále hledat obrázky alb v adresáři s hudebními soubory, pokud nenajde příslušný obrázek v zadaném adresáři obalů.
@@ -4112,7 +4177,7 @@ SETUP_ARTFOLDER_DESC
 	NL	Je kunt ervoor kiezen om alle hoesafbeeldingen in één directory te zetten. Dit werkt op dezelfde manier als met de variabele bestandsnaam optie.  Typ hier de locatie van de hoesafbeeldingen. Onafhankelijk van wat je hier invult zal SlimServer ook nog kijken in de folder waar de audiobestanden staan als geen hoesje gevonden is in de hoesafbeeldingen folder.
 	NO	Du kan velge å lagre alle platecover i en folder, ved å benytte innstillingen over. Skriv inn adressen til Grafikk folderen her. Serveren vil fremdeles lete etter platecover i samme folder som lydfilen ligger i om ikke det finnes et treff i Grafikk folderen.
 	SV	Du kan välja att lagra all grafik i en enda mapp genom att använda valet för variabla filnamn enligt ovan. Ange sökvägen till Grafikmappen här. Servern kommer ändå att leta efter grafik på samma plats som ljudfilerna om den inte hittar nåhon grafik som passar i Grafikmappen.
-	ZH_CN	您可以利用以上的文件名变量选项，把所有的图象集中存放在一个文件夹内。请在这里输入图象文件所在地点。如果伺服器未能在所指定的图象文件夹中找到匹配图象，便会在各个音像文件所属的文件夹中寻找匹配的图象。
+	ZH_CN	您可以利用以上的文件名变量选项，把所有的图象集中存放在一个文件夹内。请在这里输入图象文件所在地点。如果服务器未能在所指定的封面图象文件夹中找到匹配图象，便会在各个音像文件所属的文件夹中寻找匹配的图象。
 
 SETUP_BAD_FILE
 	CS	Chyba: "%s" není platný formát souboru. Zkuste to znovu.
@@ -4154,7 +4219,7 @@ SETUP_OK_USING
 	NO	Ok, bruker:
 	PT	O servidor irá usar a seguinte directoria para os ficheiros de áudio
 	SV	Ok, använder:
-	ZH_CN	伺服器将使用这路径访问您的音乐文件：
+	ZH_CN	服务器将使用这路径访问您的音乐文件：
 
 SETUP_PLAYLISTDIR_OK
 	CS	Server bude nyní používat tento adresář pro ukládání playlistů:
@@ -4169,7 +4234,7 @@ SETUP_PLAYLISTDIR_OK
 	NO	Bruker nå følgende folder for lagrede spillelister:
 	PT	O servidor irã usar a seguinte directoria para os ficheiros de playlist
 	SV	Använder nu följande mapp för sparade spellistor:
-	ZH_CN	伺服器将使用这路径来保存您的播放表：
+	ZH_CN	服务器将使用这路径来保存您的播放表：
 
 SETUP_PLAYLISTDIR_DESC
 	CS	Zadejte cestu k adresáři, obsahující uložené playlisty. (Můžete nechat prázdné, pokud si nepřejete svoje playlisty ukládat.)
@@ -4186,7 +4251,7 @@ SETUP_PLAYLISTDIR_DESC
 	NO	Adresse til folderen hvor dine lagrede spillelister legges. (Du kan la feltet stå tomt om du ikke vil lagre spillelister)
 	PT	A directoria onde serão guardadas as playlists. (Pode deixar vazio se não quiser guardar playlists)
 	SV	Sökväg till mappen där dina sparade spellistor lagras.<br>(Du kan lämna detta fält tomt om du inte vill spara spellistor.)
-	ZH_CN	您可以指定一个作为保存播放表的文件夹。（如果您不打算保存任何播放表，请留空。）
+	ZH_CN	您可以指定一个作为保存播放表的文件夹。（如果您不打算保存任何播放表，请腾空。）
 
 SETUP_RESCAN
 	CS	Aktualizovat informace z hudebního archivu
@@ -4238,7 +4303,7 @@ SETUP_WIPEDB
 	HE	סרוק הכל מחדש
 	IT	Cancella la libreria musicale e rianalizza tutto.
 	NL	Leeg muziekdatabase en scan alles opnieuw
-	ZH_CN	重新扫描前把现有的音乐库删除
+	ZH_CN	把现有的音乐库删除然后重新进行扫描
 
 SETUP_STANDARDRESCAN
 	DE	Nach neuen und veränderten Musikstücken suchen
@@ -4249,6 +4314,7 @@ SETUP_STANDARDRESCAN
 	HE	מצא מוזיקה חדשה
 	IT	Cerca la musica nuova e modificata.
 	NL	Zoek naar nieuwe en gewijzigde muziek
+	ZH_CN	扫描时只寻找新的或已更改的音乐
 
 SETUP_PLAYLISTRESCAN
 	DE	Nur nach Wiedergabelisten suchen
@@ -4259,7 +4325,7 @@ SETUP_PLAYLISTRESCAN
 	HE	סרוק רשימות השמעה בלבד
 	IT	Rianalisi delle sole liste di esecuzione
 	NL	Scan alleen playlists opnieuw
-	ZH_CN	只重新扫描播放表而已。
+	ZH_CN	重新扫描播放表而已。
 
 RESCANNING
 	CS	Server právě aktualizuje informace z hudebního archivu.
@@ -4276,7 +4342,7 @@ RESCANNING
 	NO	Serveren scanner gjennom din musikkfolder.
 	PT	O servidor está a analisar o arquivo de músicas.
 	SV	Servern läser nu om din musikbibliotek.
-	ZH_CN	伺服器正在重新扫描您的音乐库。
+	ZH_CN	服务器正在重新扫描您的音乐库。
 
 RESCANNING_SHORT
 	DE	Durchsuche Musiksammlung...
@@ -4299,7 +4365,7 @@ USING_ITUNES
 	JA	サーバーはiTunesの情報をインポートします。
 	NL	De server zal iTunes informatie downloaden.
 	SV	SlimServer kommer importera iTunes-information
-	ZH_CN	伺服器将引进iTunes信息。
+	ZH_CN	服务器将导入iTunes信息。
 
 NOT_USING_ITUNES
 	DE	Der Server wird keine Informationen aus iTunes mehr importieren.
@@ -4311,7 +4377,7 @@ NOT_USING_ITUNES
 	JA	サーバーはiTunesの情報をインポートしません。
 	NL	De server zal niet langer iTunes informatie importeren.
 	SV	SlimServer kommer inte att importera iTunes-information längre.
-	ZH_CN	伺服器将不再引进iTunes信息。
+	ZH_CN	服务器将不再导入iTunes信息。
 
 USE_ITUNES
 	CS	Použít iTunes
@@ -4364,7 +4430,7 @@ SETUP_ITUNES_OK
 	JA	サーバーはiTunesの情報をインポートします。
 	NL	De server zal iTunes informatie importeren.
 	SV	SlimServer kommer att importera iTunes-information.
-	ZH_CN	伺服器将引进iTunes信息。
+	ZH_CN	服务器将导入iTunes信息。
 
 SETUP_ITUNES_DESC
 	DE	Der SlimServer kann ihre iTunes-Musiksammlung und -Wiedergabeliste verwenden. Alle Änderungen, die Sie in iTunes vornehmen, spiegeln sich auf dem Player wieder. Aktivieren Sie die folgende Checkbox, falls Sie die Informationen aus iTunes verwenden wollen.
@@ -4375,7 +4441,7 @@ SETUP_ITUNES_DESC
 	JA	SlimServerはiTunesの音楽ライブラリーとプレイリストを使用することができます。iTunesにおける変更はプレーヤーに反映されます。iTunesの音楽ライブラリー情報を利用するには、以下の項目をチェックしてください。
 	NL	SlimServer kan gebruik maken van je iTunes muziekcollectie. Elke wijziging die je maakt in iTunes zal doorwerken naar je speler. Selecteer de box hieronder als je de iTunes muziekcollectie informatie wilt importeren.
 	SV	SlimServer kan använda ditt iTunes-bibliotek och -låtlistor. Alla förändringar som görs via iTunes kommer att få genomslag i din spelare. Klicka i rutan nedan om du vill importera iTunes-informationen.
-	ZH_CN	SlimServer可以使用您的iTunes音乐库和播放表。您在iTunes所作的所有变动都会显示在您的播放机。如果要引进您的iTunes音乐库信息，请点击如下的复选框。
+	ZH_CN	SlimServer可以使用您的iTunes音乐库和播放表。您在iTunes所作的所有变动都会显示在您的播放机。如果要导入您的iTunes音乐库信息，请点击如下的复选框。
 
 USE_MOODLOGIC
 	CS	Použít MoodLogic
@@ -4410,32 +4476,32 @@ DONT_USE_MOODLOGIC
 	ZH_CN	不使用Moodlogic
 
 USE_MUSICMAGIC
-	CS	Použít MusicMagic
-	DE	MusicMagic verwenden
-	DA	Anvend MusicMagic
-	EN	Use MusicMagic
-	ES	Usar MusicMagic
-	FI	Käytä MusicMagiciä
-	FR	Utiliser MusicMagic
-	NL	MusicMagic inschakelen
-	NO	Bruk MusicMagic
-	PT	Usar MusicMagic
-	SV	Använd MusicMagic
-	ZH_CN	使用MusicMagic
+	CS	Použít MusicIP
+	DE	MusicIP verwenden
+	DA	Anvend MusicIP
+	EN	Use MusicIP
+	ES	Usar MusicIP
+	FI	Käytä MusicIPiä
+	FR	Utiliser MusicIP
+	NL	MusicIP inschakelen
+	NO	Bruk MusicIP
+	PT	Usar MusicIP
+	SV	Använd MusicIP
+	ZH_CN	使用MusicIP
 
 DONT_USE_MUSICMAGIC
-	CS	Nepoužívat MusicMagic
-	DE	MusicMagic nicht verwenden
-	DA	Anvend ikke MusicMagic
-	EN	Don't use MusicMagic
-	ES	No usar MusicMagic
-	FR	Ne pas utiliser MusicMagic
-	IT	Non usare MusicMagic
-	NL	Gebruik geen MusicMagic
-	NO	Ikke bruk MusicMagic
-	PT	Não usar MusicMagic
-	SV	Använd inte MusicMagic
-	ZH_CN	不使用MusicMagic
+	CS	Nepoužívat MusicIP
+	DE	MusicIP nicht verwenden
+	DA	Anvend ikke MusicIP
+	EN	Don't use MusicIP
+	ES	No usar MusicIP
+	FR	Ne pas utiliser MusicIP
+	IT	Non usare MusicIP
+	NL	Gebruik geen MusicIP
+	NO	Ikke bruk MusicIP
+	PT	Não usar MusicIP
+	SV	Använd inte MusicIP
+	ZH_CN	不使用MusicIP
 
 SETUP_MOODLOGIC
 	DE	MoodLogic
@@ -4450,16 +4516,16 @@ SETUP_MOODLOGIC
 	ZH_CN	MoodLogic
 
 SETUP_MUSICMAGIC
-	EN	MusicMagic
-	ES	MusicMagic
-	ZH_CN	MusicMagic
+	EN	MusicIP
+	ES	MusicIP
+	ZH_CN	MusicIP
 
 SETUP_MUSICMAGIC_DESC
-	DE	SlimServer kann MusicMagic als Quelle für Titel- und Musikstilinformationen verwenden. Das Programm erlaubt es zudem, Mixe in Abhängigkeit von Musikstil, Interpret oder Charakteristik der Musikstücke zu erstellen. Kreuzen Sie die Checkbox unten an, um MusicMagics Informationen zu importieren.
-	EN	SlimServer can use your MusicMagic program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level. Check the box below to import your MusicMagic Library information.
-	ES	El SlimServer puede utilizar el programa MusicMagic como fuente para obtener la información de género y título. Además se pueden generar mezclas instantáneas a nivel de género, artista y canción. Marcar la opción debajo para importar la información de la colección de MusicMagic.
+	DE	SlimServer kann MusicIP als Quelle für Titel- und Musikstilinformationen verwenden. Das Programm erlaubt es zudem, Mixe in Abhängigkeit von Musikstil, Interpret oder Charakteristik der Musikstücke zu erstellen. Kreuzen Sie die Checkbox unten an, um MusicIPs Informationen zu importieren.
+	EN	SlimServer can use your MusicIP program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level. Check the box below to import your MusicIP Library information.
+	ES	El SlimServer puede utilizar el programa MusicIP como fuente para obtener la información de género y título. Además se pueden generar mezclas instantáneas a nivel de género, artista y canción. Marcar la opción debajo para importar la información de la colección de MusicIP.
 	NL	SlimServer kan het MusicMatch programma gebruiken als bron voor titel en genre informatie. Ook kun je instant mixen op genre, artiest en liedje niveau. Markeer het selectievakje hieronder om je MusicMatch muziekcollectie te importeren.
-	ZH_CN	SlimServer可以使用您的MusicMagic节目表作为标题和音乐风格信息的来源。您也能以音乐风格、艺人和歌曲音量水平生成即时混音。单击如下的复选框以引进您的MusicMagic音乐库信息。
+	ZH_CN	SlimServer可以使用您的MusicIP节目表作为标题和音乐风格信息的来源。您也能以音乐曲风、艺人和歌曲音量水平生成即时混音。单击如下的复选框以导入您的MusicIP音乐库信息。
 
 MMMMIXTYPE_TRACKS
 	CS	Číslo skladby
@@ -4469,7 +4535,7 @@ MMMMIXTYPE_TRACKS
 	FI	Kappaleiden määrä
 	IT	Numero di brani
 	NL	Aantal liedjes
-	ZH_CN	轨道数量
+	ZH_CN	音轨数量
 
 MMMMIXTYPE_MIN
 	CS	Počet minut
@@ -4499,7 +4565,7 @@ SETUP_MOODLOGIC_DESC
 	JA	SlimServerはタイトル・ジャンル情報ソースとしてムードロジック プログラムを利用することができます。ムードロジック ライブラリー情報を利用するには以下の項目をチェックしてください。
 	NL	SlimServer kan je Moodlogic programma gebruiken als bron voor titel en genre informatie. Ook kun je instant mixen maken op genre, artiest en liedje niveau. Markeer het selectievakje hieronder om je Moodlogic muziekcollectie te importeren.
 	SV	SlimServer kan använda din MoodLogic som källa till information om låtar och genrer. Dessutom kan du generera mixade låtlistor on-the-fly baserade på genre, artist och låt-nivå. Klicka i rutan nedan om du vill importera din MoodLogic-information.
-	ZH_CN	SlimServer可以使用您的MoodLogic节目表作为标题和音乐风格信息的来源。您也能以音乐风格、艺人和歌曲音量水平生成及时混音。单击如下的复选框以引进您的MoodLogic音乐库信息。
+	ZH_CN	SlimServer可以使用您的MoodLogic节目表作为标题和音乐风格信息的来源。您也能以音乐曲风、艺人和歌曲音量水平生成及时混音。单击如下的复选框以导入您的MoodLogic音乐库信息。
 
 SETUP_INSTANTMIXMAX
 	DE	Maximale Anzahl Lieder für Instant Mix
@@ -4533,7 +4599,7 @@ SETUP_VARIETYCOMBO_DBL
 	NL	Gevarieerdheid
 	NO	Variasjon
 	SV	Variation
-	ZH_CN	音乐品种变化
+	ZH_CN	音乐变化
 
 SETUP_VARIETYCOMBO
 	DE	Moodlogic Variety
@@ -4544,7 +4610,7 @@ SETUP_VARIETYCOMBO
 	NL	Moodlogic gevarieerdheid
 	NO	Moodlogic Variasjon
 	SV	MoodLogic-Variation
-	ZH_CN	MoodLogic的音乐品种变化
+	ZH_CN	MoodLogic的音乐变化
 
 SETUP_VARIETYCOMBO_DESC
 	DE	Mit diesem Wert steuern Sie die Variety Einstellung für den Moodlogic Instant Mix. Kleinere Werte bedeuten eine grössere Variation an Musik, grössere Werte eine engere Auswahl. Gültige Werte sind 0-100.
@@ -4555,7 +4621,7 @@ SETUP_VARIETYCOMBO_DESC
 	NL	Dit is een instelling om de vari&euml;teit voor MoodLogic instant mixes in te stellen. Lagere waardes betekenen een meer vari&euml;teit, hogere waardes betekenen minder vari&euml;teit. Invoer moet liggen tussen 1 en 100.
 	NO	Dette er verdien som kontrollerer variasjonsinstillingen for Moodlogic Hurtigmiks. Lavere verdi betyr bredere variasjon av musikk, høyere verdi betyr mindre variasjon. Gyldige verdier er 0-100.
 	SV	Detta värde styr variationen på musik i "Instant Mix"-listor skapade av MoodLogic. Lägre värden betyder större variation. Värden mellan 0 och 100 är möjliga.
-	ZH_CN	这是控制Moodlogic即时混音的值。值越小意味着音乐品种更广，越高的值则意味着较少的品种。合法值为0-100。
+	ZH_CN	这是控制Moodlogic即时混音的值。值越小意味着音乐变化更广，越高的值则意味着较少的变化。合法值为0-100。
 
 # advanced server settings
 SETUP_MENUITEM
@@ -4678,7 +4744,7 @@ SETUP_REFRESHRATE_DESC
 	NL	Stel de tijd in waarna de browser de pagina moet vernieuwen  in seconden. De server zal de pagina vernieuwen bij het einde van een liedje als dit minder is dan de ingestelde tijd. Standaardwaarde is 30, minimum is 2 seconden.
 	NO	Juster tiden mellom hver oppdatering av webgrensesninttet. Angis i sekunder, minimum 2, maksimum 30. Når en sang spilles foretas oppdatering nær slutten av sangen, om gjenværende tid er mindre en angitt verdi.
 	SV	Ställ in tiden mellan uppdatering av webgränssnittet. Anges i sekunder, minimum 2, maximum 30. När en sång spelas sker refresh närs slutet på sången, om återstående tid är mindre än angivet värde.
-	ZH_CN	设置浏览器刷新的间隔时间。当播放歌曲时，如果设的值少于歌曲的长度伺服器将在歌曲末端附近设置刷新。（缺省为30，极小值为2）
+	ZH_CN	设置浏览器刷新的间隔时间。当播放歌曲时，如果设的值少于歌曲的长度服务器将在歌曲末端附近设置刷新。（缺省为30，极小值为2）
 
 SETUP_REFRESHRATE_OK
 	CS	Interval obnovování
@@ -4708,36 +4774,36 @@ SETUP_MOODLOGICSCANINTERVAL_DESC
 	ES	Cuando la Base de Datos de Moodlogic cambie, SlimServer importará automáticamente la información de esa colección. Se puede especificar el mínimo intervalo de tiempo (en segundos) que SlimServer esperará antes de recargar nuevamente la Base de Datos de Moodlogic. Usar un valor 0 deshabilita la recarga.
 	FR	Le SlimServer importe automatiquement les modifications apportées à votre bibliothèque MoodLogic. Vous pouvez spécifier le délai minimum en secondes avant lequel le SlimServer rechargera les données MoodLogic. La valeur zéro désactive cette fonctionnalité.
 	NL	Indien je Moodlogic muziekcollectie wijzigt zal SlimServer automatisch de informatie importeren. Je kunt de minimum tijd specificeren (in seconden) dat SlimServer zal wachten voor het opnieuw importeren van je Moodlogic muziekcollectie. Een waarde van 0 seconden schakelt het herladen uit.
-	ZH_CN	当您的Moodlogic数据库改变时，SlimServer将自动地引进最新音乐库信息。您可以指定SlimServer再装您的Moodlogic数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
+	ZH_CN	当您的Moodlogic数据库改变时，SlimServer将自动地导入最新音乐库信息。您可以指定SlimServer再装您的Moodlogic数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_MUSICMAGICSCANINTERVAL
-	DE	MusicMagic Aktualisierungs-Intervall
-	EN	MusicMagic Reload Interval
-	ES	Intervalo de recarga de MusicMagic
-	NL	MusicMagic herlaadinterval
-	ZH_CN	MusicMagic刷新间隔时间
+	DE	MusicIP Aktualisierungs-Intervall
+	EN	MusicIP Reload Interval
+	ES	Intervalo de recarga de MusicIP
+	NL	MusicIP herlaadinterval
+	ZH_CN	MusicIP刷新间隔时间
 
 SETUP_MUSICMAGICSCANINTERVAL_DESC
-	DE	Sobald MusicMagic seine Informationssammlung ändert, importiert SlimServer die Daten erneut. Sie können ein minimales Zeitintervall definieren (in Sekunden), das SlimServer warten soll, bevor es die Daten neu importiert. Ein Wert von 0 deaktiviert die automatische Aktualisierung.
-	EN	When your MusicMagic Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your MusicMagic Database again. A value of zero disables the reload.
-	ES	Cuando la Base de Datos de MusicMagic cambie, SlimServer importará automáticamente la información de esa colección. Se puede especificar el mínimo intervalo de tiempo (en segundos) que SlimServer esperará antes de recargar nuevamente la Base de Datos de MusicMagic. Usar un valor 0 deshabilita la recarga.
-	NL	Indien je MusicMagic muziekcollectie wijzigt zal SlimServer automatisch de informatie importeren. Je kunt de minimum tijd specificeren (in seconden) dat SlimServer zal wachten voor het opnieuw importeren van je MusicMagic muziekcollectie. Een waarde van 0 seconden schakelt het herladen uit.
-	ZH_CN	当您的MusicMagic数据库改变时，SlimServer将自动地引进最新音乐库信息。您可以指定SlimServer再装您的MusicMagic数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
+	DE	Sobald MusicIP seine Informationssammlung ändert, importiert SlimServer die Daten erneut. Sie können ein minimales Zeitintervall definieren (in Sekunden), das SlimServer warten soll, bevor es die Daten neu importiert. Ein Wert von 0 deaktiviert die automatische Aktualisierung.
+	EN	When your MusicIP Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your MusicIP Database again. A value of zero disables the reload.
+	ES	Cuando la Base de Datos de MusicIP cambie, SlimServer importará automáticamente la información de esa colección. Se puede especificar el mínimo intervalo de tiempo (en segundos) que SlimServer esperará antes de recargar nuevamente la Base de Datos de MusicIP. Usar un valor 0 deshabilita la recarga.
+	NL	Indien je MusicIP muziekcollectie wijzigt zal SlimServer automatisch de informatie importeren. Je kunt de minimum tijd specificeren (in seconden) dat SlimServer zal wachten voor het opnieuw importeren van je MusicIP muziekcollectie. Een waarde van 0 seconden schakelt het herladen uit.
+	ZH_CN	当您的MusicIP数据库改变时，SlimServer将自动地导入最新音乐库信息。您可以指定SlimServer再装您的MusicIP数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_MMSPORT
-	EN	MusicMagic HTTP Port
-	ES	Puerto HTTP de MusicMagic
-	FR	Port HTTP MusicMagic
-	NL	MusicMagic HTTP poort
-	ZH_CN	MusicMagic HTTP端口
+	EN	MusicIP HTTP Port
+	ES	Puerto HTTP de MusicIP
+	FR	Port HTTP MusicIP
+	NL	MusicIP HTTP poort
+	ZH_CN	MusicIP HTTP端口
 
 SETUP_MMSPORT_DESC
-	DE	Das MusicMagic Service API erlaubt die Wahl des HTTP Ports für die API-Anfragen. Geben Sie hier bitte die Portnummer ein, die in den MusicMagic Mixer Einstellungen definiert ist.
-	EN	The MusicMagic Service API allows the selection of an http port to use for queries to the MusicMagic API. Enter the port number here to match the setting you have chosen in MusicMagic Mixer settings.
-	ES	La API de Servicios de MusicMagic permite elegir un puerto http para utilizar en consultas a la API de MusicMagic. Ingresar el número de puerto aquí para que coincida con el que se eligió en la configuración del Mezclador de MusicMagic.
-	FR	La bibliothèque de fonctions de service MusicMagic permet la sélection d'un port HTTP pour les requêtes. Vous devez entrer ici le numéro de port spécifié dans les paramètres MusicMagic Mixer.
-	NL	De MusicMagic service API heeft de mogelijkheid om een HTTP poort te gebruiken voor vragen aan de MusicMagic API. Geef het poortnummer op dat je in MusicMagic Mixer hebt gekozen.
-	ZH_CN	您可以通过MusicMagic的服务应用程序接口来选择用来询问MusicMagic应用程序接口的http端口。请在此输入匹配您在MusicMagic里已设置好的端口号。
+	DE	Das MusicIP Service API erlaubt die Wahl des HTTP Ports für die API-Anfragen. Geben Sie hier bitte die Portnummer ein, die in den MusicIP Mixer Einstellungen definiert ist.
+	EN	The MusicIP Service API allows the selection of an http port to use for queries to the MusicIP API. Enter the port number here to match the setting you have chosen in MusicIP Mixer settings.
+	ES	La API de Servicios de MusicIP permite elegir un puerto http para utilizar en consultas a la API de MusicIP. Ingresar el número de puerto aquí para que coincida con el que se eligió en la configuración del Mezclador de MusicIP.
+	FR	La bibliothèque de fonctions de service MusicIP permet la sélection d'un port HTTP pour les requêtes. Vous devez entrer ici le numéro de port spécifié dans les paramètres MusicIP Mixer.
+	NL	De MusicIP service API heeft de mogelijkheid om een HTTP poort te gebruiken voor vragen aan de MusicIP API. Geef het poortnummer op dat je in MusicIP Mixer hebt gekozen.
+	ZH_CN	您可以通过MusicIP的服务应用程序接口来选择用来询问MusicIP应用程序接口的http端口。请在此输入匹配您在MusicIP里已设置好的端口号。
 
 SETUP_MOODLOGICSCANINTERVAL_OK
 	DE	Minimale Wartezeit für Moodlogic Datenbank Import:
@@ -4768,7 +4834,7 @@ SETUP_ITUNESSCANINTERVAL_DESC
 	FR	Le SlimServer importe automatiquement les changements apportés à votre bibliothèque iTunes. Vous pouvez spécifier le délai minimum en secondes avant que le SlimServer actualise la bibliothèque iTunes. La valeur zéro désactive cette fonctionnalité.
 	IT	Quando cambia la tua libreria musicale di iTunes, Slimserver importa automaticamente le informazioni modificate. Puoi specificare il periodo minimo (in secondi) che lo Slimserver attenderà prima di ricaricare la libreria musicale di iTunes. Un valore pari a zero disabiliterà questa funzionalità.
 	NL	Indien je iTunes muziekcollectie wijzigt zal SlimServer automatisch de informatie opnieuw importeren. Je kunt de minimum tijd specificeren (in seconden) die SlimServer zal wachten voor het opnieuw importeren van je iTunes muziekcollectie. Een waarde van 0 seconden schakelt het herladen uit.
-	ZH_CN	当您的iTunes音乐库改变时，SlimServer将自动地引进最新音乐库信息。您可以指定SlimServer再装您的iTunes数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
+	ZH_CN	当您的iTunes音乐库改变时，SlimServer将自动地导入最新音乐库信息。您可以指定SlimServer再装您的iTunes数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_ITUNESSCANINTERVAL_OK
 	DE	Minimale Wartezeit fürs Einlesen der iTunes Musiksammlung
@@ -4859,7 +4925,7 @@ SETUP_COVERART_DESC
 	NO	Platecover kan vises sammen med informasjon om sanger. Disse bildene kan lagres i ID3-tag, eller lagres som en separat fil i samme folder som låta. Bildefiler med navn "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", eller "thumb.jpg" brukes som standard. Du kan angi andre mulige navn på disse album-filene, og også angi egne navn på filer med thumbnail bilder. Bruk Prefix % og samme elementer som er tilgjengelige for Tittelformat. (f.eks: %ARTIST - ALBUM.jpg søker etter filer med funnet verdier for artist og album.)
 	PT	As imagens da capa do álbum, quando disponíveis, são mostradas na visualização da informação do álbum ou da música. As capas dos álbuns poderão estar integradas nas "tags ID3" do próprio ficheiro, ou em ficheiros separados na pasta dos ficheiros de música. Por omissão, serão usados os nomes de ficheiros "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Pode especificar nomes de ficheiros adicionais para a imagem da capa do álbum. Pode especificar nomes diferentes para a miniatura ou para a imagem completa.
 	SV	Bilder på albumomslag kan visas samtidigt med information om sånger. Dessa bilder kan lagras i ID3-tag, eller lagras som separat fil i samma mapp som låten. Bildfiler med namnen "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", eller "thumb.jpg" används  standardmässigt. Du kan ange andra möjliga namn på dessa aalbum-grafik-filer, och även ange separata filnamn för tumnagelsstora bilder. Använd Prefix % och samma element som är tillgängliga för Titelformat. (Exempel: %ARTIST - ALBUM.jpg söker efter filer med det funna värdet på Artist och Album.)
-	ZH_CN	若乐谱帖的图象存在，观看乐谱帖或歌曲信息时图象将一同显示。图象除了可内藏于个别歌曲文件的ID3标签内，也可以放置在同歌曲文件一起的文件夹内。根据缺省规定，图象名为＇cover.jpg＇、＇albumartsmall.jpg＇、＇folder.jpg＇、＇album.jpg＇、或＇thumb.jpg＇将被接受使用。您可以指定额外的图像文件名。您也可以为指图或大型图象指定不同的文件名字。如果以%为前缀，您可以利用同标题格式一样的元素（例如%ARTIST - ALBUM, 将寻找匹配的ARTIST - Album.jpg。
+	ZH_CN	若专辑的封面图象存在，观看专辑或歌曲信息时图象将一同显示。图象除了可内藏于个别歌曲文件的ID3标签内，也可以放置在同歌曲文件一起的文件夹内。根据缺省规定，图象名为＇cover.jpg＇、＇albumartsmall.jpg＇、＇folder.jpg＇、＇album.jpg＇、或＇thumb.jpg＇将被接受使用。您可以指定额外的图像文件名。您也可以为指图或大型图象指定不同的文件名字。如果以%为前缀，您可以利用同标题格式一样的元素（例如%ARTIST - ALBUM, 将寻找匹配的ARTIST - Album.jpg。
 
 SETUP_COVERART_OK
 	CS	Jméno souboru obalů nastaveno na
@@ -4875,7 +4941,7 @@ SETUP_COVERART_OK
 	NO	Filnavn for platecover er satt til:
 	PT	Nome do ficheiro para a Capa do Álbum é
 	SV	Filnamn för albumomslag är satt till:
-	ZH_CN	乐谱帖图象文件名设为：
+	ZH_CN	专辑封面图象文件名设为：
 
 SETUP_COVERTHUMB
 	CS	Náhledy obalů
@@ -4904,7 +4970,7 @@ SETUP_COVERTHUMB_DESC
 	HE	נגעת? מגיע לך
 	IT	Per sfogliare le miniature delle copertine, il server cerchera' il file di default indicato sopra e quindi nelle tag ID3. Comunque, se desideri utilizzare la possibilita' di un nome file modificabile o specificarne uno di tua scelta, inseriscilo qui.
 	NL	Bij "Bekijk op hoezen" zal de server naar dezelfde standaard bestanden zoeken als hierboven en in de ID3 informatie. Indien je de optie met variabelen wilt gebruiken of je eigen bestandsnaam wilt specificeren kun je dat hier doen.
-	ZH_CN	在浏览图像指图方面，伺服器将根据上述的缺省图像文件和在ID3标签内搜查。但是，如果您决定使用变量文件名功能，或运用您指定的文件名，请在此输入。
+	ZH_CN	在浏览图像指图方面，服务器将根据上述的缺省封面图像文件和在ID3标签内搜查。但是，如果您决定使用变量文件名功能，或运用您指定的文件名，请在此输入。
 
 SETUP_COVERTHUMB_OK
 	CS	Název souboru náhledu alba nastaven na
@@ -4979,7 +5045,7 @@ SETUP_HTTPPORT
 	NO	Portnummer for webserver
 	PT	Porta TCP do Servidor WEB
 	SV	Portnummer för webserver
-	ZH_CN	网络伺服器端口号
+	ZH_CN	网络服务器端口号
 
 SETUP_HTTPPORT_DESC
 	CS	Zde zadejte číslo portu, na kterém se bude zobrazovat webové rozhraní SlimServeru (defaultně je nastaveno 100).
@@ -4996,7 +5062,7 @@ SETUP_HTTPPORT_DESC
 	NO	Du kan endre portnummeret som brukes for å nå webserveren fra en webleser. (Standardverdi er 9000)
 	PT	Pode mudar a porta usada para aceder ao servidor usando um navegador web. (Por omissão é 9000)
 	SV	Du kan ändra portnumret som används för att nå webservern från en webläsare. (Standardvärdet är 9000)
-	ZH_CN	您可以改变浏览器访问伺服器时所使用的端口号。（缺省值为9000）
+	ZH_CN	您可以改变浏览器访问服务器时所使用的端口号。（缺省值为9000）
 
 SETUP_HTTPPORT_OK
 	CS	Nyní bude používán port:
@@ -5099,7 +5165,7 @@ SETUP_CHECKVERSION_DESC
 	NO	Serveren kan automatisk sjekke www.slimdevices.com hver dag etter en nyere versjon av programvaren. Om en nyere versjon finnes, blir dette meddelt i webgrensesnittet.
 	PT	O servidor poderá ligar-se automaticamente a www.slimdevices.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.
 	SV	Servern kan automatiskt koppla upp sig mot www.slimdevices.com varje dag för att kontrollera om en nyare version av mjukvaran finns tillgänglig. Om nyare version finns, kommer ett meddelande visas i web-gränssnittet.
-	ZH_CN	伺服器能够每天自动地连接到www.slimdevices.com检查是否有新的软件版本可供使用。如果新的软件版本的确存在，有关信息将出现在SlimServer的网界面。
+	ZH_CN	服务器能够每天自动地连接到www.slimdevices.com检查是否有新的软件版本可供使用。如果新的软件版本的确存在，有关信息将出现在SlimServer的网界面。
 
 SETUP_CHECKVERSION_1
 	CS	Automaticky zjišťovat dostupné aktualizace
@@ -5211,6 +5277,7 @@ SETUP_SCREENSAVER_USE
 	ES	Utilizar como salvapantallas actual
 	FR	Ecran de veille courant
 	NL	Gebruik als huidige schermbeveiliger
+	ZH_CN	设为当前的有效屏幕保护程序
 
 SETUP_SCREENSAVER_CHOOSE
 	CS	Vyberte spořič pro dobu, kdy přehrávač hraje:
@@ -5384,7 +5451,7 @@ SETUP_THROTTLESCAN_DESC
 	NO	Når serveren starter scanner den gjennom musikkfolderen din for å finne artistnavn, album osv fra MP3-filene. På noen tregere systemer og Windows PCer som bruker FAT og FAT32 filsystem kan dette gjøre maskinen din veldig treg. Du kan endre denne innstillingen slik at scanningen går tregere og bruker mindre system ressurser.
 	PT	O servidor, ao iniciar, pesquisa toda a pasta de músicas, indexando o nome do artista, album e outras informações, a partir das tags ID3 dos ficheiros MP3. Em computadores mais lentos ou em sistemas operativos Windows com sistemas de ficheiros FAT ou FAT32, esta operação poderá ocupar demasiados recursos. Pode usar esta opção para adicionar um tempo de espera e abrandar a operação.
 	SV	När servern startar läser den igenom din musikmapp för att hämta namn på artist, album, etc från dina MP3-filers ID3-taggar. På vissa långsammare system och Windows-operativ som använder FAT eller FAT32 filsystem kan detta göra datorn väldigt långsam. Du kan ändra denna inställning för att sakta ner inläsningen och använda mindre av datorns resurser.
-	ZH_CN	当伺服器开始扫描您的音乐文件夹并从文件标签中装载艺人、乐谱帖、和其它信息从时，会对一些表现较慢的计算机或使用FAT或FAT32文件系统的微软视窗计算机造成较大的负荷而影响计算机的操作表现。您可以将扫描速度减慢并减少计算量。
+	ZH_CN	当服务器开始扫描您的音乐文件夹并从文件标签中装载艺人、专辑、和其它信息从时，会对一些表现较慢的计算机或使用FAT或FAT32文件系统的微软视窗计算机造成较大的负荷而影响计算机的操作表现。您可以将扫描速度减慢并减少计算量。
 
 SETUP_SEARCHSUBSTRING
 	CS	Způsob prohledávání
@@ -5437,7 +5504,7 @@ SETUP_NOGENREFILTER
 	FR	Filtrer les genres au niveau album et morceau
 	IT	Filtra i generi al livello di album & tracce.
 	NL	Filter genres op album- en liedjesniveau.
-	ZH_CN	在乐谱帖和轨道的层面过滤音乐风格。
+	ZH_CN	在专辑和音轨的层面过滤音乐风格。
 
 SETUP_NOGENREFILTER_1
 	DE	Zeige alle Lieder und Alben eines Interpreten
@@ -5446,7 +5513,7 @@ SETUP_NOGENREFILTER_1
 	FR	Afficher tous les albums et morceaux de l'artiste
 	IT	Mostra qualsiasi traccia & album di un artista
 	NL	Laat alle liedjes en albums zien voor een artiest
-	ZH_CN	显示某个艺人所属的轨道和乐谱帖
+	ZH_CN	显示某个艺人所属的音轨和专辑
 
 SETUP_NOGENREFILTER_0
 	DE	Zeige nur zum gewählten Musikstil passende Alben und Lieder für den Interpreten
@@ -5455,7 +5522,7 @@ SETUP_NOGENREFILTER_0
 	FR	Afficher uniquement les albums et morceaux du genre sélectionné
 	IT	Mostra solamente le tracce o gli album che corrispondono al genere selezionato per un artista
 	NL	Laat alleen liedjes of albums zien die voldoen aan het geselecteerde genre voor een artiest
-	ZH_CN	只显示和某个艺人的音乐风格匹配的轨道和乐谱帖
+	ZH_CN	只显示和某个艺人的音乐风格匹配的音轨和专辑
 
 SETUP_NOGENREFILTER_DESC
 	DE	Beim Durchsuchen von Musikstilen können Alben und Lieder so gefiltert werden, dass nur jene angezeigt werden, die zum aktuellen Stil gehören.
@@ -5464,7 +5531,7 @@ SETUP_NOGENREFILTER_DESC
 	FR	Le contenu de Parcourir les genres peut être filtré afin de n'afficher que les albums et les morceaux correspondant au genre sélectionné.
 	IT	L'uso di filtri puo' essere applicato quando sfogli per genere per mostrare solo gli album e le tracce che corrispondono al genere selezionato.
 	NL	Filteren kun je doen bij "Bekijk genre" om alleen de albums en liedjes te tonen die voldoen aan het geselecteerde genre.
-	ZH_CN	您可以在当浏览音乐风格时过滤并只显示和音乐风格匹配的乐谱帖和轨道。
+	ZH_CN	您可以在当浏览音乐曲风时过滤并只显示和音乐曲风匹配的专辑和音轨。
 
 SETUP_COMPOSERINARTISTS
 	CS	Zobrazování autora
@@ -5542,7 +5609,7 @@ SETUP_PERSISTPLAYLISTS
 	NO	Husk spillelister
 	PT	Manter as Playlists dos Clientes
 	SV	Behåll spellistor
-	ZH_CN	维持客户播放表
+	ZH_CN	维护Client播放表
 
 SETUP_PERSISTPLAYLISTS_DESC
 	CS	Server si může pamatovat poslední playlist, který byl hrán před vypnutím.
@@ -5557,7 +5624,7 @@ SETUP_PERSISTPLAYLISTS_DESC
 	NO	Serveren kan huske siste spilleliste med sanger som var i Spilles Nå når serveren starter.
 	PT	O servidor pode manter a playlist de músicas actual quando é re-iniciado.
 	SV	Servern kan behålla innehållet i spelarnas spellistor när servern startas om. Den gör det genom att spara låtlistan efter varje ändring. Låtlistan laddas in när spelaren startar igen.
-	ZH_CN	伺服器可以记住在起动前最后使用的播放表。
+	ZH_CN	服务器可以记住在起动前最后使用的播放表。
 
 SETUP_PERSISTPLAYLISTS_1
 	CS	Pamatovat playlist
@@ -5619,7 +5686,7 @@ SETUP_RESHUFFLEONREPEAT_DESC
 	NO	Serveren kan blande spillelister på nytt etter hver gjennomgang av listen.
 	PT	O servidor pode re-misturar a lista de músicas no final dela, se necessário.
 	SV	Servern kan, om önskvärt, blanda om den slumpade låtlistan efter varje fullständig genomgång av listan.
-	ZH_CN	如有必要，伺服器可以把随机抽样后的播放表在每一次播放时再度抽样决定次序。
+	ZH_CN	如有必要，服务器可以把随机抽样后的播放表在每一次播放时再度抽样决定次序。
 
 SETUP_RESHUFFLEONREPEAT_0
 	DE	Die gleiche Reihenfolge beibehalten
@@ -5665,7 +5732,7 @@ SETUP_PLAYTRACKALBUM
 	NO	Spill andre låter i albumet
 	PT	Tocar outras músicas do álbum
 	SV	Spela alla låtar i albumet
-	ZH_CN	播放其他在同一张乐谱帖的歌曲
+	ZH_CN	播放其他在同一张专辑的歌曲
 
 SETUP_PLAYTRACKALBUM_1
 	CS	Hrát ostatní skladby alba nebo adresáře
@@ -5680,6 +5747,7 @@ SETUP_PLAYTRACKALBUM_1
 	NO	Spill andre låter i album eller folder
 	PT	Tocar outras músicas do álbum ou da mesma directoria
 	SV	Spela alla låtar i albumet eller mappen
+	ZH_CN	播放专辑里或目录里的其他歌曲
 
 SETUP_PLAYTRACKALBUM_0
 	CS	Hrát pouze vybranou skladbu
@@ -5709,7 +5777,7 @@ SETUP_PLAYTRACKALBUM_DESC
 	NO	Når du velger en låt og trykker på PLAY, kan du velge å spille bare den sangen eller alle sangen i det albumet eller folderen, med valgt sang som den første.
 	PT	Ao escolher uma música em particular e usar o PLAY no controlo remoto, pode escolher aqui se quer tocar apenas essa música ou todas as músicas desse álbum ou directoria, começando pela música escolhida.
 	SV	När du väljer en låt och trycker på PLAY på fjärrkontrollen, kan du välj att bara spela den valda sången, eller spela alla låtar i albumet/mappen, med vald låt som första låt.
-	ZH_CN	当您浏览乐谱帖时通过遥控器选择一首歌曲并按“播放”键时，您可以选择只播放指定的那一首歌曲或播放在同一张乐谱帖内随其后的所有歌曲。
+	ZH_CN	当您浏览专机时通过遥控器选择一首歌曲并按“播放”键时，您可以选择只播放指定的那一首歌曲或播放在同一张专辑内随其后的所有歌曲。
 
 SETUP_IGNOREDARTICLES
 	CS	Položky, které budou ignorovány při třídění podle jména interpretů.
@@ -5787,7 +5855,7 @@ SETUP_FILESORT_DESC
 	NO	Når du blar i Musikkfolderen, kan du velge å liste sangene etter filnavn eller ID3 tag informasjon (artist, album, spor).
 	PT	Ao percorrer a pasta de músicas, pode escolher se deseja ordenar por nome de ficheiro ou pela informação das tags ID3 (artista, álbum, número de pista).
 	SV	När du bläddrar i Musikmappen kan du välja att få sångerna sorterade efter filnamn eller efter ID3-information (Artist, Album, Spårnummer).
-	ZH_CN	当您浏览音乐文件夹时，您可以选择以文件名或由ID3标签信息如艺人名、乐谱帖、轨道数字等进行排序。
+	ZH_CN	当您浏览音乐文件夹时，您可以选择以文件名或由ID3标签信息如艺人名、专辑、音轨数字等进行排序。
 
 SETUP_BROWSEAGELIMIT
 	CS	Počet zobrazovaných novinek
@@ -5845,6 +5913,7 @@ SETUP_DISABLESTATISTICS
 	FR	Statistiques bibliothèque
 	IT	Statistiche libreria
 	NL	Muziekcollectiestatistieken
+	ZH_CN	库存统计
 
 SETUP_DISABLESTATISTICS_DESC
 	DE	Beim Anzeigen der SlimServer Startseite wird die ganze Musiksammlung durchsucht, um den Bestand anzeigen zu können. Wenn Sie diese Funktion deaktivieren, kann die Startseite schneller angezeigt werden.
@@ -5861,6 +5930,7 @@ SETUP_DISABLE_STATISTICS
 	FR	Désactiver l'affichage des statistiques
 	IT	Disabilita statistiche libreria
 	NL	Uitschakelen muziekcollectiestatistieken
+	ZH_CN	关闭库存统计
 
 SETUP_ENABLE_STATISTICS
 	DE	Statistik anzeigen
@@ -5869,6 +5939,7 @@ SETUP_ENABLE_STATISTICS
 	FR	Activer l'affichage des statistiques
 	IT	Abilita statistiche libreria
 	NL	Inschakelen muziekcollectiestatistieken
+	ZH_CN	启用库存统计
 
 SETUP_FORKEDWEB
 	EN	Webserver Forking (Mac OS X / Linux)
@@ -5877,7 +5948,7 @@ SETUP_FORKEDWEB
 
 SETUP_FORKEDWEB_DESC
 	DE	Um den Hauptprozess nicht zu blockieren, können einige Webseiten in Unterprozessen verarbeitet werden. Dies kommt vor allem bei Verwendung von Playern mit kleinen Puffern wie der Squeezebox1 zu Gute, da hier sonst Aussetzer bei der Musikwiedergabe auftreten können. Zudem wird das Scrollen auf dem Display und die Reaktionszeit auf die Fernbedienung verbessert.
-	EN	To avoid stalling the main process, certain web pages can be handled by a child process.  This will most benefit players will small buffers such as Squeezebox1 which can experience audio dropouts while using the web interface.  It will also provide smoother scrolling and IR response while accessing the web interface.
+	EN	To avoid stalling the main process, certain web pages can be handled by a child process.  This will most benefit players with small buffers such as Squeezebox1 which can experience audio dropouts while using the web interface.  It will also provide smoother scrolling and IR response while accessing the web interface.
 	ES	Para evitar recargar el proceso principal, ciertas páginas pueden ser servidas por un proceso hijo. Esto beneficiará principalmente a los reproductores con buffer pequeño, tales como el Squeezebox1, que puede experimentar cortes mientras se utiliza la interface. Tambíen suaviza el desplazamiento de texto y la respuesta del control remoto mientras se accede a la interface web.
 	NL	Om het ophouden van het hoofdproces tegen te gaan kunnen sommige webpagina's door een separaat proces afgehandeld worden. Dit levert het meeste voordeel op voor spelers met een kleine buffer zoals Squeezebox1 die drop-outs kan geven terwijl je de webinterface gebruikt.<BR> Het geeft ook soepel bladeren met de IR afstandsbediening terwijl je de webinterface gebruikt.
 
@@ -5930,7 +6001,7 @@ SETUP_LOOKFORARTWORK
 	NL	Zoek naar hoesafbeeldingen
 	NO	Søk etter Album-omslag
 	SV	Sök efter Album-omslag
-	ZH_CN	寻找图象
+	ZH_CN	寻找封面图象
 
 SETUP_LOOKFORARTWORK_DESC
 	DE	Wenn der SlimServer die Musiksammlung durchsucht, dann kann er auch gleich nach Plattenhüllen suchen. Sie können angeben, ob sie das wollen, oder ob die Umschlaghüllen ignoriert werden sollen (beschleunigt das Einlesen).
@@ -5943,7 +6014,7 @@ SETUP_LOOKFORARTWORK_DESC
 	NL	Wanneer SlimServer je muziekbestanden scant kan ook automatisch naar afbeeldingen van hoesjes gezocht worden. Je kunt instellen dat niet naar hoesjes gezocht moet worden. Dit versnelt het scanproces maar de afbeeldingen van hoesjes komen dan niet terecht op de webpagina.
 	NO	Når SlimServer søker i musikkbiblioteket kan den automatisk lete etter albumomslag/-grafikk. Du kan velge å slå av denne muligheten, noe som vil gjøre søket raskere, men grafikken vil nødvendigvis ikke være tilgjengelig i web-grensesnittet.
 	SV	När Slimserver scannar din musikmapp kan programvaran automatiskt söka efter album-omslag. Du kan stänga av detta för att öka hastigheten på inläsning, men effekten kan bli att albumomslag inte syns i webgränssnittet.
-	ZH_CN	当SlimServer扫描您的音乐库时它可以自动的寻找乐谱帖图象。您可以选择不寻找乐谱帖图象以加速扫瞄过程。但如此一来，乐谱帖图象将不会出现在网界面。
+	ZH_CN	当SlimServer扫描您的音乐库时它可以自动的寻找专辑图象。您可以选择不寻找专辑图象以加速扫瞄过程。但如此一来，专辑图象将不会出现在网界面。
 
 SETUP_NO_ARTWORK
 	DE	Plattenhüllen ignorieren
@@ -6070,7 +6141,7 @@ SETUP_SHORTDATEFORMAT_DESC
 	NO	Denne innstillingen angir formatet for korte datoer. Følgende syntax anvendes nedenfor:<br>DD er dager i måneden<br>MM er måneden i året<br>YY er tosifret årstall<br>YYYY er firesifret årstall<br>Alt på slutten med paranteser er bare kommentarer og vises ikke.
 	PT	Esta opção determina o formato curto a usar para datas. São usadas as seguintes convenções para as opções abaixo
 	SV	Detta val hur kort datumformat presenteras. Följande konventioner används för valen nedan:<br>YYYY är fyrsiffrigt årtal<br>YY är tvåsiffrigt årtal<br>MM är månadsnummret<br>DD är dagen i månaden<br>Allt i slutet med paranteser är endast kommentarer och visas ej.
-	ZH_CN	这个选项决定了显示简化日期所使用的格式。以下是各个选择所使用的惯例：<br>YYYY=四位数的年份<br>YY=两位数的年份<br>MM=月份<br>DD=日<br>在末端括弧内的任何信息为备注而将不被显示。
+	ZH_CN	这个选项决定了显示简化日期所使用的格式。以下是各个选择所使用的惯例：<br>YYYY=四位数的年份<br>YY=两位数的年份<br>MM=月份<br>DD=日<br>在末端括弧内的任何信息为备注而将不显示。
 
 SETUP_TIMEFORMAT
 	CS	Formát času
@@ -6103,7 +6174,7 @@ SETUP_TIMEFORMAT_DESC
 	NO	Dette valget avgjør tidsformatet som benyttes. Følgende syntax brukes:<br>hh er timetall<br>h er timetall uten innledende null<br>mm er minuttall<br>ss er sekundtall<br>pm er enten AM eller PM<br>Alt på slutter og i paranteser er bare kommentarer og vises ikke.
 	PT	Esta opção determina o formato a usar para horas. São usadas as seguintes convenções para as opções abaixo
 	SV	Detta val avgör formatet för tidvisning. Följande konventioner används i valen nedan:<br>hh är timmen<br>h är timmen med inledande nolla borttagen<br>mm är minuten<br>ss är sekunden<br>pm är antingen AM eller PM<br>Allt i slutet med paranteser är endast kommentarer och visas ej.
-	ZH_CN	这个选项决定了显示时间所使用的格式。以下是各个选择所使用的惯例：<br>hh=时<br>h=时（主导零被去除）<br>mm=分<br>ss=秒<br>pm=AM或PM<BR>在末端括弧内的任何信息为备注而将不被显示。
+	ZH_CN	这个选项决定了显示时间所使用的格式。以下是各个选择所使用的惯例：<br>hh=时<br>h=时（主导零被去除）<br>mm=分<br>ss=秒<br>pm=AM或PM<BR>在末端括弧内的任何信息为备注而将不显示。
 
 SETUP_ITEMSPERPAGE
 	CS	Položek na stránku
@@ -6281,7 +6352,7 @@ SETUP_WEBPROXY_DESC
 	NL	Je kunt een IP adres en poortnummer opgeven voor een HTTP/Webproxy die gebruikt wordt wanneer SlimServer  een connectie moet maken naar servers buiten je lokale netwerk. Gebruik het formaat xx.xx.xx.xx:yyyy waarbij xx.xx.xx.xx het IP adres van de proxy is en yyyy het poortnummer. Laat dit veld leeg als je geen HTTP/Webproxy gebruikt.
 	NO	Du kan spesifisere IP adresse og port for en HTTP/Web proxy til bruk når SlimServer kobler til servere utenfor ditt lokale nettverk. Bruk formatet xx.xx.xx.xx:yyyy hvor xx.xx.xx.xx er IP adressen til proxy, og yyyy er port nummeret. La feltet stå tomt om du ikke ønsker å bruke HTTP web proxy.
 	SV	Du kan specificera IP-adress och -port på den HTTP/WebProxy som SlimServer ska ansluta sig till när den skapar anslutnignar utanför ditt lokala nätverk. Använd formatet xx.xx.xx.xx:yyyy där xx.xx.xx.xx är proxyns IP-adress, och yyyy är portnumret.  Lämna blankt om du inte använder webproxy.
-	ZH_CN	您可以指定当SlimServer连接到您本地网络以外的伺服器时所使用的HTTP/网代理IP地址和端口。请使用：xx.xx.xx.xx为网代理IP地址的格式、xx.xx.xx.xx：yyyy，yyyy为端口号。如果您不使用HTTP/网代理请留空。
+	ZH_CN	您可以指定当SlimServer连接到您本地网络以外的服务器时所使用的HTTP/网代理IP地址和端口。请使用：xx.xx.xx.xx为网代理IP地址的格式、xx.xx.xx.xx：yyyy，yyyy为端口号。如果您不使用HTTP/网代理请留空。
 
 SETUP_WEBPROXY_CHOOSE
 	CS	Adresa proxy
@@ -6471,7 +6542,7 @@ SETUP_FILTERRULE_DESC
 	NO	Hvis du har aktivert blokkering kan du liste de IP-adresser du vil tillate skal kunne koble seg til SlimServer.<br><br>Dette feltet aksepterer en komma-separert liste med IP-adresser som f.eks:<br><br><b>10.1.2.2</b> vil bare tillate 10.1.2.2 å koble til<br><br><b>10.1.2.*</b> vil tillate alle IP-adresser av formatet 10.1.2.*<br><br><b<10.1.2.2-50</b> vil tillate IP-adresser i området 10.1.2.2 til 10.1.2.50<br><br>Ulike typer kan kombineres med komma slik: <b>10.1.2.2,172.61.1.*,192.168.1-255.*</b><br><br>IP-adressen 127.0.0.1 tillater web browsere å koble til SlimServer som kjøres lokalt på maskinen.
 	PT	Se activar o bloqueio por IP de origem, introduza aqui os endereços com permissões para ligar ao SlimServer.<br><br>Este campo aceita uma lista de endereços IP, redes (usando o caractér "*"), e segmentos de rede (usando "endereço-endereço"), separados por vírgulas. Por exemplo
 	SV	Om du har aktiverat blockering kan du skriva in de IP-adresser du vill tillåta för anslutning till SlimServer.<br><br>Detta fält accepterar en komma-separerad lista med urval enligt följande exempel:<br><br><b>10.1.2.2</b> tillåter endast 10.1.2.2 att ansluta<br><br><b>10.1.2.*</b> tillåter alla med en IP-adress som börjar med 10.1.2 att ansluta.<br><br><b>10.1.2.2-50</b> tillåter alla IP-adresser mellan 10.1.2.2 och 10.1.2.50 att ansluta.<br><br>Flera olika typer kan kombineras, som t.ex <b>10.1.2.2,172.16.1.*,192.168.1-255.*</b><br><br>Den speciella IP-adressen 127.0.0.1 (localhost) tillåter alltid en webläsare på samma dator som SlimServer att ansluta.
-	ZH_CN	如果您已经启动了阻拦向内连接装置，您可以在此输入允许向内连接到SlimServer的IP来源地址。<br><br>这个资料栏接受具体IP地址名单，*式的通配符，及以逗号分开的IP地址范围名单。例如:<BR><BR><B>10.1.2.2</B>将只允许10.1.2.2连接<BR><BR><B>10.1.2.*</B>将允许任何10.1.2.x的IP地址<BR><BR><B>10.1.2.2-50</B>将允许10.1.2.2-10.1.2.50范围内的IP地址连接<BR><BR>您也可以利用逗号结合多个IP地址，例如：<B>10.1.2.2,172.16.1.*，192.168.1-255</B><BR><BR>特别IP地址127.0.0.1则表示允许浏览器连接到同一台计算机上的SlimServer。
+	ZH_CN	如果您已经启动了阻拦向内连接装置，您可以在此输入允许向内连接到SlimServer的IP来源地址。<br><br>这个资料栏接受具体IP地址名单，*式的通配符，及以逗号分开的IP地址范围名单。例如:<BR><BR><B>10.1.2.2</B>将只允许10.1.2.2连接<BR><BR><B>10.1.2.*</B>将允许任何10.1.2.x的IP地址<BR><BR><B>10.1.2.2-50</B>将允许10.1.2.2-10.1.2.50范围内的IP地址连接<BR><BR>您也可以利用逗号结合多个IP地址，例如：<B>10.1.2.2,172.16.1.*，192.168.1-255</B><BR><BR>特别IP地址127.0.0.1则表示允许浏览器连接到同一台电脑上的SlimServer。
 
 #miscellaneous setup strings
 SETUP_NEW_VALUE
@@ -6658,7 +6729,7 @@ SETUP_DONT_CACHE
 	NO	Ikke cache
 	PT	Não usar a Cache
 	SV	Spara inte
-	ZH_CN	撤销高速缓冲存储器
+	ZH_CN	关闭高速缓冲存储器
 
 SETUP_CACHE
 	DE	Zwischenspeichern
@@ -6784,7 +6855,7 @@ SETUP_MDNSNAME_OK
 	NO	Bonjournavn for denne serveren:
 	PT	O nome Bonjour para este servidor é
 	SV	Bonjour-namnet för denna server är:
-	ZH_CN	此伺服器的Bonjour名：
+	ZH_CN	此服务器的Bonjour名：
 
 SETUP_MDNSNAME_DESC
 	DA	Du kan vælge at angive et Rendezvouz-navn for denne server. Lad feltet være tomt for at slå Rendezvouz-understøttelse fra. SlimServer skal genstartes før denne indstilling har effekt.
@@ -6799,7 +6870,7 @@ SETUP_MDNSNAME_DESC
 	NO	Du kan oppgi et Bonjournavn for denne serveren
 	PT	Pode escolher um nome Bonjour para este servidor
 	SV	Du kan ange ett Bonjour-namn för denna server
-	ZH_CN	您可以为这个伺服器取个让Bonjour使用的名字。留空则表示撤销Bonjour广播SlimServer的功能。更动后您必须重新启动伺服器方为有效。
+	ZH_CN	您可以为这个服务器取个让Bonjour使用的名字。藤空则表示关闭Bonjour广播SlimServer的功能。更动后您必须重新启动服务器方为有效。
 
 SETUP_MDNSNAME_CHOOSE
 	CS	Randezvous název:
@@ -6908,12 +6979,14 @@ SETUP_DATASOURCE_1
 	EN	Your data source needs to be configured. Please open your web browser,
 	ES	La fuente de datos necesita ser configurada. Por favor abrir tu navegador,
 	NL	De databron moet geconfigureerd worden. Open je web browser.
+	ZH_CN	您必须配置数据源。请启动浏览器，
 
 SETUP_DATASOURCE_2
 	DE	Browser mit folgender URL, und gehen Sie zu den "Server Einstellungen".
 	EN	go to the following URL, and click on the "Server Settings" link.
 	ES	ir a la siguiente URL, y hacer clíck en el link "Configuración del Servidor".
 	NL	ga naar de volgende URL en klik op de "Server instellingen" link.
+	ZH_CN	请到下列网址，单击"Server Settings"。
 
 SETUP_URL_WILL_BE
 	CS	Adresa pro přístup k SlimServeru je nyní:
@@ -6955,7 +7028,7 @@ SETUP_GROUPDISCS_DESC
 	NL	Je kunt specificeren of dubbel-cd albums (met dezelfde naam) als &eacute;&eacute;n album of als meerdere albums gezien moeten worden met elk een unieke naam per cd. Bijvoorbeeld: "Album titel (Disc 2 van 3)". Het wijzigen van deze instelling start het opnieuw scannen van je muziekfolders.
 	NO	Du kan angi om flere plater skal behandles som ett eller flere separate album. Endrer du denne verdien, scannes musikkfolderen på nytt.
 	SV	Du kan ange om flera diskar ska behandlas som ett eller flera separata album. Ändrar du detta värde scannas din musikmapp på nytt
-	ZH_CN	您可以指定由多个光碟组成的合集是否视为一个单一的乐谱帖（以一个名字）或保持为个别单独的乐谱帖。例如“乐谱帖标题（光碟1）”。更动此设置SlimServer将开始重新扫描您的音乐库。
+	ZH_CN	您可以指定由多个光碟组成的合集是否视为一个单一的乐谱帖（以一个名字）或保持为个别单独的专辑。例如“专辑标题（光碟1）”。更动此设置SlimServer将开始重新扫描您的音乐库。
 
 SETUP_GROUPDISCS_0
 	CS	Chápat sady s více disky jako vícenásobné alba
@@ -6968,7 +7041,7 @@ SETUP_GROUPDISCS_0
 	NL	Behandel dubbel-cd's als meerdere albums
 	NO	Behandle multiple plater som multiple album
 	SV	Behandla multipla diskar som multipla album
-	ZH_CN	把多个光碟组成的合集视为个别单独的乐谱帖
+	ZH_CN	把多个光碟组成的合集视为个别单独的专辑
 
 SETUP_GROUPDISCS_1
 	DE	Mehrfach-Alben zu einem Album gruppieren
@@ -6980,7 +7053,7 @@ SETUP_GROUPDISCS_1
 	NL	Behandel dubbel-cd's als één album
 	NO	Behandle multiple plater som deler av samme album
 	SV	Behandla multipla diskar som del av samma album
-	ZH_CN	把多个光碟组成的合集视为单一的乐谱帖
+	ZH_CN	把多个光碟组成的合集视为单一的专辑
 
 #
 # Web interface
@@ -7443,7 +7516,7 @@ SHUFFLE_ON_ALBUMS
 	NO	Vilkårlig på Album
 	PT	Misturar Playlist por Álbum
 	SV	Blanda album
-	ZH_CN	由乐谱帖随机抽样
+	ZH_CN	由专辑随机抽样
 
 SHUFFLE_ON
 	CS	Zamíchat playlist
@@ -8035,7 +8108,7 @@ TRACK
 	NO	Spor
 	PT	Faixa
 	SV	Spår
-	ZH_CN	轨道
+	ZH_CN	音轨
 
 SONGTITLE
 	CS	Název skladby
@@ -8142,7 +8215,7 @@ ALBUM
 	JA	アルバム
 	PT	Álbum
 	SV	Album
-	ZH_CN	乐谱帖
+	ZH_CN	专辑
 
 DISC
 	CS	Disk
@@ -8411,7 +8484,7 @@ NO_ALBUM
 	NO	Ingen album
 	PT	Sem Álbum
 	SV	Inget album
-	ZH_CN	无乐谱帖
+	ZH_CN	无专辑
 
 NO_GENRE
 	CS	Žádný žánr
@@ -8426,7 +8499,7 @@ NO_GENRE
 	NO	Ingen genre
 	PT	Sem Género
 	SV	Ingen genre
-	ZH_CN	无音乐风格
+	ZH_CN	无音乐曲风
 
 NO_TITLE
 	CS	Žádná skladba
@@ -8477,9 +8550,11 @@ SAMPLESIZE
 	EN	Sample Size
 	ES	Tamaño de Muestra
 	NL	Steekproefgrootte
+	ZH_CN	抽样量
 
 BITS
 	EN	Bits
+	ZH_CN	比特
 
 SAMPLERATE
 	EN	Sample Rate
@@ -8487,6 +8562,7 @@ SAMPLERATE
 	FR	Taux d'échantillonnage
 	HE	קצב דגימה
 	NL	Sample rate
+	ZH_CN	抽样率
 
 BITRATE
 	DE	Bitrate
@@ -8558,7 +8634,7 @@ GENRE
 	NO	Genre
 	PT	Género
 	SV	Genre
-	ZH_CN	音乐风格
+	ZH_CN	音乐曲风
 
 COMMENT
 	CS	Poznámka
@@ -8580,6 +8656,8 @@ RATING
 	DE	Bewertung
 	EN	Rating
 	NL	Waardering
+	ZH_CN	评级
+    
 
 TAGVERSION
 	CS	Verze ID tagu
@@ -8653,7 +8731,7 @@ GENRES
 	NO	Genrer
 	PT	Géneros
 	SV	Genrer
-	ZH_CN	音乐风格
+	ZH_CN	音乐曲风
 
 ARTISTS
 	CS	Interpretů
@@ -8702,7 +8780,7 @@ ALBUMS
 	NO	Album
 	PT	Albums
 	SV	Album
-	ZH_CN	乐谱帖
+	ZH_CN	专辑
 
 LCALBUMS
 	CS	alba
@@ -8718,7 +8796,7 @@ LCALBUMS
 	NO	album
 	PT	álbums
 	SV	album
-	ZH_CN	乐谱帖
+	ZH_CN	专辑
 
 ALL_SONGS
 	CS	Všechny skladby
@@ -8988,7 +9066,7 @@ BROWSE_BY_GENRE
 	NO	Bla i Genrer
 	PT	Escolher por Género
 	SV	Bläddra Genrer
-	ZH_CN	浏览音乐风格
+	ZH_CN	浏览音乐曲风
 
 BROWSE_BY_GENRE_DBL
 	FR	Genres
@@ -9029,7 +9107,7 @@ BROWSE_BY_ALBUM
 	NO	Bla i Album
 	PT	Escolher por Álbum
 	SV	Bläddra album
-	ZH_CN	浏览乐谱帖
+	ZH_CN	浏览专辑
 
 BROWSE_BY_ALBUM_DBL
 	ES	Examinar por Álbum
@@ -9446,6 +9524,7 @@ BASIC_PLAYER_SETTINGS
 	EN	Basic Settings
 	FR	Réglages de base
 	NL	Basis instellingen
+	ZH_CN	基本配置
 
 ALARM_SETTINGS
 	CS	Budík nastavení
@@ -9493,7 +9572,7 @@ AUDIO_SETTINGS
 	HE	הגדרות שמע
 	JA	オーディオ
 	SV	Ljudinställningar
-	ZH_CN	音像
+	ZH_CN	音频
 
 REMOTE_SETTINGS
 	CS	Vzdálený
@@ -9529,6 +9608,7 @@ BASIC_SERVER_SETTINGS
 	EN	Basic Settings
 	FR	Réglages de base
 	NL	Basis instellingen
+	ZH_CN	基本配置
 
 SERVER_SETTINGS
 	CS	Nastavení serveru
@@ -9545,7 +9625,7 @@ SERVER_SETTINGS
 	NO	Server instillinger
 	PT	Configurações do Servidor
 	SV	Serverinställningar
-	ZH_CN	伺服器设置
+	ZH_CN	服务器设置
 
 SLIMSERVER_SETTINGS
 	CS	Nastavení SlimServeru
@@ -9578,7 +9658,7 @@ ADDITIONAL_SERVER_SETTINGS
 	NO	Ekstra Server instillinger
 	PT	Configurações Avançadas do Servidor
 	SV	Extra inställningar
-	ZH_CN	附加伺服器设置
+	ZH_CN	附加服务器设置
 
 INTERFACE_SETTINGS
 	CS	Vzhled
@@ -9711,7 +9791,7 @@ SETUP_GROUP_DEBUG_DESC
 	NO	SlimServer har et antall feilsøkingsinnstillinger som kan benyttes for å lagre detaljert informasjon om serverens virksomhet. Fyll ut de punkter som du vil logge for visning og klikk Endre for å starte loggingen med endringene. Du kan vise de siste lagrede logger <a href="/log.txt" target="log">her</a>
 	PT	O SlimServer tem várias opções de depuração que poderão ser usadas para gravar informação detalhada acerca das operações do servidor. Active as opções que deseja que sejam guardadas e selecione "Mudar" para começar a guardar a informação. Poderá ver as entradas mais recentes <a href="/log.txt" target="log">aqui</a>.
 	SV	SlimServer har ett antal felsökningsinställningar som kan användas för att spara detaljerad information om serverns funktion. Fyll i de punkter som du skulle vilja logga för visning och klicka Ändra för att starta loggningen av de valda punkterna. Du kan visa de senast sparade loggningarna <a href="/log.txt" target="log">här</a>.
-	ZH_CN	SlimServer拥有数个可以用来记录有关伺服器的详细操作信息的调试设置。请选择您想要纪录及显示的项目。单击《更动》后便开始记录。您可以在<a href="/log.txt" target="log">这里</a>参阅最新的纪录。
+	ZH_CN	SlimServer拥有数个可以用来记录有关服务器的详细操作信息的调试设置。请选择您想要纪录及显示的项目。单击《更动》后便开始记录。您可以在<a href="/log.txt" target="log">这里</a>参阅最新的纪录。
 
 DEBUGGING_SETTINGS
 	CS	Krokování
@@ -9748,6 +9828,7 @@ CHANGE
 SERVER_IP_ADDRESS
 	DE	Server IP Adresse
 	EN	Server IP address
+	NL	Server IP adres
 
 PLAYER_IP_ADDRESS
 	CS	IP adresa tohoto přehrávače je:
@@ -10048,7 +10129,7 @@ FORGET_PLAYER_DESC
 	NO	Om du ikke bruker denne spilleren eller om den finnes to ganger i listen over spillere, kan du be serveren glemme denne spilleren.
 	PT	Se não usar mais este cliente (nome ou IP), ou se o cliente aparecer várias vezes, pode "esquecê-lo".
 	SV	Om du inte använder denna spelare eller om denna spelare finns två gånger i din lista över spelare, så kan du välja att servern skall glömma denna spelare.
-	ZH_CN	如果您不再使用这个播放机或这个播放机重复出现，您可以选择让伺服器遗忘这个播放机。
+	ZH_CN	如果您不再使用这个播放机或这个播放机重复出现，您可以选择让服务器遗忘这个播放机。
 
 FORGET_PLAYER_LINK
 	CS	Neregistrovat tento přehrávač
@@ -10096,7 +10177,7 @@ PORT_NUMBER
 	NO	Du kan endre portnummeret som brukes for å nå webserveren fra en browser. (Standard er 9000)
 	PT	A porta para acesso via navegador web. (por omissão, a 9000)
 	SV	Du kan ändra portnumret som används för att nå webservern från en webläsare. (Standardvärdet är 9000)
-	ZH_CN	您可以更改浏览器访问伺服器用的端口号。（缺省为9000）。
+	ZH_CN	您可以更改浏览器访问服务器用的端口号。（缺省为9000）。
 
 SCREENSAVER_TIMEOUT
 	CS	Přehrávač  ukazuje automaticky aktuálně přehrávanou skladbu po zadtavení dálkovým ovladačem. Můžete změnit prodlevu po které to udělá. Nastavíte li prodlevu na nulu, nebude automaticky ukazovat aktuální skladbu.
@@ -10300,6 +10381,7 @@ TRANSPORTER_MUSIC_PLAYER
 	NO	Transporter Musik Player
 	PT	Leitor de Música Transporter
 	SE	Transporter musikspelare
+	ZH_CN	Transporter播放机
 
 SOFTSQUEEZE_MUSIC_PLAYER
 	DA	SoftSqueeze-afspiller
@@ -10594,7 +10676,7 @@ TO_GO_TO_SERVER_SETTINGS
 	NO	for å komme til serverinnstillingene og gjøre dette nå.
 	PT	para ir às configurações do servidor e efectuar esta alteração.
 	SV	för att komma till serverinställningarna och göra det direkt.
-	ZH_CN	到伺服器设置
+	ZH_CN	到服务器设置
 
 MUTED
 	CS	Stišeno
@@ -10621,7 +10703,7 @@ MUTE
 	JA	ミュート
 	NO	Mute - ingen lyd
 	SV	Mute - ljud avstängt
-	ZH_CN	默音
+	ZH_CN	消音
 
 LCMUTED
 	CS	ztišeno
@@ -10637,7 +10719,7 @@ LCMUTED
 	NO	stille
 	PT	silencioso
 	SV	tyst
-	ZH_CN	默音中
+	ZH_CN	消音中
 
 ADVANCEDSEARCH
 	CS	Pokročilé vyhledávání
@@ -10754,7 +10836,7 @@ SEARCHFOR_ALBUM
 	NO	Søk etter Album
 	PT	Procurar por Álbum
 	SV	Sök efter album
-	ZH_CN	搜查乐谱帖
+	ZH_CN	搜查专辑
 
 SEARCHFOR_ALBUMS
 	CS	Hledat album
@@ -10770,7 +10852,7 @@ SEARCHFOR_ALBUMS
 	NO	Søk etter Album
 	PT	Procurar por Albums
 	SV	Sök efter album
-	ZH_CN	搜查乐谱帖
+	ZH_CN	搜查专辑
 
 SEARCHFOR_ALBUMS_DBL
 	ES	Buscar álbumes
@@ -10844,7 +10926,7 @@ SEARCH_FOR_ALBUMS
 	NO	Søk på Album
 	PT	Procurar por Álbum
 	SV	Sök album
-	ZH_CN	搜查乐谱帖
+	ZH_CN	搜查专辑
 
 SEARCH_FOR_SONGS
 	CS	Hledat skladby
@@ -10870,6 +10952,7 @@ SEARCH_STREAMS
 	FR	Recherche
 	IT	Cerca
 	NL	Zoeken
+	ZH_CN	搜查
 
 SEARCHING
 	CS	Hledám...
@@ -10910,6 +10993,7 @@ NO_SEARCH_RESULTS
 	FR	Pas de résultat
 	IT	Nessuna voce trovata
 	NL	Geen zoekresultaten
+	ZH_CN	无搜查成果
 
 CONTRIBUTORMATCHING
 	CS	Interpreti, kterří obsahují
@@ -10957,7 +11041,7 @@ ALBUMMATCHING
 	NO	Album som traff
 	PT	Albums encontrados
 	SV	Album som matchar
-	ZH_CN	乐谱帖匹配
+	ZH_CN	专辑匹配
 
 ALBUMSMATCHING
 	CS	Alba, která obsahují
@@ -10974,7 +11058,7 @@ ALBUMSMATCHING
 	NO	Album som traff
 	PT	Albums encontrados
 	SV	Album som matchar
-	ZH_CN	乐谱帖匹配
+	ZH_CN	专辑匹配
 
 TRACKMATCHING
 	CS	Názvů skladeb, které obsahují
@@ -11013,6 +11097,7 @@ MORE
 	EN	More
 	ES	Más
 	NL	Meer
+	ZH_CN	更多
 
 MORE_MATCHES
 	DE	Mehr Treffer...
@@ -11101,22 +11186,24 @@ MOODLOGIC_MIX
 	ZH_CN	混音
 
 MUSICMAGIC_MIX
-	EN	MusicMagic Mix
-	ES	Mezcla MusicMagic
-	NL	MusicMagic mix
-	ZH_CN	MusicMagic混音
+	EN	MusicIP Mix
+	ES	Mezcla MusicIP
+	NL	MusicIP mix
+	ZH_CN	MusicIP混音
 
 MUSICMAGIC_MOODS
-	DE	MusicMagic Stimmungs-Mix
-	EN	MusicMagic Mood Mix
-	ES	Mezcla de Ambiente de MusicMagic
-	NL	MugicMagic humeur mix
+	DE	MusicIP Stimmungs-Mix
+	EN	MusicIP Mood Mix
+	ES	Mezcla de Ambiente de MusicIP
+	NL	MusicIP humeur mix
+	ZH_CN	MusicIP气氛混音
 
 CREATE_MIX
 	DE	Mix erstellen
 	EN	Create Mix
 	ES	Crear Mezcla
 	NL	Maak mix
+	ZH_CN	产生混音
 
 MOODLOGIC_INSTANT_MIX
 	EN	MoodLogic Instant Mix
@@ -11220,6 +11307,7 @@ RADIO_TUNEIN
 	FR	Connexion radio
 	IT	Sintonizza URL
 	NL	Radio URL
+	ZH_CN	收音机网址
 
 RADIO_TUNEIN_NOW
 	DE	Manuelle Radio Einwahl
@@ -11228,6 +11316,7 @@ RADIO_TUNEIN_NOW
 	FR	Se connecter
 	IT	Sto sintonizzando
 	NL	Stel nu in
+	ZH_CN	现在调谐
 
 RADIO_TUNEIN_DESC
 	DE	Falls Sie die URL einer Internet-Radiostation bereits kennen, so können Sie diese hier eingeben und "Station wählen" drücken. Sie können die URL des Streams selber (z.B. http://62.49.59.50:8000) oder einer Wiedergabeliste, die darauf verweist (z.B. http://www.hitzradio.com/hitzradio.pls), angeben.
@@ -11242,6 +11331,7 @@ RADIO_TUNEIN_RADIOURL
 	ES	URL de Radio:
 	FR	URL radio :
 	IT	URL Radio:
+	ZH_CN	收音机网址：
 
 RADIO_TUNEIN_CHOOSE
 	DE	Station wählen
@@ -11250,6 +11340,7 @@ RADIO_TUNEIN_CHOOSE
 	FR	Connecter
 	IT	Sintonizza
 	NL	Instellen
+	ZH_CN	调谐
 
 RADIO_TUNED_IN
 	DE	Die folgende Station wurde angewählt:
@@ -11258,6 +11349,7 @@ RADIO_TUNED_IN
 	FR	Connecté à :
 	IT	Sintonizzata stazione:
 	NL	Ingestelde zender:
+	ZH_CN	调谐到电台：
 
 HELP
 	CS	Nápověda
@@ -11498,7 +11590,7 @@ EDIT
 
 URL
 	EN	URL
-	ZH_CN	统一资源定位器
+	ZH_CN	网址
 
 SAVE_PLAYLIST
 	CS	Uložit playlist
@@ -11767,7 +11859,7 @@ INFORMATION_SERVER_IP
 	NL	Server IP adres
 	NO	Serveren IP adresse
 	SV	Serverns IP-adress
-	ZH_CN	伺服器IP地址
+	ZH_CN	服务器IP地址
 
 INFORMATION_SERVER_PORT
 	CS	Číslo portu serveru
@@ -11781,7 +11873,7 @@ INFORMATION_SERVER_PORT
 	NL	Server poortnummer
 	NO	Serveren port
 	SV	Serverns port
-	ZH_CN	伺服器端口号
+	ZH_CN	服务器端口号
 
 INFORMATION_SERVER_HTTP
 	CS	Číslo portu HTTP serveru
@@ -11796,7 +11888,7 @@ INFORMATION_SERVER_HTTP
 	NL	Server HTTP poortnummer
 	NO	Serveren HTTP port
 	SV	Serverns HTTP-port
-	ZH_CN	伺服器HTTP端口号
+	ZH_CN	服务器HTTP端口号
 
 INFORMATION_ALBUMS
 	CS	Celkem alb
@@ -11811,7 +11903,7 @@ INFORMATION_ALBUMS
 	NL	Totaal aantal albums
 	NO	Totalt antall album
 	SV	Totalt antal album
-	ZH_CN	乐谱帖总数
+	ZH_CN	专辑总数
 
 INFORMATION_ARTISTS
 	CS	Celkem interpretů
@@ -11841,7 +11933,7 @@ INFORMATION_GENRES
 	NL	Totaal aantal genres
 	NO	Totalt antall genre
 	SV	Totalt antal genrer
-	ZH_CN	歌曲风格总数
+	ZH_CN	歌曲曲风总数
 
 INFORMATION_TRACKS
 	CS	Celkem skladeb
@@ -11856,7 +11948,7 @@ INFORMATION_TRACKS
 	NL	Totaal aantal liedjes
 	NO	Totalt antall låter
 	SV	Totalt antal låtar
-	ZH_CN	轨道总数
+	ZH_CN	音轨总数
 
 INFORMATION_TIME
 	CS	Celkový hrací čas
@@ -12110,7 +12202,7 @@ SETUP_SCROLLPIXELS_DESC
 	HE	קבע את מספר הפיקסלים בכל תזוזת טקסט
 	IT	Su un lettore con schermo grafico puoi impostare il numero di pixel che il lettore scorre nell'intervallo definito sopra. Imposta questo valore assieme alla velocita' di scorrimento per regolare la velocita' con la qualita'. Nota che valori minimi con una bassa velocita' di scorrimento danno un aspetto migliore ma richiedono un server piu' potente e una rete non congestionata. Nel dubbio lascia come impostato di default a 7 pixel (min 1, max 20).
 	NL	Op een grafisch scherm kun je het aantal pixels (punten) dat de tekst elke keer loopt. Pas dit aan in combinatie met de tekstloopsnelheid om de kwaliteit van de tekstloop in te stellen.  <br>Lage waardes met een lage tekstloopsnelheid tonen mooi maar hebben een hogere serverprestatie nodig en een goed netwerk. Laat bij twijfel de waarde op de standaard van 7 staan (minimum 1, maximum 20).
-	ZH_CN	在设有图形显示屏的播放机，你可以调节播放机在每一段间隔卷动映像点的数量。依据卷动率及您对显示速度和质量的要求加以调节。请注意，较小的值和较低的卷动率虽好，但必须配合高性能的伺服器和非繁忙的网络方有效果。如有不详之处，请保留缺省值7个映像点。（最小为1，最大为20）。
+	ZH_CN	在设有图形显示屏的播放机，你可以调节播放机在每一段间隔卷动映像点的数量。依据卷动率及您对显示速度和质量的要求加以调节。请注意，较小的值和较低的卷动率虽好，但必须配合高性能的服务器和非繁忙的网络方有效果。如有不详之处，请保留缺省值7个映像点。（最小为1，最大为20）。
 
 ANY_GENRE
 	CS	Jakýkoliv žánr
@@ -12156,7 +12248,7 @@ WMA_NO_CONVERT_CMD
 	FR	Erreur conversion WMA - v�rifiez le type fichier
 	IT	Errore nella conversione WMA - Controlla il tipo di file.
 	NL	WMA converteerfout - controleer bestandstype
-	ZH_CN	WMA转换错误-请检查文件种类
+	ZH_CN	WMA转换错误-请检查文件格式
 
 MIDWORDS_UPPER
 	DE	1
@@ -12282,6 +12374,7 @@ SQUEEZENETWORK_SWITCH
 	FR	Se connecter à SqueezeNetwork
 	IT	Passa a SqueezeNetwork
 	NL	Wisselen naar SqueezeNetwork
+	ZH_CN	切换到SqueezeNetwork
 
 SQUEEZENETWORK_SWITCHING
 	DE	Verbinde zum SqueezeNetwork...
@@ -12289,6 +12382,7 @@ SQUEEZENETWORK_SWITCHING
 	FR	Connexion à SqueezeNetwork, veuillez patienter...
 	IT	Trasferimento sulla SqueezeNetwork, attendi prego...
 	NL	Wisselen naar SqueezeNetwork, even wachten...
+	ZH_CN	正在切换到SqueezeNetwork，请稍等。
 
 SQUEEZENETWORK_SB2_REQUIRED
 	DE	Diese Funktion benötigt eine Squeezebox2 oder neuer.
@@ -12305,6 +12399,7 @@ UPNP_REQUEST_FAILED
 	EN	UPnP request failed, please check the UPnP server.
 	ES	El requerimiento de UPnP falló, por favor revisar el servidor de UPnP.
 	NL	UPnP verzoek lukte niet. Controleer je UPnP server.
+	ZH_CN	UPnP请求失败，请检查UPnP服务器。
 
 SETUP_SCROLLMODE
 	DE	Scroll Modus
@@ -12441,7 +12536,7 @@ TRACKARTIST
 	EN	Track Artist
 	ES	Artista del Álbum
 	NL	Artiest van liedje
-	ZH_CN	轨道艺人
+	ZH_CN	音轨艺人
 
 ALBUMARTIST
 	DE	Album-Interpret
@@ -12450,7 +12545,7 @@ ALBUMARTIST
 	FI	Levyn esittäjä
 	IT	Album dell'artista
 	NL	Album artiest
-	ZH_CN	乐谱帖艺人
+	ZH_CN	专辑艺人
 
 UNSYNC
 	DE	Synchronisation aufheben
@@ -12475,6 +12570,7 @@ SETUP_USEBANDASALBUMARTIST_1
 	FR	Lister les albums par groupe
 	IT	Elenca gli album per gruppo
 	NL	Toon albums per band
+	ZH_CN	专辑按团体列出
 
 SETUP_USEBANDASALBUMARTIST_0
 	DE	Alben bei allen Interpreten des Albums aufführen
@@ -12484,6 +12580,7 @@ SETUP_USEBANDASALBUMARTIST_0
 	FR	Lister les albums par tous les artistes
 	IT	Elenca gli album sotto ogni artista di quell'album
 	NL	Toon albums bij alle artiesten voor dat album
+	ZH_CN	专辑按艺人列出
 
 LYRICS
 	DE	Liedertexte
@@ -12493,6 +12590,7 @@ LYRICS
 	FR	Paroles
 	IT	Testi
 	NL	Tekst liedje
+	ZH_CN	歌词
 
 SETUP_POWERONRESUME
 	DE	Startverhalten
@@ -12502,6 +12600,7 @@ SETUP_POWERONRESUME
 	HE	הגדרות הפעלה
 	IT	Ripristino all'accensione
 	NL	Actie bij aanzetten speler
+	ZH_CN	开机恢复
 
 SETUP_POWERONRESUME_DESC
 	DE	Sie können bestimmen, wie SlimServer Wiedergabelisten behandeln soll, wenn Sie ihren Player mittels des POWER Knopfes aus- und wieder einschalten. Diese Einstellung bezieht sich auf das aktuelle, sowie allenfalls mit diesem synchronisierte Geräte.
@@ -12520,6 +12619,7 @@ SETUP_POWERONRESUME_PAUSEOFF_NONEON
 	HE	הפסק בכיבוי/השאר במצב הפסק לאחר הדלקה
 	IT	Pausa allo spegnimento / Rimani in pausa all'accensione
 	NL	Pauze bij uitzetten / pauze blijft bij aanzetten
+	ZH_CN	关机暂停/开机继暂停
 
 SETUP_POWERONRESUME_PAUSEOFF_PLAYON
 	DE	Beim Ausschalten pausieren / Beim Einschalten fortsetzen
@@ -12529,6 +12629,7 @@ SETUP_POWERONRESUME_PAUSEOFF_PLAYON
 	HE	הפסק נגינה בכיבוי/המשך נגינה בהדלקה
 	IT	Pausa allo spegnimento / Ripristino all'accensione
 	NL	Pauze bij uitzetten / hervatten bij aanzetten
+	ZH_CN	关机暂停/开机恢复
 
 SETUP_POWERONRESUME_STOPOFF_PLAYON
 	DE	Beim Ausschalten anhalten / Lied beim Einschalten neu starten
@@ -12538,6 +12639,7 @@ SETUP_POWERONRESUME_STOPOFF_PLAYON
 	HE	עצור נגינה בכיבוי/נגן שיר מתחילתו בהדלקה
 	IT	Stop allo spegnimento / Riinizia brano all'accensione
 	NL	Stop bij uitzetten / herstart liedje bij aanzetten
+	ZH_CN	关机停止/开机重播歌曲
 
 SETUP_POWERONRESUME_STOPOFF_NONEON
 	DE	Beim Ausschalten anhalten / Lied beim Einschalten nicht neu starten
@@ -12547,6 +12649,7 @@ SETUP_POWERONRESUME_STOPOFF_NONEON
 	HE	עצור נגינה בכיבוי/השאר במצב זה בהדלקה
 	IT	Stop allo spegnimento / Stop all'accensione
 	NL	Stop bij uitzetten / blijf gestopt bij aanzetten
+	ZH_CN	关机停止/开机继停止
 
 SETUP_POWERONRESUME_STOPOFF_RESETPLAYON
 	DE	Beim Ausschalten anhalten / Wiedergabeliste beim Einschalten neu starten
@@ -12556,6 +12659,7 @@ SETUP_POWERONRESUME_STOPOFF_RESETPLAYON
 	HE	עצור נגינה בכיבוי/נגן רשימת ניגון מתחילתה בהדלקה
 	IT	Stop allo spegnimento / Riinizia lista di esecuzione all'accensione
 	NL	Stop bij uitzetten / herstart playlist bij aanzetten
+	ZH_CN	关机停止/开机重播播放表
 
 SETUP_POWERONRESUME_STOPOFF_RESETON
 	DE	Beim Ausschalten anhalten / Wiedergabeliste beim Einschalten nicht neu starten
@@ -12565,6 +12669,7 @@ SETUP_POWERONRESUME_STOPOFF_RESETON
 	HE	עצור נגינה בכיבוי/בטל רשימת השמעה בהדלקה
 	IT	Stop allo spegnimento / Resetta lista di esecuzione all'accensione
 	NL	Stop bij uitzetten / reset playlist bij aanzetten
+	ZH_CN	关机停止/重置播放表
 
 ARTWORK
 	DE	Plattenhüllen
@@ -12574,12 +12679,14 @@ ARTWORK
 	FR	Pochette
 	IT	Copertina
 	NL	Hoesafbeeldingen
+	ZH_CN	封面图
 
 ONE_BY_ONE_ARTWORK
 	DE	Plattenhüllen einzeln
 	EN	1-by-1 Artwork
 	ES	Arte de Tapa 1-a-1
 	NL	1-voor-1 Hoesafbeeldingen
+	ZH_CN	1-by-1 封面图
 
 OBJECT_RETRIEVAL_FAILURE
 	DE	SlimServer konnte die von ihnen gewünschte Ressource nicht finden.
@@ -12597,6 +12704,7 @@ SETUP_LARGETEXTFONT
 	FR	Grande police
 	IT	Carattere per testo grande
 	NL	Grote tekst font
+	ZH_CN	大字体
 
 SETUP_LARGETEXTFONT_DESC
 	DE	Wählen Sie, welche Schrift Sie bei doppelter Grösse anzeigen wollen
@@ -12606,6 +12714,7 @@ SETUP_LARGETEXTFONT_DESC
 	FR	Choisissez la police utilisée en mode texte de grande taille.
 	IT	Scegli quale carattere usare quando visualizzi testo grande.
 	NL	Kies welk font je wilt gebruiken wanneer je grote tekst wil gebruiken.
+	ZH_CN	选择在显示较大文字时您想要使用的字体。
 
 SETUP_LARGETEXTFONT_0
 	DE	Klassisch
@@ -12615,6 +12724,7 @@ SETUP_LARGETEXTFONT_0
 	FR	Classique
 	IT	Classico
 	NL	Klassiek
+	ZH_CN	典型
 
 SETUP_LARGETEXTFONT_1
 	EN	Modern
@@ -12623,6 +12733,7 @@ SETUP_LARGETEXTFONT_1
 	FR	Moderne
 	IT	Moderno
 	NL	Modern
+	ZH_CN	现代
 
 SORT_BY
 	DE	Sortierung
@@ -12630,6 +12741,7 @@ SORT_BY
 	ES	Ordenar Por
 	FR	Trier par
 	NL	Sorteer op
+	ZH_CN	排序按
 
 SORT_ARTISTALBUM
 	DE	Interpret, Album
@@ -12637,6 +12749,7 @@ SORT_ARTISTALBUM
 	ES	Artista, Álbum
 	FR	Artiste, Album
 	NL	Artiest, album
+	ZH_CN	艺人，专辑
 
 SORT_ARTISTYEARALBUM
 	DE	Interpret, Jahr, Album
@@ -12644,6 +12757,7 @@ SORT_ARTISTYEARALBUM
 	ES	Artista, Año, Álbum
 	FR	Artiste, Année, Album
 	NL	Artiest, jaar, album
+	ZH_CN	一人，年份，专辑
 
 SORT_YEARALBUM
 	DE	Jahr, Album
@@ -12651,6 +12765,7 @@ SORT_YEARALBUM
 	ES	Año, Álbum
 	FR	Année, Album
 	NL	Jaar, album
+	ZH_CN	年份，专辑
 
 SORT_YEARARTISTALBUM
 	DE	Jahr, Artist, Album
@@ -12658,12 +12773,14 @@ SORT_YEARARTISTALBUM
 	ES	Año, Artista, Álbum
 	FR	Année, Artiste, Album
 	NL	Jaar, artiest, album
+	ZH_CN	年份，艺人，专辑
 
 SORT_GENREALBUM
 	DE	Stil, Album
 	EN	Genre, Album
 	ES	Género, Álbum
 	NL	Genre, album
+	ZH_CN	风格，专辑
 
 SORT_GENREARTISTALBUM
 	DE	Stil, Interpret, Album
@@ -12671,6 +12788,7 @@ SORT_GENREARTISTALBUM
 	ES	Género, Artista, Álbum
 	FR	Genre, Artiste, Album
 	NL	Genre, artiest, album
+	ZH_CN	风格，艺人，专辑
 
 SETUP_CLOCKSOURCE
 	DE	Taktgeber
@@ -12678,6 +12796,7 @@ SETUP_CLOCKSOURCE
 	ES	Fuente de Reloj
 	FR	Source horloge
 	NL	Klok bron
+	ZH_CN	时钟源
 
 SETUP_CLOCKSOURCE_DESC
 	DE	Die Ausgänge des Transporters könne mit internen oder externen Quellen synchronisiert werden. Bitte wählen Sie.
@@ -12686,6 +12805,7 @@ SETUP_CLOCKSOURCE_DESC
 	FR	Les sorties audio du Transporter peuvent être synchronisées avec des sources internes ou externes. Choisissez ci-dessous la source de l'horloge.
 	IT	Le uscite del Transporter possono essere sincronizzate con una sorgente interna o esterna. Scegli la sorgente di temporizzazione piu' sotto.
 	NL	Transporter's uitvoer kan gesynchroniseerd worden met interne of externe bronnen. Kies hieronder een bron.
+	ZH_CN	Transporter的输出可以和内置或外来的时钟源进行同步。在下列选择一个时钟源。
 
 CLOCKSOURCE_INTERNAL
 	DE	Interner Taktgeber
@@ -12693,12 +12813,14 @@ CLOCKSOURCE_INTERNAL
 	ES	Reloj Interno
 	IT	Orologio interno
 	NL	Interne klok
+	ZH_CN	内置时钟
 
 CLOCKSOURCE_WORD_CLOCK
 	EN	Word Clock Input
 	ES	Entrada de Palabra de Reloj
 	IT	Orologio mondiale
 	NL	Word klok invoer
+	ZH_CN	字形时钟输入
 
 VISUALIZER_EXTENDED_TEXT
 	DE	Erweiterte Textanzeige
@@ -12706,6 +12828,7 @@ VISUALIZER_EXTENDED_TEXT
 	ES	Display de Texto Extendido
 	FR	Infos texte étendues
 	NL	Uitgebreide tekstweergave
+	ZH_CN	扩展显示
 
 VISUALIZER_SPECTRUM_ANALYZER
 	CS	Frekvenční spektrum
@@ -12715,7 +12838,7 @@ VISUALIZER_SPECTRUM_ANALYZER
 	FR	Spectromètre
 	IT	Analizzatore di spettro
 	NL	Spectrum analyser
-	ZH_CN	音谱
+	ZH_CN	音谱分析器
 
 VISUALIZER_ANALOG_VUMETER
 	DE	Analoger VU Meter
@@ -12725,6 +12848,7 @@ VISUALIZER_ANALOG_VUMETER
 	FR	VUmètre analogique
 	IT	VU meter analogico
 	NL	Analoge VU meter
+	ZH_CN	模拟VU表
 
 VISUALIZER_DIGITAL_VUMETER
 	DE	Digitaler VU Meter
@@ -12734,6 +12858,7 @@ VISUALIZER_DIGITAL_VUMETER
 	FR	VUmètre numérique
 	IT	VU meter digitale
 	NL	Digitale VU meter
+	ZH_CN	数码VU表
 
 SETUP_VISUALIZERMODE
 	DE	Visualizer Bildschirm
@@ -12741,6 +12866,7 @@ SETUP_VISUALIZERMODE
 	ES	Pantalla de Visualizador
 	FR	Mode visualisation
 	NL	Visualisatie scherm
+	ZH_CN	视像屏幕
 
 SETUP_VISUALIZERMODE_DESC
 	DE	Der Player kann auf dem rechten Bildschirm Visualisierungen oder erweiterte Informationen anzeigen. Wählen Sie hier, was dargestellt werden soll. Mit dem "Visual" Knopf auf dem Player können Sie diese Wahl jederzeit ändern. 
@@ -12757,6 +12883,7 @@ SETUP_SERVERPRIORITY
 	FR	Priorité serveur
 	IT	Priorità server
 	NL	Server prioriteit
+	ZH_CN	SlimServer服务器流程优先值
 
 SETUP_SERVERPRIORITY_DESC
 	DE	Sie können die Priorität festlegen, mit welcher SlimServer ausgeführt wird.
@@ -12765,14 +12892,16 @@ SETUP_SERVERPRIORITY_DESC
 	FR	Vous pouvez fixer le niveau de priorité du SlimServer.
 	IT	Puoi specificare la priorità attribuita allo Slimserver.
 	NL	Je kunt de prioriteit specificeren van SlimServer binnen je server.
+	ZH_CN	您可以配置SlimServer服务器流程的优先设置。
 
 SETUP_SCANNERPRIORITY
 	DE	Scanner Priorität
 	EN	Scanner Priority
-	ES	Prioridad de la recopilación /
+	ES	Prioridad de la recopilación
 	FR	Priorité répertoriage
 	IT	Priorità scansione
 	NL	Scanner prioriteit
+	ZH_CN	扫描流程优先值
 
 SETUP_SCANNERPRIORITY_DESC
 	DE	Sie können die Priorität festlegen, mit welcher der Scan-Prozess ausgeführt wird.
@@ -12781,6 +12910,7 @@ SETUP_SCANNERPRIORITY_DESC
 	FR	Vous pouvez fixer le niveau de priorité du processus de répertoriage.
 	IT	Puoi specificare la priorità attribuita al processo di scansione.
 	NL	Je kunt de prioriteit specificeren voor het scannen van nieuwe en gewijzigde muziek.
+	ZH_CN	您可以配置扫描流程的优先设置。
 
 SETUP_PRIORITY_DEFAULT
 	DE	Standard Priorität
@@ -12789,6 +12919,7 @@ SETUP_PRIORITY_DEFAULT
 	FR	Priorité par défaut
 	IT	Priorità di default
 	NL	Standaard prioriteit
+	ZH_CN	确省优先
 
 SETUP_PRIORITY_CURRENT
 	DE	Aktuelle Server Priorität
@@ -12797,6 +12928,7 @@ SETUP_PRIORITY_CURRENT
 	FR	Priorité serveur actuelle
 	IT	Priorità server in uso
 	NL	Huidige serverprioriteit
+	ZH_CN	现有服务器优先设置
 
 SETUP_PRIORITY_HIGH
 	DE	Hoch
@@ -12805,6 +12937,7 @@ SETUP_PRIORITY_HIGH
 	FR	Elevée
 	IT	Alta
 	NL	Hoog
+	ZH_CN	高
 
 SETUP_PRIORITY_ABOVE_NORMAL
 	DE	Höher als normal
@@ -12813,6 +12946,7 @@ SETUP_PRIORITY_ABOVE_NORMAL
 	FR	Au-dessus de la normale
 	IT	Sopra il normale
 	NL	Boven normaal
+	ZH_CN	中高
 
 SETUP_PRIORITY_NORMAL
 	DE	Normal
@@ -12821,6 +12955,7 @@ SETUP_PRIORITY_NORMAL
 	FR	Normale
 	IT	Normale
 	NL	Normaal
+	ZH_CN	中
 
 SETUP_PRIORITY_BELOW_NORMAL
 	DE	Niedriger als normal 
@@ -12829,6 +12964,7 @@ SETUP_PRIORITY_BELOW_NORMAL
 	FR	Sous la normale
 	IT	Sotto il normale
 	NL	Onder normaal
+	ZH_CN	中低
 
 SETUP_PRIORITY_LOW
 	DE	Niedrig
@@ -12837,145 +12973,176 @@ SETUP_PRIORITY_LOW
 	FR	Basse
 	IT	Bassa
 	NL	Laag
+	ZH_CN	低
 
 SETUP_DIGITALOUTPUTENCODING
 	DE	Kodierung des digitalen Ausgangs
 	EN	Digital Output Encoding
 	NL	Digitale uitvoer codering
+	ZH_CN	数码输出编码
 
 SETUP_DIGITALOUTPUTENCODING_DESC
 	DE	Sie können für den digitalen Ausgang zwischen S/PDIF und AES/EBU wählen.
 	EN	You can choose between S/PDIF and AES/EBU encoding for the digital outputs.
 	FR	Vous pouvez choisir le format utilisé par les sorties numériques (S/PDIF ou AES/EBU).
 	NL	Je kunt kiezen tussen S/PDIF en AES/EBU codering voor de digitale uitvoeren.
+	ZH_CN	您可以选择使用S/PDIF或AES/EBU编码作为数码输出。
 
 DIGITALOUTPUTENCODING_SPDIF
 	EN	S/PDIF
+	ZH_CN	S/PDIF
 
 DIGITALOUTPUTENCODING_AESEBU
 	EN	AES/EBU
+	ZH_CN	AES/EBU
 	
 AUDIO_SOURCE_BALANCED_AES
 	EN	Balanced AES/EBU
 	IT	Bilanciata AES/EBU
+	ZH_CN	平衡AES/EBU
 
 AUDIO_SOURCE_BNC_SPDIF
 	EN	BNC Coax S/PDIF
 	IT	BNC S/PDIF Coassiale
+	ZH_CN	BNC S/PDIF电接口
 
 AUDIO_SOURCE_RCA_SPDIF
 	EN	RCA Coax S/PDIF
 	IT	RCA S/PDIF Coassiale
+	ZH_CN	RCA S/PDIF电接口
 
 AUDIO_SOURCE_OPTICAL_SPDIF
 	EN	Optical S/PDIF (TOSLINK)
 	IT	S/PDIF Ottica (Toslink)
+	ZH_CN	S/PDIF(TOSLINK)光接口
 
 SETUP_WORDCLOCKOUTPUT
 	DE	Word Clock auf S/PDIF Ausgängen
 	EN	Word Clock On S/PDIF Outputs
 	NL	Woordklok op S/PDIF uitvoeren
+	ZH_CN	S/PDIF输出产生字形时钟信息
 
 SETUP_WORDCLOCKOUTPUT_DESC
 	DE	Wenn die digitalen Eingänge verwendet werden, kann der Transporter das Signal direkt durchreichen oder auf den S/PDIF Ausgängen ein Word Clock Signal generieren.
 	EN	When using the digital inputs, Transporter can pass the signal through or generate a word clock signal on the S/PDIF outputs.
 	NL	Bij gebruik van de digitale invoer kan de Transporter het signaal doorlaten of een woordklok signaal genereren op de S/PDIF uitvoeren.
+	ZH_CN	当使用数码输入时，Transporter可将信息进行直通或在S/PDIF输出产生字形时钟信息。
 
 WORDCLOCKOUTPUT_GENERATECLOCK
 	DE	Word Clock generieren
 	EN	Generate word clock
 	NL	Genereer woordklok
+	ZH_CN	产生字形时钟
 
 WORDCLOCKOUTPUT_PASSTHROUGH
 	DE	Signal durchreichen
 	EN	Digital passthrough
 	NL	Digitaal doorlaten
+	ZH_CN	数码直通
 
 SETUP_POWEROFFDAC
 	DE	Audio vom Strom trennen
 	EN	Power Off AUDIO
 	IT	Spegni DAC
+	NL	Uitzetten Audio
+	ZH_CN	关闭数模转换器输出
 
 SETUP_POWEROFFDAC_DESC
 	DE	Wenn der Transporter ausgeschaltet wird, so kann auch der ganze Audioteil vom Strom getrennt werden. Dies kann allerdings ein hörbares Knack-Geräusch provozieren.
 	EN	When Transporter is turned off the audio section can be completely powered down.  Powering down the audio section may cause an audible pop.
 	IT	Quando il Transporter è spento, il convertitore digitale/analogico può essere disattivato.
 	NL	Wanneer de Transporter uit is kan het audiogedeelte compleet uitgezet worden. Het uitzetten van het audiogedeelte kan een hoorbaar pop-geluid veroorzaken.
+	ZH_CN	在关掉Transporter时您可将其数模转换器关闭。关闭数模转换器时有可能在一些连接器材上会产生一些噪音。
 
 POWEROFFDAC_ALWAYSON
 	DE	Audio nie trennen
 	EN	Audio always on
 	IT	DAC sempre acceso
 	NL	Audio altijd aan
+	ZH_CN	数模转换器输出持久启动
 
 POWEROFFDAC_WHENOFF
 	DE	Audio beim Ausschalten trennen
 	EN	Power down audio when off
 	IT	Spegni DAC quando spento
 	NL	Zet DAC uit bij speler uit
+	ZH_CN	关机时也把数模转换器输出一同关闭
 
 SETUP_DISABLEDAC
 	DE	Audio ausschalten
 	EN	Turn Off Audio
 	NL	Uitzetten geluid
+	ZH_CN	关闭数模转换器输出
 
 SETUP_DISABLEDAC_DESC
 	DE	Wenn der Transporter ausgeschaltet wird, so können auch der Digital/Analog-Wandler und die digitalen Ausgänge deaktiviert werden. Das Deaktivieren der digitalen Ausgänge kann auf gewissen Verstärkern zu hörbaren Störgeräuschen führen.
 	EN	When Squeezebox is turned off the digital-to-analog converter and digital outputs can be disabled.  Disabling the outputs may cause an audible pop or noise in some receivers.
 	NL	Wanneer de Squeezbox uit is kun je de digitale naar analoog omzetter en de digitale uitvoer uitgezetten. Uitzetten van de uitvoer kan een hoorbaar pop-geluid of ruis geven in sommige receivers.
+	ZH_CN	在关掉Squeezebox时您可将其数模转换器关闭。关闭数模转换器可能在一些连接器材上产生一些噪音。
 
 DISABLEDAC_ALWAYSON
 	DE	Ausgänge nie deaktivieren
 	EN	Outputs always on
 	NL	Uitvoer altijd aan
+	ZH_CN	输出持久启动
 
 DISABLEDAC_WHENOFF
 	DE	Ausgänge beim Ausschalten deaktivieren
 	EN	Disable outputs when off
 	NL	Zet uitvoer uit wanneer speler uit is
+	ZH_CN	关机后撤销输出
 
 SETUP_POLARITYINVERSION
 	DE	Polarität umkehren
 	EN	Polarity Inversion
 	NL	Polariteitsinversie
+	ZH_CN	电极转换
 
 SETUP_POLARITYINVERSION_DESC
 	DE	Transporter kann die Polarität des Audiosignals umkehren.
 	EN	Transporter can invert the polarity of the audio signal.
 	NL	De Transporter kan de polariteit inverteren van het audio signaal.
+	ZH_CN	Transporter可以将音频信号的电极加以转换。
 
 POLARITYINVERSION_NORMAL
 	DE	Normale Polarität
 	EN	Normal polarity
 	NL	Normale polariteit
+	ZH_CN	电极正常
 
 POLARITYINVERSION_INVERTED
 	DE	Umgekehrte Polarität
 	EN	Inverted polarity
 	NL	Omgekeerde polariteit
+	ZH_CN	电极倒转
 
 INFORMATION_PLAYER_VOLTAGE
 	DE	Spannung
 	EN	Voltage
 	IT	Voltaggio
+	ZH_CN	伏特
 
 LOADING_BROWSE_MUSIC_FOLDER
 	DE	Lade Musikverzeichnis...
 	EN	Loading Music Folder...
 	NL	Laden muziekfolder...
+	ZH_CN	音乐文件夹装载中
 
 LOADING
 	DE	Lade...
 	EN	Loading...
 	NL	Laden...
+	ZH_CN	装载中
 
 SRC
 	EN	Digital Input Source
 	NL	Digitale invoerbron
+	ZH_CN	数码输入源
 
 SHRINK
+	DE	Kleiner
 	EN	Shrink
 
 ENLARGE
+	DE	Grösser
 	EN	Enlarge
-
