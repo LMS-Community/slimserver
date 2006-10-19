@@ -10,7 +10,7 @@
 	<table width = '100%'>
 	<tr class = 'playing'><td colspan = '2' class = 'supertinytext'><b>[% browse_items.1.artist.name %] - [% browse_items.1.itemobj.album.name %]</b></td></tr>
 	[% FOREACH item = browse_items %]
-           [% PROCESS browsedbitems_list.html textClass = 'supertinytext' playLink = 'ajax' %]
+           [% PROCESS browsedbitems_list.html textClass = 'supertinytext' playLink = 'ajax' noLink = 1 %]
 	[% END %]
 	</table>
 [% END %]

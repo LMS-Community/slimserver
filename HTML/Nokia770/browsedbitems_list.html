@@ -20,7 +20,11 @@
 		<table width = '100%' class = 'noborder'>
 			<tr>
 			<td class = '[% IF textClass %][% textClass %][% ELSE %]itemtext[% END %]' align = 'left'>
-			[% PROCESS iteminfo %]
+			[%- IF noLink %]
+				[% item.text | html %]
+			[%- ELSE %]
+				[% PROCESS iteminfo %]
+			[%- END %]
 			</td>
 			</tr>
 		</table>
