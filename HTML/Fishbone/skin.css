@@ -163,8 +163,16 @@ div#pagetitle {
 	margin: 0px;
 }
 
+.artworkControls {
+	padding: 0px;
+}
+
+.artworkControls img {
+	margin-left: 2px;
+	padding-top: 2px;
+}
+
 .artworkText {
-	clear: left;
 	text-align: center;
 	overflow: hidden;
 	color: #999;
@@ -218,26 +226,6 @@ div#pagetitle {
 .thumbwrap a span {
 	display: block;
 	overflow: hidden;
-}
-
-.artworkControls {
-	padding: 0px;
-	padding-right: 4px;
-	margin: 0px auto;
-	height: 15px;
-}
-
-.artworkControls a {
-	vertical-align: middle;
-	float: left;
-	position: relative;
-	padding-right: 2px;
-	padding-top: 2px;
-}
-
-.artworkControls img {
-	padding: 0px;
-	margin: 0px;
 }
 
 .pagebar{
