@@ -26,7 +26,7 @@ sub registerParser {
 
 	$log->info("Registering external parser for type $type - class: $playlistClass");
 
-	$Slim::Music::Info::tagClasses{$type} = $playlistClass;
+	$Slim::Formats::tagClasses{$type} = $playlistClass;
 }
 
 sub parseList {
