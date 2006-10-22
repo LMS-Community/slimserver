@@ -9772,12 +9772,13 @@ NETWORK_SETTINGS
 	ZH_CN	网络
 
 SETUP_GROUP_DEBUG_DESC
+	DE	SlimServer kennt einige Einstellungen, um die Aufzeichnung von Informationen zu den Aktivitäten des Servers zu ermöglichen. Jede Kategorie hat mehrere Stufen, die den Schweregrad definieren: "Debug" ist am ausführlichsten, generiert viele Meldungen, während "Aus" keine erzeugt.
 	EN	SlimServer has a number of debugging settings that can be used to record detailed information about the server & scanner operation. Each debugging category has a severity for logging. With "Debug" being the most verbose, and "Off" being the least.
 
 DEBUGGING_SETTINGS
 	CS	Krokování
 	DA	Fejlsøgning
-	DE	Fehlerbeseitigung
+	DE	Fehlerbehebung
 	EN	Debugging
 	ES	Depuración
 	FR	Mise au point
@@ -13121,153 +13122,202 @@ SRC
 	ZH_CN	数码输入源
 
 DEBUG_ARTWORK
+	DE	Plattenhüllen Anzeige & Suche
 	EN	Artwork Display & Matching
 
 DEBUG_FACTORYTEST
-	EN	Information used during factory testing.
+	DE	Informationen während des Hardwaretests
+	EN	Information used during factory testing
 
 DEBUG_FAVORITES
+	DE	Wiedergabe & Speichern von Favoriten
 	EN	Favorites Saving & Playing
 
 DEBUG_SERVER_PLUGINS
+	DE	Plugin Informationen
 	EN	Plugin Module Loading
 
 DEBUG_PREFS
+	DE	Einstellungen
 	EN	Preference Setting & Saving
 
 DEBUG_SERVER_SCHEDULER
+	DE	Interner Scheduler
 	EN	Internal Scheduler Debugging
 
 DEBUG_SERVER
+	DE	Allgemeine Server Informationen
 	EN	General Server Information
 
 DEBUG_SERVER_SELECT
+	DE	Interner Select Loop (Fortgeschritten)
 	EN	Internal Select Loop Debugging (Advanced)
 
 DEBUG_SERVER_MEMORY
+	DE	Speicherbelegung (Fortgeschritten)
 	EN	Server Memory Usage (Advanced)
 
 DEBUG_SERVER_TIMERS
+	DE	Interne Timer Informationen
 	EN	Internal Timer Information
 
 DEBUG_NETWORK_MDNS
 	EN	Multicast DNS / Bonjour
 
 DEBUG_NETWORK_HTTP
+	DE	Interner HTTP Server
 	EN	Internal HTTP Server Debugging
 
 DEBUG_NETWORK_ASYNCHTTP
+	DE	Asynchrone HTTP Request Informationen
 	EN	Asynchronous Remote HTTP Request Information
 
 DEBUG_NETWORK_PROTOCOL
+	DE	Alle Player Protokolle
 	EN	All Player Protocol Debugging
 
 DEBUG_NETWORK_PROTOCOL_SLIMPROTO
+	DE	SlimProto (Squeezebox / Transporter) Protokol
 	EN	SlimProto (Squeezebox / Transporter) Protocol
 
 DEBUG_NETWORK_PROTOCOL_SLIMP3
+	DE	SliMP3 Protokol
 	EN	SliMP3 Protocol
 
 DEBUG_NETWORK_UPNP
+	DE	UPnP Server & Geräte Information (Rhapsody)
 	EN	UPnP Server & Device Information (Rhapsody)
 
 DEBUG_FORMATS_AUDIO
+	DE	Datei Metadaten & Audio Parsing
 	EN	File Metadata & Audio Parsing Information
 
 DEBUG_FORMATS_PLAYLISTS
+	DE	Wiedergabelisten Parsing
 	EN	Playlist Parsing Information
 
 DEBUG_FORMATS_XML
+	DE	XML Parsing (Picks, Shoutcast, etc.)
 	EN	XML Parsing Information (Picks, Shoutcast, etc)
 
 DEBUG_DATABASE_MYSQL
+	DE	MySQL Initialisierung & Prozess Information
 	EN	MySQL Initialization & Process Information
 
 DEBUG_DATABASE_SQL
+	DE	SQL Debugging (Fortgeschritten)
 	EN	SQL Debugging (Advanced)
 
 DEBUG_DATABASE_INFO
+	DE	Metadaten & Parsen
 	EN	Metadata & Parsing Debugging
 
 DEBUG_OS_FILES
+	DE	Informationen zu Dateisystem-Zugriffen
 	EN	Filesystem Level Information
 
 DEBUG_OS_PATHS
+	DE	Dateipfad-Parsing
 	EN	Filesystem Path Parsing
 
 DEBUG_CONTROL_STDIO
+	DE	Standard I/O Befehle (Fortgeschritten)
 	EN	Standard I/O Command Debugging (Advanced)
 
 DEBUG_CONTROL_QUERIES
+	DE	Control Query Debugging (Fortgeschritten)
 	EN	Control Query Debugging (Advanced)
 
 DEBUG_CONTROL_COMMAND
+	DE	Interne Befehlsausführung (Fortgeschritten)
 	EN	Internal Command Execution Debugging (Advanced)
 
 DEBUG_PLAYER_IR
+	DE	Infrarot Aktivität & Parsing
 	EN	Infrared Activity & Map Parsing
 
 DEBUG_PLAYER_MENU
+	DE	Player Menü
 	EN	Player Menu Debugging
 
 DEBUG_PLAYER_UI
+	DE	Player Benutzerinterface
 	EN	Player User Interface Information
 
 DEBUG_PLAYER_GRAPHICS
+	DE	Playergrafik: Schriften & Bitmaps
 	EN	Player Graphic Display: Font & Bitmap Information 
 
 DEBUG_PLAYER_PLAYLIST
+	DE	Player Wiedergabelisten Informationen
 	EN	High Level Player Playlist Control Information
 
 DEBUG_PLAYER_STREAMING
+	DE	Streaming aller Geräte
 	EN	All Player Streaming Debugging
 
 DEBUG_PLAYER_STREAMING_DIRECT
+	DE	Player: Direct Streaming
 	EN	Player Direct Streaming Debugging
 
 DEBUG_PLAYER_STREAMING_REMOTE
+	DE	Player: Remote Streaming
 	EN	Player Remote Streaming Debugging
 
 DEBUG_PLAYER_FIRMWARE
+	DE	Player-Firmware Aktualisierung
 	EN	Player Firmware Upgrade Debugging
 
 DEBUG_PLAYER_SOURCE
+	DE	Player: Audioquelle & Konvertierung
 	EN	Player Source Audio & Conversion Debugging
 
 DEBUG_PLAYER_SYNC
+	DE	Synchronisation mehrerer Geräte
 	EN	Multi-Player Synchronization Debugging
 
 DEBUG_SCAN
+	DE	Alle Scanner-Informationen
 	EN	All Scan Debugging
 
 DEBUG_SCAN_SCANNER
+	DE	Musik & Wiedergabelisten Scanner
 	EN	Music & Playlist Folder Scanning
 
 DEBUG_SCAN_IMPORT
+	DE	Datei & Wiedergabelisten Metadaten-Import
 	EN	File & Playlist Metadata Import Debugging
 
 DEBUG_PLUGIN_ITUNES
+	DE	iTunes Synchronisation
 	EN	iTunes Synchronization Information
 
 DEBUG_PLUGIN_MUSICMAGIC
+	DE	MusicIP Mix & Export
 	EN	MusicIP Mix & Export Debugging
 
 DEBUG_PLUGIN_MOODLOGIC
+	DE	MoodLogic Mix & Export
 	EN	MoodLogic Mix & Export Debugging
 
 SETUP_DEBUG_SERVER_LOG
+	DE	Server Logdatei
 	EN	Server Log File
 
 SETUP_DEBUG_SERVER_LOG_DESC
+	DE	SlimServer schreibt Logs aller Server relevanten Aktivitäten (Audio Streaming, Infrarot, Plugins etc.) in folgende Datei:
 	EN	SlimServer keeps a log file for all server related activities (Audio Streaming, Infrared, etc) here:
 
 SETUP_DEBUG_SCANNER_LOG
+	DE	Scanner Logdatei
 	EN	Scanner Log File
 
 SETUP_DEBUG_SCANNER_LOG_DESC
+	DE	SlimServer schreibt Logs der Aktivitäten im Zusammenhang mit dem Scanner (Musikdateien, iTunes, MusicIP, MoodLogic) in folgende Datei:
 	EN	SlimServer keeps a log file for all scanning related activities, including iTunes, MusicIP & MoodLogic here:
 
 SAVE_SETTINGS
+	DE	Einstellungen speichern
 	EN	Save Settings
 
 SHRINK
