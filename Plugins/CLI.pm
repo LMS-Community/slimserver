@@ -12,6 +12,7 @@ use Socket qw(:crlf);
 use Scalar::Util qw(blessed);
 
 use Slim::Control::Request;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
@@ -28,11 +29,6 @@ use Slim::Utils::Unicode;
 # Other CLI queries/commands are handled through Request.pm
 #
 # This module also handles parameters "charset" and "subscribe"
-
-
-my $d_cli_v = 0;            # verbose debug, for developpement
-my $d_cli_vv = 0;           # very verbose debug, function calls...
-
 
 my $cli_socket;             # server socket
 my $cli_socket_port = 0;    # CLI port on which socket is opened
@@ -55,6 +51,12 @@ our %connections;           # hash indexed by client_sock value
                             
 our %pending;
 
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.cli',
+	'defaultLevel' => 'WARN',
+	'description'  => 'PLUGIN_CLI',
+});
+
 ################################################################################
 # PLUGIN CODE
 ################################################################################
@@ -62,13 +64,11 @@ our %pending;
 # plugin: initialize the command line interface server
 sub initPlugin {
 
-	$d_cli_vv && msg("CLI: initPlugin()\n");
+	$log->info("Initializing");
 
-	# enable general debug if verbose debug is on
-	$::d_cli = $d_cli_v if !$::d_cli;
-	
 	# make sure we have a default value for our preference
 	if (!defined Slim::Utils::Prefs::get('cliport')) {
+
 		Slim::Utils::Prefs::set('cliport', 9090);
 	}
 	
@@ -124,7 +124,7 @@ sub setupGroup {
 # plugin: shutdown the CLI
 sub shutdownPlugin {
 
-	$d_cli_vv && msg("CLI: shutdownPlugin()\n");
+	$log->info("Shutting down..");
 
 	# close all connections
 	foreach my $client_socket (keys %connections) {
@@ -154,7 +154,7 @@ sub shutdownPlugin {
 sub cli_socket_open {
 	my $listenerport = shift;
 
-	$d_cli_vv && msg("CLI: cli_socket_open($listenerport)\n");
+	$log->debug("Opening on $listenerport");
 
 	if ($listenerport) {
 
@@ -166,7 +166,8 @@ sub cli_socket_open {
 			ReuseAddr => 1,
 			Reuse     => 1,
 			Timeout   => 0.001
-		) or die "CLI: Can't setup the listening port $listenerport: $!";
+
+		) or $log->logdie("Can't setup the listening port $listenerport: $!");
 	
 		$cli_socket_port = $listenerport;
 	
@@ -174,14 +175,14 @@ sub cli_socket_open {
 	
 		Slim::Networking::mDNS->addService('_slimcli._tcp', $cli_socket_port);
 
-		$::d_cli && msg("CLI: Now accepting connections on port $listenerport\n");
+		$log->info("Now accepting connections on port $listenerport");
 	}
 }
 
 # open or change our socket
 sub cli_socket_change {
 
-	$d_cli_vv && msg("CLI: cli_socket_change()\n");
+	$log->debug("Begin Function");
 
 	# get the port we must use
 	my $newport = Slim::Utils::Prefs::get('cliport');
@@ -208,11 +209,11 @@ sub cli_socket_change {
 # stop our listener on cli_socket_port
 sub cli_socket_close {
 
-	$d_cli_vv && msg("CLI: cli_socket_close()\n");
+	$log->debug("Begin Function");
 
 	if ($cli_socket_port) {
 
-		$::d_cli && msg("CLI: Closing socket $cli_socket_port\n");
+		$log->info("Closing socket $cli_socket_port");
 	
 		Slim::Networking::mDNS->removeService('_slimcli._tcp');
 		
@@ -227,11 +228,13 @@ sub cli_socket_close {
 # accept new connection!
 sub cli_socket_accept {
 
-	$d_cli_vv && msg("CLI: cli_socket_accept()\n");
+	$log->debug("Begin Function");
 
 	# Check max connections
 	if (scalar keys %connections > Slim::Utils::Prefs::get("tcpConnectMaximum")) {
-		$::d_cli && msg("CLI: Did not accept connection: too many connections open\n");
+
+		$log->warn("Warning: Did not accept connection: too many connections open!");
+
 		return;
 	}
 
@@ -255,16 +258,17 @@ sub cli_socket_accept {
 			$connections{$client_socket}{'auth'} = !Slim::Utils::Prefs::get('authorize');
 			$connections{$client_socket}{'terminator'} = $LF;
 
-			$::d_cli && msg("CLI: Accepted connection from ". $connections{$client_socket}{'id'} . " (" . (scalar keys %connections) . " active connections)\n");
+			$log->info("Accepted connection from $connections{$client_socket}{'id'} (" . (keys %connections) . " active connections)");
 		} 
 		else {
-			
-			$::d_cli && msg("CLI: Did not accept connection from ". $tmpaddr . ": unauthorized source\n");
-			$client_socket->close();
+
+			$log->info("Did not accept connection from $tmpaddr: unauthorized source");
+			$client_socket->close;
 		}
 
 	} else {
-		$::d_cli && msg("CLI: Could not accept connection\n");
+
+		$log->warn("Warning: Could not accept connection");
 	}
 }
 
@@ -273,8 +277,7 @@ sub cli_socket_accept {
 sub client_socket_close {
 	my $client_socket = shift;
 	
-	$d_cli_vv && msg("CLI: client_socket_close()\n");
-
+	$log->debug("Begin Function");
 
 	my $client_id = $connections{$client_socket}{'id'};
 		
@@ -285,7 +288,7 @@ sub client_socket_close {
 	close $client_socket;
 	delete($connections{$client_socket});
 	
-	$::d_cli && msg("CLI: Closed connection with $client_id (" . (scalar keys %connections) . " active connections)\n");
+	$log->info("Closed connection with $client_id (" . (keys %connections) . " active connections)");
 }
 
 
@@ -294,19 +297,20 @@ sub client_socket_read {
 	my $client_socket = shift;
 	use bytes;
 	
-	$d_cli_vv && msg("CLI: client_socket_read()\n");
-
+	$log->debug("Begin Function");
 
 	# handle various error cases
-	
 	if (!defined($client_socket)) {
-		$::d_cli && msg("CLI: client_socket undefined in client_socket_read()!\n");
+
+		$log->warn("Warning: client_socket undefined in client_socket_read()!");
+
 		return;		
 	}
 
 	if (!($client_socket->connected())) {
-		$::d_cli && msg("CLI: connection with " 
-			. $connections{$client_socket}{'id'} . " closed by peer\n");
+
+		$log->info("Connection with $connections{$client_socket}{'id'} closed by peer");
+
 		client_socket_close($client_socket);
 		return;
 	}			
@@ -317,8 +321,9 @@ sub client_socket_read {
 	my $bytes_read = $client_socket->sysread($indata, $bytes_to_read);
 
 	if (!defined($bytes_read) || ($bytes_read == 0)) {
-		$::d_cli && msg("CLI: connection with " 
-			. $connections{$client_socket}{'id'} . " half-closed by peer\n");
+
+		$log->info("Connection with $connections{$client_socket}{'id'} half-closed by peer");
+
 		client_socket_close($client_socket);
 		return;
 	}
@@ -326,22 +331,19 @@ sub client_socket_read {
 	# buffer the data
 	$connections{$client_socket}{'inbuff'} .= $indata;
 
-	if ($::d_cli) {
-		msg("CLI: " . $connections{$client_socket}{'id'} . " - Buffered [$indata]\n");
-	}
-	
+	$log->debug("$connections{$client_socket}{'id'} - Buffered [$indata]");
+
 	# only parse when we're not busy
 	if ($connections{$client_socket}{'busy'}) {
 	
 		# manage a stack of connections requiring processing
 		$pending{$client_socket} = $client_socket;
 		
-		if ($::d_cli) {
-			my $numpending = scalar keys %pending;
-			msg("CLI: " . $connections{$client_socket}{'id'} . " - BUSY!!!!! ($numpending pending)\n");
-		}
-	}
-	else {
+		my $numpending = scalar keys %pending;
+
+		$log->warn("Warning: $connections{$client_socket}{'id'} - BUSY!!!!! ($numpending pending)");
+
+	} else {
 	
 		# parse and process
 		# if the underlying code ever calls Idle, there is a chance
@@ -351,7 +353,7 @@ sub client_socket_read {
 		# handle any pending items...
 		while (scalar keys %pending) {
 		
-			$::d_cli && msg("CLI: Found pending reads\n");
+			$log->info("Found pending reads");
 			
 			foreach my $socket (keys %pending) {
 			
@@ -368,7 +370,7 @@ sub client_socket_read {
 sub client_socket_buf_parse {
 	my $client_socket = shift;
 
-	$d_cli_vv && msg("CLI: client_socket_buf_parse(" . $connections{$client_socket}{'id'} . ")\n");
+	$log->debug($connections{$client_socket}{'id'});
 
 	# parse our buffer to find LF, CR, CRLF or even LFCR (for nutty clients)
 	while ($connections{$client_socket}{'inbuff'}) {
@@ -384,13 +386,17 @@ sub client_socket_buf_parse {
 
 			# Remember the terminator used
 			if ($connections{$client_socket}{'terminator'} ne $2) {
+
 				$connections{$client_socket}{'terminator'} = $2;
-				if ($::d_cli) {
+
+				if ($log->is_debug) {
 					my $str;
+
 					for (my $i = 0; $i < length($2); $i++) {
 						$str .= ord(substr($2, $i, 1)) . " ";
 					}
-					msg("CLI: Using terminator $str for " . $connections{$client_socket}{'id'} . "\n");
+
+					$log->debug("Using terminator $str for $connections{$client_socket}{'id'}");
 				}
 			}
 
@@ -398,10 +404,15 @@ sub client_socket_buf_parse {
 			# Indicate busy so that any incoming data is buffered and not parsed
 			# during command processing
 			$connections{$client_socket}{'busy'} = 1;
+
 			my $exit = cli_process($client_socket, $1);
-			$connections{$client_socket}{'busy'} = 0 unless $exit == 2;
-			
+
+			if ($exit != 2) {
+				$connections{$client_socket}{'busy'} = 0;
+			}
+
 			if ($exit == 1) {
+
 				client_socket_write($client_socket);
 				client_socket_close($client_socket);
 				
@@ -423,18 +434,20 @@ sub client_socket_buf_parse {
 sub client_socket_write {
 	my $client_socket = shift;
 
-	$d_cli_vv && msg("CLI: client_socket_write(" . $connections{$client_socket}{'id'} . ")\n");
+	$log->debug($connections{$client_socket}{'id'});
 
 	my $message = shift(@{$connections{$client_socket}{'outbuff'}});
 	my $sentbytes;
 
 	return unless $message;
 
-	if ($::d_cli) {
+	if ($log->is_info) {
+
 		my $msg = substr($message, 0, 100);
 		chop($msg);
 		chop($msg);
-		msg("CLI: " . $connections{$client_socket}{'id'} . " - Sending response [$msg...]\n");
+
+		$log->info("$connections{$client_socket}{'id'} - Sending response [$msg...]");
 	}
 	
 	$sentbytes = send($client_socket, $message, 0);
@@ -442,7 +455,8 @@ sub client_socket_write {
 	unless (defined($sentbytes)) {
 
 		# Treat $clientsock with suspicion
-		$::d_cli && msg("CLI: Send to " . $connections{$client_socket}{'id'}  . " had error\n");
+		$log->error("Error: While sending to: $connections{$client_socket}{'id'}");
+
 		client_socket_close($client_socket);
 
 		return;
@@ -459,11 +473,13 @@ sub client_socket_write {
 		if (@{$connections{$client_socket}{'outbuff'}} == 0) {
 
 			# no more messages to send
-			$::d_cli && msg("CLI: Sent response to " . $connections{$client_socket}{'id'}  . "\n");
+			$log->info("Sent response to $connections{$client_socket}{'id'}");
+
 			Slim::Networking::Select::addWrite($client_socket, undef);
 			
 		} else {
-			$::d_cli && msg("CLI: More to send to " . $connections{$client_socket}{'id'}  . "\n");
+
+			$log->info("More to send to $connections{$client_socket}{'id'}");
 		}
 	}
 }
@@ -474,7 +490,7 @@ sub client_socket_buffer {
 	my $client_socket = shift;
 	my $message = shift;
 
-	$d_cli_vv && msg("CLI: client_socket_buffer(" . $connections{$client_socket}{'id'} . ")\n");
+	$log->debug($connections{$client_socket}{'id'});
 
 	# we're no longer busy, this is atomic
 	$connections{$client_socket}{'busy'} = 0;
@@ -495,17 +511,23 @@ sub client_socket_buffer {
 sub cli_process {
 	my($client_socket, $command) = @_;
 
-	$d_cli_vv && msg("CLI: cli_process($command)\n");
-	
-	my $exit = 0;			# do we close the connection after this command
+	$log->debug($command);
+
+	# do we close the connection after this command
+	my $exit = 0;
 
 	# parse the command
 	my ($client, $arrayRef) = Slim::Control::Stdio::string_to_array($command);
 	my $clientid = blessed($client) ? $client->id() : undef;
 
-	$::d_cli && $clientid && msg("CLI: Parsing command: Found client [$clientid]\n");
+	if ($clientid) {
 
-	return if !defined $arrayRef;
+		$log->info("Parsing command: Found client [$clientid]");
+	}
+
+	if (!defined $arrayRef) {
+		return;
+	}
 
 	# create a request
 	my $request = Slim::Control::Request->new($clientid, $arrayRef);
@@ -535,16 +557,17 @@ sub cli_process {
 		$clientid = blessed($client) ? $client->id() : undef;
 		$request->clientid($clientid);
 		
-		if ($::d_cli) {
+		if ($log->is_info) {
+
 			if (defined $client) {
-				msg("CLI: Request [$cmd] requires client, allocated $clientid\n");
+				$log->info("Request [$cmd] requires client, allocated $clientid");
 			} else {
-				msg("CLI: Request [$cmd] requires client, none found!\n");
+				$log->info("Request [$cmd] requires client, none found!");
 			}
 		}
 	}
-			
-	$::d_cli && msg("CLI: Processing request [$cmd]\n");
+
+	$log->info("Processing request [$cmd]");
 	
 	# try login before checking for authentication
 	if ($cmd eq 'login') {
@@ -553,15 +576,19 @@ sub cli_process {
 
 	# check authentication
 	elsif ($connections{$client_socket}{'auth'} == 0) {
-			$::d_cli && msg("CLI: Connection requires authentication, bye!\n");
-			# log it so that old code knows what the problem is
-			errorMsg("CLI: Connections require authentication, check login command. Disconnecting: " . $connections{$client_socket}{'id'} . "\n");
-			$exit = 1;
+
+		$log->info("Connection requires authentication, bye!");
+
+		# log it so that old code knows what the problem is
+		logError("Connections require authentication, check login command.");
+		logError("Disconnecting: $connections{$client_socket}{'id'}");
+
+		$exit = 1;
 	}
 
 	else {
 		
-		if ($cmd eq 'exit'){
+		if ($cmd eq 'exit') {
 			$exit = 1;
 		}
 
@@ -572,16 +599,15 @@ sub cli_process {
 			$exit = 1;
 		} 
 
-		elsif ($request->isStatusDispatchable()) {
+		elsif ($request->isStatusDispatchable) {
 
-			$::d_cli && msg("CLI: Dispatching [$cmd]\n");
+			$log->info("Dispatching [$cmd]");
 
 			$request->execute();
 
 			if ($request->isStatusError()) {
 
-				$::d_cli && msg ("CLI: Request [$cmd] failed with error: "
-					. $request->getStatusText() . "\n");
+				$log->error("Request [$cmd] failed with error: " . $request->getStatusText);
 
 			} else {
 
@@ -589,11 +615,10 @@ sub cli_process {
 				# processing
 				cli_request_check_subscribe($client_socket, $request);
 				
-				
 				# handle async commands
 				if ($request->isStatusProcessing()) {
 				
-					$::d_cli && msg ("CLI: Request [$cmd] is async: will be back\n");
+					$log->info("Request [$cmd] is async: will be back");
 					
 					# add our write routine as a callback
 					$request->callbackParameters(\&cli_request_write);
@@ -606,7 +631,7 @@ sub cli_process {
 		
 		else {
 
-			$::d_cli && msg("CLI: Request [$cmd] unkown or missing client -- will echo as is...\n");
+			$log->info("Request [$cmd] unkown or missing client -- will echo as is...");
 		}
 	}
 		
@@ -620,20 +645,22 @@ sub cli_request_write {
 	my $request = shift;
 	my $client_socket = shift;
 
-	$d_cli_vv && msg("CLI: cli_request_write("
-		. $request->getRequestString() . ")\n");
+	$log->debug($request->getRequestString);
 
 	$client_socket = $request->privateData() unless defined $client_socket;
-	my $encoding      = $request->getParam('charset') || 'utf8';
-	my @elements      = $request->renderAsArray($encoding);
+
+	my $encoding   = $request->getParam('charset') || 'utf8';
+	my @elements   = $request->renderAsArray($encoding);
 
 	my $output = Slim::Control::Stdio::array_to_string($request->clientid(), \@elements);
 
-#	$::d_cli && msg("CLI: Sending: " . $output . "\n");
 	if (defined $client_socket) {
+
 		client_socket_buffer($client_socket, $output . $connections{$client_socket}{'terminator'});
+
 	} else {
-		errorMsg("CLI: client_socket undef in cli_request_write()!!!\n");
+
+		logError("client_socket undef!!!");
 	}
 }
 
@@ -643,14 +670,14 @@ sub cli_request_check_subscribe {
 	my $request = shift;
 
 	# we must have a subscribe param
-	my $subparam = $request->getParam('subscribe');
-
-	return unless defined $subparam;
+	my $subparam = $request->getParam('subscribe') || return;
 
 	# and we only care about status
-	return unless $request->isQuery([['status']]);
+	if (!$request->isQuery([['status']])) {
+		return;
+	}
 
-	$d_cli_vv && msg("CLI: cli_request_check_subscribe()\n");
+	$log->debug("Begin Function");
 
 	cli_subscribe_status($client_socket, $request, $subparam);
 }
@@ -664,7 +691,7 @@ sub cli_cmd_login {
 	my $client_socket = shift;
 	my $request = shift;
 
-	$d_cli_vv && msg("CLI: cli_cmd_login()\n");
+	$log->debug("Begin Function");
 
 	my $login = $request->getParam('_p1');
 	my $pwd   = $request->getParam('_p2');
@@ -677,17 +704,18 @@ sub cli_cmd_login {
 	
 		if (Slim::Web::HTTP::checkAuthorization($login, $pwd)) {
 
-			$::d_cli && 
-				msg("CLI: Connection requires authentication: authorized!\n");
+			$log->info("Connection requires authentication: authorized!");
+
 			$connections{$client_socket}{'auth'} = 1;
 			return 0;
 		}
 
-		errorMsg("CLI: Connections require authentication, "
-			."wrong creditentials received. Disconnecting: " 
-			. $connections{$client_socket}{'id'} . "\n");
+		logError("Connections require authentication, wrong creditentials received.");
+		logError("Disconnecting: $connections{$client_socket}{'id'}");
+
 		return 1;
 	}
+
 	return 0;
 }
 
@@ -695,14 +723,14 @@ sub cli_cmd_login {
 sub canQuery {
 	my $request = shift;
  
-	$d_cli_vv && msg("CLI::canQuery()\n");
+	$log->debug("Begin Function");
  
 	if ($request->isNotQuery([['can']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
-	my @array;
+	my @array = ();
 	my $i = 1;
 	
 	# get all parameters in the array
@@ -723,20 +751,18 @@ sub canQuery {
 		}
 	}
 	
-	if ($array[0] eq 'login' || 
-	    $array[0] eq 'shutdown' || 
-	    $array[0] eq 'exit' ) {
+	if ($array[0] eq 'login' || $array[0] eq 'shutdown' || $array[0] eq 'exit' ) {
 
 		# these do not go through the normal mechanism and are always available
 		$request->addResult('_can', 1);
 	    
 	} else {
+
 		# create a request with the array...
 		my $testrequest = Slim::Control::Request->new(undef, \@array);
 		
 		# ... and return if we found a func for it or not
-		$request->addResult('_can', 
-			($testrequest->isStatusNotDispatchable()?0:1));
+		$request->addResult('_can', ($testrequest->isStatusNotDispatchable ? 0 : 1));
 			
 		undef $testrequest;
 	}
@@ -748,7 +774,7 @@ sub canQuery {
 sub listenCommand {
 	my $request = shift;
  
-	$d_cli_vv && msg("CLI::listenCommand()\n");
+	$log->debug("Begin Function");
  
 	if ($request->isNotCommand([['listen']])) {
 		$request->setStatusBadDispatch();
@@ -781,7 +807,7 @@ sub listenCommand {
 sub listenQuery {
 	my $request = shift;
  
-	$d_cli_vv && msg("CLI::listenQuery()\n");
+	$log->debug("Begin Function");
  
 	if ($request->isNotQuery([['listen']])) {
 		$request->setStatusBadDispatch();
@@ -804,7 +830,7 @@ sub listenQuery {
 sub subscribeCommand {
 	my $request = shift;
  
-	$d_cli_vv && msg("CLI::subscribeCommand()\n");
+	$log->debug("Begin Function");
  
 	if ($request->isNotCommand([['subscribe']])) {
 		$request->setStatusBadDispatch();
@@ -845,7 +871,7 @@ sub subscribeCommand {
 sub cli_subscribe_terms_none {
 	my $client_socket = shift;
 
-	$d_cli_vv && msg("CLI: cli_subscribe_terms_none()\n");
+	$log->debug("Begin Function");
 
 	delete $connections{$client_socket}{'subscribe'}{'listen'};
 	
@@ -856,7 +882,7 @@ sub cli_subscribe_terms_none {
 sub cli_subscribe_terms_all {
 	my $client_socket = shift;
 	
-	$d_cli_vv && msg("CLI: cli_subscribe_terms_all()\n");
+	$log->debug("Begin Function");
 
 	$connections{$client_socket}{'subscribe'}{'listen'} = '*';
 	
@@ -868,7 +894,7 @@ sub cli_subscribe_terms {
 	my $client_socket = shift;
 	my $array_ref = shift;
 	
-	$d_cli_vv && msg("CLI: cli_subscribe_terms()\n");
+	$log->debug("Begin Function");
 
 	$connections{$client_socket}{'subscribe'}{'listen'} = [$array_ref];
 	
@@ -881,7 +907,7 @@ sub cli_subscribe_status {
 	my $request = shift;
 	my $subparam = shift;
 	
-	$d_cli_vv && msg("CLI: cli_subscribe_status()\n");
+	$log->debug("Begin Function");
 
 	my $clientid = $request->clientid();
 	
@@ -915,7 +941,7 @@ sub cli_subscribe_status {
 # subscribes or unsubscribes to the Request notification system
 sub cli_subscribe_manage {
 
-	$d_cli_vv && msg("CLI: cli_subscribe_manage()\n");
+	$log->debug("Begin Function");
 
 	# do we need to subscribe?
 	my $subscribe = 0;
@@ -946,9 +972,7 @@ sub cli_subscribe_manage {
 sub cli_subscribe_notification {
 	my $request = shift;
 
-	$::d_cli && msg("CLI: cli_subscribe_notification(" 
-		. $request->getRequestString() . ")\n");
-
+	$log->info($request->getRequestString);
 
 	# iterate over each connection, we have a single notification handler
 	# for all connections
@@ -990,8 +1014,7 @@ sub cli_subscribe_notification {
 			}
 		}
 
-		# commands we ignore for status (to change if other subscriptions are
-		# supported!)
+		# commands we ignore for status (to change if other subscriptions are supported!)
 		next if $request->isCommand([['ir', 'button', 'debug', 'pref', 'playerpref', 'display']]);
 		next if $request->isCommand([['playlist'], ['open', 'jump']]);
 
@@ -1041,7 +1064,7 @@ sub cli_subscribe_notification {
 sub cli_subscribe_status_output {
 	my $request = shift;
 
-	$d_cli_vv && msg("CLI: cli_subscribe_status_output()\n");
+	$log->debug("Begin Function");
 
 	$request->cleanResults();
 	$request->execute();
@@ -1063,9 +1086,11 @@ sub cli_subscribe_status_output {
 
 	elsif ($delay > 0) {
 
-		Slim::Utils::Timers::setTimer($request, 
+		Slim::Utils::Timers::setTimer(
+			$request, 
 			Time::HiRes::time() + $delay,
-			\&cli_subscribe_status_output);
+			\&cli_subscribe_status_output
+		);
 	}
 }
 
@@ -1133,9 +1158,7 @@ SETUP_CLIPORT_OK
 	PT	A porta para acesso via linha de comando é
 	SV	Använder nu följande portnummer för terminalgränssnittet:
 	ZH_CN	当前正使用如下的命令行界面端口：
-
 ";
 }
 
 1;
-

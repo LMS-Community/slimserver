@@ -13,6 +13,7 @@ use Scalar::Util qw(blessed);
 use Slim::Formats::Playlists::M3U;
 use Slim::Player::Source;
 use Slim::Player::Sync;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
@@ -147,18 +148,23 @@ sub removeTrack {
 
 	my $stopped = 0;
 	my $oldMode = Slim::Player::Source::playmode($client);
+	my $log     = logger('player.source');
 	
 	if (Slim::Player::Source::playingSongIndex($client) == $tracknum) {
-		$::d_source && msg("Removing currently playing track.\n");
+
+		$log->info("Removing currently playing track.");
 
 		Slim::Player::Source::playmode($client, "stop");
+
 		$stopped = 1;
 
 	} elsif (Slim::Player::Source::streamingSongIndex($client) == $tracknum) {
+
 		# If we're removing the streaming song (which is different from
 		# the playing song), get the client to flush out the current song
 		# from its audio pipeline.
-		$::d_source && msg("Removing currently streaming track.\n");
+		$log->info("Removing currently streaming track.");
+
 		Slim::Player::Source::flushStreamingSong($client);
 
 	} else {
@@ -177,35 +183,48 @@ sub removeTrack {
 
 	my @reshuffled;
 	my $counter = 0;
+
 	for my $i (@{shuffleList($client)}) {
+
 		if ($i < $playlistIndex) {
+
 			push @reshuffled, $i;
+
 		} elsif ($i > $playlistIndex) {
+
 			push @reshuffled, ($i - 1);
 		}
 	}
-	
+
 	$client = Slim::Player::Sync::masterOrSelf($client);
-	
+
 	@{$client->shufflelist} = @reshuffled;
 
 	if ($stopped) {
+
 		my $songcount = scalar(@{playList($client)});
+
 		if ($tracknum >= $songcount) {
 			$tracknum = $songcount - 1;
 		}
+
 		if ($oldMode eq "play") {
+
 			Slim::Player::Source::jumpto($client, $tracknum);
+
 		} else {
+
 			Slim::Player::Source::streamingSongIndex($client, $tracknum, 1);
 		}
 	}
 
 	# browseplaylistindex could return a non-sensical number if we are not in playlist mode
 	# this is due to it being a wrapper around $client->modeParam('listIndex')
-	refreshPlaylist($client,Slim::Buttons::Playlist::showingNowPlaying($client) ?
-		undef : 
-		Slim::Buttons::Playlist::browseplaylistindex($client));
+	refreshPlaylist($client,
+		Slim::Buttons::Playlist::showingNowPlaying($client) ?
+			undef : 
+			Slim::Buttons::Playlist::browseplaylistindex($client)
+	);
 }
 
 sub removeMultipleTracks {
@@ -432,12 +451,14 @@ sub fischer_yates_shuffle {
 #		We also invalidate the htmlplaylist at this point
 sub reshuffle {
 	my $client = Slim::Player::Sync::masterOrSelf(shift);
+
 	my $dontpreservecurrsong = shift;
   
 	my $songcount = count($client);
 	my $listRef   = shuffleList($client);
+	my $log       = logger('player.playlist');
 
-	unless ($songcount) {
+	if (!$songcount) {
 
 		@{$listRef} = ();
 
@@ -455,16 +476,17 @@ sub reshuffle {
 		$realsong = $songcount;
 	}
 	
-	$::d_playlist && msgf("Reshuffling, current song index: %d, preserve song? %s\n",
+	$log->info(sprintf("Reshuffling, current song index: %d, preserve song? %s",
 		$realsong,
-		( $dontpreservecurrsong ) ? 'no' : 'yes',
-	);
+		$dontpreservecurrsong ? 'no' : 'yes',
+	));
 
-	my @realqueue;
-	my $song;
-	my $queue = $client->currentsongqueue();
-	for $song (@$queue) {
-		push @realqueue, ${$listRef}[$song->{index}];
+	my @realqueue = ();
+	my $queue     = $client->currentsongqueue();
+
+	for my $song (@$queue) {
+
+		push @realqueue, $listRef->[$song->{'index'}];
 	}
 
 	@{$listRef} = (0 .. ($songcount - 1));
@@ -514,7 +536,7 @@ sub reshuffle {
 
 			if (!blessed($trackObj) || !$trackObj->can('albumid')) {
 
-				$::d_playlist && msg("Track: $track isn't an object - fetching\n");
+				$log->info("Track: $track isn't an object - fetching");
 
 				$trackObj = Slim::Schema->rs('Track')->objectForUrl($track);
 			}
@@ -532,8 +554,7 @@ sub reshuffle {
 
 			} else {
 
-				msg("Couldn't find an object for url: $track\n");
-				bt();
+				logBacktrace("Couldn't find an object for url: $track");
 			}
 		}
 
@@ -587,19 +608,21 @@ sub reshuffle {
 			}
 		}
 	}
-	
+
 	for (my $i = 0; $i < $songcount; $i++) {
+
 		for (my $j = 0; $j <= $#$queue; $j++) {
 
 			if (defined($realqueue[$j]) && defined $listRef->[$i] && $realqueue[$j] == $listRef->[$i]) {
-				$queue->[$j]->{index} = $i;
+
+				$queue->[$j]->{'index'} = $i;
 			}
 		}
 	}
 
-	for $song (@$queue) {
-		if ($song->{index} >= $songcount) {
-			$song->{index} = 0;
+	for my $song (@$queue) {
+		if ($song->{'index'} >= $songcount) {
+			$song->{'index'} = 0;
 		}
 	}
 
@@ -607,10 +630,12 @@ sub reshuffle {
 	# the next song, flush the streaming song since it's probably not next.
 	if (shuffle($client) && 
 		Slim::Player::Source::playingSongIndex($client) != Slim::Player::Source::streamingSongIndex($client)) {
+
 		Slim::Player::Source::flushStreamingSong($client);
 	}
 	elsif ($client->playmode() eq 'playout-stop' &&
 		   Slim::Player::Source::playingSongIndex($client) != (count($client) - 1)) {
+
 		Slim::Player::Source::playmode($client, 'playout-play');
 	}
 
@@ -635,7 +660,7 @@ sub scheduleWriteOfPlaylist {
 
 	if ($playlistObj->title eq $client->string('UNTITLED')) {
 
-		$::d_playlist && msg("scheduleWriteOfPlaylist: Not writing out untitled playlist.\n");
+		logger('player.playlist')->warn("Not writing out untitled playlist.");
 
 		return 0;
 	}
@@ -670,7 +695,7 @@ sub removePlaylistFromDisk {
 
 sub newSongPlaylistCallback {
 	my $request = shift;
-	
+
 	my $client = $request->client() || return;
 
 	my $playlist = '';
@@ -688,7 +713,7 @@ sub newSongPlaylistCallback {
 
 	if (Slim::Utils::Prefs::get('playlistdir')) {
 
-		$::d_playlist && msg("newSongPlaylistCallback() writeCurTrackForM3U()\n");
+		logger('player.playlist')->info("Calling writeCurTrackForM3U()");
 
 		Slim::Formats::Playlists::M3U->writeCurTrackForM3U(
 			$playlist,
@@ -700,72 +725,83 @@ sub newSongPlaylistCallback {
 sub modifyPlaylistCallback {
 	my $request = shift;
 	
-	my $client = $request->client();
-	
-	if ($client && Slim::Utils::Prefs::get('persistPlaylists')) {
+	my $client  = $request->client();
+	my $log     = logger('player.playlist');
 
-		my $saveplaylist = $request->isCommand([['playlist'], [keys %validSubCommands]]);
+	$log->info("Checking if persistPlaylists is set..");
 
-		# Did the playlist or the current song change?
-		my $savecurrsong = 
-			$saveplaylist || 
-			$request->isCommand([['playlist'], ['open']]) || 
-			($request->isCommand([['playlist'], ['jump', 'index', 'shuffle']]));
+	if (!$client || !Slim::Utils::Prefs::get('persistPlaylists')) {
 
-		$::d_playlist && msg("modifyPlaylistCallback: savecurrsong is $savecurrsong\n");
+		return;
+	}
 
-		return if !$savecurrsong;
+	my $savePlaylist = $request->isCommand([['playlist'], [keys %validSubCommands]]);
 
-		my @syncedclients = (Slim::Player::Sync::syncedWith($client), $client);
+	# Did the playlist or the current song change?
+	my $saveCurrentSong = 
+		$savePlaylist || 
+		$request->isCommand([['playlist'], ['open']]) || 
+		($request->isCommand([['playlist'], ['jump', 'index', 'shuffle']]));
 
-		my $playlist = Slim::Player::Playlist::playList($client);
-		my $currsong = (Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Source::playingSongIndex($client)];
+	if (!$saveCurrentSong) {
 
-		$client->currentPlaylistChangeTime(time());
+		$log->info("saveCurrentSong not set. returing.");
 
-		for my $eachclient (@syncedclients) {
+		return;
+	}
 
-			# Don't save all the tracks again if we're just starting up!
-			if (!$eachclient->startupPlaylistLoading && $saveplaylist) {
+	$log->info("saveCurrentSong is: [$saveCurrentSong]");
 
-				$::d_playlist && msgf("modifyPlaylistCallback: finding client playlist for: [%s]\n", $eachclient->id);
+	my @syncedclients = (Slim::Player::Sync::syncedWith($client), $client);
 
-				# Create a virtual track that is our pointer
-				# to the list of tracks that make up this playlist.
-				my $playlistObj = Slim::Schema->rs('Playlist')->updateOrCreate({
+	my $playlist = Slim::Player::Playlist::playList($client);
+	my $currsong = (Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Source::playingSongIndex($client)];
 
-					'url'        => sprintf('clientplaylist://%s', $eachclient->id),
-					'attributes' => {
-						'TITLE' => sprintf('%s - %s', 
-							Slim::Utils::Unicode::utf8encode($eachclient->string('NOW_PLAYING')),
-							Slim::Utils::Unicode::utf8encode($eachclient->name ||  $eachclient->ip),
-						),
+	$client->currentPlaylistChangeTime(time());
 
-						'CT'    => 'cpl',
-					},
-				});
+	for my $eachclient (@syncedclients) {
 
-				if (defined $playlistObj) {
+		# Don't save all the tracks again if we're just starting up!
+		if (!$eachclient->startupPlaylistLoading && $savePlaylist) {
 
-					$::d_playlist && msg("modifyPlaylistCallback: calling setTracks()\n");
+			$log->info("Finding client playlist for: ", $eachclient->id);
 
-					$playlistObj->setTracks($playlist);
-				}
-			}
+			# Create a virtual track that is our pointer
+			# to the list of tracks that make up this playlist.
+			my $playlistObj = Slim::Schema->rs('Playlist')->updateOrCreate({
 
-			if ($savecurrsong) {
-				$eachclient->prefSet('currentSong', $currsong);
+				'url'        => sprintf('clientplaylist://%s', $eachclient->id),
+				'attributes' => {
+					'TITLE' => sprintf('%s - %s', 
+						Slim::Utils::Unicode::utf8encode($eachclient->string('NOW_PLAYING')),
+						Slim::Utils::Unicode::utf8encode($eachclient->name ||  $eachclient->ip),
+					),
+
+					'CT'    => 'cpl',
+				},
+			});
+
+			if (defined $playlistObj) {
+
+				$log->info("Calling setTracks() to update playlist");
+
+				$playlistObj->setTracks($playlist);
 			}
 		}
 
-		# Because this callback is asyncronous, reset the flag here.
-		# there's only one place that sets it - in Client::startup()
-		if ($client->startupPlaylistLoading) {
+		if ($saveCurrentSong) {
 
-			$::d_playlist && msg("modifyPlaylistCallback: resetting startupPlaylistLoading flag.\n");
-
-			$client->startupPlaylistLoading(0);
+			$eachclient->prefSet('currentSong', $currsong);
 		}
+	}
+
+	# Because this callback is asyncronous, reset the flag here.
+	# there's only one place that sets it - in Client::startup()
+	if ($client->startupPlaylistLoading) {
+
+		$log->info("Resetting startupPlaylistLoading flag.");
+
+		$client->startupPlaylistLoading(0);
 	}
 }
 

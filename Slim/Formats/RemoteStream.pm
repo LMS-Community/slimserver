@@ -17,12 +17,15 @@ use IO::Select;
 
 use Slim::Music::Info;
 use Slim::Utils::Errno;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
 
 use constant MAXCHUNKSIZE => 32768;
+
+my $log = logger('player.streaming.remote');
 
 sub open {
 	my $class = shift;
@@ -34,7 +37,7 @@ sub open {
 
 	if (!$server || !$port) {
 
-		$::d_remotestream && msg("Couldn't find server or port in url: [$url]\n");
+		logError("Couldn't find server or port in url: [$url]");
 		return;
 	}
 
@@ -48,18 +51,19 @@ sub open {
 
 		$peeraddr = $proxy;
 		($server, $port) = split /:/, $proxy;
-		$::d_remotestream && msg("Opening connection using proxy $proxy\n");
+
+		$log->info("Opening connection using proxy $proxy");
 	}
 
-	$::d_remotestream && msg("Opening connection to $url: [$server on port $port with path $path with timeout $timeout]\n");
-		
+	$log->info("Opening connection to $url: [$server on port $port with path $path with timeout $timeout]");
+
 	my $sock = $class->SUPER::new(
 		LocalAddr => $main::localStreamAddr,
 		Timeout	  => $timeout,
 
 	) or do {
 
-		msg("Couldn't create socket binding to $main::localStreamAddr with timeout: $timeout - $!\n");
+		logError("Couldn't create socket binding to $main::localStreamAddr with timeout: $timeout - $!");
 		return undef;
 	};
 
@@ -70,12 +74,13 @@ sub open {
 	# Manually connect, so we can set blocking.
 	# I hate Windows.
 	Slim::Utils::Network::blocking($sock, 0) || do {
-		$::d_remotestream && msg("Couldn't set non-blocking on socket!\n");
+
+		$log->warn("Warning: Couldn't set non-blocking on socket!");
 	};
 
 	my $in_addr = inet_aton($server) || do {
 
-		msg("Couldn't resolve IP address for: $server\n");
+		logError("Couldn't resolve IP address for: $server");
 		close $sock;
 		return undef;
 	};
@@ -85,14 +90,17 @@ sub open {
 		my $errnum = 0 + $!;
 
 		if ($errnum != EWOULDBLOCK && $errnum != EINPROGRESS) {
-			$::d_remotestream && msg("Can't open socket to [$server:$port]: $errnum: $!\n");
+
+			$log->error("Can't open socket to [$server:$port]: $errnum: $!");
+
 			close $sock;
 			return undef;
 		}
 
 		() = ${*$sock}{'_sel'}->can_write($timeout) or do {
 
-			$::d_remotestream && msgf("Timeout on connect to [$server:$port]: $errnum: $!\n");
+			$log->error("Timeout on connect to [$server:$port]: $errnum: $!");
+
 			close $sock;
 			return undef;
 		};
@@ -122,32 +130,32 @@ sub request {
 	${*$self}{'client'} = $args->{'client'};
 	${*$self}{'create'} = $args->{'create'};
 	
-	$::d_remotestream && msg("Request: \n$request\n");
+	$log->info("Request: $request");
 
 	$self->syswrite($request);
 
 	my $timeout  = $self->timeout();
 	my $response = Slim::Utils::Network::sysreadline($self, $timeout);
 
-	$::d_remotestream && msg("Response: $response\n");
+	$log->info("Response: $response");
 
 	if (!$response || $response !~ / (\d\d\d)/) {
+
+		$log->warn("Warning: Invalid response code ($response) from remote stream $url");
+
 		$self->close();
-		$::d_remotestream && msg("Invalid response code ($response) from remote stream $url\n");
+
 		return undef; 	
 	} 
 
 	$response = $1;
 	
-	if ($response < 200) {
-		$::d_remotestream && msg("Invalid response code ($response) from remote stream $url\n");
-		$self->close();
-		return undef;
-	}
+	if ($response < 200 || $response > 399) {
 
-	if ($response > 399) {
-		$::d_remotestream && msg("Invalid response code ($response) from remote stream $url\n");
+		$log->warn("Warning: Invalid response code ($response) from remote stream $url");
+
 		$self->close();
+
 		return undef;
 	}
 
@@ -178,7 +186,7 @@ sub request {
 		# socket in a CLOSE_WAIT state and leaking.
 		$self->close();
 
-		$::d_remotestream && msg("Redirect to: $redir\n");
+		$log->info("Redirect to: $redir");
 
 		return $class->open({
 			'url'     => $redir,
@@ -188,7 +196,7 @@ sub request {
 		});
 	}
 
-	$::d_remotestream && msg("opened stream!\n");
+	$log->info("Opened stream!");
 
 	return $self;
 }
@@ -300,12 +308,12 @@ sub redirect {
 sub DESTROY {
 	my $self = shift;
  
-	if ($::d_remotestream && defined ${*$self}{'url'}) {
+	if ($log->is_debug && defined ${*$self}{'url'}) {
 
 		my $class = ref($self);
 
-		msgf("%s - in DESTROY\n", $class);
-		msgf("%s About to close socket to: [%s]\n", $class, ${*$self}{'url'});
+		$log->debug(sprintf("%s - in DESTROY", $class));
+		$log->debug(sprintf("%s About to close socket to: [%s]", $class, ${*$self}{'url'}));
 	}
 
 	$self->close;

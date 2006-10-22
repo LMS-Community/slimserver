@@ -11,6 +11,8 @@ use strict;
 use base qw(Slim::Formats);
 
 use MP3::Info;
+
+use Slim::Utils::Log;
 use Slim::Utils::SoundCheck;
 
 =head1 NAME
@@ -37,6 +39,8 @@ L<Slim::Formats>, L<Slim::Utils::SoundCheck>, L<MP3::Info>
 
 =cut
 
+my $log = logger('formats.audio');
+
 sub getTag {
 	my $class = shift;
 	my $file  = shift || return {};
@@ -46,7 +50,7 @@ sub getTag {
 	# Make sure the file exists.
 	return undef unless $filesize && -r $file;
 
-	$::d_formats && msg( "Reading AIFF information for $file\n");
+	$log->info("Reading information for $file");
 
 	# This hash will map the keys in the tag to their values.
 	#
@@ -70,17 +74,17 @@ sub getTag {
 	# unless told otherwise, AIFF/AIFC is big-endian
 	$tags->{'ENDIAN'} = 1;
 	$tags->{'FS'}     = $filesize;
-	
-	$::d_formats && msg("read first tag: $tag $size $format\n");
-	
+
+	$log->debug("Read first tag: $tag $size $format");
+
 	if ($tag ne 'FORM' || ($format ne 'AIFF' && $format ne 'AIFC')) {
 		return undef;
 	}
 
-	if ($::d_formats && $size != $filesize) {
+	if ($log->is_warn && $size != $filesize) {
 
 		# iTunes rips with bogus size info...
-		msg("AIFF::getTag: ignores invalid filesize in header = $size, actual file size = $filesize\n");
+		$log->warn("Ignoring invalid filesize in header = $size, actual file size = $filesize");
 	}
 
 	my %readchunks = ();
@@ -99,7 +103,7 @@ sub getTag {
 
 		$readchunks{$tag} = 1;
 
-		$::d_formats && msg("read tag: $tag $size at file offset $chunkpos\n");
+		$log->debug("Read tag: $tag $size at file offset $chunkpos");
 
 		# look for the sound chunk
 		if ($tag eq 'SSND') {
@@ -186,7 +190,8 @@ sub getTag {
 
 		# we don't know anything about sample rates, number of channels, sample size, etc...
 		# could be 8-bit mono, 16-bit stereo, ...
-		$::d_formats && msg("AIFF: Missing COMM chunk\n");
+		$log->warn("Missing COMM chunk");
+
 		return undef;
 	}
 

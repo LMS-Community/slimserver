@@ -9,6 +9,7 @@ use strict;
 
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Player::ProtocolHandlers;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Timers;
 use Slim::Utils::UPnPMediaServer;
@@ -16,6 +17,12 @@ use Plugins::Rhapsody::ProtocolHandler;
 
 # This holds a mapping between Rhapsody servers and dynamic port numbers
 my $ports = {};
+
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.rhapsody',
+	'defaultLevel' => 'WARN',
+	'description'  => getDisplayName(),
+});
 
 sub getDisplayName {
 	return 'PLUGIN_RHAPSODY_MODULE_NAME';
@@ -38,21 +45,24 @@ sub findCallback {
 		my ($host, $port) = $device->getlocation =~ m|//([0-9.]+):(\d+)|;
 		
 		if ( $event eq 'add' ) {
+
 			$ports->{ $host } = {
 				'port'   => $port,
 				'device' => $device,
 			};
-			$::d_plugins && msgf("Rhapsody: New server detected: %s (%s)\n",
+
+			$log->info(sprintf("New server detected: %s (%s)",
 				$device->getfriendlyname,
 				$device->getlocation,
-			);
+			));
 		}
 		else {
 			delete $ports->{ $host };
-			$::d_plugins && msgf("Rhapsody: Server went away: %s (%s)\n",
+
+			$log->info(sprintf("Server went away: %s (%s)",
 				$device->getfriendlyname,
 				$device->getlocation,
-			);
+			));
 		}
 	}
 	

@@ -11,6 +11,7 @@ use strict;
 use Scalar::Util qw(blessed);
 use Storable;
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
@@ -36,6 +37,8 @@ sub browsedb {
 	my $player    = $params->{'player'};
 	my $artwork   = $params->{'artwork'};
 
+	my $log       = logger('database.info');
+
 	# validate hierarchy, converting invalid hierarchies to 'track'
 	my $validHierarchies = Slim::Schema->validHierarchies;
 
@@ -43,13 +46,10 @@ sub browsedb {
 
 		$hierarchy = 'track';
 
-		$::d_info && msg("browsedb - invalid hierarchy: $hierarchy\n");
+		$log->debug("Invalid hierarchy: $hierarchy");
 	}
 
-	$::d_info && msg("\n");
-	$::d_info && msg("**********************************************\n");
-	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
-	$::d_info && msg("**********************************************\n");
+	$log->debug("Hierarchy: $hierarchy level: $level");
 
 	# code further down expects the lcfirst version of the levels
 	my @levels = map { lcfirst($_) } split(',', $validHierarchies->{lc($hierarchy)});
@@ -135,11 +135,11 @@ sub browsedb {
 
 				$attrs{'album.compilation'} = 1;
 
-				$::d_info && msg("browsedb - adding VA for breadcrumb\n");
+				$log->debug("Adding VA for breadcrumb");
 			}
 		}
 
-		$::d_info && msg("browsedb - breadcrumb level: [$i] attr: [$attr]\n");
+		$log->debug("Breadcrumb level: [$i] attr: [$attr]");
 
 		for my $levelKey (grep { /^$attr/ } keys %{$params}) {
 
@@ -163,7 +163,7 @@ sub browsedb {
 				next;
 			}
 
-			$::d_info && msg("browsedb - breadcrumb levelKey: [$levelKey] value: [$value]\n");
+			$log->debug("Breadcrumb levelKey: [$levelKey] value: [$value]");
 
 			my $obj = $rs->search({ $searchKey => $value })->single;
 
@@ -355,7 +355,7 @@ sub browsedb {
 
 		if (Slim::Schema->variousArtistsAlbumCount(\%attrs)) {
 
-			$::d_info && msg("browsedb - VA added\n");
+			$log->debug("VA Added");
 
 			my $vaObj = Slim::Schema->variousArtistsObject;
 

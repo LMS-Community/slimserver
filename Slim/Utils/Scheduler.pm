@@ -43,12 +43,15 @@ Slim::Utils::Scheduler::remove_task(\&scanFunction);
 
 use strict;
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::PerfMon;
 
 my $curtask = 0;            # the next task to run
 my @background_tasks = ();  # circular list of references to arrays (sub ptrs with args)
 my $lastpass = 0;
+
+my $log = logger('server.scheduler');
 
 our $schedulerTask = Slim::Utils::PerfMon->new('Scheduler Task', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]), 1;
 
@@ -65,7 +68,7 @@ our $schedulerTask = Slim::Utils::PerfMon->new('Scheduler Task', [0.002, 0.005, 
 sub add_task {
 	my @task = @_;
 
-	$::d_scheduler && msg("Adding task: @task\n");
+	$log->info("Adding task: @task");
 
 	push @background_tasks, \@task;
 }
@@ -90,7 +93,9 @@ sub remove_task {
 		my ($subref, @subargs) = @{$background_tasks[$i]};
 
 		if ($taskref eq $subref) {
-			$::d_scheduler && msg("Removing taskptr $i: $taskref\n");
+
+			$log->info("Removing taskptr $i: $taskref");
+
 			splice @background_tasks, $i, 1; 
 		}
 
@@ -139,7 +144,8 @@ sub run_tasks {
 		if (&$subptr(@subargs) == 0) {
 
 			# the task has finished. Remove it from the list.
-			$::d_scheduler && msg("Scheduler: task finished: $subptr\n");
+			$log->info("Task finished: $subptr");
+
 			splice(@background_tasks, $curtask, 1);
 
 		} else {

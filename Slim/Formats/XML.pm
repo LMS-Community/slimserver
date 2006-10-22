@@ -21,9 +21,12 @@ use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Cache;
 use Slim::Utils::Misc;
+use Slim::Utils::Log;
 
 # How long to cache parsed XML data
 our $XML_CACHE_TIME = 300;
+
+my $log = logger('formats.xml');
 
 # Get xml for a feed synchronously
 # Only used to support the web interface
@@ -44,14 +47,14 @@ sub getFeedSync {
 
 		return 0 unless defined $content;
 
-		my $xml;
-		eval {
-			$xml = xmlToHash(\$content);
-		};
+		my $xml = eval { xmlToHash(\$content) };
+
 		if ($@) {
-			errorMsg("Failed to parse XML feed: $@\n");
+
+			logError("Failed to parse XML feed: $@");
 			return 0;
 		}
+
 		return $xml;
 	}
 
@@ -66,9 +69,12 @@ sub getFeedAsync {
 	
 	# Try to load a cached copy of the parsed XML
 	my $cache = Slim::Utils::Cache->new();
-	my $feed = $cache->get( $url . '_parsedXML' );
+	my $feed  = $cache->get( $url . '_parsedXML' );
+
 	if ( $feed ) {
-		$::d_plugins && msg("Formats::XML: got cached XML data for $url\n");
+
+		$log->info("Got cached XML data for $url");
+
 		return $cb->( $feed, $params );
 	}
 	
@@ -78,12 +84,15 @@ sub getFeedAsync {
 
 		# read_file from File::Slurp
 		my $content = eval { read_file($path) };
+
 		if ( $content ) {
-		    $feed = eval { parseXMLIntoFeed(\$content) };
-	    }
-	    else {
-	        return $ecb->( "Unable to open file '$path'", $params );
-	    }
+
+			$feed = eval { parseXMLIntoFeed(\$content) };
+
+		} else {
+
+			return $ecb->( "Unable to open file '$path'", $params );
+		}
 	}
 
 	if ($feed) {
@@ -100,12 +109,13 @@ sub getFeedAsync {
 			'expires' => $params->{'expires'}, 
 	});
 
-	$::d_plugins && msg("Formats::XML: async request: $url\n");
+	$log->info("Async request: $url");
 	
 	# Bug 3165
 	# Override user-agent and Icy-Metadata headers so we appear to be a web browser
 	my $ua = Slim::Utils::Misc::userAgentString();
 	$ua =~ s{iTunes/4.7.1}{Mozilla/5.0};
+
 	my %headers = (
 		'User-Agent'   => $ua,
 		'Icy-Metadata' => '',
@@ -118,8 +128,8 @@ sub gotViaHTTP {
 	my $http = shift;
 	my $params = $http->params();
 
-	$::d_plugins && msg("Formats::XML: got " . $http->url() . "\n");
-	$::d_plugins && msg("Formats::XML: content type is " . $http->headers()->content_type . "\n");
+	$log->debug("Got ", $http->url);
+	$log->debug("Content type is ", $http->headers()->content_type);
 
 	# Try and turn the content we fetched into a parsed data structure.
 	my $feed = eval { parseXMLIntoFeed($http->contentRef) };
@@ -140,14 +150,18 @@ sub gotViaHTTP {
 	
 	# Cache the parsed XML
 	if ( Slim::Utils::Misc::shouldCacheURL( $http->url ) ) {
+
 		my $cache = Slim::Utils::Cache->new();
-		$::d_plugins && msg("Formats::XML: caching parsed XML for $XML_CACHE_TIME seconds\n");
+
+		$log->info("Caching parsed XML for $XML_CACHE_TIME seconds");
+
 		$cache->set( $http->url() . '_parsedXML', $feed, $XML_CACHE_TIME );
 	}
 	else {
-		$::d_plugins && msgf("Formats::XML: not caching parsed XML for %s, appears to be a local resource\n",
+
+		$log->info(sprintf("Not caching parsed XML for %s, appears to be a local resource",
 			$http->url,
-		);
+		));
 	}
 
 	# call cb
@@ -161,8 +175,7 @@ sub gotErrorViaHTTP {
 	my $http = shift;
 	my $params = $http->params();
 
-	$::d_plugins && msg("Formats::XML: error getting " . $http->url() . "\n");
-	$::d_plugins && msg("Formats::XML: " . $http->error() . "\n");
+	logError("getting ", join("\n", $http->url, $http->error));
 
 	# call ecb
 	my $ecb = $params->{'ecb'};
@@ -177,6 +190,8 @@ sub parseXMLIntoFeed {
 	# convert XML into data structure
 	if ($xml && $xml->{'body'} && $xml->{'body'}->{'outline'}) {
 
+		$log->debug("Parsing body as OPML");
+
 		# its OPML outline
 		return parseOPML($xml);
 		
@@ -186,6 +201,8 @@ sub parseXMLIntoFeed {
 		return parseAtom($xml);
 
 	} elsif ($xml) {
+
+		$log->debug("Parsing body as RSS");
 
 		# its RSS or podcast
 		return parseRSS($xml);
@@ -408,7 +425,7 @@ sub openSearch {
 		},
 	);
 
-	$::d_plugins && msg("Formats::XML: async opensearch description request: $url\n");
+	$log->info("Async opensearch description request: $url");
 
 	$http->get($url);
 }
@@ -444,7 +461,7 @@ sub openSearchDescription {
 		$params,
 	);
 
-	$::d_plugins && msg("Formats::XML: async opensearch query: $url\n");
+	$log->info("Async opensearch query: $url");
 
 	$asyncHTTP->get($url);
 }
@@ -475,9 +492,7 @@ sub openSearchResult {
 		return $ecb->( $feed->{'items'}->[0]->{'description'}, $params->{'params'} );
 	}
 	
-	$::d_plugins && msgf("Formats::XML: got opensearch results [%s]\n",
-		scalar @{ $feed->{'items'} },
-	);
+	$log->info(sprintf("Got opensearch results [%s]", scalar @{ $feed->{'items'} }));
 	
 	my $cb = $params->{'cb'};
 	$cb->( $feed, $params->{'params'} );
@@ -531,7 +546,7 @@ sub xmlToHash {
 			};
 			
 			if ($@) {
-				$::d_plugins && msg("Formats::XML: Pass $pass failed to parse: $@\n");
+				logError("Pass $pass failed to parse: $@");
 			}
 			else {
 				last;
@@ -544,14 +559,18 @@ sub xmlToHash {
 
 	if ($@) {
 
-		errorMsg("Formats::XML: failed to parse feed because:\n[$@]\n");
+		logError("Failed to parse feed because: [$@]");
 
 		if (defined $content && ref($content) eq 'SCALAR') {
-			errorMsg("Formats::XML: here's the bad feed:\n[$$content]\n\n") if length $$content < 50000;
+
+			if (length $$content < 50000) {
+				logError("Here's the bad feed:\n[$$content]\n");
+			}
+
 			undef $content;
 		}
 
-		# Ugh. Need real exceptions!
+		# XXX - Ugh. Need real exceptions!
 		die $@;
 	}
 

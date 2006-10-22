@@ -16,9 +16,12 @@ use IO::Socket qw(:crlf);
 use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings;
 use Slim::Utils::Unicode;
+
+my $log = logger('formats.playlists');
 
 sub read {
 	my ($class, $file, $baseDir, $url) = @_;
@@ -28,7 +31,7 @@ sub read {
 	my @items  = ();
 	my $data   = '';
 
-	$::d_parse && msg("Parsing playlist: $url \n");
+	$log->info("Parsing: $url");
 
 	# Bug: 3697 - Haven't seen pls files used on disk (or at least with
 	# multiple encodings perl file), but have seen UTF-16 playlists on
@@ -51,7 +54,7 @@ sub read {
 
 	for my $line (split(/\n/, $data)) {
 
-		$::d_parse && msg("Parsing line: $line\n");
+		$log->debug("Parsing line: $line");
 
 		# strip carriage return from dos playlists
 		$line =~ s/\cM//g;
@@ -95,6 +98,8 @@ sub write {
 	my $playlistname = shift || "SlimServer " . Slim::Utils::Strings::string("PLAYLIST");
 	my $filename     = shift;
 
+	$log->info("Writing out: $filename");
+
 	my $string  = '';
 	my $output  = $class->_filehandleFromNameOrString($filename, \$string) || return;
 	my $itemnum = 0;
@@ -109,7 +114,7 @@ sub write {
 
 		if (!blessed($track) || !$track->can('title')) {
 
-			errorMsg("writePLS: Couldn't fetch track object for: [$item]\n");
+			logError("Couldn't fetch track object for: [$item]");
 
 			next;
 		}

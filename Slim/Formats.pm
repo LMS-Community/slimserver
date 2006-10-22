@@ -11,6 +11,7 @@ use strict;
 use base qw(Class::Data::Inheritable);
 
 use Slim::Music::Info;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
@@ -18,10 +19,7 @@ use Slim::Utils::Unicode;
 our (%tagClasses, %loadedTagClasses);
 
 my $init = 0;
-
-# Internal debug flags (need $::d_info for activation)
-# dump tags found/processed
-my $_dump_tags = 0;
+my $log  = logger('formats');
 
 =head1 NAME
 
@@ -101,12 +99,11 @@ sub loadTagFormatForType {
 
 	$class->init;
 
-	$::d_info && msg("Trying to load $tagClasses{$type}\n");
+	$log->info("Trying to load $tagClasses{$type}");
 
 	if (!Slim::bootstrap::tryModuleLoad($tagClasses{$type}) && $@) {
 
-		msg("Couldn't load module: $tagClasses{$type} : [$@]\n");
-		bt();
+		logBacktrace("Couldn't load module: $tagClasses{$type} : [$@]");
 		return 0;
 
 	} else {
@@ -167,11 +164,13 @@ sub readTags {
 		}
 
 		if ($@) {
-			errorMsg("Slim::Formats::readTags: While trying to ->getTag($filepath) : $@\n");
-			bt();
+			logBacktrace("While trying to ->getTag($filepath) : $@");
 		}
 
-		$::d_info && !defined($tags) && msg("Slim::Formats::readTags: No tags found for $filepath\n");
+		if (!defined $tags) {
+
+			$log->info("No tags found for $filepath");
+		}
 
 		# Return early if we have a DRM track
 		if ($tags->{'DRM'}) {
@@ -188,7 +187,8 @@ sub readTags {
 
 		if (!defined $tags->{'TITLE'}) {
 
-			$::d_info && msg("Info: no title found, using plain title for $file\n");
+			$log->info("No title found, using plain title for $file");
+
 			#$tags->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
 			Slim::Music::Info::guessTags($file, $type, $tags);
 		}
@@ -220,7 +220,7 @@ sub readTags {
 	# Last resort
 	if (!defined $tags->{'TITLE'} || $tags->{'TITLE'} =~ /^\s*$/) {
 
-		$::d_info && msg("Info: no title found, calculating title from url for $file\n");
+		$log->info("No title found, calculating title from url for $file");
 
 		$tags->{'TITLE'} = Slim::Music::Info::plainTitle($file, $type);
 	}
@@ -239,7 +239,7 @@ sub readTags {
 	# Only set if we couldn't read it from the file.
 	$tags->{'CONTENT_TYPE'} ||= $type;
 
-	$::d_info && $_dump_tags && msg("Slim::Formats::readTags(): Report for $file:\n");
+	$log->debug("Report for $file:");
 
 	# Bug: 2381 - FooBar2k seems to add UTF8 boms to their values.
 	# Bug: 3769 - Strip trailing nulls
@@ -265,7 +265,7 @@ sub readTags {
 			}
 		}
 		
-		$::d_info && $_dump_tags && $value && msg(". $tag : $value\n");
+		$value && $log->debug(". $tag : $value");
 	}
 
 	return $tags;

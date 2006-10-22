@@ -16,8 +16,15 @@ use XML::Simple;
 
 use Slim::Formats::XML;
 use Slim::Utils::Cache;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.podcast',
+	'defaultLevel' => 'WARN',
+	'description'  => getDisplayName(),
+});
 
 # default can be overridden by prefs.  See initPlugin()
 # TODO: come up with a better list of defaults.
@@ -45,7 +52,8 @@ sub enabled {
 }
 
 sub initPlugin {
-	$::d_plugins && msg("Podcast Plugin initializing.\n");
+
+	$log->info("Initializing.");
 
 	Slim::Buttons::Common::addMode('PLUGIN.Podcast', getFunctions(), \&setMode);
 
@@ -90,14 +98,16 @@ sub initPlugin {
 		}
 	}
 
-	if ($::d_plugins) {
-		msg("Podcast Feed Info:\n");
+	if ($log->is_debug) {
 
-		foreach (@feeds) {
-			msg($_->{'name'} . ", " . $_->{'value'} . "\n");
+		$log->debug("Feed Info:");
+
+		for my $feed (@feeds) {
+
+			$log->debug(join(', ', $feed->{'name'}, $feed->{'value'}));
 		}
 
-		msg("\n");
+		$log->debug('');
 	}
 
 	# feed_names should reflect current names
@@ -208,7 +218,7 @@ sub webPages {
 sub cliQuery {
 	my $request = shift;
 	
-	$::d_plugins && msg("Podcast: cliQuery()\n");
+	$log->debug('Enter');
 	
 	# Get OPML list of feeds from cache
 	my $cache = Slim::Utils::Cache->new();
@@ -219,7 +229,7 @@ sub cliQuery {
 sub cliRadiosQuery {
 	my $request = shift;
 	
-	$::d_plugins && msg("Podcast: cliRadiosQuery()\n");
+	$log->debug('Enter');
 	
 	# what we want the query to report about ourself
 	my $data = {
@@ -315,15 +325,13 @@ sub setupGroup {
 }
 
 sub updateFeedNames {
-	my @feedURLPrefs = Slim::Utils::Prefs::getArray("plugin_podcast_feeds");
-	my @feedNamePrefs;
+	my @feedURLPrefs  = Slim::Utils::Prefs::getArray("plugin_podcast_feeds");
+	my @feedNamePrefs = ();
 
 	# verbose debug
-	if ($::d_plugins) {
+	if ($log->is_debug) {
 
-		require Data::Dumper;
-		msg("Podcast: updateFeedNames urls:\n");
-		msg(Data::Dumper::Dumper(\@feedURLPrefs));
+		$log->debug("URLs: " . Data::Dump::dump(\@feedURLPrefs));
 	}
 
 	# case 1: we're reverting to default

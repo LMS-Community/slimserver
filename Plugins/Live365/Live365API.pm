@@ -1,4 +1,3 @@
-# vim: foldmethod=marker
 # Live365 tuner plugin for Slim Devices SlimServer
 # Copyright (C) 2004  Jim Knepley
 #
@@ -15,30 +14,28 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#
 
-# {{{ Plugins::Live365::Live365API 
+# $Id$
 
 package Plugins::Live365::Live365API;
 
 use strict;
-use Slim::Utils::Misc qw( msg );
-use vars qw( $VERSION );
-$VERSION = 1.20;
-
-use XML::Simple;
 use IO::Socket;
+use XML::Simple;
 
+use Slim::Utils::Log;
+
+my $log = logger('plugin.live365');
 my $live365_base = "http://www.live365.com";
 
 # Make the login-specific information global between all instances of
 # API objects.  That way we only login/logout once even if we have
 # multiple clients attached.
 my %loginInformation = (
-		'sessionid'	=> undef,
-		'vip'       => 0,
-		'loggedin'  => 0
-		);
+	'sessionid' => undef,
+	'vip'       => 0,
+	'loggedin'  => 0
+);
 
 sub new {
 	my $class = shift;  
@@ -58,7 +55,6 @@ sub new {
 
 	return $self;
 }
-
 
 sub setBlockingStatus {
 	my $self = shift;
@@ -91,56 +87,54 @@ sub stopLoading {
 # Web functions
 #
 sub asyncHTTPRequest {
-	my $self = shift;
-	my $path  = shift;
-	my $args = shift;
-	my $loadCallback = shift;
-	my $errorCallback = shift;
-	my $callbackArgs = shift;
+	my ($self, $path, $args, $loadCallback, $errorCallback, $callbackArgs) = @_;
 
-	my $http = Slim::Networking::SimpleAsyncHTTP->new($loadCallback,
-													  $errorCallback,
-													  $callbackArgs);
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		$loadCallback, $errorCallback, $callbackArgs
+	);
 
 	my $stringArgs = join( '&', map { "$_=" . URI::Escape::uri_escape($args->{$_}) } grep { $args->{$_} } keys %$args );
+
 	my $url = $live365_base . $path . '?' . $stringArgs;
+
 	$http->get($url);
 
-	$::d_plugins && msg("Live365: Loading $url\n");
+	$log->debug("Loading $url");
 
 	$self->{asyncHTTP} = $http;
 }
 
 #############################
 # Protocol handler functions
-#
+
 sub GetLive365Playlist {
-    my $self   = shift;
-    my $isVIP  = shift;
-    my $handle = shift;
-	my $callback = shift;
-	my $callbackargs = shift;
+	my ($self, $isVIP, $handle, $callback, $callbackArgs) = @_;
 
-    my %args = (
-        'handler'  => 'playlist',
-        'cmd'      => 'view',
-        'handle'   => $isVIP ? "afl:$handle" : $handle,
-        'viewType' => 'xml'
-    );
+	my %args = (
+		'handler'  => 'playlist',
+		'cmd'      => 'view',
+		'handle'   => $isVIP ? "afl:$handle" : $handle,
+		'viewType' => 'xml'
+	);
 
-	$self->asyncHTTPRequest('/pls/front',
-							\%args,
-							\&playlistLoadSub,
-							\&playlistErrorSub,
-							{self => $self,
-							 callback => $callback,
-							 callbackargs => $callbackargs});
+	$self->asyncHTTPRequest(
+		'/pls/front',
+		\%args,
+		\&playlistLoadSub,
+		\&playlistErrorSub,
+		{
+			self         => $self,
+			callback     => $callback,
+			callbackargs => $callbackArgs
+		}
+	);
 }
 
 sub playlistLoadSub {
 	my $http = shift;
-	my $self = $http->params('self');
-	my $callback = $http->params('callback');
+
+	my $self         = $http->params('self');
+	my $callback     = $http->params('callback');
 	my $callbackargs = $http->params('callbackargs');
 
 	$self->{asyncHTTP} = undef;
@@ -150,8 +144,9 @@ sub playlistLoadSub {
 
 sub playlistErrorSub {
 	my $http = shift;
-	my $self = $http->params('self');
-	my $callback = $http->params('callback');
+
+	my $self         = $http->params('self');
+	my $callback     = $http->params('callback');
 	my $callbackargs = $http->params('callbackargs');
 
 	$self->{asyncHTTP} = undef;
@@ -163,12 +158,7 @@ sub playlistErrorSub {
 # Login functions
 #
 sub login {
-	my $self = shift;
-	my $username = shift;
-	my $password = shift;
-	my $client = shift;
-	my $callback = shift;
-	my $silent = shift;
+	my ($self, $username, $password, $client, $callback, $silent) = @_;
 
 	my %args = (
 		'action'      => 'login',
@@ -178,23 +168,23 @@ sub login {
 		'password'    => $password
 	);
 
-	$self->asyncHTTPRequest('/cgi-bin/api_login.cgi',
-							\%args,
-							\&authLoadSub,
-							\&authErrorSub,
-							{self => $self,
-							 client => $client,
-							 callback => $callback,
-							 login => 1,
-							 silent => $silent});
+	$self->asyncHTTPRequest(
+		'/cgi-bin/api_login.cgi',
+		\%args,
+		\&authLoadSub,
+		\&authErrorSub,
+		{
+			self     => $self,
+			client   => $client,
+			callback => $callback,
+			login    => 1,
+			silent   => $silent
+		}
+	);
 }
 
-
 sub logout {
-	my $self = shift;
-	my $client = shift;
-	my $callback = shift;
-	my $silent = shift;
+	my ($self, $client, $callback, $silent) = @_;
 
 	if( !$loginInformation{sessionid} ) {
 		&$callback($client, 0);
@@ -206,40 +196,51 @@ sub logout {
 		'org'       => 'live365'
 	);
 
-	$self->asyncHTTPRequest('/cgi-bin/api_login.cgi',
-							\%args,
-							\&authLoadSub,
-							\&authErrorSub,
-							{self => $self,
-							 client => $client,
-							 callback => $callback,
-							 silent => $silent});
+	$self->asyncHTTPRequest(
+		'/cgi-bin/api_login.cgi',
+		\%args,
+		\&authLoadSub,
+		\&authErrorSub,
+		{
+			self     => $self,
+			client   => $client,
+			callback => $callback,
+			silent   => $silent
+		}
+	);
 }
 
 sub authLoadSub {
 	my $http = shift;
-	my $self = $http->params('self');
-	my $client = $http->params('client');
+
+	my $self     = $http->params('self');
+	my $client   = $http->params('client');
 	my $callback = $http->params('callback');
-	my $login = $http->params('login');
-	my $silent = $http->params('silent');
+	my $login    = $http->params('login');
+	my $silent   = $http->params('silent');
 
 	$self->{asyncHTTP} = undef;
 
-	if(!defined $http->contentRef) {
-		$::d_plugins && msg("Live365API: No content received from api_login.cgi\n");
+	if (!defined $http->contentRef) {
+
+		$log->warn("Warning: No content received from api_login.cgi");
+
 		&$callback($client, {'status' => 6, 'silent' => $silent}); # PLUGIN_LIVE365_LOGIN_ERROR_HTTP
-		return;  
+
+		return;
 	}
 
 	my $resp = eval { XMLin($http->contentRef) }; 
 	
-	$::d_plugins && msg("Live365API: Login XML:\n" . $http->content . "\n");
+	$log->Debug("Login XML: [", $http->content, "]");
 
 	if ($@) {
-		$::d_plugins && msg("Live365API: XML parsing error on api_login.cgi: $@\n");
+
+		logError("XML parsing error on api_login.cgi: $@");
+
 		&$callback($client, {'status' => 2, 'silent' => $silent}); # PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
-		return;  
+
+		return;
 	}
 
 	if ($login) {
@@ -255,14 +256,15 @@ sub authLoadSub {
 
 sub authErrorSub {
 	my ( $http, $error ) = @_;
-	my $self = $http->params('self');
-	my $client = $http->params('client');
+
+	my $self     = $http->params('self');
+	my $client   = $http->params('client');
 	my $callback = $http->params('callback');
-	my $silent = $http->params('silent');
+	my $silent   = $http->params('silent');
 
 	$self->{asyncHTTP} = undef;
 	
-	$::d_plugins && msg("Live365API: Error on api_login.cgi: $error\n");
+	$log->error("Error: On api_login.cgi: $error");
 	
 	&$callback($client, {'status' => 6, 'silent' => $silent}); # PLUGIN_LIVE365_LOGIN_ERROR_HTTP
 }
@@ -299,40 +301,39 @@ sub getMemberStatus {
 	return $loginInformation{vip};
 }
 
-
-#############################
-# Genre functions 
-#
 sub loadGenreList {
-	my $self = shift;
-	my $client = shift;
-	my $loadSub = shift;
-	my $errorSub = shift;
+	my ($self, $client, $loadSub, $errorSub) = @_;
 
 	my %args = (
 		'format' => 'xml',
 	);
 
-	$self->asyncHTTPRequest('/cgi-bin/api_genres.cgi',
-							\%args,
-							\&genreListLoadSub,
-							\&genreListErrorSub,
-							{self => $self,
-							 client => $client,
-							 loadSub => $loadSub,
-							 errorSub => $errorSub,});
+	$self->asyncHTTPRequest(
+		'/cgi-bin/api_genres.cgi',
+		\%args,
+		\&genreListLoadSub,
+		\&genreListErrorSub,
+		{
+			self     => $self,
+			client   => $client,
+			loadSub  => $loadSub,
+			errorSub => $errorSub,
+		}
+	);
 }
 
 sub genreListLoadSub {
 	my $http = shift;
-	my $self = $http->params('self');
-	my $client = $http->params('client');
-	my $loadSub = $http->params('loadSub');
+
+	my $self     = $http->params('self');
+	my $client   = $http->params('client');
+	my $loadSub  = $http->params('loadSub');
 	my $errorSub = $http->params('errorSub');
 
 	$self->{asyncHTTP} = undef;
 
 	if (!defined($http->contentRef)) {
+
 		&$errorSub($client);
 		return;
 	}
@@ -345,14 +346,19 @@ sub genreListLoadSub {
 	}
 
 	my @list = ();
+
 	# Build full display names for genres that list a Parent_ID
 	# (...and I'm happy I get to use an Orcish maneuver, it's a geek thing)
 	my %parentNameCache = ();
-	my @tmpGenres = @{ $genres->{Genres}->{Genre} };
-	foreach my $g ( @tmpGenres ) {
+	my @tmpGenres       = @{ $genres->{Genres}->{Genre} };
+
+	for my $g ( @tmpGenres ) {
+
 		if ( $g->{Parent_ID} != 0 ) {
+
 			my $baseName = $parentNameCache{ $g->{Parent_ID} }
 				||= ( grep { $g->{Parent_ID} == $_->{ID} } @tmpGenres )[0]->{Display_Name};
+
 			$g->{Display_Name} = "$baseName $g->{Display_Name}";
 		}
 
@@ -364,11 +370,13 @@ sub genreListLoadSub {
 
 sub genreListErrorSub {
 	my $http = shift;
-	my $self = $http->params('self');
-	my $client = $http->params('client');
+
+	my $self     = $http->params('self');
+	my $client   = $http->params('client');
 	my $errorSub = $http->params('errorSub');
 
 	$self->{asyncHTTP} = undef;
+
 	&$errorSub($client);
 }
 
@@ -387,13 +395,9 @@ sub setGenrePointer {
 
 #############################
 # Station preset functions
-#
+
 sub loadMemberPresets {
-	my $self = shift;
-	my $source = shift;
-	my $client = shift;
-	my $loadSub = shift;
-	my $errorSub = shift;
+	my ($self, $source, $client, $loadSub, $errorSub) = @_;
 
 	my %args = (
 		'action'    => "get",
@@ -406,23 +410,28 @@ sub loadMemberPresets {
 		'format'    => "xml"
 	);
 
-	$self->asyncHTTPRequest('/cgi-bin/api_presets.cgi',
-							\%args,
-							\&presetsLoadSub,
-							\&presetsErrorSub,
-							{'self'     => $self,
-							 'client'   => $client,
-							 'source'   => $source,
-							 'loadSub'  => $loadSub,
-							 'errorSub' => $errorSub,});
+	$self->asyncHTTPRequest(
+		'/cgi-bin/api_presets.cgi',
+		\%args,
+		\&presetsLoadSub,
+		\&presetsErrorSub,
+		{
+			'self'     => $self,
+			'client'   => $client,
+			'source'   => $source,
+			'loadSub'  => $loadSub,
+			'errorSub' => $errorSub,
+		}
+	);
 }
 
 sub presetsLoadSub {
 	my $http = shift;
-	my $self = $http->params('self');
-	my $client = $http->params('client');
-	my $source = $http->params('source');
-	my $loadSub = $http->params('loadSub');
+
+	my $self     = $http->params('self');
+	my $client   = $http->params('client');
+	my $source   = $http->params('source');
+	my $loadSub  = $http->params('loadSub');
 	my $errorSub = $http->params('errorSub');
 
 	$self->{asyncHTTP} = undef;
@@ -435,7 +444,9 @@ sub presetsLoadSub {
 	$self->{Directory} = eval { XMLin($http->contentRef, forcearray => [ "LIVE365_STATION" ]) };
 
 	if ($@) {
-		$::d_plugins && msg("Error parsing presets: $@" );
+
+		logError("Parsing presets: $@");
+
 		&$errorSub($client);
 		return;
 	}
@@ -448,9 +459,13 @@ sub presetsLoadSub {
 
 		# Very lazy way to search the XML for an error message
 		# indicating that our session timed out
+
 		$loginInformation{loggedin} = 0;
-		$::d_plugins && msg("Login session timed out");
+
+		logWarning("Login session timed out!");
+
 		&$errorSub($client);
+
 		return;
 
 	} else {
@@ -465,11 +480,13 @@ sub presetsLoadSub {
 
 sub presetsErrorSub {
 	my $http = shift;
-	my $self = $http->params('self');
-	my $client = $http->params('client');
+
+	my $self     = $http->params('self');
+	my $client   = $http->params('client');
 	my $errorSub = $http->params('errorSub');
 
 	$self->{asyncHTTP} = undef;
+
 	&$errorSub($client);
 }
 
@@ -477,19 +494,15 @@ sub presetsErrorSub {
 # Station functions
 #
 sub loadStationDirectory {
-	my $self = shift;
-	my $source = shift;
-	my $client = shift;
-	my $loadSub = shift;
-	my $errorSub = shift;
-	my $paging = shift;
-	
-	my @addlargs = @_;
+	my ($self, $source, $client, $loadSub, $errorSub, $paging, @addlargs) = @_;
 
 	# Added to handle loading of additional stations later from original args when paging
 	if ($paging && defined($self->{currentargs})) {
+
 		push(@addlargs, @{$self->{currentargs}});
+
 	} else {
+
 		$self->{currentargs} = \@addlargs;
 	}
 
@@ -514,23 +527,28 @@ sub loadStationDirectory {
 		@addlargs
 	);
 
-	$self->asyncHTTPRequest('/cgi-bin/directory.cgi',
-							\%args,
-							\&stationLoadSub,
-							\&stationErrorSub,
-							{self => $self,
-							 client => $client,
-							 source => $source,
-							 loadSub => $loadSub,
-							 errorSub => $errorSub,});
+	$self->asyncHTTPRequest(
+		'/cgi-bin/directory.cgi',
+		\%args,
+		\&stationLoadSub,
+		\&stationErrorSub,
+		{
+			self     => $self,
+			client   => $client,
+			source   => $source,
+			loadSub  => $loadSub,
+			errorSub => $errorSub,
+		}
+	);
 }
 
 sub stationLoadSub {
 	my $http = shift;
-	my $self = $http->params('self');
-	my $client = $http->params('client');
-	my $source = $http->params('source');
-	my $loadSub = $http->params('loadSub');
+
+	my $self     = $http->params('self');
+	my $client   = $http->params('client');
+	my $source   = $http->params('source');
+	my $loadSub  = $http->params('loadSub');
 	my $errorSub = $http->params('errorSub');
 
 	$self->{asyncHTTP} = undef;
@@ -543,14 +561,19 @@ sub stationLoadSub {
 	$self->{Directory} = eval { XMLin($http->contentRef, forcearray => [ "LIVE365_STATION" ] ) };
 
 	if ($@) {
-		$::d_plugins && msg("Error parsing station directory: $@" );	
+
+		logError("parsing station directory: $@");
+
 		&$errorSub($client);
 		return;
 	}
-	
-	if( defined $self->{Directory}->{LIVE365_STATION} ) {
+
+	if (defined $self->{Directory}->{LIVE365_STATION} ) {
+
 		push @{ $self->{Stations} }, @{ $self->{Directory}->{LIVE365_STATION} };
+
 	} else {
+
 		$self->{Directory}->{LIVE365_STATION} = [];
 	}
 
@@ -561,12 +584,13 @@ sub stationLoadSub {
 
 sub stationErrorSub {
 	my $http = shift;
-	my $self = $http->params('self');
-	my $client = $http->params('client');
+
+	my $self     = $http->params('self');
+	my $client   = $http->params('client');
 	my $errorSub = $http->params('errorSub');
 
 	$self->{asyncHTTP} = undef;
-	
+
 	if ( $errorSub && ref $errorSub eq 'CODE' ) {
 		$errorSub->($client);
 	}
@@ -578,17 +602,14 @@ sub clearStationDirectory {
 	$self->{Stations} = [];
 }
 
-
 sub getCurrentStation {
 	my $self = shift;
 
-    if( defined( my $current = $self->{Stations}->[$self->{stationPointer}] ) ) {
+	if (defined( my $current = $self->{Stations}->[$self->{stationPointer}] ) ) {
 		return $current;
-	} else {
-		return undef;
 	}
 
-	# return $self->{Stations}->[$self->{stationPointer}];
+	return undef;
 }
 
 
@@ -613,11 +634,7 @@ sub willRequireLoad {
 }
 
 sub setStationListPointer { 
-	my $self = shift;
-	my $req  = shift;
-	my $client = shift;
-	my $loadSub = shift;
-	my $errorSub = shift;
+	my ($self, $req, $client, $loadSub, $errorSub) = @_;
 
 	$self->{stationPointer} = $req;
 
@@ -664,39 +681,40 @@ sub findChannelStartingWith {
 
 	# Scan the channel list until we either find a channel or pass it's spot.
 	while( $thisChannel = $self->getNextChannelRecord() ) {
-		if( ( $startsWith cmp lc substr( $thisChannel->{STATION_TITLE}, 0, 1 ) ) == 0 ) {
+
+		if ( ( $startsWith cmp lc substr( $thisChannel->{STATION_TITLE}, 0, 1 ) ) == 0 ) {
 			return $thisChannel;
 		}
 	}
+
 	return undef;
 }
-
 
 sub getCurrentChannelURL {
 	my $self = shift;
 
 	my $url = $self->{Stations}->[$self->{stationPointer}]->{STATION_ADDRESS};
+
 	$url =~ s/^http:/live365:/;
-	if( $loginInformation{sessionid} ) {
+
+	if ($loginInformation{sessionid} ) {
+
 		$url .= '?sessionid=' . $loginInformation{sessionid};
 	}
 
 	return $url;
 }
 
-
 #############################
 # Information functions
-#
+
 sub loadInfoForStation {
-	my $self = shift;
-	my $stationID = shift;
-	my $client = shift;
-	my $loadSub = shift;
-	my $errorSub = shift;
+	my ($self, $stationID, $client, $loadSub, $errorSub) = @_;
 
 	if ( defined $self->{currentStationInfo} && $stationID == $self->{currentStationInfo} ) {
+
 		&$loadSub($client);
+
 		return;
 	}
 
@@ -706,28 +724,34 @@ sub loadInfoForStation {
 		'channel' => $stationID
 	);
 
-	$self->asyncHTTPRequest('/cgi-bin/station_info.cgi',
-							\%args,
-							\&infoLoadSub,
-							\&infoErrorSub,
-							{self => $self,
-							 client => $client,
-							 loadSub => $loadSub,
-							 errorSub => $errorSub,
-							 stationID => $stationID});
+	$self->asyncHTTPRequest(
+		'/cgi-bin/station_info.cgi',
+		\%args,
+		\&infoLoadSub,
+		\&infoErrorSub,
+		{
+			self      => $self,
+			client    => $client,
+			loadSub   => $loadSub,
+			errorSub  => $errorSub,
+			stationID => $stationID
+		}
+	);
 }
 
 sub infoLoadSub {
 	my $http = shift;
-	my $self = $http->params('self');
-	my $client = $http->params('client');
-	my $loadSub = $http->params('loadSub');
-	my $errorSub = $http->params('errorSub');
+
+	my $self      = $http->params('self');
+	my $client    = $http->params('client');
+	my $loadSub   = $http->params('loadSub');
+	my $errorSub  = $http->params('errorSub');
 	my $stationID = $http->params('stationID');
 
 	$self->{asyncHTTP} = undef;
 
 	if (!defined($http->contentRef)) {
+
 		&$errorSub($client);
 		return;
 	}
@@ -735,7 +759,9 @@ sub infoLoadSub {
 	$self->{StationInfo} = eval { XMLin($http->contentRef) };
 
 	if ($@) {
-		$::d_plugins && msg("Error parsing station info: $@" );	
+
+		logError("Parsing station info: $@");
+
 		&$errorSub($client);
 		return;
 	}
@@ -769,8 +795,12 @@ sub getStationInfo {
 
 	# Convert quality levels to a canonical phrase
 	my $quality = \$self->{StationInfo}->{LIVE365_STATION}->{STATION_QUALITY_LEVEL};
+
 	QUALITY: {
-		last QUALITY if( $$quality =~ /AM|FM|CD/ );
+		if ($$quality =~ /AM|FM|CD/) {
+			last QUALITY;
+		}
+
 		$$quality >= 0 && $$quality <= 99 && do {
 			$$quality = 'AM radio';
 			last QUALITY;
@@ -787,7 +817,7 @@ sub getStationInfo {
 		}; 
 	}
 
-	foreach my $item ( @infoItems ) {
+	for my $item ( @infoItems ) {
 		$item->[1] = $self->{StationInfo}->{LIVE365_STATION}->{ $item->[0] };
 	}
 
@@ -805,15 +835,17 @@ sub getStationInfoURL {
 	my $self = shift;
 
 	my $url = $self->{StationInfo}->{LIVE365_STATION}->{STATION_ADDRESS};
+
 	$url =~ s/^http:/live365:/;
-	if( $loginInformation{sessionid} ) {
+
+	if ($loginInformation{sessionid}) {
+
 		$url .= '?sessionid=' . $loginInformation{sessionid};
 	}
 
 	return $url;
 }
 
-
 1;
 
-# }}}
+__END__

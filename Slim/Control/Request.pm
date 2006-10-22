@@ -30,7 +30,6 @@ my @result = Slim::Control::Request::executeLegacy($client, ['playlist', 'save']
 
 =cut
 
-
 #####################################################################################################################################################################
 
 =head1 COMMANDS & QUERIES LIST
@@ -45,7 +44,7 @@ my @result = Slim::Control::Request::executeLegacy($client, ['playlist', 'save']
 
 =head2 GENERAL
 
- N    debug           <debugflag>                 <0|1|?|>
+ N    debug           <debugflag>                 <OFF|FATAL|ERROR|WARN|INFO|DEBUG|?|>
  N    pref            <prefname>                  <prefvalue|?>
  N    version         ?
  N    stopserver
@@ -407,6 +406,7 @@ use Tie::LLHash;
 use Slim::Control::Commands;
 use Slim::Control::Queries;
 use Slim::Utils::Alarms;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 our %dispatchDB;                # contains a multi-level hash pointing to
@@ -417,10 +417,9 @@ our %subscribers = ();          # contains the clients to the notification
 
 our @notificationQueue;         # contains the Requests waiting to be notified
 
-my $d_notify = 0;               # local debug flag for notifications. Note that
-                                # $::d_command must be enabled as well.
-
 our $requestTask = Slim::Utils::PerfMon->new('Request Task', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5], 1);
+
+my $log = logger('control.command');
 
 ################################################################################
 # Package methods
@@ -692,11 +691,11 @@ sub subscribe {
 	
 	$subscribers{$subscriberFuncRef} = [$subscriberFuncRef, $requestsRef];
 	
-	$::d_command && $d_notify && msgf(
-		"Request: subscribe(%s) - (%d subscribers)\n",
+	$log->debug(sprintf(
+		"Request from: %s - (%d subscribers)\n",
 		Slim::Utils::PerlRunTime::realNameForCodeRef($subscriberFuncRef),
 		scalar(keys %subscribers)
-	);
+	));
 }
 
 # remove a subscriber
@@ -705,27 +704,25 @@ sub unsubscribe {
 	
 	delete $subscribers{$subscriberFuncRef};
 
-	$::d_command && $d_notify && msgf(
-		"Request: unsubscribe(%s) - (%d subscribers)\n",
+	$log->debug(sprintf(
+		"Request from: %s - (%d subscribers)\n",
 		Slim::Utils::PerlRunTime::realNameForCodeRef($subscriberFuncRef),
 		scalar(keys %subscribers)
-	);
+	));
 }
 
 # notify subscribers from an array, useful for notifying w/o execution
 # (requests must, however, be defined in the dispatch table)
 sub notifyFromArray {
 	my $client         = shift;     # client, if any, to which the query applies
-	my $requestLineRef = shift;     # reference to an array containing the 
-									# query verbs
+	my $requestLineRef = shift;     # reference to an array containing the query verbs
 
-	$::d_command && $d_notify && msg("Request: notifyFromArray(" .
-						(join " ", @{$requestLineRef}) . ")\n");
+	$log->debug(sprintf("(%s)", join(" ", @{$requestLineRef})));
 
 	my $request = Slim::Control::Request->new(
-									(blessed($client) ? $client->id() : undef), 
-									$requestLineRef
-								);
+		(blessed($client) ? $client->id() : undef), 
+		$requestLineRef
+	);
 	
 	push @notificationQueue, $request;
 }
@@ -1441,8 +1438,11 @@ sub normalize {
 sub execute {
 	my $self = shift;
 	
-	$::d_command && msg("\n");
-#	$::d_command && $self->dump("Request");
+	$log->info('Enter');
+
+	if ($log->is_debug) {
+		$self->dump("Request");
+	}
 
 	$::perfmon && (my $now = Time::HiRes::time());
 
@@ -1453,7 +1453,9 @@ sub execute {
 
 	# do nothing if something's wrong
 	if ($self->isStatusError()) {
-		$::d_command && msg('Request: Request in error, exiting');
+
+		$log->error('Request in error, returning');
+
 		return;
 	}
 	
@@ -1472,7 +1474,8 @@ sub execute {
 		eval { &{$funcPtr}($self) };
 
 		if ($@) {
-			errorMsg("Request: Error when trying to run function coderef [$funcName]: [$@]\n");
+
+			logError("While trying to run function coderef [$funcName]: [$@]");
 			$self->setStatusBadDispatch();
 			$self->dump('Request');
 		}
@@ -1505,7 +1508,10 @@ sub executeDone {
 		}
 	}
 
-	$::d_command && $self->dump('Request');
+	if ($log->is_debug) {
+
+		$log->debug($self->dump('Request'));
+	}
 }
 
 # allows re-calling the function. Basically a copycat of execute, without
@@ -1515,7 +1521,8 @@ sub jumpbacktofunc {
 	
 	# do nothing if we're done
 	if ($self->isStatusDone()) {
-		errorMsg('Request (jumpbacktofunc): Called on done request, exiting');
+
+		logError('Called on done request, exiting');
 		return;
 	}
 
@@ -1524,18 +1531,20 @@ sub jumpbacktofunc {
 
 	# do nothing if something's wrong
 	if ($self->isStatusError()) {
-		$::d_command && msg('Request (jumpbacktofunc): Request in error, exiting');
+
+		logError('Called on done request, exiting');
 		return;
 	}
-	
-	
+
 	# call the execute function
 	if (my $funcPtr = $self->{'_func'}) {
 
 		eval { &{$funcPtr}($self) };
 
 		if ($@) {
-			errorMsg("Request (jumpbacktofunc): Error when trying to run function coderef: [$@]\n");
+
+			logError("While trying to run function coderef: [$@]");
+
 			$self->setStatusBadDispatch();
 			$self->dump('Request');
 		}
@@ -1554,7 +1563,7 @@ sub callback {
 		
 		if (defined(my $funcPtr = $self->callbackFunction())) {
 
-			$::d_command && msg("Request: Calling callback function\n");
+			$log->info("Calling callback function");
 
 			my $args = $self->callbackArguments();
 		
@@ -1564,7 +1573,7 @@ sub callback {
 				eval { &$funcPtr($self) };
 
 				if ($@) { 
-					errorMsg("Request: Error when trying to run callback coderef: [$@]\n");
+					logError("While trying to run function coderef: [$@]");
 					$self->dump('Request');
 				}
 			
@@ -1581,14 +1590,15 @@ sub callback {
 				eval { &$funcPtr(@$args) };
 
 				if ($@) { 
-					errorMsg("Request: Error when trying to run callback coderef: [$@]\n");
+					logError("While trying to run function coderef: [$@]");
 					$self->dump('Request');
 				}
 			}
 		}
+
 	} else {
-	
-		$::d_command && msg("Request: Callback disabled\n");
+
+		$log->info("Callback disabled");
 	}
 }
 
@@ -1608,7 +1618,7 @@ sub notify {
 
 			my $funcName = $subscriber;
 
-			if ($::d_command && $d_notify && ref($notifyFuncRef) eq 'CODE') {
+			if ($log->is_debug && ref($notifyFuncRef) eq 'CODE') {
 				$funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($notifyFuncRef);
 			}
 		
@@ -1616,21 +1626,20 @@ sub notify {
 
 				if ($self->isNotCommand($requestsRef)) {
 
-					$::d_command && $d_notify && msg("Request: Don't notify "
-						. $funcName . " of " . $self->getRequestString() . " !~ "
-						. __filterString($requestsRef) . "\n");
+					$log->debug(sprintf("Don't notify %s of %s !~ %s",
+						$funcName, $self->getRequestString, __filterString($requestsRef)
+					));
 
 					next;
 				}
 			}
 
-			$::d_command && $d_notify && msg("Request: Notifying $funcName of " 
-				. $self->getRequestString() . " =~ "
-				. __filterString($requestsRef) . "\n");
+			$log->debug(sprintf("Notifying %s of %s =~ %s",
+				$funcName, $self->getRequestString, __filterString($requestsRef)
+			));
 
-			
 			$::perfmon && (my $now = Time::HiRes::time());
-		
+
 			&$notifyFuncRef($self);
 
 			$::perfmon && $requestTask->log(Time::HiRes::time() - $now) && 
@@ -1655,7 +1664,6 @@ sub fixEncoding {
 	}
 }
 
-
 ################################################################################
 # Legacy
 ################################################################################
@@ -1663,10 +1671,12 @@ sub fixEncoding {
 
 # perform the same feat that the old execute: array in, array out
 sub executeLegacy {
-
 	my $request = executeRequest(@_);
 	
-	return $request->renderAsArray() if defined $request;
+	if (defined $request) {
+
+		return $request->renderAsArray;
+	}
 }
 
 # returns the request as an array
@@ -1711,8 +1721,10 @@ sub renderAsArray {
 
 				while (my ($key2, $val2) = each %{$hash}) {
 
-					$val2 = Slim::Utils::Unicode::encode($encoding, $val2) 
-						if $encoding;
+					if ($encoding) {
+
+						$val2 = Slim::Utils::Unicode::encode($encoding, $val2);
+					}
 
 					if ($key2 =~ /^__/) {
 						# no output
@@ -1732,7 +1744,7 @@ sub renderAsArray {
 			push @returnArray, ($key . ':' . $val);
 		}
  	}
-	
+
 	return @returnArray;
 }
 
@@ -1742,15 +1754,15 @@ sub renderAsArray {
 sub dump {
 	my $self = shift;
 	my $introText = shift || '?';
-	
+
 	my $str = $introText . ": ";
-	
+
 	if ($self->query()) {
 		$str .= 'Query ';
 	} else {
 		$str .= 'Command ';
 	}
-	
+
 	if (my $client = $self->client()) {
 		my $clientid = $client->id();
 		$str .= "[$clientid->" . $self->getRequestString() . "]";
@@ -1772,22 +1784,22 @@ sub dump {
 	}
 
 	$str .= ' (' . $self->getStatusText() . ")\n";
-		
+
 	msg($str);
 
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
 
     		msg("   Param: [$key] = [$val]\n");
  	}
- 	
+
 	while (my ($key, $val) = each %{$self->{'_results'}}) {
-    	
+
 		if ($key =~ /^@/) {
 
 			my $count = scalar @{${$self->{'_results'}}{$key}};
 
 			msg("   Result: [$key] is loop with $count elements:\n");
-			
+
 			# loop over each elements
 			for (my $i = 0; $i < $count; $i++) {
 
@@ -1811,7 +1823,7 @@ sub __isCmdQuery {
 	my $self = shift;
 	my $isQuery = shift;
 	my $possibleNames = shift;
-	
+
 	# the query state must match
 	if ($isQuery == $self->{'_isQuery'}) {
 
@@ -1823,17 +1835,21 @@ sub __isCmdQuery {
 
 			# check each request term matches one of the passed params
 			for (my $i = 0; $i < $possibleNamesCount; $i++) {
-				
+
 				my $name = $self->{'_request'}->[$i];;
 
 				# return as soon we fail
-				return 0 if !grep(/^$name$/, @{$possibleNames->[$i]});
+				if (!grep(/^$name$/, @{$possibleNames->[$i]})) {
+
+					return 0;
+				}
 			}
 
 			# everything matched
 			return 1;
 		}
 	}
+
 	return 0;
 }
 
@@ -1841,9 +1857,12 @@ sub __isCmdQuery {
 sub __status {
 	my $self = shift;
 	my $status = shift;
-	
-	$self->{'_status'} = $status if defined $status;
-	
+
+	if (defined $status) {
+
+		$self->{'_status'} = $status;
+	}
+
 	return $self->{'_status'};
 }
 
@@ -1852,7 +1871,10 @@ sub __status {
 sub __filterString {
 	my $requestsRef = shift;
 	
-	return "(no filter)" if !defined $requestsRef;
+	if (!defined $requestsRef) {
+
+		return "(no filter)";
+	}
 	
 	my $str = "[";
 
@@ -1870,25 +1892,19 @@ sub __filterString {
 # the function to call for it. Used by the Request constructor
 sub __parse {
 	my $self           = shift;
-	my $requestLineRef = shift;     # reference to an array containing the 
-									# query verbs
-		
-#	$::d_command && msg("Request: parse(" 
-#						. (join " ", @{$requestLineRef}) . ")\n");
+	my $requestLineRef = shift; # reference to an array containing the query verbs
 
-	my $debug = 0;					# debug flag internal to the function
+	$log->debug("Request: parse(" . join(' ', @{$requestLineRef}) . ")");
 
-
-	my $found;						# have we found the right command
+	my $found;					# have we found the right command
 	my $outofverbs;					# signals we're out of verbs to try and match
 	my $LRindex    = 0;				# index into $requestLineRef
 	my $done       = 0;				# are we done yet?
 	my $DBp        = \%dispatchDB;	# pointer in the dispatch table
-	my $match      = $requestLineRef->[$LRindex];
-									# verb of the command we're trying to match
+	my $match      = $requestLineRef->[$LRindex]; # verb of the command we're trying to match
 
 	while (!$done) {
-	
+
 		# we're out of verbs to check for a match -> try with ''
 		if (!defined $match) {
 
@@ -1896,61 +1912,62 @@ sub __parse {
 			$outofverbs = 1;
 		}
 
-		$debug && msg("..Trying to match [$match]\n");
-		$debug && Data::Dump::dump($DBp);
+		$log->debug("..Trying to match [$match]");
+		$log->debug(Data::Dump::dump($DBp));
 
 		# our verb does not match in the hash 
 		if (!defined $DBp->{$match}) {
 		
-			$debug && msg("..no match for [$match]\n");
+			$log->debug("..no match for [$match]");
 			
 			# if $match is '?', abandon ship
 			if ($match eq '?') {
-			
-				$debug && msg("...[$match] is ?, done\n");
+
+				$log->debug("...[$match] is ?, done");
 				$done = 1;
-				
+
 			} else {
-			
+
 				my $foundparam = 0;
-				my $key;
 
 				# Can we find a key that starts with '_' ?
-				$debug && msg("...looking for a key starting with _\n");
-				foreach $key (keys %{$DBp}) {
-				
-					$debug && msg("....considering [$key]\n");
+				$log->debug("...looking for a key starting with _");
+
+				for my $key (keys %{$DBp}) {
+
+					$log->debug("....considering [$key]");
 					
 					if ($key =~ /^_.*/) {
-					
-						$debug && msg("....[$key] starts with _\n");
-						
+
+						$log->debug("....[$key] starts with _");
+
 						# found it, add $key=$match to the params
 						if (!$outofverbs) {
-							$debug && msg("....not out of verbs, adding param [$key, $match]\n");
+
+							$log->debug("....not out of verbs, adding param [$key, $match]");
 							$self->addParam($key, $match);
 						}
-						
+
 						# and continue with $key...
 						$foundparam = 1;
 						$match = $key;
 						last;
 					}
 				}
-				
+
 				if (!$foundparam) {
 					$done = 1;
 				}
 			}
 		}
-		
+
 		# Our verb matches, and it is an array -> done
 		if (!$done && ref $DBp->{$match} eq 'ARRAY') {
 		
-			$debug && msg("..[$match] is ARRAY -> done\n");
-			
+			$log->debug("..[$match] is ARRAY -> done");
+
 			if ($match ne '' && !($match =~ /^_.*/) && $match ne '?') {
-			
+
 				# add $match to the request list if it is something sensible
 				$self->addRequest($match);
 			}
@@ -1959,15 +1976,15 @@ sub __parse {
 			$done = 1;
 			$found = $DBp->{$match};
 		}
-		
+
 		# Our verb matches, and it is a hash -> go to next level
 		# (no backtracking...)
 		if (!$done && ref $DBp->{$match} eq 'HASH') {
 		
-			$debug && msg("..[$match] is HASH\n");
+			$log->debug("..[$match] is HASH");
 
 			if ($match ne '' && !($match =~ /^_.*/) && $match ne '?') {
-			
+
 				# add $match to the request list if it is something sensible
 				$self->addRequest($match);
 			}
@@ -1984,39 +2001,38 @@ sub __parse {
 		# 3: Function
 		
 		# handle the remaining params
-		for (my $i=++$LRindex; $i < scalar @{$requestLineRef}; $i++) {
-			
+		for (my $i = ++$LRindex; $i < scalar @{$requestLineRef}; $i++) {
+
 			# try tags if we know we have some
 			if ($found->[2] && ($requestLineRef->[$i] =~ /([^:]+):(.*)/)) {
 
 				$self->addParam($1, $2);
 
 			} else {
-			
+
 				# default to positional param...
 				$self->addParamPos($requestLineRef->[$i]);
 			}
 		}
-		
+
 		$self->{'_needClient'} = $found->[0];
 		$self->{'_isQuery'} = $found->[1];
 		$self->{'_func'} = $found->[3];
 				
 	} else {
 
-		$::d_command && msg("Request [" . (join " ", @{$requestLineRef}) . "]: no match in dispatchDB!\n");
+		$log->warn("Request [" . join(' ', @{$requestLineRef}) . "]: no match in dispatchDB!");
 
 		# handle the remaining params, if any...
 		# only for the benefit of CLI echoing...
-		for (my $i=$LRindex; $i < scalar @{$requestLineRef}; $i++) {
+		for (my $i = $LRindex; $i < scalar @{$requestLineRef}; $i++) {
+
 			$self->addParamPos($requestLineRef->[$i]);
 		}
 	}
 }
 
 =head1 SEE ALSO
-
-
 
 =cut
 

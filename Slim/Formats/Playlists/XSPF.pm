@@ -14,8 +14,11 @@ use base qw(Slim::Formats::Playlists::Base);
 use XML::XSPF;
 
 use Slim::Music::Info;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
+
+my $log = logger('formats.playlists');
 
 sub read {
 	my ($class, $file, $baseDir, $url) = @_;
@@ -23,11 +26,12 @@ sub read {
 	my @items  = ();
 	my $title;
 
-	$::d_parse && msg("parsing XSPF: $url\n");
+	$log->info("Parsing: $url");
 
-	my $xspf   = XML::XSPF->parse($file) || do {
+	my $xspf = XML::XSPF->parse($file) || do {
 
-		errorMsg("XSPF->read: Couldn't parse data!\n");
+		logError("Couldn't parse data!");
+
 		return @items;
 	};
 
@@ -41,7 +45,8 @@ sub read {
 
 		if ($class->playlistEntryIsValid($location, $url)) {
 
-			$::d_parse && msg("    entry: $location\n");
+			$log->debug("    entry: $location");
+			$log->debug("    title: $title");
 
 			push @items, $class->_updateMetaData( $location, {
 				'TITLE' => $title,
@@ -49,7 +54,7 @@ sub read {
 		}
 	}
 
-	$::d_parse && msg("parsed " . scalar(@items) . " items in xspf playlist\n");
+	$log->info("Parsed " . scalar(@items) . " items from XSPF\n");
 
 	return @items;
 }
@@ -66,6 +71,8 @@ sub write {
 	my $playlistname = shift;
 	my $filename     = shift;
 
+	$log->info("Writing out: $filename");
+
 	my $string  = '';
 	my $output  = $class->_filehandleFromNameOrString($filename, \$string) || return;
 
@@ -80,7 +87,7 @@ sub write {
 
 		if (!blessed($obj) || !$obj->can('title')) {
 
-			errorMsg("XSPF->write: Couldn't retrieve objectForUrl: [$item] - skipping!\n");
+			logError("Couldn't retrieve objectForUrl: [$item] - skipping!");
 			next;
 		};
 		

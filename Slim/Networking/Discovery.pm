@@ -10,8 +10,11 @@ package Slim::Networking::Discovery;
 use strict;
 use IO::Socket;
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
+
+my $log = logger('network.protocol');
 
 =head1 NAME
 
@@ -44,7 +47,7 @@ sub serverHostname {
 	# pad it out to 17 characters total
 	$hostname .= pack('C', 0) x (17 - (length $hostname));
 
-	$::d_protocol && msg(" calculated $hostname length: " . length($hostname) . "\n");	
+	$log->info(" calculated $hostname length: " . length($hostname));
 
 	return $hostname;
 }
@@ -60,7 +63,7 @@ Send the client on the other end of the $udpsock a hello packet.
 sub sayHello {
 	my ($udpsock, $paddr) = @_;
 
-	$::d_protocol && msg(" Saying hello!\n");	
+	$log->info(" Saying hello!");	
 
 	$udpsock->send( 'h'. pack('C', 0) x 17, 0, $paddr);
 }
@@ -76,30 +79,30 @@ sub gotDiscoveryRequest {
 
 	$revision = join('.', int($revision / 16), ($revision % 16));
 
-	$::d_protocol && msg("gotDiscoveryRequest: deviceid = $deviceid, revision = $revision, MAC = $mac\n");
+	$log->info("gotDiscoveryRequest: deviceid = $deviceid, revision = $revision, MAC = $mac");
 
 	my $response = undef;
 
 	if ($deviceid == 1) {
 
-		$::d_protocol && msg("It's a SLIMP3 (note: firmware v2.2 always sends revision of 1.1).\n");
+		$log->info("It's a SLIMP3 (note: firmware v2.2 always sends revision of 1.1).");
 
 		$response = 'D'. pack('C', 0) x 17; 
 
 	} elsif ($deviceid >= 2 || $deviceid <= 4) {
 
-		$::d_protocol && msg("It's a Squeezebox\n");
+		$log->info("It's a Squeezebox");
 
 		$response = 'D'. serverHostname(); 
 
 	} else {
 
-		$::d_protocol && msg("Unknown device.\n");
+		$log->info("Unknown device.");
 	}
 
 	$udpsock->send($response, 0, $clientpaddr);
 
-	$::d_protocol && msg("gotDiscoveryRequest: Sent discovery response.\n");
+	$log->info("gotDiscoveryRequest: Sent discovery response.");
 }
 
 =head1 SEE ALSO

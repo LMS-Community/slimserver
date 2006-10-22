@@ -15,7 +15,7 @@ use File::Spec::Functions qw(:ALL);
 use IO::Socket qw(:DEFAULT :crlf);
 
 use Slim::Formats::Playlists;
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
 # 
@@ -133,11 +133,13 @@ sub parseHeaders {
 
 	my ($contentType, $mimeType, $length, $body);
 
+	my $log = logger('player.streaming.remote');
+
 	foreach my $header (@headers) {
 
 		$header =~ s/[\r\n]+$//;
 
-		$::d_remotestream && msg("parseHeaders: " . $header . "\n");
+		$log->info("Header: $header");
 
 		if ($header =~ /^Content-Type:\s*(.*)/i) {
 			$mimeType = $1;
@@ -152,7 +154,7 @@ sub parseHeaders {
 		($mimeType eq "application/x-mms-framed") ||
 		($mimeType eq "application/vnd.ms.wms-hdr.asfv1")) {
 
-		$::d_remotestream && msg("it looks like a WMA file\n");
+		$log->info("It looks like a WMA file");
 
 		$contentType = 'wma';
 
@@ -161,7 +163,7 @@ sub parseHeaders {
 		# Assume (and this may not be correct) that anything else
 		# is an asx redirector.
 
-		$::d_remotestream && msg("it looks like an ASX redirector\n");
+		$log->info("It looks like an ASX redirector");
 
 		$contentType = 'asx';
 	}
@@ -268,7 +270,8 @@ sub parseBody {
 		};
 
 		if (!$wma || $@) {
-			errorMsg("parseBody: Couldn't create an Audio::WMA object from stream: [$@]\n");
+
+			logError("Couldn't create an Audio::WMA object from stream: [$@]");
 
 			return;
 		}

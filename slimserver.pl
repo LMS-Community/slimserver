@@ -110,6 +110,7 @@ if (!$@) {
 	$XML::Simple::PREFERRED_PARSER = 'XML::Parser';
 }
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::PerfMon;
 use Slim::Buttons::Common;
@@ -161,7 +162,9 @@ use vars qw($VERSION $REVISION @AUTHORS);
 	'Vidur Apparao',
 	'Dean Blackketter',
 	'Kevin Deane-Freeman',
+	'Andy Grundman',
 	'Amos Hayes',
+	'Christopher Key',
 	'Mark Langston',
 	'Eric Lyons',
 	'Scott McIntyre',
@@ -170,75 +173,18 @@ use vars qw($VERSION $REVISION @AUTHORS);
 	'Jacob Potter',
 	'Sam Saffron',
 	'Roy M. Silvernail',
+	'Adrian Smith',
 	'Richard Smith',
 	'Max Spicer',
 	'Dan Sully',
+	'Richard Titmuss',
 );
 
 $VERSION  = '7.0a1';
 
-# old preferences settings, only used by the .slim.conf configuration.
-# real settings are stored in the new preferences file:  .slim.pref
 our ($audiodir, $playlistdir, $httpport);
 
 our (
-	$d_artwork,
-	$d_cli,
-	$d_client,
-	$d_control,
-	$d_command,
-	$d_datamodel,
-	$d_directstream,
-	$d_display,
-	$d_factorytest,
-	$d_favorites,
-	$d_files,
-	$d_firmware,
-	$d_formats,
-	$d_graphics,
-	$d_http,
-	$d_http_async,
-	$d_http_verbose,
-	$d_info,
-	$d_ir,
-	$d_irtm,
-	$d_itunes,
-	$d_itunes_verbose,
-	$d_import,
-	$d_mdns,
-	$d_mysql,
-	$d_memory,
-	$d_moodlogic,
-	$d_mp3,
-	$d_musicmagic,
-	$d_os,
-	$d_parse,
-	$d_paths,
-	$d_playlist,
-	$d_plugins,
-	$d_protocol,
-	$d_prefs,
-	$d_remotestream,
-	$d_scan,
-	$d_server,
-	$d_scheduler,
-	$d_select,
-	$d_slimproto,
-	$d_slimproto_v,
-	$d_source,
-	$d_source_v,
-	$d_sql,
-	$d_stdio,
-	$d_startup,
-	$d_stream,
-	$d_stream_v,
-	$d_sync,
-	$d_sync_v,
-	$d_time,
-	$d_ui,
-	$d_upnp,
-	$d_usage,
-
 	$cachedir,
 	$user,
 	$group,
@@ -249,10 +195,13 @@ our (
 	$httpaddr,
 	$lastlooptime,
 	$logfile,
+	$logdir,
+	$logconf,
+	$debug,
+	$LogTimestamp,
 	$localClientNetAddr,
 	$localStreamAddr,
 	$newVersion,
-	$LogTimestamp,
 	$pidfile,
 	$prefsfile,
 	$priority,
@@ -283,10 +232,21 @@ sub init {
 		eval "use diagnostics";
 	}
 
-	$::d_server && msg("SlimServer OSDetect init...\n");
+	Slim::Utils::Log->init({
+		'logconf' => $logconf,
+		'logdir'  => $logdir,
+		'logfile' => $logfile,
+		'logtype' => 'server',
+		'debug'   => $debug,
+	});
+
+	my $log = logger('server');
+
+	$log->info("SlimServer OSDetect init...");
+
 	Slim::Utils::OSDetect::init();
 
-	$::d_server && msg("SlimServer OS Specific init...\n");
+	$log->info("SlimServer OS Specific init...");
 
 	if (Slim::Utils::OSDetect::OS() ne 'win') {
 		$SIG{'HUP'} = \&initSettings;
@@ -306,36 +266,20 @@ sub init {
 	# background if requested
 	if (Slim::Utils::OSDetect::OS() ne 'win' && $daemon) {
 
-		$::d_server && msg("SlimServer daemonizing...\n");
+		$log->info("SlimServer daemonizing...");
 		daemonize();
 
 	} else {
 
 		save_pid_file();
-
-		Slim::Utils::Misc::openLogFile($logfile);
 	}
 
 	# Change UID/GID after the pid & logfiles have been opened.
-	$::d_server && msg("SlimServer settings effective user and group if requested...\n");
+	$log->info("SlimServer settings effective user and group if requested...");
 	changeEffectiveUserAndGroup();
 
-	# do platform specific environment setup
-	# we have some special directories under OSX.
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-		mkdir $ENV{'HOME'} . "/Library/SlimDevices";
-		mkdir $ENV{'HOME'} . "/Library/SlimDevices/Plugins";
-		mkdir $ENV{'HOME'} . "/Library/SlimDevices/Graphics";
-		mkdir $ENV{'HOME'} . "/Library/SlimDevices/html";
-		mkdir $ENV{'HOME'} . "/Library/SlimDevices/IR";
-		mkdir $ENV{'HOME'} . "/Library/SlimDevices/bin";
-		
-		unshift @INC, $ENV{'HOME'} . "/Library/SlimDevices";
-		unshift @INC, "/Library/SlimDevices/";
-	}
-
 	# initialize slimserver subsystems
-	$::d_server && msg("SlimServer settings init...\n");
+	$log->info("SlimServer settings init...");
 	initSettings();
 
 	# Set priority, command line overrides pref
@@ -345,79 +289,85 @@ sub init {
 		Slim::Utils::Misc::setPriority( Slim::Utils::Prefs::get("serverPriority") );
 	}
 
-	$::d_server && msg("SlimServer strings init...\n");
-	Slim::Utils::Strings::init(catdir($Bin,'strings.txt'), "EN");
+	$log->info("SlimServer strings init...");
+	Slim::Utils::Strings::init();
 
-	$::d_server && msg("SlimServer Setup init...\n");
+	$log->info("SlimServer Setup init...");
 	Slim::Web::Setup::initSetup();
 
 	# initialize all player UI subsystems
-	$::d_server && msg("SlimServer setting language...\n");
+	$log->info("SlimServer setting language...");
 	Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
 
-	$::d_server && msg("SlimServer MySQL init...\n");
+	$log->info("SlimServer MySQL init...");
 	Slim::Utils::MySQLHelper->init();
 	
-	$::d_server && msg("Firmware init...\n");
+	$log->info("Firmware init...");
 	Slim::Utils::Firmware->init;
 
-	$::d_server && msg("SlimServer Info init...\n");
+	$log->info("SlimServer Info init...");
 	Slim::Music::Info::init();
 
-	$::d_server && msg("SlimServer IR init...\n");
+	$log->info("SlimServer IR init...");
 	Slim::Hardware::IR::init();
 
-	$::d_server && msg("SlimServer Request init...\n");
+	$log->info("SlimServer Request init...");
 	Slim::Control::Request::init();
 	
-	$::d_server && msg("SlimServer Buttons init...\n");
+	$log->info("SlimServer Buttons init...");
 	Slim::Buttons::Common::init();
 
-	$::d_server && msg("SlimServer Graphic Fonts init...\n");
+	$log->info("SlimServer Graphic Fonts init...");
 	Slim::Display::Lib::Fonts::init();
 
 	if ($stdio) {
-		$::d_server && msg("SlimServer Stdio init...\n");
+		$log->info("SlimServer Stdio init...");
 		Slim::Control::Stdio::init(\*STDIN, \*STDOUT);
 	}
 
-	$::d_server && msg("UDP init...\n");
+	$log->info("UDP init...");
 	Slim::Networking::UDP::init();
 
-	$::d_server && msg("Slimproto Init...\n");
+	$log->info("Slimproto Init...");
 	Slim::Networking::Slimproto::init();
 
-	$::d_server && msg("mDNS init...\n");
+	$log->info("mDNS init...");
 	Slim::Networking::mDNS->init;
 
-	$::d_server && msg("Async Networking init...\n");
+	$log->info("Async Networking init...");
 	Slim::Networking::Async->init;
 	
-	$::d_server && msg("Cache init, cleaning up FileCache...\n");
+	$log->info("Cache init, cleaning up FileCache...");
 	Slim::Utils::Cache->init;
-	
-	unless ( $noupnp ) {
-		$::d_server && msg("UPnP init...\n");
+
+	if (!$noupnp) {
+		$log->info("UPnP init...");
 		Slim::Utils::UPnPMediaServer::init();
 	}
 
-	$::d_server && msg("SlimServer HTTP init...\n");
+	$log->info("SlimServer HTTP init...");
 	Slim::Web::HTTP::init();
 
-	$::d_server && msg("Source conversion init..\n");
+	$log->info("Source conversion init..");
 	Slim::Player::Source::init();
 
-	$::d_server && msg("SlimServer Plugins init...\n");
+	$log->info("SlimServer Plugins init...");
 	Slim::Utils::PluginManager::init();
 
-	$::d_server && msg("mDNS startAdvertising...\n");
+	$log->info("mDNS startAdvertising...");
 	Slim::Networking::mDNS->startAdvertising;
 
-	$::d_server && msg("SlimServer checkDataSource...\n");
+	# Reinitialize logging, as plugins may have been added.
+	if (Slim::Utils::Log->needsReInit) {
+
+		Slim::Utils::Log->reInit;
+	}
+
+	$log->info("SlimServer checkDataSource...");
 	checkDataSource();
 
 	# regular server has a couple more initial operations.
-	$::d_server && msg("SlimServer persist playlists...\n");
+	$log->info("SlimServer persist playlists...");
 
 	if (Slim::Utils::Prefs::get('persistPlaylists')) {
 
@@ -431,7 +381,7 @@ sub init {
 	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
 
-	$::d_server && msg("SlimServer done init...\n");
+	$log->info("SlimServer done init...");
 }
 
 sub main {
@@ -440,9 +390,9 @@ sub main {
 
 	# all other initialization
 	init();
-	
+
 	while (!idle()) {}
-	
+
 	stopServer();
 }
 
@@ -453,8 +403,10 @@ sub idle {
 
 	# check for time travel (i.e. If time skips backwards for DST or clock drift adjustments)
 	if ($now < $lastlooptime) {
+
 		Slim::Utils::Timers::adjustAllTimers($now - $lastlooptime);
-		$::d_time && msg("finished adjustalltimers: " . Time::HiRes::time() . "\n");
+
+		logger('server.timers')->debug("Finished adjustAllTimers: " . Time::HiRes::time());
 	} 
 
 	$lastlooptime = $now;
@@ -485,7 +437,7 @@ sub idle {
 		}
 	}
 
-	$::d_time && msg("select_time: $select_time\n");
+	# $log->debug("select_time: $select_time");
 
 	# call select and process any IO
 	Slim::Networking::Select::select($select_time);
@@ -500,7 +452,7 @@ sub idleStreams {
 	my $timeout = shift || 0;
 	
 	# No idle stream processing in child web procs
-	return if $Slim::Web::HTTP::inChild;
+	# return if $Slim::Web::HTTP::inChild;
 
 	my $select_time = 0;
 	my $check_timers = 1;
@@ -514,7 +466,7 @@ sub idleStreams {
 		}
 	}
 
-	$::d_time && msg("idleStreams: select_time: $select_time, checkTimers: $check_timers\n");
+	logger('server.timers')->debug("select_time: $select_time, checkTimers: $check_timers");
 
 	Slim::Networking::Select::select($select_time, 1);
 
@@ -574,160 +526,47 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
     --perfmon        => Enable internal server performance monitoring
     --perfwarn       => Generate log messages if internal tasks take longer than specified threshold
 
-The following are debugging flags which will print various information 
-to the console via stderr:
-
-    --d_artwork      => Display information on artwork display
-    --d_cli          => Display debugging information for the 
-                        command line interface interface
-    --d_client       => Display per-client debugging.
-    --d_command      => Display internal command execution
-    --d_control      => Low level player control information
-    --d_datamodel    => Data model search and field mapping debugging
-    --d_directstream => Debugging info on direct streaming 
-    --d_display      => Show what (should be) on the player's display 
-    --d_factorytest  => Information used during factory testing
-    --d_favorites    => Information about favorite tracks
-    --d_files        => Files, paths, opening and closing
-    --d_firmware     => Information during Squeezebox firmware updates 
-    --d_formats      => Information about importing data from various file formats
-    --d_graphics     => Information bitmap graphic display 
-    --d_http         => HTTP activity
-    --d_http_async   => AsyncHTTP activity
-    --d_http_verbose => Even more HTTP activity 
-    --d_info         => MP3/ID3 track information
-    --d_import       => Information on external data import
-    --d_ir           => Infrared activity
-    --d_irtm         => Infrared activity diagnostics
-    --d_itunes       => iTunes synchronization information
-    --d_itunes_verbose => verbose iTunes Synchronization information
-    --d_mdns         => Multicast DNS aka Zeroconf aka Rendezvous information
-    --d_memory       => Turns on memory debugging interface - developers only.
-    --d_moodlogic    => MoodLogic synchronization information
-    --d_musicmagic   => MusicMagic synchronization information
-    --d_mp3    	     => MP3 frame detection
-    --d_mysql        => MySQL Process Information
-    --d_os           => Operating system detection information
-    --d_paths        => File path processing information
-    --d_parse        => Playlist parsing information
-    --d_playlist     => High level playlist and control information
-    --d_plugins      => Show information about plugins
-    --d_protocol     => Client protocol information
-    --d_prefs        => Preferences file information
-    --d_remotestream => Information about remote HTTP streams and playlists
-    --d_scan         => Information about scanning directories and filelists
-    --d_scheduler    => Internal scheduler information
-    --d_select       => Information about the select process
-    --d_server       => Basic server functionality
-    --d_slimproto    => Slimproto debugging information
-    --d_slimproto_v  => Slimproto verbose debugging information
-    --d_source       => Information about source audio files and conversion
-    --d_source_v     => Verbose information about source audio files
-    --d_sql          => Verbose SQL debugging
-    --d_stdio        => Standard I/O command debugging
-    --d_startup      => Startup/Bootstrap debugging for \@INC
-    --d_stream       => Information about player streaming protocol 
-    --d_stream_v     => Verbose information about player streaming protocol 
-    --d_sync         => Information about multi player synchronization
-    --d_sync_v       => Verbose information about multi player synchronization
-    --d_time         => Internal timer information
-    --d_ui           => Player user interface information
-    --d_upnp         => UPnP device information
-    --d_usage        => Display buffer usage codes on the player's display
-    
 Commands may be sent to the server through standard in and will be echoed via
 standard out.  See complete documentation for details on the command syntax.
 EOF
 }
 
 sub initOptions {
-    $LogTimestamp=1;
+	$LogTimestamp = 1;
+
 	if (!GetOptions(
-		'user=s'			=> \$user,
-		'group=s'			=> \$group,
-		'cliaddr=s'			=> \$cliaddr,
-		'cliport=s'			=> \$cliport,
-		'daemon'			=> \$daemon,
-		'diag'				=> \$diag,
-		'httpaddr=s'		=> \$httpaddr,
-		'httpport=s'		=> \$httpport,
-		'logfile=s'			=> \$logfile,
-		'LogTimestamp!'	        => \$LogTimestamp,
-		'audiodir=s'		=> \$audiodir,
-		'playlistdir=s'		=> \$playlistdir,
-		'cachedir=s'		=> \$cachedir,
-		'pidfile=s'			=> \$pidfile,
-		'playeraddr=s'		=> \$localClientNetAddr,
-		'priority=i'		=> \$priority,
-		'stdio'				=> \$stdio,
-		'streamaddr=s'		=> \$localStreamAddr,
-		'prefsfile=s'		=> \$prefsfile,
-		'quiet'				=> \$quiet,
-		'nosetup'			=> \$nosetup,
-		'noserver'			=> \$noserver,
-		'noupnp'			=> \$noupnp,
-		'd_artwork'			=> \$d_artwork,
-		'd_cli'				=> \$d_cli,
-		'd_client'			=> \$d_client,
-		'd_command'			=> \$d_command,
-		'd_control'			=> \$d_control,
-		'd_datamodel'		=> \$d_datamodel,
-		'd_directstream'	=> \$d_directstream,
-		'd_display'			=> \$d_display,
-		'd_factorytest'		=> \$d_factorytest,
-		'd_favorites'		=> \$d_favorites,
-		'd_files'			=> \$d_files,
-		'd_firmware'		=> \$d_firmware,
-		'd_formats'			=> \$d_formats,
-		'd_graphics'		=> \$d_graphics,
-		'd_http'			=> \$d_http,
-		'd_http_async'		=> \$d_http_async,
-		'd_http_verbose'	=> \$d_http_verbose,
-		'd_info'			=> \$d_info,
-		'd_import'			=> \$d_import,
-		'd_ir'				=> \$d_ir,
-		'd_irtm'			=> \$d_irtm,
-		'd_itunes'			=> \$d_itunes,
-		'd_itunes_verbose'	=> \$d_itunes_verbose,
-		'd_mdns'			=> \$d_mdns,
-		'd_memory'			=> \$d_memory,
-		'd_moodlogic'		=> \$d_moodlogic,
-		'd_mp3'				=> \$d_mp3,
-		'd_musicmagic'		=> \$d_musicmagic,
-		'd_mysql'		=> \$d_mysql,
-		'd_os'				=> \$d_os,
-		'd_paths'			=> \$d_paths,
-		'd_parse'			=> \$d_parse,
-		'd_playlist'		=> \$d_playlist,
-		'd_plugins'			=> \$d_plugins,
-		'd_protocol'		=> \$d_protocol,
-		'd_prefs'			=> \$d_prefs,
-		'd_remotestream'	=> \$d_remotestream,
-		'd_scan'			=> \$d_scan,
-		'd_scheduler'			=> \$d_scheduler,
-		'd_select'			=> \$d_select,
-		'd_server'			=> \$d_server,
-		'd_slimproto'		=> \$d_slimproto,
-		'd_slimproto_v'		=> \$d_slimproto_v,
-		'd_source'			=> \$d_source,
-		'd_source_v'		=> \$d_source_v,
-		'd_sql'				=> \$d_sql,
-		'd_stdio'			=> \$d_stdio,
-		'd_startup'			=> \$d_startup,
-		'd_stream'			=> \$d_stream,
-		'd_stream_v'		=> \$d_stream_v,
-		'd_sync'			=> \$d_sync,
-		'd_sync_v'			=> \$d_sync_v,
-		'd_time'			=> \$d_time,
-		'd_ui'				=> \$d_ui,
-		'd_upnp'            => \$d_upnp,
-		'd_usage'			=> \$d_usage,
-		'perfmon'			=> \$perfmon,
-		'perfwarn=f'		=> \$perfwarn, 
+		'user=s'        => \$user,
+		'group=s'       => \$group,
+		'cliaddr=s'     => \$cliaddr,
+		'cliport=s'     => \$cliport,
+		'daemon'        => \$daemon,
+		'diag'          => \$diag,
+		'httpaddr=s'    => \$httpaddr,
+		'httpport=s'    => \$httpport,
+		'logfile=s'     => \$logfile,
+		'logdir=s'      => \$logdir,
+		'logconfig=s'   => \$logconf,
+		'debug=s'       => \$debug,
+		'LogTimestamp!' => \$LogTimestamp,
+		'audiodir=s'    => \$audiodir,
+		'playlistdir=s'	=> \$playlistdir,
+		'cachedir=s'    => \$cachedir,
+		'pidfile=s'     => \$pidfile,
+		'playeraddr=s'  => \$localClientNetAddr,
+		'priority=i'    => \$priority,
+		'stdio'	        => \$stdio,
+		'streamaddr=s'  => \$localStreamAddr,
+		'prefsfile=s'   => \$prefsfile,
+		'quiet'	        => \$quiet,
+		'nosetup'       => \$nosetup,
+		'noserver'      => \$noserver,
+		'noupnp'        => \$noupnp,
+		'perfmon'       => \$perfmon,
+		'perfwarn=f'    => \$perfwarn, 
 	)) {
 		showUsage();
 		exit(1);
-	};
+	}
 
 	if (defined $perfwarn) {
 		# enable performance monitoring and set warning thresholds on performance monitors
@@ -817,43 +656,28 @@ sub initSettings {
 }
 
 sub daemonize {
-	my ($pid, $log, $logfilename);
-	
-	if (!defined($pid = fork)) { die "Can't fork: $!"; }
-	
+	my ($pid, $log);
+
+	if (!defined($pid = fork())) {
+
+		die "Can't fork: $!";
+	}
+
 	if ($pid) {
 		save_pid_file($pid);
+
 		# don't clean up the pidfile!
 		$pidfile = undef;
 		exit;
 	}
 
-	$log = $logfile ? $logfile : '/dev/null';
-
-	open(STDIN, '/dev/null') || die "Can't read /dev/null: $!";
-
-	# check for log file being pipe, e.g. multilog
-	$logfilename = $log;
-
-	if (substr($log, 0, 1) ne "|") {
-		$logfilename = ">>" . $log;
+	if (!setsid) {
+		die "Can't start a new session: $!";
 	}
 
-	open(STDOUT, $logfilename) || die "Can't write to $logfilename: $!";
-
-	# Bug: 1625 - There appears to be a bad interaction with the iTunes
-	# Update plugin / Mac::Applescript::Glue , and setting the process
-	# name after we fork. So don't do it on Mac. The System Preferences
-	# start/stop still works.
-	#
-        # Also don't do it for *nix - as startup scripts have problems (FC5)
-        # when our process name gets changed.
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
-		$0 = "slimserver";
+	if (!open STDERR, '>&STDOUT') {
+		die "Can't dup stdout: $!";
 	}
-
-	if (!setsid) { die "Can't start a new session: $!"; }
-	if (!open STDERR, '>&STDOUT') { die "Can't dup stdout: $!"; }
 }
 
 sub changeEffectiveUserAndGroup {
@@ -939,9 +763,10 @@ sub checkDataSource {
 	if (!(defined Slim::Utils::Prefs::get("audiodir") && 
 		-d Slim::Utils::Prefs::get("audiodir")) && !$quiet && !Slim::Music::Import->countImporters()) {
 
-		msg(string('SETUP_DATASOURCE_1') . "\n");
-		msg(string('SETUP_DATASOURCE_2') . "\n\n");
-		msg(string('SETUP_URL_WILL_BE') . "\n\n\t" . Slim::Utils::Prefs::homeURL() . "\n");
+		msg("\n", 0, 1);
+		msg(string('SETUP_DATASOURCE_1') . "\n", 0, 1);
+		msg(string('SETUP_DATASOURCE_2') . "\n\n", 0, 1);
+		msg(string('SETUP_URL_WILL_BE') . "\n\n\t" . Slim::Utils::Prefs::homeURL() . "\n\n", 0, 1);
 
 	} else {
 
@@ -951,9 +776,9 @@ sub checkDataSource {
 			Slim::Utils::Prefs::set("audiodir",$audiodir);
 		}
 
-		if (Slim::Schema->count('Track') == 0) {
+		if (Slim::Schema->count('Track', { 'me.audio' => 1 }) == 0) {
 
-			$::d_scan && msg("checkDataSource - no tracks in the database, initiating scan.\n");
+			logWarning("No tracks in the database, initiating scan.");
 
 			Slim::Control::Request::executeRequest(undef, ['wipecache']);
 		}
@@ -961,31 +786,39 @@ sub checkDataSource {
 }
 
 sub checkVersion {
-	unless (Slim::Utils::Prefs::get("checkVersion")) {
-		$::newVersion = undef;
+
+	if (!Slim::Utils::Prefs::get("checkVersion")) {
+
+		$newVersion = undef;
 		return;
 	}
 
 	my $lastTime = Slim::Utils::Prefs::get('checkVersionLastTime');
+	my $log      = logger('server.timers');
 
 	if ($lastTime) {
+
 		my $delta = Time::HiRes::time() - $lastTime;
+
 		if (($delta > 0) && ($delta < Slim::Utils::Prefs::get('checkVersionInterval'))) {
 
-			$::d_time && msgf("checking version in %s seconds\n",
+			$log->info(sprintf("Checking version in %s seconds",
 				($lastTime + Slim::Utils::Prefs::get('checkVersionInterval') + 2 - Time::HiRes::time())
-			);
+			));
 
 			Slim::Utils::Timers::setTimer(0, $lastTime + Slim::Utils::Prefs::get('checkVersionInterval') + 2, \&checkVersion);
+
 			return;
 		}
 	}
 
-	$::d_time && msg("checking version now.\n");
-	my $url  = "http://update.slimdevices.com/update/?version=$VERSION&lang=" . Slim::Utils::Strings::getLanguage();
+	$log->info("Checking version now.");
 
+	my $url  = "http://update.slimdevices.com/update/?version=$VERSION&lang=" . Slim::Utils::Strings::getLanguage();
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(\&checkVersionCB, \&checkVersionError);
-	$http->get($url); # will call checkVersionCB when complete
+
+	# will call checkVersionCB when complete
+	$http->get($url);
 
 	Slim::Utils::Prefs::set('checkVersionLastTime', Time::HiRes::time());
 	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + Slim::Utils::Prefs::get('checkVersionInterval'), \&checkVersion);
@@ -994,22 +827,23 @@ sub checkVersion {
 # called when check version request is complete
 sub checkVersionCB {
 	my $http = shift;
+
 	# store result in global variable, to be displayed by browser
 	if ($http->{code} =~ /^2\d\d/) {
 		$::newVersion = $http->content();
 		chomp($::newVersion);
-		# msg("CheckVersionCB: '" . $::newVersion . "' (Error code $http->{code})\n"); # temp
 	}
 	else {
 		$::newVersion = 0;
-		msg(sprintf(Slim::Utils::Strings::string('CHECKVERSION_PROBLEM'), $http->{code}) . "\n");
+		logWarning(sprintf(Slim::Utils::Strings::string('CHECKVERSION_PROBLEM'), $http->{code}));
 	}
 }
 
 # called only if check version request fails
 sub checkVersionError {
 	my $http = shift;
-	msg(Slim::Utils::Strings::string('CHECKVERSION_ERROR') . "\n" . $http->error . "\n");
+
+	logError(Slim::Utils::Strings::string('CHECKVERSION_ERROR') . "\n" . $http->error);
 }
 
 sub forceStopServer {
@@ -1021,14 +855,15 @@ sub forceStopServer {
 # Clean up resources and exit.
 #
 sub stopServer {
-	$::d_server && msg("SlimServer shutting down.\n");
+
+	logger('')->info("SlimServer shutting down.");
 	cleanup();
 	exit();
 }
 
 sub cleanup {
 
-	$::d_server && msg("SlimServer cleaning up.\n");
+	logger('')->info("SlimServer cleaning up.");
 
 	# Make sure to flush anything in the database to disk.
 	if ($INC{'Slim/Schema.pm'}) {
@@ -1053,7 +888,7 @@ sub cleanup {
 sub save_pid_file {
 	my $process_id = shift || $$;
 
-	$::d_server && msg("SlimServer saving pid file.\n");
+	logger('')->info("SlimServer saving pid file.");
 
 	if (defined $pidfile) {
 		File::Slurp::write_file($pidfile, $process_id);
@@ -1065,10 +900,15 @@ sub remove_pid_file {
 	 	unlink $pidfile;
 	 }
 }
+
+sub END {
+
+	Slim::bootstrap::theEND();
+}
  
 # start up the server if we're not running as a service.	
 if (!defined($PerlSvc::VERSION)) { 
 	main()
-};
+}
 
 __END__

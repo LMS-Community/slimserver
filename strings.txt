@@ -1718,13 +1718,6 @@ XML_ERROR
 	NL	Fout
 	ZH_CN	失误
 
-XML_ERROR
-	DE	Fehler
-	EN	Error
-	IT	Errore
-	NL	Fout
-	ZH_CN	失误
-
 XML_GET_FAILED
 	DE	Fehler beim Auslesen
 	EN	Failed to parse
@@ -9779,19 +9772,7 @@ NETWORK_SETTINGS
 	ZH_CN	网络
 
 SETUP_GROUP_DEBUG_DESC
-	DA	SlimServer har et antal fejlsøgnings-indstillinger der kan benyttes til at logge detaljerede informationer omkring serverens arbejde. Afkryds de elementer du ønsker at logge og klik Gem for at begynde logning. Du kan se de nyeste log-informationer <a href="/log.txt" target="log">her</a>.
-	DE	SlimServer kennt einige Debugging Einstellungen, um die Aufzeichnung von Informationen zu den Aktivitäten des Servers zu ermöglichen. Wählen Sie die Kategorien, die Sie interessieren, und drücken Sie Ändern, um die Aufzeichnung zu starten. Die aktuellsten Daten können <a href="/log.txt" target="log">hier</a> angeschaut werden.
-	EN	SlimServer has a number of debugging settings that can be used to record detailed information about the server's operation.  Check off the items that you'd like logged for display and click Change to start logging that information.  You can view the most recent log entries <a href="/log.txt" target="log">here</a>.
-	ES	El SlimServer posee varias opciones de depuración que pueden utilizarse para guardar información detallada acerca del funcionamiento del servidor. Activar los items que se desea incluir en el log y haga click en Cambiar para comenzar a registrar esa información. Se pueden ver las entradas más recientes del log <a href="/log.txt" target="log">aquí</a>.
-	FR	Le SlimServer dispose de réglages de mise au point qui permettent d'enregistrer des informations détaillées sur son fonctionnement. Sélectionnez ci-dessous les éléments que vous voulez enregistrer. Les enregistrements les plus récents sont disponibles <a href="/log.txt" target="log">ici</a>.
-	HE	במידה ויש חשש שהשרת אינו מתפקד כראוי, ניתן להפעיל הודעות שגיאה לעזרה
-	IT	Lo SlimServer ha un numero di impostazioni di debugging (eliminazione degli errori) che possono essere usati per registrare informazioni dettagliate sulle operazioni del server. Spunta gli argomenti che desideri registrare per poi visualizzare e premi Cambia per iniziare la registrazione delle informazioni. Puoi visualizzare le registrazioni piu' recenti <a href="/log.txt" target="log">qui</a>.
-	JA	SlimServerには、サーバーの状態に関する詳細な情報を記録する様々なデバッグセッティングがあります。記録して表示したいアイテムをチェックして「変更」をクリックして下さい。<a href="/log.txt" target="log">ここ</a>をクリックして最新のログを見ることができます。
-	NL	SlimServer heeft een aantal instellingen voor het opsporen van fouten die gebruikt kunnen worden om gedetailleerde informatie over de werking van de server kunnen verzamelen. Vink de items aan die je in de log wilt zien. Klik op de knop Veranderen om het loggen te starten. Je kunt de meest recente loginformatie <a href="/log.txt" target="log">hier</a> zien.
-	NO	SlimServer har et antall feilsøkingsinnstillinger som kan benyttes for å lagre detaljert informasjon om serverens virksomhet. Fyll ut de punkter som du vil logge for visning og klikk Endre for å starte loggingen med endringene. Du kan vise de siste lagrede logger <a href="/log.txt" target="log">her</a>
-	PT	O SlimServer tem várias opções de depuração que poderão ser usadas para gravar informação detalhada acerca das operações do servidor. Active as opções que deseja que sejam guardadas e selecione "Mudar" para começar a guardar a informação. Poderá ver as entradas mais recentes <a href="/log.txt" target="log">aqui</a>.
-	SV	SlimServer har ett antal felsökningsinställningar som kan användas för att spara detaljerad information om serverns funktion. Fyll i de punkter som du skulle vilja logga för visning och klicka Ändra för att starta loggningen av de valda punkterna. Du kan visa de senast sparade loggningarna <a href="/log.txt" target="log">här</a>.
-	ZH_CN	SlimServer拥有数个可以用来记录有关服务器的详细操作信息的调试设置。请选择您想要纪录及显示的项目。单击《更动》后便开始记录。您可以在<a href="/log.txt" target="log">这里</a>参阅最新的纪录。
+	EN	SlimServer has a number of debugging settings that can be used to record detailed information about the server & scanner operation. Each debugging category has a severity for logging. With "Debug" being the most verbose, and "Off" being the least.
 
 DEBUGGING_SETTINGS
 	CS	Krokování
@@ -13138,6 +13119,156 @@ SRC
 	EN	Digital Input Source
 	NL	Digitale invoerbron
 	ZH_CN	数码输入源
+
+DEBUG_ARTWORK
+	EN	Artwork Display & Matching
+
+DEBUG_FACTORYTEST
+	EN	Information used during factory testing.
+
+DEBUG_FAVORITES
+	EN	Favorites Saving & Playing
+
+DEBUG_SERVER_PLUGINS
+	EN	Plugin Module Loading
+
+DEBUG_PREFS
+	EN	Preference Setting & Saving
+
+DEBUG_SERVER_SCHEDULER
+	EN	Internal Scheduler Debugging
+
+DEBUG_SERVER
+	EN	General Server Information
+
+DEBUG_SERVER_SELECT
+	EN	Internal Select Loop Debugging (Advanced)
+
+DEBUG_SERVER_MEMORY
+	EN	Server Memory Usage (Advanced)
+
+DEBUG_SERVER_TIMERS
+	EN	Internal Timer Information
+
+DEBUG_NETWORK_MDNS
+	EN	Multicast DNS / Bonjour
+
+DEBUG_NETWORK_HTTP
+	EN	Internal HTTP Server Debugging
+
+DEBUG_NETWORK_ASYNCHTTP
+	EN	Asynchronous Remote HTTP Request Information
+
+DEBUG_NETWORK_PROTOCOL
+	EN	All Player Protocol Debugging
+
+DEBUG_NETWORK_PROTOCOL_SLIMPROTO
+	EN	SlimProto (Squeezebox / Transporter) Protocol
+
+DEBUG_NETWORK_PROTOCOL_SLIMP3
+	EN	SliMP3 Protocol
+
+DEBUG_NETWORK_UPNP
+	EN	UPnP Server & Device Information (Rhapsody)
+
+DEBUG_FORMATS_AUDIO
+	EN	File Metadata & Audio Parsing Information
+
+DEBUG_FORMATS_PLAYLISTS
+	EN	Playlist Parsing Information
+
+DEBUG_FORMATS_XML
+	EN	XML Parsing Information (Picks, Shoutcast, etc)
+
+DEBUG_DATABASE_MYSQL
+	EN	MySQL Initialization & Process Information
+
+DEBUG_DATABASE_SQL
+	EN	SQL Debugging (Advanced)
+
+DEBUG_DATABASE_INFO
+	EN	Metadata & Parsing Debugging
+
+DEBUG_OS_FILES
+	EN	Filesystem Level Information
+
+DEBUG_OS_PATHS
+	EN	Filesystem Path Parsing
+
+DEBUG_CONTROL_STDIO
+	EN	Standard I/O Command Debugging (Advanced)
+
+DEBUG_CONTROL_QUERIES
+	EN	Control Query Debugging (Advanced)
+
+DEBUG_CONTROL_COMMAND
+	EN	Internal Command Execution Debugging (Advanced)
+
+DEBUG_PLAYER_IR
+	EN	Infrared Activity & Map Parsing
+
+DEBUG_PLAYER_MENU
+	EN	Player Menu Debugging
+
+DEBUG_PLAYER_UI
+	EN	Player User Interface Information
+
+DEBUG_PLAYER_GRAPHICS
+	EN	Player Graphic Display: Font & Bitmap Information 
+
+DEBUG_PLAYER_PLAYLIST
+	EN	High Level Player Playlist Control Information
+
+DEBUG_PLAYER_STREAMING
+	EN	All Player Streaming Debugging
+
+DEBUG_PLAYER_STREAMING_DIRECT
+	EN	Player Direct Streaming Debugging
+
+DEBUG_PLAYER_STREAMING_REMOTE
+	EN	Player Remote Streaming Debugging
+
+DEBUG_PLAYER_FIRMWARE
+	EN	Player Firmware Upgrade Debugging
+
+DEBUG_PLAYER_SOURCE
+	EN	Player Source Audio & Conversion Debugging
+
+DEBUG_PLAYER_SYNC
+	EN	Multi-Player Synchronization Debugging
+
+DEBUG_SCAN
+	EN	All Scan Debugging
+
+DEBUG_SCAN_SCANNER
+	EN	Music & Playlist Folder Scanning
+
+DEBUG_SCAN_IMPORT
+	EN	File & Playlist Metadata Import Debugging
+
+DEBUG_PLUGIN_ITUNES
+	EN	iTunes Synchronization Information
+
+DEBUG_PLUGIN_MUSICMAGIC
+	EN	MusicIP Mix & Export Debugging
+
+DEBUG_PLUGIN_MOODLOGIC
+	EN	MoodLogic Mix & Export Debugging
+
+SETUP_DEBUG_SERVER_LOG
+	EN	Server Log File
+
+SETUP_DEBUG_SERVER_LOG_DESC
+	EN	SlimServer keeps a log file for all server related activities (Audio Streaming, Infrared, etc) here:
+
+SETUP_DEBUG_SCANNER_LOG
+	EN	Scanner Log File
+
+SETUP_DEBUG_SCANNER_LOG_DESC
+	EN	SlimServer keeps a log file for all scanning related activities, including iTunes, MusicIP & MoodLogic here:
+
+SAVE_SETTINGS
+	EN	Save Settings
 
 SHRINK
 	DE	Kleiner

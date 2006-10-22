@@ -39,6 +39,7 @@ use warnings;
 
 use Scalar::Util qw(blessed);
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::PerfMon;
 use Slim::Utils::PerlRunTime;
@@ -91,6 +92,8 @@ my $checkingHighTimers = 0;   # Semaphore for high priority timers
 our $timerLate = Slim::Utils::PerfMon->new('Timer Late', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
 our $timerTask = Slim::Utils::PerfMon->new('Timer Task', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5], 1);
 
+my $log = logger('server.timers');
+
 $d_watch_timers && setTimer( undef, time + 5, \&listTimers );
 
 =head2 checkTimers()
@@ -103,11 +106,11 @@ or at most one normal timer.
 sub checkTimers {
 
 	# check High Priority timers first (animation)
-	
 	# return if already inside one
 	if ($checkingHighTimers) {
 	
-		$::d_time && msg("[high] blocked checking - already processing a high timer!\n");
+		$log->warn("[high] blocked checking - already processing a high timer!");
+
 		return;
 	}
 
@@ -128,16 +131,20 @@ sub checkTimers {
 		my $high_objRef = $high_timer->{'objRef'};
 		my $high_args   = $high_timer->{'args'};
 
-		if ( $::d_time && $high_subptr ) {
+		if ($log->is_info && $high_subptr) {
+
 			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($high_subptr);
-			msg("[high] firing $name " . ($now - $high_timer->{'when'}) . " late.\n");
+
+			$log->info("[high] firing $name " . ($now - $high_timer->{'when'}) . " late.");
 		}
-			
+
 		if ( $high_subptr ) {	
+
 			$high_subptr->($high_objRef, @{$high_args});
-		}
-		else {
-			msg("[high] no subptr: " . Data::Dump::dump($high_timer));
+
+		} else {
+
+			$log->warn("[high] no subptr: " . Data::Dump::dump($high_timer));
 		}
 
 		$nextHigh = $high->get_next_priority();
@@ -155,8 +162,12 @@ sub checkTimers {
 	
 	# Check Normal timers - return if already inside one
 	if ($checkingNormalTimers) {
-		$::d_time && msg("[norm] blocked checking - already processing a normal timer!\n");
-		$::d_time && bt();
+
+		if ($log->is_warn) {
+
+			$log->logBacktrace("[norm] blocked checking - already processing a normal timer!");
+		}
+
 		return;
 	}
 
@@ -172,22 +183,28 @@ sub checkTimers {
 		my $objRef = $timer->{'objRef'};
 		my $args   = $timer->{'args'};
 
-		if ( $::d_time && $subptr ) {
+		if ($log->is_info && $subptr) {
 			my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
-			msg("[norm] firing $name " . ($now - $timer->{'when'}) . " late.\n");
+
+			$log->info("[norm] firing $name " . ($now - $timer->{'when'}) . " late.");
 		}
+
 		$::perfmon && $timerLate->log($now - $timer->{'when'});
-			
+
 		if ( $subptr ) {
+
 			$subptr->($objRef, @{$args});
-		}
-		else {
-			msg("Normal timer with no subptr: " . Data::Dump::dump($timer));
+
+		} else {
+
+			$log->warn("Normal timer with no subptr: " . Data::Dump::dump($timer));
 		}
 
-		$::perfmon && $timerTask->log(Time::HiRes::time() - $now) && 
+		if ($::perfmon && $timerTask->log(Time::HiRes::time() - $now)) {
+
+			# Supress the timestamp
 			msg(sprintf("    %s\n", Slim::Utils::PerlRunTime::realNameForCodeRef($subptr)), undef, 1);
-
+		}
 	}
 
 	$checkingNormalTimers = 0;
@@ -203,9 +220,9 @@ changed by.
 
 sub adjustAllTimers {
 	my $delta = shift;
-	
-	$::d_time && msg("adjustAllTimers: time travel!");
-	
+
+	$log->warn("adjustAllTimers: time travel!");
+
 	for my $item ( $high->peek_items( sub { 1 } ) ) {
 		$high->adjust_priority( $item->[ITEM_ID], sub { 1 }, $delta );
 	}
@@ -233,6 +250,7 @@ sub nextTimer {
 	if (defined($nextHigh) && (!defined($next) || $nextHigh < $next) && !$checkingHighTimers ) {
 		$next = $nextHigh;
 	}
+
 	return undef if !defined $next;
 
 	my $delta = $next - Time::HiRes::time();
@@ -250,9 +268,9 @@ Lists all pending timers in an easy-to-read format for debugging.
 =cut
 
 sub listTimers {
-	msgf( "High timers: (%d)\n", $high->get_item_count );
-	
 	my $now = Time::HiRes::time();
+
+	$log->debug(sprintf("High timers: (%d)", $high->get_item_count));
 
 	for my $item ( $high->peek_items( sub { 1 } ) ) {
 		
@@ -265,23 +283,23 @@ sub listTimers {
 			$obj = $obj->macaddress();
 		}
 
-		msgf( "%50.50s %.6s %s\n", $obj, $diff, $name );
+		$log->debug(sprintf("%50.50s %.6s %s", $obj, $diff, $name));
 	}
 
-	msgf( "Normal timers: (%d)\n", $normal->get_item_count );
+	$log->debug(sprintf("Normal timers: (%d)", $normal->get_item_count));
 
 	for my $item ( $normal->peek_items( sub { 1 } ) ) {
 		
 		my $timer = $item->[ITEM_PAYLOAD];
 		my $name  = Slim::Utils::PerlRunTime::realNameForCodeRef( $timer->{'subptr'} );
 		my $diff  = $timer->{'when'} - $now;
-		
-		my $obj = $timer->{'objRef'} || '';
+		my $obj   = $timer->{'objRef'} || '';
+
 		if ( blessed $obj && $obj->isa('Slim::Player::Client') ) {
 			$obj = $obj->macaddress();
 		}
 
-		msgf( "%50.50s %.6s %s\n", $obj, $diff, $name );
+		$log->debug(sprintf("%50.50s %.6s %s", $obj, $diff, $name));
 	}
 	
 	$d_watch_timers && setTimer( undef, time + 5, \&listTimers );
@@ -296,16 +314,16 @@ Schedule a high priority timer.  See setTimer for documentation.
 sub setHighTimer {
 	my ($objRef, $when, $subptr, @args) = @_;
 
-	if ($::d_time) {
+	if ($log->is_debug) {
 
-		my $now = Time::HiRes::time();
-
+		my $now  = Time::HiRes::time();
 		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
 		my $diff = $when - $now;
-		msg("[high] set $name, in $diff sec\n");
+
+		$log->debug("[high] Set $name, in $diff seconds");
 
 		if ($when < $now) {
-			msg("}{}{}{}{}{}{}{}{}{}  Set a timer in the past!\n");
+			$log->debug("Set a timer in the past for [$name]!");
 		}
 	}
 
@@ -353,13 +371,16 @@ An array of any other arguments to be passed to $coderef.
 sub setTimer {
 	my ($objRef, $when, $subptr, @args) = @_;
 
-	if ($::d_time) {
-		my $now = Time::HiRes::time();
+	if ($log->is_debug) {
+
+		my $now  = Time::HiRes::time();
 		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef($subptr);
 		my $diff = $when - $now;
-		msg("[norm] set $name, in $diff sec\n");
+
+		$log->debug("[norm] Set $name, in $diff seconds");
+
 		if ($when < $now) {
-			msg("}{}{}{}{}{}{}{}{}{}  Set a timer in the past!\n");
+			$log->debug("Set a timer in the past for [$name]!");
 		}
 	}
 
@@ -381,11 +402,12 @@ sub setTimer {
 			my $t = $item->[ITEM_PAYLOAD];
 		
 			if ( ref($t->{'subptr'}) eq 'CODE' ) {
-				print Slim::Utils::PerlRunTime::deparseCoderef($t->{'subptr'}) . "\n";
+
+				logError(Slim::Utils::PerlRunTime::deparseCoderef($t->{'subptr'}));
 			}
 		}
 
-		die "Insane number of timers: $numtimers\n";
+		logger('')->logdie("FATAL: Insane number of timers: [$numtimers]");
 	}
 
 	return $newtimer;
@@ -401,9 +423,11 @@ of timers removed.
 sub killTimers {
 	my $objRef = shift;
 	my $subptr = shift || return;
-	
+
 	my @killed = $normal->remove_items( sub {
+
 		my $timer = shift;
+
 		if ( $timer->{subptr} eq $subptr ) {
 			if ( !defined $objRef && !defined $timer->{objRef} ) {
 				return 1;
@@ -414,10 +438,12 @@ sub killTimers {
 		}
 		return 0;	
 	} );
-	
-	if ( $::d_time && @killed ) {
+
+	if ($log->is_info && @killed) {
+
 		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef( $subptr );
-		msg("[norm] Killed " . scalar @killed . " timer(s) for $objRef / $name\n");
+
+		$log->info("[norm] Killed " . scalar @killed . " timer(s) for $objRef / $name");
 	}
 	
 	return scalar @killed;
@@ -435,7 +461,9 @@ sub killHighTimers {
 	my $subptr = shift || return;
 
 	my @killed = $high->remove_items( sub {
+
 		my $timer = shift;
+
 		if ( $timer->{subptr} eq $subptr ) {
 			if ( !defined $objRef && !defined $timer->{objRef} ) {
 				return 1;
@@ -444,12 +472,15 @@ sub killHighTimers {
 				return 1;
 			}
 		}
+
 		return 0;	
 	} );
 	
-	if ( $::d_time && @killed ) {
+	if ($log->is_info && @killed) {
+
 		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef( $subptr );
-		msg("[high] Killed " . scalar @killed . " timer(s) for $objRef / $name\n");
+
+		$log->info("[high] Killed " . scalar @killed . " timer(s) for $objRef / $name");
 	}
 
 	return scalar @killed;
@@ -555,9 +586,11 @@ sub killSpecific {
 		return 1 if $timer eq $t;
 	}, 1 );
 	
-	if ( $::d_time && @killed ) {
+	if ($log->is_info && @killed) {
+
 		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef( $timer->{subptr} );
-		msg("killSpecific: Removed high timer $name\n");
+
+		$log->info("killSpecific: Removed high timer $name");
 	}
 
 	return 1 if @killed;
@@ -567,9 +600,11 @@ sub killSpecific {
 		return 1 if $timer eq $t;
 	}, 1 );
 	
-	if ( $::d_time && @killed ) {
+	if ($log->is_info && @killed) {
+
 		my $name = Slim::Utils::PerlRunTime::realNameForCodeRef( $timer->{subptr} );
-		msg("killSpecific: Removed normal timer $name\n");
+
+		$log->info("killSpecific: Removed normal timer $name");
 	}
 	
 	return @killed ? 1 : 0;
@@ -589,7 +624,6 @@ sub firePendingTimer {
 	my $foundTimer;
 
 	# find first pending matching timers 
-	
 	my @normal = $normal->peek_items( sub {
 		my $timer = shift;
 		if ( $timer->{subptr} eq $subptr ) {

@@ -1,4 +1,5 @@
 package Plugins::xPL;
+
 # SlimServer Copyright (C) 2001 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
@@ -12,12 +13,15 @@ package Plugins::xPL;
 #
 # xPL Protocol Support Plugin for SlimServer
 # http://www.xplproject.org.uk/
-#
+
+# $Id$
+
 use strict;
 use IO::Socket;
 use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::Prefs;
@@ -29,8 +33,11 @@ my $xpl_ir;
 my $xpl_socket;
 my $xpl_port;
 
-my $d_xpl = 0;
-
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.xpl',
+	'defaultLevel' => 'WARN',
+	'description'  => getDisplayName(),
+});
 
 ################################################################################
 # PLUGIN CODE
@@ -430,10 +437,10 @@ sub sendxplmsg {
 	eval { $sockUDP->send( Slim::Utils::Unicode::utf8encode($msg), 0, $portaddr ) };
 
 	if ($@) {
-		errorMsg("xPL - caught exception when trying to ->send: [$@]\n");
+		logError("Caught exception when trying to ->send: [$@]");
 	}
-	
-	$d_xpl && msg("xPL: sending [$msg]\n\n");
+
+	$log->debug("Sending [$msg]");
 
 	close $sockUDP;
 }
@@ -577,7 +584,7 @@ sub handleConfigResponse {
 # It sends out a remote.basic xPL message.
 # If xPL support is not enabled, the routine returns immediately.
 #sub processircode {
-#	$d_xpl && msg("xPL: processircode()\n");
+#	$log->debug("Begin Function");
 #	return unless defined $xpl_port;
 #
 #	my $clientname = validInstance($_[0]->name);
@@ -600,81 +607,71 @@ sub handleConfigResponse {
 #	sendXplHBeatMsg($_[0]);        
 #}
 
-
-# This routine is called by Slim::Command::execute() for each command 
-# it processes.
-
+# This routine is called by Slim::Command::execute() for each command it processes.
 sub xplExecuteCallback {
-#	my $client = shift;
-#	my $paramsRef = shift;
 	my $request = shift;
 	
 	my $client = $request->client();
 	
-#	my $command    = $request->getRequest(0);
-#	my $subCommand = $request->getRequest(1);
-
 	# callback is all client based below, so avoid a crash and shortcut all of it when no client supplied
-	unless (defined $client) {
-#		$d_xpl && msg("xPL: xplExecuteCallback without a client: $command - $subCommand\n");
-		$d_xpl && msg("xPL: xplExecuteCallback without a client: " . $request->getRequestString() . "\n");
+	if (!defined $client) {
+
+		logWarning("Called without a client: " . $request->getRequestString);
 		return;
 	}
 
-	
 	my $clientname = validInstance($client->name);
 	my $power = 'off';
 	
 	if ($client->can('power')){
 		$power = ($client->power()==0 ? 'off' : 'on');
 	}
-	
-#	if ($command eq 'newclient') {
+
 	if ($request->isCommand([['client'], ['new']])) {
-		$d_xpl && msg("xPL: xplExecuteCallback for new client\n");
+
+		$log->debug("Got new client.");
 		
 		sendXplHBeatMsg($client);
 	}
 	
-#	elsif ($command eq 'power') {
 	elsif ($request->isCommand([['power']])) {
-		$d_xpl && msg("xPL: xplExecuteCallback for power\n");
+
+		$log->debug("Callback for power.");
 		
 		sendXplHBeatMsg($client, 1);
 	}
 	
-#	elsif ($command eq 'button' && ($xpl_ir eq 'buttons' || $xpl_ir eq 'both')) {
 	elsif ($request->isCommand([['button']]) && ($xpl_ir eq 'buttons' || $xpl_ir eq 'both')) {
-		$d_xpl && msg("xPL: xplExecuteCallback for button\n");
-		
+
+		$log->debug("Callback for button.");
+
 		my $param = $request->getParam('_buttoncode');
-#		sendxplmsg("xpl-trig", "*", "remote.basic", "zone=slimserver\ndevice=$clientname\nkeys=$subCommand\npower=$power", $clientname);
+
 		sendxplmsg("xpl-trig", "*", "remote.basic", "zone=slimserver\ndevice=$clientname\nkeys=$param\npower=$power", $clientname);
 	}
 	
-#	elsif ($command eq 'ir' && ($xpl_ir eq 'raw' || $xpl_ir eq 'both')) {
 	elsif ($request->isCommand([['ir']]) && ($xpl_ir eq 'raw' || $xpl_ir eq 'both')) {
-		$d_xpl && msg("xPL: xplExecuteCallback for IR\n");
+
+		$log->debug("Callback for IR.");
 		
 		my $param = $request->getParam('_ircode');
-#		sendxplmsg("xpl-trig", "*", "remote.basic", "zone=slimserver\ndevice=$clientname\nkeys=$subCommand\npower=$power", $clientname);
+
 		sendxplmsg("xpl-trig", "*", "remote.basic", "zone=slimserver\ndevice=$clientname\nkeys=$param\npower=$power", $clientname);
 	}
 
-#	elsif ($command eq 'newsong') {
 	elsif ($request->isCommand([['playlist'], ['newsong']])) {
-		$d_xpl && msg("xPL: xplExecuteCallback for newsong\n");
-		
+
+		$log->debug("Callback for newsong.");
+
 		sendXplHBeatMsg($client, 1);
 	}
-	
-#	elsif ($command eq 'stop') {
+
 	elsif ($request->isCommand([['stop']]) || $request->isCommand([['mode'], ['stop']])) {
-		$d_xpl && msg("xPL: xplExecuteCallback for stop\n");
+
+		$log->debug("Callback for stop.");
 
 		sendXplHBeatMsg($client, 1);
 	}
-
 }
 
 # plugin: return strings

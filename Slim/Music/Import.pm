@@ -46,6 +46,7 @@ use Proc::Background;
 use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 
@@ -63,6 +64,7 @@ our %importsRunning = ();
 our %Importers      = ();
 
 my $folderScanClass = 'Slim::Music::MusicFolderScan';
+my $log             = logger('scan.import');
 
 =head2 launchScan( \%args )
 
@@ -80,25 +82,9 @@ sub launchScan {
 		$args->{"prefsfile=$::prefsfile"} = 1;
 	}
 
-	if (defined $::logfile) {
-		$args->{"logfile=$::logfile"} = 1;
-	}
+	if (Slim::Utils::Log->writeConfig) {
 
-	if (defined $::noLogTimestamp ) {
-		$args->{'noLogTimestamp'} = 1;
-	}
-
-	# Ugh - need real logging via Log::Log4perl
-	# Hardcode the list of debugging options that the scanner accepts.
-	my @debug = qw(d_info d_server d_import d_parse d_parse d_sql d_startup d_itunes d_moodlogic d_musicmagic);
-
-	# Search the main namespace hash to see if they're defined.
-	for my $opt (@debug) {
-
-		no strict 'refs';
-		my $check = '::' . $opt;
-
-		$args->{$opt} = 1 if $$check;
+		$args->{sprintf("logconf=%s", Slim::Utils::Log->defaultConfigFile)} = 1;
 	}
 
 	# Add in the various importer flags
@@ -230,6 +216,12 @@ sub setIsScanning {
 	my $class = shift;
 	my $value = shift;
 
+	my $autoCommit = Slim::Schema->storage->dbh->{'AutoCommit'};
+
+	if ($autoCommit) {
+		Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
+	}
+
 	eval { Slim::Schema->txn_do(sub {
 
 		my $isScanning = Slim::Schema->rs('MetaInformation')->find_or_create({
@@ -242,8 +234,10 @@ sub setIsScanning {
 
 	if ($@) {
 
-		errorMsg("Scanner: Failed to update isScanning: [$@]\n");
+		logError("Failed to update isScanning: [$@]");
 	}
+
+	Slim::Schema->storage->dbh->{'AutoCommit'} = $autoCommit;
 }
 
 =head2 runScan( )
@@ -279,7 +273,7 @@ sub runScan {
 		# See bug: 1892
 		if ($class->scanPlaylistsOnly && !$Importers{$importer}->{'playlistOnly'}) {
 
-			$::d_import && msg("Import: Skipping [$importer] - it doesn't implement playlistOnly scanning!\n");
+			$log->warn("Skipping [$importer] - it doesn't implement playlistOnly scanning!");
 
 			next;
 		}
@@ -305,7 +299,7 @@ sub runScanPostProcessing {
 	my $class  = shift;
 
 	# Auto-identify VA/Compilation albums
-	$::d_import && msg("Import: Starting mergeVariousArtistsAlbums().\n");
+	$log->info("Starting mergeVariousArtistsAlbums().");
 
 	$importsRunning{'mergeVariousAlbums'} = Time::HiRes::time();
 
@@ -313,7 +307,7 @@ sub runScanPostProcessing {
 
 	# Post-process artwork, so we can use title formats, and use a generic
 	# image to speed up artwork loading.
-	$::d_import && msg("Import: Starting findArtwork().\n");
+	$log->info("Starting findArtwork().");
 
 	$importsRunning{'findArtwork'} = Time::HiRes::time();
 
@@ -334,7 +328,7 @@ sub runScanPostProcessing {
 	$class->useFolderImporter(0);
 
 	# Always run an optimization pass at the end of our scan.
-	$::d_import && msg("Import: Starting Database optimization.\n");
+	$log->info("Starting Database optimization.");
 
 	$importsRunning{'dbOptimize'} = Time::HiRes::time();
 
@@ -342,7 +336,7 @@ sub runScanPostProcessing {
 
 	$class->endImporter('dbOptimize');
 
-	$::d_import && msg("Import: Finished background scanning.\n");
+	$log->info("Finished background scanning.");
 
 	return 1;
 }
@@ -399,7 +393,7 @@ sub addImporter {
 
 	$Importers{$importer} = $params;
 
-	$::d_import && msgf("Import: Adding %s Scan\n", $importer);
+	$log->info("Adding $importer Scan");
 }
 
 =head2 runImporter( $importer )
@@ -417,7 +411,7 @@ sub runImporter {
 		$importsRunning{$importer} = Time::HiRes::time();
 
 		# rescan each enabled Import, or scan the newly enabled Import
-		$::d_import && msgf("Import: Starting %s scan\n", $importer);
+		$log->info("Starting $importer scan");
 
 		$importer->startScan;
 
@@ -442,6 +436,8 @@ sub countImporters {
 		
 		# Don't count Folder Scan for this since we use this as a test to see if any other importers are in use
 		if ($Importers{$importer}->{'use'} && $importer ne $folderScanClass) {
+
+			$log->info("Found importer: $importer");
 
 			$count++;
 		}
@@ -532,9 +528,9 @@ sub endImporter {
 
 	if (exists $importsRunning{$importer}) { 
 
-		$::d_import && msgf("Import: Completed %s Scan in %s seconds.\n",
+		$log->info(sprintf("Completed %s Scan in %s seconds.",
 			$importer, int(Time::HiRes::time() - $importsRunning{$importer})
-		);
+		));
 
 		delete $importsRunning{$importer};
 
@@ -559,8 +555,7 @@ sub stillScanning {
 
 		$class = __PACKAGE__;
 
-		msg("Warning: Caller needs to updated to use ->stillScanning, not ::stillScanning()!\n");
-		bt();
+		logBacktrace("Caller needs to be updated to use ->stillScanning, not ::stillScanning()!");
 	}
 
 	# Check and see if there is a flag in the database, and the process is alive.

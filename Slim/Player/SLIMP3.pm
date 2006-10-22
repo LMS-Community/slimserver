@@ -12,6 +12,7 @@ package Slim::Player::SLIMP3;
 
 use strict;
 use Slim::Player::Player;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 use base qw(Slim::Player::Player);
@@ -37,13 +38,12 @@ sub new {
 	# Load these modules on the fly to save approx 700k of memory.
 	for my $module (qw(Slim::Hardware::mas3507d Slim::Networking::SliMP3::Stream Slim::Display::Text)) {
 
-		$::d_protocol && msg("Loading module: $module\n");
+		logger('network.protocol.slimp3')->info("Loading module: $module");
 
 		Slim::bootstrap::tryModuleLoad($module);
 
 		if ($@) {
-			msg("Couldn't load module: $module for SLIMP3: [$@] - THIS IS FATAL\n");
-			bt();
+			logBacktrace("Couldn't load module: $module for SLIMP3: [$@] - THIS IS FATAL!");
 			$@ = '';
 		}
 	}
@@ -202,7 +202,7 @@ sub udpstream {
 sub i2c {
 	my ($client, $data) = @_;
 
-	$::d_i2c && msg("i2c: sending ".length($data)." bytes\n");
+	logger('network.protocol.slimp3')->debug(sprintf("sending [%d] bytes", length($data)));
 
 	send($client->udpsock, '2                 '.$data, 0, $client->paddr);
 }

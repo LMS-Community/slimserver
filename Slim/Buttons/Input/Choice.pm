@@ -53,8 +53,9 @@ use strict;
 use warnings;
 
 use Slim::Buttons::Common;
-use Slim::Utils::Misc;
 use Slim::Display::Display;
+use Slim::Utils::Log;
+use Slim::Utils::Misc;
 
 # TODO: move browseCache into Client object, where it will be cleaned up after client is forgotten
 our %browseCache = (); # remember where each client is browsing
@@ -153,7 +154,8 @@ sub getExtVal {
 		my $ret = eval { $value->($client, getItem($client)) };
 
 		if ($@) {
-			errorMsg("INPUT.Choice: getExtVal - couldn't run coderef. [$@]\n");
+
+			logError("Couldn't run coderef. [$@]");
 			return '';
 		}
 
@@ -216,7 +218,7 @@ my %functions = (
 				eval { $onChange->($client, $valueRef ? ($$valueRef) : undef) };
 
 				if ($@) {
-					errorMsg("INPUT.Choice: numberScroll caught error: [$@]\n");
+					logError("numberScroll caught error: [$@]");
 				}
 			}
 		}
@@ -280,7 +282,8 @@ sub callCallback {
 		eval { $callback->(@args) };
 
 		if ($@) {
-			errorMsg("INPUT.Choice: Couldn't run callback: [$callbackName] : $@\n");
+
+			logError("Couldn't run callback: [$callbackName] : $@");
 		
 		} elsif (getParam($client,'pref')) {
 		
@@ -316,7 +319,9 @@ sub changePos {
 
 	my $newposition = Slim::Buttons::Common::scroll($client, $dir, scalar(@$listRef), $listIndex);
 	
-	$::d_ui && msgf("changepos: newpos: $newposition = scroll dir:$dir listIndex: $listIndex listLen: %d\n", scalar(@$listRef));
+	logger('player.ui')->debug(
+		"newpos: $newposition = scroll dir:$dir listIndex: $listIndex listLen: ", scalar(@$listRef)
+	);
 	
 	my $valueRef = $client->modeParam('valueRef');
 

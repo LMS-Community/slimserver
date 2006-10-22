@@ -13,10 +13,13 @@ use strict;
 
 use Slim::Formats::XML;
 use Slim::Utils::Cache;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::HTTP;
 use Slim::Web::Pages;
+
+my $log = logger('formats.xml');
 
 sub handleWebIndex {
 	my ( $class, $args ) = @_;
@@ -57,7 +60,8 @@ sub handleWebIndex {
 
 	# Handle search queries
 	if ( my $query = $asyncArgs->[1]->{'query'} ) {
-		$::d_plugins && msg("XMLBrowser: Search query [$query]\n");
+
+		$log->info("Search query [$query]");
 
 		Slim::Formats::XML->openSearch(
 			\&handleFeed,
@@ -194,7 +198,8 @@ sub handleFeed {
 		}
 		
 		if ( $url ) {
-			$::d_plugins && msg("XMLBrowser: playing/adding $url\n");
+
+			$log->info("Playing/adding $url");
 		
 			Slim::Music::Info::setTitle( $url, $title );
 		
@@ -228,9 +233,8 @@ sub handleFeed {
 		}
 		
 		if ( @urls ) {
-			$::d_plugins && msgf("XMLBrowser: playing/adding all items:\n%s\n",
-				join "\n", @urls
-			);
+
+			$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
 			
 			if ( $play ) {
 				$client->execute([ 'playlist', 'loadtracks', 'listref', \@urls ]);
@@ -329,7 +333,9 @@ sub handleSubFeed {
 		# re-cache the parsed XML to include the sub-feed
 		my $cache = Slim::Utils::Cache->new();
 		my $expires = $Slim::Formats::XML::XML_CACHE_TIME;
-		$::d_plugins && msg("Web::XML: re-caching parsed XML for $expires seconds\n");
+
+		$log->info("Re-caching parsed XML for $expires seconds.");
+
 		$cache->set( $params->{'parentURL'} . '_parsedXML', $parent, $expires );
 	}
 	

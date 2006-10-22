@@ -20,6 +20,7 @@ use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use Path::Class;
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
@@ -42,6 +43,8 @@ my %brokenplugins = (
 	'iTunes'           => 1,
 	'RandomPlay'       => 1,
 );
+
+my $log = logger('server.plugins');
 
 {
 	@pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
@@ -76,7 +79,7 @@ my %brokenplugins = (
 
 				if ($subDir ne $okDir && $subDir->is_dir && $subDir !~ /\.svn/) {
 
-					$::d_plugins && msg("Removing old non-EN HTML files from core Plugins: [$subDir]\n");
+					$log->debug("Removing old non-EN HTML files from core Plugins: [$subDir]");
 
 					$subDir->rmtree;				
 				}
@@ -206,7 +209,9 @@ sub canPlugin {
 	my $plugin = shift;
 	
 	# don't verify a second time
-	return 0 if ($brokenplugins{$plugin});
+	if ($brokenplugins{$plugin}) {
+		return 0;
+	}
 
 	# This shouldn't be here - but I can't think of a better place.
 	# Fred: commented out to re-enable xPL waiting for a better solution
@@ -223,13 +228,17 @@ sub canPlugin {
 	no strict 'refs';
 
 	my $fullname = "Plugins::$plugin";
-	$::d_plugins && msg("Requiring $fullname plugin.\n");	
 
-	Slim::bootstrap::tryModuleLoad($fullname);
+	$log->info("Requiring $fullname plugin.");
+
+	eval "use $fullname";
 
 	if ($@) {
-		$::d_plugins && msg("Can't require $fullname for Plugins menu: " . $@);
+
+		logWarning("Can't require $fullname for Plugins menu: $@");
+
 		$brokenplugins{$plugin} = 1;
+
 		return 0;
 	}
 	
@@ -261,7 +270,8 @@ sub canPlugin {
 	# want to load them.
 	if ($displayName && !Slim::Utils::Strings::stringExists($displayName)) {
 
-		$::d_plugins && msg("Can't load plugin $fullname - not 6.0+ compatible. (displayName must return a string token, strings() must not use _DATA_)\n");
+		logWarning("Can't load plugin $fullname - not 6.0+ compatible. (displayName must return a string token, strings() must not use _DATA_)");
+
 		$brokenplugins{$plugin} = 1;
 
 		return 0;
@@ -272,7 +282,7 @@ sub canPlugin {
 
 	} else {
 
-		$::d_plugins && msg("Can't load $fullname for Plugins menu: $@\n");
+		logWarning("Can't load $fullname for Plugins menu: $@");
 
 		$brokenplugins{$plugin} = 1;
 
@@ -287,8 +297,7 @@ sub addPlugin {
 
 	my $fullname = "Plugins::$plugin";
 
-	my $displayName = canPlugin($plugin);
-	return 0 if (not $displayName);
+	my $displayName = canPlugin($plugin) || return 0;
 
 	$plugins{$plugin} = {
 		module => $fullname,
@@ -303,7 +312,9 @@ sub addPlugin {
 		eval { $fullname->initPlugin };
 
 		if ($@) {
-			$::d_plugins && msg("Initialization of $fullname failed: $@\n");
+
+			$log->error("Initialization of $fullname failed: $@");
+
 			$brokenplugins{$plugin} = 1;
 			delete $plugins{$plugin};
 			return 0;
@@ -319,7 +330,7 @@ sub addPlugin {
 	if (UNIVERSAL::can("Plugins::${plugin}","getDisplayDescription")) {
 		$plugins{$plugin}->{'desc'} = &{"Plugins::${plugin}::getDisplayDescription"};
 	}
-	
+
 	return 1;
 }
 
@@ -355,7 +366,8 @@ sub addMenus {
 	
 	if (!$@ && defined $menu && $menu && !exists $disabledPlugins->{$plugin}) {
 
-		$::d_plugins && msg("Adding $plugin to menu: $menu\n");
+		$log->info("Adding $plugin to menu: $menu");
+
 		Slim::Buttons::Home::addSubMenu($menu, $plugins{$plugin}->{'name'}, \%params);
 		
 		if ($menu ne "PLUGINS") {
@@ -364,8 +376,11 @@ sub addMenus {
 		}
 	
 	} else {
+
 		$menu ||= 'PLUGINS';
-		$::d_plugins && msg("Removing $plugin from menu: $menu\n");
+
+		$log->info("Removing $plugin from menu: $menu");
+
 		Slim::Buttons::Home::addSubMenu($menu, $plugins{$plugin}->{'name'}, undef);
 	}
 }
@@ -379,16 +394,20 @@ sub addScreensavers {
 	return unless UNIVERSAL::can("Plugins::${plugin}","screenSaver");
 
 	if (exists $disabledPlugins->{$plugin}) {
+
 		Slim::Buttons::Home::addSubMenu("SCREENSAVERS", $plugins{$plugin}->{'name'}, undef);
+
 		return;
 	}
 
 	eval { &{"Plugins::${plugin}::screenSaver"}() };
 
 	if ($@) {
-		$::d_plugins && msg("Failed screensaver for $plugin: " . $@);
+
+		$log->warn("Failed screensaver for $plugin: $@");
 
 	} elsif (!UNIVERSAL::can("Plugins::${plugin}","addMenu")) {
+
 		my %params = (
 			'useMode' => "PLUGIN.$plugin",
 			'header'  => $plugins{$plugin}->{'name'}
@@ -424,8 +443,17 @@ sub addWebPages {
 		my ($pagesref, $index) = eval { &{"Plugins::${plugin}::webPages"}() };
 
 		if ($@ || (exists $disabledPlugins->{$plugin})) {
-			$@ && $::d_plugins && msg("Can't get web page handlers for plugin $plugin : " . $@);
-			Slim::Web::Pages->addPageLinks("plugins", {$plugins{$plugin}->{'name'} => undef}) if $plugins{$plugin}->{'name'};
+
+			if ($@) {
+				$log->warn("Can't get web page handlers for plugin $plugin : $@");
+			}
+
+			if ($plugins{$plugin}->{'name'}) {
+
+				Slim::Web::Pages->addPageLinks("plugins", {
+					$plugins{$plugin}->{'name'} => undef
+				});
+			}
 
 		} elsif ($pagesref) {
 
@@ -436,7 +464,7 @@ sub addWebPages {
 			for my $page (keys %$pagesref) {
 				Slim::Web::HTTP::addPageFunction($urlbase . $page, $pagesref->{$page});
 			}
-			
+
 			# Add any template directories that may exist for the plugin
 			for my $plugindir (pluginDirs()) {
 				my $htmldir = catdir($plugindir, $path, "HTML");
@@ -454,7 +482,9 @@ sub addWebPages {
 }
 
 sub clearGroups {
-	$::d_plugins && msg("Resetting plugins\n");
+
+	$log->info("Resetting plugins.");
+
 	$addGroups = 0;
 	$plugins_read = 0;
 }
@@ -480,7 +510,9 @@ sub addSetupGroups {
 		}
 
 		if ($noSetupGroup) {
-			$::d_plugins && msg("Can't get setup group for plugin $plugin : " . $noSetupGroup);
+
+			$log->warn("Can't get setup group for plugin $plugin : $noSetupGroup");
+
 			next;
 		}
 
@@ -526,8 +558,11 @@ sub addSetupGroups {
 }
 
 sub shutdownPlugins {
-	$::d_plugins && msg("Shutting down plugins...\n");
+
+	$log->info("Shutting down plugins...");
+
 	for my $plugin (enabledPlugins()) {
+
 		shutdownPlugin($plugin);
 	}
 }
@@ -540,10 +575,14 @@ sub shutdownPlugin {
 	# shutdown() because it's less likely to cause backward
 	# compatibility problems.
 	if (UNIVERSAL::can("Plugins::$plugin", "shutdownPlugin")) {
+
 		eval { &{"Plugins::${plugin}::shutdownPlugin"}() };
 	}
 
-	$plugins{$plugin}{'initialized'} = 0 if (defined $plugins{$plugin});
+	if (defined $plugins{$plugin}) {
+
+		$plugins{$plugin}{'initialized'} = 0;
+	}
 }
 
 sub unusedPluginOptions {
@@ -552,7 +591,7 @@ sub unusedPluginOptions {
 	my %menuChoices = ();
 
 	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
-	my %homeplugins = map { $_ => 1 } @{Slim::Buttons::Home::getHomeChoices($client)};
+	my %homeplugins     = map { $_ => 1 } @{Slim::Buttons::Home::getHomeChoices($client)};
 
 	my $pluginsRef = \%plugins;
 

@@ -36,11 +36,11 @@ use File::Spec::Functions qw(catfile);
 use File::Basename qw(basename);
 
 use Slim::Utils::Alarms;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Scanner;
 
-my $d_commands = 0; # local debug flag
-
+my $log = logger('control.command');
 
 sub alarmCommand {
 	# functions designed to execute requests have a single parameter, the
@@ -48,7 +48,7 @@ sub alarmCommand {
 	my $request = shift;
 	
 	# this is convenient to check the mapping in debug mode.
-	$d_commands && msg("Commands::alarmCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command. In theory this should never happen
 	# but we check anyway since it is easy to err in the big dispatch table.
@@ -126,7 +126,7 @@ sub alarmCommand {
 sub buttonCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::buttonCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['button']])) {
@@ -154,7 +154,7 @@ sub buttonCommand {
 sub clientForgetCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::clientForgetCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command. Syntax approved by Dean himself!
 	if ($request->isNotCommand([['client'], ['forget']])) {
@@ -178,8 +178,8 @@ sub clientForgetCommand {
 
 sub debugCommand {
 	my $request = shift;
-	
-	$d_commands && msg("Commands::debugCommand()\n");
+
+	$log->debug("Begin Function");
 
 	# check this is the correct command. Syntax approved by Dean himself!
 	if ($request->isNotCommand([['debug']])) {
@@ -188,24 +188,29 @@ sub debugCommand {
 	}
 	
 	# get the parameters
-	my $debugFlag = $request->getParam('_debugflag');
+	my $category = $request->getParam('_debugflag');
 	my $newValue = $request->getParam('_newvalue');
-	
-	if ( !defined $debugFlag || !($debugFlag =~ /^d_/) ) {
+
+	if ( !defined $category || !Slim::Utils::Log->isValidCategory($category) ) {
+
 		$request->setStatusBadParams();
 		return;
 	}
 	
-	$debugFlag = "::" . $debugFlag;
-	no strict 'refs';
-	
-	if (defined($newValue)) {
-		$$debugFlag = $newValue;
-	} else {
-		# toggle if we don't have a new value
-		$$debugFlag = ($$debugFlag ? 0 : 1);
+	my $ret = Slim::Utils::Log->setLogLevelForCategory($category, $newValue);
+
+	if ($ret == 0) {
+
+		$request->setStatusBadParams();
+		return;
 	}
-	
+
+	# If the above setLogLevelForCategory has returned true, we need to reinitialize.
+	if ($ret == 1) {
+
+		Slim::Utils::Log->reInit;
+	}
+
 	$request->setStatusDone();
 }
 
@@ -213,7 +218,7 @@ sub debugCommand {
 sub displayCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::displayCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['display']])) {
@@ -243,7 +248,7 @@ sub displayCommand {
 sub irCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::irCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['ir']])) {
@@ -270,7 +275,7 @@ sub irCommand {
 sub mixerCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::mixerCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['mixer'], ['volume', 'muting', 'treble', 'bass', 'pitch']])) {
@@ -303,13 +308,18 @@ sub mixerCommand {
 			my $fade;
 			
 			if ($newvalue == 0) {
+
 				# need to un-mute volume
-				$::d_command && msg("Unmuting, volume is $vol.\n");
+				$log->info("Unmuting, volume is [$vol]");
+
 				$client->prefSet("mute", 0);
 				$fade = 0.3125;
+
 			} else {
+
 				# need to mute volume
-				$::d_command && msg("Muting, volume is $vol.\n");
+				$log->info("Muting, volume is [$vol]");
+
 				$client->prefSet("mute", 1);
 				$fade = -0.3125;
 			}
@@ -317,12 +327,16 @@ sub mixerCommand {
 			$client->fade_volume($fade, \&_mixer_mute, [$client]);
 	
 			for my $eachclient (@buddies) {
+
 				if ($eachclient->prefGet('syncVolume')) {
+
 					$eachclient->fade_volume($fade, \&_mixer_mute, [$eachclient]);
 				}
 			}
 		}
+
 	} else {
+
 		my $newval;
 		my $oldval = $client->prefGet($entity);
 
@@ -352,11 +366,10 @@ sub mixerCommand {
 	$request->setStatusDone();
 }
 
-
 sub playcontrolCommand {
 	my $request = shift;
 	
-	$d_commands && msg("playcontrolCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	# "mode" is deprecated
@@ -431,7 +444,7 @@ sub playcontrolCommand {
 sub playlistClearCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::playlistClearCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['clear']])) {
@@ -467,7 +480,7 @@ sub playlistClearCommand {
 sub playlistDeleteCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::playlistDeleteCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['delete']])) {
@@ -497,7 +510,7 @@ sub playlistDeleteCommand {
 sub playlistDeleteitemCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::playlistDeleteitemCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['deleteitem']])) {
@@ -550,7 +563,8 @@ sub playlistDeleteitemCommand {
 
 			if (!open($fh, Slim::Utils::Misc::pathFromFileURL($absitem))) {
 
-				errorMsg("Couldn't open playlist file $absitem : $!\n");
+				logError("Couldn't open playlist file $absitem : $!");
+
 				$fh = undef;
 
 			} else {
@@ -577,7 +591,7 @@ sub playlistDeleteitemCommand {
 sub playlistJumpCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::playlistJumpCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['jump', 'index']])) {
@@ -602,7 +616,7 @@ sub playlistJumpCommand {
 sub playlistMoveCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::playlistMoveCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['move']])) {
@@ -633,7 +647,7 @@ sub playlistMoveCommand {
 sub playlistRepeatCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::playlistRepeatCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['repeat']])) {
@@ -659,7 +673,7 @@ sub playlistRepeatCommand {
 sub playlistSaveCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::playlistSaveCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['save']])) {
@@ -715,7 +729,7 @@ sub playlistSaveCommand {
 sub playlistShuffleCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::playlistShuffleCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['shuffle']])) {
@@ -745,7 +759,7 @@ sub playlistShuffleCommand {
 sub playlistXalbumCommand {
 	my $request = shift;
 
-	$d_commands && msg("Commands::playlistXalbumCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['playalbum', 'loadalbum', 'addalbum', 'insertalbum', 'deletealbum']])) {
@@ -814,7 +828,7 @@ sub playlistXalbumCommand {
 sub playlistXitemCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::playlistXitemCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['add', 'append', 'insert', 'insertlist', 'load', 'play', 'resume']])) {
@@ -832,8 +846,8 @@ sub playlistXitemCommand {
 		return;
 	}
 
-	$::d_command && msg("Commands::playlistXitemCommand: cmd: $cmd\n");
-	$::d_command && msg("Commands::playlistXitemCommand: cmd: $item\n");
+	$log->info("cmd : $cmd");
+	$log->info("item: $item");
 
 	my $jumpToIndex; # This should be undef - see bug 2085
 	my $results;
@@ -844,7 +858,7 @@ sub playlistXitemCommand {
 	$url =~ s/^\s*//;
 	$url =~ s/\s*$//;
 
-	$::d_command && msg("Commands::playlistXitemCommand: url: $url\n");
+	$log->info("url: $url");
 
 	my $path = $url;
 
@@ -874,7 +888,7 @@ sub playlistXitemCommand {
 		$path = Slim::Utils::Misc::unescape($path);
 	}
 
-	$::d_command && msg("Commands::playlistXitemCommand: path: $path\n");
+	$log->info("path: $path");
 
 	if ($cmd =~ /^(play|load|resume)$/) {
 
@@ -883,7 +897,7 @@ sub playlistXitemCommand {
 
 		$client->currentPlaylist( Slim::Utils::Misc::fixPath($path) );
 
-		$::d_command && msg("Commands::playlistXitemCommand: currentPlaylist:" .  Slim::Utils::Misc::fixPath($path) . "\n");
+		$log->info("currentPlaylist:" .  Slim::Utils::Misc::fixPath($path));
 
 		$client->currentPlaylistModified(0);
 
@@ -892,7 +906,7 @@ sub playlistXitemCommand {
 		$client->currentPlaylist( Slim::Utils::Misc::fixPath($path) );
 		$client->currentPlaylistModified(1);
 
-		$::d_command && msg("Commands::playlistXitemCommand: currentPlaylist:" .  Slim::Utils::Misc::fixPath($path) . "\n");
+		$log->info("currentPlaylist:" .  Slim::Utils::Misc::fixPath($path));
 
 	} else {
 
@@ -902,7 +916,8 @@ sub playlistXitemCommand {
 	if (!Slim::Music::Info::isRemoteURL($path) && Slim::Music::Info::isFileURL($path)) {
 
 		$path = Slim::Utils::Misc::pathFromFileURL($path);
-		$::d_command && msg("Commands::playlistXitemCommand: path: $path\n");
+
+		$log->info("path: $path");
 	}
 
 	if ($cmd =~ /^(play|load)$/) { 
@@ -914,14 +929,14 @@ sub playlistXitemCommand {
 		$jumpToIndex = Slim::Formats::Playlists::M3U->readCurTrackForM3U($path);
 	}
 
-	$::d_command && msg("Commands::playlistXitemCommand: jumpToIndex: $jumpToIndex\n");
+	$log->info(sprintf("jumpToIndex: %s", (defined $jumpToIndex ? $jumpToIndex : 'undef')));
 
 	if ($cmd =~ /^(insert|insertlist)$/) {
 
 		my $playListSize = Slim::Player::Playlist::count($client);
 		my @dirItems     = ();
 
-		$::d_command && msg("Commands::playlistXitemCommand: inserting, playListSize: $playListSize\n");
+		$log->info("inserting, playListSize: $playListSize");
 
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'      => $path,
@@ -949,7 +964,7 @@ sub playlistXitemCommand {
 		# Display some feedback for the player on remote URLs
 		if ( Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path)) {
 		
-			$::d_command && msg("Commands::playlistXitemCommand: Display some feedback for the player on remote URLs\n");
+			$log->info("Display some feedback for the player on remote URLs");
 			
 			my $line1 = $client->string('NOW_PLAYING') . ' (' . $client->string('CHECKING_STREAM') . ')';
 			my $line2 = Slim::Music::Info::title($path) || $path;
@@ -987,14 +1002,15 @@ sub playlistXitemCommand {
 		});
 
 	}
-	$::d_command && msg("Commands::playlistXitemCommand: done\n");
+
+	$log->debug("done.");
 }
 
 # Called after insert/load async callbacks are finished
 sub playlistXitemCommand_done {
 	my ( $client, $request, $path ) = @_;
 
-	$::d_command && msg("Commands::playlistXitemCommand_done()\n");
+	$log->debug("Begin Function");
 
 	# The callback, if any, will be called by _load/_insert_done, so
 	# don't call it now
@@ -1016,7 +1032,7 @@ sub playlistXitemCommand_done {
 sub playlistXtracksCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::playlistXtracksCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['playtracks', 'loadtracks', 'addtracks', 'inserttracks', 'deletetracks']])) {
@@ -1139,7 +1155,7 @@ sub playlistXtracksCommand {
 sub playlistZapCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::playlistZapCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlist'], ['zap']])) {
@@ -1189,7 +1205,7 @@ sub playlistZapCommand {
 sub playlistcontrolCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::playlistcontrolCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlistcontrol']])) {
@@ -1323,7 +1339,7 @@ sub playlistcontrolCommand {
 sub playlistsEditCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::playlistsEditCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlists'], ['edit']])) {
@@ -1433,14 +1449,17 @@ sub playlistsEditCommand {
 	}
 
 	if ($changed) {
-		$::d_playlist && msg("Playlist has changed via editing - saving new list of tracks.\n");
+
+		my $log = logger('player.playlist');
+
+		$log->info("Playlist has changed via editing - saving new list of tracks.");
 
 		$playlist->setTracks(\@items);
 		$playlist->update;
 
 		if ($playlist->content_type eq 'ssp') {
 
-			$::d_playlist && msg("Writing out playlist to disk..\n");
+			$log->info("Writing out playlist to disk..");
 
 			Slim::Formats::Playlists->writeList(\@items, undef, $playlist->url);
 		}
@@ -1458,7 +1477,7 @@ sub playlistsEditCommand {
 sub playlistsDeleteCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::playlistsDeleteCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlists'], ['delete']])) {
@@ -1499,7 +1518,7 @@ sub playlistsDeleteCommand {
 sub playlistsRenameCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::playlistsRenameCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['playlists'], ['rename']])) {
@@ -1577,7 +1596,7 @@ sub playlistsRenameCommand {
 sub playerprefCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::playerprefCommand()\n");
+	$log->debug("Begin Function");
 
 	if ($request->isNotCommand([['playerpref']])) {
 		$request->setStatusBadDispatch();
@@ -1603,7 +1622,7 @@ sub playerprefCommand {
 sub powerCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::powerCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['power']])) {
@@ -1648,7 +1667,7 @@ sub powerCommand {
 sub prefCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::prefCommand()\n");
+	$log->debug("Begin Function");
 
 	if ($request->isNotCommand([['pref']])) {
 		$request->setStatusBadDispatch();
@@ -1673,7 +1692,7 @@ sub prefCommand {
 sub rateCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::rateCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['rate']])) {
@@ -1704,7 +1723,7 @@ sub rateCommand {
 sub rescanCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::rescanCommand()\n");
+	$log->debug("Begin Function");
 
 	if ($request->isNotCommand([['rescan']])) {
 		$request->setStatusBadDispatch();
@@ -1736,7 +1755,7 @@ sub rescanCommand {
 sub showCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::showCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['show']])) {
@@ -1809,7 +1828,7 @@ sub showCommand {
 sub sleepCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::sleepCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['sleep']])) {
@@ -1870,7 +1889,7 @@ sub sleepCommand {
 sub syncCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::syncCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	if ($request->isNotCommand([['sync']])) {
@@ -1914,7 +1933,7 @@ sub syncCommand {
 sub timeCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::timeCommand()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct command.
 	# "gototime" is deprecated
@@ -1941,7 +1960,7 @@ sub timeCommand {
 sub wipecacheCommand {
 	my $request = shift;
 	
-	$d_commands && msg("Commands::wipecacheCommand()\n");
+	$log->debug("Begin Function");
 
 	if ($request->isNotCommand([['wipecache']])) {
 		$request->setStatusBadDispatch();
@@ -1975,7 +1994,7 @@ sub _sleepStartFade {
 	my $client = shift;
 	my $fadeDuration = shift;
 
-	$d_commands && msg("Commands::_sleepStartFade()\n");
+	$log->debug("Begin Function");
 	
 	if ($client->isPlayer()) {
 		$client->fade_volume(-$fadeDuration);
@@ -1985,7 +2004,7 @@ sub _sleepStartFade {
 sub _sleepPowerOff {
 	my $client = shift;
 	
-	$d_commands && msg("Commands::_sleepPowerOff()\n");
+	$log->debug("Begin Function");
 
 	$client->sleepTime(0);
 	$client->currentSleepTime(0);
@@ -1998,16 +2017,15 @@ sub _sleepPowerOff {
 sub _mixer_mute {
 	my $client = shift;
 
-	$d_commands && msg("Commands::_mixer_mute()\n");
+	$log->debug("Begin Function");
 
 	$client->mute();
 }
 
-
 sub _playlistXitem_load_done {
 	my ($client, $index, $callbackf, $callbackargs, $count, $url, $error) = @_;
 
-	$d_commands && msg("Commands::_playlistXitem_load_done()\n");
+	$log->debug("Begin Function");
 
 	# dont' keep current song on loading a playlist
 	Slim::Player::Playlist::reshuffle($client,
@@ -2039,7 +2057,7 @@ sub _playlistXitem_load_done {
 sub _insert_done {
 	my ($client, $listsize, $size, $callbackf, $callbackargs) = @_;
 
-	$d_commands && msg("Commands::_insert_done()\n");
+	$log->debug("Begin Function");
 
 	my $playlistIndex = Slim::Player::Source::streamingSongIndex($client)+1;
 	my @reshuffled;
@@ -2096,7 +2114,7 @@ sub _playlistXtracksCommand_parseSearchTerms {
 	my $client = shift;
 	my $what   = shift;
 
-	$d_commands && msg("Commands::_playlistXtracksCommand_parseSearchTerms()\n");
+	$log->debug("Begin Function");
 
 	my %find   = ();
 	my $terms  = {};
@@ -2282,7 +2300,7 @@ sub _playlistXtracksCommand_parseListRef {
 	my $term    = shift;
 	my $listRef = shift;
 
-	$d_commands && msg("Commands::_playlistXtracksCommand_parseListRef()\n");
+	$log->debug("Begin Function");
 
 	if ($term =~ /listref=(\w+)&?/i) {
 		$listRef = $client->modeParam($1);
@@ -2299,7 +2317,7 @@ sub _playlistXtracksCommand_parseSearchRef {
 	my $term      = shift;
 	my $searchRef = shift;
 
-	$d_commands && msg("Commands::_playlistXtracksCommand_parseSearchRef()\n");
+	$log->debug("Begin Function");
 
 	if ($term =~ /searchRef=(\w+)&?/i) {
 		$searchRef = $client->modeParam($1);
@@ -2327,7 +2345,7 @@ sub _playlistXtracksCommand_parseFavorite {
 	my $obj     = undef;
 	my $terms   = undef;
 
-	$d_commands && msg("Commands::_playlistXtracksCommand_parseFavorite()\n");
+	$log->debug("Begin Function");
 
 	# If coming from the web UI.
 	if ($what =~ /favorite=(.+?)\&/i) {
@@ -2372,7 +2390,7 @@ sub _playlistXtracksCommand_parseFavorite {
 sub _showCommand_done {
 	my $args = shift;
 	
-	$d_commands && msg("Commands::_showCommand_done()\n");
+	$log->debug("Begin Function");
 
 	my $request = $args->{'request'};
 	my $client = $request->client();

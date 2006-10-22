@@ -23,6 +23,7 @@ use Scalar::Util qw(blessed);
 use Slim::Hardware::IR;
 use Slim::Hardware::mas35x9;
 use Slim::Player::ProtocolHandlers;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 
@@ -226,6 +227,7 @@ sub quickstart {
 	my $rebuffer = shift || 0; # Are we rebuffering an existing stream?
 	
 	my $url = Slim::Player::Playlist::url( $client, Slim::Player::Source::streamingSongIndex($client) );
+	my $log = logger('player.source');
 	
 	$client->requestStatus();
 	
@@ -236,11 +238,12 @@ sub quickstart {
 	
 	# If we know the bitrate of the stream, we instead buffer a certain number of seconds of audio
 	if ( my $bitrate = Slim::Music::Info::getBitrate($url) ) {
+
 		my $bufferSecs = Slim::Utils::Prefs::get('bufferSecs') || 3;
 		$threshold     = int($bitrate / 8) * $bufferSecs;
 	}
 	
-	$::d_source && msg("Quickstart: Buffering... $fullness / $threshold\n");
+	$log->info("Buffering... $fullness / $threshold");
 
 	# Resume if we've hit the threshold, unless synced (sync unpauses all clients together)
 	if ( $fullness >= $threshold && !Slim::Player::Sync::isSynced($client) ) {
@@ -327,14 +330,15 @@ sub hasDigitalOut {
 #
 sub needsUpgrade {
 	my $client = shift;
-	my $from = $client->revision;
-	return 0 unless $from;
+
+	my $from  = $client->revision || return 0;
 	my $model = $client->model;
+	my $log   = logger('player.firmware');
 	
 	my $versionFilePath = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), "$model.version" );
 	my $versionFile;
 
-	$::d_firmware && msg("Reading firmware version file: $versionFilePath\n");
+	$log->info("Reading firmware version file: $versionFilePath");
 
 	if (!open($versionFile, "<$versionFilePath")) {
 		warn("can't open $versionFilePath\n");
@@ -343,47 +347,63 @@ sub needsUpgrade {
 
 	my $to;
 	my $default;
+
 	while (<$versionFile>) {
+
 		chomp;
 		next if /^\s*(#.*)?$/;
+
 		if (/^(\d+)\s*\.\.\s*(\d+)\s+(\d+)\s*$/) {
+
 			next unless $from >= $1 && $from <= $2;
 			$to = $3;
+
 		} elsif (/^(\d+)\s+(\d+)\s*$/) {
+
 			next unless $1 == $from;
 			$to = $2;
+
 		} elsif (/^\*\s+(\d+)\s*$/) {
+
 			$default = $1;
+
 		} else {
-			msg("Garbage in $versionFilePath at line $.: $_\n");
+
+			logError("Garbage in $versionFilePath at line $.: $_");
 		}
+
 		last;
 	}
 
 	close($versionFile);
 
 	if (!defined $to) {
+
 		if ($default) {
+
 			# use the default value in case we need to go back from the future.
-			$::d_firmware && msg ("No target found, using default version: $default\n");
+			$log->info("No target found, using default version: $default");
 			$to = $default;
+
 		} else {
-			$::d_firmware && msg ("No upgrades found for $model v. $from\n");
+
+			$log->info("No upgrades found for $model v. $from");
 			return 0;
 		}
 	}
 
 	if ($to == $from) {
-		$::d_firmware && msg ("$model firmware is up-to-date, v. $from\n");
+
+		$log->info("$model firmware is up-to-date, v. $from");
 		return 0;
 	}
 
 	# skip upgrade if file doesn't exist
-
 	my $file = shift || catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), $model . "_$to.bin" );
 
 	unless (-r $file && -s $file) {
-		$::d_firmware && msg ("$model v. $from could be upgraded to v. $to if the file existed.\n");
+
+		$log->info("$model v. $from could be upgraded to v. $to if the file existed.");
 		
 		# We now download firmware from the internet.  In the case of no internet connection
 		# we want to check if the file has appeared later.  This timer will check every 10 minutes
@@ -401,7 +421,8 @@ sub needsUpgrade {
 		return 0;
 	}
 
-	$::d_firmware && msg ("$model v. $from requires upgrade to $to\n");
+	$log->info("$model v. $from requires upgrade to $to");
+
 	return $to;
 
 }
@@ -420,8 +441,8 @@ sub checkFirmwareUpgrade {
 
 	if ( $client->needsUpgrade() ) {
 		
-		$::d_firmware && msg("Firmware file has appeared, prompting player to upgrade\n");
-				
+		logger('player.firmware')->info("Firmware file has appeared, prompting player to upgrade"); 
+
 		# don't start playing if we're upgrading
 		$client->execute(['stop']);
 
@@ -452,15 +473,18 @@ sub checkFirmwareUpgrade {
 
 # the new way: use slimproto
 sub upgradeFirmware_SDK5 {
-	use bytes;
 	my ($client, $filename) = @_;
 
-	$::d_firmware && msg("Updating firmware with file: $filename\n");
+	use bytes;
+
+	my $log = logger('player.firmware');
+
+	$log->info("Updating firmware with file: $filename");
 
 	my $frame;
 
 	# disable visualizer is this mode
-	$client->modeParam('visu',[0]);
+	$client->modeParam('visu', [0]);
 
 	# force brightness to dim if off
 	if ($client->display->currBrightness() == 0) { $client->display->brightness(1); }
@@ -469,9 +493,9 @@ sub upgradeFirmware_SDK5 {
 
 	binmode FS;
 	
-	my $size = -s $filename;	
+	my $size = -s $filename;
 	
-	$::d_firmware && msg("Updating firmware: Sending $size bytes\n");
+	$log->info("Updating firmware: Sending $size bytes");
 
 	# place in block mode so that brightness key is now ignored
 	$client->block( {
@@ -483,71 +507,79 @@ sub upgradeFirmware_SDK5 {
 		},
 	}, 'upgrade', 1 );
 	
-	my $bytesread=0;
-	my $totalbytesread=0;
-	my $buf;
+	my $bytesread      = 0;
+	my $totalbytesread = 0;
+	my $lastFraction   = -1;
 	my $byteswritten;
 	my $bytesleft;
-	my $lastFraction = -1;
 	
-	while ($bytesread=read(FS, $buf, 1024)) {
+	while ($bytesread = read(FS, my $buf, 1024)) {
+
 		assert(length($buf) == $bytesread);
 
 		$client->sendFrame('upda', \$buf);
-		
+
 		$totalbytesread += $bytesread;
-		$::d_firmware && msg("Updating firmware: $totalbytesread / $size\n");
-		
-		my $fraction = $totalbytesread/$size;
-		
+
+		$log->info("Updating firmware: $totalbytesread / $size");
+
+		my $fraction = $totalbytesread / $size;
+
 		if (($fraction - $lastFraction) > (1/40)) {
+
 			$client->showBriefly( {
+
 				'line'  => [ $client->string('UPDATING_FIRMWARE_' . uc($client->model())),
-							 $client->symbols($client->progressBar($client->displayWidth(), $totalbytesread/$size)) ],
+					 $client->symbols($client->progressBar($client->displayWidth(), $totalbytesread/$size)) ],
+
 				'fonts' => { 
 					'graphic-320x32' => 'light',
 					'graphic-280x16' => 'small',
 					'text'           => 2,
 				},
 			} );
+
 			$lastFraction = $fraction;
 		}
 	}
 
 	$client->unblock();
-	
-	$client->sendFrame('updn',\(' ')); # upgrade done
 
-	$::d_firmware && msg("Firmware updated successfully.\n");
-	
+	$client->sendFrame('updn', \(' ')); # upgrade done
+
+	$log->info("Firmware updated successfully.");
+
 #	Slim::Utils::Network::blocking($client->tcpsock, 0);
-	
+
 	return undef;
 }
 
 # the old way: connect to 31337 and dump the file
 sub upgradeFirmware_SDK4 {
-	use bytes;
 	my ($client, $filename) = @_;
+
+	use bytes;
+
 	my $ip;
+
 	if (ref $client ) {
+
 		$ip = $client->ip;
-		$client->prefSet( "powerOnBrightness", 4);
-		$client->prefSet( "powerOffBrightness", 1);
+		$client->prefSet("powerOnBrightness", 4);
+		$client->prefSet("powerOffBrightness", 1);
 		$client->brightness($client->prefGet($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
+
 	} else {
+
 		$ip = $client;
 	}
-	
-	my $port = 31337;  # upgrade port
-	
+
+	my $port    = 31337;  # upgrade port
 	my $iaddr   = inet_aton($ip) || return("Bad IP address: $ip\n");
-	
 	my $paddr   = sockaddr_in($port, $iaddr);
-	
 	my $proto   = getprotobyname('tcp');
 
-	socket(SOCK, PF_INET, SOCK_STREAM, $proto)	|| return("Couldn't open socket: $!\n");
+	socket(SOCK, PF_INET, SOCK_STREAM, $proto) || return("Couldn't open socket: $!\n");
 	binmode SOCK;
 
 	connect(SOCK, $paddr) || return("Connect failed $!\n");
@@ -556,23 +588,26 @@ sub upgradeFirmware_SDK4 {
 	binmode FS;
 	
 	my $size = -s $filename;	
-	
-	$::d_firmware && msg("Updating firmware: Sending $size bytes\n");
-	
-	my $bytesread=0;
-	my $totalbytesread=0;
-	my $buf;
+	my $log  = logger('player.firmware');
 
-	while ($bytesread=read(FS, $buf, 256)) {
-		syswrite SOCK, $buf;
+	$log->info("Updating firmware: Sending $size bytes");
+	
+	my $bytesread      = 0;
+	my $totalbytesread = 0;
+
+	while ($bytesread = read(FS, my $buf, 256)) {
+
+		syswrite(SOCK, $buf);
+
 		$totalbytesread += $bytesread;
-		$::d_firmware && msg("Updating firmware: $totalbytesread / $size\n");
+
+		$log->info("Updating firmware: $totalbytesread / $size");
 	}
 	
-	$::d_firmware && msg("Firmware updated successfully.\n");
-	
+	$log->info("Firmware updated successfully.");
+
 	close (SOCK) || return("Couldn't close socket to player.");
-	
+
 	return undef; 
 }
 
@@ -589,31 +624,41 @@ sub upgradeFirmware {
 	}
 
 	# if no upgrade path is given, then "upgrade" the client to itself.
-
 	$to_version = $client->revision unless $to_version;
 
-	my $filename = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), "squeezebox_$to_version.bin" );
+	my $file = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), "squeezebox_$to_version.bin" );
+	my $log  = logger('player.firmware');
 
-	if (!-f$filename) {
-		warn("file does not exist: $filename\n");
-		return(0);
+	if (!-f $file) {
+
+		logWarning("File does not exist: $file");
+
+		return 0;
 	}
 
 	my $err;
 
 	if ((!ref $client) || ($client->revision <= 10)) {
-		$::d_firmware && msg("using old update mechanism\n");
-		# not calling as a client method, because it might just be an IP address, if triggered 
-		# from the web page.
-		$err = upgradeFirmware_SDK4($client, $filename);
+
+		$log->info("Using old update mechanism");
+
+		# not calling as a client method, because it might just be an
+		# IP address, if triggered from the web page.
+		$err = upgradeFirmware_SDK4($client, $file);
+
 	} else {
-		$::d_firmware && msg("using new update mechanism\n");
-		$err = $client->upgradeFirmware_SDK5($filename);
+
+		$log->info("Using new update mechanism");
+
+		$err = $client->upgradeFirmware_SDK5($file);
 	}
 
 	if (defined($err)) {
-		msg("upgrade failed: $err");
+
+		logWarning("Upgrade failed: $err");
+
 	} else {
+
 		$client->forgetClient();
 	}
 }
@@ -674,22 +719,27 @@ sub opened {
 sub stream {
 	my ($client, $command, $params) = @_;
 
-	my $format = $params->{format};
+	my $log    = logger('network.protocol.slimproto');
+	my $format = $params->{'format'};
 
 	if ($client->opened()) {
-		$::d_slimproto && msg("*************stream called: $command paused: $params->{paused} format: $format url: $params->{url}\n");
-		$::d_slimproto && bt();
-		my $autostart;
-		
+
+		$log->info(sprintf("stream called: $command paused: %s format: %s url: %s",
+			($params->{'paused'} || 'undef'), ($format || 'undef'), ($params->{'url'} || 'undef')
+		));
+
+		$log->debug(bt(1));
+
+		my $autostart = 1;
+
 		# autostart off when pausing or stopping, otherwise 75%
-		if ($params->{paused} || $command =~ /^[pq]$/) {
+		if ($params->{'paused'} || $command =~ /^[pq]$/) {
 			$autostart = 0;
-		} else {
-			$autostart = 1;
 		}
 
 		my $bufferThreshold;
-		if ($params->{paused}) {
+
+		if ($params->{'paused'}) {
 			$bufferThreshold = $client->prefGet('syncBufferThreshold');
 		}
 		else {
@@ -704,7 +754,8 @@ sub stream {
 		my $outputThreshold;
 
 		my $handler;
-		my $server_url = $client->canDirectStream($params->{url});
+		my $server_url = $client->canDirectStream($params->{'url'});
+
 		if ($server_url) {
 
 			$handler = Slim::Player::ProtocolHandlers->handlerForURL($server_url);
@@ -718,24 +769,25 @@ sub stream {
 		}
 		
 		if ( !$format && $command eq 's' ) {
-			warn "*** WARNING: stream('s') called with no format, defaulting to mp3 decoder, url: $params->{url}\n";
-			bt();
+
+			logBacktrace("*** stream('s') called with no format, defaulting to mp3 decoder, url: $params->{'url'}");
 		}
-		
+
 		$format ||= 'mp3';
-		
+
 		if ($format eq 'wav') {
-			$formatbyte = 'p';
-			$pcmsamplesize = '1';
-			$pcmsamplerate = '3';
-			$pcmendian = '1';
-			$pcmchannels = '2';
+
+			$formatbyte      = 'p';
+			$pcmsamplesize   = 1;
+			$pcmsamplerate   = 3;
+			$pcmendian       = 1;
+			$pcmchannels     = 2;
 			$outputThreshold = 0;
 
 			if ($params->{url}) {
 
 				my $track = Slim::Schema->rs('Track')->objectForUrl({
-					'url' => $params->{url},
+					'url' => $params->{'url'},
 		       		});
 
 				$pcmsamplesize = $client->pcm_sample_sizes($track);
@@ -744,15 +796,16 @@ sub stream {
 			}
 
 		} elsif ($format eq 'aif') {
+
 			my $track = Slim::Schema->rs('Track')->objectForUrl({
 				'url' => $params->{url},
 			});
 
-			$formatbyte = 'p';
-			$pcmsamplesize = '1';
-			$pcmsamplerate = '3';
-			$pcmendian = '0';
-			$pcmchannels = '2';
+			$formatbyte      = 'p';
+			$pcmsamplesize   = 1;
+			$pcmsamplerate   = 3;
+			$pcmendian       = 0;
+			$pcmchannels     = 2;
 			$outputThreshold = 0;
 
 			if ($params->{url}) {
@@ -767,11 +820,12 @@ sub stream {
 			 }
 
 		} elsif ($format eq 'flc') {
-			$formatbyte = 'f';
-			$pcmsamplesize = '?';
-			$pcmsamplerate = '?';
-			$pcmendian = '?';
-			$pcmchannels = '?';
+
+			$formatbyte      = 'f';
+			$pcmsamplesize   = '?';
+			$pcmsamplerate   = '?';
+			$pcmendian       = '?';
+			$pcmchannels     = '?';
 			$outputThreshold = 0;
 
 			# Only on Squeezebox2/3, threshold the output buffer for
@@ -789,50 +843,60 @@ sub stream {
 			}
 
 		} elsif ( $format =~ /(?:wma|asx)/ ) {
+
 			$formatbyte = 'w';
+
 			# Commandeer the unused pcmsamplesize field
 			# to indicate whether the data coming in is
 			# going to have the mms/http chunking headers.
 			if ($server_url) {
+
 				if ($server_url =~ /^rhap:/) {
-					$pcmsamplesize = '2';
+					$pcmsamplesize = 2;
+				} else {
+					$pcmsamplesize = 1;
 				}
-				else {
-					$pcmsamplesize = '1';
-				}
+
+			} else {
+
+				$pcmsamplesize = 0;
 			}
-			else {
-				$pcmsamplesize = '0';
-			}
-			$pcmsamplerate = chr(1);
-			$pcmendian = '?';
-			$pcmchannels = '?';
+
+			$pcmsamplerate   = chr(1);
+			$pcmendian       = '?';
+			$pcmchannels     = '?';
 			$outputThreshold = 10;
+
 		} elsif ($format eq 'ogg') {
-                        $formatbyte = 'o';
-                        $pcmsamplesize = '?';
-                        $pcmsamplerate = '?';
-                        $pcmendian = '?';
-                        $pcmchannels = '?';
+
+                        $formatbyte      = 'o';
+                        $pcmsamplesize   = '?';
+                        $pcmsamplerate   = '?';
+                        $pcmendian       = '?';
+                        $pcmchannels     = '?';
 			$outputThreshold = 20;
-		} else { # assume MP3
-			$formatbyte = 'm';
-			$pcmsamplesize = '?';
-			$pcmsamplerate = '?';
-			$pcmendian = '?';
-			$pcmchannels = '?';
+
+		} else {
+
+			# assume MP3
+			$formatbyte      = 'm';
+			$pcmsamplesize   = '?';
+			$pcmsamplerate   = '?';
+			$pcmendian       = '?';
+			$pcmchannels     = '?';
 			$outputThreshold = 0;
 			
 			# XXX: The use of mp3 as default has been known to cause the mp3 decoder to be used for
 			# other audio types, resulting in static. 
 			if ( $format ne 'mp3' ) {
-				warn "*** WARNING: mp3 decoder used for format: $format, url: $params->{url}\n";
-				bt();
+
+				logBacktrace("*** mp3 decoder used for format: $format, url: $params->{'url'}");
 			}
 		}
 		
 		my $request_string = '';
 		my ($server_port, $server_ip);
+
 		if ($command eq 's') {
 			
 			# When streaming a new song, we reset the buffer fullness value so quickstart()
@@ -840,8 +904,11 @@ sub stream {
 			Slim::Networking::Slimproto::fullness( $client, 0 );
 			
 			if ($server_url) {
-				
-				$::d_directstream && msg("This player supports direct streaming for $params->{url} as $server_url, let's do it.\n");
+
+				# Logger for direct streaming
+				my $log = logger('player.directstream');
+
+				$log->info("This player supports direct streaming for $params->{'url'} as $server_url, let's do it.");
 		
 				my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($server_url);
 				
@@ -861,14 +928,20 @@ sub stream {
 
 				$request_string = $handler->requestString($client, $server_url, undef, 1);  
 				$autostart = 2;
+
 				if (!$server_port || !$server_ip) {
-					$::d_directstream && msg("Couldn't get an IP and Port for direct stream ($server_ip:$server_port), failing.\n");
+
+					$log->info("Couldn't get an IP and Port for direct stream ($server_ip:$server_port), failing.");
+
 					$client->failedDirectStream();
 					Slim::Networking::Slimproto::stop($client);
 					return;
+
 				} else {
-					$::d_directstream && msg("setting up direct stream ($server_ip:$server_port) autostart: $autostart.\n");
-					$::d_directstream && msg("request string: $request_string\n");
+
+					$log->info("setting up direct stream ($server_ip:$server_port) autostart: $autostart.");
+					$log->info("request string: $request_string");
+
 					$client->directURL($params->{url});
 				}
 				
@@ -881,40 +954,48 @@ sub stream {
 				}
 	
 			} else {
-				my $path = '/stream.mp3?player='.$client->id;
-		
-				$request_string = "GET $path HTTP/1.0\n";
+
+				$request_string = sprintf("GET /stream.mp3?player=%s HTTP/1.0\n", $client->id);
 			
 				if (Slim::Utils::Prefs::get('authorize')) {
+
 					$client->password(generate_random_string(10));
 				
 					my $password = encode_base64('squeezeboxXXX:' . $client->password);
 				
 					$request_string .= "Authorization: Basic $password\n";
 				}
-				$server_port = Slim::Utils::Prefs::get('httpport');		# port
-				$server_ip = 0;		# server IP of 0 means use IP of control server
+
+				$server_port = Slim::Utils::Prefs::get('httpport');
+
+				# server IP of 0 means use IP of control server
+				$server_ip = 0;
 				$request_string .= "\n";
+
 				if (length($request_string) % 2) {
 					$request_string .= "\n";
 				}
 			}
 		}
-		
+
 		# If we're sending an 's' command but got no request string, don't send it
 		# This is used when syncing Rhapsody radio stations so slaves don't request the radio playlist
 		if ( $command eq 's' && !$request_string ) {
 			return;
 		}
-		
-		$::d_slimproto && msg("starting with decoder with format: $formatbyte autostart: $autostart threshold: $bufferThreshold samplesize: $pcmsamplesize samplerate: $pcmsamplerate endian: $pcmendian channels: $pcmchannels\n");
+
+		$log->info(sprintf(
+			"Starting with decoder with format: %s autostart: %s threshold: %s samplesize: %s samplerate: %s endian: %s channels: %s",
+			$formatbyte, $autostart, $bufferThreshold, $pcmsamplesize, $pcmsamplerate, $pcmendian, $pcmchannels,
+		));
 
 		my $flags = 0;
 		$flags |= 0x40 if $params->{reconnect};
 		$flags |= 0x80 if $params->{loop};
 		$flags |= ($client->prefGet('polarityInversion') || 0);
 
-		$::d_slimproto && msg("flags: $flags\n");
+		$log->info("flags: $flags");
+
 		my $frame = pack 'aaaaaaaCCCaCCCNnN', (
 			$command,	# command
 			$autostart,
@@ -939,10 +1020,10 @@ sub stream {
 	
 		$frame .= $request_string;
 
-		$::d_slimproto && msg("sending strm frame of length: " . length($frame) . " request string:\n$request_string\n");
+		$log->info("sending strm frame of length: " . length($frame) . " request string: [$request_string]");
 
-		$client->sendFrame('strm',\$frame);
-		
+		$client->sendFrame('strm', \$frame);
+
 		if ($client->pitch() != 100 && $command eq 's') {
 			$client->sendPitch($client->pitch());
 		}
@@ -981,10 +1062,15 @@ sub sendFrame {
 	my $type = shift;
 	my $dataRef = shift;
 	my $empty = '';
-	
-	return if (!defined($client->tcpsock));  # don't try to send if the player has disconnected.
-	
-	if (!defined($dataRef)) { $dataRef = \$empty; }
+
+	# don't try to send if the player has disconnected.
+	if (!defined($client->tcpsock)) {
+		return;
+	}
+
+	if (!defined($dataRef)) {
+		$dataRef = \$empty;
+	}
 
 	my $len = length($$dataRef);
 
@@ -992,7 +1078,7 @@ sub sendFrame {
 	
 	my $frame = pack('n', $len + 4) . $type . $$dataRef;
 
-	$::d_slimproto_v && msg ("sending squeezebox frame: $type, length: $len\n");
+	logger('network.protocol.slimproto')->debug("sending squeezebox frame: $type, length: $len");
 
 	$::perfmon && $client->slimprotoQLenLog()->log(Slim::Networking::Select::writeNoBlockQLen($client->tcpsock));
 
@@ -1020,14 +1106,14 @@ sub i2c {
 	my ($client, $data) = @_;
 
 	if ($client->opened()) {
-		$::d_i2c && msg("i2c: sending ".length($data)." bytes\n");
+
+		logger('network.protocol.slimproto')->debug("sending " . length($data) . " bytes");
+
 		$client->sendFrame('i2cc', \$data);
 	}
 }
 
-#
 # set the mas35x9 pitch rate as a percentage of the normal rate, where 100% is 100.
-#
 sub pitch {
 	my $client = shift;
 	my $newpitch = shift;
@@ -1050,12 +1136,14 @@ sub sendPitch {
 
 	# This only works for mp3 - only change pitch for mp3 format
 	if ($client->streamformat() && ($client->streamformat() eq 'mp3')) {
+
 		$client->i2c(
 			Slim::Hardware::mas35x9::masWrite('OfreqControl', $freqHex).
 				Slim::Hardware::mas35x9::masWrite('OutClkConfig', '00001').
 				Slim::Hardware::mas35x9::masWrite('IOControlMain', '00015')     # MP3
 		);
-		$::d_control && msg("Pitch frequency set to $freq ($freqHex)\n");
+
+		logger('player')->debug("Pitch frequency set to $freq ($freqHex)");
 	}
 }
 	
@@ -1095,25 +1183,27 @@ sub volume {
 			#
 	
 			my $level = sprintf('%05X', 0x80000 * (($volume / $client->maxVolume)**2));
+
 			$client->i2c(
-				Slim::Hardware::mas35x9::masWrite('out_LL', $level)
-				.Slim::Hardware::mas35x9::masWrite('out_RR', $level)
-				.Slim::Hardware::mas35x9::masWrite('VOLUME', '7600')
+				Slim::Hardware::mas35x9::masWrite('out_LL', $level) .
+				Slim::Hardware::mas35x9::masWrite('out_RR', $level) .
+				Slim::Hardware::mas35x9::masWrite('VOLUME', '7600')
 			);
 	
 		} else {
+
 			# or: leave the digital controls always at 0db and vary the main volume:
 			# much better for the analog outputs, but this does force the S/PDIF level to be fixed.
-	
 			my $level = sprintf('%02X00', 0x73 * ($volume / $client->maxVolume)**0.1);
 	
 			$client->i2c(
-				Slim::Hardware::mas35x9::masWrite('out_LL',  '80000')
-				.Slim::Hardware::mas35x9::masWrite('out_RR', '80000')
-				.Slim::Hardware::mas35x9::masWrite('VOLUME', $level)
+				Slim::Hardware::mas35x9::masWrite('out_LL',  '80000') .
+				Slim::Hardware::mas35x9::masWrite('out_RR', '80000') .
+				Slim::Hardware::mas35x9::masWrite('VOLUME', $level)
 			);
 		}
 	}
+
 	return $volume;
 }
 

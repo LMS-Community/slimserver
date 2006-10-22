@@ -20,7 +20,7 @@ A collection of network & socket related utilities.
 =cut
 
 use strict;
-use base qw(Exporter);
+use Exporter::Lite;
 
 our @EXPORT = qw(hostAddr hostName addrToHost hostToAddr);
 

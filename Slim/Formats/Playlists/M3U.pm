@@ -16,8 +16,11 @@ use Scalar::Util qw(blessed);
 use Socket qw(:crlf);
 
 use Slim::Music::Info;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
+
+my $log = logger('formats.playlists');
 
 sub read {
 	my ($class, $file, $baseDir, $url) = @_;
@@ -26,7 +29,7 @@ sub read {
 	my ($secs, $artist, $album, $title);
 	my $foundBOM = 0;
 
-	$::d_parse && msg("parsing M3U: $url\n");
+	$log->info("Parsing M3U: $url");
 
 	while (my $entry = <$file>) {
 
@@ -56,19 +59,23 @@ sub read {
 
 		$entry = Slim::Utils::Unicode::utf8decode_guess($entry, $enc);
 
-		$::d_parse && msg("  entry from file: $entry\n");
+		$log->debug("  entry from file: $entry");
 
 		if ($entry =~ /^#EXTINF\:(.*?),<(.*?)> - <(.*?)> - <(.*?)>/) {
+
 			$secs   = $1;
 			$artist = $2;
 			$album  = $3;
 			$title  = $4;
-			$::d_parse && msg("  found secs: $secs, title: $title, artist: $artist, album: $album\n");
+
+			$log->debug("  found secs: $secs, title: $title, artist: $artist, album: $album");
 
 		} elsif ($entry =~ /^#EXTINF:(.*?),(.*)$/) {
+
 			$secs  = $1;
 			$title = $2;	
-			$::d_parse && msg("  found secs: $secs, title: $title\n");
+
+			$log->debug("  found secs: $secs, title: $title");
 		}
 
 		next if $entry =~ /^#/;
@@ -81,7 +88,7 @@ sub read {
 
 		if ($class->playlistEntryIsValid($entry, $url)) {
 
-			$::d_parse && msg("    entry: $entry\n");
+			$log->debug("    entry: $entry");
 
 			push @items, $class->_updateMetaData( $entry, {
 				'TITLE'  => $title,
@@ -95,7 +102,7 @@ sub read {
 		}
 	}
 
-	$::d_parse && msg("parsed " . scalar(@items) . " items in m3u playlist\n");
+	$log->info("Parsed " . scalar(@items) . " items in playlist");
 
 	close($file);
 
@@ -115,6 +122,9 @@ sub readCurTrackForM3U {
 	close(FH);
  
 	if ($line =~ /#CURTRACK (\d+)$/) {
+
+		$log->info("Found track: $1");
+
 		return $1;
 	}
 
@@ -125,6 +135,8 @@ sub writeCurTrackForM3U {
 	my $class = shift;
 	my $path  = shift || return 0;
 	my $track = shift || 0;
+
+	$log->info("Writing out: $path");
 
 	# do nothing to the index if we can't open the list
 	open(IN, $path) || return 0;
@@ -159,6 +171,8 @@ sub write {
 	my $addTitles    = shift;
 	my $resumetrack  = shift;
 
+	$log->info("Writing out: $filename");
+
 	my $string = '';
 	my $output = $class->_filehandleFromNameOrString($filename, \$string) || return;
 
@@ -171,7 +185,7 @@ sub write {
 	
 		if (!blessed($track) || !$track->can('title')) {
 	
-			errorMsg("writeM3U: Couldn't retrieve objectForUrl: [$item] - skipping!\n");
+			logError("Couldn't retrieve objectForUrl: [$item] - skipping!");
 			next;
 		};
 

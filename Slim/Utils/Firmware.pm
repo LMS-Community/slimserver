@@ -35,6 +35,7 @@ use File::Spec::Functions qw(:ALL);
 use LWP::UserAgent;
 
 use Slim::Networking::SimpleAsyncHTTP;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Timers;
@@ -63,9 +64,12 @@ sub init {
 	my $files = {};
 	
 	for my $model ( @models ) {
+
 		# read each model's version file
 		open my $fh, '<', catdir( $dir, "$model.version" );
+
 		if ( !$fh ) {
+
 			# It's a fatal error if we can't read our version files
 			fatal("Unable to initialize firmware, missing $model.version file\n");
 		}
@@ -76,13 +80,18 @@ sub init {
 			my ($version) = $_ =~ m/(?:\d+|\*)(?:\.\.\d+)?\s+(\d+)/;
 			
 			if ( $version ) {
+
 				my $file = "${model}_${version}.bin";
-				next if $files->{$file};
-				
 				my $path = catdir( $dir, $file );
+
+				if ($files->{$file}) {
+					next;
+				}
 				
 				if ( !-r $path ) {
-					$::d_firmware && msg("Firmware: Need to download $file\n");
+
+					logger('player.firmware')->info("Need to download $file\n");
+
 					$files->{$file} = 1;
 				}
 			}
@@ -92,6 +101,7 @@ sub init {
 	}
 	
 	my $ok = 1;
+
 	for my $file ( keys %{$files} ) {
 		my $url = $base . '/' . $::VERSION . '/' . $file;
 		
@@ -106,7 +116,7 @@ sub init {
 	}
 	
 	if ( !$ok ) {
-		errorMsg("Some firmware failed to download, will try again in 10 minutes.  Please check your Internet connection.\n");
+		logError("Some firmware failed to download, will try again in 10 minutes.  Please check your Internet connection.");
 	}
 }
 
@@ -150,13 +160,13 @@ sub download {
 			close $fh;
 			
 			if ( $sha1->hexdigest eq $sum ) {
-				warn "Successfully downloaded and verified $file.\n";
+				logWarning("Successfully downloaded and verified $file.");
 				return 1;
 			}
 			
 			unlink $path;
 			
-			errorMsg("Validation of firmware $file failed, SHA1 checksum did not match\n");
+			logError("Validation of firmware $file failed, SHA1 checksum did not match");
 		}
 		else {
 			unlink $path;
@@ -167,7 +177,8 @@ sub download {
 		$error = $res->status_line;
 	}
 	
-	errorMsg("Unable to download firmware from $url: $error\n");
+	logError("Unable to download firmware from $url: $error");
+
 	return 0;
 }
 
@@ -255,7 +266,7 @@ sub downloadAsyncSHADone {
 		my $real = catdir( $dir, $file );
 		rename $path, $real or return downloadAsyncError( $http, "Unable to rename temporary $path file" );
 		
-		warn "Successfully downloaded and verified $file.\n";
+		logWarning("Successfully downloaded and verified $file.");
 	}
 	else {
 		downloadAsyncError( $http, "Validation of firmware $file failed, SHA1 checksum did not match" );
@@ -277,10 +288,10 @@ sub downloadAsyncError {
 	my $path = catdir( $dir, $file ) . '.tmp';
 	unlink $path if -e $path;
 	
-	msgf("Firmware: Failed to download %s (%s), will try again in 10 minutes.\n",
+	logWarning(sprintf("Firmware: Failed to download %s (%s), will try again in 10 minutes.",
 		$http->url,
 		$error,
-	);
+	));
 	
 	Slim::Utils::Timers::setTimer( $file, time() + $CHECK_TIME + int(rand(60)), \&downloadAsync );
 }
@@ -290,14 +301,13 @@ sub downloadAsyncError {
 Shuts down with an error message.
 
 =cut
-	
+
 sub fatal {
 	my $msg = shift;
 	
-	errorMsg($msg);
+	logError($msg);
 	
 	main::stopServer();
 }
 
 1;
-		

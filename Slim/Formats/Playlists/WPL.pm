@@ -16,23 +16,27 @@ use XML::Simple;
 use URI::Escape;
 
 use Slim::Music::Info;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
+
+my $log     = logger('formats.playlists');
 
 sub read {
 	my ($class, $file, $baseDir, $url) = @_;
 
-	my @items  = ();
+	my @items = ();
+
+	$log->info("Parsing: $file ($url)");
 
 	# Handles version 1.0 WPL Windows Medial Playlist files...
 	my $content = eval { XMLin($file) };
 
 	if ($@) {
-		errorMsg("WPL->read failed to read [$content] got error: [$@]\n");
+
+		logError("Failed to read [$content] got error: [$@]");
 		$content = {};
 	}
-
-	$::d_parse && msg("parsing WPL: $file url: [$url]\n");
 
 	if (exists($content->{'body'}->{'seq'}->{'media'})) {
 		
@@ -51,21 +55,21 @@ sub read {
 
 			my $entry = $entry_info->{'src'};
 
-			$::d_parse && msg("  entry from file: $entry\n");
+			$log->debug("  entry from file: $entry");
 
 			$entry = Slim::Utils::Unicode::utf8encode_locale($entry);
 			$entry = Slim::Utils::Misc::fixPath($entry, $baseDir);
 
 			if ($class->playlistEntryIsValid($entry, $url)) {
 
-				$::d_parse && msg("    entry: $entry\n");
+				$log->debug("    entry: $entry");
 
 				push @items, $class->_updateMetaData($entry);
 			}
 		}
 	}
 
-	$::d_parse && msg("parsed " . scalar(@items) . " items in wpl playlist\n");
+	$log->info("Parsed " . scalar(@items) . " items from WPL");
 
 	return @items;
 }
@@ -126,7 +130,8 @@ sub write {
 	my $xml = eval { XMLout($content, 'XMLDecl' => '<?wpl version="1.0"?>', 'RootName' => undef) };
 
 	if ($@) {
-		errorMsg("WPL->write: Couldn't write out [$content] got error: [$@]\n");
+
+		logError("Couldn't write out [$content] got error: [$@]");
 		return undef;
 	}
 

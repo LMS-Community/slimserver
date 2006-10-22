@@ -16,6 +16,7 @@ use FindBin qw($Bin);
 use Digest::MD5;
 use YAML::Syck qw(DumpFile LoadFile Dump);
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::Unicode;
@@ -32,6 +33,8 @@ our %DEFAULT = ();
 our %prefChange = ();
 
 my $DEFAULT_DBSOURCE = 'dbi:mysql:hostname=127.0.0.1;port=9092;database=%s';
+
+my $log = logger('prefs');
 
 sub init {
 
@@ -200,7 +203,6 @@ sub init {
 		'maxBitrate'		=> 320,
 		'composerInArtists'	=> 0,
 		'groupdiscs' 		=> 0,
-		'livelog'		=> 102400, # keep around an in-memory log of 100kbytes, available from the web interfaces
 		'remotestreamtimeout'	=> 5, # seconds to try to connect for a remote stream
 		'prefsWriteDelay'	=> 30,
 		'dbsource'		=> $DEFAULT_DBSOURCE,
@@ -271,8 +273,13 @@ sub init {
 		'playlistdir' => sub {
 			my $newvalue = shift;
 
-			if (defined($newvalue) && $newvalue ne '' && !-d $newvalue) {
-				mkdir $newvalue || ($::d_files && msg("Could not create $newvalue\n"));
+			if ($newvalue && !-d $newvalue) {
+
+				mkpath($newvalue) or do {
+
+					logError("Could't create playlistdir: [$newvalue]");
+					return;
+				};
 			}
 
 			Slim::Music::PlaylistFolderScan->init;
@@ -328,9 +335,9 @@ sub makeSecuritySecret {
 	
 	if (defined($currentVal) && ($currentVal =~ m|^[0-9a-f]{32}$|)) {
 	
-		$::d_prefs && msg("server already has a securitySecret\n");
+		$log->debug("Server already has a securitySecret - returning existing");
+
 		return $currentVal;
-	
 	}
 	
 	# make a new value, based on a random number
@@ -342,9 +349,10 @@ sub makeSecuritySecret {
 	# explicitly "set" this so it persists through shutdown/startupa
 	my $secret = $hash->hexdigest();
 	
-	$::d_prefs && msg("creating a securitySecret for this installation\n");
-	set('securitySecret',$secret);
-	
+	$log->debug("Creating a securitySecret for this installation.");
+
+	set('securitySecret', $secret);
+
 	return $secret;
 }
 
@@ -445,9 +453,10 @@ sub makeCacheDir {
 	my $cacheDir = get("cachedir") || defaultCacheDir();
 	
 	if (defined $cacheDir && !-d $cacheDir) {
+
 		mkpath($cacheDir) or do {
-			bt();
-			msg("Couldn't create cache dir for $cacheDir : $!\n");
+
+			logBacktrace("Couldn't create cache dir for $cacheDir : $!");
 			return;
 		};
 	}
@@ -585,22 +594,26 @@ sub initClientPrefs {
 
 sub push {
 	my $arrayPref = shift;
-	my $value = shift;
+	my $value     = shift;
 
 	# allow clients to specify the preference hash to modify
-	my $prefs = shift || \%prefs;
+	my $prefs     = shift || \%prefs;
 
 	if (!defined($prefs->{$arrayPref})) {
+
 		# auto-vivify
 		$prefs->{$arrayPref} = [];
 	}
 
 	if (ref($prefs->{$arrayPref}) eq 'ARRAY') {
-		CORE::push @{$prefs->{$arrayPref}}, $value;
+
+		CORE::push(@{$prefs->{$arrayPref}}, $value);
+
 	} else {
-		bt();
-		warn "Attempted to push a value onto a scalar pref";
+
+		logBacktrace("Attempted to push a value onto a scalar pref!");
 	}
+
 	scheduleWrite() unless $writePending;
 }
 
@@ -654,7 +667,8 @@ sub clientGetArray {
 sub getClientPrefs {
 	my $clientid = shift;
 	
-	if (!defined $prefs{'clients'}{$clientid} ||  ref($prefs{'clients'}{$clientid}) ne "HASH") {
+	if (!defined $prefs{'clients'}{$clientid} || ref($prefs{'clients'}{$clientid}) ne "HASH") {
+
 		$prefs{'clients'}{$clientid} = {};
 	}
 	
@@ -670,13 +684,19 @@ sub get {
 # for indexed (array or hash) prefs
 sub getInd {
 	my ($pref,$index) = @_;
+
 	if (defined $prefs{$pref}) {
+
 		if (ref $prefs{$pref} eq 'ARRAY') {
+
 			return $prefs{$pref}[$index];
+
 		} elsif (ref $prefs{$pref} eq 'HASH') {
+
 			return $prefs{$pref}{$index};
 		}
 	}
+
 	return undef;
 }
 
@@ -684,9 +704,13 @@ sub getInd {
 # gets the keys of a hash pref
 sub getKeys {
 	my $hashPref = shift;
+
 	if (defined($prefs{$hashPref}) && ref($prefs{$hashPref}) eq 'HASH') {
+
 		return keys %{$prefs{$hashPref}};
+
 	} else {
+
 		return ();
 	}
 }
@@ -694,9 +718,13 @@ sub getKeys {
 # getHash($pref)
 sub getHash {
 	my $hashPref = shift;
+
 	if (defined($prefs{($hashPref)}) && ref($prefs{$hashPref}) eq 'HASH') {
+
 		return %{$prefs{($hashPref)}};
+
 	} else {
+
 		return ();
 	}
 }
@@ -705,15 +733,19 @@ sub getHash {
 sub clientGetKeys {
 	my $client = shift;
 	my $hashPref = shift;
+
 	assert($client);
+
 	return $client->prefGetKeys($hashPref);
 }
 	
 # clientGetHash($client, $hashPref)
 sub clientGetHash {
-	my $client = shift;
+	my $client   = shift;
 	my $hashPref = shift;
+
 	assert($client);
+
 	return $client->prefGetHash($hashPref);
 }
 	
@@ -722,9 +754,11 @@ sub clientGet {
 	my $client = shift;
 	my $key = shift;
 	my $ind = shift;
+
 	if (!defined($client)) {
-		$::d_prefs && msg("clientGet on an undefined client\n");
-		bt();
+
+		$log->logBacktrace("Undefined client!");
+
 		return undef;
 	}
 
@@ -734,15 +768,22 @@ sub clientGet {
 sub getDefault {
 	my $key = shift;
 	my $ind = shift;
+
 	if (defined($ind)) {
+
 		if (defined $DEFAULT{$key}) {
+
 			if (ref $DEFAULT{$key} eq 'ARRAY') {
+
 				return $DEFAULT{$key}[$ind];
+
 			} elsif (ref $DEFAULT{$key} eq 'HASH') {
+
 				return $DEFAULT{$key}{$ind};
 			}
 		}
 	}
+
 	return $DEFAULT{$key};
 }
 
@@ -807,22 +848,19 @@ sub set {
 
 	# must mark $ind as defined or indexed prefs cause an error in this msg
 	if (defined $ind) {
-		$::d_prefs && msg("Setting prefs $key $ind equal to " . ((defined $value) ? $value : "undefined") . "\n");
+
+		$log->debug(sprintf("Setting prefs $key $ind to " . ((defined $value) ? $value : "undef")));
+
 	} else {
-		$::d_prefs && msg("Setting prefs $key equal to " . ((defined $value) ? $value : "undefined") . "\n");
+
+		$log->debug(sprintf("Setting prefs $key to " . ((defined $value) ? $value : "undef")));
 	}
 
-	scheduleWrite() unless $writePending;
+	if (!$writePending) {
+		scheduleWrite();
+	}
+
 	return $oldvalue;
-}
-
-sub clientSet {
-	my $client = shift;
-	my $key = shift;
-	my $value = shift;
-	my $ind = shift;
-
-	$client->pref([$key,$ind], $value);
 }
 
 sub setArray {
@@ -835,12 +873,12 @@ sub setArray {
 	
 	onChange($key, $value);
 	
-	$::d_prefs && msgf("Prefs: %s => %s\n",
-		$key,
-		Data::Dump::dump($value),
-	);
-	
-	scheduleWrite() unless $writePending;
+	$log->debug(sprintf("%s => %s", $key, Data::Dump::dump($value)));
+
+	if (!$writePending) {
+		scheduleWrite();
+	}
+
 	return $oldvalue;
 }
 
@@ -872,16 +910,22 @@ sub maxRate {
 	# override the saved or default bitrate if a transcodeBitrate has been set via HTTP parameter
 	$rate = $client->prefGet('transcodeBitrate') || $rate;
 
-	$::d_source && $rate != 0 && msgf("Setting maxBitRate for %s to: %d\n", $client->name(), $rate);
-	
-	return $rate if $soloRate;
+	if ($soloRate) {
+		return $rate;
+	}
+
+	if ($rate != 0) {
+		logger('player.source')->debug(sprintf("Setting maxBitRate for %s to: %d", $client->name, $rate));
+	}
 	
 	# if we're the master, make sure we return the lowest common denominator bitrate.
 	my @playergroup = ($client, Slim::Player::Sync::syncedWith($client));
 	
 	for my $everyclient (@playergroup) {
 
-		next if $everyclient->prefGet('silent');
+		if ($everyclient->prefGet('silent')) {
+			next;
+		}
 
 		my $otherRate = maxRate($everyclient, 1);
 		
@@ -972,29 +1016,26 @@ sub writePending {
 sub writePrefs {
 
 	return unless $canWrite;
-	
-	my $writeFile = prefsFile();
-	my $prefdump = Dump(\%prefs);
 
-	$::d_prefs && msg("Writing out prefs in $writeFile\n");
+	my $writeFile = prefsFile();
+	my $prefdump  = Dump(\%prefs);
+
+	my %writeAttr = (
+		'atomic'  => $canWriteAtomic,
+		'buf_ref' => \$prefdump,
+	);
+
+	$log->info("Writing out prefs in $writeFile");
 	
 	if ($] > 5.007) {
-		File::Slurp::write_file(
-			$writeFile,
-			{
-				'binmode' => ':raw',
-				'atomic'  => $canWriteAtomic,
-				'buf_ref' => \$prefdump,
-			}
-		);
-	} else {
-		File::Slurp::write_file(
-			$writeFile,
-			{
-				'atomic'  => $canWriteAtomic,
-				'buf_ref' => \$prefdump,
-			}
-		);
+
+		$writeAttr{'binmode'} = ':raw';
+	}
+
+	eval { File::Slurp::write_file($writeFile, \%writeAttr) };
+
+	if ($@) {
+		logError("Couldn't write prefs file: [$writeFile] - [$@]");
 	}
 
 	$writePending = 0;
@@ -1012,14 +1053,19 @@ sub preferencesPath {
 	}
 
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
+
 		$prefsPath = catdir($ENV{'HOME'}, 'Library', 'SlimDevices');
+
 	} elsif (Slim::Utils::OSDetect::OS() eq 'win')  {
+
 		$prefsPath = $Bin;
+
 	} else {
+
 	 	$prefsPath = $ENV{'HOME'};
 	}
 	
-	$::d_prefs && msg("The default prefs directory is $prefsPath\n");
+	$log->info("The default prefs directory is $prefsPath");
 
 	return $prefsPath;
 }
@@ -1030,7 +1076,9 @@ sub prefsFile {
 	# Bug: 2354 - if the user has passed in a prefs file - set the prefs
 	# path based off of that.
 	if (defined $setFile) { 
+
 		$prefsFile = $setFile;
+
 		preferencesPath(dirname($prefsFile));
 	}
 	
@@ -1041,28 +1089,37 @@ sub prefsFile {
 	my $pref_path = preferencesPath();
 
 	if (Slim::Utils::OSDetect::OS() eq 'win')  {	
+
 		$prefsFile = catdir($pref_path, 'slimserver.pref');
+
 	} elsif (Slim::Utils::OSDetect::OS() eq 'mac') {
+
 		$prefsFile = catdir($pref_path, 'slimserver.pref');
+
 	} else {
+
 		if (-r '/etc/slimserver.conf') {
+
 			$prefsFile = '/etc/slimserver.conf';
+
 			preferencesPath(dirname($prefsFile));
+
 		} elsif (-r catdir($pref_path, '.slimserver.pref')) {
+
 			$prefsFile = catdir($pref_path, '.slimserver.pref');
+
 		} else {
+
 			$prefsFile = catdir($pref_path, 'slimserver.pref');
 		}
 	}
-	
-	$::d_prefs && msg("The default prefs file location is $prefsFile\n");
-	
+
+	$log->info("The default prefs file location is $prefsFile");
+
 	return $prefsFile;
 }
 
-#
 # Figures out where the preferences file should be on our platform, and loads it.
-#
 sub load {
 	my $setFile = shift;
 	my $nosetup = shift;
@@ -1071,35 +1128,48 @@ sub load {
 
 	# if we found some file to read, then let's read it!
 	eval {
-
 		if (-r $readFile) {
+
 			open(NUPREFS, $readFile);
 			my $firstline = <NUPREFS>;
 			close(NUPREFS);
+
 			if ($firstline =~ /^---/) {
+
 				# it's a YAML formatted file
-				$::d_prefs && msg("Loading YAML style prefs file $readFile\n");
+				$log->info("Loading YAML style prefs file: $readFile");
+
 				my $prefref = LoadFile($readFile);
+
 				%prefs = %$prefref;
+
 			} else {
+
 				# it's the old style prefs file
-				$::d_prefs && msg("Loading old style prefs file $readFile\n");
+				$log->info("Loading old style prefs file: $readFile");
+
 				loadOldPrefs($readFile);
 			}
 		}
 	};
 
 	if ($@) {
-		die "There was an error reading your SlimServer configuration file - it might be corrupted!: [$@]\n";
+
+		$log->logdie(
+			"There was an error reading your SlimServer configuration file - it might be corrupted!: [$@]\n",
+			"If you are on a Unix platform, you may need to install YAML::Syck\n",
+			"Run './Bin/build-perl-modules.pl YAML::Syck'",
+		);
 	}
-	
+
 	# see if we can write out the real prefs file
 	$canWrite = (-e prefsFile() && -w prefsFile()) || (-w preferencesPath());
 	
 	$canWriteAtomic = (-w preferencesPath) ? 1 : 0;
 	
 	if (!$canWrite && !$nosetup) {
-		errorMsg("Cannot write to preferences file $prefsFile, any changes made will not be preserved for the next startup of the server\n");
+
+		logError("Can't write to preferences file: $prefsFile, any changes made will not be saved!");
 	}
 }
 

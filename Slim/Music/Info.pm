@@ -28,6 +28,7 @@ use Tie::Cache::LRU;
 use Slim::Formats;
 use Slim::Music::TitleFormatter;
 use Slim::Player::ProtocolHandlers;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::PluginManager;
 use Slim::Utils::OSDetect;
@@ -63,6 +64,8 @@ tie our %isFile, 'Tie::Cache::LRU', 16;
 # No need to do this over and over again either.
 tie our %urlToTypeCache, 'Tie::Cache::LRU', 16;
 
+my $log = logger('database.info');
+
 sub init {
 
 	# Allow external programs to use Slim::Utils::Misc, without needing
@@ -88,7 +91,7 @@ sub init {
 sub loadTypesConfig {
 	my @typesFiles = ();
 
-	$::d_info && msg("loading types config file...\n");
+	$log->info("Loading config file...");
 
 	# custom types file allowed at server root or root of plugin directories
 	for my $baseDir (Slim::Utils::OSDetect::dirsFor('types')) {
@@ -179,15 +182,15 @@ sub updateCacheEntry {
 	my $cacheEntryHash = shift;
 
 	if (!defined($url)) {
-		msg("No URL specified for updateCacheEntry\n");
-		bt();
+
+		logBacktrace("No URL passed!");
 		Data::Dump::dump($cacheEntryHash) if !$::quiet;
 		return;
 	}
 
 	if (!isURL($url)) { 
-		msg("Non-URL passed to updateCacheEntry::info ($url)\n");
-		bt();
+
+		logBacktrace("Non-URL passed from caller ($url)");
 		return;
 	}
 
@@ -214,8 +217,10 @@ sub setContentType {
 	my $type = shift;
 
 	if ($type =~ /(.*);(.*)/) {
+
 		# content type has ";" followed by encoding
-		$::d_info && msg("Info: truncating content type.  Was: $type, now: $1\n");
+		$log->info("Truncating content type. Was: $type, now: $1");
+
 		# TODO: remember encoding as it could be useful later
 		$type = $1; # truncate at ";"
 	}
@@ -223,11 +228,17 @@ sub setContentType {
 	$type = lc($type);
 
 	if ($types{$type}) {
+
 		# we got it
+
 	} elsif ($mimeTypes{$type}) {
+
 		$type = $mimeTypes{$type};
+
 	} else {
+
 		my $guessedtype = typeFromPath($url);
+
 		if ($guessedtype ne 'unk') {
 			$type = $guessedtype;
 		}
@@ -244,7 +255,7 @@ sub setContentType {
 		'readTags'   => isRemoteURL($url) ? 0 : 1,
 	});
 
-	$::d_info && msg("Content type for $url is cached as $type\n");
+	$log->info("Content-Type for $url is cached as $type");
 }
 
 sub title {
@@ -266,7 +277,7 @@ sub setTitle {
 	my $url = shift;
 	my $title = shift;
 
-	$::d_info && msg("Adding title $title for $url\n");
+	$log->info("Adding title $title for $url");
 
 	# Only readTags if we're not a remote URL. Otherwise, we'll
 	# overwrite the title with the URL.
@@ -404,7 +415,7 @@ sub plainTitle {
 
 	my $title = "";
 
-	$::d_info && msg("Plain title for: " . $file . "\n");
+	$log->info("Plain title for: $file");
 
 	if (isRemoteURL($file)) {
 
@@ -431,7 +442,7 @@ sub plainTitle {
 		$title =~ s/_/ /g;
 	}
 	
-	$::d_info && msg(" is " . $title . "\n");
+	$log->info(" is $title");
 
 	return $title;
 }
@@ -531,7 +542,7 @@ sub guessTags {
 	
 	my $file = $filename;
 
-	$::d_info && msg("Guessing tags for: $file\n");
+	$log->info("Guessing tags for: $file");
 
 	# Rip off from plainTitle()
 	if (isRemoteURL($file)) {
@@ -570,7 +581,7 @@ sub guessTags {
 		$pat =~ s/(TRACKNUM|DISC{1,2})/\(\\d+\)/g;
 		$pat =~ s/($Slim::Music::TitleFormatter::elemRegex)/\(\[^\\\/\]\+\)/g;
 
-		$::d_info && msg("Using format \"$guess\" = /$pat/...\n" );
+		$log->info("Using format \"$guess\" = /$pat/...");
 
 		$pat = qr/$pat/;
 
@@ -579,7 +590,7 @@ sub guessTags {
 
 		if (@matches = $file =~ $pat) {
 
-			$::d_info && msg("Format string $guess matched $file\n" );
+			$log->info("Format string $guess matched $file");
 
 			my @tags = $guess =~ /($Slim::Music::TitleFormatter::elemRegex)/g;
 
@@ -587,7 +598,7 @@ sub guessTags {
 
 			foreach my $match (@matches) {
 
-				$::d_info && msg("$tags[$i] => $match\n");
+				$log->info("$tags[$i] => $match");
 
 				$match =~ tr/_/ / if (defined $match);
 
@@ -726,7 +737,10 @@ sub splitTag {
 
 				push @temp, $item if $item !~ /^\s*$/;
 
-				$::d_info && msg("Splitting $tag by $splitOn = @temp\n") unless scalar @temp <= 1;
+				if (!scalar @temp <= 1) {
+
+					$log->info("Splitting $tag by $splitOn = @temp");
+				}
 			}
 
 			# store this for return only if there has been a successfil split
@@ -762,7 +776,7 @@ sub isFile {
 
 	my $stat = ((-f $fullpath && -r _) ? 1 : 0);
 
-	$::d_info && msgf("isFile(%s) == %d\n", $fullpath, (1 * $stat));
+	$log->debug(sprintf("isFile(%s) == %d", $fullpath, (1 * $stat)));
 
 	$isFile{$url} = $stat;
 
@@ -1197,9 +1211,17 @@ sub typeFromPath {
 		
 		# check with the protocol handler
 		if ( isRemoteURL($fullpath) ) {
+
 			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($fullpath);
+
 			if ( $handler && $handler->can('getFormatForURL') ) {
-				$type = $handler->getFormatForURL($fullpath);
+
+				my $remoteType = $handler->getFormatForURL($fullpath);
+
+				if (defined $remoteType) {
+
+					$type = $remoteType;
+				}
 			}
 		}	
 	}
@@ -1210,7 +1232,7 @@ sub typeFromPath {
 		$urlToTypeCache{$fullpath} = $type;
 	}
 
-	$::d_info && msg("$type file type for $fullpath\n");
+	$log->debug("$type file type for $fullpath");
 
 	return $type;
 }
@@ -1220,8 +1242,10 @@ sub variousArtistString {
 	return (Slim::Utils::Prefs::get('variousArtistsString') || string('VARIOUSARTISTS'));
 }
 
+
 =head1 SEE ALSO
 
+L<Slim::Schema>
 
 =cut
 

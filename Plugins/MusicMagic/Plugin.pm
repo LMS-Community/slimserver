@@ -8,6 +8,7 @@ use Scalar::Util qw(blessed);
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::Protocols::HTTP;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings;
@@ -15,11 +16,16 @@ use Slim::Utils::Strings;
 use Plugins::MusicMagic::Common;
 use Plugins::MusicMagic::Settings;
 
-my $OS = Slim::Utils::OSDetect::OS();
-
 my $initialized = 0;
 my $MMSHost;
 my $MMSport;
+
+my $OS  = Slim::Utils::OSDetect::OS();
+
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.musicmagic',
+	'defaultLevel' => 'WARN',
+});
 
 our %mixMap  = (
 	'add.single' => 'play_1',
@@ -68,8 +74,8 @@ sub useMusicMagic {
 	
 	$use = Slim::Utils::Prefs::get('musicmagic') && $can;
 
-	$::d_musicmagic && msg("MusicMagic: using musicmagic: $use\n");
-	
+	$log->info("Using musicmagic: $use");
+
 	return $use;
 }
 
@@ -112,43 +118,50 @@ sub initPlugin {
 	
 	Plugins::MusicMagic::Common::checkDefaults();
 	
-	if (grep {$_ eq 'MusicMagic::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
+	if (grep { $_ eq 'MusicMagic::Plugin' } Slim::Utils::Prefs::getArray('disabledplugins')) {
 
-		$::d_musicmagic && msg("MusicMagic: don't initialize, it's disabled\n");
+		$log->info("Not initializing: disabled");
+
 		$initialized = 0;
-		
-		my ($groupRef,$prefRef) = &setupPort();
+
+		my ($groupRef, $prefRef) = setupPort();
+
 		Slim::Web::Setup::addGroup('PLUGINS', 'musicmagic_connect', $groupRef, undef, $prefRef);
+
 		return 0;		
 	}
 
 	$MMSport = Slim::Utils::Prefs::get('MMSport');
 	$MMSHost = Slim::Utils::Prefs::get('MMSHost');
 
-	$::d_musicmagic && msg("MusicMagic: Testing for API on $MMSHost:$MMSport\n");
+	$log->info("Testing for API on $MMSHost:$MMSport");
 
 	my $http = Slim::Player::Protocols::HTTP->new({
-		'url'    => "http://$MMSHost:$MMSport/api/version",
-		'create' => 0,
+		'url'     => "http://$MMSHost:$MMSport/api/version",
+		'create'  => 0,
 		'timeout' => 5,
 	});
 
 	if (!$http) {
 
 		$initialized = 0;
-		$::d_musicmagic && msg("MusicMagic: Cannot Connect\n");
-		
-		my ($groupRef,$prefRef) = &setupPort();
+
+		$log->warn("Can't connect to port $MMSport - MusicMagic disabled.");
+
+		my ($groupRef, $prefRef) = setupPort();
+
 		Slim::Web::Setup::addGroup('PLUGINS', 'musicmagic_connect', $groupRef, undef, $prefRef);
 
 	} else {
 
 		my $content = $http->content;
-		$::d_musicmagic && msg("MusicMagic: $content\n");
+
+		$log->info($content);
+
 		$http->close;
-		
+
 		Plugins::MusicMagic::Settings::init();
-		
+
 		# Note: Check version restrictions if any
 		$initialized = $content;
 
@@ -238,7 +251,7 @@ sub addGroups {
 	my $category = setupCategory();
 
 	Slim::Web::Setup::addCategory('MUSICMAGIC',$category);
-	
+
 	my ($groupRef, $prefRef) = setupUse();
 
 	Slim::Web::Setup::addGroup('BASIC_SERVER_SETTINGS', 'musicmagic', $groupRef, undef, $prefRef);
@@ -258,7 +271,7 @@ sub isMusicLibraryFileChanged {
 
 	chomp($fileMTime);
 
-	$::d_musicmagic && msg("MusicMagic: read cacheid of $fileMTime\n");
+	$log->info("Read cacheid of $fileMTime");
 
 	$http->close;
 
@@ -268,7 +281,7 @@ sub isMusicLibraryFileChanged {
 		'timeout' => 5,
 	}) || return 0;
 
-	$::d_musicmagic && msgf("MusicMagic: got status - %s", $http->content);
+	$log->info("Got status: ", $http->content);
 
 	$http->close;
 
@@ -283,20 +296,17 @@ sub isMusicLibraryFileChanged {
 
 		my $scanInterval = Slim::Utils::Prefs::get('musicmagicscaninterval');
 
-		if ($::d_musicmagic) {
-
-			msg("MusicMagic: music library has changed!\n");
-			msg("Details: \n");
-			msg("\tCurrCacheID  - $fileMTime\n");
-			msg("\tLastCacheID  - $lastMMMChange\n");
-			msg("\tInterval     - $scanInterval\n");
-			msg("\tLastScanTime - $lastScanTime\n");
-		}
+		$log->debug("MusicMagic: music library has changed!");
+		$log->debug("Details:");
+		$log->debug("\tCurrCacheID  - $fileMTime");
+		$log->debug("\tLastCacheID  - $lastMMMChange");
+		$log->debug("\tInterval     - $scanInterval");
+		$log->debug("\tLastScanTime - $lastScanTime");
 
 		if (!$scanInterval) {
 
 			# only scan if musicmagicscaninterval is non-zero.
-			$::d_musicmagic && msg("MusicMagic: Scan Interval set to 0, rescanning disabled\n");
+			$log->info("Scan Interval set to 0, rescanning disabled");
 
 			return 0;
 		}
@@ -306,7 +316,7 @@ sub isMusicLibraryFileChanged {
 			return 1;
 		}
 
-		$::d_musicmagic && msg("MusicMagic: waiting for $scanInterval seconds to pass before rescanning\n");
+		$log->info("Waiting for $scanInterval seconds to pass before rescanning");
 	}
 
 	return 0;
@@ -332,20 +342,24 @@ sub checker {
 }
 
 sub grabFilters {
-	my @filters;
-	my %filterHash;
+	my @filters    = ();
+	my %filterHash = ();
 	
-	return unless $initialized;
+	if (!$initialized) {
+		return;
+	}
 	
 	if (grep {$_ eq 'MusicMagic::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		$::d_musicmagic && msg("MusicMagic: don't get filters list, it's disabled\n");
+
+		$log->debug("Don't get filters list, it's disabled");
+
 		return %filterHash;
 	}
 	
 	$MMSport = Slim::Utils::Prefs::get('MMSport') unless $MMSport;
 	$MMSHost = Slim::Utils::Prefs::get('MMSHost') unless $MMSHost;
 
-	$::d_musicmagic && msg("MusicMagic: get filters list\n");
+	$log->debug("Get filters list");
 
 	my $http = Slim::Player::Protocols::HTTP->new({
 		'url'    => "http://$MMSHost:$MMSport/api/filters",
@@ -357,12 +371,13 @@ sub grabFilters {
 		@filters = split(/\n/, $http->content);
 		$http->close;
 
-		if ($::d_musicmagic && scalar @filters) {
+		if ($log->is_debug && scalar @filters) {
 
-			msg("MusicMagic: found filters:\n");
+			$log->debug("Found filters:");
 
 			for my $filter (@filters) {
-				msg("MusicMagic:\t$filter\n");
+
+				$log->debug("\t$filter");
 			}
 		}
 	}
@@ -408,20 +423,24 @@ sub mixable {
 }
 
 sub grabMoods {
-	my @moods;
-	my %moodHash;
-	
-	return unless $initialized;
-	
+	my @moods    = ();
+	my %moodHash = ();
+
+	if (!$initialized) {
+		return;
+	}
+
 	if (grep {$_ eq 'MusicMagic::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		$::d_musicmagic && msg("MusicMagic: don't get moods list, it's disabled\n");
+
+		$log->debug("Don't get moods list, it's disabled");
+
 		return %moodHash;
 	}
 	
 	$MMSport = Slim::Utils::Prefs::get('MMSport') unless $MMSport;
 	$MMSHost = Slim::Utils::Prefs::get('MMSHost') unless $MMSHost;
 
-	$::d_musicmagic && msg("MusicMagic: get moods list\n");
+	$log->debug("Get moods list");
 
 	my $http = Slim::Player::Protocols::HTTP->new({
 		'url'    => "http://$MMSHost:$MMSport/api/moods",
@@ -433,12 +452,13 @@ sub grabMoods {
 		@moods = split(/\n/, $http->content);
 		$http->close;
 
-		if ($::d_musicmagic && scalar @moods) {
+		if ($log->is_debug && scalar @moods) {
 
-			msg("MusicMagic: found moods:\n");
+			$log->debug("Found moods:");
 
 			for my $mood (@moods) {
-				msg("MusicMagic:\t$mood\n");
+
+				$log->debug("\t$mood");
 			}
 		}
 	}
@@ -449,11 +469,12 @@ sub grabMoods {
 sub setMoodMode {
 	my $client = shift;
 	my $method = shift;
+
 	if ($method eq 'pop') {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
-	
+
 	my %params = (
 		'header'         => $client->string('MUSICMAGIC_MOODS'),
 		'listRef'        => &grabMoods,
@@ -700,7 +721,8 @@ sub getMix {
 	my $filter = defined $client ? $client->prefGet('MMMFilter') || Slim::Utils::Prefs::get('MMMFilter') : Slim::Utils::Prefs::get('MMMFilter');
 
 	if ($filter) {
-		$::d_musicmagic && msg("MusicMagic: filter $filter in use.\n");
+
+		$log->debug("Filter $filter in use.");
 
 		$args{'filter'} = Slim::Utils::Misc::escape($filter);
 	}
@@ -709,7 +731,8 @@ sub getMix {
 
 	if (!$validMixTypes{$for}) {
 
-		$::d_musicmagic && msg("MusicMagic: no valid type specified for mix\n");
+		$log->debug("No valid type specified for mix");
+
 		return undef;
 	}
 
@@ -719,7 +742,7 @@ sub getMix {
 		$id = Slim::Utils::Unicode::utf8encode_locale($id);
 	}
 
-	$::d_musicmagic && msg("MusicMagic: Creating mix for: $validMixTypes{$for} using: $id as seed.\n");
+	$log->debug("Creating mix for: $validMixTypes{$for} using: $id as seed.");
 
 	my $mixArgs = "$validMixTypes{$for}=$id";
 
@@ -736,7 +759,7 @@ sub getMix {
 		$mixArgs = Slim::Utils::Misc::escape($mixArgs);
 	}
 	
-	$::d_musicmagic && msg("Musicmagic: request http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString\n");
+	$log->debug("Request http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString");
 
 	my $http = Slim::Player::Protocols::HTTP->new({
 		'url'    => "http://$MMSHost:$MMSport/api/mix?$mixArgs\&$argString",
@@ -745,7 +768,8 @@ sub getMix {
 
 	if (!$http) {
 		# NYI
-		$::d_musicmagic && msg("Musicmagic Error - Couldn't get mix: $mixArgs\&$argString\n");
+		$log->warn("Warning: Couldn't get mix: $mixArgs\&$argString");
+
 		return @mix;
 	}
 
@@ -766,7 +790,7 @@ sub getMix {
 
 		my $newPath = Plugins::MusicMagic::Common::convertPath($songs[$j]);
 
-		$::d_musicmagic && msg("MusicMagic: Original $songs[$j] : New $newPath\n");
+		$log->debug("Original $songs[$j] : New $newPath");
 
 		push @mix, Slim::Utils::Misc::fileURLFromPath($newPath);
 	}
@@ -775,8 +799,9 @@ sub getMix {
 }
 
 sub webPages {
+
 	my %pages = (
-		"musicmagic_mix\.(?:htm|xml)" => \&musicmagic_mix,
+		"musicmagic_mix\.(?:htm|xml)"   => \&musicmagic_mix,
 		"musicmagic_moods\.(?:htm|xml)" => \&musicmagic_moods,
 	);
 
@@ -786,11 +811,7 @@ sub webPages {
 sub musicmagic_moods {
 	my ($client, $params) = @_;
 
-	my $items = "";
-
-	$items = grabMoods();
-
-	$params->{'mood_list'} = $items;
+	$params->{'mood_list'} = grabMoods();
 
 	return Slim::Web::HTTP::filltemplatefile("plugins/MusicMagic/musicmagic_moods.html", $params);
 }
@@ -902,7 +923,7 @@ sub musicmagic_mix {
 		
 	} else {
 
-		$::d_musicmagic && msg('MusicMagic: no/unknown type specified for mix\n');
+		$log->debug("No/unknown type specified for mix");
 
 		# allow a valid page return, but report an empty mix
 		$params->{'warn'} = Slim::Utils::Strings::string('EMPTY');
@@ -1019,7 +1040,7 @@ sub setupUse {
 		}
 	);
 
-	return (\%setupGroup,\%setupPrefs);
+	return (\%setupGroup, \%setupPrefs);
 }
 
 sub setupGroup {

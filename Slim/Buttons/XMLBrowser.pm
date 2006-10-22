@@ -25,7 +25,11 @@ use strict;
 use Slim::Buttons::Common;
 use Slim::Control::Request;
 use Slim::Formats::XML;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
+
+# XXXX - not the best category, but better than d_plugins, which is what it was.
+my $log = logger('formats.xml');
 
 sub init {
 	Slim::Buttons::Common::addMode('xmlbrowser', getFunctions(), \&setMode);
@@ -143,14 +147,14 @@ sub gotError {
 	my $client = $params->{'client'};
 	my $url    = $params->{'url'};
 
-	$::d_plugins && msg("XMLBrowser: error retrieving <$url>:\n");
-	$::d_plugins && msg($err);
+	$log->error("Error: While retrieving [$url]: [$err]");
 
 	# unblock client
 	$client->unblock;
 	
 	# notify failure callback if necessary
 	if ( ref $params->{'onFailure'} eq 'CODE' ) {
+
 		my $cb = $params->{'onFailure'};
 		$cb->( $client, $url, $err );
 	}
@@ -468,7 +472,7 @@ sub handleSearch {
 			$searchString
 		);
 		
-		$::d_plugins && msg("XMLBrowser: Search query [$searchString]\n");
+		$log->info("Search query [$searchString]");
 
 		Slim::Formats::XML->openSearch(
 			\&gotFeed,
@@ -829,7 +833,7 @@ sub fitTitle {
 sub cliQuery {
 	my ( $query, $feed, $request, $expires ) = @_;
 	
-	$::d_plugins && msg("XMLBrowser: cliQuery()\n");
+	$log->info("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([[$query], ['items', 'playlist']])) {
@@ -865,7 +869,7 @@ sub cliQuery {
 sub _cliQuery_done {
 	my ( $feed, $params ) = @_;
 
-	$::d_plugins && msg("XMLBrowser: _cliQuery_done()\n");
+	$log->info("Begin Function");
 
 	my $request = $params->{'request'};
 	my $query   = $params->{'query'};
@@ -939,7 +943,8 @@ sub _cliQuery_done {
 	}
 
 	if ($isPlaylistCmd) {
-		$::d_plugins && msg("XMLBrowser: _cliQuery_done() - play an item\n");
+
+		$log->info("Play an item.");
 
 		# get our parameters
 		my $client = $request->client();
@@ -959,7 +964,8 @@ sub _cliQuery_done {
 				}
 	
 				if ( $url ) {
-					$::d_plugins && msg("XMLBrowser: $method $url\n");
+
+					$log->info("$method $url");
 				
 					Slim::Music::Info::setTitle( $url, $title );
 				
@@ -983,9 +989,8 @@ sub _cliQuery_done {
 				}
 				
 				if ( @urls ) {
-					$::d_plugins && msgf("XMLBrowser: playing/adding all items:\n%s\n",
-						join "\n", @urls
-					);
+
+					$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
 					
 					if ( $method =~ /play|load/i ) {
 						$client->execute([ 'playlist', 'loadtracks', 'listref', \@urls ]);
@@ -1003,7 +1008,8 @@ sub _cliQuery_done {
 	}	
 
 	elsif ($isItemQuery) {
-		$::d_plugins && msg("XMLBrowser: _cliQuery_done() - get items\n");
+
+		$log->info("Get items.");
 
 		# get our parameters
 		my $index    = $request->getParam('_index');
@@ -1098,9 +1104,11 @@ sub _cliQuerySubFeed_done {
 	$subFeed->{'url'}   = undef;
 	
 	# re-cache the parsed XML to include the sub-feed
-	my $cache = Slim::Utils::Cache->new();
+	my $cache   = Slim::Utils::Cache->new();
 	my $expires = $Slim::Formats::XML::XML_CACHE_TIME;
-	$::d_plugins && msg("XMLBrowser: re-caching parsed XML for $expires seconds\n");
+
+	$log->info("Re-caching parsed XML for $expires seconds.");
+
 	$cache->set( $params->{'parentURL'} . '_parsedXML', $parent, $expires );
 	
 	_cliQuery_done( $parent, $params );
@@ -1112,8 +1120,7 @@ sub _cliQuery_error {
 	my $request = $params->{'request'};
 	my $url     = $params->{'url'};
 	
-	$::d_plugins && msg("Picks: error retrieving <$url>:\n");
-	$::d_plugins && msg($err);
+	logError("While retrieving [$url]: [$err]");
 	
 	$request->addResult("networkerror", 1);
 	$request->addResult('count', 0);

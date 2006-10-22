@@ -6,7 +6,7 @@ use strict;
 use base 'Slim::Schema::Track';
 
 use Scalar::Util qw(blessed);
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 
 {
 	my $class = __PACKAGE__;
@@ -47,7 +47,7 @@ sub setTracks {
 	};
 
 	if ($@) {
-		errorMsg("setTracks: Failed to add tracks to playlist: [$@]\n");
+		logError("Failed to add tracks to playlist: [$@]");
 	}
 
 	Slim::Schema->storage->dbh->{'AutoCommit'} = $autoCommit;
@@ -79,7 +79,7 @@ sub appendTracks {
 	};
 
 	if ($@) {
-		errorMsg("appendTracks: Failed to add tracks to playlist: [$@]\n");
+		logError("Failed to add tracks to playlist: [$@]");
 	}
 
 	Slim::Schema->storage->dbh->{'AutoCommit'} = $autoCommit;

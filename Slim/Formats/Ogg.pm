@@ -26,7 +26,7 @@ Read tags & metadata embedded in Ogg Vorbis files.
 use strict;
 use base qw(Slim::Formats);
 
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 
 use Ogg::Vorbis::Header::PurePerl;
@@ -65,12 +65,16 @@ sub getTag {
 	};
 
 	if (!$ogg or $@) {
-		$::d_formats && msg("Can't open ogg handle for $file\n");
+
+		logWarning("Warning Can't open Ogg file $file: [$@]");
+
 		return $tags;
 	}
 
 	if (!$ogg->info('length')) {
-		$::d_formats && msg("Length for Ogg file: $file is 0 - skipping.\n");
+
+		logWarning("Length for Ogg file: $file is 0 - skipping.");
+
 		return $tags;
 	}
 
@@ -157,30 +161,40 @@ sub scanBitrate {
 	my $fh    = shift;
 	
 	my $ogg;
+	my $log   = logger('scan.scanner');
 	
 	# some ogg files can blow up - especially if they are invalid.
 	eval {
 		local $^W = 0;
 		$ogg = Ogg::Vorbis::Header::PurePerl->new( $fh->filename );
 	};
+
 	if ( !$ogg || $@ ) {
-		$::d_scan && msg("Ogg scanBitrate: Unable to parse Ogg stream\n");
+
+		logWarning("Unable to parse Ogg stream");
+
 		return (-1, undef);
 	}
 	
 	my $vbr = 0;
+
 	if (defined $ogg->info('bitrate_upper') && defined $ogg->info('bitrate_lower')) {
+
 		if ($ogg->info('bitrate_upper') != $ogg->info('bitrate_lower')) {
+
 			$vbr = 1;
 		}
 	}
 	
 	if ( my $bitrate = $ogg->info('bitrate_nominal') ) {
-		$::d_scan && msg("Ogg scanBitrate: Found bitrate header: $bitrate kbps " . ( $vbr ? 'VBR' : 'CBR' ) . "\n");
+
+		$log->debug("Found bitrate header: $bitrate kbps " . ( $vbr ? 'VBR' : 'CBR' ));
+
 		return ( $bitrate, $vbr );
 	}
 	
-	$::d_scan && msg("Ogg scanBitrate: Unable to read bitrate from stream\n");
+	logWarning("Unable to read bitrate from stream!");
+
 	return (-1, undef);
 }
 

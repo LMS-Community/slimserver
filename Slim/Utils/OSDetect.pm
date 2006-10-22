@@ -29,6 +29,7 @@ L<Slim::Utils::OSDetect> handles Operating System Specific details.
 
 use strict;
 use Config;
+use File::Path;
 use File::Spec::Functions qw(:ALL);
 use FindBin qw($Bin);
 
@@ -70,48 +71,42 @@ sub init {
 		$Bin = $newBin;
 	}
 
-	if (!$detectedOS) {
+	if ($detectedOS) {
+		return;
+	}
 
-		$::d_os && Slim::Utils::Misc::msg("Auto-detecting OS: $^O\n");
+	if ($^O =~/darwin/i) {
 
-		if ($^O =~/darwin/i) {
+		$detectedOS = 'mac';
 
-			$detectedOS = 'mac';
+		initDetailsForOSX();
 
-			initDetailsForOSX();
+	} elsif ($^O =~ /^m?s?win/i) {
 
-		} elsif ($^O =~ /^m?s?win/i) {
+		$detectedOS = 'win';
 
-			$detectedOS = 'win';
+		initDetailsForWin32();
 
-			initDetailsForWin32();
+	} elsif ($^O =~ /linux/i) {
 
-		} elsif ($^O =~ /linux/i) {
+		$detectedOS = 'unix';
 
-			$detectedOS = 'unix';
-
-			initDetailsForLinux();
-
-		} else {
-
-			$detectedOS = 'unix';
-
-			initDetailsForUnix();
-		}
-
-		$::d_os && Slim::Utils::Misc::msg("I think it's \"$detectedOS\".\n");
+		initDetailsForLinux();
 
 	} else {
 
-		$::d_os && Slim::Utils::Misc::msg("OS detection skipped, using \"$detectedOS\".\n");
+		$detectedOS = 'unix';
+
+		initDetailsForUnix();
 	}
 }
 
-=head2 dirsFor( $dir)
+=head2 dirsFor( $dir )
 
- Return OS Specific directories.
- Argument $dir is a string to indicate which of the slimserver directories
- we need information for.
+Return OS Specific directories.
+
+Argument $dir is a string to indicate which of the slimserver directories we
+need information for.
 
 =cut
 
@@ -136,9 +131,30 @@ sub dirsFor {
 				$dir = lc($dir);
 			}
 
-			push @dirs, $ENV{'HOME'} . "/Library/SlimDevices/$dir";
+			push @dirs, "$ENV{'HOME'}/Library/SlimDevices/$dir";
 			push @dirs, "/Library/SlimDevices/$dir";
 			push @dirs, catdir($Bin, $dir);
+
+		} elsif ($dir eq 'log') {
+
+			# If SlimServer is installed systemwide.
+			if (-d "/Library/SlimDevices") {
+
+				mkpath("/Library/Logs/SlimServer");
+
+			} else {
+
+				mkpath("$ENV{'HOME'}/Library/Logs/SlimServer");
+			}
+
+			if (-d "/Library/SlimDevices") {
+
+				push @dirs, "/Library/Logs/SlimServer";
+
+			} elsif (-d "$ENV{'HOME'}/Library/Logs/SlimServer") {
+
+				push @dirs, "$ENV{'HOME'}/Library/Logs/SlimServer";
+			}
 
 		} else {
 
@@ -183,6 +199,10 @@ sub dirsFor {
 		if ($dir =~ /^(?:strings|revision|convert|types)$/) {
 
 			push @dirs, $Bin;
+
+		} elsif ($dir eq 'log') {
+
+			push @dirs, catdir($Bin, 'Logs');
 
 		} else {
 
@@ -256,6 +276,17 @@ sub initDetailsForOSX {
 	$osDetails{'os'}     = 'Macintosh';
 	$osDetails{'uid'}    = getpwuid($>);
 	$osDetails{'osArch'} = $Config{'myarchname'};
+
+	for my $dir (qw(
+		Library/SlimDevices/Plugins Library/SlimDevices/Graphics Library/SlimDevices/html
+		Library/SlimDevices/IR Library/SlimDevices/bin Library/Logs/SlimServer
+	)) {
+
+		mkpath("$ENV{'HOME'}/$dir");
+	}
+
+	unshift @INC, $ENV{'HOME'} . "/Library/SlimDevices";
+	unshift @INC, "/Library/SlimDevices/";
 }
 
 sub initDetailsForLinux {

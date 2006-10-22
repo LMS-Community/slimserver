@@ -10,6 +10,8 @@ package Slim::Utils::PerlRunTime;
 use strict;
 use Devel::Peek;
 
+use Slim::Utils::Log;
+
 =head1 NAME
 
 Slim::Utils::PerlRunTime
@@ -38,13 +40,11 @@ sub watchVariable {
 		-shadow   => 0,
 
 		-clear    => sub {
-			msg("In clear callback for $var!\n");
-			bt();
+			logBacktrace("In clear callback for $var!");
 		},
 
 		-destroy  => sub {
-			msg("In destroy callback for $var!\n");
-			bt();
+			logBacktrace("In destroy callback for $var!");
 		},
 
 		-fetch   => sub {

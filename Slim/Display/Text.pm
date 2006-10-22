@@ -797,6 +797,7 @@ sub sliderBar {
 sub setCustomChar {
 	Slim::Display::Lib::TextVFD::setCustomChar(@_);
 }
+
 =head1 SEE ALSO
 
 L<Slim::Display::Display>
@@ -806,10 +807,3 @@ L<Slim::Display::Lib::TextVFD>
 =cut
 
 1;
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:
-
-

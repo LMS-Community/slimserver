@@ -20,12 +20,17 @@ L<Slim::Music::PlaylistFolderScan>
 use strict;
 use base qw(Class::Data::Inheritable);
 
-use Slim::Utils::Misc;
+use Slim::Music::Import;
+use Slim::Utils::Log;
+use Slim::Utils::Prefs;
+use Slim::Utils::Scanner;
 
 {
 
 	__PACKAGE__->mk_classdata('stillScanning');
 }
+
+my $log = logger('scan.import');
 
 sub init {
 	my $class = shift;
@@ -52,14 +57,16 @@ sub startScan {
 	my $recurse = shift;
 
 	if (!defined $dir || !-d $dir) {
-		$::d_info && msg("Skipping playlist folder scan - playlistdir is undefined.\n");
+
+		$log->info("Skipping playlist folder scan - playlistdir is undefined.");
+
 		doneScanning();
 		return;
 	}
 
 	if ($class->stillScanning) {
 
-		$::d_info && msg("Scan already in progress. Restarting\n");
+		$log->info("Scan already in progress. Restarting");
 
 		$class->stillScanning(0);
 	} 
@@ -70,7 +77,7 @@ sub startScan {
 		$recurse = 1;
 	}
 
-	$::d_info && msg("Starting playlist folder scan\n");
+	$log->info("Starting playlist folder scan");
 
 	Slim::Utils::Scanner->scanDirectory({
 		'url'       => $dir,
@@ -87,15 +94,16 @@ sub doneScanning {
 	# If scan aborted, $stillScanning will already be false.
 	return if !$class->stillScanning;
 
-	$::d_info && msg("finished background scan of playlist folder.\n");
+	$log->info("Finished background scan of playlist folder.");
 
 	$class->stillScanning(0);
 
 	Slim::Music::Import->endImporter('PLAYLIST');
 }
+
 =head1 SEE ALSO
 
-
+L<Slim::Music::Import>
 
 =cut
 

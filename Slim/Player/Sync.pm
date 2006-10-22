@@ -9,11 +9,12 @@ package Slim::Player::Sync;
 
 use strict;
 use Scalar::Util qw(blessed);
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
-#
+my $log = logger('player.sync');
+
 # playlist synchronization routines
-#
 sub syncname {
 	my $client = shift;
 	my $ignore = shift;
@@ -25,15 +26,23 @@ sub syncname {
 		push @buddies , $client;
 	}
 
-	my @newbuddies;
-	foreach my $i (@buddies) {
-		if ($ignore && $i eq $ignore) { next; }
+	my @newbuddies = ();
+
+	for my $i (@buddies) {
+
+		if ($ignore && $i eq $ignore) {
+			next;
+		}
+
 		push @newbuddies, $i;
 	}
 				
 	my @names = map {$_->name() || $_->id()} @newbuddies;
-	$::d_sync && msg("syncname for " . $client->id() . " is " . (join ' & ',@names) . "\n");
+
+	$log->info(sprintf("syncname for %s is %s", $client->id, (join ' & ',@names)));
+
 	my $last = pop @names;
+
 	if (scalar @names) {
 		return (join ', ', @names) . ' & ' . $last;
 	} else {
@@ -43,20 +52,25 @@ sub syncname {
 
 sub syncwith {
 	my $client = shift;
+
 	if (isSynced($client)) {
+
 		my @buddies = syncedWith($client);
-		my @names = map {$_->name() || $_->id()} @buddies;
-		return join ' & ',@names;
-	} else { return undef;}
+		my @names   = map { $_->name || $_->id } @buddies;
+
+		return join(' & ', @names);
+	}
+
+	return undef;
 }
 
 # unsync a client from its buddies
 sub unsync {
 	my $client = shift;
 	my $temp = shift;
-	
-	$::d_sync && msg( $client->id() . ": unsyncing\n");
-	
+
+	$log->info($client->id . ": unsyncing");
+
 	# bail if we don't have sync state
 	if (!defined($client->syncgroupid)) {
 		return;
@@ -88,6 +102,7 @@ sub unsync {
 			@{$newmaster->slaves} = @{$client->slaves};
 
 		} else {
+
 			@{$newmaster->slaves} = ();
 			$lastInGroup = $newmaster;
 		}
@@ -105,13 +120,18 @@ sub unsync {
 		$client->audioFilehandle(undef);	
 
 	} elsif (isSlave($client)) {
+
 		# if we're a slave, remove us from the master's list
 		my $i = 0;
+
 		foreach my $c (@{($client->master())->slaves}) {
-			if ($c->id() eq $client->id()) {
+
+			if ($c->id eq $client->id) {
+
 				splice @{$client->master->slaves}, $i, 1;
 				last;
 			}
+
 			$i++;
 		}	
 	
@@ -125,37 +145,50 @@ sub unsync {
 		$lastInGroup = $master if !scalar(@{$master->slaves});
 
 	} else {
+
 		$lastInGroup = $client;
 	}
 
 	# check for any players in group which are off and hence not synced
 	my @players = Slim::Player::Client::clients();
-	my @inGroup;
+	my @inGroup = ();
 	
 	foreach my $other (@players) {
+
 		next if ($other->power || $other eq $client );
+
 		push @inGroup, $other if (Slim::Utils::Prefs::clientGet($other,'syncgroupid') == $syncgroupid);
 	}
+
 	if (scalar @inGroup == 1) {
+
 		if ($lastInGroup && $lastInGroup != $inGroup[0]) {
+
 			# not last in group as other off players exist
 			$lastInGroup = undef;
+
 		} else {
+
 			# off player is last in group
 			$lastInGroup = $inGroup[0];
 		}
+
 	} elsif (scalar @inGroup > 1) {
+
 		# multiple off players in group, remaining player is not last
 		$lastInGroup = undef;
 	}
 
 	# when we unsync, we stop, but save settings first if we're doing at temporary unsync.
-
 	if ($temp) {
+
 		saveSyncPrefs($client);
 		$client->execute(["stop"]);
+
 	} else {
+
 		$client->execute(["stop"]);
+
 		# delete sync prefs for both this client and remaining client if it is last in group
 		deleteSyncPrefs($client) unless ($client == $lastInGroup);
 		deleteSyncPrefs($lastInGroup, 1) if $lastInGroup;
@@ -167,10 +200,11 @@ sub sync {
 	my $client = shift;
 	my $buddy = shift;
 	
-	$::d_sync && msg($client->id() .": syncing\n");
+	$log->info($client->id .": syncing");
 
+	# we're already synced up!
 	if (isSynced($client) && isSynced($buddy) && master($client) eq master($buddy)) {
-		return;  # we're already synced up!
+		return;
 	}
 	
 	unsync($client);
@@ -181,8 +215,11 @@ sub sync {
 	if ($buddy->prefGet('silent')) {
 		($client, $buddy) = ($buddy, $client);
 	}
-	
-	msg($buddy->id . " is silent and we're trying to make it a master!\n") if ($buddy->prefGet('silent'));
+
+	if ($buddy->prefget('silent')) {
+
+		$log->warn($buddy->id . " is silent and we're trying to make it a master!");
+	}
 	
 	$client->master($buddy);
 	
@@ -200,22 +237,24 @@ sub sync {
 }
 
 sub saveSyncPrefs {
-	
 	my $client = shift;
-	my $clientID = $client->id();
 
 	if (isSynced($client)) {
 	
 		if (!defined($client->master->syncgroupid)) {
 			$client->master->syncgroupid(int(rand 999999999));
 		}
-		
+
 		my $masterID = $client->master->syncgroupid;
+		my $clientID = $client->id;
+
 		$client->syncgroupid($masterID);
+
 		# Save Status to Prefs file
-		$::d_sync && msg("Saving $clientID as a slave to $masterID\n");
-		$client->prefSet('syncgroupid',$masterID);
-		$client->master->prefSet('syncgroupid',$masterID);
+		$log->info("Saving $clientID as a slave to $masterID");
+
+		$client->prefSet('syncgroupid', $masterID);
+		$client->master->prefSet('syncgroupid', $masterID);
 		
 	}
 }
@@ -224,15 +263,18 @@ sub deleteSyncPrefs {
 	my $client = shift;
 	my $last   = shift;
 
-	my $clientID = $client->id();
+	my $clientID    = $client->id();
 	my $syncgroupid = $client->syncgroupid;
 
 	if ($last) {
-		$::d_sync && msg("Deleting Sync group prefs for group: $syncgroupid\n");
+
+		$log->info("Deleting Sync group prefs for group: $syncgroupid");
+
 		Slim::Utils::Prefs::delete("$syncgroupid-Sync");
 	}
 
-	$::d_sync && msg("Clearing Sync master for $clientID\n");
+	$log->info("Clearing Sync master for $clientID");
+
 	$client->syncgroupid(undef);
 	$client->prefDelete('syncgroupid');
 }
@@ -243,6 +285,7 @@ sub restoreSync {
 	my $masterID = ($client->prefGet('syncgroupid'));
 
 	if ($masterID && ($client->power() || $client->prefGet('syncPower'))) {
+
 		my @players = Slim::Player::Client::clients();
 
 		foreach my $other (@players) {
@@ -265,54 +308,75 @@ sub restoreSync {
 }
 
 sub syncedWith {
-	my $client = shift;
+	my $client = shift || return undef;;
+
 	my @buddies = ();
-	my $otherclient;
-	
-	return undef unless $client;
 	
 	# get the master and its slaves
 	if (isSlave($client)) {
+
 		push @buddies, $client->master;
-		foreach $otherclient (@{$client->master()->slaves}) {
-			next if ($client == $otherclient);	# skip ourself
-			push @buddies, $otherclient;
-			$::d_sync_v && msg($client->id() .": is synced with other slave " . $otherclient->id() . "\n");
+
+		for my $otherclient (@{$client->master()->slaves}) {
+
+			# skip ourself.
+			if ($client != $otherclient) {
+
+				push @buddies, $otherclient;
+
+				$log->debug($client->id . ": is synced with other slave " . $otherclient->id);
+			}
 		}
 	}
 	
 	# get our slaves
-	foreach $otherclient (@{$client->slaves()}) {
+	for my $otherclient (@{$client->slaves()}) {
+
 		push @buddies, $otherclient;
-		$::d_sync_v && msg($client->id() . " : is synced with its slave " . $otherclient->id() . "\n");
+
+		$log->debug($client->id . ": is synced with it's slave " . $otherclient->id);
 	}
-	
+
 	return @buddies;
 }
 
 sub isSyncedWith {
 	my $client = shift;
-	my $buddy = shift;
+	my $buddy  = shift;
 	
-	foreach my $i (syncedWith($client)) {
+	for my $i (syncedWith($client)) {
+
 		if ($buddy == $i) {
-			$::d_sync_v && msg($client->id() . " : is synced with " . $buddy->id() . "\n");
+
+			$log->debug($client->id . ": is synced with " . $buddy->id);
+
 			return 1;
 		}
 	}
-	$::d_sync_v && msg($client->id() . " : is synced NOT with " . $buddy->id() . "\n");
+
+	$log->debug($client->id . ": is NOT synced with " . $buddy->id);
+
 	return 0;
 }
 
 sub canSyncWith {
 	my $client = shift;
+
 	my @buddies = ();
 
 	if (blessed($client) && $client->isPlayer()) {
-		foreach my $otherclient (Slim::Player::Client::clients()) {
-			next if ($client eq $otherclient);					# skip ourself
-			next if (!$otherclient->isPlayer());  # we only sync hardware devices
-			next if (isSlave($otherclient)); 					# only include masters and un-sync'ed clients.
+
+		for my $otherclient (Slim::Player::Client::clients()) {
+
+			# skip ourself
+			next if ($client eq $otherclient);
+
+			# we only sync slimproto devices
+			next if (!$otherclient->isPlayer());
+
+			# only include masters and un-sync'ed clients.
+			next if (isSlave($otherclient));
+
 			push @buddies, $otherclient;
 		}
 	}
@@ -323,30 +387,35 @@ sub canSyncWith {
 sub uniqueVirtualPlayers {
 	my @players = ();
 
-	foreach my $player (Slim::Player::Client::clients()) {
-		next if (isSlave($player)); 					# only include masters and un-sync'ed clients.
+	for my $player (Slim::Player::Client::clients()) {
+
+		# only include masters and un-sync'ed clients.
+		next if (isSlave($player));
+
 		push @players, $player;
 	}
+
 	return @players;
 }
 
 # checkSync:
 #   syncs up the start of playback of synced clients
 #   resyncs clients between songs if some clients have multiple outstanding chunks
-#
 sub checkSync {
 	my $client = shift;
-	
-#	$::d_sync && msg("checkSync: Player " . $client->id() . " has " . scalar(@{$client->chunks}) . " chunks, and " . $client->usage() . "% full buffer \n");
+
+	$log->debug(sprintf("Player %s has %d chunks and %d%% full buffer", 
+		$client->id, scalar(@{$client->chunks}), $client->usage
+	));
 
 	if (!isSynced($client) || $client->prefGet('silent')) {
 		return;
 	}
-	
+
 	return if $client->playmode eq 'stop';
-	
+
 	my @group = ($client, syncedWith($client));
-	
+
 	# if we're synced and waiting for the group's buffers to fill,
 	# check if our buffer has passed the 64K level. If so, indicate
 	# that we're ready to be unpaused.  If everyone else is now ready,
@@ -371,52 +440,70 @@ sub checkSync {
 
 			my $fullness = $client->bufferFullness();
 			my $usage = $client->usage();
-			$::d_sync && msg($client->id()." checking buffer fullness: $fullness (threshold: $threshold)\n");
+
+			$log->info($client->id . " checking buffer fullness: $fullness (threshold: $threshold)");
 
 			if 	((defined($fullness) && $fullness > $threshold) ||
 				 (defined($usage) && $usage > 0.90)) {
+
 				$client->readytosync(1);
 		
-				$::d_sync && msg($client->id()." is ready to sync ".Time::HiRes::time()."\n");
-				my $allReady=1;
-				my $everyclient;
-				foreach $everyclient (@group) {
-					if (!($everyclient->readytosync)) {
-						$allReady=0;
+				$log->info($client->id . " is ready to sync " . Time::HiRes::time());
+
+				my $allReady = 1;
+
+				for my $everyclient (@group) {
+
+					if (!$everyclient->readytosync) {
+						$allReady = 0;
 					}
 				}
 			
 				if ($allReady) {
-					$::d_sync && msg("all clients ready to sync now. unpausing them.\n");
 
-					foreach $everyclient (@group) {
-						$everyclient->resume();
+					$log->info("all clients ready to sync now. unpausing them.");
+
+					for my $everyclient (@group) {
+						$everyclient->resume;
 					}
 				}
 			}
 		}
+
 	# now check to see if every player has run out of data...
 	} elsif ($client->readytosync == -1) {
-		$::d_sync && msg($client->id() . " has run out of data, checking to see if we can push on...\n");
 
-		my $allReady=1;
-		my $everyclient;
-		foreach $everyclient (@group) {
+		$log->info($client->id . " has run out of data, checking to see if we can push on...");
+
+		my $allReady = 1;
+
+		for my $everyclient (@group) {
+
 			if ($everyclient->readytosync != -1) {
-				$allReady=0;
+
+				$allReady = 0;
 			}
 		}
+
 		if ($allReady) {
-			$::d_sync && msg("everybody's run out of data.  Let's start them up...\n");
-			foreach $everyclient (@group) {
+
+			$log->info("everybody's run out of data.  Let's start them up...");
+
+			for my $everyclient (@group) {
 				$everyclient->readytosync(0);
 			}
+
 			if ($client->playmode ne 'playout-stop') {
+
 				Slim::Player::Source::skipahead($client);
+
 			} else {
-				$::d_sync && msg("End of playlist, and players have played out. Going to playmode stop.\n");
+
+				$log->info("End of playlist, and players have played out. Going to playmode stop.");
+
 				Slim::Player::Source::playmode($client,'stop');
-				$client->update();
+
+				$client->update;
 			}
 		}
 	}
@@ -424,6 +511,7 @@ sub checkSync {
 
 sub isMaster {
 	my $client = shift;
+
 	if (scalar(@{$client->slaves}) > 0) {
 		return 1;
 	} else {
@@ -433,24 +521,24 @@ sub isMaster {
 
 sub master {
 	my $client = shift;
+
 	if (isMaster($client)) {
 		return $client;
 	} 
+
 	return $client->master;
 }
 
 sub slaves {
-	my $client = shift;
-	return undef unless $client;
-	
+	my $client = shift || return undef;
+
 	return @{$client->slaves};
 }
 
-
 # returns the master if it's a slave, otherwise returns undef
 sub isSlave {
-	my $client = shift;
-	return undef unless $client;
+	my $client = shift || return undef;
+
 	return $client->master;
 }
 
@@ -464,39 +552,35 @@ sub masterOrSelf {
 
 sub isSynced {
 	my $client = shift;
+
 	return (scalar(@{$client->slaves}) || $client->master);
 }
 
 sub syncGroupPref {
-	my $client = shift;
-	my $pref = shift;
-	my $val = shift;
+	my ($client, $pref, $val) = @_;
 
-	my $syncgroupid = $client->prefGet('syncgroupid');
+	my $syncgroupid = $client->prefGet('syncgroupid') || return undef;
 
-	if ($syncgroupid) {
-		unless ($val) {
-			my $ret = Slim::Utils::Prefs::getInd("$syncgroupid-Sync",$pref);
-			if (!defined($ret)) {
-				$ret = masterOrSelf($client)->prefGet($pref);
-				$::d_sync && msg("Creating Sync group pref for: $pref group: $syncgroupid\n");
-				Slim::Utils::Prefs::set("$syncgroupid-Sync",$ret,$pref);
-			}
-			return $ret;
-		} else {
-			Slim::Utils::Prefs::set("$syncgroupid-Sync",$val,$pref);
-		}
+	if ($val) {
+		Slim::Utils::Prefs::set("$syncgroupid-Sync", $val, $pref);
 
-	} else {
 		return undef;
 	}
+
+	my $ret = Slim::Utils::Prefs::getInd("$syncgroupid-Sync", $pref);
+
+	if (!defined($ret)) {
+
+		$ret = masterOrSelf($client)->prefGet($pref);
+
+		$log->info("Creating Sync group pref for: $pref group: $syncgroupid");
+
+		Slim::Utils::Prefs::set("$syncgroupid-Sync", $ret, $pref);
+	}
+
+	return $ret;
 }
 				
-
 1;
+
 __END__
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

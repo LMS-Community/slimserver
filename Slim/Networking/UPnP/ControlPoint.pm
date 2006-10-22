@@ -21,7 +21,7 @@ use Socket;
 
 use Slim::Networking::Select;
 use Slim::Networking::Async::Socket::UDP;
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 
 # all devices we currently know about
 our $devices = {};
@@ -63,7 +63,8 @@ MX: $mx
 	);
 
 	if ( !$sock ) {
-		warn "UPnP: Failed to initialize multicast socket, disabling UPnP.\n";
+
+		logWarning("Failed to initialize multicast socket, disabling UPnP.");
 		return;
 	}
 
@@ -85,7 +86,7 @@ MX: $mx
 sub removeDevice {
 	my ( $device, $callback ) = @_;
 		
-	$::d_upnp && msg("UPnP: Device went away: " . $device->getfriendlyname . "\n");
+	logger('network.upnp')->debug("Device went away: " . $device->getfriendlyname);
 
 	if ( $callback ) {
 		$callback->( $device, 'remove' );
@@ -99,6 +100,7 @@ sub _readResult {
 	my $sock = shift;
 	
 	my $ssdp_res_msg;
+	my $log = logger('network.upnp');
 	
 	eval {
 		local $SIG{ALRM} = sub { die "recv timed out"; };
@@ -106,8 +108,10 @@ sub _readResult {
 		$sock->recv( $ssdp_res_msg, 4096 ) or die "recv failed: $!";
 		alarm 0;
 	};
+
 	if ( $@ ) {
-		msg("UPnP: Read search result failed: $@\n");
+
+		$log->warn("Read search result failed: $@");
 		return;
 	}
 	
@@ -131,10 +135,12 @@ sub _readResult {
 		# ignore failed devices
 		if ( my $retry = $failedDevices->{ $dev_location } ) {
 			if ( time < $retry ) {
-				$::d_upnp && msgf("UPnP: Notify from previously failed device at %s, ignoring for %s seconds\n",
+
+				$log->debug(sprintf("Notify from previously failed device at %s, ignoring for %s seconds",
 					$dev_location,
 					$retry - time,
-				);
+				));
+
 				return;
 			}
 			else {
@@ -160,10 +166,7 @@ sub _readResult {
 					my $device = Net::UPnP::Device->new();
 					$device->setssdp( $ssdp_res_msg );
 					
-					$::d_upnp && msgf("UPnP: Notify from new device [%s at %s]\n",
-						$USN,
-						$dev_location,
-					);
+					$log->debug(sprintf("Notify from new device [%s at %s]", $USN, $dev_location));
 		
 					# make an async request for the device description XML document
 					_getDeviceDescription( {
@@ -228,10 +231,10 @@ sub _gotDeviceDescription {
 	# is it new?
 	if ( !$devices->{ $udn } ) {
 		
-		$::d_upnp && msgf("UPnP: New device found: %s [%s]\n",
+		logger('network.upnp')->debug(sprintf("New device found: %s [%s]",
 			$device->getfriendlyname,
 			$device->getlocation,
-		);
+		));
 		
 		# add the device to our list of known devices
 		$devices->{ $udn } = $device;
@@ -253,7 +256,7 @@ sub _gotError {
 	# keep track of failures
 	$failedDevices->{ $args->{location} } = time + $FAILURE_RETRY_TIME;
 	
-	$::d_upnp && msg("UPnP: Error retrieving device description: $error\n");
+	logger('network.upnp')->error("Error retrieving device description: $error");
 }
 
 sub _parseUSNHeader {
@@ -328,7 +331,7 @@ sub gotError {
 	my $error = $http->error;
 	my $url   = $http->url;
 	
-	msg("UPnP: Error retrieving $url: $error\n");
+	logger("")->error("Error retrieving $url: $error");
 	
 	my $callback    = $args->{callback};
 	my $passthrough = $args->{passthrough} || [];
@@ -385,6 +388,5 @@ sub _soap_request {
 
 	return ( $ctrl_url, $soap_action, $soap_content );
 }
-
 
 1;

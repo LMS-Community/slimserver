@@ -13,6 +13,7 @@ use File::Spec::Functions qw(:ALL);
 use HTTP::Status;
 
 use Slim::Player::TranscodingHelper;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::Strings qw(string);
@@ -20,6 +21,8 @@ use Slim::Utils::Validate;
 
 our %setup = ();
 our @newPlayerChildren;
+
+my $log = logger('prefs');
 
 # XXXXXX This code is brain damaged. It needs to be gutted and rewritten.
 
@@ -82,6 +85,7 @@ our @newPlayerChildren;
 # 'options' => hash of value => text pairs to be used in building a list (no default)
 # 'optionSort' => controls sort order of the options, one of K (key), KR (key reversed), V (value), VR (value reversed),
 #	 NK (numeric key), NKR (numeric key reversed), NV (numeric value), NVR (numeric value reversed) - (default K)
+#	 S - no string subsitution.
 # 'dontSet' => flag to suppress actually changing the preference
 # 'currentValue' => sub ref taking $client,$key,$ind as parameters, returns current value of preference.  Only needed for preferences which don't use Slim::Utils::Prefs
 # 'noWarning' => flag to suppress change information
@@ -1337,7 +1341,10 @@ sub initSetupConfig {
 
 	,'BASIC_SERVER_SETTINGS' => {
 
-		'children' => [qw(BASIC_SERVER_SETTINGS INTERFACE_SETTINGS BEHAVIOR_SETTINGS FORMATS_SETTINGS FORMATTING_SETTINGS SECURITY_SETTINGS PERFORMANCE_SETTINGS NETWORK_SETTINGS DEBUGGING_SETTINGS)],
+		'children' => [qw(BASIC_SERVER_SETTINGS INTERFACE_SETTINGS BEHAVIOR_SETTINGS 
+				FORMATS_SETTINGS FORMATTING_SETTINGS SECURITY_SETTINGS 
+				PERFORMANCE_SETTINGS NETWORK_SETTINGS DEBUGGING_SETTINGS)],
+
 		'title'    => string('BASIC_SERVER_SETTINGS'),
 		'singleChildLinkText' => string('ADDITIONAL_SERVER_SETTINGS'),
 
@@ -1423,7 +1430,7 @@ sub initSetupConfig {
 						$rescanType = [qw(rescan playlists)];
 					}
 
-					$::d_scan && msgf("Setup::rescan - initiating scan of type: [%s]\n", $rescanType->[0]);
+					logger('scan.scanner')->info("Initiating scan of type: [$rescanType->[0]]");
 
 					Slim::Control::Request::executeRequest($client, $rescanType);
 				},
@@ -1789,7 +1796,7 @@ sub initSetupConfig {
 				'onChange' => sub {
 					my $client = shift;
 
-					$::d_scan && msgf("Setup::ignoredarticles changed - initiating scan of type: [wipecache]\n");
+					logWarning("ignoredArticles changed - starting wipe scan");
 
 					Slim::Control::Request::executeRequest($client, ['wipecache']);
 				},
@@ -1801,7 +1808,7 @@ sub initSetupConfig {
 				'onChange' => sub {
 					my $client = shift;
 
-					$::d_scan && msgf("Setup::splitList changed - initiating scan of type: [wipecache]\n");
+					logWarning("splitList changed - starting wipe scan");
 
 					Slim::Control::Request::executeRequest($client, ['wipecache']);
 				},
@@ -1910,7 +1917,7 @@ sub initSetupConfig {
 				'onChange' => sub {
 					my $client = shift;
 
-					$::d_scan && msgf("Setup::groupdiscs changed - initiating scan of type: [wipecache]\n");
+					logWarning("groupDiscs changed - starting wipe scan");
 
 					Slim::Control::Request::executeRequest($client, ['wipecache']);
 				},
@@ -2255,57 +2262,11 @@ sub initSetupConfig {
 						,'validateArgs' => [1,4096,1,1] #limit to 4096
 					}
 			}
-		} #end of setup{'network'} hash
-	,'DEBUGGING_SETTINGS' => {
-		'title' => string('DEBUGGING_SETTINGS')
-		,'parent' => 'BASIC_SERVER_SETTINGS'
-		,'postChange' => sub {
-					my ($client,$paramref,$pageref) = @_;
-					no strict 'refs';
-					foreach my $debugItem (@{$pageref->{'Groups'}{'Default'}{'PrefOrder'}}) {
-						my $debugSet = "::" . $debugItem;
+		}, #end of setup{'network'} hash
 
-						# Lame. Our debugging sucks.
-						if ($debugItem eq 'd_sql') {
-							Slim::Schema->toggleDebug($$debugSet);
-						}
+	# This is handled by handleDebugSettings()
+	'DEBUGGING_SETTINGS' => { },
 
-						if (!exists $paramref->{$debugItem}) {
-							$paramref->{$debugItem} = $$debugSet;
-						}
-					}
-				}
-		,'GroupOrder' => ['Default']
-		,'Groups' => {
-			'Default' => {
-					'PrefOrder' => [] # will be filled after hash is set up
-					,'Suppress_PrefHead' => 1
-#					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'PrefsInTable' => 1
-					,'GroupDesc' => 'SETUP_GROUP_DEBUG_DESC'
-				}
-			}
-		,'Prefs' => {
-			'd_' => { #template for the debug settings
-					'validate' => \&Slim::Utils::Validate::trueFalse
-					,'inputTemplate' => 'setup_input_chk.html'
-					,'dontSet' => 1
-					,'currentValue' => sub {
-								my ($client,$key,$ind) = @_;
-								no strict 'refs';
-								$key = '::' . $key;
-								return $$key || 0;
-							}
-					,'onChange' => sub {
-								my ($client,$changeref,$paramref,$pageref,$key,$ind) = @_;
-								no strict 'refs';
-								my $key2 = '::' . $key;
-								$$key2 = $changeref->{$key}{'new'};
-							}
-				}
-			}
-		} #end of setup{'debug'} hash
 	); #end of setup hash
 
 	# Bug 2724 - only show the mDNS settings if we have a binary for it.
@@ -2316,30 +2277,20 @@ sub initSetupConfig {
 	
 	# Add forking performance options for non-Windows
 	if ( $^O !~ /Win32/ ) {
+
 		push @{ $setup{'PERFORMANCE_SETTINGS'}->{'Groups'}->{'Default'}->{'PrefOrder'} },
 			'forkedWeb',
 			'forkedStreaming';
 	}
 
-	# This hack pulls the --d_* debug keys from the main package and sets
-	# their current value.
-	foreach my $key (sort keys %main:: ) {
-		next unless $key =~ /^d_/;
-		my %debugTemp = %{$setup{'DEBUGGING_SETTINGS'}{'Prefs'}{'d_'}};
-		push @{$setup{'DEBUGGING_SETTINGS'}{'Groups'}{'Default'}{'PrefOrder'}},$key;
-		$setup{'DEBUGGING_SETTINGS'}{'Prefs'}{$key} = \%debugTemp;
-		$setup{'DEBUGGING_SETTINGS'}{'Prefs'}{$key}{'PrefChoose'} = $key;
-		$setup{'DEBUGGING_SETTINGS'}{'Prefs'}{$key}{'changeIntro'} = $key;
-	}
-
 	if (scalar(keys %{Slim::Utils::PluginManager::installedPlugins()})) {
 		
-		Slim::Web::Setup::addChildren('BASIC_SERVER_SETTINGS','PLUGINS');
+		addChildren('BASIC_SERVER_SETTINGS', 'PLUGINS');
 
 		# XXX This should be added conditionally based on whether there
 		# are any radio plugins. We need to find a place to make that
 		# check *after* plugins have been correctly initialized.
-		Slim::Web::Setup::addChildren('BASIC_SERVER_SETTINGS','RADIO');
+		addChildren('BASIC_SERVER_SETTINGS', 'RADIO');
 	}
 }
 
@@ -2348,79 +2299,153 @@ sub initSetup {
 	fillAlarmOptions();
 }
 
+sub handleDebugSettings {
+	my ($client, $paramRef, $pageSetup) = @_;
+
+	# If this is a settings update
+	if ($paramRef->{'submit'}) {
+
+		my $categories = Slim::Utils::Log->allCategories;
+
+		for my $category (keys %{$categories}) {
+
+			Slim::Utils::Log->setLogLevelForCategory(
+				$category, $paramRef->{$category}
+			);
+		}
+
+		# $paramRef might have the overwriteCustomConfig flag.
+		Slim::Utils::Log->reInit($paramRef);
+	}
+
+	# Pull in the dynamic debugging levels.
+	my $debugCategories = Slim::Utils::Log->allCategories;
+	my @validLogLevels  = Slim::Utils::Log->validLevels;
+	my @categories      = (); 
+
+	for my $debugCategory (sort keys %{$debugCategories}) {
+
+		my $string = Slim::Utils::Log->descriptionForCategory($debugCategory);
+
+		push @categories, {
+			'label'   => string($string),
+			'name'    => $debugCategory,
+			'current' => $debugCategories->{$debugCategory},
+		};
+	}
+
+	$paramRef->{'page'}       = 'DEBUGGING_SETTINGS';
+	#$paramRef->{'categories'} = [ sort { $a->{'label'} cmp $b->{'label'} } @categories ];
+	$paramRef->{'categories'} = \@categories;
+	$paramRef->{'logLevels'}  = \@validLogLevels;
+
+	# Needed to generate the drop down settings chooser list.
+	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
+
+	$paramRef->{'debugServerLog'}  = Slim::Utils::Log->serverLogFile;
+	$paramRef->{'debugScannerLog'} = Slim::Utils::Log->scannerLogFile;
+
+	return Slim::Web::HTTP::filltemplatefile('debugging.html', $paramRef);
+}
+
 sub getSetupOptions {
 	my ($category, $pref) = @_;
+
 	return $setup{$category}{'Prefs'}{$pref}{'options'};
 }
 
 sub getPlayingDisplayModes {
 	my $client = shift || return {};
 	
-	my $displayHash = {	'-1' => ' '	};
+	my $displayHash = { '-1' => ' ' };
 	my $modes = $client->display->modes();
 
 	foreach my $i (0..$client->display->nmodes()) {
+
 		my $desc = $modes->[$i]{'desc'};
+
 		foreach my $j (0..$#{$desc}){
 			$displayHash->{"$i"} .= ' ' if ($j > 0);
 			$displayHash->{"$i"} .= string(@{$desc}[$j]);
 		}
 	}
+
 	return $displayHash;
 }
 
 sub getVisualModes {
 	my $client = shift;
 	
-	return {} unless (defined $client && $client->display->isa('Slim::Display::Transporter'));
-	
-	my $displayHash = {	'-1' => ' '	};
+	if (!defined $client || !$client->display->isa('Slim::Display::Transporter')) {
+
+		return {};
+	}
+
+	my $displayHash = { '-1' => ' ' };
+
 	my $modes = $client->display->visualizerModes();
 
 	foreach my $i (0..$client->display->visualizerNModes()) {
+
 		my $desc = $modes->[$i]{'desc'};
+
 		foreach my $j (0..$#{$desc}){
+
 			$displayHash->{"$i"} .= ' ' if ($j > 0);
 			$displayHash->{"$i"} .= string(@{$desc}[$j]);
 		}
 	}
+
 	return $displayHash;
 }
 
 sub getFontOptions {
 	my $client = shift;
 
-	return {} if (!$client || !exists &Slim::Display::Lib::Fonts::fontnames);
+	if (!$client || !exists &Slim::Display::Lib::Fonts::fontnames) {
+
+		return {};
+	}
 
 	my $fonts = Slim::Display::Lib::Fonts::fontnames();
 	my %allowedfonts;
 	my $displayHeight = $client->displayHeight();
 
 	foreach my $f (@$fonts) {
+
 		if ($displayHeight == Slim::Display::Lib::Fonts::fontheight($f . '.2') && 
 			Slim::Display::Lib::Fonts::fontchars($f . '.2') > 255 ) {
+
 			$allowedfonts{$f} = $f;
 		}
 	}
-	
+
 	$allowedfonts{'-1'} = ' ';
 
 	return \%allowedfonts;
 }
 
 sub getBrightnessOptions {
+	my $client = shift;
+
 	my %brightnesses = (
-						'0' => '0 ('.string('BRIGHTNESS_DARK').')',
-						'1' => '1',
-						'2' => '2',
-						'3' => '3',
-						'4' => '4 ('.string('BRIGHTNESS_BRIGHTEST').')',
-						);
-	my $client = shift || return \%brightnesses;
+		'0' => '0 ('.string('BRIGHTNESS_DARK').')',
+		'1' => '1',
+		'2' => '2',
+		'3' => '3',
+		'4' => '4 ('.string('BRIGHTNESS_BRIGHTEST').')',
+	);
+
+	if (!defined $client) {
+
+		return \%brightnesses;
+	}
+
 	if (defined $client->maxBrightness) {
 		$brightnesses{'4'} = '4';
 		$brightnesses{$client->maxBrightness} = $client->maxBrightness . ' (' . string('BRIGHTNESS_BRIGHTEST').')';
 	}
+
 	return \%brightnesses;
 }
 
@@ -2528,9 +2553,10 @@ sub fillAlarmOptions {
 }
 
 sub fillSetupOptions {
-	my ($set,$pref,$hash) = @_;
-	$setup{$set}{'Prefs'}{$pref}{'options'} = {hash_of_prefs($hash)};
-	$setup{$set}{'Prefs'}{$pref}{'validateArgs'} = [$setup{$set}{'Prefs'}{$pref}{'options'}];
+	my ($set, $pref, $hash) = @_;
+
+	$setup{$set}{'Prefs'}{$pref}{'options'}      = { hash_of_prefs($hash) };
+	$setup{$set}{'Prefs'}{$pref}{'validateArgs'} = [ $setup{$set}{'Prefs'}{$pref}{'options'} ];
 }
 
 sub playerChildren {
@@ -2552,7 +2578,9 @@ sub playerChildren {
 }
 
 sub addPlayerChild {
-	push @newPlayerChildren,shift;
+	my $child = shift;
+
+	push @newPlayerChildren, $child;
 }
 
 sub menuItemName {
@@ -2633,6 +2661,13 @@ sub setup_HTTP {
 		$client = undef;
 	}
 
+	# XXXX - ugly hack. The debug settings page needs a more flexible
+	# layout than the current Setup code can give us. So call a different handler.
+	if (defined $pagesetup{'handler'}) {
+
+		return &{$pagesetup{'handler'}}($client, $paramref, \%pagesetup);
+	}
+
 	if (defined $pagesetup{'preEval'}) {
 		&{$pagesetup{'preEval'}}($client,$paramref,\%pagesetup);
 	}
@@ -2646,7 +2681,7 @@ sub setup_HTTP {
 	processChanges($client,$changed,$paramref,\%pagesetup);
 
 	if (defined $pagesetup{'postChange'}) {
-			&{$pagesetup{'postChange'}}($client,$paramref,\%pagesetup);
+		&{$pagesetup{'postChange'}}($client,$paramref,\%pagesetup);
 	}
 
 	#fill the option lists
@@ -2655,7 +2690,7 @@ sub setup_HTTP {
 	buildHTTP($client,$paramref,\%pagesetup);
 	
 	$paramref->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
-	
+
 	return Slim::Web::HTTP::filltemplatefile('setup.html', $paramref);
 }
 
@@ -2860,7 +2895,7 @@ sub buildHTTP {
 # This function builds the list of settings page links. 
 # in future this will be done at startup and by plugins where needed
 sub buildLinks {
-	my ($paramref,@pages) = @_;
+	my ($paramref, @pages) = @_;
 	
 	for my $page (@pages) {
 		
@@ -2871,14 +2906,25 @@ sub buildLinks {
 		# Grab player tabs.  
 		# TODO do this on startup only and allow plugins to add themselves
 		if (defined $paramref->{'playerid'}) {
+
 			Slim::Web::Pages->addPageLinks("playersetup",{"$page"  => "setup.html?page=$page"});
+
 			for my $playerplugin (@newPlayerChildren) {
+
 				#Slim::Web::Pages->addPageLinks("playerplugin",{"$playerplugin"  => "setup.html?page=$playerplugin"});
 			}
 		
-		# global setup pages, need to do this at startup too
 		} else {
-			Slim::Web::Pages->addPageLinks("setup",{"$page"  => "setup.html?page=$page"});
+
+			# global setup pages, need to do this at startup too
+			if ($page eq "DEBUGGING_SETTINGS") {
+
+				Slim::Web::Pages->addPageLinks('setup', { 'DEBUGGING_SETTINGS' => 'debugging.html' });
+
+			} else {
+
+				Slim::Web::Pages->addPageLinks('setup', { $page => "setup.html?page=$page" });
+			}
 		}
 	}
 }
@@ -3034,7 +3080,9 @@ sub skins {
 	my %skinlist = ();
 
 	foreach my $templatedir (Slim::Web::HTTP::HTMLTemplateDirs()) {
+
 		foreach my $dir (Slim::Utils::Misc::readDirectory($templatedir)) {
+
 			# reject CVS, html, and .svn directories as skins
 			next if $dir =~ /^(?:cvs|html|\.svn)$/i;
 			next if $forUI && $dir =~ /^x/;
@@ -3043,9 +3091,8 @@ sub skins {
 			# BUG 4171: Disable dead Default2 skin, in case it was left lying around
 			next if $dir =~ /^(?:Default2)$/i;
 
+			logger('network.http')->info("skin entry: $dir");
 
-			$::d_http && msg(" skin entry: $dir\n");
-			
 			if ($dir eq Slim::Web::HTTP::defaultSkin()) {
 				$skinlist{$dir} = string('DEFAULT_SKIN');
 			} elsif ($dir eq Slim::Web::HTTP::baseSkin()) {
@@ -3152,7 +3199,9 @@ sub setup_changes_HTTP {
 	}
 
 	foreach my $key (keys %{$changeref}) {
+
 		my ($keyA,$keyI);
+
 		# split up array preferences into the base + index
 		# debug variables start with d_ and should not be split
 		if ($key =~ /^(?!d_)(.+?)(\d*)$/) {
@@ -3162,50 +3211,82 @@ sub setup_changes_HTTP {
 			$keyA = $key;
 			$keyI = '';
 		}
+
 		my $changemsg  = undef;
 		my $changedval = undef;
 		my $changebase = undef;
+
 		if (exists $settingsref->{$keyA}{'noWarning'}) {
 			next;
 		}
 		
 		if (exists $settingsref->{$keyA}{'changeIntro'}) {
+
 			$changebase = Slim::Utils::Strings::getString($settingsref->{$keyA}{'changeIntro'});
+
 		} elsif (Slim::Utils::Strings::stringExists('SETUP_' . uc($keyA) . '_OK')) {
+
 			$changebase = string('SETUP_' . uc($keyA) . '_OK');
+
 		} elsif (Slim::Utils::Strings::stringExists('SETUP_' . uc($keyA))) {
+
 			$changebase = string('SETUP_' . uc($keyA)) . ($keyI ne '' ? " $keyI" : '') . string('COLON');
+
 		} else {
+
 			$changebase = $keyA . ($keyI ne '' ? " $keyI" : '') . string('COLON');
 		}
+
 		$changemsg = sprintf($changebase,$keyI);
 		$changemsg .= '<p>';
-		#use external value from 'options' hash
+
+		# use external value from 'options' hash
+
 		if (exists $settingsref->{$keyA}{'changeoptions'}) {
+
 			if ($settingsref->{$keyA}{'changeoptions'}) {
+
 				$changedval = $settingsref->{$keyA}{'changeoptions'}{$changeref->{$key}{'new'}};
 			}
+
 		} elsif (exists $settingsref->{$keyA}{'options'}) {
+
 			if (ref $settingsref->{$keyA}{'options'} eq 'CODE') {
+
 				$changedval = &{$settingsref->{$keyA}{'options'}}($client)->{$changeref->{$key}{'new'}};
+
 			} else {
+
 				$changedval = $settingsref->{$keyA}{'options'}{$changeref->{$key}{'new'}};
 			}
+
 		} elsif (exists $settingsref->{$keyA}{'externalValue'}) {
+
 			$changedval = &{$settingsref->{$keyA}{'externalValue'}}($client,$changeref->{$key},$key);
+
 		} else {
+
 			$changedval = $changeref->{$key}{'new'};
 		}
+
 		if (exists $settingsref->{$keyA}{'changeMsg'}) {
+
 			$changemsg .= Slim::Utils::Strings::getString($settingsref->{$keyA}{'changeMsg'});
+
 		} else {
+
 			$changemsg .= '%s';
 		}
+
 		$changemsg .= '</p>';
+
 		if (exists $settingsref->{$keyA}{'changeAddlText'}) {
+
 			$changemsg .= Slim::Utils::Strings::getString($settingsref->{$keyA}{'changeAddlText'});
 		}
+
 		if (defined($changedval) && $changemsg) {
+
 			$paramref->{'warning'} .= sprintf($changemsg, $changedval);
 		}
 	}
@@ -3283,8 +3364,12 @@ sub _sortOptionArray {
 	$sort = 'K' unless defined $sort;
 
 	# First - resolve any string pointers
-	while (my ($key, $value) = each %{$optionref}) {
-		$optionref->{$key} = Slim::Utils::Strings::getString($value);
+	if ($sort !~ /S/) {
+
+		while (my ($key, $value) = each %{$optionref}) {
+
+			$optionref->{$key} = Slim::Utils::Strings::getString($value);
+		}
 	}
 
 	# Now sort
@@ -3326,76 +3411,100 @@ sub _sortOptionArray {
 # supplied position (or at the end if no position supplied)
 
 sub addPrefToGroup {
-	my ($category,$groupname,$prefname,$position) = @_;
+	my ($category, $groupname, $prefname, $position) = @_;
+
 	unless (exists $setup{$category} && exists $setup{$category}{'Groups'}{$groupname}) {
+
 		# either the category or the group within the category is invalid
-		$::d_prefs && msg("Group $groupname in category $category does not exist\n");
+		$log->warn("Group $groupname in category $category does not exist!");
+
 		return;
 	}
+
 	if (!defined $position || $position > scalar(@{$setup{$category}{'Groups'}{$groupname}{'PrefOrder'}})) {
+
 		$position = scalar(@{$setup{$category}{'Groups'}{$groupname}{'PrefOrder'}});
 	}
+
 	splice(@{$setup{$category}{'Groups'}{$groupname}{'PrefOrder'}},$position,0,$prefname);
-	return;
 }
 
 # Removes the preference from the PrefOrder array of the supplied group
 # in the supplied category
 sub removePrefFromGroup {
-	my ($category,$groupname,$prefname,$noWarn) = @_;
+	my ($category, $groupname, $prefname, $noWarn) = @_;
+
 	# Find $prefname in $setup{$category}{'Groups'}{$groupname}{'PrefOrder'} array
 	unless (exists $setup{$category} && exists $setup{$category}{'Groups'}{$groupname}) {
+
 		# either the category or the group within the category is invalid
-		$::d_prefs && msg("Group $groupname in category $category does not exist\n");
+		$log->warn("Group $groupname in category $category does not exist!");
+
 		return;
 	}
+
 	my $i = 0;
+
 	for my $currpref (@{$setup{$category}{'Groups'}{$groupname}{'PrefOrder'}}) {
+
 		if ($currpref eq $prefname) {
+
 			splice (@{$setup{$category}{'Groups'}{$groupname}{'PrefOrder'}},$i,1);
 			$i = -1; # indicates that a preference was removed
 			last;
 		}
+
 		$i++;
 	}
+
 	if ($i > 0 && !$noWarn) {
-		$::d_prefs && msg("Preference $prefname not found in group $groupname in category $category\n");
+
+		$log->warn("Preference $prefname not found in group $groupname in category $category");
 	}
-	return;
 }
 
 # Adds the preference to the category.  A reference to a hash containing the
 # preference data must be supplied.
 sub addPref {
-	my ($category,$prefname,$prefref,$groupname,$position) = @_;
-	unless (exists $setup{$category}) {
-		$::d_prefs && msg("Category $category does not exist\n");
+	my ($category, $prefname, $prefref, $groupname, $position) = @_;
+
+	if (!exists $setup{$category}) {
+
+		$log->warn("Category $category does not exist");
+
 		return;
 	}
+
 	$setup{$category}{'Prefs'}{$prefname} = $prefref;
+
 	if (defined $groupname) {
+
 		addPrefToGroup($category,$groupname,$prefname,$position);
 	}
-	return;
 }
 
 # Removes the preference from the supplied category, optionally removes
 # all references to the preference from the PrefOrder arrays of the groups
 # within the category
 sub delPref {
-	my ($category,$prefname,$andGroupRefs) = @_;
+	my ($category, $prefname, $andGroupRefs) = @_;
 	
-	unless (exists $setup{$category}) {
-		$::d_prefs && msg("Category $category does not exist\n");
+	if (!exists $setup{$category}) {
+
+		$log->warn("Category $category does not exist");
+
 		return;
 	}
+
 	delete $setup{$category}{'Prefs'}{$prefname};
+
 	if ($andGroupRefs) {
+
 		for my $group (@{$setup{$category}{'GroupOrder'}}) {
-			removePrefFromGroup($category,$group,$prefname,1);
+
+			removePrefFromGroup($category, $group, $prefname, 1);
 		}
 	}
-	return;
 }
 
 # Adds a group to the supplied category.  A reference to a hash containing the
@@ -3405,11 +3514,16 @@ sub addGroup {
 	my ($category,$groupname,$groupref,$position,$prefsref,$categoryKey) = @_;
 
 	unless (exists $setup{$category}) {
-		$::d_prefs && msg("Category $category does not exist\n");
+
+		$log->warn("Category $category does not exist");
+
 		return;
 	}
+
 	unless (defined $groupname && (defined $groupref || defined $categoryKey)) {
-		warn "No group information supplied!\n";
+
+		$log->warn("No group information supplied!");
+
 		return;
 	}
 	
@@ -3418,100 +3532,129 @@ sub addGroup {
 	if (defined $prefsref) {
 		$setup{$category}{'Groups'}{$groupname} = $groupref;
 	}
-	
+
 	my $found = 0;
-	foreach (@{$setup{$category}{$categoryKey}}) {
+
+	for (@{$setup{$category}{$categoryKey}}) {
+
 		next if !defined $_;
-		$found = 1,last if $_ eq $groupname;
+
+		$found = 1, last if $_ eq $groupname;
 	}
+
 	if (!$found) {
+
 		if (!defined $position || $position > scalar(@{$setup{$category}{$categoryKey}})) {
+
 			$position = scalar(@{$setup{$category}{$categoryKey}});
 		}
-		$::d_prefs && msg("Adding $groupname to position $position in $categoryKey\n");
-		splice(@{$setup{$category}{$categoryKey}},$position,0,$groupname);
+
+		$log->info("Adding $groupname to position $position in $categoryKey");
+
+		splice(@{$setup{$category}{$categoryKey}}, $position, 0, $groupname);
 	}
-	
+
 	if ($category eq 'PLUGINS') {
+
 		my $first = shift @{$setup{$category}{$categoryKey}};
+
 		my $pluginlistref = getCategoryPlugins(undef, $category);
-		@{$setup{$category}{$categoryKey}} = ($first,sort {uc($pluginlistref->{$a}) cmp uc($pluginlistref->{$b})} (@{$setup{$category}{$categoryKey}}));
+
+		@{$setup{$category}{$categoryKey}} = ($first, sort {
+
+			uc($pluginlistref->{$a}) cmp uc($pluginlistref->{$b})
+
+		} (@{$setup{$category}{$categoryKey}}));
 	}
 	
 	if (defined $prefsref) {
+
 		my ($pref,$prefref);
+
 		while (($pref,$prefref) = each %{$prefsref}) {
+
 			$setup{$category}{'Prefs'}{$pref} = $prefref;
-			$::d_prefs && msg("Adding $pref to setup hash\n");
+
+			$log->info("Adding $pref to setup hash");
 		}
 	}
-	return;
 }
 
 # Deletes a group from a category and optionally the associated preferences
 sub delGroup {
 	my ($category,$groupname,$andPrefs) = @_;
-	
-	unless (exists $setup{$category}) {
-		$::d_prefs && msg("Category $category does not exist\n");
+
+	if (!exists $setup{$category}) {
+
+		$log->warn("Category $category does not exist");
+
 		return;
 	}
 	
-	my @preflist;
-	
+	my @preflist = ();
+
 	if (exists $setup{$category}{'Groups'}{$groupname} && $andPrefs) {
+
 		#hold on to preferences for later deletion
 		@preflist = @{$setup{$category}{'Groups'}{$groupname}{'PrefOrder'}};
 	}
 	
-
 	if ($setup{$category}{'children'}) {
+
 		# remove ghost children
-		my @children;
-			foreach (@{$setup{$category}{'children'}}) {
+		my @children = ();
+
+		foreach (@{$setup{$category}{'children'}}) {
+
 			next if !defined $_;
 			next if $_ eq $groupname;
 			push @children,$_;
 		}
+
 		@{$setup{$category}{'children'}} = @children;
 	}
-	#remove from Groups hash
+
+	# remove from Groups hash
 	delete $setup{$category}{'Groups'}{$groupname};
 	
-	#remove from GroupOrder array
-	my $i=0;
+	# remove from GroupOrder array
+	my $i = 0;
 	
 	for my $currgroup (@{$setup{$category}{'GroupOrder'}}) {
+
 		if ($currgroup eq $groupname) {
-			splice (@{$setup{$category}{'GroupOrder'}},$i,1);
+
+			splice (@{$setup{$category}{'GroupOrder'}}, $i, 1);
 			last;
 		}
+
 		$i++;
 	}
-	
-	#delete associated preferences if requested
+
+	# delete associated preferences if requested
 	if ($andPrefs) {
+
 		for my $pref (@preflist) {
-			delPref($category,$pref);
+			delPref($category, $pref);
 		}
 	}
-	
-	return;
 }
 
 sub addChildren {
-	my ($category,$child,$position) = @_;
+	my ($category, $child, $position) = @_;
+
 	my $categoryKey = 'children';
 	
-	addGroup($category,$child,undef,$position,undef,$categoryKey);
-	return;
+	addGroup($category, $child, undef, $position, undef, $categoryKey);
 }
 
 sub addCategory {
-	my ($category,$categoryref) = @_;
-	
-	unless (defined $category && defined $categoryref) {
-		warn "No category information supplied!\n";
+	my ($category, $categoryref) = @_;
+
+	if (!defined $category || !defined $categoryref) {
+
+		$log->warn("No category information supplied!");
+
 		return;
 	}
 	
@@ -3521,8 +3664,10 @@ sub addCategory {
 sub delCategory {
 	my $category = shift;
 
-	unless (defined $category) {
-		warn "No category information supplied!\n";
+	if (!defined $category) {
+
+		$log->warn("No category information supplied!");
+
 		return;
 	}
 
@@ -3531,36 +3676,46 @@ sub delCategory {
 
 sub existsCategory {
 	my $category = shift;
+
 	return exists $setup{$category};
 }
 
 sub getCategoryPlugins {
-	no strict 'refs';
-	my $client = shift;
-	my $category = shift || 'PLUGINS';
+	my $client        = shift;
+	my $category      = shift || 'PLUGINS';
 	my $pluginlistref = Slim::Utils::PluginManager::installedPlugins();
 
+	no strict 'refs';
+
 	for my $plugin (keys %{$pluginlistref}) {
+
 		# get plugin's displayName if it's not available, yet
-		unless (Slim::Utils::Strings::stringExists($pluginlistref->{$plugin})) {
+		if (!Slim::Utils::Strings::stringExists($pluginlistref->{$plugin})) {
+
 			$pluginlistref->{$plugin} = Slim::Utils::PluginManager::canPlugin($plugin);
 		}
 		
 		if (Slim::Utils::Strings::stringExists($pluginlistref->{$plugin})) {
+
 			my $menu = 'PLUGINS';
 
 			if (UNIVERSAL::can("Plugins::${plugin}", "addMenu")) {
+
 				$menu = eval { &{"Plugins::${plugin}::addMenu"}() };
+
 				# if there's a problem or a category does not exist, reset $menu
 				$menu = 'PLUGINS' if ($@ || not existsCategory($menu));
 			}
 
 			# only return the current category's plugins
 			if ($menu eq $category) {
+
 				$pluginlistref->{$plugin} = Slim::Utils::Strings::string($pluginlistref->{$plugin});
+
 				next;
 			}
 		}
+
 		delete $pluginlistref->{$plugin};
 	}
 	
@@ -3575,7 +3730,9 @@ sub fillPluginsList {
 	my $i = 0;
 
 	for my $plugin (sort {uc($pluginlistref->{$a}) cmp uc($pluginlistref->{$b})} (keys %{$pluginlistref})) {	
+
 		if ((exists $paramref->{"pluginlist$i"} && $paramref->{"pluginlist$i"} == (exists $plugins{$plugin} ? 0 : 1))) {
+
 			delete $paramref->{"pluginlist$i"};
 		}
 
@@ -3593,21 +3750,28 @@ sub processPluginsList {
 	Slim::Utils::Prefs::delete('disabledplugins');
 
 	my $pluginlistref = getCategoryPlugins($client, $category);
+
 	my @sorted = (sort {uc($pluginlistref->{$a}) cmp uc($pluginlistref->{$b})} (keys %{$pluginlistref}));
 
 	no strict 'refs';
+
 	for my $plugin (@sorted) {
+
 		if (defined $paramref->{"pluginlist$i"} && not $paramref->{"pluginlist$i"}) {
+
 			Slim::Utils::PluginManager::shutdownPlugin($plugin);
 		}
 
 		if (!exists $paramref->{"pluginlist$i"}) {
+
 			$paramref->{"pluginlist$i"} = exists $plugins{$plugin} ? 0 : 1;
 		}
 
-		unless ($paramref->{"pluginlist$i"}) {
+		if (!$paramref->{"pluginlist$i"}) {
+
 			Slim::Utils::Prefs::push('disabledplugins',$plugin);
 		}
+
 		delete $plugins{$plugin};
 
 		$i++;
@@ -3615,6 +3779,7 @@ sub processPluginsList {
 
 	# add remaining disabled plugins (other categories)
 	foreach (keys %plugins) {
+
 		Slim::Utils::Prefs::push('disabledplugins', $_);
 	}
 
@@ -3623,10 +3788,14 @@ sub processPluginsList {
 	Slim::Utils::PluginManager::addSetupGroups();
 
 	$i = 0;
+
 	# refresh the list of plugins as some of them might have been disable during intialization
 	%plugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
+
 	for my $plugin (@sorted) {	
+
 		if (exists $plugins{$plugin} && $plugins{$plugin}) {
+
 			$paramref->{"pluginlist$i"} = 0;
 		}
 
@@ -3635,19 +3804,18 @@ sub processPluginsList {
 }
 
 sub getPluginState {
-	my ($client,$value,$key, $category) = @_;
+	my ($client, $value, $key, $category) = @_;
 
 	if ($key !~ /\D+(\d+)$/) {
 		return $value;
+
 	}
 
 	my $pluginlistref = getCategoryPlugins($client, $category);
+
 	return $pluginlistref->{(sort {uc($pluginlistref->{$a}) cmp uc($pluginlistref->{$b})} (keys %{$pluginlistref}))[$1]};
 }
 
 1;
 
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:
+__END__

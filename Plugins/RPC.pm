@@ -8,9 +8,16 @@ use JSON::Syck;
 use RPC::XML::Parser;
 use Scalar::Util qw(blessed);
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
+
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.rpc',
+	'defaultLevel' => 'WARN',
+	'description'  => getDisplayName(),
+});
 
 my %rpcFunctions = (
 	'system.listMethods' => \&listMethods,
@@ -195,7 +202,7 @@ sub handleReqJSON {
 		return Slim::Web::HTTP::filltemplatefile('html/errors/400.html');
 	}
 
-	$::d_plugins && msg("JSON request: " . $input . "\n");
+	$log->info("JSON request: $input");
 
 	my @resparr = ();
 
@@ -246,7 +253,7 @@ sub handleReqJSON {
 		$rpcresponse = "JXTK2.JSONRPC.asyncDispatch(" . $params->{'asyncId'} . "," . $rpcresponse . ")";
 	}
 
-	$::d_plugins && msg("JSON response ready\n");
+	$log->info("JSON response ready");
 
 	return \$rpcresponse;
 }

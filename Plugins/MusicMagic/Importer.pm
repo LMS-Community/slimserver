@@ -14,6 +14,7 @@ use Plugins::MusicMagic::Common;
 
 use Slim::Music::Import;
 use Slim::Player::ProtocolHandlers;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
@@ -23,7 +24,12 @@ my $MMMVersion  = 0;
 my $MMSHost;
 my $MMSport;
 
-my $OS = Slim::Utils::OSDetect::OS();
+my $OS  = Slim::Utils::OSDetect::OS();
+
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.musicmagic',
+	'defaultLevel' => 'WARN',
+});
 
 sub useMusicMagic {
 	my $class    = shift;
@@ -55,7 +61,7 @@ sub useMusicMagic {
 
 	Slim::Music::Import->useImporter($class, $use);
 
-	$::d_musicmagic && msg("MusicMagic: using musicmagic: $use\n");
+	$log->info("Using musicmagic: $use");
 
 	return $use;
 }
@@ -75,7 +81,8 @@ sub initPlugin {
 
 	if (grep {$_ eq 'MusicMagic::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
 
-		$::d_musicmagic && msg("MusicMagic: don't initialize, it's disabled\n");
+		$log->info("Not initializing: disabled.");
+
 		$initialized = 0;
 
 		return 0;		
@@ -84,7 +91,7 @@ sub initPlugin {
 	$MMSport = Slim::Utils::Prefs::get('MMSport');
 	$MMSHost = Slim::Utils::Prefs::get('MMSHost');
 
-	$::d_musicmagic && msg("MusicMagic: Testing for API on $MMSHost:$MMSport\n");
+	$log->info("Testing for API on $MMSHost:$MMSport");
 
 	my $initialized = get("http://$MMSHost:$MMSport/api/version");
 
@@ -93,7 +100,7 @@ sub initPlugin {
 		# Note: Check version restrictions if any
 		chomp($initialized);
 
-		$::d_musicmagic && msg("MusicMagic: $initialized\n");
+		$log->info($initialized);
 
 		($MMMVersion) = ($initialized =~ /Version ([\d\.]+)$/);
 
@@ -108,7 +115,8 @@ sub initPlugin {
 	} else {
 
 		$initialized = 0;
-		$::d_musicmagic && msg("MusicMagic: Cannot Connect\n");
+
+		$log->info("Cannot Connect");
 	}
 
 	return $initialized;
@@ -116,7 +124,7 @@ sub initPlugin {
 
 sub resetState {
 
-	$::d_musicmagic && msg("MusicMagic: Resetting Last Library Change Time.\n");
+	$log->debug("Resetting Last Library Change Time.");
 
 	Slim::Music::Import->setLastScanTime('MMMLastLibraryChange', 0);
 }
@@ -128,7 +136,7 @@ sub startScan {
 		return;
 	}
 		
-	$::d_musicmagic && msg("MusicMagic: start export\n");
+	$log->debug("Start export");
 
 	if (Slim::Music::Import->scanPlaylistsOnly) {
 
@@ -145,7 +153,7 @@ sub startScan {
 sub doneScanning {
 	my $class = shift;
 
-	$::d_musicmagic && msg("MusicMagic: done Scanning\n");
+	$log->info("Done Scanning");
 
 	my $lastDate = get("http://$MMSHost:$MMSport/api/cacheid?contents");
 
@@ -175,7 +183,7 @@ sub exportFunction {
 		$count += 0;
 	}
 
-	$::d_musicmagic && msg("MusicMagic: Got $count song(s).\n");
+	$log->info("Got $count song(s).");
 
 	$class->exportSongs($count);
 	$class->exportPlaylists;
@@ -193,7 +201,7 @@ sub exportSongs {
 	# 1 HTTP request, and the process the file.
 	if (vstring_cmp($MMMVersion, '>=', '1.5')) {
 
-		$::d_musicmagic && msg("MusicMagic: Fetching ALL song data via songs/extended..\n");
+		$log->info("Fetching ALL song data via songs/extended..");
 
 		my $MMMSongData = catdir( Slim::Utils::Prefs::get('cachedir'), 'mmm-song-data.txt' );
 
@@ -203,17 +211,17 @@ sub exportSongs {
 
 		if (!-r $MMMSongData) {
 
-			errorMsg("MusicMagic: Couldn't connect to $MMMDataURL ! : $!\n");
+			logError("Couldn't connect to $MMMDataURL ! : $!");
 			return;
 		}
 
 		open(MMMDATA, $MMMSongData) || do {
 
-			errorMsg("MusicMagic: Couldn't read file: $MMMSongData : $!\n");
+			logError("Couldn't read file: $MMMSongData : $!");
 			return;
 		};
 
-		$::d_musicmagic && msg("MusicMagic: done fetching - processing.\n");
+		$log->info("Finished fetching - processing.");
 
 		local $/ = "$LF$LF";
 
@@ -300,7 +308,7 @@ sub processSong {
 		$attributes{'MUSICMAGIC_MIXABLE'} = 1;
 	}
 
-	$::d_musicmagic && msg("MusicMagic: Exporting song: $songInfo{'file'}\n");
+	$log->debug("Exporting song: $songInfo{'file'}");
 
 	# Both Linux & Windows need conversion to the current charset.
 	if ($OS ne 'mac') {
@@ -317,7 +325,7 @@ sub processSong {
 
 	}) || do {
 
-		$::d_musicmagic && msg("MusicMagic: Couldn't create track for $fileurl!\n");
+		$log->warn("Couldn't create track for $fileurl");
 
 		$progress->update if $progress;
 
@@ -359,7 +367,7 @@ sub exportPlaylists {
 		my $playlist = get("http://$MMSHost:$MMSport/api/getPlaylist?index=$i") || next;
 		my @songs    = split(/\n/, $playlist);
 
-		$::d_musicmagic && msgf("MusicMagic: got playlist %s with %d items\n", $playlists[$i], scalar @songs);
+		$log->info(sprintf("Got playlist %s with %d items", $playlists[$i], scalar @songs));
 
 		$class->_updatePlaylist($playlists[$i], \@songs);
 	}
@@ -374,13 +382,13 @@ sub exportDuplicates {
 		return;
 	}
 
-	$::d_musicmagic && msg("MusicMagic: Checking for duplicates.\n");
-	
+	$log->info("Checking for duplicates.");
+
 	my @songs = split(/\n/, get("http://$MMSHost:$MMSport/api/duplicates"));
 
 	$class->_updatePlaylist('Duplicates', \@songs);
 
-	$::d_musicmagic && msgf("MusicMagic: finished export (%d records)\n", scalar @songs);
+	$log->info(sprintf("Finished export (%d records)", scalar @songs));
 }
 	
 sub _updatePlaylist {

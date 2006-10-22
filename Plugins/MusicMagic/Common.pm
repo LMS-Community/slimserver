@@ -4,16 +4,20 @@ package Plugins::MusicMagic::Common;
 
 use strict;
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings;
 
-my $os = Slim::Utils::OSDetect::OS();
+my $os  = Slim::Utils::OSDetect::OS();
+my $log = logger('plugin.musicmagic');
 
 sub convertPath {
 	my $mmsPath = shift;
 	
-	return $mmsPath if (Slim::Utils::Prefs::get('MMSHost') eq 'localhost');
+	if (Slim::Utils::Prefs::get('MMSHost') eq 'localhost') {
+		return $mmsPath;
+	}
 	
 	my $remoteRoot = Slim::Utils::Prefs::get('MMSremoteRoot');
 	my $nativeRoot = Slim::Utils::Prefs::get('audiodir');
@@ -31,7 +35,7 @@ sub convertPath {
 			# convert any windozes paths to unix style
 			$remoteRoot =~ tr/\\/\//;
 
-			$::d_musicmagic && msg("MusicMagic: $remoteRoot :: $nativeRoot \n");
+			$log->debug("$remoteRoot :: $nativeRoot");
 
 			# convert windozes paths to unix style
 			$mmsPath =~ tr/\\/\//;
@@ -50,7 +54,7 @@ sub convertPath {
 			# cuz matching dont work unless we do
 			$nativeRoot =~ tr/\\/\//;
 
-			$::d_musicmagic && msg("MusicMagic: $remoteRoot :: $nativeRoot \n");
+			$log->debug("$remoteRoot :: $nativeRoot");
 
 			# convert unix root to windows root
 			$mmsPath =~ s/$remoteRoot/$nativeRoot/;
@@ -59,7 +63,7 @@ sub convertPath {
 		}
 	}
 
-	$::d_musicmagic && msg("MusicMagic: $original is now $mmsPath\n");
+	$log->debug("$original is now $mmsPath");
 
 	return $mmsPath
 }

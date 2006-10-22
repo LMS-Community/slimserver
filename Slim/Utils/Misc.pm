@@ -29,7 +29,7 @@ L<Slim::Utils::Misc> serves as a collection of miscellaneous utility
 =cut
 
 use strict;
-use base qw(Exporter);
+use Exporter::Lite;
 
 our @EXPORT = qw(assert bt msg msgf watchDog errorMsg specified);
 
@@ -38,6 +38,7 @@ use Cwd ();
 use File::Spec::Functions qw(:ALL);
 use File::Which ();
 use FindBin qw($Bin);
+use Log::Log4perl;
 use Net::IP;
 use POSIX qw(strftime);
 use Scalar::Util qw(blessed);
@@ -49,15 +50,12 @@ use URI::file;
 # These must be 'required', as they use functions from the Misc module!
 require Slim::Music::Info;
 require Slim::Player::ProtocolHandlers;
+require Slim::Utils::DateTime;
 require Slim::Utils::OSDetect;
 require Slim::Utils::Strings;
 require Slim::Utils::Unicode;
-require Slim::Utils::DateTime;
 
-our $log = "";
-
-our %pathToFileCache = ();
-our %fileToPathCache = ();
+use Slim::Utils::Log;
 
 {
 	if ($^O =~ /Win32/) {
@@ -73,6 +71,9 @@ our %fileToPathCache = ();
 # Cache our user agent string.
 my $userAgentString;
 
+my %pathToFileCache = ();
+my %fileToPathCache = ();
+
 =head1 METHODS
 
 =head2 findbin( $executable)
@@ -84,14 +85,16 @@ my $userAgentString;
 sub findbin {
 	my $executable = shift;
 
+	my $log = logger('os.paths');
+
+	$log->debug("Looking for executable: [$executable]");
+
 	# Reduce all the x86 architectures down to i386, so we only need one
 	# directory per *nix OS.
 	my $arch = $Config::Config{'archname'};
 
 	   $arch =~ s/^i[3456]86-([^-]+).*$/i386-$1/;
 
-	my $path;
-	
 	my @paths = (
 		catdir($Bin, 'Bin', $arch),
 		catdir($Bin, 'Bin', $^O),
@@ -119,45 +122,53 @@ sub findbin {
 		}
 	}
 
-	foreach my $path (@paths) {
+	for my $path (@paths) {
+
 		$path = catdir($path, $executable);
 
-		$::d_paths && msg("Checking for $executable in $path\n");
+		$log->debug("Checking for $executable in $path");
 
 		if (-x $path) {
-			$::d_paths && msg("Found binary $path for $executable\n");
+
+			$log->info("Found binary $path for $executable");
+
 			return $path;
 		}
 	}
 
+	# Couldn't find it in the environment? Look on disk..
+	# XXXX - why only windows? Security issue?
 	if (Slim::Utils::OSDetect::OS() eq "win") {
-		$path =  File::Which::which($executable);
+
+		my $path = File::Which::which($executable);
+
+		$log->info("Found binary $path for $executable");
+
+		return $path;
+
 	} else {
-		$path = undef;
+
+		$log->warn("Didn't find binary for $executable");
+
+		return undef;
 	}
-
-	$::d_paths && msgf("Found binary %s for %s\n", defined $path ? $path : 'undef', $executable);
-
-	return $path;	
 }
 
-=head2 setPriority( $priority)
+=head2 setPriority( $priority )
 
-	
+Set the priority for the server. $priority should be -20 to 20
 
 =cut
 
 sub setPriority {
-	my $priority = shift;
-
-	return unless (defined $priority && $priority ne "");
+	my $priority = shift || return;
 
 	# For *nix, including OSX, set whatever priority the user gives us.
 	# For win32, translate the priority to a priority class and use that
 
 	if (Slim::Utils::OSDetect::OS() eq 'win') {
 
-		my ($priorityClass, $priorityClassName) = priorityClassFromPriority($priority);
+		my ($priorityClass, $priorityClassName) = _priorityClassFromPriority($priority);
 
 		my $getCurrentProcess = Win32::API->new('kernel32', 'GetCurrentProcess', ['V'], 'N');
 		my $setPriorityClass  = Win32::API->new('kernel32', 'SetPriorityClass',  ['N', 'N'], 'N');
@@ -168,28 +179,34 @@ sub setPriority {
 
 			if (!$processHandle || $@) {
 
-				errorMsg("setPriority: Can't get process handle ($^E) [$@]\n");
+				logError("Can't get process handle ($^E) [$@]");
 				return;
 			};
 
-			$::d_server && msg("SlimServer changing process priority to $priorityClassName\n");
+			logger('server')->info("SlimServer changing process priority to $priorityClassName");
+
 			eval { $setPriorityClass->Call($processHandle, $priorityClass) };
 
 			if ($@) {
-				errorMsg("setPriority: Couldn't set priority to $priorityClassName ($^E) [$@]\n");
+				logError("Couldn't set priority to $priorityClassName ($^E) [$@]");
 			}
 		}
 
 	} else {
 
-		$::d_server && msg("SlimServer changing process priority to $priority\n");
+		logger('server')->info("SlimServer changing process priority to $priority");
+
 		eval { setpriority (0, 0, $priority); };
+
+		if ($@) {
+			logError("Couldn't set priority to $priority [$@]");
+		}
 	}
 }
 
 =head2 getPriority( )
 
-	
+Get the current priority of the server.
 
 =cut
 
@@ -206,21 +223,28 @@ sub getPriority {
 
 			if (!$processHandle || $@) {
 
-				errorMsg("getPriority: Can't get process handle ($^E) [$@]\n");
+				logError("Can't get process handle ($^E) [$@]");
 				return;
 			};
 
 			my $priorityClass = eval { $getPriorityClass->Call($processHandle) };
 
 			if ($@) {
-				errorMsg("getPriority: Couldn't get priority class ($^E) [$@]\n");
+				logError("Can't get priority class ($^E) [$@]");
 			}
 
-			return priorityFromPriorityClass($priorityClass);
+			return _priorityFromPriorityClass($priorityClass);
 		}
 
 	} else {
-		eval { getpriority (0, 0); };
+
+		my $priority = eval { getpriority (0, 0) };
+
+		if ($@) {
+			logError("Can't get priority [$@]");
+		}
+
+		return $priority;
 	}
 }
 
@@ -232,7 +256,7 @@ sub getPriority {
 #   5  -   14  BELOW NORMAL
 #  15  -   20  LOW
 
-sub priorityClassFromPriority {
+sub _priorityClassFromPriority {
 	my $priority = shift;
 
 	# ABOVE_NORMAL_PRIORITY_CLASS and BELOW_NORMAL_PRIORITY_CLASS aren't
@@ -251,7 +275,7 @@ sub priorityClassFromPriority {
 	}
 }
 
-sub priorityFromPriorityClass {
+sub _priorityFromPriorityClass {
 	my $priorityClass = shift;
 
 	if ($priorityClass == 0x00000100) { # REALTIME
@@ -269,9 +293,9 @@ sub priorityFromPriorityClass {
 	}
 }
 
-=head2 pathFromWinShortcut( $)
+=head2 pathFromWinShortcut( $path )
 
-	Return the filepath for a given windows shortcut
+Return the filepath for a given Windows Shortcut
 
 =cut
 
@@ -279,16 +303,21 @@ sub pathFromWinShortcut {
 	my $fullpath = pathFromFileURL(shift);
 
 	my $path = "";
+	my $log  = logger('os.files');
 
 	if (Slim::Utils::OSDetect::OS() ne "win") {
-		$::d_files && msg("Windows shortcuts not supported on non-windows platforms\n");
+
+		logWarning("Windows shortcuts not supported on non-windows platforms!");
+
 		return $path;
 	}
 
 	my $shortcut = Win32::Shortcut->new($fullpath);
+
 	if (defined($shortcut)) {
 
 		$path = $shortcut->Path();
+
 		# the following pattern match throws out the path returned from the
 		# shortcut if the shortcut is contained in a child directory of the path
 		# to avoid simple loops, loops involving more than one shortcut are still
@@ -303,15 +332,16 @@ sub pathFromWinShortcut {
 			}
 
 		} else {
-			$::d_files && msg("Bad path in $fullpath\n");
-			$::d_files && defined($path) && msg("Path was $path\n");
+
+			$log->error("Error: Bad path in $fullpath - path was: [$path]");
 		}
 
 	} else {
-		$::d_files && msg("Shortcut $fullpath is invalid\n");
+
+		$log->error("Error: Shortcut $fullpath is invalid");
 	}
 
-	$::d_files && msg("pathFromWinShortcut: path $path from shortcut $fullpath\n");	
+	$log->info("Got path $path from shortcut $fullpath");
 
 	return $path;
 }
@@ -345,7 +375,9 @@ sub pathFromFileURL {
 	}
 
 	if ($url !~ /^file:\/\//i) {
-		errorMsg("Path isn't a file URL: $url\n");
+
+		logWarning("Path isn't a file URL: $url");
+
 		return $url;
 	}
 
@@ -376,8 +408,9 @@ sub pathFromFileURL {
 	#
 	# file URLs must start with file:/// or file://localhost/ or file://\\uncpath
 	my $path = $uri->path;
+	my $log  = logger('os.files');
 
-	$::d_files && msg("Got $path from file url $url\n");
+	$log->info("Got $path from file url $url");
 
 	# only allow absolute file URLs and don't allow .. in files...
 	if ($path !~ /[\/\\]\.\.[\/\\]/) {
@@ -386,9 +419,9 @@ sub pathFromFileURL {
 	}
 
 	if (!defined($file))  {
-		$::d_files && msg("bad file: url $url\n");
+		$log->warn("Bad file: url $url");
 	} else {
-		$::d_files && msg("extracted: $file from $url\n");
+		$log->info("Extracted: $file from $url");
 	}
 
 	if (!$noCache && scalar keys %fileToPathCache > 32) {
@@ -484,9 +517,13 @@ sub stripAnchorFromURL {
 	return $url;
 }
 
-=head2 crackURL( $string)
+=head2 crackURL( $string )
 
-	Split a URL $string into (host, port, path)
+Split a URL $string into (host, port, path)
+
+This relies on the schemes as specified by any registered handlers.
+
+Otherwise we could use L<URI>
 
 =cut
 
@@ -497,25 +534,21 @@ sub crackURL {
 
 	$string =~ m|[$urlstring]://(?:([^\@:]+):?([^\@]*)\@)?([^:/]+):*(\d*)(\S*)|i;
 	
-	my $user = $1;
-	my $password = $2;
-	my $host = $3;
-	my $port = $4;
-	my $path = $5;
-	
-	$path = '/' unless $path;
+	my ($user, $pass, $host, $port, $path) = ($1, $2, $3, $4, $5);
 
-	$port = 80 unless $port;
+	$path ||= '/';
+	$port ||= 80;
 
-	$::d_files && msg("cracked: $string with [$host],[$port],[$path]\n");
-	$::d_files && $user && msg("   user: [$user]\n");
-	$::d_files && $password && msg("   password: [$password]\n");
-	
-	return ($host, $port, $path, $user, $password);
+	my $log = logger('os.paths');
+
+	$log->debug("Cracked: $string with [$host],[$port],[$path]");
+	$log->debug("   user: [$user]") if $user;
+	$log->debug("   pass: [$pass]") if $pass;
+
+	return ($host, $port, $path, $user, $pass);
 }
 
-
-=head2 fixPathCase( $path)
+=head2 fixPathCase( $path )
 
 	fixPathCase makes sure that we are using the actual casing of paths in
 	a case-insensitive but case preserving filesystem.
@@ -674,8 +707,14 @@ sub fixPath {
 		}
 	}
 
-	$::d_paths && ($file ne $fixed) && msg("*****fixed: " . $file . " to " . $fixed . "\n");
-	$::d_paths && ($file ne $fixed) && ($base) && msg("*****base: " . $base . "\n");
+	if ($file ne $fixed) {
+
+		logger('os.paths')->info("Fixed: $file to $fixed");
+
+		if ($base) {
+			logger('os.paths')->info("Base: $base");
+		}
+	}
 
 	if (Slim::Music::Info::isFileURL($fixed)) {
 		return $fixed;
@@ -687,11 +726,14 @@ sub fixPath {
 sub stripRel {
 	my $file = shift;
 	
+	logger('os.paths')->info("Original: $file");
+
 	while ($file =~ m#[\/\\]\.\.[\/\\]#) {
 		$file =~ s#[^\/\\]+[\/\\]\.\.[\/\\]##sg;
 	}
 	
-	$::d_paths && msg("stripRel result: $file\n");
+	logger('os.paths')->info("Stripped: $file");
+
 	return $file;
 }
 
@@ -772,20 +814,18 @@ sub readDirectory {
 	my $dirname  = shift;
 	my $validRE  = shift || Slim::Music::Info::validTypeExtensions();
 	my @diritems = ();
-	
-	$::d_files && msg("reading directory: $dirname\n");
-
-	if (!-d $dirname) { 
-		$::d_files && msg("no such dir: $dirname\n");
-		return @diritems;
-	}
+	my $log      = logger('os.files');
 
 	my $ignore = Slim::Utils::Prefs::get('ignoreDirRE') || '';
 
 	opendir(DIR, $dirname) || do {
-		warn "opendir failed: " . $dirname . ": $!\n";
+
+		logError("opendir on [$dirname] failed: $!");
+
 		return @diritems;
 	};
+
+	$log->info("Reading directory: $dirname");
 
 	for my $item (readdir(DIR)) {
 
@@ -832,9 +872,9 @@ sub readDirectory {
 	}
 
 	closedir(DIR);
-	
-	$::d_files && msg("directory: $dirname contains " . scalar(@diritems) . " items\n");
-	
+
+	$log->info("Directory contains " . scalar(@diritems) . " items");
+
 	return sort(@diritems);
 }
 
@@ -877,12 +917,12 @@ sub findAndScanDirectoryTree {
 
 	if (!blessed($topLevelObj) || !$topLevelObj->can('path')) {
 
-		msg("Error: Couldn't find a topLevelObj for findAndScanDirectoryTree()\n");
+		logError("Couldn't find a topLevelObj!");
 
 		if (scalar @$levels) {
-			msgf("Passed in value was: [%s]\n", $levels->[-1]);
+			logError("Passed in value was: $levels->[-1]");
 		} else {
-			msg("Starting from audiodir! Is it not set?\n");
+			logError("Starting from audiodir! Is it not set?");
 		}
 
 		return ();
@@ -896,10 +936,8 @@ sub findAndScanDirectoryTree {
 
 	if ($fsMTime != $dbMTime) {
 
-		if ($::d_scan) {
-			msg("mtime db: $dbMTime : " . localtime($dbMTime) . "\n");
-			msg("mtime fs: $fsMTime : " . localtime($fsMTime) . "\n");
-		}
+		logger('scan.scanner')->info("mtime db: $dbMTime : " . localtime($dbMTime));
+		logger('scan.scanner')->info("mtime fs: $fsMTime : " . localtime($fsMTime));
 
 		# Update the mtime in the db.
 		$topLevelObj->timestamp($fsMTime);
@@ -1073,32 +1111,6 @@ sub bt {
 	msg($msg);
 }
 
-=head2 openLogFile( $logfile )
-
-Opens a log file for writing in appending mode.
-
-=cut
-
-sub openLogFile {
-	my $logfile = shift || return;
-
-	my $logfilename = $logfile;
-
-	if (substr($logfile, 0, 1) ne "|") {
-		$logfilename = ">>" . $logfile;
-	}
-
-	if ($::stdio) {
-
-		open(STDERR, $logfilename) || die "Can't write to $logfilename: $!";
-
-	} else {
-
-		open(STDOUT, $logfilename) || die "Can't write to $logfilename: $!";
-		open(STDERR, '>&STDOUT')   || die "Can't dup stdout: $!";
-	}
-}
-
 =head2 msg( $entry, [ $forceLog ], [ $suppressTimestamp ])
 
 	Outputs an entry to the slimserver log file. 
@@ -1114,18 +1126,15 @@ sub msg {
 	my $suppressTimestamp = shift;
 
 	if ( $::LogTimestamp && !$suppressTimestamp ) {
+
 		my $now = substr(int(Time::HiRes::time() * 10000),-4);
-		$entry = join( "", strftime( "%Y-%m-%d %H:%M:%S.", localtime ),
-			$now , ' ' , $entry );
+
+		$entry = join("", strftime("%H:%M:%S.", localtime), $now, " $entry");
 	}
 
 	if (!$::quiet) {
+
 		print STDERR $entry;
-	}
-	
-	if ($forceLog || Slim::Utils::Prefs::get('livelog')) {
-		 $Slim::Utils::Misc::log .= $entry;
-		 $Slim::Utils::Misc::log = substr($Slim::Utils::Misc::log, -Slim::Utils::Prefs::get('livelog'));
 	}
 }
 
@@ -1141,7 +1150,7 @@ sub msgf {
 	msg(sprintf($format, @_));
 }
 
-=head2 errorMsg( $msg)
+=head2 errorMsg( $msg )
 
 	Output formatting for more severe messages in the log
 

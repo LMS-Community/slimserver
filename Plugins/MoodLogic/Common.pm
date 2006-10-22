@@ -3,12 +3,13 @@ package Plugins::MoodLogic::Common;
 # $Id$
 
 use strict;
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 
 my $last_error = 0;
-	
+
 sub OLEError {
-	$::d_moodlogic && msg(Win32::OLE->LastError() . "\n");
+
+	logError(Win32::OLE->LastError);
 }
 
 sub DESTROY {
@@ -16,11 +17,16 @@ sub DESTROY {
 }
 
 sub event_hook {
-	my ($mixer,$event,@args) = @_;
-	return if ($event eq "TaskProgress");
+	my ($mixer, $event, @args) = @_;
+
+	if ($event eq "TaskProgress") {
+		return;
+	}
+
 	$last_error = $args[0]->Value();
-	print "MoodLogic Error Event triggered: '$event',".join(",", $args[0]->Value())."\n";
-	print $mixer->ErrorDescription()."\n";
+
+	logError("triggered: '$event', ", join(',', $args[0]->Value));
+	logError("", $mixer->ErrorDescription);
 }
 
 sub checkDefaults {

@@ -25,7 +25,7 @@ use base qw(Slim::Formats::RemoteStream);
 use IO::Socket qw(:crlf);
 use MIME::Base64;
 
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 
 use constant DEFAULT_TYPE => 'mp3';
@@ -133,9 +133,11 @@ sub parseHeaders {
 	my $self    = shift;
 	my @headers = @_;
 
+	my $log = logger('player.streaming.remote');
+
 	for my $header (@headers) {
 
-		$::d_remotestream && msg("header-rs: " . $header);
+		$log->info("Header: $header");
 
 		if ($header =~ /^(?:ic[ey]-name|x-audiocast-name):\s*(.+)$CRLF$/i) {
 
@@ -157,10 +159,10 @@ sub parseHeaders {
 				Slim::Music::Info::setBitrate( $self->infoUrl, $self->bitrate );
 			}
 			
-			$::d_remotestream && msgf("parseHeaders: Bitrate for %s set to %d\n",
+			$log->info(sprintf("Bitrate for %s set to %d",
 				$self->infoUrl,
 				$self->bitrate,
-			);
+			));
 		}
 		
 		if ($header =~ /^icy-metaint:\s*(.+)$CRLF$/) {
@@ -200,7 +202,7 @@ sub parseHeaders {
 
 		if ($header eq $CRLF) { 
 
-			$::d_remotestream && msg("Recieved final blank line...\n");
+			$log->info("Recieved final blank line...");
 			last; 
 		}
 	}

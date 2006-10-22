@@ -7,11 +7,13 @@ use strict;
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
 use Slim::Formats::XML;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Web::XMLBrowser;
 
 my $FEED   = 'http://content.us.squeezenetwork.com:8080/shoutcast/index.opml';
 my $SEARCH = 'http://www.squeezenetwork.com/api/opensearch/shoutcast/opensearch.xml';
+
 my $cli_next;
 
 sub enabled {
@@ -19,7 +21,6 @@ sub enabled {
 }
 
 sub initPlugin {
-	$::d_plugins && msg("Shoutcast: initPlugin()\n");
 
 	Slim::Buttons::Common::addMode('PLUGIN.ShoutcastBrowser', getFunctions(), \&setMode);
 
@@ -75,15 +76,11 @@ sub setMode {
 sub cliQuery {
 	my $request = shift;
 	
-	$::d_plugins && msg("Shoutcast: cliQuery()\n");
-	
 	Slim::Buttons::XMLBrowser::cliQuery('shoutcast', $FEED, $request);
 }
 
 sub cliRadiosQuery {
 	my $request = shift;
-	
-	$::d_plugins && msg("Shoutcast: cliRadiosQuery()\n");
 	
 	# what we want the query to report about ourself
 	my $data = {

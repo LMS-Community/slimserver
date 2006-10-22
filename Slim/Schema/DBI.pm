@@ -10,7 +10,7 @@ package Slim::Schema::DBI;
 use strict;
 use base qw(DBIx::Class);
 
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 
 my $dirtyCount = 0;
 
@@ -61,7 +61,9 @@ sub removeStaleDBEntries {
 	my $class   = shift;
 	my $foreign = shift;
 
-	$::d_import && msg("Import: Starting stale cleanup for class $class / $foreign\n");
+	my $log     = logger('scan.import');
+
+	$log->info("Starting stale cleanup for class $class / $foreign");
 
 	my $rs   = Slim::Schema->search($class, undef, { 'prefetch' => $foreign });
 	my $vaId = Slim::Schema->variousArtistsObject->id;
@@ -76,7 +78,7 @@ sub removeStaleDBEntries {
 
 		if ($obj->search_related($foreign)->count == 0) {
 
-			$::d_import && msgf("Import: DB garbage collection - removing $class: %s - no more $foreign!\n", $obj->name);
+			$log->info(sprintf("DB garbage collection - removing $class: %s - no more $foreign!", $obj->name));
 
 			$obj->delete;
 
@@ -84,7 +86,7 @@ sub removeStaleDBEntries {
 		}
 	}
 
-	$::d_import && msg("Import: Finished stale cleanup for class $class / $foreign\n");
+	$log->info("Finished stale cleanup for class $class / $foreign");
 }
 
 1;

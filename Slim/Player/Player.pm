@@ -17,12 +17,15 @@ use strict;
 
 use Scalar::Util qw(blessed);
 
-use Slim::Player::Client;
-use Slim::Utils::Misc;
-use Slim::Hardware::IR;
-use Slim::Buttons::SqueezeNetwork;
-
 use base qw(Slim::Player::Client);
+
+use Slim::Buttons::SqueezeNetwork;
+use Slim::Hardware::IR;
+use Slim::Player::Client;
+use Slim::Utils::Log;
+use Slim::Utils::Misc;
+
+my $log = logger('player.ui');
 
 our $defaultPrefs = {
 	'bass'                 => 50,
@@ -382,8 +385,10 @@ sub power {
 		my $sync = $client->prefGet('syncPower');
 
 		if (defined $sync && $sync == 0) {
-			$::d_sync && msg("Temporary Unsync ".$client->id()."\n");
-			Slim::Player::Sync::unsync($client,1);
+
+			logger('player.sync')->info("Temporary Unsync " . $client->id);
+
+			Slim::Player::Sync::unsync($client, 1);
   		}
   
 		if (Slim::Player::Source::playmode($client) eq 'play') {
@@ -506,12 +511,16 @@ sub _fadeVolumeUpdate {
 	my $rate = $f->{'rate'};
 
 	if (!$rate || $rate < 0 && $f->{'vol'} < $f->{'endVol'} || $rate > 0 && $f->{'vol'} > $f->{'endVol'}) {
+
 		# reached end of fade
 		$client->volume($f->{'endVol'}, 1);
+
 		if ($f->{'cb'}) {
 			&{$f->{'cb'}}(@{$f->{'cbargs'}});
 		}
+
 	} else {
+
 		$client->volume($f->{'vol'}, 1);
 		Slim::Utils::Timers::setHighTimer($client, $now + $f->{'int'}, \&_fadeVolumeUpdate, $f);
 	}

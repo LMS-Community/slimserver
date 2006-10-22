@@ -26,7 +26,7 @@ use base 'Class::Data::Accessor';
 
 use Slim::Networking::Async::HTTP;
 use Slim::Utils::Cache;
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 
 use HTTP::Date ();
 use HTTP::Request;
@@ -97,7 +97,9 @@ sub _createHTTPRequest {
 	$self->type( $type );
 	$self->url( $url );
 
-	$::d_http_async && msg("SimpleAsyncHTTP: ${type}ing $url\n");
+	my $log = logger('network.asynchttp');
+
+	$log->debug("${type}ing $url");
 	
 	# Check for cached response
 	if ( $self->{params}->{cache} ) {
@@ -112,9 +114,7 @@ sub _createHTTPRequest {
 			# UI experience
 			if ( $data->{_no_revalidate} || time - $data->{_time} < 300 ) {
 				
-				$::d_http_async && msgf("SimpleAsyncHTTP: Using cached response [%s]\n",
-					$url,
-				);
+				$log->debug("Using cached response [$url]");
 				
 				return $self->sendCachedResponse();
 			}
@@ -169,9 +169,8 @@ sub onError {
 	
 	# If we have a cached copy of this request, we can use it
 	if ( $self->cachedResponse ) {
-		$::d_http_async && msg(
-			"SimpleAsyncHTTP: Failed to connect to $uri, using cached copy. ($error)\n"
-		);
+
+		logger('network.asynchttp')->warn("Failed to connect to $uri, using cached copy. ($error)");
 		
 		return $self->sendCachedResponse();
 	}
@@ -188,8 +187,9 @@ sub onBody {
 	
 	my $req = $http->request;
 	my $res = $http->response;
+	my $log = logger('network.asynchttp');
 	
-	$::d_http_async && msgf( "SimpleAsyncHTTP: status for %s is %s\n", $self->url, $res->status_line );
+	$log->debug(sprintf("status for %s is %s", $self->url, $res->status_line ));
 	
 	$self->code( $res->code );
 	$self->mess( $res->message );
@@ -200,7 +200,7 @@ sub onBody {
 		# Check if we are cached and got a "Not Modified" response
 		if ( $self->cachedResponse && $res->code == 304) {
 		
-			$::d_http_async && msg("SimpleAsyncHTTP: Remote file not modified, using cached content\n");
+			$log->debug("Remote file not modified, using cached content");
 		
 			# update the cache time so we get another 5 minutes with no revalidation
 			my $cache = Slim::Utils::Cache->new();
@@ -215,18 +215,26 @@ sub onBody {
 	
 		# unzip if necessary
 		if ( hasZlib() ) {
+
 			if ( my $ce = $res->header('Content-Encoding') ) {
+
 				if ( $ce eq 'gzip' ) {
-					$::d_http_async && msg("Decompressing gzip'ed content\n");
+
+					$log->debug("Decompressing gzip'ed content");
+
 					# Formats::XML requires a scalar ref
 					$self->contentRef( \Compress::Zlib::memGunzip( $res->content_ref ) );
 				}
 				elsif ( $ce eq 'deflate' ) {
-					$::d_http_async && msg("Decompressing deflated content\n");
+
+					$log->debug("Decompressing deflated content");
+
 					my $i = Compress::Zlib::inflateInit(
 						-WindowBits => -Compress::Zlib::MAX_WBITS(),
 					);
+
 					my $output = $i->inflate( $res->content_ref );
+
 					# Formats::XML requires a scalar ref
 					$self->contentRef( \$output );
 				}
@@ -275,10 +283,10 @@ sub onBody {
 						&& !$res->last_modified
 						&& !$res->header('ETag')
 					) {
+
 						$no_cache = 1;
-						$::d_http_async && msgf("SimpleAsyncHTTP: Not caching [%s], no expiration set and missing cache headers\n",
-							$self->url,
-						);
+
+						$log->debug(sprintf("Not caching [%s], no expiration set and missing cache headers", $self->url));
 					}
 				}
 		
@@ -291,16 +299,13 @@ sub onBody {
 					$data->{_expires} = $expires;
 					$cache->set( $self->url, $data, $expires );
 			
-					$::d_http_async && msgf("SimpleAsyncHTTP: Caching [%s] for %d seconds\n",
-						$self->url,
-						$expires,
-					);
+					$log->info(sprintf("Caching [%s] for %d seconds", $self->url, $expires));
 				}
 			}
 		}
 	}
 	
-	$::d_http_async && msg("SimpleAsyncHTTP: Done\n");
+	$log->debug("Done");
 
 	$self->cb->( $self );
 	

@@ -10,6 +10,7 @@ use Scalar::Util qw(blessed);
 use Slim::Music::Artwork;
 use Slim::Music::Info;
 use Slim::Utils::DateTime;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 our @allColumns = (qw(
@@ -261,8 +262,9 @@ sub coverArt {
 	# Don't pass along anchors - they mess up the content-type.
 	# See Bug: 2219
 	my $url = Slim::Utils::Misc::stripAnchorFromURL($self->url);
+	my $log = logger('artwork');
 
-	$::d_artwork && msg("Retrieving artwork ($artType) for: $url\n");
+	$log->info("Retrieving artwork ($artType) for: $url");
 
 	my ($body, $contentType, $mtime, $path);
 
@@ -280,7 +282,7 @@ sub coverArt {
 
 		if ($body && $contentType) {
 
-			$::d_artwork && msg("coverArt: Found cached $artType file: $artwork\n");
+			$log->info("Found cached $artType file: $artwork");
 
 			$path = $artwork;
 		}
@@ -293,7 +295,7 @@ sub coverArt {
 		($body, $contentType, $path) = eval { Slim::Music::Artwork->readCoverArt($self, $artType) };
 
 		if ($@) {
-			errorMsg("coverArt: Exception when trying to call readCoverArt() for [$url] : [$@]\n");
+			$log->error("Error: Exception when trying to call readCoverArt() for [$url] : [$@]");
 		}
 	}
 

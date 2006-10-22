@@ -13,6 +13,7 @@ use IO::String;
 use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 sub _updateMetaData {
@@ -61,7 +62,8 @@ sub _filehandleFromNameOrString {
 	if ($filename) {
 
 		$output = FileHandle->new($filename, "w") || do {
-			msg("Could not open $filename for writing.\n");
+
+			logError("Could't open $filename for writing.");
 			return undef;
 		};
 
@@ -96,13 +98,13 @@ sub playlistEntryIsValid {
 	# Be verbose to the user - this will let them fix their files / playlists.
 	if ($entry eq $url) {
 
-		msg("$caller:\nWARNING:\n\tFound self-referencing playlist in:\n\t$entry == $url\n\t - skipping!\n\n");
+		logWarning("Found self-referencing playlist in:\n\t$entry == $url\n\t - skipping!");
 		return 0;
 	}
 
 	if (!Slim::Music::Info::isFile($entry)) {
 
-		msg("$caller:\nWARNING:\n\t$entry found in playlist:\n\t$url doesn't exist on disk - skipping!\n\n");
+		logWarning("$entry found in playlist:\n\t$url doesn't exist on disk - skipping!");
 		return 0;
 	}
 

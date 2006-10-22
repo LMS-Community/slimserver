@@ -37,12 +37,16 @@ This includes navigating menus, registering and managing player modes, and acces
 use strict;
 use warnings;
 
-use File::Spec::Functions qw(:ALL);
-use File::Spec::Functions qw(updir);
 use Scalar::Util qw(blessed);
 
+use Slim::Buttons::Favorites;
+use Slim::Buttons::SqueezeNetwork;
+use Slim::Buttons::Volume;
+use Slim::Buttons::XMLBrowser;
+use Slim::Display::Display;
 use Slim::Player::Client;
 use Slim::Utils::DateTime;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::PluginManager;
 use Slim::Display::Display;
@@ -92,6 +96,8 @@ my $minimumVelocity = 2;
 my $holdTimeBeforeScroll = 0.300;  
 
 our $scrollClientHash = {};
+
+my $log = logger('player.ui');
 
 =head1 METHODS
 
@@ -160,10 +166,12 @@ sub addSaver {
 
 	$savers{$name} = $displayName;
 
-	$::d_plugins && msg("Registering screensaver $displayName\n");
+	logger('player.ui')->info("Registering screensaver $displayName");
 
 	addMode($name, $buttonFunctions, $setModeFunction, $leaveModeFunction);
+
 	if ($name =~ s/^SCREENSAVER\./OFF\./) {
+
 		addMode($name, $buttonFunctions, $setModeFunction, $leaveModeFunction);
 	}
 }
@@ -591,7 +599,7 @@ our %functions = (
 			}
 		}
 
-		$::d_ui && msg("UI: Brightness using $brightmode during mode: $mode\n");
+		$log->info("Brightness using $brightmode during mode: $mode");
 
 		my $newBrightness;
 
@@ -648,7 +656,7 @@ our %functions = (
 
 		if ($buttonarg eq 'toggle') {
 
-			$::d_ui && msg("Switching to playlist view\n");
+			$log->info("Switching to playlist view.");
 
 			if (Slim::Player::Playlist::count($client) == 0) {
 
@@ -1032,12 +1040,11 @@ our %functions = (
 );
 
 sub getFunction {
- 	my $client = shift;
- 	my $function = shift;
- 	my $clientMode = shift;
- 	my $coderef;
+	my $client     = shift || return;
+	my $function   = shift || return;
+	my $clientMode = shift || mode($client);
 
- 	$clientMode = mode($client) unless defined($clientMode);
+ 	my $coderef;
 
 	if ($coderef = $modeFunctions{$clientMode}{$function}) {
 
@@ -1054,10 +1061,6 @@ sub getFunction {
  	} elsif (($function =~ /(.+?)_(.+)/) && ($coderef = $functions{$1})) {
 
  		return ($coderef, $2)
-
- 	} else {
-
-		return;
 	}
 }
 
@@ -1515,19 +1518,17 @@ sub checkBoxOverlay {
 
 	unless (blessed($client) && $client->isa('Slim::Player::Client')) {
 
-		msg ("PLUGIN WARNING: plugins must now provide client when calling checkBoxOverlay\n");
-		bt();
+		logBacktrace("Plugins must now provide client when calling checkBoxOverlay!");
+
 		$value = $client;
 
 	} elsif ($client->display->isa('Slim::Display::Graphics')) {
 
 		return $client->symbols( $value ? 'filledcircle' : 'circle' );
-
 	}
 
 	return $value ? "[X]" : "[ ]";
 }
-
 
 sub param {
 	my $client = shift;
@@ -1555,7 +1556,7 @@ sub pushMode {
 	my $setmode = shift;
 	my $paramHashRef = shift;
 
-	$::d_ui && msg("pushing button mode: $setmode\n");
+	$log->info("Pushing button mode: $setmode");
 
 	my $oldscreen2 = $client->modeParam('screen2active');
 
@@ -1587,14 +1588,14 @@ sub pushMode {
 	my $newModeFunction = $modes{$setmode};
 
 	if (!$newModeFunction || ref($newModeFunction) ne "CODE") {
-		bt();
-		msg("Crashing because '$setmode' has no mode function or a bogus function.  Perhaps you mis-typed the mode name.\n");
+
+		logError("Crashing because '$setmode' has no mode function or a bogus function. Perhaps you mis-typed the mode name.");
 	}
 
 	eval { &$newModeFunction($client, 'push') };
 
 	if ($@) {
-		msg("Couldn't push into new mode: [$setmode] !: $@\n");
+		logError("Couldn't push into new mode: [$setmode] !: $@");
 	}
 
 	if ($client->display->hasScreen2) {
@@ -1632,7 +1633,7 @@ sub popMode {
 
 		$client->updateKnob(1);
 
-		$::d_ui && msg("popMode: nothing on the modeStack - updatingKnob & returning.\n");
+		$log->info("Nothing on the modeStack - updatingKnob & returning.");
 
 		return undef;
 	}
@@ -1665,7 +1666,7 @@ sub popMode {
 		&$fun($client,'pop');
 	}
 
-	$::d_ui && msg("popped to button mode: " . (mode($client) || 'empty!') . "\n");
+	$log->info("Popped to button mode: " . (mode($client) || 'empty!'));
 
 	if ($client->display->hasScreen2) {
 

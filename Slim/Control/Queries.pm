@@ -33,16 +33,16 @@ use strict;
 use Scalar::Util qw(blessed);
 use URI::Escape;
 
-use Slim::Utils::Misc qw(msg errorMsg specified);
 use Slim::Utils::Alarms;
+use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 
-my $d_queries = 0; # local debug flag
+my $log = logger('control.queries');
 
 sub alarmsQuery {
 	my $request = shift;
 
-	$d_queries && msg("alarmsQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['alarms']])) {
@@ -72,15 +72,19 @@ sub alarmsQuery {
 	} else {
 
 		my $i = 0;
+
 		$filter = 'enabled' if !defined $filter;
+
 		for $alarmDOW (0..7) {
+
 			my $alarm = Slim::Utils::Alarms->newLoaded($client, $alarmDOW);
 			
-			my $wanted = 	( 
-								($filter eq 'all') ||
-								($filter eq 'defined' && !$alarm->undefined()) ||
-								($filter eq 'enabled' && $alarm->enabled())
-							);
+			my $wanted = ( 
+				($filter eq 'all') ||
+				($filter eq 'defined' && !$alarm->undefined()) ||
+				($filter eq 'enabled' && $alarm->enabled())
+			);
+
 			$results[$i++] = $alarm if $wanted;
 		}
 	}
@@ -115,7 +119,7 @@ sub alarmsQuery {
 sub albumsQuery {
 	my $request = shift;
 
-	$d_queries && msg("albumsQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['albums']])) {
@@ -240,7 +244,7 @@ sub albumsQuery {
 sub artistsQuery {
 	my $request = shift;
 
-	$d_queries && msg("artistsQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['artists']])) {
@@ -369,7 +373,7 @@ sub artistsQuery {
 sub cursonginfoQuery {
 	my $request = shift;
 	
-	$d_queries && msg("cursonginfoQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['duration', 'artist', 'album', 'title', 'genre',
@@ -406,8 +410,7 @@ sub cursonginfoQuery {
 
 			if (!blessed($track) || !$track->can('secs')) {
 
-				errorMsg("cursonginfoQuery: Couldn't fetch object for URL: [$url] - skipping track\n");
-				bt();
+				logBacktrace("Couldn't fetch object for URL: [$url] - skipping track.");
 
 			} else {
 
@@ -434,7 +437,7 @@ sub cursonginfoQuery {
 sub connectedQuery {
 	my $request = shift;
 	
-	$d_queries && msg("connectedQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['connected']])) {
@@ -454,7 +457,7 @@ sub connectedQuery {
 sub debugQuery {
 	my $request = shift;
 	
-	$d_queries && msg("debugQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['debug']])) {
@@ -463,29 +466,33 @@ sub debugQuery {
 	}
 	
 	# get our parameters
-	my $debugFlag = $request->getParam('_debugflag');
-	
-	if ( !defined $debugFlag || !($debugFlag =~ /^d_/) ) {
+	my $category = $request->getParam('_debugflag');
+
+	if ( !defined $category || !Slim::Utils::Log->isValidCategory($category) ) {
+
 		$request->setStatusBadParams();
 		return;
 	}
+
+	my $categories = Slim::Utils::Log->allCategories;
 	
-	$debugFlag = "::" . $debugFlag;
-	no strict 'refs';
+	if (defined $categories->{$category}) {
 	
-	my $isValue = $$debugFlag;
-	$isValue ||= 0;
-	
-	$request->addResult('_value', $isValue);
-	
-	$request->setStatusDone();
+		$request->addResult('_value', $categories->{$category});
+		
+		$request->setStatusDone();
+
+	} else {
+
+		$request->setStatusBadParams();
+	}
 }
 
 
 sub displayQuery {
 	my $request = shift;
 	
-	$d_queries && msg("displayQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['display']])) {
@@ -508,7 +515,7 @@ sub displayQuery {
 sub displaynowQuery {
 	my $request = shift;
 	
-	$d_queries && msg("displaynowQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['displaynow']])) {
@@ -529,7 +536,7 @@ sub displaynowQuery {
 sub genresQuery {
 	my $request = shift;
 
-	$d_queries && msg("genresQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['genres']])) {
@@ -624,7 +631,7 @@ sub genresQuery {
 sub infoTotalQuery {
 	my $request = shift;
 	
-	$d_queries && msg("infoTotalQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['info'], ['total'], ['genres', 'artists', 'albums', 'songs']])) {
@@ -658,7 +665,7 @@ sub infoTotalQuery {
 sub linesperscreenQuery {
 	my $request = shift;
 	
-	$d_queries && msg("linesperscreenQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['linesperscreen']])) {
@@ -678,7 +685,7 @@ sub linesperscreenQuery {
 sub mixerQuery {
 	my $request = shift;
 	
-	$d_queries && msg("mixerQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['mixer'], ['volume', 'muting', 'treble', 'bass', 'pitch']])) {
@@ -706,7 +713,7 @@ sub mixerQuery {
 sub modeQuery {
 	my $request = shift;
 	
-	$d_queries && msg("modeQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['mode']])) {
@@ -726,7 +733,7 @@ sub modeQuery {
 sub playerXQuery {
 	my $request = shift;
 
-	$d_queries && msg("playerXQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['player'], ['count', 'name', 'address', 'ip', 'id', 'model', 'displaytype']])) {
@@ -782,7 +789,7 @@ sub playerXQuery {
 sub playersQuery {
 	my $request = shift;
 
-	$d_queries && msg("playersQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['players']])) {
@@ -835,7 +842,7 @@ sub playersQuery {
 sub playlistPlaylistsinfoQuery {
 	my $request = shift;
 	
-	$d_queries && msg("playlistPlaylistsinfoQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['playlist'], ['playlistsinfo']])) {
@@ -866,7 +873,7 @@ sub playlistPlaylistsinfoQuery {
 sub playlistXQuery {
 	my $request = shift;
 	
-	$d_queries && msg("playlistXQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['playlist'], ['name', 'url', 'modified', 
@@ -945,7 +952,7 @@ sub playlistXQuery {
 sub playlistsTracksQuery {
 	my $request = shift;
 
-	$d_queries && msg("playlistsTracksQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	# "playlisttracks" is deprecated (July 06).
@@ -1018,7 +1025,7 @@ sub playlistsTracksQuery {
 sub playlistsQuery {
 	my $request = shift;
 
-	$d_queries && msg("playlistsQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['playlists']])) {
@@ -1072,7 +1079,7 @@ sub playlistsQuery {
 sub playerprefQuery {
 	my $request = shift;
 	
-	$d_queries && msg("playerprefQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['playerpref']])) {
@@ -1098,7 +1105,7 @@ sub playerprefQuery {
 sub powerQuery {
 	my $request = shift;
 	
-	$d_queries && msg("powerQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['power']])) {
@@ -1118,7 +1125,7 @@ sub powerQuery {
 sub prefQuery {
 	my $request = shift;
 	
-	$d_queries && msg("prefQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['pref']])) {
@@ -1143,7 +1150,7 @@ sub prefQuery {
 sub rateQuery {
 	my $request = shift;
 	
-	$d_queries && msg("rateQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['rate']])) {
@@ -1163,7 +1170,7 @@ sub rateQuery {
 sub rescanQuery {
 	my $request = shift;
 	
-	$d_queries && msg("rescanQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['rescan']])) {
@@ -1182,7 +1189,7 @@ sub rescanQuery {
 sub searchQuery {
 	my $request = shift;
 
-	$d_queries && msg("searchQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['search']])) {
@@ -1248,7 +1255,7 @@ sub searchQuery {
 sub signalstrengthQuery {
 	my $request = shift;
 	
-	$d_queries && msg("signalstrengthQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['signalstrength']])) {
@@ -1268,7 +1275,7 @@ sub signalstrengthQuery {
 sub sleepQuery {
 	my $request = shift;
 	
-	$d_queries && msg("sleepQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['sleep']])) {
@@ -1293,7 +1300,7 @@ sub sleepQuery {
 sub statusQuery {
 	my $request = shift;
 	
-	$d_queries && msg("statusQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['status']])) {
@@ -1501,7 +1508,7 @@ sub statusQuery {
 sub songinfoQuery {
 	my $request = shift;
 
-	$d_queries && msg("songinfoQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['songinfo']])) {
@@ -1578,7 +1585,7 @@ sub songinfoQuery {
 sub syncQuery {
 	my $request = shift;
 	
-	$d_queries && msg("syncQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['sync']])) {
@@ -1606,7 +1613,7 @@ sub syncQuery {
 sub timeQuery {
 	my $request = shift;
 	
-	$d_queries && msg("timeQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['time', 'gototime']])) {
@@ -1625,7 +1632,7 @@ sub timeQuery {
 sub titlesQuery {
 	my $request = shift;
 
-	$d_queries && msg("titlesQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['titles', 'tracks', 'songs']])) {
@@ -1674,19 +1681,21 @@ sub titlesQuery {
 	}
 
 	# we don't want client playlists
-	$where->{'me.content_type'} = {'!=', 'cpl'};
+	$where->{'me.content_type'} = { '!=' => 'cpl' };
+
 	# we don't want transporter sources...
-	$where->{'me.content_type'} = {'!=', 'src'};
+	$where->{'me.content_type'} = { '!=' => 'src' };
 
 	# Manage joins
+	if (defined $genreID) {
 
-	if (defined $genreID){
 		$where->{'genreTracks.genre'} = $genreID;
+
 		push @{$attr->{'join'}}, 'genreTracks';
 #		$attr->{'distinct'} = 1;
 	}
 
-	if (defined $contributorID){
+	if (defined $contributorID) {
 	
 		# handle the case where we're asked for the VA id => return compilations
 		if ($contributorID == Slim::Schema->variousArtistsObject->id) {
@@ -1711,7 +1720,7 @@ sub titlesQuery {
 		$attr->{'order_by'} =  "me.titlesort";
 	}
 
-	if (Slim::Music::Import->stillScanning()) {
+	if (Slim::Music::Import->stillScanning) {
 		$request->addResult("rescan", 1);
 	}
 
@@ -1724,9 +1733,9 @@ sub titlesQuery {
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	if ($valid) {
-		
+
 		my $cnt = 0;
-	
+
 		for my $item ($rs->slice($start, $end)) {
 
 			_addSong($request, '@titles', $cnt++, $item, $tags);
@@ -1738,11 +1747,10 @@ sub titlesQuery {
 	$request->setStatusDone();
 }
 
-
 sub versionQuery {
 	my $request = shift;
 	
-	$d_queries && msg("versionQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([['version']])) {
@@ -1756,7 +1764,6 @@ sub versionQuery {
 	
 	$request->setStatusDone();
 }
-
 
 ################################################################################
 # Special queries
@@ -1802,7 +1809,7 @@ sub dynamicAutoQuery {
 	my $funcptr = shift;                       # data returned by addDispatch
 	my $data    = shift || return;             # data to add to results
 	
-	$d_queries && msg("dynamicAutoQuery()\n");
+	$log->debug("Begin Function");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([[$query]])) {
@@ -1835,7 +1842,8 @@ sub dynamicAutoQuery {
 	
 			# arrange for some useful logging if we fail
 			if ($@) {
-				errorMsg("dynamicAutoQuery: Error when trying to run function coderef: [$@]\n");
+
+				logError("While trying to run function coderef: [$@]");
 				$request->setStatusBadDispatch();
 				$request->dump('Request');
 			}
@@ -1855,8 +1863,6 @@ sub dynamicAutoQuery {
 		$request->setStatusDone();
 	}
 }
-
-
 
 ################################################################################
 # Helper functions
@@ -1884,18 +1890,15 @@ sub _addSong {
 	$request->setResultLoopHash($loop, $index, $hashRef);
 }
 
-
 sub _songData {
 	my $pathOrObj = shift; # song path or object
 	my $tags      = shift; # tags to use
 
 	my $track     = Slim::Schema->rs('Track')->objectForUrl($pathOrObj);
 
-#	msg("REMOTE STREAM\n") if Slim::Music::Info::isRemoteURL($pathOrObj);
-
 	if (!blessed($track) || !$track->can('id')) {
 
-		errorMsg("Queries::_songData called with invalid object or path: $pathOrObj!\n");
+		logError("Called with invalid object or path: $pathOrObj!");
 		
 		# For some reason, $pathOrObj may be an id... try that before giving up...
 		if ($pathOrObj =~ /^\d+$/) {
@@ -1904,7 +1907,7 @@ sub _songData {
 
 		if (!blessed($track) || !$track->can('id')) {
 
-			errorMsg("Queries::_songData cannot make track from: $pathOrObj!\n");
+			logError("Can't make track from: $pathOrObj!");
 			return;
 		}
 	}
@@ -1981,8 +1984,6 @@ sub _songData {
 
 	);
 
-
-
 	# loop so that stuff is returned in the order given...
 	for my $tag (split //, $tags) {
 
@@ -1990,9 +1991,9 @@ sub _songData {
 		if (defined(my $method = $tagMap{$tag}->[1])) {
 			
 			if ($method ne '') {
-			
+
 				my $value;
-				
+
 				if (defined(my $submethod = $tagMap{$tag}->[2])) {
 					if (defined(my $related = $track->$method)) {
 						$value = $related->$submethod();
@@ -2004,7 +2005,7 @@ sub _songData {
 				
 				# if we have a value
 				if (defined $value && $value ne '') {
-					
+
 					# add the tag to the result
 					$returnHash{$tagMap{$tag}->[0]} = $value;
 				}
@@ -2014,7 +2015,6 @@ sub _songData {
 
 	return \%returnHash;
 }
-
 
 =head1 SEE ALSO
 

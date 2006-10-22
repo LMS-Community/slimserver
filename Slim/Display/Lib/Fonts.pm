@@ -31,14 +31,18 @@ Library functions to provide bitmapped fonts for graphics displays.
 =cut
 
 use strict;
+
+use File::Slurp;
+use File::Basename;
 use File::Spec::Functions qw(catdir);
 use List::Util qw(max);
+use Path::Class;
+use Storable;
 use Tie::Cache::LRU;
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
-
-use Storable;
 
 our $fonts;
 our $fonthash;
@@ -120,12 +124,15 @@ my %font2uc = (
 	'standard.1' => 1,
 );
 
+my $log = logger('player.graphics');
+
 sub init {
 	loadFonts();
 
-	$::d_graphics && msgf("Trying to load GD Library for TTF support: %s\n", $canUseGD ? 'ok' : 'not ok!');
+	$log->info(sprintf("Trying to load GD Library for TTF support: %s", $canUseGD ? 'ok' : 'not ok!'));
 
 	if ($canUseGD) {
+
 		FONTDIRS:
 		for my $fontFolder (graphicsDirs()) {
 
@@ -143,7 +150,8 @@ sub init {
 		}
 	
 		if ($useTTF) {
-			$::d_graphics && msgf("Using TTF for Unicode on Player Display. Font: [$TTFFontFile]\n");
+
+			$log->info("Using TTF for Unicode on Player Display. Font: [$TTFFontFile]");
 	
 			$useTTFCache = 1;
 			%TTFCache    = ();
@@ -164,7 +172,8 @@ sub init {
 		}	
 
 	} else { 
-		$::d_graphics && msg("Error while trying to load GD Library: [$gdError]\n");
+
+		$log->info("Error while trying to load GD Library: [$gdError]");
 	}
 }
 
@@ -198,7 +207,13 @@ sub fontchars {
 # negative values are for top-row fonts
 sub extent {
 	my $fontname = shift;
-	return $fontextents->{$fontname} || 0;
+
+	if (defined $fontname && exists $fontextents->{$fontname}) {
+
+		return $fontextents->{$fontname};
+	}
+
+	return 0;
 }
 
 sub loadExtent {
@@ -213,7 +228,7 @@ sub loadExtent {
 	
 	$fonts->{extents}->{$fontname} = $extent;
 	
-	$::d_graphics && msg(" extent of: $fontname is $extent\n");
+	$log->debug(" extent of: $fontname is $extent");
 }
 
 sub string {
@@ -221,8 +236,8 @@ sub string {
 	my $string = shift || return (0, '');
 
 	my $defaultFont = $fonts->{$defaultFontname} || do {
-		msg(" Invalid font $defaultFontname\n");
-		bt();
+
+		logBacktrace(" Invalid font $defaultFontname");
 		return (0, '');
 	};
 
@@ -368,12 +383,13 @@ sub string {
 
 				# We don't handle anything outside ISO-8859-1
 				# right now in our non-TTF bitmaps.
-				if ($ord > 255) {
+				if ($ord > 255 || !defined $ord) {
 					$ord = 63; # 63 == '?'
 				}
 
 				if (defined($cursorpos) && !$cursorend) { 
-					$cursorend = length($font->[$ord])/ length($font->[$ord0a]); 
+
+					$cursorend = length($font->[$ord]) / length($font->[$ord0a]); 
 				}
 
 				$bits .= $font->[$ord] . $interspace;
@@ -383,6 +399,7 @@ sub string {
 	}
 
 	if (defined($cursorpos)) {
+
 		$bits |= ($char0 x $cursorpos) . ($font->[$ord0a] x $cursorend);
 	}
 		
@@ -415,22 +432,37 @@ sub fontCacheFile {
 
 # returns a hash of filenames/external names and newest modification time
 sub fontfiles {
-	my %fontfilelist = ();
+	my %fonts  = ();
 	my $newest = 0;
-	foreach my $fontfiledir (graphicsDirs()) {
-		if (opendir(DIR, $fontfiledir)) {
-			foreach my $fontfile ( sort(readdir(DIR)) ) {
-				if ($fontfile =~ /(.+)\.font.bmp$/) {
-					$::d_graphics && msg(" fontfile entry: $fontfile\n");
-					$fontfilelist{$1} = catdir($fontfiledir, $fontfile);
-					my $moddate = (stat($fontfilelist{$1}))[9]; 
-					$newest = $moddate if $moddate > $newest;
+
+	for my $fontFileDir (graphicsDirs()) {
+
+		if (!-d $fontFileDir) {
+			next;
+		}
+
+		my $dir = dir($fontFileDir);
+
+		while (my $fileObj = $dir->next) {
+
+			my $file = $fileObj->stringify;
+
+			if ($file =~ /\/(.+?)\.font\.bmp$/) {
+
+				$fonts{basename($1)} = $file;
+
+				my $moddate = (stat($file))[9]; 
+
+				if ($moddate > $newest) {
+					$newest = $moddate;
 				}
+
+				$log->debug(" found: $file");
 			}
-			closedir(DIR);
 		}
 	}
-	return ($newest, %fontfilelist);
+
+	return ($newest, %fonts);
 }
 
 sub loadFonts {
@@ -443,41 +475,51 @@ sub loadFonts {
 
 	# use stored fontCache if newer than all font files and correct version
 	if (!$forceParse && -r $fontCache && ($newest < (stat($fontCache))[9])) { 
+
 		# check cache for consitency
 		my $cacheOK = 1;
 
-		$::d_graphics && msg( "Retrieving font data from font cache: $fontCache\n");
+		$log->info("Retrieving font data from font cache: $fontCache");
 
 		eval { $fonts = retrieve($fontCache); };
-		
-		$::d_graphics && $@ && msg(" Tried loading fonts: $@\n");
+
+		if ($@) {
+			$log->warn("Tried loading fonts: $@");
+		}
 
 		if (!$@ && defined $fonts && defined($fonts->{hash}) && defined($fonts->{height}) && defined($fonts->{extents})) {
-			$fonthash = $fonts->{hash};
-			$fontheight = $fonts->{height};
+			$fonthash    = $fonts->{hash};
+			$fontheight  = $fonts->{height};
 			$fontextents = $fonts->{extents};
 		} else {
-			$cacheOK = 0;
+			$cacheOK     = 0;
 		}
 
 		# check for font files being removed
-		foreach my $font (keys %{$fontheight}) {
-			$cacheOK = 0 if !exists($fontfiles{$font});
+		for my $font (keys %{$fontheight}) {
+
+			if (!exists($fontfiles{$font})) {
+				$cacheOK = 0;
+			}
 		}
 
 		# check for new fonts being added (with old modification date)
-		foreach my $font (keys %fontfiles) {
-			$cacheOK = 0 if !exists($fontheight->{$font});
+		for my $font (keys %fontfiles) {
+
+			if (!exists($fontheight->{$font})) {
+				$cacheOK = 0;
+			}
 		}
 
 		# check for version of fontcache
 		if (!$fonts->{version} || !$fontCacheVersion || $fonts->{version} != $fontCacheVersion) {
+
 			$cacheOK = 0;
 		}
 
 		return if $cacheOK;
 
-		$::d_graphics && msg( " font cache contains old data - reparsing fonts\n");
+		$log->info("Font cache contains old data - reparsing fonts");
 	}
 
 	# otherwise clear data and parse all font files
@@ -485,18 +527,19 @@ sub loadFonts {
 
 	foreach my $font (keys %fontfiles) {
 
-		$::d_graphics && msg( "Now parsing: $font\n");
+		$log->debug("Now parsing: $font");
 
 		my ($fontgrid, $height) = parseBMP($fontfiles{$font});
 
-		$::d_graphics && msg( " height of: $font is ".($height - 1)."\n");		
+		$log->debug(" height of: $font is " . ($height - 1));
 
 		# store height and then skip font if never seen a player requiring it
-		$fonts->{height}->{$font} = $height - 1;
+		$fonts->{'height'}->{$font} = $height - 1;
+
 		next if ($height == 17 && !Slim::Utils::Prefs::get('loadFontsSqueezeboxG'));
 		next if ($height == 33 && !Slim::Utils::Prefs::get('loadFontsSqueezeboxII'));
 
-		$::d_graphics && msg( " loading...\n");
+		$log->debug("loading...");
 
 		if ($font =~ m/(.*?).(\d)/i) {
 			$fonts->{hash}->{$1}->{line}[$2-1] = $font;
@@ -508,12 +551,14 @@ sub loadFonts {
 		$fonts->{extent}->{$font} = loadExtent($font);
 	}
 
-	$fonthash = $fonts->{hash};
-	$fontheight = $fonts->{height};
-	$fontextents = $fonts->{extents};
+	$fonthash    = $fonts->{'hash'};
+	$fontheight  = $fonts->{'height'};
+	$fontextents = $fonts->{'extents'};
 
-	$::d_graphics && msg( "Writing font cache: $fontCache\n");
-	$fonts->{version} = $fontCacheVersion;
+	$log->info("Writing font cache: $fontCache");
+
+	$fonts->{'version'} = $fontCacheVersion;
+
 	store($fonts, $fontCache);
 }
 
@@ -560,33 +605,47 @@ sub parseFont {
 
 # parses a monochrome, uncompressed BMP file into an array for font data
 sub parseBMP {
-	use bytes;
 	my $fontfile = shift;
-	my $fontstring;
-	my @font;
-	
+
+	use bytes;
+
 	# slurp in bitmap file
-	{
-		local $/;
+	my $fontstring = read_file($fontfile);
+	my @font       = ();
 
-		open(my $fh, $fontfile) or do {
-			errorMsg(" couldn't open fontfile $fontfile\n"); 
-			return undef;
-		};
-
-		binmode $fh;
-		$fontstring = <$fh>;
-	}
-	
 	my ($type, $fsize, $offset, 
 	    $biSize, $biWidth, $biHeight, $biPlanes, $biBitCount, $biCompression, $biSizeImage, $biFirstPaletteEntry ) 
 		= unpack("a2 V xx xx V  V V V v v V V xxxx xxxx xxxx xxxx V", $fontstring);
-	
-	if ($type ne "BM") { msg(" No BM header on $fontfile\n"); return undef; }
-	if ($fsize ne -s $fontfile) { msg(" Bad size in $fontfile\n"); return undef; }
-	if ($biPlanes ne 1) { msg(" Planes must be one, not $biPlanes in $fontfile\n"); return undef; }
-	if ($biBitCount ne 1) { msg(" Font files must be one bpp, not $biBitCount in $fontfile\n"); return undef; }
-	if ($biCompression ne 0) { msg(" Font files must be uncompressed in $fontfile\n"); return undef; }
+
+	if ($type ne "BM") {
+
+		$log->warn("No BM header on $fontfile");
+		return undef;
+	}
+
+	if ($fsize != -s $fontfile) {
+
+		$log->warn("Bad size in $fontfile");
+		return undef;
+	}
+
+	if ($biPlanes != 1) {
+
+		$log->warn("Planes must be one, not $biPlanes in $fontfile");
+		return undef;
+	}
+
+	if ($biBitCount != 1) {
+
+		$log->warn("Font files must be one bpp, not $biBitCount in $fontfile");
+		return undef;
+	}
+
+	if ($biCompression != 0) {
+
+		$log->warn("Font files must be uncompressed in $fontfile");
+		return undef;
+	}
 	
 	# skip over the BMP header and the color table
 	$fontstring = substr($fontstring, $offset);
@@ -602,13 +661,15 @@ sub parseBMP {
 		my $bsLength  = length($bitstring);
 
 		# Surprisingly, this loop is about 20% faster than doing split(//, $bitString)
-
 		if ($biFirstPaletteEntry == 0xFFFFFF) {
+
 			# normal palette
 			for (my $j = 0; $j < $bsLength; $j++) {
 				$line[$j] = substr($bitstring, $j, 1);
 			}
+
 		} else {
+
 			# reversed palette
 			for (my $j = 0; $j < $bsLength; $j++) {
 				$line[$j] = substr($bitstring, $j, 1) ? 0 : 1;
@@ -620,18 +681,13 @@ sub parseBMP {
 
 	return (\@font, $biHeight);
 }
+
 =head1 SEE ALSO
 
-
+L<GD>
 
 =cut
 
 1;
 
-
 __END__
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

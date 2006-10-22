@@ -296,7 +296,7 @@ sub tryModuleLoad {
 }
 
 sub sigint {
-	$::d_server && Slim::Utils::Misc::msg("Got sigint.\n");
+	Slim::Utils::Log::logger('server')->info('Got sigint');
 
 	$sigINTcalled = 1;
 
@@ -308,7 +308,7 @@ sub sigint {
 }
 
 sub sigterm {
-	$::d_server && Slim::Utils::Misc::msg("Got sigterm.\n");
+	Slim::Utils::Log::logger('server')->info('Got sigterm');
 
 	main::cleanup() if defined &main::cleanup;
 
@@ -316,20 +316,23 @@ sub sigterm {
 }
 
 sub ignoresigquit {
-	$::d_server && Slim::Utils::Misc::msg("Ignoring sigquit.\n");
+
+	Slim::Utils::Log::logger('server')->info('Ignoring sigquit');
 }
 
 sub sigquit {
-	$::d_server && Slim::Utils::Misc::msg("Got sigquit.\n");
+	Slim::Utils::Log::logger('server')->info('Got sigquit');
 
 	main::cleanup() if defined &main::cleanup;
 
 	exit();
 }
 
-sub END {
+# Aliased to END in slimserver & scanner, as Log::Log4perl installs an END
+# handler, which needs to run last.
+sub theEND {
 
-	$::d_server && Slim::Utils::Misc::msg("Got to the END.\n");
+	Slim::Utils::Log::logger('server')->info('Got to the END');
 
 	if (!$sigINTcalled && !$main::daemon) {
 		sigint();

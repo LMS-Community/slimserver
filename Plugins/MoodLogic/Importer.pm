@@ -6,9 +6,15 @@ use strict;
 use File::Spec::Functions qw(catfile);
 
 use Plugins::MoodLogic::Common;
+use Slim::Utils::Log;
+use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
-use Slim::Utils::Misc;
+
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.moodlogic',
+	'defaultLevel' => 'WARN',
+});
 
 my $initialized = 0;
 
@@ -23,9 +29,6 @@ my $isauto = 1;
 
 my $last_error = 0;
 my $mixer;
-
-our @mood_names;
-our %mood_hash;
 
 sub useMoodLogic {
 	my $class    = shift;
@@ -56,9 +59,9 @@ sub useMoodLogic {
 
 	$use = Slim::Utils::Prefs::get('moodlogic') && $can;
 
-	Slim::Music::Import->useImporter($class,$use);
+	Slim::Music::Import->useImporter($class, $use);
 
-	$::d_moodlogic && msg("MoodLogic: using moodlogic: $use\n");
+	$log->info(sprintf("Using moodlogic?: %s", $use ? 'yes' : 'no');
 
 	return $use;
 }
@@ -70,16 +73,16 @@ sub canUseMoodLogic {
 }
 
 sub initPlugin {
-	my $class    = shift;
+	my $class = shift;
 
 	return 1 if $initialized; 
 	return 0 if Slim::Utils::OSDetect::OS() ne 'win';
 	
 	Plugins::MoodLogic::Common::checkDefaults();
-	
+
 	require Win32::OLE;
 	import Win32::OLE qw(EVENTS);
-	
+
 	Win32::OLE->Option(Warn => \&Plugins::MoodLogic::Common::OLEError);
 	my $name = "mL_MixerCenter";
 	
@@ -91,49 +94,44 @@ sub initPlugin {
 	}
 	
 	if (!defined $mixer) {
-		$::d_moodlogic && msg("MoodLogic: could not find moodlogic mixer component\n");
+
+		$log->error("Error: Could not find MoodLogic mixer component!");
 		return 0;
 	}
 	
 	$browser = Win32::OLE->new("$name.MlMixerFilter");
 	
 	if (!defined $browser) {
-		$::d_moodlogic && msg("MoodLogic: could not find moodlogic filter component\n");
+
+		$log->error("Error: Could not find MoodLogic filter component!");
 		return 0;
 	}
 	
 	Win32::OLE->WithEvents($mixer, \&Plugins::MoodLogic::Common::event_hook);
-	
-	$mixer->{JetPwdMixer} = 'C393558B6B794D';
-	$mixer->{JetPwdPublic} = 'F8F4E734E2CAE6B';
+
+	# Are these constants documented anywhere?
+	$mixer->{JetPwdMixer}   = 'C393558B6B794D';
+	$mixer->{JetPwdPublic}  = 'F8F4E734E2CAE6B';
 	$mixer->{JetPwdPrivate} = '5B1F074097AA49F5B9';
-	$mixer->{UseStrings} = 1;
+	$mixer->{UseStrings}    = 1;
+	$mixer->{MixMode}       = 0;
 	$mixer->Initialize();
-	$mixer->{MixMode} = 0;
 	
 	if ($last_error != 0) {
-		$::d_moodlogic && msg("MoodLogic: rebuilding mixer db\n");
+
+		$log->warn("Warning: Rebuilding mixer database!");
+
 		$mixer->MixerDb_Create();
+
 		$last_error = 0;
+
 		$mixer->Initialize();
+
 		if ($last_error != 0) {
 			return 0;
 		}
 	}
-	
-	my $i = 0;
-	
-	push @mood_names, string('MOODLOGIC_MOOD_0');
-	push @mood_names, string('MOODLOGIC_MOOD_1');
-	push @mood_names, string('MOODLOGIC_MOOD_2');
-	push @mood_names, string('MOODLOGIC_MOOD_3');
-	push @mood_names, string('MOODLOGIC_MOOD_4');
-	push @mood_names, string('MOODLOGIC_MOOD_5');
-	push @mood_names, string('MOODLOGIC_MOOD_6');
-	
-	map { $mood_hash{$_} = $i++ } @mood_names;
 
-	#Slim::Utils::Strings::addStrings($strings);
 	Slim::Player::ProtocolHandlers->registerHandler("moodlogicplaylist", "0");
 
 	Slim::Music::Import->addImporter($class, {
@@ -150,7 +148,7 @@ sub initPlugin {
 
 sub resetState {
 
-	$::d_musicmagic && msg("MusicMagic: Resetting Last Library Change Time.\n");
+	$log->info("Resetting Last Library Change Time.");
 
 	Slim::Music::Import->setLastScanTime('MLLastLibraryChange', 0);
 }
@@ -161,9 +159,9 @@ sub startScan {
 	if (!useMoodLogic()) {
 		return;
 	}
-		
-	$::d_moodlogic && msg("MoodLogic: start export\n");
-	
+
+	$log->info("Starting export.");
+
 	if (Slim::Music::Import->scanPlaylistsOnly) {
 
 		$class->exportPlaylists;
@@ -181,7 +179,7 @@ sub doneScanning {
 
 	$conn->Close;
 
-	$::d_moodlogic && msg("MoodLogic: done Scanning\n");
+	$log->info("Finished scanning.");
 
 	%genre_hash = ();
 
@@ -196,9 +194,10 @@ sub exportFunction {
 	$conn = Win32::OLE->new("ADODB.Connection");
 	$rs   = Win32::OLE->new("ADODB.Recordset");
 
-	$::d_moodlogic && msg("MoodLogic: Opening Object Link...\n");
+	$log->debug("Opening Object Link...");
 
 	$conn->Open('PROVIDER=MSDASQL;DRIVER={Microsoft Access Driver (*.mdb)};DBQ='.$mixer->{JetFilePublic}.';UID=;PWD=F8F4E734E2CAE6B;');
+
 	$rs->Open('SELECT tblSongObject.songId, tblSongObject.profileReleaseYear, tblAlbum.name, tblSongObject.tocAlbumTrack, tblMediaObject.bitrate FROM tblAlbum,tblMediaObject,tblSongObject WHERE tblAlbum.albumId = tblSongObject.tocAlbumId AND tblSongObject.songId = tblMediaObject.songId ORDER BY tblSongObject.songId', $conn, 1, 1);
 	
 	$browser->filterExecute();
@@ -215,12 +214,13 @@ sub exportFunction {
 	}
 
 	$count = $browser->FLT_Song_Count();
-	$::d_moodlogic && msg("MoodLogic: Begin song scan for ".$count." tracks. \n");
+
+	$log->info("Begin song scan for $count tracks.");
 
 	$class->exportSongs($count);
 
 	$rs->Close;
-	
+
 	$class->exportPlaylists;
 }
 
@@ -280,7 +280,7 @@ sub exportSongs {
 			}
 		}
 
-		$::d_moodlogic && msg("MoodLogic: Creating entry for track $scan: $url\n");
+		$log->debug("Creating entry for track $scan: $url");
 
 		# that's all for the track
 		my $track = Slim::Schema->rs('Track')->updateOrCreate({
@@ -291,7 +291,7 @@ sub exportSongs {
 
 		}) || do {
 
-			$::d_moodlogic && msg("MoodLogic: Couldn't create track for: $url\n");
+			$log->error("Error: Couldn't create track for: $url");
 
 		};
 		
@@ -330,7 +330,7 @@ sub exportContribGenres {
 		$genre->update();
 	}
 	
-	#$::d_moodlogic && msg("MoodLogic: Song scan complete, checking playlists\n");
+	$log->info("Song scan complete, checking playlists.");
 }
 
 sub exportPlaylists {
@@ -339,7 +339,7 @@ sub exportPlaylists {
 	if (!defined $conn) {
 		$conn = Win32::OLE->new("ADODB.Connection");
 
-		$::d_moodlogic && msg("MoodLogic: Opening Object Link...\n");
+		$log->debug("Opening Object Link...");
 
 		$conn->Open('PROVIDER=MSDASQL;DRIVER={Microsoft Access Driver (*.mdb)};DBQ='.$mixer->{JetFilePublic}.';UID=;PWD=F8F4E734E2CAE6B;');
 	}
@@ -353,8 +353,11 @@ sub exportPlaylists {
 	};
 	
 	if ($@) {
-		$::d_moodlogic && msg("MoodLogic: No Playlists Found: $@\n");
+
+		$log->info("No Playlists Found: $@");
+
 	} else {
+
 		$class->processPlaylists($playlist);
 		#$playlist->Close;
 	}
@@ -367,8 +370,11 @@ sub exportPlaylists {
 	};
 
 	if (Win32::OLE->LastError) {
-		$::d_moodlogic && msg("MoodLogic: No AutoPlaylists Found\n");
+
+		$log->info("No AutoPlaylists Found");
+
 	} else {
+
 		$class->processPlaylists($auto);
 		$auto->Close;
 	}
@@ -389,7 +395,7 @@ sub processPlaylists {
 
 		if (ref($list) eq 'ARRAY' && scalar @$list > 0) {
 
-			$::d_moodlogic && msg("MoodLogic: Found MoodLogic Playlist: $url\n");
+			$log->info("Found MoodLogic Playlist: $url");
 
 			# add this playlist to our playlist library
 			Slim::Music::Info::updateCacheEntry($url, {
@@ -400,8 +406,7 @@ sub processPlaylists {
 
 		} else {
 
-			$::d_moodlogic && msg("MoodLogic: playlist [$name] has no entries!\n");
-
+			$log->warn("Playlist [$name] has no entries!");
 		}
 
 		$playlist->MoveNext unless $playlist->EOF;
@@ -426,7 +431,7 @@ sub getPlaylistItems {
 		$playlist->MoveNext;
 	}
 
-	$::d_moodlogic && msg("MoodLogic: adding ". scalar(@list)." items\n");
+	$log->info("Adding ", scalar(@list), " items");
 
 	return \@list;
 }

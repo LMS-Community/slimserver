@@ -20,6 +20,7 @@ L<Slim::Display::Display>
 
 use strict;
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Timers;
 
@@ -415,9 +416,9 @@ sub curLines {
 		$client = $display->client;
 
 	} elsif ($display->isa('Slim::Player::Player')) {
+
 		# this code is reached if curLines is called with the old API rather than a method of display
-		msg("Slim::Display::curLines() depreciated, please call \$client->curLines()\n");
-		Slim::Utils::Misc::bt();
+		logBacktrace("This function is depreciated, please call \$client->curLines()");
 		$client = $display;
 		  
 	} else {
@@ -497,8 +498,8 @@ sub parseLines {
 }
 
 sub renderOverlay {
-	msg("renderOverlay depreciated - please use parseLines\n");
-	bt();
+	logBacktrace("renderOverlay depreciated - please use parseLines()");
+
 	return shift->parseLines(@_);
 }
 
@@ -841,9 +842,10 @@ sub subString {
 	my $oldstring = '';
 
 	if ($start && $length && ($start > 32765 || ($length || 0) > 32765)) {
-			msg("substr on string with start or length greater than 32k, returning empty string.\n");
-			bt();
-			return '';
+
+		logBacktrace("substr on string with start or length greater than 32k, returning empty string.");
+
+		return '';
 	}
 
 	if ($string && $string =~ s/^(((?:(\x1e[^\x1e]+\x1e)|)(?:[^\x1e\x1f]|\x1f[^\x1f]+\x1f)){0,$start})//) {
@@ -866,13 +868,6 @@ sub subString {
 
 =head1 SEE ALSO
 
-
-
 =cut
 
 1;
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

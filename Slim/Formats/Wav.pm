@@ -13,7 +13,7 @@ use base qw(Slim::Formats);
 use Audio::Wav;
 use MP3::Info;
 
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 
 sub getTag {
 	my $class = shift;
@@ -33,12 +33,16 @@ sub getTag {
 		my %parameters = @_;
 
 		if ( $parameters{'warning'} ) {
+
 			# This is a non-critical warning
-			$::d_formats && msg( "Warning: $parameters{'filename'}: $parameters{'message'}\n");
+			logger('formats.audio')->warn("Warning: $parameters{'filename'}: $parameters{'message'}");
+
 		} else {
+
 			# Critical error!
 			$bail = 1;
-			$::d_formats && msg( "ERROR: $parameters{'filename'}: $parameters{'message'}\n");
+
+			logError("$parameters{'filename'}: $parameters{'message'}");
 		}
 	});
 

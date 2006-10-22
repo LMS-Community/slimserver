@@ -40,7 +40,10 @@ L<Cache::Cache> and L<Cache::FileCache>.
 
 use strict;
 use base qw(Class::Singleton);
+
 use Cache::FileCache ();
+
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
@@ -95,6 +98,7 @@ sub cleanup {
 	
 	# Use the same method the Scheduler uses to run only when idle
 	my $busy;
+	my $log = logger('server');
 	
 	for my $client ( Slim::Player::Client::clients() ) {
 
@@ -108,17 +112,20 @@ sub cleanup {
 	}
 	
 	if ( !$busy ) {
-		$::d_server && msg("Cache: Cleaning up expired items...\n");
+
+		$log->info("Cleaning up expired items...");
 	
 		__PACKAGE__->new->purge();
 	
-		$::d_server && msg("Cache: Done\n");
+		$log->info("Done");
 		
 		Slim::Utils::Timers::setTimer( undef, time() + $PURGE_INTERVAL, \&cleanup );
 	}
 	else {
+
 		# try again soon
-		$::d_server && msg("Cache: Skipping cleanup, server is busy\n");
+		$log->info("Skipping cache cleanup, server is busy.");
+
 		Slim::Utils::Timers::setTimer( undef, time() + ($PURGE_INTERVAL / 6), \&cleanup );
 	}	
 }

@@ -25,7 +25,7 @@ use Scalar::Util qw(blessed);
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Player::TranscodingHelper;
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 use Slim::Utils::Favorites;
 
 our %functions = ();
@@ -275,16 +275,26 @@ sub loadDataForTrack {
 	}
 
 	if ( my $bitrate = ( Slim::Music::Info::getCurrentBitrate($track->url) || $track->prettyBitRate ) ) {
-		
-		if ( $bitrate > 0 ) {
+
+		if ( $track->bitrate > 0 ) {
+
 			my $undermax = Slim::Player::TranscodingHelper::underMax($client, $track->url);
+			my $rate     = $bitrate;
+			my $convert  = '';
 
-			my $rate = (defined $undermax && $undermax) ? $bitrate : Slim::Utils::Prefs::maxRate($client).$client->string('KBPS')." ABR";
+			if (!$undermax) {
 
-			push (@{$client->trackInfoLines}, 
-				$client->string('BITRATE').": $bitrate " .
-					(($client->modeParam( 'current') && (defined $undermax && !$undermax)) 
-						? '('.$client->string('CONVERTED_TO').' '.$rate.')' : ''));
+				$rate = Slim::Utils::Prefs::maxRate($client) . $client->string('KBPS') . " ABR";
+			}
+
+			if ($client->modeParam('current') && (defined $undermax && !$undermax)) { 
+
+				$convert = sprintf('(%s %s)', $client->string('CONVERTED_TO'), $rate);
+			}
+
+			push (@{$client->trackInfoLines}, sprintf("%s: %s %s",
+				$client->string('BITRATE'), $bitrate, $convert,
+			));
 
 			push (@{$client->trackInfoContent}, undef);
 		}
@@ -367,7 +377,7 @@ sub listExitHandler {
 
 		if (!blessed($track)) {
 
-			errorMsg("Unable to fetch valid track object for currently selected item!\n");
+			logError("Unable to fetch valid track object for currently selected item!");
 			return 0;
 		}
 
@@ -400,7 +410,7 @@ sub listExitHandler {
 
 			if (!blessed($album) || !blessed($contributor)) {
 
-				errorMsg("Unable to fetch valid album or artist object for currently selected track!\n");
+				logError("Unable to fetch valid album or artist object for currently selected track!");
 				return 0;
 			}
 		}

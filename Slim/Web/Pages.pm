@@ -13,6 +13,7 @@ use File::Spec::Functions qw(:ALL);
 use POSIX ();
 use Scalar::Util qw(blessed);
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -42,15 +43,19 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^tunein\.(?:htm|xml)/,\&tuneIn);
 	Slim::Web::HTTP::addPageFunction(qr/^update_firmware\.(?:htm|xml)/,\&update_firmware);
 	Slim::Web::HTTP::addPageFunction(qr/^ping\.(?:htm|xml)/,\&ping);
+	Slim::Web::HTTP::addPageFunction(qr/^debugging\.(?:htm|xml)/, \&Slim::Web::Setup::handleDebugSettings);
 
 	# pull in the memory usage module if requested.
-	if ($::d_memory) {
+	if (logger('server.memory')->is_info) {
 
 		Slim::bootstrap::tryModuleLoad('Slim::Utils::MemoryUsage');
 
 		if ($@) {
-			print "Couldn't load Slim::Utils::MemoryUsage - error: [$@]\n";
+
+			logError("Couldn't load Slim::Utils::MemoryUsage: [$@]");
+
 		} else {
+
 			Slim::Web::HTTP::addPageFunction(qr/^memoryusage\.html.*/,\&memory_usage);
 		}
 	}
@@ -155,9 +160,9 @@ sub addLibraryStats {
 	$params->{'album_count'}  = $class->_lcPlural($counts{'album'}->distinct->count, 'ALBUM', 'ALBUMS');
 	$params->{'artist_count'} = $class->_lcPlural($counts{'contributor'}->distinct->count, 'ARTIST', 'ARTISTS');
 
-	$::d_sql && msgf("->addLibraryStats() found %s, %s & %s\n", 
+	logger('database.sql')->info(sprintf("Found %s, %s & %s", 
 		$params->{'song_count'}, $params->{'album_count'}, $params->{'artist_count'}
-	);
+	));
 }
 
 sub addPlayerList {

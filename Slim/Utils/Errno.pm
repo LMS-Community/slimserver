@@ -30,7 +30,7 @@ Platform correct error constants.
 =cut
 
 use strict;
-use base qw(Exporter);
+use Exporter::Lite;
 
 our @EXPORT = qw(EWOULDBLOCK EINPROGRESS EINTR ECHILD);
 

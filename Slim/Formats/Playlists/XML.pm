@@ -18,20 +18,24 @@ use Scalar::Util qw(blessed);
 
 use Slim::Formats::XML;
 use Slim::Music::Info;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings;
 use Slim::Utils::Unicode;
 
+my $log = logger('formats.playlists');
+
 sub read {
 	my ($class, $file, $baseDir, $url) = @_;
 
-	my $content = read_file($file);
+	$log->info("Parsing: $file");
 
-	my $xml = Slim::Formats::XML::xmlToHash(\$content);
+	my $content = read_file($file);
+	my $xml     = Slim::Formats::XML::xmlToHash(\$content);
 
 	if (!$xml) {
 
-		$::d_parse && msg("Slim::Formats::Playlists::XML->read: failed to parse XML/Podcast: [$@]\n");
+		logError("Failed to parse XML/Podcast: [$@]");
 
 		# TODO: how can we get error message to client?
 		return ();
@@ -45,15 +49,22 @@ sub read {
 
 		my $enclosure = ref($item->{'enclosure'}) eq 'ARRAY' ? $item->{'enclosure'}->[0] : $item->{'enclosure'};
 
-		next if ref($enclosure) ne 'HASH' || !defined $enclosure->{'url'} || $enclosure->{'type'} !~ /audio/i;
+		if (ref($enclosure) ne 'HASH' || !defined $enclosure->{'url'} || $enclosure->{'type'} !~ /audio/i) {
+
+			next;
+		}
 
 		if ($item->{'title'}) {
+
+			$log->debug("Found title for enclosure: [$item->{'title'}]");
 
 			push @urls, $class->_updateMetaData( $enclosure->{'url'}, {
 				'TITLE' => $item->{'title'},
 			} );
 
 		} else {
+
+			$log->debug("Found url for enclosure: [$enclosure->{'url'}]");
 
 			push @urls, $enclosure->{'url'};
 

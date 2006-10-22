@@ -18,6 +18,7 @@ use Storable qw(nfreeze);
 
 use Slim::Control::Request;
 use Slim::Player::Sync;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::PerfMon;
@@ -72,7 +73,7 @@ sub new {
 	my $clientAlreadyKnown = 0;
 	bless $client, $class;
 
-	$::d_protocol && msg("New client connected: $id\n");
+	logger('network.protocol')->info("New client connected: $id");
 
 	assert(!defined(getClient($id)));
 
@@ -323,9 +324,7 @@ Log a debug message for this client.
 sub debug {
 	my $self = shift;
 
-	if ($::d_client) {
-		msg(sprintf("%s : %s\n", $self->name(), @_));
-	}
+	logger('player')->debug(sprintf("%s : ", $self->name), @_);
 }
 
 # If the ID is undef, that means we have a new client.
@@ -669,33 +668,40 @@ sub tempVolume {
 }
 
 sub treble {
-	my ($client, $treble) = @_;
-	if (defined($treble)) {
-		if ($treble > $client->maxTreble()) { $treble = $client->maxTreble(); }
-		if ($treble < $client->minTreble()) { $treble = $client->minTreble(); }
-		Slim::Utils::Prefs::clientSet($client, "treble", $treble);
-	}
-	return Slim::Utils::Prefs::clientGet($client, "treble");
+	my ($client, $value) = @_;
+
+	return $client->_mixerPrefs('treble', 'maxTreble', 'minTreble', $value);
 }
 
 sub bass {
-	my ($client, $bass) = @_;
-	if (defined($bass)) {	
-		if ($bass > $client->maxBass()) { $bass = $client->maxBass(); }
-		if ($bass < $client->minBass()) { $bass = $client->minBass(); }
-		Slim::Utils::Prefs::clientSet($client, "bass", $bass);
-	}
-	return Slim::Utils::Prefs::clientGet($client, "bass");
+	my ($client, $value) = @_;
+
+	return $client->_mixerPrefs('bass', 'maxBass', 'minBass', $value);
 }
 
 sub pitch {
-	my ($client, $pitch) = @_;
-	if (defined($pitch)) {	
-		if ($pitch > $client->maxPitch()) { $pitch = $client->maxPitch(); }
-		if ($pitch < $client->minPitch()) { $pitch = $client->minPitch(); }
-		Slim::Utils::Prefs::clientSet($client, "pitch", $pitch);
+	my ($client, $value) = @_;
+
+	return $client->_mixerPrefs('pitch', 'maxPitch', 'minPitch', $value);
+}
+
+sub _mixerPrefs {
+	my ($client, $pref, $max, $min, $value) = @_;
+
+	if (defined($value)) {
+
+		if ($value > $client->$max()) {
+			$value = $client->$max();
+		}
+
+		if ($value < $client->$min()) {
+			$value = $client->$min();
+		}
+
+		$client->prefSet($pref, $value);
 	}
-	return Slim::Utils::Prefs::clientGet($client, "pitch");
+
+	return $client->prefGet($pref);
 }
 
 # stub out display functions, some players may not have them.
@@ -793,10 +799,7 @@ sub param {
 	my $name   = shift;
 	my $value  = shift;
 
-	if ($::d_client) {
-		errorMsg("Use of \$client->param is deprecated, use \$client->modeParam instead\n");
-		bt();
-	}
+	logBacktrace("Use of \$client->param is deprecated, use \$client->modeParam instead");
 
 	my $mode   = $client->modeParameterStack(-1) || return undef;
 
@@ -1137,20 +1140,18 @@ sub streamingProgressBar {
 	
 	# Set the duration so the progress bar appears
 	if ( ref $client->currentsongqueue->[0] eq 'HASH' ) {
+
 		$client->currentsongqueue()->[0]->{'duration'} = $secs;
+
+		my $log = logger('player.streaming');
 		
-		if ( $::d_remotestream || $::d_directstream ) {
-			if ( $duration ) {
-				msgf("Duration of stream set to %d seconds\n", $duration );
-			}
-			else {
-				msgf(
-					"Duration of stream set to %d seconds based on length of %d and bitrate of %d\n",
-					$secs,
-					$length,
-					$bitrate
-				);
-			}
+		if ( $duration ) {
+
+			$log->info("Duration of stream set to $duration seconds");
+
+		} else {
+
+			$log->info("Duration of stream set to $secs seconds based on length of $length and bitrate of $bitrate");
 		}
 	}
 }

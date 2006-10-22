@@ -892,16 +892,18 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/thumb.jpg?player=&lt;playerid&g
 	<strong>
 		<code>
 			debug 
-			&lt;debugflag&gt;
-			&lt;0|1|?|&gt;
+			&lt;debug category&gt;
+			&lt;OFF|FATAL|ERROR|WARN|INFO|DEBUG|?|&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;debug&quot; command allows the caller to query, clear, set
-	or toggle the server's internal debug flags. Use 0 to clear, 1
-	to set, ? to query and no parameter to toggle the debug flag
-	value.
+	The &quot;debug&quot; command allows the caller to query or set
+	the server's internal debugging categories. Use 'OFF' to silence,
+	'FATAL' for only seeing fatal errors, 'ERROR' for non-fatal errors, etc.
+	Finally, using ? will query the current level for the category.
+
+	Valid categories can be found under Settings -> Debugging.
 </p>
 <p>
 	Examples:

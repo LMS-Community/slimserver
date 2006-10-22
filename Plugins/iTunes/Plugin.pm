@@ -9,8 +9,14 @@ use strict;
 use base qw(Plugins::iTunes::Common);
 
 use Slim::Player::ProtocolHandlers;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.itunes',
+	'defaultLevel' => 'WARN',
+});
 
 sub getDisplayName {
 	return 'SETUP_ITUNES';
@@ -88,7 +94,7 @@ sub checker {
 		$interval = 10;
 	}
 
-	$::d_itunes && msg("iTunes: Setting checker for $interval seconds from now.\n");
+	$log->info("setting checker for $interval seconds from now.");
 
 	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&checker);
 }

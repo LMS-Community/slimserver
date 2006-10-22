@@ -1,6 +1,6 @@
 package Slim::Networking::SliMP3::Stream;
 
-# $Id4
+# $Id$
 
 # SlimServer Copyright (C) 2001-2004 Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -8,11 +8,12 @@ package Slim::Networking::SliMP3::Stream;
 # version 2.
 
 use strict;
-
-use Slim::Utils::Timers;
-use Slim::Utils::Misc;
-use Slim::Player::SLIMP3;
 use bytes;
+
+use Slim::Player::SLIMP3;
+use Slim::Utils::Log;
+use Slim::Utils::Misc;
+use Slim::Utils::Timers;
 
 ###
 ### lots o' knobs:
@@ -40,6 +41,8 @@ our %lastByte;			# if we get an odd number of bytes from the upper level, hold o
 
 my $empty = '';
 
+my $log = logger('network.protocol.slimp3');
+
 #
 # things we remember about packets in flight
 #	chunkref
@@ -51,28 +54,32 @@ my $empty = '';
 ###  External interface
 ###
 
-# This module provides the interface for controlling streams to the player
-#
+=head1 DESCRIPTION
 
-# newStream - start a new stream 
-#
-#   $client		the client
-#
-#   initial state	can be 'paused' or 'buffering'
-#			the caller specifies either 'paused' or 'play', and we decide internally
-# 			how to handle the buffering.
-#
+This module provides the interface for controlling streams to a SliMP3 player.
+
+=head1 CLIENT METHODS
+
+=head2 newStream( $client, $paused )
+
+Start a new stream to the client.
+
+$paused can be 'paused' or 'buffering'.
+
+The caller specifies either 'paused' or 'play', and we decide internally how
+to handle the buffering.
+
+=cut
 
 sub newStream {
 	my ($client, $paused) = @_;
 	
-	$::d_stream && msg( $client->id() ." new stream " . ($paused ? "paused" : "") . "\n");
-		
+	$log->info($client->id, " new stream: ", ($paused ? "paused" : ""));
+
 	if ($paused) {
 		$streamState{$client} = 'paused';
 	} else {
 		$streamState{$client} = 'buffering';
-
 	}
 	
 	$bytesSent{$client} = 0;
@@ -97,20 +104,25 @@ sub fullness {
 	return $fullness{$client} || 0;
 }
 
-# 
-# Pauses playback (but keep filling the buffer)
-#
+=head2 pause( $client )
+
+Pauses playback (but keep filling the buffer)
+
+=cut
 
 sub pause {
 	my ($client) = @_;
-	$::d_stream && msg($client->id() ." pause\n");
-	
+
+	$log->infomsg($client->id, " pause");
+
 	if ($streamState{$client} ne 'play' && $streamState{$client} ne 'buffering') {
-		$::d_stream && msg("Attempted to pause a " . $streamState{$client} .  " stream.\n");
+
+		$log->info("Attempted to pause a $streamState{$client} stream.");
+
 		return 0;
 	}
 
-	$streamState{$client}='paused';
+	$streamState{$client} = 'paused';
 
 	if ($fullness{$client} > $BUFFER_FULL_THRESHOLD) {
 		sendEmptyChunk($client);
@@ -121,52 +133,77 @@ sub pause {
 	return 1;
 }
 
-#
-# Halts playback completely
-#
+=head2 stop( $client )
+
+Halts playback completely
+
+=cut
 
 sub stop {
 	my ($client) = @_;
-		
-	$::d_stream && msg( $client->id() ." stream stop\n");
+
+	$log->info($client->id, " stream stop");
+
 	if (!$streamState{$client} || $streamState{$client}  eq 'stop') {
-		$::d_stream && msg("Attempted to stop an already stopped stream.\n");
+
+		$log->info("Attempted to stop an already stopped stream.");
+
 		return 0;
 	}
-	$streamState{$client}='stop';
+
+	$streamState{$client} = 'stop';
+
 	sendNextChunk($client);	
+
 	$client->bytesReceived(0);
+
 	return 1;
 }
 
 sub playout {
 	my ($client) = @_;
-	$::d_stream && msg( $client->id() ." stream play out\n");
-	$streamState{$client}='eof';
+
+	$log->info($client->id, " stream play out");
+
+	$streamState{$client} = 'eof';
 }
-	
-#
-# Unpauses a paused stream. If the buffer is too low to unpause, this
-# does not take effect until it has filled sufficiently.
-#
+
+=head2 unpause( $client )
+
+Unpauses a paused stream. If the buffer is too low to unpause, this does not
+take effect until it has filled sufficiently.
+
+=cut
+
 sub unpause {
 	my ($client) = @_;
-	$::d_stream && msg($client->id() ." unpause\n");
+
+	$log->info($client->id, " unpause");
+
 	if ($streamState{$client} eq 'buffering') {
-		return 0;  # can't force unpause while in buffering state.
-	} elsif ($streamState{$client} eq 'stop') {
-		msg( "Attempted to unpause a stopped stream.\n");
-		bt();
-	} elsif ($streamState{$client} eq 'play') {
+
+		# can't force unpause while in buffering state.
 		return 0;
+
+	} elsif ($streamState{$client} eq 'stop') {
+
+		$log->logBacktrace("Attempted to unpause a stopped stream.");
+
+	} elsif ($streamState{$client} eq 'play') {
+
+		return 0;
+
 	} elsif  ($streamState{$client} eq 'paused') {
+
 		$streamState{$client} = 'play';
 		sendNextChunk($client);
 		return 1;	
+
 	} else {
-		msg( "Bogus streamstate for unpause\n");
-		bt();
+
+		$log->logBacktrace("Bogus streamstate for unpause.");
 	}
+
 	return 0;
 }
 
@@ -195,77 +232,80 @@ sub unpause {
 #
 
 # The stream control code is included with every packet of data
-#
 my %streamControlCodes = (
-        'go' 	=> 0,   # Run the decoder
-        'stop'	=> 1,   # Halt decoder but don't reset rptr
+        'go' 	=> 0, # Run the decoder
+        'stop'	=> 1, # Halt decoder but don't reset rptr
         'reset'	=> 3  # Halt decoder and reset rptr  
-	);
+);
 
-#
 # send a packet
-#
 sub sendStreamPkt {
 	my ($client, $pkt) = @_;	
 	
 	my $seq  = $pkt->{'seq'};
 	my $len  = $pkt->{'len'};
 	my $wptr = $pkt->{'wptr'};
-	
-	$::d_stream_v && msg($client->id() . " " . Time::HiRes::time() .
-		" sending stream, seq = $seq len = $len wptr = $wptr state=". 
-		$streamState{$client}.
-		" inflight=" . defined($packetInFlight{$client}) . "\n"
+
+	$log->debug(
+		$client->id, 
+		" sending stream, seq = $seq len = $len wptr = $wptr state = $streamState{$client}",
+		" inflight = " . defined($packetInFlight{$client}),
 	);
 
 	my $control;
 	my $streamState = $streamState{$client};
 	
 	if (($streamState eq 'stop') || ($bytesSent{$client} == 0)) {
-		$::d_stream_v && msg(ms()." reset\n");
+
+		$log->debug("reset");
+
 		$control = $streamControlCodes{'reset'};
 		
 	} elsif ($streamState eq 'buffering') {
+
 		$control = $streamControlCodes{'reset'};
-		
+
 	} elsif ($streamState eq 'paused') {
+
 		$control = $streamControlCodes{'stop'};
-		
+
 	} elsif ($streamState eq 'play') {
+
 		$control = $streamControlCodes{'go'};
-		
+
 	} elsif ($streamState eq 'eof') {
+
 		$control = $streamControlCodes{'go'};
+
 	} else {
-		msg( "bogus streamstate $streamState");
-		bt();
+
+		$log->logBacktrace("Bogus streamstate $streamState");
 	}
 
 	my $measuredlen = length(${$pkt->{'chunkref'}});
 
 	if ($len == $measuredlen && $len < 4097 ) {
+
 		$client->udpstream($control, $wptr, $seq, ${$pkt->{'chunkref'}});
 	
-		if ($::d_stream && $packetInFlight{$client}) {
-			msg("Sending packet when we have one in queue!!!!!!\n"); 
-			bt();
+		if ($log->warn && $packetInFlight{$client}) {
+
+			$log->logBacktrace("Sending packet when we have one in queue!!!!!!"); 
 		};
 		
 		$packetInFlight{$client} = $pkt;
 		$bytesSent{$client} += $len;
 
 	} else {
-		msg("Bogus length $len, measured: $measuredlen\n");
-		bt();
+
+		$log->logBacktrace("Bogus length $len, measured: $measuredlen");
 	}
 
 	# restart the timeout
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time()+$TIMEOUT, \&timeout, ($seq));
 }
 
-#
 # Retransmit timed out packet
-
 sub timeout {
 	my $client = shift;
 	my $seq = shift;
@@ -276,22 +316,22 @@ sub timeout {
 
 	my $packet = $packetInFlight{$client};
 
-	$::d_stream && msg($client->id() . " " . Time::HiRes::time() . " Timeout on seq: " . $packet->{'seq'} . "\n");
+	$log->warn($client->id, " Timeout on seq: $packet->{'seq'}");
 
 	$packetInFlight{$client} = undef;
 
 	if (($lastAck{$client} + $ACK_TIMEOUT) < Time::HiRes::time()) {
+
 		# we haven't gotten an ack in a long time.  shut it down and don't bother resending.
 		Slim::Player::Sync::unsync($client);
 		$client->execute(["stop"]);
+
 	} else {
 		sendStreamPkt($client, $packet);
 	}
 }
 
-#
 # receive an ack, then send one or two more packets
-#
 sub gotAck {
 	my ($client, $wptr, $rptr, $seq) = @_;
 	my $pkt;
@@ -299,18 +339,20 @@ sub gotAck {
 	my $eachpkt;
 
 	if (!defined($streamState{$client})) {
-		$::d_stream && msg($client->id() . ": received a stray ack from an unknown client - ignoring.\n");
+
+		$log->warn($client->id, ": received a stray ack from an unknown client - ignoring.");
+
 		return;
 	}
 
-	$::d_stream_v && msg($client->id() . " ".Time::HiRes::time() .  " gotAck for seq: $seq ");
-	$::d_stream_v && msg("ack: wptr:$wptr, rptr:$rptr, seq:$seq, ");
+	$log->debug($client->id, " gotAck for seq: $seq ack: wptr:$wptr, rptr:$rptr, seq:$seq");
 
 	# calculate buffer usage
 	# todo: optimize usage calculations
 	my $bytesInFlight = 0;
 
 	if ($packetInFlight{$client}) {
+
 		$bytesInFlight += $packetInFlight{$client}->{'len'};
 	}
 
@@ -321,42 +363,55 @@ sub gotAck {
 	} 
 
 	$fullness = $fullness * 2 + $bytesInFlight;
-	
+
 	$fullness{$client} = $fullness;
-	
-	$::d_stream_v && msg("bytesinflight:$bytesInFlight fullness:" . $fullness{$client} . "\n");
-	
+
+	$log->debug("bytesinflight:$bytesInFlight fullness:$fullness{$client}");
+
 	if (!$packetInFlight{$client}) {
-		$::d_stream && msg("***Missing packet acked: $seq\n");
+
+		$log->warn("Warning: Missing packet acked: $seq");
+
 	} elsif ($packetInFlight{$client}->{'seq'} != $seq) { 
-		$::d_stream && msg("***Unexpected packet acked: $seq, was expecting " . $packetInFlight{$client}->{'seq'} . "\n");
+
+		$log->warn("Warning: Unexpected packet acked: $seq, was expecting " . $packetInFlight{$client}->{'seq'});
+
 	} else {
+
 		$client->bytesReceived($client->bytesReceived + $packetInFlight{$client}->{'len'});
+
 		$packetInFlight{$client} = undef;
+
 		Slim::Utils::Timers::killOneTimer($client, \&timeout);
+
 		$lastAck{$client} = Time::HiRes::time();
 	}
 
 	if ($fullness <= 512) { 
-		$::d_stream && msg("***Stream underrun: $fullness\n");
+
+		$log->warn("Warning: Stream underrun: $fullness");
+
 		Slim::Player::Source::underrun($client);
+
 		if ($streamState{$client} eq 'eof') { 
+
 			$streamState{$client} = 'stop'; 
-		};
+		}
 	}
 
 	my $state = $streamState{$client};
 
 	if ($state eq 'stop') {
+
 		# don't bother sending anything.
+
 	} else {
+
 		sendNextChunk($client);
 	}
 }
 
-#
 # sends the next packet of data in the stream
-#
 sub sendNextChunk {
 	my $client   = shift;
 
@@ -367,6 +422,7 @@ sub sendNextChunk {
 
 	# if there's a packet in flight, come back later and try again...
 	if ($packetInFlight{$client}) {
+
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $BUFFER_FULL_DELAY, \&sendNextChunk);
 		return 0;
 	}
@@ -374,30 +430,38 @@ sub sendNextChunk {
 	my $streamState = $streamState{$client};
 	
 	if (($streamState eq 'stop')) { 
+
 		sendEmptyChunk($client);
+
 		# there is no more data to send
 		return 0;
 	}
 	
 	if ($fullness > $BUFFER_FULL_THRESHOLD) {
-		$::d_stream_v && msg($client->id() . "- $streamState -  Buffer full, need to poll to see if there is space\n");
+
+		$log->debug($client->id, "- $streamState - Buffer full, need to poll to see if there is space");
+
 		# if client's buffer is full, poll it every 50ms until there's room if we're playing
 		# otherwise, we can't send a chunk.
 		if ($streamState eq 'play' || $streamState eq 'eof') {
+
 			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $BUFFER_FULL_DELAY, \&sendEmptyChunk);
 		} 
+
 		return 0;
 	}
 
 	my $requestedChunkSize = Slim::Utils::Prefs::get('udpChunkSize');
-	
+
 	my $remainingSpace = $client->bufferSize() - ($curWptr * 2);
-	
+
 	if ($remainingSpace && $requestedChunkSize > $remainingSpace) {
+
 		$requestedChunkSize = $remainingSpace;
 	}
 
 	if (defined($lastByte{$client})) {
+
 		$requestedChunkSize--;
 	}
 
@@ -405,28 +469,32 @@ sub sendNextChunk {
 	
 	if (!defined($chunkRef)) {
 
-		$::d_stream && msg("stream not readable\n");
+		$log->warn("Stream not readable");
 
 		if ($streamState eq 'eof') {
 
-			$::d_stream && msg("sending empty chunk...\n");
+			$log->warn("Sending empty chunk...");
+
 			# we're going to poll after BUFFER_FULL_DELAY with an empty chunk so we can know when the player runs out.
 			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $BUFFER_FULL_DELAY, \&sendEmptyChunk);
 
 		} else {
-				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $TIMEOUT, \&sendNextChunk);
+
+			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $TIMEOUT, \&sendNextChunk);
 		}
 
 		return 0;
 	}
 	
 	if (defined($lastByte{$client})) {
+
 		$$chunkRef = $lastByte{$client} . $$chunkRef;
+
 		delete($lastByte{$client});	
 	}
-	
+
 	my $len = length($$chunkRef) || 0;
-	
+
 	# We must send an even number of bytes.
 	if (($len % 2) != 0) {
 
@@ -436,27 +504,33 @@ sub sendNextChunk {
 	} 
 
 	if (($fullness > $UNPAUSE_THRESHOLD) && ($streamState eq 'buffering')) {
+
 		$streamState{$client}='play';
-		$::d_stream && msg($client->id() . " Buffer full, starting playback\n");
+
+		$log->info($client->id, " Buffer full, starting playback");
+
 		$client->currentplayingsong(Slim::Player::Playlist::song($client));
 		$client->remoteStreamStartTime(time());
 
 	} elsif (($fullness < $PAUSE_THRESHOLD) && ($streamState eq 'play')) {
-		$::d_stream && msg($client->id() . "Buffer drained, pausing playback\n");
+
+		$log->info($client->id, "Buffer drained, pausing playback");
+
 		$streamState{$client}='buffering';
 	}
-	
+
 	my $pkt = {
 		'wptr'     => $curWptr,
 		'len'      => $len,
 		'chunkref' => $chunkRef,
 	};
-	
+
 	$curWptr = $curWptr + $len/2;
 
 	if ($curWptr >= $UNPAUSE_THRESHOLD) {
+
 		$curWptr -= $UNPAUSE_THRESHOLD;
-	};
+	}
 	
 	$curWptr{$client} = $curWptr;
 	
@@ -465,22 +539,18 @@ sub sendNextChunk {
 	return 1;
 }
 
-#
 # send a stream packet with no data. Used to update the stream control code
 # and also to effect a poll of the client's buffer usage. 
-#
-
 sub sendEmptyChunk {
+	my $client = shift;
 
-	my ($client) = @_;
+	$log->debug($client->id);
 
-	$::d_stream_v && msg($client->id() . " sendEmptyChunk\n");
-
-	my $pkt = {};
-
-	$pkt->{'wptr'}     = $curWptr{$client};
-	$pkt->{'len'}      = 0;
-	$pkt->{'chunkref'} = \$empty;
+	my $pkt = {
+		'wptr'     => $curWptr{$client},
+		'len'      => 0,
+		'chunkref' => \$empty,
+	};
 
 	sendPkt($client, $pkt);
 }
@@ -490,24 +560,21 @@ sub sendPkt {
 	my $pkt    = shift;
 
 	my $seq = $seq{$client};
+
 	$pkt->{'seq'} = $seq;
 
 	sendStreamPkt($client, $pkt);
-	
+
 	$seq++;
 
 	if ($seq >= $UNPAUSE_THRESHOLD) {
+
 		$seq -= $UNPAUSE_THRESHOLD;
-	};
+	}
 
 	$seq{$client} = $seq;
 }
 
-# returns a time stamp for debugging
-sub ms {
-	return (int(Time::HiRes::time()*10000)%100000/10);
-}
-
-
 1;
+
 __END__

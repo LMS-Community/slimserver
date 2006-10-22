@@ -16,12 +16,15 @@ use URI::Find;
 
 use Slim::Formats;
 use Slim::Music::Info;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
+
+my $log = logger('formats.playlists');
 
 sub registerParser {
 	my ($class, $type, $playlistClass) = @_;
 
-	$::d_parse && msg("registerParser: Registering external parser for type $type - class: $playlistClass\n");
+	$log->info("Registering external parser for type $type - class: $playlistClass");
 
 	$Slim::Music::Info::tagClasses{$type} = $playlistClass;
 }
@@ -40,7 +43,7 @@ sub parseList {
 		$type = Slim::Music::Info::typeFromSuffix($url);
 	}
 
-	$::d_parse && msg("parseList (type: $type): $url\n");
+	$log->info("Type: $type for: $url");
 
 	my @results = ();
 	my $closeFH = 0;
@@ -72,13 +75,12 @@ sub parseList {
 
 		if ($@) {
 
-			errorMsg("parseList: While running \$playlistClass->read()\n");
-			errorMsg("$@\n");
+			logError("While running \$playlistClass->read(): [$@]");
 		}
 	}
 	else {
 		# Try to guess what kind of playlist it is		
-		$::d_parse && msg("parseList: Unknown content type $type, trying to guess\n");
+		$log->warn("Unknown content type $type, trying to guess");
 
 		my $content = read_file($fh);
 
@@ -100,7 +102,7 @@ sub parseList {
 		}
 
 		# no luck there, so just use URI::Find to look for URLs
-		$::d_parse && msg("parseList: Couldn't guess, so trying to simply read all URLs from content\n");
+		$log->warn("Couldn't guess, so trying to simply read all URLs from content");
 
 		my $finder = URI::Find->new( sub {
 			my ( $uri, $orig_uri ) = @_;
@@ -136,8 +138,7 @@ sub writeList {
 
 		if ($@) {
 
-			errorMsg("writeList: While running \$playlistClass->read()\n");
-			errorMsg("$@\n");
+			logError("While running \$playlistClass->read(): [$@]");
 		}
 	}
 

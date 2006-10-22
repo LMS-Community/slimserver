@@ -27,6 +27,7 @@ use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;
 use Slim::Music::Info;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 our %functions = ();
@@ -266,7 +267,8 @@ sub init {
 
 			if (scalar @mixers == 1) {
 				
-				$::d_plugins && msg("Running Mixer $mixers[0]\n");
+				logger('server.plugin')->info("Running Mixer $mixers[0]");
+
 				&{$Imports->{$mixers[0]}->{'mixer'}}($client);
 				
 			} elsif (@mixers) {
@@ -320,7 +322,8 @@ sub mixerExitHandler {
 
 		if (defined $Imports->{$mixer}->{'mixer'}) {
 
-			$::d_plugins && msg("Running Mixer $mixer\n");
+			logger('server.plugin')->info("Running Mixer $mixer");
+
 			&{$Imports->{$mixer}->{'mixer'}}($client);
 
 		} else {
@@ -395,7 +398,7 @@ sub browsedbExitCallback {
 
 			if (!blessed($track) || !$track->can('title')) {
 
-				errorMsg("Couldn't find a valid object for playlist!\n");
+				logError("Couldn't find a valid object for playlist!");
 
 				$client->showBriefly($client->string('PROBLEM_OPENING'));
 
@@ -650,8 +653,9 @@ sub setMode {
 	my $hierarchy = $client->modeParam('hierarchy');
 	my $level     = $client->modeParam('level') || 0;
 	my $search    = $client->modeParam('search');
+	my $log       = logger('database.info');
 
-	$::d_info && msg("browsedb - hierarchy: $hierarchy level: $level\n");
+	$log->debug("hierarchy: $hierarchy level: $level");
 
 	# Parse the hierarchy list into an array
 	my @levels   = split(',', $hierarchy);
@@ -828,7 +832,7 @@ sub setMode {
 		$selectionKey = join(':', $hierarchy, $level, Storable::freeze($find));
 		$listIndex    = $client->lastID3Selection($selectionKey) || 0;
 
-		$::d_info && msg("last position from selection key $selectionKey is $listIndex\n");
+		$log->debug("last position from selection key $selectionKey is $listIndex");
 	}
 
 	my %params = (

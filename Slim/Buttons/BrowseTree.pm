@@ -26,6 +26,7 @@ use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;
 use Slim::Music::Info;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 our %functions = ();
@@ -121,15 +122,16 @@ sub init {
 			} else {
 
 				my $wasShuffled = Slim::Player::Playlist::shuffle($client);
+				my $log         = logger('player.playlist');
 
 				Slim::Player::Playlist::shuffle($client, 0);
 
 				$client->execute(['playlist', 'clear']);
 
-				$::d_playlist && msg("Playing all in folder, starting with $listIndex\n");
+				$log->info("Playing all in folder, starting with $listIndex");
 
-				my @playlist;
-				
+				my @playlist = ();
+
 				# iterate through list in reverse order, so that dropped items don't affect the index as we subtract.
 				for my $i (reverse (0..scalar @{$items}-1)) {
 
@@ -137,18 +139,22 @@ sub init {
 						$items->[$i] =  Slim::Utils::Misc::fixPath($items->[$i], $client->modeParam('topLevelPath'));
 					}
 
-					unless (Slim::Music::Info::isSong($items->[$i])) {
-						$::d_playlist && msgf("Dropping %s from play all in folder at index %d\n",$items->[$i],$i);
+					if (!Slim::Music::Info::isSong($items->[$i])) {
+
+						$log->info("Dropping $items->[$i] from play all in folder at index $i");
+
 						if ($i < $listIndex) {
-							$listIndex --;
+							$listIndex--;
 						}
+
 						next;
 					}
 
 					unshift (@playlist, $items->[$i]);
 				}
 
-				$::d_playlist && msg("Load folder playlist, now starting at index: $listIndex\n");
+				$log->info("Load folder playlist, now starting at index: $listIndex");
+
 				$client->execute(['playlist', 'addtracks','listref', \@playlist]);
 				$client->execute(['playlist', 'jump', $listIndex]);
 
@@ -183,10 +189,11 @@ sub init {
 #			}
 
 			if (scalar @mixers == 1) {
-				
-				$::d_plugins && msg("Running Mixer $mixers[0]\n");
+
+				logger('server.plugin')->info("Running Mixer $mixers[0]");
+
 				&{$Imports->{$mixers[0]}->{'mixer'}}($client);
-				
+
 			} elsif (@mixers) {
 
 				# store existing browsedb params for use later.
@@ -205,9 +212,9 @@ sub init {
 				};
 
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', $params);
-			
+
 			} else {
-			
+
 				# if we don't have mix generation, then just play
 				(getFunctions())->{'play'}($client);
 			}

@@ -34,8 +34,11 @@ use Scalar::Util qw(blessed);
 
 use Slim::Buttons::Common;
 use Slim::Utils::Favorites;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+
+my $log = logger('favorites');
 
 my %context = ();
 
@@ -73,7 +76,7 @@ sub getDisplayName {
 }
 
 sub init {
-	$::d_favorites && msg("Favorites: init\n");
+	$log->info("Initializing");
 
 	Slim::Buttons::Common::addMode('FAVORITES', \%mainModeFunctions, \&setMode);
 
@@ -203,7 +206,7 @@ sub playFavorite {
 		return;
 	}
 
-	$::d_favorites && msg("Favorites: playing favorite number $digit, $titles[$listIndex]\n");
+	$log->info("Playing favorite number $digit, $titles[$listIndex]");
 
 	_addOrPlayFavoriteUrl($client, $urls[$listIndex], $titles[$listIndex], $listIndex);
 }
@@ -228,7 +231,7 @@ sub _addOrPlayFavoriteUrl {
 	if (!$add) {
 		$client->execute([ 'playlist', 'clear' ] );
 	}
-	
+
 	# remote URLs should go via play/add so they go through Scanner
 	# 
 	# NB: Transporter digital source: URLs are special. They are
@@ -237,13 +240,13 @@ sub _addOrPlayFavoriteUrl {
 
 		$command = $add ? 'add' : 'play';
 
-		$::d_favorites && msg("Favorites: Calling $command on favorite [$title] ($url)\n");
+		$log->info("Calling $command on favorite [$title] ($url)");
 
 		$client->execute([ 'playlist', $command, $url, $title ]);
 
 	} else {
 
-		$::d_favorites && msg("Favorites: Calling $command on favorite [$title] ($url)\n");
+		$log->info("Calling $command on favorite [$title] ($url)");
 
 		$client->execute([ 'playlist', $command, 'favorite', $url ]);
 	}

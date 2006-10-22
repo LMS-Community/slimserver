@@ -27,14 +27,14 @@ string()
 =cut
 
 use strict;
-use base qw(Exporter);
+use Exporter::Lite;
 
 # we export string() so it's less typing to use it
 our @EXPORT_OK = qw(string);
 
 use File::Spec::Functions qw(:ALL);
 
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 
 #-------------------------------------------------
 
@@ -121,7 +121,7 @@ sub load_strings_file {
 		local $/ = undef;
 
 		open(STRINGS, '<:utf8', $file) || do {
-			errorMsg("load_strings_file: couldn't open $file - FATAL!\n");
+			logError("load_strings_file: couldn't open $file - FATAL!");
 			die;
 		};
 
@@ -135,7 +135,7 @@ sub load_strings_file {
 		local $/ = undef;
 
 		open(STRINGS, $file) || do {
-			errorMsg("load_strings_file: couldn't open $file - FATAL!\n");
+			logError("load_strings_file: couldn't open $file - FATAL!");
 			die;
 		};
 
@@ -213,7 +213,9 @@ sub addStrings {
 			# TEMP temporary ID translation for backwards compatibility
 			# print a warning for plugin authors
 			if ($legacyLanguages{$one} && $legacyLanguages{$one} eq $currentLanguage) {
-				msg("Please tell the plugin author to update string '$string': '$one' should be '$legacyLanguages{$one}'\n");
+
+				logWarning("Please tell the plugin author to update string '$string': '$one' should be '$legacyLanguages{$one}'");
+
 				$one = $legacyLanguages{$one};
 			}
 			# /TEMP
@@ -245,7 +247,8 @@ sub addStrings {
 			}
 
 		} else {
-			msg("Parse error on line $ln: $line\n");
+
+			logError("Parsing line $ln: $line");
 		}
 	}
 }
@@ -300,9 +303,8 @@ sub string {
 	}
 
 	if (!$dontWarn) {
-		bt();
-		msg("string: Undefined string: $stringname\n");
-		msg("string: Requested language: $language - failsafe language: $failsafe_language\n");
+		logBacktrace("Undefined string: $stringname");
+		logWarning("Requested language: $language - failsafe language: $failsafe_language");
 	}
 
 	return '';

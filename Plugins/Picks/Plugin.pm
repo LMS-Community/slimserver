@@ -9,7 +9,6 @@ use strict;
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
 use Slim::Formats::XML;
-use Slim::Utils::Misc;
 use Slim::Web::XMLBrowser;
 
 my $FEED = 'http://www.slimdevices.com/picks/radio.opml';
@@ -20,7 +19,6 @@ sub enabled {
 }
 
 sub initPlugin {
-	$::d_plugins && msg("Picks: initPlugin()\n");
 
 	Slim::Buttons::Common::addMode('PLUGIN.Picks', getFunctions(), \&setMode);
 
@@ -82,15 +80,11 @@ sub setMode {
 sub cliQuery {
 	my $request = shift;
 	
-	$::d_plugins && msg("Picks: cliQuery()\n");
-	
 	Slim::Buttons::XMLBrowser::cliQuery('picks', $FEED, $request);
 }
 
 sub cliRadiosQuery {
 	my $request = shift;
-	
-	$::d_plugins && msg("Picks: cliRadiosQuery()\n");
 	
 	# what we want the query to report about ourself
 	my $data = {

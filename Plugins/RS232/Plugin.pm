@@ -14,14 +14,12 @@ package Plugins::RS232::Plugin;
 
 
 use strict;
-use Slim::Utils::Misc;
 
 sub getDisplayName {
 	return 'PLUGIN_RS232_NAME';
 }
 
 sub initPlugin {
-	$::d_plugins && msg("RS232 plugin enabled\n");
 
 	Slim::Control::Request::addDispatch(['rs232', 'baud', '_rate'], [1, 0, 0, \&rs232baud]);
 	Slim::Control::Request::addDispatch(['rs232', 'tx', '_data'], [1, 0, 0, \&rs232tx]);

@@ -27,14 +27,15 @@ use Slim::Player::Player;
 use Slim::Player::ProtocolHandlers;
 use Slim::Player::Protocols::HTTP;
 use Slim::Player::Protocols::MMS;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
 our $defaultPrefs = {
-	'transitionType'		=> 0,
-	'transitionDuration'	=> 0,
-	'replayGainMode'		=> 0,
-	'disableDac'			=> 0,
+	'transitionType'     => 0,
+	'transitionDuration' => 0,
+	'replayGainMode'     => 0,
+	'disableDac'         => 0,
 };
 
 # Keep track of direct stream redirects
@@ -80,7 +81,7 @@ sub minPitch { 100 };
 
 sub model {
 	return 'squeezebox2';
-};
+}
 
 # in order of preference based on whether we're connected via wired or wireless...
 sub formats {
@@ -173,17 +174,21 @@ sub upgradeFirmware {
 	my $client = shift;
 
 	my $to_version = $client->needsUpgrade();
+	my $log        = logger('player.firmware');
 
 	if (!$to_version) {
+
 		$to_version = $client->revision;
-		$::d_firmware && msg ("upgrading to same rev: $to_version\n");
+
+		$log->warn("upgrading to same rev: $to_version");
 	}
 
-	my $filename = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), $client->model . "_$to_version.bin" );
+	my $file = catdir( Slim::Utils::OSDetect::dirsFor('Firmware'), $client->model . "_$to_version.bin" );
 
-	if (!-f $filename) {
-		warn("file does not exist: $filename\n");
-		
+	if (!-f $file) {
+
+		logWarning("File does not exist: $file");
+
 		# display an error message
 		$client->showBriefly( {
 			'line1' => $client->string( 'FIRMWARE_MISSING' ),
@@ -205,13 +210,16 @@ sub upgradeFirmware {
 	
 	$client->stop();
 
-	$::d_firmware && msg("using new update mechanism: $filename\n");
+	$log->info("Using new update mechanism: $file");
 
-	my $err = $client->upgradeFirmware_SDK5($filename);
+	my $err = $client->upgradeFirmware_SDK5($file);
 
 	if (defined($err)) {
-		msg("upgrade failed: $err");
+
+		logWarning("Upgrade failed: $err");
+
 	} else {
+
 		$client->forgetClient();
 	}
 }
@@ -276,7 +284,9 @@ sub directHeaders {
 	my $client = shift;
 	my $headers = shift;
 
-	$::d_directstream && msg("processing headers for direct streaming:\n$headers");
+	my $log = logger('player.streaming.direct');
+
+	$log->info("Processing headers for direct streaming:\n$headers");
 
 	my $url = $client->directURL || return;
 	
@@ -302,21 +312,28 @@ sub directHeaders {
 	my $response = shift @headers;
 	
 	if (!$response || $response !~ / (\d\d\d)/) {
-		$::d_directstream && msg("Invalid response code ($response) from remote stream $url\n");
+
+		$log->warn("Invalid response code ($response) from remote stream $url");
+
 		$client->failedDirectStream($response);
+
 	} else {
 	
 		my $status_line = $response;
 		$response = $1;
 		
 		if (($response < 200) || $response > 399) {
-			$::d_directstream && msg("Invalid response code ($response) from remote stream $url\n");
+
+			$log->warn("Invalid response code ($response) from remote stream $url");
+
 			if ($handler && $handler->can("handleDirectError")) {
+
 				$handler->handleDirectError($client, $url, $response, $status_line);
 			}
 			else {
 				$client->failedDirectStream($status_line);
 			}
+
 		} else {
 			my $redir = '';
 			my $metaint = 0;
@@ -327,7 +344,8 @@ sub directHeaders {
 			my $contentType = "audio/mpeg";  # assume it's audio.  Some servers don't send a content type.
 			my $bitrate;
 			my $body;
-			$::d_directstream && msg("processing " . scalar(@headers) . " headers\n");
+
+			$log->info("Processing " . scalar(@headers) . " headers");
 
 			if ($handler && $handler->can("parseDirectHeaders")) {
 				# Could use a hash ref for header parameters
@@ -337,7 +355,7 @@ sub directHeaders {
 				# This code could move to the HTTP protocol handler
 				foreach my $header (@headers) {
 				
-					$::d_directstream && msg("header-ds: " . $header . "\n");
+					$log->info("header-ds: $header");
 		
 					if ($header =~ /^(?:ic[ey]-name|x-audiocast-name):\s*(.+)/i) {
 						
@@ -409,7 +427,7 @@ sub directHeaders {
 				}
 			}
 
-			$::d_directstream && msg("got a stream type:: $contentType  bitrate: $bitrate  title: $title\n");
+			$log->info("Got a stream type: $contentType bitrate: $bitrate title: $title");
 
 			if ($contentType eq 'wma') {
 				push @guids, @WMA_FILE_PROPERTIES_OBJECT_GUID;
@@ -426,7 +444,8 @@ sub directHeaders {
 			}
 
 			if ($redir) {
-				$::d_directstream && msg("Redirecting to: $redir\n");
+
+				$log->info("Redirecting to: $redir");
 				
 				# Store the old URL so we can update its bitrate/content-type/etc
 				$redirects->{ $redir } = $url;			
@@ -441,7 +460,8 @@ sub directHeaders {
 
 			} elsif ($body || Slim::Music::Info::isList($url)) {
 
-				$::d_directstream && msg("Direct stream is list, get body to explode\n");
+				$log->info("Direct stream is list, get body to explode");
+
 				$client->directBody(undef);
 
 				# we've got a playlist in all likelyhood, have the player send it to us
@@ -450,7 +470,7 @@ sub directHeaders {
 			} elsif ( $contentType =~ /^(?:mp3|ogg|flc)$/ && !defined $bitrate ) {
 				
 				# if we're streaming mp3, ogg or flac audio and don't know the bitrate, request some body data
-				$::d_directstream && msg("MP3/Ogg/FLAC stream with unknown bitrate, requesting body from player to parse\n");
+				$log->info("MP3/Ogg/FLAC stream with unknown bitrate, requesting body from player to parse");
 				
 				$client->sendFrame( 'body', \(pack( 'N', 16 * 1024 )) );
 
@@ -466,7 +486,7 @@ sub directHeaders {
 					Slim::Music::Info::setTitle( $url, $title ) if $title;
 				}
 
-				$::d_directstream && msg("Beginning direct stream!\n");
+				$log->info("Beginning direct stream!");
 
 				my $loop = $client->shouldLoop($length);
 
@@ -475,7 +495,8 @@ sub directHeaders {
 
 			} else {
 
-				$::d_directstream && msg("Direct stream failed\n");
+				$log->warn("Direct stream failed for url: [$url]");
+
 				$client->failedDirectStream();
 			}
 		}
@@ -483,20 +504,24 @@ sub directHeaders {
 }
 
 sub directBodyFrame {
-	my $client = shift;
-	my $body = shift;
+	my $client  = shift;
+	my $body    = shift;
 
-	my $url = $client->directURL();
+	my $log     = logger('player.streaming.direct');
+	my $url     = $client->directURL();
 	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
-	my $done = 0;
+	my $done    = 0;
 
-	$::d_directstream && msg("got some body from the player, length " . length($body) . "\n");
+	$log->info("Got some body from the player, length " . length($body));
 	
 	if (length($body)) {
-		$::d_directstream && msg("saving away that body message until we get an empty body\n");
+
+		$log->info("Saving away that body message until we get an empty body");
 
 		if ($handler && $handler->can('handleBodyFrame')) {
+
 			$done = $handler->handleBodyFrame($client, $body);
+
 			if ($done) {
 				$client->stop();
 			}
@@ -504,25 +529,32 @@ sub directBodyFrame {
 		else {
 			# save direct body to a temporary file
 			if ( !blessed $client->directBody ) {
+
 				my $fh = File::Temp->new();
 				$client->directBody( $fh );
-				$::d_directstream && msg("directBodyFrame: Saving to temp file: " . $fh->filename . "\n");
+
+				$log->info("directBodyFrame: Saving to temp file: " . $fh->filename);
 			}
 			
 			$client->directBody->write( $body, length($body) );
 		}
+
 	} else {
-		$::d_directstream && msg("empty body means we should parse what we have for " . $client->directURL() . "\n");
+
+		$log->info("Empty body means we should parse what we have for " . $client->directURL);
+
 		$done = 1;
 	}
 
 	if ($done) {
+
 		if ( defined $client->directBody ) {
 			
 			# seek back to the front of the file
 			seek $client->directBody, 0, 0;
 
-			my @items;
+			my @items = ();
+
 			# done getting body of playlist, let's parse it!
 			# If the protocol handler knows how to parse it, give
 			# it a chance, else we parse based on the type we know
@@ -535,17 +567,23 @@ sub directBodyFrame {
 			}
 	
 			if ( scalar @items ) { 
+
 				Slim::Player::Source::explodeSong($client, \@items);
 				Slim::Player::Source::playmode($client, 'play');
+
 			} else {
-				$::d_directstream && msg("body had no parsable items in it.\n");
+
+				$log->warn("Body had no parsable items in it.");
 
 				$client->failedDirectStream( $client->string('PLAYLIST_NO_ITEMS_FOUND') );
 			}
 
-			$client->directBody(undef); # Will also remove the temporary file
+			# Will also remove the temporary file
+			$client->directBody(undef);
+
 		} else {
-			$::d_directstream && msg("actually, the body was empty.  Got nobody...\n");
+
+			$log->warn("Actually, the body was empty. Got nobody...");
 		}
 	}
 }
@@ -571,10 +609,14 @@ sub directMetadata {
 sub failedDirectStream {
 	my $client = shift;
 	my $error  = shift;
-	my $url = $client->directURL();
-	$::d_directstream && msg("Oh, well failed to do a direct stream for: $url [$error]\n");
+
+	my $log    = logger('player.streaming.direct');
+	my $url    = $client->directURL();
+
+	$log->warn("Oh, well failed to do a direct stream for: $url [$error]");
+
 	$client->directURL(undef);
-	$client->directBody(undef);	
+	$client->directBody(undef);
 
 	Slim::Player::Source::errorOpening( $client, $error || $client->string("PROBLEM_CONNECTING") );
 
@@ -582,11 +624,14 @@ sub failedDirectStream {
 	# end of a playlist (irrespective of the repeat mode).
 	if ($client->playmode eq 'playout-play' &&
 		Slim::Player::Source::streamingSongIndex($client) != (Slim::Player::Playlist::count($client) - 1)) {
+
 		Slim::Player::Source::skipahead($client);
+
 	} else {
+
 		Slim::Player::Source::playmode($client, 'stop');
 	}
-	
+
 	# 6.3 Rhapsody code added this, why?
 	# 1 means underrun due to error
 	# Slim::Player::Source::underrun($client, 1);
@@ -619,7 +664,8 @@ sub shouldLoop {
 	);
 
 	if (!$url) {
-		errorMsg("shouldLoop: Invalid URL for client song!: [$url]\n");
+
+		logError("Invalid URL for client song!: [$url]");
 		return 0;
 	}
 
@@ -631,7 +677,9 @@ sub shouldLoop {
 	
 	# Check with the protocol handler
 	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+
 	if ( $handler && $handler->can('shouldLoop') ) {
+
 		return $handler->shouldLoop($audio_size, $url);
 	}
 	
@@ -705,9 +753,9 @@ our $pref_settings = {
 # Request a pref from the player firmware
 sub getPlayerSetting {
 	my $client = shift;
-	my $pref = shift;
+	my $pref   = shift;
 
-	$::d_prefs && msg("getPlayerSetting $pref\n");
+	logger('prefs')->info("Getting pref: [$pref]");
 
 	my $currpref = $pref_settings->{$pref};
 
@@ -718,12 +766,10 @@ sub getPlayerSetting {
 # Update a pref in the player firmware
 sub setPlayerSetting {
 	my $client = shift;
-	my $pref = shift;
-	my $value = shift;
+	my $pref   = shift;
+	my $value  = shift || return;
 
-	return if !defined $value;
-
-	$::d_prefs && msg("setPlayerSetting $pref = $value\n");
+	logger('prefs')->info("Setting pref: [$pref] to [$value]");
 
 	my $currpref = $pref_settings->{$pref};
 
@@ -736,26 +782,33 @@ sub setPlayerSetting {
 	else {
 
 		# we can't update the pref's while playing, cache this change for later
-		$::d_prefs && msg("setPlayerSeting pending change for $pref\n");
-		$client->pendingPrefChanges()->{$pref}++;
+		logger('prefs')->info("Pending change for $pref");
 
+		$client->pendingPrefChanges()->{$pref}++;
 	}
 }
 
 # Allow the firmware to update a pref in slimserver
 sub playerSettingsFrame {
-	my $client = shift;
+	my $client   = shift;
 	my $data_ref = shift;
 
 	my $id = unpack('C', $$data_ref);
 
 	while (my ($pref, $currpref) = each %$pref_settings) {
-		next unless ($currpref->{firmwareid} == $id);
+
+		if ($currpref->{'firmwareid'} != $id) {
+			next;
+		}
 
 		my $value = (unpack('C'.$currpref->{pack}, $$data_ref))[1];
-		$value = undef if (length($value) == 0);
 
-		$::d_prefs && msg("playerSettingsFrame $pref = $value\n");
+		if (length($value) == 0) {
+
+			$value = undef;
+		}
+
+		logger('prefs')->info(sprintf("Pref [%s] = [%s]", $pref, (defined $value ? $value : 'undef')));
 
 		if (!defined $value) {
 			$client->setPlayerSetting($pref, $client->prefGet($pref));

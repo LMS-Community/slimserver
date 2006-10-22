@@ -32,6 +32,7 @@ use MP3::Info;
 use MPEG::Audio::Frame;
 
 use Slim::Utils::Cache;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::SoundCheck;
 
@@ -117,9 +118,21 @@ Extract and return audio information & any embedded metadata found.
 
 sub getTag {
 	my $class = shift;
-	my $file  = shift || return {};
+	my $file  = shift;
 
-	open(my $fh, $file) or return {};
+	my $log   = logger('formats.audio');
+
+	if (!$file) {
+
+		logWarning("No file was passed!");
+		return {};
+	}
+
+	open(my $fh, $file) or do {
+
+		logWarning("Couldn't open file: [$file] $!");
+		return {};
+	};
 
 	# Bug: 4071 - Windows is lame.
 	binmode($fh);
@@ -128,12 +141,16 @@ sub getTag {
 	# get_mp3tag, as we need custom logic.
 	my (%tags, %ape) = ();
 
+	$log->debug("Trying to read ID3v2 tags from $file");
+
 	# Always take a v2 tag if we have it.
 	MP3::Info::_get_v2tag($fh, 2, 0, \%tags);
 
 	# If the only tag is TAGVERSION, that means we didn't parse the ID3v2
 	# tag properly, or it's bogus. Look for a ID3v1 tag.
 	if ((!scalar keys %tags) || (scalar keys %tags == 1 && defined $tags{'TAGVERSION'})) {
+
+		$log->debug("Didn't find any ID3v2 tags, trying v1 tags.");
 
 		# Only use v1 tags if there are no v2 tags.
 		MP3::Info::_get_v1tag($fh, \%tags);
@@ -143,6 +160,9 @@ sub getTag {
 	if (MP3::Info::_parse_ape_tag($fh, -s $file, \%ape)) {
 
 		if (scalar keys %ape) {
+
+			$log->debug("Found APE tags as well.");
+
 			%tags = (%tags, %ape);
 		}
 	}
@@ -153,6 +173,8 @@ sub getTag {
 	# Some MP3 files don't have their header information readily
 	# accessable. So try seeking in a bit further.
 	if (!scalar keys %$info) {
+
+		$log->debug("Didn't find audio information in first pass - trying harder.");
 
 		$MP3::Info::try_harder = 6;
 
@@ -308,7 +330,9 @@ sub findFrameBoundaries {
 	my ($start, $end) = (0, 0);
 
 	if (!defined $fh || !defined $offset) {
-		errorMsg("findFrameBoundaries: Invalid arguments!\n");
+
+		logError("Invalid arguments!");
+
 		return wantarray ? ($start, $end) : $start;
 	}
 
@@ -319,7 +343,9 @@ sub findFrameBoundaries {
 
 	# dup the filehandle, as MPEG::Audio::Frame uses read(), and not sysread()
 	open(my $mpeg, '<&=', $fh) or do {
-		errorMsg("findFrameBoundaries: Couldn't dup filehandle!\n");
+
+		logError("Couldn't dup filehandle!");
+
 		return wantarray ? ($start, $end) : $start;
 	};
 
@@ -349,7 +375,7 @@ sub findFrameBoundaries {
 
 	close($mpeg);
 
-	$::d_source && Slim::Utils::Misc::msgf("findFrameBoundaries: start: [%d] end: [%d]\n", $start, $end);
+	logger('player.source')->debug("start: [$start] end: [$end]");
 
 	if (defined $seek) {
 		return ($start, $end);
@@ -373,7 +399,8 @@ sub getFrame {
 		
 	# dup the filehandle, as MPEG::Audio::Frame uses read(), and not sysread()
 	open(my $mpeg, '<&=', $fh) or do {
-		errorMsg("getFrames: Couldn't dup filehandle!\n");
+
+		logError("Couldn't dup filehandle!");
 		return;
 	};
 	
@@ -404,7 +431,9 @@ sub scanBitrate {
 	my $url   = shift;
 	
 	# We can also read ID3 tags from this header to use for title information
-	my %tags;
+	my %tags  = ();
+	my $log   = logger('scan.scanner');
+
 	if ( !MP3::Info::_get_v2tag( $fh, 2, 0, \%tags ) ) {
 
 		# Only use v1 tags if there are no v2 tags.
@@ -436,7 +465,7 @@ sub scanBitrate {
 			},
 		});
 		
-		$::d_scan && msg("MP3 scanBitrate: Read ID3 tags from stream: " . Data::Dump::dump(\%tags) . "\n");
+		$log->debug("Read ID3 tags from stream: " . Data::Dump::dump(\%tags));
 		
 		my $title = $tags{TITLE};
 		$title .= ' - ' . $tags{ARTIST} if $tags{ARTIST};
@@ -479,7 +508,7 @@ sub scanBitrate {
 		my $mfs = $frame->sample / ( $frame->version ? 144000 : 72000 );
 		my $bitrate = sprintf "%.0f", $vbr->{bytes} / $vbr->{frames} * $mfs;
 		
-		$::d_scan && msg("MP3 scanBitrate: Found Xing VBR header in stream, bitrate: $bitrate kbps VBR\n");
+		$log->debug("Found Xing VBR header in stream, bitrate: $bitrate kbps VBR");
 		
 		return ($bitrate * 1000, 1);
 	}
@@ -502,16 +531,17 @@ sub scanBitrate {
 
 	if ( $avg ) {			
 		my $vbr = undef;
+
 		if ( !$cbr{$avg} ) {
 			$vbr = 1;
 		}
 		
-		$::d_scan && msg("MP3 scanBitrate: Read average bitrate from stream: $avg " . ( $vbr ? 'VBR' : 'CBR' ) . "\n");
+		$log->debug("Read average bitrate from stream: $avg " . ( $vbr ? 'VBR' : 'CBR' ));
 		
 		return ($avg * 1000, $vbr);
 	}
 	
-	$::d_scan && msg("MP3 scanBitrate: Unable to find any MP3 frames in stream\n");
+	$log->warn("Unable to find any MP3 frames in stream!");
 
 	return (-1, undef);
 }	

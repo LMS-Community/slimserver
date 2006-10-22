@@ -19,6 +19,7 @@ use Slim::Web::UPnPMediaServer;
 use Slim::Networking::Select;
 use Slim::Networking::UPnP::ControlPoint;
 use Slim::Utils::IPDetect;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 our $registeredCallbacks = [];
@@ -36,13 +37,16 @@ sub init {
 
 sub foundDevice {
 	my ( $device, $event ) = @_;
+
+	my $log = logger('network.upnp');
 	
 	# We'll get a callback for all UPnP devices, but we only look for media servers
 	if ( $device->getdevicetype =~ /MediaServer/ ) {
 		my $menuName = HTML::Entities::decode( $device->getfriendlyname );
 		
 		if ( $event eq 'add' ) {
-			$::d_upnp && msg("UPnP: Adding new media server: $menuName\n");
+
+			$log->info("Adding new media server: $menuName");
 		
 			addDeviceMenus( $device, $menuName );
 			
@@ -62,12 +66,13 @@ sub foundDevice {
 		}
 	}
 	else {
-		$::d_upnp && msgf("UPnP: %s is a %s %s (%s), ignoring\n",
+
+		$log->info(sprintf("%s is a %s %s (%s), ignoring",
 			$device->getfriendlyname,
 			$device->getmanufacturer,
 			$device->getmodelname,
 			$device->getdevicetype,
-		);
+		));
 	}
 }
 
@@ -75,10 +80,14 @@ sub registerCallback {
 	my $callback = shift;
 	
 	push @{$registeredCallbacks}, $callback;
+
+	my $log = logger('network.upnp');
 	
-	if ( $::d_upnp ) {
+	if ($log->is_debug) {
+
 		my $func = Slim::Utils::PerlRunTime::realNameForCodeRef( $callback );
-		msg("UPnP: New device callback registered: $func\n");
+
+		$log->debug("New device callback registered: [$func]");
 	}
 }
 
@@ -110,11 +119,11 @@ sub checkServerHealthError {
 	my $device = $http->params('device');
 	my $error  = $http->error;
 	
-	$::d_upnp && msgf("UPnP: %s failed to respond at %s, removing. (%s)\n",
+	logger('network.upnp')->warn(sprintf("%s failed to respond at %s, removing. (%s)",
 		$device->getfriendlyname,
 		$device->getlocation,
 		$error,
-	);
+	));
 	
 	# Remove the device from the control point
 	Slim::Networking::UPnP::ControlPoint::removeDevice( $device );
@@ -392,11 +401,11 @@ sub gotBlurb {
 sub gotBlurbError {
 	my $http  = shift;
 	my $args  = $http->params('args');
-	
-	$::d_upnp && msgf("UPnP: Error while trying to fetch blurb text at %s: %s\n",
+
+	logger('network.upnp')->error(sprintf("Error while trying to fetch blurb text at %s: %s",
 		$http->url,
 		$http->error,
-	);
+	));
 
 	my $container   = $http->params('container');
 	my $callback    = $args->{callback};

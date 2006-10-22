@@ -5,7 +5,7 @@ package Slim::Schema::Album;
 use strict;
 use base 'Slim::Schema::DBI';
 
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 
 {
 	my $class = __PACKAGE__;
@@ -178,7 +178,7 @@ sub artists {
 
 	} elsif (scalar @artists == 0) {
 
-		$::d_info && msgf("\t\%artists == 0 && \$self->contributor - returning: [%s]\n", $self->contributors);
+		logger('database.info')->debug(sprintf("\%artists == 0 && \$self->contributor - returning: [%s]", $self->contributors));
 
 		@artists = $self->contributors;
 	}

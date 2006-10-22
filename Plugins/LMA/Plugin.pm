@@ -6,7 +6,6 @@ package Plugins::LMA::Plugin;
 
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
-use Slim::Utils::Misc;
 use Slim::Web::XMLBrowser;
 
 my $FEED = 'http://content.us.squeezenetwork.com:8080/lma/artists.opml';
@@ -17,7 +16,6 @@ sub enabled {
 }
 
 sub initPlugin {
-	$::d_plugins && msg("Live Music Archive Plugin initializing.\n");
 
 #        |requires Client
 #        |  |is a Query
@@ -94,24 +92,20 @@ sub webPages {
 
 sub cliQuery {
 	my $request = shift;
-	
-	$::d_plugins && msg("Live Music Archive: cliQuery()\n");
-	
+
 	Slim::Buttons::XMLBrowser::cliQuery('lma', $FEED, $request);
 }
 
 sub cliRadiosQuery {
 	my $request = shift;
-	
-	$::d_plugins && msg("Live Music Archive: cliRadiosQuery()\n");
-	
+
 	# what we want the query to report about ourself
 	my $data = {
 		'cmd' => 'lma',                      # cmd label
 		'name' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
 		'type' => 'xmlbrowser',              # type
 	};
-	
+
 	# let our super duper function do all the hard work
 	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
 }

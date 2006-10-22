@@ -1,6 +1,8 @@
 <script language="JavaScript" type="text/javascript">
 <!-- Start Hiding the Script
-[% IF NOT path.match('setup') %]
+
+[% IF NOT path.match('setup') AND NOT path.match('debugging') %]
+
 var url = "[% statusroot %]";
 
 function to_currentsong() {
@@ -228,17 +230,27 @@ function resize(src,width)
 		window.location.replace("home.html?player=[% player | uri %]");
 	}
 [% END %]
+
 [% ELSE %]	
+
 function chooseSettings(value,option)
 {
 	var url;
 
 	switch(option)
 	{
-		[% IF playerid -%][% PROCESS addSetupCaseLinks setuplinks=additionalLinks.playersetup  %]
-						 [%# PROCESS addSetupCaseLinks setuplinks=additionalLinks.playerplugin %]
-		[%- ELSE -%][% PROCESS addSetupCaseLinks setuplinks=additionalLinks.setup   %]
-				  [%# PROCESS addSetupCaseLinks setuplinks=additionalLinks.plugin %][%- END %]
+		[% IF playerid -%]
+
+			[% PROCESS addSetupCaseLinks setuplinks=additionalLinks.playersetup  %]
+			[%# PROCESS addSetupCaseLinks setuplinks=additionalLinks.playerplugin %]
+
+		[%- ELSE -%]
+
+			[% PROCESS addSetupCaseLinks setuplinks=additionalLinks.setup   %]
+			[%# PROCESS addSetupCaseLinks setuplinks=additionalLinks.plugin %]
+
+		[%- END %]
+
 		case "HOME":
 			url = "[% webroot %]home.html?"
 		break
@@ -256,5 +268,6 @@ function chooseSettings(value,option)
 }
 
 [% END %]
+
 // Stop Hiding script --->
 </script>

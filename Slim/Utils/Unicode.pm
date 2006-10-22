@@ -35,7 +35,7 @@ use Fcntl qw(:seek);
 use POSIX qw(LC_CTYPE LC_TIME);
 use Text::Unidecode;
 
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 
 # Find out what code page we're in, so we can properly translate file/directory encodings.
 our (
@@ -792,9 +792,7 @@ sub encodingFromFileHandle {
 	# If we didn't get a filehandle, not much we can do.
 	if (!ref($fh) || !$fh->can('seek')) {
 
-		msg("Warning: Not a filehandle in encodingFromFileHandle()\n");
-		bt();
-
+		logBacktrace("Didn't get a filehandle from caller!");
 		return;
 	}
 
@@ -869,7 +867,7 @@ sub encodingFromFile {
 
 		$fh->open($file) or do {
 
-			errorMsg("Couldn't open file: [$file] : $!\n");
+			logError("Couldn't open file: [$file] : $!");
 
 			return $encoding;
 		};
@@ -880,8 +878,7 @@ sub encodingFromFile {
 
 	} else {
 
-		msg("Warning: Not a filename or filehandle encodingFromFile( $file )\n");
-		bt();
+		logBacktrace("Not a filename or filehandle: [$file]");
 	}
 
 	return $encoding;

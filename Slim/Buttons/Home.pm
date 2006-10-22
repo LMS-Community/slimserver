@@ -36,7 +36,10 @@ use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
 use Slim::Buttons::TrackInfo;
 use Slim::Buttons::RemoteTrackInfo;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
+
+my $log = logger('player.menu');
 
 our %home = ();
 our %defaultParams = ();
@@ -53,7 +56,7 @@ menu, allowing users to change the order and selection of items in the home menu
 =cut
 
 sub init {
-	Slim::Buttons::Common::addMode('home',getFunctions(),\&setMode);
+	Slim::Buttons::Common::addMode('home', getFunctions(), \&setMode);
 
 	# More documentation needed for all this magic.
 	%defaultParams = (
@@ -63,7 +66,9 @@ sub init {
 			my $client = shift;
 			my $string = shift;
 
-			return $string unless Slim::Utils::Strings::stringExists($string);
+			if (!Slim::Utils::Strings::stringExists($string)) {
+				return $string;
+			}
 
 			if (defined $client && $client->linesPerScreen() == 1) {
 				return $client->doubleString($string);
@@ -141,7 +146,8 @@ sub init {
 ######################################################################
 # Home Hash Manipulation Functions
 ######################################################################
-#
+
+# XXXX - this should all be object based!!
 
 =head2 addSubMenu( $menu,$submenuname,$submenuref)
 
@@ -152,45 +158,51 @@ will be created
 =cut
 
 sub addSubMenu {
-	my ($menu,$submenuname,$submenuref) = @_;
+	my ($menu, $submenuname, $submenuref) = @_;
 
 	if (!exists $home{$menu} && defined $submenuref) {
-		$::d_plugins && msg("$menu does not exist. creating...\n");
+
+		$log->info("$menu does not exist. creating...");
+
 		addMenuOption($menu);
 	}
 
 	if (exists $home{$menu}{'useMode'}) {
-		warn "Menu $menu cannot take submenus\n";
+
+		$log->warn("Warning: Menu $menu cannot take submenus.");
+
 		return;
 	}
 
 	# Don't add/remove submenu if there is no name or its an empty string
-	return unless (defined $submenuname && $submenuname);
+	if (!defined $submenuname && $submenuname) {
+
+		return;
+	}
 	
 	if (!defined $submenuref) {
 		
 		if (exists $home{$menu}{'submenus'}{$submenuname}) {
 
-			$::d_plugins && msg("Deleting $submenuname from menu: $menu\n");
+			$log->info("Deleting $submenuname from menu: $menu");
 			
 			delete $home{$menu}{'submenus'}{$submenuname};
 			
-			if (not keys %{$home{$menu}{'submenus'}}) {
+			if (!keys %{$home{$menu}{'submenus'}}) {
 
 				delete $home{$menu}{'submenus'};
 				delete $home{$menu};
-				$::d_plugins && msg("Deleting empty $menu submenu\n");
-				delSubMenu("PLUGINS",$menu);
 
+				$log->info("Deleting empty $menu submenu.");
+
+				delSubMenu("PLUGINS",$menu);
 			}
-			
 		}
+
 	} else {
 
 		$home{$menu}{'submenus'}{$submenuname} = $submenuref;
 	}
-	
-	return;
 }
 
 =head2 delSubMenu( $menu,$submenuname)
@@ -200,31 +212,33 @@ Takes two strings, deleting the menu indicated by $submenuname from the menu nam
 =cut
 
 sub delSubMenu {
-	my ($menu,$submenuname) = @_;
+	my ($menu, $name) = @_;
 	
-	#$::d_plugins && msg("deleting $submenuname from $menu\n");
+	$log->info("Deleting $name from $menu");
 	
 	if (!exists $home{$menu}{'submenus'}) {
+
 		return;
 	}
 
-	if (!defined $submenuname) {
-		warn "No submenu information supplied!\n";
-		bt();
+	if (!defined $name) {
+
+		$log->logBacktrace("No submenu information supplied!");
+
 		return;
 	}
 
-	if (exists $home{$menu}{'submenus'}{$submenuname}) {
+	if (exists $home{$menu}{'submenus'}{$name}) {
 
-			delete $home{$menu}{'submenus'}{$submenuname};
+		delete $home{$menu}{'submenus'}{$name};
 
-			if (not keys %{$home{$menu}{'submenus'}}) {
-				delete $home{$menu}{'submenus'};
-				delSubMenu("PLUGINS",$menu);
-			}
+		if (!keys %{$home{$menu}{'submenus'}}) {
+
+			delete $home{$menu}{'submenus'};
+
+			delSubMenu("PLUGINS",$menu);
+		}
 	}
-
-	return;
 }
 
 
@@ -237,10 +251,12 @@ which is a reference to the hash of menu parameters.
 =cut
 
 sub addMenuOption {
-	my ($menu,$menuref) = @_;
+	my ($menu, $menuref) = @_;
 	
-	unless (defined $menu) {
-		warn "No menu information supplied!\n";
+	if (!defined $menu) {
+
+		$log->logBacktrace("No menu information supplied!");
+
 		return;
 	}
 	
@@ -256,8 +272,10 @@ Removes the menu named by $option from the list of available menu items to add/r
 sub delMenuOption {
 	my $option = shift;
 
-	unless (defined $option) {
-		warn "No menu reference supplied!\n";
+	if (!defined $option) {
+
+		$log->logBacktrace("No menu reference supplied!");
+
 		return;
 	}
 
@@ -276,6 +294,7 @@ sub setMode {
 
 		Slim::Buttons::Common::popMode($client);
 		updateMenu($client);
+
 		$client->curDepth('');
 
 		if (!defined($client->curSelection($client->curDepth()))) {
@@ -294,24 +313,26 @@ sub setMode {
 	}
 	
 	my %params          = %defaultParams;
+
 	$params{'header'}   = \&homeheader;
 	$params{'listRef'}  = \@{$homeChoices{$client}};
 	$params{'valueRef'} = \${$client->curSelection()}{$client->curDepth()};
 	$params{'curMenu'}  = $client->curDepth();
 	
-	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
+	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 }
 
 #return the reference needed to access the menu one level up.
 sub getLastDepth {
 	my $client = shift;
+
 	if ($client->curDepth() eq "") {
 		return ""
 	}
-	
+
 	my @depth = split(/-/,$client->curDepth());
 
-	#dropping last item in depth reference, gives the previous depth.
+	# Dropping last item in depth reference, gives the previous depth.
 	pop @depth;
 
 	my $last = join("-",@depth);
@@ -337,6 +358,7 @@ sub getNextList {
 # get a clients current menu params
 sub getCurrentList {
 	my $client = shift;
+
 	return getMenu($client->curDepth());
 }
 
@@ -358,6 +380,7 @@ sub getMenu {
 	for my $level (@depth) {
 		$current = $current->{'submenus'}->{$level};
 	}
+
 	return $current;
 }
 
@@ -381,21 +404,22 @@ sub homeExitHandler {
 			$client->curDepth("");
 			updateMenu($client);
 			$client->bumpLeft();
-
 		}
 	
 	} elsif ($exittype eq 'RIGHT') {
+
 		my $nextmenu = $client->curSelection($client->curDepth());
 		
 		# map default selection in case no onChange was done in INPUT.List
 		if (!defined($nextmenu)) { 
 
 			$nextmenu = ${$client->modeParam('valueRef')};
-			$client->curSelection($client->curDepth(),$nextmenu);
 
+			$client->curSelection($client->curDepth(),$nextmenu);
 		}
 		
-		unless (defined $nextmenu) {
+		if (!defined $nextmenu) {
+
 			$client->bumpRight();
 			return;
 		}
@@ -404,16 +428,20 @@ sub homeExitHandler {
 		# some menus might need function return values for params, so test here and grab
 		
 		if (ref(getNextList($client)) eq 'CODE') {
+
 			$nextParams = {&getNextList($client)->($client)};
 
 		} elsif (getNextList($client)) { 
+
 			$nextParams = &getNextList($client);
 		}
 		
 		if (exists ($nextParams->{'submenus'})) {
+
 			my %params = %defaultParams;
 			
 			$params{'header'} = $client->string($client->curSelection($client->curDepth()));
+
 			# move reference to new depth
 			$client->curDepth($client->curDepth()."-".$client->curSelection($client->curDepth()));
 			
@@ -430,11 +458,7 @@ sub homeExitHandler {
 			# merge next list params over the default params where they exist.
 			@params{keys %{$nextParams}} = values %{$nextParams};
 			
-			Slim::Buttons::Common::pushModeLeft(
-				$client
-				,'INPUT.List'
-				,\%params
-			);
+			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', \%params);
 		
 		# if here are no submenus, check for the way out.
 		} elsif (exists($nextParams->{'useMode'})) {
@@ -445,7 +469,9 @@ sub homeExitHandler {
 			} else {
 				my %params = %$nextParams;
 
-				if (($nextParams->{'useMode'} eq 'INPUT.List' || $nextParams->{'useMode'} eq 'INPUT.Bar')  && exists($nextParams->{'initialValue'})) {
+				if (($nextParams->{'useMode'} eq 'INPUT.List' || $nextParams->{'useMode'} eq 'INPUT.Bar') && 
+					exists($nextParams->{'initialValue'})) {
+
 					#set up valueRef for current pref
 					my $value;
 
@@ -466,15 +492,14 @@ sub homeExitHandler {
 				);
 			}
 
-		} elsif (Slim::Buttons::Common::validMode("PLUGIN.".$nextmenu)){
-			Slim::Buttons::Common::pushModeLeft($client,"PLUGIN.".$nextmenu);
+		} elsif (Slim::Buttons::Common::validMode("PLUGIN.$nextmenu")) {
+
+			Slim::Buttons::Common::pushModeLeft($client, "PLUGIN.$nextmenu");
 
 		} else {
+
 			$client->bumpRight();
 		}
-
-	} else {
-		return;
 	}
 }
 
@@ -483,6 +508,7 @@ sub cmpString {
 	my $string = shift;
 
 	if (Slim::Utils::Strings::stringExists($string)) {
+
 		return $client->string($string);
 	}
 
@@ -499,11 +525,13 @@ sub createList {
 	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
 	
 	for my $sub (sort {((Slim::Utils::Prefs::get("rank-$b") || 0) <=> 
-				(Slim::Utils::Prefs::get("rank-$a") || 0)) || 
-				    (lc(cmpString($client, $a)) cmp lc(cmpString($client, $b)))} 
-			 keys %{$params->{'submenus'}}) {
+		(Slim::Utils::Prefs::get("rank-$a") || 0)) || 
+		(lc(cmpString($client, $a)) cmp lc(cmpString($client, $b)))} 
+		keys %{$params->{'submenus'}}) {
 
-		next if exists $disabledplugins{$sub};
+		if (exists $disabledplugins{$sub}) {
+			next;
+		}
 
 		# Leakage of the DigitalInput plugin..
 		if ($sub eq 'PLUGIN_DIGITAL_INPUT' && !$client->hasDigitalIn) {

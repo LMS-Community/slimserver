@@ -20,7 +20,6 @@ use URI::Escape qw(uri_escape);
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
 use Slim::Player::ProtocolHandlers;
-use Slim::Utils::Misc;
 use Slim::Utils::Strings qw( string );
 use Slim::Web::XMLBrowser;
 
@@ -34,8 +33,7 @@ sub enabled {
 }                             
 
 sub initPlugin {
-	$::d_plugins && msg("RadioIO Plugin initializing.\n");
-	
+
 	# Backwards-compat with radioio:// protocol links
 	Slim::Player::ProtocolHandlers->registerHandler('radioio', 'Plugins::RadioIO::ProtocolHandler');
 
@@ -142,23 +140,19 @@ sub webPages {
 sub cliQuery {
 	my $request = shift;
 	
-	$::d_plugins && msg("RadioIO: cliQuery()\n");
-	
 	Slim::Buttons::XMLBrowser::cliQuery('radioio', radioIOURL(), $request);
 }
 
 sub cliRadiosQuery {
 	my $request = shift;
-	
-	$::d_plugins && msg("RadioIO: cliRadiosQuery()\n");
-	
+
 	# what we want the query to report about ourself
 	my $data = {
 		'cmd' => 'radioio',                    # cmd label
 		'name' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
 		'type' => 'xmlbrowser',              # type
 	};
-	
+
 	# let our super duper function do all the hard work
 	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
 }

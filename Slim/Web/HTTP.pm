@@ -35,6 +35,7 @@ use Slim::Networking::Select;
 use Slim::Player::HTTP;
 use Slim::Music::Info;
 use Slim::Utils::Errno;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::OSDetect;
@@ -106,6 +107,8 @@ our %dangerousCommands = (
 # flag for when we are in a child process
 our $inChild;
 
+my $log = logger('network.http');
+
 # initialize the http server
 sub init {
 
@@ -117,11 +120,11 @@ sub init {
 	if ($@) {
 
 		# Pure perl is the default, so we don't need to do anything.
-		$::d_http && msg("Couldn't find Template::Stash::XS - falling back to pure perl version.\n");
+		$log->warn("Couldn't find Template::Stash::XS - falling back to pure perl version.");
 
 	} else {
 
-		$::d_http && msg("Found Template::Stash::XS!\n");
+		$log->info("Found Template::Stash::XS!");
 
 		$Template::Config::STASH = 'Template::Stash::XS';
 	}
@@ -147,14 +150,15 @@ sub openport {
 		Reuse => 1,
 		Timeout   => 0.001,
 
-	) or die "can't setup the listening port $listenerport for the HTTP server: $!";
+	) or $log->logdie("Can't setup the listening port $listenerport for the HTTP server: $!");
 	
-	defined(Slim::Utils::Network::blocking($http_server_socket,0)) || die "Cannot set port nonblocking";
+	defined(Slim::Utils::Network::blocking($http_server_socket,0)) || $log->logdie("Cannot set port nonblocking");
 
 	$openedport = $listenerport;
+
 	Slim::Networking::Select::addRead($http_server_socket, \&acceptHTTP);
-	
-	$::d_http && msg("Server $0 accepting http connections on port $listenerport\n");
+
+	$log->info("Server $0 accepting http connections on port $listenerport");
 
 	Slim::Networking::mDNS->addService('_http._tcp', $listenerport);
 	Slim::Networking::mDNS->addService('_slimhttp._tcp', $listenerport);
@@ -174,8 +178,10 @@ sub _adjustHTTPPortCallback {
 		Slim::Networking::mDNS->removeService('_http._tcp');
 		Slim::Networking::mDNS->removeService('_slimhttp._tcp');
 		
-		$::d_http && msg("closing http server socket\n");
+		$log->info("Closing http server socket");
+
 		Slim::Networking::Select::addRead($http_server_socket, undef);
+
 		$http_server_socket->close();
 		undef($http_server_socket);
 		$openedport = 0;
@@ -202,11 +208,12 @@ sub connectedSocket {
 sub acceptHTTP {
 	# try and pull the handle
 	my $httpClient = $http_server_socket->accept() || do {
-		$::d_http && msg("Did not accept connection, accept returned nothing\n");
+
+		$log->info("Did not accept connection, accept returned nothing");
 		return;
 	};
 
-	defined(Slim::Utils::Network::blocking($httpClient,0)) || die "Cannot set port nonblocking";
+	defined(Slim::Utils::Network::blocking($httpClient,0)) || $log->logdie("Cannot set port nonblocking");
 	
 	binmode($httpClient);
 	
@@ -224,26 +231,30 @@ sub acceptHTTP {
 			$httpClient->timeout(KEEPALIVETIMEOUT);
 
 			$peeraddr{$httpClient} = $peer;
+
 			Slim::Networking::Select::addRead($httpClient, \&processHTTP);
 			Slim::Networking::Select::addError($httpClient, \&closeStreamingSocket);
+
 			$connected++;
-			$::d_http && msg("Accepted connection $connected from ". $peeraddr{$httpClient} . "\n");
+
+			$log->info("Accepted connection $connected from $peeraddr{$httpClient}");
 
 		} else {
 
-			$::d_http && msg("Did not accept HTTP connection from $peer, unauthorized source\n");
+			$log->warn("Did not accept HTTP connection from $peer, unauthorized source");
+
 			$httpClient->close();
 			undef($httpClient);
 		}
 
 	} else {
 
-		$::d_http && msg("Did not accept connection, couldn't get peer addr\n");
+		$log->warn("Did not accept connection, couldn't get peer addr");
 	}
 }
 
 sub isaSkin {
-	my $name = shift;
+	my $name  = shift;
 	
 	# BUG 4171: Default2 is gone, so redirect to Default.
 	if ($name =~ /^(?:Default2)$/i) {
@@ -251,12 +262,13 @@ sub isaSkin {
 	}
 	
 	my %skins = Slim::Web::Setup::skins();
-	
+
 	for my $skin (keys %skins) {
 		return $skin if $name =~ /^($skin)$/i;
 	}
-	
-	$::d_http && msg("HTTP: no matching skin, falling back to default\n");
+
+	$log->warn("Warning: No matching skin, falling back to default!");
+
 	return 'Default';
 }
 
@@ -266,11 +278,13 @@ sub processHTTP {
 
 	my $params     = {};
 	my $request    = $httpClient->get_request();
-	$::d_http && msg("reading request...\n");
+
+	$log->info("Reading request...");
 
 	# socket half-closed from client
 	if (!defined $request) {
-		$::d_http && msg("Client at " . $peeraddr{$httpClient} . " disconnected. (half-closed)\n\n");
+
+		$log->info("Client at $peeraddr{$httpClient} disconnected. (half-closed)");
 
 		closeHTTPSocket($httpClient);
 		return;
@@ -279,9 +293,9 @@ sub processHTTP {
 	# Set the request time - for If-Modified-Since
 	$request->client_date(time());
 
-	$::d_http && msg(
-		"HTTP request: from " . $peeraddr{$httpClient} . " ($httpClient) for " .
-		join(' ', ($request->method(), $request->protocol(), $request->uri()), "\n")
+	$log->info(
+		"HTTP request: from $peeraddr{$httpClient} ($httpClient) for " .
+		join(' ', ($request->method(), $request->protocol(), $request->uri()))
 	);
 
 	# remove our special X-Slim-CSRF header if present
@@ -289,11 +303,15 @@ sub processHTTP {
 
 	# store CSRF auth code in fake request header if present
 	if (defined($request->uri()) && ($request->uri() =~ m|^(.*)\;cauth\=([0-9a-f]{32})$|) ) {
+
 		my $plainURI = $1;
 		my $csrfAuth = $2;
-		$::d_http && msg("Found CSRF auth token \"$csrfAuth\" in URI \"".$request->uri()."\", so resetting request URI to \"$plainURI\"\n");
+
+		$log->info("Found CSRF auth token \"$csrfAuth\" in URI \"".$request->uri()."\", so resetting request URI to \"$plainURI\"");
+
 		# change the URI so later code doesn't "see" the cauth part
 		$request->uri($plainURI);
+
 		# store the cauth code in the request object (headers are handy!)
 		$request->push_header("X-Slim-CSRF",$csrfAuth);
 	}
@@ -310,9 +328,7 @@ sub processHTTP {
 	$response->protocol($request->protocol());
 	$response->request($request);
 
-	if ($::d_http_verbose) {
-		#msg("Request Headers: [\n" . $request->as_string() . "]\n");
-	}
+	$log->debug("Request Headers: [\n" . $request->as_string() . "]");
 
 	if ($request->method() eq 'GET' || $request->method() eq 'HEAD' || $request->method() eq 'POST') {
 
@@ -377,7 +393,7 @@ sub processHTTP {
 
 					$params->{$name} = $value;
 
-					$::d_http && msg("HTTP parameter $name = $value\n");
+					$log->info("HTTP parameter $name = $value");
 
 				} else {
 
@@ -385,7 +401,7 @@ sub processHTTP {
 
 					$params->{$name} = 1;
 
-					$::d_http && msg("HTTP parameter from $name = 1\n");
+					$log->info("HTTP parameter $name = 1");
 				}
 			}
 		}
@@ -400,27 +416,38 @@ sub processHTTP {
 			}
 			
 			if ($path =~ m|/([a-zA-Z0-9]+)$| && isaSkin($1)) {
-					$::d_http && msg("Alternate skin $1 requested, redirecting to $uri/ append a slash.\n");
-					$response->code(RC_MOVED_PERMANENTLY);
-					$response->header('Location' => $uri . '/');
-					$httpClient->send_response($response);
-					closeHTTPSocket($httpClient);
-					return;
+
+				$log->info("Alternate skin $1 requested, redirecting to $uri/ append a slash.");
+
+				$response->code(RC_MOVED_PERMANENTLY);
+				$response->header('Location' => $uri . '/');
+
+				$httpClient->send_response($response);
+
+				closeHTTPSocket($httpClient);
+
+				return;
+
 			} elsif ($path =~ m|^/(.+?)/.*| && $path !~ m{^/(?:html|music|plugins)/}i) {
 
 				my $desiredskin = $1;
 
 				# Requesting a specific skin, verify and set the skinOverride param
-				$::d_http && msg("Alternate skin $desiredskin requested\n");
+				$log->info("Alternate skin $desiredskin requested");
 
 				my $skinname = isaSkin($desiredskin);
 				
 				if ($skinname) {
-					$::d_http && msg("Rendering using $skinname\n");
+
+					$log->info("Rendering using $skinname");
+
 					$params->{'skinOverride'} = $skinname;
 					$params->{'webroot'} = $params->{'webroot'} . "$skinname/";
+
 					$path =~ s{^/.+?/}{/};
+
 				} else {
+
 					# we can either throw a 404 here or just ignore the requested skin
 					
 					# ignore: commented out
@@ -429,7 +456,8 @@ sub processHTTP {
 					# throw 404
 					$params->{'suggestion'} = qq(There is no "$desiredskin")
 						. qq( skin, try ) . Slim::Utils::Prefs::homeURL() . qq( instead.);
-					$::d_http && msg("Invalid skin requested: [" . join(' ', ($request->method(), $request->uri())) . "]\n");
+
+					$log->warn("Invalid skin requested: [" . join(' ', ($request->method, $request->uri)) . "]");
 			
 					$response->code(RC_NOT_FOUND);
 					$response->content_type('text/html');
@@ -452,14 +480,17 @@ sub processHTTP {
 
 			my $dregexp = $dangerousCommands{$d};
 
-			if ($params->{"path"} && $pageFunctions{$params->{"path"}} && $pageFunctions{$params->{"path"}} eq $d && $request->uri() =~ m|$dregexp| ) {
+			if ($params->{"path"} && 
+				$pageFunctions{$params->{"path"}} && 
+				$pageFunctions{$params->{"path"}} eq $d && 
+				$request->uri() =~ m|$dregexp| ) {
 
 				if ( ! isRequestCSRFSafe($request,$response) ) {
 
-					$::d_http && msg("client requested dangerous function/arguments and failed CSRF Referer/token test, sending 403 denial\n");
+					$log->error("Client requested dangerous function/arguments and failed CSRF Referer/token test, sending 403 denial");
+
 					throwCSRFError($httpClient,$request,$response,$params);
 					return;
-
 				}
 			}
 		}
@@ -471,7 +502,8 @@ sub processHTTP {
 			# This will close the client socket & remove the
 			# counter in sendResponse()
 			$response->header('Connection' => 'close');
-			$::d_http && msg("Hit MAXKEEPALIVES, will close connection.\n");
+
+			$log->info("Hit MAXKEEPALIVES, will close connection.");
 
 		} else {
 
@@ -508,7 +540,7 @@ sub processHTTP {
 
 	} else {
 
-		$::d_http && msg("Bad Request: [" . join(' ', ($request->method(), $request->uri())) . "]\n");
+		$log->warn("Bad Request: [" . join(' ', ($request->method, $request->uri)) . "]");
 
 		$response->code(RC_METHOD_NOT_ALLOWED);
 		$response->header('Connection' => 'close');
@@ -520,15 +552,16 @@ sub processHTTP {
 	}
 
 	# what does our response look like?
-	if ($::d_http_verbose) {
-		#$response->content("");
-		#msg("Response Headers: [\n" . $response->as_string() . "]\n");
+	if ($log->is_debug) {
+
+		$response->content("");
+		$log->debug("Response Headers: [\n" . $response->as_string . "]");
 	}
 
-	$::d_http && msg(
+	$log->info(
 		"End request: keepAlive: [" .
 		($keepAlives{$httpClient} || '') .
-		"] - waiting for next request for $httpClient on connection = " . ($response->header('Connection') || '') . "\n\n"
+		"] - waiting for next request for $httpClient on connection = " . ($response->header('Connection') || '') . "\n"
 	);
 }
 
@@ -564,7 +597,7 @@ sub processURL {
 		$p[2] = join '&', map $_ . '=' . $params->{$_},  keys %{$params};
 	}
 
-	$::d_http && msg("processURL Clients: " . join(" ", Slim::Player::Client::clientIPs()) . "\n");
+	$log->info("processURL Clients: " . join(" ", Slim::Player::Client::clientIPs()));
 
 	# explicitly specified player (for web browsers or squeezeboxen)
 	if (defined($params->{"player"})) {
@@ -576,14 +609,15 @@ sub processURL {
 	
 		my $address = $peeraddr{$httpClient};
 	
-		$::d_http && msg("processURL found HTTP client at address=$address\n");
+		$log->info("processURL found HTTP client at address=$address");
 	
 		$client = Slim::Player::Client::getClient($address);
 		
 		if (!defined($client)) {
 
 			my $paddr = getpeername($httpClient);
-			$::d_http && msg ("new http client at $address\n");
+
+			$log->info("New http client at $address");
 
 			if ($paddr) {
 				$client = Slim::Player::HTTP->new($address, $paddr, $httpClient);
@@ -602,7 +636,8 @@ sub processURL {
 			}
 
 			$client->prefSet('transcodeBitrate',$temprate); 	 
-			$::d_http && msg("Setting transcode bitrate to $temprate\n"); 	 
+
+			$log->info("Setting transcode bitrate to $temprate");
 
 		} else {
 
@@ -741,7 +776,7 @@ sub generateHTTPResponse {
 		);
 	}
 
-	$::d_http && msg("Generating response for ($type, $contentType) $path\n");
+	$log->info("Generating response for ($type, $contentType) $path");
 
 	# some generally useful form details...
 	if (defined($client)) {
@@ -783,8 +818,11 @@ sub generateHTTPResponse {
 		
 		# fork for certain read-only operations i.e. browsedb
 		if ( $forkFunctions{$path} && $^O !~ /Win32/ && Slim::Utils::Prefs::get('forkedWeb') ) {
+
 			if ( my $pid = fork ) {
-				$::d_http && msg("Forked $pid to handle web request for $httpClient\n");
+
+				$log->info("Forked $pid to handle web request for $httpClient");
+
 				closeHTTPSocket($httpClient);
 				return;
 			}
@@ -840,7 +878,8 @@ sub generateHTTPResponse {
 				} );
 			
 				if ( my $pid = fork ) {
-					$::d_http && msg("Forked $pid to handle stream\n");
+
+					$log->info("Forked $pid to handle stream");
 				
 					# close HTTP socket, child will keep it open
 					closeHTTPSocket($httpClient);
@@ -882,18 +921,21 @@ sub generateHTTPResponse {
 
 		my $obj = Slim::Schema->find('Track', $1);
 
-		if (blessed($obj) && Slim::Music::Info::isSong($obj) && Slim::Music::Info::isFile($obj->url())) {
+		if (blessed($obj) && Slim::Music::Info::isSong($obj) && Slim::Music::Info::isFile($obj->url)) {
 
-			$::d_http && msg("Opening $obj to stream...\n");
+			$log->info("Opening $obj to stream...");
 
-			my $songHandle =  FileHandle->new(Slim::Utils::Misc::pathFromFileURL($obj->url()));
+			my $songHandle =  FileHandle->new(Slim::Utils::Misc::pathFromFileURL($obj->url));
 
 			if ($songHandle) {
 				
 				# fork for sending large file downloads
 				if ( $^O !~ /Win32/ && Slim::Utils::Prefs::get('forkedWeb') ) {
+
 					if ( my $pid = fork ) {
-						$::d_http && msg("Forked $pid to handle file download\n");
+
+						$log->info("Forked $pid to handle file download");
+
 						closeHTTPSocket($httpClient);
 						return;
 					}
@@ -940,7 +982,7 @@ sub generateHTTPResponse {
 			($body, $mtime, $inode, $size) = getStaticContent($path, $params);
 		}
 
-	} elsif ($path =~ /(status)\.txt/ || $path =~ /(log)\.txt/) {
+	} elsif ($path =~ /status\.txt/) {
 
 		# if the HTTP client has asked for a text file, then always return the text on the display
 		$contentType = "text/plain";
@@ -950,22 +992,15 @@ sub generateHTTPResponse {
 
 		# This code is deprecated. Jonas Salling is the only user
 		# anymore, and we're trying to move him to use the CLI.
-		buildStatusHeaders($client, $response, $p) if $1 eq 'status';
+		buildStatusHeaders($client, $response, $p);
 
-		if ($path =~ /status/) {
-
-			if (defined($client)) {
-				my $parsed = $client->parseLines($client->curLines());
-				my $line1 = $parsed->{line}[0] || '';
-				my $line2 = $parsed->{line}[1] || '';
-				$$body = $line1 . $CRLF . $line2 . $CRLF;
-			} else {
-				$$body = '';
-			}
-
+		if (defined($client)) {
+			my $parsed = $client->parseLines($client->curLines());
+			my $line1 = $parsed->{line}[0] || '';
+			my $line2 = $parsed->{line}[1] || '';
+			$$body = $line1 . $CRLF . $line2 . $CRLF;
 		} else {
-			$$body = $Slim::Utils::Misc::log;
-
+			$$body = '';
 		}
 
 	} elsif ($path =~ /status\.m3u/) {
@@ -1086,8 +1121,10 @@ sub childRead {
 	my $bytes = sysread $child, my $data, 4096;
 	
 	if ( !$bytes ) {
+
 		# child may have died
-		$::d_http && msg( 'childRead had an error: ' . ( $! || 'eof' ) . "\n" );
+		$log->error('childRead had an error: ' . ( $! || 'eof' ));
+
 		Slim::Networking::Select::removeRead( $child );
 		close $child;
 		return;
@@ -1097,7 +1134,7 @@ sub childRead {
 	
 	$data = thaw($data);
 	
-	$::d_http && msg( "[$$] childRead got " . Data::Dump::dump($data) );
+	$log->info("[$$] childRead got " . Data::Dump::dump($data));
 	
 	my $client = Slim::Player::Client::getClient( $data->{clientid} );
 	
@@ -1199,7 +1236,7 @@ sub contentHasBeenModified {
 
 		if ($ifMatch ne '*' && (!$etag || $etag eq 'W' || $etag ne $ifMatch)) {
 
-			$::d_http_verbose && msgf("\tifMatch - RC_PRECONDITION_FAILED\n");
+			$log->debug("\tifMatch - RC_PRECONDITION_FAILED");
 			$response->code(RC_PRECONDITION_FAILED);
 		}
 
@@ -1213,7 +1250,7 @@ sub contentHasBeenModified {
 
 		if ($ifUnmodified && time() > $ifUnmodified) {
 
-			 $::d_http_verbose && msgf("\tifUnmodified - RC_PRECONDITION_FAILED\n");
+			 $log->debug("\tifUnmodified - RC_PRECONDITION_FAILED");
 
 			 $response->code(RC_PRECONDITION_FAILED);
          	}
@@ -1242,7 +1279,7 @@ sub contentHasBeenModified {
 
 		if ($ifNoneMatch eq '*') {
 
-			$::d_http_verbose && msg("\tifNoneMatch - * - returning 304\n");
+			$log->debug("\tifNoneMatch - * - returning 304");
  			$response->code(RC_NOT_MODIFIED);
 
 		} elsif ($etag) {
@@ -1251,13 +1288,13 @@ sub contentHasBeenModified {
 
 				if ($etag ne 'W' && $ifNoneMatch eq $etag) {
 
-					$::d_http_verbose && msg("\tETag is not weak and ifNoneMatch eq ETag - returning 304\n");
+					$log->debug("\tETag is not weak and ifNoneMatch eq ETag - returning 304");
 					$response->code(RC_NOT_MODIFIED);
 				}
 
 			} elsif ($ifNoneMatch eq $etag) {
 
-				$::d_http_verbose && msg("\tifNoneMatch eq ETag - returning 304\n");
+				$log->debug("\tifNoneMatch eq ETag - returning 304");
 				$response->code(RC_NOT_MODIFIED);
 			}
  		}
@@ -1278,7 +1315,7 @@ sub contentHasBeenModified {
 
 			if (($ifModified >= $mtime) && ($ifModified <= $requestTime)) {
 
-				$::d_http && msgf("Content at: %s has not been modified - returning 304.\n", $request->uri());
+				$log->info(sprintf("Content at: %s has not been modified - returning 304.", $request->uri));
 
 				$response->code(RC_NOT_MODIFIED);
 			}
@@ -1385,7 +1422,8 @@ sub addHTTPResponse {
 
 		while ( sendResponse( $httpClient ) ) {}
 		
-		$::d_http && msg("Done sending response in child process, exiting\n");
+		$log->info("Done sending response in child process, exiting");
+
 		exit 0;
 	}
 
@@ -1401,15 +1439,18 @@ sub sendResponse {
 	my $sentbytes  = 0;
 
 	# abort early if we don't have anything.
-	unless ($httpClient->connected()) {
+	if (!$httpClient->connected) {
 
-		$::d_http && msg("Got nothing for message to " . $peeraddr{$httpClient} . ", closing socket\n");
+		$log->warn("Got nothing for message to $peeraddr{$httpClient}, closing socket");
+
 		closeHTTPSocket($httpClient);
 		return;
 	}
 
-	unless ($segment) {
-		$::d_http && msg("No segment to send to " . $peeraddr{$httpClient} . ", waiting for next request..\n");
+	if (!$segment) {
+
+		$log->info("No segment to send to $peeraddr{$httpClient}, waiting for next request..");
+
 		# Nothing to send, so we take the socket out of the write list.
 		# When we process the next request, it will get put back on.
 		Slim::Networking::Select::removeWrite($httpClient); 
@@ -1423,14 +1464,18 @@ sub sendResponse {
 	}
 
 	if ($! == EWOULDBLOCK) {
-		$::d_http && msg("Would block while sending. Resetting sentbytes for: " . $peeraddr{$httpClient} . "\n");
-		$sentbytes = 0 unless defined $sentbytes;
+
+		$log->info("Would block while sending. Resetting sentbytes for: $peeraddr{$httpClient}");
+
+		if (!defined $sentbytes) {
+			$sentbytes = 0;
+		}
 	}
 
 	if (!defined($sentbytes)) {
 
 		# Treat $httpClient with suspicion
-		$::d_http && msg("Send to " . $peeraddr{$httpClient} . " had error, closing and aborting.\n");
+		$log->info("Send to $peeraddr{$httpClient} had error, closing and aborting.");
 
 		closeHTTPSocket($httpClient);
 
@@ -1451,13 +1496,13 @@ sub sendResponse {
 
 	} else {
 		
-		$::d_http && msg("Sent $sentbytes to " . $peeraddr{$httpClient} . "\n");
+		$log->info("Sent $sentbytes to $peeraddr{$httpClient}");
 
 		# sent full message
 		if (@{$outbuf{$httpClient}} == 0) {
 
 			# no more messages to send
-			$::d_http && msg("No more messages to send to " . $peeraddr{$httpClient} . "\n");
+			$log->info("No more messages to send to $peeraddr{$httpClient}");
 
 			my $connection = 0;
 
@@ -1468,13 +1513,14 @@ sub sendResponse {
 			# if either the client or the server has requested a close, respect that.
 			if (!$connection || $connection =~ /close/i) {
 
-				$::d_http && msg("End request, connection closing for: $httpClient\n");
+				$log->info("End request, connection closing for: $httpClient");
+
 				closeHTTPSocket($httpClient);
 			}
 
 		} else {
 
-			$::d_http && msg("More to send to " . $peeraddr{$httpClient} . "\n");
+			$log->info("More to send to $peeraddr{$httpClient}");
 			
 			if ( $inChild ) {
 				return 1;
@@ -1540,7 +1586,8 @@ sub addStreamingResponse {
 			}					
 		}
 		
-		$::d_http && msg("Done streaming to $httpClient, exiting\n");
+		$log->info("Done streaming to $httpClient, exiting");
+
 		exit 0;
 	}
 	else {
@@ -1563,7 +1610,7 @@ sub parentRead {
 	
 	$data = thaw($data);
 	
-	$::d_http && msg( "parentRead got: " . Data::Dump::dump($data) );
+	$log->info("parentRead got: " . Data::Dump::dump($data));
 	
 	if ( $data->{command} eq 'playlist' ) {
 		
@@ -1607,7 +1654,7 @@ sub sendStreamingResponse {
 
 	my $silence = 0;
 	
-	$::d_http && msg("sendstreaming response begun...\n");
+	$log->info("sendStreaming response begun...");
 
 	if ($client && 
 			$client->isa("Slim::Player::Squeezebox") && 
@@ -1615,30 +1662,33 @@ sub sendStreamingResponse {
 			(!defined($client->streamingsocket()) || $httpClient != $client->streamingsocket())
 		) {
 
-		$::d_http && msg($client->id() . " We're done streaming this socket to client\n");
+		$log->info($client->id . " We're done streaming this socket to client");
+
 		closeStreamingSocket($httpClient);
 		return;
 	}
 	
 	if (!$httpClient->connected()) {
+
 		closeStreamingSocket($httpClient);
-		$::d_http && msg("Streaming client closed connection...\n");
+
+		$log->info("Streaming client closed connection...");
+
 		return undef;
 	}
 	
-	if (!$streamingFile && 
-			$client && 
-			$client->isa("Slim::Player::Squeezebox") && 
-			(Slim::Player::Source::playmode($client) eq 'stop')) {
+	if (!$streamingFile && $client && $client->isa("Slim::Player::Squeezebox") && 
+		(Slim::Player::Source::playmode($client) eq 'stop')) {
+
 		closeStreamingSocket($httpClient);
-		$::d_http && msg("Squeezebox closed connection...\n");
+
+		$log->info("Squeezebox closed connection...");
+
 		return undef;
 	}
 	
-	if (!defined($streamingFile) && 
-			$client && 
-			$client->isa("Slim::Player::HTTP") && 
-			((Slim::Player::Source::playmode($client) ne 'play') || (Slim::Player::Playlist::count($client) == 0))) {
+	if (!defined($streamingFile) && $client && $client->isa("Slim::Player::HTTP") && 
+		((Slim::Player::Source::playmode($client) ne 'play') || (Slim::Player::Playlist::count($client) == 0))) {
 
 		$silence = 1;
 	} 
@@ -1649,15 +1699,24 @@ sub sendStreamingResponse {
 		# if we aren't playing something, then queue up some silence
 		if ($silence) {
 
-			$::d_http && msg("(silence)");
+			$log->info("(silence)");
 
 			my $bitrate = Slim::Utils::Prefs::maxRate($client);
-			my $silencedataref = ($bitrate == 320 || $bitrate == 0) ? getStaticContent("html/silence.mp3") : getStaticContent("html/lbrsilence.mp3");
+			my $silence = undef;
+
+			if ($bitrate == 320 || $bitrate == 0) { 
+
+				$silence = getStaticContent("html/silence.mp3");
+
+			} else {
+
+				$silence = getStaticContent("html/lbrsilence.mp3");
+			}
 
 			my %segment = ( 
-				'data'   => $silencedataref,
+				'data'   => $silence,
 				'offset' => 0,
-				'length' => length($$silencedataref)
+				'length' => length($$silence)
 			);
 
 			unshift @{$outbuf{$httpClient}}, \%segment;
@@ -1666,26 +1725,35 @@ sub sendStreamingResponse {
 			my $chunkRef;
 
 			if (defined($streamingFile)) {
+
 				my $chunk = undef;
+
 				$streamingFile->sysread($chunk, MAXCHUNKSIZE);
 
 				if (defined($chunk) && length($chunk)) {
+
 					$chunkRef = \$chunk;
+
 				} else {
+
 					# we're done streaming this stored file, closing connection.
 					closeStreamingSocket($httpClient);
-					$::d_http && msg("we're done streaming this stored file, closing connection....\n");
+
+					$log->info("we're done streaming this stored file, closing connection....");
+
 					return 0;
 				}
 
 			} else {
+
 				$chunkRef = Slim::Player::Source::nextChunk($client, MAXCHUNKSIZE);
 			}
-			
+
 			# otherwise, queue up the next chunk of sound
 			if ($chunkRef && length($$chunkRef)) {
 
-				$::d_http && msg("(audio: " . length($$chunkRef) . " bytes)\n" );
+				$log->info("(audio: " . length($$chunkRef) . " bytes)");
+
 				my %segment = ( 
 					'data'   => $chunkRef,
 					'offset' => 0,
@@ -1697,6 +1765,7 @@ sub sendStreamingResponse {
 				unshift @{$outbuf{$httpClient}},\%segment;
 
 			} else {
+
 				# let's try again after RETRY_TIME
 				my $retry = RETRY_TIME;
 
@@ -1706,7 +1775,7 @@ sub sendStreamingResponse {
 					$retry = RETRY_TIME_FAST;
 				}
 
-				$::d_http && msg("Nothing to stream, let's wait for " . $retry . " seconds...\n");
+				$log->info("Nothing to stream, let's wait for $retry seconds...");
 				
 				Slim::Networking::Select::removeWrite($httpClient);
 				
@@ -1731,7 +1800,7 @@ sub sendStreamingResponse {
 	if ($sendMetaData{$httpClient}) {
 
 		# if the metadata would appear in the middle of this message, just send the bit before
-		$::d_http && msg("metadata bytes: " . $metaDataBytes{$httpClient} . "\n");
+		$log->info("metadata bytes: $metaDataBytes{$httpClient}");
 
 		if ($metaDataBytes{$httpClient} == METADATAINTERVAL) {
 
@@ -1759,7 +1828,8 @@ sub sendStreamingResponse {
 			$segment = \%segment;
 			
 			$metaDataBytes{$httpClient} = 0;
-			$::d_http && msg("sending metadata of length $length: '$metastring' (" . length($message) . " bytes)\n");
+
+			$log->info("sending metadata of length $length: '$metastring' (" . length($message) . " bytes)");
 
 		} elsif (defined($segment) && $metaDataBytes{$httpClient} + $segment->{'length'} > METADATAINTERVAL) {
 
@@ -1767,6 +1837,7 @@ sub sendStreamingResponse {
 			
 			# make a copy of the segment, and point to the second half, to be sent later.
 			my %splitsegment = %$segment;
+
 			$splitsegment{'offset'} += $splitpoint;
 			$splitsegment{'length'} -= $splitpoint;
 			
@@ -1776,11 +1847,13 @@ sub sendStreamingResponse {
 			$segment->{'length'} = $splitpoint;
 			
 			$metaDataBytes{$httpClient} += $splitpoint;
-			$::d_http && msg("splitting message for metadata at " . $splitpoint . "\n");
+
+			$log->info("splitting message for metadata at $splitpoint");
 		
-		} else {
+		} elsif (defined $segment) {
+
 			# if it's time to send the metadata, just send the metadata
-			$metaDataBytes{$httpClient} += $segment->{'length'} if defined $segment;
+			$metaDataBytes{$httpClient} += $segment->{'length'};
 		}
 	}
 
@@ -1798,45 +1871,55 @@ sub sendStreamingResponse {
 		if (defined($sentbytes)) {
 			if ($sentbytes < $segment->{'length'}) { #sent incomplete message
 
-#				if (($sentbytes % 2) == 1) {
-#					msg( "ODD!:$sentbytes (tried: $prebytes)\n");
-#				} else {
-#					msg( "even:$sentbytes (tried: $prebytes)\n");
-#				}
+				if ($sentbytes) {
 
-				$::d_http && $sentbytes && msg("sent incomplete chunk, requeuing " . 
-					($segment->{'length'} - $sentbytes). " bytes\n");
+					$log->info("sent incomplete chunk, requeuing " . ($segment->{'length'} - $sentbytes). " bytes");
+				}
 
 				$metaDataBytes{$httpClient} -= $segment->{'length'} - $sentbytes;
+
 				$segment->{'length'} -= $sentbytes;
 				$segment->{'offset'} += $sentbytes;
+
 				unshift @{$outbuf{$httpClient}},$segment;
 			}
 
 		} else {
-			$::d_http && msg("sendstreamingsocket syswrite returned undef: $!\n");
+
+			$log->info("syswrite returned undef: $!");
+
 			closeStreamingSocket($httpClient);
+
 			return undef;
 		}
 
 	} else {
-		$::d_http && msg("Got nothing for streaming data to " . $peeraddr{$httpClient} . "\n");
+
+		$log->info("Got nothing for streaming data to $peeraddr{$httpClient}");
+
 		return 0;
 	}
 
-	$::d_http && $sentbytes && msg("Streamed $sentbytes to " . $peeraddr{$httpClient} . "\n");
+	if ($sentbytes) {
+
+		$log->info("Streamed $sentbytes to $peeraddr{$httpClient}");
+	}
+
 	return $sentbytes;
 }
 
 sub tryStreamingLater {
-	my $client = shift;
+	my $client     = shift;
 	my $httpClient = shift;
+
 	Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse, 1);
 }
 
 sub nonBreaking {
 	my $string = shift;
+
 	$string =~ s/\s/\&nbsp;/g;
+
 	return $string;
 }
 
@@ -1859,7 +1942,7 @@ sub newSkinTemplate {
 			$skinSettings = eval { LoadFile($skinConfig) };
 
 			if ($@) {
-				errorMsg("Could not load skin configuration file: $skinConfig\n$!\n");
+				logError("Could not load skin configuration file: $skinConfig\n$!");
 			}
 
 			last;
@@ -1889,16 +1972,26 @@ sub newSkinTemplate {
 	}
 	
 	if (ref($skinSettings) eq 'HASH' && ref $skinSettings->{'preprocess'} eq "ARRAY") {
+
 		for my $checkfile (@{$skinSettings->{'preprocess'}}) {
+
 			my $found = 0;
+
 			DIRS: for my $checkdir (@include_path) {
+
 				if (-r catfile($checkdir,$checkfile)) {
+
 					push @preprocess, $checkfile;
+
 					$found = 1;
+
 					last DIRS;
 				}
 			}
-			$::d_http && !$found && msg("$checkfile not found in include path, skipping\n");
+
+			if (!$found) {
+				$log->warn("$checkfile not found in include path, skipping");
+			}
 		}
 	}
 
@@ -1966,7 +2059,7 @@ sub _generateContentFromFile {
 		$skin = 'Default';
 	}
 	
-	$::d_http && msg("generating from $path\n");
+	$log->info("generating from $path");
 
 	# Make sure we have a skin template for fixHttpPath to use.
 	my $template = $skinTemplates{$skin} || newSkinTemplate($skin);
@@ -1989,7 +2082,8 @@ sub _generateContentFromFile {
 		}
 
 		if (!$template->process($path,$params,\$output)) {
-			errorMsg($template->error() . "\n");
+
+			logError($template->error);
 		}
 
 		return \$output;
@@ -2020,7 +2114,7 @@ sub _getFileContent {
 
 	my ($content, $template, $mtime, $inode, $size);
 
-	$::d_http && msg("reading http file for ($skin $path)\n");
+	$log->info("Reading http file for ($skin $path)");
 
 	my $skinpath = fixHttpPath($skin, $path) || return;
 
@@ -2039,11 +2133,15 @@ sub _getFileContent {
 		binmode($template) if $binary;
 		$content = <$template>;
 		close $template;
-		$::d_http && (length($content) || msg("File empty: $path"));
+
+		if (!length($content) && $log->is_debug) {
+
+			$log->debug("File empty: $path");
+		}
 
 	} else {
 
-		errorMsg("_getFileContent: Couldn't open: $path\n");
+		logError("Couldn't open: $path");
 	}
 	
 	return (\$content, $mtime, $inode, $size);
@@ -2064,9 +2162,14 @@ sub fixHttpPath {
 	my $skindirs = $template->context()->{'CONFIG'}->{'INCLUDE_PATH'};
 
 	for my $dir (@{$skindirs}) {
+
 		my $fullpath = catdir($dir, $path);
-		$::d_http && msg("  checking for $fullpath.\n");
-		return $fullpath if (-r $fullpath);
+
+		$log->info("Checking for $fullpath.");
+
+		if (-r $fullpath) {
+			return $fullpath;
+		}
 	} 
 
 	return undef;
@@ -2198,15 +2301,16 @@ sub closeHTTPSocket {
 sub closeStreamingSocket {
 	my $httpClient = shift;
 	
-	$::d_http && msg("Closing streaming socket.\n");
+	$log->info("Closing streaming socket.");
 	
 	if (defined $streamingFiles{$httpClient}) {
 
-		$::d_http && msg("Closing streaming file.\n");
+		$log->info("Closing streaming file.");
+
 		close  $streamingFiles{$httpClient};
 		delete $streamingFiles{$httpClient};
 	}
-	
+
 	foreach my $client (Slim::Player::Client::clients()) {
 
 		if (defined($client->streamingsocket) && $client->streamingsocket == $httpClient) {
@@ -2226,7 +2330,8 @@ sub checkAuthorization {
 	my $ok = 0;
 
 	# No authorization needed
-	unless (Slim::Utils::Prefs::get('authorize')) {
+	if (!Slim::Utils::Prefs::get('authorize')) {
+
 		$ok = 1;
 		return $ok;
 	}
@@ -2262,7 +2367,8 @@ sub checkAuthorization {
 sub addPageFunction {
 	my ($regexp, $func, $fork) = @_;
 
-	$::d_http && msg("Adding handler for regular expression /$regexp\n");
+	$log->info("Adding handler for regular expression /$regexp/");
+
 	$pageFunctions{$regexp} = $func;
 	
 	if ( $fork ) {
@@ -2273,7 +2379,8 @@ sub addPageFunction {
 sub addTemplateDirectory {
 	my $dir = shift;
 
-	$::d_http && msg("Adding template directory $dir\n");
+	$log->info("Adding template directory $dir");
+
 	push @templateDirs, $dir if (not grep({$_ eq $dir} @templateDirs));
 }
 
@@ -2285,32 +2392,36 @@ sub isCsrfAuthCodeValid {
 	if (! defined($csrfProtectionLevel) ) {
 
 		# Prefs.pm should have set this!
-		$::d_http && msg("Server unable to determine CRSF protection level due to missing server pref\n");
+		$log->warn("Warning: Server unable to determine CRSF protection level due to missing server pref");
+
 		return 0;
 	}
 
 	# no protection, so we don't care
 	return 1 if ( !$csrfProtectionLevel);
 
-	my $uri = $req->uri();
+	my $uri  = $req->uri();
 	my $code = $req->header("X-Slim-CSRF");
 
-	if ( (!defined($uri)) || (!defined($code)) ) { return 0; }
+	if ( (!defined($uri)) || (!defined($code)) ) {
+		return 0;
+	}
 
 	my $secret = Slim::Utils::Prefs::get("securitySecret");
 
 	if ( (!defined($secret)) || ($secret !~ m|^[0-9a-f]{32}$|) ) {
 
 		# invalid secret!
-		$::d_http && msg("Server unable to verify CRSF auth code due to missing or invalid securitySecret server pref\n");
+		$log->warn("Server unable to verify CRSF auth code due to missing or invalid securitySecret server pref");
+
 		return 0;
 	}
 
 	my $expectedCode = $secret;
 
 	# calculate what the auth code should look like
-	my $highHash = new Digest::MD5;
-	my $mediumHash = new Digest::MD5;
+	my $highHash   = Digest::MD5->new;
+	my $mediumHash = Digest::MD5->new;
 
 	# only the "HIGH" cauth code depends on the URI
 	$highHash->add($uri);
@@ -2352,8 +2463,11 @@ sub isRequestCSRFSafe {
 		if ($hostHeader !~ m/:\d{1,}$/ ) { $hostHeader .= ":80"; }
 
 		if ("$host:$port" ne $hostHeader) {
-			$::d_http && msg("Invalid referer: [" . join(' ', ($request->method(), $request->uri())) . "]\n");
+
+			$log->warn("Invalid referer: [" . join(' ', ($request->method, $request->uri)) . "]");
+
 		} else {
+
 			# looks good
 			$rc = 1;
 		}
@@ -2366,7 +2480,10 @@ sub isRequestCSRFSafe {
 		if ( ! isCsrfAuthCodeValid($request) ) {
 
 			$params->{'suggestion'} = "Invalid referrer and no valid cauth code.";
-			$::d_http && msg("No valid CSRF auth code: [" . join(' ', ($request->method(), $request->uri(), $request->header('X-Slim-CSRF'))) . "]\n");
+
+			$log->warn("No valid CSRF auth code: [" . 
+				join(' ', ($request->method, $request->uri, $request->header('X-Slim-CSRF')))
+			. "]");
 
 		} else {
 
@@ -2386,7 +2503,8 @@ sub makeAuthorizedURI {
 	if ( (!defined($secret)) || ($secret !~ m|^[0-9a-f]{32}$|) ) {
 
 		# invalid secret!
-		$::d_http && msg("Server unable to compute CRSF auth code URL due to missing or invalid securitySecret server pref\n");
+		$log->warn("Server unable to compute CRSF auth code URL due to missing or invalid securitySecret server pref");
+
 		return undef;
 	}
 
@@ -2395,11 +2513,12 @@ sub makeAuthorizedURI {
 	if (! defined($csrfProtectionLevel) ) {
 
 		# Prefs.pm should have set this!
-		$::d_http && msg("Server unable to determine CRSF protection level due to missing server pref\n");
+		$log->warn("Server unable to determine CRSF protection level due to missing server pref");
+
 		return 0;
 	}
 
-	my $hash = new Digest::MD5;
+	my $hash = Digest::MD5->new;
 
 	if ( $csrfProtectionLevel == 2 ) {
 

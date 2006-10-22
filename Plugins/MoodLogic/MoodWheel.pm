@@ -8,7 +8,10 @@ package Plugins::MoodLogic::MoodWheel;
 # version 2.
 
 use strict;
+
 use Slim::Buttons::Common;
+use Slim::Utils::Log;
+
 use Plugins::MoodLogic::Plugin;
 
 # 
@@ -65,7 +68,7 @@ sub setMode {
 
 	} else {
 	
-		$::d_moodlogic && msg("MoodLogic: no/unknown type specified for mood wheel\n");
+		logWarning("No/unknown type specified for mood wheel.");
 	}
 
 	my %params = (

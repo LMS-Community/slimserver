@@ -14,6 +14,7 @@ use base qw(DBIx::Class::Storage::DBI::mysql);
 
 use Carp::Clan qw/DBIx::Class/;
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 our $dbAccess = Slim::Utils::PerfMon->new('Database Access', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5], 1);
@@ -21,9 +22,7 @@ our $dbAccess = Slim::Utils::PerfMon->new('Database Access', [0.002, 0.005, 0.01
 sub throw_exception {
 	my ($self, $msg) = @_;
 
-	errorMsg($msg);
-	errorMsg("Backtrace follows:\n");
-	bt();
+	logBacktrace($msg);
 
 	# Need to propagate the real error so that DBIx::Class::Storage will
 	# do the right thing and reconnect to the DB.

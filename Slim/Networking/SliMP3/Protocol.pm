@@ -15,11 +15,14 @@ use strict;
 use Slim::Player::SLIMP3;
 use Slim::Networking::Discovery;
 use Slim::Networking::Select;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 
+my $log = logger('network.protocol.slimp3');
+
 sub processMessage {
-	my ($client,$msg) = @_;
+	my ($client, $msg) = @_;
 
 	my $type   = unpack('a',$msg);
 
@@ -34,6 +37,7 @@ sub processMessage {
 	#  [12..17]  reserved/ignored
 
 	if ($type eq 'i') {
+
 		# extract the IR code and the timestamp for the IR message
 		my ($irTime, $irCodeBytes) = unpack 'xxNxxH8', $msg;	
 		
@@ -54,15 +58,21 @@ sub processMessage {
 		Slim::Player::Sync::checkSync($client);
 
 	} else {
-		$::d_protocol && msg("debug: unknown type: [$type]\n");
+
+		$log->warn("Unknown type: [$type]");
 	}
 
 	return 1;
 }
 
-###################
-# return the client based on IP address and socket.  will create a new one if
-# necessary 
+=head2 getUdpClient( $clientpaddr, $sock, $msg )
+
+Return the client based on IP address and socket.
+
+Will create a new one if necessary 
+
+=cut
+
 sub getUdpClient {
 	my ($clientpaddr, $sock, $msg) = @_;
 
@@ -82,8 +92,9 @@ sub getUdpClient {
 			if ($revision >= 2.2)  { $id = $mac }
 			if ($deviceid != 0x01) { return undef }
 
-			$::d_protocol && msg("$id ($msgtype) deviceid: $deviceid revision: $revision address: " .
-				Slim::Utils::Network::paddr2ipaddress($clientpaddr) . "\n");
+			$log->info("$id ($msgtype) deviceid: $deviceid revision: $revision address: ",
+				Slim::Utils::Network::paddr2ipaddress($clientpaddr)
+			);
 
 			$client = Slim::Player::SLIMP3->new($id, $clientpaddr, $revision, $sock);			
 

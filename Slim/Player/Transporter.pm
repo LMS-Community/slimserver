@@ -22,9 +22,9 @@ use IO::Socket;
 use MIME::Base64;
 
 use Slim::Player::Player;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
-
 
 our $defaultPrefs = {
 	'clockSource'  => 0,
@@ -58,6 +58,7 @@ sub init {
 
 sub reconnect {
 	my $client = shift;
+
 	$client->SUPER::reconnect(@_);
 
 	$client->getPlayerSetting('digitalOutputEncoding');
@@ -79,8 +80,8 @@ sub play {
 	# value for those. If the user then goes and pressed play on a
 	# standard file:// or http:// URL, we need to set the value back to 0,
 	# IE: input from the network.
-	
 	my $url = $params->{'url'};
+
 	if ($url) {
 
 		if (Slim::Music::Info::isDigitalInput($url)) {
@@ -92,7 +93,9 @@ sub play {
 			return 1;
 
 		} else {
-			$::d_source && msg("Transporter::play - setting DigitalInput to 0 for [$url]\n");
+
+			logger('player.source')->info("Setting DigitalInput to 0 for [$url]");
+
 			$client->setDigitalInput(0);
 		}
 	}
@@ -105,25 +108,31 @@ sub pause {
 	my $client = shift;
 
 	$client->SUPER::pause(@_);
+
 	if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::url($client))) {
+
 		$client->setDigitalInput(0);	
 	}
 }
 
 sub stop {
 	my $client = shift;
+
 	$client->SUPER::stop(@_);
 
 	if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::url($client))) {
+
 		$client->setDigitalInput(0);	
 	}
 }
 
 sub resume {
 	my $client = shift;
+
 	$client->SUPER::resume(@_);
 
 	if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::url($client))) {
+
 		$client->setDigitalInput(Slim::Player::Playlist::url($client));	
 	}
 }
@@ -133,35 +142,40 @@ sub power {
 
 	# can't use the result below because power is sometimes called recursively through other display functions
 	my $was = $client->prefGet('power');
-	
+
 	my $result = $client->SUPER::power($on);
 
 	# if we're turning on and the current song is a digital input, then start playing.
 	if (defined($on) && $on && !$was) {
+
 		if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::url($client))) {
+
 			$client->execute(["play"]);
 		}
 	}
-	
+
 	return $result;	
 }
 
 sub setDigitalInput {
 	my $client = shift;
-	my $input = shift;
+	my $input  = shift;
+
+	my $log    = logger('player.source');
 
 	# convert a source: url to a number, otherwise, just use the number
 	if (Slim::Music::Info::isDigitalInput($input)) {
 	
-		$::d_source && msg("Transporter::setDigitalInput - Got source: url [$input]\n");
+		$log->info("Got source: url: [$input]");
 
 		if ($INC{'Plugins/DigitalInput/Plugin.pm'}) {
+
 			$input = Plugins::DigitalInput::Plugin::valueForSourceName($input);
 		}
 	}
 
-	$::d_source && msg("Transporter switching to digital input $input\n");
-	
+	$log->info("Switching to digital input $input");
+
 	$client->prefSet('digitalInput', $input);
 	$client->sendFrame('audp', \pack('C', $input));
 }
@@ -189,12 +203,14 @@ sub updateKnob {
 		}			
 	}
 
-	my $knobPos  = $client->knobPos || 0;
-	my $knobSync = $client->knobSync;
-	my $flags    = $client->modeParam('knobFlags') || 0;
-	my $width    = $client->modeParam('knobWidth') || 0;
-	my $height   = $client->modeParam('knobHeight') || 0;
+	my $knobPos   = $client->knobPos || 0;
+	my $knobSync  = $client->knobSync;
+	my $flags     = $client->modeParam('knobFlags') || 0;
+	my $width     = $client->modeParam('knobWidth') || 0;
+	my $height    = $client->modeParam('knobHeight') || 0;
 	my $backForce = $client->modeParam('knobBackgroundForce') || 0;
+
+	my $log       = logger('player.ui');
 
 	if (defined $listIndex && (($listIndex != $knobPos) || $newList)) {
 
@@ -206,15 +222,15 @@ sub updateKnob {
 
 			$parambytes = pack "NNCcncc", $listIndex, $listLen, $knobSync, $flags, $width, $height, $backForce;
 
-			$::d_ui && msgf("sending new knob position- listIndex: %d with knobPos: %d of %d sync: %d flags: %d\n",
+			$log->debug(sprintf("Sending new knob position- listIndex: %d with knobPos: %d of %d sync: %d flags: %d",
 				$listIndex, $knobPos, $listLen, $knobSync, $flags,
-			);
+			));
 
 		} else {
 
 			$parambytes = pack "N", $listIndex;
 
-			$::d_ui && msg("sending new knob position- listIndex: $listIndex\n");
+			$log->debug("Sending new knob position- listIndex: $listIndex");
 		}
 
 		$client->sendFrame('knob', \$parambytes);
@@ -223,13 +239,13 @@ sub updateKnob {
 
 	} else {
 
-		$::d_ui && msg("skipping sending redundant knob position\n");
+		$log->debug("Skipping sending redundant knob position");
 	}
 }
 
 sub knobListPos {
-	my $client = shift;
-	my $curPos = shift || $client->modeParam('listIndex');
+	my $client  = shift;
+	my $curPos  = shift || $client->modeParam('listIndex');
 	my $listLen = shift || $client->modeParam('listLen') || scalar @{ $client->modeParam('listRef') };
 
 	my $newPos = $client->knobPos();
@@ -242,7 +258,7 @@ sub knobListPos {
 		# set direction only if a bump is required otherwise leave as undef
 		if ($newPos > 0) {
 			$direction = 'up';
-		} elsif($newPos < 0) {
+		} elsif ($newPos < 0) {
 			$direction = 'down';
 		}
 
@@ -286,19 +302,19 @@ sub hasExternalClock {
 	return 1;
 }
 
-sub hasAesbeu() {
+sub hasAesbeu {
     	return 1;
 }
 
-sub hasPowerControl() {
+sub hasPowerControl {
 	return 1;
 }
 
-sub hasDisableDac() {
+sub hasDisableDac {
 	return 0;
 }
 
-sub hasPolarityInversion() {
+sub hasPolarityInversion {
 	return 1;
 }
 
@@ -327,7 +343,6 @@ sub volumeString {
 		return $client->SUPER::volumeString($volume);
 
 	}
-
 }
 
 1;

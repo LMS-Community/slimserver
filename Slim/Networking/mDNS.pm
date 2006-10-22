@@ -14,6 +14,7 @@ use File::Slurp;
 use File::Spec::Functions qw(:ALL);
 use Proc::Background;
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
@@ -27,19 +28,21 @@ use Slim::Utils::Prefs;
 
 	$class->isInitialized(0);
 }
+
+my $log = logger('network.mdns');
  
 my %services = ();
 
 sub init {
 	my $class = shift;
 
-	$::d_mdns && msg("mDNS: Initializing..\n");
+	$log->info("Initializing..");
 
 	my $cacheDir = Slim::Utils::Prefs::get('cachedir');
 
 	if (!-d $cacheDir) {
 
-		$::d_mdns && msg("mDNS: cachedir [$cacheDir] isn't set or writeable\n");
+		$log->error("Error: cachedir [$cacheDir] isn't set or writeable");
 		return;
 	}
 
@@ -60,11 +63,11 @@ sub addService {
 
 	if (!$name) {
 
-		$::d_mdns && msg("mDNS: Blank name, skipping service: $service - TXT - $port\n");
+		$log->warn("Warning: Blank name, skipping service: $service - TXT - $port");
 
 	} else {
 
-		$::d_mdns && msg("mDNS: Adding service: $name - $service - TXT - $port\n");
+		$log->info("Adding service: $name - $service - TXT - $port");
 
 		$services{$service} = [ $name, $port ];
 	}
@@ -77,7 +80,7 @@ sub removeService {
 		return if !$class->init;
 	}
 
-	$::d_mdns && msg("mDNS: Removing service: $service\n");
+	$log->info("Removing service: $service");
 
 	delete $services{$service};
 }
@@ -85,11 +88,11 @@ sub removeService {
 sub startAdvertising {
 	my $class = shift;
 
-	$::d_mdns && msg("mDNS: startAdvertising - building config.\n");
+	$log->info("Building configuration.");
 
 	my $mDNSBin = Slim::Utils::Misc::findbin('mDNSResponderPosix') || do {
 
-		$::d_mdns && msg("mDNS: Couldn't find mDNSResponderPosix binary! Aborting!\n");
+		$log->error("Error: Couldn't find mDNSResponderPosix binary! Aborting!");
 		return;
 	};
 
@@ -102,7 +105,7 @@ sub startAdvertising {
 
 	open(CONF, '>', $class->confFile) or do {
 
-		$::d_mdns && msgf("mDNS: Couldn't open %s for appending!: $!\n", $class->confFile);
+		$log->error(sprintf("Error: Couldn't open %s for appending!: $!", $class->confFile));
 		return;
 	};
 
@@ -122,7 +125,7 @@ sub startAdvertising {
 
 	if (-z $class->confFile) {
 
-		$::d_mdns && msg("mDNS: Config has 0 size - disabling mDNS\n");
+		$log->warn("Warning: Config has 0 size - disabling mDNS");
 		return;
 	}
 
@@ -132,23 +135,24 @@ sub startAdvertising {
 		sprintf('-P %s', $class->pidFile)
 	));
 
-	$::d_mdns && msgf("mDNS: About to run: $command\n");
+	$log->info("About to run: $command");
 
 	$class->processObj( Proc::Background->new($command) );
 
-	$::d_mdns && msgf("Process is alive: [%d] with pid: [%d]\n",
+	$log->info(sprintf("Process is alive: [%d] with pid: [%d]",
 		$class->processObj->alive, $class->processObj->pid
-	);
+	));
 }
 
 sub stopAdvertising {
 	my $class = shift;
 
-	$::d_mdns && msg("mDNS: stopAdvertising()\n");
+	$log->info("Shutting down..");
 
 	if (!$class->pidFile || !-f $class->pidFile) {
 
-		$::d_mdns && msg("mDNS: No PID file.\n");
+		$log->debug("Warning: No PID file.");
+
 		return;
 	}
 
@@ -178,7 +182,7 @@ sub stopAdvertising {
 	if ($dead) {
 
 		if ($pid) {
-			$::d_mdns && msg("mDNS: Killed PID: $pid\n");
+			$log->info("Killed PID: $pid");
 		}
 
 		unlink($class->confFile);

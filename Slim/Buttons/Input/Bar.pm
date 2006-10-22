@@ -57,6 +57,7 @@ use strict;
 
 use Slim::Buttons::Common;
 use Slim::Display::Display;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 my %functions = ();
@@ -202,12 +203,13 @@ sub init {
 			
 			my $knobPos   = $client->knobPos();
 			my $listIndex = $client->modeParam('listIndex');
-			
-			$::d_ui && msg("got a knob event for the bar: knobpos: $knobPos listindex: $listIndex\n");
+			my $log       = logger('player.ui');
+
+			$log->debug("Got a knob event for the bar: knobpos: $knobPos listindex: $listIndex");
 
 			changePos($client, $knobPos - $listIndex, $funct);
 
-			$::d_ui && msgf("new listindex: %d\n", $client->modeParam('listIndex'));
+			$log->debug("New listindex: ", $client->modeParam('listIndex'));
 		},
 
 		# call callback procedure

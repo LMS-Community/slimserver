@@ -29,6 +29,7 @@ use File::Which qw(which);
 use Proc::Background;
 use Template;
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
@@ -43,6 +44,8 @@ use Slim::Utils::SQLHelper;
         }
 }
 
+my $log = logger('database.mysql');
+
 =head2 init()
 
 Initializes the entire MySQL subsystem - creates the config file, and starts the server.
@@ -56,7 +59,7 @@ sub init {
 	# the user has setup their own copy of MySQL.
 	if (Slim::Utils::Prefs::get('dbsource') !~ /port=9092/) {
 
-		$::d_mysql && msg("MySQLHelper: init() Not starting MySQL - looks to be user configured.\n");
+		$log->info("Not starting MySQL - looks to be user configured.");
 
 		if (Slim::Utils::OSDetect::OS() ne 'win') {
 
@@ -95,7 +98,7 @@ sub init {
 
 	if ($class->needSystemTables) {
 
-		$::d_mysql && msg("MySQLHelper: init() Creating system tables..\n");
+		$log->info("Creating system tables..");
 
 		$class->createSystemTables;
 	}
@@ -158,7 +161,7 @@ sub createConfig {
 		}
 	}
 
-	$::d_mysql && msg("MySQLHelper: createConfig() Creating config from file: [$ttConf] -> [$output].\n");
+	$log->info("createConfig() Creating config from file: [$ttConf] -> [$output].");
 
 	my $template = Template->new({ 'ABSOLUTE' => 1 }) or die Template->error(), "\n";
            $template->process($ttConf, \%config, $output) || die $template->error;
@@ -183,18 +186,20 @@ sub startServer {
 
 	# Start on Debian - but use the private port/socket.
 	# if (Slim::Utils::OSDetect::isDebian()) {
-	#	$::d_mysql && msg("MySQLHelper: startServer() Not starting MySQL server on Debian..\n");
+	#	$log->info("Not starting MySQL server on Debian..");
 	#	return 1;
 	#}
 
 	if ($class->pidFile && $class->processObj && $class->processObj->alive) {
-		errorMsg("MySQLHelper: startServer(): MySQL is already running!\n");
+
+		$log->info("MySQL is already running!");
+
 		return 0;
 	}
 
 	my $mysqld = Slim::Utils::Misc::findbin('mysqld') || do {
-		errorMsg("MySQLHelper: startServer() Couldn't find a executable for 'mysqld'! This is a fatal error. Exiting.\n");
-		exit;
+
+		$log->logdie("FATAL: Couldn't find a executable for 'mysqld'! Exiting.");
 	};
 
 	my $confFile = $class->confFile;                                                                                                                    
@@ -215,7 +220,7 @@ sub startServer {
 		push @commands, sprintf('--log-error=%s', $::logfile);
 	}
 
-	$::d_mysql && msgf("MySQLHelper: startServer() About to start MySQL with command: [%s]\n", join(' ', @commands));
+	$log->info(sprintf("About to start MySQL with command: [%s]\n", join(' ', @commands)));
 
 	my $proc = Proc::Background->new(@commands);
 	my $dbh  = undef;
@@ -234,8 +239,8 @@ sub startServer {
 	}
 
 	if ($@) {
-		errorMsg("MySQLHelper: startServer() - server didn't startup in $secs seconds! Fatal! Exiting!\n");
-		exit;
+
+		$log->logdie("FATAL: Server didn't startup in $secs seconds! Exiting!");
 	}
 
 	$class->processObj($proc);
@@ -258,7 +263,7 @@ sub stopServer {
 	# We have a running server & handle. Shut it down internally.
 	if ($dbh) {
 
-		$::d_mysql && msg("MySQLHelper: stopServer() Running shutdown.\n");
+		$log->info("Running shutdown.");
 
 		$dbh->func('shutdown', 'admin');
 		$dbh->disconnect;
@@ -284,7 +289,7 @@ sub stopServer {
 
 		next if !$pid || !kill(0, $pid);
 
-		$::d_mysql && msgf("MySQLHelper: stopServer() Killing pid: [%d]\n", $pid);
+		$log->info("Killing pid: [$pid]");
 
 		kill('TERM', $pid);
 
@@ -298,8 +303,7 @@ sub stopServer {
 
 		if (kill(0, $pid)) {
 
-			errorMsg("MySQLHelper: stopServer() - server didn't shutdown in 20 seconds!\n");
-			exit;
+			$log->logdie("FATAL: Server didn't shutdown in 20 seconds!");
 		}
 	}
 
@@ -349,7 +353,7 @@ sub createSystemTables {
 
 	my $dbh = $class->dbh or do {
 
-		errorMsg("MySQLHelper: createSystemTables() Couldn't connect to database: [$DBI::errstr]\n");
+		$log->fatal("FATAL: Couldn't connect to database: [$DBI::errstr]");
 
 		$class->stopServer;
 
@@ -369,9 +373,7 @@ sub createSystemTables {
 
 	} else {
 
-		errorMsg("MySQLHelper: createSystemTables() - couldn't run executeSQLFile on [$sqlFile]!\n");
-		errorMsg("MySQLHelper: createSystemTables() - this is a fatal error. Exiting.\n");
-		exit;
+		$log->logdie("FATAL: Couldn't run executeSQLFile on [$sqlFile]! Exiting!");
 	}
 }
 
@@ -424,9 +426,8 @@ sub createDatabase {
 	eval { $dbh->do("CREATE DATABASE $dbname") };
 
 	if ($@) {
-		errorMsg("MySQLHelper: createDatabase() - Couldn't create database with name: [$dbname] - [$DBI::errstr]\n");
-		errorMsg("MySQLHelper: createDatabase() - this is a fatal error. Exiting.\n");
-		exit;
+
+		$log->logdie("FATAL: Couldn't create database with name: [$dbname] - [$DBI::errstr]. Exiting!");
 	}
 }
 

@@ -13,6 +13,7 @@ use base qw(Slim::Formats);
 use MP4::Info;
 
 use Slim::Utils::Cache;
+use Slim::Utils::Log;
 use Slim::Utils::SoundCheck;
 
 my %tagMapping = (
@@ -104,7 +105,7 @@ sub getCoverArt {
 		return $tags->{'COVR'};
 	}
 
-	Slim::Utils::Misc::msg("Got invalid tag data back from file: [$file]\n");
+	logError("Got invalid tag data back from file: [$file]");
 }
 
 1;

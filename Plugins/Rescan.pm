@@ -1,20 +1,21 @@
+package Plugins::Rescan;
+
 # Rescan.pm by Andrew Hedges (andrew@hedges.me.uk) October 2002
 # Timer functions added by Kevin Deane-Freeman (kevindf@shaw.ca) June 2004
 # $Id$
 
 # This code is derived from code with the following copyright message:
 #
-# SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
+# SliMP3 Server Copyright (C) 2001-2006 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-package Plugins::Rescan;
-
 use strict;
-use Slim::Control::Request;
-use Slim::Utils::Misc qw(msgf);
 use Time::HiRes;
+
+use Slim::Control::Request;
+use Slim::Utils::Log;
 
 our $interval = 1; # check every x seconds
 our @browseMenuChoices;
@@ -236,7 +237,7 @@ sub checkScanTimer {
 
 			if ($time == $scantime && !Slim::Music::Import->stillScanning()) {
 
-				$::d_scan && msgf("checkScanTimer - initiating scan of type: [%s]\n", $rescanType->[0]);
+				logger('scan.scanner')->info("Initiating scan of type: ", $rescanType->[0]);
 
 				Slim::Control::Request::executeRequest(undef, $rescanType);
 			}

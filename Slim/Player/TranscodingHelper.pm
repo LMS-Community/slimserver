@@ -15,6 +15,7 @@ use Scalar::Util qw(blessed);
 use Slim::Music::Info;
 use Slim::Player::Sync;
 use Slim::Utils::DateTime;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
@@ -26,11 +27,13 @@ sub Conversions {
 	return \%commandTable;
 }
 
+my $log = logger('player.source');
+
 sub loadConversionTables {
 
 	my @convertFiles = ();
 
-	$::d_source && msg("loading conversion config files...\n");
+	$log->info("Loading conversion config files...");
 
 	# custom convert files allowed at server root or root of plugin directories
 	for my $baseDir (Slim::Utils::OSDetect::dirsFor('convert')) {
@@ -77,9 +80,9 @@ sub loadConversionTables {
 				$command =~ s/^\s*//o;
 				$command =~ s/\s*$//o;
 
-				$::d_source && msg(
+				$log->debug(
 					"input: '$inputtype' output: '$outputtype' clienttype: " .
-					"'$clienttype': clientid: '$clientid': '$command'\n"
+					"'$clienttype': clientid: '$clientid': '$command'"
 				);
 
 				next unless defined $command && $command !~ /^\s*$/;
@@ -95,22 +98,26 @@ sub loadConversionTables {
 sub enabledFormat {
 	my $profile = shift;
 
-	$::d_source && msg("Checking to see if $profile is enabled\n");
+	$log->debug("Checking to see if $profile is enabled");
 
 	my $count = Slim::Utils::Prefs::getArrayMax('disabledformats');
 
-	return 1 if !defined($count) || $count < 0;
+	if (!defined($count) || $count < 0) {
+		return 1;
+	}
 
-	$::d_source && msg("There are $count disabled formats...\n");
+	$log->debug("There are $count disabled formats...");
 
 	for (my $i = $count; $i >= 0; $i--) {
 
 		my $disabled = Slim::Utils::Prefs::getInd('disabledformats', $i);
 
-		$::d_source && msg("Testing $disabled vs $profile\n");
+		$log->debug("Testing $disabled vs $profile");
 
 		if ($disabled eq $profile) {
-			$::d_source && msg("!! $profile Disabled!!\n");
+
+			$log->debug("** $profile Disabled **");
+
 			return 0;
 		}
 	}
@@ -122,7 +129,7 @@ sub checkBin {
 	my $profile = shift;
 	my $command;
 
-	$::d_source && msg("checking formats for: $profile\n");
+	$log->debug("Checking formats for: $profile");
 
 	# get the command for this profile
 	$command = $commandTable{$profile};
@@ -130,8 +137,11 @@ sub checkBin {
 	# if the user's disabled the profile, then skip it...
 	return undef unless $command && enabledFormat($profile);
 
-	$::d_source && msg("   enabled\n");
-	$::d_source && $command && msg("  Found command: $command\n");
+	$log->debug("   enabled");
+
+	if ($command) {
+		$log->debug("  Found command: $command");
+	}
 
 	# if we don't have one or more of the requisite binaries, then move on.
 	while ($command && $command =~ /\[([^]]+)\]/g) {
@@ -149,7 +159,8 @@ sub checkBin {
 		} elsif (!exists $binaries{$1}) {
 
 			$command = undef;
-			$::d_source && msg("   drat, missing binary $1\n");
+
+			$log->warn("   couldn't find  binary for: $1");
 		}
 	}
 
@@ -181,7 +192,7 @@ sub getConvertCommand {
 		$clientid = $client->id();	
 		$underMax = underMax($client, $url, $type);
 
-		$::d_source && msg("undermax = $underMax, type = $type, $player = $clientid\n");
+		$log->debug("undermax = $underMax, type = $type, $player = $clientid");
 	
 		# make sure we only test formats that are supported.
 		foreach my $everyclient (@playergroup) {
@@ -214,7 +225,7 @@ sub getConvertCommand {
 	# Bug: 2095
 	if ($type eq 'mov' && blessed($track) && $track->lossless) {
 
-		$::d_source && msg("getConvertCommand: track is alac - updating type!\n");
+		$log->debug("Track is alac - updating type!");
 
 		$type = 'alc';
 	}
@@ -280,10 +291,13 @@ sub getConvertCommand {
 	}
 
 	if (!defined $command) {
-		$::d_source && msg("******* Error:  Didn't find any command matches for type: $type format: $format ******\n");
+
+		$log->error("Error: Didn't find any command matches for type: $type format: $format");
+
 		$format = $type;
 	} else {
-		$::d_source && msg("Matched Format: $format Type: $type Command: $command \n");
+
+		$log->info("Matched Format: $format Type: $type Command: $command");
 	}
 
 	return ($command, $type, $format);
@@ -341,7 +355,7 @@ sub tokenizeConvertCommand {
 		$command .= ' |';
 	}
 
-	$::d_source && msg("Using command for conversion: $command\n");
+	$log->debug("Using command for conversion: $command");
 
 	return $command;
 }

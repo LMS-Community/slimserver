@@ -22,6 +22,7 @@ use Scalar::Util qw(blessed weaken);
 use Socket;
 
 use Slim::Networking::Select;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 __PACKAGE__->mk_classaccessors( qw(
@@ -32,8 +33,10 @@ __PACKAGE__->mk_classaccessors( qw(
 # we use a valid server during bgsend() calls
 sub init {
 	my $class = shift;
-	
+
+	my $log = logger('network.asynchttp');
 	my $res = Net::DNS::Resolver->new;
+
 	$res->tcp_timeout( 10 );
 	$res->udp_timeout( 10 );
 	
@@ -43,23 +46,31 @@ sub init {
 	my $domain = 'www.google.com';
 	
 	for my $ns ( @ns ) {
-		$::d_http_async && msg("Async: Verifying if we can use nameserver $ns...\n");
 
-		$::d_http_async && msg("  Testing lookup of $domain\n");
+		$log->debug("Verifying if we can use nameserver $ns...");
+		$log->debug("  Testing lookup of $domain");
+
 		$res->nameservers( $ns );
+
 		my $packet = $res->send( $domain, 'A' );
+
 		if ( defined $packet ) {
+
 			if ( scalar $packet->answer > 0 ) {
-				$::d_http_async && msg("  Lookup successful, using $ns for DNS lookups\n");
+
+				$log->debug("  Lookup successful, using $ns for DNS lookups");
+
 				$class->nameserver( $ns );
+
 				return;
 			}
 		}
 		
-		$::d_http_async && msg("  Lookup failed\n");
+		$log->debug("  Lookup failed");
 	}
-	
-	msg("Aysnc: No DNS servers responded, you may have trouble with network connections.  Please check your network settings.\n");
+
+	logWarning("No DNS servers responded, you may have trouble with network connections.");
+	logWarning("Please check your network settings.");
 }
 
 sub new {
@@ -95,18 +106,19 @@ sub open {
 		$resolver->nameservers( $self->nameserver );
 	}
 	
-	$::d_http_async && msgf("Async: Starting async DNS lookup for [%s] using server [%s] [timeout %d]\n",
-		$args->{Host},
-		($resolver->nameservers)[0],
-		$args->{Timeout},
-	);
+	my $log = logger('network.asynchttp');
+
+	$log->debug(sprintf("Starting async DNS lookup for [%s] using server [%s] [timeout %d]",
+		$args->{Host}, ($resolver->nameservers)[0], $args->{Timeout},
+	));
 	
 	my $bgsock = $resolver->bgsend( $args->{Host} );
 	
 	if ( !defined $bgsock ) {
 		my $host  = $args->{Host};
 		my $error = $resolver->errorstring;
-		errorMsg("Async: Couldn't resolve IP address for $host: $error\n");
+
+		logger("")->error("Couldn't resolve IP address for $host: $error");
 		
 		# Call back to the caller's error handler
 		if ( my $ecb = $args->{onError} ) {
@@ -142,7 +154,8 @@ sub _dns_error {
 	Slim::Networking::Select::removeRead($bgsock);
 	
 	my $host = $args->{Host};
-	errorMsg("Async: Couldn't resolve IP address for: $host\n");
+
+	logger("")->error("Couldn't resolve IP address for: $host");
 	
 	# Call back to the caller's error handler
 	if ( my $ecb = $args->{onError} ) {
@@ -178,10 +191,9 @@ sub _dns_read {
 				
 				$args->{PeerAddr} = $addr;
 								
-				$::d_http_async && msgf("Async: Resolved %s to [%s]\n",
-					$args->{Host},
-					$addr,
-				);
+				logger('network.asynchttp')->debug(sprintf(
+					"Resolved %s to [%s]", $args->{Host}, $addr,
+				));
 				
 				$bgsock->close;
 				undef $bgsock;
@@ -200,7 +212,7 @@ sub connect {
 	my $host = $args->{Host};
 	my $port = $args->{PeerPort};
 
-	$::d_http_async && msg("Async: Connecting to $host:$port\n");
+	logger('network.asynchttp')->debug("Connecting to $host:$port");
 
 	my $socket = $self->new_socket( %{$args} );
 	
@@ -227,7 +239,7 @@ sub _connect_error {
 	# Kill the timeout timer
 	Slim::Utils::Timers::killTimers( $socket, \&_connect_error );
 
-	$::d_http_async && msg("Async: Failed to connect: $!\n");
+	logger('network.asynchttp')->error("Failed to connect: $!");
 
 	# close the socket
 	$socket->close;
@@ -257,7 +269,7 @@ sub _async_connect {
 	
 	$self->socket( $socket );
 	
-	$::d_http_async && msg("Async: connected, ready to write request\n");
+	logger('network.asynchttp')->debug("connected, ready to write request");
 
 	if ( my $cb = $args->{onConnect} ) {
 		my $passthrough = $args->{passthrough} || [];
@@ -285,9 +297,9 @@ sub write_async {
 	if ( ref $content_ref eq 'CODE' ) {
 		$content_ref = $content_ref->( $self );
 	}
-	
-	$::d_http_async && msg("Async: Sending:\n" . $$content_ref );
-	
+
+	logger('network.asynchttp')->debug("Sending: [" . $$content_ref . "]");
+
 	$self->socket->set( passthrough => [ $self, $args ] );
 
 	Slim::Networking::Select::addError( $self->socket, \&_async_error );
@@ -321,7 +333,7 @@ sub _async_error {
 	
 	$self->disconnect;
 	
-	$::d_http_async && msg("Async: $error\n");
+	logger('network.asynchttp')->error("Error: [$error]");
 	
 	if ( my $ecb = $args->{onError} ) {
 		my $passthrough = $args->{passthrough} || [];

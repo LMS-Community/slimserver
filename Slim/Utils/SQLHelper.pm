@@ -35,7 +35,7 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::OSDetect;
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 
 sub executeSQLFile {
 	my $class  = shift;
@@ -49,11 +49,11 @@ sub executeSQLFile {
 		$sqlFile = catdir(Slim::Utils::OSDetect::dirsFor('SQL'), $driver, $file);
 	}
 
-	$::d_info && msg("Executing SQL file $sqlFile\n");
+	logger('database.sql')->info("Executing SQL file $sqlFile");
 
 	open(my $fh, $sqlFile) or do {
 
-		errorMsg("executeSQLFile: Couldn't open file [$sqlFile] : $!\n");
+		logError("Couldn't open file [$sqlFile] : $!");
 		return 0;
 	};
 
@@ -78,12 +78,12 @@ sub executeSQLFile {
 
 			$statement .= $line;
 
-			$::d_sql && msg("Executing SQL statement: [$statement]\n");
+			logger('database.sql')->info("Executing SQL: [$statement]");
 
 			eval { $dbh->do($statement) };
 
 			if ($@) {
-				msg("Couldn't execute SQL statement: [$statement] : [$@]\n");
+				logError("Couldn't execute SQL statement: [$statement] : [$@]");
 			}
 
 			$statement   = '';

@@ -16,8 +16,11 @@ use File::Spec::Functions qw(:ALL);
 use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
+
+my $log = logger('formats.playlists');
 
 # This now just processes the cuesheet into tags. The calling process is
 # responsible for adding the tracks into the datastore.
@@ -31,10 +34,12 @@ sub parse {
 	my $cuesheet = {};
 	my $tracks   = {};
 
-	$::d_parse && msg("parseCUE: baseDir: [$baseDir]\n");
+	$log->info("baseDir: [$baseDir]");
 
 	if (!@$lines) {
-		$::d_parse && msg("parseCUE skipping empty cuesheet.\n");
+
+		$log->warn("Skipping empty cuesheet.");
+
 		return;
 	}
 
@@ -147,14 +152,16 @@ sub parse {
 
 		if (!$embedded && defined $filepath && !-r $filepath) {
 
-			errorMsg("parseCUE: Couldn't find referenced FILE: [$filepath] on disk! Skipping!\n");
+			logError("Couldn't find referenced FILE: [$filepath] on disk! Skipping!");
 
 			delete $tracks->{$key};
 		}
 	}
 
 	if (scalar keys %$tracks == 0 || (!$currtrack || $currtrack < 1 || !$filename)) {
-		$::d_parse && msg("parseCUE unable to extract tracks from cuesheet\n");
+
+		$log->warn("Unable to extract tracks from cuesheet");
+
 		return {};
 	}
 
@@ -164,7 +171,7 @@ sub parse {
 	# If we can't get $lastpos from the cuesheet, try and read it from the original file.
 	if (!$lastpos && $filename) {
 
-		$::d_parse && msg("Reading tags to get ending time of $filename\n");
+		$log->info("Reading tags to get ending time of $filename");
 
 		my $track = Slim::Schema->rs('Track')->updateOrCreate({
 			'url'        => $filename,
@@ -193,7 +200,10 @@ sub parse {
 		}
 	}
 
-	errorMsg("parseCUE: Couldn't get duration of $filename\n") unless $lastpos;
+	if (!$lastpos) {
+
+		logError("Couldn't get duration of $filename");
+	}
 
 	for my $key (sort {$b <=> $a} keys %$tracks) {
 
@@ -228,7 +238,7 @@ sub parse {
 		# Don't use $track->{'URL'} or the db will break
 		$track->{'URI'} = "$file#".$track->{'START'}."-".$track->{'END'};
 
-		$::d_parse && msg("    URL: " . $track->{'URI'} . "\n");
+		$log->debug("    URL: $track->{'URI'}");
 
 		# Ensure that we have a CONTENT_TYPE
 		if (!defined $track->{'CONTENT_TYPE'}) {
@@ -236,13 +246,15 @@ sub parse {
 		}
 
 		$track->{'TRACKNUM'} = $key;
-		$::d_parse && msg("    TRACKNUM: " . $track->{'TRACKNUM'} . "\n");
+
+		$log->debug("    TRACKNUM: $track->{'TRACKNUM'}");
 
 		for my $attribute (Slim::Schema::Contributor->contributorRoles,
 			qw(TITLE ALBUM YEAR GENRE REPLAYGAIN_TRACK_PEAK REPLAYGAIN_TRACK_GAIN)) {
 
 			if (exists $track->{$attribute}) {
-				$::d_parse && msg("    $attribute: " . $track->{$attribute} . "\n");
+
+				$log->debug("    $attribute: $track->{$attribute}");
 			}
 		}
 
@@ -252,7 +264,8 @@ sub parse {
 			if (!exists $track->{$attribute} && defined $cuesheet->{$attribute}) {
 
 				$track->{$attribute} = $cuesheet->{$attribute};
-				$::d_parse && msg("    $attribute: " . $track->{$attribute} . "\n");
+
+				$log->debug("    $attribute: $track->{$attribute}");
 			}
 		}
 
@@ -269,7 +282,7 @@ sub read {
 	my $baseDir = shift;
 	my $url     = shift;
 
-	$::d_parse && msg("Parsing cue: $url \n");
+	$log->info("Reading CUE: $url");
 
 	my @items  = ();
 	my @lines  = read_file($file);
@@ -286,7 +299,8 @@ sub read {
 		my $track = $tracks->{$key};
 
 		if (!defined $track->{'URI'} || !defined $track->{'FILENAME'}) {
-			$::d_parse && msg("Skipping track without url or filename\n");
+
+			$log->warn("Skipping track without url or filename");
 			next;
 		}
 
@@ -297,7 +311,7 @@ sub read {
 		# Grab data from the base file to pass on to our individual tracks.
 		if (!defined $basetrack || $basetrack->url ne $track->{'FILENAME'}) {
 
-			$::d_parse && msg("Creating new track for: $track->{'FILENAME'}\n");
+			$log->info("Creating new track for: $track->{'FILENAME'}");
 
 			$basetrack = Slim::Schema->rs('Track')->updateOrCreate({
 				'url'        => $track->{'FILENAME'},
@@ -346,7 +360,7 @@ sub read {
 		});
 	}
 
-	$::d_parse && msg("    returning: " . scalar(@items) . " items\n");	
+	$log->info("    returning: " . scalar(@items) . " items");
 
 	return @items;
 }
@@ -359,7 +373,9 @@ sub processAnchor {
 	# rewrite the size, offset and duration if it's just a fragment
 	# This is mostly (always?) for cue sheets.
 	if (!defined $start && !defined $end) {
-		$::d_parse && msg("parse: Couldn't process anchored file fragment for " . $attributesHash->{'URI'} . "\n");
+
+		$log->warn("Couldn't process anchored file fragment for $attributesHash->{'URI'}");
+
 		return 0;
 	}
 
@@ -372,7 +388,7 @@ sub processAnchor {
 
 	} elsif (!$attributesHash->{'SECS'}) {
 
-		$::d_parse && msg("parse: Couldn't process undef or 0 SECS fragment for " . $attributesHash->{'URI'} . "\n");
+		$log->warn("Couldn't process undef or 0 SECS fragment for $attributesHash->{'URI'}");
 
 		return 0;
 	}
@@ -389,10 +405,8 @@ sub processAnchor {
 	$attributesHash->{'SIZE'} = $endbytes - $startbytes;
 	$attributesHash->{'SECS'} = $duration;
 
-	if ($::d_parse) {
-		msg("parse: calculating duration for anchor: $duration\n");
-		msg("parse: calculating header $header, startbytes $startbytes and endbytes $endbytes\n");
-	}		
+	$log->debug("Calculating duration for anchor: $duration");
+	$log->debug("Calculating header $header, startbytes $startbytes and endbytes $endbytes");
 }
 
 1;

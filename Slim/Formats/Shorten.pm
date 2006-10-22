@@ -20,7 +20,7 @@ use base qw(Slim::Formats);
 use Audio::Wav;
 use MP3::Info;
 
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 
 # Given a file, return a hash of name value pairs, where each name is
 # a tag name.
@@ -37,12 +37,14 @@ sub getTag {
 	my $shorten = Slim::Utils::Misc::findbin('shorten') || return undef;
 	
 	if (Slim::Utils::OSDetect::OS() eq 'win') {
-		$file = $shorten." -x \"$file\" - 2>nul|";
+		$file = $shorten . " -x \"$file\" - 2>nul|";
 	} else {
-		$file = $shorten." -x \Q$file\E - 2>/dev/null|";
+		$file = $shorten . " -x \Q$file\E - 2>/dev/null|";
 	}
 
-	$::d_source && msg( "Reading WAV information from $file\n");
+	my $log = logger('formats.audio');
+
+	$log->debug("Reading WAV information from $file");
 
 	# This hash will map the keys in the tag to their values.
 	# Don't use MP3::Info since we can't seek around the stream
@@ -67,11 +69,13 @@ sub getTag {
 		      $parameters{'message'} =~ /^can\'t move to position/)) {
 
 			# This is a non-critical warning
-			$::d_source && msg( "Warning: $parameters{'filename'}: $parameters{'message'}\n");
+			$log->warn("Warning: $parameters{'filename'}: $parameters{'message'}");
+
 		} else {
+
 			# Critical error!
 			$bail = 1;
-			$::d_source && msg( "ERROR: $parameters{'filename'}: $parameters{'message'}\n");
+			logError("$parameters{'filename'}: $parameters{'message'}");
 		}
 	});
 

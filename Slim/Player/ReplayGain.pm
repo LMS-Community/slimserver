@@ -14,7 +14,7 @@ use Scalar::Util qw(blessed);
 use Slim::Music::Info;
 use Slim::Player::Playlist;
 use Slim::Player::Source;
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
 sub fetchGainMode {
@@ -28,7 +28,8 @@ sub fetchGainMode {
 	my $url = Slim::Player::Playlist::song($client, Slim::Player::Source::streamingSongIndex($client));
 
 	if (!$url) {
-		errorMsg("Invalid URL for client song!: [$url]\n");
+
+		logError("Invalid URL for client song!: [$url]");
 		return 0;
 	}
 
@@ -112,14 +113,14 @@ sub trackAlbumMatch {
 
 	if (!blessed($current_track) || !blessed($compare_track)) {
 
-		errorMsg("Couldn't find object for track: [$current_track] or [$compare_track] !\n");
+		logError("Couldn't find object for track: [$current_track] or [$compare_track] !");
 
 		return 0;
 	}
 
 	if (!$current_track->can('album') || !$compare_track->can('album')) {
 
-		errorMsg("Couldn't a find valid object for track: [$current_track] or [$compare_track] !\n");
+		logError("Couldn't a find valid object for track: [$current_track] or [$compare_track] !");
 
 		return 0;
 	}

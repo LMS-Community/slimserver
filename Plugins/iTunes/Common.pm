@@ -32,10 +32,13 @@ use base qw(Class::Data::Inheritable);
 use File::Spec::Functions qw(:ALL);
 use File::Basename;
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
-INIT: {
+my $log = logger('plugin.itunes');
+
+{
 	my $class = __PACKAGE__;
 
 	$class->mk_classdata('iTunesLibraryBasePath');
@@ -61,7 +64,7 @@ sub useiTunesLibrary {
 
 	Slim::Music::Import->useImporter($class, $use && $can);
 
-	$::d_itunes && msg("iTunes: using itunes library: $use\n");
+	$log->info("Using iTunes library: $use");
 
 	return $use && $can;
 }
@@ -124,7 +127,7 @@ sub findLibraryFromRegistry {
 
 			if ($folder->QueryValueEx("My Music", $type, $value)) {
 				$path = $value . '\\iTunes\\iTunes Music Library.xml';
-				$::d_itunes && msg("iTunes: found My Music here: $value for $path\n");
+				$log->info("Found 'My Music' here: $value for $path");
 			}
 
 			if ($path && -r $path) {
@@ -133,7 +136,7 @@ sub findLibraryFromRegistry {
 
 			} elsif ($folder->QueryValueEx("Personal", $type, $value)) {
 				$path = $value . '\\My Music\\iTunes\\iTunes Music Library.xml';
-				$::d_itunes && msg("iTunes: found  Personal: $value for $path\n");
+				$log->info("Found 'Personal' here: $value for $path");
 			}
 		}
 	}
@@ -157,7 +160,7 @@ sub findMusicLibraryFile {
 		}
 	}
 
-	$::d_itunes && msg("iTunes: attempting to locate iTunes Music Library.xml automatically\n");
+	$log->info("Attempting to locate iTunes Music Library.xml automatically");
 
 	my $base = $ENV{'HOME'} || '';
 
@@ -165,7 +168,8 @@ sub findMusicLibraryFile {
 
 	if ($path && -r $path) {
 
-		$::d_itunes && msg("iTunes: found path via iTunes preferences at: $path\n");
+		$log->info("Found path via iTunes preferences at: $path");
+
 		Slim::Utils::Prefs::set( 'itunes_library_xml_path', $path );
 
 		return $path;
@@ -175,7 +179,8 @@ sub findMusicLibraryFile {
 
 	if ($path && -r $path) {
 
-		$::d_itunes && msg("iTunes: found path via Windows registry at: $path\n");
+		$log->info("Found path via Windows registry at: $path");
+
 		Slim::Utils::Prefs::set( 'itunes_library_xml_path', $path );
 
 		return $path;
@@ -203,12 +208,14 @@ sub findMusicLibraryFile {
 		$path = catfile(($dir), 'iTunes Music Library.xml');
 
 		if ($path && -r $path) {
-			$::d_itunes && msg("iTunes: found path via directory search at: $path\n");
+
+			$log->info("Found path via directory search at: $path");
+
 			return $path;
 		}
 	}
 
-	$::d_itunes && msg("iTunes: unable to find iTunes Music Library.xml.\n");
+	$log->info("Unable to find iTunes Music Library.xml");
 
 	return undef;
 }
@@ -233,37 +240,34 @@ sub isMusicLibraryFileChanged {
 
 		my $scanInterval = Slim::Utils::Prefs::get('itunesscaninterval');
 
-		if ($::d_itunes) {
-
-			msgf("iTunes: lastiTunesChange: [%s]\n", scalar localtime($lastiTunesChange));
-			msgf("iTunes: lastScanTime    : [$lastScanTime]\n");
-			msgf("iTunes: scanInterval    : [$scanInterval]\n");
-		}
+		$log->debug("lastiTunesChange: " . scalar localtime($lastiTunesChange));
+		$log->debug("lastScanTime    : $lastScanTime");
+		$log->debug("scanInterval    : $scanInterval");
 
 		if (!$scanInterval) {
-			
+
 			# only scan if itunesscaninterval is non-zero.
-			$::d_itunes && msg("iTunes: Scan Interval set to 0, rescanning disabled.\n");
+			$log->info("Scan Interval set to 0, rescanning disabled.");
 
 			return 0;
 		}
 
 		if (!$lastScanTime) {
 
-			$::d_itunes && msg("iTunes: lastScanTime is 0: Will start scanning.\n");
+			$log->info("lastScanTime is 0: Will start scanning.");
 
 			return 1;
 		}
 
 		if ((time - $lastScanTime) > $scanInterval) {
 
-			$::d_itunes && msg("iTunes: (time - lastScanTime) > scanInterval: Will start scanning.\n");
+			$log->info("(time - lastScanTime) > scanInterval: Will start scanning.");
 
 			return 1;
 
 		} else {
 
-			$::d_itunes && msg("iTunes: waiting for $scanInterval seconds to pass before rescanning\n");
+			$log->info("Waiting for $scanInterval seconds to pass before rescanning");
 		}
 	}
 
@@ -297,7 +301,7 @@ sub normalize_location {
 
 	$url =~ s/file:\/\/localhost\//file:\/\/\//;
 
-	$::d_itunes_verbose && msg("iTunes: normalized $location to $url\n");
+	$log->debug("Normalized $location to $url");
 
 	return $url;
 }

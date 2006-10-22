@@ -27,6 +27,7 @@ use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
 use Slim::Control::Request;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 our %functions = ();
@@ -109,7 +110,10 @@ sub init {
 					playlistNowPlaying($client, 0);
 				}
 
-				$::d_ui && msgf("funct: [$funct] old: $oldindex new: $newindex is after setting: [%s]\n", browseplaylistindex($client));
+				logger('player.ui')->debug(
+					"funct: [$funct] old: $oldindex new: $newindex is after setting: [%s]",
+					browseplaylistindex($client)
+				);
 
 				if ($songcount < 2) {
 					
@@ -374,7 +378,7 @@ sub jump {
 			$pos = Slim::Player::Source::playingSongIndex($client);
 		}
 	
-		$::d_playlist && msg("Playlist: Jumping to song index: $pos\n");
+		logger('player.playlist')->info("Jumping to song index: $pos");
 	
 		browseplaylistindex($client,$pos);
 	}
@@ -519,8 +523,11 @@ The optional argument, $playlistindex sets the zero-based position for browsing 
 sub browseplaylistindex {
 	my $client = shift;
 
-	if ( $::d_playlist && @_ && defined($_[0])) {
-		msg("new playlistindex: $_[0]\n");
+	my $log = logger('player.playlist');
+
+	if ($log->is_debug && @_) {
+
+		$log->debug("New playlistindex: $_[0]");
 	}
 	
 	# update list length for the knob.  ### HACK ATTACK ###

@@ -11,6 +11,7 @@ use strict;
 
 use Scalar::Util qw(blessed);
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 # the protocolHandlers hash contains the modules that handle specific URLs,
@@ -59,12 +60,13 @@ sub openRemoteStream {
 	my $client = shift;
 
 	my $protoClass = $class->handlerForURL($url);
+	my $log        = logger('player.source');
 
-	$::d_source && msg("Trying to open protocol stream for $url\n");
+	$log->info("Trying to open protocol stream for $url");
 
 	if ($protoClass) {
 
-		$::d_source && msg("Found handler for $url - using $protoClass\n");
+		$log->info("Found handler for $url - using $protoClass");
 
 		return $protoClass->new({
 			'url'    => $url,
@@ -72,7 +74,7 @@ sub openRemoteStream {
 		});
 	}
 
-	$::d_source && msg("Couldn't find protocol handler for $url\n");
+	$log->warn("Couldn't find protocol handler for $url");
 
 	return undef;
 }
@@ -108,7 +110,9 @@ sub loadHandler {
 		Slim::bootstrap::tryModuleLoad($handlerClass);
 
 		if ($@) {
-			errorMsg("loadHandler: Couldn't load class: [$handlerClass] - [$@]\n");
+
+			logWarning("Couldn't load class: [$handlerClass] - [$@]");
+
 			return undef;
 		}
 

@@ -9,7 +9,7 @@ use strict;
 use Scalar::Util qw(blessed);
 
 use Slim::Player::ProtocolHandlers;
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 
 my $digital_input = 0;
 
@@ -17,13 +17,19 @@ my @digital_inputs = ();
 
 my $source_name = 'source';
 
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.digitalinput',
+	'defaultLevel' => 'WARN',
+	'description'  => getDisplayName(),
+});
+
 sub getDisplayName {
 	return 'PLUGIN_DIGITAL_INPUT'
 }
 
 sub initPlugin {
 
-        $::d_plugins && msg("DigitalInput Plugin initializing.\n");
+        $log->info("Initializing");
 
 	@digital_inputs = (
 		{
@@ -85,7 +91,7 @@ sub updateDigitalInput {
 	$name =~ s/[{}]//g;
 	$name = $client->string($name);
 
-	$::d_plugins && msg("updateDigitalInput: Calling addtracks on [$name] ($url)\n");
+	$log->info("Calling addtracks on [$name] ($url)");
 
 	# Create an object in the database for this meta source: url.
 	my $obj = Slim::Schema->rs('Track')->updateOrCreate({

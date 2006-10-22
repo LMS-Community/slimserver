@@ -4,6 +4,7 @@ use strict;
 
 use Scalar::Util qw(blessed);
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Cache;
 
@@ -12,6 +13,8 @@ my %typeToMethod = (
 	'image/jpeg' => 'newFromJpegData',
 	'image/png'  => 'newFromPngData',
 );
+
+my $log = logger('artwork');
 
 {
 	# Artwork resizing support by using GD, requires JPEG support built in
@@ -76,14 +79,14 @@ sub processCoverArtRequest {
 		$obj = Slim::Schema->find('Track', $trackid);
 	}
 
-	$::d_artwork && msg("Cover Art asking for trackid: $trackid - $image" . 
-		($requestedWidth ? (" at size " . $requestedWidth . "x" . $requestedHeight) : "") . "\n");
+	$log->info("Asking for trackid: $trackid - $image" . 
+		($requestedWidth ? (" at size " . $requestedWidth . "x" . $requestedHeight) : ""));
 
 	if (blessed($obj) && $obj->can('coverArt')) {
 
 		$cacheKey = join('-', $trackid, $resizeMode, $requestedWidth, $requestedHeight, $requestedBackColour);
 
-		$::d_artwork && msg("  artwork cache key: $cacheKey\n");
+		$log->info("  artwork cache key: $cacheKey");
 
 		$cachedImage = Slim::Utils::Cache->new()->get($cacheKey);
 		
@@ -99,7 +102,7 @@ sub processCoverArtRequest {
 
 	unless ($cachedImage || $imageData) {
 		
-		$::d_artwork && msg("  missing artwork replaced by placeholder.\n");
+		$log->info("  missing artwork replaced by placeholder.");
 
 		$cacheKey = "BLANK-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour";	
 
@@ -115,12 +118,12 @@ sub processCoverArtRequest {
 
 	if ($cachedImage) {
 
-		$::d_artwork && msg("  returning cached artwork image.\n");
+		$log->info("  returning cached artwork image.");
 
 		return ($cachedImage->{'body'}, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}, $cachedImage->{'contentType'});
 	}
 
-	$::d_artwork && msg("  got cover art image $contentType of ". length($imageData) . " bytes\n");
+	$log->info("  got cover art image $contentType of ". length($imageData) . " bytes");
 
 	if (serverResizesArt() && $typeToMethod{$contentType}) {
 
@@ -208,8 +211,8 @@ sub processCoverArtRequest {
 				# the image needs to be processed if the sizes differ, or the image is a png
 				if ($contentType eq "image/png" || $returnedWidth != $origImage->width || $returnedHeight != $origImage->height) {
 
-					$::d_artwork && msg("  resizing from " . $origImage->width . "x" . $origImage->height . " to " 
-						 . $returnedWidth . "x" . $returnedHeight ." using " . $resizeMode . "\n");
+					$log->info("  resizing from " . $origImage->width . "x" . $origImage->height .
+						 " to $returnedWidth x $returnedHeight using $resizeMode");
 
 					# determine source and destination upper left corner and width / height
 					my ($sourceX, $sourceY, $sourceWidth, $sourceHeight);
@@ -270,30 +273,30 @@ sub processCoverArtRequest {
 						$contentType = 'image/jpeg';
 					}
 
-					$::d_artwork && msg("  outputting cover art image $contentType of ". length($newImageData) . " bytes\n");
+					$log->info("  outputting cover art image $contentType of ". length($newImageData) . " bytes");
 					$body = \$newImageData;
 
 				} else {
 
-					$::d_artwork && msg("  not resizing\n");
+					$log->info("  not resizing");
 					$body = \$imageData;
 				}
 
 			} else {
 
-				$::d_artwork && msg("GD wouldn't create image object\n");
+				$log->info("GD wouldn't create image object");
 				$body = \$imageData;
 			}
 
 		} else {
 
-			$::d_artwork && msg("no need to process image\n");
+			$log->info("No need to process image");
 			$body = \$imageData;
 		}
 
 	} else {
 
-		$::d_artwork && msg("can't use GD\n");
+		$log->warn("Can't use GD");
 		$body = \$imageData;
 	}
 
@@ -306,7 +309,7 @@ sub processCoverArtRequest {
 			'size'        => $size,
 		};
 
-		$::d_artwork && msg("  caching result key: $cacheKey\n");
+		$log->info("  caching result key: $cacheKey");
 
 		Slim::Utils::Cache->new()->set($cacheKey, $cached, "10days");
 	}
@@ -319,7 +322,6 @@ sub getResizeCoords {
 	my $sourceImageHeight = shift;
 	my $destImageWidth = shift;
 	my $destImageHeight = shift;
-
 
 	my $sourceImageAR = 1.0 * $sourceImageWidth / $sourceImageHeight;
 	my $destImageAR = 1.0 * $destImageWidth / $destImageHeight;

@@ -33,6 +33,7 @@ use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Music::MusicFolderScan;
 use Slim::Music::PlaylistFolderScan;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::MySQLHelper;
 use Slim::Utils::OSDetect;
@@ -43,10 +44,9 @@ use Slim::Utils::Strings qw(string);
 
 sub main {
 
-	our ($d_startup, $d_info, $d_remotestream, $d_parse, $d_scan, $d_sql, $d_itunes, $d_server, $d_import, $d_moodlogic, $d_musicmagic);
 	our ($rescan, $playlists, $wipe, $itunes, $musicmagic, $moodlogic, $force, $cleanup, $prefsFile, $progress, $priority);
+	our ($quiet, $logfile, $logdir, $logconf, $debug);
 
-	our $logfile;
 	our $LogTimestamp = 1;
 
 	GetOptions(
@@ -58,20 +58,14 @@ sub main {
 		'itunes'       => \$itunes,
 		'musicmagic'   => \$musicmagic,
 		'moodlogic'    => \$moodlogic,
-		'd_info'       => \$d_info,
-		'd_server'     => \$d_server,
-		'd_import'     => \$d_import,
-		'd_parse'      => \$d_parse,
-		'd_scan'       => \$d_scan,
-		'd_sql'        => \$d_sql,
-		'd_startup'    => \$d_startup,
-		'd_itunes'     => \$d_itunes,
-		'd_moodlogic'  => \$d_moodlogic,
-		'd_musicmagic' => \$d_musicmagic,
 		'prefsfile=s'  => \$prefsFile,
 		'progress'     => \$progress,
 		'priority=i'   => \$priority,
-		'logfile=s'    => \$logfile,
+                'logfile=s'    => \$logfile,
+                'logdir=s'     => \$logdir,
+                'logconfig=s'  => \$logconf,
+                'debug=s'      => \$debug,
+                'quiet'        => \$quiet,
 		'LogTimestamp!'=> \$LogTimestamp,
 	);
 
@@ -80,11 +74,18 @@ sub main {
 		exit;
 	}
 
-	# Open the log file, if any.
-	Slim::Utils::Misc::openLogFile($logfile);
+	Slim::Utils::Log->init({
+		'logconf' => $logconf,
+		'logdir'  => $logdir,
+		'logfile' => $logfile,
+		'logtype' => 'scanner',
+		'debug'   => $debug,
+	});
+
+	my $log = logger('server');
 
 	# Bring up strings, database, etc.
-	initializeFrameworks();
+	initializeFrameworks($log);
 
 	# Set priority, command line overrides pref
 	if (defined $priority) {
@@ -125,10 +126,9 @@ sub main {
 		initClass('Plugins::MoodLogic::Importer');
 	}
 
-	#$::d_server && msg("SlimServer checkDataSource...\n");
 	#checkDataSource();
 
-	$::d_server && msg("SlimServer done init...\n");
+	$log->info("SlimServer done init...\n");
 
 	# Take the db out of autocommit mode - this makes for a much faster scan.
 	Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
@@ -145,8 +145,8 @@ sub main {
 		eval { Slim::Schema->txn_do(sub { Slim::Schema->wipeAllData }) };
 
 		if ($@) {
-			errorMsg("Scanner: Failed when calling Slim::Schema->wipeAllData: [$@]\n");
-			errorMsg("Scanner: This is a fatal error. Exiting\n");
+			logError("Failed when calling Slim::Schema->wipeAllData: [$@]");
+			logError("This is a fatal error. Exiting");
 			exit(-1);
 		}
 	}
@@ -183,8 +183,8 @@ sub main {
 
 	if ($@) {
 
-		errorMsg("Scanner: Failed when running main scan: [$@]\n");
-		errorMsg("Scanner: Skipping post-process & Not updating lastRescanTime!\n");
+		logError("Failed when running main scan: [$@]");
+		logError("Skipping post-process & Not updating lastRescanTime!");
 
 	} else {
 
@@ -193,16 +193,16 @@ sub main {
 
 		if ($@) {
 
-			errorMsg("Scanner: Failed when running scan post-process: [$@]\n");
-			errorMsg("Scanner: Not updating lastRescanTime!\n");
+			logError("Failed when running scan post-process: [$@]");
+			logError("Not updating lastRescanTime!");
 
 		} else {
 
 			Slim::Music::Import->setLastScanTime;
 
 			if ($@) {
-				errorMsg("Scanner: Failed to update lastRescanTime: [$@]\n");
-				errorMsg("Scanner: You may encounter problems next rescan!\n");
+				logError("Failed to update lastRescanTime: [$@]");
+				logError("You may encounter problems next rescan!");
 			}
 		}
 	}
@@ -212,14 +212,16 @@ sub main {
 }
 
 sub initializeFrameworks {
+	my $log = shift;
 
-	$::d_server && msg("SlimServer OSDetect init...\n");
+	$log->info("SlimServer OSDetect init...");
+
 	Slim::Utils::OSDetect::init();
 
-	$::d_server && msg("SlimServer OS Specific init...\n");
+	$log->info("SlimServer OS Specific init...");
 
 	# initialize slimserver subsystems
-	$::d_server && msg("SlimServer settings init...\n");
+	$log->info("SlimServer settings init...");
 
 	Slim::Utils::Prefs::init();
 	Slim::Utils::Prefs::load($::prefsFile);
@@ -230,13 +232,15 @@ sub initializeFrameworks {
 
 	Slim::Utils::Prefs::makeCacheDir();	
 
-	$::d_server && msg("SlimServer strings init...\n");
+	$log->info("SlimServer strings init...");
+
 	Slim::Utils::Strings::init(catdir($Bin,'strings.txt'), "EN");
 
-	# $::d_server && msg("SlimServer MySQL init...\n");
+	# $log->info("SlimServer MySQL init...");
 	# Slim::Utils::MySQLHelper->init();
 
-	$::d_server && msg("SlimServer Info init...\n");
+	$log->info("SlimServer Info init...");
+
 	Slim::Music::Info::init();
 }
 
@@ -259,18 +263,6 @@ Command line options:
 	--priority    set process priority from -20 (high) to 20 (low)
 	--logfile     Send all debugging messages to the specified logfile.
 
-Debug flags:
-
-	--d_info       Miscellaneous Info
-	--d_server     Initialization phase
-	--d_import     Show Import Stages
-	--d_parse      Playlist parsing, etc.
-	--d_scan       Show the files that are being scanned.
-	--d_sql        Show all SQL statements being executed. (Lots of output)
-	--d_itunes     iTunes debugging / XML file parsing.
-	--d_moodlogic  MoodLogic debugging, import parsing.
-	--d_musicmagic Musicmagic debugging, import parsing.
-
 Examples:
 
 	$0 --rescan /Users/dsully/Music
@@ -287,15 +279,13 @@ sub initClass {
 	Slim::bootstrap::tryModuleLoad($class);
 
 	if ($@) {
-		errorMsg("Couldn't load $class: $@\n");
+		logError("Couldn't load $class: $@");
 	} else {
 		$class->initPlugin;
 	}
 }
 
 sub cleanup {
-
-	$::d_server && msg("SlimServer scanner cleaning up.\n");
 
 	# Make sure to flush anything in the database to disk.
 	if ($INC{'Slim/Schema.pm'}) {
@@ -305,6 +295,11 @@ sub cleanup {
 		Slim::Schema->forceCommit;
 		Slim::Schema->disconnect;
 	}
+}
+
+sub END { 
+
+        Slim::bootstrap::theEND();
 }
 
 sub idleStreams {}

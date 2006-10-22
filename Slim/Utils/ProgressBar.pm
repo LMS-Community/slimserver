@@ -26,6 +26,8 @@ package Slim::Utils::ProgressBar;
 use strict;
 use bytes;
 
+use Slim::Utils::Log;
+
 use constant HAS_TERM_READKEY => eval { require Term::ReadKey };
 
 # Load Time::HiRes if it's available
@@ -76,7 +78,8 @@ sub new {
 
 	if (!exists($args->{'total'}) || $args->{'total'} < 1) {
 
-		Slim::Utils::Misc::msg("ProgressBar: must provide a total value > 1\n");
+		logWarning("Must provide a total value > 1");
+
 		return undef;
 	}
 

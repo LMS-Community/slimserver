@@ -44,9 +44,12 @@ use Slim::Player::ProtocolHandlers;
 use Slim::Networking::Async::HTTP;
 use Slim::Utils::Cache;
 use Slim::Utils::FileFindRule;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::ProgressBar;
 use Slim::Utils::Strings;
+
+my $log = logger('scan.scanner');
 
 =head2 scanPathOrURL( { url => $url, callback => $callback, ... } )
 
@@ -62,7 +65,7 @@ sub scanPathOrURL {
 
 	my $pathOrUrl = $args->{'url'} || do {
 
-		errorMsg("scanPathOrURL: No path or URL was requested!\n");
+		logError("No path or URL was requested!");
 
 		return $cb->( [] );
 	};
@@ -84,7 +87,7 @@ sub scanPathOrURL {
 		}
 
 		# Always let the user know what's going on..
-		msg("scanPathOrURL: Finding valid files in: $pathOrUrl\n");
+		msg("Finding valid files in: $pathOrUrl\n");
 
 		# Non-async directory scan
 		my $foundItems = $class->scanDirectory( $args, 'return' );
@@ -177,14 +180,14 @@ sub findFilesMatching {
 			# directory above us - if so, that's a loop and we need to break it.
 			if (dir($file)->subsumes($topDir)) {
 
-				msg("findFilesMatching: Warning- Found an infinite loop! Breaking out: $file -> $topDir\n");
+				logWarning("Found an infinite loop! Breaking out: $file -> $topDir");
 				next;
 			}
 
 			# Recurse into additional shortcuts and directories.
 			if ($file =~ /\.lnk$/i || -d $file) {
 
-				$::d_scan && msg("findFilesMatching: Following Windows Shortcut to: $url\n");
+				$log->info("Following Windows Shortcut to: $url");
 
 				# Bug 4027 - pass along the types & recursion
 				# flags. The perils of recursive methods.
@@ -217,7 +220,7 @@ sub findFilesForRescan {
 	my $topDir = shift;
 	my $args   = shift;
 
-	$::d_scan && msg("findFilesForRescan: Generating file list from disk & database...\n");
+	$log->info("Generating file list from disk & database...");
 
 	my $onDisk = $class->findFilesMatching($topDir, $args);
 	my $inDB   = Slim::Schema->rs('Track')->allTracksAsPaths;
@@ -236,7 +239,7 @@ sub findNewAndChangedFiles {
 	my $onDisk = shift;
 	my $inDB   = shift;
 
-	$::d_scan && msg("findNewAndChangedFiles: Comparing file list between disk & database to generate rescan list...\n");
+	$log->info("Comparing file list between disk & database to generate rescan list...");
 
 	# When rescanning: we need to find files:
 	#
@@ -281,11 +284,8 @@ sub scanDirectory {
 	# Create a Path::Class::Dir object for later use.
 	my $topDir = dir($args->{'url'});
 
-	if ($::d_scan) {
-
-		msg("About to look for files in $topDir\n");
-		msgf("For files with extensions in: [%s]\n", Slim::Music::Info::validTypeExtensions($args->{'types'}) );
-	}
+	$log->info("About to look for files in $topDir");
+	$log->info("For files with extensions in: ", Slim::Music::Info::validTypeExtensions($args->{'types'}));
 
 	my $files  = [];
 
@@ -297,12 +297,13 @@ sub scanDirectory {
 
 	if (!scalar @{$files}) {
 
-		$::d_scan && msg("scanDirectory: Didn't find any valid files in: [$topDir]\n");
+		$log->warn("Didn't find any valid files in: [$topDir]");
+
 		return $foundItems;
 
 	} else {
 
-		msgf("Found %d files in %s\n", scalar @{$files}, $topDir);
+		$log->info(sprintf("Found %d files in %s\n", scalar @{$files}, $topDir));
 	}
 
 	# Give the user a progress indicator if available.
@@ -317,7 +318,7 @@ sub scanDirectory {
 
 		if (Slim::Music::Info::isSong($url)) {
 
-			$::d_scan && msg("ScanDirectory: Adding $url to database.\n");
+			$log->debug("Adding $url to database.");
 
 			my $track = Slim::Schema->$method({
 				'url'        => $url,
@@ -333,7 +334,7 @@ sub scanDirectory {
 			(Slim::Music::Info::isPlaylist($url) && Slim::Utils::Misc::inPlaylistFolder($url))) {
 
 			# Only read playlist files if we're in the playlist dir. Read cue sheets from anywhere.
-			$::d_scan && msg("ScanDirectory: Adding playlist $url to database.\n");
+			$log->debug("Adding playlist $url to database.");
 
 			# Bug: 3761 - readTags, so the title is properly decoded with the locale.
 			my $playlist = Slim::Schema->$method({
@@ -389,7 +390,7 @@ sub scanRemoteURL {
 
 	if ( Slim::Music::Info::isAudioURL($url) ) {
 
-		$::d_scan && msg("scanRemoteURL: remote stream $url known to be audio\n");
+		$log->debug("Remote stream $url known to be audio");
 
 		my $track = Slim::Schema->rs('Track')->updateOrCreate({
 			'url' => $url,
@@ -434,7 +435,7 @@ sub scanRemoteURL {
 		$request->uri( $url );
 	}
 
-	$::d_scan && msg("scanRemoteURL: opening remote location $url\n");
+	$log->debug("Opening remote location $url");
 	
 	my $http = Slim::Networking::Async::HTTP->new();
 	$http->send_request( {
@@ -444,7 +445,7 @@ sub scanRemoteURL {
 		'onError'     => sub {
 			my ( $http, $error ) = @_;
 
-			errorMsg("scanRemoteURL: Can't connect to remote server to retrieve playlist: $error.\n");
+			logError("Can't connect to remote server to retrieve playlist: $error.");
 
 			push @{$pt}, 'PLAYLIST_PROBLEM_CONNECTING';
 			return $cb->( $foundItems, @{$pt} );
@@ -486,7 +487,8 @@ sub handleRedirect {
 	my $request = shift;
 	
 	if ( $request->uri =~ /^mms/ ) {
-		$::d_scan && msg("scanRemoteURL: Server redirected to MMS URL: " . $request->uri . ", adding WMA headers\n");
+
+		$log->debug("Server redirected to MMS URL: " . $request->uri . ", adding WMA headers");
 		
 		addWMAHeaders( $request );
 	}
@@ -540,7 +542,7 @@ sub readRemoteHeaders {
 		$type = 'wma';
 	}
 	
-	$::d_scan && msg("scanRemoteURL: Content-Type is $type for $url\n");
+	$log->debug("Content-Type is $type for $url");
 	
 	$track->content_type( $type );
 	$track->update;
@@ -552,7 +554,7 @@ sub readRemoteHeaders {
 	# type while loading.
 	if ( Slim::Music::Info::isSong($track) ) {
 
-		$::d_scan && msg("scanRemoteURL: found that $url is audio [$type]\n");
+		$log->debug("Found that $url is audio [$type]");
 		
 		# If we redirected, we need to update the title on the final URL to match
 		# the title for the original URL
@@ -579,16 +581,21 @@ sub readRemoteHeaders {
 		
 		# If the audio is mp3, we can read the bitrate from the header or stream
 		if ( $type eq 'mp3' ) {
+
 			if ( my $bitrate = ( $http->response->header( 'icy-br' ) || $http->response->header( 'x-audiocast-bitrate' ) ) * 1000 ) {
-				$::d_scan && msgf( "scanRemoteURL: Found bitrate in header: %d\n", $bitrate );
+
+				$log->debug("Found bitrate in header: $bitrate");
+
 				$track->bitrate( $bitrate );
 				$track->update;
+
 				Slim::Music::Info::setBitrate( $url, $bitrate );
 				
 				$http->disconnect;
 			}
 			else {
-				$::d_scan && msg("scanRemoteURL: scanning mp3 stream for bitrate\n");
+
+				$log->debug("Scanning mp3 stream for bitrate");
 				
 				$http->read_body( {
 					'readLimit'   => 16 * 1024,
@@ -641,7 +648,7 @@ sub readRemoteHeaders {
 	}
 	else {
 		
-		$::d_scan && msg("scanRemoteURL: found that $url is a playlist\n");
+		$log->debug("Found that $url is a playlist");
 
 		# Re-fetch as a playlist.
 		$args->{'playlist'} = Slim::Schema->rs('Playlist')->objectForUrl({
@@ -746,7 +753,7 @@ sub scanPlaylistFileHandle {
 		#XXX There is another method that comes close if this shouldn't be used.
 		$parentDir = Slim::Utils::Misc::fileURLFromPath( file($playlist->path)->parent );
 
-		$::d_scan && msg("scanPlaylistFileHandle: will scan $url, base: $parentDir\n");
+		$log->debug("Will scan $url, base: $parentDir");
 	}
 
 	my @playlistTracks = Slim::Formats::Playlists->parseList(
@@ -796,9 +803,14 @@ sub scanPlaylistFileHandle {
 	$playlist->content_type($ct);
 	$playlist->update;
 
-	if ( $::d_scan ) {
-		msgf( "scanPlaylistFileHandle: found %d items in playlist:\n", scalar @playlistTracks );
-		map { msgf( "  %s\n", blessed $_ ? $_->url : '' ) } @playlistTracks;
+	if ($log->is_debug) {
+
+		$log->debug(sprintf("Found %d items in playlist: ", scalar @playlistTracks));
+
+		for my $track (@playlistTracks) {
+
+			$log->debug(sprintf("  %s", blessed($track) ? $track->url : ''));
+		}
 	}
 
 	return wantarray ? @playlistTracks : \@playlistTracks;
@@ -817,6 +829,7 @@ sub scanPlaylistURLs {
 	my $pt = $args->{'passthrough'} || [];
 	
 	my $offset = 0;
+
 	for my $item ( @{$foundItems} ) {
 		
 		next if !blessed $item;
@@ -826,11 +839,10 @@ sub scanPlaylistURLs {
 		next if $item->content_type eq 'wma' && $item->url =~ /\.nsc$/i;
 		
 		if ( Slim::Music::Info::isAudioURL( $item->url ) || Slim::Music::Info::isSong( $item ) ) {
+
 			# we finally found an audio URL, so we're done
-			$::d_scan && msgf( "scanPlaylistURLs: Found an audio URL: %s [%s]\n",
-				$item->url,
-				$item->content_type,
-			);
+
+			$log->debug("Found an audio URL: %s [%s]", $item->url, $item->content_type);
 			
 			# return a list with the first found audio URL at the top
 			unshift @{$foundItems}, splice @{$foundItems}, $offset, 1;
@@ -863,8 +875,11 @@ sub scanPlaylistURLs {
 	$args->{'loopCount'} ||= 0;
 	
 	if ( $args->{'loopCount'} > 5 ) {
-		$::d_parse && msg("scanPlaylistURLs: recursion limit reached, giving up\n");
+
+		logger('formats.playlists')->warn("Warning: recursion limit reached, giving up");
+
 		push @{$pt}, 'PLAYLIST_NO_ITEMS_FOUND';
+
 		return $cb->( [], @{$pt} );
 	}
 	
@@ -905,7 +920,7 @@ sub scanBitrate {
 		return $formatClass->scanBitrate( $fh, $url );
 	}
 
-	$::d_scan && msg("scanBitrate: Unable to scan content-type: $contentType\n");
+	$log->warn("Unable to scan content-type: $contentType");
 
 	return (-1, undef);
 }
@@ -931,9 +946,10 @@ sub scanWMAStream {
 		return;
 	}
 	
-	$::d_scan && msg("scanWMA: Checking stream at " . $request->uri . "\n");
+	$log->debug("Checking stream at " . $request->uri);
 	
 	my $http = Slim::Networking::Async::HTTP->new();
+
 	$http->send_request( {
 		'request'     => $request,
 		'readLimit'   => 16 * 1024,
@@ -962,9 +978,10 @@ sub scanWMAStreamDone {
 		&& $type ne 'audio/x-ms-wma'
 		&& $type ne 'audio/asf'
 	) {
-		# It's not audio, treat it as ASX playlist, but only if there are no other streams in the playlist
+
 		if ( scalar @{ $args->{'foundItems'} } == 1 ) {
-			$::d_scan && msgf("scanWMA: Stream returned non-audio content-type: $type, treating as ASX playlist\n");
+
+			$log->debug("Stream returned non-audio content-type: $type, treating as ASX redirector");
 		
 			# Re-fetch as a playlist.
 			$args->{'playlist'} = Slim::Schema->rs('Playlist')->objectForUrl({
@@ -979,7 +996,7 @@ sub scanWMAStreamDone {
 		}
 		else {
 			# Skip the stream with the bad content-type, and try the next stream
-			$::d_scan && msg("scanWMA: Stream returned non-audio content-type: $type, skipping to next stream\n");
+			$log->debug("Stream returned non-audio content-type: $type, skipping to the next stream.");
 			
 			shift @{ $args->{'foundItems'} };
 			my $next = $args->{'foundItems'}->[0];
@@ -1024,7 +1041,7 @@ sub scanWMAStreamDone {
 		}
 	}
 	
-	$::d_scan && msg("WMA header data: " . Data::Dump::dump($wma) . "\n");
+	$log->debug("WMA header data: " . Data::Dump::dump($wma));
 	
 	my $streamNum = 1;
 	
@@ -1042,10 +1059,7 @@ sub scanWMAStreamDone {
 		
 			my $streamBitrate = int($stream->{'bitrate'} / 1000);
 		
-			$::d_scan && msgf("scanWMA: Available stream: #%d, %d kbps\n",
-				$stream->{'streamNumber'},
-				$streamBitrate,
-			);
+			$log->debug("Available stream: \#$stream->{'streamNumber'}, $streamBitrate kbps");
 
 			if ( $stream->{'bitrate'} > $bitrate && $max >= $streamBitrate ) {
 				$streamNum = $stream->{'streamNumber'};
@@ -1058,10 +1072,10 @@ sub scanWMAStreamDone {
 			$streamNum = $wma->stream(0)->{'streamNumber'};
 		}
 
-		$::d_scan && msgf("scanWMA: Will play stream #%d, bitrate: %s kbps\n",
+		$log->debug(sprintf("Will play stream #%d, bitrate: %s kbps",
 			$streamNum,
 			$bitrate ? int($bitrate / 1000) : 'unknown',
-		);
+		));
 	}
 	
 	# Always cache with mms URL prefix
@@ -1088,7 +1102,7 @@ sub scanWMAStreamDone {
 sub scanWMAStreamError {
 	my ( $http, $error, $args ) = @_;
 	
-	$::d_scan && msg("scanWMA Error: $error\n");
+	$log->error("Error: $error");
 	
 	if ( !Slim::Utils::Strings::stringExists($error) ) {
 		$error = 'PROBLEM_CONNECTING';
@@ -1103,7 +1117,9 @@ sub scanWMAStreamError {
 	
 	# If there are other streams in foundItems, try them
 	if ( @{$foundItems} ) {
-		$::d_scan && msgf("scanWMA: Trying next stream: %s\n", $foundItems->[0]->url);
+
+		$log->debug("Trying next stream: %s", $foundItems->[0]->url);
+
 		return scanWMAStream( {
 			'client'      => $args->{'client'},
 			'url'         => $foundItems->[0]->url,

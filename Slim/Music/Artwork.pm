@@ -30,6 +30,7 @@ use Slim::Formats;
 use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Music::TitleFormatter;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
@@ -83,7 +84,9 @@ sub findArtwork {
 
 			my $album = $track->album;
 
-			$::d_import && !$progress && msgf("Import: Album [%s] has artwork.\n", $album->name);
+			if (!$progress) {
+				logger('scan.import')->info(sprintf("Album [%s] has artwork.", $album->name));
+			}
 
 			$album->artwork($track->id);
 			$album->update;
@@ -116,7 +119,7 @@ sub getImageContentAndType {
 		return ($content, $class->_imageContentType(\$content));
 	}
 
-	$::d_artwork && msg("getImageContent: Image File empty or couldn't read: $path : $! [$@]\n");
+	logger('artwork')->warn("Image File empty or couldn't read: $path : $! [$@]");
 
 	return undef;
 }
@@ -185,7 +188,9 @@ sub _readCoverArtTags {
 	my $track = shift;
 	my $file  = shift;
 
-	$::d_artwork && msg("readCoverArtTags: Looking for a cover art image in the tags of: [$file]\n");
+	my $log   = logger('artwork');
+
+	$log->info("Looking for a cover art image in the tags of: [$file]");
 
 	if (blessed($track) && $track->can('audio') && $track->audio) {
 
@@ -202,14 +207,14 @@ sub _readCoverArtTags {
 
 			my $contentType = $class->_imageContentType(\$body);
 
-			$::d_artwork && msgf("readCoverArtTags: Found image of length [%d] bytes with type: [$contentType]\n", length($body));
+			$log->info(sprintf("Found image of length [%d] bytes with type: [$contentType]", length($body)));
 
 			return ($body, $contentType, 1);
 		}
 
  	} else {
 
-		$::d_info && msg("readCoverArtTags: Not file we can extract artwork from. Skipping.\n");
+		$log->info("Not file we can extract artwork from. Skipping.");
 	}
 
 	return undef;
@@ -229,7 +234,9 @@ sub _readCoverArtFiles {
 	my $file       = file($path);
 	my $parentDir  = $file->dir;
 
-	$::d_artwork && msg("Looking for image files in $parentDir\n");
+	my $log        = logger('artwork');
+
+	$log->info("Looking for image files in $parentDir");
 
 	my %nameslist = map { $_ => [do { my $t = $_; map { "$t.$_" } @ext }] } @names;
 	
@@ -256,11 +263,11 @@ sub _readCoverArtFiles {
 
 		$artwork = Slim::Music::TitleFormatter::infoFormat(
 			Slim::Utils::Misc::fileURLFromPath($track->url), $1
-		)."$suffix";
+		) . $suffix;
 
-		$::d_artwork && msgf(
-			"Variable %s: %s from %s\n", ($image eq 'thumb' ? 'Thumbnail' : 'Cover'), $artwork, $1
-		);
+		$log->info(sprintf(
+			"Variable %s: %s from %s", ($image eq 'thumb' ? 'Thumbnail' : 'Cover'), $artwork, $1
+		));
 
 		if (Slim::Utils::OSDetect::OS() eq 'win') {
 			# Remove illegal characters from filename.
@@ -282,7 +289,7 @@ sub _readCoverArtFiles {
 
 		if ($body && $contentType) {
 
-			$::d_artwork && msg("Found $image file: $artPath\n");
+			$log->info("Found $image file: $artPath");
 
 			return ($body, $contentType, $artPath);
 		}
@@ -296,7 +303,7 @@ sub _readCoverArtFiles {
 
 		if (exists $lastFile{$image} && $lastFile{$image} ne 1) {
 
-			$::d_artwork && msg("Using existing $image: $lastFile{$image}\n");
+			$log->info("Using existing $image: $lastFile{$image}");
 
 			my ($body, $contentType) = $class->getImageContentAndType($lastFile{$image});
 
@@ -304,7 +311,7 @@ sub _readCoverArtFiles {
 
 		} elsif (exists $lastFile{$image}) {
 
-			$::d_artwork && msg("No $image in $artworkDir\n");
+			$log->info("No $image in $artworkDir");
 
 			return undef;
 		}
@@ -325,7 +332,7 @@ sub _readCoverArtFiles {
 
 		if ($body && $contentType) {
 
-			$::d_artwork && msg("Found $image file: $file\n");
+			$log->info("Found $image file: $file");
 
 			$lastFile{$image} = $file;
 
@@ -339,9 +346,8 @@ sub _readCoverArtFiles {
 
 	return undef;
 }
+
 =head1 SEE ALSO
-
-
 
 =cut
 

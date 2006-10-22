@@ -18,6 +18,7 @@ use Slim::Formats::Playlists;
 use Slim::Player::Source;
 use Slim::Player::TranscodingHelper;
 use Slim::Utils::Cache;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 use constant DEFAULT_TYPE => 'wma';
@@ -41,7 +42,7 @@ sub new {
 
 	unless (defined($command) && $command ne '-') {
 
-		$::d_remotestream && msg "Couldn't find conversion command for wma\n";
+		logger('player.streaming.remote')->error("Error: Couldn't find conversion command for wma!");
 
 		# XXX - errorOpening should not be in Source!
 		Slim::Player::Source::errorOpening($client, $client->string('WMA_NO_CONVERT_CMD'));
@@ -182,40 +183,59 @@ sub parseMetadata {
 
 sub setMetadata {
 	my ( $client, $url, $wma, $streamNumber ) = @_;
+
+	my $log = logger('player.streaming.direct');
 	
 	# Bitrate method 1: from parseDirectBody, we have the whole WMA object
 	if ( $streamNumber && ref $wma->stream ) {
+
 		for my $stream ( @{ $wma->stream } ) {
+
 			if ( $stream->{'streamNumber'} == $streamNumber ) {
+
 				if ( my $bitrate = $stream->{'bitrate'} ) {
+
 					my $kbps = int( $bitrate / 1000 );
 					my $vbr  = $wma->tags('vbr') || undef;
+
 					Slim::Music::Info::setBitrate( $url, $kbps * 1000, $vbr );
-					$::d_directstream && msg("Setting bitrate to $kbps from WMA metadata\n");
+
+					$log->info("Setting bitrate to $kbps from WMA metadata");
 				}
+
 				last;
 			}
 		}
 	}
 	elsif ( ref $wma->{'BITRATES'} ) {
+
 		# method 2: from parseMetadata
 		my $bitrates = $wma->{'BITRATES'};
 		my $bitrate  = 0;
+
 		for my $stream ( keys %{ $bitrates } ) {
+
 			if ( $stream == $streamNumber ) {
+
 				$bitrate = $bitrates->{$stream};
 			}
 		}
+
 		my $kbps = int( $bitrate / 1000 );
 		my $vbr  = $wma->tags('vbr') || undef;
+
 		Slim::Music::Info::setBitrate( $url, $kbps * 1000, $vbr );
-		$::d_directstream && msg("Setting bitrate to $kbps from WMA bitrate properties object\n");
+
+		$log->info("Setting bitrate to $kbps from WMA bitrate properties object");
 	}
 	
 	# Set duration and progress bar if available and this is not a broadcast stream
 	if ( $wma->info('playtime_seconds') ) {
+
 		if ( my $secs = int( $wma->info('playtime_seconds') ) ) {
+
 			if ( $wma->info('flags') && $wma->info('flags')->{'broadcast'} != 1 ) {
+
 				if ( $secs > 0 ) {
 					
 					$client->streamingProgressBar( {
@@ -232,13 +252,14 @@ sub setMetadata {
 		
 		# Ignore title metadata for Rhapsody tracks
 		if ( $url !~ /^rhap/ ) {
+
 			Slim::Music::Info::setCurrentTitle($url, $title);
 
 			for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
 				$everybuddy->update();
 			}
 		
-			$::d_directstream && msg("Setting title to '$title' from WMA metadata\n");
+			$log->info("Setting title to '$title' from WMA metadata");
 		}
 	}
 }

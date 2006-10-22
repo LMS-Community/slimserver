@@ -20,6 +20,7 @@ INIT: {
 }
 
 use Slim::Player::ProtocolHandlers;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -34,6 +35,11 @@ my %tracks = ();
 my $progress;
 
 my ($inKey, $inDict, $inValue, %item, $currentKey, $nextIsMusicFolder, $nextIsPlaylistName, $inPlaylistArray);
+
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.itunes',
+	'defaultLevel' => 'WARN',
+});
 
 # mac file types
 our %filetypes = (
@@ -79,7 +85,7 @@ sub initPlugin {
 # This will be called when wipeDB is run - we always want to rescan at that point.
 sub resetState {
 
-	$::d_itunes && msg("iTunes: wipedb called - resetting lastITunesMusicLibraryDate\n");
+	$log->info("wipedb called - resetting lastITunesMusicLibraryDate");
 
 	$lastITunesMusicLibraryDate = -1;
 
@@ -106,7 +112,7 @@ sub _getTotalCount {
 	# Get the total count of tracks for the progress bar.
 	open(XML, $file) or do {
 
-		errorMsg("iTunes: Couldn't open [$file]: [$@]\n");
+		logError("Couldn't open [$file]: [$@]");
 		return 0;
 	};
 
@@ -136,11 +142,11 @@ sub startScan {
 	# Set the last change time for the next go-round.
 	$currentITunesMusicLibraryDate = (stat($file))[9];
 
-	$::d_itunes && msg("iTunes: startScan on file: $file\n");
+	$log->info("Parsing file: $file");
 
 	if (!defined $file) {
 
-		errorMsg("iTunes: Trying to scan an iTunes XML file that doesn't exist.");
+		logError("Trying to scan an iTunes XML file that doesn't exist.");
 		return;
 	}
 
@@ -163,7 +169,7 @@ sub startScan {
 
 	$iTunesParser->parsefile($file);
 
-	$::d_itunes && msg("iTunes: Finished scanning iTunes XML\n");
+	$log->info("Finished scanning iTunes XML");
 
 	$class->doneScanning;
 }
@@ -173,13 +179,11 @@ sub doneScanning {
 
 	$progress->final($class->getTotalPlaylistCount) if $progress;
 
-	$::d_itunes && msg("iTunes: Finished Scanning\n");
+	$log->info("Finished Scanning");
 
 	$lastMusicLibraryFinishTime = time();
 
-	if ($::d_itunes) {
-		msgf("iTunes: scan completed in %d seconds.\n", (time() - $iTunesScanStartTime));
-	}
+	$log->info(sprintf("Scan completed in %d seconds.", (time() - $iTunesScanStartTime)));
 
 	Slim::Music::Import->setLastScanTime('iTunesLastLibraryChange', $currentITunesMusicLibraryDate);
 
@@ -227,7 +231,7 @@ sub handleTrack {
 			eval { Encode::from_to($file, 'utf8', Slim::Utils::Unicode::currentLocale()) };
 
 			if ($@) {
-				errorMsg("iTunes: handleTrack: [$@]\n");
+				logError("[$@]");
 			}
 		}
 
@@ -257,7 +261,7 @@ sub handleTrack {
 	# skip track if Disabled in iTunes
 	if ($curTrack->{'Disabled'} && !Slim::Utils::Prefs::get('ignoredisableditunestracks')) {
 
-		$::d_itunes && msg("iTunes: deleting disabled track $url\n");
+		$log->info("Deleting disabled track $url");
 
 		Slim::Schema->search('Track', { 'url' => $url })->delete;
 
@@ -291,14 +295,15 @@ sub handleTrack {
 		    ($mtime && $mtime < $lastITunesMusicLibraryDate) &&
 		    Slim::Schema->count('Track', { 'url' => $url })) {
 
-			$::d_itunes && msg("iTunes: not updated, skipping: $file\n");
+			$log->debug("Not updated, skipping: $file");
 
 			return 1;
 		}
 
 		# Reuse the stat from above.
 		if (!$file || !-r _) { 
-			$::d_itunes && msg("iTunes: file not found: $file\n");
+
+			$log->warn("File not found: $file");
 
 			# Tell the database to cleanup.
 			Slim::Schema->search('Track', { 'url' => $url })->delete;
@@ -315,7 +320,7 @@ sub handleTrack {
 		return 1;
 	}
 
-	$::d_itunes && msg("iTunes: got a track named " . $curTrack->{'Name'} . " location: $url\n");
+	$log->debug("Got a track named $curTrack->{'Name'} location: $url");
 
 	if ($filetype) {
 
@@ -397,15 +402,14 @@ sub handleTrack {
 
 		}) || do {
 
-			$::d_itunes && msg("iTunes: Couldn't create track for: $url\n");
+			$log->error("Couldn't create track for: $url");
 
 			return 1;
 		};
 
 	} else {
 
-		$::d_itunes && msg("iTunes: unknown file type " . ($curTrack->{'Kind'} || '') . " " . ($url || 'Unknown URL') . "\n");
-
+		$log->warn("Unknown file type " . ($curTrack->{'Kind'} || '') . " " . ($url || 'Unknown URL'));
 	}
 }
 
@@ -419,7 +423,7 @@ sub handlePlaylist {
 	my $name = Slim::Utils::Misc::unescape($cacheEntry->{'TITLE'});
 	my $url  = join('', 'itunesplaylist:', Slim::Utils::Misc::escape($name));
 
-	$::d_itunes && msg("iTunes: got a playlist ($url) named $name\n");
+	$log->info("Got a playlist ($url) named $name");
 
 	# add this playlist to our playlist library
 	# 'LIST',  # list items (array)
@@ -433,7 +437,7 @@ sub handlePlaylist {
 
 	Slim::Music::Info::updateCacheEntry($url, $cacheEntry);
 
-	$::d_itunes && msg("iTunes: playlists now has " . scalar @{$cacheEntry->{'LIST'}} . " items...\n");
+	$log->info("Playlist now has " . scalar @{$cacheEntry->{'LIST'}} . " items.");
 }
 
 sub handleStartElement {
@@ -482,9 +486,7 @@ sub handleCharElement {
 
 		$class->iTunesLibraryBasePath( $class->strip_automounter($value) );
 
-		$::d_itunes && msgf("iTunes: found the music folder: [%s]\n",
-			$class->iTunesLibraryBasePath,
-		);
+		$log->info("Found the music folder: ", $class->iTunesLibraryBasePath);
 
 		return;
 	}
@@ -518,13 +520,13 @@ sub handleCharElement {
 
 		if (defined($tracks{$value})) {
 
-			$::d_itunes_verbose && msg("iTunes: pushing $value on to list: " . $tracks{$value} . "\n");
+			$log->debug("Pushing $value on to list: $tracks{$value}");
 
 			push @{$item{'LIST'}}, $tracks{$value};
 
 		} else {
 
-			$::d_itunes_verbose && msg("iTunes: NOT pushing $value on to list, it's missing (or disabled).\n");
+			$log->debug("NOT pushing $value on to list, it's missing (or disabled).");
 		}
 	}
 }
@@ -546,7 +548,7 @@ sub handleEndElement {
 
 		if ($currentKey eq 'Tracks') {
 
-			$::d_itunes && msg("iTunes: starting track parsing\n");
+			$log->debug("Starting track parsing.");
 
 			$inTracks = 1;
 		}
@@ -555,7 +557,7 @@ sub handleEndElement {
 
 			Slim::Schema->rs('Playlist')->clearExternalPlaylists('itunesplaylist:');
 
-			$::d_itunes && msg("iTunes: starting playlist parsing, cleared old playlists\n");
+			$log->debug("Starting playlist parsing, cleared old playlists");
 
 			$inTracks = 0;
 			$inPlaylists = 1;
@@ -595,7 +597,7 @@ sub handleEndElement {
 		# iTunes 7.0 adds 'Music' as a playlist - we don't want that either.
 		if (defined $item{'TITLE'} && $item{'TITLE'} !~ /^(?:Library|Music)$/) {
 
-			$::d_itunes && msg("iTunes: got a playlist array of " . scalar(@{$item{'LIST'}}) . " items\n");
+			$log->debug("Got a playlist array of " . scalar(@{$item{'LIST'}}) . " items.");
 
 			$class->handlePlaylist(\%item);
 		}

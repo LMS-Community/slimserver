@@ -35,45 +35,45 @@ package Plugins::Live365::Web;
 #
 # ***** END LICENSE BLOCK ***** */
 
+# $Id$
+
 use strict;
-use vars qw( $VERSION );
-$VERSION = 1.20;
 
 use FindBin qw($Bin);
 use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 use Plugins::Live365::Live365API;
 
 use constant ROWS_TO_RETRIEVE => 50;
 
-my $API = Plugins::Live365::Live365API->new();
+my $API = Plugins::Live365::Live365API->new;
+my $log = logger('plugin.live365');
 
-#
 #  Handle play or add actions on a station
-#
-
 sub handleAction {
 	my ($client, $params) = @_;
 
-	my $mode = $params->{'mode'};
-	my $current = $params->{'current'} || 1;
-	my $action = $params->{'action'};
+	my $mode      = $params->{'mode'};
+	my $current   = $params->{'current'} || 1;
+	my $action    = $params->{'action'};
 	my $stationid = $params->{'id'};
 
 	if (defined($client)) {
+
 		my $play = ($action eq 'play');
 
 		$API->setStationListPointer($current-1);
 	
 		my $stationURL = $API->getCurrentChannelURL();
-		$::d_plugins && msg( "Live365.ChannelMode URL: $stationURL\n" );
+
+		$log->info("ChannelMode URL: $stationURL");
 	
 		Slim::Music::Info::setContentType($stationURL, 'mp3');
-		Slim::Music::Info::setTitle($stationURL, 
-		   	$API->getCurrentStation()->{STATION_TITLE});
+		Slim::Music::Info::setTitle($stationURL, $API->getCurrentStation()->{STATION_TITLE});
 		
 		if ( $play ) {
 			$client->execute([ 'playlist', 'clear' ]);
@@ -83,16 +83,17 @@ sub handleAction {
 			$client->execute([ 'playlist', 'add', $stationURL ]);
 		}
 	}
+
 	my $webroot = $params->{'webroot'};
 	$webroot =~ s/(.*?)plugins.*$/$1/;
+
 	return filltemplatefile("live365_redirect.html", $params);
 }
 
-#
 #  Handle browsing genres or stations for a genre.
 #    Play some async games here.  No response until we get a callback from the completion
 #    of the Async_HTTP login request.
-#
+
 sub handleBrowseGenre {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
 
@@ -108,7 +109,14 @@ sub handleBrowseGenre {
 		return handleIndex($client,$params);
 	}
 
-	storeAsyncRequest("xxx","genre",{client => $client, params => $params, callback => $callback, httpClient => $httpClient, response => $response});
+	storeAsyncRequest("xxx", "genre", {
+		client     => $client,
+		params     => $params,
+		callback   => $callback,
+		httpClient => $httpClient,
+		response   => $response
+	});
+
 	return undef;
 }
 
@@ -129,12 +137,13 @@ sub startBrowseGenre {
 		}
 		
 		$API->clearStationDirectory();
+
 		$API->loadStationDirectory(
 			$genreid, $client, \&completeBrowseGenre, \&errorBrowseGenre, 0,
-			genre			=> $genreid,
-			sort			=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
-			rows			=> ROWS_TO_RETRIEVE,
-			searchfields	=> Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
+			'genre'	       => $genreid,
+			'sort'         => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
+			'rows'         => ROWS_TO_RETRIEVE,
+			'searchfields' => Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
 			@optionalFirstParam
 		);
 	}
@@ -148,38 +157,44 @@ sub completeBrowseGenre {
 
 	my $body = "";
 
-	my $fullparams = fetchAsyncRequest('xxx','genre');
-	my $params = $fullparams->{'params'};
-
-	my $genreid = $params->{'id'};
+	my $fullparams = fetchAsyncRequest('xxx', 'genre');
+	my $params     = $fullparams->{'params'};
+	my $genreid    = $params->{'id'};
 
 	if ($genreid eq 'root') {
 
 		my @genreList = @$list;
 
-		if ( !@genreList ) {
+		if (scalar @genreList == 0) {
+
 			$params->{'errmsg'} = "PLUGIN_LIVE365_LOADING_GENRES_ERROR";
 			$body = handleIndex($client,$params);
+
 		} else {
+
 			my %listform = %$params;
 			my $i = 0;
+
 			for my $genre (@genreList) {
+
 				$listform{'genreid'} = @$genre[1];
 				$listform{'genrename'} = @$genre[0];
 				$listform{'genremode'} = 1;
 				$listform{'odd'} = $i++ % 2;
-				$params->{'browse_list'} .=
-					${filltemplatefile("live365_browse_list.html",
-								   \%listform)};
+				$params->{'browse_list'} .= ${filltemplatefile("live365_browse_list.html", \%listform)};
 			}
 		}
+
 	} else {
-		push @{$params->{'pwd_list'}}, {'hreftype' => 'Live365Browse',
-										'title' => $params->{'name'},
-										'genreid' => $genreid,
-										'genrename' => $params->{'name'},
-										'type' => 'genres'
-										};
+
+		push @{$params->{'pwd_list'}}, {
+			'hreftype'  => 'Live365Browse',
+			'title'     => $params->{'name'},
+			'genreid'   => $genreid,
+			'genrename' => $params->{'name'},
+			'type'      => 'genres'
+		};
+
 		$params->{'listname'} = $params->{'name'};
 		$body = buildStationBrowseHTML($params);
 	}
@@ -187,20 +202,19 @@ sub completeBrowseGenre {
 	if ($body eq "") {
 		$body = filltemplatefile("live365_browse.html", $params);
 	}
-	createAsyncWebPage($client,$body,$fullparams);
+
+	createAsyncWebPage($client, $body, $fullparams);
 }
 
 sub errorBrowseGenre {
 	my $client = shift;
-	my $list = shift;
+	my $list   = shift;
 
 	my $body = "";
 
 	my $fullparams = fetchAsyncRequest('xxx','genre');
-	my $params = $fullparams->{'params'};
-
-
-	my $genreid = $params->{'id'};
+	my $params     = $fullparams->{'params'};
+	my $genreid    = $params->{'id'};
 
 	if ($genreid eq 'root') {
 		$params->{'errmsg'} = "PLUGIN_LIVE365_LOADING_GENRES_ERROR";
@@ -227,37 +241,46 @@ sub handleBrowseStation {
 	# Errcode = 0 means the browse is in progress.
 	# Errcode < 0 means normal completion with no async stuff needed.
 	if ($errcode != 0) {
+
 		if ($errcode > 0) {
 			$params->{'errmsg'} = "PLUGIN_LIVE365_LOGIN_ERROR_ACTION";
 		}
+
 		return handleIndex($client,$params);
 	}
 
-	storeAsyncRequest("xxx","station",{client => $client, params => $params, callback => $callback, httpClient => $httpClient, response => $response});
+	storeAsyncRequest("xxx", "station", {
+		client     => $client,
+		params     => $params,
+		callback   => $callback,
+		httpClient => $httpClient,
+		response   => $response
+	});
+
 	return undef;
 }
 
 my %lookupStrings = (
-	"presets" 		=> "PLUGIN_LIVE365_PRESETS",
-	"picks"   		=> "PLUGIN_LIVE365_BROWSEPICKS",
-	"pro"     		=> "PLUGIN_LIVE365_BROWSEPROS",
-	"all"     		=> "PLUGIN_LIVE365_BROWSEALL",
-	"tac"			=> "PLUGIN_LIVE365_SEARCH_TAC",
-	"artist"		=> "PLUGIN_LIVE365_SEARCH_A",
-	"track"			=> "PLUGIN_LIVE365_SEARCH_T",
-	"cd"			=> "PLUGIN_LIVE365_SEARCH_C",
-	"station"		=> "PLUGIN_LIVE365_SEARCH_E",
-	"location"		=> "PLUGIN_LIVE365_SEARCH_L",
-	"broadcaster"	=> "PLUGIN_LIVE365_SEARCH_H",
-	"genres"		=> "PLUGIN_LIVE365_BROWSEGENRES",
-        );
+	"presets"     => "PLUGIN_LIVE365_PRESETS",
+	"picks"       => "PLUGIN_LIVE365_BROWSEPICKS",
+	"pro"         => "PLUGIN_LIVE365_BROWSEPROS",
+	"all"         => "PLUGIN_LIVE365_BROWSEALL",
+	"tac"         => "PLUGIN_LIVE365_SEARCH_TAC",
+	"artist"      => "PLUGIN_LIVE365_SEARCH_A",
+	"track"       => "PLUGIN_LIVE365_SEARCH_T",
+	"cd"          => "PLUGIN_LIVE365_SEARCH_C",
+	"station"     => "PLUGIN_LIVE365_SEARCH_E",
+	"location"    => "PLUGIN_LIVE365_SEARCH_L",
+	"broadcaster" => "PLUGIN_LIVE365_SEARCH_H",
+	"genres"      => "PLUGIN_LIVE365_BROWSEGENRES",
+);
 
 my %lookupGenres = (
 	"presets" => "N/A",  # Not used
 	"picks"   => "ESP",
 	"pro"     => "Pro",
 	"all"     => "All"
-        );
+);
 
 sub startBrowseStation {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
@@ -270,8 +293,7 @@ sub startBrowseStation {
 
 		# Presets.  Clear everything and reload just because we're lazy.
 		$API->clearStationDirectory();
-		$API->loadMemberPresets(
-			$source, $client, \&completeBrowseStation, \&errorBrowseStation);
+		$API->loadMemberPresets( $source, $client, \&completeBrowseStation, \&errorBrowseStation);
 			
 	} elsif ($lookupGenres{$brtype}) {
 
@@ -281,7 +303,7 @@ sub startBrowseStation {
 		#   We will only ever have N channels in the Stations hash.  We clear and reload
 		#   the N channels page by page.  It allows us to skip around pages a bit easier
 		#   at the expense of a possible performance hit.
-		my @optionalFirstParam;
+		my @optionalFirstParam = ();
 
 		if ($params->{'start'}) {
 			@optionalFirstParam = ( "first", $params->{'start'} + 1);
@@ -294,12 +316,13 @@ sub startBrowseStation {
 			\&completeBrowseStation,
 			\&errorBrowseStation,
 			0,
-			sort			=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
-			searchfields	=> Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
-			rows			=> ROWS_TO_RETRIEVE,
-			genre			=> $lookupGenres{$brtype},
+			'sort'         => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
+			'searchfields' => Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
+			'rows'         => ROWS_TO_RETRIEVE,
+			'genre'	       => $lookupGenres{$brtype},
 			@optionalFirstParam
-			);
+		);
+
 	} else {
 
 		# What are you asking us to do?!?
@@ -317,7 +340,7 @@ sub completeBrowseStation {
 	my $brtype = $params->{'type'};
 
 	my $body = buildStationBrowseHTML($params);
-		
+
 	createAsyncWebPage($client,$body,$fullparams);
 }
 
@@ -350,17 +373,23 @@ sub buildStationBrowseHTML {
 	# Set up paging links for search vs. browse
 	my $targetPage;
 	my $targetParms;
+
 	if ($isSearch) {
+
 		$targetPage = "search.html";
 		$targetParms = "type=" . $params->{'type'} . "&query=" .
-					   URI::Escape::uri_escape($params->{'query'}) .
-					   "&player=" . $params->{'player'};
+			URI::Escape::uri_escape($params->{'query'}) .
+			"&player=" . $params->{'player'};
+
 	} else {
+
 		$targetPage = "browse.html";
 		$targetParms = "type=" . $params->{'type'} . "&player=" . $params->{'player'};
+
 		if ($params->{'id'}) {
 			$targetParms .= "&id=" . $params->{'id'};
 		}
+
 		if ($params->{'name'}) {
 			$targetParms .= "&name=" . $params->{'name'};
 		}
@@ -368,7 +397,9 @@ sub buildStationBrowseHTML {
 
 	# If we have nothing to show, show an error.
 	if ($totalcount == 0) {
+
 		$params->{'errmsg'} = "PLUGIN_LIVE365_NOSTATIONS";
+
 	} else {
 	
 		# Handle paging sections, if necessary
@@ -379,13 +410,12 @@ sub buildStationBrowseHTML {
 			$params->{'start'} = 1;
 
 			Slim::Web::Pages->simpleHeader({
-					'itemCount'    => $totalcount,
-					'startRef'     => \$params->{'start'},
-					'headerRef'    => \$params->{'browselist_header'},
-					'skinOverride' => $params->{'skinOverride'},
-					'perPage'        => ROWS_TO_RETRIEVE,
-				}
-			);
+				'itemCount'    => $totalcount,
+				'startRef'     => \$params->{'start'},
+				'headerRef'    => \$params->{'browselist_header'},
+				'skinOverride' => $params->{'skinOverride'},
+				'perPage'      => ROWS_TO_RETRIEVE,
+			});
 	
 		} else {
 
@@ -399,39 +429,40 @@ sub buildStationBrowseHTML {
 		}
 	
 		my %listform = %$params;
-		my $i = 0;
-		my $slist = $API->{Stations};
+		my $i        = 0;
+		my $slist    = $API->{Stations};
+
 		for my $station (@$slist) {
-			$listform{'stationid'} = $station->{STATION_ID};
-			$listform{'stationname'} = $station->{STATION_TITLE};
-			$listform{'listeners'} = $station->{STATION_LISTENERS_ACTIVE};
+
+			$listform{'stationid'}    = $station->{STATION_ID};
+			$listform{'stationname'}  = $station->{STATION_TITLE};
+			$listform{'listeners'}    = $station->{STATION_LISTENERS_ACTIVE};
 			$listform{'maxlisteners'} = $station->{STATION_LISTENERS_MAX};
-			$listform{'connection'} = $station->{STATION_CONNECTION};
-			$listform{'rating'} = $station->{STATION_RATING};
-			$listform{'quality'} = $station->{STATION_QUALITY_LEVEL};
-			$listform{'access'} = $station->{LISTENER_ACCESS};
-			$listform{'stationmode'} = 1;
-			$listform{'odd'} = $i++ % 2;
-			$listform{'current'} = $i;
-			$listform{'mode'} = "";
+			$listform{'connection'}   = $station->{STATION_CONNECTION};
+			$listform{'rating'}       = $station->{STATION_RATING};
+			$listform{'quality'}      = $station->{STATION_QUALITY_LEVEL};
+			$listform{'access'}       = $station->{LISTENER_ACCESS};
+			$listform{'stationmode'}  = 1;
+			$listform{'odd'}          = $i++ % 2;
+			$listform{'current'}      = $i;
+			$listform{'mode'}         = "";
+
 			if ($params->{'extrainfo_function'}) {
 				$listform{'extrainfo'} = eval($params->{'extrainfo_function'});
 			}
-			$params->{'browse_list'} .=	
-				${filltemplatefile("live365_browse_list.html", 
-							\%listform)};
+
+			$params->{'browse_list'} .= ${filltemplatefile("live365_browse_list.html", \%listform)};
 		}
-	
+
 		$params->{'match_count'} = $totalcount;
 	}
 
 	return filltemplatefile(($isSearch ? "live365_search.html" : "live365_browse.html"), $params);
 }
 
-#
 #  Handle Browse action (Genres or Stations)
 #    Just refer them off to the right handler after checking the client and login status.
-#
+
 sub handleBrowse {
 	my ($client, $params) = @_;
 
@@ -445,15 +476,17 @@ sub handleBrowse {
 	$params->{'listname'} = string($lookupStrings{$brtype});
 
 	$params->{'pwd_list'} = [
-							{'hreftype' => 'Live365Index',
-								'title' => string("PLUGIN_LIVE365_MODULE_NAME"),
-								},
-							{'hreftype' => 'Live365Browse',
-								'title' => $params->{'listname'},
-								'genreid' => $params->{'type'} eq "genres" ? 'root' : '',
-								'type' => $brtype,
-								},
-							];
+		{
+			'hreftype' => 'Live365Index',
+			'title' => string("PLUGIN_LIVE365_MODULE_NAME"),
+		},
+		{
+			'hreftype' => 'Live365Browse',
+			'title' => $params->{'listname'},
+			'genreid' => $params->{'type'} eq "genres" ? 'root' : '',
+			'type' => $brtype,
+		},
+	];
 
 	if ($params->{'type'} eq "genres") {
 		return handleBrowseGenre(@_);
@@ -483,18 +516,22 @@ sub handleSearch {
 	$params->{'listname'} = string($lookupStrings{$brtype});
 
 	$params->{'pwd_list'} = [
-							{'hreftype' => 'Live365Index',
-								'title' => string("PLUGIN_LIVE365_MODULE_NAME"),
-								},
-							{'hreftype' => 'Live365Search',
-								'title' => string("PLUGIN_LIVE365_SEARCH"),
-								'type' => $brtype,
-								},
-							];
+		{
+			'hreftype' => 'Live365Index',
+			'title' => string("PLUGIN_LIVE365_MODULE_NAME"),
+		},
+		{
+			'hreftype' => 'Live365Search',
+			'title' => string("PLUGIN_LIVE365_SEARCH"),
+			'type' => $brtype,
+		},
+	];
 
 	# Short circuit error msg if query param not given
-	unless ($params->{'query'}) {
+	if (!$params->{'query'}) {
+
 		$params->{'numresults'} = -1;
+
 		return filltemplatefile("live365_search.html", $params);
 	}
 
@@ -504,41 +541,50 @@ sub handleSearch {
 	# Errcode = 0 means the search is in progress.
 	# Errcode < 0 means normal completion with no async stuff needed.
 	if ($errcode != 0) {
+
 		if ($errcode > 0) {
 			$params->{'errmsg'} = "PLUGIN_LIVE365_NOSTATIONS";
 		}
+
 		return filltemplatefile("live365_search.html", $params);
 	}
 
-	storeAsyncRequest("xxx","search",{client => $client, params => $params, callback => $callback, httpClient => $httpClient, response => $response});
+	storeAsyncRequest("xxx", "search", {
+		client     => $client,
+		params     => $params,
+		callback   => $callback,
+		httpClient => $httpClient,
+		response   => $response
+	});
+
 	return undef;
 }
 
 my %lookupSearchFields = (
-	"tac"			=> "T:A:C",
-	"artist"		=> "A",
-	"track"			=> "T",
-	"cd"			=> "C",
-	"station"		=> "E",
-	"location"		=> "L",
-	"broadcaster"	=> "H",
-        );
+	"tac"         => "T:A:C",
+	"artist"      => "A",
+	"track"       => "T",
+	"cd"          => "C",
+	"station"     => "E",
+	"location"    => "L",
+	"broadcaster" => "H",
+);
 
 my %lookupExtraInfo = (
-	"tac"			=> "\&showPlaylistMatches(\$station->{STATION_PLAYLIST_INFO}->{PlaylistEntry})",
-	"artist"		=> "\&showPlaylistMatches(\$station->{STATION_PLAYLIST_INFO}->{PlaylistEntry})",
-	"track"			=> "\&showPlaylistMatches(\$station->{STATION_PLAYLIST_INFO}->{PlaylistEntry})",
-	"cd"			=> "\&showPlaylistMatches(\$station->{STATION_PLAYLIST_INFO}->{PlaylistEntry})",
-	"station"		=> "",
-	"location"		=> "\$station->{STATION_LOCATION}",
-	"broadcaster"	=> "\$station->{STATION_BROADCASTER}",
-        );
+	"tac"         => "\&showPlaylistMatches(\$station->{STATION_PLAYLIST_INFO}->{PlaylistEntry})",
+	"artist"      => "\&showPlaylistMatches(\$station->{STATION_PLAYLIST_INFO}->{PlaylistEntry})",
+	"track"       => "\&showPlaylistMatches(\$station->{STATION_PLAYLIST_INFO}->{PlaylistEntry})",
+	"cd"          => "\&showPlaylistMatches(\$station->{STATION_PLAYLIST_INFO}->{PlaylistEntry})",
+	"station"     => "",
+	"location"    => "\$station->{STATION_LOCATION}",
+	"broadcaster" => "\$station->{STATION_BROADCASTER}",
+);
 
 sub startSearch {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
 
 	my $query = $params->{'query'};
-	my $type = $params->{'type'};
+	my $type  = $params->{'type'};
 
 	my $source = $lookupStrings{$type};
 
@@ -551,17 +597,17 @@ sub startSearch {
 	
 	$API->clearStationDirectory();
 	$API->loadStationDirectory(
-			$source,
-			$client, 
-			\&completeSearch,
-			\&errorSearch,
-			0,
-			'sort'			=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
-			'searchfields'	=> $lookupSearchFields{$type},
-			'rows'			=> ROWS_TO_RETRIEVE,
-			'searchdesc'		=> $query,
-			@optionalFirstParam
-		);
+		$source,
+		$client, 
+		\&completeSearch,
+		\&errorSearch,
+		0,
+		'sort'         => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
+		'searchfields' => $lookupSearchFields{$type},
+		'rows'         => ROWS_TO_RETRIEVE,
+		'searchdesc'   => $query,
+		@optionalFirstParam
+	);
 
 	return 0;
 }
@@ -575,11 +621,12 @@ sub completeSearch {
 
 	my $showDetails = Slim::Utils::Prefs::get( 'plugin_live365_web_show_details' );
 
-	push @{$params->{'pwd_list'}},	{'hreftype' => 'Live365Search',
-								'title' => $params->{'listname'} . ' -> ' . $params->{'query'},
-								'type' => $brtype,
-								'query' => $params->{'query'},
-								};
+	push @{$params->{'pwd_list'}}, {
+		'hreftype' => 'Live365Search',
+		'title'    => join(' -> ', $params->{'listname'}, $params->{'query'}),
+		'type'     => $brtype,
+		'query'    => $params->{'query'},
+	};
 
 	if ($showDetails) {
 		$params->{'extrainfo_function'} = $lookupExtraInfo{$brtype};
@@ -619,9 +666,13 @@ sub showPlaylistMatches {
 	}
 
 	foreach my $item (@templist) {
+
 		# Empty values in the XML show up as refs to hashes
-		next if (ref($item->{Artist}) eq "HASH" ||
-		         ref($item->{Title}) eq "HASH");
+		if (ref($item->{Artist}) eq "HASH" || ref($item->{Title}) eq "HASH") {
+
+			next;
+		}
+
 		$retval .= "<br>\n" if ($retval);
 		$retval .= $item->{Artist} . " - " . $item->{Title};
 		$retval .= " (" . $item->{Album} . ")" unless (ref($item->{Album}) eq "HASH");
@@ -642,7 +693,9 @@ sub handleIndex {
 	$params->{'loggedin'} = $API->isLoggedIn();
 
 	if ($params->{'autologin'} && !($params->{'loggedin'})) {
+
 		$params->{'action'} = "in";
+
 		# Stop infinite loops in the event we don't log in successfully
 		$params->{'autologin'} = 0;
 
@@ -662,7 +715,13 @@ sub handleIndex {
 sub handleLogin {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
 
-	storeAsyncRequest("xxx","login",{client => $client, params => $params, callback => $callback, httpClient => $httpClient, response => $response});
+	storeAsyncRequest("xxx", "login", {
+		client     => $client,
+		params     => $params,
+		callback   => $callback,
+		httpClient => $httpClient,
+		response   => $response
+	});
 
 	my $errcode = doLoginLogout($client, $params, $callback, $httpClient, $response);
 	
@@ -670,9 +729,11 @@ sub handleLogin {
 	# Errcode = 0 means the login is in progress.
 	# Errcode < 0 means normal completion with no async stuff needed.
 	if ($errcode != 0) {
+
 		if ($errcode > 0) {
 			$params->{'errmsg'} = "PLUGIN_LIVE365_NO_CREDENTIALS";
 		}
+
 		return handleIndex($client,$params);
 	}
 
@@ -680,17 +741,16 @@ sub handleLogin {
 }
 
 my @login_statusText = qw(
-		PLUGIN_LIVE365_LOGIN_SUCCESS
-		PLUGIN_LIVE365_LOGIN_ERROR_NAME
-		PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
-		PLUGIN_LIVE365_LOGIN_ERROR_ACTION
-		PLUGIN_LIVE365_LOGIN_ERROR_ORGANIZATION
-		PLUGIN_LIVE365_LOGIN_ERROR_SESSION
-		PLUGIN_LIVE365_LOGIN_ERROR_HTTP
-		);
+	PLUGIN_LIVE365_LOGIN_SUCCESS
+	PLUGIN_LIVE365_LOGIN_ERROR_NAME
+	PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
+	PLUGIN_LIVE365_LOGIN_ERROR_ACTION
+	PLUGIN_LIVE365_LOGIN_ERROR_ORGANIZATION
+	PLUGIN_LIVE365_LOGIN_ERROR_SESSION
+	PLUGIN_LIVE365_LOGIN_ERROR_HTTP
+);
 
-
-sub doLoginLogout() {
+sub doLoginLogout {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
 	
 	my $action = $params->{'action'};
@@ -703,54 +763,73 @@ sub doLoginLogout() {
 	}
 
 	if ($action eq 'in') {
-		if( $userID and $password ) {
-			$::d_plugins && msg( "Live365: logging in $userID\n" );
+
+		if ($userID and $password ) {
+
+			$log->info("Logging in $userID");
+
 			my $loginStatus = $API->login( $userID, $password, $client, \&webLoginDone);
+
 		} else {
-			$::d_plugins && msg( "Live365: no credentials set for login\n" );
+
+			$log->warn("Warning: No credentials set for login");
+
 			return 1;
 		}
+
 	} else {
-		$::d_plugins && msg( "Live365: logging out $userID\n" );
+
+		$log->info("Logging out $userID");
+
 		my $logoutStatus = $API->logout($client, \&webLogoutDone);
 	}
+
 	return 0;
 }
 
 sub webLoginDone {
 	my $client = shift;
 	my $args   = shift;
-	
+
 	my $loginStatus = $args->{'status'};
 
 	my $params = fetchAsyncRequest('xxx','login');
 
 	if( $loginStatus == 0 ) {
+
 		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', $API->getSessionID() );
 		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', $API->getMemberStatus() );
+
 		$API->setLoggedIn( 1 );
-		$::d_plugins && msg( "Live365: logged in: " . $API->getSessionID() . "\n" );
+
+		$log->info("Logged in: ", $API->getSessionID);
+
 	} else {
+
 		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', undef );
 		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', undef );
+
 		$API->setLoggedIn( 0 );
-		$::d_plugins && msg( "Live365: login failure: " . $login_statusText[ $loginStatus ] . "\n" );
+
+		$log->warn("Warning: login failure: $login_statusText[$loginStatus]");
+
 		$params->{'params'}->{'errmsg'} = $login_statusText[ $loginStatus ];
 	}
 
-	my $body = handleIndex($client,$params->{'params'});
+	my $body = handleIndex($client, $params->{'params'});
 	
-	createAsyncWebPage($client,$body,$params);
+	createAsyncWebPage($client, $body, $params);
 }
 
 sub webLogoutDone {
 	my $client = shift;
 
 	$API->setLoggedIn( 0 );
+
 	Slim::Utils::Prefs::set( 'plugin_live365_sessionid', '' );
 
 	#my $params = fetchAsyncRequest($client->id(),'login');
-	my $params = fetchAsyncRequest('xxx','login');
+	my $params = fetchAsyncRequest('xxx', 'login');
 
 	my $body = handleIndex($client,$params->{'params'});
 	
@@ -768,8 +847,10 @@ sub createAsyncWebPage {
 	
 	# create webpage if we were called asynchronously
 	my $current_player = "";
-	if (defined($APIclient)) {
-		$current_player = $APIclient->id();
+
+	if (defined $APIclient) {
+
+		$current_player = $APIclient->id;
 	}
 		
 	$params->{callback}->($current_player, $params->{params}, $output, $params->{httpClient}, $params->{response});
@@ -783,21 +864,21 @@ sub createAsyncWebPage {
 my %async_queue = ();
 
 sub storeAsyncRequest {
-	my $client = shift;
-	my $operation = shift;
-	my $params = shift;
+	my ($client, $operation, $params) = @_;
 	
 	my $asynckey = $operation . "--" . $client;
+
 	$async_queue{$asynckey} = $params;
 }
 
 sub fetchAsyncRequest {
-	my $client = shift;
-	my $operation = shift;
+	my ($client, $operation) = @_;
 
 	my $asynckey = $operation . "--" . $client;
-	my $retval = $async_queue{$asynckey};
+	my $retval   = $async_queue{$asynckey};
+
 	delete $async_queue{$asynckey};
+
 	return $retval;
 }
 
@@ -827,12 +908,17 @@ sub cli_login {
 	}
 
 	if( $userID and $password ) {
-		$::d_plugins && msg( "Live365: logging in $userID (from CLI)\n" );
+
+		$log->info("Logging in $userID (from CLI)");
+
 		my $loginStatus = $API->login( $userID, $password, $request, \&cli_login_cb);
+
 		return 1;
 	} 
 	else {
-		$::d_plugins && msg( "Live365: no credentials set for login (from CLI)\n" );
+
+		$log->warn("Warning: No credentials set for login (from CLI)");
+
 		return 0;
 	}
 }
@@ -842,24 +928,29 @@ sub cli_login_cb {
 	my $loginStatus = shift;
 
 	if( $loginStatus == 0 ) {
+
 		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', $API->getSessionID() );
 		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', $API->getMemberStatus() );
+
 		$API->setLoggedIn( 1 );
-		$::d_plugins && msg( "Live365: logged in: " . $API->getSessionID() . " (from CLI)\n" );
+
+		$log->info("Logged in: ", $API->getSessionID, " (from CLI)");
+
 	} else {
+
 		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', undef );
 		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', undef );
+
 		$API->setLoggedIn( 0 );
-		
+
 		# remember we failed so we don't try it again...
 		$request->addParam('__loginfailed', 1);
-		
-		$::d_plugins && msg( "Live365: login failure: " . $login_statusText[ $loginStatus ] . " (from CLI)\n" );
+
+		$log->warn("Warning: login failure: $login_statusText[$loginStatus] (from CLI)");
 	}
 
-	# this will re-call the cli handling function we left for handling
-	# login
-	$request->jumpbacktofunc();
+	# this will re-call the cli handling function we left for handling login
+	$request->jumpbacktofunc;
 }
 
 # login management for cli handling code
@@ -867,42 +958,46 @@ sub cli_manage_login {
 	my $request = shift;
 
 	# check we're logged in
-	if (!($API->isLoggedIn())) {
+	if (!$API->isLoggedIn) {
 	
 		# try to login or check if we failed already
 		if (!cli_login($request) || $request->getParam('__loginfailed')) {
+
 			# cannot login for some reason
 			$request->addResult("loginerror", 1);
 			$request->addResult('count', 0);
 	
 			$request->setStatusDone();	
 			return 1;
-		}
-		
-		else {
-		
+
+		} else {
+
 			# login in progress, wave bye bye
 			$request->setStatusProcessing();
 			return 1;
 		}
 	}
+
 	return 0;
 }
-
 
 # handles 'live365 genres'
 sub cli_genresQuery {
 	my $request = shift;
 	
-	$::d_plugins && msg("Live365: cli_genresQuery()\n");
+	$log->info("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['live365'], ['genres']])) {
+
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
-	return if cli_manage_login($request);
+	if (cli_manage_login($request)) {
+
+		return;
+	}
 	
 	$API->loadGenreList($request, \&cli_genresQuery_cb, \&cli_error_cb);
 
@@ -949,27 +1044,30 @@ sub cli_genresQuery_cb {
 }
 
 my %cli_sort_lookup = (
-	'name' 	=>	'T:A',
-	'bitrate' 	=>	'B:D',
-	'rating' 	=>	'R:D',
-	'listeners' =>	'L:D',
-	);
-
+	'name' 	    => 'T:A',
+	'bitrate'   => 'B:D',
+	'rating'    => 'R:D',
+	'listeners' => 'L:D',
+);
 
 # handles 'live365 stations'
 sub cli_stationsQuery {
 	my $request = shift;
 	
-	$::d_plugins && msg("Live365: cli_stationsQuery()\n");
+	$log->info("Enter\n");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['live365'], ['stations']])) {
+
 		$request->setStatusBadDispatch();
 		return;
 	}
 	
 	# manage login
-	return if cli_manage_login($request);
+	if (cli_manage_login($request)) {
+
+		return;
+	}
 
 	# get our parameter
 	my $genre = $request->getParam('genre_id');
@@ -982,7 +1080,8 @@ sub cli_stationsQuery {
 			$genre,
 			$request, 
 			\&cli_stationsQuery_cb, 
-			\&cli_error_cb);
+			\&cli_error_cb
+		);
 	}
 	else {
 	
@@ -1033,12 +1132,12 @@ sub cli_stationsQuery {
 			\&cli_stationsQuery_cb, 
 			\&cli_error_cb, 
 			0,
-			'genre'			=> $genre,
-			'sort'			=> $sort,
-			'rows'			=> $quantity,
-			'first'			=> $index + 1,
-			'searchfields'	=> $queryf,
-			'searchdesc'	=> $query,
+			'genre'	       => $genre,
+			'sort'	       => $sort,
+			'rows'	       => $quantity,
+			'first'	       => $index + 1,
+			'searchfields' => $queryf,
+			'searchdesc'   => $query,
 		);
 	}
 
@@ -1053,11 +1152,12 @@ sub cli_stationsQuery_cb {
 	my $slist   = $API->{Stations};
 	my $start   = 0;
 	my $end     = scalar @$slist - 1;
-	my $valid	= 1;
+	my $valid   = 1;
 
 	print Data::Dumper::Dumper($slist);
 
 	if ($API->getStationSource() eq 'presets') {
+
 		# need to handle paging here...
 		my $index    = $request->getParam('_index');
 		my $quantity = $request->getParam('_quantity');
@@ -1099,7 +1199,7 @@ sub cli_stationsQuery_cb {
 sub cli_playlistCommand {
 	my $request = shift;
 	
-	$::d_plugins && msg("Live365: cli_playlistCommand()\n");
+	$log->info("Begin Function");
 
 	# check this is the correct query
 	if ($request->isNotCommand([['live365'], ['playlist']])) {
@@ -1130,7 +1230,8 @@ sub cli_playlistCommand {
 		$stationid,
 		$request,
 		\&cli_playlistCommand_cb,
-		\&cli_error_cb);
+		\&cli_error_cb
+	);
 	
 	$request->setStatusProcessing();	
 }
@@ -1141,20 +1242,25 @@ sub cli_playlistCommand_cb {
 	# get params	
 	my $mode   = $request->getParam('_mode');
 	my $client = $request->client();
-	
-	my $play = ($mode eq 'play');
+	my $play   = ($mode eq 'play');
 
 	# data was loaded, get URL
 	my $stationURL = $API->getStationInfoURL();
-	$::d_plugins && msg( "Live365: URL: $stationURL (from CLI)\n" );
+
+	$log->info("URL: $stationURL (from CLI)");
 	
 	Slim::Music::Info::setContentType($stationURL, 'mp3');
-	Slim::Music::Info::setTitle($stationURL, 
-		 $API->getStationInfoString('STATION_TITLE'));
-	
-	$play and $client->execute([ 'playlist', 'clear' ] );
+	Slim::Music::Info::setTitle($stationURL, $API->getStationInfoString('STATION_TITLE'));
+
+	if ($play) {
+		$client->execute([ 'playlist', 'clear' ] );
+	}
+
 	$client->execute([ 'playlist', 'add', $stationURL ] );
-	$play and $client->execute([ 'play' ] );
+
+	if ($play) {
+		$client->execute([ 'play' ] );
+	}
 
 	$request->setStatusDone();		
 }
@@ -1168,8 +1274,3 @@ sub cli_error_cb {
 }
 
 1;
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

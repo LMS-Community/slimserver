@@ -1,0 +1,70 @@
+[% FILTER null %]
+
+	[% pwd_list = BLOCK %]
+
+		[% IF playerid %]
+
+			[% "PLAYER_SETTINGS" | string %] [% IF playername %][% "FOR" | string %] [% playername %][% END %]
+
+		[% ELSE %]
+
+			<a href="setup.html?page=BASIC_SERVER_SETTINGS">[% "SERVER_SETTINGS" | string %]</a>
+
+		[%END %] / <a href="setup.html?page=[% page %]">[% page | string %]</a>
+
+	[% END %]
+
+	[% pageHeaderInfo = BLOCK %]
+		[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
+	[% END %]
+
+[% END %]
+
+[% pagetitle = pagetitle; pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %] 
+
+<form method="post" action="debugging.html">
+
+	<input type=hidden value="[% page %]" name="page">
+
+	<div class="settingSection">
+
+		<div class="prefHead">[% "SETUP_DEBUG_SERVER_LOG" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_DEBUG_SERVER_LOG_DESC" | string %]</div>
+
+		[% debugServerLog %]
+
+		<div class="prefHead">[% "SETUP_DEBUG_SCANNER_LOG" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_DEBUG_SCANNER_LOG_DESC" | string %]</div>
+
+		[% debugScannerLog %]
+
+		<div class="prefHead">[% "DEBUGGING_SETTINGS" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_GROUP_DEBUG_DESC" | string %]</div>
+
+		[% FOREACH category = categories %]
+
+			<p>
+			<select class="stdedit" name="[% category.name %]" id="[% category.name %]">
+
+			[%- FOREACH value = logLevels -%]
+				<option [% IF value == category.current %]selected[% END %] value="[% value %]">[% value | lower | ucfirst %]</option>
+
+			[%- END -%]
+
+			</select>
+
+			<label for="[% category.name %]" class="stdlabel">([% category.name %]) - [% category.label %]</label>
+			</p>
+
+		[% END %]
+
+	</div>
+
+	<p><input name="submit" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]"></p>
+</form>
+
+</div>
+
+<p></p>
+
+[% PROCESS pagefooter.html %]

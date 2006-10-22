@@ -6,6 +6,7 @@ use strict;
 use Scalar::Util qw(blessed);
 
 use Slim::Player::ProtocolHandlers;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -14,15 +15,20 @@ use Plugins::MoodLogic::InstantMix;
 use Plugins::MoodLogic::MoodWheel;
 use Plugins::MoodLogic::Common;
 
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.moodlogic',
+	'defaultLevel' => 'WARN',
+});
+
 my $mixer;
 my $isScanning = 0;
 
 my $initialized = 0;
 my $browser;
 
-our @mood_names;
-our %mood_hash;
-my $last_error = 0;
+our @mood_names = ();
+our %mood_hash  = ();
+my $last_error  = 0;
 
 sub strings {
 	return '';
@@ -108,51 +114,52 @@ sub initPlugin {
 	}
 	
 	if (!defined $mixer) {
-		$::d_moodlogic && msg("MoodLogic: could not find moodlogic mixer component\n");
+
+		logError("Could not find MoodLogic mixer component.");
 		return 0;
 	}
 	
 	$browser = Win32::OLE->new("$name.MlMixerFilter");
 	
 	if (!defined $browser) {
-		$::d_moodlogic && msg("MoodLogic: could not find moodlogic filter component\n");
+
+		logError("Could not find MoodLogic filter component.");
 		return 0;
 	}
-	
+
 	Win32::OLE->WithEvents($mixer, \&Plugins::MoodLogic::Common::event_hook);
-	
-	$mixer->{JetPwdMixer} = 'C393558B6B794D';
-	$mixer->{JetPwdPublic} = 'F8F4E734E2CAE6B';
+
+	# What are these constants from?
+	$mixer->{JetPwdMixer}   = 'C393558B6B794D';
+	$mixer->{JetPwdPublic}  = 'F8F4E734E2CAE6B';
 	$mixer->{JetPwdPrivate} = '5B1F074097AA49F5B9';
-	$mixer->{UseStrings} = 1;
+	$mixer->{UseStrings}    = 1;
+	$mixer->{MixMode}       = 0;
 	$mixer->Initialize();
-	$mixer->{MixMode} = 0;
 	
 	if ($last_error != 0) {
-		$::d_moodlogic && msg("MoodLogic: rebuilding mixer db\n");
+
+		$log->info("Rebuilding mixer database.");
+
 		$mixer->MixerDb_Create();
 		$last_error = 0;
 		$mixer->Initialize();
+
 		if ($last_error != 0) {
 			return 0;
 		}
 	}
 	
-	my $i = 0;
-	
-	push @mood_names, string('MOODLOGIC_MOOD_0');
-	push @mood_names, string('MOODLOGIC_MOOD_1');
-	push @mood_names, string('MOODLOGIC_MOOD_2');
-	push @mood_names, string('MOODLOGIC_MOOD_3');
-	push @mood_names, string('MOODLOGIC_MOOD_4');
-	push @mood_names, string('MOODLOGIC_MOOD_5');
-	push @mood_names, string('MOODLOGIC_MOOD_6');
-	
-	map { $mood_hash{$_} = $i++ } @mood_names;
+	for (my $i = 0; $i < 7; $i++) {
+
+		push @mood_names, string("MOODLOGIC_MOOD_$i");
+
+		$mood_hash{$mood_names{$i}} = $i;
+	}
 
 	#Slim::Utils::Strings::addStrings($strings);
 	Slim::Player::ProtocolHandlers->registerHandler("moodlogicplaylist", "0");
-	
+
 	# addImporter for Plugins, may include mixer function, setup function, mixerlink reference and use on/off.
 	Slim::Music::Import->addImporter($class, {
 		'mixer'     => \&mixerFunction,
@@ -208,7 +215,7 @@ sub isMusicLibraryFileChanged {
 	my $file      = $mixer->{'JetFilePublic'} || return 0;
 	my $fileMTime = (stat $file)[9];
 
-	$::d_moodlogic && msg("MoodLogic: read library status of $fileMTime\n");
+	$log->debug("Read library status of $fileMTime");
 
 	# Only say "yes" if it has been more than one minute since we last finished scanning
 	# and the file mod time has changed since we last scanned. Note that if we are
@@ -219,14 +226,14 @@ sub isMusicLibraryFileChanged {
 
 	if ($fileMTime > $lastMLChange) {
 
-		$::d_moodlogic && msg("MoodLogic: music library has changed!\n");
+		$log->info("Music library has changed!");
 
 		my $scanInterval = Slim::Utils::Prefs::get('moodlogicscaninterval');
 
 		if (!$scanInterval) {
 
 			# only scan if moodlogicscaninterval is non-zero.
-			$::d_moodlogic && msg("MoodLogic: Scan Interval set to 0, rescanning disabled\n");
+			$log->info("Scan interval set to 0, rescanning disabled.");
 
 			return 0;
 		}
@@ -239,28 +246,33 @@ sub isMusicLibraryFileChanged {
 			return 1;
 		}
 
-		$::d_moodlogic && msg("MoodLogic: waiting for $scanInterval seconds to pass before rescanning\n");
+		$log->info("Waiting for $scanInterval seconds to pass before rescanning.");
 	}
 	
 	return 0;
 }
 
 sub getMoodWheel {
-	my $id = shift @_;
-	my $for = shift @_;
+	my ($id, $for) = @_;
+
 	my @enabled_moods = ();
 	
 	if ($for eq "genre") {
+
 		$mixer->{Seed_MGID} = $id;
 		$mixer->{MixMode} = 3;
+
 	} elsif ($for eq "artist") {
+
 		$mixer->{Seed_AID} = $id;
 		$mixer->{MixMode} = 2;
+
 	} else {
-		$::d_moodlogic && msg('MoodLogic: no/unknown type specified for mood wheel');
+
+		$log->warn('Warning: no/unknown type specified for mood wheel.');
 		return undef;
 	}
-	
+
 	push @enabled_moods, $mood_names[1] if ($mixer->{MF_1_Enabled});
 	push @enabled_moods, $mood_names[3] if ($mixer->{MF_3_Enabled});
 	push @enabled_moods, $mood_names[4] if ($mixer->{MF_4_Enabled});
@@ -274,19 +286,18 @@ sub mixerFunction {
 	my $client = shift;
 	
 	# look for parentParams (needed when multiple mixers have been used)
-	my $paramref = defined $client->modeParam('parentParams') ? $client->modeParam('parentParams') : $client->modeParameterStack(-1);
+	my $paramref  = defined $client->modeParam('parentParams') ? $client->modeParam('parentParams') : $client->modeParameterStack(-1);
 	my $listIndex = $paramref->{'listIndex'};
 
-	my $items = $paramref->{'listRef'};
+	my $items     = $paramref->{'listRef'};
 	my $hierarchy = $paramref->{'hierarchy'};
-	my $level	   = $paramref->{'level'} || 0;
+	my $level     = $paramref->{'level'} || 0;
 	my $descend   = $paramref->{'descend'};
 
 	my $currentItem = $items->[$listIndex];
-	my $all = !ref($currentItem);
+	my $all         = !ref($currentItem);
 
 	my @levels = split(",", $hierarchy);
-
 	my $mix;
 
 	# if we've chosen a particular song
@@ -315,9 +326,7 @@ sub mixerFunction {
 }
 
 sub mixerlink {
-	my $item = shift;
-	my $form = shift;
-	my $descend = shift;
+	my ($item, $form, $descend) = @_;
 
 	if ($descend) {
 		$form->{'mixable_descend'} = 1;
@@ -341,41 +350,57 @@ sub mixerlink {
 }
 
 sub getMix {
-	my $id = shift @_;
-	my $mood = shift @_;
-	my $for = shift @_;
+	my ($id, $mood, $for) = @_;
+
 	my @instant_mix = ();
 	
 	$mixer->{VarietyCombo} = 0; # resets mixer
-	if (defined $mood) {$::d_moodlogic && msg("MoodLogic: Create $mood mix for $for $id\n")};
+
+	if (defined $mood) {
+
+		$log->info("Create $mood mix for $for $id")
+	}
 	
 	if ($for eq "song") {
+
 		$mixer->{Seed_SID} = $id;
 		$mixer->{MixMode} = 0;
+
 	} elsif (defined $mood && defined $mood_hash{$mood}) {
+
 		$mixer->{MoodField} = $mood_hash{$mood};
+
 		if ($for eq "artist") {
+
 			$mixer->{Seed_AID} = $id;
 			$mixer->{MixMode} = 2;
+
 		} elsif ($for eq "genre") {
+
 			$mixer->{Seed_MGID} = $id;
 			$mixer->{MixMode} = 3;
+
 		} else {
-			$::d_moodlogic && msg("MoodLogic: no valid type specified for instant mix");
+
+			$log->warn("Warning: No valid type specified for instant mix.");
 			return undef;
 		}
+
 	} else {
-		$::d_moodlogic && msg("MoodLogic: no valid mood specified for instant mix");
+
+		$log->warn("Warning: No valid mood specified for instant mix.");
 		return undef;
 	}
 
-	$mixer->Process();	# the VarietyCombo property can only be set
-						# after an initial mix has been created
-	my $count = Slim::Utils::Prefs::get('instantMixMax');
+	# the VarietyCombo property can only be set
+	# after an initial mix has been created
+	$mixer->Process;
+
+	my $count   = Slim::Utils::Prefs::get('instantMixMax');
 	my $variety = Slim::Utils::Prefs::get('varietyCombo');
 
-	while ($mixer->Mix_PlaylistSongCount() < $count && $mixer->{VarietyCombo} > $variety)
-	{
+	while ($mixer->Mix_PlaylistSongCount() < $count && $mixer->{VarietyCombo} > $variety) {
+
 		# $mixer->{VarietyCombo} = 0 causes a mixer reset, so we have to avoid it.
 		$mixer->{VarietyCombo} = $mixer->{VarietyCombo} == 10 ? $mixer->{VarietyCombo} - 9 : $mixer->{VarietyCombo} - 10;
 		$mixer->Process(); # recreate mix
@@ -383,7 +408,8 @@ sub getMix {
 
 	$count = $mixer->Mix_PlaylistSongCount();
 
-	for (my $i=1; $i<=$count; $i++) {
+	for (my $i = 1; $i <= $count; $i++) {
+
 		push @instant_mix, Slim::Utils::Misc::fileURLFromPath($mixer->Mix_SongFile($i));
 	}
 
@@ -392,88 +418,103 @@ sub getMix {
 
 sub setupUse {
 	my $client = shift;
+
 	my %setupGroup = (
-		'PrefOrder' => ['moodlogic']
-		,'Suppress_PrefLine' => 1
-		,'Suppress_PrefSub' => 1
-		,'GroupLine' => 1
-		,'GroupSub' => 1
+		'PrefOrder'         => ['moodlogic'],
+		'Suppress_PrefLine' => 1,
+		'Suppress_PrefSub'  => 1,
+		'GroupLine'         => 1,
+		'GroupSub'          => 1,
 	);
+
 	my %setupPrefs = (
+
 		'moodlogic' => {
-			'validate' => \&Slim::Utils::Validate::trueFalse
-			,'changeIntro' => ""
-			,'options' => {
-				'1' => string('USE_MOODLOGIC')
-				,'0' => string('DONT_USE_MOODLOGIC')
-			}
-			,'onChange' => sub {
-					my ($client,$changeref,$paramref,$pageref) = @_;
-					
-					foreach my $client (Slim::Player::Client::clients()) {
-						Slim::Buttons::Home::updateMenu($client);
-					}
-					Slim::Music::Import->useImporter('MOODLOGIC',$changeref->{'moodlogic'}{'new'});
+			'validate'    => \&Slim::Utils::Validate::trueFalse,
+			'changeIntro' => "",
+			'options' => {
+				'1' => string('USE_MOODLOGIC'),
+				'0' => string('DONT_USE_MOODLOGIC'),
+			},
+			'onChange' => sub {
+				my ($client, $changeref, $paramref, $pageref) = @_;
+
+				for my $client (Slim::Player::Client::clients()) {
+					Slim::Buttons::Home::updateMenu($client);
 				}
-			,'optionSort' => 'KR'
-			,'inputTemplate' => 'setup_input_radio.html'
+
+				Slim::Music::Import->useImporter('MOODLOGIC', $changeref->{'moodlogic'}{'new'});
+			},
+			'optionSort'    => 'KR',
+			'inputTemplate' => 'setup_input_radio.html',
 		}
 	);
+
 	return (\%setupGroup,\%setupPrefs);
 }
 
 sub setupCategory {
+
 	my %setupCategory =(
-		'title' => string('SETUP_MOODLOGIC')
-		,'parent' => 'BASIC_SERVER_SETTINGS'
-		,'GroupOrder' => ['Default','MoodLogicPlaylistFormat']
-		,'Groups' => {
+		'title'      => string('SETUP_MOODLOGIC'),
+		'parent'     => 'BASIC_SERVER_SETTINGS',
+		'GroupOrder' => ['Default', 'MoodLogicPlaylistFormat'],
+		'Groups'     => {
+
 			'Default' => {
-					'PrefOrder' => ['instantMixMax','varietyCombo','moodlogicscaninterval']
-				}
-			,'MoodLogicPlaylistFormat' => {
-					'PrefOrder' => ['MoodLogicplaylistprefix','MoodLogicplaylistsuffix']
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupHead' => string('SETUP_MOODLOGICPLAYLISTFORMAT')
-					,'GroupDesc' => string('SETUP_MOODLOGICPLAYLISTFORMAT_DESC')
-					,'GroupLine' => 1
-					,'GroupSub' => 1
-				}
+				'PrefOrder' => ['instantMixMax','varietyCombo','moodlogicscaninterval'],
 			}
-		,'Prefs' => {
+
+			'MoodLogicPlaylistFormat' => {
+				'PrefOrder'         => ['MoodLogicplaylistprefix','MoodLogicplaylistsuffix'],
+				'PrefsInTable'      => 1,
+				'Suppress_PrefHead' => 1,
+				'Suppress_PrefDesc' => 1,
+				'Suppress_PrefLine' => 1,
+				'Suppress_PrefSub'  => 1,
+				'GroupHead'         => string('SETUP_MOODLOGICPLAYLISTFORMAT'),
+				'GroupDesc'         => string('SETUP_MOODLOGICPLAYLISTFORMAT_DESC'),
+				'GroupLine'         => 1,
+				'GroupSub'          => 1,
+			},
+		},
+
+		'Prefs' => {
+
 			'MoodLogicplaylistprefix' => {
-					'validate' => \&Slim::Utils::Validate::acceptAll
-					,'PrefSize' => 'large'
-				}
-			,'MoodLogicplaylistsuffix' => {
-					'validate' => \&Slim::Utils::Validate::acceptAll
-					,'PrefSize' => 'large'
-				}
-			,'moodlogicscaninterval' => {
-					'validate' => \&Slim::Utils::Validate::number
-					,'validateArgs' => [0,undef,1000]
-				}
-			,'instantMixMax'	=> {
-					'validate' => \&Slim::Utils::Validate::isInt
-					,'validateArgs' => [1,undef,1]
-				}
-			,'varietyCombo'	=> {
-					'validate' => \&Slim::Utils::Validate::isInt
-					,'validateArgs' => [1,100,1,1]
-				}
+				'validate' => \&Slim::Utils::Validate::acceptAll,
+				'PrefSize' => 'large',
+			},
+
+			'MoodLogicplaylistsuffix' => {
+				'validate' => \&Slim::Utils::Validate::acceptAll,
+				'PrefSize' => 'large',
+			},
+
+			'moodlogicscaninterval' => {
+				'validate'     => \&Slim::Utils::Validate::number,
+				'validateArgs' => [0, undef, 1000],
+			}
+
+			'instantMixMax' => {
+				'validate'     => \&Slim::Utils::Validate::isInt,
+				'validateArgs' => [1, undef, 1],
+			}
+
+			'varietyCombo'	=> {
+				'validate'     => \&Slim::Utils::Validate::isInt,
+				'validateArgs' => [1, 100, 1, 1],
+			}
 		}
 	);
-	return (\%setupCategory);
+
+	return \%setupCategory;
 };
 
 sub webPages {
 	my %pages = (
 		"instant_mix\.(?:htm|xml)" => \&instant_mix,
-		"mood_wheel\.(?:htm|xml)" => \&mood_wheel,
+		"mood_wheel\.(?:htm|xml)"  => \&mood_wheel,
 	);
 
 	return (\%pages);
@@ -502,12 +543,10 @@ sub mood_wheel {
 
 	} else {
 
-		$::d_moodlogic && msg('MoodLogic: no/unknown type specified for mood wheel');
+		$log->warn('Warning: no/unknown type specified for mood wheel');
 		return undef;
 	}
 
-	#$params->{'pwd_list'} = Slim::Web::Pages::generate_pwd_list($genre, $artist, $album, $player,$params->{'webroot'});
-	
 	$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("plugins/MoodLogic/mood_wheel_pwdlist.html", $params)};
 	$params->{'mood_list'} = $items;
 
@@ -535,6 +574,7 @@ sub instant_mix {
 	$params->{'levelName'} = "track";
 
 	if (defined $mood && $mood ne "") {
+
 		$params->{'pwd_list'} .= ${Slim::Web::HTTP::filltemplatefile("plugins/MoodLogic/mood_wheel_pwdlist.html", $params)};
 	}
 
@@ -560,7 +600,8 @@ sub instant_mix {
 
 	} else {
 
-		$::d_moodlogic && msg('MoodLogic: no/unknown type specified for instant mix');
+		$log->warn('Warning: no/unknown type specified for instant mix.');
+
 		return undef;
 	}
 

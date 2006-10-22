@@ -16,23 +16,25 @@ use URI;
 
 use Slim::Player::ProtocolHandlers;
 use Slim::Music::Info;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 sub read {
 	my ($class, $file, $baseDir, $url) = @_;
 
 	my @items   = ();
-	my $content  = read_file($file);
+	my $content = read_file($file);
+	my $log     = logger('formats.playlists');
 
 	# First try for version 3.0 ASX
 	if ($content =~ /<ASX/i) {
 		
 		# Forget trying to parse this as XML, all we care about are REF and ENTRYREF elements
-		$::d_parse && msg("parsing ASX: $file url: [$url]\n");
-		
+		$log->info("Parsing ASX 3.0: $file url: [$url]");
+
 		my @refs      = $content =~ m{<ref\s+href\s*=\s*"([^"]+)"}ig;
 		my @entryrefs = $content =~ m{<entryref\s+href\s*=\s*"([^"]+)"}ig;
-		
+
 		for my $href ( @refs, @entryrefs ) {
 			
 			# Bug 3160 (partial)
@@ -40,7 +42,7 @@ sub read {
 			# the use of the MMS protocol handler by making sure the URI starts with mms
 			$href =~ s/^http/mms/;
 			
-			$::d_parse && msg("Found an entry: $href\n");
+			$log->info("Found an entry: $href");
 			
 			# We've found URLs in ASX files that should be
 			# escaped to be legal - specifically, they contain
@@ -60,6 +62,9 @@ sub read {
 
 	# Next is version 2.0 ASX
 	elsif ($content =~ /[Reference]/) {
+
+		$log->info("Parsing ASX 2.0: $file url: [$url]");
+
 		while ($content =~ /^Ref(\d+)=(.*)$/gm) {
 
 			my $entry = URI->new($2);
@@ -81,6 +86,8 @@ sub read {
 	# And finally version 1.0 ASX
 	else {
 
+		$log->info("Parsing ASX 1.0: $file url: [$url]");
+
 		while ($content =~ /^(.*)$/gm) {
 
 			my $entry = $1;
@@ -92,7 +99,7 @@ sub read {
 		}
 	}
 
-	$::d_parse && msg("parsed " . scalar(@items) . " items in asx playlist\n");
+	$log->info("parsed " . scalar(@items) . " items out of ASX");
 
 	return @items;
 }

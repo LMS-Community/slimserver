@@ -10,7 +10,7 @@ package Slim::Utils::IPDetect;
 use strict;
 use Socket;
 use Symbol;
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 
 my $detectedIP = undef;
 my $localhost  = '127.0.0.1';
@@ -72,7 +72,7 @@ sub _init {
 
 	my $iaddr = inet_aton($raddr) || do {
 
-		msg("Warning: Couldn't call inet_aton($raddr) - falling back to $localhost\n");
+		logWarning("Couldn't call inet_aton($raddr) - falling back to $localhost");
 
 		$detectedIP = $localhost;
 
@@ -83,7 +83,7 @@ sub _init {
 
 	socket($sock, PF_INET, SOCK_DGRAM, $proto) || do {
 
-		msg("Warning: Couldn't call socket(PF_INET, SOCK_DGRAM, \$proto) - falling back to $localhost\n");
+		logWarning("Couldn't call socket(PF_INET, SOCK_DGRAM, \$proto) - falling back to $localhost");
 
 		$detectedIP = $localhost;
 
@@ -96,7 +96,7 @@ sub _init {
 
 		bind($sock, pack_sockaddr_in(0, $laddr)) or do {
 
-			msg("Warning: Couldn't call bind(pack_sockaddr_in(0, \$laddr) - falling back to $localhost\n");
+			logWarning("Couldn't call bind(pack_sockaddr_in(0, \$laddr) - falling back to $localhost");
 
 			$detectedIP = $localhost;
 
@@ -106,7 +106,7 @@ sub _init {
 
 	connect($sock, $paddr) || do {
 
-		msg("Warning: Couldn't call connect() - falling back to $localhost\n");
+		logWarning("Couldn't call connect() - falling back to $localhost");
 
 		$detectedIP = $localhost;
 

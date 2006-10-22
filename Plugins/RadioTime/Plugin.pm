@@ -18,19 +18,23 @@ use URI::Escape qw(uri_escape);
 
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
-use Slim::Utils::Misc;
 use Slim::Utils::Strings qw( string );
 use Slim::Web::XMLBrowser;
 
 my $FEED = 'http://opml.radiotime.com/Index.aspx';
 my $cli_next;
 
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.radiotime',
+	'defaultLevel' => 'WARN',
+	'description'  => getDisplayName(),
+});
+
 sub enabled {
 	return ($::VERSION ge '6.5');
 }
 
 sub initPlugin {
-	$::d_plugins && msg("RadioTime Plugin initializing.\n");
 
 	Slim::Buttons::Common::addMode('PLUGIN.RadioTime', getFunctions(), \&setMode);
 
@@ -43,7 +47,7 @@ sub initPlugin {
         [0, 1, 1, \&cliQuery]);
 	Slim::Control::Request::addDispatch(['radiotime', 'playlist', '_method' ],
 		[1, 1, 1, \&cliQuery]);
-	$cli_next=Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
+	$cli_next = Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
 		[0, 1, 1, \&cliRadiosQuery]);
 }
 
@@ -80,7 +84,7 @@ sub setMode {
 	Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
 
 	# we'll handle the push in a callback
-	$client->modeParam('handledTransition',1);
+	$client->modeParam('handledTransition', 1);
 }
 
 sub radioTimeURL {
@@ -140,23 +144,19 @@ sub webPages {
 sub cliQuery {
 	my $request = shift;
 	
-	$::d_plugins && msg("RadioTime: cliQuery()\n");
-	
 	Slim::Buttons::XMLBrowser::cliQuery('radiotime', radioTimeURL(), $request);
 }
 
 sub cliRadiosQuery {
 	my $request = shift;
 	
-	$::d_plugins && msg("RadioTime: cliRadiosQuery()\n");
-	
 	# what we want the query to report about ourself
 	my $data = {
-		'cmd' => 'radiotime',                    # cmd label
-		'name' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
-		'type' => 'xmlbrowser',              # type
+		'cmd'  => 'radiotime',
+		'name' => Slim::Utils::Strings::string(getDisplayName()),
+		'type' => 'xmlbrowser',
 	};
-	
+
 	# let our super duper function do all the hard work
 	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
 }

@@ -14,6 +14,7 @@ use IO::Socket;
 
 use Slim::Networking::Discovery;
 use Slim::Networking::Select;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::Prefs;
@@ -22,6 +23,8 @@ use Slim::Utils::Prefs;
 use constant SERVERPORT => 3483;
 
 my $udpsock = undef;
+
+my $log = logger('network.protocol');
 
 sub init {
 
@@ -33,20 +36,17 @@ sub init {
 
 	) or do {
 
-		errorMsg("There is already another copy of the SlimServer running on this machine. ($!)\n");
-		# XXX - exiting in a deep sub is kinda bad. should propagate
-		# up. Too bad perl doesn't have real exceptions.
-		exit 1;
+		# XXX - exiting in a deep sub is kinda bad. should propagate up.
+		logger('')->logdie("FATAL: There is already another copy of the SlimServer running on this machine. ($!)");
 	};
-	
+
 	defined(Slim::Utils::Network::blocking($udpsock, 0)) || do { 
 
-		errorMsg("Discovery init: Cannot set port nonblocking\n");
-		die;
+		logger('')->logdie("FATAL: Discovery init: Cannot set port nonblocking");
 	};
 
 	Slim::Networking::Select::addRead($udpsock, \&readUDP);
-	
+
 	# say hello to the old slimp3 clients that we might remember...
 	for my $clientID (Slim::Utils::Prefs::getKeys('clients')) {
 
@@ -56,7 +56,7 @@ sub init {
 		# skip client addrs that aren't dotted-4 with a port
 		next if $clientID !~ /\d+\.\d+\.\d+\.\d+:\d+/;
 
-		$::d_protocol && msg("Discovery init: Saying hello to $clientID\n");
+		$log->info("Discovery init: Saying hello to $clientID");
 
 		Slim::Networking::Discovery::sayHello($udpsock, Slim::Utils::Network::ipaddress2paddr($clientID));
 		
@@ -103,10 +103,9 @@ sub readUDP {
 	
 			} else {
 
-				if ($::d_protocol) {
-					my ($clientport, $clientip) = sockaddr_in($clientpaddr);
-					msg("ignoring Client: ".inet_ntoa($clientip).":$clientport that sent bogus message $msg\n");
-				}
+				my ($clientport, $clientip) = sockaddr_in($clientpaddr);
+
+				$log->warn("Ignoring client: " . inet_ntoa($clientip) . ":$clientport that sent bogus message $msg");
 			}
 		}
 

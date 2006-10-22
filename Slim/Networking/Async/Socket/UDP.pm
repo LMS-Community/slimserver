@@ -15,8 +15,7 @@ use warnings;
 use base qw(IO::Socket::INET Slim::Networking::Async::Socket);
 
 use Socket;
-
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 
 sub new {
 	my $class = shift;
@@ -38,7 +37,12 @@ sub mcast_send {
 		getprotobyname('ip') || 0,
 		_constant('IP_MULTICAST_TTL'),
 		pack 'I', 4,
-	) || msg("UPnP: Error setting multicast TTL: $!\n");
+
+	) || do {
+
+		logError("While setting multicast TTL: $!");
+		return;
+	};
 	
 	my $dest_addr = sockaddr_in( $port, inet_aton( $addr ) );
 	send( $self, $msg, 0, $dest_addr );
@@ -57,7 +61,7 @@ sub mcast_add {
 		getprotobyname('ip') || 0,
 		_constant('IP_ADD_MEMBERSHIP'),
 		$ip_mreq
-	) || msg("UPnP: Error adding multicast membership, UPnP may not work properly: $!\n");
+	) || logError("While adding multicast membership, UPnP may not work properly: $!");
 }
 
 sub _constant {

@@ -22,6 +22,7 @@ use XML::Simple;
 use Slim::Buttons::XMLBrowser;
 use Slim::Formats::XML;
 use Slim::Utils::Cache;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -53,6 +54,12 @@ my @default_feeds = (
 	},
 );
 
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.rssnews',
+	'defaultLevel' => 'WARN',
+	'description'  => getDisplayName(),
+});
+
 my @feeds = ();
 my %feed_names; # cache of feed names
 
@@ -71,7 +78,8 @@ sub enabled {
 }
 
 sub initPlugin {
-	$::d_plugins && msg("RSS Plugin initializing.\n");
+
+	$log->info("Initializing.");
 
 	Slim::Buttons::Common::addMode('PLUGIN.RSS', getFunctions(), \&setMode);
 
@@ -119,14 +127,16 @@ sub initPlugin {
 		}
 	}
 
-	if ($::d_plugins) {
-		msg("RSS Feed Info:\n");
+	if ($log->is_debug) {
 
-		foreach (@feeds) {
-			msg($_->{'name'} . ", " . $_->{'value'} . "\n");
+		$log->debug("RSS Feed Info:");
+
+		for my $feed (@feeds) {
+
+			$log->debug(join(', ', ($feed->{'name'}, $feed->{'value'})));
 		}
 
-		msg("\n");
+		$log->debug("");
 	}
 
 	# feed_names should reflect current names
@@ -200,7 +210,7 @@ sub setMode {
 sub cliQuery {
 	my $request = shift;
 	
-	$::d_plugins && msg("RSS: cliQuery()\n");
+	$log->info("Begin Function");
 	
 	# Get OPML list of feeds from cache
 	my $cache = Slim::Utils::Cache->new();
@@ -307,11 +317,7 @@ sub updateFeedNames {
 	my @feedNamePrefs;
 
 	# verbose debug
-	if ($::d_plugins) {
-
-		msg("RSS: updateFeedNames urls:\n");
-		msg(Data::Dump::dump(\@feedURLPrefs));
-	}
+	$log->debug("URLs: " . Data::Dump::dump(\@feedURLPrefs));
 
 	# case 1: we're reverting to default
 	if (scalar(@feedURLPrefs) == 0) {
@@ -453,7 +459,7 @@ sub leaveScreenSaverRssNews {
 
 	delete $savers->{$client};
 	
-	$::d_plugins && msg("RSS: Left screensaver mode\n");
+	$log->info("Leaving screensaver mode");
 }
 
 sub tickerUpdate {
@@ -485,7 +491,7 @@ sub getNextFeed {
 	
 	my $url = $feeds[$index - 1]->{'value'};
 	
-	$::d_plugins && msg("RSS: Fetching next feed: $url\n");
+	$log->info("Fetching next feed: $url");
 	
 	if ( !$savers->{$client}->{current_feed} ) {
 		$client->update( {
@@ -531,19 +537,21 @@ sub gotError {
 	}
 	
 	# Bug 1664, skip broken feeds in screensaver mode
-	
-	$::d_plugins && msg("RSS: Error loading feed: $error, skipping\n");
+	logError("While loading feed: $error, skipping!");
 	
 	my $errors = $savers->{$client}->{feed_error} || 0;
 	$errors++;
 	$savers->{$client}->{feed_error} = $errors;
 	
 	if ( $errors == scalar @feeds ) {
-		$::d_plugins && msg("RSS: All feeds failed, giving up\n");
+
+		logError("All feeds failed, giving up!!");
 		
 		$client->update( {
-			'line' => [ $client->string('PLUGIN_RSSNEWS'),
-						$client->string('PLUGIN_RSSNEWS_ERROR') ],
+			'line' => [
+				$client->string('PLUGIN_RSSNEWS'),
+				$client->string('PLUGIN_RSSNEWS_ERROR')
+			],
 		} );
 	}
 	else {	
@@ -673,7 +681,7 @@ sub tickerLines {
 
 			$line2 = substr $line2, 0, $screensaver_chars_per_item;
 
-			$::d_plugins && msg("RSS: screensaver character limit exceeded - truncating.\n");
+			$log->debug("Screensaver character limit exceeded - truncating.");
 		}
 
 		$current_items->{$feed}->{'next_item'} = $i + 1;

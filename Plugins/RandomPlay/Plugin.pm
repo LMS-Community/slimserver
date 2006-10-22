@@ -17,6 +17,7 @@ package Plugins::RandomPlay::Plugin;
 use strict;
 
 use Slim::Buttons::Home;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
@@ -34,6 +35,12 @@ my %genreNameMap = ();
 
 my $htmlTemplate = 'plugins/RandomPlay/randomplay_list.html';
 
+my $log          = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.randomplay',
+	'defaultLevel' => 'WARN',
+	'description'  => getDisplayName(),
+});
+
 sub getDisplayName {
 	return 'PLUGIN_RANDOM';
 }
@@ -42,7 +49,7 @@ sub getDisplayName {
 sub findAndAdd {
 	my ($client, $type, $find, $limit, $addOnly) = @_;
 
-	$::d_plugins && msgf("RandomPlay: Starting random selection of %s items for type: $type\n", defined($limit) ? $limit : 'unlimited');
+	$log->info(sprintf("Starting random selection of %s items for type: $type", defined($limit) ? $limit : 'unlimited'));
 
 	my @joins  = ();
 
@@ -95,20 +102,21 @@ sub findAndAdd {
 		@results = $rs->all;
 	}
 
-	$::d_plugins && msgf("RandomPlay: Find returned %i items\n", scalar @results);
+	$log->info(sprintf("Find returned %i items", scalar @results));
 
 	# Pull the first track off to add / play it if needed.
 	my $obj = shift @results;
 
 	if (!$obj || !ref($obj)) {
 
-		errorMsg("RandomPlay: Didn't get a valid object for findAndAdd()!\n");
+		logWarning("Didn't get a valid object for findAndAdd()!");
+
 		return undef;
 	}
 
-	$::d_plugins && msgf("RandomPlay: %s %s: %s, %d\n",
+	$log->info(sprintf("%s %s: %s, %d",
 		$addOnly ? 'Adding' : 'Playing', $type, $obj->name, $obj->id
-	);
+	));
 
 	# Replace the current playlist with the first item / track or add it to end
 	my $request = $client->execute([
@@ -123,7 +131,7 @@ sub findAndAdd {
 
 		if (!defined $limit || $limit > 1) {
 
-			$::d_plugins && msgf("RandomPlay: Adding %i tracks to end of playlist\n", scalar @results);
+			$log->info(sprintf("Adding %i tracks to end of playlist", scalar @results));
 
 			$request = $client->execute(['playlist', 'addtracks', 'listRef', \@results ]);
 
@@ -196,7 +204,7 @@ sub getFilteredGenres {
 sub getRandomYear {
 	my $filteredGenres = shift;
 
-	$::d_plugins && msg("RandomPlay: Starting random year selection\n");
+	$log->debug("Starting random year selection");
 
 	my %cond = ();
 	my %attr = ( 'order_by' => \'RAND()' );
@@ -209,7 +217,7 @@ sub getRandomYear {
 
 	my $year = Slim::Schema->rs('Track')->search(\%cond, \%attr)->single->year;
 
-	$::d_plugins && msg("RandomPlay: Selected year $year\n");
+	$log->debug("Selected year $year");
 
 	return $year;
 }
@@ -219,7 +227,7 @@ sub playRandom {
 	# If addOnly, then track(s) are appended to end.  Otherwise, a new playlist is created.
 	my ($client, $type, $addOnly) = @_;
 
-	$::d_plugins && msg("RandomPlay: playRandom called with type $type\n");
+	$log->debug("Called with type $type");
 
 	if (!$mixInfo{$client->masterOrSelf->id}) {
 		
@@ -242,7 +250,8 @@ sub playRandom {
 
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client);
 	my $songsRemaining = Slim::Player::Playlist::count($client) - $songIndex - 1;
-	$::d_plugins && msg("RandomPlay: $songsRemaining songs remaining, songIndex = $songIndex\n");
+
+	$log->debug("$songsRemaining songs remaining, songIndex = $songIndex");
 
 	# Work out how many items need adding
 	my $numItems = 0;
@@ -262,7 +271,7 @@ sub playRandom {
 
 		} else {
 
-			$::d_plugins && msgf("RandomPlay: $songsRemaining items remaining so not adding new track\n");
+			$log->debug("$songsRemaining items remaining so not adding new track");
 		}
 
 	} elsif ($type ne 'disable' && ($type ne $mixInfo{$client->masterOrSelf->id}->{'type'} || ! $addOnly || $songsRemaining <= 0)) {
@@ -387,7 +396,7 @@ sub playRandom {
 
 	if ($type eq 'disable') {
 
-		$::d_plugins && msg("RandomPlay: cyclic mode ended\n");
+		$log->info("Cyclic mode ended");
 
 		# Don't do showBrieflys if visualiser screensavers are running as 
 		# the display messes up
@@ -401,16 +410,18 @@ sub playRandom {
 
 	} else {
 
-		$::d_plugins && msgf(
-			"RandomPlay: Playing %s %s mode with %i items\n",
+		$log->info(
+			"Playing %s %s mode with %i items",
 			$continuousMode ? 'continuous' : 'static', $type, Slim::Player::Playlist::count($client)
 		);
 
 		# $startTime will only be defined if this is a new (or restarted) mix
 		if (defined $startTime) {
+
 			# Record current mix type and the time it was started.
 			# Do this last to prevent menu items changing too soon
-			$::d_plugins && msgf("RandomPlay: New mix started at %i\n", $startTime);
+			$log->info("New mix started at $startTime");
+
 			$mixInfo{$client->masterOrSelf->id}->{'type'} = $type;
 			$mixInfo{$client->masterOrSelf->id}->{'startTime'} = $startTime;
 		}
@@ -525,7 +536,7 @@ sub toggleGenreState {
 sub handlePlayOrAdd {
 	my ($client, $item, $add) = @_;
 
-	$::d_plugins && msgf("RandomPlay: %s button pushed on type %s\n", $add ? 'Add' : 'Play', $item);
+	$log->debug(sprintf("RandomPlay: %s button pushed on type %s", $add ? 'Add' : 'Play', $item));
 
 	# reconstruct the list of options, adding and removing the 'disable' option where applicable
 	if ($item ne 'genreFilter') {
@@ -633,15 +644,16 @@ sub commandCallback {
 		return;
 	}
 
-	if ($::d_plugins) {
-		msgf("RandomPlay: received command %s\n", $request->getRequestString);
-		msgf("RandomPlay: while in mode: %s, from %s\n", $mixInfo{$client->masterOrSelf->id}->{'type'}, $client->name);
-	}
+	$log->debug(sprintf("Received command %s", $request->getRequestString));
+	$log->debug(sprintf("While in mode: %s, from %s", $mixInfo{$client->masterOrSelf->id}->{'type'}, $client->name));
 	
 	# Bug 3696, If the last track in the playlist failed, restart play
 	if ( $request->isCommand([['playlist'], ['cant_open']]) && $client->playmode !~ /play/ ) {
-		$::d_plugins && msg("RandomPlay: Last track failed, restarting\n");
+
+		$log->warn("Warning: Last track failed, restarting.");
+
 		playRandom($client, $mixInfo{$client->masterOrSelf->id}->{'type'});
+
 		return;
 	}		
 
@@ -651,12 +663,15 @@ sub commandCallback {
 	    $request->isCommand([['playlist'], ['delete']]) && 
 	    $request->getParam('_index') > $songIndex) {
 
-		if ($::d_plugins) {
+		if ($log->is_info) {
 
 			if ($request->isCommand([['playlist'], ['newsong']])) {
-				msg("RandomPlay: new song detected ($songIndex)\n");
+
+				$log->info(sprintf("New song detected ($songIndex)"));
+
 			} else {
-				msg("RandomPlay: deletion detected (" . $request->getParam('_index') . ")\n");
+
+				$log->info(sprintf("Deletion detected (%s)", $request->getParam('_index')));
 			}
 		}
 
@@ -664,7 +679,7 @@ sub commandCallback {
 
 		if ($songIndex && $songsToKeep ne '' && $songIndex > $songsToKeep) {
 
-			$::d_plugins && msgf("RandomPlay: Stripping off %i completed track(s)\n", $songIndex - $songsToKeep);
+			$log->info(sprintf("Stripping off %i completed track(s)", $songIndex - $songsToKeep));
 
 			# Delete tracks before this one on the playlist
 			for (my $i = 0; $i < $songIndex - $songsToKeep; $i++) {
@@ -678,7 +693,8 @@ sub commandCallback {
 
 	} elsif ($request->isCommand([['playlist'], [keys %stopcommands]])) {
 
-		$::d_plugins && msgf("RandomPlay: cyclic mode ending due to playlist: %s command\n", $request->getRequestString);
+		$log->info(sprintf("Cyclic mode ending due to playlist: %s command", $request->getRequestString));
+
 		playRandom($client, 'disable');
 	}
 }
@@ -832,15 +848,21 @@ sub handleWebSettings {
 	Slim::Utils::Prefs::set('plugin_random_exclude_genres', [keys %{$genres}]);	
 
 	if ($params->{'numTracks'} =~ /^[0-9]+$/) {
+
 		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', $params->{'numTracks'});
+
 	} else {
-		$::d_plugins && msg("RandomPlay: Invalid value for numTracks\n");
+
+		$log->warn("Warning: Invalid value for numTracks");
 	}
 
 	if ($params->{'numOldTracks'} eq '' || $params->{'numOldTracks'} =~ /^[0-9]+$/) {
+
 		Slim::Utils::Prefs::set('plugin_random_number_of_old_tracks', $params->{'numOldTracks'});	
+
 	} else {
-		$::d_plugins && msg("RandomPlay: Invalid value for numOldTracks\n");
+
+		$log->warn("Warning: Invalid value for numOldTracks");
 	}
 
 	Slim::Utils::Prefs::set('plugin_random_keep_adding_tracks', $params->{'continuousMode'} ? 1 : 0);
@@ -853,25 +875,32 @@ sub checkDefaults {
 	my $prefVal = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
 
 	if (! defined $prefVal || $prefVal !~ /^[0-9]+$/) {
-		$::d_plugins && msg("RandomPlay: Defaulting plugin_random_number_of_tracks to 10\n");
+
+		$log->debug("Defaulting plugin_random_number_of_tracks to 10");
+
 		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', 10);
 	}
 	
 	$prefVal = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
 
 	if (! defined $prefVal || $prefVal !~ /^$|^[0-9]+$/) {
+
 		# Default to keeping all tracks
-		$::d_plugins && msg("RandomPlay: Defaulting plugin_random_number_of_old_tracks to ''\n");
+		$log->debug("Defaulting plugin_random_number_of_old_tracks to ''");
+
 		Slim::Utils::Prefs::set('plugin_random_number_of_old_tracks', '');
 	}
 
 	if (! defined Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks')) {
+
 		# Default to continous mode
-		$::d_plugins && msg("RandomPlay: Defaulting plugin_random_keep_adding_tracks to 1\n");
+		$log->debug("Defaulting plugin_random_keep_adding_tracks to 1");
+
 		Slim::Utils::Prefs::set('plugin_random_keep_adding_tracks', 1);
 	}
 
 	if (!Slim::Utils::Prefs::isDefined('plugin_random_exclude_genres')) {
+
 		# Include all genres by default
 		Slim::Utils::Prefs::set('plugin_random_exclude_genres', []);
 	}

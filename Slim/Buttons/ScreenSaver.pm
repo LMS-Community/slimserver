@@ -13,8 +13,8 @@ Slim::Buttons::ScreenSaver
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::ScreenSaver> is a SlimServer module to register basic core screensavers and to handle
-moving the player in and out of screensaver modes.
+Module to register basic core screensavers and to handle moving the player in
+and out of screensaver modes.
 
 =cut
 
@@ -24,6 +24,7 @@ use File::Spec::Functions qw(updir);
 
 use Slim::Buttons::Common;
 use Slim::Buttons::Playlist;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
@@ -59,23 +60,24 @@ sub screenSaver {
 	my $client = shift;
 	my $display = $client->display;
 
-	my $now = Time::HiRes::time();
-
-	$::d_time && msg("screenSaver idle display " . (
-		$now - Slim::Hardware::IR::lastIRTime($client) - 
-			$client->prefGet("screensavertimeout")) . 
-		"(mode:" . Slim::Buttons::Common::mode($client) . ")\n"
-	);
-
+	my $now  = Time::HiRes::time();
+	my $log  = logger('server.timers');
 	my $mode = Slim::Buttons::Common::mode($client);
 
 	assert($mode);
-	
+
+	if ($log->is_info) {
+
+		my $diff = $now - Slim::Hardware::IR::lastIRTime($client) - $client->prefGet("screensavertimeout");
+
+		$log->info("screenSaver idle display [$diff] (mode: [$mode])");
+	}
+
 	# some variables, so save us calling the same functions multiple times.
-	my $saver = Slim::Player::Source::playmode($client) eq 'play' ? $client->prefGet('screensaver') : $client->prefGet('idlesaver');
-	my $dim = $client->prefGet('idleBrightness');
+	my $saver   = Slim::Player::Source::playmode($client) eq 'play' ? $client->prefGet('screensaver') : $client->prefGet('idlesaver');
+	my $dim     = $client->prefGet('idleBrightness');
 	my $timeout = $client->prefGet("screensavertimeout");
-	my $irtime = Slim::Hardware::IR::lastIRTime($client);
+	my $irtime  = Slim::Hardware::IR::lastIRTime($client);
 	
 	# if we are already in now playing, jump back screensaver is redundant and confusing
 	if ($saver eq 'screensaver' && $mode eq 'playlist') {
@@ -91,15 +93,22 @@ sub screenSaver {
 			$irtime < $now - $timeout && 
 			$mode ne 'block' &&
 			$client->power()) {
+
 		$display->brightness($dim);
 	}
 
 	if ($display->updateMode() == 2 || $display->animateState() ) {
+
 		# don't change whilst updates blocked or animating (non scrolling)
+
 	} elsif ($mode eq 'block') {
+
 		# blocked mode handles its own updating of the screen.
+
 	} elsif ($saver eq 'nosaver' && $client->power()) {
+
 		# don't change modes when none (just dim) is the screensaver.
+
 	} elsif ($timeout && 
 			$irtime < $now - $timeout && 
 			( ($mode ne $saver) || 
@@ -112,35 +121,59 @@ sub screenSaver {
 		# we only go into screensaver mode if we've timed out 
 		# and we're not off or blocked
 		if ($saver eq 'playlist') {
+
 			if ($mode eq 'playlist') {
+
 				Slim::Buttons::Playlist::browseplaylistindex($client, Slim::Player::Source::playingSongIndex($client));
+
 			} else {
+
 				Slim::Buttons::Common::pushMode($client,'playlist');
 			}
+
 		} else {
+
 			if (Slim::Buttons::Common::validMode($saver)) {
+
 				Slim::Buttons::Common::pushMode($client, $saver);
+
 			} else {
-				$::d_plugins && msg("Mode ".$saver." not found, using default\n");
-				Slim::Buttons::Common::pushMode($client,'screensaver');
+
+				logger('player.ui.screensaver')->warn("Mode [$saver] not found, using default");
+
+				Slim::Buttons::Common::pushMode($client, 'screensaver');
 			}
 		}
+
 		$display->update();
 
 	} elsif (!$client->power()) {
+
 		$saver = $client->prefGet('offsaver');
 		$saver =~ s/^SCREENSAVER\./OFF\./;
+
 		if ($saver eq 'nosaver') {
+
 			# do nothing
+
 		} elsif ($mode ne $saver) {
+
 			if (Slim::Buttons::Common::validMode($saver)) {
+
 				Slim::Buttons::Common::pushMode($client, $saver);
+
 			} else {
-				$::d_plugins && msg("Mode ".$saver." not found, using default\n");
-				Slim::Buttons::Common::setMode($client,'off') unless $mode eq 'off';
+
+				logger('player.ui.screensaver')->warn("Mode [$saver] not found, using default");
+
+				if ($mode ne 'off') {
+					Slim::Buttons::Common::setMode($client, 'off');
+				}
 			}
+
 			$display->update();
 		}
+
 	} else {
 		# do nothing - periodic updates handled per client where required
 	}
@@ -194,7 +227,7 @@ sub wakeup {
 sub setMode {
 	my $client = shift;
 
-	$::d_time && msg("going into screensaver mode");
+	logger('player.ui.screensaver')->debug("Going into screensaver mode.");
 
 	$client->lines( $client->customPlaylistLines() || \&Slim::Buttons::Playlist::lines );
 
@@ -214,8 +247,3 @@ L<Slim::Hardware::IR>
 1;
 
 __END__
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

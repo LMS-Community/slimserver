@@ -46,8 +46,9 @@ use strict;
 use warnings;
 
 use Slim::Buttons::Common;
-use Slim::Utils::Misc;
 use Slim::Display::Display;
+use Slim::Utils::Log;
+use Slim::Utils::Misc;
 
 Slim::Buttons::Common::addMode('INPUT.List', getFunctions(), \&setMode);
 
@@ -166,7 +167,9 @@ sub changePos {
 
 	my $newposition = Slim::Buttons::Common::scroll($client, $dir, scalar(@$listRef), $listIndex);
 
-	$::d_ui && msgf("changepos: newpos: $newposition = scroll dir:$dir listIndex: $listIndex listLen: %d\n", scalar(@$listRef));
+	logger('player.ui')->debug(
+		"newpos: $newposition = scroll dir:$dir listIndex: $listIndex listLen: ", scalar(@$listRef)
+	);
 
 	my $valueRef = $client->modeParam('valueRef');
 

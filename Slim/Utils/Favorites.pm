@@ -18,10 +18,13 @@ use strict;
 use FindBin qw($Bin);
 use Scalar::Util qw(blessed);
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
 use Slim::Utils::Prefs;
+
+my $log = logger('favorites');
 
 # Class-only method, not an instance method
 # Adds a favorite for the given client to the database.  
@@ -34,7 +37,8 @@ sub clientAdd {
 
 	# don't crash if no url
 	if (!$url) {
-		$::d_favorites && msg("No url passed to $class\::clientAdd, skipping.\n");
+
+		logWarning("No url passed! Skipping.");
 		return undef;
 	}
 
@@ -46,7 +50,7 @@ sub clientAdd {
 	# Bug 3362, ignore sessionID's within URLs (Live365)
 	$url =~ s/\?sessionid.+//i;
 
-	$::d_favorites && msgf("Favorites::add(%s, %s, %s)\n", $client->id, $url, $title);
+	$log->info(sprintf("%s, %s, %s)", $client->id, $url, $title));
 
 	# if its already a favorite, don't add it again
 	my $fav = $class->findByClientAndURL($client, $url);
@@ -113,7 +117,8 @@ sub findByClientAndURL {
 
 	if (defined($i)) {
 
-		$::d_favorites && msg("Favorites: found favorite number " . ($i+1) . ": $url\n");
+		$log->info("Found favorite number " . ($i+1) . ": $url");
+
 		my $title = Slim::Utils::Prefs::getInd('favorite_titles', $i);
 
 		return {
@@ -124,7 +129,8 @@ sub findByClientAndURL {
 
 	} else {
 
-		$::d_favorites && msg("Favorites: not found: $url\n");
+		$log->debug("Not found: $url");
+
 		return undef;
 	}
 }
@@ -212,14 +218,14 @@ sub addCurrentItem {
 	# if all of that fails, send the debug with a best guess helper for tracing back
 	} else {
 
-		if ($::d_favorites) { 
-			msg("Favorites: no valid url found, not adding favorite\n");
+		if ($log->is_error) { 
+
+			$log->error("Error: No valid url found, not adding favorite!");
 			
 			if ($obj) {
-				msg(Data::Dumper::Dumper($obj));
-			
+				$log->error(Data::Dump::dump($obj));
 			} else {
-				Slim::Utils::Misc::bt();
+				$log->logBacktrace;
 			}
 		}
 	}
@@ -273,7 +279,7 @@ sub deleteByClientAndId {
 		Slim::Utils::Prefs::setArray( 'favorite_titles', \@titles );
 		Slim::Utils::Prefs::setArray( 'favorite_urls', \@urls );
 		
-		$::d_favorites && msg("Favorites: deleting favorite number " . ($i+1) . "\n");
+		$log->info("Deleting favorite number " . ($i+1));
 	}
 }
 

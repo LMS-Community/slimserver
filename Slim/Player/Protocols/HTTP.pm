@@ -16,17 +16,21 @@ use IO::String;
 use Slim::Music::Info;
 use Slim::Player::TranscodingHelper;
 use Slim::Utils::Errno;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
 use constant MAXCHUNKSIZE => 32768;
+
+my $log = logger('player.streaming.remote');
 
 sub new {
 	my $class = shift;
 	my $args  = shift;
 
 	if (!$args->{'url'}) {
-		msg("No url passed to Slim::Player::Protocols::HTTP->new() !\n");
+
+		logWarning("No url passed!");
 		return undef;
 	}
 
@@ -52,12 +56,15 @@ sub readMetaData {
 		$byteRead = $self->SUPER::sysread($metadataSize, 1);
 
 		if ($!) {
+
 			if ($! ne "Unknown error" && $! != EWOULDBLOCK) {
-			 	$::d_remotestream && msg("Metadata byte not read! $!\n");  
+
+			 	$log->warn("Warning: Metadata byte not read! $!");
 			 	return;
+
 			 } else {
-			 	# too verbose!
-				#$::d_remotestream && msg("Metadata byte not read, trying again: $!\n");  
+
+				$log->debug("Metadata byte not read, trying again: $!");  
 			 }
 		}
 
@@ -66,8 +73,7 @@ sub readMetaData {
 	
 	$metadataSize = ord($metadataSize) * 16;
 	
-	# too verbose
-	#$::d_remotestream && msg("metadata size: $metadataSize\n");
+	$log->debug("Metadata size: $metadataSize");
 
 	if ($metadataSize > 0) {
 		my $metadata;
@@ -79,11 +85,14 @@ sub readMetaData {
 
 			if ($!) {
 				if ($! ne "Unknown error" && $! != EWOULDBLOCK) {
-					$::d_remotestream && msg("Metadata bytes not read! $!\n");  
+
+					$log->info("Metadata bytes not read! $!");
 					return;
+
 				} else {
-					$::d_remotestream && msg("Metadata bytes not read, trying again: $!\n");  
-				}			 
+
+					$log->info("Metadata bytes not read, trying again: $!");
+				}
 			}
 
 			$byteRead = 0 if (!defined($byteRead));
@@ -92,7 +101,7 @@ sub readMetaData {
 
 		} while ($metadataSize > 0);			
 
-		$::d_remotestream && msg("metadata: $metadata\n");
+		$log->info("Metadata: $metadata");
 
 		${*$self}{'title'} = parseMetadata($client, $self->url, $metadata);
 
@@ -152,9 +161,7 @@ sub parseMetadata {
 			# For some purposes, a change of title is a newsong...
 			Slim::Control::Request::notifyFromArray($client, ['playlist', 'newsong', $newTitle]);
 			
-			if ( $::d_remotestream || $::d_directstream ) {
-				msg("parseMetadata: Setting title for $url to $newTitle\n");
-			}
+			logger('player.streaming')->info("Setting title for $url to $newTitle");
 		}
 
 		return $newTitle;
@@ -169,7 +176,11 @@ sub canDirectStream {
 	# When synced, we don't direct stream so that the server can proxy a single
 	# stream for all players
 	if ( Slim::Player::Sync::isSynced($client) ) {
-		$::d_directstream && msgf("[%s] Not direct streaming because player is synced\n", $client->id);
+
+		logger('player.streaming')->info(sprintf(
+			"[%s] Not direct streaming because player is synced", $client->id
+		));
+
 		return 0;
 	}
 
@@ -193,7 +204,8 @@ sub sysread {
 	if ($metaInterval && ($metaPointer + $chunkSize) > $metaInterval) {
 
 		$chunkSize = $metaInterval - $metaPointer;
-		$::d_source && msg("reduced chunksize to $chunkSize for metadata\n");
+
+		$log->debug("Reduced chunksize to $chunkSize for metadata");
 	}
 
 	my $readLength = CORE::sysread($self, $_[1], $chunkSize, length($_[1] || ''));
@@ -212,22 +224,24 @@ sub sysread {
 
 		} elsif ($metaPointer > $metaInterval) {
 
-			msg("Problem: the shoutcast metadata overshot the interval.\n");
+			$log->debug("The shoutcast metadata overshot the interval.");
 		}	
 	}
 	
 	# Use MPEG::Audio::Frame to detect the bitrate if we didn't see an icy header
 	if ( !$self->bitrate && $self->contentType =~ /^(?:mp3|audio\/mpeg)$/ ) {
+
 		my $io = IO::String->new($_[1]);
-		
-		$::d_remotestream && msg("Trying to read bitrate from stream\n");
-		
+
+		$log->info("Trying to read bitrate from stream");
+
 		my ($bitrate, $vbr) = Slim::Utils::Scanner::scanBitrate($io);
 
 		Slim::Music::Info::setBitrate( $self->infoUrl, $bitrate, $vbr );
 		${*$self}{'bitrate'} = $bitrate;
 		
 		if ( $self->client && $self->bitrate > 0 && $self->contentLength > 0 ) {
+
 			# if we know the bitrate and length of a stream, display a progress bar
 			if ( $self->bitrate < 1000 ) {
 				${*$self}{'bitrate'} *= 1000;
@@ -253,31 +267,26 @@ sub sysread {
 
 sub parseDirectBody {
 	my ( $class, $client, $url, $body ) = @_;
-	
-	$::d_directstream && msg( "parseDirectBody: Parsing body for bitrate\n");
-	
+
+	logger('player.streaming.direct')->info("Parsing body for bitrate.");
+
 	my $contentType = Slim::Music::Info::contentType($url);
 
 	my ($bitrate, $vbr) = Slim::Utils::Scanner::scanBitrate( $body, $contentType, $url );
+
 	if ( $bitrate ) {
 		Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
 	}
-	
+
 	# Must return a track object to play
 	my $track = Slim::Schema->rs('Track')->objectForUrl({
 		'url'      => $url,
 		'readTags' => 1
 	});
-	
-	return ($track);
+
+	return $track;
 }
 
 1;
 
 __END__
-
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

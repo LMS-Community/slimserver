@@ -8,9 +8,12 @@ use IO::Socket qw(:DEFAULT :crlf);
 
 use Slim::Formats::Playlists::M3U;
 use Slim::Utils::IPDetect;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
 my %radioTracks = ();
+
+my $log = logger('plugin.rhapsody');
 
 sub new {
 	my $class  = shift;
@@ -109,18 +112,20 @@ sub requestString {
 			$url = $trackURL;
 			
 			if ( $client->master ) {
-				$::d_plugins && msgf("Rhapsody: [%s] Radio mode, synced slave got playlist track from master: %s\n",
+
+				$log->info(sprintf("[%s] Radio mode, synced slave got playlist track from master: %s",
 					$client->id,
 					$url,
-				);
+				));
 			}
 		}
 		else {
 			# If synced, only the master should request the playlist rhr file
 			if ( $client->master ) {
-				$::d_plugins && msgf("Rhapsody: [%s] Radio mode, synced slave not requesting playlist\n",
+
+				$log->info(sprintf("[%s] Radio mode, synced slave not requesting playlist",
 					$client->id,
-				);
+				));
 				
 				# XXX: This will cause a 'can't connect' error on the slave(s), but will (hopefully)
 				# connect on repeat when the master gets a playlist track.  Sometimes Rhapsody will
@@ -205,11 +210,11 @@ sub handleDirectError {
 		my $stopIn = $tracklen - $elapsed;
 		my $stopAt = time + ( $stopIn || 0 );
 		
-		$::d_plugins && msgf("Rhapsody: [%s] Got error %s, stopping player after current song (in %d seconds).\n",
+		$log->error(sprintf("Error: [%s] Got error %s, stopping player after current song (in %d seconds).\n",
 			$client->id,
 			$error,
 			$stopIn || 0,
-		);
+		));
 
 		Slim::Utils::Timers::setTimer( $client, $stopAt, sub {
 			my $client = shift;
@@ -232,7 +237,7 @@ sub parseDirectHeaders {
 
 	foreach my $header (@headers) {
 
-		$::d_directstream && msg("Rhapsody header: " . $header . "\n");
+		logger('player.streaming.direct')->info("Rhapsody header: $header");
 
 		if ($header =~ /^Content-Type:\s*(.*)/i) {
 			$mimeType = $1;
@@ -341,7 +346,8 @@ sub playlistCallback {
 	# The user has changed the repeat setting.  Radio requires a repeat
 	# setting of '2' (repeat all) to work properly
 	if ( $p1 eq 'repeat' ) {
-		$::d_plugins && msg("Rhapsody: Radio mode, user changed repeat setting, forcing back to 2\n");
+
+		$log->debug("Radio mode, user changed repeat setting, forcing back to 2");
 		
 		Slim::Player::Playlist::repeat( $client, 2 );
 		

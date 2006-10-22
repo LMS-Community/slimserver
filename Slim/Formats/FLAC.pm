@@ -34,6 +34,7 @@ use MIME::Base64 qw(decode_base64);
 use Slim::Formats::Playlists::CUE;
 use Slim::Schema::Contributor;
 use Slim::Utils::Cache;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
 
@@ -81,7 +82,8 @@ sub getTag {
 
 	my $flac   = Audio::FLAC::Header->new($file) || do {
 
-		errorMsg("Couldn't open file: [$file] for reading: $!\n");
+		logError("Couldn't open file: [$file] for reading: $!");
+
 		return {};
 	};
 
@@ -123,7 +125,9 @@ sub getTag {
 
 	# fallback if we can't parse metadata
 	if ($items < 1) {
-		$::d_parse && msg("Unable to find metadata for tracks referenced by cuesheet\n");
+
+		logWarning("Unable to find metadata for tracks referenced by cuesheet: [$file]");
+
 		return $tags;
 	}
 
@@ -162,12 +166,14 @@ sub getTag {
 		# if we were passed in an anchor, then the caller is expecting back tags for
 		# the single track indicated.
 		if ($anchor && $track->{'URI'} eq $fileurl) {
+
 			$tags = $track;
-			$::d_parse && msg("    found tags for $file#$anchor\n");	
+
+			logger('formats.playlists')->debug("    found tags for $file\#$anchor");
 		}
 	}
 
-	$::d_parse && msg("    returning: $items items\n");	
+	logger('formats.playlists')->debug("    returning $items items");
 
 	return $tags;
 }
@@ -193,7 +199,8 @@ sub getCoverArt {
 	}
 
 	my $flac = Audio::FLAC::Header->new($file) || do {
-		errorMsg("FLAC: Couldn't open file: [$file] for reading: $!\n");
+
+		logError("Couldn't open file: [$file] for reading: $!");
 		return;
 	};
 
@@ -352,7 +359,7 @@ sub _getSubFileTags {
 
 	# if we really wanted to, we could parse "standard" tags and apply to every track
 	# but that doesn't seem very useful.
-	$::d_parse && msg("No useable metadata found for this FLAC file.\n");
+	logWarning("No useable metadata found in $flac->{'FILENAME'}.");
 
 	return 0;
 }
@@ -443,29 +450,33 @@ sub _getXMLTags {
 
 	# grab artist info
 	my $artistHash = {};
+	my $log = logger('formats.playlists');
 
 	while ($xml =~ s|<mm:Artist\s+rdf:about="([^"]+)">(.+?)</mm:Artist>||s) { #"
+
 		my $artistid = $1;
 		my $artistSegment = $2;
+
 		$artistHash->{$artistid} = {};
 
 		$artistHash->{$artistid}->{'ARTISTID'} = $artistid;
 
-		my $message = "    ARTISTID: $artistid" if $::d_parse;
+		my $message = "    ARTISTID: $artistid" if $log->is_debug;
 
 		if ($artistSegment =~ m|<dc:title>(.+)</dc:title>|s) {
+
 			$artistHash->{$artistid}->{'ARTIST'} = $1;
 
-			$message .= " ARTIST: " . $artistHash->{$artistid}->{'ARTIST'} if $::d_parse;
+			$message .= " ARTIST: " . $artistHash->{$artistid}->{'ARTIST'} if $log->is_debug;
 		}
+
 		if ($artistSegment =~ m|<mm:sortName>(.+)</mm:sortName>|s) {
+
 			$artistHash->{$artistid}->{'ARTISTSORT'} = $1;
 		}
 
-		$::d_parse && msg("$message\n");
-
+		$log->debug($message);
 	}
-
 
 	# $tracks is keyed to the cuesheet TRACK number, which is sequential
 	# in some cases, that may not match the tracks official TRACKNUM
@@ -475,36 +486,43 @@ sub _getXMLTags {
 
 		my $tracknumber = 0;
 
-		$::d_parse && msg("    ALBUM: " . $albumHash->{$album}->{'ALBUM'} . "\n");
+		$log->debug("    ALBUM: " . $albumHash->{$album}->{'ALBUM'});
 
 		for my $track (@{$albumHash->{$album}->{'TRACKLIST'}}) {
+
 			my $tempTags = {};
+
 			$cuesheetTrack++;
 			$tracknumber++;
 
-			$::d_parse && msg("    processing track $cuesheetTrack -- $track\n");
+			if (!exists $tracks->{$cuesheetTrack}) {
+				next;
+			}
 
-			next unless exists $tracks->{$cuesheetTrack};
+			$log->debug("    processing track $cuesheetTrack -- $track");
 
 			$tracks->{$cuesheetTrack}->{'TRACKNUM'} = $tracknumber;
-			$::d_parse && msg("    TRACKNUM: $tracknumber\n");
+
+			$log->debug("    TRACKNUM: $tracknumber");
 
 			%{$tracks->{$cuesheetTrack}} = (%{$tracks->{$cuesheetTrack}}, %{$albumHash->{$album}});
-			
+
 			# now process track info
 			if ($xml =~ m|<mm:Track\s+rdf:about="$track">(.+?)</mm:Track>|s) {
 
 				my $trackSegment = $1;
 				if ($trackSegment =~ m|<dc:title>(.+?)</dc:title>|s) {
+
 					$tracks->{$cuesheetTrack}->{'TITLE'} = $1;
 
-					$::d_parse && msg("    TITLE: " . $tracks->{$cuesheetTrack}->{'TITLE'} . "\n");
+					$log->debug("    TITLE: " . $tracks->{$cuesheetTrack}->{'TITLE'});
 				}
 
 				if ($trackSegment =~ m|<dc:creator rdf:resource="([^"]+)"/>|s) { #"
+
 					%{$tracks->{$cuesheetTrack}} = (%{$tracks->{$cuesheetTrack}}, %{$artistHash->{$1}});
 
-					$::d_parse && msg("    ARTIST: " . $tracks->{$cuesheetTrack}->{'ARTIST'} . "\n");
+					$log->debug("    ARTIST: " . $tracks->{$cuesheetTrack}->{'ARTIST'});
 				}
 			}
 
@@ -559,21 +577,24 @@ sub _getNumberedVCs {
 		$titletags++ if $tag =~ /^\s*TITLE\s*[\(\[\{\<]\d+[\)\]\}\>]\s*=/i;
 	}
 
-	return 0 if $titletags == 0;
+	if ($titletags == 0) {
+		return 0;
+	}
 
 	for my $track (@$cuesheet) {
 		$cuetracks++ if $track =~ /^\s*TRACK/i;
 	}
 
+	my $log = logger('formats.playlists');
+
 	if ($titletags != $cuetracks) {
-		$::d_parse && msg("ERROR: This file has tags for "
-			. $titletags . " tracks but the cuesheet has "
-			. $cuetracks . " tracks\n");
+
+		logError("This file has tags for $titletags tracks but the cuesheet has $cuetracks tracks");
+
 		return 0;
 	}
 
 	# ok, let's see which tags apply to us
-
 	my $defaultTags = {};
 
 	$class->_addInfoTags($flac, $defaultTags);
@@ -587,15 +608,17 @@ sub _getNumberedVCs {
 			my $tkey  = uc($1);
 			my $value = $2;
 
-			$::d_parse && msg("matched: $tkey = $value\n");
-			
+			$log->debug("matched: $tkey = $value");
+
 			# Match track number
 			my $group;
+
 			if ($tkey =~ /^(.+)\s*[\(\[\{\<](\d+)[\)\]\}\>]/) {
 				$tkey = $1;
 				$group = $2 + 0;
-				$::d_parse && msg("grouped as track $group\n");
-			}			
+
+				$log->debug("grouped as track $group");
+			}
 
 			if (defined $group) {
 				$tracks->{$group}->{$tkey} = $value;
@@ -631,32 +654,39 @@ sub _getCDDBTags {
 	# currently we just expect you to have fairly clean tags.
 	my $order = 'standard';
 
-	my $tags = $flac->tags() || {};
+	my $tags  = $flac->tags() || {};
+	my $log   = logger('formats.playlists');
 
 	# Detect CDDB style tags by presence of DTITLE, or return.
-	return 0 unless defined $tags->{'DTITLE'};
+	if (!defined $tags->{'DTITLE'}) {
+		return 0;
+	}
 
 	if ($tags->{'DTITLE'} =~ m|^(.+)\s*/\s*(.+)$|) {
+
 		$tags->{'ARTIST'} = $1;
-		$tags->{'ALBUM'} = $2;
+		$tags->{'ALBUM'}  = $2;
+
 		delete $tags->{'DTITLE'};
 
-		$::d_parse && msg("    ARTIST: " . $tags->{'ARTIST'} . "\n");
-		$::d_parse && msg("    ALBUM: " . $tags->{'ALBUM'} . "\n");
+		$log->debug("    ARTIST: $tags->{'ARTIST'}");
+		$log->debug("    ALBUM: $tags->{'ALBUM'}");
 	}
 
 	if (exists $tags->{'DGENRE'}) {
+
 		$tags->{'GENRE'} = $tags->{'DGENRE'};
 		delete $tags->{'DGENRE'};
 
-		$::d_parse && msg("    GENRE: " . $tags->{'GENRE'} . "\n");
+		$log->debug("    GENRE: $tags->{'GENRE'}");
 	}
 
 	if (exists $tags->{'DYEAR'}) {
+
 		$tags->{'YEAR'} = $tags->{'DYEAR'};
 		delete $tags->{'DYEAR'};
 
-		$::d_parse && msg("    YEAR: " . $tags->{'YEAR'} . "\n");
+		$log->debug("    YEAR: $tags->{'YEAR'}");
 	}
 
 	# grab the cuesheet and process the individual tracks
@@ -677,19 +707,21 @@ sub _getCDDBTags {
 					$tracks->{$tracknum}->{'TITLE'} = $1;
 				}
 
-				$::d_parse && msg("    ARTIST: " . $tracks->{$tracknum}->{'ARTIST'} . "\n");
-				
+				$log->debug("    ARTIST: $tracks->{$tracknum}->{'ARTIST'}");
+
 			} else {
+
 				$tracks->{$tracknum}->{'TITLE'} = $tags->{$key};
 			}
 
-			$::d_parse && msg("    TITLE: " . $tracks->{$tracknum}->{'TITLE'} . "\n");
 
 			$tracks->{$tracknum}->{'TRACKNUM'} = $tracknum;
 
-			$::d_parse && msg("    TRACKNUM: " . $tracks->{$tracknum}->{'TRACKNUM'} . "\n");
+			$log->debug("    TITLE: $tracks->{$tracknum}->{'TITLE'}");
+			$log->debug("    TRACKNUM: $tracks->{$tracknum}->{'TRACKNUM'}");
 
 			delete $tags->{$key};
+
 			$items++;
 		}
 	}
@@ -743,7 +775,9 @@ sub _getCUEinVCs {
 	for my $key (keys %$tracks) {
 
 		if (!exists $metadata->{$key}) {
-			$::d_parse && msg("No metadata found for track " . $tracks->{$key}->{'URI'} . "\n");
+
+			logWarning("No metadata found for track $tracks->{$key}->{'URI'}");
+
 			next;
 		}
 
@@ -844,7 +878,8 @@ sub _getStackedVCs {
 			}
 
 			$tempTags->{$tkey} = $value;
-			$::d_parse && msg("    $tkey: $value\n");
+
+			logger('formats.playlists')->debug("    $tkey: $value");
 		}
 	}
 
@@ -1025,7 +1060,8 @@ sub _seekNextFrame {
 	use bytes;
 
 	if (!defined $fh || !defined $startoffset || !defined $direction) {
-		errorMsg("seekNextFrame: Invalid arguments!\n");
+
+		logError("Invalid arguments!");
 		return 0;
 	}
 
@@ -1035,8 +1071,9 @@ sub _seekNextFrame {
 	}
 
 	my $seekto = ($direction == 1) ? $startoffset : $startoffset - $MAXDISTANCE;
+	my $log    = logger('player.source');
 
-	$::d_source && msg("seekNextFrame: reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction) \n");
+	$log->debug("Reading $MAXDISTANCE bytes at: $seekto (to scan direction: $direction)");
 
 	sysseek($fh, $seekto, SEEK_SET);
 	sysread($fh, my $buf, $MAXDISTANCE, 0);
@@ -1044,7 +1081,9 @@ sub _seekNextFrame {
 	my $len = length($buf);
 
 	if ($len < 16) {
-		$::d_source && msg("seekNextFrame: got less than 16 bytes\n");
+
+		$log->warn("Got less than 16 bytes");
+
 		return 0;
 	}
 
@@ -1058,7 +1097,7 @@ sub _seekNextFrame {
 		$end   = 0;
 	}
 
-	$::d_source && msg("seekNextFrame: scanning: len = $len, start = $start, end = $end\n");
+	$log->debug("Scanning: len = $len, start = $start, end = $end");
 
 	for (my $pos = $start; $pos != $end; $pos += $direction) {
 
@@ -1074,12 +1113,12 @@ sub _seekNextFrame {
 
 		my $found_at_offset = $seekto + $pos;
 
-		$::d_source && msg("seekNextFrame: Found frame header at $found_at_offset\n");
+		$log->debug("Found frame header at $found_at_offset");
 
 		return $found_at_offset;
 	}
 
-	$::d_source && msg("seekNextFrame: Couldn't find any frame header\n");
+	$log->warn("Couldn't find any frame header");
 
 	return 0;
 }
@@ -1100,7 +1139,9 @@ sub findFrameBoundaries {
 	my ($class, $fh, $offset, $seek) = @_;
 
 	if (!defined $fh || !defined $offset) {
-		errorMsg("findFrameBoundaries: Invalid arguments!\n");
+
+		logError("Invalid arguments!");
+
 		return wantarray ? (0, 0) : 0;
 	}
 
@@ -1127,22 +1168,24 @@ so we use this to set the track duaration value.
 
 sub scanBitrate {
 	my ( $class, $fh, $url ) = @_;
-	
+
 	my $flac = Audio::FLAC::Header->new( $fh->filename ) || do {
 
-		$::d_scan && msg("FLAC scanBitrate: Unable to parse FLAC stream\n");
+		logWarning("Unable to parse FLAC stream");
+
 		return (-1, undef);
 	};
-	
+
 	# The bitrate from parsing a short FLAC header is wrong, but we can get the
 	# correct track length from trackTotalLengthSeconds
 	if ( my $secs = $flac->{trackTotalLengthSeconds} ) {
-		$::d_scan && msg("FLAC scanBitrate: Read duration from stream: $secs seconds\n");
+
+		logger('scan.scanner')->debug("Read duration from stream: $secs seconds");
+
 		Slim::Music::Info::setDuration( $url, $secs );
 	}
 
 	# FLAC bitrate is not accurate with a small header file, so don't bother
-	
 	return (-1, undef);
 }
 

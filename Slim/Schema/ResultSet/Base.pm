@@ -8,7 +8,10 @@ use strict;
 use base qw(DBIx::Class::ResultSet);
 
 use Slim::Schema::PageBar;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
+
+my $log = logger('database.sql');
 
 sub suppressAll        { 0 }
 sub allTransform       { '' }
@@ -85,10 +88,8 @@ sub fixupSortKeys {
 		$fixed .= ',me.disc';
 	}
 
-	if ($::d_sql) {
-		msg("fixupSortKeys: fixed: [$sort]\n");
-		msg("fixupSortKeys  into : [$fixed]\n");
-	}
+	$log->debug("fixupSortKeys: fixed: [$sort]\n");
+	$log->debug("fixupSortKeys  into : [$fixed]\n");
 
 	return $fixed;
 }
@@ -136,11 +137,10 @@ sub generateConditionsFromFilters {
 		$filters{$param} = $value;
 	}
 
-	if ($::d_sql) {
-		msg("levelMap:\n");
-		Data::Dump::dump(\%levelMap);
-		msg("filters:\n");
-		Data::Dump::dump(\%filters);
+	if ($log->is_debug) {
+
+		$log->debug("levelMap: ", Data::Dump::dump(\%levelMap));
+		$log->debug("filters : ", Data::Dump::dump(\%filters));
 	}
 
 	# Turn parameters in the form of: album.sort into the appropriate sort
@@ -172,7 +172,7 @@ sub generateConditionsFromFilters {
 			$param = sprintf('%s.%s', $rs->{'attrs'}{'alias'}, $1);
 		}
 
-		$::d_sql && msg("working on levelname: [$levelName]\n");
+		$log->debug("Working on levelname: [$levelName]");
 
 		if (exists $levelMap{$levelName} && defined $levelMap{$levelName}) {
 
@@ -186,9 +186,9 @@ sub generateConditionsFromFilters {
 		}
 	}
 
-	if ($::d_sql) {
-		msg("find:\n");
-		Data::Dump::dump(\%find);
+	if ($log->is_debug) {
+
+		$log->debug("find: ", Data::Dump::dump(\%find));
 	}
 
 	return (\%filters, \%find, \%sort);
@@ -199,7 +199,7 @@ sub descend {
 
 	my $rs = $self;
 
-	$::d_sql && msgf("\$self->result_class: [%s]\n", $self->result_class);
+	$log->debug(sprintf("\$self->result_class: [%s]", $self->result_class));
 
 	# Walk the hierarchy we were passed, calling into the descend$level
 	# for each, which will build up a RS to hand back to the caller.
@@ -218,24 +218,27 @@ sub descend {
 
 		$level           = ucfirst($level);
 
-		if ($::d_sql) {
+		if ($log->is_debug) {
 
-			msg("descend: working on level: [$level]\n");
-			msgf("\$self->result_source->schema->source(\$level)->result_class: [%s]\n",
+			$log->debug("Working on level: [$level]");
+
+			$log->deubg(sprintf("\$self->result_source->schema->source(\$level)->result_class: [%s]",
 				$self->result_source->schema->source($level)->result_class
-			);
+			));
 		}
 
 		# If we're at the top level for a Level, just browse.
 		if ($self->result_class eq $self->result_source->schema->source($level)->result_class) {
 
-			$::d_sql && msg("Calling method: [browse]\n");
+			$log->debug("Calling method: [browse]");
+
 			$rs = $rs->browse($find, $condForLevel, $sortForLevel);
 
 		} else {
 
 			my $method = "descend${level}";
-			$::d_sql && msg("Calling method: [$method]\n");
+
+			$log->debug("Calling method: [$method]");
 
 			$rs = $rs->$method($find, $condForLevel, $sortForLevel);
 		}

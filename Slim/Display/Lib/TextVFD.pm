@@ -20,8 +20,11 @@ L<Slim::Display::Lib::TextVFD>
 =cut
 
 use strict;
-use Slim::Utils::Misc;
+
+use Slim::Utils::Log;
 use Slim::Utils::Unicode;
+
+my $log = logger('player.ui');
 
 our $MAXBRIGHTNESS = 4;
 
@@ -119,7 +122,6 @@ my %gracefulmap = (
 	'rightvbar'  => '|',
 );
 
-
 sub vfdUpdate {
 	my $client = shift;
 	my $line1  = shift; 
@@ -138,7 +140,7 @@ sub vfdUpdate {
 		$lang =~ s/[^-]*-(.*)/$1/;
 	}
 
-	$::d_ui && msg("vfdUpdate $lang\nline1: $line1\nline2: $line2\n\n");
+	$log->debug("vfdUpdate $lang\nline1: $line1\nline2: $line2\n");
 	
 	my $brightness = $client->brightness();
 
@@ -217,32 +219,49 @@ sub vfdUpdate {
 	# Find out which custom chars we need to add, and which we can discard
 	my $usedCustom = scalar keys(%customUsed);
 	my $nextChr = chr(0);
+
 	foreach my $custom (keys %newCustom) {
+
 		my $encodedCustom = "\x1F" . $custom . "\x1F";
+
 		if ($usedCustom < 8) { # Room to add this one
+
 			while(defined $customUsed{$nextChr}) {
+
 				$nextChr = chr(ord($nextChr)+1);
 			}
+
 			# Insert code into line, replacing temporaries
 			$line =~ s/$encodedCustom/$nextChr/g;
+
 			# Forget previous custom at this code
 			foreach my $prevCustom (keys(%{$customChars{$client}})) {
 				delete $customChars{$client}{$prevCustom} if($customChars{$client}{$prevCustom} eq $nextChr);
 			}
+
 			# Record new custom and code
 			$customChars{$client}{$custom} = $nextChr;
 			$customUsed{$nextChr} = $custom;
 			$usedCustom++;
 			$nextChr = chr(ord($nextChr)+1);
+
 		} else { # No space left; use a space
-		    $::d_ui && msg( "no space left:" . $custom . "\n") ;
-		    if ($gracefulmap{$custom}) {
-				$::d_ui && msg( "graceful: " . $custom . " -> " . $gracefulmap{$custom} . "\n" );
+
+			$log->debug("no space left: [$custom]");
+
+			if ($gracefulmap{$custom}) {
+
+				$log->debug("graceful: $custom -> $gracefulmap{$custom}");
+
 				$line =~ s/$encodedCustom/$gracefulmap{$custom}/g;
-		    } else {
-				$::d_ui && msg("ungraceful\n");
+
+			} else {
+
+				$log->debug("ungraceful");
+
 				$line =~ s/$encodedCustom/ /g;
-		    }
+			}
+
 			delete $newCustom{$custom};
 		}
 	}
@@ -272,20 +291,23 @@ sub vfdUpdate {
 	} else {
 		$vfddata .= $noritakeBrightPrelude . $vfdBright[$brightness];
 	}
+
 	# define required custom characters
 	while((my $custc,my $ncustom) = each %customUsed) {
-			my $bitmapref = $vfdcustomchars{$ncustom};
-			my $bitmap = pack ('C8', @$bitmapref);
-			$bitmap =~ s/(.)/$vfdCodeChar$1/gos;
-			$vfddata .= $vfdCodeCmd . pack('C',0b01000000 + (ord($custc) * 8)) . $bitmap;
+
+		my $bitmapref = $vfdcustomchars{$ncustom};
+		my $bitmap = pack ('C8', @$bitmapref);
+		$bitmap =~ s/(.)/$vfdCodeChar$1/gos;
+		$vfddata .= $vfdCodeCmd . pack('C',0b01000000 + (ord($custc) * 8)) . $bitmap;
 	}	
-	
+
 	# put us in incrementing mode and move the cursor home
 	$vfddata .= $vfdReset;
 	$vfddata .= $vfdCodeCmd . $vfdCommand{"CFF"};
+
 	# include our actual character data
 	$line =~ s/(.)/$vfdCodeChar$1/gos;
-	
+
 	# split the line in two and move the cursor to the second line
 	$line = substr($line, 0, 80) . $vfdCodeCmd . $vfdCommand{"HOME2"} . substr($line, 80);
 
@@ -293,11 +315,13 @@ sub vfdUpdate {
 	
 	# set the cursor
 	if ($cur >= 0) {
+
 		if ($cur < 40) {
 			$vfddata .= $vfdCodeCmd.(pack 'C', (0b10000000 + $cur));
 		} else {
 			$vfddata .= $vfdCodeCmd.(pack 'C', (0b11000000 + $cur - 40));
 		}
+
 		# turn on  the cursor			
 		$vfddata .= $vfdCodeCmd. $vfdCommand{'CUR'};
 	}
@@ -305,8 +329,9 @@ sub vfdUpdate {
 	$client->vfd($vfddata);
 	
 	my $len = length($vfddata);
-	die "Odd vfddata: $vfddata" if ($len % 2);
-	die "VFDData too long: $len bytes: $vfddata" if ($len > 500);
+
+	$log->logdie("Odd vfddata: $vfddata") if ($len % 2);
+	$log->logdie("VFDData too long: $len bytes: $vfddata") if ($len > 500);
 }
 
 # the following are the custom character definitions for the new progress/level bar...
@@ -929,32 +954,56 @@ my $doubleModern = {
 
 sub addDoubleChar {
 	my ($char,$doublechar) = @_;
+
 	if (!exists $doubleClassic->{$char} && ref($doublechar) eq 'ARRAY' 
-			&& Slim::Display::Display::lineLength($doublechar->[0]) == Slim::Display::Display::lineLength($doublechar->[1])) {
+		&& Slim::Display::Display::lineLength($doublechar->[0]) == Slim::Display::Display::lineLength($doublechar->[1])) {
+
 		$doubleClassic->{$char} = $doublechar;
-		$doubleModern->{$char} = $doublechar;
+		$doubleModern->{$char}  = $doublechar;
+
 	} else {
-		if ($::d_display) {
-			msg("Could not add character $char, it already exists.\n") if exists $doubleClassic->{$char};
-			msg("Could not add character $char, doublechar is not array reference.\n") if ref($doublechar) ne 'ARRAY';
-			msg("Could not add character $char, lines of doublechar have unequal lengths.\n")
-				if Slim::Display::Display::lineLength($doublechar->[0]) != Slim::Display::Display::lineLength($doublechar->[1]);
+
+		if (exists $doubleClassic->{$char}) {
+
+			$log->warn("Could not add character $char, it already exists.");
+		}
+
+		if (ref($doublechar) ne 'ARRAY') {
+
+			$log->warn("Could not add character $char, doublechar is not array reference.");
+		}
+
+		if (Slim::Display::Display::lineLength($doublechar->[0]) !=
+		    Slim::Display::Display::lineLength($doublechar->[1])) {
+
+			$log->warn("Could not add character $char, lines of doublechar have unequal lengths.");
 		}
 	}
 }
 
 sub updateDoubleChar {
 	my ($char,$doublechar) = @_;
+
 	if (ref($doublechar) eq 'ARRAY' 
-			&& Slim::Display::Display::lineLength($doublechar->[0]) == Slim::Display::Display::lineLength($doublechar->[1])) {
+		&& Slim::Display::Display::lineLength($doublechar->[0]) == 
+		   Slim::Display::Display::lineLength($doublechar->[1])) {
+
 		$doubleClassic->{$char} = $doublechar;
-		$doubleModern->{$char} = $doublechar;
+		$doubleModern->{$char}  = $doublechar;
+
 	} else {
-		if ($::d_display) {
-			msg("Could not update character $char, doublechar is not array reference.\n") if ref($doublechar) ne 'ARRAY';
-			msg("Could not update character $char, lines of doublechar have unequal lengths.\n")
-				if Slim::Display::Display::lineLength($doublechar->[0]) != Slim::Display::Display::lineLength($doublechar->[1]);
+
+		if (ref($doublechar) ne 'ARRAY') {
+
+			$log->warn("Could not add character $char, doublechar is not array reference.");
 		}
+
+		if (Slim::Display::Display::lineLength($doublechar->[0]) !=
+		    Slim::Display::Display::lineLength($doublechar->[1])) {
+
+			$log->warn("Could not add character $char, lines of doublechar have unequal lengths.");
+		}
+
 	}
 }
 
@@ -992,11 +1041,11 @@ sub doubleSize {
 	$line2 =~ s/$cursorpos//g;
 	$line2 =~ s/^(\s*)(.*)/$2/;
 	
-	$::d_ui && msg("doubling: $line2\n");
+	$log->info("doubling: $line2");
 
 	$line2 =~ tr/\x{00E6}\x{00F8}\x{00F0}/\x{00C6}\x{00D8}\x{00D0}/;
 	$line2 =~ tr/\x{00C5}\x{00E5}/AA/;
-	
+
 	my $lastch1 = "";
 	my $lastch2 = "";
    
@@ -1005,40 +1054,52 @@ sub doubleSize {
 	my $split = Slim::Display::Display::splitString($line2);
 	
 	foreach my $char (@$split) {
+
 		if (exists($doublechars->{$char}) || exists($doublechars->{Slim::Utils::Text::matchCase($char)})) {
+
 			my ($char1,$char2);
+
 			if (!exists($doublechars->{$char})) {
 				$char = Slim::Utils::Text::matchCase($char);
 			}
+
 			($char1,$char2)=  @{$doublechars->{$char}};
+
 			if ($char =~ /[A-Z]/ && $lastchar ne ' ' && $lastchar !~ /\d/) {
-					if (($lastch1 =~ $kernL && $char1 =~ $kernR) ||
-						 ($lastch2 =~ $kernL && $char2 =~ $kernR)) {
+
+				if (($lastch1 =~ $kernL && $char1 =~ $kernR) || ($lastch2 =~ $kernL && $char2 =~ $kernR)) {
 					
-						if ($lastchar =~ /[CGLSTZ]/ && $char =~ /[COQ]/) {
-							# Special cases to exclude kerning between
-						} else {
-						   $newline1 .= ' ';
-						   $newline2 .= ' ';
-						}
+					if ($lastchar =~ /[CGLSTZ]/ && $char =~ /[COQ]/) {
+
+						# Special cases to exclude kerning between
+
+					} else {
+
+						$newline1 .= ' ';
+						$newline2 .= ' ';
 					}
+				}
 			}
+
 			$lastch1 = $char1;
 			$lastch2 = $char2;
 			$newline1 .= $char1;
 			$newline2 .= $char2;
+
 		} else {
-			$::d_display && msg("Character $char has no double\n");
+
+			$log->warn("Character $char has no double");
+
 			next;
 		}
+
 		$lastchar = $char;
 	}
 	
 	return ($newline1, $newline2);
 }
+
 =head1 SEE ALSO
-
-
 
 =cut
 

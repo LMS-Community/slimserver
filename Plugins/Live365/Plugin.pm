@@ -1,4 +1,3 @@
-# vim: foldmethod=marker
 # Live365 tuner plugin for Slim Devices SlimServer
 # Copyright (C) 2004  Jim Knepley
 #
@@ -15,17 +14,16 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#
+
+# $Id$
 
 package Plugins::Live365::Plugin;
 
 use strict;
-use vars qw( $VERSION );
-$VERSION = 1.20;
 
 use Slim::Player::ProtocolHandlers;
-use Slim::Utils::Strings qw( string );
-use Slim::Utils::Misc qw( msg );
+use Slim::Utils::Strings qw(string);
+use Slim::Utils::Log;
 use Slim::Control::Request;
 
 # Need this to include the other modules now that we split up Live365.pm
@@ -35,7 +33,12 @@ use Plugins::Live365::Web;
 
 use constant ROWS_TO_RETRIEVE => 50;
 
-# {{{ Initialize
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.digitalinput',
+	'defaultLevel' => 'WARN',
+	'description'  => getDisplayName(),
+});
+
 our $live365 = {};
 our %channelModeFunctions;
 our %mainModeFunctions;
@@ -43,7 +46,16 @@ our %genreModeFunctions;
 our %searchModeFunctions;
 our %infoModeFunctions = ();
 
-our @searchModeItems;
+my @searchModeItems = (
+	[ 'PLUGIN_LIVE365_SEARCH_TAC', 'T:A:C' ],
+	[ 'PLUGIN_LIVE365_SEARCH_A'  , 'A' ],
+	[ 'PLUGIN_LIVE365_SEARCH_T'  , 'T' ],
+	[ 'PLUGIN_LIVE365_SEARCH_C'  , 'C' ],
+	[ 'PLUGIN_LIVE365_SEARCH_E'  , 'E' ],
+	[ 'PLUGIN_LIVE365_SEARCH_L'  , 'L' ],
+	[ 'PLUGIN_LIVE365_SEARCH_H'  , 'H' ]
+);
+
 our @mainModeItems;
 
 our $mainModeIdx = 0;
@@ -88,29 +100,36 @@ sub setupGroup {
 	my %Prefs = (
 		plugin_live365_username => {
 		},
+
 		plugin_live365_password => { 
+
 			'onChange' => sub {
 				my $encoded = pack( 'u', $_[1]->{plugin_live365_password}->{new} );
 				chomp $encoded;
 				Slim::Utils::Prefs::set( 'plugin_live365_password', $encoded );
 			},
+
 			'inputTemplate' => 'setup_input_passwd.html',
 			'changeMsg' => string('SETUP_PLUGIN_LIVE365_PASSWORD_CHANGED'),
 		},
+
 		plugin_live365_sort_order => {
 			options => \%sort_options
 		},
+
 		plugin_live365_web_show_details => {
-				validate => \&Slim::Utils::Validate::trueFalse,
-				options  => {
-						1 => string('ON'),
-						0 => string('OFF')
-				},
-				'PrefChoose' => string('SETUP_PLUGIN_LIVE365_WEB_SHOW_DETAILS')
+
+			validate => \&Slim::Utils::Validate::trueFalse,
+			options  => {
+				1 => string('ON'),
+				0 => string('OFF')
+			},
+
+			'PrefChoose' => string('SETUP_PLUGIN_LIVE365_WEB_SHOW_DETAILS')
 		}
 	);
 
-	return( \%Group, \%Prefs );
+	return (\%Group, \%Prefs);
 }
 
 sub playOrAddCurrentStation {
@@ -118,9 +137,11 @@ sub playOrAddCurrentStation {
 	my $play = shift;
 
 	my $stationURL = $live365->{$client}->getCurrentChannelURL();
-	$::d_plugins && msg( "Live365.ChannelMode URL: $stationURL\n" );
+
+	$log->info("URL: $stationURL");
 
 	my $line1;
+
 	if ($play) {
 		$line1 = $client->string('CONNECTING_FOR');
 	}
@@ -129,6 +150,7 @@ sub playOrAddCurrentStation {
 	}
 
 	my $title = $live365->{$client}->getCurrentStation()->{STATION_TITLE};
+
 	$client->showBriefly({
 		'line1'    => $line1,
 		'line2'    => $title,
@@ -147,734 +169,779 @@ sub playOrAddCurrentStation {
 	}
 }
 
-# }}}
-
 #############################
-# Main mode {{{
-# 
-MAINMODE: {
-	sub setMode {
-		my $client = shift;
-		my $entryType = shift;
-	
-		if ($entryType eq 'pop') {
-			Slim::Buttons::Common::popMode($client);
-			return;
-		}
-	
-		unless( defined $live365->{$client} ) {
-			$live365->{$client} = new Plugins::Live365::Live365API();
-		}
-	
-		my ( $loginModePtr ) = ( grep { $_->[0] eq 'loginMode' } @mainModeItems )[0];
-		if( $entryType eq 'push' ) {
-			loginMode($client, {'silent' => 1}) unless( $live365->{$client}->isLoggedIn() );
-		}
-	
-		if( $live365->{$client}->isLoggedIn() ) {
-			$loginModePtr->[1] = 'PLUGIN_LIVE365_LOGOUT';
-		} else {
-			$loginModePtr->[1] = 'PLUGIN_LIVE365_LOGIN';
-		}
-		
-		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List',
-			{
-			'listRef'        => \@mainModeItems,
-			'externRef'      => sub { 
-								if ($_[1][0] eq 'loginMode') {
-									return $_[0]->string($live365->{$_[0]}->isLoggedIn() ? 'PLUGIN_LIVE365_LOGOUT' : 'PLUGIN_LIVE365_LOGIN');
-								} else {
-									return $_[0]->string($_[1][1]);
-								}
-							},
-			'externRefArgs'  => 'CV',
-			'header'         => \&mainHeader,
-			'headerArgs'     => 'CI',
-			'stringHeader'   => 1,
-			'headerAddCount' => 1,
-			'stringHeader'   => 1,
-			'headerAddCount' => 1,
-			'callback'       => \&mainExitHandler,
-			'overlayRef'     => sub {
-									return (undef, Slim::Display::Display::symbol('rightarrow'));
-								},
-			}
-		);
-	}
-	
-	sub mainExitHandler {
-		my ($client,$exitType) = @_;
-	
-		$exitType = uc($exitType);
-		my $selection = ${$client->modeParam('valueRef')};
-	
-		if ($exitType eq 'LEFT') {
-			Slim::Buttons::Common::popModeRight($client);
-		} else {
-			my $success = 0;
-			my $stationParams = {};
-			SWITCH: {
-				$selection->[1] eq 'PLUGIN_LIVE365_PRESETS' && do {
-					if( !$live365->{$client}->getSessionID() ) {
-						$client->showBriefly({'line1' => $client->string( 'PLUGIN_LIVE365_NOT_LOGGED_IN' )});
-					} else {
-						$success = 1;
-					}
-					last SWITCH;
-				};
-	
-				$selection->[1] eq 'PLUGIN_LIVE365_BROWSEALL' && do {
-					$stationParams = {
-						'sort'			=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
-						'searchfields'	=> Slim::Utils::Prefs::get( 'plugin_live365_search_fields' )
-					};
-					$success = 1;
-					last SWITCH;
-				};
-	
-				$selection->[1] eq 'PLUGIN_LIVE365_BROWSEPICKS' && do {
-					$stationParams = {
-						'sort'			=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
-						'searchfields'	=> Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
-						'genre' 		=> 'ESP'
-					};
-					$success = 1;
-					last SWITCH;
-				};
-	
-				$selection->[1] eq 'PLUGIN_LIVE365_BROWSEPROS' && do {
-					$stationParams = {
-						'sort'			=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
-						'searchfields'	=> Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
-						'genre'			=> 'Pro'
-					};
-					$success = 1;
-					last SWITCH;
-				};
-	
-				$success = 1;
-			}
-	
-			if( $success ) {
-				if ($selection->[0] eq 'loginMode') {
-					loginMode($client);
-				}
-				else {
-					Slim::Buttons::Common::pushModeLeft( $client, $selection->[0], { source => $selection->[1], stationParams => $stationParams } );
-				}
-			}
-		}
-	}
-	
-	sub mainHeader {
-		my $client = shift;
-		my $index = shift;
-		
-		if ( my $APImessage = $live365->{$client}->status() ) {
-			return $client->string( $APImessage);
-		} else {
-			return $client->string('PLUGIN_LIVE365_MODULE_NAME');
-		}
-	}
-	
-	sub getFunctions {
-		return \%mainModeFunctions;
+sub setMode {
+	my $client = shift;
+	my $entryType = shift;
+
+	if ($entryType eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
 	}
 
-} # end main mode
+	if (!defined $live365->{$client} ) {
+		$live365->{$client} = Plugins::Live365::Live365API->new;
+	}
 
-# }}}
+	my ( $loginModePtr ) = ( grep { $_->[0] eq 'loginMode' } @mainModeItems )[0];
 
-#############################
-# Login mode {{{
-#
-LOGINMODE: {
-	sub loginMode {
-		my $client = shift;
-		my $args = shift;
-		
-		my $silent = $args->{'silent'};
+	if ($entryType eq 'push' ) {
+		loginMode($client, {'silent' => 1}) unless( $live365->{$client}->isLoggedIn() );
+	}
+
+	if( $live365->{$client}->isLoggedIn() ) {
+		$loginModePtr->[1] = 'PLUGIN_LIVE365_LOGOUT';
+	} else {
+		$loginModePtr->[1] = 'PLUGIN_LIVE365_LOGIN';
+	}
 	
-		my $userID   = Slim::Utils::Prefs::get( 'plugin_live365_username' );
-		my $password = Slim::Utils::Prefs::get( 'plugin_live365_password' );
-		my $loggedIn = $live365->{$client}->isLoggedIn();
-	
-		if (defined $password) {
-			$password = unpack('u', $password);
-		}
-	
-		if( $loggedIn ) {
-			$::d_plugins && msg( "Logging out $userID\n" );
-			my $logoutStatus = $live365->{$client}->logout($client, \&logoutDone, $silent);
-		
-		} else {
-		
-			if( $userID and $password ) {
-				$::d_plugins && msg( "Logging in $userID\n" );
-				my $loginStatus = $live365->{$client}->login( $userID, $password,
-															  $client, \&loginDone, $silent);
+	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', {
+
+		'listRef'        => \@mainModeItems,
+		'externRef'      => sub { 
+
+			if ($_[1][0] eq 'loginMode') {
+
+				return $_[0]->string($live365->{$_[0]}->isLoggedIn() ? 'PLUGIN_LIVE365_LOGOUT' : 'PLUGIN_LIVE365_LOGIN');
+
 			} else {
-				$::d_plugins && msg( "Live365.login: no credentials set\n" );
-				unless ($silent) {
-					$client->showBriefly({'line1' => $client->string( 'PLUGIN_LIVE365_NO_CREDENTIALS' )});
+
+				return $_[0]->string($_[1][1]);
+			}
+		},
+
+		'externRefArgs'  => 'CV',
+		'header'         => \&mainHeader,
+		'headerArgs'     => 'CI',
+		'stringHeader'   => 1,
+		'headerAddCount' => 1,
+		'stringHeader'   => 1,
+		'headerAddCount' => 1,
+		'callback'       => \&mainExitHandler,
+		'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
+	});
+}
+
+sub mainExitHandler {
+	my ($client,$exitType) = @_;
+
+	$exitType = uc($exitType);
+
+	my $selection = ${$client->modeParam('valueRef')};
+
+	if ($exitType eq 'LEFT') {
+
+		Slim::Buttons::Common::popModeRight($client);
+
+	} else {
+
+		my $success = 0;
+		my $stationParams = {};
+
+		SWITCH: {
+
+			$selection->[1] eq 'PLUGIN_LIVE365_PRESETS' && do {
+
+				if (!$live365->{$client}->getSessionID() ) {
+
+					$client->showBriefly({'line1' => $client->string( 'PLUGIN_LIVE365_NOT_LOGGED_IN' )});
+
+				} else {
+
+					$success = 1;
 				}
+
+				last SWITCH;
+			};
+
+			$selection->[1] eq 'PLUGIN_LIVE365_BROWSEALL' && do {
+
+				$stationParams = {
+					'sort'	       => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
+					'searchfields' => Slim::Utils::Prefs::get( 'plugin_live365_search_fields' )
+				};
+
+				$success = 1;
+
+				last SWITCH;
+			};
+
+			$selection->[1] eq 'PLUGIN_LIVE365_BROWSEPICKS' && do {
+
+				$stationParams = {
+					'sort'	       => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
+					'searchfields' => Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
+					'genre'        => 'ESP'
+				};
+
+				$success = 1;
+
+				last SWITCH;
+			};
+
+			$selection->[1] eq 'PLUGIN_LIVE365_BROWSEPROS' && do {
+
+				$stationParams = {
+					'sort'	       => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
+					'searchfields' => Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
+					'genre'	       => 'Pro'
+				};
+
+				$success = 1;
+
+				last SWITCH;
+			};
+
+			$success = 1;
+		}
+
+		if ($success) {
+
+			if ($selection->[0] eq 'loginMode') {
+
+				loginMode($client);
+
+			} else {
+
+				Slim::Buttons::Common::pushModeLeft($client, $selection->[0], {
+					source        => $selection->[1],
+					stationParams => $stationParams
+				});
 			}
 		}
-	};
-	
-	sub loginDone {
-		my $client = shift;
-		my $args = shift;
-		
-		my $loginStatus = $args->{'status'};
-		my $webOnly = $args->{'webOnly'};
-		my $silent = $args->{'silent'};
-	
-		if( $loginStatus == 0 ) {
-	
-			Slim::Utils::Prefs::set( 'plugin_live365_sessionid', $live365->{$client}->getSessionID() );
-			Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', $live365->{$client}->getMemberStatus() );
-	
-			unless ($silent) {
-				$client->showBriefly({'line1' => $client->string( 'PLUGIN_LIVE365_LOGIN_SUCCESS' )});
-			}
-	
-			$live365->{$client}->setLoggedIn( 1 );
-			$::d_plugins && msg( "Live365 logged in: " . $live365->{$client}->getSessionID() . "\n" );
-	
-		} else {
-			Slim::Utils::Prefs::set( 'plugin_live365_sessionid', undef );
-			Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', undef );
-			$client->showBriefly({'line1' => $client->string( $statusText[ $loginStatus ] )});
-			$live365->{$client}->setLoggedIn( 0 );
-			$::d_plugins && msg( "Live365 login failure: " . $statusText[ $loginStatus ] . "\n" );
-		}
 	}
-	
-	sub logoutDone {
-		my $client = shift;
-		my $args = shift;
-		
-		my $logoutStatus = $args->{'status'};
-		my $silent = $args->{'silent'};
-	
-		if( $logoutStatus == 0 ) {
-			$client->showBriefly({'line1' => $client->string( $statusText[ $logoutStatus ])});
-			  $::d_plugins && msg( "Live365 logged out.\n" );
-	
-		} else {
-			$client->showBriefly({'line1' => $client->string( $statusText[ $logoutStatus ])});
-			$::d_plugins && msg( "Live365 logout error: $statusText[ $logoutStatus ]\n" );
-		}
-	
-		$live365->{$client}->setLoggedIn( 0 );
-		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', '' );
+}
+
+sub mainHeader {
+	my $client = shift;
+	my $index = shift;
+
+	if ( my $APImessage = $live365->{$client}->status() ) {
+
+		return $client->string( $APImessage);
+
+	} else {
+
+		return $client->string('PLUGIN_LIVE365_MODULE_NAME');
 	}
-	
-	sub noLoginMode {
-		my $client = shift;
-	};
+}
 
-} # end login mode
-
-# }}}
+sub getFunctions {
+	return \%mainModeFunctions;
+}
 
 #############################
-# Genre mode {{{
-#
+sub loginMode {
+	my $client = shift;
+	my $args = shift;
+	
+	my $silent = $args->{'silent'};
+
+	my $userID   = Slim::Utils::Prefs::get( 'plugin_live365_username' );
+	my $password = Slim::Utils::Prefs::get( 'plugin_live365_password' );
+	my $loggedIn = $live365->{$client}->isLoggedIn();
+
+	if (defined $password) {
+		$password = unpack('u', $password);
+	}
+
+	if( $loggedIn ) {
+
+		$log->info("Logging out $userID");
+
+		my $logoutStatus = $live365->{$client}->logout($client, \&logoutDone, $silent);
+	
+	} else {
+	
+		if ($userID and $password) {
+
+			$log->info("Logging in $userID");
+
+			my $loginStatus = $live365->{$client}->login( $userID, $password, $client, \&loginDone, $silent);
+
+		} else {
+
+			$log->warn("Warning: No credentials set.");
+
+			if (!$silent) {
+				$client->showBriefly({'line1' => $client->string( 'PLUGIN_LIVE365_NO_CREDENTIALS' )});
+			}
+		}
+	}
+}
+
+sub loginDone {
+	my $client = shift;
+	my $args   = shift;
+	
+	my $loginStatus = $args->{'status'};
+	my $webOnly     = $args->{'webOnly'};
+	my $silent      = $args->{'silent'};
+
+	if( $loginStatus == 0 ) {
+
+		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', $live365->{$client}->getSessionID() );
+		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', $live365->{$client}->getMemberStatus() );
+
+		if (!$silent) {
+			$client->showBriefly({'line1' => $client->string( 'PLUGIN_LIVE365_LOGIN_SUCCESS' )});
+		}
+
+		$live365->{$client}->setLoggedIn(1);
+
+		$log->info("Logged in: " . $live365->{$client}->getSessionID);
+
+	} else {
+
+		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', undef );
+		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', undef );
+
+		$client->showBriefly({'line1' => $client->string( $statusText[ $loginStatus ] )});
+
+		$live365->{$client}->setLoggedIn( 0 );
+
+		$log->warn("Warning: Login failure: $statusText[$loginStatus]");
+	}
+}
+
+sub logoutDone {
+	my $client = shift;
+	my $args = shift;
+	
+	my $logoutStatus = $args->{'status'};
+	my $silent       = $args->{'silent'};
+
+	if( $logoutStatus == 0 ) {
+
+		$client->showBriefly({'line1' => $client->string( $statusText[ $logoutStatus ])});
+
+		$log->info("Logged out.");
+
+	} else {
+
+		$client->showBriefly({'line1' => $client->string( $statusText[ $logoutStatus ])});
+
+		$log->error("Error: While trying to logout: $statusText[ $logoutStatus ]");
+	}
+
+	$live365->{$client}->setLoggedIn( 0 );
+
+	Slim::Utils::Prefs::set( 'plugin_live365_sessionid', '' );
+}
+
+sub noLoginMode {
+	my $client = shift;
+}
+
+#############################
 my @genreList = ();
 
-GENREMODE: {
-	sub setGenreMode {
-		my $client = shift;
-		my $entryType = shift;
-	
-		if ($entryType eq 'pop') {
-			Slim::Buttons::Common::popMode($client);
+sub setGenreMode {
+	my $client = shift;
+	my $entryType = shift;
+
+	if ($entryType eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
+
+	$client->lines( \&loadingLines );
+
+	if (!scalar(@genreList)) {
+		$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_GENRES' );
+		$live365->{$client}->loadGenreList($client, \&genreModeLoad, \&genreModeError);
+	} else {
+		genreModeLoad($client);
+	}
+}
+
+sub genreModeLoad {
+	my $client = shift;
+	my $list = shift;
+
+	@genreList = @$list if $list;
+
+	$live365->{$client}->clearBlockingStatus();
+
+	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', {
+		'listRef'        => \@genreList,
+		'externRef'      => sub { return $_[1][0] },
+		'externRefArgs'  => 'CV',
+		'header'         => sub {
+			if( my $APImessage = $live365->{$client}->status() ) {
+				return $_[0]->string( $APImessage );
+			} else {
+				return $_[0]->string('PLUGIN_LIVE365_GENRES');
+			}
+		},
+		'headerArgs'     => 'C',
+		'stringHeader'   => 1,
+		'headerAddCount' => 1,
+		'stringHeader'   => 1,
+		'headerAddCount' => 1,
+		'callback'       => \&genreExitHandler,
+		'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
+		'isSorted'       => 'L',
+		'lookupRef'      => sub { 
+			my $index = shift;
+			return $genreList[$index][0];
+		},
+		'lookupRefArgs'  => 'I',
+	});
+}
+
+sub genreModeError {
+	my $client = shift;
+
+	$live365->{$client}->clearBlockingStatus();
+
+	$client->showBriefly({'line1' => $client->string( 'PLUGIN_LIVE365_LOGIN_ERROR_HTTP' )});
+}
+
+sub genreExitHandler {
+	my ($client,$exitType) = @_;
+
+	$exitType = uc($exitType);
+	my $selection = ${$client->modeParam('valueRef')};
+
+	if ($exitType eq 'LEFT') {
+
+		$live365->{$client}->stopLoading();
+		Slim::Buttons::Common::popModeRight( $client );
+
+	} else {
+
+		if (!scalar(@genreList)) {
+			$client->bumpRight();
 			return;
 		}
-	
-		$client->lines( \&loadingLines );
-	
-		if (!scalar(@genreList)) {
-			$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_GENRES' );
-			$live365->{$client}->loadGenreList($client, \&genreModeLoad, \&genreModeError);
-		} else {
-			genreModeLoad($client);
-		}
-	
-	};
-	
-	sub genreModeLoad {
-		my $client = shift;
-		my $list = shift;
-	
-		@genreList = @$list if $list;
-	
-		$live365->{$client}->clearBlockingStatus();
 
-		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List',
-			{
-			'listRef'        => \@genreList,
-			'externRef'      => sub { 
-										return $_[1][0];
-								},
-			'externRefArgs'  => 'CV',
-			'header'         => sub {
-									if( my $APImessage = $live365->{$client}->status() ) {
-										return $_[0]->string( $APImessage );
-									} else {
-										return $_[0]->string('PLUGIN_LIVE365_GENRES');
-									}
-								},
-			'headerArgs'     => 'C',
-			'stringHeader'   => 1,
-			'headerAddCount' => 1,
-			'stringHeader'   => 1,
-			'headerAddCount' => 1,
-			'callback'       => \&genreExitHandler,
-			'overlayRef'     => sub {
-									return (undef, Slim::Display::Display::symbol('rightarrow'));
-								},
-			'isSorted'       => 'L',
-			'lookupRef'      => sub { 
-									my $index = shift;
-									return $genreList[$index][0];
-								},
-			'lookupRefArgs'  => 'I',
-			}
-		);
-	}
-	
-	sub genreModeError {
-		my $client = shift;
-	
-		$live365->{$client}->clearBlockingStatus();
-	
-		$client->showBriefly({'line1' => $client->string( 'PLUGIN_LIVE365_LOGIN_ERROR_HTTP' )});
-		#Slim::Buttons::Common::popModeRight( $client );
-	}
-	
-	sub genreExitHandler {
-		my ($client,$exitType) = @_;
-	
-		$exitType = uc($exitType);
-		my $selection = ${$client->modeParam('valueRef')};
-	
-		if ($exitType eq 'LEFT') {
-				$live365->{$client}->stopLoading();
-				Slim::Buttons::Common::popModeRight( $client );
-		} else {
-				if (!scalar(@genreList)) {
-					$client->bumpRight();
-					return;
-				}
+		my $genrePointer = ${$client->modeParam('valueRef')};
 		
-				my $genrePointer = ${$client->modeParam('valueRef')};
-				
-				my $stationParams = {
-					'genre'			=> $genrePointer->[1],
-					'sort'			=> Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
-					'searchfields'	=> Slim::Utils::Prefs::get( 'plugin_live365_search_fields' )
-				};
-				Slim::Buttons::Common::pushModeLeft( $client, 'Live365Channels', 
-									{ source => $genrePointer->[0], 
-									  stationParams => $stationParams  } );
-		}
+		my $stationParams = {
+			'genre'	       => $genrePointer->[1],
+			'sort'         => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
+			'searchfields' => Slim::Utils::Prefs::get( 'plugin_live365_search_fields' )
+		};
+
+		Slim::Buttons::Common::pushModeLeft($client, 'Live365Channels', {
+			source => $genrePointer->[0], 
+			stationParams => $stationParams
+		});
 	}
-	
-	sub noGenreMode {
-		my $client = shift;
-	};
+}
 
-} # end genre mode
-
-# }}}
+sub noGenreMode {
+	my $client = shift;
+}
 
 #############################
-# Channel mode {{{
-#
-CHANNELMODE: {
-	sub setChannelMode {
-		my $client = shift;
-		my $entryType = shift;
+sub setChannelMode {
+	my $client    = shift;
+	my $entryType = shift;
+
+	if ($entryType eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
 	
-		if ($entryType eq 'pop') {
-			Slim::Buttons::Common::popMode($client);
-			return;
+	$client->lines( \&loadingLines );
+	
+	$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_DIRECTORY' );
+
+	my $source = $client->modeParam('source');
+
+	if (defined($source) && $source eq 'PLUGIN_LIVE365_PRESETS') {
+
+		$live365->{$client}->clearStationDirectory();
+
+		$live365->{$client}->loadMemberPresets(
+			$source,
+			$client, 
+			\&channelModeLoad,
+			\&channelModeError
+		);
+
+		return;
+
+	} elsif (!defined($source) || $source ne $live365->{$client}->getStationSource()) {
+
+		my $pointer = defined($source) ? $live365->{$client}->getChannelModePointer($source) || 0 : 0;
+
+		my $stationParams = $client->modeParam('stationParams');
+
+		# If the last position within the station list is greater than
+		# the default number of rows to retrieve, get enough so that
+		# we have a non-sparse station array.
+		if ($pointer > ROWS_TO_RETRIEVE) {
+
+			$stationParams->{'rows'} = $pointer + ROWS_TO_RETRIEVE;
+
+		} else {
+
+			$stationParams->{'rows'} = ROWS_TO_RETRIEVE;
+		}
+
+		$live365->{$client}->clearStationDirectory();
+		$live365->{$client}->loadStationDirectory(
+			$source, $client, \&channelModeLoad, \&channelModeError, 0, %$stationParams
+		);
+
+		return;
+	}
+
+	channelModeLoad($client);
+}
+
+sub channelModeLoad {
+	my $client = shift || return;
+
+	my $source = $client->modeParam('source');
+	
+	# Check if the current pointer for the source mode is greater than
+	# the number of stations currently loaded. If so, clip it.
+	my $pointer = defined($source) ? $live365->{$client}->getChannelModePointer($source) || 0 : 0;
+
+	my $listlength = $live365->{$client}->getStationListLength();
+
+	if ($listlength) {
+
+		if ($pointer >= $listlength) {
+			$pointer = $listlength - 1;
 		}
 		
-		$client->lines( \&loadingLines );
-		
+		$live365->{$client}->setStationListPointer($pointer);
+	}
+
+	$live365->{$client}->clearBlockingStatus();
+	
+	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', {
+		'listRef'        => [1..$live365->{$client}->getStationListLength()],
+		'externRef'      => sub { 
+
+			if (my $station = $live365->{$_[0]}->getCurrentStation()) {
+
+				return $station->{STATION_TITLE};
+
+			} elsif ( my $APImessage = $live365->{$client}->status() ) {
+
+				return $_[0]->string( $APImessage );
+			}
+		},
+
+		'externRefArgs'  => 'C',
+		'header'         => sub {
+
+			if( my $APImessage = $live365->{$client}->status() ) {
+
+				return $_[0]->string( $APImessage );
+
+			} else {
+
+				return $_[0]->string('PLUGIN_LIVE365_STATIONS');
+			}
+		},
+		'headerArgs'     => 'C',
+		'stringHeader'   => 1,
+		'headerAddCount' => 1,
+		'stringHeader'   => 1,
+		'headerAddCount' => 1,
+		'onChange' => sub {
+			if( $live365->{$client}->willRequireLoad( $_[1] ) ) {
+
+				$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_DIRECTORY' );
+
+				$client->update();
+
+				$live365->{$_[0]}->setStationListPointer(
+					$_[1], 
+					$_[0],
+					\&channelAdditionalLoad,
+					\&channelAdditionalError
+				);
+
+			} else {
+
+				$live365->{$client}->setStationListPointer( $_[1] );
+			}
+		},
+
+		'onChangeArgs'   => 'CV',
+		'callback'       => \&channelExitHandler,
+		'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('notesymbol')) },
+	});
+}
+
+sub channelExitHandler {
+	my ($client,$exitType) = @_;
+
+	$exitType = uc($exitType);
+
+	my $selection = ${$client->modeParam('valueRef')};
+
+	if ($exitType eq 'LEFT') {
+
+		$live365->{$client}->stopLoading();
+		Slim::Buttons::Common::popModeRight( $client );
+
+	} else {
+
+		if (!$live365->{$client}->getStationListLength()) {
+
+			$client->bumpRight();
+			return;
+		}
+
+		my $source = $client->modeParam('source');
+
+		if (defined $source) {
+
+			$live365->{$client}->setChannelModePointer(
+				$source, $live365->{$client}->getStationListPointer
+			);
+		}
+	
+		Slim::Buttons::Common::pushModeLeft( $client, 'ChannelInfo' );
+	}
+}
+
+sub channelModeError {
+	my $client = shift;
+
+	my $source = $client->modeParam( 'source');
+
+	$live365->{$client}->clearBlockingStatus();
+
+	if ($live365->{$client}->isLoggedIn) {
+
+		if (defined $source) {
+			$log->warn("Warning: No stations for source: $source");
+		}
+
+		$client->showBriefly({'line1' => $client->string( 'PLUGIN_LIVE365_NOSTATIONS' )});
+
+	} else {
+
+		$client->showBriefly({'line1' => $client->string('PLUGIN_LIVE365_NOT_LOGGED_IN' )});
+	}
+
+	Slim::Buttons::Common::popModeRight( $client );
+}
+
+sub noChannelMode {
+	my $client = shift;
+}
+
+sub channelAdditionalLoad {
+	my $client = shift || return;
+
+	# if the numberscroll has been used, we may have to keep loading additional blocks until 
+	# it is in range of the new stationListPointer
+	if( $live365->{$client}->willRequireLoad( $live365->{$client}->getStationListPointer ) ) {
+
 		$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_DIRECTORY' );
 
-		my $source = $client->modeParam('source');
-		if (defined($source) && $source eq 'PLUGIN_LIVE365_PRESETS') {
-			$live365->{$client}->clearStationDirectory();
-			$live365->{$client}->loadMemberPresets($source,
-												   $client, 
-												   \&channelModeLoad,
-												   \&channelModeError);
-			return;
-		}
-		elsif (!defined($source) ||
-			   $source ne $live365->{$client}->getStationSource()) {
+		$client->update;
 
-			my $pointer = defined($source) ? $live365->{$client}->getChannelModePointer($source) || 0 : 0;
-
-			my $stationParams = $client->modeParam('stationParams');
-
-			# If the last position within the station list is greater than
-			# the default number of rows to retrieve, get enough so that
-			# we have a non-sparse station array.
-			if ($pointer > ROWS_TO_RETRIEVE) {
-				$stationParams->{'rows'} = $pointer + ROWS_TO_RETRIEVE;
-			}
-			else {
-				$stationParams->{'rows'} = ROWS_TO_RETRIEVE;
-			}
-
-			$live365->{$client}->clearStationDirectory();
-			$live365->{$client}->loadStationDirectory(
-													  $source,
-													  $client, 
-													  \&channelModeLoad,
-													  \&channelModeError,
-													  0,
-													  %$stationParams);
-			return;
-		}
-		channelModeLoad($client);
-	};
-	
-	sub channelModeLoad {
-		my $client = shift || return;
-	
-		my $source = $client->modeParam('source');
-		
-		# Check if the current pointer for the source mode is greater than
-		# the number of stations currently loaded. If so, clip it.
-		my $pointer = defined($source) ? $live365->{$client}->getChannelModePointer($source) || 0 : 0;
-		my $listlength = $live365->{$client}->getStationListLength();
-		if ($listlength) {
-			if ($pointer >= $listlength) {
-				$pointer = $listlength - 1;
-			}
-			
-			$live365->{$client}->setStationListPointer($pointer);
-		}
-	
-		$live365->{$client}->clearBlockingStatus();
-		
-		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List',
-			{
-			'listRef'        => [1..$live365->{$client}->getStationListLength()],
-			'externRef'      => sub { 
-										if (my $station = $live365->{$_[0]}->getCurrentStation()) {
-											return $station->{STATION_TITLE};
-										} elsif ( my $APImessage = $live365->{$client}->status() ) {
-											return $_[0]->string( $APImessage );
-										}
-								},
-			'externRefArgs'  => 'C',
-			'header'         => sub {
-									if( my $APImessage = $live365->{$client}->status() ) {
-										return $_[0]->string( $APImessage );
-									} else {
-										return $_[0]->string('PLUGIN_LIVE365_STATIONS');
-									}
-								},
-			'headerArgs'     => 'C',
-			'stringHeader'   => 1,
-			'headerAddCount' => 1,
-			'stringHeader'   => 1,
-			'headerAddCount' => 1,
-			'onChange' => sub {
-							if( $live365->{$client}->willRequireLoad( $_[1] ) ) {
-								$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_DIRECTORY' );
-								$client->update();
-								$live365->{$_[0]}->setStationListPointer($_[1], 
-												   $_[0],
-												   \&channelAdditionalLoad,
-												   \&channelAdditionalError);
-							} else {
-								$live365->{$client}->setStationListPointer( $_[1] );
-							};
-						},
-			'onChangeArgs' => 'CV',
-			'callback'       => \&channelExitHandler,
-			'overlayRef'     => sub {
-									return (undef, Slim::Display::Display::symbol('notesymbol'));
-								},
-			}
+		$live365->{$client}->setStationListPointer(
+			$live365->{$client}->getStationListPointer, 
+			$client,
+			\&channelAdditionalLoad,
+			\&channelAdditionalError
 		);
-	}
-	
-	sub channelExitHandler {
-		my ($client,$exitType) = @_;
-	
-		$exitType = uc($exitType);
-		my $selection = ${$client->modeParam('valueRef')};
-	
-		if ($exitType eq 'LEFT') {
-				$live365->{$client}->stopLoading();
-				Slim::Buttons::Common::popModeRight( $client );
-		} else {
-				if (!$live365->{$client}->getStationListLength()) {
-					$client->bumpRight();
-					return;
-				}
-		
-				my $source = $client->modeParam( 'source');
-	
-				if (defined($source)) {
-					$live365->{$client}->setChannelModePointer($source, 
-						$live365->{$client}->getStationListPointer());
-				}
-			
-				Slim::Buttons::Common::pushModeLeft( $client, 'ChannelInfo' );
-		}
-	}
-	
-	sub channelModeError {
-		my $client = shift;
-	
-		my $source = $client->modeParam( 'source');
-	
-		$live365->{$client}->clearBlockingStatus();
-	
-		if ($live365->{$client}->isLoggedIn()) {
-			$::d_plugins && defined($source) && msg( "No stations for source: $source\n");
-			$client->showBriefly({'line1' => $client->string( 'PLUGIN_LIVE365_NOSTATIONS' )});
-	
-		} else {
-			$client->showBriefly({'line1' => $client->string('PLUGIN_LIVE365_NOT_LOGGED_IN' )});
-		}
-	
-		Slim::Buttons::Common::popModeRight( $client );
-	}
-	
-	sub noChannelMode {
-		my $client = shift;
-	};
-	
-	sub channelAdditionalLoad {
-		my $client = shift;
-	
-		# if the numberscroll has been used, we may have to keep loading additional blocks until 
-		# it is in range of the new stationListPointer
-		if( $live365->{$client}->willRequireLoad( $live365->{$client}->getStationListPointer ) ) {
-			$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_DIRECTORY' );
-			$client->update();
-			$live365->{$client}->setStationListPointer($live365->{$client}->getStationListPointer, 
-						   $client,
-						   \&channelAdditionalLoad,
-						   \&channelAdditionalError);
-		} else {
-	
-			$live365->{$client}->clearBlockingStatus();
-			$client->update();
-		}
-	}
-	
-	sub channelAdditionalError {
-		my $client = shift;
-	
-		$live365->{$client}->clearBlockingStatus();
-		$client->update();
-	}
-	
-	sub loadingLines {
-		my $client = shift;
-	
-		if( my $APImessage = $live365->{$client}->status() ) {
-			return { 'line1' => $client->string( $APImessage ) };
-		}
-	}
 
-} # end channel mode
+	} else {
 
-# }}}
+		$live365->{$client}->clearBlockingStatus;
+		$client->update;
+	}
+}
+
+sub channelAdditionalError {
+	my $client = shift;
+
+	$live365->{$client}->clearBlockingStatus;
+	$client->update;
+}
+
+sub loadingLines {
+	my $client = shift;
+
+	if (my $APImessage = $live365->{$client}->status() ) {
+
+		return { 'line1' => $client->string( $APImessage ) };
+	}
+}
 
 #############################
-# Information mode {{{
-#
-INFOMODE: {
-
-	sub setInfoMode {
-		my $client = shift;
-		my $method = shift;
-		
-		if ($method eq 'pop') {
-			Slim::Buttons::Common::popMode($client);
-			return;
-		}
+sub setInfoMode {
+	my $client = shift;
+	my $method = shift;
 	
-		$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_INFORMATION' );
-		$client->update();
-	
-		$live365->{$client}->loadInfoForStation( $live365->{$client}->getCurrentStation()->{STATION_ID}, $client, \&infoModeLoad, \&infoModeError );;
-	};
-	
-	sub infoModeLoad {
-		my $client = shift;
-	
-		my @infoItems = $live365->{$client}->getStationInfo();
-		my @items = map {"{PLUGIN_LIVE365_". $_->[0] . "}: " . $_->[1]} @infoItems;
-	
-		infoModeCommon($client, @items);
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
 	}
-	
-	sub infoModeError {
-		my $client = shift;
-	
-		infoModeCommon($client, "{PLUGIN_LIVE365_NO_INFO}");
-	}
-	
-	sub infoModeCommon {
-		my $client = shift;
-	
-		my $url = $live365->{$client}->getCurrentChannelURL();
-		my $title = $live365->{$client}->getCurrentStation()->{STATION_TITLE};
-	
-		# use remotetrackinfo mode to show all details
-		my %params  = (
-			url     => $url,
-			title   => $title,
-			details => \@_,
-		);
-	
-		$live365->{$client}->clearBlockingStatus();
-		Slim::Buttons::Common::pushMode($client, 'remotetrackinfo', \%params);  
-		$client->update();
-	}
-	
-	sub noInfoMode {
-		my $client = shift;
-	};
 
-} # end info mode
+	$live365->{$client}->setBlockingStatus( 'PLUGIN_LIVE365_LOADING_INFORMATION' );
+	$client->update();
 
-# }}}
+	$live365->{$client}->loadInfoForStation( $live365->{$client}->getCurrentStation()->{STATION_ID}, $client, \&infoModeLoad, \&infoModeError );;
+}
 
-#############################
-# Search mode {{{
-#
-SEARCHMODE: {
-	
-	@searchModeItems = (
-		[ 'PLUGIN_LIVE365_SEARCH_TAC', 'T:A:C' ],
-		[ 'PLUGIN_LIVE365_SEARCH_A'  , 'A' ],
-		[ 'PLUGIN_LIVE365_SEARCH_T'  , 'T' ],
-		[ 'PLUGIN_LIVE365_SEARCH_C'  , 'C' ],
-		[ 'PLUGIN_LIVE365_SEARCH_E'  , 'E' ],
-		[ 'PLUGIN_LIVE365_SEARCH_L'  , 'L' ],
-		[ 'PLUGIN_LIVE365_SEARCH_H'  , 'H' ]
+sub infoModeLoad {
+	my $client = shift;
+
+	my @infoItems = $live365->{$client}->getStationInfo();
+	my @items     = map {"{PLUGIN_LIVE365_". $_->[0] . "}: " . $_->[1]} @infoItems;
+
+	infoModeCommon($client, @items);
+}
+
+sub infoModeError {
+	my $client = shift;
+
+	infoModeCommon($client, "{PLUGIN_LIVE365_NO_INFO}");
+}
+
+sub infoModeCommon {
+	my $client = shift;
+
+	my $url   = $live365->{$client}->getCurrentChannelURL();
+	my $title = $live365->{$client}->getCurrentStation()->{STATION_TITLE};
+
+	# use remotetrackinfo mode to show all details
+	my %params  = (
+		url     => $url,
+		title   => $title,
+		details => \@_,
 	);
-	
-	sub setSearchMode {
-		my $client = shift;
-		my $entryType = shift;
 
-		if ($entryType eq 'pop') {
-			Slim::Buttons::Common::popMode($client);
-			return;
-		}
+	$live365->{$client}->clearBlockingStatus();
 
-		$searchString{$client} = '';
-		Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List',
-				{
-				'listRef'        => \@searchModeItems,
-				'externRef'      => sub { 
-										if( my $APImessage = $live365->{$client}->status() ) {
-											return $_[0]->string( $APImessage )
-										} else {
-											return $_[0]->string($_[1][0]);
-										}
-									},
-				'externRefArgs'  => 'CV',
-				'header'         => 'PLUGIN_LIVE365_SEARCH',
-				'stringHeader'   => 1,
-				'headerAddCount' => 1,
-				'callback'       => \&searchExitHandler,
-				'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
-				'overlayRefArgs' => '',
-				}
-			);
+	Slim::Buttons::Common::pushMode($client, 'remotetrackinfo', \%params);  
+
+	$client->update();
+}
+
+sub noInfoMode {
+	my $client = shift;
+}
+
+#############################
+sub setSearchMode {
+	my $client = shift;
+	my $entryType = shift;
+
+	if ($entryType eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
 	}
-	
-	sub searchExitHandler {
-		my ($client,$exitType) = @_;
-	
-		$exitType = uc($exitType);
-		
-		if ($exitType eq 'LEFT') {
-			Slim::Buttons::Common::popModeRight($client);
-		} else {
-			my $type = ${$client->modeParam('valueRef')}->[1];
 
-			Slim::Buttons::Common::pushModeLeft( $client, 'INPUT.Text',
-				{
-					'callback'	   => \&doSearch,
-					'valueRef'	   => \$searchString{$client},
-					'header'	   => $client->string( 'PLUGIN_LIVE365_SEARCHPROMPT' ),
-					'cursorPos'    => 0,
-					'searchfields' => $type,
-				}
-			);
-		}
+	$searchString{$client} = '';
+
+	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List', {
+		'listRef'        => \@searchModeItems,
+		'externRef'      => sub { 
+
+			if (my $APImessage = $live365->{$client}->status() ) {
+
+				return $_[0]->string( $APImessage )
+
+			} else {
+
+				return $_[0]->string($_[1][0]);
+			}
+		},
+
+		'externRefArgs'  => 'CV',
+		'header'         => 'PLUGIN_LIVE365_SEARCH',
+		'stringHeader'   => 1,
+		'headerAddCount' => 1,
+		'callback'       => \&searchExitHandler,
+		'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
+		'overlayRefArgs' => '',
+	});
+}
+
+sub searchExitHandler {
+	my ($client,$exitType) = @_;
+
+	$exitType = uc($exitType);
+	
+	if ($exitType eq 'LEFT') {
+
+		Slim::Buttons::Common::popModeRight($client);
+
+	} else {
+
+		my $type = ${$client->modeParam('valueRef')}->[1];
+
+		Slim::Buttons::Common::pushModeLeft( $client, 'INPUT.Text', {
+
+			'callback'     => \&doSearch,
+			'valueRef'     => \$searchString{$client},
+			'header'       => $client->string( 'PLUGIN_LIVE365_SEARCHPROMPT' ),
+			'cursorPos'    => 0,
+			'searchfields' => $type,
+		});
 	}
-	
-	sub noSearchMode {
-		my $client = shift;
-	};
-	
-	sub doSearch {
-		my $client = shift;
-		my $exitType = shift;
-	
-		my $arrow = Slim::Display::Display::symbol('rightarrow');
-		$searchString{$client} =~ s/$arrow//;
-		my $searchfields = $client->modeParam('searchfields');
-	
-		ExitEventType: {
-			$::d_plugins && msg( "Live365.doSearch exit input mode: '$exitType'\n" );
-	
-			$exitType =~ /(backspace|cursor_left|delete|scroll_left)/ && do {
-				Slim::Buttons::Common::popModeRight( $client );
-				return;
-				last ExitEventType;
-			};
-	
-			$exitType =~ /(cursor_right|nextChar|scroll_right)/ && do {
-				if( $searchString{$client} eq '' ) {
-					$::d_plugins && msg( "Live365.doSearch string empty, returning\n" );
-					return;
-				}
-				$::d_plugins && msg( "Live365.doSearch string: '$searchString{$client}'\n" );
-				last ExitEventType;
-			};
-	
-			$::d_plugins && msg( "Live365.doSearch: unsupported exit '$exitType'\n" );
+}
+
+sub noSearchMode {
+	my $client = shift;
+}
+
+sub doSearch {
+	my $client = shift;
+	my $exitType = shift;
+
+	my $arrow = Slim::Display::Display::symbol('rightarrow');
+
+	$searchString{$client} =~ s/$arrow//;
+
+	my $searchfields = $client->modeParam('searchfields');
+
+	ExitEventType: {
+
+		$log->debug("Exit input mode: '$exitType'");
+
+		$exitType =~ /(backspace|cursor_left|delete|scroll_left)/ && do {
+
+			Slim::Buttons::Common::popModeRight( $client );
 			return;
-		}
-	
-		my $stationParams = {
-			'searchdesc'   => $searchString{$client},
-			'sort'		   => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
-			'searchfields' => $searchfields
 		};
-	
-		Slim::Buttons::Common::pushModeLeft( $client, 'Live365Channels',
-											 { stationParams => $stationParams } );
-	}
-} # end search mode
 
-#
+		$exitType =~ /(cursor_right|nextChar|scroll_right)/ && do {
+
+			if ($searchString{$client} eq '' ) {
+
+				$log->debug("String empty, returning" );
+				return;
+			}
+
+			$log->debug("Search string: '$searchString{$client}'");
+
+			last ExitEventType;
+		};
+
+		$log->warn("Warning: unsupported exit '$exitType'");
+
+		return;
+	}
+
+	my $stationParams = {
+		'searchdesc'   => $searchString{$client},
+		'sort'         => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
+		'searchfields' => $searchfields
+	};
+
+	Slim::Buttons::Common::pushModeLeft($client, 'Live365Channels', { stationParams => $stationParams });
+}
+
 # Add web pages and handlers.  See Plugins::Live365::Web for handlers.
-#
 sub webPages {
-	$::d_plugins && msg("Live365: webPages()\n");
+	$log->debug("Begin Function");
 	
 	my %pages = (
 		"browse\.(?:htm|xml)"   => \&Plugins::Live365::Web::handleBrowse,
@@ -884,7 +951,7 @@ sub webPages {
 		"loginout\.(?:htm|xml)" => \&Plugins::Live365::Web::handleLogin
 	);
 
-	if (grep {$_ eq 'Live365::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
+	if (grep { $_ eq 'Live365::Plugin' } Slim::Utils::Prefs::getArray('disabledplugins')) {
 		Slim::Web::Pages->addPageLinks("radio", { 'PLUGIN_LIVE365_MODULE_NAME' => undef } );
 	} else {
 		Slim::Web::Pages->addPageLinks("radio", { 'PLUGIN_LIVE365_MODULE_NAME' => "plugins/Live365/index.html?autologin=1" } );
@@ -904,22 +971,24 @@ sub getLive365 {
 }
 
 sub initPlugin {
-	$::d_plugins && msg("Live365: initPlugin()\n");
+
+	$log->info("Initializing.");
 
 	Slim::Player::ProtocolHandlers->registerHandler("live365", "Plugins::Live365::ProtocolHandler");
+
 	Slim::Buttons::Common::addMode( 'searchMode',      \%searchModeFunctions,  \&setSearchMode,  \&noSearchMode );
 	Slim::Buttons::Common::addMode( 'genreMode',       \%genreModeFunctions,   \&setGenreMode,   \&noGenreMode );
 	Slim::Buttons::Common::addMode( 'ChannelInfo',     \%infoModeFunctions,    \&setInfoMode,    \&noInfoMode );
 	Slim::Buttons::Common::addMode( 'Live365Channels', \%channelModeFunctions, \&setChannelMode, \&noChannelMode );
-	
+
 	@mainModeItems = (
-		[ 'genreMode',			'PLUGIN_LIVE365_BROWSEGENRES' ],
-		[ 'Live365Channels',	'PLUGIN_LIVE365_BROWSEPICKS' ],
-		[ 'Live365Channels',	'PLUGIN_LIVE365_BROWSEPROS' ],
-		[ 'Live365Channels',	'PLUGIN_LIVE365_BROWSEALL' ],
-		[ 'searchMode',			'PLUGIN_LIVE365_SEARCH' ],
-		[ 'Live365Channels',	'PLUGIN_LIVE365_PRESETS' ],
-		[ 'loginMode',			'PLUGIN_LIVE365_LOGIN' ]
+		[ 'genreMode',	     'PLUGIN_LIVE365_BROWSEGENRES' ],
+		[ 'Live365Channels', 'PLUGIN_LIVE365_BROWSEPICKS' ],
+		[ 'Live365Channels', 'PLUGIN_LIVE365_BROWSEPROS' ],
+		[ 'Live365Channels', 'PLUGIN_LIVE365_BROWSEALL' ],
+		[ 'searchMode',	     'PLUGIN_LIVE365_SEARCH' ],
+		[ 'Live365Channels', 'PLUGIN_LIVE365_PRESETS' ],
+		[ 'loginMode',	     'PLUGIN_LIVE365_LOGIN' ]
 	);
 
 	@statusText = qw(
@@ -965,12 +1034,12 @@ sub initPlugin {
 
 sub cli_radiosQuery {
 	my $request = shift;
-	
-	$::d_plugins && msg("Live365: cli_radiosQuery()\n");
-	
+
+	$log->debug("Begin Function");
+
 	# what we want the query to report about ourself
 	my $data = {
-		'cmd' => 'live365',                    # cmd label
+		'cmd'  => 'live365',                    # cmd label
 		'name' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
 		'type' => 'live365',              # type
 	};
@@ -979,10 +1048,9 @@ sub cli_radiosQuery {
 	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
 }
 
-# }}}
-
 sub strings {
-	return q^PLUGIN_LIVE365_MODULE_NAME
+	return q^
+PLUGIN_LIVE365_MODULE_NAME
 	EN	Live365 Internet Radio
 	ES	Radio por Internet Live365
 	HE	LIVE365
@@ -1413,6 +1481,3 @@ PLUGIN_LIVE365_NO_INFO
 }
 
 1;
-
-# }}}
-

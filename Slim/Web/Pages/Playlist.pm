@@ -13,9 +13,12 @@ use File::Spec::Functions qw(:ALL);
 use POSIX ();
 use Scalar::Util qw(blessed);
 
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
+
+my $log = logger('player.playlist');
 
 sub init {
 	
@@ -60,15 +63,15 @@ sub playlist {
 		$params->{'current_playlist_name'} = Slim::Music::Info::standardTitle($client,$client->currentPlaylist());
 	}
 
-	if ($::d_playlist && $client->currentPlaylistRender() && ref($client->currentPlaylistRender()) eq 'ARRAY') {
+	if ($log->is_debug && $client->currentPlaylistRender() && ref($client->currentPlaylistRender()) eq 'ARRAY') {
 
-		msg("currentPlaylistChangeTime : " . localtime($client->currentPlaylistChangeTime()) . "\n");
-		msg("currentPlaylistRender     : " . localtime($client->currentPlaylistRender()->[0]) . "\n");
-		msg("currentPlaylistRenderSkin : " . $client->currentPlaylistRender()->[1] . "\n");
-		msg("currentPlaylistRenderStart: " . $client->currentPlaylistRender()->[2] . "\n");
+		$log->debug("currentPlaylistChangeTime : " . localtime($client->currentPlaylistChangeTime()));
+		$log->debug("currentPlaylistRender     : " . localtime($client->currentPlaylistRender()->[0]));
+		$log->debug("currentPlaylistRenderSkin : " . $client->currentPlaylistRender()->[1]);
+		$log->debug("currentPlaylistRenderStart: " . $client->currentPlaylistRender()->[2]);
 
-		msg("skinOverride: $params->{'skinOverride'}\n");
-		msg("start: $params->{'start'}\n");
+		$log->debug("skinOverride: $params->{'skinOverride'}");
+		$log->debug("start: $params->{'start'}");
 	}
 
 	# Only build if we need to.
@@ -87,7 +90,7 @@ sub playlist {
 			$params->{'cansave'} = 1;
 		}
 
-		$::d_playlist && msg("Skipping playlist build - not modified.\n");
+		$log->info("Skipping playlist build - not modified.");
 
 		$params->{'playlist_items'}   = $client->currentPlaylistRender()->[3];
 		$params->{'pageinfo'}         = $client->currentPlaylistRender()->[4];
@@ -140,7 +143,9 @@ sub playlist {
 		if (!blessed($objOrUrl) || !$objOrUrl->can('id')) {
 
 			$track = Slim::Schema->rs('Track')->objectForUrl($objOrUrl) || do {
-				msg("Couldn't retrieve objectForUrl: [$objOrUrl] - skipping!\n");
+
+				logError("Couldn't retrieve objectForUrl: [$objOrUrl] - skipping!");
+
 				$itemCount++;
 				next;
 			};
@@ -182,7 +187,7 @@ sub playlist {
 		}
 	}
 
-	$::d_playlist && msg("End playlist build. $itemCount items\n");
+	$log->info("End playlist build. $itemCount items");
 
 	# Give some player time after the loop, but before rendering.
 	main::idleStreams();
@@ -206,8 +211,3 @@ sub playlist {
 1;
 
 __END__
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

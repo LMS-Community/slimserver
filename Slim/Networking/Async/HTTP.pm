@@ -19,14 +19,16 @@ BEGIN {
 		return $hasSSL if defined $hasSSL;
 		
 		$hasSSL = 0;
+
 		eval { 
 			require Slim::Networking::Async::Socket::HTTPS;
 			$hasSSL = 1;
 		};
+
 		if ($@) {
 			msg("Async::HTTP: Unable to load IO::Socket::SSL, will try connecting to SSL servers in non-SSL mode\n");
 		}
-		
+
 		return $hasSSL;
 	}
 }
@@ -40,6 +42,7 @@ use MIME::Base64 qw(encode_base64);
 use URI;
 
 use Slim::Networking::Async::Socket::HTTP;
+use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
@@ -56,9 +59,12 @@ __PACKAGE__->mk_classaccessor( maxRedirect => 3 );
 
 sub new_socket {
 	my $self = shift;
+
+	my $log  = logger('network.asynchttp');
 	
 	if ( my $proxy = $self->use_proxy ) {
-		$::d_http_async && msg("Async::HTTP: Using proxy $proxy to connect\n");
+
+		$log->info("Using proxy $proxy to connect");
 	
 		my ($pserver, $pport) = split /:/, $proxy;
 	
@@ -82,7 +88,7 @@ sub new_socket {
 			my %args = @_;
 			$args{PeerPort} = 80;
 			
-			$::d_http_async && msg("Async::HTTP: Warning: trying HTTP request to HTTPS server\n");
+			$log->warn("Warning: trying HTTP request to HTTPS server");
 			
 			return Slim::Networking::Async::Socket::HTTP->new( %args );
 		}
@@ -234,7 +240,7 @@ sub _http_error {
 	
 	$self->disconnect;
 	
-	$::d_http_async && msg("Async::HTTP: Error: $error\n");
+	logger('network.asynchttp')->error("Error: [$error]");
 
 	if ( my $ecb = $args->{onError} ) {
 		my $passthrough = $args->{passthrough} || [];
@@ -246,10 +252,15 @@ sub _http_read {
 	my ( $self, $args ) = @_;
 	
 	my ($code, $mess, @h) = eval { $self->socket->read_response_headers };
+
+	my $log = logger('network.asynchttp');
 	
 	if ($@) {
-		$::d_http_async && msg("Async::HTTP: Error reading headers: $@\n");
+
+		$log->error("Error reading headers: $@");
+
 		$self->_http_error( "Error reading headers: $@", $args );
+
 		return;
 	}
 	
@@ -277,9 +288,10 @@ sub _http_read {
 		# Save previous response
 		$self->response->previous( $previous );
 		
-		if ( $::d_http_async ) {
-			msg("Async::HTTP: Headers read. code: $code status: $mess\n");
-			warn Data::Dump::dump( $self->response->headers ) . "\n";
+		if ( $log->is_debug ) {
+
+			$log->debug("Headers read. code: $code status: $mess");
+			$log->debug( Data::Dump::dump( $self->response->headers ) );
 		}
 		
 		if ( $code !~ /[23]\d\d/ ) {
@@ -300,9 +312,7 @@ sub _http_read {
 					URI->new_abs( $self->response->header('Location'), $self->request->uri )
 				);
 				
-				$::d_http_async && msgf("Async::HTTP: Redirecting to %s\n",
-					$self->request->uri->as_string,
-				);
+				$log->info(sprintf("Redirecting to %s", $self->request->uri->as_string));
 				
 				# Does the caller want to modify redirecting URLs?
 				if ( $args->{onRedirect} ) {
@@ -317,7 +327,8 @@ sub _http_read {
 				return;
 			}
 			else {
-				$::d_http_async && msg("Async::HTTP: Redirection limit exceeded\n");
+
+				$log->warn("Redirection limit exceeded");
 				
 				$self->disconnect;
 				
@@ -355,17 +366,22 @@ sub _http_read_body {
 	Slim::Utils::Timers::killTimers( $socket, \&_http_read_timeout );
 	
 	my $result = $socket->read_entity_body( my $buf, $self->bufsize );
-	
-	$::d_http_async && $result && msgf("Async::HTTP: Read body: %d bytes\n", $result);
+	my $log    = logger('network.asynchttp');
+
+	if ($result && $log->is_debug) {
+
+		$log->debug("Read body: [$result] bytes");
+	}
 	
 	# Are we saving directly to a file?
 	if ( $self->saveAs && !$self->fh ) {
 		open my $fh, '>', $self->saveAs;
+
 		if ( !$fh ) {
 			return $self->_http_error( 'Unable to open ' . $self->saveAs . ' for writing', $args );
 		}
 		
-		$::d_http_async && msg("Async::HTTP: Writing response directly to " . $self->saveAs . "\n");
+		$log->debug("Writing response directly to " . $self->saveAs);
 		
 		$self->fh( $fh );
 	}
@@ -385,9 +401,7 @@ sub _http_read_body {
 		# close and remove the socket
 		$self->disconnect;
 		
-		$::d_http_async && msgf("Async::HTTP: Body read (stopped after %d bytes)\n",
-			length( $self->response->content )
-		);
+		$log->debug(sprintf("Body read (stopped after %d bytes)", length( $self->response->content )));
 		
 		if ( my $cb = $args->{onBody} ) {
 			my $passthrough = $args->{passthrough} || [];
@@ -402,7 +416,7 @@ sub _http_read_body {
 		$self->fh->close if $self->fh;
 		$self->disconnect;
 		
-		$::d_http_async && msg("Async::HTTP: Body read\n");
+		$log->debug("Body read");
 		
 		if ( my $cb = $args->{onBody} ) {
 			my $passthrough = $args->{passthrough} || [];
@@ -421,7 +435,7 @@ sub _http_read_body {
 sub _http_read_timeout {
 	my ( $socket, $self, $args ) = @_;
 	
-	$::d_http_async && msg("Async::HTTP: Timed out waiting for more body data, returning what we have\n");
+	logger('network.asynchttp')->warn("Timed out waiting for more body data, returning what we have");
 	
 	Slim::Networking::Select::removeError( $socket );
 	Slim::Networking::Select::removeRead( $socket );

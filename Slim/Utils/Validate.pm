@@ -26,7 +26,7 @@ L<Slim::Utils::Validate> provides validation checks for web ui preference inputs
 
 use strict;
 
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 use Slim::Utils::Network;
 
 ######################################################################
@@ -369,7 +369,7 @@ sub _isValidPath {
 
 	} else {
 
-		errorMsg("_isValidPath: Couldn't find directory: [$val] on disk: [$!]\n");
+		logError("Couldn't find directory: [$val] on disk: [$!]");
 
 		return (undef, $invalidString) ;
 	}

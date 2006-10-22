@@ -18,7 +18,7 @@ package Plugins::PreventStandby::Plugin;
 # 1.0 - 2006-04-05 - Initial Release
 
 use strict;
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 use Slim::Utils::OSDetect;
 
 # how many seconds between checks for playing clients
@@ -26,6 +26,13 @@ my $interval = 60;
 
 # keep the timer so we can kill it if we want
 my $timer = undef;
+
+# Logger object
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.preventstandby',
+	'defaultLevel' => 'WARN',
+	'description'  => getDisplayName(),
+});
 
 # reference to the windows function of same name
 my $SetThreadExecutionState = undef;
@@ -50,11 +57,11 @@ sub checkClientActivity {
 
 		my $playmode = $client->playmode();
 
-		$::d_plugins && msgf("Prevent Standby plugin: client %s in playmode %s\n", $client->name, $playmode);
+		$log->info(sprintf("Client %s in playmode %s", $client->name, $playmode));
 
 		if ($playmode ne 'stop' && $playmode ne 'pause') {
 
-			$::d_plugins && msg("Prevent Standby plugin: setting thread execution state\n");
+			$log->info("Setting thread execution state");
 
 			if (defined $SetThreadExecutionState) {
 				$SetThreadExecutionState->Call(1);
@@ -75,11 +82,13 @@ sub startTimer {
 
 	if (!defined $timer && defined $SetThreadExecutionState) {
 
-		$::d_plugins && msg("Prevent Standby plugin: starting timer\n");
+		$log->info("Starting timer.");
 
 		$timer = Slim::Utils::Timers::setTimer(0, time + $interval, \&checkClientActivity);
 
-		$::d_plugins && !defined($timer) && msg("Prevent Standby plugin: starting timer failed\n");
+		if (!defined $timer) {
+			$log->error("Starting timer failed!");
+		}
 	}
 
 	return defined($timer);
@@ -105,7 +114,7 @@ sub initPlugin {
 		return startTimer();
 	}
 
-	$::d_plugins && msg("Prevent Standby plugin: Only available under Windows\n");
+	$log->info("Only available under Windows");
 }
 
 sub shutdownPlugin {

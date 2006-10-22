@@ -19,13 +19,15 @@ use strict;
 use base qw(Class::Data::Inheritable);
 
 use Slim::Music::Info;
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 use Slim::Utils::Scanner;
 
 {
 
 	__PACKAGE__->mk_classdata('stillScanning');
 }
+
+my $log = logger('scan.import');
 
 sub init {
 	my $class = shift;
@@ -49,14 +51,16 @@ sub startScan {
 	my $recurse = shift;
 
 	if (!defined $dir || !-d $dir) {
-		$::d_info && msg("Skipping music folder scan - audiodir is undefined. [$dir]\n");
+
+		$log->info("Skipping music folder scan - audiodir is undefined. [$dir]");
+
 		doneScanning();
 		return;
 	}
 
 	if ($class->stillScanning) {
 
-		$::d_info && msg("Scan already in progress. Restarting\n");
+		$log->info("Scan already in progress. Restarting");
 
 		$class->stillScanning(0);
 	}
@@ -67,7 +71,7 @@ sub startScan {
 		$recurse = 1;
 	}
 
-	$::d_info && msg("Starting music folder scan in $dir\n");
+	$log->info("Starting music folder scan in $dir");
 
 	Slim::Utils::Scanner->scanDirectory({
 		'url'       => $dir,
@@ -75,7 +79,7 @@ sub startScan {
 		'types'     => 'audio',
 	});
 
-	$::d_info && msg("finished background scan of music folder.\n");
+	$log->info("Finished background scan of music folder.");
 
 	$class->stillScanning(0);
 

@@ -24,11 +24,13 @@ use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
 use Slim::Utils::DateTime;
-use Slim::Utils::Misc;
+use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 
 our ($elemstring, @elements, $elemRegex, %parsedFormats);
+
+my $log = logger('database.info');
 
 sub init {
 
@@ -307,7 +309,7 @@ sub addFormat {
 
 		$parsedFormats{$format} = $formatSubRef;
 
-		$::d_info && msg("Format $format added.\n");
+		$log->debug("Format $format added.");
 
 		if ($format !~ /\W/) {
 			# format is a single word, so make it an element
@@ -318,7 +320,7 @@ sub addFormat {
 
 	} else {
 
-		$::d_info && msg("Format $format already exists.\n");
+		$log->debug("Format $format already exists.");
 	}
 
 	return 1;
@@ -536,9 +538,10 @@ sub infoFormat {
 
 	return $output;
 }
+
 =head1 SEE ALSO
 
-
+L<Slim::Music::Info>
 
 =cut
 
