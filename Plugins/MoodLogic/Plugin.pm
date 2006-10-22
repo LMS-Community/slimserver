@@ -154,7 +154,7 @@ sub initPlugin {
 
 		push @mood_names, string("MOODLOGIC_MOOD_$i");
 
-		$mood_hash{$mood_names{$i}} = $i;
+		$mood_hash{$mood_names[$i]} = $i;
 	}
 
 	#Slim::Utils::Strings::addStrings($strings);
@@ -463,7 +463,7 @@ sub setupCategory {
 
 			'Default' => {
 				'PrefOrder' => ['instantMixMax','varietyCombo','moodlogicscaninterval'],
-			}
+			},
 
 			'MoodLogicPlaylistFormat' => {
 				'PrefOrder'         => ['MoodLogicplaylistprefix','MoodLogicplaylistsuffix'],
@@ -494,17 +494,17 @@ sub setupCategory {
 			'moodlogicscaninterval' => {
 				'validate'     => \&Slim::Utils::Validate::number,
 				'validateArgs' => [0, undef, 1000],
-			}
+			},
 
 			'instantMixMax' => {
 				'validate'     => \&Slim::Utils::Validate::isInt,
 				'validateArgs' => [1, undef, 1],
-			}
+			},
 
 			'varietyCombo'	=> {
 				'validate'     => \&Slim::Utils::Validate::isInt,
 				'validateArgs' => [1, 100, 1, 1],
-			}
+			},
 		}
 	);
 

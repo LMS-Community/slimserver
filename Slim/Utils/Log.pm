@@ -89,9 +89,10 @@ sub init {
 	# If the user has specified a log file, check for a pipe, etc.
 	if ($args->{'logfile'}) {
 
-		$class->addLogAppender({
-			'filename' => $args->{'logfile'},
-		});
+		# Bug 4407 - specifying a log file is overriden in serverLogFile().
+		#$class->addLogAppender({
+		#	'filename' => $args->{'logfile'},
+		#});
 	}
 
 	# Anything passed on the command line will override the config file.

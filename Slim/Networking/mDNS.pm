@@ -17,6 +17,7 @@ use Proc::Background;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
+use Slim::Utils::OSDetect;
 
 {
 	my $class = __PACKAGE__;
@@ -36,6 +37,13 @@ my %services = ();
 sub init {
 	my $class = shift;
 
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
+
+		$log->debug("Skipping initialization on Windows.");
+
+		return 0;
+	}
+
 	$log->info("Initializing..");
 
 	my $cacheDir = Slim::Utils::Prefs::get('cachedir');
@@ -43,13 +51,15 @@ sub init {
 	if (!-d $cacheDir) {
 
 		$log->error("Error: cachedir [$cacheDir] isn't set or writeable");
-		return;
+		return 0;
 	}
 
 	$class->confFile(catfile($cacheDir, 'mDNS.conf'));
 	$class->pidFile(catfile($cacheDir, 'mDNS.pid'));
 
 	$class->isInitialized(1);
+
+	return 1;
 }
 
 sub addService {
@@ -87,6 +97,10 @@ sub removeService {
 
 sub startAdvertising {
 	my $class = shift;
+
+	if (!$class->isInitialized) {
+		return if !$class->init;
+	}
 
 	$log->info("Building configuration.");
 
@@ -146,6 +160,10 @@ sub startAdvertising {
 
 sub stopAdvertising {
 	my $class = shift;
+
+	if (!$class->isInitialized) {
+		return if !$class->init;
+	}
 
 	$log->info("Shutting down..");
 
