@@ -37,6 +37,7 @@ use strict;
 use base qw(Log::Log4perl::Logger);
 
 use Exporter::Lite;
+use File::Path;
 use File::Spec;
 use Log::Log4perl;
 use Path::Class;
@@ -536,6 +537,10 @@ sub _logFileFor {
 	my $file  = shift || return '';
 
 	my $dir   = $logDir || Slim::Utils::OSDetect::dirsFor('log');
+
+	if (!-d $dir) {
+		mkpath($dir);
+	}
 
 	if (-d $dir) {
 
