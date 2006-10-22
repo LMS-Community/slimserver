@@ -1894,7 +1894,11 @@ sub __parse {
 	my $self           = shift;
 	my $requestLineRef = shift; # reference to an array containing the query verbs
 
-	$log->debug("Request: parse(" . join(' ', @{$requestLineRef}) . ")");
+	my $isDebug    = $log->is_debug;
+
+	if ($isDebug) {
+		$log->debug("Request: parse(" . join(' ', @{$requestLineRef}) . ")");
+	}
 
 	my $found;					# have we found the right command
 	my $outofverbs;					# signals we're out of verbs to try and match
@@ -1912,13 +1916,18 @@ sub __parse {
 			$outofverbs = 1;
 		}
 
-		$log->debug("..Trying to match [$match]");
-		$log->debug(Data::Dump::dump($DBp));
+		if ($isDebug) {
+			$log->debug("..Trying to match [$match]");
+			$log->debug(Data::Dump::dump($DBp));
+		}
 
 		# our verb does not match in the hash 
 		if (!defined $DBp->{$match}) {
-		
-			$log->debug("..no match for [$match]");
+
+			if ($isDebug) {
+
+				$log->debug("..no match for [$match]");
+			}
 			
 			# if $match is '?', abandon ship
 			if ($match eq '?') {
@@ -1931,20 +1940,29 @@ sub __parse {
 				my $foundparam = 0;
 
 				# Can we find a key that starts with '_' ?
-				$log->debug("...looking for a key starting with _");
+				if ($isDebug) {
+					$log->debug("...looking for a key starting with _");
+				}
 
 				for my $key (keys %{$DBp}) {
 
-					$log->debug("....considering [$key]");
+					if ($isDebug) {
+						$log->debug("....considering [$key]");
+					}
 					
 					if ($key =~ /^_.*/) {
 
-						$log->debug("....[$key] starts with _");
+						if ($isDebug) {
+							$log->debug("....[$key] starts with _");
+						}
 
 						# found it, add $key=$match to the params
 						if (!$outofverbs) {
 
-							$log->debug("....not out of verbs, adding param [$key, $match]");
+							if ($isDebug) {
+								$log->debug("....not out of verbs, adding param [$key, $match]");
+							}
+
 							$self->addParam($key, $match);
 						}
 
@@ -1963,8 +1981,10 @@ sub __parse {
 
 		# Our verb matches, and it is an array -> done
 		if (!$done && ref $DBp->{$match} eq 'ARRAY') {
-		
-			$log->debug("..[$match] is ARRAY -> done");
+
+			if ($isDebug) {
+				$log->debug("..[$match] is ARRAY -> done");
+			}
 
 			if ($match ne '' && !($match =~ /^_.*/) && $match ne '?') {
 
@@ -1980,8 +2000,10 @@ sub __parse {
 		# Our verb matches, and it is a hash -> go to next level
 		# (no backtracking...)
 		if (!$done && ref $DBp->{$match} eq 'HASH') {
-		
-			$log->debug("..[$match] is HASH");
+
+			if ($isDebug) {	
+				$log->debug("..[$match] is HASH");
+			}
 
 			if ($match ne '' && !($match =~ /^_.*/) && $match ne '?') {
 
