@@ -667,7 +667,7 @@ sub _defaultCategories {
 
 	my %defaultCategories = (
 
-		'server'                     => 'WARN',
+		'server'                     => 'INFO',
 		'server.memory'              => 'OFF',
 		'server.plugins'             => 'WARN',
 		'server.scheduler'           => 'WARN',
