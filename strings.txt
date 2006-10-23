@@ -13316,6 +13316,42 @@ SETUP_DEBUG_SCANNER_LOG_DESC
 	DE	SlimServer schreibt Logs der Aktivitäten im Zusammenhang mit dem Scanner (Musikdateien, iTunes, MusicIP, MoodLogic) in folgende Datei:
 	EN	SlimServer keeps a log file for all scanning related activities, including iTunes, MusicIP & MoodLogic here:
 
+SETUP_DEBUG_LEVEL_OFF
+	CS	Vypnuto
+	DE	Aus
+	DA	Fra
+	EN	Off
+	ES	Apagado
+	FI	Pois
+	FR	Éteint
+	HE	לא פעיל
+	IT	No
+	JA	オフ
+	NL	Uit
+	NO	Av
+	PT	Não
+	SV	Av
+	ZH_CN	熄机
+
+SETUP_DEBUG_LEVEL_FATAL
+	DE	Fatale Fehler
+	EN	Fatal
+
+SETUP_DEBUG_LEVEL_ERROR
+	DE	Fehler
+	EN	Error
+
+SETUP_DEBUG_LEVEL_WARN
+	DE	Warnungen
+	EN	Warn
+
+SETUP_DEBUG_LEVEL_INFO
+	DE	Information
+	EN	Info
+
+SETUP_DEBUG_LEVEL_DEBUG
+	EN	Debug
+
 SAVE_SETTINGS
 	DE	Einstellungen speichern
 	EN	Save Settings

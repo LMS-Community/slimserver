@@ -47,8 +47,7 @@
 			<select class="stdedit" name="[% category.name %]" id="[% category.name %]">
 
 			[%- FOREACH value = logLevels -%]
-				<option [% IF value == category.current %]selected[% END %] value="[% value %]">[% value | lower | ucfirst %]</option>
-
+				<option [% IF value == category.current %]selected[% END %] value="[% value %]">[% "SETUP_DEBUG_LEVEL_$value" | string %]</option>
 			[%- END -%]
 
 			</select>
