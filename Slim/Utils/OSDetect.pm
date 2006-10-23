@@ -193,6 +193,38 @@ sub dirsFor {
 			Slim::Utils::Misc::errorMsg("dirsFor: Didn't find a match request: [$dir]\n");
 		}
 
+	# RedHat/Fedora specific paths.
+	} elsif (isRHELorFC()) {
+
+		if ($dir =~ /^(?:Plugins|Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
+
+			push @dirs, "/usr/share/slimserver/$dir";
+
+		} elsif ($dir eq 'strings' || $dir eq 'revision') {
+
+			push @dirs, "/usr/share/slimserver";
+
+		} elsif ($dir =~ /^(?:types|convert|pref)$/) {
+
+			push @dirs, "/etc/slimserver";
+
+		} elsif ($dir eq 'log') {
+
+			push @dirs, "/var/log/slimserver";
+
+		} elsif ($dir eq 'cache') {
+
+			push @dirs, "/var/cache/slimserver";
+
+		} elsif ($dir eq 'MySQL') {
+
+			# Do nothing - use the depended upon MySQL install.
+
+		} else {
+
+			Slim::Utils::Misc::errorMsg("dirsFor: Didn't find a match request: [$dir]\n");
+		}
+
 	} else {
 
 		# Everyone else - Windows, and *nix.
@@ -232,6 +264,19 @@ sub isDebian {
 	my $details = details();
 
 	if ($details->{'osName'} eq 'Debian' && -d '/usr/share/slimserver/Firmware') {
+		return 1;
+	}
+
+	return 0;
+}
+
+sub isRHELorFC {
+
+	# Initialize
+	my $OS      = OS();
+	my $details = details();
+
+	if (($details->{'osName'} eq 'Fedora Core' || $details->{'osName'} eq 'RedHat') && -d '/usr/share/slimserver/Firmware') {
 		return 1;
 	}
 

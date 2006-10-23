@@ -95,7 +95,7 @@ sub loadModules {
 
 	my @SlimINC = ();
 
-	if (Slim::Utils::OSDetect::isDebian()) {
+	if (Slim::Utils::OSDetect::isDebian() || Slim::Utils::OSDetect::isRHELorFC()) {
 
 		@SlimINC = Slim::Utils::OSDetect::dirsFor('lib');
 

@@ -118,7 +118,7 @@ sub launchScan {
 
 		$command  = "$Bin/scanner.exe";
 
-	} elsif (Slim::Utils::OSDetect::isDebian() && -x '/usr/sbin/slimserver-scanner') {
+	} elsif (-x '/usr/sbin/slimserver-scanner') {
 
 		$command  = '/usr/sbin/slimserver-scanner';
 	}
