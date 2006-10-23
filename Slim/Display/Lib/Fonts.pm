@@ -447,7 +447,7 @@ sub fontfiles {
 
 			my $file = $fileObj->stringify;
 
-			if ($file =~ /\/(.+?)\.font\.bmp$/) {
+			if ($file =~ /[\/\\](.+?)\.font\.bmp$/) {
 
 				$fonts{basename($1)} = $file;
 
