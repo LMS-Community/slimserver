@@ -22,7 +22,7 @@ use Slim::Utils::OSDetect;
 {
 	my $class = __PACKAGE__;
 
-	for my $accessor (qw(confFile pidFile processObj isInitialized)) {
+	for my $accessor (qw(confFile processObj isInitialized)) {
 
 		$class->mk_classdata($accessor);
 	}
@@ -55,7 +55,6 @@ sub init {
 	}
 
 	$class->confFile(catfile($cacheDir, 'mDNS.conf'));
-	$class->pidFile(catfile($cacheDir, 'mDNS.pid'));
 
 	$class->isInitialized(1);
 
@@ -146,7 +145,6 @@ sub startAdvertising {
 	my $command = join(' ', (
 		$mDNSBin,
 		sprintf('-f %s', $class->confFile),
-		sprintf('-P %s', $class->pidFile)
 	));
 
 	$log->info("About to run: $command");
@@ -167,19 +165,19 @@ sub stopAdvertising {
 
 	$log->info("Shutting down..");
 
-	if (!$class->pidFile || !-f $class->pidFile) {
-
-		$log->debug("Warning: No PID file.");
-
-		return;
-	}
-
 	my $dead = 0;
 	my $pid  = undef;
 
-	if ($class->processObj && $class->processObj->alive) {
+	if ($class->processObj) {
 
-		$class->processObj->die;
+		$pid = $class->processObj->pid;
+
+		if ($pid) {
+
+			$log->info("Found process pid: $pid");
+
+			$class->processObj->die;
+		}
 
 		if (!$class->processObj->alive) {
 			$dead = 1;
@@ -188,15 +186,6 @@ sub stopAdvertising {
 		}
 	}
 
-	if (-f $class->pidFile || !$dead) {
-
-		$pid  = read_file($class->pidFile);	
-
-		if ($pid) {
-			$dead = kill('KILL', $pid);
-		}
-	}
-	
 	if ($dead) {
 
 		if ($pid) {
@@ -204,7 +193,10 @@ sub stopAdvertising {
 		}
 
 		unlink($class->confFile);
-		unlink($class->pidFile);
+
+	} else {
+
+		$log->info("Didn't kill any PIDs!");
 	}
 
 	return $dead;

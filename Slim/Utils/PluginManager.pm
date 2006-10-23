@@ -563,12 +563,14 @@ sub shutdownPlugins {
 
 	for my $plugin (enabledPlugins()) {
 
-		shutdownPlugin($plugin);
+		shutdownPlugin($plugin, 1);
 	}
 }
 
 sub shutdownPlugin {
-	my $plugin = shift;
+	my $plugin  = shift;
+	my $exiting = shift || 0;
+
 	no strict 'refs';
 
 	# We use shutdownPlugin() instead of the more succinct
@@ -576,7 +578,8 @@ sub shutdownPlugin {
 	# compatibility problems.
 	if (UNIVERSAL::can("Plugins::$plugin", "shutdownPlugin")) {
 
-		eval { &{"Plugins::${plugin}::shutdownPlugin"}() };
+		# Exiting is passed along if the entire server is being shut down.
+		eval { &{"Plugins::${plugin}::shutdownPlugin"}($exiting) };
 	}
 
 	if (defined $plugins{$plugin}) {

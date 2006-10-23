@@ -123,6 +123,7 @@ sub setupGroup {
 
 # plugin: shutdown the CLI
 sub shutdownPlugin {
+	my $exiting = shift;
 
 	$log->info("Shutting down..");
 
@@ -139,8 +140,11 @@ sub shutdownPlugin {
 	# close the socket
 	cli_socket_close();
 
-	# and restart mDNS without the cli port.
-	Slim::Networking::mDNS->startAdvertising;
+	# If the server is exiting completely, don't do anything.
+	# Otherwise restart mDNS without the cli port.
+	if (!$exiting) {
+		Slim::Networking::mDNS->startAdvertising;
+	}
 }
 
 # plugin strings at the end of the file

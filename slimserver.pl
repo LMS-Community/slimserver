@@ -155,9 +155,7 @@ use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Firmware;
 use Slim::Utils::UPnPMediaServer;
 
-use vars qw($VERSION $REVISION @AUTHORS);
-
-@AUTHORS = (
+our @AUTHORS = (
 	'Sean Adams',
 	'Vidur Apparao',
 	'Dean Blackketter',
@@ -180,9 +178,11 @@ use vars qw($VERSION $REVISION @AUTHORS);
 	'Richard Titmuss',
 );
 
-$VERSION  = '7.0a1';
-
-our ($audiodir, $playlistdir, $httpport);
+our $VERSION     = '7.0a1';
+our $REVISION    = undef;
+our $audiodir    = undef
+our $playlistdir = undef;
+our $httpport    = undef;
 
 our (
 	$cachedir,
@@ -212,7 +212,8 @@ our (
 	$stdio,
 	$stop,
 	$perfmon,
-	$perfwarn
+	$perfwarn,
+	$d_startup, # Needed for Slim::bootstrap
 );
 
 sub init {
@@ -563,6 +564,7 @@ sub initOptions {
 		'noupnp'        => \$noupnp,
 		'perfmon'       => \$perfmon,
 		'perfwarn=f'    => \$perfwarn, 
+		'd_startup'     => \$d_startup, # Needed for Slim::bootstrap
 	)) {
 		showUsage();
 		exit(1);
@@ -871,9 +873,13 @@ sub cleanup {
 		Slim::Schema->disconnect;
 	}
 
-	Slim::Utils::Prefs::writePrefs() if Slim::Utils::Prefs::writePending();
-	Slim::Networking::mDNS->stopAdvertising;
 	Slim::Utils::PluginManager::shutdownPlugins();
+
+	if (Slim::Utils::Prefs::writePending()) {
+		Slim::Utils::Prefs::writePrefs();
+	}
+
+	Slim::Networking::mDNS->stopAdvertising;
 
 	if (Slim::Utils::Prefs::get('persistPlaylists')) {
 		Slim::Control::Request::unsubscribe(
