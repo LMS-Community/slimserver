@@ -47,19 +47,11 @@ our $IRSINGLETIME = 0.256;
 # Max time an IR key code is queued for before being discarded [if server is busy]
 my $maxIRQTime = 3.0;
 
-# and more things for diagnostics.  Define the debug severity to turn diagnostics on.
-my ($serverStartSeconds, $serverStartMicros);
-
 our $irPerf = Slim::Utils::PerfMon->new('IR Delay', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
 
 my $log = logger('player.ir');
 
 sub init {
-
-	# Turn on IR diagnostics
-	if ($log->is_debug) {
-		($serverStartSeconds, $serverStartMicros) = gettimeofday();
-	}
 
 	%irCodes = ();
 	%irMap = ();
@@ -103,26 +95,6 @@ sub enqueue {
 		'estTime'=> $irTime + $ref,
 	};
 
-	if ($log->is_debug) {
-
-		# we can start profiling here
-		if (defined $DB::profile && $DB::profile == 0) {
-
-			$log->debug("IRTM Starting Profiler");
-
-			$DB::profile = 1;
-		}
-
-		# record information so the client can time each response
-		my ($serverSeconds, $serverMicros) = gettimeofday();
-		my $serverTime = ($serverSeconds - $serverStartSeconds) * 1000000;
-
-		$serverTime += $serverMicros;
-
-		$entry->{'irtm_cTime'} = $clientTime;
-		$entry->{'irtm_sTime'} = $serverTime;
-	}
-
 	push @irQueue, $entry;
 }
 
@@ -151,44 +123,8 @@ sub idle {
 
 		$log->info(sprintf("Discarded stale IR for client: %s", $client->id));
 
-		return 1;
 	}
 		
-	if ($log->is_debug) {
-
-		# compute current time in microseconds
-		my ($nowSeconds, $nowMicros) = gettimeofday();
-		my $nowTime = ($nowSeconds - $serverStartSeconds) * 1000000;
-		
-		$nowTime += $nowMicros;
-
-		my $clientTime         = $entry->{'irtm_cTime'};
-		my $serverReceivedTime = $entry->{'irtm_sTime'};
-		my $clientCount        = Slim::Player::Client::clientCount();
-
-		# send a message to the client that the IR has been processed.
-		#
-		# note that during execute() above, the client's display may
-		# have been updated a number of times.  So the deltaT we
-		# return here may be longer than what the client experienced.
-		# However, a pending command from another client could have
-		# been waiting all that time.
-		if ($client->isa("Slim::Player::Squeezebox")) {
-
-			my $serverDeltaT = $nowTime - $serverReceivedTime;
-
-			my $msg = join(' ',
-				"<irtm",
-				"clientSentTime=$clientTime",
-				"serverReceivedTime=$serverReceivedTime",
-				"serverDeltaT=$serverDeltaT",
-				"clientCount=$clientCount>"
-			);
-			
-			$client->sendFrame('irtm', \$msg);
-		}
-	}
-
 	return 1;
 }
 
