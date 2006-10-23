@@ -198,6 +198,9 @@ sub select {
 
 	$::perfmon && ($endSelectTime = Time::HiRes::time());
 
+	# return now if nothing to service - optimisation for most common case
+	return unless ( $r || $w || $e );
+
 	$selectInstance = ($selectInstance + 1) % 1000;
 
 	my $thisInstance = $selectInstance;
