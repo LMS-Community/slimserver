@@ -61,7 +61,7 @@ sub useMoodLogic {
 
 	Slim::Music::Import->useImporter($class, $use);
 
-	$log->info(sprintf("Using moodlogic?: %s", $use ? 'yes' : 'no');
+	$log->info(sprintf("Using moodlogic?: %s", $use ? 'yes' : 'no'));
 
 	return $use;
 }
