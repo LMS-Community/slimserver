@@ -73,7 +73,7 @@ sub addService {
 
 	if (!$name) {
 
-		$log->warn("Warning: Blank name, skipping service: $service - TXT - $port");
+		$log->info("Blank name, skipping service: $service - TXT - $port");
 
 	} else {
 
@@ -139,7 +139,7 @@ sub startAdvertising {
 
 	if (-z $class->confFile) {
 
-		$log->warn("Warning: Config has 0 size - disabling mDNS");
+		$log->info("Config has 0 size - disabling mDNS");
 		return;
 	}
 
