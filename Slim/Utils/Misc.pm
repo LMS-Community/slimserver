@@ -138,9 +138,7 @@ sub findbin {
 
 	# Couldn't find it in the environment? Look on disk..
 	# XXXX - why only windows? Security issue?
-	if (Slim::Utils::OSDetect::OS() eq "win") {
-
-		my $path = File::Which::which($executable);
+	if (Slim::Utils::OSDetect::OS() eq "win" && (my $path = File::Which::which($executable))) {
 
 		$log->info("Found binary $path for $executable");
 
