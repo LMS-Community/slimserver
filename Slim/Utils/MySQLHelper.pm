@@ -139,6 +139,11 @@ sub createConfig {
 		$config{'language'} = '/usr/share/mysql/english';
 	}
 
+	if (Slim::Utils::OSDetect::isRHELorFC()) {
+
+		$config{'language'} = '/usr/share/mysql/english';
+	}
+
 	# If there's no data dir setup - that also means we need to create the system tables.
 	if (!-d $config{'datadir'}) {
 
