@@ -193,6 +193,8 @@ sub initPlugins {
 
 	for my $plugin (keys %{installedPlugins()}) {
 
+		next if (exists $disabledplugins{$plugin});
+
 		if (addPlugin($plugin, \%disabledplugins)) {
 			addMenus($plugin, \%disabledplugins);
 			addScreensavers($plugin, \%disabledplugins);
