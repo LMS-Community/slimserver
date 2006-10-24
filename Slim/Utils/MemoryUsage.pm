@@ -108,6 +108,8 @@ sub package_size {
 	my $total_opcount = 0;
 	my $stash;
 
+	local $^W = 0;
+
 	{
 		no strict;
 		$stash = \%{"$package\::"};
@@ -126,7 +128,7 @@ sub package_size {
 			$total_opsize += B::Sizeof::GV + B::Sizeof::XPVGV + B::Sizeof::GP;
 		}
 
-		#measure global variables
+		# measure global variables
 		for my $type (qw(ARRAY HASH SCALAR)) {
 
 			no strict;
@@ -139,9 +141,10 @@ sub package_size {
 
 			next if ref($obj) eq 'B::NULL';
 
-			# XXX - dsully - Devel::Size seems to be more accurate
-			#my $tsize = $obj->size;
-			my $tsize = Devel::Size::total_size($ref);
+			# XXX - Devel::Size seems to be more accurate
+			# XXX - but it crashes on a lot of code.
+			my $tsize = $obj->size;
+			#my $tsize = Devel::Size::total_size($ref);
 
 			$total_opsize += $tsize;
 			$retval{"*${_}{$type}"} = {'size' => $tsize};
@@ -154,7 +157,6 @@ sub package_size {
 		for (keys %{ $filelex{$package} }) {
 
 			$total_opsize += $opsize;
-
 			$retval{"my ${_} = ...;"} = {
 				'size' => $filelex{$package}->{$_},
 			};
@@ -166,8 +168,9 @@ sub package_size {
 
 		$retval{$_} = {
 			'count' => $opcount,
-			'size' => $opsize
+			'size'  => $opsize,
 		};
+
 	}
 
 	return (\%retval, $total_opcount, $total_opsize);
@@ -213,6 +216,7 @@ sub CV_walk {
 
 	init_curpad_names($cvref);
 
+	no strict;
 	local *B::objsym = \&objsym;
 
 	# XXX - dsully added - walkoptree_* prints it's data
@@ -222,7 +226,7 @@ sub CV_walk {
 
 		B::walkoptree_exec($cv->START, $meth);
 
-	} elsif ($cv->can('first')) {
+	} else {
 
 		B::walkoptree_slow($cv->ROOT, $meth);
 	}
@@ -555,53 +559,27 @@ sub PADLIST_size {
 		my $class = B::class($vals[$i]);
 		my $byteinfo = sprintf "[%-4s %3d bytes]", $class, $entsize;
 
+		no warnings;
 		push @retval, sprintf "%${fill_len}d: %${padname_max}s %s %s\n", $i, $names_pv[$i], $byteinfo, 
 			($is_fake ? '__SvFAKE__' : (defined $vals[$i] ? 0 : $vals[$i]->sizeval));
 	}
 
-	undef @names;
-	undef @names_pv;
-	undef @vals;
-	undef $fill;
+	@names = ();
+	@names_pv = ();
+	@vals  = ();
+	$fill = undef;
 
 	if ($wantarray) {
 		return ($size, \@retval);
 	}
 
-	undef @retval;
+	@retval = ();
 	return $size;
 }
 
 sub max {
 	my ($cur, $maybe) = @_;
 	$maybe > $cur ? $maybe : $cur;
-}
-
-our %summary_cache = ();
-
-sub total_package_size {
-	my $package = shift;
-	my($subs, $opcount, $opsize);
-	my $keys = 0;
-	my $cache = {};
-
-	{
-		no strict 'refs';
-		$keys = keys %{"$package\::"};
-	}
-
-	# dsully - Don't cache - we want to reload them every time
-	#if ($cache = $summary_cache{$package}) {
-	#
-	#	if ($cache->{'keys'} == $keys) {
-	#	    return @{ $cache->{'data'} } if $cache->{'data'};
-	#	}
-	#}
-
-	$cache->{'keys'} = $keys;
-	#$summary_cache{$package} = $cache;
-
-	@{ $cache->{'data'} } = package_size($package);
 }
 
 sub b_lexinfo_link {
@@ -882,10 +860,10 @@ sub noh_b_lexinfo {
 	return \$html;
 }
 
-use Slim::Utils::Misc;
-
 sub status_memory_usage {
 	my $class = shift;
+
+	$| = 1;
 
 	my $stab = Devel::Symdump->rnew('main');
 
@@ -898,6 +876,7 @@ sub status_memory_usage {
 		next if $package =~ /Slim::Utils::MemoryUsage/;
 		next if $package =~ /^B::/;
 		next if $package =~ /^B$/;
+		next if $package =~ /^NS/;
 		next if $package =~ /^Devel::/;
 		next if $package =~ /^Data::\w*?Dumper/;
 		next if $package =~ /::SUPER$/;
@@ -920,10 +899,14 @@ sub status_memory_usage {
 		my $link = qq(<a href="$script?item=$_&command=noh_b_package_size">);
 
 		push @retval, sprintf "$link%-${nlen}s</a> %${slen}d bytes | %${clen}d OPs\n", $_, $total{$_}->{size}, $total{$_}->{count};
+		#printf "%-${nlen}s %${slen}d bytes | %${clen}d OPs\n", $_, $total{$_}->{size}, $total{$_}->{count};
 
 		$totalBytes   += $total{$_}->{'size'};
 		$totalOpCodes += $total{$_}->{'count'};
 	}
+
+	#printf("%d total in bytes\n", $totalBytes),
+	#printf("%6.2lf total in megabytes\n", ($totalBytes / 1048576)),
 
 	unshift @retval, (
 		'<pre>',
@@ -942,54 +925,3 @@ sub status_memory_usage {
 1;
 
 __END__
-
-=head1 NAME
-
-B::TerseSize - Printing info about ops and their (estimated) size
-
-=head1 SYNOPSIS
-
-	perl -MO=TerseSize[,OPTIONS] foo.pl
-
-=head1 DESCRIPTION
-
-The I<B::Size> and I<B::TerseSize> modules attempt to measure the size 
-of Perl op codes.  The output of B<B::TerseSize> is similar to that of 
-I<B::Terse>, but includes the size of each OP in the tree and the
-PADLIST (subroutine lexical variables).  The module can be run just as 
-other compiler backends or used via I<Apache::Status> (version 2.02
-and higher).
-
-If the I<Apache::Status> I<StatusTerseSize> option is enabled, there
-will be a main menu item added, "Memory Usage".  Clicking on this link 
-will cause I<B::TerseSize> to produce a summary of package memory
-usage.  This summary can take quite a while to produce, as each
-package subroutine syntax tree will be walked, adding up the
-information.  This information will be cached, so running httpd in
-I<-X> (non-forking mode) is a good choice.
-
-When browsing the Apache::Status "Symbol Table Dump", a "Memory
-Usage" link will be at the bottom of each page.  These summaries
-also include measurements of package global variables.
-
-The Apache::Status symbol table browser will also provide an option to 
-dump a subroutine tree along with the other subroutine options.
-
-=head1 CAVEATS
-
-The memory measurements are only an estimate.  But, chances are, if a 
-measurement is not accurate, it is smaller than the actual size.
-
-The "execution order" option under Apache::Status can only be run once
-unless you are using Perl 5.6.0+ or apply the
-I<patches/b_clearsym_60.pat> to older Perls.
-
-=head1 SEE ALSO
-
-B(3), B::Size(3), B::LexInfo(3), Apache::Status(3)
-
-=head1 AUTHOR
-
-Doug MacEachern based in part on B::Terse by Malcolm Beattie
-
-=cut
