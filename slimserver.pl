@@ -677,6 +677,8 @@ sub daemonize {
 		die "Can't start a new session: $!";
 	}
 
+	open STDOUT, '>>/dev/null';
+
 	if (!open STDERR, '>&STDOUT') {
 		die "Can't dup stdout: $!";
 	}
