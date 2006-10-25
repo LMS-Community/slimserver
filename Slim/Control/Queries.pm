@@ -33,6 +33,7 @@ use strict;
 use Scalar::Util qw(blessed);
 use URI::Escape;
 
+use Slim::Utils::Misc qw(specified);
 use Slim::Utils::Alarms;
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
