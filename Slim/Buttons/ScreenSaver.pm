@@ -110,13 +110,19 @@ sub screenSaver {
 		# don't change modes when none (just dim) is the screensaver.
 
 	} elsif ($timeout && 
+			
+			# no ir for at least the screensaver timeout
 			$irtime < $now - $timeout && 
-			( ($mode ne $saver) || 
-			 # in case the saver is 'now playing' and we're browsing another song
-			 ($mode eq 'playlist' && !Slim::Buttons::Playlist::showingNowPlaying($client)) ) &&
-			$mode ne 'screensaver' && # just in case it falls into default, we dont want recursive pushModes
-			$mode ne 'block' &&
-			$client->power()) {
+			
+			# make sure it's not already in a valid saver mode.
+			( ($mode ne $saver && Slim::Buttons::Common::validMode($saver)) || 
+				# in case the saver is 'now playing' and we're browsing another song
+				($mode eq 'playlist' && !Slim::Buttons::Playlist::showingNowPlaying($client)) ||
+				# just in case it falls into default, we dont want recursive pushModes
+				($mode ne 'screensaver' && !Slim::Buttons::Common::validMode($saver)) ) &&
+			
+			# not blocked and power is on
+			$mode ne 'block' && $client->power()) {
 		
 		# we only go into screensaver mode if we've timed out 
 		# and we're not off or blocked
