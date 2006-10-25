@@ -346,9 +346,6 @@ sub init {
 		Slim::Utils::UPnPMediaServer::init();
 	}
 
-	$log->info("SlimServer HTTP init...");
-	Slim::Web::HTTP::init();
-
 	$log->info("Source conversion init..");
 	Slim::Player::Source::init();
 
@@ -378,6 +375,9 @@ sub init {
 	}
 
 	checkVersion();
+
+	$log->info("SlimServer HTTP init...");
+	Slim::Web::HTTP::init();
 
 	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
