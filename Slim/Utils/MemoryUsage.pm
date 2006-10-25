@@ -885,7 +885,9 @@ sub status_memory_usage {
 		my ($subs, $opcount, $opsize) = package_size($package);
 
 		$total{$package} = {'count' => $opcount, 'size' => $opsize};
-
+		
+		main::idleStreams();
+		
 		$nlen = max($nlen, length $package);
 		$slen = max($slen, length $opsize);
 		$clen = max($clen, length $opcount);
