@@ -19,7 +19,6 @@ use strict;
 
 use Slim::Control::Request;
 use Slim::Utils::Timers;
-use Slim::Display::Text;
 use File::Spec::Functions qw(:ALL);
 
 use vars qw($VERSION);
