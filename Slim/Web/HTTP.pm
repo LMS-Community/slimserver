@@ -725,7 +725,7 @@ sub generateHTTPResponse {
 
 	# Check for the gallery view cookie.
 	if ($params->{'cookies'}->{'SlimServer-albumView'} && 
-	    $params->{'cookies'}->{'SlimServer-albumView'}->value) {
+		$params->{'cookies'}->{'SlimServer-albumView'}->value) {
 
 		$params->{'artwork'} = 1 unless defined $params->{'artwork'};
 	}
@@ -738,7 +738,7 @@ sub generateHTTPResponse {
 	}
 
 	# Check for thumbSize cookie (for Touch, 1-by-1 artwork enlarge/shrink feature)
-	if (	$params->{'cookies'}->{'SlimServer-thumbSize'} &&
+	if ($params->{'cookies'}->{'SlimServer-thumbSize'} &&
 		$params->{'cookies'}->{'SlimServer-thumbSize'}->value) {
 
 			$params->{'thumbSize'} = $params->{'cookies'}->{'SlimServer-thumbSize'}->value unless defined $params->{'thumbSize'};
