@@ -250,17 +250,17 @@ SQUEEZEBOX2_HOME
 	ZH_CN	Squeezebox主页
 
 TRANSPORTER_HOME
+	DA	Transporter Hovedmenu
 	DE	Transporter Hauptmenü
-	DK	Transporter Hovedmenu
 	EN	Transporter Home
 	ES	Inicio Transporter
 	FI	Transporter Valikko
 	FR	Menu Transporter
-	JP	Transporter �ーム
+	JA	Transporter �ーム
 	NL	Transporter hoofdmenu
 	NO	Transporter Hjem
 	PT	Início Transporter
-	SE	Transporter huvudmeny
+	SV	Transporter huvudmeny
 
 SOFTSQUEEZE_HOME
 	DE	SoftSqueeze Hauptmenü
@@ -1412,19 +1412,19 @@ WELCOME_TO_SQUEEZEBOX2
 	ZH_CN	欢迎使用Squeezebox
 
 WELCOME_TO_TRANSPORTER
-	CZ	Vítá Vás Transporter
+	CS	Vítá Vás Transporter
+	DA	Velkommen til Transporter
 	DE	Willkommen bei Transporter
-	DK	Velkommen til Transporter
 	EN	Welcome to Transporter
 	ES	Bienvenido al Transporter
 	FI	Transporter Tervetuloa!
 	FR	Bienvenue sur le Transporter
 	IT	Benvenuto a Transporter
-	JP	Transporterへようこそ
+	JA	Transporterへようこそ
 	NL	Welkom bij Transporter
 	NO	Velkommen til Transporter
 	PT	Bem-vindo ao Transporter
-	SE	Välkommen till Transporter
+	SV	Välkommen till Transporter
 	ZH_CN	欢迎使用Transporter
 
 WELCOME_TO_SOFTSQUEEZE
@@ -1495,11 +1495,11 @@ UPDATING_FIRMWARE_TRANSPORTER
 	EN	Updating Transporter firmware.
 	ES	Actualizando firmware de Transporter
 	FR	Mise à jour du micrologiciel Transporter
-	JP	ファームウェアをアップデートしています
+	JA	ファームウェアをアップデートしています
 	NL	Bijwerken Transporter firmware.
 	NO	Oppdaterer spillerens programvare ('firmware')
 	PT	Atualizando firmware ...
-	SE	Uppdaterar spelarens mjukvara
+	SV	Uppdaterar spelarens mjukvara
 	ZH_CN	更新Transporter韧件
 	
 FIRMWARE_MISSING
@@ -10352,18 +10352,18 @@ SQUEEZEBOX2_MUSIC_PLAYER
 	ZH_CN	Squeezebox播放机
 
 TRANSPORTER_MUSIC_PLAYER
+	DA	Transporter-afspiller
 	DE	Transporter Musik Player
-	DK	Transporter-afspiller
 	EN	Transporter Music Player
 	ES	Reproductor de Música Transporter 
 	FI	Transporter soitin
 	FR	Platine Transporter
 	IT	Lettore Musicale Transporter
-	JP	Transporterプレーヤー
+	JA	Transporterプレーヤー
 	NL	Transporter muziekspeler
 	NO	Transporter Musik Player
 	PT	Leitor de Música Transporter
-	SE	Transporter musikspelare
+	SV	Transporter musikspelare
 	ZH_CN	Transporter播放机
 
 SOFTSQUEEZE_MUSIC_PLAYER
