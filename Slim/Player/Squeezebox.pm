@@ -906,7 +906,7 @@ sub stream {
 			if ($server_url) {
 
 				# Logger for direct streaming
-				my $log = logger('player.directstream');
+				my $log = logger('player.streaming.direct');
 
 				$log->info("This player supports direct streaming for $params->{'url'} as $server_url, let's do it.");
 		
