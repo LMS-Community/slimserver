@@ -497,8 +497,7 @@ sub contentType {
 	my $contentType = $defaultType;
 
 	# See if we were handed a track object already, or just a plain url.
-	my $track       = blessed($urlOrObj) && $urlOrObj->can('id') ? $urlOrObj : undef;
-	my $url         = blessed($track) && $track->can('url') ? $track->url : URI->new($urlOrObj)->canonical->as_string;
+	my ($track, $url, $blessed) = _validTrackOrURL($urlOrObj);
 
 	# We can't get a content type on a undef url
 	if (!defined $url) {
@@ -511,8 +510,9 @@ sub contentType {
 		return $contentTypeCache{$url};
 	}
 
+	# Track will be a blessed object if it's defined.
 	# If we have an object - return from that.
-	if (blessed($track) && $track->can('content_type')) {
+	if ($track) {
 
 		$contentType = $track->content_type;
 
@@ -523,18 +523,19 @@ sub contentType {
 	}
 
 	# Nothing from the path, and we don't have a valid track object - fetch one.
-	if ((!defined $contentType || $contentType eq $defaultType) && !blessed($track)) {
+	if ((!defined $contentType || $contentType eq $defaultType) && !$track) {
 
-		$track = $self->objectForUrl($url);
+		$track   = $self->objectForUrl($url);
+		$blessed = blessed($track);
 
-		if (blessed($track) && $track->can('content_type')) {
+		if ($blessed eq 'Slim::Schema::Track' || $blessed eq 'Slim::Schema::Playlist') {
 
 			$contentType = $track->content_type;
 		}
 	}
 
 	# Nothing from the object we already have in the db.
-	if ((!defined $contentType || $contentType eq $defaultType) && blessed($track)) {
+	if ((!defined $contentType || $contentType eq $defaultType) && $blessed) {
 
 		$contentType = Slim::Music::Info::typeFromPath($url);
 	} 
@@ -864,8 +865,7 @@ sub updateOrCreate {
 	my $playlist      = $args->{'playlist'};
 
 	# XXX - exception should go here. Comming soon.
-	my $track = blessed($urlOrObj) ? $urlOrObj : undef;
-	my $url   = blessed($track) && $track->can('get') ? $track->get('url') : URI->new($urlOrObj)->canonical->as_string;
+	my ($track, $url, $blessed) = _validTrackOrURL($urlOrObj);
 
 	if (!defined($url) || ref($url)) {
 
@@ -1654,11 +1654,6 @@ sub _postCheckAttributes {
 	my $attributes = $args->{'attributes'};
 	my $create     = $args->{'create'} || 0;
 
-	# XXX - exception should go here. Comming soon.
-	if (!blessed($track) || !$track->can('get_columns')) {
-		return undef;
-	}
-
 	# Don't bother with directories / lnks. This makes sure "No Artist",
 	# etc don't show up if you don't have any.
 	my %cols = $track->get_columns;
@@ -1989,7 +1984,9 @@ sub _postCheckAttributes {
 		}
 	}
 
-	if (blessed($albumObj) && !$self->_albumIsUnknownAlbum($albumObj)) {
+	my $blessedAlbum = blessed($albumObj);
+
+	if ($blessedAlbum && !$self->_albumIsUnknownAlbum($albumObj)) {
 
 		my $sortable_title = Slim::Utils::Text::ignoreCaseArticles($attributes->{'ALBUMSORT'} || $album);
 
@@ -2073,7 +2070,7 @@ sub _postCheckAttributes {
 	}
 
 	# Always do this, no matter if we don't have an Album title.
-	if (blessed($albumObj)) {
+	if ($blessedAlbum) {
 
 		# Don't add an album to container tracks - See bug 2337
 		if (!Slim::Music::Info::isContainer($track, $trackType)) {
@@ -2119,10 +2116,12 @@ sub _postCheckAttributes {
 
 	# Years have their own lookup table.
 	# Bug: 3911 - don't add years for tracks without albums.
-	if (defined $track->year && $track->year =~ /^\d+$/ && 
-		blessed($albumObj) && $albumObj->title ne string('NO_ALBUM')) {
+	my $year = $track->year;
 
-		Slim::Schema->rs('Year')->find_or_create({ 'id' => $track->year });
+	if (defined $year && $year =~ /^\d+$/ && 
+		$blessedAlbum && $albumObj->title ne string('NO_ALBUM')) {
+
+		Slim::Schema->rs('Year')->find_or_create({ 'id' => $year });
 	}
 
 	# Add comments if we have them:
@@ -2143,8 +2142,7 @@ sub _postCheckAttributes {
 sub _albumIsUnknownAlbum {
 	my ($self, $albumObj) = @_;
 
-	if (blessed($_unknownAlbum) && 
-	    $albumObj->get_column('title') eq $_unknownAlbum->get_column('title')) {
+	if ($_unknownAlbum && $albumObj->get_column('title') eq $_unknownAlbum->get_column('title')) {
 
 		return 1;
 	}
@@ -2199,6 +2197,26 @@ sub _mergeAndCreateContributors {
 	}
 
 	return \%contributors;
+}
+
+sub _validTrackOrURL {
+	my $urlOrObj = shift;
+
+	my $track   = undef;
+	my $url     = undef ;
+	my $blessed = blessed($urlOrObj);
+
+	if ($blessed && ($blessed eq 'Slim::Schema::Track' || $blessed eq 'Slim::Schema::Playlist')) {
+
+		$track = $urlOrObj;
+		$url   = $track->url;
+
+	} elsif ($urlOrObj) {
+
+		$url   = URI->new($urlOrObj)->canonical->as_string;
+	}
+
+	return ($track, $url, $blessed);
 }
 
 sub _buildValidHierarchies {
