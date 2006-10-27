@@ -1006,6 +1006,7 @@ POWER
 	DE	Power
 	EN	Power
 	ES	Encendido
+	FI	Virta
 	FR	État
 	HE	הדלקה
 	IT	Acceso
@@ -7470,7 +7471,7 @@ SHUFFLE
 	DA	Vilkårlig rækkefølge
 	EN	Shuffle
 	ES	Al Azar
-	FI	Satunnaissoitto
+	FI	Sekoitus
 	FR	Mélanger
 	HE	ערבב
 	IT	Ordinamento Casuale
@@ -7517,7 +7518,7 @@ SHUFFLE_ON
 	DA	Vilkårlig playliste
 	EN	Shuffle Playlist
 	ES	Al Azar activado
-	FI	Satunnaisoitto päällä
+	FI	Sekoitus päällä
 	FR	Mélanger la liste de lecture
 	HE	בלאגאן
 	IT	Attiva l'Ordinamento Casuale dei brani
@@ -7534,7 +7535,7 @@ SHUFFLE_OFF
 	DA	Ikke-vilkårlig playliste
 	EN	Don't Shuffle Playlist
 	ES	Al Azar desactivado
-	FI	Satunnaissoitto pois päältä
+	FI	Sekoitus pois päältä
 	FR	Ne pas mélanger la liste de lecture
 	HE	ללא ערבוב
 	IT	Disattiva l'Ordinamento Casuale dei brani
@@ -8203,7 +8204,7 @@ BAND
 ALBUM
 	EN	Album
 	ES	Álbum
-	FI	Levyn nimi
+	FI	Levy
 	HE	אלבום
 	JA	アルバム
 	PT	Álbum
@@ -10386,7 +10387,7 @@ BY
 	DA	af
 	EN	by
 	ES	por
-	FI	by
+	FI	ja
 	FR	par
 	HE	בביצוע
 	IT	di
