@@ -153,7 +153,12 @@ sub setMode {
 }
 
 sub getFunctions {
-	return {};
+	return {
+		'aes-ebu'    => sub { updateDigitalInput(shift, $digital_inputs[ 0 ]) },
+		'bnc-spdif'  => sub { updateDigitalInput(shift, $digital_inputs[ 1 ]) },
+		'rcs-spdif'  => sub { updateDigitalInput(shift, $digital_inputs[ 2 ]) },
+		'toslink'    => sub { updateDigitalInput(shift, $digital_inputs[ 3 ]) },
+	};
 }
 
 # This plugin leaks into the main server, Slim::Web::Pages::Home() needs to
