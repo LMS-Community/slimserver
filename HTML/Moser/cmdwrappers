@@ -144,18 +144,32 @@
 [%- END %]
 
 [% BLOCK browsecontrols -%]
-    [% WRAPPER playlink   %][% PROCESS cmdHRef cmdType = "play"   %][% END %]
-    [% WRAPPER insertlink %][% PROCESS cmdHRef cmdType = "insert" %][% END %]
-    [% WRAPPER addlink    %][% PROCESS cmdHRef cmdType = "add"    %][% END %]
-    [% WRAPPER removelink %][% PROCESS cmdHRef cmdType = "remove" %][% END %]
+    [% IF showplayall %]
+        [% WRAPPER playlink noTarget = 1 %]href="[% playallhref %]"[% END %]
+        [% WRAPPER addlink  noTarget = 1 %]href="[% addallhref %]"[% END %]
+    [% ELSIF showdescend && href %]
+        [% WRAPPER descendlink %][% href %][% END %]
+        [% IF showplay %]
+            [% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
+            [% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
+        [% END %]
+    [% ELSE %]
+        [% WRAPPER playlink   %][% PROCESS cmdHRef cmdType = "play"   %][% END %]
+        [% WRAPPER insertlink %][% PROCESS cmdHRef cmdType = "insert" %][% END %]
+        [% WRAPPER addlink    %][% PROCESS cmdHRef cmdType = "add"    %][% END %]
+        [% WRAPPER removelink %][% PROCESS cmdHRef cmdType = "remove" %][% END %]
+    [% END %]
 [%- END %]
 
 [% BLOCK trackinfo -%]
-<span class="songtitle"><a [% PROCESS songinfoItemHRef %][% IF item.currentsong %] id="currentsong"[% END %] target="browser">[% item.title | html %]</a></span>
-[% IF item.album %]
-  [%- "FROM" | string -%] <span class="album"><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></span>
-[%- END %]
-[% IF item.includeArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+[% IF item.infohref %]
+   <span class="songtitle"><a [% item.infohref %] target="browser">[% ( item.text || item.title ) | html %]</a></span>
+[% ELSE %]<span class="songtitle"><a [% PROCESS songinfoItemHRef %][% IF item.currentsong %] id="currentsong"[% END %] target="browser">[% item.title | html %]</a></span>
+  [% IF item.album %]
+    [%- "FROM" | string -%] <span class="album"><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></span>
+  [%- END %]
+  [% IF item.includeArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+[% END %]
 [%- END %]
 
 [% BLOCK iteminfo -%]

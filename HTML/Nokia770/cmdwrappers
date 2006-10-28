@@ -133,24 +133,35 @@
 
 [% BLOCK browsecontrols_abbr %]
 	[% width='20' height='20'  %]
-	[%- IF playLink == 'ajax' %]
-		<td class = 'listing' align = 'center'>
-			<img src="[% webroot %]html/images/play.this.gif" onClick = 'changeOSD("[% itemobj.title %] [% "NOW_PLAYING" | string %]"); addItem("[% PROCESS ajaxCmdHRef cmdType='play' %]");' border=0 height="20" alt='Play Now' title='Play Now'>
-		</td>
-	[%- ELSE %]
-		[% WRAPPER playlink   %][% PROCESS cmdHRef cmdType='play' statusroot = 'status.html'  %][% END %]
-	[%- END %]
-
-	[%- IF addLink == 'noajax' %]
-	[% WRAPPER addlink    %][% PROCESS cmdHRef cmdType='add' statusroot = 'playlist.html' %][% END %]
-	[%- ELSE %]
-		<td class = 'listing' align = 'center'>
-			<img src="[% webroot %]html/images/add.gif" onClick = 'changeOSD("[% "ADDING_TO_PLAYLIST" | string %] [% itemobj.title %]"); addItem("[% PROCESS ajaxCmdHRef cmdType='add' %]");' border=0 height="20" alt='Add to playlist' title='Add to playlist'>
-		</td>
-	[%- END %]
-       [% FOREACH mixer = mixerlinks.values.sort %]
-               <td class="[% isCurrent ? "listing2" : "listing" %]" align="center">[% PROCESS $mixer %]</td>
-       [% END %]
+	[% IF showplayall %]
+		[% WRAPPER playlink noTarget = 1 %]href="[% playallhref %]"[% END %]
+		[% WRAPPER addlink  noTarget = 1 %]href="[% addallhref %]"[% END %]
+	[% ELSIF showdescend && href %]
+		[% WRAPPER descendlink %][% href %][% END %]
+		[% IF showplay %]
+			[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
+			[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
+		[% END %]
+	[% ELSE %]
+		[%- IF playLink == 'ajax' %]
+			<td class = 'listing' align = 'center'>
+				<img src="[% webroot %]html/images/play.this.gif" onClick = 'changeOSD("[% itemobj.title %] [% "NOW_PLAYING" | string %]"); addItem("[% PROCESS ajaxCmdHRef cmdType='play' %]");' border=0 height="20" alt='Play Now' title='Play Now'>
+			</td>
+		[%- ELSE %]
+			[% WRAPPER playlink   %][% PROCESS cmdHRef cmdType='play' statusroot = 'status.html'  %][% END %]
+		[%- END %]
+		
+		[%- IF addLink == 'noajax' %]
+		[% WRAPPER addlink    %][% PROCESS cmdHRef cmdType='add' statusroot = 'playlist.html' %][% END %]
+		[%- ELSE %]
+			<td class = 'listing' align = 'center'>
+				<img src="[% webroot %]html/images/add.gif" onClick = 'changeOSD("[% "ADDING_TO_PLAYLIST" | string %] [% itemobj.title %]"); addItem("[% PROCESS ajaxCmdHRef cmdType='add' %]");' border=0 height="20" alt='Add to playlist' title='Add to playlist'>
+			</td>
+		[%- END %]
+		[% FOREACH mixer = mixerlinks.values.sort %]
+			<td class="[% isCurrent ? "listing2" : "listing" %]" align="center">[% PROCESS $mixer %]</td>
+		[% END %]
+	[% END %]
 [% END %]
 
 [% BLOCK browsecontrols %]
@@ -176,7 +187,9 @@
 [% END %]
 
 [% BLOCK trackinfo %]
-	[% IF item.num || item.num == 0 %]
+	[% IF item.infohref %]
+			<a [% item.infohref %] target="browser">[% ( item.text || item.title ) | html %]</a>
+	[% ELSIF item.num || item.num == 0 %]
 			<b><a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %] >&nbsp;[% item.num + 1 %].&nbsp;</a>
 			<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %] >[% item.title | html %]</a></b>
 	[%# browse list items %]

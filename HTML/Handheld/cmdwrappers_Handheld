@@ -114,18 +114,33 @@
 
 [% BLOCK browsecontrols %]
 	[% SET width='13' height='13' -%]
-	[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END -%]
-	<td width="1" bgcolor="[% PROCESS oddOrEvenC %]">&nbsp;</td>
-	[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END -%]
-	[% FOREACH mixer = mixerlinks.values.sort %]
-		<td width="1" bgcolor="[% PROCESS oddOrEvenC %]">&nbsp;</td><td width="1" bgcolor="[% PROCESS oddOrEvenC %]">[% PROCESS $mixer %]</td>
+	[% IF showplayall %]
+		[% WRAPPER playlink noTarget = 1 %]href="[% playallhref %]"[% END %]
+		<td width="1" bgcolor="[% PROCESS oddOrEvenC %]">&nbsp;</td>
+		[% WRAPPER addlink  noTarget = 1 %]href="[% addallhref %]"[% END %]
+	[% ELSIF showdescend && href %]
+		[% WRAPPER descendlink %][% href %][% END %]
+		[% IF showplay %]
+			[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
+			<td width="1" bgcolor="[% PROCESS oddOrEvenC %]">&nbsp;</td>
+			[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
+		[% END %]
+	[% ELSE %]
+		[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END -%]
+		<td width="1" bgcolor="[% PROCESS oddOrEvenC %]">&nbsp;</td>
+		[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END -%]
+		[% FOREACH mixer = mixerlinks.values.sort %]
+			<td width="1" bgcolor="[% PROCESS oddOrEvenC %]">&nbsp;</td><td width="1" bgcolor="[% PROCESS oddOrEvenC %]">[% PROCESS $mixer %]</td>
+		[% END %]
 	[% END %]
 [% END %]
 
 [% BLOCK trackinfo %]
 	
 	[%# current playlist items %]
-	[% IF item.num || item.num == 0 %]
+	[% IF item.infohref %]
+		<a [% item.infohref %]>[% ( item.text || item.title ) | html %]</a>
+	[% ELSIF item.num || item.num == 0 %]
 		<a name=[% item.num %]>
 		<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %]>[% item.num + 1 %].</a>&nbsp;
 		<a [% PROCESS songinfoItemHRef %]>[% item.title %]</a>

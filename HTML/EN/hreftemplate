@@ -160,6 +160,12 @@ href="[% webroot %]setup.html?page=[% item.page %]&amp;player=[% playerURI %][% 
 href="[% webroot %]browsedb.html?hierarchy=[% item.hierarchy | html%][% IF artwork %]&amp;artwork=1[% END %][% IF item.orderBy %]&amp;orderBy=[% item.orderBy %][% END %]&amp;level=[% item.level %][% item.attributes | html %]&amp;player=[% playerURI %]"
 [%- END %]
 
+[%# this is the href to the browse page for a upnp item %]
+[% BLOCK browseUpnpItemHRef -%]
+href="[% webroot %]browseupnp.html?device=[% item.device | uri %]&hierarchy=[% item.hierarchy | html%][% item.attributes | html %]&amp;player=[% playerURI %]"
+[%- END %]
+
+
 [%# this is the href to the browsetree page for item %]
 [% BLOCK browseTreeItemHRef -%]
 href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;player=[% playerURI %]"

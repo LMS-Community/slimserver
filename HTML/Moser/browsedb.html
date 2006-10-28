@@ -27,7 +27,14 @@
           itemobj = item.itemobj
           attributes = item.attributes
           mixerlinks = item.mixerlinks
-	      odd = item.odd %]
+          odd = item.odd
+          anchor      = item.anchor 
+          showdescend = item.showdescend
+          showplay    = item.showplay
+          showplayall = item.showplayall
+          playallhref = item.playallhref
+          addallhref  = item.addallhref
+          href        = item.href %]
 	   [%- PROCESS iteminfo IF contentwrapper == 'contentitem' -%]
       [%- END %][%# end contentitem wrapper %]
      [%- END %][%# end for browse_items %]
