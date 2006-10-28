@@ -1754,29 +1754,19 @@ sub _postCheckAttributes {
 	$log->debug("-- Track has $foundContributor contributor(s)");
 
 	# Create a singleton for "No Artist"
-	if ($create && $isLocal && !$foundContributor && !$_unknownArtist) {
+	if ($create && $isLocal && !$foundContributor) {
 
-		$_unknownArtist = $self->resultset('Contributor')->update_or_create({
-			'name'       => string('NO_ARTIST'),
-			'namesort'   => Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST')),
-			'namesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST')),
-		}, { 'key' => 'namesearch' });
+		if (!$_unknownArtist) {
 
-		Slim::Schema::Contributor->add({
-			'artist' => $_unknownArtist->name,
-			'role'   => Slim::Schema::Contributor->typeToRole('ARTIST'),
-			'track'  => $trackId,
-		});
+			$_unknownArtist = $self->resultset('Contributor')->update_or_create({
+				'name'       => string('NO_ARTIST'),
+				'namesort'   => Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST')),
+				'namesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ARTIST')),
+			}, { 'key' => 'namesearch' });
 
-		push @{ $contributors->{'ARTIST'} }, $_unknownArtist;
+			$log->debug(sprintf("-- Created NO ARTIST (id: [%d])", $_unknownArtist->id));
+		}
 
-		$log->debug(sprintf("-- Created NO ARTIST (id: [%d])", $_unknownArtist->id));
-		$log->debug("-- Track has no artist");
-
-	} elsif ($create && $isLocal && !$foundContributor) {
-
-		# Otherwise - reuse the singleton object, since this is the
-		# second time through.
 		Slim::Schema::Contributor->add({
 			'artist' => $_unknownArtist->name,
 			'role'   => Slim::Schema::Contributor->typeToRole('ARTIST'),
@@ -1811,23 +1801,22 @@ sub _postCheckAttributes {
 
 	# Create a singleton for "No Album"
 	# Album should probably have an add() method
-	if ($create && $isLocal && !$album && !$_unknownAlbum) {
+	if ($create && $isLocal && !$album) {
 
-		$_unknownAlbum = $self->resultset('Album')->update_or_create({
-			'title'       => string('NO_ALBUM'),
-			'titlesort'   => Slim::Utils::Text::ignoreCaseArticles(string('NO_ALBUM')),
-			'titlesearch' => Slim::Utils::Text::ignoreCaseArticles(string('NO_ALBUM')),
-			'compilation' => $isCompilation,
-			'year'        => 0,
-		}, { 'key' => 'titlesearch' });
+		if (!$_unknownAlbum) {
 
-		$track->album($_unknownAlbum->id);
-		$albumObj = $_unknownAlbum;
+			my $string = string('NO_ALBUM');
 
-		$log->debug(sprintf("-- Created NO ALBUM as id: [%d]", $_unknownAlbum->id));
-		$log->debug("-- Track has no album");
+			$_unknownAlbum = $self->resultset('Album')->update_or_create({
+				'title'       => $string,
+				'titlesort'   => Slim::Utils::Text::ignoreCaseArticles($string),
+				'titlesearch' => Slim::Utils::Text::ignoreCaseArticles($string),
+				'compilation' => $isCompilation,
+				'year'        => 0,
+			}, { 'key' => 'titlesearch' });
 
-	} elsif ($create && $isLocal && !$album && blessed($_unknownAlbum)) {
+			$log->debug(sprintf("-- Created NO ALBUM as id: [%d]", $_unknownAlbum->id));
+		}
 
 		$track->album($_unknownAlbum->id);
 		$albumObj = $_unknownAlbum;
