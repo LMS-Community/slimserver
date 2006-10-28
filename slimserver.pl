@@ -453,7 +453,7 @@ sub idleStreams {
 	my $timeout = shift || 0;
 	
 	# No idle stream processing in child web procs
-	# return if $Slim::Web::HTTP::inChild;
+	return if $Slim::Web::HTTP::inChild;
 
 	my $select_time = 0;
 	my $check_timers = 1;
