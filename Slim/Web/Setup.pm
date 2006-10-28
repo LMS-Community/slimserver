@@ -807,7 +807,7 @@ sub initSetupConfig {
 				playerChildren($client, $pageref);
 				my $playlistRef = playlists();
 				$playlistRef->{''} = undef;
-				my $specialPlaylists = Slim::Buttons::AlarmClock::getSpecialPlaylists;
+				my $specialPlaylists = \%Slim::Buttons::AlarmClock::specialPlaylists;
 				for my $key (keys %{$specialPlaylists}) {
 					$playlistRef->{$key} = $key;
 				}
