@@ -864,7 +864,9 @@ sub setMode {
 	# If this is a list of containers (e.g. albums, artists, genres)
 	# that are not the result of a search, assume they are sorted.
 	# sort at simple track level as well.
-	if (($descend && !$search) || ($levels[$level] eq 'track' && !exists $find->{'album.id'} && !$search)) {
+
+	# Test reworked, see Bug 4437
+	if (($descend || !($levels[$level] eq 'track' || $levels[$level] eq 'playlistTrack')) && !$search) {
 
 		$params{'isSorted'}  = 'L';
 
