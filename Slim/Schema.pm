@@ -1622,8 +1622,10 @@ sub _preCheckAttributes {
 
 	# We also need these in _postCheckAttributes, but they should be set during create()
 	$deferredAttributes->{'COVER'}   = $attributes->{'COVER'};
-	$deferredAttributes->{'THUMB'}   = $attributes->{'THUMB'};
 	$deferredAttributes->{'DISC'}    = $attributes->{'DISC'};
+
+	# thumb has gone away, since we have GD resizing.
+	delete $attributes->{'THUMB'};
 
 	if ($log->is_debug) {
 
