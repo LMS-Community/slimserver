@@ -270,7 +270,10 @@ sub canPlugin {
 	
 	# Older plugins don't send back the string token - so we don't
 	# want to load them.
-	if ($displayName && !Slim::Utils::Strings::stringExists($displayName)) {
+	
+	my $nameExists = Slim::Utils::Strings::stringExists($displayName);
+	
+	if ($displayName && !$nameExists) {
 
 		logWarning("Can't load plugin $fullname - not 6.0+ compatible. (displayName must return a string token, strings() must not use _DATA_)");
 
@@ -278,7 +281,7 @@ sub canPlugin {
 
 		return 0;
 
-	} elsif ($displayName && Slim::Utils::Strings::stringExists($displayName)) {
+	} elsif ($displayName && $nameExists) {
 
 		return $displayName;
 
