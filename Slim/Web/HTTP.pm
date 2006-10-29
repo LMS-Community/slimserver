@@ -132,6 +132,9 @@ sub init {
 	# Initialize all the web page handlers.
 	Slim::Web::Pages::init();
 
+	# Initialize graphics resizing
+	Slim::Web::Graphics::init();
+
 	# if we've got an HTTP port specified, open it up!
 	if (Slim::Utils::Prefs::get('httpport')) {
 		Slim::Web::HTTP::openport(Slim::Utils::Prefs::get('httpport'), $::httpaddr, $Bin);

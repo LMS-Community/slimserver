@@ -242,7 +242,7 @@ sub updateOPMLCache {
 	};
 		
 	my $cache = Slim::Utils::Cache->new();
-	$cache->set( 'rss_opml', $opml );
+	$cache->set( 'rss_opml', $opml, '10days' );
 }
 
 # for configuring via web interface

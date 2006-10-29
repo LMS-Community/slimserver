@@ -1083,7 +1083,7 @@ sub scanWMAStreamDone {
 	$mmsURL =~ s/^http/mms/;
 	
 	# Cache this metadata for the MMS protocol handler to use
-	my $cache = Slim::Utils::Cache->instance;
+	my $cache = Slim::Utils::Cache->new;
 	$cache->set( 'wma_streamNum_' . $mmsURL, $streamNum,      '1 day' );	
 	$cache->set( 'wma_metadata_'  . $mmsURL, $wma,            '1 day' );
 	

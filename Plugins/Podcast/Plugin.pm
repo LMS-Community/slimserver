@@ -265,7 +265,7 @@ sub updateOPMLCache {
 	};
 		
 	my $cache = Slim::Utils::Cache->new();
-	$cache->set( 'podcasts_opml', $opml );
+	$cache->set( 'podcasts_opml', $opml, '10days' );
 }
 
 # for configuring via web interface

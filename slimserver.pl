@@ -338,8 +338,8 @@ sub init {
 	$log->info("Async Networking init...");
 	Slim::Networking::Async->init;
 	
-	$log->info("Cache init, cleaning up FileCache...");
-	Slim::Utils::Cache->init;
+	$log->info("Cache init...");
+	Slim::Utils::Cache->init();
 
 	if (!$noupnp) {
 		$log->info("UPnP init...");

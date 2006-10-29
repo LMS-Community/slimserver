@@ -16,9 +16,12 @@ my %typeToMethod = (
 
 my $log = logger('artwork');
 
-{
+my $canUseGD = 0;
+my $cache;
+
+sub init {
 	# Artwork resizing support by using GD, requires JPEG support built in
-	my $canUseGD = eval {
+	$canUseGD = eval {
 		require GD;
 		if (GD::Image->can('jpeg')) {
 			return 1;
@@ -27,9 +30,12 @@ my $log = logger('artwork');
 		}
 	};
 
-	sub serverResizesArt {
-		return $canUseGD;
-	}
+	# create cache for artwork which is not purged periodically due to potential size of cache
+	$cache = Slim::Utils::Cache->new('Artwork', 1, 1);
+}
+
+sub serverResizesArt {
+	return $canUseGD;
 }
 
 sub processCoverArtRequest {
@@ -88,7 +94,7 @@ sub processCoverArtRequest {
 
 		$log->info("  artwork cache key: $cacheKey");
 
-		$cachedImage = Slim::Utils::Cache->new()->get($cacheKey);
+		$cachedImage = $cache->get($cacheKey);
 		
 		if ($cachedImage && $cachedImage->{'mtime'} != $obj->coverArtMtime($image)) {
 			$cachedImage = undef;
@@ -106,7 +112,7 @@ sub processCoverArtRequest {
 
 		$cacheKey = "BLANK-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour";	
 
-		$cachedImage = Slim::Utils::Cache->new()->get($cacheKey);
+		$cachedImage = $cache->get($cacheKey);
 
 		unless ($cachedImage) {
 
@@ -125,7 +131,7 @@ sub processCoverArtRequest {
 
 	$log->info("  got cover art image $contentType of ". length($imageData) . " bytes");
 
-	if (serverResizesArt() && $typeToMethod{$contentType}) {
+	if ($canUseGD && $typeToMethod{$contentType}) {
 
 		# If this is a thumb, a size has been given, or this is a png and the background color isn't 100% transparent
 		# then the overhead of loading the image with GD is necessary.  Otherwise, the original content
@@ -311,7 +317,7 @@ sub processCoverArtRequest {
 
 		$log->info("  caching result key: $cacheKey");
 
-		Slim::Utils::Cache->new()->set($cacheKey, $cached, "10days");
+		$cache->set($cacheKey, $cached, "10days");
 	}
 
 	return ($body, $mtime, $inode, $size, $contentType);

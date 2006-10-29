@@ -135,7 +135,7 @@ sub requestString {
 	my $mmsURL = $url;
 	$mmsURL    =~ s/^http/mms/;
 	
-	my $cache     = Slim::Utils::Cache->instance;
+	my $cache     = Slim::Utils::Cache->new;
 	my $streamNum = $cache->get( 'wma_streamNum_' . $mmsURL );
 	my $wma       = $cache->get( 'wma_metadata_'  . $mmsURL );
 	
@@ -173,7 +173,7 @@ sub parseMetadata {
 	my $mmsURL = $url;
 	$mmsURL    =~ s/^http/mms/;
 	
-	my $cache     = Slim::Utils::Cache->instance;
+	my $cache     = Slim::Utils::Cache->new;
 	my $streamNum = $cache->get( 'wma_streamNum_' . $mmsURL );
 
 	setMetadata( $client, $url, $wma, $streamNum || 1 );
