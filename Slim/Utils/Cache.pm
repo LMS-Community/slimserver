@@ -28,7 +28,7 @@ A simple cache for arbitrary data using L<Cache::FileCache>.
 
 =head1 METHODS
 
-=head2 new( [ $namespeace ], [ $version ], [ $noPeriodicPurge ] )
+=head2 new( [ $namespace ], [ $version ], [ $noPeriodicPurge ] )
 
 $namespace allows unique namespace for cache to give control of purging on per namespace basis
 
