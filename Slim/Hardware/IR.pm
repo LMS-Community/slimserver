@@ -168,7 +168,7 @@ sub irfiles {
 
 			my $file = $fileObj->stringify;
 
-			if ($file !~ /(.+)\.ir$/) {
+			if (basename($file) !~ /(.+)\.ir$/) {
 				next;
 			}
 			
@@ -201,7 +201,8 @@ sub defaultMap {
 sub defaultMapFile {
 
 	if (!defined($defaultMapFile)) {
-		$defaultMapFile = defaultMap() . '.map';
+		my @dirs = IRFileDirs();
+		$defaultMapFile = file($dirs[0],defaultMap() . '.map');
 	}
 
 	return $defaultMapFile;
@@ -223,10 +224,10 @@ sub mapfiles {
 
 			my $file = $fileObj->stringify;
 
-			if ($file !~ /(.+)\.map$/) {
+			if (basename($file) !~ /(.+)\.map$/) {
 				next;
 			}
-			
+
 			$log->info("Found key mapping file: $file");
 
 			if ($1 eq defaultMap()) {
@@ -292,7 +293,7 @@ sub loadMapFile {
 
 	my @lines = file($file)->slurp('chomp' => 1);
 
-	$file = basename($file);
+	#$file = basename($file);
 
 	delete $irMap{$file};
 
@@ -447,7 +448,18 @@ sub lookupFunction {
 		$mode = Slim::Buttons::Common::mode($client);
 	}
 
-	my $map      = $client->prefGet('irmap');
+	my $map = $client->prefGet('irmap');
+	
+	if (!-e $map) {
+	
+		# older prefs didn't track pathname
+		# resave the pref with path also stripping to basename as a way to try to fix an invalid path
+		my @dirs = IRFileDirs();
+		$map = file($dirs[0], basename($map));
+
+		$client->prefSet('irmap');
+	}
+	
 	my $function = '';
 
 	assert($client);
