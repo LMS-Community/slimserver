@@ -31,7 +31,6 @@ use IO::String;
 use MP3::Info;
 use MPEG::Audio::Frame;
 
-use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::SoundCheck;
@@ -263,9 +262,6 @@ sub getTag {
 		Slim::Utils::SoundCheck::commentTagTodB($info);
 	}
 
-	# Allow getCoverArt to reuse what we just fetched.
-	Slim::Utils::Cache->new->set($file, $info, 60);
-
 	return $info;
 }
 
@@ -278,16 +274,6 @@ Extract and return cover image from the file.
 sub getCoverArt {
 	my $class = shift;
 	my $file  = shift || return undef;
-
-	# Try to save a re-read
-	my $cache = Slim::Utils::Cache->new;
-
-	if (my $tags = $cache->get($file)) {
-
-		$cache->remove($file);
-
-		return $tags->{'PIC'}->{'DATA'};
-	}
 
 	my $tags = MP3::Info::get_mp3tag($file, 2) || {};
 

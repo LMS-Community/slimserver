@@ -12,7 +12,6 @@ use base qw(Slim::Formats);
 
 use MP4::Info;
 
-use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::SoundCheck;
 
@@ -79,24 +78,12 @@ sub getTag {
 
 	delete $tags->{'META'};
 
-	Slim::Utils::Cache->new->set($file, $tags, 60);
-
 	return $tags;
 }
 
 sub getCoverArt {
 	my $class = shift;
 	my $file  = shift;
-
-	# Try to save a re-read
-	my $cache = Slim::Utils::Cache->new;
-
-	if (my $tags = $cache->get($file)) {
-
-		$cache->remove($file);
-
-		return $tags->{'PIC'};
-	}
 
 	my $tags = MP4::Info::get_mp4tag($file) || {};
 

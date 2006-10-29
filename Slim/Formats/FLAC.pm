@@ -33,7 +33,6 @@ use MIME::Base64 qw(decode_base64);
 
 use Slim::Formats::Playlists::CUE;
 use Slim::Schema::Contributor;
-use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
@@ -188,16 +187,6 @@ sub getCoverArt {
 	my $class = shift;
 	my $file  = shift;
 
-	my $cache = Slim::Utils::Cache->new;
-
-	if (my $tags = $cache->get($file)) {
-
-		# Invalidate the cache
-		$cache->remove($file);
-
-		return $tags->{'ARTWORK'};
-	}
-
 	my $flac = Audio::FLAC::Header->new($file) || do {
 
 		logError("Couldn't open file: [$file] for reading: $!");
@@ -237,8 +226,6 @@ sub _getStandardTag {
 	$class->_doTagMapping($tags);
 	$class->_addInfoTags($flac, $tags);
 	$class->_addArtworkTags($flac, $tags);
-
-	Slim::Utils::Cache->new->set($file, $tags, 60);
 
 	return $tags;
 }

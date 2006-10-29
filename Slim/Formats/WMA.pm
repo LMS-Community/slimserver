@@ -12,8 +12,6 @@ use base qw(Slim::Formats);
 
 use Audio::WMA;
 
-use Slim::Utils::Cache;
-
 my %tagMapping = (
 	'TRACKNUMBER'        => 'TRACKNUM',
 	'ALBUMTITLE'         => 'ALBUM',
@@ -69,24 +67,12 @@ sub getTag {
 
 	$tags->{'STEREO'} = ($tags->{'CHANNELS'} && $tags->{'CHANNELS'} == 2) ? 1 : 0;
 	
-	Slim::Utils::Cache->new->set($file, $tags, 60);
-
 	return $tags;
 }
 
 sub getCoverArt {
 	my $class = shift;
 	my $file  = shift || return undef;
-
-	# Try to save a re-read
-	my $cache = Slim::Utils::Cache->new;
-
-	if (my $tags = $cache->get($file)) {
-
-		$cache->remove($file);
-
-		return $tags->{'PICTURE'}->{'DATA'};
-	}
 
 	my $tags = $class->getTag($file);
 
