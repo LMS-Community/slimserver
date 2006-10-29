@@ -42,7 +42,6 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^setup\.(?:htm|xml)/,\&Slim::Web::Setup::setup_HTTP);
 	Slim::Web::HTTP::addPageFunction(qr/^tunein\.(?:htm|xml)/,\&tuneIn);
 	Slim::Web::HTTP::addPageFunction(qr/^update_firmware\.(?:htm|xml)/,\&update_firmware);
-	Slim::Web::HTTP::addPageFunction(qr/^ping\.(?:htm|xml)/,\&ping);
 	Slim::Web::HTTP::addPageFunction(qr/^debugging\.(?:htm|xml)/, \&Slim::Web::Setup::handleDebugSettings);
 
 	# pull in the memory usage module if requested.
@@ -252,7 +251,7 @@ sub addSongInfo {
 		}
 	
 		# handle artwork bits
-		if ($track->coverArt('thumb')) {
+		if ($track->coverArt) {
 			$params->{'coverThumb'} = $track->id;
 		}
 

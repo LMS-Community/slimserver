@@ -59,7 +59,6 @@ CREATE TABLE tracks (
   year smallint(5) unsigned,
   secs float unsigned,
   cover blob,
-  thumb blob,
   vbr_scale varchar(255),
   bitrate float unsigned,
   samplerate int(10) unsigned,

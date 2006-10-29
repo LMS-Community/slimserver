@@ -84,7 +84,11 @@ sub launchScan {
 
 	if (Slim::Utils::Log->writeConfig) {
 
-		$args->{sprintf("logconf=%s", Slim::Utils::Log->defaultConfigFile)} = 1;
+		$args->{sprintf("logconfig=%s", Slim::Utils::Log->defaultConfigFile)} = 1;
+	}
+
+	if (defined $::logdir && -d $::logdir) {
+		$args->{"logdir=$::logdir"} = 1;
 	}
 
 	# Add in the various importer flags
@@ -295,8 +299,18 @@ finding artwork, cleaning stale db entries, and optimizing the database.
 
 =cut
 
+use Devel::Size qw(total_size);
+
 sub runScanPostProcessing {
 	my $class  = shift;
+
+	#Data::Dump::dump(%Slim::Schema::postGenres);
+	msgf("postGenres size is: [%d]\n", total_size(\%Slim::Schema::postGenres));
+
+	while (my ($genre, $tracks) = each %Slim::Schema::postGenres) {
+
+		Slim::Schema::Genre->addPost($genre, $tracks);
+	}
 
 	# Auto-identify VA/Compilation albums
 	$log->info("Starting mergeVariousArtistsAlbums().");

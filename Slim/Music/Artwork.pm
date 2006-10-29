@@ -37,7 +37,8 @@ use Slim::Utils::Unicode;
 use Slim::Utils::OSDetect;
 
 # Global caches:
-my $artworkDir   = '';
+my $artworkDir = '';
+my $log        = logger('artwork');
 
 tie my %lastFile, 'Tie::Cache::LRU', 32;
 
@@ -80,7 +81,7 @@ sub findArtwork {
 
 	while (my $track = $tracks->next) {
 
-		if ($track->coverArt('cover') || $track->coverArt('thumb')) {
+		if ($track->coverArt) {
 
 			my $album = $track->album;
 
@@ -127,7 +128,6 @@ sub getImageContentAndType {
 sub readCoverArt {
 	my $class = shift;
 	my $track = shift;  
-	my $image = shift || 'cover';
 
 	my $url  = Slim::Utils::Misc::stripAnchorFromURL($track->url);
 	my $file = $track->path;
@@ -137,7 +137,7 @@ sub readCoverArt {
 
 	# Nothing there? Look on the file system.
 	if (!defined $body) {
-		($body, $contentType, $path) = $class->_readCoverArtFiles($track, $file, $image);
+		($body, $contentType, $path) = $class->_readCoverArtFiles($track, $file);
 	}
 
 	return ($body, $contentType, $path);
@@ -188,8 +188,6 @@ sub _readCoverArtTags {
 	my $track = shift;
 	my $file  = shift;
 
-	my $log   = logger('artwork');
-
 	$log->info("Looking for a cover art image in the tags of: [$file]");
 
 	if (blessed($track) && $track->can('audio') && $track->audio) {
@@ -224,36 +222,21 @@ sub _readCoverArtFiles {
 	my $class = shift;
 	my $track = shift;
 	my $path  = shift;
-	my $image = shift || 'cover';
 
-	my @filestotry = ();
-	my @names      = qw(cover thumb album albumartsmall folder);
-	my @ext        = qw(jpg gif);
-	my $artwork    = undef;
+	my @names      = qw(cover thumb album folder);
+	my @ext        = qw(png jpg gif);
 
 	my $file       = file($path);
 	my $parentDir  = $file->dir;
-
-	my $log        = logger('artwork');
+	my $trackId    = $track->id;
 
 	$log->info("Looking for image files in $parentDir");
 
-	my %nameslist = map { $_ => [do { my $t = $_; map { "$t.$_" } @ext }] } @names;
+	my %nameslist  = map { $_ => [do { my $t = $_; map { "$t.$_" } @ext }] } @names;
 	
-	if ($image eq 'thumb') {
-
-		# these seem to be in a particular order - not sure if that means anything.
-		@filestotry = map { @{$nameslist{$_}} } qw(thumb albumartsmall cover folder album);
-
-		$artwork = Slim::Utils::Prefs::get('coverThumb');
-
-	} else {
-
-		# these seem to be in a particular order - not sure if that means anything.
-		@filestotry = map { @{$nameslist{$_}} } qw(cover folder album thumb albumartsmall);
-
-		$artwork = Slim::Utils::Prefs::get('coverArt');
-	}
+	# these seem to be in a particular order - not sure if that means anything.
+	my @filestotry = map { @{$nameslist{$_}} } @names;
+	my $artwork    = Slim::Utils::Prefs::get('coverArt');
 
 	# If the user has specified a pattern to match the artwork on, we need
 	# to generate that pattern. This is nasty.
@@ -265,9 +248,7 @@ sub _readCoverArtFiles {
 			Slim::Utils::Misc::fileURLFromPath($track->url), $1
 		) . $suffix;
 
-		$log->info(sprintf(
-			"Variable %s: %s from %s", ($image eq 'thumb' ? 'Thumbnail' : 'Cover'), $artwork, $1
-		));
+		$log->info("Variable cover: $artwork from $1");
 
 		if (Slim::Utils::OSDetect::OS() eq 'win') {
 			# Remove illegal characters from filename.
@@ -289,7 +270,7 @@ sub _readCoverArtFiles {
 
 		if ($body && $contentType) {
 
-			$log->info("Found $image file: $artPath");
+			$log->info("Found image file: $artPath");
 
 			return ($body, $contentType, $artPath);
 		}
@@ -301,17 +282,17 @@ sub _readCoverArtFiles {
 
 	if (defined $artworkDir && $artworkDir eq $parentDir) {
 
-		if (exists $lastFile{$image} && $lastFile{$image} ne 1) {
+		if (exists $lastFile{$trackId} && $lastFile{$trackId} ne 1) {
 
-			$log->info("Using existing $image: $lastFile{$image}");
+			$log->info("Using existing image: $lastFile{$trackId}");
 
-			my ($body, $contentType) = $class->getImageContentAndType($lastFile{$image});
+			my ($body, $contentType) = $class->getImageContentAndType($lastFile{$trackId});
 
-			return ($body, $contentType, $lastFile{$image});
+			return ($body, $contentType, $lastFile{$trackId});
 
-		} elsif (exists $lastFile{$image}) {
+		} elsif (exists $lastFile{$trackId}) {
 
-			$log->info("No $image in $artworkDir");
+			$log->info("No image in $artworkDir");
 
 			return undef;
 		}
@@ -332,15 +313,15 @@ sub _readCoverArtFiles {
 
 		if ($body && $contentType) {
 
-			$log->info("Found $image file: $file");
+			$log->info("Found image file: $file");
 
-			$lastFile{$image} = $file;
+			$lastFile{$trackId} = $file;
 
 			return ($body, $contentType, $file);
 
 		} else {
 
-			$lastFile{$image} = 1;
+			$lastFile{$trackId} = 1;
 		}
 	}
 

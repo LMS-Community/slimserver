@@ -1935,7 +1935,7 @@ sub _songData {
 		  'f' => ['filesize',         'filesize'],         #filesize
 		#                                                  #tag 
 		  'i' => ['disc',             'disc'],             #disc
-		  'j' => ['coverart',         'coverArtExists'],   #thumb, cover
+		  'j' => ['coverart',         'coverArtExists'],   #cover
 		  'x' => ['remote',           'remote'],           #remote 
 		#                                                  #audio 
 		#                                                  #audio_size 
