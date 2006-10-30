@@ -6,14 +6,13 @@ use warnings;
 
 use Carp 'confess';
 
-our $VERSION = '0.02';
+our $VERSION = '0.05';
 
 sub merge {
-    my ($root, $parent_fetcher) = @_;
+    my ($root, $parent_fetcher, $cache) = @_;
 
+    $cache ||= {};
     my @STACK;  # stack for simulating recursion
-    my %fcache; # cache of _fetcher results
-    my %mcache; # cache of merge do-block results
 
     my $pfetcher_is_coderef = ref($parent_fetcher) eq 'CODE';
 
@@ -42,20 +41,20 @@ sub merge {
             ]);
 
             $current_root = $new_root;
-            $current_parents = $fcache{$current_root} ||= [ $current_root->$parent_fetcher ];
+            $current_parents = $cache->{pfetch}->{$current_root} ||= [ $current_root->$parent_fetcher ];
             $recurse_mergeout = [];
             $i = 0;
             next;
         }
 
-        my $mergeout = $mcache{$current_root} ||= do {
+        my $mergeout = $cache->{merge}->{$current_root} ||= do {
 
             # This do-block is the code formerly known as the function
             # that was a perl-port of the python code at
             # http://www.python.org/2.3/mro.html :)
 
-            # Initial set
-            my @seqs = ([$current_root], @$recurse_mergeout, $current_parents);
+            # Initial set (make sure everything is copied - it will be modded)
+            my @seqs = map { [@$_] } (@$recurse_mergeout, $current_parents);
 
             # Construct the tail-checking hash
             my %tails;
@@ -63,7 +62,7 @@ sub merge {
                 $tails{$_}++ for (@$seq[1..$#$seq]);
             }
 
-            my @res;
+            my @res = ( $current_root );
             while (1) {
                 my $cand;
                 my $winner;
@@ -183,7 +182,7 @@ explaination, see the links in the L<SEE ALSO> section.
 
 =over 4
 
-=item B<merge ($root, $func_to_fetch_parent)>
+=item B<merge ($root, $func_to_fetch_parent, $cache)>
 
 This takes a C<$root> node, which can be anything really it
 is up to you. Then it takes a C<$func_to_fetch_parent> which 
@@ -213,6 +212,26 @@ might look is below:
 The purpose of C<$func_to_fetch_parent> is to provide a way 
 for C<merge> to extract the parents of C<$root>. This is 
 needed for C3 to be able to do it's work.
+
+The C<$cache> parameter is an entirely optional performance
+measure, and should not change behavior.
+
+If supplied, it should be a hashref that merge can use as a
+private cache between runs to speed things up.  Generally
+speaking, if you will be calling merge many times on related
+things, and the parent fetching function will return constant
+results given the same arguments during all of these calls,
+you can and should reuse the same shared cache hash for all
+of the calls.  Example:
+
+  sub do_some_merging {
+      my %merge_cache;
+      my @foo_mro = Algorithm::C3::Merge('Foo', \&get_supers, \%merge_cache);
+      my @bar_mro = Algorithm::C3::Merge('Bar', \&get_supers, \%merge_cache);
+      my @baz_mro = Algorithm::C3::Merge('Baz', \&get_supers, \%merge_cache);
+      my @quux_mro = Algorithm::C3::Merge('Quux', \&get_supers, \%merge_cache);
+      # ...
+  }
 
 =back
 

@@ -7,7 +7,7 @@ use warnings;
 use Scalar::Util 'blessed';
 use Algorithm::C3;
 
-our $VERSION = '0.11';
+our $VERSION = '0.14';
 
 # this is our global stash of both 
 # MRO's and method dispatch tables
@@ -29,6 +29,9 @@ our %MRO;
 sub _dump_MRO_table { %MRO }
 our $TURN_OFF_C3 = 0;
 
+# state tracking for initialize()/uninitialize()
+our $_initialized = 0;
+
 sub import {
     my $class = caller();
     # skip if the caller is main::
@@ -45,9 +48,14 @@ sub import {
 sub initialize {
     # why bother if we don't have anything ...
     return unless keys %MRO;
+    if($_initialized) {
+        uninitialize();
+        $MRO{$_} = undef foreach keys %MRO;
+    }
     _calculate_method_dispatch_tables();
     _apply_method_dispatch_tables();
     %next::METHOD_CACHE = ();
+    $_initialized = 1;
 }
 
 sub uninitialize {
@@ -55,27 +63,24 @@ sub uninitialize {
     return unless keys %MRO;    
     _remove_method_dispatch_tables();    
     %next::METHOD_CACHE = ();
+    $_initialized = 0;
 }
 
-sub reinitialize {
-    uninitialize();
-    # clean up the %MRO before we re-initialize
-    $MRO{$_} = undef foreach keys %MRO;
-    initialize();
-}
+sub reinitialize { goto &initialize }
 
 ## functions for applying C3 to classes
 
 sub _calculate_method_dispatch_tables {
+    my %merge_cache;
     foreach my $class (keys %MRO) {
-        _calculate_method_dispatch_table($class);
+        _calculate_method_dispatch_table($class, \%merge_cache);
     }
 }
 
 sub _calculate_method_dispatch_table {
-    my $class = shift;
+    my ($class, $merge_cache) = @_;
     no strict 'refs';
-    my @MRO = calculateMRO($class);
+    my @MRO = calculateMRO($class, $merge_cache);
     $MRO{$class} = { MRO => \@MRO };
     my $has_overload_fallback = 0;
     my %methods;
@@ -139,11 +144,11 @@ sub _remove_method_dispatch_table {
 ## functions for calculating C3 MRO
 
 sub calculateMRO {
-    my ($class) = @_;
+    my ($class, $merge_cache) = @_;
     return Algorithm::C3::merge($class, sub { 
         no strict 'refs'; 
         @{$_[0] . '::ISA'};
-    });
+    }, $merge_cache);
 }
 
 package  # hide me from PAUSE
@@ -159,7 +164,9 @@ our $VERSION = '0.05';
 our %METHOD_CACHE;
 
 sub method {
-    my $level = 1;
+    my $indirect = caller() =~ /^(?:next|maybe::next)$/;
+    my $level = $indirect ? 2 : 1;
+     
     my ($method_caller, $label, @label);
     while ($method_caller = (caller($level++))[3]) {
       @label = (split '::', $method_caller);
@@ -172,28 +179,44 @@ sub method {
     my $self     = $_[0];
     my $class    = blessed($self) || $self;
     
-    goto &{ $METHOD_CACHE{"$class|$caller|$label"} ||= do {
+    my $method = $METHOD_CACHE{"$class|$caller|$label"} ||= do {
+        
+        my @MRO = Class::C3::calculateMRO($class);
+        
+        my $current;
+        while ($current = shift @MRO) {
+            last if $caller eq $current;
+        }
+        
+        no strict 'refs';
+        my $found;
+        foreach my $class (@MRO) {
+            next if (defined $Class::C3::MRO{$class} && 
+                     defined $Class::C3::MRO{$class}{methods}{$label});          
+            last if (defined ($found = *{$class . '::' . $label}{CODE}));
+        }
+        
+        $found;
+    };
 
-      my @MRO = Class::C3::calculateMRO($class);
+    return $method if $indirect;
 
-      my $current;
-      while ($current = shift @MRO) {
-          last if $caller eq $current;
-      }
+    die "No next::method '$label' found for $self" if !$method;
 
-      no strict 'refs';
-      my $found;
-      foreach my $class (@MRO) {
-          next if (defined $Class::C3::MRO{$class} && 
-                   defined $Class::C3::MRO{$class}{methods}{$label});          
-          last if (defined ($found = *{$class . '::' . $label}{CODE}));
-      }
-
-      die "No next::method '$label' found for $self" unless $found;
-
-      $found;
-    } };
+    goto &{$method};
 }
+
+sub can { method($_[0]) }
+
+package  # hide me from PAUSE
+    maybe::next; 
+
+use strict;
+use warnings;
+
+our $VERSION = '0.01';
+
+sub method { (next::method($_[0]) || return)->(@_) }
 
 1;
 
@@ -315,7 +338,21 @@ Given a C<$class> this will return an array of class names in the proper C3 meth
 =item B<initialize>
 
 This B<must be called> to initalize the C3 method dispatch tables, this module B<will not work> if 
-you do not do this. It is advised to do this as soon as possible B<after> any classes which use C3.
+you do not do this. It is advised to do this as soon as possible B<after> loading any classes which 
+use C3. Here is a quick code example:
+  
+  package Foo;
+  use Class::C3;
+  # ... Foo methods here
+  
+  package Bar;
+  use Class::C3;
+  use base 'Foo';
+  # ... Bar methods here
+  
+  package main;
+  
+  Class::C3::initialize(); # now it is safe to use Foo and Bar
 
 This function used to be called automatically for you in the INIT phase of the perl compiler, but 
 that lead to warnings if this module was required at runtime. After discussion with my user base 
@@ -325,7 +362,9 @@ any other users other than the L<DBIx::Class> folks). The simplest solution of c
 your own INIT method which calls this function. 
 
 NOTE: 
-This can B<not> be used to re-load the dispatch tables for all classes. Use C<reinitialize> for that.
+
+If C<initialize> detects that C<initialize> has already been executed, it will L</uninitialize> and
+clear the MRO cache first.
 
 =item B<uninitialize>
 
@@ -334,11 +373,7 @@ style dispatch order (depth-first, left-to-right).
 
 =item B<reinitialize>
 
-This effectively calls C<uninitialize> followed by C<initialize> the result of which is a reloading of
-B<all> the calculated C3 dispatch tables. 
-
-It should be noted that if you have a large class library, this could potentially be a rather costly 
-operation.
+This is an alias for L</initialize> above.
 
 =back
 
@@ -382,6 +417,16 @@ that you cannot dispatch to a method of a different name (this is how C<NEXT::> 
 
 The next thing to keep in mind is that you will need to pass all arguments to C<next::method> it can 
 not automatically use the current C<@_>. 
+
+If C<next::method> cannot find a next method to re-dispatch the call to, it will throw an exception.
+You can use C<next::can> to see if C<next::method> will succeed before you call it like so:
+
+  $self->next::method(@_) if $self->next::can; 
+
+Additionally, you can use C<maybe::next::method> as a shortcut to only call the next method if it exists. 
+The previous example could be simply written as:
+
+  $self->maybe::next::method(@_);
 
 There are some caveats about using C<next::method>, see below for those.
 
@@ -510,11 +555,16 @@ and finding many bugs and providing fixes.
 =item Thanks to Justin Guenther for making C<next::method> more robust by handling 
 calls inside C<eval> and anon-subs.
 
+=item Thanks to Robert Norris for adding support for C<next::can> and 
+C<maybe::next::method>.
+
 =back
 
 =head1 AUTHOR
 
 Stevan Little, E<lt>stevan@iinteractive.comE<gt>
+
+Brandon L. Black, E<lt>blblack@gmail.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 

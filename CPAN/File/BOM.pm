@@ -60,7 +60,19 @@ File::BOM - Utilities for handling Byte Order Marks
 
     # get an encoding from a known BOM
     $enc = $bom2enc{$bom}
-  
+
+=head1 DESCRIPTION
+
+This module provides functions for handling unicode byte order marks, which are
+to be found at the beginning of some files and streams.
+
+For details about what a byte order mark is, see
+L<http://www.unicode.org/unicode/faq/utf_bom.html#BOM>
+
+The intention of File::BOM is for files with BOMs to be readable as seamlessly
+as possible, regardless of the encoding used. To that end, several different
+interfaces are available, as shown in the synopsis above. 
+
 =cut
 
 use strict;
@@ -89,7 +101,7 @@ my @subs = qw(
 
 my @vars = qw( %bom2enc %enc2bom );
 
-our $VERSION = '0.11';
+our $VERSION = '0.13';
 
 our @EXPORT = ();
 our @EXPORT_OK = ( @subs, @vars );
@@ -150,8 +162,6 @@ just %bom2enc and %enc2bom
 =head2 %bom2enc
 
 Maps Byte Order marks to their encodings.
-
-See L<http://www.unicode.org/unicode/faq/utf_bom.html#BOM> for details
 
 The keys of this hash are strings which represent the BOMs, the values are their
 encodings, in a format which is understood by L<Encode>
@@ -450,7 +460,11 @@ sub _get_encoding_unseekable (*) {
 
     my $so_far = '';
     for my $c (1 .. $MAX_BOM_LENGTH) {
-	defined(read($fh, my $byte, 1)) or croak "Couldn't read byte: $!";
+        # read is supposed to return undef on error, but on some platforms it
+        # seems to just return 0 and set $!
+        local $!;
+        my $status = read $fh, my $byte, 1;
+        if (!$status && $!) { croak "Couldn't read byte: $!" }
 
 	$so_far .= $byte;
 
@@ -761,7 +775,7 @@ encoding(...) layers.
 
 Matt Lawrence E<lt>mattlaw@cpan.orgE<gt>
 
-With thanks to Mark Fowler and Steve Purkis for additional tests.
+With thanks to Mark Fowler and Steve Purkis for additional tests and advice.
 
 =head1 COPYRIGHT
 
