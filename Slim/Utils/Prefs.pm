@@ -34,7 +34,8 @@ our %prefChange = ();
 
 my $DEFAULT_DBSOURCE = 'dbi:mysql:hostname=127.0.0.1;port=9092;database=%s';
 
-my $log = logger('prefs');
+# Prefs is special - we need to be loaded before logging, but use logging later on.
+my $log = undef;
 
 sub init {
 
@@ -321,6 +322,12 @@ sub init {
 	);
 }
 
+# This needs to be run after Logging is initialized.
+sub loadLogHandler {
+
+	$log = logger('prefs');
+}
+
 sub makeSecuritySecret {
 	
 	# each SlimServer installation should have a unique,
@@ -334,8 +341,11 @@ sub makeSecuritySecret {
 	my $currentVal = get('securitySecret');
 	
 	if (defined($currentVal) && ($currentVal =~ m|^[0-9a-f]{32}$|)) {
-	
-		$log->debug("Server already has a securitySecret - returning existing");
+
+		if ($log) {
+
+			$log->debug("Server already has a securitySecret - returning existing");
+		}
 
 		return $currentVal;
 	}
@@ -348,8 +358,10 @@ sub makeSecuritySecret {
 	
 	# explicitly "set" this so it persists through shutdown/startupa
 	my $secret = $hash->hexdigest();
-	
-	$log->debug("Creating a securitySecret for this installation.");
+
+	if ($log) {
+		$log->debug("Creating a securitySecret for this installation.");
+	}
 
 	set('securitySecret', $secret);
 
@@ -849,11 +861,15 @@ sub set {
 	# must mark $ind as defined or indexed prefs cause an error in this msg
 	if (defined $ind) {
 
-		$log->debug(sprintf("Setting prefs $key $ind to " . ((defined $value) ? $value : "undef")));
+		if ($log) {
+			$log->debug(sprintf("Setting prefs $key $ind to " . ((defined $value) ? $value : "undef")));
+		}
 
 	} else {
 
-		$log->debug(sprintf("Setting prefs $key to " . ((defined $value) ? $value : "undef")));
+		if ($log) {
+			$log->debug(sprintf("Setting prefs $key to " . ((defined $value) ? $value : "undef")));
+		}
 	}
 
 	if (!$writePending) {
@@ -872,8 +888,10 @@ sub setArray {
 	$prefs{$key} = $value;
 	
 	onChange($key, $value);
-	
-	$log->debug(sprintf("%s => %s", $key, Data::Dump::dump($value)));
+
+	if ($log) {
+		$log->debug(sprintf("%s => %s", $key, Data::Dump::dump($value)));
+	}
 
 	if (!$writePending) {
 		scheduleWrite();
@@ -1023,13 +1041,12 @@ sub writePrefs {
 	my %writeAttr = (
 		'atomic'  => $canWriteAtomic,
 		'buf_ref' => \$prefdump,
+		'binmode' => ':raw',
 	);
 
-	$log->info("Writing out prefs in $writeFile");
-	
-	if ($] > 5.007) {
+	if ($log) {
 
-		$writeAttr{'binmode'} = ':raw';
+		$log->info("Writing out prefs in $writeFile");
 	}
 
 	eval { File::Slurp::write_file($writeFile, \%writeAttr) };
@@ -1064,8 +1081,10 @@ sub preferencesPath {
 
 	 	$prefsPath = $ENV{'HOME'};
 	}
-	
-	$log->info("The default prefs directory is $prefsPath");
+
+	if ($log) {
+		$log->info("The default prefs directory is $prefsPath");
+	}
 
 	return $prefsPath;
 }
@@ -1114,7 +1133,9 @@ sub prefsFile {
 		}
 	}
 
-	$log->info("The default prefs file location is $prefsFile");
+	if ($log) {
+		$log->info("The default prefs file location is $prefsFile");
+	}
 
 	return $prefsFile;
 }
@@ -1137,7 +1158,9 @@ sub load {
 			if ($firstline =~ /^---/) {
 
 				# it's a YAML formatted file
-				$log->info("Loading YAML style prefs file: $readFile");
+				if ($log) {
+					$log->info("Loading YAML style prefs file: $readFile");
+				}
 
 				my $prefref = LoadFile($readFile);
 
@@ -1146,7 +1169,9 @@ sub load {
 			} else {
 
 				# it's the old style prefs file
-				$log->info("Loading old style prefs file: $readFile");
+				if ($log) {
+					$log->info("Loading old style prefs file: $readFile");
+				}
 
 				loadOldPrefs($readFile);
 			}
@@ -1155,11 +1180,15 @@ sub load {
 
 	if ($@) {
 
-		$log->logdie(
+		print(
 			"There was an error reading your SlimServer configuration file - it might be corrupted!: [$@]\n",
 			"If you are on a Unix platform, you may need to install YAML::Syck\n",
 			"Run './Bin/build-perl-modules.pl YAML::Syck'",
+			"\n\n",
+			"Exiting\n",
 		);
+
+		exit;
 	}
 
 	# see if we can write out the real prefs file

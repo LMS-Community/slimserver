@@ -597,9 +597,7 @@ sub defaultConfigFile {
 
 	if (defined $cacheDir && -d $cacheDir) {
 
-		return File::Spec->catdir(
-			Slim::Utils::Prefs::get('cachedir'), 'log.conf',
-		);
+		return File::Spec->catdir($cacheDir, 'log.conf');
 	}
 }
 

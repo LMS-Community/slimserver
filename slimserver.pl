@@ -233,6 +233,14 @@ sub init {
 		eval "use diagnostics";
 	}
 
+	msg("SlimServer OSDetect init...\n");
+	Slim::Utils::OSDetect::init();
+
+	# initialize slimserver subsystems
+	msg("SlimServer settings init...\n");
+	initSettings();
+
+	# Now that the user might have changed - open the log files.
 	Slim::Utils::Log->init({
 		'logconf' => $logconf,
 		'logdir'  => $logdir,
@@ -241,11 +249,10 @@ sub init {
 		'debug'   => $debug,
 	});
 
+	# Load a log handler for prefs now.
+	Slim::Utils::Prefs::loadLogHandler();
+
 	my $log = logger('server');
-
-	$log->info("SlimServer OSDetect init...");
-
-	Slim::Utils::OSDetect::init();
 
 	$log->info("SlimServer OS Specific init...");
 
@@ -278,10 +285,6 @@ sub init {
 	# Change UID/GID after the pid & logfiles have been opened.
 	$log->info("SlimServer settings effective user and group if requested...");
 	changeEffectiveUserAndGroup();
-
-	# initialize slimserver subsystems
-	$log->info("SlimServer settings init...");
-	initSettings();
 
 	# Set priority, command line overrides pref
 	if (defined $priority) {
