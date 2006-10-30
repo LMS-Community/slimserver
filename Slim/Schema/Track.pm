@@ -15,7 +15,7 @@ use Slim::Utils::Misc;
 
 our @allColumns = (qw(
 	id url content_type title titlesort titlesearch album tracknum
-	timestamp filesize disc thumb remote audio audio_size audio_offset year secs
+	timestamp filesize disc remote audio audio_size audio_offset year secs
 	cover vbr_scale bitrate samplerate samplesize channels block_alignment endian
 	bpm tagversion drm moodlogic_id moodlogic_mixable musicmagic_mixable
 	musicbrainz_id playcount lastplayed lossless lyrics rating replay_gain replay_peak
@@ -250,7 +250,6 @@ sub isContainer {
 # we cache whether we had success reading the cover art.
 sub coverArt {
 	my $self    = shift;
-	my $artType = shift || 'cover';
 	my $list    = shift || 0;
 
 	# return with nothing if this isn't a file. 
@@ -264,17 +263,15 @@ sub coverArt {
 	my $url = Slim::Utils::Misc::stripAnchorFromURL($self->url);
 	my $log = logger('artwork');
 
-	$log->info("Retrieving artwork ($artType) for: $url");
+	$log->info("Retrieving artwork for: $url");
 
 	my ($body, $contentType, $mtime, $path);
 
-	# artType will be either 'cover' or 'thumb'
-	#
 	# A value of 1 indicate the cover art is embedded in the file's
 	# metdata tags.
 	# 
 	# Otherwise we'll have a path to a file on disk.
-	my $artwork = $self->get_column($artType);
+	my $artwork = $self->cover;
 
 	if ($artwork && $artwork ne 1) {
 
@@ -282,7 +279,7 @@ sub coverArt {
 
 		if ($body && $contentType) {
 
-			$log->info("Found cached $artType file: $artwork");
+			$log->info("Found cached file: $artwork");
 
 			$path = $artwork;
 		}
@@ -292,7 +289,7 @@ sub coverArt {
 	if (!$artwork || $artwork eq 1 || !$body) {
 
 		# readCoverArt calls into the Format classes, which can throw an error. 
-		($body, $contentType, $path) = eval { Slim::Music::Artwork->readCoverArt($self, $artType) };
+		($body, $contentType, $path) = eval { Slim::Music::Artwork->readCoverArt($self) };
 
 		if ($@) {
 			$log->error("Error: Exception when trying to call readCoverArt() for [$url] : [$@]");
@@ -302,7 +299,7 @@ sub coverArt {
 	# kick this back up to the webserver so we can set last-modified
 	if (defined $path) {
 
-		$self->set($artType, $path);
+		$self->cover($path);
 		$self->update;
 
 		$mtime = (stat($path))[9];
@@ -319,9 +316,8 @@ sub coverArt {
 
 sub coverArtMtime {
 	my $self = shift;
-	my $artType = shift || 'cover';
 
-	my $artwork = $self->get_column($artType);
+	my $artwork = $self->cover;
 
 	if ($artwork && -r $artwork) {
 		return (stat($artwork))[9];
@@ -333,7 +329,7 @@ sub coverArtMtime {
 sub coverArtExists {
 	my $self = shift;
 
-	return defined($self->coverArt());
+	return defined($self->coverArt);
 }
 
 sub path {
