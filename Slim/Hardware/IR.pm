@@ -455,9 +455,8 @@ sub lookupFunction {
 		# older prefs didn't track pathname
 		# resave the pref with path also stripping to basename as a way to try to fix an invalid path
 		my @dirs = IRFileDirs();
-		$map = file($dirs[0], basename($map));
-
-		$client->prefSet('irmap');
+		$map = file($dirs[0], basename($map))->stringify;
+		$client->prefSet('irmap', $map);
 	}
 	
 	my $function = '';
