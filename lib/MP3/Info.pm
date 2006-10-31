@@ -180,19 +180,25 @@ with the C<:utf8> or C<:all> export tag.
 
 =cut
 
-my $unicode_module = eval { require Encode; require Encode::Guess };
-my $UNICODE = use_mp3_utf8($unicode_module ? 1 : 0);
+my $unicode_base_module   = eval { require Encode; require Encode::Guess };
+my $unicode_detect_module = eval { require Encode::Detect::Detector };
+
+my $UNICODE = use_mp3_utf8($unicode_base_module ? 1 : 0);
 
 sub use_mp3_utf8 {
-	my($val) = @_;
+	my $val = shift;
+
+	$UNICODE = 0;
+
 	if ($val == 1) {
-		if ($unicode_module) {
-			$UNICODE = 1;
+
+		if ($unicode_base_module) {
+
 			$Encode::Guess::NoUTFAutoGuess = 1;
+			$UNICODE = 1;
 		}
-	} elsif ($val == 0) {
-		$UNICODE = 0;
 	}
+
 	return $UNICODE;
 }
 
@@ -612,10 +618,23 @@ sub _get_v1tag {
 		next unless $info->{$key};
 
 		# Try and guess the encoding.
+		if ($INC{'Encode/Detect/Detector.pm'}) {
+
+			my $charset = Encode::Detect::Detector::detect($info->{$key}) || 'iso-8859-1';
+			my $enc     = Encode::find_encoding($charset);
+
+			if ($enc) {
+
+				$info->{$key} = $enc->decode($info->{$key}, 0);
+
+				next;
+			}
+		}
+
 		my $value = $info->{$key};
 		my $icode = Encode::Guess->guess($value);
 
-		unless (ref($icode)) {
+		if (!ref($icode)) {
 
 			# Often Latin1 bytes are
 			# stuffed into a 1.1 tag.
@@ -841,14 +860,26 @@ sub _parse_v2tag {
 						# Only guess if it's not ascii.
 						if ($data && $data !~ /^[\x00-\x7F]+$/) {
 
-							# Try and guess the encoding, otherwise just use latin1
-							my $dec = Encode::Guess->guess($data);
+							if ($INC{'Encode/Detect/Detector.pm'}) {
 
-							if (ref $dec) {
-								$data = $dec->decode($data);
+								my $charset = Encode::Detect::Detector::detect($data) || 'iso-8859-1';
+								my $enc     = Encode::find_encoding($charset);
+
+								if ($enc) {
+									$data = $enc->decode($data, 0);
+								}
+
 							} else {
-								# Best try
-								$data = Encode::decode('iso-8859-1', $data);
+
+								# Try and guess the encoding, otherwise just use latin1
+								my $dec = Encode::Guess->guess($data);
+
+								if (ref $dec) {
+									$data = $dec->decode($data);
+								} else {
+									# Best try
+									$data = Encode::decode('iso-8859-1', $data);
+								}
 							}
 						}
 					}

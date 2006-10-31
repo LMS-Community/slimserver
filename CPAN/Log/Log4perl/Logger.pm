@@ -798,6 +798,7 @@ foreach my $level (keys %Log::Log4perl::Level::PRIORITY){
 ##################################################
 sub init_warn {
 ##################################################
+    Slim::Utils::Misc::bt();
     CORE::warn "Log4perl: Seems like no initialization happened. " .
                "Forgot to call init()?\n";
     # Only tell this once;

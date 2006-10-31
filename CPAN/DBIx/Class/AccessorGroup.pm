@@ -46,6 +46,7 @@ sub mk_group_accessors {
   return;
 }
 
+use Sub::Name;
 
 {
     no strict 'refs';
@@ -70,6 +71,7 @@ sub mk_group_accessors {
 
             my $accessor = $self->$maker($group, $field);
             my $alias = "_${name}_accessor";
+		#subname($alias, $accessor);
 
             #warn "$class $group $field $alias";
 

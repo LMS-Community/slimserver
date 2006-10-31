@@ -32,6 +32,7 @@ encoding such as: o%CC%88 - which is an o with diaeresis. The correct
 
 use strict;
 use Fcntl qw(:seek);
+use File::BOM;
 use POSIX qw(LC_CTYPE LC_TIME);
 use Text::Unidecode;
 
@@ -40,27 +41,22 @@ use Slim::Utils::Log;
 # Find out what code page we're in, so we can properly translate file/directory encodings.
 our (
 	$sysLang, $locale, $lc_ctype, $lc_time, $utf8_re_bits, $bomRE, $FB_QUIET,
-	$recomposeTable, $decomposeTable, $recomposeRE, $decomposeRE,
+	$recomposeTable, $decomposeTable, $recomposeRE, $decomposeRE, $encodeDetect
 );
 
 {
-	if ($] > 5.007) {
-		require Encode;
-		require Encode::Guess;
-		require File::BOM;
+	# We implement a decode() & encode(), so don't import those.
+	require Encode;
 
-		$Encode::Guess::NoUTFAutoGuess = 1;
+	$FB_QUIET = Encode::FB_QUIET();
 
-		$FB_QUIET = Encode::FB_QUIET();
-
-		$bomRE = qr/^(?:
-			\xef\xbb\xbf     |
-			\xfe\xff         |
-			\xff\xfe         |
-			\x00\x00\xfe\xff |
-			\xff\xfe\x00\x00
-		)/x;
-	}
+	$bomRE = qr/^(?:
+		\xef\xbb\xbf     |
+		\xfe\xff         |
+		\xff\xfe         |
+		\x00\x00\xfe\xff |
+		\xff\xfe\x00\x00
+	)/x;
 
 	# Set some defaults:
 	$sysLang = 'en';
@@ -153,11 +149,24 @@ our (
 		$lc_ctype =~ s/gb2312/euc-cn/i;
 	}
 
-	# Setup suspects for Encode::Guess based on the locale - we might also
-	# want to use our own Language pref?
-	if ($lc_ctype ne 'utf8') {
+	# This works better than Encode::Guess, but it may not be everywhere.
+	if (Slim::bootstrap::tryModuleLoad('Encode::Detect::Detector')) {
 
-		Encode::Guess->add_suspects($lc_ctype);
+		$encodeDetect = 1;
+
+	} else {
+
+		require Encode::Guess;
+
+		$encodeDetect = 0;
+		$Encode::Guess::NoUTFAutoGuess = 1;
+
+		# Setup suspects for Encode::Guess based on the locale - we might also
+		# want to use our own Language pref?
+		if ($lc_ctype ne 'utf8') {
+
+			Encode::Guess->add_suspects($lc_ctype);
+		}
 	}
 
 	# Create a regex for looks_like_utf8()
@@ -443,34 +452,39 @@ Return the newly decoded string.
 =cut
 
 sub utf8decode_guess {
-	my ($string, @preferedEncodings) = @_;
+	my $string = shift || return;
+	my @preferedEncodings = @_;
 
 	# Bail early if it's just ascii
-	if (looks_like_ascii($string)) {
+	if (looks_like_ascii($string) || Encode::is_utf8($string)) {
+
 		return $string;
 	}
 
-	my $orig = $string;
+	my $charset  = encodingFromString($string);
+	my $encoding = undef;
 
-	if ($string && $] > 5.007 && !Encode::is_utf8($string)) {
+	if ($charset && $charset ne 'raw') {
 
-		eval {
+		$encoding = Encode::find_encoding($charset);
 
-			my $icode = Encode::Guess::guess_encoding($string);
+	} else {
 
-			if (ref $icode) {
+		$encoding = Encode::Guess::guess_encoding($string);
+	}
 
-				$string = Encode::decode($icode, $string, $FB_QUIET);
+	if (ref $encoding) {
 
-			} else {
+		return $encoding->decode($string, $FB_QUIET);
+	}
 
-				for my $encoding (@preferedEncodings) {
+	for my $encoding (@preferedEncodings) {
 
-					$string = Encode::decode($encoding, $string, $FB_QUIET);
+		$string = eval { Encode::decode($encoding, $string, $FB_QUIET) };
 
-					last if $icode =~ /$encoding/;
-				}
-			}
+		if (Encode::is_utf8($string)) {
+
+			last;
 		}
 	}
 
@@ -748,6 +762,17 @@ Returns 'raw' if not: ascii, utf-32, utf-16, utf-8, iso-8859-1 or cp1252
 sub encodingFromString {
 
 	my $encoding = 'raw';
+
+	# Try and using Encode::Detect if we have it installed.
+	if ($encodeDetect && $_[0] && !Encode::is_utf8($_[0])) {
+
+		my $charset = Encode::Detect::Detector::detect($_[0]);
+
+		if ($charset) {
+
+			return lc($charset);
+		}
+	}
 
 	# Don't copy a potentially large string - just read it from the stack.
 	if (looks_like_ascii($_[0])) {

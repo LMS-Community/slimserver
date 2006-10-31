@@ -4,6 +4,8 @@ use Carp;
 use vars qw($VERSION);
 $VERSION = '0.03';
 
+use Sub::Name;
+
 sub mk_classaccessor {
     my ($declaredclass, $attribute, $data) = @_;
 
@@ -32,6 +34,7 @@ sub mk_classaccessor {
 
     no warnings qw/redefine/;
     my $alias = "_${attribute}_accessor";
+    #subname($alias, $accessor);
     *{$declaredclass.'::'.$attribute} = $accessor;
     *{$declaredclass.'::'.$alias}     = $accessor;
 }
