@@ -100,9 +100,9 @@ sub processCoverArtRequest {
 			$cachedImage = undef;
 		}
 
-		unless ($cachedImage) {
+		if (!$cachedImage) {
 
-			($imageData, $contentType, $mtime) = $obj->coverArt($image);
+			($imageData, $contentType, $mtime) = $obj->coverArt;
 		}
 	}
 
