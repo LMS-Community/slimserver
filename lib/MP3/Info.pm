@@ -185,7 +185,8 @@ my $unicode_base_module = eval { require Encode; require Encode::Guess };
 my $UNICODE = use_mp3_utf8($unicode_base_module ? 1 : 0);
 
 eval { require Encode::Detect::Detector };
-my $unicode_detect_module = $@ ? : 0 : 1;
+
+my $unicode_detect_module = $@ ? 0 : 1;
 
 sub use_mp3_utf8 {
 	my $val = shift;
