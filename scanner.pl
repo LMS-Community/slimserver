@@ -61,11 +61,11 @@ sub main {
 		'prefsfile=s'  => \$prefsFile,
 		'progress'     => \$progress,
 		'priority=i'   => \$priority,
-                'logfile=s'    => \$logfile,
-                'logdir=s'     => \$logdir,
-                'logconfig=s'  => \$logconf,
-                'debug=s'      => \$debug,
-                'quiet'        => \$quiet,
+		'logfile=s'    => \$logfile,
+		'logdir=s'     => \$logdir,
+		'logconfig=s'  => \$logconf,
+		'debug=s'      => \$debug,
+		'quiet'        => \$quiet,
 		'LogTimestamp!'=> \$LogTimestamp,
 	);
 
@@ -250,19 +250,23 @@ Usage: $0 [debug options] [--rescan] [--wipe] [--itunes] [--musicmagic] [--moodl
 
 Command line options:
 
-	--force       Force a scan, even if we think a scan is already taking place.
-	--cleanup     Run a database cleanup job at the end of the scan
-	--rescan      Look for new files since the last scan.
-	--wipe        Wipe the DB and start from scratch
-	--playlists   Only scan files in your playlistdir.
-	--itunes      Run the iTunes Importer.
-	--musicmagic  Run the MusicMagic/MusicIP Importer.
-	--moodlogic   Run the MoodLogic Importer.
-	--progress    Show a progress bar of the scan.
-	--prefsfile   Specify an alternate prefs file.
-	--priority    set process priority from -20 (high) to 20 (low)
-	--logfile     Send all debugging messages to the specified logfile.
-
+	--force        Force a scan, even if we think a scan is already taking place.
+	--cleanup      Run a database cleanup job at the end of the scan
+	--rescan       Look for new files since the last scan.
+	--wipe         Wipe the DB and start from scratch
+	--playlists    Only scan files in your playlistdir.
+	--itunes       Run the iTunes Importer.
+	--musicmagic   Run the MusicMagic/MusicIP Importer.
+	--moodlogic    Run the MoodLogic Importer.
+	--progress     Show a progress bar of the scan.
+	--prefsfile    Specify an alternate prefs file.
+	--priority     set process priority from -20 (high) to 20 (low)
+	--logfile      Send all debugging messages to the specified logfile.
+	--logdir       Specify folder location for log file
+	--logconfig    Specify pre-defined logging configuration file
+	--debug        various debug options
+	--quiet        keep silent
+	
 Examples:
 
 	$0 --rescan /Users/dsully/Music
