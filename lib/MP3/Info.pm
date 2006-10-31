@@ -180,10 +180,12 @@ with the C<:utf8> or C<:all> export tag.
 
 =cut
 
-my $unicode_base_module   = eval { require Encode; require Encode::Guess };
-my $unicode_detect_module = eval { require Encode::Detect::Detector };
+my $unicode_base_module = eval { require Encode; require Encode::Guess };
 
 my $UNICODE = use_mp3_utf8($unicode_base_module ? 1 : 0);
+
+eval { require Encode::Detect::Detector };
+my $unicode_detect_module = $@ ? : 0 : 1;
 
 sub use_mp3_utf8 {
 	my $val = shift;
@@ -618,7 +620,7 @@ sub _get_v1tag {
 		next unless $info->{$key};
 
 		# Try and guess the encoding.
-		if ($INC{'Encode/Detect/Detector.pm'}) {
+		if ($unicode_detect_module) {
 
 			my $charset = Encode::Detect::Detector::detect($info->{$key}) || 'iso-8859-1';
 			my $enc     = Encode::find_encoding($charset);
@@ -860,7 +862,7 @@ sub _parse_v2tag {
 						# Only guess if it's not ascii.
 						if ($data && $data !~ /^[\x00-\x7F]+$/) {
 
-							if ($INC{'Encode/Detect/Detector.pm'}) {
+							if ($unicode_detect_module) {
 
 								my $charset = Encode::Detect::Detector::detect($data) || 'iso-8859-1';
 								my $enc     = Encode::find_encoding($charset);
