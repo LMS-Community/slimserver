@@ -77,7 +77,7 @@
        				         </td>
 			                <td class = 'smallitemtext'>
 			                [% FOREACH genre = genres %]
-		                        <a href="browsedb.html?hierarchy=contributor,album,track&level=0&genre=[% genre.id %]&amp;player=[% playerURI %]"style="text-decoration:none">[% genre.name %]</a>
+		                        <a href="browsedb.html?hierarchy=genre,contributor,album,track&amp;level=1&amp;genre.id=[% genre.id %]&amp;player=[% playerURI %]"style="text-decoration:none">[% genre.name %]</a>
                				 [% END %]
 			                </td>
 				        [% END %]
