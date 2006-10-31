@@ -67,7 +67,7 @@
       <br>
 
       [% IF coverThumb %]
-	<a href="browsedb.html?level=0&hierarchy=track&album=[% itemobj.album.id | uri %]&player=[% playerURI %]" target="browser"><img src="/music/[% coverThumb %]/thumb.jpg" border="0" height="100"></a>
+	<a href="browsedb.html?level=0&hierarchy=track&album=[% itemobj.album.id | uri %]&player=[% playerURI %]" target="browser"><img src="/music/[% coverThumb %]/cover.jpg" border="0" height="100"></a>
 	[% END %]
       <br>
 [% PROCESS volumecontrol.html activeon='<b><font color="#FF0000">' activeoff='</b></font>' %]

@@ -1,7 +1,7 @@
 [% ADD = "ADD" | string ; PLAY = "PLAY" | string %]<div align="left" width="100%" class="coverartcell">
  <div class="browseimagecell" style="width:[%size%]px;height:[%size%]px;text-align:center;">
   [% IF coverThumb %]
-  <img src="/music/[% coverThumb %]/thumb.jpg" height="[% size %]" alt="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year
+  <img src="/music/[% coverThumb %]/cover.jpg" height="[% size %]" alt="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year
   %])[% END %]" border="0" onclick="parent.browseurl(&quot;browsedb.html?hierarchy=[% hierarchy %]&amp;level=[% level %][%
   attributes | html %]&quot;)" width="[% size %]" title="[% item | html %][% IF artist %] [% "BY" | string %] [% artist %][% END %][% IF year %] ([% year %])[% END %]"/>
   [% ELSE %]

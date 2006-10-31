@@ -36,7 +36,7 @@ hasPagebar = (pageinfo && pageinfo.totalpages > 1 && pageinfo.totalalphapages !=
 
 [%# img tag for album thumbnail in browse artwork context %]
 [%- BLOCK thumbnailImg %][% IF NOT height; height = 100; END %][% artistlist = ''; IF artist; artistlist = PROCESS artistAsText.html; END %]
-	[% "<img src=\"/music/$coverThumb/thumb_Xx"; height;".jpg\" height=\"";height;"\" 
+	[% "<img src=\"/music/$coverThumb/cover_Xx"; height;".jpg\" height=\"";height;"\" 
 		alt=\"";item | html; artistlist ; IF year; " ($year)"; END; "\" 
 		title=\"";item | html; artistlist ; IF year; " ($year)"; END; "\">" %] 
 [% END -%]
@@ -179,7 +179,7 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 [%# img tag for album thumbnail in browse artwork context %]
 [% BLOCK thumbnailItemImg -%][% IF NOT height; height = 100; END %]
  [% artistlist = ''; IF item.artist; itemobj=item.itemobj; artistlist = PROCESS artistsAsText.html; END %]
- [%- "<img $style src=\"/music/$item.coverThumb/thumb_"; height;"x"; height;"_f_000000.jpg\"" %][% IF NOT serverResizesArt; "height=\"";height;"\" width=\"";height;"\""; END %]
+ [%- "<img $style src=\"/music/$item.coverThumb/cover_"; height;"x"; height;"_f_000000.jpg\"" %][% IF NOT serverResizesArt; "height=\"";height;"\" width=\"";height;"\""; END %]
  [%- " alt=\"";item.item | html; artistlist ; IF item.year; " ($item.year)"; END; "\"" %]
  [%- " title=\"";item.item | html; artistlist ; IF item.year; " ($item.year)"; END; "\">" -%]
 [%- END %]

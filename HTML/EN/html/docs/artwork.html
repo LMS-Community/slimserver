@@ -47,12 +47,10 @@ larger than 300x300 pixels, they won't be displayed with that size,
 and it simply takes up space and bandwidth.
 </P>
 <p>
-There are two file sizes in use in the current skins.
-One image is used when you select tracks from an  album, the image
-size should be about 300x300 pixels. A second image is 
-used as a "thumbnail" in the browse-by-coverart, and is displayed
-in the status pane of the Fishbone skin. This image should be
-no larger than 100x100.
+There are several locations where images are used.  Where possible, the server will
+resize the files as necessary. For the purposes of artwork in slimserver, it is 
+unnecessary to have an image much larger than about 300x300 as this will simply
+be overhead for the resize.
 
 <h4>Technical details</h4>
 For each place in the skin that references a large cover art image,
@@ -61,15 +59,6 @@ the SlimServer software performs the following search:
 <li>Search in the current music directory for (in order): <br>
 <ol><li>cover.jpg, cover.gif, <li>folder.jpg, folder.gif, <li>album.jpg, album.gif, <li>thumb.jpg, thumb.gif, <li>albumartsmall.jpg, albumartsmall.gif</ul>
 </ol>
-<p>
-The SlimServer will use the first image file located in this search.
-For the smaller, thumbnail image, a similar search is performed, except that
-the list is reversed, searching for thumb first. 
-Specifically:
-<ul>
-<li>Search in the current music directory for (in order):<br>
-<ol><li>thumb.jpg, thumb.gif, <li>albumartsmall.jpg, albumartsmall.gif, <li>cover.jpg, cover.gif, <li>album.jpg, album.gif, <li>folder.jpg, folder.gif</ol>
-</ul>
 
 <p>
 Slimserver looks in the same path as the song, thus you would be looking for the
@@ -152,10 +141,7 @@ ability is in the SlimServer.
 <p>
 Artwork internal to the  ID3 tags within a song takes precedence, followed by any specified filename in the server
 settings.  If an Artwork Folder setting is used (in Server Settings, Additional, Interface) then that folder is searched first
-for any file matching those given for Artwork and Artwork Thumbnail.
-
-In the Thumbnail selection, the Server reverses the search list so that thumb is found before cover. This
-way, you can have a set of large images and a set of small ones.  
+for any file matching those given for Artwork.
 
 <p>
 Browse by artwork and status BOTH scale the same image
