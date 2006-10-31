@@ -150,7 +150,9 @@ our (
 	}
 
 	# This works better than Encode::Guess, but it may not be everywhere.
-	if (Slim::bootstrap::tryModuleLoad('Encode::Detect::Detector')) {
+	eval "use Encode::Detect::Detector";
+
+	if (!$@) {
 
 		$encodeDetect = 1;
 
