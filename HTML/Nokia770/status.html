@@ -109,8 +109,8 @@
 		<td width="100"><img src="html/images/repeat_symbol.gif" title = 'Repeat settings'></td>
 		[% FOREACH type= ['off','song','playlist'] %]
 		<td align="center" onclick="playerButtonControl('repeat', '[% type %]','p0=playlist&p1=repeat&p2=[% loop.index %]&player=[% playerURI %]&start=[% start %]&ajaxRequest=1');" title = '[% 'REPEAT' | string | ucfirst %] [% type %]'>
-		<img id = 'repeatcontrol_active_[% type %]' src="html/images/[% type %]_symbol_active.gif" border="0" style = 'display:[% IF repeat==loop.index %]block[% ELSE %]none[% END %];'></a>
-		<img id = 'repeatcontrol_[% type %]' src="html/images/[% type %]_symbol.gif" border="0" style = 'display:[% IF repeat==loop.index %]none[% ELSE %]block[% END %];'></a>
+		<img id = 'repeatcontrol_active_[% type %]' src="html/images/[% type %]_symbol_active.gif" border="0" alt = '[% 'REPEAT' | string | ucfirst %] [% type %]' style = 'display:[% IF repeat==loop.index %]block[% ELSE %]none[% END %];'></a>
+		<img id = 'repeatcontrol_[% type %]' src="html/images/[% type %]_symbol.gif" border="0" alt = '[% 'REPEAT' | string | ucfirst %] [% type %]' style = 'display:[% IF repeat==loop.index %]none[% ELSE %]block[% END %];'></a>
 		</td>
 		[% END %]
 	</tr>
@@ -125,8 +125,8 @@
 		<td width = '100'><img src="html/images/shuffle_symbol.gif" title = 'Shuffle settings'></td>
 		[% FOREACH type = ['off','song','album'] %]
 		<td align="center" onclick="playerButtonControl('shuffle', '[% type %]','p0=playlist&p1=shuffle&p2=[% loop.index %]&player=[% playerURI %]&ajaxRequest=1');" title = '[% 'SHUFFLE' | string | ucfirst %] [% type %]'>
-			<img id = 'shufflecontrol_active_[% type %]' src="html/images/[% type %]_symbol_active.gif" border="0" alt = 'shuffle [% type %]' style = 'display:[% IF shuffle == loop.index %]block[% ELSE %]none[% END %];'></a>
-			<img id = 'shufflecontrol_[% type %]' src="html/images/[% type %]_symbol.gif" border="0" alt = 'shuffle [% type %]' style = 'display:[% IF shuffle == loop.index %]none[% ELSE %]block[% END %];'></a>
+			<img id = 'shufflecontrol_active_[% type %]' src="html/images/[% type %]_symbol_active.gif" border="0" alt = '[% 'SHUFFLE' | string | ucfirst %] [% type %]' style = 'display:[% IF shuffle == loop.index %]block[% ELSE %]none[% END %];'></a>
+			<img id = 'shufflecontrol_[% type %]' src="html/images/[% type %]_symbol.gif" border="0" alt = 'sh[% 'SHUFFLE' | string | ucfirst %] [% type %]' style = 'display:[% IF shuffle == loop.index %]none[% ELSE %]block[% END %];'></a>
 		</td>
 		[% END %]
 	</tr>
@@ -282,11 +282,11 @@ onclick="document.prev.src = 'html/images/larger/prev_active.gif'; playerButtonC
 <table class = 'thinborder' width = '100%' cellpadding = '3' bgcolor = 'white' border = '0'>
 	<tr>
 
-	<td valign="bottom" width="100"><img src="html/images/vol_symbol2.gif" title = 'volume settings'></td>
+	<td valign="bottom" width="100"><img src="html/images/vol_symbol2.gif" title = 'Volume settings'></td>
 
 	<td width="25" onclick='volumeControl("0","p0=mixer&p1=volume&p2=0&player=[% playerURI %]&start=[% start %]&ajaxRequest=1");' valign="bottom">
-	<img src="html/images/off_symbol.gif" id = 'bar_active_0' border="0" width="20" style="display:[% IF volume == 0 %]block[% ELSE %]none[% END %];" title = 'muted'>
-	<img src="html/images/off_symbol_gray.gif" id = 'bar_0' border="0" width="20" style="display:[% IF volume == 0 %]none[% ELSE %]block[% END %];" title = 'mute player'>
+	<img src="html/images/off_symbol.gif" id = 'bar_active_0' border="0" width="20" style="display:[% IF volume == 0 %]block[% ELSE %]none[% END %];" title = 'Muted'>
+	<img src="html/images/off_symbol_gray.gif" id = 'bar_0' border="0" width="20" style="display:[% IF volume == 0 %]none[% ELSE %]block[% END %];" title = 'Mute player'>
 	</td>
 	[% vol= [20, 35, 50, 75, 80, 85, 90, 95, 100]  %]
 	[% FOREACH level IN vol %]
@@ -300,12 +300,12 @@ onclick="document.prev.src = 'html/images/larger/prev_active.gif'; playerButtonC
 	<table>
 	<tr>
 		<td onclick = 'adjustVolume("1");'>
-		<img src="html/images/volume_up.gif" id = 'volume_up' border="0" height="15" width = '15' title = 'volume up one'>
+		<img src="html/images/volume_up.gif" id = 'volume_up' border="0" height="15" width = '15' title = 'Volume up one'>
 		</td>
 	</tr>
 	<tr>
 		<td>
-	<img src="html/images/volume_down.gif" onclick = 'adjustVolume("-1");' id = 'volume_down' border="0" width = '15' height="15" title = 'volume down one'>
+	<img src="html/images/volume_down.gif" onclick = 'adjustVolume("-1");' id = 'volume_down' border="0" width = '15' height="15" title = 'Volume down one'>
 		</td>
 	</tr>
 	</table>
