@@ -213,10 +213,9 @@
 
 [% BLOCK ajax_by_from_info %]
 	<span class = 'smalltext' id = 'byfrominfo_[% item.num %]'>
-	[% IF item.includeArtist && item.artist && item.artist != item.noArtist %]
-		[% "BY" | string %]
-		<a href="[% webroot %]browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=[% item.itemobj.artist.id %]&amp;level=1&amp;player=[% playerURI %]" id = 'artistlink_[% item.num %]'>[% item.artist.name %]</a>
-	[% END %]
+	<span id = 'artist_[% item.num %]'>
+		[% PROCESS artistsAsHTML.html %]
+	</span>
 	[% IF item.includeAlbum && item.album && item.album != item.noAlbum %]
 		[% "FROM" | string %]
 		<i><a [% PROCESS albumItemHRef %] id = 'albumlink_[% item.num %]'> [% item.itemobj.album.title | html %] </a></i>

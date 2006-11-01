@@ -71,7 +71,6 @@ function refreshPlaylistElements(theData, r) {
 	var parsedData = fillDataHash(theData);
 	// items to refresh: tracklink, artistlink, albumlink
 	var linkIds = { tracklink:  { id:'tracklink_', stub:trackHrefTemplate, replaceString: 'ITEM', key: 'item_', inner: 'title_'},
-			artistlink: { id: 'artistlink_', stub:artistHrefTemplate, replaceString: 'ARTIST', key: 'artistid_', inner: 'artist_'},
 			albumlink:  { id: 'albumlink_', stub:albumHrefTemplate, replaceString: 'ALBUM', key: 'albumid_', inner: 'album_'}};
 	for (obj in linkIds) {
 		var thisId = linkIds[obj].id + r.toString();		
@@ -87,6 +86,7 @@ function refreshPlaylistElements(theData, r) {
 			$(thisId).innerHTML = innerText;
 		}
 	}
+	refreshElement('artist_' + r.toString(),parsedData['artist_0']);
 	refreshItemClass(parsedData, r);
 }
 
