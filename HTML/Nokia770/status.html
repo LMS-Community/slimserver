@@ -108,9 +108,9 @@
 	<tr>
 		<td width="100"><img src="html/images/repeat_symbol.gif" title = 'Repeat settings'></td>
 		[% FOREACH type= ['off','song','playlist'] %]
-		<td align="center" onclick="playerButtonControl('repeat', '[% type %]','p0=playlist&p1=repeat&p2=[% loop.index %]&player=[% playerURI %]&start=[% start %]&ajaxRequest=1');" title = '[% 'REPEAT' | string | ucfirst %] [% type %]'>
-		<img id = 'repeatcontrol_active_[% type %]' src="html/images/[% type %]_symbol_active.gif" border="0" alt = '[% 'REPEAT' | string | ucfirst %] [% type %]' style = 'display:[% IF repeat==loop.index %]block[% ELSE %]none[% END %];'></a>
-		<img id = 'repeatcontrol_[% type %]' src="html/images/[% type %]_symbol.gif" border="0" alt = '[% 'REPEAT' | string | ucfirst %] [% type %]' style = 'display:[% IF repeat==loop.index %]none[% ELSE %]block[% END %];'></a>
+		<td align="center" onclick="playerButtonControl('repeat', '[% type %]','p0=playlist&p1=repeat&p2=[% loop.index %]&player=[% playerURI %]&start=[% start %]&ajaxRequest=1');" title = '[% "REPEAT" | string | ucfirst %] [% type %]'>
+		<img id = 'repeatcontrol_active_[% type %]' src="html/images/[% type %]_symbol_active.gif" border="0" alt = '[% "REPEAT" | string | ucfirst %] [% type %]' style = 'display:[% IF repeat==loop.index %]block[% ELSE %]none[% END %];'></a>
+		<img id = 'repeatcontrol_[% type %]' src="html/images/[% type %]_symbol.gif" border="0" alt = '[% "REPEAT" | string | ucfirst %] [% type %]' style = 'display:[% IF repeat==loop.index %]none[% ELSE %]block[% END %];'></a>
 		</td>
 		[% END %]
 	</tr>
@@ -124,9 +124,9 @@
 	<tr>
 		<td width = '100'><img src="html/images/shuffle_symbol.gif" title = 'Shuffle settings'></td>
 		[% FOREACH type = ['off','song','album'] %]
-		<td align="center" onclick="playerButtonControl('shuffle', '[% type %]','p0=playlist&p1=shuffle&p2=[% loop.index %]&player=[% playerURI %]&ajaxRequest=1');" title = '[% 'SHUFFLE' | string | ucfirst %] [% type %]'>
-			<img id = 'shufflecontrol_active_[% type %]' src="html/images/[% type %]_symbol_active.gif" border="0" alt = '[% 'SHUFFLE' | string | ucfirst %] [% type %]' style = 'display:[% IF shuffle == loop.index %]block[% ELSE %]none[% END %];'></a>
-			<img id = 'shufflecontrol_[% type %]' src="html/images/[% type %]_symbol.gif" border="0" alt = 'sh[% 'SHUFFLE' | string | ucfirst %] [% type %]' style = 'display:[% IF shuffle == loop.index %]none[% ELSE %]block[% END %];'></a>
+		<td align="center" onclick="playerButtonControl('shuffle', '[% type %]','p0=playlist&p1=shuffle&p2=[% loop.index %]&player=[% playerURI %]&ajaxRequest=1');" title = '[% "SHUFFLE" | string | ucfirst %] [% type %]'>
+			<img id = 'shufflecontrol_active_[% type %]' src="html/images/[% type %]_symbol_active.gif" border="0" alt = '[% "SHUFFLE" | string | ucfirst %] [% type %]' style = 'display:[% IF shuffle == loop.index %]block[% ELSE %]none[% END %];'></a>
+			<img id = 'shufflecontrol_[% type %]' src="html/images/[% type %]_symbol.gif" border="0" alt = '[% "SHUFFLE" | string | ucfirst %] [% type %]' style = 'display:[% IF shuffle == loop.index %]none[% ELSE %]block[% END %];'></a>
 		</td>
 		[% END %]
 	</tr>
