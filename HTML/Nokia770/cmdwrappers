@@ -5,7 +5,7 @@
 
 [% BLOCK cmdlink %]
 <td class="[% isCurrent ? "listing2" : "listing" %]" align="center">
-	<p><a [% content %]><img src="[% webroot %]html/images/[% cmdimage %]" border=0 height="20" alt='[% cmdtitle | string %]' title='[% cmdtitle | string %]'></a>
+	<p><a [% content %]><img src="[% webroot %]html/images/[% cmdimage %]" border=0 height="20" alt='[% cmdtitle | string | ucfirst %]' title='[% cmdtitle | string | ucfirst %]'></a>
 </td>
 [% END %]
 

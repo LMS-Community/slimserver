@@ -27,12 +27,12 @@
 <td class = 'playlistcontrols' align = 'center'>
 <span id = 'play_[% item.num %]' style = 'display: [% IF item.currentsong %]none[% ELSE %]block[% END %];'>
 	<a href = 'javascript:playlistPlayTrack("p0=playlist&p1=jump&p2=[% num %]&player=[% playerURI %]&ajaxRequest=1");' id = 'play_link_[% item.num %]'>
-	<img src="[% webroot %]html/images/play.this.gif" border=0 height="20" alt='Play' title='Play'>
+	<img src="[% webroot %]html/images/play.this.gif" border=0 height="20" alt=[% 'PLAY' | string | ucfirst %] title=[% 'PLAY' | string | ucfirst %]>
 	</a>
 </span>
 <span id = 'playcurrent_[% item.num %]' style = 'display: [% IF item.currentsong %]block[% ELSE %]none[% END %];'>
 	<a href = 'javascript:playlistPlayTrack("p0=play&player=[% playerURI %]&ajaxRequest=1");' id = 'play_link_[% item.num %]'>
-	<img src="[% webroot %]html/images/play.current.gif" border=0 height="20" alt='Play' title='Play'>
+	<img src="[% webroot %]html/images/play.current.gif" border=0 height="20" alt=[% 'PLAY' | string | ucfirst %] title=[% 'PLAY' | string | ucfirst %]>
 	</a>
 </span>
 </td>
@@ -41,7 +41,7 @@
 
 <span id = 'up_[% item.num %]' style = 'display: [% IF item.currentsong || item.num == pageinfo.startitem %]none[% ELSE %]block[% END %];'>
 	<a href = 'javascript:playlistSwapTrack("p0=playlist&p1=move&p2=[% item.num %]&p3=[% '%2D' | uri %]1&player=[% playerURI %]&start=[% pageinfo.startitem %]&ajaxRequest=1", [% item.num %], [% item.num - 1 %]);' id = 'up_link_[% item.num %]'>
-	<img src="[% webroot %]html/images/b_up.gif" border=0 height="20" alt='Move Up' title='Move Up'>
+	<img src="[% webroot %]html/images/b_up.gif" border=0 height="20" alt=[% 'MOVEUP' | string | ucfirst %] title=[% 'MOVEUP' | string | ucfirst %]>
 	</a>
 </span>
 
@@ -50,12 +50,12 @@
 <td class = 'playlistcontrols' align = 'center'>
 <span id = 'pause_[% item.num %]' style = 'display: [% IF item.currentsong %]block[% ELSE %]none[% END %];'>
 	<a href = 'javascript:playlistPlayTrack("p0=pause&player=[% playerURI %]&ajaxRequest=1");' id = 'pause_link_[% item.num %]'>
-	<img src="[% webroot %]html/images/pause.current.gif" border=0 height="20" alt='Pause' title='Pause'>
+	<img src="[% webroot %]html/images/pause.current.gif" border=0 height="20" alt=[% 'PAUSE' | string | ucfirst %] title=[% 'PAUSE' | string | ucfirst %]>
 	</a>
 </span>
 <span id = 'down_[% item.num %]' style = 'display: [% IF item.currentsong || item.num == pageinfo.enditem %]none[% ELSE %]block[% END %];'>
 	<a href = 'javascript:playlistSwapTrack("p0=playlist&p1=move&p2=[% item.num %]&p3=[% '%2B' | uri %]1&player=[% playerURI %]&start=[% pageinfo.startitem %]&ajaxRequest=1", [% item.num %], [% item.num + 1%]);' id = 'down_link_[% item.num %]'>
-	<img src="[% webroot %]html/images/b_down.gif" border=0 height="20" alt='Move Down' title='Move Down'>
+	<img src="[% webroot %]html/images/b_down.gif" border=0 height="20" alt=[% 'MOVEDOWN' | string | ucfirst %] title=[% 'MOVEDOWN' | string | ucfirst %]>
 	</a>
 </span>
 </td>
@@ -64,7 +64,7 @@
 
 <span id = 'next_[% item.num %]' style = 'display: [% IF item.currentsong %]none[% ELSE %]block[% END %];'>
 	<a href = 'javascript:playlistNextTrack("p0=playlist&p1=move&p2=[% item.num %]&player=[% playerURI %]&start=[% pageinfo.startitem %]&ajaxRequest=1", [% item.num %]);' id = 'next_link_[% item.num %]'>
-	<img src="[% webroot %]html/images/b_next.gif" border=0 height="20" alt='Next' title='Next'>
+	<img src="[% webroot %]html/images/b_next.gif" border=0 height="20" alt=[% 'NEXT' | string | ucfirst %] title=[% 'NEXT' | string | ucfirst %]>
 	</a>
 </span>
 
@@ -73,7 +73,7 @@
 
 <span id = 'remove_[% item.num %]' [% IF item.currentsong %]style = 'display: none;'[% END %]>
 	<a href = 'javascript:playlistDeleteTrack("[% item.num %]", "p0=playlist&p1=delete&p2=[% item.num %]&player=[% playerURI %]&start=[% pageinfo.startitem %]&ajaxRequest=1", [% item.num %]);' id = 'down_link_[% item.num %]'>
-	<img src="[% webroot %]html/images/remove.gif" border=0 height="20" alt='Remove from playlist' title='Remove from playlist'>
+	<img src="[% webroot %]html/images/remove.gif" border=0 height="20" alt=[% 'REMOVE_FROM_PLAYLIST' | string | ucfirst %] title=[% 'REMOVE_FROM_PLAYLIST' | string | ucfirst %]>
 	</a>
 </span>
 

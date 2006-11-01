@@ -106,9 +106,9 @@
 
 <table width="100%" class = 'thinborder' cellspacing="0" cellpadding="7" align="left">
 	<tr>
-		<td width="100"><img src="html/images/repeat_symbol.gif" title = 'repeat settings'></td>
+		<td width="100"><img src="html/images/repeat_symbol.gif" title = 'Repeat settings'></td>
 		[% FOREACH type= ['off','song','playlist'] %]
-		<td align="center" onclick="playerButtonControl('repeat', '[% type %]','p0=playlist&p1=repeat&p2=[% loop.index %]&player=[% playerURI %]&start=[% start %]&ajaxRequest=1');" title = 'repeat [% type %]'>
+		<td align="center" onclick="playerButtonControl('repeat', '[% type %]','p0=playlist&p1=repeat&p2=[% loop.index %]&player=[% playerURI %]&start=[% start %]&ajaxRequest=1');" title = '[% 'REPEAT' | string | ucfirst %] [% type %]'>
 		<img id = 'repeatcontrol_active_[% type %]' src="html/images/[% type %]_symbol_active.gif" border="0" style = 'display:[% IF repeat==loop.index %]block[% ELSE %]none[% END %];'></a>
 		<img id = 'repeatcontrol_[% type %]' src="html/images/[% type %]_symbol.gif" border="0" style = 'display:[% IF repeat==loop.index %]none[% ELSE %]block[% END %];'></a>
 		</td>
@@ -122,9 +122,9 @@
 
 <table width="100%" class = 'thinborder' cellspacing="0" cellpadding="7" align="left">
 	<tr>
-		<td width = '100'><img src="html/images/shuffle_symbol.gif" title = 'shuffle settings'></td>
+		<td width = '100'><img src="html/images/shuffle_symbol.gif" title = 'Shuffle settings'></td>
 		[% FOREACH type = ['off','song','album'] %]
-		<td align="center" onclick="playerButtonControl('shuffle', '[% type %]','p0=playlist&p1=shuffle&p2=[% loop.index %]&player=[% playerURI %]&ajaxRequest=1');" title = 'shuffle [% type %]'>
+		<td align="center" onclick="playerButtonControl('shuffle', '[% type %]','p0=playlist&p1=shuffle&p2=[% loop.index %]&player=[% playerURI %]&ajaxRequest=1');" title = '[% 'SHUFFLE' | string | ucfirst %] [% type %]'>
 			<img id = 'shufflecontrol_active_[% type %]' src="html/images/[% type %]_symbol_active.gif" border="0" alt = 'shuffle [% type %]' style = 'display:[% IF shuffle == loop.index %]block[% ELSE %]none[% END %];'></a>
 			<img id = 'shufflecontrol_[% type %]' src="html/images/[% type %]_symbol.gif" border="0" alt = 'shuffle [% type %]' style = 'display:[% IF shuffle == loop.index %]none[% ELSE %]block[% END %];'></a>
 		</td>
@@ -237,23 +237,23 @@
 	<table bgcolor="#FFFFFF" border="0" cellspacing="2" cellpadding="0" width = '100%'>
 		<tr align="center">
 		<td onClick="playerButtonControl('player', 'play', 'p0=play&player=[% playerURI %]&ajaxRequest=1');">
-		<img id = 'playercontrol_active_play' src = "html/images/larger/play_active.gif" border="0" style = 'display:[% IF modeplay %]block[% ELSE %]none[% END %];' title = 'play'>
-		<img id = 'playercontrol_play' src = "html/images/larger/play.gif" border="0" style = 'display:[% IF modeplay %]none[% ELSE %]block[% END %];' title = 'play'>
+		<img id = 'playercontrol_active_play' src = "html/images/larger/play_active.gif" border="0" style = 'display:[% IF modeplay %]block[% ELSE %]none[% END %];' title = [% 'PLAY' | string | ucfirst %]>
+		<img id = 'playercontrol_play' src = "html/images/larger/play.gif" border="0" style = 'display:[% IF modeplay %]none[% ELSE %]block[% END %];' title = [% 'PLAY' | string | ucfirst %]>
 		</td>
         
 		<td onclick="playerButtonControl('player', 'pause','p0=pause&player=[% playerURI %]&ajaxRequest=1');">
-		<img id = 'playercontrol_active_pause' src = "html/images/larger/pause_active.gif" border="0" style = 'display:[% IF modepause %]block[% ELSE %]none[% END %];' title = 'pause'>
-		<img id = 'playercontrol_pause' src = "html/images/larger/pause.gif" border="0" style = 'display:[% IF modepause %]none[% ELSE %]block[% END %];' title = 'pause'>
+		<img id = 'playercontrol_active_pause' src = "html/images/larger/pause_active.gif" border="0" style = 'display:[% IF modepause %]block[% ELSE %]none[% END %];' title = [% 'PAUSE' | string | ucfirst %]>
+		<img id = 'playercontrol_pause' src = "html/images/larger/pause.gif" border="0" style = 'display:[% IF modepause %]none[% ELSE %]block[% END %];' title = [% 'PAUSE' | string | ucfirst %]>
 		</td>
         
 		<td onclick="playerButtonControl('player', 'stop','p0=stop&player=[% playerURI %]&ajaxRequest=1');">
-		<img id = 'playercontrol_active_stop' src = "html/images/larger/stop_active.gif" border="0" style = 'display:[% IF modestop %]block[% ELSE %]none[% END %];' title = 'stop'>
-		<img id = 'playercontrol_stop' src = "html/images/larger/stop.gif" border="0" style = 'display:[% IF modestop %]none[% ELSE %]block[% END %];' title = 'stop'>
+		<img id = 'playercontrol_active_stop' src = "html/images/larger/stop_active.gif" border="0" style = 'display:[% IF modestop %]block[% ELSE %]none[% END %];' title = [% 'STOP' | string | ucfirst %]>
+		<img id = 'playercontrol_stop' src = "html/images/larger/stop.gif" border="0" style = 'display:[% IF modestop %]none[% ELSE %]block[% END %];' title = [% 'STOP' | string | ucfirst %]>
 		</td>   
         
 		<td> 
 		<img id = 'playercontrol_prev' src="html/images/larger/prev.gif" border="0" name="prev"
-onclick="document.prev.src = 'html/images/larger/prev_active.gif'; playerButtonControl('player', 'prev', 'p0=playlist&p1=jump&p2=-1&player=[% playerURI %]&ajaxRequest=1');" title = 'previous'> 
+onclick="document.prev.src = 'html/images/larger/prev_active.gif'; playerButtonControl('player', 'prev', 'p0=playlist&p1=jump&p2=-1&player=[% playerURI %]&ajaxRequest=1');" title = [% 'PREVIOUS' | string | ucfirst %]> 
 		</td>
       
 <!-- ffw and rewind are really lame from a web browser. really lame
@@ -266,7 +266,7 @@ onclick="document.prev.src = 'html/images/larger/prev_active.gif'; playerButtonC
 
 -->
 
-		<td><img id = 'playercontrol_next' src="html/images/larger/next.gif" border="0" name="next" onclick="document.next.src = 'html/images/larger/next_active.gif'; playerButtonControl('player', 'next','p0=playlist&p1=jump&p2=%2b1&player=[% playerURI %]&ajaxRequest=1');" title = 'next'>
+		<td><img id = 'playercontrol_next' src="html/images/larger/next.gif" border="0" name="next" onclick="document.next.src = 'html/images/larger/next_active.gif'; playerButtonControl('player', 'next','p0=playlist&p1=jump&p2=%2b1&player=[% playerURI %]&ajaxRequest=1');" title = [% 'NEXT' | string | ucfirst %]>
 		</td>
 
 	</tr>
