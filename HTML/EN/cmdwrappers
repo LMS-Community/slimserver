@@ -282,7 +282,7 @@ END %]
 
 [% BLOCK pagebarheader %]
 <span class="pagebarheadertext">
-Items [% pageinfo.startitem %] [% "TO" | string %] [% pageinfo.enditem %] [% "OF" | string %] [% pageinfo.totalitems %]
+[% "ITEMS" | string %] [% pageinfo.startitem %] [% "TO" | string %] [% pageinfo.enditem %] [% "OF" | string %] [% pageinfo.totalitems %]
 </span>
 [% END %]
 

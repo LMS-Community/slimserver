@@ -20,7 +20,7 @@
       <h3>&nbsp; </h3></td>
     <td width="149" valign="middle" bgcolor="#999999"><h3><font color="#FFFFFF">[% "HOME" | string %] <img src="html/images/spacer.gif" width="30" height="1"></font></h3></td>
     <td valign="middle" bgcolor="#999999"> 
-      <p><font color="#FFFFFF">[% IF song_count %]The music collection contain <B>[% song_count %]</B> by <B>[% artist_count %]</B>[% END %]</font></p></td>
+      <p><font color="#FFFFFF">[% IF song_count %][% "LIBRARY_CONTAINS" | string %] <B>[% song_count %]</B> [% "BY" | string %] <B>[% artist_count %]</B>[% END %]</font></p></td>
   </tr>
 </table>
 <h3>&nbsp;</h3>
