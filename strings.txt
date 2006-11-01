@@ -1114,7 +1114,7 @@ ALARM_SET_VOLUME
 	NL	Kies wekvolume
 	NO	Sett Alarm volum
 	PT	Mudar Volume do Alarme
-	SV	Välj volym för väckning
+	SV	Ställ in volym för väckning
 	ZH_CN	配置闹钟音量
 
 ALARM_SET_VOLUME_SHORT
@@ -1141,6 +1141,7 @@ ALARM_FADE
 	FR	Volume progressif
 	IT	Sveglia graduale
 	NL	Fade wekalarm in
+	SV	Tona in väckning
 	ZH_CN	闹钟缓慢切入
 
 ALARM_SET_ENTRY
@@ -1221,7 +1222,7 @@ ALARM_WEEKDAYS
 	HE	שעון מעורר יומי
 	IT	Sveglia settimanale
 	NL	wektijd weekdagen
-	SV	Larm Veckodagar
+	SV	Väckning veckodagar
 	ZH_CN	周日闹钟
 
 ALARM_DAY0
@@ -1234,7 +1235,7 @@ ALARM_DAY0
 	HE	כל יום
 	IT	Ogni giorno
 	NL	Elke dag
-	SV	Varje Dag
+	SV	Varje dag
 	ZH_CN	每一天
 
 ALARM_DAY1
@@ -1508,6 +1509,7 @@ FIRMWARE_MISSING
 	ES	Error: No se encuentra Firmware
 	IT	Errore: Firmware non trovato
 	NL	Fout: Firmware mist
+	SV	Fel: Mjukvaran saknas
 	ZH_CN	失误：韧件丢失
 
 FIRMWARE_MISSING_DESC
@@ -1516,6 +1518,7 @@ FIRMWARE_MISSING_DESC
 	ES	El server no puede conectarse a Internet para obtener la actualización de firmware.
 	IT	Il Server non riesce a connettersi ad Internet per ottenere il firmware aggiornato.
 	NL	Server kan geen connectie maken naar Internet om de bijgewerkte firmware op te halen.
+	SV	Servern kan inte koppla upp sig för att uppdatera spelarens mjukvara.
 	ZH_CN	服务器无法连接互联网并取得韧件更新。
 
 CHECKING_STREAM
@@ -1523,6 +1526,7 @@ CHECKING_STREAM
 	EN	Checking stream...
 	FR	Vérif. flux...
 	NL	Controleren stream...
+	SV	Kontrollerar dataström...
 	ZH_CN	检查频流
 
 CONNECTING_FOR
@@ -1546,6 +1550,7 @@ BUFFERING
 	EN	Buffering
 	ES	Llenando el buffer...
 	NL	Bufferen
+	SV	Fyller buffert
 	ZH_CN	缓冲装载中
 
 REBUFFERING
@@ -1559,6 +1564,7 @@ WAITING_TO_SYNC
 	ES	Esperando sincronización...
 	FR	Attente synchro...
 	NL	Wachten op sync...
+	SV	Väntar på synkronisering...
 	ZH_CN	等待同步
 
 PROBLEM_CONNECTING
@@ -1595,6 +1601,7 @@ PROBLEM_OPENING_REMOTE_URL
 	EN	Error: Can't open remote URL
 	ES	Error: No se puede abrir la ULR remota
 	NL	Fout: kan URL niet op afstand niet openen
+	SV	Fel: Kan inte öppna URL
 	ZH_CN	失误：无法连接网址
 
 PLAYLIST_NO_ITEMS_FOUND
@@ -1602,6 +1609,7 @@ PLAYLIST_NO_ITEMS_FOUND
 	EN	Error: No items found in playlist
 	ES	Error: No se encontraron items en la lista
 	NL	Fout: Geen items gevonden in de playlist
+	SV	Fel: Spellistan är tom
 	ZH_CN	失误：播放表为空
 
 PLAYLIST_PROBLEM_CONNECTING
@@ -1609,12 +1617,14 @@ PLAYLIST_PROBLEM_CONNECTING
 	EN	Error: Can't connect to retrieve playlist
 	ES	Error: No se puede conectar para obtener la lista
 	NL	Fout: Kan geen connectie maken om playlist op te halen
+	SV	Fel: Kan inte ansluta för att hämta spellista
 	ZH_CN	失误：无法取得播放表
 
 ASF_UNABLE_TO_PARSE
 	DE	Fehler: kann ASF Stream nicht lesen
 	EN	Error: Unable to parse ASF audio stream
 	NL	Fout: decoderen ASF audio mislukt
+	SV	Fel: Kan inte avkoda ASF-ljudström
 	ZH_CN	失误：无法解析音频流
 
 NO_PLAYLIST_DIR
@@ -1643,7 +1653,7 @@ NO_PLAYLIST_DIR_MORE
 	IT	Rivedi le impostazioni del Server per sistemare il problema.
 	JA	サーバー セッティングを調整して下さい
 	NL	Ga naar serverinstellingen om dit te corrigeren.
-	SV	Ändra serverinställningar för att korrigera detta
+	SV	Ändra serverinställningar för att korrigera detta.
 	ZH_CN	请参考服务器配置以便修正
 
 HOME
@@ -1660,7 +1670,7 @@ HOME
 	NL	Hoofdmenu
 	NO	Hjem
 	PT	Início
-	SV	huvudmeny
+	SV	Huvudmeny
 	ZH_CN	主页
 
 STATUS
@@ -1673,7 +1683,7 @@ STATUS
 	HE	מצב
 	IT	Stato
 	JA	ステータス
-	SV	status
+	SV	Status
 	ZH_CN	状态
 
 SERVER
@@ -1710,6 +1720,7 @@ WEB_XML_ERROR
 	EN	There was an error loading the remote feed for %s: (%s)
 	ES	Hubo un error al cargar el feed remoto de %s: (%s)
 	NL	Er was een laadfout van de feed op afstand gedurende %s: (%s)
+	SV	Ett fel uppstod vid laddning av feed för %s: (%s)
 	ZH_CN	载入远方信息时发生失误%s: (%s)
 
 XML_ERROR
@@ -1717,6 +1728,7 @@ XML_ERROR
 	EN	Error
 	IT	Errore
 	NL	Fout
+	SV	Fel
 	ZH_CN	失误
 
 XML_GET_FAILED
@@ -1724,6 +1736,7 @@ XML_GET_FAILED
 	EN	Failed to parse
 	ES	Error de parse
 	NL	Decoderen podcast mislukte
+	SV	Inläsning misslyckades
 	ZH_CN	解析失误
 
 XML_LOADING
@@ -1733,12 +1746,14 @@ XML_LOADING
 	FI	Haetaan...
 	FR	Chargement...
 	NL	Ophalen...
+	SV	Hämtar...
 	ZH_CN	读取中
 
 XML_LINK
 	EN	Link
 	IT	Collegamento
 	ES	Vínculo
+	SV	Länk
 	ZH_CN	链路
 
 XML_DATE
@@ -1747,6 +1762,7 @@ XML_DATE
 	ES	Fecha
 	IT	Data
 	NL	Datum
+	SV	Datum
 	ZH_CN	日期
 
 XML_EDITOR
@@ -1754,12 +1770,14 @@ XML_EDITOR
 	EN	Editor
 	FR	Edition
 	NL	Redacteur
+	SV	Utgivare
 	ZH_CN	编辑
 
 XML_ENCLOSURE
 	DE	Anhang
 	EN	Enclosure
 	NL	Bijlage
+	SV	Bilaga
 	ZH_CN	框架
 
 XML_AUDIO_ENCLOSURES
@@ -1767,6 +1785,7 @@ XML_AUDIO_ENCLOSURES
 	EN	Audio Enclosures
 	ES	Enclosures de Audio
 	NL	Audio bijlage
+	SV	Ljudbilagor
 	ZH_CN	音频框架
 
 XML_FEED_DESCRIPTION
@@ -1774,6 +1793,7 @@ XML_FEED_DESCRIPTION
 	EN	About this feed
 	ES	Acerca de este feed
 	NL	Over deze feed
+	SV	Om denna feed
 	ZH_CN	关于这饲址
 
 XML_SUBTITLE
@@ -1781,6 +1801,7 @@ XML_SUBTITLE
 	EN	Subtitle
 	ES	Subtítulo
 	NL	Subtitel
+	SV	Undertitel
 	ZH_CN	字幕
 
 XML_SUMMARY
@@ -1788,6 +1809,7 @@ XML_SUMMARY
 	EN	Summary
 	ES	Resumen
 	NL	Samenvatting
+	SV	Sammanfattning
 	ZH_CN	简介
 
 XML_EXPLICIT
@@ -1803,6 +1825,7 @@ NUMBER_OF_LISTENERS
 	ES	Número de oyentes
 	IT	Numero di ascoltatori
 	NL	Aantal luisteraars
+	SV	Antal lyssnare
 	ZH_CN	听众数量
 
 DESCRIPTION
@@ -1811,6 +1834,7 @@ DESCRIPTION
 	ES	Descripción
 	IT	Descrizione
 	NL	Beschrijving
+	SV	Beskrivning
 	ZH_CN	陈述
 
 SOURCE
@@ -1818,6 +1842,7 @@ SOURCE
 	EN	Source
 	ES	Fuente
 	NL	Bron
+	SV	Källa
 	ZH_CN	源头
 
 #
@@ -1866,7 +1891,7 @@ SETUP_GROUP_BRIGHTNESS_DESC
 	IT	La luminosita' dello schermo del lettore puo' essere impostata per quando e' acceso, spento o inattivo (salvaschermo). Puo' anche essere regolata automaticamente quando premi un pulsante, riproduci un brano o rimane inattivo per un po'. Puoi anche scegliere di disabilitare questo automatismo.
 	JA	パワーオン・オフ時、スクリーンセーバー時のプレーヤーのディスプレイの明るさを調節できます
 	NL	De helderheid van het spelerscherm kun je apart instellen voor als de speler aan staat, uit staat ('standby') staat of in ruststand (schermbeveiliger). <BR>De helderheid kun je ook instellen voor wanneer je op een toets drukt, start met afspelen of de speler met rust laat voor een tijdje. Je kunt kiezen om dit automatische gedrag uit te schakelen.
-	SV	Ljusstyrkan på spelarens skärm kan ställas in oberoende för lägena av, på och vänteläge. Ljusstyrkan kan också justeras automatiskt vid knapptryckning, vid start eller slut på sång, eller efter förinställd tid av oaktivitet. Du kan också välja att stänga av denna automatik.
+	SV	Ljusstyrkan på spelarens skärm kan ställas in oberoende för lägena av, på och vänteläge. Ljusstyrkan kan också justeras automatiskt vid knapptryckning, vid start eller slut på sång, eller efter förinställd tid av inaktivitet. Du kan också välja att stänga av denna automatik.
 	ZH_CN	播放机显示屏可以根据不同的操作状态如开机、关机、或屏幕保护程序进行时设置不同的光亮度。播放机也会随着按键、开始播放音乐等活动而自行调节显示屏光亮度。用户可选择是否采用此项自动光亮度调节功能。
 
 SETUP_GROUP_TCP_PARAMS
@@ -1980,7 +2005,7 @@ SETUP_GROUP_NONMENUITEMS_INTRO
 	NL	Inactieve menu opties:
 	NO	Inaktive meny elementer:
 	PT	Items disponíveis
-	SV	Inaktiva meny-val:
+	SV	Inaktiva menyval:
 	ZH_CN	非活动菜单项目：
 
 SETUP_FONTLIST
@@ -2096,7 +2121,7 @@ SETUP_OFFDISPLAYSIZE
 	NL	Tekstgrootte indien uitgeschakeld
 	NO	Tekststørrelse i standby modus
 	PT	Tamanho do Texto ao Desligar
-	SV	Textstorlek i standby-läge
+	SV	Textstorlek i viloläge
 	ZH_CN	备用字体大小
 
 SETUP_SCROLLPAUSE
@@ -2110,7 +2135,7 @@ SETUP_SCROLLPAUSE
 	JA	スクロール一時停止
 	NL	Tekstlooppauze
 	NO	Pause ved scrolling
-	SV	Paus under scrollning
+	SV	Paus vid rullning
 	ZH_CN	暂停卷动
 
 SETUP_SCROLLPAUSEDOUBLE
@@ -2120,7 +2145,7 @@ SETUP_SCROLLPAUSEDOUBLE
 	FI	Suuren tekstin vierityksen tauko
 	IT	Pausa di scorrimento con testo grande
 	NL	Tekstlooppauze (grote tekst)
-	SV	Paus vid skollning med stor text
+	SV	Paus vid rullning med stor text
 	ZH_CN	大字体暂停卷动
 
 SETUP_SCROLLPAUSE_DESC
@@ -2133,7 +2158,7 @@ SETUP_SCROLLPAUSE_DESC
 	IT	Puoi regolare la pausa di tempo che il lettore antepone allo scorrimento orizzontale del testo sullo schermo. Inserisci un valore, in secondi, per la quantita' di tempo da attendere prima, o tra, lo scorrimento. Inserisci zero per non attendere ed iniziare immediatamente lo scorrimento. 3.6 secondi sono il valore di default.
 	JA	ディスプレイスクロール開始までの時間を調節することができます。秒数を入力してください。「０」とすると、すぐに開始します。出荷時設定は3.6秒です。
 	NL	Je kunt de hoeveelheid tijd specificeren die de speler wacht voordat het lopen van de tekst start. Voer een waarde in (seconden) voor de tijdsduur van het wachten tot het lopen start of tussen het opnieuw lopen. Voer 0 in om helemaal niet te pauzeren en de tekst direct te laten lopen. 3.6 seconden is de standaard waarde.
-	SV	Fördröjning innan scrollning av långa texter börjar. Multipel av 0.9 fungerar bäst. 0.001 rekommenderas som lägsta värde.
+	SV	Fördröjning innan rullning av långa texter börjar. Multiplar av 0.9 fungerar bäst. 0.001 rekommenderas som lägsta värde.
 	ZH_CN	您可调整播放机开始进行横跨文字卷动前的等待值。输入一个以秒为单位的等待值为在卷动之前或在卷动之间的等待时间。如要立刻进行卷动请输入零为等待值。缺省值为3.6秒。
 
 SETUP_SCROLLRATE
@@ -2147,7 +2172,7 @@ SETUP_SCROLLRATE
 	JA	スクロール速度
 	NL	tekstloopsnelheid
 	NO	Scroll-frekvens
-	SV	Scroll-frekvens
+	SV	Rullningsfrekvens
 	ZH_CN	卷动速度
 
 SETUP_SCROLLRATEDOUBLE
@@ -2157,7 +2182,7 @@ SETUP_SCROLLRATEDOUBLE
 	FI	Suuren tekstin vieritysnopeus
 	IT	Velocita' di scorrimento con testo grande
 	NL	Hoge tekstloopsnelheid
-	SV	Tempo för skrollning av stor text
+	SV	Tempo för rullning av stor text
 	ZH_CN	大字体卷动速度
 
 SETUP_SCROLLRATE_DESC
@@ -2171,7 +2196,7 @@ SETUP_SCROLLRATE_DESC
 	JA	ディスプレイテキストの別の文字をスクロール開始するまでの時間を調節することができます。秒数を入力してください。出荷時設定は、1行フォントであれば0.15秒、2行フォントであれば0.10秒です。
 	NL	Je kunt de snelheid instellen waarmee de tekst over het scherm loopt. De snelheid geeft de tijd aan tussen schermwijzigingen.  <br>Op een speler met grafisch scherm kan dit gespecificeerd worden in combinatie met de hoeveelheid pixels die per keer versprongen moet worden om de snelheid en kwaliteit van de tekstloop in te stellen.  <br>Op een speler met een karakter scherm geeft deze instelling de tijd aan om het volgende karakter te tonen.  <br>Voer een waarde in seconden in. Lagere waarden laten de tekst sneller lopen. 0.15 seconden is de standaardwaarde voor tekst met een enkele regelhoogte. 0.1 seconden is de standaardwaarde voor tekst met dubbele regelhoogte.
 	NO	Du kan justere tiden spilleren venter før den scroller til neste bokstav i teksten på displayet. Skriv inn verdien i sekunder. Lavt nummer scroller fortere. 0.15 sekunder er standard.
-	SV	Tid mellan rullande scroll-bilder. O.15 är standardvärdet. Värden mellan 0 och 1 kan sättas för att öka eller minska scroll-tempot
+	SV	Tid mellan rullande bilder. 0.15 är standardvärdet. Värden mellan 0 och 1 kan sättas för att öka eller minska rull-tempot
 	ZH_CN	您可以调节文字横向卷动的速度。卷动速度也代表了显示刷新之间所需的时间。在设有图形显示屏的播放机，这个设置可与卷动映像点的设置一并进行调节已达到您所要求的显示速度和质量（文字将根据卷动映像点和卷动速度的设定组合进行卷动）。在设有字符显示屏的播放机这个设定表示卷动到下一个字符前所需的时间。输入一个以秒为单位的值，为更新之间的时间。小值使卷动更加快速。单行缺省值为0.15秒，双行缺省值为0.1秒。
 
 DOUBLE-LINE
@@ -2184,6 +2209,7 @@ DOUBLE-LINE
 	HE	שורה כפולה
 	JA	ダブルサイズ
 	NL	Dubbele hoogte
+	SV	Dubbel höjd
 	ZH_CN	双倍大小
 
 SINGLE-LINE
@@ -2196,6 +2222,7 @@ SINGLE-LINE
 	HE	שורה בודדת
 	IT	Linea singola
 	NL	Enkele regel
+	SV	Enkel höjd
 	ZH_CN	单行
 
 SETUP_GROUP_ALARM
@@ -2224,6 +2251,7 @@ SETUP_GROUP_ALARM_DESC
 	HE	ניתן להגדיר 8 שעונים מעוררים שונים
 	IT	Questo lettore puo' avere sino ad 8 sveglie: una sveglia quotidiana e sveglie per ogni singolo giorno della settimana.
 	NL	Deze speler kan tot 8 wektijden hebben: één wektijd die elke dag af gaat en een individuele wektijd voor elke dag van de week.
+	SV	Denna spelare kan ha upp till 8 väckningstider: en gemensam tid för alla dagar och individuella tider för varje veckodag. Du kan också låta väckningen tona in under 20 sekunder.
 	ZH_CN	此播放机设有8个闹钟设置：其中1个可每天启动，其他7个分为周一至周日使用。您可以选择让闹钟在20秒内淡入。
 
 SETUP_GROUP_IRSETS
@@ -2298,7 +2326,7 @@ SETUP_PLUGINS-ONTHEFLY
 	IT	Carica i Plugins al volo
 	JA	プラグインを逐次チェックする。
 	NL	Plugins direct laden
-	SV	Ladda tilläggsprogram On-the-Fly
+	SV	Ladda tilläggsprogram direkt
 	ZH_CN	即时装载插件程序
 
 SETUP_PLUGINS-ONTHEFLY_0
@@ -2366,7 +2394,7 @@ SETUP_FORMATSLIST_CHANGE
 	NL	Instelling is aangepast.
 	NO	Innstillingen er endret.
 	PT	A opção mudou.
-	SV	Inställning är ändrad.
+	SV	Inställningen är ändrad.
 	ZH_CN	更动设置完成。
 
 SETUP_FORMATSLIST_MISSING_BINARY
@@ -2421,7 +2449,7 @@ STREAM_FORMAT
 	JA	ストリームフォーマット
 	NL	Stream formaat
 	NO	Streamingformat
-	SV	Format för strömmande ljud
+	SV	Format för ljudströmmar
 	ZH_CN	频流格式
 
 SETUP_GROUP_FORMATS_EXTENSIONS
@@ -2431,6 +2459,7 @@ SETUP_GROUP_FORMATS_EXTENSIONS
 	FR	Exclusion des types de fichier
 	IT	Impostazione analisi estensione file.
 	NL	Bestandsextensies scan instelling
+	SV	Inställningar för filändelser vid genomsökning
 	ZH_CN	文件扩展名扫描配置
 
 SETUP_DISABLEDEXTENSIONSAUDIO
@@ -2440,6 +2469,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO
 	FR	Types de fichier ignorés
 	IT	Disabilita estensioni file audio
 	NL	Uitgezette audio bestand extensies.
+	SV	Avaktiverade filändelser för ljudfiler
 	ZH_CN	撤销音频文件扩展名
 
 SETUP_DISABLEDEXTENSIONSAUDIO_DESC
@@ -2449,6 +2479,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	FR	Le SlimServer examinera dans votre dossier de musique tous les types de fichier audio supportés (fichiers et listes de lecture ou "cue sheets"). Pour exclure un type de fichier audio du parcours du dossier de musique, vous pouvez entrer ci-après la liste des extensions à ignorer, séparées par une virgule (par ex. : cue, mp4, aac)
 	IT	Lo Slimserver cercherà nella cartella Musica tutti i tipi di file supportati (file audio e cue sheets). Per scartare specifici tipi di file dalla ricerca all'interno della cartella Musica, inserisci una lista di estensioni separate da una virgola. Es.: cue, mp4, aac
 	NL	SlimServer kijkt in de muziekfolder naar alle ondersteunde bestandsformaten (audio bestanden en cue bestanden). <BR>Om specifieke bestandsformaten over te slaan bij het scannen naar muziek kun je een komma gescheiden lijst met extensies opnemen hieronder. Bijvoorbeeld: cue, mp4, aac
+	SV	SlimServer kommer att söka igenom Musikmappen efter alla filtyper som stöds (ljudfiler och cue sheets). För att avaktivera givna filtyper från att bearbetas vid genomsökning av Musikmappen, ange en kommaseparerad lista med filändelser nedan. Ex: cue, mp4, aac
 	ZH_CN	SlimServer会在音乐文件夹内寻找各式所支持的音频或cue sheet文件。 如想要把某些格式除外，便在以下输入其格式扩展名，以逗号为分隔。例如: cue, mp4, aac
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST
@@ -2458,6 +2489,7 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST
 	FR	Types de liste de lecture ignorés
 	IT	Disabilita estensioni liste di esecuzione
 	NL	Uitgezette playlist bestandsextensies
+	SV	Avaktiverade filändelser för spellistor
 	ZH_CN	撤销播放表文件扩展名
 
 SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
@@ -2467,6 +2499,7 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
 	FR	Le SlimServer examinera dans votre dossier de listes de lecture tous les types de fichier audio supportés (listes de lecture et "cue sheets"). Pour exclure un type de fichier audio du parcours du dossier de listes de lecture, vous pouvez entrer ci-après la liste des extensions à ignorer, séparées par une virgule (par ex. : m3u, pls, cue)
 	IT	Lo Slimserver cercherà nella cartella Liste di esecuzione tutti i tipi di file supportati (playlist e cue sheets). Per scartare specifici tipi di file dalla ricerca all'interno della cartella Liste di distribuzione, inserisci una lista di estensioni separate da una virgola. Es.: m3u, pls, cue
 	NL	SlimServer kijkt in de playlistfolder naar alle ondersteunde bestandsformaten (playlist bestanden en cue bestanden). <BR>Om specifieke bestandsformaten over te slaan bij het scannen naar playlists kun je een komma gescheiden lijst met extensies opnemen hieronder. Bijvoorbeeld: m3u,pls,cue
+	SV	Slimserver kommer att söka igenom Spellistemappen efter alla filtyper som stöds (spellistor och cue sheets). För att avaktivera givna filtyper från att bearbetas vid genomsökning av Spellistemappen, ange en kommaseparerad lista med filändelser nedan. Ex: m3u, pls, cue
 	ZH_CN	SlimServer会在播放表文件夹内寻找各式所支持的播放表或cue sheet文件。 如想要把某些格式除外，便在以下输入其格式扩展名，以逗号为分隔。例如: m3u, pls, cue
 
 PLAYER_TYPE
@@ -2692,7 +2725,7 @@ SETUP_IDLEBRIGHTNESS_CHOOSE
 	IT	Luminosita' quando inattivo:
 	JA	アイドル時の明るさ:
 	NL	Helderheid in rust:
-	SV	Ljusstyrka i viloläge
+	SV	Ljusstyrka i viloläge:
 	ZH_CN	空闲时的光亮度：
 
 SETUP_AUTOBRIGHTNESS_CHOOSE
@@ -2776,7 +2809,7 @@ SETUP_ALARMVOLUME
 	NL	Kies wekvolume (0-100)
 	NO	Sett Alarm volum (0-100)
 	PT	Mudar Volume do Alarme (0-100)
-	SV	Välj volym för väckning (0-100)
+	SV	Ställ in volym för väckning (0-100)
 	ZH_CN	设置闹钟音量(0-100)
 
 SETUP_ALARMPLAYLIST
@@ -2792,7 +2825,7 @@ SETUP_ALARMPLAYLIST
 	NL	Kies een playlist voor de wekker
 	NO	Velg Spilleliste for Alarm
 	PT	Playlist para o Alarme
-	SV	Låtlista för alarm-funktion
+	SV	Låtlista för väckning
 	ZH_CN	闹钟专用的播放表
 
 SETUP_PLAYINGDISPLAYMODE
@@ -3008,7 +3041,7 @@ SETUP_SYNCPOWER_DESC
 	JA	プレーヤーの電源を独立でオフにことも、グループでオフにすることもできます。以下で選択してください。
 	NL	Je kunt kiezen om de speler individueel uit te zetten, of uit te zetten als deel van een groep  met alle andere spelers in die groep. Maak een selectie hieronder en klik op de knop Veranderen.
 	NO	Du kan velge å la denne spilleren slå seg av alene, eller samkjørt i gruppen med de andre spillerene. Velg nedenfor og trykk Endre.
-	SV	Du kan välja att låta dena spelare stänga av oberoende andra spelare, eller tillsammans med andra spelare i en grupp. Välj nedan och klicka Ändra.
+	SV	Du kan välja att låta denna spelare stängas av oberoende av andra spelare, eller tillsammans med andra spelare i en grupp. Välj nedan och klicka Ändra.
 	ZH_CN	您可以选择将这个播放机的电源切断独立化、或与其他播放机小组一起切断。请选择并点击《更动》。
 
 SETUP_DIGITALVOLUMECONTROL_ON
@@ -3035,7 +3068,7 @@ SETUP_DIGITALVOLUMECONTROL_OFF
 	JA	デジタル出力は固定です
 	NL	Digitale uitvoerniveau is vast gezet
 	NO	Digital utgangsnivå er fast
-	SV	Den digitala utnivån är fixerad
+	SV	Den digitala utnivån är fast
 	ZH_CN	数码式输出量固定化
 
 SETUP_DIGITALVOLUMECONTROL
@@ -3062,7 +3095,7 @@ SETUP_DIGITALVOLUMECONTROL_DESC
 	JA	デジタル出力のボリュームを固定、あるいは調整可能にできます。どちらのセッティングでも、音量はボリュームボタンで調節することができます。
 	NL	Je kunt kiezen om de digitale audio uitvoer op je speler op een vast maximum niveau in te stellen of in te stellen met de volumetoetsen. Met beide instellingen zal de analoge uitvoer altijd met de volume toetsen ingesteld kunnen worden.
 	NO	Du kan velge mellom å la digitalt volum være fast på maks nivå eller la den styres av volumkontrollen. Uansett innstilling påvirkes analogt volum av volumknappene.
-	SV	Du kan välja mellan att låta ditital volym vara fix på max nivå, eller låta den styras av volymkontroller. Oavsett inställning, så påverkar påverkas analog volym av volymknapparna.
+	SV	Du kan välja mellan att låta digital volym vara fast på maximal nivå, eller låta den styras av volymknapparna. Oavsett inställning påverkas analog volym av volymknapparna.
 	ZH_CN	您可以选择将数码式音频输出固定在最高水平或由音量按钮控制。无论如何，模拟式输出量都是由音量按钮调节。
 
 SETUP_PREAMPVOLUMECONTROL
@@ -3122,7 +3155,7 @@ SETUP_MAXBITRATE
 	IT	Limitazione del Bitrate
 	JA	ビットレート制限
 	NL	Bitrate limiteren
-	SV	Begränsa bitkodningstakten
+	SV	Begränsa bithastighet
 	ZH_CN	限制比特率
 
 SETUP_MAXBITRATE_DESC
@@ -3134,7 +3167,7 @@ SETUP_MAXBITRATE_DESC
 	IT	Lo SlimServer puo' convertire al volo e automaticamente i tuoi file musicali WAV/AIFF o MP3 per abbassare il bitrate dei dati inviati al lettore. Puo' essere utile se stai collegando il lettore allo SlimServer attraverso internet oppure se hai saltuarie interruzioni usando una rete wireless. Puoi scegliere il bitrate massimo da inviare al lettore. I brani MP3 codificati ad un bitrate inferiore a quanto indicato non saranno convertiti. Se scegli Nessun Limite, lo SlimServer trasferira' i file MP3 senza conversione e le altre tipologie di file come audio PCM non compresso.
 	JA	SlimServerは、自動的にあなたの音楽ファイルをWAV/AIFFまたはMP3に変換します。ビットレートの最大値を設定することができます。｢制限なし」を選択しますと、元のファイル通りのビットレートで再生されます。
 	NL	SlimServer kan automatisch je muziekbestanden converteren naar WAV/AIFF of MP3 om met een lagere bitrate je speler aan te sturen. Dit is handig als de speler via het Internet connectie maakt met je server of als je af en toe netwerkproblemen hebt met een draadloos netwerk.<br>Je kunt de maximum bitrate kiezen die SlimServer naar je speler streamt. MP3 bestanden met een lagere bitrate zullen niet geconverteerd worden. Indien je "Geen limiet" kiest zal SlimServer zonder conversie de audio en alle andere bestandstype zoals ongecomprimeerde PCM audio streamen.
-	SV	SlimServer kan automatiskt och löpande konvertera dina musikfiler till WAV/AIFF eller MP3 för att sända lägre bitkodningstakt till din spelare. Detta är användbart om du kopplar till din SlimServer över Internet, eller emellanåt har problem med överföring via trådlöst nätverk. Du kan bestämma vilken maximal bitkodningstakt Slimserver ska sända till din spelare. MP3-filer ursprungligen kodade i lägre takt kommer inte att kodas om. Om du väljer "Ingen begräsning" kommer SlimServer sända dina MP3-filer utan omkodning och övriga filtyper i det okomprimerade PCM-audio-formatet.
+	SV	SlimServer kan automatiskt och löpande konvertera dina musikfiler till WAV/AIFF eller MP3 för att sänka bithastigheten på det data som skickas till din spelare. Detta är användbart om du ansluter till din SlimServer över Internet, eller emellanåt har problem med överföring via trådlöst nätverk. Du kan bestämma med vilken maximal bithastighet Slimserver ska sända till din spelare. MP3-filer ursprungligen kodade i lägre hastigheter kommer inte att kodas om. Om du väljer "Ingen begränsning" kommer SlimServer sända dina MP3-filer utan omkodning och övriga filtyper i okomprimerat PCM-format.
 	ZH_CN	SlimServer可以将您的音乐文件自动并即时转换成WAV/AIFF或MP3格式，以降低流出到播放机的比特率。如果您的播放机与SlimServer的联系经过互联网或您的无线网络有堵塞的问题存在，这个功能将会提供很好的帮助。您可以选择SlimServer流出到播放机的最大比特率。如果MP3歌曲原有比特率低于如下则不被转换。如果您选择不限制比特率，SlimServer将不会对您的MP3文件流出到播放机前进行任何转换。其他文件类型也会以未压缩的PCM音像格式流出到播放机。
 
 SETUP_MP3BITRATE_DESC
@@ -3145,7 +3178,7 @@ SETUP_MP3BITRATE_DESC
 	IT	Lo SlimServer puo' convertire automaticamente e al volo in MP3 i tuoi file musicali per riprodurre formati diversi dall'MP3. Lo SlimServer puo' inoltre ricomprimere ad un bitrate inferiore i file MP3 inviati al lettore. Puo' essere utile se stai connettendo il lettore allo SlimServer attraverso Internet o se verifichi brevi interruzioni usando una rete wireless. Puoi scegliere il bitrate massimo che lo SlimServer inviera' al lettore. I brani MP3 codificati ad un bitrate piu' basso di quanto indicato sotto, non saranno convertiti.
 	JA	SlimServerは、自動的にあなたの音楽ファイルをMP3に変換します。MP3からさらに下のビットレートへの変換もできます。
 	NL	SlimServer kan automatisch je muziekbestanden converteren naar MP3 tijdens het afspelen. SlimServer kan ook MP3 bestanden hercoderen om een lagere bitrate naar je speler te streamen. Dit is handig als je de speler connectie laat maken via het Internet of als je regelmatig problemen hebt met een draadloos netwerk. Je kunt de maximum bitrate kiezen dat SlimServer zal streamen naar je speler. MP3 bestanden gecodeerd op een lagere bitrate dan hieronder worden niet geconverteerd.
-	SV	SlimServer kan automatiskt och löpande konvertera dina musikfiler till MP3 för att spela upp andra format än MP3. SlimServer kan också komprimera om dina MP3-filer så att lägre datatakt skickas till din spelare. Detta är värdefullt om du kopplar mot en server över Internet eller via trådlöst nätverk. Du kan bestämma vilken maximal bitkodningstakt Slimserver ska sända till din spelare. MP3-filer ursprungligen kodade i lägre takt kommer inte att kodas om.
+	SV	SlimServer kan automatiskt och löpande konvertera dina musikfiler till MP3 för att spela upp andra format än MP3. SlimServer kan också komprimera om dina MP3-filer för att sänka bithastigheten på det data som skickas till din spelare. Detta är användbart om du ansluter till din SlimServer över Internet eller via trådlöst nätverk. Du kan bestämma med vilken maximal bithastighet Slimserver ska sända till din spelare. MP3-filer ursprungligen kodade i lägre hastigheter kommer inte att kodas om.
 	ZH_CN	SlimServer可以将您的非MP3音乐文件自动并即时转换成MP3格式。SlimServer也可以把MP3文件重新压缩以降低流出到播放机的比特率。如果您的播放机与SlimServer的联系横跨互联网或您的无线网络有堵塞的问题存在，这个功能将会提供很好的帮助。您可以选择SlimServer流出到播放机的最大比特率。如果MP3歌曲原有比特率低于如下则不被转换。
 
 CONVERTED_TO
@@ -3194,7 +3227,7 @@ LAME0
 	FR	Qualité optimale, lent
 	IT	Migliore qualita', molto lento
 	NL	Hoogste kwaliteit, zeer langzaam
-	SV	Högsta kvalitet, långsamt
+	SV	Högsta kvalitet, mycket långsamt
 	ZH_CN	最高质量，过程缓慢
 
 LAME9
@@ -3206,7 +3239,7 @@ LAME9
 	FR	Qualité moyenne, rapide
 	IT	Mediocre qualita', ma veloce
 	NL	Slechte kwaliteit, maar snel
-	SV	Lägsta kvalitet, snabbt
+	SV	Lägsta kvalitet, men snabbt
 	ZH_CN	最低质量，过程迅速
 
 SETUP_LAMEQUALITY
@@ -3260,6 +3293,7 @@ SETUP_REPLAYGAINMODE
 	HE	התאמת עוצמת שמע
 	IT	Regolazione del Volume / Replay Gain
 	NL	Volume aanpassing/Replay Gain
+	SV	Volymanpassning (Replay Gain)
 	ZH_CN	音量调整/重播增益
 
 SETUP_REPLAYGAINMODE_DESC
@@ -3269,6 +3303,7 @@ SETUP_REPLAYGAINMODE_DESC
 	FR	Les fichiers audio peuvent contenir des informations d'ajustement du volume ou gain, dites "Replay Gain", permettant de normaliser le volume apparent d'un morceau ou d'un album durant la lecture. La Squeezebox peut utiliser ces informations lorsqu'elles sont présentes. En mode "Gain morceau", le volume de chaque morceau sera normalisé. En mode "Gain album", le volume de chaque album dans son ensemble sera normalisé, mais les morceaux d'un même album conserveront leurs différences de volume. En mode "Gain intelligent", le serveur utilisera le gain album si des morceaux consécutifs sont issus d'un même album et le gain morceau sinon.
 	HE	הנגן מסוגל לנרמל עוצמת שמע בין אלבומים ובין שירים שונים
 	IT	Alcune tracce audio contengono una regolazione del volume o "Replay Gain", informazione che puo' essere usata durante la riproduzione per assicurarsi che le tracce e gli album suonino allo stesso livello. Lo Squeezebox puo' usare queste informazioni se presenti. "Track gain" puo' essere usato per assicurarsi che tutte le tracce suonino allo stesso livello. "Album gain" puo' essere usato per assicurarsi che tutti gli album suonino allo stesso livello ma che le differenze di volume tra le tracce di uno stesso album siano mantenute. "Smart gain" usa "Album gain" se i brani successivi sono di uno stesso album o "Track gain" per una lista di esecuzione mixata.
+	SV	Vissa ljudspår innehåller volymjusteringar, "Replay Gain", som kan användas vid uppspelning för att säkerställa att olika spår och album spelas upp lika starkt. Spelaren kan använda denna information om den finns. "Track gain" kan användas för att se till att alla spår låter lika starkt. "Album gain" kan användas för att se till att alla album låter lika starkt, men att volymskillnader mellan spår på samma album bevaras. "Smart" volymjustering använder albumets volym om nästföljande låtar är från samma album, eller spårets volym vid blandade spellistor.
 	NL	Sommige muziekbestanden bevatten volume aanpassingen, of "Replay Gain" informatie die gebruikt kan worden tijdens het afspelen om er voor te zorgen dat liedjes en albums met een gelijk volume af spelen.  SlimServer kan deze informatie gebruiken bij het afspelen. "Liedjes volume aanpassing" kun je gebruiken om liedjes met een gelijk volume af te spelen. "album volume aanpassing" gebruik je om albums met een gelijk volume af te spelen waarbij de volumeverschillen tussen de liedjes in een album bewaard blijven. "Slimme aanpassing selectie" gebruikt "album volume aanpassing" als opeenvolgende liedjes uit hetzelfde album komen en "Liedjes volume aanpassing" voor een gemixte playlist.
 
 REPLAYGAIN_DISABLED
@@ -3279,6 +3314,7 @@ REPLAYGAIN_DISABLED
 	HE	לא תודה
 	IT	Disabilita regolazione volume
 	NL	Schakel volume aanpassing uit
+	SV	Avaktivera volymjustering
 	ZH_CN	关闭音量调整
 
 REPLAYGAIN_TRACK_GAIN
@@ -3289,6 +3325,7 @@ REPLAYGAIN_TRACK_GAIN
 	HE	לפי שיר
 	IT	Usa Track Gain (se presente)
 	NL	Gebruik liedjes volume aanpassing (indien aanwezig)
+	SV	Använd spårets volymjustering (om tillgänglig)
 	ZH_CN	利用音轨增益（如有）
 
 REPLAYGAIN_ALBUM_GAIN
@@ -3299,6 +3336,7 @@ REPLAYGAIN_ALBUM_GAIN
 	HE	לפי אלבום
 	IT	Usa Album Gain (se presente)
 	NL	Gebruik album volume aanpassing (indien aanwezig)
+	SV	Används albumets volymjustering (om tillgänglig)
 	ZH_CN	利用专辑增益（如有）
 
 REPLAYGAIN_SMART_GAIN
@@ -3309,6 +3347,7 @@ REPLAYGAIN_SMART_GAIN
 	HE	לפי שיר ואלבום
 	IT	Seleziona "Smart" Gain
 	NL	"Slimme" aanpassing selectie
+	SV	"Smart" volymjustering
 	ZH_CN	智慧型增益选择
 
 REPLAYGAIN
@@ -3319,6 +3358,7 @@ REPLAYGAIN
 	HE	התאמת עוצמת שמע
 	IT	Regolazione volume
 	NL	Volume aanpassing
+	SV	Volymjustering
 	ZH_CN	音量调整
 
 ALBUMREPLAYGAIN
@@ -3330,6 +3370,7 @@ ALBUMREPLAYGAIN
 	HE	התאמת עוצמת שמע אלבום
 	IT	Regolazione volume album
 	NL	Album volume-aanpassing
+	SV	Volymjustering för album
 	ZH_CN	专辑音量调整
 
 SETUP_TRANSITIONTYPE
@@ -3339,6 +3380,7 @@ SETUP_TRANSITIONTYPE
 	FR	Transitions
 	HE	מעבר בין שירים
 	IT	Dissolvenza
+	SV	Mjuk övergång
 	ZH_CN	音频同时淡出淡入
 
 SETUP_TRANSITIONTYPE_DESC
@@ -3349,6 +3391,7 @@ SETUP_TRANSITIONTYPE_DESC
 	HE	ניתן לקבוע כיצד הנגן יעבור משיר לשיר
 	IT	Lo Squeezebox puo' gradualmente passare tra i brani, sia sfumando tra il precedente ed il successivo, sia dissolvendo in entrata o in uscita. Scegli il tipo di transizione che desideri.
 	NL	Squeezebox kan naadloze overgangen maken tussen  liedjes. Dit kan door crossfading tussen de liedjes of door de liedjes uit en in te faden. Kies het type van crossfade die je wilt.
+	SV	Spelaren kan göra mjuka övergångar mellan låtar, antingen genom att korstona eller genom att tona ut och in. Välj vilken typ av övergång du vill ha.
 	ZH_CN	Squeezebox能在歌曲之间逐渐转折。两首歌曲能交互或进行个别的淡出淡入。请选择您想要的音频同时淡出淡入模式。
 
 SETUP_TRANSITIONDURATION
@@ -3360,6 +3403,7 @@ SETUP_TRANSITIONDURATION
 	HE	אורך המיזוג
 	IT	Durata dissolvenza
 	NL	Crossfade tijdsduur
+	SV	Korstoningslängd
 	ZH_CN	音频同时淡出淡入的持久时间
 
 SETUP_TRANSITIONDURATION_DESC
@@ -3371,6 +3415,7 @@ SETUP_TRANSITIONDURATION_DESC
 	HE	קבע פרק זמן בו השיר הנכנס והשיר היוצא חופפים
 	IT	Inserisci, in secondi, la durata delle transizioni tra i brani. La durata massima e' 10 secondi.
 	NL	Geef op in seconden hoe lang een crossfade mag duren tussen liedjes. Het maximum is 10 seconden.
+	SV	Ange korstoningslängd i sekunder. Max är 10 sekunder.
 	ZH_CN	请以秒为单位输入在歌曲之间音频同时淡出淡入的持久时间。最大值为10秒。
 
 TRANSITION_NONE
@@ -3381,6 +3426,7 @@ TRANSITION_NONE
 	HE	רגיל
 	IT	Nessuna
 	NL	Geen
+	SV	Ingen
 	ZH_CN	无
 
 TRANSITION_CROSSFADE
@@ -3388,6 +3434,7 @@ TRANSITION_CROSSFADE
 	FR	Fondu enchaîné
 	HE	מזג בין השירים
 	IT	Dissolvenza
+	SV	Korstoning
 	ZH_CN	音频同时淡出淡入
 
 TRANSITION_FADE_IN
@@ -3397,6 +3444,7 @@ TRANSITION_FADE_IN
 	FR	Fondu ascendant
 	HE	הגבר בתחילת שיר
 	IT	In entrata
+	SV	Tona in
 	ZH_CN	音频淡入
 
 TRANSITION_FADE_OUT
@@ -3407,6 +3455,7 @@ TRANSITION_FADE_OUT
 	HE	הנמך בסוף שיר	
 	IT	In uscita
 	NL	Fade uit
+	SV	Tona ut
 	ZH_CN	音频淡出
 
 TRANSITION_FADE_IN_OUT
@@ -3418,6 +3467,7 @@ TRANSITION_FADE_IN_OUT
 	HE	הנמך בסוף שיר והגבר בתחילת שיר
 	IT	In entrata e in uscita
 	NL	Fade in en uit
+	SV	Tona in och ut
 	ZH_CN	音频同时淡出淡入
 
 SETUP_TITLEFORMATCURR
@@ -3464,6 +3514,7 @@ SETUP_TITLEFORMAT_DESC
 	IT	Puoi personalizzare la visualizzazione dei titoli dei brani sullo schermo del lettore scegliendo il formato che desideri dal menu qui sotto. Le scelte disponibili qui sotto lo sono anche nel menu' Impostazioni -> Formato titolo brano del lettore. Premi un pulsante nella colonna "In uso" per cambiare il formato attualmente in uso. Quando hai fatto, premi il pulsante "Cambia" per salvare i cambiamenti.
 	JA	ディスプレーに表示される曲のタイトルのフォーマットを指定することができます。セッティング->曲タイトル、で選択してください。選択の後「変更」をクリックして下さい。
 	NL	Je kunt de manier waarop een liedjestitel wordt getoond aanpassen door een formaat te kiezen hieronder. Deze keuzes zijn beschikbaar op de speler in het spelermenu bij Instellingen - Titelformaat. Klik op een keuzerondje in de Huidige formaten kolom om het huidige formaat te wijzigen. Klik op de knop Veranderen om de wijzigingen te bewaren.
+	SV	Du kan ange in vilket titelformat du vill använda i spelarens fönster i menyerna nedan. Dessa val finns även tillgängliga i Inställningar -> Titelformat på spelaren. Klicka på en knapp i "Aktuell"-kolumnen för att ändra det aktuella formatet. Spara dina ändringar genom att klicka på "Ändra".
 	ZH_CN	您可以从以下的菜单选择您所要显示在播放机前的歌曲标题格式。您也可以通过播放机上的菜单《设置》->《播放机标题格式》作选择。请点击《当前的》专栏旁的按钮以改变当前的标题格式。选择妥当后,请点击《更动》以保存您的选择。
 
 SETUP_TITLEFORMAT_CHANGED
@@ -3471,6 +3522,7 @@ SETUP_TITLEFORMAT_CHANGED
 	EN	Format will be changed for any clients using this setting
 	ES	El formato será cambiado en todos los clientes que utilicen esta configuración
 	NL	Formaat wordt gewijzigd voor elke client die deze instelling gebruikt
+	SV	Formatet kommer att ändras för alla spelare som använder denna inställning.
 	ZH_CN	所有利用此配置的Client格式将会转变
 
 SETUP_ITUNESPLAYLISTFORMAT
@@ -3732,6 +3784,7 @@ FOLDER
 	FI	Kansio
 	IT	Cartella
 	NL	Folder
+	SV	Mapp
 	ZH_CN	文件夹
 
 ITUNES
@@ -3747,6 +3800,7 @@ YES
 	HE	כן
 	IT	Si'
 	NL	Ja
+	SV	Ja
 	ZH_CN	是
 
 NO
@@ -3757,6 +3811,7 @@ NO
 	FR	Non
 	HE	לא
 	NL	Nee
+	SV	Nej
 	ZH_CN	否
 
 MOODLOGIC
@@ -3930,7 +3985,7 @@ SETUP_GROUP_GUESSFILEFORMATS_DESC
 	JA	正しいタグが含まれていないファイルに関しては、サーバーが推測するよう指定できます。どのようなパターンで推測するか指定してください。
 	NL	Voor bestanden die geen juiste taginformatie hebben kan de server de tags raden door de folder- en bestandsnamen te gebruiken. Door dezelfde variabelen als bij "Titelformaat" te gebruiken kun je een patroon maken dat correspondeert met de bestandsnaamconventie die je gebruikt. Met dit patroon kan de server raden wat de tags moeten zijn. De prioriteit is in de volgorde hieronder. Het eerste correcte patroon wordt gebruikt.
 	NO	For filer som ikke har forståelig metadata tagger kan serveren gjette ved å bruke fil- og folderinformasjon. Ved å bruke samme variabler som for låt-format kan du skape et mønster som passer måten filene dine er navngitt. Listen er i prioritert rekkefølge. Det første mønster som passer blir brukt.
-	SV	För filer som inte har rimliga metadata (taggar), kan servern gissa genom att använda fil- och mappinformation. Genom att använda samma variabler som för Låt-format kan du skapa mönster som passar det sätt dina filer är namngivna. Prioritet enligt listan nedan; första mönster-matchning används.
+	SV	För filer som inte har rimliga metadata (taggar), kan servern gissa genom att använda fil- och mappinformation. Genom att använda samma variabler som för Låt-format kan du skapa mönster som passar det sätt dina filer är namngivna. Prioritet enligt listan nedan; första mönster-träff används.
 	ZH_CN	那些没有合理标签的文件,您可以让服务器凭着使用路径和文件名为基础进行标签猜测。您可以使用和标题格式一样的变量来建立匹配您的文件命名惯例的样式，以方便服务器对标签的猜测。优先权将取决于下列的排序。第一个被匹配的样式将被接受使用。
 
 SETUP_IRMAP
@@ -4107,7 +4162,7 @@ SETUP_AUDIODIR_DESC
 	IT	Puoi indicare una cartella contenente file musicali che lo SlimServer analizzera' e aggiungera' alla tua libreria musicale. Inserisci il percorso della cartella qui' sotto. Puoi lasciare il campo vuoto se stai importando la libreria musicale da iTunes o MoodLogic.
 	JA	SlimServerが検索するフォルダーを指定することができます。iTunesまたはムードロジックの情報を利用する場合はブランクで構いません。
 	NL	Je kunt de folder specificeren waarin de muziekbestanden staan die SlimServer scant en toevoegt aan de muziekcollectie. Je kunt dit veld leeg laten als je muziek importeert vanuit iTunes of Moodlogic.
-	SV	Du kan ange en mapp som SlimServer kommer scanna för att lägga till musik till ditt bibliotek. Ange läget nedan. Om du importerar MoodLogic eller iTunes behöver ingenting anges.
+	SV	Du kan ange en mapp som SlimServer kommer scanna för att lägga till musik till ditt bibliotek. Ange sökvägen till mappen nedan. Om du importerar MoodLogic eller iTunes behöver ingenting anges.
 	ZH_CN	您可以指定SlimServer所扫描和用来增加您的音乐库的音乐文件夹。请在以下的资料栏内输入此文件夹的完整路径。如果您从iTunes或MoodLogic导入您音乐库信息，您可以让此资料栏空白。
 
 SETUP_AUDIODIR_OK
@@ -4123,7 +4178,7 @@ SETUP_AUDIODIR_OK
 	NL	De server zal het volgende pad gebruiken voor je muziekbestanden:
 	NO	Ok, bruker:
 	PT	O servidor irã usar a seguinte directoria para os ficheiros áudio
-	SV	Använder nu följande sökväg till dina MP3-filer:
+	SV	Använder nu följande sökväg till dina musikfiler:
 	ZH_CN	服务器将使用这路径访问您的音乐文件：
 
 SETUP_PLAYLISTDIR
@@ -4155,7 +4210,7 @@ SETUP_ARTFOLDER
 	JA	アートワークのフォルダー
 	NL	Hoesafbeeldingen folder
 	NO	Folder for platecover
-	SV	Grafikmapp
+	SV	Mapp för skivomslagsgrafik
 	ZH_CN	封面图象文件夹
 
 SETUP_ARTFOLDER_DESC
@@ -4170,7 +4225,7 @@ SETUP_ARTFOLDER_DESC
 	JA	アートワークを１つのフォルダーにまとめて保存しても構いません。以下に入力してください。フォルダー名を指定しても、もし見つからなければ、音楽ファイルがある場所を探します。
 	NL	Je kunt ervoor kiezen om alle hoesafbeeldingen in één directory te zetten. Dit werkt op dezelfde manier als met de variabele bestandsnaam optie.  Typ hier de locatie van de hoesafbeeldingen. Onafhankelijk van wat je hier invult zal SlimServer ook nog kijken in de folder waar de audiobestanden staan als geen hoesje gevonden is in de hoesafbeeldingen folder.
 	NO	Du kan velge å lagre alle platecover i en folder, ved å benytte innstillingen over. Skriv inn adressen til Grafikk folderen her. Serveren vil fremdeles lete etter platecover i samme folder som lydfilen ligger i om ikke det finnes et treff i Grafikk folderen.
-	SV	Du kan välja att lagra all grafik i en enda mapp genom att använda valet för variabla filnamn enligt ovan. Ange sökvägen till Grafikmappen här. Servern kommer ändå att leta efter grafik på samma plats som ljudfilerna om den inte hittar nåhon grafik som passar i Grafikmappen.
+	SV	Du kan välja att lagra all skivomslagsgrafik i en enda mapp genom att använda valet för variabla filnamn enligt ovan. Ange sökvägen till grafikmappen här. Servern kommer ändå att leta efter grafik på samma plats som ljudfilerna om den inte hittar någon grafik som passar i Grafikmappen.
 	ZH_CN	您可以利用以上的文件名变量选项，把所有的图象集中存放在一个文件夹内。请在这里输入图象文件所在地点。如果服务器未能在所指定的封面图象文件夹中找到匹配图象，便会在各个音像文件所属的文件夹中寻找匹配的图象。
 
 SETUP_BAD_FILE
@@ -4181,7 +4236,7 @@ SETUP_BAD_FILE
 	FR	"%s" ne semble pas être un fichier valide. Ré-essayez.
 	JA	"%s"は正しいファイルではありません。もう一度入力してください。
 	NL	Oeps! - "%s" lijkt geen geldig bestand. Probeer opnieuw.
-	SV	Oops - "%s" verkar inte vara en giltig fil. Försök igen.
+	SV	Hoppsan, "%s" verkar inte vara en giltig fil. Försök igen.
 	ZH_CN	"%s"似乎不是一个合法文件。请再次尝试。
 
 SETUP_BAD_DIRECTORY
@@ -4197,7 +4252,7 @@ SETUP_BAD_DIRECTORY
 	NL	Oeps! "%s" lijkt geen geldige folder. Probeer opnieuw.
 	NO	Huffda, "%s" er ikke en gyldig katalog. Forsøk igjen.
 	PT	A Pasta "%s" não é válida. Tente de novo.
-	SV	"%s" verkar inte vara en godkänd mapp. Försök igen.
+	SV	Hoppsan, "%s" verkar inte vara en godkänd mapp. Försök igen.
 	ZH_CN	"%s"似乎不是一个合法文件夹。请再次尝试。
 
 SETUP_OK_USING
@@ -4212,7 +4267,7 @@ SETUP_OK_USING
 	NL	OK, het pad naar de MP3 bestanden is:
 	NO	Ok, bruker:
 	PT	O servidor irá usar a seguinte directoria para os ficheiros de áudio
-	SV	Ok, använder:
+	SV	Använder nu följande sökväg för dina musikfiler:
 	ZH_CN	服务器将使用这路径访问您的音乐文件：
 
 SETUP_PLAYLISTDIR_OK
@@ -4257,6 +4312,7 @@ SETUP_RESCAN
 	HE	סריקת הספרייה
 	IT	Rianalisi della libreria musicale.
 	NL	Opnieuw scannen van muziekcollectie
+	SV	Sök igenom musikmapp
 	ZH_CN	重新扫描音乐库
 
 SETUP_RESCAN_BUTTON
@@ -4273,7 +4329,7 @@ SETUP_RESCAN_BUTTON
 	NL	Opnieuw inlezen
 	NO	Scan musikkfolderen på nytt
 	PT	Ler Directoria
-	SV	Scanna musikmappen på nytt
+	SV	Sök
 	ZH_CN	重新扫描
 
 SETUP_RESCAN_DESC
@@ -4286,6 +4342,7 @@ SETUP_RESCAN_DESC
 	HE	לחץ על כפתור הסריקה לביצוע הסריקה הנבחרת
 	IT	Premi Rianalisi per far si' che lo SlimServer analizzi la libreria musicale e aggiunga la nuova musica o aggiorni i brani che sono cambiati.
 	NL	Klik op Opnieuw inlezen om SlimServer je muziekfolders te laten scannen en nieuwe muziek toe te voegen of muziek te wijzigen.
+	SV	Klicka på "Sök" för att låta SlimServer söka igenom din musikmapp och lägga till ny musik eller uppdatera sånger som ändrats.
 	ZH_CN	点击《重新扫描》将使SlimServer扫瞄音乐库，把新增或已更新的音乐记录在音乐库内。在点击《重新扫描》前点击复选框将使SlimServer把现有的音乐库删除然后重头扫描重建。
 
 SETUP_WIPEDB
@@ -4297,6 +4354,7 @@ SETUP_WIPEDB
 	HE	סרוק הכל מחדש
 	IT	Cancella la libreria musicale e rianalizza tutto.
 	NL	Leeg muziekdatabase en scan alles opnieuw
+	SV	Töm musikbibliotek och sök igenom allt på nytt
 	ZH_CN	把现有的音乐库删除然后重新进行扫描
 
 SETUP_STANDARDRESCAN
@@ -4308,6 +4366,7 @@ SETUP_STANDARDRESCAN
 	HE	מצא מוזיקה חדשה
 	IT	Cerca la musica nuova e modificata.
 	NL	Zoek naar nieuwe en gewijzigde muziek
+	SV	Sök efter ny eller ändrad musik
 	ZH_CN	扫描时只寻找新的或已更改的音乐
 
 SETUP_PLAYLISTRESCAN
@@ -4319,6 +4378,7 @@ SETUP_PLAYLISTRESCAN
 	HE	סרוק רשימות השמעה בלבד
 	IT	Rianalisi delle sole liste di esecuzione
 	NL	Scan alleen playlists opnieuw
+	SV	Sök bara efter låtlistor
 	ZH_CN	重新扫描播放表而已。
 
 RESCANNING
@@ -4335,7 +4395,7 @@ RESCANNING
 	NL	De server leest nu de muziekfolder opnieuw in.
 	NO	Serveren scanner gjennom din musikkfolder.
 	PT	O servidor está a analisar o arquivo de músicas.
-	SV	Servern läser nu om din musikbibliotek.
+	SV	Servern söker nu igenom ditt musikbibliotek.
 	ZH_CN	服务器正在重新扫描您的音乐库。
 
 RESCANNING_SHORT
@@ -4346,6 +4406,7 @@ RESCANNING_SHORT
 	FR	Répertoriage en cours...
 	IT	Rianalisi della raccolta musicale.
 	NL	Opnieuw scannen muziekcollectie...
+	SV	Söker igenom musikbibliotek...
 	ZH_CN	重新扫描音乐库中...
 
 USING_ITUNES
@@ -4358,7 +4419,7 @@ USING_ITUNES
 	IT	Il server importera' le informazioni da iTunes.
 	JA	サーバーはiTunesの情報をインポートします。
 	NL	De server zal iTunes informatie downloaden.
-	SV	SlimServer kommer importera iTunes-information
+	SV	SlimServer kommer att importera iTunes-information.
 	ZH_CN	服务器将导入iTunes信息。
 
 NOT_USING_ITUNES
@@ -4434,7 +4495,7 @@ SETUP_ITUNES_DESC
 	IT	Lo Slimserver può usare la tua libreria musicale e le liste di esecuzione di iTunes. Qualsiasi cambiamento apportato in iTunes si rifletterà nl tuo lettore. Spunta il riquadro più sotto se vuoi importare le tue informazioni della libreria musicale di iTunes.
 	JA	SlimServerはiTunesの音楽ライブラリーとプレイリストを使用することができます。iTunesにおける変更はプレーヤーに反映されます。iTunesの音楽ライブラリー情報を利用するには、以下の項目をチェックしてください。
 	NL	SlimServer kan gebruik maken van je iTunes muziekcollectie. Elke wijziging die je maakt in iTunes zal doorwerken naar je speler. Selecteer de box hieronder als je de iTunes muziekcollectie informatie wilt importeren.
-	SV	SlimServer kan använda ditt iTunes-bibliotek och -låtlistor. Alla förändringar som görs via iTunes kommer att få genomslag i din spelare. Klicka i rutan nedan om du vill importera iTunes-informationen.
+	SV	SlimServer kan använda ditt iTunes-bibliotek och låtlistor. Alla förändringar som görs via iTunes kommer att få genomslag i din spelare. Klicka i rutan nedan om du vill importera iTunes-informationen.
 	ZH_CN	SlimServer可以使用您的iTunes音乐库和播放表。您在iTunes所作的所有变动都会显示在您的播放机。如果要导入您的iTunes音乐库信息，请点击如下的复选框。
 
 USE_MOODLOGIC
@@ -4722,7 +4783,7 @@ SETUP_REFRESHRATE
 	JA	ブラウザーを更新するタイミング
 	NL	Browser vernieuwingstiming
 	NO	Oppdateringsintervall for webgrensesnittet
-	SV	Refresh-intervall för webgränssnittet
+	SV	Uppdateringsintervall för webgränssnittet
 	ZH_CN	浏览器刷新时间
 
 SETUP_REFRESHRATE_DESC
@@ -4737,7 +4798,7 @@ SETUP_REFRESHRATE_DESC
 	JA	ブラウザーが更新する時間を秒数で入力してください。曲を再生中の場合には、曲の最後に更新します。（工場出荷時は30秒、最小は2秒）
 	NL	Stel de tijd in waarna de browser de pagina moet vernieuwen  in seconden. De server zal de pagina vernieuwen bij het einde van een liedje als dit minder is dan de ingestelde tijd. Standaardwaarde is 30, minimum is 2 seconden.
 	NO	Juster tiden mellom hver oppdatering av webgrensesninttet. Angis i sekunder, minimum 2, maksimum 30. Når en sang spilles foretas oppdatering nær slutten av sangen, om gjenværende tid er mindre en angitt verdi.
-	SV	Ställ in tiden mellan uppdatering av webgränssnittet. Anges i sekunder, minimum 2, maximum 30. När en sång spelas sker refresh närs slutet på sången, om återstående tid är mindre än angivet värde.
+	SV	Ställ in tiden mellan uppdateringar av webgränssnittet. Anges i sekunder, minimum 2, maximum 30. När en sång spelas sker refresh nära slutet på sången, om återstående tid är mindre än angivet värde.
 	ZH_CN	设置浏览器刷新的间隔时间。当播放歌曲时，如果设的值少于歌曲的长度服务器将在歌曲末端附近设置刷新。（缺省为30，极小值为2）
 
 SETUP_REFRESHRATE_OK
@@ -4901,7 +4962,7 @@ SETUP_COVERART
 	NL	Hoesafbeeldingen
 	NO	Platecover
 	PT	Capa Álbum
-	SV	Albumomslag
+	SV	Skivomslag
 	ZH_CN	图象
 
 SETUP_COVERART_DESC
@@ -4918,7 +4979,7 @@ SETUP_COVERART_DESC
 	NL	Indien er een hoesjesafbeelding beschikbaar is wordt deze getoond als je een album bekijkt of informatie over een liedje opvraagt. Deze afbeeldingen staan in de ID3 tag van een muziekbestand of staan in dezelfde folder als de muziekbestanden. <br>  Standaard gebruikt de server de bestanden "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" en "thumb.jpg". Aanvullende bestandsnamen kun je opgeven. Dit kan afzonderlijk voor verkleinde afbeeldingen (thumbmails) en voor volledige afbeeldingen. Je kunt een voorvoegsel % gebruiken gevolgd door de tekst zoals gebruikt bij Titelformaten (bijvoorbeeld %ARTIST - ALBUM, zal zoeken naar Artiest - Album.jpg om artiest en album informatie te vinden).
 	NO	Platecover kan vises sammen med informasjon om sanger. Disse bildene kan lagres i ID3-tag, eller lagres som en separat fil i samme folder som låta. Bildefiler med navn "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", eller "thumb.jpg" brukes som standard. Du kan angi andre mulige navn på disse album-filene, og også angi egne navn på filer med thumbnail bilder. Bruk Prefix % og samme elementer som er tilgjengelige for Tittelformat. (f.eks: %ARTIST - ALBUM.jpg søker etter filer med funnet verdier for artist og album.)
 	PT	As imagens da capa do álbum, quando disponíveis, são mostradas na visualização da informação do álbum ou da música. As capas dos álbuns poderão estar integradas nas "tags ID3" do próprio ficheiro, ou em ficheiros separados na pasta dos ficheiros de música. Por omissão, serão usados os nomes de ficheiros "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg" ou "thumb.jpg". Pode especificar nomes de ficheiros adicionais para a imagem da capa do álbum. Pode especificar nomes diferentes para a miniatura ou para a imagem completa.
-	SV	Bilder på albumomslag kan visas samtidigt med information om sånger. Dessa bilder kan lagras i ID3-tag, eller lagras som separat fil i samma mapp som låten. Bildfiler med namnen "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", eller "thumb.jpg" används  standardmässigt. Du kan ange andra möjliga namn på dessa aalbum-grafik-filer, och även ange separata filnamn för tumnagelsstora bilder. Använd Prefix % och samma element som är tillgängliga för Titelformat. (Exempel: %ARTIST - ALBUM.jpg söker efter filer med det funna värdet på Artist och Album.)
+	SV	Bilder på skivomslag kan visas samtidigt med information om sånger. Dessa bilder kan lagras i ID3-tag, eller lagras som separat fil i samma mapp som låten. Bildfiler med namnen "cover.jpg", "albumartsmall.jpg", "folder.jpg", "album.jpg", eller "thumb.jpg" används  standardmässigt. Du kan ange andra möjliga namn på dessa skiv-grafik-filer, och även ange separata filnamn för tumnagelsstora bilder. Använd Prefix % och samma element som är tillgängliga för Titelformat. (Exempel: %ARTIST - ALBUM.jpg söker efter filer med det funna värdet på Artist och Album.)
 	ZH_CN	若专辑的封面图象存在，观看专辑或歌曲信息时图象将一同显示。图象除了可内藏于个别歌曲文件的ID3标签内，也可以放置在同歌曲文件一起的文件夹内。根据缺省规定，图象名为＇cover.jpg＇、＇albumartsmall.jpg＇、＇folder.jpg＇、＇album.jpg＇、或＇thumb.jpg＇将被接受使用。您可以指定额外的图像文件名。您也可以为指图或大型图象指定不同的文件名字。如果以%为前缀，您可以利用同标题格式一样的元素（例如%ARTIST - ALBUM, 将寻找匹配的ARTIST - Album.jpg。
 
 SETUP_COVERART_OK
@@ -4934,7 +4995,7 @@ SETUP_COVERART_OK
 	NL	Naam van de afbeelding van de hoes ingesteld op
 	NO	Filnavn for platecover er satt til:
 	PT	Nome do ficheiro para a Capa do Álbum é
-	SV	Filnamn för albumomslag är satt till:
+	SV	Filnamn för skivomslag är satt till:
 	ZH_CN	专辑封面图象文件名设为：
 
 SETUP_COVERTHUMB
@@ -4951,7 +5012,7 @@ SETUP_COVERTHUMB
 	NL	Verkleinde afbeelding van de hoes
 	NO	Platecover thumbnail
 	PT	Miniatura da Capa do Álbum
-	SV	Albumomslags-miniatyrer
+	SV	Skivomslagsminiatyrer
 	ZH_CN	图象指图
 
 SETUP_COVERTHUMB_DESC
@@ -4978,7 +5039,7 @@ SETUP_COVERTHUMB_OK
 	NL	Bestandsnaam voor verkleinde afbeelding van de hoes ingesteld op
 	NO	Filnavn for platecover-thumbnails er satt til:
 	PT	O nome do ficheiro para a miniatura da Capa do Álbum é
-	SV	Filnamn för albumomslags-miniatyrer är satt till:
+	SV	Filnamn för skivomslagsminiatyrer är satt till:
 	ZH_CN	图象指图文件名已设为：
 
 SETUP_THUMBSIZE
@@ -5008,7 +5069,7 @@ SETUP_THUMBSIZE_DESC
 	JA	アートワークでブラウズする場合の、サムネイルの大きさをピクセル数（25-250）で指定してください。工場出荷時は100です。
 	NL	Kies een grootte in pixels (25-250) voor de standaard miniatuurweergave bij "Bekijk op hoezen". De standaardwaarde is 100.
 	NO	Velg størrelse i pixler (25-250) som platecover thumbnails nortmal skal vises i. Standardverdien er 100.
-	SV	Välj storlek i antal pixlar (25-250) som albumomslagsminatyrer normalt ska presenteras i. Standardvärdet är 100
+	SV	Välj storlek i antal pixlar (25-250) som skivomslagsminatyrer normalt ska presenteras i. Standardvärdet är 100
 	ZH_CN	以映像点（25-250）为单位，请选择浏览图象时缺省图象指图的大小。缺省值为100。
 
 SETUP_PLUGINS_OK
@@ -5190,7 +5251,7 @@ SETUP_CHECKVERSION_0
 	NL	Controleer niet op bijgewerkte software
 	NO	Ikke sjekk for software oppdateringer
 	PT	Não Verificar
-	SV	Kontrollera INTE automatiskt
+	SV	Kontrollera inte automatiskt
 	ZH_CN	不要自动检查是否有新的软件版本可供使用
 
 SETUP_IGNOREDISABLEDITUNESTRACKS
@@ -5284,7 +5345,7 @@ SETUP_SCREENSAVER_CHOOSE
 	JA	お好きなスクリーンセーバーを選んでください:
 	NL	Kies een schermbeveiliger wanneer de speler speelt:
 	NO	Velg din skjermsparer
-	SV	Välj din anpassade skärmsläckare
+	SV	Välj skärmsläckare för uppspelning:
 	ZH_CN	请选择一个在播放时应用的屏幕保护程序：
 
 SETUP_IDLESAVER_CHOOSE
@@ -5296,6 +5357,7 @@ SETUP_IDLESAVER_CHOOSE
 	HE	בחר שומר מסך כאשר לא מתנגן שיר
 	IT	Scegli un salvaschermo da usare quando fermo:
 	NL	Kies een schermbeveiliger wanneer de speler stopt:
+	SV	Välj skärmsläckare för stoppat läge:
 	ZH_CN	请选择一个在非播放时应用的屏幕保护程序：
 
 SETUP_OFFSAVER_CHOOSE
@@ -5307,6 +5369,7 @@ SETUP_OFFSAVER_CHOOSE
 	HE	בחר שומר מסך כאשר הנגן כבוי
 	IT	Scegli un salvaschermo da usare quando spento:
 	NL	Kies een schermbeveiliger wanneer de speler uit staat:
+	SV	Välj skärmsläckare för avstängt läge:
 	ZH_CN	请选择一个在关机时应用的屏幕保护程序：
 
 SETUP_SCREENSAVER_DESC
@@ -5318,6 +5381,7 @@ SETUP_SCREENSAVER_DESC
 	HE	בחר סוג שומר מסך בפעילויות שונות
 	IT	Puoi scegliere un salvaschermo che visualizzi informazioni dopo un certo periodo di tempo di inattivita' del telecomando. Puoi scegliere l'attesa prima di attivare il salvaschermo. Puoi anche scegliere differenti salvaschermo a seconda che il lettore stia riproducendo musica, sia fermo oppure sia spento.
 	NL	Je kunt schermbeveiligers gebruiken om informatie te tonen op het scherm nadat de afstandsbediening enige tijd niet is gebruikt. Je kunt verschillende schermbeveiligers kiezen afhankelijk van of de speler audio aan het spelen is, gestopt is of uit staat.
+	SV	Efter en tids inaktivitet från fjärrkontrollern kan spelaren visa olika sorters information som "skärmsläckare". Du kan välja olika skärmsläckare som visas beroende på om spelaren spelar eller inte, eller om den är av. Du kan också välja vilken inaktivitet som krävs innan skärmsläckaren aktiveras.
 	ZH_CN	您可以通过遥控器选择在播放机非活动状态时以屏幕保护程序来显示信息。您可以设定屏幕保护程序介入前的等候时间。并且设定播放机在不同状态下如播放时、停止播放时、或关机时应用不同屏幕保护程序。
 
 SETUP_SCREENSAVERTIMEOUT_CHOOSE
@@ -5368,6 +5432,7 @@ SCREENSAVER_NONE
 	FR	Aucun
 	HE	ללא שומר מסך
 	NL	Geen
+	SV	Ingen
 	ZH_CN	无
 
 SETUP_DISPLAYTEXTTIMEOUT
@@ -5429,7 +5494,7 @@ SETUP_THROTTLESCAN
 	NL	Snelheid muziek scannen:
 	NO	Hastighet for scanning av musikk
 	PT	Velocidade de pesquisa da música
-	SV	Hastighet på inläsning av musikfiler:
+	SV	Hastighet på genomsökning av musikfiler:
 	ZH_CN	音乐扫描速度
 
 SETUP_THROTTLESCAN_DESC
@@ -5444,7 +5509,7 @@ SETUP_THROTTLESCAN_DESC
 	NL	Als de server opstart zal deze je muziekfolder inlezen om uit de MP3 tags de artiest, het album en andere gegevens te lezen. Op langzamere systemen en Windows PCs die FAT of FAT32 bestandsystemen gebruiken kan dit een onacceptabele vertraging van de PC tot gevolg hebben. Je kunt met deze instelling de inleessnelheid verminderen om zodanig minder computercapaciteit te gebruiken.
 	NO	Når serveren starter scanner den gjennom musikkfolderen din for å finne artistnavn, album osv fra MP3-filene. På noen tregere systemer og Windows PCer som bruker FAT og FAT32 filsystem kan dette gjøre maskinen din veldig treg. Du kan endre denne innstillingen slik at scanningen går tregere og bruker mindre system ressurser.
 	PT	O servidor, ao iniciar, pesquisa toda a pasta de músicas, indexando o nome do artista, album e outras informações, a partir das tags ID3 dos ficheiros MP3. Em computadores mais lentos ou em sistemas operativos Windows com sistemas de ficheiros FAT ou FAT32, esta operação poderá ocupar demasiados recursos. Pode usar esta opção para adicionar um tempo de espera e abrandar a operação.
-	SV	När servern startar läser den igenom din musikmapp för att hämta namn på artist, album, etc från dina MP3-filers ID3-taggar. På vissa långsammare system och Windows-operativ som använder FAT eller FAT32 filsystem kan detta göra datorn väldigt långsam. Du kan ändra denna inställning för att sakta ner inläsningen och använda mindre av datorns resurser.
+	SV	När servern startar söker den igenom din musikmapp för att hämta namn på artist, album, etc från dina MP3-filers ID3-taggar. På vissa långsammare system och Windows-operativ som använder FAT eller FAT32 filsystem kan detta göra datorn väldigt långsam. Du kan ändra denna inställning för att sakta ner genomsökningen och använda mindre av datorns resurser.
 	ZH_CN	当服务器开始扫描您的音乐文件夹并从文件标签中装载艺人、专辑、和其它信息从时，会对一些表现较慢的计算机或使用FAT或FAT32文件系统的微软视窗计算机造成较大的负荷而影响计算机的操作表现。您可以将扫描速度减慢并减少计算量。
 
 SETUP_SEARCHSUBSTRING
@@ -5456,6 +5521,7 @@ SETUP_SEARCHSUBSTRING
 	FR	Rechercher à l'intérieur des mots
 	IT	Cerca all'interno delle parole
 	NL	Zoek binnen woorden
+	SV	Sök inom ord
 	ZH_CN	在词内搜寻
 
 SETUP_SEARCHSUBSTRING_0
@@ -5467,6 +5533,7 @@ SETUP_SEARCHSUBSTRING_0
 	FR	Rechercher par début de mot
 	IT	Cerca all'inizio delle parole
 	NL	Zoek aan het begin van woorden
+	SV	Sök i början av ord
 	ZH_CN	由词的前头搜寻
 
 SETUP_SEARCHSUBSTRING_1
@@ -5478,6 +5545,7 @@ SETUP_SEARCHSUBSTRING_1
 	FR	Rechercher à l'intérieur des mots
 	IT	Cerca all'interno delle parole
 	NL	Zoek binnen woorden
+	SV	Sök inom ord
 	ZH_CN	在词内搜寻
 
 SETUP_SEARCHSUBSTRING_DESC
@@ -9136,6 +9204,7 @@ BROWSE_NEW_MUSIC
 	HE	דפדוף במוזיקה שהוספה לאחרונה
 	IT	Musica recente
 	NL	Nieuwe muziek
+	SV	Ny musik
 	ZH_CN	最新引进的音乐
 
 BROWSE_BY_SONG
@@ -9169,6 +9238,7 @@ BROWSE_BY_YEAR
 	HE	דפדוף לפי שנים
 	IT	Sfoglia per anno
 	NL	Bekijk op jaar
+	SV	Bläddra årtal
 	ZH_CN	浏览年份
 
 BROWSE_MUSIC_FOLDER
@@ -9446,6 +9516,7 @@ HOME_SCAN_WARNING
 	HE	השרת עדיין סורק את ספריית המוזיקה, הזדיין בסבלנות
 	IT	Lo SlimServer sta costruendo la tua raccolta musicale, per favore attendi il tempo necessario.
 	NL	SlimServer is bezig je muziekfolders te scannen. Nog even geduld, dit neemt enige tijd in beslag.
+	SV	SlimServer läser fortfarande in ditt musikbibliotek. Ha tålamod, det kan ta ett tag.
 	ZH_CN	SlimServer正在扫描您的音乐库，这也许需要一些时间，敬请耐心稍候。
 
 SCAN_CLICK
@@ -9518,6 +9589,7 @@ BASIC_PLAYER_SETTINGS
 	EN	Basic Settings
 	FR	Réglages de base
 	NL	Basis instellingen
+	SV	Grundinställningar
 	ZH_CN	基本配置
 
 ALARM_SETTINGS
@@ -9531,6 +9603,7 @@ ALARM_SETTINGS
 	IT	Sveglia
 	JA	アラーム
 	NL	Wekker
+	SV	Väckning
 	ZH_CN	闹钟
 
 MENU_SETTINGS
@@ -12174,6 +12247,7 @@ SETUP_SCROLLPIXELS
 	HE	פיקסלים בגילגול
 	IT	Scorrimento dei pixel
 	NL	Tekstlooppixels
+	SV	Rullningspixlar
 	ZH_CN	卷动映像点
 
 SETUP_SCROLLPIXELS_DESC
@@ -12185,6 +12259,7 @@ SETUP_SCROLLPIXELS_DESC
 	HE	קבע את מספר הפיקסלים בכל תזוזת טקסט
 	IT	Su un lettore con schermo grafico puoi impostare il numero di pixel che il lettore scorre nell'intervallo definito sopra. Imposta questo valore assieme alla velocita' di scorrimento per regolare la velocita' con la qualita'. Nota che valori minimi con una bassa velocita' di scorrimento danno un aspetto migliore ma richiedono un server piu' potente e una rete non congestionata. Nel dubbio lascia come impostato di default a 7 pixel (min 1, max 20).
 	NL	Op een grafisch scherm kun je het aantal pixels (punten) dat de tekst elke keer loopt. Pas dit aan in combinatie met de tekstloopsnelheid om de kwaliteit van de tekstloop in te stellen.  <br>Lage waardes met een lage tekstloopsnelheid tonen mooi maar hebben een hogere serverprestatie nodig en een goed netwerk. Laat bij twijfel de waarde op de standaard van 7 staan (minimum 1, maximum 20).
+	SV	På en spelare med grafisk skärm kan du ställa in det antal pixlar (skärmpunkter) som spelaren rullar i varje intervall som specificeras ovan. Justera detta tillsammans med rullningsfrekvens för att ställa in rullningshastighet och kvalitet. Notera att små värden på scrollfrekvens ser bra ut, men kräver högre serverprestanda och nätverkskapacitet. Är du osäker, lämna skönsvärdet 7 pixlar. (Min 1, Max 20)
 	ZH_CN	在设有图形显示屏的播放机，你可以调节播放机在每一段间隔卷动映像点的数量。依据卷动率及您对显示速度和质量的要求加以调节。请注意，较小的值和较低的卷动率虽好，但必须配合高性能的服务器和非繁忙的网络方有效果。如有不详之处，请保留缺省值7个映像点。（最小为1，最大为20）。
 
 ANY_GENRE
@@ -12197,6 +12272,7 @@ ANY_GENRE
 	HE	כל סוג
 	IT	Qualsiasi Genere
 	NL	Elk genre
+	SV	Alla genrer
 	ZH_CN	任何歌曲风格
 
 ANY_VALUE
@@ -12209,6 +12285,7 @@ ANY_VALUE
 	HE	כל ערך
 	IT	Qualsiasi valore
 	NL	Elke waarde
+	SV	Alla värden
 	ZH_CN	任何值
 
 ANY_TYPE
@@ -12221,6 +12298,7 @@ ANY_TYPE
 	HE	כל קובץ
 	IT	Qualsiasi formato di file
 	NL	Elk bestandsformaat
+	SV	Alla filformat
 	ZH_CN	任何文件格式
 
 WMA_NO_CONVERT_CMD
@@ -12246,6 +12324,7 @@ FAVORITES
 	HE	מועדפים
 	IT	Favoriti
 	NL	Favorieten
+	SV	Favoriter
 
 FAVORITES_NOT_DEFINED
 	DE	Favorit Nr. %s existiert nicht!
@@ -12253,6 +12332,7 @@ FAVORITES_NOT_DEFINED
 	ES	Favorita #%s no definida
 	FR	Favori n°%s non défini
 	NL	Favoriet #%s niet gedefinieerd.
+	SV	Favorit nr %s finns inte.
 
 FAVORITES_NONE_DEFINED
 	DE	Es sind noch keine Favoriten definiert
@@ -12262,6 +12342,7 @@ FAVORITES_NONE_DEFINED
 	FR	Aucun favori défini
 	IT	Non esistono Favoriti
 	NL	Er zijn geen favorieten
+	SV	Det finns inga favoriter ännu
 
 FAVORITES_PLAYING
 	DE	Spiele Favorit Nr. %s...
@@ -12269,6 +12350,7 @@ FAVORITES_PLAYING
 	ES	Se está escuchando favorita #%s
 	FR	Lecture favori n°%s
 	NL	Speel favoriet #%s
+	SV	Spelar favorit nr %s
 
 FAVORITES_FAVORITE_NUM
 	DE	Favorit Nr.
@@ -12278,16 +12360,18 @@ FAVORITES_FAVORITE_NUM
 	FR	Favori n°
 	IT	Favoriti #
 	NL	Favoriet #
+	SV	Favorit nr
 	ZH_CN	最喜爱#
 
 FAVORITES_RIGHT_TO_DELETE
-	DE	 (RECHTS zum löschen)
-	EN	 (Go right to delete)
+	DE	(RECHTS zum löschen)
+	EN	(Go right to delete)
 	ES	(RIGHT para eliminar)
 	FI	(OIKEALLE poistaaksesi)
 	FR	(DROITE pour supprimer)
 	IT	(DESTRA per cancellare)
 	NL	(Toets -> om te verwijderen)
+	SV	(Tryck HÖGER för att radera)
 	ZH_CN	 （删除按右方向键）
 
 FAVORITES_NOT_A_FAVORITE
@@ -12298,6 +12382,7 @@ FAVORITES_NOT_A_FAVORITE
 	FR	Pas un favori
 	IT	Non piu' tra i favoriti
 	NL	Geen favoriet
+	SV	Ingen favorit
 	ZH_CN	不是最喜爱的
 
 FAVORITES_RIGHT_TO_ADD
@@ -12308,6 +12393,7 @@ FAVORITES_RIGHT_TO_ADD
 	FR	Appuyez sur DROITE pour ajouter aux favoris
 	IT	Premi DESTRA per aggiungere ai favoriti
 	NL	Druk -> om favoriet toe te voegen
+	SV	Tryck HÖGER för att göra till favorit
 	ZH_CN	列入最喜爱的按右方向键
 
 FAVORITES_ADDING
@@ -12318,6 +12404,7 @@ FAVORITES_ADDING
 	FR	Sauvegarde favori...
 	IT	Salvataggio favoriti...
 	NL	Bewaren favorieten...
+	SV	Sparar favoriter...
 	ZH_CN	保存最喜爱的...
 
 FAVORITES_DELETING
@@ -12328,6 +12415,7 @@ FAVORITES_DELETING
 	FR	Suppression favori...
 	IT	Cancellazione favoriti...
 	NL	Verwijderen favorieten...
+	SV	Raderar favoriter...
 	ZH_CN	删除最喜爱的...
 
 SQUEEZENETWORK
@@ -12349,6 +12437,7 @@ SQUEEZENETWORK_CONNECTING
 	FR	Connexion à SqueezeNetwork...
 	IT	In connessione a SqueezeNetwork...
 	NL	Connectie maken met SqueezeNetwork...
+	SV	Ansluter till SqueezeNetwork...
 	ZH_CN	SqueezeNetwork连接中...
 
 SQUEEZENETWORK_SWITCH
@@ -12357,6 +12446,7 @@ SQUEEZENETWORK_SWITCH
 	FR	Se connecter à SqueezeNetwork
 	IT	Passa a SqueezeNetwork
 	NL	Wisselen naar SqueezeNetwork
+	SV	Växla till SqueezeNetwork
 	ZH_CN	切换到SqueezeNetwork
 
 SQUEEZENETWORK_SWITCHING
@@ -12365,6 +12455,7 @@ SQUEEZENETWORK_SWITCHING
 	FR	Connexion à SqueezeNetwork, veuillez patienter...
 	IT	Trasferimento sulla SqueezeNetwork, attendi prego...
 	NL	Wisselen naar SqueezeNetwork, even wachten...
+	SV	Växlar till SqueezeNetwork, vänta...
 	ZH_CN	正在切换到SqueezeNetwork，请稍等。
 
 SQUEEZENETWORK_SB2_REQUIRED
@@ -12393,6 +12484,7 @@ SETUP_SCROLLMODE
 	HE	גילגול טקסט
 	IT	Modalita' di scorrimento
 	NL	Tekstloopmode
+	SV	Rullningsfunktion
 	ZH_CN	卷动模式
 
 SETUP_SCROLLMODE_DESC
@@ -12404,6 +12496,7 @@ SETUP_SCROLLMODE_DESC
 	HE	סוג הגלגול כאשר טקסט מוצג גדול מהתצוגה הנראית
 	IT	Puoi selezionare come il lettore visualizzera' il testo troppo lungo sulla seconda linea dello schermo. Il modo di scorrimento standard aspettera' il tempo impostato in Pausa di scorrimento e quindi scorrera' il testo per visualizzare l'intera linea. Lo scorrimento continuera' fino a che il lettore visualizzera' questa schermata. I modi alternativi sono lo scorrimento una sola volta o il non scorrimento.
 	NL	Je kunt selecteren hoe de speler de tekst op de tweede regel moet tonen als die te lang is om in één keer te laten zien.<br>De standaard "Tekst laten lopen" optie wacht tot de pauze interval voorbij is en laat dan de tekst lopen. Het lopen zal voortduren zolang de tekst op het scherm getoond wordt.<br>De alternatieve manieren laten  de tekst één keer lopen en stopt vervolgens of laat de tekst in het geheel niet lopen.
+	SV	Du kan välja hur en spelare visar text på andra raden när texten är för lång för att få plats. Standardläget för rullning väntar "Paus vid rullning" sekunder och rullar sedan texten för att visa hela raden. Rullningen fortsätter så länge spelaren visar samma skärmbild. De alternativa funktionerna rullar texten en gång för att sedan sluta, eller rullar inte texten alls.
 	ZH_CN	您可以选择播放机在文体太长无法恰当显示时如何将其显示在第二行。
 
 SETUP_SCROLLMODE_DEFAULT
@@ -12415,6 +12508,7 @@ SETUP_SCROLLMODE_DEFAULT
 	HE	גלגול רגיל
 	IT	Scorrimento normale
 	NL	Tekst laten lopen
+	SV	Standardrullning
 	ZH_CN	标准卷动
 
 SETUP_SCROLLMODE_SCROLLONCE
@@ -12426,6 +12520,7 @@ SETUP_SCROLLMODE_SCROLLONCE
 	HE	גלגול חד פעמי
 	IT	Scorri solo una volta
 	NL	Laat tekst &eacute;&eacute;n keer lopen en stop
+	SV	Rulla en gång och stanna sedan
 	ZH_CN	卷动一次然后停止
 
 SETUP_SCROLLMODE_NOSCROLL
@@ -12437,6 +12532,7 @@ SETUP_SCROLLMODE_NOSCROLL
 	HE	ללא גלגול
 	IT	Non scorrere
 	NL	Niet tekst laten lopen
+	SV	Rulla inte
 	ZH_CN	不要卷动
 
 COMPILATION
@@ -12445,6 +12541,7 @@ COMPILATION
 	ES	Compilación
 	FI	Kokoelma
 	NL	Verzamel
+	SV	Samling
 	ZH_CN	合辑
 
 SETUP_VARIOUSARTISTS
@@ -12454,6 +12551,7 @@ SETUP_VARIOUSARTISTS
 	FI	Kokoelmat
 	IT	Compilation
 	NL	Diverse artiesten
+	SV	Diverse artister
 	ZH_CN	合辑
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION
@@ -12512,6 +12610,7 @@ VARIOUSARTISTS
 	FR	Artistes divers
 	IT	Artisti Vari
 	NL	Diverse artiesten
+	SV	Diverse artister
 	ZH_CN	多位艺人
 
 TRACKARTIST
@@ -12519,6 +12618,7 @@ TRACKARTIST
 	EN	Track Artist
 	ES	Artista del Álbum
 	NL	Artiest van liedje
+	SV	Spårets artist
 	ZH_CN	音轨艺人
 
 ALBUMARTIST
@@ -12528,12 +12628,14 @@ ALBUMARTIST
 	FI	Levyn esittäjä
 	IT	Album dell'artista
 	NL	Album artiest
+	SV	Albumets artist
 	ZH_CN	专辑艺人
 
 UNSYNC
 	DE	Synchronisation aufheben
 	EN	Unsync
 	ES	Desincronizar
+	SV	Avslutar synkronisering
 	ZH_CN	非同步
 
 SETUP_USEBANDASALBUMARTIST_DESC
@@ -12573,6 +12675,7 @@ LYRICS
 	FR	Paroles
 	IT	Testi
 	NL	Tekst liedje
+	SV	Text
 	ZH_CN	歌词
 
 SETUP_POWERONRESUME
@@ -12662,6 +12765,7 @@ ARTWORK
 	FR	Pochette
 	IT	Copertina
 	NL	Hoesafbeeldingen
+	SV	Skivomslag
 	ZH_CN	封面图
 
 ONE_BY_ONE_ARTWORK
@@ -12678,6 +12782,7 @@ OBJECT_RETRIEVAL_FAILURE
 	FI	Slimserver epäonnistui noutaessaan pyytämääsi resurssia.
 	IT	Lo SlimServer non ha trovato la risorsa che stavi cercando.
 	NL	SlimServer kon de hulpbron niet benaderen die je wilde hebben.
+	SV	SlimServer kunde inte ladda den önskade resursen.
 
 SETUP_LARGETEXTFONT
 	DE	Grosse Schrift
@@ -12687,6 +12792,7 @@ SETUP_LARGETEXTFONT
 	FR	Grande police
 	IT	Carattere per testo grande
 	NL	Grote tekst font
+	SV	Font för stor text
 	ZH_CN	大字体
 
 SETUP_LARGETEXTFONT_DESC
@@ -12697,6 +12803,7 @@ SETUP_LARGETEXTFONT_DESC
 	FR	Choisissez la police utilisée en mode texte de grande taille.
 	IT	Scegli quale carattere usare quando visualizzi testo grande.
 	NL	Kies welk font je wilt gebruiken wanneer je grote tekst wil gebruiken.
+	SV	Välj vilken font som skall användas för att visa stor text.
 	ZH_CN	选择在显示较大文字时您想要使用的字体。
 
 SETUP_LARGETEXTFONT_0
@@ -12707,6 +12814,7 @@ SETUP_LARGETEXTFONT_0
 	FR	Classique
 	IT	Classico
 	NL	Klassiek
+	SV	Klassisk
 	ZH_CN	典型
 
 SETUP_LARGETEXTFONT_1
@@ -12716,6 +12824,7 @@ SETUP_LARGETEXTFONT_1
 	FR	Moderne
 	IT	Moderno
 	NL	Modern
+	SV	Modern
 	ZH_CN	现代
 
 SORT_BY
@@ -12724,6 +12833,7 @@ SORT_BY
 	ES	Ordenar Por
 	FR	Trier par
 	NL	Sorteer op
+	SV	Sortera på
 	ZH_CN	排序按
 
 SORT_ARTISTALBUM
@@ -12732,6 +12842,7 @@ SORT_ARTISTALBUM
 	ES	Artista, Álbum
 	FR	Artiste, Album
 	NL	Artiest, album
+	SV	Artist, Album
 	ZH_CN	艺人，专辑
 
 SORT_ARTISTYEARALBUM
@@ -12740,6 +12851,7 @@ SORT_ARTISTYEARALBUM
 	ES	Artista, Año, Álbum
 	FR	Artiste, Année, Album
 	NL	Artiest, jaar, album
+	SV	Artist, År, Album
 	ZH_CN	一人，年份，专辑
 
 SORT_YEARALBUM
@@ -12748,6 +12860,7 @@ SORT_YEARALBUM
 	ES	Año, Álbum
 	FR	Année, Album
 	NL	Jaar, album
+	SV	År, Album
 	ZH_CN	年份，专辑
 
 SORT_YEARARTISTALBUM
@@ -12756,6 +12869,7 @@ SORT_YEARARTISTALBUM
 	ES	Año, Artista, Álbum
 	FR	Année, Artiste, Album
 	NL	Jaar, artiest, album
+	SV	År, Artist, Album
 	ZH_CN	年份，艺人，专辑
 
 SORT_GENREALBUM
@@ -12763,6 +12877,7 @@ SORT_GENREALBUM
 	EN	Genre, Album
 	ES	Género, Álbum
 	NL	Genre, album
+	SV	Genre, Album
 	ZH_CN	风格，专辑
 
 SORT_GENREARTISTALBUM
@@ -12771,6 +12886,7 @@ SORT_GENREARTISTALBUM
 	ES	Género, Artista, Álbum
 	FR	Genre, Artiste, Album
 	NL	Genre, artiest, album
+	SV	Genre, Artist, Album
 	ZH_CN	风格，艺人，专辑
 
 SETUP_CLOCKSOURCE
@@ -12779,6 +12895,7 @@ SETUP_CLOCKSOURCE
 	ES	Fuente de Reloj
 	FR	Source horloge
 	NL	Klok bron
+	SV	Klockkälla
 	ZH_CN	时钟源
 
 SETUP_CLOCKSOURCE_DESC
@@ -12788,6 +12905,7 @@ SETUP_CLOCKSOURCE_DESC
 	FR	Les sorties audio du Transporter peuvent être synchronisées avec des sources internes ou externes. Choisissez ci-dessous la source de l'horloge.
 	IT	Le uscite del Transporter possono essere sincronizzate con una sorgente interna o esterna. Scegli la sorgente di temporizzazione piu' sotto.
 	NL	Transporter's uitvoer kan gesynchroniseerd worden met interne of externe bronnen. Kies hieronder een bron.
+	SV	Transporters utgångar kan synkroniseras med interna eller externa källor. Välj klockkälla nedan.
 	ZH_CN	Transporter的输出可以和内置或外来的时钟源进行同步。在下列选择一个时钟源。
 
 CLOCKSOURCE_INTERNAL
@@ -12796,6 +12914,7 @@ CLOCKSOURCE_INTERNAL
 	ES	Reloj Interno
 	IT	Orologio interno
 	NL	Interne klok
+	SV	Intern klocka
 	ZH_CN	内置时钟
 
 CLOCKSOURCE_WORD_CLOCK
@@ -12803,6 +12922,7 @@ CLOCKSOURCE_WORD_CLOCK
 	ES	Entrada de Palabra de Reloj
 	IT	Orologio mondiale
 	NL	Word klok invoer
+	SV	Word Clock - ingång
 	ZH_CN	字形时钟输入
 
 VISUALIZER_EXTENDED_TEXT
@@ -12811,6 +12931,7 @@ VISUALIZER_EXTENDED_TEXT
 	ES	Display de Texto Extendido
 	FR	Infos texte étendues
 	NL	Uitgebreide tekstweergave
+	SV	Utökad textvisning
 	ZH_CN	扩展显示
 
 VISUALIZER_SPECTRUM_ANALYZER
@@ -12821,6 +12942,7 @@ VISUALIZER_SPECTRUM_ANALYZER
 	FR	Spectromètre
 	IT	Analizzatore di spettro
 	NL	Spectrum analyser
+	SV	Spektrumanalysator
 	ZH_CN	音谱分析器
 
 VISUALIZER_ANALOG_VUMETER
@@ -12831,6 +12953,7 @@ VISUALIZER_ANALOG_VUMETER
 	FR	VUmètre analogique
 	IT	VU meter analogico
 	NL	Analoge VU meter
+	SV	Analog VU-mätare
 	ZH_CN	模拟VU表
 
 VISUALIZER_DIGITAL_VUMETER
@@ -12841,6 +12964,7 @@ VISUALIZER_DIGITAL_VUMETER
 	FR	VUmètre numérique
 	IT	VU meter digitale
 	NL	Digitale VU meter
+	SV	Digital VU-mätare
 	ZH_CN	数码VU表
 
 SETUP_VISUALIZERMODE
@@ -12849,6 +12973,7 @@ SETUP_VISUALIZERMODE
 	ES	Pantalla de Visualizador
 	FR	Mode visualisation
 	NL	Visualisatie scherm
+	SV	Visualiseringsläge
 	ZH_CN	视像屏幕
 
 SETUP_VISUALIZERMODE_DESC
@@ -12857,6 +12982,7 @@ SETUP_VISUALIZERMODE_DESC
 	ES	El reproductor puede mostrar visualizadores o información de texto extendido en la pantalla de la derecha. Elegir el que se quiera mostrar. El botón Visual en el reproductor irá pasando de una a otra entre las opciones elegidas debajo.
 	FR	La platine peut afficher différents mode de visualisation ou des informations texte étendues sur la droite de l'écran. Choisissez le mode de visualisation que vous voulez afficher. Le bouton Visualisation sur la platine permet de parcourir tous les modes de visualisation sélectionnés ci-dessous.
 	IT	Il lettore può mostrare testo o grafica sullo schermo di destra. Scegli ciò che preferisci sia visualizzato. Il bottone Visual sul lettore visualizzerà ciclicamente le opzioni selezionate più sotto.
+	SV	Spelaren kan visa visualiserare eller utökad textinformation till höger på skärmen. Välj vad du vill skall visas. "Visual" - knappen på spelaren stegar igenom de olika alternativen nedan.
 	NL	De speler kan visualisaties of extra informatie tonen op het rechter scherm. Kies wat je getoond wilt hebben. <BR>The Visual toets op de speler zal de keuzes doorlopen die je hieronder kiest.
 
 SETUP_SERVERPRIORITY
@@ -12866,6 +12992,7 @@ SETUP_SERVERPRIORITY
 	FR	Priorité serveur
 	IT	Priorità server
 	NL	Server prioriteit
+	SV	Serverprioritet
 	ZH_CN	SlimServer服务器流程优先值
 
 SETUP_SERVERPRIORITY_DESC
@@ -12875,6 +13002,7 @@ SETUP_SERVERPRIORITY_DESC
 	FR	Vous pouvez fixer le niveau de priorité du SlimServer.
 	IT	Puoi specificare la priorità attribuita allo Slimserver.
 	NL	Je kunt de prioriteit specificeren van SlimServer binnen je server.
+	SV	Du kan ange vilken prioritet SlimServer kör under.
 	ZH_CN	您可以配置SlimServer服务器流程的优先设置。
 
 SETUP_SCANNERPRIORITY
@@ -12884,6 +13012,7 @@ SETUP_SCANNERPRIORITY
 	FR	Priorité répertoriage
 	IT	Priorità scansione
 	NL	Scanner prioriteit
+	SV	Prioritet för genomsökning
 	ZH_CN	扫描流程优先值
 
 SETUP_SCANNERPRIORITY_DESC
@@ -12893,6 +13022,7 @@ SETUP_SCANNERPRIORITY_DESC
 	FR	Vous pouvez fixer le niveau de priorité du processus de répertoriage.
 	IT	Puoi specificare la priorità attribuita al processo di scansione.
 	NL	Je kunt de prioriteit specificeren voor het scannen van nieuwe en gewijzigde muziek.
+	SV	Här kan du ange prioritet för genomsökningsprocessen.
 	ZH_CN	您可以配置扫描流程的优先设置。
 
 SETUP_PRIORITY_DEFAULT
@@ -12902,6 +13032,7 @@ SETUP_PRIORITY_DEFAULT
 	FR	Priorité par défaut
 	IT	Priorità di default
 	NL	Standaard prioriteit
+	SV	Standardprioritet
 	ZH_CN	确省优先
 
 SETUP_PRIORITY_CURRENT
@@ -12911,6 +13042,7 @@ SETUP_PRIORITY_CURRENT
 	FR	Priorité serveur actuelle
 	IT	Priorità server in uso
 	NL	Huidige serverprioriteit
+	SV	Aktuell prioritet
 	ZH_CN	现有服务器优先设置
 
 SETUP_PRIORITY_HIGH
@@ -12920,6 +13052,7 @@ SETUP_PRIORITY_HIGH
 	FR	Elevée
 	IT	Alta
 	NL	Hoog
+	SV	Hög
 	ZH_CN	高
 
 SETUP_PRIORITY_ABOVE_NORMAL
@@ -12929,6 +13062,7 @@ SETUP_PRIORITY_ABOVE_NORMAL
 	FR	Au-dessus de la normale
 	IT	Sopra il normale
 	NL	Boven normaal
+	SV	Över normal
 	ZH_CN	中高
 
 SETUP_PRIORITY_NORMAL
@@ -12938,6 +13072,7 @@ SETUP_PRIORITY_NORMAL
 	FR	Normale
 	IT	Normale
 	NL	Normaal
+	SV	Normal
 	ZH_CN	中
 
 SETUP_PRIORITY_BELOW_NORMAL
@@ -12947,6 +13082,7 @@ SETUP_PRIORITY_BELOW_NORMAL
 	FR	Sous la normale
 	IT	Sotto il normale
 	NL	Onder normaal
+	SV	Under normal
 	ZH_CN	中低
 
 SETUP_PRIORITY_LOW
@@ -12956,6 +13092,7 @@ SETUP_PRIORITY_LOW
 	FR	Basse
 	IT	Bassa
 	NL	Laag
+	SV	Låg
 	ZH_CN	低
 
 SETUP_DIGITALOUTPUTENCODING
@@ -13103,18 +13240,21 @@ INFORMATION_PLAYER_VOLTAGE
 	DE	Spannung
 	EN	Voltage
 	IT	Voltaggio
+	SV	Spänning
 	ZH_CN	伏特
 
 LOADING_BROWSE_MUSIC_FOLDER
 	DE	Lade Musikverzeichnis...
 	EN	Loading Music Folder...
 	NL	Laden muziekfolder...
+	SV	Laddar Musikmapp...
 	ZH_CN	音乐文件夹装载中
 
 LOADING
 	DE	Lade...
 	EN	Loading...
 	NL	Laden...
+	SV	Laddar...
 	ZH_CN	装载中
 
 SRC
@@ -13356,11 +13496,14 @@ SETUP_DEBUG_LEVEL_DEBUG
 SAVE_SETTINGS
 	DE	Einstellungen speichern
 	EN	Save Settings
+	SV	Spara inställningar
 
 SHRINK
 	DE	Kleiner
 	EN	Shrink
+	SV	Minska
 
 ENLARGE
 	DE	Grösser
 	EN	Enlarge
+	SV	Förstora
