@@ -390,7 +390,7 @@ sub exportDuplicates {
 
 	$log->info(sprintf("Finished export (%d records)", scalar @songs));
 }
-	
+
 sub _updatePlaylist {
 	my ($class, $name, $songs) = @_;
 
@@ -407,12 +407,24 @@ sub _updatePlaylist {
 		$name,
 		Slim::Utils::Prefs::get('MusicMagicplaylistsuffix'),
 	);
-	
-	$attributes{'LIST'}  = [ map { Slim::Utils::Misc::fileURLFromPath(
 
-		Plugins::MusicMagic::Common::convertPath($_)
+	$attributes{'LIST'}  = [];
 
-	) } @{$songs} ];
+	for my $song (@$songs) {
+
+		if ($OS eq 'win') {
+
+			$song = Slim::Utils::Unicode::utf8decode_guess(
+				$song, Slim::Utils::Unicode::encodingFromString($song),
+			);
+		}
+
+		$song = Slim::Utils::Misc::fileURLFromPath(
+			Plugins::MusicMagic::Common::convertPath($song)
+		);
+
+		push @{$attributes{'LIST'}}, $song;
+	}
 
 	$attributes{'CT'}                 = 'mmp';
 	$attributes{'TAG'}                = 1;
