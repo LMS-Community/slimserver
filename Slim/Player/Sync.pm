@@ -216,7 +216,7 @@ sub sync {
 		($client, $buddy) = ($buddy, $client);
 	}
 
-	if ($buddy->prefget('silent')) {
+	if ($buddy->prefGet('silent')) {
 
 		$log->warn($buddy->id . " is silent and we're trying to make it a master!");
 	}
