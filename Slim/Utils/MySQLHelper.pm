@@ -45,6 +45,9 @@ use Slim::Utils::SQLHelper;
 }
 
 my $log = logger('database.mysql');
+my $OS  = Slim::Utils::OSDetect::OS();
+
+my $serviceName = 'SlimServerMySQL';
 
 =head2 init()
 
@@ -61,7 +64,7 @@ sub init {
 
 		$log->info("Not starting MySQL - looks to be user configured.");
 
-		if (Slim::Utils::OSDetect::OS() ne 'win') {
+		if ($OS ne 'win') {
 
 			my $mysql_config = which('mysql_config');
 
@@ -107,7 +110,15 @@ sub init {
 	# time. That's ok.
 	if (!$class->dbh) {
 
-		$class->startServer;
+		# Bring MySQL up as a service on Windows.
+		if ($OS eq 'win') {
+
+			$class->startServer(1);
+
+		} else {
+
+			$class->startServer;
+		}
 	}
 
 	return 1;
@@ -130,16 +141,13 @@ sub createConfig {
 		'language' => $class->mysqlDir,
 		'datadir'  => catdir($cacheDir, 'MySQL'),
 		'socket'   => $class->socketFile,
+		'pidFile'  => $class->pidFile,
+		'errorLog' => catdir($cacheDir, 'mysql-error-log.txt'),
 	);
 
 	# Because we use the system MySQL, we need to point to the right
 	# directory for the errmsg. files. Default to english.
-	if (Slim::Utils::OSDetect::isDebian()) {
-
-		$config{'language'} = '/usr/share/mysql/english';
-	}
-
-	if (Slim::Utils::OSDetect::isRHELorFC()) {
+	if (Slim::Utils::OSDetect::isDebian() || Slim::Utils::OSDetect::isRHELorFC()) {
 
 		$config{'language'} = '/usr/share/mysql/english';
 	}
@@ -159,7 +167,7 @@ sub createConfig {
 	}
 
 	# MySQL on Windows wants forward slashes.
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
+	if ($OS eq 'win') {
 
 		for my $key (keys %config) {
 			$config{$key} =~ s/\\/\//g;
@@ -171,11 +179,11 @@ sub createConfig {
 	my $template = Template->new({ 'ABSOLUTE' => 1 }) or die Template->error(), "\n";
            $template->process($ttConf, \%config, $output) || die $template->error;
 
-	$class->confFile($output);
-
 	# Bug: 3847 possibly - set permissions on the config file.
 	# Breaks all kinds of other things.
 	# chmod(0664, $output);
+
+	return $output;
 }
 
 =head2 startServer()
@@ -187,15 +195,28 @@ This is a no-op if you are using a pre-configured copy of MySQL.
 =cut
 
 sub startServer {
-	my $class = shift;
+	my $class   = shift;
+	my $service = shift || 0;
 
-	# Start on Debian - but use the private port/socket.
-	# if (Slim::Utils::OSDetect::isDebian()) {
-	#	$log->info("Not starting MySQL server on Debian..");
-	#	return 1;
-	#}
+	my $isRunning = 0;
 
-	if ($class->pidFile && $class->processObj && $class->processObj->alive) {
+	if ($service) {
+
+		my %status = ();
+
+        	Win32::Service::GetStatus('', $serviceName, \%status);
+
+		if ($status{'CurrentState'} == 0x04) {
+
+			$isRunning = 1;
+		}
+
+	} elsif ($class->pidFile && $class->processObj && $class->processObj->alive) {
+
+		$isRunning = 1;
+	}
+
+	if ($isRunning) {
 
 		$log->info("MySQL is already running!");
 
@@ -208,26 +229,54 @@ sub startServer {
 	};
 
 	my $confFile = $class->confFile;                                                                                                                    
+	my $process  = undef;
 
 	# Bug: 3461
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
+	if ($OS eq 'win') {
+		$mysqld   = Win32::GetShortPathName($mysqld);
 		$confFile = Win32::GetShortPathName($confFile);
 	}
 
-	my @commands = (
-		$mysqld, 
-		sprintf('--defaults-file=%s', $confFile),
-		sprintf('--pid-file=%s', $class->pidFile),
-	);
+	my @commands = ($mysqld, sprintf('--defaults-file=%s', $confFile));
 
-	# Log MySQL errors to slimserver log file
-	if ($::logfile) {
-		push @commands, sprintf('--log-error=%s', $::logfile);
+	$log->info(sprintf("About to start MySQL as a %s with command: [%s]\n",
+		($service ? 'service' : 'process'), join(' ', @commands),
+	));
+
+	if ($service && $OS eq 'win') {
+
+		my %status = ();
+
+        	Win32::Service::GetStatus('', $serviceName, \%status);
+
+		# Install the service, if it isn't.
+       		if (scalar keys %status == 0) {
+
+			push @commands, ("--install $serviceName", pop @commands);
+
+			system(join(' ', @commands));
+
+        		Win32::Service::GetStatus('', $serviceName, \%status);
+
+       			if (scalar keys %status == 0) {
+
+				logError("Couldn't install MySQL as a service! Will run as a process!");
+				$service = 0;
+			}
+		}
+
+		if ($service) {
+
+			Win32::Service::StartService('', $serviceName);
+		}
 	}
 
-	$log->info(sprintf("About to start MySQL with command: [%s]\n", join(' ', @commands)));
+	# Catch Unix users, and Windows users when we couldn't run as a service.
+	if (!$service) {
 
-	my $proc = Proc::Background->new(@commands);
+		$process = Proc::Background->new(@commands);
+	}
+
 	my $dbh  = undef;
 	my $secs = 30;
 
@@ -248,7 +297,7 @@ sub startServer {
 		$log->logdie("FATAL: Server didn't startup in $secs seconds! Exiting!");
 	}
 
-	$class->processObj($proc);
+	$class->processObj($process);
 
 	return 1;
 }
@@ -259,11 +308,27 @@ Bring down our private copy of MySQL server.
 
 This is a no-op if you are using a pre-configured copy of MySQL.
 
+Or are running MySQL as a Windows service.
+
 =cut
 
 sub stopServer {
 	my $class = shift;
 	my $dbh   = shift || $class->dbh;
+
+	if ($OS eq 'win') {
+
+		my %status = ();
+
+		Win32::Service::GetStatus('', $serviceName, \%status);
+
+       		if (scalar keys %status != 0) {
+
+			$log->info("Running as Windows service, skipping shutdown.");
+
+			return;
+		}
+	}
 
 	# We have a running server & handle. Shut it down internally.
 	if ($dbh) {
@@ -342,8 +407,7 @@ Create required MySQL system tables. See the L<MySQL/system.sql> file.
 sub createSystemTables {
 	my $class = shift;
 
-	# We need to bring up MySQL to set the initial system tables, then
-	# bring it down again.
+	# We need to bring up MySQL to set the initial system tables, then bring it down again.
 	$class->startServer;
 
 	my $sqlFile = catdir($class->mysqlDir, 'system.sql');
@@ -392,7 +456,7 @@ sub dbh {
 	my $class = shift;
 	my $dsn   = '';
 
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
+	if ($OS eq 'win') {
 
 		$dsn = Slim::Utils::Prefs::get('dbsource');
 		$dsn =~ s/;database=.+;?//;
