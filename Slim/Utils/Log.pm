@@ -58,6 +58,18 @@ my $hasConfigFile = 0;
 
 my @validLevels   = qw(OFF FATAL ERROR WARN INFO DEBUG);
 
+=head2 isInitialized( )
+
+Returns true if the logging system is initialized. False otherwise.
+
+=cut
+
+sub isInitialized {
+	my $class = shift;
+
+	return Log::Log4perl->initialized;
+}
+
 =head2 init( )
 
 Initialize the logging subsystem.
@@ -258,11 +270,10 @@ sub logBacktrace {
 	$Log::Log4perl::caller_depth++;
 
 	if (scalar @_) {
-		Slim::Utils::Misc::bt();
 		$self->error("Error: ", @_);
 	}
 
-	$self->error("Backtrace: \n", Slim::Utils::Misc::bt(1));
+	$self->error(Slim::Utils::Misc::bt(1));
 
 	$Log::Log4perl::caller_depth--;
 }

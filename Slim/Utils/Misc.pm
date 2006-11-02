@@ -64,6 +64,7 @@ use Slim::Utils::Log;
 		require Win32::File;
 		require Win32::FileOp;
 		require Win32::Process;
+		require Win32::Service;
 		require Win32::Shortcut;
 	}
 }
@@ -408,7 +409,10 @@ sub pathFromFileURL {
 	my $path = $uri->path;
 	my $log  = logger('os.files');
 
-	$log->info("Got $path from file url $url");
+	if (Slim::Utils::Log->isInitialized) {
+
+		$log->info("Got $path from file url $url");
+	}
 
 	# only allow absolute file URLs and don't allow .. in files...
 	if ($path !~ /[\/\\]\.\.[\/\\]/) {
@@ -416,10 +420,13 @@ sub pathFromFileURL {
 		$file = fixPathCase($uri->file);
 	}
 
-	if (!defined($file))  {
-		$log->warn("Bad file: url $url");
-	} else {
-		$log->info("Extracted: $file from $url");
+	if (Slim::Utils::Log->isInitialized) {
+
+		if (!defined($file))  {
+			$log->warn("Bad file: url $url");
+		} else {
+			$log->info("Extracted: $file from $url");
+		}
 	}
 
 	if (!$noCache && scalar keys %fileToPathCache > 32) {
@@ -1127,7 +1134,7 @@ sub msg {
 
 		my $now = substr(int(Time::HiRes::time() * 10000),-4);
 
-		$entry = join("", strftime("%H:%M:%S.", localtime), $now, " $entry");
+		$entry = join("", strftime("[%H:%M:%S.", localtime), $now, "] $entry");
 	}
 
 	if (!$::quiet) {
