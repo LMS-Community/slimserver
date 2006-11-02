@@ -765,17 +765,6 @@ sub encodingFromString {
 
 	my $encoding = 'raw';
 
-	# Try and using Encode::Detect if we have it installed.
-	if ($encodeDetect && $_[0] && !Encode::is_utf8($_[0])) {
-
-		my $charset = Encode::Detect::Detector::detect($_[0]);
-
-		if ($charset) {
-
-			return lc($charset);
-		}
-	}
-
 	# Don't copy a potentially large string - just read it from the stack.
 	if (looks_like_ascii($_[0])) {
 
@@ -800,6 +789,10 @@ sub encodingFromString {
 	} elsif (looks_like_cp1252($_[0])) {
 	
 		$encoding = 'cp1252';
+
+	} elsif ($encodeDetect && $_[0] && !Encode::is_utf8($_[0])) {
+
+		$encoding  = lc(Encode::Detect::Detector::detect($_[0]));
 	}
 
 	return $encoding;
