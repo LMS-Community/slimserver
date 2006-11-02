@@ -43,7 +43,6 @@ sub init {
 			my $addOrInsert = shift;
 
 			playOrAdd($client,$addOrInsert);
-			$client->execute(['playlist', 'jump', 0]) unless $addOrInsert;
 		},
 	);
 }
