@@ -54,6 +54,10 @@ sub dbh {
 
 			unlink($lockFile);
 		}
+
+	} elsif ($@) {
+
+		return $self->throw_exception($@);
 	}
 
 	return $self->_dbh;
