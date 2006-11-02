@@ -24,17 +24,21 @@
 	[% FOREACH role = itemobj.contributorRoles.sort %]
 
 		[% contributors = itemobj.contributorsOfType(role) %]
+		
 		[% IF contributors %]
-
 			<tr>
-                        <td> [% role | upper | string; "COLON" | string %]</td>
-                        <td>
+				<td>[% role | upper | string; "COLON" | string %]</td>
+				[% contributorsHTML = [] %]
 
-			[% FOREACH contributor = contributors.sort %]
-				<a href="browsedb.html?hierarchy=contributor,album,track&level=1&contributor.id=[% contributor.id %]&amp;player=[% playerURI %]" target="browser">[% contributor.name | html %]</a>
-			[% END %]
+				<td>[% FOREACH contributor = contributors.sort %]
 
-			</td>
+					[% contributorHTMLFrag = "<a href=\"browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=$contributor.id&amp;player=$playerURI\" target=\"browser\">$contributor.name</a>" %]
+
+					[% contributorsHTML.push(contributorHTMLFrag) %]
+
+				[% END %]
+
+				[% contributorsHTML.join(', ') %]</td>
 			</tr>
 		[% END %]
 
@@ -49,18 +53,25 @@
 		</td>
 	</tr>
 	[% END %]
-	[% genres = itemobj.genres %]
-	[% IF genres %]
+	[% IF itemobj.genres %][% genresHTML = [] %]
+
 	<tr>
+
+		<td>[% "GENRE" | string %][% "COLON" | string %]</td>
+
 		<td>
-			[% "GENRE" | string %][% "COLON" | string %]
-		</td>
-		<td>
-		[% FOREACH genre = genres %]
-                        <a href="browsedb.html?hierarchy=contributor,album,track&level=0&genre.id=[% genre.id %]&amp;player=[% playerURI %]" target="browser">[% genre.name %]</a>
+
+		[% FOREACH genre = itemobj.genres.sort %]
+
+					[% genreHTMLFrag = "<a href=\"browsedb.html?hierarchy=genre,contributor,album,track&amp;level=1&amp;genre.id=$genre.id&amp;player=$playerURI\" target=\"browser\">$genre.name</a>" %]
+					[% genresHTML.push(genreHTMLFrag) %]
 		[% END %]
+
+		[% genresHTML.join(', ') %]
 		</td>
+
 	</tr>
+
 	[% END %] [% IF itemobj.tracknum %] 
 	<tr>
 		<td>

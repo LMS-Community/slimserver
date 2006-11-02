@@ -44,12 +44,14 @@
 			</li>
 		[% END %]
 	
-		[% genres = itemobj.genres %] 
-		[% IF genres %] 
+		[% IF itemobj.genres %] [% genresHTML = [] %]
 			<li><div class="songInfoTitle">[% "GENRE" | string; "COLON" | string %]</div>
-				<div class="songInfoText">[% FOREACH genre = genres %]
-					<a href="browsedb.html?hierarchy=genre,contributor,album,track&amp;level=1&amp;genre.id=[% genre.id %]&amp;player=[% playerURI %]" target="browser">[% genre.name | html %]</a>
-				[% END %]</div>
+				<div class="songInfoText">
+					[% FOREACH genre = itemobj.genres.sort %]
+						[% genreHTMLFrag = "<a href=\"browsedb.html?hierarchy=genre,contributor,album,track&amp;level=1&amp;genre.id=$genre.id&amp;player=$playerURI\" target=\"browser\">$genre.name</a>" %]
+						[% genresHTML.push(genreHTMLFrag) %]
+					[% END %]
+				[% genresHTML.join(', ') %]</div>
 			</li>
 		[% END %]
 	

@@ -25,20 +25,20 @@
 		<table width="100%" cellspacing="0" cellpadding="5" border="0">
 			<tr>
 				<td align="left" colspan = 2>
-			        <table width = '75'><tr>
-			                 [% PROCESS browsecontrols_abbr
-			                 itemobj = itemobj
-			                 attributes = attributes
- 			                odd = odd
-			                 mixerlinks = mixerlinks %]
-			        </tr></table>
+				<table width = '75'><tr>
+					 [% PROCESS browsecontrols_abbr
+					 itemobj = itemobj
+					 attributes = attributes
+					odd = odd
+					 mixerlinks = mixerlinks %]
+				</tr></table>
 				</td>
 			</tr>
 			<tr>
 				<td valign = 'top'>
 				<table border = '0'>
-        			<tr>
-               				<td class = 'smallitemtext'>
+				<tr>
+					<td class = 'smallitemtext'>
 					<nobr>[% "TITLE" | string %][% "COLON" | string %]</nobr>
 					</td>
 					<td class = 'smallitemtext'>
@@ -46,73 +46,82 @@
 					</td>
 				</tr>
 				[% FOREACH role = itemobj.contributorRoles.sort %]
-				[% contributors = itemobj.contributorsOfType(role) %]
-				[% IF contributors %]
+			
+					[% contributors = itemobj.contributorsOfType(role) %]
+					
+					[% IF contributors %]
+						<tr>
+							<td class = 'smallitemtext'>[% role | upper | string; "COLON" | string %]</td>
+							[% contributorsHTML = [] %]
+			
+							<td class = 'smallitemtext'>[% FOREACH contributor = contributors.sort %]
+			
+								[% contributorHTMLFrag = "<a href=\"browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=$contributor.id&amp;player=$playerURI\" target=\"browser\">$contributor.name</a>" %]
+			
+								[% contributorsHTML.push(contributorHTMLFrag) %]
+			
+							[% END %]
+			
+							[% contributorsHTML.join(', ') %]</td>
+						</tr>
+					[% END %]
+			
+				[% END %]
+				[% IF itemobj.album %]
 				<tr>
 					<td class = 'smallitemtext'>
-					[% role | upper | string; "COLON" | string %]
-					</td>
+					[% "ALBUM" | string %][% "COLON" | string %]
+					 </td>
 					<td class = 'smallitemtext'>
-					[% FOREACH contributor = contributors.sort %]
-					<a href="browsedb.html?hierarchy=contributor,album,track&level=1&contributor.id=[% contributor.id %]&amp;player=[% playerURI %]" style="text-decoration:none">[% contributor.name | html %]</a>
-					[% END %]
+						<a href="browsedb.html?hierarchy=contributor,album,track&level=2&album.id=[% itemobj.album.id %]&player=[% playerURI %]" style="text-decoration:none">[% itemobj.album.title %]</a>
 					</td>
 				</tr>
-				[% END %]
-			        [% END %] [% IF itemobj.album %]
-			        <tr>
-			                <td class = 'smallitemtext'>
-		                        [% "ALBUM" | string %][% "COLON" | string %]
-               				 </td>
-			                <td class = 'smallitemtext'>
-						<a href="browsedb.html?hierarchy=contributor,album,track&level=2&album.id=[% itemobj.album.id %]&player=[% playerURI %]" style="text-decoration:none">[% itemobj.album.title %]</a>
-			                </td>
-			        </tr>
-			        [% END %] 
-			        [% genres = itemobj.genres %]
-			        [% IF genres %]
-			        <tr>
-			                <td class = 'smallitemtext'>
-		                        [% "GENRE" | string %][% "COLON" | string %]
-       				         </td>
-			                <td class = 'smallitemtext'>
-			                [% FOREACH genre = genres %]
-		                        <a href="browsedb.html?hierarchy=genre,contributor,album,track&amp;level=1&amp;genre.id=[% genre.id %]&amp;player=[% playerURI %]"style="text-decoration:none">[% genre.name %]</a>
-               				 [% END %]
-			                </td>
-				        [% END %]
-			        </tr>
+				[% END %] 
+				[% IF itemobj.genres %][% genresHTML = [] %]
+				<tr>
+					<td class = 'smallitemtext'>
+					[% "GENRE" | string %][% "COLON" | string %]
+					</td>
+					<td class = 'smallitemtext'>
+					[% FOREACH genre = itemobj.genres.sort %]
+						[% genreHTMLFrag = "<a href=\"browsedb.html?hierarchy=genre,contributor,album,track&amp;level=1&amp;genre.id=$genre.id&amp;player=$playerURI\" style=\"text-decoration:none\">$genre.name</a>" %]
+						[% genresHTML.push(genreHTMLFrag) %]
+					[% END %]
+					[% genresHTML.join(', ') %]
+					</td>
+					[% END %]
+				</tr>
 			</table>
 			</td>
 			<td valign = 'top'>
 			<table> 
 			[% IF itemobj.tracknum %]
-			        <tr>
-			                <td class = 'smallitemtext'>
-		                        [% "TRACK" | string %][% "COLON" | string %]
-			                </td>
-			                <td class = 'smallitemtext'>
-		                        [% itemobj.tracknum %]
-			                </td>
-			        </tr>
-			        [% END %] [% IF itemobj.duration %]
-			        <tr>
-                			<td class = 'smallitemtext'>
-		                        [% "LENGTH" | string %][% "COLON" | string %]
-			                </td>
-			                <td class = 'smallitemtext'>
-		                        [% itemobj.duration %]
-			                </td>
-			        </tr>
-			        [% END %] [% IF itemobj.year %]
-			        <tr>
-		                <td class = 'smallitemtext'>
-		                        [% "YEAR" | string %][% "COLON" | string %]
-		                </td>
-		                <td class = 'smallitemtext'>
-		                        [% itemobj.year %]
-		                </td>
-		        </tr>
+				<tr>
+					<td class = 'smallitemtext'>
+					[% "TRACK" | string %][% "COLON" | string %]
+					</td>
+					<td class = 'smallitemtext'>
+					[% itemobj.tracknum %]
+					</td>
+				</tr>
+				[% END %] [% IF itemobj.duration %]
+				<tr>
+					<td class = 'smallitemtext'>
+					[% "LENGTH" | string %][% "COLON" | string %]
+					</td>
+					<td class = 'smallitemtext'>
+					[% itemobj.duration %]
+					</td>
+				</tr>
+				[% END %] [% IF itemobj.year %]
+				<tr>
+				<td class = 'smallitemtext'>
+					[% "YEAR" | string %][% "COLON" | string %]
+				</td>
+				<td class = 'smallitemtext'>
+					[% itemobj.year %]
+				</td>
+			</tr>
 				[% END %] [% IF itemobj.replay_gain.defined %] 
 				<tr> 
 					<td class = 'smallitemtext'>[% "REPLAYGAIN" | string; "COLON" | string %]</td>
@@ -123,57 +132,57 @@
 					<td class = 'smallitemtext'>[% "ALBUMREPLAYGAIN" | string; "COLON" | string %]</td>
 					<td class = 'smallitemtext'>[% itemobj.album.replay_gain | format('%2.2f') | html %] dB</td>
 				</tr>
-		        [% END %] [% IF comment %]
-		        <tr>
-		                <td class = 'smallitemtext'>
-		                        [% "COMMENT" | string %][% "COLON" | string %]
-		                </td>
-		                <td class = 'smallitemtext'>
-		                        [% comment %]
-		                </td>
-		        </tr>
+			[% END %] [% IF comment %]
+			<tr>
+				<td class = 'smallitemtext'>
+					[% "COMMENT" | string %][% "COLON" | string %]
+				</td>
+				<td class = 'smallitemtext'>
+					[% comment %]
+				</td>
+			</tr>
 			[% END %] [% IF itemobj.lyrics %]
-		        <tr>
-		                <td class = 'smallitemtext'>
-		                        [% "LYRICS" | string %][% "COLON" | string %]
-		                </td>
-		                <td class = 'smallitemtext'>
-		                        [% itemobj.lyrics | html_line_break | html_para %]
-		                </td>
-		        </tr>
-		        [% END %] [% IF filelength %]
-		        <tr>
-		                <td class = 'smallitemtext'>
-		                        [% "FILELENGTH" | string %][% "COLON" | string %]
-		                </td>
-		                <td class = 'smallitemtext'>
-		                        [% filelength %] [% "BYTES" | string %]
-		                </td>
-		        </tr>
-		        [% END %] [% IF itemobj.prettyBitRate %]
-		        <tr>
-		                <td class = 'smallitemtext'>
-		                        [% "BITRATE" | string %][% "COLON" | string %]
-		                </td>
-		                <td class = 'smallitemtext'>
-		                        [% itemobj.prettyBitRate %]
-		                </td>
-		        </tr>
-		        [% END %][% IF itemobj.samplerate %] 
-		        <tr> 
-		                <td class = 'smallitemtext'>[% "SAMPLERATE" | string; "COLON" | string %]</td>
-		                <td class = 'smallitemtext'>[% itemobj.prettySampleRate | html %] </td>
-		        </tr>
-		        [% END %] [% IF itemobj.tagversion %]
-		        <tr>
-		                <td class = 'smallitemtext'>
-		                        [% "TAGVERSION" | string %][% "COLON" | string %]
-		                </td>
-		                <td class = 'smallitemtext'>
-		                        [% itemobj.tagversion %]
-		                </td>
-		        </tr>
-		        [% END %]
+			<tr>
+				<td class = 'smallitemtext'>
+					[% "LYRICS" | string %][% "COLON" | string %]
+				</td>
+				<td class = 'smallitemtext'>
+					[% itemobj.lyrics | html_line_break | html_para %]
+				</td>
+			</tr>
+			[% END %] [% IF filelength %]
+			<tr>
+				<td class = 'smallitemtext'>
+					[% "FILELENGTH" | string %][% "COLON" | string %]
+				</td>
+				<td class = 'smallitemtext'>
+					[% filelength %] [% "BYTES" | string %]
+				</td>
+			</tr>
+			[% END %] [% IF itemobj.prettyBitRate %]
+			<tr>
+				<td class = 'smallitemtext'>
+					[% "BITRATE" | string %][% "COLON" | string %]
+				</td>
+				<td class = 'smallitemtext'>
+					[% itemobj.prettyBitRate %]
+				</td>
+			</tr>
+			[% END %][% IF itemobj.samplerate %] 
+			<tr> 
+				<td class = 'smallitemtext'>[% "SAMPLERATE" | string; "COLON" | string %]</td>
+				<td class = 'smallitemtext'>[% itemobj.prettySampleRate | html %] </td>
+			</tr>
+			[% END %] [% IF itemobj.tagversion %]
+			<tr>
+				<td class = 'smallitemtext'>
+					[% "TAGVERSION" | string %][% "COLON" | string %]
+				</td>
+				<td class = 'smallitemtext'>
+					[% itemobj.tagversion %]
+				</td>
+			</tr>
+			[% END %]
 		</table>
 		</td>
 		</tr>
