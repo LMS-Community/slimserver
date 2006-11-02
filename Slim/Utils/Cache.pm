@@ -97,6 +97,9 @@ sub init {
 	Slim::Utils::Timers::setTimer( undef, time() + 10, \&cleanup );
 }
 
+# Backwards-compat
+*instance = \&new;
+
 sub new {
 	my $class = shift;
 	my $namespace = shift || $defaultNameSpace;
