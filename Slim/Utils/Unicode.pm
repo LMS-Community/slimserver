@@ -47,6 +47,7 @@ our (
 {
 	# We implement a decode() & encode(), so don't import those.
 	require Encode;
+	require Encode::Guess;
 
 	$FB_QUIET = Encode::FB_QUIET();
 
@@ -155,20 +156,16 @@ our (
 	if (!$@) {
 
 		$encodeDetect = 1;
+	}
 
-	} else {
+	# Setup Encode::Guess
+	$Encode::Guess::NoUTFAutoGuess = 1;
 
-		require Encode::Guess;
+	# Setup suspects for Encode::Guess based on the locale - we might also
+	# want to use our own Language pref?
+	if ($lc_ctype ne 'utf8') {
 
-		$encodeDetect = 0;
-		$Encode::Guess::NoUTFAutoGuess = 1;
-
-		# Setup suspects for Encode::Guess based on the locale - we might also
-		# want to use our own Language pref?
-		if ($lc_ctype ne 'utf8') {
-
-			Encode::Guess->add_suspects($lc_ctype);
-		}
+		Encode::Guess->add_suspects($lc_ctype);
 	}
 
 	# Create a regex for looks_like_utf8()
@@ -763,39 +760,46 @@ Returns 'raw' if not: ascii, utf-32, utf-16, utf-8, iso-8859-1 or cp1252
 
 sub encodingFromString {
 
-	my $encoding = 'raw';
-
 	# Don't copy a potentially large string - just read it from the stack.
 	if (looks_like_ascii($_[0])) {
 
-		$encoding = 'ascii';
+		return 'ascii';
 
 	} elsif (looks_like_utf32($_[0])) {
 
-		$encoding = 'utf-32';
+		return 'utf-32';
 
 	} elsif (looks_like_utf16($_[0])) {
 	
-		$encoding = 'utf-16';
+		return 'utf-16';
 
 	} elsif (looks_like_utf8($_[0])) {
 	
-		$encoding = 'utf8';
+		return 'utf8';
+	}
 
-	} elsif (looks_like_latin1($_[0])) {
+	# Check Encode::Detect::Detector before ISO-8859-1, as it can find
+	# overlapping charsets.
+	if ($encodeDetect) {
+
+		my $charset = Encode::Detect::Detector::detect($_[0]);
+
+		if ($charset) {
+
+			return lc($charset);
+		}
+	}
+
+	if (looks_like_latin1($_[0])) {
 	
-		$encoding = 'iso-8859-1';
+		return 'iso-8859-1';
 
 	} elsif (looks_like_cp1252($_[0])) {
 	
-		$encoding = 'cp1252';
-
-	} elsif ($encodeDetect && $_[0] && !Encode::is_utf8($_[0])) {
-
-		$encoding  = lc(Encode::Detect::Detector::detect($_[0]));
+		return 'cp1252';
 	}
 
-	return $encoding;
+	return 'raw';
 }
 
 =head2 encodingFromFileHandle( $fh )
