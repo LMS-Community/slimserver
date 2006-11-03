@@ -242,6 +242,10 @@ sub handleFeed {
 			else {
 				$client->execute([ 'playlist', 'addtracks', 'listref', \@urls ]);
 			}
+
+			my $webroot = $stash->{'webroot'};
+			$webroot =~ s/(.*?)plugins.*$/$1/;
+			$template = 'xmlbrowser_redirect.html';
 		}
 	}
 	else {
