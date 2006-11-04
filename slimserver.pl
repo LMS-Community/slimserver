@@ -260,7 +260,7 @@ sub init {
 		$SIG{'HUP'} = \&initSettings;
 	}		
 
-	if (defined(&PerlSvc::RunningAsService) && PerlSvc::RunningAsService()) {
+	if (Slim::Utils::Misc::runningAsService()) {
 		$SIG{'QUIT'} = \&Slim::bootstrap::ignoresigquit; 
 	} else {
 		$SIG{'QUIT'} = \&Slim::bootstrap::sigquit;
