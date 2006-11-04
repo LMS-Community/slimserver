@@ -222,7 +222,7 @@ sub descend {
 
 			$log->debug("Working on level: [$level]");
 
-			$log->deubg(sprintf("\$self->result_source->schema->source(\$level)->result_class: [%s]",
+			$log->debug(sprintf("\$self->result_source->schema->source(\$level)->result_class: [%s]",
 				$self->result_source->schema->source($level)->result_class
 			));
 		}
