@@ -43,6 +43,7 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^tunein\.(?:htm|xml)/,\&tuneIn);
 	Slim::Web::HTTP::addPageFunction(qr/^update_firmware\.(?:htm|xml)/,\&update_firmware);
 	Slim::Web::HTTP::addPageFunction(qr/^debugging\.(?:htm|xml)/, \&Slim::Web::Setup::handleDebugSettings);
+	Slim::Web::HTTP::addPageFunction(qr/^setupfiletypes\.(?:htm|xml)/, \&Slim::Web::Setup::handleFileTypeSettings);
 
 	# pull in the memory usage module if requested.
 	if (logger('server.memory')->is_info) {

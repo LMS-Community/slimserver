@@ -1600,149 +1600,7 @@ sub initSetupConfig {
 		}
 	}# end of setup{'INTERFACE_SETTINGS'} hash
 
-	,'FORMATS_SETTINGS' => {
-		'title' => string('FORMATS_SETTINGS')
-		,'parent' => 'BASIC_SERVER_SETTINGS'
-		,'preEval' => sub {
-			my ($client,$paramref,$pageref) = @_;
-			my $i = 0;
-			my %formats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
-			my $formatslistref = Slim::Player::TranscodingHelper::Conversions();
-
-			foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
-				next if $formats =~ /\-transcode\-/;
-				my $oldVal = exists $formats{$formats} ? 0 : (Slim::Player::TranscodingHelper::checkBin($formats) ? 1 : 0);
-				if (exists $paramref->{"formatslist$i"} && $paramref->{"formatslist$i"} == $oldVal) {
-					delete $paramref->{"formatslist$i"};
-				}
-				$i++;
-			}
-			$pageref->{'Prefs'}{'formatslist'}{'arrayMax'} = $i - 1;
-		}
-		,'postChange' => sub {
-			my ($client,$paramref,$pageref) = @_;
-			my $i = 0;
-			my %formats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
-
-			Slim::Utils::Prefs::delete('disabledformats');
-
-			my $formatslistref = Slim::Player::TranscodingHelper::Conversions();
-
-			foreach my $formats (sort {$a cmp $b}(keys %{$formatslistref})) {
-				next if $formats =~ /\-transcode\-/;
-				my $binAvailable = Slim::Player::TranscodingHelper::checkBin($formats);
-
-				# First time through, set the value of the checkbox
-				# based on whether the conversion was explicitly 
-				# disabled or implicitly disallowed because the 
-				# corresponding binary does not exist.
-				if (!exists $paramref->{"formatslist$i"}) {
-					$paramref->{"formatslist$i"} = exists $formats{$formats} ? 0 : ($binAvailable ? 1 : 0);
-				} 
-				# If the conversion pref is checked confirm that 
-				# it's allowed to be checked.
-				elsif ($paramref->{"formatslist$i"} && !$binAvailable) {
-					$paramref->{'warning'} .= 
-						string('SETUP_FORMATSLIST_MISSING_BINARY') .
-							" " . $formatslistref->{$formats}."<br>";
-					$paramref->{"formatslist$i"} = $binAvailable;
-				} 
-
-				# If the conversion pref is not checked, persist
-				# the pref only in the explicit change case: if
-				# the binary is available or if it previously was
-				# explicitly disabled.  This way we don't persist
-				# the pref if it wasn't explicitly changed.
-				if (!$paramref->{"formatslist$i"} && ($binAvailable || exists $formats{$formats})) {
-
-					Slim::Utils::Prefs::push('disabledformats',$formats);
-				}
-
-				$i++;
-			}
-
-			foreach my $group (Slim::Utils::Prefs::getArray('disabledformats')) {
-				delGroup('formats',$group,1);
-			}
-		}
-
-		,'GroupOrder' => [qw(Default FormatsList)]
-		,'Groups' => {
-
-			'Default' => {
-				'PrefOrder' => [qw(disabledextensionsaudio disabledextensionsplaylist)],
-				'GroupHead' => 'SETUP_GROUP_FORMATS_EXTENSIONS',
-			},
-
-			'FormatsList' => {
-				'PrefOrder' => ['formatslist'],
-				'PrefsInTable' => 1,
-				'Suppress_PrefHead' => 1,
-				'Suppress_PrefDesc' => 1,
-				'Suppress_PrefLine' => 1,
-				'Suppress_PrefSub' => 1,
-				'GroupLine' => 1,
-				'GroupSub' => 1,
-				'GroupHead' => 'SETUP_GROUP_FORMATS_CONVERSION',
-				'GroupDesc' => 'SETUP_GROUP_FORMATS_CONVERSION_DESC',
-				'GroupPrefHead' => '<tr><th>&nbsp;' .
-					'</th><th>' . string('FILE_FORMAT') .
-					'</th><th>' . string('STREAM_FORMAT') .
-					'</th><th>' . string('DECODER') .
-					'</th></tr>',
-			}
-		},
-
-		'Prefs' => {
-			'disabledextensionsaudio' => {
-
-				'validate'      => \&Slim::Utils::Validate::acceptAll,
-				'inputTemplate' => 'setup_input_txt.html',
-				'PrefSize'      => 'large',
-			},
-
-			'disabledextensionsplaylist' => {
-
-				'validate'      => \&Slim::Utils::Validate::acceptAll,
-				'inputTemplate' => 'setup_input_txt.html',
-				'PrefSize'      => 'large',
-			},
-
-			'formatslist' => {
-				'isArray' => 1
-				,'dontSet' => 1
-				,'validate' => \&Slim::Utils::Validate::trueFalse
-				,'inputTemplate' => 'setup_input_array_chk.html'
-				,'arrayMax' => undef #set in preEval
-				,'changeMsg' => 'SETUP_FORMATSLIST_CHANGE'
-				,'externalValue' => sub {
-					my ($client,$value,$key) = @_;
-						
-					if ($key =~ /\D+(\d+)$/) {
-						my $formatslistref = Slim::Player::TranscodingHelper::Conversions();
-						my $profile = (sort {$a cmp $b} (grep {$_ !~ /transcode/} (keys %{$formatslistref})))[$1];
-						my @profileitems = split('-', $profile);
-						pop @profileitems; # drop ID
-						$profileitems[0] = string($profileitems[0]);
-						$profileitems[1] = string($profileitems[1]);
-						$profileitems[2] = $formatslistref->{$profile}; #replace model with binary string
-						my $dec = $formatslistref->{$profile};
-						$dec =~ s{
-								^\[(.*?)\](.*?\|?\[(.*?)\].*?)?
-							}{
-								$profileitems[2] = $1;
-								if (defined $3) {$profileitems[2] .= "/".$3;}
-							}iegsx;
-						$profileitems[2] = '(built-in)' unless defined $profileitems[2] && $profileitems[2] ne '-';
-						
-						return join('</td><td>', @profileitems);
-					} else {
-						return $value;
-					}
-				}
-			}
-		}
-	} #end of setup{'formats'}
+	,'FORMATS_SETTINGS' => { }
 
 	,'BEHAVIOR_SETTINGS' => {
 		'title' => string('BEHAVIOR_SETTINGS'),
@@ -2297,6 +2155,86 @@ sub initSetupConfig {
 sub initSetup {
 	initSetupConfig();
 	fillAlarmOptions();
+}
+
+sub handleFileTypeSettings {
+	my ($client, $paramRef, $pageSetup) = @_;
+
+	# If this is a settings update
+	if ($paramRef->{'submit'}) {
+
+		Slim::Utils::Prefs::set('disabledextensionsaudio',    $paramRef->{'disabledextensionsaudio'});
+		Slim::Utils::Prefs::set('disabledextensionsplaylist', $paramRef->{'disabledextensionsplaylist'});
+
+		my %disabledformats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
+
+		Slim::Utils::Prefs::delete('disabledformats');
+
+		my $formatslistref = Slim::Player::TranscodingHelper::Conversions();
+
+		foreach my $profile (sort {$a cmp $b} (grep {$_ !~ /transcode/} (keys %{$formatslistref}))) {
+			
+			# If the conversion pref is enabled confirm that 
+			# it's allowed to be checked.
+			if ($paramRef->{"$profile"} ne 'DISABLED' && $disabledformats{$profile}) {
+
+				if (!Slim::Player::TranscodingHelper::checkBin($profile)) {
+
+					$paramRef->{'warning'} .= 
+						string('SETUP_FORMATSLIST_MISSING_BINARY') . " $@ ".string('FOR')." $profile<br>";
+
+					Slim::Utils::Prefs::push('disabledformats',$profile);
+				}
+
+			} elsif ($paramRef->{"$profile"} eq 'DISABLED') {
+
+				Slim::Utils::Prefs::push('disabledformats',$profile);
+			}
+		}
+	}
+
+	my %disabledformats = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledformats');
+	my $formatslistref  = Slim::Player::TranscodingHelper::Conversions();
+	my @formats         = (); 
+
+	foreach my $profile (sort {$a cmp $b} (grep {$_ !~ /transcode/} (keys %{$formatslistref}))) {
+
+		my @profileitems = split('-', $profile);
+		my @binaries = 'DISABLED';
+		
+		# TODO: expand this to handle multiple command lines, but use binary case for now
+		my $enabled = Slim::Player::TranscodingHelper::checkBin($profile) ? 1 : 0;
+		
+		# build setup string from commandTable
+		my $cmdline = $formatslistref->{$profile};
+		my $binstring;
+		$cmdline =~ s{
+				^\[(.*?)\](.*?\|?\[(.*?)\].*?)?
+			}{
+				$binstring = $1;
+				if (defined $3) {$binstring .= "/".$3;}
+			}iegsx;
+		push @binaries, (defined $binstring && $binstring ne '-' ? $binstring : 'NATIVE');
+		
+		push @formats, {
+			'profile'  => $profile,
+			'input'    => $profileitems[0],
+			'output'   => $profileitems[1],
+			'binaries' => \@binaries,
+			'enabled'  => $enabled,
+		};
+	}
+	
+	$paramRef->{'formats'} = \@formats;
+	$paramRef->{'page'}       = 'FORMATS_SETTINGS';
+
+	# Needed to generate the drop down settings chooser list.
+	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
+
+	$paramRef->{'disabledextensionsaudio'}  = Slim::Utils::Prefs::get('disabledextensionsaudio');
+	$paramRef->{'disabledextensionsplaylist'} = Slim::Utils::Prefs::get('disabledextensionsplaylist');
+
+	return Slim::Web::HTTP::filltemplatefile('setupfiletypes.html', $paramRef);
 }
 
 sub handleDebugSettings {
@@ -2920,6 +2858,10 @@ sub buildLinks {
 			if ($page eq "DEBUGGING_SETTINGS") {
 
 				Slim::Web::Pages->addPageLinks('setup', { 'DEBUGGING_SETTINGS' => 'debugging.html' });
+
+			} elsif ($page eq "FORMATS_SETTINGS") {
+
+				Slim::Web::Pages->addPageLinks('setup', { 'FORMATS_SETTINGS' => 'setupfiletypes.html' });
 
 			} else {
 

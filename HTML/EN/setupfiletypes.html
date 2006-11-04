@@ -1,0 +1,79 @@
+[% FILTER null %]
+
+	[% pwd_list = BLOCK %]
+
+		<a href="setup.html?page=BASIC_SERVER_SETTINGS">[% "SERVER_SETTINGS" | string %]</a>
+
+		 / <a href="setupfiletypes.html">[% page | string %]</a>
+
+	[% END %]
+
+	[% pageHeaderInfo = BLOCK %]
+		[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
+	[% END %]
+
+[% END %]
+
+[% pagetitle = pagetitle; pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %] 
+
+<div class="statusarea">
+	[% IF warning %]
+		[% warning %]
+	[% END %]
+</div>
+
+<form method="post" action="setupfiletypes.html">
+
+	<input type=hidden value="[% page %]" name="page">
+
+	<div class="settingSection">
+
+		<div class="prefHead">[% "SETUP_DISABLEDEXTENSIONSAUDIO" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_DISABLEDEXTENSIONSAUDIO_DESC" | string %]</div>
+
+		<input type=text class="stdedit" name="disabledextensionsaudio" id="disabledextensionsaudio" value="[% disabledextensionsaudio %]" size="40">
+
+		<div class="prefHead">[% "SETUP_DISABLEDEXTENSIONSPLAYLIST" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC" | string %]</div>
+
+		<input type=text class="stdedit" name="disabledextensionsplaylist" id="disabledextensionsplaylist" value="[% disabledextensionsplaylist %]" size="40">
+
+		<div class="prefHead">[% "SETUP_GROUP_FORMATS_CONVERSION" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_GROUP_FORMATS_CONVERSION_DESC" | string %]</div>
+
+		<table border="0" cellspacing="0" width="100%">
+			<tr><th>[% 'FILE_FORMAT' | string %]</th><th>[% 'STREAM_FORMAT' | string %]</th><th>[% 'DECODER' | string %]</th></tr>
+	
+			[% FOREACH format = formats %]
+				[% frame = format.input != loop.prev.input %]
+				[% IF frame %]
+					<tr style="height: 5px;"><td class="[% odd ? "odd" : "even" %]" colspan="3"></td></tr>
+					[% odd = (not odd) %]<tr style="height: 5px;"><td class="[% odd ? "odd" : "even" %]" colspan="3"></td></tr>
+				[% END %]
+				<tr>
+				<td class="[% odd ? "odd" : "even" %]">[% IF frame %][% format.input | string %][% END %]</td>
+				
+				<td class="[% odd ? "odd" : "even" %]"><label for="[% format.profile %]" class="stdlabel">[% format.output | string %]</label></td>
+				
+				<td class="[% odd ? "odd" : "even" %]">
+					<select class="stdedit" name="[% format.profile %]" id="[% format.profile %]">
+		
+					[%- FOREACH value = format.binaries -%]
+						<option [% IF loop.index == format.enabled %]selected [% END %]value="[% value %]">[% value | getstring %]</option>
+					[%- END -%]
+					
+					</select>
+				</td>
+				</tr>
+			[% END %]
+			<tr style="height: 5px;"><td class="[% odd ? "odd" : "even" %]" colspan="3"></td></tr>
+		</table>
+
+	<p><input name="submit" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]"></p>
+</form>
+
+</div>
+
+<p></p>
+
+[% PROCESS pagefooter.html %]

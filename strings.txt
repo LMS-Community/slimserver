@@ -7644,6 +7644,9 @@ DISABLED
 	SV	Avaktiverad
 	ZH_CN	撤销
 
+NATIVE
+	EN	Native
+
 CLEAR_PLAYLIST
 	CS	Vyčistit playlist
 	DE	Wiedergabeliste Löschen

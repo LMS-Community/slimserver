@@ -99,9 +99,11 @@ our %dangerousCommands = (
 	#	\&Slim::Web::Pages::status => '\bp0=rescan\b'
 	# means inisist on CSRF protection for the status command *only*
 	# if the URL includes p0=rescan
-	\&Slim::Web::Setup::setup_HTTP => '.',
-	\&Slim::Web::EditPlaylist::editplaylist => '.',
-	\&Slim::Web::Pages::Status::status => '(p0=debug|p0=pause|p0=stop|p0=play|p0=sleep|p0=playlist|p0=mixer|p0=display|p0=button|p0=rescan|(p0=(|player)pref\b.*p2=[^\?]|p2=[^\?].*p0=(|player)pref))',
+	\&Slim::Web::Setup::setup_HTTP             => '.',
+	\&Slim::Web::Setup::handleDebugSettings    => '.',
+	\&Slim::Web::Setup::handleFileTypeSettings => '.',
+	\&Slim::Web::EditPlaylist::editplaylist    => '.',
+	\&Slim::Web::Pages::Status::status         => '(p0=debug|p0=pause|p0=stop|p0=play|p0=sleep|p0=playlist|p0=mixer|p0=display|p0=button|p0=rescan|(p0=(|player)pref\b.*p2=[^\?]|p2=[^\?].*p0=(|player)pref))',
 );
 
 # flag for when we are in a child process
