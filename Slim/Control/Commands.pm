@@ -962,7 +962,7 @@ sub playlistXitemCommand {
 	} else {
 		
 		# Display some feedback for the player on remote URLs
-		if ( Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path)) {
+		if ( $cmd eq 'play' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) ) {
 		
 			$log->info("Display some feedback for the player on remote URLs");
 			
