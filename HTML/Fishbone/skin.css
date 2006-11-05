@@ -250,6 +250,7 @@ div#pagetitle {
 
 .prefHead {
 	font-weight: bold;
+	padding-top: 10px;
 }
 
 .prefDesc,.prefHead {

@@ -1958,92 +1958,8 @@ sub initSetupConfig {
 
 			}
 		} #end of setup{'security'} hash
-	,'PERFORMANCE_SETTINGS' => {
-		'title' => string('PERFORMANCE_SETTINGS'),
-		'parent' => 'BASIC_SERVER_SETTINGS',
-		'GroupOrder' => ['Default'],
-		'Groups' => {
-
-			'Default' => {
-				'PrefOrder' => [qw(
-					disableStatistics
-					itemsPerPass
-					prefsWriteDelay
-					serverPriority
-					scannerPriority
-				)],
-			},
-		},
-
-		'Prefs' => {
-			'disableStatistics' => {
-				'validate' => \&Slim::Utils::Validate::trueFalse,
-				'options' => {
-					'1' => 'SETUP_DISABLE_STATISTICS',
-					'0' => 'SETUP_ENABLE_STATISTICS',
-				},
-			},
-
-			'itemsPerPass' => {
-				'validate' => \&Slim::Utils::Validate::isInt,
-			},
-
-			'prefsWriteDelay' => {
-				'validate' => \&Slim::Utils::Validate::isInt,
-				'validateArgs' => [0,undef,1],
-			},
-			
-			'forkedWeb' => {
-				'validate' => \&Slim::Utils::Validate::trueFalse,
-				'options'  => {
-					'1' => 'SETUP_FORKEDWEB_ENABLE',
-					'0' => 'SETUP_FORKEDWEB_DISABLE',
-				},
-			},
-			
-			'forkedStreaming' => {
-				'validate' => \&Slim::Utils::Validate::trueFalse,
-				'options'  => {
-					'1' => 'SETUP_FORKEDSTREAMING_ENABLE',
-					'0' => 'SETUP_FORKEDSTREAMING_DISABLE',
-				},
-			},
-
-			'serverPriority' => {
-				'validate' => \&Slim::Utils::Validate::inList,
-				'validateArgs' => ['', -20 .. 20],
-				'onChange' => sub { Slim::Utils::Misc::setPriority( Slim::Utils::Prefs::get("serverPriority") ); },
-				'optionSort' => sub {$a eq "" ? -1 : ($b eq "" ? 1 : $a <=> $b)},
-				'options' => {
-					''   => 'SETUP_PRIORITY_DEFAULT',
-					map {$_ => $_ . " " . Slim::Utils::Strings::getString({
-						-16 => 'SETUP_PRIORITY_HIGH',
-						-6 => 'SETUP_PRIORITY_ABOVE_NORMAL',
-						0 => 'SETUP_PRIORITY_NORMAL',
-						5 => 'SETUP_PRIORITY_BELOW_NORMAL',
-						15 => 'SETUP_PRIORITY_LOW'
-						}->{$_} || "") } (-20 .. 20)
-				}
-			},
-
-			'scannerPriority' => {
-				'validate' => \&Slim::Utils::Validate::inList,
-				'validateArgs' => ['', -20 .. 20],
-				'optionSort' => sub {$a eq "" ? -1 : ($b eq "" ? 1 : $a <=> $b)},
-				'options' => {
-					''   => 'SETUP_PRIORITY_CURRENT',
-					map {$_ => $_ . " " . Slim::Utils::Strings::getString({
-						-16 => 'SETUP_PRIORITY_HIGH',
-						-6 => 'SETUP_PRIORITY_ABOVE_NORMAL',
-						0 => 'SETUP_PRIORITY_NORMAL',
-						5 => 'SETUP_PRIORITY_BELOW_NORMAL',
-						15 => 'SETUP_PRIORITY_LOW'
-						}->{$_} || "") } (-20 .. 20)
-				}
-			},
-
-		},
-	} #end of setup{'performance'} hash
+	,'PERFORMANCE_SETTINGS' => { } #end of setup{'performance'} hash
+	
 	,'NETWORK_SETTINGS' => {
 		'title' => string('NETWORK_SETTINGS')
 		,'parent' => 'BASIC_SERVER_SETTINGS'
@@ -2284,6 +2200,48 @@ sub handleDebugSettings {
 	$paramRef->{'debugScannerLog'} = Slim::Utils::Log->scannerLogFile;
 
 	return Slim::Web::HTTP::filltemplatefile('debugging.html', $paramRef);
+}
+
+sub handlePerformanceSettings {
+	my ($client, $paramRef, $pageSetup) = @_;
+
+	my @prefs = qw(
+					disableStatistics
+					itemsPerPass
+					prefsWriteDelay
+					serverPriority
+					scannerPriority
+				);
+
+	# If this is a settings update
+	if ($paramRef->{'submit'}) {
+
+		for my $pref (@prefs) {
+			Slim::Utils::Prefs::set($pref,    $paramRef->{$pref});
+		}
+	}
+
+	$paramRef->{'options'} = {
+		''   => 'SETUP_PRIORITY_CURRENT',
+		map {$_ => {
+			-16 => 'SETUP_PRIORITY_HIGH',
+			-6 => 'SETUP_PRIORITY_ABOVE_NORMAL',
+			0 => 'SETUP_PRIORITY_NORMAL',
+			5 => 'SETUP_PRIORITY_BELOW_NORMAL',
+			15 => 'SETUP_PRIORITY_LOW'
+			}->{$_} } (-20 .. 20)
+	};
+
+	$paramRef->{'page'}       = 'PERFORMANCE_SETTINGS';
+
+	# Needed to generate the drop down settings chooser list.
+	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
+
+	for my $pref (@prefs) {
+		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
+	}
+	
+	return Slim::Web::HTTP::filltemplatefile('setupperformance.html', $paramRef);
 }
 
 sub getSetupOptions {
@@ -2862,6 +2820,10 @@ sub buildLinks {
 			} elsif ($page eq "FORMATS_SETTINGS") {
 
 				Slim::Web::Pages->addPageLinks('setup', { 'FORMATS_SETTINGS' => 'setupfiletypes.html' });
+
+			} elsif ($page eq "PERFORMANCE_SETTINGS") {
+
+				Slim::Web::Pages->addPageLinks('setup', { 'PERFORMANCE_SETTINGS' => 'setupperformance.html' });
 
 			} else {
 
