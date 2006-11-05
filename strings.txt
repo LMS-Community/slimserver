@@ -5611,38 +5611,6 @@ SETUP_COMPOSERINARTISTS
 	SV	Kompositör, grupp och orkester i Artister
 	ZH_CN	有关艺人的作曲家及乐队信息
 
-SETUP_COMPOSERINARTISTS_1
-	CS	Vložit skladatele, skupinu nebo orchestr do interpreta
-	DE	Komponist, Gruppe und Orchester in Interpreten einschliessen
-	DA	Vis komponist, band og orkester som kunstner
-	EN	Include composer, band and orchestra in artists
-	ES	Incluir compositor, banda y orquesta en artistas
-	FI	Sisällytä yhtye, säveltäjä tai orkesteri artisteihin
-	FR	Inclure les compositeurs, groupes et orchestres dans les artistes
-	IT	Includi Compositore, Gruppo e Orchestra in Artisti
-	JA	「アーチスト」に、作曲家、バンド、オーケストラを含める
-	NL	Voeg componist, groep en orkest toe in artiesten
-	NO	Inkluder komponist, band og orkester i artister
-	PT	Incluir compositor, banda e orquestra nos artistas
-	SV	Inkludera kompositör, grupp och orkester i Artister
-	ZH_CN	包括有关艺人的作曲家及乐队信息
-
-SETUP_COMPOSERINARTISTS_0
-	CS	Nevkládat autora, skupinu nebo orchestr do interpreta
-	DE	Komponist, Gruppe und Orchester nicht in Interpreten einschliessen
-	DA	Vis ikke komponist, band og orkester som kunstner
-	EN	Don't include composer, band and orchestra in artists
-	ES	No incluir compositor, banda y orquesta en artistas
-	FI	Älä sisällytä säveltäjää, yhtyettä tai orkesteria artisteihin
-	FR	Ne pas inclure compositeurs, groupes et orchestres dans les artistes
-	IT	Non includere Compositore, Gruppo e Orchestra in Artisti
-	JA	「アーチスト」に、作曲家、バンド、オーケストラを含めない
-	NL	Voeg componist, groep en orkest niet toe in artiesten
-	NO	Ikke inkluder komponist, band og orkerster i artister
-	PT	Não incluir compositor, banda e orquestra nos artistas
-	SV	Inkludera INTE kompositör, grupp och orkester i Artister
-	ZH_CN	不包括有关艺人的作曲家及乐队信息
-
 SETUP_COMPOSERINARTISTS_DESC
 	CS	Informace o autorovi, skupině nebo orchestu mohou být vloženy do nabídky interpretů pro procházení nebo vyhledávání.
 	DE	Titelinformationen über Komponist, Gruppe und Orchester können in der Interpretenliste und beim Suchen eingeschlossen werden.
@@ -10221,55 +10189,6 @@ MP3DIR_IS_NOW
 	PT	A directoria que tem os ficheiros MP3 no disco
 	SV	Den mapp på din hårddisk där dina MP3-filer är lagrade:
 	ZH_CN	您的音乐文件存放在硬盘上的目录：
-
-PORT_NUMBER
-	CS	Zde můžete změnit port serveru, který je používán pro přístup k webowému rozhraní. Defaultně je nastaveno 9000.
-	DE	Sie können die Port-Nummer ändern, die für den Server-Zugriff mit Hilfe eines Web-Browsers verwendet wird (Standard ist 9000).
-	DA	Du kan ændre hvilket port-nummer der anvendes til at tilgå SlimServer via en web-browser. (Standard er 9000).
-	EN	You can change the port number that is used to access the server from a web browser. (The default is 9000.)
-	ES	El número de puerto para acceder al servidor utilizando un navegador (9000 por defecto)
-	FI	Voit vaihtaa WWW-palvelimen käyttämää porttinumeroa. (Oletusasetus on 9000.)
-	FR	Vous pouvez changer le port utilisé pour accéder au serveur à partir d'un navigateur web. Le port par défaut est 9000.
-	IT	Puoi cambiare il numero della porta che viene usata dal browser per accedere al server. (Di default e' la 9000).
-	JA	ウェブブラウザーからサーバーに接続するポート番号を変更することができます（通常は9000）。
-	NL	Je kunt het poortnummer veranderen dat gebruikt wordt om de server te raadplegen met een webbrowser. (De standaardpoort is 9000).
-	NO	Du kan endre portnummeret som brukes for å nå webserveren fra en browser. (Standard er 9000)
-	PT	A porta para acesso via navegador web. (por omissão, a 9000)
-	SV	Du kan ändra portnumret som används för att nå webservern från en webläsare. (Standardvärdet är 9000)
-	ZH_CN	您可以更改浏览器访问服务器用的端口号。（缺省为9000）。
-
-SCREENSAVER_TIMEOUT
-	CS	Přehrávač  ukazuje automaticky aktuálně přehrávanou skladbu po zadtavení dálkovým ovladačem. Můžete změnit prodlevu po které to udělá. Nastavíte li prodlevu na nulu, nebude automaticky ukazovat aktuální skladbu.
-	DE	Der Player wird automatisch das aktuelle Lied anzeigen, nachdem Sie für einige Zeit keinen Knopf mehr betätigt haben. Sie können die Wartezeit einstellen oder eine Null verwenden, um nie das aktuelle Lied anzuzeigen.
-	DA	SlimServer vil automatisk vise hvilken sang der afspilles hvis fjernbetjeningen ikke anvendes i en periode.
-	EN	The player will automatically show the currently playing song if you don't press any buttons for some amount of time. You can change the duration of this wait below. Set this duration to zero to never automatically show the current song.
-	ES	El reproductor mostrará automaticamente la canción actual si no usa el control remoto durante un tiempo determinado. Se puede cambiar este comportamiento e incluso desactivarlo introduciendo un 0 (cero).
-	FI	Kun kaukosäätimen viimeisestä napin painalluksesta on kulunut hieman aikaa, palaa soittimen näyttöön soimassa olevan kappaleen nimi. Voit vaikuttaa tähän toimintoon.
-	FR	Lorsque vous cessez d'utiliser la télécommande pendant un certain temps, la platine affichera automatiquement le morceau en cours de lecture. Vous pouvez changer la durée de ce délai. La valeur zéro désactivera cette fonctionnalité.
-	IT	Il lettore mostrera' automaticamente il brano in riproduzione dopo alcuni secondi dalla fine dell'uso del telecomando. Puoi modificare la durata dell'attesa piu' sotto. Imposta questa durata a zero per non mostrare automaticamente il brano.
-	JA	一定の時間リモートを操作しないと、プレーヤーは自動的に現在再生中の曲を表示します。以下でその時間を設定することができます。ゼロにセットすると、その機能を無効にできます。
-	NL	De speler kan automatisch het op dit moment spelende nummer tonen nadat je de afstandsbediening een bepaalde tijd niet hebt gebruikt. Je kunt deze tijd in seconden hieronder instellen. Stel deze tijd in op 0 (nul) om het huidige nummer nooit vanzelf te tonen.
-	NO	Spilleren vil etter en stund uten bruk automatisk vise hvilken sang som spilles. Du kan endre ventetiden før dette skjer nedenfor. Sett verdien til 0 for aldri å vise hva som spilles nå.
-	PT	O player irá mostrar automaticamente a música actual ao fim de algum tempo, se o parar com o controlo remoto. Pode mudar a duração da espera abaixo. Se não quiser este comportamento, coloque a 0 (zero).
-	SV	Spelaren kommer efter en fördröjning automatiskt hoppa till "Spelas nu" när du inte använder fjärrkontrollen. Nedan kan du ändra längden på denna fördröjning. Sätt fördröjningen till 0 (noll) för att aldrig automatiskt hoppa till "Spelas nu".
-	ZH_CN	播放机在您停止使用遥控后的一段时间内会自动地显示当前播放的歌曲。您可以更改这等待的时间。以零为值则表示播放机绝对不会显示当前播放的歌曲
-
-DISPLAYTEXT_TIMEOUT
-	CS	Nastavení časové prodlevy, po které přehrávač skočí při zadávání textu na další písmeno.
-	DE	Wenn Sie Text für eine Suche eingeben, wird der Player nach einer gewissen Zeit zum nächsten Buchstaben springen. Bestimmen Sie hier die Wartezeit zwischen dem Drücken zweier Tasten.
-	DA	Når du indtaster tekst til en søgning vil SlimServer gå videre til næste bogstav efter det nedenfor angivne antal sekunder.
-	EN	When you are entering text for a search, the player will move on to the next letter after some amount of time. You can change the duration of this wait below.
-	ES	Cuando se está ingresando text para una búsqueda, el reproductor se moverá a la letra siguiente despues de un cierto intervalo. Se puede cambiar la duración de esta espera debajo.
-	FI	Syöttäessäsi tekstiä hakua varten, kursori siirtyy automaattisesti eteenpäin jonkin ajan kuluttua. Voit alla olevasta valinnasta säätää odottamiseen käytettyä aikaa.
-	FR	La platine passera à la lettre suivante après un certain délai lors de la saisie de texte. Vous pouvez choisir ce délai ci-dessous.
-	HE	פרק זמן בין מעבר לאות נוספת בחיפוש מוזיקה
-	IT	Mentre inserisci il testo per una ricerca, il lettore si spostera' sulla lettera successiva dopo una certa quantita' di tempo. Puoi cambiare la durata dell'attesa qui sotto.
-	JA	検索にテキスト文字を入力すると、プレーヤーは一定時間のあと、次の文字に移ります。以下でこの時間を設定することができます。
-	NL	Indien je tekst invoert om te gaan zoeken, zal de speler na een aantal seconden doorspringen naar het volgende teken. Je kunt deze wachttijd hier instellen.
-	NO	Når du skriver inn tekst for et søk, vil spilleren automatisk hoppe til neste tegnfelt etter en liten stund. Her kan du endre tiden før dette skjer.
-	PT	Ao introduzir texto para a procura, o cliente moverá para a próxima letra ao fim de algum tempo. Pode mudar esse tempo de espera abaixo.
-	SV	När du matar in text för en sökning kommer spelaren automatiskt flytta till nästa tecken efter en liten fördröjning. Här kan du ändra denna fördröjning.
-	ZH_CN	当您输入文字进行搜查行动时，播放机会在您输入的每一个字符后等待片刻才向下一个字符移动。您可以在这里调整该等待时间。
 
 SECONDS
 	CS	sekund

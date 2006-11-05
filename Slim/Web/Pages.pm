@@ -45,6 +45,7 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^debugging\.(?:htm|xml)/, \&Slim::Web::Setup::handleDebugSettings);
 	Slim::Web::HTTP::addPageFunction(qr/^setupfiletypes\.(?:htm|xml)/, \&Slim::Web::Setup::handleFileTypeSettings);
 	Slim::Web::HTTP::addPageFunction(qr/^setupperformance\.(?:htm|xml)/, \&Slim::Web::Setup::handlePerformanceSettings);
+	Slim::Web::HTTP::addPageFunction(qr/^setupbehavior\.(?:htm|xml)/, \&Slim::Web::Setup::handleBehaviorSettings);
 
 	# pull in the memory usage module if requested.
 	if (logger('server.memory')->is_info) {

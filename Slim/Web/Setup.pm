@@ -1602,191 +1602,7 @@ sub initSetupConfig {
 
 	,'FORMATS_SETTINGS' => { }
 
-	,'BEHAVIOR_SETTINGS' => {
-		'title' => string('BEHAVIOR_SETTINGS'),
-		'parent' => 'BASIC_SERVER_SETTINGS',
-		'GroupOrder' => [qw(DisplayInArtists VariousArtists Default)],
-		'Groups' => {
-	
-			'Default' => {
-
-				'PrefOrder' => [qw(displaytexttimeout checkVersion noGenreFilter
-						playtrackalbum searchSubString ignoredarticles splitList browseagelimit
-						groupdiscs persistPlaylists reshuffleOnRepeat saveShuffled)],
-			},
-
-			'DisplayInArtists' => {
-				'PrefOrder' => [qw(composerInArtists conductorInArtists bandInArtists)],
-				'GroupHead' => 'SETUP_COMPOSERINARTISTS',
-				'Suppress_PrefHead' => 1,
-				'Suppress_PrefSub' => 1,
-				'GroupSub' => 1,
-				'GroupLine' => 1,
-				'Suppress_PrefLine' => 1,
-			},
-
-			'VariousArtists' => {
-				'PrefOrder' => [qw(variousArtistAutoIdentification useBandAsAlbumArtist variousArtistsString)],
-				'GroupHead' => 'SETUP_VARIOUSARTISTS',
-				'Suppress_PrefHead' => 1,
-				'Suppress_PrefSub' => 1,
-				'GroupSub' => 1,
-				'GroupLine' => 1,
-				'Suppress_PrefLine' => 1,
-			},
-		},
-
-		'Prefs' => {
-
-			'displaytexttimeout' => {
-				'validate'     => \&Slim::Utils::Validate::number,
-				'validateArgs' => [0.1,undef,1],
-			},
-
-			'browseagelimit' => {
-				'validate'     	=> \&Slim::Utils::Validate::number,
-				'validateArgs' => [0,undef,1,undef],
-			},
-
-			'ignoredarticles' => {
-				'validate' => \&Slim::Utils::Validate::acceptAll,
-				'PrefSize' => 'large',
-				'onChange' => sub {
-					my $client = shift;
-
-					logWarning("ignoredArticles changed - starting wipe scan");
-
-					Slim::Control::Request::executeRequest($client, ['wipecache']);
-				},
-			},
-
-			'splitList' => {
-				'validate' => \&Slim::Utils::Validate::acceptAll,
-				'PrefSize' => 'large',
-				'onChange' => sub {
-					my $client = shift;
-
-					logWarning("splitList changed - starting wipe scan");
-
-					Slim::Control::Request::executeRequest($client, ['wipecache']);
-				},
-			},
-
-			'variousArtistAutoIdentification' => {
-				'validate' => \&Slim::Utils::Validate::trueFalse,
-				'options' => {
-					'1' => 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1',
-					'0' => 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0',
-				},
-			},
-
-			'useBandAsAlbumArtist' => {
-				'validate' => \&Slim::Utils::Validate::trueFalse,
-				'options' => {
-					'1' => 'SETUP_USEBANDASALBUMARTIST_1',
-					'0' => 'SETUP_USEBANDASALBUMARTIST_0',
-				},
-			},
-
-			'variousArtistsString' => {
-				'validate' => \&Slim::Utils::Validate::acceptAll,
-				'PrefSize' => 'large',
-			},
-
-			'playtrackalbum' => {
-				'validate' => \&Slim::Utils::Validate::trueFalse,
-				'options'  => {
-					'1' => 'SETUP_PLAYTRACKALBUM_1',
-					'0' => 'SETUP_PLAYTRACKALBUM_0',
-				},
-			},
-
-			'composerInArtists' => { 	 
-
-				'inputTemplate' => 'setup_input_chk.html',
-				'PrefChoose'    => 'COMPOSER',
-				'validate'      => \&Slim::Utils::Validate::trueFalse,
-			},
-
-			'conductorInArtists' => { 	 
-
-				'inputTemplate' => 'setup_input_chk.html',
-				'PrefChoose'    => 'CONDUCTOR',
-				'validate'      => \&Slim::Utils::Validate::trueFalse,
-			},
-
-			'bandInArtists' => { 	 
-
-				'inputTemplate' => 'setup_input_chk.html',
-				'PrefChoose'    => 'BAND',
-				'validate'      => \&Slim::Utils::Validate::trueFalse,
-			},
-
-			'noGenreFilter' => { 	 
-				'validate' => \&Slim::Utils::Validate::trueFalse,
-				'options'  => { 	 
-					'1' => 'SETUP_NOGENREFILTER_1',
-					'0' => 'SETUP_NOGENREFILTER_0',
-				},
-			},
-
-			'searchSubString' => {
-				'validate' => \&Slim::Utils::Validate::trueFalse,
-				'options'  => {
-					'1' => 'SETUP_SEARCHSUBSTRING_1',
-					'0' => 'SETUP_SEARCHSUBSTRING_0',
-				},
-			},
-
-			'persistPlaylists' => {
-				'validate' => \&Slim::Utils::Validate::trueFalse,
-				'options'  => {
-					'1' => 'SETUP_PERSISTPLAYLISTS_1',
-					'0' => 'SETUP_PERSISTPLAYLISTS_0',
-				},
-			},
-
-			'reshuffleOnRepeat' => {
-				'validate' => \&Slim::Utils::Validate::trueFalse,
-				'options'  => {
-					'1' => 'SETUP_RESHUFFLEONREPEAT_1',
-					'0' => 'SETUP_RESHUFFLEONREPEAT_0',
-				},
-			},
-
-			'saveShuffled' => {
-				'validate' => \&Slim::Utils::Validate::trueFalse,
-				'options' => {
-					'1' => 'SETUP_SAVESHUFFLED_1',
-					'0' => 'SETUP_SAVESHUFFLED_0',
-				},
-			},
-
-			'checkVersion' => {
-				'validate' => \&Slim::Utils::Validate::trueFalse,
-				'options' => {
-					'1' => 'SETUP_CHECKVERSION_1',
-					'0' => 'SETUP_CHECKVERSION_0',
-				},
-			},
-
-			'groupdiscs' => {
-				'validate' => \&Slim::Utils::Validate::trueFalse,
-				'onChange' => sub {
-					my $client = shift;
-
-					logWarning("groupDiscs changed - starting wipe scan");
-
-					Slim::Control::Request::executeRequest($client, ['wipecache']);
-				},
-
-				'options' => {
-					'1' => 'SETUP_GROUPDISCS_1',
-					'0' => 'SETUP_GROUPDISCS_0',
-				},
-			 },
-		}
-	} #end of setup{'behavior'} hash
+	,'BEHAVIOR_SETTINGS' => { } #end of setup{'behavior'} hash
 
 	,'FORMATTING_SETTINGS' => {
 		'title' => string('FORMATTING_SETTINGS')
@@ -2243,6 +2059,64 @@ sub handlePerformanceSettings {
 	
 	return Slim::Web::HTTP::filltemplatefile('setupperformance.html', $paramRef);
 }
+
+sub handleBehaviorSettings {
+	my ($client, $paramRef, $pageSetup) = @_;
+
+	my @prefs = qw(
+				displaytexttimeout
+				checkVersion
+				noGenreFilter
+				playtrackalbum
+				searchSubString
+				ignoredarticles
+				splitList
+				browseagelimit
+				groupdiscs
+				persistPlaylists
+				reshuffleOnRepeat
+				saveShuffled
+				composerInArtists
+				conductorInArtists
+				bandInArtists
+				variousArtistAutoIdentification
+				useBandAsAlbumArtist
+				variousArtistsString
+			);
+
+	my %scanOn = map {$_ => 1} qw(splitList ignoredarticles groupDiscs);
+
+	# If this is a settings update
+	if ($paramRef->{'submit'}) {
+
+		for my $pref (@prefs) {
+		Data::Dump::dump($pref, $scanOn{$pref},$paramRef->{$pref},Slim::Utils::Prefs::get($pref));
+			if (exists $scanOn{$pref} && $paramRef->{$pref} ne Slim::Utils::Prefs::get($pref)) {
+
+				logWarning("$pref changed - starting wipe scan");
+
+				Slim::Utils::Prefs::set($pref,    $paramRef->{$pref});
+
+				Slim::Control::Request::executeRequest($client, ['wipecache']);
+			} else {
+
+				Slim::Utils::Prefs::set($pref,    $paramRef->{$pref});
+			}
+		}
+	}
+
+	$paramRef->{'page'}       = 'BEHAVIOR_SETTINGS';
+
+	# Needed to generate the drop down settings chooser list.
+	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
+
+	for my $pref (@prefs) {
+		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
+	}
+	
+	return Slim::Web::HTTP::filltemplatefile('setupbehavior.html', $paramRef);
+}
+
 
 sub getSetupOptions {
 	my ($category, $pref) = @_;
@@ -2824,6 +2698,10 @@ sub buildLinks {
 			} elsif ($page eq "PERFORMANCE_SETTINGS") {
 
 				Slim::Web::Pages->addPageLinks('setup', { 'PERFORMANCE_SETTINGS' => 'setupperformance.html' });
+
+			} elsif ($page eq "BEHAVIOR_SETTINGS") {
+
+				Slim::Web::Pages->addPageLinks('setup', { 'BEHAVIOR_SETTINGS' => 'setupbehavior.html' });
 
 			} else {
 
