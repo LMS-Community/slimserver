@@ -2090,7 +2090,7 @@ sub handleBehaviorSettings {
 	if ($paramRef->{'submit'}) {
 
 		for my $pref (@prefs) {
-		Data::Dump::dump($pref, $scanOn{$pref},$paramRef->{$pref},Slim::Utils::Prefs::get($pref));
+
 			if (exists $scanOn{$pref} && $paramRef->{$pref} ne Slim::Utils::Prefs::get($pref)) {
 
 				logWarning("$pref changed - starting wipe scan");
