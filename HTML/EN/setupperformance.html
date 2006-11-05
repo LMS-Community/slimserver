@@ -73,6 +73,8 @@
 		
 		<select class="stdedit" name="serverPriority" id="serverPriority">
 
+		[% option = "" %]
+		<option [% IF serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
 		[% FOREACH option = [-20..20] %]
 			<option [% IF serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
 		[%- END -%]
@@ -84,6 +86,8 @@
 
 		<select class="stdedit" name="scannerPriority" id="scannerPriority">
 
+		[% option = "" %]
+		<option [% IF serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
 		[% FOREACH option = [-20..20] %]
 			<option [% IF scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
 		[%- END -%]
