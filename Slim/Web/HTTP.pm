@@ -103,6 +103,12 @@ our %dangerousCommands = (
 	\&Slim::Web::Setup::handleDebugSettings       => '.',
 	\&Slim::Web::Setup::handleFileTypeSettings    => '.',
 	\&Slim::Web::Setup::handlePerformanceSettings => '.',
+	\&Slim::Web::Setup::handleBehaviorSettings    => '.',
+#	\&Slim::Web::Setup::handleFormattingSettings   => '.',
+#	\&Slim::Web::Setup::handleNetworkingSettings   => '.',
+#	\&Slim::Web::Setup::handleSecuritySettings     => '.',
+#	\&Slim::Web::Setup::handleInterfaceSettings    => '.',
+#	\&Slim::Web::Setup::handleBasicServerSettings  => '.',
 	\&Slim::Web::EditPlaylist::editplaylist       => '.',
 	\&Slim::Web::Pages::Status::status            => 
 		'(p0=debug|p0=pause|p0=stop|p0=play|p0=sleep|p0=playlist|p0=mixer|p0=display|p0=button|p0=rescan|(p0=(|player)pref\b.*p2=[^\?]|p2=[^\?].*p0=(|player)pref))',
