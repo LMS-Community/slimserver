@@ -232,7 +232,7 @@ sub authLoadSub {
 
 	my $resp = eval { XMLin($http->contentRef) }; 
 	
-	$log->Debug("Login XML: [", $http->content, "]");
+	$log->debug("Login XML: [", $http->content, "]");
 
 	if ($@) {
 
