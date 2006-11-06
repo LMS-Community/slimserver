@@ -1710,70 +1710,8 @@ sub initSetupConfig {
 					}
 			}
 		} #end of setup{'FORMATTING_SETTINGS'} hash
-	,'SECURITY_SETTINGS' => {
-		'title' => string('SECURITY_SETTINGS')
-		,'parent' => 'BASIC_SERVER_SETTINGS'
-		,'GroupOrder' => ['BasicAuth','Default']
-		,'Groups' => {
-			'Default' => {
-					'PrefOrder' => ['filterHosts', 'allowedHosts','csrfProtectionLevel']
-				}
-			,'BasicAuth' => {
-					'PrefOrder' => ['authorize','username','password']
-					,'Suppress_PrefSub' => 1
-					,'GroupSub' => 1
-					,'GroupLine' => 1
-					,'Suppress_PrefLine' => 1
-				}
-			}
-		,'Prefs' => {
-			'authorize' => {
-						'validate' => \&Slim::Utils::Validate::trueFalse
-						,'options' => {
-								'0' => 'SETUP_NO_AUTHORIZE',
-								'1' => 'SETUP_AUTHORIZE',
-								}
-					}
-			,'username' => {
-						'validate' => \&Slim::Utils::Validate::acceptAll
-						,'PrefSize' => 'large'
-					}
-			,'password' => {
-						'validate' => \&Slim::Utils::Validate::password
-						,'inputTemplate' => 'setup_input_passwd.html'
-						,'changeMsg' => 'SETUP_PASSWORD_CHANGED'
-						,'PrefSize' => 'large'
-					}
-			,'filterHosts' => {
-						
-						'validate' => \&Slim::Utils::Validate::trueFalse
-						,'PrefHead' => 'SETUP_IPFILTER_HEAD'
-						,'PrefDesc' => 'SETUP_IPFILTER_DESC'
-						,'options' => {
-								'0' => 'SETUP_NO_IPFILTER',
-								'1' => 'SETUP_IPFILTER',
-							}
-					}
-			,'csrfProtectionLevel' => {
-							'validate' => \&Slim::Utils::Validate::isInt
-							,'validateArgs' => [0,2,1,1]
-							,'optionSort' => 'V'
-							,'options' => {
-									'0' => 'NONE',
-									'1' => 'MEDIUM',
-									'2' => 'HIGH',
+	,'SECURITY_SETTINGS' => { } #end of setup{'security'} hash
 
-								}
-						}
-			,'allowedHosts' => {
-						'validate' => \&Slim::Utils::Validate::allowedHosts
-						,'PrefHead' => 'SETUP_FILTERRULE_HEAD'
-						,'PrefDesc' => 'SETUP_FILTERRULE_DESC'
-						,'PrefSize' => 'large'
-					}
-
-			}
-		} #end of setup{'security'} hash
 	,'PERFORMANCE_SETTINGS' => { } #end of setup{'performance'} hash
 	
 	,'NETWORK_SETTINGS' => {
@@ -2060,29 +1998,199 @@ sub handlePerformanceSettings {
 	return Slim::Web::HTTP::filltemplatefile('setupperformance.html', $paramRef);
 }
 
+sub handleBasicServerSettings {
+	my ($client, $paramRef, $pageSetup) = @_;
+
+	my @prefs = qw(
+					language
+					audiodir
+					playlistdir
+					rescantype
+					rescan
+				);
+				#itunes?
+				#musicmagic?
+				#moodlogic?
+
+	# If this is a settings update
+	if ($paramRef->{'submit'}) {
+
+		for my $pref (@prefs) {
+
+			Slim::Utils::Prefs::set($pref,    $paramRef->{$pref});
+		}
+	}
+
+	$paramRef->{'page'}       = 'BASIC_SERVER_SETTINGS';
+
+	# Needed to generate the drop down settings chooser list.
+	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
+
+	for my $pref (@prefs) {
+		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
+	}
+	
+	return Slim::Web::HTTP::filltemplatefile('setupserverbasic.html', $paramRef);
+}
+
+sub handleNetworkingSettings {
+	my ($client, $paramRef, $pageSetup) = @_;
+
+	my @prefs = qw(
+					webproxy
+					httpport
+					bufferSecs
+					remotestreamtimeout
+					maxWMArate
+					tcpReadMaximum
+					tcpWriteMaximum
+					udpChunkSize
+				);
+
+	# If this is a settings update
+	if ($paramRef->{'submit'}) {
+
+		for my $pref (@prefs) {
+
+			Slim::Utils::Prefs::set($pref,    $paramRef->{$pref});
+		}
+	}
+
+	$paramRef->{'page'}       = 'NETWORK_SETTINGS';
+
+	# Needed to generate the drop down settings chooser list.
+	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
+
+	for my $pref (@prefs) {
+		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
+	}
+	
+	return Slim::Web::HTTP::filltemplatefile('setupnetworking.html', $paramRef);
+}
+
+sub handleSecuritySettings {
+	my ($client, $paramRef, $pageSetup) = @_;
+
+	my @prefs = qw(
+					filterHosts
+					allowedHosts
+					csrfProtectionLevel
+					authorize
+					username
+					password
+				);
+
+	# If this is a settings update
+	if ($paramRef->{'submit'}) {
+
+		for my $pref (@prefs) {
+
+			Slim::Utils::Prefs::set($pref,    $paramRef->{$pref});
+		}
+	}
+
+	$paramRef->{'page'}       = 'SECURITY_SETTINGS';
+
+	# Needed to generate the drop down settings chooser list.
+	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
+
+	for my $pref (@prefs) {
+		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
+	}
+	
+	return Slim::Web::HTTP::filltemplatefile('setupsecurity.html', $paramRef);
+}
+
+sub handleFormattingSettings {
+	my ($client, $paramRef, $pageSetup) = @_;
+
+	my @prefs = qw(
+					guessFileFormats
+					titleFormat
+					longdateFormat
+					shortdateFormat
+					timeFormat
+					showArtist
+					showYear
+				);
+
+	# If this is a settings update
+	if ($paramRef->{'submit'}) {
+
+		for my $pref (@prefs) {
+
+			Slim::Utils::Prefs::set($pref,    $paramRef->{$pref});
+		}
+	}
+
+	$paramRef->{'page'}       = 'FORMATTING_SETTINGS';
+
+	# Needed to generate the drop down settings chooser list.
+	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
+
+	for my $pref (@prefs) {
+		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
+	}
+	
+	return Slim::Web::HTTP::filltemplatefile('setupformatting.html', $paramRef);
+}
+
+sub handleInterfaceSettings {
+	my ($client, $paramRef, $pageSetup) = @_;
+
+	my @prefs = qw(
+					skin
+					itemsPerPage
+					refreshRate
+					coverArt
+					artfolder
+					thumbSize
+				);
+
+	# If this is a settings update
+	if ($paramRef->{'submit'}) {
+
+		for my $pref (@prefs) {
+
+			Slim::Utils::Prefs::set($pref,    $paramRef->{$pref});
+		}
+	}
+
+	$paramRef->{'page'}       = 'INTERFACE_SETTINGS';
+
+	# Needed to generate the drop down settings chooser list.
+	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
+
+	for my $pref (@prefs) {
+		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
+	}
+	
+	return Slim::Web::HTTP::filltemplatefile('setupinterface.html', $paramRef);
+}
+
 sub handleBehaviorSettings {
 	my ($client, $paramRef, $pageSetup) = @_;
 
 	my @prefs = qw(
-				displaytexttimeout
-				checkVersion
-				noGenreFilter
-				playtrackalbum
-				searchSubString
-				ignoredarticles
-				splitList
-				browseagelimit
-				groupdiscs
-				persistPlaylists
-				reshuffleOnRepeat
-				saveShuffled
-				composerInArtists
-				conductorInArtists
-				bandInArtists
-				variousArtistAutoIdentification
-				useBandAsAlbumArtist
-				variousArtistsString
-			);
+					displaytexttimeout
+					checkVersion
+					noGenreFilter
+					playtrackalbum
+					searchSubString
+					ignoredarticles
+					splitList
+					browseagelimit
+					groupdiscs
+					persistPlaylists
+					reshuffleOnRepeat
+					saveShuffled
+					composerInArtists
+					conductorInArtists
+					bandInArtists
+					variousArtistAutoIdentification
+					useBandAsAlbumArtist
+					variousArtistsString
+				);
 
 	my %scanOn = map {$_ => 1} qw(splitList ignoredarticles groupDiscs);
 
@@ -2116,7 +2224,6 @@ sub handleBehaviorSettings {
 	
 	return Slim::Web::HTTP::filltemplatefile('setupbehavior.html', $paramRef);
 }
-
 
 sub getSetupOptions {
 	my ($category, $pref) = @_;
@@ -2689,19 +2796,39 @@ sub buildLinks {
 			# global setup pages, need to do this at startup too
 			if ($page eq "DEBUGGING_SETTINGS") {
 
-				Slim::Web::Pages->addPageLinks('setup', { 'DEBUGGING_SETTINGS' => 'debugging.html' });
+				Slim::Web::Pages->addPageLinks('setup', { $page => 'debugging.html' });
 
 			} elsif ($page eq "FORMATS_SETTINGS") {
 
-				Slim::Web::Pages->addPageLinks('setup', { 'FORMATS_SETTINGS' => 'setupfiletypes.html' });
+				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupfiletypes.html' });
 
 			} elsif ($page eq "PERFORMANCE_SETTINGS") {
 
-				Slim::Web::Pages->addPageLinks('setup', { 'PERFORMANCE_SETTINGS' => 'setupperformance.html' });
+				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupperformance.html' });
 
 			} elsif ($page eq "BEHAVIOR_SETTINGS") {
 
-				Slim::Web::Pages->addPageLinks('setup', { 'BEHAVIOR_SETTINGS' => 'setupbehavior.html' });
+				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupbehavior.html' });
+
+			} elsif ($page eq "SECURITY_SETTINGS") {
+
+				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupsecurity.html' });
+
+#			} elsif ($page eq "NETWORK_SETTINGS") {
+
+#				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupnetworking.html' });
+
+#			} elsif ($page eq "FORMATTING_SETTINGS") {
+
+#				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupformatting.html' });
+
+#			} elsif ($page eq "INTERFACE_SETTINGS") {
+
+#				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupinterface.html' });
+
+#			} elsif ($page eq "BASIC_SERVER_SETTINGS") {
+
+#				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupbasicserver.html' });
 
 			} else {
 
