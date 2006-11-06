@@ -20,7 +20,7 @@
 
 [% END %]
 
-[% pagetitle = pagetitle; pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %] 
+[% pagetitle = page | string; pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %] 
 
 <form method="post" action="debugging.html">
 
