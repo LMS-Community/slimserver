@@ -838,7 +838,7 @@ sub musicmagic_mix {
 
 	if ($mood) {
 		$mix = getMix($client, $mood, 'mood');
-		$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $mood);
+		$params->{'src_mix'} = $mood;
 
 	} elsif ($playlist) {
 
@@ -853,11 +853,10 @@ sub musicmagic_mix {
 					$playlist = Slim::Utils::Misc::unescape($1);
 				}
 
-				# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
 				$mix = getMix($client, $playlist, 'playlist');
 			}
 
-			$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $obj);
+			$params->{'src_mix'} = $obj->title;
 		}
 
 	} elsif ($song) {
@@ -884,7 +883,7 @@ sub musicmagic_mix {
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
 			$mix = getMix($client, $obj->name, 'artist');
 			
-			$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $obj->name);
+			$params->{'src_mix'} = $obj->name;
 		}
 
 	} elsif ($album) {
@@ -895,12 +894,11 @@ sub musicmagic_mix {
 
 			my $trackObj = $obj->tracks->next;
 
-			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
 			if ($trackObj) {
 
 				$mix = getMix($client, $trackObj->path, 'album');
 				
-				$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $obj);
+				$params->{'src_mix'} = $obj->title;
 			}
 		}
 		
@@ -913,7 +911,7 @@ sub musicmagic_mix {
 			# For the moment, skip straight to InstantMix mode. (See VarietyCombo)
 			$mix = getMix($client, $obj->name, 'genre');
 			
-			$params->{'src_mix'} = Slim::Music::Info::standardTitle(undef, $obj->name);
+			$params->{'src_mix'} = $obj->name;
 		}
 	
 	} elsif (defined $year) {
