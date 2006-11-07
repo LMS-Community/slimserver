@@ -1547,128 +1547,23 @@ sub initSetupConfig {
 					}
 				}
 			}
-		} #end of setup{'RADIO'}
-	,'INTERFACE_SETTINGS' => { }# end of setup{'INTERFACE_SETTINGS'} hash
+		}, #end of setup{'RADIO'}
+	'INTERFACE_SETTINGS'   => { },# end of setup{'INTERFACE_SETTINGS'} hash
 
-	,'FORMATS_SETTINGS' => { }
+	'FORMATS_SETTINGS'     => { },
 
-	,'BEHAVIOR_SETTINGS' => { } #end of setup{'behavior'} hash
+	'BEHAVIOR_SETTINGS'    => { }, #end of setup{'behavior'} hash
 
-	,'FORMATTING_SETTINGS' => {
-		'title' => string('FORMATTING_SETTINGS')
-		,'parent' => 'BASIC_SERVER_SETTINGS'
-		,'GroupOrder' => ['Default','TitleFormats','GuessFileFormats']
-		,'Groups' => {
-			'Default' => {
-					'PrefOrder' => ['longdateFormat','shortdateFormat','timeFormat','showArtist','showYear']
-				}
-			,'TitleFormats' => {
-					'PrefOrder' => ['titleFormat']
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupHead' => 'SETUP_TITLEFORMAT'
-					,'GroupDesc' => 'SETUP_GROUP_TITLEFORMATS_DESC'
-					,'GroupPrefHead' => '<tr><th>' . string('SETUP_CURRENT') .
-										'</th><th></th><th>' . string('SETUP_FORMATS') .
-										'</th><th></th></tr>'
-					,'GroupLine' => 1
-					,'GroupSub' => 1
-				}
-			,'GuessFileFormats' => {
-					'PrefOrder' => ['guessFileFormats']
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupHead' => 'SETUP_GUESSFILEFORMATS'
-					,'GroupDesc' => 'SETUP_GROUP_GUESSFILEFORMATS_DESC'
-					,'GroupPrefHead' => '<tr><th>' .
-										'</th><th></th><th>' . string('SETUP_FORMATS') .
-										'</th><th></th></tr>'
-					,'GroupLine' => 1
-					,'GroupSub' => 1
-				}
-			}
-		,'Prefs' => {
-			'titleFormatWeb' => {
-						'validate' => \&Slim::Utils::Validate::isInt
-						,'validateArgs' => [0,undef,1]
-						,'onChange' => sub {
-								if (Slim::Utils::Prefs::get('titleFormatWeb') > Slim::Utils::Prefs::getArrayMax('titleFormat')) {
-									Slim::Utils::Prefs::set('titleFormatWeb', Slim::Utils::Prefs::getArrayMax('titleFormat'));
-								}
-								for my $client (Slim::Player::Client::clients()) {
-									$client->currentPlaylistChangeTime(time());
-								}
-							}
-					}
-			,'titleFormat'	=> {
-						'isArray' => 1
-						,'arrayAddExtra' => 1
-						,'arrayDeleteNull' => 1
-						,'arrayDeleteValue' => ''
-						,'arrayBasicValue' => 0
-						,'arrayCurrentPref' => 'titleFormatWeb'
-						,'PrefSize' => 'large'
-						,'inputTemplate' => 'setup_input_array_txt.html'
-						,'validate' => \&Slim::Utils::Validate::isFormat
-						,'changeAddlText' => 'SETUP_TITLEFORMAT_CHANGED'
-							}
-			,'showArtist' => {
-						'validate' => \&Slim::Utils::Validate::trueFalse
-						,'options' => {
-									'0' => 'DISABLED',
-									'1' => 'ENABLED'
-								}
-							}
-			,'showYear' => {
-						'validate' => \&Slim::Utils::Validate::trueFalse
-						,'options' => {
-									'0' => 'DISABLED',
-									'1' => 'ENABLED'
-								}
-							}
-			,'guessFileFormats'	=> {
-						'isArray' => 1
-						,'arrayAddExtra' => 1
-						,'arrayDeleteNull' => 1
-						,'arrayDeleteValue' => ''
-						,'arrayBasicValue' => 0
-						,'PrefSize' => 'large'
-						,'inputTemplate' => 'setup_input_array_txt.html'
-						,'validate' => \&Slim::Utils::Validate::isFormat
-						,'changeAddlText' => 'SETUP_GUESSFILEFORMATS_CHANGED'
-					}
-			,"longdateFormat" => {
-						'validate' => \&Slim::Utils::Validate::inHash
-						,'validateArgs' => [\&Slim::Utils::DateTime::longDateFormats,1]
-						,'options' => \&Slim::Utils::DateTime::longDateFormats
-					}
-			,"shortdateFormat" => {
-						'validate' => \&Slim::Utils::Validate::inHash
-						,'validateArgs' => [\&Slim::Utils::DateTime::shortDateFormats,1]
-						,'options' => \&Slim::Utils::DateTime::shortDateFormats
-					}
-			,"timeFormat" => {
-						'validate' => \&Slim::Utils::Validate::inHash
-						,'validateArgs' => [\&Slim::Utils::DateTime::timeFormats,1]
-						,'options' => \&Slim::Utils::DateTime::timeFormats
-					}
-			}
-		} #end of setup{'FORMATTING_SETTINGS'} hash
+	'FORMATTING_SETTINGS'  => { }, #end of setup{'FORMATTING_SETTINGS'} hash
 
-	,'SECURITY_SETTINGS' => { } #end of setup{'security'} hash
+	'SECURITY_SETTINGS'    => { }, #end of setup{'security'} hash
 
-	,'PERFORMANCE_SETTINGS' => { } #end of setup{'performance'} hash
+	'PERFORMANCE_SETTINGS' => { }, #end of setup{'performance'} hash
 	
-	,'NETWORK_SETTINGS' => { }, #end of setup{'network'} hash
+	'NETWORK_SETTINGS'     => { }, #end of setup{'network'} hash
 
 	# This is handled by handleDebugSettings()
-	'DEBUGGING_SETTINGS' => { },
+	'DEBUGGING_SETTINGS'   => { },
 
 	); #end of setup hash
 
@@ -2022,6 +1917,7 @@ sub handleFormattingSettings {
 	my @prefs = qw(
 					guessFileFormats
 					titleFormat
+					titleFormatWeb
 					longdateFormat
 					shortdateFormat
 					timeFormat
@@ -2034,7 +1930,28 @@ sub handleFormattingSettings {
 
 		for my $pref (@prefs) {
 
-			Slim::Utils::Prefs::set($pref,    $paramRef->{$pref});
+			if ($pref eq 'titleFormat' || $pref eq 'guessFileFormats') {
+			
+				Slim::Utils::Prefs::delete($pref);
+				my $i = 0;
+				
+				while ($paramRef->{$pref.$i}) {
+					last if (!$paramRef->{$pref.$i});
+					Slim::Utils::Prefs::push($pref,$paramRef->{$pref.$i});
+					$i++;
+				}
+				
+			} else {
+				if ($paramRef->{'titleformatWeb'} ne Slim::Utils::Prefs::get('titleFormatWeb')) {
+	
+					for my $client (Slim::Player::Client::clients()) {
+						$client->currentPlaylistChangeTime(time());
+					}
+				}
+	
+				Slim::Utils::Prefs::set($pref,    $paramRef->{$pref});
+			}
+			
 		}
 	}
 
@@ -2044,8 +1961,22 @@ sub handleFormattingSettings {
 	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
 
 	for my $pref (@prefs) {
-		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
+		if ($pref eq 'guessFileFormats') {
+			$paramRef->{$pref} = [Slim::Utils::Prefs::getArray($pref)];
+			push @{$paramRef->{$pref}},"";
+
+		} elsif ($pref eq 'titleFormat') {
+			$paramRef->{$pref} = [Slim::Utils::Prefs::getArray($pref)];
+			push @{$paramRef->{$pref}},"";
+
+		} else {
+			$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
+		}
 	}
+	
+	$paramRef->{'longdateoptions'}  = Slim::Utils::DateTime::longDateFormats;
+	$paramRef->{'shortdateoptions'} = Slim::Utils::DateTime::shortDateFormats;
+	$paramRef->{'timeoptions'}      = Slim::Utils::DateTime::timeFormats;
 	
 	return Slim::Web::HTTP::filltemplatefile('setupformatting.html', $paramRef);
 }
@@ -2769,9 +2700,9 @@ sub buildLinks {
 
 				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupnetworking.html' });
 
-#			} elsif ($page eq "FORMATTING_SETTINGS") {
+			} elsif ($page eq "FORMATTING_SETTINGS") {
 
-#				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupformatting.html' });
+				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupformatting.html' });
 
 			} elsif ($page eq "INTERFACE_SETTINGS") {
 
