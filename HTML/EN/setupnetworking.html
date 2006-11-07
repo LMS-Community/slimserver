@@ -1,0 +1,95 @@
+[% FILTER null %]
+
+	[% pwd_list = BLOCK %]
+
+		<a href="setup.html?page=BASIC_SERVER_SETTINGS">[% "SERVER_SETTINGS" | string %]</a>
+
+		 / <a href="setupnetworking.html">[% page | string %]</a>
+
+	[% END %]
+
+	[% pageHeaderInfo = BLOCK %]
+		[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
+	[% END %]
+
+[% END %]
+
+[% pagetitle = page | string; pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %] 
+
+<div class="statusarea">
+	[% IF warning %]
+		[% warning %]
+	[% END %]
+</div>
+
+<form method="post" action="setupnetworking.html">
+
+	<input type=hidden value="[% page %]" name="page">
+
+	<div class="settingSection">
+
+		<div class="prefHead">[% "SETUP_WEBPROXY" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_WEBPROXY_DESC" | string %]</div>
+
+		<label for="webproxy" class="stdlabel">[% "SETUP_WEBPROXY_CHOOSE" | string %]</label>
+		<input type=text class="stdedit" name="webproxy" id="webproxy" value="[% webproxy %]" size="40">
+
+		<div class="prefHead">[% "SETUP_HTTPPORT" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_HTTPPORT_DESC" | string %]</div>
+
+		<input type=text class="stdedit" name="httpport" id="httpport" value="[% httpport %]" size="15">
+
+		<div class="prefHead">[% "SETUP_BUFFERSECS" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_BUFFERSECS_DESC" | string %]</div>
+
+		<input type=text class="stdedit" name="bufferSecs" id="bufferSecs" value="[% bufferSecs %]" size="15">
+
+		<div class="prefHead">[% "SETUP_REMOTESTREAMTIMEOUT" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_REMOTESTREAMTIMEOUT_DESC" | string %]</div>
+
+		<label for="remotestreamtimeout" class="stdlabel">[% "SETUP_REMOTESTREAMTIMEOUT_CHOOSE" | string %]</label>
+		<input type=text class="stdedit" name="remotestreamtimeout" id="remotestreamtimeout" value="[% remotestreamtimeout %]" size="15">
+
+		<div class="prefHead">[% "SETUP_MAXWMARATE" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MAXWMARATE_DESC" | string %]</div>
+
+		<select class="stdedit" name="maxWMArate" id="maxWMArate">
+
+		[% FOREACH option = wmaoptions.nsort %]
+			<option [% IF maxWMArate == option %]selected [% END %]value="[% option %]">[% wmaoptions.$option %]</option>
+		[%- END -%]
+
+		</select>
+
+	</div>
+	<div class="settingSection">
+
+		<div class="groupHead">[% "SETUP_GROUP_TCP_PARAMS" | string | upper %]</div>
+		<div class="groupDesc">[% "SETUP_GROUP_TCP_PARAMS_DESC" | string %]</div>
+		
+		<table border="0" width="100%">
+		<tr>
+		<td><label for="tcpReadMaximum" class="stdlabel">[% "SETUP_TCPREADMAXIMUM_CHOOSE" | string %]</label></td>
+		<td><input type="text" class="stdedit" name="tcpReadMaximum" id="tcpReadMaximum" value="[% tcpReadMaximum %]" size="15"></td>
+		</tr>
+
+		<tr>
+		<td><label for="tcpWriteMaximum" class="stdlabel">[% "SETUP_TCPWRITEMAXIMUM_CHOOSE" | string %]</label></td>
+		<td><input type="text" class="stdedit" name="tcpWriteMaximum" id="tcpWriteMaximum" value="[% tcpWriteMaximum %]" size="15"></td>
+		</tr>
+		
+		<tr>
+		<td><label for="udpChunkSize" class="stdlabel">[% "SETUP_UDPCHUNKSIZE_CHOOSE" | string %]</label></td>
+		<td><input type="text" class="stdedit" name="udpChunkSize" id="udpChunkSize" value="[% udpChunkSize %]" size="15"></td>
+		</tr>
+		</table>
+
+	</div>
+
+	<p><input name="submit" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]"></p>
+</form>
+
+<p></p>
+
+[% PROCESS pagefooter.html %]
+

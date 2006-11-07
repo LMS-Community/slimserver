@@ -1548,57 +1548,7 @@ sub initSetupConfig {
 				}
 			}
 		} #end of setup{'RADIO'}
-	,'INTERFACE_SETTINGS' => {
-		'title' => string('INTERFACE_SETTINGS')
-		,'parent' => 'BASIC_SERVER_SETTINGS'
-		,'GroupOrder' => ['Default']
-		,'Groups' => {
-			'Default' => {
-				'PrefOrder' => ['skin','itemsPerPage','refreshRate','coverArt','coverThumb','artfolder','thumbSize']
-			}
-		}
-		,'Prefs' => {
-			'skin'		=> {
-						'validate' => \&Slim::Utils::Validate::inHash
-						,'validateArgs' => [\&skins]
-						,'options' => sub {return {skins(1)};}
-						,'changeIntro' => 'SETUP_SKIN_OK'
-						,'changeAddlText' => 'HIT_RELOAD'
-						,'onChange' => sub {
-							for my $client (Slim::Player::Client::clients()) {
-								$client->currentPlaylistChangeTime(time());
-							}
-						}
-					}
-			,'itemsPerPage'	=> {
-						'validate' => \&Slim::Utils::Validate::isInt
-						,'validateArgs' => [1,undef,1]
-					}
-			,'refreshRate'	=> {
-						'validate' => \&Slim::Utils::Validate::isInt
-						,'validateArgs' => [2,undef,1]
-					}
-			,'coverArt' => {
-						'validate' => \&Slim::Utils::Validate::acceptAll
-						,'PrefSize' => 'large'
-					}
-			,'coverThumb' => {
-						'validate' => \&Slim::Utils::Validate::acceptAll
-						,'PrefSize' => 'large'
-					}
-			,'artfolder' => {
-					'validate' => \&Slim::Utils::Validate::isDir
-					,'validateArgs' => [1]
-					,'changeIntro' => 'SETUP_ARTFOLDER'
-					,'rejectMsg' => 'SETUP_BAD_DIRECTORY'
-					,'PrefSize' => 'large'
-				}
-			,'thumbSize' => {
-					'validate' => \&Slim::Utils::Validate::isInt
-					,'validateArgs' => [25,250,1,1]
-				}
-		}
-	}# end of setup{'INTERFACE_SETTINGS'} hash
+	,'INTERFACE_SETTINGS' => { }# end of setup{'INTERFACE_SETTINGS'} hash
 
 	,'FORMATS_SETTINGS' => { }
 
@@ -1710,87 +1660,12 @@ sub initSetupConfig {
 					}
 			}
 		} #end of setup{'FORMATTING_SETTINGS'} hash
+
 	,'SECURITY_SETTINGS' => { } #end of setup{'security'} hash
 
 	,'PERFORMANCE_SETTINGS' => { } #end of setup{'performance'} hash
 	
-	,'NETWORK_SETTINGS' => {
-		'title' => string('NETWORK_SETTINGS')
-		,'parent' => 'BASIC_SERVER_SETTINGS'
-		,'GroupOrder' => ['Default','TCP_Params']
-		,'Groups' => {
-			'Default' => {
-					'PrefOrder' => ['webproxy','httpport','bufferSecs','remotestreamtimeout', 'maxWMArate']
-				}
-			,'TCP_Params' => {
-					'PrefOrder' => ['tcpReadMaximum','tcpWriteMaximum','udpChunkSize']
-					,'PrefsInTable' => 1
-					,'Suppress_PrefHead' => 1
-					,'Suppress_PrefDesc' => 1
-					,'Suppress_PrefLine' => 1
-					,'Suppress_PrefSub' => 1
-					,'GroupHead' => 'SETUP_GROUP_TCP_PARAMS'
-					,'GroupDesc' => 'SETUP_GROUP_TCP_PARAMS_DESC'
-					,'GroupLine' => 1
-					,'GroupSub' => 1
-				}
-			}
-		,'Prefs' => {
-			'httpport'	=> {
-						'validate' => \&Slim::Utils::Validate::isInt
-						,'validateArgs' => [1025,65535,undef,1]
-						,'changeAddlText' => string('SETUP_NEW_VALUE')
-									. '<blockquote><a target="_top" href="[EVAL]Slim::Utils::Prefs::homeURL()[/EVAL]">'
-									. '[EVAL]Slim::Utils::Prefs::homeURL()[/EVAL]</a></blockquote>'
-						,'onChange' => sub {
-									my ($client,$changeref,$paramref,$pageref) = @_;
-									$paramref->{'HomeURL'} = Slim::Utils::Prefs::homeURL();
-								}
-					}
-			,'webproxy'	=> {
-						'validate' => \&Slim::Utils::Validate::hostNameOrIPAndPort,
-						'PrefSize' => 'large'
-					}
-			,'mDNSname'	=> {
-							'PrefSize' => 'medium'
-					}
-			,'bufferSecs' => {
-						'validate'   => \&Slim::Utils::Validate::isInt,
-						'validateArgs' => [3,30,1,1],
-					}							
-			,'remotestreamtimeout' => {
-						'validate' => \&Slim::Utils::Validate::isInt
-						,'validateArgs' => [1,undef,1]
-					}
-			,'maxWMArate' => {
-							'validate' => \&Slim::Utils::Validate::isInt,
-							'optionSort' => 'NKR',
-							'options' => {
-								'9999' => string('NO_LIMIT'),
-								'320'  => '320 ' . string('KBPS'),
-								'256'  => '256 ' . string('KBPS'),
-								'192'  => '192 ' . string('KBPS'),
-								'160'  => '160 ' . string('KBPS'),
-								'128'  => '128 ' . string('KBPS'),
-								'96'   => '96 ' . string('KBPS'),
-								'64'   => '64 ' . string('KBPS'),
-								'32'   => '32 ' . string('KBPS'),
-							}
-						}
-			,'tcpReadMaximum' => {
-						'validate' => \&Slim::Utils::Validate::isInt
-						,'validateArgs' => [1,undef,1]
-					}
-			,"tcpWriteMaximum" => {
-						'validate' => \&Slim::Utils::Validate::isInt
-						,'validateArgs' => [1,undef,1]
-					}
-			,"udpChunkSize" => {
-						'validate' => \&Slim::Utils::Validate::isInt
-						,'validateArgs' => [1,4096,1,1] #limit to 4096
-					}
-			}
-		}, #end of setup{'network'} hash
+	,'NETWORK_SETTINGS' => { }, #end of setup{'network'} hash
 
 	# This is handled by handleDebugSettings()
 	'DEBUGGING_SETTINGS' => { },
@@ -2050,9 +1925,36 @@ sub handleNetworkingSettings {
 	# If this is a settings update
 	if ($paramRef->{'submit'}) {
 
+		$paramRef->{'warning'} = "";
+
 		for my $pref (@prefs) {
 
-			Slim::Utils::Prefs::set($pref,    $paramRef->{$pref});
+			if ($pref eq 'bufferSecs') {
+				if ($paramRef->{'bufferSecs'} > 30) {$paramRef->{'bufferSecs'} = 30};
+				if ($paramRef->{'bufferSecs'} < 3) {$paramRef->{'bufferSecs'} = 3};
+			};
+			
+			if ($pref eq 'bufferSecs') {
+				if ($paramRef->{'bufferSecs'} > 30) {$paramRef->{'bufferSecs'} = 30};
+				if ($paramRef->{'bufferSecs'} < 3) {$paramRef->{'bufferSecs'} = 3};
+			};
+			
+			if ($pref eq 'bufferSecs') {
+				if ($paramRef->{'bufferSecs'} > 30) {$paramRef->{'bufferSecs'} = 30};
+				if ($paramRef->{'bufferSecs'} < 3) {$paramRef->{'bufferSecs'} = 3};
+			};
+
+			if ($pref eq 'udpChunkSize') {
+				if ($paramRef->{'udpChunkSize'} < 1) {$paramRef->{'udpChunkSize'} = 1};
+				if ($paramRef->{'udpChunkSize'} > 4096) {$paramRef->{'udpChunkSize'} = 4096};
+			};
+
+			Slim::Utils::Prefs::set($pref,    $paramRef->{$pref}) if $paramRef->{$pref};
+
+			if ($pref eq 'httpport' && $paramRef->{'httpport'}) {
+				$paramRef->{'warning'} .= string("SETUP_HTTPPORT_OK").'<blockquote><a target="_top" href="'.Slim::Utils::Prefs::homeURL().'">'
+									. Slim::Utils::Prefs::homeURL()."</a></blockquote><br>";
+			}
 		}
 	}
 
@@ -2064,6 +1966,19 @@ sub handleNetworkingSettings {
 	for my $pref (@prefs) {
 		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
 	}
+	
+	$paramRef->{'wmaoptions'} =  {
+								'9999' => string('NO_LIMIT'),
+								'320'  => '320 ' . string('KBPS'),
+								'256'  => '256 ' . string('KBPS'),
+								'192'  => '192 ' . string('KBPS'),
+								'160'  => '160 ' . string('KBPS'),
+								'128'  => '128 ' . string('KBPS'),
+								'96'   => '96 ' . string('KBPS'),
+								'64'   => '64 ' . string('KBPS'),
+								'32'   => '32 ' . string('KBPS'),
+							};
+	
 	
 	return Slim::Web::HTTP::filltemplatefile('setupnetworking.html', $paramRef);
 }
@@ -2150,9 +2065,43 @@ sub handleInterfaceSettings {
 	# If this is a settings update
 	if ($paramRef->{'submit'}) {
 
+		$paramRef->{'warning'} = "";
+
 		for my $pref (@prefs) {
 
-			Slim::Utils::Prefs::set($pref,    $paramRef->{$pref});
+			if ($pref eq 'itemsPerPage') {
+				if ($paramRef->{'bufferSecs'} < 1) {$paramRef->{'bufferSecs'} = 1};
+			};
+			
+			if ($pref eq 'refreshRate') {
+				if ($paramRef->{'bufferSecs'} < 2) {$paramRef->{'bufferSecs'} = 2};
+			};
+
+			if ($pref eq 'thumbSize') {
+				if ($paramRef->{'udpChunkSize'} < 25) {$paramRef->{'udpChunkSize'} = 25};
+				if ($paramRef->{'udpChunkSize'} > 250) {$paramRef->{'udpChunkSize'} = 250};
+			};
+			
+			if ($paramRef->{'skin'} ne Slim::Utils::Prefs::get('skin')) {
+				$paramRef->{'warning'} .= string("SETUP_SKIN_OK")." ".string("HIT_RELOAD");
+
+				for my $client (Slim::Player::Client::clients()) {
+					$client->currentPlaylistChangeTime(time());
+				}
+			}
+
+			if ($pref eq 'artfolder' && $paramRef->{'artfolder'} ne Slim::Utils::Prefs::get('artfolder')) {
+				
+				my ($validDir, $errMsg) = Slim::Utils::Validate::isDir($paramRef->{'artfolder'});
+				
+				if (!$validDir && $paramRef->{'artfolder'} ne "") {
+					$paramRef->{'warning'} .= sprintf(string("SETUP_BAD_DIRECTORY"),$paramRef->{'artfolder'});
+
+					delete $paramRef->{'artfolder'};
+				}
+			}
+
+			Slim::Utils::Prefs::set($pref,    $paramRef->{$pref}) if exists $paramRef->{$pref};
 		}
 	}
 
@@ -2164,6 +2113,8 @@ sub handleInterfaceSettings {
 	for my $pref (@prefs) {
 		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
 	}
+	
+	$paramRef->{'skinoptions'} = {skins(1)};
 	
 	return Slim::Web::HTTP::filltemplatefile('setupinterface.html', $paramRef);
 }
@@ -2814,17 +2765,17 @@ sub buildLinks {
 
 				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupsecurity.html' });
 
-#			} elsif ($page eq "NETWORK_SETTINGS") {
+			} elsif ($page eq "NETWORK_SETTINGS") {
 
-#				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupnetworking.html' });
+				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupnetworking.html' });
 
 #			} elsif ($page eq "FORMATTING_SETTINGS") {
 
 #				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupformatting.html' });
 
-#			} elsif ($page eq "INTERFACE_SETTINGS") {
+			} elsif ($page eq "INTERFACE_SETTINGS") {
 
-#				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupinterface.html' });
+				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupinterface.html' });
 
 #			} elsif ($page eq "BASIC_SERVER_SETTINGS") {
 
