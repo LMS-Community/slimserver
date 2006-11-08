@@ -64,7 +64,6 @@
 		[% IF mDNSname.size %]
 		<div class="prefHead">[% "SETUP_MDNSNAME" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_MDNSNAME_DESC" | string %]</div>
-
 		<label for="mDNSname" class="stdlabel">[% "SETUP_MDNSNAME_CHOOSE" | string %]</label>
 		<input type=text class="stdedit" name="mDNSname" id="mDNSname" value="[% mDNSname %]" size="20">
 		[% END %]
@@ -74,13 +73,13 @@
 
 		<div class="groupHead">[% "SETUP_GROUP_TCP_PARAMS" | string | upper %]</div>
 		<div class="groupDesc">[% "SETUP_GROUP_TCP_PARAMS_DESC" | string %]</div>
-		
+				
 		<table border="0" width="100%">
 		<tr>
 		<td><label for="tcpReadMaximum" class="stdlabel">[% "SETUP_TCPREADMAXIMUM_CHOOSE" | string %]</label></td>
 		<td><input type="text" class="stdedit" name="tcpReadMaximum" id="tcpReadMaximum" value="[% tcpReadMaximum %]" size="15"></td>
 		</tr>
-
+		
 		<tr>
 		<td><label for="tcpWriteMaximum" class="stdlabel">[% "SETUP_TCPWRITEMAXIMUM_CHOOSE" | string %]</label></td>
 		<td><input type="text" class="stdedit" name="tcpWriteMaximum" id="tcpWriteMaximum" value="[% tcpWriteMaximum %]" size="15"></td>
@@ -91,7 +90,7 @@
 		<td><input type="text" class="stdedit" name="udpChunkSize" id="udpChunkSize" value="[% udpChunkSize %]" size="15"></td>
 		</tr>
 		</table>
-
+		
 	</div>
 
 	<p><input name="submit" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]"></p>
