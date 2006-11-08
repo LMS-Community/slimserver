@@ -1,7 +1,7 @@
 <script language="JavaScript" type="text/javascript">
 <!-- Start Hiding the Script
 
-[% IF NOT path.match('setup') AND NOT path.match('debugging') %]
+[% IF NOT path.match('setup') AND NOT path.match('settings') %]
 
 var url = "[% statusroot %]";
 
