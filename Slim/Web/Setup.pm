@@ -1826,21 +1826,20 @@ sub handleNetworkingSettings {
 		$paramRef->{'warning'} = "";
 
 		if ($paramRef->{'httpport'} ne Slim::Utils::Prefs::get('httpport')) {
+		
+			if ($paramRef->{'httpport'} < 1025)  { $paramRef->{'httpport'}  = 1025 };
+			if ($paramRef->{'httpport'} > 65535) { $paramRef->{'httpport'} = 65535 };
+		
 			Slim::Utils::Prefs::set('httpport', $paramRef->{'httpport'});
+
 			$paramRef->{'warning'} .= string("SETUP_HTTPPORT_OK").'<blockquote><a target="_top" href="'.Slim::Utils::Prefs::homeURL().'">'
 								. Slim::Utils::Prefs::homeURL()."</a></blockquote><br>";
 		}
 
 		for my $pref (@prefs) {
 
-			if ($pref eq 'bufferSecs') {
-				if ($paramRef->{'bufferSecs'} > 30) {$paramRef->{'bufferSecs'} = 30};
-				if ($paramRef->{'bufferSecs'} < 3) {$paramRef->{'bufferSecs'} = 3};
-			};
-			
-			if ($pref eq 'bufferSecs') {
-				if ($paramRef->{'bufferSecs'} > 30) {$paramRef->{'bufferSecs'} = 30};
-				if ($paramRef->{'bufferSecs'} < 3) {$paramRef->{'bufferSecs'} = 3};
+			if ($pref =~ /^tcp/ || $pref eq 'validate') {
+				if ($paramRef->{$pref} < 1) {$paramRef->{$pref} = 1};
 			};
 			
 			if ($pref eq 'bufferSecs') {
@@ -1866,6 +1865,8 @@ sub handleNetworkingSettings {
 	for my $pref (@prefs) {
 		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
 	}
+	
+	$paramRef->{'HomeURL'} = Slim::Utils::Prefs::homeURL();
 	
 	$paramRef->{'wmaoptions'} =  {
 								'9999' => string('NO_LIMIT'),
