@@ -349,6 +349,12 @@ sub init {
 	$log->info("Source conversion init..");
 	Slim::Player::Source::init();
 
+	if (!$nosetup) {
+
+		$log->info("SlimServer Web Settings init...");
+		Slim::Web::Setup::initSetup();
+	}
+
 	$log->info("SlimServer Plugins init...");
 	Slim::Utils::PluginManager::init();
 
@@ -378,12 +384,6 @@ sub init {
 
 	$log->info("SlimServer HTTP init...");
 	Slim::Web::HTTP::init();
-
-	if (!$nosetup) {
-
-		$log->info("SlimServer Web Settings init...");
-		Slim::Web::Setup::initSetup();
-	}
 
 	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
