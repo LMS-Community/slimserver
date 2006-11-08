@@ -74,7 +74,7 @@
 
 		</select>
 
-		[% IF forkedWeb.size %]
+		[% IF forkingPrefs %]
 		<div class="prefHead">[% "SETUP_FORKEDWEB" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_FORKEDWEB_DESC" | string %]</div>
 
@@ -84,9 +84,7 @@
 			<option [% IF forkedWeb %]selected [% END %]value="1">[% 'SETUP_FORKEDWEB_ENABLE' | getstring %]</option>
 		
 		</select>
-		[% END %]
-
-		[% IF forkedStreaming.size %]
+		
 		<div class="prefHead">[% "SETUP_FORKEDSTREAMING" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_FORKEDSTREAMING_DESC" | string %]</div>
 

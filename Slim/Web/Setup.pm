@@ -1730,13 +1730,15 @@ sub handlePerformanceSettings {
 		push @prefs,
 			'forkedWeb',
 			'forkedStreaming';
+		
+		$paramRef->{'forkingPrefs'} = 1;
 	}
 
 	# If this is a settings update
 	if ($paramRef->{'submit'}) {
 
 		for my $pref (@prefs) {
-			Slim::Utils::Prefs::set($pref,    $paramRef->{$pref});
+			Slim::Utils::Prefs::set($pref,    $paramRef->{$pref}) if $paramRef->{$pref};
 		}
 	}
 
@@ -1823,6 +1825,12 @@ sub handleNetworkingSettings {
 
 		$paramRef->{'warning'} = "";
 
+		if ($paramRef->{'httpport'} ne Slim::Utils::Prefs::get('httpport')) {
+			Slim::Utils::Prefs::set('httpport', $paramRef->{'httpport'});
+			$paramRef->{'warning'} .= string("SETUP_HTTPPORT_OK").'<blockquote><a target="_top" href="'.Slim::Utils::Prefs::homeURL().'">'
+								. Slim::Utils::Prefs::homeURL()."</a></blockquote><br>";
+		}
+
 		for my $pref (@prefs) {
 
 			if ($pref eq 'bufferSecs') {
@@ -1847,10 +1855,6 @@ sub handleNetworkingSettings {
 
 			Slim::Utils::Prefs::set($pref,    $paramRef->{$pref}) if $paramRef->{$pref};
 
-			if ($pref eq 'httpport' && $paramRef->{'httpport'}) {
-				$paramRef->{'warning'} .= string("SETUP_HTTPPORT_OK").'<blockquote><a target="_top" href="'.Slim::Utils::Prefs::homeURL().'">'
-									. Slim::Utils::Prefs::homeURL()."</a></blockquote><br>";
-			}
 		}
 	}
 
