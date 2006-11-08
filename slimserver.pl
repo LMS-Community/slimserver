@@ -296,9 +296,6 @@ sub init {
 	$log->info("SlimServer strings init...");
 	Slim::Utils::Strings::init();
 
-	$log->info("SlimServer Setup init...");
-	Slim::Web::Setup::initSetup();
-
 	# initialize all player UI subsystems
 	$log->info("SlimServer setting language...");
 	Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
@@ -381,6 +378,12 @@ sub init {
 
 	$log->info("SlimServer HTTP init...");
 	Slim::Web::HTTP::init();
+
+	if (!$nosetup) {
+
+		$log->info("SlimServer Web Settings init...");
+		Slim::Web::Setup::initSetup();
+	}
 
 	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();

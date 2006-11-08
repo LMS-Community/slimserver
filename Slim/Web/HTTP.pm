@@ -548,6 +548,7 @@ sub processHTTP {
 				}
 			}
 		}
+
 		# process the commands
 		processURL($httpClient, $response, $params);
 
@@ -813,18 +814,21 @@ sub generateHTTPResponse {
 		$response->header('Cache-Control' => sprintf('max-age=%d, public', 3600));
 	}
 
-	if ($contentType =~ /text/) {
+	if ($contentType =~ /text/ && $path !~ /memoryusage/) {
+
 		$params->{'params'} = {};
+
 		filltemplatefile('include.html', $params);
 
 		while (my ($key,$value) = each %{$params->{'params'}}) {
+
 			$params->{$key} = $value;
 		}
 
 		delete $params->{'params'};
 	}
 
-	if (ref($pageFunctions{$path}) eq 'CODE') {
+	if (my $classOrCode = $pageFunctions{$path}) {
 
 		# if we match one of the page functions as defined above,
 		# execute that, and hand it a callback to send the data.
@@ -849,13 +853,26 @@ sub generateHTTPResponse {
 
 		$::perfmon && (my $startTime = Time::HiRes::time());
 
-		$body = &{$pageFunctions{$path}}(
-			$client,
-			$params,
-			\&prepareResponseForSending,
-			$httpClient,
-			$response,
-		);
+		if (ref($classOrCode) eq 'CODE') {
+
+			$body = &{$classOrCode}(
+				$client,
+				$params,
+				\&prepareResponseForSending,
+				$httpClient,
+				$response,
+			);
+
+		} elsif ($classOrCode->can('handler')) {
+
+			$body = $classOrCode->handler(
+				$client,
+				$params,
+				\&prepareResponseForSending,
+				$httpClient,
+				$response,
+			);
+		}
 		
 		$::perfmon && $startTime && $pageBuild->log(Time::HiRes::time() - $startTime) &&
 			msg(sprintf("    Page: %s\n", $path || '/'), undef, 1);

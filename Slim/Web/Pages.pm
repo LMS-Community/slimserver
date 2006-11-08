@@ -81,18 +81,35 @@ sub _lcPlural {
 sub addPageLinks {
 	my ($class, $category, $links, $noquery) = @_;
 
-	return if (ref($links) ne 'HASH');
+	if (ref($links) ne 'HASH') {
+		return;
+	}
 
 	while (my ($title, $path) = each %$links) {
+
 		if (defined($path)) {
-			$additionalLinks{$category}->{$title} = $path . 
-				($noquery ? '' : (($path =~ /\?/) ? '&' : '?' )); #'
+
+			my $separator = '';
+
+			if (!$noquery) {
+
+				if ($path =~ /\?/) {
+					$separator = '&';
+				} else {
+					$separator = '?';
+				}
+			}
+
+			$additionalLinks{$category}->{$title} = $path . $separator;
+
 		} else {
+
 			delete($additionalLinks{$category}->{$title});
 		}
 	}
 
 	if (not keys %{$additionalLinks{$category}}) {
+
 		delete($additionalLinks{$category});
 	}
 }
