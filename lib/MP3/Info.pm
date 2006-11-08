@@ -1809,35 +1809,43 @@ sub _get_lame {
 # in the MP3 (eg for 'update' frames).
 sub _get_v2head {
 	my $fh = $_[0] or return;
-	my($v2h, $bytes, @bytes);
-	$v2h->{offset} = $_[1] || 0;
+
+	my $v2h = {
+		'offset'   => $_[1] || 0,
+		'tag_size' => 0,
+	};
 
 	# check first three bytes for 'ID3'
-	seek $fh, $v2h->{offset}, SEEK_SET;
-	read $fh, $bytes, 3;
+	seek($fh, $v2h->{offset}, SEEK_SET);
+	read($fh, my $header, 10);
+
+	my $tag = substr($header, 0, 3);
 
 	# (Note: Footers are dealt with in v2foot)
 	if ($v2h->{offset} == 0) {
 
 		# JRF: Only check for special headers if we're at the start of the file.
-		if ($bytes eq 'RIF' || $bytes eq 'FOR') {
-			_find_id3_chunk($fh, $bytes) or return;
+		if ($tag eq 'RIF' || $tag eq 'FOR') {
+			_find_id3_chunk($fh, $tag) or return;
 			$v2h->{offset} = tell $fh;
-			read $fh, $bytes, 3;
+
+			read($fh, $header, 10);
+			$tag = substr($header, 0, 3);
 		}
 	}
 
-	return unless $bytes eq 'ID3';
+	return if $tag ne 'ID3';
 
 	# get version
-	read $fh, $bytes, 2;
-	$v2h->{version} = sprintf "ID3v2.%d.%d",
-		@$v2h{qw[major_version minor_version]} =
-			unpack 'c2', $bytes;
+	my ($major, $minor, $flags) = unpack ("x3CCC", $header);
+
+	$v2h->{version} = sprintf("ID3v2.%d.%d", $major, $minor);
+	$v2h->{major_version} = $major;
+	$v2h->{minor_version} = $minor;
 
 	# get flags
-	read $fh, $bytes, 1;
-	my @bits = split //, unpack 'b8', $bytes;
+	my @bits = split(//, unpack('b8', pack('v', $flags)));
+
 	if ($v2h->{major_version} == 2) {
 		$v2h->{unsync}       = $bits[7];
 		$v2h->{compression}  = $bits[6]; # Should be ignored - no defined form
@@ -1851,14 +1859,15 @@ sub _get_v2head {
 	}
 
 	# get ID3v2 tag length from bytes 7-10
-	$v2h->{tag_size} = 10;	# include ID3v2 header size
-	$v2h->{tag_size} += 10 if $v2h->{footer};
-	read $fh, $bytes, 4;
-	@bytes = reverse unpack 'C4', $bytes;
-	foreach my $i (0 .. 3) {
-		# whoaaaaaa nellllllyyyyyy!
-		$v2h->{tag_size} += $bytes[$i] * 128 ** $i;
+	my $rawsize = substr($header, 6, 4);
+
+	for my $b (unpack('C4', $rawsize)) {
+
+		$v2h->{tag_size} = ($v2h->{tag_size} << 7) + $b;
 	}
+
+	$v2h->{tag_size} += 10;	# include ID3v2 header size
+	$v2h->{tag_size} += 10 if $v2h->{footer};
 
 	# JRF: I think this is done wrongly - this should be part of the main frame,
 	#      and therefore under ID3v2.3 it's subject to unsynchronisation
@@ -1867,14 +1876,25 @@ sub _get_v2head {
 
 	# get extended header size (2.3/2.4 only)
 	$v2h->{ext_header_size} = 0;
+
 	if ($v2h->{ext_header}) {
-		read $fh, $bytes, 4;
-		@bytes = reverse unpack 'C4', $bytes;
+		my $filesize = -s $fh;
+
+		read $fh, my $bytes, 4;
+		my @bytes = reverse unpack 'C4', $bytes;
 
 		# use syncsafe bytes if using version 2.4
 		my $bytesize = ($v2h->{major_version} > 3) ? 128 : 256;
 		for my $i (0..3) {
 			$v2h->{ext_header_size} += $bytes[$i] * $bytesize ** $i;
+		}
+
+		# Bug 4486
+		# Don't try to read past the end of the file if we have a
+		# bogus extended header size.
+		if (($v2h->{ext_header_size} - 10 ) > -s $fh) {
+
+			return $v2h;
 		}
 
 		# Read the extended header
