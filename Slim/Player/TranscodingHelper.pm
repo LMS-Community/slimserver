@@ -160,7 +160,9 @@ sub checkBin {
 
 			$command = undef;
 
-			$log->warn("   couldn't find  binary for: $1");
+			$@ = $1;
+
+			$log->warn("   couldn't find binary for: $1");
 		}
 	}
 

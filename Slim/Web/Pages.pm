@@ -42,15 +42,6 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^setup\.(?:htm|xml)/,\&Slim::Web::Setup::setup_HTTP);
 	Slim::Web::HTTP::addPageFunction(qr/^tunein\.(?:htm|xml)/,\&tuneIn);
 	Slim::Web::HTTP::addPageFunction(qr/^update_firmware\.(?:htm|xml)/,\&update_firmware);
-	Slim::Web::HTTP::addPageFunction(qr/^debugging\.(?:htm|xml)/, \&Slim::Web::Setup::handleDebugSettings);
-	Slim::Web::HTTP::addPageFunction(qr/^setupfiletypes\.(?:htm|xml)/, \&Slim::Web::Setup::handleFileTypeSettings);
-	Slim::Web::HTTP::addPageFunction(qr/^setupperformance\.(?:htm|xml)/, \&Slim::Web::Setup::handlePerformanceSettings);
-	Slim::Web::HTTP::addPageFunction(qr/^setupbehavior\.(?:htm|xml)/, \&Slim::Web::Setup::handleBehaviorSettings);
-	Slim::Web::HTTP::addPageFunction(qr/^setupsecurity\.(?:htm|xml)/, \&Slim::Web::Setup::handleSecuritySettings);
-	Slim::Web::HTTP::addPageFunction(qr/^setupnetworking\.(?:htm|xml)/, \&Slim::Web::Setup::handleNetworkingSettings);
-	Slim::Web::HTTP::addPageFunction(qr/^setupformatting\.(?:htm|xml)/, \&Slim::Web::Setup::handleFormattingSettings);
-	Slim::Web::HTTP::addPageFunction(qr/^setupinterface\.(?:htm|xml)/, \&Slim::Web::Setup::handleInterfaceSettings);
-	#Slim::Web::HTTP::addPageFunction(qr/^setupserverbasic\.(?:htm|xml)/, \&Slim::Web::Setup::handleBasicServerSettings);
 
 	# pull in the memory usage module if requested.
 	if (logger('server.memory')->is_info) {

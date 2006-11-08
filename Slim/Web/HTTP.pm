@@ -441,7 +441,7 @@ sub processHTTP {
 
 				return;
 
-			} elsif ($path =~ m|^/(.+?)/.*| && $path !~ m{^/(?:html|music|plugins)/}i) {
+			} elsif ($path =~ m|^/(.+?)/.*| && $path !~ m{^/(?:html|music|plugins|settings)/}i) {
 
 				my $desiredskin = $1;
 
@@ -828,7 +828,7 @@ sub generateHTTPResponse {
 
 		# if we match one of the page functions as defined above,
 		# execute that, and hand it a callback to send the data.
-		
+
 		# fork for certain read-only operations i.e. browsedb
 		if ( $forkFunctions{$path} && $^O !~ /Win32/ && Slim::Utils::Prefs::get('forkedWeb') ) {
 

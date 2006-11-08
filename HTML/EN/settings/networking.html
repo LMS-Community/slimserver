@@ -4,7 +4,7 @@
 
 		<a href="setup.html?page=BASIC_SERVER_SETTINGS">[% "SERVER_SETTINGS" | string %]</a>
 
-		 / <a href="setupnetworking.html">[% page | string %]</a>
+		 / <a href="/[% path %]">[% page | string %]</a>
 
 	[% END %]
 
@@ -21,8 +21,8 @@
 		[% warning %]
 	[% END %]
 </div>
-
-<form method="post" action="setupnetworking.html">
+[% path %]
+<form method="post" action="/[% path %]">
 
 	<input type=hidden value="[% page %]" name="page">
 
@@ -60,6 +60,14 @@
 		[%- END -%]
 
 		</select>
+
+		[% IF mDNSname.size %]
+		<div class="prefHead">[% "SETUP_MDNSNAME" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MDNSNAME_DESC" | string %]</div>
+
+		<label for="mDNSname" class="stdlabel">[% "SETUP_MDNSNAME_CHOOSE" | string %]</label>
+		<input type=text class="stdedit" name="mDNSname" id="mDNSname" value="[% mDNSname %]" size="20">
+		[% END %]
 
 	</div>
 	<div class="settingSection">

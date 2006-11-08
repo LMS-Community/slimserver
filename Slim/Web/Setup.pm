@@ -1341,9 +1341,7 @@ sub initSetupConfig {
 
 	,'BASIC_SERVER_SETTINGS' => {
 
-		'children' => [qw(BASIC_SERVER_SETTINGS INTERFACE_SETTINGS BEHAVIOR_SETTINGS 
-				FORMATS_SETTINGS FORMATTING_SETTINGS SECURITY_SETTINGS 
-				PERFORMANCE_SETTINGS NETWORK_SETTINGS DEBUGGING_SETTINGS)],
+		'children' => [qw(BASIC_SERVER_SETTINGS)],
 
 		'title'    => string('BASIC_SERVER_SETTINGS'),
 		'singleChildLinkText' => string('ADDITIONAL_SERVER_SETTINGS'),
@@ -1548,39 +1546,8 @@ sub initSetupConfig {
 				}
 			}
 		}, #end of setup{'RADIO'}
-	'INTERFACE_SETTINGS'   => { },# end of setup{'INTERFACE_SETTINGS'} hash
-
-	'FORMATS_SETTINGS'     => { },
-
-	'BEHAVIOR_SETTINGS'    => { }, #end of setup{'behavior'} hash
-
-	'FORMATTING_SETTINGS'  => { }, #end of setup{'FORMATTING_SETTINGS'} hash
-
-	'SECURITY_SETTINGS'    => { }, #end of setup{'security'} hash
-
-	'PERFORMANCE_SETTINGS' => { }, #end of setup{'performance'} hash
-	
-	'NETWORK_SETTINGS'     => { }, #end of setup{'network'} hash
-
-	# This is handled by handleDebugSettings()
-	'DEBUGGING_SETTINGS'   => { },
-
 	); #end of setup hash
-
-	# Bug 2724 - only show the mDNS settings if we have a binary for it.
-	if (Slim::Utils::Misc::findbin('mDNSResponderPosix')) {
-
-		push @{$setup{'NETWORK_SETTINGS'}{'Groups'}{'Default'}{'PrefOrder'}}, 'mDNSname';
-	}
 	
-	# Add forking performance options for non-Windows
-	if ( $^O !~ /Win32/ ) {
-
-		push @{ $setup{'PERFORMANCE_SETTINGS'}->{'Groups'}->{'Default'}->{'PrefOrder'} },
-			'forkedWeb',
-			'forkedStreaming';
-	}
-
 	if (scalar(keys %{Slim::Utils::PluginManager::installedPlugins()})) {
 		
 		addChildren('BASIC_SERVER_SETTINGS', 'PLUGINS');
@@ -1595,6 +1562,26 @@ sub initSetupConfig {
 sub initSetup {
 	initSetupConfig();
 	fillAlarmOptions();
+
+	Slim::Web::HTTP::addPageFunction(qr/^settings\/debugging\.(?:htm|xml)/,   \&Slim::Web::Setup::handleDebugSettings);
+	Slim::Web::HTTP::addPageFunction(qr/^settings\/filetypes\.(?:htm|xml)/,   \&Slim::Web::Setup::handleFileTypeSettings);
+	Slim::Web::HTTP::addPageFunction(qr/^settings\/performance\.(?:htm|xml)/, \&Slim::Web::Setup::handlePerformanceSettings);
+	Slim::Web::HTTP::addPageFunction(qr/^settings\/behavior\.(?:htm|xml)/,    \&Slim::Web::Setup::handleBehaviorSettings);
+	Slim::Web::HTTP::addPageFunction(qr/^settings\/security\.(?:htm|xml)/,    \&Slim::Web::Setup::handleSecuritySettings);
+	Slim::Web::HTTP::addPageFunction(qr/^settings\/networking\.(?:htm|xml)/,  \&Slim::Web::Setup::handleNetworkingSettings);
+	Slim::Web::HTTP::addPageFunction(qr/^settings\/formatting\.(?:htm|xml)/,  \&Slim::Web::Setup::handleFormattingSettings);
+	Slim::Web::HTTP::addPageFunction(qr/^settings\/interface\.(?:htm|xml)/,   \&Slim::Web::Setup::handleInterfaceSettings);
+	#Slim::Web::HTTP::addPageFunction(qr/^settings\/basic\.(?:htm|xml)/,       \&Slim::Web::Setup::handleBasicServerSettings);
+
+	Slim::Web::Pages->addPageLinks('setup', { "DEBUGGING_SETTINGS"   => 'settings/debugging.html' });
+	Slim::Web::Pages->addPageLinks('setup', { "FORMATS_SETTINGS"     => 'settings/filetypes.html' });
+	Slim::Web::Pages->addPageLinks('setup', { "PERFORMANCE_SETTINGS" => 'settings/performance.html' });
+	Slim::Web::Pages->addPageLinks('setup', { "BEHAVIOR_SETTINGS"    => 'settings/behavior.html' });
+	Slim::Web::Pages->addPageLinks('setup', { "SECURITY_SETTINGS"    => 'settings/security.html' });
+	Slim::Web::Pages->addPageLinks('setup', { "NETWORK_SETTINGS"     => 'settings/networking.html' });
+	Slim::Web::Pages->addPageLinks('setup', { "FORMATTING_SETTINGS"  => 'settings/formatting.html' });
+	Slim::Web::Pages->addPageLinks('setup', { "INTERFACE_SETTINGS"   => 'settings/interface.html' });
+#	Slim::Web::Pages->addPageLinks('setup', { "BASIC_SERVER_SETTINGS" => 'settings/setupbasicserver.html' });
 }
 
 sub handleFileTypeSettings {
@@ -1674,7 +1661,7 @@ sub handleFileTypeSettings {
 	$paramRef->{'disabledextensionsaudio'}  = Slim::Utils::Prefs::get('disabledextensionsaudio');
 	$paramRef->{'disabledextensionsplaylist'} = Slim::Utils::Prefs::get('disabledextensionsplaylist');
 
-	return Slim::Web::HTTP::filltemplatefile('setupfiletypes.html', $paramRef);
+	return Slim::Web::HTTP::filltemplatefile('settings\filetypes.html', $paramRef);
 }
 
 sub handleDebugSettings {
@@ -1723,7 +1710,7 @@ sub handleDebugSettings {
 	$paramRef->{'debugServerLog'}  = Slim::Utils::Log->serverLogFile;
 	$paramRef->{'debugScannerLog'} = Slim::Utils::Log->scannerLogFile;
 
-	return Slim::Web::HTTP::filltemplatefile('debugging.html', $paramRef);
+	return Slim::Web::HTTP::filltemplatefile('settings\debugging.html', $paramRef);
 }
 
 sub handlePerformanceSettings {
@@ -1736,6 +1723,14 @@ sub handlePerformanceSettings {
 					serverPriority
 					scannerPriority
 				);
+
+	# Add forking performance options for non-Windows
+	if ( $^O !~ /Win32/ ) {
+
+		push @prefs,
+			'forkedWeb',
+			'forkedStreaming';
+	}
 
 	# If this is a settings update
 	if ($paramRef->{'submit'}) {
@@ -1765,7 +1760,7 @@ sub handlePerformanceSettings {
 		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
 	}
 	
-	return Slim::Web::HTTP::filltemplatefile('setupperformance.html', $paramRef);
+	return Slim::Web::HTTP::filltemplatefile('settings/performance.html', $paramRef);
 }
 
 sub handleBasicServerSettings {
@@ -1800,7 +1795,7 @@ sub handleBasicServerSettings {
 		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
 	}
 	
-	return Slim::Web::HTTP::filltemplatefile('setupserverbasic.html', $paramRef);
+	return Slim::Web::HTTP::filltemplatefile('settings/basic.html', $paramRef);
 }
 
 sub handleNetworkingSettings {
@@ -1816,6 +1811,12 @@ sub handleNetworkingSettings {
 					tcpWriteMaximum
 					udpChunkSize
 				);
+
+	# Bug 2724 - only show the mDNS settings if we have a binary for it.
+	if (Slim::Utils::Misc::findbin('mDNSResponderPosix')) {
+
+		push @prefs, 'mDNSname';
+	}
 
 	# If this is a settings update
 	if ($paramRef->{'submit'}) {
@@ -1875,7 +1876,7 @@ sub handleNetworkingSettings {
 							};
 	
 	
-	return Slim::Web::HTTP::filltemplatefile('setupnetworking.html', $paramRef);
+	return Slim::Web::HTTP::filltemplatefile('settings/networking.html', $paramRef);
 }
 
 sub handleSecuritySettings {
@@ -1908,7 +1909,7 @@ sub handleSecuritySettings {
 		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
 	}
 	
-	return Slim::Web::HTTP::filltemplatefile('setupsecurity.html', $paramRef);
+	return Slim::Web::HTTP::filltemplatefile('settings/security.html', $paramRef);
 }
 
 sub handleFormattingSettings {
@@ -1978,7 +1979,7 @@ sub handleFormattingSettings {
 	$paramRef->{'shortdateoptions'} = Slim::Utils::DateTime::shortDateFormats;
 	$paramRef->{'timeoptions'}      = Slim::Utils::DateTime::timeFormats;
 	
-	return Slim::Web::HTTP::filltemplatefile('setupformatting.html', $paramRef);
+	return Slim::Web::HTTP::filltemplatefile('settings/formatting.html', $paramRef);
 }
 
 sub handleInterfaceSettings {
@@ -2047,7 +2048,7 @@ sub handleInterfaceSettings {
 	
 	$paramRef->{'skinoptions'} = {skins(1)};
 	
-	return Slim::Web::HTTP::filltemplatefile('setupinterface.html', $paramRef);
+	return Slim::Web::HTTP::filltemplatefile('settings/interface.html', $paramRef);
 }
 
 sub handleBehaviorSettings {
@@ -2104,7 +2105,7 @@ sub handleBehaviorSettings {
 		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
 	}
 	
-	return Slim::Web::HTTP::filltemplatefile('setupbehavior.html', $paramRef);
+	return Slim::Web::HTTP::filltemplatefile('settings/behavior.html', $paramRef);
 }
 
 sub getSetupOptions {
@@ -2675,47 +2676,7 @@ sub buildLinks {
 		
 		} else {
 
-			# global setup pages, need to do this at startup too
-			if ($page eq "DEBUGGING_SETTINGS") {
-
-				Slim::Web::Pages->addPageLinks('setup', { $page => 'debugging.html' });
-
-			} elsif ($page eq "FORMATS_SETTINGS") {
-
-				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupfiletypes.html' });
-
-			} elsif ($page eq "PERFORMANCE_SETTINGS") {
-
-				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupperformance.html' });
-
-			} elsif ($page eq "BEHAVIOR_SETTINGS") {
-
-				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupbehavior.html' });
-
-			} elsif ($page eq "SECURITY_SETTINGS") {
-
-				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupsecurity.html' });
-
-			} elsif ($page eq "NETWORK_SETTINGS") {
-
-				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupnetworking.html' });
-
-			} elsif ($page eq "FORMATTING_SETTINGS") {
-
-				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupformatting.html' });
-
-			} elsif ($page eq "INTERFACE_SETTINGS") {
-
-				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupinterface.html' });
-
-#			} elsif ($page eq "BASIC_SERVER_SETTINGS") {
-
-#				Slim::Web::Pages->addPageLinks('setup', { $page => 'setupbasicserver.html' });
-
-			} else {
-
 				Slim::Web::Pages->addPageLinks('setup', { $page => "setup.html?page=$page" });
-			}
 		}
 	}
 }

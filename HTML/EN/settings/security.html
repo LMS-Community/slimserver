@@ -4,7 +4,7 @@
 
 		<a href="setup.html?page=BASIC_SERVER_SETTINGS">[% "SERVER_SETTINGS" | string %]</a>
 
-		 / <a href="setupsecurity.html">[% page | string %]</a>
+		 / <a href="/[% path %]">[% page | string %]</a>
 
 	[% END %]
 
@@ -22,7 +22,7 @@
 	[% END %]
 </div>
 
-<form method="post" action="setupsecurity.html">
+<form method="post" action="/[% path %]">
 
 	<input type=hidden value="[% page %]" name="page">
 
