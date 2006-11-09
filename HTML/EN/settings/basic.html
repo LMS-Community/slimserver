@@ -62,10 +62,10 @@
 		<select class="stdedit" name="rescantype" id="rescantype">
 
 		[% FOREACH option = {
-								'1rescan'   => 'SETUP_STANDARDRESCAN',
-								'2wipedb'   => 'SETUP_WIPEDB',
-								'3playlist' => 'SETUP_PLAYLISTRESCAN',
-							} %]
+			'1rescan'   => 'SETUP_STANDARDRESCAN',
+			'2wipedb'   => 'SETUP_WIPEDB',
+			'3playlist' => 'SETUP_PLAYLISTRESCAN',
+		} %]
 			<option value="[% option.key %]">[% option.value | string %]</option>
 		[%- END -%]
 		
@@ -132,10 +132,8 @@
 
 </p>[% END %]
 
-
 </form>
 
 <p></p>
 
 [% PROCESS pagefooter.html %]
-
