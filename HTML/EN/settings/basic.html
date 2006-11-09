@@ -28,75 +28,111 @@
 
 	<div class="settingSection">
 
-		<div class="prefHead">[% "SETUP_DISABLESTATISTICS" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_DISABLESTATISTICS_DESC" | string %]</div>
+		<div class="prefHead">[% "SETUP_LANGUAGE" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_LANGUAGE_DESC" | string %]</div>
 
-		<select class="stdedit" name="disableStatistics" id="disableStatistics">
+		<select class="stdedit" name="language" id="language">
 
-			<option [% IF NOT disableStatistics %]selected [% END %]value="0">[% 'SETUP_ENABLE_STATISTICS' | getstring %]</option>
-			<option [% IF disableStatistics %]selected [% END %]value="1">[% 'SETUP_DISABLE_STATISTICS' | getstring %]</option>
-		
-		</select>
-
-		<div class="prefHead">[% "SETUP_ITEMSPERPASS" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_ITEMSPERPASS_DESC" | string %]</div>
-
-		<input type=text class="stdedit" name="itemsPerPass" id="itemsPerPass" value="[% itemsPerPass %]" size="15">
-
-		<div class="prefHead">[% "SETUP_PREFSWRITEDELAY" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_PREFSWRITEDELAY_DESC" | string %]</div>
-
-		<input type=text class="stdedit" name="prefsWriteDelay" id="prefsWriteDelay" value="[% prefsWriteDelay %]" size="15">
-
-		<!--<div class="prefHead">[% "SETUP_FORKEDWEB" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_FORKEDWEB_DESC" | string %]</div>
-
-		<select class="stdedit" name="forkedWeb" id="forkedWeb">
-
-			<option [% IF NOT forkedWeb %]selected [% END %]value="0">[% 'SETUP_FORKEDWEB_DISABLE' | getstring %]</option>
-			<option [% IF forkedWeb %]selected [% END %]value="1">[% 'SETUP_FORKEDWEB_ENABLE' | getstring %]</option>
-		
-		</select>
-
-		<div class="prefHead">[% "SETUP_FORKEDSTREAMING" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_FORKEDSTREAMING_DESC" | string %]</div>
-
-		<select class="stdedit" name="forkedStreaming" id="forkedStreaming">
-
-			<option [% IF NOT forkedStreaming %]selected [% END %]value="0">[% 'SETUP_FORKEDSTREAMING_DISABLE' | getstring %]</option>
-			<option [% IF forkedStreaming %]selected [% END %]value="1">[% 'SETUP_FORKEDSTREAMING_ENABLE' | getstring %]</option>
-		
-		</select>-->
-
-		<div class="prefHead">[% "SETUP_SERVERPRIORITY" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_SERVERPRIORITY_DESC" | string %]</div>
-		
-		<select class="stdedit" name="serverPriority" id="serverPriority">
-
-		[% option = "" %]
-		<option [% IF serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
-		[% FOREACH option = [-20..20] %]
-			<option [% IF serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
+		[% FOREACH option = languageoptions %]
+			<option [% IF language == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
 		[%- END -%]
-
-		</select>
-
-		<div class="prefHead">[% "SETUP_SCANNERPRIORITY" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_SCANNERPRIORITY_DESC" | string %]</div>
-
-		<select class="stdedit" name="scannerPriority" id="scannerPriority">
-
-		[% option = "" %]
-		<option [% IF scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
-		[% FOREACH option = [-20..20] %]
-			<option [% IF scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
-		[%- END -%]
-
+		
 		</select>
 
 	</div>
 
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_AUDIODIR" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_AUDIODIR_DESC" | string %]</div>
+
+		<input type="text" class="stdedit" name="audiodir" id="artfolder" value="[% audiodir %]" size="40">
+
+
+		<div class="prefHead">[% "SETUP_PLAYLISTDIR" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_PLAYLISTDIR_DESC" | string %]</div>
+
+		<input type="text" class="stdedit" name="playlistdir" id="artfolder" value="[% playlistdir %]" size="40">
+	</div>
+
+	<div class="settingSection">
+	
+		<div class="groupHead">[% "SETUP_RESCAN" | string | upper %]</div>
+		<div class="groupDesc">[% "SETUP_RESCAN_DESC" | string %]</div>
+
+		<select class="stdedit" name="rescantype" id="rescantype">
+
+		[% FOREACH option = {
+								'1rescan'   => 'SETUP_STANDARDRESCAN',
+								'2wipedb'   => 'SETUP_WIPEDB',
+								'3playlist' => 'SETUP_PLAYLISTRESCAN',
+							} %]
+			<option value="[% option.key %]">[% option.value | string %]</option>
+		[%- END -%]
+		
+		</select>
+		
+		<p><input name="rescan" type="submit" class="stdclick" value="[% "SETUP_RESCAN_BUTTON" | string %]"></p>
+	</div>
+
+	<div class="settingSection">
+		
+		[% IF itunesavailable %]
+		<div class="prefHead">[% "ITUNES" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_ITUNES_DESC" | string %]</div>
+
+		<select class="stdedit" name="itunes" id="itunes">
+
+			<option [% IF NOT itunes %]selected [% END %]value="0">[% 'DONT_USE_ITUNES' | getstring %]</option>
+			<option [% IF itunes %]selected [% END %]value="1">[% 'USE_ITUNES' | getstring %]</option>
+		
+		</select>
+		[% END %]
+
+		[% IF musicmagicavailable %]
+		<div class="prefHead">[% "SETUP_MUSICMAGIC" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MUSICMAGIC_DESC" | string %]</div>
+
+		<select class="stdedit" name="musicmagic" id="musicmagic">
+
+			<option [% IF NOT musicmagic %]selected [% END %]value="0">[% 'DONT_USE_MUSICMAGIC' | getstring %]</option>
+			<option [% IF musicmagic %]selected [% END %]value="1">[% 'USE_MUSICMAGIC' | getstring %]</option>
+		
+		</select>
+		[% END %]
+		
+		[% IF moodlogicavailable %]
+		<div class="prefHead">[% "SETUP_MOODLOGIC" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MOODLOGIC_DESC" | string %]</div>
+
+		<select class="stdedit" name="moodlogic" id="moodlogic">
+
+			<option [% IF NOT moodlogic %]selected [% END %]value="0">[% 'DONT_USE_MOODLOGIC' | getstring %]</option>
+			<option [% IF moodlogic %]selected [% END %]value="1">[% 'USE_MOODLOGIC' | getstring %]</option>
+		
+		</select>
+		[% END %]
+	
+	</div>
+
 	<p><input name="submit" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]"></p>
+
+[% IF versionInfo %]<p>
+
+	<div class="settingSection">
+
+		<div class="groupHead">[% "INFORMATION_DIAGSTRING" | string | upper  %]</div>
+
+		<p>[% versionInfo %]</p>
+
+		[% IF newVersion %]
+			<p>[% newVersion %]</p>
+		[% END %]
+
+	</div>
+
+</p>[% END %]
+
+
 </form>
 
 <p></p>
