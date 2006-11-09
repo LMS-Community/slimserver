@@ -461,9 +461,9 @@ div#closeAlbumInfo {
 div.settingSection .groupHead, .settingSection .prefHead {
 	/* home menu list header */
 	background-color: #c5c5c5;
-	height: 13px;
-	padding: 4px 3px 4px;
-	font-size: 16px;
+	height: 15px;
+	padding: 3px 3px 4px;
+	font-size: 15px;
 	font-weight: bold;
 }
 
