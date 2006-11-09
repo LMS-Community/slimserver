@@ -11,7 +11,7 @@ use strict;
 
 use File::Spec::Functions qw(:ALL);
 use HTTP::Status;
-use Module::Pluggable require => '1', search_path => ['Slim::Web::Settings'];
+use Module::Pluggable require => '1', search_path => ['Slim::Web::Settings'], except => qr/::\._.*$/;
 
 use Slim::Player::TranscodingHelper;
 use Slim::Utils::Log;
@@ -1569,6 +1569,11 @@ sub initSetup {
 
 		$plugin->new;
 	}
+	
+	# init radio and plugin settings on startup
+	# TODO: make these loadable from plugin API
+	my @pages = @{$setup{'BASIC_SERVER_SETTINGS'}{'children'}};
+	buildLinks(undef,@pages);
 }
 
 sub getSetupOptions {
