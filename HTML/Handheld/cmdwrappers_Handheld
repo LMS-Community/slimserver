@@ -2,6 +2,7 @@
 
 [% controlGraphics = 1 %]
 [% maxInputSize = 20 %]
+[% useTabList = 1 %]
 
 [% statusroot = 'status.html' %]
 [%-

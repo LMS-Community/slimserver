@@ -1,5 +1,6 @@
 [%- FILTER null %]
 [% statusroot = 'status.html' %]
+[% useTabList = 1 %]
 
 [% BLOCK cmdlink -%]
 <li><a [% content %] [% UNLESS noTarget %]target="status"[% END %] title="[% cmdtitle | string%]">[% cmdshown %]</a></li>

@@ -2,9 +2,9 @@
 
 	[% pwd_list = BLOCK %]
 
-		<a href="setup.html?page=BASIC_SERVER_SETTINGS">[% "SERVER_SETTINGS" | string %]</a>
+		[% "SERVER_SETTINGS" | string %]
 
-		 / <a href="/[% path %]">[% page | string %]</a>
+		 / <a href="[% webroot %][% path %]">[% page | string %]</a>
 
 	[% END %]
 
@@ -22,7 +22,7 @@
 	[% END %]
 </div>
 
-<form method="post" action="/[% path %]">
+<form method="post" action="[% webroot %][% path %]">
 
 	<input type=hidden value="[% page %]" name="page">
 

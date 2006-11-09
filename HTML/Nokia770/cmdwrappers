@@ -2,6 +2,7 @@
 [% statusroot = 'status.html' %]
 [% noHomeLink = 1 %]
 [% controlGraphics = 1 %]
+[% useTabList = 1 %]
 
 [% BLOCK cmdlink %]
 <td class="[% isCurrent ? "listing2" : "listing" %]" align="center">

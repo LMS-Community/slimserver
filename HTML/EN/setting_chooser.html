@@ -1,3 +1,19 @@
+[% IF useTabList %]
+
+    [% IF playerid %][% links = additionalLinks.playersetup %][% ELSE %][% links = additionalLinks.setup %][% END %]
+    [% IF links %]
+      [% IF style == "list" %]<div id="setuptabs"><ul>[% END %]
+      [% FOREACH link = links %]
+        [% IF style == "list" %]
+          <li [% IF page == link.key %] id="currtab"[% END %]>
+        [%- ELSIF loop.index > 0%]<span class="bar">|</span>[% END %]
+          <a href="[% webroot %][% link.value %]player=[% playerURI %][% IF playerid %]&amp;playerid=[% playerid %][% END %]">[% link.key | string %]</a>[% IF style == "list" %]</li>[% END %]
+      [% END %]
+      [% IF style == "list" %]</ul></div>[% END %]
+    [% END %]
+
+[% ELSE %]
+
 [% BLOCK addSetupLinks %]
 	[% IF setuplinks %]
 		[% FOREACH link = setuplinks %]
@@ -6,24 +22,14 @@
 	[% END %]
 [% END %]
 
-[% BLOCK addPluginLinks %]
-	[% IF setuplinks %]
-		[% FOREACH link = setuplinks %]
-			<option [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="PLUGIN: [% link.key | string %]">PLUGIN: [% link.key | string %]</option>
-		[% END %]
-	[% END %]
-[% END %]
-
 <form name="setup_chooser" method="get" action="[% webroot %]setup.html" target="header">
 	<select NAME="browse" class="stdedit" style="width:17em;" onchange="chooseSettings(selectedIndex,options[selectedIndex].value)">
 		[% UNLESS setting_chooser_noHome %]<option [% IF page == "HOME" %]selected[% END %] value="HOME" label="[% "HOME" | string %]">[% "HOME" | string %]</option>[% END %]
-		[% IF playerid %]<option [% IF page == "BASIC_PLAYER_SETTINGS" %]selected[% END %] value="BASIC_PLAYER_SETTINGS" label="[% "BASIC_PLAYER_SETTINGS" | string %]">[% "BASIC_PLAYER_SETTINGS" | string %]</option>
-		[% ELSE %]<option [% IF page == "BASIC_SERVER_SETTINGS" %]selected[% END %] value="BASIC_SERVER_SETTINGS" label="[% "BASIC_SERVER_SETTINGS" | string %]">[% "BASIC_SERVER_SETTINGS" | string %]</option>[% END %]
+		[% IF playerid %]<option [% IF page == "BASIC_PLAYER_SETTINGS" %]selected[% END %] value="BASIC_PLAYER_SETTINGS" label="[% "BASIC_PLAYER_SETTINGS" | string %]">[% "BASIC_PLAYER_SETTINGS" | string %]</option>[% END %]
 		[% IF playerid %][% PROCESS addSetupLinks   setuplinks=additionalLinks.playersetup %]
-						 [%# PROCESS addPluginLinks setuplinks=additionalLinks.playerplugin %]
 		[% ELSE %][% PROCESS addSetupLinks  setuplinks=additionalLinks.setup %][% END %]
-				  [%# PROCESS addPluginLinks setuplinks=additionalLinks.plugin %]
 	</select>
 	<input type=hidden value="[% page %]" name="page">
 	<input type=hidden value="[% playerid | uri %]" name="playerid">
 </FORM>
+[% END %]

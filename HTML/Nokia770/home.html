@@ -133,7 +133,7 @@
 	<div>[% "SETTINGS" | string | upper %]</div>
 	<ul>
 	[%- IF not noserver %]
-		<li><a href="setup.html?page=BASIC_SERVER_SETTINGS&amp;player=[% playerURI %]">[% "SERVER_SETTINGS" | string %]</a></li>
+		<li><a href="settings/basic.html">[% "SERVER_SETTINGS" | string %]</a></li>
 	[%- END %]
 
 	[%- USE Clients; players = Clients.get("name"); FOREACH client = players; %]
@@ -187,7 +187,7 @@
 	<tr>
 		<td align="right">
 			<a href="[% webroot %]html/about.html" class = 'statusbartext'>[% "ABOUT_SHORT" | string %]</a>&nbsp;|&nbsp;
-			<a href="[% webroot %]setup.html?player=[% playerURI %]&page=BASIC_SERVER_SETTINGS" class = "statusbartext">[% "SERVER_SETTINGS" | string %]</a>&nbsp;|&nbsp;
+			<a href="[% webroot %]settings/basic.html" class = "statusbartext">[% "SERVER_SETTINGS" | string %]</a>&nbsp;|&nbsp;
 			<a class = 'statusbartext' href="[% webroot %]setup.html?page=BASIC_PLAYER_SETTINGS&player=[% playerURI %]&playerid=[% playerURI %]">[% "PLAYER_SETTINGS" | string %]</a>
 		</td>
 		<td width="4"></td>
