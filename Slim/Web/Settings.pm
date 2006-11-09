@@ -46,8 +46,8 @@ sub handler {
 
 	$paramRef->{'page'} = $class->name;
 
-        # Needed to generate the drop down settings chooser list.
-        $paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
+	# Needed to generate the drop down settings chooser list.
+	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
 }
