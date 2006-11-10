@@ -471,8 +471,10 @@ sub addWMAHeaders {
 	my $h = $request->headers;
 	$h->header( Accept => '*/*' );
 	$h->header( 'User-Agent' => 'NSPlayer/4.1.0.3856' );
-	$h->header( Pragma => 'xClientGUID={' . Slim::Player::Protocols::MMS::randomGUID(). '}' );
-	$h->header( Pragma => 'no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=1,max-duration=0' );
+	$h->header( Pragma => [
+		'xClientGUID={' . Slim::Player::Protocols::MMS::randomGUID(). '}',
+		'no-cache,rate=1.0000000,stream-time=0,stream-offset=0:0,request-context=1,max-duration=0',
+	] );
 	$h->header( Connection => 'close' );
 }
 
@@ -859,10 +861,8 @@ sub scanPlaylistURLs {
 				
 				return;
 			}
-			else {
 			
-				return $cb->( $foundItems, @{$pt} );
-			}
+			return $cb->( $foundItems, @{$pt} );
 		}
 		$offset++;
 	}

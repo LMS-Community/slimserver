@@ -23,6 +23,9 @@ use Slim::Utils::Misc;
 
 use constant DEFAULT_TYPE => 'wma';
 
+# Use the same random GUID for all connections
+our $guid;
+
 =head2 new ( $class, $args )
 
 Create a new instance of the MMS protocol handler, only for transcoding using wmadec or
@@ -74,7 +77,10 @@ sub contentType {
 }
 
 sub randomGUID {
-	my $guid = '';
+
+	return $guid if $guid;
+	
+	$guid = '';
 
 	for my $digit (0...31) {
 
