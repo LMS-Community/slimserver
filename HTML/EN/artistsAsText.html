@@ -1,7 +1,7 @@
 [% UNLESS noby %] [% "BY" | string %] [% END %]
 [%- FILTER null %]
 [% contributorsText = [] %]
-[ USE Dumper; Dumper.dump(item) %]
+
 [% FOREACH contributorTuple IN itemobj.artistsWithAttributes %]
 
 	[% contributor = contributorTuple.artist %]
