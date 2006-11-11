@@ -5,7 +5,7 @@
 		<div class="prefHead">[% "SETUP_PLAYERNAME" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_PLAYERNAME_DESC" | string %]</div>
 
-		<input type="text" class="stdedit" name="playername" id="playername" value="[% prefs.playername %]" size="40">
+		<input type="text" class="stdedit" name="playername" id="playername" value="[% prefs.playername %]" size="20">
 
 	</div>
 
@@ -96,8 +96,9 @@
 		<div class="groupHead">[% "SCREENSAVERS" | string | upper %]</div>
 		<div class="groupDesc">[% "SETUP_SCREENSAVER_DESC" | string %]</div>
 
-		<label for="screensaver" class="stdlabel">[% "SETUP_SCREENSAVER_CHOOSE" | string %]</label>
-		<select class="stdedit" name="screensaver" id="screensaver">
+		<table><tr>
+		<td><label for="screensaver" class="stdlabel">[% "SETUP_SCREENSAVER_CHOOSE" | string %]</label></td>
+		<td><select class="stdedit" name="screensaver" id="screensaver">
 
 		[% FOREACH option = screensavers.keys %]
 
@@ -105,11 +106,12 @@
 
 		[%- END -%]
 		
-		</select>
+		</select></td>
+		</tr>
 		
-		<br>
-		<label for="idlesaver" class="stdlabel">[% "SETUP_IDLESAVER_CHOOSE" | string %]</label>
-		<select class="stdedit" name="idlesaver" id="idlesaver">
+		<tr>
+		<td><label for="idlesaver" class="stdlabel">[% "SETUP_IDLESAVER_CHOOSE" | string %]</label></td>
+		<td><select class="stdedit" name="idlesaver" id="idlesaver">
 
 		[% FOREACH option = screensavers.keys %]
 
@@ -117,11 +119,12 @@
 
 		[%- END -%]
 		
-		</select>
-		
-		<br>
-		<label for="offsaver" class="stdlabel">[% "SETUP_OFFSAVER_CHOOSE" | string %]</label>
-		<select class="stdedit" name="offsaver" id="offsaver">
+		</select></td>
+		</tr>
+
+		<tr>
+		<td><label for="offsaver" class="stdlabel">[% "SETUP_OFFSAVER_CHOOSE" | string %]</label></td>
+		<td><select class="stdedit" name="offsaver" id="offsaver">
 
 		[% FOREACH option = screensavers.keys %]
 
@@ -129,11 +132,14 @@
 
 		[%- END -%]
 		
-		</select>
-		
-		<br>
-		<label for="screensavertimeout" class="stdlabel">[% "SETUP_SCREENSAVERTIMEOUT_CHOOSE" | string %]</label>
-		<input type="text" class="stdedit" name="screensavertimeout" id="screensavertimeout" value="[% prefs.screensavertimeout %]" size="15">
+		</select></td>
+		</tr>
+
+		<tr>
+		<td><label for="screensavertimeout" class="stdlabel">[% "SETUP_SCREENSAVERTIMEOUT_CHOOSE" | string %]</label></td>
+		<td><input type="text" class="stdedit" name="screensavertimeout" id="screensavertimeout" value="[% prefs.screensavertimeout %]" size="15"></td>
+		</tr>
+		</table>
 
 	</div>
 

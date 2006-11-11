@@ -1,10 +1,57 @@
-[% PROCESS settings/header.html
-
+[% PROCESS settings/header.html %]
 	<div class="settingSection">
 
+		<div class="groupHead">[% "SETUP_GROUP_ALARM" | string | upper %]</div>
+		<div class="groupDesc">[% "SETUP_GROUP_ALARM_DESC" | string %]</div>
 
-
+		<input type=hidden name="alarmfadeseconds" value="0" />
+		<input type=checkbox [% IF alarmfadeseconds %]checked [% END %] class="stdedit" name="alarmfadeseconds" id="alarmfadeseconds" value="1" />
+		<label for="alarmfadeseconds" class="stdlabel">[% "ALARM_FADE" | string %][% "COLON" | string %]</label>
 
 	</div>
+
+	[% FOREACH day = [0 ..7] %]
+	<div class="settingSection">
+
+		<div class="groupHead">[% "ALARM_DAY$day" | string | upper %]</div>
+
+		<table><tr>
+		<td><label for="alarm[% day %]" class="stdlabel">[% "SETUP_ALARM" | string %][% "COLON" | string %]</label></td>
+		<td><select class="stdedit" name="alarm[% day %]" id="alarm[% day %]">
+
+		[% FOREACH option = {
+			'1' => 'ON',
+			'0' => 'OFF',
+		} %]
+			<option [% IF prefs.alarm.$day == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+		[%- END -%]
+		
+		</select></td>
+		</tr>
+
+		<tr>
+		<td><label for="alarmtime[% day %]" class="stdlabel">[% "ALARM_SET" | string %][% "COLON" | string %]</label></td>
+		<td><input type="text" class="stdedit" name="alarmtime[% day %]" id="alarmtime$day" value="[% prefs.alarmtime.$day %]" size="15"></td>
+		</tr>
+
+		<tr>
+		<td><label for="alarmvolume[% day %]" class="stdlabel">[% "SETUP_ALARMVOLUME" | string %][% "COLON" | string %]</label></td>
+		<td><input type="text" class="stdedit" name="alarmvolume[% day %]" id="alarmvolume[% day %]" value="[% prefs.alarmvolume.$day %]" size="15"></td>
+		</tr>
+		
+		<tr>
+		<td><label for="alarmplaylist[% day %]" class="stdlabel">[% "ALARM_SELECT_PLAYLIST" | string %][% "COLON" | string %]</label></td>
+		<td><select class="stdedit" name="alarmplaylist[% day %]" id="alarmplaylist[% day %]">
+
+		[% FOREACH option = playlistOptions  %]
+			<option [% IF prefs.alarmplaylist.$day == option.key %]selected [% END %]value="[% option.key %]">[% option.value | getstring %]</option>
+		[%- END -%]
+		
+		</select></td>
+		</tr>
+		</table>
+
+	</div>
+	[% END %]
 
 [% PROCESS settings/footer.html %]
