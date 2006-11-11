@@ -21,7 +21,7 @@ sub name {
 }
 
 sub page {
-	return 'settings/interface.html';
+	return 'settings/server/interface.html';
 }
 
 sub handler {

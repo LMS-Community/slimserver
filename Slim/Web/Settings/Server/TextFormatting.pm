@@ -15,7 +15,7 @@ sub name {
 }
 
 sub page {
-	return 'settings/formatting.html';
+	return 'settings/server/formatting.html';
 }
 
 sub handler {

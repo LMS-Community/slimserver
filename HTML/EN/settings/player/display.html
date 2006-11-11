@@ -192,9 +192,7 @@
 
 		[% FOREACH option = {
 			'0' => 'SETUP_SCROLLMODE_DEFAULT',
-
 			'1' => 'SETUP_SCROLLMODE_SCROLLONCE',
-
 			'2' => 'SETUP_SCROLLMODE_NOSCROLL'
 		} %]
 			<option [% IF prefs.scrollMode == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>

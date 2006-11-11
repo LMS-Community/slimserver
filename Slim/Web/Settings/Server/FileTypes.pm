@@ -19,7 +19,7 @@ sub name {
 }
 
 sub page {
-	return 'settings/filetypes.html';
+	return 'settings/server/filetypes.html';
 }
 
 sub handler {

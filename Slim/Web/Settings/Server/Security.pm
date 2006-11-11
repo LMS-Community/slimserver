@@ -15,7 +15,7 @@ sub name {
 }
 
 sub page {
-	return 'settings/security.html';
+	return 'settings/server/security.html';
 }
 
 sub handler {

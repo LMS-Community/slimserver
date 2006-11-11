@@ -18,7 +18,7 @@ sub name {
 }
 
 sub page {
-	return 'settings/debugging.html';
+	return 'settings/server/debugging.html';
 }
 
 sub handler {

@@ -57,7 +57,7 @@
 	<div>[% "SETTINGS" | string | upper %]</div>
 	<ul>
 	[%- IF not noserver %]
-		<li><a href="[% webroot %]settings/basic.html?player=[% playerURI %]">[% "SERVER_SETTINGS" | string %]</a></li>
+		<li><a href="[% webroot %]settings/server/basic.html?player=[% playerURI %]">[% "SERVER_SETTINGS" | string %]</a></li>
 	[%- END %]
 
 	[%- USE Clients; players = Clients.get("name"); FOREACH client = players; %]

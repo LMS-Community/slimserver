@@ -17,7 +17,7 @@ sub name {
 }
 
 sub page {
-	return 'settings/basic.html';
+	return 'settings/server/basic.html';
 }
 
 sub handler {

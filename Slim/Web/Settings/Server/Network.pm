@@ -19,7 +19,7 @@ sub name {
 }
 
 sub page {
-	return 'settings/networking.html';
+	return 'settings/server/networking.html';
 }
 
 sub handler {

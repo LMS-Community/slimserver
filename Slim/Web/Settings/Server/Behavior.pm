@@ -15,7 +15,7 @@ sub name {
 }
 
 sub page {
-	return 'settings/behavior.html';
+	return 'settings/server/behavior.html';
 }
 
 sub handler {

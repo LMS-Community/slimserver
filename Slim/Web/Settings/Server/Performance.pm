@@ -15,7 +15,7 @@ sub name {
 }
 
 sub page {
-	return 'settings/performance.html';
+	return 'settings/server/performance.html';
 }
 
 sub handler {
