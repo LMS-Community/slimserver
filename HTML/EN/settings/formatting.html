@@ -1,30 +1,4 @@
-[% FILTER null %]
-
-	[% pwd_list = BLOCK %]
-
-		<a href="[% webroot %]settings/basic.html">[% "SERVER_SETTINGS" | string %]</a>
-
-		 / <a href="[% webroot %][% path %]">[% page | string %]</a>
-
-	[% END %]
-
-	[% pageHeaderInfo = BLOCK %]
-		[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
-	[% END %]
-
-[% END %]
-
-[% pagetitle = page | string; pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %] 
-
-<div class="statusarea">
-	[% IF warning %]
-		[% warning %]
-	[% END %]
-</div>
-
-<form method="post" action="[% webroot %][% path %]">
-
-	<input type=hidden value="[% page %]" name="page">
+[% PROCESS settingsheader.html %]
 
 	<div class="settingSection">
 
@@ -112,10 +86,5 @@
 	
 	</div>
 
-	<p><input name="submit" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]"></p>
-</form>
-
-<p></p>
-
-[% PROCESS pagefooter.html %]
+[% PROCESS settingsfooter.html %]
 

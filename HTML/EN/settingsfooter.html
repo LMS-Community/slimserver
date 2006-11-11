@@ -1,0 +1,26 @@
+<!-- Begin settingsfooter.html -->
+
+	<p><input name="submit" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]"></p>
+
+[% IF versionInfo %]<p>
+
+	<div class="settingSection">
+
+		<div class="groupHead">[% "INFORMATION_DIAGSTRING" | string | upper  %]</div>
+
+		<p>[% versionInfo %]</p>
+
+		[% IF newVersion %]
+			<p>[% newVersion %]</p>
+		[% END %]
+
+	</div>
+
+</p>[% END %]
+
+</form>
+
+<p></p>
+<!-- End settingsfooter.html -->
+[% PROCESS pagefooter.html %]
+

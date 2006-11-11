@@ -1,32 +1,7 @@
-[% FILTER null %]
-
-	[% pwd_list = BLOCK %]
-
-		<a href="[% webroot %]settings/basic.html">[% "SERVER_SETTINGS" | string %]</a>
-
-		 / <a href="[% webroot %][% path %]">[% page | string %]</a>
-
-	[% END %]
-
-	[% pageHeaderInfo = BLOCK %]
-		[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
-	[% END %]
-
-[% END %]
-
-[% pagetitle = page | string; pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %] 
-
-<div class="statusarea">
-	[% IF warning %]
-		[% warning %]
-	[% END %]
-</div>
-
-<form method="post" action="[% webroot %][% path %]">
-
-	<input type=hidden value="[% page %]" name="page">
+[% PROCESS settingsheader.html %]
 
 	<div class="settingSection">
+
 		<div class="groupHead">[% "SETUP_COMPOSERINARTISTS" | string | upper %]</div>
 		<div class="groupDesc">[% "SETUP_COMPOSERINARTISTS_DESC" | string %]</div>
 
@@ -48,6 +23,7 @@
 	
 		<div class="groupHead">[% "SETUP_VARIOUSARTISTS" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC" | string %]</div>
+
 		<select class="stdedit" name="variousArtistAutoIdentification" id="variousArtistAutoIdentification">
 
 			<option [% IF NOT variousArtistAutoIdentification %]selected [% END %]value="0">[% 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0' | getstring %]</option>
@@ -174,10 +150,5 @@
 
 	</div>
 
-	<p><input name="submit" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]"></p>
-</form>
-
-<p></p>
-
-[% PROCESS pagefooter.html %]
+[% PROCESS settingsfooter.html %]
 

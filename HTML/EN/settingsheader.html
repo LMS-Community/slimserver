@@ -1,0 +1,35 @@
+<!-- Begin settingsheader.html -->
+[% FILTER null %]
+
+	[% pwd_list = BLOCK %]
+
+		[% IF playerid %]
+			[% "PLAYER_SETTINGS" | string %] [% IF playername %][% "FOR" | string %] [% playername %][% END %]
+		[% ELSE %]
+			[% "SERVER_SETTINGS" | string %]
+		[% END %]
+
+		 / <a href="[% webroot %][% path %][% IF playerid %]?playerid=[% playerid | uri %][% END %]">[% page | string %]</a>
+
+	[% END %]
+
+	[% pageHeaderInfo = BLOCK %]
+		[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
+	[% END %]
+
+[% END %]
+
+[% pagetitle = page | string; pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %] 
+
+<div class="statusarea">
+	[% IF warning %]
+		[% warning %]
+	[% END %]
+</div>
+
+<form method="post" action="[% webroot %][% path %][% IF playerid %]?playerid=[% playerid | uri %][% END %]">
+
+	<input type=hidden value="[% page %]" name="page">
+	[% IF playerid %]<input type=hidden value="[% playerid %]" name="playerid">[% END %]
+
+<!-- End settingsheader.html -->

@@ -1,30 +1,4 @@
-[% FILTER null %]
-
-	[% pwd_list = BLOCK %]
-
-		<a href="[% webroot %]settings/basic.html">[% "SERVER_SETTINGS" | string %]</a>
-
-		 / <a href="[% webroot %][% path %]">[% page | string %]</a>
-
-	[% END %]
-
-	[% pageHeaderInfo = BLOCK %]
-		[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
-	[% END %]
-
-[% END %]
-
-[% pagetitle = page | string; pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %] 
-
-<div class="statusarea">
-	[% IF warning %]
-		[% warning %]
-	[% END %]
-</div>
-
-<form method="post" action="[% webroot %][% path %]">
-
-	<input type=hidden value="[% page %]" name="page">
+[% PROCESS settingsheader %]
 
 	<div class="settingSection">
 
@@ -55,8 +29,9 @@
 
 		<select class="stdedit" name="maxWMArate" id="maxWMArate">
 
-		[% FOREACH option = wmaoptions.nsort %]
-			<option [% IF maxWMArate == option %]selected [% END %]value="[% option %]">[% wmaoptions.$option %]</option>
+		[% FOREACH option = ['9999', '32', '64', '96', '128', '160', '192', '256', '320'] %]
+			<option [% IF maxWMArate == option %]selected [% END %]value="[% option %]">
+				[% IF option == 9999 %][% "NO_LIMIT" | string %][% ELSE %][% option %] [% 'KBPS' | string %][% END %]</option>
 		[%- END -%]
 
 		</select>
@@ -64,6 +39,7 @@
 		[% IF mDNSname.size %]
 		<div class="prefHead">[% "SETUP_MDNSNAME" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_MDNSNAME_DESC" | string %]</div>
+		
 		<label for="mDNSname" class="stdlabel">[% "SETUP_MDNSNAME_CHOOSE" | string %]</label>
 		<input type=text class="stdedit" name="mDNSname" id="mDNSname" value="[% mDNSname %]" size="20">
 		[% END %]
@@ -93,10 +69,5 @@
 		
 	</div>
 
-	<p><input name="submit" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]"></p>
-</form>
-
-<p></p>
-
-[% PROCESS pagefooter.html %]
+[% PROCESS settingsfooter.html %]
 
