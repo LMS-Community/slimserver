@@ -25,7 +25,11 @@ sub new {
 
 	if ($class->can('page') && $class->can('name')) {
 
-		Slim::Web::Pages->addPageLinks('setup', { $class->name => $class->page });
+		if ($class->needsClient) {
+			Slim::Web::Pages->addPageLinks('playersetup', { $class->name => $class->page });
+		} else {
+			Slim::Web::Pages->addPageLinks('setup', { $class->name => $class->page });
+		}
 	}
 }
 
@@ -41,6 +45,12 @@ sub page {
 	return '';
 }
 
+sub needsClient {
+	my $class = shift;
+	
+	return 0;
+}
+
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
@@ -48,6 +58,10 @@ sub handler {
 
 	# Needed to generate the drop down settings chooser list.
 	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
+	
+	if (defined $client) {
+		$paramRef->{'playername'} = $client->name();
+	}
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
 }

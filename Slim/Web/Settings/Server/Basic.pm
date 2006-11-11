@@ -25,19 +25,11 @@ sub handler {
 
 	my @prefs = qw(language audiodir playlistdir rescantype rescan);
 
-	if (grep {$_ =~ 'iTunes'} keys %Slim::Music::Import::Importers) {
-		push @prefs, 'itunes';
-		$paramRef->{'itunesavailable'} = 1;
-	}
-	
-	if (grep {$_ =~ 'MusicMagic'} keys %Slim::Music::Import::Importers) {
-		push @prefs, 'musicmagic';
-		$paramRef->{'musicmagicavailable'} = 1;
-	}
-	
-	if (grep {$_ =~ 'MoodLogic'} keys %Slim::Music::Import::Importers) {
-		push @prefs, 'moodlogic';
-		$paramRef->{'moodlogicavailable'} = 1;
+	for my $importer ('iTunes', 'MusicMagic', 'MoodLogic') {
+		
+		if (grep {$_ =~ $importer} keys %Slim::Music::Import::Importers) {
+			push @prefs, lc($importer);
+		}
 	}
 
 	if ($paramRef->{'rescan'}) {
@@ -97,7 +89,7 @@ sub handler {
 	$paramRef->{'languageoptions'} = {Slim::Utils::Strings::hash_of_languages()};
 
 	for my $pref (@prefs) {
-		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
+		$paramRef->{'prefs'}->{$pref} = Slim::Utils::Prefs::get($pref);
 	}
 	
 	return $class->SUPER::handler($client, $paramRef);
