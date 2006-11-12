@@ -14,7 +14,7 @@ package Slim::Web::Template::Context;
 use strict;
 use base 'Template::Context';
 
-our $procTemplate = Slim::Utils::PerfMon->new('Process Template', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5], 1);
+our $procTemplate = Slim::Utils::PerfMon->new('Process Template', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
 my $indent = 0;
 
 my $last = 0;
@@ -22,8 +22,6 @@ my $last = 0;
 
 sub process {
 	my $self = shift;
-
-	$::perfmon && $indent++;
 
 	my $now = Time::HiRes::time();
 
@@ -35,12 +33,25 @@ sub process {
 
 	}
 
-	my $ret = \$self->SUPER::process(@_);
+	unless ($::perfmon) {
 
-	$::perfmon && $indent-- && $procTemplate->log(Time::HiRes::time() - $now) && 
-		Slim::Utils::Misc::msg(sprintf("    %s%s\n", "  " x $indent, ref $_[0] ? $_[0]->{'name'} : $_[0]), undef, 1);
+		return $self->SUPER::process(@_);
 
-	return $$ret;
+	} else {
+
+		my $temp = $_[0];
+
+		$indent++;
+
+		my $ret = \$self->SUPER::process(@_);
+
+		$indent--;
+
+		$procTemplate->log(Time::HiRes::time() - $now, sub { "  " x $indent . (ref $temp ? $temp->{'name'} : $temp) } );
+
+		return $$ret;
+
+	}
 }
 
 1;

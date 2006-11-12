@@ -91,7 +91,7 @@ tie %pageFunctions, 'Tie::RegexpHash';
 our %forkFunctions = ();
 tie %forkFunctions, 'Tie::RegexpHash';
 
-our $pageBuild = Slim::Utils::PerfMon->new('Web Page Build', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5], 1);
+our $pageBuild = Slim::Utils::PerfMon->new('Web Page Build', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
 
 our %dangerousCommands = (
 	# name of command => regexp for URI patterns that make it dangerous
@@ -874,8 +874,7 @@ sub generateHTTPResponse {
 			);
 		}
 		
-		$::perfmon && $startTime && $pageBuild->log(Time::HiRes::time() - $startTime) &&
-			msg(sprintf("    Page: %s\n", $path || '/'), undef, 1);
+		$::perfmon && $startTime && $pageBuild->log(Time::HiRes::time() - $startTime, "Page: $path");
 
 	} elsif ($path =~ /^(?:stream\.mp3|stream)$/o) {
 

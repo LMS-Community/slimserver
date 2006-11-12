@@ -410,6 +410,9 @@ sub allCategories {
 
 	while (my ($key, $value) = each %config) {
 
+		# hide the following as they are not debugging categories
+		next if ($key =~ /additivity|perfmon/);
+
 		$key =~ s/^log4perl\.logger\.//;
 
 		$categories{$key} = $value;
@@ -543,6 +546,23 @@ sub scannerLogFile {
 	}
 
 	return _logFileFor('scanner');
+}
+
+=head2 perfmonLogFile ( )
+
+Returns the location of SlimServer's performance monitor log file.
+
+=cut
+
+sub perfmonLogFile {
+	my $class = shift;
+
+	# If the user has requested an override.
+	if ($::logfile) {
+		return $::logfile;
+	}
+
+	return _logFileFor('perfmon');
 }
 
 sub _logFileFor {
@@ -726,6 +746,8 @@ sub _defaultCategories {
 		'scan'                       => 'INFO',
 		'scan.scanner'               => 'INFO',
 		'scan.import'                => 'INFO',
+
+		'perfmon'                    => 'WARN, screen-raw, perfmon',
 	);
 
 	# Map our shortened names to the ones l4p wants.
@@ -734,6 +756,12 @@ sub _defaultCategories {
 	while (my ($category, $level) = each %defaultCategories) {
 
 		$mappedCategories{"log4perl.logger.$category"} = $level;
+
+		# turn off propagation to default appenders if specific appenders are specified
+		if ($level =~ /,/) {
+			$mappedCategories{"log4perl.additivity.$category"} = 0;
+		}
+
 	}
 
 	return %mappedCategories;
@@ -749,6 +777,11 @@ sub _defaultAppenders {
 			'appender' => 'Log::Log4perl::Appender::Screen',
 		},
 
+		'screen-raw' => {
+			'appender' => 'Log::Log4perl::Appender::Screen',
+			'layout'   => 'raw'
+		},
+
 		'server' => {
 			'appender' => 'Log::Log4perl::Appender::File',
 			'mode'     => 'append',
@@ -760,6 +793,14 @@ sub _defaultAppenders {
 			'mode'     => 'append',
 			'filename' => 'sub { Slim::Utils::Log::scannerLogFile() }',
 		},
+
+		'perfmon' => {
+			'appender' => 'Log::Log4perl::Appender::File',
+			'mode'     => 'append',
+			'filename' => 'sub { Slim::Utils::Log::perfmonLogFile() }',
+			'layout'   => 'raw'
+		},
+
 	);
 
 	return $class->_fixupAppenders(\%defaultAppenders);
@@ -770,26 +811,41 @@ sub _fixupAppenders {
 	my $appenders = shift;
 
 	my $pattern   = '';
+	my $rawpattern= '';
 
 	if ($::LogTimestamp) {
 
-		$pattern = '[%d{HH:mm:ss.SSSS}] %M (%L) %m%n';
+		$pattern    = '[%d{HH:mm:ss.SSSS}] %M (%L) %m%n';
+		$rawpattern = '[%d{HH:mm:ss.SSSS}] %m%n';
 
 	} else {
 
 		$pattern = '%M (%L) %m%n';
+		$rawpattern = '%m%n';
 	}
 
-	my %properties = (
+	my %baseProperties = (
 		'utf8'   => 1,
 		'layout' => 'PatternLayout',
-		'layout.ConversionPattern' => $pattern,
 	);
 
 	# Make sure everyone has these properties
 	my %mappedAppenders = ();
 
 	while (my ($appender, $data) = each %{$appenders}) {
+
+		my %properties = %baseProperties;
+
+		if ($data->{'layout'} && $data->{'layout'} eq 'raw') {
+
+			$properties{'layout.ConversionPattern'} = $rawpattern;
+			delete $data->{'layout'};
+
+		} else {
+
+			$properties{'layout.ConversionPattern'} = $pattern;
+
+		}
 
 		while (my ($property, $value) = each %properties) {
 

@@ -90,7 +90,7 @@ my $checkingNormalTimers = 0; # Semaphore to avoid normal timer callbacks execut
 my $checkingHighTimers = 0;   # Semaphore for high priority timers
 
 our $timerLate = Slim::Utils::PerfMon->new('Timer Late', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
-our $timerTask = Slim::Utils::PerfMon->new('Timer Task', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5], 1);
+our $timerTask = Slim::Utils::PerfMon->new('Timer Task', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
 
 my $log = logger('server.timers');
 
@@ -200,11 +200,7 @@ sub checkTimers {
 			$log->warn("Normal timer with no subptr: " . Data::Dump::dump($timer));
 		}
 
-		if ($::perfmon && $timerTask->log(Time::HiRes::time() - $now)) {
-
-			# Supress the timestamp
-			msg(sprintf("    %s\n", Slim::Utils::PerlRunTime::realNameForCodeRef($subptr)), undef, 1);
-		}
+		$::perfmon && $timerTask->log(Time::HiRes::time() - $now, undef, $subptr);
 	}
 
 	$checkingNormalTimers = 0;

@@ -21,7 +21,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::MySQLHelper;
 use Slim::Utils::Prefs;
 
-our $dbAccess = Slim::Utils::PerfMon->new('Database Access', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5], 1);
+our $dbAccess = Slim::Utils::PerfMon->new('Database Access', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
 
 sub dbh {
 	my $self = shift;
@@ -80,7 +80,7 @@ sub select {
 
 	my @ret = $self->next::method(@_);
 
-	$::perfmon && $dbAccess->log(Time::HiRes::time() - $now) && msg("    DBIx select\n", undef, 1);
+	$::perfmon && $dbAccess->log(Time::HiRes::time() - $now, "DBIx select");
 
 	return wantarray ? @ret : $ret[0];
 }
@@ -92,7 +92,7 @@ sub select_single {
 
 	my @ret = $self->next::method(@_);
 
-	$::perfmon && $dbAccess->log(Time::HiRes::time() - $now) && msg("    DBIx select_single\n", undef, 1);
+	$::perfmon && $dbAccess->log(Time::HiRes::time() - $now, "DBIx select_single");
 
 	return wantarray ? @ret : $ret[0];
 }

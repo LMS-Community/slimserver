@@ -417,7 +417,7 @@ our %subscribers = ();          # contains the clients to the notification
 
 our @notificationQueue;         # contains the Requests waiting to be notified
 
-our $requestTask = Slim::Utils::PerfMon->new('Request Task', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5], 1);
+our $requestTask = Slim::Utils::PerfMon->new('Request Task', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
 
 my $log = logger('control.command');
 
@@ -1460,8 +1460,6 @@ sub execute {
 	}
 	
 	# call the execute function
-	my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($self->{'_func'});
-
 	if (my $funcPtr = $self->{'_func'}) {
 
 		# notify for commands
@@ -1474,7 +1472,7 @@ sub execute {
 		eval { &{$funcPtr}($self) };
 
 		if ($@) {
-
+			my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
 			logError("While trying to run function coderef [$funcName]: [$@]");
 			$self->setStatusBadDispatch();
 			$self->dump('Request');
@@ -1484,7 +1482,7 @@ sub execute {
 	# contine execution unless the Request is still work in progress (async)...
 	$self->executeDone() unless $self->isStatusProcessing();
 
-	$::perfmon && $now && $requestTask->log(Time::HiRes::time() - $now) && msg("    Execute: $funcName\n", undef, 1);
+	$::perfmon && $now && $requestTask->log(Time::HiRes::time() - $now, "Execute: ", $self->{'_func'});
 }
 
 # perform end of execution, calling the callback etc...
@@ -1642,8 +1640,7 @@ sub notify {
 
 			&$notifyFuncRef($self);
 
-			$::perfmon && $requestTask->log(Time::HiRes::time() - $now) && 
-				msg(sprintf("    Notify: %s\n", Slim::Utils::PerlRunTime::realNameForCodeRef($notifyFuncRef)), undef, 1);
+			$::perfmon && $requestTask->log(Time::HiRes::time() - $now, "Notify: ", $notifyFuncRef);
 
 		}
 	}
