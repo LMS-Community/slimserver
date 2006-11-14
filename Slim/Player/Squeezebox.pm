@@ -145,21 +145,36 @@ sub decoder {
 sub play {
 	my $client = shift;
 	my $params = shift;
+	
+	# Calculate the correct buffer threshold for remote URLs
+	if ( Slim::Music::Info::isRemoteURL( $params->{url} ) ) {
+		# begin playback once we have this much data in the decode buffer (in KB)
+		$params->{bufferThreshold} = 20;
 
-	$client->stream('s', $params );
+		# If we know the bitrate of the stream, we instead buffer a certain number of seconds of audio
+		if ( my $bitrate = Slim::Music::Info::getBitrate( $params->{url} ) ) {
+			my $bufferSecs = Slim::Utils::Prefs::get('bufferSecs') || 3;
+			$params->{bufferThreshold} = ( int($bitrate / 8) * $bufferSecs ) / 1000;
+			
+			# Max threshold is 255
+			$params->{bufferThreshold} = 255 if $params->{bufferThreshold} > 255;
+		}
+		
+		# Set a timer for feedback during buffering
+		$buffering->{$client} = Time::HiRes::time(); # track when we started buffering
+		Slim::Utils::Timers::killTimers( $client, \&buffering );
+		Slim::Utils::Timers::setTimer(
+			$client,
+			Time::HiRes::time() + 0.125,
+			\&buffering,
+			$params->{bufferThreshold} * 1024
+		);
+	}
+
+	$client->stream('s', $params);
 
 	# make sure volume is set, without changing temp setting
 	$client->volume($client->volume(), defined($client->tempVolume()));
-
-	# if this is a remote stream, start playback as soon as we have enough buffer filled
-	my $quickstart = Slim::Music::Info::isRemoteURL($params->{url}) ? 0.125 : undef;
-
-	Slim::Utils::Timers::killTimers($client, \&quickstart);
-
-	if ($quickstart) {
-		$buffering->{$client} = Time::HiRes::time(); # track when we started buffering
-		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + $quickstart, \&quickstart );
-	}
 
 	$client->lastSong($params->{url});
 
@@ -174,7 +189,7 @@ sub resume {
 
 	delete $buffering->{$client};
 	
-	Slim::Utils::Timers::killTimers($client, \&quickstart);
+	Slim::Utils::Timers::killTimers($client, \&buffering);
 
 	$client->stream('u');
 	$client->SUPER::resume();
@@ -189,7 +204,7 @@ sub pause {
 
 	delete $buffering->{$client};
 
-	Slim::Utils::Timers::killTimers($client, \&quickstart);
+	Slim::Utils::Timers::killTimers($client, \&buffering);
 
 	$client->stream('p');
 	$client->SUPER::pause();
@@ -201,7 +216,7 @@ sub stop {
 	
 	delete $buffering->{$client};
 
-	Slim::Utils::Timers::killTimers($client, \&quickstart);
+	Slim::Utils::Timers::killTimers($client, \&buffering);
 
 	$client->stream('q');
 	Slim::Networking::Slimproto::stop($client);
@@ -215,89 +230,93 @@ sub flush {
 	
 	delete $buffering->{$client};
 
-	Slim::Utils::Timers::killTimers($client, \&quickstart);
+	Slim::Utils::Timers::killTimers($client, \&buffering);
 
 	$client->stream('f');
 	$client->SUPER::flush();
 	return 1;
 }
 
-sub quickstart {
-	my $client   = shift;
-	my $rebuffer = shift || 0; # Are we rebuffering an existing stream?
+sub buffering {
+	my ( $client, $threshold ) = @_;
 	
-	my $url = Slim::Player::Playlist::url( $client, Slim::Player::Source::streamingSongIndex($client) );
 	my $log = logger('player.source');
 	
+	# If the track has started, stop displaying buffering status
+	# currentPlaylistChangeTime is set to time() after a track start event
+	if ( $client->currentPlaylistChangeTime() > $buffering->{$client} ) {
+		delete $buffering->{$client};
+		return;
+	}
+
 	$client->requestStatus();
 	
 	my $fullness = $client->bufferFullness();
 	
-	# begin playback once we have this much data in the buffer
-	my $threshold = 20 * 1024;
-	
-	# If we know the bitrate of the stream, we instead buffer a certain number of seconds of audio
-	if ( my $bitrate = Slim::Music::Info::getBitrate($url) ) {
-
-		my $bufferSecs = Slim::Utils::Prefs::get('bufferSecs') || 3;
-		$threshold     = int($bitrate / 8) * $bufferSecs;
-	}
-	
 	$log->info("Buffering... $fullness / $threshold");
-
-	# Resume if we've hit the threshold, unless synced (sync unpauses all clients together)
-	if ( $fullness >= $threshold && !Slim::Player::Sync::isSynced($client) ) {
-		$client->resume();
+	
+	# Bug 1827, display better buffering feedback while we wait for data
+	my $percent = sprintf "%d", ( $fullness / $threshold ) * 100;
+	
+	my $stillBuffering = ( $percent < 100 ) ? 1 : 0;
+	
+	my ( $line1, $line2 );
+	
+	if ( $percent == 0 ) {
+		my $string = 'CONNECTING_FOR';
+		$line1 = $client->string('NOW_PLAYING') . ' (' . $client->string($string) . ')';
+		
+		if ( $client->linesPerScreen() == 1 ) {
+			$line2 = $client->string($string);
+		}
 	}
 	else {
-
-		# Bug 1827, display better buffering feedback while we wait for data
-		my $percent = sprintf "%d", ( $fullness / $threshold ) * 100;
+		my $status;
 		
-		my ( $line1, $line2 );
-		
-		if ( $percent == 0 ) {
-			my $string = $rebuffer ? 'REBUFFERING' : 'CONNECTING_FOR';
-			$line1 = $client->string('NOW_PLAYING') . ' (' . $client->string($string) . ')';
-			
-			if ( $client->linesPerScreen() == 1 ) {
-				$line2 = $client->string($string);
-			}
+		# When synced, a player may have to wait longer than the buffering time
+		if ( Slim::Player::Sync::isSynced($client) && $percent >= 100 ) {
+			$status = $client->string('WAITING_TO_SYNC');
+			$stillBuffering = 1;
 		}
 		else {
-			my $status;
-			
-			# When synced, a player may have to wait longer than the buffering time
-			if ( Slim::Player::Sync::isSynced($client) && $percent >= 100 ) {
-				$status = $client->string('WAITING_TO_SYNC');
-			}
-			else {
-				my $string = $rebuffer ? 'REBUFFERING' : 'BUFFERING';
-				$status = $client->string($string) . ' ' . $percent . '%';
+			if ( $percent > 100 ) {
+				$percent = 99;
 			}
 			
-			$line1 = $client->string('NOW_PLAYING') . ' (' . $status . ')';
-			
-			# Display only buffering text in large text mode
-			if ( $client->linesPerScreen() == 1 ) {
-				$line2 = $status;
-			}
+			my $string = 'BUFFERING';
+			$status = $client->string($string) . ' ' . $percent . '%';
 		}
 		
-		# Find the track title
-		if ( $client->linesPerScreen() > 1 ) {
-			$line2  = Slim::Music::Info::title( $url );
+		$line1 = $client->string('NOW_PLAYING') . ' (' . $status . ')';
+		
+		# Display only buffering text in large text mode
+		if ( $client->linesPerScreen() == 1 ) {
+			$line2 = $status;
 		}
+	}
+	
+	# Find the track title
+	if ( $client->linesPerScreen() > 1 ) {
+		my $url = Slim::Player::Playlist::url( $client, Slim::Player::Source::streamingSongIndex($client) );
+		$line2  = Slim::Music::Info::title( $url );
+	}
+	
+	# Only show buffering status if no user activity on player or we're on the Now Playing screen
+	my $nowPlaying = Slim::Buttons::Playlist::showingNowPlaying($client);
+	my $lastIR     = Slim::Hardware::IR::lastIRTime($client) || 0;
+	
+	if ( $nowPlaying || $lastIR < $buffering->{$client} ) {
+		$client->showBriefly( $line1, $line2, 0.5 ) unless $client->display->sbName();
 		
-		# Only show buffering status if no user activity on player or we're on the Now Playing screen
-		my $nowPlaying = Slim::Buttons::Playlist::showingNowPlaying($client);
-		my $lastIR     = Slim::Hardware::IR::lastIRTime($client) || 0;
-		
-		if ( $nowPlaying || $lastIR < $buffering->{$client} ) {
-			$client->showBriefly( $line1, $line2, 0.5 ) unless $client->display->sbName();
+		# Call again unless we've reached the threshold
+		if ( $stillBuffering ) {
+			Slim::Utils::Timers::setTimer(
+				$client,
+				Time::HiRes::time() + 0.125,
+				\&buffering,
+				$threshold,
+			);
 		}
-		
-		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + 0.125, \&quickstart, $rebuffer );
 	}
 }
 
@@ -694,7 +713,7 @@ sub opened {
 # Squeezebox control for tcp stream
 #
 #	u8_t command;		// [1]	's' = start, 'p' = pause, 'u' = unpause, 'q' = stop, 'f' = flush
-#	u8_t autostart;		// [1]	'0' = don't auto-start, '1' = auto-start, '2' = direct streaming
+#	u8_t autostart;		// [1]	'0' = don't auto-start, '1' = auto-start, '2' = direct streaming, '3' direct streaming + autostart
 #	u8_t mode;		// [1]	'm' = mpeg bitstream, 'p' = PCM
 #	u8_t pcm_sample_size;	// [1]	'0' = 8, '1' = 16, '2' = 24, '3' = 32
 #	u8_t pcm_sample_rate;	// [1]	'0' = 11kHz, '1' = 22, '2' = 32, '3' = 44.1, '4' = 48, '5' = 8, '6' = 12, '7' = 16, '8' = 24, '9' = 96
@@ -740,10 +759,10 @@ sub stream {
 		my $bufferThreshold;
 
 		if ($params->{'paused'}) {
-			$bufferThreshold = $client->prefGet('syncBufferThreshold');
+			$bufferThreshold = $params->{bufferThreshold} || $client->prefGet('syncBufferThreshold');
 		}
 		else {
-			$bufferThreshold = $client->prefGet('bufferThreshold');
+			$bufferThreshold = $params->{bufferThreshold} || $client->prefGet('bufferThreshold');
 		}
 		
 		my $formatbyte;
@@ -899,8 +918,8 @@ sub stream {
 
 		if ($command eq 's') {
 			
-			# When streaming a new song, we reset the buffer fullness value so quickstart()
-			# doesn't get an outdated fullness result and unpause too early
+			# When streaming a new song, we reset the buffer fullness value so buffering()
+			# doesn't get an outdated fullness result
 			Slim::Networking::Slimproto::fullness( $client, 0 );
 			
 			if ($server_url) {
@@ -927,7 +946,7 @@ sub stream {
 				}
 
 				$request_string = $handler->requestString($client, $server_url, undef, 1);  
-				$autostart = 2;
+				$autostart += 2; # will be 2 for direct streaming with no autostart, or 3 for direct with autostart
 
 				if (!$server_port || !$server_ip) {
 
