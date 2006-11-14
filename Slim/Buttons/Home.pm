@@ -662,7 +662,7 @@ sub menuOptions {
 			next;
 		}
 
-		$menuChoices{$menuOption} = $client->string($menuOption);
+		$menuChoices{$menuOption} = $menuOption;
 	}
 
 	return %menuChoices;
