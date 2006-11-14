@@ -25,7 +25,6 @@
 <form name="setup_chooser" method="get" action="[% webroot %]setup.html" target="header">
 	<select NAME="browse" class="stdedit" style="width:17em;" onchange="chooseSettings(selectedIndex,options[selectedIndex].value)">
 		[% UNLESS setting_chooser_noHome %]<option [% IF page == "HOME" %]selected[% END %] value="HOME" label="[% "HOME" | string %]">[% "HOME" | string %]</option>[% END %]
-		[% IF playerid %]<option [% IF page == "BASIC_PLAYER_SETTINGS" %]selected[% END %] value="BASIC_PLAYER_SETTINGS" label="[% "BASIC_PLAYER_SETTINGS" | string %]">[% "BASIC_PLAYER_SETTINGS" | string %]</option>[% END %]
 		[% IF playerid %][% PROCESS addSetupLinks   setuplinks=additionalLinks.playersetup %]
 		[% ELSE %][% PROCESS addSetupLinks  setuplinks=additionalLinks.setup %][% END %]
 	</select>

@@ -62,8 +62,10 @@
       <p>[% IF not nosetup %] </p>
       <h4><font color="#999999">[% "SETTINGS" | string %]</font></h4>
       <ul>
-        <li> <a href="settings/server/basic.html?player=[% playerURI %]">[% "SERVER_SETTINGS" | string %]</a> 
-          [% player_list %] </li>
+        <li> <a href="settings/server/basic.html?player=[% playerURI %]">[% "SERVER_SETTINGS" | string %]</a> </li>
+    [%- USE Clients; players = Clients.get("name"); FOREACH client = players; %]
+		<li><a href="[% webroot %]settings/player/basic.html?player=[% playerURI %]&amp;playerid=[% client.id | uri %]">[% "PLAYER_SETTINGS" | string %][% IF client.name %] [% "FOR" | string %] [% client.name %][% END %]</a></li>
+	[%- END %]
 [% IF additionalLinks.settings %]
     [% FOREACH key = additionalLinks.settings.keys %]
     <li>

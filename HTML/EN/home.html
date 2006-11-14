@@ -61,7 +61,7 @@
 	[%- END %]
 
 	[%- USE Clients; players = Clients.get("name"); FOREACH client = players; %]
-		<li><a href="[% webroot %]setup.html?page=BASIC_PLAYER_SETTINGS&amp;player=[% playerURI %]&amp;playerid=[% client.id | uri %]">[% "PLAYER_SETTINGS" | string %][% IF client.name %] [% "FOR" | string %] [% client.name %][% END %]</a></li>
+		<li><a href="[% webroot %]settings/player/basic.html?player=[% playerURI %]&amp;playerid=[% client.id | uri %]">[% "PLAYER_SETTINGS" | string %][% IF client.name %] [% "FOR" | string %] [% client.name %][% END %]</a></li>
 	[%- END %]
 
 	[%- FOREACH key = additionalLinks.settings.keys %]

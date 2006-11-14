@@ -66,6 +66,12 @@ sub handler {
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
 }
 
+sub _handleChanges {
+	my ($class, $client, $prefs, $paramRef) = @_;
+	
+	$paramRef->{'warning'} = Slim::Utils::Strings::string('SETTINGS_CHANGED').'<br>'.join('<br>',@{$prefs});
+}
+
 1;
 
 __END__
