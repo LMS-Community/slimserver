@@ -57,7 +57,7 @@ sub handler {
 		$client->prefSet('menuItem','NOW_PLAYING',0);
 	}
 	
-	if ($paramRef->{'removeItems'} {
+	if ($paramRef->{'removeItems'}) {
 		for ($i = $client->prefGetArrayMax('menuItem'); $i >= 0; $i--) {
 			if ($paramRef->{'menuItemRemove' . $i}) {
 				$client->prefDelete('menuItem',$i);
