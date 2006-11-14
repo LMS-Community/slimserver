@@ -50,7 +50,6 @@ sub init {
 	Slim::Networking::Slimproto::setEventCallback('STMu', \&underrun);
 	Slim::Networking::Slimproto::setEventCallback('STMd', \&decoderUnderrun);
 	Slim::Networking::Slimproto::setEventCallback('STMs', \&trackStartEvent);
-	Slim::Networking::Slimproto::setEventCallback('STMt', \&checkFullness);
 	Slim::Networking::Slimproto::setEventCallback('STMn', \&notSupported);
 }
 
@@ -626,45 +625,6 @@ sub underrun {
 		$client->update();
 		
 		Slim::Control::Request::notifyFromArray($client, ['stop']);
-	}
-}
-
-sub checkFullness {
-	my $client = shift || return;
-	
-	# Softsqueeze doesn't report buffer fullness the same as hardware
-	# SB1 doesn't report output buffer fullness
-	if ( $client->isa('Slim::Player::SoftSqueeze') || $client->model() eq 'squeezebox' ) {
-		return;
-	}
-	
-	# Only do this for remote streams
-	my $url = Slim::Player::Playlist::url($client);
-	if ( !$url || !Slim::Music::Info::isRemoteURL($url) ) {
-		return;
-	}
-	
-	my $fullness = $client->outputBufferFullness();
-
-	# If the buffer is empty, rebuffer	
-	if ( !$fullness ) {
-		$log->warn("Output buffer empty, player waiting for more data");
-		
-		# We can only survive a short time without data, display "Rebuffering" while we wait
-		# The player will restart automatically when it gets some data
-		my ( $line1, $line2 );
-		
-		my $string = 'REBUFFERING';
-		$line1 = $client->string('NOW_PLAYING') . ' (' . $client->string($string) . ')';
-		if ( $client->linesPerScreen() == 1 ) {
-			$line2 = $client->string($string);
-		}
-		else {
-			my $url = Slim::Player::Playlist::url( $client, Slim::Player::Source::streamingSongIndex($client) );
-			$line2  = Slim::Music::Info::title( $url );
-		}
-		
-		$client->showBriefly( $line1, $line2, 2 ) unless $client->display->sbName();
 	}
 }
 
