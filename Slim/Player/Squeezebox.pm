@@ -246,6 +246,7 @@ sub buffering {
 	# currentPlaylistChangeTime is set to time() after a track start event
 	if ( $client->currentPlaylistChangeTime() > $buffering->{$client} ) {
 		delete $buffering->{$client};
+		$client->update();
 		return;
 	}
 
