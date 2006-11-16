@@ -69,7 +69,7 @@ sub handler {
 sub _handleChanges {
 	my ($class, $client, $prefs, $paramRef) = @_;
 	
-	$paramRef->{'warning'} = Slim::Utils::Strings::string('SETTINGS_CHANGED').'<br>'.join('<br>',@{$prefs});
+	$paramRef->{'warning'} .= Slim::Utils::Strings::string('SETTINGS_CHANGED').'<br>'.join('<br>',@{$prefs});
 }
 
 1;

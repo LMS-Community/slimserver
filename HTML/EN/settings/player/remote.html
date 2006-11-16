@@ -1,4 +1,5 @@
 [% PROCESS settings/header.html %]
+[% IF prefs %]
 	<div class="settingSection">
 	
 		<div class="groupHead">[% "SETUP_GROUP_IRSETS" | string | upper %]</div>
@@ -28,5 +29,5 @@
 		</select>
 
 	</div>
-
+[% END %]
 [% PROCESS settings/footer.html %]

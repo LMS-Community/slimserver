@@ -51,70 +51,73 @@ sub handler {
 				scrollRate scrollRateDouble
 			);
 		}
+
+		# If this is a settings update
+		if ($paramRef->{'submit'}) {
+	
+			for my $pref (@prefs) {
+	
+				# parse indexed array prefs.
+				if ($pref eq 'activeFont' || $pref eq 'idleFont') {
+	
+					$client->prefDelete($pref);
+	
+					my $i = 0;
+	
+					while (defined $paramRef->{$pref.$i}) {
+	
+						if ($paramRef->{$pref.$i} eq "-1") {
+							last;
+						}
+	
+						$client->prefPush($pref,$paramRef->{$pref.$i});
+	
+						$i++;
+					}
+				} else {
+				
+					$client->prefSet($pref, $paramRef->{$pref} ) if defined $paramRef->{$pref};
+				}
+				
+				if ($pref eq 'doublesize') {
+					$client->textSize($paramRef->{'doublesize'});
+				}
+			}
+			
+	
+		}
+	
+		# Load any option lists for dynamic options.
+		$paramRef->{'brightnessOptions' } = { %{Slim::Web::Setup::getBrightnessOptions($client)} };
+		$paramRef->{'maxBrightness' }     = $client->maxBrightness;
+		$paramRef->{'fontOptions'}        = { %{Slim::Web::Setup::getFontOptions($client)} };
+	
+		# Set current values for prefs
+		# load into prefs hash so that web template can detect exists/!exists
+		for my $pref (@prefs) {
+	
+			if ($pref eq 'activeFont' || $pref eq 'idleFont') {
+	
+				$paramRef->{'prefs'}->{$pref} = [$client->prefGetArray($pref)];
+	
+				push @{$paramRef->{'prefs'}->{$pref}},"-1";
+	
+			} elsif ($pref eq 'doubleSize') {
+				
+				$paramRef->{'prefs'}->{$pref} = $client->textSize;
+				
+			} else {
+	
+				$paramRef->{'prefs'}->{$pref} = $client->prefGet($pref);
+			}
+		}
+
 	} else {
 		# non-SD player, so no applicable display settings
-	}
-	
-	# If this is a settings update
-	if ($paramRef->{'submit'}) {
-
-		for my $pref (@prefs) {
-
-			# parse indexed array prefs.
-			if ($pref eq 'activeFont' || $pref eq 'idleFont') {
-
-				$client->prefDelete($pref);
-
-				my $i = 0;
-
-				while (defined $paramRef->{$pref.$i}) {
-
-					if ($paramRef->{$pref.$i} eq "-1") {
-						last;
-					}
-
-					$client->prefPush($pref,$paramRef->{$pref.$i});
-
-					$i++;
-				}
-			} else {
-			
-				$client->prefSet($pref, $paramRef->{$pref} ) if defined $paramRef->{$pref};
-			}
-			
-			if ($pref eq 'doublesize') {
-				$client->textSize($paramRef->{'doublesize'});
-			}
-		}
+		$paramRef->{'warning'} = Slim::Utils::Strings::string('SETUP_NO_PREFS');
 		
-
 	}
 
-	# Load any option lists for dynamic options.
-	$paramRef->{'brightnessOptions' } = { %{Slim::Web::Setup::getBrightnessOptions($client)} };
-	$paramRef->{'maxBrightness' }     = $client->maxBrightness;
-	$paramRef->{'fontOptions'}        = { %{Slim::Web::Setup::getFontOptions($client)} };
-
-	# Set current values for prefs
-	# load into prefs hash so that web template can detect exists/!exists
-	for my $pref (@prefs) {
-
-		if ($pref eq 'activeFont' || $pref eq 'idleFont') {
-
-			$paramRef->{'prefs'}->{$pref} = [$client->prefGetArray($pref)];
-
-			push @{$paramRef->{'prefs'}->{$pref}},"-1";
-
-		} elsif ($pref eq 'doubleSize') {
-			
-			$paramRef->{'prefs'}->{$pref} = $client->textSize;
-			
-		} else {
-
-			$paramRef->{'prefs'}->{$pref} = $client->prefGet($pref);
-		}
-	}
-	
 	return $class->SUPER::handler($client, $paramRef);
 }
 

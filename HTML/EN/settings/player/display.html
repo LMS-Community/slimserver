@@ -1,5 +1,5 @@
 [% PROCESS settings/header.html %]
-
+[% IF prefs %]
 	[% IF prefs.exists('powerOnBrightness') %]
 	<div class="settingSection">
 	
@@ -259,4 +259,5 @@
 	</div>
 	[% END %]
 
+[% END %]
 [% PROCESS settings/footer.html %]

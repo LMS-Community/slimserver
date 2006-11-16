@@ -4072,6 +4072,12 @@ SETUP_PLUGINLIST_CHANGE
 	SV	Inställning for %s är ändrad.
 	ZH_CN	%s设置已更改。
 
+SETTINGS_CHANGED
+	EN	The following settings were changed:
+
+SETUP_NO_PREFS
+	EN	There are no settings for this player on this page
+
 SETUP_PASSWORD_CHANGED
 	DE	Das Passwort wurde geändert.
 	DA	Kodeordet er nu ændret.

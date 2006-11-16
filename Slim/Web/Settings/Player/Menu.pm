@@ -27,67 +27,75 @@ sub needsClient {
 sub handler {
 	my ($class, $client, $paramRef) = @_;
 
-	my @prefs = ('menuItem');
+	if ($client->isPlayer()) {
 
-	# If this is a settings update
-	my $i;
-	for ($i = $client->prefGetArrayMax('menuItem'); $i >= 0; $i--) {
-		if (exists $paramRef->{'Action' . $i}) {
-
-			my $newval = $paramRef->{'Action' . $i};
-			my $tempItem = $client->prefGet('menuItem',$i);
-			if (defined $newval) {
-				if ($newval eq 'Remove') {
-				
-					$client->prefDelete('menuItem',$i);
-				} elsif ($newval eq 'Up' && $i > 0) {
+		my @prefs = ('menuItem');
+	
+		# If this is a settings update
+		my $i;
+		for ($i = $client->prefGetArrayMax('menuItem'); $i >= 0; $i--) {
+			if (exists $paramRef->{'Action' . $i}) {
+	
+				my $newval = $paramRef->{'Action' . $i};
+				my $tempItem = $client->prefGet('menuItem',$i);
+				if (defined $newval) {
+					if ($newval eq 'Remove') {
 					
-					$client->prefSet('menuItem',$client->prefGet('menuItem',$i - 1),$i);
-					$client->prefSet('menuItem',$tempItem,$i - 1);
-				} elsif ($newval eq 'Down' && $i < $client->prefGetArrayMax('menuItem')) {
-				
-					$client->prefSet('menuItem',$client->prefGet('menuItem',$i + 1),$i);
-					$client->prefSet('menuItem',$tempItem,$i + 1);
+						$client->prefDelete('menuItem',$i);
+					} elsif ($newval eq 'Up' && $i > 0) {
+						
+						$client->prefSet('menuItem',$client->prefGet('menuItem',$i - 1),$i);
+						$client->prefSet('menuItem',$tempItem,$i - 1);
+					} elsif ($newval eq 'Down' && $i < $client->prefGetArrayMax('menuItem')) {
+					
+						$client->prefSet('menuItem',$client->prefGet('menuItem',$i + 1),$i);
+						$client->prefSet('menuItem',$tempItem,$i + 1);
+					}
 				}
 			}
 		}
-	}
-	
-	if ($client->prefGetArrayMax('menuItem') < 0) {
-		$client->prefSet('menuItem','NOW_PLAYING',0);
-	}
-	
-	if ($paramRef->{'removeItems'}) {
-		for ($i = $client->prefGetArrayMax('menuItem'); $i >= 0; $i--) {
-			if ($paramRef->{'menuItemRemove' . $i}) {
-				$client->prefDelete('menuItem',$i);
-			}
-		}
-	}
-	
-	if ($paramRef->{'addItems'}) {
 		
-		for my $i (0..$paramRef->{'nonMenuItems'}) {
-			if ($paramRef->{'nonMenuItemAdd' . $i}) {
-				$client->prefPush('menuItem',$paramRef->{'nonMenuItemAdd' . $i});
-			}
+		if ($client->prefGetArrayMax('menuItem') < 0) {
+			$client->prefSet('menuItem','NOW_PLAYING',0);
 		}
-
-		for my $i (0..$paramRef->{'pluginItems'}) {
 		
-			if (exists $paramRef->{'pluginItemAdd' . $i}) {
-				$client->prefPush('menuItem',$paramRef->{'pluginItemAdd' . $i});
+		if ($paramRef->{'removeItems'}) {
+			for ($i = $client->prefGetArrayMax('menuItem'); $i >= 0; $i--) {
+				if ($paramRef->{'menuItemRemove' . $i}) {
+					$client->prefDelete('menuItem',$i);
+				}
 			}
 		}
+		
+		if ($paramRef->{'addItems'}) {
+			
+			for my $i (0..$paramRef->{'nonMenuItems'}) {
+				if ($paramRef->{'nonMenuItemAdd' . $i}) {
+					$client->prefPush('menuItem',$paramRef->{'nonMenuItemAdd' . $i});
+				}
+			}
+	
+			for my $i (0..$paramRef->{'pluginItems'}) {
+			
+				if (exists $paramRef->{'pluginItemAdd' . $i}) {
+					$client->prefPush('menuItem',$paramRef->{'pluginItemAdd' . $i});
+				}
+			}
+	
+		}
+	
+		Slim::Buttons::Home::updateMenu($client);
+	
+		$paramRef->{'menuItems'}     = [ $client->prefGetArray('menuItem') ];
+		$paramRef->{'menuItemNames'} = { map {$_ => Slim::Web::Setup::menuItemName($client, $_)} $client->prefGetArray('menuItem') };
+		$paramRef->{'nonMenuItems'}  = { map {$_ => Slim::Web::Setup::menuItemName($client, $_)} Slim::Buttons::Home::unusedMenuOptions($client) };
+		$paramRef->{'pluginItems'}   = { map {$_ => Slim::Web::Setup::menuItemName($client, $_)} Slim::Utils::PluginManager::unusedPluginOptions($client) };
 
+	} else {
+		# non-SD player, so no applicable display settings
+		$paramRef->{'warning'} = Slim::Utils::Strings::string('SETUP_NO_PREFS');
 	}
-
-	Slim::Buttons::Home::updateMenu($client);
-
-	$paramRef->{'menuItems'}     = [ $client->prefGetArray('menuItem') ];
-	$paramRef->{'menuItemNames'} = { map {$_ => Slim::Web::Setup::menuItemName($client, $_)} $client->prefGetArray('menuItem') };
-	$paramRef->{'nonMenuItems'}  = { map {$_ => Slim::Web::Setup::menuItemName($client, $_)} Slim::Buttons::Home::unusedMenuOptions($client) };
-	$paramRef->{'pluginItems'}   = { map {$_ => Slim::Web::Setup::menuItemName($client, $_)} Slim::Utils::PluginManager::unusedPluginOptions($client) };
+	
 
 	return $class->SUPER::handler($client, $paramRef);
 }

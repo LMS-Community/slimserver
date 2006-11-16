@@ -36,6 +36,7 @@
 	
 	</div>
 	
+	[% IF prefs.exists('playingDisplayModes') %]
 	<div class="settingSection">
 	
 		<div class="groupHead">[% "SETUP_PLAYINGDISPLAYMODE" | string | upper %]</div>
@@ -63,7 +64,9 @@
 		</table>
 	
 	</div>
+	[% END %]
 
+	[% IF prefs.exists('visualModes') %]
 	<div class="settingSection">
 	
 		<div class="groupHead">[% "SETUP_VISUALIZERMODE" | string | upper %]</div>
@@ -90,7 +93,9 @@
 		</table>
 	
 	</div>
+	[% END %]
 
+	[% IF prefs.exists('screensaver') %]
 	<div class="settingSection">
 	
 		<div class="groupHead">[% "SCREENSAVERS" | string | upper %]</div>
@@ -171,5 +176,6 @@
 		[% END %] 
 	
 	</div>
+	[% END %]
 
 [% PROCESS settings/footer.html %]
