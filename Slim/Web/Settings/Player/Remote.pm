@@ -30,34 +30,42 @@ sub handler {
 	my @prefs = ();
 
 	if ($client->isPlayer()) {
+
 		if (scalar(keys %{Slim::Hardware::IR::mapfiles()}) > 1) {  
+
 			push @prefs, 'irmap';  
 		}
-	
 		
 		# If this is a settings update
 		if ($paramRef->{'submit'}) {
 	
 			my @changed = ();
+
 			for my $pref (@prefs) {
 	
 				# parse indexed array prefs.
 				if ($paramRef->{$pref} ne $client->prefGet($pref)) {
+
 					push @changed, $pref;
 				}
 				
-				$client->prefSet($pref, $paramRef->{$pref} ) if defined $paramRef->{$pref};
-	
+				if (defined $paramRef->{$pref}) {
+
+					$client->prefSet($pref, $paramRef->{$pref});
+				}
 			}
 			
 			$client->prefDelete('disabledirsets');
 			
 			my @irsets = keys %{Slim::Hardware::IR::irfiles($client)};
+
 			for my $i (0 .. (scalar(@irsets)-1)) {
 			
 				if ($paramRef->{'irsetlist'.$i}) {
+
 					$client->prefPush('disabledirsets',$paramRef->{'irsetlist'.$i});
 				}
+
 				Slim::Hardware::IR::loadIRFile($irsets[$i]);
 			}
 			
@@ -76,6 +84,7 @@ sub handler {
 		}
 		
 	} else {
+
 		# non-SD player, so no applicable display settings
 		$paramRef->{'warning'} = Slim::Utils::Strings::string('SETUP_NO_PREFS');
 	}

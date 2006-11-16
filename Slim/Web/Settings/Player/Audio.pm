@@ -78,10 +78,12 @@ sub handler {
 	if ($paramRef->{'submit'}) {
 
 		my @changed = ();
+
 		for my $pref (@prefs) {
 
 			# parse indexed array prefs.
 			if ($paramRef->{$pref} ne $client->prefGet($pref)) {
+
 				push @changed, $pref;
 			}
 			
@@ -92,11 +94,14 @@ sub handler {
 	}
 
 	# Load any option lists for dynamic options.
-	$paramRef->{'syncGroups'}    = { %{Slim::Web::Setup::syncGroups($client)} };
-	$paramRef->{'lamefound'}     = Slim::Utils::Misc::findbin('lame');
+	$paramRef->{'syncGroups'} = { %{Slim::Web::Setup::syncGroups($client)} };
+	$paramRef->{'lamefound'}  = Slim::Utils::Misc::findbin('lame');
 	
 	my @formats = $client->formats();
-	if ($formats[0] ne 'mp3') { $paramRef->{'allowNoLimit'} = 1; }
+
+	if ($formats[0] ne 'mp3') {
+		$paramRef->{'allowNoLimit'} = 1;
+	}
 
 	# Set current values for prefs
 	# load into prefs hash so that web template can detect exists/!exists
@@ -105,19 +110,24 @@ sub handler {
 		if ($pref eq 'synchronize') {
 
 			$paramRef->{'prefs'}->{$pref} =  -1;
+
 			if (Slim::Player::Sync::isSynced($client)) {
+
 				$paramRef->{'prefs'}->{$pref} = $client->id();
+
 			} elsif ( my $syncgroupid = $client->prefGet('syncgroupid') ) {
 
 				# Bug 3284, we want to show powered off players that will resync when turned on
 				my @players = Slim::Player::Client::clients();
 
 				foreach my $other (@players) {
+
 					next if $other eq $client;
 
 					my $othersyncgroupid = Slim::Utils::Prefs::clientGet($other,'syncgroupid');
 
 					if ( $syncgroupid == $othersyncgroupid ) {
+
 						$paramRef->{'prefs'}->{$pref} = $other->id;
 					}
 				}
@@ -129,8 +139,9 @@ sub handler {
 			
 		} elsif ($pref eq 'powerOnResume') {
 			
-			$paramRef->{'prefs'}->{$pref} = Slim::Player::Sync::syncGroupPref($client,'powerOnResume') ||
-								$client->prefGet('powerOnResume');	
+			$paramRef->{'prefs'}->{$pref} = Slim::Player::Sync::syncGroupPref($client,'powerOnResume') || 
+								$client->prefGet('powerOnResume');
+
 		} else {
 
 			$paramRef->{'prefs'}->{$pref} = $client->prefGet($pref);

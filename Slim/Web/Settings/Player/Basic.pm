@@ -29,15 +29,20 @@ sub handler {
 
 	my @prefs = qw(playername titleFormat titleFormatCurr);
 
+	# isPlayer means not a HTTP client.
 	if ($client->isPlayer()) {
+
 		push @prefs, qw(playingDisplayMode playingDisplayModes);
 		
 		if ($client->display->isa('Slim::Display::Transporter')) {
+
 			push @prefs, qw(visualMode visualModes);
 		}
 		
 		my $savers = Slim::Buttons::Common::hash_of_savers();
+
 		if (scalar(keys %{$savers}) > 0) {
+
 			push @prefs, qw(screensaver idlesaver offsaver screensavertimeout);
 		}
 	}
@@ -45,10 +50,12 @@ sub handler {
 	# If this is a settings update
 	if ($paramRef->{'submit'}) {
 
-		my @changed;
+		my @changed = ();
 
 		my $vismodeChange = 0;
+
 		if (${$paramRef->{'visualModes'}}[$paramRef->{'visualMode'}] ne $client->prefGet('visualModes',$paramRef->{'visualMode'})) {
+
 			$vismodeChange = 1;
 		}
 
@@ -66,22 +73,27 @@ sub handler {
 						last;
 					}
 
-					$client->prefPush($pref,$paramRef->{$pref.$i});
+					$client->prefPush($pref, $paramRef->{$pref.$i});
 
 					$i++;
 				}
+
 			} else {
 			
 				if ($paramRef->{$pref} ne $client->prefGet($pref)) {
 					push @changed, $pref;
 				}
 			
-				$client->prefSet($pref, $paramRef->{$pref} ) if defined $paramRef->{$pref};
+				if (defined $paramRef->{$pref}) {
+
+					$client->prefSet($pref, $paramRef->{$pref});
+				}
 			}
 		}
 		
 		if ($vismodeChange) {
-			Slim::Buttons::Common::updateScreen2Mode;
+
+			Slim::Buttons::Common::updateScreen2Mode();
 		}
 		
 		$class->_handleChanges($client, \@changed, $paramRef);
@@ -97,9 +109,9 @@ sub handler {
 
 		if ($pref eq 'visualModes' || $pref eq 'playingDisplayModes' || $pref eq 'titleFormat') {
 
-			$paramRef->{'prefs'}->{$pref} = [$client->prefGetArray($pref)];
+			$paramRef->{'prefs'}->{$pref} = [ $client->prefGetArray($pref) ];
 
-			push @{$paramRef->{'prefs'}->{$pref}},"-1";
+			push @{$paramRef->{'prefs'}->{$pref}}, "-1";
 
 		} else {
 
@@ -107,8 +119,13 @@ sub handler {
 		}
 	}
 
-	if (defined($client->revision)) {
-		$paramRef->{'versionInfo'} = Slim::Utils::Strings::string("PLAYER_VERSION") . Slim::Utils::Strings::string("COLON") . $client->revision;
+	if (defined $client->revision) {
+
+		$paramRef->{'versionInfo'} = sprintf("%s%s%s", 
+			Slim::Utils::Strings::string("PLAYER_VERSION"),
+			Slim::Utils::Strings::string("COLON"),
+			$client->revision,
+		);
 	}
 	
 	$paramRef->{'ipaddress'}      = $client->ipport();
@@ -116,7 +133,6 @@ sub handler {
 	$paramRef->{'signalstrength'} = $client->signalStrength;
 	$paramRef->{'voltage'}        = $client->voltage();
 
-	
 	return $class->SUPER::handler($client, $paramRef);
 }
 

@@ -29,11 +29,13 @@ sub handler {
 
 	my @prefs = ();
 
-	#$ set up prefs array for all conditions.
+	# set up prefs array for all conditions.
 	if ($client->isPlayer()) {
+
 		push @prefs, qw(powerOnBrightness powerOffBrightness idleBrightness autobrightness);
 		
 		if ($client->display->isa("Slim::Display::Graphics")) {
+
 			push @prefs, qw(
 				activeFont activeFont_curr
 				idleFont idleFont_curr
@@ -42,7 +44,9 @@ sub handler {
 				scrollRate scrollRateDouble
 				scrollPixels scrollPixelsDouble
 			);
+
 		} else {
+
 			push @prefs, qw(
 				doublesize offDisplaySize
 				largeTextFont
@@ -74,17 +78,16 @@ sub handler {
 	
 						$i++;
 					}
-				} else {
-				
-					$client->prefSet($pref, $paramRef->{$pref} ) if defined $paramRef->{$pref};
+
+				} elsif (defined $paramRef->{$pref}) {
+
+					$client->prefSet($pref, $paramRef->{$pref});
 				}
 				
 				if ($pref eq 'doublesize') {
 					$client->textSize($paramRef->{'doublesize'});
 				}
 			}
-			
-	
 		}
 	
 		# Load any option lists for dynamic options.
@@ -113,9 +116,9 @@ sub handler {
 		}
 
 	} else {
+
 		# non-SD player, so no applicable display settings
 		$paramRef->{'warning'} = Slim::Utils::Strings::string('SETUP_NO_PREFS');
-		
 	}
 
 	return $class->SUPER::handler($client, $paramRef);

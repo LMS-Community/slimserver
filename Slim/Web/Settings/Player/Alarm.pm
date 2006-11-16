@@ -28,33 +28,40 @@ sub handler {
 	my ($class, $client, $paramRef) = @_;
 
 	my @prefs = qw(alarmfadeseconds alarm alarmtime alarmvolume alarmplaylist);
-
 	
 	# If this is a settings update
 	if ($paramRef->{'submit'}) {
 
 		my @changed = ();
+
 		for my $pref (@prefs) {
 
 			if ($pref eq 'alarmfadeseconds') {
 			
 				# parse indexed array prefs.
 				if ($paramRef->{$pref} ne $client->prefGet($pref)) {
+
 					push @changed, $pref;
 				}
 				
-				$client->prefSet($pref, $paramRef->{$pref} ) if defined $paramRef->{$pref};
+				if (defined $paramRef->{$pref}) {
+
+					$client->prefSet($pref, $paramRef->{$pref});
+				}
+
 			} else {
 			
 				for my $i (0..7) {
 
 					# parse indexed array prefs.
 					if ($pref ne 'alarmtime' && $paramRef->{$pref.$i} ne $client->prefGet($pref, $i)) {
+
 						push @changed, $pref.$i;
 					}
 
 					if ($pref eq 'alarmtime') {
-						my $time = $paramRef->{'alarmtime'.$i};
+
+						my $time    = $paramRef->{'alarmtime'.$i};
 						my $newtime = 0;
 
 						$time =~ s{
@@ -67,14 +74,19 @@ sub handler {
 							}
 						}iegsx;
 
-						if ($newtime != $client->prefGet('alarmtime',$i)) {
+						if ($newtime != $client->prefGet('alarmtime', $i)) {
+
 							push @changed, 'alarmtime'.$i;
 						}
 
-						$client->prefSet('alarmtime',$newtime,$i);
+						$client->prefSet('alarmtime', $newtime, $i);
+
 					} else {
 					
-						$client->prefSet($pref.$i, $paramRef->{$pref.$i} ) if defined $paramRef->{$pref.$i};
+						if (defined $paramRef->{$pref.$i}) {
+
+							$client->prefSet($pref.$i, $paramRef->{$pref.$i});
+						}
 					}
 				}
 			}
@@ -91,6 +103,7 @@ sub handler {
 	my $specialPlaylists = \%Slim::Buttons::AlarmClock::specialPlaylists;
 
 	for my $key (keys %{$specialPlaylists}) {
+
 		$playlistRef->{$key} = $key;
 	}
 
@@ -103,17 +116,34 @@ sub handler {
 		if ($pref eq 'alarmfadeseconds') {
 		
 			$paramRef->{'prefs'}->{$pref} = $client->prefGet($pref);
+
 		} else {
 
 			@{$paramRef->{'prefs'}->{$pref}} = $client->prefGetArray($pref);
 		}
 		
 		if ($pref eq 'alarmtime') {
+
 			for my $i (0..7) {
+
 				my $time = $client->prefGet('alarmtime',$i);
 				
 				my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Input::Time::timeDigits($client,$time);
+
 				my $timestring = ((defined($p) && $h0 == 0) ? ' ' : $h0) . $h1 . ":" . $m0 . $m1 . " " . (defined($p) ? $p : '');
+
+				my $timestring = ' ';
+
+				if (!defined $p || $h0 != 0) {
+
+					$timestring = $h0;
+				}
+
+				$timestring .= "$h1:$m0$m1 ";
+
+				if (defined $p) {
+					$timestring .= $p;
+				}
 				
 				${$paramRef->{'prefs'}->{'alarmtime'}}[$i] = $timestring;
 			}
