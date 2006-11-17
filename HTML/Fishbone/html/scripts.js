@@ -264,7 +264,8 @@ function getPage() {
 var selectedLink;
 function selectLink(lnk,reset) {
 
-	if (selectedLink) selectedLink.style.fontWeight='normal';
+	document.getElementById('homelink').style.fontWeight = 'normal';
+	if (selectedLink) selectedLink.style.fontWeight = 'normal';
 
 	if (lnk) {
 		lnk.style.fontWeight='bold';

@@ -100,7 +100,7 @@
 
 [%- IF NOT undock -%]
 		<div id="menuHeader">
-			<form id="playerForm" action="javascript:return false">
+			<form id="playerForm" action="javascript:return(false);">
 				[% IF player_chooser_list -%]
 					<select name="player" onchange="changePlayer(this);" class="stdedit">[% player_chooser_list %]</select>
 				[%- ELSE -%]
@@ -206,7 +206,7 @@
 				([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])[% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
 			</div>
 			<div id="playlistLinks">
-				[% img = '' %]<span id="saveplaylist" style="display:none";>[% PROCESS savePlaylistLink %] / </span>
+				[% img = '' %]<span id="saveplaylist" style="display:none;">[% PROCESS savePlaylistLink %] / </span>
 				[% PROCESS downloadPlaylistLink %] /
 				[% PROCESS clearPlaylistLink %]
 			</div>

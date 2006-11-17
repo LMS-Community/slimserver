@@ -13,7 +13,7 @@
 [%- END -%]
 
 [% BLOCK dummylink -%]
-<a><img src="[% webroot %]html/images/spacer.gif" width=7></a>
+<a><img src="[% webroot %]html/images/spacer.gif" alt="" title="" width="7"></a>
 [%- END %]
 
 [% BLOCK infolink %]
@@ -49,9 +49,9 @@
 	[%- WRAPPER moveuplink   -%][%- PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp           -%][%- END -%]
 	[%- WRAPPER movedownlink -%][%- PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown         -%][%- END -%]
 	[%- WRAPPER removelink   -%][%- PROCESS cmdHRef cmdType = 'delete'                         -%][%- END -%]
-	<span class="mixers">[%- FOREACH mixer = item.mixerlinks.values.sort %]
-		[%- PROCESS $mixer -%]
-	[%- END -%]
+		[% IF mixerlinks %]<span class="mixers">[%- FOREACH mixer = item.mixerlinks.values.sort -%]
+			[%- PROCESS $mixer -%]
+		[%- END %]</span>[% END %]
 [%- END %]
 
 [% BLOCK browsecontrols -%]
@@ -70,9 +70,9 @@
 		[%- WRAPPER insertlink -%][%- PROCESS cmdHRef cmdType='insert' -%][%- END %]
 		[%- WRAPPER addlink    -%][%- PROCESS cmdHRef cmdType='add'    -%][%- END %]
 		[%- WRAPPER removelink -%][%- PROCESS cmdHRef cmdType='remove' -%][%- END %]
-		<span class="mixers">[%- FOREACH mixer = mixerlinks.values.sort -%]
+		[% IF mixerlinks %]<span class="mixers">[%- FOREACH mixer = mixerlinks.values.sort -%]
 			[%- PROCESS $mixer -%]
-		[%- END %]</span>
+		[%- END %]</span>[% END %]
 	[% END %]
 [%- END %]
 

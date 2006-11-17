@@ -26,7 +26,7 @@
 <html>
 <head>
 	[% PROCESS customheader.html %]
-	[% IF home %]<script language="JavaScript">
+	[% IF home %]<script type="text/javascript">
 	<!--Hide
 	var homestring;
 	var page;
@@ -116,18 +116,18 @@
 			<a href="http://www.slimdevices.com/" target="slimdevices"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices"></a>
 	</div>
 	<div id="serverlinks">
-		<a id="homelink" onload="style.fontWeight='bold';" href="" target="browser" onclick="selectLink(this,'[% page %]');" onMouseOver="homelink();setLink(this);" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
+		<a id="homelink" style="font-weight:bold;" href="javascript:selectLink(this,'BROWSE_NEW_MUSIC');" target="browser" onclick="selectLink(this,'[% page %]');" onMouseOver="homelink();setLink(this);" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
 		 / 
 		[% IF not nosetup && not noserver %]
 			<a href="[% webroot %]settings/server/basic.html?player=[% playerURI %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this,1)">[% "SERVER_SETTINGS" | string %]</a>
 			 / 
 		[% END %]
-		<a href="[% webroot %]home.html?page=help&player=[% playerURI %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this,1)">[% "HELP" | string %]</a></nobr>
+		<a href="[% webroot %]home.html?page=help&amp;player=[% playerURI %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this,1)">[% "HELP" | string %]</a>
 	</div>
 </div>
 
 <div id="menuHeader">[% END %]
-	<FORM id="browseForm" name="browser" action="javascript: return false;" target="header">
+	<FORM id="browseForm" name="browseForm" action="javascript:return(false);" target="header">
 		<SELECT NAME="browse" class="stdedit" style="width:17em;" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
 			<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
 			[% PROCESS addBrowseLinks links=additionalLinks.browse %]
@@ -149,7 +149,7 @@
 		<input type=hidden value="[% page %]" name="page">
 	</FORM>
 	[% IF NOT optionOnly %]
-	<FORM id="HeaderSearchForm" name=searcher action="javascript: return false;" onSubmit="doSearch(query.value);">
+	<FORM id="HeaderSearchForm" name="HeaderSearchForm" action="javascript:return(false);" onSubmit="doSearch(query.value);">
 		[% "SEARCH" | string %]
 		<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="15">
 		<input type=hidden value="[% player %]" name="player">
@@ -171,5 +171,5 @@
 [%- END %]
 <span class="pageHeaderInfo">[% pageHeaderInfo %]</span>
 
-[% UNLESS noHR %]<span class="headerhr"><hr></span>[% END %]
+[% UNLESS noHR %]<hr class="headerhr">[% END %]
 [% END %]

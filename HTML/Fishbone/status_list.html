@@ -1,4 +1,4 @@
-[% IF item.currentsong %]<a name="currentsong"></a>[% ELSE %]<a name="[% item.num %]"></a>[% END %]
+<a name="[% item.num %]"></a>
 <div [% IF item.odd %]class="odd"[% END %] [% IF not item.odd %]class="even"[% END %]>
 	<div id="playlistitem[% item.num %]" [% IF item.currentsong %]class="currentListItem"[% ELSE %]class="browsedbListItem"[% END %]>
 		[% PROCESS trackinfo %]
