@@ -1,5 +1,5 @@
 <!-- Begin settingsfooter.html -->
-[% IF prefs %]
+[% IF prefs || NOT playerid %]
 	[% IF NOT nosubmit %]<p><input name="submit" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]"></p>[% END %]
 [% END %]
 
