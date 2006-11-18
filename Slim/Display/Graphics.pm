@@ -340,6 +340,7 @@ sub render {
 				$sc->{scrollbitsref} = \$tickerbits;
 				$sc->{scrolldir} = 1; # only support l->r scrolling for ticker
 				$sc->{scrollstart} = 0;
+				$changed = 1;
 
 			} elsif ($sc->{scroll} >= 2) {
 				$sc->{scroll} = 0;

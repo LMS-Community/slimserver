@@ -366,6 +366,7 @@ sub render {
 
 		$sc->{scrolldir} = 1;
 		$sc->{scrollstart} = 0;
+		$sc->{changed} = 1;
 
 	} elsif ($sc->{scroll} >= 2) {
 		$sc->{scroll} = 0;

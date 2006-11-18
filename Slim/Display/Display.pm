@@ -211,7 +211,7 @@ sub update {
 				$display->scrollStop($screenNo);
 				$display->scrollInit($screen, $screenNo, $scrollonce);
 
-			} elsif ($state == 2 && $screen->{scroll} == 2) {
+			} elsif ($state == 2 && $screen->{scroll} == 2 && $screen->{changed}) {
 				# staying in ticker mode - add to ticker queue & update background
 				$display->scrollUpdateTicker($screen, $screenNo);
 				$display->scrollUpdateBackground($screen, $screenNo);
