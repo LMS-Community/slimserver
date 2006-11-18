@@ -126,7 +126,7 @@ sub init {
 		# Add our default root logger
 		my @levels = ('WARN', $logtype);
 
-		if (!$::quiet) {
+		if ($::daemon || !$::quiet) {
 			push @levels, 'screen';
 		}
 
@@ -775,11 +775,13 @@ sub _defaultAppenders {
 
 		'screen' => {
 			'appender' => 'Log::Log4perl::Appender::Screen',
+			'stderr'   => 0,
 		},
 
 		'screen-raw' => {
 			'appender' => 'Log::Log4perl::Appender::Screen',
-			'layout'   => 'raw'
+			'stderr'   => 0,
+			'layout'   => 'raw',
 		},
 
 		'server' => {
@@ -800,7 +802,6 @@ sub _defaultAppenders {
 			'filename' => 'sub { Slim::Utils::Log::perfmonLogFile() }',
 			'layout'   => 'raw'
 		},
-
 	);
 
 	return $class->_fixupAppenders(\%defaultAppenders);
@@ -873,6 +874,25 @@ sub _fixupAppenders {
 L<Log::Log4perl>
 
 =cut
+
+package Slim::Utils::Log::Trapper;
+
+use strict;
+
+sub TIEHANDLE {
+	my $class = shift;
+	bless [], $class;
+}
+
+sub PRINT {
+	my $self = shift;
+
+	$Log::Log4perl::caller_depth++;
+
+	Slim::Utils::Log::logger('')->warn("Warning: ", @_);
+
+	$Log::Log4perl::caller_depth--;
+}
 
 1;
 

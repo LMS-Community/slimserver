@@ -82,6 +82,9 @@ sub main {
 		'debug'   => $debug,
 	});
 
+	# Redirect STDERR to the log file.
+	tie *STDERR, 'Slim::Utils::Log::Trapper';
+
 	my $log = logger('server');
 
 	# Bring up strings, database, etc.

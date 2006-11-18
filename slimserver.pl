@@ -221,9 +221,6 @@ sub init {
 	# initialize the process and daemonize, etc...
 	srand();
 
-	autoflush STDERR;
-	autoflush STDOUT;
-
 	# The revision file may not exist for svn copies.
 	$REVISION = eval { File::Slurp::read_file(
 		catdir(Slim::Utils::OSDetect::dirsFor('revision'), 'revision.txt')
@@ -248,6 +245,9 @@ sub init {
 		'logtype' => 'server',
 		'debug'   => $debug,
 	});
+
+	# Redirect STDERR to the log file.
+	tie *STDERR, 'Slim::Utils::Log::Trapper';
 
 	# Load a log handler for prefs now.
 	Slim::Utils::Prefs::loadLogHandler();
@@ -684,10 +684,6 @@ sub daemonize {
 	}
 
 	open STDOUT, '>>/dev/null';
-
-	if (!open STDERR, '>&STDOUT') {
-		die "Can't dup stdout: $!";
-	}
 }
 
 sub changeEffectiveUserAndGroup {
