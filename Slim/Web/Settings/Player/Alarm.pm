@@ -130,8 +130,6 @@ sub handler {
 				
 				my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Input::Time::timeDigits($client,$time);
 
-				my $timestring = ((defined($p) && $h0 == 0) ? ' ' : $h0) . $h1 . ":" . $m0 . $m1 . " " . (defined($p) ? $p : '');
-
 				my $timestring = ' ';
 
 				if (!defined $p || $h0 != 0) {
