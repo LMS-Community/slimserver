@@ -125,6 +125,11 @@ sub init {
 			Slim::Utils::Prefs::set('screensaverDateFormat', Slim::Utils::Prefs::get('longdateFormat'))
 				unless Slim::Utils::Prefs::get('screensaverDateFormat');
 		},
+
+		# The change to force stderr to off requires a clean log config.
+		'7.0a1-2006-11-18' => sub {
+			unlink Slim::Utils::Log->defaultConfigFile;
+		},
 	);
 
 	# When adding new server and client preference options, put a default value for the option
@@ -220,6 +225,7 @@ sub init {
 		'upgrade-6.5b1-2006-01-25-script' => 1,
 		'upgrade-6.5b1-2006-02-03-script' => 1,
 		'upgrade-6.5b1-2006-03-31-script' => 1,
+		'upgrade-7.0a1-2006-11-18-script' => 1,
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
 		'disabledextensionsaudio' => '',
 		'disabledextensionsplaylist' => '',
