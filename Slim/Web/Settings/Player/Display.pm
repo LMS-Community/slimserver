@@ -91,10 +91,10 @@ sub handler {
 		}
 	
 		# Load any option lists for dynamic options.
-		$paramRef->{'brightnessOptions' } = { %{Slim::Web::Setup::getBrightnessOptions($client)} };
+		$paramRef->{'brightnessOptions' } = getBrightnessOptions($client);
 		$paramRef->{'maxBrightness' }     = $client->maxBrightness;
-		$paramRef->{'fontOptions'}        = { %{Slim::Web::Setup::getFontOptions($client)} };
-	
+		$paramRef->{'fontOptions'}        = getFontOptions($client);
+
 		# Set current values for prefs
 		# load into prefs hash so that web template can detect exists/!exists
 		for my $pref (@prefs) {
@@ -122,6 +122,59 @@ sub handler {
 	}
 
 	return $class->SUPER::handler($client, $paramRef);
+}
+
+sub getFontOptions {
+	my $client = shift;
+
+	if (!$client || !exists &Slim::Display::Lib::Fonts::fontnames) {
+
+		return {};
+	}
+
+	my $height = $client->displayHeight;
+	my $fonts  = {
+		'-1' => '',
+	};
+
+	for my $font (Slim::Display::Lib::Fonts::fontnames()) {
+
+		if ($height == Slim::Display::Lib::Fonts::fontheight("$font.2") && 
+			Slim::Display::Lib::Fonts::fontchars("$font.2") > 255 ) {
+
+			$fonts->{$font} = $font;
+		}
+	}
+
+	return $fonts;
+}
+
+sub getBrightnessOptions {
+	my $client = shift;
+
+	my %brightnesses = (
+		0 => '0 ('.string('BRIGHTNESS_DARK').')',
+		1 => '1',
+		2 => '2',
+		3 => '3',
+		4 => '4 ('.string('BRIGHTNESS_BRIGHTEST').')',
+	);
+
+	if (!defined $client) {
+
+		return \%brightnesses;
+	}
+
+	if (defined $client->maxBrightness) {
+
+		$brightnesses{4} = 4;
+
+		$brightnesses{$client->maxBrightness} = sprintf('%s (%s)', 
+			$client->maxBrightness, string('BRIGHTNESS_BRIGHTEST')
+		);
+	}
+
+	return \%brightnesses;
 }
 
 1;

@@ -100,9 +100,9 @@ sub handler {
 
 	}
 
-	$paramRef->{'titleFormatOptions'}    = { Slim::Web::Setup::hash_of_prefs('titleFormat') };
-	$paramRef->{'playingDisplayOptions'} = { %{Slim::Web::Setup::getPlayingDisplayModes($client)} };
-	$paramRef->{'visualModeOptions'}     = { %{Slim::Web::Setup::getVisualModes($client)} };
+	$paramRef->{'titleFormatOptions'}    = hashOfPrefs('titleFormat');
+	$paramRef->{'playingDisplayOptions'} = getPlayingDisplayModes($client);
+	$paramRef->{'visualModeOptions'}     = getVisualModes($client);
 	$paramRef->{'screensavers'}          = Slim::Buttons::Common::hash_of_savers();
 
 	for my $pref (@prefs) {
@@ -128,12 +128,92 @@ sub handler {
 		);
 	}
 	
-	$paramRef->{'ipaddress'}      = $client->ipport();
+	$paramRef->{'ipaddress'}      = $client->ipport;
 	$paramRef->{'macaddress'}     = $client->macaddress;
 	$paramRef->{'signalstrength'} = $client->signalStrength;
-	$paramRef->{'voltage'}        = $client->voltage();
+	$paramRef->{'voltage'}        = $client->voltage;
 
 	return $class->SUPER::handler($client, $paramRef);
+}
+
+# returns a hash of title formats with the key being their array index and the
+# value being the format string
+sub hashOfPrefs {
+	my $pref = shift;
+
+	my %prefs = ();
+
+	# used to delete a title format from the list
+	$prefs{'-1'} = ' ';
+
+	my $i = 0;
+
+	for my $item (Slim::Utils::Prefs::getArray($pref)) {
+
+		if (Slim::Utils::Strings::stringExists($item)) {
+
+			$prefs{$i++} = Slim::Utils::Strings::string($item);
+
+		} else {
+
+			$prefs{$i++} = $item;
+		}
+	}
+
+	return \%prefs;
+}
+
+sub getPlayingDisplayModes {
+	my $client = shift || return {};
+	
+	my $display = {
+		'-1' => ' '
+	};
+
+	my $modes  = $client->display->modes;
+	my $nmodes = $client->display->nmodes;
+
+	for (my $i = 0; $i < $nmodes; $i++) {
+
+		my $desc = $modes->[$i]{'desc'};
+
+		for (my $j = 0; $j < scalar @$desc; $j++) {
+
+			$display->{$i} .= ' ' if $j > 0;
+			$display->{$i} .= string(@{$desc}[$j]);
+		}
+	}
+
+	return $display;
+}
+
+sub getVisualModes {
+	my $client = shift;
+	
+	if (!defined $client || !$client->display->isa('Slim::Display::Transporter')) {
+
+		return {};
+	}
+
+	my $display = {
+		'-1' => ' '
+	};
+
+	my $modes  = $client->display->visualizerModes;
+	my $nmodes = $client->display->visualizerNModes;
+
+	for (my $i = 0; $i < $nmodes; $i++) {
+
+		my $desc = $modes->[$i]{'desc'};
+
+		for (my $j = 0; $j < scalar @$desc; $j++) {
+
+			$display->{$i} .= ' ' if ($j > 0);
+			$display->{$i} .= string(@{$desc}[$j]);
+		}
+	}
+
+	return $display;
 }
 
 1;

@@ -94,7 +94,7 @@ sub handler {
 	}
 
 	# Load any option lists for dynamic options.
-	$paramRef->{'syncGroups'} = { %{Slim::Web::Setup::syncGroups($client)} };
+	$paramRef->{'syncGroups'} = syncGroups($client);
 	$paramRef->{'lamefound'}  = Slim::Utils::Misc::findbin('lame');
 	
 	my @formats = $client->formats();
@@ -149,6 +149,27 @@ sub handler {
 	}
 	
 	return $class->SUPER::handler($client, $paramRef);
+}
+
+# returns a hash reference to syncGroups available for a client
+sub syncGroups {
+	my $client = shift;
+
+	my %clients = ();
+
+	for my $eachclient (Slim::Player::Sync::canSyncWith($client)) {
+
+		$clients{$eachclient->id} = Slim::Player::Sync::syncname($eachclient, $client);
+	}
+
+	if (Slim::Player::Sync::isMaster($client)) {
+
+		$clients{$client->id} = Slim::Player::Sync::syncname($client, $client);
+	}
+
+	$clients{-1} = string('SETUP_NO_SYNCHRONIZATION');
+
+	return \%clients;
 }
 
 1;

@@ -14,6 +14,8 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 
+use FormValidator::Simple;
+
 sub name {
 	return 'NETWORK_SETTINGS';
 }
@@ -36,6 +38,21 @@ sub handler {
 		udpChunkSize
 	);
 
+	if ($paramRef->{'validate'}) {
+
+		my $result = FormValidator::Simple->check($paramRef => [
+			'webproxy' => [ 'HTTP_URL' ],
+		]);
+
+		#$paramRef->{'result'} = $result;
+		if ($result->has_error) {
+			
+			return \"webproxy is invalid!";
+		} else {
+			return \"";
+		}
+	}
+
 	my $homeURL = Slim::Utils::Prefs::homeURL();
 
 	# Bug 2724 - only show the mDNS settings if we have a binary for it.
@@ -47,66 +64,33 @@ sub handler {
 	# If this is a settings update
 	if ($paramRef->{'submit'}) {
 
+		my $result = FormValidator::Simple->check($paramRef => [
+			'httpport'            => [ 'NOT_BLANK', 'INT', [ 'BETWEEN', 1025, 65535 ] ],
+			'tcpReadMaximum'      => [ 'NOT_BLANK', 'INT', [ 'BETWEEN', 1, 65535 ] ],
+			'tcpWriteMaximum'     => [ 'NOT_BLANK', 'INT', [ 'BETWEEN', 1, 65535 ] ],
+			'bufferSecs'          => [ 'NOT_BLANK', 'INT', [ 'BETWEEN', 3, 30 ] ],
+			'udpChunkSize'        => [ 'NOT_BLANK', 'INT', [ 'BETWEEN', 1, 4096 ] ],
+			'remotestreamtimeout' => [ 'NOT_BLANK', 'INT', [ 'BETWEEN', 0, 600 ] ],
+			'maxWMArate'          => [ 'NOT_BLANK', 'INT', [ 'BETWEEN', 0, 9999 ] ],
+			'webproxy'            => [ 'HTTP_URL' ],
+		]);
+
 		$paramRef->{'warning'} = "";
 
 		if ($paramRef->{'httpport'} ne Slim::Utils::Prefs::get('httpport')) {
-		
-			if ($paramRef->{'httpport'} < 1025)  { $paramRef->{'httpport'}  = 1025 };
-			if ($paramRef->{'httpport'} > 65535) { $paramRef->{'httpport'} = 65535 };
-		
-			Slim::Utils::Prefs::set('httpport', $paramRef->{'httpport'});
 
-			$paramRef->{'warning'} .= join('',
-				string("SETUP_HTTPPORT_OK"),
-				'<blockquote><a target="_top" href="',
-				$homeURL,
-				'">',
-				$homeURL,
-				"</a></blockquote><br>"
-			);
+			Slim::Utils::Prefs::set('httpport', $paramRef->{'httpport'});
 		}
 
 		for my $pref (@prefs) {
-
-			if ($pref =~ /^tcp/ || $pref eq 'validate') {
-
-				if ($paramRef->{$pref} < 1) {
-
-					$paramRef->{$pref} = 1
-				}
-			}
-
-			if ($pref eq 'bufferSecs') {
-
-				if ($paramRef->{'bufferSecs'} > 30) {
-
-					$paramRef->{'bufferSecs'} = 30
-				}
-
-				if ($paramRef->{'bufferSecs'} < 3) {
-
-					$paramRef->{'bufferSecs'} = 3
-				}
-			}
-
-			if ($pref eq 'udpChunkSize') {
-
-				if ($paramRef->{'udpChunkSize'} < 1) {
-
-					$paramRef->{'udpChunkSize'} = 1
-				}
-
-				if ($paramRef->{'udpChunkSize'} > 4096) {
-
-					$paramRef->{'udpChunkSize'} = 4096
-				}
-			}
 
 			if ($paramRef->{$pref}) {
 
 				Slim::Utils::Prefs::set($pref, $paramRef->{$pref});
 			}
 		}
+
+		#$paramRef->{'result'} = $result;
 	}
 
 	for my $pref (@prefs) {

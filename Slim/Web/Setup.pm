@@ -25,95 +25,6 @@ our @newPlayerChildren;
 
 my $log = logger('prefs');
 
-# XXXXXX This code is brain damaged. It needs to be gutted and rewritten.
-
-# Setup uses strings extensively, for many values it defaults to a certain combination of the
-# preference name with other characters.  For this reason it is important to follow the naming
-# convention when adding strings for preferences into strings.txt.
-# In the following $groupname is replaced by the actual key used in the Groups hash and $prefname
-# by the key from the Prefs hash.
-# SETUP_GROUP_$groupname => the name of the group, such as would be used in a menu to select the group
-#				or in the heading of the group in the web page.  Should be < 40 chars
-# SETUP_GROUP_$groupname_DESC => the long description of the group, used in the web page, so length unimportant
-# SETUP_$prefname => the friendly name of the preference, such as would be used in a menu to select the preference
-#				or in the heading of the preference in the web page.  Should be < 40 chars.  Also
-#				used when the preference changes and no change intro message was specified.
-# SETUP_$prefname_DESC => the long description of the preference, used in the web page, so length unimportant
-# SETUP_$prefname_CHOOSE => the label used for presentation of the input for the preference
-# SETUP_$prefname_OK => the change intro message to use when the preference changes
-
-# setup hash's keys:
-# 'player' => hash of per player settings
-# 'server' => hash of main server settings on the setup server web page
-
-# page hash's keys:
-# 'preEval' => sub ref taking $client,$paramref,$pageref as parameters used to refresh a setup entry on each page load
-# 'postChange' => sub ref taking $client,$paramref,$pageref as parameters
-# 'isClient' => set to 1 for pages relating to a player (client)
-# 'template' => template to use to build page
-# 'GroupOrder' => array of preference groups to appear on page, in order
-# 'Groups' => hash of preference groups on page
-# 'Prefs' => hash of preferences on page
-# 'parent' => parent category of current category
-# 'children' => array of child categories of current category
-# 'title' => friendly name to use in web page
-# 'singleChildLinkText' => Text to use for a single link to the first child
-
-
-# Groups hash's keys:
-# 'PrefOrder' => list of prefs to appear in group, in order
-# 'PrefsInTable' => set if prefs should appear in a table
-# 'GroupHead' => Name of the group, usually set to string('SETUP_GROUP+$groupname'), not defaulted to anything
-# 'GroupDesc' => Description of the group, usually set to string('SETUP_GROUP_$groupname_DESC'), not defaulted to anything
-# 'GroupLine' => set if an <hr> should appear after the group
-# 'GroupSub' => set if a submit button should appear after the group
-# 'Suppress_PrefHead' => set to prevent the heading of preferences in the group from showing
-# 'Suppress_PrefDesc' => set to prevent the descriptions of preferences in the group from showing
-# 'Suppress_PrefLine' => set to prevent <hr>'s from appearing after preferences in the group
-# 'Suppress_PrefSub' => set to prevent submit buttons from appearing after preferences in the group
-
-# Prefs hash's' keys:
-# 'onChange' => sub ref taking $client,$changeref,$paramref,$pageref,$key,$ind as parameters, fired when a preference changes
-# 'isArray' => exists if setting is an array type preference
-# 'arrayAddExtra' => number of extra null entries to append to end of array
-# 'arrayDeleteNull' => indicates whether to delete undef and '' from array
-# 'arrayDeleteValue' => value signifying a null entry in the array
-# 'arrayCurrentPref' => name of preference denoting current of array
-# 'arrayBasicValue' => value to add to array if all entries are removed
-# 'arrayMax' => largest index in array (only needed for items which are not actually prefs)
-# 'validate' => reference to validation function (will be passed value to validate) (default validateAcceptAll)
-# 'validateArgs' => array of arguments to be passed to validation function (in addition to value) (no default)
-# 'options' => hash of value => text pairs to be used in building a list (no default)
-# 'optionSort' => controls sort order of the options, one of K (key), KR (key reversed), V (value), VR (value reversed),
-#	 NK (numeric key), NKR (numeric key reversed), NV (numeric value), NVR (numeric value reversed) - (default K)
-#	 S - no string subsitution.
-# 'dontSet' => flag to suppress actually changing the preference
-# 'currentValue' => sub ref taking $client,$key,$ind as parameters, returns current value of preference.  Only needed for preferences which don't use Slim::Utils::Prefs
-# 'noWarning' => flag to suppress change information
-# 'externalValue' => sub ref taking $client,$value, $key as parameters, used to map an internal value to an external one
-# 'PrefHead' => friendly name of the preference (defaults to 'SETUP_$prefname')
-# 'PrefDesc' => long description of the preference (defaults to 'SETUP_$prefname_DESC')
-# 'PrefChoose' => label to use for input of the preference (defaults to 'SETUP_$prefname_CHOOSE')
-# 'PrefSize' => size to use for text box of input (choices are 'small','medium', and 'large', default 'small')
-#	Actual size to use is determined by the setup_input_txt.html template (in EN skin values are 10,20,40)
-# 'ChangeButton' => Text to display on the submit button within the input for this preference
-#	Defaults to 'CHANGE'
-# 'inputTemplate' => template to use for the input of the preference (defaults to setup_input_sel.html
-#	for preferences with 'options', setup_input_txt.html otherwise)
-# 'changeIntro' => template for the change introductory text (defaults to 'string('SETUP_NEW_VALUE') string('SETUP_prefname'):')
-#	for array prefs the default is 'string('SETUP_NEW_VALUE') string('SETUP_prefname') %s:' sprintf'd with array index
-# 'changeMsg' => template for change value (defaults to %s), this will be sprintf'd to stick in the value
-# 'changeAddlText => template for any additional text to display after a change (default '')
-# 'rejectIntro' => template for the rejection introductory text (defaults to 'string('SETUP_NEW_VALUE') string('SETUP_prefname') string('SETUP_REJECTED'):')(sprintf'd with array index for array settings)
-	#for array prefs the default is 'string('SETUP_NEW_VALUE') string('SETUP_prefname') %s string('SETUP_REJECTED'):' sprintf'd with array index
-# 'rejectMsg' => template for rejected value message (defaults to 'string('SETUP_BAD_VALUE')%s'), this will be sprintf'd to stick in the value
-# 'rejectAddlText => template for any additional text to display after a rejection (default '')
-# 'showTextExtValue' => indicates whether to display the external value as a label for an array of text input prefs
-# 'PrefInTable' => set if only this pref should appear in a table. not compatible with group parameter 'PrefsInTable'
-
-# the default values are used for keys which do not exist() for a particular preference
-# for most preferences the only values to set will be 'validate', 'validateArgs', and 'options'
-
 sub initSetupConfig {
 	%setup = (
 	'BASIC_PLAYER_SETTINGS' => { } #end of setup{'player'} hash
@@ -150,7 +61,7 @@ sub initSetupConfig {
 		# if more than one ir map exists the undef will be replaced by 'Default'
 		,'Groups' => {
 				'Default' => {
-					'PrefOrder' => ['plugins-onthefly', 'pluginlist']
+					'PrefOrder' => ['pluginlist']
 					,'PrefsInTable' => 1
 					,'Suppress_PrefHead' => 1
 					,'Suppress_PrefDesc' => 1
@@ -174,13 +85,6 @@ sub initSetupConfig {
 				,'externalValue' => sub {
 						my ($client, $value, $key) = @_;
 						return getPluginState($client, $value, $key);
-					}
-				}
-			,'plugins-onthefly' => {
-				'validate' => \&Slim::Utils::Validate::trueFalse
-				,'options' => {
-						'1' => 'SETUP_PLUGINS-ONTHEFLY_1'
-						,'0' => 'SETUP_PLUGINS-ONTHEFLY_0'
 					}
 				}
 			}
@@ -243,7 +147,6 @@ sub initSetupConfig {
 sub initSetup {
 
 	initSetupConfig();
-	fillAlarmOptions();
 
 	for my $plugin (Slim::Web::Setup->plugins) {
 
@@ -254,217 +157,6 @@ sub initSetup {
 	# TODO: make these loadable from plugin API
 	my @pages = @{$setup{'BASIC_SERVER_SETTINGS'}{'children'}};
 	buildLinks(undef,@pages);
-}
-
-sub getSetupOptions {
-	my ($category, $pref) = @_;
-
-	return $setup{$category}{'Prefs'}{$pref}{'options'};
-}
-
-sub getPlayingDisplayModes {
-	my $client = shift || return {};
-	
-	my $displayHash = { '-1' => ' ' };
-	my $modes = $client->display->modes();
-
-	foreach my $i (0..$client->display->nmodes()) {
-
-		my $desc = $modes->[$i]{'desc'};
-
-		foreach my $j (0..$#{$desc}){
-			$displayHash->{"$i"} .= ' ' if ($j > 0);
-			$displayHash->{"$i"} .= string(@{$desc}[$j]);
-		}
-	}
-
-	return $displayHash;
-}
-
-sub getVisualModes {
-	my $client = shift;
-	
-	if (!defined $client || !$client->display->isa('Slim::Display::Transporter')) {
-
-		return {};
-	}
-
-	my $displayHash = { '-1' => ' ' };
-
-	my $modes = $client->display->visualizerModes();
-
-	foreach my $i (0..$client->display->visualizerNModes()) {
-
-		my $desc = $modes->[$i]{'desc'};
-
-		foreach my $j (0..$#{$desc}){
-
-			$displayHash->{"$i"} .= ' ' if ($j > 0);
-			$displayHash->{"$i"} .= string(@{$desc}[$j]);
-		}
-	}
-
-	return $displayHash;
-}
-
-sub getFontOptions {
-	my $client = shift;
-
-	if (!$client || !exists &Slim::Display::Lib::Fonts::fontnames) {
-
-		return {};
-	}
-
-	my $fonts = Slim::Display::Lib::Fonts::fontnames();
-	my %allowedfonts;
-	my $displayHeight = $client->displayHeight();
-
-	foreach my $f (@$fonts) {
-
-		if ($displayHeight == Slim::Display::Lib::Fonts::fontheight($f . '.2') && 
-			Slim::Display::Lib::Fonts::fontchars($f . '.2') > 255 ) {
-
-			$allowedfonts{$f} = $f;
-		}
-	}
-
-	$allowedfonts{'-1'} = ' ';
-
-	return \%allowedfonts;
-}
-
-sub getBrightnessOptions {
-	my $client = shift;
-
-	my %brightnesses = (
-		'0' => '0 ('.string('BRIGHTNESS_DARK').')',
-		'1' => '1',
-		'2' => '2',
-		'3' => '3',
-		'4' => '4 ('.string('BRIGHTNESS_BRIGHTEST').')',
-	);
-
-	if (!defined $client) {
-
-		return \%brightnesses;
-	}
-
-	if (defined $client->maxBrightness) {
-		$brightnesses{'4'} = '4';
-		$brightnesses{$client->maxBrightness} = $client->maxBrightness . ' (' . string('BRIGHTNESS_BRIGHTEST').')';
-	}
-
-	return \%brightnesses;
-}
-
-sub getBrightnessArgs {
-	my @args = (0,4,1,1);
-	my $client = shift || return @args;
-	if (defined $client->maxBrightness) {
-		$args[1] = $client->maxBrightness;
-	}
-	return @args;
-}
-
-sub fillAlarmOptions {
-	$setup{'ALARM_SETTINGS'}{'Prefs'}{'alarmtime'} = {
-		'onChange' => sub {
-			my ($client,$changeref,$paramref,$pageref,$key,$index) = @_;
-			
-			return if (!defined($client));
-			my $time = $changeref->{'alarmtime'.$index}{'new'};
-			my $newtime = 0;
-			$time =~ s{
-				^(0?[0-9]|1[0-9]|2[0-4]):([0-5][0-9])\s*(P|PM|A|AM)?$
-			}{
-				if (defined $3) {
-					$newtime = ($1 == 12?0:$1 * 60 * 60) + ($2 * 60) + ($3 =~ /P/?12 * 60 * 60:0);
-				} else {
-					$newtime = ($1 * 60 * 60) + ($2 * 60);
-				}
-			}iegsx;
-
-			$client->prefSet('alarmtime',$newtime,$index);
-		}
-	};
-
-	for my $i (0..7) {
-		$setup{'ALARM_SETTINGS'}{'Prefs'}{'alarmvolume'.$i} = {
-			'validate' => \&Slim::Utils::Validate::number
-			,'PrefChoose' => 'SETUP_ALARMVOLUME'
-			,'validateArgs' => [0,$Slim::Player::Client::maxVolume,1,1]
-			,'changeIntro' => string('SETUP_ALARMVOLUME').' '.string('ALARM_DAY'.$i).string('COLON')
-			,'currentValue' => sub {
-				my $client = shift;
-				return if (!defined($client));
-				return $client->prefGet( "alarmvolume",$i);
-			}
-		};
-
-		$setup{'ALARM_SETTINGS'}{'Prefs'}{'alarmtime'.$i} = {
-			'validate' => \&Slim::Utils::Validate::isTime
-			,'validateArgs' => [0,undef],
-			,'PrefChoose' => 'ALARM_SET'
-			,'changeIntro' => string('ALARM_SET').' '.string('ALARM_DAY'.$i).string('COLON')
-			,'rejectIntro' => 'ALARM_SET'
-			,'currentValue' => sub {
-				my $client = shift;
-				return if (!defined($client));
-				
-				my $time = $client->prefGet( "alarmtime",$i);
-				
-				my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Input::Time::timeDigits($client,$time);
-				my $timestring = ((defined($p) && $h0 == 0) ? ' ' : $h0) . $h1 . ":" . $m0 . $m1 . " " . (defined($p) ? $p : '');
-				
-				return $timestring;
-			}
-		};
-		$setup{'ALARM_SETTINGS'}{'Prefs'}{'alarm'.$i} = {
-			'validate' => \&Slim::Utils::Validate::trueFalse
-			,'PrefHead' => ' '
-			,'PrefChoose' => 'SETUP_ALARM'
-			,'options' => {
-					'1' => 'ON',
-					'0' => 'OFF',
-				}
-			,'changeIntro' => string('SETUP_ALARM').' '.string('ALARM_DAY'.$i).string('COLON')
-			,'currentValue' => sub {
-					my $client = shift;
-					return if (!defined($client));
-					return $client->prefGet( "alarm",$i);
-				}
-		};
-		$setup{'ALARM_SETTINGS'}{'Prefs'}{'alarmplaylist'.$i} = {
-			'validate' => \&Slim::Utils::Validate::inHash
-			,'PrefChoose' => 'ALARM_SELECT_PLAYLIST'
-			,'validateArgs' => undef
-			,'options' => undef
-			,'changeIntro' => string('ALARM_SELECT_PLAYLIST').' '.string('ALARM_DAY'.$i).string('COLON')
-			,'currentValue' => sub {
-					my $client = shift;
-					return if (!defined($client));
-					return $client->prefGet( "alarmplaylist",$i);
-				}
-		};
-		$setup{'ALARM_SETTINGS'}{'Groups'}{'AlarmDay'.$i} = {
-			'PrefOrder' => ['alarm'.$i,'alarmtime'.$i,'alarmvolume'.$i,'alarmplaylist'.$i]
-			,'PrefsInTable' => 1
-			,'Suppress_PrefHead' => 1
-			,'Suppress_PrefDesc' => 1
-			,'Suppress_PrefLine' => 1
-			,'Suppress_PrefSub' => 1
-			,'GroupHead' => "ALARM_DAY$i"
-			,'GroupLine' => 1
-			,'GroupSub' => 1
-		};
-	};
-}
-
-sub fillSetupOptions {
-	my ($set, $pref, $hash) = @_;
-
-	$setup{$set}{'Prefs'}{$pref}{'options'}      = { hash_of_prefs($hash) };
-	$setup{$set}{'Prefs'}{$pref}{'validateArgs'} = [ $setup{$set}{'Prefs'}{$pref}{'options'} ];
 }
 
 sub playerChildren {
@@ -504,66 +196,6 @@ sub getPlayerPages {
 	}
 	
 	return @pages;
-}
-
-sub addPlayerChild {
-	my $child = shift;
-
-	push @newPlayerChildren, $child;
-}
-
-sub menuItemName {
-	my ($client,$value) = @_;
-
-	my $pluginsRef = Slim::Utils::PluginManager::installedPlugins();
-
-	if (Slim::Utils::Strings::stringExists($value)) {
-
-		my $string = $client->string($value);
-
-		if (Slim::Utils::Strings::stringExists($string)) {
-			return $client->string($string);
-		}
-
-		return $string;
-
-	} elsif (exists $pluginsRef->{$value}) {
-
-		return $client->string($pluginsRef->{$value});
-	}
-
-	return $value;
-}
-
-#returns a hash of title formats with the key being their array index and the value being the
-#format string
-sub hash_of_prefs {
-	my $pref = shift;
-	my %prefsHash;
-	
-	$prefsHash{'-1'} = ' '; #used to delete a title format from the list
-	my $i = 0;
-	foreach my $item (Slim::Utils::Prefs::getArray($pref)) {
-		$prefsHash{$i++} = Slim::Utils::Strings::stringExists($item) ? Slim::Utils::Strings::string($item) : $item;
-	}
-	
-	return %prefsHash;
-}
-
-#returns a hash reference to syncGroups available for a client
-sub syncGroups {
-	my $client = shift;
-	my %clientlist = ();
-	foreach my $eachclient (Slim::Player::Sync::canSyncWith($client)) {
-		$clientlist{$eachclient->id()} =
-		Slim::Player::Sync::syncname($eachclient, $client);
-	}
-	if (Slim::Player::Sync::isMaster($client)) {
-		$clientlist{$client->id()} =
-		Slim::Player::Sync::syncname($client, $client);
-	}
-	$clientlist{-1} = string('SETUP_NO_SYNCHRONIZATION');
-	return \%clientlist;
 }
 
 sub setup_HTTP {
@@ -845,7 +477,7 @@ sub buildLinks {
 		
 		} else {
 
-				Slim::Web::Pages->addPageLinks('setup', { $page => "setup.html?page=$page" });
+			Slim::Web::Pages->addPageLinks('setup', { $page => "setup.html?page=$page" });
 		}
 	}
 }
@@ -930,29 +562,6 @@ sub processArrayChange {
 	}
 }
 
-sub removeExtraArrayEntries {
-	my ($client,$array,$paramref,$pageref) = @_;
-
-	if (!defined($pageref->{'Prefs'}{$array}{'arrayAddExtra'})) {
-		return;
-	}
-
-	my $arrayMax;
-	if (defined($pageref->{'Prefs'}{$array}{'arrayMax'})) {
-		$arrayMax = $pageref->{'Prefs'}{$array}{'arrayMax'};
-	} else {
-		$arrayMax = ($client) ? $client->prefGetArrayMax($array) : Slim::Utils::Prefs::getArrayMax($array);
-	}
-
-	my $adval = defined($pageref->{'Prefs'}{$array}{'arrayDeleteValue'}) ? $pageref->{'Prefs'}{$array}{'arrayDeleteValue'} : '';
-
-	for (my $i = $arrayMax + $pageref->{'Prefs'}{$array}{'arrayAddExtra'};$i > $arrayMax;$i--) {
-		if (exists $paramref->{$array . $i} && (!defined($paramref->{$array . $i}) || $paramref->{$array . $i} eq '' || $paramref->{$array . $i} eq $adval)) {
-			delete $paramref->{$array . $i};
-		}
-	}
-}
-
 sub preprocessArray {
 	my ($client,$array,$paramref,$settingsref) = @_;
 
@@ -982,17 +591,6 @@ sub preprocessArray {
 	}
 
 	return $arrayMax;
-}
-
-sub playlists {
-	my %lists = ();
-
-	for my $playlist (Slim::Schema->rs('Playlist')->getPlaylists) {
-
-		$lists{$playlist->url} = Slim::Music::Info::standardTitle(undef, $playlist);
-	}
-
-	return \%lists;
 }
 
 sub skins {
@@ -1330,103 +928,6 @@ sub _sortOptionArray {
 ######################################################################
 # Adds the preference to the PrefOrder array of the supplied group at the
 # supplied position (or at the end if no position supplied)
-
-sub addPrefToGroup {
-	my ($category, $groupname, $prefname, $position) = @_;
-
-	unless (exists $setup{$category} && exists $setup{$category}{'Groups'}{$groupname}) {
-
-		# either the category or the group within the category is invalid
-		$log->warn("Group $groupname in category $category does not exist!");
-
-		return;
-	}
-
-	if (!defined $position || $position > scalar(@{$setup{$category}{'Groups'}{$groupname}{'PrefOrder'}})) {
-
-		$position = scalar(@{$setup{$category}{'Groups'}{$groupname}{'PrefOrder'}});
-	}
-
-	splice(@{$setup{$category}{'Groups'}{$groupname}{'PrefOrder'}},$position,0,$prefname);
-}
-
-# Removes the preference from the PrefOrder array of the supplied group
-# in the supplied category
-sub removePrefFromGroup {
-	my ($category, $groupname, $prefname, $noWarn) = @_;
-
-	# Find $prefname in $setup{$category}{'Groups'}{$groupname}{'PrefOrder'} array
-	unless (exists $setup{$category} && exists $setup{$category}{'Groups'}{$groupname}) {
-
-		# either the category or the group within the category is invalid
-		$log->warn("Group $groupname in category $category does not exist!");
-
-		return;
-	}
-
-	my $i = 0;
-
-	for my $currpref (@{$setup{$category}{'Groups'}{$groupname}{'PrefOrder'}}) {
-
-		if ($currpref eq $prefname) {
-
-			splice (@{$setup{$category}{'Groups'}{$groupname}{'PrefOrder'}},$i,1);
-			$i = -1; # indicates that a preference was removed
-			last;
-		}
-
-		$i++;
-	}
-
-	if ($i > 0 && !$noWarn) {
-
-		$log->warn("Preference $prefname not found in group $groupname in category $category");
-	}
-}
-
-# Adds the preference to the category.  A reference to a hash containing the
-# preference data must be supplied.
-sub addPref {
-	my ($category, $prefname, $prefref, $groupname, $position) = @_;
-
-	if (!exists $setup{$category}) {
-
-		$log->warn("Category $category does not exist");
-
-		return;
-	}
-
-	$setup{$category}{'Prefs'}{$prefname} = $prefref;
-
-	if (defined $groupname) {
-
-		addPrefToGroup($category,$groupname,$prefname,$position);
-	}
-}
-
-# Removes the preference from the supplied category, optionally removes
-# all references to the preference from the PrefOrder arrays of the groups
-# within the category
-sub delPref {
-	my ($category, $prefname, $andGroupRefs) = @_;
-	
-	if (!exists $setup{$category}) {
-
-		$log->warn("Category $category does not exist");
-
-		return;
-	}
-
-	delete $setup{$category}{'Prefs'}{$prefname};
-
-	if ($andGroupRefs) {
-
-		for my $group (@{$setup{$category}{'GroupOrder'}}) {
-
-			removePrefFromGroup($category, $group, $prefname, 1);
-		}
-	}
-}
 
 # Adds a group to the supplied category.  A reference to a hash containing the
 # group data must be supplied.  If a reference to a hash of preferences is supplied,

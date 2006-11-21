@@ -98,9 +98,9 @@ sub handler {
 		Slim::Buttons::Home::updateMenu($client);
 	
 		$paramRef->{'menuItems'}     = [ $client->prefGetArray('menuItem') ];
-		$paramRef->{'menuItemNames'} = { map {$_ => Slim::Web::Setup::menuItemName($client, $_)} $client->prefGetArray('menuItem') };
-		$paramRef->{'nonMenuItems'}  = { map {$_ => Slim::Web::Setup::menuItemName($client, $_)} Slim::Buttons::Home::unusedMenuOptions($client) };
-		$paramRef->{'pluginItems'}   = { map {$_ => Slim::Web::Setup::menuItemName($client, $_)} Slim::Utils::PluginManager::unusedPluginOptions($client) };
+		$paramRef->{'menuItemNames'} = { map {$_ => menuItemName($client, $_)} $client->prefGetArray('menuItem') };
+		$paramRef->{'nonMenuItems'}  = { map {$_ => menuItemName($client, $_)} Slim::Buttons::Home::unusedMenuOptions($client) };
+		$paramRef->{'pluginItems'}   = { map {$_ => menuItemName($client, $_)} Slim::Utils::PluginManager::unusedPluginOptions($client) };
 
 	} else {
 
@@ -109,6 +109,30 @@ sub handler {
 	}
 
 	return $class->SUPER::handler($client, $paramRef);
+}
+
+sub menuItemName {
+	my ($client, $value) = @_;
+
+	my $plugins = Slim::Utils::PluginManager::installedPlugins();
+
+	if (Slim::Utils::Strings::stringExists($value)) {
+
+		my $string = $client->string($value);
+
+		if (Slim::Utils::Strings::stringExists($string)) {
+
+			return $client->string($string);
+		}
+
+		return $string;
+
+	} elsif ($value && exists $plugins->{$value}) {
+
+		return $client->string($plugins->{$value});
+	}
+
+	return $value;
 }
 
 1;

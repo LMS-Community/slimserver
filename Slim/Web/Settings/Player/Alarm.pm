@@ -97,17 +97,23 @@ sub handler {
 	}
 
 	# Load any option lists for dynamic options.
-	my $playlistRef = Slim::Web::Setup::playlists();
-	$playlistRef->{''} = undef;
+	my $playlists = {
+		'' => undef,
+	};
+
+        for my $playlist (Slim::Schema->rs('Playlist')->getPlaylists) {
+
+                $playlists->{$playlist->url} = Slim::Music::Info::standardTitle(undef, $playlist);
+        }
 
 	my $specialPlaylists = \%Slim::Buttons::AlarmClock::specialPlaylists;
 
 	for my $key (keys %{$specialPlaylists}) {
 
-		$playlistRef->{$key} = $key;
+		$playlists->{$key} = $key;
 	}
 
-	$paramRef->{'playlistOptions'} = { %{$playlistRef} };
+	$paramRef->{'playlistOptions'} = $playlists;
 
 	# Set current values for prefs
 	# load into prefs hash so that web template can detect exists/!exists
