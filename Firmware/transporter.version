@@ -3,8 +3,8 @@
 # from        to
 # from1..from2 to
 
-1..22 22
+1..24 24
 
 # future versions may be downgraded to this one
-* 22
+* 24
 
