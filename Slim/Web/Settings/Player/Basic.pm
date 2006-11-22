@@ -11,6 +11,7 @@ use strict;
 use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Log;
+use Slim::Utils::Strings qw(string);
 
 sub name {
 	return 'BASIC_PLAYER_SETTINGS';
@@ -122,8 +123,8 @@ sub handler {
 	if (defined $client->revision) {
 
 		$paramRef->{'versionInfo'} = sprintf("%s%s%s", 
-			Slim::Utils::Strings::string("PLAYER_VERSION"),
-			Slim::Utils::Strings::string("COLON"),
+			string("PLAYER_VERSION"),
+			string("COLON"),
 			$client->revision,
 		);
 	}
@@ -150,9 +151,9 @@ sub hashOfPrefs {
 
 	for my $item (Slim::Utils::Prefs::getArray($pref)) {
 
-		if (Slim::Utils::Strings::stringExists($item)) {
+		if (stringExists($item)) {
 
-			$prefs{$i++} = Slim::Utils::Strings::string($item);
+			$prefs{$i++} = string($item);
 
 		} else {
 
