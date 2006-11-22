@@ -151,7 +151,7 @@ sub hashOfPrefs {
 
 	for my $item (Slim::Utils::Prefs::getArray($pref)) {
 
-		if (stringExists($item)) {
+		if (Slim::Utils::Strings::stringExists($item)) {
 
 			$prefs{$i++} = string($item);
 
