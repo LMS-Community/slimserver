@@ -232,8 +232,8 @@ sub _parseWMAHeader {
 			print "nextObjectSize: [" . $nextObjectSize . "]\n";
 			print "\n";
 		}
-        
-        	if (defined($nextObjectGUIDName)) {
+	
+		if (defined($nextObjectGUIDName)) {
 
 			# start the different header types parsing              
 			if ($nextObjectGUIDName eq 'ASF_File_Properties_Object') {
@@ -249,7 +249,7 @@ sub _parseWMAHeader {
 			}
 
 			if ($nextObjectGUIDName eq 'ASF_Content_Encryption_Object' ||
-			    $nextObjectGUIDName eq 'ASF_Extended_Content_Encryption_Object') {
+				$nextObjectGUIDName eq 'ASF_Extended_Content_Encryption_Object') {
 
 				$self->_parseASFContentEncryptionObject();
 				next;
@@ -477,7 +477,7 @@ sub _parseASFExtendedContentDescriptionObject {
 				print "\timage_desc    = $image_desc\n";
 				print "\n";
 			}
-                }
+		}
 
 		$ext{'content'}->{$id} = {
 			'name'        => $name,
@@ -715,8 +715,8 @@ sub _parseASFHeaderExtensionObject {
 		}
 
 		# We only handle this object type for now.
-        	if ($nextObjectName eq 'ASF_Metadata_Library_Object' ||
-        	    $nextObjectName eq 'ASF_Metadata_Object') {
+		if ($nextObjectName eq 'ASF_Metadata_Library_Object' ||
+			$nextObjectName eq 'ASF_Metadata_Object') {
 
 			my $content_count = unpack('v', $self->_readAndIncrementInlineOffset($WORD));
 
@@ -740,6 +740,14 @@ sub _parseASFHeaderExtensionObject {
 				my $data_length   = unpack('V', $self->_readAndIncrementInlineOffset($DWORD));
 				my $name          = _denull($self->_readAndIncrementInlineOffset($name_length));
 				my $value         = $self->_bytesToValue($data_type, $self->_readAndIncrementInlineOffset($data_length));
+
+				if ($name eq 'WM/Picture') {
+		
+					$value = {
+						'TYPE' => 'image/jpg',
+						'DATA' => $value,
+					};
+				}
 
 				$ext{'content'}->{$id}->{'name'}  = $name;
 				$ext{'content'}->{$id}->{'value'} = $value;
