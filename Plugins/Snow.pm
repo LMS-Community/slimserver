@@ -20,6 +20,7 @@ use strict;
 use Slim::Control::Request;
 use Slim::Utils::Timers;
 use File::Spec::Functions qw(:ALL);
+use Scalar::Util qw(blessed);
 
 use vars qw($VERSION);
 $VERSION = substr(q$Revision$,10);
@@ -469,6 +470,11 @@ sub setScreensaverSnowMode {
 			loadTextCustomChars();
 			$loadedTextCustomChars = 1;
 		}
+	}
+
+	# Turn off visualizer on SB2/3 in text mode
+	if (blessed $client->display eq 'Slim::Display::Squeezebox2' && $snow{$client}->{snowStyle} == 6) {
+		$client->modeParam('visu', [0]);
 	}
 }
 
