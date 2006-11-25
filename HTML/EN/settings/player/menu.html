@@ -1,6 +1,6 @@
 [% PROCESS settings/header.html %]
 [% nosubmit = 1 %]
-[% IF prefs %]
+
 	<div class="settingSection">
 
 		<div class="groupHead">[% "SETUP_GROUP_MENUITEMS" | string | upper %]</div>
@@ -55,5 +55,4 @@
 	<p><input name="addItems" type="submit" class="stdclick" value="[% "ADD" | string %]"></p>
 	</div>
 
-[% END %]
 [% PROCESS settings/footer.html %]

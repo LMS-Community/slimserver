@@ -40,7 +40,7 @@ sub initSetupConfig {
 		,'preEval' => sub {
 				my ($client,$paramref,$pageref) = @_;
 				return if (!defined($client));
-				playerChildren($client, $pageref);
+				#playerChildren($client, $pageref);
 			}
 	} # end of setup{'ADDITIONAL_PLAYER'} hash
 
