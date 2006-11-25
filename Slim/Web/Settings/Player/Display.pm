@@ -11,6 +11,7 @@ use strict;
 use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Log;
+use Slim::Utils::Strings qw(string);
 
 sub name {
 	return 'DISPLAY_SETTINGS';

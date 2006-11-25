@@ -11,6 +11,7 @@ use strict;
 use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Log;
+use Slim::Utils::Strings qw(string);
 
 sub name {
 	return 'MENU_SETTINGS';
@@ -105,7 +106,7 @@ sub handler {
 	} else {
 
 		# non-SD player, so no applicable display settings
-		$paramRef->{'warning'} = Slim::Utils::Strings::string('SETUP_NO_PREFS');
+		$paramRef->{'warning'} = string('SETUP_NO_PREFS');
 	}
 
 	return $class->SUPER::handler($client, $paramRef);
