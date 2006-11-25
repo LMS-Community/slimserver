@@ -4073,9 +4073,11 @@ SETUP_PLUGINLIST_CHANGE
 	ZH_CN	%s设置已更改。
 
 SETTINGS_CHANGED
+	DE	Die folgenden Einstellungen wurden geändert:
 	EN	The following settings were changed:
 
 SETUP_NO_PREFS
+	DE	Es gibt für diesen Player auf dieser Seite keine Einstellungen
 	EN	There are no settings for this player on this page
 
 SETUP_PASSWORD_CHANGED
@@ -7619,6 +7621,7 @@ DISABLED
 	ZH_CN	撤销
 
 NATIVE
+	DE	Nativ
 	EN	Native
 
 CLEAR_PLAYLIST
