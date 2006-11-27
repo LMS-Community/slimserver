@@ -879,6 +879,9 @@ package Slim::Utils::Log::Trapper;
 
 use strict;
 
+# prevent pipelines crashing during open2 call
+sub FILENO  { 2 }
+
 sub TIEHANDLE {
 	my $class = shift;
 	bless [], $class;
