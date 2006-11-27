@@ -1681,11 +1681,9 @@ sub titlesQuery {
 		$where->{'me.year'} = $year;
 	}
 
-	# we don't want client playlists
-	$where->{'me.content_type'} = { '!=' => 'cpl' };
-
-	# we don't want transporter sources...
-	$where->{'me.content_type'} = { '!=' => 'src' };
+	# we don't want client playlists (Now playing), transporter sources,
+	# or playlists.
+	$where->{'me.content_type'} = {'!=', ['cpl', 'src', 'ssp']};
 
 	# Manage joins
 	if (defined $genreID) {

@@ -107,7 +107,7 @@ sub getPlaylists {
 	};
 
 	if (defined $search) {
-		$find->{'titlesearch'} = $search;
+		$find->{'titlesearch'} = {'like' => $search};
 	}
 
 	# Add search criteria for playlists
