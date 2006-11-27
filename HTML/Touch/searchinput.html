@@ -1,6 +1,6 @@
 <!-- searchinput.html -->
 
-<SCRIPT LANGUAGE="Javascript">
+<script language="Javascript">
 
 function Change(Key)
 	{		
@@ -45,10 +45,9 @@ if (mode=='Album') {
 mode='';
 return true;
 }
-</SCRIPT>
+</script>
 
 
-<center>
 <table width = '100%' bgcolor = '#EEEEEE'>
 <tr><td>
 <!--
@@ -84,7 +83,7 @@ type=track&query=jones&Go=Search+Music&player=00%3A04%3A20%3A05%3A81%3A92
 <tr><td height="10"></td></tr>
 
 <tr><td colspan="8" align="center">
-<br><center>
+<br>
 	      <input type=submit value="[% "SEARCH" | string %]" name="Go" style="
     FONT-SIZE:12pt;
     FONT-FAMILY: Verdana;
@@ -133,12 +132,14 @@ type=track&query=jones&Go=Search+Music&player=00%3A04%3A20%3A05%3A81%3A92
 </tr>
 <tr><td height="10"></td></tr>
 
-<tr><td></td><td>
-<center><input type=button value="[% "SONGS" | string %]" name="Song" onclick="Activate('Song');Mode('track')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
-</td><td>
-<center><input type=button value="[% "ARTISTS" | string %]" name="Artist" onclick="Activate('Artist');Mode('contributor')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
-</td><td>
-<center><input type=button value="[% "ALBUMS" | string %]" name="Album" onclick="Activate('Album');Mode('album')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
+<tr>
+	<td></td>
+	<td align = 'center'>
+	<input type=button value="[% "SONGS" | string %]" name="Song" onclick="Activate('Song');Mode('track')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
+	</td><td align = 'center'>
+<input type=button value="[% "ARTISTS" | string %]" name="Artist" onclick="Activate('Artist');Mode('contributor')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
+	</td><td align = 'center'>
+	<input type=button value="[% "ALBUMS" | string %]" name="Album" onclick="Activate('Album');Mode('album')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
 </td></tr>
 	<tr><td height="15"></td></tr>
 </table>

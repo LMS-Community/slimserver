@@ -4,8 +4,7 @@ body {
 	margin-top: 0px;
 	margin-left: 0px;
 	margin-right: 0px;
-	height: 480px;
-	overflow: visible;
+	overflow-y: hidden;
 }
 
 body.default {
@@ -160,25 +159,19 @@ img {
 }
 
 div#pagecontainer {
-	position: absolute;
-	top: 80;
-	height: 364px;
-	width: 100%;
-	overflow: visible;
+         top: 80; height: 85%;  overflow-y: auto; width: 100%; position: absolute; z-index: 2;
 }
 
 div#innerSanctum {
 	position: absolute;
-	width: 100%;
 }
 div#hidden {
 	display: none;
 }
 
 div#footer {
-	position: fixed;
+	position: absolute;
 	bottom: 0;
-	width: 100%;
 	clear: both;
 	z-index: 10;
 }
@@ -195,19 +188,19 @@ tr.even, td.even {
 }
 
 div#page {
-	width: 100%;
+	width: auto;
 	z-index: -100;
 	overflow: visible;
 }
 
 div#page_with_bar {
-	width: 100%;
+	width: auto;
 	z-index: -100;
 	overflow: visible;
 }
 
 div#miniControls {
-	position: fixed;
+	position: absolute;
 	padding-top: 3px;
 	padding-left: 5px;
 	top: 0;
@@ -220,18 +213,17 @@ div#miniControls {
 }
 
 div#topbar {
-	position: fixed;
+	position: absolute;
 	top: 0;
 	left: 0;
 	height: 20;
 	overflow: visible;
 	z-index: 10;
-	width: 100%;
 }
 
 div#playerSelect {
         z-index: 11;
-        position: fixed;
+        position: absolute;
         right: 0;
         top: 0;
         height: 20;
@@ -239,18 +231,16 @@ div#playerSelect {
 }
 
 div#menu {
-	position: fixed;
+	position: absolute;
 	top: 25;
 	left: 0;
 	overflow: visible;
 	z-index: 10;
-	width: 100%;
 }
 
 div#emptyplayer {
         position: absolute;
         left: 180;
-        width: 100%;
         top: 70;
 	overflow: visible;
 	z-index: 1;
@@ -316,7 +306,6 @@ div#controls {
        position: absolute;
        top:241;
 	left: 0;
-       width: 100%;
 }
 
 div#progressbar {
@@ -375,7 +364,7 @@ div#next_cover{
 }
 
 div#systemWorking{
-	position: fixed;
+	position: absolute;
 	left: 0;
 	top: 25;
 	width: 1;
@@ -384,33 +373,33 @@ div#systemWorking{
 	z-index: 12;
 }
 div#systemNotWorking{
-	position: fixed;
+	position: absolute;
 	left: 0;
 	top: 25;
 	z-index: 12;
 }
 
 div#galleryToggle {
-        position: fixed;
+        position: absolute;
         left: 20;
         top: 40;
         z-index: 12;
 }
 div#gallerySelect {
-        position: fixed;
+        position: absolute;
         right: 10;
         top: 85;
         z-index: 12;
 }
 div#crumblist {
-        position: fixed;
+        position: absolute;
         left: 0;
         top: 80;
         z-index: 11;
 }
 
 div#OSD{
-        position: fixed;
+        position: absolute;
         z-index: 100;
         top: 240;
         left: 500;
@@ -422,7 +411,7 @@ div#OSD{
 }
 
 div#volumeOSD{
-        position: fixed;
+        position: absolute;
         z-index: 100;
         top: 240;
         left: 500;
@@ -434,7 +423,7 @@ div#volumeOSD{
 }
 
 div#albumInfo {
-        position: fixed;
+        position: absolute;
         z-index: 99;
         top: 140;
         left: 300;
