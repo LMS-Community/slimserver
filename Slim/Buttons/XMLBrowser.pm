@@ -82,7 +82,7 @@ sub setMode {
 
 		# give user feedback while loading
 		$client->block(
-			$client->string('XML_LOADING'),
+			$client->modeParam('header') ? $client->string( $client->modeParam('header') ) : $client->string('XML_LOADING'),
 			$title || $url,
 		);
 		
