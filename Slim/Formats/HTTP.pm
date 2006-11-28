@@ -233,7 +233,7 @@ sub parseHeaders {
 			$self->client->streamingProgressBar( {
 				'url'     => $self->url,
 				'bitrate' => $self->bitrate,
-				'length'  => $self->length,
+				'length'  => $self->contentLength,
 			} );
 		}
 	}
