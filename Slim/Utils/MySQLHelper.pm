@@ -324,9 +324,14 @@ sub stopServer {
 
        		if (scalar keys %status != 0) {
 
-			$log->info("Running as Windows service, skipping shutdown.");
+			$log->info("Running service shutdown.");
 
-			return;
+			if (Win32::Service::StopService('', $serviceName)) {
+
+				return;
+			}
+
+			$log->warn("Running service shutdown failed!");
 		}
 	}
 
