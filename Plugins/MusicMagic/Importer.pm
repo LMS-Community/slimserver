@@ -5,7 +5,6 @@ package Plugins::MusicMagic::Importer;
 use strict;
 
 use File::Spec::Functions qw(:ALL);
-use Data::VString qw(vstring_cmp);
 use LWP::Simple;
 use Scalar::Util qw(blessed);
 use Socket qw($LF);
@@ -18,6 +17,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Versions;
 
 my $initialized = 0;
 my $MMMVersion  = 0;
@@ -199,7 +199,7 @@ sub exportSongs {
 	# MMM Version 1.5+ adds support for /api/songs?extended, which pulls
 	# down the entire library, separated by $LF$LF - this allows us to make
 	# 1 HTTP request, and the process the file.
-	if (vstring_cmp($MMMVersion, '>=', '1.5')) {
+	if (Slim::Utils::Versions->compareVersions($MMMVersion, '1.5')) {
 
 		$log->info("Fetching ALL song data via songs/extended..");
 
@@ -378,7 +378,7 @@ sub exportDuplicates {
 	my $class = shift;
 
 	# check for dupes, but not with 1.1.3
-	if (vstring_cmp($MMMVersion, '<=', '1.1.3')) {
+	if (Slim::Utils::Versions->compareVersions('1.1.3', $MMMVersion)) {
 		return;
 	}
 
