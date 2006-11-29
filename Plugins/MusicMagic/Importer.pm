@@ -199,7 +199,7 @@ sub exportSongs {
 	# MMM Version 1.5+ adds support for /api/songs?extended, which pulls
 	# down the entire library, separated by $LF$LF - this allows us to make
 	# 1 HTTP request, and the process the file.
-	if (Slim::Utils::Versions->compareVersions($MMMVersion, '1.5')) {
+	if (Slim::Utils::Versions->compareVersions($MMMVersion, '1.5') >= 0) {
 
 		$log->info("Fetching ALL song data via songs/extended..");
 
@@ -378,7 +378,7 @@ sub exportDuplicates {
 	my $class = shift;
 
 	# check for dupes, but not with 1.1.3
-	if (Slim::Utils::Versions->compareVersions('1.1.3', $MMMVersion)) {
+	if (Slim::Utils::Versions->compareVersions('1.1.3', $MMMVersion) <= 0) {
 		return;
 	}
 
