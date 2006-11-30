@@ -740,10 +740,6 @@ sub playItem {
 	my $type  = $item->{'type'} || $item->{'enclosure'}->{'type'} || '';
 
 	if ($type eq 'audio') {
-		
-		Slim::Music::Info::setTitle( $url, $title );
-
-		$client->execute([ 'playlist', $action, $url, $title ]);
 
 		my $string; 
 		if ($action eq 'add') {
@@ -763,7 +759,10 @@ sub playItem {
 		}
 
 		$client->showBriefly( $string, $title, 10 );
+		
+		Slim::Music::Info::setTitle( $url, $title );
 
+		$client->execute([ 'playlist', $action, $url, $title ]);
 	}
 	elsif ($type eq 'playlist') {
 
