@@ -2317,43 +2317,6 @@ SETUP_GROUP_PLUGINS_DESC
 	SV	SlimServer inkluderar tilläggs-funktioner som du kan konfigurera och/eller använda via din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras var för sig. Kryssa i rutan bredvid tillägget nedan för att aktivera ett tillägg. Ta bort krysset när du vill avaktivera ett tillägg. Spara dina ändringar genom att klicka på "Ändra".
 	ZH_CN	SlimServer设有一些称为插件程序(Plugins)的额外功能。这些功能都可通过遥控器操控。您可选择激活或撤销在Plugins目录下的各类插件程序。如要激活某个插件程序，请在其复选框中标记。如要撤销某个插件程序，请清除其复选框中的标记。您可选择是否让服务器在每当漫游到插件程序的菜单或设置时进行插件程序扫瞄。在服务器启动时装载插件程序为缺省。请点击《更动》以保存您所作的设定。
 
-SETUP_PLUGINS-ONTHEFLY
-	CS	Načítat pluginy za běhu
-	DE	Plugins während der Programmausführung laden
-	EN	Load Plugins On-The-Fly
-	ES	Cargar Plugins en el momento
-	FR	Charger les modules à la volée
-	IT	Carica i Plugins al volo
-	JA	プラグインを逐次チェックする。
-	NL	Plugins direct laden
-	SV	Ladda tilläggsprogram direkt
-	ZH_CN	即时装载插件程序
-
-SETUP_PLUGINS-ONTHEFLY_0
-	CS	Načítat pluginy pouze při startu
-	DE	Plugins nur beim Programmstart laden
-	EN	Load Plugins at startup Only
-	ES	Cargar plugins solo al inicio
-	FR	Charger les modules au démarrage uniquement
-	HE	טען תוספים בזמן טעינת השרת
-	IT	Carica i Plugins solo alla partenza
-	JA	プラグインをスタートアップの時のみチェックする。
-	NL	Plugins alleen bij opstarten laden
-	SV	Ladda tilläggsprogram endast vid serverstart
-	ZH_CN	只在启动时装载插件程序
-
-SETUP_PLUGINS-ONTHEFLY_1
-	DE	Plugins während der Programmausführung laden
-	EN	Load Plugins On-The-Fly
-	ES	Cargar Plugins en el momento
-	FR	Charger les modules à la volée
-	HE	טען תוספים בעת השימוש בהם
-	IT	Carica i Plugins al volo
-	JA	プラグインを逐次チェックする。
-	NL	Plugins direct laden
-	SV	Laddar tilläggsprogram
-	ZH_CN	即时装载插件程序
-
 SETUP_GROUP_FORMATS_CONVERSION
 	CS	Nastavení konverze formátů
 	DE	Dateikonvertierungseinstellungen

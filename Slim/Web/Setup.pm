@@ -1206,8 +1206,8 @@ sub processPluginsList {
 	}
 
 	Slim::Web::HTTP::initSkinTemplateCache();
-	Slim::Utils::PluginManager::initPlugins();
-	Slim::Utils::PluginManager::addSetupGroups();
+	#Slim::Utils::PluginManager::initPlugins();
+	#Slim::Utils::PluginManager::addSetupGroups();
 
 	$i = 0;
 

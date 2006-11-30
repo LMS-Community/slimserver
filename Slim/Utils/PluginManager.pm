@@ -26,7 +26,6 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
 
-my $addGroups = 0;
 my $plugins_read;
 my @pluginDirs = ();
 my @pluginRootDirs = ();
@@ -96,7 +95,6 @@ sub pluginDirs {
 sub init {
 	no strict 'refs';
 	initPlugins() unless $plugins_read;
-	addSetupGroups() unless $addGroups;
 }
 
 sub enabledPlugins {
@@ -187,7 +185,7 @@ sub installedPlugins {
 }
 
 sub initPlugins {
-	return if $plugins_read || $addGroups;
+	return if $plugins_read;
 
 	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
 
@@ -196,15 +194,28 @@ sub initPlugins {
 		next if (exists $disabledplugins{$plugin});
 
 		if (addPlugin($plugin, \%disabledplugins)) {
+
 			addMenus($plugin, \%disabledplugins);
 			addScreensavers($plugin, \%disabledplugins);
 			addDefaultMaps($plugin, \%disabledplugins);
 			addWebPages($plugin, \%disabledplugins);
-		}
 
+			# Add any template directories.
+			my $path = ($plugin =~ /^(.+?)::/) ? $1 : $plugin;
+
+			for my $plugindir (pluginDirs()) {
+
+				my $htmldir = catdir($plugindir, $path, "HTML");
+
+				if (-r $htmldir) {
+
+					Slim::Web::HTTP::addTemplateDirectory($htmldir);
+				}
+			}
+		}
 	}
 
-	$plugins_read = 1 unless Slim::Utils::Prefs::get('plugins-onthefly');
+	$plugins_read = 1;
 }
 
 sub canPlugin {
@@ -470,15 +481,6 @@ sub addWebPages {
 				Slim::Web::HTTP::addPageFunction($urlbase . $page, $pagesref->{$page});
 			}
 
-			# Add any template directories that may exist for the plugin
-			for my $plugindir (pluginDirs()) {
-				my $htmldir = catdir($plugindir, $path, "HTML");
-
-				if (-r $htmldir) {
-					Slim::Web::HTTP::addTemplateDirectory($htmldir);
-				}
-			}
-
 			if ($index) {
 				Slim::Web::Pages->addPageLinks("plugins", { $plugins{$plugin}->{'name'} => $urlbase . $index });
 			}
@@ -490,76 +492,12 @@ sub clearGroups {
 
 	$log->info("Resetting plugins.");
 
-	$addGroups = 0;
 	$plugins_read = 0;
 }
 
 sub clearPlugins {
 	%plugins = {};
 	clearGroups();
-}
-
-sub addSetupGroups {
-	no strict 'refs';
-	
-	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
-
-	return if $addGroups;
-
-	for my $plugin (keys %{installedPlugins()}) {
-		my ($groupRef, $prefRef, $isClient, $noSetupGroup);
-
-		if (UNIVERSAL::can("Plugins::${plugin}","setupGroup")) {
-			($groupRef, $prefRef, $isClient) = eval { &{"Plugins::${plugin}::setupGroup"}() };
-			$noSetupGroup = $@;
-		}
-
-		if ($noSetupGroup) {
-
-			$log->warn("Can't get setup group for plugin $plugin : $noSetupGroup");
-
-			next;
-		}
-
-		if ($groupRef && $prefRef && exists($plugins{$plugin})) {
-			my %params = (
-				'title'      => $plugins{$plugin}->{'name'},
-				'parent'     => 'BASIC_SERVER_SETTINGS',
-				'Groups'     => { 'Default' => $groupRef },
-				'GroupOrder' => ['Default'],
-				'Prefs'      => $prefRef
-			);
-
-			my $menu = 'PLUGINS';
-			if (UNIVERSAL::can("Plugins::${plugin}","addMenu")) {
-				$menu = eval { &{"Plugins::${plugin}::addMenu"}() };
-				$menu = 'PLUGINS' if (not $menu || $@);
-			}
-	
-			if (defined $isClient && $isClient) {
-				if ($menu eq 'PLUGINS') {
-					$menu = 'PLAYER_PLUGINS';
-					$params{'parent'} = 'BASIC_PLAYER_SETTINGS';
-					#Slim::Web::Pages->addPageLinks("playerplugin",{"$plugins{$plugin}->{'name'}"  => "setup.html?page=$plugins{$plugin}->{'name'}"});
-				}
-				$playerplugins{$plugins{$plugin}->{'name'}} = not exists $disabledplugins{$plugin};
-			}
-	
-			if (exists $disabledplugins{$plugin}) {
-				Slim::Web::Setup::delGroup($menu, $plugin);
-			}
-			else {
-				Slim::Web::Setup::addGroup($menu, $plugin, $groupRef, undef, $prefRef);
-				Slim::Web::Setup::addCategory("PLUGINS.${plugin}", \%params);
-				#Slim::Web::Pages->addPageLinks("plugin",{"$plugins{$plugin}->{'name'}"  => "setup.html?page=$plugins{$plugin}->{'name'}"});
-			}
-		}
-		
-		if (exists $disabledplugins{$plugin}) {
-			shutdownPlugin($plugin);
-		}
-	}
-	$addGroups = 1 unless Slim::Utils::Prefs::get('plugins-onthefly');
 }
 
 sub shutdownPlugins {
