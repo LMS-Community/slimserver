@@ -16,6 +16,8 @@ use strict;
 
 use URI::Escape qw(uri_escape);
 
+use Plugins::RadioTime::Settings;
+
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
 use Slim::Utils::Strings qw( string );
@@ -35,6 +37,8 @@ sub enabled {
 }
 
 sub initPlugin {
+
+	Plugins::RadioTime::Settings->new;
 
 	Slim::Buttons::Common::addMode('PLUGIN.RadioTime', getFunctions(), \&setMode);
 
@@ -159,26 +163,6 @@ sub cliRadiosQuery {
 
 	# let our super duper function do all the hard work
 	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
-}
-
-sub setupGroup {
-	my %Group = (
-		PrefOrder => [
-			'plugin_radiotime_username',
-		],
-		GroupHead => string( 'PLUGIN_RADIOTIME_MODULE_NAME' ),
-		GroupDesc => string( 'SETUP_GROUP_PLUGIN_RADIOTIME_DESC' ),
-		GroupLine => 1,
-		GroupSub  => 1,
-		Suppress_PrefSub  => 1,
-		Suppress_PrefLine => 1,
-	);
-
-	my %Prefs = (
-		plugin_radiotime_username => {},
-	);
-
-	return( \%Group, \%Prefs );
 }
 
 sub strings

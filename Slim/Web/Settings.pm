@@ -51,9 +51,28 @@ sub needsClient {
 	return 0;
 }
 
+sub prefs {
+	return ();
+}
+
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
+	# Handle the simple case where no validation is needed. Or we can do
+	# programatic validation via the prefs rework.
+	my @prefs = $class->prefs;
+
+	for my $pref (@prefs) {
+
+		if ($paramRef->{'submit'}) {
+
+			Slim::Utils::Prefs::set($pref, $paramRef->{$pref});
+		}
+
+		$paramRef->{'prefs'}->{$pref} = Slim::Utils::Prefs::get($pref);
+	}
+
+	# Common values
 	$paramRef->{'page'} = $class->name;
 
 	# Needed to generate the drop down settings chooser list.
