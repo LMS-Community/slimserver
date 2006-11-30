@@ -288,7 +288,13 @@ sub _addArtworkTags {
 
 		delete $tags->{'COVERART'};
 
-	} elsif (my $artwork = $flac->application($ESCIENT_ARTWORK)) {
+	} elsif ($flac->picture) {
+
+		$tags->{'ARTWORK'} = $flac->picture->{'imageData'};
+
+	} elsif ($flac->application($ESCIENT_ARTWORK)) {
+
+		my $artwork = $flac->application($ESCIENT_ARTWORK);
 
 		if (substr($artwork, 0, 4, '') eq 'PIC1') {
 			$tags->{'ARTWORK'} = $artwork;
