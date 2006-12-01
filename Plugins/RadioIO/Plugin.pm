@@ -17,6 +17,8 @@ use strict;
 use MIME::Base64;
 use URI::Escape qw(uri_escape);
 
+use Plugins::RadioIO::Settings;
+
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
 use Slim::Player::ProtocolHandlers;
@@ -36,6 +38,8 @@ sub initPlugin {
 
 	# Backwards-compat with radioio:// protocol links
 	Slim::Player::ProtocolHandlers->registerHandler('radioio', 'Plugins::RadioIO::ProtocolHandler');
+
+	Plugins::RadioIO::Settings->new;
 
 	Slim::Buttons::Common::addMode('PLUGIN.RadioIO', getFunctions(), \&setMode);
 
@@ -155,36 +159,6 @@ sub cliRadiosQuery {
 
 	# let our super duper function do all the hard work
 	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
-}
-
-sub setupGroup {
-	my %Group = (
-		PrefOrder => [
-			'plugin_radioio_username',
-			'plugin_radioio_password',
-		],
-		GroupHead => string( 'PLUGIN_RADIOIO_MODULE_NAME' ),
-		GroupDesc => string( 'SETUP_GROUP_PLUGIN_RADIOIO_DESC' ),
-		GroupLine => 1,
-		GroupSub  => 1,
-		Suppress_PrefSub  => 1,
-		Suppress_PrefLine => 1,
-	);
-
-	my %Prefs = (
-		plugin_radioio_username => {},
-		plugin_radioio_password => { 
-			onChange => sub {
-				my $encoded = encode_base64( $_[1]->{plugin_radioio_password}->{new} );
-				chomp $encoded;
-				Slim::Utils::Prefs::set( 'plugin_radioio_password', $encoded );
-			},
-			inputTemplate => 'setup_input_passwd.html',
-			changeMsg     => string('SETUP_PLUGIN_RADIOIO_PASSWORD_CHANGED')
-		},
-	);
-
-	return( \%Group, \%Prefs );
 }
 
 ###

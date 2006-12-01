@@ -1,0 +1,18 @@
+[% PROCESS settings/header.html %]
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_PLUGIN_RADIOIO_USERNAME" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_PLUGIN_RADIOIO_USERNAME_DESC" | string %]</div>
+
+		<input type="text" class="stdedit" name="plugin_radioio_username" id="plugin_radioio_username" value="[% prefs.plugin_radioio_username %]" size="40">
+	</div>
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_PLUGIN_RADIOIO_PASSWORD" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_PLUGIN_RADIOIO_PASSWORD_DESC" | string %]</div>
+
+		<input type="password" class="stdedit" name="plugin_radioio_password" id="plugin_radioio_password" value="[% prefs.plugin_radioio_password %]" size="40">
+	</div>
+
+
+[% PROCESS settings/footer.html %]
