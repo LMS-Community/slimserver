@@ -393,6 +393,7 @@ PLUGIN_LIVE365_RECENT
 PLUGIN_LIVE365_NO_INFO
 	DE	Fehler beim Laden der Informationen
 	EN	Error loading info
+	ES	Error al cargar información
 	NL	Fout bij laden info
 
 TACMATCHING
@@ -424,8 +425,3 @@ BROADCASTERSMATCHING
 	FI	Lähettäjät jotka täsmäävät
 	IT	Emittenti corrispondenti a
 	NL	Omroep matching
-
-PLUGIN_LIVE365_NO_INFO
-	DE	Fehler beim Laden der Informationen
-	EN	Error loading info
-	ES	Error al cargar información
