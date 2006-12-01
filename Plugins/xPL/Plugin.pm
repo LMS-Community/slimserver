@@ -20,6 +20,8 @@ use strict;
 use IO::Socket;
 use Scalar::Util qw(blessed);
 
+use Plugins::xPL::Settings;
+
 use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -45,6 +47,8 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 # plugin: initialize xPL support
 sub initPlugin {
+
+	Plugins::xPL::Settings->new;
 
 	my $computername = Slim::Utils::Network::hostName();
 
@@ -100,44 +104,6 @@ sub getDisplayName {
 sub enabled {
 	return ($::VERSION ge '6.5');
 }
-
-# plugin: manage the CLI preference
-sub setupGroup {
-	my $client = shift;
-	
-	my %setupGroup = (
-		'PrefOrder' => ['xplinterval', 'xplir']
-		,'PrefsInTable' => 1
-		,'Suppress_PrefHead' => 1
-		,'Suppress_PrefDesc' => 1
-		,'Suppress_PrefLine' => 1
-		,'Suppress_PrefSub' => 1
-		,'GroupHead' => Slim::Utils::Strings::string('SETUP_GROUP_XPL')
-		,'GroupDesc' => Slim::Utils::Strings::string('SETUP_GROUP_XPL_DESC')
-		,'GroupLine' => 1
-		,'GroupSub' => 1
-	);
-	
-	my %setupPrefs = (
-		'xplinterval' => {
-					'validate' => \&Slim::Utils::Validate::isInt
-						,'validateArgs' => [5,30,1,1]
-				}
-		,'xplir' => {
-					'options' => {
-							'none' => Slim::Utils::Strings::string('SETUP_XPLIR_NONE')
-							,'buttons' => Slim::Utils::Strings::string('SETUP_XPLIR_BUTTONS')
-							,'raw' => Slim::Utils::Strings::string('SETUP_XPLIR_RAW')
-							,'both' => Slim::Utils::Strings::string('SETUP_XPLIR_BOTH')
-							}
-			}
-	);
-	
-	return (\%setupGroup, \%setupPrefs);
-
-	
-}
-
 
 # This routine ensures an xPL instance is valid
 # by removing any invalid characters and trimming to
