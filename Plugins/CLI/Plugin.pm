@@ -11,6 +11,8 @@ use IO::Socket;
 use Socket qw(:crlf);
 use Scalar::Util qw(blessed);
 
+use Plugins::CLI::Settings;
+
 use Slim::Control::Request;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -71,7 +73,9 @@ sub initPlugin {
 
 		Slim::Utils::Prefs::set('cliport', 9090);
 	}
-	
+
+	Plugins::CLI::Settings->new;
+
 	# register our functions
 	
 #        |requires Client
@@ -101,24 +105,6 @@ sub getDisplayName {
 
 sub getDisplayDescription {
 	return "PLUGIN_CLI_DESC";
-}
-
-# plugin: manage the CLI preference
-sub setupGroup {
-	my $client = shift;
-	
-	my %setupGroup = (
-		PrefOrder => ['cliport'],
-	);
-	
-	my %setupPrefs = (
-		'cliport'	=> {
-			'validate' => \&Slim::Utils::Validate::port,
-			'onChange' => \&cli_socket_change,
-		}
-	);
-	
-	return (\%setupGroup, \%setupPrefs);
 }
 
 # plugin: shutdown the CLI

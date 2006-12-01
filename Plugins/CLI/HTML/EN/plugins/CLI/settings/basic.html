@@ -1,0 +1,15 @@
+[% PROCESS settings/header.html %]
+
+	<div class="settingSection">
+		<div class="groupHead">[% "PLUGIN_CLI" | string | upper %]</div>
+		<div class="groupDesc">[% "PLUGIN_CLI_DESC" | string %]</div>
+	</div>
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_CLIPORT" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_CLIPORT_DESC" | string %]</div>
+
+		<input type="text" class="stdedit" name="cliport" id="cliport" value="[% prefs.cliport %]" size="5">
+	</div>
+
+[% PROCESS settings/footer.html %]

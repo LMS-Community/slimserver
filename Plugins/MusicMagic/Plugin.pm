@@ -126,10 +126,6 @@ sub initPlugin {
 
 		$initialized = 0;
 
-		my ($groupRef, $prefRef) = setupPort();
-
-		Slim::Web::Setup::addGroup('PLUGINS', 'musicmagic_connect', $groupRef, undef, $prefRef);
-
 		return 0;		
 	}
 
@@ -149,10 +145,6 @@ sub initPlugin {
 		$initialized = 0;
 
 		$log->warn("Can't connect to port $MMSport - MusicMagic disabled.");
-
-		my ($groupRef, $prefRef) = setupPort();
-
-		Slim::Web::Setup::addGroup('PLUGINS', 'musicmagic_connect', $groupRef, undef, $prefRef);
 
 	} else {
 
