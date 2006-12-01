@@ -65,6 +65,11 @@ my $nmodes = $#modes;
 
 sub init {
 	my $display = shift;
+
+	if (!Slim::Utils::Prefs::get('loadFontsText')) {
+		Slim::Utils::Prefs::set('loadFontsText', 1);
+	}
+
 	Slim::Utils::Prefs::initClientPrefs($display->client, $defaultPrefs);
 	$display->SUPER::init();
 }
@@ -792,6 +797,16 @@ sub sliderBar {
 	}
 	
 	return $chart;
+}
+
+sub string {
+	my $display = shift;
+	return Slim::Utils::Unicode::utf8toLatin1($display->SUPER::string(@_));
+}
+
+sub doubleString {
+	my $display = shift;
+	return Slim::Utils::Unicode::utf8toLatin1($display->SUPER::doubleString(@_));
 }
 
 # register text custom characters - not called as a method of display

@@ -144,8 +144,6 @@ sub playerPlugins {
 sub installedPlugins {
 	my %pluginlist = ();
 
-	my $firstCall = !scalar(@pluginRootDirs); # first call loads @pluginRootDirs
-
 	for my $plugindir (pluginDirs()) {
 
 		opendir(DIR, $plugindir) || next;
@@ -173,8 +171,7 @@ sub installedPlugins {
 				my $pluginname = $plugin . '::' . "Plugin";
 
 				$pluginlist{$pluginname} = exists($plugins{$pluginname}) ? $plugins{$pluginname}{'name'} : $plugin;
-				
-				push @pluginRootDirs, catdir($plugindir, $plugin) if $firstCall;
+
 			}
 		}
 
@@ -259,23 +256,6 @@ sub canPlugin {
 		return 0 if (not &{"Plugins::${plugin}::enabled"});
 	}
 	
-	# load up the localized strings, if available
-	my $strings = eval { &{$fullname . "::strings"}() };
-
-	if (!$@ && $strings) {
-		# flag strings as UTF8
-		if ($] > 5.007) {
-			$strings = pack "U0C*", unpack "C*", $strings;
-		} else {
-			# for the 5.6 laggers.
-			if (Slim::Utils::Unicode::currentLocale() =~ /^iso-8859/) {
-				$strings = Slim::Utils::Unicode::utf8toLatin1($strings);
-			}
-		}
-
-		Slim::Utils::Strings::addStrings(\$strings);
-	}
-
 	my $displayName = eval { &{$fullname . "::getDisplayName"}() };
 	$displayName = undef if $@;
 	
@@ -286,7 +266,7 @@ sub canPlugin {
 	
 	if ($displayName && !$nameExists) {
 
-		logWarning("Can't load plugin $fullname - not 6.0+ compatible. (displayName must return a string token, strings() must not use _DATA_)");
+		logWarning("Can't load plugin $fullname - not 7.0+ compatible. Strings should be defined in a strings.txt file held in the plugin's root directory & displayName must return a string token which is resolved from this file");
 
 		$brokenplugins{$plugin} = 1;
 
@@ -568,8 +548,20 @@ sub pluginCount {
 }
 
 sub pluginRootDirs {
-	# returns root directory of installed plugins with their own directory 
-	# not expected to be called until after initPlugins
+	if (scalar @pluginRootDirs) {
+		return @pluginRootDirs;
+	}
+
+	for my $path (@pluginDirs) {
+		opendir(DIR, $path) || next;
+		for my $plugin ( readdir(DIR) ) {
+			if (-d catdir($path, $plugin) && $plugin !~ m/^\./i) {
+				push @pluginRootDirs, catdir($path, $plugin);
+			}
+		}
+		closedir(DIR);
+	}
+
 	return @pluginRootDirs;
 }
 

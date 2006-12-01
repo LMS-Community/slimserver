@@ -1,0 +1,7 @@
+# String file for SlimTris plugin
+
+# $Id$
+
+SLIMTRIS
+	EN	SlimTris
+	HE	טטריס

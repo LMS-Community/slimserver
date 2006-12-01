@@ -282,6 +282,18 @@ sub killAnimation {
 	$display->updateMode(0);
 	$display->endShowBriefly if ($animate == 5);
 }
+
+sub string {
+	my $display = shift;
+	return Slim::Utils::Unicode::utf8toLatin1($display::SUPER->string(@_));
+}
+
+sub doubleString {
+	my $display = shift;
+	return Slim::Utils::Unicode::utf8toLatin1($display::SUPER->doubleString(@_));
+}
+
+
 =head1 SEE ALSO
 
 L<Slim::Display::Graphics>

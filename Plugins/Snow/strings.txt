@@ -1,0 +1,186 @@
+# String file for Snow plugin
+
+# $Id$
+
+PLUGIN_SCREENSAVER_SNOW
+	DE	Schnee Bildschirmschoner
+	EN	Snow Screensaver
+	ES	Salvapantallas de Nieve
+	FI	Lumi ruudunsäästäjä
+	FR	Ecran de veille Neige
+	IT	Salvaschermo Neve
+	NL	Sneeuw schermbeveiliger
+
+PLUGIN_SCREENSAVER_SNOW_SETTINGS
+	DE	Schnee Einstellungen
+	EN	Snow Screensaver settings
+	ES	Parámetros para Salvapantallas de Nieve
+	FR	Réglages Ecran de veille Neige
+	IT	Impostazioni salvaschermo Neve
+	NL	Sneeuw schermbeveiliger instellingen
+
+PLUGIN_SCREENSAVER_SNOW_DEFAULT
+	DE	Standard-Bildschirmschoner aktivieren
+	EN	Use default screensaver (not Snow)
+	ES	Utilizar salvapantallas por defecto (No Nieve)
+	FR	Utiliser écran de veille par défaut (hors Neige)
+	NL	Gebruik standaard schermbeveiliger (niet Sneeuw)
+
+PLUGIN_SCREENSAVER_SNOW_QUANTITY
+	DE	Schneemenge
+	EN	Quantity of snow
+	ES	Cantidad de nieve
+	FI	Lumen määrä
+	FR	Intensité neige
+	NL	Hoeveelheid sneeuw
+
+PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE
+	DE	Schnee Bildschirmschoner: Schneemenge
+	EN	Snow Screensaver: Quantity of snow
+	ES	Salvapantallas de Nieve: Cantidad de nieve
+	FR	Ecran de veille neige: Intensité
+	NL	Sneeuw schermbeveiliger: hoeveelheid sneeuw
+
+PLUGIN_SCREENSAVER_SNOW_QUANTITY_0
+	DE	Ein paar Schneeflocken
+	EN	Light flurries
+	ES	Copos livianos
+	FI	Kevyitä hiutaleita
+	FR	Quelques flocons
+	NL	Lichte sneeuwbui
+
+PLUGIN_SCREENSAVER_SNOW_QUANTITY_1
+	DE	Weihnächtlich weiss
+	EN	Christmassy
+	ES	Estilo Navidad
+	FR	C'est Noël !
+	NL	Kerstmisachtig
+
+PLUGIN_SCREENSAVER_SNOW_QUANTITY_2
+	DE	Heftiges Schneegestöber
+	EN	Blizzard
+	ES	Tormenta
+	FR	Tempête
+	NL	Sneeuwstorm
+
+PLUGIN_SCREENSAVER_SNOW_QUANTITY_3
+	DE	Dichtes Schneegestöber
+	EN	Whiteout
+	ES	Resplandor Blanco
+	FR	Tout blanc
+	NL	Zware sneeuwstorm
+
+PLUGIN_SCREENSAVER_SNOW_STYLE
+	DE	Schneetyp ein
+	EN	Style of snow when on
+	ES	Estilo de nieve on
+	FI	Lumen tyyli kun päällä
+	FR	Type neige (ON)
+	NL	Sneeuwstijl wanneer aan
+
+PLUGIN_SCREENSAVER_SNOW_STYLE_OFF
+	DE	Schneetyp aus
+	EN	Style of snow when off
+	ES	Estilo de nieve off
+	FR	Type neige (OFF)
+	NL	Sneeuwstijl wanneer uit
+
+PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE
+	DE	Schnee Bildschirmschoner: Schneetyp
+	EN	Snow Screensaver: Style of snow
+	ES	Salvapantallas de Nieve: Estilo de nieve
+	FR	Ecran de veille Neige: Type
+	NL	Sneeuw schermbeveiliger: sneeuwstijl
+
+PLUGIN_SCREENSAVER_SNOW_STYLE_1
+	DE	Es läuft gerade... mit Schnee im Hintergrund
+	EN	Now Playing, snow falling behind
+	ES	Se está escuchando, la nieve cae detrás
+	FR	Lecture + neige en arrière-plan
+	IT	Riproduzione in corso, nevicata sullo sfondo
+	NL	Speelt nu, sneeuw valt achter
+
+PLUGIN_SCREENSAVER_SNOW_STYLE_2
+	DE	Es läuft gerade... mit Schnee im Vordergrund
+	EN	Now Playing, snow falling in front
+	ES	Se está escuchando, la nieve cae delante
+	FR	Lecture +  neige en avant-plan
+	IT	Riproduzione in corso, nevicata di fronte
+	NL	Speelt nu, sneeuw valt voor
+
+PLUGIN_SCREENSAVER_SNOW_STYLE_3
+	DE	Datum/Zeit
+	EN	Date/Time
+	ES	Fecha/Hora
+	FR	Date/Heure
+	NL	Datum/tijd
+
+PLUGIN_SCREENSAVER_SNOW_STYLE_4
+	DE	Nur Schnee
+	EN	Just snow
+	ES	Solo nieve
+	FR	Neige seule
+	NL	Alleen sneeuw
+
+PLUGIN_SCREENSAVER_SNOW_STYLE_5
+	DE	Automatisch
+	EN	Automatic
+	ES	Automático
+	FR	Automatique
+	NL	Automatisch
+
+PLUGIN_SCREENSAVER_SNOW_STYLE_6
+	DE	Frohe Feiertage!
+	EN	Season's Greetings
+	ES	Saludos para las Fiestas
+	FR	Voeux
+	NL	Wensen voor de feestdagen
+
+PLUGIN_SCREENSAVER_SNOW_NUMBER_OF_WORDS
+	DE	4
+	EN	5
+	ES	5
+	FR	2
+
+PLUGIN_SCREENSAVER_SNOW_WORD_0
+	DE	FROHE
+	EN	MERRY
+	ES	FELIZ
+	FR	JOYEUX
+	NL	Vrolijk
+
+PLUGIN_SCREENSAVER_SNOW_WORD_1
+	DE	WEIHNACHTEN
+	EN	CHRISTMAS
+	ES	NAVIDAD
+	FR	NOEL
+	NL	Kerstmis
+
+PLUGIN_SCREENSAVER_SNOW_WORD_2
+	DE	UND EIN GUTES
+	EN	AND A VERY
+	ES	Y UN MUY
+	FR	ET
+	NL	en een heel
+
+PLUGIN_SCREENSAVER_SNOW_WORD_3
+	DE	GLÜCKLICHES
+	EN	HAPPY
+	ES	PRÓSPERO
+	FR	BONNE
+	NL	gelukkig
+
+PLUGIN_SCREENSAVER_SNOW_WORD_4
+	DE	NEUES JAHR!
+	EN	NEW YEAR !
+	ES	AÑO NUEVO !
+	FR	ANNÉE !
+	NL	nieuw jaar!
+
+PLUGIN_SCREENSAVER_SNOW_SORRY
+	DE	Sorry, Schnee funktioniert auf diesem Gerät nicht.
+	EN	Sorry, Snow doesn't work with this player.
+	ES	Lo siento, la Nieve no funciona en este reproductor.
+	FR	Désolé, Neige ne fonctionne pas sur cette platine.
+	IT	Scusa, Neve non funziona con questo lettore.
+	NL	Sorry, sneeuw werkt niet met deze speler.

@@ -4,7 +4,7 @@ package Slim::Utils::Strings;
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License, 
+# modify it under the terms of the GNU General Public License,
 # version 2.
 
 =head1 NAME
@@ -13,12 +13,21 @@ Slim::Utils::Strings
 
 =head1 SYNOPSIS
 
-my $localstring = Slim::Utils::Strings('EMPTY');
+init ()
+
+loadStrings ( [ $argshash ] )
+
+string ( $token )
+
+getString ( $token )
+
+stringExists ( $token )
+
+setString ( $token, $string )
 
 =head1 DESCRIPTION
 
- Global localization module.  Handles the reading of strings.txt for 
- international translation.  
+Global localization module.  Handles the reading of strings.txt for international translations
 
 =head1 EXPORTS
 
@@ -29,91 +38,170 @@ string()
 use strict;
 use Exporter::Lite;
 
-# we export string() so it's less typing to use it
 our @EXPORT_OK = qw(string);
 
 use File::Spec::Functions qw(:ALL);
+use Storable;
 
 use Slim::Utils::Log;
 
-#-------------------------------------------------
+our $strings = {};
+our $defaultStrings;
 
-our %strings   = ();
-our %languages = ();
-our $failsafe_language = 'EN';
+my $currentLang;
+my $failsafeLang  = 'EN';
+
+my $log = logger('server');
 
 =head1 METHODS
 
 =head2 init( )
 
- Initializes the module
-
- When a new string is added in strings.txt, it will probably take 
- a while before someome gets around to translating it. $failsafe_language
- is the fallback. If a string is not available in the user's
- preferred language (current_lang), then this is the one we'll return in it's place.
+ Initializes the module - called at server startup.
 
 =cut
 
 sub init {
-	my $usr_strings;
-
-	# clear these so they can be reloaded after language change
-	%strings   = ();
-	%languages = ();
-
-	for my $dir (stringsDirs()) {
-
-		for my $stringfile (stringsFiles()) {
-			load_strings_file(catdir($dir, $stringfile));
-		}
-	}
-
-	for my $lang (keys(%languages)) {
-		$languages{$lang} = languageName($lang);
-	}
-
-	return 1;
+	$currentLang = getLanguage();
+	loadStrings();
 }
 
-sub stringsDirs {
+=head2 loadStrings( [ $argshash ] )
 
-	return (
-		Slim::Utils::OSDetect::dirsFor('strings'),
-		Slim::Utils::Prefs::preferencesPath(),
-	);
-}
+ Load/Reload Strings files for server and plugins using cache if valid.
+ If stringcache file is valid this is loaded into memory and used as string hash, otherwise
+ string text files are parsed and new stringhash creted which stored as the stringcache file.
 
-sub stringsFiles {
-
-	my @stringsFiles = qw(
-		strings.txt
-		slimserver-strings.txt
-		custom-strings.txt
-	);
-
-	return @stringsFiles;
-}
-
-=head2 load_strings_file( $file )
-
- Loads a file containing strings. Takes the filpath as an argument.
+ optional $argshash allows default behavious to be overridden, keys that can be set are:
+ 'ignoreCache' - ignore cache file and reparse all files
+ 'dontClear'   - don't clear current string hash before loading file
+ 'dontSave'    - don't save new string hash to cache file [restart will use old cache file]
+ 'storeString' - sub as alternative to storeString [e.g. for use by string editor]
 
 =cut
 
-sub load_strings_file {
-	my $file = shift;
+sub loadStrings {
+	my $args = shift;
 
-	if (!-e $file) {
-		return;
+	my ($newest, $files) = stringsFiles();
+
+	my $stringCache = catdir( Slim::Utils::Prefs::get('cachedir'),
+		Slim::Utils::OSDetect::OS() eq 'unix' ? 'stringcache' : 'strings.bin');
+
+	my $stringCacheVersion = 1; # Version number for cache file
+
+	# use stored stringCache if newer than all string files and correct version
+	if (!$args->{'ignoreCache'} && -r $stringCache && ($newest < (stat($stringCache))[9])) {
+
+		# check cache for consitency
+		my $cacheOK = 1;
+
+		$log->info("Retrieving string data from string cache: $stringCache");
+
+		eval { $strings = retrieve($stringCache); };
+
+		if ($@) {
+			$log->warn("Tried loading string: $@");
+		}
+
+		if (!$@ && defined $strings &&
+			defined $strings->{'version'} && $strings->{'version'} == $stringCacheVersion &&
+			defined $strings->{'lang'} && $strings->{'lang'} eq $currentLang ) {
+
+			$defaultStrings = $strings->{$currentLang};
+
+		} else {
+			$cacheOK = 0;
+		}
+
+		# check for same list of strings files as that stored in stringcache
+		if (scalar @{$strings->{'files'}} == scalar @$files) {
+			for my $i (0 .. scalar @$files - 1) {
+				if ($strings->{'files'}[$i] ne $files->[$i]) {
+					$cacheOK = 0;
+				}
+			}
+		} else {
+			$cacheOK = 0;
+		}
+
+		return if $cacheOK;
+
+		$log->info("String cache contains old data - reparsing string files");
 	}
 
-	my $strings;
+	# otherwise reparse all string files
+	unless ($args->{'dontClear'}) {
+		$strings = {
+			'version' => $stringCacheVersion,
+			'lang'    => $currentLang,
+			'files'   => $files,
+		};
+	}
+
+	unless (defined $args->{'storeFailsafe'}) {
+		$args->{'storeFailsafe'} = storeFailsafe();
+	}
+
+	for my $file (@$files) {
+
+		$log->info("Loading string file: $file");
+
+		loadFile($file, $args);
+
+	}
+
+	unless ($args->{'dontStore'}) {
+		$log->info("Storing string cache: $stringCache");
+		store($strings, $stringCache);
+	}
+
+	$defaultStrings = $strings->{$currentLang};
+}
+
+sub stringsFiles {
+	my @files;
+	my $newest = 0;
+
+	# server string file
+	my $serverPath = Slim::Utils::OSDetect::dirsFor('strings');
+	push @files, catdir($serverPath, 'strings.txt');
+
+	# plugin string files
+	for my $path ( Slim::Utils::PluginManager::pluginRootDirs() ) {
+		push @files, catdir($path, 'strings.txt');
+	}
+
+	# custom string file
+	push @files, catdir($serverPath, 'custom-strings.txt');
+
+	# prune out files which don't exist and find newest
+	my $i = 0;
+	while (my $file = $files[$i]) {
+		if (-r $file) {
+			my $moddate = (stat($file))[9];
+			if ($moddate > $newest) {
+				$newest = $moddate;
+			}
+			$i++;
+		} else {
+			splice @files, $i, 1;
+		}
+	}
+
+	return $newest, \@files;
+}
+
+sub loadFile {
+	my $file = shift;
+	my $args = shift;
+
+	my $text;
 
 	# Force the UTF-8 layer opening of the strings file.
 	#
 	# Be backwards compatible with perl 5.6.x
-	# 
+	#
 	# Setting $/ to undef and slurping is much faster than join('', <STRINGS>)
 	# it also avoids creating an extra in memory copy of the string.
 	if ($] > 5.007) {
@@ -121,11 +209,11 @@ sub load_strings_file {
 		local $/ = undef;
 
 		open(STRINGS, '<:utf8', $file) || do {
-			logError("load_strings_file: couldn't open $file - FATAL!");
+			logError("Couldn't open $file - FATAL!");
 			die;
 		};
 
-		$strings = <STRINGS>;
+		$text = <STRINGS>;
 		close STRINGS;
 
 	} else {
@@ -135,73 +223,49 @@ sub load_strings_file {
 		local $/ = undef;
 
 		open(STRINGS, $file) || do {
-			logError("load_strings_file: couldn't open $file - FATAL!");
+			logError("Couldn't open $file - FATAL!");
 			die;
 		};
 
-		$strings = <STRINGS>;
+		$text = <STRINGS>;
 
 		if (Slim::Utils::Unicode::currentLocale() =~ /^iso-8859-1/) {
-			$strings = Slim::Utils::Unicode::utf8toLatin1($strings);
+			$strings = Slim::Utils::Unicode::utf8toLatin1($text);
 		}
 
 		close STRINGS;
 	}
 
-	addStrings(\$strings);
+	parseStrings(\$text, $file, $args);
 }
 
-=head2 addStringPointer( $name, $pointer )
-
- Add a single string with a pointer to another string.
-
-=cut
-
-sub addStringPointer {
-	my $name    = shift;
-	my $pointer = shift;
-	       
-	foreach my $language (list_of_languages()) {
-		$strings{$name}->{$language} = $pointer;
-	}
-}
-
-sub addStrings {
-	my $strings = shift;
-
-	# memory saver by passing in a ref.
-	if (ref($strings) ne 'SCALAR') {
-		$strings = \$strings;
-	}
+sub parseStrings {
+	my $text = shift;
+	my $file = shift;
+	my $args = shift;
 
 	my $string = '';
 	my $language = '';
 	my $stringname = '';
+	my $stringData = {};
 	my $ln = 0;
-	
-	# TEMP changed language IDs for temporary ID translation (needed for plugins' 6.2.x <-> 6.5 compatibility)
-	my %legacyLanguages = (
-		'CZ' => 'CS',
-		'DK' => 'DA',
-		'JP' => 'JA',
-		'SE' => 'SV',
-	);
-	# /TEMP
 
-	my $currentLanguage  = getLanguage();
-	my $failSafeLanguage = failsafeLanguage();
-	
-	LINE: for my $line (split('\n', $$strings)) {
+	my $store = $args->{'storeString'} || \&storeString;
+
+	LINE: for my $line (split('\n', $$text)) {
 
 		$ln++;
 		chomp($line);
-		
+
 		next if $line =~ /^#/;
 		next if $line !~ /\S/;
 
 		if ($line =~ /^(\S+)$/) {
 
+			&$store($stringname, $stringData, $file, $args);
+
 			$stringname = $1;
+			$stringData = {};
 			$string = '';
 			next LINE;
 
@@ -210,221 +274,173 @@ sub addStrings {
 			my $one = $1;
 			$string = $2;
 
-			# TEMP temporary ID translation for backwards compatibility
-			# print a warning for plugin authors
-			if ($legacyLanguages{$one} && $legacyLanguages{$one} eq $currentLanguage) {
-
-				logWarning("Please tell the plugin author to update string '$string': '$one' should be '$legacyLanguages{$one}'");
-
-				$one = $legacyLanguages{$one};
+			if ($one =~ /./) {
+				$language = uc($one);
 			}
-			# /TEMP
-						
-			# only read strings in our preferred and the failback language - plus the language names for the setup page
-			if ($one ne $failSafeLanguage && $one ne $currentLanguage && $stringname ne 'LANGUAGE_CHOICES') {
+
+			if ($stringname eq 'LANGUAGE_CHOICES') {
+				$strings->{'langchoices'}->{$language} = $string;
 				next LINE;
 			}
 
-			if ($one =~ /./) {
-				# if the string spans multiple lines, language can be left blank, and
-				# we'll remember it from the last time we saw it.
-				$language = uc($one);
-
-				# keep track of all the languages we've seen
-				if (!exists($languages{$language})) {
-					$languages{$language} = $language;
-				}
-
-				if (defined $strings{$stringname}->{$language}) { 
-					delete $strings{$stringname}->{$language};
-				};
-			} 
-
-			if (defined $strings{$stringname}->{$language}) { 
-				$strings{$stringname}->{$language} .= "\n$string";
+			if (defined $stringData->{$language}) {
+				$stringData->{$language} .= "\n$string";
 			} else {
-				$strings{$stringname}->{$language} = $string;
+				$stringData->{$language} = $string;
 			}
 
 		} else {
 
-			logError("Parsing line $ln: $line");
+			$log->error("Parsing line $ln: $line");
 		}
+	}
+
+	&$store($stringname, $stringData, $file, $args);
+}
+
+sub storeString {
+	my $name = shift || return;
+	my $curString = shift;
+	my $file = shift;
+	my $args = shift;
+
+	return if ($name eq 'LANGUAGE_CHOICES');
+
+	if (defined $strings->{$currentLang}->{$name}) {
+		$log->warn("redefined string: $name in $file");
+	}
+
+	if (defined $curString->{$currentLang}) {
+		$strings->{$currentLang}->{$name} = $curString->{$currentLang};
+
+	} elsif (defined $curString->{$failsafeLang}) {
+		$strings->{$currentLang}->{$name} = $curString->{$failsafeLang};
+		$log->debug("Language $currentLang using $failsafeLang for $name in $file");
+	}
+
+	if ($args->{'storeFailsafe'}) {
+		$strings->{$failsafeLang}->{$name} = $curString->{$failsafeLang};
 	}
 }
 
-# These should be self explainatory.
-sub list_of_languages {
-	return sort(keys(%languages));
-}
+# access strings
 
-sub hash_of_languages {
-	return %languages;
-}
+=head2 string ( $token )
 
-sub hashref_of_strings {
-	return \%strings;
-}
-
-=head2 string( $stringname, [ $language ], [ $dontwarn] )
-
- Returns a string in the requested language
-
- We can pass in a language to override the default.
- Currently used for falling back to English when the selected language is a
- non-latin1 language such as Japanese.
- 
- $dontwarn argument will suppress warnings about missing strings if set.
+Return localised string for token $token, or ''.
 
 =cut
 
 sub string {
-	my $stringname = uc(shift);
-	my $language   = shift || Slim::Utils::Prefs::get('language');
-	my $dontWarn   = shift || 0;
+	my $token = uc(shift);
+	my $string = $defaultStrings->{$token};
 
-	my $translate  = Slim::Utils::Prefs::get('plugin-stringeditor-translatormode') || 0;
+	return $string if defined $string;
 
-	for my $tryLang ($language, $failsafe_language) {
-
-		if (!$strings{$stringname}->{$tryLang}) {
-			next;
-		}
-
-		my $string = $strings{$stringname}->{$tryLang};
-
-		# Some code to help with Michael Herger's string translator plugin.
-		if (($tryLang ne $language) && $translate) {
-
-			 $string .= " {$stringname}";
-		}
-
-		return $string;
-	}
-
-	if (!$dontWarn) {
-		logBacktrace("Undefined string: $stringname");
-		logWarning("Requested language: $language - failsafe language: $failsafe_language");
-	}
-
+	logBacktrace("missing string $token") if $token;
 	return '';
 }
 
-=head2 getString( $string )
+=head2 getString ( $token )
 
- like string() above, but returns the string token if the string does not exist
+Return localised string for token $token, or token itself.
 
 =cut
 
 sub getString {
-	my $string = shift;
-
-	# Call string, but don't warn on missing.
-	my $parsed = string($string, undef, 1);
-
-	return $parsed ? $parsed : $string;
+	my $token = uc(shift);
+	return $defaultStrings->{$token} || $token;
 }
 
-=head2 doubleString( $stringname, [ $language ] )
+=head2 stringExists ( $token )
 
- Returns a string for doublesize mode in the requested language
-
-=cut
-
-sub doubleString {
-	my $stringname = uc(shift);
-	my $language   = shift || Slim::Utils::Prefs::get('language');
-
-	# Try the double size string first - but don't warn if we can't find
-	# it. Then fallback to the regular string.
-	return string($stringname.'_DBL', $language, 1) || string($stringname, $language);
-}
-
-=head2 stringExists( $stringname, [ $language ] )
-
- Returns 1 if the requested string exists, 0 if not
- caller may provide a specific $language instead of the current preference.
+Return boolean indicating whether $token exists.
 
 =cut
 
 sub stringExists {
-	my $stringname = uc(shift) || return 0;
-	my $language   = shift || Slim::Utils::Prefs::get('language');
-
-	return ($strings{$stringname}->{$language} || $strings{$stringname}->{$failsafe_language}) ? 1 : 0;
+	my $token = uc(shift);
+	return (defined $defaultStrings->{$token}) ? 1 : 0;
 }
 
-=head2 resolveString( $string, $language )
+=head2 setString ( $token, $string )
 
- "Pointer chase" a string - useful for plugins where we don't have $client yet.
+Set string for $token to $string.  Used to override string definitions parsed from string files.
+The new definition is lost if the language is changed.
 
 =cut
 
-sub resolveString {
-	my $string   = shift;
-	my $language = shift || Slim::Utils::Prefs::get('language');
+sub setString {
+	my $token = uc(shift);
+	my $string = shift;
 
-	my $value  = '';
-
-	if (stringExists($string, $language)) {
-
-		$value = string($string, $language);
-
-		if (stringExists($value, $language)) {
-			$value = string($value, $language);
-		}
-	}
-
-	return $value;
+	$log->debug("setString token: $token to $string");
+	$defaultStrings->{$token} = $string;
 }
 
-=head2 setLanguage( $lang )
+=head2 defaultStrings ( )
 
- Sets the language in which strings will be returned
- returns 1 if the language is available, otherwise returns 0
- and current_lang is unchanged. Argument is a two-character string
- to indicate language
+Returns hash of tokens to localised strings for default language.
 
 =cut
 
-sub setLanguage {
-	my $lang = shift;
-	
-	$lang =~ tr/a-z/A-Z/;
-	
-	if (defined $languages{$lang}) {
-		Slim::Utils::Prefs::set('language', $lang);
-		return 1;
-	}
+sub defaultStrings {
+	return $defaultStrings;
+}
 
-	return 0;
+# get & set languages
+
+sub languageOptions {
+	return $strings->{langchoices};
 }
 
 sub getLanguage {
-	return Slim::Utils::Prefs::get('language') || failsafeLanguage();
+	return Slim::Utils::Prefs::get('language') || $failsafeLang;
 }
 
-sub languageName {
+sub setLanguage {
 	my $lang = shift;
 
-	return $strings{'LANGUAGE_CHOICES'}->{$lang};
+	if ($strings->{'langchoices'}->{$lang}) {
+
+		Slim::Utils::Prefs::set('language', $lang);
+		$currentLang = $lang;
+
+		loadStrings({'ignoreCache' => 1});
+
+		for my $client ( Slim::Player::Client::clients() ) {
+			$client->display->displayStrings(clientStrings($client));
+		}
+	}
 }
-
-=head2 failsafeLanguage( )
-
- Returns the failsafe language
-
-=cut
 
 sub failsafeLanguage {
-	return $failsafe_language;
+	return $failsafeLang;
 }
 
-sub validClientLanguages {
+sub clientStrings {
+	my $client = shift;
+	my $display = $client->display;
 
-	# This should really be dynamically generated - how?
-	# list_of_languages grab - and walk the list - check for stringExists(VALID_CLIENT_LANGUAGE)
-	return map { $_, 1 } qw(CS DE DA EN ES FI FR IT NL NO PT SV);
+	if (storeFailsafe() && $display->isa('Slim::Display::Text') || $display->isa('Slim::Display::SqueezeboxG') ) {
+
+		unless ($strings->{$failsafeLang}) {
+			$log->info("Reparsing strings as client requires failsafe language");
+			loadStrings({'ignoreCache' => 1});
+		}
+
+		return $strings->{$failsafeLang};
+
+	} else {
+		return $defaultStrings;
+	}
 }
+
+sub storeFailsafe {
+	return ($currentLang ne $failsafeLang &&
+			(Slim::Utils::Prefs::get('loadFontsSqueezeboxG') || Slim::Utils::Prefs::get('loadFontsText') ) &&
+			$currentLang !~ /CS|DE|DA|EN|ES|FI|FR|IT|NL|NO|PT|SV/ ) ? 1 : 0;
+}
+
 
 1;

@@ -405,20 +405,6 @@ sub killAnimation {
 	$display->endShowBriefly() if ($animate == 5);
 }
 
-# We can display Unicode fonts via a TTF
-sub string {
-	my $display = shift;
-	my $string = shift;
-
-	return Slim::Utils::Strings::string($string, Slim::Utils::Strings::getLanguage());
-}
-
-sub doubleString {
-	my $display = shift;
-	my $string = shift;
-
-	return Slim::Utils::Strings::doubleString($string, Slim::Utils::Strings::getLanguage());
-}
 =head1 SEE ALSO
 
 L<Slim::Display::Graphics>

@@ -1,0 +1,6 @@
+# String file for RS232 plugin
+
+# $Id$
+
+PLUGIN_RS232_NAME
+	EN	RS232

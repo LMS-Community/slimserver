@@ -1,0 +1,154 @@
+# String file for xPL plugin
+
+# $Id$
+
+PLUGIN_XPL
+	EN	xPL Interface
+	FR	Interface xPL
+	NL	xPL interface
+	
+SETUP_GROUP_XPL
+	DE	xPL Einstellungen
+	EN	xPL Settings
+	ES	Configuración de xPL
+	FR	Paramètres xPL
+	JA	xPL セッティング
+	NL	xPL instellingen
+	NO	xPL-innstillinger
+	SV	xPL-inställningar
+	ZH_CN	xPL设置
+
+SETUP_GROUP_XPL_DESC
+	DE	Diese Einstellungen steuern das Verhalten des xPL Protokolls
+	EN	These settings control the behavior of the xPL protocol
+	ES	Estos valores controlan el comportamiento del protocolo xPL
+	FR	Ces réglages permettent de paramétrer le protocole xPL.
+	HE	הגדרות הפרוטוקול
+	IT	Queste impostazioni controllano il comportamento del protocollo xPL.
+	JA	これらのセッティングはxPLプロトコルを調節します
+	NL	Deze instellingen wijzigen het gedrag van het xPL protocol.
+	NO	Dette er innstillinger for xPL-protokollen
+	SV	Detta är inställningar för xPL-protokollet
+	ZH_CN	控制xPL协议的设置
+
+SETUP_XPLSUPPORT
+	DE	xPL Support
+	EN	xPL support
+	ES	soporte xPL
+	FR	Support du xPL
+	JA	xPL サポート
+	NL	xPL ondersteuning
+	NO	xPL støtte
+	SV	xPL-stöd
+	ZH_CN	xPL支持
+
+SETUP_XPLSUPPORT_CHOOSE
+	DE	xPL Support:
+	EN	xPL support:
+	ES	soporte xPL:
+	FR	Support du xPL :
+	NL	xPL ondersteuning:
+	NO	xPL støtte:
+	SV	xPL-stöd:
+	ZH_CN	xPL支持：
+
+SETUP_XPLINTERVAL
+	CS	Interval kontrolního taktu
+	DE	Heartbeat Intervall
+	EN	Heartbeat Interval
+	ES	Intervalo de latidos
+	FI	Sykeväli
+	FR	Intervale
+	JA	インターバル
+	NL	Heartbeat interval
+	NO	Intervall
+	SV	Hjärtrytm, intervall
+	ZH_CN	心跳间隔时间
+
+SETUP_XPLINTERVAL_CHOOSE
+	CS	Interval kontrolního taktu:
+	DE	Heartbeat Intervall:
+	EN	Heartbeat Interval:
+	ES	Intervalo de latidos:
+	FR	Intervalle :
+	JA	インターバル:
+	NL	Heartbeat interval:
+	NO	Intervall:
+	SV	Hjärtrytm, intervall:
+	ZH_CN	心跳间隔时间：
+
+SETUP_XPLIR
+	DE	Infrarot Verarbeitung
+	EN	Infra-red Processing
+	ES	Procesando Infra-rojo
+	FR	Traitement infrarouge
+	JA	赤外線プロセシング
+	NL	Infrarood verwerking
+	NO	Infrarød håndtering
+	SV	Infraröd, hantering
+	ZH_CN	红外线处理
+
+SETUP_XPLIR_CHOOSE
+	DE	Infrarot Verarbeitung:
+	EN	Infra-red Processing:
+	ES	Procesamiento Infra-rojo
+	FR	Traitement infrarouge :
+	JA	赤外線プロセシング:
+	NL	Infrarood verwerking:
+	NO	Infrarød håndtering:
+	SV	Infraröd, hantering:
+	ZH_CN	红外线处理：
+
+SETUP_XPLIR_NONE
+	CS	Není
+	DE	Keine
+	EN	None
+	ES	Ninguno
+	FR	Aucun
+	HE	אף אחד
+	IT	Nessuno
+	JA	なし
+	NL	Geen
+	NO	Ingen
+	SV	Ingen
+	ZH_CN	无
+
+SETUP_XPLIR_BUTTONS
+	CS	Tlačítka
+	DE	Tasten
+	EN	Buttons
+	ES	Botones
+	FR	Touches
+	HE	כפתורים
+	JA	ボタン
+	NL	Knoppen
+	NO	Knapper
+	SV	Knappar
+	ZH_CN	按钮
+
+SETUP_XPLIR_RAW
+	DE	Roh
+	EN	Raw
+	ES	Crudo
+	FR	Brut
+	HE	גולמי
+	JA	列
+	NL	Ruw (Raw)
+	NO	Rå
+	SV	Rå
+	ZH_CN	生
+
+SETUP_XPLIR_BOTH
+	CS	Oba
+	DE	Beide
+	EN	Both
+	ES	Ambos
+	FI	Molemmat
+	FR	Les deux
+	HE	שניהם
+	IT	Entrambi
+	JA	両方
+	NL	Beide
+	NO	Begge
+	SV	Båda
+	ZH_CN	两者皆是

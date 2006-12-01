@@ -136,7 +136,7 @@ sub addDeviceMenus {
 	my $name   = shift;
 
 	if ( !Slim::Utils::Strings::stringExists($name) ) {
-		Slim::Utils::Strings::addStringPointer( uc $name, $name );
+		Slim::Utils::Strings::setString( uc $name, $name );
 	}
 	
 	my $udn = $device->getudn;

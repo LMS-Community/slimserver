@@ -54,11 +54,12 @@ sub handler {
 
 		if ($paramRef->{'language'} ne Slim::Utils::Prefs::get('language')) {
 		
-			Slim::Utils::Prefs::set('language', $paramRef->{'language'});
-			Slim::Utils::PluginManager::clearPlugins();
-			Slim::Utils::Strings::init();
+			Slim::Utils::Strings::setLanguage($paramRef->{'language'});
+
+			# FIXME - are all the following is required when plugin strings are in files?
+			#Slim::Utils::PluginManager::clearPlugins();
+			#Slim::Utils::PluginManager::initPlugins();
 			Slim::Web::Setup::initSetup();
-			Slim::Utils::PluginManager::initPlugins();
 			Slim::Music::Import->resetSetupGroups;
 
 		}
@@ -85,8 +86,7 @@ sub handler {
 	my @versions = Slim::Utils::Misc::settingsDiagString();
 	$paramRef->{'versionInfo'} = join( "<br />\n", @versions ) . "\n<p>";
 	$paramRef->{'newVersion'}  = $::newVersion;
-
-	$paramRef->{'languageoptions'} = {Slim::Utils::Strings::hash_of_languages()};
+	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
 
 	for my $pref (@prefs) {
 		$paramRef->{'prefs'}->{$pref} = Slim::Utils::Prefs::get($pref);

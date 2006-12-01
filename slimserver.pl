@@ -296,10 +296,6 @@ sub init {
 	$log->info("SlimServer strings init...");
 	Slim::Utils::Strings::init();
 
-	# initialize all player UI subsystems
-	$log->info("SlimServer setting language...");
-	Slim::Utils::Strings::setLanguage(Slim::Utils::Prefs::get("language"));
-
 	$log->info("SlimServer MySQL init...");
 	Slim::Utils::MySQLHelper->init();
 	

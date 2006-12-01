@@ -9246,20 +9246,6 @@ SYNCHRONIZED_WITH
 	SV	Synkroniserad med
 	ZH_CN	同步与
 
-SLIMTRIS
-	DE	SlimTris
-	EN	SlimTris
-	ES	SlimTris
-	FI	SlimTris
-	FR	SlimTris
-	HE	טטריס
-	JA	SlimTris
-	NL	SlimTris
-	NO	SlimTris
-	PT	SlimTris
-	SV	SlimTris
-	ZH_CN	SlimTris
-
 PLAYER_PLUGINS
 	EN	Plugins
 

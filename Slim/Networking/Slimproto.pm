@@ -883,6 +883,7 @@ sub _hello_handler {
 		}
 
 		$client->display( $display_class->new($client) );
+		$client->display->init;
 	}
 
 	if (!defined($client)) {

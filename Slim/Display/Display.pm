@@ -82,6 +82,7 @@ sub new {
 	$display->[9] = undef;    # sbOldDisplay
 	$display->[10]= undef;    # sbName
 	$display->[11]= 0;        # screen2updateOK
+	$display->[12]= {};       # displayStrings - strings for this display
 
 	$display->resetDisplay(); # init render cache
 
@@ -90,7 +91,10 @@ sub new {
 
 sub init {
 	my $display = shift;
+
 	Slim::Utils::Prefs::initClientPrefs($display->client, $defaultPrefs);
+
+	$display->displayStrings(Slim::Utils::Strings::clientStrings($display->client));
 }
 
 # Methods to access display state
@@ -142,6 +146,10 @@ sub sbName {
 sub screen2updateOK {
 	my $r = shift;
 	@_ ? ($r->[11] = shift) : $r->[11];
+}
+sub displayStrings {
+	my $r = shift;
+	@_ ? ($r->[12] = shift) : $r->[12];
 }
 
 ################################################################################################
@@ -735,39 +743,16 @@ sub forgetDisplay {
 	Slim::Utils::Timers::forgetTimer($display);
 }
 
-our $failsafeLanguage     = Slim::Utils::Strings::failsafeLanguage();
-our %validClientLanguages = Slim::Utils::Strings::validClientLanguages();
-
 sub string {
-	my $display = shift;
-	my $string = shift;
-
-	my $language = Slim::Utils::Strings::getLanguage();
-
-	# We're in the list - ok.
-	if ($validClientLanguages{$language}) {
-
-		return Slim::Utils::Unicode::utf8toLatin1(Slim::Utils::Strings::string($string, $language));
-	}
-
-	# Otherwise return using the failsafe.
-	return Slim::Utils::Strings::string($string, $failsafeLanguage);
+	my $strings = shift->displayStrings;
+	my $name = uc(shift);
+	return $strings->{$name} || '';
 }
 
 sub doubleString {
-	my $display = shift;
-	my $string = shift;
-
-	my $language = Slim::Utils::Strings::getLanguage();
-
-	# We're in the list - ok.
-	if ($validClientLanguages{$language}) {
-
-		return Slim::Utils::Unicode::utf8toLatin1(Slim::Utils::Strings::doubleString($string, $language));
-	}
-
-	# Otherwise return using the failsafe.
-	return Slim::Utils::Strings::doubleString($string, $failsafeLanguage);
+	my $strings = shift->displayStrings;
+	my $name = shift;
+	return $strings->{$name.'_DBL'} || $strings->{$name} || '';
 }
 
 

@@ -2047,7 +2047,6 @@ sub newSkinTemplate {
 		FILTERS => {
 			'string'        => \&Slim::Utils::Strings::string,
 			'getstring'     => \&Slim::Utils::Strings::getString,
-			'resolvestring' => \&Slim::Utils::Strings::resolveString,
 			'nbsp'          => \&nonBreaking,
 			'uri'           => \&URI::Escape::uri_escape_utf8,
 			'unuri'         => \&URI::Escape::uri_unescape,
@@ -2413,7 +2412,7 @@ sub addPageFunction {
 	$log->info("Adding handler for regular expression /$regexp/");
 
 	$pageFunctions{$regexp} = $func;
-	
+
 	if ( $fork ) {
 		$forkFunctions{$regexp} = 1;
 	}

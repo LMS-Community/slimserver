@@ -1,0 +1,37 @@
+# String file for DateTime plugin
+
+# $Id$
+
+PLUGIN_SCREENSAVER_DATETIME
+	CS	Datumový spořič
+	DE	Datum/Zeit Bildschirmschoner
+	EN	Date and Time Screensaver
+	ES	Salvapantallas de Fecha y Hora
+	FR	Ecran de veille Date/Heure
+	HE	שומר מסך תאריכון
+	IT	Data e ora
+	NL	Datum en tijd
+
+SETUP_GROUP_DATETIME
+	DE	Datum/Zeit Bildschirmschoner Einstellungen
+	EN	Date and Time Screensaver Settings
+	FR	Paramètres Ecran de veille Date/Heure
+	NL	Instellingen datum en tijd schermbeveiliger
+
+SETUP_GROUP_DATETIME_DESC
+	DE	Hier können Sie das Format des Datum/Zeit Bildschirmschoners festlegen.
+	EN	These settings control the behavior of the Date and Time Screensaver
+	FR	Ces réglages ajustent les paramètres de l'Ecran de veille Date/Heure.
+	NL	Deze instellingen stellen het gedrag in van de datum en tijd schermbeveiliger
+
+SETUP_GROUP_DATETIME_DEFAULTTIME
+	DE	Slimserver Standard
+	EN	Slimserver Default
+	FR	Défaut serveur
+	NL	SlimServer standaard
+
+SETUP_GROUP_DATETIME_DEFAULTDATE
+	DE	Slimserver Standard
+	EN	Slimserver Default
+	FR	Défaut serveur
+	NL	SlimServer standaard
