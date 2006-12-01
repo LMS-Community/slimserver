@@ -19,6 +19,8 @@ use constant FEEDS_VERSION => 1.0;
 use HTML::Entities;
 use XML::Simple;
 
+use Plugins::RSSNews::Settings;
+
 use Slim::Buttons::XMLBrowser;
 use Slim::Formats::XML;
 use Slim::Utils::Cache;
@@ -80,6 +82,8 @@ sub enabled {
 sub initPlugin {
 
 	$log->info("Initializing.");
+
+	Plugins::RSSNews::Settings->new;
 
 	Slim::Buttons::Common::addMode('PLUGIN.RSS', getFunctions(), \&setMode);
 
@@ -245,73 +249,6 @@ sub updateOPMLCache {
 	$cache->set( 'rss_opml', $opml, '10days' );
 }
 
-# for configuring via web interface
-sub setupGroup {
-	my %Group = (
-		PrefOrder => [
-			'plugin_RssNews_items_per_feed',
-			'plugin_RssNews_reset',
-			'plugin_RssNews_feeds',
-		],
-		GroupHead => 'PLUGIN_RSSNEWS',
-		GroupDesc => 'SETUP_GROUP_PLUGIN_RSSNEWS_DESC',
-		GroupLine => 1,
-		GroupSub  => 1,
-		Suppress_PrefSub  => 1,
-		Suppress_PrefLine => 1,
-	);
-
-	my %Prefs = (
-		
-		plugin_RssNews_items_per_feed => {
-			'validate'       => \&Slim::Utils::Validate::isInt,
-			'validateArgs'  => [1,undef,1],
-			'onChange'      => sub {
-				$screensaver_items_per_feed = $_[1]->{plugin_RssNews_items_per_feed}->{new};
-				Slim::Utils::Prefs::set('plugin_RssNews_items_per_feed', $screensaver_items_per_feed);
-			},
-		},
-		
-		plugin_RssNews_reset => {
-			'onChange'      => sub {
-				Slim::Utils::Prefs::set("plugin_RssNews_feeds_modified", undef);
-				Slim::Utils::Prefs::set("plugin_RssNews_feeds_version", undef);
-				revertToDefaults();
-			},
-			'inputTemplate' => 'setup_input_submit.html',
-			'changeIntro'   => 'PLUGIN_RSSNEWS_RESETTING',
-			'ChangeButton'  => 'SETUP_PLUGIN_RSSNEWS_RESET_BUTTON',
-			'dontSet'       => 1,
-			'changeMsg'     => '',
-		},
-
-		plugin_RssNews_feeds => { 
-			'isArray'          => 1,
-			'arrayAddExtra'    => 1,
-			'arrayDeleteNull'  => 1,
-			'arrayDeleteValue' => '',
-			'arrayBasicValue'  => 0,
-			'PrefSize'         => 'large',
-			'inputTemplate'    => 'setup_input_array_txt.html',
-			'PrefInTable'      => 1,
-			'showTextExtValue' => 1,
-			'externalValue'    => sub {
-				my ($client, $value, $key) = @_;
-
-				if ($key =~ /^(\D*)(\d+)$/ && ($2 < scalar(@feeds))) {
-					return $feeds[$2]->{'name'};
-				}
-
-				return '';
-			},
-			'onChange'         => \&updateFeedNames,
-			'changeMsg'        => 'SETUP_PLUGIN_RSSNEWS_FEEDS_CHANGE',
-		},
-	);
-
-	return (\%Group, \%Prefs);
-}
-
 sub updateFeedNames {
 	my @feedURLPrefs = Slim::Utils::Prefs::getArray("plugin_RssNews_feeds");
 	my @feedNamePrefs;
@@ -396,7 +333,6 @@ sub updateFeedNames {
 		
 		updateOPMLCache( \@feeds );
 	}
-
 }
 
 ################################
