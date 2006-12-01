@@ -14,6 +14,8 @@ package Plugins::Rescan::Plugin;
 use strict;
 use Time::HiRes;
 
+use Plugins::Rescan::Settings;
+
 use Slim::Control::Request;
 use Slim::Utils::Log;
 
@@ -44,7 +46,7 @@ sub initPlugin {
 
 				$client->showBriefly( {
 					'line' => [ $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
-								$client->string('PLUGIN_RESCAN_RESCANNING') ]
+							$client->string('PLUGIN_RESCAN_RESCANNING') ]
 				});
 
 			} else {
@@ -53,6 +55,8 @@ sub initPlugin {
 			}
 		}
 	);
+
+	Plugins::Rescan::Settings->new;
 
 	Slim::Buttons::Common::addMode('scantimer', getFunctions(), \&setMode);
 	setTimer();
@@ -75,24 +79,13 @@ sub setMode {
 	);
 
 	# get previous alarm time or set a default
-	unless (defined Slim::Utils::Prefs::get("rescan-time")) {
+	if (!defined Slim::Utils::Prefs::get("rescan-time")) {
 
 		Slim::Utils::Prefs::set("rescan-time", 9 * 60 * 60 );
 	}
 	
 	my %params = (
 		'listRef'        => \@browseMenuChoices,
-		'externRef'      => sub {
-				my $client = shift;
-				my $value  = shift;
-				
-				if (Slim::Utils::Prefs::get("rescan-scheduled") && $value eq 'PLUGIN_RESCAN_TIMER_OFF') {
-
-					return $client->string('PLUGIN_RESCAN_TIMER_ON');
-				} else {
-					return $client->string($value);
-				}
-			},
 		'externRefArgs'  => 'CV',
 		'header'         => 'PLUGIN_RESCAN_MUSIC_LIBRARY',
 		'headerAddCount' => 1,
@@ -100,6 +93,17 @@ sub setMode {
 		'callback'       => \&rescanExitHandler,
 		'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
 		'overlayRefArgs' => '',
+		'externRef'      => sub {
+			my $client = shift;
+			my $value  = shift;
+			
+			if (Slim::Utils::Prefs::get("rescan-scheduled") && $value eq 'PLUGIN_RESCAN_TIMER_OFF') {
+
+				return $client->string('PLUGIN_RESCAN_TIMER_ON');
+			}
+
+			return $client->string($value);
+		},
 	);
 		
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
@@ -183,9 +187,6 @@ sub settingsExitHandler {
 	} elsif ($exittype eq 'RIGHT') {
 
 		$client->bumpRight();
-
-	} else {
-		return;
 	}
 }
 
@@ -246,80 +247,6 @@ sub checkScanTimer {
 
 	setTimer();
 }
-
-sub setupGroup {
-
-	my %group = (
-		PrefOrder => ['rescan-scheduled','rescan-time', 'rescan-type'],
-		PrefsInTable => 1,
-		GroupHead => Slim::Utils::Strings::string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
-		GroupDesc => Slim::Utils::Strings::string('PLUGIN_RESCAN_TIMER_DESC'),
-		GroupLine => 1,
-		GroupSub => 1,
-		Suppress_PrefSub => 1,
-		Suppress_PrefLine => 1,
-		Suppress_PrefHead => 1
-	);
-	
-	my %prefs = (
-		'rescan-scheduled' => {
-			'validate' => \&Slim::Utils::Validate::trueFalse,
-			'PrefChoose' => Slim::Utils::Strings::string('PLUGIN_RESCAN_TIMER_NAME'),
-			'changeIntro' => Slim::Utils::Strings::string('PLUGIN_RESCAN_TIMER_NAME'),
-			'options' => {
-				'1' => 'ON',
-				'0' => 'OFF',
-			},
-		},
-
-		'rescan-time' => {
-			'validate' => \&Slim::Utils::Validate::acceptAll,
-			'validateArgs' => [0,undef],
-			'PrefChoose' => Slim::Utils::Strings::string('PLUGIN_RESCAN_TIMER_SET'),
-			'changeIntro' => Slim::Utils::Strings::string('PLUGIN_RESCAN_TIMER_SET'),
-
-			'currentValue' => sub {
-				my $client = shift;
-				my $time = Slim::Utils::Prefs::get("rescan-time");
-				my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Input::Time::timeDigits($client,$time);
-				my $timestring = ((defined($p) && $h0 == 0) ? ' ' : $h0) . $h1 . ":" . $m0 . $m1 . " " . (defined($p) ? $p : '');
-				return $timestring;
-			},
-
-			'onChange' => sub {
-				my ($client,$changeref,$paramref,$pageref) = @_;
-				my $time = $changeref->{'rescan-time'}{'new'};
-				if (defined $time) {
-					my $newtime = 0;
-					$time =~ s{
-						^(\s?0?[0-9]|1[0-9]|2[0-4]):([0-5][0-9])\s*(P|PM|A|AM)?$
-					}{
-						if (defined $3) {
-							$newtime = ($1 == 12?0:$1 * 60 * 60) + ($2 * 60) + ($3 =~ /P/?12 * 60 * 60:0);
-						} else {
-							$newtime = ($1 * 60 * 60) + ($2 * 60);
-						}
-					}iegsx;
-					Slim::Utils::Prefs::set('rescan-time',$newtime);
-				}
-			},
-		},
-		
-		'rescan-type' => {
-			'validate' => \&Slim::Utils::Validate::acceptAll,
-			'optionSort' => 'K',
-			'options' => {
-				'1rescan'   => Slim::Utils::Strings::string('SETUP_STANDARDRESCAN'),
-				'2wipedb'   => Slim::Utils::Strings::string('SETUP_WIPEDB'),
-				'3playlist' => Slim::Utils::Strings::string('SETUP_PLAYLISTRESCAN'),
-			},
-			'PrefChoose' => Slim::Utils::Strings::string('PLUGIN_RESCAN_TIMER_TYPE'),
-			'changeIntro' => Slim::Utils::Strings::string('PLUGIN_RESCAN_TIMER_TYPE'),
-		}
-	);
-
-	return (\%group,\%prefs);
-};
 
 sub strings {
 	return q^
@@ -424,5 +351,3 @@ PLUGIN_RESCAN_TIMER_TYPE
 }
 
 1;
-
-

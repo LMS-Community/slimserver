@@ -41,6 +41,15 @@ my %brokenplugins = (
 	'Picks'            => 1,
 	'iTunes'           => 1,
 	'RandomPlay'       => 1,
+	'CLI'              => 1,
+	'RPC'              => 1,
+	'RssNews'          => 1,
+	'Rescan'           => 1,
+	'SavePlaylist'     => 1,
+	'SlimTris'         => 1,
+	'Snow'             => 1,
+	'Visualizer'       => 1,
+	'xPL'              => 1,
 );
 
 my $log = logger('server.plugins');

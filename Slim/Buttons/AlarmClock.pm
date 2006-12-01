@@ -26,6 +26,7 @@ use strict;
 
 use Slim::Player::Playlist;
 use Slim::Buttons::Common;
+use Slim::Utils::DateTime;
 use Slim::Utils::Misc;
 
 use Scalar::Util qw(blessed);
@@ -221,8 +222,7 @@ sub init {
 					$dowString .= sprintf(" (%s)",
 						Slim::Buttons::Input::Time::timeString( 
 							$client,
-							Slim::Buttons::Input::Time::timeDigits(
-								$client,
+							Slim::Utils::DateTime::timeDigits(
 								$client->prefGet('alarmtime', $dayOfWeek)
 							),
 							-1  # hide the cursor

@@ -10,6 +10,7 @@ package Slim::Web::Settings::Player::Alarm;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use Slim::Utils::DateTime;
 use Slim::Utils::Log;
 
 sub name {
@@ -61,25 +62,14 @@ sub handler {
 
 					if ($pref eq 'alarmtime') {
 
-						my $time    = $paramRef->{'alarmtime'.$i};
-						my $newtime = 0;
+						my $newTime = Slim::Utils::DateTime::prettyTimeToSecs($paramRef->{"alarmtime$i"});
 
-						$time =~ s{
-							^(0?[0-9]|1[0-9]|2[0-4]):([0-5][0-9])\s*(P|PM|A|AM)?$
-						}{
-							if (defined $3) {
-								$newtime = ($1 == 12?0:$1 * 60 * 60) + ($2 * 60) + ($3 =~ /P/?12 * 60 * 60:0);
-							} else {
-								$newtime = ($1 * 60 * 60) + ($2 * 60);
-							}
-						}iegsx;
-
-						if ($newtime != $client->prefGet('alarmtime', $i)) {
+						if ($newTime != $client->prefGet('alarmtime', $i)) {
 
 							push @changed, 'alarmtime'.$i;
 						}
 
-						$client->prefSet('alarmtime', $newtime, $i);
+						$client->prefSet('alarmtime', $newTime, $i);
 
 					} else {
 					
@@ -90,7 +80,6 @@ sub handler {
 					}
 				}
 			}
-
 		}
 		
 		$class->_handleChanges($client, \@changed, $paramRef);
@@ -132,24 +121,11 @@ sub handler {
 
 			for my $i (0..7) {
 
-				my $time = $client->prefGet('alarmtime',$i);
+				my $time = Slim::Utils::DateTime::secsToPrettyTime(
+					$client->prefGet('alarmtime', $i)
+				);
 				
-				my ($h0, $h1, $m0, $m1, $p) = Slim::Buttons::Input::Time::timeDigits($client,$time);
-
-				my $timestring = ' ';
-
-				if (!defined $p || $h0 != 0) {
-
-					$timestring = $h0;
-				}
-
-				$timestring .= "$h1:$m0$m1 ";
-
-				if (defined $p) {
-					$timestring .= $p;
-				}
-				
-				${$paramRef->{'prefs'}->{'alarmtime'}}[$i] = $timestring;
+				${$paramRef->{'prefs'}->{'alarmtime'}}[$i] = $time;
 			}
 		}
 	}

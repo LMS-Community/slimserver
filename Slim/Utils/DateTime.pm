@@ -7,8 +7,10 @@ package Slim::Utils::DateTime;
 
 use strict;
 
+use Date::Parse;
 use POSIX qw(strftime);
 
+use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
 
 =head1 NAME 
@@ -114,6 +116,110 @@ sub fracSecToMinSec {
 	$frac = substr($fracrounded, -2, 2);
 									
 	return "$min:$sec.$frac";
+}
+
+=head2 secsToPrettyTime( $seconds )
+
+Turns seconds into HH:MM AM/PM
+
+=cut
+
+sub secsToPrettyTime {
+	my $secs = shift;
+
+	my ($h0, $h1, $m0, $m1, $p) = timeDigits($secs);
+
+	my $string = ' ';
+
+	if (!defined $p || $h0 != 0) {
+
+		$string = $h0;
+	}
+
+	$string .= "$h1:$m0$m1 ";
+
+	if (defined $p) {
+		$string .= $p;
+	}
+
+	return $string;
+}
+
+=head2 prettyTimeToSecs( "HH:MM AM/PM" ) 
+
+Turns a pretty time string into seconds.
+
+=cut
+
+sub prettyTimeToSecs {
+	my $secs = shift;
+
+	my ($mm,$hh) = (strptime($secs))[1,2];
+
+	return ($hh*3600) + ($mm*60);
+}
+
+=head2 timeDigits( $time )
+
+This function converts a unix time value to the individual values for hours, minutes and am/pm
+
+Takes as arguments, the $client object/structure and a reference to the scalar time value.
+
+=cut
+
+sub timeDigits {
+	my $timeRef = shift;
+	my $time;
+
+	if (ref($timeRef))  {
+		$time = $$timeRef || 0;
+
+	} else {
+		$time = $timeRef || 0;
+	}
+
+	my $h = int($time / (60*60));
+	my $m = int(($time - $h * 60 * 60) / 60);
+	my $p = undef;
+
+	if (Slim::Utils::Prefs::get('timeFormat') =~ /%p/) {
+		$p = 'AM';
+
+		if ($h > 11) { $h -= 12; $p = 'PM'; }
+
+		if ($h == 0) { $h = 12; }
+	} #else { $p = " "; };
+
+	if ($h < 10) { $h = '0' . $h; }
+
+	if ($m < 10) { $m = '0' . $m; }
+
+	my $h0 = substr($h, 0, 1);
+	my $h1 = substr($h, 1, 1);
+	my $m0 = substr($m, 0, 1);
+	my $m1 = substr($m, 1, 1);
+
+	return ($h0, $h1, $m0, $m1, $p);
+}
+
+=head2 timeDigitsToTime( $h0, $h1, $m0, $m1, $p)
+
+This function converts discreet time digits into a scalar time value.  It is the reverse of timeDigits()
+
+Takes as arguments, the hour ($h0, $h1), minute ($m0, $m1) and whether time is am or pm if applicable ($p)
+
+=cut
+
+sub timeDigitsToTime {
+	my ($h0, $h1, $m0, $m1, $p) = @_;
+
+	$p ||= 0;
+	
+	my $time = (((($p * 12)            # pm adds 12 hours
+	         + ($h0 * 10) + $h1) * 60) # convert hours to minutes
+	         + ($m0 * 10) + $m1) * 60; # then  minutes to seconds
+
+	return $time;
 }
 
 =head2 timeFormats()

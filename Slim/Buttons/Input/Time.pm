@@ -41,8 +41,9 @@ and typicall formatting of time strings. Callers include Sli::Buttons::AlarmCLoc
 use strict;
 
 use Slim::Buttons::Common;
-use Slim::Utils::Misc;
 use Slim::Display::Display;
+use Slim::Utils::DateTime;
+use Slim::Utils::Misc;
 
 Slim::Buttons::Common::addMode('INPUT.Time',getFunctions(),\&setMode);
 
@@ -66,7 +67,7 @@ our %functions = (
 	,'knob' => sub {
 			my ($client,$funct,$functarg) = @_;
 
-			my @timedigits = timeDigits($client, $client->modeParam('valueRef'));
+			my @timedigits = Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef'));
 
 			scroll($client, $client->knobPos() - $timedigits[$client->modeParam('cursorPos')]);
 		}
@@ -122,7 +123,7 @@ our %functions = (
 			}
 			
 			my $valueRef = $client->modeParam('valueRef');
-			my ($h0, $h1, $m0, $m1, $p) = timeDigits($client,$valueRef);
+			my ($h0, $h1, $m0, $m1, $p) = Slim::Utils::DateTime::timeDigits($valueRef);
 
 			$p = (defined $p && $p eq 'PM') ? 1 : 0;
 			
@@ -191,7 +192,7 @@ our %functions = (
 				}
 			}
 			
-			$$valueRef = timeDigitsToTime($h0, $h1, $m0, $m1, $p);
+			$$valueRef = Slim::Utils::DateTime::timeDigitsToTime($h0, $h1, $m0, $m1, $p);
 	
 			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + Slim::Utils::Prefs::get("displaytexttimeout"), \&nextChar);
 			
@@ -244,9 +245,15 @@ sub lines {
 		$line1 = $client->string($line1);
 	}
 	
-	my $timestring = timeString($client,timeDigits($client,$client->modeParam('valueRef')));
+	my $timestring = timeString($client, 
+		Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef'))
+	);
 	
-	if (!defined($timestring)) { return ( {} ); }
+	if (!defined($timestring)) {
+
+		return {};
+	}
+
 	$line2 = $timestring;
 	
 	return {
@@ -271,7 +278,7 @@ sub setMode {
 
 	# The knob on Transporter needs to be prepopulated with list lengths
 	# for proper scrolling.
-	my @timedigits = timeDigits($client, $client->modeParam('valueRef'));
+	my @timedigits = Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef'));
 
 	prepKnob($client, \@timedigits);
 }
@@ -332,71 +339,6 @@ sub init {
 
 	return 1;
 }
-
-=head2 timeDigits( $client, $timeRef)
-
-This function converts a unix time value to the individual values for hours, minutes and am/pm
-
-Takes as arguments, the $client object/structure and a reference to the scalar time value.
-
-=cut
-
-sub timeDigits {
-	my $client = shift;
-	my $timeRef = shift;
-	my $time;
-
-	if (ref($timeRef))  {
-		$time = $$timeRef || 0;
-
-	} else {
-		$time = $timeRef || 0;
-	}
-
-	my $h = int($time / (60*60));
-	my $m = int(($time - $h * 60 * 60) / 60);
-	my $p = undef;
-
-	if (Slim::Utils::Prefs::get('timeFormat') =~ /%p/) {
-		$p = 'AM';
-
-		if ($h > 11) { $h -= 12; $p = 'PM'; }
-
-		if ($h == 0) { $h = 12; }
-	} #else { $p = " "; };
-
-	if ($h < 10) { $h = '0' . $h; }
-
-	if ($m < 10) { $m = '0' . $m; }
-
-	my $h0 = substr($h, 0, 1);
-	my $h1 = substr($h, 1, 1);
-	my $m0 = substr($m, 0, 1);
-	my $m1 = substr($m, 1, 1);
-
-	return ($h0, $h1, $m0, $m1, $p);
-}
-
-=head2 timeDigitsToTime( $h0, $h1, $m0, $m1, $p)
-
-This function converts discreet time digits into a scalar time value.  It is the reverse of timeDigits()
-
-Takes as arguments, the hour ($h0, $h1), minute ($m0, $m1) and whether time is am or pm if applicable ($p)
-
-=cut
-
-sub timeDigitsToTime {
-	my ($h0, $h1, $m0, $m1, $p) = @_;
-
-	$p ||= 0;
-	
-	my $time = (((($p * 12)            # pm adds 12 hours
-	         + ($h0 * 10) + $h1) * 60) # convert hours to minutes
-	         + ($m0 * 10) + $m1) * 60; # then  minutes to seconds
-
-	return $time;
-}
-
 
 =head2 timeString( $client, $h0, $h1, $m0, $m1, $p, $c)
 
@@ -469,7 +411,7 @@ sub moveCursor {
 	$client->modeParam('cursorPos',$cursorPos);
 	$client->update();
 	
-	prepKnob($client, [ timeDigits($client,$client->modeParam('valueRef')) ]);
+	prepKnob($client, [ Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef')) ]);
 }
 
 sub scroll {
@@ -487,7 +429,8 @@ sub scroll {
 		$onChange->(@args);
 	}
 
-	my @timedigits = timeDigits($client, $client->modeParam('valueRef'));
+	my @timedigits = Slim::Utils::DateTime::timeDigits($client->modeParam('valueRef'));
+
 	$client->modeParam('listIndex', $timedigits[$client->modeParam('cursorPos')]);
 	$client->updateKnob();
 
@@ -556,10 +499,11 @@ sub scrollTime {
 		}
 
 	} else {
+
 		$valueRef = $client->modeParam('valueRef');
 	}
 	
-	my ($h0, $h1, $m0, $m1, $p) = timeDigits($client,$valueRef);
+	my ($h0, $h1, $m0, $m1, $p) = Slim::Utils::DateTime::timeDigits($valueRef);
 
 	my $ampm = (Slim::Utils::Prefs::get('timeFormat') =~ /%p/);
 	
@@ -612,7 +556,7 @@ sub scrollTime {
 		}
 	}
 	
-	$$valueRef = timeDigitsToTime($h0, $h1, $m0, $m1, $p);
+	$$valueRef = Slim::Utils::DateTime::timeDigitsToTime($h0, $h1, $m0, $m1, $p);
 	
 	return $$valueRef;
 }

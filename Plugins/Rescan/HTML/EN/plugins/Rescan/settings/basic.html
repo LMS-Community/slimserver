@@ -1,0 +1,46 @@
+[% PROCESS settings/header.html %]
+
+	<div class="settingSection">
+		<div class="groupHead">[% "PLUGIN_RESCAN_MUSIC_LIBRARY" | string | upper %]</div>
+		<div class="groupDesc">[% "PLUGIN_RESCAN_TIMER_DESC" | string %]</div>
+
+		<table border="0" cellspacing="7" cellpaddding="7">
+
+		<tr>
+			<td><label for="rescan-scheduled">[% "PLUGIN_RESCAN_TIMER_NAME" | string %]</label></td>
+			<td>
+				<select name="rescan-scheduled">
+
+				<option value="1" [% IF prefs.rescanScheduled %]selected[% END %]>[% "ON" | string %]</option>
+				<option value="0" [% IF NOT prefs.rescanScheduled %]selected[% END %]>[% "OFF" | string %]</option>
+
+				</select>
+			</td>
+
+		</tr>
+		<tr>
+			<td><label for="rescan-time">[% "PLUGIN_RESCAN_TIMER_SET" | string %]</label></td>
+			<td>
+				<input type="text" class="stdedit" name="rescan-time" id="rescan-time" value="[% prefs.rescanTime %]" size="10" />
+			</td>
+
+		</tr>
+		<tr>
+
+			<td><label for="rescan-type">[% "PLUGIN_RESCAN_TIMER_TYPE" | string %]</label></td>
+			<td>
+				<select name="rescan-type">
+
+				<option value="1rescan" [% IF prefs.rescanType == "1rescan" %]selected[% END %]>[% "SETUP_STANDARDRESCAN" | string %]</option>
+				<option value="2wipedb" [% IF prefs.rescanType == "2wipedb" %]selected[% END %]>[% "SETUP_WIPEDB" | string %]</option>
+				<option value="3playlist" [% IF prefs.rescanType == "3playlist" %]selected[% END %]>[% "SETUP_PLAYLISTRESCAN" | string %]</option>
+
+				</select>
+			</td>
+
+		</tr>
+
+		</table>
+	</div>
+
+[% PROCESS settings/footer.html %]
