@@ -168,7 +168,7 @@ sub initPlugin {
 		'use'       => Slim::Utils::Prefs::get($class->prefName),
 	});
 
-	addGroups();
+	Slim::Web::Setup::addCategory('MOODLOGIC', setupCategory());
 
 	Plugins::MoodLogic::InstantMix::init();
 	Plugins::MoodLogic::MoodWheel::init();
@@ -179,16 +179,6 @@ sub initPlugin {
 	checker($initialized);
 
 	return $initialized;
-}
-
-sub addGroups {
-	my ($groupRef,$prefRef) = setupUse();
-
-	Slim::Web::Setup::addGroup('BASIC_SERVER_SETTINGS', 'moodlogic', $groupRef, undef, $prefRef);
-
-	Slim::Web::Setup::addChildren('BASIC_SERVER_SETTINGS', 'MOODLOGIC');
-
-	Slim::Web::Setup::addCategory('MOODLOGIC', setupCategory());
 }
 
 sub checker {
@@ -414,43 +404,6 @@ sub getMix {
 	}
 
 	return \@instant_mix;
-}
-
-sub setupUse {
-	my $client = shift;
-
-	my %setupGroup = (
-		'PrefOrder'         => ['moodlogic'],
-		'Suppress_PrefLine' => 1,
-		'Suppress_PrefSub'  => 1,
-		'GroupLine'         => 1,
-		'GroupSub'          => 1,
-	);
-
-	my %setupPrefs = (
-
-		'moodlogic' => {
-			'validate'    => \&Slim::Utils::Validate::trueFalse,
-			'changeIntro' => "",
-			'options' => {
-				'1' => string('USE_MOODLOGIC'),
-				'0' => string('DONT_USE_MOODLOGIC'),
-			},
-			'onChange' => sub {
-				my ($client, $changeref, $paramref, $pageref) = @_;
-
-				for my $client (Slim::Player::Client::clients()) {
-					Slim::Buttons::Home::updateMenu($client);
-				}
-
-				Slim::Music::Import->useImporter('MOODLOGIC', $changeref->{'moodlogic'}{'new'});
-			},
-			'optionSort'    => 'KR',
-			'inputTemplate' => 'setup_input_radio.html',
-		}
-	);
-
-	return (\%setupGroup,\%setupPrefs);
 }
 
 sub setupCategory {
