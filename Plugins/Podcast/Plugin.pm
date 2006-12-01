@@ -14,6 +14,8 @@ use constant FEEDS_VERSION => 1;
 use HTML::Entities;
 use XML::Simple;
 
+use Plugins::Podcast::Settings;
+
 use Slim::Formats::XML;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
@@ -55,6 +57,8 @@ sub initPlugin {
 
 	$log->info("Initializing.");
 
+	Plugins::Podcast::Settings->new;
+
 	Slim::Buttons::Common::addMode('PLUGIN.Podcast', getFunctions(), \&setMode);
 
 	my @feedURLPrefs = Slim::Utils::Prefs::getArray("plugin_podcast_feeds");
@@ -79,22 +83,22 @@ sub initPlugin {
 
 	# No prefs set or we've had a version change and they weren't modified, 
 	# so we'll use the defaults
-	if (scalar(@feedURLPrefs) == 0 ||
-		(!$feedsModified && (!$version  || $version != FEEDS_VERSION))) {
+	if (scalar(@feedURLPrefs) == 0 || (!$feedsModified && (!$version  || $version != FEEDS_VERSION))) {
+
 		# use defaults
 		# set the prefs so the web interface will work.
 		revertToDefaults();
+
 	} else {
+
 		# use prefs
-		my $i = 0;
-		while ($i < scalar(@feedNamePrefs)) {
+		for (my $i = 0; $i < scalar(@feedNamePrefs); $i++) {
 
 			push @feeds, {
 				name  => $feedNamePrefs[$i],
 				value => $feedURLPrefs[$i],
 				type  => 'link',
 			};
-			$i++;
 		}
 	}
 
@@ -110,11 +114,6 @@ sub initPlugin {
 		$log->debug('');
 	}
 
-	# feed_names should reflect current names
-	%feed_names = ();
-
-	map { $feed_names{$_->{'value'} } = $_->{'name'}} @feeds;
-	
 	updateOPMLCache( \@feeds );
 }
 
@@ -128,11 +127,6 @@ sub revertToDefaults {
 	Slim::Utils::Prefs::set('plugin_podcast_names', \@names);
 	Slim::Utils::Prefs::set('plugin_podcast_feeds_version', FEEDS_VERSION);
 
-	# feed_names should reflect current names
-	%feed_names = ();
-
-	map { $feed_names{$_->{'value'}} = $_->{'name'} } @feeds;
-	
 	updateOPMLCache( \@feeds );
 }
 
@@ -245,8 +239,14 @@ sub cliRadiosQuery {
 # Update the hashref of podcast feeds for use with the web UI
 sub updateOPMLCache {
 	my $feeds = shift;
+
+	# feed_names should reflect current names
+	%feed_names = ();
+
+	map { $feed_names{$_->{'value'}} = $_->{'name'} } @feeds;
 	
 	my $outline = [];
+
 	for my $item ( @{$feeds} ) {
 		push @{$outline}, {
 			'name'  => $item->{'name'},
@@ -268,62 +268,6 @@ sub updateOPMLCache {
 	$cache->set( 'podcasts_opml', $opml, '10days' );
 }
 
-# for configuring via web interface
-sub setupGroup {
-	my %Group = (
-		PrefOrder => [
-			'plugin_podcast_reset',
-			'plugin_podcast_feeds',
-		],
-		GroupHead => 'PLUGIN_PODCAST',
-		GroupDesc => 'PODCAST_GROUP_DESC',
-		GroupLine => 1,
-		GroupSub => 1,
-		Suppress_PrefSub  => 1,
-		Suppress_PrefLine => 1,
-	);
-
-	my %Prefs = (
-		plugin_podcast_reset => {
-			'onChange' => sub {
-				Slim::Utils::Prefs::set("plugin_podcast_feeds_modified", undef);
-				Slim::Utils::Prefs::set("plugin_podcast_feeds_version", undef);
-				revertToDefaults();
-			},
-			'inputTemplate' => 'setup_input_submit.html',
-			'changeIntro' => 'PODCAST_RESETTING',
-			'ChangeButton' => 'PODCAST_RESET_BUTTON',
-			'dontSet' => 1,
-			'changeMsg' => '',
-		},
-
-		plugin_podcast_feeds => {
-			'isArray' => 1,
-			'arrayAddExtra' => 1,
-			'arrayDeleteNull' => 1,
-			'arrayDeleteValue' => '',
-			'arrayBasicValue' => 0,
-			'PrefSize' => 'large',
-			'inputTemplate' => 'setup_input_array_txt.html',
-			'PrefInTable' => 1,
-			'showTextExtValue' => 1,
-			'externalValue' => sub {
-				my ($client, $value, $key) = @_;
-
-				if ($key =~ /^(\D*)(\d+)$/ && ($2 < scalar(@feeds))) {
-					return $feeds[$2]->{'name'};
-				}
-
-				return '';
-			},
-			'onChange' => \&updateFeedNames,
-			'changeMsg' => 'PODCAST_FEEDS_CHANGE',
-		},
-	);
-
-	return (\%Group, \%Prefs);
-}
-
 sub updateFeedNames {
 	my @feedURLPrefs  = Slim::Utils::Prefs::getArray("plugin_podcast_feeds");
 	my @feedNamePrefs = ();
@@ -336,80 +280,73 @@ sub updateFeedNames {
 
 	# case 1: we're reverting to default
 	if (scalar(@feedURLPrefs) == 0) {
+
 		revertToDefaults();
-	} else {
-		# case 2: url list edited
+		return;
+	}
 
-		my $i = 0;
-		while ($i < scalar(@feedURLPrefs)) {
+	# case 2: url list edited
+	my $i = 0;
+	while ($i < scalar(@feedURLPrefs)) {
 
-			my $url = $feedURLPrefs[$i];
-			my $name = $feed_names{$url};
+		my $url = $feedURLPrefs[$i];
+		my $name = $feed_names{$url};
 
-			if ($name && $name !~ /^http\:/) {
+		if ($name && $name !~ /^http\:/) {
 
-				# no change
-				$feedNamePrefs[$i] = $name;
+			# no change
+			$feedNamePrefs[$i] = $name;
 
-			} elsif ($url =~ /^http\:/) {
+		} elsif ($url =~ /^http\:/) {
 
-				# does a synchronous get
-				my $xml = Slim::Formats::XML->getFeedSync($url);
+			# does a synchronous get
+			my $xml = Slim::Formats::XML->getFeedSync($url);
 
-				if ($xml && exists $xml->{'channel'}->{'title'}) {
+			if ($xml && exists $xml->{'channel'}->{'title'}) {
 
-					# here for podcasts and RSS
-					$feedNamePrefs[$i] = Slim::Formats::XML::unescapeAndTrim($xml->{'channel'}->{'title'});
+				# here for podcasts and RSS
+				$feedNamePrefs[$i] = Slim::Formats::XML::unescapeAndTrim($xml->{'channel'}->{'title'});
 
-				} elsif ($xml && exists $xml->{'head'}->{'title'}) {
+			} elsif ($xml && exists $xml->{'head'}->{'title'}) {
 
-					# here for OPML
-					$feedNamePrefs[$i] = Slim::Formats::XML::unescapeAndTrim($xml->{'head'}->{'title'});
-
-				} else {
-					# use url as title since we have nothing else
-					$feedNamePrefs[$i] = $url;
-				}
+				# here for OPML
+				$feedNamePrefs[$i] = Slim::Formats::XML::unescapeAndTrim($xml->{'head'}->{'title'});
 
 			} else {
 				# use url as title since we have nothing else
 				$feedNamePrefs[$i] = $url;
 			}
 
-			$i++;
+		} else {
+			# use url as title since we have nothing else
+			$feedNamePrefs[$i] = $url;
 		}
 
-		# if names array contains more than urls, delete the extras
-		while ($feedNamePrefs[$i]) {
-			delete $feedNamePrefs[$i];
-			$i++;
-		}
-
-		# save updated names to prefs
-		Slim::Utils::Prefs::set('plugin_podcast_names', \@feedNamePrefs);
-
-		# runtime list must reflect changes
-		@feeds = ();
-		$i = 0;
-
-		while ($i < scalar(@feedNamePrefs)) {
-
-			push @feeds, {
-				name => $feedNamePrefs[$i],
-				value => $feedURLPrefs[$i]
-			};
-
-			$i++;
-		}
-
-		# feed_names should reflect current names
-		%feed_names = ();
-
-		map { $feed_names{$_->{'value'}} = $_->{'name'} } @feeds;
-		
-		updateOPMLCache( \@feeds );
+		$i++;
 	}
 
+	# if names array contains more than urls, delete the extras
+	while ($feedNamePrefs[$i]) {
+		delete $feedNamePrefs[$i];
+		$i++;
+	}
+
+	# save updated names to prefs
+	Slim::Utils::Prefs::set('plugin_podcast_names', \@feedNamePrefs);
+
+	# runtime list must reflect changes
+	@feeds = ();
+
+	for (my $i = 0; $i < scalar(@feedNamePrefs); $i++) {
+
+		push @feeds, {
+			name  => $feedNamePrefs[$i],
+			value => $feedURLPrefs[$i],
+			type  => 'link',
+		};
+	}
+
+	updateOPMLCache( \@feeds );
 }
 
 sub strings { return q!
@@ -461,6 +398,13 @@ SETUP_PLUGIN_PODCAST_RESET
 	ES	Reinicializar Podcasts por defecto
 	FR	Rétablir la liste des podcasts par défaut
 	NL	Herstel default podcasts
+
+SETUP_PLUGIN_PODCAST_ADD_FEED
+	EN	Add a new feed:
+
+
+SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
+	EN	Existing feeds:
 !};
 
 1;

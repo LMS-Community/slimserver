@@ -395,7 +395,22 @@ sub processHTTP {
 						$value = Slim::Utils::Unicode::utf8encode_locale($value);
 					}
 
-					$params->{$name} = $value;
+					# Ick. It sure would be nice to use
+					# CGI or CGI::Lite
+					if (ref($params->{$name}) eq 'ARRAY') {
+
+						push @{$params->{$name}}, $value;
+
+					} elsif (exists $params->{$name}) {
+
+						my $old = delete $params->{$name};
+
+						@{$params->{$name}} = ($old, $value);
+
+					} else {
+
+						$params->{$name} = $value;
+					}
 
 					$log->info("HTTP parameter $name = $value");
 
