@@ -713,7 +713,9 @@ sub nowPlayingModeLines {
 		my $url = Slim::Player::Playlist::url($client);
 		if ( Slim::Music::Info::isRemoteURL($url) ) {
 			if ( my $bitrate = Slim::Music::Info::getBitrate($url) ) {
-				$songtime  = ' ' . sprintf( "%.1f", $client->bufferFullness() / ( int($bitrate / 8) ) );
+				my $decodeBuffer = $client->bufferFullness() / ( int($bitrate / 8) );
+				my $outputBuffer = $client->outputBufferFullness() / (44100 * 8);
+				$songtime  = ' ' . sprintf "%.1f / %.1f", $decodeBuffer, $outputBuffer;
 				$songtime .= ' ' . $client->string('SECONDS');
 			}
 		}
