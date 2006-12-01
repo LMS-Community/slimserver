@@ -400,10 +400,11 @@ SETUP_PLUGIN_PODCAST_RESET
 	NL	Herstel default podcasts
 
 SETUP_PLUGIN_PODCAST_ADD_FEED
+	DE	Neuen Feed hinzufügen:
 	EN	Add a new feed:
 
-
 SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
+	DE	Bestehende Feeds:
 	EN	Existing feeds:
 !};
 
