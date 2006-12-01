@@ -1154,7 +1154,7 @@ sub cli_stationsQuery_cb {
 	my $end     = scalar @$slist - 1;
 	my $valid   = 1;
 
-	print Data::Dumper::Dumper($slist);
+	#Data::Dump::dump($slist);
 
 	if ($API->getStationSource() eq 'presets') {
 

@@ -29,6 +29,7 @@ use Slim::Control::Request;
 # Need this to include the other modules now that we split up Live365.pm
 use Plugins::Live365::ProtocolHandler;
 use Plugins::Live365::Live365API;
+use Plugins::Live365::Settings;
 use Plugins::Live365::Web;
 
 use constant ROWS_TO_RETRIEVE => 50;
@@ -72,64 +73,6 @@ sub addMenu {
 
 sub getDisplayName {
 	return 'PLUGIN_LIVE365_MODULE_NAME';
-}
-
-sub setupGroup {
-	my %Group = (
-		PrefOrder => [
-			'plugin_live365_username',
-			'plugin_live365_password',
-			'plugin_live365_sort_order',
-			'plugin_live365_web_show_details'
-		],
-		GroupHead => string( 'SETUP_GROUP_PLUGIN_LIVE365' ),
-		GroupDesc => string( 'SETUP_GROUP_PLUGIN_LIVE365_DESC' ),
-		GroupLine => 1,
-		GroupSub  => 1,
-		Suppress_PrefSub  => 1,
-		Suppress_PrefLine => 1
-	);
-
-	my %sort_options = (
-		'T:A' => string( 'SETUP_PLUGIN_LIVE365_SORT_TITLE' ),
-		'B:D' => string( 'SETUP_PLUGIN_LIVE365_SORT_BPS' ),
-		'R:D' => string( 'SETUP_PLUGIN_LIVE365_SORT_RATING' ),
-		'L:D' => string( 'SETUP_PLUGIN_LIVE365_SORT_LISTENERS' ),
-	);
-
-	my %Prefs = (
-		plugin_live365_username => {
-		},
-
-		plugin_live365_password => { 
-
-			'onChange' => sub {
-				my $encoded = pack( 'u', $_[1]->{plugin_live365_password}->{new} );
-				chomp $encoded;
-				Slim::Utils::Prefs::set( 'plugin_live365_password', $encoded );
-			},
-
-			'inputTemplate' => 'setup_input_passwd.html',
-			'changeMsg' => string('SETUP_PLUGIN_LIVE365_PASSWORD_CHANGED'),
-		},
-
-		plugin_live365_sort_order => {
-			options => \%sort_options
-		},
-
-		plugin_live365_web_show_details => {
-
-			validate => \&Slim::Utils::Validate::trueFalse,
-			options  => {
-				1 => string('ON'),
-				0 => string('OFF')
-			},
-
-			'PrefChoose' => string('SETUP_PLUGIN_LIVE365_WEB_SHOW_DETAILS')
-		}
-	);
-
-	return (\%Group, \%Prefs);
 }
 
 sub playOrAddCurrentStation {
@@ -975,6 +918,8 @@ sub initPlugin {
 	$log->info("Initializing.");
 
 	Slim::Player::ProtocolHandlers->registerHandler("live365", "Plugins::Live365::ProtocolHandler");
+
+	Plugins::Live365::Settings->new;
 
 	Slim::Buttons::Common::addMode( 'searchMode',      \%searchModeFunctions,  \&setSearchMode,  \&noSearchMode );
 	Slim::Buttons::Common::addMode( 'genreMode',       \%genreModeFunctions,   \&setGenreMode,   \&noGenreMode );

@@ -1,0 +1,62 @@
+[% PROCESS settings/header.html %]
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_PLUGIN_LIVE365_USERNAME" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_PLUGIN_LIVE365_USERNAME_DESC" | string %]</div>
+
+		<input type="text" class="stdedit" name="plugin_live365_username" id="plugin_live365_username" value="[% prefs.plugin_live365_username %]" size="40">
+	</div>
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_PLUGIN_LIVE365_PASSWORD" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_PLUGIN_LIVE365_PASSWORD_DESC" | string %]</div>
+
+		<input type="password" class="stdedit" name="plugin_live365_password" id="plugin_live365_password" value="[% prefs.plugin_live365_password %]" size="40">
+	</div>
+
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_PLUGIN_LIVE365_SORT_ORDER" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_PLUGIN_LIVE365_SORT_ORDER_DESC" | string %]</div>
+
+		<select name="plugin_live365_sort_order">
+
+			<option value="T:A" [% IF prefs.plugin_live365_sort_order == "T:A" %]selected[% END %]>
+				[% "SETUP_PLUGIN_LIVE365_SORT_TITLE" | string %]
+			</option>
+
+			<option value="B:D" [% IF prefs.plugin_live365_sort_order == "T:A" %]selected[% END %]>
+				[% "SETUP_PLUGIN_LIVE365_SORT_BPS" | string %]
+			</option>
+
+			<option value="R:D" [% IF prefs.plugin_live365_sort_order == "T:A" %]selected[% END %]>
+				[% "SETUP_PLUGIN_LIVE365_SORT_RATING" | string %]
+			</option>
+
+			<option value="L:D" [% IF prefs.plugin_live365_sort_order == "T:A" %]selected[% END %]>
+				[% "SETUP_PLUGIN_LIVE365_SORT_LISTENERS" | string %]
+			</option>
+
+		</select>
+	</div>
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_PLUGIN_LIVE365_WEB_SHOW_DETAILS" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_PLUGIN_LIVE365_WEB_SHOW_DETAILS_DESC" | string %]</div>
+
+		[% "SETUP_PLUGIN_LIVE365_WEB_SHOW_DETAILS" | string %]:&nbsp;	
+
+		<select name="plugin_live365_web_show_details">
+
+			<option value="1" [% IF prefs.plugin_live365_web_show_details == 1 %]selected[% END %]>
+				[% "ON" | string %]
+			</option>
+
+			<option value="0" [% IF prefs.plugin_live365_web_show_details == 0 %]selected[% END %]>
+				[% "OFF" | string %]
+			</option>
+
+		</select>
+	</div>
+
+[% PROCESS settings/footer.html %]
