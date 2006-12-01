@@ -1,0 +1,135 @@
+[% PROCESS settings/header.html %]
+
+	<div class="settingSection">
+		<div class="prefHead">[% "MUSICMAGIC" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MUSICMAGIC_DESC" | string %]</div>
+
+		<input type="checkbox" [% IF prefs.musicmagic %]checked [% END %] class="stdedit" name="musicmagic" id="musicmagic" />
+
+		<!--
+		<option [% IF NOT prefs.musicmagic %]selected [% END %]value="0">[% 'DONT_USE_MUSICMAGIC' | getstring %]</option>
+		<option [% IF prefs.musicmagic %]selected [% END %]value="1">[% 'USE_MUSICMAGIC' | getstring %]</option>
+		-->
+	</div>
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_MMMPLAYERSETTINGS" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MMMPLAYERSETTINGS_DESC" | string %]</div>
+
+		<select class="stdedit" name="MMMPlayerSettings" id="MMMPlayerSettings">
+
+			<option [% IF NOT MMMPlayerSettings %]selected [% END %]value="0">[% 'NO' | getstring %]</option>
+			<option [% IF MMMPlayerSettings %]selected [% END %]value="1">[% 'YES' | getstring %]</option>
+		
+		</select>
+
+	</div>
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_MMMSIZE" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MMMSIZE_DESC" | string %]</div>
+
+		<input type="text" class="stdedit" name="MMMSize" id="MMMSize" value="[% prefs.MMMSize %]" size="5">
+	</div>
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_MMMMIXTYPE" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MMMMIXTYPE_DESC" | string %]</div>
+
+		<select class="stdedit" name="MMMMixType" id="MMMMixType">
+
+			<option [% IF MMMMixType == prefs.MMMMixType %]selected [% END %]value="0">[% 'MMMMIXTYPE_TRACKS' | getstring %]</option>
+			<option [% IF MMMMixType == prefs.MMMMixType %]selected [% END %]value="1">[% 'MMMMIXTYPE_MIN' | getstring %]</option>
+			<option [% IF MMMMixType == prefs.MMMMixType %]selected [% END %]value="2">[% 'MMMMIXTYPE_MBYTES' | getstring %]</option>
+		
+		</select>
+
+	</div>
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_MMMSTYLE" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MMMSTYLE_DESC" | string %]</div>
+
+		<input type="text" class="stdedit" name="MMMStyle" id="MMMStyle" value="[% prefs.MMMStyle %]" size="5">
+	</div>
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_MMMVARIETY" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MMMVARIETY_DESC" | string %]</div>
+
+		<input type="text" class="stdedit" name="MMMVariety" id="MMMVariety" value="[% prefs.MMMVariety %]" size="5">
+	</div>
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_MMMMIXGENRE" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MMMMIXGENRE_DESC" | string %]</div>
+
+		<select class="stdedit" name="MMMMixGenre" id="MMMMixGenre">
+
+			<option [% IF NOT MMMMixGenre %]selected [% END %]value="0">[% 'NO' | getstring %]</option>
+			<option [% IF MMMMixGenre %]selected [% END %]value="1">[% 'YES' | getstring %]</option>
+		
+		</select>
+	</div>
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_MMMREJECTTYPE" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MMMREJECTTYPE_DESC" | string %]</div>
+
+		<select class="stdedit" name="MMMRejectType" id="MMMRejectType">
+
+			<option [% IF MMMRejectType == prefs.MMMRejectType %]selected [% END %]value="0">[% 'MMMMIXTYPE_TRACKS' | getstring %]</option>
+			<option [% IF MMMRejectType == prefs.MMMRejectType %]selected [% END %]value="1">[% 'MMMMIXTYPE_MIN' | getstring %]</option>
+			<option [% IF MMMRejectType == prefs.MMMRejectType %]selected [% END %]value="2">[% 'MMMMIXTYPE_MBYTES' | getstring %]</option>
+		
+		</select>
+
+	</div>
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_MMMREJECTSIZE" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MMMREJECTSIZE_DESC" | string %]</div>
+
+		<input type="text" class="stdedit" name="MMMRejectSize" id="MMMRejectSize" value="[% prefs.MMMRejectSize %]" size="5">
+	</div>
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_MMMFILTER" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MMMFILTER_DESC" | string %]</div>
+
+		<select class="stdedit" name="MMMFilter" id="MMMFilter">
+
+		[% FOREACH option = filters.keys %]
+
+			<option [% IF MMMFilter == option %]selected [% END %]value="[% option %]">[% filters.$option %]</option>
+
+		[%- END -%]
+		
+		</select>
+
+	</div>
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_MUSICMAGICSCANINTERVAL" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MUSICMAGICSCANINTERVAL_DESC" | string %]</div>
+
+		<input type="text" class="stdedit" name="musicmagicscaninterval" id="musicmagicscaninterval" value="[% prefs.musicmagicscaninterval %]" size="5">
+	</div>
+
+	<div class="settingSection">
+		<div class="prefHead">[% "SETUP_MMSPORT" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MMSPORT_DESC" | string %]</div>
+
+		<input type="text" class="stdedit" name="MMSport" id="MMSport" value="[% prefs.MMSport %]" size="5">
+	</div>
+
+	<div class="settingSection">
+		<div class="groupHead">[% "SETUP_MUSICMAGICPLAYLISTFORMAT" | string | upper %]</div>
+		<div class="groupDesc">[% "SETUP_MUSICMAGICPLAYLISTFORMAT_DESC" | string %]</div>
+
+		[% "SETUP_ITUNESPLAYLISTPREFIX_CHOOSE" | string %]<input type="text" class="stdedit" name="MusicMagicplaylistprefix" id="MusicMagicplaylistprefix" value="[% prefs.MusicMagicplaylistprefix %]" size="40">
+		<br>
+		[% "SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE" | string %]<input type="text" class="stdedit" name="MusicMagicplaylistsuffix" id="MusicMagicplaylistsuffix" value="[% prefs.MusicMagicplaylistsuffix %]" size="40">
+	</div>
+
+[% PROCESS settings/footer.html %]

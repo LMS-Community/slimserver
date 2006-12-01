@@ -13,8 +13,10 @@ use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings;
 
-use Plugins::MusicMagic::Common;
 use Plugins::MusicMagic::Settings;
+
+use Plugins::MusicMagic::Common;
+use Plugins::MusicMagic::PlayerSettings;
 
 my $initialized = 0;
 my $MMSHost;
@@ -160,7 +162,7 @@ sub initPlugin {
 
 		$http->close;
 
-		Plugins::MusicMagic::Settings::init();
+		Plugins::MusicMagic::PlayerSettings::init();
 
 		# Note: Check version restrictions if any
 		$initialized = $content;
@@ -177,7 +179,7 @@ sub initPlugin {
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
 
-		addGroups();
+		Plugins::MusicMagic::Settings->new;
 
 		if (scalar @{grabMoods()}) {
 
@@ -245,18 +247,6 @@ sub playMix {
 	}, { 'duration' => 2});
 
 	$client->execute(["playlist", $playAddInsert, "listref", $client->modeParam('listRef')]);
-}
-
-sub addGroups {
-	my $category = setupCategory();
-
-	Slim::Web::Setup::addCategory('MUSICMAGIC',$category);
-
-	my ($groupRef, $prefRef) = setupUse();
-
-	Slim::Web::Setup::addGroup('BASIC_SERVER_SETTINGS', 'musicmagic', $groupRef, undef, $prefRef);
-
-	Slim::Web::Setup::addChildren('BASIC_SERVER_SETTINGS', 'MUSICMAGIC');
 }
 
 sub isMusicLibraryFileChanged {
@@ -339,65 +329,6 @@ sub checker {
 
 	# Call ourselves again after 120 seconds
 	Slim::Utils::Timers::setTimer(0, (Time::HiRes::time() + 120), \&checker);
-}
-
-sub grabFilters {
-	my @filters    = ();
-	my %filterHash = ();
-	
-	if (!$initialized) {
-		return;
-	}
-	
-	if (grep {$_ eq 'MusicMagic::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-
-		$log->debug("Don't get filters list, it's disabled");
-
-		return %filterHash;
-	}
-	
-	$MMSport = Slim::Utils::Prefs::get('MMSport') unless $MMSport;
-	$MMSHost = Slim::Utils::Prefs::get('MMSHost') unless $MMSHost;
-
-	$log->debug("Get filters list");
-
-	my $http = Slim::Player::Protocols::HTTP->new({
-		'url'    => "http://$MMSHost:$MMSport/api/filters",
-		'create' => 0,
-	});
-
-	if ($http) {
-
-		@filters = split(/\n/, $http->content);
-		$http->close;
-
-		if ($log->is_debug && scalar @filters) {
-
-			$log->debug("Found filters:");
-
-			for my $filter (@filters) {
-
-				$log->debug("\t$filter");
-			}
-		}
-	}
-
-	my $none = sprintf('(%s)', Slim::Utils::Strings::string('NONE'));
-
-	push @filters, $none;
-
-	foreach my $filter ( @filters ) {
-
-		if ($filter eq $none) {
-
-			$filterHash{0} = $filter;
-			next
-		}
-
-		$filterHash{$filter} = $filter;
-	}
-
-	return %filterHash;
 }
 
 sub prefName {
@@ -999,203 +930,6 @@ sub playerGroup {
 	
 	return \%group;
 }
-
-sub setupUse {
-	my $client = shift;
-
-	my %setupGroup = (
-		'PrefOrder'         => ['musicmagic'],
-		'PrefsInTable'      => 0,
-		'Suppress_PrefLine' => 1,
-		'Suppress_PrefSub'  => 1,
-		'GroupLine'         => 1,
-		'GroupSub'          => 1,
-	);
-
-	my %setupPrefs = (
-
-		'musicmagic'  => {
-			'validate'    => \&Slim::Utils::Validate::trueFalse,
-			'changeIntro' => "",
-
-			'options' => {
-				'1' => Slim::Utils::Strings::string('USE_MUSICMAGIC'),
-				'0' => Slim::Utils::Strings::string('DONT_USE_MUSICMAGIC'),
-			},
-
-			'onChange' => sub {
-				my ($client,$changeref,$paramref,$pageref) = @_;
-				
-				foreach my $client (Slim::Player::Client::clients()) {
-					Slim::Buttons::Home::updateMenu($client);
-				}
-
-				Slim::Music::Import->useImporter('Plugins::MusicMagic::Plugin', $changeref->{'musicmagic'}{'new'});
-			},
-
-			'optionSort' => 'KR',
-			'inputTemplate' => 'setup_input_radio.html',
-		}
-	);
-
-	return (\%setupGroup, \%setupPrefs);
-}
-
-sub setupGroup {
-	my $category = setupCategory();
-	my $group    = playerGroup();
-
-	$category->{'parent'}     = 'BASIC_PLAYER_SETTINGS';
-	$category->{'GroupOrder'} = ['Default'];
-	$category->{'Groups'}     = $group->{'Groups'};
-	
-	return ($category->{'Groups'}->{'Default'}, $category->{'Prefs'},1);
-}
-
-sub setupPort {
-	my $client = shift;
-
-	my $category   = setupCategory();
-
-	my %setupGroup = (
-		'PrefOrder' => [qw(MMSport)]
-	);
-
-	my %setupPrefs = (
-		'MMSport' => $category->{'Prefs'}->{'MMSport'}
-	);
-
-	return (\%setupGroup, \%setupPrefs);
-}
-
-sub setupCategory {
-	
-	my %setupCategory = (
-
-		'title' => Slim::Utils::Strings::string('SETUP_MUSICMAGIC'),
-		'parent' => 'BASIC_SERVER_SETTINGS',
-		'GroupOrder' => ['Default','MusicMagicPlaylistFormat'],
-		'Groups' => {
-
-			'Default' => {
-				'PrefOrder' => [qw(MMMPlayerSettings MMMSize MMMMixType MMMStyle MMMVariety MMMMixGenre MMMRejectType MMMRejectSize MMMFilter musicmagicscaninterval MMSport)]
-				
-				# disable remote host access, its confusing and only works in specific cases
-				# leave it here for hackers who really want to try it
-				#'PrefOrder' => [qw(MMMSize MMMMixType MMMStyle MMMVariety musicmagicscaninterval MMSport MMSHost MMSremoteRoot)]
-			},
-
-			'MusicMagicPlaylistFormat' => {
-				'PrefOrder'         => ['MusicMagicplaylistprefix','MusicMagicplaylistsuffix'],
-				'PrefsInTable'      => 1,
-				'Suppress_PrefHead' => 1,
-				'Suppress_PrefDesc' => 1,
-				'Suppress_PrefLine' => 1,
-				'Suppress_PrefSub'  => 1,
-				'GroupHead'         => Slim::Utils::Strings::string('SETUP_MUSICMAGICPLAYLISTFORMAT'),
-				'GroupDesc'         => Slim::Utils::Strings::string('SETUP_MUSICMAGICPLAYLISTFORMAT_DESC'),
-				'GroupLine'         => 1,
-				'GroupSub'          => 1,
-			}
-		},
-
-		'Prefs' => {
-			'MMMPlayerSettings' => {
-				'validate' => \&Slim::Utils::Validate::trueFalse,
-				,'options' => {
-						'1'  => Slim::Utils::Strings::string('YES')
-						,'0' => Slim::Utils::Strings::string('NO')
-					}
-			},
-
-			'MusicMagicplaylistprefix' => {
-				'validate' => \&Slim::Utils::Validate::acceptAll,
-				'PrefSize' => 'large',
-			},
-
-			'MusicMagicplaylistsuffix' => {
-				'validate' => \&Slim::Utils::Validate::acceptAll,
-				'PrefSize' => 'large',
-			},
-
-			'musicmagicscaninterval' => {
-				'validate'     => \&Slim::Utils::Validate::number,
-				'validateArgs' => [0,undef,1000],
-			},
-
-			,'MMMFilter' => {
-				'validate'      => \&Slim::Utils::Validate::inHash
-				,'validateArgs' => [\&grabFilters]
-				,'options'      => {grabFilters()}
-			},
-			
-			'MMMSize' => {
-				'validate'     => \&Slim::Utils::Validate::isInt,
-				'validateArgs' => [1,undef,1]
-			},
-			
-			'MMMRejectSize' => {
-				'validate'     => \&Slim::Utils::Validate::isInt,
-				'validateArgs' => [1,undef,1]
-			},
-			
-			'MMMMixType' => {
-				'validate'     => \&Slim::Utils::Validate::inList,
-				'validateArgs' => [0,1,2],
-				'options'      => {
-					'0' => Slim::Utils::Strings::string('MMMMIXTYPE_TRACKS'),
-					'1' => Slim::Utils::Strings::string('MMMMIXTYPE_MIN'),
-					'2' => Slim::Utils::Strings::string('MMMMIXTYPE_MBYTES'),
-				}
-			},
-			
-			'MMMRejectType' => {
-				'validate'     => \&Slim::Utils::Validate::inList,
-				'validateArgs' => [0,1,2],
-				'options'      => {
-					'0' => Slim::Utils::Strings::string('MMMMIXTYPE_TRACKS'),
-					'1' => Slim::Utils::Strings::string('MMMMIXTYPE_MIN'),
-					'2' => Slim::Utils::Strings::string('MMMMIXTYPE_MBYTES'),
-				}
-			},
-			
-			'MMMMixGenre' => {
-				'validate' => \&Slim::Utils::Validate::trueFalse,
-				,'options' => {
-						'1'  => Slim::Utils::Strings::string('YES')
-						,'0' => Slim::Utils::Strings::string('NO')
-					}
-			},
-			
-			'MMMStyle' => {
-				'validate'     => \&Slim::Utils::Validate::isInt,
-				'validateArgs' => [0,200,1,1],
-			},
-
-			'MMMVariety' => {
-				'validate'     => \&Slim::Utils::Validate::isInt,
-				'validateArgs' => [0,9,1,1],
-			},
-
-			'MMSport' => {
-				'validate'     => \&Slim::Utils::Validate::isInt,
-				'validateArgs' => [1025,65535,undef,1],
-			},
-
-			'MMSHost' => {
-				'validate' => \&Slim::Utils::Validate::acceptAll,
-				'PrefSize' => 'large'
-			},
-
-			'MMSremoteRoot'=> {
-				'validate' =>  \&Slim::Utils::Validate::acceptAll,
-				'PrefSize' => 'large'
-			}
-		}
-	);
-
-	return (\%setupCategory);
-};
 
 1;
 

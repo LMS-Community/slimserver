@@ -1,271 +1,135 @@
 package Plugins::MusicMagic::Settings;
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (C) 2001-2006 Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
 use strict;
+use base qw(Slim::Web::Settings);
 
-# button functions for browse directory
-our @defaultSettingsChoices = qw(MMMSize MMMMixType MMMStyle MMMVariety MMMFilter MMMMixGenre MMMRejectType MMMRejectSize);
+use Slim::Utils::Log;
+use Slim::Utils::Misc;
+use Slim::Utils::Strings qw(string);
 
-our @settingsChoices = ();
-our %current = ();
-our %menuParams = ();
-our %functions = ();
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'plugin.musicmagic',
+	'defaultLevel' => 'WARN',
+});
 
-sub init {
-	Slim::Buttons::Common::addMode('MMMsettings',getFunctions(),\&setMode);
+sub name {
+	return 'MUSICMAGIC';
+}
 
-	%functions = (
-		'right' => sub  {
-			my ($client,$funct,$functarg) = @_;
-			if (defined($client->modeParam('useMode'))) {
-				#in a submenu of settings, which is passing back a button press
-				Slim::Buttons::Common::popMode($client);
-				Plugins::MusicMagic::Plugin::mixerFunction($client,1);
-			} else {
-				#handle passback of button presses
-				settingsExitHandler($client,'RIGHT');
-			}
-		},
-		'play' => sub {
-			my $client = shift;
-			my @oldlines = Slim::Display::Display::curLines($client);
-			
-			Slim::Buttons::Common::popMode($client);
-			Plugins::MusicMagic::Plugin::mixerFunction($client,1);
-		},
+sub page {
+	return 'plugins/MusicMagic/settings/musicmagic.html';
+}
+
+sub handler {
+	my ($class, $client, $params) = @_;
+
+	# These are lame preference names.
+	my @prefs = qw(
+		musicmagic
+		MMMPlayerSettings
+		MMMSize
+		MMMMixType
+		MMMStyle
+		MMMVariety
+		MMMMixGenre
+		MMMRejectType
+		MMMRejectSize
+		MMMFilter
+		musicmagicscaninterval
+		MMSport
+		MusicMagicplaylistprefix
+		MusicMagicplaylistsuffix
 	);
 
-	%menuParams = (
+	# Cleanup the checkbox
+	$params->{'musicmagic'} = defined $params->{'musicmagic'} ? 1 : 0;
 
-		'MMMsettings' => {
-			'listRef'         => \@defaultSettingsChoices,
-			'stringExternRef' => 1,
-			'header'          => 'SETUP_MMMSETTINGS',
-			'stringHeader'    => 1,
-			'headerAddCount'  => 1,
-			'callback'        => \&settingsExitHandler,
-			'overlayRef'      => sub {
-				return (undef,Slim::Display::Display::symbol('rightarrow'));
-			},
-			'overlayRefArgs'  => 'C',
-		},
-		
-		'MMMsettings/MMMSize' => {
-			'useMode'        => 'INPUT.Bar',
-			'header'         => 'SETUP_MMMSIZE',
-			'stringHeader'   => 1,
-			'headerValue'    =>'unscaled',
-			'min'            => 0,
-			'max'            => 200,
-			'increment'      => 1,
-			'onChange'       => \&setPref,
-			'pref'           => "MMMSize",
-			'initialValue'   => "MMMSize",
-			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
-			'overlayRefArgs' => 'C',
-		},
+	if ($params->{'submit'}) {
 
-		'MMMsettings/MMMMixType' => {
-			'useMode'        => 'INPUT.List',
-			'header'         => 'SETUP_MMMMIXTYPE',
-			'stringHeader'   => 1,
-			'listRef'        => [0,1,2],
-			'externRef'      => {
-				'0' => Slim::Utils::Strings::string('MMMMIXTYPE_TRACKS'),
-				'1' => Slim::Utils::Strings::string('MMMMIXTYPE_MIN'),
-				'2' => Slim::Utils::Strings::string('MMMMIXTYPE_MBYTES'),
-			},
-			'onChange'       => \&setPref,
-			'pref'           => "MMMMixType",
-			'initialValue'   => "MMMStyle",
-			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
-			'overlayRefArgs' => 'C',
-		},
+		if ($params->{'musicmagic'} != Slim::Utils::Prefs::get('musicmagic')) {
 
-		'MMMsettings/MMMStyle' => {
-			'useMode'        => 'INPUT.Bar',
-			'header'         => 'SETUP_MMMSTYLE',
-			'stringHeader'   => 1,
-			'headerValue'    => 'unscaled',
-			'min'            => 0,
-			'max'            => 200,
-			'onChange'       => \&setPref,
-			'pref'           => "MMMStyle",
-			'initialValue'   => "MMMStyle",
-			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
-			'overlayRefArgs' => 'C',
-		},
+			for my $c (Slim::Player::Client::clients()) {
 
-		'MMMsettings/MMMVariety' => {
-			'useMode'        => 'INPUT.Bar',
-			'header'         => 'SETUP_MMMVARIETY',
-			'stringHeader'   => 1,
-			'headerValue'    =>'unscaled',
-			'min'            => 0,
-			'max'            => 9,
-			'increment'      => 1,
-			'onChange'       => \&setPref,
-			'pref'           => "MMMVariety",
-			'initialValue'   => "MMMVariety",
-			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
-			'overlayRefArgs' => 'C',
-		},
-
-		'MMMsettings/MMMFilter' => {
-			'useMode'        => 'INPUT.List',
-			'header'         => 'SETUP_MMMFILTER',
-			'stringHeader'   => 1,
-			'listRef'        => undef,
-			'externRef'      => undef,
-			'onChange'       => \&setPref,
-			'pref'           => "MMMFilter",
-			'initialValue'   => "MMMFilter",
-			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
-			'overlayRefArgs' => 'C',
-		},
-
-		'MMMsettings/MMMMixGenre' => {
-			'useMode'        => 'INPUT.List',
-			'header'         => 'SETUP_MMMMIXGENRE',
-			'stringHeader'   => 1,
-			'listRef'        => [0,1],
-			'externRef'      => {
-				'0' => Slim::Utils::Strings::string('NO'),
-				'1' => Slim::Utils::Strings::string('YES'),
-			},
-			'onChange'       => \&setPref,
-			'pref'           => "MMMMixGenre",
-			'initialValue'   => "MMMMixGenre",
-			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
-			'overlayRefArgs' => 'C',
-		},
-		
-		'MMMsettings/MMMRejectType' => {
-			'useMode'        => 'INPUT.List',
-			'header'         => 'SETUP_MMMREJECTTYPE',
-			'stringHeader'   => 1,
-			'listRef'        => [0,1,2],
-			'externRef'      => {
-				'0' => Slim::Utils::Strings::string('MMMMIXTYPE_TRACKS'),
-				'1' => Slim::Utils::Strings::string('MMMMIXTYPE_MIN'),
-				'2' => Slim::Utils::Strings::string('MMMMIXTYPE_MBYTES'),
-			},
-			'onChange'       => \&setPref,
-			'pref'           => "MMMRejectType",
-			'initialValue'   => "MMMRejectType",
-			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
-			'overlayRefArgs' => 'C',
-		},
-		
-		'MMMsettings/MMMRejectSize' => {
-			'useMode'        => 'INPUT.Bar',
-			'header'         => 'SETUP_MMMREJECTSIZE',
-			'stringHeader'   => 1,
-			'headerValue'    =>'unscaled',
-			'min'            => 0,
-			'max'            => 200,
-			'increment'      => 1,
-			'onChange'       => \&setPref,
-			'pref'           => "MMMRejectSize",
-			'initialValue'   => "MMMRejectSize",
-			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
-			'overlayRefArgs' => 'C',
-		},
-	);
-}
-
-sub setPref {
-	my $client = shift;
-	my $value = shift;
-	
-	my $pref = $client->modeParam('pref');
-	
-	$client->prefSet($pref,$value);
-}
-
-sub executeCommand {
-	my $client = shift;
-	my $value = shift;
-	
-	my $command = $client->modeParam('command');
-	my $subcmd  = $client->modeParam('subcommand');
-	
-	$client->execute([$command, $subcmd, $value]);
-}
-	
-sub settingsExitHandler {
-	my ($client,$exittype) = @_;
-	$exittype = uc($exittype);
-	if ($exittype eq 'LEFT') {
-		Slim::Buttons::Common::popModeRight($client);
-	} elsif ($exittype eq 'RIGHT') {
-		my $nextmenu = 'MMMsettings/'.$current{$client};
-		if (defined($client->modeParam('useMode'))) {
-			#in a submenu of settings and exiting right.
-			Plugins::MusicMagic::Plugin::mixerFunction($client,1);
-		} elsif (exists($menuParams{$nextmenu})) {
-			my %nextParams = %{$menuParams{$nextmenu}};
-			$nextParams{'callback'} = \&settingsExitHandler;
-			$nextParams{'parentParams'} = $client->modeParam('parentParams');
-			if (($nextParams{'useMode'} eq 'INPUT.List' || $nextParams{'useMode'} eq 'INPUT.Bar')  && exists($nextParams{'initialValue'})) {
-				#set up valueRef for current pref
-				my $value;
-				if (ref($nextParams{'initialValue'}) eq 'CODE') {
-					$value = $nextParams{'initialValue'}->($client);
-				} else {
-					$value = $client->prefGet($nextParams{'initialValue'});
-				}
-				$nextParams{'valueRef'} = \$value;
+				Slim::Buttons::Home::updateMenu($c);
 			}
-			if ($nextmenu eq 'MMMsettings/MMMFilter') {
-				my %filters = Plugins::MusicMagic::Plugin::grabFilters();
-				
-				$nextParams{'listRef'} = [keys %filters];
-				$nextParams{'externRef'} = {Plugins::MusicMagic::Plugin::grabFilters()};
-				$nextParams{'listIndex'} = $client->prefGet('MMMFilter');
-				
-			}
-			
-			Slim::Buttons::Common::pushModeLeft(
-				$client
-				,$nextParams{'useMode'}
-				,\%nextParams
-			);
-		} else {
-			Plugins::MusicMagic::Plugin::mixerFunction($client,1);
+
+			Slim::Music::Import->useImporter('Plugin::MusicMagic::Plugin', $params->{'musicmagic'});
 		}
-	} else {
-		return;
-	}
-}
 
-sub getFunctions {
-	return \%functions;
-}
+		for my $pref (@prefs) {
 
-sub setMode {
-	my $client = shift;
-	my $method = shift;
-	if ($method eq 'pop') {
-		Slim::Buttons::Common::popMode($client);
-		return;
+			# XXX - need validation!
+			#'itunesscaninterval' => { 'validate' => \&Slim::Utils::Validate::number, },
+			#'itunes_library_xml_path' => { 'validate' => \&Slim::Utils::Validate::isFile, },
+			#'itunes_library_music_path' => { 'validate' => \&Slim::Utils::Validate::isDir, },
+
+			Slim::Utils::Prefs::set($pref, $params->{$pref});
+		}
 	}
 
-	$current{$client}       = $defaultSettingsChoices[0] unless exists($current{$client});
-	my %params              = %{$menuParams{'MMMsettings'}};
-	$params{'valueRef'}     = \$current{$client};
-	$params{'parentParams'} = $client->modeParam('parentParams');
-	
-	my @settingsChoices     = @defaultSettingsChoices;
-	
-	$params{'listRef'}      = \@settingsChoices;
-	
-	Slim::Buttons::Common::pushMode($client,'INPUT.List',\%params);
+	for my $pref (@prefs) {
+
+		$params->{'prefs'}->{$pref} = Slim::Utils::Prefs::get($pref);
+	}
+	$params->{'filters'}        = grabFilters();
+
+	return $class->SUPER::handler($client, $params);
 }
+
+sub grabFilters {
+	my @filters    = ();
+	my %filterHash = ();
+	
+	my $MMSport = Slim::Utils::Prefs::get('MMSport');
+	my $MMSHost = Slim::Utils::Prefs::get('MMSHost');
+
+	$log->debug("Get filters list");
+
+	my $http = Slim::Player::Protocols::HTTP->new({
+		'url'    => "http://$MMSHost:$MMSport/api/filters",
+		'create' => 0,
+	});
+
+	if ($http) {
+
+		@filters = split(/\n/, $http->content);
+		$http->close;
+
+		if ($log->is_debug && scalar @filters) {
+
+			$log->debug("Found filters:");
+
+			for my $filter (@filters) {
+
+				$log->debug("\t$filter");
+			}
+		}
+	}
+
+	my $none = sprintf('(%s)', Slim::Utils::Strings::string('NONE'));
+
+	push @filters, $none;
+
+	foreach my $filter ( @filters ) {
+
+		if ($filter eq $none) {
+
+			$filterHash{0} = $filter;
+			next
+		}
+
+		$filterHash{$filter} = $filter;
+	}
+
+	return \%filterHash;
+}
+
+
 
 1;
 
