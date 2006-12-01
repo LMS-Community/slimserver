@@ -1,3 +1,5 @@
+package Plugins::SavePlaylist::Plugin;
+
 # $Id$
 # This code is derived from code with the following copyright message:
 #
@@ -5,8 +7,6 @@
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
-
-package Plugins::SavePlaylist;
 
 use strict;
 use Slim::Player::Playlist;
@@ -81,7 +81,7 @@ sub setMode {
 							0;
 
 		Slim::Buttons::Common::pushMode($client,'INPUT.Text', {
-			'callback'        => \&Plugins::SavePlaylist::savePluginCallback,
+			'callback'        => \&savePluginCallback,
 			'valueRef'        => \$context{$client},
 			'charsRef'        => \@LegalChars,
 			'numberLetterRef' => \@legalMixed,

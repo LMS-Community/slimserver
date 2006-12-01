@@ -1,4 +1,4 @@
-package Plugins::CLI;
+package Plugins::CLI::Plugin;
 
 # SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -224,7 +224,7 @@ sub cli_socket_close {
 		Slim::Networking::Select::addRead($cli_socket, undef);
 		$cli_socket->close();
 		$cli_socket_port = 0;
-		Slim::Control::Request::unsubscribe(\&Plugins::CLI::cli_request_notification);
+		Slim::Control::Request::unsubscribe(\&cli_request_notification);
 	}
 }
 
@@ -961,13 +961,13 @@ sub cli_subscribe_manage {
 	# subscribe
 	if ($subscribe && !$cli_subscribed) {
 
-		Slim::Control::Request::subscribe(\&Plugins::CLI::cli_subscribe_notification);
+		Slim::Control::Request::subscribe(\&cli_subscribe_notification);
 		$cli_subscribed = 1;
 
 	# unsubscribe
 	} elsif (!$subscribe && $cli_subscribed) {
 
-		Slim::Control::Request::unsubscribe(\&Plugins::CLI::cli_subscribe_notification);
+		Slim::Control::Request::unsubscribe(\&cli_subscribe_notification);
 		$cli_subscribed = 0;
 	}
 }

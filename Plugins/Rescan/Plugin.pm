@@ -1,4 +1,4 @@
-package Plugins::Rescan;
+package Plugins::Rescan::Plugin;
 
 # Rescan.pm by Andrew Hedges (andrew@hedges.me.uk) October 2002
 # Timer functions added by Kevin Deane-Freeman (kevindf@shaw.ca) June 2004
@@ -54,7 +54,7 @@ sub initPlugin {
 		}
 	);
 
-	Slim::Buttons::Common::addMode('scantimer', getFunctions(), \&Plugins::Rescan::setMode);
+	Slim::Buttons::Common::addMode('scantimer', getFunctions(), \&setMode);
 	setTimer();
 }
 

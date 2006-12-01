@@ -1,4 +1,4 @@
-package Plugins::RssNews;
+package Plugins::RSSNews::Plugin;
 
 # RSS News Browser
 # Copyright (c) 2006 Slim Devices, Inc. (www.slimdevices.com)

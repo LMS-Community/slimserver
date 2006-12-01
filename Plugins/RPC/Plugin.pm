@@ -1,4 +1,4 @@
-package Plugins::RPC;
+package Plugins::RPC::Plugin;
 
 # $Id$
 

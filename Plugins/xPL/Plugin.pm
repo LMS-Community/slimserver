@@ -1,4 +1,4 @@
-package Plugins::xPL;
+package Plugins::xPL::Plugin;
 
 # SlimServer Copyright (C) 2001 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -85,11 +85,11 @@ sub initPlugin {
 	Slim::Networking::Select::addRead($xpl_socket, \&readxpl);
 	sendxplhbeat();
 	
-	Slim::Control::Request::subscribe(\&Plugins::xPL::xplExecuteCallback);
+	Slim::Control::Request::subscribe(\&xplExecuteCallback);
 }
 
 sub shutdownPlugin {
-	Slim::Control::Request::unsubscribe(\&Plugins::xPL::xplExecuteCallback);
+	Slim::Control::Request::unsubscribe(\&xplExecuteCallback);
 }
 
 # plugin: name of our plugin

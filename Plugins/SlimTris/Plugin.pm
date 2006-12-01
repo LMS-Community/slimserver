@@ -1,4 +1,4 @@
-package Plugins::SlimTris;
+package Plugins::SlimTris::Plugin;
 
 # SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -11,8 +11,7 @@ use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
 use Slim::Utils::Misc;
 
-use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.7 $,10);
+our $VERSION = substr(q$Revision: 1.7 $,10);
 
 # constants
 my $height = 4;

@@ -1,3 +1,5 @@
+package Plugins::Visualizer::Plugin;
+
 # $Id: $
 
 # SlimServer Copyright (c) 2001-2005 Sean Adams, Slim Devices Inc.

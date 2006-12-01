@@ -1,4 +1,4 @@
-package Plugins::Snow;
+package Plugins::Snow::Plugin;
 
 # $Id$
 # by Phil Barrett, December 2003
@@ -22,8 +22,7 @@ use Slim::Utils::Timers;
 use File::Spec::Functions qw(:ALL);
 use Scalar::Util qw(blessed);
 
-use vars qw($VERSION);
-$VERSION = substr(q$Revision$,10);
+our $VERSION = substr(q$Revision$,10);
 
 sub getDisplayName {
 	return 'PLUGIN_SCREENSAVER_SNOW';
