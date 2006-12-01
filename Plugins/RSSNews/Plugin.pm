@@ -403,8 +403,6 @@ sub updateFeedNames {
 # ScreenSaver Mode
 
 sub screenSaver {
-	Slim::Utils::Strings::addStrings(strings());
-
 	Slim::Buttons::Common::addSaver(
 		'SCREENSAVER.rssnews',
 		getScreensaverRssNews(),
