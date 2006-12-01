@@ -53,17 +53,12 @@
 	</div>
 
 	<div class="settingSection">
-		<div class="prefHead">[% "SETUP_ITUNESPLAYLISTPREFIX" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_ITUNESPLAYLISTPREFIX_CHOOSE" | string %]</div>
+		<div class="groupHead">[% "SETUP_ITUNESPLAYLISTFORMAT" | string | upper %]</div>
+		<div class="groupDesc">[% "SETUP_ITUNESPLAYLISTFORMAT_DESC" | string %]</div>
 
-		<input type="text" class="stdedit" name="iTunesplaylistprefix" id="iTunesplaylistprefix" value="[% prefs.iTunesplaylistprefix %]" size="40">
-	</div>
-
-	<div class="settingSection">
-		<div class="prefHead">[% "SETUP_ITUNESPLAYLISTSUFFIX" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE" | string %]</div>
-
-		<input type="text" class="stdedit" name="iTunesplaylistsuffix" id="iTunesplaylistsuffix" value="[% prefs.iTunesplaylistsuffix %]" size="40">
+		[% "SETUP_ITUNESPLAYLISTPREFIX_CHOOSE" | string %]<input type="text" class="stdedit" name="iTunesplaylistprefix" id="iTunesplaylistprefix" value="[% prefs.iTunesplaylistprefix %]" size="40">
+		<br>
+		[% "SETUP_ITUNESPLAYLISTSUFFIX_CHOOSE" | string %]<input type="text" class="stdedit" name="iTunesplaylistsuffix" id="iTunesplaylistsuffix" value="[% prefs.iTunesplaylistsuffix %]" size="40">
 	</div>
 
 [% PROCESS settings/footer.html %]
