@@ -13,8 +13,6 @@ package Plugins::Visualizer::Plugin;
 # GNU General Public License for more details.
 #
 
-package Plugins::Visualizer;
-
 use Slim::Player::Squeezebox2;
 
 use vars qw($VERSION);
