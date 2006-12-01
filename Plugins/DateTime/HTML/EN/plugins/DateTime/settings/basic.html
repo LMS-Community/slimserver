@@ -1,0 +1,32 @@
+[% PROCESS settings/header.html %]
+
+	<div class="settingSection">
+		<div class="groupHead">[% "SETUP_GROUP_DATETIME" | string | upper %]</div>
+		<div class="groupDesc">[% "SETUP_GROUP_DATETIME_DESC" | string %]</div>
+
+		<select name="screensaverDateFormat">
+
+		<option value="" [% IF NOT prefs.screensaverTimeFormat %]selected[% END %]>[% "SETUP_GROUP_DATETIME_DEFAULTTIME" | string %]</option>
+
+		[% FOREACH format = dateFormats %]
+
+			<option value="[% format.key %]" [% IF prefs.screensaverDateFormat == format %]selected[% END %]>[% format.value %]</option>
+
+		[% END %]
+
+		</select>
+
+		<select name="screensaverTimeFormat">
+
+		<option value="" [% IF NOT prefs.screensaverTimeFormat %]selected[% END %]>[% "SETUP_GROUP_DATETIME_DEFAULTTIME" | string %]</option>
+
+		[% FOREACH format = timeFormats %]
+
+			<option value="[% format.key %]" [% IF prefs.screensaverTimeFormat == format %]selected[% END %]>[% format.value %]</option>
+
+		[% END %]
+
+		</select>
+	</div>
+
+[% PROCESS settings/footer.html %]
