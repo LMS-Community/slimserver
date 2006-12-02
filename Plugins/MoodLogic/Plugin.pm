@@ -14,6 +14,7 @@ use Plugins::MoodLogic::VarietyCombo;
 use Plugins::MoodLogic::InstantMix;
 use Plugins::MoodLogic::MoodWheel;
 use Plugins::MoodLogic::Common;
+use Plugins::MoodLogic::Settings;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.moodlogic',
@@ -168,7 +169,7 @@ sub initPlugin {
 		'use'       => Slim::Utils::Prefs::get($class->prefName),
 	});
 
-	Slim::Web::Setup::addCategory('MOODLOGIC', setupCategory());
+	Plugins::MoodLogic::Settings->new;
 
 	Plugins::MoodLogic::InstantMix::init();
 	Plugins::MoodLogic::MoodWheel::init();
@@ -405,64 +406,6 @@ sub getMix {
 
 	return \@instant_mix;
 }
-
-sub setupCategory {
-
-	my %setupCategory =(
-		'title'      => string('SETUP_MOODLOGIC'),
-		'parent'     => 'BASIC_SERVER_SETTINGS',
-		'GroupOrder' => ['Default', 'MoodLogicPlaylistFormat'],
-		'Groups'     => {
-
-			'Default' => {
-				'PrefOrder' => ['instantMixMax','varietyCombo','moodlogicscaninterval'],
-			},
-
-			'MoodLogicPlaylistFormat' => {
-				'PrefOrder'         => ['MoodLogicplaylistprefix','MoodLogicplaylistsuffix'],
-				'PrefsInTable'      => 1,
-				'Suppress_PrefHead' => 1,
-				'Suppress_PrefDesc' => 1,
-				'Suppress_PrefLine' => 1,
-				'Suppress_PrefSub'  => 1,
-				'GroupHead'         => string('SETUP_MOODLOGICPLAYLISTFORMAT'),
-				'GroupDesc'         => string('SETUP_MOODLOGICPLAYLISTFORMAT_DESC'),
-				'GroupLine'         => 1,
-				'GroupSub'          => 1,
-			},
-		},
-
-		'Prefs' => {
-
-			'MoodLogicplaylistprefix' => {
-				'validate' => \&Slim::Utils::Validate::acceptAll,
-				'PrefSize' => 'large',
-			},
-
-			'MoodLogicplaylistsuffix' => {
-				'validate' => \&Slim::Utils::Validate::acceptAll,
-				'PrefSize' => 'large',
-			},
-
-			'moodlogicscaninterval' => {
-				'validate'     => \&Slim::Utils::Validate::number,
-				'validateArgs' => [0, undef, 1000],
-			},
-
-			'instantMixMax' => {
-				'validate'     => \&Slim::Utils::Validate::isInt,
-				'validateArgs' => [1, undef, 1],
-			},
-
-			'varietyCombo'	=> {
-				'validate'     => \&Slim::Utils::Validate::isInt,
-				'validateArgs' => [1, 100, 1, 1],
-			},
-		}
-	);
-
-	return \%setupCategory;
-};
 
 sub webPages {
 	my %pages = (
