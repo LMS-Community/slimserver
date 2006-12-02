@@ -31,10 +31,6 @@ our @mood_names = ();
 our %mood_hash  = ();
 my $last_error  = 0;
 
-sub strings {
-	return '';
-}
-
 sub getFunctions {
 	return '';
 }

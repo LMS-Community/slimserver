@@ -1,0 +1,317 @@
+# String file for MoodLogic plugin
+
+# $Id: strings.txt 10821 2006-12-01 21:44:53Z adrian $
+
+MOODLOGIC
+	EN	MoodLogic
+
+SETUP_MOODLOGICPLAYLISTFORMAT
+	DE	MoodLogic Wiedergabelisten Format
+	EN	MoodLogic Playlist Format
+	ES	Formato de Lista de MoodLogic
+	FR	Format des listes de lecture MoodLogic
+	JA	ムードロジック プレイリストフォーマット
+	NL	Moodlogic playlistformaat
+	NO	MoodLogic spilleliste format
+	SV	MoodLogic låtlistsformat
+	ZH_CN	MoodLogic播放表格式
+
+SETUP_MOODLOGICPLAYLISTFORMAT_DESC
+	DE	Diese Option definiert das Format, in welcher MoodLogic Wiedergabelisten importiert werden.
+	EN	This option determines the format used when importing MoodLogic playlists.
+	ES	Esta opción determina el formato utilizado cuando se importan listas de MoodLogic.
+	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture MoodLogic.
+	JA	このオプションでは、ムードロジック プレイリストをインポートする時に使われるフォーマットを決めます。
+	NL	Deze optie bepaalt het te gebruiken formaat bij het importeren van Moodlogic playlists.
+	NO	Denne innstillingen avgjør hvilket format som brukes ved import av MoodLogic spillelister.
+	SV	Denna inställning styr format vid import av MoodLogic-låtlistor
+	ZH_CN	这个选项决定了导入MoodLogic播放表所使用的格式。
+
+MOODLOGIC_MIXING
+	EN	MoodLogic Mixing
+	ES	Mezcla MoodLogic
+	NL	MoodLogic mixing
+	ZH_CN	MoodLogic混音中
+
+SETUP_MOODLOGICPLAYLISTPREFIX
+	DE	Der Prefix für MoodLogic Wiedergabelisten wurde geändert auf:
+	EN	MoodLogic playlist prefix changed to:
+	ES	Prefijo de listas de MoodLogic cambiado a:
+	NL	Moodlogic playlist voorvoegsel wijzigt in:
+	ZH_CN	MoodLogic播放表前缀被改为：
+
+SETUP_MOODLOGICPLAYLISTSUFFIX
+	DE	Der Suffix für MoodLogic Wiedergabelisten wurde geändert auf:
+	EN	MoodLogic playlist suffix changed to:
+	ES	Sufijo de listas de MoodLogic cambiado a:
+	NL	Moodlogic playlist achtervoegsel wijzigt in:
+	ZH_CN	MoodLogic播放表词尾被改为：
+
+USE_MOODLOGIC
+	CS	Použít MoodLogic
+	DE	MoodLogic verwenden
+	DA	Anvend MoodLogic
+	EN	Use MoodLogic
+	ES	Usar Moodlogic
+	FI	Käytä Moodlogicia
+	FR	Utiliser MoodLogic
+	IT	Usa MoodLogic
+	JA	ムードロジックを使用する
+	NL	MoodLogic inschakelen
+	NO	Bruk MoodLogic
+	PT	Usar MoodLogic
+	SV	Använd MoodLogic
+	ZH_CN	使用Moodlogic
+
+DONT_USE_MOODLOGIC
+	CS	Nepouživat MoodLogic
+	DE	MoodLogic nicht verwenden
+	DA	Anvend ikke MoodLogic
+	EN	Don't use MoodLogic
+	ES	No usar MoodLogic
+	FI	Älä käytä Moodlogicia
+	FR	Ne pas utiliser MoodLogic
+	IT	Non usare MoodLogic
+	JA	ムードロジックを使用しない
+	NL	Gebruik geen MoodLogic
+	NO	Ikke bruk MoodLogic
+	PT	Não usar MoodLogic
+	SV	Använd inte MoodLogic
+	ZH_CN	不使用Moodlogic
+
+SETUP_MOODLOGIC_DESC
+	DE	Der SlimServer kann MoodLogic als Quelle für Titel- und Musikstil-Informationen verwenden. Zusätzlich können Sie "Instant Mixes" auf Grund von Musikstil, Interpret und Lied-Intensität erstellen. Aktivieren Sie die folgende Checkbox, falls Sie die Informationen aus MoodLogic verwenden wollen.
+	EN	SlimServer can use your MoodLogic program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level. Check the box below to import your MoodLogic Library information.
+	ES	El SlimServer puede utilizar el programa MoodLogic como fuente para obtener la información de género y título. Además se pueden generar mezclas instantáneas a nivel de género, artista y canción. Marcar la opción debajo para importar la información de la colección de MoodLogic. 
+	FR	Le SlimServer peut utiliser le logiciel MoodLogic comme source pour les titres et les genres. Vous pouvez par ailleurs générer des mixes instantanés par genre, artiste ou morceau. Cochez la case ci-dessous pour importer les données de votre bibliothèque MoodLogic.
+	JA	SlimServerはタイトル・ジャンル情報ソースとしてムードロジック プログラムを利用することができます。ムードロジック ライブラリー情報を利用するには以下の項目をチェックしてください。
+	NL	SlimServer kan je Moodlogic programma gebruiken als bron voor titel en genre informatie. Ook kun je instant mixen maken op genre, artiest en liedje niveau. Markeer het selectievakje hieronder om je Moodlogic muziekcollectie te importeren.
+	SV	SlimServer kan använda din MoodLogic som källa till information om låtar och genrer. Dessutom kan du generera mixade låtlistor on-the-fly baserade på genre, artist och låt-nivå. Klicka i rutan nedan om du vill importera din MoodLogic-information.
+	ZH_CN	SlimServer可以使用您的MoodLogic节目表作为标题和音乐风格信息的来源。您也能以音乐曲风、艺人和歌曲音量水平生成及时混音。单击如下的复选框以导入您的MoodLogic音乐库信息。
+
+SETUP_INSTANTMIXMAX
+	DE	Maximale Anzahl Lieder für Instant Mix
+	EN	Instant Mix Max Count
+	ES	Número Máximo por Mezcla Instantánea
+	FR	Nombre maximum de morceaux par Mix
+	JA	インスタント ミックス 最大数
+	NL	Maximum aantal instant mix
+	NO	Maks antall for hurtigmiks
+	SV	Max antal låtar för "Instant Mix"
+	ZH_CN	即时混音最多次数
+
+SETUP_INSTANTMIXMAX_DESC
+	CS	Tato volba určuje maximální počet skladeb, které můžete přidat do playlistu jako Instant Mix. Instant Mixes may have fewer songs, depending on the Variety setting.
+	DE	Definiert die maximale Anzahl Lieder, die in einer als Instant Mix erstellten Wiedergabeliste erfasst sein sollen. Instant Mixes können weniger Lieder haben, abhängig von den Variety Einstellungen.
+	EN	This is the maximum number of songs you want in playlists created as an Instant Mix. Instant Mixes may have fewer songs, depending on the Variety setting.
+	ES	Este es el número máximo de canciones que se quiere en listas creadas como Mezclas Instantáneas. Las Mezclas Instantáneas pueden tener menos canciones, dependiendo del valor de Variedad.
+	FR	Spécifiez le nombre maximum de morceaux que vous souhaitez voir apparaitre dans un Mix instantané. Les Mixes instantanés peuvent comporter un nombre inférieur de morceaux en fonction du réglage Variété.
+	JA	インスタントミックスとして、プレイリストに登録できる曲数はこれが最大です。バラエティのセッティングでこの数は少なくなることもあります。
+	NL	Dit is het maximum aantal liedjes dat je wilt in playlists gemaakt als "Instant Mix". Instant Mixes kunnen minder liedjes hebben, afhankelijk van de "Gevarieerdheid" instelling.
+	NO	Dette er maks antall sanger som du vil ha i spillelister laget som en hurtigmiks. Hurtigmikser kan ha færre sanger, alt etter Variasjons instillinger.
+	SV	Detta är det maximala antalet låtar som du vill att en "Instant Mix"-låtlista ska innehålla. (Låtlistan kan innehålla färre låtar, beroende på Variation-inställning.)
+	ZH_CN	这是由播放表生成即时混音的最多首歌曲顶限。即时混音也许会根据音乐品种变化的设置而拥有较少量的歌曲。
+
+SETUP_VARIETYCOMBO_DBL
+	DE	Variety
+	EN	Variety
+	ES	Variedad
+	FR	Variété
+	JA	ムードロジック バラエティ
+	NL	Gevarieerdheid
+	NO	Variasjon
+	SV	Variation
+	ZH_CN	音乐变化
+
+SETUP_VARIETYCOMBO
+	DE	Moodlogic Variety
+	EN	Moodlogic Variety
+	ES	Variedad de MoodLogic
+	FR	Variété MoodLogic
+	JA	ムードロジック バラエティ
+	NL	Moodlogic gevarieerdheid
+	NO	Moodlogic Variasjon
+	SV	MoodLogic-Variation
+	ZH_CN	MoodLogic的音乐变化
+
+SETUP_VARIETYCOMBO_DESC
+	DE	Mit diesem Wert steuern Sie die Variety Einstellung für den Moodlogic Instant Mix. Kleinere Werte bedeuten eine grössere Variation an Musik, grössere Werte eine engere Auswahl. Gültige Werte sind 0-100.
+	EN	This is the value to control the variety setting for Moodlogic Instant Mixes.  Lower numbers mean a wider variety of music, higher numbers mean less variety.  Valid numbers are 0-100.
+	ES	Este es el valor para controlar la el parámetro Variedad para las Mezclas Instantáneas de MoodLogic. Números bajos significan una mayor variedad de música, números más altos significan menos variedad. Números válidos son 0-100. 
+	FR	Spécifiez un nombre pour régler le paramètre Variété des Mixes instantanés MoodLogic. Un nombre bas signifie une variété plus importante de musique, un nombre élevé une variété réduite. Les valeurs acceptées sont 0-100.
+	JA	これが、ムードロジック インスタントミックスのバラエティをコントロールする数値です。低い数値はより広いバラエティを意味し、高い数値は狭いバラエティを意味します。0から100の間です。
+	NL	Dit is een instelling om de vari&euml;teit voor MoodLogic instant mixes in te stellen. Lagere waardes betekenen een meer vari&euml;teit, hogere waardes betekenen minder vari&euml;teit. Invoer moet liggen tussen 1 en 100.
+	NO	Dette er verdien som kontrollerer variasjonsinstillingen for Moodlogic Hurtigmiks. Lavere verdi betyr bredere variasjon av musikk, høyere verdi betyr mindre variasjon. Gyldige verdier er 0-100.
+	SV	Detta värde styr variationen på musik i "Instant Mix"-listor skapade av MoodLogic. Lägre värden betyder större variation. Värden mellan 0 och 100 är möjliga.
+	ZH_CN	这是控制Moodlogic即时混音的值。值越小意味着音乐变化更广，越高的值则意味着较少的变化。合法值为0-100。
+
+SETUP_MOODLOGICSCANINTERVAL
+	DE	Moodlogic Aktualisierungs-Intervall
+	EN	Moodlogic Reload Interval
+	ES	Intervalo de recarga de MoodLogic
+	FR	Délai d'actualisation MoodLogic
+	JA	ムードロジック 更新時間
+	NL	Interval herladen Moodlogic
+	SV	Intervall för uppdatering av MoodLogic
+	ZH_CN	Moodlogic刷新间隔时间
+
+SETUP_MOODLOGICSCANINTERVAL_DESC
+	DE	Wenn ihre Moodlogic Datenbank verändert wird, importiert SlimServer automatisch die Bibliotheksinformationen. Wählen Sie die minimale Wartezeit (in Sekunden), die SlimServer vor einem erneuten Import der Moodlogic Datenbank abwarten soll. Ein Wert von 0 deaktiviert die automatische Aktualisierung.
+	EN	When your Moodlogic Database changes, SlimServer will automatically import the library information. You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your Moodlogic Database again. A value of zero disables the reload.
+	ES	Cuando la Base de Datos de Moodlogic cambie, SlimServer importará automáticamente la información de esa colección. Se puede especificar el mínimo intervalo de tiempo (en segundos) que SlimServer esperará antes de recargar nuevamente la Base de Datos de Moodlogic. Usar un valor 0 deshabilita la recarga.
+	FR	Le SlimServer importe automatiquement les modifications apportées à votre bibliothèque MoodLogic. Vous pouvez spécifier le délai minimum en secondes avant lequel le SlimServer rechargera les données MoodLogic. La valeur zéro désactive cette fonctionnalité.
+	NL	Indien je Moodlogic muziekcollectie wijzigt zal SlimServer automatisch de informatie importeren. Je kunt de minimum tijd specificeren (in seconden) dat SlimServer zal wachten voor het opnieuw importeren van je Moodlogic muziekcollectie. Een waarde van 0 seconden schakelt het herladen uit.
+	ZH_CN	当您的Moodlogic数据库改变时，SlimServer将自动地导入最新音乐库信息。您可以指定SlimServer再装您的Moodlogic数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
+
+SETUP_MOODLOGICSCANINTERVAL_OK
+	DE	Minimale Wartezeit für Moodlogic Datenbank Import:
+	EN	Minimum Moodlogic Database reload time:
+	ES	Mínimo tiempo de recarga de base de datos de Moodlogic
+	FR	Délai d'actualisation MoodLogic
+	JA	ムードロジック データベース更新時間:
+	NL	Minimum Moodlogic muziekcollectie herlaadtijd:
+	SV	Minsta intervall mellan MoodLogic-laddningar
+	ZH_CN	Moodlogic数据库极少刷新时间：
+
+MOODLOGIC_SELECT_MOOD
+	CS	Vyber Mood pro Tvůj Mix
+	DA	Vælg en stemning for dit mix
+	DE	Wählen Sie eine Stimmung für ihren Mix
+	EN	Select a Mood for your Mix
+	ES	Elegir un ambiente para la Mezcla
+	FI	Valitse sekoituksesi tunnelma
+	FR	Sélectionnez une ambiance pour votre mix
+	JA	ミックス用にムードを選んでください
+	NL	Kies een sfeer voor je mix
+	NO	Velg stemning (MoodLogic) for din blanding
+	PT	Seleccione um ambiente para a mistura
+	SV	Välj stämning (MoodLogic) för din mix
+	ZH_CN	请为您的混音选择一个气氛
+
+MOODLOGIC_SELECT_MOOD_SHORT
+	CS	Vyber Mood
+	DE	Wählen Sie eine Stimmung
+	DA	Vælg en stemning
+	EN	Select a Mood
+	ES	Elegir un Ambiente
+	FI	Valitse fiilis
+	FR	Choisissez une ambiance
+	JA	ムード選択
+	NL	Kies een sfeer
+	NO	Velg stemning (MoodLogic)
+	PT	Seleccione um Ambiente
+	SV	Välj stämning (MoodLogic)
+	ZH_CN	请选择气氛
+
+MOODLOGIC_MIX
+	DE	Mix
+	EN	Mix
+	ES	Mezcla
+	FI	Sekoitus
+	FR	Mix
+	JA	ミックス
+	NL	Mix
+	NO	Mix
+	PT	Mixtura
+	SV	Mix
+	ZH_CN	混音
+
+MOODLOGIC_INSTANT_MIX
+	EN	MoodLogic Instant Mix
+	ES	Mezcla instantánea de MoodLogic
+	FI	MoodLogic välitön sekoitus
+	NL	MoodLogic instant mix
+	ZH_CN	MoodLogic即时混音
+
+MOODLOGIC_MOOD_0
+	CS	Překvapení
+	DE	Überraschung
+	DA	Overraskelse
+	EN	Surprise
+	ES	Sorpresa
+	FI	Yllätys
+	FR	Surprise
+	JA	サプライズ
+	NL	Verrassing
+	NO	Overraskelse
+	PT	Surpresa
+	SV	Överraskning
+	ZH_CN	惊奇
+
+MOODLOGIC_MOOD_1
+	DE	Upbeat
+	EN	Upbeat
+	ES	Alegre
+	FI	Iloinen
+	FR	Rythmé
+	JA	アップビート
+	NL	Upbeat
+	NO	Tempo
+	ZH_CN	活泼
+
+MOODLOGIC_MOOD_2
+	CS	Snadný
+	DE	Easy
+	DA	Easy
+	EN	Easy
+	ES	Tranquilo
+	FI	Letkeä
+	FR	Easy
+	JA	イージー
+	NL	Easy
+	NO	Lett
+	PT	Fácil
+	ZH_CN	简易
+
+MOODLOGIC_MOOD_3
+	CS	Mléčný
+	DE	Sanft
+	EN	Mild
+	ES	Dulce
+	FI	Mieto
+	FR	Doux
+	JA	マイルド
+	NO	Mild
+	ZH_CN	温和
+
+MOODLOGIC_MOOD_4
+	CS	Modrý
+	DA	Trist
+	DE	Trist
+	EN	Blue
+	ES	Triste
+	FI	Surullinen
+	FR	Blues
+	JA	ブルー
+	NL	Triest
+	NO	Blå
+	PT	Azul
+	ZH_CN	蓝调
+
+MOODLOGIC_MOOD_5
+	DE	Abhängen
+	DA	Løst
+	EN	Hang
+	ES	Ido
+	FR	Suspendu
+	JA	ハング
+	NL	Losjes
+	NO	Løst
+	PT	Saída
+	ZH_CN	悬挂
+
+MOODLOGIC_MOOD_6
+	CS	Divoký
+	DE	Wild
+	EN	Wild
+	ES	Salvaje
+	FI	Villi
+	FR	Sauvage
+	JA	ワイルド
+	NO	Vill
+	ZH_CN	狂野
+
+DEBUG_PLUGIN_MOODLOGIC
+	DE	MoodLogic Mix & Export
+	EN	MoodLogic Mix & Export Debugging
+

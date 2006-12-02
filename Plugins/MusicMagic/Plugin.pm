@@ -46,10 +46,6 @@ our %validMixTypes = (
 	'year'     => 'filter=?year',
 );
 
-sub strings {
-	return '';
-}
-
 sub getFunctions {
 	return '';
 }

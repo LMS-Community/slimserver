@@ -97,10 +97,6 @@ sub checker {
 	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $interval, \&checker);
 }
 
-sub strings {
-	return '';
-}
-
 1;
 
 __END__
