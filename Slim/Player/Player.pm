@@ -712,12 +712,19 @@ sub nowPlayingModeLines {
 		# show the number of seconds of audio in the buffer instead of a percentage
 		my $url = Slim::Player::Playlist::url($client);
 		if ( Slim::Music::Info::isRemoteURL($url) ) {
+			my $decodeBuffer;
+			
+			# Display decode buffer as seconds if we know the bitrate, otherwise show KB
 			if ( my $bitrate = Slim::Music::Info::getBitrate($url) ) {
-				my $decodeBuffer = $client->bufferFullness() / ( int($bitrate / 8) );
-				my $outputBuffer = $client->outputBufferFullness() / (44100 * 8);
-				$songtime  = ' ' . sprintf "%.1f / %.1f", $decodeBuffer, $outputBuffer;
-				$songtime .= ' ' . $client->string('SECONDS');
+				$decodeBuffer = sprintf( "%.1f", $client->bufferFullness() / ( int($bitrate / 8) ) );
 			}
+			else {
+				$decodeBuffer = sprintf( "%d KB", $client->bufferFullness() / 1024 );
+			}
+			
+			my $outputBuffer = $client->outputBufferFullness() / (44100 * 8);
+			$songtime  = ' ' . sprintf "%s / %.1f", $decodeBuffer, $outputBuffer;
+			$songtime .= ' ' . $client->string('SECONDS');
 		}
 	} elsif ($showTime) { 
 		$songtime = ' ' . $client->textSongTime($showTime < 0);
