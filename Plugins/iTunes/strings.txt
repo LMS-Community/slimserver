@@ -1,6 +1,6 @@
 # String file for iTunes plugin
 
-# $Id: strings.txt 10821 2006-12-01 21:44:53Z adrian $
+# $Id$
 
 ITUNES
 	EN	iTunes
