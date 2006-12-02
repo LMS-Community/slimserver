@@ -49,7 +49,7 @@
 	[%- WRAPPER moveuplink   -%][%- PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp           -%][%- END -%]
 	[%- WRAPPER movedownlink -%][%- PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown         -%][%- END -%]
 	[%- WRAPPER removelink   -%][%- PROCESS cmdHRef cmdType = 'delete'                         -%][%- END -%]
-		[% IF mixerlinks %]<span class="mixers">[%- FOREACH mixer = item.mixerlinks.values.sort -%]
+		[% IF item.mixerlinks %]<span class="mixers">[%- FOREACH mixer = item.mixerlinks.values.sort -%]
 			[%- PROCESS $mixer -%]
 		[%- END %]</span>[% END %]
 [%- END %]
