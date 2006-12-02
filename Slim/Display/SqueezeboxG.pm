@@ -285,12 +285,12 @@ sub killAnimation {
 
 sub string {
 	my $display = shift;
-	return Slim::Utils::Unicode::utf8toLatin1($display::SUPER->string(@_));
+	return Slim::Utils::Unicode::utf8toLatin1($display->SUPER::string(@_));
 }
 
 sub doubleString {
 	my $display = shift;
-	return Slim::Utils::Unicode::utf8toLatin1($display::SUPER->doubleString(@_));
+	return Slim::Utils::Unicode::utf8toLatin1($display->SUPER::doubleString(@_));
 }
 
 
