@@ -57,26 +57,30 @@ my $log = logger('server');
 
 =head2 init( )
 
- Initializes the module - called at server startup.
+Initializes the module - called at server startup.
 
 =cut
 
 sub init {
 	$currentLang = getLanguage();
 	loadStrings();
+
+	if ($::checkstrings) {
+		checkChangedStrings();
+	}
 }
 
 =head2 loadStrings( [ $argshash ] )
 
- Load/Reload Strings files for server and plugins using cache if valid.
- If stringcache file is valid this is loaded into memory and used as string hash, otherwise
- string text files are parsed and new stringhash creted which stored as the stringcache file.
+Load/Reload Strings files for server and plugins using cache if valid.
+If stringcache file is valid this is loaded into memory and used as string hash, otherwise
+string text files are parsed and new stringhash creted which stored as the stringcache file.
 
- optional $argshash allows default behavious to be overridden, keys that can be set are:
- 'ignoreCache' - ignore cache file and reparse all files
- 'dontClear'   - don't clear current string hash before loading file
- 'dontSave'    - don't save new string hash to cache file [restart will use old cache file]
- 'storeString' - sub as alternative to storeString [e.g. for use by string editor]
+optional $argshash allows default behavious to be overridden, keys that can be set are:
+'ignoreCache' - ignore cache file and reparse all files
+'dontClear'   - don't clear current string hash before loading file
+'dontSave'    - don't save new string hash to cache file [restart will use old cache file]
+'storeString' - sub as alternative to storeString [e.g. for use by string editor]
 
 =cut
 
@@ -306,7 +310,7 @@ sub storeString {
 
 	return if ($name eq 'LANGUAGE_CHOICES');
 
-	if (defined $strings->{$currentLang}->{$name}) {
+	if (defined $strings->{$currentLang}->{$name} && $strings->{$currentLang}->{$name} ne $curString->{$currentLang}) {
 		$log->warn("redefined string: $name in $file");
 	}
 
@@ -442,5 +446,28 @@ sub storeFailsafe {
 			$currentLang !~ /CS|DE|DA|EN|ES|FI|FR|IT|NL|NO|PT|SV/ ) ? 1 : 0;
 }
 
+
+# Timer task to check mtime of string files and reload if they have changed.
+# Started by init when --checkstrings is present on command line.
+my $lastChange = time;
+
+sub checkChangedStrings {
+
+	my $reload;
+
+	for my $file (@{$strings->{'files'}}) {
+		if ((stat($file))[9] > $lastChange) {
+			$log->info("$file updated - reparsing");
+			loadFile($file);
+			$reload ||= time;
+		}
+	}
+
+	if ($reload) {
+		$lastChange = $reload;
+	}
+
+	Slim::Utils::Timers::setTimer(undef, time + 1, \&checkChangedStrings);
+}
 
 1;

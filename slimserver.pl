@@ -213,6 +213,7 @@ our (
 	$stop,
 	$perfmon,
 	$perfwarn,
+	$checkstrings,
 	$d_startup, # Needed for Slim::bootstrap
 );
 
@@ -488,7 +489,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
           [--priority <priority>]
           [--prefsfile <prefsfilepath> [--pidfile <pidfilepath>]]
           [--perfmon] [--perfwarn=<threshold>]
-          [--d_various]
+          [--checkstrings]
 
     --help           => Show this usage information.
     --audiodir       => The path to a directory of your MP3 files.
@@ -528,6 +529,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
     --noupnp         => Disable UPnP subsystem
     --perfmon        => Enable internal server performance monitoring
     --perfwarn       => Generate log messages if internal tasks take longer than specified threshold
+    --checkstrings   => Enable reloading of changed string files for plugin development
 
 Commands may be sent to the server through standard in and will be echoed via
 standard out.  See complete documentation for details on the command syntax.
@@ -565,7 +567,8 @@ sub initOptions {
 		'noserver'      => \$noserver,
 		'noupnp'        => \$noupnp,
 		'perfmon'       => \$perfmon,
-		'perfwarn=f'    => \$perfwarn, 
+		'perfwarn=f'    => \$perfwarn,
+		'checkstrings'  => \$checkstrings,
 		'd_startup'     => \$d_startup, # Needed for Slim::bootstrap
 	)) {
 		showUsage();
