@@ -116,21 +116,4 @@ sub webPages {
 	return \%pages;
 }
 
-sub strings {
-	return "
-PLUGIN_SHOUTCASTBROWSER_MODULE_NAME
-	EN	SHOUTcast Internet Radio
-	ES	Radio por Internet SHOUTcast
-	HE	ShoutCast
-	NL	SHOUTcast Internet radio
-
-PLUGIN_SHOUTCASTBROWSER_CONNECTING
-	DE	Verbinde mit SHOUTcast...
-	EN	Connecting to SHOUTcast...
-	ES	Conectando a SHOUTcast...
-	FR	Connexion à SHOUTcast...
-	IT	In connessione con SHOUTcast...
-	NL	Connectie maken naar SHOUTcast...
-";}
-
 1;

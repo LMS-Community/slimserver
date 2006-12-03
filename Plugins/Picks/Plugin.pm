@@ -119,23 +119,4 @@ sub webPages {
 	return \%pages;
 }
 
-sub strings {
-	return "
-PLUGIN_PICKS_MODULE_NAME
-	DE	Slim Devices Auswahl
-	EN	Slim Devices Picks
-	ES	Preferidas de Slim Devices
-	FR	Sélection Slim Devices
-	HE	המומלצים
-	NL	De beste van Slim Devices
-
-PLUGIN_PICKS_LOADING_PICKS
-	DE	Lade Slim Devices Picks...
-	EN	Loading Slim Devices Picks...
-	ES	Cargando las Preferidas de Slim Devices...
-	FR	Chargement sélection...
-	HE	טוען מועדפים
-	NL	Laden van de beste van Slim Devices...
-";}
-
 1;

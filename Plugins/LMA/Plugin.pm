@@ -110,16 +110,4 @@ sub cliRadiosQuery {
 	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
 }
 
-sub strings {
-	return "
-PLUGIN_LMA_MODULE_NAME
-	EN	Live Music Archive
-
-PLUGIN_LMA_LOADING
-	DE	Lade Live Music Archive...
-	EN	Loading Live Music Archive...
-	FR	Chargement Live Music Archive...
-	NL	Laden Live Music Archive...
-";}
-
 1;

@@ -88,14 +88,6 @@ sub rs232baud {
 	$request->setStatusDone();
 }
 
-
-sub strings {
-	return "
-PLUGIN_RS232_NAME
-	EN	RS232
-";
-}
-
 1;
 
 

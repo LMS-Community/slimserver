@@ -219,43 +219,6 @@ sub handleSetting {
 	handleWebList($client, $params);
 }
 
-sub strings {
-
-	return '
-PLUGIN_DIGITAL_INPUT
-	DE	Digitale Eingänge
-	EN	Digital Inputs
-	NL	Digitale invoer
-
-PLUGIN_DIGITAL_INPUT_BALANCED_AES
-	EN	Balanced AES/EBU
-	ES	AES/EBU Balanceada
-	FR	AES/EBU symétrique
-	NL	Gebalanceerde AES/EBU
-	
-PLUGIN_DIGITAL_INPUT_BNC_SPDIF
-	EN	BNC Coax S/PDIF
-	ES	S/PDIF BNC Coax 
-	FR	S/PDIF coaxial BNC
-	NL	BNC coax S/PDIF
-	
-PLUGIN_DIGITAL_INPUT_RCA_SPDIF
-	EN	RCA Coax S/PDIF
-	ES	S/PDIF RCA Coax
-	FR	S/PDIF coaxial RCA
-	NL	RCA coax S/PDIF
-	
-PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF
-	DE	Optisch S/PDIF (TOSLINK)
-	EN	Optical S/PDIF (TOSLINK)
-	NL	Optische S/PDIF (TOSLINK)
-
-PLUGIN_DIGITAL_INPUT_CHOOSE_BELOW
-	DE	Wählen Sie einen digitalen Eingang:
-	EN	Choose a Digital Input option below:
-	NL	Kies hieronder een digitale invoeroptie:
-'};
-
 1;
 
 __END__

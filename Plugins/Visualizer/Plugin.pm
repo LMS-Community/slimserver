@@ -100,49 +100,6 @@ sub enabled {
 	return ($::VERSION ge '6.1');
 }
 
-sub strings { return '
-PLUGIN_SCREENSAVER_VISUALIZER
-	DE	Visualizer Bildschirmschoner
-	EN	Visualizer Screensaver
-	ES	Salvapantallas de Visualizador
-	FI	Visualisointi ruudunsäästäjä
-	FR	Ecran de veille Visualisation
-	IT	Salvaschermo grafici
-	NL	Visualisatie schermbeveiliger
-
-PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
-	DE	Benötigt Squeezebox2
-	EN	Needs Squeezebox2
-	ES	Requiere Squeezebox2
-	FR	Squeezebox2 requise
-	IT	Necessita Squeezebox2/3
-	NL	Squeezebox2/3 nodig
-
-PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE
-	DE	RECHTS drücken zum Aktivieren des Bildschirmschoners
-	EN	Press -> to enable this screensaver
-	ES	Presionar -> para activar este salvapantallas
-	NL	Druk -> om deze schermbeveiliger te activeren
-
-PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
-	CS	Spořič je nastaven
-	DE	Bildschirmschoner aktiviert
-	EN	This screensaver is enabled
-	ES	Este salvapantallas está activo
-	FI	Tämä ruudunsäästäjä on kytketty
-	IT	Questo salvaschermo e\' abilitato
-	NL	Deze schermbeveiliger is actief
-
-PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
-	CS	Výchozí spořič
-	DE	Standard Bildschirmschoner
-	EN	Default screenaver
-	ES	Salvapantallas por defecto
-	FR	Ecran de veille par défaut
-	IT	Salvaschermo di default
-	NL	Standaard schermbeveiliger
-'};
-
 ##################################################
 ### Screensaver configuration mode
 ##################################################

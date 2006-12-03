@@ -182,10 +182,6 @@ sub savePluginCallback {
 	};
 }
 
-sub strings {
-	return '';
-}
-
 ####################################################################
 # Adds a mapping for 'save' function in Now Playing mode.
 ####################################################################
