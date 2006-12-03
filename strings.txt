@@ -1631,35 +1631,6 @@ ASF_UNABLE_TO_PARSE
 	SV	Fel: Kan inte avkoda ASF-ljudström
 	ZH_CN	失误：无法解析音频流
 
-NO_PLAYLIST_DIR
-	CS	Chyba: Není uložen žádný playlist.
-	DA	Problem: Der findes ingen folder med gemte playlister.
-	DE	Problem: kein Wiedergabelisten Ordner
-	EN	Problem: No Saved Playlist folder.
-	ES	Problem: No existe una carpeta de Listas Guardadas
-	FI	Ongelma: Tallenettujen soittolistojen hakemistoa ei ole.
-	FR	Dossier Listes de lecture enregistrées introuvable.
-	HE	אין ספרייה מוגדרת לרשימות ניגון
-	JA	エラー: プレイ  リストがみつかりません
-	NL	Probleem: geen bewaarde playlistfolder.
-	SV	Problem: Det finns ingen mapp för sparade spellistor
-	ZH_CN	失误：播放表保存文件夹不存在
-
-NO_PLAYLIST_DIR_MORE
-	CS	Přejít na nastavení serveru a opravit.
-	DA	Gå til serverindstillinger for at korrigere dette.
-	DE	Bitte Server Einstellungen überprüfen
-	EN	Visit Server Settings to fix this.
-	ES	Ver Configuración del Servidor para solucionar esto.
-	FI	Korjaa tämä palvelimen asetuksista.
-	FR	Consultez "Réglages du serveur".
-	HE	תקן זאת בשרת
-	IT	Rivedi le impostazioni del Server per sistemare il problema.
-	JA	サーバー セッティングを調整して下さい
-	NL	Ga naar serverinstellingen om dit te corrigeren.
-	SV	Ändra serverinställningar för att korrigera detta.
-	ZH_CN	请参考服务器配置以便修正
-
 HOME
 	CS	Hlavní menu
 	DE	Startseite
@@ -10615,69 +10586,6 @@ EDIT
 URL
 	EN	URL
 	ZH_CN	网址
-
-SAVE_PLAYLIST
-	CS	Uložit playlist
-	DE	Wiedergabeliste speichern
-	EN	Save Playlist
-	ES	Guardar Lista
-	FR	Enregistrer la liste de lecture
-	HE	שומר רשימות ניגון
-	IT	Salva lista di esecuzione
-	JA	プレイリストを保存する
-	NL	Bewaar playlist
-	NO	Lagre spilleliste
-	SV	Lagra låtlista
-	ZH_CN	保存播放表
-
-PLAYLIST_OVERWRITE
-	DE	RECHTS drücken zum Überschreiben der existierenden Datei:
-	EN	Go right to replace existing playlist:
-	ES	Presionar DERECHA para reemplazar la lista existente:
-	FR	Appuyez sur DROITE pour remplacer la liste de lecture existante :
-	NL	Druk -> om de bestaande playlist te vervangen:
-
-PLAYLIST_SAVE
-	CS	Stiskněte znovu tlačítko DOPRAVA, uložíte aktuální playlist jako:
-	DE	Zum Speichern der Wiedergabeliste RECHTS drücken:
-	EN	Right again to save playlist as:
-	ES	Presionar DERECHA para guardar la lista como:
-	FI	Paina OIKEALLE uudestaan tallentaaksesi soittolistan nimellä:
-	FR	Appuyez à nouveau sur DROITE pour sauver la liste de lecture sous :
-	IT	Premi DESTRA ancora per salvare la lista di esecuzione come:
-	JA	プレイリストを保存するにはRIGHTをもう一度押してください :
-	NL	Druk -> opnieuw om playlist te bewaren als:
-	NO	Trykk HØYRE pil igjen for å lagre spillelisten som:
-	SV	Klicka Högerpil igen för att lagra låtlistan som:
-	ZH_CN	保存播放表请按右方向键：
-
-PLAYLIST_AS
-	CS	Uložit aktuální playlist jako:
-	DE	Wiedergabeliste unter folgendem Namen speichern:
-	EN	Save current playlist as:
-	ES	Guardar la lista actual como:
-	FI	Tallenna nykyinen soittolista nimellä:
-	FR	Enregistrer la liste de lecture sous :
-	IT	Salva la lista di esecuzione in uso come:
-	JA	現在のプレイリストを別の名前で保存する :
-	NL	Bewaar huidige playlist als:
-	NO	Lagre spillelisten som:
-	SV	Lagra aktuell låtlista som:
-	ZH_CN	保存当前的播放表：
-
-PLAYLIST_SAVING
-	CS	Uložit aktuální playlist jako:
-	DE	Speichere Wiedergabeliste als:
-	EN	Saving current playlist as:
-	ES	Guardando la lista actual como:
-	FI	Tallennetaan nykyinen soittolista nimellä:
-	FR	Enregistre la liste de lecture sous :
-	IT	Salvataggio della lista di esecuzione in uso come:
-	JA	現在のプレイリストを別の名前で保存する :
-	NL	Bewaar huidige playlist als:
-	NO	Lagrer spillelisten som:
-	SV	Lagrar aktuell låtlista som:
-	ZH_CN	正在保存当前的播放表：
 
 INFORMATION
 	CS	Informace
