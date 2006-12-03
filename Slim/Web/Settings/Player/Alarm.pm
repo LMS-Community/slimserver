@@ -90,16 +90,16 @@ sub handler {
 		'' => undef,
 	};
 
-        for my $playlist (Slim::Schema->rs('Playlist')->getPlaylists) {
+	for my $playlist (Slim::Schema->rs('Playlist')->getPlaylists) {
 
-                $playlists->{$playlist->url} = Slim::Music::Info::standardTitle(undef, $playlist);
-        }
+		$playlists->{$playlist->url} = Slim::Music::Info::standardTitle(undef, $playlist);
+	}
 
 	my $specialPlaylists = \%Slim::Buttons::AlarmClock::specialPlaylists;
 
 	for my $key (keys %{$specialPlaylists}) {
 
-		$playlists->{$key} = $key;
+		$playlists->{$key} = Slim::Utils::Strings::string($key);
 	}
 
 	$paramRef->{'playlistOptions'} = $playlists;

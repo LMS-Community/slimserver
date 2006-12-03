@@ -44,7 +44,7 @@
 		<td><select class="stdedit" name="alarmplaylist[% day %]" id="alarmplaylist[% day %]">
 
 		[% FOREACH option = playlistOptions  %]
-			<option [% IF prefs.alarmplaylist.$day == option.key %]selected [% END %]value="[% option.key %]">[% option.value | getstring %]</option>
+			<option [% IF prefs.alarmplaylist.$day == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
 		[%- END -%]
 		
 		</select></td>
