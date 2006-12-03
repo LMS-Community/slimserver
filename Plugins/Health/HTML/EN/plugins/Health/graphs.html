@@ -11,7 +11,7 @@
 </form>
 
 <p></p>[% "PLUGIN_HEALTH_GRAPHS_DESC_" _ type | string %]
-<p></p>[% "PLUGIN_HEALTH_WARNING_DESC" | string %]
+<p></p>[% "PLUGIN_HEALTH_WARNING_DESC" | string %] [% serverlog %]
 
 [% FOREACH log IN graphs %]
 <h3>[% "PLUGIN_HEALTH_" _ log.name | string %]</h3>

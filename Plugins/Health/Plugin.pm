@@ -301,6 +301,7 @@ sub handleGraphs {
 	$params->{'playername'} = $client->name() if $client;
 	$params->{'type'} = $type;
 	$params->{'graphs'} = \@graphs;
+	$params->{'serverlog'} = Slim::Utils::Log::serverLogFile();
 
 	return Slim::Web::HTTP::filltemplatefile("plugins/Health/graphs.html",$params);
 }
