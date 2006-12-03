@@ -286,7 +286,7 @@ sub buildHTTP {
 			my $tokenChoose = $token . '_CHOOSE';
 
 			if (!exists $prefparams{'PrefHead'}) {
-				$prefparams{'PrefHead'} = (Slim::Utils::Strings::resolveString($token) || $pref);
+				$prefparams{'PrefHead'} = $token || $pref;
 			}
 
 			if (!exists $prefparams{'PrefDesc'} && Slim::Utils::Strings::stringExists($tokenDesc)) {
