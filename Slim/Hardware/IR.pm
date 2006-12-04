@@ -984,7 +984,9 @@ sub executeButton {
 sub processCode {
 	my ($client, $irCode, $irTime) = @_;
 
-	$log->info("irCode: $irCode, " . $client->id);
+	if ( $log->is_info ) {
+		$log->info("irCode: $irCode, " . $client->id);
+	}
 
 	$client->lastircode($irCode);
 
