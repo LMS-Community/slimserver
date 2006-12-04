@@ -16,6 +16,23 @@
 # The two letter codes are defined by ISO 639-1
 # http://en.wikipedia.org/wiki/List_of_ISO_639_codes
 
+LANGUAGE_CHOICES
+	CS	Česky
+	DE	Deutsch
+	DA	Dansk
+	EN	English
+	ES	Español
+	FI	Suomi
+	FR	Français
+	HE	Hebrew
+	IT	Italiano
+	JA	日本語
+	NL	Nederlands
+	NO	Norsk
+	PT	Português
+	SV	Svenska
+	ZH_CN	简体中文
+
 CREDITS
 	CS	Roman Smetak
 	DA	Ulrik Mehr, Morten Fischer-Madsen
@@ -108,23 +125,6 @@ HIT_RELOAD
 	PT	<a href="/" target="_top">Actualize esta página para activar o novo tema.</a>
 	SV	<a href="/" target="_top">Klicka här</a> för att ladda om sidan med det nya utseendet.
 	ZH_CN	<a href="/" target="_top">单击此处</a>以刷新网页并观看新设置的外壳。
-
-LANGUAGE_CHOICES
-	CS	Česky
-	DE	Deutsch
-	DA	Dansk
-	EN	English
-	ES	Español
-	FI	Suomi
-	FR	Français
-	HE	Hebrew
-	IT	Italiano
-	JA	日本語
-	NL	Nederlands
-	NO	Norsk
-	PT	Português
-	SV	Svenska
-	ZH_CN	简体中文
 
 SERVER_VERSION
 	CS	Verze SlimServeru
