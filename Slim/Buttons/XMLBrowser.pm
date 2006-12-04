@@ -81,8 +81,12 @@ sub setMode {
 		my $item = $client->modeParam('item');
 
 		# give user feedback while loading
+		my $string = $client->modeParam('header') 
+			? ( $client->string( $client->modeParam('header') ) || $client->string('XML_LOADING') )
+			: $client->string('XML_LOADING');
+
 		$client->block(
-			$client->modeParam('header') ? $client->string( $client->modeParam('header') ) : $client->string('XML_LOADING'),
+			$string,
 			$title || $url,
 		);
 		
