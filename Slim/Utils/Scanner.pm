@@ -403,6 +403,31 @@ sub scanRemoteURL {
 		return $cb->( $foundItems, @{$pt} );
 	}
 	
+	# Bug 4522, if user has disabled native WMA decoding to get MMS support, don't scan MMS URLs
+	if ( $url =~ /^mms/i ) {
+		
+		my ($command, $type, $format) = Slim::Player::TranscodingHelper::getConvertCommand(
+			$args->{'client'},
+			$url,
+			'wma',
+		);
+		
+		if ( defined $command && $command ne '-' ) {
+			
+			$log->debug('Not scanning MMS URL because transcoding is enabled.');
+
+			my $track = Slim::Schema->rs('Track')->updateOrCreate({
+				'url' => $url,
+			});
+
+			$track->content_type( 'wma' );
+
+			push @{$foundItems}, $track;
+
+			return $cb->( $foundItems, @{$pt} );
+		}
+	}			
+	
 	my $originalURL = $url;
 	
 	my $request = HTTP::Request->new( GET => $url );
