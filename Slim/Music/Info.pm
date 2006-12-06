@@ -164,17 +164,34 @@ sub playlistForClient {
 }
 
 sub clearFormatDisplayCache {
+	my $format = shift; # if set only clear cached formats including this string
 
-	%currentTitles   = ();
-	%currentBitrates = ();
+	if ($format) {
+		# prune matching entries from non client cache
+		for my $key ( keys %$musicInfoTextCache ) {
+			delete $musicInfoTextCache->{$key} if ($key =~ /$format/);
+		}
 
-	$musicInfoTextCache = undef;
+		# prune matching entries from client caches
+		for my $client ( Slim::Player::Client::clients() ) {
+			if (my $cache = $client->musicInfoTextCache) {
+				for my $key ( keys %$cache ) {
+					delete $cache->{$key} if ($key =~ /$format/);
+				}
+			}
+		}
 
-	foreach my $client ( Slim::Player::Client::clients() ) {
-		$client->musicInfoTextCache(undef);
+	} else {
+		# remove all cached entries
+		$musicInfoTextCache = undef;
+
+		foreach my $client ( Slim::Player::Client::clients() ) {
+			$client->musicInfoTextCache(undef);
+		}
+
+		%currentTitles   = ();
+		%currentBitrates = ();
 	}
-
-	return 1;
 }
 
 sub updateCacheEntry {
@@ -513,17 +530,24 @@ sub displayText {
 
 		if (exists $cache->{$format}) {
 			return $cache->{$format};
-		} else {
+
+		} elsif (Slim::Music::TitleFormatter::cacheFormat($format)) {
 			return $cache->{$format} = Slim::Music::TitleFormatter::infoFormat($obj, $format);
+
+		} else {
+			return Slim::Music::TitleFormatter::infoFormat($obj, $format);
 		}
 	}
 
-	my $text = Slim::Music::TitleFormatter::infoFormat($obj, $format);	
+	my $text = Slim::Music::TitleFormatter::infoFormat($obj, $format);
 
 	# Clear the cache first.
 	$cache = {};
 	$cache->{'url'}   = $url;
-	$cache->{$format} = $text;
+
+	if (Slim::Music::TitleFormatter::cacheFormat($format)) {
+		$cache->{$format} = $text;
+	}
 
 	$client ? $client->musicInfoTextCache($cache) : $musicInfoTextCache = $cache;
 

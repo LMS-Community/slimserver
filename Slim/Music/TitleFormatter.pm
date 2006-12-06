@@ -28,7 +28,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 
-our ($elemstring, @elements, $elemRegex, %parsedFormats);
+our ($elemstring, @elements, $elemRegex, %parsedFormats, $nocacheRegex, @noCache);
 
 my $log = logger('database.info');
 
@@ -296,6 +296,12 @@ sub init {
 		return (defined $output ? $output : '');
 	};
 
+	# Define built in formats which should not be cached
+	@noCache = qw( LONGDATE SHORTDATE CURRTIME );
+
+	my $nocache = join "|", @noCache;
+	$nocacheRegex = qr/$nocache/;
+
 	return 1;
 }
 
@@ -303,6 +309,7 @@ sub init {
 sub addFormat {
 	my $format = shift;
 	my $formatSubRef = shift;
+	my $nocache = shift;
 
 	# only add format if it is not already defined
 	if (!defined $parsedFormats{$format}) {
@@ -316,6 +323,13 @@ sub addFormat {
 			push @elements, $format;
 			$elemstring = join "|", @elements;
 			$elemRegex = qr/$elemstring/;
+		}
+
+		if ($nocache) {
+			# format must not be cached per track
+			push @noCache, $format;
+			my $nocache = join "|", @noCache;
+			$nocacheRegex = qr/$nocache/;
 		}
 
 	} else {
@@ -480,6 +494,12 @@ sub _parseFormat {
 	};
 
 	return $parsedFormats{$formatparsed};
+}
+
+sub cacheFormat {
+	my $format = shift;
+	# return if format result is valid for duration of a track and hence can be cached
+	return ($format !~ $nocacheRegex);
 }
 
 sub infoFormat {
