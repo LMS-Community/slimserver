@@ -22,7 +22,7 @@
 			
 			<select class="stdedit" name="titleFormat[% loop.index %]" id="titleFormat[% loop.index %]">
 			[% num = loop.index %][% last = loop.max %]
-			[% FOREACH option = titleFormatOptions.keys %]
+			[% FOREACH option = titleFormatOptions.keys.sort %]
 	
 				<option [% IF prefs.titleFormat.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% titleFormatOptions.$option %]</option>
 	
@@ -51,7 +51,7 @@
 			<select class="stdedit" name="playingDisplayModes[% loop.index %]" id="playingDisplayModes[% loop.index %]">
 			[% num = loop.index %][% last = loop.max %]
 			
-			[% FOREACH option = playingDisplayOptions.keys %]
+			[% FOREACH option = playingDisplayOptions.keys.nsort %]
 	
 				<option [% IF prefs.playingDisplayModes.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% playingDisplayOptions.$option %]</option>
 	
@@ -80,7 +80,7 @@
 			<select class="stdedit" name="visualModes[% loop.index %]" id="visualModes[% loop.index %]">
 			[% num = loop.index %][% last = loop.max %]
 			
-			[% FOREACH option = visualModeOptions.keys %]
+			[% FOREACH option = visualModeOptions.keys.nsort %]
 	
 				<option [% IF prefs.visualModes.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% visualModeOptions.$option %]</option>
 	
@@ -101,44 +101,21 @@
 		<div class="groupHead">[% "SCREENSAVERS" | string | upper %]</div>
 		<div class="groupDesc">[% "SETUP_SCREENSAVER_DESC" | string %]</div>
 
-		<table><tr>
-		<td><label for="screensaver" class="stdlabel">[% "SETUP_SCREENSAVER_CHOOSE" | string %]</label></td>
-		<td><select class="stdedit" name="screensaver" id="screensaver">
-
-		[% FOREACH option = screensavers.keys %]
-
-			<option [% IF prefs.screensaver == option %]selected [% END %]value="[% option %]">[% screensavers.$option | string %]</option>
-
-		[%- END -%]
-		
-		</select></td>
-		</tr>
-		
+		<table>
+		[% FOREACH saver = [ 'screensaver', 'idlesaver', 'offsaver' ] %]
 		<tr>
-		<td><label for="idlesaver" class="stdlabel">[% "SETUP_IDLESAVER_CHOOSE" | string %]</label></td>
-		<td><select class="stdedit" name="idlesaver" id="idlesaver">
+		<td><label for="[% saver %]" class="stdlabel">[% "SETUP_" _ saver _ "_CHOOSE" | string %]</label></td>
+		<td><select class="stdedit" name="[% saver %]" id="[% saver %]">
 
-		[% FOREACH option = screensavers.keys %]
+		[% FOREACH option = screensavers %]
 
-			<option [% IF prefs.idlesaver == option %]selected [% END %]value="[% option %]">[% screensavers.$option | string %]</option>
-
-		[%- END -%]
-		
-		</select></td>
-		</tr>
-
-		<tr>
-		<td><label for="offsaver" class="stdlabel">[% "SETUP_OFFSAVER_CHOOSE" | string %]</label></td>
-		<td><select class="stdedit" name="offsaver" id="offsaver">
-
-		[% FOREACH option = screensavers.keys %]
-
-			<option [% IF prefs.offsaver == option %]selected [% END %]value="[% option %]">[% screensavers.$option | string %]</option>
+			<option [% IF prefs.$saver == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
 
 		[%- END -%]
 		
 		</select></td>
 		</tr>
+		[% END %]
 
 		<tr>
 		<td><label for="screensavertimeout" class="stdlabel">[% "SETUP_SCREENSAVERTIMEOUT_CHOOSE" | string %]</label></td>
