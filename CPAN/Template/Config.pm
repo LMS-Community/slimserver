@@ -6,33 +6,30 @@
 #   Template Toolkit configuration module.
 #
 # AUTHOR
-#   Andy Wardley   <abw@kfs.org>
+#   Andy Wardley   <abw@cpan.org>
 #
 # COPYRIGHT
-#   Copyright (C) 1996-2000 Andy Wardley.  All Rights Reserved.
-#   Copyright (C) 1998-2000 Canon Research Centre Europe Ltd.
+#   Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
 #
-#------------------------------------------------------------------------
-#
-#   $Id: Config.pm,v 2.68 2004/01/30 19:32:23 abw Exp $
+# REVISION
+#   $Id: Config.pm,v 2.70 2006/02/01 09:12:40 abw Exp $
 #
 #========================================================================
  
 package Template::Config;
 
-require 5.004;
-
 use strict;
+use warnings;
 use base qw( Template::Base );
 use vars qw( $VERSION $DEBUG $ERROR $INSTDIR
-	     $PARSER $PROVIDER $PLUGINS $FILTERS $ITERATOR 
+             $PARSER $PROVIDER $PLUGINS $FILTERS $ITERATOR 
              $LATEX_PATH $PDFLATEX_PATH $DVIPS_PATH
-	     $STASH $SERVICE $CONTEXT $CONSTANTS @PRELOAD );
+             $STASH $SERVICE $CONTEXT $CONSTANTS @PRELOAD );
 
-$VERSION   = sprintf("%d.%02d", q$Revision: 2.68 $ =~ /(\d+)\.(\d+)/);
+$VERSION   = sprintf("%d.%02d", q$Revision: 2.70 $ =~ /(\d+)\.(\d+)/);
 $DEBUG     = 0 unless defined $DEBUG;
 $ERROR     = '';
 $CONTEXT   = 'Template::Context';
@@ -86,25 +83,16 @@ sub preload {
 # or undef on error.  Use $class->error() to examine the error string.
 #------------------------------------------------------------------------
 
-my %loaded = ();
-
 sub load {
     my ($class, $module) = @_;
     $module =~ s[::][/]g;
     $module .= '.pm';
-
-    return 1 if $loaded{$module};
 #    print STDERR "loading $module\n"
 #	if $DEBUG;
     eval {
 	require $module;
     };
-
-    if ($@) {
-        return $class->error("failed to load $module: $@");
-    }
-
-    return $loaded{$module} = 1;
+    return $@ ? $class->error("failed to load $module: $@") : 1;
 }
 
 
@@ -143,8 +131,8 @@ sub provider {
 
     return undef unless $class->load($PROVIDER);
     return $PROVIDER->new($params) 
-	|| $class->error("failed to create template provider: ",
-			 $PROVIDER->error);
+        || $class->error("failed to create template provider: ",
+                         $PROVIDER->error);
 }
 
 
@@ -441,21 +429,21 @@ optional components of the Template Toolkit have not been installed.
 
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@andywardley.comE<gt>
+Andy Wardley E<lt>abw@wardley.orgE<gt>
 
-L<http://www.andywardley.com/|http://www.andywardley.com/>
+L<http://wardley.org/|http://wardley.org/>
 
 
 
 
 =head1 VERSION
 
-2.68, distributed as part of the
-Template Toolkit version 2.14, released on 04 October 2004.
+2.70, distributed as part of the
+Template Toolkit version 2.15, released on 26 May 2006.
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2004 Andy Wardley.  All Rights Reserved.
+  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
   Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
 
 This module is free software; you can redistribute it and/or

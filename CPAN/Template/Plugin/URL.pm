@@ -8,30 +8,27 @@
 #   and adaptable parameters.
 #
 # AUTHOR
-#   Andy Wardley   <abw@kfs.org>
+#   Andy Wardley   <abw@cpan.org>
 #
 # COPYRIGHT
-#   Copyright (C) 2000 Andy Wardley.  All Rights Reserved.
+#   Copyright (C) 2000-2006 Andy Wardley.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
 #
-#----------------------------------------------------------------------------
-#
-# $Id: URL.pm,v 2.65 2004/01/30 19:33:20 abw Exp $
+# REVISION
+#   $Id: URL.pm,v 2.71 2006/01/30 20:05:48 abw Exp $
 #
 #============================================================================
 
 package Template::Plugin::URL;
 
-require 5.004;
-
 use strict;
-use vars qw( @ISA $VERSION );
-use Template::Plugin;
+use warnings;
+use base 'Template::Plugin';
 
-@ISA     = qw( Template::Plugin );
-$VERSION = sprintf("%d.%02d", q$Revision: 2.65 $ =~ /(\d+)\.(\d+)/);
+our $VERSION = sprintf("%d.%02d", q$Revision: 2.71 $ =~ /(\d+)\.(\d+)/);
+our $JOINT   = '&amp;';
 
 
 #------------------------------------------------------------------------
@@ -46,20 +43,19 @@ sub new {
     $args ||= { };
 
     return sub {
-	my $newbase = shift unless ref $_[0] eq 'HASH';
-	my $newargs = shift || { };
-	my $combo   = { %$args, %$newargs };
-	my $urlargs = join('&amp;', 
-#			   map  { "$_=" . escape($combo->{ $_ }) }
+        my $newbase = shift unless ref $_[0] eq 'HASH';
+        my $newargs = shift || { };
+        my $combo   = { %$args, %$newargs };
+        my $urlargs = join($JOINT,
 			   map  { args($_, $combo->{ $_ }) }
-			   grep { defined $combo->{ $_ } }
+			   grep { defined $combo->{ $_ } && length $combo->{ $_ } }
 			   sort keys %$combo);
 
-	my $query = $newbase || $base || '';
-	$query .= '?' if length $query && length $urlargs;
-	$query .= $urlargs if length $urlargs;
+        my $query = $newbase || $base || '';
+        $query .= '?' if length $query && length $urlargs;
+        $query .= $urlargs if length $urlargs;
 
-	return $query
+        return $query
     }
 }
 
@@ -67,8 +63,9 @@ sub new {
 sub args {
     my ($key, $val) = @_;
     $key = escape($key);
+    
     return map {
-	"$key=" . escape($_);
+        "$key=" . escape($_);
     } ref $val eq 'ARRAY' ? @$val : $val;
     
 }
@@ -151,7 +148,15 @@ For the above three examples, these will produce the following outputs:
     /cgi-bin/bar.pl?mode=browse
     /cgi-bin/baz.pl?mode=browse&amp;debug=1
 
-Additional parameters may be also be specified:
+Note that additional parameters are seperated by '&amp;' rather than
+simply '&'.  This is the correct behaviour for HTML pages but is,
+unfortunately, incorrect when creating URLs that do not need to be
+encoded safely for HTML.  This is likely to be corrected in a future
+version of the plugin (most probably with TT3).  In the mean time, you
+can set C<$Template::Plugin::URL::JOINT> to C<&> to get the correct
+behaviour.
+
+Additional parameters may be also be specified to the URL:
 
     [% url(mode='submit', id='wiz') %]
 
@@ -171,7 +176,6 @@ producing
     /cgi-bin/waz.pl?mode=browse&amp;test=1
     /cgi-bin/waz.pl?mode=browse&amp;debug=1&amp;test=1
 
-
 The ordering of the parameters is non-deterministic due to fact that 
 Perl's hashes themselves are unordered.  This isn't a problem as the 
 ordering of CGI parameters is insignificant (to the best of my knowledge).
@@ -185,37 +189,30 @@ Here the spaces and "'" character are escaped in the output:
 
     /cgi-bin/woz.pl?name=Elrich%20von%20Benjy%20d%27Weiro
 
-Alternate name may be provided for the plugin at construction time
+An alternate name may be provided for the plugin at construction time
 as per regular Template Toolkit syntax.
 
     [% USE mycgi = url('cgi-bin/min.pl') %]
 
     [% mycgi(debug=1) %]
 
-Note that in the following line, additional parameters are seperated
-by '&amp;', while common usage on the Web is to just use '&'. '&amp;'
-is actually the Right Way to do it. See this URL for more information:
-http://ppewww.ph.gla.ac.uk/~flavell/www/formgetbyurl.html
-
-    /cgi-bin/waz.pl?mode=browse&amp;debug=1&amp;test=1
-
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@andywardley.comE<gt>
+Andy Wardley E<lt>abw@wardley.orgE<gt>
 
-L<http://www.andywardley.com/|http://www.andywardley.com/>
+L<http://wardley.org/|http://wardley.org/>
 
 
 
 
 =head1 VERSION
 
-2.65, distributed as part of the
-Template Toolkit version 2.14, released on 04 October 2004.
+2.71, distributed as part of the
+Template Toolkit version 2.15, released on 26 May 2006.
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2004 Andy Wardley.  All Rights Reserved.
+  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
   Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
 
 This module is free software; you can redistribute it and/or

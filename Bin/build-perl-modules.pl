@@ -29,7 +29,7 @@ my %packages = (
 	'DBD::mysql'         => 'DBD-mysql-3.0002.tar.gz',
 	'Digest::SHA1'       => 'Digest-SHA1-2.11.tar.gz',
 	'HTML::Parser'       => 'HTML-Parser-3.48.tar.gz',
-	'Template'           => 'Template-Toolkit-2.14.tar.gz',
+	'Template'           => 'Template-Toolkit-2.15.tar.gz',
 	'Time::HiRes'        => 'Time-HiRes-1.86.tar.gz',
 	'XML::Parser::Expat' => 'XML-Parser-2.34.tar.gz',
 	'YAML::Syck'         => 'YAML-Syck-0.64.tar.gz',
@@ -37,7 +37,7 @@ my %packages = (
 
 # Options for specific packages
 my %packageOptions = (
-	'Template-Toolkit-2.14' => {
+	'Template-Toolkit-2.15' => {
 
 		'Makefile.PL' => join(' ', qw(
 			TT_DOCS=n

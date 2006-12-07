@@ -8,30 +8,27 @@
 #   from which row and column permutations can be fetched.
 #
 # AUTHOR
-#   Andy Wardley   <abw@kfs.org>
+#   Andy Wardley   <abw@cpan.org>
 #
 # COPYRIGHT
-#   Copyright (C) 2000 Andy Wardley.  All Rights Reserved.
+#   Copyright (C) 2000-2006 Andy Wardley.  All Rights Reserved.
 #
 #   This module is free software; you can redistribute it and/or
 #   modify it under the same terms as Perl itself.
 #
-#----------------------------------------------------------------------------
-#
-# $Id: Table.pm,v 2.65 2004/01/30 19:33:20 abw Exp $
+# REVISION
+#   $Id: Table.pm,v 2.68 2006/05/25 11:23:36 abw Exp $
 #
 #============================================================================
 
 package Template::Plugin::Table;
 
-require 5.004;
-
 use strict;
-use vars qw( @ISA $VERSION $AUTOLOAD );
-use base qw( Template::Plugin );
-use Template::Plugin;
+use warnings;
+use base 'Template::Plugin';
 
-$VERSION = sprintf("%d.%02d", q$Revision: 2.65 $ =~ /(\d+)\.(\d+)/);
+our $VERSION = sprintf("%d.%02d", q$Revision: 2.68 $ =~ /(\d+)\.(\d+)/);
+our $AUTOLOAD;
 
 
 #------------------------------------------------------------------------
@@ -53,18 +50,18 @@ sub new {
     # or subclass thereof, we call its get_all() method to extract all
     # the data it contains
     if (UNIVERSAL::isa($data, 'Template::Iterator')) {
-	($data, $error) = $data->get_all();
-	return $class->error("iterator failed to provide data for table: ",
-			     $error)
-	    if $error;
+        ($data, $error) = $data->get_all();
+        return $class->error("iterator failed to provide data for table: ",
+                             $error)
+            if $error;
     }
 	
     return $class->error('invalid table data, expecting a list')
-	unless ref $data eq 'ARRAY';
+        unless ref $data eq 'ARRAY';
 
     $params ||= { };
     return $class->error('invalid table parameters, expecting a hash')
-	unless ref $params eq 'HASH';
+        unless ref $params eq 'HASH';
 
     # ensure keys are folded to upper case
     @$params{ map { uc } keys %$params } = values %$params;
@@ -74,44 +71,44 @@ sub new {
 
     # calculate number of columns based on a specified number of rows
     if ($rows = $params->{ ROWS }) {
-	if ($size < $rows) {
-	    $rows = $size;   # pad?
-	    $cols = 1;
-	    $coloff = 0;
-	}
-	else {
-	    $coloff = $rows - $overlap;
-	    $cols = int ($size / $coloff) 
-		  + ($size % $coloff > $overlap ? 1 : 0)
-	}
+        if ($size < $rows) {
+            $rows = $size;   # pad?
+            $cols = 1;
+            $coloff = 0;
+        }
+        else {
+            $coloff = $rows - $overlap;
+            $cols = int ($size / $coloff) 
+                + ($size % $coloff > $overlap ? 1 : 0)
+            }
     }
     # calculate number of rows based on a specified number of columns
     elsif ($cols = $params->{ COLS }) {
-	if ($size < $cols) {
-	    $cols = $size;
-	    $rows = 1;
-	    $coloff = 1;
-	}
-	else {
-	    $coloff = int ($size / $cols) 
-		    + ($size % $cols > $overlap ? 1 : 0);
-	    $rows = $coloff + $overlap;
-	}
+        if ($size < $cols) {
+            $cols = $size;
+            $rows = 1;
+            $coloff = 1;
+        }
+        else {
+            $coloff = int ($size / $cols) 
+                + ($size % $cols > $overlap ? 1 : 0);
+            $rows = $coloff + $overlap;
+        }
     }
     else {
-	$rows = $size;
-	$cols = 1;
-	$coloff = 0;
+        $rows = $size;
+        $cols = 1;
+        $coloff = 0;
     }
     
     bless {
-	_DATA    => $data,
-	_SIZE    => $size,
-	_NROWS   => $rows,
-	_NCOLS   => $cols,
-	_COLOFF  => $coloff,
-	_OVERLAP => $overlap,
-	_PAD     => defined $params->{ PAD } ? $params->{ PAD } : 1,
+        _DATA    => $data,
+        _SIZE    => $size,
+        _NROWS   => $rows,
+        _NCOLS   => $cols,
+        _COLOFF  => $coloff,
+        _OVERLAP => $overlap,
+        _PAD     => defined $params->{ PAD } ? $params->{ PAD } : 1,
     }, $class;
 }
 
@@ -127,22 +124,22 @@ sub new {
 sub row {
     my ($self, $row) = @_;
     my ($data, $cols, $offset, $size, $pad) 
-	= @$self{ qw( _DATA _NCOLS _COLOFF _SIZE _PAD) };
+        = @$self{ qw( _DATA _NCOLS _COLOFF _SIZE _PAD) };
     my @set;
 
     # return all rows if row number not specified
     return $self->rows()
-	unless defined $row;
+        unless defined $row;
 
     return () if $row >= $self->{ _NROWS } || $row < 0;
     
     my $index = $row;
 
     for (my $c = 0; $c < $cols; $c++) {
-	push(@set, $index < $size 
-		    ? $data->[$index] 
-		    : ($pad ? undef : ()));
-	$index += $offset;
+        push(@set, $index < $size 
+             ? $data->[$index] 
+             : ($pad ? undef : ()));
+        $index += $offset;
     }
     return \@set;
 }
@@ -164,7 +161,7 @@ sub col {
 
     # return all cols if row number not specified
     return $self->cols()
-	unless defined $col;
+        unless defined $col;
 
     return () if $col >= $self->{ _NCOLS } || $col < 0;
 
@@ -172,12 +169,12 @@ sub col {
     $end = $start + $self->{ _NROWS } - 1;
     $end = $start if $end < $start;
     if ($end >= $size) {
-	$blanks = ($end - $size) + 1;
-	$end = $size - 1;
+        $blanks = ($end - $size) + 1;
+        $end = $size - 1;
     }
     return () if $start >= $size;
     return [ @$data[$start..$end], 
-	     $self->{ _PAD } ? ((undef) x $blanks) : () ];
+             $self->{ _PAD } ? ((undef) x $blanks) : () ];
 }
 
 
@@ -217,11 +214,11 @@ sub AUTOLOAD {
     $item =~ s/.*:://;
     return if $item eq 'DESTROY';
 
-    if ($item =~ /^data|size|nrows|ncols|overlap|pad$/) {
-	return $self->{ $item };
+    if ($item =~ /^(?:data|size|nrows|ncols|overlap|pad)$/) {
+        return $self->{ $item };
     }
     else {
-	return (undef, "no such table method: $item");
+        return (undef, "no such table method: $item");
     }
 }
 
@@ -429,21 +426,21 @@ remaining items.  These are then available via the usual Table interface.
 
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@andywardley.comE<gt>
+Andy Wardley E<lt>abw@wardley.orgE<gt>
 
-L<http://www.andywardley.com/|http://www.andywardley.com/>
+L<http://wardley.org/|http://wardley.org/>
 
 
 
 
 =head1 VERSION
 
-2.65, distributed as part of the
-Template Toolkit version 2.14, released on 04 October 2004.
+2.68, distributed as part of the
+Template Toolkit version 2.15, released on 26 May 2006.
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2004 Andy Wardley.  All Rights Reserved.
+  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
   Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
 
 This module is free software; you can redistribute it and/or

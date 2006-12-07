@@ -18,7 +18,7 @@
 #   modify it under the same terms as Perl itself.
 # 
 # REVISION
-#   $Id: Context.pm,v 2.91 2004/10/04 10:02:29 abw Exp $
+#   $Id: Context.pm,v 2.96 2006/02/01 09:11:59 abw Exp $
 #
 #============================================================================
 
@@ -35,7 +35,7 @@ use Template::Config;
 use Template::Constants;
 use Template::Exception;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 2.91 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 2.96 $ =~ /(\d+)\.(\d+)/);
 $DEBUG_FORMAT = "\n## \$file line \$line : [% \$text %] ##\n";
 
 
@@ -370,7 +370,7 @@ sub process {
             # instead?
 
             pop(@{$element->{ callers }})
-                if (UNIVERSAL::isa($element, 'Template::Document'));
+                if (UNIVERSAL::isa($component, 'Template::Document'));
         }
         $stash->set('component', $component);
     };
@@ -426,38 +426,38 @@ sub insert {
 
 
     FILE: foreach $file (@$files) {
-	my $name = $file;
+    my $name = $file;
 
-	if ($^O eq 'MSWin32') {
-	    # let C:/foo through
-	    $prefix = $1 if $name =~ s/^(\w{2,})://o;
-	}
-	else {
-	    $prefix = $1 if $name =~ s/^(\w+)://;
-	}
+    if ($^O eq 'MSWin32') {
+        # let C:/foo through
+        $prefix = $1 if $name =~ s/^(\w{2,})://o;
+    }
+    else {
+        $prefix = $1 if $name =~ s/^(\w+)://;
+    }
 
-	if (defined $prefix) {
-	    $providers = $self->{ PREFIX_MAP }->{ $prefix } 
-	    || return $self->throw(Template::Constants::ERROR_FILE,
-				   "no providers for file prefix '$prefix'");
-	}
-	else {
-	    $providers = $self->{ PREFIX_MAP }->{ default }
-	    || $self->{ LOAD_TEMPLATES };
-	}
+    if (defined $prefix) {
+        $providers = $self->{ PREFIX_MAP }->{ $prefix } 
+        || return $self->throw(Template::Constants::ERROR_FILE,
+                   "no providers for file prefix '$prefix'");
+    }
+    else {
+        $providers = $self->{ PREFIX_MAP }->{ default }
+        || $self->{ LOAD_TEMPLATES };
+    }
 
-	foreach my $provider (@$providers) {
-	    ($text, $error) = $provider->load($name, $prefix);
-	    next FILE unless $error;
-	    if ($error == Template::Constants::STATUS_ERROR) {
-		$self->throw($text) if ref $text;
-		$self->throw(Template::Constants::ERROR_FILE, $text);
-	    }
-	}
-	$self->throw(Template::Constants::ERROR_FILE, "$file: not found");
+    foreach my $provider (@$providers) {
+        ($text, $error) = $provider->load($name, $prefix);
+        next FILE unless $error;
+        if ($error == Template::Constants::STATUS_ERROR) {
+        $self->throw($text) if ref $text;
+        $self->throw(Template::Constants::ERROR_FILE, $text);
+        }
+    }
+    $self->throw(Template::Constants::ERROR_FILE, "$file: not found");
     }
     continue {
-	$output .= $text;
+    $output .= $text;
     }
     return $output;
 }
@@ -496,14 +496,14 @@ sub throw {
 
     # die! die! die!
     if (UNIVERSAL::isa($error, 'Template::Exception')) {
-	die $error;
+    die $error;
     }
     elsif (defined $info) {
-	die (Template::Exception->new($error, $info, $output));
+    die (Template::Exception->new($error, $info, $output));
     }
     else {
-	$error ||= '';
-	die (Template::Exception->new('undef', $error, $output));
+    $error ||= '';
+    die (Template::Exception->new('undef', $error, $output));
     }
 
     # not reached
@@ -533,11 +533,11 @@ sub catch {
     my ($self, $error, $output) = @_;
 
     if (UNIVERSAL::isa($error, 'Template::Exception')) {
-	$error->text($output) if $output;
-	return $error;
+    $error->text($output) if $output;
+    return $error;
     }
     else {
-	return Template::Exception->new('undef', $error, $output);
+    return Template::Exception->new('undef', $error, $output);
     }
 }
 
@@ -588,7 +588,7 @@ sub visit {
 #
 # The leave() method is called when the document has finished
 # processing itself.  This removes the entry from the BLKSTACK list
-# that was added visit() above.  For persistance of BLOCK definitions,
+# that was added visit() above.  For persistence of BLOCK definitions,
 # the process() method (i.e. the PROCESS directive) does some extra
 # magic to copy BLOCKs into a shared hash.
 #------------------------------------------------------------------------
@@ -606,15 +606,15 @@ sub leave {
 # be specified as a reference to a sub-routine or Template::Document
 # object or as text which is compiled into a template.  Returns a true
 # value (the $block reference or compiled block reference) if
-# succesful or undef on failure.  Call error() to retrieve the
+# successful or undef on failure.  Call error() to retrieve the
 # relevent error message (i.e. compilation failure).
 #------------------------------------------------------------------------
 
 sub define_block {
     my ($self, $name, $block) = @_;
     $block = $self->template(\$block)
-	|| return undef
-	    unless ref $block;
+    || return undef
+        unless ref $block;
     $self->{ BLOCKS }->{ $name } = $block;
 }
 
@@ -631,13 +631,13 @@ sub define_filter {
     $filter = [ $filter, 1 ] if $is_dynamic;
 
     foreach my $provider (@{ $self->{ LOAD_FILTERS } }) {
-	($result, $error) = $provider->store($name, $filter);
-	return 1 unless $error;
-	$self->throw(&Template::Constants::ERROR_FILTER, $result)
-	    if $error == &Template::Constants::STATUS_ERROR;
+    ($result, $error) = $provider->store($name, $filter);
+    return 1 unless $error;
+    $self->throw(&Template::Constants::ERROR_FILTER, $result)
+        if $error == &Template::Constants::STATUS_ERROR;
     }
     $self->throw(&Template::Constants::ERROR_FILTER, 
-		 "FILTER providers declined to store filter $name");
+         "FILTER providers declined to store filter $name");
 }
 
 
@@ -697,28 +697,28 @@ sub debugging {
 
 #    print "*** debug(@args)\n";
     if (@args) {
-	if ($args[0] =~ /^on|1$/i) {
-	    $self->{ DEBUG_DIRS } = 1;
-	    shift(@args);
-	}
-	elsif ($args[0] =~ /^off|0$/i) {
-	    $self->{ DEBUG_DIRS } = 0;
-	    shift(@args);
-	}
+    if ($args[0] =~ /^on|1$/i) {
+        $self->{ DEBUG_DIRS } = 1;
+        shift(@args);
+    }
+    elsif ($args[0] =~ /^off|0$/i) {
+        $self->{ DEBUG_DIRS } = 0;
+        shift(@args);
+    }
     }
 
     if (@args) {
-	if ($args[0] =~ /^msg$/i) {
+    if ($args[0] =~ /^msg$/i) {
             return unless $self->{ DEBUG_DIRS };
-	    my $format = $self->{ DEBUG_FORMAT };
-	    $format = $DEBUG_FORMAT unless defined $format;
-	    $format =~ s/\$(\w+)/$hash->{ $1 }/ge;
-	    return $format;
-	}
-	elsif ($args[0] =~ /^format$/i) {
-	    $self->{ DEBUG_FORMAT } = $args[1];
-	}
-	# else ignore
+        my $format = $self->{ DEBUG_FORMAT };
+        $format = $DEBUG_FORMAT unless defined $format;
+        $format =~ s/\$(\w+)/$hash->{ $1 }/ge;
+        return $format;
+    }
+    elsif ($args[0] =~ /^format$/i) {
+        $self->{ DEBUG_FORMAT } = $args[1];
+    }
+    # else ignore
     }
 
     return '';
@@ -743,7 +743,7 @@ sub AUTOLOAD {
     return if $method eq 'DESTROY';
 
     warn "no such context method/member: $method\n"
-	unless defined ($result = $self->{ uc $method });
+    unless defined ($result = $self->{ uc $method });
 
     return $result;
 }
@@ -777,56 +777,53 @@ sub _init {
     my ($self, $config) = @_;
     my ($name, $item, $method, $block, $blocks);
     my @itemlut = ( 
-	LOAD_TEMPLATES => 'provider',
-	LOAD_PLUGINS   => 'plugins',
-	LOAD_FILTERS   => 'filters' 
+        LOAD_TEMPLATES => 'provider',
+        LOAD_PLUGINS   => 'plugins',
+        LOAD_FILTERS   => 'filters' 
     );
 
     # LOAD_TEMPLATE, LOAD_PLUGINS, LOAD_FILTERS - lists of providers
     while (($name, $method) = splice(@itemlut, 0, 2)) {
-	$item = $config->{ $name } 
-	     || Template::Config->$method($config)
-	     || return $self->error($Template::Config::ERROR);
-	$self->{ $name } = ref $item eq 'ARRAY' ? $item : [ $item ];
+        $item = $config->{ $name } 
+            || Template::Config->$method($config)
+            || return $self->error($Template::Config::ERROR);
+        $self->{ $name } = ref $item eq 'ARRAY' ? $item : [ $item ];
     }
 
     my $providers  = $self->{ LOAD_TEMPLATES };
     my $prefix_map = $self->{ PREFIX_MAP } = $config->{ PREFIX_MAP } || { };
     while (my ($key, $val) = each %$prefix_map) {
-	$prefix_map->{ $key } = [ ref $val ? $val :
-				  map { $providers->[$_] } 
-				  split(/\D+/, $val) ]
-	    unless ref $val eq 'ARRAY';
-#	print(STDERR "prefix $key => $val => [", 
-#	      join(', ', @{ $prefix_map->{ $key } }), "]\n");
+        $prefix_map->{ $key } = [ ref $val ? $val : 
+                                  map { $providers->[$_] } split(/\D+/, $val) ]
+                                  unless ref $val eq 'ARRAY';
     }
 
     # STASH
     $self->{ STASH } = $config->{ STASH } || do {
-      	my $predefs  = $config->{ VARIABLES } 
-		    || $config->{ PRE_DEFINE } 
-		    || { };
+        my $predefs  = $config->{ VARIABLES } 
+            || $config->{ PRE_DEFINE } 
+            || { };
 
-	# hack to get stash to know about debug mode
-	$predefs->{ _DEBUG } = ( ($config->{ DEBUG } || 0)
-                               & &Template::Constants::DEBUG_UNDEF ) ? 1 : 0
-            unless defined $predefs->{ _DEBUG };
-                                
-	Template::Config->stash($predefs)
-	    || return $self->error($Template::Config::ERROR);
+        # hack to get stash to know about debug mode
+        $predefs->{ _DEBUG } = ( ($config->{ DEBUG } || 0)
+                                 & &Template::Constants::DEBUG_UNDEF ) ? 1 : 0
+                                 unless defined $predefs->{ _DEBUG };
+        
+        Template::Config->stash($predefs)
+            || return $self->error($Template::Config::ERROR);
     };
-
+    
     # compile any template BLOCKS specified as text
     $blocks = $config->{ BLOCKS } || { };
     $self->{ INIT_BLOCKS } = $self->{ BLOCKS } = { 
-	map {
-	    $block = $blocks->{ $_ };
-	    $block = $self->template(\$block)
-		|| return undef
-		    unless ref $block;
-	    ($_ => $block);
-	} 
-	keys %$blocks
+        map {
+            $block = $blocks->{ $_ };
+            $block = $self->template(\$block)
+                || return undef
+                unless ref $block;
+            ($_ => $block);
+        } 
+        keys %$blocks
     };
 
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -874,18 +871,18 @@ sub _dump {
     my $key;
 
     foreach $key (qw( RECURSION EVAL_PERL TRIM )) {
-	$output .= sprintf($format, $key, $self->{ $key });
+    $output .= sprintf($format, $key, $self->{ $key });
     }
     foreach my $pname (qw( LOAD_TEMPLATES LOAD_PLUGINS LOAD_FILTERS )) {
-	my $provtext = "[\n";
-	foreach my $prov (@{ $self->{ $pname } }) {
-	    $provtext .= $prov->_dump();
-#	    $provtext .= ",\n";
-	}
-	$provtext =~ s/\n/\n        /g;
-	$provtext =~ s/\s+$//;
-	$provtext .= ",\n    ]";
-	$output .= sprintf($format, $pname, $provtext);
+    my $provtext = "[\n";
+    foreach my $prov (@{ $self->{ $pname } }) {
+        $provtext .= $prov->_dump();
+#       $provtext .= ",\n";
+    }
+    $provtext =~ s/\n/\n        /g;
+    $provtext =~ s/\s+$//;
+    $provtext .= ",\n    ]";
+    $output .= sprintf($format, $pname, $provtext);
     }
     $output .= sprintf($format, STASH => $self->{ STASH }->_dump());
     $output .= '}';
@@ -1545,21 +1542,21 @@ An AUTOLOAD method provides access to context configuration items.
 
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@andywardley.comE<gt>
+Andy Wardley E<lt>abw@wardley.orgE<gt>
 
-L<http://www.andywardley.com/|http://www.andywardley.com/>
+L<http://wardley.org/|http://wardley.org/>
 
 
 
 
 =head1 VERSION
 
-2.91, distributed as part of the
-Template Toolkit version 2.14, released on 04 October 2004.
+2.96, distributed as part of the
+Template Toolkit version 2.15, released on 26 May 2006.
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2004 Andy Wardley.  All Rights Reserved.
+  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
   Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
 
 This module is free software; you can redistribute it and/or

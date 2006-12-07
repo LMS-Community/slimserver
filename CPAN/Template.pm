@@ -17,7 +17,7 @@
 #   modify it under the same terms as Perl itself.
 #
 # REVISION
-#   $Id: Template.pm,v 2.80 2004/10/04 10:24:10 abw Exp $
+#   $Id: Template.pm,v 2.84 2006/02/01 11:55:27 abw Exp $
 #
 #========================================================================
  
@@ -38,7 +38,7 @@ use File::Path;
 
 ## This is the main version number for the Template Toolkit.
 ## It is extracted by ExtUtils::MakeMaker and inserted in various places.
-$VERSION     = '2.14';
+$VERSION     = '2.15';
 $ERROR       = '';
 $DEBUG       = 0;
 $BINMODE     = 0 unless defined $BINMODE;
@@ -60,10 +60,10 @@ sub process {
     my ($output, $error);
     my $options = (@opts == 1) && UNIVERSAL::isa($opts[0], 'HASH')
         ? shift(@opts) : { @opts };
-    
-    $options->{ binmode } = $BINMODE 
-        unless defined $options->{ binmode };
 
+    $options->{ binmode } = $BINMODE
+        unless defined $options->{ binmode };
+    
     # we're using this for testing in t/output.t and t/filter.t so 
     # don't remove it if you don't want tests to fail...
     $self->DEBUG("set binmode\n") if $DEBUG && $options->{ binmode };
@@ -76,7 +76,7 @@ sub process {
             my $outpath = $self->{ OUTPUT_PATH };
             $outstream = "$outpath/$outstream" if $outpath;
         }	
-        
+
         # send processed template to output stream, checking for error
         return ($self->error($error))
             if ($error = &_output($outstream, \$output, $options));
@@ -192,7 +192,7 @@ sub _output {
         }
         elsif (open(FP, ">$where")) { 
             # binmode option can be 1 or a specific layer, e.g. :utf8
-            my $bm = $options->{ binmode };
+            my $bm = $options->{ binmode  };
             if ($bm && +$bm == 1) { 
                 binmode FP;
             }
@@ -937,20 +937,20 @@ Ignored and deleted.
 
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@andywardley.comE<gt>
+Andy Wardley E<lt>abw@wardley.orgE<gt>
 
-L<http://www.andywardley.com/|http://www.andywardley.com/>
+L<http://wardley.org/|http://wardley.org/>
 
 
 
 
 =head1 VERSION
 
-Template Toolkit version 2.14, released on 04 October 2004.
+Template Toolkit version 2.15, released on 26 May 2006.
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2004 Andy Wardley.  All Rights Reserved.
+  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
   Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
 
 This module is free software; you can redistribute it and/or

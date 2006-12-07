@@ -9,10 +9,10 @@
 #   originally the t/texpect.pl script.
 #
 # AUTHOR
-#   Andy Wardley   <abw@kfs.org>
+#   Andy Wardley   <abw@cpan.org>
 #
 # COPYRIGHT
-#   Copyright (C) 1996-2000 Andy Wardley.  All Rights Reserved.
+#   Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
 #   Copyright (C) 1998-2000 Canon Research Centre Europe Ltd.
 #
 #   This module is free software; you can redistribute it and/or
@@ -20,7 +20,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Test.pm,v 2.70 2004/01/30 19:32:28 abw Exp $
+# $Id: Test.pm,v 2.72 2006/01/30 20:04:55 abw Exp $
 #
 #============================================================================
 
@@ -30,12 +30,12 @@ require 5.004;
 
 use strict;
 use vars qw( @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS 
-	     $VERSION $DEBUG $EXTRA $PRESERVE $REASON $NO_FLUSH
-	     $loaded %callsign);
+         $VERSION $DEBUG $EXTRA $PRESERVE $REASON $NO_FLUSH
+         $loaded %callsign);
 use Template qw( :template );
 use Exporter;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 2.70 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 2.72 $ =~ /(\d+)\.(\d+)/);
 $DEBUG   = 0;
 @ISA     = qw( Exporter );
 @EXPORT  = qw( ntests ok is match flush skip_all test_expect callsign banner );
@@ -46,7 +46,7 @@ $| = 1;
 $REASON   = 'not applicable on this platform';
 $NO_FLUSH = 0;
 $EXTRA    = 0;   # any extra tests to come after test_expect()
-$PRESERVE = 0	 # don't mangle newlines in output/expect
+$PRESERVE = 0    # don't mangle newlines in output/expect
     unless defined $PRESERVE;
 
 # always set binmode on Win32 machines so that any output generated
@@ -78,12 +78,12 @@ sub ntests {
     $ntests = shift;
     # add any pre-declared extra tests, or pre-stored test @results, to 
     # the grand total of tests
-    $ntests += $EXTRA + scalar @results;	 
+    $ntests += $EXTRA + scalar @results;     
     $ok_count = 1;
     print $ntests ? "1..$ntests\n" : "1..$ntests # skipped: $REASON\n";
     # flush cached results
     foreach my $pre_test (@results) {
-	ok(@$pre_test);
+        ok(@$pre_test);
     }
 }
 
@@ -101,17 +101,17 @@ sub ok {
 
     # cache results if ntests() not yet called
     unless ($ok_count) {
-	push(@results, [ $ok, $msg ]);
-	return $ok;
+        push(@results, [ $ok, $msg ]);
+        return $ok;
     }
 
     $msg = defined $msg ? " - $msg" : '';
     if ($ok) {
-	print "ok ", $ok_count++, "$msg\n";
+        print "ok ", $ok_count++, "$msg\n";
     }
     else {
-	print STDERR "FAILED $ok_count: $msg\n" if defined $msg;
-	print "not ok ", $ok_count++, "$msg\n";
+        print STDERR "FAILED $ok_count: $msg\n" if defined $msg;
+        print "not ok ", $ok_count++, "$msg\n";
     }
 }
 
@@ -144,14 +144,14 @@ sub match {
     my $count = $ok_count ? $ok_count : scalar @results + 1;
 
     # force stringification of $result to avoid 'no eq method' overload errors
-    $result = "$result" if ref $result;	   
+    $result = "$result" if ref $result;    
 
     if ($result eq $expect) {
-	return ok(1, $msg);
+        return ok(1, $msg);
     }
     else {
-	print STDERR "FAILED $count:\n  expect: [$expect]\n  result: [$result]\n";
-	return ok(0, $msg);
+        print STDERR "FAILED $count:\n  expect: [$expect]\n  result: [$result]\n";
+        return ok(0, $msg);
     }
 }
 
@@ -164,7 +164,7 @@ sub match {
 
 sub flush {
     ntests(0)
-	unless $ok_count || $NO_FLUSH;
+    unless $ok_count || $NO_FLUSH;
 }
 
 
@@ -221,12 +221,12 @@ sub test_expect {
     # read input text
     eval {
         local $/ = undef;
-	$input = ref $src ? <$src> : $src;
+        $input = ref $src ? <$src> : $src;
     };
     if ($@) {
-	ntests(1); ok(0);
-	warn "Cannot read input text from $src\n";
-	return undef;
+        ntests(1); ok(0);
+        warn "Cannot read input text from $src\n";
+        return undef;
     }
 
     # remove any comment lines
@@ -250,18 +250,18 @@ sub test_expect {
     # optional second param may contain a Template reference or a HASH ref
     # of constructor options, or may be undefined
     if (ref($tproc) eq 'HASH') {
-	# create Template object using hash of config items
-	$tproc = Template->new($tproc)
-	    || die Template->error(), "\n";
+        # create Template object using hash of config items
+        $tproc = Template->new($tproc)
+            || die Template->error(), "\n";
     }
     elsif (ref($tproc) eq 'ARRAY') {
-	# list of [ name => $tproc, name => $tproc ], use first $tproc
-	$ttprocs = { @$tproc };
-	$tproc   = $tproc->[1];
+        # list of [ name => $tproc, name => $tproc ], use first $tproc
+        $ttprocs = { @$tproc };
+        $tproc   = $tproc->[1];
     }
     elsif (! ref $tproc) {
-	$tproc = Template->new()
-	    || die Template->error(), "\n";
+        $tproc = Template->new()
+            || die Template->error(), "\n";
     }
     # otherwise, we assume it's a Template reference
 
@@ -273,90 +273,90 @@ sub test_expect {
 
     # the remaining tests are defined in @tests...
     foreach $input (@tests) {
-	$count++;
-	my $name = '';
+        $count++;
+        my $name = '';
+        
+        if ($input =~ s/^\s*-- name:? (.*?) --\s*\n//im) {
+            $name = $1; 
+        }
+        else {
+            $name = "template text $count";
+        }
 
-	if ($input =~ s/^\s*-- name:? (.*?) --\s*\n//im) {
-	    $name = $1; 
-	}
-	else {
-	    $name = "template text $count";
-	}
+        # split input by a line like "-- expect --"
+        ($input, $expect) = 
+            split(/^\s*--\s*expect\s*--\s*\n/im, $input);
+        $expect = '' 
+            unless defined $expect;
 
-	# split input by a line like "-- expect --"
-	($input, $expect) = 
-	    split(/^\s*--\s*expect\s*--\s*\n/im, $input);
-	$expect = '' 
-	    unless defined $expect;
+        $output = '';
 
-	$output = '';
+        # input text may be prefixed with "-- use name --" to indicate a
+        # Template object in the $ttproc hash which we should use
+        if ($input =~ s/^\s*--\s*use\s+(\S+)\s*--\s*\n//im) {
+            my $ttname = $1;
+            my $ttlookup;
+            if ($ttlookup = $ttprocs->{ $ttname }) {
+                $tproc = $ttlookup;
+            }
+            else {
+                warn "no such template object to use: $ttname\n";
+            }
+        }
 
-	# input text may be prefixed with "-- use name --" to indicate a
-	# Template object in the $ttproc hash which we should use
-	if ($input =~ s/^\s*--\s*use\s+(\S+)\s*--\s*\n//im) {
-	    my $ttname = $1;
-	    my $ttlookup;
-	    if ($ttlookup = $ttprocs->{ $ttname }) {
-		$tproc = $ttlookup;
-	    }
-	    else {
-		warn "no such template object to use: $ttname\n";
-	    }
-	}
+        # process input text
+        $tproc->process(\$input, $params, \$output) || do {
+            warn "Template process failed: ", $tproc->error(), "\n";
+            # report failure and automatically fail the expect match
+            ok(0, "$name process FAILED: " . subtext($input));
+            ok(0, '(obviously did not match expected)');
+            next;
+        };
 
-	# process input text
-	$tproc->process(\$input, $params, \$output) || do {
-	    warn "Template process failed: ", $tproc->error(), "\n";
-	    # report failure and automatically fail the expect match
-	    ok(0, "$name process FAILED: " . subtext($input));
-	    ok(0, '(obviously did not match expected)');
-	    next;
-	};
+        # processed OK
+        ok(1, "$name processed OK: " . subtext($input));
 
-	# processed OK
-	ok(1, "$name processed OK: " . subtext($input));
+        # another hack: if the '-- expect --' section starts with 
+        # '-- process --' then we process the expected output 
+        # before comparing it with the generated output.  This is
+        # slightly twisted but it makes it possible to run tests 
+        # where the expected output isn't static.  See t/date.t for
+        # an example.
 
-	# another hack: if the '-- expect --' section starts with 
-	# '-- process --' then we process the expected output 
-	# before comparing it with the generated output.  This is
-	# slightly twisted but it makes it possible to run tests 
-	# where the expected output isn't static.  See t/date.t for
-	# an example.
-
-	if ($expect =~ s/^\s*--+\s*process\s*--+\s*\n//im) {
-	    my $out;
-	    $tproc->process(\$expect, $params, \$out) || do {
-		warn("Template process failed (expect): ", 
-		     $tproc->error(), "\n");
-		# report failure and automatically fail the expect match
-		ok(0, "failed to process expected output ["
-		     . subtext($expect) . ']');
-		next;
-	    };
-	    $expect = $out;
-	};		
-
-	# strip any trailing blank lines from expected and real output
-	foreach ($expect, $output) {
-	    s/\n*\Z//mg;
-	}
-
-	$match = ($expect eq $output) ? 1 : 0;
-	if (! $match || $DEBUG) {
-	    print "MATCH FAILED\n"
-		unless $match;
-
-	    my ($copyi, $copye, $copyo) = ($input, $expect, $output);
-	    unless ($PRESERVE) {
-		foreach ($copyi, $copye, $copyo) {
-		    s/\n/\\n/g;
-		}
-	    }
-	    printf(" input: [%s]\nexpect: [%s]\noutput: [%s]\n", 
-		   $copyi, $copye, $copyo);
-	}
-
-	ok($match, $match ? "$name matched expected" : "$name did not match expected");
+        if ($expect =~ s/^\s*--+\s*process\s*--+\s*\n//im) {
+            my $out;
+            $tproc->process(\$expect, $params, \$out) || do {
+                warn("Template process failed (expect): ", 
+                     $tproc->error(), "\n");
+                # report failure and automatically fail the expect match
+                ok(0, "failed to process expected output ["
+                   . subtext($expect) . ']');
+                next;
+            };
+            $expect = $out;
+        };      
+        
+        # strip any trailing blank lines from expected and real output
+        foreach ($expect, $output) {
+            s/\n*\Z//mg;
+        }
+        
+        $match = ($expect eq $output) ? 1 : 0;
+        if (! $match || $DEBUG) {
+            print "MATCH FAILED\n"
+                unless $match;
+            
+            my ($copyi, $copye, $copyo) = ($input, $expect, $output);
+            unless ($PRESERVE) {
+                foreach ($copyi, $copye, $copyo) {
+                    s/\n/\\n/g;
+                }
+            }
+            printf(" input: [%s]\nexpect: [%s]\noutput: [%s]\n", 
+                   $copyi, $copye, $copyo);
+        }
+        
+        ok($match, $match ? "$name matched expected" : "$name did not match expected");
     };
 }
 
@@ -370,9 +370,9 @@ sub test_expect {
 sub callsign {
     my %callsign;
     @callsign{ 'a'..'z' } = qw( 
-	    alpha bravo charlie delta echo foxtrot golf hotel india 
-	    juliet kilo lima mike november oscar papa quebec romeo 
-	    sierra tango umbrella victor whisky x-ray yankee zulu );
+        alpha bravo charlie delta echo foxtrot golf hotel india 
+        juliet kilo lima mike november oscar papa quebec romeo 
+        sierra tango umbrella victor whisky x-ray yankee zulu );
     return \%callsign;
 }
 
@@ -676,21 +676,21 @@ The line splitter may be a bit dumb, especially if it sees lines like
 
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@andywardley.comE<gt>
+Andy Wardley E<lt>abw@wardley.orgE<gt>
 
-L<http://www.andywardley.com/|http://www.andywardley.com/>
+L<http://wardley.org/|http://wardley.org/>
 
 
 
 
 =head1 VERSION
 
-2.70, distributed as part of the
-Template Toolkit version 2.14, released on 04 October 2004.
+2.72, distributed as part of the
+Template Toolkit version 2.15, released on 26 May 2006.
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2004 Andy Wardley.  All Rights Reserved.
+  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
   Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
 
 This module is free software; you can redistribute it and/or

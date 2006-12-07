@@ -7,10 +7,10 @@
 #   variables for the Template Toolkit. 
 #
 # AUTHOR
-#   Andy Wardley   <abw@wardley.org>
+#   Andy Wardley   <abw@cpan.org>
 #
 # COPYRIGHT
-#   Copyright (C) 1996-2003 Andy Wardley.  All Rights Reserved.
+#   Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
 #   Copyright (C) 1998-2000 Canon Research Centre Europe Ltd.
 #
 #   This module is free software; you can redistribute it and/or
@@ -18,7 +18,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Stash.pm,v 2.86 2004/01/30 19:32:28 abw Exp $
+# $Id: Stash.pm,v 2.102 2006/05/25 11:23:35 abw Exp $
 #
 #============================================================================
 
@@ -27,9 +27,10 @@ package Template::Stash;
 require 5.004;
 
 use strict;
-use vars qw( $VERSION $DEBUG $ROOT_OPS $SCALAR_OPS $HASH_OPS $LIST_OPS );
 
-$VERSION = sprintf("%d.%02d", q$Revision: 2.86 $ =~ /(\d+)\.(\d+)/);
+our $VERSION = sprintf("%d.%02d", q$Revision: 2.102 $ =~ /(\d+)\.(\d+)/);
+our $DEBUG   = 0 unless defined $DEBUG;
+our $PRIVATE = qr/^[_.]/;
 
 
 #========================================================================
@@ -43,20 +44,32 @@ $VERSION = sprintf("%d.%02d", q$Revision: 2.86 $ =~ /(\d+)\.(\d+)/);
 # respectively for LIST_OPS and HASH_OPS
 #------------------------------------------------------------------------
 
-$ROOT_OPS = {
+our $ROOT_OPS = {
     'inc'  => sub { local $^W = 0; my $item = shift; ++$item }, 
     'dec'  => sub { local $^W = 0; my $item = shift; --$item }, 
 #    import => \&hash_import,
     defined $ROOT_OPS ? %$ROOT_OPS : (),
 };
 
-$SCALAR_OPS = {
+our $SCALAR_OPS = {
     'item'    => sub {   $_[0] },
     'list'    => sub { [ $_[0] ] },
     'hash'    => sub { { value => $_[0] } },
     'length'  => sub { length $_[0] },
     'size'    => sub { return 1 },
     'defined' => sub { return 1 },
+    'match' => sub {
+        my ($str, $search, $global) = @_;
+        return $str unless defined $str and defined $search;
+        my @matches = $global ? ($str =~ /$search/g)
+                              : ($str =~ /$search/);
+        return @matches ? \@matches : '';
+    },
+    'search'  => sub { 
+        my ($str, $pattern) = @_;
+        return $str unless defined $str and defined $pattern;
+        return $str =~ /$pattern/;
+    },
     'repeat'  => sub { 
         my ($str, $count) = @_;
         $str = '' unless defined $str;  
@@ -64,31 +77,66 @@ $SCALAR_OPS = {
         $count ||= 1;
         return $str x $count;
     },
-    'search'  => sub { 
-        my ($str, $pattern) = @_;
-        return $str unless defined $str and defined $pattern;
-        return $str =~ /$pattern/;
-    },
-    'replace'  => sub { 
-        my ($str, $search, $replace) = @_;
+    'replace' => sub {
+        my ($text, $pattern, $replace, $global) = @_;
+        $text    = '' unless defined $text;
+        $pattern = '' unless defined $pattern;
         $replace = '' unless defined $replace;
-        return $str unless defined $str and defined $search;
-        $str =~ s/$search/$replace/g;
-#       print STDERR "s [ $search ] [ $replace ] g\n";
-#       eval "\$str =~ s$search$replaceg";
-        return $str;
+        $global  = 1  unless defined $global;
+
+        if ($replace =~ /\$\d+/) {
+            # replacement string may contain backrefs
+            my $expand = sub {
+                my ($chunk, $start, $end) = @_;
+                $chunk =~ s{ \\(\\|\$) | \$ (\d+) }{
+                    $1 ? $1
+                        : ($2 > $#$start || $2 == 0) ? '' 
+                        : substr($text, $start->[$2], $end->[$2] - $start->[$2]);
+                }exg;
+                $chunk;
+            };
+            if ($global) {
+                $text =~ s{$pattern}{ &$expand($replace, [@-], [@+]) }eg;
+            } 
+            else {
+                $text =~ s{$pattern}{ &$expand($replace, [@-], [@+]) }e;
+            }
+        }
+        else {
+            if ($global) {
+                $text =~ s/$pattern/$replace/g;
+            } 
+            else {
+                $text =~ s/$pattern/$replace/;
+            }
+        }
+        return $text;
     },
-    'match' => sub {
+    'remove'  => sub { 
         my ($str, $search) = @_;
         return $str unless defined $str and defined $search;
-        my @matches = ($str =~ /$search/);
-        return @matches ? \@matches : '';
+        $str =~ s/$search//g;
+        return $str;
     },
-    'split'   => sub { 
-        my ($str, $split, @args) = @_;
+    'split' => sub {
+        my ($str, $split, $limit) = @_;
         $str = '' unless defined $str;
-        return [ defined $split ? split($split, $str, @args)
-                                : split(' ', $str, @args) ];
+
+        # we have to be very careful about spelling out each possible 
+        # combination of arguments because split() is very sensitive
+        # to them, for example C<split(' ', ...)> behaves differently 
+        # to C<$space=' '; split($space, ...)>
+
+        if (defined $limit) {
+            return [ defined $split 
+                     ? split($split, $str, $limit)
+                     : split(' ', $str, $limit) ];
+        }
+        else {
+            return [ defined $split 
+                     ? split($split, $str)
+                     : split(' ', $str) ];
+        }
     },
     'chunk' => sub {
         my ($string, $size) = @_;
@@ -108,33 +156,66 @@ $SCALAR_OPS = {
         }
         return \@list;
     },
-    
+    'substr' => sub {
+        my ($text, $offset, $length, $replacement) = @_;
+        $offset ||= 0;
+
+        if(defined $length) {
+            if (defined $replacement) {
+                substr( $text, $offset, $length, $replacement );
+                return $text;
+            }
+            else {
+                return substr( $text, $offset, $length );
+            }
+        }
+        else {
+            return substr( $text, $offset );
+        }
+    },
 
     defined $SCALAR_OPS ? %$SCALAR_OPS : (),
 };
 
-$HASH_OPS = {
+our $HASH_OPS = {
     'item'   => sub { 
         my ($hash, $item) = @_; 
         $item = '' unless defined $item;
-        return if $item =~ /^[_.]/;
+        return if $PRIVATE && $item =~ /$PRIVATE/;
         $hash->{ $item };
     },
     'hash'   => sub { $_[0] },
     'size'   => sub { scalar keys %{$_[0]} },
+    'each'   => sub { # this will be changed in TT3 to do what pairs does
+                      [        %{ $_[0] } ] },
     'keys'   => sub { [ keys   %{ $_[0] } ] },
     'values' => sub { [ values %{ $_[0] } ] },
-    'each'   => sub { [        %{ $_[0] } ] },
+    'items'  => sub { [        %{ $_[0] } ] },
+    'pairs'  => sub { [ map   { { key => $_ , value => $_[0]->{ $_ } } }
+                        sort keys %{ $_[0] } ] },
     'list'   => sub { 
-        my ($hash, $what) = @_;  $what ||= '';
+        my ($hash, $what) = @_;  
+        $what ||= '';
         return ($what eq 'keys')   ? [   keys %$hash ]
-            : ($what eq 'values') ? [ values %$hash ]
-            : ($what eq 'each')   ? [        %$hash ]
-            : [ map { { key => $_ , value => $hash->{ $_ } } }
-                keys %$hash ];
+            :  ($what eq 'values') ? [ values %$hash ]
+            :  ($what eq 'each')   ? [        %$hash ]
+            :  # for now we do what pairs does but this will be changed 
+               # in TT3 to return [ $hash ] by default
+               [ map { { key => $_ , value => $hash->{ $_ } } }
+                 sort keys %$hash 
+               ];
     },
     'exists'  => sub { exists $_[0]->{ $_[1] } },
-    'defined' => sub { defined $_[0]->{ $_[1] } },
+    'defined' => sub { 
+        # return the item requested, or 1 if no argument 
+        # to indicate that the hash itself is defined
+        my $hash = shift;
+        return @_ ? defined $hash->{ $_[0] } : 1;
+    },
+    'delete'  => sub { 
+        my $hash = shift; 
+        delete $hash->{ $_ } for @_;
+    },
     'import'  => \&hash_import,
     'sort'    => sub {
         my ($hash) = @_;
@@ -147,17 +228,30 @@ $HASH_OPS = {
     defined $HASH_OPS ? %$HASH_OPS : (),
 };
 
-$LIST_OPS = {
+our $LIST_OPS = {
     'item'    => sub { $_[0]->[ $_[1] || 0 ] },
     'list'    => sub { $_[0] },
-    'hash'    => sub { my $list = shift; my $n = 0; 
-                       return { map { ($n++, $_) } @$list }; },
-    'push'    => sub { my $list = shift; push(@$list, shift); return '' },
+    'hash'    => sub { 
+        my $list = shift;
+        if (@_) {
+            my $n = shift || 0;
+            return { map { ($n++, $_) } @$list }; 
+        }
+        no warnings;
+        return { @$list };
+    },
+    'push'    => sub { my $list = shift; push(@$list, @_); return '' },
     'pop'     => sub { my $list = shift; pop(@$list) },
-    'unshift' => sub { my $list = shift; unshift(@$list, shift); return '' },
+    'unshift' => sub { my $list = shift; unshift(@$list, @_); return '' },
     'shift'   => sub { my $list = shift; shift(@$list) },
     'max'     => sub { local $^W = 0; my $list = shift; $#$list; },
     'size'    => sub { local $^W = 0; my $list = shift; $#$list + 1; },
+    'defined' => sub { 
+        # return the item requested, or 1 if no argument to 
+        # indicate that the hash itself is defined
+        my $list = shift;
+        return @_ ? defined $list->[$_[0]] : 1;
+    },
     'first'   => sub {
         my $list = shift;
         return $list->[0] unless @_;
@@ -183,7 +277,8 @@ $LIST_OPS = {
         $^W = 0;
         my ($list, $field) = @_;
         return $list unless @$list > 1;     # no need to sort 1 item lists
-        return $field                       # Schwartzian Transform 
+        return [
+            $field                          # Schwartzian Transform 
             ?  map  { $_->[0] }             # for case insensitivity
                sort { $a->[1] cmp $b->[1] }
                map  { [ $_, lc(ref($_) eq 'HASH' 
@@ -194,12 +289,14 @@ $LIST_OPS = {
             :  map  { $_->[0] }
                sort { $a->[1] cmp $b->[1] }
                map  { [ $_, lc $_ ] } 
-               @$list
+               @$list,
+       ];
    },
    'nsort'    => sub {
         my ($list, $field) = @_;
-        return $list unless $#$list;        # no need to sort 1 item lists
-        return $field                       # Schwartzian Transform 
+        return $list unless @$list > 1;     # no need to sort 1 item lists
+        return [ 
+            $field                          # Schwartzian Transform 
             ?  map  { $_->[0] }             # for case insensitivity
                sort { $a->[1] <=> $b->[1] }
                map  { [ $_, lc(ref($_) eq 'HASH' 
@@ -210,9 +307,15 @@ $LIST_OPS = {
             :  map  { $_->[0] }
                sort { $a->[1] <=> $b->[1] }
                map  { [ $_, lc $_ ] } 
-               @$list
+               @$list,
+        ];
     },
     'unique'  => sub { my %u; [ grep { ++$u{$_} == 1 } @{$_[0]} ] },
+    'import'  => sub {
+        my $list = shift;
+        push(@$list, grep defined, map ref eq 'ARRAY' ? @$_ : undef, @_);
+        return $list;
+    },
     'merge'   => sub {
         my $list = shift;
         return [ @$list, grep defined, map ref eq 'ARRAY' ? @$_ : undef, @_ ];
@@ -589,9 +692,10 @@ sub _dotop {
 #   if $DEBUG;
 
     # return undef without an error if either side of the dot is unviable
+    return undef unless defined($root) and defined($item);
+
     # or if an attempt is made to access a private member, starting _ or .
-    return undef
-        unless defined($root) and defined($item) and $item !~ /^[\._]/;
+    return undef if $PRIVATE && $item =~ /$PRIVATE/;
 
     if ($atroot || $rootref eq 'HASH') {
         # if $root is a regular HASH or a Template::Stash kinda HASH (the 
@@ -620,10 +724,8 @@ sub _dotop {
     }
     elsif ($rootref eq 'ARRAY') {    
         # if root is an ARRAY then we check for a LIST_OPS pseudo-method 
-        # (except for l-values for which it doesn't make any sense)
         # or return the numerical index into the array, or undef
-        
-        if (($value = $LIST_OPS->{ $item }) && ! $lvalue) {
+        if ($value = $LIST_OPS->{ $item }) {
             @result = &$value($root, @$args);               ## @result
         }
         elsif ($item =~ /^-?\d+$/) {
@@ -654,48 +756,34 @@ sub _dotop {
             # by views; if $@ is a ref (e.g. Template::Exception
             # object then we assume it's a real error that needs
             # real throwing
-            
-            die $@ if ref($@) || ($@ !~ /Can't locate object method/);
+
+            my $class = ref($root) || $root;
+            die $@ if ref($@) || ($@ !~ /Can't locate object method "\Q$item\E" via package "\Q$class\E"/);
 
             # failed to call object method, so try some fallbacks
-# patch from Stephen Howard
-# -- remove from here... --
-            if (UNIVERSAL::isa($root, 'HASH')
-                && defined($value = $root->{ $item })) {
-                return $value unless ref $value eq 'CODE';      ## RETURN
-                @result = &$value(@$args);
+            if (UNIVERSAL::isa($root, 'HASH') ) {
+                if( defined($value = $root->{ $item })) {
+                    return $value unless ref $value eq 'CODE';      ## RETURN
+                    @result = &$value(@$args);
+                }
+                elsif ($value = $HASH_OPS->{ $item }) {
+                    @result = &$value($root, @$args);
+                }
             }
-# -- and replace with this... --
-#            if (UNIVERSAL::isa($root, 'HASH') ) {
-#                if( defined($value = $root->{ $item })) {
-#                    return $value unless ref $value eq 'CODE';      ## RETURN
-#                    @result = &$value(@$args);
-#                }
-#                elsif ($value = $HASH_OPS->{ $item }) {
-#                    @result = &$value($root, @$args);
-#                }
-#            }
-# -- remove from here... --
-            elsif (UNIVERSAL::isa($root, 'ARRAY') 
-               && ($value = $LIST_OPS->{ $item })) {
-                @result = &$value($root, @$args);
+            elsif (UNIVERSAL::isa($root, 'ARRAY') ) {
+                if( $value = $LIST_OPS->{ $item }) {
+                   @result = &$value($root, @$args);
+                }
+                elsif( $item =~ /^-?\d+$/ ) {
+                   $value = $root->[$item];
+                   return $value unless ref $value eq 'CODE';      ## RETURN
+                   @result = &$value(@$args);                      ## @result
+                }
+                elsif ( ref $item eq 'ARRAY' ) {
+                    # array slice
+                    return [@$root[@$item]];                        ## RETURN
+                }
             }
-# -- and replace with this... --
-#            elsif (UNIVERSAL::isa($root, 'ARRAY') ) {
-#                if( $value = $LIST_OPS->{ $item }) {
-#                   @result = &$value($root, @$args);
-#                }
-#                elsif( $item =~ /^-?\d+$/ ) {
-#                   $value = $root->[$item];
-#                   return $value unless ref $value eq 'CODE';      ## RETURN
-#                   @result = &$value(@$args);                      ## @result
-#                }
-#                elsif ( ref $item eq 'ARRAY' ) {
-#                    # array slice
-#                    return [@$root[@$item]];                        ## RETURN
-#                }
-#            }
-# -- end --
             elsif ($value = $SCALAR_OPS->{ $item }) {
                 @result = &$value($root, @$args);
             }
@@ -760,21 +848,13 @@ sub _assign {
     $args ||= [ ];
     $default ||= 0;
 
-#    print(STDERR "_assign(root=$root, item=$item, args=[@$args], \n",
-#                         "value=$value, default=$default)\n")
-#   if $DEBUG;
-    
     # return undef without an error if either side of the dot is unviable
+    return undef unless $root and defined $item;
+
     # or if an attempt is made to update a private member, starting _ or .
-    return undef                        ## RETURN
-    unless $root and defined $item and $item !~ /^[\._]/;
+    return undef if $PRIVATE && $item =~ /$PRIVATE/;
     
     if ($rootref eq 'HASH' || $atroot) {
-#   if ($item eq 'IMPORT' && UNIVERSAL::isa($value, 'HASH')) {
-#       # import hash entries into root hash
-#       @$root{ keys %$value } = values %$value;
-#       return '';                      ## RETURN
-#   }
         # if the root is a hash we set the named key
         return ($root->{ $item } = $value)          ## RETURN
             unless $default && $root->{ $item };
@@ -806,7 +886,6 @@ sub _assign {
 #         }
 #     }
 #     return $result;                       ## RETURN
-
     }
     else {
         die "don't know how to assign to [$root].[$item]\n";    ## DIE
@@ -977,7 +1056,7 @@ copied (i.e. imported) into the current namespace.
     # foo.bar = baz, foo.wiz = waz
     $stash->set('foo', { 'bar' => 'baz', 'wiz' => 'waz' });
 
-    # import 'foo' into main namespace: foo = baz, wiz = waz
+    # import 'foo' into main namespace: bar = baz, wiz = waz
     $stash->set('IMPORT', $stash->get('foo'));
 
 =head2 clone(\%params)
@@ -1005,21 +1084,21 @@ restore the state of a stash as described above.
 
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@andywardley.comE<gt>
+Andy Wardley E<lt>abw@wardley.orgE<gt>
 
-L<http://www.andywardley.com/|http://www.andywardley.com/>
+L<http://wardley.org/|http://wardley.org/>
 
 
 
 
 =head1 VERSION
 
-2.86, distributed as part of the
-Template Toolkit version 2.14, released on 04 October 2004.
+2.102, distributed as part of the
+Template Toolkit version 2.15, released on 26 May 2006.
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2004 Andy Wardley.  All Rights Reserved.
+  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
   Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
 
 This module is free software; you can redistribute it and/or

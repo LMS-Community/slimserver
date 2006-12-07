@@ -27,33 +27,20 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Provider.pm,v 2.81 2004/07/23 12:49:53 abw Exp $
+# $Id: Provider.pm,v 2.88 2006/02/02 13:12:52 abw Exp $
 #
 #============================================================================
 
 package Template::Provider;
 
-require 5.004;
-
 use strict;
-use vars qw( $VERSION $DEBUG $ERROR $DOCUMENT $STAT_TTL $MAX_DIRS $UNICODE );
-use base qw( Template::Base );
+use warnings;
+use base 'Template::Base';
 use Template::Config;
 use Template::Constants;
 use Template::Document;
 use File::Basename;
 use File::Spec;
-
-$VERSION  = sprintf("%d.%02d", q$Revision: 2.81 $ =~ /(\d+)\.(\d+)/);
-
-# name of document class
-$DOCUMENT = 'Template::Document' unless defined $DOCUMENT;
-
-# maximum time between performing stat() on file to check staleness
-$STAT_TTL = 1 unless defined $STAT_TTL;
-
-# maximum number of directories in an INCLUDE_PATH, to prevent runaways
-$MAX_DIRS = 64 unless defined $MAX_DIRS;
 
 use constant PREV   => 0;
 use constant NAME   => 1;
@@ -62,10 +49,21 @@ use constant LOAD   => 3;
 use constant NEXT   => 4;
 use constant STAT   => 5;
 
-$DEBUG = 0 unless defined $DEBUG;
+our $VERSION = sprintf("%d.%02d", q$Revision: 2.88 $ =~ /(\d+)\.(\d+)/);
+our $DEBUG   = 0 unless defined $DEBUG;
+our $ERROR   = '';
+
+# name of document class
+our $DOCUMENT = 'Template::Document' unless defined $DOCUMENT;
+
+# maximum time between performing stat() on file to check staleness
+our $STAT_TTL = 1 unless defined $STAT_TTL;
+
+# maximum number of directories in an INCLUDE_PATH, to prevent runaways
+our $MAX_DIRS = 64 unless defined $MAX_DIRS;
 
 # UNICODE is supported in versions of Perl from 5.007 onwards
-$UNICODE = $] > 5.007 ? 1 : 0;
+our $UNICODE = $] > 5.007 ? 1 : 0;
 
 my $boms = [
     'UTF-8'    => "\x{ef}\x{bb}\x{bf}",
@@ -74,6 +72,10 @@ my $boms = [
     'UTF-16BE' => "\x{fe}\x{ff}",
     'UTF-16LE' => "\x{ff}\x{fe}",
 ];
+
+# regex to match relative paths
+our $RELATIVE_PATH = qr[(?:^|/)\.+/];
+
 
 # hack so that 'use bytes' will compile on versions of Perl earlier than 
 # 5.6, even though we never call _decode_unicode() on those systems
@@ -133,7 +135,7 @@ sub fetch {
             : ("$name: absolute paths are not allowed (set ABSOLUTE option)",
                Template::Constants::STATUS_ERROR);
     }
-    elsif ($name =~ m[^\.+/]) {
+    elsif ($name =~ m/$RELATIVE_PATH/o) {
         # anything starting "./" is relative to cwd, allowed if RELATIVE set
         ($data, $error) = $self->{ RELATIVE } 
 	    ? $self->_fetch($name) 
@@ -189,7 +191,7 @@ sub load {
         $error = "$name: absolute paths are not allowed (set ABSOLUTE option)" 
             unless $self->{ ABSOLUTE };
     }
-    elsif ($name =~ m[^\.+/]) {
+    elsif ($name =~ m[$RELATIVE_PATH]o) {
         # anything starting "./" is relative to cwd, allowed if RELATIVE set
         $error = "$name: relative paths are not allowed (set RELATIVE option)"
             unless $self->{ RELATIVE };
@@ -376,26 +378,15 @@ sub _init {
     # create COMPILE_DIR and sub-directories representing each INCLUDE_PATH
     # element in which to store compiled files
     if ($cdir) {
-        
-# Stas' hack
-#        # this is a hack to solve the problem with INCLUDE_PATH using
-#	 # relative dirs
-#	 my $segments = 0;
-#	 for (@$path) {
-#	     my $c = 0;
-#	     $c++ while m|\.\.|g;
-#	     $segments = $c if $c > $segments;
-#	 }
-#	 $cdir .= "/".join "/",('hack') x $segments if $segments;
-#
-
         require File::Path;
         foreach my $dir (@$path) {
             next if ref $dir;
             my $wdir = $dir;
             $wdir =~ s[:][]g if $^O eq 'MSWin32';
             $wdir =~ /(.*)/;  # untaint
-            &File::Path::mkpath(File::Spec->catfile($cdir, $1));
+            $wdir = $1;
+            $wdir = File::Spec->catfile($cdir, $1);
+            File::Path::mkpath($wdir) unless -d $wdir;
         }
     }
 
@@ -410,9 +401,10 @@ sub _init {
     $self->{ RELATIVE     } = $params->{ RELATIVE } || 0;
     $self->{ TOLERANT     } = $params->{ TOLERANT } || 0;
     $self->{ DOCUMENT     } = $params->{ DOCUMENT } || $DOCUMENT;
-    $self->{ PARSER       } = $params->{ PARSER };
-    $self->{ DEFAULT      } = $params->{ DEFAULT };
-#   $self->{ PREFIX       } = $params->{ PREFIX };
+    $self->{ PARSER       } = $params->{ PARSER   };
+    $self->{ DEFAULT      } = $params->{ DEFAULT  };
+    $self->{ ENCODING     } = $params->{ ENCODING };
+#   $self->{ PREFIX       } = $params->{ PREFIX   };
     $self->{ PARAMS       } = $params;
 
     # look for user-provided UNICODE parameter or use default from package var
@@ -443,7 +435,7 @@ sub _fetch {
     if (defined $size && ! $size) {
         # caching disabled so load and compile but don't cache
         if ($compiled && -f $compiled 
-            && (stat($name))[9] <= (stat($compiled))[9]) {
+            && ! $self->_modified($name, (stat(_))[9])) {
             $data = $self->_load_compiled($compiled);
             $error = $self->error() unless $data;
         }
@@ -687,8 +679,8 @@ sub _load {
     }
     
     $data->{ path } = $data->{ name }
-        if $data and ! defined $data->{ path };
-    
+        if $data and ref $data and ! defined $data->{ path };
+
     return ($data, $error);
 }
 
@@ -778,9 +770,10 @@ sub _store {
     my $size = $self->{ SIZE };
     my ($slot, $head);
 
-    # extract the load time and compiled template from the data
-#    my $load = $data->{ load };
-    my $load = (stat($name))[9];
+    # check the modification time
+    my $load = $self->_modified($name);
+
+    # extract the compiled template from the data hash
     $data = $data->{ data };
 
     $self->debug("_store($name, $data)") if $self->{ DEBUG };
@@ -874,13 +867,20 @@ sub _compile {
             my $basedir = &File::Basename::dirname($compfile);
             $basedir =~ /(.*)/;
             $basedir = $1;
-            &File::Path::mkpath($basedir) unless -d $basedir;
-            
-            my $docclass = $self->{ DOCUMENT };
-            $error = 'cache failed to write '
-                . &File::Basename::basename($compfile)
-                . ': ' . $docclass->error()
-                unless $docclass->write_perl_file($compfile, $parsedoc);
+
+            unless (-d $basedir) {
+                eval { File::Path::mkpath($basedir) };
+                $error = "failed to create compiled templates directory: $basedir ($@)"
+                    if ($@);
+            }
+
+            unless ($error) {
+                my $docclass = $self->{ DOCUMENT };
+                $error = 'cache failed to write '
+                    . &File::Basename::basename($compfile)
+                    . ': ' . $docclass->error()
+                    unless $docclass->write_perl_file($compfile, $parsedoc);
+            }
             
             # set atime and mtime of newly compiled file, don't bother
             # if time is undef
@@ -916,6 +916,25 @@ sub _compile {
         : ($error,  Template::Constants::STATUS_ERROR)
 }
 
+
+#------------------------------------------------------------------------
+# _modified($name)        
+# _modified($name, $time) 
+#
+# When called with a single argument, it returns the modification time 
+# of the named template.  When called with a second argument it returns 
+# true if $name has been modified since $time.
+#------------------------------------------------------------------------
+
+sub _modified {
+    my ($self, $name, $time) = @_;
+    my $load = (stat($name))[9] 
+        || return $time ? 1 : 0;
+
+    return $time 
+         ? $load > $time 
+         : $load;
+}
 
 #------------------------------------------------------------------------
 # _dump()
@@ -1003,16 +1022,20 @@ sub _dump_cache {
 #------------------------------------------------------------------------
 
 
-sub _decode_unicode
-{
-    use bytes;
-
+sub _decode_unicode {
     my $self   = shift;
     my $string = shift;
 
+    use bytes;
+    require Encode;
+    
+    return $string if Encode::is_utf8( $string );
+    
     # try all the BOMs in order looking for one (order is important
     # 32bit BOMs look like 16bit BOMs)
-    my $count = 0;
+
+    my $count  = 0;
+
     while ($count < @{ $boms }) {
         my $enc = $boms->[$count++];
         my $bom = $boms->[$count++];
@@ -1020,13 +1043,13 @@ sub _decode_unicode
         # does the string start with the bom?
         if ($bom eq substr($string, 0, length($bom))) {
             # decode it and hand it back
-            require Encode;
             return Encode::decode($enc, substr($string, length($bom)), 1);
         }
     }
 
-    # no boms matched so it must be a non unicode string which we return as is
-    return $string;
+    return $self->{ ENCODING }
+        ? Encode::decode( $self->{ ENCODING }, $string )
+        : $string;
 }
 
 
@@ -1477,21 +1500,21 @@ reporting as much.
 
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@andywardley.comE<gt>
+Andy Wardley E<lt>abw@wardley.orgE<gt>
 
-L<http://www.andywardley.com/|http://www.andywardley.com/>
+L<http://wardley.org/|http://wardley.org/>
 
 
 
 
 =head1 VERSION
 
-2.81, distributed as part of the
-Template Toolkit version 2.14, released on 04 October 2004.
+2.88, distributed as part of the
+Template Toolkit version 2.15, released on 26 May 2006.
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2004 Andy Wardley.  All Rights Reserved.
+  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
   Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
 
 This module is free software; you can redistribute it and/or

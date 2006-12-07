@@ -20,7 +20,7 @@
 # 
 #----------------------------------------------------------------------------
 #
-# $Id: Document.pm,v 2.74 2004/09/17 07:58:36 abw Exp $
+# $Id: Document.pm,v 2.76 2006/01/30 20:04:49 abw Exp $
 #
 #============================================================================
 
@@ -33,16 +33,16 @@ use vars qw( $VERSION $ERROR $COMPERR $DEBUG $AUTOLOAD $UNICODE );
 use base qw( Template::Base );
 use Template::Constants;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 2.74 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 2.76 $ =~ /(\d+)\.(\d+)/);
 
 BEGIN {
     # UNICODE is supported in versions of Perl from 5.008 onwards
     if ($UNICODE = $] > 5.007 ? 1 : 0) {
-        if ($^V gt v5.8.0) {
+        if ($] > 5.008) {
             # utf8::is_utf8() available from Perl 5.8.1 onwards
             *is_utf8 = \&utf8::is_utf8;
         }
-        elsif ($^V eq v5.8.0) {
+        elsif ($] == 5.008) {
             # use Encode::is_utf8() for Perl 5.8.0
             require Encode;
             *is_utf8 = \&Encode::is_utf8;
@@ -466,7 +466,7 @@ An autoload method returns METADATA items.
 
 =head2 write_perl_file(\%config)
 
-This package subroutine is provided to effect persistance of compiled
+This package subroutine is provided to effect persistence of compiled
 templates.  If the COMPILE_EXT option (to indicate a file extension
 for saving compiled templates) then the Template::Parser module calls
 this subroutine before calling the new() constructor.  At this stage,
@@ -474,25 +474,25 @@ the parser has a representation of the template as text strings
 containing Perl code.  We can write that to a file, enclosed in a
 small wrapper which will allow us to susequently require() the file
 and have Perl parse and compile it into a Template::Document.  Thus we
-have persistance of compiled templates.
+have persistence of compiled templates.
 
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@andywardley.comE<gt>
+Andy Wardley E<lt>abw@wardley.orgE<gt>
 
-L<http://www.andywardley.com/|http://www.andywardley.com/>
+L<http://wardley.org/|http://wardley.org/>
 
 
 
 
 =head1 VERSION
 
-2.74, distributed as part of the
-Template Toolkit version 2.14, released on 04 October 2004.
+2.76, distributed as part of the
+Template Toolkit version 2.15, released on 26 May 2006.
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2004 Andy Wardley.  All Rights Reserved.
+  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
   Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
 
 This module is free software; you can redistribute it and/or

@@ -9,10 +9,10 @@
 #   on Francois Desarmenien's Parse::Yapp module.  Kudos to him.
 # 
 # AUTHOR
-#   Andy Wardley <abw@kfs.org>
+#   Andy Wardley <abw@cpan.org>
 #
 # COPYRIGHT
-#   Copyright (C) 1996-2000 Andy Wardley.  All Rights Reserved.
+#   Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
 #   Copyright (C) 1998-2000 Canon Research Centre Europe Ltd.
 #
 #   This module is free software; you can redistribute it and/or
@@ -29,20 +29,16 @@
 #      the GNU General Public License or the Artistic License, as
 #      specified in the Perl README file.
 # 
-#----------------------------------------------------------------------------
-#
-# $Id: Parser.pm,v 2.82 2004/01/30 19:32:27 abw Exp $
+# REVISION
+#   $Id: Parser.pm,v 2.86 2006/05/25 11:43:39 abw Exp $
 #
 #============================================================================
 
 package Template::Parser;
 
-require 5.004;
-
 use strict;
-use vars qw( $VERSION $DEBUG $ERROR );
-use base qw( Template::Base );
-use vars qw( $TAG_STYLE $DEFAULT_STYLE $QUOTED_ESCAPES );
+use warnings;
+use base 'Template::Base';
 
 use Template::Constants qw( :status :chomp );
 use Template::Directive;
@@ -54,16 +50,16 @@ use constant ACCEPT   => 1;
 use constant ERROR    => 2;
 use constant ABORT    => 3;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 2.82 $ =~ /(\d+)\.(\d+)/);
-$DEBUG   = 0 unless defined $DEBUG;
-$ERROR   = '';
+our $VERSION = sprintf("%d.%02d", q$Revision: 2.86 $ =~ /(\d+)\.(\d+)/);
+our $DEBUG   = 0 unless defined $DEBUG;
+our $ERROR   = '';
 
 
 #========================================================================
 #                        -- COMMON TAG STYLES --
 #========================================================================
 
-$TAG_STYLE   = {
+our $TAG_STYLE   = {
     'default'   => [ '\[%',    '%\]'    ],
     'template1' => [ '[\[%]%', '%[\]%]' ],
     'metatext'  => [ '%%',     '%%'     ],
@@ -76,7 +72,7 @@ $TAG_STYLE   = {
 $TAG_STYLE->{ template } = $TAG_STYLE->{ tt2 } = $TAG_STYLE->{ default };
 
 
-$DEFAULT_STYLE = {
+our $DEFAULT_STYLE = {
     START_TAG   => $TAG_STYLE->{ default }->[0],
     END_TAG     => $TAG_STYLE->{ default }->[1],
 #    TAG_STYLE   => 'default',
@@ -88,11 +84,15 @@ $DEFAULT_STYLE = {
     EVAL_PERL   => 0,
 };
 
-$QUOTED_ESCAPES = {
+our $QUOTED_ESCAPES = {
 	n => "\n",
 	r => "\r",
 	t => "\t",
 };
+
+# note that '-' must come first so Perl doesn't think it denotes a range
+our $CHOMP_FLAGS  = qr/[-=~+]/;
+
 
 
 #========================================================================
@@ -305,44 +305,53 @@ sub split_text {
         $pre = '' unless defined $pre;
         $dir = '' unless defined $dir;
         
-        $postlines = 0;                      # denotes lines chomped
-        $prelines  = ($pre =~ tr/\n//);      # NULL - count only
-        $dirlines  = ($dir =~ tr/\n//);      # ditto
+        $prelines  = ($pre =~ tr/\n//);  # newlines in preceeding text
+        $dirlines  = ($dir =~ tr/\n//);  # newlines in directive tag
+        $postlines = 0;                  # newlines chomped after tag
         
-        # the directive CHOMP options may modify the preceding text
         for ($dir) {
-            # remove leading whitespace and check for a '-' chomp flag
-            s/^([-+\#])?\s*//s;
-            if ($1 && $1 eq '#') {
-                # comment out entire directive except for any chomp flag
-                $dir = ($dir =~ /([-+])$/) ? $1 : '';
+            if (/^\#/) {
+                # comment out entire directive except for any end chomp flag
+                $dir = ($dir =~ /($CHOMP_FLAGS)$/o) ? $1 : '';
             }
             else {
-                $chomp = ($1 && $1 eq '+') ? 0 : ($1 || $prechomp);
-#               my $space = $prechomp == &Template::Constants::CHOMP_COLLAPSE 
-                my $space = $prechomp == CHOMP_COLLAPSE 
-                    ? ' ' : '';
-                
-                # chomp off whitespace and newline preceding directive
-                $chomp and $pre =~ s/(\n|^)([ \t]*)\Z/($1||$2) ? $space : ''/me
-                    and $1 eq "\n"
-                    and $prelines++;
+                s/^($CHOMP_FLAGS)?\s*//so;
+                # PRE_CHOMP: process whitespace before tag
+                $chomp = $1 ? $1 : $prechomp;
+                $chomp =~ tr/-=~+/1230/;
+                if ($chomp && $pre) {
+                    # chomp off whitespace and newline preceding directive
+                    if ($chomp == CHOMP_ALL) { 
+                        $pre =~ s{ (\n|^) [^\S\n]* \z }{}mx;
+                    }
+                    elsif ($chomp == CHOMP_COLLAPSE) { 
+                        $pre =~ s{ (\s+) \z }{ }x;
+                    }
+                    elsif ($chomp == CHOMP_GREEDY) { 
+                        $pre =~ s{ (\s+) \z }{}x;
+                    }
+                }
             }
             
-            # remove trailing whitespace and check for a '-' chomp flag
-            s/\s*([-+])?\s*$//s;
-            $chomp = ($1 && $1 eq '+') ? 0 : ($1 || $postchomp);
-            my $space = $postchomp == &Template::Constants::CHOMP_COLLAPSE 
-                ? ' ' : '';
-            
-            $postlines++ 
-                if $chomp and $text =~ s/ 
-                ^
-                ([ \t]*)\n    # whitespace to newline
-                (?:(.|\n)|$)      # any char (not EOF)
-                 / 
-                 (($1||$2) ? $space : '') . (defined $2 ? $2 : '')
-                 /ex;
+            # POST_CHOMP: process whitespace after tag
+            s/\s*($CHOMP_FLAGS)?\s*$//so;
+            $chomp = $1 ? $1 : $postchomp;
+            $chomp =~ tr/-=~+/1230/;
+            if ($chomp) {
+                if ($chomp == CHOMP_ALL) { 
+                    $text =~ s{ ^ ([^\S\n]* \n) }{}x  
+                        && $postlines++;
+                }
+                elsif ($chomp == CHOMP_COLLAPSE) { 
+                    $text =~ s{ ^ (\s+) }{ }x  
+                        && ($postlines += $1=~y/\n//);
+                }
+                # any trailing whitespace
+                elsif ($chomp == CHOMP_GREEDY) { 
+                    $text =~ s{ ^ (\s+) }{}x  
+                        && ($postlines += $1=~y/\n//);
+                }
+            }
         }
             
         # any text preceding the directive can now be added
@@ -350,8 +359,8 @@ sub split_text {
             push(@tokens, $interp
                  ? [ $pre, $line, 'ITEXT' ]
                  : ('TEXT', $pre) );
-            $line += $prelines;
         }
+        $line += $prelines;
             
         # and now the directive, along with line number information
         if (length $dir) {
@@ -1040,9 +1049,9 @@ Output:
 The PRE_CHOMP and POST_CHOMP options can help to clean up some of this
 extraneous whitespace.  Both are disabled by default.
 
-    my $parser = Template::Parser->new({
-	PRE_CHOMP  => 1,
-	POST_CHOMP => 1,
+    my $parser = Template::Parser-E<gt>new({
+        PRE_CHOMP  =E<gt> 1,
+        POST_CHOMP =E<gt> 1,
     });
 
 With PRE_CHOMP set to 1, the newline and whitespace preceding a directive
@@ -1050,60 +1059,97 @@ at the start of a line will be deleted.  This has the effect of
 concatenating a line that starts with a directive onto the end of the 
 previous line.
 
- 	Foo <----------.
- 		       |
+        Foo E<lt>----------.
+                       |
     ,---(PRE_CHOMP)----'
     |
     `-- [% a = 10 %] --.
- 		       |
+                       |
     ,---(POST_CHOMP)---'
     |
-    `-> Bar
+    `-E<gt> Bar
 
 With POST_CHOMP set to 1, any whitespace after a directive up to and
 including the newline will be deleted.  This has the effect of joining
 a line that ends with a directive onto the start of the next line.
 
-If PRE_CHOMP or POST_CHOMP is set to 2, then instead of removing all
-the whitespace, the whitespace will be collapsed to a single space.
+If PRE_CHOMP or POST_CHOMP is set to 2, all whitespace including any
+number of newline will be removed and replaced with a single space.
 This is useful for HTML, where (usually) a contiguous block of
 whitespace is rendered the same as a single space.
 
-You may use the CHOMP_NONE, CHOMP_ALL, and CHOMP_COLLAPSE constants
-from the Template::Constants module to deactivate chomping, remove
-all whitespace, or collapse whitespace to a single space.
+With PRE_CHOMP or POST_CHOMP set to 3, all adjacent whitespace
+(including newlines) will be removed entirely.
+
+These values are defined as CHOMP_NONE, CHOMP_ONE, CHOMP_COLLAPSE and
+CHOMP_GREEDY constants in the Template::Constants module.  CHOMP_ALL
+is also defined as an alias for CHOMP_ONE to provide backwards
+compatability with earlier version of the Template Toolkit.  
+
+Additionally the chomp tag modifiers listed below may also be used for
+the PRE_CHOMP and POST_CHOMP configuration.
+ 
+     my $template = Template-E<gt>new({
+        PRE_CHOMP  =E<lt> '~',
+        POST_CHOMP =E<gt> '-',
+     });
 
 PRE_CHOMP and POST_CHOMP can be activated for individual directives by
 placing a '-' immediately at the start and/or end of the directive.
 
-    [% FOREACH user = userlist %]
+    [% FOREACH user IN userlist %]
        [%- user -%]
     [% END %]
 
-The '-' characters activate both PRE_CHOMP and POST_CHOMP for the one
-directive '[%- name -%]'.  Thus, the template will be processed as if
-written:
+This has the same effect as CHOMP_ONE in removing all whitespace
+before or after the directive up to and including the newline.  The
+template will be processed as if written:
 
-    [% FOREACH user = userlist %][% user %][% END %]
+    [% FOREACH user IN userlist %][% user %][% END %]
 
-Note that this is the same as if PRE_CHOMP and POST_CHOMP were set
-to CHOMP_ALL; the only way to get the CHOMP_COLLAPSE behavior is
-to set PRE_CHOMP or POST_CHOMP accordingly.  If PRE_CHOMP or POST_CHOMP
-is already set to CHOMP_COLLAPSE, using '-' will give you CHOMP_COLLAPSE
-behavior, not CHOMP_ALL behavior.
+To remove all whitespace including any number of newlines, use the '~' 
+character instead.
 
-Similarly, '+' characters can be used to disable PRE_CHOMP or
-POST_CHOMP (i.e.  leave the whitespace/newline intact) options on a
-per-directive basis.
+    [% FOREACH user IN userlist %]
+    
+       [%~ user ~%]
+    
+    [% END %]
+
+To collapse all whitespace to a single space, use the '=' character.
+
+    [% FOREACH user IN userlist %]
+ 
+       [%= user =%]
+    
+    [% END %]
+
+Here the template is processed as if written:
+
+    [% FOREACH user IN userlist %] [% user %] [% END %]
+
+If you have PRE_CHOMP or POST_CHOMP set as configuration options then
+you can use '+' to disable any chomping options (i.e.  leave the
+whitespace intact) on a per-directive basis.
 
     [% FOREACH user = userlist %]
     User: [% user +%]
     [% END %]
 
-With POST_CHOMP enabled, the above example would be parsed as if written:
+With POST_CHOMP set to CHOMP_ONE, the above example would be parsed as
+if written:
 
     [% FOREACH user = userlist %]User: [% user %]
     [% END %]
+
+For reference, the PRE_CHOMP and POST_CHOMP configuration options may be set to any of the following:
+
+     Constant      Value   Tag Modifier
+     ----------------------------------
+     CHOMP_NONE      0          +
+     CHOMP_ONE       1          -
+     CHOMP_COLLAPSE  2          =
+     CHOMP_GREEDY    3          ~
 
 
 
@@ -1391,20 +1437,27 @@ would generate this output:
 =head2 parse($text)
 
 The parse() method parses the text passed in the first parameter and
-returns a reference to a Template::Document object which contains the
-compiled representation of the template text.  On error, undef is
+returns a reference to a hash array of data defining the compiled
+representation of the template text, suitable for passing to the
+Template::Document new() constructor method.  On error, undef is
 returned.
 
 Example:
 
-    $doc = $parser->parse($text)
-	|| die $parser->error();
+    $data = $parser->parse($text)
+    	|| die $parser->error();
+
+The $data hash reference returned contains a BLOCK item containing the
+compiled Perl code for the template, a DEFBLOCKS item containing a
+reference to a hash array of sub-template BLOCKs defined within in the
+template, and a METADATA item containing a reference to a hash array
+of metadata values defined in META tags.
 
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@andywardley.comE<gt>
+Andy Wardley E<lt>abw@wardley.orgE<gt>
 
-L<http://www.andywardley.com/|http://www.andywardley.com/>
+L<http://wardley.org/|http://wardley.org/>
 
 
 
@@ -1413,14 +1466,14 @@ L<http://www.andywardley.com/|http://www.andywardley.com/>
 
 =head1 VERSION
 
-2.82, distributed as part of the
-Template Toolkit version 2.14, released on 04 October 2004.
+2.86, distributed as part of the
+Template Toolkit version 2.15, released on 26 May 2006.
 
  
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2004 Andy Wardley.  All Rights Reserved.
+  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
   Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
 
 This module is free software; you can redistribute it and/or

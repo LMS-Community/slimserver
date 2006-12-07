@@ -13,7 +13,7 @@
 #   modify it under the same terms as Perl itself.
 #
 # REVISION
-#   $Id: Image.pm,v 1.14 2004/01/30 19:33:17 abw Exp $
+#   $Id: Image.pm,v 1.18 2006/01/30 20:05:48 abw Exp $
 #
 #============================================================================
 
@@ -31,7 +31,7 @@ use File::Spec;
 use base qw( Template::Plugin );
 use vars qw( $VERSION $AUTOLOAD );
 
-$VERSION = sprintf("%d.%02d", q$Revision: 1.14 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 1.18 $ =~ /(\d+)\.(\d+)/);
 
 BEGIN {
     if (eval { require Image::Info; }) {
@@ -85,16 +85,19 @@ sub new {
         $file = File::Spec->catfile($root, $name);
     }
     else {
-        $file = $name;
+        $file = defined $config->{file} ? $config->{file} : $name;
     }
 
     # Make a note of whether we are using Image::Size or
     # Image::Info -- at least for the test suite
     $type = $INC{"Image/Size.pm"} ? "Image::Size" : "Image::Info";
-        
-    # do we want to check to see if file exists?
 
+    # set a default (empty) alt attribute for tag()
+    $config->{ alt } = '' unless defined $config->{ alt };
+
+    # do we want to check to see if file exists?
     bless { 
+        %$config,
         name => $name,
         file => $file,
         root => $root,
@@ -135,6 +138,7 @@ sub attr {
     return "width=\"$size->[0]\" height=\"$size->[1]\"";
 }
 
+
 #------------------------------------------------------------------------
 # modtime()
 #
@@ -149,6 +153,7 @@ sub modtime {
     return $self->{ modtime };
 }
 
+
 #------------------------------------------------------------------------
 # tag(\%options)
 #
@@ -159,11 +164,18 @@ sub tag {
     my $self = shift;
     my $options = ref $_[0] eq 'HASH' ? shift : { @_ };
 
-    my $tag = "<img src=\"$self->{ name }\" " . $self->attr();
+    my $tag = '<img src="' . $self->name() . '" ' . $self->attr();
+ 
+    # XHTML spec says that the alt attribute is mandatory, so who
+    # are we to argue?
+
+    $options->{ alt } = $self->{ alt }
+        unless defined $options->{ alt };
 
     if (%$options) {
         while (my ($key, $val) = each %$options) {
-            $tag .= " $key=\"$val\"";
+            my $escaped = escape( $val );
+            $tag .= qq[ $key="$escaped"];
         }
     }
 
@@ -172,6 +184,16 @@ sub tag {
     return $tag;
 }
 
+sub escape {
+    my ($text) = @_;
+    for ($text) {
+        s/&/&amp;/g;
+        s/</&lt;/g;
+        s/>/&gt;/g;
+        s/"/&quot;/g;
+    }
+    $text;
+}
 
 sub throw {
     my ($self, $error) = @_;
@@ -231,10 +253,31 @@ the image should be specified as a positional or named argument.
     [% USE image(name='baz.gif') %]
     [% USE Image name='pong.gif' %]
 
+A "root" parameter can be used to specify the location of the image file:
+
+    [% USE Image(root='/path/to/root', name='images/home.png') %]
+    # image path: /path/to/root/images/home.png
+    # img src: images/home.png
+
+In cases where the image path and image url do not match up, specify the
+file name directly:
+
+    [% USE Image(file='/path/to/home.png', name='/images/home.png') %]
+
+The "alt" parameter can be used to specify an alternate name for the
+image, for use in constructing an XHTML element (see the tag() method
+below).
+
+    [% USE Image('home.png', alt="Home") %]
+
 You can also provide an alternate name for an Image plugin object.
 
     [% USE img1 = image 'foo.gif' %]
     [% USE img2 = image 'bar.gif' %]
+
+The 'name' method returns the image file name.
+
+    [% img1.name %]     # foo.gif
 
 The 'width' and 'height' methods return the width and height of the
 image, respectively.  The 'size' method returns a reference to a 2
@@ -244,6 +287,13 @@ element list containing the width and height.
     width: [% image.width %]
     height: [% image.height %]
     size: [% image.size.join(', ') %]
+
+The 'modtime' method returns the ctime of the file in question, suitable
+for use with date.format:
+
+    [% USE image 'foo.gif' %]
+    [% USE date %]
+    [% date.format(image.modtime, "%B, %e %Y") %]
 
 The 'attr' method returns the height and width as HTML/XML attributes.
 
@@ -261,25 +311,24 @@ The 'tag' method returns a complete XHTML tag referencing the image.
 
 Typical output:
 
-    <img src="foo.gif" width="60" height="20" />
+    <img src="foo.gif" width="60" height="20" alt="" />
 
 You can provide any additional attributes that should be added to the 
 XHTML tag.
 
-
     [% USE image 'foo.gif' %]
-    [% image.tag(border=0, class="logo") %]
+    [% image.tag(class="logo" alt="Logo") %]
 
 Typical output:
 
-    <img src="foo.gif" width="60" height="20" border="0" class="logo" />
+    <img src="foo.gif" width="60" height="20" alt="Logo" class="logo" />
 
-The 'modtime' method returns the ctime of the file in question, suitable
-for use with date.format:
+Note that the 'alt' attribute is mandatory in a strict XHTML 'img'
+element (even if it's empty) so it is always added even if you don't
+explicitly provide a value for it.  You can do so as an argument to 
+the 'tag' method, as shown in the previous example, or as an argument
 
-    [% USE image 'foo.gif' %]
-    [% USE date %]
-    [% date.format(image.modtime, "%B, %e %Y") %]
+    [% USE image('foo.gif', alt='Logo') %]
 
 =head1 CATCHING ERRORS
 
@@ -390,21 +439,21 @@ A number.
 
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@andywardley.comE<gt>
+Andy Wardley E<lt>abw@wardley.orgE<gt>
 
-L<http://www.andywardley.com/|http://www.andywardley.com/>
+L<http://wardley.org/|http://wardley.org/>
 
 
 
 
 =head1 VERSION
 
-1.14, distributed as part of the
-Template Toolkit version 2.14, released on 04 October 2004.
+1.18, distributed as part of the
+Template Toolkit version 2.15, released on 26 May 2006.
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2004 Andy Wardley.  All Rights Reserved.
+  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
   Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
 
 This module is free software; you can redistribute it and/or

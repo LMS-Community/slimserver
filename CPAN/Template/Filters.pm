@@ -18,7 +18,7 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Filters.pm,v 2.78 2004/01/30 19:32:25 abw Exp $
+# $Id: Filters.pm,v 2.81 2006/01/30 20:04:54 abw Exp $
 #
 #============================================================================
 
@@ -27,11 +27,13 @@ package Template::Filters;
 require 5.004;
 
 use strict;
+use warnings;
+use locale;
 use base qw( Template::Base );
 use vars qw( $VERSION $DEBUG $FILTERS $URI_ESCAPES $PLUGIN_FILTER );
 use Template::Constants;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 2.78 $ =~ /(\d+)\.(\d+)/);
+$VERSION = sprintf("%d.%02d", q$Revision: 2.81 $ =~ /(\d+)\.(\d+)/);
 
 
 #------------------------------------------------------------------------
@@ -481,15 +483,17 @@ sub remove_filter_factory {
 #------------------------------------------------------------------------
 
 sub truncate_filter_factory {
-    my ($context, $len) = @_;
+    my ($context, $len, $char) = @_;
     $len = 32 unless defined $len;
+    $char = "..." unless defined $char;
 
     return sub {
         my $text = shift;
-        return $text if length $text < $len;
-        return substr($text, 0, $len - 3) . "...";
+        return $text if length $text <= $len;
+        return substr($text, 0, $len - length($char)) . $char;
     }
 }
+
 
 
 #------------------------------------------------------------------------
@@ -1047,9 +1051,9 @@ output:
 
 =head2 html
 
-Converts the characters 'E<lt>', 'E<gt>' and '&' to '&lt;', '&gt;' and
-'&amp;', respectively, protecting them from being interpreted as
-representing HTML tags or entities.
+Converts the characters 'E<lt>', 'E<gt>', '&' and '"' to '&lt;',
+'&gt;', '&amp;', and '&quot;' respectively, protecting them from being
+interpreted as representing HTML tags or entities.
 
     [% FILTER html %]
     Binary "<=>" returns -1, 0, or 1 depending on...
@@ -1167,11 +1171,11 @@ output:
     ME> blah blah blah
     ME> cabbages, rhubard, onions
 
-=head2 truncate(length)
+=head2 truncate(length,dots)
 
-Truncates the text block to the length specified, or a default length of
-32.  Truncated text will be terminated with '...' (i.e. the '...' falls
-inside the required length, rather than appending to it).
+Truncates the text block to the length specified, or a default length
+of 32.  Truncated text will be terminated with '...' (i.e. the '...'
+falls inside the required length, rather than appending to it).
 
     [% FILTER truncate(21) %]
     I have much to say on this matter that has previously 
@@ -1181,6 +1185,18 @@ inside the required length, rather than appending to it).
 output:
 
     I have much to say...
+
+If you want to use something other than '...' you can pass that as a 
+second argument.
+
+    [% FILTER truncate(26, '&hellip;') %]
+    I have much to say on this matter that has previously 
+    been said on more than one occasion.
+    [% END %]
+
+output:
+
+    I have much to say&hellip;
 
 =head2 repeat(iterations)
 
@@ -1351,83 +1367,27 @@ generates output to stdout (in this case in binary mode).
 
 =head2 latex(outputType)
 
-Passes the text block to LaTeX and produces either PDF, DVI or
-PostScript output.  The 'outputType' argument determines the output
-format and it should be set to one of the strings: "pdf" (default),
-"dvi", or "ps".
-
-The text block should be a complete LaTeX source file.
-
-    [% FILTER latex("pdf") -%]
-    \documentclass{article}
-
-    \begin{document}
-
-    \title{A Sample TT2 \LaTeX\ Source File}
-    \author{Craig Barratt}
-    \maketitle
-
-    \section{Introduction}
-    This is some text.
-
-    \end{document}
-    [% END -%]
-
-The output will be a PDF file. You should be careful not to prepend or
-append any extraneous characters or text outside the FILTER block,
-since this text will wrap the (binary) output of the latex filter.
-Notice the END directive uses '-%]' for the END_TAG to remove the
-trailing new line.
-
-One example where you might prepend text is in a CGI script where
-you might include the Content-Type before the latex output, eg:
-
-    Content-Type: application/pdf
-
-    [% FILTER latex("pdf") -%]
-    \documentclass{article}
-    \begin{document}
-    ...
-    \end{document}
-    [% END -%]
-
-In other cases you might use the redirect filter to put the output
-into a file, rather than delivering it to stdout.  This might be
-suitable for batch scripts:
-
-    [% output = FILTER latex("pdf") -%]
-    \documentclass{article}
-    \begin{document}
-    ...
-    \end{document}
-    [% END; output | redirect("document.pdf", 1) -%]
-
-(Notice the second argument to redirect to force binary mode.)
-
-Note that the latex filter runs one or two external programs, so it
-isn't very fast.  But for modest documents the performance is adequate,
-even for interactive applications.
-
-A error of type 'latex' will be thrown if there is an error reported
-by latex, pdflatex or dvips.
+The latex() filter is no longer part of the core Template Toolkit
+distribution as of version 2.15.  You can download it as a 
+separate Template-Latex distribution from CPAN.
 
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@andywardley.comE<gt>
+Andy Wardley E<lt>abw@wardley.orgE<gt>
 
-L<http://www.andywardley.com/|http://www.andywardley.com/>
+L<http://wardley.org/|http://wardley.org/>
 
 
 
 
 =head1 VERSION
 
-2.78, distributed as part of the
-Template Toolkit version 2.14, released on 04 October 2004.
+2.81, distributed as part of the
+Template Toolkit version 2.15, released on 26 May 2006.
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2004 Andy Wardley.  All Rights Reserved.
+  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
   Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
 
 This module is free software; you can redistribute it and/or

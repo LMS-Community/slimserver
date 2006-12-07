@@ -18,22 +18,21 @@
 #
 #----------------------------------------------------------------------------
 #
-# $Id: Plugins.pm,v 2.71 2004/01/30 19:32:28 abw Exp $
+# $Id: Plugins.pm,v 2.74 2006/01/30 20:04:54 abw Exp $
 #
 #============================================================================
 
 package Template::Plugins;
 
-require 5.004;
-
 use strict;
-use base qw( Template::Base );
-use vars qw( $VERSION $DEBUG $STD_PLUGINS );
+use warnings;
+use base 'Template::Base';
 use Template::Constants;
 
-$VERSION = sprintf("%d.%02d", q$Revision: 2.71 $ =~ /(\d+)\.(\d+)/);
-
-$STD_PLUGINS   = {
+our $VERSION = sprintf("%d.%02d", q$Revision: 2.74 $ =~ /(\d+)\.(\d+)/);
+our $DEBUG   = 0 unless defined $DEBUG;
+our $PLUGIN_BASE = 'Template::Plugin';
+our $STD_PLUGINS = {
     'autoformat' => 'Template::Plugin::Autoformat',
     'cgi'        => 'Template::Plugin::CGI',
     'datafile'   => 'Template::Plugin::Datafile',
@@ -121,11 +120,12 @@ sub fetch {
         }
     };
     if ($error = $@) {
+#	chomp $error;
         return $self->{ TOLERANT } 
-            ? (undef,  Template::Constants::STATUS_DECLINED)
-            : ($error, Template::Constants::STATUS_ERROR);
+	       ? (undef,  Template::Constants::STATUS_DECLINED)
+	       : ($error, Template::Constants::STATUS_ERROR);
     }
-    
+
     return $plugin;
 }
 
@@ -147,10 +147,13 @@ sub _init {
         @$params{ qw( PLUGIN_BASE PLUGINS PLUGIN_FACTORY ) };
 
     $plugins ||= { };
-    if (ref $pbase ne 'ARRAY') {
-        $pbase = $pbase ? [ $pbase ] : [ ];
-    }
-    push(@$pbase, 'Template::Plugin');
+
+    # update PLUGIN_BASE to an array ref if necessary
+    $pbase = [ ] unless defined $pbase;
+    $pbase = [ $pbase ] unless ref($pbase) eq 'ARRAY';
+    
+    # add default plugin base (Template::Plugin) if set
+    push(@$pbase, $PLUGIN_BASE) if $PLUGIN_BASE;
 
     $self->{ PLUGIN_BASE } = $pbase;
     $self->{ PLUGINS     } = { %$STD_PLUGINS, %$plugins };
@@ -177,7 +180,7 @@ sub _load {
     my ($self, $name, $context) = @_;
     my ($factory, $module, $base, $pkg, $file, $ok, $error);
 
-    if ($module = $self->{ PLUGINS }->{ $name }) {
+    if ($module = $self->{ PLUGINS }->{ $name } || $self->{ PLUGINS }->{ lc $name }) {
         # plugin module name is explicitly stated in PLUGIN_NAME
         $pkg = $module;
         ($file = $module) =~ s|::|/|g;
@@ -208,8 +211,8 @@ sub _load {
     
     if ($ok) {
         $self->debug("calling $pkg->load()") if $self->{ DEBUG };
-        
-        $factory = eval { $pkg->load($context) };
+
+	$factory = eval { $pkg->load($context) };
         $error   = '';
         if ($@ || ! $factory) {
             $error = $@ || 'load() returned a false value';
@@ -264,14 +267,14 @@ sub _dump {
     my $key;
 
     foreach $key (qw( TOLERANT LOAD_PERL )) {
-	$output .= sprintf($format, $key, $self->{ $key });
+        $output .= sprintf($format, $key, $self->{ $key });
     }
 
     local $" = ', ';
     my $fkeys = join(", ", keys %{$self->{ FACTORY }});
     my $plugins = $self->{ PLUGINS };
     $plugins = join('', map { 
-	sprintf("    $format", $_, $plugins->{ $_ });
+        sprintf("    $format", $_, $plugins->{ $_ });
     } keys %$plugins);
     $plugins = "{\n$plugins    }";
     
@@ -387,12 +390,24 @@ their corresponding Template::Plugin::* counterparts.  These can be
 redefined by values in the PLUGINS hash.
 
     my $plugins = Template::Plugins->new({
-	PLUGINS => {
-	    cgi => 'MyOrg::Template::Plugin::CGI',
-    	    foo => 'MyOrg::Template::Plugin::Foo',
-	    bar => 'MyOrg::Template::Plugin::Bar',
-	},
-    });
+        PLUGINS => {
+            cgi => 'MyOrg::Template::Plugin::CGI',
+            foo => 'MyOrg::Template::Plugin::Foo',
+            bar => 'MyOrg::Template::Plugin::Bar',
+        },  
+    }); 
+
+The recommended convention is to specify these plugin names in lower
+case.  The Template Toolkit first looks for an exact case-sensitive
+match and then tries the lower case conversion of the name specified.
+
+    [% USE Foo %]      # look for 'Foo' then 'foo'
+
+If you define all your PLUGINS with lower case names then they will be
+located regardless of how the user specifies the name in the USE
+directive.  If, on the other hand, you define your PLUGINS with upper
+or mixed case names then the name specified in the USE directive must
+match the case exactly.  
 
 The USE directive is used to create plugin objects and does so by
 calling the plugin() method on the current Template::Context object.
@@ -402,8 +417,8 @@ calls the load() class method which should return the class name
 (default and general case) or a prototype object against which the 
 new() method can be called to instantiate individual plugin objects.
 
-If the plugin name is not defined in the PLUGINS hash then the PLUGIN_BASE
-and/or LOAD_PERL options come into effect.
+If the plugin name is not defined in the PLUGINS hash then the
+PLUGIN_BASE and/or LOAD_PERL options come into effect.
 
 
 
@@ -415,17 +430,15 @@ If a plugin is not defined in the PLUGINS hash then the PLUGIN_BASE is used
 to attempt to construct a correct Perl module name which can be successfully 
 loaded.  
 
-The PLUGIN_BASE can be specified as a single value or as a reference
-to an array of multiple values.  The default PLUGIN_BASE value,
-'Template::Plugin', is always added the the end of the PLUGIN_BASE
-list (a single value is first converted to a list).  Each value should
-contain a Perl package name to which the requested plugin name is
-appended.
+The PLUGIN_BASE can be specified as a reference to an array of module
+namespaces, or as a single value which is automatically converted to a
+list.  The default PLUGIN_BASE value ('Template::Plugin') is then added
+to the end of this list.
 
 example 1:
 
     my $plugins = Template::Plugins->new({
-	PLUGIN_BASE => 'MyOrg::Template::Plugin',
+        PLUGIN_BASE => 'MyOrg::Template::Plugin',
     });
 
     [% USE Foo %]    # => MyOrg::Template::Plugin::Foo
@@ -434,13 +447,33 @@ example 1:
 example 2:
 
     my $plugins = Template::Plugins->new({
-	PLUGIN_BASE => [   'MyOrg::Template::Plugin',
-			 'YourOrg::Template::Plugin'  ],
+        PLUGIN_BASE => [   'MyOrg::Template::Plugin',
+                           'YourOrg::Template::Plugin'  ],
     });
 
     [% USE Foo %]    # =>   MyOrg::Template::Plugin::Foo
                        or YourOrg::Template::Plugin::Foo 
                        or          Template::Plugin::Foo 
+
+If you don't want the default Template::Plugin namespace added to the
+end of the PLUGIN_BASE, then set the $Template::Plugins::PLUGIN_BASE
+variable to a false value before calling the Template::Plugins new()
+constructor method.  This is shown in the example below where the
+'Foo' is located as 'My::Plugin::Foo' or 'Your::Plugin::Foo' but not 
+as 'Template::Plugin::Foo'.
+
+example 3:
+
+    use Template::Plugins;
+    $Template::Plugins::PLUGIN_BASE = '';
+
+    my $plugins = Template::Plugins->new({
+        PLUGIN_BASE => [   'My::Plugin',
+                           'Your::Plugin'  ],
+    });
+
+    [% USE Foo %]    # =>   My::Plugin::Foo
+                       or Your::Plugin::Foo 
 
 
 
@@ -558,7 +591,7 @@ or is available from CPAN.
 Provides an interface to data stored in a plain text file in a simple
 delimited format.  The first line in the file specifies field names
 which should be delimiter by any non-word character sequence.
-Subsequent lines define data using the same delimiter as int he first
+Subsequent lines define data using the same delimiter as in the first
 line.  Blank lines and comments (lines starting '#') are ignored.  See
 L<Template::Plugin::Datafile> for further details.
 
@@ -605,20 +638,9 @@ details.
 
 =head2 DBI
 
-The DBI plugin, developed by Simon Matthews
-E<lt>sam@knowledgepool.comE<gt>, brings the full power of Tim Bunce's
-E<lt>Tim.Bunce@ig.co.ukE<gt> database interface module (DBI) to your
-templates.  See L<Template::Plugin::DBI> and L<DBI> for further details.
-
-    [% USE DBI('dbi:driver:database', 'user', 'pass') %]
-
-    [% FOREACH user = DBI.query( 'SELECT * FROM users' ) %]
-       [% user.id %] [% user.name %]
-    [% END %]
-
-The DBI and relevant DBD modules are available from CPAN:
-
-  http://www.cpan.org/modules/by-module/DBI/
+The DBI plugin is no longer distributed as part of the Template Toolkit
+(as of version 2.15).  It is now available as a separate Template-Plugin-DBI 
+distribution from CPAN.
 
 =head2 Dumper
 
@@ -676,129 +698,14 @@ details.
     [% USE bold = format('<b>%s</b>') %]
     [% bold('Hello') %]
 
-=head2 GD::Image, GD::Polygon, GD::Constants
+=head2 GD
 
-These plugins provide access to the GD graphics library via Lincoln
-D. Stein's GD.pm interface.  These plugins allow PNG, JPEG and other
-graphical formats to be generated.
-
-    [% FILTER null;
-        USE im = GD.Image(100,100);
-        # allocate some colors
-        black = im.colorAllocate(0,   0, 0);
-        red   = im.colorAllocate(255,0,  0);
-        blue  = im.colorAllocate(0,  0,  255);
-        # Draw a blue oval
-        im.arc(50,50,95,75,0,360,blue);
-        # And fill it with red
-        im.fill(50,50,red);
-        # Output image in PNG format
-        im.png | stdout(1);
-       END;
-    -%]
-
-See L<Template::Plugin::GD::Image> for further details.
-
-=head2 GD::Text, GD::Text::Align, GD::Text::Wrap
-
-These plugins provide access to Martien Verbruggen's GD::Text,
-GD::Text::Align and GD::Text::Wrap modules. These plugins allow the
-layout, alignment and wrapping of text when drawing text in GD images.
-
-    [% FILTER null;
-        USE gd  = GD.Image(200,400);
-        USE gdc = GD.Constants;
-        black = gd.colorAllocate(0,   0, 0);
-        green = gd.colorAllocate(0, 255, 0);
-        txt = "This is some long text. " | repeat(10);
-        USE wrapbox = GD.Text.Wrap(gd,
-         line_space  => 4,
-         color       => green,
-         text        => txt,
-        );
-        wrapbox.set_font(gdc.gdMediumBoldFont);
-        wrapbox.set(align => 'center', width => 160);
-        wrapbox.draw(20, 20);
-        gd.png | stdout(1);
-      END;
-    -%]
-
-See L<Template::Plugin::GD::Text>, L<Template::Plugin::GD::Text::Align>
-and L<Template::Plugin::GD::Text::Wrap> for further details.
-
-=head2 GD::Graph::lines, GD::Graph::bars, GD::Graph::points, GD::Graph::linespoin
-ts, GD::Graph::area, GD::Graph::mixed, GD::Graph::pie
-
-These plugins provide access to Martien Verbruggen's GD::Graph module
-that allows graphs, plots and charts to be created. These plugins allow
-graphs, plots and charts to be generated in PNG, JPEG and other
-graphical formats.
-
-    [% FILTER null;
-        data = [
-            ["1st","2nd","3rd","4th","5th","6th"],
-            [    4,    2,    3,    4,    3,  3.5]
-        ];
-        USE my_graph = GD.Graph.pie(250, 200);
-        my_graph.set(
-                title => 'A Pie Chart',
-                label => 'Label',
-                axislabelclr => 'black',
-                pie_height => 36,
-                transparent => 0,
-        );
-        my_graph.plot(data).png | stdout(1);
-      END;
-    -%]
-
-See
-L<Template::Plugin::GD::Graph::lines>,
-L<Template::Plugin::GD::Graph::bars>,
-L<Template::Plugin::GD::Graph::points>,
-L<Template::Plugin::GD::Graph::linespoints>,
-L<Template::Plugin::GD::Graph::area>,
-L<Template::Plugin::GD::Graph::mixed>,
-L<Template::Plugin::GD::Graph::pie>, and
-L<GD::Graph>,
-for more details.
-
-=head2 GD::Graph::bars3d, GD::Graph::lines3d, GD::Graph::pie3d
-
-These plugins provide access to Jeremy Wadsack's GD::Graph3d
-module.  This allows 3D bar charts and 3D lines plots to
-be generated.
-
-    [% FILTER null;
-        data = [
-            ["1st","2nd","3rd","4th","5th","6th","7th", "8th", "9th"],
-            [    1,    2,    5,    6,    3,  1.5,    1,     3,     4],
-        ];
-        USE my_graph = GD.Graph.bars3d();
-        my_graph.set(
-            x_label         => 'X Label',
-            y_label         => 'Y label',
-            title           => 'A 3d Bar Chart',
-            y_max_value     => 8,
-            y_tick_number   => 8,
-            y_label_skip    => 2,
-            # shadows
-            bar_spacing     => 8,
-            shadow_depth    => 4,
-            shadowclr       => 'dred',
-            transparent     => 0,
-        my_graph.plot(data).png | stdout(1);
-      END;
-    -%]
-
-See
-L<Template::Plugin::GD::Graph::lines3d>,
-L<Template::Plugin::GD::Graph::bars3d>, and
-L<Template::Plugin::GD::Graph::pie3d>
-for more details.
+The GD plugins are no longer part of the core Template Toolkit distribution.
+They are now available in a separate Template-GD distribution.
 
 =head2 HTML
 
-The HTML plugin is very new and very basic, implementing a few useful
+The HTML plugin is very basic, implementing a few useful
 methods for generating HTML.  It is likely to be extended in the future
 or integrated with a larger project to generate HTML elements in a generic
 way (as discussed recently on the mod_perl mailing list).
@@ -898,54 +805,6 @@ The Text::Wrap module is available from CPAN:
 
     http://www.cpan.org/modules/by-module/Text/
 
-=head2 XML::DOM
-
-The XML::DOM plugin gives access to the XML Document Object Module via
-Clark Cooper E<lt>cooper@sch.ge.comE<gt> and Enno Derksen's 
-E<lt>enno@att.comE<gt> XML::DOM module.  See L<Template::Plugin::XML::DOM> 
-and L<XML::DOM> for further details.
-
-    [% USE dom = XML.DOM %]
-    [% doc = dom.parse(filename) %]
-
-    [% FOREACH node = doc.getElementsByTagName('CODEBASE') %]
-       * [% node.getAttribute('href') %]
-    [% END %]
-
-The plugin requires the XML::DOM module, available from CPAN:
-
-    http://www.cpan.org/modules/by-module/XML/
-
-=head2 XML::RSS
-
-The XML::RSS plugin is a simple interface to Jonathan Eisenzopf's
-E<lt>eisen@pobox.comE<gt> XML::RSS module.  A RSS (Rich Site Summary)
-file is typically used to store short news 'headlines' describing
-different links within a site.  This plugin allows you to parse RSS
-files and format the contents accordingly using templates.  
-See L<Template::Plugin::XML::RSS> and L<XML::RSS> for further details.
-
-    [% USE news = XML.RSS(filename) %]
-   
-    [% FOREACH item = news.items %]
-       <a href="[% item.link %]">[% item.title %]</a>
-    [% END %]
-
-The XML::RSS module is available from CPAN:
-
-    http://www.cpan.org/modules/by-module/XML/
-
-=head2 XML::Simple
-
-This plugin implements an interface to the L<XML::Simple|XML::Simple>
-module.
-
-    [% USE xml = XML.Simple(xml_file_or_text) %]
-
-    [% xml.head.title %]
-
-See L<Template::Plugin::XML::Simple> for further details.
-
 =head2 XML::Style
 
 This plugin defines a filter for performing simple stylesheet based 
@@ -971,21 +830,12 @@ transformations of XML text.
 
 See L<Template::Plugin::XML::Style> for further details.
 
-=head2 XML::XPath
+=head2 XML
 
-The XML::XPath plugin provides an interface to Matt Sergeant's
-E<lt>matt@sergeant.orgE<gt> XML::XPath module.  See 
-L<Template::Plugin::XML::XPath> and L<XML::XPath> for further details.
+The XML::DOM, XML::RSS, XML::Simple and XML::XPath plugins are no
+longer distributed with the Template Toolkit as of version 2.15
 
-    [% USE xpath = XML.XPath(xmlfile) %]
-    [% FOREACH page = xpath.findnodes('/html/body/page') %]
-       [% page.getAttribute('title') %]
-    [% END %]
-
-The plugin requires the XML::XPath module, available from CPAN:
-
-    http://www.cpan.org/modules/by-module/XML/
-
+They are now available in a separate Template-XML distribution.
 
 
 
@@ -1005,21 +855,21 @@ denote relative to PLUGIN_BASE.
 
 =head1 AUTHOR
 
-Andy Wardley E<lt>abw@andywardley.comE<gt>
+Andy Wardley E<lt>abw@wardley.orgE<gt>
 
-L<http://www.andywardley.com/|http://www.andywardley.com/>
+L<http://wardley.org/|http://wardley.org/>
 
 
 
 
 =head1 VERSION
 
-2.71, distributed as part of the
-Template Toolkit version 2.14, released on 04 October 2004.
+2.74, distributed as part of the
+Template Toolkit version 2.15, released on 26 May 2006.
 
 =head1 COPYRIGHT
 
-  Copyright (C) 1996-2004 Andy Wardley.  All Rights Reserved.
+  Copyright (C) 1996-2006 Andy Wardley.  All Rights Reserved.
   Copyright (C) 1998-2002 Canon Research Centre Europe Ltd.
 
 This module is free software; you can redistribute it and/or
