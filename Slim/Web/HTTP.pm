@@ -2008,7 +2008,11 @@ sub newSkinTemplate {
 
 		foreach my $rootDir (HTMLTemplateDirs()) {
 
-			push @include_path, catdir($rootDir, $dir);
+			my $skinDir = catdir($rootDir, $dir);
+
+			if (-d $skinDir) {
+				push @include_path, $skinDir;
+			}
 		}
 	}
 	

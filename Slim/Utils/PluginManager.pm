@@ -213,7 +213,7 @@ sub initPlugins {
 
 				my $htmldir = catdir($plugindir, $path, "HTML");
 
-				if (-r $htmldir) {
+				if (-d $htmldir) {
 
 					Slim::Web::HTTP::addTemplateDirectory($htmldir);
 				}
