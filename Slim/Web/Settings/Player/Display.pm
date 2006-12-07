@@ -140,7 +140,7 @@ sub getFontOptions {
 
 	for my $font (@{Slim::Display::Lib::Fonts::fontnames()}) {
 
-		if ($height == Slim::Display::Lib::Fonts::fontheight("$font.2") && 
+		if ($height && $height == Slim::Display::Lib::Fonts::fontheight("$font.2") && 
 			Slim::Display::Lib::Fonts::fontchars("$font.2") > 255 ) {
 
 			$fonts->{$font} = $font;

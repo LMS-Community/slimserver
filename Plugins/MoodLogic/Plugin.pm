@@ -59,10 +59,6 @@ sub shutdownPlugin {
 
 	$initialized = 0;
 
-	# delGroups, categories and prefs
-	Slim::Web::Setup::delCategory('MOODLOGIC');
-	Slim::Web::Setup::delGroup('BASIC_SERVER_SETTINGS','moodlogic',1);
-	
 	# set importer to not use
 	Slim::Music::Import->useImporter('Plugins::MoodLogic::Plugin', 0);
 }

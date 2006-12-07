@@ -25,14 +25,16 @@ sub handler {
 
 	my @prefs = qw(language audiodir playlistdir rescantype rescan);
 
-	for my $importer ('iTunes', 'MusicMagic', 'MoodLogic') {
-		
-		if (grep {$_ =~ $importer} keys %Slim::Music::Import::Importers) {
+	for my $importer (qw(iTunes MusicMagic MoodLogic)) {
+
+		if (exists $Slim::Music::Import::Importers{$importer}) {
+
 			push @prefs, lc($importer);
 		}
 	}
 
 	if ($paramRef->{'rescan'}) {
+
 		my $rescanType = ['rescan'];
 
 		if ($paramRef->{'rescantype'} eq '2wipedb') {
@@ -61,34 +63,40 @@ sub handler {
 			#Slim::Utils::PluginManager::initPlugins();
 			Slim::Web::Setup::initSetup();
 			Slim::Music::Import->resetSetupGroups;
-
 		}
 
 		for my $pref (@prefs) {
 
 			if ($pref eq 'playlistdir' || $pref eq 'audiodir') {
+
 				if ($paramRef->{$pref} ne Slim::Utils::Prefs::get($pref)) {
 					
 					my ($validDir, $errMsg) = Slim::Utils::Validate::isDir($paramRef->{$pref});
 					
 					if (!$validDir && $paramRef->{$pref} ne "") {
-						$paramRef->{'warning'} .= sprintf(string("SETUP_BAD_DIRECTORY"),$paramRef->{$pref});
+
+						$paramRef->{'warning'} .= sprintf(string("SETUP_BAD_DIRECTORY"), $paramRef->{$pref});
 	
 						delete $paramRef->{$pref};
 					}
 				}
 			}
 
-			Slim::Utils::Prefs::set($pref, $paramRef->{$pref}) if $paramRef->{$pref};
+			if ($paramRef->{$pref}) {
+
+				Slim::Utils::Prefs::set($pref, $paramRef->{$pref});
+			}
 		}
 	}
 
 	my @versions = Slim::Utils::Misc::settingsDiagString();
+
 	$paramRef->{'versionInfo'} = join( "<br />\n", @versions ) . "\n<p>";
 	$paramRef->{'newVersion'}  = $::newVersion;
 	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
 
 	for my $pref (@prefs) {
+
 		$paramRef->{'prefs'}->{$pref} = Slim::Utils::Prefs::get($pref);
 	}
 	

@@ -99,10 +99,6 @@ sub shutdownPlugin {
 
 	$initialized = 0;
 
-	# delGroups, categories and prefs
-	Slim::Web::Setup::delCategory('MUSICMAGIC');
-	Slim::Web::Setup::delGroup('BASIC_SERVER_SETTINGS','musicmagic',1);
-
 	# set importer to not use, but only for this session. leave server
 	# pref as is to support reenabling the features, without needing a
 	# forced rescan

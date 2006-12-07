@@ -99,7 +99,6 @@ our %dangerousCommands = (
 	#	\&Slim::Web::Pages::status => '\bp0=rescan\b'
 	# means inisist on CSRF protection for the status command *only*
 	# if the URL includes p0=rescan
-	\&Slim::Web::Setup::setup_HTTP                => '.',
 	\&Slim::Web::EditPlaylist::editplaylist       => '.',
 	\&Slim::Web::Pages::Status::status            => 
 		'(p0=debug|p0=pause|p0=stop|p0=play|p0=sleep|p0=playlist|p0=mixer|p0=display|p0=button|p0=rescan|(p0=(|player)pref\b.*p2=[^\?]|p2=[^\?].*p0=(|player)pref))',
@@ -871,12 +870,11 @@ sub generateHTTPResponse {
 
 		} elsif ($classOrCode->can('handler')) {
 
+			# Pull the player ID out and create a client from it
+			# if we need to use it for player settings. 
 			if (exists $params->{'playerid'} && $classOrCode->needsClient) {
+
 				$client = Slim::Player::Client::getClient($params->{'playerid'});
-				
-				# TODO: get rid of this after player page api works for all.
-				my @pages = Slim::Web::Setup::getPlayerPages($client);
-				Slim::Web::Setup::buildLinks($params,@pages);
 			}
 
 			$body = $classOrCode->handler(
