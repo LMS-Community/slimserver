@@ -22,7 +22,7 @@ SETUP_GROUP_PLUGIN_RADIOTIME_DESC
 	NL	Gebruik <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> om je favoriete lokale en globale praat-, sport-, religieuze- en muziekradio te vinden - alles <b>gratis</b>.
 
 SETUP_PLUGIN_RADIOTIME_USERNAME
-	DE	Geben Sie ihren RadioTime Benutzernamen ein.
+	DE	Geben Sie ihren RadioTime Benutzernamen ein:
 	EN	Enter your RadioTime username.
 	FR	Entrez votre nom d'utilisateur radiotime
 	NL	Voer je RadioTime gebruikersnaam in.

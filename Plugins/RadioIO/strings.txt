@@ -49,7 +49,7 @@ SETUP_PLUGIN_RADIOIO_PASSWORD
 	NL	RadioIO wachtwoord
 
 SETUP_PLUGIN_RADIOIO_PASSWORD_DESC
-	DE	Dein RadioIO Passwort
+	DE	Ihr RadioIO Passwort
 	EN	Your RadioIO password
 	ES	Tu contraseña para RadioIO
 	FR	Votre mot de passe RadioIO
