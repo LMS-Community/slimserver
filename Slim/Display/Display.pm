@@ -751,7 +751,7 @@ sub string {
 
 sub doubleString {
 	my $strings = shift->displayStrings;
-	my $name = shift;
+	my $name = uc(shift);
 	return $strings->{$name.'_DBL'} || $strings->{$name} || '';
 }
 
