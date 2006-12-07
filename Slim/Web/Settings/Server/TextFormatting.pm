@@ -43,10 +43,11 @@ sub handler {
 
 				my $i = 0;
 
-				while ($paramRef->{$pref.$i}) {
+				while (defined $paramRef->{$pref.$i}) {
 
 					if (!$paramRef->{$pref.$i}) {
-						last;
+						$i++;
+						next;
 					}
 
 					Slim::Utils::Prefs::push($pref,$paramRef->{$pref.$i});
