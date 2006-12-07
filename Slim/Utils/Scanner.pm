@@ -32,6 +32,7 @@ use base qw(Class::Data::Inheritable);
 use Audio::WMA;
 use FileHandle;
 use File::Basename qw(basename);
+use File::Next;
 use HTTP::Request;
 use IO::String;
 use Path::Class;
@@ -43,7 +44,6 @@ use Slim::Music::Info;
 use Slim::Player::ProtocolHandlers;
 use Slim::Networking::Async::HTTP;
 use Slim::Utils::Cache;
-use Slim::Utils::FileFindRule;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::ProgressBar;
@@ -99,8 +99,7 @@ sub scanPathOrURL {
 
 =head2 findFilesMatching( $topDir, $args )
 
-Starting at $topDir, uses L<Slim::Utils::FileFindRule> to find any files matching 
-our list of supported files.
+Starting at $topDir, uses L<File::Next> to find any files matching our list of supported files.
 
 =cut
 
@@ -110,57 +109,55 @@ sub findFilesMatching {
 	my $args   = shift;
 
 	my $os     = Slim::Utils::OSDetect::OS();
+	my $types  = Slim::Music::Info::validTypeExtensions($args->{'types'});
 
-	# See perldoc File::Find::Rule for more information.
-	my $rule   = Slim::Utils::FileFindRule->new;
-	my $extras = { 'no_chdir' => 1 };
+	my $descend_filter = sub {
 
-	# File::Find doesn't like follow on Windows.
-	# Bug: 3767 - Ignore items we've seen more than once, and don't die.
-	if ($os ne 'win') {
+		# Don't include old Shoutcast recently played items.
+		return 0 if /ShoutcastBrowser_Recently_Played/;
 
-		$extras->{'follow'}      = 1;
-		$extras->{'follow_skip'} = 2;
+		if ($os eq 'win') {
+			my $attribs;
 
-	} else {
+			return Win32::File::GetAttributes($File::Next::name, $attribs) && !($attribs & Win32::File::HIDDEN());
+		}
 
-		# skip hidden files on Windows
-		$rule->exec(\&_skipWindowsHiddenFiles);
-	}
+		return 1;
+	};
 
-	$rule->extras($extras);
+	my $file_filter = sub {
 
-	# Honor recursion
-	if (defined $args->{'recursive'} && $args->{'recursive'} == 0) {
-		$rule->maxdepth(0);
-	}
+		# validTypeExtensions returns a qr// regex.
+		return 0 if $_ !~ $types;
 
-	# validTypeExtensions returns a qr// regex.
-	$rule->name( Slim::Music::Info::validTypeExtensions($args->{'types'}) );
+		# Make sure we can read the file.
+		return 0 if !-r $File::Next::name;
 
-	# Don't include old style internal playlists.
-	$rule->not_name(qr/\W__\S+\.m3u$/);
+		# Don't include old style internal playlists.
+		return 0 if /^__\S+\.m3u$/o;
 
-	# Don't include old Shoutcast recently played items.
-	$rule->not_name(qr/ShoutcastBrowser_Recently_Played/);
+		# OS X leaves around turd files - ignore them.
+		return 0 if /^\.Apple(?:Single|Double)$/io;
 
-	# OS X leaves around turd files - ignore them.
-	$rule->not_name(qr/\.Apple(?:Single|Double)/i);
+		# iTunes 4.x makes binary metadata files with the format of: ._filename.ext
+		# In the same directory as the real audio files. Ignore those, so we
+		# don't create bogus tracks and try to guess names based off the file,
+		# thus duplicating tracks & albums, etc.
+		return 0 if /^\._/o;
 
-	# iTunes 4.x makes binary metadata files with the format of: ._filename.ext
-	# In the same directory as the real audio files. Ignore those, so we
-	# don't create bogus tracks and try to guess names based off the file,
-	# thus duplicating tracks & albums, etc.
-	$rule->not_name(qr/\/\._/);
+		return 1;
+	};
 
-	# Make sure we can read the file.
-	$rule->readable;
+	my $iter  = File::Next::files({
+		'file_filter'     => $file_filter,
+		'descend_filter'  => $descend_filter,
+		'sort_files'      => 1,
+		'error_handler'   => sub { errorMsg("$_\n") },
+	}, $topDir);
 
-	my $files = $rule->in($topDir);
 	my $found = $args->{'foundItems'} || [];
 
-	# File::Find::Rule doesn't keep filenames properly sorted, so we sort them here
-	for my $file ( sort @{$files} ) {
+	while (my $file = $iter->()) {
 
 		# Only check for Windows Shortcuts on Windows.
 		# Are they named anything other than .lnk? I don't think so.
@@ -1157,12 +1154,6 @@ sub scanWMAStreamError {
 	# Callback with no foundItems, as we had an error
 	push @{$pt}, $error;
 	return $cb->( [], @{$pt} );
-}
-
-sub _skipWindowsHiddenFiles {
-	my $attribs;
-
-	return Win32::File::GetAttributes($_, $attribs) && !($attribs & Win32::File::HIDDEN());
 }
 
 1;
