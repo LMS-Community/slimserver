@@ -746,13 +746,13 @@ sub forgetDisplay {
 sub string {
 	my $strings = shift->displayStrings;
 	my $name = uc(shift);
-	return $strings->{$name} || '';
+	return $strings->{$name} || logBacktrace("missing string $name") && '';
 }
 
 sub doubleString {
 	my $strings = shift->displayStrings;
 	my $name = uc(shift);
-	return $strings->{$name.'_DBL'} || $strings->{$name} || '';
+	return $strings->{$name.'_DBL'} || $strings->{$name} || logBacktrace("missing string $name") && '';
 }
 
 
