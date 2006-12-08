@@ -98,7 +98,7 @@ sub handler {
 		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
 	}
 	
-	$paramRef->{'skinoptions'} = { Slim::Web::Setup::skins(1) };
+	$paramRef->{'skinoptions'} = { Slim::Web::HTTP::skins(1) };
 	
 	return $class->SUPER::handler($client, $paramRef, $pageSetup);
 }

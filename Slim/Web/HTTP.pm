@@ -264,7 +264,7 @@ sub isaSkin {
 		$name = 'Default';
 	}
 	
-	my %skins = Slim::Web::Setup::skins();
+	my %skins = skins();
 
 	for my $skin (keys %skins) {
 		return $skin if $name =~ /^($skin)$/i;
@@ -273,6 +273,38 @@ sub isaSkin {
 	$log->warn("Warning: No matching skin, falling back to default!");
 
 	return 'Default';
+}
+
+sub skins {
+	my $forUI = shift;
+	
+	my %skinlist = ();
+
+	for my $templatedir (HTMLTemplateDirs()) {
+
+		for my $dir (Slim::Utils::Misc::readDirectory($templatedir)) {
+
+			# reject CVS, html, and .svn directories as skins
+			next if $dir =~ /^(?:cvs|html|\.svn)$/i;
+			next if $forUI && $dir =~ /^x/;
+			next if !-d catdir($templatedir, $dir);
+
+			# BUG 4171: Disable dead Default2 skin, in case it was left lying around
+			next if $dir =~ /^(?:Default2)$/i;
+
+			logger('network.http')->info("skin entry: $dir");
+
+			if ($dir eq defaultSkin()) {
+				$skinlist{$dir} = string('DEFAULT_SKIN');
+			} elsif ($dir eq baseSkin()) {
+				$skinlist{$dir} = string('BASE_SKIN');
+			} else {
+				$skinlist{$dir} = Slim::Utils::Misc::unescape($dir);
+			}
+		}
+	}
+
+	return %skinlist;
 }
 
 # Handle an HTTP request

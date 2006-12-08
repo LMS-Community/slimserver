@@ -61,7 +61,7 @@ sub handler {
 			# FIXME - are all the following is required when plugin strings are in files?
 			#Slim::Utils::PluginManager::clearPlugins();
 			#Slim::Utils::PluginManager::initPlugins();
-			Slim::Web::Setup::initSetup();
+			#Slim::Web::Setup::initSetup();
 			Slim::Music::Import->resetSetupGroups;
 		}
 
