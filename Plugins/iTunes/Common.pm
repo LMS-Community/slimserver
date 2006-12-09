@@ -291,7 +291,11 @@ sub normalize_location {
 		my $base = Slim::Utils::Misc::fileURLFromPath($explicit_path);
 
 		$url = $stripped;
-		$url =~ s/$class->iTunesLibraryBasePath/$base/isg;
+		
+		my $itunesbase = $class->iTunesLibraryBasePath;
+		
+		$url =~ s/$itunesbase/$base/isg;
+		
 		$url =~ s/(\w)\/\/(\w)/$1\/$2/isg;
 
 	} else {
@@ -327,7 +331,7 @@ sub strip_automounter {
 }
 
 sub checkDefaults {
-	my $class = shift;;
+	my $class = shift;
 
 	if (!Slim::Utils::Prefs::isDefined('itunesscaninterval')) {
 
