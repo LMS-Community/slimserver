@@ -71,12 +71,16 @@ sub setWarnLow {
 	my $ref = shift || return;
 	my $val = shift;
 
+	$log->warn( sprintf "%-16s : Low threshold %s", $ref->{name}, defined $val ? "set to $val" : 'cleared' );
+
 	$ref->{warnlo} = $val;
 }
 
 sub setWarnHigh {
 	my $ref = shift || return;
 	my $val = shift;
+
+	$log->warn( sprintf "%-16s : High threshold %s", $ref->{name}, defined $val ? "set to $val" : 'cleared' );
 
 	$ref->{warnhi} = $val;
 }

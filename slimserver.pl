@@ -488,7 +488,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
           [--cliport <portnumber> [--cliaddr <listenip>]]
           [--priority <priority>]
           [--prefsfile <prefsfilepath> [--pidfile <pidfilepath>]]
-          [--perfmon] [--perfwarn=<threshold>]
+          [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
           [--checkstrings]
 
     --help           => Show this usage information.
@@ -567,22 +567,12 @@ sub initOptions {
 		'noserver'      => \$noserver,
 		'noupnp'        => \$noupnp,
 		'perfmon'       => \$perfmon,
-		'perfwarn=f'    => \$perfwarn,
+		'perfwarn=s'    => \$perfwarn,  # content parsed by Health plugin if loaded
 		'checkstrings'  => \$checkstrings,
 		'd_startup'     => \$d_startup, # Needed for Slim::bootstrap
 	)) {
 		showUsage();
 		exit(1);
-	}
-
-	if (defined $perfwarn) {
-		# enable performance monitoring and set warning thresholds on performance monitors
-		$perfmon = 1;
-		$Slim::Networking::Select::responseTime->setWarnHigh($perfwarn);
-		$Slim::Networking::Select::selectTask->setWarnHigh($perfwarn);
-		$Slim::Utils::Timers::timerTask->setWarnHigh($perfwarn);
-		$Slim::Utils::Scheduler::schedulerTask->setWarnHigh($perfwarn);
-		$Slim::Control::Request::requestTask->setWarnHigh($perfwarn);
 	}
 }
 

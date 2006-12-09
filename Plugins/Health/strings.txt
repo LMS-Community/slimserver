@@ -386,32 +386,32 @@ PLUGIN_HEALTH_RESPONSE_DESC
 	FR	Ce graphique montre le laps de temps en secondes nécessaire au serveur pour répondre aux instructions de la ou des platine(s) connectée(s). Plus la valeur est basse, plus le serveur est réactif. Des valeurs supérieures à 1 seconde sont susceptibles d'altérer les performances audio.    Les temps de réponse trop élevés peuvent être le résultat d'autres tâches ou de tâches complexes en cours d'éxécution sur le serveur.
 	NL	De responstijd van de server. De tijdsduur tussen achtereenvolgende aanroepen.
 
-PLUGIN_HEALTH_SELECTTASK
+PLUGIN_HEALTH_SELECT
 	EN	Select Task Duration
 	FR	Durée tâche sélectionnée
 	NL	Selecteer taakduur
 
-PLUGIN_HEALTH_SELECTTASK_DESC
+PLUGIN_HEALTH_SELECT_DESC
 	EN	The length of time taken by each task run by select.
 	FR	La durée écoulée pour chaque tâche sélectionnée.
 	NL	De tijdsduur die elke geselecteerde taak neemt.
 
-PLUGIN_HEALTH_SCHEDULERTASK
+PLUGIN_HEALTH_SCHEDULER
 	EN	Scheduler Task Duration
 	FR	Durée tâche planifiée
 	NL	Taakplanner taakduur
 
-PLUGIN_HEALTH_SCHEDULERTASK_DESC
+PLUGIN_HEALTH_SCHEDULER_DESC
 	EN	The length of time taken by each scheduled task.
 	FR	La durée écoulée pour chaque tâche planifiée.
 	NL	De tijdsduur die elke geplande taak neemt.
 
-PLUGIN_HEALTH_TIMERTASK
+PLUGIN_HEALTH_TIMER
 	EN	Timer Task Duration
 	FR	Durée tâche automatique
 	NL	Timertaakduur
 
-PLUGIN_HEALTH_TIMERTASK_DESC
+PLUGIN_HEALTH_TIMER_DESC
 	EN	The length of time taken by each timer task.
 	FR	La durée de chaque tâche automatique.
 	NL	De tijdsduur ingenomen door elke timertaak.
@@ -466,12 +466,12 @@ PLUGIN_HEALTH_DBACCESS_DESC
 	FR	Le temps écoulé pour accéder à une information depuis la base de données.
 	NL	De tijdsduur om informatie op te halen uit de database.
 
-PLUGIN_HEALTH_PROCTEMPLATE
+PLUGIN_HEALTH_TEMPLATE
 	EN	Process Template
 	FR	Exécution Template
 	NL	Proces sjabloon
 
-PLUGIN_HEALTH_PROCTEMPLATE_DESC
+PLUGIN_HEALTH_TEMPLATE_DESC
 	EN	The time to process each Template Toolkit template when building web pages.
 	FR	La durée d'exécution de chaque Template Toolkit lors de la génération d'une page web.
 	NL	De tijd om elk gereedschapsjabloon uit te voeren bij het opbouwen van webpagina's.

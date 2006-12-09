@@ -18,9 +18,14 @@ use Slim::Utils::Strings qw(string);
 
 use Plugins::Health::NetTest;
 
-
 sub enabled {
 	return ($::VERSION ge '6.5');
+}
+
+sub initPlugin {
+	if (defined $::perfwarn) {
+		parseCmdLine($::perfwarn);
+	}
 }
 
 # Main web interface
@@ -54,20 +59,53 @@ sub getFunctions {
 
 # Perfmon logs managed by this plugin
 my @perfmonLogs = (
-	{ 'type' => 'server', 'name' => 'response',     'monitor' => \$Slim::Networking::Select::responseTime,  },
-	{ 'type' => 'server', 'name' => 'timerlate',    'monitor' => \$Slim::Utils::Timers::timerLate,          },
-	{ 'type' => 'server', 'name' => 'selecttask',   'monitor' => \$Slim::Networking::Select::selectTask,    },
-	{ 'type' => 'server', 'name' => 'timertask',    'monitor' => \$Slim::Utils::Timers::timerTask,          },
-	{ 'type' => 'server', 'name' => 'request',      'monitor' => \$Slim::Control::Request::requestTask,     },
-	{ 'type' => 'server', 'name' => 'schedulertask','monitor' => \$Slim::Utils::Scheduler::schedulerTask,   },
-	{ 'type' => 'server', 'name' => 'dbaccess',     'monitor' => \$Slim::Schema::Storage::dbAccess,         },
-	{ 'type' => 'server', 'name' => 'pagebuild',    'monitor' => \$Slim::Web::HTTP::pageBuild,              },
-	{ 'type' => 'server', 'name' => 'proctemplate', 'monitor' => \$Slim::Web::Template::Context::procTemplate },
-	{ 'type' => 'server', 'name' => 'irqueue',      'monitor' => \$Slim::Hardware::IR::irPerf,              },
-	{ 'type' => 'player', 'name' => 'signal',       'monitor' => \&Slim::Player::Client::signalStrengthLog, },
-	{ 'type' => 'player', 'name' => 'buffer',       'monitor' => \&Slim::Player::Client::bufferFullnessLog, },
-	{ 'type' => 'player', 'name' => 'control',      'monitor' => \&Slim::Player::Client::slimprotoQLenLog,  },
+	{ 'type' => 'server', 'name' => 'response',  'monitor' => \$Slim::Networking::Select::responseTime, 'warn' => 1 },
+	{ 'type' => 'server', 'name' => 'select',    'monitor' => \$Slim::Networking::Select::selectTask,   'warn' => 1 },
+	{ 'type' => 'server', 'name' => 'timer',     'monitor' => \$Slim::Utils::Timers::timerTask,         'warn' => 1 },
+	{ 'type' => 'server', 'name' => 'request',   'monitor' => \$Slim::Control::Request::requestTask,    'warn' => 1 },
+	{ 'type' => 'server', 'name' => 'scheduler', 'monitor' => \$Slim::Utils::Scheduler::schedulerTask,  'warn' => 1 },
+	{ 'type' => 'server', 'name' => 'timerlate', 'monitor' => \$Slim::Utils::Timers::timerLate,                     },
+	{ 'type' => 'server', 'name' => 'dbaccess',  'monitor' => \$Slim::Schema::Storage::dbAccess,                    },
+	{ 'type' => 'server', 'name' => 'pagebuild', 'monitor' => \$Slim::Web::HTTP::pageBuild,                         },
+	{ 'type' => 'server', 'name' => 'template',  'monitor' => \$Slim::Web::Template::Context::procTemplate,         },
+	{ 'type' => 'server', 'name' => 'irqueue',   'monitor' => \$Slim::Hardware::IR::irPerf,                         },
+	{ 'type' => 'player', 'name' => 'signal',    'monitor' => \&Slim::Player::Client::signalStrengthLog, },
+	{ 'type' => 'player', 'name' => 'buffer',    'monitor' => \&Slim::Player::Client::bufferFullnessLog, },
+	{ 'type' => 'player', 'name' => 'control',   'monitor' => \&Slim::Player::Client::slimprotoQLenLog,  },
 );
+
+sub parseCmdLine {
+	my $cmdline = shift;
+
+	$::perfmon = 1;
+
+	if ( $cmdline =~ /^\d+$|^\d+\.\d+$/ ) {
+		foreach my $mon (@perfmonLogs) {
+			if ($mon->{'type'} eq 'server' && $mon->{'warn'}) {
+				${$mon->{'monitor'}}->setWarnHigh($cmdline);
+			}
+		}
+	} elsif ($cmdline =~ /=/) {
+		for my $statement (split /\s*,\s*/, $cmdline) {
+			my ($name, $thresh) = split /=/, $statement;
+			next if ($thresh !~ /^\d+$|^\d+\.\d+$/);
+			foreach my $mon (@perfmonLogs) {
+				if ($mon->{'type'} eq 'server' && $mon->{'name'} eq $name) {
+					${$mon->{'monitor'}}->setWarnHigh($thresh);
+				}
+			}
+		}
+	} else {
+		print "Valid perfwarn options: [--perfwarn=<threshold secs>] | [--perfwarn <monitor1>=<threshold1>,<monitor2>=<threshold2>,...]\n";
+		print "monitors: ";
+		foreach my $mon (@perfmonLogs) {
+			if ($mon->{'type'} eq 'server') {
+				print $mon->{'name'}. " ";
+			}
+		}
+		print "\n";
+	}
+}
 
 sub clearAllCounters {
 
@@ -177,7 +215,7 @@ sub summary {
 sub handleIndex {
 	my ($client, $params) = @_;
 	
-	my $refresh = 60; # default refresh of 60s 
+	my $refresh;
 	my ($newtest, $stoptest);
 
 	# process input parameters
@@ -186,13 +224,11 @@ sub handleIndex {
 		if ($params->{'perf'} eq 'on') {
 			$::perfmon = 1;
 			clearAllCounters();
-			$refresh = 1;
 		} elsif ($params->{'perf'} eq 'off') {
 			$::perfmon = 0;
 		}
 		if ($params->{'perf'} eq 'clear') {
 			clearAllCounters();
-			$refresh = 1;
 		}
 	}
 
@@ -211,7 +247,6 @@ sub handleIndex {
 		$params->{'perfon'} = 1;
 	} else {
 		$params->{'perfoff'} = 1;
-		$refresh = undef;
 	}
 
 	# summary section
@@ -241,9 +276,10 @@ sub handleIndex {
 				$refresh = 2;
 			} 
 			if (!$stoptest && defined($modeParam) && ref($modeParam) eq 'HASH' && defined $modeParam->{'log'}) { 
-				# display current results
+				# display current results & refresh in a minute
 				$params->{'nettest_rate'} = $modeParam->{'rate'};
 				$params->{'nettest_graph'} = $modeParam->{'log'}->sprint();
+				$refresh = 60;
 			}
 
 		} elsif (defined($newtest)) {
@@ -280,9 +316,15 @@ sub handleGraphs {
 
 		if (defined $params->{'monitor'} && ($params->{'monitor'} eq $mon->{'name'} || $params->{'monitor'} eq 'all') ) {
 			if (exists($params->{'setwarn'})) {
-				$monitor->setWarnHigh(Slim::Utils::Validate::number($params->{'warnhi'}));
-				$monitor->setWarnLow(Slim::Utils::Validate::number($params->{'warnlo'}));
-				$monitor->setWarnBt($params->{'warnbt'});
+				if (defined $monitor->warnHigh() || $params->{'warnhi'} ne '') {
+					$monitor->setWarnHigh(Slim::Utils::Validate::number($params->{'warnhi'}));
+				}
+				if (defined $monitor->warnLow() || $params->{'warnlo'} ne '') {
+					$monitor->setWarnLow(Slim::Utils::Validate::number($params->{'warnlo'}));
+				}
+				if (defined $monitor->warnBt() || $params->{'warnbt'} ne '') {
+					$monitor->setWarnBt($params->{'warnbt'});
+				}
 			}
 			if (exists($params->{'clear'})) {
 				$monitor->clear();
