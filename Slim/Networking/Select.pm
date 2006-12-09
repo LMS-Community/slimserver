@@ -173,7 +173,7 @@ sub _updateSelect {
 			$selects->{'is_'.$type}->remove($sock);
 		}
 		
-		$log->info(sprintf("fileno: [%d] Removing $type", fileno($sock)));
+		$log->info(sprintf("fileno: [%d] Removing $type", fileno($sock) || 0));
 	}
 }
 
