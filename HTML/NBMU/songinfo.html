@@ -30,7 +30,7 @@
 				<td>[% role | upper | string; "COLON" | string %]</td>
 				[% contributorsHTML = [] %]
 
-				<td>[% FOREACH contributor = contributors.sort %]
+				<td>[% FOREACH contributor = contributors %]
 
 					[% contributorHTMLFrag = "<a href=\"browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=$contributor.id&amp;player=$playerURI\" target=\"browser\">$contributor.name</a>" %]
 
@@ -61,7 +61,7 @@
 
 		<td>
 
-		[% FOREACH genre = itemobj.genres.sort %]
+		[% FOREACH genre = itemobj.genres %]
 
 					[% genreHTMLFrag = "<a href=\"browsedb.html?hierarchy=genre,contributor,album,track&amp;level=1&amp;genre.id=$genre.id&amp;player=$playerURI\" target=\"browser\">$genre.name</a>" %]
 					[% genresHTML.push(genreHTMLFrag) %]
