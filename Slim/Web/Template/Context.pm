@@ -15,21 +15,22 @@ use strict;
 use base 'Template::Context';
 
 our $procTemplate = Slim::Utils::PerfMon->new('Process Template', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
-my $indent = 0;
+my $depth = 0;
 
 my $last = 0;
 
+my (@start, @elapsed) = ([0], [0]);
 
 sub process {
 	my $self = shift;
 
-	my $now = Time::HiRes::time();
+	my $t1 = Time::HiRes::time();
 
-	if ($now - $last > 0.05) {
+	if ($t1 - $last > 0.05) {
 
 		main::idleStreams();
 
-		$last = $now = Time::HiRes::time();
+		$last = $t1;
 
 	}
 
@@ -41,13 +42,29 @@ sub process {
 
 		my $temp = $_[0];
 
-		$indent++;
+		$elapsed[$depth] += $t1 - $start[$depth];
+
+		$depth++;
+
+		my $t2 = Time::HiRes::time();
+
+		$elapsed[$depth] = 0;
+		$start[$depth]   = $t2;
 
 		my $ret = \$self->SUPER::process(@_);
 
-		$indent--;
+		my $t3 = Time::HiRes::time();
 
-		$procTemplate->log(Time::HiRes::time() - $now, sub { "  " x $indent . (ref $temp ? $temp->{'name'} : $temp) } );
+		$procTemplate->log($t3 - $t2,
+			sub {
+				my $us = ($elapsed[$depth] + $t3 - $start[$depth]) * 1000000;
+				sprintf ("%-32s (this templ: %7d us)", "  " x $depth . (ref $temp ? $temp->{'name'} : $temp), $us);
+			}
+		);
+
+		$depth--;
+
+		$start[$depth] = Time::HiRes::time();
 
 		return $$ret;
 
@@ -55,4 +72,4 @@ sub process {
 }
 
 1;
-	
+
