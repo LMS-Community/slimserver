@@ -343,6 +343,9 @@ sub init {
 		Slim::Utils::UPnPMediaServer::init();
 	}
 
+	$log->info("SlimServer HTTP init...");
+	Slim::Web::HTTP::init();
+
 	$log->info("Source conversion init..");
 	Slim::Player::Source::init();
 
@@ -379,8 +382,8 @@ sub init {
 
 	checkVersion();
 
-	$log->info("SlimServer HTTP init...");
-	Slim::Web::HTTP::init();
+	$log->info("SlimServer HTTP enable...");
+	Slim::Web::HTTP::init2();
 
 	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
@@ -441,8 +444,6 @@ sub idle {
 		}
 	}
 
-	# $log->debug("select_time: $select_time");
-
 	# call select and process any IO
 	Slim::Networking::Select::select($select_time);
 
@@ -469,8 +470,6 @@ sub idleStreams {
 			$select_time = $timeout;
 		}
 	}
-
-	logger('server.timers')->debug("select_time: $select_time, checkTimers: $check_timers");
 
 	Slim::Networking::Select::select($select_time, 1);
 
