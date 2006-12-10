@@ -27,8 +27,7 @@ sub handler {
 
 	for my $importer (qw(iTunes MusicMagic MoodLogic)) {
 
-		if (exists $Slim::Music::Import::Importers{$importer}) {
-
+		if (exists $Slim::Music::Import::Importers{"Plugins::".$importer."::Plugin"}) {
 			push @prefs, lc($importer);
 		}
 	}
@@ -75,14 +74,14 @@ sub handler {
 					
 					if (!$validDir && $paramRef->{$pref} ne "") {
 
-						$paramRef->{'warning'} .= sprintf(string("SETUP_BAD_DIRECTORY"), $paramRef->{$pref});
+						$paramRef->{'warning'} .= sprintf(Slim::Utils::Strings::string("SETUP_BAD_DIRECTORY"), $paramRef->{$pref});
 	
 						delete $paramRef->{$pref};
 					}
 				}
 			}
 
-			if ($paramRef->{$pref}) {
+			if (exists $paramRef->{$pref}) {
 
 				Slim::Utils::Prefs::set($pref, $paramRef->{$pref});
 			}
