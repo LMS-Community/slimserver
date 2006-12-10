@@ -29,7 +29,7 @@ sub getDisplayName {
 
 sub initPlugin {
 
-        $log->info("Initializing");
+	$log->info("Initializing");
 
 	@digital_inputs = (
 		{
@@ -154,10 +154,10 @@ sub setMode {
 
 sub getFunctions {
 	return {
-		'aes-ebu'    => sub { updateDigitalInput(shift, $digital_inputs[ 0 ]) },
-		'bnc-spdif'  => sub { updateDigitalInput(shift, $digital_inputs[ 1 ]) },
-		'rcs-spdif'  => sub { updateDigitalInput(shift, $digital_inputs[ 2 ]) },
-		'toslink'    => sub { updateDigitalInput(shift, $digital_inputs[ 3 ]) },
+		'aes-ebu'     => sub { updateDigitalInput(shift, $digital_inputs[ 0 ]) },
+		'bnc-spdif'   => sub { updateDigitalInput(shift, $digital_inputs[ 1 ]) },
+		'rcs-spdif'   => sub { updateDigitalInput(shift, $digital_inputs[ 2 ]) },
+		'toslink'     => sub { updateDigitalInput(shift, $digital_inputs[ 3 ]) },
 	};
 }
 
@@ -194,13 +194,20 @@ sub handleWebList {
 
 	if ($client) {
 
-		# Pass on the current pref
-		# 0 is Network, but we don't keep it in our digital_input list.
-		my $value = $client->prefGet('digitalInput') - 1;
+		my $song = Slim::Player::Playlist::song($client);
+		my $url  = $song->url;
+		
+		my $name;
+		for my $input (@digital_inputs) {
+			if ($url eq $input->{'url'}) {
+				$name = $input->{'name'};
+				last;
+			}
+		}
 
 		# pre-localised string served to template
 		$params->{'digitalInputCurrent'} = Slim::Buttons::Input::Choice::formatString(
-			$client, $digital_inputs[$value]->{'name'},
+			$client, $name,
 		);
 	}
 

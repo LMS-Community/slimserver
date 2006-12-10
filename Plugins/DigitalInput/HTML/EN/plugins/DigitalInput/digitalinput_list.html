@@ -6,8 +6,10 @@
 [% END -%]
 [%- pageHeaderInfo = BLOCK %]
 
+		[% IF digitalInputCurrent %]
 		<strong>[% "NOW_PLAYING" | string %][% "COLON" | string %]</strong>
 		<span class="exboldnowplaying">[% digitalInputCurrent %]</span>
+		[% END %]
 
 [% END -%]
 [%- PROCESS pageheader.html %]
