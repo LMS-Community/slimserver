@@ -9,7 +9,7 @@ PLUGIN_CLI
 	NL	Commandoregel interface (CLI)
 
 PLUGIN_CLI_DESC
-	DE	Mit Hilfe des Command Line Interface Plugin können SlimServer und Squeezeboxen über eine TCP/IP Verbindung ferngesteuert werden.  
+	DE	Mit Hilfe des Command Line Interface Plugins können SlimServer und Squeezeboxen über eine TCP/IP Verbindung ferngesteuert werden.  
 	EN	The Command Line Interface plugin allows SlimServer and the Squeezeboxen to be controlled remotely over a TCP/IP connection, for example by a third party automation system like AMX or Crestron.
 	NL	De commandoregel interface (CLI) maakt het mogelijk om de SlimServer en de Squeezeboxen te bedienen op afstand over een TCP/IP connectie. Bijvoorbeeld door een automatiseringssysteem van een derde partij zoals AMX of Creston.
 
@@ -31,7 +31,7 @@ SETUP_CLIPORT
 
 SETUP_CLIPORT_DESC
 	CS	Můžete změnit číslo portu, který bude použit k ovládání přehrávače z příkazové řádky.
-	DE	Sie können den Port wechseln, der für die Kommandozeilen-Schnittstellen verwendet werden soll.
+	DE	Definieren Sie den Port, der für das CLI verwendet werden soll.
 	DA	Du kan ændre hvilket port-nummer der anvendes til at styre player-afspilleren via Command Line Interfacet.
 	EN	You can change the port number that is used to by a command line interface to control the player.
 	ES	Puede cambiar el número de puerto que se usa para controlar el reproductor con la linea de comandos.

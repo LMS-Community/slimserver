@@ -1905,7 +1905,7 @@ SETUP_GROUP_TCP_PARAMS_DESC
 SETUP_GROUP_TITLEFORMATS_DESC
 	CS	Toto jsou formáty dostupné ve výběrech v nastavení přehrávačů. Pro vymazání formátu,  vymažte stávající formát a nahraďte jej novým, nebo nechte prízdné.  Dostupné proměnné jsou: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time)  Elementy mohou být odděleny čímkoliv (nebo ničím). Oddělovače jsou pouze použity, pokud jsou datové elementy přednastaveny.  Aktuální formát bude použit také pro zobrazení na webovém rozhraní.
 	DA	Dette er sangtitel-formaterne, der er tilgængelige både ovenfor og i afspiller-indstillingerne. Tøm indholdet i en teksboks for at fjerne formatet. For at tilføje et format indtastes tekst i den tomme tekstboks nederst. Tilgængelige elementer er: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
-	DE	Die verfügbaren Formate sind für die obige Selektion sowie für die Player Einstellung. Zum Entfernen eines Formates löschen Sie die Textbox, zum Erstellen eines Formates fügen Sie den Text in ein leeres Feld ein. Verfügbare Datenelemente sind: CT (Art des Inhalts), TITLE, BAND (Band/Orchestra), GENRE, TRACKNUM, FS (Dateigröße), ARTIST (Interpret), ALBUM, COMMENT, YEAR, SECS (Gesamtsekunden), DURATION (Minuten und Sekunden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (Name des Volumens), PATH, FILE, EXT (Dateierweiterung), LONGDATE (Aktuelles Datum, lang), SHORTDATE (Aktuelles Datum, kurz), CURRTIME(Aktuelle Zeit).
+	DE	Hier können Sie Formate definieren, wie sie in Wiedergabelisten oder auf dem Player verwendet werden. Zum Entfernen eines Formates löschen Sie die Textbox, zum Erstellen eines Formates fügen Sie den Text in ein leeres Feld ein.<br>Verfügbare Datenelemente sind: CT (Art des Inhalts), TITLE, BAND (Band/Orchestra), GENRE, TRACKNUM, FS (Dateigröße), ARTIST (Interpret), ALBUM, COMMENT, YEAR, SECS (Gesamtsekunden), DURATION (Minuten und Sekunden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (Name des Volumens), PATH, FILE, EXT (Dateierweiterung), LONGDATE (Aktuelles Datum, lang), SHORTDATE (Aktuelles Datum, kurz), CURRTIME(Aktuelle Zeit).
 	EN	These are the formats available for selection both above and in the player setup. To remove a format, clear the text box, to enter a new format, place it in the empty one. Available data elements are: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
 	ES	Estos son los formatos disponibles para elegir arriba y tambien en la configuración del reproductor. Para borrar un formato, vacíe la casilla. Para introducir un formato nuevo, póngalo en la casilla vacía. Los elementos disponibles son: CT (tipo de contenido), TITLE (nombre de la canción), GENRE (género), TRACKNUM (índice de la canción en su álbum), FS (tamaño del archivo), ARTIST (artista), ALBUM (álbum), COMMENT (comentarios), YEAR (año), SECS (duración de la canción en segundos), DURATION (duración de la canción en minutos y segundos), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME, PATH (camino al archivo), FILE (nombre del archivo), EXT (extensión del archivo), LONGDATE (la fecha en formato largo), SHORTDATE (la fecha en formato corto), CURRTIME (la hora actual). Los elementos pueden ser separados por lo que quiera, incluso nada. Los separadores se usarán solamente si los valores son definidos.<br>La selección actual es la que se usará en la interfaz web.
 	FI	Seuraavat kentät ovat käytössäsi sekä yllä, että soittimen asetuksissa. Poistaaksesi kentän, tyhjennä teksi laatikosta, lisätäksesi uuden kentän, syötä teksi tyhjään laatikkoon. Vaihtoehtoja ovat: CT (sisältötyyppi), TITLE, GENRE, TRACKNUM (kappaleen numero kokonaislukuna), FS (tiedoston koko), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (sekunnit), DURATION (minuutit ja sekunnit), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (äänenvoimakkuuden säätö), PATH, FILE, EXT (tiedoston pääte), LONGDATE (päiväys, pitkä esitystapa), SHORTDATE (päiväys, lyhyt esitystapa), CURRTIME(aika). Kentät voidaan erottaa toisistaan millä tahansa erottimella. Erottimia käytetään vain mikäli tietokenttiä on valittuna.<br>Tämänhetkistä valintaa tullaan käyttämään WWW-sivuilla.
@@ -3063,7 +3063,7 @@ SETUP_BUFFERSECS
 	ZH_CN	收音机频道缓冲秒数
 
 SETUP_BUFFERSECS_DESC
-	DE	Wenn Internet Radiostationen wiedergegeben werden, puffert der Player eine geringe Datenmenge, bevor er die Wiedergabe startet. Geben Sie die Anzahl Sekunden an, die in den Puffer geladen werden sollen (3-30 Sekunden). Vorgabewert ist 3 Sekunden. Falls Sie eine stotternde Wiedergabe feststellen, so kann das Erhöhen dieses Wertes helfen.
+	DE	Wenn Internet Radiostationen wiedergegeben werden, puffert der Player eine bestimmte Datenmenge, bevor er die Wiedergabe startet. Geben Sie die Anzahl Sekunden an, die in den Puffer geladen werden sollen (3-30 Sekunden). Vorgabewert ist 3 Sekunden. Falls Sie eine stotternde Wiedergabe feststellen, so kann das Erhöhen dieses Wertes helfen.
 	EN	When playing an Internet stream, the player buffers a small amount of data before beginning playback.  Specify the amount of audio data to buffer, in seconds from 3 to 30.  The default value is 3 seconds.  If you experience stuttering audio, increasing this value may help.
 	FR	Lors de la connexion Ã  un flux Internet, la platine utilise un tampon audio avant de débuter la lecture. Vous pouvez spécifier la taille en secondes (3 Ã  30) de ce tampon. La valeur par défaut est de 3 secondes. Si vous subissez des coupures audio, augmentez cette valeur.
 	IT	Nella riproduzione di un flusso Internet, il lettore memorizza una piccola quantitÃ  di dati prima di iniziare la riproduzione. Specifica la quantitÃ  di dati audio da memorizzare, in secondi da 3 a 30. Il valore standard Ã¨ 3 secondi. Se verifichi inceppamenti nell'audio, aumentare questo valore potrebbe essere d'aiuto.
@@ -3523,7 +3523,7 @@ SETUP_PLAYLISTSUFFIX_CHOOSE
 
 SETUP_SHOWYEAR
 	CS	Zobrazovat rok s albem
-	DE	Jahr beim Durchsuchen der Alben anzeigen
+	DE	Jahrgang beim Durchsuchen der Alben anzeigen
 	EN	Show Year with Albums
 	ES	Mostrar Año con Álbumes
 	FR	Affichage de l'année avec l'album
@@ -3535,7 +3535,7 @@ SETUP_SHOWYEAR
 
 SETUP_SHOWYEAR_DESC
 	CS	Můžete vybrat, zda se mají při procházení podle alb nebo obalů zobrazovat spolu s názvy alb i roky vydání. Pokud tuto volbu aktivujete bude rok zobrazen za názvem alba.
-	DE	Sie können das Jahr eines Albums anzeigen lassen, wenn Sie Alben nachschlagen oder Plattenhülle durchsuchen. Das Jahr wird neben dem Albumtitel angezeigt.
+	DE	Sie können den Jahrgang eines Albums anzeigen lassen, wenn Sie Alben nachschlagen. Das Jahr wird neben dem Albumtitel angezeigt.
 	EN	You may choose to show the album year when browsing by Albums or by Artwork.  When enabled, the album year will be shown next to the album title.
 	ES	Se puede elegir mostrar el año de edición de un álbum cuando se recorre por Álbum o Arte de Tapa. Cuando está habilitado, el año del álbum se mostrará junto al título del álbum.
 	FR	Vous pouvez afficher l'année de sortie d'un album en mode Parcourir les albums ou Parcourir les pochettes. Si ce réglage est activé, l'année sera affichée à la suite du titre de l'album.
@@ -3556,7 +3556,7 @@ SETUP_SHOWARTIST
 	ZH_CN	艺人与专辑一同显示
 
 SETUP_SHOWARTIST_DESC
-	DE	Sie können den Interpreten eines Albums anzeigen lassen, wenn Sie nach Album nachschlagen. Er wird neben dem Albumtitel angezeigt.
+	DE	Sie können den Interpreten eines Albums anzeigen lassen, wenn Sie Alben nachschlagen. Er wird neben dem Albumtitel angezeigt.
 	EN	You may choose to show the artist when browsing by Albums.  When enabled, the album' artist will be shown next to the album title.
 	ES	Se puede elegir el mostrar el artista cuando se examina por Álbumes. Cuando se habilita, el artista del álbum se mostrará junto al título del álbum.
 	FR	Vous pouvez afficher l'artiste d'un album en mode Parcourir les albums. Si ce réglage est activé, l'artiste sera affichée à la suite du titre de l'album.
@@ -3725,7 +3725,7 @@ SETUP_LANGUAGE
 
 SETUP_LANGUAGE_DESC
 	CS	Můžete  změnit nastavení jazyka pro SlimServer.
-	DE	Sie können die Sprache auswählen, die Sie für den SlimServer verwenden wollen.
+	DE	Wählen Sie die Sprache aus, die Sie für den SlimServer verwenden wollen.
 	DA	Du kan ændre sproget for dit Slim-system.
 	EN	You can change the language that you'd like SlimServer to use.
 	ES	Puede cambiar el idioma que quiere que use el SlimServer.
@@ -3772,7 +3772,7 @@ SETUP_AUDIODIR
 
 SETUP_AUDIODIR_DESC
 	CS	Zde můžete určit složku obsahující hudební soubory, kterou bude SlimServer kontrolovat a obsah přidávat do hudebního archivu. Vložte cestu k této složce. Můžete také hodnotu nechat prázdnou, pakliže chcete importovat hudebni archiv prostřednictvím iTunes nebo MoodLogic.
-	DE	Sie können ein Verzeichnis definieren, dessen Musikdateien vom SlimServer durchsucht und zur Musiksammlung hinzugefügt werden sollen. Definieren Sie den Pfad zum Ordner im folgenden Feld. Sie können den Eintrag leer lassen, falls Sie die Musiksammlung von iTunes oder MoodLogic verwenden.
+	DE	Definieren Sie ein Verzeichnis, welches SlimServer nach Musikdateien durchsuchen und zur Musiksammlung hinzufügen soll. Sie können den Eintrag leer lassen, falls Sie die Musiksammlung von iTunes oder MoodLogic verwenden.
 	EN	You can specify a folder containing music files that SlimServer will scan and add to your music library.  Enter the path to the folder below.  You can leave this field blank if you are importing your music library information from iTunes or MoodLogic.
 	ES	Se puede especificar una carpeta que contenga archivos de música que SlimServer va a recopilar y añadir a la colección musical. Ingrese el camino a la carpeta debajo. Se puede dejar este campo en blanco si se está importando la información de la colección musical desde iTunes o MoodLogic.
 	FI	Voit määritellä hakemiston, joka sisältää musiikkitiedostoja, jotka SlimServer lukee musiikki kirjastoonsa. Syötä hakemiston polku allaolevaan kenttään. Voit jättää kentän tyhjäksi jos musiikkikirjastosi tiedot tulevat iTunesista tai MoodLogicista.
@@ -3802,7 +3802,7 @@ SETUP_AUDIODIR_OK
 
 SETUP_PLAYLISTDIR
 	CS	Složka s playlisty
-	DE	Wiedergabelisten Ordner:
+	DE	Ordner für Wiedergabelisten 
 	DA	Gemte playlister
 	EN	Playlists Folder
 	ES	Carpeta de listas guardadas
@@ -3834,7 +3834,7 @@ SETUP_ARTFOLDER
 
 SETUP_ARTFOLDER_DESC
 	CS	Můžete zvolit způsob ukládání obrázků obalů alb do zvláštního adresáře. Tuto volbu aktivujete použitím názvů souborů výše. Zadejte lokaci, kam se mají obrázky obalů ukládat. I přes použití této volby bude server stále hledat obrázky alb v adresáři s hudebními soubory, pokud nenajde příslušný obrázek v zadaném adresáři obalů.
-	DE	Sie können einen Ordner definieren, in welchem alle Plattenhüllen abgelegt werden sollen. Definieren Sie hier diesen Ordner. Unabhängig von dieser Einstellung wird der Server stets auch in den Verzeichnissen der Musikdateien nach Bilddateien für die Plattenhüllen schauen, falls in diesem Ordner nichts passendes gefunden wird.
+	DE	Sie können einen Ordner definieren, in welchem alle Plattenhüllen abgelegt sind. Definieren Sie hier diesen Ordner. Unabhängig von dieser Einstellung wird der Server stets auch in den Verzeichnissen der Musikdateien nach Bilddateien für die Plattenhüllen schauen, falls in diesem Ordner nichts passendes gefunden wird.
 	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, the server will still look for artwork in the same path as each audio file if no matching artwork in found in the Artwork Folder.
 	ES	Se puede elegir almacenar todos los Artes de Tapa en una única carpeta, utilizando los nombres de archivo variables de arriba. Ingrese la ubicación de los archivos de Arte de Tapa aquí. No obstante esta ubicación, el servidor también buscará en el mismo camino en el que está cada archivo de audio si no se encuentra ningun archivo de arte de tapa en la Carpeta de Arte de Tapa.
 	FI	Voit valita hakemiston, mihin kaikki kansikuvat tallennetaan, käyttäen ylläolevaa muokattua tiedoston nimeämiskäytäntöä. Palvelin etsii kuvatiedostoja myös jokaisen musiikkitiedoston hakemistosta, jos kansikuvaa ei löydy tästä hakemistosta.
@@ -3906,7 +3906,7 @@ SETUP_PLAYLISTDIR_OK
 
 SETUP_PLAYLISTDIR_DESC
 	CS	Zadejte cestu k adresáři, obsahující uložené playlisty. (Můžete nechat prázdné, pokud si nepřejete svoje playlisty ukládat.)
-	DE	Sie können hier das Verzeichnis angeben, in welchem Sie ihre Wiedergabelisten auf der Festplatte abgespeichert haben. (Sie können dieses Feld leer lassen, wenn Sie keine Wiedergabelisten speichern wollen.)
+	DE	Geben Sie hier das Verzeichnis an, in welchem Sie ihre Wiedergabelisten auf der Festplatte abgespeichert haben wollen. Sie können dieses Feld leer lassen, wenn Sie keine Wiedergabelisten speichern wollen.
 	DA	Du kan indtaste stien til mappen hvor dine gemte playlister er placeret på din harddisk. (Lad feltet være tomt, hvis du ikke ønsker at benytte gemte playlister).
 	EN	You can enter the path to a directory where your saved playlist files are stored on your hard disk. (You can leave this blank if you don't want to save playlists.)
 	ES	Puede introducir el camino a una carpeta donde quiere guardar listas (déjelo en blanco si no quiere poder guardar listas)
@@ -3953,7 +3953,7 @@ SETUP_RESCAN_BUTTON
 
 SETUP_RESCAN_DESC
 	CS	Pokud přidáte, odstraníte, nebo změníte soubory ve svém hudebním archivu, můžete nastavit aby SlimServer provedl kontrolu souborů tak, aby uchoval hudební databázi stále aktuální.
-	DE	Klicken Sie auf "Musiksammlung aktualisieren", damit SlimServer ihre Musiksammlung erneut nach neuen oder veränderten Musikstücken durchsucht.
+	DE	Klicken Sie auf "Durchsuchen", damit SlimServer ihre Musiksammlung erneut nach neuen oder veränderten Musikstücken durchsucht.
 	EN	Click Rescan to have SlimServer scan through your music library and add new music or update songs that have changed.
 	ES	Presionar en Recopilar para que SlimServer recorra la colección musical y añada nueva música o actualice canciones que hayan cambiado.
 	FI	Paina "Lue uudelleen" nappulaa, jotta SlimServer käy hakemistosi läpi ja lisää uudet kappaleet tai päivittää muuttuneet kappaleet.
@@ -4302,7 +4302,7 @@ SETUP_PLUGINS_OK
 
 SETUP_HTTPPORT
 	CS	Číslo portu web serveru
-	DE	Verwendeter Web-Server Port
+	DE	Webserver Port
 	DA	Port-nummer for Web Server
 	EN	Web Server Port Number
 	ES	Número de puerto del servidor web
@@ -4425,7 +4425,7 @@ SETUP_CHECKVERSION
 SETUP_CHECKVERSION_DESC
 	CS	SlimServer se může každý den automaticky připojit k www.slimdevice.com a kontrolovat, zda je dostupná akutualizace software. Pakliže ani, server zobrazi  hlášku na webovém rozhraní.
 	DA	Serveren kan automatisk forbinde til www.slimdevices.com hver dag for at checke om der er kommet en opdateret version af softwaren. Hvis der er, vises en besked i Slim-webinterfacet.
-	DE	Der Server kann automatisch jeden Tag Verbindung mit www.slimdevices.com aufnehmen und prüfen, ob eine neue Software Version vorhanden ist. Falls ja, erscheint eine Meldung im SlimServer Web Interface.
+	DE	Der Server kann automatisch jeden Tag Verbindung mit www.slimdevices.com aufnehmen und prüfen, ob eine neue Software Version vorhanden ist. Falls eine solche existiert, erscheint eine Meldung im SlimServer Web Interface.
 	EN	The server can automatically connect to www.slimdevices.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in SlimServer's web interface.
 	ES	El servidor puede conectarse automáticamente a www.slimdevices.com todos los días y ver si existe una versión más actualizada disponible. Si existe, entonces un mensaje aparecerá en la interfaz web de SlimServer. 
 	FR	Le SlimServer peut se connecter tous les jours à www.slimdevices.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Un message dans l'interface web signale cette disponibilité le cas échéant.
@@ -4741,7 +4741,7 @@ SETUP_SEARCHSUBSTRING_DESC
 	ZH_CN	当您在进行音乐搜寻时，您可以设定让SlimServer由此的前头或在词内寻找匹配。
 
 SETUP_NOGENREFILTER
-	DE	Musikstil auf Album- und Liederebene ausfiltern
+	DE	Musikstil auf Alben- und Liederebene ausfiltern
 	EN	Filter genres at the album & track level.
 	ES	Filtrar géneros a nivel de album y pista
 	FR	Filtrer les genres au niveau album et morceau
@@ -4885,7 +4885,7 @@ SETUP_RESHUFFLEONREPEAT
 
 SETUP_RESHUFFLEONREPEAT_DESC
 	CS	Pokud si budete přát, server může promíchat pořadí playlistu před jeho každým přehráním.
-	DE	Der Server kann nach dem kompletten Durchspielen einer zufälligen Wiedergabeliste diese erneut mischen.
+	DE	Der Server kann nach der Wiedergabe einer zufälligen Wiedergabeliste diese erneut mischen.
 	DA	Serveren kan lave en ny vilkårlig rækkefølge af playlisten når playlisten starter forfra ved gentagelse.
 	EN	The server can reshuffle shuffled playlists after each complete pass through the list, if desired.
 	ES	El servidor puede desordenar al azar las listas después de cada pasada completa por la lista, si se desea.
@@ -5006,7 +5006,7 @@ SETUP_IGNOREDARTICLES
 	ZH_CN	进行排序时应忽略的词汇
 
 SETUP_IGNOREDARTICLES_DESC
-	DE	Eine Liste von Artikeln ("the" "die" "les" etc..), die beim Sortieren am Anfang von Interpreten, Albumnamen oder Liedern unberücksichtigt bleiben sollen. Trennen Sie verschiedene Artikel durch Leerzeichen oder lassen Sie die Liste leer, um diese Option nicht zu nutzen. Aktivieren dieser Option wird einen Rescan der Plattensammlung auslösen.
+	DE	Definieren Sie eine Liste von Artikeln ("the" "die" "les" etc..), die beim Sortieren am Anfang von Interpreten, Albumnamen oder Liedern unberücksichtigt bleiben sollen. Trennen Sie verschiedene Artikel durch Leerzeichen oder lassen Sie die Liste leer, um diese Option nicht zu nutzen. Aktivieren dieser Option wird einen Rescan der Plattensammlung auslösen.
 	EN	A list of articles ("the", "les", "los", etc.) to ignore at the beginning of artist, song or album names when sorting. Separate multiple articles by spaces or leave this list blank to disable this behavior.  Changing this setting will start a rescan of your music library.
 	ES	Una lista de artículos ("the", "les", "los", etc.) a ignorar al comienzo del nombre de artistas o álbumes cuando se ordena. Separar múltiples artículos con espacios o dejar la lista en blanco , para deshabilitar este comportamiento. Si se cambia esta opción, se iniciará automaticamente una recopilación de información de su colección musical.
 	FR	Une liste d'articles ("the", "les", "los", etc.) à ignorer au début des noms d'artistes, chansons ou albums lors du tri alphabetique. Séparer les articles par des espaces. Laisser la zone de saisie vide pour désactiver ce comportement. Si vous modifiez ce réglage, votre dossier de musique sera répertorié à nouveau.
@@ -5029,7 +5029,7 @@ SETUP_SPLITLIST
 	ZH_CN	标签内存有多个项目
 
 SETUP_SPLITLIST_DESC
-	DE	SlimServer kann mehrere Interpreten, Albumtitel und Musikstile in den Tags ihrer Musikstücke erkennen. Falls SlimServer in den Tags eines der folgenden Trennzeichen oder Trennwörter erkennt, so kann es individuelle Einträge für die einzelnen Werte in die Listen aufnehmen. Wenn Sie z.B. den Strichpunkt als Trennzeichen definieren, so wird ein Lied mit dem Interpreten Tag "J. S. Bach;Michael Tilson Thomas" sowohl unter "J. S. Bach" als auch "Michael Tilson Thomas" aufgelistet. Aktivieren dieser Option wird einen Rescan der Plattensammlung auslösen.
+	DE	SlimServer kann mehrere Interpreten, Albentitel und Musikstile in den Tags ihrer Musikstücke erkennen. Falls SlimServer in den Tags eines der folgenden Trennzeichen oder Trennwörter erkennt, so kann es individuelle Einträge für die einzelnen Werte in die Listen aufnehmen. Wenn Sie z.B. den Strichpunkt als Trennzeichen definieren, so wird ein Lied mit dem Interpreten Tag "J. S. Bach;Michael Tilson Thomas" sowohl unter "J. S. Bach" als auch "Michael Tilson Thomas" aufgelistet. Aktivieren dieser Option wird einen Rescan der Plattensammlung auslösen.
 	EN	SlimServer can extract multiple artist, album titles and genres from the tags inside your music files.  If SlimServer finds any of the words or characters below in your tags, it will create individual listings for each item.  For example, if you put a semicolon in the list below, a song with an artist tag of "J. S. Bach;Michael Tilson Thomas" will appear in the artists area for both "J. S. Bach" and "Michael Tilson Thomas".  Changing this setting will start a rescan of your music library.
 	ES	SlimServer puede extraer múltiples artistas, títulos de álbumes y géneros de los tags que están dentro de los archivos de música. Si SlimServer encuentra cualquiera de los carácteres de abajo en los tags, creará listados individuales para cada item. For ejemplo, si se pone un punto y coma en la lista debajo, una canción con un tag de Artista igual a "J. S. Bach;Michael Tilson Thomas" aparecerá en el área de artistas tanto para "J. S. Bach" como para "Michael Tilson Thomas". Si se cambia esta opción, se iniciará automaticamente una recopilación de información de su colección musical.
 	FR	Le SlimServer peut extraire plusieurs noms d'artistes, titres d'albums ou genres des repères ID3 de vos fichiers musicaux. Si le SlimServer détecte l'un des caractères ci-dessous dans les répères ID3, il créera une entrée différente pour chaque élément présent - par exemple, si le caractère point-virgule est défini comme séparateur, un fichier contenant le répère ID3 "J. S. Bach;Michael Tilson Thomas" sera listé à la fois sous "J. S. Bach" et sous "Michael Tilson Thomas". Si vous modifiez ce réglage, votre dossier de musique sera répertorié à nouveau.
@@ -5200,46 +5200,6 @@ SETUP_FORKEDSTREAMING_DISABLE
 	ES	Deshabilitar Forking para Stream de Audio
 	NL	Uitzetten audiostroom forking
 
-SETUP_LOOKFORARTWORK
-	CS	Hledat obal
-	DE	Plattenhüllen nachschlagen
-	EN	Look For Artwork
-	ES	Buscar Arte de Tapa
-	FR	Répertorier les pochettes
-	HE	חפש עטיפות
-	IT	Cerca le copertine
-	JA	アートワークを探す
-	NL	Zoek naar hoesafbeeldingen
-	NO	Søk etter Album-omslag
-	SV	Sök efter Album-omslag
-	ZH_CN	寻找封面图象
-
-SETUP_LOOKFORARTWORK_DESC
-	DE	Wenn der SlimServer die Musiksammlung durchsucht, dann kann er auch gleich nach Plattenhüllen suchen. Sie können angeben, ob sie das wollen, oder ob die Umschlaghüllen ignoriert werden sollen (beschleunigt das Einlesen).
-	EN	When SlimServer scans your music library it can automatically look for album artwork.  You can choose to not have it look for album artwork, which may speed up the scan process but may make the artwork not appear in the web interface.
-	ES	Cuando SlimServer recopila la información de la colección musical puede buscar el Arte de Tapa automáticamente. Se puede optar por no hacerlo, lo que puede acelerar el procesos de recopilación pero a la vez puede hacer que el Arte de Tapa no figure en la interfaz web.
-	FR	Lorsque le SlimServer répertorie votre dossier de musique, il recherche automatiquement les pochettes d'album. Vous pouvez choisir de ne pas rechercher les pochettes pour accélérer ce processus, mais certaines pochettes présentes risquent de ne pas apparaître dans l'interface web.
-	HE	חיפוש העטיפות מגדיל את זמן סריקת הסיפריה
-	IT	Quando lo SlimServer sfoglia la tua libreria musicale puo' cercare in automatico le copertine. Puoi scegliere di non farle cercare, nel qual caso il processo sara' molto piu' veloce ma le copertine potrebbero non apparire nell'interfaccia web.
-	JA	SlimServerが音楽ライブラリをスキャンする時に、アルバムのアートワークを同時に検索することができます。スキャンのスピードアップの為にこの機能を使わないようにセットすることもできます。
-	NL	Wanneer SlimServer je muziekbestanden scant kan ook automatisch naar afbeeldingen van hoesjes gezocht worden. Je kunt instellen dat niet naar hoesjes gezocht moet worden. Dit versnelt het scanproces maar de afbeeldingen van hoesjes komen dan niet terecht op de webpagina.
-	NO	Når SlimServer søker i musikkbiblioteket kan den automatisk lete etter albumomslag/-grafikk. Du kan velge å slå av denne muligheten, noe som vil gjøre søket raskere, men grafikken vil nødvendigvis ikke være tilgjengelig i web-grensesnittet.
-	SV	När Slimserver scannar din musikmapp kan programvaran automatiskt söka efter album-omslag. Du kan stänga av detta för att öka hastigheten på inläsning, men effekten kan bli att albumomslag inte syns i webgränssnittet.
-	ZH_CN	当SlimServer扫描您的音乐库时它可以自动的寻找专辑图象。您可以选择不寻找专辑图象以加速扫瞄过程。但如此一来，专辑图象将不会出现在网界面。
-
-SETUP_NO_ARTWORK
-	DE	Plattenhüllen ignorieren
-	EN	Do not Look For Artwork
-	ES	No buscar Arte de Tapa
-	FR	Ne pas répertorier les pochettes
-	HE	אל תחפש עטיפות
-	IT	Non cercare le copertine
-	JA	アートワークを検索しない
-	NL	Zoek niet naar hoesafbeeldingen
-	NO	Ikke søk etter albumgrafikk
-	SV	Sök inte efter album-omslag
-	ZH_CN	不要寻找图象
-
 SETUP_ITEMSPERPASS
 	DE	Anzahl Elemente pro Durchgang
 	EN	Build Items Per Pass
@@ -5305,7 +5265,7 @@ SETUP_LONGDATEFORMAT
 
 SETUP_LONGDATEFORMAT_DESC
 	CS	Tato volba určuje formát, použitý pro dlouhé datum (takové, jako přehrávač používá, když je vypnutý). Následující konvence je použita ve volbách níže:  WWWW je plný název dne týdne  WWW je zkratka pro den týdne  DD je číslo dne v měsíci  MM je číslo měsíce v roce  YYYY je čtyřmístné číslo roku
-	DE	Diese Option bestimmt das Format des langen Datums, wie es beim ausgeschaltetem Player angezeigt wird. Es gibt die folgenden Alternativen: <br>WWWW ist der voll ausgeschriebene Tag (Samstag, Sonntag usw.)<br>WWW ist die abgekürzte Schreibweise (Sam, Son usw.)<br>DD ist das Tageszahl (ohne führende Null)<br>MM ist der Monat<br>YY ist das zweistellige Jahr<br>YYYY ist das vierstellige Jahr
+	DE	Diese Option bestimmt das Format des langen Datums, wie es bei ausgeschaltetem Player angezeigt wird. Es gibt die folgenden Alternativen: <br>WWWW ist der voll ausgeschriebene Tag (Samstag, Sonntag usw.)<br>WWW ist die abgekürzte Schreibweise (Sam, Son usw.)<br>DD ist das Tageszahl (ohne führende Null)<br>MM ist der Monat<br>YY ist das zweistellige Jahr<br>YYYY ist das vierstellige Jahr
 	DA	Denne indstilling angiver formatet for lange datoer (vises fx. når afspilleren er slukket). Følgende syntax anvendes nedenfor:<br>WWWW er det fulde navn for ugedagen (lørdag, søndag, etc.)<br>WWW er det forkortede navn for ugedagen (lør, søn, etc.)<br>DD er dagen på måneden (indledende nul fjernes)<br>MM er måneden på året<br>YY er det to-cifrede årstal<br>YYYY er det fire-cifrede årstal
 	EN	This option determines the format used for long dates (such as displayed when the player is off). The following conventions are used in the choices presented below:<br>WWWW is the full day of the week (Saturday, Sunday, etc)<br>WWW is the abbreviated day of the week (Sat, Sun, etc)<br>DD is the day of the month (leading zero removed)<br>MM is the month of the year<br>YY is the two digit year<br>YYYY is the four digit year
 	ES	Esta opción determina el formato largo utilizado para mostrar fechas (tal como el utilizado cuando el reproductor está apagado). Las siguientes convenciones se utilizan  en las opciones que se presentan debajo:<br>WWWW es el nombre completo del día de la semana (Sábado, Domingo, etc)<br>WWW es el nombre abreviado del día de la semana (Sáb, Dom, etc)<br>DD es el día del mes (sin el cero inicial)<br>MM es el mes del año<br>YY es el año en dos dígitos<br>YYYY es el año en cuatro dígitos<br>
@@ -5339,7 +5299,7 @@ SETUP_SHORTDATEFORMAT
 
 SETUP_SHORTDATEFORMAT_DESC
 	CS	Tato volba určuje formát, použitý pro formát krátkého datumu. Následující konvence je použita ve volbách níže:  YYYY je čtyřmístné číslo roku  YY je dvojmístné číslo roku  MM je číslo měsíce v roce  DD je číslo dne v měsíci  Cokoliv na konci v závorkách je komentář a ten nebude zobrazován.
-	DE	Diese Option bestimmt das Format des kurzen Datums. Es gibt die folgenden Alternativen: <br>YYYY ist das vierstellige Jahr<br>YY ist das zweistellige Jahr<br>MM ist der Monat<br>DD ist das Tagesdatum<br>Alles Folgende ist ausschliesslich Kommentar und wird nicht angezeigt.
+	DE	Diese Option bestimmt das Format des kurzen Datums. Es gibt die folgenden Alternativen: <br>YYYY ist das vierstellige Jahr<br>YY ist das zweistellige Jahr<br>MM ist der Monat<br>DD ist das Tagesdatum<br>Die angehängten Informationen in Klammern sind ausschliesslich Kommentare und werden nicht angezeigt.
 	DA	Denne indstilling angiver formatet for korte datoer. Følgende syntax anvendes nedenfor:<br>DD er dagen på måneden<br>MM er måneden på året<br>YY er det to-cifrede årstal<br>YYYY er det fire-cifrede årstal<br>Alt i slutningen og i parantes er bare en kommentar og vises ikke.
 	EN	This option determines the format used for short dates. The following conventions are used in the choices presented below:<br>YYYY is the four digit year<br>YY is the two digit year<br>MM is the month of the year<br>DD is the day of the month<br>Anything at the end in parentheses is just a comment and is not displayed.
 	ES	Esta opción determina el formato corto utilizado para mostrar fechas. Las siguientes convenciones se utilizan  en las opciones que se presentan debajo: <br>YYYY es el año en cuatro dígitos<br>YY es el año en dos dígitos<br>MM es el mes del año<br>DD es el día del mes<br>Cualquier caracter que se agregue al final de la linea se considera un comentario y no es mostrado.
@@ -5372,7 +5332,7 @@ SETUP_TIMEFORMAT
 	ZH_CN	时间的格式：
 
 SETUP_TIMEFORMAT_DESC
-	DE	Diese Option bestimmt das verwendete Zeitformat. Es gibt die folgenden Alternativen:<br>hh zeigt die Stunden<br>h zeigt die Stunden ohne führende Null<br>mm zeigt die Minuten<br>ss zeigt die Sekunden<br>pm ist entweder AM oder PM<br>Alles Folgende ist ausschliesslich Kommentar und wird nicht angezeigt.
+	DE	Diese Option bestimmt das verwendete Zeitformat. Es gibt die folgenden Alternativen:<br>hh zeigt die Stunden<br>h zeigt die Stunden ohne führende Null<br>mm zeigt die Minuten<br>ss zeigt die Sekunden<br>pm ist entweder AM oder PM<br>Die angehängten Informationen in Klammern sind ausschliesslich Kommentare und werden nicht angezeigt.
 	DA	Denne indstilling angiver tidsformatet. Følgende syntax anvendes:<br>hh er timetallet<br>h er timetallet med indledende nul fjernet<br>mm er minuttallet<br>ss er sekundtallet<br>pm er enten AM eller PM<br>Alt i slutningen og i parantes er bare en kommentar og vises ikke.
 	EN	This option determines the format used for times. The following conventions are used in the choices presented below:<br>hh is the hour<br>h is the hour (leading zero removed)<br>mm is the minute<br>ss is the second<br>pm is either AM or PM<br>Anything at the end in parentheses is just a comment and is not displayed.
 	ES	Esta opción determina el formato usado para mostrar el tiempo. Las siguientes convenciones se utilizan  en las opciones que se presentan debajo: <br>hh es la hora<br>h es la hora(sin el cero inicial)<br>mm son los minutos<br>ss son los segundos<br>pm es o bien AM o bien PM<br>Cualquier caracter que se agregue al final de la linea se considera un comentario y no es mostrado.
@@ -8268,7 +8228,7 @@ BROWSE_MUSIC
 
 BROWSE_BY_GENRE
 	CS	Procházet podle žánrů
-	DE	Stilrichtung nachschlagen
+	DE	Stilrichtungen
 	DA	Gennemse genrer
 	EN	Genres
 	ES	Examinar por Género
@@ -8288,7 +8248,7 @@ BROWSE_BY_GENRE_DBL
 
 BROWSE_BY_ARTIST
 	CS	Procházet podle interpretů
-	DE	Interpret nachschlagen
+	DE	Interpreten
 	DA	Gennemse kunstnere
 	EN	Artists
 	ES	Examinar por Artista
@@ -8309,7 +8269,7 @@ BROWSE_BY_ARTIST_DBL
 
 BROWSE_BY_ALBUM
 	CS	Procházet podle alb
-	DE	Album nachschlagen
+	DE	Alben
 	DA	Gennemse albums
 	EN	Albums
 	ES	Examinar por Álbum
@@ -8330,7 +8290,7 @@ BROWSE_BY_ALBUM_DBL
 
 BROWSE_BY_ARTWORK
 	CS	Procházet podle obalů
-	DE	Plattenhülle nachschlagen
+	DE	Plattenhüllen
 	EN	Artwork
 	ES	Examinar por Arte de Tapa
 	FI	Selaa kansikuvia
@@ -8362,7 +8322,7 @@ BROWSE_NEW_MUSIC
 
 BROWSE_BY_SONG
 	CS	Procházet podle skladeb
-	DE	Titel nachschlagen
+	DE	Titel
 	DA	Gennemse sange
 	EN	Songs
 	ES	Examinar por canción
@@ -8383,7 +8343,7 @@ BROWSE_BY_SONG_DBL
 
 BROWSE_BY_YEAR
 	CS	Procházet podle roku vydání
-	DE	Jahrgänge nachschlagen
+	DE	Jahrgänge
 	EN	Years
 	ES	Examinar por Año
 	FI	Selaa vuosittain
@@ -8396,7 +8356,7 @@ BROWSE_BY_YEAR
 
 BROWSE_MUSIC_FOLDER
 	CS	Procházet podle adresářů
-	DE	Musikverzeichnis durchsuchen
+	DE	Musikverzeichnis
 	DA	Gennemse hele musiksamlingen
 	EN	Music Folder
 	ES	Examinar Carpeta de Música

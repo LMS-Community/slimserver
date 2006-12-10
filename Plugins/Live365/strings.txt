@@ -273,7 +273,7 @@ SETUP_PLUGIN_LIVE365_USERNAME
 	NL	Live365 gebruikersnaam
 
 SETUP_PLUGIN_LIVE365_USERNAME_DESC
-	DE	Ihr Live365 Benutzername, besuche live365.com zum Einschreiben
+	DE	Geben Sie bitte Ihren Live365 Benutzernamen an. Besuchen Sie zum Einschreiben live365.com.
 	EN	Your Live365 username, visit live365.com to sign up
 	ES	Tu nombre de usuario de Live365,  visitar live365.com para registrarse
 	FR	Votre nom d'utilisateur Live365 (visitez live365.com pour vous inscrire) :

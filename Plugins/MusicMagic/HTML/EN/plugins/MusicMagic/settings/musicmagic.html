@@ -4,6 +4,7 @@
 		<div class="prefHead">[% "MUSICMAGIC" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_MUSICMAGIC_DESC" | string %]</div>
 
+		<label for="musicmagic" class="stdlabel">[% "USE_MUSICMAGIC" | string %]</label>
 		<input type="checkbox" [% IF prefs.musicmagic %]checked [% END %] class="stdedit" name="musicmagic" id="musicmagic" />
 
 		<!--
@@ -27,13 +28,6 @@
 
 	<div class="settingSection">
 		<div class="prefHead">[% "SETUP_MMMSIZE" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_MMMSIZE_DESC" | string %]</div>
-
-		<input type="text" class="stdedit" name="MMMSize" id="MMMSize" value="[% prefs.MMMSize %]" size="5">
-	</div>
-
-	<div class="settingSection">
-		<div class="prefHead">[% "SETUP_MMMMIXTYPE" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_MMMMIXTYPE_DESC" | string %]</div>
 
 		<select class="stdedit" name="MMMMixType" id="MMMMixType">
@@ -44,6 +38,7 @@
 		
 		</select>
 
+		<input type="text" class="stdedit" name="MMMSize" id="MMMSize" value="[% prefs.MMMSize %]" size="5">
 	</div>
 
 	<div class="settingSection">
@@ -73,7 +68,7 @@
 	</div>
 
 	<div class="settingSection">
-		<div class="prefHead">[% "SETUP_MMMREJECTTYPE" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_MMMREJECTSIZE" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_MMMREJECTTYPE_DESC" | string %]</div>
 
 		<select class="stdedit" name="MMMRejectType" id="MMMRejectType">
@@ -83,12 +78,6 @@
 			<option [% IF MMMRejectType == prefs.MMMRejectType %]selected [% END %]value="2">[% 'MMMMIXTYPE_MBYTES' | getstring %]</option>
 		
 		</select>
-
-	</div>
-
-	<div class="settingSection">
-		<div class="prefHead">[% "SETUP_MMMREJECTSIZE" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_MMMREJECTSIZE_DESC" | string %]</div>
 
 		<input type="text" class="stdedit" name="MMMRejectSize" id="MMMRejectSize" value="[% prefs.MMMRejectSize %]" size="5">
 	</div>

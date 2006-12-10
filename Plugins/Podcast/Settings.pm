@@ -9,15 +9,15 @@ use strict;
 use base qw(Slim::Web::Settings);
 
 sub name {
-        return 'PLUGIN_PODCAST';
+	return 'PLUGIN_PODCAST';
 }
 
 sub page {
-        return 'plugins/Podcast/settings/basic.html';
+	return 'plugins/Podcast/settings/basic.html';
 }
 
 sub handler {
-        my ($class, $client, $params) = @_;
+	my ($class, $client, $params) = @_;
 
 	if ($params->{'submit'}) {
 
@@ -35,9 +35,9 @@ sub handler {
 	for (my $i = 0; $i < @feeds; $i++) {
 
 		push @{$params->{'prefs'}}, [ $feeds[$i], $names[$i] ];
-        }
+	}
 
-        return $class->SUPER::handler($client, $params);
+	return $class->SUPER::handler($client, $params);
 }
 
 1;
