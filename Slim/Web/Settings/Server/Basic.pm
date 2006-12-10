@@ -61,7 +61,7 @@ sub handler {
 			#Slim::Utils::PluginManager::clearPlugins();
 			#Slim::Utils::PluginManager::initPlugins();
 			#Slim::Web::Setup::initSetup();
-			Slim::Music::Import->resetSetupGroups;
+			#Slim::Music::Import->resetSetupGroups;
 		}
 
 		for my $pref (@prefs) {
