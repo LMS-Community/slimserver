@@ -43,6 +43,9 @@ our @allColumns = (qw(
 	}
 
 	$class->resultset_class('Slim::Schema::ResultSet::Track');
+
+	# Simple caching as artistsWithAttributes is expensive.
+	$class->mk_group_accessors('simple' => 'cachedArtistsWithAttributes');
 }
 
 # Wrappers - to make sure that the UTF-8 code is called. I really just want to
@@ -104,6 +107,10 @@ sub artists {
 sub artistsWithAttributes {
 	my $self = shift;
 
+	if ($self->cachedArtistsWithAttributes) {
+		return $self->cachedArtistsWithAttributes;
+	}
+
 	my @objs = ();
 
 	for my $type (qw(ARTIST TRACKARTIST)) {
@@ -119,6 +126,8 @@ sub artistsWithAttributes {
 			};
 		}
 	}
+
+	$self->cachedArtistsWithAttributes(\@objs);
 
 	return \@objs;
 }
