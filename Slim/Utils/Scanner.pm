@@ -119,7 +119,7 @@ sub findFilesMatching {
 		if ($os eq 'win') {
 			my $attribs;
 
-			return Win32::File::GetAttributes($File::Next::name, $attribs) && !($attribs & Win32::File::HIDDEN());
+			return Win32::File::GetAttributes($File::Next::dir, $attribs) && !($attribs & Win32::File::HIDDEN());
 		}
 
 		return 1;
