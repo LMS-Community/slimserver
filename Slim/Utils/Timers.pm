@@ -109,7 +109,7 @@ sub checkTimers {
 	# return if already inside one
 	if ($checkingHighTimers) {
 	
-		$log->warn("[high] blocked checking - already processing a high timer!");
+		$log->debug("[high] blocked checking - already processing a high timer!");
 
 		return;
 	}
@@ -163,7 +163,7 @@ sub checkTimers {
 	# Check Normal timers - return if already inside one
 	if ($checkingNormalTimers) {
 
-		if ($log->is_warn) {
+		if ($log->is_debug) {
 
 			$log->logBacktrace("[norm] blocked checking - already processing a normal timer!");
 		}
