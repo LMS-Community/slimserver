@@ -41,8 +41,7 @@ sub initPlugin {
 
 			if ($browseMenuChoices[$menuSelection{$client}] eq $client->string('PLUGIN_RESCAN_PRESS_PLAY')) {
 
-				my @pargs=('rescan');
-				$client->execute(\@pargs, undef, undef);
+				executeRescan();
 
 				$client->showBriefly( {
 					'line' => [ $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
@@ -91,8 +90,12 @@ sub setMode {
 		'headerAddCount' => 1,
 		'stringHeader'   => 1,
 		'callback'       => \&rescanExitHandler,
-		'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
-		'overlayRefArgs' => '',
+		'overlayRef'     => sub { 
+				if ($_[0] ne 'PLUGIN_RESCAN_PRESS_PLAY') {
+					return (undef, Slim::Display::Display::symbol('rightarrow')) 
+				}
+			},
+		'overlayRefArgs' => 'V',
 		'externRef'      => sub {
 			my $client = shift;
 			my $value  = shift;
@@ -217,35 +220,41 @@ sub checkScanTimer {
 
 		my $scantime =  Slim::Utils::Prefs::get("rescan-time");
 
-		if ($scantime) {
+		if ($scantime && $time == $scantime) {
 
 			# alarm is done, so reset to find the beginning of a minute
 			if ($time == $scantime + 60) {
 				$interval = 1;
 			}
 
-			my $rescanType = ['rescan'];
-			my $rescanPref = Slim::Utils::Prefs::get('rescan-type') || '';
+			executeRescan();
 
-			if ($rescanPref eq '2wipedb') {
-
-				$rescanType = ['wipecache'];
-
-			} elsif ($rescanPref eq '3playlist') {
-
-				$rescanType = [qw(rescan playlists)];
-			}
-
-			if ($time == $scantime && !Slim::Music::Import->stillScanning()) {
-
-				logger('scan.scanner')->info("Initiating scan of type: ", $rescanType->[0]);
-
-				Slim::Control::Request::executeRequest(undef, $rescanType);
-			}
 		}
 	}
 
 	setTimer();
+}
+
+sub executeRescan {
+	
+	my $rescanType = ['rescan'];
+	my $rescanPref = Slim::Utils::Prefs::get('rescan-type') || '';
+
+	if ($rescanPref eq '2wipedb') {
+
+		$rescanType = ['wipecache'];
+
+	} elsif ($rescanPref eq '3playlist') {
+
+		$rescanType = [qw(rescan playlists)];
+	}
+
+	if (!Slim::Music::Import->stillScanning()) {
+
+		logger('scan.scanner')->info("Initiating scan of type: ", $rescanType->[0]);
+
+		Slim::Control::Request::executeRequest(undef, $rescanType);
+	}
 }
 
 1;
