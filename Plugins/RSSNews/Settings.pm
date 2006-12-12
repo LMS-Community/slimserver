@@ -17,11 +17,15 @@ sub page {
 }
 
 sub handler {
-        my ($class, $client, $params) = @_;
+	my ($class, $client, $params) = @_;
 
 	my @prefs = qw(
 		plugin_RssNews_items_per_feed
 	);
+
+	if ($params->{'reset'}) {
+		Plugins::RSSNews::Plugin::revertToDefaults();
+	}
 
 	if ($params->{'submit'}) {
 
@@ -44,14 +48,14 @@ sub handler {
 	for (my $i = 0; $i < @feeds; $i++) {
 
 		push @{$params->{'prefs'}->{'feeds'}}, [ $feeds[$i], $names[$i] ];
-        }
+	}
 
 	for my $pref (@prefs) {
 
 		$params->{'prefs'}->{$pref} = Slim::Utils::Prefs::get($pref);
 	}
 
-        return $class->SUPER::handler($client, $params);
+	return $class->SUPER::handler($client, $params);
 }
 
 1;

@@ -36,7 +36,7 @@ sub getFunctions {
 }
 
 sub getDisplayName {
-	return 'SETUP_MOODLOGIC';
+	return 'MOODLOGIC';
 }
 
 sub enabled {

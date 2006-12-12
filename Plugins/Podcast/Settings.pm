@@ -19,6 +19,10 @@ sub page {
 sub handler {
 	my ($class, $client, $params) = @_;
 
+	if ($params->{'reset'}) {
+		Plugins::Podcast::Plugin::revertToDefaults();
+	}
+
 	if ($params->{'submit'}) {
 
 		# Remove empty feeds.

@@ -20,21 +20,21 @@
 		<table border="0" cellspacing="7" cellpadding="7">
 
 			<tr>
-			<td><label for="new_feed" class="stdlabel">[% "SETUP_PLUGIN_PODCAST_ADD_FEED" | string %]</label></td>
+			<td><label for="new_feed" class="stdlabel">[% "PLUGIN_RSSNEWS_ADD_NEW" | string %]</label></td>
 
-			<td><input type="text" class="stdedit" name="plugin_podcast_feeds" id="new_feed" value="" size="60" /></td>
+			<td><input type="text" class="stdedit" name="plugin_RssNews_feeds" id="new_feed" value="" size="60" /></td>
 			</tr>
 
 			<tr></tr>
 			<tr></tr>
-			<tr><td><label>[% "SETUP_PLUGIN_PODCAST_EXISTING_FEEDS" | string %]</label></td><td></td></tr>
+			<tr><td><label>[% "SETUP_PLUGIN_RSSNEWS_EXISTING_FEEDS" | string %]</label></td><td></td></tr>
 
 		[% FOREACH pref = prefs.feeds %]
 
 			<tr>
-			<td><label for="plugin_podcast_feeds" class="stdlabel">[% pref.1 %]</label></td>
+			<td><label for="plugin_RssNews_feeds" class="stdlabel">[% pref.1 %]</label></td>
 
-			<td><input type="text" class="stdedit" name="plugin_podcast_feeds" id="plugin_podcast_feeds" value="[% pref.0 %]" size="60" /></td>
+			<td><input type="text" class="stdedit" name="plugin_RssNews_feeds" id="plugin_RssNews_feeds" value="[% pref.0 %]" size="60" /></td>
 
 			</tr>
 
@@ -43,4 +43,5 @@
 		</table>
 	</div>
 
+	<input name="reset" type="submit" class="stdclick" value="[% "SETUP_PLUGIN_RSSNEWS_RESET" | string %]">
 [% PROCESS settings/footer.html %]
