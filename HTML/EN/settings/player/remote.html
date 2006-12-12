@@ -8,13 +8,14 @@
 		[% FOREACH option = irsetlist  %]
 	
 		<input type=hidden name="irsetlist[% loop.index %]" value="[% option.key %]" />
-		<input type=checkbox [% IF NOT disabledirsets.exists(option.key); %]checked [% END %] class="stdedit" name="irsetlist[% loop.index %]" id="irsetlist[% loop.index %]" value="0" />
+		<input type=checkbox [% IF NOT prefs.disabledirsets.exists(option.key); %]checked [% END %] class="stdedit" name="irsetlist[% loop.index %]" id="irsetlist[% loop.index %]" value="0" />
 		<label for="[% option.key %]" class="stdlabel">[% option.value %]</label><br>
 
 		[% END %]
 	
 	</div>
 
+	[% IF prefs.exists('irmap') %]
 	<div class="settingSection">
 
 		<div class="groupHead">[% "SETUP_IRMAP" | string | upper %]</div>
@@ -29,5 +30,6 @@
 		</select>
 
 	</div>
+	[% END %]
 [% END %]
 [% PROCESS settings/footer.html %]

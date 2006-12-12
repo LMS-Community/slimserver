@@ -28,7 +28,7 @@ sub needsClient {
 sub handler {
 	my ($class, $client, $paramRef) = @_;
 
-	my @prefs = ();
+	my @prefs = ('disabledirsets');
 
 	if ($client->isPlayer()) {
 
@@ -75,13 +75,17 @@ sub handler {
 	
 		$paramRef->{'irmapOptions'}   = { %{Slim::Hardware::IR::mapfiles()}};
 		$paramRef->{'irsetlist'}      = { map {$_ => Slim::Hardware::IR::irfileName($_)} sort(keys %{Slim::Hardware::IR::irfiles($client)})};
-		$paramRef->{'disabledirsets'} = { map {$_ => 1} $client->prefGetArray('disabledirsets')};
-	
+		
 		# Set current values for prefs
 		# load into prefs hash so that web template can detect exists/!exists
 		for my $pref (@prefs) {
+		
+			if ($pref eq 'disabledirsets') {
+				$paramRef->{'prefs'}->{$pref} = { map {$_ => 1} $client->prefGetArray('disabledirsets')};
+			} else {
 			
-			$paramRef->{'prefs'}->{$pref} = $client->prefGet($pref);
+				$paramRef->{'prefs'}->{$pref} = $client->prefGet($pref);
+			}
 		}
 		
 	} else {
