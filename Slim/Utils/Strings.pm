@@ -155,7 +155,7 @@ sub loadStrings {
 
 	}
 
-	unless ($args->{'dontStore'}) {
+	unless ($args->{'dontSave'}) {
 		$log->info("Storing string cache: $stringCache");
 		store($strings, $stringCache);
 	}
