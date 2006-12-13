@@ -490,13 +490,26 @@ sub standardTitle {
 
 		$format = 'TITLE';
 
-	} elsif (defined($client)) {
+	} else {
+
+		$format = standardTitleFormat($client);
+
+	}
+
+	return displayText($client, $track, $format);
+}
+
+# format string for standard title, potentially client specific
+sub standardTitleFormat {
+	my $client = shift;
+
+	if (defined($client)) {
 
 		# in array syntax this would be
 		# $titleFormat[$clientTitleFormat[$clientTitleFormatCurr]] get
 		# the title format
 
-		$format = Slim::Utils::Prefs::getInd("titleFormat",
+		return Slim::Utils::Prefs::getInd("titleFormat",
 			# at the array index of the client titleformat array
 			$client->prefGet("titleFormat",
 				# which is currently selected
@@ -507,10 +520,8 @@ sub standardTitle {
 	} else {
 
 		# in array syntax this would be $titleFormat[$titleFormatWeb]
-		$format = Slim::Utils::Prefs::getInd("titleFormat", Slim::Utils::Prefs::get("titleFormatWeb"));
+		return Slim::Utils::Prefs::getInd("titleFormat", Slim::Utils::Prefs::get("titleFormatWeb"));
 	}
-
-	return displayText($client, $track, $format);
 }
 
 # get display text for object by format, caches all formats for this url for this client

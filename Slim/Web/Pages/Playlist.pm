@@ -20,6 +20,8 @@ use Slim::Web::Pages;
 
 my $log = logger('player.playlist');
 
+use constant CACHE_TIME => 300;
+
 sub init {
 	
 	Slim::Web::HTTP::addPageFunction( qr/^playlist\.(?:htm|xml)/, \&playlist, 'fork' );
@@ -82,20 +84,18 @@ sub playlist {
 		$client->currentPlaylistRender() && 
 		ref($client->currentPlaylistRender()) eq 'ARRAY' && 
 		$client->currentPlaylistChangeTime() && 
+		$client->currentPlaylistChangeTime() < $client->currentPlaylistRender()->[0] &&
 		$client->currentPlaylistRender()->[1] eq $params->{'skinOverride'} &&
-		$client->currentPlaylistRender()->[2] eq $params->{'start'} &&
-		$client->currentPlaylistChangeTime() < $client->currentPlaylistRender()->[0]) {
+		$client->currentPlaylistRender()->[2] eq $params->{'start'} ) {
 
-		if (Slim::Utils::Prefs::get("playlistdir")) {
-			$params->{'cansave'} = 1;
-		}
+		$log->info("Returning cached playlist html - not modified.");
 
-		$log->info("Skipping playlist build - not modified.");
+		# reset cache timer to forget cached html
+		Slim::Utils::Timers::killTimers($client, \&flushCachedHTML);
+		Slim::Utils::Timers::setTimer($client, time() + CACHE_TIME, \&flushCachedHTML);
 
-		$params->{'playlist_items'}   = $client->currentPlaylistRender()->[3];
-		$params->{'pageinfo'}         = $client->currentPlaylistRender()->[4];
-
-		return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
+		# return cached html as playlist has not changed
+		return $client->currentPlaylistRender()->[3];
 	}
 
 	if (!$songcount) {
@@ -124,16 +124,17 @@ sub playlist {
 
 	my $currsongind   = Slim::Player::Source::playingSongIndex($client);
 
-	my $itemCount    = 0;
-	my $itemsPerPass = Slim::Utils::Prefs::get('itemsPerPass');
 	my $itemsPerPage = Slim::Utils::Prefs::get('itemsPerPage');
 	my $composerIn   = Slim::Utils::Prefs::get('composerInArtists');
+
+	my $titleFormat  = Slim::Music::Info::standardTitleFormat($client);
 
 	$params->{'playlist_items'} = [];
 	$params->{'myClientState'}  = $client;
 
 	# This is a hot loop.
 	# But it's better done all at once than through the scheduler.
+
 	for my $itemnum ($start..$end) {
 
 		# These should all be objects - but be safe.
@@ -145,8 +146,6 @@ sub playlist {
 			$track = Slim::Schema->rs('Track')->objectForUrl($objOrUrl) || do {
 
 				logError("Couldn't retrieve objectForUrl: [$objOrUrl] - skipping!");
-
-				$itemCount++;
 				next;
 			};
 		}
@@ -171,41 +170,49 @@ sub playlist {
 		} else {
 
 			$form{'currentsong'} = undef;
-			$form{'title'}    = Slim::Music::Info::standardTitle(undef, $track);
+			$form{'title'}    = Slim::Music::TitleFormatter::infoFormat($track, $titleFormat);
 		}
 
 		$form{'nextsongind'} = $currsongind + (($itemnum > $currsongind) ? 1 : 0);
 
 		push @{$params->{'playlist_items'}}, \%form;
 
-		$itemCount++;
-
-		# don't neglect the streams too long, every itemsPerPass idle them
-		if (!($itemCount % $itemsPerPass)) {
-
-			main::idleStreams();
-		}
+		# don't neglect the streams too long
+		main::idleStreams();
 	}
 
-	$log->info("End playlist build. $itemCount items");
+	$log->info("End playlist build.");
 
-	# Give some player time after the loop, but before rendering.
-	main::idleStreams();
+	my $page = Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
 
 	if ($client) {
 
-		# Stick the rendered data into the client object as a stopgap
+		# Cache the rendered html for this page of the playlist in the client object as a temporary
 		# solution to the cpu spike issue.
+		my $time = time();
+
 		$client->currentPlaylistRender([
-			time(),
+			$time,
 			($params->{'skinOverride'} || ''),
 			($params->{'start'}),
-			$params->{'playlist_items'},
-			$params->{'pageinfo'},
+			$page,
 		]);
+
+		$log->info("Caching playlist html.");
+
+		# timer to forget cached html
+		Slim::Utils::Timers::killTimers($client, \&flushCachedHTML);
+		Slim::Utils::Timers::setTimer($client, $time + CACHE_TIME, \&flushCachedHTML);
 	}
 
-	return Slim::Web::HTTP::filltemplatefile("playlist.html", $params),
+	return $page;
+}
+
+sub flushCachedHTML {
+	my $client = shift;
+
+	$log->info("Flushing playlist html cache for client.");
+	$client->currentPlaylistRender(undef);
 }
 
 1;
