@@ -51,6 +51,7 @@ sub init {
 	Slim::Networking::Slimproto::setEventCallback('STMd', \&decoderUnderrun);
 	Slim::Networking::Slimproto::setEventCallback('STMs', \&trackStartEvent);
 	Slim::Networking::Slimproto::setEventCallback('STMn', \&notSupported);
+	Slim::Networking::Slimproto::setEventCallback('STMo', \&outputUnderrun);
 }
 
 # rate can be negative for rew, zero for pause, 1 for playback and greater than one for ffwd
@@ -634,6 +635,96 @@ sub notSupported {
 	logError("Decoder does not support file format, skipping track");
 	
 	errorOpening($client);
+}
+
+sub outputUnderrun {
+	my $client = shift;
+	
+	# STMo is called when the output buffer underruns but the decoder connection is still active.
+	# It signals that we need to pause and rebuffer the live audio stream.
+
+	return unless $client->playmode() =~ /play/;
+	
+	if ( $log->is_debug ) {
+		my $decoder = $client->bufferFullness();
+		my $output  = $client->outputBufferFullness();
+		$log->debug( "Output buffer underrun (decoder: $decoder / output: $output)" );
+	}
+	
+	playmode( $client, 'pause' );
+	
+	my ( $line1, $line2 ); 	 
+
+	my $string = 'REBUFFERING'; 	 
+	$line1 = $client->string('NOW_PLAYING') . ' (' . $client->string($string) . ' 0%)'; 	 
+	if ( $client->linesPerScreen() == 1 ) { 	 
+		$line2 = $client->string($string) . ' 0%'; 	 
+	} 	 
+	else { 	 
+		my $url = Slim::Player::Playlist::url($client); 	 
+		$line2  = Slim::Music::Info::title($url);
+	}
+	
+	$client->showBriefly( $line1, $line2, 2 ) unless $client->display->sbName();
+	
+	# Setup a timer to check the buffer and unpause
+	$client->bufferStarted( Time::HiRes::time() ); # track when we started rebuffering
+	Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + 1, \&rebuffer );
+}
+
+sub rebuffer {
+	my $client = shift;
+	
+	# If the user changes something, stop rebuffering
+	return unless $client->playmode() eq 'pause';
+	
+	$client->requestStatus();
+	
+	my $threshold = 80 * 1024; # 5 seconds of 128k
+	
+	my $url = Slim::Player::Playlist::url($client);
+	if ( my $bitrate = Slim::Music::Info::getBitrate($url) ) {
+		$threshold = 5 * ( int($bitrate / 8) );
+	}
+	
+	# We restart playback based on the decode buffer, 
+	# as the output buffer is not updated in pause mode.
+	my $fullness = $client->bufferFullness();
+	
+	$log->debug( "Rebuffering: $fullness / $threshold" );
+	
+	if ( $fullness >= $threshold ) {
+		playmode( $client, 'play' );
+		
+		$client->update();
+	}
+	else {
+		
+		# Only show rebuffering status if no user activity on player or we're on the Now Playing screen
+		my $nowPlaying = Slim::Buttons::Playlist::showingNowPlaying($client);
+		my $lastIR     = Slim::Hardware::IR::lastIRTime($client) || 0;
+
+		if ( $nowPlaying || $lastIR < $client->bufferStarted() ) {
+			my ( $line1, $line2 );
+		
+			# Bug 1827, display better buffering feedback while we wait for data
+			my $percent = sprintf "%d%%", ( $fullness / $threshold ) * 100;
+
+			my $string = 'REBUFFERING';
+			$line1 = $client->string('NOW_PLAYING') . ' (' . $client->string($string) . " $percent)"; 	 
+			if ( $client->linesPerScreen() == 1 ) { 	 
+				$line2 = $client->string($string) . " $percent"; 	 
+			} 	 
+			else { 	 
+				my $url = Slim::Player::Playlist::url($client); 	 
+				$line2  = Slim::Music::Info::title($url);
+			}
+		
+			$client->showBriefly( $line1, $line2, 2 ) unless $client->display->sbName();
+		}
+		
+		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + 1, \&rebuffer );
+	}
 }
 
 sub skipahead {

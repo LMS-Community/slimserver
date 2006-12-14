@@ -176,6 +176,7 @@ sub new {
 	$client->[111] = {}; # pipe sockets used for parent/child communication
 	$client->[112] = 0; # knobSync
 	$client->[113] = {}; # pendingPrefChanges
+	$client->[114] = 0; # bufferStarted, tracks when players begin buffering/rebuffering
 
 	$clientHash{$id} = $client;
 
@@ -1702,6 +1703,11 @@ sub knobSync {
 sub pendingPrefChanges {
 	my $r = shift;
 	@_ ? ($r->[113] = shift) : $r->[113];
+}
+
+sub bufferStarted {
+	my $r = shift;
+	@_ ? ($r->[114] = shift) : $r->[114];
 }
 
 1;

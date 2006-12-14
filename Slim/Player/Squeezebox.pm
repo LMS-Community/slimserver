@@ -27,9 +27,6 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 
-# Track when clients begin to buffer streams
-our $buffering = {};
-
 # We inherit new() completely from our parent class.
 
 sub init {
@@ -161,7 +158,7 @@ sub play {
 		}
 		
 		# Set a timer for feedback during buffering
-		$buffering->{$client} = Time::HiRes::time(); # track when we started buffering
+		$client->bufferStarted( Time::HiRes::time() ); # track when we started buffering
 		Slim::Utils::Timers::killTimers( $client, \&buffering );
 		Slim::Utils::Timers::setTimer(
 			$client,
@@ -186,8 +183,6 @@ sub play {
 #
 sub resume {
 	my $client = shift;
-
-	delete $buffering->{$client};
 	
 	Slim::Utils::Timers::killTimers($client, \&buffering);
 
@@ -202,8 +197,6 @@ sub resume {
 sub pause {
 	my $client = shift;
 
-	delete $buffering->{$client};
-
 	Slim::Utils::Timers::killTimers($client, \&buffering);
 
 	$client->stream('p');
@@ -213,8 +206,6 @@ sub pause {
 
 sub stop {
 	my $client = shift;
-	
-	delete $buffering->{$client};
 
 	Slim::Utils::Timers::killTimers($client, \&buffering);
 
@@ -227,8 +218,6 @@ sub stop {
 
 sub flush {
 	my $client = shift;
-	
-	delete $buffering->{$client};
 
 	Slim::Utils::Timers::killTimers($client, \&buffering);
 
@@ -244,8 +233,7 @@ sub buffering {
 	
 	# If the track has started, stop displaying buffering status
 	# currentPlaylistChangeTime is set to time() after a track start event
-	if ( $client->currentPlaylistChangeTime() > $buffering->{$client} ) {
-		delete $buffering->{$client};
+	if ( $client->currentPlaylistChangeTime() > $client->bufferStarted() ) {
 		$client->update();
 		return;
 	}
@@ -306,7 +294,7 @@ sub buffering {
 	my $nowPlaying = Slim::Buttons::Playlist::showingNowPlaying($client);
 	my $lastIR     = Slim::Hardware::IR::lastIRTime($client) || 0;
 	
-	if ( $nowPlaying || $lastIR < $buffering->{$client} ) {
+	if ( $nowPlaying || $lastIR < $client->bufferStarted() ) {
 		$client->showBriefly( $line1, $line2, 0.5 ) unless $client->display->sbName();
 		
 		# Call again unless we've reached the threshold
