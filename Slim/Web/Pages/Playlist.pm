@@ -76,26 +76,41 @@ sub playlist {
 		$log->debug("start: $params->{'start'}");
 	}
 
-	# Only build if we need to.
-	# Check to see if we're newer, and the same skin.
+	# Only build if we need to - try to return cached html or build page from cached info
+	my $cachedRender = $client->currentPlaylistRender();
+
 	if ($songcount > 0 && 
 		defined $params->{'skinOverride'} &&
 		defined $params->{'start'} &&
-		$client->currentPlaylistRender() && 
-		ref($client->currentPlaylistRender()) eq 'ARRAY' && 
-		$client->currentPlaylistChangeTime() && 
+		$cachedRender && ref($cachedRender) eq 'ARRAY' &&
+		$client->currentPlaylistChangeTime() &&
 		$client->currentPlaylistChangeTime() < $client->currentPlaylistRender()->[0] &&
-		$client->currentPlaylistRender()->[1] eq $params->{'skinOverride'} &&
-		$client->currentPlaylistRender()->[2] eq $params->{'start'} ) {
+		$cachedRender->[1] eq $params->{'skinOverride'} &&
+		$cachedRender->[2] eq $params->{'start'} ) {
 
-		$log->info("Returning cached playlist html - not modified.");
+		if ($cachedRender->[5]) {
 
-		# reset cache timer to forget cached html
-		Slim::Utils::Timers::killTimers($client, \&flushCachedHTML);
-		Slim::Utils::Timers::setTimer($client, time() + CACHE_TIME, \&flushCachedHTML);
+			$log->info("Returning cached playlist html - not modified.");
 
-		# return cached html as playlist has not changed
-		return $client->currentPlaylistRender()->[3];
+			# reset cache timer to forget cached html
+			Slim::Utils::Timers::killTimers($client, \&flushCachedHTML);
+			Slim::Utils::Timers::setTimer($client, time() + CACHE_TIME, \&flushCachedHTML);
+
+			return $client->currentPlaylistRender()->[5];
+
+		} else {
+
+			$log->info("Rebuilding playlist from cached params.");
+
+			if (Slim::Utils::Prefs::get("playlistdir")) {
+				$params->{'cansave'} = 1;
+			}
+
+			$params->{'playlist_items'}   = $client->currentPlaylistRender()->[3];
+			$params->{'pageinfo'}         = $client->currentPlaylistRender()->[4];
+
+			return Slim::Web::HTTP::filltemplatefile("playlist.html", $params);
+		}
 	}
 
 	if (!$songcount) {
@@ -127,7 +142,7 @@ sub playlist {
 	my $itemsPerPage = Slim::Utils::Prefs::get('itemsPerPage');
 	my $composerIn   = Slim::Utils::Prefs::get('composerInArtists');
 
-	my $titleFormat  = Slim::Music::Info::standardTitleFormat($client);
+	my $titleFormat  = Slim::Music::Info::standardTitleFormat();
 
 	$params->{'playlist_items'} = [];
 	$params->{'myClientState'}  = $client;
@@ -187,22 +202,30 @@ sub playlist {
 
 	if ($client) {
 
-		# Cache the rendered html for this page of the playlist in the client object as a temporary
-		# solution to the cpu spike issue.
+		# Cache to reduce cpu spike seen when playlist refreshes
+		# For the moment cache html for Default, other skins only cache params
+		# Later consider caching as html unless an ajaxRequest
+		# my $cacheHtml = !$params->{'ajaxRequest'};
+		my $cacheHtml = (($params->{'skinOverride'} || Slim::Utils::Prefs::get('skin')) eq 'Default');
+
 		my $time = time();
 
 		$client->currentPlaylistRender([
 			$time,
 			($params->{'skinOverride'} || ''),
 			($params->{'start'}),
-			$page,
+			$params->{'playlist_items'},
+			$params->{'pageinfo'},
+			$cacheHtml ? $page : undef,
 		]);
 
-		$log->info("Caching playlist html.");
+		$log->info( sub { sprintf("Caching playlist as %s.", $cacheHtml ? 'html' : 'params') } );
 
-		# timer to forget cached html
 		Slim::Utils::Timers::killTimers($client, \&flushCachedHTML);
-		Slim::Utils::Timers::setTimer($client, $time + CACHE_TIME, \&flushCachedHTML);
+
+		if ($cacheHtml) {
+			Slim::Utils::Timers::setTimer($client, $time + CACHE_TIME, \&flushCachedHTML);
+		}
 	}
 
 	return $page;
