@@ -2221,8 +2221,13 @@ sub _playlistXtracksCommand_parseSearchTerms {
 		} else {
 
 			if ($key =~ /\.(?:name|title)search$/) {
-
-				$find{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($value) };
+				
+				# BUG 4536: if existing value is a hash, don't create another one
+				if (ref $value eq 'HASH') {
+					$find{$key} = $value;
+				} else {
+					$find{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($value) };
+				}
 
 			} else {
 
