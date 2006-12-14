@@ -15,11 +15,14 @@ use strict;
 use base 'Template::Context';
 
 our $procTemplate = Slim::Utils::PerfMon->new('Process Template', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
-my $depth = 0;
+
+# Following allow timing of template processing excluding time in idleStreams and log4perl
+my $depth = 0;   # depth of template being processed
+my @start = [0]; # start time for latest execute of this template
+my @this  = [0]; # time spent in this template
+my @total = [0]; # total time spent in this template + deaper templates
 
 my $last = 0;
-
-my (@start, @elapsed) = ([0], [0]);
 
 sub process {
 	my $self = shift;
@@ -42,32 +45,35 @@ sub process {
 
 		my $temp = $_[0];
 
-		$elapsed[$depth] += $t1 - $start[$depth];
+		$this[$depth] += $t1 - $start[$depth];
 
 		$depth++;
 
 		my $t2 = Time::HiRes::time();
 
-		$elapsed[$depth] = 0;
-		$start[$depth]   = $t2;
+		$this[$depth]  = 0;
+		$total[$depth] = 0;
+		$start[$depth] = $t2;
 
 		my $ret = \$self->SUPER::process(@_);
 
 		my $t3 = Time::HiRes::time();
 
-		$procTemplate->log($t3 - $t2,
+		my $this = $this[$depth] + $t3 - $start[$depth];
+		my $total= $total[$depth] += $this;
+
+		$procTemplate->log($total,
 			sub {
-				my $us = ($elapsed[$depth] + $t3 - $start[$depth]) * 1000000;
-				sprintf ("%-32s (this templ: %7d us)", "  " x $depth . (ref $temp ? $temp->{'name'} : $temp), $us);
+				sprintf ("%-32s (this templ: %7d us)", "  " x $depth . (ref $temp ? $temp->{'name'} : $temp), $this * 1000000);
 			}
 		);
 
 		$depth--;
 
 		$start[$depth] = Time::HiRes::time();
+		$total[$depth] += $total;
 
 		return $$ret;
-
 	}
 }
 
