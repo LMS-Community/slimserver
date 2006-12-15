@@ -4,7 +4,7 @@
 [% PROCESS helpheader.html %]
 
 <p>
-	<a href="#SC">Experts, jump directly to the command index</a>
+	<a href="#Supported Commands">Experts, jump directly to the command index</a>
 </p>
 
 <h2>Introduction</h2>
@@ -121,7 +121,7 @@
 		if a certain command or query is available
 	</li>
 	<li>
-		Added the &quot;<a href="#clientforget">client forget</a>&quot; command.
+		Added the &quot;<a href="#client forget">client forget</a>&quot; command.
 	</li>
 	<li>
 		Added the &quot;<a href="#alarms">alarms</a>&quot; extended query and 
@@ -217,15 +217,15 @@
 	</li>
 	<li>
 		Documented correctly system support for 
-		&quot;<a href="#mixerbass">mixer bass</a>&quot;, 
-		&quot;<a href="#mixertreble">mixer treble</a>&quot; and
-		&quot;<a href="#mixerpitch">mixer pitch</a>&quot;. These 3 options are
+		&quot;<a href="#mixer bass">mixer bass</a>&quot;, 
+		&quot;<a href="#mixer treble">mixer treble</a>&quot; and
+		&quot;<a href="#mixer pitch">mixer pitch</a>&quot;. These 3 options are
 		not (yet) supported on the most recent players. Pitch is only supported
 		by Squeezebox1 players; bass and treble are supported by SliMP3 and 
 		Squeezebox1 players.
 	</li>
 	<li>
-		Changed &quot;<a href="#mixermuting">mixer muting</a>&quot; to be
+		Changed &quot;<a href="#mixer muting">mixer muting</a>&quot; to be
 		coherent with other commands. There is now a query mode &quot;mixer
 		muting ?&quot;, and parameters 1 or 0 are accepted.
 	</li>
@@ -530,13 +530,19 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		returned as well. This allows the client to add to commands and
 		queries some context information. For example:
 		<blockquote> 
-		  <p>Request: &quot;04:20:00:12:23:45 mixer bass ?
-		  	context&lt;LF&gt;&quot;<br>Response:
-		  	&quot;04:20:00:12:23:45 mixer bass 98
-		  	context&lt;LF&gt;&quot;</p>
-		  <p>Request: &quot;players 0 2 context:1&lt;LF&gt;&quot;<br>
-		  	Response: &quot;players 0 2 context:1 count:2
-		  	id:00:04:20:02:00:c8 ...(same as above)&quot;</p>
+			<p>
+				Request: &quot;04:20:00:12:23:45 mixer bass ? 
+		  					context&lt;LF&gt;&quot;
+		  		<br>
+		  		Response: &quot;04:20:00:12:23:45 mixer bass 98
+		  					context&lt;LF&gt;&quot;
+			</p>
+			<p>
+				Request: &quot;players 0 2 context:1&lt;LF&gt;&quot;
+				<br>
+				Response: &quot;players 0 2 context:1 count:2
+							id:00:04:20:02:00:c8 ...(same as above)&quot;
+			</p>
 		</blockquote>
 	</li>
 	
@@ -573,7 +579,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 
 
 
-<h3 id="SC">
+<h3 id="Supported Commands">
 	Supported Commands
 </h3>
 <p>
@@ -1021,9 +1027,56 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#mixer volume">mixer volume</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#mixer muting">mixer muting</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#mixer bass">mixer bass</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#mixer treble">mixer treble</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#mixer pitch">mixer pitch</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#rate">rate</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#show">show</a></code></strong>
 	</li>
-<!-- MISSING COMMANDS HERE ! -->
+	<li>
+		<strong><code><a href="#display">display</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#linesperscreen">linesperscreen</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#display ? ?">display ? ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#displaynow ? ?">displaynow ? ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playerpref">playerpref</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#button">button</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#ir">ir</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#client forget">client forget</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#players">players</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#alarm">alarm</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#alarms">alarms</a></code></strong>
+	</li>
 </ul>
 
 <p id="player count ?">
@@ -1383,19 +1436,37 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</p>
 </blockquote>
 
-<br><p id="mixermuting">
-	<strong><code>&lt;playerid&gt; mixer muting &lt;0|1|?|&gt;</code></strong></p>
-<p>The &quot;mixer muting&quot; command mutes or unmutes the player. Use 0 to 
+<br>
+<p id="mixer muting">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			mixer 
+			muting 
+			&lt;0|1|?|&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;mixer muting&quot; command mutes or unmutes the player. Use 0 to 
 	unmute, 1 to mute, ? to query and no parameter to toggle the muting state 
-	of the player. Note also the &quot;<a href="#mixer volume">mixer volume</a>&quot;
-	command returns a negative value if the player is muted.</p>
-<p> Example: </p>
+	of the player. Note also the 
+	&quot;<a href="#mixer volume">mixer volume</a>&quot; command returns a 
+	negative value if the player is muted.
+</p>
+<p>
+	Example:
+</p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 mixer muting&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 mixer muting&lt;LF&gt;&quot;</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 mixer muting&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 mixer muting&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
 <br>
-<p id ="mixerbass">
+<p id ="mixer bass">
 	<strong>
 		<code>
 			&lt;playerid&gt;
@@ -1432,44 +1503,108 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</p>
 </blockquote>
 
-<br><p id="mixertreble"><strong>
-	<code>&lt;playerid&gt; mixer treble &lt;0 .. 100|-100 .. +100|?&gt;</code>
-</strong></p>
-<p>The &quot;mixer treble&quot; command returns or sets the current treble 
-   setting for the player. This is only supported by SliMP3 and SqueezeBox (SB1) 
-   players. For more information on the 0 to 100 scale, please refer to 
-   the &quot;<a href="#mixer volume">mixer volume</a>&quot; command. </p>
-<p> Example: </p><p> Example: </p>
+<br>
+<p id="mixer treble">
+	<strong>
+		<code>
+			&lt;playerid&gt; 
+			mixer 
+			treble 
+			&lt;0 .. 100|-100 .. +100|?&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;mixer treble&quot; command returns or sets the current treble 
+	setting for the player. This is only supported by SliMP3 and SqueezeBox (SB1) 
+	players. For more information on the 0 to 100 scale, please refer to 
+	the &quot;<a href="#mixer volume">mixer volume</a>&quot; command.
+</p>
+<p>
+	Example:
+</p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 mixer treble ?&lt;LF&gt;&quot;
-  <br>Response: &quot;04:20:00:12:23:45 mixer treble 98&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 mixer treble 25&lt;LF&gt;&quot;
-  <br>Response: &quot;04:20:00:12:23:45 mixer treble 25&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 mixer treble +10&lt;LF&gt;&quot;
-  <br>Response: &quot;04:20:00:12:23:45 mixer treble +10&lt;LF&gt;&quot;</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 mixer treble ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 mixer treble 98&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 mixer treble 25&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 mixer treble 25&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 mixer treble +10&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 mixer treble +10&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
-<br><p id="mixerpitch"><strong>
-	<code>&lt;playerid&gt; mixer pitch &lt;80 .. 120|-40 .. +40|?&gt;</code>
-</strong></p>
-<p>The &quot;mixer pitch&quot; command returns or sets the current pitch setting
-   for the player (only supported by SqueezeBox (SB1) players).</p>
-<p> Example: </p>
+<br>
+<p id="mixer pitch">
+	<strong>
+		<code>
+			&lt;playerid&gt; 
+			mixer 
+			pitch 
+			&lt;80 .. 120|-40 .. +40|?&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;mixer pitch&quot; command returns or sets the current pitch 
+	setting for the player (only supported by SqueezeBox (SB1) players).
+</p>
+<p>
+	Example:
+</p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 mixer pitch ?&lt;LF&gt;&quot;
-  <br>Response: &quot;04:20:00:12:23:45 mixer pitch 98&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 mixer pitch 80&lt;LF&gt;&quot;
-  <br>Response: &quot;04:20:00:12:23:45 mixer pitch 80&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 mixer pitch +10&lt;LF&gt;&quot;
-  <br>Response: &quot;04:20:00:12:23:45 mixer pitch +10&lt;LF&gt;&quot;</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 mixer pitch ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 mixer pitch 98&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 mixer pitch 80&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 mixer pitch 80&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 mixer pitch +10&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 mixer pitch +10&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; rate &lt;rate|?&gt;</code></strong></p>
-<p>The &quot;rate&quot; command returns or sets the current play rate for the player. 1 is normal, 2 is 2x fast forward, 0 is paused, -1 is rewind, etc.</p>
-<p> Example: </p>
+<br>
+<p id="rate">
+	<strong>
+		<code>
+			&lt;playerid&gt; 
+			rate 
+			&lt;rate|?&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;rate&quot; command returns or sets the current play rate for the 
+	player. 1 is normal, 2 is 2x fast forward, 0 is paused, -1 is rewind, etc.
+</p>
+<p>
+	Example:
+</p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 rate ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 rate 1&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 rate -4&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 rate -4&lt;LF&gt;&quot;</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 rate ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 rate 1&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 rate -4&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 rate -4&lt;LF&gt;&quot;
+	</p>
 </blockquote>
 
 <br>
@@ -1589,7 +1724,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </blockquote>
 
 <br>
-<p id="displayC">
+<p id="display">
 	<strong>
 		<code>
 			&lt;playerid&gt;
@@ -1650,7 +1785,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </blockquote>
 
 <br>
-<p id="displayQ">
+<p id="display ? ?">
 	<strong>
 		<code>
 			&lt;playerid&gt;
@@ -1676,7 +1811,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </blockquote>
 
 <br>
-<p id="displaynow">
+<p id="displaynow ? ?">
 	<strong>
 		<code>
 			&lt;playerid&gt;
@@ -1703,16 +1838,47 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playerpref &lt;prefname&gt; &lt;prefvalue|?&gt;</code></strong></p>
-<p>The &quot;playerpref&quot; command allows the caller to set and query the SlimServer's internal player-specific
-preferences values.</p>
-<p>Examples:</p>
+<br>
+<p id="playerpref">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			playerpref 
+			&lt;prefname&gt; 
+			&lt;prefvalue|?&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;playerpref&quot; command allows the caller to set and query the 
+	SlimServer's internal player-specific preferences values.
+</p>
+<p>
+	Examples:
+</p>
 <blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 playerpref doublesize ?&quot;<br>Response: &quot;04:20:00:12:23:45 playerpref doublesize 1&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 playerpref doublesize 0&quot;<br>Response: &quot;04:20:00:12:23:45 playerpref doublesize 0&quot;</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 playerpref doublesize ?&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 playerpref doublesize 1&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 playerpref doublesize 0&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 playerpref doublesize 0&quot;
+	</p>
 </blockquote>
-<!-- doublesize -->
-<br><p id="button"><strong><code>&lt;playerid&gt; button &lt;buttoncode&gt;</code></strong></p>
+
+<br>
+<p id="button">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			button
+			&lt;buttoncode&gt;
+		</code>
+	</strong>
+</p>
 <p>The &quot;button&quot; command simulates a button press. Valid button codes correspond to the functions defined in the Default.map file.
 <p>Example:</p>
 <blockquote> 
@@ -1746,7 +1912,7 @@ preferences values.</p>
 </blockquote>
 
 <br>
-<p id="clientforget">
+<p id="client forget">
 	<strong>
 		<code>
 			&lt;playerid&gt;
@@ -4205,8 +4371,22 @@ preferences values.</p>
 <h3 id="Favorites">
 	Favorites
 </h3>
+<ul>
+	<li>
+		<strong><code><a href="#favorites">favorites</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#favorites add">favorites add</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#favorites move">favorites move</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#favorites delete">favorites delete</a></code></strong>
+	</li>
+</ul>
 
-<p>
+<p id="favorites">
 	<strong>
 		<code>
 			favorites
@@ -4292,7 +4472,32 @@ preferences values.</p>
 </blockquote>
 
 <br>
+<p id="favorites add">
+	<strong>
+		<code>
+			favorites
+			add
+			 &lt;url&gt;
+			 &lt;title&gt;
+		</code>
+	</strong>
+</p>
 <p>
+	The &quot;favorites add&quot; command adds a favorite.
+</p>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request:  &quot;favorites add file:///... BestSong&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;favorites add file:///... BestSong&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="favorites move">
 	<strong>
 		<code>
 			favorites
@@ -4318,7 +4523,7 @@ preferences values.</p>
 </blockquote>
 
 <br>
-<p>
+<p id="favorites delete">
 	<strong>
 		<code>
 			favorites
@@ -4402,6 +4607,90 @@ preferences values.</p>
 	</li>
 	<li>
 		<strong><code><a href="#playlist insert">playlist insert</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist deleteitem">playlist deleteitem</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist move">playlist move</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist delete">playlist delete</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist resume">playlist resume</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist save">playlist save</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist loadalbum">playlist loadalbum</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist addalbum">playlist addalbum</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist insertalbum">playlist insertalbum</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist deletealbum">playlist deletealbum</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist clear">playlist clear</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist zap">playlist zap</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist name ?">playlist name ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist url ?">playlist url ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist modified ?">playlist modified ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist playlistsinfo">playlist playlistsinfo</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist index">playlist index</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlistXinfo">playlist genre ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlistXinfo">playlist artist ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlistXinfo">playlist album ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlistXinfo">playlist title ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlistXinfo">playlist path ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlistXinfo">playlist remote ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlistXinfo">playlist duration ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist tracks ?">playlist tracks ?</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist shuffle">playlist shuffle</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist repeat">playlist repeat</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlistcontrol">playlistcontrol</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#status">status</a></code></strong>
 	</li>
 </ul>
 
@@ -4668,7 +4957,7 @@ Any songs currently playing or already on the playlist are not affected.</p>
 	<br>Response: &quot;04:20:00:12:23:45 playlist insert /playlists/abba.m3u&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist deleteitem &lt;item&gt;</code></strong></p>
+<br><p id="playlist deleteitem"><strong><code>&lt;playerid&gt; playlist deleteitem &lt;item&gt;</code></strong></p>
 <p>The &quot;playlist deleteitem&quot; command removes the specified song URL, playlist or directory contents from the current playlist.</p>
 <p>Examples:</p>
 <blockquote>
@@ -4730,7 +5019,7 @@ Any songs currently playing or already on the playlist are not affected.</p>
 	</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist resume &lt;playlist&gt;</code></strong></p>
+<br><p id="playlist resume"><strong><code>&lt;playerid&gt; playlist resume &lt;playlist&gt;</code></strong></p>
 <p>Replace the current playlist with the playlist specified by p2, starting at the song that was playing when
 the file was saved. (Resuming works only with M3U files saved with the &quot;playlist save&quot; command below.) 
 Shortcut: use a bare playlist name (without leading directories or trailing .m3u suffix) to load a playlist 
@@ -4767,7 +5056,7 @@ in the saved playlists folder.</p>
 	</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist loadalbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
+<br><p id="playlist loadalbum"><strong><code>&lt;playerid&gt; playlist loadalbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
 <p>The &quot;playlist loadalbum&quot; command puts songs matching the specified 
   genre artist and album criteria on the playlist. Songs previously in the 
   playlist are discarded.</p>
@@ -4776,7 +5065,7 @@ in the saved playlists folder.</p>
   <p>Request: &quot;04:20:00:12:23:45 playlist loadalbum Rock Abba *&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist loadalbum Rock Abba *&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist addalbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
+<br><p id="playlist addalbum"><strong><code>&lt;playerid&gt; playlist addalbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
 <p> The &quot;playlist addalbum&quot; command appends all songs matching the 
   specified criteria onto the end of the playlist. Songs currently playing 
   or already on the playlist are not affected.</p>
@@ -4785,7 +5074,7 @@ in the saved playlists folder.</p>
   <p>Request: &quot;04:20:00:12:23:45 playlist addalbum Rock Abba *&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist addalbum Rock Abba *&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist insertalbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
+<br><p id="playlist insertalbum"><strong><code>&lt;playerid&gt; playlist insertalbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
 <p> The &quot;playlist insertalbum&quot; command inserts all songs matching the 
   specified criteria at the top of the playlist. Songs already on the playlist are not affected.</p>
 <p>Examples: </p>
@@ -4793,7 +5082,7 @@ in the saved playlists folder.</p>
   <p>Request: &quot;04:20:00:12:23:45 playlist addalbum Rock Abba *&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist addalbum Rock Abba *&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist deletealbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
+<br><p id="playlist deletealbum"><strong><code>&lt;playerid&gt; playlist deletealbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
 <p>The &quot;playlist deletealbum&quot; command removes songs matching the specified 
   genre artist and album criteria from the playlist.</p>
 <p>Examples: </p>
@@ -4801,7 +5090,7 @@ in the saved playlists folder.</p>
   <p>Request: &quot;04:20:00:12:23:45 playlist deletealbum Rock Abba *&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist deletealbum Rock Abba *&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist clear</code></strong></p>
+<br><p id="playlist clear"><strong><code>&lt;playerid&gt; playlist clear</code></strong></p>
 <p>The &quot;playlist clear&quot; command removes any song that is on the playlist. 
   The player is stopped.</p>
 <p>Examples: </p>
@@ -4809,7 +5098,7 @@ in the saved playlists folder.</p>
   <p>Request: &quot;04:20:00:12:23:45 playlist clear&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist clear&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist zap &lt;songindex&gt;</code></strong></p>
+<br><p id="playlist zap"><strong><code>&lt;playerid&gt; playlist zap &lt;songindex&gt;</code></strong></p>
 <p>The &quot;playlist zap&quot; command adds the song at index songindex into the zapped song playlist.</p>
 <p>Examples: </p>
 <blockquote> 
@@ -4817,7 +5106,7 @@ in the saved playlists folder.</p>
 </blockquote>
 
 <br>
-<p id="playlist name">
+<p id="playlist name ?">
 	<strong>
 		<code>
 			&lt;playerid&gt; 
@@ -4843,7 +5132,7 @@ in the saved playlists folder.</p>
 </blockquote>
 
 <br>
-<p id="playlist url">
+<p id="playlist url ?">
 	<strong>
 		<code>
 			&lt;playerid&gt;
@@ -4869,7 +5158,7 @@ in the saved playlists folder.</p>
 </blockquote>
 
 <br>
-<p id="playlist modified">
+<p id="playlist modified ?">
 	<strong>
 		<code>
 			&lt;playerid&gt;
@@ -4970,7 +5259,7 @@ in the saved playlists folder.</p>
 </blockquote>
 
 
-<br><p><strong><code>&lt;playerid&gt; playlist index &lt;index|+index|-index|?&gt;</code></strong></p>
+<br><p id="playlist index"><strong><code>&lt;playerid&gt; playlist index &lt;index|+index|-index|?&gt;</code></strong></p>
 <p>The &quot;playlist index&quot; command sets or queries the song that is currently 
   playing by index. When setting, a zero-based value may be used to indicate which 
   song to play. An explicitly positive or negative number may be used to jump 
@@ -5052,7 +5341,7 @@ in the saved playlists folder.</p>
 	</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist tracks ?</code></strong></p>
+<br><p id="playlist tracks ?"><strong><code>&lt;playerid&gt; playlist tracks ?</code></strong></p>
 <p>The &quot;playlist tracks&quot; command returns the the total number 
   of tracks in the current playlist</p>
 <p> Example: </p>
@@ -5060,7 +5349,7 @@ in the saved playlists folder.</p>
   <p>Request: &quot;04:20:00:12:23:45 playlist tracks ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist tracks 7&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist shuffle &lt;0|1|2|?|&gt;</code></strong></p>
+<br><p id="playlist shuffle"><strong><code>&lt;playerid&gt; playlist shuffle &lt;0|1|2|?|&gt;</code></strong></p>
 <p>The &quot;playlist shuffle&quot; command is used to shuffle, unshuffle or query 
     the shuffle state for the current playlist. A value of &quot;0&quot; indicates 
     that the playlist is not shuffled, &quot;1&quot; indicates that the playlist 
@@ -5072,7 +5361,7 @@ in the saved playlists folder.</p>
   <p>Request: &quot;04:20:00:12:23:45 playlist shuffle 0&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist shuffle 0&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p><strong><code>&lt;playerid&gt; playlist repeat &lt;0|1|2|?|&gt;</code></strong></p>
+<br><p id="playlist repeat"><strong><code>&lt;playerid&gt; playlist repeat &lt;0|1|2|?|&gt;</code></strong></p>
 <p>The &quot;playlist repeat&quot; command is used to indicate or query if the 
   player will stop playing at the end of the playlist, repeat the current song 
   indefinitely, or repeat the current playlist indefinitely. A value of &quot;0&quot; 
@@ -5634,7 +5923,7 @@ in the saved playlists folder.</p>
 	reconnects (as signaled by &quot;client reconnect&quot;) before a number of
 	minutes, the client will be automatically forgotten by SlimServer (as 
 	indicated by command/notification 
-	&quot;<a href="#clientforget">client forget</a>&quot;.)
+	&quot;<a href="#client forget">client forget</a>&quot;.)
 </p>
 
 <br>
@@ -6088,7 +6377,7 @@ in the saved playlists folder.</p>
 <p id="live365 genres">
 	<strong>
 		<code>
-			&lt;live365&gt;
+			live365
 			genres
 			&lt;start&gt;
 			&lt;itemsPerResponse&gt;
@@ -6208,7 +6497,7 @@ in the saved playlists folder.</p>
 <p id="live365 stations">
 	<strong>
 		<code>
-			&lt;live365&gt;
+			live365
 			stations
 			&lt;start&gt;
 			&lt;itemsPerResponse&gt;
@@ -6447,7 +6736,7 @@ in the saved playlists folder.</p>
 	<strong>
 		<code>
 			&lt;playerid&gt;
-			&lt;live365&gt;
+			live365
 			playlist
 			&lt;play|add&gt;
 			&lt;taggedParameters&gt;
