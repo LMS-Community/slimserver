@@ -5,8 +5,12 @@ var currentID = 0;
 
 [% PROCESS html/global.js %]
 
-function doAjaxRefresh() {
+function doAjaxRefresh(light) {
 	var args = 'player='+player+'&ajaxRequest=1&s='+Math.random();
+	if (light) {
+		args = args + "&light=1";
+	}
+	
 	getStatusData(args, refreshAll);
 }
 
@@ -194,6 +198,11 @@ function refreshInfo(theData, force, curstyle) {
 		if (a == null || a[1] == parsedData['songtitleid']) {newsong = 0;}
 	}
 	
+	if (newsong && !parsedData['artisthtml']) {
+		doAjaxRefresh();
+		return true;
+	}
+		
 	//alert([newsong,parsedData['songtitleid'] ,$('nowplaying').style.display]);
 	var elems = ['thissongnum', 'playtextmode', 'songcount'];
 	if (newsong) {

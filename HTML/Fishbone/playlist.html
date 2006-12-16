@@ -1,6 +1,6 @@
 [%- IF ajaxRequest -%]
 <pre>
-	[% PROCESS ajaxRequest.txt page = 'playlist' %]
+	[% PROCESS ajaxRequest.txt page = 'playlist' light = 1 %]
 </pre>
 [%- ELSE -%]
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">

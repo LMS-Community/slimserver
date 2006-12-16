@@ -162,7 +162,7 @@ function ProgressUpdate(mp) {
 	}
 	
 	if (inc == 10) {
-		doAjaxRefresh();
+		doAjaxRefresh(1);
 		inc = 0;
 	}
 

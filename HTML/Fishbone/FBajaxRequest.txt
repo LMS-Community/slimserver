@@ -1,4 +1,3 @@
-artisthtml|[% PROCESS artistsAsHTML.html noby=1 %]
 bitrate|[% bitrate %]
 year|[% itemobj.year %]
 sleeptime|[% sleeptime %]
