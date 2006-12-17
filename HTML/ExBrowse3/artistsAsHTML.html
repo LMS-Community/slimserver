@@ -2,11 +2,12 @@
 [%- FILTER null %]
 [% contributorsHTML = [] %]
 
-[% FOREACH contributorTuple IN itemobj.artistsWithAttributes %]
+[% contributors = item.artistsWithAttributes || itemobj.artistsWithAttributes %]
 
-	[% contributor = contributorTuple.artist %]
+[% FOREACH contributorTuple IN contributors %]
+
 	[% attrs  = contributorTuple.attributes | html %]
-	[% contributorHTMLFrag = "<a onclick=\"parent.browseurl(&quot;browsedb.html?hierarchy=contributor,album,track&amp;$attrs&amp;level=1&quot;)\">$contributor.name</a>" %]
+	[% contributorHTMLFrag = "<a onclick=\"parent.browseurl(&quot;browsedb.html?hierarchy=contributor,album,track&amp;$attrs&amp;level=1&quot;)\">$contributorTuple.name</a>" %]
 	[% contributorsHTML.push(contributorHTMLFrag) %]
 
 [% END %]
