@@ -2,10 +2,11 @@
 [%- FILTER null %]
 [% contributorsText = [] %]
 
-[% FOREACH contributorTuple IN itemobj.artistsWithAttributes %]
+[% contributors = item.artistsWithAttributes || itemobj.artistsWithAttributes %]
 
-	[% contributor = contributorTuple.artist %]
-	[% contributorsText.push(contributor.name) %]
+[% FOREACH contributorTuple IN contributors %]
+
+	[% contributorsText.push(contributorTuple.name) %]
 
 [% END %]
 [% END -%]

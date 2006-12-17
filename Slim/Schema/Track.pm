@@ -119,6 +119,7 @@ sub artistsWithAttributes {
 
 			push @objs, {
 				'artist'     => $contributor,
+				'name'       => $contributor->name,
 				'attributes' => join('&', 
 					join('=', 'contributor.id', $contributor->id),
 					join('=', 'contributor.role', $type),
@@ -385,8 +386,26 @@ sub displayAsHTML {
 
 	# Only include Artist & Album if the user doesn't have them defined in a custom title format.
 	if ($format !~ /ARTIST/) {
-		$form->{'artist'}        = $self->artist;
-		$form->{'includeArtist'} = 1;
+
+		if (my $contributors = $self->contributorsOfType(qw(ARTIST TRACKARTIST))) {
+
+			my $artist = $contributors->first;
+
+			$form->{'includeArtist'} = 1;
+			$form->{'artist'} = $artist;
+
+			my @info;
+
+			for my $contributor ($contributors->all) {
+				push @info, {
+					'artist'     => $contributor,
+					'name'       => $contributor->name,
+					'attributes' => 'contributor.id=' . $contributor->id,
+				};
+			}
+
+			$form->{'artistsWithAttributes'} = \@info;
+		}
 	}
 
 	if ($format !~ /ALBUM/) {

@@ -118,18 +118,31 @@ sub displayAsHTML {
 		# contributors in the album view.
 		# if ($form->{'hierarchy'} ne 'contributor,album,track') {
 
-			if (my $contributor = $self->contributors->first) {
+		my $contributors = $self->contributors;
 
-				$form->{'artist'}        = $contributor;
-				#$form->{'includeArtist'} = defined $findCriteria->{'artist'} ? 0 : 1;
-				$form->{'noArtist'}      = Slim::Utils::Strings::string('NO_ARTIST');
-				
-				if ($showContributor) {
-					# override default field for anchors with contributor.namesort
-					$$anchortextRef = $contributor->namesort;
-				}
+		if (my $contributor = $contributors->first) {
+
+			$form->{'artist'}   = $contributor;
+			#$form->{'includeArtist'} = defined $findCriteria->{'artist'} ? 0 : 1;
+			$form->{'noArtist'} = Slim::Utils::Strings::string('NO_ARTIST');
+
+			if ($showContributor) {
+				# override default field for anchors with contributor.namesort
+				$$anchortextRef = $contributor->namesort;
 			}
-		# }
+		}
+
+		my @info;
+
+		for my $contributor ($contributors->all) {
+			push @info, {
+				'artist'     => $contributor,
+				'name'       => $contributor->name,
+				'attributes' => 'contributor.id=' . $contributor->id,
+			};
+		}
+
+		$form->{'artistsWithAttributes'} = \@info;
 	}
 
 	my $Imports = Slim::Music::Import->importers;
@@ -207,6 +220,7 @@ sub artistsWithAttributes {
 
 		push @artists, {
 			'artist'     => $artist,
+			'name'       => $artist->name,
 			'attributes' => join('&', @attributes),
 		};
 	}

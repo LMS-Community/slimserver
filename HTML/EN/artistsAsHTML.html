@@ -2,13 +2,13 @@
 [%- FILTER null %]
 [% contributorsHTML = [] %]
 
-[% FOREACH contributorTuple IN itemobj.artistsWithAttributes %]
+[% contributors = item.artistsWithAttributes || itemobj.artistsWithAttributes %]
 
-	[% contributor = contributorTuple.artist %]
+[% FOREACH contributorTuple IN contributors %]
+
 	[% attrs  = contributorTuple.attributes | html %]
 	[% target = notarget ? '' : 'target="browser"' %]
-	[% contrib = contributor.name | html %]
-	[% art = artwork ? "&amp;artwork=$artwork" : '' %]
+	[% contrib = contributorTuple.name | html %]
 
 	[% contributorHTMLFrag = "<a href=\"${webroot}browsedb.html?hierarchy=contributor,album,track&amp;$attrs&amp;artwork=$artwork&amp;level=1&amp;player=$playerURI\" $target>$contrib</a>" %]
 
