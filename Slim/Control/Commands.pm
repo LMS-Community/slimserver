@@ -2045,7 +2045,7 @@ sub _playlistXitem_load_done {
 		$client->showBriefly({
 			'line1'    => $client->string( $error || 'PROBLEM_OPENING_REMOTE_URL' ),
 			'line2'    => $url,
-		}, { 'duration' => 2, 'block' => 1, 'scroll' => 1, 'firstline' => 1 });
+		}, { 'scroll' => 1, 'firstline' => 1 });
 	}
 
 	$callbackf && (&$callbackf(@$callbackargs));
