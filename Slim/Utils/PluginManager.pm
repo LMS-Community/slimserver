@@ -148,7 +148,7 @@ sub findInstalledPlugins {
 			return 0;
 		},
 
-	}, $class->pluginDirs);
+	}, @pluginDirs);
 
 	while ( my $file = $iter->() ) {
 
