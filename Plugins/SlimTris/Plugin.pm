@@ -6,10 +6,7 @@ package Plugins::SlimTris::Plugin;
 # version 2.
 
 use strict;
-use File::Spec::Functions qw(:ALL);
-use File::Spec::Functions qw(updir);
-use Slim::Buttons::Common;
-use Slim::Utils::Misc;
+use base qw(Slim::Plugin::Base);
 
 our $VERSION = substr(q$Revision: 1.7 $,10);
 
@@ -21,7 +18,9 @@ my $customchar = 1;
 # flag to avoid loading custom chars multiple times
 my $loadedcustomchar = 0;
 
-sub getDisplayName { 'SlimTris' }
+sub getDisplayName {
+	return 'SLIMTRIS';
+}
 
 #
 # array of blocks
@@ -271,15 +270,15 @@ sub loadBlocks {
 		}
 
 		my @cenblockpix = ();
+
 		foreach my $pix (@blockpix) {
 			my $x = @$pix[0] - $center[0];
 			my $y = @$pix[1] - $center[1];
 			push(@cenblockpix, [$x, $y]);
 		}
-		push(@blockspix, \@cenblockpix);
-		
-	}
 
+		push(@blockspix, \@cenblockpix);
+	}
 }
 
 #
@@ -297,7 +296,6 @@ sub initGrid {
 			}
 		}
 	}
-
 }
 
 sub resetGame {
@@ -313,17 +311,16 @@ sub gameOver {
 	$gamemode = 'gameover';
 }
 
-sub addMenu {
-	my $menu = "GAMES";
-	return $menu;
-}
-
 sub setMode {
+	my $class  = shift;
 	my $client = shift;
+
 	$gamemode = 'attract';
+
 	if ($customchar) {
 		loadCustomChars($client);
 	}
+
 	$client->modeParam('modeUpdateInterval', 1);
 
 	$client->modeParam('knobFlags', Slim::Player::Client::KNOB_NOACCELERATION());
@@ -503,7 +500,7 @@ sub loadCustomChars {
 		
 	$loadedcustomchar = 1;
 
-	}
+}
 	
 sub getFunctions {
     \%functions;

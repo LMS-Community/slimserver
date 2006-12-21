@@ -27,6 +27,16 @@ my %rpcFunctions = (
 	'slim.getStrings'    => \&getStrings
 );
 
+sub initPlugin {
+	my $class = shift;
+
+	Slim::Web::HTTP::addPageFunction('rpc.xml' => \&handleReqXML);
+	Slim::Web::HTTP::addPageFunction('rpc.js'  => \&handleReqJSON);
+
+	$Slim::Web::HTTP::dangerousCommands{\&handleReqJSON} = '.';
+	$Slim::Web::HTTP::dangerousCommands{\&handleReqXML}  = '.';
+}
+
 sub listMethods {
 
 	return [ keys %rpcFunctions ];
@@ -133,22 +143,6 @@ sub getDisplayName {
         return 'PLUGIN_RPC';
 }
                 
-sub getFunctions {
-        return {};
-}
-
-sub webPages {
-	my %pages = (
-		'rpc.xml' => \&handleReqXML,
-		'rpc.js'  => \&handleReqJSON,
-	);
-
-	$Slim::Web::HTTP::dangerousCommands{\&handleReqJSON} = '.';
-	$Slim::Web::HTTP::dangerousCommands{\&handleReqXML}  = '.';
-
-	return \%pages;
-}
-
 sub handleReqXML {
 	my ($client, $params, $prepareResponseForSending, $httpClient, $response) = @_;
 

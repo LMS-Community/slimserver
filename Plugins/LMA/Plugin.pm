@@ -4,6 +4,9 @@ package Plugins::LMA::Plugin;
 
 # Load Live Music Archive data via an OPML file - so we can ride on top of the Podcast Browser
 
+use strict;
+use base qw(Slim::Plugin::Base);
+
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
 use Slim::Web::XMLBrowser;
@@ -11,40 +14,23 @@ use Slim::Web::XMLBrowser;
 my $FEED = 'http://content.us.squeezenetwork.com:8080/lma/artists.opml';
 my $cli_next;
 
-sub enabled {
-	return ($::VERSION ge '6.3');
-}
-
 sub initPlugin {
+	my $class = shift;
 
-#        |requires Client
-#        |  |is a Query
-#        |  |  |has Tags
-#        |  |  |  |Function to call
-#        C  Q  T  F
-    Slim::Control::Request::addDispatch(['lma', 'items', '_index', '_quantity'],
-        [0, 1, 1, \&cliQuery]);
-	Slim::Control::Request::addDispatch(['lma', 'playlist', '_method' ],
-		[1, 1, 1, \&cliQuery]);
-	$cli_next=Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
-		[0, 1, 1, \&cliRadiosQuery]);
+	Slim::Control::Request::addDispatch(['lma', 'items', '_index', '_quantity'], [0, 1, 1, \&cliQuery]);
+	Slim::Control::Request::addDispatch(['lma', 'playlist', '_method' ], [1, 1, 1, \&cliQuery]);
 
-	Slim::Buttons::Common::addMode('PLUGIN.LMA', getFunctions(), \&setMode);
+	$cli_next = Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ], [0, 1, 1, \&cliRadiosQuery]);
+
+	$class->SUPER::initPlugin();
 }
 
 sub getDisplayName {
 	return 'PLUGIN_LMA_MODULE_NAME';
 }
 
-sub addMenu {
-	return 'RADIO';
-}
-
-sub getFunctions {
-	return {};
-}
-
 sub setMode {
+	my $class  = shift;
 	my $client = shift;
 	my $method = shift;
 
@@ -65,29 +51,25 @@ sub setMode {
 	Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
 
 	# we'll handle the push in a callback
-	$client->modeParam('handledTransition',1);
+	$client->modeParam('handledTransition', 1);
 }
 
 sub webPages {
-	my $title = 'PLUGIN_LMA_MODULE_NAME';
-	
-	if (grep {$_ eq 'LMA::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages->addPageLinks('radio', { $title => undef });
-	} else {
-		Slim::Web::Pages->addPageLinks('radio', { $title => 'plugins/LMA/index.html' });
-	}
+	my $class = shift;
 
-	my %pages = ( 
-		'index.html' => sub {
-			Slim::Web::XMLBrowser->handleWebIndex( {
-				feed   => $FEED,
-				title  => $title,
-				args   => \@_
-			} );
-		},
-	);
+	my $title = getDisplayName();
+	my $url   = 'plugins/LMA/index.html';
 	
-	return \%pages;
+	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
+
+	Slim::Web::HTTP::addPageFunction($url, sub {
+
+		Slim::Web::XMLBrowser->handleWebIndex( {
+			feed   => $FEED,
+			title  => $title,
+			args   => \@_
+		} );
+	});
 }
 
 sub cliQuery {

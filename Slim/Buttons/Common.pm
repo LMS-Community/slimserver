@@ -48,7 +48,6 @@ use Slim::Player::Client;
 use Slim::Utils::DateTime;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::PluginManager;
 use Slim::Display::Display;
 use Slim::Buttons::Block;
 use Slim::Buttons::Favorites;
@@ -185,9 +184,7 @@ in Slim::Web::Setup and Slim::Buttons::Settings
 
 sub hash_of_savers {
 
-	my %saversCopy = %savers;
-
-	return \%saversCopy;
+	return {%savers};
 }
 
 =head2 addMode ( )
@@ -205,6 +202,7 @@ of existing INPUT.* modes.
 $leaveModeFunction is an optional reference to a routine to run when exiting the screensaver mode.
 
 =cut
+
 sub addMode {
 	my $name = shift;
 	my $buttonFunctions = shift;
@@ -1902,21 +1900,12 @@ sub _periodicUpdate {
 
 L<Scalar::Util>
 
-L<Slim::Utils::PluginManager>
-
 L<Slim::Display::Display>
 
 L<Slim::Buttons::*>
 
 =cut
 
-
 1;
 
 __END__
-
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

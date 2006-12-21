@@ -1,6 +1,0 @@
-	[% IF not Suppress_PrefHead && PrefHead %]<div class="prefHead">[% PrefHead | getstring | upper | html %]</div>[% END %]
-		[% IF not Suppress_PrefDesc && PrefDesc %]<div class="prefDesc">[% PrefDesc | getstring %]</div>[% END %]
-		[% IF PrefInTable %]<table border="0" cellspacing="0">[% END %]
-		[% PrefInput %]
-		[% IF PrefInTable %]</table>[% END %]
-	[% IF not Suppress_PrefHead %]<br>[% END %]

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<extension>
+        <id>638DB963-2492-4C89-9547-8B07465565D7</id>
+        <name>PLUGIN_SCREENSAVER_VISUALIZER</name>
+        <module>Plugins::Visualizer::Plugin</module>
+        <version>1.0</version>
+        <description>Visualizer ScreenSaver</description>
+        <creator>Slim Devices</creator>
+	<email>support@slimdevices.com</email>
+
+	<defaultState>enabled</defaultState>
+        
+        <homepageURL>http://www.slimdevices.com/</homepageURL>
+	<type>2</type><!-- type=extension -->
+
+        <targetApplication>
+  	        <id>SlimServer</id>
+                <minVersion>7.0a</minVersion>
+                <maxVersion>7.0+</maxVersion>
+        </targetApplication>
+
+</extension>

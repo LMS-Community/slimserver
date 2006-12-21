@@ -11,21 +11,32 @@ package Plugins::Snow::Plugin;
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
+
 use strict;
+use base qw(Slim::Plugin::Base);
 
-###########################################
-### Section 1. Change these as required ###
-###########################################
-
-use Slim::Control::Request;
-use Slim::Utils::Timers;
 use File::Spec::Functions qw(:ALL);
 use Scalar::Util qw(blessed);
 
-our $VERSION = substr(q$Revision$,10);
+use Slim::Utils::Timers;
 
 sub getDisplayName {
 	return 'PLUGIN_SCREENSAVER_SNOW';
+}
+
+sub initPlugin {
+	my $class = shift;
+
+	$class->SUPER::initPlugin();
+
+	Slim::Buttons::Common::addSaver('SCREENSAVER.snow', 
+		getScreensaverSnowFunctions(),
+		\&setScreensaverSnowMode, 
+		\&leaveScreensaverSnowMode,
+		getDisplayName(),
+	);
+
+	Slim::Buttons::Home::addSubMenu("SCREENSAVERS", getDisplayName());
 }
 
 ##################################################
@@ -190,8 +201,10 @@ sub getFunctions {
 }
 
 sub setMode {
+	my $class  = shift;
 	my $client = shift;
 	my $method = shift;
+
 	if ($method eq 'pop') {
 		Slim::Buttons::Common::popMode($client);
 		return;
@@ -218,17 +231,6 @@ sub setMode {
 ###################################################################
 ### Section 3. Your variables for your screensaver mode go here ###
 ###################################################################
-
-# First, Register the screensaver mode here.  Must make the call to addStrings in order to have plugin
-# localization available at this point.
-sub screenSaver {
-	Slim::Buttons::Common::addSaver('SCREENSAVER.snow', 
-		getScreensaverSnowFunctions(),
-		\&setScreensaverSnowMode, 
-		\&leaveScreensaverSnowMode,
-		'PLUGIN_SCREENSAVER_SNOW',
-	);
-}
 
 our %screensaverSnowFunctions = (
 	'done' => sub  {

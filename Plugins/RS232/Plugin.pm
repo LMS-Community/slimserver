@@ -20,19 +20,12 @@ sub getDisplayName {
 }
 
 sub initPlugin {
+	my $class = shift;
 
 	Slim::Control::Request::addDispatch(['rs232', 'baud', '_rate'], [1, 0, 0, \&rs232baud]);
 	Slim::Control::Request::addDispatch(['rs232', 'tx', '_data'], [1, 0, 0, \&rs232tx]);
 	Slim::Control::Request::addDispatch(['rs232', 'rx', '_data'], [1, 0, 0, \&rs232rx]);
 	Slim::Networking::Slimproto::addHandler('RSRX', \&rsrx);
-}
-
-sub enabled {
-	return ($::VERSION ge '6.5');
-}
-
-sub getFunctions {
-	return '';
 }
 
 sub rsrx {
@@ -89,9 +82,3 @@ sub rs232baud {
 }
 
 1;
-
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

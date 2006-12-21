@@ -37,7 +37,7 @@ our $defaultPrefs = {
 		NOW_PLAYING
 		BROWSE_MUSIC
 		SEARCH
-		RandomPlay::Plugin
+		Plugins::RandomPlay::Plugin
 		FAVORITES
 		SAVED_PLAYLISTS
 		RADIO

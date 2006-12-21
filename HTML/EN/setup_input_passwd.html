@@ -1,9 +1,0 @@
-[% IF PrefsInTable %]<tr><td>[% END %]
-[% IF PrefChoose %]<label for="[% PrefName %]" class="stdlabel">[% PrefChoose | getstring %]</label>[% END %]
-[% IF PrefsInTable %]</td><td>[% END %]
-<input type="password" class="stdedit" name="[% PrefName %]" id="[% PrefName %]" value="[% PrefValue %]" 
-		size=[% IF not PrefSize %]10[% END %][% IF PrefSize == 'small' %]10[% END %][% IF PrefSize == 'medium' %]20[% END %][% IF PrefSize == 'large' %]40[% END %]>
-[% IF PrefsInTable %]</td><td>[% END %]
-[% IF not Suppress_PrefSub %]<input type=submit value=[% ChangeButton | getstring %] class="stdclick">[% END %]
-[% IF PrefsInTable %]</td></tr>[% END %]
-[% IF not PrefsInTable %]<br>[% END %]

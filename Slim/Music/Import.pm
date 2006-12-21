@@ -367,10 +367,6 @@ Add an importer to the system. Valid params are:
 
 Shortcut to use / not use an importer. Same functionality as L<useImporter>.
 
-=item * setup => \&addGroups
-
-Code reference to the web setup function.
-
 =item * reset => \&code
 
 Code reference to reset the state of the importer.
@@ -448,18 +444,6 @@ sub countImporters {
 	}
 
 	return $count;
-}
-
-=head2 resetSetupGroups( )
-
-Run the 'setup' function as defined by each importer.
-
-=cut
-
-sub resetSetupGroups {
-	my $class = shift;
-
-	$class->_walkImporterListForFunction('setup');
 }
 
 =head2 resetImporters( )

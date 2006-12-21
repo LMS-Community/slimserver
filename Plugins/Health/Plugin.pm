@@ -18,37 +18,27 @@ use Slim::Utils::Strings qw(string);
 
 use Plugins::Health::NetTest;
 
-sub enabled {
-	return ($::VERSION ge '6.5');
-}
-
 sub initPlugin {
+	my $class = shift;
+
 	if (defined $::perfwarn) {
 		parseCmdLine($::perfwarn);
 	}
-}
 
-# Main web interface
-sub webPages {
-	my %pages = ("index\.(?:htm|xml)"         => \&handleIndex,
-				 "player|server\.(?:htm|xml)" => \&handleGraphs);
+	Slim::Buttons::Common::addMode($class, $class->getFunctions, \&Plugins::Health::NetTest::setMode);
 
-	if (grep {$_ eq 'Health::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages->addPageLinks("help", { 'PLUGIN_HEALTH' => undef });
-	} else {
-		Slim::Web::Pages->addPageLinks("help", { 'PLUGIN_HEALTH' => "plugins/Health/index.html" });
-	}
+	my $urlBase = 'plugins/Health';
 
-	return (\%pages);
+	Slim::Web::Pages->addPageLinks("help", { 'PLUGIN_HEALTH' => "$urlBase/index.html" });
+
+	Slim::Web::HTTP::addPageFunction("$urlBase/index.html",  \&handleIndex);
+	Slim::Web::HTTP::addPageFunction("$urlBase/player.html", \&handleGraphs);
+	Slim::Web::HTTP::addPageFunction("$urlBase/server.html", \&handleGraphs);
 }
 
 # Player inteface for network test - shows up on player as 'NetTest'
 sub getDisplayName {
 	return('PLUGIN_HEALTH_NETTEST');
-}
-
-sub setMode {
-	return Plugins::Health::NetTest::setMode(@_);
 }
 
 sub getFunctions {

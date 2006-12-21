@@ -253,7 +253,7 @@ sub init {
 				Slim::Hardware::IR::loadMapFile($newvalue);
 
 				if ($newvalue eq Slim::Hardware::IR::defaultMapFile()) {
-					Slim::Utils::PluginManager::addDefaultMaps();
+					#Slim::Utils::PluginManager->addDefaultMaps();
 				}
 			},
 		},

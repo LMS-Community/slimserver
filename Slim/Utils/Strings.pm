@@ -172,7 +172,7 @@ sub stringsFiles {
 	push @files, catdir($serverPath, 'strings.txt');
 
 	# plugin string files
-	for my $path ( Slim::Utils::PluginManager::pluginRootDirs() ) {
+	for my $path ( Slim::Utils::PluginManager->pluginRootDirs() ) {
 		push @files, catdir($path, 'strings.txt');
 	}
 

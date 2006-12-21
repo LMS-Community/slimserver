@@ -13,6 +13,7 @@ package Plugins::RadioIO::Plugin;
 # GNU General Public License for more details.
 
 use strict;
+use base qw(Slim::Plugin::Base);
 
 use MIME::Base64;
 use URI::Escape qw(uri_escape);
@@ -30,18 +31,15 @@ use Plugins::RadioIO::ProtocolHandler;
 my $FEED = 'http://www.radioio.com/opml/channelsLOGIN.php?device=Squeezebox&speed=high';
 my $cli_next;
 
-sub enabled {
-	return ($::VERSION ge '6.3');
-}                             
-
 sub initPlugin {
+	my $class = shift;
+
+	$class->SUPER::initPlugin();
 
 	# Backwards-compat with radioio:// protocol links
 	Slim::Player::ProtocolHandlers->registerHandler('radioio', 'Plugins::RadioIO::ProtocolHandler');
 
 	Plugins::RadioIO::Settings->new;
-
-	Slim::Buttons::Common::addMode('PLUGIN.RadioIO', getFunctions(), \&setMode);
 
 #        |requires Client
 #        |  |is a Query
@@ -56,19 +54,12 @@ sub initPlugin {
 		[0, 1, 1, \&cliRadiosQuery]);
 }
 
-sub addMenu {
-	return 'RADIO';
-}
-
 sub getDisplayName {
 	return 'PLUGIN_RADIOIO_MODULE_NAME';
 }
 
-sub getFunctions {
-	return {};
-}
-
 sub setMode {
+	my $class  = shift;
 	my $client = shift;
 	my $method = shift;
 
@@ -116,29 +107,25 @@ sub radioIOURL {
 }
 
 # Web pages
-
 sub webPages {
+	my $class = shift;
+
 	my $title = 'PLUGIN_RADIOIO_MODULE_NAME';
+	my $url   = 'plugins/RadioIO/index.html';
 	
-	if (grep {$_ eq 'RadioIO::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages->addPageLinks('radio', { $title => undef });
-	} else {
-		Slim::Web::Pages->addPageLinks('radio', { $title => 'plugins/RadioIO/index.html' });
-	}
+	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
 	
-	my %pages = ( 
-		'index.html' => sub {
-			my $client = $_[0];
-			my $url = radioIOURL($client);
-			Slim::Web::XMLBrowser->handleWebIndex( {
-				feed   => $url,
-				title  => $title,
-				args   => \@_
-			} );
-		},
-	);
-	
-	return \%pages;
+	Slim::Web::HTTP::addPageFunction($url, sub {
+
+		my $client = $_[0];
+		my $url = radioIOURL($client);
+
+		Slim::Web::XMLBrowser->handleWebIndex( {
+			feed   => $url,
+			title  => $title,
+			args   => \@_
+		} );
+	});
 }
 
 sub cliQuery {

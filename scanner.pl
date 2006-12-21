@@ -37,6 +37,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::MySQLHelper;
 use Slim::Utils::OSDetect;
+use Slim::Utils::PluginManager;
 use Slim::Utils::Prefs;
 use Slim::Utils::ProgressBar;
 use Slim::Utils::Scanner;

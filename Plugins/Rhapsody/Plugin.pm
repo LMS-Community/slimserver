@@ -28,10 +28,6 @@ sub getDisplayName {
 	return 'PLUGIN_RHAPSODY_MODULE_NAME';
 }
 
-sub enabled {
-	return ($::VERSION ge '6.5');
-}
-
 sub getFunctions {
 	return '';
 }

@@ -5,22 +5,17 @@ package Plugins::Picks::Plugin;
 # Load Picks via an OPML file - so we can ride on top of the Podcast Browser
 
 use strict;
+use base qw(Slim::Plugin::Base);
 
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
-use Slim::Formats::XML;
 use Slim::Web::XMLBrowser;
 
 my $FEED = 'http://www.slimdevices.com/picks/radio.opml';
 my $cli_next;
 
-sub enabled {
-	return ($::VERSION ge '6.3');
-}
-
 sub initPlugin {
-
-	Slim::Buttons::Common::addMode('PLUGIN.Picks', getFunctions(), \&setMode);
+	my $class = shift;
 
 #        |requires Client
 #        |  |is a Query
@@ -34,21 +29,15 @@ sub initPlugin {
 	$cli_next=Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
 		[0, 1, 1, \&cliRadiosQuery]);
 
+	$class->SUPER::initPlugin();
 }
 
 sub getDisplayName {
 	return 'PLUGIN_PICKS_MODULE_NAME';
 }
 
-sub addMenu {
-	return 'RADIO';
-}
-
-sub getFunctions {
-	return {};
-}
-
 sub setMode {
+	my $class  = shift;
 	my $client = shift;
 	my $method = shift;
 
@@ -74,7 +63,7 @@ sub setMode {
 	Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
 	
 	# we'll handle the push in a callback
-	$client->modeParam('handledTransition',1)
+	$client->modeParam('handledTransition', 1)
 }
 
 sub cliQuery {
@@ -98,25 +87,21 @@ sub cliRadiosQuery {
 }
 
 sub webPages {
-	my $title = 'PLUGIN_PICKS_MODULE_NAME';
+	my $class = shift;
 
-	if (grep {$_ eq 'Picks::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages->addPageLinks('radio', { $title => undef });
-	} else {
-		Slim::Web::Pages->addPageLinks('radio', { $title => 'plugins/Picks/index.html' });
-	}
-
-	my %pages = ( 
-		'index.html' => sub {
-			Slim::Web::XMLBrowser->handleWebIndex( {
-				feed   => $FEED,
-				title  => $title,
-				args   => \@_
-			} );
-		},
-	);
+	my $title = getDisplayName();
+	my $url   = 'plugins/Picks/index.html';
 	
-	return \%pages;
+	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
+
+	Slim::Web::HTTP::addPageFunction($url, sub {
+
+		Slim::Web::XMLBrowser->handleWebIndex( {
+			feed   => $FEED,
+			title  => $title,
+			args   => \@_
+		} );
+	});
 }
 
 1;

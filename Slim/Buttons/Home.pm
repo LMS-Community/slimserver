@@ -180,29 +180,7 @@ sub addSubMenu {
 		return;
 	}
 	
-	if (!defined $submenuref) {
-		
-		if (exists $home{$menu}{'submenus'}{$submenuname}) {
-
-			$log->info("Deleting $submenuname from menu: $menu");
-			
-			delete $home{$menu}{'submenus'}{$submenuname};
-			
-			if (!keys %{$home{$menu}{'submenus'}}) {
-
-				delete $home{$menu}{'submenus'};
-				delete $home{$menu};
-
-				$log->info("Deleting empty $menu submenu.");
-
-				delSubMenu("PLUGINS",$menu);
-			}
-		}
-
-	} else {
-
-		$home{$menu}{'submenus'}{$submenuname} = $submenuref;
-	}
+	$home{$menu}{'submenus'}{$submenuname} = $submenuref;
 }
 
 =head2 delSubMenu( $menu,$submenuname)
@@ -318,7 +296,7 @@ sub setMode {
 	$params{'listRef'}  = \@{$homeChoices{$client}};
 	$params{'valueRef'} = \${$client->curSelection()}{$client->curDepth()};
 	$params{'curMenu'}  = $client->curDepth();
-	
+
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 }
 
@@ -367,13 +345,18 @@ sub getMenu {
 	my $depth = shift;
 	
 	my $current = \%home;
-	return $current if $depth eq "";
-	my @depth = split(/-/,$depth);
+
+	if ($depth eq "") {
+
+		return $current;
+	}
+
+	my @depth = split(/-/, $depth);
 	
-	#home reference is "" so drop first item
+	# home reference is "" so drop first item
 	shift @depth;
 	
-	#top level reference
+	# top level reference
 	$current = $current->{shift @depth};
 	
 	# recursive submenus
@@ -435,7 +418,7 @@ sub homeExitHandler {
 
 			$nextParams = &getNextList($client);
 		}
-		
+
 		if (exists ($nextParams->{'submenus'})) {
 
 			my %params = %defaultParams;
@@ -464,6 +447,7 @@ sub homeExitHandler {
 		} elsif (exists($nextParams->{'useMode'})) {
 
 			if (ref($nextParams->{'useMode'}) eq 'CODE') {
+
 				$nextParams->{'useMode'}->($client);
 
 			} else {
@@ -472,13 +456,15 @@ sub homeExitHandler {
 				if (($nextParams->{'useMode'} eq 'INPUT.List' || $nextParams->{'useMode'} eq 'INPUT.Bar') && 
 					exists($nextParams->{'initialValue'})) {
 
-					#set up valueRef for current pref
+					# set up valueRef for current pref
 					my $value;
 
 					if (ref($nextParams->{'initialValue'}) eq 'CODE') {
+
 						$value = $nextParams->{'initialValue'}->($client);
 
 					} else {
+
 						$value = $client->prefGet($nextParams->{'initialValue'});
 					}
 
@@ -492,9 +478,9 @@ sub homeExitHandler {
 				);
 			}
 
-		} elsif (Slim::Buttons::Common::validMode("PLUGIN.$nextmenu")) {
+		} elsif (Slim::Buttons::Common::validMode($nextmenu)) {
 
-			Slim::Buttons::Common::pushModeLeft($client, "PLUGIN.$nextmenu");
+			Slim::Buttons::Common::pushModeLeft($client, $nextmenu);
 
 		} else {
 
@@ -682,7 +668,7 @@ sub unusedMenuOptions {
 
 	delete $menuChoices{""};
 
-	my $pluginsRef = Slim::Utils::PluginManager::installedPlugins();
+	my $pluginsRef = Slim::Utils::PluginManager->installedPlugins();
 
 	for my $plugin (values %{$pluginsRef}) {
 		next unless defined $plugin;
@@ -721,22 +707,25 @@ sub updateMenu {
 	my $client = shift;
 	my @home = ();
 	
-	my %disabledplugins = map {$_ => 1} Slim::Utils::Prefs::getArray('disabledplugins');
-	my $pluginsRef = Slim::Utils::PluginManager::installedPlugins();
-	
 	for my $menuItem ($client->prefGetArray('menuItem')) {
 
-		next if (exists $disabledplugins{$menuItem});
-		next if (!exists $home{$menuItem} && !exists $pluginsRef->{$menuItem});
+		my $plugin = Slim::Utils::PluginManager->dataForPlugin($menuItem);
 
-		if (exists $pluginsRef->{$menuItem}) {
-			$menuItem = $pluginsRef->{$menuItem};
+		if (!exists $home{$menuItem} && !defined $plugin) {
+
+			next;
 		}
+
+		if (defined $plugin) {
+
+                        $menuItem = $plugin->{'name'};
+                }
 
 		push @home, $menuItem;
 	}
 
 	if (!scalar @home) {
+
 		push @home, 'NOW_PLAYING';
 	}
 

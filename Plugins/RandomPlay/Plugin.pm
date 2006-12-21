@@ -15,6 +15,7 @@ package Plugins::RandomPlay::Plugin;
 # version 2.
 
 use strict;
+use base qw(Slim::Plugin::Base);
 
 use Slim::Buttons::Home;
 use Slim::Utils::Log;
@@ -33,7 +34,7 @@ my %displayText  = ();
 my %genres       = ();
 my %genreNameMap = ();
 
-my $htmlTemplate = 'plugins/RandomPlay/randomplay_list.html';
+my $htmlTemplate = 'plugins/RandomPlay/list.html';
 
 my $log          = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.randomplay',
@@ -43,6 +44,43 @@ my $log          = Slim::Utils::Log->addLogCategory({
 
 sub getDisplayName {
 	return 'PLUGIN_RANDOM';
+}
+
+sub initPlugin {
+	my $class = shift;
+
+	$class->SUPER::initPlugin();
+	$class->webPages;
+
+	# playlist commands that will stop random play
+	%stopcommands = (
+		'clear'	     => 1,
+		'loadtracks' => 1, # multiple play
+		'playtracks' => 1, # single play
+		'load'       => 1, # old style url load (no play)
+		'play'       => 1, # old style url play
+		'loadalbum'  => 1, # old style multi-item load
+		'playalbum'  => 1, # old style multi-item play
+	);
+	
+	checkDefaults();
+
+	generateGenreNameMap();
+
+	# set up our subscription
+	Slim::Control::Request::subscribe(\&commandCallback, 
+		[['playlist'], ['newsong', 'delete', 'cant_open', keys %stopcommands]]);
+
+	# Regenerate the genre map after a rescan.
+	Slim::Control::Request::subscribe(\&generateGenreNameMap, [['rescan'], ['done']]);
+
+#        |requires Client
+#        |  |is a Query
+#        |  |  |has Tags
+#        |  |  |  |Function to call
+#        C  Q  T  F
+	Slim::Control::Request::addDispatch(['randomplay', '_mode'],
+	[1, 0, 0, \&cliRequest]);
 }
 
 # Find tracks matching parameters and add them to the playlist
@@ -564,6 +602,7 @@ sub handlePlayOrAdd {
 }
 
 sub setMode {
+	my $class  = shift;
 	my $client = shift;
 	my $method = shift;
 	
@@ -699,38 +738,6 @@ sub commandCallback {
 	}
 }
 
-sub initPlugin {
-	# playlist commands that will stop random play
-	%stopcommands = (
-		'clear'	     => 1,
-		'loadtracks' => 1, # multiple play
-		'playtracks' => 1, # single play
-		'load'       => 1, # old style url load (no play)
-		'play'       => 1, # old style url play
-		'loadalbum'  => 1, # old style multi-item load
-		'playalbum'  => 1, # old style multi-item play
-	);
-	
-	checkDefaults();
-
-	generateGenreNameMap();
-
-	# set up our subscription
-	Slim::Control::Request::subscribe(\&commandCallback, 
-		[['playlist'], ['newsong', 'delete', 'cant_open', keys %stopcommands]]);
-
-	# Regenerate the genre map after a rescan.
-	Slim::Control::Request::subscribe(\&generateGenreNameMap, [['rescan'], ['done']]);
-
-#        |requires Client
-#        |  |is a Query
-#        |  |  |has Tags
-#        |  |  |  |Function to call
-#        C  Q  T  F
-	Slim::Control::Request::addDispatch(['randomplay', '_mode'],
-	[1, 0, 0, \&cliRequest]);
-}
-
 sub generateGenreNameMap {
 	my $request = shift;
 
@@ -769,6 +776,8 @@ sub cliRequest {
 }
 
 sub shutdownPlugin {
+	my $class = shift;
+
 	# unsubscribe
 	Slim::Control::Request::unsubscribe(\&commandCallback);
 }
@@ -785,23 +794,15 @@ sub getFunctions {
 }
 
 sub webPages {
+	my $class = shift;
 
-	my %pages = (
-		"randomplay_list\.(?:htm|xml)"     => \&handleWebList,
-		"randomplay_mix\.(?:htm|xml)"      => \&handleWebMix,
-		"randomplay_settings\.(?:htm|xml)" => \&handleWebSettings,
-	);
+        my $urlBase = 'plugins/RandomPlay';
 
-	my $value = $htmlTemplate;
+	Slim::Web::Pages->addPageLinks("browse", { 'PLUGIN_RANDOM' => $htmlTemplate });
 
-	if (grep { /^RandomPlay::Plugin$/ } Slim::Utils::Prefs::getArray('disabledplugins')) {
-
-		$value = undef;
-	}
-
-	Slim::Web::Pages->addPageLinks("browse", { 'PLUGIN_RANDOM' => $value });
-
-	return (\%pages);
+        Slim::Web::HTTP::addPageFunction("$urlBase/list.html", \&handleWebList);
+        Slim::Web::HTTP::addPageFunction("$urlBase/mix.html", \&handleWebMix);
+        Slim::Web::HTTP::addPageFunction("$urlBase/settings.html", \&handleWebSettings);
 }
 
 # Draws the plugin's web page

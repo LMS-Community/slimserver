@@ -156,7 +156,6 @@ sub initPlugin {
 	# addImporter for Plugins, may include mixer function, setup function, mixerlink reference and use on/off.
 	Slim::Music::Import->addImporter($class, {
 		'mixer'     => \&mixerFunction,
-		'setup'     => \&addGroups,
 		'mixerlink' => \&mixerlink,
 		'use'       => Slim::Utils::Prefs::get($class->prefName),
 	});

@@ -13,10 +13,8 @@ package Plugins::Visualizer::Plugin;
 # GNU General Public License for more details.
 #
 
-use Slim::Player::Squeezebox2;
-
-use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.0 $,10);
+use strict;
+use base qw(Slim::Plugin::Base);
 
 my $VISUALIZER_NONE = 0;
 my $VISUALIZER_VUMETER = 1;
@@ -92,12 +90,53 @@ my %screensaver_info = (
 	}
 );
 
+our %screensaverFunctions = (
+	'done' => sub  {
+		my ($client ,$funct ,$functarg) = @_;
+
+		Slim::Buttons::Common::popMode($client);
+		$client->update();
+
+		# pass along ir code to new mode if requested
+		if (defined $functarg && $functarg eq 'passback') {
+			Slim::Hardware::IR::resendButton($client);
+		}
+	},
+);
+
+
 sub getDisplayName {
 	return 'PLUGIN_SCREENSAVER_VISUALIZER';
 }
 
-sub enabled {
-	return ($::VERSION ge '6.1');
+sub initPlugin {
+	my $class = shift;
+
+	$class->SUPER::initPlugin();
+
+	Slim::Buttons::Common::addSaver(
+		'SCREENSAVER.visualizer_spectrum',
+		\%screensaverFunctions,
+		\&setVisualizerMode,
+		\&leaveVisualizerMode,
+		'VISUALIZER_SPECTRUM_ANALYZER',
+	);
+
+	Slim::Buttons::Common::addSaver(
+		'SCREENSAVER.visualizer_analog_vumeter',
+		\%screensaverFunctions,
+		\&setVisualizerMode,
+		\&leaveVisualizerMode,
+		'VISUALIZER_ANALOG_VUMETER',
+	);
+
+	Slim::Buttons::Common::addSaver(
+		'SCREENSAVER.visualizer_digital_vumeter',
+		\%screensaverFunctions,
+		\&setVisualizerMode,
+		\&leaveVisualizerMode,
+		'VISUALIZER_DIGITAL_VUMETER',
+	);
 }
 
 ##################################################
@@ -110,6 +149,7 @@ sub getFunctions {
 }
 
 sub setMode {
+	my $class  = shift;
 	my $client = shift;
 	my $method = shift;
 
@@ -157,20 +197,6 @@ sub setVis {
 ### Screensaver display mode
 ##################################################
 
-our %screensaverFunctions = (
-	'done' => sub  {
-		my ($client ,$funct ,$functarg) = @_;
-
-		Slim::Buttons::Common::popMode($client);
-		$client->update();
-
-		# pass along ir code to new mode if requested
-		if (defined $functarg && $functarg eq 'passback') {
-			Slim::Hardware::IR::resendButton($client);
-		}
-	},
-);
-
 sub screensaverLines {
 	my $client = shift;
 
@@ -183,30 +209,6 @@ sub screensaverLines {
 			]
 		};
 	}
-}
-
-sub screenSaver {
-	Slim::Buttons::Common::addSaver(
-		'SCREENSAVER.visualizer_spectrum',
-		\%screensaverFunctions,
-		\&setVisualizerMode,
-		\&leaveVisualizerMode,
-		'VISUALIZER_SPECTRUM_ANALYZER',
-	);
-	Slim::Buttons::Common::addSaver(
-		'SCREENSAVER.visualizer_analog_vumeter',
-		\%screensaverFunctions,
-		\&setVisualizerMode,
-		\&leaveVisualizerMode,
-		'VISUALIZER_ANALOG_VUMETER',
-	);
-	Slim::Buttons::Common::addSaver(
-		'SCREENSAVER.visualizer_digital_vumeter',
-		\%screensaverFunctions,
-		\&setVisualizerMode,
-		\&leaveVisualizerMode,
-		'VISUALIZER_DIGITAL_VUMETER',
-	);
 }
 
 sub leaveVisualizerMode {

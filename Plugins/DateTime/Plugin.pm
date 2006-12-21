@@ -6,6 +6,7 @@ package Plugins::DateTime::Plugin;
 # version 2.
 
 use strict;
+use base qw(Slim::Plugin::Base);
 use Slim::Utils::DateTime;
 use Slim::Utils::Prefs;
 
@@ -15,12 +16,10 @@ sub getDisplayName {
 	return 'PLUGIN_SCREENSAVER_DATETIME';
 }
 
-sub enabled {
-	return ($::VERSION ge '6.1');
-}
-
 sub setMode {
+	my $class  = shift;
 	my $client = shift;
+
 	$client->lines(\&lines);
 
 	# setting this param will call client->update() frequently
@@ -28,6 +27,9 @@ sub setMode {
 }
 
 sub initPlugin {
+	my $class = shift;
+
+	$class->SUPER::initPlugin();
 
 	Plugins::DateTime::Settings->new;
 
@@ -41,6 +43,14 @@ sub initPlugin {
 	if (!Slim::Utils::Prefs::get('screensaverTimeFormat')) {
 		Slim::Utils::Prefs::set('screensaverTimeFormat','')
 	}
+
+	Slim::Buttons::Common::addSaver(
+		'SCREENSAVER.datetime',
+		getScreensaverDatetime(),
+		\&setScreensaverDateTimeMode,
+		undef,
+		getDisplayName(),
+	);
 }
 
 our %functions = (
@@ -89,24 +99,14 @@ sub lines {
 }
 
 sub getFunctions {
+	my $class = shift;
+
 	return \%functions;
 }
 
 ###################################################################
 ### Section 3. Your variables for your screensaver mode go here ###
 ###################################################################
-
-# First, Register the screensaver mode here.  
-
-sub screenSaver {
-	Slim::Buttons::Common::addSaver(
-		'SCREENSAVER.datetime',
-		getScreensaverDatetime(),
-		\&setScreensaverDateTimeMode,
-		undef,
-		'PLUGIN_SCREENSAVER_DATETIME',
-	);
-}
 
 our %screensaverDateTimeFunctions = (
 	'done' => sub  {

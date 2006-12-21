@@ -30,7 +30,6 @@ use Slim::Music::TitleFormatter;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::PluginManager;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
@@ -100,7 +99,7 @@ sub loadTypesConfig {
 		push @typesFiles, catdir($baseDir, 'custom-types.conf');
 	}
 
-	foreach my $baseDir (Slim::Utils::PluginManager::pluginRootDirs()) {
+	foreach my $baseDir (Slim::Utils::PluginManager->pluginRootDirs()) {
 
 		push @typesFiles, catdir($baseDir, 'custom-types.conf');
 	}

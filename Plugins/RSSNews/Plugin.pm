@@ -75,11 +75,8 @@ my $refresh_sec = 60 * 60;
 # per-client screensaver state information
 my $savers = {};
 
-sub enabled {
-	return ($::VERSION ge '6.3');
-}
-
 sub initPlugin {
+	my $class = shift;
 
 	$log->info("Initializing.");
 
@@ -109,6 +106,13 @@ sub initPlugin {
     Slim::Control::Request::addDispatch(['rss', 'items', '_index', '_quantity'],
         [0, 1, 1, \&cliQuery]);
 
+	Slim::Buttons::Common::addSaver(
+		'SCREENSAVER.rssnews',
+		getScreensaverRssNews(),
+		\&setScreensaverRssNewsMode,
+		\&leaveScreenSaverRssNews,
+		'PLUGIN_RSSNEWS_SCREENSAVER'
+	);
 
 	# No prefs set or we've had a version change and they weren't modified, 
 	# so we'll use the defaults
@@ -337,16 +341,6 @@ sub updateFeedNames {
 
 ################################
 # ScreenSaver Mode
-
-sub screenSaver {
-	Slim::Buttons::Common::addSaver(
-		'SCREENSAVER.rssnews',
-		getScreensaverRssNews(),
-		\&setScreensaverRssNewsMode,
-		\&leaveScreenSaverRssNews,
-		'PLUGIN_RSSNEWS_SCREENSAVER'
-	);
-}
 
 sub getScreensaverRssNews {
 

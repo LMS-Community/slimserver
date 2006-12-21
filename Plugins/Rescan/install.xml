@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<extension>
+	<id>665291B7-02A3-4623-9152-FD30B6217C8B</id>
+        <name>PLUGIN_RESCAN_MUSIC_LIBRARY</name>
+        <module>Plugins::Rescan::Plugin</module>
+        <version>1.0</version>
+        <description>Automatic Library Scanning</description>
+        <creator>Slim Devices</creator>
+        <email>support@slimdevices.com</email>
+
+	<defaultState>enabled</defaultState>
+        
+        <homepageURL>http://www.slimdevices.com/</homepageURL>
+	<optionsURL>plugins/Rescan/settings/basic.html</optionsURL>
+	<type>2</type><!-- type=extension -->
+
+        <targetApplication>
+  	        <id>SlimServer</id>
+                <minVersion>7.0a</minVersion>
+                <maxVersion>7.0+</maxVersion>
+        </targetApplication>
+
+</extension>

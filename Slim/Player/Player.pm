@@ -38,7 +38,7 @@ our $defaultPrefs = {
 		NOW_PLAYING
 		BROWSE_MUSIC
 		SEARCH
-		RandomPlay::Plugin
+		Plugins::RandomPlay::Plugin
 		FAVORITES
 		SAVED_PLAYLISTS
 		RADIO
@@ -156,7 +156,7 @@ our %upgradeScripts = (
 
 			for (my $i = 0; $i < @$menuItem; $i++) {
 
-				if (@$menuItem[$i] eq 'RandomPlay::Plugin') {
+				if (@$menuItem[$i] eq 'Plugins::RandomPlay::Plugin') {
 					$randomMixFound = 1;
 					last;
 				} elsif (@$menuItem[$i] eq 'SEARCH') {
@@ -169,9 +169,9 @@ our %upgradeScripts = (
 				if (defined $insertPos) {
 
 					# Insert random mix after SEARCH
-					splice(@$menuItem, $insertPos, 0, 'RandomPlay::Plugin');
+					splice(@$menuItem, $insertPos, 0, 'Plugins::RandomPlay::Plugin');
 				} else {
-					push (@$menuItem, 'RandomPlay::Plugin');
+					push (@$menuItem, 'Plugins::RandomPlay::Plugin');
 				}
 
 				$client->prefSet('menuItem', $menuItem);

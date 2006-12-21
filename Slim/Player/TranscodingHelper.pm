@@ -45,7 +45,7 @@ sub loadConversionTables {
 		);
 	}
 
-	foreach my $baseDir (Slim::Utils::PluginManager::pluginRootDirs()) {
+	foreach my $baseDir (Slim::Utils::PluginManager->pluginRootDirs()) {
 
 		push @convertFiles, catdir($baseDir, 'custom-convert.conf');
 	}

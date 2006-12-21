@@ -67,10 +67,6 @@ our @statusText;
 
 my $cli_next;
 
-sub addMenu {
-	return "RADIO";
-}
-
 sub getDisplayName {
 	return 'PLUGIN_LIVE365_MODULE_NAME';
 }
@@ -267,10 +263,6 @@ sub mainHeader {
 
 		return $client->string('PLUGIN_LIVE365_MODULE_NAME');
 	}
-}
-
-sub getFunctions {
-	return \%mainModeFunctions;
 }
 
 #############################
@@ -884,23 +876,17 @@ sub doSearch {
 
 # Add web pages and handlers.  See Plugins::Live365::Web for handlers.
 sub webPages {
-	$log->debug("Begin Function");
-	
-	my %pages = (
-		"browse\.(?:htm|xml)"   => \&Plugins::Live365::Web::handleBrowse,
-		"search\.(?:htm|xml)"   => \&Plugins::Live365::Web::handleSearch,
-		"action\.(?:htm|xml)"   => \&Plugins::Live365::Web::handleAction,
-		"index\.(?:htm|xml)"    => \&Plugins::Live365::Web::handleIndex,
-		"loginout\.(?:htm|xml)" => \&Plugins::Live365::Web::handleLogin
-	);
+	my $class = shift;
 
-	if (grep { $_ eq 'Live365::Plugin' } Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages->addPageLinks("radio", { 'PLUGIN_LIVE365_MODULE_NAME' => undef } );
-	} else {
-		Slim::Web::Pages->addPageLinks("radio", { 'PLUGIN_LIVE365_MODULE_NAME' => "plugins/Live365/index.html?autologin=1" } );
-	}
-	
-	return (\%pages, undef);
+	my $urlBase = 'plugins/Live365';
+
+	Slim::Web::Pages->addPageLinks("radio", { 'PLUGIN_LIVE365_MODULE_NAME' => "$urlBase/index.html?autologin=1" } );
+
+	Slim::Web::HTTP::addPageFunction("$urlBase/browse.html",  \&Plugins::Live365::Web::handleBrowse);
+	Slim::Web::HTTP::addPageFunction("$urlBase/search.html",  \&Plugins::Live365::Web::handleSearch);
+	Slim::Web::HTTP::addPageFunction("$urlBase/action.html",  \&Plugins::Live365::Web::handleAction);
+	Slim::Web::HTTP::addPageFunction("$urlBase/index.html",    \&Plugins::Live365::Web::handleIndex);
+	Slim::Web::HTTP::addPageFunction("$urlBase/loginout.html", \&Plugins::Live365::Web::handleLogin);
 }
 
 sub getLive365 {
@@ -914,6 +900,7 @@ sub getLive365 {
 }
 
 sub initPlugin {
+	my $class = shift;
 
 	$log->info("Initializing.");
 
@@ -921,6 +908,9 @@ sub initPlugin {
 
 	Plugins::Live365::Settings->new;
 
+	$class->webPages;
+
+	Slim::Buttons::Common::addMode( $class,            \%mainModeFunctions,    \&setMode);
 	Slim::Buttons::Common::addMode( 'searchMode',      \%searchModeFunctions,  \&setSearchMode,  \&noSearchMode );
 	Slim::Buttons::Common::addMode( 'genreMode',       \%genreModeFunctions,   \&setGenreMode,   \&noGenreMode );
 	Slim::Buttons::Common::addMode( 'ChannelInfo',     \%infoModeFunctions,    \&setInfoMode,    \&noInfoMode );

@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+
+<extension>
+        <id>BFACABFD-6334-4743-95BA-43A60E159560</id>
+        <name>PLUGIN_PREVENTSTANDBY</name>
+        <module>Plugins::PreventStandby::Plugin</module>
+        <version>1.0</version>
+        <description>Prevent Windows machines from going into Standby mode.</description>
+        <creator>Julian Neil, Slim Devices</creator>
+	<email>support@slimdevices.com</email>
+
+	<defaultState>enabled</defaultState>
+        
+        <homepageURL>http://www.slimdevices.com/</homepageURL>
+        <optionsURL>slim://PreventStandby/content/settings.html</optionsURL>
+	<type>2</type><!-- type=extension -->
+
+        <targetApplication>
+  	        <id>SlimServer</id>
+                <minVersion>7.0a</minVersion>
+                <maxVersion>7.0+</maxVersion>
+        </targetApplication>
+
+	<targetPlatform>Windows</targetPlatform>
+
+</extension>

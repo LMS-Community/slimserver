@@ -13,6 +13,7 @@ package Plugins::RadioTime::Plugin;
 # GNU General Public License for more details.
 
 use strict;
+use base qw(Slim::Plugin::Base);
 
 use URI::Escape qw(uri_escape);
 
@@ -32,15 +33,12 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
-sub enabled {
-	return ($::VERSION ge '6.5');
-}
-
 sub initPlugin {
+	my $class = shift;
+
+	$class->SUPER::initPlugin();
 
 	Plugins::RadioTime::Settings->new;
-
-	Slim::Buttons::Common::addMode('PLUGIN.RadioTime', getFunctions(), \&setMode);
 
 #        |requires Client
 #        |  |is a Query
@@ -55,19 +53,12 @@ sub initPlugin {
 		[0, 1, 1, \&cliRadiosQuery]);
 }
 
-sub addMenu {
-	return 'RADIO';
-}
-
 sub getDisplayName {
 	return 'PLUGIN_RADIOTIME_MODULE_NAME';
 }
 
-sub getFunctions {
-	return {};
-}
-
 sub setMode {
+	my $class  = shift;
 	my $client = shift;
 	my $method = shift;
 
@@ -122,27 +113,24 @@ sub radioTimeURL {
 # Web pages
 
 sub webPages {
+	my $class = shift;
+
 	my $title = 'PLUGIN_RADIOTIME_MODULE_NAME';
+	my $url   = 'plugins/RadioTime/index.html';
 	
-	if (grep {$_ eq 'RadioTime::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages->addPageLinks('radio', { $title => undef });
-	} else {
-		Slim::Web::Pages->addPageLinks('radio', { $title => 'plugins/RadioTime/index.html' });
-	}
+	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
 	
-	my %pages = ( 
-		'index.html' => sub {
-			my $client = $_[0];
-			my $url = radioTimeURL($client);
-			Slim::Web::XMLBrowser->handleWebIndex( {
-				feed   => $url,
-				title  => $title,
-				args   => \@_
-			} );
-		},
-	);
-	
-	return \%pages;
+	Slim::Web::HTTP::addPageFunction($url, sub {
+
+		my $client = $_[0];
+		my $url = radioTimeURL($client);
+
+		Slim::Web::XMLBrowser->handleWebIndex( {
+			feed   => $url,
+			title  => $title,
+			args   => \@_
+		} );
+	});
 }
 
 sub cliQuery {

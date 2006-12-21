@@ -156,7 +156,6 @@ sub initPlugin {
 		# addImporter for Plugins, may include mixer function, setup function, mixerlink reference and use on/off.
 		Slim::Music::Import->addImporter($class, {
 			'mixer'     => \&mixerFunction,
-			'setup'     => \&addGroups,
 			'mixerlink' => \&mixerlink,
 			'use'       => Slim::Utils::Prefs::get($class->prefName),
 		});
@@ -184,6 +183,9 @@ sub initPlugin {
 
 	Slim::Buttons::Common::addMode('musicmagic_mix', \%mixFunctions);
 	Slim::Hardware::IR::addModeDefaultMapping('musicmagic_mix',\%mixMap);
+
+	Slim::Web::HTTP::addPageFunction("musicmagic_mix.html" => \&musicmagic_mix);
+	Slim::Web::HTTP::addPageFunction("musicmagic_moods.html" => \&musicmagic_moods);
 	
 	return $initialized;
 }
@@ -711,16 +713,6 @@ sub getMix {
 	}
 
 	return \@mix;
-}
-
-sub webPages {
-
-	my %pages = (
-		"musicmagic_mix\.(?:htm|xml)"   => \&musicmagic_mix,
-		"musicmagic_moods\.(?:htm|xml)" => \&musicmagic_moods,
-	);
-
-	return (\%pages);
 }
 
 sub musicmagic_moods {

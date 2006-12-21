@@ -309,8 +309,8 @@ sub setMode {
 	}
 
 	unless (ref($modules)) {
-		$modules = Slim::Utils::PluginManager::installedPlugins();
-		$enabled{$_} = 1 for (Slim::Utils::PluginManager::enabledPlugins($client));
+		$modules = Slim::Utils::PluginManager->installedPlugins();
+		$enabled{$_} = 1 for (Slim::Utils::PluginManager->enabledPlugins($client));
 		$menuParams{catdir('main','module')}{'listRef'} = module_list();
 	}
 

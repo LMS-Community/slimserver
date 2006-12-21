@@ -13,9 +13,6 @@ use Slim::Player::Playlist;
 use File::Spec::Functions qw(:ALL);
 use Slim::Utils::Misc;
 
-use vars qw($VERSION);
-$VERSION = substr(q$Revision: 1.10 $,10);
-
 our %context = ();
 
 my $rightarrow = Slim::Display::Display::symbol('rightarrow');
@@ -48,10 +45,6 @@ sub getDisplayName {
 	return 'SAVE_PLAYLIST';
 }
 
-sub enabled {
-	return ($::VERSION ge '6.1');
-}
-
 # the routines
 sub setMode {
 	my $client = shift;
@@ -63,22 +56,20 @@ sub setMode {
 		# do nothing if there is no playlist folder defined.
 		
 	} elsif ($push ne 'push') {
-		my $playlist = '';
-	
+
 	} elsif ($client->modeParam('playlist') ne '') {
-		# don't do anything if we have a playlist name, since this means we've done the text entry
+
+		# don't do anything if we have a playlist name, since this
+		# means we've done the text entry
 	
 	} else {
 	
 		# default to the existing title for a known playlist, otherwise just start with 'A'
 		$context{$client} = $client->currentPlaylist ? 
-								Slim::Music::Info::standardTitle($client, $client->currentPlaylist) : 
-								'A';
-		
+			Slim::Music::Info::standardTitle($client, $client->currentPlaylist) : 'A';
+
 		# set cursor position to end of playlist title if the playlist is known
-		my $cursorpos = $client->currentPlaylist ?
-							length($context{$client}) :
-							0;
+		my $cursorpos = $client->currentPlaylist ?  length($context{$client}) : 0;
 
 		Slim::Buttons::Common::pushMode($client,'INPUT.Text', {
 			'callback'        => \&savePluginCallback,
@@ -152,10 +143,11 @@ sub lines {
 sub savePlaylist {
 	my $client = shift;
 	my $playlistfile = shift;
+
 	$client->execute(['playlist', 'save', $playlistfile]);
+
 	$client->showBriefly( {
-		'line' => [ $client->string('PLAYLIST_SAVING'),
-					$playlistfile ]
+		'line' => [ $client->string('PLAYLIST_SAVING'), $playlistfile ]
 	});
 }
 
@@ -164,22 +156,26 @@ sub getFunctions {
 }
 
 sub savePluginCallback {
-	my ($client,$type) = @_;
+	my ($client, $type) = @_;
+
 	if ($type eq 'nextChar') {
+
 		$context{$client} =~ s/$rightarrow//;
 		
 		# re-enter plugin with the new playlist title to get the confirmation screen for saving the playlist.
-		Slim::Buttons::Common::pushModeLeft($client,'PLUGIN.SavePlaylist',{
-				'playlist' => $context{$client},
-			});
+		Slim::Buttons::Common::pushModeLeft($client,'PLUGIN.SavePlaylist', {
+			'playlist' => $context{$client},
+		});
 			
 	} elsif ($type eq 'backspace') {
+
 		Slim::Buttons::Common::popModeRight($client);
 		Slim::Buttons::Common::popModeRight($client);
 	
 	} else {
+
 		$client->bumpRight();
-	};
+	}
 }
 
 ####################################################################
@@ -194,10 +190,13 @@ sub defaultMap {
 sub initPlugin {
 	
 	# programmatically add the playlist mode function for 'save' when play.hold button is detected
-	Slim::Hardware::IR::addModeDefaultMapping('playlist',\%mapping);
+	Slim::Hardware::IR::addModeDefaultMapping('playlist', \%mapping);
+
 	our $functref = Slim::Buttons::Playlist::getFunctions();
+
 	$functref->{'save'} = $functions{'save'};
 }
+
 1;
 
 __END__

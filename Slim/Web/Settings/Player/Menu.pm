@@ -101,7 +101,7 @@ sub handler {
 		$paramRef->{'menuItems'}     = [ $client->prefGetArray('menuItem') ];
 		$paramRef->{'menuItemNames'} = { map {$_ => menuItemName($client, $_)} $client->prefGetArray('menuItem') };
 		$paramRef->{'nonMenuItems'}  = { map {$_ => menuItemName($client, $_)} Slim::Buttons::Home::unusedMenuOptions($client) };
-		$paramRef->{'pluginItems'}   = { map {$_ => menuItemName($client, $_)} Slim::Utils::PluginManager::unusedPluginOptions($client) };
+		$paramRef->{'pluginItems'}   = { map {$_ => menuItemName($client, $_)} Slim::Utils::PluginManager->unusedPluginOptions($client) };
 
 	} else {
 
@@ -115,7 +115,7 @@ sub handler {
 sub menuItemName {
 	my ($client, $value) = @_;
 
-	my $plugins = Slim::Utils::PluginManager::installedPlugins();
+	my $plugins = Slim::Utils::PluginManager->installedPlugins();
 
 	if (Slim::Utils::Strings::stringExists($value)) {
 

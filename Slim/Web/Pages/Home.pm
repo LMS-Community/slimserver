@@ -99,9 +99,11 @@ sub home {
 	# More leakage from the DigitalInput 'plugin'
 	#
 	# If our current player has digital inputs, show the menu.
-	eval { Plugins::DigitalInput::Plugin::webPages($client->hasDigitalIn) };
+	if ($client->hasDigitalIn) {
 
-	#Slim::Utils::PluginManager::addSetupGroups();
+		Plugins::DigitalInput::Plugin->webPages;
+	}
+
 	$params->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
 
 	$class->addPlayerList($client, $params);

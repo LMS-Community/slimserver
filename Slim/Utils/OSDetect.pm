@@ -308,6 +308,7 @@ sub initDetailsForWin32 {
 
 sub initDetailsForOSX {
 
+	# Once for OS Version, then again for CPU Type.
 	open(SYS, '/usr/sbin/system_profiler SPSoftwareDataType |') or return;
 
 	while (<SYS>) {
@@ -321,9 +322,26 @@ sub initDetailsForOSX {
 
 	close SYS;
 
-	$osDetails{'os'}     = 'Macintosh';
-	$osDetails{'uid'}    = getpwuid($>);
-	$osDetails{'osArch'} = $Config{'myarchname'};
+	# CPU Type / Processor Name
+	open(SYS, '/usr/sbin/system_profiler SPHardwareDataType |') or return;
+
+	while (<SYS>) {
+
+		if (/Intel/i) {
+
+			$osDetails{'osArch'} = 'x86';
+			last;
+
+		} elsif (/PowerPC/i) {
+
+			$osDetails{'osArch'} = 'ppc';
+		}
+	}
+
+	close SYS;
+
+	$osDetails{'os'}  = 'Darwin';
+	$osDetails{'uid'} = getpwuid($>);
 
 	for my $dir (qw(
 		Library/SlimDevices/Plugins Library/SlimDevices/Graphics Library/SlimDevices/html

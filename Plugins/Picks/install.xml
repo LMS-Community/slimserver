@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<extension>
+	<id>5FF66A2D-F072-47CC-91EB-A750FF9C2351</id>
+        <name>PLUGIN_PICKS_MODULE_NAME</name>
+        <module>Plugins::Picks::Plugin</module>
+        <playerMenu>RADIO</playerMenu>
+        <version>1.0</version>
+        <description>Slim Devices Picks - Best of Internet Radio</description>
+        <creator>Slim Devices</creator>
+        <email>support@slimdevices.com</email>
+
+	<defaultState>enabled</defaultState>
+        
+        <homepageURL>http://www.slimdevices.com/</homepageURL>
+	<type>2</type><!-- type=extension -->
+
+        <targetApplication>
+  	        <id>SlimServer</id>
+                <minVersion>7.0a</minVersion>
+                <maxVersion>7.0+</maxVersion>
+        </targetApplication>
+
+</extension>

@@ -356,7 +356,7 @@ sub init {
 	}
 
 	$log->info("SlimServer Plugins init...");
-	Slim::Utils::PluginManager::init();
+	Slim::Utils::PluginManager->init();
 
 	$log->info("mDNS startAdvertising...");
 	Slim::Networking::mDNS->startAdvertising;
@@ -865,7 +865,7 @@ sub cleanup {
 		Slim::Schema->disconnect;
 	}
 
-	Slim::Utils::PluginManager::shutdownPlugins();
+	Slim::Utils::PluginManager->shutdownPlugins();
 
 	if (Slim::Utils::Prefs::writePending()) {
 		Slim::Utils::Prefs::writePrefs();

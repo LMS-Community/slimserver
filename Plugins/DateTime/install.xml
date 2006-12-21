@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<extension>
+	<id>FE8130FE-84DA-470B-BC73-EBBD50D70E4F</id>
+        <name>PLUGIN_SCREENSAVER_DATETIME</name>
+        <module>Plugins::DateTime::Plugin</module>
+        <version>1.0</version>
+        <description>Date &amp; Time Screensaver</description>
+        <creator>Slim Devices</creator>
+        <email>support@slimdevices.com</email>
+
+	<defaultState>enabled</defaultState>
+        
+        <homepageURL>http://www.slimdevices.com/</homepageURL>
+	<type>2</type><!-- type=extension -->
+
+        <targetApplication>
+  	        <id>SlimServer</id>
+                <minVersion>7.0a</minVersion>
+                <maxVersion>7.0+</maxVersion>
+        </targetApplication>
+
+</extension>

@@ -108,7 +108,12 @@ sub handleFeed {
 	} );
 		
 	# select the proper list of items
-	my @index = split /\./, $stash->{'index'};
+	my @index = ();
+
+	if (defined $stash->{'index'}) {
+
+		@index = split /\./, $stash->{'index'};
+	}
 	
 	if ( scalar @index ) {
 		

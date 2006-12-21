@@ -18,6 +18,8 @@ package Plugins::PreventStandby::Plugin;
 # 1.0 - 2006-04-05 - Initial Release
 
 use strict;
+use Win32::API;
+
 use Slim::Utils::Log;
 use Slim::Utils::OSDetect;
 
@@ -36,10 +38,6 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 # reference to the windows function of same name
 my $SetThreadExecutionState = undef;
-
-sub enabled {
-	return ($::VERSION ge '6.1');
-}
 
 sub getFunctions {
 	return '';
@@ -105,16 +103,9 @@ sub stopTimer {
 
 sub initPlugin {
 
-	if (Slim::Utils::OSDetect::OS() eq 'win') {
+	$SetThreadExecutionState = Win32::API->new('kernel32', 'SetThreadExecutionState', 'N', 'N');
 
-		require Win32::API;
-
-		$SetThreadExecutionState = Win32::API->new('kernel32', 'SetThreadExecutionState', 'N', 'N');
-
-		return startTimer();
-	}
-
-	$log->info("Only available under Windows");
+	return startTimer();
 }
 
 sub shutdownPlugin {

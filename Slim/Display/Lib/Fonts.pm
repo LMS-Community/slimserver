@@ -394,7 +394,6 @@ sub string {
 
 				$bits .= $font->[$ord] . $interspace;
 			}
-
 		}
 	}
 
@@ -421,7 +420,7 @@ sub graphicsDirs {
 	# graphics files allowed in Graphics dir and root directory of plugins
 	return (
 		Slim::Utils::OSDetect::dirsFor('Graphics'), 
-		Slim::Utils::PluginManager::pluginRootDirs(), 
+		Slim::Utils::PluginManager->pluginRootDirs(), 
 	); 
 }
 

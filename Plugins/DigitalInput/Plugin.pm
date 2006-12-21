@@ -129,6 +129,7 @@ sub updateDigitalInput {
 }
 
 sub setMode {
+	my $class  = shift;
 	my $client = shift;
 	my $method = shift;
 
@@ -164,28 +165,14 @@ sub getFunctions {
 # This plugin leaks into the main server, Slim::Web::Pages::Home() needs to
 # call this function to decide to show the Digital Input menu or not.
 sub webPages {
-	my $hasDigitalInput = shift;
+	my $class = shift;
 
-	my %pages = (
-		"digitalinput_list\.(?:htm|xml)" => \&handleWebList,
-		"digitalinput_set\.(?:htm|xml)"  => \&handleSetting,
-	);
+	my $urlBase = 'plugins/DigitalInput';
 
-	my $value = 'plugins/DigitalInput/digitalinput_list.html';
+	Slim::Web::Pages->addPageLinks("browse", { 'PLUGIN_DIGITAL_INPUT' => "$urlBase/list.html" });
 
-	if (grep { /^DigitalInput::Plugin$/ } Slim::Utils::Prefs::getArray('disabledplugins')) {
-
-		$value = undef;
-	}
-
-	if (!$hasDigitalInput) {
-
-		$value = undef;
-	}
-
-	Slim::Web::Pages->addPageLinks("browse", { 'PLUGIN_DIGITAL_INPUT' => $value });
-
-	return \%pages;
+	Slim::Web::HTTP::addPageFunction("$urlBase/list.html", \&handleWebList);
+	Slim::Web::HTTP::addPageFunction("$urlBase/set.html", \&handleSetting);
 }
 
 # Draws the plugin's web page

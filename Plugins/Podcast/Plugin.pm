@@ -49,15 +49,14 @@ our @feeds = ();
 our %feed_names; # cache of feed names
 my $cli_next;
 
-sub enabled {
-	return ($::VERSION ge '6.3');
-}
-
 sub initPlugin {
+	my $class = shift;
 
 	$log->info("Initializing.");
 
 	Plugins::Podcast::Settings->new;
+
+	$class->webPages;
 
 	Slim::Buttons::Common::addMode('PLUGIN.Podcast', getFunctions(), \&setMode);
 
@@ -185,16 +184,15 @@ sub setMode {
 }
 
 sub webPages {
-	my $title = 'PLUGIN_PODCAST';
-	
-	if (grep {$_ eq 'Podcast::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages->addPageLinks('radio', { $title => undef });
-	} else {
-		Slim::Web::Pages->addPageLinks('radio', { $title => 'plugins/Podcast/index.html' });
-	}
+	my $class = shift;
 
-	my %pages = ( 
-		'index.html' => sub {
+	my $title = 'PLUGIN_PODCAST';
+	my $url   = 'plugins/Podcast/index.html';
+	
+	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
+
+	Slim::Web::HTTP::addPageFunction(
+		$url => sub {
 			# Get OPML list of feeds from cache
 			my $cache = Slim::Utils::Cache->new();
 			my $opml = $cache->get( 'podcasts_opml' );
@@ -205,8 +203,6 @@ sub webPages {
 			} );
 		},
 	);
-	
-	return \%pages;
 }
 
 sub cliQuery {

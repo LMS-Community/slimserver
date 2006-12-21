@@ -56,12 +56,6 @@ sub handler {
 		if ($paramRef->{'language'} ne Slim::Utils::Prefs::get('language')) {
 		
 			Slim::Utils::Strings::setLanguage($paramRef->{'language'});
-
-			# FIXME - are all the following is required when plugin strings are in files?
-			#Slim::Utils::PluginManager::clearPlugins();
-			#Slim::Utils::PluginManager::initPlugins();
-			#Slim::Web::Setup::initSetup();
-			#Slim::Music::Import->resetSetupGroups;
 		}
 
 		for my $pref (@prefs) {

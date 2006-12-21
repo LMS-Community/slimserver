@@ -18,12 +18,12 @@ use Slim::Web::Pages;
 sub new {
 	my $class = shift;
 
-	if ($class->can('page') && $class->can('handler')) {
+	if ($class->can('page') && $class->can('handler') && $class->page) {
 
 		Slim::Web::HTTP::addPageFunction($class->page, $class);
 	}
 
-	if ($class->can('page') && $class->can('name')) {
+	if ($class->can('page') && $class->can('name') && $class->page && $class->name) {
 
 		if ($class->needsClient) {
 			Slim::Web::Pages->addPageLinks('playersetup', { $class->name => $class->page });

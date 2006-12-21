@@ -691,7 +691,7 @@ sub subscribe {
 	
 	$subscribers{$subscriberFuncRef} = [$subscriberFuncRef, $requestsRef];
 	
-	$log->debug(sprintf(
+	$log->info(sprintf(
 		"Request from: %s - (%d subscribers)\n",
 		Slim::Utils::PerlRunTime::realNameForCodeRef($subscriberFuncRef),
 		scalar(keys %subscribers)
@@ -704,7 +704,7 @@ sub unsubscribe {
 	
 	delete $subscribers{$subscriberFuncRef};
 
-	$log->debug(sprintf(
+	$log->info(sprintf(
 		"Request from: %s - (%d subscribers)\n",
 		Slim::Utils::PerlRunTime::realNameForCodeRef($subscriberFuncRef),
 		scalar(keys %subscribers)
@@ -717,7 +717,7 @@ sub notifyFromArray {
 	my $client         = shift;     # client, if any, to which the query applies
 	my $requestLineRef = shift;     # reference to an array containing the query verbs
 
-	$log->debug(sprintf("(%s)", join(" ", @{$requestLineRef})));
+	$log->info(sprintf("(%s)", join(" ", @{$requestLineRef})));
 
 	my $request = Slim::Control::Request->new(
 		(blessed($client) ? $client->id() : undef), 

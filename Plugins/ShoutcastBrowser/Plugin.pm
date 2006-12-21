@@ -3,6 +3,7 @@ package Plugins::ShoutcastBrowser::Plugin;
 # $Id$
 
 use strict;
+use base qw(Slim::Plugin::Base);
 
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
@@ -16,13 +17,8 @@ my $SEARCH = 'http://www.squeezenetwork.com/api/opensearch/shoutcast/opensearch.
 
 my $cli_next;
 
-sub enabled {
-	return ($::VERSION ge '6.3');
-}
-
 sub initPlugin {
-
-	Slim::Buttons::Common::addMode('PLUGIN.ShoutcastBrowser', getFunctions(), \&setMode);
+	my $class = shift;
 
 #        |requires Client
 #        |  |is a Query
@@ -33,23 +29,18 @@ sub initPlugin {
         [0, 1, 1, \&cliQuery]);
 	Slim::Control::Request::addDispatch(['shoutcast', 'playlist', '_method' ],
 		[1, 1, 1, \&cliQuery]);
-	$cli_next=Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
+	$cli_next = Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
 		[0, 1, 1, \&cliRadiosQuery]);
+
+	$class->SUPER::initPlugin();
 }
 
 sub getDisplayName {
 	return 'PLUGIN_SHOUTCASTBROWSER_MODULE_NAME';
 }
 
-sub addMenu {
-	return 'RADIO';
-}
-
-sub getFunctions {
-	return {};
-}
-
 sub setMode {
+	my $class  = shift;
 	my $client = shift;
 	my $method = shift;
 
@@ -70,7 +61,7 @@ sub setMode {
 	Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
 	
 	# we'll handle the push in a callback
-	$client->modeParam('handledTransition',1)
+	$client->modeParam('handledTransition', 1)
 }
 
 sub cliQuery {
@@ -94,26 +85,22 @@ sub cliRadiosQuery {
 }
 
 sub webPages {
-	my $title = 'PLUGIN_SHOUTCASTBROWSER_MODULE_NAME';
+	my $class = shift;
 
-	if (grep {$_ eq 'ShoutcastBrowser::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-		Slim::Web::Pages->addPageLinks('radio', { $title => undef });
-	} else {
-		Slim::Web::Pages->addPageLinks('radio', { $title => 'plugins/ShoutcastBrowser/index.html' });
-	}
+	my $title = getDisplayName();
+	my $url   = 'plugins/ShoutcastBrowser/index.html';
 
-	my %pages = ( 
-		'index.html' => sub {
-			Slim::Web::XMLBrowser->handleWebIndex( {
-				feed   => $FEED,
-				title  => $title,
-				search => $SEARCH, 
-				args   => \@_
-			} );
-		},
-	);
-	
-	return \%pages;
+	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
+
+	Slim::Web::HTTP::addPageFunction($url => sub {
+
+		Slim::Web::XMLBrowser->handleWebIndex( {
+			feed   => $FEED,
+			title  => $title,
+			search => $SEARCH, 
+			args   => \@_
+		} );
+	});
 }
 
 1;

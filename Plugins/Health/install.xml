@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<extension>
+	<id>F6700F72-3D53-4C81-8E3A-69CC4DE00B6B</id>
+        <name>PLUGIN_HEALTH</name>
+        <module>Plugins::Health::Plugin</module>
+        <version>1.0</version>
+        <description>Health Testing</description>
+        <creator>Triode</creator>
+        <email>triode1@btinternet.com</email>
+
+	<defaultState>enabled</defaultState>
+        
+        <homepageURL>http://www.slimdevices.com/</homepageURL>
+	<type>2</type><!-- type=extension -->
+
+        <targetApplication>
+  	        <id>SlimServer</id>
+                <minVersion>7.0a</minVersion>
+                <maxVersion>7.0+</maxVersion>
+        </targetApplication>
+
+</extension>

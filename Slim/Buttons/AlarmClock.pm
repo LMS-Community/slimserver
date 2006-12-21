@@ -247,8 +247,9 @@ sub init {
 }
 
 sub randomEnabled {
-	return (grep {$_ eq 'RandomPlay::Plugin'} keys %{Slim::Utils::PluginManager::installedPlugins()}) 
-				&& !(grep {$_ eq 'RandomPlay::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins'));
+	return 0;
+#	return (grep {$_ eq 'RandomPlay::Plugin'} keys %{Slim::Utils::PluginManager->installedPlugins()}) 
+#		&& !(grep {$_ eq 'RandomPlay::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins'));
 }
 
 # the routines
