@@ -67,6 +67,11 @@ sub getFunctions {
 	return \%functions;
 }
 
+sub displayName {
+	my $class = shift;
+	return Slim::Utils::Strings::string('PLUGIN_HEALTH_NETTEST');
+}
+
 sub setMode {
 	my $class  = shift;
 	my $client = shift;
