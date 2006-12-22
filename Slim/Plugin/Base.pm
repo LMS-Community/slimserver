@@ -23,7 +23,9 @@ sub initPlugin {
 	# can be called as class method.
 	if ($class->can('setMode')) {
 
-	        Slim::Buttons::Common::addMode($class, $class->getFunctions, sub { $class->setMode(@_) });
+		my $exitMode = $class->can('exitMode') ? sub { $class->exitMode(@_) } : undef;
+
+	        Slim::Buttons::Common::addMode($class, $class->getFunctions, sub { $class->setMode(@_) }, $exitMode);
 	}
 
         my %params = (

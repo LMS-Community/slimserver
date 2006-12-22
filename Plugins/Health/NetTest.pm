@@ -12,16 +12,16 @@
 # modify it under the terms of the GNU General Public License,
 # version 2.
 
-use strict;
-
 package Plugins::Health::NetTest;
 
-our @testRates = ( 64, 128, 192, 256, 320, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000);
+use base qw(Slim::Plugin::Base);
+use strict;
+
+our @testRates = ( 64, 128, 192, 256, 320, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000);
 
 our %functions = (
 	'left' => sub  {
 		my $client = shift;
-		exitMode($client);
 		Slim::Buttons::Common::popModeRight($client);
 	},
 
@@ -60,13 +60,19 @@ our %functions = (
 
 );
 
+sub getFunctions {
+	my $class = shift;
+	return \%functions;
+}
+
 sub setMode {
+	my $class  = shift;
 	my $client = shift;
 
 	if (!$client->display->isa("Slim::Display::Graphics")) {
 		$client->lines(\&errorLines);
 		return;
-	} 
+	}
 
 	if ($client->isa('Slim::Player::Transporter')) {
 		$client->modeParam('listLen', scalar(@testRates));
@@ -101,12 +107,13 @@ sub setMode {
 }
 
 sub exitMode {
+	my $class = shift;
 	my $client = shift;
 
 	Slim::Utils::Timers::killTimers($client, \&updateDisplay);
 	Slim::Utils::Timers::killHighTimers($client, \&sendDisplay);
 	Slim::Utils::Timers::killTimers($client, \&startDisplay);
-	
+
 	$client->modeParam('Health.NetTest', undef);
 	$client->updateMode(0); # unblock screen updates
 }
@@ -154,8 +161,8 @@ sub updateDisplay {
 	my $client = shift;
 	my $params = shift;
 
-	if (Slim::Buttons::Common::mode($client) ne 'PLUGIN.Health::Plugin') {
-		exitMode($client);
+	if (Slim::Buttons::Common::mode($client) ne 'Plugins::Health::Plugin') {
+		exitMode(undef, $client);
 		return;
 	}
 
@@ -171,8 +178,8 @@ sub sendDisplay {
 	my $client = shift;
 	my $params = shift;
 
-	if (Slim::Buttons::Common::mode($client) ne 'PLUGIN.Health::Plugin') {
-		exitMode($client);
+	if (Slim::Buttons::Common::mode($client) ne 'Plugins::Health::Plugin') {
+		exitMode(undef, $client);
 		return;
 	}
 
@@ -195,7 +202,7 @@ sub sendDisplay {
 	} else {
 		$params->{'refresh'} += 0.5;
 	}
-	
+
 	Slim::Utils::Timers::setHighTimer($client, $params->{'refresh'}, \&sendDisplay, $params);
 }
 
@@ -230,9 +237,3 @@ sub errorLines {
 
 1;
 
-__END__
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:
