@@ -81,6 +81,11 @@ sub initPlugin {
 #        C  Q  T  F
 	Slim::Control::Request::addDispatch(['randomplay', '_mode'],
 	[1, 0, 0, \&cliRequest]);
+	
+	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_TRACK','track');
+	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_ALBUM','album');
+	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_CONTRIBUTOR','artist');
+
 }
 
 # Find tracks matching parameters and add them to the playlist

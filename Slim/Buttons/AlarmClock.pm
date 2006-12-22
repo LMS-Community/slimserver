@@ -99,19 +99,9 @@ sub init {
 	
 	setTimer();
 
-	# check if Random plugin is isntalled and not disabled.  create items for the special random playlists
-	if (randomEnabled()) {
-		
-			%specialPlaylists = (
-				'PLUGIN_RANDOM_TRACK'       => 'track',
-				'PLUGIN_RANDOM_ALBUM'       => 'album',
-				'PLUGIN_RANDOM_CONTRIBUTOR' => 'artist',
-		);
-	}
-	
 	# add option for the current playlist
 	$specialPlaylists{'CURRENT_PLAYLIST'} = 0;
-
+	
 	%menuParams = (
 
 		'alarm' => {
@@ -246,10 +236,12 @@ sub init {
 	);
 }
 
-sub randomEnabled {
-	return 0;
-#	return (grep {$_ eq 'RandomPlay::Plugin'} keys %{Slim::Utils::PluginManager->installedPlugins()}) 
-#		&& !(grep {$_ eq 'RandomPlay::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins'));
+sub addSpecialPlaylist {
+	my $class = shift;
+	my $name  = shift;
+	my $value = shift;
+
+	$specialPlaylists{$name} = $value;
 }
 
 # the routines
@@ -490,7 +482,7 @@ sub checkAlarms {
 				my $playlist = $client->prefGet("alarmplaylist", $day);
 				
 				# if a random playlist option is chosen, make sure that the plugin is installed and enabled.
-				if ($specialPlaylists{$playlist} && randomEnabled()) {
+				if ($specialPlaylists{$playlist}) {
 					
 					Plugins::RandomPlay::Plugin::playRandom($client,$specialPlaylists{$playlist});
 					
