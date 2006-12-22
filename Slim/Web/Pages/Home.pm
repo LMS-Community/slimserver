@@ -99,7 +99,7 @@ sub home {
 	# More leakage from the DigitalInput 'plugin'
 	#
 	# If our current player has digital inputs, show the menu.
-	if ($client->hasDigitalIn) {
+	if ($client && $client->hasDigitalIn) {
 
 		Plugins::DigitalInput::Plugin->webPages;
 	}
