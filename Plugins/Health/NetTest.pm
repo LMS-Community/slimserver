@@ -15,6 +15,8 @@
 package Plugins::Health::NetTest;
 
 use base qw(Slim::Plugin::Base);
+use Class::C3;
+
 use strict;
 
 our @testRates = ( 64, 128, 192, 256, 320, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000);

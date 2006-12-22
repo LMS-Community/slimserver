@@ -14,5 +14,8 @@ package Plugins::Health::Plugin;
 # Plugin is implemented in two sub plugins:
 
 use base qw(Plugins::Health::NetTest Plugins::Health::PerfMon);
+use Class::C3;
+
+Class::C3::initialize();
 
 1;

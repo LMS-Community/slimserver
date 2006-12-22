@@ -14,6 +14,8 @@
 package Plugins::Health::PerfMon;
 
 use base qw(Slim::Plugin::Base);
+use Class::C3;
+
 use strict;
 
 use Slim::Utils::Misc;
