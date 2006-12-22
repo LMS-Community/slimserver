@@ -1867,7 +1867,7 @@ sub _postCheckAttributes {
 
 			$albumObj = $a;
 
-			$log->debug(sprintf("-- Same album '$album' (id: [%d]) than previous track", $albumObj->id));
+			$log->debug(sprintf("-- Same album '%s' (id: [%d]) as previous track", $album, $albumObj->id));
 
 		} else {
 
@@ -1970,7 +1970,7 @@ sub _postCheckAttributes {
 
 				$albumObj = $self->resultset('Album')->create({ 'title' => $album });
 
-				$log->debug(sprintf("-- Created album '$album' (id: [%d])", $albumObj->id));
+				$log->debug(sprintf("-- Created album '%s' (id: [%d])", $album, $albumObj->id));
 			}
 		}
 	}
