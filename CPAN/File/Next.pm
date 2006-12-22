@@ -9,11 +9,11 @@ File::Next - File-finding iterator
 
 =head1 VERSION
 
-Version 0.30
+Version 0.36
 
 =cut
 
-our $VERSION = '0.30';
+our $VERSION = '0.36';
 
 =head1 SYNOPSIS
 
@@ -49,6 +49,11 @@ will walk through a directory tree.  The simplest use case is:
     /tmp/baz/wango/tango/purple.txt
 
 Note that only files are returned by C<files()>'s iterator.
+Directories are ignored.
+
+In list context, the iterator returns a list containing I<$dir>,
+I<$file> and I<$fullpath>, where I<$fullpath> is what would get
+returned in scalar context.
 
 The first parameter to any of the iterator factory functions may
 be a hashref of parameters.
@@ -123,8 +128,8 @@ C<< sort_files => 1 >>.
 If you want a special sort order, pass in a sort function like
 C<< sort_files => sub { $a->[1] cmp $b->[1] } >>.
 Note that the parms passed in to the sub are arrayrefs, where $a->[0]
-is the directory name and $a->[1] is the file name.  Typically
-you're going to be sorting on $a->[1].
+is the directory name, $a->[1] is the file name and $a->[2] is the
+full path.  Typically you're going to be sorting on $a->[2].
 
 =head1 FUNCTIONS
 
@@ -162,12 +167,27 @@ use File::Spec ();
 our $name; # name of the current file
 our $dir;  # dir of the current file
 
-my %files_defaults = (
-    file_filter => sub{1},
-    descend_filter => sub {1},
-    error_handler => sub { CORE::die @_ },
-    sort_files => undef,
-);
+our %files_defaults;
+our %skip_dirs;
+
+BEGIN {
+    %files_defaults = (
+        file_filter => undef,
+        descend_filter => undef,
+        error_handler => sub { CORE::die @_ },
+        sort_files => undef,
+    );
+    %skip_dirs = map {($_,1)} (File::Spec->curdir, File::Spec->updir);
+}
+
+=for internal
+
+The C<@queue> that gets passed around is an array that has three
+elements for each of the entries in the queue: $dir, $file and
+$fullpath.  Items must be pushed and popped off the queue three at
+a time (spliced, really).
+
+=cut
 
 sub files {
     my $passed_parms = ref $_[0] eq 'HASH' ? {%{+shift}} : {}; # copy parm hash
@@ -185,56 +205,35 @@ sub files {
 
     my @queue;
     for ( @_ ) {
-        my $start = _reslash( $_ );
+        my $start = reslash( $_ );
         if (-d $start) {
-            push @queue, [$start,undef];
+            push @queue, ($start,undef,$start);
         }
         else {
-            push @queue, [undef,$start];
+            push @queue, (undef,$start,$start);
         }
     }
 
     return sub {
         while (@queue) {
-            my ($dir,$file) = @{shift @queue};
+            my ($dir,$file,$fullpath) = splice( @queue, 0, 3 );
 
-            my $fullpath =
-                defined $dir
-                    ? defined $file
-                        ? File::Spec->catfile( $dir, $file )
-                        : $dir
-                    : $file;
-
-            if (-d $fullpath) {
-                unshift( @queue, _candidate_files( $parms, $fullpath ) );
-            }
-            elsif (-f $fullpath) {
-                local $_ = $file;
-                local $File::Next::dir = $dir;
-                local $File::Next::name = $fullpath;
-                if ( $parms->{file_filter}->() ) {
-                    if (wantarray) {
-                        return ($dir,$file);
-                    }
-                    else {
-                        return $fullpath;
-                    }
+            if (-f $fullpath) {
+                if ( $parms->{file_filter} ) {
+                    local $_ = $file;
+                    local $File::Next::dir = $dir;
+                    local $File::Next::name = $fullpath;
+                    next if not $parms->{file_filter}->();
                 }
+                return wantarray ? ($dir,$file,$fullpath) : $fullpath;
+            }
+            elsif (-d $fullpath) {
+                unshift( @queue, _candidate_files( $parms, $fullpath ) );
             }
         } # while
 
         return;
     }; # iterator
-}
-
-sub _reslash {
-    my $path = shift;
-
-    my @parts = split( /\//, $path );
-
-    return $path if @parts < 2;
-
-    return File::Spec->catfile( @parts );
 }
 
 =for private _candidate_files( $parms, $dir )
@@ -248,8 +247,6 @@ I<$parms> is the hashref of parms passed into File::Next constructor.
 
 =cut
 
-my %ups;
-
 sub _candidate_files {
     my $parms = shift;
     my $dir = shift;
@@ -260,21 +257,27 @@ sub _candidate_files {
         return;
     }
 
-    %ups or %ups = map {($_,1)} (File::Spec->curdir, File::Spec->updir);
     my @newfiles;
     while ( my $file = readdir $dh ) {
-        next if $ups{$file};
+        next if $skip_dirs{$file};
 
-        local $File::Next::dir = File::Spec->catdir( $dir, $file );
-        if ( -d $File::Next::dir ) {
+        # Only do directory checking if we have a descend_filter
+        my $fullpath = File::Spec->catdir( $dir, $file );
+        if ( $parms->{descend_filter} && -d $fullpath ) {
+            local $File::Next::dir = $fullpath;
             local $_ = $file;
-            next unless $parms->{descend_filter}->();
+            next if not $parms->{descend_filter}->();
         }
-        push( @newfiles, [$dir, $file] );
+        push( @newfiles, $dir, $file, $fullpath );
     }
     if ( my $sub = $parms->{sort_files} ) {
         $sub = \&sort_standard unless ref($sub) eq 'CODE';
-        @newfiles = sort $sub @newfiles;
+
+        my @triplets;
+        while ( @newfiles ) {
+            push @triplets, [splice( @newfiles, 0, 3 )];
+        }
+        @newfiles = map { @{$_} } sort $sub @triplets;
     }
 
     return @newfiles;
@@ -282,6 +285,27 @@ sub _candidate_files {
 
 sub sort_standard($$)   { return $_[0]->[1] cmp $_[1]->[1] }; ## no critic (ProhibitSubroutinePrototypes)
 sub sort_reverse($$)    { return $_[1]->[1] cmp $_[0]->[1] }; ## no critic (ProhibitSubroutinePrototypes)
+
+
+=head2 reslash( $path )
+
+Takes a path with all forward slashes and rebuilds it with whatever
+is appropriate for the platform.  For example 'foo/bar/bat' will
+become 'foo\bar\bat' on Windows.
+
+This is really just a convenience function.
+
+=cut
+
+sub reslash {
+    my $path = shift;
+
+    my @parts = split( /\//, $path );
+
+    return $path if @parts < 2;
+
+    return File::Spec->catfile( @parts );
+}
 
 =head1 AUTHOR
 
