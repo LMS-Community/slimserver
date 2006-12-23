@@ -92,7 +92,7 @@ sub launchScan {
 	}
 
 	# Add in the various importer flags
-	for my $importer (qw(itunes musicmagic moodlogic)) {
+	for my $importer (qw(itunes musicmagic)) {
 
 		if (Slim::Utils::Prefs::get($importer)) {
 
@@ -568,8 +568,6 @@ L<Slim::Music::PlaylistFolderScan>
 L<Plugins::iTunes::Importer>
 
 L<Plugins::MusicMagic::Importer>
-
-L<Plugins::MoodLogic::Importer>
 
 L<Proc::Background>
 

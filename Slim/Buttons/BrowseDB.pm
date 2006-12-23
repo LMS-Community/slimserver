@@ -622,7 +622,8 @@ sub browsedbOverlay {
 		}
 
 	} else {
-		# Music Magic is everywhere, MoodLogic doesn't exist on albums
+
+		# Music Magic is everywhere
 		my $Imports = Slim::Music::Import->importers;
 
 		for my $import (keys %{$Imports}) {

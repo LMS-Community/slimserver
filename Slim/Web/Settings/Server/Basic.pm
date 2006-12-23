@@ -25,7 +25,7 @@ sub handler {
 
 	my @prefs = qw(language audiodir playlistdir rescantype rescan);
 
-	for my $importer (qw(iTunes MusicMagic MoodLogic)) {
+	for my $importer (qw(iTunes MusicMagic)) {
 
 		if (exists $Slim::Music::Import::Importers{"Plugins::".$importer."::Plugin"}) {
 			push @prefs, lc($importer);

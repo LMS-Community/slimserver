@@ -202,10 +202,10 @@ sub browsedb {
 		}
 	}
 
-	# Bug 3311, disable editing for iTunes, MoodLogic, and MusicMagic playlists
+	# Bug 3311, disable editing for iTunes and MusicMagic playlists
 	if (ref $params->{'playlist'}) {
 
-		if ($params->{'playlist'}->content_type =~ /(?:itu|mlp|mmp)/) {
+		if ($params->{'playlist'}->content_type =~ /(?:itu|mmp)/) {
 
 			$params->{'noEdit'} = 1;
 		}

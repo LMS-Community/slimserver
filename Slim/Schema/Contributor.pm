@@ -26,8 +26,6 @@ our %contributorToRoleMap = (
 		id
 		name
 		namesort
-		moodlogic_id
-		moodlogic_mixable
 		musicmagic_mixable
 		namesearch
 		musicbrainz_id

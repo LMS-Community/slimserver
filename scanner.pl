@@ -45,7 +45,7 @@ use Slim::Utils::Strings qw(string);
 
 sub main {
 
-	our ($rescan, $playlists, $wipe, $itunes, $musicmagic, $moodlogic, $force, $cleanup, $prefsFile, $progress, $priority);
+	our ($rescan, $playlists, $wipe, $itunes, $musicmagic, $force, $cleanup, $prefsFile, $progress, $priority);
 	our ($quiet, $logfile, $logdir, $logconf, $debug);
 
 	our $LogTimestamp = 1;
@@ -58,7 +58,6 @@ sub main {
 		'playlists'    => \$playlists,
 		'itunes'       => \$itunes,
 		'musicmagic'   => \$musicmagic,
-		'moodlogic'    => \$moodlogic,
 		'prefsfile=s'  => \$prefsFile,
 		'progress'     => \$progress,
 		'priority=i'   => \$priority,
@@ -70,7 +69,7 @@ sub main {
 		'LogTimestamp!'=> \$LogTimestamp,
 	);
 
-	if (!$rescan && !$wipe && !$playlists && !$musicmagic && !$moodlogic && !$itunes && !scalar @ARGV) {
+	if (!$rescan && !$wipe && !$playlists && !$musicmagic && !$itunes && !scalar @ARGV) {
 		usage();
 		exit;
 	}
@@ -124,10 +123,6 @@ sub main {
 
 	if ($musicmagic) {
 		initClass('Plugins::MusicMagic::Importer');
-	}
-
-	if ($moodlogic) {
-		initClass('Plugins::MoodLogic::Importer');
 	}
 
 	#checkDataSource();
@@ -250,7 +245,7 @@ sub initializeFrameworks {
 
 sub usage {
 	print <<EOF;
-Usage: $0 [debug options] [--rescan] [--wipe] [--itunes] [--musicmagic] [--moodlogic] <path or URL>
+Usage: $0 [debug options] [--rescan] [--wipe] [--itunes] [--musicmagic] <path or URL>
 
 Command line options:
 
@@ -261,7 +256,6 @@ Command line options:
 	--playlists    Only scan files in your playlistdir.
 	--itunes       Run the iTunes Importer.
 	--musicmagic   Run the MusicMagic/MusicIP Importer.
-	--moodlogic    Run the MoodLogic Importer.
 	--progress     Show a progress bar of the scan.
 	--prefsfile    Specify an alternate prefs file.
 	--priority     set process priority from -20 (high) to 20 (low)

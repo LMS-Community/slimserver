@@ -1950,8 +1950,6 @@ sub _songData {
 		  'm' => ['bpm',              'bpm'],              #bpm
 		  'v' => ['tagversion',       'tagversion'],       #tagversion
 		  'z' => ['drm',              'drm'],              #drm
-		#                                                  #moodlogic_id 
-		#                                                  #moodlogic_mixable
 		#                                                  #musicmagic_mixable
 		#                                                  #musicbrainz_id 
 		#                                                  #playcount 

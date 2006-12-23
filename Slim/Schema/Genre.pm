@@ -18,8 +18,6 @@ use Slim::Utils::Misc;
 		name
 		namesort
 		namesearch
-		moodlogic_id
-		moodlogic_mixable
 		musicmagic_mixable
 	));
 

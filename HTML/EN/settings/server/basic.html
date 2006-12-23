@@ -47,7 +47,7 @@
 		<p><input name="rescan" type="submit" class="stdclick" value="[% "SETUP_RESCAN_BUTTON" | string %]"></p>
 	</div>
 
-	[% IF prefs.exists('itunes') || prefs.exists('musicmagic') || prefs.exists('moodlogic') %]
+	[% IF prefs.exists('itunes') || prefs.exists('musicmagic') %]
 	<div class="settingSection">
 		
 		[% IF prefs.exists('itunes') %]
@@ -73,19 +73,6 @@
 		
 		</select>
 		[% END %]
-		
-		[% IF prefs.exists('moodlogic') %]
-		<div class="prefHead">[% "MOODLOGIC" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_MOODLOGIC_DESC" | string %]</div>
-
-		<select class="stdedit" name="moodlogic" id="moodlogic">
-
-			<option [% IF NOT prefs.moodlogic %]selected [% END %]value="0">[% 'DONT_USE_MOODLOGIC' | getstring %]</option>
-			<option [% IF prefs.moodlogic %]selected [% END %]value="1">[% 'USE_MOODLOGIC' | getstring %]</option>
-		
-		</select>
-		[% END %]
-	
 	</div>
 	[% END %]
 	

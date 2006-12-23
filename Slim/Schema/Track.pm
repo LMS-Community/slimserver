@@ -17,7 +17,7 @@ our @allColumns = (qw(
 	id url content_type title titlesort titlesearch album tracknum
 	timestamp filesize disc remote audio audio_size audio_offset year secs
 	cover vbr_scale bitrate samplerate samplesize channels block_alignment endian
-	bpm tagversion drm moodlogic_id moodlogic_mixable musicmagic_mixable
+	bpm tagversion drm musicmagic_mixable
 	musicbrainz_id playcount lastplayed lossless lyrics rating replay_gain replay_peak
 ));
 
