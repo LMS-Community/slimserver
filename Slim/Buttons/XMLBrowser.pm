@@ -887,7 +887,12 @@ sub _cliQuery_done {
 	}
 
 	# select the proper list of items
-	my @index = split /\./, $request->getParam('item_id');
+	my @index = ();
+
+	if (my $item_id = $request->getParam('item_id')) {
+
+		@index = split /\./, $item_id;
+	}
 	
 	my $subFeed = $feed;
 	my @crumbIndex = ();
