@@ -132,8 +132,8 @@ sub loadModules {
 
 	# Try and load the modules - some will fail if we don't include the
 	# binaries for that version/architecture combo
-	my @required_failed = tryModuleLoad(@$required_modules);
-	my @optional_failed = tryModuleLoad(@$optional_modules);
+	my @required_failed = tryModuleLoad(@$required_modules, 'nowarn');
+	my @optional_failed = tryModuleLoad(@$optional_modules, 'nowarn');
 
 	if ($d_startup) {
 		print "The following modules are loaded after the first attempt:\n";
@@ -152,8 +152,8 @@ sub loadModules {
 	# Remove our paths so we can try loading the failed modules from the default system @INC
 	splice(@INC, 0, scalar @SlimINC);
 
-	my @required_really_failed = tryModuleLoad(@required_failed);
-	my @optional_really_failed = tryModuleLoad(@optional_failed);
+	my @required_really_failed = tryModuleLoad(@required_failed, 'nowarn');
+	my @optional_really_failed = tryModuleLoad(@optional_failed, 'nowarn');
 
 	if ($d_startup) {
 		print "The following modules are loaded after the second attempt:\n";
@@ -217,6 +217,9 @@ sub sigCHLDCallback {
 sub tryModuleLoad {
 	my @modules = @_;
 
+	# if called from loadModules don't warn for modules which fail to load
+	my $warnOnFail = (@modules && $modules[$#modules] eq 'nowarn' && pop @modules) ? 0 : 1;
+
 	my @failed  = ();
 
 	my (%oldINC, @newModules);
@@ -240,9 +243,9 @@ sub tryModuleLoad {
 
 		if ($@) {
 
-			if ($d_startup || $module =~ /^Slim::Display::/ || ($::d_plugins && $module =~ /^Plugins::/)) {
+			if ($d_startup || $warnOnFail) {
 
-				warn "Module [$module] failed to load: [$@]\n";
+				print STDERR "Module [$module] failed to load:\n$@\n";
 			}
 
 			# NB: More FC5 / SELinux - in case the above chcon doesn't work.
