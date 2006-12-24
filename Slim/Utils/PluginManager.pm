@@ -78,7 +78,7 @@ sub init {
 	# or if we've been run before.
 	if (!-r $class->pluginCacheFile) {
 
-		$log->info("No plugin cache file exists - finding shipped pluggins.");
+		$log->info("No plugin cache file exists - finding shipped plugins.");
 
 		$class->findInstalledPlugins;
 		$class->writePluginCache;
@@ -491,7 +491,7 @@ sub enabledPlugins {
 	return @found;
 }
 
-sub enabledPlugin {
+sub isEnabled {
 	my $class  = shift;
 	my $plugin = shift;
 
