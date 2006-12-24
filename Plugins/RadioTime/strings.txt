@@ -5,6 +5,10 @@
 PLUGIN_RADIOTIME_MODULE_NAME
 	EN	RadioTime
 
+PLUGIN_RADIOTIME_MODULE_NAME_DESC
+	DE	RadioTime - Zugang zu lokalen Internet Radio Stationen
+	EN	RadioTime - Local Internet Radio
+
 PLUGIN_RADIOTIME_MODULE_TITLE
 	EN	radiotime
 	

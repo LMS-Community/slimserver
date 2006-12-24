@@ -6,7 +6,7 @@
         <module>Plugins::Rhapsody::Plugin</module>
         <playerMenu>RADIO</playerMenu>
         <version>1.0</version>
-        <description>Real Rhapsody</description>
+        <description>PLUGIN_RHAPSODY_DESC</description>
         <creator>Slim Devices</creator>
         <email>support@slimdevices.com</email>
 

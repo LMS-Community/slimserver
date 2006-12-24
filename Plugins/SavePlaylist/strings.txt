@@ -16,6 +16,10 @@ SAVE_PLAYLIST
 	SV	Lagra låtlista
 	ZH_CN	保存播放表
 
+SAVE_PLAYLIST_DESC
+	DE	Wiedergabelisten über das Player-Interface abspeichern
+	EN	Save Playlists from the Player UI
+
 PLAYLIST_OVERWRITE
 	DE	RECHTS drücken zum Überschreiben der existierenden Datei:
 	EN	Go right to replace existing playlist:

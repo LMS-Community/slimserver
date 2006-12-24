@@ -5,7 +5,7 @@
         <name>PLUGIN_RPC</name>
         <module>Plugins::RPC::Plugin</module>
         <version>1.0</version>
-        <description>JSON RPC for the ExBrowse3 Skin</description>
+        <description>PLUGIN_RPC_DESC</description>
         <creator>Slim Devices</creator>
 	<email>support@slimdevices.com</email>
 

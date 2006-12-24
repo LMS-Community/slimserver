@@ -13,6 +13,10 @@ PLUGIN_RESCAN_MUSIC_LIBRARY
 	IT	Rianalisi della libreria musicale
 	NL	Opnieuw scannen muziekcollectie
 
+PLUGIN_RESCAN_MUSIC_LIBRARY_DESC
+	DE	Automatisches Durchsuchen der Musiksammlung
+	EN	Automatic Library Scanning
+
 PLUGIN_RESCAN_RESCANNING
 	CS	Server právě aktualizuje informace z hudebního archivu
 	DE	Server durchsucht Verzeichnisse...

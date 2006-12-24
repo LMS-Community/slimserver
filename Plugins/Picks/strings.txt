@@ -10,6 +10,10 @@ PLUGIN_PICKS_MODULE_NAME
 	HE	המומלצים
 	NL	De beste van Slim Devices
 
+PLUGIN_PICKS_MODULE_NAME_DESC
+	DE	Slim Devices Auswahl von Internet Radio Stationen
+	EN	Slim Devices Picks - Best of Internet Radio
+
 PLUGIN_PICKS_LOADING_PICKS
 	DE	Lade Slim Devices Picks...
 	EN	Loading Slim Devices Picks...

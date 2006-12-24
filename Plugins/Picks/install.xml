@@ -6,7 +6,7 @@
         <module>Plugins::Picks::Plugin</module>
         <playerMenu>RADIO</playerMenu>
         <version>1.0</version>
-        <description>Slim Devices Picks - Best of Internet Radio</description>
+        <description>PLUGIN_PICKS_MODULE_NAME_DESC</description>
         <creator>Slim Devices</creator>
         <email>support@slimdevices.com</email>
 

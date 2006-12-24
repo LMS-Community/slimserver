@@ -5,6 +5,10 @@
 MUSICMAGIC
 	EN	MusicIP
 
+MUSICMAGIC_DESC
+	DE	MusicIP Integration
+	EN	MusicIP integration
+
 SETUP_MUSICMAGICPLAYLISTFORMAT
 	DE	MusicIP Wiedergabelisten Format
 	EN	MusicIP Playlist Format

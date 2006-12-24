@@ -4,3 +4,7 @@
 
 PLUGIN_RS232_NAME
 	EN	RS232
+
+PLUGIN_RS232_NAME_DESC
+	DE	RS232 Unterstützung für den Transporter
+	EN	RS232 access for Transporter

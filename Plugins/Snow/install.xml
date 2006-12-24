@@ -5,7 +5,7 @@
         <name>PLUGIN_SCREENSAVER_SNOW</name>
         <module>Plugins::Snow::Plugin</module>
         <version>1.0</version>
-        <description>Snow ScreenSaver</description>
+        <description>PLUGIN_SCREENSAVER_SNOW</description>
         <creator>Slim Devices</creator>
 	<email>support@slimdevices.com</email>
 

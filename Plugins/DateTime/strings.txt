@@ -12,6 +12,10 @@ PLUGIN_SCREENSAVER_DATETIME
 	IT	Data e ora
 	NL	Datum en tijd
 
+PLUGIN_SCREENSAVER_DATETIME_DESC
+	DE	Bildschirmschoner zur Anzeige von Datum und Zeit 
+	EN	Date and Time Screensaver
+
 SETUP_GROUP_DATETIME
 	DE	Datum/Zeit Bildschirmschoner Einstellungen
 	EN	Date and Time Screensaver Settings

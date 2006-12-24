@@ -8,6 +8,10 @@ PLUGIN_SHOUTCASTBROWSER_MODULE_NAME
 	HE	ShoutCast
 	NL	SHOUTcast Internet radio
 
+PLUGIN_SHOUTCASTBROWSER_DESC
+	DE	Zugriff auf SHOUTcast Internet Radio Stationen
+	EN	Access to SHOUTcast Internet Radio.
+
 PLUGIN_SHOUTCASTBROWSER_CONNECTING
 	DE	Verbinde mit SHOUTcast...
 	EN	Connecting to SHOUTcast...

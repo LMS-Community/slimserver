@@ -5,7 +5,7 @@
         <name>MUSICMAGIC</name>
         <module>Plugins::MusicMagic::Plugin</module>
         <version>1.0</version>
-        <description>MusicIP Mixer</description>
+        <description>MUSICMAGIC_DESC</description>
         <creator>Slim Devices</creator>
         <email>support@slimdevices.com</email>
 

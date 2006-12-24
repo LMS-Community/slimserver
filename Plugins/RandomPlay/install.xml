@@ -5,7 +5,7 @@
         <name>PLUGIN_RANDOM</name>
         <module>Plugins::RandomPlay::Plugin</module>
         <version>1.0</version>
-        <description>Jukebox For your Music</description>
+        <description>PLUGIN_RANDOM_DESC</description>
         <creator>Slim Devices</creator>
         <email>support@slimdevices.com</email>
 

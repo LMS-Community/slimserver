@@ -11,6 +11,10 @@ PLUGIN_RANDOM
 	HE	מיקס אקראי
 	NL	Willekeurige mix
 
+PLUGIN_RANDOM_DESC
+	DE	Zufällige Wiedergabe ihrer Musiksammlung
+	EN	Jukebox For your Music
+
 PLUGIN_RANDOM_DISABLED
 	DE	Zufalls Mix angehalten
 	EN	Random Mix Stopped

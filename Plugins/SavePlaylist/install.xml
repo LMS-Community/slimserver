@@ -5,7 +5,7 @@
         <name>SAVE_PLAYLIST</name>
         <module>Plugins::SavePlaylist::Plugin</module>
         <version>1.0</version>
-        <description>Save Playlists from the Player UI</description>
+        <description>SAVE_PLAYLIST_DESC</description>
         <creator>Slim Devices</creator>
         <email>support@slimdevices.com</email>
 

@@ -5,7 +5,7 @@
         <name>PLUGIN_PODCAST</name>
         <module>Plugins::Podcast::Plugin</module>
         <version>1.0</version>
-        <description>Access to Podcasts</description>
+        <description>PLUGIN_PODCAST_DESC</description>
         <creator>Slim Devices</creator>
         <email>support@slimdevices.com</email>
 

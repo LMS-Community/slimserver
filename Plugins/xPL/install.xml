@@ -5,7 +5,7 @@
         <name>PLUGIN_XPL</name>
         <module>Plugins::xPL::Plugin</module>
         <version>1.0</version>
-        <description>xPL Interface</description>
+        <description>PLUGIN_XPL</description>
         <creator>Slim Devices</creator>
 	<email>support@slimdevices.com</email>
 

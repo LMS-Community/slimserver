@@ -5,6 +5,9 @@
 PLUGIN_RHAPSODY_MODULE_NAME
 	EN	Real Rhapsody
 
+PLUGIN_RHAPSODY_DESC
+	EN	Real Rhapsody
+
 RHAPSODY
 	EN	Rhapsody
 

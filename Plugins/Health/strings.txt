@@ -11,6 +11,10 @@ PLUGIN_HEALTH
 	HE	תקינות השרת
 	NL	Server- en netwerktoestand
 
+PLUGIN_HEALTH_DESC
+	DE	Server- und Netzwerk-Zustand testen und überwachen
+	EN	Monitor Server & Network Health
+
 PLUGIN_HEALTH_PERF_ENABLE
 	DE	Leistungsüberwachung aktivieren
 	EN	Enable Performance Monitoring

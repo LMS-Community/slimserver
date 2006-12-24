@@ -3,7 +3,11 @@
 # $Id$
 
 PLUGIN_PREVENTSTANDBY
-	DE	Standby Modus während der Wiedergabe verhindern (nur in Windows)
+	DE	Standby Modus während der Wiedergabe verhindern
 	EN	Windows: Prevent System Standby While Playing
 	FR	Windows : empêcher la mise en veille du système lors de la lecture
 	NL	Windows: Voorkom systeem slaapstand gedurende het afspelen
+
+PLUGIN_PREVENTSTANDBY_DESC
+	DE	Standby Modus während der Musik-Wiedergabe verhindern (nur unter Windows verfügbar)
+	EN	Prevent Windows machines from going into Standby mode.

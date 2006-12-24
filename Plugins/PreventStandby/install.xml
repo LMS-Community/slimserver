@@ -5,7 +5,7 @@
         <name>PLUGIN_PREVENTSTANDBY</name>
         <module>Plugins::PreventStandby::Plugin</module>
         <version>1.0</version>
-        <description>Prevent Windows machines from going into Standby mode.</description>
+        <description>PLUGIN_PREVENTSTANDBY_DESC</description>
         <creator>Julian Neil, Slim Devices</creator>
 	<email>support@slimdevices.com</email>
 

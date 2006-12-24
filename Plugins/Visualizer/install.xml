@@ -5,7 +5,7 @@
         <name>PLUGIN_SCREENSAVER_VISUALIZER</name>
         <module>Plugins::Visualizer::Plugin</module>
         <version>1.0</version>
-        <description>Visualizer ScreenSaver</description>
+        <description>PLUGIN_SCREENSAVER_VISUALIZER</description>
         <creator>Slim Devices</creator>
 	<email>support@slimdevices.com</email>
 

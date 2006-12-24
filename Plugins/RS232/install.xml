@@ -5,7 +5,7 @@
         <name>PLUGIN_RS232_NAME</name>
         <module>Plugins::RS232::Plugin</module>
         <version>1.0</version>
-        <description>RS232 access for Transporter</description>
+        <description>PLUGIN_RS232_NAME_DESC</description>
         <creator>Slim Devices</creator>
 	<email>support@slimdevices.com</email>
 

@@ -6,6 +6,10 @@ ITUNES
 	EN	iTunes
 	ZH_CN	iTunes
 
+ITUNES_DESC
+	DE	iTunes Integration (Musik und Wiedergabelisten)
+	EN	iTunes integration
+
 SETUP_ITUNESPLAYLISTFORMAT
 	CS	Formát playlistu iTunes
 	DE	iTunes Wiedergabelisten Format

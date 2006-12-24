@@ -8,6 +8,10 @@ PLUGIN_RADIOIO_MODULE_NAME
 	HE	רדיו אינטרנט ללא גבולות
 	NL	radioio.com - geen grenzen.
 
+PLUGIN_RADIOIO_MODULE_NAME_DESC
+	DE	Zugang zu RadioIO
+	EN	Access to RadioIO.
+
 PLUGIN_RADIOIO_MODULE_TITLE
 	EN	radioio.com
 	

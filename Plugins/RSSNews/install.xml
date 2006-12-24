@@ -5,7 +5,7 @@
         <name>PLUGIN_RSSNEWS</name>
         <module>Plugins::RSSNews::Plugin</module>
         <version>1.0</version>
-        <description>Access to RSS News Feeds</description>
+        <description>PLUGIN_RSSNEWS_DESC</description>
         <creator>Slim Devices</creator>
         <email>support@slimdevices.com</email>
 

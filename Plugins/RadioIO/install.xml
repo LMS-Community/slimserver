@@ -6,7 +6,7 @@
         <module>Plugins::RadioIO::Plugin</module>
         <playerMenu>RADIO</playerMenu>
         <version>1.0</version>
-        <description>Access to RadioIO.</description>
+        <description>PLUGIN_RADIOIO_MODULE_NAME_DESC</description>
         <creator>Slim Devices</creator>
         <email>support@slimdevices.com</email>
 

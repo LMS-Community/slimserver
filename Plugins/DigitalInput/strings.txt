@@ -7,6 +7,10 @@ PLUGIN_DIGITAL_INPUT
 	EN	Digital Inputs
 	NL	Digitale invoer
 
+PLUGIN_DIGITAL_INPUT_DESC
+	DE	Digitale Eingänge für den Transporter
+	EN	Digital Input for Transporter
+
 PLUGIN_DIGITAL_INPUT_BALANCED_AES
 	EN	Balanced AES/EBU
 	ES	AES/EBU Balanceada

@@ -8,6 +8,10 @@ PLUGIN_RSSNEWS
 	FR	Aggrégateur RSS
 	NL	RSS nieuwsberichten
 
+PLUGIN_RSSNEWS_DESC
+	DE	Zugriff auf RSS News Feeds
+	EN	Access to RSS News Feeds
+
 PLUGIN_RSSNEWS_ADD_NEW
 	DE	Neuer Newsfeed -->
 	EN	Add new feed -->

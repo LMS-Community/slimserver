@@ -6,7 +6,7 @@
         <module>Plugins::ShoutcastBrowser::Plugin</module>
         <playerMenu>RADIO</playerMenu>
         <version>1.0</version>
-        <description>Access to Shoutcast.</description>
+        <description>PLUGIN_SHOUTCASTBROWSER_DESC</description>
         <creator>Slim Devices</creator>
         <email>support@slimdevices.com</email>
 

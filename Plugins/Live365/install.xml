@@ -6,7 +6,7 @@
         <module>Plugins::Live365::Plugin</module>
         <playerMenu>RADIO</playerMenu>
         <version>1.0</version>
-        <description>Access to Live365.</description>
+        <description>PLUGIN_LIVE365_MODULE_NAME_DESC</description>
         <creator>Slim Devices</creator>
         <email>support@slimdevices.com</email>
 

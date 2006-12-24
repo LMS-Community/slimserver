@@ -5,7 +5,7 @@
         <name>PLUGIN_HEALTH</name>
         <module>Plugins::Health::Plugin</module>
         <version>1.0</version>
-        <description>Health Testing</description>
+        <description>PLUGIN_HEALTH_DESC</description>
         <creator>Triode</creator>
         <email>triode1@btinternet.com</email>
 

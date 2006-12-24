@@ -5,6 +5,10 @@
 PLUGIN_PODCAST
 	EN	Podcasts
 
+PLUGIN_PODCAST_DESC
+	DE	Zugang zu Podcasts
+	EN	Access to Podcasts
+
 PODCAST_NOTHING_TO_PLAY
 	DE	Nichts zu spielen
 	EN	Nothing to play

@@ -5,7 +5,7 @@
         <name>PLUGIN_DIGITAL_INPUT</name>
         <module>Plugins::DigitalInput::Plugin</module>
         <version>1.0</version>
-        <description>Digital Input for Transporter</description>
+        <description>PLUGIN_DIGITAL_INPUT_DESC</description>
         <creator>Slim Devices</creator>
         <email>support@slimdevices.com</email>
 

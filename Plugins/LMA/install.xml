@@ -6,7 +6,7 @@
         <module>Plugins::LMA::Plugin</module>
         <playerMenu>RADIO</playerMenu>
         <version>1.0</version>
-        <description>Access to the Live Music Archive.</description>
+        <description>PLUGIN_LMA_MODULE_NAME_DESC</description>
         <creator>Slim Devices</creator>
         <email>support@slimdevices.com</email>
 

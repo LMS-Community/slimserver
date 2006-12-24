@@ -5,7 +5,7 @@
         <name>PLUGIN_CLI</name>
         <module>Plugins::CLI::Plugin</module>
         <version>1.0</version>
-        <description>Command Line Interface</description>
+        <description>PLUGIN_CLI_DESC</description>
         <creator>Slim Devices</creator>
         <email>support@slimdevices.com</email>
 

@@ -5,7 +5,7 @@
         <name>PLUGIN_RESCAN_MUSIC_LIBRARY</name>
         <module>Plugins::Rescan::Plugin</module>
         <version>1.0</version>
-        <description>Automatic Library Scanning</description>
+        <description>PLUGIN_RESCAN_MUSIC_LIBRARY_DESC</description>
         <creator>Slim Devices</creator>
         <email>support@slimdevices.com</email>
 

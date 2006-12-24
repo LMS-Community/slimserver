@@ -5,7 +5,7 @@
         <name>PLUGIN_SCREENSAVER_DATETIME</name>
         <module>Plugins::DateTime::Plugin</module>
         <version>1.0</version>
-        <description>Date &amp; Time Screensaver</description>
+        <description>PLUGIN_SCREENSAVER_DATETIME_DESC</description>
         <creator>Slim Devices</creator>
         <email>support@slimdevices.com</email>
 

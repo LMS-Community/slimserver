@@ -8,6 +8,10 @@ PLUGIN_LIVE365_MODULE_NAME
 	HE	LIVE365
 	NL	Live365 Internet radio
 
+PLUGIN_LIVE365_MODULE_NAME_DESC
+	DE	Zugriff auf Live365 Internet Radio
+	EN	Access to Live365 Internet Radio stations
+
 PLUGIN_LIVE365_LOGOUT
 	CS	Odhlásit
 	DE	Abmelden

@@ -6,7 +6,7 @@
         <module>Plugins::SlimTris::Plugin</module>
         <version>1.0</version>
 	<playerMenu>GAMES</playerMenu>
-        <description>Tetris for your Squeezebox or Transporter!</description>
+        <description>SLIMTRIS_DESC</description>
         <creator>Slim Devices</creator>
 	<email>support@slimdevices.com</email>
 
