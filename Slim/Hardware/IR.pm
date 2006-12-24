@@ -602,7 +602,7 @@ sub processIR {
 
 	if ($irCodeBytes eq '00000000') {
 
-		$log->warn("Ignoring spurious null repeat code.");
+		$log->debug("Ignoring spurious null repeat code.");
 		return;
 	}
 

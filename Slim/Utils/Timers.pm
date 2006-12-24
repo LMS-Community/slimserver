@@ -165,7 +165,7 @@ sub checkTimers {
 
 		if ($log->is_debug) {
 
-			$log->logBacktrace("[norm] blocked checking - already processing a normal timer!");
+			$log->debug("[norm] blocked checking - already processing a normal timer!");
 		}
 
 		return;
