@@ -928,6 +928,10 @@ sub _hello_handler {
 		Slim::Utils::Timers::killTimers($client, \&forget_disconnected_client);
 
 		$client->reconnect($paddr, $revision, $s, $reconnect, $bytes_received);
+
+		# notify of reconnect
+		Slim::Control::Request::notifyFromArray($client, ['client', 'reconnect']);
+
 	}
 
 	$sock2client{$s} = $client;
