@@ -35,7 +35,6 @@ sub initPlugin {
 	$log->info("Initializing");
 	
 	$class->SUPER::initPlugin();
-	$class->webPages;
 
 	@digital_inputs = (
 		{

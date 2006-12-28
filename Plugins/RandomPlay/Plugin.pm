@@ -50,7 +50,6 @@ sub initPlugin {
 	my $class = shift;
 
 	$class->SUPER::initPlugin();
-	$class->webPages;
 
 	# playlist commands that will stop random play
 	%stopcommands = (

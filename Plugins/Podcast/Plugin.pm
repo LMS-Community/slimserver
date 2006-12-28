@@ -59,7 +59,6 @@ sub initPlugin {
 	Plugins::Podcast::Settings->new;
 
 	$class->SUPER::initPlugin();
-	$class->webPages;
 
 	Slim::Buttons::Common::addMode('PLUGIN.Podcast', getFunctions(), \&setMode);
 
