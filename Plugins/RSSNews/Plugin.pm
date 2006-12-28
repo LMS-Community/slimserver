@@ -13,6 +13,7 @@ package Plugins::RSSNews::Plugin;
 # $Id$
 
 use strict;
+use base qw(Slim::Plugin::Base);
 
 use constant FEEDS_VERSION => 1.0;
 
@@ -79,6 +80,8 @@ sub initPlugin {
 	my $class = shift;
 
 	$log->info("Initializing.");
+
+	$class->SUPER::initPlugin();
 
 	Plugins::RSSNews::Settings->new;
 
@@ -182,6 +185,7 @@ sub getFunctions {
 }
 
 sub setMode {
+	my $class  = shift;
 	my $client = shift;
 	my $method = shift;
 

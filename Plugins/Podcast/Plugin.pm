@@ -9,6 +9,8 @@ package Plugins::Podcast::Plugin;
 # version 2.
 
 use strict;
+use base qw(Slim::Plugin::Base);
+
 use constant FEEDS_VERSION => 1;
 
 use HTML::Entities;
@@ -56,6 +58,7 @@ sub initPlugin {
 
 	Plugins::Podcast::Settings->new;
 
+	$class->SUPER::initPlugin();
 	$class->webPages;
 
 	Slim::Buttons::Common::addMode('PLUGIN.Podcast', getFunctions(), \&setMode);
@@ -138,6 +141,7 @@ sub getFunctions {
 }
 
 sub setMode {
+	my $class =  shift;
 	my $client = shift;
 	my $method = shift;
 

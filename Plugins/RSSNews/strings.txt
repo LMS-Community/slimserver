@@ -13,12 +13,12 @@ PLUGIN_RSSNEWS_DESC
 	EN	Access to RSS News Feeds
 
 PLUGIN_RSSNEWS_ADD_NEW
-	DE	Neuer Newsfeed -->
-	EN	Add new feed -->
-	ES	Añadir nuevo feed -->
-	FR	Ajouter flux -->
-	IT	Aggiungi un nuovo feed -->
-	NL	Voeg nieuw kanaal toe -->
+	DE	Neuer Newsfeed:
+	EN	Add new feed:
+	ES	Añadir nuevo feed:
+	FR	Ajouter flux:
+	IT	Aggiungi un nuovo feed:
+	NL	Voeg nieuw kanaal toe:
 
 PLUGIN_RSSNEWS_WAIT
 	DE	Bitte warten...
@@ -199,15 +199,6 @@ SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC
 	IT	E' il numero massimo di argomenti visualizzati per ogni feed mentre il salvaschermo e' attivo. Un valore piu' grande implica che il salvaschermo visualizzera' piu' argomenti prima di passare al prossimo feed.
 	NL	Het maximum aantal te tonen items per kanaal terwijl de schermbeveiliger actief is. Een hogere waarde laat meer items van een kanaal zien voordat naar het volgende kanaal gesprongen wordt.
 
-SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_CHOOSE
-	CS	Položek na kanál
-	DE	Einträge pro Feed
-	EN	Items per channel
-	ES	Elementos por canal
-	FR	Eléments par flux
-	IT	Argomenti per canale
-	NL	Items per kanaal
-
 SETUP_PLUGIN_RSSNEWS_FEEDS_CHANGE
 	DE	RSS Feed Liste wurde geändert.
 	EN	RSS Feeds list changed.
@@ -215,3 +206,7 @@ SETUP_PLUGIN_RSSNEWS_FEEDS_CHANGE
 	FR	Liste des flux RSS modifiée.
 	IT	Lista dei feed RSS cambiata.
 	NL	RSS kanalenlijst gewijzigd.
+
+SETUP_PLUGIN_RSSNEWS_EXISTING_FEEDS
+	DE	Eingetragene Feeds:
+	EN	Existing feeds:

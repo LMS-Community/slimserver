@@ -6,6 +6,8 @@ package Plugins::DigitalInput::Plugin;
 # version 2.
 
 use strict;
+use base qw(Slim::Plugin::Base);
+
 use Scalar::Util qw(blessed);
 
 use Slim::Player::ProtocolHandlers;
@@ -28,8 +30,12 @@ sub getDisplayName {
 }
 
 sub initPlugin {
+	my $class = shift;
 
 	$log->info("Initializing");
+	
+	$class->SUPER::initPlugin();
+	$class->webPages;
 
 	@digital_inputs = (
 		{
