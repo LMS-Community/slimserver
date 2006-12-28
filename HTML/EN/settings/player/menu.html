@@ -10,9 +10,9 @@
 		[% FOREACH option = menuItems %]
 			<tr>
 			<td>[% menuItemNames.$option %]</td>
-				<td><a href="[% path %]?playerid=[% playerid | uri %]&Action[% loop.index %]=Up">[% IF controlGraphics %]<img src="[% webroot %]html/images/b_up.gif" border=0 align="center">[% ELSE %][% "MOVEUP" | string %][% END %]</a></td>
-				<td><a href="[% path %]?playerid=[% playerid | uri %]&Action[% loop.index %]=Down">[% IF controlGraphics %]<img src="[% webroot %]html/images/b_down.gif" border=0 align="center">[% ELSE %][% "MOVEDOWN" | string %][% END %]</a></td>
-				<td><a href="[% path %]?playerid=[% playerid | uri %]&Action[% loop.index %]=Remove">[% IF controlGraphics %]<img src="[% webroot %]html/images/b_delete.gif" border=0 align="center">[% ELSE %][% "DELETE" | string %][% END %]</a></td>
+				<td><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&Action[% loop.index %]=Up">[% IF controlGraphics %]<img src="[% webroot %]html/images/b_up.gif" border=0 align="center">[% ELSE %][% "MOVEUP" | string %][% END %]</a></td>
+				<td><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&Action[% loop.index %]=Down">[% IF controlGraphics %]<img src="[% webroot %]html/images/b_down.gif" border=0 align="center">[% ELSE %][% "MOVEDOWN" | string %][% END %]</a></td>
+				<td><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&Action[% loop.index %]=Remove">[% IF controlGraphics %]<img src="[% webroot %]html/images/b_delete.gif" border=0 align="center">[% ELSE %][% "DELETE" | string %][% END %]</a></td>
 				<td><input type=checkbox class="stdedit" name="menuItemRemove[% loop.index %]" id="menuItemRemove[% loop.index %]" value="1" />
 				</tr>
 		[%- END -%]
