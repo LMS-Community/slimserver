@@ -16,7 +16,7 @@ PLUGIN_RSSNEWS_ADD_NEW
 	DE	Neuer Newsfeed:
 	EN	Add new feed:
 	ES	Añadir nuevo feed:
-	FR	Ajouter flux:
+	FR	Ajouter flux :
 	IT	Aggiungi un nuovo feed:
 	NL	Voeg nieuw kanaal toe:
 
