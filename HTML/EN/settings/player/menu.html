@@ -27,10 +27,10 @@
 		
 		<table width="100%">
 		<input type=hidden name="nonMenuItems" value="[% nonMenuItems.keys.max %]" />
-		[% FOREACH option = nonMenuItems  %]
+		[% FOREACH option = nonMenuItems.sort %]
 			[% IF NOT loop.index % 2 %]<tr>[% END %]
-			<td><input type=checkbox class="stdedit" name="nonMenuItemAdd[% loop.index %]" id="nonMenuItemAdd[% loop.index %]" value="[% option.key %]" />
-			[% option.value %]</td>
+			<td><input type=checkbox class="stdedit" name="nonMenuItemAdd[% loop.index %]" id="nonMenuItemAdd[% loop.index %]" value="[% option %]" />
+			[% nonMenuItems.$option %]</td>
 			[% IF loop.index % 2 %]</tr>[% END %]
 		[%- END -%]
 		</table>
