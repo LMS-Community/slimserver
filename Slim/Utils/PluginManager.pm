@@ -419,7 +419,7 @@ sub _filterPlugins {
 
 	while (my ($name, $manifest) = each %{$plugins}) {
 
-		if ($manifest->{$category} && $manifest->{$category} eq $opType) {
+		if (defined $manifest->{$category} && $manifest->{$category} eq $opType) {
 
 			push @found, $name;
 		}
