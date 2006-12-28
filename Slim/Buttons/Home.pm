@@ -668,11 +668,10 @@ sub unusedMenuOptions {
 
 	delete $menuChoices{""};
 
-	my $pluginsRef = Slim::Utils::PluginManager->installedPlugins();
+	my %plugins = map { $_ => 1 } Slim::Utils::PluginManager->installedPlugins();
 
-	for my $plugin (values %{$pluginsRef}) {
-		next unless defined $plugin;
-
+	for my $plugin (keys %plugins ) {
+		
 		delete $menuChoices{$plugin} if defined $menuChoices{$plugin};
 	}
 

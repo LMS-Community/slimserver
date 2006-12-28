@@ -38,6 +38,7 @@
 	<p><input name="addItems" type="submit" class="stdclick" value="[% "ADD" | string %]"></p>
 	</div>
 
+	[% IF pluginsItems %]
 	<div class="settingSection">
 
 		<div class="groupDesc">[% "SETUP_GROUP_PLUGINITEMS_INTRO" | string %]</div>
@@ -54,5 +55,6 @@
 
 	<p><input name="addItems" type="submit" class="stdclick" value="[% "ADD" | string %]"></p>
 	</div>
+	[% END %]
 
 [% PROCESS settings/footer.html %]
