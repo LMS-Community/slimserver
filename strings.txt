@@ -5200,32 +5200,6 @@ SETUP_FORKEDSTREAMING_DISABLE
 	ES	Deshabilitar Forking para Stream de Audio
 	NL	Uitzetten audiostroom forking
 
-SETUP_ITEMSPERPASS
-	DE	Anzahl Elemente pro Durchgang
-	EN	Build Items Per Pass
-	ES	Items incorporados por pasada.
-	FR	Nombre d'éléments par passe
-	HE	מספר פריטים הנקראים בסריקה
-	IT	Voci ricostruite per ogni passaggio
-	JA	１パス当たりのアイテム数
-	NL	Items per deel instellen
-	NO	Antall musikkfiler per søk
-	SV	Antal musikfiler per sökpass
-	ZH_CN	每次扫描层的项目建立数量
-
-SETUP_ITEMSPERPASS_DESC
-	DE	Um eine Unterbrechung der Musik zu verhindern, bildet SlimServer lange Listen in mehreren Durchgängen. Diese Einstellung definiert, wie viele Elemente pro Durchgang verarbeitet werden.
-	EN	To avoid interrupting the music, SlimServer builds long lists in chunks. This setting determines how many items to build in a single pass.
-	ES	Pare evitar interrumpir la música, Slimserver arma listas largas de a bloques. Esta opción determina cuántos items serán incorporados en una sola pasada.
-	FR	Pour ne pas interrompre la musique, le SlimServer génère les listes longues en plusieurs passes. Ce réglage détermine le nombre d'éléments générés à chaque passe.
-	HE	ככל שמספר הפריטים גדול יותר, כך יהיו פחות הפרעות לנגנים במהלך ביצוע סריקה
-	IT	Per evitare di interrompere la musica, lo SlimServer costruisce lunghe liste in pezzi. Questa impostazione determina quante voci aggiungere alla volta.
-	JA	音楽の中断を防ぐ為に、SlimServerは長いリストをまとめて構築します。このセッティングは、いくつのアイテムを１つのパスで構築するかを決めます。
-	NL	Om een interruptie van de muziek te voorkomen maakt SlimServer lange lijsten aan in meerdere delen. Deze instelling geeft aan hoeveel items er per deel gevormd worden.
-	NO	For ikke å påvirker avspillingen av musikk bygger SlimServer sine lister i små deler. Denne innstillingen avgjør hvor mange sanger som skal tas med per søk.
-	SV	För att inte störa uppspelinng av musik bygger Slimserver sina listor i mindre delar. Denna instälning avgör hur många låtar som ska indexeras per pass
-	ZH_CN	为了不对播放中的音乐造成影响，SlimServer在建立较长的名单时会以小块小块的方式进行。这个设置决定了在每一个扫描层时所允许建立的项目数量。
-
 SETUP_PREFSWRITEDELAY
 	DE	Schreib-Intervall für Einstellungen
 	EN	Prefs write interval

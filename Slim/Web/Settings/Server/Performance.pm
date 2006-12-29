@@ -21,7 +21,7 @@ sub page {
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
-	my @prefs = qw(disableStatistics itemsPerPass prefsWriteDelay serverPriority scannerPriority);
+	my @prefs = qw(disableStatistics prefsWriteDelay serverPriority scannerPriority);
 
 	$paramRef->{'options'} = {
 		''   => 'SETUP_PRIORITY_CURRENT',
