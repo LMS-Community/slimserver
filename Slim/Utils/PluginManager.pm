@@ -81,7 +81,6 @@ sub init {
 		$log->info("No plugin cache file exists - finding shipped plugins.");
 
 		$class->findInstalledPlugins;
-		$class->writePluginCache;
 
 	} else {
 
@@ -96,6 +95,8 @@ sub init {
 	}
 
 	$class->enablePlugins;
+
+	$class->writePluginCache;
 }
 
 sub pluginCacheFile {
@@ -560,8 +561,6 @@ sub shutdownPlugins {
 
 		$class->shutdownPlugin($plugin);
 	}
-
-	$class->writePluginCache;
 }
 
 sub shutdownPlugin {
