@@ -18,10 +18,6 @@ my $customchar = 1;
 # flag to avoid loading custom chars multiple times
 my $loadedcustomchar = 0;
 
-sub getDisplayName {
-	return 'SLIMTRIS';
-}
-
 #
 # array of blocks
 # star represents rotational pivot
@@ -73,6 +69,8 @@ sub defaultHandler {
 }
 
 sub defaultMap {
+	my $class = shift;
+
 	return {'play' => 'rotate_1'
 		,'play.repeat' => 'rotate_1'
 		,'add' => 'rotate_-1'
@@ -503,6 +501,8 @@ sub loadCustomChars {
 }
 	
 sub getFunctions {
+	my $class = shift;
+
     \%functions;
 }
 

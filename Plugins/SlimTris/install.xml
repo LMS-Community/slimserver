@@ -10,7 +10,7 @@
         <creator>Slim Devices</creator>
 	<email>support@slimdevices.com</email>
 
-	<defaultState>disabled</defaultState>
+	<defaultState>enabled</defaultState>
         
         <homepageURL>http://www.slimdevices.com/</homepageURL>
 	<type>2</type><!-- type=extension -->
