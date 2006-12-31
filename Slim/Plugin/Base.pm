@@ -11,7 +11,7 @@ use Slim::Utils::Log;
 use constant PLUGINMENU => 'PLUGINS';
 
 sub initPlugin {
-        my $class = shift;
+	my $class = shift;
 	my $args  = shift;
 
 	my $name  = $class->displayName;
@@ -25,22 +25,22 @@ sub initPlugin {
 
 		my $exitMode = $class->can('exitMode') ? sub { $class->exitMode(@_) } : undef;
 
-	        Slim::Buttons::Common::addMode($class, $class->getFunctions, sub { $class->setMode(@_) }, $exitMode);
+		Slim::Buttons::Common::addMode($class, $class->getFunctions, sub { $class->setMode(@_) }, $exitMode);
 	}
 
-        my %params = (
-                'useMode' => $class,
-                'header'  => $name,
-        );
+	my %params = (
+		'useMode' => $class,
+		'header'  => $name,
+	);
 
-        # Add toplevel info for the option of having a plugin at the top level.
-        Slim::Buttons::Home::addMenuOption($name, \%params);
+	# Add toplevel info for the option of having a plugin at the top level.
+	Slim::Buttons::Home::addMenuOption($name, \%params);
 
-        Slim::Buttons::Home::addSubMenu($menu, $name, \%params);
+	Slim::Buttons::Home::addSubMenu($menu, $name, \%params);
 
 	if ($menu ne PLUGINMENU) {
 
-        	Slim::Buttons::Home::addSubMenu(PLUGINMENU, $menu, Slim::Buttons::Home::getMenu("-$menu"));
+		Slim::Buttons::Home::addSubMenu(PLUGINMENU, $menu, Slim::Buttons::Home::getMenu("-$menu"));
 	}
 
 	#logWarning("Adding $name to menu $menu");
@@ -85,12 +85,13 @@ sub _pluginDataFor {
 sub getFunctions {
 	my $class = shift;
 
-        return {};
+	return {};
 }
 
 sub setMode {
-        my $client = shift;
-        my $method = shift;
+	my $class = shift;
+	my $client = shift;
+	my $method = shift;
 
 	return;
 }
