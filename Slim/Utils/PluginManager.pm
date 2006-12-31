@@ -22,9 +22,6 @@ package Slim::Utils::PluginManager;
 # * Check plugin versions from cache on new version of slimserver 
 #   - Mark as OP_NEEDS_UPGRADE
 # 
-# * Slim::Utils::PluginManager->addDefaultMaps(); does not exist.
-#   Needs to be rethought. Shouldn't be here.
-#
 # * Install by id (UUID)?
 # * Copy HTML/* into a common folder, so INCLUDE_PATH is shorter?
 #   There's already a namespace for each plugin.

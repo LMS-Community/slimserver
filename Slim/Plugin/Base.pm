@@ -49,6 +49,11 @@ sub initPlugin {
 
 		$class->webPages;
 	}
+
+	if ($class->can('defaultMap')) {
+
+		Slim::Hardware::IR::addModeDefaultMapping($class, $class->defaultMap);
+	}
 }
 
 sub displayName {
