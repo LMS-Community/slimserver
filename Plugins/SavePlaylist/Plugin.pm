@@ -15,10 +15,8 @@ use Slim::Utils::Misc;
 
 our %context = ();
 
-my $rightarrow = Slim::Display::Display::symbol('rightarrow');
-
 our @LegalChars = (
-	Slim::Display::Display::symbol('rightarrow'),
+	undef, # placeholder for rightarrrow
 	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
 	'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
 	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -160,8 +158,6 @@ sub savePluginCallback {
 
 	if ($type eq 'nextChar') {
 
-		$context{$client} =~ s/$rightarrow//;
-		
 		# re-enter plugin with the new playlist title to get the confirmation screen for saving the playlist.
 		Slim::Buttons::Common::pushModeLeft($client,'PLUGIN.SavePlaylist', {
 			'playlist' => $context{$client},

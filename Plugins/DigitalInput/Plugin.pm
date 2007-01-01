@@ -149,10 +149,7 @@ sub setMode {
 		'listRef'      => \@digital_inputs,
 		'modeName'     => 'Digital Input Plugin',
 		'onPlay'       => \&updateDigitalInput,
-		'overlayRef'   => [
-			undef,
-			Slim::Display::Display::symbol('notesymbol') 
-		],
+		'overlayRef'   => sub { return [ undef, shift->symbols('notesymbol') ] },
 	);
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);

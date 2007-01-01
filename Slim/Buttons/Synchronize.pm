@@ -21,7 +21,6 @@ for synchronizing groups of players, and reporting the current status of sync gr
 use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
-use Slim::Display::Display;
 
 our %functions = ();
 
@@ -119,8 +118,8 @@ sub setMode {
 								return buddies($_[0], undef);
 							},
 		'externRefArgs'  => 'CV',
-		'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
-		'overlayRefArgs' => '',
+		'overlayRef'     => sub { return (undef, shift->symbols('rightarrow')) },
+		'overlayRefArgs' => 'C',
 		'callback'       => \&syncExitHandler,
 		'onChange'       => sub { $_[0]->syncSelection($_[1]); },
 		'onChangeArgs'   => 'CI'

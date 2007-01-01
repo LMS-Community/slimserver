@@ -519,10 +519,10 @@ sub overlay {
 	my $overlay1 = ' (' . ($index+1) . ' ' . $client->string('OF') .' ' . scalar(@{$client->trackInfoLines}) . ')';
 
 	# add note symbol
-	$overlay1 .= Slim::Display::Display::symbol('notesymbol');
+	$overlay1 .= $client->symbols('notesymbol');
 
 	# add right arrow symbol if current line can point to more info e.g. artist, album, year etc
-	my $overlay2 = defined($client->trackInfoContent->[$index]) ? Slim::Display::Display::symbol('rightarrow') : undef;
+	my $overlay2 = defined($client->trackInfoContent->[$index]) ? $client->symbols('rightarrow') : undef;
 
 	return ($overlay1, $overlay2);
 }

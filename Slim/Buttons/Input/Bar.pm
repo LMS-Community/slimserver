@@ -56,7 +56,6 @@ Avilable Parameters and their defaults:
 use strict;
 
 use Slim::Buttons::Common;
-use Slim::Display::Display;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
@@ -354,7 +353,7 @@ sub changePos {
 sub lines {
 	my $client = shift;
 
-	# These parameters are used when calling this function from Slim::Display::Display
+	# These parameters are used when calling this function from Slim::Player::Player::mixerDisplay
 	my $value  = shift;
 	my $header = shift;
 	my $args   = shift;
@@ -479,8 +478,6 @@ sub exitInput {
 L<Slim::Buttons::Common>
 
 L<Slim::Buttons::Settings>
-
-L<Slim::Display::Display>
 
 =cut
 

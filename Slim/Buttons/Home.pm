@@ -83,9 +83,9 @@ sub init {
 		'headerAddCount' => 1,
 		'callback' => \&homeExitHandler,
 
-		'overlayRef' => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
+		'overlayRef' => sub { return (undef, shift->symbols('rightarrow')) },
 
-		'overlayRefArgs' => '',
+		'overlayRefArgs' => 'C',
 		'valueRef' => undef,
 	);
 

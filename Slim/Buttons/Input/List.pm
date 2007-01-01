@@ -24,11 +24,13 @@ Slim::Buttons::Input::List
 	'urls'           => \@urls,
 	'parentMode'     => Slim::Buttons::Common::mode($client),
 	'overlayRef'     => sub {
+		my $client = shift;
 		if (scalar @urls) {
-			return (undef,Slim::Display::Display::symbol('notesymbol'));
+			return (undef, $client->symbols('notesymbol'));
 		} else {
 			return undef;
 		}
+	'overlayRefArgs' => 'C',
 	},
  );
 
@@ -46,7 +48,6 @@ use strict;
 use warnings;
 
 use Slim::Buttons::Common;
-use Slim::Display::Display;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 

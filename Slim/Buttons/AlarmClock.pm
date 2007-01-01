@@ -231,7 +231,7 @@ sub init {
 			'stringHeader'     => 1,
 			'callback'         => \&weekdayExitHandler,
 			'overlayRef'       => \&weekdayOverlay,
-			'overlayRefArgs'   => 'I',
+			'overlayRefArgs'   => 'CI',
 		},
 	);
 }
@@ -305,10 +305,11 @@ sub weekdayExitHandler {
 }
 
 sub weekdayOverlay {
-	my $index = shift;
+	my $client = shift;
+	my $index  = shift;
 
 	if ($index) {
-		return (undef,Slim::Display::Display::symbol('rightarrow'));
+		return (undef,$client->symbols('rightarrow'));
 	} else {
 		return;
 	}
@@ -584,7 +585,7 @@ sub overlayFunc {
 		}
 	}
 	
-	return (undef,Slim::Display::Display::symbol('rightarrow'));
+	return (undef,$client->symbols('rightarrow'));
 }
 
 sub alarmHeader {

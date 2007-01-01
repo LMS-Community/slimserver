@@ -283,8 +283,8 @@ sub init {
 					'headerAddCount'  => 1,
 					'stringHeader'    => 1,
 					'callback'        => \&mixerExitHandler,
-					'overlayRef'      => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
-					'overlayRefArgs'  => '',
+					'overlayRef'      => sub { return (undef, shift->symbols('rightarrow')) },
+					'overlayRefArgs'  => 'C',
 					'valueRef'        => \$mixer,
 				};
 
@@ -612,13 +612,13 @@ sub browsedbOverlay {
 		if ($levels[$level] ne 'track') {
 
 			return (undef, join('', 
-				Slim::Display::Display::symbol('notesymbol'),
-				Slim::Display::Display::symbol('rightarrow')
+				$client->symbols('notesymbol'),
+				$client->symbols('rightarrow')
 			));
 
 		} else {
 
-			return (undef, Slim::Display::Display::symbol('notesymbol'));
+			return (undef, $client->symbols('notesymbol'));
 		}
 
 	} else {
@@ -628,15 +628,15 @@ sub browsedbOverlay {
 
 		for my $import (keys %{$Imports}) {
 			if ($import->can('mixable') && $import->mixable($item)) {
-				$overlay1 = Slim::Display::Display::symbol('mixable');
+				$overlay1 = $client->symbols('mixable');
 			}
 		}
 	}
 
 	if ($client->modeParam('descend')) {
-		$overlay2 = Slim::Display::Display::symbol('rightarrow');
+		$overlay2 = $client->symbols('rightarrow');
 	} else {
-		$overlay2 = Slim::Display::Display::symbol('notesymbol');
+		$overlay2 = $client->symbols('notesymbol');
 	}
 
 	return ($overlay1, $overlay2);

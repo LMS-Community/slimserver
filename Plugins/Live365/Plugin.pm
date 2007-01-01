@@ -157,7 +157,8 @@ sub setMode {
 		'stringHeader'   => 1,
 		'headerAddCount' => 1,
 		'callback'       => \&mainExitHandler,
-		'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
+		'overlayRef'     => sub { return (undef, shift->symbols('rightarrow')) },
+		'overlayRefArgs' => 'C',
 	});
 }
 
@@ -415,7 +416,8 @@ sub genreModeLoad {
 		'stringHeader'   => 1,
 		'headerAddCount' => 1,
 		'callback'       => \&genreExitHandler,
-		'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
+		'overlayRef'     => sub { return (undef, shift->symbols('rightarrow')) },
+		'overlayRefArgs' => 'C',
 		'isSorted'       => 'L',
 		'lookupRef'      => sub { 
 			my $index = shift;
@@ -603,7 +605,8 @@ sub channelModeLoad {
 
 		'onChangeArgs'   => 'CV',
 		'callback'       => \&channelExitHandler,
-		'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('notesymbol')) },
+		'overlayRef'     => sub { return (undef, shift->symbols('notesymbol')) },
+		'overlayRefArgs' => 'C',
 	});
 }
 
@@ -794,8 +797,8 @@ sub setSearchMode {
 		'stringHeader'   => 1,
 		'headerAddCount' => 1,
 		'callback'       => \&searchExitHandler,
-		'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
-		'overlayRefArgs' => '',
+		'overlayRef'     => sub { return (undef, shift->symbols('rightarrow')) },
+		'overlayRefArgs' => 'C',
 	});
 }
 
@@ -831,7 +834,7 @@ sub doSearch {
 	my $client = shift;
 	my $exitType = shift;
 
-	my $arrow = Slim::Display::Display::symbol('rightarrow');
+	my $arrow = $client->symbols('rightarrow');
 
 	$searchString{$client} =~ s/$arrow//;
 

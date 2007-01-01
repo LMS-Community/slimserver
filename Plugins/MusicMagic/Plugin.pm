@@ -508,8 +508,8 @@ sub mixerFunction {
 			'headerAddCount' => 1,
 			'stringHeader'   => 1,
 			'callback'       => \&mixExitHandler,
-			'overlayRef'     => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
-			'overlayRefArgs' => '',
+			'overlayRef'     => sub { return (undef, shift->symbols('rightarrow')) },
+			'overlayRefArgs' => 'C',
 			'parentMode'     => 'musicmagic_mix',
 		);
 		

@@ -154,7 +154,7 @@ sub vfdUpdate {
 	
 	my $line;
 
-	my $cursorchar = Slim::Display::Display::symbol('cursorpos');
+	my $cursorchar = $Slim::Display::Text::commandmap{'cursorpos'};
 
 	my $i = 0;
 

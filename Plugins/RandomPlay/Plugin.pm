@@ -510,10 +510,10 @@ sub getOverlay {
 
 	# Put the right arrow by genre filter and notesymbol by mixes
 	if ($item eq 'genreFilter') {
-		return [undef, Slim::Display::Display::symbol('rightarrow')];
+		return [undef, $client->symbols('rightarrow')];
 	
 	} elsif ($item ne 'disable') {
-		return [undef, Slim::Display::Display::symbol('notesymbol')];
+		return [undef, $client->symbols('notesymbol')];
 	
 	} else {
 		return [undef, undef];

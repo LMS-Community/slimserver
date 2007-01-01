@@ -206,8 +206,8 @@ sub init {
 					'headerAddCount'  => 1,
 					'stringHeader'    => 1,
 					'callback'        => \&mixerExitHandler,
-					'overlayRef'      => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
-					'overlayRefArgs'  => '',
+					'overlayRef'      => sub { return (undef, shift->symbols('rightarrow')) },
+					'overlayRefArgs'  => 'C',
 					'valueRef'        => \$mixer,
 				};
 
@@ -342,13 +342,13 @@ sub browseTreeOverlay {
 
 	# A text item generally means ALL_, so overlay an arrow
 	if (!ref $item) {
-		return (undef, Slim::Display::Display::symbol('rightarrow'));
+		return (undef, $client->symbols('rightarrow'));
 	}
 
 	if (Slim::Music::Info::isSong($item)) {
-		$overlay2 = Slim::Display::Display::symbol('notesymbol');
+		$overlay2 = $client->symbols('notesymbol');
 	} else {
-		$overlay2 = Slim::Display::Display::symbol('rightarrow');
+		$overlay2 = $client->symbols('rightarrow');
 	}
 
 	return ($overlay1, $overlay2);

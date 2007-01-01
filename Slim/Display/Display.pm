@@ -755,55 +755,6 @@ sub doubleString {
 	return $strings->{$name.'_DBL'} || $strings->{$name} || logBacktrace("missing string $name") && '';
 }
 
-
-# Utility functions for Text players + backwards compatibility for plugins
-# Aim to move this into Display::Text, but will mean plugin changes
-
-our %Symbols = (
-	'notesymbol' => "\x1Fnotesymbol\x1F",
-	'rightarrow' => "\x1Frightarrow\x1F",
-	'progressEnd'=> "\x1FprogressEnd\x1F",
-	'progress1e' => "\x1Fprogress1e\x1F",
-	'progress2e' => "\x1Fprogress2e\x1F",
-	'progress3e' => "\x1Fprogress3e\x1F",
-	'progress1'  => "\x1Fprogress1\x1F",
-	'progress2'  => "\x1Fprogress2\x1F",
-	'progress3'  => "\x1Fprogress3\x1F",
-	'cursor'	 => "\x1Fcursor\x1F",
-	'mixable'    => "\x1Fmixable\x1F",
-	'bell'	     => "\x1Fbell\x1F",
-	'hardspace'  => "\x1Fhardspace\x1F"
-);
-
-our %commandmap = (
-	'center'     => "\x1ecenter\x1e",
-	'cursorpos'  => "\x1ecursorpos\x1e",
-	'framebuf'   => "\x1eframebuf\x1e",
-	'/framebuf'  => "\x1e/framebuf\x1e",
-	'linebreak'  => "\x1elinebreak\x1e",
-	'repeat'     => "\x1erepeat\x1e", 
-	'right'      => "\x1eright\x1e",
-	'scroll'     => "\x1escroll\x1e",
-	'/scroll'    => "\x1e/scroll\x1e", 
-	'tight'      => "\x1etight\x1e",
-	'/tight'     => "\x1e/tight\x1e",
-	'font'       => "\x1efont\x1e",
-	'/font'      => "\x1e/font\x1e",
-	'defaultfont'=> "\x1edefaultfont\x1e",
-);
-
-sub symbol {
-	my $symname = shift;
-	if (exists($commandmap{$symname})) { return $commandmap{$symname}; }
-	return ("\x1f". $symname . "\x1f");
-}
-
-sub command {
-	my $symname = shift;
-	if (exists($commandmap{$symname})) { return $commandmap{$symname}; }
-}
-
-
 =head1 SEE ALSO
 
 =cut

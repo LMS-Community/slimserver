@@ -52,12 +52,6 @@ sub setMode {
 		modeName => 'Picks Plugin',
 		url      => $FEED,
 		title    => $client->string(getDisplayName()),
-
-		overlayRef => sub {
-			my $client = shift;
-
-			return (undef, Slim::Display::Display::symbol('notesymbol'));
-		},
 	);
 
 	Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);

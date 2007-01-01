@@ -87,11 +87,11 @@ sub setMode {
 		'stringHeader'   => 1,
 		'callback'       => \&rescanExitHandler,
 		'overlayRef'     => sub { 
-				if ($_[0] ne 'PLUGIN_RESCAN_PRESS_PLAY') {
-					return (undef, Slim::Display::Display::symbol('rightarrow')) 
+				if ($_[1] ne 'PLUGIN_RESCAN_PRESS_PLAY') {
+					return (undef, $_[0]->symbols('rightarrow')) 
 				}
 			},
-		'overlayRefArgs' => 'V',
+		'overlayRefArgs' => 'CV',
 		'externRef'      => sub {
 			my $client = shift;
 			my $value  = shift;

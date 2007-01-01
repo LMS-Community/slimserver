@@ -53,7 +53,6 @@ use strict;
 use warnings;
 
 use Slim::Buttons::Common;
-use Slim::Display::Display;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 

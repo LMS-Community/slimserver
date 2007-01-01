@@ -34,10 +34,6 @@ our %current = ();
 our %menuParams = ();
 our %functions = ();
 
-sub arrowFunc {
-	return (undef,Slim::Display::Display::symbol('rightarrow'));
-};
-
 sub init {
 	#Slim::Buttons::Common::addMode('settings',Slim::Buttons::Settings::getFunctions(),\&Slim::Buttons::Settings::setMode);
 
@@ -63,8 +59,8 @@ sub init {
 			'header'          => 'SETTINGS',
 			'stringHeader'    => 1,
 			'headerAddCount'  => 1,
-			'overlayRef'      => \&arrowFunc,
-			'overlayRefArgs'  => '',
+			'overlayRef'      => sub { return (undef, shift->symbols('rightarrow')) },
+			'overlayRefArgs'  => 'C',
 			'init'            => \&settingsMenu,
 			'submenus'        => {
 		
@@ -330,8 +326,8 @@ sub init {
 					'header'          => 'SCREENSAVERS',
 					'stringHeader'    => 1,
 					'headerAddCount'  => 1,
-					'overlayRef'      => \&arrowFunc,
-					'overlayRefArgs'  => '',
+					'overlayRef'      => sub { return (undef, shift->symbols('rightarrow')) },
+					'overlayRefArgs'  => 'C',
 					'submenus'        => {
 	
 						'SETUP_SCREENSAVER' => {

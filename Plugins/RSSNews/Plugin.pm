@@ -210,10 +210,7 @@ sub setMode {
 			Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
 		},
 
-		overlayRef => [
-			undef,
-			Slim::Display::Display::symbol('rightarrow') 
-		],
+		overlayRef => sub { return [ undef, shift->symbols('rightarrow') ] },
 	);
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);

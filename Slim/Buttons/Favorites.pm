@@ -135,11 +135,12 @@ sub setMode {
 		'parentMode'     => Slim::Buttons::Common::mode($client),
 		'overlayRef'     => sub {
 			if (scalar @urls) {
-				return (undef,Slim::Display::Display::symbol('notesymbol'));
+				return (undef,shift->symbols('notesymbol'));
 			} else {
 				return undef;
 			}
 		},
+		'overlayRefArgs' => 'C',
 	);
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);

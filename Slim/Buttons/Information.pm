@@ -46,7 +46,6 @@ use strict;
 use File::Spec::Functions qw(catdir);
 
 use Slim::Buttons::Common;
-use Slim::Display::Display;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
@@ -99,8 +98,8 @@ sub init {
 			'externRef' => sub { return $_[0]->string('INFORMATION_MENU_' . uc($_[1])) },
 			'externRefArgs' => 'CV',
 			'listRef' => ['library','player','server','module'],
-			'overlayRef' => sub { return (undef,Slim::Display::Display::symbol('rightarrow')) },
-			'overlayRefArgs' => '',
+			'overlayRef' => sub { return (undef,shift->symbols('rightarrow')) },
+			'overlayRefArgs' => 'C',
 			'callback' => \&mainExitHandler,
 		},
 

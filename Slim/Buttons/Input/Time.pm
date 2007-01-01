@@ -41,7 +41,6 @@ and typicall formatting of time strings. Callers include Sli::Buttons::AlarmCLoc
 use strict;
 
 use Slim::Buttons::Common;
-use Slim::Display::Display;
 use Slim::Utils::DateTime;
 use Slim::Utils::Misc;
 

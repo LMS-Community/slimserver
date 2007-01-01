@@ -249,7 +249,7 @@ sub gotRSS {
 				] );
 			},
 
-			'overlayRef' => [ undef, Slim::Display::Display::symbol('rightarrow') ],
+			'overlayRef' => [ undef, shift->symbols('rightarrow') ],
 		);
 
 		unshift @{$feed->{'items'}}, \%desc; # prepend
@@ -364,9 +364,6 @@ sub gotOPML {
 					'charsRef'        => 'UPPER',
 					'numberLetterRef' => 'UPPER',
 					'callback'        => \&handleSearch,
-					'overlayRef'      => sub {
-						return (undef, $client->symbols('rightarrow'))
-					},
 					'_search'         => $item->{'search'},
 				);
 				
@@ -466,11 +463,8 @@ sub handleSearch {
 		my $searchString = ${ $client->modeParam('valueRef') };
 		
 		# Don't allow null search string
-		my $rightarrow = Slim::Display::Display::symbol('rightarrow');
-		return $client->bumpRight if $searchString eq $rightarrow;
+		return $client->bumpRight if $searchString eq '';
 		
-		$searchString =~ s/$rightarrow//;
-				
 		$client->block( 
 			$client->string('SEARCHING'),
 			$searchString
@@ -501,14 +495,14 @@ sub overlaySymbol {
 
 	if (hasAudio($item)) {
 
-		$overlay .= Slim::Display::Display::symbol('notesymbol');
+		$overlay .= $client->symbols('notesymbol');
 	}
 	
 	$item->{'type'} ||= ''; # avoid warning but still display right arrow
 
 	if ( $item->{'type'} ne 'text' && ( hasDescription($item) || hasLink($item) ) ) {
 
-		$overlay .= Slim::Display::Display::symbol('rightarrow');
+		$overlay .= $client->symbols('rightarrow');
 	}
 
 	return [ undef, $overlay ];
@@ -595,18 +589,18 @@ sub displayItemDescription {
 	if (my $link = hasLink($item)) {
 
 		push @lines, {
-			'name'       => '{XML_LINK}: ' . $link,
-			'value'      => $link,
-			'overlayRef' => [ undef, Slim::Display::Display::symbol('rightarrow') ],
+			'name'      => '{XML_LINK}: ' . $link,
+			'value'     => $link,
+			'overlayRef'=> [ undef, shift->symbols('rightarrow') ],
 		}
 	}
 
 	if (hasAudio($item)) {
 
 		push @lines, {
-			'name'       => '{XML_ENCLOSURE}: ' . $item->{'enclosure'}->{'url'},
-			'value'      => $item->{'enclosure'}->{'url'},
-			'overlayRef' => [ undef, Slim::Display::Display::symbol('notesymbol') ],
+			'name'      => '{XML_ENCLOSURE}: ' . $item->{'enclosure'}->{'url'},
+			'value'     => $item->{'enclosure'}->{'url'},
+			'overlayRef'=> [ undef, $client->symbols('notesymbol') ],
 		};
 
 		# its a remote audio source, use remotetrackinfo
@@ -681,9 +675,9 @@ sub displayFeedDescription {
 
 	if ($count) {
 		push @lines, {
-			'name'       => '{XML_AUDIO_ENCLOSURES}: ' . $count,
-			'value'      => $feed,
-			'overlayRef' => [ undef, Slim::Display::Display::symbol('notesymbol') ],
+			'name'           => '{XML_AUDIO_ENCLOSURES}: ' . $count,
+			'value'          => $feed,
+			'overlayRef'     => [ undef, shift->symbols('notesymbol') ],
 		};
 	}
 

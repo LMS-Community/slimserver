@@ -21,7 +21,6 @@ use strict;
 use Slim::Utils::UPnPMediaServer;
 use Slim::Buttons::Common;
 use Slim::Utils::Misc;
-use Slim::Display::Display;
 
 sub init {
 	Slim::Buttons::Common::addMode( 'upnpmediaserver', getFunctions(), \&setMode );
@@ -192,10 +191,10 @@ sub listOverlayCallback {
 	return [ undef, undef ] unless defined($item);
 
 	if ($item->{'childCount'}) {
-		$overlay = Slim::Display::Display::symbol('rightarrow');
+		$overlay = $client->symbols('rightarrow');
 	}
 	elsif ($item->{'url'}) {
-		$overlay = Slim::Display::Display::symbol('notesymbol');
+		$overlay = $client->symbols('notesymbol');
 	}
 
 	return [ undef, $overlay ];

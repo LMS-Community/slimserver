@@ -414,8 +414,8 @@ sub lines {
 		my ($line1, $line2);
 		for (my $x = 1; $x < $width+2; $x++)
 			{
-				$line1 .= grid2char($dispgrid[$x][1] * 2 + $dispgrid[$x][2]);
-				$line2 .= grid2char($dispgrid[$x][3] * 2 + $dispgrid[$x][4]);
+				$line1 .= grid2char($client, $dispgrid[$x][1] * 2 + $dispgrid[$x][2]);
+				$line2 .= grid2char($client, $dispgrid[$x][3] * 2 + $dispgrid[$x][4]);
 			}
 		$parts = {
 		    'line1' => $line1,
@@ -429,13 +429,14 @@ sub lines {
 # convert numbers into characters.  should use custom characters.
 #
 sub grid2char {
+	my $client = shift;
 	my $val = shift;
 
 	if ($customchar) {
 		return " " if ($val == 0);
-		return Slim::Display::Display::symbol('slimtristop') if ($val == 1);
-		return Slim::Display::Display::symbol('slimtrisbottom') if ($val == 2);
-		return Slim::Display::Display::symbol('slimtrisboth') if ($val == 3);
+		return $client->symbols('slimtristop') if ($val == 1);
+		return $client->symbols('slimtrisbottom') if ($val == 2);
+		return $client->symbols('slimtrisboth') if ($val == 3);
 	} else {
 		return " " if ($val == 0);
 		return "o" if ($val == 1);

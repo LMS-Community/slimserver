@@ -24,11 +24,9 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
-use Slim::Display::Display;
 
 # button functions for search directory
 my @defaultSearchChoices = qw(ARTISTS ALBUMS SONGS);
-my $rightarrow = Slim::Display::Display::symbol('rightarrow');
 
 our %current    = ();
 our %context    = ();
@@ -59,8 +57,8 @@ sub init {
 			'stringHeader' => 1,
 			'headerAddCount' => 1,
 			'callback' => \&searchExitHandler,
-			'overlayRef' => sub { return (undef, Slim::Display::Display::symbol('rightarrow')) },
-			'overlayRefArgs' => '',
+			'overlayRef' => sub { return (undef, shift->symbols('rightarrow')) },
+			'overlayRefArgs' => 'C',
 			'submenus' => {
 
 				'ARTISTS' => {
@@ -153,7 +151,6 @@ sub searchHandler {
 	if ($exitType eq 'BACKSPACE') {
 		Slim::Buttons::Common::popModeRight($client);
 	} else {
-		$context{$client} =~ s/$rightarrow//;
 		startSearch($client);
 	}
 }
@@ -210,7 +207,7 @@ sub searchTerm {
 
 	for my $a (@{$client->searchTerm}) {
 
-		if (defined($a) && ($a ne $rightarrow)) {
+		if (defined($a)) {
 			$term .= $a;
 		}
 	}

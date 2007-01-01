@@ -48,9 +48,7 @@ sub init {
 			'stringHeader'    => 1,
 			'headerAddCount'  => 1,
 			'callback'        => \&settingsExitHandler,
-			'overlayRef'      => sub {
-				return (undef,Slim::Display::Display::symbol('rightarrow'));
-			},
+			'overlayRef'      => sub { return (undef,shift->symbols('rightarrow')) },
 			'overlayRefArgs'  => 'C',
 		},
 		

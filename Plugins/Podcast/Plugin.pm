@@ -176,11 +176,10 @@ sub setMode {
 			$client->execute(['playlist', 'add', $item->{'value'}, $item->{'name'}]);
 		},
 
-		overlayRef => [
-			undef,
-			Slim::Display::Display::symbol('notesymbol') .
-			Slim::Display::Display::symbol('rightarrow') 
-		],
+		overlayRef => sub {
+			my $client = shift;
+			return [ undef, $client->symbols('notesymbol') . $client->symbols('rightarrow') ];
+		},
 	);
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.Choice', \%params);
