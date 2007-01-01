@@ -323,10 +323,10 @@ sub exitInput {
 sub lines {
 	my $client = shift;
 
-	my $line1    = $client->modeParam('header') || $client->string('ENTER_TEXT');
-	my $arrayRef = $client->modeParam('arrayRef');
+	my $arrayRef = $client->modeParam('arrayRef') || return;
 	my $charsRef = $client->modeParam('charsRef');
 
+	my $line1    = $client->modeParam('header');
 	my $line2;
 
 	# assemble string, for all but last character as this needs the cursor first
@@ -436,6 +436,10 @@ sub init {
 
 	while (my $char = substr($$valueRef, $i++, 1) ) {
 		push @indexArray, $charsInd->{ $char };
+	}
+
+	unless (@indexArray) {
+		push @indexArray, $charsInd->{ undef };
 	}
 
 	$client->modeParam('arrayRef', \@indexArray);
