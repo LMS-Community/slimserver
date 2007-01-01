@@ -731,8 +731,9 @@ sub _defaultCategories {
 		'control.queries'            => 'WARN',
 		'control.stdio'              => 'WARN',
 
+		'player.display'             => 'WARN',
+		'player.fonts'               => 'WARN',
 		'player.firmware'            => 'WARN',
-		'player.graphics'            => 'WARN',
 		'player.ir'                  => 'WARN',
 		'player.menu'                => 'WARN',
 		'player.playlist'            => 'WARN',
@@ -741,6 +742,7 @@ sub _defaultCategories {
 		'player.streaming.direct'    => 'WARN',
 		'player.streaming.remote'    => 'WARN',
 		'player.sync'                => 'WARN',
+		'player.text'                => 'WARN',
 		'player.ui'                  => 'WARN',
 
 		'scan'                       => 'INFO',

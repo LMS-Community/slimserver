@@ -24,7 +24,7 @@ use strict;
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 
-my $log = logger('player.ui');
+my $log = logger('player.text');
 
 our $MAXBRIGHTNESS = 4;
 

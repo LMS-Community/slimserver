@@ -51,6 +51,8 @@ use Slim::Utils::Timers;
 #   2 = server side ticker mode
 #  3+ = <reserved for client side scrolling>
 
+my $log = logger('player.display');
+
 our $defaultPrefs = {
 	'autobrightness'       => 1,
 	'idleBrightness'       => 1,
@@ -163,11 +165,31 @@ sub update {
 	my $client  = $display->client;
 
 	my $parts;
+	my $linefunc;
+
 	if (defined($lines)) {
 		$parts = $display->parseLines($lines);
 	} else {
-		my $linefunc = $client->lines();
+		$linefunc = $client->lines();
 		$parts = $display->parseLines(&$linefunc($client));
+	}
+
+	if ($log->is_info) {
+
+		my ($line, $subr) = (caller(1))[2,3];
+		($line, $subr) = (caller(2))[2,3] if $subr eq 'Slim::Player::Player::update';
+
+		my $source = $linefunc ? Slim::Utils::PerlRunTime::realNameForCodeRef($linefunc) : '';
+
+		my $logstr = "caller $subr ($line) ($source) ";
+
+		if ($log->is_debug) {
+			$logstr .= "\$scrollMode: $scrollMode " if $scrollMode;
+			$logstr .= "s2periodic " if $s2periodic;
+			$logstr .= "display hash:" . ($parts == $display->renderCache ? 'Cache' : "\n" . Data::Dump::dump $parts);
+		}
+
+		$log->info($logstr);
 	}
 
 	unless ($s2periodic && $display->screen2updateOK) {
@@ -241,6 +263,12 @@ sub showBriefly {
 
 	my $client = $display->client;
 
+	if ($log->is_info) {
+		my ($line, $subr) = (caller(1))[2,3];
+		($line, $subr) = (caller(2))[2,3] if $subr eq 'Slim::Player::Player::showBriefly';
+		$log->info(sprintf "caller %s (%d) %s ", $subr, $line, $display->updateMode() == 2 ? '[Blocked]' : '');
+	}
+
 	# return if update blocked
 	return if ($display->updateMode() == 2);
 
@@ -250,7 +278,7 @@ sub showBriefly {
 	if (ref($parts) eq 'HASH') {
 		$parsed = $parts;
 	} else {
-		$parsed = $display->parseLines([$parts,shift]);
+		$parsed = { 'lines' => [ $parts, shift ] };
 	}
 
 	my $args = shift;
@@ -448,10 +476,12 @@ sub parseLines {
 	my $display = shift;
 	my $lines = shift;
 	my ($line1, $line2, $line3, $line4, $overlay1, $overlay2, $center1, $center2, $bits);
-	
-	if (ref($lines) eq 'HASH') { 
-		return $lines;
-	} elsif (ref($lines) eq 'SCALAR') {
+
+	return $lines if (ref($lines) eq 'HASH');
+
+	logBacktrace("lines function not using display hash, please update to display hash as this will be depreciated");
+
+	if (ref($lines) eq 'SCALAR') {
 		$line1 = $$lines;
 	} else {
 		if (ref($lines) eq 'ARRAY') {

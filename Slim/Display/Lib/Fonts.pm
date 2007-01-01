@@ -124,7 +124,7 @@ my %font2uc = (
 	'standard.1' => 1,
 );
 
-my $log = logger('player.graphics');
+my $log = logger('player.fonts');
 
 sub init {
 	loadFonts();
