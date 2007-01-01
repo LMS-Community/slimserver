@@ -249,12 +249,12 @@ sub render {
 				} else {
 					$sc->{linetext}[$l] = $screen->{line}[$l];
 				}
-				$sc->{linefinish}[$l] = Slim::Display::Display::lineLength($sc->{linetext}[$l]);
+				$sc->{linefinish}[$l] = lineLength($sc->{linetext}[$l]);
 			} else {
 				($sc->{linetext}[0], $sc->{linetext}[1]) =
 					Slim::Display::Lib::TextVFD::doubleSize($client,$screen->{line}[1]);
-				$sc->{linefinish}[0] = Slim::Display::Display::lineLength($sc->{linetext}[0]);
-				$sc->{linefinish}[1] = Slim::Display::Display::lineLength($sc->{linetext}[1]);
+				$sc->{linefinish}[0] = lineLength($sc->{linetext}[0]);
+				$sc->{linefinish}[1] = lineLength($sc->{linetext}[1]);
 			}
 			if ($sc->{scroll} && ($sc->{scrollline} == $l || $double)) {
 				$sc->{scroll} = 0; $sc->{scrollline} = undef;
@@ -286,11 +286,11 @@ sub render {
 			} else {
 				$sc->{overlaytext}[$l] = '';
 			}
-			if (Slim::Display::Display::lineLength($sc->{overlaytext}[$l]) > 40 ) {
-				$sc->{overlaytext}[$l] = Slim::Display::Display::subString($sc->{overlaytext}[$l], 0, 40);
+			if (lineLength($sc->{overlaytext}[$l]) > 40 ) {
+				$sc->{overlaytext}[$l] = subString($sc->{overlaytext}[$l], 0, 40);
 				$sc->{overlaystart}[$l] = 40;
 			} else {
-				$sc->{overlaystart}[$l] = 40 - Slim::Display::Display::lineLength($sc->{overlaytext}[$l]);
+				$sc->{overlaystart}[$l] = 40 - lineLength($sc->{overlaytext}[$l]);
 			}
 			$sc->{changed} = 1;
 		} elsif (!defined($screen->{overlay}[$l]) && defined($sc->{overlay}[$l])) {
@@ -308,22 +308,22 @@ sub render {
 			$sc->{center}[$l] = $screen->{center}[$l];
 			next if ($double && $l == 0);
 			if (!$double) {
-				my $len = Slim::Display::Display::lineLength($sc->{center}[$l]); 
+				my $len = lineLength($sc->{center}[$l]); 
 				if ($len < 39) {
 					$sc->{centertext}[$l] = ' ' x ((40 - $len)/2) . $screen->{center}[$l] . 
 						' ' x (40 - $len - int((40 - $len)/2));
 				} else {
-					$sc->{centertext}[$l] = Slim::Display::Display::subString($sc->{center}[$l] . ' ', 0 ,40);
+					$sc->{centertext}[$l] = subString($sc->{center}[$l] . ' ', 0 ,40);
 				}
 			} else {
 				my ($center1, $center2) = Slim::Display::Lib::TextVFD::doubleSize($client,$screen->{center}[1]);
-				my $len = Slim::Display::Display::lineLength($center1);
+				my $len = lineLength($center1);
 				if ($len < 39) {
 					$sc->{centertext}[0] = ' ' x ((40 - $len)/2) . $center1 . ' ' x (40 - $len - int((40 - $len)/2));
 					$sc->{centertext}[1] = ' ' x ((40 - $len)/2) . $center2 . ' ' x (40 - $len - int((40 - $len)/2));
 				} else {
-					$sc->{centertext}[0] = Slim::Display::Display::subString($center1 . ' ', 0 ,40);
-					$sc->{centertext}[1] = Slim::Display::Display::subString($center2 . ' ', 0 ,40);
+					$sc->{centertext}[0] = subString($center1 . ' ', 0 ,40);
+					$sc->{centertext}[1] = subString($center2 . ' ', 0 ,40);
 				}
 			}
 			$sc->{changed} = 1;
@@ -349,10 +349,10 @@ sub render {
 				$sc->{scrollline} = $l;
 				if (!$double) {
 					$ticker[$l] = $screen->{ticker}[$l];
-					$len = Slim::Display::Display::lineLength($ticker[$l]);
+					$len = lineLength($ticker[$l]);
 				} else {
 					($ticker[0], $ticker[1]) = Slim::Display::Lib::TextVFD::doubleSize($client,$screen->{ticker}[$l]);
-					$len = Slim::Display::Display::lineLength($ticker[$l]);
+					$len = lineLength($ticker[$l]);
 				}
 				last;
 			}
@@ -387,7 +387,7 @@ sub render {
 
 		if ($sc->{centertext}[$l]) {
 			# centered text takes precedence
-			$line = Slim::Display::Display::subString($sc->{centertext}[$l], 0, $sc->{overlaystart}[$l]). 
+			$line = subString($sc->{centertext}[$l], 0, $sc->{overlaystart}[$l]). 
 				$sc->{overlaytext}[$l];
 
 		} elsif ($sc->{linefinish}[$l] <= $sc->{overlaystart}[$l] ) {
@@ -397,7 +397,7 @@ sub render {
 
 		} elsif (!$scroll || ($sc->{scroll} && $sc->{scrollline} != $l) ) {
 			# scrolling not enabled or already scrolling for another line - truncate line
-			$line = Slim::Display::Display::subString($sc->{linetext}[$l], 0, $sc->{overlaystart}[$l]) .
+			$line = subString($sc->{linetext}[$l], 0, $sc->{overlaystart}[$l]) .
 				$sc->{overlaytext}[$l];
 
 		} elsif ($sc->{scroll} && $sc->{scrollline} == $l) {
@@ -414,7 +414,7 @@ sub render {
 			$sc->{scrollstart} = 0;
 			if ($scroll == 1) {
 				# normal wrapped text scrolling
-				$scrolltext .= ' ' x $scroll_pad_scroll . Slim::Display::Display::subString($scrolltext, 0, 40);
+				$scrolltext .= ' ' x $scroll_pad_scroll . subString($scrolltext, 0, 40);
 				$sc->{scrollend} = $sc->{linefinish}[$l] + $scroll_pad_scroll;
 			} else {
 				# don't wrap text - scroll to end only
@@ -512,8 +512,8 @@ sub pushUpdate {
 	
 	$offset += $delta;
 
-	my $screenline1 = Slim::Display::Display::subString($$line1, $offset, 40);
-	my $screenline2 = Slim::Display::Display::subString($$line2, $offset, 40);
+	my $screenline1 = subString($$line1, $offset, 40);
+	my $screenline2 = subString($$line2, $offset, 40);
 
 	Slim::Display::Lib::TextVFD::vfdUpdate($display->client, $screenline1, $screenline2);		
 
@@ -592,27 +592,27 @@ sub scrollUpdateDisplay {
 			# top line scrolling
 			$line2 = ${$scroll->{line2ref}};
 			if ($padlen) {
-				$line1 = Slim::Display::Display::subString(${$scroll->{scrollline1ref}} . $pad, $scroll->{offset}, $scroll->{overlaystart}) . $scroll->{overlay1text};
+				$line1 = subString(${$scroll->{scrollline1ref}} . $pad, $scroll->{offset}, $scroll->{overlaystart}) . $scroll->{overlay1text};
 			} else {
-				$line1 = Slim::Display::Display::subString(${$scroll->{scrollline1ref}}, $scroll->{offset}, $scroll->{overlaystart}) . $scroll->{overlay1text};
+				$line1 = subString(${$scroll->{scrollline1ref}}, $scroll->{offset}, $scroll->{overlaystart}) . $scroll->{overlay1text};
 			}
 		} else {
 			# bottom line scrolling
 			$line1 = ${$scroll->{line1ref}};
 			if ($padlen) {
-				$line2 = Slim::Display::Display::subString(${$scroll->{scrollline2ref}} . $pad, $scroll->{offset}, $scroll->{overlaystart}) . $scroll->{overlay2text};
+				$line2 = subString(${$scroll->{scrollline2ref}} . $pad, $scroll->{offset}, $scroll->{overlaystart}) . $scroll->{overlay2text};
 			} else {
-				$line2 = Slim::Display::Display::subString(${$scroll->{scrollline2ref}}, $scroll->{offset}, $scroll->{overlaystart}) . $scroll->{overlay2text};
+				$line2 = subString(${$scroll->{scrollline2ref}}, $scroll->{offset}, $scroll->{overlaystart}) . $scroll->{overlay2text};
 			}
 		}
 	} else {
 		# both lines scrolling
 		if ($padlen) {
-			$line1 = Slim::Display::Display::subString(${$scroll->{scrollline1ref}} . $pad, $scroll->{offset}, 40);
-			$line2 = Slim::Display::Display::subString(${$scroll->{scrollline2ref}} . $pad, $scroll->{offset}, 40);
+			$line1 = subString(${$scroll->{scrollline1ref}} . $pad, $scroll->{offset}, 40);
+			$line2 = subString(${$scroll->{scrollline2ref}} . $pad, $scroll->{offset}, 40);
 		} else {
-			$line1 = Slim::Display::Display::subString(${$scroll->{scrollline1ref}}, $scroll->{offset}, 40);
-			$line2 = Slim::Display::Display::subString(${$scroll->{scrollline2ref}}, $scroll->{offset}, 40);
+			$line1 = subString(${$scroll->{scrollline1ref}}, $scroll->{offset}, 40);
+			$line2 = subString(${$scroll->{scrollline2ref}}, $scroll->{offset}, 40);
 		}
 	}
 
@@ -636,13 +636,13 @@ sub scrollUpdateTicker {
 	}
 
 	if ($double || $scrollline == 0) {
-		my $line1 = Slim::Display::Display::subString(${$scroll->{scrollline1ref}}, $scroll->{offset});
+		my $line1 = subString(${$scroll->{scrollline1ref}}, $scroll->{offset});
 		$line1 .= ' ' x $pad;
 		$line1 .= ${$screen->{scrollref}[0]};
 		$scroll->{scrollline1ref} = \$line1;
 	}
 	if ($double || $scrollline == 1) {
-		my $line2 = Slim::Display::Display::subString(${$scroll->{scrollline2ref}}, $scroll->{offset});
+		my $line2 = subString(${$scroll->{scrollline2ref}}, $scroll->{offset});
 		$line2 .= ' ' x $pad;
 		$line2 .= ${$screen->{scrollref}[1]};
 		$scroll->{scrollline2ref} = \$line2;
@@ -694,7 +694,7 @@ sub maxTextSize {
 sub measureText {
 	my $display = shift;
 	my $text = shift;
-	return Slim::Display::Display::lineLength($text);
+	return lineLength($text);
 }
 
 sub symbols {
@@ -812,6 +812,57 @@ sub doubleString {
 # register text custom characters - not called as a method of display
 sub setCustomChar {
 	Slim::Display::Lib::TextVFD::setCustomChar(@_);
+}
+
+
+# utility functions to manipulate strings including text display control characters
+
+sub lineLength {
+	my $line = shift;
+	return 0 if (!defined($line) || !length($line));
+
+	$line =~ s/\x1f[^\x1f]+\x1f/x/g;
+	$line =~ s/(\x1eframebuf\x1e.*\x1e\/framebuf\x1e|\n|\xe1[^\x1e]\x1e)//gs;
+	return length($line);
+}
+
+sub splitString {
+	my $string = shift;
+	my @result = ();
+	$string =~ s/(\x1f[^\x1f]+\x1f|\x1eframebuf\x1e.*\x1e\/framebuf\x1e|\x1e[^\x1e]+\x1e|.)/push @result, $1;/esg;
+	return \@result;
+}
+
+sub subString {
+	my ($string,$start,$length,$replace) = @_;
+	$string =~ s/\x1eframebuf\x1e.*\x1e\/framebuf\x1e//s if ($string);
+
+	my $newstring = '';
+	my $oldstring = '';
+
+	if ($start && $length && ($start > 32765 || ($length || 0) > 32765)) {
+
+		logBacktrace("substr on string with start or length greater than 32k, returning empty string.");
+
+		return '';
+	}
+
+	if ($string && $string =~ s/^(((?:(\x1e[^\x1e]+\x1e)|)(?:[^\x1e\x1f]|\x1f[^\x1f]+\x1f)){0,$start})//) {
+		$oldstring = $1;
+	}
+
+	if (defined($length)) {
+		if ($string =~ s/^(((?:(\x1e[^\x1e]+\x1e)|)([^\x1e\x1f]|\x1f[^\x1f]+\x1f)){0,$length})//) {
+			$newstring = $1;
+		}
+
+		if (defined($replace)) {
+			$_[0] = $oldstring . $replace . $string;
+		}
+	} else {
+		$newstring = $string;
+	}
+	return $newstring;
 }
 
 =head1 SEE ALSO

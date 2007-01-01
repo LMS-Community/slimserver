@@ -803,53 +803,6 @@ sub command {
 	if (exists($commandmap{$symname})) { return $commandmap{$symname}; }
 }
 
-sub lineLength {
-	my $line = shift;
-	return 0 if (!defined($line) || !length($line));
-
-	$line =~ s/\x1f[^\x1f]+\x1f/x/g;
-	$line =~ s/(\x1eframebuf\x1e.*\x1e\/framebuf\x1e|\n|\xe1[^\x1e]\x1e)//gs;
-	return length($line);
-}
-
-sub splitString {
-	my $string = shift;
-	my @result = ();
-	$string =~ s/(\x1f[^\x1f]+\x1f|\x1eframebuf\x1e.*\x1e\/framebuf\x1e|\x1e[^\x1e]+\x1e|.)/push @result, $1;/esg;
-	return \@result;
-}
-
-sub subString {
-	my ($string,$start,$length,$replace) = @_;
-	$string =~ s/\x1eframebuf\x1e.*\x1e\/framebuf\x1e//s if ($string);
-
-	my $newstring = '';
-	my $oldstring = '';
-
-	if ($start && $length && ($start > 32765 || ($length || 0) > 32765)) {
-
-		logBacktrace("substr on string with start or length greater than 32k, returning empty string.");
-
-		return '';
-	}
-
-	if ($string && $string =~ s/^(((?:(\x1e[^\x1e]+\x1e)|)(?:[^\x1e\x1f]|\x1f[^\x1f]+\x1f)){0,$start})//) {
-		$oldstring = $1;
-	}
-	
-	if (defined($length)) {
-		if ($string =~ s/^(((?:(\x1e[^\x1e]+\x1e)|)([^\x1e\x1f]|\x1f[^\x1f]+\x1f)){0,$length})//) {
-			$newstring = $1;
-		}
-	
-		if (defined($replace)) {
-			$_[0] = $oldstring . $replace . $string;
-		}
-	} else {
-		$newstring = $string;
-	}
-	return $newstring;
-}
 
 =head1 SEE ALSO
 

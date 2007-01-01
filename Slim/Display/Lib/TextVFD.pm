@@ -956,7 +956,7 @@ sub addDoubleChar {
 	my ($char,$doublechar) = @_;
 
 	if (!exists $doubleClassic->{$char} && ref($doublechar) eq 'ARRAY' 
-		&& Slim::Display::Display::lineLength($doublechar->[0]) == Slim::Display::Display::lineLength($doublechar->[1])) {
+		&& Slim::Display::Text::lineLength($doublechar->[0]) == Slim::Display::Text::lineLength($doublechar->[1])) {
 
 		$doubleClassic->{$char} = $doublechar;
 		$doubleModern->{$char}  = $doublechar;
@@ -973,8 +973,8 @@ sub addDoubleChar {
 			$log->warn("Could not add character $char, doublechar is not array reference.");
 		}
 
-		if (Slim::Display::Display::lineLength($doublechar->[0]) !=
-		    Slim::Display::Display::lineLength($doublechar->[1])) {
+		if (Slim::Display::Text::lineLength($doublechar->[0]) !=
+		    Slim::Display::Text::lineLength($doublechar->[1])) {
 
 			$log->warn("Could not add character $char, lines of doublechar have unequal lengths.");
 		}
@@ -985,8 +985,8 @@ sub updateDoubleChar {
 	my ($char,$doublechar) = @_;
 
 	if (ref($doublechar) eq 'ARRAY' 
-		&& Slim::Display::Display::lineLength($doublechar->[0]) == 
-		   Slim::Display::Display::lineLength($doublechar->[1])) {
+		&& Slim::Display::Text::lineLength($doublechar->[0]) == 
+		   Slim::Display::Text::lineLength($doublechar->[1])) {
 
 		$doubleClassic->{$char} = $doublechar;
 		$doubleModern->{$char}  = $doublechar;
@@ -998,8 +998,8 @@ sub updateDoubleChar {
 			$log->warn("Could not add character $char, doublechar is not array reference.");
 		}
 
-		if (Slim::Display::Display::lineLength($doublechar->[0]) !=
-		    Slim::Display::Display::lineLength($doublechar->[1])) {
+		if (Slim::Display::Text::lineLength($doublechar->[0]) !=
+		    Slim::Display::Text::lineLength($doublechar->[1])) {
 
 			$log->warn("Could not add character $char, lines of doublechar have unequal lengths.");
 		}
@@ -1051,7 +1051,7 @@ sub doubleSize {
    
 	my $lastchar = "";
 	
-	my $split = Slim::Display::Display::splitString($line2);
+	my $split = Slim::Display::Text::splitString($line2);
 	
 	foreach my $char (@$split) {
 
