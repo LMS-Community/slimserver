@@ -734,9 +734,9 @@ sub sliderBar {
 	if ($dots < 0) { $dots = 0 };
 	
 	if ($dots < $charwidth) {
-		$chart = $midpoint ? Slim::Display::Display::symbol('leftprogress4') : Slim::Display::Display::symbol('leftprogress'.$dots);
+		$chart = $midpoint ? $display->symbols('leftprogress4') : $display->symbols('leftprogress'.$dots);
 	} else {
-		$chart = $midpoint ? Slim::Display::Display::symbol('leftprogress0') : Slim::Display::Display::symbol('leftprogress4');
+		$chart = $midpoint ? $display->symbols('leftprogress0') : $display->symbols('leftprogress4');
 	}
 	
 	$dots -= $charwidth;
@@ -744,45 +744,45 @@ sub sliderBar {
 	if ($midpoint) {
 		for (my $i = 1; $i < $divider; $i++) {
 			if ($dots <= 0) {
-				$chart .= Slim::Display::Display::symbol('solidblock');
+				$chart .= $display->symbols('solidblock');
 			} else {
-				$chart .= Slim::Display::Display::symbol('middleprogress0');
+				$chart .= $display->symbols('middleprogress0');
 			}
 			$dots -= $charwidth;
 		}
 		if ($value < $midpoint) {
-			$chart .= Slim::Display::Display::symbol('solidblock');
+			$chart .= $display->symbols('solidblock');
 			$dots -= $charwidth;
 		} else {
-			$chart .= Slim::Display::Display::symbol('leftmark');
+			$chart .= $display->symbols('leftmark');
 			$dots -= $charwidth;
 		}
 	}
 	for (my $i = $divider + 1; $i < ($width - 1); $i++) {
 		if ($midpoint && $i == $divider + 1) {
 			if ($value > $midpoint) {
-				$chart .= Slim::Display::Display::symbol('solidblock');
+				$chart .= $display->symbols('solidblock');
 			} else {
-				$chart .= Slim::Display::Display::symbol('rightmark');
+				$chart .= $display->symbols('rightmark');
 			}
 			$dots -= $charwidth;
 		}
 		if ($dots <= 0) {
-			$chart .= Slim::Display::Display::symbol('middleprogress0');
+			$chart .= $display->symbols('middleprogress0');
 		} elsif ($dots < $charwidth && !$fullstep) {
-			$chart .= Slim::Display::Display::symbol('middleprogress'.$dots);
+			$chart .= $display->symbols('middleprogress'.$dots);
 		} else {
-			$chart .= Slim::Display::Display::symbol('solidblock');
+			$chart .= $display->symbols('solidblock');
 		}
 		$dots -= $charwidth;
 	}
 		
 	if ($dots <= 0) {
-		$chart .= Slim::Display::Display::symbol('rightprogress0');
+		$chart .= $display->symbols('rightprogress0');
 	} elsif ($dots < $charwidth && !$fullstep) {
-		$chart .= Slim::Display::Display::symbol('rightprogress'.$dots);
+		$chart .= $display->symbols('rightprogress'.$dots);
 	} else {
-		$chart .= Slim::Display::Display::symbol('rightprogress4');
+		$chart .= $display->symbols('rightprogress4');
 	}
 	
 	return $chart;
@@ -801,14 +801,7 @@ sub doubleString {
 our %Symbols = (
 	'notesymbol' => "\x1Fnotesymbol\x1F",
 	'rightarrow' => "\x1Frightarrow\x1F",
-	'progressEnd'=> "\x1FprogressEnd\x1F",
-	'progress1e' => "\x1Fprogress1e\x1F",
-	'progress2e' => "\x1Fprogress2e\x1F",
-	'progress3e' => "\x1Fprogress3e\x1F",
-	'progress1'  => "\x1Fprogress1\x1F",
-	'progress2'  => "\x1Fprogress2\x1F",
-	'progress3'  => "\x1Fprogress3\x1F",
-	'cursor'	 => "\x1Fcursor\x1F",
+	'solidblock' => "\x1Fsolidblock\x1F",
 	'mixable'    => "\x1Fmixable\x1F",
 	'bell'	     => "\x1Fbell\x1F",
 	'hardspace'  => "\x1Fhardspace\x1F"
@@ -824,11 +817,6 @@ our %commandmap = (
 	'right'      => "\x1eright\x1e",
 	'scroll'     => "\x1escroll\x1e",
 	'/scroll'    => "\x1e/scroll\x1e", 
-	'tight'      => "\x1etight\x1e",
-	'/tight'     => "\x1e/tight\x1e",
-	'font'       => "\x1efont\x1e",
-	'/font'      => "\x1e/font\x1e",
-	'defaultfont'=> "\x1edefaultfont\x1e",
 );
 
 sub symbols {

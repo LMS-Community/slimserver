@@ -416,9 +416,6 @@ sub lines {
 
 	my ($overlay1, $overlay2) = Slim::Buttons::Input::List::getExtVal($client, $valueRef, $listIndex, 'overlayRef') unless $noOverlay;
 
-	$overlay1 = $client->symbols($overlay1) if defined($overlay1);
-	$overlay2 = $client->symbols($overlay2) if defined($overlay2);
-	
 	my $parts = {
 		'line'    => [ $line1, $line2 ],
 		'overlay' => [ $overlay1, $overlay2 ]

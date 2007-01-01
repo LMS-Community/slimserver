@@ -229,7 +229,7 @@ sub lines {
 	my $listIndex = $client->modeParam('listIndex');
 	my $listRef = $client->modeParam('listRef');
 
-	if (!defined($listRef)) { return ('','');}
+	if (!defined($listRef)) { return {} }
 
 	if ($listIndex && ($listIndex == scalar(@$listRef))) {
 		$client->modeParam('listIndex',$listIndex-1);
@@ -260,9 +260,6 @@ sub lines {
 	}
 	my ($overlay1, $overlay2) = getExtVal($client,$listRef->[$listIndex],$listIndex,'overlayRef');
 
-	$overlay1 = $client->symbols($overlay1) if defined($overlay1);
-	$overlay2 = $client->symbols($overlay2) if defined($overlay2);
-	
 	my $parts = {
 		'line'    => [ $line1, $line2 ],
 		'overlay' => [ $overlay1, $overlay2 ]

@@ -441,8 +441,6 @@ sub lines {
 	if (ref($overlayref) eq 'ARRAY') {
 
 		($overlay1, $overlay2) = @$overlayref;
-		$overlay1 = $client->symbols($overlay1) if (defined($overlay1));
-		$overlay2 = $client->symbols($overlay2) if (defined($overlay2));
 		
 	} elsif (my $pref = getParam($client,'pref')) {
 		
