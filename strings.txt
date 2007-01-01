@@ -12195,9 +12195,14 @@ DEBUG_PLAYER_UI
 	DE	Player Benutzerinterface
 	EN	Player User Interface Information
 
-DEBUG_PLAYER_GRAPHICS
-	DE	Playergrafik: Schriften & Bitmaps
-	EN	Player Graphic Display: Font & Bitmap Information 
+DEBUG_PLAYER_DISPLAY
+	EN	Player Display Information 
+
+DEBUG_PLAYER_FONTS
+	EN	Player Display (Font & Bitmap Information)
+
+DEBUG_PLAYER_TEXT
+	EN	Player Display (Character Display Information)
 
 DEBUG_PLAYER_PLAYLIST
 	DE	Player Wiedergabelisten Informationen
