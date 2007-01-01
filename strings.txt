@@ -7070,7 +7070,7 @@ NAME
 
 SAVED_PLAYLISTS
 	CS	Procházet playlisty
-	DE	Wiedergabelisten nachschlagen
+	DE	Wiedergabelisten
 	DA	Gemte playlister
 	EN	Playlists
 	ES	Elegir de  Listas Guardadas
@@ -12196,12 +12196,15 @@ DEBUG_PLAYER_UI
 	EN	Player User Interface Information
 
 DEBUG_PLAYER_DISPLAY
+	DE	Player-Anzeige
 	EN	Player Display Information 
 
 DEBUG_PLAYER_FONTS
+	DE	Player Anzeige (Schriften & Bitmaps)
 	EN	Player Display (Font & Bitmap Information)
 
 DEBUG_PLAYER_TEXT
+	DE	Player Anzeige (Zeichendarstellung)
 	EN	Player Display (Character Display Information)
 
 DEBUG_PLAYER_PLAYLIST
