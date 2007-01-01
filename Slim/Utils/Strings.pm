@@ -426,7 +426,7 @@ sub clientStrings {
 	my $client = shift;
 	my $display = $client->display;
 
-	if (storeFailsafe() && $display->isa('Slim::Display::Text') || $display->isa('Slim::Display::SqueezeboxG') ) {
+	if (storeFailsafe() && ($display->isa('Slim::Display::Text') || $display->isa('Slim::Display::SqueezeboxG')) ) {
 
 		unless ($strings->{$failsafeLang}) {
 			$log->info("Reparsing strings as client requires failsafe language");
