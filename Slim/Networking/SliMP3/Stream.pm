@@ -113,7 +113,7 @@ Pauses playback (but keep filling the buffer)
 sub pause {
 	my ($client) = @_;
 
-	$log->infomsg($client->id, " pause");
+	$log->info($client->id, " pause");
 
 	if ($streamState{$client} ne 'play' && $streamState{$client} ne 'buffering') {
 
