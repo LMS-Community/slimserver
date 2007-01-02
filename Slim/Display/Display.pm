@@ -159,43 +159,12 @@ sub displayStrings {
 # main display function - all screen updates [other than push/bumps] are driven by this function
 sub update {
 	my $display = shift;
-	my $lines   = shift;
+	my $parts   = shift;
 	my $scrollMode = shift;	# 0 = normal scroll, 1 = scroll once only, 2 = no scroll, 3 = scroll once and end
 	my $s2periodic = shift; # flag to indicate called by peridic update for screen 2 [to bypass some state checks]
 	my $client  = $display->client;
 
-	my $parts;
-	my $linefunc;
-
-	if (defined($lines)) {
-		$parts = $display->parseLines($lines);
-
-	} else {
-		$linefunc = $client->lines();
-		$parts = eval { $display->parseLines(&$linefunc($client)) };
-
-		if ($@) {
-			logError("bad lines function: $@");
-		}
-	}
-
-	if ($log->is_info) {
-
-		my ($line, $subr) = (caller(1))[2,3];
-		($line, $subr) = (caller(2))[2,3] if $subr eq 'Slim::Player::Player::update';
-
-		my $source = $linefunc ? Slim::Utils::PerlRunTime::realNameForCodeRef($linefunc) : '';
-
-		my $logstr = "caller $subr ($line) ($source) ";
-
-		if ($log->is_debug) {
-			$logstr .= "\$scrollMode: $scrollMode " if $scrollMode;
-			$logstr .= "s2periodic " if $s2periodic;
-			$logstr .= "display hash:" . ($parts == $display->renderCache ? 'Cache' : "\n" . Data::Dump::dump $parts);
-		}
-
-		$log->info($logstr);
-	}
+	$parts ||= $display->curLines;
 
 	unless ($s2periodic && $display->screen2updateOK) {
 
@@ -450,25 +419,38 @@ sub curDisplay {
 
 sub curLines {
 	my $display = shift;
-	my $client;
+
+	unless ($display->isa('Slim::Display::Display')) {
+		# not called as a display method
+		logBacktrace("This function is depreciated, please call \$client->curLines() or \$display->curLines()");
+		return;
+	}
+
+	my $client = $display->client;
+	my $linefunc = $client->lines;
 	my $parts;
 
-	if ($display->isa('Slim::Display::Display')) {
-		$client = $display->client;
+	if (defined $linefunc) {
+		$parts = eval {  $display->parseLines(&$linefunc($client)) };
 
-		my $linefunc = $client->lines();
-
-		if (defined $linefunc) {
-			$parts = eval {  $display->parseLines(&$linefunc($client)) };
-
-			if ($@) {
-				logError("bad lines function: $@");
-			}
+		if ($@) {
+			logError("bad lines function: $@");
 		}
+	}
 
-	} else {
-		# not called as a display method - depreciated
-		logBacktrace("This function is depreciated, please call \$client->curLines()");
+	if ($log->is_info) {
+
+		my $source = Slim::Utils::PerlRunTime::realNameForCodeRef($linefunc);
+		my ($line, $sub, @subs);
+		my $frame = 1;
+
+		do {
+			($line, $sub) = (caller($frame++))[2,3];
+			push @subs, $sub;
+		} while ($sub && $sub =~ /Slim::Display|Slim::Player::Player::update|Slim::Player::Player::push/);
+
+		$log->info(sprintf "lines $source [%s($line)]", join(", ", @subs));
+		$log->debug(sub { Data::Dump::dump $parts });
 	}
 
 	return $parts;
