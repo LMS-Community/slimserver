@@ -55,7 +55,7 @@ __PACKAGE__->mk_classaccessors( qw(
 __PACKAGE__->mk_classaccessor( bufsize => 1024 );
 
 # Max redirects to follow
-__PACKAGE__->mk_classaccessor( maxRedirect => 3 );
+__PACKAGE__->mk_classaccessor( maxRedirect => 7 );
 
 sub new_socket {
 	my $self = shift;
