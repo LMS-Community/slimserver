@@ -2,10 +2,22 @@ package Slim::Formats::MMS;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2005 Vidur Apparao, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Vidur Apparao, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
-# version 2.  
+# version 2.
+
+=head1 NAME
+
+Slim::Formats::MMS
+
+=head1 DESCRIPTION
+
+Extract metadata from MMS/WMA streams.
+
+=head1 METHODS
+
+=cut
 
 use strict;
 use base qw(Slim::Formats::RemoteStream);
@@ -21,7 +33,12 @@ use Slim::Utils::Prefs;
 # 
 use constant DEFAULT_TYPE => 'wma';
 
-# Class constructor for just reading metadata from the stream / remote playlist
+=head2 getTag( $url )
+
+Class constructor for reading metadata from the stream / remote playlist
+
+=cut
+
 sub getTag {
 	my $class = shift;
 	my $url   = shift || return {};
@@ -52,6 +69,24 @@ sub getTag {
 	return $self;
 }
 
+=head2 getFormatForURL()
+
+Returns the type of of stream we are checking (wma)
+
+=cut
+
+sub getFormatForURL {
+	my ($classOrSelf, $url) = @_;
+
+	return DEFAULT_TYPE;
+}
+
+=head2 randomGUID()
+
+Generate a random GUID.
+
+=cut
+
 sub randomGUID {
 	my $self = shift;
 
@@ -70,10 +105,17 @@ sub randomGUID {
 	return $guid;
 }
 
-# Most WM streaming stations also stream via HTTP. The requestString class
-# method is invoked by the direct streaming code to obtain a request string
-# to send to a WM streaming server. We construct a HTTP request string and
-# cross our fingers. 
+=head2 requestString( $client, $url, )
+
+Generate a MMS request string suitable for sending to a MMS server.
+
+Most WM streaming stations also stream via HTTP. The requestString class
+method is invoked by the direct streaming code to obtain a request string to
+send to a WM streaming server. We construct a HTTP request string and cross
+our fingers. 
+
+=cut
+
 sub requestString {
 	my $self = shift;
 	my $url  = shift;
@@ -119,12 +161,6 @@ sub requestString {
 
 	# make the request
 	return join($CRLF, @headers, $CRLF);
-}
-
-sub getFormatForURL {
-	my ($classOrSelf, $url) = @_;
-
-	return DEFAULT_TYPE;
 }
 
 sub parseHeaders {
