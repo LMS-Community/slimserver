@@ -169,9 +169,14 @@ sub update {
 
 	if (defined($lines)) {
 		$parts = $display->parseLines($lines);
+
 	} else {
 		$linefunc = $client->lines();
-		$parts = $display->parseLines(&$linefunc($client));
+		$parts = eval { $display->parseLines(&$linefunc($client)) };
+
+		if ($@) {
+			logError("bad lines function: $@");
+		}
 	}
 
 	if ($log->is_info) {
@@ -445,29 +450,28 @@ sub curDisplay {
 
 sub curLines {
 	my $display = shift;
-
 	my $client;
+	my $parts;
 
 	if ($display->isa('Slim::Display::Display')) {
 		$client = $display->client;
 
-	} elsif ($display->isa('Slim::Player::Player')) {
+		my $linefunc = $client->lines();
 
-		# this code is reached if curLines is called with the old API rather than a method of display
+		if (defined $linefunc) {
+			$parts = eval {  $display->parseLines(&$linefunc($client)) };
+
+			if ($@) {
+				logError("bad lines function: $@");
+			}
+		}
+
+	} else {
+		# not called as a display method - depreciated
 		logBacktrace("This function is depreciated, please call \$client->curLines()");
-		$client = $display;
-		  
-	} else {
-		return undef;
 	}
 
-	my $linefunc = $client->lines();
-
-	if (defined $linefunc) {
-		return $display->parseLines(&$linefunc($client));
-	} else {
-		return undef;
-	}
+	return $parts;
 }
 
 # Parse lines into the latest hash format.  Provides backward compatibility for array and escaped lines definitions

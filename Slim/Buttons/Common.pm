@@ -1563,7 +1563,12 @@ sub pushMode {
 		my $exitFun = $leaveMode{$oldmode};
 
 		if ($exitFun && ref($exitFun) eq 'CODE') {
-			&$exitFun($client, 'push');
+
+			eval { &$exitFun($client, 'push') };
+
+			if ($@) {
+				logError("Couldn't execute mode exit function: $@");
+			}
 		}
 	}
 
@@ -1643,7 +1648,12 @@ sub popMode {
 		my $exitFun = $leaveMode{$oldMode};
 
 		if ($exitFun && ref($exitFun) eq 'CODE') {
-			&$exitFun($client, 'pop');
+
+			eval { &$exitFun($client, 'pop') };
+
+			if ($@) {
+				logError("Couldn't execute mode exit function: $@");
+			}
 		}
 	}
 	
@@ -1659,7 +1669,11 @@ sub popMode {
 
 		my $fun = $modes{$newMode};
 
-		&$fun($client,'pop');
+		eval { &$fun($client,'pop') };
+
+		if ($@) {
+			logError("Couldn't execute setMode on pop: $@");
+		}
 	}
 
 	$log->info("Popped to button mode: " . (mode($client) || 'empty!'));
@@ -1890,7 +1904,14 @@ sub _periodicUpdate {
 	}
 
 	if ($update2 && (!$display->updateMode || $display->screen2updateOK) && (my $linefunc = $client->lines2periodic()) ) {
-		$client->display->update({ 'screen2' => &$linefunc($client, 1) }, undef, 1);
+
+		my $screen2 = eval { &$linefunc($client, 1) };
+
+		if ($@) {
+			logError("bad screen2 lines: $@");
+		}
+
+		$client->display->update({ 'screen2' => $screen2 }, undef, 1);
 	}
 }
 
