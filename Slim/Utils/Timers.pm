@@ -193,7 +193,11 @@ sub checkTimers {
 
 		if ( $subptr ) {
 
-			$subptr->($objRef, @{$args});
+			eval { $subptr->($objRef, @{$args}) };
+
+			if ($@) {
+				logError("Timer failed: $@");
+			}
 
 		} else {
 

@@ -35,9 +35,7 @@ Slim::Utils::Scheduler::remove_task(\&scanFunction);
  your function and a list of arguments. 
 
  Background tasks should be run whenever the server has extra time on its hands, ie,
- when we'd otherwise be sitting in select. To run background tasks, call run_tasks,
- passing as the argument the amount of time (in seconds; 0.1 or less is
- recommended) that you want to spend on them.
+ when we'd otherwise be sitting in select.
 
 =cut
 
@@ -117,7 +115,7 @@ sub remove_task {
 =cut
 
 sub run_tasks {
-	return 0 if scalar !@background_tasks;
+	return 0 unless @background_tasks;
 
 	my $busy = 0;
 	my $now  = Time::HiRes::time();
@@ -141,7 +139,13 @@ sub run_tasks {
 		my $taskptr = $background_tasks[$curtask];
 		my ($subptr, @subargs) = @$taskptr;
 
-		if (&$subptr(@subargs) == 0) {
+		my $cont = eval { &$subptr(@subargs) };
+
+		if ($@) {
+			logError("Scheduled task failed: $@");
+		}
+
+		if ($@ || !$cont) {
 
 			# the task has finished. Remove it from the list.
 			$log->info("Task finished: $subptr");

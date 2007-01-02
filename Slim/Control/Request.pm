@@ -1638,7 +1638,11 @@ sub notify {
 
 			$::perfmon && (my $now = Time::HiRes::time());
 
-			&$notifyFuncRef($self);
+			eval { &$notifyFuncRef($self) };
+
+			if ($@) {
+				logError("Failed notify: $@");
+			}
 
 			$::perfmon && $requestTask->log(Time::HiRes::time() - $now, "Notify: ", $notifyFuncRef);
 

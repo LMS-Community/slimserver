@@ -232,7 +232,11 @@ sub select {
 				# the socket may have passthrough arguments set
 				my $passthrough = ${*$sock}{'passthrough'} || [];
 				
-				$callback->( $sock, @{$passthrough} );
+				eval { $callback->( $sock, @{$passthrough} ) };
+
+				if ($@) {
+					logError("Select task failed: $@");
+				}
 
 				$::perfmon && $now && $selectTask->log(Time::HiRes::time() - $now, undef, $callback);
 			}
