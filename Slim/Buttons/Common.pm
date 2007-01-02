@@ -1597,6 +1597,12 @@ sub pushMode {
 
 	if ($@) {
 		logError("Couldn't push into new mode: [$setmode] !: $@");
+
+		pop @{$scrollClientHash->{$client}{scrollParamsStack}};
+		pop @{$client->modeStack};
+		pop @{$client->modeParameterStack};
+
+		return;
 	}
 
 	if ($client->display->hasScreen2) {
