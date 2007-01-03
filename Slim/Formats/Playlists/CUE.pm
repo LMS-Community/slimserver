@@ -134,7 +134,7 @@ sub parse {
 
 		} elsif (defined $currtrack and $line =~ /^\s*REM\s+END\s+(\d+):(\d+):(\d+)/i) {
 
-			$tracks->{$currtrack}->{'END'} = ($1 * 60) + $2 + ($3 / 75);			
+			$tracks->{$currtrack}->{'END'} = ($1 * 60) + $2 + ($3 / 75);
 
 		} elsif (defined $currtrack and defined $filename) {
 			# Each track in a cue sheet can have a different
@@ -173,12 +173,19 @@ sub parse {
 
 		$log->info("Reading tags to get ending time of $filename");
 
-		my $track = Slim::Schema->rs('Track')->updateOrCreate({
-			'url'        => $filename,
-			'readTags'   => 1,
-		});
+		my $tags = Slim::Formats->readTags($filename);
 
-		$lastpos = $track->secs();
+		# Make sure the format is the same as END above.
+		$lastpos = sprintf("%02d:%02d:%02d",
+			int(int($tags->{'SECS'})/60),
+			int($tags->{'SECS'} % 60),
+			(($tags->{'SECS'} - int($tags->{'SECS'})) * 75)
+		);
+
+		if ($lastpos =~ /^(\d+):(\d+):(\d+)/) {
+
+			$lastpos = ($1 * 60) + $2 + ($3 / 75);
+		}
 
 		# Also - check the original file for any information that may
 		# not be in the cue sheet. Bug 2668
@@ -186,14 +193,9 @@ sub parse {
 
 			if (!$cuesheet->{$attribute}) {
 
-				my $method   = lc($attribute);
-				my $fromFile = eval { $track->$method };
+				my $fromFile = $tags->{$attribute};
 
-				if (blessed($fromFile) && $fromFile->can('name')) {
-					$fromFile = $fromFile->name;
-				}
-
-				if ($fromFile) {
+				if (defined $fromFile) {
 					$cuesheet->{$attribute} = $fromFile;
 				}
 			}

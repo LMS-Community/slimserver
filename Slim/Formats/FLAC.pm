@@ -139,6 +139,7 @@ sub getTag {
 
 	my $fileurl = Slim::Utils::Misc::fileURLFromPath($file) . "#$anchor";
 	my $fileage = (stat($file))[9];
+	my $rs      = Slim::Schema->rs('Track');
 
 	# Do the actual data store
 	for my $key (sort { $a <=> $b } keys %$tracks) {
@@ -156,7 +157,7 @@ sub getTag {
 
 		Slim::Formats::Playlists::CUE->processAnchor($track);
 
-		Slim::Schema->rs('Track')->updateOrCreate({
+		$rs->updateOrCreate({
 			'url'        => $track->{'URI'},
 			'attributes' => $track,
 			'readTags'   => 0,  # avoid the loop, don't read tags

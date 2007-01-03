@@ -1799,6 +1799,16 @@ sub _postCheckAttributes {
 
 	if (!$create && $isLocal) {
 		$albumObj = $track->album;
+
+		# Bug: 4140
+		# If the track is from a FLAC cue sheet, the original entry
+		# will have a 'No Album' album. See if we have a real album name.
+		my $noAlbum = string('NO_ALBUM');
+
+		if ($album && $albumObj->title eq $noAlbum && $album ne $noAlbum) {
+
+			$create = 1;
+		}
 	}
 
 	# Create a singleton for "No Album"
