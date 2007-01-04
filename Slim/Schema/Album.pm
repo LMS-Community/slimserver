@@ -15,6 +15,7 @@ use Slim::Utils::Log;
 	$class->add_columns(qw(
 		id
 		titlesort
+		contributor
 		compilation
 		year
 		artwork
@@ -29,6 +30,8 @@ use Slim::Utils::Log;
 
 	$class->set_primary_key('id');
 	$class->add_unique_constraint('titlesearch' => [qw/id titlesearch/]);
+
+	$class->belongs_to('contributor' => 'Slim::Schema::Contributor');
 
 	$class->has_many('tracks'            => 'Slim::Schema::Track'            => 'album');
 	$class->has_many('contributorAlbums' => 'Slim::Schema::ContributorAlbum' => 'album');

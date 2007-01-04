@@ -59,6 +59,7 @@ CREATE TABLE tracks (
   year smallint(5) unsigned,
   secs float unsigned,
   cover blob,
+  thumb blob,
   vbr_scale varchar(255),
   bitrate float unsigned,
   samplerate int(10) unsigned,
@@ -77,6 +78,8 @@ CREATE TABLE tracks (
   remote bool,
   lossless bool,
   lyrics text, -- needs to be text so that searches are case insensitive.
+  moodlogic_id  int(10) unsigned,
+  moodlogic_mixable bool,
   musicbrainz_id varchar(40),	-- musicbrainz uuid (36 bytes of text)
   musicmagic_mixable bool,
   replay_gain float,
@@ -172,6 +175,8 @@ CREATE TABLE contributors (
   namesort text,
   namesearch text,
   customsearch text,
+  moodlogic_id  int(10) unsigned,
+  moodlogic_mixable bool,
   musicbrainz_id varchar(40),	-- musicbrainz uuid (36 bytes of text)
   musicmagic_mixable bool,
   INDEX contributorsNameIndex (name(255)),
@@ -223,6 +228,8 @@ CREATE TABLE genres (
   namesort text,
   namesearch text,
   customsearch text,
+  moodlogic_id  int(10) unsigned,
+  moodlogic_mixable bool,
   musicmagic_mixable bool,
   INDEX genreNameIndex (name(255)),
   INDEX genreSortIndex (namesort(255)),

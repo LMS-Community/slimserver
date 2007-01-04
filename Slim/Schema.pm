@@ -1194,6 +1194,7 @@ sub mergeVariousArtistsAlbums {
 			$log->debug("--- Album is a VA");
 
 			$albumObj->compilation(1);
+			$albumObj->contributor($vaObjId);
 			$albumObj->update;
 		}
 
@@ -2001,6 +2002,16 @@ sub _postCheckAttributes {
 
 		# Bug 2393 - was fixed here (now obsolete due to further code rework)
 		$set{'compilation'} = $isCompilation;
+
+		# Bug 3255 - add album contributor which is either VA or the primary artist, used for sort by artist
+		if ($isCompilation && !scalar @{$contributors->{'ALBUMARTIST'}}) {
+
+			$set{'contributor'} = $self->variousArtistsObject->id;
+
+		} elsif (blessed($contributor)) {
+
+			$set{'contributor'} = $contributor->id;
+		}
 
 		$set{'musicbrainz_id'} = $attributes->{'MUSICBRAINZ_ALBUM_ID'};
 

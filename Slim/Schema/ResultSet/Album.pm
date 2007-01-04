@@ -94,7 +94,7 @@ sub browse {
 
 		if ($sort =~ /contributor/) {
 
-			push @join, { 'contributorAlbums' => 'contributor' };
+			push @join, 'contributor';
 		}
 
 		if ($sort =~ /genre/) {
