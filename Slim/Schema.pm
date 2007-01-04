@@ -151,7 +151,7 @@ sub init {
 		}
 	}
 
-	$class->migrateDB;
+	my $update = $class->migrateDB;
 
 	# Load the DBIx::Class::Schema classes we've defined.
 	# If you add a class to the schema, you must add it here as well.
@@ -173,7 +173,7 @@ sub init {
 	/);
 
 	# Build all our class accessors and populate them.
-	for my $accessor (qw(lastTrackURL lastTrack trackAttrs driver)) {
+	for my $accessor (qw(lastTrackURL lastTrack trackAttrs driver schemaUpdated)) {
 
 		$class->mk_classaccessor($accessor);
 	}
@@ -189,6 +189,8 @@ sub init {
 	$class->toggleDebug(logger('database.sql')->is_info);
 
 	$class->_buildValidHierarchies;
+
+	$class->schemaUpdated($update);
 
 	$initialized = 1;
 }
@@ -370,9 +372,32 @@ sub migrateDB {
 		'dir'      => catdir(Slim::Utils::OSDetect::dirsFor('SQL'), $driver),
 	});
 
-	$dbix->migrate;
+	my $old = $dbix->version || 0;
 
-	$log->info(sprintf("Connected to database $source - schema version: [%d]", $dbix->version));
+	if ($dbix->migrate) {
+
+		my $new = $dbix->version || 0;
+
+		$log->info(sprintf("Connected to database $source - schema version: [%d]\n", $new));
+
+		if ($old != $new) {
+
+			$log->warn(sprintf("Migrated database from schema version: %d to version: %d\n", $old, $new));
+
+			return 1;
+
+		}
+
+	} else {
+
+		# this occurs if a user downgrades slimserver to a version with an older schema and which does not include
+		# the required downgrade sql scripts - should probably drop the whole database at this point
+
+		logError(sprintf("Unable to downgrade database from schema version: %d. You may need to delete the database.\n", $old));
+
+	}
+
+	return 0;
 }
 
 =head2 rs( $class )

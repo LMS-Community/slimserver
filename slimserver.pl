@@ -770,9 +770,9 @@ sub checkDataSource {
 			Slim::Utils::Prefs::set("audiodir",$audiodir);
 		}
 
-		if (Slim::Schema->count('Track', { 'me.audio' => 1 }) == 0) {
+		if (Slim::Schema->schemaUpdated || Slim::Schema->count('Track', { 'me.audio' => 1 }) == 0) {
 
-			logWarning("No tracks in the database, initiating scan.");
+			logWarning("Schema updated or tracks in the database, initiating scan.");
 
 			Slim::Control::Request::executeRequest(undef, ['wipecache']);
 		}
