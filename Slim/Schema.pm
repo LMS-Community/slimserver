@@ -143,7 +143,7 @@ sub init {
 	# metainformation (and possibly dbix_migration, if the db is in a
 	# wierd state), so that the migrateDB call below will update the schema.
 	if ($@) {
-		logWarning("Migrating from 6.3.x used with MySQL!");
+		logWarning("Creating new database - empty database or database from 6.3.x found");
 
 		eval {
 			$dbh->do('DROP TABLE IF EXISTS metainformation');
