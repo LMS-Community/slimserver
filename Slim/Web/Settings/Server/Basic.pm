@@ -32,24 +32,6 @@ sub handler {
 		}
 	}
 
-	if ($paramRef->{'rescan'}) {
-
-		my $rescanType = ['rescan'];
-
-		if ($paramRef->{'rescantype'} eq '2wipedb') {
-
-			$rescanType = ['wipecache'];
-
-		} elsif ($paramRef->{'rescantype'} eq '3playlist') {
-
-			$rescanType = [qw(rescan playlists)];
-		}
-
-		logger('scan.scanner')->info(sprintf("Initiating scan of type: %s",join (" ",@{$rescanType})));
-
-		Slim::Control::Request::executeRequest($client, $rescanType);
-	}
-	
 	# If this is a settings update
 	if ($paramRef->{'submit'}) {
 
@@ -72,6 +54,16 @@ sub handler {
 	
 						delete $paramRef->{$pref};
 					}
+
+					else {
+
+						$paramRef->{'rescan'} = 1;
+
+						if ($paramRef->{'rescantype'} ne '2wipedb') {
+
+							$paramRef->{'rescantype'} = ($pref eq 'playlistdir' ? '3playlist' : '2wipedb');
+						}
+					}
 				}
 			}
 
@@ -80,6 +72,24 @@ sub handler {
 				Slim::Utils::Prefs::set($pref, $paramRef->{$pref});
 			}
 		}
+	}
+
+	if ($paramRef->{'rescan'}) {
+
+		my $rescanType = ['rescan'];
+
+		if ($paramRef->{'rescantype'} eq '2wipedb') {
+
+			$rescanType = ['wipecache'];
+
+		} elsif ($paramRef->{'rescantype'} eq '3playlist') {
+
+			$rescanType = [qw(rescan playlists)];
+		}
+
+		logger('scan.scanner')->info(sprintf("Initiating scan of type: %s",join (" ",@{$rescanType})));
+
+		Slim::Control::Request::executeRequest($client, $rescanType);
 	}
 
 	my @versions = Slim::Utils::Misc::settingsDiagString();
