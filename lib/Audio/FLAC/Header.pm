@@ -1,11 +1,11 @@
 package Audio::FLAC::Header;
 
-# $Id$
+# $Id: Header.pm 12 2007-01-05 03:10:38Z dsully $
 
 use strict;
 use File::Basename;
 
-our $VERSION = '1.4';
+our $VERSION = '1.6';
 our $HAVE_XS = 0;
 
 # First four bytes of stream are always fLaC
@@ -51,11 +51,17 @@ XS_BOOT: {
 	};
 
 	# Try to use the faster code first.
-	*new = $HAVE_XS ? \&new_XS : \&new_PP;
+	if ($HAVE_XS) {
+		*new   = \&new_XS;
+		*write = \&write_XS;
+	} else {
+		*new   = \&new_PP;
+		*write = \&write_PP;
+	}
 }
 
 sub new_PP {
-	my ($class, $file, $writeHack) = @_;
+	my ($class, $file) = @_;
 
 	# open up the file
 	open(my $fh, $file) or die "[$file] does not exist or cannot be read: $!";
@@ -88,15 +94,14 @@ sub new_PP {
 		die "[$file] Unable to read metadata from FLAC!";
 	};
 
-	# This is because we don't write out tags in XS yet.
-	if (!$writeHack) {
+	# Always set to empty hash in the case of no comments.
+	$self->{'tags'} = {};
 
-		for my $block (@{$self->{'metadataBlocks'}}) {
+	for my $block (@{$self->{'metadataBlocks'}}) {
 
-			my $method = $BLOCK_TYPES{ $block->{'blockType'} } || next;
+		my $method = $BLOCK_TYPES{ $block->{'blockType'} } || next;
 
-			$self->$method($block);
-		}
+		$self->$method($block);
 	}
 
 	close($fh);
@@ -168,27 +173,14 @@ sub picture {
 	return undef;
 }
 
-sub write {
+sub vendor_string {
 	my $self = shift;
 
-	# XXX - this is a hack until I do metadata writing in XS
-	# Very ugly, I know.
-	if ($HAVE_XS) {
+	return $self->{'vendor'} || "Audio::FLAC::Header $VERSION";
+}
 
-		# Make a copy of these - otherwise we'll refcnt++
-		my %tags = %{$self->{'tags'}};
-		my %info = %{$self->{'info'}};
-
-		my $filename = $self->{'filename'};
-		my $class    = ref($self);
-
-		undef $self;
-
-		$self = $class->new_PP($filename, 1);
-
-		$self->{'tags'} = \%tags;
-		$self->{'info'} = \%info;
-	}
+sub write_PP {
+	my $self = shift;
 
 	my @tagString = ();
 	my $numTags   = 0;
@@ -246,7 +238,7 @@ sub write {
 	# re-writing entire file (not within scope)
 	if ($totalAvail - length($vorbisComment) < 0) {
 		warn "Unable to write Vorbis tags - not enough header space!";
-		return -1;
+		return 0;
 	}
 
 	# Modify the metadata blocks to reflect new header sizes
@@ -280,15 +272,15 @@ sub write {
 	}
 
 	# open FLAC file and write new metadata blocks
-	open FLACFILE, "+<$self->{'filename'}" or return -1;
+	open FLACFILE, "+<$self->{'filename'}" or return 0;
 	binmode FLACFILE;
 
 	# overwrite the existing metadata blocks
-	print FLACFILE $metadataBlocks or return -1;
+	print FLACFILE $metadataBlocks or return 0;
 
 	close FLACFILE;
 
-	return 0;
+	return 1;
 }
 
 # private methods to this class
@@ -978,9 +970,9 @@ Dan Sully, E<lt>daniel@cpan.orgE<gt> for XS code.
 
 Pure perl code Copyright (c) 2003-2004, Erik Reckase.
 
-Pure perl code Copyright (c) 2003-2006, Dan Sully.
+Pure perl code Copyright (c) 2003-2007, Dan Sully & Slim Devices.
 
-XS code Copyright (c) 2004-2006, Dan Sully.
+XS code Copyright (c) 2004-2007, Dan Sully & Slim Devices.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.2 or,

@@ -11,7 +11,7 @@ if ($] > 5.007) {
 	require Encode;
 }
 
-$VERSION = '0.9';
+$VERSION = '1.0';
 
 my %guidMapping   = _knownGUIDs();
 my %reversedGUIDs = reverse %guidMapping;
@@ -210,7 +210,6 @@ sub _parseWMAHeader {
 
 	# some sanity checks
 	return -1 if ($self->{'size'} && $objectSize > $self->{'size'});
-	return -1 if ($objectSize < 30);
 
 	read($fh, $self->{'headerData'}, ($objectSize - 30));
 
@@ -222,43 +221,53 @@ sub _parseWMAHeader {
 
 		my $nextObjectGUIDName = $reversedGUIDs{$nextObjectGUIDText};
 
-		# some sanity checks
-		return -1 if (!defined($nextObjectGUIDName));
-		return -1 if (!defined $nextObjectSize || ($self->{'size'} && $nextObjectSize > $self->{'size'}));
+		# FIX: calculate the next offset up-front to allow for
+		# object handlers that don't read the full object.
+		my $nextObjectOffset   = $self->{'offset'} + ($nextObjectSize - (16 + 8));
 
 		if ($DEBUG) {
 			print "nextObjectGUID: [" . $nextObjectGUIDText . "]\n";
-			print "nextObjectName: [" . $nextObjectGUIDName . "]\n";
+			print "nextObjectName: [" . (defined($nextObjectGUIDName) ? $nextObjectGUIDName : "<unknown>") . "]\n";
 			print "nextObjectSize: [" . $nextObjectSize . "]\n";
 			print "\n";
 		}
-	
+
+		# FIX: don't error out on unknown objects (they are properly
+		# skipped below), report a debug message if we get an
+		# inconsistent object size. some sanity checks
+		if ((!defined $nextObjectSize) || ($nextObjectSize > $self->{'size'})) {
+
+			if ($DEBUG) {
+				print "Inconsistent object size: $nextObjectSize\n";
+			}
+
+			return -1;
+		}
+
+		# FIX: fall-through to the bottom which sets the
+		# offset for the next object.
 		if (defined($nextObjectGUIDName)) {
 
 			# start the different header types parsing              
 			if ($nextObjectGUIDName eq 'ASF_File_Properties_Object') {
 	
 				$self->_parseASFFilePropertiesObject();
-				next;
 			}
 	
-			if ($nextObjectGUIDName eq 'ASF_Content_Description_Object') {
+			elsif ($nextObjectGUIDName eq 'ASF_Content_Description_Object') {
 	
 				$self->_parseASFContentDescriptionObject();
-				next;
 			}
 
-			if ($nextObjectGUIDName eq 'ASF_Content_Encryption_Object' ||
+			elsif ($nextObjectGUIDName eq 'ASF_Content_Encryption_Object' ||
 				$nextObjectGUIDName eq 'ASF_Extended_Content_Encryption_Object') {
 
 				$self->_parseASFContentEncryptionObject();
-				next;
 			}
 	
-			if ($nextObjectGUIDName eq 'ASF_Extended_Content_Description_Object') {
+			elsif ($nextObjectGUIDName eq 'ASF_Extended_Content_Description_Object') {
 	
 				$self->_parseASFExtendedContentDescriptionObject();
-				next;
 			}
 
 			if ($nextObjectGUIDName eq 'ASF_Stream_Properties_Object') {
@@ -267,21 +276,20 @@ sub _parseWMAHeader {
 				next;
 			}
 			
-			if ($nextObjectGUIDName eq 'ASF_Stream_Bitrate_Properties_Object') {
+			elsif ($nextObjectGUIDName eq 'ASF_Stream_Bitrate_Properties_Object') {
 
 				$self->_parseASFStreamBitratePropertiesObject();
-				next;
 			}
 
-			if ($nextObjectGUIDName eq 'ASF_Header_Extension_Object') {
+			elsif ($nextObjectGUIDName eq 'ASF_Header_Extension_Object') {
 
 				$self->_parseASFHeaderExtensionObject();
-				next;
 			}
 		}
 
-		# set our next object size
-		$self->{'offset'} += ($nextObjectSize - $GUID - $QWORD);
+		# FIX: set the next offset based on what we calculated
+		# up-front, rather then relying on our object handlers.
+		$self->{'offset'} = $nextObjectOffset;
 	}
 
 	# Now work on the subtypes.
@@ -1205,11 +1213,11 @@ Audio::FLAC::Header, L<http://getid3.sf.net/>
 
 =head1 AUTHOR
 
-Dan Sully, E<lt>Dan@cpan.orgE<gt>
+Dan Sully, E<lt>daniel@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2003-2006 by Dan Sully & Slim Devices, Inc.
+Copyright 2003-2007 by Dan Sully & Slim Devices, Inc.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 
