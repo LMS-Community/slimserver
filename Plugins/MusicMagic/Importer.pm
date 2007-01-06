@@ -332,7 +332,7 @@ sub processSong {
 
 		$log->warn("Couldn't create track for $fileurl");
 
-		$progress->update if $progress;
+		$progress->update($fileurl) if $progress;
 
 		return;
 	};
