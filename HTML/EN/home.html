@@ -27,11 +27,17 @@
 		[% END %]
 	</div>
 
-[% END %]	
+[% END %]
+
+[% pageHeaderScripts = BLOCK %]
+	<script type="text/javascript" src="[% webroot %]html/prototype.js" ></script>
+	<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/global.js %]</script>
+[% END %]
+
 [% END -%]
 [% PROCESS pageheader.html %]
 
-			<div id="progressName"></div>
+			<div id="progressName">[% IF progress.name %][% progress.name _ "_PROGRESS" | string %][% END %]</div>
 			<a href="[% webroot %]progress.html?type=importer"><span id="progressBar" >[% progress.bar %]</span></a>
 
 <div class="homeMenuSection">

@@ -13,9 +13,7 @@
 	.thumbwrap { width: 97%}
 </style>
 <![endif]-->
-
-	<script type="text/javascript" src="[% webroot %]html/prototype.js" ></script>
-	<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/global.js %]</script>
+	[% IF pageHeaderScripts %][% pageHeaderScripts %][% END %]
 	[% PROCESS html/common.js %]
 </head>
 <body [% bodyscript %]>
