@@ -180,27 +180,34 @@ sub webPages {
 # Draws the plugin's web page
 sub handleWebList {
 	my ($client, $params) = @_;
+	my $url;
 
 	if ($client) {
 
 		my $song = Slim::Player::Playlist::song($client);
-		my $url  = $song->url;
 		
-		my $name;
-		for my $input (@digital_inputs) {
-			if ($url eq $input->{'url'}) {
-				$name = $input->{'name'};
-				last;
+		if ($song) {
+			$url = $song->url;
+
+		
+			my $name;
+			for my $input (@digital_inputs) {
+				if ($url && $url eq $input->{'url'}) {
+					$name = $input->{'name'};
+					last;
+				}
+			}
+	
+			if (defined $name) {
+				# pre-localised string served to template
+				$params->{'digitalInputCurrent'} = Slim::Buttons::Input::Choice::formatString(
+					$client, $name,
+				);
 			}
 		}
-
-		# pre-localised string served to template
-		$params->{'digitalInputCurrent'} = Slim::Buttons::Input::Choice::formatString(
-			$client, $name,
-		);
 	}
 
-	return Slim::Web::HTTP::filltemplatefile('plugins/DigitalInput/digitalinput_list.html', $params);
+	return Slim::Web::HTTP::filltemplatefile('plugins/DigitalInput/list.html', $params);
 }
 
 # Handles play requests from plugin's web page
