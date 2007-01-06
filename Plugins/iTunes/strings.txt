@@ -261,3 +261,6 @@ DEBUG_PLUGIN_ITUNES
 	DE	iTunes Synchronisation
 	EN	iTunes Synchronization Information
 
+ITUNES_PROGRESS
+	EN	iTunes Import Progress
+

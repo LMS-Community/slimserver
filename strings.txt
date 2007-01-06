@@ -12314,6 +12314,9 @@ ENLARGE
 	EN	Enlarge
 	SV	Förstora
 
+SCANNER_PROGRESS
+	EN	Music Scan Details
+
 DIRECTORY_PROGRESS
 	EN	Directory Scan
 

@@ -150,7 +150,12 @@ sub startScan {
 		return;
 	}
 
-	$progress = Slim::Utils::ProgressBar->new({ 'total' => $class->getTotalTrackCount($file) });
+	my $progress = Slim::Utils::Progress->new({ 
+		'type'  => 'importer', 
+		'name'  => 'itunes', 
+		'total' => $class->getTotalTrackCount($file), 
+		'bar'   => 1
+	});
 
 	$iTunesScanStartTime = time();
 

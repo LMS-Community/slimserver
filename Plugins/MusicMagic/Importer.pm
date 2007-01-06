@@ -194,7 +194,12 @@ sub exportSongs {
 	my $class = shift;
 	my $count = shift;
 
-	my $progress = Slim::Utils::ProgressBar->new({ 'total' => $count });
+	my $progress = Slim::Utils::Progress->new({ 
+		'type'  => 'importer', 
+		'name'  => 'musicmagic', 
+		'total' => $count, 
+		'bar'   => 1
+	});
 
 	# MMM Version 1.5+ adds support for /api/songs?extended, which pulls
 	# down the entire library, separated by $LF$LF - this allows us to make
