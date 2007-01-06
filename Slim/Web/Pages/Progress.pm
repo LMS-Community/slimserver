@@ -11,7 +11,7 @@ sub init {
 sub progress {
 	my ($client, $params) = @_;
 
-	my $barLen = $params->{'barlen'} || 25;
+	my $barLen = $params->{'barlen'} || 40;
 
 	my $args = {};
 
