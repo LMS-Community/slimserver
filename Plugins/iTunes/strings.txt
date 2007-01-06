@@ -265,3 +265,6 @@ ITUNES_PROGRESS
 	DE	iTunes Import Fortschritt
 	EN	iTunes Import Progress
 
+ITUNES_PLAYLISTS_PROGRESS
+	EN	iTunes Playlist Import Progress
+

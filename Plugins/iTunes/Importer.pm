@@ -569,7 +569,14 @@ sub handleEndElement {
 
 			# Set the progress to final when we're done with tracks and have moved on to playlists.
 			$progress->final if $progress;
-			$progress = Slim::Utils::ProgressBar->new({ 'total' => $class->getTotalPlaylistCount });
+			
+			$progress = Slim::Utils::Progress->new({ 
+				'type'  => 'importer', 
+				'name'  => 'itunes_playlists', 
+				'total' => $class->getTotalPlaylistCount, 
+				'bar'   => 1
+			});
+
 		}
 
 		if ($inPlaylists && $currentKey eq 'Name') {
