@@ -33,7 +33,7 @@ sub handler {
 
 	for my $pref (@prefs) {
 
-		if ($params->{'submit'}) {
+		if ($params->{'saveSettings'}) {
 
 			Slim::Utils::Prefs::set($pref, $params->{$pref});
 		}

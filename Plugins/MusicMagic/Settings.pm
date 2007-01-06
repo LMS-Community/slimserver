@@ -49,7 +49,7 @@ sub handler {
 	# Cleanup the checkbox
 	$params->{'musicmagic'} = defined $params->{'musicmagic'} ? 1 : 0;
 
-	if ($params->{'submit'}) {
+	if ($params->{'saveSettings'}) {
 
 		if ($params->{'musicmagic'} != Slim::Utils::Prefs::get('musicmagic')) {
 

@@ -27,7 +27,7 @@ sub handler {
 		Plugins::RSSNews::Plugin::revertToDefaults();
 	}
 
-	if ($params->{'submit'}) {
+	if ($params->{'saveSettings'}) {
 
 		# Remove empty feeds.
 		my @feeds = grep { $_ ne '' } @{$params->{'plugin_RssNews_feeds'}};

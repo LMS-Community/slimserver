@@ -28,7 +28,7 @@ sub handler {
 
 	for my $pref (@prefs) {
 
-		if ($params->{'submit'}) {
+		if ($params->{'saveSettings'}) {
 
 			if ($pref eq 'plugin_live365_password') {
 

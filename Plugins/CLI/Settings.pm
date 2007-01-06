@@ -25,7 +25,7 @@ sub handler {
 
 	for my $pref (@prefs) {
 
-		if ($params->{'submit'}) {
+		if ($params->{'saveSettings'}) {
 
 			# XXX - validate port
 			Slim::Utils::Prefs::set($pref, $params->{$pref});

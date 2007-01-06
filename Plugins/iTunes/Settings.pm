@@ -42,7 +42,7 @@ sub handler {
 	# Cleanup the checkbox
 	$params->{'itunes'} = defined $params->{'itunes'} ? 1 : 0;
 
-	if ($params->{'submit'}) {
+	if ($params->{'saveSettings'}) {
 
 		if ($params->{'itunes'} != Slim::Utils::Prefs::get('itunes')) {
 
