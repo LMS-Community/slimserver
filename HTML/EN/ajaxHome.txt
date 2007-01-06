@@ -7,3 +7,5 @@ progressname|[% progress.name _ "_PROGRESS" | string %]
 # grab the object
 progressbar|[% progress.bar %]
 
+warn|[% warn %]
+

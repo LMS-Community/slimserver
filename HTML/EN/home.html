@@ -13,9 +13,7 @@
 [% pageHeaderMenu = BLOCK %]
 
 	<div class="statusarea">
-		[% IF warn %]
-			<b>[% "NOTE" | string %]</b> [% "HOME_SCAN_WARNING" | string %]
-		[% END %]
+		<div id="scanWarning" [% IF NOT warn %]style="display:hidden"[% END %]><b>[% "NOTE" | string %]</b> [% "HOME_SCAN_WARNING" | string %]</div>
 
 		[% IF song_count %]
 			[% "LIBRARY_CONTAINS" | string %] [% album_count %] [% "WITH" | string %] 
@@ -32,6 +30,7 @@
 [% pageHeaderScripts = BLOCK %]
 	<script type="text/javascript" src="[% webroot %]html/prototype.js" ></script>
 	<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/global.js %]</script>
+	<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/home.js %]</script>
 [% END %]
 
 [% END -%]
