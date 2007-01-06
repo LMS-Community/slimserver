@@ -10,10 +10,6 @@
 	<div class="statusarea">
 		[% IF warn %]
 			<b>[% "NOTE" | string %]</b> [% "HOME_SCAN_WARNING" | string %]
-			[% IF progress.name %]
-				<p>[% progress.name _ "_PROGRESS" | string %] 
-				<a href="[% webroot %]progress.html?type=importer">[% progress.bar %]</a>
-			[% END %]
 		[% END %]
 
 		[% IF song_count %]
@@ -29,6 +25,11 @@
 [% END %]	
 [% END -%]
 [% PROCESS pageheader.html %]
+
+			[% IF progress.name %]
+				<div>[% progress.name _ "_PROGRESS" | string %] <br>
+				<a href="[% webroot %]progress.html?type=importer">[% progress.bar %]</a></div>
+			[% END %]
 
 <div class="homeMenuSection">
 	<div>[% "BROWSE_MUSIC" | string | upper %]</div>
