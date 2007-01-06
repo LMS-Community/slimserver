@@ -17,7 +17,7 @@ sub progress {
 
 	$args->{'type'} = $params->{'type'} if $params->{'type'};
 
-	my @progress = Slim::Schema->rs('Progress')->search( $args )->all;
+	my @progress = Slim::Schema->rs('Progress')->search( $args, { 'order_by' => 'start' } )->all;
 
 	for my $p (@progress) {
 
