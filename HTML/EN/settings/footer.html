@@ -3,13 +3,15 @@
 	[% IF NOT nosubmit %]<p><input name="saveSettings" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]"></p>[% END %]
 [% END %]
 
-[% IF versionInfo %]<p>
+[% IF versionInfo %]<br>
 
 	<div class="settingSection">
 
 		<div class="groupHead">[% "INFORMATION_DIAGSTRING" | string | upper  %]</div>
 
-		<p>[% versionInfo %]</p>
+		[% IF versionInfo %]
+			<p>[% versionInfo %]</p>
+		[% END %]
 
 		[% IF newVersion %]
 			<p>[% newVersion %]</p>
@@ -17,11 +19,10 @@
 
 	</div>
 
-</p>[% END %]
+[% END %]
 
 </form>
 
-<p></p>
 <!-- End settingsfooter.html -->
 [% PROCESS pagefooter.html %]
 
