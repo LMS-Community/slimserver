@@ -255,6 +255,11 @@ This is called by the scanner.pl helper program.
 sub runScan {
 	my $class  = shift;
 
+	# Delete all exiting importer progress entries
+	for my $prog (Slim::Schema->rs('Progress')->search({ 'type' => 'importer' })->all) {
+		$prog->delete;
+	}
+
 	# If we are scanning a music folder, do that first - as we'll gather
 	# the most information from files that way and subsequent importers
 	# need to do less work.

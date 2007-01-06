@@ -85,6 +85,8 @@ sub main {
 	# Redirect STDERR to the log file.
 	tie *STDERR, 'Slim::Utils::Log::Trapper';
 
+	STDOUT->autoflush(1);
+
 	my $log = logger('server');
 
 	# Bring up strings, database, etc.

@@ -26,6 +26,8 @@ use Slim::Web::Pages::Status;
 use Slim::Web::Pages::Playlist;
 use Slim::Web::Pages::History;
 use Slim::Web::Pages::EditPlaylist;
+use Slim::Web::Pages::Progress;
+use Slim::Utils::Progress;
 
 our %additionalLinks = ();
 
@@ -66,6 +68,7 @@ sub init {
 	Slim::Web::Pages::EditPlaylist::init(); # must precede Playlist::init();
 	Slim::Web::Pages::Playlist::init();
 	Slim::Web::Pages::History::init();
+	Slim::Web::Pages::Progress::init();
 }
 
 sub _lcPlural {
@@ -117,7 +120,25 @@ sub addLibraryStats {
 	my ($class, $params, $rs, $previousLevel) = @_;
 
 	if (Slim::Music::Import->stillScanning) {
+
 		$params->{'warn'} = 1;
+
+		if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'active' => 1 })->first) {
+
+			my $bar = '';
+
+			for (my $i = 0; $i < $p->total; $i += $p->total / 40) {
+
+				$params->{'cell_full'} = $i < $p->done;
+				$bar .= ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $params)};
+			}
+
+			$params->{'progress'} = {
+				'name' => $p->name,
+				'bar'  => $bar,
+			}
+		}
+
 		return;
 	}
 

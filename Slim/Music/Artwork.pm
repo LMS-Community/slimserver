@@ -76,7 +76,9 @@ sub findArtwork {
 	my $count    = $tracks->count;
 
 	if ($count) {
-		$progress = Slim::Utils::ProgressBar->new({ 'total' => $count });
+		$progress = Slim::Utils::Progress->new({ 
+			'type' => 'importer', 'name' => 'artwork', 'total' => $count, 'bar' => 1
+		});
 	}
 
 	while (my $track = $tracks->next) {
@@ -93,10 +95,10 @@ sub findArtwork {
 			$album->update;
 		}
 
-		$progress->update if $progress;
+		$progress->update;
 	}
 
-	$progress->final($count) if $progress;
+	$progress->final($count) if $count;
 
 	Slim::Music::Import->endImporter('findArtwork');
 }

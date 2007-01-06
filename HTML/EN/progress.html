@@ -1,0 +1,35 @@
+[% pagetitle = "STATISTICS" | string %]
+[% pageHeaderMenu = pagetitle %]
+
+[% PROCESS pageheader.html %]
+
+[% IF refresh %]<script language="JavaScript">
+
+function doLoad() {
+	setTimeout( "refresh()", [% refresh %] * 1000);
+}
+
+function refresh() {
+	window.location.replace("[% webroot	%]progress.html?type=[% type %]&player=[% player | uri %]");
+}
+
+</script>[% END %]
+
+<body [% IF refresh %]onload="doLoad()"[% END %]>
+
+    <h4>[% type _ "_PROGRESS" | string %]</h4>
+
+	<p>[% type _ "_PROGRESS_DESC" | string %]</p>
+
+	[% FOREACH item = progress_items %]
+		<p>
+		[% item.obj.name _ "_PROGRESS" | string %] ( [% item.obj.done %] [% "OF" | string %] [% item.obj.total %] ) 
+		[% IF item.obj.active %] [% "RUNNING" | string %][% ELSE %] [% "COMPLETE" | string %][% END %]
+		[% item.time %] [% "SECONDS" | string %] [% item.bar %]
+		[% IF item.obj.info %]<p>[% item.obj.info %]</p>[% END %]
+		</p>	
+	[% END %]
+
+	<p>[% IF message %][% message %][% END %]</p>
+
+[% PROCESS pagefooter.html %]

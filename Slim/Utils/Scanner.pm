@@ -46,7 +46,7 @@ use Slim::Networking::Async::HTTP;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::ProgressBar;
+use Slim::Utils::Progress;
 use Slim::Utils::Strings;
 
 my $log = logger('scan.scanner');
@@ -303,13 +303,20 @@ sub scanDirectory {
 		$log->info(sprintf("Found %d files in %s\n", scalar @{$files}, $topDir));
 	}
 
-	# Give the user a progress indicator if available.
-	my $progress = Slim::Utils::ProgressBar->new({ 'total' => scalar @{$files} });
+	# Send progress info to the db and progress bar
+	my $progress = Slim::Utils::Progress->new({
+		'type' => 'importer',
+		'name' => $args->{'scanName'} || 'directory',
+		'total'=> scalar @{$files}, 'bar' => 1,
+		'every'=> ($args->{'scanName'} && $args->{'scanName'} eq 'playlist'), # record all playists in the db
+	});
 
 	# If we're starting with a clean db - don't bother with searching for a track
 	my $method   = $::wipe ? 'newTrack' : 'updateOrCreate';
 
 	for my $file (@{$files}) {
+
+		$progress->update($file);
 
 		my $url = Slim::Utils::Misc::fileURLFromPath($file);
 
@@ -351,10 +358,9 @@ sub scanDirectory {
 			}
 		}
 
-		$progress->update if $progress;
 	}
 
-	$progress->final if $progress;
+	$progress->final;
 
 	return $foundItems;
 }

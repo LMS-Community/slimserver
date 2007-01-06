@@ -83,6 +83,7 @@ sub startScan {
 		'url'       => $dir,
 		'recursive' => $recurse,
 		'types'     => 'list',
+		'scanName'  => 'playlist',
 	});
 
 	$class->doneScanning;

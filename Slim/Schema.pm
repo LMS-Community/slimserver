@@ -47,6 +47,7 @@ use Slim::Utils::SQLHelper;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
 use Slim::Utils::Unicode;
+use Slim::Utils::Progress;
 
 my $log = logger('database.info');
 
@@ -168,8 +169,9 @@ sub init {
 		Playlist
 		PlaylistTrack
 		Rescan
-		Track 
-		Year 
+		Track
+		Year
+		Progress
 	/);
 
 	# Build all our class accessors and populate them.
@@ -1005,7 +1007,10 @@ sub cleanupStaleTrackEntries {
 
 	my $iterator = $self->search('Track', { 'audio' => 1 });
 	my $count    = $iterator->count;
-	my $progress = Slim::Utils::ProgressBar->new({ 'total' => $count });
+
+	my $progress = Slim::Utils::Progress->new({
+		'type' => 'importer', 'name' => 'cleanup', 'total' => $count, 'bar' => 1
+	});
 
 	# fetch one at a time to keep memory usage in check.
 	while (my $track = $iterator->next) {
@@ -1016,10 +1021,10 @@ sub cleanupStaleTrackEntries {
 			$track = undef;
 		}
 
-		$progress->update if $progress;
+		$progress->update;
 	}
 
-	$progress->final($count) if $progress;
+	$progress->final($count);
 
 	logger('scan.import')->info("Finished with stale track cleanup.");
 
@@ -1163,7 +1168,9 @@ sub mergeVariousArtistsAlbums {
 	my $count    = $cursor->count;
 
 	if ($count) {
-		$progress = Slim::Utils::ProgressBar->new({ 'total' => $count });
+		$progress = Slim::Utils::Progress->new({
+			'type' => 'importer', 'name' => 'mergeva', 'total' => $count, 'bar' => 1
+		});
 	}
 
 	# fetch one at a time to keep memory usage in check.
@@ -1223,7 +1230,7 @@ sub mergeVariousArtistsAlbums {
 			$albumObj->update;
 		}
 
-		$progress->update if $progress;
+		$progress->update;
 	}
 
 	$progress->final($count) if $progress;

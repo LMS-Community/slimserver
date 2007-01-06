@@ -12313,3 +12313,33 @@ ENLARGE
 	DE	Grösser
 	EN	Enlarge
 	SV	Förstora
+
+DIRECTORY_PROGRESS
+	EN	Directory Scan
+
+PLAYLIST_PROGRESS
+	EN	Playlist Scan
+
+MERGEVA_PROGRESS
+	EN	Merge Various Artists
+
+ARTWORK_PROGRESS
+	EN	Artwork Scan
+
+CLEANUP_PROGRESS
+	EN	Database Cleanup
+
+IMPORTER_PROGRESS
+	EN	Scanning Progress
+
+IMPORTER_PROGRESS_DESC
+	EN	This page shows the progress of each phase of the scanning process.
+
+RUNNING
+	EN	Running
+
+COMPLETE
+	EN	Complete
+
+PROGRESS_IMPORTER_COMPLETE_DESC
+	EN	Slimserver has finished scanning your music collection.

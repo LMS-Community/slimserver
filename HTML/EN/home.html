@@ -8,7 +8,13 @@
 [% pageHeaderMenu = BLOCK %]
 
 	<div class="statusarea">
-		[% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "HOME_SCAN_WARNING" | string %] [% END %]
+		[% IF warn %]
+			<b>[% "NOTE" | string %]</b> [% "HOME_SCAN_WARNING" | string %]
+			[% IF progress.name %]
+				<p>[% progress.name _ "_PROGRESS" | string %] 
+				<a href="[% webroot %]progress.html?type=importer">[% progress.bar %]</a>
+			[% END %]
+		[% END %]
 
 		[% IF song_count %]
 			[% "LIBRARY_CONTAINS" | string %] [% album_count %] [% "WITH" | string %] 
