@@ -150,7 +150,7 @@ sub startScan {
 		return;
 	}
 
-	my $progress = Slim::Utils::Progress->new({ 
+	$progress = Slim::Utils::Progress->new({ 
 		'type'  => 'importer', 
 		'name'  => 'itunes', 
 		'total' => $class->getTotalTrackCount($file), 
@@ -198,7 +198,6 @@ sub doneScanning {
 sub handleTrack {
 	my $class    = shift;
 	my $curTrack = shift;
-	my $progress = shift;
 
 	my %cacheEntry = ();
 
@@ -596,7 +595,7 @@ sub handleEndElement {
 
 		$inDict = 0;
 
-		$class->handleTrack(\%item, $progress);
+		$class->handleTrack(\%item);
 
 		%item = ();
 	}
