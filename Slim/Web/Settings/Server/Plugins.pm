@@ -25,7 +25,7 @@ sub handler {
 	my ($class, $client, $paramRef) = @_;
 
 	# If this is a settings update
-	if ($paramRef->{'submit'}) {
+	if ($paramRef->{'saveSettings'}) {
 
 		# XXXX - handle install / uninstall / enable / disable
 

@@ -33,7 +33,7 @@ sub handler {
 	);
 
 	# If this is a settings update
-	if ($paramRef->{'submit'}) {
+	if ($paramRef->{'saveSettings'}) {
 
 		for my $pref (@prefs) {
 

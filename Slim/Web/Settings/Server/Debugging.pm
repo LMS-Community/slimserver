@@ -25,7 +25,7 @@ sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
 	# If this is a settings update
-	if ($paramRef->{'submit'}) {
+	if ($paramRef->{'saveSettings'}) {
 
 		my $categories = Slim::Utils::Log->allCategories;
 

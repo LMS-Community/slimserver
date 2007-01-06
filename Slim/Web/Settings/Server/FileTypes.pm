@@ -26,7 +26,7 @@ sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
 	# If this is a settings update
-	if ($paramRef->{'submit'}) {
+	if ($paramRef->{'saveSettings'}) {
 
 		Slim::Utils::Prefs::set('disabledextensionsaudio',    $paramRef->{'disabledextensionsaudio'});
 		Slim::Utils::Prefs::set('disabledextensionsplaylist', $paramRef->{'disabledextensionsplaylist'});

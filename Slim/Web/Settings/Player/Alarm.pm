@@ -31,7 +31,7 @@ sub handler {
 	my @prefs = qw(alarmfadeseconds alarm alarmtime alarmvolume alarmplaylist);
 	
 	# If this is a settings update
-	if ($paramRef->{'submit'}) {
+	if ($paramRef->{'saveSettings'}) {
 
 		my @changed = ();
 

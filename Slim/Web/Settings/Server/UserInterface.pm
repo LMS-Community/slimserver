@@ -30,7 +30,7 @@ sub handler {
 	my @prefs = qw(skin itemsPerPage refreshRate coverArt artfolder thumbSize);
 
 	# If this is a settings update
-	if ($paramRef->{'submit'}) {
+	if ($paramRef->{'saveSettings'}) {
 
 		$paramRef->{'warning'} = "";
 

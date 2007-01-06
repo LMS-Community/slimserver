@@ -33,7 +33,8 @@ sub handler {
 	}
 
 	# If this is a settings update
-	if ($paramRef->{'submit'}) {
+	if ($paramRef->{'saveSettings'}) {
+logger('scan.scanner')->info("saveSettings");
 
 		if ($paramRef->{'language'} ne Slim::Utils::Prefs::get('language')) {
 		

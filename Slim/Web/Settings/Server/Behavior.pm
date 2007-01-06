@@ -47,7 +47,7 @@ sub handler {
 	for my $pref (@prefs) {
 
 		# If this is a settings update
-		if ($paramRef->{'submit'}) {
+		if ($paramRef->{'saveSettings'}) {
 
 			if (exists $scanOn{$pref} && $paramRef->{$pref} ne Slim::Utils::Prefs::get($pref)) {
 
