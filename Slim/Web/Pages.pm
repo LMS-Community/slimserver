@@ -136,6 +136,7 @@ sub addLibraryStats {
 			$params->{'progress'} = {
 				'name' => $p->name,
 				'bar'  => $bar,
+				'obj'  => $p,
 			}
 		}
 
