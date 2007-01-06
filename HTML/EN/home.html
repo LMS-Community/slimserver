@@ -1,8 +1,13 @@
+[%- IF ajaxRequest -%]
+	<pre>
+	[% PROCESS ajaxHome.txt %]
+	</pre>
+[%- ELSE -%]
 [% FILTER null %]
 [% pagetitle = "HOME" | string; noSpacer = 1; noHomeLink = 1 %]
 
 [% IF warn %]
-	[% bodyscript = 'onload="doLoad();"' %]
+	[% bodyscript = 'onload="doLoad(1);"' %]
 [% END %]
 
 [% pageHeaderMenu = BLOCK %]
@@ -26,10 +31,8 @@
 [% END -%]
 [% PROCESS pageheader.html %]
 
-			[% IF progress.name %]
-				<div>[% progress.name _ "_PROGRESS" | string %] <br>
-				<a href="[% webroot %]progress.html?type=importer">[% progress.bar %]</a></div>
-			[% END %]
+			<div id="progressName"></div>
+			<a href="[% webroot %]progress.html?type=importer"><span id="progressBar" >[% progress.bar %]</span></a>
 
 <div class="homeMenuSection">
 	<div>[% "BROWSE_MUSIC" | string | upper %]</div>
@@ -98,3 +101,4 @@
 	</ul>
 </div>
 [% PROCESS pagefooter.html %]
+[% END %]

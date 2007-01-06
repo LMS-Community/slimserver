@@ -1,0 +1,9 @@
+
+# get the name of the current progress status
+[% IF progress.name %]
+progressname|[% progress.name _ "_PROGRESS" | string %]
+[% END %]
+
+# grab the object
+progressbar|[% progress.bar %]
+

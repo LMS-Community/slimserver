@@ -87,11 +87,42 @@ function toggleGalleryView(artwork) {
 	}
 [% END %]
 
+function updateHome(theData) {
+	var parsedData = fillDataHash(theData);
+	
+	if (parsedData['progressname']) {
+		showElements(['progressName']);
+		refreshElement('progressName', parsedData['progressname']);
+	} else {
+		hideElements(['progressName']);
+	}
+	//alert('update');
+	if (parsedData['progressbar']) {
+		showElements(['progressBar']);
+		refreshElement('progressBar', parsedData['progressbar']);
+	} else {
+		hideElements(['progressBar']);
+	}
+}
+
 function ajaxRefresh() {
 
 	// add a random number to the params as IE loves to cache the heck out of 
 	var args = 'd=' + Math.random();
 	ajaxPing(args, ajaxCallback);
+}
+
+function ajaxHomeCallback(theData) {
+	
+	updateHome(theData);
+	setTimeout( "ajaxHomeRefresh()", 5 * 1000);
+}
+
+function ajaxHomeRefresh() {
+
+	// add a random number to the params as IE loves to cache the heck out of 
+	var args = 'ajaxRequest=1&d=' + Math.random();
+	ajaxHomeUpdate(args, ajaxHomeCallback);
 }
 
 function ajaxCallback(theData) {
@@ -106,9 +137,10 @@ function ajaxCallback(theData) {
 	} else {
 	
 		// do another background ping every 60 seconds
-		setTimeout( "ajaxRefresh()", 60*1000);
+		setTimeout( "ajaxRefresh()", 1000);
 	}
 }
+
 
 [% BLOCK addSetupCaseLinks %]
 	[% IF setuplinks %]
@@ -221,7 +253,7 @@ function resize(src,width)
 	function doLoad(useAjax) {
 		
 		if (useAjax == 1) {
-			setTimeout( "ajaxRefresh()", 300*1000);
+			setTimeout( "ajaxHomeRefresh()", 1000);
 		} else {
 			setTimeout( "refresh()", 300*1000);
 		}

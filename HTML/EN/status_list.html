@@ -1,7 +1,19 @@
 [% IF item.currentsong %]<a name="currentsong"></a>[% END %]
 <div [% IF item.odd %]class="odd"[% END %] [% IF not item.odd %]class="even"[% END %] [% IF item.currentsong %]id="currentListItem"[% END %]>
 	<div class="browsedbListItem">
-		[% PROCESS trackinfo %]
+		[% IF item.currentsong %]
+		<a name="currentsong"></a>
+		<span class="exboldlisting">
+		[% ELSE %]
+		<span class="exlisting">
+		[% END %]
+		<a href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser">[% item.title | html %]</a>
+		[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
+			[% "FROM" | string %]
+			<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">[% item.itemobj.album.title | html %]</a>
+		[% END %]
+		[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+		</span>
 		<div class="playlistControls">
 			[% PROCESS playlistcontrols
 			num = item.num

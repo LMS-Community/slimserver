@@ -80,6 +80,23 @@ function ajaxPing(params, action) {
 	});
 }
 
+function ajaxHomeUpdate(params, action) {
+	var requesttype = 'post';
+
+	if (window.XMLHttpRequest) {
+		requesttype = 'get';
+	}
+
+	var myAjax = new Ajax.Request(
+	'home.html',
+	{
+		method: requesttype,
+		postBody: params,
+		parameters: params,
+		onComplete: action,
+		requestHeaders:['Referer', document.location.href]
+	});
+}
 
 // Parse the raw data and return the requested hash.
 // if data is already parsed, just return unprocessed.
