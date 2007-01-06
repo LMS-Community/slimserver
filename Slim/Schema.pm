@@ -380,11 +380,11 @@ sub migrateDB {
 
 		my $new = $dbix->version || 0;
 
-		$log->info(sprintf("Connected to database $source - schema version: [%d]\n", $new));
+		$log->info(sprintf("Connected to database $source - schema version: [%d]", $new));
 
 		if ($old != $new) {
 
-			$log->warn(sprintf("Migrated database from schema version: %d to version: %d\n", $old, $new));
+			$log->warn(sprintf("Migrated database from schema version: %d to version: %d", $old, $new));
 
 			return 1;
 
@@ -393,9 +393,21 @@ sub migrateDB {
 	} else {
 
 		# this occurs if a user downgrades slimserver to a version with an older schema and which does not include
-		# the required downgrade sql scripts - should probably drop the whole database at this point
+		# the required downgrade sql scripts - attempt to drop and create the database at current schema version
 
-		logError(sprintf("Unable to downgrade database from schema version: %d. You may need to delete the database.\n", $old));
+		$log->warn(sprintf("Unable to downgrade database from schema version: %d - Attempting to recreate database", $old));
+
+		eval { $class->storage->dbh->do('DROP TABLE IF EXISTS dbix_migration') };
+
+		if ($dbix->migrate) {
+
+			$log->warn(sprintf("Successfully created database at schema version: %d", $dbix->version));
+
+			return 1;
+
+		}
+
+		logError(sprintf("Unable to create database - **** You may need to manually delete the database ****", $old));
 
 	}
 
