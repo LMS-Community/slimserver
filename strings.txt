@@ -2317,7 +2317,7 @@ SETUP_GROUP_FORMATS_CONVERSION_DESC
 	JA	SlimServerはオーディオファイル フォーマットを自動的に変換することができます。特定のフォーマットを無効にするにはチェックマークを消してください。フォーマット名のみが出ていますが、コマンドライン全てを見るまたは編集するには、convert.conf を開いてください。変更をセーブするには｢変更」をクリックして下さい。
 	NL	SlimServer kan audioformaten direct converteren tijdens het afspelen. Je kunt specifieke formaten uitschakelen door het vinkje weg te halen. Alleen de naam van het programmabestand is te zien. Om het gehele commando te zien of te wijzigen moet je het bestand convert.conf openen. Klik op de knop Veranderen om de wijzigingen te bewaren.
 	NO	SlimServer kan konvertere mellom ulike lyd-formater for avspilling i spilleren. Her kan du deaktivere forskjellige formater.
-	SV	Slimserver kan konvertera mellan olika ljud-format för uppspelning i spelaren.
+	SV	SlimServer kan konvertera mellan olika ljud-format för uppspelning i spelaren.
 	ZH_CN	SlimServer能对音像文件进行即时的格式转换以便在播放机上播放。如要撤销某些格式，请清除其复选框中的标记。此处只显示有关的可执行文件。如要查看或编辑完整的命令行，请查看convert.conf。请点击《更动》以保存您所作的设定。
 
 SETUP_FORMATSLIST_CHANGE
@@ -2415,7 +2415,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 	EN	SlimServer will look in the Music Folder for all supported file types (audio files and cue sheets). To disable specific file types from being processed when scanning the Music Folder, enter a comma separated list of file extensions below. E.g.: cue, mp4, aac
 	ES	SlimServer examinará la Carpeta de Música teniendo en cuenta todos los formatos de archivo soportados (archivos de audio y cuesheets). Para deshabilitar tipos de archivo específicos al examinar la Carpeta de Música, ingresar una lista de extensiones separadas por coma debajo. (Por ej. cue, mp4, etc)
 	FR	Le SlimServer examinera dans votre dossier de musique tous les types de fichier audio supportés (fichiers et listes de lecture ou "cue sheets"). Pour exclure un type de fichier audio du parcours du dossier de musique, vous pouvez entrer ci-après la liste des extensions à ignorer, séparées par une virgule (par ex. : cue, mp4, aac)
-	IT	Lo Slimserver cercherà nella cartella Musica tutti i tipi di file supportati (file audio e cue sheets). Per scartare specifici tipi di file dalla ricerca all'interno della cartella Musica, inserisci una lista di estensioni separate da una virgola. Es.: cue, mp4, aac
+	IT	Lo SlimServer cercherà nella cartella Musica tutti i tipi di file supportati (file audio e cue sheets). Per scartare specifici tipi di file dalla ricerca all'interno della cartella Musica, inserisci una lista di estensioni separate da una virgola. Es.: cue, mp4, aac
 	NL	SlimServer kijkt in de muziekfolder naar alle ondersteunde bestandsformaten (audio bestanden en cue bestanden). <BR>Om specifieke bestandsformaten over te slaan bij het scannen naar muziek kun je een komma gescheiden lijst met extensies opnemen hieronder. Bijvoorbeeld: cue, mp4, aac
 	SV	SlimServer kommer att söka igenom Musikmappen efter alla filtyper som stöds (ljudfiler och cue sheets). För att avaktivera givna filtyper från att bearbetas vid genomsökning av Musikmappen, ange en kommaseparerad lista med filändelser nedan. Ex: cue, mp4, aac
 	ZH_CN	SlimServer会在音乐文件夹内寻找各式所支持的音频或cue sheet文件。 如想要把某些格式除外，便在以下输入其格式扩展名，以逗号为分隔。例如: cue, mp4, aac
@@ -2435,9 +2435,9 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
 	EN	SlimServer will look in the Playlist Folder for all supported file types (playlist files and cue sheets). To disable specific file types from being processed when scanning the Playlist Folder, enter a comma separated list of file extensions below. E.g.: m3u, pls, cue
 	ES	SlimServer examinará la Carpeta de Listasa teniendo en cuenta todos los formatos de archivo soportados (archivos de listas y cuesheets). Para deshabilitar tipos de archivo específicos al examinar la Carpeta de Listas, ingresar una lista de extensiones separadas por coma debajo. (Por ej. cue, mp4, etc)
 	FR	Le SlimServer examinera dans votre dossier de listes de lecture tous les types de fichier audio supportés (listes de lecture et "cue sheets"). Pour exclure un type de fichier audio du parcours du dossier de listes de lecture, vous pouvez entrer ci-après la liste des extensions à ignorer, séparées par une virgule (par ex. : m3u, pls, cue)
-	IT	Lo Slimserver cercherà nella cartella Liste di esecuzione tutti i tipi di file supportati (playlist e cue sheets). Per scartare specifici tipi di file dalla ricerca all'interno della cartella Liste di distribuzione, inserisci una lista di estensioni separate da una virgola. Es.: m3u, pls, cue
+	IT	Lo SlimServer cercherà nella cartella Liste di esecuzione tutti i tipi di file supportati (playlist e cue sheets). Per scartare specifici tipi di file dalla ricerca all'interno della cartella Liste di distribuzione, inserisci una lista di estensioni separate da una virgola. Es.: m3u, pls, cue
 	NL	SlimServer kijkt in de playlistfolder naar alle ondersteunde bestandsformaten (playlist bestanden en cue bestanden). <BR>Om specifieke bestandsformaten over te slaan bij het scannen naar playlists kun je een komma gescheiden lijst met extensies opnemen hieronder. Bijvoorbeeld: m3u,pls,cue
-	SV	Slimserver kommer att söka igenom Spellistemappen efter alla filtyper som stöds (spellistor och cue sheets). För att avaktivera givna filtyper från att bearbetas vid genomsökning av Spellistemappen, ange en kommaseparerad lista med filändelser nedan. Ex: m3u, pls, cue
+	SV	SlimServer kommer att söka igenom Spellistemappen efter alla filtyper som stöds (spellistor och cue sheets). För att avaktivera givna filtyper från att bearbetas vid genomsökning av Spellistemappen, ange en kommaseparerad lista med filändelser nedan. Ex: m3u, pls, cue
 	ZH_CN	SlimServer会在播放表文件夹内寻找各式所支持的播放表或cue sheet文件。 如想要把某些格式除外，便在以下输入其格式扩展名，以逗号为分隔。例如: m3u, pls, cue
 
 PLAYER_TYPE
@@ -3081,7 +3081,7 @@ SETUP_MAXWMARATE_DESC
 	DE	Manche WMA Streams können unterschiedliche Bitraten enthalten. Standardmässig wähle SlimServer die höchste verfügbare Bitrate. Dies kann bei langsameren Internet-Verbindungen zu Problemen führen. Daher können Sie hier die maximale Bitrate, die verwendet werden soll, festlegen.
 	EN	Some WMA streams have multiple bitrates available for streaming.  By default, SlimServer will select the highest bitrate stream available, but if you have a slower Internet connection, you may set a lower value here to limit the maximum rate that can be chosen from these multiple rate streams.
 	FR	Certains flux WMA sont disponibles en plusieurs débits binaires ; par défaut, le SlimServer choisira le débit le plus élevé disponible. Si votre connexion Internet ne le supporte pas, vous pouvez spécifier ici le débit maximum à utiliser.
-	IT	Alcuni flussi WMA sono disponibili per lo scaricamento con bitrate multipli. Per dafault, lo Slimserver sceglierà il flusso con il bitrate più alto, ma se disponi di una connessione lenta a Internet, puoi impostare qui un valore più basso per limitare la velocità massima nella scelta di questi flussi multipli.
+	IT	Alcuni flussi WMA sono disponibili per lo scaricamento con bitrate multipli. Per dafault, lo SlimServer sceglierà il flusso con il bitrate più alto, ma se disponi di una connessione lenta a Internet, puoi impostare qui un valore più basso per limitare la velocità massima nella scelta di questi flussi multipli.
 	NL	Sommige WMA streams zijn beschikbaar in meerdere kwaliteiten (bitrates). Standaard selecteert SlimServer de hoogst beschikbare bitrate. Als je een langzamere Internetverbinding hebt kun je een lagere bitrate kiezen om de streams te limiteren. Dan kun je alleen bitrates kiezen die lager zijn dan dit maximum.
 
 SETUP_MAXBITRATE
@@ -3105,18 +3105,18 @@ SETUP_MAXBITRATE_DESC
 	IT	Lo SlimServer puo' convertire al volo e automaticamente i tuoi file musicali WAV/AIFF o MP3 per abbassare il bitrate dei dati inviati al lettore. Puo' essere utile se stai collegando il lettore allo SlimServer attraverso internet oppure se hai saltuarie interruzioni usando una rete wireless. Puoi scegliere il bitrate massimo da inviare al lettore. I brani MP3 codificati ad un bitrate inferiore a quanto indicato non saranno convertiti. Se scegli Nessun Limite, lo SlimServer trasferira' i file MP3 senza conversione e le altre tipologie di file come audio PCM non compresso.
 	JA	SlimServerは、自動的にあなたの音楽ファイルをWAV/AIFFまたはMP3に変換します。ビットレートの最大値を設定することができます。｢制限なし」を選択しますと、元のファイル通りのビットレートで再生されます。
 	NL	SlimServer kan automatisch je muziekbestanden converteren naar WAV/AIFF of MP3 om met een lagere bitrate je speler aan te sturen. Dit is handig als de speler via het Internet connectie maakt met je server of als je af en toe netwerkproblemen hebt met een draadloos netwerk.<br>Je kunt de maximum bitrate kiezen die SlimServer naar je speler streamt. MP3 bestanden met een lagere bitrate zullen niet geconverteerd worden. Indien je "Geen limiet" kiest zal SlimServer zonder conversie de audio en alle andere bestandstype zoals ongecomprimeerde PCM audio streamen.
-	SV	SlimServer kan automatiskt och löpande konvertera dina musikfiler till WAV/AIFF eller MP3 för att sänka bithastigheten på det data som skickas till din spelare. Detta är användbart om du ansluter till din SlimServer över Internet, eller emellanåt har problem med överföring via trådlöst nätverk. Du kan bestämma med vilken maximal bithastighet Slimserver ska sända till din spelare. MP3-filer ursprungligen kodade i lägre hastigheter kommer inte att kodas om. Om du väljer "Ingen begränsning" kommer SlimServer sända dina MP3-filer utan omkodning och övriga filtyper i okomprimerat PCM-format.
+	SV	SlimServer kan automatiskt och löpande konvertera dina musikfiler till WAV/AIFF eller MP3 för att sänka bithastigheten på det data som skickas till din spelare. Detta är användbart om du ansluter till din SlimServer över Internet, eller emellanåt har problem med överföring via trådlöst nätverk. Du kan bestämma med vilken maximal bithastighet SlimServer ska sända till din spelare. MP3-filer ursprungligen kodade i lägre hastigheter kommer inte att kodas om. Om du väljer "Ingen begränsning" kommer SlimServer sända dina MP3-filer utan omkodning och övriga filtyper i okomprimerat PCM-format.
 	ZH_CN	SlimServer可以将您的音乐文件自动并即时转换成WAV/AIFF或MP3格式，以降低流出到播放机的比特率。如果您的播放机与SlimServer的联系经过互联网或您的无线网络有堵塞的问题存在，这个功能将会提供很好的帮助。您可以选择SlimServer流出到播放机的最大比特率。如果MP3歌曲原有比特率低于如下则不被转换。如果您选择不限制比特率，SlimServer将不会对您的MP3文件流出到播放机前进行任何转换。其他文件类型也会以未压缩的PCM音像格式流出到播放机。
 
 SETUP_MP3BITRATE_DESC
 	DE	SlimServer kann ihre MP3 Dateien automatisch während der Wiedergabe in andere Formate als MP3 umwandeln. SlimServer kann MP3 Dateien auch mit einer geringeren Bitrate neu kodieren. Das ist hilfreich, wenn Sie ihren Player übers Internet mit dem SlimServer verbinden oder Probleme mit dem Wireless LAN haben. Sie können die maximale Bitrate definieren, die der SlimServer zu ihrem Player streamen soll. MP3 Lieder, die mit einer geringeren Bitrate kodiert sind, werden nicht umgewandelt.
 	EN	SlimServer can automatically convert your music files to MP3 on-the-fly to play back other formats than MP3.  SlimServer can also recompress your MP3 files to lower the bitrate of the data streamed to your player.  This is useful if you are connecting your player to SlimServer across the Internet or are having intermittent problems using a wireless network.  You can choose the maximum bitrate that SlimServer will stream to your player.  MP3 songs encoded at a bitrate lower than below won't be converted.
-	ES	SlimServer puede convertir automaticamente los archivos de música a MP3 en-el-momento para reproducir otros formatos, ademas de MP3. Slimserver puede tambien recomprimir para reducir la tasa de transmisión hacia el reproductor. Esto es útil si se conecta  el reproductor al SlimServer a través de internet o se encuentran problemas intermitentes utilizando una red inalámbrica. Se puede elegir la tasa de transmisión máxima que el SlimServer usará para transmitir hacia el reproductor. Las canciones MP3 codificadas a una tasa menor, no serán convertidas. 
+	ES	SlimServer puede convertir automaticamente los archivos de música a MP3 en-el-momento para reproducir otros formatos, ademas de MP3. SlimServer puede tambien recomprimir para reducir la tasa de transmisión hacia el reproductor. Esto es útil si se conecta  el reproductor al SlimServer a través de internet o se encuentran problemas intermitentes utilizando una red inalámbrica. Se puede elegir la tasa de transmisión máxima que el SlimServer usará para transmitir hacia el reproductor. Las canciones MP3 codificadas a una tasa menor, no serán convertidas. 
 	FR	Le SlimServer peut encoder automatiquement et à la volée vos fichiers de musique non-MP3 au format MP3, ainsi que ré-encoder vos fichiers MP3 existants afin de réduire le débit binaire envoyé à votre platine. Ce réglage est utile lorsque vous vous connectez au SlimServer depuis l'internet ou via un réseau sans fil défectueux. Vous pouvez spécifier le débit maximum envoyé par le SlimServer à votre platine. Les fichiers MP3 encodés à un débit inférieur ne seront pas transcodés.
 	IT	Lo SlimServer puo' convertire automaticamente e al volo in MP3 i tuoi file musicali per riprodurre formati diversi dall'MP3. Lo SlimServer puo' inoltre ricomprimere ad un bitrate inferiore i file MP3 inviati al lettore. Puo' essere utile se stai connettendo il lettore allo SlimServer attraverso Internet o se verifichi brevi interruzioni usando una rete wireless. Puoi scegliere il bitrate massimo che lo SlimServer inviera' al lettore. I brani MP3 codificati ad un bitrate piu' basso di quanto indicato sotto, non saranno convertiti.
 	JA	SlimServerは、自動的にあなたの音楽ファイルをMP3に変換します。MP3からさらに下のビットレートへの変換もできます。
 	NL	SlimServer kan automatisch je muziekbestanden converteren naar MP3 tijdens het afspelen. SlimServer kan ook MP3 bestanden hercoderen om een lagere bitrate naar je speler te streamen. Dit is handig als je de speler connectie laat maken via het Internet of als je regelmatig problemen hebt met een draadloos netwerk. Je kunt de maximum bitrate kiezen dat SlimServer zal streamen naar je speler. MP3 bestanden gecodeerd op een lagere bitrate dan hieronder worden niet geconverteerd.
-	SV	SlimServer kan automatiskt och löpande konvertera dina musikfiler till MP3 för att spela upp andra format än MP3. SlimServer kan också komprimera om dina MP3-filer för att sänka bithastigheten på det data som skickas till din spelare. Detta är användbart om du ansluter till din SlimServer över Internet eller via trådlöst nätverk. Du kan bestämma med vilken maximal bithastighet Slimserver ska sända till din spelare. MP3-filer ursprungligen kodade i lägre hastigheter kommer inte att kodas om.
+	SV	SlimServer kan automatiskt och löpande konvertera dina musikfiler till MP3 för att spela upp andra format än MP3. SlimServer kan också komprimera om dina MP3-filer för att sänka bithastigheten på det data som skickas till din spelare. Detta är användbart om du ansluter till din SlimServer över Internet eller via trådlöst nätverk. Du kan bestämma med vilken maximal bithastighet SlimServer ska sända till din spelare. MP3-filer ursprungligen kodade i lägre hastigheter kommer inte att kodas om.
 	ZH_CN	SlimServer可以将您的非MP3音乐文件自动并即时转换成MP3格式。SlimServer也可以把MP3文件重新压缩以降低流出到播放机的比特率。如果您的播放机与SlimServer的联系横跨互联网或您的无线网络有堵塞的问题存在，这个功能将会提供很好的帮助。您可以选择SlimServer流出到播放机的最大比特率。如果MP3歌曲原有比特率低于如下则不被转换。
 
 CONVERTED_TO
@@ -3195,7 +3195,7 @@ SETUP_LAMEQUALITY_DESC
 	EN	The LAME MP3 encoder may be used to convert your music to MP3 format for streaming.  You can adjust the quality setting for LAME in the range 0 to 9.  9 is the default setting, which sounds very good at high bit rates and and uses the least amount of computing power. 0 is the highest quality, but may slow your computer down.  Some computers running SlimServer may not be able to convert fast enough with higher quality settings.
 	ES	El codificador de MP3 LAME puede utilizarse para convertir música a formato MP3 para transmisión. Se puede ajustar el nivel de calidad de LAME en un rango de 0 a 9. 9 es el valor por defecto, el cual suena muy bien a niveles altos de tasa de bits y utiliza la menor cantidad de recursos de computadora. 0 es la calidad más alta, pero puede afectar la perfomance de la computadora. Algunas computadoras que están corriendo SlimServer pueden no convertir lo suficientemente rápido con niveles de calidad superiores.
 	FR	L'encodeur MP3 LAME peut être utilisé pour convertir vos fichiers audio au format MP3 pour la diffusion à distance. Vous pouvez ajuster le niveau de qualité utilisé par LAME de 0 à 9 (la valeur par défaut est 9, ce qui donne des résultats acceptables à des taux d'encodage élevés et économise au maximum les ressources système ; 0 est le niveau de qualité optimal mais risque de ralentir sensiblement le serveur sur des machines moins performantes).
-	IT	L'encoder LAME MP3 puo' essere usato per convertire la tua musica nel formato MP3 per l'invio al lettore. Puoi regolare l'impostazione della qualita' da 0 a 9. 9 e' l'impostazione standard che da' una resa molto buona ad alti bit rate ed utilizza il minimo delle capacita' del processore. 0 e' la qualita' massima ma potrebbe rallentare il tuo computer. Alcuni computer su cui gira lo Slimserver potrebbero non riuscire a convertire abbastanza velocemente con l'impostazione di qualita' piu' alta.
+	IT	L'encoder LAME MP3 puo' essere usato per convertire la tua musica nel formato MP3 per l'invio al lettore. Puoi regolare l'impostazione della qualita' da 0 a 9. 9 e' l'impostazione standard che da' una resa molto buona ad alti bit rate ed utilizza il minimo delle capacita' del processore. 0 e' la qualita' massima ma potrebbe rallentare il tuo computer. Alcuni computer su cui gira lo SlimServer potrebbero non riuscire a convertire abbastanza velocemente con l'impostazione di qualita' piu' alta.
 	NL	Het lame MP3 codeerprogramma kan gebruikt worden om je muziek naar MP3 te converteren voor het streamen naar de speler. Je kunt de kwaliteit instellen met een waarde tussen 0 en 9. 9 is de standaard waarde en klinkt heel goed bij hoge bitrates en gebruikt de minste rekenkracht van de server. 0 is de hoogste kwaliteit maar kan je server langzamer maken. Sommige computers waarop SlimServer draait zijn niet krachtig genoeg om te converteren met een hoge kwaliteitsinstelling.
 	ZH_CN	LAME MP3编码器可将您的音乐转换成MP3格式流出。您能在0至9的设置范围内调节LAME MP3编码器的输出质量。缺省值为5的设置以高比特率编码的音效会相當的好，同时计算量也較小。0是最高质量，但其高计算量可能对计算机的性能表现造成负面影响。有一些运行SlimServer的计算机也许不足以迅速的应付更加优质的LAME设置。
 
@@ -4115,7 +4115,7 @@ SETUP_PLUGINS_DESC
 	FR	Le SlimServer comprend des fonctionnalités supplémentaires, dont des jeux, que vous pouvez utiliser avec votre télécommande. Utilisez le menu ci-dessous pour ajouter ou retirer le menu Modules d'extension de votre Menu principal.
 	IT	Lo SlimServer include alcune caratteristiche extra, tra cui alcuni giochi, che puoi utilizzare con il telecomando. Usa il menu qui sotto per aggiungere o eliminare i Plugins dal menu' principale.
 	JA	SlimServerは、ゲーム等、いくつかの追加機能があります。下のメニューを使って、それらプラグインの追加・削除ができます。
-	NL	Slimserver heeft een aantal extra mogelijkheden die je kunt kiezen met de afstandsbediening waaronder een aantal spelletjes. Je kunt het menu hieronder gebruiken om plugins toe te voegen of te verwijderen van het hoofdmenu.
+	NL	SlimServer heeft een aantal extra mogelijkheden die je kunt kiezen met de afstandsbediening waaronder een aantal spelletjes. Je kunt het menu hieronder gebruiken om plugins toe te voegen of te verwijderen van het hoofdmenu.
 	NO	SlimServer inkluderer mange tillegg, f.eks noen spill, som du kan benytte deg av med din fjernkontroll. Benytt menyen nedenfor for å legge til eller ta bort Plugins-menyen fra fin Hovedmeny.
 	PT	O SlimServer inclui algumas funcionalidades extras, tais como alguns jogos, que podem ser usados com o controlo remoto. Use o menu abaixo para adicionar ou remover os menus extra do cliente.
 	SV	SlimServer inkluderar några tillägg, t.ex några spel, som du kan använda med din fjärrkontroll. Använd menyn nedan för att lägga till eller ta bort Tilläggs-menyn from din Huvudmeny.
@@ -4733,10 +4733,10 @@ SETUP_SEARCHSUBSTRING_DESC
 	CS	Pokud prohledáváte hudební archiv, SlimServer může vyhledávat zadaný řetězec od začátků názvů alb a interpretů, nebo kdekoliv ve slově. Např. výsledek vyhledávání retězce "RAIN" při vyhledávání od začátku najde pouze položku začínající na "RAINBOW", kdežto při prohledávání kdekoliv ve slově nalezne také "TRAIN".
 	DE	Beim Suchen können Sie SlimServer anweisen, den gewünschten Ausdruck nur am Wortanfang zu suchen, oder auch als beliebigen Teil eines Wortes. Beispielsweise findet die Suche nach dem Wortanfang "RAIN" den Begriff "RAINBOW". Bei der Suche innerhalb eines Wortes würde auch "TRAIN" gefunden.
 	EN	When you search for music, you can have SlimServer find matches for items that contain words that begin with the same letters in your search string or contain words that have the search string anywhere in the word.  For example, searching the beginnings of words for "RAIN" in would find items with the word "RAINBOW".  Searching within words would also return item containing the word "TRAIN".
-	ES	Cuando se busca música, se puede hacer que Slimserver encuentre coincidencias entre items que contienen palabras que comiencen con las mismas letras de la cadena de búsqueda, o que contengan palabras que tengan la cadena de búsqueda en cualquier parte de la palabra. Por ejemplo, buscar comienzos de palabras con "RAIN", encontrará items con la palabra "RAINBOW". Buscar dentro de palabras, también encontrará la palabra "TRAIN"
+	ES	Cuando se busca música, se puede hacer que SlimServer encuentre coincidencias entre items que contienen palabras que comiencen con las mismas letras de la cadena de búsqueda, o que contengan palabras que tengan la cadena de búsqueda en cualquier parte de la palabra. Por ejemplo, buscar comienzos de palabras con "RAIN", encontrará items con la palabra "RAINBOW". Buscar dentro de palabras, también encontrará la palabra "TRAIN"
 	FR	Lors d'une recherche dans la bibliothèque, le SlimServer peut afficher comme résultat les morceaux contenant les mots spécifiés ou seulement les morceaux dont le nom débute par les mots spécifiés. Par exemple, une recherche sur "RAIN" affichera les morceaux contenant le mot "RAINBOW" si vous sélectionnez la recherche par début de mot, mais trouvera aussi "TRAIN" si vous sélectionnez la recherche à l'intérieur des mots.
 	HE	שיטת חיפוש טקסט
-	IT	Quando ricerchi della musica, lo Slimserver puo' trovare corrispondenze per voci che iniziano con le stesse lettere della stringa di ricerca o che le contengono dovunque. Per esempio, cercando solo le parole che iniziano con "RAIN", trovera' la parola "RAINBOW". Cercando all'interno delle parole avrebbe trovato anche voci che contengono la parola "TRAIN".
+	IT	Quando ricerchi della musica, lo SlimServer puo' trovare corrispondenze per voci che iniziano con le stesse lettere della stringa di ricerca o che le contengono dovunque. Per esempio, cercando solo le parole che iniziano con "RAIN", trovera' la parola "RAINBOW". Cercando all'interno delle parole avrebbe trovato anche voci che contengono la parola "TRAIN".
 	NL	Als je zoekt naar muziek kun je op twee verschillende manieren zoeken. Zoek tekst waarmee de te vinden woorden beginnen of zoek tekst die op elke plek in een woord mag voorkomen. Bijvoorbeeld: het zoeken aan het begin van een woord voor "RAIN" zal een woord vinden als "RAINBOW". Zoeken binnen woorden zal ook het woord "TRAIN" als resultaat geven.
 	ZH_CN	当您在进行音乐搜寻时，您可以设定让SlimServer由此的前头或在词内寻找匹配。
 
@@ -5131,7 +5131,7 @@ SETUP_DISABLESTATISTICS_DESC
 	EN	When the SlimServer front page comes up, it scans your music library to figure out your library statistics and displays them on the front page.  You can choose to disable this behavior, which will shorten the time it takes to initially open up the web interface, especially with a large music library.
 	ES	Cuando se muestra la pantalla incial de SlimServer, se recorre la colección musical para obtener las estadísticas de la colección y mostrarlas en esta página inicial. Se puede deshabilitar este comportamiento, lo cual minimizará el tiempo que se necesita para abrir la interface web, especialmente con colecciones de gran tamaño.
 	FR	Lorsque la page d'accueil du SlimServer apparaît, celui-ci parcourt votre bibliothèque musicale afin d'afficher des statistiques. Vous pouvez désactiver ce comportement, ce qui réduira le temps nécessaire à l'affichage de la page d'accueil, surtout si la bibliothèque est importante.
-	IT	All'apertura della pagina principale, lo Slimserver analizza la libreria musicale per calcolarne le dimensioni e mostrarle all'inizio della pagina. Puoi scegliere di disabilitare questa modalita' che velocizzera' l'apertura dell'interfaccia web, specialmente con una ampia libreria musicale.
+	IT	All'apertura della pagina principale, lo SlimServer analizza la libreria musicale per calcolarne le dimensioni e mostrarle all'inizio della pagina. Puoi scegliere di disabilitare questa modalita' che velocizzera' l'apertura dell'interfaccia web, specialmente con una ampia libreria musicale.
 	NL	Bij het tonen van de SlimServer webpagina wordt je muziekcollectie gescand om de statistieken op te halen en te tonen op de webpagina. Deze statistieken (aantal liedjes, albums, etc.) kun je uitschakelen. Het laden van de webpagina gaat dan sneller. Vooral bij een grote muziekcollectie is dit van invloed.
 
 SETUP_DISABLE_STATISTICS
@@ -6006,7 +6006,7 @@ SETUP_MDNSNAME_DESC
 	DA	Du kan vælge at angive et Rendezvouz-navn for denne server. Lad feltet være tomt for at slå Rendezvouz-understøttelse fra. SlimServer skal genstartes før denne indstilling har effekt.
 	DE	Sie können einen Namen für diesen Server zur Verwendung mit Bonjour auswählen. Lassen Sie das Feld leer, um Bonjour zu deaktivieren. Um die Änderungen zu aktivieren, muss der Server neu gestartet werden.
 	EN	You can choose a name for this server to be used with Bonjour.  Leave this field blank to disable Bonjour advertising of SlimServer.  You will need to restart the server to see the effect of these changes.
-	ES	Se puede elegir que nombra utilizará este reproductor para Bonjour. Dejar este campo en blanco para deshabilitar avisos comerciales de Bonjour en el Slimserver. Se deberá reiniciar el servidor para que estos cambios tengan efecto.
+	ES	Se puede elegir que nombra utilizará este reproductor para Bonjour. Dejar este campo en blanco para deshabilitar avisos comerciales de Bonjour en el SlimServer. Se deberá reiniciar el servidor para que estos cambios tengan efecto.
 	FR	Vous pouvez choisir un nom de serveur reconnu par Bonjour.
 	HE	שם השרת עבור רנדוו
 	IT	Puoi scegliere un nome per questo server da utilizzare con Bonjour. Lascia il campo vuoto per disabilitare il riconoscimento dello SlimServer da parte di Bonjour. Devi far ripartire il server perche' il cambiamento abbia effetto.
@@ -6070,7 +6070,7 @@ SETUP_REMOTESTREAMTIMEOUT_DESC
 	IT	Puoi impostare l'intervallo durante il quale lo SlimServer provera' a connettersi ad una radio via internet o ad altra sorgente prima di abbandonare. Inserisci la quantita' di tempo, in secondi, qui sotto.
 	NL	Je kunt de tijd instellen die SlimServer zal gebruiken om te proberen connectie te maken met een Internet radio station of een andere bron. Na deze tijd geeft SlimServer het proberen op als er nog geen connectie is. Geef de tijd op in seconden.
 	NO	Du kan oppgi antall sekunder som SlimServer skal forsøke å få kontakt med internett radiostasjonen eller andre stream kilder, før den gir opp.
-	SV	Du kan ange antal sekunder som Slimserver ska försöka etablera kontakt med internetradio-station eller andra strömmande källor, innan den ger upp.
+	SV	Du kan ange antal sekunder som SlimServer ska försöka etablera kontakt med internetradio-station eller andra strömmande källor, innan den ger upp.
 	ZH_CN	您可以设置SlimServer尝试连接到互联网电台或其它服务的时限。请在如下输入以秒为单位的时限。
 
 SETUP_REMOTESTREAMTIMEOUT_CHOOSE
@@ -9551,7 +9551,7 @@ NO_PLAYER_DETAILS
 	DE	<b>Sie besitzen eine Squeezebox oder einen Transporter:</b><ul><li>Überprüfen Sie, ob der Player korrekt eingesteckt ist und die Netzwerkeinstellungen stimmen. Drücken Sie auf "Aktualisierung" im Menü ihres Browser, sobald der Player angeschlossen ist.</ul><p><b>Sie besitzen weder Squeezebox noch Transporter:</b><ul><li>Sie können mit <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, einer Software-Version der Squeezebox, ihre Musiksammlung anhören.<li>Verwenden Sie eine Software zur Wiedergabe von MP3-Streams (z.B. WinAmp oder iTunes), um über die folgende URL auf den SlimServer zugreifen zu können: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	EN	<b>If you own a Squeezebox or Transporter:</b><ul><li>Make sure that your player is plugged in and its networking settings are correct. Click the Refresh button once your player is connected.</ul><p><b>If you do not own a Squeezebox or Transporter:</b><ul><li>You can listen to your music library using <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, a software version of Squeezebox.<li>You can use MP3 player software (such as WinAmp or iTunes) to listen to your music library with SlimServer by connecting to this URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	ES	<b>Si posee un Squeezebox:</b><ul><li>Asegurarse que el reproductor esta conectado y su configuración de red sea correcta. Hacer Click en el botón de Actualizar una vez que el reproductor este conectado.</ul><p><b>Si no posee un Squeezebox:</b><ul><li>Se puede escuchar la colección musical utilizando <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, una versión en software de Squeezebox.<li>Se puede utilizar un reproductor en software de MP3 (como WinAmp o iTunes) para escuchar su colección musical con SlimServer, conectandose a esta URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>	
-	FI	<td><b>Jos omistat Squeezeboxin:</b>  <ul>  <li>Varmista, että soittimesi on kytketty verkkoon ja että verkkoasetuksesi ovat oikein. Kun soittimesi on kytketty verkkoon, paina "Refresh" nappulaa</ul>  <p>  <b>Jos et omista Squeezeboxia:</b>  <ul><li>  Voit kuunnella musiikkikirjastosi sisältöä ohjelmallisella versiolla Squeezeboxista: <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>  <li>Voit myös käyttää median toistoohjelmistoja (kuten WinAmp tai iTunes) kuunnellaksesi musiikkikirjastoasi Slimserverin kautta ottamalla yhteyttä osoitteeseen:<a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul> </td>
+	FI	<td><b>Jos omistat Squeezeboxin:</b>  <ul>  <li>Varmista, että soittimesi on kytketty verkkoon ja että verkkoasetuksesi ovat oikein. Kun soittimesi on kytketty verkkoon, paina "Refresh" nappulaa</ul>  <p>  <b>Jos et omista Squeezeboxia:</b>  <ul><li>  Voit kuunnella musiikkikirjastosi sisältöä ohjelmallisella versiolla Squeezeboxista: <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>  <li>Voit myös käyttää median toistoohjelmistoja (kuten WinAmp tai iTunes) kuunnellaksesi musiikkikirjastoasi SlimServerin kautta ottamalla yhteyttä osoitteeseen:<a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul> </td>
 	FR	Assurez-vous que votre platine est branchée et que ses réglages de réseau sont valides. Cliquez sur le bouton "Actualiser" de votre navigateur pour vérifier de nouveau la présence de la platine.
 	HE	אין פרטי נגן
 	IT	<b>Se possiedi uno Squeezebox:</b><ul><li>Accertati che il tuo lettore sia collegato e le impostazioni di rete corrette. Premi il bottone Aggiorna non appena il tuo lettore e' connesso.</ul><p><b>Se non possiedi uno Squeezebox:</b><ul><li>Puoi ascoltare la tua raccolta musicale usando lo<a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, la versione software dello Squeezebox.<li>Puoi usare un lettore MP3 software (come WinAmp o iTunes) per ascoltare la tua libreria musicale con lo SlimServer collegandoti a questa URL:<a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
@@ -11040,7 +11040,7 @@ SETUP_GROUP_RADIO_DESC
 	CS	SlimServer obsahuje podporu pro několik poskytovatelů internetových rádií. Můžete konfigurovat chování pro každého z nich. zadáním svého uživatelského jména a hesla na této stránce. K uložení změn klikněte na 'Změnit'.
 	DE	SlimServer unterstützt Internet Radio durch verschiedene Radiostationen. Sie können auf dieser Seite diese Unterstützung für einige Anbieter konfigurieren, inklusive der Angabe von Benutzername und Passwort für Premium-Zugänge.
 	EN	SlimServer includes support for Internet Radio through several radio providers. You can configure support for some of these providers, including entering your username and password for premium access, on this page. To save your changes, click Change.
-	ES	Slimserver incluye soporte para Radios por  Internet de varios proveedores de radio. Se puede configurar el soporte para algunos de estos proveedodes, incluyendo el ingreso de usuario y contraseña para servicios Premium, en esta página. Para guardar los cambio, haga click en Cambiar.
+	ES	SlimServer incluye soporte para Radios por  Internet de varios proveedores de radio. Se puede configurar el soporte para algunos de estos proveedodes, incluyendo el ingreso de usuario y contraseña para servicios Premium, en esta página. Para guardar los cambio, haga click en Cambiar.
 	FR	Le SlimServer supporte différents fournisseurs de radios Internet. Vous pouvez activer ou désactiver le support de ces fournisseurs et fournir votre nom d'utilisateur et mot de passe pour l'accès à certains services. Cliquez sur Modifier pour enregistrer vos changements.
 	IT	Lo SlimServer include il supporto alle radio via Internet attraverso diversi fornitori. Puoi configurare in questa pagina, l'accesso per alcuni di questi fornitori, incluso l'inserimento di nome utente e password per l'accesso privilegiato. Per salvare le modifiche premi Cambia.
 	JA	SlimServer は複数の無線の提供者を通してインターネ ットのラジオのためのサポートを含んでいる。あなたはこのペー ジの優れたアクセスのためのあなたのusername そしてパスワード を, 入れることを含むこれらの提供者のいくつかのためのサポー トを, 形成できる。あなたの変更を救うため, かちりと言う音の 変更。
@@ -11589,7 +11589,7 @@ OBJECT_RETRIEVAL_FAILURE
 	DE	SlimServer konnte die von ihnen gewünschte Ressource nicht finden.
 	EN	SlimServer failed retrieve the resource you were looking for.
 	ES	SlimServer no pudo recuperar el recurso que estaba buscando.
-	FI	Slimserver epäonnistui noutaessaan pyytämääsi resurssia.
+	FI	SlimServer epäonnistui noutaessaan pyytämääsi resurssia.
 	IT	Lo SlimServer non ha trovato la risorsa che stavi cercando.
 	NL	SlimServer kon de hulpbron niet benaderen die je wilde hebben.
 	SV	SlimServer kunde inte ladda den önskade resursen.
@@ -11810,7 +11810,7 @@ SETUP_SERVERPRIORITY_DESC
 	EN	You can specify the priority that SlimServer runs at.
 	ES	Se puede especificar la prioridad con la que correrá SlimServer.
 	FR	Vous pouvez fixer le niveau de priorité du SlimServer.
-	IT	Puoi specificare la priorità attribuita allo Slimserver.
+	IT	Puoi specificare la priorità attribuita allo SlimServer.
 	NL	Je kunt de prioriteit specificeren van SlimServer binnen je server.
 	SV	Du kan ange vilken prioritet SlimServer kör under.
 	ZH_CN	您可以配置SlimServer服务器流程的优先设置。
@@ -12112,6 +12112,10 @@ DEBUG_SERVER_TIMERS
 	DE	Interne Timer Informationen
 	EN	Internal Timer Information
 
+DEBUG_SERVER_SETTINGS
+	DE	Informationen zu den Einstellungen
+	EN	Settings Information
+
 DEBUG_NETWORK_MDNS
 	EN	Multicast DNS / Bonjour
 
@@ -12315,34 +12319,45 @@ ENLARGE
 	SV	Förstora
 
 SCANNER_PROGRESS
+	DE	Details zum Musik-Scan
 	EN	Music Scan Details
 
 DIRECTORY_PROGRESS
+	DE	Durchsuche Musik-Verzeichnis
 	EN	Directory Scan
 
 PLAYLIST_PROGRESS
+	DE	Suche Wiedergabelisten
 	EN	Playlist Scan
 
 MERGEVA_PROGRESS
+	DE	Gruppiere "Diverse Artisten"
 	EN	Merge Various Artists
 
 ARTWORK_PROGRESS
+	DE	Suche Plattenhüllen
 	EN	Artwork Scan
 
 CLEANUP_PROGRESS
+	DE	Datenbank wird aufgeräumt
 	EN	Database Cleanup
 
 IMPORTER_PROGRESS
+	DE	Fortschritt der Musik-Suche
 	EN	Scanning Progress
 
 IMPORTER_PROGRESS_DESC
+	DE	Hier werden die einzelnen Fortschritte jeder Phase der Suche nach Musikdateien angezeigt.
 	EN	This page shows the progress of each phase of the scanning process.
 
 RUNNING
+	DE	Läuft
 	EN	Running
 
 COMPLETE
+	DE	Beendet
 	EN	Complete
 
 PROGRESS_IMPORTER_COMPLETE_DESC
-	EN	Slimserver has finished scanning your music collection.
+	DE	SlimServer hat das Durchsuchen ihrer Musiksammlung abgeschlossen.
+	EN	SlimServer has finished scanning your music collection.
