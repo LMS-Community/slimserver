@@ -12112,10 +12112,6 @@ DEBUG_SERVER_TIMERS
 	DE	Interne Timer Informationen
 	EN	Internal Timer Information
 
-DEBUG_SERVER_SETTINGS
-	DE	Informationen zu den Einstellungen
-	EN	Settings Information
-
 DEBUG_NETWORK_MDNS
 	EN	Multicast DNS / Bonjour
 
