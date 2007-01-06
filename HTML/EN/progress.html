@@ -30,7 +30,7 @@
 setTimeout( "refresh()", [% refresh %] * 1000);
 
 function refresh() {
-	window.location.replace("[% webroot	%]progress.html?type=[% type %]&player=[% player | uri %]");
+	window.location.replace("[% webroot	%]progress.html?type=[% type %]&player=[% player | uri %]&barlen=[% barlen %]");
 }
 
 </script>[% END %]

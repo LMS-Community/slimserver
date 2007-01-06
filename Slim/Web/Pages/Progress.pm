@@ -11,21 +11,22 @@ sub init {
 sub progress {
 	my ($client, $params) = @_;
 
+	my $barLen = $params->{'barlen'} || 25;
+
 	my $args = {};
 
 	$args->{'type'} = $params->{'type'} if $params->{'type'};
-	$args->{'name'} = $params->{'name'} if $params->{'name'};
-	$args->{'active'} = $params->{'active'} if $params->{'active'};
 
 	my @progress = Slim::Schema->rs('Progress')->search( $args )->all;
 
 	for my $p (@progress) {
 
 		my $bar = '';
+		my $barInc = $p->total / $barLen;
 
-		for (my $i = 0; $i < $p->total; $i += $p->total / 25) {
+		for (my $i = 0; $i < $barLen; $i++) {
 
-			$params->{'cell_full'} = $i < $p->done;
+			$params->{'cell_full'} = $i * $barInc < $p->done;
 			$bar .= ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $params)};
 		}
 
