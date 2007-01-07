@@ -756,7 +756,10 @@ sub playItem {
 			}
 		}
 
-		$client->showBriefly( $string, $title, 10 );
+		$client->showBriefly( {
+			'line1' => $string,
+			'line2' => $title,
+		}, 10 );
 		
 		Slim::Music::Info::setTitle( $url, $title );
 

@@ -82,11 +82,17 @@ sub setMode {
 				if ($num) {
 					Slim::Utils::Favorites->deleteByClientAndURL($client, $client->modeParam('url'));
 					$client->modeParam('favorite', 0);
-					$client->showBriefly($client->string('FAVORITES_DELETING'), $client->modeParam('title'));
+					$client->showBriefly( {
+						'line1' => $client->string('FAVORITES_DELETING'),
+						'line2' => $client->modeParam('title'),
+					});
 				} else {
 					$num = Slim::Utils::Favorites->clientAdd($client, $url, $title);
 					$client->modeParam('favorite', $num);
-					$client->showBriefly($client->string('FAVORITES_ADDING'), $client->modeParam('title'));
+					$client->showBriefly( {
+						'line1' => $client->string('FAVORITES_ADDING'),
+						'line2' => $client->modeParam('title'),
+					});
 				}
 			}
 		};

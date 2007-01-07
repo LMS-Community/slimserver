@@ -161,7 +161,9 @@ sub startSearch {
 	my $oldlines = $client->curLines();
 
 	my $term = searchTerm($client);
-	$client->showBriefly($client->string('SEARCHING'));
+	$client->showBriefly( {
+		'line1' => $client->string('SEARCHING'),
+	});
 
 	if ($client->searchFor eq 'ARTISTS') {
 

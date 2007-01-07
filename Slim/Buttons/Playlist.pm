@@ -255,7 +255,10 @@ sub init {
 				);
 
 				$client->execute(["playlist", "delete", browseplaylistindex($client)]);	
-				$client->showBriefly( $client->string('REMOVING_FROM_PLAYLIST'), $songtitle, undef, 1);
+				$client->showBriefly( {
+					'line1' => $client->string('REMOVING_FROM_PLAYLIST'),
+					'line2' => $songtitle,
+				});
 			}
 		},
 		
@@ -265,11 +268,11 @@ sub init {
 
 			if (Slim::Player::Playlist::count($client) > 0) {
 
-				$client->showBriefly(
-					$client->string('ZAPPING_FROM_PLAYLIST'),
-					Slim::Music::Info::standardTitle($client, 
-					Slim::Player::Playlist::song($client, browseplaylistindex($client))), undef, 1
-				);
+				$client->showBriefly( {
+					'line1' => $client->string('ZAPPING_FROM_PLAYLIST'),
+					'line2' => Slim::Music::Info::standardTitle($client,
+						Slim::Player::Playlist::song($client, browseplaylistindex($client))),
+				});
 
 				$client->execute(["playlist", "zap", browseplaylistindex($client)]);
 			}

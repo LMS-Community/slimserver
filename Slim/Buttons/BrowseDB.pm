@@ -400,7 +400,9 @@ sub browsedbExitCallback {
 
 				logError("Couldn't find a valid object for playlist!");
 
-				$client->showBriefly($client->string('PROBLEM_OPENING'));
+				$client->showBriefly( {
+					'line1' => $client->string('PROBLEM_OPENING'),
+				});
 
 				return;
 			}
@@ -409,7 +411,10 @@ sub browsedbExitCallback {
 
 				$num = Slim::Utils::Favorites->clientAdd($client, $track, $track->title);
 
-				$client->showBriefly($client->string('FAVORITES_ADDING'), $track->title);
+				$client->showBriefly( {
+					'line1' => $client->string('FAVORITES_ADDING'),
+					'line2' => $track->title,
+				});
 
 				$client->modeParam('favorite', $num);
 
@@ -417,7 +422,10 @@ sub browsedbExitCallback {
 
 				Slim::Utils::Favorites->deleteByClientAndURL($client, $track);
 
-				$client->showBriefly($client->string('FAVORITES_DELETING'), $track->title);
+				$client->showBriefly( {
+					'line1' => $client->string('FAVORITES_DELETING'),
+					'line2' => $track->title,
+				});
 
 				$client->modeParam('favorite', -1);
 			}
