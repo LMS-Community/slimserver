@@ -13,7 +13,7 @@
 [% pageHeaderMenu = BLOCK %]
 
 	<div class="statusarea">
-		<div id="scanWarning" [% IF NOT warn %]style="display:hidden"[% END %]><b>[% "NOTE" | string %]</b> [% "HOME_SCAN_WARNING" | string %]</div>
+		<div id="scanWarning" [% IF NOT warn %]style="display:none"[% END %]><b>[% "NOTE" | string %]</b> [% "HOME_SCAN_WARNING" | string %]</div>
 
 		[% IF song_count %]
 			[% "LIBRARY_CONTAINS" | string %] [% album_count %] [% "WITH" | string %] 

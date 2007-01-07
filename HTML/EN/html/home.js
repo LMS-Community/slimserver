@@ -6,7 +6,8 @@ function ajaxHomeCallback(theData) {
 	
 	if (parsedData['warn']) {
 	
-		//showElements(['scanWarning']);
+		if ($('scanWarning')) showElements(['scanWarning'],'inline');
+		
 		var elements = ['progressName', 'progressBar', 'progressDone', 'progressTotal'];
 		var data = ['progressname', 'progressbar', 'progressdone', 'progresstotal']
 		
@@ -21,7 +22,8 @@ function ajaxHomeCallback(theData) {
 		
 		setTimeout( "ajaxHomeRefresh()", 5 * 1000);
 	} else {
-		//hideElements(['scanWarning']);
+		
+		if ($('scanWarning')) hideElements(['scanWarning']);
 		refresh();
 	}
 }
