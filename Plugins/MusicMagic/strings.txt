@@ -319,5 +319,5 @@ DEBUG_PLUGIN_MUSICMAGIC
 	EN	MusicIP Mix & Export Debugging
 
 MUSICMAGIC_PROGRESS
-	DE	MusicIP Import Fortschritt
-	EN	MusicIP Import Progress
+	DE	MusicIP Import
+	EN	MusicIP Import
