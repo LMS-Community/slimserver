@@ -1,11 +1,55 @@
 package Slim::Utils::Progress;
 
+# $Id$
+#
+# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License, version 2.
+
 use strict;
 
 use Slim::Schema;
 
 use constant UPDATE_DB_INTERVAL  => 1;
 use constant UPDATE_BAR_INTERVAL => 0.3;
+
+=head2 new
+
+Slim::Utils::Progress->new($args)
+
+Description:
+Creates a new Slim::Utils::Progress object which will store progress in the database and
+optionally display a progress bar on the terminal.
+
+Valid values for the $args hashref are:
+
+=over 5
+
+=item total (required)
+
+The total number of messages expected to be processed. This item is required.
+
+=item type [optional]
+
+A type lable for a progress instance.  This allows multiple progress instances to be grouped by
+the database by type.
+
+=item name [optional]
+
+The name of this progress insance.  Information about this progress instance is stored in the
+database by type and name.
+
+=item every [optional]
+
+Set to make the progress object update the database for every call to update (rather than once every UPDATE_DB_INTERVAL sec)
+
+=item bar [optional]
+
+Set to display a progress bar on STDOUT (used by scanner.pl and will only do so if $::perfmon is set).
+
+=back
+
+=cut
 
 sub new {
 	my $class = shift;
@@ -56,6 +100,18 @@ sub new {
 	return $ref;
 }
 
+=head2 update
+
+public instance () update ([String $info], [Integer $num_done])
+
+Description:
+Call to update the progress instance. If $info is passed, this is stored in the database info column
+so infomation can be associated with current progress (set the 'every' param in the call to new if
+you want to rely on this being stored for every call to update). Unless $num_done is passed, the 
+progress is incremented by one from the previous call to update.
+
+=cut
+
 sub update {
 	my $class = shift;
 	my $info  = shift;
@@ -95,6 +151,15 @@ sub update {
 
 	}
 }
+
+=head2 final
+
+public instance () final
+
+Description:
+Call to signal this progress instance is complete.  This updates the database and potentially the progress bar to the complete state.
+
+=cut
 
 sub final {
 	my $class = shift;
