@@ -199,8 +199,8 @@ function refreshInfo(theData, force, curstyle) {
 	}
 	
 	if (newsong && !parsedData['artisthtml']) {
-		doAjaxRefresh();
-		return true;
+		//doAjaxRefresh();
+		//return true;
 	}
 		
 	//alert([newsong,parsedData['songtitleid'] ,$('nowplaying').style.display]);
