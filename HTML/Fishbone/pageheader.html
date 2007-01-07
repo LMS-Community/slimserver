@@ -1,95 +1,9 @@
-[%- IF home && ajaxRequest -%]
-	<pre>
-	[% PROCESS ajaxHome.txt %]
-	</pre>
-[%- ELSE -%]
-[% IF NOT optionOnly %]
-[%- FILTER null %]
-[% BLOCK addBrowseLinks %]
-	[% IF links %]
-		[% FOREACH link = links %]
-			<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
-		[% END %]
-	[% END %]
-[% END %]
-
-[% BLOCK addCaseLinks %]
-	[% IF links %]
-		[% FOREACH link = links %]
-		case "[% link.key %]":
-			url = "[% link.value %]"
-			[% IF cookie %]page = "[% link.key %]"[% END %]
-			suffix = "page=" + page
-			[% IF cookie %]homestring = "[% link.key | string %]"
-			cookie = [% cookie %][% END %]
-		break
-		[% END %]
-	[% END %]
-[% END %]
-[% END -%]
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-	[% IF home && warn %]
-		<script type="text/javascript" src="[% webroot %]html/prototype.js" ></script>
-		<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/global.js %]</script>
-		<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/home.js %]</script>
-	[% END %]
 	[% PROCESS customheader.html %]
-	[% IF home %]<script type="text/javascript">
-	<!--Hide
-	var homestring;
-	var page;
-	function doSearch(value)
-	{
-		selectLink();
-		parent.browser.location='search.html?manualSearch=1&query=' + value + '&player' + getPlayer('SlimServer-player');
-	}
-	
-	function chooseBrowser(value,option)
-	{
-		selectLink()
-		var url;
-		var cookie = 0;
-		switch(option)
-		{
-			[% PROCESS addCaseLinks links=additionalLinks.browse cookie=1 %]
-			[% PROCESS addCaseLinks links=additionalLinks.radio cookie=1 %]
-			[% PROCESS addCaseLinks links=additionalLinks.search cookie=0 %]
-			[% PROCESS addCaseLinks links=additionalLinks.plugins cookie=1 %]
-			[% PROCESS addCaseLinks links=additionalLinks.settings cookie=0 %]
-		case "RADIO_TUNEIN":
-			url = "tunein.html"
-			page = "RADIO_TUNEIN"
-			suffix = "?page=" + page
-		break
-		case "STATISTICS":
-			url= "hitlist.html"
-			page="STATISTICS"
-			suffix = ""
-		}
 
-		if (option) {
-			if (cookie) {
-				setCookie("SlimServer-Browserpage",url + suffix);
-				//parent.header.location =  "home.html?page=" + page + '&player' + getPlayer('SlimServer-player');
-			}
-			if (suffix != "") {suffix = suffix + "&"} else {suffix = "?"}
-			parent.browser.location = url + suffix + 'player' + getPlayer('SlimServer-player');
-		}
-	}
-	
-	[% IF home %]function homelink() {
-		if (homestring) {
-			document.getElementById('homelink').innerHTML = homestring;
-		} [% IF page %]else {
-			document.getElementById('homelink').innerHTML = '[% page | string %]';
-		}[% END %]
-	}[% END %]
-	
-	-->
-	</script>[% END %]
-	[% headScripts %]
+	[% IF pageHeaderScripts %][% pageHeaderScripts %][% END %]
 
 [% IF artwork && levelName == 'album' %]
 <style type="text/css">
@@ -117,74 +31,23 @@
 </style>
 <![endif]-->
 </head>
-<body bgcolor="#FFFFFF" topmargin="0" leftmargin="0" rightmargin="0" [% bodyscript %][% IF home && warn %]onload="doLoad(1);"[% END %]>
-[% END %]
+<body bgcolor="#FFFFFF" topmargin="0" leftmargin="0" rightmargin="0" [% bodyscript %]>
 
-[% IF home %][% IF NOT optionOnly %]
-<div id="masthead">
-	<div id="SDlogo">
-		[% IF warn %]
-			Server scanning... <a href="[% webroot %]progress.html?type=importer" target="browser"><span id="progressName">[% progress.name _ "_PROGRESS" | string %]</span> (<span id="progressDone">[% progress.obj.done %]</span> [% "OF" | string %] <span id="progressTotal">[% progress.obj.total %]</span>)</a></span>
-		[% ELSE %]
-			<a href="http://www.slimdevices.com/" target="slimdevices"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices"></a>
-		[% END %]
-	</div>
-	<div id="serverlinks">
-		<a id="homelink" style="font-weight:bold;" href="javascript:selectLink(this,'BROWSE_NEW_MUSIC');" target="browser" onclick="selectLink(this,'[% page %]');" onMouseOver="homelink();setLink(this);" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
-		 / 
-		[% IF not nosetup && not noserver %]
-			<a href="[% webroot %]settings/server/basic.html?player=[% playerURI %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this,1)">[% "SERVER_SETTINGS" | string %]</a>
-			 / 
-		[% END %]
-		<a href="[% webroot %]home.html?page=help&amp;player=[% playerURI %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this,1)">[% "HELP" | string %]</a>
-	</div>
-</div>
 
-<div id="menuHeader">[% END %]
-	<FORM id="browseForm" name="browseForm" action="javascript:return(false);" target="header">
-		<SELECT NAME="browse" class="stdedit" style="width:17em;" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
-			<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
-			[% PROCESS addBrowseLinks links=additionalLinks.browse %]
-			<OPTION value="" label="">---[% "SEARCH" | string %]---</OPTION>
-			[% PROCESS addBrowseLinks links=additionalLinks.search %]
-			<OPTION value="" label="">---[% "RADIO" | string %]---</OPTION>
-			[% PROCESS addBrowseLinks links=additionalLinks.radio %]
-			<OPTION [% IF page == "RADIO_TUNEIN" %]selected[% END %] value="RADIO_TUNEIN" label='[% "RADIO_TUNEIN" | string %]'>[% "RADIO_TUNEIN" | string %]</OPTION>
-			[% IF additionalLinks.plugins %]
-			<OPTION value="" label="">---[% "PLUGINS" | string %]---</OPTION>
-			[% PROCESS addBrowseLinks links=additionalLinks.plugins %]
-			[% END %]
-			<OPTION [% IF page == "STATISTICS" %]selected[% END %] value="[% "STATISTICS" %]" label="[% "STATISTICS" | string %]">[% "STATISTICS" | string %]</OPTION>
-			[% IF additionalLinks.settings %]
-			<OPTION value="" label="">---[% "SETTINGS" | string %]---</OPTION>
-			[% PROCESS addBrowseLinks links=additionalLinks.settings %]
-			[% END %]
-		</SELECT>
-		<input type=hidden value="[% page %]" name="page">
-	</FORM>
-	[% IF NOT optionOnly %]
-	<FORM id="HeaderSearchForm" name="HeaderSearchForm" action="javascript:return(false);" onSubmit="doSearch(query.value);">
-		[% "SEARCH" | string %]
-		<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="15">
-		<input type=hidden value="[% player %]" name="player">
-		<input type=hidden value="[% page %]" name="page">
-	</FORM>
-</div>[% END %]
-[% ELSE %]
-[% IF newVersion %]<br>[% newVersion %]<br>[% END %]
-[% UNLESS nodiv %]<div class="list">[% END %]
-[% IF pagetitle %]<div class="largeAttribute" id="pagetitle">[% pagetitle %][% IF artwork && (levelName == 'album' || levelName == 'age')%] [% "GALLERY" | string %][% END %]</div>[% END %]
-
-[% PROCESS galleryselect.html %]
-
-[% UNLESS pwd_list %]
-	[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu -%][% END %]
-	<div id="pwdlist">[%- PROCESS crumblist IF pwd_list %][% UNLESS pageHeaderMenu %]</div>[% END %]
-[% IF artwork && (levelName == 'album' || levelName == 'age') -%]
-	<span id="showText">(<a href="javascript:toggleText();">Show Text</a>)</span><span id="hideText">(<a href="javascript:toggleText();">Hide Text</a>)</span>
-[%- END %]
-<span class="pageHeaderInfo">[% pageHeaderInfo %]</span>
-
+[% IF NOT home %]
+	[% IF newVersion %]<br>[% newVersion %]<br>[% END %]
+	[% UNLESS nodiv %]<div class="list">[% END %]
+	[% IF pagetitle %]<div class="largeAttribute" id="pagetitle">[% pagetitle %][% IF artwork && (levelName == 'album' || levelName == 'age')%] [% "GALLERY" | string %][% END %]</div>[% END %]
+	
+	[% PROCESS galleryselect.html %]
+	
+	[% UNLESS pwd_list %]
+		[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu -%][% END %]
+		<div id="pwdlist">[%- PROCESS crumblist IF pwd_list %][% UNLESS pageHeaderMenu %]</div>[% END %]
+	[% IF artwork && (levelName == 'album' || levelName == 'age') -%]
+		<span id="showText">(<a href="javascript:toggleText();">Show Text</a>)</span><span id="hideText">(<a href="javascript:toggleText();">Hide Text</a>)</span>
+	[%- END %]
+	<span class="pageHeaderInfo">[% pageHeaderInfo %]</span>
+	
 [% UNLESS noHR %]<hr class="headerhr">[% END %]
-[% END %]
 [% END %]

@@ -1,18 +1,190 @@
-[% IF page != 'help' %][% pageicon = 'MUSIC' %] [% search = '0' %][% browse = '1' %][% music = '0' %][% home = '1' %][% playlist = '0' %][% ELSE %][% pagetitle = "HELP" | string %][% END %][% PROCESS pageheader.html %]
-
-[% IF page == 'help' %]
-
-	<ul>
-	[% IF additionalLinks.help %]
-		[% FOREACH link = additionalLinks.help %]
-		<li>
-			<a href="[% link.value %][% IF NOT link.value.match('^http') %]player=[% playerURI %][% END %]" [% IF link.value.match('^http') %]target="_new"[% END %]>[% link.key | string %]</a>
-		</li>
+[%- FILTER null %]
+[% optionForm = BLOCK %]
+<FORM id="browseForm" name="browseForm" action="javascript:return(false);" target="header">
+	<SELECT NAME="browse" class="stdedit" style="width:17em;" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
+		<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
+		[% PROCESS addBrowseLinks links=additionalLinks.browse %]
+		<OPTION value="" label="">---[% "SEARCH" | string %]---</OPTION>
+		[% PROCESS addBrowseLinks links=additionalLinks.search %]
+		<OPTION value="" label="">---[% "RADIO" | string %]---</OPTION>
+		[% PROCESS addBrowseLinks links=additionalLinks.radio %]
+		<OPTION [% IF page == "RADIO_TUNEIN" %]selected[% END %] value="RADIO_TUNEIN" label='[% "RADIO_TUNEIN" | string %]'>[% "RADIO_TUNEIN" | string %]</OPTION>
+		[% IF additionalLinks.plugins %]
+		<OPTION value="" label="">---[% "PLUGINS" | string %]---</OPTION>
+		[% PROCESS addBrowseLinks links=additionalLinks.plugins %]
 		[% END %]
-		<li>
-			<a href="[% webroot %]html/docs/readme.html">Fishbone Skin style changes</a>
-		</li>
-	[% END %]
-	</ul>
+		<OPTION [% IF page == "STATISTICS" %]selected[% END %] value="[% "STATISTICS" %]" label="[% "STATISTICS" | string %]">[% "STATISTICS" | string %]</OPTION>
+		[% IF additionalLinks.settings %]
+		<OPTION value="" label="">---[% "SETTINGS" | string %]---</OPTION>
+		[% PROCESS addBrowseLinks links=additionalLinks.settings %]
+		[% END %]
+	</SELECT>
+	<input type=hidden value="[% page %]" name="page">
+</FORM>
 [% END %]
-[% PROCESS pagefooter.html %]
+
+[% BLOCK addBrowseLinks %]
+	[% IF links %]
+		[% FOREACH link = links %]
+			<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
+		[% END %]
+	[% END %]
+[% END %]
+
+[% BLOCK addCaseLinks %]
+	[% IF links %]
+		[% FOREACH link = links %]
+		case "[% link.key %]":
+			url = "[% link.value %]"
+			[% IF cookie %]page = "[% link.key %]"[% END %]
+			suffix = "page=" + page
+			[% IF cookie %]homestring = "[% link.key | string %]"
+			cookie = [% cookie %][% END %]
+		break
+		[% END %]
+	[% END %]
+[% END %]
+[% END -%]
+
+[%- IF ajaxRequest -%]
+	<pre>
+	[% PROCESS ajaxHome.txt %]
+	</pre>
+[%- ELSIF optionOnly -%]
+[% optionForm %]
+[%- ELSE -%]
+	[% IF page != 'help' %]
+		[% pageicon = 'MUSIC' %] [% search = '0' %][% browse = '1' %][% music = '0' %][% home = '1' %][% playlist = '0' %]
+		
+		<script type="text/javascript">
+			<!--Hide
+			var homestring;
+			var page;
+			function doSearch(value)
+			{
+				selectLink();
+				parent.browser.location='search.html?manualSearch=1&query=' + value + '&player' + getPlayer('SlimServer-player');
+			}
+			
+			function chooseBrowser(value,option)
+			{
+				selectLink()
+				var url;
+				var cookie = 0;
+				switch(option)
+				{
+					[% PROCESS addCaseLinks links=additionalLinks.browse cookie=1 %]
+					[% PROCESS addCaseLinks links=additionalLinks.radio cookie=1 %]
+					[% PROCESS addCaseLinks links=additionalLinks.search cookie=0 %]
+					[% PROCESS addCaseLinks links=additionalLinks.plugins cookie=1 %]
+					[% PROCESS addCaseLinks links=additionalLinks.settings cookie=0 %]
+				case "RADIO_TUNEIN":
+					url = "tunein.html"
+					page = "RADIO_TUNEIN"
+					suffix = "?page=" + page
+				break
+				case "STATISTICS":
+					url= "hitlist.html"
+					page="STATISTICS"
+					suffix = ""
+				}
+		
+				if (option) {
+					if (cookie) {
+						setCookie("SlimServer-Browserpage",url + suffix);
+						//parent.header.location =  "home.html?page=" + page + '&player' + getPlayer('SlimServer-player');
+					}
+					if (suffix != "") {suffix = suffix + "&"} else {suffix = "?"}
+					parent.browser.location = url + suffix + 'player' + getPlayer('SlimServer-player');
+				}
+			}
+			
+			function homelink() {
+				if (homestring) {
+					document.getElementById('homelink').innerHTML = homestring;
+				} [% IF page %]else {
+					document.getElementById('homelink').innerHTML = '[% page | string %]';
+				}[% END %]
+			}
+			
+			-->
+		</script>
+		
+		[% IF warn %]
+			[% bodyscript = 'onload="doLoad(1);"' %]
+			
+			[% pageHeaderScripts = BLOCK %]
+				<script type="text/javascript" src="[% webroot %]html/prototype.js" ></script>
+				<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/global.js %]</script>
+				<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/home.js %]</script>
+			[% END %]
+		[% END %]
+	
+	[% ELSE %]
+		[% pagetitle = "HELP" | string %]
+	[% END %]
+	
+	[% PROCESS pageheader.html %]
+	
+	[% IF page == 'help' %]
+	
+		<ul>
+		[% IF additionalLinks.help %]
+			[% FOREACH link = additionalLinks.help %]
+			<li>
+				<a href="[% link.value %][% IF NOT link.value.match('^http') %]player=[% playerURI %][% END %]" [% IF link.value.match('^http') %]target="_new"[% END %]>[% link.key | string %]</a>
+			</li>
+			[% END %]
+			<li>
+				<a href="[% webroot %]html/docs/readme.html">Fishbone Skin style changes</a>
+			</li>
+		[% END %]
+		</ul>
+	[% ELSE %]
+
+		<div id="masthead">
+			<div id="SDlogo">
+		
+					<div id="scanWarning" [% IF NOT warn %]style="display:none"[% END %]>
+						[% "RESCANNING_SHORT" | string %]
+						<a href="[% webroot %]progress.html?type=importer" target="browser">
+							<span id="progressName">[% IF progress.name %][% progress.name _ "_PROGRESS" | string %][% END %]</span>
+							<span class="progress" [% IF NOT progress.name %]style="display:none"[% END %]>( </span>
+							<span id="progressDone">[% IF progress.name %][% progress.obj.done %][% END %]</span>
+							<span class="progress" [% IF NOT progress.name %]style="display:none"[% END %]> [% "OF" | string %] </span>
+							<span id="progressTotal">[% IF progress.name %][% progress.obj.total %][% END %]</span>
+							<span class="progress" [% IF NOT progress.name %]style="display:none"[% END %]> )</span>
+						</a>
+					</div>
+		
+					<div id="libraryInfo" [% IF warn %]style="display:none"[% END %]>
+						<a href="http://www.slimdevices.com/" target="slimdevices"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices"></a>
+					</div>
+		
+			</div>
+			<div id="serverlinks">
+				<a id="homelink" style="font-weight:bold;" href="javascript:selectLink(this,'BROWSE_NEW_MUSIC');" target="browser" onclick="selectLink(this,'[% page %]');" onMouseOver="homelink();setLink(this);" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
+				 / 
+				[% IF not nosetup && not noserver %]
+					<a href="[% webroot %]settings/server/basic.html?player=[% playerURI %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this,1)">[% "SERVER_SETTINGS" | string %]</a>
+					 / 
+				[% END %]
+				<a href="[% webroot %]home.html?page=help&amp;player=[% playerURI %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this,1)">[% "HELP" | string %]</a>
+			</div>
+		</div>
+		
+		<div id="menuHeader">
+			
+			[% optionForm %]
+			
+			<FORM id="HeaderSearchForm" name="HeaderSearchForm" action="javascript:return(false);" onSubmit="doSearch(query.value);">
+				[% "SEARCH" | string %]
+				<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="15">
+				<input type=hidden value="[% player %]" name="player">
+				<input type=hidden value="[% page %]" name="page">
+			</FORM>
+		</div>
+
+	[% END %]
+	[% PROCESS pagefooter.html %]
+[% END %]
