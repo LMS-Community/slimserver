@@ -24,7 +24,7 @@
 			[% "OF" | string %] 
 			<span id="Total">[% item.obj.total %]</span>
 			 ) 
-			<span id="Active">[% "RUNNING" | string %]</span>
+			<span id="Active">[% IF item.obj.active %][% "RUNNING" | string %][% ELSE %][% "COMPLETE" | string %][% END %]</span>
 			<span id="Time">[% item.time %]</span> [% "SECONDS" | string %]
 		[% END -%]
 		[% odd = (not odd) %]
