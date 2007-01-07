@@ -6,6 +6,8 @@ progressname|[% progress.name _ "_PROGRESS" | string %]
 
 # grab the object
 progressbar|[% progress.bar %]
+progressdone|[% progress.obj.done %]
+progresstotal|[% progress.obj.total %]
 
 warn|[% warn %]
 

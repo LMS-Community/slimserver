@@ -1,3 +1,8 @@
+[%- IF home && ajaxRequest -%]
+	<pre>
+	[% PROCESS ajaxHome.txt %]
+	</pre>
+[%- ELSE -%]
 [% IF NOT optionOnly %]
 [%- FILTER null %]
 [% BLOCK addBrowseLinks %]
@@ -25,6 +30,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
+	[% IF home %]
+		<script type="text/javascript" src="[% webroot %]html/prototype.js" ></script>
+		<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/global.js %]</script>
+		<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/home.js %]</script>
+	[% END %]
 	[% PROCESS customheader.html %]
 	[% IF home %]<script type="text/javascript">
 	<!--Hide
@@ -107,13 +117,17 @@
 </style>
 <![endif]-->
 </head>
-<body bgcolor="#FFFFFF" topmargin="0" leftmargin="0" rightmargin="0" [% bodyscript %]>
+<body bgcolor="#FFFFFF" topmargin="0" leftmargin="0" rightmargin="0" [% bodyscript %][% IF home %]onload="doLoad(1);"[% END %]>
 [% END %]
 
 [% IF home %][% IF NOT optionOnly %]
 <div id="masthead">
 	<div id="SDlogo">
+		[% IF progress.name %]
+			Server scanning... <a href="[% webroot %]progress.html?type=importer" target="browser"><span id="progressName">[% progress.name _ "_PROGRESS" | string %]</span>(<span id="progressDone">[% progress.obj.done %]</span> [% "OF" | string %] <span id="progressTotal">[% progress.obj.total %]</span>)</a></span>
+		[% ELSE %]
 			<a href="http://www.slimdevices.com/" target="slimdevices"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices"></a>
+		[% END %]
 	</div>
 	<div id="serverlinks">
 		<a id="homelink" style="font-weight:bold;" href="javascript:selectLink(this,'BROWSE_NEW_MUSIC');" target="browser" onclick="selectLink(this,'[% page %]');" onMouseOver="homelink();setLink(this);" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
@@ -172,4 +186,5 @@
 <span class="pageHeaderInfo">[% pageHeaderInfo %]</span>
 
 [% UNLESS noHR %]<hr class="headerhr">[% END %]
+[% END %]
 [% END %]

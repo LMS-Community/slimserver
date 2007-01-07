@@ -7,19 +7,16 @@ function ajaxHomeCallback(theData) {
 	if (parsedData['warn']) {
 	
 		//showElements(['scanWarning']);
-	
-		if (parsedData['progressname']) {
-			showElements(['progressName']);
-			refreshElement('progressName', parsedData['progressname']);
-		} else {
-			hideElements(['progressName']);
-		}
+		var elements = ['progressName', 'progressBar', 'progressDone', 'progressTotal'];
+		var data = ['progressname', 'progressbar', 'progressdone', 'progresstotal']
 		
-		if (parsedData['progressbar']) {
-			showElements(['progressBar']);
-			refreshElement('progressBar', parsedData['progressbar']);
-		} else {
-			hideElements(['progressBar']);
+		for (var i=0; i < elements.length; i++) {
+			if (parsedData[data[i]]) {
+				if ($(elements[i])) showElements([elements[i]],'inline');
+				refreshElement(elements[i], parsedData[data[i]]);
+			} else {
+				if ($(elements[i])) hideElements([elements[i]]);
+			}
 		}
 		
 		setTimeout( "ajaxHomeRefresh()", 5 * 1000);
