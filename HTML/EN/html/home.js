@@ -10,12 +10,14 @@ function ajaxHomeCallback(theData) {
 		if ($('scanWarning')) showElements(['scanWarning'],'inline');
 		
 		var elements = ['progressName', 'progressBar', 'progressDone', 'progressTotal'];
-		var data = ['progressname', 'progressbar', 'progressdone', 'progresstotal']
 		
 		for (var i=0; i < elements.length; i++) {
-			if (parsedData[data[i]]) {
-				if ($(elements[i])) showElements([elements[i]],'inline');
-				refreshElement(elements[i], parsedData[data[i]]);
+		
+			if (parsedData[elements[i].toLowerCase()]) {
+				if ($(elements[i])) {
+					showElements([elements[i]],'inline');
+					refreshElement(elements[i], parsedData[elements[i].toLowerCase()]);
+				}
 			} else {
 				if ($(elements[i])) hideElements([elements[i]]);
 			}
@@ -36,18 +38,20 @@ function ajaxHomeCallback(theData) {
 		setTimeout( "ajaxHomeRefresh()", 5 * 1000);
 	} else {
 	
-		refresh();
+		if ($('scanWarning'))  hideElements(['scanWarning']);
+		if ($('progressName')) hideElements(['progressName']);
+		if ($('progressBar'))  hideElements(['progressBar']);
+		
+		if ($('libraryInfo'))  showElements(['libraryInfo'],'inline');
 		
 		var elements = ['songcount', 'albumcount', 'artistcount'];
 		
 		for (var i=0; i < elements.length; i++) {
-			if (parsedData[data[i]]) {
-				refreshElement(elements[i], parsedData[data[i]]);
+			if (parsedData[elements[i]]) {
+				refreshElement(elements[i], parsedData[elements[i]]);
 			} 
 		}
 		
-		if ($('scanWarning')) hideElements(['scanWarning']);
-		if ($('libraryInfo')) showElements(['libraryInfo'],'inline');
 	}
 }
 
@@ -64,12 +68,6 @@ function ajaxHomeRefresh() {
 		
 		if (useAjax == 1) {
 			setTimeout( "ajaxHomeRefresh()", 1000);
-		} else {
-			setTimeout( "refresh()", 300*1000);
 		}
-	}
-		
-	function refresh() {
-		window.location.replace("home.html?player=[% player | uri %]");
 	}
 [% END %]
