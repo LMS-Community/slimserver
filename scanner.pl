@@ -39,7 +39,7 @@ use Slim::Utils::MySQLHelper;
 use Slim::Utils::OSDetect;
 use Slim::Utils::PluginManager;
 use Slim::Utils::Prefs;
-use Slim::Utils::ProgressBar;
+use Slim::Utils::Progress;
 use Slim::Utils::Scanner;
 use Slim::Utils::Strings qw(string);
 
