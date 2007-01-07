@@ -11,3 +11,6 @@ progresstotal|[% progress.obj.total %]
 
 warn|[% warn %]
 
+songcount|[% song_count %]
+artistcount|[% artist_count %]
+albumcount|[% album_count %]

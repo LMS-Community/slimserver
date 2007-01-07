@@ -1,31 +1,52 @@
+[%- IF ajaxRequest -%]
+	<pre>
+	[% PROCESS ajaxProgress.txt %]
+	</pre>
+[%- ELSE -%]
+
 [% pagetitle = type _ "_PROGRESS" | string %]
+
 [% pageHeaderMenu = pagetitle %]
+
+[% pageHeaderScripts = BLOCK %]
+<!--	<script type="text/javascript" src="[% webroot %]html/prototype.js" ></script>
+	<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/global.js %]</script>
+	<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/progress.js %]</script>
+-->
+[% END %]
+
+[%# bodyscript = 'onload="doLoad();"' %]
 
 [% PROCESS pageheader.html %]
 
 	<div>[% type _ "_PROGRESS_DESC" | string %]</div>
 
-	[% odd = 1 %]
+	[% odd = 1 %][% num = 0 %]
 	[% FOREACH item = progress_items %]
 
-		[%- WRAPPER contentitem  %]
-			[% item.obj.name _ "_PROGRESS" | string %] ( [% item.obj.done %] [% "OF" | string %] [% item.obj.total %] ) 
-			[% IF item.obj.active %] [% "RUNNING" | string %][% ELSE %] [% "COMPLETE" | string %][% END %]
-			[% item.time %] [% "SECONDS" | string %]
+		[%- WRAPPER contentitem %]
+			<span id="Name">[% item.obj.name _ "_PROGRESS" | string %]</span>
+			 ( 
+			 <span id="Done">[% item.obj.done %]</span>
+			[% "OF" | string %] 
+			<span id="Total">[% item.obj.total %]</span>
+			 ) 
+			<span id="Active">[% "RUNNING" | string %]</span>
+			<span id="Time">[% item.time %]</span> [% "SECONDS" | string %]
 		[% END -%]
 		[% odd = (not odd) %]
-		[%- WRAPPER contentitem  %]
-			[% item.bar %]
+		[%- WRAPPER contentitem lineclass='progressItem' %]
+			<span id="Bar">[% item.bar %]</span>
 			<br>
-			[% IF item.obj.info %]<p>[% item.obj.info %]</p>[% END %]
+			<div id="Info">[% IF item.obj.info %][% item.obj.info %][% END %]</div>
 		[% END -%]
-		[% odd = (not odd) %]
+		[% odd = (not odd) %][% num = num +1 %]
 	[% END %]
 
-	<div>[% IF message %][% message %][% END %]</div>
+	<div id="message">[% IF message %][% message %][% END %]</div>
 
 
-[% IF refresh %]<script language="JavaScript">
+[% IF refresh && NOT message %]<script language="JavaScript">
 
 setTimeout( "refresh()", [% refresh %] * 1000);
 
@@ -36,3 +57,4 @@ function refresh() {
 </script>[% END %]
 
 [% PROCESS pagefooter.html %]
+[% END %]

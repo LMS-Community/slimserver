@@ -6,6 +6,7 @@ function ajaxHomeCallback(theData) {
 	
 	if (parsedData['warn']) {
 	
+		if ($('libraryInfo')) hideElements(['libraryInfo']);
 		if ($('scanWarning')) showElements(['scanWarning'],'inline');
 		
 		var elements = ['progressName', 'progressBar', 'progressDone', 'progressTotal'];
@@ -20,11 +21,33 @@ function ajaxHomeCallback(theData) {
 			}
 		}
 		
+		var elems = $('scanWarning').getElementsByTagName("span");
+		
+		for (var i=0; i < elems.length; i++) {
+			if (elems[i].className == 'progress') {
+				if (parsedData['progressname']) {
+					elems[i].style.display = 'inline';
+				} else {
+					elems[i].style.display = 'none';
+				}
+			}
+		}
+		
 		setTimeout( "ajaxHomeRefresh()", 5 * 1000);
 	} else {
+	
+		refresh();
+		
+		var elements = ['songcount', 'albumcount', 'artistcount'];
+		
+		for (var i=0; i < elements.length; i++) {
+			if (parsedData[data[i]]) {
+				refreshElement(elements[i], parsedData[data[i]]);
+			} 
+		}
 		
 		if ($('scanWarning')) hideElements(['scanWarning']);
-		refresh();
+		if ($('libraryInfo')) showElements(['libraryInfo'],'inline');
 	}
 }
 

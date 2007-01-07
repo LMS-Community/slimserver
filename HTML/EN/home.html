@@ -15,14 +15,14 @@
 	<div class="statusarea">
 		<div id="scanWarning" [% IF NOT warn %]style="display:none"[% END %]><b>[% "NOTE" | string %]</b> [% "HOME_SCAN_WARNING" | string %]</div>
 
-		[% IF song_count %]
-			[% "LIBRARY_CONTAINS" | string %] [% album_count %] [% "WITH" | string %] 
-			[% song_count %] [% "BY" | string %] [% artist_count %].
-		[% END %]
+		<div id="libraryInfo" [% IF warn %]style="display:none"[% END %]>
+			[%- "LIBRARY_CONTAINS" | string %] <span id="albumcount">[% album_count %]</span> [% "WITH" | string -%] 
+			<span id="songcount">[%- song_count %]</span> [% "BY" | string %] <span id="artistcount">[% artist_count %]</span>.
+		</div>
 
-		[% IF newVersion %]
-			<br><br>[% newVersion %]
-		[% END %]
+		<div id="newVersion">
+			[% IF newVersion %]<br><br>[% newVersion %][% END %]
+		</div>
 	</div>
 
 [% END %]
@@ -36,7 +36,7 @@
 [% END -%]
 [% PROCESS pageheader.html %]
 
-			<div id="progressName">[% IF progress.name %][% progress.name _ "_PROGRESS" | string %][% END %]</div>
+			<div id="progressName" style="display:inline">[% IF progress.name %][% progress.name _ "_PROGRESS" | string %][% END %]</div><br>
 			<a href="[% webroot %]progress.html?type=importer"><span id="progressBar" >[% progress.bar %]</span></a>
 
 <div class="homeMenuSection">
