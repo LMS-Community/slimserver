@@ -1,6 +1,6 @@
 var url = "[% statusroot %]";
 
-function ajaxCallback(theData) {
+function ajaxProgressCallback(theData) {
 	
 	var parsedData = fillDataHash(theData);
 	
@@ -21,20 +21,23 @@ function ajaxCallback(theData) {
 				refreshElement(elems[j]+i, parsedData[elems[j]+i]);
 			}
 		}
-	
 	}
 	
-	setTimeout( "ajaxProgressRefresh()", 5000);
+	if (parsedData['message']) {
+		refreshElement('message',parsedData['message']);
+	} else {
+		setTimeout( "ajaxProgressRefresh()", 5000);
+	}
 }
 
 function ajaxProgressRefresh() {
 
 	// add a random number to the params as IE loves to cache the heck out of 
 	var args = 'type=[% type %]&barlen=[% barlen %]&ajaxRequest=1&player=[% player | uri %]&d=' + Math.random();
-	ajaxUpdate(args, ajaxCallback);
+	ajaxProgressUpdate(args, ajaxProgressCallback);
 }
 
-function ajaxUpdate(params, action) {
+function ajaxProgressUpdate(params, action) {
 	var requesttype = 'post';
 
 	if (window.XMLHttpRequest) {

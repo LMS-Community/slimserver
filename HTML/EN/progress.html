@@ -46,15 +46,5 @@
 
 	<div id="message">[% IF message %][% message %][% END %]</div>
 
-
-[% IF refresh && NOT message %]<script language="JavaScript">
-
-setTimeout( "refresh()", [% refresh %] * 1000);
-
-function refresh() {
-}
-
-</script>[% END %]
-
 [% PROCESS pagefooter.html %]
 [% END %]
