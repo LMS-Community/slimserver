@@ -1,0 +1,16 @@
+[% num = 0 %]
+[% FOREACH item = progress_items %]
+
+Name[% num %]|[% item.obj.name _ "_PROGRESS" | string %]
+Done[% num %]|[% item.obj.done %]
+Total[% num %]|[% item.obj.total %]
+Active[% num %]|[% IF item.obj.active %][% "RUNNING" | string %][% ELSE %][% "COMPLETE" | string %][% END %]
+Time[% num %]|[% item.time %]
+Bar[% num %]|[% item.bar %]
+Info[% num %]|[% item.obj.info %]
+
+[% num = num +1 %]
+
+[% END %]
+num|[% num %]
+message|[% message %]
