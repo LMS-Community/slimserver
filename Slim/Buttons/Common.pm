@@ -423,8 +423,7 @@ our %functions = (
 		if (Slim::Player::Playlist::count($client) == 0) {
 
 			$client->showBriefly( {
-				'line1' => $client->string('PLAYLIST_EMPTY'),
-				'line2' => "",
+				'line' => [ $client->string('PLAYLIST_EMPTY'), "" ]
 			});
 
 		} else {
@@ -434,8 +433,7 @@ our %functions = (
 			Slim::Buttons::Common::pushMode($client, 'playlist');
 
 			$client->showBriefly( {
-				'line1' => $client->string('STOPPING'),
-				'line2' => "",
+				'line' =>  [ $client->string('STOPPING'), "" ]
 			}) unless suppressStatus($client);
 		}
 	},
@@ -663,8 +661,7 @@ our %functions = (
 			if (Slim::Player::Playlist::count($client) == 0) {
 
 				$client->showBriefly( {
-					'line1' => $client->string('PLAYLIST_EMPTY'),
-					'line2' => "",
+					'line' =>  [ $client->string('PLAYLIST_EMPTY'), "" ]
 				});
 
 			} else {
@@ -773,22 +770,19 @@ our %functions = (
 		if (Slim::Player::Playlist::repeat($client) == 0) {
 
 			$client->showBriefly( {
-				'line1' => $client->string('REPEAT_OFF'),
-				'line2' => "",
+				'line' => [ $client->string('REPEAT_OFF'), "" ]
 			});
 
 		} elsif (Slim::Player::Playlist::repeat($client) == 1) {
 
 			$client->showBriefly( {
-				'line1' => $client->string('REPEAT_ONE'),
-				'line2' => "",
+				'line' =>  [ $client->string('REPEAT_ONE'), "" ]
 			});
 
 		} elsif (Slim::Player::Playlist::repeat($client) == 2) {
 
 			$client->showBriefly( {
-				'line1' => $client->string('REPEAT_ALL'),
-				'line2' => "",
+				'line' => [ $client->string('REPEAT_ALL'), "" ]
 			});
 		}
 	},
@@ -908,13 +902,11 @@ our %functions = (
 
 		if ($sleepTime == 0) {
 			$client->showBriefly( {
-				'line1' => $client->string('CANCEL_SLEEP'),
-				'line2' => "",
+				'line' => [ $client->string('CANCEL_SLEEP'), "" ]
 			});
 		} else {
 			$client->showBriefly( {
-				'line1' => $client->prettySleepTime,
-				'line2' => "",
+				'line' => [ $client->prettySleepTime, "" ]
 			});
 		}
 	},
@@ -952,22 +944,19 @@ our %functions = (
 		if (Slim::Player::Playlist::shuffle($client) == 2) {
 
 			$client->showBriefly( {
-				'line1' => $client->string('SHUFFLE_ON_ALBUMS'),
-				'line2' => "",
+				'line' => [ $client->string('SHUFFLE_ON_ALBUMS'), "" ]
 			});
 
 		} elsif (Slim::Player::Playlist::shuffle($client) == 1) {
 
 			$client->showBriefly( {
-				'line1' => $client->string('SHUFFLE_ON_SONGS'),
-				'line2' => "",
+				'line' => [ $client->string('SHUFFLE_ON_SONGS'), "" ]
 			});
 
 		} else {
 
 			$client->showBriefly( {
-				'line1' => $client->string('SHUFFLE_OFF'),
-				'line2' => "",
+				'line' => [ $client->string('SHUFFLE_OFF'), "" ]
 			});
 		}
 	},
@@ -988,7 +977,9 @@ our %functions = (
 		my $client = shift;
 
  		# briefly display the time/date
- 		$client->showBriefly(dateTime(), 3);
+ 		$client->showBriefly(dateTime(), {
+			'duration' => 3
+		});
  	},
 
 	'textsize' => sub  {
@@ -1026,8 +1017,7 @@ our %functions = (
 		my $client = shift;
 
 		$client->showBriefly( {
-			'line1' => $client->string('CLEARING_PLAYLIST'),
-			'line2' => "",
+			'line' => [ $client->string('CLEARING_PLAYLIST'), "" ]
 		});
 
 		$client->execute(['playlist', 'clear']);
@@ -1068,8 +1058,7 @@ our %functions = (
 		$client->prefSet('irmap',$maps{$functarg});
 
 		$client->showBriefly( {
-			'line1' => $client->string('SETUP_IRMAP') . ':',
-			'line2' => $functarg,
+			'line' => [ $client->string('SETUP_IRMAP') . ':', $functarg ]
 		});
 	},
 );

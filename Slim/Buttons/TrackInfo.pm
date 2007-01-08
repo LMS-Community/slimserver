@@ -468,8 +468,7 @@ sub listExitHandler {
 				$num = Slim::Utils::Favorites->clientAdd($client, track($client), $track->title || $track->url);
 
 				$client->showBriefly( {
-					'line1' => $client->string('FAVORITES_ADDING'),
-					'line2' => $track->title || $track->url,
+					'line' => [ $client->string('FAVORITES_ADDING'), $track->title || $track->url ]
 				});
 
 				$client->modeParam('favorite', $num);
@@ -479,8 +478,7 @@ sub listExitHandler {
 				Slim::Utils::Favorites->deleteByClientAndURL($client, track($client));
 
 				$client->showBriefly( {
-					'line1' => $client->string('FAVORITES_DELETING'),
-					'line2' => $track->title || $track->url,
+					'line' => [ $client->string('FAVORITES_DELETING'), $track->title || $track->url ]
 				});
 
 				$client->modeParam('favorite', -1);

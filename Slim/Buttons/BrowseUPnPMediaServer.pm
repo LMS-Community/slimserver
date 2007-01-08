@@ -153,9 +153,8 @@ sub gotContainer {
 		   return unless ( defined($item) && $item->{url} );
 
 		   $client->showBriefly( {
-			   'line1'    => $client->string('CONNECTING_FOR'), 
-			   'line2'    => $item->{title}, 
-			   'overlay2' => $client->symbols('notesymbol'),
+			   'line'    => [ $client->string('CONNECTING_FOR'), $item->{title} ],
+			   'overlay' => [ undef, $client->symbols('notesymbol') ]
 		   });
 
 		   $client->execute([ 'playlist', 'play', $item->{url} ]);
@@ -167,9 +166,8 @@ sub gotContainer {
 			return unless ( defined($item) && $item->{url} );
 
 			$client->showBriefly( {
-			 'line1'    => $client->string('ADDING_TO_PLAYLIST'), 
-			 'line2'    => $item->{title}, 
-			 'overlay2' => $client->symbols('notesymbol'),
+			 'line'    => [ $client->string('ADDING_TO_PLAYLIST'), $item->{title} ],
+			 'overlay' => [ undef, $client->symbols('notesymbol') ]
 			});
 
 			$client->execute([ 'playlist', 'add', $item->{url} ]);

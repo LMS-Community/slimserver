@@ -162,7 +162,7 @@ sub startSearch {
 
 	my $term = searchTerm($client);
 	$client->showBriefly( {
-		'line1' => $client->string('SEARCHING'),
+		'line' => [ $client->string('SEARCHING'), undef ]
 	});
 
 	if ($client->searchFor eq 'ARTISTS') {
