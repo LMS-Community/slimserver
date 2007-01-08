@@ -126,27 +126,43 @@ sub findAndAdd {
 		}
 	}
 
-	# Search the database for the number of track we need. Use MySQL's
-	# RAND() function to get back a random list. Restrict by the genre's we've selected.
-	my @results = ();
-	my $rs      = Slim::Schema->rs($type)->search($find, {
+	# Search the database for the number of track we need. 
+	# Restrict by the genre's we've selected.
+	my $rs     = Slim::Schema->rs($type)->search($find, { 'join' => \@joins });
 
-		'order_by' => \'RAND()',
-		'join'     => \@joins,
-	});
+	my @idList = $rs->distinct->get_column('me.id')->all;
 
 	if ($limit) {
 
-		@results = $rs->slice(0, ($limit-1));
+		# Get a fixed selection of random keys, make sure they don't duplicate.
+		my %random = ();
+		my $max    = $limit;
+
+        	while ($max) {
+
+                	my $i = $idList[ rand @idList ];
+
+			if (exists $random{$i}) {
+				next;
+			}
+
+			$random{$i} = 1;
+
+			$max--;
+		}
+
+		@idList = keys %random;
 
 	} else {
 
-		@results = $rs->all;
+		Slim::Player::Playlist::fischer_yates_shuffle(\@idList);
 	}
 
-	$log->info(sprintf("Find returned %i items", scalar @results));
+	$log->info(sprintf("Find returned %i items", scalar @idList));
 
 	# Pull the first track off to add / play it if needed.
+	my @results = Slim::Schema->rs($type)->search({ 'id' => { 'in' => \@idList } })->all;
+
 	my $obj = shift @results;
 
 	if (!$obj || !ref($obj)) {
@@ -271,10 +287,10 @@ sub playRandom {
 
 	$log->debug("Called with type $type");
 
-	if (!$mixInfo{$client->masterOrSelf->id}) {
-		
-		#init hash for each new client
-		$mixInfo{$client->masterOrSelf->id}->{'type'} = undef;
+	if (!$mixInfo{$client->masterOrSelf->id} || !$mixInfo{$client->masterOrSelf->id}->{'type'}) {
+
+		# init hash for each new client
+		$mixInfo{$client->masterOrSelf->id}->{'type'} = '';
 	}
 	
 	$type ||= 'track';
@@ -287,6 +303,7 @@ sub playRandom {
 	my $startTime = undef;
 
 	if ($continuousMode && $type && (!$mixInfo{$client->masterOrSelf->id}->{'type'} || $mixInfo{$client->masterOrSelf->id}->{'type'} ne $type)) {
+
 		$startTime = time();
 	}
 
@@ -303,7 +320,7 @@ sub playRandom {
 		# Add new tracks if there aren't enough after the current track
 		my $numRandomTracks = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
 
-		if (! $addOnly) {
+		if (!$addOnly) {
 
 			$numItems = $numRandomTracks;
 
@@ -316,7 +333,7 @@ sub playRandom {
 			$log->debug("$songsRemaining items remaining so not adding new track");
 		}
 
-	} elsif ($type ne 'disable' && ($type ne $mixInfo{$client->masterOrSelf->id}->{'type'} || ! $addOnly || $songsRemaining <= 0)) {
+	} elsif ($type ne 'disable' && ($type ne $mixInfo{$client->masterOrSelf->id}->{'type'} || !$addOnly || $songsRemaining <= 0)) {
 
 		# Old artist/album/year is finished or new random mix started.  Add a new one
 		$numItems = 1;
@@ -411,8 +428,7 @@ sub playRandom {
 			}
 		}
 
-		# Do a show briefly the first time things are added, or every time a new album/artist/year
-		# is added
+		# Do a show briefly the first time things are added, or every time a new album/artist/year is added
 		if (!$addOnly || $type ne $mixInfo{$client->masterOrSelf->id}->{'type'} || $type ne 'track') {
 
 			if ($type eq 'track') {
@@ -444,18 +460,20 @@ sub playRandom {
 		# the display messes up
 		if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
 
-			$client->showBriefly(string('PLUGIN_RANDOM'), 
-								string('PLUGIN_RANDOM_DISABLED'));
+			$client->showBriefly(
+				string('PLUGIN_RANDOM'), 
+				string('PLUGIN_RANDOM_DISABLED')
+			);
 		}
 
 		$mixInfo{$client->masterOrSelf->id} = undef;
 
 	} else {
 
-		$log->info(
+		$log->info(sprintf(
 			"Playing %s %s mode with %i items",
 			$continuousMode ? 'continuous' : 'static', $type, Slim::Player::Playlist::count($client)
-		);
+		));
 
 		# $startTime will only be defined if this is a new (or restarted) mix
 		if (defined $startTime) {
