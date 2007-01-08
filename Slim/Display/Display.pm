@@ -252,7 +252,7 @@ sub showBriefly {
 	if (ref($parts) eq 'HASH') {
 		$parsed = $parts;
 	} else {
-		$parsed = { 'lines' => [ $parts, shift ] };
+		$parsed = { 'line' => [ $parts, shift ] };
 	}
 
 	my $args = shift;
