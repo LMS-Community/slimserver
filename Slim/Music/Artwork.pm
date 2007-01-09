@@ -95,7 +95,7 @@ sub findArtwork {
 			$album->update;
 		}
 
-		$progress->update;
+		$progress->update($track->album->name);
 	}
 
 	$progress->final($count) if $count;

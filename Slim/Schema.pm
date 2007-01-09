@@ -1242,7 +1242,7 @@ sub mergeVariousArtistsAlbums {
 			$albumObj->update;
 		}
 
-		$progress->update;
+		$progress->update($albumObj->name);
 	}
 
 	$progress->final($count) if $progress;

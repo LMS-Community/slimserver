@@ -182,7 +182,7 @@ sub startScan {
 sub doneScanning {
 	my $class = shift;
 
-	$progress->final($class->getTotalPlaylistCount) if $progress;
+	$progress->final($class->getTotalPlaylistCount);
 
 	$log->info("Finished Scanning");
 
@@ -207,7 +207,7 @@ sub handleTrack {
 	my $type     = undef;
 
 	# Always update the progress, even if we return.
-	$progress->update if $progress;
+	$progress->update;
 
 	# We got nothin
 	if (scalar keys %{$curTrack} == 0) {
@@ -422,11 +422,11 @@ sub handlePlaylist {
 	my $class      = shift;
 	my $cacheEntry = shift;
 
-	# Always update the progress.
-	$progress->update if $progress;
-
 	my $name = Slim::Utils::Misc::unescape($cacheEntry->{'TITLE'});
 	my $url  = join('', 'itunesplaylist:', Slim::Utils::Misc::escape($name));
+
+	# Always update the progress.
+	$progress->update($name);
 
 	$log->info("Got a playlist ($url) named $name");
 
@@ -568,7 +568,7 @@ sub handleEndElement {
 			$inPlaylists = 1;
 
 			# Set the progress to final when we're done with tracks and have moved on to playlists.
-			$progress->final if $progress;
+			$progress->final;
 			
 			$progress = Slim::Utils::Progress->new({ 
 				'type'  => 'importer', 

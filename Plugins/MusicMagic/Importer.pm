@@ -332,7 +332,7 @@ sub processSong {
 
 		$log->warn("Couldn't create track for $fileurl");
 
-		$progress->update($songInfo{'file'}) if $progress;
+		$progress->update($songInfo{'file'});
 
 		return;
 	};
@@ -355,7 +355,7 @@ sub processSong {
 		}
 	}
 
-	$progress->update($songInfo{'file'}) if $progress;
+	$progress->update($songInfo{'file'});
 }
 
 sub exportPlaylists {
