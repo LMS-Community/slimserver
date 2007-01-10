@@ -143,6 +143,10 @@ sub dropNewBlock {
 	$xpos = 3;
 	$ypos = 2;
 	$currblock = int(rand() * ($#blocks+1));
+	# initial position of 4x1 block might overlap with border resulting in false Game Over
+	if ($currblock == 1) {
+		checkBorderConflict();
+	}
 	if (!move(0,0)) {
 		gameOver();
 	}
@@ -239,6 +243,29 @@ sub checkBlock {
 		return (0) if ($grid[$x][$y]);
 	}
 	return (1);
+}
+
+
+#
+# adjust block position if overlap with grid border
+#
+sub checkBorderConflict {
+	my $block = $blockspix[$currblock];
+	my $upperConflict = 0;
+	my $lowerConflict = 0;
+	foreach my $pixel (@$block) {
+		my $y = @$pixel[1] + $ypos;
+		if ($y == 0) {
+			$upperConflict = 1;
+		} elsif ($y == ($height+1)) {
+			$lowerConflict = 1;
+		}
+	}
+	if ($upperConflict) {
+		$ypos++;
+	} elsif ($lowerConflict) {
+		$ypos--;
+	}
 }
 
 #
