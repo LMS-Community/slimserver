@@ -4,9 +4,9 @@
 	[% pwd_list = BLOCK %]
 
 		[% IF playerid %]
-			[% "PLAYER_SETTINGS" | string %] [% IF playername %][% "FOR" | string %] [% playername %][% END %]
+			<a href="[% webroot %]settings/player/basic.html[% IF playerid %]?playerid=[% playerid | uri %][% END %]">[% "PLAYER_SETTINGS" | string %] [% IF playername %][% "FOR" | string %] [% playername %][% END %]</a>
 		[% ELSE %]
-			[% "SERVER_SETTINGS" | string %]
+			<a href="[% webroot %]settings/server/basic.html[% IF playerid %]?playerid=[% playerid | uri %][% END %]">[% "SERVER_SETTINGS" | string %]</a>
 		[% END %]
 
 		 / <a href="[% webroot %][% path %][% IF playerid %]?playerid=[% playerid | uri %][% END %]">[% page | string %]</a>
