@@ -35,7 +35,7 @@ use Plugins::Live365::Web;
 use constant ROWS_TO_RETRIEVE => 50;
 
 my $log = Slim::Utils::Log->addLogCategory({
-	'category'     => 'plugin.digitalinput',
+	'category'     => 'plugin.live365',
 	'defaultLevel' => 'WARN',
 	'description'  => getDisplayName(),
 });
