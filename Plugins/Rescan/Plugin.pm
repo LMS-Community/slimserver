@@ -48,11 +48,7 @@ sub initPlugin {
 							$client->string('PLUGIN_RESCAN_RESCANNING') ]
 				});
 
-				Slim::Buttons::Common::popMode($client);
-				
-				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&progressUpdate);
-				
-				Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%progressParams);
+				Slim::Buttons::Common::pushMode($client, 'scanProgress');
 				
 			} else {
 
@@ -70,6 +66,8 @@ sub initPlugin {
 		'externRefArgs'      => 'CI',
 		'modeUpdateInterval' => 1,
 	);
+
+	Slim::Buttons::Common::addMode('scanProgress', undef, \&setProgressMode, \&exitProgressMode);
 
 	$class->SUPER::initPlugin();
 	Plugins::Rescan::Settings->new;
@@ -100,17 +98,13 @@ sub setMode {
 		Slim::Utils::Prefs::set("rescan-time", 9 * 60 * 60 );
 	}
 	
-	my %params;
-	
 	if ( Slim::Music::Import->stillScanning ) {
 
-		%params = %progressParams;
-		
-		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&progressUpdate);
+		Slim::Buttons::Common::pushMode($client, 'scanProgress');
 		
 	} else {
 
-		%params = (
+		my %params = (
 			'listRef'        => \@browseMenuChoices,
 			'externRefArgs'  => 'CV',
 			'header'         => 'PLUGIN_RESCAN_MUSIC_LIBRARY',
@@ -142,9 +136,33 @@ sub setMode {
 			},
 		);
 	
+		Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 	}
 	
-	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
+	
+}
+
+sub setProgressMode {
+	my $client = shift;
+	my $method = shift;
+
+	if ($method eq 'pop') {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
+
+	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&progressUpdate);
+	
+	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%progressParams);
+}
+
+sub exitProgressMode {
+	my $client = shift;
+	my $method = shift;
+	
+	if ($method eq 'pop') {
+		Slim::Utils::Timers::killTimers($client, \&progressUpdate);
+	}
 }
 
 sub progressHeader {
@@ -172,8 +190,10 @@ sub progressBar {
 	
 	if ($p && $p->name) {
 		if ($p->active) {
+
 			return $client->sliderBar($client->displayWidth(), $p->done/$p->total * 100,0,0);
 		} else {
+
 			return $p->total . ' ' . $client->string('ITEMS') . ' ' . ($p->finish - $p->start) .' ' . $client->string('SECONDS');
 		}
 	} else {
@@ -229,6 +249,7 @@ sub rescanExitHandler {
 				'pref' => 'rescan-time',
 				'callback' => \&settingsExitHandler
 			);
+			
 			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Time',\%params);
 	
 		} elsif ($$valueref eq 'PLUGIN_RESCAN_TIMER_OFF') {
