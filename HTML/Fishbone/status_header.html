@@ -60,6 +60,8 @@
 <head>
 	[% pagetitle = player_name %]
 	[% PROCESS customheader.html %]
+	<script type="text/javascript" src="[% webroot %]html/prototype.js" ></script>
+	<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/songprogress.js %]</script>
 	<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/ajax.js %]</script>
 	[% IF playercount == '0' %]<script TYPE="text/javascript" language="JavaScript">
 		<!--Hide
