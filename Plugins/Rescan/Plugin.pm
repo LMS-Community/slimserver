@@ -14,6 +14,8 @@ package Plugins::Rescan::Plugin;
 use strict;
 use Time::HiRes;
 
+use base qw(Slim::Plugin::Base);
+
 use Plugins::Rescan::Settings;
 
 use Slim::Control::Request;
@@ -21,29 +23,37 @@ use Slim::Utils::Log;
 
 our $interval = 1; # check every x seconds
 our @browseMenuChoices;
-our %menuSelection;
-our %searchCursor;
 our %functions;
+
+my @progress;
+my %progressParams;
 
 sub getDisplayName {
 	return 'PLUGIN_RESCAN_MUSIC_LIBRARY';
 }
 
 sub initPlugin {
+	my $class = shift;
 
 	%functions = (
 		'play' => sub {
 			my $client = shift;
 
-			if ($browseMenuChoices[$menuSelection{$client}] eq $client->string('PLUGIN_RESCAN_PRESS_PLAY')) {
+			if ($client->modeParam('listRef')->[$client->modeParam('listIndex')] eq 'PLUGIN_RESCAN_PRESS_PLAY') {
 
-				executeRescan();
+				executeRescan($client);
 
 				$client->showBriefly( {
 					'line' => [ $client->string('PLUGIN_RESCAN_MUSIC_LIBRARY'),
 							$client->string('PLUGIN_RESCAN_RESCANNING') ]
 				});
 
+				Slim::Buttons::Common::popMode($client);
+				
+				Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&progressUpdate);
+				
+				Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%progressParams);
+				
 			} else {
 
 				$client->bumpRight();
@@ -51,13 +61,24 @@ sub initPlugin {
 		}
 	);
 
+	%progressParams = (
+		'header'             => \&progressHeader,
+		'headerArgs'         => 'CI',
+		'headerAddCount'     => 1,
+		'listRef'            => [0],
+		'externRef'          => \&progressBar,
+		'externRefArgs'      => 'CI',
+		'modeUpdateInterval' => 1,
+	);
+
+	$class->SUPER::initPlugin();
 	Plugins::Rescan::Settings->new;
 
-	Slim::Buttons::Common::addMode('scantimer', getFunctions(), \&setMode);
 	setTimer();
 }
 
 sub setMode {
+	my $class  = shift;
 	my $client = shift;
 	my $method = shift;
 
@@ -79,33 +100,111 @@ sub setMode {
 		Slim::Utils::Prefs::set("rescan-time", 9 * 60 * 60 );
 	}
 	
-	my %params = (
-		'listRef'        => \@browseMenuChoices,
-		'externRefArgs'  => 'CV',
-		'header'         => 'PLUGIN_RESCAN_MUSIC_LIBRARY',
-		'headerAddCount' => 1,
-		'stringHeader'   => 1,
-		'callback'       => \&rescanExitHandler,
-		'overlayRef'     => sub { 
-				if ($_[1] ne 'PLUGIN_RESCAN_PRESS_PLAY') {
-					return (undef, $_[0]->symbols('rightarrow')) 
-				}
-			},
-		'overlayRefArgs' => 'CV',
-		'externRef'      => sub {
-			my $client = shift;
-			my $value  = shift;
-			
-			if (Slim::Utils::Prefs::get("rescan-scheduled") && $value eq 'PLUGIN_RESCAN_TIMER_OFF') {
+	my %params;
+	
+	if ( Slim::Music::Import->stillScanning ) {
 
-				return $client->string('PLUGIN_RESCAN_TIMER_ON');
-			}
-
-			return $client->string($value);
-		},
-	);
+		%params = %progressParams;
 		
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&progressUpdate);
+		
+	} else {
+
+		%params = (
+			'listRef'        => \@browseMenuChoices,
+			'externRefArgs'  => 'CV',
+			'header'         => 'PLUGIN_RESCAN_MUSIC_LIBRARY',
+			'headerAddCount' => 1,
+			'stringHeader'   => 1,
+			'callback'       => \&rescanExitHandler,
+			'overlayRef'     => sub { 
+
+					if($_[1] =~ /PLUGIN_RESCAN_TIMER_O/) {
+
+						return (undef, Slim::Buttons::Common::checkBoxOverlay( $client, Slim::Utils::Prefs::get("rescan-scheduled")));
+					} elsif ($_[1] ne 'PLUGIN_RESCAN_PRESS_PLAY') {
+
+						return (undef, $_[0]->symbols('rightarrow')) 
+					}
+
+				},
+			'overlayRefArgs' => 'CV',
+			'externRef'      => sub {
+				my $client = shift;
+				my $value  = shift;
+				
+				if (Slim::Utils::Prefs::get("rescan-scheduled") && $value eq 'PLUGIN_RESCAN_TIMER_OFF') {
+	
+					return $client->string('PLUGIN_RESCAN_TIMER_ON');
+				}
+	
+				return $client->string($value);
+			},
+		);
+	
+	}
+	
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
+}
+
+sub progressHeader {
+	my $client = shift;
+	my $index  = shift || 0;
+	
+	my $p = $progress[$index];
+	
+	if ($p && $p->name) {
+	
+		return $client->string($p->name.'_PROGRESS')
+			.' '. $client->string( $p->active ? 'RUNNING' : 'COMPLETE')
+			.' ('. ($p->active ? $p->done.'/' . $p->total . ') ' : '' );
+	} else {
+	
+		return $client->string('RESCANNING_SHORT');
+	}
+}
+
+sub progressBar {
+	my $client = shift;
+	my $index  = shift;
+	
+	my $p = $progress[$index];
+	
+	if ($p && $p->name) {
+		if ($p->active) {
+			return $client->sliderBar($client->displayWidth(), $p->done/$p->total * 100,0,0);
+		} else {
+			return $p->total . ' ' . $client->string('ITEMS') . ' ' . ($p->finish - $p->start) .' ' . $client->string('SECONDS');
+		}
+	} else {
+	
+		return $client->sliderBar($client->displayWidth(), 0,0,0);
+	}
+}
+
+sub progressUpdate {
+	my $client = shift;
+	
+	Slim::Utils::Timers::killTimers($client, \&progressUpdate);
+	
+	@progress = reverse(Slim::Schema->rs('Progress')->search( { 'type' => 'importer' }, { 'order_by' => 'start' } )->all);
+	
+	if (scalar @progress) {
+		$client->modeParam('listRef',[0..$#progress]);
+	}
+	
+	$client->update;
+	
+	if ( Slim::Music::Import->stillScanning ) {
+		
+		# Block screensaver while checking progress and still scanning
+		Slim::Hardware::IR::setLastIRTime(
+			$client,
+			Time::HiRes::time() + ($client->prefGet("screensavertimeout") * 5),
+		);
+		
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&progressUpdate);
+	}
 }
 
 sub rescanExitHandler {
@@ -136,19 +235,15 @@ sub rescanExitHandler {
 	
 			Slim::Utils::Prefs::set("rescan-scheduled", 1);
 			$$valueref = 'PLUGIN_RESCAN_TIMER_ON';
-			$client->showBriefly( {
-				'line1' => $client->string('PLUGIN_RESCAN_TIMER_TURNING_ON'),
-			});
 			setTimer($client);
+			$client->update;
 	
 		} elsif ($$valueref eq 'PLUGIN_RESCAN_TIMER_ON') {
 	
 			Slim::Utils::Prefs::set("rescan-scheduled", 0);
 			$$valueref = 'PLUGIN_RESCAN_TIMER_OFF';
-			$client->showBriefly( {
-				'line' => [ $client->string('PLUGIN_RESCAN_TIMER_TURNING_OFF') ]
-			});
 			setTimer($client);
+			$client->update;
 		
 		} elsif ($$valueref eq 'PLUGIN_RESCAN_TIMER_TYPE') {
 			my $value = Slim::Utils::Prefs::get("rescan-type");
@@ -189,8 +284,10 @@ sub settingsExitHandler {
 	}
 }
 
-sub getFunctions() {
-	return \%functions;
+sub getFunctions {
+	my $class = shift;
+
+	\%functions;
 }
 
 sub setTimer {
@@ -201,6 +298,8 @@ sub setTimer {
 sub checkScanTimer {
 
 	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+
+	Slim::Utils::Timers::killTimers(0, \&checkScanTimer);
 
 	my $time = $hour * 60 * 60 + $min * 60;
 
@@ -232,6 +331,7 @@ sub checkScanTimer {
 }
 
 sub executeRescan {
+	my $client = shift;
 	
 	my $rescanType = ['rescan'];
 	my $rescanPref = Slim::Utils::Prefs::get('rescan-type') || '';
@@ -249,7 +349,7 @@ sub executeRescan {
 
 		logger('scan.scanner')->info("Initiating scan of type: ", $rescanType->[0]);
 
-		Slim::Control::Request::executeRequest(undef, $rescanType);
+		Slim::Control::Request::executeRequest($client, $rescanType);
 	}
 }
 
