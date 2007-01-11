@@ -9,6 +9,7 @@ package Slim::Utils::Progress;
 use strict;
 
 use Slim::Schema;
+use Slim::Utils::Unicode;
 
 use constant UPDATE_DB_INTERVAL  => 1;
 use constant UPDATE_BAR_INTERVAL => 0.3;
@@ -138,7 +139,7 @@ sub update {
 		my $obj = $class->{'obj'} || return;
 
 		$obj->done($done);
-		$obj->info($info) if $info;
+		$obj->info(Slim::Utils::Unicode::utf8decode_locale($info)) if $info;
 
 		$obj->update();
 	}
