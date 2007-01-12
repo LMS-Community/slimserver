@@ -164,9 +164,9 @@ sub addCurrentItem {
 			$obj = $client->modeParam('track');
 	
 		# specific HACK for Live365
-		} elsif(Slim::Player::ProtocolHandlers->handlerForURL('live365://') && (Plugins::Live365::Plugin::getLive365($client))) {
+		} elsif(Slim::Player::ProtocolHandlers->handlerForURL('live365://') && (Slim::Plugin::Live365::Plugin::getLive365($client))) {
 
-			my $live365 = Plugins::Live365::Plugin::getLive365($client);
+			my $live365 = Slim::Plugin::Live365::Plugin::getLive365($client);
 			my $station = $live365->getCurrentStation();
 			
 			$title = $station->{STATION_TITLE};

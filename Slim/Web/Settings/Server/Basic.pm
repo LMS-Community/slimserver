@@ -27,7 +27,7 @@ sub handler {
 
 	for my $importer (qw(iTunes MusicMagic)) {
 
-		if (exists $Slim::Music::Import::Importers{"Plugins::".$importer."::Plugin"}) {
+		if (exists $Slim::Music::Import::Importers{"Slim::Plugin::".$importer."::Plugin"}) {
 			push @prefs, lc($importer);
 		}
 	}

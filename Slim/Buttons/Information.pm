@@ -231,7 +231,7 @@ sub moduleDisplay {
 
 	my $version = eval {
 		no strict 'refs';
-		${"Plugins::${item}::VERSION"};
+		${"Slim::Plugin::${item}::VERSION"};
 	};
 
 	if ($@ || !$version) {

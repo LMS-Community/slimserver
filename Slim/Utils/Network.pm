@@ -58,7 +58,7 @@ sub blocking {
 
 =head2 isAllowedHost( $host, [ $allowedHosts ] )
 
-Check for allowed source IPs, called via L<Plugins::CLI> and L<Slim::Web::HTTP>
+Check for allowed source IPs, called via L<Slim::Plugin::CLI> and L<Slim::Web::HTTP>
 
 A list of comma separated allowed hosts can be passed in, or the
 'allowedHosts' pref will be used by default.

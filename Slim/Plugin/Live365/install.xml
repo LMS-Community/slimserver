@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<extension>
+	<id>1108FB7A-9EE2-4750-89DB-1454E7E9C4D2</id>
+        <name>PLUGIN_LIVE365_MODULE_NAME</name>
+        <module>Slim::Plugin::Live365::Plugin</module>
+        <playerMenu>RADIO</playerMenu>
+        <version>1.0</version>
+        <description>PLUGIN_LIVE365_MODULE_NAME_DESC</description>
+        <creator>Slim Devices</creator>
+        <email>support@slimdevices.com</email>
+
+	<defaultState>enabled</defaultState>
+        
+        <homepageURL>http://www.slimdevices.com/</homepageURL>
+	<optionsURL>plugins/Live365/settings/basic.html</optionsURL>
+	<type>2</type><!-- type=extension -->
+
+        <targetApplication>
+  	        <id>SlimServer</id>
+                <minVersion>7.0a</minVersion>
+                <maxVersion>7.0+</maxVersion>
+        </targetApplication>
+
+</extension>

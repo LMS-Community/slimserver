@@ -168,9 +168,9 @@ sub setDigitalInput {
 	
 		$log->info("Got source: url: [$input]");
 
-		if ($INC{'Plugins/DigitalInput/Plugin.pm'}) {
+		if ($INC{'Slim/Plugin/DigitalInput/Plugin.pm'}) {
 
-			$input = Plugins::DigitalInput::Plugin::valueForSourceName($input);
+			$input = Slim::Plugin::DigitalInput::Plugin::valueForSourceName($input);
 		}
 	}
 

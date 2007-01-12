@@ -2079,7 +2079,7 @@ sub newSkinTemplate {
 
 		INCLUDE_PATH => \@include_path,
 		COMPILE_DIR => templateCacheDir(),
-		PLUGIN_BASE => ['Plugins::TT',"HTML::$skin"],
+		PLUGIN_BASE => ['Slim::Plugin::TT',"HTML::$skin"],
 		PRE_PROCESS => \@preprocess,
 		FILTERS => {
 			'string'        => \&Slim::Utils::Strings::string,

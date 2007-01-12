@@ -485,7 +485,7 @@ sub checkAlarms {
 				# if a random playlist option is chosen, make sure that the plugin is installed and enabled.
 				if ($specialPlaylists{$playlist}) {
 					
-					Plugins::RandomPlay::Plugin::playRandom($client,$specialPlaylists{$playlist});
+					Slim::Plugin::RandomPlay::Plugin::playRandom($client,$specialPlaylists{$playlist});
 					
 				# handle a chosen playlist that is not the current playlist.
 				} elsif (defined $playlist && $playlist ne 'CURRENT_PLAYLIST') {

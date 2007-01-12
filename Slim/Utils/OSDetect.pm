@@ -117,6 +117,10 @@ sub dirsFor {
 	my $OS      = OS();
 	my $details = details();
 
+	if ($dir eq "Plugins") {
+		push @dirs, catdir($Bin, 'Slim', 'Plugin');
+	}
+
 	if ($OS eq 'mac') {
 
 		# These are all at the top level.

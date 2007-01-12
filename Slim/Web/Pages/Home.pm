@@ -101,7 +101,7 @@ sub home {
 	# If our current player has digital inputs, show the menu.
 	if ($client && $client->hasDigitalIn) {
 
-		Plugins::DigitalInput::Plugin->webPages;
+		Slim::Plugin::DigitalInput::Plugin->webPages;
 	}
 
 	$params->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;

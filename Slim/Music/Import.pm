@@ -11,7 +11,7 @@ Slim::Music::Import
 
 =head1 SYNOPSIS
 
-	my $class = 'Plugins::iTunes::Importer';
+	my $class = 'Slim::Plugin::iTunes::Importer';
 
 	# Make an importer available for use.
 	Slim::Music::Import->addImporter($class);
@@ -570,9 +570,9 @@ L<Slim::Music::MusicFolderScan>
 
 L<Slim::Music::PlaylistFolderScan>
 
-L<Plugins::iTunes::Importer>
+L<Slim::Plugin::iTunes::Importer>
 
-L<Plugins::MusicMagic::Importer>
+L<Slim::Plugin::MusicMagic::Importer>
 
 L<Proc::Background>
 
