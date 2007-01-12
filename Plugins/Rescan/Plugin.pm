@@ -26,7 +26,6 @@ our @browseMenuChoices;
 our %functions;
 
 my @progress;
-my %progressParams;
 
 sub getDisplayName {
 	return 'PLUGIN_RESCAN_MUSIC_LIBRARY';
@@ -56,17 +55,7 @@ sub initPlugin {
 			}
 		}
 	);
-
-	%progressParams = (
-		'header'             => \&progressHeader,
-		'headerArgs'         => 'CI',
-		'headerAddCount'     => 1,
-		'listRef'            => [0],
-		'externRef'          => \&progressBar,
-		'externRefArgs'      => 'CI',
-		'modeUpdateInterval' => 1,
-	);
-
+	
 	Slim::Buttons::Common::addMode('scanProgress', undef, \&setProgressMode, \&exitProgressMode);
 
 	$class->SUPER::initPlugin();
@@ -151,6 +140,16 @@ sub setProgressMode {
 		return;
 	}
 
+	my %progressParams = (
+		'header'             => \&progressHeader,
+		'headerArgs'         => 'CI',
+		'headerAddCount'     => 1,
+		'listRef'            => [0],
+		'externRef'          => \&progressBar,
+		'externRefArgs'      => 'CI',
+		'modeUpdateInterval' => 1,
+	);
+
 	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&progressUpdate);
 	
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%progressParams);
@@ -167,7 +166,7 @@ sub exitProgressMode {
 
 sub progressHeader {
 	my $client = shift;
-	my $index  = shift || 0;
+	my $index  = shift;
 	
 	my $p = $progress[$index];
 	
@@ -175,7 +174,7 @@ sub progressHeader {
 	
 		return $client->string($p->name.'_PROGRESS')
 			.' '. $client->string( $p->active ? 'RUNNING' : 'COMPLETE')
-			.' ('. ($p->active ? $p->done.'/' . $p->total . ') ' : '' );
+			.($p->active ? ' ('.  $p->done.'/' . $p->total . ') ' : '' );
 	} else {
 	
 		return $client->string('RESCANNING_SHORT');
@@ -207,10 +206,16 @@ sub progressUpdate {
 	
 	Slim::Utils::Timers::killTimers($client, \&progressUpdate);
 	
-	@progress = reverse(Slim::Schema->rs('Progress')->search( { 'type' => 'importer' }, { 'order_by' => 'start' } )->all);
+	@progress = Slim::Schema->rs('Progress')->search( { 'type' => 'importer' }, { 'order_by' => 'start' } )->all;
+	my $size = scalar @{$client->modeParam('listRef')};
 	
 	if (scalar @progress) {
 		$client->modeParam('listRef',[0..$#progress]);
+	}
+	
+	#adjust the index to teh last position if the new item starts while viewing the previous last item
+	if ($client->modeParam('listIndex') == $#progress -1 && $size != scalar @progress) {
+		$client->modeParam('listIndex',$#progress);
 	}
 	
 	$client->update;
