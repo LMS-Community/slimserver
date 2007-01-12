@@ -9,7 +9,6 @@ package Slim::Utils::PluginManager;
 
 # TODO:
 #
-# * Check plugin cache timestamp vs XML files, and load newer.
 # * Enable plugins that OP_NEEDS_ENABLE
 # * Disable plugins that OP_NEEDS_DISABLE 
 # 
@@ -71,17 +70,17 @@ my $log = logger('server.plugins');
 sub init {
 	my $class = shift;
 
-	# Check to see if we're starting from scratch, 
-	# or if we've been run before.
-	if (!-r $class->pluginCacheFile) {
+	my ($manifestFiles, $newest) = $class->findInstallManifests;
 
-		$log->info("No plugin cache file exists - finding shipped plugins.");
+	# parse the manifests if no cache file or it is older than newest install.xml file
+	if (!-r $class->pluginCacheFile || (stat($class->pluginCacheFile))[9] < $newest) {
 
-		$class->findInstalledPlugins;
+		$log->info("Reparsing plugin manifests - new manifest found.");
+
+		$class->readInstallManifests($manifestFiles);
 
 	} else {
 
-		# XXXX - need to check for newer versions of the install.xml files.
 		if (!$class->loadPluginCache) {
 
 			$class->checkPluginVersions;
@@ -135,8 +134,11 @@ sub loadPluginCache {
 	return 1;
 }
 
-sub findInstalledPlugins {
+sub findInstallManifests {
 	my $class = shift;
+
+	my $newest = 0;
+	my @files;
 
 	# Only find plugins that have been installed.
 	my $iter = File::Next::files({
@@ -149,6 +151,21 @@ sub findInstalledPlugins {
 	}, @pluginDirs);
 
 	while ( my $file = $iter->() ) {
+
+		my $mtime = (stat($file))[9];
+		$newest = $mtime if $mtime > $newest;
+
+		push @files, $file;
+	}
+
+	return (\@files, $newest);
+}
+
+sub readInstallManifests {
+	my $class = shift;
+	my $files = shift;
+
+	for my $file (@{$files}) {
 
 		my ($pluginName, $installManifest) = $class->_parseInstallManifest($file);
 
