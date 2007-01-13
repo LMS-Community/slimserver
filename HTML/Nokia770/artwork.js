@@ -79,7 +79,7 @@ function refreshThumbs(theData) {
 
 function refreshThumb(theData, whichOne, thatOne) {
 	parsedData = fillDataHash(theData);
-	var thumbId = 'thumb_' + whichOne;
+	var thumbId = 'cover_' + whichOne;
 	var thumbKey = 'coverthumb_' + thatOne;
 	var albumKey = 'albumid_' + thatOne;
 	var albumTextKey = 'album_' + thatOne;
@@ -89,6 +89,7 @@ function refreshThumb(theData, whichOne, thatOne) {
 	var thatThumb = parsedData[thumbKey];
 	var thatAlbum = parsedData[albumKey];
 	var artistAlbum = parsedData[artistTextKey] + ' - ' + parsedData[albumTextKey];
+
 	if ($(thumbId)) {
 		var thumbHref = thumbHrefTemplate.replace('COVER', thatThumb);
 		$(thumbId).src = thumbHref;
