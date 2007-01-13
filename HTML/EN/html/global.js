@@ -45,42 +45,18 @@ Ajax.Responders.register(myGlobalHandlers);
 // params is a list of args to send to url
 // action is the function to be called after the ajaxRequest.txt file is spit back
 function getStatusData(params, action) {
-	var requesttype = 'post';
-
-	if (window.XMLHttpRequest) {
-		requesttype = 'get';
-	}
-
-	var myAjax = new Ajax.Request(
-	url,
-	{
-		method: requesttype,
-		postBody: params,
-		parameters: params,
-		onComplete: action,
-		requestHeaders:['Referer', document.location.href]
-	});
+	ajaxRequest(url, params, action);
 }
 
 function ajaxPing(params, action) {
-	var requesttype = 'post';
-
-	if (window.XMLHttpRequest) {
-		requesttype = 'get';
-	}
-
-	var myAjax = new Ajax.Request(
-	'html/ping.html',
-	{
-		method: requesttype,
-		postBody: params,
-		parameters: params,
-		onComplete: action,
-		requestHeaders:['Referer', document.location.href]
-	});
+	ajaxRequest('html/ping.html', params, action);
 }
 
 function ajaxHomeUpdate(params, action) {
+	ajaxRequest('home.html', params, action);
+}
+
+function ajaxRequest(thisurl,params, action) {
 	var requesttype = 'post';
 
 	if (window.XMLHttpRequest) {
@@ -88,7 +64,7 @@ function ajaxHomeUpdate(params, action) {
 	}
 
 	var myAjax = new Ajax.Request(
-	'home.html',
+	thisurl,
 	{
 		method: requesttype,
 		postBody: params,
@@ -102,12 +78,14 @@ function ajaxHomeUpdate(params, action) {
 // if data is already parsed, just return unprocessed.
 function fillDataHash(theData) {
 	var returnData = null;
+
 	if (theData['player_id']) { 
 		return theData;
 	} else {
 		var myData = theData.responseText;
 		returnData = parseData(myData);
 	}
+
 	return returnData;
 }
 
@@ -121,6 +99,7 @@ function doRefresh() {
 
 // clears setInterval() defined by intervalID
 function clearIntervalCall() {
+
 	if (intervalID) {
 		clearInterval(intervalID);
 		intervalID = false;
@@ -129,8 +108,10 @@ function clearIntervalCall() {
 
 // pass an array of div element ids to be hidden on the page
 function hideElements(myAry) {
+
 	for (var i = 0; i < myAry.length; i++) {
 		var div = myAry[i];
+
 		if ($(div)) {
 		//	document.getElementById(div).style.display = "none";
 			$(div).style.display = 'none';
@@ -141,8 +122,10 @@ function hideElements(myAry) {
 // pass an array of div element ids to be shown on the page
 function showElements(myAry,style) {
 	if (!style) style = 'block';
+
 	for (var i = 0; i < myAry.length; i++) {
 		var div = myAry[i];
+
 		if ($(div)) {
 			//document.getElementByID(div).style.display = 'block';
 			$(div).style.display = style;
@@ -157,16 +140,10 @@ function refreshNothing() {
 
 // changes the href attribute to 'value' of an anchor id of 'element'
 function refreshHref (element, value) {
+
 	if ($(element)) {
 		document.getElementById(element).href = value;
 	}
-}
-
-// enters message sent to OSD div (typically still needs to be made visible with a different function)
-function changeOSD(message) {
-        if ($('OSD')) {
-                $('OSD').innerHTML = message;
-        }
 }
 
 // changes some part of a query in an href of id 'item', finding based on 'rpl', and replacing with 'data'
@@ -175,6 +152,7 @@ function refreshHrefElement (item,data,rpl) {
 	var myString = new String($(item).innerHTML);
 	var rString = rpl + data + "&amp;player";
 	var rExp= new RegExp(rpl + ".*?&amp;player","i");
+
 	//safari hack
 	if (rExp.exec(myString) == null) rExp= new RegExp(rpl + ".*?&player","i");
 	$(item).innerHTML = myString.replace(rExp, rString);
@@ -184,10 +162,12 @@ function refreshHrefElement (item,data,rpl) {
 // changes the innerHTML to 'value' of an element id of 'element'
 // if truncate is given, 'value' is reduced to truncate in length, plus a '...'
 function refreshElement(element, value, truncate) {
+
 	if (value.length > truncate) {
 		var smaller = value.substring(0,truncate);
 		value = smaller+'...';
 	}
+
 	if ($(element)) {
 		$(element).innerHTML = '';
 		$(element).innerHTML = value;
@@ -199,12 +179,14 @@ function refreshElement(element, value, truncate) {
 function parseData(thisData) {
 	var lines = thisData.split("\n");
 	var returnData = new Array();
+
 	for (i=0; i<lines.length; i++) {
 		var comment = /^#/;
 		var blank = /^\s*$/;
 		var preTag = /<\\*pre>/;
 		var commentLine = lines[i].match(comment);
 		var blankLine = lines[i].match(blank);
+
 		if (!commentLine && !blankLine && preTag) {
 			var keyValue = lines[i].split('|');
 			var key = keyValue[0];
@@ -212,12 +194,15 @@ function parseData(thisData) {
 			returnData[key] = value;
 		}
 	}
+
 	return returnData;
 }
 
 function refreshLibraryInfo() {
 	var prevURL = url;
+
 	url = '[% webroot %]home.html';
+
 	var homeArgs = 'player='+player+'&ajaxRequest=1';
 	getStatusData(homeArgs, displayLibraryInfo);
 	url = prevURL;
@@ -227,6 +212,7 @@ function displayLibraryInfo(theData) {
 	var myData = theData.responseText;
 	var homeParsedData = parseData(myData);
 	var libraryString = homeParsedData['song_count'] +', '+ homeParsedData['artist_count'] +', '+ homeParsedData['album_count'];
+
 	if ($('libraryInfo')) {
 		if (homeParsedData['song_count'] != '0') {
 			$('libraryInfo').innerHTML = libraryString;
@@ -256,43 +242,15 @@ function truncateAt(tableId, lastRow) {
 // miniControls is for putting play/pause on any page. ajax request is made via status.html
 function miniControls(action) {
 	var args = "p0="+action+"&player="+player+"&ajaxRequest=1";
+
 	// always use status.html for this request
 	var old_url = url;
+
 	url = '[% webroot %]status.html';
 	getStatusData(args, refreshNothing);
 	url = old_url;
 }
 
-// send a message and number of milliseconds duration to the OSD div
-function showVolumeOSD(message, duration) {
-	var msDuration = parseInt(duration, 10);
-        if ($('volumeOSD')) {
-		$('volumeOSD').innerHTML = '';
-                $('volumeOSD').style.display = 'block';
-		$('volumeOSD').innerHTML = message;
-        }
-        var intervalID = setTimeout(hideVolumeOSD, msDuration);
-}
-
-function hideVolumeOSD() {
-        if ($('volumeOSD')) {
-                $('volumeOSD').style.display = 'none';
-        }
-
-}
-
-function showAdded() {
-	if ($('OSD')) {
-		$('OSD').style.display = 'block';
-	}
-	var intervalID = setTimeout("hideAdded()", 2000);
-}
-
-function hideAdded() {
-	if ($('OSD')) {
-		$('OSD').style.display = 'none';
-	}
-}
 // put global.js functions here that you want to be run after the page loads
 // requires a window.onLoad function in the js script that calls global.js
 // see Nokia770/browse.js for example

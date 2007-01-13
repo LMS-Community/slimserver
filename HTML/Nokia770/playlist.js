@@ -16,6 +16,7 @@ var timeToRefresh = 20000;
 var previousState = new Object();
 
 [% PROCESS html/global.js %]
+[% PROCESS skin_global.js %]
 
 // parses the data if it has not been done already
 function fillDataHash(theData) {

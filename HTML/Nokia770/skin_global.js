@@ -19,3 +19,47 @@ function setCookie(name, value) {
                 name + "=" + escape(value) +
                 ((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
 }
+
+// enters message sent to OSD div (typically still needs to be made visible with a different function)
+function changeOSD(message) {
+	if ($('OSD')) {
+		$('OSD').innerHTML = message;
+	}
+}
+
+// send a message and number of milliseconds duration to the OSD div
+function showVolumeOSD(message, duration) {
+	var msDuration = parseInt(duration, 10);
+
+	if ($('volumeOSD')) {
+		$('volumeOSD').innerHTML = '';
+		$('volumeOSD').style.display = 'block';
+		$('volumeOSD').innerHTML = message;
+	}
+
+	var intervalID = setTimeout(hideVolumeOSD, msDuration);
+}
+
+function hideVolumeOSD() {
+
+	if ($('volumeOSD')) {
+		$('volumeOSD').style.display = 'none';
+	}
+
+}
+
+function showAdded() {
+
+	if ($('OSD')) {
+		$('OSD').style.display = 'block';
+	}
+
+	var intervalID = setTimeout("hideAdded()", 2000);
+}
+
+function hideAdded() {
+
+	if ($('OSD')) {
+		$('OSD').style.display = 'none';
+	}
+}

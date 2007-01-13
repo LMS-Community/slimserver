@@ -8,6 +8,8 @@ var intervalID = false;
 var incr;
 
 [% PROCESS html/global.js %]
+[% PROCESS skin_global.js %]
+
 var args = 'player='+player+'&ajaxRequest=1';
 
 // Update the progress dialog with the current state
