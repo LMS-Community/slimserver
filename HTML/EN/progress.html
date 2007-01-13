@@ -26,13 +26,13 @@
 		<div id="progress[% num %]" style="display:none">
 		[%- WRAPPER contentitem %]
 			<span id="Name[% num %]"></span>
-			 ( 
+			<span id="Count[% num %]"> ( 
 			 <span id="Done[% num %]"></span>
 			 [% "OF" | string %] 
 			<span id="Total[% num %]"></span>
-			 ) 
+			 ) </span>
 			<span id="Active[% num %]"></span>
-			<span id="Time[% num %]"></span> [% "SECONDS" | string %]
+			<span id="Time[% num %]"></span>
 		[% END -%]
 		[% odd = (not odd) %]
 		[%- WRAPPER contentitem lineclass='progressItem' %]
@@ -44,7 +44,7 @@
 		[% odd = (not odd) %]
 	[% END %]
 
-	<div id="message">[% IF message %][% message %][% END %]</div>
+	<div id="message">[% IF message %][% message %][% END %][% IF total_time %] [% "TOTAL_TIME" | string %][% total_time %][% END %]</div>
 
 [% PROCESS pagefooter.html %]
 [% END %]

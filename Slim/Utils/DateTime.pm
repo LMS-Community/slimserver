@@ -114,7 +114,7 @@ sub fracSecToMinSec {
 	# always round down to avoid overshooting EOF on last track
 	$fracrounded = int($seconds * 100) + 100;
 	$frac = substr($fracrounded, -2, 2);
-									
+	
 	return "$min:$sec.$frac";
 }
 
@@ -136,10 +136,10 @@ sub secsToPrettyTime {
 		$string = $h0;
 	}
 
-	$string .= "$h1:$m0$m1 ";
+	$string .= "$h1:$m0$m1";
 
 	if (defined $p) {
-		$string .= $p;
+		$string .= " $p";
 	}
 
 	return $string;

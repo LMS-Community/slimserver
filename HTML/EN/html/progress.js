@@ -8,13 +8,20 @@ function ajaxProgressCallback(theData) {
 	
 	for (var i=0; i <= 10; i++) {
 	
+		// only show the count if it is more than one item
+		if (parsedData['Total'] > 1) {
+			showElements(['Count'+i],'inline');
+		} else {
+			hideElements(['Count'+i]);
+		}
+		
 		for (var j=0; j < elems.length; j++) {
 		
 			if (parsedData['Name'+i]) {
-				if ($('progress'+i)) showElements(['progress'+i],'inline');
+				showElements(['progress'+i],'inline');
 				refreshElement(elems[j]+i, parsedData[elems[j]+i]);
 			} else {
-				if ($('progress'+i)) hideElements(['progress'+i]);
+				hideElements(['progress'+i]);
 			}
 
 			if (parsedData[elems[j]+i]) {
@@ -24,7 +31,7 @@ function ajaxProgressCallback(theData) {
 	}
 	
 	if (parsedData['message']) {
-		refreshElement('message',parsedData['message']);
+		refreshElement('message',parsedData['message']+" [% 'TOTAL_TIME' | string %] "+parsedData['total_time']);
 	} else {
 		setTimeout( "ajaxProgressRefresh()", 5000);
 	}

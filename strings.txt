@@ -12357,3 +12357,6 @@ COMPLETE
 PROGRESS_IMPORTER_COMPLETE_DESC
 	DE	SlimServer hat das Durchsuchen ihrer Musiksammlung abgeschlossen.
 	EN	SlimServer has finished scanning your music collection.
+
+TOTAL_TIME
+	EN	Total Time:
