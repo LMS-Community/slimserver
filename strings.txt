@@ -12359,4 +12359,5 @@ PROGRESS_IMPORTER_COMPLETE_DESC
 	EN	SlimServer has finished scanning your music collection.
 
 TOTAL_TIME
+	DE	Laufzeit:
 	EN	Total Time:
