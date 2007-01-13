@@ -120,11 +120,11 @@ sub main {
 
 	# Various importers - should these be hardcoded?
 	if ($itunes) {
-		initClass('Plugins::iTunes::Importer');
+		initClass('Slim::Plugin::iTunes::Importer');
 	}
 
 	if ($musicmagic) {
-		initClass('Plugins::MusicMagic::Importer');
+		initClass('Slim::Plugin::MusicMagic::Importer');
 	}
 
 	#checkDataSource();
