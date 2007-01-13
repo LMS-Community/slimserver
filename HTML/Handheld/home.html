@@ -1,4 +1,5 @@
 [%# Page home.html %]
+
 [%- FILTER null %]
 	[% BLOCK menu %]
 		[% PROCESS subtitle title=menutitle %]
@@ -16,6 +17,7 @@
 
 	[% pagetitle = "HOME" | string %]
 [% END -%]
+
 	[%- PROCESS pageheader.html %]
 
 	[% PROCESS menu menutitle='BROWSE_MUSIC' menulist=additionalLinks.browse %]
@@ -29,7 +31,7 @@
 	[% PROCESS menu menutitle='HELP' menulist={} additionalmenu.link = 'html/help.html' additionalmenu.text = 'HELP'%]
 	
 	[% IF warn && NOT pageHeaderInfo; pageHeaderInfo = BLOCK %]
-		<b>[% "NOTE" | string %]</b> [% "HOME_SCAN_WARNING" | string %]
+		<b>[% "NOTE" | string %]</b> [% "HOME_SCAN_WARNING" | string %] (<a href="progress.html">[% "SCANNER_PROGRESS" | string %]</a>)
 	[% END %]
 	[% ELSIF album_count && NOT pageHeaderInfo; pageHeaderInfo = BLOCK %]
 		[% album_count %] | [% song_count %] | [% artist_count %]

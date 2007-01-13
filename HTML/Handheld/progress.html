@@ -1,0 +1,27 @@
+[% pagetitle = "SCANNER_PROGRESS" | string %]
+[% IF NOT total_time; refreshurl = "progress.html?type=importer"; END %]
+[% pageHeaderMenu = pagetitle %]
+
+[% PROCESS pageheader.html %]
+
+<p>[% "IMPORTER_PROGRESS_DESC" | string %]</p>
+[% odd = 1 %]
+
+[% FOREACH item = progress_items %]
+
+	<p>
+		<div class="even">
+			[% item.obj.name _ "_PROGRESS" | string %]
+			[% IF item.obj.active %][% "RUNNING" | string %][% ELSE %][% "COMPLETE" | string %][% END %]
+			[% item.time %]
+		</div>
+		
+		<div>[% item.bar %]</div>
+		<div>[% item.obj.info %]</div>
+	</p>
+
+[% END %]
+
+<p>[% IF message %][% message %][% END %][% IF total_time %] [% "TOTAL_TIME" | string %] [% total_time %][% END %]</div>
+
+[% PROCESS pagefooter.html %]
