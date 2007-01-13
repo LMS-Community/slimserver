@@ -192,8 +192,11 @@ sub progressBar {
 
 			return $client->sliderBar($client->displayWidth(), $p->done/$p->total * 100,0,0);
 		} else {
+			my $runtime = $p->finish - $p->start;
+				
+			my ($h0, $h1, $m0, $m1) = Slim::Utils::DateTime::timeDigits($runtime);
 
-			return $p->total . ' ' . $client->string('ITEMS') . ' ' . ($p->finish - $p->start) .' ' . $client->string('SECONDS');
+			return $p->total . ' ' . $client->string('ITEMS') . " $h0$h1:$m0$m1".sprintf(":%02s",($runtime % 60));
 		}
 	} else {
 	
@@ -203,7 +206,7 @@ sub progressBar {
 
 sub progressUpdate {
 	my $client = shift;
-	
+
 	Slim::Utils::Timers::killTimers($client, \&progressUpdate);
 	
 	@progress = Slim::Schema->rs('Progress')->search( { 'type' => 'importer' }, { 'order_by' => 'start' } )->all;
@@ -212,8 +215,8 @@ sub progressUpdate {
 	if (scalar @progress) {
 		$client->modeParam('listRef',[0..$#progress]);
 	}
-	
-	#adjust the index to teh last position if the new item starts while viewing the previous last item
+
+	#adjust the index to the last position if the new item starts while viewing the previous last item
 	if ($client->modeParam('listIndex') == $#progress -1 && $size != scalar @progress) {
 		$client->modeParam('listIndex',$#progress);
 	}

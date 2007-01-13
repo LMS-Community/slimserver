@@ -34,7 +34,7 @@ sub progress {
 
 		my $runtime = ($p->finish || time()) - $p->start;
 		
-		my ($h0, $h1, $m0, $m1) = timeDigits($runtime);
+		my ($h0, $h1, $m0, $m1) = Slim::Utils::DateTime::timeDigits($runtime);
 		
 		my $item = {
 			'obj'  => $p,
@@ -54,7 +54,7 @@ sub progress {
 
 		$params->{'message'}    = Slim::Utils::Strings::string('PROGRESS_IMPORTER_COMPLETE_DESC');
 		
-		my ($h0, $h1, $m0, $m1) = timeDigits($total_time);
+		my ($h0, $h1, $m0, $m1) = Slim::Utils::DateTime::timeDigits($total_time);
 		$params->{'total_time'} = "$h0$h1:$m0$m1".sprintf(":%02s",($total_time % 60));
 
 	}
