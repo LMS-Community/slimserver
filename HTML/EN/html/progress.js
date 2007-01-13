@@ -9,7 +9,7 @@ function ajaxProgressCallback(theData) {
 	for (var i=0; i <= 10; i++) {
 	
 		// only show the count if it is more than one item
-		if (parsedData['Total'] > 1) {
+		if (parsedData['Total'+i] > 1) {
 			showElements(['Count'+i],'inline');
 		} else {
 			hideElements(['Count'+i]);

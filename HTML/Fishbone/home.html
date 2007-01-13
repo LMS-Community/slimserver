@@ -148,12 +148,10 @@
 					<div id="scanWarning" [% IF NOT warn %]style="display:none"[% END %]>
 						[% "RESCANNING_SHORT" | string %]
 						<a href="[% webroot %]progress.html?type=importer" target="browser">
-							<span id="progressName">[% IF progress.name %][% progress.name _ "_PROGRESS" | string %][% END %]</span>
-							<span class="progress" [% IF NOT progress.name %]style="display:none"[% END %]>( </span>
-							<span id="progressDone">[% IF progress.name %][% progress.obj.done %][% END %]</span>
-							<span class="progress" [% IF NOT progress.name %]style="display:none"[% END %]> [% "OF" | string %] </span>
-							<span id="progressTotal">[% IF progress.name %][% progress.obj.total %][% END %]</span>
-							<span class="progress" [% IF NOT progress.name %]style="display:none"[% END %]> )</span>
+<span id="progressName">[% IF progress.name %][% progress.name _ "_PROGRESS" | string %][% END %]</span>
+<span class="progress" [% IF NOT progress.name %]style="display:none"[% END %]> (</span><span id="progressDone">[% IF progress.name %][% progress.obj.done %][% END %]</span>
+<span class="progress" [% IF NOT progress.name %]style="display:none"[% END %]> [% "OF" | string %] </span>
+<span id="progressTotal">[% IF progress.name %][% progress.obj.total %][% END %]</span><span class="progress" [% IF NOT progress.name %]style="display:none"[% END %]>) </span>
 						</a>
 					</div>
 		
