@@ -222,6 +222,7 @@ sub progressUpdate {
 	}
 	
 	$client->update;
+	$client->updateKnob(1);
 	
 	if ( Slim::Music::Import->stillScanning ) {
 		

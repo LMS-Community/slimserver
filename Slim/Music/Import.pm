@@ -138,6 +138,9 @@ sub launchScan {
 		Proc::Background->new($command, @scanArgs)
 	);
 
+	# Clear progress info so scan progress displays are blank
+	$class->clearProgressInfo;
+
 	# Update a DB flag, so the server knows we're scanning.
 	$class->setIsScanning(1);
 
@@ -244,6 +247,21 @@ sub setIsScanning {
 	Slim::Schema->storage->dbh->{'AutoCommit'} = $autoCommit;
 }
 
+=head2 clearProgressInfo( )
+
+Clear importer progress info stored in the database.
+
+=cut
+
+sub clearProgressInfo {
+	my $class = shift;
+
+	for my $prog (Slim::Schema->rs('Progress')->search({ 'type' => 'importer' })->all) {
+		$prog->delete;
+		$prog->update;
+	}
+}
+
 =head2 runScan( )
 
 Start a scan of all used importers.
@@ -255,10 +273,8 @@ This is called by the scanner.pl helper program.
 sub runScan {
 	my $class  = shift;
 
-	# Delete all exiting importer progress entries
-	for my $prog (Slim::Schema->rs('Progress')->search({ 'type' => 'importer' })->all) {
-		$prog->delete;
-	}
+	# clear progress info in case scanner.pl is run standalone
+	$class->clearProgressInfo;
 
 	# If we are scanning a music folder, do that first - as we'll gather
 	# the most information from files that way and subsequent importers
