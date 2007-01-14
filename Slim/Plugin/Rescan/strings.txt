@@ -103,3 +103,6 @@ PLUGIN_RESCAN_TIMER_TYPE
 	EN	Rescan Type
 	FR	Type répertoriage
 	NL	Herscan type
+
+PLUGIN_RESCAN_LAST_SCAN
+	EN	Last Scan Details

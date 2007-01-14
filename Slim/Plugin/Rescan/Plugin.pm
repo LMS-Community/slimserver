@@ -18,6 +18,8 @@ use base qw(Slim::Plugin::Base);
 
 use Slim::Plugin::Rescan::Settings;
 
+use Scalar::Util qw(blessed);
+
 use Slim::Control::Request;
 use Slim::Utils::Log;
 
@@ -25,7 +27,7 @@ our $interval = 1; # check every x seconds
 our @browseMenuChoices;
 our %functions;
 
-my @progress;
+my @progress = [0];
 
 sub getDisplayName {
 	return 'PLUGIN_RESCAN_MUSIC_LIBRARY';
@@ -93,6 +95,10 @@ sub setMode {
 		
 	} else {
 
+		if (Slim::Schema->rs('Progress')->search( { 'type' => 'importer' }, { 'order_by' => 'start' } )->all) {
+			push @browseMenuChoices, 'PLUGIN_RESCAN_LAST_SCAN'
+		}
+
 		my %params = (
 			'listRef'        => \@browseMenuChoices,
 			'externRefArgs'  => 'CV',
@@ -127,8 +133,6 @@ sub setMode {
 	
 		Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%params);
 	}
-	
-	
 }
 
 sub setProgressMode {
@@ -139,6 +143,8 @@ sub setProgressMode {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
+	
+	my $value = $#progress;
 
 	my %progressParams = (
 		'header'             => \&progressHeader,
@@ -148,11 +154,11 @@ sub setProgressMode {
 		'externRef'          => \&progressBar,
 		'externRefArgs'      => 'CI',
 		'modeUpdateInterval' => 1,
+		'valueref'           => \$value,
 	);
 
-	Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&progressUpdate);
-	
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%progressParams);
+	progressUpdate($client);
 }
 
 sub exitProgressMode {
@@ -170,14 +176,18 @@ sub progressHeader {
 	
 	my $p = $progress[$index];
 	
-	if ($p && $p->name) {
+	if (blessed($p) && $p->name) {
 	
 		return $client->string($p->name.'_PROGRESS')
 			.' '. $client->string( $p->active ? 'RUNNING' : 'COMPLETE')
 			.($p->active ? ' ('.  $p->done.'/' . $p->total . ') ' : '' );
 	} else {
 	
-		return $client->string('RESCANNING_SHORT');
+		if (Slim::Music::Import->stillScanning) {
+			return $client->string('RESCANNING_SHORT');
+		} else {
+			return $client->string('RESCANNING_SHORT').$client->string('COMPLETE');
+		}
 	}
 }
 
@@ -187,7 +197,7 @@ sub progressBar {
 	
 	my $p = $progress[$index];
 	
-	if ($p && $p->name) {
+	if (blessed($p) && $p->name) {
 		if ($p->active) {
 
 			return $client->sliderBar($client->displayWidth(), $p->done/$p->total * 100,0,0);
@@ -200,7 +210,12 @@ sub progressBar {
 		}
 	} else {
 	
-		return $client->sliderBar($client->displayWidth(), 0,0,0);
+		
+		if (Slim::Music::Import->stillScanning) {
+			return $client->sliderBar($client->displayWidth(), 0,0,0);
+		} else {
+			return $client->string('TOTAL_TIME').' '.$p->{'total_time'};
+		}
 	}
 }
 
@@ -233,6 +248,37 @@ sub progressUpdate {
 		);
 		
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&progressUpdate);
+	} else {
+		my $totaltime = 0;
+		my $count     = 0;
+		
+		for my $p (@progress) {
+			$totaltime += $p->finish - $p->start;
+			$count     += $p->total;
+		}
+		
+		my ($h0, $h1, $m0, $m1) = Slim::Utils::DateTime::timeDigits($totaltime);
+		
+		my $t = {
+			'total_time' => "$h0$h1:$m0$m1".sprintf(":%02s",($totaltime % 60)),
+			'count'      => $count,
+		};
+		
+		my $size = scalar @{$client->modeParam('listRef')};
+
+		push @progress, $t;
+		
+		if (scalar @progress) {
+			$client->modeParam('listRef',[0..$#progress]);
+		}
+	
+		#adjust the index to the last position if the new item starts while viewing the previous last item
+		if ($client->modeParam('listIndex') == $#progress -1 && $size != scalar @progress) {
+			$client->modeParam('listIndex',$#progress);
+		}
+		
+		$client->update;
+		$client->updateKnob(1);
 	}
 }
 
@@ -277,23 +323,37 @@ sub rescanExitHandler {
 		
 		} elsif ($$valueref eq 'PLUGIN_RESCAN_TIMER_TYPE') {
 			my $value = Slim::Utils::Prefs::get("rescan-type");
-			
+
 			my %params = (
-	
-				'header' => 'PLUGIN_RESCAN_TIMER_TYPE',
-				'headerAddCount' => 1,
-				'stringHeader' => 1,
-				'listRef' => ['1rescan','2wipedb','3playlist'],
-				'externRef' => [qw(SETUP_STANDARDRESCAN SETUP_WIPEDB SETUP_PLAYLISTRESCAN)],
-				'stringExternRef' => 1,
+				'listRef'  => [
+					{
+						name   => '{SETUP_STANDARDRESCAN}',
+						value  => '1rescan',
+					},
+					{
+						name   => '{SETUP_WIPEDB}',
+						value  => '2wipedb',
+					},
+					{
+						name   => '{SETUP_PLAYLISTRESCAN}',
+						value  => '3playlist',
+					},
+				],
+				'onPlay'   => sub { Slim::Utils::Prefs::set("rescan-type",$_[1]->{'value'}); },
+				'onAdd'    => sub { Slim::Utils::Prefs::set("rescan-type",$_[1]->{'value'}); },
+				'onRight'  => sub { Slim::Utils::Prefs::set("rescan-type",$_[1]->{'value'}); },
+				'header'   => '{PLUGIN_RESCAN_TIMER_TYPE}{count}',
+				'pref'     => sub { return Slim::Utils::Prefs::get("rescan-type"); },
 				'valueRef' => \$value,
-				'cursorPos' => 1,
-				'pref' => 'rescan-type',
-				'callback' => \&settingsExitHandler,
 			);
 
-			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.List',\%params);
+			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice',\%params);
+
+		} elsif ($$valueref eq 'PLUGIN_RESCAN_LAST_SCAN') {
+		
+			Slim::Buttons::Common::pushModeLeft($client, 'scanProgress');
 		}
+
 	}
 }
 
