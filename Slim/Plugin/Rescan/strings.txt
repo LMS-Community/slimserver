@@ -105,4 +105,5 @@ PLUGIN_RESCAN_TIMER_TYPE
 	NL	Herscan type
 
 PLUGIN_RESCAN_LAST_SCAN
+	DE	Letzte Scan-Details
 	EN	Last Scan Details
