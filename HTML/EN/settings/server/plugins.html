@@ -41,7 +41,7 @@
 				<td>
 					[% IF settings AND enabled %]
 
-					<input type="button" value="[% 'SETTINGS' | string %]" onClick="location.href='[% webroot %][% settings %]'">
+					<input type="button" value="[% 'SETTINGS' | string %]" onClick="location.href='[% webroot %][% settings %][% IF player %]?player=[% playerURI %]&amp;playerid=[% playerURI %][% END %]'">
 
 					[% ELSE %]
 

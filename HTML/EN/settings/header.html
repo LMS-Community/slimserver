@@ -6,10 +6,10 @@
 		[% IF playerid %]
 			<a href="[% webroot %]settings/player/basic.html[% IF playerid %]?playerid=[% playerid | uri %][% END %]">[% "PLAYER_SETTINGS" | string %] [% IF playername %][% "FOR" | string %] [% playername %][% END %]</a>
 		[% ELSE %]
-			<a href="[% webroot %]settings/server/basic.html[% IF playerid %]?playerid=[% playerid | uri %][% END %]">[% "SERVER_SETTINGS" | string %]</a>
+			<a href="[% webroot %]settings/server/basic.html">[% "SERVER_SETTINGS" | string %]</a>
 		[% END %]
 
-		 / <a href="[% webroot %][% path %][% IF playerid %]?playerid=[% playerid | uri %][% END %]">[% page | string %]</a>
+		 / <a href="[% webroot %][% path %][% IF playerid %]?playerid=[% playerid | uri %][% ELSIF player %]?player=[% playerURI %][% END %]">[% page | string %]</a>
 
 	[% END %]
 
@@ -31,5 +31,6 @@
 
 	<input type=hidden value="[% page %]" name="page">
 	[% IF playerid %]<input type=hidden value="[% playerid %]" name="playerid">[% END %]
+	[% IF player %]<input type=hidden value="[% player %]" name="player">[% END %]
 
 <!-- End settingsheader.html -->
