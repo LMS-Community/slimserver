@@ -1,3 +1,20 @@
+[% pageHeaderScripts = BLOCK %]
+	<script type="text/javascript" src="[% webroot %]html/prototype.js" ></script>
+	<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/global.js %]</script>
+	<script TYPE="text/javascript" language="JavaScript">
+		function forgetPlayer(player) {
+		
+			// add a random number to the params as IE loves to cache the heck out of 
+			var args   = 'command=client&subcommand=forget&playerid='+ player +'&d=' + Math.random();
+			var url    = 'index.html';
+			var action = 'dummyCallback';
+			ajaxRequest(url, args, action);
+		}
+		
+		function dummyCallback() {
+		}
+	</script>
+[% END %]
 [% PROCESS settings/header.html %]
 
 	<div class="settingSection">
@@ -131,7 +148,11 @@
 		<div class="prefDesc">[% "FORGET_PLAYER_DESC" | string %]</div>
 	
 		<p>
-			<a href="[% webroot %]index.html?command=client&amp;subcommand=forget&amp;playerid=[% playerid | uri %]&amp;player=[% playerid | uri %]" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a>
+			[% IF useJavascript %]
+				<a href="[% webroot %]index.html" onClick="forgetPlayer('[% player %]');" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a>
+			[% ELSE %]
+				<a href="[% webroot %]index.html?command=client&amp;subcommand=forget&amp;playerid=[% playerid | uri %]&amp;player=[% playerid | uri %]" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a>
+			[% END %]
 		</p>
 	
 		<div class="prefHead">[% "INFORMATION_MENU_PLAYER" | string | upper %]</div>

@@ -15,6 +15,9 @@
 [%# set browserTarget to the name of the frame used for browser lists, if your skin uses frames %]
 [% browserTarget  = 0 %]
 
+[# set this to set whether or not the skin is capable of using javascript. %]
+[% useJavascript = 1 %]
+
 [%- BLOCK cmdlink -%]
 <a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% cmdtitle | string %]</a>
 [%- END -%]
