@@ -12361,3 +12361,16 @@ PROGRESS_IMPORTER_COMPLETE_DESC
 TOTAL_TIME
 	DE	Laufzeit:
 	EN	Total Time:
+
+ENABLE
+	EN	Enable
+
+DISABLE
+	EN	Disable
+
+UNINSTALL
+	EN	Uninstall
+
+PLUGINS_CHANGED
+	EN	Changes will take place at the next server restart for the following plugins:
+

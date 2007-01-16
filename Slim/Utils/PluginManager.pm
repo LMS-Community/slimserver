@@ -497,7 +497,7 @@ sub enabledPlugins {
 
 	for my $plugin ($class->installedPlugins) {
 
-		if ($plugins->{$plugin}->{'state'} eq OP_NONE) {
+		if ($plugins->{$plugin}->{'state'} == STATE_ENABLED) {
 
 			push @found, $plugin;
 		}
@@ -522,37 +522,35 @@ sub isEnabled {
 
 sub enablePlugin {
 	my $class  = shift;
-	my $name   = shift;
+	my $plugin = shift;
 
-	my $plugin = $plugins->{$name};
-	my $opType = $plugin->{'opType'};
+	my $opType = $plugins->{$plugin}->{'opType'};
 
-	if ($opType == OP_NEEDS_UNINSTALL) {
+	if ($opType eq OP_NEEDS_UNINSTALL) {
 		return;
 	}
 
-	if ($opType != OP_NEEDS_ENABLE) {
+	if ($opType ne OP_NEEDS_ENABLE) {
 
-		$plugin->{'opType'} = OP_NEEDS_ENABLE;
-		$plugin->{'state'}  = STATE_ENABLED;
+		$plugins->{$plugin}->{'opType'} = OP_NEEDS_ENABLE;
+		$plugins->{$plugin}->{'state'}  = STATE_ENABLED;
 	}
 }
 
 sub disablePlugin {
 	my $class  = shift;
-	my $name   = shift;
+	my $plugin = shift;
 
-	my $plugin = $plugins->{$name};
-	my $opType = $plugin->{'opType'};
+	my $opType = $plugins->{$plugin}->{'opType'};
 
-	if ($opType == OP_NEEDS_UNINSTALL) {
+	if ($opType eq OP_NEEDS_UNINSTALL) {
 		return;
 	}
 
-	if ($opType != OP_NEEDS_DISABLE) {
+	if ($opType ne OP_NEEDS_DISABLE) {
 
-		$plugin->{'opType'} = OP_NEEDS_DISABLE;
-		$plugin->{'state'}  = STATE_DISABLED;
+		$plugins->{$plugin}->{'opType'} = OP_NEEDS_DISABLE;
+		$plugins->{$plugin}->{'state'}  = STATE_DISABLED;
 	}
 }
 

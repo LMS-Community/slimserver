@@ -52,15 +52,15 @@
 					<!-- XXXX - need to check for pending uninstall / install -->
 					[% IF enabled %]
 
-					<input type="submit" name="[% name %].disable" value="Disable">
+					<input type="submit" name="[% name %].disable" value="[% 'DISABLE' | string %]">
 
 					[% ELSE %]
 
-					<input type="submit" name="[% name %].enable" value="Enable">
+					<input type="submit" name="[% name %].enable" value="[% 'ENABLE' | string %]">
 
 					[% END %]
 
-					<input type="submit" name="[% name %].uninstall" value="Uninstall">
+					<input type="submit" name="[% name %].uninstall" value="[% 'UNINSTALL' | string %]">
 				</td>
 			</tr>
 			</table>

@@ -31,7 +31,7 @@ sub handler {
 	my @prefs = qw(playername titleFormat titleFormatCurr);
 
 	# isPlayer means not a HTTP client.
-	if ($client->isPlayer()) {
+	if (defined $client && $client->isPlayer()) {
 
 		push @prefs, qw(playingDisplayMode playingDisplayModes);
 		
@@ -49,7 +49,7 @@ sub handler {
 	}
 	
 	# If this is a settings update
-	if ($paramRef->{'saveSettings'}) {
+	if (defined $client && $paramRef->{'saveSettings'}) {
 
 		my @changed = ();
 

@@ -24,14 +24,40 @@ sub page {
 sub handler {
 	my ($class, $client, $paramRef) = @_;
 
-	# If this is a settings update
-	if ($paramRef->{'saveSettings'}) {
+	my @changed = ();
+	
+	my $plugins = Slim::Utils::PluginManager->allPlugins;
+	
+	for my $plugin (keys %{$plugins}) {
 
+		my $name   = $plugins->{$plugin}->{'name'};
+		my $module = $plugins->{$plugin}->{'module'};
+		
 		# XXXX - handle install / uninstall / enable / disable
+		if ($paramRef->{$name.'.disable'}) {
+			push @changed, Slim::Utils::Strings::string($name);
+			Slim::Utils::PluginManager->disablePlugin($module);
+		}
+		
+		if ($paramRef->{$name.'.enable'}) {
+			push @changed, Slim::Utils::Strings::string($name);
+			Slim::Utils::PluginManager->enablePlugin($module);
+		}
+		
+		if ($paramRef->{$name.'.uninstall'}) {
+			push @changed, Slim::Utils::Strings::string($name);
+		}
 
 	}
 
-	$paramRef->{'plugins'}  = Slim::Utils::PluginManager->allPlugins;
+	if (@changed) {
+		
+		#Slim::Utils::PluginManager->runPendingOperations;
+		Slim::Utils::PluginManager->writePluginCache;
+		$paramRef->{'warning'} .= Slim::Utils::Strings::string('PLUGINS_CHANGED').'<br>'.join('<br>',@changed);
+	}
+
+	$paramRef->{'plugins'}  = $plugins;
 	$paramRef->{'nosubmit'} = 1;
 
 	return $class->SUPER::handler($client, $paramRef);
