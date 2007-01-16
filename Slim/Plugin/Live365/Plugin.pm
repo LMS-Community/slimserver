@@ -673,6 +673,8 @@ sub noChannelMode {
 sub channelAdditionalLoad {
 	my $client = shift || return;
 
+	return unless $live365->{$client};
+
 	# if the numberscroll has been used, we may have to keep loading additional blocks until 
 	# it is in range of the new stationListPointer
 	if( $live365->{$client}->willRequireLoad( $live365->{$client}->getStationListPointer ) ) {
