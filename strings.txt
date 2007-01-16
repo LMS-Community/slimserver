@@ -12363,14 +12363,18 @@ TOTAL_TIME
 	EN	Total Time:
 
 ENABLE
+	DE	Aktivieren
 	EN	Enable
 
 DISABLE
+	DE	Deaktivieren
 	EN	Disable
 
 UNINSTALL
+	DE	Entfernen
 	EN	Uninstall
 
 PLUGINS_CHANGED
+	DE	Die die folgenden Plugins werden beim nächsten Server-Neustart aktiviert bzw. deaktiviert:
 	EN	Changes will take place at the next server restart for the following plugins:
 
