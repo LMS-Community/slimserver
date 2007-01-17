@@ -114,7 +114,7 @@ my @modes = (
 	  params => [$VISUALIZER_NONE], },
 );
 
-my $nmodes = $#modes;
+my $nmodes = $#modes + 1;
 
 our $defaultPrefs = {
 	'idleBrightness'      => 2,
