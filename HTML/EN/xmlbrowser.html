@@ -176,5 +176,9 @@
 				[% END %]
 			[%- END %]
 
+			[% IF edit %][% WRAPPER editlink noTarget=1 %]
+				href="[% webroot %][% edit %]&amp;player=[% playerURI %]&amp;index=[% crumb.index %]"
+			[% END %][% END %]
+
 [% PROCESS pagefooter.html %]
 

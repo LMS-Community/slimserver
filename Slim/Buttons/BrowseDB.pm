@@ -407,9 +407,11 @@ sub browsedbExitCallback {
 				return;
 			}
 
-			if ($num < 0) {
+			my $favs = Slim::Utils::Favorites->new;
 
-				$num = Slim::Utils::Favorites->clientAdd($client, $track, $track->title);
+			if (!$num) {
+
+				$num = $favs->clientAdd($client, $track, $track->title);
 
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_ADDING'), $track->title ]
@@ -419,13 +421,13 @@ sub browsedbExitCallback {
 
 			} else {
 
-				Slim::Utils::Favorites->deleteByClientAndURL($client, $track);
+				$favs->deleteByClientAndURL($client, $track);
 
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_DELETING'), $track->title ]
 				});
 
-				$client->modeParam('favorite', -1);
+				$client->modeParam('favorite', undef);
 			}
 
 		} elsif ($descend || $all) {
@@ -796,12 +798,12 @@ sub setMode {
 
 		if (blessed($track) && $track->can('id')) {
 		
-			my $fav = Slim::Utils::Favorites->findByClientAndURL($client, $track);
+			my $fav = Slim::Utils::Favorites->new->findByClientAndURL($client, $track);
 
 			if ($fav) {
 				$client->modeParam('favorite', $fav->{'num'});
 			} else {
-				$client->modeParam('favorite', -1);
+				$client->modeParam('favorite', undef);
 			}
 
 			push @items, 'FAVORITE';

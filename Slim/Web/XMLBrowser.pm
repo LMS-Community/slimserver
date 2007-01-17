@@ -21,6 +21,8 @@ use Slim::Web::Pages;
 
 my $log = logger('formats.xml');
 
+my $editors = {}; # hash of patterns to url which trigger an edit link for page
+
 sub handleWebIndex {
 	my ( $class, $args ) = @_;
 
@@ -96,7 +98,7 @@ sub handleWebIndex {
 sub handleFeed {
 	my ( $feed, $params ) = @_;
 	my ( $client, $stash, $callback, $httpClient, $response ) = @{ $params->{'args'} };
-	
+
 	$stash->{'pagetitle'} = $feed->{'title'} || string($params->{'title'});
 	
 	my $template = 'xmlbrowser.html';
@@ -114,7 +116,7 @@ sub handleFeed {
 
 		@index = split /\./, $stash->{'index'};
 	}
-	
+
 	if ( scalar @index ) {
 		
 		# index links for each crumb item
@@ -287,7 +289,14 @@ sub handleFeed {
 			@{ $stash->{'items'} } = splice @{ $stash->{'items'} }, $stash->{'start'}, $stash->{'pageinfo'}{'itemsperpage'};
 		}
 	}
-	
+
+	# add edit link if editor for this page
+	for my $key (keys %$editors) {
+		if ($params->{'url'} =~ $key) {
+			$stash->{'edit'} = sprintf("%s?url=%s", $editors->{$key}, $params->{'url'});
+		}
+	}
+
 	my $output = processTemplate($template, $stash);
 	
 	# done, send output back to Web module for display
@@ -353,6 +362,13 @@ sub handleSubFeed {
 
 sub processTemplate {	
 	return Slim::Web::HTTP::filltemplatefile( @_ );
+}
+
+sub registerEditor{
+	my $pattern = shift;
+	my $url     = shift;
+
+	$editors->{$pattern} = $url;
 }
 
 1;

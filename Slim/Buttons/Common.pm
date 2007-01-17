@@ -39,7 +39,6 @@ use warnings;
 
 use Scalar::Util qw(blessed);
 
-use Slim::Buttons::Favorites;
 use Slim::Buttons::SqueezeNetwork;
 use Slim::Buttons::Volume;
 use Slim::Buttons::XMLBrowser;
@@ -48,7 +47,6 @@ use Slim::Utils::DateTime;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Buttons::Block;
-use Slim::Buttons::Favorites;
 use Slim::Buttons::SqueezeNetwork;
 use Slim::Buttons::XMLBrowser;
 use Slim::Buttons::Volume;
@@ -120,7 +118,6 @@ sub init {
 	Slim::Buttons::Block::init();
 	Slim::Buttons::BrowseDB::init();
 	Slim::Buttons::BrowseTree::init();
-	Slim::Buttons::Favorites::init();
 	Slim::Buttons::Information::init();
 	Slim::Buttons::Playlist::init();
 	Slim::Buttons::XMLBrowser::init();
@@ -742,7 +739,96 @@ our %functions = (
 
 		if (defined $buttonarg && $buttonarg eq "add") {
 
-			Slim::Utils::Favorites->addCurrentItem($client);
+			# First lets try for a listRef from INPUT.*
+			my $list = $client->modeParam('listRef');
+			my $obj;
+			my $title;
+			my $url;
+
+			# If there is a list, try grabbing the current index.
+			if ($list) {
+
+				$obj = $list->[$client->modeParam('listIndex')];
+
+			# hack to grab currently browsed item from current playlist (needs to use INPUT.List at some point)
+			} elsif (Slim::Buttons::Common::mode($client) eq 'playlist') {
+
+				$obj = Slim::Player::Playlist::song($client, Slim::Buttons::Playlist::browseplaylistindex($client));
+			}
+
+			# if that doesn't work, perhaps we have a track param from something like trackinfo
+			if (!blessed($obj)) {
+
+				if ($client->modeParam('track')) {
+
+					$obj = $client->modeParam('track');
+
+				# specific HACK for Live365
+				} elsif(Slim::Player::ProtocolHandlers->handlerForURL('live365://') && (Slim::Plugin::Live365::Plugin::getLive365($client))) {
+
+					my $live365 = Slim::Plugin::Live365::Plugin::getLive365($client);
+					my $station = $live365->getCurrentStation();
+
+					$title = $station->{STATION_TITLE};
+					$url   = $station->{STATION_ADDRESS};
+
+					# fix url to activate protocol handler
+					$url =~ s/http\:/live365\:/;
+				}
+			}
+
+			# start with the object if we have one
+			if ($obj && !$url) {
+
+				if (blessed($obj) && $obj->can('url')) {
+					$url = $obj->url;
+
+					# xml browser uses hash lists with url and name values.
+				} elsif (ref($obj) eq 'HASH') {
+
+					$url = $obj->{'url'};
+				}
+
+				if (blessed($obj) && $obj->can('name')) {
+
+					$title = $obj->name;
+				} elsif (ref($obj) eq 'HASH') {
+
+					$title = $obj->{'name'} || $obj->{'title'};
+				}
+
+				if (!$title) {
+
+					# failing specified name values, try the db title
+					$title = Slim::Music::Info::standardTitle($client, $obj) || $url;
+				}
+			}
+
+			# remoteTrackInfo uses url and title params for lists.
+			if ($client->modeParam('url') && !$url) {
+
+				$url   = $client->modeParam('url');
+				$title = $client->modeParam('title');
+			}
+
+			if ($url && $title) {
+				Slim::Utils::Favorites->new->clientAdd($client, $url, $title);
+				$client->showBriefly($client->string('FAVORITES_ADDING'), $title);
+
+			# if all of that fails, send the debug with a best guess helper for tracing back
+			} else {
+
+				if ($log->is_error) { 
+
+					$log->error("Error: No valid url found, not adding favorite!");
+
+					if ($obj) {
+						$log->error(Data::Dump::dump($obj));
+					} else {
+						$log->logBacktrace;
+					}
+				}
+			}
 
 		} elsif (mode($client) ne 'FAVORITES') {
 

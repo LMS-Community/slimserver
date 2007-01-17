@@ -337,12 +337,12 @@ sub loadDataForTrack {
 	}
 
 	if (Slim::Music::Info::isURL($track->url)) {
-		my $fav = Slim::Utils::Favorites->findByClientAndURL($client, $track->url);
+		my $fav = Slim::Utils::Favorites->new->findByClientAndURL($client, $track->url);
 
 		if ($fav) {
 			$client->modeParam('favorite', $fav->{'num'});
 		} else {
-			$client->modeParam('favorite', -1);
+			$client->modeParam('favorite', undef);
 		}
 
 		push (@{$client->trackInfoLines}, 'FAVORITE'); # replaced in lines()
@@ -461,27 +461,27 @@ sub listExitHandler {
 
 		} elsif ($curType eq 'FAVORITE') {
 
-			my $num = $client->modeParam('favorite');
+			my $fav = $client->modeParam('favorite');
 
-			if ($num < 0) {
+			if (!defined $fav) {
 
-				$num = Slim::Utils::Favorites->clientAdd($client, track($client), $track->title || $track->url);
+				$fav = Slim::Utils::Favorites->new->clientAdd($client, track($client), $track->title || $track->url);
 
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_ADDING'), $track->title || $track->url ]
 				});
 
-				$client->modeParam('favorite', $num);
+				$client->modeParam('favorite', $fav);
 
 			} else {
 
-				Slim::Utils::Favorites->deleteByClientAndURL($client, track($client));
+				Slim::Utils::Favorites->new->deleteByClientAndURL($client, track($client));
 
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_DELETING'), $track->title || $track->url ]
 				});
 
-				$client->modeParam('favorite', -1);
+				$client->modeParam('favorite', undef);
 			}
 
 			$push = 0;
@@ -506,7 +506,8 @@ sub infoLine {
 
 	# special case favorites line, which must be determined dynamically
 	if ($line2 eq 'FAVORITE') {
-		if ((my $num = $client->modeParam('favorite')) < 0) {
+		my $num = $client->modeParam('favorite');
+		if (!defined $num) {
 			$line2 = $client->string('FAVORITES_RIGHT_TO_ADD');
 		} else {
 			$line2 = $client->string('FAVORITES_FAVORITE_NUM') . "$num " . $client->string('FAVORITES_RIGHT_TO_DELETE');

@@ -1,0 +1,129 @@
+[% pagetitle = "PLUGIN_FAVORITES_EDITOR" | string; pageicon = 'PLUGINS' %]
+[% PROCESS pageheader.html %]
+
+[% IF errormsg %][% errormsg %][% END %]
+
+[% IF newentry %]
+	<p>[% "PLUGIN_FAVORITES_ADD_DESC" | string %]</p>
+	<form name="newentry" method="get" action="[% webroot %]plugins/Favorites/edit.html">
+		<table width="100%">
+		<tr><td colspan="5"><h3>[% "PLUGIN_FAVORITES_ADDSTREAM" | string %]</h3></td></tr>
+		<tr><td>[% "TITLE" | string %]</td>
+		<td style="width:40%"><input type="text" class="stdedit" name="streamtitle" style="width: 100%"></td>
+		<td style="width:6%; text-align: right">[% "URL" | string %]</td>
+		<td><input type="text" class="stdedit" name="streamurl" style="width: 100%"></td>
+		<td><center><input type="submit" class="stdclick" name="newstream" value=[% "ADD" | string %]></center></td></tr>
+		<tr><td colspan="5"><h3>[% "PLUGIN_FAVORITES_ADDMENU" | string %]</h3></td></tr>
+		<tr><td style="width:5%;">[% "TITLE" | string %]</td>
+		<td colspan="3" style="width: 35%"><input type="text" class="stdedit" name="menutitle" style="width: 100%;"></td>
+		<td style="width:10%"><center><input type="submit" class="stdclick" name="newmenu" value=[% "ADD" | string %]></center></td></tr>
+
+		</table>
+
+		<p></p>
+		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
+	</form>
+
+[% ELSIF edittitle %]
+
+	<form name="title" method="get" action="[% webroot %]plugins/Favorites/edit.html">
+		[% "TITLE" | string %]
+		<input type="text" class="stdedit" name="title" size="60" value="[% title %]">
+		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_SET" | string %]>
+		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
+	</form>
+
+[% ELSE %]
+
+	<h4><a href="[% webroot %]plugins/Favorites/edit.html?action=edittitle">[% title %]</a></h4>
+	
+	[% odd = 1 %]
+	[% IF previous %]
+		[% WRAPPER contentitem %]
+			<a href="[% webroot %]plugins/Favorites/edit.html?action=ascend"><b><I>[% "PLUGIN_FAVORITES_PREVLEVEL" | string %]</b></I></a>
+		[% END %]
+		[% odd = (not odd) %]
+	[% END %]
+		
+	[% WRAPPER contentcontainer %]
+		[% FOREACH entry = entries %]
+	
+ 			[% BLOCK favoritescontrol %]
+				[% IF entry.audio %]
+					[% WRAPPER playlink noTarget=1 %]
+						href="[% webroot %]plugins/Favorites/edit.html?action=play&entry=[% entry.index %]"
+					[% END %]
+					[% WRAPPER addlink noTarget=1 %]
+						href="[% webroot %]plugins/Favorites/edit.html?action=add&entry=[% entry.index %]"
+					[% END %]
+				[% END %]
+				[% IF entry.outline %]
+					[% WRAPPER descendlink noTarget=1 %]
+						href="[% webroot %]plugins/Favorites/edit.html?action=descend&entry=[% entry.index %]"
+					[% END %]
+				[% END %]
+				[% WRAPPER moveuplink noTarget=1 %]
+					href="[% webroot %]plugins/Favorites/edit.html?action=moveup&entry=[% entry.index %]"
+				[% END %]
+				[% WRAPPER movedownlink noTarget=1 %]
+					href="[% webroot %]plugins/Favorites/edit.html?action=movedown&entry=[% entry.index %]"
+				[% END %]
+				[% WRAPPER editlink noTarget=1 %]
+					href="[% webroot %]plugins/Favorites/edit.html?action=edit&entry=[% entry.index %]"
+				[% END %]
+				[% WRAPPER removelink noTarget=1 %]
+					href="[% webroot %]plugins/Favorites/edit.html?action=delete&entry=[% entry.index %]"
+				[% END %]
+			[% END %]
+
+			[% IF entry.edit %]
+				[% IF entry.outline %]	
+					<form name="edittitle" method="get" action="[% webroot %]plugins/Favorites/edit.html">
+						<input type="hidden" name="entry" value="[% entry.index %]">
+						<input style="width: 92%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]">
+						<input style="position: absolute; right: 8px;" type="submit" class="stdclick" name="editset" value=[% "PLUGIN_FAVORITES_SET" | string %]>
+					</form>
+				[% ELSE %]
+					<form name="edittitleurl" method="get" action="[% webroot %]plugins/Favorites/edit.html">
+						<input type="hidden" name="entry" value="[% entry.index %]">
+						<input style="width: 45%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]">
+						<input style="width: 45%;" type="text" class="stdedit" name="entryurl" value="[% entry.url %]">
+						<input style="position: absolute; right: 8px;"type="submit" class="stdclick" name="editset" value=[% "PLUGIN_FAVORITES_SET" | string %]>
+					</form>
+				[% END %]	
+			[% ELSE %]
+				[% WRAPPER contentitem controls = 'favoritescontrol' %]
+					<a href="[% webroot %]plugins/Favorites/edit.html?action=[% IF entry.outline %]descend[% ELSE %]edit[% END %]&entry=[% entry.index %]">[% entry.title %]</a>
+				[% END %]
+			[% END %]
+			
+			[% odd = (not odd) %]
+		[% END %]
+	[% END %]
+
+	[% IF deleted %]
+		[% BLOCK favoritesdeleteditem %]
+			[% WRAPPER removelink noTarget=1 %]
+				href="[% webroot %]plugins/Favorites/edit.html?action=forgetdelete"
+			[% END %]
+		[% END %]
+		[% WRAPPER contentitem controls = 'favoritesdeleteditem'%]
+			<a href="[% webroot %]plugins/Favorites/edit.html?action=insert"><b><I>[% "PLUGIN_FAVORITES_INSERTDEL" | string %]</b> [ [% deleted %] ]</I></a>
+		[% END %]
+		[% odd = (not odd) %]
+	[% END %]
+
+	[% WRAPPER contentitem %]
+		<a href="[% webroot %]plugins/Favorites/edit.html?action=newentry"><b><I>[% "PLUGIN_FAVORITES_NEWENTRY" | string %]</b></I></a>
+	[% END %]
+
+	<p></p>
+	<form name="loadsave" method="get" action="[% webroot %]plugins/Favorites/edit.html">
+		[% IF changed %]
+		<input type="submit" class="stdclick" name="save" value="[% "PLUGIN_FAVORITES_SAVECHANGED" | string %]"></td>
+		[% END %]
+	</form>
+
+[% END %]
+
+[% PROCESS pagefooter.html %]

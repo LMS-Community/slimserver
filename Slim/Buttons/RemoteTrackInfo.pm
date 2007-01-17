@@ -80,13 +80,13 @@ sub setMode {
 				my $client = shift;
 				my $num = $client->modeParam('favorite');
 				if ($num) {
-					Slim::Utils::Favorites->deleteByClientAndURL($client, $client->modeParam('url'));
-					$client->modeParam('favorite', 0);
+					Slim::Utils::Favorites->new->deleteByClientAndURL($client, $client->modeParam('url'));
+					$client->modeParam('favorite', undef);
 					$client->showBriefly( {
 						'line' => [ $client->string('FAVORITES_DELETING'), $client->modeParam('title') ]
 					});
 				} else {
-					$num = Slim::Utils::Favorites->clientAdd($client, $url, $title);
+					$num = Slim::Utils::Favorites->new->clientAdd($client, $url, $title);
 					$client->modeParam('favorite', $num);
 					$client->showBriefly( {
 						'line' => [ $client->string('FAVORITES_ADDING'), $client->modeParam('title') ]
@@ -97,7 +97,7 @@ sub setMode {
 	}
 
 	# is the url already a favorite?
-	my $favorite = Slim::Utils::Favorites->findByClientAndURL($client, $url);
+	my $favorite = Slim::Utils::Favorites->new->findByClientAndURL($client, $url);
 
 	# now use another mode for the heavy lifting
 	my %params = (
