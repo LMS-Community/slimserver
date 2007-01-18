@@ -170,7 +170,7 @@ sub editHandler {
 
 		$opml = Slim::Plugin::Favorites::OpmlFavorites->new;
 
-		if ("file://" . $opml->filename ne $params->{'url'}) {
+		if (Slim::Utils::Misc::pathFromFileURL($params->{'url'}) ne $opml->filename) {
 			# if url is not for favorite file use opml direct
 			$opml = Slim::Plugin::Favorites::Opml->new( $params->{'url'} );
 		}
