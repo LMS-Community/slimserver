@@ -289,7 +289,7 @@ sub editHandler {
 	$params->{'changed' } = $changed;
 
 	if ($opml->error) {
-		$params->{'errormsg'} = string('PLUGIN_FAVORITES_' . $opml->error . " " . $opml->filename);
+		$params->{'errormsg'} = string('PLUGIN_FAVORITES_' . $opml->error) . " " . $opml->filename;
 	}
 
 	my @entries;

@@ -3,55 +3,76 @@
 # $Id$
 
 PLUGIN_FAVORITES
+	DE	Favoriten II
 	EN	Favorites II
 
 PLUGIN_FAVORITES_EDITOR
+	DE	Favoriten bearbeiten
 	EN	Favorites Editor
 
 PLUGIN_FAVORITES_NEWENTRY
+	DE	Neuer Eintrag
 	EN	New Entry
 
 PLUGIN_FAVORITES_LOAD
+	DE	Laden
 	EN	Load
 
 PLUGIN_FAVORITES_SAVE
+	DE	Speichern
 	EN	Save
 
 PLUGIN_FAVORITES_NOFILE
+	DE	Datei nicht gefunden
 	EN	File Not Found
 
 PLUGIN_FAVORITES_SAVECHANGED
+	DE	Änderungen speichern
 	EN	Save Changes
 
 PLUGIN_FAVORITES_SET
+	DE	Setzen
 	EN	Set
 
 PLUGIN_FAVORITES_CANCEL
+	DE	Abbrechen
 	EN	Cancel
 
 PLUGIN_FAVORITES_INSERTDEL
+	DE	Gelöschten einfügen
 	EN	Insert Deleted
 
 PLUGIN_FAVORITES_LOADING
+	DE	Lade Favoriten...
 	EN	Loading Favorites...
 
 PLUGIN_FAVORITES_ADD_DESC
+	DE	Einen der folgenden Einträge der aktuellen Eben hinzufügen:
 	EN	Add one of the following at the current level
 
 PLUGIN_FAVORITES_ADDMENU
+	DE	Neues Menü
 	EN	New Menu
 
 PLUGIN_FAVORITES_ADDSTREAM
 	EN	Audio Stream
 
 PLUGIN_FAVORITES_ADDOPMLMENU
+	DE	Remote OPML Menü
 	EN	Remote OPML Menu
 
 PLUGIN_FAVORITES_PREVLEVEL
+	DE	Vorherige Ebene
 	EN	Previous Level
 
 PLUGIN_FAVORITES_LOADERROR
+	DE	Fehler beim Laden der Datei
 	EN	Error Loading File
 
+PLUGIN_FAVORITES_SAVEERROR
+	DE	Fehler beim Speichern der Datei
+	EN	Error Saving File
+
 PLUGIN_FAVORITES_NOTITLE
+	DE	Ohne Titel
 	EN	No Title
