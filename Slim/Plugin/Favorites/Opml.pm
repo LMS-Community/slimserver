@@ -140,8 +140,8 @@ sub filename {
 
 	return $class->{'filename'} unless $name;
 
-	if ($name =~ /^file\:\/\/(.*)/) {
-		$name = $1;
+	if ($name =~ /^file\:\/\//) {
+		$name = Slim::Utils::Misc::pathFromFileURL($name);
 	} elsif (dirname($name) eq '.') {
 		$name = catdir(Slim::Utils::Prefs::get("playlistdir"), $name);
 	}
