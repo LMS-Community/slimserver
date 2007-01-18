@@ -81,14 +81,14 @@
 					<form name="edittitle" method="get" action="[% webroot %]plugins/Favorites/edit.html">
 						<input type="hidden" name="entry" value="[% entry.index %]">
 						<input style="width: 92%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]">
-						<input style="position: absolute; right: 8px;" type="submit" class="stdclick" name="editset" value=[% "PLUGIN_FAVORITES_SET" | string %]>
+						<input style="width: 5%;" type="submit" class="stdclick" name="editset" value=[% "PLUGIN_FAVORITES_SET" | string %]>
 					</form>
 				[% ELSE %]
 					<form name="edittitleurl" method="get" action="[% webroot %]plugins/Favorites/edit.html">
 						<input type="hidden" name="entry" value="[% entry.index %]">
 						<input style="width: 45%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]">
 						<input style="width: 45%;" type="text" class="stdedit" name="entryurl" value="[% entry.url %]">
-						<input style="position: absolute; right: 8px;"type="submit" class="stdclick" name="editset" value=[% "PLUGIN_FAVORITES_SET" | string %]>
+						<input style="width: 5%;" type="submit" class="stdclick" name="editset" value=[% "PLUGIN_FAVORITES_SET" | string %]>
 					</form>
 				[% END %]	
 			[% ELSE %]
