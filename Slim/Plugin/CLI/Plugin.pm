@@ -306,7 +306,7 @@ sub client_socket_read {
 	}			
 
 	# attempt to read data from the stream
-	my $bytes_to_read = 100;
+	my $bytes_to_read = 4096;
 	my $indata = '';
 	my $bytes_read = $client_socket->sysread($indata, $bytes_to_read);
 
@@ -365,28 +365,26 @@ sub client_socket_buf_parse {
 	# parse our buffer to find LF, CR, CRLF or even LFCR (for nutty clients)
 	while ($connections{$client_socket}{'inbuff'}) {
 
-		if ($connections{$client_socket}{'inbuff'} =~ m/([^\r\n]*)([$CR|$LF|$CR$LF|\x00]+)(.*)/s) {
+		if ( $connections{$client_socket}{'inbuff'} =~ m/([$CR|$LF|$CR$LF|\x00]+)/o ) {
+			
+			my $terminator = $1;
+
+			# Parse out the command
+			$connections{$client_socket}{'inbuff'} =~ m/([^\r\n]*)$terminator(.*)/s;
 			
 			# $1 : command
-			# $2 : terminator used
-			# $3 : rest of buffer
+			# $2 : rest of buffer
 
 			# Keep the leftovers for the next run...
-			$connections{$client_socket}{'inbuff'} = $3;
+			$connections{$client_socket}{'inbuff'} = $2;
 
 			# Remember the terminator used
-			if ($connections{$client_socket}{'terminator'} ne $2) {
+			if ($connections{$client_socket}{'terminator'} ne $terminator) {
 
-				$connections{$client_socket}{'terminator'} = $2;
+				$connections{$client_socket}{'terminator'} = $terminator;
 
 				if ($log->is_debug) {
-					my $str;
-
-					for (my $i = 0; $i < length($2); $i++) {
-						$str .= ord(substr($2, $i, 1)) . " ";
-					}
-
-					$log->debug("Using terminator $str for $connections{$client_socket}{'id'}");
+					$log->debug('Using terminator ' . Data::Dump::dump($terminator) . " for $connections{$client_socket}{'id'}");
 				}
 			}
 
