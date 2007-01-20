@@ -12334,9 +12334,14 @@ ARTWORK_PROGRESS
 	DE	Suche Plattenhüllen
 	EN	Artwork Scan
 
-CLEANUP_PROGRESS
-	DE	Datenbank wird aufgeräumt
-	EN	Database Cleanup
+CLEANUP1_PROGRESS
+	EN	Database Cleanup #1
+
+CLEANUP2_PROGRESS
+	EN	Database Cleanup #2
+
+DBOPTIMIZE_PROGRESS
+	EN	Database Optimize
 
 IMPORTER_PROGRESS
 	DE	Fortschritt der Musik-Suche
@@ -12358,6 +12363,9 @@ PROGRESS_IMPORTER_COMPLETE_DESC
 	DE	SlimServer hat das Durchsuchen ihrer Musiksammlung abgeschlossen.
 	EN	SlimServer has finished scanning your music collection.
 
+PROGRESS_IMPORTER_NO_INFO
+	EN	Progress information from the previous scan is not available.
+
 TOTAL_TIME
 	DE	Laufzeit:
 	EN	Total Time:
@@ -12378,3 +12386,8 @@ PLUGINS_CHANGED
 	DE	Die die folgenden Plugins werden beim nächsten Server-Neustart aktiviert bzw. deaktiviert:
 	EN	Changes will take place at the next server restart for the following plugins:
 
+SETUP_VIEW_SCANNING
+	EN	Scanning - View Progress
+
+SETUP_VIEW_NOT_SCANNING
+	EN	View Previous Scan Details

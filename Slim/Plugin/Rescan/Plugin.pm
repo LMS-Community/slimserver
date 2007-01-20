@@ -200,7 +200,9 @@ sub progressBar {
 	if (blessed($p) && $p->name) {
 		if ($p->active) {
 
-			return $client->sliderBar($client->displayWidth(), $p->done/$p->total * 100,0,0);
+			my $complete = $p->total ? $p->done/$p->total : 0;
+
+			return $client->sliderBar($client->displayWidth(), $complete * 100,0,0);
 		} else {
 			my $runtime = $p->finish - $p->start;
 				

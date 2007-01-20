@@ -26,9 +26,9 @@ Valid values for the $args hashref are:
 
 =over 5
 
-=item total (required)
+=item total [optional]
 
-The total number of messages expected to be processed. This item is required.
+The total number of messages expected to be processed. This should be specified unless the number of items is not known, in which case it can be set later with $class->total
 
 =item type [optional]
 
@@ -56,7 +56,6 @@ sub new {
 	my $class = shift;
 	my $args  = shift;
 
-	my $done;
 	my $obj;
 	my $now = Time::HiRes::time();
 
@@ -65,21 +64,16 @@ sub new {
 		'name' => $args->{'name'}  || 'NONAME',
 	});
 
-	if (defined $args->{'total'}) {
+	$obj->total($args->{'total'});
+	$obj->done(0);
+	$obj->start ( time() );
+	$obj->active(1);
 
-		$obj->total($args->{'total'});
-		$obj->done(0);
-		$obj->start ( time() );
-		$obj->active(1);
-
-		$obj->update;
-
-		$done = 0;
-	}
+	$obj->update;
 
 	my $ref = {
 		'total' => $args->{'total'},
-		'done'  => $done,
+		'done'  => 0,
 		'obj'   => $obj,
 		'dbup'  => 0,
 		'dball' => $args->{'every'},
@@ -95,10 +89,36 @@ sub new {
 		$ref->{'fh'} = \*STDOUT,
 		$ref->{'term'} = $args->{'term'} || -t $ref->{'fh'};
 
-		$ref->_initBar,
+		$ref->_initBar if $args->{'total'},
 	}
 
 	return $ref;
+}
+
+=head2 total
+
+public instance () total (Integer $total)
+
+Description:
+Set the total number of items for a progress instance.  Used when the progress instance is started without knowing the
+total number of elements.  Should be called before calling update for a progress instance.
+
+=cut
+
+sub total {
+	my $class = shift;
+	my $total = shift;
+
+	$class->{'total'} = $total;
+
+	$class->{'obj'}->total( $total );
+	$class->{'obj'}->update;
+
+	if ($class->{'bar'}) {
+		# bar only times duration of progress after total set to get accurate tracks/sec
+		$class->{'start_time'} = Time::HiRes::time();
+		$class->_initBar;
+	}
 }
 
 =head2 update
@@ -266,12 +286,14 @@ sub _initBar {
 
 	my @chars = (' ') x $self->{'bar_size'};
 
-	print $fh sprintf("\r%3d%% [%s] %6.2f tracks/sec %sm%ss LEFT",
+	print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %sm%ss LEFT",
 		    0, join('', @chars), 0, '--', '--');
 }
 
 sub _updateBar {
 	my ($self, $num_done) = @_;
+
+	return unless $self->{'total'};
 
 	my $fh       = $self->{'fh'};
 	my $time_now = Time::HiRes::time();
@@ -320,7 +342,7 @@ sub _updateBar {
 		my $min = int($eta/60) % 60;
 		my $sec = int($eta % 60);
 
-		print $fh sprintf("\r%3d%% [%s] %6.2f tracks/sec %02dm%02ds LEFT",
+		print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %02dm%02ds LEFT",
 				$percentage, join('', @chars), $self->{'avg_msgs_per_sec'}, $min, $sec);
 
 	} else {
@@ -368,12 +390,12 @@ sub _finalBar {
 			$chars[$_] = '=';
 		}
 
-		print $fh sprintf("\r%3d%% [%s] %6.2f tracks/sec %02dm%02ds DONE\n",
+		print $fh sprintf("\r%3d%% [%s] %6.2f items/sec %02dm%02ds DONE\n",
 		      $percentage, join('', @chars), $msgs_per_sec, $min, $sec);
 
 	} else {
 
-		print $fh sprintf("\n%3d%% Completed %6.2f tracks/sec in %02dm%02ds\n",
+		print $fh sprintf("\n%3d%% Completed %6.2f items/sec in %02dm%02ds\n",
 		      $percentage, $msgs_per_sec, $min, $sec);
 	}
 }

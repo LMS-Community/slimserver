@@ -123,17 +123,9 @@ sub addLibraryStats {
 
 		if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'active' => 1 })->first) {
 
-			my $bar = '';
-
-			for (my $i = 0; $i < $p->total; $i += $p->total / 40) {
-
-				$params->{'cell_full'} = $i < $p->done;
-				$bar .= ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", $params)};
-			}
-
 			$params->{'progress'} = {
 				'name' => $p->name,
-				'bar'  => $bar,
+				'bar'  => Slim::Web::Pages::Progress::progressBar($p, 40),
 				'obj'  => $p,
 			}
 		}

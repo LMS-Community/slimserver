@@ -286,6 +286,14 @@ sub scanDirectory {
 
 	my $files  = [];
 
+	# Send progress info to the db and progress bar
+	my $progress = Slim::Utils::Progress->new({
+		'type' => 'importer',
+		'name' => $args->{'scanName'} || 'directory',
+		'bar' => 1,
+		'every'=> ($args->{'scanName'} && $args->{'scanName'} eq 'playlist'), # record all playists in the db
+	});
+
 	if ($::rescan) {
 		$files = $class->findFilesForRescan($topDir->stringify, $args);
 	} else {
@@ -296,6 +304,8 @@ sub scanDirectory {
 
 		$log->warn("Didn't find any valid files in: [$topDir]");
 
+		$progress->final;
+
 		return $foundItems;
 
 	} else {
@@ -303,13 +313,7 @@ sub scanDirectory {
 		$log->info(sprintf("Found %d files in %s\n", scalar @{$files}, $topDir));
 	}
 
-	# Send progress info to the db and progress bar
-	my $progress = Slim::Utils::Progress->new({
-		'type' => 'importer',
-		'name' => $args->{'scanName'} || 'directory',
-		'total'=> scalar @{$files}, 'bar' => 1,
-		'every'=> ($args->{'scanName'} && $args->{'scanName'} eq 'playlist'), # record all playists in the db
-	});
+	$progress->total( scalar @{$files} );
 
 	# If we're starting with a clean db - don't bother with searching for a track
 	my $method   = $::wipe ? 'newTrack' : 'updateOrCreate';

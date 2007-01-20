@@ -18,7 +18,7 @@
 
 [% PROCESS pageheader.html %]
 
-	<div>[% type _ "_PROGRESS_DESC" | string %]</div>
+	[% IF desc %]<div>[% type _ "_PROGRESS_DESC" | string %]</div>[% END %]
 
 	[% odd = 1 %]
 	[% FOREACH num = [0..10] %]

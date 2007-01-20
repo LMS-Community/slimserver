@@ -336,6 +336,8 @@ sub optimizeDB {
 
 	logger('scan.import')->info("Start schema_optimize");
 
+	my $progress = Slim::Utils::Progress->new({ 'type' => 'importer', 'name' => 'dboptimize' });
+
 	my ($driver) = $class->sourceInformation;
 
 	eval {
@@ -352,6 +354,8 @@ sub optimizeDB {
 	}
 
 	logger('scan.import')->info("End schema_optimize");
+
+	$progress->final;
 }
 
 =head2 migrateDB()
@@ -1021,7 +1025,7 @@ sub cleanupStaleTrackEntries {
 	my $count    = $iterator->count;
 
 	my $progress = Slim::Utils::Progress->new({
-		'type' => 'importer', 'name' => 'cleanup', 'total' => $count, 'bar' => 1
+		'type' => 'importer', 'name' => 'cleanup1', 'total' => $count, 'bar' => 1
 	});
 
 	# fetch one at a time to keep memory usage in check.
@@ -1036,15 +1040,20 @@ sub cleanupStaleTrackEntries {
 		$progress->update;
 	}
 
-	$progress->final($count);
+	$progress->final;
 
 	logger('scan.import')->info("Finished with stale track cleanup.");
 
 	# Walk the Album, Contributor and Genre tables to see if we have any dangling
 	# entries, pointing to non-existant tracks.
+
+	$progress = Slim::Utils::Progress->new({ 'type' => 'importer', 'name' => 'cleanup2' });
+
 	Slim::Schema::Contributor->removeStaleDBEntries('contributorTracks');
 	Slim::Schema::Album->removeStaleDBEntries('tracks');
 	Slim::Schema::Genre->removeStaleDBEntries('genreTracks');
+
+	$progress->final;
 
 	# We're done.
 	$self->forceCommit;
@@ -1245,7 +1254,7 @@ sub mergeVariousArtistsAlbums {
 		$progress->update($albumObj->name);
 	}
 
-	$progress->final($count) if $progress;
+	$progress->final($count);
 
 	Slim::Music::Import->endImporter('mergeVariousAlbums');
 }

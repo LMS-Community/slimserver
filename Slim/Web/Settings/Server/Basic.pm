@@ -92,6 +92,8 @@ sub handler {
 		Slim::Control::Request::executeRequest($client, $rescanType);
 	}
 
+	$paramRef->{'scanning'} = Slim::Music::Import->stillScanning;
+
 	my @versions = Slim::Utils::Misc::settingsDiagString();
 
 	$paramRef->{'versionInfo'} = join( "<br />\n", @versions ) . "\n";

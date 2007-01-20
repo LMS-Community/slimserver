@@ -31,7 +31,11 @@ function ajaxProgressCallback(theData) {
 	}
 	
 	if (parsedData['message']) {
-		refreshElement('message',parsedData['message']+" [% 'TOTAL_TIME' | string %] "+parsedData['total_time']);
+		if (parsedData['total_time']) {
+			refreshElement('message',parsedData['message']+" [% 'TOTAL_TIME' | string %] "+parsedData['total_time']);
+		} else {
+			refreshElement('message',parsedData['message']);
+		}
 	} else {
 		setTimeout( "ajaxProgressRefresh()", 5000);
 	}

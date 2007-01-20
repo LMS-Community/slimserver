@@ -45,6 +45,9 @@
 		</select>
 		
 		<p><input name="rescan" type="submit" class="stdclick" value="[% "SETUP_RESCAN_BUTTON" | string %]"></p>
+
+		<a href="[% webroot %]progress.html?type=importer">[% IF scanning %][% "SETUP_VIEW_SCANNING" | string %][% ELSE %][% "SETUP_VIEW_NOT_SCANNING" | string %][% END %]</a>
+
 	</div>
 
 	[% IF prefs.exists('itunes') || prefs.exists('musicmagic') %]
