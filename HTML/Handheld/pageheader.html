@@ -14,7 +14,7 @@
 			<td>[% PROCESS crumblist %]</td>
 			<td align="right"><nobr>[% PROCESS galleryselect.html %]</nobr></td>
 		</tr>
-		[% content %]
+		[% IF NOT path.match("settings/"); content; END; %]
 	</table>
 [%- END -%]
 
@@ -54,6 +54,11 @@
 		</tr>
 	</table>
 
-[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
-[%- PROCESS submenu IF pwd_list and not noSubMenu %]
+	[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
+	[%- PROCESS submenu IF pwd_list and not noSubMenu %]
 
+	[% IF pageHeaderInfo && path.match("settings/") %]
+		<div style="background-color:[% subtitleC %]">
+			<font color="#ffffff">[% pageHeaderInfo %]</font>
+		</div>
+	[% END %]

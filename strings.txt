@@ -12387,7 +12387,9 @@ PLUGINS_CHANGED
 	EN	Changes will take place at the next server restart for the following plugins:
 
 SETUP_VIEW_SCANNING
+	DE	Durchsuchen gestartet - Fortschritt anzeigen
 	EN	Scanning - View Progress
 
 SETUP_VIEW_NOT_SCANNING
+	DE	Zeige Details zur vorherige Suche
 	EN	View Previous Scan Details

@@ -1,10 +1,10 @@
 [% pagetitle = "SCANNER_PROGRESS" | string %]
-[% IF NOT total_time; refreshurl = "progress.html?type=importer"; END %]
+[% IF NOT total_time; refresh=5; refreshurl = "progress.html?type=importer"; END %]
 [% pageHeaderMenu = pagetitle %]
 
 [% PROCESS pageheader.html %]
 
-<p>[% "IMPORTER_PROGRESS_DESC" | string %]</p>
+[% IF desc %]<p>[% "IMPORTER_PROGRESS_DESC" | string %]</p>[% END %]
 [% odd = 1 %]
 
 [% FOREACH item = progress_items %]
