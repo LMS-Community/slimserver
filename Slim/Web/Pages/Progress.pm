@@ -21,9 +21,9 @@ sub progress {
 
 	$args->{'type'} = $params->{'type'} if $params->{'type'};
 
-	my @progress = Slim::Schema->rs('Progress')->search( $args, { 'order_by' => 'start' } )->all;
+	my $progress = Slim::Schema->rs('Progress')->search( $args, { 'order_by' => 'start' } );
 
-	for my $p (@progress) {
+	while (my $p = $progress->next) {
 
 		my $bar;
 		my $barFinish = $p->finish ? $barLen : $p->total ? $p->done / $p->total * $barLen : -1;
@@ -34,12 +34,14 @@ sub progress {
 
 		my $runtime = ($p->finish || time()) - $p->start;
 
-		my ($h0, $h1, $m0, $m1) = Slim::Utils::DateTime::timeDigits($runtime);
+		my $hrs  = int($runtime / 3600);
+		my $mins = int(($runtime - $hrs * 60)/60);
+		my $sec  = $runtime - 3600 * $hrs - 60 * $mins;
 
 		my $item = {
 			'obj'  => $p,
 			'bar'  => $bar,
-			'time' => "$h0$h1:$m0$m1".sprintf(":%02s",($runtime % 60)),
+			'time' => sprintf("%02d:%02d:%02d", $hrs, $mins, $sec),
 		};
 
 		$total_time += $runtime;
@@ -52,12 +54,15 @@ sub progress {
 	# special message for importers once finished
 	if ($params->{'type'} && $params->{'type'} eq 'importer' && !Slim::Music::Import->stillScanning) {
 
-		if (@progress) {
+		if ($progress) {
 
 			$params->{'message'}    = Slim::Utils::Strings::string('PROGRESS_IMPORTER_COMPLETE_DESC');
 
-			my ($h0, $h1, $m0, $m1) = Slim::Utils::DateTime::timeDigits($total_time);
-			$params->{'total_time'} = "$h0$h1:$m0$m1".sprintf(":%02s",($total_time % 60));
+			my $hrs  = int($total_time / 3600);
+			my $mins = int(($total_time - $hrs * 60)/60);
+			my $sec  = $total_time - 3600 * $hrs - 60 * $mins;
+
+			$params->{'total_time'} = sprintf("%02d:%02d:%02d", $hrs, $mins, $sec);
 
 		} else {
 
