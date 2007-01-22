@@ -866,13 +866,13 @@ sub set {
 	if (defined $ind) {
 
 		if ($log) {
-			$log->debug(sprintf("Setting prefs $key $ind to " . ((defined $value) ? $value : "undef")));
+			$log->debug("Setting prefs $key $ind to " . ((defined $value) ? $value : "undef"));
 		}
 
 	} else {
 
 		if ($log) {
-			$log->debug(sprintf("Setting prefs $key to " . ((defined $value) ? $value : "undef")));
+			$log->debug("Setting prefs $key to " . ((defined $value) ? $value : "undef"));
 		}
 	}
 
