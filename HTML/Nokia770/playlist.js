@@ -87,7 +87,8 @@ function refreshPlaylistElements(theData, r) {
 			$(thisId).innerHTML = innerText;
 		}
 	}
-	refreshElement('artist_' + r.toString(),parsedData['artist_0']);
+	var artist_elem = 'artist_' + r.toString();
+	refreshElement('artist_' + r.toString(),parsedData[artist_elem]);
 	refreshItemClass(parsedData, r);
 }
 
