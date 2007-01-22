@@ -21,9 +21,9 @@ sub progress {
 
 	$args->{'type'} = $params->{'type'} if $params->{'type'};
 
-	my $progress = Slim::Schema->rs('Progress')->search( $args, { 'order_by' => 'start' } );
+	my @progress = Slim::Schema->rs('Progress')->search( $args, { 'order_by' => 'start,id' } )->all;
 
-	while (my $p = $progress->next) {
+	for my $p (@progress) {
 
 		my $bar;
 		my $barFinish = $p->finish ? $barLen : $p->total ? $p->done / $p->total * $barLen : -1;
@@ -54,7 +54,7 @@ sub progress {
 	# special message for importers once finished
 	if ($params->{'type'} && $params->{'type'} eq 'importer' && !Slim::Music::Import->stillScanning) {
 
-		if ($progress) {
+		if (@progress) {
 
 			$params->{'message'}    = Slim::Utils::Strings::string('PROGRESS_IMPORTER_COMPLETE_DESC');
 
