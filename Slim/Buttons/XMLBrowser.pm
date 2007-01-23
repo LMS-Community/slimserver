@@ -81,9 +81,9 @@ sub setMode {
 		my $item = $client->modeParam('item');
 
 		# give user feedback while loading
-		my $string = $client->modeParam('header') 
-			? ( $client->string( $client->modeParam('header') ) || $client->string('XML_LOADING') )
-			: $client->string('XML_LOADING');
+		my $string = $client->modeParam('header');
+
+		$string = Slim::Utils::Strings::stringExists($string) ? $client->string($string) : $client->string('XML_LOADING');
 
 		$client->block(
 			$string,
