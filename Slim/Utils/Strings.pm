@@ -352,8 +352,8 @@ Return localised string for token $token, or token itself.
 =cut
 
 sub getString {
-	my $token = uc(shift);
-	return $defaultStrings->{$token} || $token;
+	my $token = shift;
+	return $defaultStrings->{uc($token)} || $token;
 }
 
 =head2 stringExists ( $token )
