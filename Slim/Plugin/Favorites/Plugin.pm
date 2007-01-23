@@ -29,6 +29,8 @@ use File::Spec::Functions qw(:ALL);
 
 use Slim::Plugin::Favorites::Opml;
 use Slim::Plugin::Favorites::OpmlFavorites;
+use Slim::Plugin::Favorites::Directory;
+use Slim::Plugin::Favorites::Settings;
 
 my $log = logger('favorites');
 
@@ -36,6 +38,8 @@ sub initPlugin {
 	my $class = shift;
 
 	$class->SUPER::initPlugin(@_);
+
+	Slim::Plugin::Favorites::Settings->new;
 
 	# register ourselves as the opml editor for xmlbrowser
 	Slim::Web::XMLBrowser::registerEditor( qr/^file:\/\/.*\.opml$/, 'plugins/Favorites/edit.html' );
@@ -116,11 +120,18 @@ sub playFavorite {
 sub webPages {
 	my $class = shift;
 
-	Slim::Web::Pages->addPageLinks('browse', { 'FAVORITES' => 'plugins/Favorites/index.html' });
-#	Slim::Web::Pages->addPageLinks('plugins', { 'PLUGIN_FAVORITES_EDITOR' => 'plugins/Favorites/edit.html' });
-
 	Slim::Web::HTTP::addPageFunction('plugins/Favorites/index.html', \&indexHandler);
 	Slim::Web::HTTP::addPageFunction('plugins/Favorites/edit.html', \&editHandler);
+
+	Slim::Web::Pages->addPageLinks('browse', { 'FAVORITES' => 'plugins/Favorites/index.html' });
+
+	addEditLink();
+}
+
+sub addEditLink {
+	my $enabled = Slim::Utils::Prefs::get('plugin_favorites_opmleditor');
+
+	Slim::Web::Pages->addPageLinks('plugins', {	'PLUGIN_FAVORITES_PLAYLIST_EDITOR' => $enabled ? 'plugins/Favorites/edit.html?new=1' : undef });
 }
 
 sub indexHandler {
@@ -141,7 +152,6 @@ my $level = 0;
 my $currentLevel;
 my @prevLevels;
 my $deleted;
-my $filename;
 my $changed;
 
 sub editHandler {
@@ -156,13 +166,32 @@ sub editHandler {
 	#}
 
 	# action any params set
+	if ($params->{'new'} && $params->{'new'} == 1) {
+		$opml = Slim::Plugin::Favorites::Opml->new;
+		$level = 0;
+		$currentLevel = undef;
+		@prevLevels = ();
+		$deleted = undef;
+		$changed = undef;
+	}
+
 	if ($params->{'title'}) {
 		$opml->title( $params->{'title'} );
 		$changed = 1;
 	}
 
-	if ($params->{'save'}) {
+	if ($params->{'savefile'} || $params->{'savechanged'}) {
+		$opml->filename($params->{'filename'}) if $params->{'savefile'};
 		$opml->save;
+		$changed = undef unless $opml->error;
+	}
+
+	if ($params->{'loadfile'}) {
+		$opml->load($params->{'filename'});
+		$level = 0;
+		$currentLevel = $opml->toplevel;
+		@prevLevels = ();
+		$deleted = undef;
 		$changed = undef;
 	}
 
@@ -194,17 +223,52 @@ sub editHandler {
 		}
 	}
 
+	if ($params->{'newentrymore'}) {
+
+		$params->{'newentry'} = 1;
+
+		my $sourceInd = 1;
+
+		for my $infoSource (Slim::Utils::Prefs::getArray('plugin_favorites_directories')) {
+
+			my $directory = Slim::Plugin::Favorites::Directory->new($infoSource);
+
+			my $extEntry = {
+				'ind'   => $sourceInd++,
+				'title' => $directory->title
+			};
+
+			my $catInd = 1;
+
+			for my $cat (@{$directory->categories}) {
+				push @{$extEntry->{'menu'}}, {
+					'ind'  => $catInd++,
+					'name' => $cat,
+					'opts' => $directory->itemNames($cat),
+				};
+			}
+
+			push @{$params->{'external'}}, $extEntry;
+		}
+	}
+
 	if (my $action = $params->{'action'}) {
+
 		if ($action eq 'descend') {
+
 			$prevLevels[ $level++ ] = {
 				'ref'   => $currentLevel,
 				'title' => @$currentLevel[$params->{'entry'}]->{'text'},
 			};
+
 			$currentLevel = @$currentLevel[$params->{'entry'}]->{'outline'};
+
 		}
 
 		if ($action eq 'ascend') {
+
 			my $pop = defined ($params->{'levels'}) ? $params->{'levels'} : 1;
+
 			while ($pop) {
 				$currentLevel = $prevLevels[ --$level ]->{'ref'} if $level > 0;
 				--$pop;
@@ -246,10 +310,6 @@ sub editHandler {
 			$changed = 1;
 		}
 
-		if ($action eq 'newentry') {
-			$params->{'newentry'} = 1;
-		}
-
 		if ($action =~ /play|add/ && $client) {
 			my $stream = @$currentLevel[$params->{'entry'}]->{'URL'};
 			my $title  = @$currentLevel[$params->{'entry'}]->{'text'};
@@ -282,14 +342,43 @@ sub editHandler {
 		$changed = 1;
 	}
 
+	if ($params->{'newopmlmenu'}) {
+		push @$currentLevel, {
+			'text' => $params->{'opmlmenutitle'},
+			'URL'  => $params->{'opmlmenuurl'},
+		};
+		$changed = 1;
+	}
+
+	# search for external information source selection in key: extsel.$sourceIndex.$categoryIndex
+	if ($params->{'url_query'} =~ /extsel\./) {
+		for my $key (keys %$params) {
+			if ($key =~ /^extsel\.(\d+)\.(\d+)/) {
+				my $source = Slim::Utils::Prefs::getInd('plugin_favorites_directories', $1 - 1);
+				my $name = $params->{"extval.$1.$2"};
+				my $entry = Slim::Plugin::Favorites::Directory->new($source)->item($2 - 1, $name);
+				push @$currentLevel, $entry if $entry;
+				$changed = 1;
+				last;
+			}
+		}
+	}
+
+	if ($params->{'load'}) { $params->{'loaddialog'} = 1; }
+	if ($params->{'save'}) { $params->{'savedialog'} = 1; }
+
 	# set params for page build
-	$params->{'title'} = $opml->title;
-	$params->{'previous'} = ($level > 0);
-	$params->{'deleted'} = defined($deleted) ? $deleted->{'text'} : undef;
-	$params->{'changed' } = $changed;
+	$params->{'favorites'} = $opml->isa('Slim::Plugin::Favorites::OpmlFavorites');
+	$params->{'title'}     = $opml->title;
+	$params->{'previous'}  = ($level > 0);
+	$params->{'deleted'}   = defined($deleted) ? $deleted->{'text'} : undef;
+	$params->{'changed' }  = $changed;
+	$params->{'filename'}  = $opml->filename;
+	$params->{'advanced'}  = Slim::Utils::Prefs::get('plugin_favorites_advanced');
 
 	if ($opml->error) {
 		$params->{'errormsg'} = string('PLUGIN_FAVORITES_' . $opml->error) . " " . $opml->filename;
+		$opml->clearerror;
 	}
 
 	my @entries;

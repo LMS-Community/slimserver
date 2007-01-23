@@ -6,6 +6,9 @@ PLUGIN_FAVORITES_EDITOR
 	DE	Favoriten bearbeiten
 	EN	Favorites Editor
 
+PLUGIN_FAVORITES_PLAYLIST_EDITOR
+	EN	OPML Playlist Editor
+
 PLUGIN_FAVORITES_NEWENTRY
 	DE	Neuer Eintrag
 	EN	New Entry
@@ -17,6 +20,12 @@ PLUGIN_FAVORITES_LOAD
 PLUGIN_FAVORITES_SAVE
 	DE	Speichern
 	EN	Save
+
+PLUGIN_FAVORITES_LOADFILE
+	EN	Enter filename to load
+
+PLUGIN_FAVORITES_SAVEFILE
+	EN	Enter filename to save
 
 PLUGIN_FAVORITES_NOFILE
 	DE	Datei nicht gefunden
@@ -33,6 +42,9 @@ PLUGIN_FAVORITES_SET
 PLUGIN_FAVORITES_CANCEL
 	DE	Abbrechen
 	EN	Cancel
+
+PLUGIN_FAVORITES_MORE
+	EN	More
 
 PLUGIN_FAVORITES_INSERTDEL
 	DE	Gelöschten einfügen
@@ -57,6 +69,9 @@ PLUGIN_FAVORITES_ADDOPMLMENU
 	DE	Remote OPML Menü
 	EN	Remote OPML Menu
 
+PLUGIN_FAVORITES_ADDSLIMPICKS
+	EN	Entry From Slim Picks
+
 PLUGIN_FAVORITES_PREVLEVEL
 	DE	Vorherige Ebene
 	EN	Previous Level
@@ -72,3 +87,30 @@ PLUGIN_FAVORITES_SAVEERROR
 PLUGIN_FAVORITES_NOTITLE
 	DE	Ohne Titel
 	EN	No Title
+
+SETUP_PLUGIN_FAVORITES_DESC
+	EN	The favorites editor allows you to edit your list of favorite files and radio stations.  It is accessed by clicking on the edit icon when browsing Favorites from the web interface.
+
+SETUP_PLUGIN_FAVORITES_ADVANCED
+	EN	Advanced Mode
+
+SETUP_PLUGIN_FAVORITES_ADVANCED_DESC
+	EN	Advanced mode allows you to add radio stations from external directories such as Slim Picks via 'New Entry'.
+
+SETUP_PLUGIN_FAVORITES_ADD_DIRECTORY_DESC
+	EN	You may add radio stations directories below.<p>Stations from each directory will then be available to add to your Favorites list or other opml playlists via the New Entry menu of the Favorites editor.  (Pressing the reset button restores the default Slim Picks directory.)
+
+SETUP_PLUGIN_FAVORITES_ADD_DIRECTORY
+	EN	Add New Directory Location
+
+SETUP_PLUGIN_FAVORITES_EXISTING_DIRECTORIES
+	EN	Existing Directories
+
+SETUP_PLUGIN_FAVORITES_EDIT
+	EN	OPML Playlist Editor	
+
+SETUP_PLUGIN_FAVORITES_EDIT_DESC
+	EN	The favorites editor will also edit any other opml based playlist in on your server.  Select the option below to add this mode to the Plugin links on the home page.
+
+SETUP_PLUGIN_FAVORITES_RESET
+	EN	Reset To Default

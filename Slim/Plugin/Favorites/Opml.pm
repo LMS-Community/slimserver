@@ -18,13 +18,33 @@ use File::Temp qw(tempfile);
 
 my $log = logger('favorites');
 
+my $nullopml = {
+	'head' => {
+		'title'          => string('NO_TITLE'),
+		'expansionState' => {},
+	},
+	'version' => '1.0',
+	'body'    => [
+		{
+			'outline' => [],
+		}
+	],
+};
+
 sub new {
 	my $class = shift;
 	my $name  = shift;
 
 	my $ref = bless {}, $class;
 
-	$ref->load($name) if $name;
+	if ($name) {
+
+		$ref->load($name);
+
+	} else {
+
+		$ref->{'opml'} = $nullopml;
+	}
 
 	return $ref;
 }
@@ -45,28 +65,18 @@ sub load {
 
 			$log->info("Loaded OPML file $filename");
 
+			return $class->{'opml'};
+
 		} else {
 
 			$log->warn("Failed to load OPML $filename ($!)");
 
-			$class->{'error'} = 'loaderror';
 		}
     }
 
-	$class->{'opml'} ||= {
-		'head' => {
-			'title'          => string('NO_TITLE'),
-			'expansionState' => {},
-		},
-		'version' => '1.0',
-		'body'    => [
-			{
-				'outline' => [],
-			}
-		],
-	};
+	$class->{'opml'} = $nullopml;
 
-	$class->{'error'} = undef;
+	$class->{'error'} = 'loaderror';
 
     return $class->{'opml'};
 }
@@ -81,7 +91,7 @@ sub save {
 	my $cache = Slim::Utils::Cache->new();
 	$cache->remove( Slim::Utils::Misc::fileURLFromPath($filename) . '_parsedXML' );
 
-    my $dir = dirname($filename);
+    my $dir = $filename ? dirname($filename) : undef;
 
 	if (-w $dir) {
 
@@ -132,6 +142,10 @@ sub title {
 
 sub error {
 	return shift->{'error'};
+}
+
+sub clearerror {
+	delete shift->{'error'};
 }
 
 sub filename {
