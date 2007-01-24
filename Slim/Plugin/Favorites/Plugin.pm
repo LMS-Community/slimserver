@@ -368,7 +368,7 @@ sub editHandler {
 	if ($params->{'save'}) { $params->{'savedialog'} = 1; }
 
 	# set params for page build
-	$params->{'favorites'} = $opml->isa('Slim::Plugin::Favorites::OpmlFavorites');
+	$params->{'favorites'} = (defined $opml && $opml->isa('Slim::Plugin::Favorites::OpmlFavorites'));
 	$params->{'title'}     = $opml->title;
 	$params->{'previous'}  = ($level > 0);
 	$params->{'deleted'}   = defined($deleted) ? $deleted->{'text'} : undef;

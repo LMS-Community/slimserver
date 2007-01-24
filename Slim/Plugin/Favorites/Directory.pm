@@ -4,26 +4,15 @@ package Slim::Plugin::Favorites::Directory;
 
 # Class to implement directory menus for slim picks and others
 
+use base qw(Slim::Plugin::Favorites::Opml);
+
 use strict;
 
 use Slim::Utils::Log;
-use XML::Simple;
 
-my $cache_time = 30 * 60; # time to cache directory opml files for
+my $cache_time = 3600; # cache for 60 mins
 
 my $log = logger('favorites');
-
-
-sub new {
-	my $class = shift;
-	my $url   = shift;
-
-	my $ref = bless {}, $class;
-
-	$ref->load($url) if $url;
-
-	return $ref;
-}
 
 sub load {
 	my $class = shift;
@@ -31,35 +20,18 @@ sub load {
 
 	my $cache = Slim::Utils::Cache->new();
 
-	# FIXME - this is sync http for the moment
-	unless ( $class->{'opml'} = $cache->get( 'opml_dir:' . $url ) ) {
+	$class->{'opml'} = $cache->get( 'opml_dir:' . $url );
 
-		$log->info("Fetching $url directory");
+	return if $class->{'opml'};
 
-		my $http = Slim::Player::Protocols::HTTP->new( { 'url' => $url, 'create' => 0, 'timeout' => 10 } );
+	$class->SUPER::load($url);
 
-		if ( defined $http ) {
+	$cache->set( 'opml_dir:' . $url, $class->{'opml'}, $cache_time );
 
-			my $content = $http->content;
-			$http->close;
-
-			if ( defined $content ) {
-
-				$class->{'opml'} = eval { XMLin( \$content, forcearray => [ 'outline', 'body' ], SuppressEmpty => undef ) };
-
-				if ($@) {
-
-					$log->warn("Failed to parse directory OPML <$url> because: $@");
-
-				} else {
-
-					$cache->set( 'opml_dir:' . $url, $class->{'opml'}, $cache_time );
-
-				}
-			}
-		}
-	}
+	return $class->{'opml'};
 }
+
+sub save {}
 
 sub categories {
 	my $class = shift;
@@ -113,14 +85,6 @@ sub item {
 	}
 
 	return undef;
-}
-
-sub title {
-	my $class = shift;
-
-	return unless $class->{'opml'};
-
-	return $class->{'opml'}->{'head'}->{'title'};
 }
 
 1;

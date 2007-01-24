@@ -57,19 +57,32 @@ sub load {
 
 	$class->{'opml'} = undef;
 
-    if (defined $filename) {
+	if (Slim::Music::Info::isRemoteURL($filename)) {
+
+		$log->info("Fetching $name");
+
+		my $http = Slim::Player::Protocols::HTTP->new( { 'url' => $filename, 'create' => 0, 'timeout' => 10 } );
+
+		if (defined $http) {
+			# NB this is not async at present - the following blocks the server user interface but not streaming
+			$filename = \$http->content;
+			$http->close;
+		}
+	}
+
+	if (defined $filename) {
 
 		$class->{'opml'} = eval { XMLin( $filename, forcearray => [ 'outline', 'body' ], SuppressEmpty => undef ) };
 
 		if (defined $class->{'opml'}) {
 
-			$log->info("Loaded OPML file $filename");
+			$log->info("Loaded OPML from $name");
 
 			return $class->{'opml'};
 
 		} else {
 
-			$log->warn("Failed to load OPML $filename ($!)");
+			$log->warn("Failed to load from $name ($!)");
 
 		}
     }
