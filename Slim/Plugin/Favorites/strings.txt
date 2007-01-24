@@ -21,11 +21,20 @@ PLUGIN_FAVORITES_SAVE
 	DE	Speichern
 	EN	Save
 
+PLUGIN_FAVORITES_IMPORT
+	EN	Import
+
 PLUGIN_FAVORITES_LOADFILE
-	EN	Enter filename to load
+	EN	Enter filename/url to load
 
 PLUGIN_FAVORITES_SAVEFILE
 	EN	Enter filename to save
+
+PLUGIN_FAVORITES_IMPORT_DESC
+	EN	Import the contents of a playlist at the current level
+
+PLUGIN_FAVORITES_IMPORTFILE
+	EN	Enter filename/url to import
 
 PLUGIN_FAVORITES_NOFILE
 	DE	Datei nicht gefunden

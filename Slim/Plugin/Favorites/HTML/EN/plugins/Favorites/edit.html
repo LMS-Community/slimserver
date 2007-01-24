@@ -67,6 +67,17 @@
 		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 	</form>
 
+[% ELSIF importdialog %]
+
+	[% "PLUGIN_FAVORITES_IMPORT_DESC" | string %]
+	<p></p>
+	<form name="importfile" method="get" action="[% webroot %]plugins/Favorites/edit.html">
+	[% "PLUGIN_FAVORITES_IMPORTFILE" | string %]
+		<input type="text" class="stdedit" name="filename" size="60">
+		<input type="submit" class="stdclick" name="importfile" value="[% "PLUGIN_FAVORITES_IMPORT" | string %]">
+		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
+	</form>
+
 [% ELSIF edittitle %]
 
 	<form name="title" method="get" action="[% webroot %]plugins/Favorites/edit.html">
@@ -169,6 +180,8 @@
 		[% ELSE %]	
 			<input type="submit" class="stdclick" name="load" value="[%	"PLUGIN_FAVORITES_LOAD" | string %]">
 			<input type="submit" class="stdclick" name="save" value="[% "PLUGIN_FAVORITES_SAVE" | string %]">
+			<input type="submit" class="stdclick" name="import" value="[% "PLUGIN_FAVORITES_IMPORT" | string %]">
+
 		[% END %]	
 	</form>
 

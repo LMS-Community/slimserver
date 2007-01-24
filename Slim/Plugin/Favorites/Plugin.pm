@@ -27,10 +27,14 @@ use Slim::Utils::Strings qw(string);
 
 use File::Spec::Functions qw(:ALL);
 
+use Slim::Formats;
+
 use Slim::Plugin::Favorites::Opml;
 use Slim::Plugin::Favorites::OpmlFavorites;
 use Slim::Plugin::Favorites::Directory;
 use Slim::Plugin::Favorites::Settings;
+use Slim::Plugin::Favorites::Playlist;
+
 
 my $log = logger('favorites');
 
@@ -193,6 +197,33 @@ sub editHandler {
 		@prevLevels = ();
 		$deleted = undef;
 		$changed = undef;
+	}
+
+	if ($params->{'importfile'}) {
+		my $filename = $params->{'filename'};
+
+		if ($filename =~ /\.opml/) {
+
+			for my $entry (@{Slim::Plugin::Favorites::Opml->new($filename)->toplevel}) {
+				push @$currentLevel, $entry;
+			}
+
+		} elsif (my $fh = FileHandle->new($filename)) {
+
+			my $type = Slim::Music::Info::contentType($filename);
+			my $playlistClass = Slim::Formats->classForFormat($type);
+
+			Slim::Formats->loadTagFormatForType($type);
+
+			# subclass usual playlist class to avoid adding to the database when it is read
+			$playlistClass = Slim::Plugin::Favorites::Playlist->new($playlistClass);
+
+			for my $entry ( eval { $playlistClass->read($fh) } ) {
+				push @$currentLevel, $entry;
+			}
+
+			close($fh);
+		}
 	}
 
 	if ($params->{'url'}) {
@@ -364,19 +395,23 @@ sub editHandler {
 		}
 	}
 
-	if ($params->{'load'}) { $params->{'loaddialog'} = 1; }
-	if ($params->{'save'}) { $params->{'savedialog'} = 1; }
+	if ($params->{'load'}  ) { $params->{'loaddialog'} = 1;   }
+	if ($params->{'save'}  ) { $params->{'savedialog'} = 1;   }
+	if ($params->{'import'}) { $params->{'importdialog'} = 1; }
 
 	# set params for page build
-	$params->{'favorites'} = (defined $opml && $opml->isa('Slim::Plugin::Favorites::OpmlFavorites'));
-	$params->{'title'}     = $opml->title;
+	if (defined $opml) {
+		$params->{'favorites'} = $opml->isa('Slim::Plugin::Favorites::OpmlFavorites');
+		$params->{'title'}     = $opml->title;
+		$params->{'filename'}  = $opml->filename;
+	}
+
 	$params->{'previous'}  = ($level > 0);
-	$params->{'deleted'}   = defined($deleted) ? $deleted->{'text'} : undef;
+	$params->{'deleted'}   = defined $deleted ? $deleted->{'text'} : undef;
 	$params->{'changed' }  = $changed;
-	$params->{'filename'}  = $opml->filename;
 	$params->{'advanced'}  = Slim::Utils::Prefs::get('plugin_favorites_advanced');
 
-	if ($opml->error) {
+	if ($opml && $opml->error) {
 		$params->{'errormsg'} = string('PLUGIN_FAVORITES_' . $opml->error) . " " . $opml->filename;
 		$opml->clearerror;
 	}
