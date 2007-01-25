@@ -25,16 +25,11 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 
-use File::Spec::Functions qw(:ALL);
-
-use Slim::Formats;
-
 use Slim::Plugin::Favorites::Opml;
 use Slim::Plugin::Favorites::OpmlFavorites;
 use Slim::Plugin::Favorites::Directory;
 use Slim::Plugin::Favorites::Settings;
 use Slim::Plugin::Favorites::Playlist;
-
 
 my $log = logger('favorites');
 
@@ -45,8 +40,11 @@ sub initPlugin {
 
 	Slim::Plugin::Favorites::Settings->new;
 
-	# register ourselves as the opml editor for xmlbrowser
-	Slim::Web::XMLBrowser::registerEditor( qr/^file:\/\/.*\.opml$/, 'plugins/Favorites/edit.html' );
+	# register ourselves as the editor for favorites.opml in xmlbrowser
+	Slim::Web::XMLBrowser::registerEditor( qr/^file:\/\/.*favorites\.opml$/, 'plugins/Favorites/edit.html', 'PLUGIN_FAVORITES_EDITOR' );
+
+	# register ourselves as the editor for other opml files with different title
+	Slim::Web::XMLBrowser::registerEditor( qr/^file:\/\/.*\.opml$/, 'plugins/Favorites/edit.html', 'PLUGIN_FAVORITES_PLAYLIST_EDITOR' );
 
 	# register opml based favorites handler
 	Slim::Utils::Favorites::registerFavoritesClassName('Slim::Plugin::Favorites::OpmlFavorites');
@@ -169,11 +167,10 @@ sub editHandler {
 	#	print "Key: $key, Val: ".$params->{$key}."\n";
 	#}
 
-	# action any params set
 	if ($params->{'new'} && $params->{'new'} == 1) {
 		$opml = Slim::Plugin::Favorites::Opml->new;
 		$level = 0;
-		$currentLevel = undef;
+		$currentLevel = $opml->toplevel;
 		@prevLevels = ();
 		$deleted = undef;
 		$changed = undef;
@@ -201,33 +198,25 @@ sub editHandler {
 
 	if ($params->{'importfile'}) {
 		my $filename = $params->{'filename'};
+		my $playlist;
 
 		if ($filename =~ /\.opml/) {
+			$playlist = Slim::Plugin::Favorites::Opml->new($filename)->toplevel;
+		} else {
+			$playlist = Slim::Plugin::Favorites::Playlist->read($filename);
+		}
 
-			for my $entry (@{Slim::Plugin::Favorites::Opml->new($filename)->toplevel}) {
+		if ($playlist) {
+			for my $entry (@$playlist) {
 				push @$currentLevel, $entry;
 			}
-
-		} elsif (my $fh = FileHandle->new($filename)) {
-
-			my $type = Slim::Music::Info::contentType($filename);
-			my $playlistClass = Slim::Formats->classForFormat($type);
-
-			Slim::Formats->loadTagFormatForType($type);
-
-			# subclass usual playlist class to avoid adding to the database when it is read
-			$playlistClass = Slim::Plugin::Favorites::Playlist->new($playlistClass);
-
-			for my $entry ( eval { $playlistClass->read($fh) } ) {
-				push @$currentLevel, $entry;
-			}
-
-			close($fh);
+			$changed = 1;
+		} else {
+			$params->{'errormsg'} = string('PLUGIN_FAVORITES_IMPORTERROR') . " " . $filename;
 		}
 	}
 
 	if ($params->{'url'}) {
-
 		$opml = Slim::Plugin::Favorites::OpmlFavorites->new;
 
 		if (Slim::Utils::Misc::pathFromFileURL($params->{'url'}) ne $opml->filename) {
@@ -433,7 +422,7 @@ sub editHandler {
 	$params->{'entries'} = \@entries;
 
 	push @{$params->{'pwd_list'}}, {
-		'title' => $opml->title || string('PLUGIN_FAVORITES_EDITOR'),
+		'title' => $opml && $opml->title || string('PLUGIN_FAVORITES_EDITOR'),
 		'href'  => 'href="edit.html?action=ascend&levels=' . $level . '"',
 	};
 
