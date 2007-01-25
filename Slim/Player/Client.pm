@@ -764,7 +764,11 @@ sub prettySleepTime {
 	my $sleepstring = "";
 	
 	my $dur = Slim::Player::Source::playingSongDuration($client) || 0;
-	my $remaining = $dur - Slim::Player::Source::songTime($client) || 0;
+	my $remaining = 0;
+	
+	if ($dur) {
+		$remaining = $dur - Slim::Player::Source::songTime($client);
+	}
 
 	if ($client->sleepTime) {
 		
