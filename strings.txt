@@ -3312,9 +3312,11 @@ ALBUMREPLAYGAIN
 	ZH_CN	专辑音量调整
 
 SETUP_MP3STREAMINGMETHOD
+	DE	MP3 Streaming Methode
 	EN	MP3 Streaming Method
 
 SETUP_MP3STREAMINGMETHOD_DESC
+	DE	Bei der Wiedergabe von MP3 Internet Radio Stationen kann das Streaming auf zwei Arten gehandhabt werden: "Direct Streaming" lässt den Player sich direkt mit dem Streaming Server verbinden, was die Last auf dem SlimServer geringfügig verringert. Zudem kann die Wiedergabe weiter laufen, falls die Verbindung zum SlimServer abbricht. "Proxied Streaming" lässt den Musik-Strom über den SlimServer laufen. Standardmässig  wird Direct Streaming verwendet. Falls Sie jedoch Probleme, Verbindungsunterbrüche o.ä. erfahren, so testen Sie, ob Proxied Streaming das Problem behebt. Wenn zwei oder mehr Geräte einen MP3 Strom synchronisiert wiedergeben, so wird stets Proxied Streaming angewendet, um die benötigte Bandbreite zu reduzieren.
 	EN	When playing an MP3 Internet stream, the streaming can be done in one of two ways.  Direct Streaming causes the player to make a direct connection to the audio streaming server, reducing the load on SlimServer slightly and allowing the stream to continue playing if the SlimServer connection is lost.  Proxied Streaming causes SlimServer to handle the connection, passing the audio through to the player.  Direct Streaming is the default, but if you experience problems with MP3 streams, try changing this setting to Proxied Streaming.  Note that if two or more players are synchronized to an MP3 stream, proxied streaming is always used to reduce bandwidth usage.
 
 MP3_STREAMING_DIRECT
