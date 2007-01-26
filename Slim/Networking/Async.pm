@@ -202,8 +202,8 @@ sub _dns_read {
 			}
 		}
 	}
-	
-	return;
+
+	_dns_error($bgsock, $self, $args, $resolver);
 }
 
 sub connect {
