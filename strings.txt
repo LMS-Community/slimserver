@@ -3311,6 +3311,18 @@ ALBUMREPLAYGAIN
 	SV	Volymjustering för album
 	ZH_CN	专辑音量调整
 
+SETUP_MP3STREAMINGMETHOD
+	EN	MP3 Streaming Method
+
+SETUP_MP3STREAMINGMETHOD_DESC
+	EN	When playing an MP3 Internet stream, the streaming can be done in one of two ways.  Direct Streaming causes the player to make a direct connection to the audio streaming server, reducing the load on SlimServer slightly and allowing the stream to continue playing if the SlimServer connection is lost.  Proxied Streaming causes SlimServer to handle the connection, passing the audio through to the player.  Direct Streaming is the default, but if you experience problems with MP3 streams, try changing this setting to Proxied Streaming.  Note that if two or more players are synchronized to an MP3 stream, proxied streaming is always used to reduce bandwidth usage.
+
+MP3_STREAMING_DIRECT
+	EN	Direct Streaming
+
+MP3_STREAMING_PROXIED
+	EN	Proxied Streaming
+
 SETUP_TRANSITIONTYPE
 	DE	Überblendung
 	EN	Crossfade

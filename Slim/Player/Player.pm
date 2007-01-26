@@ -723,9 +723,16 @@ sub nowPlayingModeLines {
 				$decodeBuffer = sprintf( "%d KB", $client->bufferFullness() / 1024 );
 			}
 			
-			my $outputBuffer = $client->outputBufferFullness() / (44100 * 8);
-			$songtime  = ' ' . sprintf "%s / %.1f", $decodeBuffer, $outputBuffer;
-			$songtime .= ' ' . $client->string('SECONDS');
+			if ( $client->isa('Slim::Player::Squeezebox2') ) {
+				# Only show output buffer status on SB2 and higher
+				my $outputBuffer = $client->outputBufferFullness() / (44100 * 8);
+				$songtime  = ' ' . sprintf "%s / %.1f", $decodeBuffer, $outputBuffer;
+				$songtime .= ' ' . $client->string('SECONDS');
+			}
+			else {
+				$songtime  = ' ' . sprintf "%s", $decodeBuffer;
+				$songtime .= ' ' . $client->string('SECONDS');
+			}
 		}
 	} elsif ($showTime) { 
 		$songtime = ' ' . $client->textSongTime($showTime < 0);

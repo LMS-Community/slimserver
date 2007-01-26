@@ -75,6 +75,10 @@ sub handler {
 		push @prefs,'replayGainMode';
 	}
 	
+	if ( $client->isa('Slim::Player::Squeezebox2') ) {
+		push @prefs, 'mp3StreamingMethod';
+	}
+	
 	# If this is a settings update
 	if ($paramRef->{'saveSettings'}) {
 

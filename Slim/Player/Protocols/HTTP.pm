@@ -145,29 +145,64 @@ sub parseMetadata {
 		}
 
 		if ($newTitle && ($oldTitle ne $newTitle)) {
-
-			Slim::Music::Info::setCurrentTitle($url, $newTitle);
 			
-			$client->sendParent( {
-				command => 'setCurrentTitle',
-				url     => $url,
-				title   => $newTitle,
-			} );
-
-			for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
-				$everybuddy->update();
+			# Some mp3 stations can have 10-15 seconds in the buffer.
+			# This will delay metadata updates according to how much is in
+			# the buffer, so title updates are more in sync with the music
+			my $bitrate = Slim::Music::Info::getBitrate($url) || 128000;
+			my $delay   = 0;
+			
+			if ( $bitrate > 0 ) {
+				my $decodeBuffer = $client->bufferFullness() / ( int($bitrate / 8) );
+				my $outputBuffer = $client->outputBufferFullness() / (44100 * 8);
+			
+				$delay = $decodeBuffer + $outputBuffer;
 			}
 			
-			# For some purposes, a change of title is a newsong...
-			Slim::Control::Request::notifyFromArray($client, ['playlist', 'newsong', $newTitle]);
+			# No delay on the initial metadata (when old title is the station's title)
+			if ( $oldTitle eq Slim::Music::Info::title($url) ) {
+				$delay = 0;
+			}
 			
-			logger('player.streaming')->info("Setting title for $url to $newTitle");
+			logger('player.streaming')->info("Delaying metadata title set by $delay secs");
+			
+			Slim::Utils::Timers::setTimer(
+				$client,
+				Time::HiRes::time() + $delay,
+				\&setMetadataTitle,
+				$url,
+				$newTitle,
+			);
 		}
 
 		return $newTitle;
 	}
 
 	return undef;
+}
+
+sub setMetadataTitle {
+	my ( $client, $url, $newTitle ) = @_;
+	
+	my $currentTitle = Slim::Music::Info::getCurrentTitle($client, $url) || '';
+	return if $newTitle eq $currentTitle;
+	
+	Slim::Music::Info::setCurrentTitle($url, $newTitle);
+	
+	$client->sendParent( {
+		command => 'setCurrentTitle',
+		url     => $url,
+		title   => $newTitle,
+	} );
+
+	for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
+		$everybuddy->update();
+	}
+	
+	# For some purposes, a change of title is a newsong...
+	Slim::Control::Request::notifyFromArray($client, ['playlist', 'newsong', $newTitle]);
+	
+	logger('player.streaming')->info("Setting title for $url to $newTitle");
 }
 
 sub canDirectStream {
@@ -182,6 +217,14 @@ sub canDirectStream {
 		));
 
 		return 0;
+	}
+
+	# Allow user pref to select the method for streaming
+	if ( my $method = $client->prefGet('mp3StreamingMethod') ) {
+		if ( $method == 1 ) {
+			logger('player.streaming')->debug("Not direct streaming because of mp3StreamingMethod pref");
+			return 0;
+		}
 	}
 
 	# Check the available types - direct stream MP3, but not Ogg.
@@ -205,7 +248,8 @@ sub sysread {
 
 		$chunkSize = $metaInterval - $metaPointer;
 
-		$log->debug("Reduced chunksize to $chunkSize for metadata");
+		# This is very verbose...
+		#$log->debug("Reduced chunksize to $chunkSize for metadata");
 	}
 
 	my $readLength = CORE::sysread($self, $_[1], $chunkSize, length($_[1] || ''));

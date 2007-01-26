@@ -297,5 +297,25 @@
 
 	</div>
 	[% END %]
+	
+	[% IF prefs.exists('mp3StreamingMethod') %]
+	<div class="settingSection">
+
+		<div class="prefHead">[% "SETUP_MP3STREAMINGMETHOD" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_MP3STREAMINGMETHOD_DESC" | string %]</div>
+
+		<select class="stdedit" name="mp3StreamingMethod" id="mp3StreamingMethod">
+
+		[% FOREACH option = {
+			'0' => 'MP3_STREAMING_DIRECT',
+			'1' => 'MP3_STREAMING_PROXIED',
+		} %]
+			<option [% IF prefs.mp3StreamingMethod == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+		[%- END -%]
+
+		</select>
+
+	</div>
+	[% END %]		
 
 [% PROCESS settings/footer.html %]

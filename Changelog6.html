@@ -1,6 +1,14 @@
 <h2><a name="v6.5.2" id="v6.5.2"></a>Version 6.5.2 - 2007-MM-DD</h2>
 
 <ul>
+	<li>Internet Radio:
+	<ul>
+		<li>For SB2 and higher: Added a new preference under Player Settings -> Audio to select the type of streaming to perform for MP3 streams: Direct Streaming, where the player makes a connection directly to the stream, or Proxied Streaming, where SlimServer makes the connection and passes the audio through to the player.</li>
+		<li>Added a delay when setting title metadata from MP3 streams, to take the buffer level into account and let the title update better match the audio.</li>
+	</ul>
+</ul>
+
+<ul>
 	<li>Bug Fixes:
 	<ul>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4203">#4203</a> - alac crashes</li>
