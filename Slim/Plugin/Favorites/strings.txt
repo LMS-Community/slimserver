@@ -101,6 +101,7 @@ PLUGIN_FAVORITES_SAVEERROR
 	EN	Error Saving File
 
 PLUGIN_FAVORITES_IMPORTERROR
+	DE	Fehler beim Import von Wiedergabelisten
 	EN	Error Importing Playlist	
 
 PLUGIN_FAVORITES_NOTITLE
