@@ -32,18 +32,23 @@ sub new {
 
 	} else {
 
-		# return dummy class
-		return bless({}, shift);
+		return undef;
 	}
 }
 
-# Favorites classes should define the following
-sub clientAdd {}
-sub findByClientAndURL {}
-sub findByClientAndId {}
-sub deleteByClientAndURL {}
-sub deleteByClientAndId {}
+sub enabled {
+	return $favsClassName ? 1 : 0;
+}
 
 1;
+
+# Favorites classes should contain the following methods
+#
+# sub new                 ( $class                        ) - contructor
+# sub clientAdd           ( $class, $client, $url, $title ) - add $url with $title to favorites
+# sub findByClientAndURL  ( $class, $client, $url         ) - returns index or undef for $url from favorites
+# sub findByClientAndId   ( $class, $client, $index       ) - returns ($url, $title) for $index from favorites
+# sub deleteByClientAndURL( $class, $client, $url         ) - deletes $url from favorites
+# sub deleteByClientAndId ( $class, $client, $index       ) - deletes favorite with index $index
 
 __END__

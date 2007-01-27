@@ -61,16 +61,21 @@ sub setMode {
 	# INPUT.Choice will display 'name' dynamically
 	# 
 	# Only allow adding to favorites if the URL is something we can play.
-	if (Slim::Music::Info::isSong($url) || Slim::Music::Info::isPlaylist($url)) {
+
+	my $fav;
+
+	if (Slim::Utils::Favorites->enabled && (Slim::Music::Info::isSong($url) || Slim::Music::Info::isPlaylist($url)) ) {
+
+		$fav = Slim::Utils::Favorites->new->findByClientAndURL($client, $url);
 
 		unshift @list, {
 			value => $url,
 			name => sub {
 				my $client = shift;
 
-				my $num = $client->modeParam('favorite');
-				if ($num) {
-					return "{FAVORITES_FAVORITE_NUM}$num {FAVORITES_RIGHT_TO_DELETE}";
+				my $index = $client->modeParam('favorite');
+				if ($index) {
+					return "{FAVORITES_FAVORITE_NUM}$index {FAVORITES_RIGHT_TO_DELETE}";
 				} else {
 					return "{FAVORITES_RIGHT_TO_ADD}";
 				}
@@ -78,16 +83,18 @@ sub setMode {
 
 			onRight => sub {
 				my $client = shift;
-				my $num = $client->modeParam('favorite');
-				if ($num) {
-					Slim::Utils::Favorites->new->deleteByClientAndURL($client, $client->modeParam('url'));
+				my $favorites = Slim::Utils::Favorites->new || return;
+				my $index = $client->modeParam('favorite');
+
+				if ($index) {
+					$favorites->deleteByClientAndId($client, $index);
 					$client->modeParam('favorite', undef);
 					$client->showBriefly( {
 						'line' => [ $client->string('FAVORITES_DELETING'), $client->modeParam('title') ]
 					});
 				} else {
-					$num = Slim::Utils::Favorites->new->clientAdd($client, $url, $title);
-					$client->modeParam('favorite', $num);
+					$index = $favorites->clientAdd($client, $url, $title);
+					$client->modeParam('favorite', $index);
 					$client->showBriefly( {
 						'line' => [ $client->string('FAVORITES_ADDING'), $client->modeParam('title') ]
 					});
@@ -96,16 +103,13 @@ sub setMode {
 		};
 	}
 
-	# is the url already a favorite?
-	my $favorite = Slim::Utils::Favorites->new->findByClientAndURL($client, $url);
-
 	# now use another mode for the heavy lifting
 	my %params = (
 		'header'   => $client->modeParam('header') || ($title . ' {count}'),
 		'listRef'  => \@list,
 		'url'      => $url,
 		'title'    => $title,
-		'favorite' => $favorite ? $favorite->{'num'} : undef,
+		'favorite' => $fav ? $fav->{'index'} : undef,
 
 		# play music when play is pressed
 		'onPlay'   => sub {

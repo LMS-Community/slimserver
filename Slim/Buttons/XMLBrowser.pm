@@ -739,7 +739,9 @@ sub playItem {
 
 	if ($type eq 'audio') {
 
-		my $string; 
+		my $string;
+		my $duration;
+
 		if ($action eq 'add') {
 
 			$string = $client->string('ADDING_TO_PLAYLIST');
@@ -750,16 +752,21 @@ sub playItem {
 
 				$string = $client->string('PLAYING_RANDOMLY_FROM');
 
-			} else {
+			} elsif (Slim::Music::Info::isRemoteURL($url)) {
 
 				$string = $client->string('NOW_PLAYING') . ' (' . $client->string('CONNECTING_FOR') . ')';
+				$duration = 10;
+
+			} else {
+
+				$string = $client->string('NOW_PLAYING');
 			}
 		}
 
 		$client->showBriefly( {
 			'line' => [ $string, $title ]
 		}, {
-			'duration' => 10
+			'duration' => $duration
 		});
 		
 		Slim::Music::Info::setTitle( $url, $title );

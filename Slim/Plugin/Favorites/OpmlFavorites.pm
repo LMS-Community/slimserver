@@ -154,7 +154,7 @@ sub findByClientAndURL {
 		return {
 			'url'   => $url,
 			'title' => $class->{'urlindex'}->{ $url }->{'text'},
-			'num'   => $class->{'urlindex'}->{ $url }->{'ind'},
+			'index' => $class->{'urlindex'}->{ $url }->{'ind'},
 		};
 	}
 

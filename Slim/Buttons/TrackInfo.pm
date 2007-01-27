@@ -336,14 +336,12 @@ sub loadDataForTrack {
 		push (@{$client->trackInfoContent}, undef);
 	}
 
-	if (Slim::Music::Info::isURL($track->url)) {
-		my $fav = Slim::Utils::Favorites->new->findByClientAndURL($client, $track->url);
+	if (Slim::Music::Info::isURL($track->url) && Slim::Utils::Favorites->enabled) {
 
-		if ($fav) {
-			$client->modeParam('favorite', $fav->{'num'});
-		} else {
-			$client->modeParam('favorite', undef);
-		}
+		my $favorites = Slim::Utils::Favorites->new;
+		my $fav = $favorites->findByClientAndURL($client, $track->url);
+
+		$client->modeParam( 'favorite', $fav ? $fav->{'index'} : undef );
 
 		push (@{$client->trackInfoLines}, 'FAVORITE'); # replaced in lines()
 		push (@{$client->trackInfoContent}, {
@@ -461,25 +459,26 @@ sub listExitHandler {
 
 		} elsif ($curType eq 'FAVORITE') {
 
-			my $fav = $client->modeParam('favorite');
+			my $favorites = Slim::Utils::Favorites->new;
+			my $favIndex = $client->modeParam('favorite');
 
-			if (!defined $fav) {
+			if (!defined $favIndex) {
 
-				$fav = Slim::Utils::Favorites->new->clientAdd($client, track($client), $track->title || $track->url);
+				$favIndex = $favorites->clientAdd($client, track($client), $track->title || $track->url);
 
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_ADDING'), $track->title || $track->url ]
-				});
+				   });
 
-				$client->modeParam('favorite', $fav);
+				$client->modeParam('favorite', $favIndex);
 
 			} else {
 
-				Slim::Utils::Favorites->new->deleteByClientAndURL($client, track($client));
+				$favorites->deleteByClientAndId($client, $favIndex);
 
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_DELETING'), $track->title || $track->url ]
-				});
+				   });
 
 				$client->modeParam('favorite', undef);
 			}
@@ -506,11 +505,11 @@ sub infoLine {
 
 	# special case favorites line, which must be determined dynamically
 	if ($line2 eq 'FAVORITE') {
-		my $num = $client->modeParam('favorite');
-		if (!defined $num) {
+		my $favIndex = $client->modeParam('favorite');
+		if (!defined $favIndex) {
 			$line2 = $client->string('FAVORITES_RIGHT_TO_ADD');
 		} else {
-			$line2 = $client->string('FAVORITES_FAVORITE_NUM') . "$num " . $client->string('FAVORITES_RIGHT_TO_DELETE');
+			$line2 = $client->string('FAVORITES_FAVORITE_NUM') . "$favIndex " . $client->string('FAVORITES_RIGHT_TO_DELETE');
 		}
 	}
 

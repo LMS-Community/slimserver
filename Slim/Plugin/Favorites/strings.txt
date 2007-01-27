@@ -2,6 +2,9 @@
 
 # $Id$
 
+PLUGIN_FAVORITES_DESC
+	EN	Save and edit your favorites
+
 PLUGIN_FAVORITES_EDITOR
 	DE	Favoriten bearbeiten
 	EN	Favorites Editor

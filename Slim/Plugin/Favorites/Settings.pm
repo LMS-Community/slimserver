@@ -46,6 +46,8 @@ sub handler {
 	$params->{'advanced'} = Slim::Utils::Prefs::get('plugin_favorites_advanced');
 	$params->{'opmleditor'} = Slim::Utils::Prefs::get('plugin_favorites_opmleditor');
 
+	delete $params->{'playerid'};
+
 	return $class->SUPER::handler($client, $params);
 }
 

@@ -393,7 +393,8 @@ sub browsedbExitCallback {
 
 		} elsif ($currentItem eq 'FAVORITE') {
 
-			my $num   = $client->modeParam('favorite');
+			my $favorites = Slim::Utils::Favorites->new;
+			my $index = $client->modeParam('favorite');
 			my $track = Slim::Schema->find('Track', $client->modeParam('findCriteria')->{'playlist.id'});
 
 			if (!blessed($track) || !$track->can('title')) {
@@ -407,21 +408,19 @@ sub browsedbExitCallback {
 				return;
 			}
 
-			my $favs = Slim::Utils::Favorites->new;
+			if (!$index) {
 
-			if (!$num) {
-
-				$num = $favs->clientAdd($client, $track, $track->title);
+				$index = $favorites->clientAdd($client, $track, $track->title);
 
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_ADDING'), $track->title ]
 				});
 
-				$client->modeParam('favorite', $num);
+				$client->modeParam('favorite', $index);
 
 			} else {
 
-				$favs->deleteByClientAndURL($client, $track);
+				$favorites->deleteByClientAndId($client, $index);
 
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_DELETING'), $track->title ]
@@ -513,10 +512,12 @@ sub browsedbItemName {
 	# special case favorites line, which must be determined dynamically
 	if (!$blessed && $item eq 'FAVORITE') {
 
-		if ((my $num = $client->modeParam('favorite')) < 0) {
+		my $index = $client->modeParam('favorite');
+
+		if (defined $index) {
 			$item = $client->string('FAVORITES_RIGHT_TO_ADD');
 		} else {
-			$item = $client->string('FAVORITES_FAVORITE_NUM') . "$num " . $client->string('FAVORITES_RIGHT_TO_DELETE');
+			$item = $client->string('FAVORITES_FAVORITE_NUM') . "$index " . $client->string('FAVORITES_RIGHT_TO_DELETE');
 		}
 
 		return $item
@@ -792,19 +793,15 @@ sub setMode {
 
 	# If the previous level is a playlist. IE: We're in playlistTracks -
 	# let the user add a favorite for this playlist.
-	if ($levels[$level-1] eq 'playlist') {
+	if ($levels[$level-1] eq 'playlist' && Slim::Utils::Favorites->enabled) {
 
 		my $track = Slim::Schema->find('Track', $filters->{'playlist.id'});
 
 		if (blessed($track) && $track->can('id')) {
-		
+
 			my $fav = Slim::Utils::Favorites->new->findByClientAndURL($client, $track);
 
-			if ($fav) {
-				$client->modeParam('favorite', $fav->{'num'});
-			} else {
-				$client->modeParam('favorite', undef);
-			}
+			$client->modeParam('favorite', $fav ? $fav->{'index'} : undef);
 
 			push @items, 'FAVORITE';
 		}

@@ -185,6 +185,12 @@ sub editHandler {
 		$opml->filename($params->{'filename'}) if $params->{'savefile'};
 		$opml->save;
 		$changed = undef unless $opml->error;
+
+		my $favorites = Slim::Plugin::Favorites::OpmlFavorites->new;
+		if ($favorites && $opml != $favorites && $opml->filename eq $favorites->filename) {
+			# overwritten the favorites file - force favorites to be reloaded
+			$favorites->load;
+		}
 	}
 
 	if ($params->{'loadfile'}) {
@@ -222,6 +228,9 @@ sub editHandler {
 		if (Slim::Utils::Misc::pathFromFileURL($params->{'url'}) ne $opml->filename) {
 			# if url is not for favorite file use opml direct
 			$opml = Slim::Plugin::Favorites::Opml->new( $params->{'url'} );
+			$log->info("opening editor for " . $params->{'url'});
+		} else {
+			$log->info("opening editor for favorites");
 		}
 
 		$level = 0;
