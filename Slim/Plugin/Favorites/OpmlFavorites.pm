@@ -39,7 +39,8 @@ sub new {
 
 sub filename {
 	my $class = shift;
-	return catdir(Slim::Utils::Prefs::get("playlistdir"), "favorites.opml");
+	my $dir = Slim::Utils::Prefs::get('playlistdir') || Slim::Utils::Prefs::get('cachedir');
+	return catdir($dir, "favorites.opml");
 }
 
 sub load {

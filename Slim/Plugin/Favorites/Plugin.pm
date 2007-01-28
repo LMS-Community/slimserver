@@ -139,14 +139,11 @@ sub addEditLink {
 sub indexHandler {
 	my $file = Slim::Plugin::Favorites::OpmlFavorites->new->filename;
 
-	if (-r $file) {
-
-		Slim::Web::XMLBrowser->handleWebIndex( {
-			feed   => Slim::Utils::Misc::fileURLFromPath($file),
-			title  => 'FAVORITES',
-			args   => \@_
-		} );
-	}
+	Slim::Web::XMLBrowser->handleWebIndex( {
+		feed   => Slim::Utils::Misc::fileURLFromPath($file),
+		title  => 'FAVORITES',
+		args   => \@_
+	} );
 }
 
 my $opml;

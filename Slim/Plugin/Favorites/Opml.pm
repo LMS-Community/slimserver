@@ -175,7 +175,7 @@ sub filename {
 
 	if ($name =~ /^file\:\/\//) {
 		$name = Slim::Utils::Misc::pathFromFileURL($name);
-	} elsif (dirname($name) eq '.') {
+	} elsif (dirname($name) eq '.' && Slim::Utils::Prefs::get("playlistdir")) {
 		$name = catdir(Slim::Utils::Prefs::get("playlistdir"), $name);
 	}
 
