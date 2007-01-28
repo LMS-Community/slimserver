@@ -34,6 +34,7 @@
 [% BLOCK addCaseLinks %]
 	[% IF links %]
 		[% FOREACH link = links %]
+		[% IF link.key == "SQUEEZENETWORK_SWITCH" %][% cookie = 0 %][% END %]
 		case "[% link.key %]":
 			url = "[% link.value %]"
 			[% IF cookie %]page = "[% link.key %]"[% END %]
