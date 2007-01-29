@@ -68,8 +68,8 @@ sub _urlindex {
 	my $i = 1;
 
 	for my $entry (@{$level}) {
-		if ($entry->{'URL'} && $entry->{'type'} eq 'audio') {
-			$class->{'urlindex'}->{ $entry->{'URL'} } = {
+		if ($entry->{'type'} eq 'audio' && ($entry->{'URL'} || $entry->{'url'}) ) {
+			$class->{'urlindex'}->{ $entry->{'URL'} || $entry->{'url'} } = {
 				'text' => $entry->{'text'},
 				'ind'  => $index."$i",
 			};
@@ -178,11 +178,12 @@ sub findByClientAndId {
 	}
 
 	my $i = shift @ind;
+	my $entry = @{$pos}[ $i - 1 ];
 
-	if (ref @{$pos}[ $i - 1 ] eq 'HASH') {
+	if (ref $entry eq 'HASH') {
 
-		my $url   = @{$pos}[$i - 1]->{'URL'};
-		my $title = @{$pos}[$i - 1]->{'text'};
+		my $url   = $entry->{'URL'} || $entry->{'url'};
+		my $title = $entry->{'text'};
 
 		$log->info("Found favorite at index $index: $title $url");
 

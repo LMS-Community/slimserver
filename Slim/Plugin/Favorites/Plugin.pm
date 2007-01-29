@@ -337,8 +337,9 @@ sub editHandler {
 		}
 
 		if ($action =~ /play|add/ && $client) {
-			my $stream = @$currentLevel[$params->{'entry'}]->{'URL'};
-			my $title  = @$currentLevel[$params->{'entry'}]->{'text'};
+			my $entry = @$currentLevel[$params->{'entry'}];
+			my $stream = $entry->{'URL'} || $entry->{'url'};
+			my $title  = $entry->{'text'};
 			Slim::Music::Info::setTitle($stream, $title);
 			$client->execute(['playlist', $action, $stream]);
 		}
@@ -417,7 +418,7 @@ sub editHandler {
 	foreach my $opmlEntry (@$currentLevel) {
 		push @entries, {
 			'title'   => $opmlEntry->{'text'} || '',
-			'url'     => $opmlEntry->{'URL'} || '',
+			'url'     => $opmlEntry->{'URL'} || $opmlEntry->{'url'} || '',
 			'audio'   => (defined $opmlEntry->{'type'} && $opmlEntry->{'type'} eq 'audio'),
 			'outline' => $opmlEntry->{'outline'},
 			'edit'    => (defined $edit && $edit == $index),
