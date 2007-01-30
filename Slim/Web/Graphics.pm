@@ -290,19 +290,19 @@ sub processCoverArtRequest {
 
 			} else {
 
-				$log->info("GD wouldn't create image object");
+				$log->info("GD wouldn't create image object from $path");
 				$body = \$imageData;
 			}
 
 		} else {
 
-			$log->info("No need to process image");
+			$log->info("No need to process image for $path");
 			$body = \$imageData;
 		}
 
 	} else {
 
-		$log->warn("Can't use GD");
+		$log->warn("Can't use GD for $path");
 		$body = \$imageData;
 	}
 
