@@ -67,10 +67,9 @@ function hideAdded() {
 function resize(src,width) {
 	if (!width) {
 		// special case for IE (argh)
-		if (document.all) //if IE 4+ {
+		if (document.all) {
 			width = document.body.clientWidth*0.5;
-		}
-		else if (document.getElementById) //else if NS6+ {
+		} else if (document.getElementById) { //else if NS6+ 
 			width = window.innerWidth*0.5;
 		}
 	}
