@@ -163,7 +163,7 @@ END %]
 
 		[% IF item.coverThumb %]
 
-			<div style="width:[% item.size %]px;height:[% item.size %]px;">
+			<div style="width:[% item.size %]px;height:[% item.size %]px;overflow:hidden;">
 			<a [% PROCESS browseDbItemHRef %] target="browser">[% PROCESS thumbnailItemImg height="$item.size" %]</a>
 			</div>
 
