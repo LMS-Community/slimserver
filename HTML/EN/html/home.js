@@ -27,7 +27,7 @@ function ajaxHomeCallback(theData) {
 		
 		for (var i=0; i < elems.length; i++) {
 			if (elems[i].className == 'progress') {
-				if (parsedData['progressname']) {
+				if (parsedData['progresstotal']) {
 					elems[i].style.display = 'inline';
 				} else {
 					elems[i].style.display = 'none';
