@@ -79,6 +79,12 @@
 		cmdimage = "b_down.gif" %]
 [% END %]
 
+[%- BLOCK editlink -%]
+	[%- PROCESS cmdlink
+		cmdtitle = "EDIT"
+		cmdimage = "b_edit.gif" -%]
+[%- END -%]
+
 [% BLOCK scanwarning -%]
 <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string -%]
 	[%- IF audiodir -%]
