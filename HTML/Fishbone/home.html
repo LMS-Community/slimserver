@@ -1,131 +1,134 @@
 [%- FILTER null %]
-[% optionForm = BLOCK %]
-<FORM id="browseForm" name="browseForm" action="javascript:return(false);" target="header">
-	<SELECT NAME="browse" class="stdedit" style="width:17em;" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
-		<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
-		[% PROCESS addBrowseLinks links=additionalLinks.browse %]
-		<OPTION value="" label="">---[% "SEARCH" | string %]---</OPTION>
-		[% PROCESS addBrowseLinks links=additionalLinks.search %]
-		<OPTION value="" label="">---[% "RADIO" | string %]---</OPTION>
-		[% PROCESS addBrowseLinks links=additionalLinks.radio %]
-		<OPTION [% IF page == "RADIO_TUNEIN" %]selected[% END %] value="RADIO_TUNEIN" label='[% "RADIO_TUNEIN" | string %]'>[% "RADIO_TUNEIN" | string %]</OPTION>
-		[% IF additionalLinks.plugins %]
-		<OPTION value="" label="">---[% "PLUGINS" | string %]---</OPTION>
-		[% PROCESS addBrowseLinks links=additionalLinks.plugins %]
-		[% END %]
-		<OPTION [% IF page == "STATISTICS" %]selected[% END %] value="[% "STATISTICS" %]" label="[% "STATISTICS" | string %]">[% "STATISTICS" | string %]</OPTION>
-		[% IF additionalLinks.settings %]
-		<OPTION value="" label="">---[% "SETTINGS" | string %]---</OPTION>
-		[% PROCESS addBrowseLinks links=additionalLinks.settings %]
-		[% END %]
-	</SELECT>
-	<input type=hidden value="[% page %]" name="page">
-</FORM>
-[% END %]
-
-[% BLOCK addBrowseLinks %]
-	[% IF links %]
-		[% FOREACH link = links %]
-			<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
-		[% END %]
-	[% END %]
-[% END %]
-
-[% BLOCK addCaseLinks %]
-	[% IF links %]
-		[% FOREACH link = links %]
-		[% IF link.key == "SQUEEZENETWORK_SWITCH" %][% cookie = 0 %][% END %]
-		case "[% link.key %]":
-			url = "[% link.value %]"
-			[% IF cookie %]page = "[% link.key %]"[% END %]
-			suffix = "page=" + page
-			[% IF cookie %]homestring = "[% link.key | string %]"
-			cookie = [% cookie %][% END %]
-		break
-		[% END %]
-	[% END %]
-[% END %]
-[% END -%]
+	[%- optionForm = BLOCK -%]
+	<FORM id="browseForm" name="browseForm" action="javascript:return(false);" target="header">
+		<SELECT NAME="browse" class="stdedit" style="width:17em;" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
+			<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
+			[% PROCESS addBrowseLinks links=additionalLinks.browse %]
+			<OPTION value="" label="">---[% "SEARCH" | string %]---</OPTION>
+			[% PROCESS addBrowseLinks links=additionalLinks.search %]
+			<OPTION value="" label="">---[% "RADIO" | string %]---</OPTION>
+			[% PROCESS addBrowseLinks links=additionalLinks.radio %]
+			<OPTION [% IF page == "RADIO_TUNEIN" %]selected[% END %] value="RADIO_TUNEIN" label='[% "RADIO_TUNEIN" | string %]'>[% "RADIO_TUNEIN" | string %]</OPTION>
+			[% IF additionalLinks.plugins %]
+			<OPTION value="" label="">---[% "PLUGINS" | string %]---</OPTION>
+			[% PROCESS addBrowseLinks links=additionalLinks.plugins %]
+			[% END %]
+			<OPTION [% IF page == "STATISTICS" %]selected[% END %] value="[% "STATISTICS" %]" label="[% "STATISTICS" | string %]">[% "STATISTICS" | string %]</OPTION>
+			[% IF additionalLinks.settings %]
+			<OPTION value="" label="">---[% "SETTINGS" | string %]---</OPTION>
+			[% PROCESS addBrowseLinks links=additionalLinks.settings %]
+			[% END %]
+		</SELECT>
+		<input type=hidden value="[% page %]" name="page">
+	</FORM>
+	[%- END -%]
+	
+	[%- BLOCK addBrowseLinks -%]
+		[%- IF links -%]
+			[%- FOREACH link = links -%]
+				<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
+			[%- END -%]
+		[%- END -%]
+	[%- END -%]
+	
+	[% BLOCK addCaseLinks -%]
+		[%- IF links -%]
+			[%- FOREACH link = links -%]
+			[% IF link.key == "SQUEEZENETWORK_SWITCH" %][% cookie = 0 %][% END %]
+			case "[% link.key %]":
+				url = "[% link.value %]"
+				[% IF cookie %]page = "[% link.key %]"[% END %]
+				suffix = "page=" + page
+				[% IF cookie %]homestring = "[% link.key | string %]"
+				cookie = [% cookie %][% END %]
+			break
+			[%- END -%]
+		[%- END -%]
+	[%- END %]
+[%- END -%]
 
 [%- IF ajaxRequest -%]
-	<pre>
-	[% PROCESS ajaxHome.txt %]
-	</pre>
+<pre>
+[% PROCESS ajaxHome.txt %]
+</pre>
 [%- ELSIF optionOnly -%]
 [% optionForm %]
 [%- ELSE -%]
 	[% IF page != 'help' %]
 		[% pageicon = 'MUSIC' %] [% search = '0' %][% browse = '1' %][% music = '0' %][% home = '1' %][% playlist = '0' %]
-		
-		<script type="text/javascript">
-			<!--Hide
-			var homestring;
-			var page;
-			function doSearch(value)
-			{
-				selectLink();
-				parent.browser.location='search.html?manualSearch=1&query=' + value + '&player' + getPlayer('SlimServer-player');
-			}
-			
-			function chooseBrowser(value,option)
-			{
-				selectLink()
-				var url;
-				var cookie = 0;
-				switch(option)
+	[% ELSE %]
+		[% pagetitle = "HELP" | string %]
+	[% END %]
+	
+	[% IF page != 'help' %]		
+		[% pageHeaderScripts = BLOCK %]
+			<script type="text/javascript" src="[% webroot %]html/prototype.js" ></script>
+			<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/global.js %]</script>
+			<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/home.js %]</script>
+
+			<script type="text/javascript">
+				<!--Hide
+				var homestring;
+				var page;
+				function doSearch(value)
 				{
+					selectLink();
+					parent.browser.location='search.html?manualSearch=1&query=' + value + '&player' + getPlayer('SlimServer-player');
+				}
+				
+				function chooseBrowser(value,option)
+				{
+					selectLink()
+					var url;
+					var cookie = 0;
+					switch(option)
+					{
 					[% PROCESS addCaseLinks links=additionalLinks.browse cookie=1 %]
 					[% PROCESS addCaseLinks links=additionalLinks.radio cookie=1 %]
 					[% PROCESS addCaseLinks links=additionalLinks.search cookie=0 %]
 					[% PROCESS addCaseLinks links=additionalLinks.plugins cookie=1 %]
 					[% PROCESS addCaseLinks links=additionalLinks.settings cookie=0 %]
-				case "RADIO_TUNEIN":
-					url = "tunein.html"
-					page = "RADIO_TUNEIN"
-					suffix = "?page=" + page
-				break
-				case "STATISTICS":
-					url= "hitlist.html"
-					page="STATISTICS"
-					suffix = ""
-				}
-		
-				if (option) {
-					if (cookie) {
-						setCookie("SlimServer-Browserpage",url + suffix);
-						//parent.header.location =  "home.html?page=" + page + '&player' + getPlayer('SlimServer-player');
+					case "RADIO_TUNEIN":
+						url = "tunein.html"
+						page = "RADIO_TUNEIN"
+						suffix = "?page=" + page
+					break
+					case "STATISTICS":
+						url= "hitlist.html"
+						page="STATISTICS"
+						suffix = ""
 					}
-					if (suffix != "") {suffix = suffix + "&"} else {suffix = "?"}
-					parent.browser.location = url + suffix + 'player' + getPlayer('SlimServer-player');
+			
+					if (option) {
+						if (cookie) {
+							setCookie("SlimServer-Browserpage",url + suffix);
+							//parent.header.location =  "home.html?page=" + page + '&player' + getPlayer('SlimServer-player');
+						}
+						if (suffix != "") {suffix = suffix + "&"} else {suffix = "?"}
+						parent.browser.location = url + suffix + 'player' + getPlayer('SlimServer-player');
+					}
 				}
-			}
-			
-			function homelink() {
-				if (homestring) {
-					document.getElementById('homelink').innerHTML = homestring;
-				} [% IF page %]else {
-					document.getElementById('homelink').innerHTML = '[% page | string %]';
-				}[% END %]
-			}
-			
-			-->
-		</script>
+				
+				function homelink() {
+					if (homestring) {
+						document.getElementById('homelink').innerHTML = homestring;
+					} [% IF page %]else {
+						document.getElementById('homelink').innerHTML = '[% page | string %]';
+					}[% END %]
+				}
+				
+				-->
+			</script>
+
+		[% END %]
 		
 		[% IF warn %]
 			[% bodyscript = 'onload="doLoad(1);"' %]
-			
-			[% pageHeaderScripts = BLOCK %]
-				<script type="text/javascript" src="[% webroot %]html/prototype.js" ></script>
-				<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/global.js %]</script>
-				<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/home.js %]</script>
-			[% END %]
 		[% END %]
 	
-	[% ELSE %]
-		[% pagetitle = "HELP" | string %]
 	[% END %]
 	
-	[% PROCESS pageheader.html %]
+	[%- PROCESS pageheader.html %]
 	
 	[% IF page == 'help' %]
 	
