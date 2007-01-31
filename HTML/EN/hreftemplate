@@ -182,7 +182,7 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 [% BLOCK dummyItemImg -%]
  [% artistlist = ''; IF item.artist; itemobj=item.itemobj; artistlist = PROCESS artistsAsText.html; END %]
  [%- "<img $style src=\"/html/images/cover.png\" height=\"";height or 100;"\"" %]
- [%-	" alt=\"";item.item | html; artistlist | html ; IF item.year; " ($item.year)"; END; "\"" %] 
+ [%- " alt=\"";item.item | html; artistlist | html ; IF item.year; " ($item.year)"; END; "\"" %] 
  [%- " title=\"";item.item | html; artistlist | html ; IF item.year; " ($item.year)"; END; "\">" -%] 
 [%- END %]
 
