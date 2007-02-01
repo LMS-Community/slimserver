@@ -2315,10 +2315,12 @@ sub buildStatusHeaders {
 		}
 	}
 
-	# include returned parameters
-	for (my $i = 0; $i < scalar @$p; $i++) {
-
-		$headers{"x-p$i"} = $p->[$i];
+	# include returned parameters if defined
+	if (defined $p) {
+		for (my $i = 0; $i < scalar @$p; $i++) {
+	
+			$headers{"x-p$i"} = $p->[$i];
+		}
 	}
 	
 	# simple quoted printable encoding
