@@ -28,6 +28,7 @@ my @perfmonLogs = (
 	{ 'type' => 'server', 'name' => 'timer',     'monitor' => \$Slim::Utils::Timers::timerTask,         'warn' => 1 },
 	{ 'type' => 'server', 'name' => 'request',   'monitor' => \$Slim::Control::Request::requestTask,    'warn' => 1 },
 	{ 'type' => 'server', 'name' => 'scheduler', 'monitor' => \$Slim::Utils::Scheduler::schedulerTask,  'warn' => 1 },
+	{ 'type' => 'server', 'name' => 'async',     'monitor' => \$Slim::Networking::SimpleAsyncHTTP::callbackTask, 'warn' => 1 },
 	{ 'type' => 'server', 'name' => 'timerlate', 'monitor' => \$Slim::Utils::Timers::timerLate,                     },
 	{ 'type' => 'server', 'name' => 'dbaccess',  'monitor' => \$Slim::Schema::Storage::dbAccess,                    },
 	{ 'type' => 'server', 'name' => 'pagebuild', 'monitor' => \$Slim::Web::HTTP::pageBuild,                         },

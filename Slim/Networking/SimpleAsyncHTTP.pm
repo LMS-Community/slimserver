@@ -31,6 +31,8 @@ use Slim::Utils::Log;
 use HTTP::Date ();
 use HTTP::Request;
 
+our $callbackTask = Slim::Utils::PerfMon->new('Async Callback', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
+
 __PACKAGE__->mk_classaccessors( qw(
 	cb ecb type url error code mess headers contentRef cachedResponse async
 ) );
@@ -176,8 +178,12 @@ sub onError {
 	}
 	
 	$self->error( "Failed to connect to $uri ($error)\n" );
+
+	$::perfmon && (my $now = Time::HiRes::time());
 	
 	$self->ecb->( $self, $error );
+
+	$::perfmon && $now && $callbackTask->log(Time::HiRes::time() - $now, undef, $self->ecb);
 	
 	return;
 }
@@ -307,8 +313,12 @@ sub onBody {
 	
 	$log->debug("Done");
 
-	$self->cb->( $self );
+	$::perfmon && (my $now = Time::HiRes::time());
 	
+	$self->cb->( $self );
+
+	$::perfmon && $now && $callbackTask->log(Time::HiRes::time() - $now, undef, $self->cb);
+
 	return;
 }
 
@@ -322,8 +332,12 @@ sub sendCachedResponse {
 	$self->mess( $data->{mess} );
 	$self->headers( $data->{headers} );
 	$self->contentRef( \$data->{content} );
-		
+
+	$::perfmon && (my $now = Time::HiRes::time());
+	
 	$self->cb->( $self );
+
+	$::perfmon && $now && $callbackTask->log(Time::HiRes::time() - $now, undef, $self->cb);
 	
 	return;
 }

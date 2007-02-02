@@ -479,3 +479,9 @@ PLUGIN_HEALTH_TEMPLATE_DESC
 	EN	The time to process each Template Toolkit template when building web pages.
 	FR	La durée d'exécution de chaque Template Toolkit lors de la génération d'une page web.
 	NL	De tijd om elk gereedschapsjabloon uit te voeren bij het opbouwen van webpagina's.
+
+PLUGIN_HEALTH_ASYNC
+	EN	Async HTTP Task Duration
+
+PLUGIN_HEALTH_ASYNC_DESC
+	EN	The length of time taken by each asynchronous http callback function.
