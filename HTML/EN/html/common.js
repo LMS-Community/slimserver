@@ -188,7 +188,6 @@ function newValue(doc,plyr) {
 	}
 }
 
-
 function setCookie(name, value) {
 	var expires = new Date();
 	expires.setTime(expires.getTime() + 1000*60*60*24*365);
