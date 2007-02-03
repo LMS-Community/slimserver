@@ -130,30 +130,21 @@ sub findAndAdd {
 	# Restrict by the genre's we've selected.
 	my $rs     = Slim::Schema->rs($type)->search($find, { 'join' => \@joins });
 
-	my @idList = $rs->distinct->get_column('me.id')->all;
+	my @idList;
 
 	if ($limit) {
 
 		# Get a fixed selection of random keys, make sure they don't duplicate.
-		my %random = ();
-		my $max    = $limit;
+		my @allIds = $rs->distinct->get_column('me.id')->all;
 
-        	while ($max) {
+		for (my $i = 0; $i < $limit && @allIds; ++$i) {
 
-                	my $i = $idList[ rand @idList ];
-
-			if (exists $random{$i}) {
-				next;
-			}
-
-			$random{$i} = 1;
-
-			$max--;
+			push @idList, (splice @allIds, rand @allIds, 1);
 		}
 
-		@idList = keys %random;
-
 	} else {
+
+		@idList = $rs->distinct->get_column('me.id')->all;
 
 		Slim::Player::Playlist::fischer_yates_shuffle(\@idList);
 	}
