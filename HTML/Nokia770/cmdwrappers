@@ -206,9 +206,9 @@
 [% IF verbose %]
                 [% "FROM" | string %]
                 <a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% item.album.id %]&player=[% playerURI %]">[% item.album.title | html %]</a>
-	[% PROCESS artistsAsHTML.html %]
+	[% PROCESS artistsAsHTML.html notarget=1 %]
 [% END %]
-[%# IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
+[%# IF includeArtist && artist; PROCESS artistsAsHTML.html notarget = 1; END %]
 	[% ELSIF item.songtitle %]
 		<a [% PROCESS songinfoItemHRef %] >[% item.songtitle | html %]</a>
 	[% ELSE %]
@@ -221,7 +221,7 @@
 [% BLOCK ajax_by_from_info %]
 	<span class = 'smalltext' id = 'byfrominfo_[% item.num %]'>
 	<span id = 'artist_[% item.num %]'>
-		[% PROCESS artistsAsHTML.html %]
+		[% PROCESS artistsAsHTML.html notarget = 1 %]
 	</span>
 	[% IF item.includeAlbum && item.album && item.album != item.noAlbum %]
 		[% "FROM" | string %]
@@ -233,7 +233,7 @@
 [% BLOCK by_from_info %]
 	<span class = 'smalltext'>
 	[% IF item.includeArtist && item.artist && item.artist != item.noArtist %]
-		[% PROCESS artistsAsHTML.html itemobj = item.itemobj %]
+		[% PROCESS artistsAsHTML.html notarget = 1 itemobj = item.itemobj %]
 	[% END %]
 	[% IF item.includeAlbum && item.album && item.album != item.noAlbum %]
 		[% "FROM" | string %]
@@ -284,7 +284,7 @@
         [% IF item.descend %][% IF item.hierarchy %]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% item.text | html %]</a>
         [% IF item.showYear && item.year %]<a [% PROCESS yearItemHRef %] >([% item.year %])</a>[% END %]
                 <!-- Include the artist for the album view -->
-                [% IF item.artist.name && item.artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
+                [% IF item.artist.name && item.artist.name != item.noArtist; PROCESS artistsAsHTML.html notarget = 1 itemobj=item.itemobj; END %]
 
         [% ELSE %]
                 [% PROCESS trackinfo %]

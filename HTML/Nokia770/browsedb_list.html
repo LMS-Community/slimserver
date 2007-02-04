@@ -20,7 +20,7 @@
 	&nbsp;[% IF hierarchy %]<a href="[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %]&player=[% playerURI %]">[% END %][% text | html %][% IF showYear && year %] ([% year %])[% END %]</a>
 
 	<!-- Include the artist for the album view -->
-	[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
+	[% IF includeArtist && artist; PROCESS artistsAsHTML.html notarget = 1; END %]
 
 [% ELSE %]
 	<a href="[% webroot %]songinfo.html?item=[% item %]&player=[% playerURI %]">[% text | html %][% IF showYear && year %] ([% year %])[% END %]</font></a>
@@ -32,7 +32,7 @@
 
 	[% END %]
 
-	[% IF includeArtist && artist; PROCESS artistsAsHTML.html; END %]
+	[% IF includeArtist && artist; PROCESS artistsAsHTML.html notarget = 1; END %]
 
 [% END %]
 
