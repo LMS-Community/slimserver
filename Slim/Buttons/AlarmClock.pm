@@ -160,6 +160,7 @@ sub init {
 			},
 			'stringHeader' => 1,
 			'headerArgs'   => 'C',
+			'increment'    => 1,
 			'headerValue'  => sub { return $_[0]->volumeString($_[1]) },
 			'onChange'     => sub { $_[0]->prefSet("alarmvolume", $_[1], weekDay($_[0])) },
 			'initialValue' => sub { return $_[0]->prefGet("alarmvolume", weekDay($_[0])) },

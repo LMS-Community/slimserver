@@ -68,6 +68,7 @@ sub init {
 					'useMode'      => 'INPUT.Bar',
 					'header'       => 'VOLUME',
 					'stringHeader' => 1,
+					'increment'    => 1,
 					'headerValue'  => sub { return $_[0]->volumeString($_[1]) },
 					'onChange'     => \&executeCommand,
 					'command'      => 'mixer',
