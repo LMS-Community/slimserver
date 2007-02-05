@@ -149,7 +149,7 @@
 		<div id="masthead">
 			<div id="SDlogo">
 		
-					<div id="scanWarning" [% IF NOT warn %]style="display:none"[% END %]>
+					<span id="scanWarning" [% IF NOT warn %]style="display:none"[% END %]>
 						[% "RESCANNING_SHORT" | string %]
 						<a href="[% webroot %]progress.html?type=importer" target="browser">
 <span id="progressName">[% IF progress.obj.total %][% progress.name _ "_PROGRESS" | string %][% END %]</span>
@@ -157,11 +157,11 @@
 <span class="progress" [% IF NOT progress.obj.total %]style="display:none"[% END %]> [% "OF" | string %] </span>
 <span id="progressTotal">[% IF progress.obj.total %][% progress.obj.total %][% END %]</span><span class="progress" [% IF NOT progress.obj.total %]style="display:none"[% END %]>) </span>
 						</a>
-					</div>
+					</span>
 		
-					<div id="libraryInfo" [% IF warn %]style="display:none"[% END %]>
-						<a href="http://www.slimdevices.com/" target="slimdevices"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices"></a>
-					</div>
+					<span id="libraryInfo" [% IF warn %]style="display:none"[% END %]>
+						<a href="http://www.slimdevices.com/" target="slimdevices"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices" height="17" width="150"></a>
+					</span>
 		
 			</div>
 			<div id="serverlinks">
