@@ -135,16 +135,11 @@
 [% END %]
 
 [% BLOCK cover_art_display %]
-	<table class = 'thinborder' cellspacing="0" cellpadding="0">
+	<table cellspacing="0" cellpadding="0">
 		<tr>
 		<td> 
 			<a href = 'http://google.com' id = 'albumhref'>
-		[% IF coverThumb -%]
-			<!--<a [% albumHRef %] id = 'albumhref'>[% PROCESS statusImg height="190" %]</a>-->
-			<img src="[% webroot %]html/images/cover.png" width = '190' height="190" STYLE="border: 1px solid black" id = 'coverartpath'>
-		[% ELSE -%]
-			<img src="[% webroot %]html/images/cover.png" width = '190' height="190" STYLE="border: 1px solid black" id = 'coverartpath'>
-		[%- END %]
+			<img src="[% webroot %]html/images/blank.png" width = '190' height="190" id = 'coverartpath'>
 			</a>
 		</td>
 		</tr>
