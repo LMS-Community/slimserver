@@ -1,25 +1,11 @@
 var p = 1;
 
-// track the progress bar update timer state
-var timerID = false;
-
-// refresh data interval (1s for progress updates, 10s for only status)
-var interval = 1000;
-
-// update timer counter, waits for 10 updates when update interval is 1s
-var inc = 0;
-
-// progressBar variables
-var _progressEnd = 0;
-var _progressAt = 0;
-var _curstyle = '';
-
 // regex to match player id, mac and ip format.
 var playerExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 
 function changePlayer(player_List) {
 	player = player_List.options[player_List.selectedIndex].value;
-	setCookie('SlimServer-player', '=' + player);
+	//setCookie('SlimServer-player', '=' + player);
 	player = escape(player);
 	
 	var newPlayer = "=" + player;
@@ -88,14 +74,6 @@ function resizePlaylist(page) {
 
 function openRemote() {
 	window.open('status.html?player='+player+'&undock=1', '', 'width=480,height=210,status=no');
-}
-
-function setCookie(name, value) {
-	var expires = new Date();
-	expires.setTime(expires.getTime() + 1000*60*60*24*365);
-	document.cookie =
-		name + "=" + escape(value) +
-		((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
 }
 
 function getArgs() {

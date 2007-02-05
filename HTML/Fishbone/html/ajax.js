@@ -190,7 +190,9 @@ function refreshInfo(theData, force, curstyle) {
 	refreshSleepTime(parsedData);
 	var myString = new String($('songtitlehref').innerHTML);
 	var rExp= new RegExp("item=(.+?)&amp;player","i");
+
 	if (rExp.exec(myString) == null) {rExp= new RegExp("item=(.+?)&player","i");}
+
 	var a = rExp.exec(myString);
 	var newsong = 1;
 
@@ -460,17 +462,7 @@ function optionDone(req) {
 }
 
 function getOptionData(params, action) {
-	var requesttype = 'get';
-
-	var myAjax = new Ajax.Request(
-	homeloc,
-	{
-		method: requesttype,
-		postBody: params,
-		parameters: params,
-		onComplete: action,
-		requestHeaders:['Referer', document.location.href]
-	});
+	ajaxRequest(homeloc, params, action);
 }
 
 function playlistChecker(start) {
@@ -481,7 +473,8 @@ function playlistChecker(start) {
 	if(start != null && start != '') {
 		refreshPlaylist();
 		args = args + "&start="+start;
+	} else {
+		getStatusData(args, currentSong);
 	}
-	getStatusData(args, currentSong);
 	url = prev_url;
 }

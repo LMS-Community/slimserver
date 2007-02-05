@@ -1,3 +1,17 @@
+// track the progress bar update timer state
+var timerID = false;
+
+// refresh data interval (1s for progress updates, 10s for only status)
+var interval = 1000;
+
+// update timer counter, waits for 10 updates when update interval is 1s
+var inc = 0;
+
+// progressBar variables
+var _progressEnd = 0;
+var _progressAt = 0;
+var _curstyle = '';
+
 function insertProgressBar(mp,end,at) {
 	var s = '';
 	if (!mp) s = '_s';
@@ -28,20 +42,24 @@ function ProgressUpdate(mp) {
 	if ($('playCtlplay') != null) {
 		if ($('playCtlplay'+ _curstyle).src.indexOf('_s') != -1) {
 			mp = 1;
-			if ($("progressBar").src.indexOf('_s') != -1) {$("progressBar").src = '[% webroot %]html/images/pixel.green.gif'}
+			if ($("progressBar").src.indexOf('_s') != -1) {$("progressBar").src = 'html/images/pixel.green.gif'}
 
 		} else {
 			mp = 0;
-			if ($("progressBar").src.indexOf('_s') == -1) {$("progressBar").src = '[% webroot %]html/images/pixel.green_s.gif'}
+			if ($("progressBar").src.indexOf('_s') == -1) {$("progressBar").src = 'html/images/pixel.green_s.gif'}
 		}
 	}
 	
+	timerID = setTimeout("ProgressUpdate( "+mp+")", interval);
+
 	inc++;
 	if (mp) _progressAt++;
 
 	if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
 	
-	[% IF undock %]refreshElement('inc',inc);[% END %]
+	if ($(inc)) {
+		refreshElement('inc',inc);
+	}
 
 	if (_progressAt == 1) {
 		doAjaxRefresh();
@@ -66,6 +84,5 @@ function ProgressUpdate(mp) {
 		inc = 0;
 	}
 
-	timerID = setTimeout("ProgressUpdate( "+mp+")", interval);
 }
 
