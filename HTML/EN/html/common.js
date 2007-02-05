@@ -139,7 +139,7 @@ function switchPlayer(player_List) {
 	var player = player_List.options[player_List.selectedIndex].value;
 	var newPlayer = "=" + player;
 	
-	setCookie( 'SlimServer-player', player_List.options[player_List.selectedIndex].value );
+	//setCookie( 'SlimServer-player', player_List.options[player_List.selectedIndex].value );
 	var doc = this;
 	
 	[% IF browserTarget %]
