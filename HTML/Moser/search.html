@@ -38,6 +38,8 @@
         [% FOREACH item = browse_items %]
           [% PROCESS browsedbitems_list.html %]
         [% END %]
+      [% ELSIF manualSearch %]
+        [% "NO_SEARCH_RESULTS" | string %]
       [% END %]
       </ul>
     </div>
