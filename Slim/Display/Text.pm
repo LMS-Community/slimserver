@@ -61,7 +61,7 @@ my @modes = (
 	  bar => 1, secs => 0,  width => 40, fullness => 1, },
 );
 
-my $nmodes = $#modes + 1;
+my $nmodes = $#modes;
 
 sub init {
 	my $display = shift;

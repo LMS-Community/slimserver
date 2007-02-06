@@ -68,7 +68,7 @@ my @modes = (
 	  bar => 1, secs => 0,  width => 320, fullness => 1 },
 );
 
-my $nmodes = $#modes + 1;
+my $nmodes = $#modes;
 
 # Parameters for the vumeter:
 #   0 - Channels: stereo == 0, mono == 1
@@ -123,7 +123,7 @@ my @visualizers = (
     },
 );
 
-my $nvisualizers = $#visualizers + 1;
+my $nvisualizers = $#visualizers;
 
 sub modes {
 	return \@modes;

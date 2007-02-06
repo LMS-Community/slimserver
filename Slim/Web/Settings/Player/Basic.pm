@@ -172,8 +172,9 @@ sub getPlayingDisplayModes {
 	};
 
 	my $modes  = $client->display->modes;
+	my $nmodes = $client->display->nmodes;
 
-	for (my $i = 0; $i < scalar @$modes; $i++) {
+	for (my $i = 0; $i <= $nmodes; $i++) {
 
 		my $desc = $modes->[$i]{'desc'};
 
@@ -202,7 +203,7 @@ sub getVisualModes {
 	my $modes  = $client->display->visualizerModes;
 	my $nmodes = $client->display->visualizerNModes;
 
-	for (my $i = 0; $i < $nmodes; $i++) {
+	for (my $i = 0; $i <= $nmodes; $i++) {
 
 		my $desc = $modes->[$i]{'desc'};
 

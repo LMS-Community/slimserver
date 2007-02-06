@@ -114,7 +114,7 @@ my @modes = (
 	  params => [$VISUALIZER_NONE], },
 );
 
-my $nmodes = $#modes + 1;
+my $nmodes = $#modes;
 
 our $defaultPrefs = {
 	'idleBrightness'      => 2,
@@ -269,8 +269,8 @@ sub visualizerParams {
 		$visu = 0; 
 	}
 	
-	if ($visu >= nmodes()) { 
-		$visu = nmodes() - 1;
+	if ($visu > $nmodes) {
+		$visu = $nmodes;
 	}
 	
 	return $display->modes()->[$visu]{params};
