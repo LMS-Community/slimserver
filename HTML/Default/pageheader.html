@@ -13,8 +13,11 @@
 	.thumbwrap { width: 97%}
 </style>
 <![endif]-->
-	[% IF pageHeaderScripts %][% pageHeaderScripts %][% END %]
-	[% PROCESS html/common.js %]
+	[% IF pageHeaderScripts %]
+		[% pageHeaderScripts %]
+	[% ELSE %]
+		<script TYPE="text/javascript">[% PROCESS html/common.js %]</script>
+	[% END %]
 </head>
 <body [% bodyscript %]>
 

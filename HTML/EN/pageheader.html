@@ -3,7 +3,12 @@
 <html>
 	<head>
 		[% PROCESS standardheader.html %]
-		[% PROCESS html/common.js %]
+		
+		[% IF pageHeaderScripts %]
+			[% pageHeaderScripts %]
+		[% ELSE %]
+			<script TYPE="text/javascript">[% PROCESS html/common.js %]</script>
+		[% END %]
 
 		<!--[if IE]>
 		<style type="text/css">

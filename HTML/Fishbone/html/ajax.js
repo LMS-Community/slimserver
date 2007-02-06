@@ -105,7 +105,7 @@ function refreshSleepTime(theData) {
 	if (parsedData['sleeptime'] && parsedData['sleeptime'] != 0) {
 		refreshElement('sleeptime', parsedData['sleep']);
 	} else {
-		refreshElement('sleeptime', '[% "SLEEP" | string %]');
+		refreshElement('sleeptime', parsedData['sleepstring']);
 	}
 }
 

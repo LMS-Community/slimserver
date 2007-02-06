@@ -32,7 +32,7 @@
 		<div class="groupDesc">[% "SETUP_GROUP_TITLEFORMATS_DESC" | string %]</div>
 		
 		<table width="100%">
-		<tr><th>[% 'SETUP_CURRENT' | string | upper %]</th><th>&nbsp</th><th>[% 'DISPLAY_SETTINGS' | string | upper %]</th><th>&nbsp</th></tr>
+		<tr><th>[% 'SETUP_CURRENT' | string | upper %]</th><th>&nbsp</th><th>[% 'DISPLAY_SETTINGS' | string | upper %]</th><th>&nbsp;</th></tr>
 		[% FOREACH format = prefs.titleFormat %]
 			<tr><td><input type=radio [% IF prefs.titleFormatCurr == loop.index %]checked [% END %]value="[% loop.index %]" name="titleFormatCurr"></td><td>
 			</td><td>
@@ -149,7 +149,7 @@
 	
 		<p>
 			[% IF useAJAX %]
-				<a href="[% webroot %]index.html" onClick="forgetPlayer('[% player %]');" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a>
+				<a href="[% webroot %]" onClick="forgetPlayer('[% player %]');" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a>
 			[% ELSE %]
 				<a href="[% webroot %]index.html?command=client&amp;subcommand=forget&amp;playerid=[% playerid | uri %]&amp;player=[% playerid | uri %]" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a>
 			[% END %]

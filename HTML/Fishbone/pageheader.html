@@ -2,7 +2,11 @@
 <html>
 <head>
 	[% PROCESS customheader.html %]
-	[% IF pageHeaderScripts %][% pageHeaderScripts %][% END %]
+	[% IF pageHeaderScripts %]
+		[% pageHeaderScripts %]
+	[% ELSE %]
+		<script TYPE="text/javascript">[% PROCESS html/common.js %]</script>
+	[% END %]
 
 [% IF artwork && levelName == 'album' %]
 <style type="text/css">

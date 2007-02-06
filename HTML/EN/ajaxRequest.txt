@@ -90,7 +90,6 @@ artisttext|[% PROCESS artistsAsText.html noby=1 %]
 # mm:ss length of song
 duration|[% itemobj.duration %]
 # mm:ss elapsed
-elapsed|[% songtime %]
 [%- IF songtime == 0 %]
 elapsed|0:00
 [%- ELSE %]

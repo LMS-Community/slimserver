@@ -1,5 +1,3 @@
-var url = "[% statusroot %]";
-
 function ajaxHomeCallback(theData) {
 	
 	var parsedData = fillDataHash(theData);
@@ -59,15 +57,13 @@ function ajaxHomeRefresh() {
 
 	// add a random number to the params as IE loves to cache the heck out of 
 	var args = 'ajaxRequest=1&d=' + Math.random();
-	ajaxHomeUpdate(args, ajaxHomeCallback);
+	ajaxRequest('home.html', args, ajaxHomeCallback);
 }
 
-
-[% IF warn %]
-	function doLoad(useAjax) {
-		
-		if (useAjax == 1) {
-			setTimeout( "ajaxHomeRefresh()", 1000);
-		}
+function doLoad(useAjax) {
+	
+	if (useAjax == 1) {
+		setTimeout( "ajaxHomeRefresh()", 1000);
 	}
-[% END %]
+}
+

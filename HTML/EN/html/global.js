@@ -48,14 +48,6 @@ function getStatusData(params, action) {
 	ajaxRequest(url, params, action);
 }
 
-function ajaxPing(params, action) {
-	ajaxRequest('html/ping.html', params, action);
-}
-
-function ajaxHomeUpdate(params, action) {
-	ajaxRequest('home.html', params, action);
-}
-
 function ajaxRequest(thisurl,params, action) {
 	var requesttype = 'post';
 

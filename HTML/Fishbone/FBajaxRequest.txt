@@ -7,6 +7,7 @@ playermodel|[% playermodel %]
 isplayer|[% isplayer %]
 sync|[% sync %]
 by|[% "BY" | string %]
+sleepstring|[% "SLEEP" | string %]
 cansave|[% cansave %]
 
 # path to cover art 

@@ -17,6 +17,11 @@
 		[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
 	[% END %]
 
+	[% pageHeaderScripts = BLOCK %]
+		[% pageHeaderScripts %]
+		<script TYPE="text/javascript">[% PROCESS html/settings.js %]</script>
+	[% END %]
+
 [% END %]
 
 [% pagetitle = page | string; pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %] 
