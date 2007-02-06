@@ -175,14 +175,14 @@
 	</div>
 
 	<div id="browsedbList">
-
+		
 		[% IF browse_items.size %]
 
 			[% FOREACH item = browse_items %]
 				[% PROCESS browsedbitems_list.html %]
 			[% END %]
 
-		[% ELSE %]
+		[% ELSIF search %]
 
 			[% "NO_SEARCH_RESULTS" | string %]
 
