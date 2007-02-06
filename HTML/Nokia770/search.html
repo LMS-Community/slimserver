@@ -45,8 +45,6 @@
 			<table border="0" cellspacing="0" cellpadding="0" width="100%">
 			[% FOREACH item = browse_items %]
 				[% PROCESS browsedbitems_list.html verbose = '1' %]
-			[% ELSIF manualSearch %]
-				[% "NO_SEARCH_RESULTS" | string %]
 			[% END %]
 			</table>
 			[% ELSE %]

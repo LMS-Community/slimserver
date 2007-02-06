@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</title>
+    <title>[% "SEARCH_MUSIC" | string %]</title>
     <link rel="stylesheet" href="[% webroot %]slimserver.css" type="text/css">
     <link rel="stylesheet" href="[% webroot %]skin.css" type="text/css">
     <meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]">
@@ -22,47 +22,49 @@
       <p> 
       <p> 
       <p> 
-      <h3>[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]<img src="html/images/spacer.gif" width="30" height="8"></h3>
+      <h3>[% "SEARCH_MUSIC" | string %]<img src="html/images/spacer.gif" width="30" height="8"></h3>
       </td>
   </tr>
 </table>
 <p>
-<p><img src="html/images/spacer.gif" width="30" height="8"><a href="home.html?player=[% playerURI %]">[% "HOME" | string %]</a> / <a href="search.html?player=[% playerURI %]&type=[% type %]">[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %] [% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type 
-  == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</a> 
+<p><img src="html/images/spacer.gif" width="30" height="8"><a href="home.html?player=[% playerURI %]">[% "HOME" | string %]</a> / <a href="search.html?player=[% playerURI %]&type=[% type %]">[% "SEARCH" | string %]</a> 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="30">&nbsp;</td>
     <td><hr>
       <p> 
-      <form method="get" action="search.html">
-        [% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %][% "COLON" | string %] 
-        <input type=text class="stdedit" name="query" value="[% query %]" size=40>
-        <input name="submit" type=submit class="stdclick" value=[% "SEARCH" | string %]>
-        <input type=hidden value="[% type %]" name="type">
-        <input type=hidden value="[% player %]" name="player">
-      </form>
+<script type="text/javascript" src="/html/prototype.js"></script>
+[% IF liveSearch %]
+  <form id="searchForm" name="searchForm" method="GET" action="search.html">
+    [% "SEARCH" | string %][% "COLON" | string %]<input type="text" id="query" name="query" size="40" autocomplete="off" />
+[% ELSE %]
+  <form id="searchForm" name="searchForm" method="GET" action="search.html">
+    [% "SEARCH" | string %][% "COLON" | string %]<input type="text" id="query" name="query" size="40" value="[% query %]"/>
+[% END %]
+    <input name="submit" type=submit class="stdclick" value="[% "SEARCH" | string %]"><p>
+    <input type="hidden" value="1" name="manualSearch">
+    <input type="hidden" value="[% player %]" name="player">
+  </form>
+<div id="search-results"></div>
       <p>
       <hr>
-      <p>[% IF numresults != '-1' %][% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %][% IF type 
-        == 'album' %][% "ALBUMSMATCHING" | string %][% END %][% IF type == 'song' %][% "TRACKSMATCHING" | string %][% END %] "[% query %]"[% "COLON" | string %][% numresults %]</p>
-      <p>[% END %]</p>
-      [% IF searchlist_pagebar %]
-      <p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
-      [% END %] [% IF searchlist_header %]
-      <p>[% searchlist_header %][% "COLON" | string %]</p>
-      [% END %] 
-      <table border="0" cellspacing="0" cellpadding="4">
-        [% IF browse_items %]
-          [% FOREACH item = browse_items %]
-            [% PROCESS browsedbitems_list.html %]
-          [% END %]
-        [% ELSIF manualSearch %]
-          [% "NO_SEARCH_RESULTS" | string %]
-        [% END %]
-      </table>
-      [% IF searchlist_pagebar %]
-      <p>[% "PAGES" | string %][% "COLON" | string %][% searchlist_pagebar %]</p>
-      [% END %]</td>
+<p>
+  [% IF searchError %]
+    [% searchError %]
+  [% END %]
+  [% IF pageinfo.totalpages && pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
+</p>
+<p>
+  [% IF browse_items.size %]
+    [% FOREACH item = browse_items %]
+      [% PROCESS browsedbitems_list.html %]
+    [% END %]
+  [% ELSIF manualSearch %]
+    [% "NO_SEARCH_RESULTS" | string %]
+  [% END %]
+</p>
+[% IF pageinfo.totalpages && pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
+[% IF liveSearch; INCLUDE "search-observer.html"; END %]
   </tr>
 </table>
 <p> 

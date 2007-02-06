@@ -2,11 +2,11 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
   <head>
-    <title>[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</title>
+    <title>[% "SEARCH" | string %]</title>
     <link rel="stylesheet" href="slimserver.css" />
   </head>
   <body>
-    <h3>[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %]</h3>
+    <h3>[% "SEARCH" | string %]</h3>
     <div class="linktree">
     <ul>
       <li><a href="home.html?player=[% playerURI %]">[% "HOME" | string %]</a></li>
@@ -15,17 +15,20 @@
     </div>
 
 <div class="searchinput">
-<form method="get" action="search.html">
-[% IF type == 'artist' %][% "SEARCHFOR_ARTIST" | string %][% END %][% IF type == 'album' %][% "SEARCHFOR_ALBUM" | string %][% END %][% IF type == 'song' %][% "SEARCHFOR_SONGTITLE" | string %][% END %][% "COLON" | string %]
-<input type="text" class="stdedit" name="query" value="[% query %]" size="40" />
-<input type="submit" class="stdclick" value="[% "SEARCH" | string %]" />
-<input type="hidden" value="[% type %]" name="type" />
-<input type="hidden" value="[% player %]" name="player" />
-</form>
-[% IF numresults != '-1' %]
-[% IF type == 'artist' %][% "ARTISTSMATCHING" | string %][% END %][% IF type == 'album' %][% "ALBUMSMATCHING" | string %][% END %][% IF type == 'song' %][% "TRACKSMATCHING" | string %][% END %] "[% query %]"[% "COLON" | string %][% numresults %]
+<script type="text/javascript" src="/html/prototype.js"></script>
+[% IF liveSearch %]
+  <form id="searchForm" name="searchForm" method="GET" action="search.html">
+    [% "SEARCH" | string %][% "COLON" | string %]<input type="text" id="query" name="query" size="40" autocomplete="off" />
+[% ELSE %]
+  <form id="searchForm" name="searchForm" method="GET" action="search.html">
+    [% "SEARCH" | string %][% "COLON" | string %]<input type="text" id="query" name="query" size="40" value="[% query %]"/>
 [% END %]
+    <input name="submit" type=submit class="stdclick" value="[% "SEARCH" | string %]"><p>
+    <input type="hidden" value="1" name="manualSearch">
+    <input type="hidden" value="[% player %]" name="player">
+  </form>
 </div>
+<div id="search-results"></div>
  [%- IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %]
     <div id="browselist_header">[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]</div>
   [%- FILTER indent(4) %]
@@ -34,13 +37,13 @@
  [%- END %]
     <div id="browselist">
       <ul>
-      [% IF browse_items %]
-        [% FOREACH item = browse_items %]
-          [% PROCESS browsedbitems_list.html %]
-        [% END %]
-      [% ELSIF manualSearch %]
-        [% "NO_SEARCH_RESULTS" | string %]
-      [% END %]
+  [% IF browse_items.size %]
+    [% FOREACH item = browse_items %]
+      [% PROCESS browsedbitems_list.html %]
+    [% END %]
+  [% ELSIF manualSearch %]
+    [% "NO_SEARCH_RESULTS" | string %]
+  [% END %]
       </ul>
     </div>
  [%- IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %]
@@ -48,6 +51,7 @@
    [%- PROCESS pagebar pagebarid = 'bottombrowselistpagebar' %]
   [%- END %]
  [%- END %]
+ [% IF liveSearch; INCLUDE "search-observer.html"; END %]
   </body>
 </html>
 
