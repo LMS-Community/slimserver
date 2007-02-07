@@ -841,7 +841,7 @@ sub isMMSURL {
 sub isRemoteURL {
 	my $url = shift || return 0;
 
-	if ($url =~ /^([a-zA-Z0-9\-]+):/ && Slim::Player::ProtocolHandlers->isValidHandler($1)) {
+	if ($url =~ /^([a-zA-Z0-9\-]+):/ && Slim::Player::ProtocolHandlers->isValidHandler( lc($1) )) {
 
 		return 1;
 	}
