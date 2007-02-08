@@ -480,3 +480,32 @@ div#closeAlbumInfo {
 .thinborder {
 	border: 1px solid black;
 }
+div.settingSection .groupHead, .settingSection .prefHead {
+        /* home menu list header */
+        background-color: #c5c5c5;
+        height: 15px;
+        padding: 3px 3px 4px;
+        font-size: 15px;
+        font-weight: bold;
+}
+
+div.prefHead {
+        height: 13px;
+        padding: 8px 6px 2px 0px;
+        margin-top: 6px;
+        margin-bottom: 6px;
+}
+
+div.groupHead {
+        margin-top: 6px;
+        margin-bottom: 6px;
+}
+
+div.prefDesc,.groupDesc,.groupHead {
+        padding-bottom: 10px;
+}
+
+.bar {
+	padding-left: 10px;
+	padding-right: 10px;
+}

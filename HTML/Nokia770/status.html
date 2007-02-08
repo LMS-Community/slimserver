@@ -284,7 +284,7 @@ onclick="document.prev.src = 'html/images/larger/prev_active.gif'; playerButtonC
 	<img src="html/images/off_symbol.gif" id = 'bar_active_0' border="0" width="20" style="display:[% IF volume == 0 %]block[% ELSE %]none[% END %];" title = 'Muted'>
 	<img src="html/images/off_symbol_gray.gif" id = 'bar_0' border="0" width="20" style="display:[% IF volume == 0 %]none[% ELSE %]block[% END %];" title = 'Mute player'>
 	</td>
-	[% vol= [20, 35, 50, 75, 80, 85, 90, 95, 100]  %]
+	[% vol= [ 15, 30, 40, 50, 60, 70, 80, 90, 100 ] %]
 	[% FOREACH level IN vol %]
 	<td width="25" onclick='volumeControl("[% level %]");' valign="bottom">
 	<img src="html/images/bar_active.gif" id = 'bar_active_[% level %]' border="0" width="20" height="[% loop.count*4 %]" style="display:[% IF volume >= level %]block[% ELSE %]none[% END %];" title = 'set volume to [% level %]'>

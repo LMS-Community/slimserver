@@ -483,3 +483,7 @@ div.prefDesc,.groupDesc,.groupHead {
 	padding-bottom: 10px;
 }
 
+.bar {
+	padding-left: 10px;
+	padding-right: 10px;
+}

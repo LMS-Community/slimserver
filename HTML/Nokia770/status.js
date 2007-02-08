@@ -160,7 +160,7 @@ function refreshControls(theData) {
 
 function refreshVolumeControl(theData) {
 	var parsedData = fillDataHash(theData);
-	var levels = [0, 20, 35, 50, 75, 80, 85, 90, 95, 100];
+	var levels = [0, 15, 30, 40, 50, 60, 70, 80, 90, 100];
 	levels.each( function(thisLevel) {
 		var key = 'bar_'+thisLevel;
 		var activeKey = 'bar_active_'+thisLevel;
@@ -187,6 +187,8 @@ function refreshVolumeControl(theData) {
 			Element.show(turnOn);
 		}
 	});
+	var level = parseInt(parsedData['volume']);
+	showVolumeOSD(level, 500);
 }
 
 function adjustVolume(level) {
