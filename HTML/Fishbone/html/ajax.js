@@ -222,9 +222,11 @@ function refreshInfo(theData, force, curstyle) {
 	if (parsedData['thissongnum']) {
 		hideElements(['notplaying']);
 		showElements(['nowplaying']);
+		$('coverarthref').href = 'browsedb.html?hierarchy=album,track&level=2&album.id='+parsedData['albumid']+'&amp;player='+player;
 	} else {
 		hideElements(['nowplaying']);
 		showElements(['notplaying']);
+		$('coverarthref').href = "javascript:void();";
 	}
 
 	var playeronly = ['playCtlffwd', 'playCtlrew', 'playCtlmute', 'volumeControl'];
@@ -362,6 +364,11 @@ function currentSong(theData) {
 	var doc = parent.playlist.document;
 	var found = 0;
 	var refresh = 0;
+	
+	if (parsedData['playlistsize'] == 0) {
+		getPlaylistData();
+		return;
+	}
 	
 	if (first == null || first == parsedData['first_item']) {
 		first = parsedData['first_item'];

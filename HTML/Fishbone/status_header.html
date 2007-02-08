@@ -124,7 +124,7 @@
 [%- PROCESS progressOverlay -%]
 		<div id="TopMenu1">
 			<div id="coverart">
-				<span id='coverhref'><a [% albumHRef %] target="browser">[% IF coverThumb -%]
+				<span id='coverhref'><a id="coverarthref" [% albumHRef %] target="browser">[% IF coverThumb -%]
 					[%- PROCESS statusImg width="100" -%]
 				[%- ELSE -%]
 					<img src="[% webroot %]html/images/cover.png" id="coverartpath" width = '100' height="100">
