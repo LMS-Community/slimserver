@@ -50,6 +50,16 @@ function newHref(doc,plyr) {
 	}
 }
 
+function newValue(doc,plyr) {
+
+	for (var j=0;j < doc.forms.length; j++){
+
+		if (doc.forms[j].player) {
+			doc.forms[j].player.value = plyr;
+		}
+	}
+}
+
 function toggleStatus(divs) {
 
 	for (var i=0; i < divs.length; i++) {
