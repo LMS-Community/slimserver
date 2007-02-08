@@ -416,10 +416,10 @@ div#OSD{
 }
 
 div#volumeOSD{
-	position: fixed;
+	position: absolute;
 	z-index: 100;
-	top: 240;
-	left: 500;
+	top: 215;
+	left: 750;
 	background-color: white;
 	color: black;
 	font-weight: bold;
