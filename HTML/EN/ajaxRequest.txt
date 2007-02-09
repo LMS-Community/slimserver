@@ -73,7 +73,7 @@ odd_[% myItem.num %]|[% myItem.odd %]
 
 [% IF page == 'status' %]
 # status page only
-songtitle|[% songtitle %]
+songtitle|[% itemobj.title %]
 [% IF itemobj.isRemoteURL %]streamtitle|[% songtitle %][% END %]
 artist|[% itemobj.artist.name %]
 album|[% itemobj.album.title %]
