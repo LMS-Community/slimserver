@@ -1,5 +1,5 @@
-<a name="[% item.num %]"></a>
-<div [% IF item.odd %]class="odd"[% END %] [% IF not item.odd %]class="even"[% END %]>
+<a id="currentPlaylistItem[% item.num %]" name="currentPlaylistItem[% item.num %]"></a>
+<div [% IF item.odd %]class="odd"[% END %] [% IF not item.odd %]class="even"[% END %] onmouseover="this.style.backgroundColor='40464a';" onmouseout="this.style.backgroundColor='000000';">
 	<div id="playlistitem[% item.num %]" [% IF item.currentsong %]class="currentListItem"[% ELSE %]class="browsedbListItem"[% END %]>
 		[% IF item.currentsong %]
 			<a name="currentsong"></a>

@@ -5,6 +5,12 @@ var currentID = 0;
 
 [% PROCESS html/global.js %]
 
+function convert(url)
+{
+	var re = /&amp;/g;
+	return url.replace(re, "&");
+}
+
 function doAjaxRefresh(light) {
 	var args = 'player='+player+'&ajaxRequest=1&s='+Math.random();
 	if (light) {
@@ -217,12 +223,14 @@ function refreshInfo(theData, force, curstyle) {
 		refreshElement('songtitle', parsedData['streamtitle']);
 	}
 	
-	if (parsedData['durationseconds']) updateTime(parsedData['songtime'],parsedData['durationseconds'], curstyle);
-
+	if (parsedData['durationseconds']) {
+		updateTime(parsedData['songtime'],parsedData['durationseconds'], curstyle);
+	}
+	
 	if (parsedData['thissongnum']) {
 		hideElements(['notplaying']);
 		showElements(['nowplaying']);
-		$('coverarthref').href = 'browsedb.html?hierarchy=album,track&level=2&album.id='+parsedData['albumid']+'&amp;player='+player;
+		$('coverarthref').href = convert(parsedData['albumhref']);
 	} else {
 		hideElements(['nowplaying']);
 		showElements(['notplaying']);
@@ -270,8 +278,10 @@ function refreshInfo(theData, force, curstyle) {
 	
 	// refresh href content
 	if (newsong) {
-		refreshHrefElement('albumhref', parsedData['albumid'],"album.id=");
-		refreshHrefElement('coverhref', parsedData['albumid'],"album.id=");
+		if (parsedData['albumid']) {
+			refreshHrefElement('albumhref', parsedData['albumid'],"album.id=");
+			refreshHrefElement('coverhref', parsedData['albumid'],"album.id=");
+		}
 		refreshHrefElement('removealbumhref', parsedData['album'],"p4=");
 		refreshHrefElement('removeartisthref', parsedData['artist'],"p3=");
 		refreshHrefElement('songtitlehref', parsedData['songtitleid'],"item=");
@@ -413,7 +423,7 @@ function currentSong(theData) {
 	if (refresh != 0) {
 		refreshPlaylist();
 	} else {
-		doc.location.hash = parsedData['currentsongnum'];
+		doc.location.hash = 'currentPlaylistItem'+currentsong;
 	}
 }
 

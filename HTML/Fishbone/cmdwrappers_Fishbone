@@ -76,6 +76,24 @@
 	[% END %]
 [%- END %]
 
+[%# taken from EN/cmdwrappers as an override %]
+[% BLOCK contentitem -%]
+<div class="[% odd ? "odd" : "even" %]" onmouseover="this.style.backgroundColor='40464a';" onmouseout="this.style.backgroundColor='000000';">
+	[%- IF anchor %]
+		<a name="[% anchor | uri %]"></a>
+	[%- END -%]
+	
+	<div class="[% lineclass || 'browsedbListItem' %]">
+		[%- content | indent(4) %]
+		[%- IF controls -%]
+			<div class="browsedbControls">
+			[%- PROCESS $controls -%]
+			</div>
+		[%- END %]
+	</div>
+</div>
+[%- END %]
+
 [% BLOCK trackinfo %]
 	[% IF item.currentsong %]
 		<a name="currentsong"></a>
