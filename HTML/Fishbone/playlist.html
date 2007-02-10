@@ -18,7 +18,7 @@
 <![endif]-->
 
 	</head>
-	<body bgcolor="#000000" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0" onload="javascript:to_currentsong();">
+	<body bgcolor="#000000" style="margin: 0;" onload="javascript:to_currentsong();">
 	[% IF playercount == '0' %]
 	[% ELSIF not playlist_items %]<div class="list"><a name="currentsong"></a></p>[% "EMPTY" | string %]</div>
 	[% ELSE %]
