@@ -833,7 +833,7 @@ sub generateHTTPResponse {
 	$log->info("Generating response for ($type, $contentType) $path");
 
 	# some generally useful form details...
-	if (defined($client)) {
+	if (defined($client) && exists($pageFunctions{$path})) {
 		$params->{'player'} = $client->id();
 		$params->{'myClientState'} = $client;
 		
