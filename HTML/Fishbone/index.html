@@ -3,25 +3,21 @@
 <html>
 	<head>
 		[% PROCESS customheader.html %]
-		<script TYPE="text/javascript">
-			//<!--Hide
-			
-			document.write('<frameset cols="50%,*" framespacing="2" border="2">' );
-			document.write('<frameset name="home" ID="home" border="0" frameborder="no" framespacing="0" rows="55,*">');
-			document.write('<frame name="header" ID="header" scrolling="no" src="home.html?player=[% playerURI %]&page='+ getPage() +'">');
-			document.write('<frame name="browser" ID="browser" src="' + getHomeCookie('SlimServer-Browserpage') +'&player=[% playerURI %]">');
-			document.write('<\/frameset>');
-			
-			document.write('<frameset name="player_frame" ID="player_frame" border="0" frameborder="no" framespacing="0" rows="260,*">');
-			document.write('<frame ID="status" name="status" scrolling="no" src="status_header.html?player=[% playerURI %]">');
-			document.write('<frame ID="playlist" name="playlist" src="playlist.html?player=[% playerURI %]">');
-			document.write('<\/frameset>');
-			document.write('<\/frameset>');
-			document.close();
-			//-->
-		</script>
 	</head>
-	<body>
+	
+	<frameset cols="50%,*" framespacing="2" border="2">
+		<frameset name="home" ID="home" border="0" frameborder="no" framespacing="0" rows="55,*">
+			<frame name="header" ID="header" scrolling="no" src="home.html?player=[% playerURI %]">
+			<frame name="browser" ID="browser" src="html/black.html">
+		</frameset>
+		<frameset name="player_frame" ID="player_frame" border="0" frameborder="no" framespacing="0" rows="260,*">
+			<frame ID="status" name="status" scrolling="no" src="status_header.html?player=[% playerURI %]">
+			<frame ID="playlist" name="playlist" src="playlist.html?player=[% playerURI %]">
+		</frameset>
+	</frameset>
+	<noframes>
+	<body bgcolor="#000000">
 		This page requires Frames.
 	</body>
+	</noframes>
 </html>

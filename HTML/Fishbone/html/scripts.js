@@ -5,21 +5,16 @@ var playerExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 
 function changePlayer(player_List) {
 	player = player_List.options[player_List.selectedIndex].value;
-	//setCookie('SlimServer-player', '=' + player);
+	
 	player = escape(player);
 	
 	var newPlayer = "=" + player;
-	newHref(parent.frames[2].document,newPlayer);
 	refreshPlaylist(player);
 	
 	var args = 'player='+player+'&ajaxRequest=1&s='+Math.random();
 	getStatusData(args, refreshNewPlayer);
 	
-	var newpage = '';
-	var rExp= new RegExp("&page=(.*?)$");
-	
-	if (parent.browser.location.href.indexOf('setup')        == -1 &&
-			parent.browser.location.href.indexOf('settings') == -1) {
+	if (parent.browser.location.href.indexOf('setup') == -1) {
 		newHref(parent.browser.document,newPlayer);
 		newHref(parent.header.document,newPlayer);
 		newValue(parent.browser.document,unescape(player));
@@ -29,15 +24,12 @@ function changePlayer(player_List) {
 		parent.browser.location=browseURL.replace(playerExp, newPlayer);
 	}
 
-	var myString = getHomeCookie('SlimServer-Browserpage');
-	if (rExp.exec(myString)) newpage = "&page=" + rExp.exec(myString)[1];
-
-	headerURL = new String(parent.header.location.href);
-	newloc = headerURL.replace(playerExp, newPlayer);
-	
 	if (document.all) { //certain versions of IE will just have to reload the header
-		parent.header.location = newloc.replace(/&page=(.*?)$/,newpage);
+		parent.header.location = "home.html?player=" + player;
 	}
+	
+	var page = parent.header.document.getElementById('homepage').innerHTML;
+	selectLink("",page);
 }
 
 // change browse/plugin/radio hrefs to proper player
@@ -86,23 +78,6 @@ function openRemote() {
 	window.open('status.html?player='+player+'&undock=1', '', 'width=480,height=210,status=no');
 }
 
-function getArgs() {
-	var args = new Object();
-	var query = location.search.substring(1);
-	var pairs = query.split("&");
-
-	for(var i = 0; i < pairs.length; i++) {
-		var pos = pairs[i].indexOf('=');
-
-		if (pos == -1) continue;
-		var argname = pairs[i].substring(0,pos);
-		var value = pairs[i].substring(pos+1);
-		args[argname] = unescape(value);
-	}
-
-	return args;
-}
-
 function getCookie(cookie)
 {
 	var search = cookie + "=";
@@ -127,17 +102,12 @@ function getPlayer(Player)
 	plyr = getCookie(Player);
 
 	if (!plyr) return "";
-	if (plyr.indexOf("=") == -1) plyr = "=" + plyr;
+	if (plyr.indexOf("=") == -1) plyr = plyr;
 
 	return plyr;
 }
 
-function goHome(plyr)
-{
-	var loc = getHomeCookie('SlimServer-Browserpage')+'&player='+plyr;
-	parent.browser.location = loc;
-}
-
+// grab homepage cookie
 function getHomeCookie(Name) 
 {
 	var url = getCookie(Name);
@@ -150,6 +120,7 @@ function getHomeCookie(Name)
 	return url;
 }
 
+// parse the page name token (handles old style full href cookie)
 function getPage() {
 	var url = getHomeCookie('SlimServer-Browserpage');
 
@@ -170,18 +141,18 @@ function getPage() {
 					end = url.length;
 				page = unescape(url.substring(offset, end));
 
-				if (!page) return "BROWSE_BY_ALBUM";
+				if (!page) return url;
 				return page;
 			}
 		}
-		return "BROWSE_BY_ALBUM";
+		return url;
 	}
 }
 
 var selectedLink;
 function selectLink(lnk,reset) {
 
-	document.getElementById('homelink').style.fontWeight = 'normal';
+	parent.header.document.getElementById('homelink').style.fontWeight = 'normal';
 	if (selectedLink) selectedLink.style.fontWeight = 'normal';
 
 	if (lnk) {
@@ -189,15 +160,15 @@ function selectLink(lnk,reset) {
 		selectedLink=lnk;
 	}
 	if (reset == 1) {
-		document.forms[0].browse.options[0].selected = "true";
+		parent.header.document.forms[0].browse.options[0].selected = "true";
 
 	} else {
-		if (reset && homestring) {reset = page;}
-
-		for (var i=0;i < document.forms[0].browse.options.length; i++){
-
-			if (document.forms[0].browse.options[i].value == reset) {
-				document.forms[0].browse.options[i].selected = "true";
+		if (reset) {
+			for (var i=0;i < parent.header.document.forms[0].browse.options.length; i++){
+	
+				if (parent.header.document.forms[0].browse.options[i].value == reset) {
+					parent.header.document.forms[0].browse.options[i].selected = "true";
+				}
 			}
 		}
 	}
@@ -207,6 +178,7 @@ function setLink(lnk) {
 	lnk.href=getHomeCookie('SlimServer-Browserpage') + "&player" + getPlayer('SlimServer-player');
 }
 
+// function to turn off text under album images while in gallery view.
 function toggleText(set) {
 	for (var i=0; i < document.getElementsByTagName("div").length; i++) {
 

@@ -1,6 +1,6 @@
 [%- FILTER null %]
 	[%- optionForm = BLOCK -%]
-	<FORM id="browseForm" name="browseForm" action="javascript:return(false);" target="header">
+	<FORM id="browseForm" name="browseForm" action="javascript:void(0);" target="header">
 		<SELECT NAME="browse" class="stdedit" style="width:17em;" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
 			<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
 			[% PROCESS addBrowseLinks links=additionalLinks.browse %]
@@ -8,12 +8,12 @@
 			[% PROCESS addBrowseLinks links=additionalLinks.search %]
 			<OPTION value="" label="">---[% "RADIO" | string %]---</OPTION>
 			[% PROCESS addBrowseLinks links=additionalLinks.radio %]
-			<OPTION [% IF page == "RADIO_TUNEIN" %]selected[% END %] value="RADIO_TUNEIN" label='[% "RADIO_TUNEIN" | string %]'>[% "RADIO_TUNEIN" | string %]</OPTION>
+			<OPTION value="RADIO_TUNEIN" label='[% "RADIO_TUNEIN" | string %]'>[% "RADIO_TUNEIN" | string %]</OPTION>
 			[% IF additionalLinks.plugins %]
 			<OPTION value="" label="">---[% "PLUGINS" | string %]---</OPTION>
 			[% PROCESS addBrowseLinks links=additionalLinks.plugins %]
 			[% END %]
-			<OPTION [% IF page == "STATISTICS" %]selected[% END %] value="[% "STATISTICS" %]" label="[% "STATISTICS" | string %]">[% "STATISTICS" | string %]</OPTION>
+			<OPTION label="[% "STATISTICS" | string %]">[% "STATISTICS" | string %]</OPTION>
 			[% IF additionalLinks.settings %]
 			<OPTION value="" label="">---[% "SETTINGS" | string %]---</OPTION>
 			[% PROCESS addBrowseLinks links=additionalLinks.settings %]
@@ -26,7 +26,7 @@
 	[%- BLOCK addBrowseLinks -%]
 		[%- IF links -%]
 			[%- FOREACH link = links -%]
-				<OPTION [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
+				<OPTION value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
 			[%- END -%]
 		[%- END -%]
 	[%- END -%]
@@ -37,8 +37,6 @@
 			[% IF link.key == "SQUEEZENETWORK_SWITCH" %][% cookie = 0 %][% END %]
 			case "[% link.key %]":
 				url = "[% link.value %]"
-				[% IF cookie %]page = "[% link.key %]"[% END %]
-				suffix = "page=" + page
 				[% IF cookie %]homestring = "[% link.key | string %]"
 				cookie = [% cookie %][% END %]
 			break
@@ -77,9 +75,14 @@
 					parent.browser.location='search.html?manualSearch=1&query=' + value + '&player' + getPlayer('SlimServer-player');
 				}
 				
+				function goHome()
+				{
+					var homepage = getPage();
+					chooseBrowser(null,homepage);
+				}
+				
 				function chooseBrowser(value,option)
 				{
-					selectLink()
 					var url;
 					var cookie = 0;
 					switch(option)
@@ -91,33 +94,43 @@
 					[% PROCESS addCaseLinks links=additionalLinks.settings cookie=0 %]
 					case "RADIO_TUNEIN":
 						url = "tunein.html"
-						page = "RADIO_TUNEIN"
-						suffix = "?page=" + page
+						//page = "RADIO_TUNEIN"
 					break
 					case "STATISTICS":
-						url= "hitlist.html"
-						page="STATISTICS"
-						suffix = ""
+						url = "hitlist.html"
+						//page = "STATISTICS"
 					}
 			
 					if (option) {
 						if (cookie) {
-							setCookie("SlimServer-Browserpage",url + suffix);
-							//parent.header.location =  "home.html?page=" + page + '&player' + getPlayer('SlimServer-player');
+							setCookie("SlimServer-Browserpage",option);
+							//parent.header.location =  "home.html?player' + getPlayer('SlimServer-player');
 						}
-						if (suffix != "") {suffix = suffix + "&"} else {suffix = "?"}
-						parent.browser.location = url + suffix + 'player' + getPlayer('SlimServer-player');
+						
+						parent.browser.location = url + '?player' + getPlayer('SlimServer-player');
 					}
+					
+					if (value != null) {
+						selectLink();
+					} else {
+						selectLink("",option);
+					}
+					document.getElementById('homepage').innerHTML = option;
 				}
 				
 				function homelink() {
 					if (homestring) {
 						document.getElementById('homelink').innerHTML = homestring;
-					} [% IF page %]else {
-						document.getElementById('homelink').innerHTML = '[% page | string %]';
-					}[% END %]
+					}
 				}
 				
+				function loadBrowser(force) {
+					if (force || parent.browser.location.href.match('black.html')) {
+						page = getPage();
+						chooseBrowser(null,page);
+					}
+				}
+
 				-->
 			</script>
 
@@ -125,6 +138,8 @@
 		
 		[% IF warn %]
 			[% bodyscript = 'onload="doLoad(1);"' %]
+		[% ELSE %]
+			[% bodyscript = 'onload="loadBrowser();"' %]
 		[% END %]
 	
 	[% END %]
@@ -149,7 +164,7 @@
 
 		<div id="masthead">
 			<div id="SDlogo">
-		
+					<span id="homepage" style="display:none;"></span>
 					<span id="scanWarning" [% IF NOT warn %]style="display:none"[% END %]>
 						[% "RESCANNING_SHORT" | string %]
 						<a href="[% webroot %]progress.html?type=importer" target="browser">
@@ -166,7 +181,7 @@
 		
 			</div>
 			<div id="serverlinks">
-				<a id="homelink" style="font-weight:bold;" href="javascript:selectLink(this,'BROWSE_NEW_MUSIC');" target="browser" onclick="selectLink(this,'[% page %]');" onMouseOver="homelink();setLink(this);" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
+				<a id="homelink" style="font-weight:bold;" href="javascript:loadBrowser(1);" onMouseOver="homelink();" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
 				 / 
 				[% IF not nosetup && not noserver %]
 					<a href="[% webroot %]settings/server/basic.html?player=[% playerURI %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this,1)">[% "SERVER_SETTINGS" | string %]</a>
@@ -180,7 +195,7 @@
 			
 			[% optionForm %]
 			
-			<FORM id="HeaderSearchForm" name="HeaderSearchForm" action="javascript:return(false);" onSubmit="doSearch(query.value);">
+			<FORM id="HeaderSearchForm" name="HeaderSearchForm" action="javascript:void(0)" onSubmit="doSearch(query.value);">
 				[% "SEARCH" | string %]
 				<input type=text class="stdedit" name="query" [% IF search %]value="[% query %]"[% END %] size="15">
 				<input type=hidden value="[% player %]" name="player">
