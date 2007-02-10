@@ -144,8 +144,8 @@
 				<span id="artisthtml">[% PROCESS artistsAsHTML.html noby=1 %]</span>
 				
 				<div id="albuminfo" class="label">[% "ALBUM" | string %]&nbsp;<span id="removealbumhref">[% PROCESS remove param="album.id" value = "$itemobj.album.id" %]</span></div>
-				<span id="albumhref"><a [% albumHRef %] target="browser"><span id="album">[% itemobj.album.title | html %]</span></a>&nbsp;
-				<span id="yearinfo">(<span id="yearhref"><a [% yearHRef %] target="browser"><span id="year">[% itemobj.year %]</span></a></span>)</span></span>
+				<span id="albumhref"><a [% albumHRef %] target="browser"><span id="album">[% itemobj.album.title | html %]</span></a>&nbsp;</span>
+				<span id="yearinfo">(<span id="yearhref"><a [% yearHRef %] target="browser"><span id="year">[% itemobj.year %]</span></a></span>)</span>
 			</div>
 		</div>
 	
