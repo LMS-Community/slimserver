@@ -1254,7 +1254,7 @@ sub mergeVariousArtistsAlbums {
 		$progress->update($albumObj->name);
 	}
 
-	$progress->final($count);
+	$progress->final($count) if $count;
 
 	Slim::Music::Import->endImporter('mergeVariousAlbums');
 }
@@ -1634,21 +1634,37 @@ sub _preCheckAttributes {
 
 	# We can take an array too - from vorbis comments, so be sure to handle that.
 	my $comments = [];
+	my $rawcomments = [];
 
 	if ($attributes->{'COMMENT'} && !ref($attributes->{'COMMENT'})) {
 
-		$comments = [ $attributes->{'COMMENT'} ];
+		$rawcomments = [ $attributes->{'COMMENT'} ];
 
 	} elsif (ref($attributes->{'COMMENT'}) eq 'ARRAY') {
 
-		$comments = $attributes->{'COMMENT'};
+		$rawcomments = $attributes->{'COMMENT'};
 	}
 
 	# Bug: 2605 - Get URL out of the attributes - some programs, and
 	# services such as www.allofmp3.com add it.
 	if ($attributes->{'URL'}) {
 
-		push @$comments, delete $attributes->{'URL'};
+		push @$rawcomments, delete $attributes->{'URL'};
+	}
+
+	# Look for tags we don't want to expose in comments, and splice them out.
+	for my $c(@$rawcomments) {
+
+		#ignore SoundJam and iTunes CDDB comments, iTunSMPB, iTunPGAP
+		if ($c =~ /SoundJam_CDDB_/ ||
+		    $c =~ /iTunes_CDDB_/ ||
+		    $c =~ /^iTun[A-Z]{4}/ ||
+		    $c =~ /^\s*[0-9A-Fa-f]{8}(\+|\s)/ ||
+		    $c =~ /^\s*[0-9A-Fa-f]{2}\+[0-9A-Fa-f]{32}/) {
+
+			next;
+		}
+		push @$comments, $c;
 	}
 
 	$attributes->{'COMMENT'} = $comments;

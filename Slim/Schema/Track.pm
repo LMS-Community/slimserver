@@ -167,14 +167,6 @@ sub comment {
 
 		next unless $c;
 
-		# ignore SoundJam and iTunes CDDB comments
-		if ($c =~ /SoundJam_CDDB_/ ||
-		    $c =~ /iTunes_CDDB_/ ||
-		    $c =~ /^\s*[0-9A-Fa-f]{8}(\+|\s)/ ||
-		    $c =~ /^\s*[0-9A-Fa-f]{2}\+[0-9A-Fa-f]{32}/) {
-			next;
-		} 
-
 		# put a slash between multiple comments.
 		$comment .= ' / ' if $comment;
 		$c =~ s/^eng(.*)/$1/;
