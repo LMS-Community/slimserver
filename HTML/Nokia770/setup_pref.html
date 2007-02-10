@@ -1,9 +1,0 @@
-<!-- setup_pref.html -->
-[% IF not Suppress_PrefHead %]
-     <table bgcolor="#c5c5c5" width=100%><tr><td><b>[% PrefHead | getstring | upper | html %]</b></td></tr></table>
-[% END %]
-[% IF not Suppress_PrefDesc %]<p>[% PrefDesc | getstring %]</p>[% END %]
-[% PrefInput %]
-[% IF not Suppress_PrefHead %][% END %]
-[% IF not Suppress_PrefLine %][% END %]
-<!-- /Element setup_pref.html -->
