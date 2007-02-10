@@ -13,7 +13,7 @@
 			<OPTION value="" label="">---[% "PLUGINS" | string %]---</OPTION>
 			[% PROCESS addBrowseLinks links=additionalLinks.plugins %]
 			[% END %]
-			<OPTION label="[% "STATISTICS" | string %]">[% "STATISTICS" | string %]</OPTION>
+			<OPTION value="STATISTICS" label="[% "STATISTICS" | string %]">[% "STATISTICS" | string %]</OPTION>
 			[% IF additionalLinks.settings %]
 			<OPTION value="" label="">---[% "SETTINGS" | string %]---</OPTION>
 			[% PROCESS addBrowseLinks links=additionalLinks.settings %]
