@@ -281,10 +281,11 @@ function refreshInfo(theData, force, curstyle) {
 		if (parsedData['albumid']) {
 			refreshHrefElement('albumhref', parsedData['albumid'],"album.id=");
 			refreshHrefElement('coverhref', parsedData['albumid'],"album.id=");
+			refreshHrefElement('removealbumhref', parsedData['albumid'],"album.id=");
 		}
-		refreshHrefElement('removealbumhref', parsedData['album'],"p4=");
-		refreshHrefElement('removeartisthref', parsedData['artist'],"p3=");
+		refreshHrefElement('removeartisthref', parsedData['artistid'],"contributor.id=");
 		refreshHrefElement('songtitlehref', parsedData['songtitleid'],"item=");
+		refreshHrefElement('yearhref', parsedData['year'],"year.id=");
 		refreshHrefElement('zaphref', parsedData['thissongnum']-1,"p2=");
 		currentID = parsedData['songtitleid'];
 	}
@@ -298,7 +299,7 @@ function refreshInfo(theData, force, curstyle) {
 	}
 	
 	if (newsong) {
-		var elems = ['duration', 'bitrate', 'year'];
+		var elems = ['duration', 'bitrate'];
 		for (var i=0; i < elems.length; i++) {
 			var key = elems[i];
 			if (parsedData[key] && parsedData[key] != 0) {
@@ -312,9 +313,11 @@ function refreshInfo(theData, force, curstyle) {
 		if(parsedData['album']) {
 			showElements(['albuminfo']);
 			showElements(['albumhref'], 'inline');
+			showElements(['yearinfo'], 'inline');
 			refreshElement('album', parsedData['album']);
+			refreshElement('year', parsedData['year']);
 		} else {
-			hideElements(['albuminfo', 'albumhref']);
+			hideElements(['albuminfo', 'albumhref', 'yearinfo']);
 		}
 		
 		if(parsedData['artist']) {

@@ -51,7 +51,7 @@
 [% END %]
 
 [% BLOCK remove %]
-	<a class="label" href="[% statusroot %]?p0=playlist&amp;p1=deletealbum&amp;p2=&amp;[% param %]=[% value | uri %]&amp;player=[% playerURI %]" title='[% "REMOVE_FROM_PLAYLIST" | string %]'>[x]</a>
+	<a class="label" href="[% statusroot %]?command=playlist&amp;subcommand=deletetracks&amp;[% param %]=[% value | uri %]&amp;player=[% playerURI %]" title='[% "REMOVE_FROM_PLAYLIST" | string %]'>[x]</a>
 [% END %]
 
 [% END -%]
@@ -140,11 +140,12 @@
 				<div id="songtitlehref" class="currentSongData"><a class="songtitle" [% songinfoHRef %] target="browser"><span id="songtitle">[% songtitle %]</span></a>
 				&nbsp;<span id="duration">[% IF itemobj.duration %]([% itemobj.duration | html %])[% END %]</span>&nbsp;<span id="bitrate">[% IF bitrate %]([% bitrate %])[% END %]</span></div>
 				
-				<div id="artistinfo" class="label">[% "ARTIST" | string %]&nbsp;<span id="removeartisthref">[% PROCESS remove param="p3" value = "$itemobj.artist" %]</span></div>
+				<div id="artistinfo" class="label">[% "ARTIST" | string %]&nbsp;<span id="removeartisthref">[% PROCESS remove param="contributor.id" value = "$itemobj.artist.id" %]</span></div>
 				<span id="artisthtml">[% PROCESS artistsAsHTML.html noby=1 %]</span>
 				
-				<div id="albuminfo" class="label">[% "ALBUM" | string %]&nbsp;<span id="removealbumhref">[% PROCESS remove param="p3=&amp;p4" value = "$itemobj.album.title" %]</span></div>
-				<span id="albumhref"><a [% albumHRef %] target="browser"><span id="album">[% itemobj.album.title | html %]</span></a>&nbsp;<span id="year">[% IF itemobj.year %]([% itemobj.year %])[% END %]</span></span>
+				<div id="albuminfo" class="label">[% "ALBUM" | string %]&nbsp;<span id="removealbumhref">[% PROCESS remove param="album.id" value = "$itemobj.album.id" %]</span></div>
+				<span id="albumhref"><a [% albumHRef %] target="browser"><span id="album">[% itemobj.album.title | html %]</span></a>&nbsp;
+				<span id="yearinfo">(<span id="yearhref"><a [% yearHRef %] target="browser"><span id="year">[% itemobj.year %]</span></a></span>)</span></span>
 			</div>
 		</div>
 	
