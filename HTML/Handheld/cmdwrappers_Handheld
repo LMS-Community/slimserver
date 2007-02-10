@@ -5,6 +5,9 @@
 [% useTabList = 1 %]
 [% useAJAX = 0 %]
 
+[%# Default to no targets for links %]
+[% notarget = 1 %]
+
 [% statusroot = 'status.html' %]
 [%-
 	oddC  = '#ffffff';
