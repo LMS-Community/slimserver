@@ -51,6 +51,8 @@
 </p>
 <ul>
 	<li>
+		Deprecated the tag &quot;year_id&quot; in favour of &quot;year&quot; in the 
+		&quot;<a href="#playlistcontrol">playlistcontrol</a>&quot; command.
 	</li>
 </ul>
 <p>
@@ -5531,8 +5533,11 @@ in the saved playlists folder.</p>
 			artist_id and/or album_id parameter is ignored.</td>
 	</tr>
 	<tr>
-		<td>year_id</td>
-		<td>Year ID, to restrict the results to the given year.</td>
+		<td>year|year_id</td>
+		<td>
+			Year, to restrict the results to the given year. The form year_id is accepted
+			for backwared compatibility but is deprecated.
+		</td>
 	</tr>
 	<tr>
 		<td>playlist_id</td>

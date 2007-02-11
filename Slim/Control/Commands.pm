@@ -1309,6 +1309,11 @@ sub playlistcontrolCommand {
 			$find->{'me.album'} = $album_id;
 		}
 
+		if (defined(my $year = $request->getParam('year'))) {
+
+			$find->{'me.year'} = $year;
+		}
+		# Fred: form year_id DEPRECATED in 7.0
 		if (defined(my $year_id = $request->getParam('year_id'))) {
 
 			$find->{'me.year'} = $year_id;
