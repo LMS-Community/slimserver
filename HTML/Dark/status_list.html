@@ -1,21 +1,20 @@
-
 <tr>
-   <td>[% IF item.currentsong %]<img src="html/spinner.gif">[% END %]&nbsp;</td>
-   <td [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
-       	[% IF item.currentsong %]<a name="currentsong"></a><b>[% END %]
-  			 <a [% PROCESS songinfoItemHRef%] target="browser">[% item.title | html %]</a>
- 		[% IF item.currentsong %]</b>[% END %]
+	<td>[% IF item.currentsong %]<img src="html/spinner.gif">[% END %]&nbsp;</td>
+	<td [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+		[% IF item.currentsong %]<a name="currentsong"></a><b>[% END %]
+			<a [% PROCESS songinfoItemHRef%] target="browser">[% item.title | html %]</a>
+		[% IF item.currentsong %]</b>[% END %]
 
-<span class="small">
-		[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album != noAlbum %]
-
+		<span class="small">
+		[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
 			[% "FROM" | string %]
-			<a [% PROCESS albumItemHRef %] target="browser">[% itemobj.album.title | html %]</a>
+			<a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a>
 		[% END %]
-		[% IF item.includeArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
-</span></td>
-   <td [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
-      (<a [% PROCESS cmdHRef cmdType = 'delete' num=item.num useStart=1 %]>[% "DELETE" | string %]</a>,
-      <a [% PROCESS cmdHRef cmdType = 'jump' %]>[% "PLAY" | string %]</a>)
-   </td>
+		[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+		</span>
+	</td>
+	<td [% IF item.odd %]class="odd" bgcolor="#d0d0d0"[% END %] [% IF not item.odd %]class="even" bgcolor="#FFFFFF"[% END %]>
+		(<a [% PROCESS cmdHRef cmdType = 'delete' num=item.num useStart=1 %]>[% "DELETE" | string %]</a>,
+		<a [% PROCESS cmdHRef cmdType = 'jump' %]>[% "PLAY" | string %]</a>)
+	</td>
 </tr>
