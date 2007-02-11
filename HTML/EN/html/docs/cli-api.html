@@ -65,6 +65,10 @@
 		Added the &quot;<a href="#years">years</a>&quot; query, to enable
 		Browse by Year functionality.
 	</li>
+	<li>
+		Order of tracks passed to &quot;<a href="#playlistcontrol">playlistcontrol</a>&quot;
+		command is maintained.
+	</li>
 </ul>
 
 <h4>Changes starting from SlimServer 6.5</h4>
@@ -5530,7 +5534,8 @@ in the saved playlists folder.</p>
 		<td>track_id</td>
 		<td>Comma-separated list of track IDs, to restrict the results to these
 			track_ids. If this parameter is provided, then any genre_id, 
-			artist_id and/or album_id parameter is ignored.</td>
+			artist_id and/or album_id parameter is ignored. The tracks are added to the playlist
+			in the given order.</td>
 	</tr>
 	<tr>
 		<td>year|year_id</td>

@@ -1282,8 +1282,20 @@ sub playlistcontrolCommand {
 
 		# split on commas
 		my @track_ids = split(/,/, $track_id_list);
+		
+		# keep the order
+		my %track_ids_order;
+		my $i = 0;
+		for my $id (@track_ids) {
+			$track_ids_order{$id} = $i++;
+		}
 
-		@tracks = Slim::Schema->search('Track', { 'id' => { 'in' => \@track_ids } })->all;
+		# find the tracks
+		my @rawtracks = Slim::Schema->search('Track', { 'id' => { 'in' => \@track_ids } })->all;
+		
+		# sort them back!
+		@tracks = sort { $track_ids_order{$a->id()} <=> $track_ids_order{$b->id()} } @rawtracks;
+
 
 	} else {
 
