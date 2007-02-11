@@ -39,7 +39,7 @@ my $defaultMapFile;
 our $IRMINTIME  = 0.140;
 
 # bumped up to a full second, to help the heavy handed.
-our $IRHOLDTIME  = 1.0;
+our $IRHOLDTIME  = 0.9;
 
 # 256 ms
 our $IRSINGLETIME = 0.256;

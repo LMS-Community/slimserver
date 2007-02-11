@@ -215,7 +215,6 @@ our %functions = (
 	},
 
 	# use characters to enter characters
-	# FIXME this doesn't work (works equally badly as previous version).... get rid of it?
 	'letter' => sub {
 		my ($client,$funct,$functarg) = @_;
 
