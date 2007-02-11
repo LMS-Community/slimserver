@@ -14,7 +14,7 @@ function changePlayer(player_List) {
 	var args = 'player='+player+'&ajaxRequest=1&s='+Math.random();
 	getStatusData(args, refreshNewPlayer);
 	
-	if (parent.browser.location.href.indexOf('setup') == -1) {
+	if (parent.browser.location.href.indexOf('settings') == -1) {
 		newHref(parent.browser.document,newPlayer);
 		newHref(parent.header.document,newPlayer);
 		newValue(parent.browser.document,unescape(player));

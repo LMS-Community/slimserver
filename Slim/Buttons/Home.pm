@@ -677,6 +677,11 @@ sub unusedMenuOptions {
 		delete $menuChoices{$plugin} if defined $menuChoices{$plugin};
 	}
 
+	# Leakage from Digital Input Plugin
+	if (defined $menuChoices{'PLUGIN_DIGITAL_INPUT'} && !$client->hasDigitalIn) {
+		delete $menuChoices{'PLUGIN_DIGITAL_INPUT'};
+	}
+
 	for my $usedOption (@{$homeChoices{$client}}) {
 		delete $menuChoices{$usedOption};
 	}
