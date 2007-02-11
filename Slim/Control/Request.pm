@@ -60,6 +60,7 @@ my @result = Slim::Control::Request::executeLegacy($client, ['playlist', 'save']
  N    info            total                       genres|artists|albums|songs ?
  N    songinfo        <startindex>                <numitems>                  <tagged parameters>
  N    titles          <startindex>                <numitems>                  <tagged parameters>
+ N    years           <startindex>                <numitems>                  <tagged parameters>
  
  N    playlists       <startindex>                <numitems>                  <tagged parameters>
  N    playlists       tracks                      <startindex>                <numitems>       <tagged parameters>
@@ -566,6 +567,7 @@ sub init {
     addDispatch(['tracks',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::titlesQuery]);
     addDispatch(['version',        '?'],                                                               [0, 1, 0, \&Slim::Control::Queries::versionQuery]);
     addDispatch(['wipecache'],                                                                         [0, 0, 0, \&Slim::Control::Commands::wipecacheCommand]);
+    addDispatch(['years',          '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::yearsQuery]);
 
 # NOTIFICATIONS
     addDispatch(['client',         'disconnect'],                                                      [1, 0, 0, undef]);

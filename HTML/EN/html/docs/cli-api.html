@@ -60,6 +60,8 @@
 </p>
 <ul>
 	<li>
+		Added the &quot;<a href="#years">years</a>&quot; query, to enable
+		Browse by Year functionality.
 	</li>
 </ul>
 
@@ -2306,6 +2308,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#albums">albums</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#years">years</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#playlists">playlists</a></code></strong>
 	</li>
 	<li>
@@ -3091,6 +3096,105 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 
 
 <br>
+<p id="years">
+	<strong>
+		<code>
+			years
+			&lt;start&gt;
+			&lt;itemsPerResponse&gt;
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;years&quot; query returns all years known by the server.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			charset
+		</td>
+		<td>
+			Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.
+		</td>
+	</tr>
+</table>
+<p>
+	Returned tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			rescan
+		</td>
+		<td>
+			Returned with value 1 if the server is still scanning 
+			the database. The results may therefore be incomplete.
+			Not returned if no scan is in progress.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			count
+		</td>
+		<td>
+			Number of results returned by the query. If no filter parameter is
+			present, this is the same value as returned by 
+			&quot;<a href="#info total genres ?">info total genres ?</a>&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<em>For each year:</em>
+		</td>
+		<td>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;<b>year</b>
+		</td>
+		<td>
+			Year. Item delimiter.
+		</td>
+	</tr>
+</table>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+  		Request: &quot;years 0 5&lt;LF&gt;&quot;
+  		<br>
+		Response: &quot;years 0 5 rescan:1 count:6 
+		year:1985 year:1987 year:1988 
+		year:2002 year:2003 year:2004
+		&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+
+<br>
 <p id="playlists">
 	<strong>
 		<code>
@@ -3304,6 +3408,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<td>Same tags as defined in command &quot;<a href="#songinfo">songinfo</a>&quot;.</td>
 	</tr>
 </table>
+
 
 <br>
 <p id="playlists rename">
@@ -3537,6 +3642,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			playlist_id:22 title:Song url:file://...&lt;LF&gt;&quot;
 	</p>
 </blockquote>
+
 
 <br>
 <p id="songinfo">
@@ -5375,12 +5481,23 @@ in the saved playlists folder.</p>
   <p>Request: &quot;04:20:00:12:23:45 playlist repeat 0&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist repeat 0&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<br><p id="playlistcontrol"><strong>
-	<code>&lt;playerid&gt; playlistcontrol &lt;taggedParameters&gt;</code>
-</strong></p>
-<p>The &quot;playlistcontrol&quot; command enables playlist operations using
-   IDs as returned by extended CLI queries (titles, artists, playlists, etc).</p>
-<p>Accepted tagged parameters:</p>
+<br>
+<p id="playlistcontrol">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			playlistcontrol
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;playlistcontrol&quot; command enables playlist operations using IDs as returned by 
+	extended CLI queries (titles, artists, playlists, etc).
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
 <table border="0" spacing="50">
 	<tr>
 		<td width="100"><b>Tag</b></td>
@@ -5388,10 +5505,12 @@ in the saved playlists folder.</p>
 	</tr>
 	<tr>
 		<td>cmd</td>
-		<td>Command to perform on the playlist, one of &quot;load&quot;, 
+		<td>
+			Command to perform on the playlist, one of &quot;load&quot;, 
 			&quot;add&quot;, &quot;insert&quot; or &quot;delete&quot;.
 		 	This parameter is mandatory. If no additional parameter is provided,
-		 	the entire DB is loaded/added/inserted/deleted.</td>
+		 	the entire DB is loaded/added/inserted/deleted.
+		 </td>
 	</tr>
 	<tr>
 		<td>genre_id</td>

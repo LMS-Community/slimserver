@@ -1764,6 +1764,55 @@ sub versionQuery {
 	$request->setStatusDone();
 }
 
+sub yearsQuery {
+	my $request = shift;
+
+	$log->debug("Begin Function");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['years']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $index         = $request->getParam('_index');
+	my $quantity      = $request->getParam('_quantity');	
+	
+	# get them all by default
+	my $where = {};
+	
+	# sort them
+	my $attr = {
+		'distinct' => 'me.id'
+	};
+
+	if (Slim::Music::Import->stillScanning()) {
+		$request->addResult('rescan', 1);
+	}
+
+	my $rs = Slim::Schema->resultset('Year')->browse->search($where, $attr);
+
+	my $count = $rs->count;
+
+	$request->addResult('count', $count);
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+
+		my $loopname = '@years';
+		my $cnt = 0;
+
+		for my $eachitem ($rs->slice($start, $end)) {
+			$request->addResultLoop($loopname, $cnt, 'year', $eachitem->id);
+			$cnt++;
+		}
+	}
+
+	$request->setStatusDone();
+}
+
 ################################################################################
 # Special queries
 ################################################################################
