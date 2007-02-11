@@ -69,6 +69,9 @@
 		Order of tracks passed to &quot;<a href="#playlistcontrol">playlistcontrol</a>&quot;
 		command is maintained.
 	</li>
+	<li>
+		Added a tag to return the artist from the &quot;<a href="#albums">albums</a>&quot; query.
+	</li>
 </ul>
 
 <h4>Changes starting from SlimServer 6.5</h4>
@@ -3069,6 +3072,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			1 if this album is a compilation.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			a
+		</td>
+		<td>
+			&nbsp;&nbsp;artist
+		</td>
+		<td>
+			The album artist (depends on server configuration).
 		</td>
 	</tr>
 </table>

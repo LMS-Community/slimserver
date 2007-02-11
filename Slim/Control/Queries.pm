@@ -234,6 +234,10 @@ sub albumsQuery {
 			$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'disc', $eachitem->disc);
 			$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'disccount', $eachitem->discc);
 			$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'compilation', $eachitem->compilation);
+			if ($tags =~ /a/) {
+				my @artists = $eachitem->artists();
+				$request->addResultLoopIfValueDefined($loopname, $cnt, 'artist', $artists[0]->name());
+			}
 			$cnt++;
 		}
 	}
