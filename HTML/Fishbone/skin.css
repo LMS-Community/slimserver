@@ -751,7 +751,17 @@ A.linkbtn:link {
 	border-top:solid 1px #333;
 }
 
-.listing A, .listing2 A, .odd A, .even A
+.evenactive, .oddactive
+{
+	background-color: #40464a;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color:#999;
+	padding-left: 1px;
+	margin: 0px;
+	border-top:solid 1px #333;
+}
+
+.listing A, .listing2 A, .odd A, .even A, .oddactive A, .evenactive A
 {
 	color : white ! important;
 }

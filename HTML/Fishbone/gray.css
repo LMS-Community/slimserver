@@ -195,7 +195,17 @@ A.linkbtn:link {
 	border-bottom:solid 1px black;
 }
 
-.listing A, .listing2 A, .odd A, .even A
+.evenactive, .oddactive
+{
+	background-color: #40464a;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color:#999;
+	padding-left: 1px;
+	border-top:solid 2px #333;
+	border-bottom:solid 1px black;
+}
+
+.listing A, .listing2 A, .odd A, .even A, .oddactive A, .evenactive A
 {
 	color : #c9c9c9! important;
 	font-family: Arial, Helvetica, sans-serif;

@@ -78,7 +78,7 @@
 
 [%# taken from EN/cmdwrappers as an override %]
 [% BLOCK contentitem -%]
-<div class="[% odd ? "odd" : "even" %]" onmouseover="this.style.backgroundColor='40464a';" onmouseout="this.style.backgroundColor='000000';">
+<div class="[% odd ? "odd" : "even" %]" onmouseover="this.className='[% odd ? "odd" : "even" %]active';" onmouseout="this.className='[% odd ? "odd" : "even" %]';">
 	[%- IF anchor %]
 		<a name="[% anchor | uri %]"></a>
 	[%- END -%]
