@@ -27,6 +27,7 @@ function insertProgressBar(mp,end,at) {
 
 // update at and end times for the next progress update.
 function updateTime(at,end, style) {
+	
 	_progressAt  = at;
 	_progressEnd = end;
 	
@@ -34,11 +35,11 @@ function updateTime(at,end, style) {
 		_curstyle    = style;
 	}
 }
-	
 
 // Update the progress dialog with the current state
 function ProgressUpdate(mp) {
 
+	// lame way to detect playode using the state of the play graphics.
 	if ($('playCtlplay') != null) {
 		if ($('playCtlplay'+ _curstyle).src.indexOf('_s') != -1) {
 			mp = 1;
@@ -61,7 +62,8 @@ function ProgressUpdate(mp) {
 		refreshElement('inc',inc);
 	}
 
-	if (_progressAt == 1) {
+	// Refresh just after song change.  If stopped, lock progress and inc at 0 for when things start again
+	if (_progressAt > 0 && inc > _progressAt) {
 		doAjaxRefresh();
 		inc = 0;
 		if (!mp) {
@@ -70,19 +72,21 @@ function ProgressUpdate(mp) {
 		}
 	}
 	
+	// For old IE versions
 	if (document.all) {
 		p = (document.body.clientWidth / _progressEnd) * _progressAt;
 		eval("document.progressBar.width=p");
 
+	// All others
 	} else if (document.getElementById) {
 		p = (document.width / _progressEnd) * _progressAt;
 		$("progressBar").width=p+" ";
 	}
 	
+	// Forced refresh every 10 seconds to catch non-web changes
 	if (inc == 10) {
 		doAjaxRefresh(1);
 		inc = 0;
 	}
-
 }
 

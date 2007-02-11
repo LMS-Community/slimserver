@@ -379,7 +379,7 @@ function currentSong(theData) {
 	var refresh = 0;
 	
 	if (parsedData['playlistsize'] == 0) {
-		getPlaylistData();
+		refreshPlaylist();
 		return;
 	}
 	
