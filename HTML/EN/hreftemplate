@@ -51,31 +51,31 @@ hasPagebar = (pageinfo && pageinfo.totalpages > 1 && pageinfo.totalalphapages !=
 
 [%  
 	'urlcmdFor' => {
-					'play'   => 'play',
-					'add'    => 'add',
-					'insert' => 'insert',
-					'remove' => 'deleteitem',
-					}
-					
+				'play'   => 'play',
+				'add'    => 'add',
+				'insert' => 'insert',
+				'remove' => 'deleteitem',
+			}
+			
 	'cmdFor'    => {
-					'play'   => 'loadtracks',
-					'add'    => 'addtracks',
-					'insert' => 'inserttracks',
-					'remove' => 'deletetracks',
-					} 
-					
+				'play'   => 'loadtracks',
+				'add'    => 'addtracks',
+				'insert' => 'inserttracks',
+				'remove' => 'deletetracks',
+			} 
+			
 	'numcmdFor' => {
-					'delete' => 'delete',
-					'move'   => 'move',
-					'jump'   => 'jump',
-					}
+				'delete' => 'delete',
+				'move'   => 'move',
+				'jump'   => 'jump',
+			}
 
 	'p3For' => {
-					'move'   => 'moveTo',
-					}
+				'move'   => 'moveTo',
+			}
 
-					%]
-														
+%]
+
 [%# command query params for commands above on remote urls %]
 [% BLOCK cmdRemoteURLQuery -%]
 p0=playlist&amp;p1=[% urlcmdFor.$cmdType %]&amp;p2=[% itemobj.url | uri %][% IF p3 %]&amp;p3=[% p3 %][% END %]
