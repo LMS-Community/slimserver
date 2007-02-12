@@ -149,12 +149,16 @@ my @result = Slim::Control::Request::executeLegacy($client, ['playlist', 'save']
  Y    playlist        path                        <index>                     ?
  Y    playlist        remote                      <index>                     ?
  
- Y    status          <startindex>                <numitems>                  <tagged parameters>
- 
  Y    playlist        name                        ?
  Y    playlist        url                         ?
  Y    playlist        modified                    ?
  Y    playlist        playlistsinfo               <tagged parameters>
+ 
+ COMPOUND
+ 
+ N    serverstatus    <startindex>                <numitems>                  <tagged parameters>
+ Y    status          <startindex>                <numitems>                  <tagged parameters>
+ 
  
  DEPRECATED (BUT STILL SUPPORTED)
  Y    mode            <play|pause|stop>
@@ -413,9 +417,12 @@ use Slim::Utils::Misc;
 our %dispatchDB;                # contains a multi-level hash pointing to
                                 # each command or query subroutine
 
-our %subscribers = ();          # contains the clients to the notification
-                                # mechanism
+our %listeners = ();            # contains the clients to the notification
+                                # mechanism (internal to the server)
 
+our %subscribers = ();          # contains the requests being subscribed to
+                                # (generaly by external users/clients)
+                                
 our @notificationQueue;         # contains the Requests waiting to be notified
 
 our $requestTask = Slim::Utils::PerfMon->new('Request Task', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
@@ -549,6 +556,7 @@ sub init {
     addDispatch(['rescan',         '?'],                                                               [0, 1, 0, \&Slim::Control::Queries::rescanQuery]);
     addDispatch(['rescan',         '_playlists'],                                                      [0, 0, 0, \&Slim::Control::Commands::rescanCommand]);
     addDispatch(['search',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::searchQuery]);
+    addDispatch(['serverstatus',   '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::serverstatusQuery]);
     addDispatch(['show'],                                                                              [1, 0, 1, \&Slim::Control::Commands::showCommand]);
     addDispatch(['signalstrength', '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::signalstrengthQuery]);
     addDispatch(['sleep',          '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::sleepQuery]);
@@ -691,12 +699,12 @@ sub subscribe {
 	my $subscriberFuncRef = shift || return;
 	my $requestsRef = shift;
 	
-	$subscribers{$subscriberFuncRef} = [$subscriberFuncRef, $requestsRef];
+	$listeners{$subscriberFuncRef} = [$subscriberFuncRef, $requestsRef];
 	
 	$log->info(sprintf(
-		"Request from: %s - (%d subscribers)\n",
+		"Request from: %s - (%d listeners)\n",
 		Slim::Utils::PerlRunTime::realNameForCodeRef($subscriberFuncRef),
-		scalar(keys %subscribers)
+		scalar(keys %listeners)
 	));
 }
 
@@ -704,16 +712,16 @@ sub subscribe {
 sub unsubscribe {
 	my $subscriberFuncRef = shift;
 	
-	delete $subscribers{$subscriberFuncRef};
+	delete $listeners{$subscriberFuncRef};
 
 	$log->info(sprintf(
-		"Request from: %s - (%d subscribers)\n",
+		"Request from: %s - (%d listeners)\n",
 		Slim::Utils::PerlRunTime::realNameForCodeRef($subscriberFuncRef),
-		scalar(keys %subscribers)
+		scalar(keys %listeners)
 	));
 }
 
-# notify subscribers from an array, useful for notifying w/o execution
+# notify listeners from an array, useful for notifying w/o execution
 # (requests must, however, be defined in the dispatch table)
 sub notifyFromArray {
 	my $client         = shift;     # client, if any, to which the query applies
@@ -763,6 +771,29 @@ sub executeRequest {
 	return $request;
 }
 
+=head2 unregisterAutoExecute ( $connectionID )
+
+Removes all subscriptions for this $connectionID.
+
+=cut
+sub unregisterAutoExecute{
+	my $connectionID = shift;
+	
+	# kill any timers
+	for my $name (keys %{$subscribers{$connectionID}}) {
+		for my $clientid (keys %{$subscribers{$connectionID}{$name}}) {
+			
+			my $request = $subscribers{$connectionID}{$name}{$clientid};
+			
+			Slim::Utils::Timers::killTimers($request, \&__autoexecute);
+		}
+	}
+	
+	# delete everything linked to connection
+	delete $subscribers{$connectionID};
+}
+
+
 ################################################################################
 # Constructors
 ################################################################################
@@ -777,20 +808,23 @@ sub new {
 	tie (my %resultHash, "Tie::LLHash", {lazy => 1});
 	
 	my $self = {
-		'_request'    => [],
-		'_isQuery'    => undef,
-		'_clientid'   => $clientid,
-		'_needClient' => 0,
-		'_params'     => \%paramHash,
-		'_curparam'   => 0,
-		'_status'     => 0,
-		'_results'    => \%resultHash,
-		'_func'       => undef,
-		'_cb_enable'  => 1,
-		'_cb_func'    => undef,
-		'_cb_args'    => undef,
-		'_source'     => undef,
-		'_private'    => undef,
+		'_request'           => [],
+		'_isQuery'           => undef,
+		'_clientid'          => $clientid,
+		'_needClient'        => 0,
+		'_params'            => \%paramHash,
+		'_curparam'          => 0,
+		'_status'            => 0,
+		'_results'           => \%resultHash,
+		'_func'              => undef,
+		'_cb_enable'         => 1,
+		'_cb_func'           => undef,
+		'_cb_args'           => undef,
+		'_source'            => undef,
+		'_connectionid'      => undef,
+		'_ae_callback'       => undef,
+		'_ae_filter'         => undef,
+		'_private'           => undef,
 	};
 
 	bless $self, $class;
@@ -817,6 +851,9 @@ sub virginCopy {
 	$copy->{'_func'} = \&{$self->{'_func'}};
 	$copy->{'_source'} = $self->{'_source'};
 	$copy->{'_private'} = $self->{'_private'};
+	$copy->{'_connectionid'} = $self->{'_connectionid'};
+	$copy->{'_ae_callback'} = $self->{'_ae_callback'};
+	$copy->{'_ae_filter'} = $self->{'_ae_filter'};
 	$copy->{'_curparam'} = $self->{'_curparam'};
 	
 	# duplicate the arrays and hashes
@@ -940,6 +977,37 @@ sub source {
 	
 	return $self->{'_source'};
 }
+
+# sets/returns the source connectionid
+sub connectionID {
+	my $self = shift;
+	my $newvalue = shift;
+	
+	$self->{'_connectionid'} = $newvalue if defined $newvalue;
+	
+	return $self->{'_connectionid'};
+}
+
+# sets/returns the source subscribe callback
+sub autoExecuteCallback {
+	my $self = shift;
+	my $newvalue = shift;
+	
+	$self->{'_ae_callback'} = $newvalue if defined $newvalue;
+	
+	return $self->{'_ae_callback'};
+}
+
+# sets/returns the source subscribe callback
+sub autoExecuteFilter {
+	my $self = shift;
+	my $newvalue = shift;
+	
+	$self->{'_ae_filter'} = $newvalue if defined $newvalue && ref($newvalue) eq 'CODE';
+	
+	return $self->{'_ae_filter'};
+}
+
 
 # sets/returns the source private data
 sub privateData {
@@ -1602,21 +1670,20 @@ sub callback {
 	}
 }
 
-# notify subscribers...
+# notify listeners...
 sub notify {
 	my $self = shift || return;
-	my $dontcallExecuteCallback = shift;
 
-	for my $subscriber (keys %subscribers) {
+	for my $listener (keys %listeners) {
 
-		if ( $subscribers{$subscriber} ) {
+		if ( $listeners{$listener} ) {
 
 			# filter based on desired requests
 			# undef means no filter
-			my $notifyFuncRef = $subscribers{$subscriber}->[0];
-			my $requestsRef   = $subscribers{$subscriber}->[1];
+			my $notifyFuncRef = $listeners{$listener}->[0];
+			my $requestsRef   = $listeners{$listener}->[1];
 
-			my $funcName = $subscriber;
+			my $funcName = $listener;
 
 			if ($log->is_debug && ref($notifyFuncRef) eq 'CODE') {
 				$funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($notifyFuncRef);
@@ -1650,9 +1717,98 @@ sub notify {
 
 		}
 	}
+	
+	# handle subscriptions
+	# send the notification to all filters...
+	for my $cnxid (keys %subscribers) {
+		for my $name (keys %{$subscribers{$cnxid}}) {
+			for my $clientid (keys %{$subscribers{$cnxid}{$name}}) {
+				
+				my $request = $subscribers{$cnxid}{$name}{$clientid};
+				
+				my $relevant = 1;
+				
+				if (defined(my $funcPtr = $request->autoExecuteFilter())) {
+				
+					$relevant = 0;
+					
+					if (ref($funcPtr) eq 'CODE') {
+				
+						eval { $relevant = &{$funcPtr}($self) };
+				
+						if ($@) {
+							my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
+							logError("While trying to run function coderef [$funcName]: [$@]");
+							next;
+						}
+					}
+				}
+				
+				if ($relevant) {
+					$request->__autoexecute();
+				}
+			}
+		}
+	}
 }
 
-# handle encoding for external commands
+
+=head2 registerAutoExecute ( timeout, filterFunc )
+
+Register ourself as subscribed to. Autoexecute after timeout
+(if > 0) or if filterFunc returns 1 when sent notifications.
+
+=cut
+sub registerAutoExecute{
+	my $self = shift || return;
+	my $timeout = shift;
+	my $filterFunc = shift;
+	
+	# we shall be a query
+	return unless $self->{'_isQuery'};
+	
+	# we shall have a defined connectionID
+	my $cnxid = $self->connectionID() || return;
+	
+	# requests with a client are remembered by client
+	my $clientid = $self->clientid() || 'global';
+	
+	# requests are remembered by kind
+	my $name = $self->getRequestString();
+	
+	# store the filterFunc in the request
+	$self->autoExecuteFilter($filterFunc);
+	
+	# kill any previous subscription we might have laying around 
+	# (for this query/client/connection)
+	my $oldrequest = $subscribers{$cnxid}{$name}{$clientid};
+
+	delete $subscribers{$cnxid}{$name}{$clientid};
+
+	Slim::Utils::Timers::killTimers($oldrequest, \&__autoexecute);
+
+	# store the new subscription if this is what is asked of us
+	if ($timeout ne '-') {
+		
+		# copy the request
+		my $request = $self->virginCopy();
+
+		$subscribers{$cnxid}{$name}{$clientid} = $request;
+
+		if ($timeout > 0) {
+			# start the timer
+			Slim::Utils::Timers::setTimer($request, 
+				Time::HiRes::time() + $timeout,
+				\&__autoexecute);
+		}
+	}
+}
+
+=head2 fixencoding ( )
+
+Handle encoding for external commands.
+
+=cut
 sub fixEncoding {
 	my $self = shift || return;
 	
@@ -2055,6 +2211,40 @@ sub __parse {
 			$self->addParamPos($requestLineRef->[$i]);
 		}
 	}
+}
+
+# callback for the subscriptions.
+sub __autoexecute{
+	my $self = shift;
+	
+	$log->debug("__autoexecute()");
+	
+	# we shall have somewhere to callback to
+	my $funcPtr = $self->autoExecuteCallback() || return;
+	
+	return unless ref($funcPtr) eq 'CODE';
+	
+	# we shall have a connection id to send as param
+	my $cnxid = $self->connectionID() || return;
+	
+	# execute ourself after some cleanup
+	$self->cleanResults;
+	$self->execute();
+	
+	# execute the callback
+	eval { &{$funcPtr}($self, $cnxid) };
+
+	# oops, failed
+	if ($@) {
+		my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
+		logError("While trying to run function coderef [$funcName]: [$@] => deleting subscription");
+
+		my $name = $self->getRequestString();
+		my $clientid = $self->clientid() || 'global';
+		delete $subscribers{$cnxid}{$name}{$clientid};
+		Slim::Utils::Timers::killTimers($self, \&__autoexecute);
+	}
+
 }
 
 =head1 SEE ALSO

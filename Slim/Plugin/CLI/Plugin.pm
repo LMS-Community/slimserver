@@ -277,6 +277,7 @@ sub client_socket_close {
 	
 	close $client_socket;
 	delete($connections{$client_socket});
+	Slim::Control::Request::unregisterAutoExecute($client_socket);
 	
 	$log->info("Closed connection with $client_id (" . (keys %connections) . " active connections)");
 }
@@ -527,7 +528,9 @@ sub cli_process {
 
 	# remember we're the source and the $client_socket
 	$request->source('CLI');
-	$request->privateData($client_socket);
+	$request->connectionID($client_socket);
+	# set this in case the query can be subscribed to
+	$request->autoExecuteCallback(\&cli_request_write);
 	
 	my $cmd = $request->getRequest(0);
 	
@@ -550,7 +553,7 @@ sub cli_process {
 			if (defined $client) {
 				$log->info("Request [$cmd] requires client, allocated $clientid");
 			} else {
-				$log->info("Request [$cmd] requires client, none found!");
+				$log->warn("Request [$cmd] requires client, none found!");
 			}
 		}
 	}
@@ -619,7 +622,7 @@ sub cli_process {
 		
 		else {
 
-			$log->info("Request [$cmd] unkown or missing client -- will echo as is...");
+			$log->warn("Request [$cmd] unkown or missing client -- will echo as is...");
 		}
 	}
 		
@@ -635,7 +638,7 @@ sub cli_request_write {
 
 	$log->debug($request->getRequestString);
 
-	$client_socket = $request->privateData() unless defined $client_socket;
+	$client_socket = $request->connectionID() unless defined $client_socket;
 
 	my $encoding   = $request->getParam('charset') || 'utf8';
 	my @elements   = $request->renderAsArray($encoding);
@@ -770,7 +773,7 @@ sub listenCommand {
 	}
 
 	my $param = $request->getParam('_newvalue');
-	my $client_socket = $request->privateData();
+	my $client_socket = $request->connectionID();
 	
 	if (!defined $client_socket) {
 		$request->setStatusBadParams();
@@ -802,7 +805,7 @@ sub listenQuery {
 		return;
 	}
 
-	my $client_socket = $request->privateData();
+	my $client_socket = $request->connectionID();
 	
 	if (!defined $client_socket) {
 		$request->setStatusBadParams();
@@ -826,7 +829,7 @@ sub subscribeCommand {
 	}
 
 	my $param = $request->getParam('_functions');
-	my $client_socket = $request->privateData();
+	my $client_socket = $request->connectionID();
 	
 	if (!defined $client_socket) {
 		$request->setStatusBadParams();
@@ -980,7 +983,7 @@ sub cli_subscribe_notification {
 
 			# don't echo twice to the sender
 			if (!($request->source() eq 'CLI' && 
-				  $request->privateData() eq $client_socket)) {
+				  $request->connectionID() eq $client_socket)) {
 
 				# assume no array in {'listen'}: we send everything
 				$sent = 1;
@@ -1057,7 +1060,7 @@ sub cli_subscribe_status_output {
 	$request->cleanResults();
 	$request->execute();
 	
-	my $client_socket = $request->privateData();
+	my $client_socket = $request->connectionID();
 
 	cli_request_write($request);
 

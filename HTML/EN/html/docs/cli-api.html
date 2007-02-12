@@ -72,6 +72,15 @@
 	<li>
 		Added a tag to return the artist from the &quot;<a href="#albums">albums</a>&quot; query.
 	</li>
+	<li>
+		Added the &quot;<a href="#serverstatus">serverstatus</a>&quot; query, to return
+		compound server status in a single query.
+	</li>
+	<li>
+		Slightly reorganised this document to introduce a &quot;Compound queries&quot; section to
+		document queries &quot;<a href="#serverstatus">serverstatus</a>&quot; and 
+		&quot;<a href="#status">status</a>&quot;.
+	</li>
 </ul>
 
 <h4>Changes starting from SlimServer 6.5</h4>
@@ -594,24 +603,26 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	Supported Commands
 </h3>
 <p>
-	The supported commands are listed below, grouped by their scope:
+	The available commands and queries are listed below, grouped by their scope:
 </p>
 <ul>
 	<li>
-  		<strong><a href="#GC">General</a></strong>: commands for general
-  		management of the server.
+  		<strong><a href="#GC">General</a></strong>: general management of the Command Line
+  		Interface and of the SlimServer.
   	</li>
 	<li>
-		<strong><a href="#PC">Players</a></strong>: commands to manage and
-  		get information on players.
+		<strong><a href="#PC">Players</a></strong>: management of players.
   	</li>
 	<li>
-		<strong><a href="#DB">Database</a></strong>: commands to manage
-		and browse the music database.
+		<strong><a href="#DB">Database</a></strong>: mangement of the music database.
 	</li>
 	<li>
-		<strong><a href="#PL">Playlist</a></strong>: commands to get
-		information on and manage the playlist for each player.
+		<strong><a href="#PL">Playlist</a></strong>: management of the playlist of each player.
+	</li>
+	<li>
+		<strong><a href="#CQ">Coumpound queries</a></strong>: queries to get
+		most of the information about the server or a player in one convenient query, that can
+		be updated by the server automatically.
 	</li>
 	<li>
 		<strong><a href="#NC">Notifications</a></strong>: internal server
@@ -737,15 +748,16 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </blockquote>
 
 <br>
-<p id="version">
+<p id="version ?">
 	<strong>
 		<code>
 			version
+			?
 		</code>
 	</strong>
 </p>
 <p>
-	The &quot;version&quot; query returns the server version number.<
+	The &quot;version&quot; query returns version number of SlimServer.
 </p>
 <p>
 	Examples:
@@ -951,7 +963,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;exit&quot; command closes the TCP connection with the server.
+	The &quot;exit&quot; command closes the TCP connection with the server and terminates the
+	Command Line Interface session.
 </p>
 <p>
 	Example:
@@ -2009,7 +2022,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Number of players known by SlimServer. Equivalent to 
-			&quot;player count ?&quot;.
+			&quot;<a href="#player count ?">player count ?</a>&quot;.
 		</td>
 	</tr>
 	<tr>
@@ -2071,7 +2084,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Player display type. Not returned for streaming connections. 
-			Equivalent to &quot;player displaytype &lt;playerindex&gt; ?&quot;.
+			Equivalent to 
+			&quot;<a href="#player displaytype ?">player displaytype &lt;playerindex&gt; ?</a>&quot;.
 		</td>
 	</tr>
 	<tr>
@@ -2080,7 +2094,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Connected state. Equivalent to 
-			&quot;&lt;playerid&gt; connected ?&quot;.
+			&quot;<a href="#connected ?">&lt;playerid&gt; connected ?</a>&quot;.
 		</td>
 	</tr>
 </table>
@@ -2095,16 +2109,26 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		playerindex:0 playerid:a5:41:d2:cd:cd:05 ip:127.0.0.1:60488 
 		name:127.0.0.1 model:softsqueeze displaytype:graphic-280x16 connected:1 
 		playerindex:1 playerid:00:04:20:02:00:c8 ip:192.168.1.22:3483 
-		name:Movy model:slimp3 displaytype:noritake-katakana connected:1
-		&lt;LF&gt;&quot;
+		name:Movy model:slimp3 displaytype:noritake-katakana connected:1&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 
-<br><p id="alarm"><strong>
-	<code>&lt;playerid&gt; alarm &lt;taggedParameters&gt;</code>
-</strong></p>
-<p>The &quot;alarm&quot; command allows to manipulate player alarms.</p>
-<p>Accepted tagged parameters:</p>
+<br>
+<p id="alarm">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			alarm
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;alarm&quot; command allows to manipulate player alarms.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
 <table border="0" spacing="50">
 	<tr>
 		<td width="100"><b>Tag</b></td>
@@ -2181,11 +2205,11 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
   <p><b>Defining a new alarm</b>
 <br>Request: &quot;bd:a5:a9:9b:9d:df alarm cmd:set dow:1 enable:1 
 	playlist_id:22 time:9000&lt;LF&gt;&quot;
-<br>Response: &quot;bd:a5:a9:9b:9d:df alarm cmd:update dow:1 enable:1 
+<br>Response: &quot;bd:a5:a9:9b:9d:df alarm cmd:set dow:1 enable:1 
 	playlist_id:22 time:9000 count:1&lt;LF&gt;&quot;</p>
   <p><b>Clearing an alarm</b>
 <br>Request: &quot;bd:a5:a9:9b:9d:df alarm cmd:clear dow:1&lt;LF&gt;&quot;
-<br>Response: &quot;bd:a5:a9:9b:9d:df alarm cmd:update dow:1 count:1
+<br>Response: &quot;bd:a5:a9:9b:9d:df alarm cmd:clear dow:1 count:1
 	&lt;LF&gt;&quot;</p>
   <p><b>Enabling a previously defined alarm</b>
 <br>Request: &quot;bd:a5:a9:9b:9d:df alarm cmd:update dow:1 enable:1&lt;LF&gt;&quot;
@@ -4815,9 +4839,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<li>
 		<strong><code><a href="#playlistcontrol">playlistcontrol</a></code></strong>
 	</li>
-	<li>
-		<strong><code><a href="#status">status</a></code></strong>
-	</li>
 </ul>
 
 <br>
@@ -5602,6 +5623,267 @@ in the saved playlists folder.</p>
   	 	cmd:load album_id:22 count:12&lt;LF&gt;&quot;</p>
 </blockquote>
 
+
+<!----------------------------------------------------------------------------->
+<!-- COMPOUND QUERIES                                                        -->
+<!----------------------------------------------------------------------------->
+
+<hr>
+<h2 id="CQ">
+	Compound queries
+</h2>
+<ul>
+	<li>
+		<strong><code><a href="#serverstatus">serverstatus</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#status">status</a></code></strong>
+	</li>
+</ul>
+
+
+<br>
+<p id="serverstatus">
+	<strong>
+		<code>
+			serverstatus 
+			&lt;start&gt; 
+			&lt;itemsPerResponse&gt; 
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;serverstatus&quot; query returns a complete status about the server, including its 
+	players. 
+	<br>
+	Clients can subscribe to &quot;serverstatus&quot; queries, so that the query
+	results are automatically returned asynchronously whenever a change occurs
+	to the server. Please note this mechanism is completely distinct from the 
+	&quot;listen&quot; and &quot;subscribe&quot; commands described elsewhere in this
+	document.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			tags
+		</td>
+		<td>
+			Determines which tags are returned. Each returned tag is identified
+			by a letter (see command 
+			&quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible
+			fields and their identifying letter). The default tags value for 
+			this query is &quot;gald&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			charset
+		</td>
+		<td>
+			Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			subscribe
+		</td>
+		<td>
+			This optional parameter controls the subscription to the player 
+			status. Only one status subscription is possible per player and 
+			connection.
+			<br>
+			Subscription is enabled by using this parameter with a positive
+			integer. It is disabled by using &quot;-&quot;. When the
+			subscription is enabled, normal &quot;status&quot; queries (i.e.
+			not using the &quot;subscribe&quot; parameter) can be performed and
+			will have no effect on the subscription in place.
+			<br>
+			When enabled, the &quot;status&quot; request is automatically
+			re-generated on player change (and sent asynchronously to the CLI
+			client). The number indicates the time interval in seconds between 
+			automatic generations in case nothing happened to the player in the
+			interval. Use &quot;0&quot; to disable this last feature and only be
+			notified on player or playlist changes. Please see the example.
+			<br>
+			Some situations will lead to multiple status queries
+			generated very close to another. This is a limitation of the 
+			change detection &quot;algorithm&quot;.
+			<br>
+			If the player is manually (through the web page) or automatically
+			deleted from SlimServer, &quot;client forget&quot; is sent instead
+			of the status query and the subscription is terminated.
+			<br>
+			Please note this mechanism is completely distinct from the 
+			&quot;listen&quot; and &quot;subscribe&quot; commands described 
+			above.
+		</td>
+	</tr>
+</table>
+<p>
+	Returned tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			rescan
+		</td>
+		<td>
+			Returned with value 1 if SlimServer is still scanning the
+			database. The results may therefore be incomplete. Not returned if
+			no scan is in progress.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			version
+		</td>
+		<td>
+			SlimServer version. Equivalent to
+			&quot;<a href="#version ?">version ?</a>&quot;
+		</td>
+	</tr>
+	<tr>
+		<td>
+			info total albums
+		</td>
+		<td>
+			Number of albums known to SlimServer. Equivalent to
+			&quot;<a href="#info total albums ?">info total albums ?</a>&quot;
+		</td>
+	</tr>
+	<tr>
+		<td>
+			info total artists
+		</td>
+		<td>
+			Number of artists known to SlimServer. Equivalent to
+			&quot;<a href="#info total artists ?">info total artists ?</a>&quot;
+		</td>
+	</tr>
+	<tr>
+		<td>
+			info total genres
+		</td>
+		<td>
+			Number of genres known to SlimServer. Equivalent to
+			&quot;<a href="#info total genres ?">info total genres ?</a>&quot;
+		</td>
+	</tr>
+	<tr>
+		<td>
+			info total songs
+		</td>
+		<td>
+			Number of songs known to SlimServer. Equivalent to
+			&quot;<a href="#info total songs ?">info total songs ?</a>&quot;
+		</td>
+	</tr>
+	<tr>
+		<td>
+			player count
+		</td>
+		<td>
+			Number of players known by SlimServer. Equivalent to 
+			&quot;<a href="#player count ?">player count ?</a>&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<em>
+				For each player:
+			</em>
+		</td>
+		<td>
+			<em>
+				Essentially, this list is equivalent to the one returned by
+				&quot;<a href="#players">players</a>&quot;.
+			</em>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;<b>playerid</b>
+		</td>
+		<td>
+			Player unique identifier. Item delimiter. Equivalent to 
+			&quot;<a href="#player id ?">player id ?</a>&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;ip
+		</td>
+		<td>
+			Player IP and port. Equivalent to 
+			&quot;<a href="#player ip ?">player ip ?</a>&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;name
+		</td>
+		<td>
+			Player name. Equivalent to 
+			&quot;<a href="#player name ?">player name ?</a>&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;model
+		</td>
+		<td>
+			Player model. Equivalent to 
+			&quot;<a href="#player model ?">player model ?</a>&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;displaytype
+		</td>
+		<td>
+			Player display type. Not returned for streaming connections. 
+			Equivalent to 
+			&quot;<a href="#player displaytype ?">player displaytype &lt;playerindex&gt; ?</a>&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;connected
+		</td>
+		<td>
+			Connected state. Equivalent to 
+			&quot;<a href="#connected ?">&lt;playerid&gt; connected ?</a>&quot;.
+		</td>
+	</tr>
+</table>
+<p>
+	Example:
+</p>
+<blockquote> 
+</blockquote>
+
+
 <br>
 <p id="status">
 	<strong>
@@ -5615,7 +5897,7 @@ in the saved playlists folder.</p>
 	</strong>
 </p>
 <p>
-	The &quot;status&quot; request returns the complete status about a given
+	The &quot;status&quot; query returns the complete status about a given
 	player, including the current playlist. Set the &lt;start&gt; parameter to
 	&quot;-&quot; to get the playlist data starting from the current song.
 	<br>
@@ -5630,10 +5912,10 @@ in the saved playlists folder.</p>
 	is one, only the current song is returned, regardless of the value of
 	&lt;itemsPerResponse&gt;.
 	<br>
-	Clients can subscribe to &quot;status&quot; requests, so that the request
+	Clients can subscribe to &quot;status&quot; queries, so that the query
 	results are automatically returned asynchronously whenever a change occurs
 	to a player. Please note this mechanism is completely distinct from the 
-	&quot;listen&quot; and &quot;subscribe&quot; commands described above.
+	&quot;listen&quot; and &quot;subscribe&quot; commands described elsewhere in this document.
 </p>
 <p>
 	Accepted tagged parameters:

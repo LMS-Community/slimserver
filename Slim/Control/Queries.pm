@@ -23,7 +23,8 @@ Slim::Control::Queries
 L<Slim::Control::Queries> implements most SlimServer queries and is designed to 
  be exclusively called through Request.pm and the mechanisms it defines.
 
- There are no important differences between the code for a query and one for
+ Except for subscribe-able queries (such as status and serverstatus), there are no
+ important differences between the code for a query and one for
  a command. Please check the commented command in Commands.pm.
 
 =cut
@@ -39,6 +40,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 
 my $log = logger('control.queries');
+
 
 sub alarmsQuery {
 	my $request = shift;
@@ -844,6 +846,7 @@ sub playersQuery {
 	$request->setStatusDone();
 }
 
+
 sub playlistPlaylistsinfoQuery {
 	my $request = shift;
 	
@@ -874,6 +877,7 @@ sub playlistPlaylistsinfoQuery {
 	
 	$request->setStatusDone();
 }
+
 
 sub playlistXQuery {
 	my $request = shift;
@@ -1257,6 +1261,85 @@ sub searchQuery {
 }
 
 
+sub serverstatusQuery {
+	my $request = shift;
+	
+	$log->debug("Begin Function");
+
+	# check this is the correct query
+	if ($request->isNotQuery([['serverstatus']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+ 	if (Slim::Music::Import->stillScanning()) {
+ 		$request->addResult('rescan', "1");
+ 	}
+ 	
+ 	# add version
+ 	$request->addResult('version', $::VERSION);
+
+	# add totals
+	$request->addResult("info total albums", Slim::Schema->count('Album'));
+	$request->addResult("info total artists", Slim::Schema->rs('Contributor')->browse->count);
+	$request->addResult("info total genres", Slim::Schema->count('Genre'));
+	$request->addResult("info total songs", Slim::Schema->rs('Track')->browse->count);
+
+	# get our parameters
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	
+	my $count = Slim::Player::Client::clientCount();
+	$request->addResult('player count', $count);
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+		my $cnt = 0;
+		my @players = Slim::Player::Client::clients();
+
+		if (scalar(@players) > 0) {
+
+			for my $eachclient (@players[$start..$end]) {
+				$request->addResultLoop('@players', $cnt, 
+					'playerid', $eachclient->id());
+				$request->addResultLoop('@players', $cnt, 
+					'ip', $eachclient->ipport());
+				$request->addResultLoop('@players', $cnt, 
+					'name', $eachclient->name());
+				$request->addResultLoop('@players', $cnt, 
+					'model', $eachclient->model());
+				$request->addResultLoop('@players', $cnt, 
+					'displaytype', $eachclient->vfdmodel())
+					unless ($eachclient->model() eq 'http');
+				$request->addResultLoop('@players', $cnt, 
+					'connected', ($eachclient->connected() || 0));
+					
+				$cnt++;
+			}	
+		}
+	}
+	
+	# manage the subscription
+	if (defined(my $timeout = $request->getParam('subscribe'))) {
+	
+		# the filter function decides, based on a notified request, if the serverstatus
+		# query must be re-executed.
+		sub filter{
+			my $request = shift;
+						
+			# we want to know about rescan and all client notifs
+			return $request->isCommand([['rescan', 'client']]);
+		}
+	
+		# register ourselves to be automatically re-executed on timeout or filter
+		$request->registerAutoExecute($timeout, \&filter);
+	}
+	
+	$request->setStatusDone();
+}
+
+
 sub signalstrengthQuery {
 	my $request = shift;
 	
@@ -1615,6 +1698,7 @@ sub syncQuery {
 	$request->setStatusDone();
 }
 
+
 sub timeQuery {
 	my $request = shift;
 	
@@ -1750,6 +1834,7 @@ sub titlesQuery {
 	$request->setStatusDone();
 }
 
+
 sub versionQuery {
 	my $request = shift;
 	
@@ -1767,6 +1852,7 @@ sub versionQuery {
 	
 	$request->setStatusDone();
 }
+
 
 sub yearsQuery {
 	my $request = shift;
@@ -1941,6 +2027,7 @@ sub _addSong {
 	# add it directly to the result loop
 	$request->setResultLoopHash($loop, $index, $hashRef);
 }
+
 
 sub _songData {
 	my $pathOrObj = shift; # song path or object
