@@ -21,7 +21,8 @@ my $favs; # single instance for all callers
 sub new {
 	return $favs if $favs;
 
-	my $class = shift;
+	my $class  = shift;
+	my $client = shift; # ignored for this version as favorites are shared by all clients
 
 	$favs = $class->SUPER::new;
 
@@ -135,9 +136,8 @@ sub levelForIndex {
 	return undef, undef, undef;
 }
 
-sub clientAdd {
+sub add {
 	my $class  = shift;
-	my $client = shift;
 	my $url    = shift;
 	my $title  = shift;
 
@@ -152,10 +152,10 @@ sub clientAdd {
 
 	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs (Live365)
 
-	$log->info(sprintf("%s url: %s title: %s", $client->id, $url, $title));
+	$log->info(sprintf("url: %s title: %s", $url, $title));
 
 	# if its already a favorite, don't add it again
-	if (my $fav = $class->findByClientAndURL($client, $url)) {
+	if (my $fav = $class->findUrl($url)) {
 		return $fav->{'num'};
 	}
 
@@ -171,9 +171,8 @@ sub clientAdd {
 	return scalar @{$class->toplevel} - 1;
 }
 
-sub findByClientAndURL {
+sub findUrl {
 	my $class  = shift;
-	my $client = shift;
 	my $url    = shift;
 
 	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs (Live365)
@@ -194,9 +193,8 @@ sub findByClientAndURL {
 	return undef;
 }
 
-sub deleteByClientAndURL {
+sub deleteUrl {
 	my $class  = shift;
-	my $client = shift;
 	my $url    = shift;
 
 	if (blessed($url) && $url->can('url')) {
@@ -207,7 +205,7 @@ sub deleteByClientAndURL {
 
 	if ($class->{'urlindex'}->{ $url }) {
 
-		$class->deleteByClientAndId($client, $class->{'urlindex'}->{ $url }->{'ind'});
+		$class->deleteIndex($class->{'urlindex'}->{ $url }->{'ind'});
 
 	} else {
 
@@ -215,9 +213,8 @@ sub deleteByClientAndURL {
 	}
 }
 
-sub deleteByClientAndId {
+sub deleteIndex {
 	my $class  = shift;
-	my $client = shift;
 	my $index  = shift;
 
 	my @ind = split(/\./, $index);

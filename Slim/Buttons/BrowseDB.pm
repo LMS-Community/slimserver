@@ -393,7 +393,7 @@ sub browsedbExitCallback {
 
 		} elsif ($currentItem eq 'FAVORITE') {
 
-			my $favorites = Slim::Utils::Favorites->new;
+			my $favorites = Slim::Utils::Favorites->new($client);
 			my $index = $client->modeParam('favorite');
 			my $track = Slim::Schema->find('Track', $client->modeParam('findCriteria')->{'playlist.id'});
 
@@ -410,7 +410,7 @@ sub browsedbExitCallback {
 
 			if (!$index) {
 
-				$index = $favorites->clientAdd($client, $track, $track->title);
+				$index = $favorites->add($track, $track->title);
 
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_ADDING'), $track->title ]
@@ -420,7 +420,7 @@ sub browsedbExitCallback {
 
 			} else {
 
-				$favorites->deleteByClientAndId($client, $index);
+				$favorites->deleteIndex($index);
 
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_DELETING'), $track->title ]
@@ -799,7 +799,7 @@ sub setMode {
 
 		if (blessed($track) && $track->can('id')) {
 
-			my $fav = Slim::Utils::Favorites->new->findByClientAndURL($client, $track);
+			my $fav = Slim::Utils::Favorites->new($client)->findUrl($track);
 
 			$client->modeParam('favorite', $fav ? $fav->{'index'} : undef);
 

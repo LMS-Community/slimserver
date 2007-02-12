@@ -66,7 +66,7 @@ sub setMode {
 
 	if (Slim::Utils::Favorites->enabled && (Slim::Music::Info::isSong($url) || Slim::Music::Info::isPlaylist($url)) ) {
 
-		$fav = Slim::Utils::Favorites->new->findByClientAndURL($client, $url);
+		$fav = Slim::Utils::Favorites->new($client)->findUrl($url);
 
 		unshift @list, {
 			value => $url,
@@ -83,17 +83,17 @@ sub setMode {
 
 			onRight => sub {
 				my $client = shift;
-				my $favorites = Slim::Utils::Favorites->new || return;
+				my $favorites = Slim::Utils::Favorites->new($client) || return;
 				my $index = $client->modeParam('favorite');
 
 				if ($index) {
-					$favorites->deleteByClientAndId($client, $index);
+					$favorites->deleteIndex($index);
 					$client->modeParam('favorite', undef);
 					$client->showBriefly( {
 						'line' => [ $client->string('FAVORITES_DELETING'), $client->modeParam('title') ]
 					});
 				} else {
-					$index = $favorites->clientAdd($client, $url, $title);
+					$index = $favorites->add($url, $title);
 					$client->modeParam('favorite', $index);
 					$client->showBriefly( {
 						'line' => [ $client->string('FAVORITES_ADDING'), $client->modeParam('title') ]

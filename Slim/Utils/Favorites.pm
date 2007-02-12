@@ -44,10 +44,10 @@ sub enabled {
 
 # Favorites classes should contain the following methods
 #
-# sub new                 ( $class                        ) - contructor
-# sub clientAdd           ( $class, $client, $url, $title ) - add $url with $title to favorites
-# sub findByClientAndURL  ( $class, $client, $url         ) - returns index or undef for $url from favorites
-# sub deleteByClientAndURL( $class, $client, $url         ) - deletes $url from favorites
-# sub deleteByClientAndId ( $class, $client, $index       ) - deletes favorite with index $index
+# sub new         ( $class, $client      ) - contructor
+# sub add         ( $class, $url, $title ) - add $url with $title to favorites
+# sub findUrl     ( $class, $url         ) - returns favorite hash or undef for $url from favorites
+# sub deleteUrl   ( $class, $url         ) - deletes $url from favorites
+# sub deleteIndex ( $class, $index       ) - deletes favorite with index $index
 
 __END__

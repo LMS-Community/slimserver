@@ -338,8 +338,7 @@ sub loadDataForTrack {
 
 	if (Slim::Music::Info::isURL($track->url) && Slim::Utils::Favorites->enabled) {
 
-		my $favorites = Slim::Utils::Favorites->new;
-		my $fav = $favorites->findByClientAndURL($client, $track->url);
+		my $fav = Slim::Utils::Favorites->new($client)->findUrl($track->url);
 
 		$client->modeParam( 'favorite', $fav ? $fav->{'index'} : undef );
 
@@ -459,12 +458,12 @@ sub listExitHandler {
 
 		} elsif ($curType eq 'FAVORITE') {
 
-			my $favorites = Slim::Utils::Favorites->new;
+			my $favorites = Slim::Utils::Favorites->new($client);
 			my $favIndex = $client->modeParam('favorite');
 
 			if (!defined $favIndex) {
 
-				$favIndex = $favorites->clientAdd($client, track($client), $track->title || $track->url);
+				$favIndex = $favorites->add(track($client), $track->title || $track->url);
 
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_ADDING'), $track->title || $track->url ]
@@ -474,7 +473,7 @@ sub listExitHandler {
 
 			} else {
 
-				$favorites->deleteByClientAndId($client, $favIndex);
+				$favorites->deleteIndex($favIndex);
 
 				$client->showBriefly( {
 					'line' => [ $client->string('FAVORITES_DELETING'), $track->title || $track->url ]
