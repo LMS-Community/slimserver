@@ -101,7 +101,7 @@ sub playFavorite {
 	my $button = shift;
 	my $digit  = shift;
 
-	my ($level, $index, undef) = Slim::Plugin::Favorites::OpmlFavorites->new->levelForIndex($digit);
+	my ($level, $index, undef) = Slim::Plugin::Favorites::OpmlFavorites->new($client)->levelForIndex($digit);
 
 	if (!defined $index) {
 
@@ -144,7 +144,7 @@ sub addEditLink {
 }
 
 sub indexHandler {
-	my $file = Slim::Plugin::Favorites::OpmlFavorites->new->filename;
+	my $file = Slim::Plugin::Favorites::OpmlFavorites->new($_[0])->filename;
 
 	Slim::Web::XMLBrowser->handleWebIndex( {
 		feed   => Slim::Utils::Misc::fileURLFromPath($file),
@@ -190,7 +190,7 @@ sub editHandler {
 		$opml->save;
 		$changed = undef unless $opml->error;
 
-		my $favorites = Slim::Plugin::Favorites::OpmlFavorites->new;
+		my $favorites = Slim::Plugin::Favorites::OpmlFavorites->new($client);
 		if ($favorites && $opml != $favorites && $opml->filename eq $favorites->filename) {
 			# overwritten the favorites file - force favorites to be reloaded
 			$favorites->load;
@@ -227,7 +227,7 @@ sub editHandler {
 	}
 
 	if ($params->{'url'}) {
-		$opml = Slim::Plugin::Favorites::OpmlFavorites->new;
+		$opml = Slim::Plugin::Favorites::OpmlFavorites->new($client);
 
 		if (Slim::Utils::Misc::pathFromFileURL($params->{'url'}) ne $opml->filename) {
 			# if url is not for favorite file use opml direct
@@ -458,10 +458,11 @@ sub cliBrowse {
 		return;
 	}
 
+	my $client   = $request->client();
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 
-	my ($level, $start, $prefix) = Slim::Plugin::Favorites::OpmlFavorites->new->levelForIndex($index);
+	my ($level, $start, $prefix) = Slim::Plugin::Favorites::OpmlFavorites->new($client)->levelForIndex($index);
 
 	my $count = $level ? scalar @$level : 0;
 
@@ -506,12 +507,13 @@ sub cliAdd {
 		return;
 	}
 
+	my $client = $request->client();
 	my $command= $request->getRequest(1);
 	my $url    = $request->getParam('_url');
 	my $title  = $request->getParam('_title');
 	my $index  = $request->getParam('_index');
 
-	my $favs = Slim::Plugin::Favorites::OpmlFavorites->new;
+	my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($client);
 
 	my ($level, $i) = defined $index ? $favs->levelForIndex($index) : ($favs->toplevel, scalar @{$favs->toplevel});
 
@@ -567,6 +569,7 @@ sub cliDelete {
 		return;
 	}
 
+	my $client = $request->client();
 	my $index  = $request->getParam('_index');;
 
 	if (!defined $index) {
@@ -574,7 +577,7 @@ sub cliDelete {
 		return;
 	}
 
-	Slim::Plugin::Favorites::OpmlFavorites->new->deleteByClientAndId(undef, $index);
+	Slim::Plugin::Favorites::OpmlFavorites->new($client)->deleteIndex($index);
 
 	$request->setStatusDone();
 }
