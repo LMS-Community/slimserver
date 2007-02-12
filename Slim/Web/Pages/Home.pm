@@ -98,8 +98,11 @@ sub home {
 
 	# More leakage from the DigitalInput 'plugin'
 	#
-	# If our current player has digital inputs, show the menu only when digital Input is available
-	Slim::Plugin::DigitalInput::Plugin->webPages($client->hasDigitalIn);
+	# If our current player has digital inputs, show the menu.
+	if ($client) {
+
+		Slim::Plugin::DigitalInput::Plugin->webPages($client->hasDigitalIn);
+	}
 
 	$params->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
 
