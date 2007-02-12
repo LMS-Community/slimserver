@@ -5677,18 +5677,6 @@ in the saved playlists folder.</p>
 	</tr>
 	<tr>
 		<td>
-			tags
-		</td>
-		<td>
-			Determines which tags are returned. Each returned tag is identified
-			by a letter (see command 
-			&quot;<a href="#songinfo">songinfo</a>&quot; for a list of possible
-			fields and their identifying letter). The default tags value for 
-			this query is &quot;gald&quot;.
-		</td>
-	</tr>
-	<tr>
-		<td>
 			charset
 		</td>
 		<td>
@@ -5701,30 +5689,25 @@ in the saved playlists folder.</p>
 			subscribe
 		</td>
 		<td>
-			This optional parameter controls the subscription to the player 
-			status. Only one status subscription is possible per player and 
-			connection.
+			This optional parameter controls the subscription to the server 
+			status. Only one status subscription is possible per connection.
 			<br>
 			Subscription is enabled by using this parameter with a positive
 			integer. It is disabled by using &quot;-&quot;. When the
-			subscription is enabled, normal &quot;status&quot; queries (i.e.
+			subscription is enabled, normal &quot;serverstatus&quot; queries (i.e.
 			not using the &quot;subscribe&quot; parameter) can be performed and
 			will have no effect on the subscription in place.
 			<br>
-			When enabled, the &quot;status&quot; request is automatically
-			re-generated on player change (and sent asynchronously to the CLI
+			When enabled, the &quot;serverstatus&quot; query is automatically
+			re-generated on server change (and sent asynchronously to the CLI
 			client). The number indicates the time interval in seconds between 
-			automatic generations in case nothing happened to the player in the
+			automatic generations in case nothing happened to the server info in the
 			interval. Use &quot;0&quot; to disable this last feature and only be
-			notified on player or playlist changes. Please see the example.
+			notified on changes. Please see the example.
 			<br>
 			Some situations will lead to multiple status queries
 			generated very close to another. This is a limitation of the 
 			change detection &quot;algorithm&quot;.
-			<br>
-			If the player is manually (through the web page) or automatically
-			deleted from SlimServer, &quot;client forget&quot; is sent instead
-			of the status query and the subscription is terminated.
 			<br>
 			Please note this mechanism is completely distinct from the 
 			&quot;listen&quot; and &quot;subscribe&quot; commands described 
