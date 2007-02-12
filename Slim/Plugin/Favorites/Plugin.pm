@@ -54,8 +54,8 @@ sub initPlugin {
 
 	# register cli handlers
 	Slim::Control::Request::addDispatch(['favorites', '_index', '_quantity'], [0, 1, 1, \&cliBrowse]);
-	Slim::Control::Request::addDispatch(['favorites', 'add', '_url', '_title', '_index'], [0, 0, 0, \&cliAdd]);
-	Slim::Control::Request::addDispatch(['favorites', 'addlevel', '_title', '_index'], [0, 0, 0, \&cliAdd]);
+	Slim::Control::Request::addDispatch(['favorites', 'add', '_url', '_title'], [0, 0, 0, \&cliAdd]);
+	Slim::Control::Request::addDispatch(['favorites', 'addlevel', '_title'], [0, 0, 0, \&cliAdd]);
 	Slim::Control::Request::addDispatch(['favorites', 'delete', '_index'], [0, 0, 0, \&cliDelete]);
 }
 
@@ -462,6 +462,10 @@ sub cliBrowse {
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 
+	if (my $item_id  = $request->getParam('item_id')) {
+		$index = $item_id . '.' . $index;
+	}
+
 	my ($level, $start, $prefix) = Slim::Plugin::Favorites::OpmlFavorites->new($client)->levelForIndex($index);
 
 	my $count = $level ? scalar @$level : 0;
@@ -511,7 +515,7 @@ sub cliAdd {
 	my $command= $request->getRequest(1);
 	my $url    = $request->getParam('_url');
 	my $title  = $request->getParam('_title');
-	my $index  = $request->getParam('_index');
+	my $index  = $request->getParam('item_id');
 
 	my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($client);
 
@@ -570,7 +574,7 @@ sub cliDelete {
 	}
 
 	my $client = $request->client();
-	my $index  = $request->getParam('_index');;
+	my $index  = $request->getParam('_index');
 
 	if (!defined $index) {
 		$request->setStatusBadParams();
