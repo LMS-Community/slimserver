@@ -155,10 +155,10 @@ function refreshControls(theData) {
 	// refresh shuffle controls
 	// refresh repeat controls
 	// refresh volume (?)
-	refreshVolumeControl(parsedData);
+	refreshVolumeControl(parsedData, 1);
 }
 
-function refreshVolumeControl(theData) {
+function refreshVolumeControl(theData, suppressOSD) {
 	var parsedData = fillDataHash(theData);
 	var levels = [0, 15, 30, 40, 50, 60, 70, 80, 90, 100];
 	levels.each( function(thisLevel) {
@@ -188,7 +188,9 @@ function refreshVolumeControl(theData) {
 		}
 	});
 	var level = parseInt(parsedData['volume']);
-	showVolumeOSD(level, 500);
+	if (!suppressOSD) {
+		showVolumeOSD(level, 500);
+	}
 }
 
 function adjustVolume(level) {

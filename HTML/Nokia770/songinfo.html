@@ -17,7 +17,15 @@
 	<tr>
 		<td valign = 'top'>
 		[% IF itemobj.coverArt('cover', 1) %]
-		<a href="browsedb.html?hierarchy=track&level=0&album=[% itemobj.album.id %]&player=[% playerURI %]"><img src="/music/[% itemobj.id %]/cover.jpg" height="220" STYLE="border: 1px solid black"></a>
+		<a href="browsedb.html?hierarchy=album,track&level=2&album.id=[% itemobj.album.id %]&player=[% playerURI %]">
+			<img src="/music/[% itemobj.id %]/thumb_[% IF thumbSize %][% thumbSize %]x[% thumbSize %][% ELSE %]200x200[% END %]_f_000000.jpg" style="border: 1px solid black">
+		</a>
+
+		<!-- add SHRINK/ENLARGE links here, same as is needed in the album view section of browsedb.html
+			<a href = 'javascript:shrinkThumbs();'>[% "SHRINK" | string %]</a> |
+			<a href = 'javascript:enlargeThumbs();'>[% "ENLARGE" | string %]</a>
+		-->
+
 		[% END %]
 		</td>
 

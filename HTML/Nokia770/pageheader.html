@@ -58,7 +58,7 @@
 	[% IF playerid %]<input type = 'hidden' name = 'playerid' value = '[% playerid %]'>[% END %]
 	</form>
 	[% ELSE %]
-		[% FOREACH playerobj IN players %][% IF player == playerobj.id %][% "CURRENT_PLAYER" | string %] [% playerobj.name %][% END %][% END %]
+		[% FOREACH playerobj IN players %][% IF player == playerobj.id %][% "CURRENT_PLAYER" | string %] [% IF playerobj.name %][% playerobj.name %][% ELSE %][% player %][% END %][% END %][% END %]
 	[% END %]
 [% END %]
 </td></tr></table>
