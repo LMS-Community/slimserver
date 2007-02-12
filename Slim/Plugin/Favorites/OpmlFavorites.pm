@@ -65,7 +65,7 @@ sub _urlindex {
 		$level = $class->toplevel;
 	}
 
-	my $i = 1;
+	my $i = 0;
 
 	for my $entry (@{$level}) {
 		if ($entry->{'type'} eq 'audio' && ($entry->{'URL'} || $entry->{'url'}) ) {
@@ -105,6 +105,36 @@ sub _loadOldFavorites {
 	$class->save;
 }
 
+sub levelForIndex {
+	my $class  = shift;
+	my $index  = shift;
+
+	my @ind = split(/\./, $index);
+	my $pos = $class->toplevel;
+	my $prefix = '';
+
+	while (scalar @ind > 1 && ref $pos eq 'ARRAY') {
+		$prefix .= $ind[0] . '.';
+		$pos = $pos->[shift @ind]->{'outline'};
+	}
+
+	my $i = shift @ind;
+
+	if (!@ind) {
+
+		if ($pos->[$i] && ref $pos->[$i] eq 'HASH') {
+
+			return $pos, $i, $prefix;
+
+		} else {
+
+			return $pos, undef, $prefix;
+		}
+	}
+
+	return undef, undef, undef;
+}
+
 sub clientAdd {
 	my $class  = shift;
 	my $client = shift;
@@ -138,7 +168,7 @@ sub clientAdd {
 
 	$class->save;
 
-	return scalar @{$class->toplevel};
+	return scalar @{$class->toplevel} - 1;
 }
 
 sub findByClientAndURL {
@@ -162,35 +192,6 @@ sub findByClientAndURL {
 	$log->info("No match for $url");
 
 	return undef;
-}
-
-sub findByClientAndId {
-	my $class  = shift;
-	my $client = shift;
-	my $index  = shift;
-
-	my @ind = split(/\./, $index);
-	my $pos = $class->toplevel;
-	my $i;
-
-	while (scalar @ind > 1 && ref $pos eq 'ARRAY') {
-		$pos = $pos->[(shift @ind) - 1]->{'outline'};
-	}
-
-	my $i = shift @ind;
-	my $entry = @{$pos}[ $i - 1 ];
-
-	if (ref $entry eq 'HASH') {
-
-		my $url   = $entry->{'URL'} || $entry->{'url'};
-		my $title = $entry->{'text'};
-
-		$log->info("Found favorite at index $index: $title $url");
-
-		return $url, $title;
-	}
-
-	return undef, undef;
 }
 
 sub deleteByClientAndURL {
@@ -224,14 +225,14 @@ sub deleteByClientAndId {
 	my $i;
 
 	while (scalar @ind > 1 && ref $pos eq 'ARRAY') {
-		$pos = $pos->[(shift @ind) - 1]->{'outline'};
+		$pos = $pos->[shift @ind]->{'outline'};
 	}
 
 	my $i = shift @ind;
 
-	if (ref @{$pos}[ $i - 1 ] eq 'HASH') {
+	if (ref @{$pos}[ $i ] eq 'HASH') {
 
-		splice @{$pos}, $i - 1, 1;
+		splice @{$pos}, $i, 1;
 
 		$log->info("Removed entry at index $index");
 

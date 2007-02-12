@@ -51,6 +51,12 @@ sub initPlugin {
 
 	# register handler for playing favorites by remote hot button
 	Slim::Buttons::Common::setFunction('playFavorite', \&playFavorite);
+
+	# register cli handlers
+	Slim::Control::Request::addDispatch(['favorites', '_index', '_quantity'], [0, 1, 1, \&cliBrowse]);
+	Slim::Control::Request::addDispatch(['favorites', 'add', '_url', '_title', '_index'], [0, 0, 0, \&cliAdd]);
+	Slim::Control::Request::addDispatch(['favorites', 'addlevel', '_title', '_index'], [0, 0, 0, \&cliAdd]);
+	Slim::Control::Request::addDispatch(['favorites', 'delete', '_index'], [0, 0, 0, \&cliDelete]);
 }
 
 sub setMode {
@@ -95,13 +101,9 @@ sub playFavorite {
 	my $button = shift;
 	my $digit  = shift;
 
-	if ($digit == 0) {
-		$digit = 10;
-	}
+	my ($level, $index, undef) = Slim::Plugin::Favorites::OpmlFavorites->new->levelForIndex($digit);
 
-	my ($url, $title) = Slim::Plugin::Favorites::OpmlFavorites->new->findByClientAndId($client, $digit);
-
-	if (!$url) {
+	if (!defined $index) {
 
 		$client->showBriefly({
 			 'line' => [ sprintf($client->string('FAVORITES_NOT_DEFINED'), $digit) ],
@@ -110,6 +112,11 @@ sub playFavorite {
 		return;
 
 	} else {
+
+		my $entry = $level->[$index];
+
+		my $url   = $entry->{'URL'} || $entry->{'url'};
+		my $title = $entry->{'title'};
 
 		$log->info("Playing favorite number $digit $title $url");
 
@@ -442,5 +449,135 @@ sub editHandler {
 
 	return Slim::Web::HTTP::filltemplatefile('plugins/Favorites/edit.html', $params);
 }
+
+sub cliBrowse {
+	my $request = shift;
+
+	if ($request->isNotQuery([['favorites']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+
+	my ($level, $start, $prefix) = Slim::Plugin::Favorites::OpmlFavorites->new->levelForIndex($index);
+
+	my $count = $level ? scalar @$level : 0;
+
+	$request->addResult('count', $count);
+
+	if (defined $start) {
+
+		$log->info("found start index $index in favorites, returning entries");
+
+		my $ind = $start;
+		my $cnt = 0;
+
+		while ($level->[$ind] && $cnt < $quantity) {
+
+			my $entry = $level->[$ind];
+
+			$request->addResultLoop('@favorites', $cnt, 'id',    $prefix . $ind );
+			$request->addResultLoop('@favorites', $cnt, 'title', $entry->{'text'});
+			$request->addResultLoop('@favorites', $cnt, 'url',   $entry->{'URL'} || $entry->{'url'});
+
+			if ($entry->{'outline'} && ref $entry->{'outline'} eq 'ARRAY') {
+				$request->addResultLoop('@favorites', $cnt, 'hasitems',  scalar @{$entry->{'outline'}} );
+			}
+
+			++$ind;
+			++$cnt;
+		}
+
+	} else {
+
+		$log->info("start index $index does not exist in favorites");
+	}
+
+	$request->setStatusDone();
+}
+
+sub cliAdd {
+	my $request = shift;
+
+	if ($request->isNotCommand([['favorites'], ['add', 'addlevel']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $command= $request->getRequest(1);
+	my $url    = $request->getParam('_url');
+	my $title  = $request->getParam('_title');
+	my $index  = $request->getParam('_index');
+
+	my $favs = Slim::Plugin::Favorites::OpmlFavorites->new;
+
+	my ($level, $i) = defined $index ? $favs->levelForIndex($index) : ($favs->toplevel, scalar @{$favs->toplevel});
+
+	if ($level) {
+
+		my $entry;
+
+		if ($command eq 'add' && defined $title && defined $url) {
+
+			$log->info("adding entry $title $url at index $index");
+
+			$entry = {
+				'text' => $title,
+				'URL'  => $url,
+				'type' => 'audio',
+			};
+
+		} elsif ($command eq 'addlevel' && defined $title) {
+
+			$log->info("adding new level $title at index $index");
+
+			$entry = {
+				'text'    => $title,
+				'outline' => [],
+			};
+
+		} else {
+
+			$log->info("can't perform $command bad title or url");
+			request->setStatusBadParams();
+			return;
+		}
+
+		splice @$level, $i, 0, $entry;
+
+		$favs->save;
+
+		$request->setStatusDone();
+
+	} else {
+
+		$log->info("index $index invalid");
+
+		request->setStatusBadParams();
+	}
+}
+
+sub cliDelete {
+	my $request = shift;
+
+	if ($request->isNotCommand([['favorites'], ['delete']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $index  = $request->getParam('_index');;
+
+	if (!defined $index) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	Slim::Plugin::Favorites::OpmlFavorites->new->deleteByClientAndId(undef, $index);
+
+	$request->setStatusDone();
+}
+
 
 1;
