@@ -1,4 +1,6 @@
 var thumbSize = [% IF thumbSize %][% thumbSize %][% ELSE %]250[% END %];
+var thumbHrefTemplate = '/music/COVER/thumb_'+thumbSize+'x'+thumbSize+'_f_000000.jpg';
+
 function chooseAlbumOrderBy(value, option, artwork)
 {
 	if (!artwork) {

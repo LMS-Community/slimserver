@@ -34,4 +34,4 @@
 </table>
 </div>
 <!-- /Menu -->
-[% IF thispage != 'browse' && thispage != 'artwork' %]<div id = 'pagecontainer'>[% END %]
+[% IF thispage != 'browse' && thispage != 'artwork' %]<div id = 'pagecontainer'>[% IF thispage == '' %]<p>[% END %][% END %]

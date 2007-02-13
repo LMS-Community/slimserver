@@ -1,6 +1,6 @@
 <!--status_list.html-->
 [%# Element status_list.html %]
-<tr [% IF item.currentsong %]class = 'playing'[% ELSIF not item.odd %]class = 'odd'[% ELSE %]class = 'even'[% END %] id = 'row[% item.num %]'>
+<tr class = '[% IF item.currentsong %]playing[% ELSIF not item.odd %]odd[% ELSE %]even[% END %]' id = 'row[% item.num %]'>
 
         [% PROCESS ajaxplaylistcontrols
                 itemobj = item.itemobj
@@ -23,7 +23,8 @@
 [%# /Element status_list.html %]
 
 [% BLOCK ajaxplaylistcontrols %]
-<td><table class = 'playlistcontrols'><tr>
+<td>
+<table class = 'playlistcontrols'><tr>
 <td class = 'playlistcontrols' align = 'center'>
 <span id = 'play_[% item.num %]' style = 'display: [% IF item.currentsong %]none[% ELSE %]block[% END %];'>
 	<a href = 'javascript:playlistPlayTrack("p0=playlist&p1=jump&p2=[% num %]&player=[% playerURI %]&ajaxRequest=1");' id = 'play_link_[% item.num %]'>
@@ -86,4 +87,5 @@
 
 </td>
 </tr></table>
+</td>
 [% END %]

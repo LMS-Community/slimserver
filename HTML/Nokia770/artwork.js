@@ -14,8 +14,6 @@ var thisAlbum, thatAlbum, clickedItem;
 [% PROCESS html/global.js %]
 [% PROCESS skin_global.js %]
 
-var thumbHrefTemplate = '/music/COVER/thumb_'+thumbSize+'x'+thumbSize+'_f_000000.jpg';
-
 function addItem(args) {
 	url = '[% webroot %]status.html';
         getStatusData(args, showAdded);

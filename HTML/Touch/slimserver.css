@@ -150,6 +150,11 @@ td.playlistcontrols {
 	width: 25px;
 }
 
+td.listing {
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
 div {
 	overflow: visible;
 }
@@ -178,13 +183,20 @@ div#footer {
 
 tr.playing {
 	background-color: #9ef5f6;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 tr.odd, td.odd {
 	background-color: #d0d0d0;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
+
 tr.even, td.even {
 	background-color: #FFFFFF;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 div#page {
