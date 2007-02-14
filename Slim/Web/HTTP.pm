@@ -773,8 +773,9 @@ sub generateHTTPResponse {
 		$response->protocol('HTTP/1.0');
 	}
 
-	$params->{'player'} = '';
-	$params->{'nosetup'} = 1   if $::nosetup;
+	$params->{'player'}   = '';
+	$params->{'revision'} = $::REVISION if $::REVISION;
+	$params->{'nosetup'}  = 1   if $::nosetup;
 	$params->{'noserver'} = 1   if $::noserver;
 
 	# Check for the gallery view cookie.
