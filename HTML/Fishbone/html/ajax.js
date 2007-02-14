@@ -1,9 +1,5 @@
-var player = '[% playerURI %]';
-var url = 'status_header.html';
 var mp = 0;
 var currentID = 0;
-
-[% PROCESS html/global.js %]
 
 function convert(url)
 {
@@ -102,7 +98,7 @@ function refreshVolume(theData) {
 }
 
 function processSleepLink(param) {
-	getStatusData(param + "&player="+player+"&ajaxRequest=1&s="+Math.random(), refreshSleepTime);
+	getStatusData(param + "&player=" + player + "&ajaxRequest=1&s=" + Math.random(), refreshSleepTime);
 }
 
 function refreshSleepTime(theData) {
@@ -135,15 +131,15 @@ function refreshPlayControls(theData,force) {
 		var objID = $('playCtl' + controls[i] + curstyle);
 		
 		if (parsedData['playmode'] == i) {
-			objID.src = '[% webroot %]html/images/'+controls[i]+'_s'+curstyle+'.gif';
+			objID.src = webroot + 'html/images/' + controls[i] + '_s' + curstyle + '.gif';
 			
 			if (controls[i] !='play') {
-				if ($("progressBar").src.indexOf('_s') == -1) {$("progressBar").src = '[% webroot %]html/images/pixel.green_s.gif'}
+				if ($("progressBar").src.indexOf('_s') == -1) {$("progressBar").src = webroot + 'html/images/pixel.green_s.gif'}
 			} else {
-				if ($("progressBar").src.indexOf('_s') != -1) {$("progressBar").src = '[% webroot %]html/images/pixel.green.gif'}
+				if ($("progressBar").src.indexOf('_s') != -1) {$("progressBar").src = webroot + 'html/images/pixel.green.gif'}
 			}
 		} else {
-			objID.src = '[% webroot %]html/images/'+controls[i]+curstyle+'.gif';
+			objID.src = webroot + 'html/images/'+controls[i] + curstyle + '.gif';
 		}
 	}
 
@@ -154,17 +150,17 @@ function refreshPlayControls(theData,force) {
 			var objID = $('playCtl' + controls[i] + curstyle);
 			
 			if (parsedData['rate'] == controls[i]) {
-				objID.src = '[% webroot %]html/images/'+controls[i]+'_s'+curstyle+'.gif';
+				objID.src = webroot + 'html/images/' + controls[i] + '_s' + curstyle + '.gif';
 				
 			} else {
-				objID.src = '[% webroot %]html/images/'+controls[i]+curstyle+'.gif';
+				objID.src = webroot + 'html/images/' + controls[i] + curstyle + '.gif';
 			}
 		}
 		
 		if (parsedData['mute'] == 1) {
-			if ($('playCtl' + 'mute').src.indexOf('_s') != -1) {$('playCtl' + 'mute').src = '[% webroot %]html/images/mute_s'+curstyle+'.gif';}
+			if ($('playCtl' + 'mute').src.indexOf('_s') != -1) {$('playCtl' + 'mute').src = webroot + 'html/images/mute_s' + curstyle + '.gif';}
 		} else {
-			if ($('playCtl' + 'mute').src.indexOf('_s') == -1) {$('playCtl' + 'mute').src = '[% webroot %]html/images/mute'+curstyle+'.gif';}
+			if ($('playCtl' + 'mute').src.indexOf('_s') == -1) {$('playCtl' + 'mute').src = webroot + 'html/images/mute' + curstyle + '.gif';}
 		}
 	}
 
@@ -194,10 +190,11 @@ function refreshInfo(theData, force, curstyle) {
 	}
 
 	refreshSleepTime(parsedData);
+	
 	var myString = new String($('songtitlehref').innerHTML);
-	var rExp= new RegExp("item=(.+?)&amp;player","i");
+	var rExp     = new RegExp("item=(.+?)&amp;player","i");
 
-	if (rExp.exec(myString) == null) {rExp= new RegExp("item=(.+?)&player","i");}
+	if (rExp.exec(myString) == null) {rExp = new RegExp("item=(.+?)&player","i");}
 
 	var a = rExp.exec(myString);
 	var newsong = 1;
@@ -206,10 +203,10 @@ function refreshInfo(theData, force, curstyle) {
 		if (a == null || a[1] == parsedData['songtitleid']) {newsong = 0;}
 	}
 	
-	if (newsong && !parsedData['artisthtml']) {
+	//if (newsong && !parsedData['artisthtml']) {
 		//doAjaxRefresh();
 		//return true;
-	}
+	//}
 		
 	//alert([newsong,parsedData['songtitleid'] ,$('nowplaying').style.display]);
 	var elems = ['thissongnum', 'playtextmode', 'songcount'];
@@ -259,6 +256,7 @@ function refreshInfo(theData, force, curstyle) {
 		} else {
 			coverPath = '/music/'+parsedData['coverartpath']+'/cover_100x100_f_000000.jpg';
 		}
+		
 		$('coverartpath').src   = coverPath;
 		
 		var tooltip = "";
@@ -315,7 +313,7 @@ function refreshInfo(theData, force, curstyle) {
 			showElements(['albumhref'], 'inline');
 			showElements(['yearinfo'], 'inline');
 			refreshElement('album', parsedData['album']);
-			refreshElement('year', parsedData['year']);
+			if (parsedData['year']) { refreshElement('year', parsedData['year']); }
 		} else {
 			hideElements(['albuminfo', 'albumhref', 'yearinfo']);
 		}
@@ -323,13 +321,13 @@ function refreshInfo(theData, force, curstyle) {
 		if(parsedData['artist']) {
 			showElements(['artistinfo']);
 			showElements(['artisthtml'], 'inline');
-			refreshElement('artisthtml', parsedData['artisthtml']);
+			if (parsedData['artisthtml']) { refreshElement('artisthtml', parsedData['artisthtml']);}
 		} else {
 			hideElements(['artistinfo', 'artisthtml']);
 		}
 		
 		if(parsedData['playermodel']) {
-			$('logoimage' + curstyle).src = '[% webroot %]html/images/' + parsedData['playermodel'] + '_logo.small' + curstyle + '.gif';
+			$('logoimage' + curstyle).src = webroot + 'html/images/' + parsedData['playermodel'] + '_logo.small' + curstyle + '.gif';
 		}
 		playlistChecker();
 		
@@ -341,7 +339,7 @@ function refreshInfo(theData, force, curstyle) {
 
 // reload undock window
 function refreshUndock() {
-	var args = 'player=[% playerURI %]&ajaxRequest=1&s='+Math.random();
+	var args = 'player=' + player + '&ajaxRequest=1&s=' + Math.random();
 	getStatusData(args, refreshAll);
 	//window.location.replace('status.html?player='+player+'&undock=1');
 }
@@ -402,7 +400,7 @@ function currentSong(theData) {
 				
 				// Check the id's of each item, refresh if any don't match.
 				var myString = new String(doc.getElementById('playlistitem' + i).innerHTML);
-				var rExp= new RegExp("item=(.*?)&amp;player","i");
+				var rExp     = new RegExp("item=(.*?)&amp;player","i");
 				if (rExp.exec(myString) == null) {rExp= new RegExp("item=(.*?)&player","i");}
 				var a = rExp.exec(myString);
 				
@@ -479,6 +477,9 @@ function optionDone(req) {
 			//parent.header.document.getElementById('browseForm').innerHTML = " Error:\n"+ req.status + "\n" +req.statusText;
 		}
 	}
+	
+	var page = parent.header.document.getElementById('homepage').innerHTML;
+	selectLink("", page);
 }
 
 function getOptionData(params, action) {
@@ -488,11 +489,11 @@ function getOptionData(params, action) {
 function playlistChecker(start) {
 	var prev_url = url;
 	url = 'playlist.html';
-	var args = 'player='+player+'&ajaxRequest=1&s='+Math.random();
+	var args = 'player=' + player + '&ajaxRequest=1&s=' + Math.random();
 	
 	if(start != null && start != '') {
 		refreshPlaylist();
-		args = args + "&start="+start;
+		args = args + "&start=" + start;
 	} else {
 		getStatusData(args, currentSong);
 	}

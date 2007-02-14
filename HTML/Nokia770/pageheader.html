@@ -2,7 +2,8 @@
 <html>
       <head>
             [% PROCESS standardheader.html %]
-		<script src="[% webroot %]html/prototype.js"></script>
+		<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
+		<script src="[% webroot %]html/prototype.js?r=[% revision %]"></script>
 		<script>
 		[% IF thispage == 'status' %][% PROCESS status.js %][% ELSIF thispage == 'playlist' %][% PROCESS playlist.js %][% ELSIF thispage == 'artwork' %][% PROCESS artwork.js %][% ELSE %][% PROCESS browse.js %][% END %]
 		</script>

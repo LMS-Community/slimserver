@@ -1,6 +1,7 @@
 [% pageHeaderScripts = BLOCK %]
-	<script type="text/javascript" src="[% webroot %]html/prototype.js" ></script>
-	<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/global.js %]</script>
+	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
+	<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
+	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
 	<script TYPE="text/javascript" language="JavaScript">
 		function forgetPlayer(player) {
 		

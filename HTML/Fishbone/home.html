@@ -60,27 +60,17 @@
 	
 	[% IF page != 'help' %]		
 		[% pageHeaderScripts = BLOCK %]
-			<script TYPE="text/javascript">[% PROCESS html/common.js %]</script>
-			<script type="text/javascript" src="[% webroot %]html/prototype.js" ></script>
-			<script TYPE="text/javascript">[% PROCESS html/global.js %]</script>
-			<script TYPE="text/javascript">[% PROCESS html/home.js %]</script>
+			<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
+			<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
+			<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
+			<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
+			<script TYPE="text/javascript" src="[% webroot %]html/home.js?r=[% revision %]"></script>
 
 			<script type="text/javascript">
 				<!--Hide
 				var homestring;
 				var page;
-				function doSearch(value)
-				{
-					selectLink();
-					parent.browser.location='search.html?manualSearch=1&query=' + value + '&player' + getPlayer('SlimServer-player');
-				}
-				
-				function goHome()
-				{
-					var homepage = getPage();
-					chooseBrowser(null,homepage);
-				}
-				
+
 				function chooseBrowser(value,option)
 				{
 					var url;
@@ -118,19 +108,6 @@
 					document.getElementById('homepage').innerHTML = option;
 				}
 				
-				function homelink() {
-					if (homestring) {
-						document.getElementById('homelink').innerHTML = homestring;
-					}
-				}
-				
-				function loadBrowser(force) {
-					if (force || parent.browser.location.href.match('black.html')) {
-						page = getPage();
-						chooseBrowser(null,page);
-					}
-				}
-
 				-->
 			</script>
 
@@ -163,7 +140,7 @@
 	[% ELSE %]
 
 		<div id="masthead">
-			<div id="SDlogo">
+			<span id="SDlogo">
 					<span id="homepage" style="display:none;"></span>
 					<span id="scanWarning" [% IF NOT warn %]style="display:none"[% END %]>
 						[% "RESCANNING_SHORT" | string %]
@@ -179,8 +156,8 @@
 						<a href="http://www.slimdevices.com/" target="slimdevices"><img src="[% webroot %]html/images/slimdevices_logo.gif" alt="Slim Devices" height="17" width="150"></a>
 					</span>
 		
-			</div>
-			<div id="serverlinks">
+			</span>
+			<span id="serverlinks">
 				<a id="homelink" style="font-weight:bold;" href="javascript:loadBrowser(1);" onMouseOver="homelink();" onMouseOut="document.getElementById('homelink').innerHTML = '[% "HOME" | string %]';">[% "HOME" | string %]</a>
 				 / 
 				[% IF not nosetup && not noserver %]
@@ -188,7 +165,7 @@
 					 / 
 				[% END %]
 				<a href="[% webroot %]home.html?page=help&amp;player=[% playerURI %][% IF nofolder %]&nofolder=1[% END %]" target="browser" onclick="selectLink(this,1)">[% "HELP" | string %]</a>
-			</div>
+			</span>
 		</div>
 		
 		<div id="menuHeader">

@@ -3,6 +3,31 @@ var p = 1;
 // regex to match player id, mac and ip format.
 var playerExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 
+function homelink() {
+	if (homestring) {
+		document.getElementById('homelink').innerHTML = homestring;
+	}
+}
+
+function loadBrowser(force) {
+	if (force || parent.browser.location.href.match('black.html')) {
+		page = getPage();
+		chooseBrowser(null,page);
+	}
+}
+
+function doSearch(value)
+{
+	selectLink();
+	parent.browser.location='search.html?manualSearch=1&query=' + value + '&player' + getPlayer('SlimServer-player');
+}
+
+function goHome()
+{
+	var homepage = getPage();
+	chooseBrowser(null,homepage);
+}
+	
 function changePlayer(player_List) {
 	player = player_List.options[player_List.selectedIndex].value;
 	
@@ -11,7 +36,7 @@ function changePlayer(player_List) {
 	var newPlayer = "=" + player;
 	refreshPlaylist(player);
 	
-	var args = 'player='+player+'&ajaxRequest=1&s='+Math.random();
+	var args = 'player=' + player + '&ajaxRequest=1&s=' + Math.random();
 	getStatusData(args, refreshNewPlayer);
 	
 	if (parent.browser.location.href.indexOf('settings') == -1) {
@@ -29,7 +54,7 @@ function changePlayer(player_List) {
 	}
 	
 	var page = parent.header.document.getElementById('homepage').innerHTML;
-	selectLink("",page);
+	selectLink("", page);
 }
 
 // change browse/plugin/radio hrefs to proper player
@@ -37,7 +62,7 @@ function newHref(doc,plyr) {
 
 	for (var j=0;j < doc.links.length; j++){
 		var myString = new String(doc.links[j].href);
-		var rString = plyr;
+		var rString  = plyr;
 		doc.links[j].href = myString.replace(playerExp, rString);
 	}
 }
@@ -57,13 +82,13 @@ function toggleStatus(divs) {
 	for (var i=0; i < divs.length; i++) {
 
 		if ($(divs[i]).style.display == "none") {
-			$(divs[i]).style.display = "block";
-			$('statusImg_up').style.display = "inline";
+			$(divs[i]).style.display          = "block";
+			$('statusImg_up').style.display   = "inline";
 			$('statusImg_down').style.display = "none";
 
 		} else {
-			$(divs[i]).style.display = "none";
-			$('statusImg_up').style.display = "none";
+			$(divs[i]).style.display          = "none";
+			$('statusImg_up').style.display   = "none";
 			$('statusImg_down').style.display = "inline";
 		}
 	}
@@ -115,7 +140,7 @@ function getHomeCookie(Name)
 	var re  = new RegExp(/artwork,/i);
 	var m   = re.exec(url);
 
-	if (!url || m) return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
+	if (!url || m) return "browsedb.html?hierarchy=album,track&level=0";
 
 	return url;
 }
@@ -175,7 +200,7 @@ function selectLink(lnk,reset) {
 }
 
 function setLink(lnk) {
-	lnk.href=getHomeCookie('SlimServer-Browserpage') + "&player" + getPlayer('SlimServer-player');
+	lnk.href=getHomeCookie('SlimServer-Browserpage') + "&player=" + getPlayer('SlimServer-player');
 }
 
 // function to turn off text under album images while in gallery view.

@@ -1,5 +1,3 @@
-var url = "[% statusroot %]";
-
 function ajaxProgressCallback(theData) {
 	
 	var parsedData = fillDataHash(theData);
@@ -32,7 +30,7 @@ function ajaxProgressCallback(theData) {
 	
 	if (parsedData['message']) {
 		if (parsedData['total_time']) {
-			refreshElement('message',parsedData['message']+" [% 'TOTAL_TIME' | string %] "+parsedData['total_time']);
+			refreshElement('message',parsedData['message']+ timestring + parsedData['total_time']);
 		} else {
 			refreshElement('message',parsedData['message']);
 		}
@@ -44,7 +42,7 @@ function ajaxProgressCallback(theData) {
 function ajaxProgressRefresh() {
 
 	// add a random number to the params as IE loves to cache the heck out of 
-	var args = 'type=[% type %]&barlen=[% barlen %]&ajaxRequest=1&player=[% player | uri %]&d=' + Math.random();
+	var args = 'type=' + progresstype + '&barlen=' + progressbarlen + '&ajaxRequest=1&player=' + player + '&d=' + Math.random();
 	ajaxProgressUpdate(args, ajaxProgressCallback);
 }
 

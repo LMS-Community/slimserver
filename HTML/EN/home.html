@@ -28,10 +28,11 @@
 [% END %]
 
 [% pageHeaderScripts = BLOCK %]
-	<script TYPE="text/javascript">[% PROCESS html/common.js %]</script>
-	<script type="text/javascript" src="[% webroot %]html/prototype.js" ></script>
-	<script TYPE="text/javascript">[% PROCESS html/global.js %]</script>
-	<script TYPE="text/javascript" src="[% webroot %]html/home.js" ></script>
+	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
+	<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
+	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
+	<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
+	<script TYPE="text/javascript" src="[% webroot %]html/home.js?r=[% revision %]" ></script>
 [% END %]
 
 [% END -%]

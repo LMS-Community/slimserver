@@ -1,4 +1,3 @@
-var player = '[% playerURI %]';
 // global.js
 // these functions should be generic across all pages that use ajax requests
 // the url var needs to be initialized in the page specific javascript file
@@ -85,7 +84,7 @@ function fillDataHash(theData) {
 // refreshes all elements on the page with ajaxRequest
 // refreshAll needs to be defined in the page specific javascript file 
 function doRefresh() {
-	var args = 'player='+player+'&ajaxRequest=1';
+	var args = 'player=' + player + '&ajaxRequest=1';
 	getStatusData(args, refreshAll);
 }
 
@@ -150,7 +149,6 @@ function refreshHrefElement (item,data,rpl) {
 	$(item).innerHTML = myString.replace(rExp, rString);
 }
 
-
 // changes the innerHTML to 'value' of an element id of 'element'
 // if truncate is given, 'value' is reduced to truncate in length, plus a '...'
 function refreshElement(element, value, truncate) {
@@ -193,9 +191,9 @@ function parseData(thisData) {
 function refreshLibraryInfo() {
 	var prevURL = url;
 
-	url = '[% webroot %]home.html';
+	url = webroot + 'home.html';
 
-	var homeArgs = 'player='+player+'&ajaxRequest=1';
+	var homeArgs = 'player=' + player + '&ajaxRequest=1';
 	getStatusData(homeArgs, displayLibraryInfo);
 	url = prevURL;
 }
@@ -215,13 +213,17 @@ function displayLibraryInfo(theData) {
 // METHOD:  truncateAt: truncate specified tableId at specified length
 function truncateAt(tableId, lastRow) {
 	var tableObj, oTr;
-	if ( ! $(tableId) ) { 
-		return null;    
+	
+	if ( ! $(tableId) ) {
+		return null;
 	}
+	
 	tableObj = $(tableId);
+	
 	if ( ! (oTr = tableObj.rows[lastRow]) ) {
 		return null;
 	}
+	
 	if (tableObj.rows.length >= lastRow) {
 		var startRow = lastRow;
 		for (var r=startRow; r <= tableObj.rows.length; r++ ) {
@@ -233,12 +235,12 @@ function truncateAt(tableId, lastRow) {
 
 // miniControls is for putting play/pause on any page. ajax request is made via status.html
 function miniControls(action) {
-	var args = "p0="+action+"&player="+player+"&ajaxRequest=1";
+	var args = "p0=" + action + "&player=" + player + "&ajaxRequest=1";
 
 	// always use status.html for this request
 	var old_url = url;
 
-	url = '[% webroot %]status.html';
+	url = webroot + 'status.html';
 	getStatusData(args, refreshNothing);
 	url = old_url;
 }

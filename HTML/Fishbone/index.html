@@ -5,12 +5,12 @@
 		[% PROCESS customheader.html %]
 	</head>
 	
-	<frameset cols="50%,*" framespacing="2" border="2">
-		<frameset name="home" ID="home" border="0" frameborder="no" framespacing="0" rows="55,*">
+	<frameset cols="50%,*" border="2" framespacing="2">
+		<frameset name="home" ID="home" frameborder="no" rows="55,*">
 			<frame name="header" ID="header" scrolling="no" src="home.html?player=[% playerURI %]">
 			<frame name="browser" ID="browser" src="html/black.html">
 		</frameset>
-		<frameset name="player_frame" ID="player_frame" border="0" frameborder="no" framespacing="0" rows="260,*">
+		<frameset name="player_frame" ID="player_frame" frameborder="no" rows="260,*">
 			<frame ID="status" name="status" scrolling="no" src="status_header.html?player=[% playerURI %]">
 			<frame ID="playlist" name="playlist" src="playlist.html?player=[% playerURI %]">
 		</frameset>

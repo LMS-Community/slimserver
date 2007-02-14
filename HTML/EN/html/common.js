@@ -1,136 +1,128 @@
-<!-- Start Hiding the Script
+function to_currentsong() {
+	if (window.location.hash == '' || navigator.appName=="Microsoft Internet Explorer") {
+		window.location.hash = 'currentsong';
+	}
+}
 
-	var url = "[% statusroot %]";
-	
-	function to_currentsong() {
-		if (window.location.hash == '' || navigator.appName=="Microsoft Internet Explorer") {
-			window.location.hash = 'currentsong';
+function refreshStatus() {
+	for (var i=0; i < parent.frames.length; i++) {
+		if (parent.frames[i].name == "status" && parent.frames[i].location.pathname != '') {
+			parent.frames[i].location.replace(parent.frames[i].location.pathname);
 		}
 	}
+}
+
+function toggleGalleryView(artwork) {
+
+	var thisdoc = this;
 	
-	function refreshStatus() {
-		for (var i=0; i < parent.frames.length; i++) {
-			if (parent.frames[i].name == "status" && parent.frames[i].location.pathname != '') {
-				parent.frames[i].location.replace(parent.frames[i].location.pathname);
-			}
-		}
+	if (browserTarget) {
+		thisdoc = parent.frames[browserTarget];
 	}
-	
-	function toggleGalleryView(artwork) {
-	
-		[%- IF browserTarget -%]
-		var thisdoc = parent.[% browserTarget %];
-		[%- ELSE -%]
-		var thisdoc = this;
-		[%- END -%]
-	
-		if (thisdoc.location.pathname != '') {
-			myString = new String(thisdoc.location.href);
+
+	if (thisdoc.location.pathname != '') {
+		myString = new String(thisdoc.location.href);
+		
+		if (artwork) {
+			setCookie( 'SlimServer-albumView', "1" );
 			
-			if (artwork) {
-				setCookie( 'SlimServer-albumView', "1" );
-				
-				if (thisdoc.location.href.indexOf('start') == -1) {
-					thisdoc.location=thisdoc.location.href+"&artwork=1";
-				} else {
-					myString = new String(thisdoc.location.href);
-					var rExp = /\&start=/gi;
-					thisdoc.location=myString.replace(rExp, "&artwork=1&start=");
-				}
+			if (thisdoc.location.href.indexOf('start') == -1) {
+				thisdoc.location=thisdoc.location.href+"&artwork=1";
 			} else {
-	
-				setCookie( 'SlimServer-albumView', "" );
+				myString = new String(thisdoc.location.href);
 				
-				var rExp = /\&artwork=1/gi;
-				thisdoc.location=myString.replace(rExp, "");
-			}
-		}
-	}
-	
-	[% IF refresh %]
-		function doLoad(useAjax) {
-		
-			if (useAjax == 1) {
-				setTimeout( "ajaxRefresh()", [% refresh %]*1000);
-			} else {
-				setTimeout( "refresh()", [% refresh %]*1000);
-			}
-			try {
-				if (parent.playlist.location.host != '') {
-					// Putting a time-dependant string in the URL seems to be the only way to make Safari
-					// refresh properly. Stitching it together as below is needed to put the salt before
-					// the hash (#currentsong).
-					var plloc = top.frames.playlist.location;
-					var newloc = plloc.protocol + '//' + plloc.host + plloc.pathname
-						+ plloc.search.replace(/&d=\d+/, '') + '&d=' + new Date().getTime() + plloc.hash;
-						
-					// Bug 3404
-					// We also need to make sure the player param in the playlist frame matches ours
-					var q = window.location.search;
-					var playerExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
-					var player = q.match( playerExp );
-					newloc = newloc.replace(playerExp, player);
-					
-					plloc.replace(newloc);
-				}
-			}
-			catch (err) {
-				// first load can fail, so swallow that initial exception.
-			}
-		}
-		
-		function refresh() {
-			window.location.replace("[% statusroot %]?player=[% player | uri %]");
-		}
-	[% END %]
-	
-	function ajaxRefresh() {
-	
-		// add a random number to the params as IE loves to cache the heck out of 
-		var args = 'd=' + Math.random();
-		ajaxRequest('html/ping.html', args, ajaxCallback);
-	}
-	
-	function ajaxCallback(theData) {
-		
-		// firefox needs to know we have a reponse first
-		if (theData.responseText) {
-		
-			// then make sure response is ok
-			if (theData.status == 200){
-				refresh();
+				var rExp = /\&start=/gi;
+				thisdoc.location=myString.replace(rExp, "&artwork=1&start=");
 			}
 		} else {
-		
-			// do another background ping every 60 seconds
-			setTimeout( "ajaxRefresh()", 1000);
+
+			setCookie( 'SlimServer-albumView', "" );
+			
+			var rExp = /\&artwork=1/gi;
+			thisdoc.location=myString.replace(rExp, "");
 		}
 	}
-	
-	function chooseAlbumOrderBy(value, option)
-	{
-		var url = '[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %][% IF artwork %]&artwork=1[% END %]&player=[% playerURI %]';
-	
-		if (option) {
-			url = url + '&orderBy=' + option;
-		}
-		setCookie( 'SlimServer-orderBy', option );
-		window.location = url;
+}
+
+function doLoad(useAjax) {
+
+	if (useAjax == 1) {
+		setTimeout( "ajaxRefresh()", refreshtime*1000);
+	} else {
+		setTimeout( "refresh()", refreshtime*1000);
 	}
+
+	try {
+		if (parent.playlist.location.host != '') {
+			// Putting a time-dependant string in the URL seems to be the only way to make Safari
+			// refresh properly. Stitching it together as below is needed to put the salt before
+			// the hash (#currentsong).
+			var plloc = top.frames.playlist.location;
+			var newloc = plloc.protocol + '//' + plloc.host + plloc.pathname
+				+ plloc.search.replace(/&d=\d+/, '') + '&d=' + new Date().getTime() + plloc.hash;
+				
+			// Bug 3404
+			// We also need to make sure the player param in the playlist frame matches ours
+			var q = window.location.search;
+			var playerExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
+			var player = q.match( playerExp );
+			newloc = newloc.replace(playerExp, player);
+			
+			plloc.replace(newloc);
+		}
+	}
+	catch (err) {
+		// first load can fail, so swallow that initial exception.
+	}
+}
+
+function refresh() {
+	window.location.replace(statusroot + "?player=" + player);
+}
+
+function ajaxRefresh() {
+
+	// add a random number to the params as IE loves to cache the heck out of 
+	var args = 'd=' + Math.random();
+	ajaxRequest('html/ping.html', args, ajaxCallback);
+}
+
+function ajaxCallback(theData) {
 	
-	function switchPlayer(player_List) {
-		var player = player_List.options[player_List.selectedIndex].value;
-		var newPlayer = "=" + player;
-		
-		//setCookie( 'SlimServer-player', player_List.options[player_List.selectedIndex].value );
-		var doc = this;
-		
-		[% IF browserTarget %]
+	// firefox needs to know we have a reponse first
+	if (theData.responseText) {
+	
+		// then make sure response is ok
+		if (theData.status == 200){
+			refresh();
+		}
+	} else {
+	
+		// do another background ping every 60 seconds
+		setTimeout( "ajaxRefresh()", 1000);
+	}
+}
+
+function chooseAlbumOrderBy(value, option)
+{
+	if (option) {
+		orderByUrl = orderByUrl + '&orderBy=' + option;
+	}
+	setCookie( 'SlimServer-orderBy', option );
+	window.location = orderByUrl;
+}
+
+function switchPlayer(player_List) {
+	player    = escape(player_List.options[player_List.selectedIndex].value);
+	var newPlayer = "=" + player;
+	
+	//setCookie( 'SlimServer-player', player_List.options[player_List.selectedIndex].value );
+	try {
 		// change for skins with frames
-		doc = parent.[% browserTarget %];
+		doc = parent.frames[browserTarget];
 		
-		parent.playlist.location="playlist.html?player"+newPlayer;
-		window.location="status_header.html?player"+newPlayer;
+		parent.playlist.location = "playlist.html?player" + newPlayer;
+		window.location = "status_header.html?player" + newPlayer;
 		
 		if (doc.location.href.indexOf('home')    == -1 &&
 		    doc.location.href.indexOf('settings') == -1) {
@@ -148,55 +140,62 @@
 	
 		} else {
 	
-		[% END %]
 			myString = new String(doc.location.href);
 			var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 	
-			doc.location=myString.replace(rExp, newPlayer);
+			doc.location = myString.replace(rExp, newPlayer);
 	
-		[% IF browserTarget %]
 		}
-		[% END %]
-	}
+	}  catch(e) {
 	
-	// change form values to correct player
-	function newValue(doc,plyr) {
-	
-		for (var j=0;j < doc.forms.length; j++){
-	
-			if (doc.forms[j].player) {
-				doc.forms[j].player.value = plyr;
-			}
+		myString = new String(this.location.href);
+		
+		var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
+
+		if (rExp.exec(myString)) {
+			this.location = myString.replace(rExp, newPlayer);
+		} else {
+			this.location = this.location.href + "?player=" + escape(player);
 		}
 	}
-	
-	function setCookie(name, value) {
-		var expires = new Date();
-		expires.setTime(expires.getTime() + 1000*60*60*24*365);
-		document.cookie =
-			name + "=" + escape(value) +
-			((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
-	}
-	
-	function resize(src,width)
-	{
-		if (!width) {
-			// special case for IE (argh)
-			if (document.all) //if IE 4+
-			{
-				width = document.body.clientWidth*0.5;
-			}
-			else if (document.getElementById) //else if NS6+
-			{
-				width = window.innerWidth*0.5;
-			}
+}
+
+// change form values to correct player
+function newValue(doc,plyr) {
+
+	for (var j=0;j < doc.forms.length; j++){
+
+		if (doc.forms[j].player) {
+			doc.forms[j].player.value = plyr;
 		}
-	
-		if (src.width > width )
+	}
+}
+
+function setCookie(name, value) {
+	var expires = new Date();
+	expires.setTime(expires.getTime() + 1000*60*60*24*365);
+	document.cookie =
+		name + "=" + escape(value) +
+		((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
+}
+
+function resize(src,width)
+{
+	if (!width) {
+		// special case for IE (argh)
+		if (document.all) //if IE 4+
 		{
-			src.width = width;
+			width = document.body.clientWidth*0.5;
+		}
+		else if (document.getElementById) //else if NS6+
+		{
+			width = window.innerWidth*0.5;
 		}
 	}
 
-// Stop Hiding script -->
+	if (src.width > width )
+	{
+		src.width = width;
+	}
+}
 

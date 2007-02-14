@@ -43,11 +43,11 @@ function ProgressUpdate(mp) {
 	if ($('playCtlplay') != null) {
 		if ($('playCtlplay'+ _curstyle).src.indexOf('_s') != -1) {
 			mp = 1;
-			if ($("progressBar").src.indexOf('_s') != -1) {$("progressBar").src = 'html/images/pixel.green.gif'}
+			if ($("progressBar").src.indexOf('_s') != -1) {$("progressBar").src = webroot + 'html/images/pixel.green.gif'}
 
 		} else {
 			mp = 0;
-			if ($("progressBar").src.indexOf('_s') == -1) {$("progressBar").src = 'html/images/pixel.green_s.gif'}
+			if ($("progressBar").src.indexOf('_s') == -1) {$("progressBar").src = webroot + 'html/images/pixel.green_s.gif'}
 		}
 	}
 	
