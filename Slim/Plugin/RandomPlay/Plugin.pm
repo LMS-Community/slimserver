@@ -89,71 +89,95 @@ sub initPlugin {
 
 # Find tracks matching parameters and add them to the playlist
 sub findAndAdd {
-	my ($client, $type, $find, $limit, $addOnly) = @_;
+	my ($client, $type, $find, $limit, $idList, $addOnly) = @_;
 
 	$log->info(sprintf("Starting random selection of %s items for type: $type", defined($limit) ? $limit : 'unlimited'));
 
-	my @joins  = ();
+	my @results;
 
-	# Pull in the right tables to do our searches
-	if ($type eq 'track' || $type eq 'year') {
+	if ($limit && scalar @$idList) {
 
-		if ($find->{'genreTracks.genre'}) {
+		# use previous id list as same find criteria as last call, select a random set of them
+		my @randomIds;
 
-			push @joins, 'genreTracks';
+		for (my $i = 0; $i < $limit && scalar @$idList; ++$i) {
+
+			push @randomIds, (splice @$idList, rand @$idList, 1);
 		}
 
-	} elsif ($type eq 'album') {
-
-		if ($find->{'genreTracks.genre'}) {
-
-			push @joins, { 'tracks' => 'genreTracks' };
-
-		} else {
-
-			push @joins, 'tracks';
-		}
-
-	} elsif ($type eq 'contributor') {
-
-		if ($find->{'genreTracks.genre'}) {
-
-			push @joins, { 'contributorTracks' => { 'track' => 'genreTracks' } };
-
-		} else {
-
-			push @joins, { 'contributorTracks' => 'track' };
-		}
-	}
-
-	# Search the database for the number of track we need. 
-	# Restrict by the genre's we've selected.
-	my $rs     = Slim::Schema->rs($type)->search($find, { 'join' => \@joins });
-
-	my @idList;
-
-	if ($limit) {
-
-		# Get a fixed selection of random keys, make sure they don't duplicate.
-		my @allIds = $rs->distinct->get_column('me.id')->all;
-
-		for (my $i = 0; $i < $limit && @allIds; ++$i) {
-
-			push @idList, (splice @allIds, rand @allIds, 1);
-		}
+		# Turn ids into tracks, note this will reorder ids so needs use of RAND() in SQL statement to maintain randomness
+		@results = Slim::Schema->rs($type)->search({ 'id' => { 'in' => \@randomIds } }, { 'order_by' => \'RAND()' })->all;
 
 	} else {
 
-		@idList = $rs->distinct->get_column('me.id')->all;
+		# Search the database for all items of $type which match find criteria
 
-		Slim::Player::Playlist::fischer_yates_shuffle(\@idList);
+		my @joins  = ();
+
+		# Pull in the right tables to do our searches
+		if ($type eq 'track' || $type eq 'year') {
+
+			if ($find->{'genreTracks.genre'}) {
+
+				push @joins, 'genreTracks';
+			}
+
+		} elsif ($type eq 'album') {
+
+			if ($find->{'genreTracks.genre'}) {
+
+				push @joins, { 'tracks' => 'genreTracks' };
+
+			} else {
+
+				push @joins, 'tracks';
+			}
+
+		} elsif ($type eq 'contributor') {
+
+			if ($find->{'genreTracks.genre'}) {
+
+				push @joins, { 'contributorTracks' => { 'track' => 'genreTracks' } };
+
+			} else {
+
+				push @joins, { 'contributorTracks' => 'track' };
+			}
+		}
+
+		my $rs = Slim::Schema->rs($type)->search($find, { 'join' => \@joins });
+
+		if ($limit) {
+
+			# Get ids for all results from find and store in @$idList so they can be used in repeat calls
+			@$idList = $rs->distinct->get_column('me.id')->all;
+
+			# Get a random selection for this call
+			my @randomIds;
+
+			for (my $i = 0; $i < $limit && scalar @$idList; ++$i) {
+
+				push @randomIds, (splice @$idList, rand @$idList, 1);
+			}
+
+			# Turn ids into tracks, note this will reorder ids so needs use of RAND() in SQL statement to maintain randomness
+			@results = Slim::Schema->rs($type)->search({ 'id' => { 'in' => \@randomIds } }, { 'order_by' => \'RAND()' })->all;
+
+		} else {
+
+			# We want all results from the result set, but need to randomise them
+			my @all = $rs->all;
+
+			while (@all) {
+
+				push @results, (splice @all, rand @all, 1);
+			}
+		}
 	}
 
-	$log->info(sprintf("Find returned %i items", scalar @idList));
+	$log->info(sprintf("Find returned %i items", scalar @results));
 
 	# Pull the first track off to add / play it if needed.
-	my @results = Slim::Schema->rs($type)->search({ 'id' => { 'in' => \@idList } })->all;
-
 	my $obj = shift @results;
 
 	if (!$obj || !ref($obj)) {
@@ -278,11 +302,7 @@ sub playRandom {
 
 	$log->debug("Called with type $type");
 
-	if (!$mixInfo{$client->masterOrSelf->id} || !$mixInfo{$client->masterOrSelf->id}->{'type'}) {
-
-		# init hash for each new client
-		$mixInfo{$client->masterOrSelf->id}->{'type'} = '';
-	}
+	$mixInfo{$client->masterOrSelf->id}->{'type'} ||= '';
 	
 	$type ||= 'track';
 	$type = lc($type);
@@ -293,9 +313,11 @@ sub playRandom {
 	# If this is a new mix, store the start time
 	my $startTime = undef;
 
-	if ($continuousMode && $type && (!$mixInfo{$client->masterOrSelf->id}->{'type'} || $mixInfo{$client->masterOrSelf->id}->{'type'} ne $type)) {
+	if ($type ne $mixInfo{$client->masterOrSelf->id}->{'type'}) {
 
-		$startTime = time();
+		$mixInfo{$client->masterOrSelf->id}->{'idList'} = undef;
+
+		$startTime = time() if $continuousMode;
 	}
 
 	my $songIndex = Slim::Player::Source::streamingSongIndex($client);
@@ -407,6 +429,7 @@ sub playRandom {
 				    $type eq 'year' ? 'track' : $type,
 				    $find,
 				    $type eq 'year' ? undef : $numItems,
+					$mixInfo{$client->masterOrSelf->id}->{'idList'} ||= [],
 					# 2nd time round just add tracks to end
 					$i == 0 ? $addOnly : 1
 				);
@@ -466,6 +489,8 @@ sub playRandom {
 			$continuousMode ? 'continuous' : 'static', $type, Slim::Player::Playlist::count($client)
 		));
 
+		$mixInfo{$client->masterOrSelf->id}->{'type'} = $type;
+
 		# $startTime will only be defined if this is a new (or restarted) mix
 		if (defined $startTime) {
 
@@ -473,7 +498,6 @@ sub playRandom {
 			# Do this last to prevent menu items changing too soon
 			$log->info("New mix started at $startTime");
 
-			$mixInfo{$client->masterOrSelf->id}->{'type'} = $type;
 			$mixInfo{$client->masterOrSelf->id}->{'startTime'} = $startTime;
 		}
 	}
@@ -918,6 +942,12 @@ sub checkDefaults {
 		# Include all genres by default
 		Slim::Utils::Prefs::set('plugin_random_exclude_genres', []);
 	}
+}
+
+sub active {
+	my $client = shift;
+
+	return $mixInfo{$client->masterOrSelf->id} ? 1 : 0;
 }
 
 1;

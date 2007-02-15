@@ -730,7 +730,8 @@ sub modifyPlaylistCallback {
 
 	$log->info("Checking if persistPlaylists is set..");
 
-	if (!$client || !Slim::Utils::Prefs::get('persistPlaylists')) {
+	if (!$client || !Slim::Utils::Prefs::get('persistPlaylists') ||
+		exists &Slim::Plugin::RandomPlay::Plugin::active && Slim::Plugin::RandomPlay::Plugin::active($client) ) {
 
 		return;
 	}
