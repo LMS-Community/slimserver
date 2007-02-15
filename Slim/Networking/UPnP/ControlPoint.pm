@@ -102,16 +102,10 @@ sub _readResult {
 	my $ssdp_res_msg;
 	my $log = logger('network.upnp');
 	
-	eval {
-		local $SIG{ALRM} = sub { die "recv timed out"; };
-		alarm 1;
-		$sock->recv( $ssdp_res_msg, 4096 ) or die "recv failed: $!";
-		alarm 0;
-	};
+	my $addr = recv( $sock, $ssdp_res_msg, 4096, 0 );
 
-	if ( $@ ) {
-
-		$log->warn("Read search result failed: $@");
+	if ( !defined $addr ) {
+		$log->warn("Read search result failed: $!");
 		return;
 	}
 	
