@@ -66,7 +66,7 @@ use constant KEEPALIVETIMEOUT => 10;
 
 # Package variables
 
-my $openedport = 0;
+my $openedport = undef;
 my $http_server_socket;
 my $connected = 0;
 
@@ -140,7 +140,9 @@ sub init2 {
 	# open HTTP port if specified
 	# split into second init function so this can be performed after all server init is complete
 	if (Slim::Utils::Prefs::get('httpport')) {
-		Slim::Web::HTTP::openport(Slim::Utils::Prefs::get('httpport'), $::httpaddr, $Bin);
+		Slim::Web::HTTP::openport(Slim::Utils::Prefs::get('httpport'), $::httpaddr);
+	} else {
+		$openedport = 0; # init complete but no port opened
 	}
 }
 
@@ -172,6 +174,8 @@ sub openport {
 
 sub adjustHTTPPort {
 
+	return unless defined $openedport; # only adjust once init is complete
+
 	# do this on a timer so current page can be updated first and it executed outside select
 	Slim::Utils::Timers::setTimer(undef, Time::HiRes::time() + 0.5, \&_adjustHTTPPortCallback);
 }
@@ -196,7 +200,7 @@ sub _adjustHTTPPortCallback {
 	# open new port if specified
 	if (Slim::Utils::Prefs::get('httpport')) {
 
-		Slim::Web::HTTP::openport(Slim::Utils::Prefs::get('httpport'), $::httpaddr, $Bin);
+		Slim::Web::HTTP::openport(Slim::Utils::Prefs::get('httpport'), $::httpaddr);
 
 		# Need to restart mDNS after changing the HTTP port.
 		Slim::Networking::mDNS->startAdvertising;
