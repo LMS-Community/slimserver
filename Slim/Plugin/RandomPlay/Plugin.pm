@@ -319,7 +319,7 @@ sub playRandom {
 
 		$mixInfo{$client->masterOrSelf->id}->{'idList'} = undef;
 
-		$client->prefSet('plugin_random_type', $type);
+		$client->prefSet('plugin_random_type', $type) unless ($type eq 'disable');
 
 		$startTime = time() if $continuousMode;
 	}
