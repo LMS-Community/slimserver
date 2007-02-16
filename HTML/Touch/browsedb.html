@@ -96,8 +96,7 @@
 	<tr>
 [% IF coverArt %]
 		<td valign = 'top' width = '205'>
-			<a href="status.html?p0=playlist&p1=addalbum&p2=[% genre | uri %]&p3=[% contributor.id | uri %]&p4=[% album.id | uri %]&player=[% playerURI %]">
-			<img src="/music/[% coverArt %]/thumb_[% IF thumbSize %][% thumbSize %]x[% thumbSize %][% ELSE %]200x200[% END %]_f_000000.jpg" STYLE="border: 1px solid black" id = 'albumArt'></a>
+			<img src="/music/[% coverArt %]/thumb_[% IF thumbSize %][% thumbSize %]x[% thumbSize %][% ELSE %]200x200[% END %]_f_000000.jpg" STYLE="border: 1px solid black" id = 'albumArt'>
 		</td>
 [% END %]
 		<td valign = 'top'>
@@ -106,7 +105,7 @@
 				[% FOREACH item = browse_items %]
 					[%# IF browseby == 'BROWSE_BY_ARTWORK' && level == 0 %]
 					[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age') %]
-						[% IF loop.index mod 6 == 1 || loop.first %]<tr>[% END %]
+[% IF loop.index mod 6 == 1 || loop.first %][% UNLESS loop.first %]<tr><td colspan = '6'><hr></td></tr>[% END %]<tr>[% END %]
 						[% IF loop.first && item.text == 'All Songs' %]
 							<td colspan = '2'>
 							<table>

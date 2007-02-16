@@ -121,6 +121,9 @@ a.statusbartext:hover {
 .supertinytext {
 	font-size: 12px;
 }
+.superdupertinytext {
+	font-size: 8px;
+}
 
 .pagebarheadertext {
 	font-size: 16px;
@@ -136,12 +139,17 @@ table.playlistbox {
 table.thinborder { 
 	border: 1px solid black;
 }
+
 table.thinborder_grey { 
 	border: 1px solid black;
 }
 table.noborder { 
 	border: none;
 }
+table.bottomborder {
+	border: 1px solid black;
+}
+
 table.playlistcontrols {
 	width: 125px;
 	overflow: hidden;
@@ -157,6 +165,11 @@ div {
 
 img {
 	border: 0;
+}
+
+hr {
+	height: 1px;
+	color: black;
 }
 
 div#pagecontainer {

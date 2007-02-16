@@ -120,6 +120,12 @@ a.statusbartext:hover {
 .supertinytext {
 	font-size: 12px;
 }
+.superdupertinytext {
+	color: black;
+	font-family: serif;
+        font-size: 9px;
+}
+
 
 .pagebarheadertext {
 	font-size: 16px;

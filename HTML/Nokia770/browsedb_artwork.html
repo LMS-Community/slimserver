@@ -1,6 +1,6 @@
 <!--browsedb_artwork.html-->
 
-	<table cellpadding="0" cellspacing="0" border = '0' align="center">
+	<table cellpadding="0" cellspacing="0" class = 'noborder' align="center">
 	<tr>
 		<td width="100">
 		[% IF item.coverThumb %]
@@ -16,11 +16,15 @@
 		<td align = 'center' valign = 'top'>
 		<table cellspacing = '0' cellpadding = '0' border = '0' width = 100%>
 			<tr>
+			[% IF item.item %]<tr><td class = 'superdupertinytext'>[% item.item | truncate(25)%]</td></tr>[% END %]
+			[% IF item.artist %][% itemobj = item.itemobj %]<tr><td class = 'superdupertinytext'>[%- artistlist = PROCESS artistsAsText.html %][% artistlist | truncate(25)%]</td></tr>[% END %]
+			<td><table width = '100%'><tr>
        			 [% PROCESS browsecontrols_abbr
        	         itemobj = item.itemobj
        	         attributes = item.attributes
        	         odd = item.odd
        	         mixerlinks = item.mixerlinks %]
+			</tr></table></td>
 			</tr>
 		</table>
 		</td>
