@@ -242,11 +242,15 @@ sub editHandler {
 		if ($params->{'index'}) {
 			for my $i (split(/\./, $params->{'index'})) {
 				if (defined @$currentLevel[$i]) {
-					$prevLevels[ $level++ ] = {
-						'ref'   => $currentLevel,
-						'title' => @$currentLevel[$i]->{'text'},
-					};
-					$currentLevel = @$currentLevel[$i]->{'outline'};
+					if (@$currentLevel[$i]->{'outline'}) {
+						$prevLevels[ $level++ ] = {
+							'ref'   => $currentLevel,
+							'title' => @$currentLevel[$i]->{'text'},
+						};
+						$currentLevel = @$currentLevel[$i]->{'outline'};
+					} else {
+						$edit = $i;
+					}
 				}
 			}
 		}
