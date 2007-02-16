@@ -243,6 +243,7 @@ PLUGIN_RANDOM_GENERAL_HELP
 	NL	Je kunt op elk moment liedjes toevoegen bij of verwijderen uit je mix. Om de willekeurige mix te stoppen maak je de playlist leeg of klik op
 
 PLUGIN_RANDOM_GENERAL_HELP2
+	DE	Sie können, wenn Sie den Mix mal angehalten haben, diesen durch Drücken und gedrückt Halten des "Shuffle" Knopfes auf der Fernsteuerung neu starten.
 	EN	Once stopped you can restart the same type of mix by holding down the shuffle button on the remote.
 
 PLUGIN_RANDOM_PRESS_RIGHT
