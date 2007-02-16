@@ -89,7 +89,7 @@
 
 [% ELSE %]
 
-	<h4><a href="[% webroot %]plugins/Favorites/edit.html?action=edittitle">[% title %]</a></h4>
+	[% IF NOT favorites %]<h4><a href="[% webroot %]plugins/Favorites/edit.html?action=edittitle">[% title %]</a></h4>[% END %]
 	
 	[% odd = 1 %]
 	[% IF previous %]
@@ -173,11 +173,7 @@
 
 	<p></p>
 	<form name="loadsave" method="get" action="[% webroot %]plugins/Favorites/edit.html">
-		[% IF favorites %]
-			[% IF changed %]
-			<input type="submit" class="stdclick" name="savechanged" value="[% "PLUGIN_FAVORITES_SAVECHANGED" | string %]">
-			[% END %]
-		[% ELSE %]	
+		[% IF NOT favorites %]
 			<input type="submit" class="stdclick" name="load" value="[%	"PLUGIN_FAVORITES_LOAD" | string %]">
 			<input type="submit" class="stdclick" name="save" value="[% "PLUGIN_FAVORITES_SAVE" | string %]">
 			<input type="submit" class="stdclick" name="import" value="[% "PLUGIN_FAVORITES_IMPORT" | string %]">

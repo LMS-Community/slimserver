@@ -49,10 +49,6 @@ PLUGIN_FAVORITES_NOFILE
 	DE	Datei nicht gefunden
 	EN	File Not Found
 
-PLUGIN_FAVORITES_SAVECHANGED
-	DE	Änderungen speichern
-	EN	Save Changes
-
 PLUGIN_FAVORITES_SET
 	DE	Setzen
 	EN	Set

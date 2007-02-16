@@ -158,13 +158,13 @@ my $level = 0;
 my $currentLevel;
 my @prevLevels;
 my $deleted;
-my $changed;
 
 sub editHandler {
 	my ($client, $params) = @_;
 
 	my $edit;     # index of entry to edit if set
 	my $errorMsg; # error message to display at top of page
+	my $changed;
 
 	# Debug:
 	#for my $key (keys %$params) {
@@ -177,12 +177,10 @@ sub editHandler {
 		$currentLevel = $opml->toplevel;
 		@prevLevels = ();
 		$deleted = undef;
-		$changed = undef;
 	}
 
 	if ($params->{'title'}) {
 		$opml->title( $params->{'title'} );
-		$changed = 1;
 	}
 
 	if ($params->{'savefile'} || $params->{'savechanged'}) {
@@ -203,7 +201,6 @@ sub editHandler {
 		$currentLevel = $opml->toplevel;
 		@prevLevels = ();
 		$deleted = undef;
-		$changed = undef;
 	}
 
 	if ($params->{'importfile'}) {
@@ -241,7 +238,6 @@ sub editHandler {
 		$currentLevel = $opml->toplevel;
 		@prevLevels = ();
 		$deleted = undef;
-		$changed = undef;
 
 		if ($params->{'index'}) {
 			for my $i (split(/\./, $params->{'index'})) {
@@ -398,6 +394,11 @@ sub editHandler {
 		}
 	}
 
+	# save each change if in favorites mode
+	if ($changed && $opml && $opml->isa('Slim::Plugin::Favorites::OpmlFavorites')) {
+		$opml->save;
+	}
+
 	if ($params->{'load'}  ) { $params->{'loaddialog'} = 1;   }
 	if ($params->{'save'}  ) { $params->{'savedialog'} = 1;   }
 	if ($params->{'import'}) { $params->{'importdialog'} = 1; }
@@ -411,7 +412,6 @@ sub editHandler {
 
 	$params->{'previous'}  = ($level > 0);
 	$params->{'deleted'}   = defined $deleted ? $deleted->{'text'} : undef;
-	$params->{'changed' }  = $changed;
 	$params->{'advanced'}  = Slim::Utils::Prefs::get('plugin_favorites_advanced');
 
 	if ($opml && $opml->error) {
