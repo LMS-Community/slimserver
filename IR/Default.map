@@ -91,6 +91,7 @@ textsize_large			= textsize_large
 shuffle					= shuffle_toggle
 shuffle_off				= shuffle_off
 shuffle_on				= shuffle_on
+shuffle.hold			= randomPlay
 
 # repeat modes
 repeat					= repeat_toggle

@@ -85,6 +85,8 @@ sub initPlugin {
 	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_ALBUM','album');
 	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_CONTRIBUTOR','artist');
 
+	# register handler for starting mix of last type on remote button press [Default is press and hold shuffle]
+	Slim::Buttons::Common::setFunction('randomPlay', \&buttonStart);
 }
 
 # Find tracks matching parameters and add them to the playlist
@@ -316,6 +318,8 @@ sub playRandom {
 	if ($type ne $mixInfo{$client->masterOrSelf->id}->{'type'}) {
 
 		$mixInfo{$client->masterOrSelf->id}->{'idList'} = undef;
+
+		$client->prefSet('plugin_random_type', $type);
 
 		$startTime = time() if $continuousMode;
 	}
@@ -714,9 +718,7 @@ sub commandCallback {
 		return;
 	}
 
-	if (!defined $client || !defined $mixInfo{$client->masterOrSelf->id}->{'type'}) {
-		# This is nothing unexpected - some events don't provide $client
-		# e.g. rescan
+	if (!defined $client || !defined $mixInfo{$client->masterOrSelf->id}->{'type'} || !Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks')) {
 		return;
 	}
 
@@ -828,6 +830,12 @@ sub getFunctions {
 		'contributors' => sub { playRandom(shift, 'contributor') },
 		'year'         => sub { playRandom(shift, 'year') },
 	}
+}
+
+sub buttonStart {
+	my $client = shift;
+
+	playRandom($client, $client->prefGet('plugin_random_type') || 'track');
 }
 
 sub webPages {

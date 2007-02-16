@@ -242,6 +242,9 @@ PLUGIN_RANDOM_GENERAL_HELP
 	FR	Vous pouvez ajouter ou supprimer des morceaux de votre mix à tout moment. Pour arrêter un mix aléatoire, effacez votre liste de lecture ou cliquez  ici pour
 	NL	Je kunt op elk moment liedjes toevoegen bij of verwijderen uit je mix. Om de willekeurige mix te stoppen maak je de playlist leeg of klik op
 
+PLUGIN_RANDOM_GENERAL_HELP2
+	EN	Once stopped you can restart the same type of mix by holding down the shuffle button on the remote.
+
 PLUGIN_RANDOM_PRESS_RIGHT
 	DE	RECHTS drücken um
 	EN	Press RIGHT to
