@@ -527,3 +527,10 @@ div.prefDesc,.groupDesc,.groupHead {
 	padding-left: 10px;
 	padding-right: 10px;
 }
+
+table.floater {
+        float: left;
+        margin-top: 10px;
+        margin-right: 10px;
+}
+

@@ -7,12 +7,12 @@
         </pre>
 [% ELSIF artwork == 4 %]
 [% IF browse_items %]
-<div id = 'closeAlbumInfo' style="float: right;"><img src = "[% webroot %]html/images/close.gif" onClick = "javascript:hideAlbumInfo();"></div>
-[% FOREACH item = browse_items %]
-        <table width = '100%'>
-           [% PROCESS browsedbitems_list.html textClass = 'supertinytext' %]
-        </table>
-[% END %]
+	<table width = '100%'>
+	<tr class = 'playing'><td colspan = '2' class = 'supertinytext'><b>[% browse_items.1.artist.name %] - [% browse_items.1.itemobj.album.name %]</b></td></tr>
+	[% FOREACH item = browse_items %]
+           [% PROCESS browsedbitems_list.html textClass = 'supertinytext' playLink = 'ajax' noLink = 1 %]
+	[% END %]
+	</table>
 [% END %]
 [%- ELSE -%]
 <!-- browsedb.html -->
@@ -55,58 +55,70 @@
 <div id = 'pagecontainer'>
 
 <!-- need about 40px of space to deal with fixed crumblist-->
-<table><tr><td height = '40'>&nbsp;</td></tr></table>
+<table><tr><td height = '[% IF coverArt %]20[% ELSE %]40[% END %]'>&nbsp;</td></tr></table>
 
 [% IF level == 0 && artwork == 2 %]
+<div id = 'resizeThumbs'>
+<a href = 'javascript:shrinkThumbs();'>[% "SHRINK" | string %]</a> |
+<a href = 'javascript:enlargeThumbs();'>[% "ENLARGE" | string %]</a>
+</div>
+<div id = 'cover1'>
+<table >
+	<tr>
+		<td>
+			<img src = '[% webroot %]html/images/rew_active.gif' id = 'last_cover_click' class = 'thinborder'>
+		</td>
+		<td>
+			<!--first cover here-->[% INCLUDE coverTable cover = 1 %]
+		</td>
+		<td>
+			<!--second cover here-->[% INCLUDE coverTable cover = 2 %]
+		</td>
+		<td>
+			<img src = '[% webroot %]html/images/ffw_active.gif' id = 'next_cover_click' class = 'thinborder'>
+		</td>
+	</tr>
+</table>
+</div>
+
 <div id = 'albumInfo' style="display:none;">
+	<div id = 'closeAlbumInfo'><img src = "[% webroot %]html/images/close.gif" onClick = "javascript:hideAlbumInfo();"></div>
 	<div id = 'trackInfo'></div>
 </div>
 
-<div id = 'last_cover'>
-	<img src = '[% webroot %]html/images/rew_active.gif' id = 'last_cover_click' >
-</div>
-<div id = 'cover1'>
-	<!--first cover here-->[% INCLUDE coverTable cover = 1 %]
-</div>
-<div id = 'cover2'>
-	<!--second cover here-->[% INCLUDE coverTable cover = 2 %]
-</div>
-<div id = 'next_cover'>
-	<img src = '[% webroot %]html/images/ffw_active.gif' id = 'next_cover_click'>
-</div>
-
-
 [% ELSE %]
+
+[% IF coverArt %]
+<a href = "javascript:changeThumbSize('shrink', 'albumArt', '[% coverArt %]');">[% "SHRINK" | string %]</a> |
+<a href = "javascript:changeThumbSize('enlarge', 'albumArt', '[% coverArt %]');">[% "ENLARGE" | string %]</a>
+[% END %]
+
+[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age') %]
+	[%- IF browse_items %]
+		[%- FOREACH item = browse_items %]
+			[% IF loop.first && item.text == 'All Songs' %]
+				<table width = '100%'>
+				[% PROCESS browsedbitems_list.html rowClass = 'even' %]
+				</table>
+			[% ELSE -%]
+				[% PROCESS browsedb_artwork.html %]
+			[% END -%]
+		[% END -%]
+	[% END -%]
+[% ELSE -%]
 
 <table width = '100%' class = 'noborder' bgcolor = 'white'>
 	<tr>
 [% IF coverArt %]
 		<td valign = 'top' width = '205'>
-			<img src="/music/[% coverArt %]/thumb_200xX_f_000000.jpg" STYLE="border: 1px solid black" width = '200'>
+			<img src="/music/[% coverArt %]/thumb_[% IF thumbSize %][% thumbSize %]x[% thumbSize %][% ELSE %]200x200[% END %]_f_000000.jpg" STYLE="border: 1px solid black" id = 'albumArt'>
 		</td>
 [% END %]
 		<td valign = 'top'>
-		<table cellspacing="0" class = 'noborder' cellpadding="0" width="100%" bgcolor = 'white' id = 'browsetable'>
+		<table cellspacing="0" border="0" cellpadding="0" width="100%" bgcolor = 'white' id = 'browsetable'>
 			[% IF browse_items %]
 				[% FOREACH item = browse_items %]
-					[%# IF browseby == 'BROWSE_BY_ARTWORK' && level == 0 %]
-					[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age') %]
-						[% IF loop.index mod 6 == 1 || loop.first %][% UNLESS loop.first %]<tr><td colspan = '6'><hr></td></tr>[% END %]<tr>[% END %]
-						[% IF loop.first && item.text == 'All Songs' %]
-						[%# IF loop.first %]
-							<td colspan = '2'>
-							<table>
-							[% PROCESS browsedbitems_list.html rowClass = 'even' %]
-							</table>
-							<td colspan = '4'>&nbsp;</td></tr><tr>[% ELSE %]
-						<td>
-						[% PROCESS browsedb_artwork.html %]
-						</td>
-						[% END %]
-						[% IF loop.index mod 6 == 0 %]</tr>[% END %]
-					[% ELSE %]
-						[% PROCESS browsedbitems_list.html %]
-					[% END %]
+					[% PROCESS browsedbitems_list.html %]
 				[% END %]
 			[% ELSE %]
 				[% browse_list %]
@@ -115,7 +127,9 @@
 		</td>
 	</tr>
 </table>
-<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#EEEEEE">
+[% END %]
+<p>
+<table border="0" class = 'floater' width="100%" bgcolor="#EEEEEE">
 	<tr>
 		<td class="pagebartext">
 			[%- IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %]&nbsp;[% PROCESS pagebar %]
@@ -126,6 +140,9 @@
 	<tr>
 		<td>&nbsp;&nbsp;[% PROCESS crumblist noHomeLink = 1%]</td>
 	</tr>
+	<tr>
+		<td><p>&nbsp;</td>
+	</tr>
 </table>
 [% END %]
 
@@ -134,10 +151,11 @@
 [% END %]
 
 [% BLOCK coverTable %]
+[% IF cover == 1 %][% whichAlbum = 'thisAlbum' %][% ELSE %][% whichAlbum = 'thatAlbum' %][% END %]
 <table id = 'cover_table_[% cover %]' align = 'center'>
 <tr>	
-	<td colspan = 2><table class = 'thinborder'><tr><td height = '250' width = '250'>
-	<img src = "[% webroot %]html/images/cover.png" border = '0' id = 'cover_[% cover %]' [%# onClick = 'popUpAlbumInfo("[% cover %]");' %]>
+	<td colspan = 2><table class = 'thinborder'><tr><td>
+	<img src = "[% webroot %]html/images/cover.png" border = '0' id = 'cover_[% cover %]' onClick = 'popUpAlbumInfo("[% cover %]");'>
 	</td></tr></table></td>
 </tr>
 <tr height = '30' valign = 'top'>
