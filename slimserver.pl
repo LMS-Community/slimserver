@@ -488,7 +488,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
           [--priority <priority>]
           [--prefsfile <prefsfilepath> [--pidfile <pidfilepath>]]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
-          [--checkstrings]
+          [--checkstrings] [--debug]
 
     --help           => Show this usage information.
     --audiodir       => The path to a directory of your MP3 files.
@@ -529,6 +529,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
     --perfmon        => Enable internal server performance monitoring
     --perfwarn       => Generate log messages if internal tasks take longer than specified threshold
     --checkstrings   => Enable reloading of changed string files for plugin development
+    --debug          => Enable debugging for the specified comma separated categories
 
 Commands may be sent to the server through standard in and will be echoed via
 standard out.  See complete documentation for details on the command syntax.
