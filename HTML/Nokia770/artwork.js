@@ -116,14 +116,19 @@ function refreshThumb(theData, whichOne, thatOne) {
 	}
 }
 
-function popUpAlbumInfo(thisOne) {
-	if (thisOne == 1) {
-		clickedItem = thisAlbum;
+function popUpAlbumInfo(thisOne, albumId) {
+	var lookupId;
+	if (albumId) {
+		lookupId = thisOne;
 	} else {
-		clickedItem = thatAlbum;
+		if (thisOne == 1) {
+			clickedItem = thisAlbum;
+		} else {
+			clickedItem = thatAlbum;
+		}
+		var albumKey = 'albumid_' + clickedItem;
+		lookupId = parsedData[albumKey];
 	}
-	var albumKey = 'albumid_' + clickedItem;
-	var lookupId = parsedData[albumKey];
 	
 	// here we go-- get the album track details via an ajax call
 	// pop up a list of the tracks in an inline div, including play/add buttons next to tracks
@@ -132,7 +137,6 @@ function popUpAlbumInfo(thisOne) {
 		$('trackInfo').innerHTML = '';
 		Element.show('albumInfo');
 		var newArgs = 'artwork=4&hierarchy=album,track&level=1&player=[% playerURI %]&album.id='+parseInt(lookupId);
-		//var newArgs = 'artwork=4&orderBy=contributor.namesort,album.titlesor&album,track&level=1&&album.id='+parseInt(lookupId);
 		getStatusData(newArgs,updateTrackInfo);
 	}
 }

@@ -39,6 +39,11 @@ body, table, input, select, p, li, a {
 	font-size: 22px;
 	text-decoration: none;
 }
+.popUpText {
+	font-size: 22px;
+	font-style: bold;
+	text-decoration: none;
+}
 .smallitemtext {
 	font-size: 18px;
 }
@@ -419,13 +424,14 @@ div#crumblist {
 div#OSD{
         position: absolute;
         z-index: 100;
-        top: 240;
-        left: 500;
+        top: 50%;
+        left: 35%;
         background-color: white;
         color: black;
         font-weight: bold;
         padding: 5px;
         border: 1px solid black;
+	text-align: center;
 }
 
 div#volumeOSD{
@@ -443,10 +449,10 @@ div#volumeOSD{
 div#albumInfo {
         position: absolute;
         z-index: 99;
-        top: 140;
-        left: 300;
-	width: 300;
-	bottom: 40;
+        top: 10;
+        left: 200;
+	width: 500;
+	bottom: 10;
         background-color: white;
         color: black;
         padding: 5px;

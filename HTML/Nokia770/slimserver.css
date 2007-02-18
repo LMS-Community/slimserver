@@ -40,6 +40,9 @@ body, table, input, select, p, li, a {
 	font-size: 22px;
 	text-decoration: none;
 }
+.popUpText {
+	font-size: 14px;
+}
 .smallitemtext {
 	font-size: 18px;
 }
@@ -419,8 +422,9 @@ div#crumblist {
 div#OSD{
 	position: fixed;
 	z-index: 100;
-	top: 280;
-	right: 20;
+	top: 50%;
+	left: 30%;
+	text-align: center;
 	background-color: white;
 	color: black;
 	font-weight: bold;

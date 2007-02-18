@@ -4,10 +4,10 @@
 	<tr>
 		<td width="100">
 		[% IF item.coverThumb %]
-			<a [% PROCESS browseDbItemHRef %]>
+			<a onClick = 'popUpAlbumInfo("[% item.album %]", 1)'>
 			[% PROCESS thumbnailItemImg height="100" width="100" style='STYLE="border: 1px solid black"' %]</a>
 		[% ELSE %]
-			<a [% PROCESS browseDbItemHRef %]>
+			<a onClick = 'popUpAlbumInfo("[% item.album %]", 1)'>
 			[% PROCESS dummyItemImg height="100" width="100" style='STYLE="border: 1px solid black"' %]</a>
 		[% END %]
 		</td>

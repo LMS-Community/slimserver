@@ -8,9 +8,9 @@
 [% ELSIF artwork == 4 %]
 [% IF browse_items %]
 	<table width = '100%'>
-	<tr class = 'playing'><td colspan = '2' class = 'supertinytext'><b>[% browse_items.1.artist.name %] - [% browse_items.1.itemobj.album.name %]</b></td></tr>
+	<tr class = 'playing'><td colspan = '2' class = 'popUpText'><b>[% browse_items.1.artist.name %] - [% browse_items.1.itemobj.album.name %]</b></td></tr>
 	[% FOREACH item = browse_items %]
-           [% PROCESS browsedbitems_list.html textClass = 'supertinytext' playLink = 'ajax' noLink = 1 %]
+           [% PROCESS browsedbitems_list.html textClass = 'popUpText' playLink = 'ajax' noLink = 1 %]
 	[% END %]
 	</table>
 [% END %]
@@ -52,6 +52,11 @@
 </table>
 </div>
 
+<div id = 'albumInfo' style="display:none;">
+	<div id = 'closeAlbumInfo'><img src = "[% webroot %]html/images/close.gif" onClick = "javascript:hideAlbumInfo();"></div>
+	<div id = 'trackInfo'></div>
+</div>
+
 <div id = 'pagecontainer'>
 
 <!-- need about 40px of space to deal with fixed crumblist-->
@@ -81,12 +86,8 @@
 </table>
 </div>
 
-<div id = 'albumInfo' style="display:none;">
-	<div id = 'closeAlbumInfo'><img src = "[% webroot %]html/images/close.gif" onClick = "javascript:hideAlbumInfo();"></div>
-	<div id = 'trackInfo'></div>
-</div>
-
 [% ELSE %]
+
 
 [% IF coverArt %]
 <a href = "javascript:changeThumbSize('shrink', 'albumArt', '[% coverArt %]');">[% "SHRINK" | string %]</a> |
@@ -155,7 +156,7 @@
 <table id = 'cover_table_[% cover %]' align = 'center'>
 <tr>	
 	<td colspan = 2><table class = 'thinborder'><tr><td>
-	<img src = "[% webroot %]html/images/cover.png" border = '0' id = 'cover_[% cover %]' onClick = 'popUpAlbumInfo("[% cover %]");'>
+	<img src = "[% webroot %]html/images/cover.png" border = '0' id = 'cover_[% cover %]' onClick = 'popUpAlbumInfo("[% cover %]", 0);'>
 	</td></tr></table></td>
 </tr>
 <tr height = '30' valign = 'top'>
