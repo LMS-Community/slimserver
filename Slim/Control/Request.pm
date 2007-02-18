@@ -1734,7 +1734,7 @@ sub notify {
 					
 					if (ref($funcPtr) eq 'CODE') {
 				
-						eval { $relevant = &{$funcPtr}($self) };
+						eval { $relevant = &{$funcPtr}($request, $self) };
 				
 						if ($@) {
 							my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);

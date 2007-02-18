@@ -1285,6 +1285,20 @@ sub serverstatusQuery {
 	$request->addResult("info total genres", Slim::Schema->count('Genre'));
 	$request->addResult("info total songs", Slim::Schema->rs('Track')->browse->count);
 
+	my @prefs;
+	if (defined(my $pref_list = $request->getParam('prefs'))) {
+		# split on commas
+
+		@prefs = split(/,/, $pref_list);
+	
+		for my $pref (@prefs) {
+			if (defined(my $value = Slim::Utils::Prefs::get($pref))) {
+				$request->addResult($pref, $value);
+			}
+		}
+	}
+
+
 	# get our parameters
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
@@ -1326,12 +1340,30 @@ sub serverstatusQuery {
 		# the filter function decides, based on a notified request, if the serverstatus
 		# query must be re-executed.
 		sub filter{
+			my $self = shift;
 			my $request = shift;
-						
+			
 			# we want to know about rescan and all client notifs
-			return $request->isCommand([['rescan', 'client']]);
+			if ($request->isCommand([['rescan', 'client']])) {
+				return 1;
+			}
+			
+			# we want to know about any pref in our array
+			if (defined(my $prefsPtr = $self->privateData())) {
+				if ($request->isCommand([['pref']])) {
+					if (defined(my $reqpref = $request->getParam('_prefname'))) {
+						return grep($reqpref, @{$prefsPtr});
+					}
+				}
+			}
+			return 0;
 		}
 	
+		# store the prefs array as private data so our filter above can find it back
+		if (scalar @prefs) {
+			$request->privateData(\@prefs);
+		}
+		
 		# register ourselves to be automatically re-executed on timeout or filter
 		$request->registerAutoExecute($timeout, \&filter);
 	}
