@@ -8,7 +8,7 @@
 [% ELSIF artwork == 4 %]
 [% IF browse_items %]
 	<table width = '100%'>
-	<tr class = 'playing'><td colspan = '2' class = 'popUpText'><b>[% browse_items.1.artist.name %] - [% browse_items.1.itemobj.album.name %]</b></td></tr>
+	<tr class = 'playing' height = '32'><td colspan = '2' class = 'popUpText'><b>[% browse_items.1.artist.name %] - [% browse_items.1.itemobj.album.name %]</b></td></tr>
 	[% FOREACH item = browse_items %]
            [% PROCESS browsedbitems_list.html textClass = 'popUpText' playLink = 'ajax' noLink = 1 %]
 	[% END %]
@@ -53,7 +53,7 @@
 </div>
 
 <div id = 'albumInfo' style="display:none;">
-	<div id = 'closeAlbumInfo'><img src = "[% webroot %]html/images/close.gif" onClick = "javascript:hideAlbumInfo();"></div>
+	<div id = 'closeAlbumInfo'><img src = "[% webroot %]html/images/cancel.jpg" onClick = "javascript:hideAlbumInfo();"></div>
 	<div id = 'trackInfo'></div>
 </div>
 

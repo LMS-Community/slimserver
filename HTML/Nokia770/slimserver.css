@@ -448,8 +448,8 @@ div#albumInfo {
         position: fixed;
         z-index: 99;
         top: 140;
-        left: 300;
-	width: 300;
+        left: 275;
+	width: 350;
 	bottom: 40;
         background-color: white;
         color: black;
