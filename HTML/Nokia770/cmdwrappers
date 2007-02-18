@@ -155,7 +155,7 @@
 	[% ELSE %]
 		[%- IF playLink == 'ajax' %]
 			<td class = 'listing' align = 'center'>
-				<img src="[% webroot %]html/images/play.this.gif" onClick = 'changeOSD("[% itemobj.title FILTER html FILTER replace('\'', '&#39;') %] [% "NOW_PLAYING" | string %]"); addItem("[% PROCESS ajaxCmdHRef cmdType='play' %]");' border=0 height="20" alt='Play Now' title='Play Now'>
+				<img src="[% webroot %]html/images/play.this.gif" onClick = 'changeOSD("[% IF itemobj.title == '' %][% "ALL_SONGS" | string %][% ELSE %][% itemobj.title FILTER html FILTER replace('\'', '&#39;') %][% END %] [% "NOW_PLAYING" | string %]"); addItem("[% PROCESS ajaxCmdHRef cmdType='play' %]");' border=0 height="20" alt='Play Now' title='Play Now'>
 			</td>
 		[%- ELSE %]
 			[% WRAPPER playlink   %][% PROCESS cmdHRef cmdType='play' statusroot = 'status.html'  %][% END %]
@@ -165,7 +165,7 @@
 		[% WRAPPER addlink    %][% PROCESS cmdHRef cmdType='add' statusroot = 'playlist.html' %][% END %]
 		[%- ELSE %]
 			<td class = 'listing' align = 'center'>
-				<img src="[% webroot %]html/images/add.gif" onClick = 'changeOSD("[% "ADDING_TO_PLAYLIST" | string %] [% itemobj.title FILTER html FILTER replace('\'','&#39;')  %]"); addItem("[% PROCESS ajaxCmdHRef cmdType='add' %]");' border=0 height="20" alt='Add to playlist' title='Add to playlist'>
+				<img src="[% webroot %]html/images/add.gif" onClick = 'changeOSD("[% "ADDING_TO_PLAYLIST" | string %] [% IF itemobj.title == '' %][% "ALL_SONGS" | string %][% ELSE %][% itemobj.title FILTER html FILTER replace('\'','&#39;')  %][% END %]"); addItem("[% PROCESS ajaxCmdHRef cmdType='add' %]");' border=0 height="20" alt='Add to playlist' title='Add to playlist'>
 			</td>
 		[%- END %]
 		[% FOREACH mixer = mixerlinks.values.sort %]
