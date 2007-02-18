@@ -40,12 +40,6 @@ sub initPlugin {
 
 	Slim::Plugin::Favorites::Settings->new;
 
-	# register ourselves as the editor for favorites.opml in xmlbrowser
-	Slim::Web::XMLBrowser::registerEditor( qr/^file:\/\/.*favorites\.opml$/, 'plugins/Favorites/edit.html', 'PLUGIN_FAVORITES_EDITOR' );
-
-	# register ourselves as the editor for other opml files with different title
-	Slim::Web::XMLBrowser::registerEditor( qr/^file:\/\/.*\.opml$/, 'plugins/Favorites/edit.html', 'PLUGIN_FAVORITES_PLAYLIST_EDITOR' );
-
 	# register opml based favorites handler
 	Slim::Utils::Favorites::registerFavoritesClassName('Slim::Plugin::Favorites::OpmlFavorites');
 
@@ -54,8 +48,8 @@ sub initPlugin {
 
 	# register cli handlers
 	Slim::Control::Request::addDispatch(['favorites', '_index', '_quantity'], [0, 1, 1, \&cliBrowse]);
-	Slim::Control::Request::addDispatch(['favorites', 'add', '_url', '_title'], [0, 0, 0, \&cliAdd]);
-	Slim::Control::Request::addDispatch(['favorites', 'addlevel', '_title'], [0, 0, 0, \&cliAdd]);
+	Slim::Control::Request::addDispatch(['favorites', 'add', '_url', '_title'], [0, 0, 1, \&cliAdd]);
+	Slim::Control::Request::addDispatch(['favorites', 'addlevel', '_title'], [0, 0, 1, \&cliAdd]);
 	Slim::Control::Request::addDispatch(['favorites', 'delete', '_index'], [0, 0, 0, \&cliDelete]);
 }
 
@@ -69,31 +63,18 @@ sub setMode {
         return;
     }
 
-	my $file = Slim::Plugin::Favorites::OpmlFavorites->new->filename;
+	# use INPUT.Choice to display the list of feeds
+	my %params = (
+		header   => 'PLUGIN_FAVORITES_LOADING',
+		modeName => 'Favorites.Browser',
+		url      => Slim::Plugin::Favorites::OpmlFavorites->new($client)->fileurl,
+		title    => $client->string('FAVORITES'),
+	);
 
-	if (-r $file) {
+	Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
 
-		# use INPUT.Choice to display the list of feeds
-		my %params = (
-			header   => 'PLUGIN_FAVORITES_LOADING',
-			modeName => 'Favorites.Browser',
-			url      => Slim::Utils::Misc::fileURLFromPath($file),
-			title    => $client->string('FAVORITES'),
-		   );
-
-		Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
-
-		# we'll handle the push in a callback
-		$client->modeParam('handledTransition',1)
-
-	} else {
-
-		$client->lines(\&errorLines);
-	}
-}
-
-sub errorLines {
-	return { 'line' => [string('FAVORITES'), string('PLUGIN_FAVORITES_NOFILE')] };
+	# we'll handle the push in a callback
+	$client->modeParam('handledTransition',1)
 }
 
 sub playFavorite {
@@ -101,19 +82,9 @@ sub playFavorite {
 	my $button = shift;
 	my $digit  = shift;
 
-	my ($level, $index, undef) = Slim::Plugin::Favorites::OpmlFavorites->new($client)->levelForIndex($digit);
+	my $entry = Slim::Plugin::Favorites::OpmlFavorites->new($client)->entry($digit);
 
-	if (!defined $index) {
-
-		$client->showBriefly({
-			 'line' => [ sprintf($client->string('FAVORITES_NOT_DEFINED'), $digit) ],
-		});
-
-		return;
-
-	} else {
-
-		my $entry = $level->[$index];
+	if (defined $entry && $entry->{'type'} && $entry->{'type'} eq 'audio') {
 
 		my $url   = $entry->{'URL'} || $entry->{'url'};
 		my $title = $entry->{'title'};
@@ -123,6 +94,14 @@ sub playFavorite {
 		Slim::Music::Info::setTitle($url, $title);
 
 		$client->execute(['playlist', 'play', $url]);
+
+	} else {
+
+		$log->info("Can't play favorite number $digit - not an audio entry");
+
+		$client->showBriefly({
+			 'line' => [ sprintf($client->string('FAVORITES_NOT_DEFINED'), $digit) ],
+		});
 	}
 }
 
@@ -130,9 +109,8 @@ sub webPages {
 	my $class = shift;
 
 	Slim::Web::HTTP::addPageFunction('plugins/Favorites/index.html', \&indexHandler);
-	Slim::Web::HTTP::addPageFunction('plugins/Favorites/edit.html', \&editHandler);
 
-	Slim::Web::Pages->addPageLinks('browse', { 'FAVORITES' => 'plugins/Favorites/index.html' });
+	Slim::Web::Pages->addPageLinks('browse', { 'FAVORITES' => 'plugins/Favorites/index.html?fav' });
 
 	addEditLink();
 }
@@ -140,120 +118,208 @@ sub webPages {
 sub addEditLink {
 	my $enabled = Slim::Utils::Prefs::get('plugin_favorites_opmleditor');
 
-	Slim::Web::Pages->addPageLinks('plugins', {	'PLUGIN_FAVORITES_PLAYLIST_EDITOR' => $enabled ? 'plugins/Favorites/edit.html?new=1' : undef });
+	Slim::Web::Pages->addPageLinks('plugins', {	'PLUGIN_FAVORITES_PLAYLIST_EDITOR' => $enabled ? 'plugins/Favorites/index.html?new' : undef });
 }
+
+my $opml;    # opml hash for current editing session
+my $deleted; # any deleted sub tree which may be added back
 
 sub indexHandler {
-	my $file = Slim::Plugin::Favorites::OpmlFavorites->new($_[0])->filename;
-
-	Slim::Web::XMLBrowser->handleWebIndex( {
-		feed   => Slim::Utils::Misc::fileURLFromPath($file),
-		title  => 'FAVORITES',
-		args   => \@_
-	} );
-}
-
-my $opml;
-my $level = 0;
-my $currentLevel;
-my @prevLevels;
-my $deleted;
-
-sub editHandler {
-	my ($client, $params) = @_;
+	my $client = shift;
+	my $params = shift;
 
 	my $edit;     # index of entry to edit if set
 	my $errorMsg; # error message to display at top of page
-	my $changed;
+	my $changed;  # opml has been changed
 
 	# Debug:
 	#for my $key (keys %$params) {
 	#	print "Key: $key, Val: ".$params->{$key}."\n";
 	#}
 
-	if ($params->{'new'} && $params->{'new'} == 1) {
-		$opml = Slim::Plugin::Favorites::Opml->new;
-		$level = 0;
-		$currentLevel = $opml->toplevel;
-		@prevLevels = ();
+	if ($params->{'fav'}) {
+
+		$log->info("opening favorites edditing session");
+
+		$opml = Slim::Plugin::Favorites::OpmlFavorites->new($client);
 		$deleted = undef;
 	}
 
-	if ($params->{'title'}) {
-		$opml->title( $params->{'title'} );
+	if ($params->{'new'}) {
+
+		$log->info("new opml editting session");
+
+		$opml = Slim::Plugin::Favorites::Opml->new;
+		$deleted = undef;
+	}
+
+	# get the level to operate on - this is the level containing the index if action is set, otherwise the level specified by index
+	my ($level, $indexLevel, @indexPrefix) = $opml->level($params->{'index'}, defined $params->{'action'});
+
+	if (!defined $level && $opml->isa('Slim::Plugin::Favorites::OpmlFavorites')) {
+		# favorites editor cannot follow remote links, so pass through to xmlbrowser as index does not appear to be edittable
+		$log->info("passing through to xmlbrowser");
+
+		return Slim::Web::XMLBrowser->handleWebIndex( {
+			feed   => $opml->fileurl,
+			args   => [$client, $params, @_],
+		} );
+	}
+
+	if ($params->{'loadfile'}) {
+
+		$opml->load($params->{'filename'});
+
+		($level, $indexLevel, @indexPrefix) = ($opml->toplevel, undef, undef);
+		$deleted = undef;
 	}
 
 	if ($params->{'savefile'} || $params->{'savechanged'}) {
+
 		$opml->filename($params->{'filename'}) if $params->{'savefile'};
+
 		$opml->save;
+
 		$changed = undef unless $opml->error;
 
 		my $favorites = Slim::Plugin::Favorites::OpmlFavorites->new($client);
+
 		if ($favorites && $opml != $favorites && $opml->filename eq $favorites->filename) {
 			# overwritten the favorites file - force favorites to be reloaded
 			$favorites->load;
 		}
 	}
 
-	if ($params->{'loadfile'}) {
-		$opml->load($params->{'filename'});
-		$level = 0;
-		$currentLevel = $opml->toplevel;
-		@prevLevels = ();
-		$deleted = undef;
-	}
-
 	if ($params->{'importfile'}) {
+
 		my $filename = $params->{'filename'};
 		my $playlist;
 
 		if ($filename =~ /\.opml/) {
+
 			$playlist = Slim::Plugin::Favorites::Opml->new($filename)->toplevel;
+
 		} else {
+
 			$playlist = Slim::Plugin::Favorites::Playlist->read($filename);
 		}
 
 		if ($playlist) {
+
 			for my $entry (@$playlist) {
-				push @$currentLevel, $entry;
+				push @$level, $entry;
 			}
+
 			$changed = 1;
+
 		} else {
+
 			$params->{'errormsg'} = string('PLUGIN_FAVORITES_IMPORTERROR') . " " . $filename;
 		}
 	}
 
-	if ($params->{'url'}) {
-		$opml = Slim::Plugin::Favorites::OpmlFavorites->new($client);
+	if ($params->{'title'}) {
+		$opml->title( $params->{'title'} );
+	}
 
-		if (Slim::Utils::Misc::pathFromFileURL($params->{'url'}) ne $opml->filename) {
-			# if url is not for favorite file use opml direct
-			$opml = Slim::Plugin::Favorites::Opml->new( $params->{'url'} );
-			$log->info("opening editor for " . $params->{'url'});
-		} else {
-			$log->info("opening editor for favorites");
+	if (my $action = $params->{'action'}) {
+
+		if ($action eq 'edit') {
+			$edit = $indexLevel;
 		}
 
-		$level = 0;
-		$currentLevel = $opml->toplevel;
-		@prevLevels = ();
+		if ($action eq 'edittitle') {
+			$params->{'edittitle'} = 1;
+		}
+
+		if ($action eq 'delete') {
+
+			$deleted = splice @$level, $indexLevel, 1;
+
+			$changed = 1;
+		}
+
+		if ($action eq 'movedown') {
+
+			my $entry = splice @$level, $indexLevel, 1;
+
+			splice @$level, $indexLevel + 1, 0, $entry;
+
+			$changed = 1;
+		}
+
+		if ($action eq 'moveup' && $indexLevel > 0) {
+
+			my $entry = splice @$level, $indexLevel, 1;
+
+			splice @$level, $indexLevel - 1, 0, $entry;
+
+			$changed = 1;
+		}
+
+		if ($action =~ /play|add/ && $client) {
+
+			my $entry = $opml->entry($params->{'index'});
+			my $stream = $entry->{'URL'} || $entry->{'url'};
+			my $title  = $entry->{'text'};
+
+			Slim::Music::Info::setTitle($stream, $title);
+			$client->execute(['playlist', $action, $stream]);
+		}
+
+		if ($action eq 'editset' && $params->{'editset'} && defined $params->{'index'}) {
+
+			my $entry = $opml->entry($params->{'index'});
+
+			$entry->{'text'} = $params->{'entrytitle'};
+			$entry->{'URL'} = $params->{'entryurl'} if defined($params->{'entryurl'});
+
+			$changed = 1;
+		}
+	}
+
+	if ($params->{'forgetdelete'}) {
+
 		$deleted = undef;
+	}
 
-		if ($params->{'index'}) {
-			for my $i (split(/\./, $params->{'index'})) {
-				if (defined @$currentLevel[$i]) {
-					if (@$currentLevel[$i]->{'outline'}) {
-						$prevLevels[ $level++ ] = {
-							'ref'   => $currentLevel,
-							'title' => @$currentLevel[$i]->{'text'},
-						};
-						$currentLevel = @$currentLevel[$i]->{'outline'};
-					} else {
-						$edit = $i;
-					}
-				}
-			}
-		}
+	if ($params->{'insert'} && $deleted) {
+
+		push @$level, $deleted;
+
+		$deleted = undef;
+		$changed = 1;
+	}
+
+	if ($params->{'newmenu'}) {
+
+		push @$level, {
+			'text'   => $params->{'menutitle'},
+			'outline'=> [],
+		};
+
+		$changed = 1;
+	}
+
+	if ($params->{'newstream'}) {
+
+		push @$level,{
+			'text' => $params->{'streamtitle'},
+			'URL'  => $params->{'streamurl'},
+			'type' => 'audio',
+		};
+
+		$changed = 1;
+	}
+
+	if ($params->{'newopmlmenu'}) {
+
+		push @$level, {
+			'text' => $params->{'opmlmenutitle'},
+			'URL'  => $params->{'opmlmenuurl'},
+		};
+
+		$changed = 1;
 	}
 
 	if ($params->{'newentrymore'}) {
@@ -285,113 +351,20 @@ sub editHandler {
 		}
 	}
 
-	if (my $action = $params->{'action'}) {
-
-		if ($action eq 'descend') {
-
-			$prevLevels[ $level++ ] = {
-				'ref'   => $currentLevel,
-				'title' => @$currentLevel[$params->{'entry'}]->{'text'},
-			};
-
-			$currentLevel = @$currentLevel[$params->{'entry'}]->{'outline'};
-
-		}
-
-		if ($action eq 'ascend') {
-
-			my $pop = defined ($params->{'levels'}) ? $params->{'levels'} : 1;
-
-			while ($pop) {
-				$currentLevel = $prevLevels[ --$level ]->{'ref'} if $level > 0;
-				--$pop;
-			}
-		}
-
-		if ($action eq 'edit') {
-			$edit = $params->{'entry'};
-		}
-
-		if ($action eq 'edittitle') {
-			$params->{'edittitle'} = 1;
-		}
-
-		if ($action eq 'delete') {
-			$deleted = splice @$currentLevel, $params->{'entry'}, 1;
-			$changed = 1;
-		}
-
-		if ($action eq 'forgetdelete') {
-			$deleted = undef;
-		}
-
-		if ($action eq 'insert' && $deleted) {
-			push @$currentLevel, $deleted;
-			$deleted = undef;
-			$changed = 1;
-		}
-
-		if ($action eq 'movedown') {
-			my $entry = splice @$currentLevel, $params->{'entry'}, 1;
-			splice @$currentLevel, $params->{'entry'} + 1, 0, $entry;
-			$changed = 1;
-		}
-
-		if ($action eq 'moveup' && $params->{'entry'} > 0) {
-			my $entry = splice @$currentLevel, $params->{'entry'}, 1;
-			splice @$currentLevel, $params->{'entry'} - 1, 0, $entry;
-			$changed = 1;
-		}
-
-		if ($action =~ /play|add/ && $client) {
-			my $entry = @$currentLevel[$params->{'entry'}];
-			my $stream = $entry->{'URL'} || $entry->{'url'};
-			my $title  = $entry->{'text'};
-			Slim::Music::Info::setTitle($stream, $title);
-			$client->execute(['playlist', $action, $stream]);
-		}
-	}
-
-	if ($params->{'editset'} && defined $params->{'entry'}) {
-		my $entry = @$currentLevel[$params->{'entry'}];
-		$entry->{'text'} = $params->{'entrytitle'};
-		$entry->{'URL'} = $params->{'entryurl'} if defined($params->{'entryurl'});
-		$changed = 1;
-	}
-
-	if ($params->{'newmenu'}) {
-		push @$currentLevel, {
-			'text'   => $params->{'menutitle'},
-			'outline'=> [],
-		};
-		$changed = 1;
-	}
-
-	if ($params->{'newstream'}) {
-		push @$currentLevel,{
-			'text' => $params->{'streamtitle'},
-			'URL'  => $params->{'streamurl'},
-			'type' => 'audio',
-		};
-		$changed = 1;
-	}
-
-	if ($params->{'newopmlmenu'}) {
-		push @$currentLevel, {
-			'text' => $params->{'opmlmenutitle'},
-			'URL'  => $params->{'opmlmenuurl'},
-		};
-		$changed = 1;
-	}
-
 	# search for external information source selection in key: extsel.$sourceIndex.$categoryIndex
 	if ($params->{'url_query'} =~ /extsel\./) {
+
 		for my $key (keys %$params) {
+
 			if ($key =~ /^extsel\.(\d+)\.(\d+)/) {
+
 				my $source = Slim::Utils::Prefs::getInd('plugin_favorites_directories', $1 - 1);
 				my $name = $params->{"extval.$1.$2"};
+
 				my $entry = Slim::Plugin::Favorites::Directory->new($source)->item($2 - 1, $name);
-				push @$currentLevel, $entry if $entry;
+
+				push @$level, $entry if $entry;
+
 				$changed = 1;
 				last;
 			}
@@ -414,7 +387,6 @@ sub editHandler {
 		$params->{'filename'}  = $opml->filename;
 	}
 
-	$params->{'previous'}  = ($level > 0);
 	$params->{'deleted'}   = defined $deleted ? $deleted->{'text'} : undef;
 	$params->{'advanced'}  = Slim::Utils::Prefs::get('plugin_favorites_advanced');
 
@@ -423,35 +395,41 @@ sub editHandler {
 		$opml->clearerror;
 	}
 
+	# add the entries for current level
 	my @entries;
-	my $index = 0;
+	my $i = 0;
 
-	foreach my $opmlEntry (@$currentLevel) {
+	foreach my $opmlEntry (@$level) {
 		push @entries, {
 			'title'   => $opmlEntry->{'text'} || '',
 			'url'     => $opmlEntry->{'URL'} || $opmlEntry->{'url'} || '',
 			'audio'   => (defined $opmlEntry->{'type'} && $opmlEntry->{'type'} eq 'audio'),
 			'outline' => $opmlEntry->{'outline'},
-			'edit'    => (defined $edit && $edit == $index),
-			'index'   => $index++,
+			'edit'    => (defined $edit && $edit == $i),
+			'index'   => join '.', (@indexPrefix, $i++),
 		};
 	}
 
 	$params->{'entries'} = \@entries;
+	$params->{'levelindex' } = join '.', @indexPrefix;
 
+	# add the top level title to pwd_list
 	push @{$params->{'pwd_list'}}, {
 		'title' => $opml && $opml->title || string('PLUGIN_FAVORITES_EDITOR'),
-		'href'  => 'href="edit.html?action=ascend&levels=' . $level . '"',
+		'href'  => 'href="index.html?index="',
 	};
 
-	for (my $i = 1; $i <= $level; $i++) {
+	# add remaining levels up to current level to pwd_list
+	for (my $i = 0; $i <= $#indexPrefix; ++$i) {
+
+		my @ind = @indexPrefix[0..$i];
 		push @{$params->{'pwd_list'}}, {
-			'title' => $prevLevels[ $i - 1 ]->{'title'},
-			'href'  => 'href="edit.html?action=ascend&levels=' . ($level - $i) . '"',
+			'title' => $opml->entry(\@ind)->{'text'},
+			'href'  => 'href="index.html?index=' . (join '.', @ind) . '"',
 		};
 	}
 
-	return Slim::Web::HTTP::filltemplatefile('plugins/Favorites/edit.html', $params);
+	return Slim::Web::HTTP::filltemplatefile('plugins/Favorites/index.html', $params);
 }
 
 sub cliBrowse {
@@ -470,7 +448,7 @@ sub cliBrowse {
 		$index = $item_id . '.' . $index;
 	}
 
-	my ($level, $start, $prefix) = Slim::Plugin::Favorites::OpmlFavorites->new($client)->levelForIndex($index);
+	my ($level, $start, $prefix) = Slim::Plugin::Favorites::OpmlFavorites->new($client)->level($index, 'contains');
 
 	my $count = $level ? scalar @$level : 0;
 
@@ -523,7 +501,7 @@ sub cliAdd {
 
 	my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($client);
 
-	my ($level, $i) = defined $index ? $favs->levelForIndex($index) : ($favs->toplevel, scalar @{$favs->toplevel});
+	my ($level, $i) = $favs->level($index, 'contains');
 
 	if ($level) {
 
@@ -551,7 +529,8 @@ sub cliAdd {
 		} else {
 
 			$log->info("can't perform $command bad title or url");
-			request->setStatusBadParams();
+
+			$request->setStatusBadParams();
 			return;
 		}
 
@@ -565,7 +544,7 @@ sub cliAdd {
 
 		$log->info("index $index invalid");
 
-		request->setStatusBadParams();
+		$request->setStatusBadParams();
 	}
 }
 

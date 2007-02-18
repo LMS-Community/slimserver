@@ -81,6 +81,9 @@ div#browsedbList {
 	padding-right: 100px;
 }
 
+.browsedbListItemFullWidth {
+}
+
 .playlistControls {
 	position: absolute;
 	top: 0px;

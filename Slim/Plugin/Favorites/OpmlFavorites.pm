@@ -40,18 +40,22 @@ sub new {
 
 sub filename {
 	my $class = shift;
+
 	my $dir = Slim::Utils::Prefs::get('playlistdir') || Slim::Utils::Prefs::get('cachedir');
+
 	return catdir($dir, "favorites.opml");
 }
 
 sub load {
 	my $class = shift;
+
 	$class->SUPER::load(@_);
 	$class->_urlindex;
 }
 
 sub save {
 	my $class = shift;
+
 	$class->SUPER::save(@_);
 	$class->_urlindex;
 }
@@ -69,15 +73,18 @@ sub _urlindex {
 	my $i = 0;
 
 	for my $entry (@{$level}) {
+
 		if ($entry->{'type'} eq 'audio' && ($entry->{'URL'} || $entry->{'url'}) ) {
 			$class->{'urlindex'}->{ $entry->{'URL'} || $entry->{'url'} } = {
 				'text' => $entry->{'text'},
 				'ind'  => $index."$i",
 			};
 		}
+
 		if ($entry->{'outline'}) {
 			$class->_urlindex($entry->{'outline'}, $index."$i.");
 		}
+
 		$i++;
 	}
 }
@@ -104,36 +111,6 @@ sub _loadOldFavorites {
 	$class->title(string('FAVORITES'));
 
 	$class->save;
-}
-
-sub levelForIndex {
-	my $class  = shift;
-	my $index  = shift;
-
-	my @ind = split(/\./, $index);
-	my $pos = $class->toplevel;
-	my $prefix = '';
-
-	while (scalar @ind > 1 && ref $pos eq 'ARRAY') {
-		$prefix .= $ind[0] . '.';
-		$pos = $pos->[shift @ind]->{'outline'};
-	}
-
-	my $i = shift @ind;
-
-	if (!@ind) {
-
-		if ($pos->[$i] && ref $pos->[$i] eq 'HASH') {
-
-			return $pos, $i, $prefix;
-
-		} else {
-
-			return $pos, undef, $prefix;
-		}
-	}
-
-	return undef, undef, undef;
 }
 
 sub add {
@@ -217,15 +194,7 @@ sub deleteIndex {
 	my $class  = shift;
 	my $index  = shift;
 
-	my @ind = split(/\./, $index);
-	my $pos = $class->toplevel;
-	my $i;
-
-	while (scalar @ind > 1 && ref $pos eq 'ARRAY') {
-		$pos = $pos->[shift @ind]->{'outline'};
-	}
-
-	my $i = shift @ind;
+	my ($pos, $i) = $class->level($index, 'contains');
 
 	if (ref @{$pos}[ $i ] eq 'HASH') {
 

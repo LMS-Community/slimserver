@@ -6,17 +6,9 @@ PLUGIN_FAVORITES_DESC
 	DE	Favoriten speichern und bearbeiten
 	EN	Save and edit your favorites
 
-PLUGIN_FAVORITES_EDITOR
-	DE	Favoriten bearbeiten
-	EN	Favorites Editor
-
 PLUGIN_FAVORITES_PLAYLIST_EDITOR
 	DE	OPML Wiedergabelisten bearbeiten
 	EN	OPML Playlist Editor
-
-PLUGIN_FAVORITES_NEWENTRY
-	DE	Neuer Eintrag
-	EN	New Entry
 
 PLUGIN_FAVORITES_LOAD
 	DE	Laden
@@ -49,10 +41,6 @@ PLUGIN_FAVORITES_NOFILE
 	DE	Datei nicht gefunden
 	EN	File Not Found
 
-PLUGIN_FAVORITES_SET
-	DE	Setzen
-	EN	Set
-
 PLUGIN_FAVORITES_CANCEL
 	DE	Abbrechen
 	EN	Cancel
@@ -75,22 +63,14 @@ PLUGIN_FAVORITES_ADD_DESC
 
 PLUGIN_FAVORITES_ADDMENU
 	DE	Neues Menü
-	EN	New Menu
+	EN	New Folder
 
 PLUGIN_FAVORITES_ADDSTREAM
 	EN	Audio Stream
 
 PLUGIN_FAVORITES_ADDOPMLMENU
 	DE	Remote OPML Menü
-	EN	Remote OPML Menu
-
-PLUGIN_FAVORITES_ADDSLIMPICKS
-	DE	Eintrag aus den Slim Picks
-	EN	Entry From Slim Picks
-
-PLUGIN_FAVORITES_PREVLEVEL
-	DE	Vorherige Ebene
-	EN	Previous Level
+	EN	Remote Link
 
 PLUGIN_FAVORITES_LOADERROR
 	DE	Fehler beim Laden der Datei
@@ -108,21 +88,17 @@ PLUGIN_FAVORITES_NOTITLE
 	DE	Ohne Titel
 	EN	No Title
 
-SETUP_PLUGIN_FAVORITES_DESC
-	DE	Der Favoriten-Editor erlaubt das Bearbeiten von Listen bevorzugter Dateien und Radio Stationen. Sie erreichen es durch einen Klick auf das Bearbeiten-Icon im Favoriten-Verzeichnis des Web-Interfaces.
-	EN	The favorites editor allows you to edit your list of favorite files and radio stations.  It is accessed by clicking on the edit icon when browsing Favorites from the web interface.
-
 SETUP_PLUGIN_FAVORITES_ADVANCED
 	DE	Fortgeschrittener Modus
 	EN	Advanced Mode
 
 SETUP_PLUGIN_FAVORITES_ADVANCED_DESC
 	DE	Der Fortgeschrittene Modus erlaubt es, Radio Stationen von externen Verzeichnissen, wie z.B. den Slim Picks, über "Neuer Eintrag" hinzuzufügen.
-	EN	Advanced mode allows you to add radio stations from external directories such as Slim Picks via 'New Entry'.
+	EN	Advanced mode allows you to add radio stations from external directories such as Slim Picks via 'Add'.
 
 SETUP_PLUGIN_FAVORITES_ADD_DIRECTORY_DESC
 	DE	Unten können Sie Verzeichnisse von Radio Stationen hinzufügen.<p>Stationen aus diesen Verzeichnissen können dann über "Neuer Eintrag" zu ihren Favoriten oder anderen OPML Wiedergabelisten hinzugefügt werden. Der "Zurücksetzen" Knopf ersetzt die Liste wieder durch das Slim Picks Verzeichnis.
-	EN	You may add radio stations directories below.<p>Stations from each directory will then be available to add to your Favorites list or other opml playlists via the New Entry menu of the Favorites editor.  (Pressing the reset button restores the default Slim Picks directory.)
+	EN	You may add radio stations directories below.<p>Stations from each directory will then be available to add to your Favorites list or other opml playlists via the Add menu of the Favorites editor.  (Pressing the reset button restores the default Slim Picks directory.)
 
 SETUP_PLUGIN_FAVORITES_ADD_DIRECTORY
 	DE	Neues Verzeichnis hinzufügen

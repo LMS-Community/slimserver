@@ -21,8 +21,6 @@ use Slim::Web::Pages;
 
 my $log = logger('formats.xml');
 
-my @editors; # editors registered for xmlbrowser pages
-
 sub handleWebIndex {
 	my ( $class, $args ) = @_;
 
@@ -290,17 +288,6 @@ sub handleFeed {
 		}
 	}
 
-	# add edit link if editor for this page
-	for my $editor ( @editors ) {
-		if ($params->{'url'} =~ $editor->{'pattern'}) {
-			$stash->{'edit'} = {
-				'url'  => sprintf("%s?url=%s", $editor->{'url'}, $params->{'url'}),
-				'text' => $editor->{'text'},
-			};
-			last;
-		}
-	}
-
 	my $output = processTemplate($template, $stash);
 	
 	# done, send output back to Web module for display
@@ -366,18 +353,6 @@ sub handleSubFeed {
 
 sub processTemplate {	
 	return Slim::Web::HTTP::filltemplatefile( @_ );
-}
-
-sub registerEditor {
-	my $pattern = shift;
-	my $url     = shift;
-	my $text    = shift;
-
-	push @editors, {
-		'pattern' => $pattern,
-		'url'     => $url,
-		'text'    => $text,
-	};
 }
 
 1;

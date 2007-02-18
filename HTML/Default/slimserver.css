@@ -381,6 +381,12 @@ div#homeMenu {
 	padding-right: 80px;
 }
 
+.browsedbListItemFullWidth {
+	position: relative;
+	padding: 6px;
+	padding-right: 0px;
+}
+
 #currentListItem {
 	border: 1px solid #888;
 }

@@ -15,6 +15,7 @@ use XML::Simple;
 use File::Basename;
 use File::Spec::Functions qw(:ALL);
 use File::Temp qw(tempfile);
+use Storable;
 
 my $log = logger('favorites');
 
@@ -43,7 +44,7 @@ sub new {
 
 	} else {
 
-		$ref->{'opml'} = $nullopml;
+		$ref->{'opml'} = Storable::dclone($nullopml);
 	}
 
 	return $ref;
@@ -108,7 +109,7 @@ sub save {
 
 	# ensure server XML cache for this filename is removed - this needs to align with server XMLbrowsers
 	my $cache = Slim::Utils::Cache->new();
-	$cache->remove( Slim::Utils::Misc::fileURLFromPath($filename) . '_parsedXML' );
+	$cache->remove( $class->fileurl . '_parsedXML' );
 
     my $dir = $filename ? dirname($filename) : undef;
 
@@ -146,10 +147,6 @@ sub save {
 	$class->{'error'} = 'saveerror';
 }
 
-sub toplevel {
-	return 	shift->{'opml'}->{'body'}[0]->{'outline'} ||= [];
-}
-
 sub title {
 	my $class = shift;
 	my $title = shift;
@@ -157,14 +154,6 @@ sub title {
 	return $class->{'opml'}->{'head'}->{'title'} unless $title;
 
 	$class->{'opml'}->{'head'}->{'title'} = $title;
-}
-
-sub error {
-	return shift->{'error'};
-}
-
-sub clearerror {
-	delete shift->{'error'};
 }
 
 sub filename {
@@ -180,6 +169,78 @@ sub filename {
 	}
 
 	return $class->{'filename'} = $name;
+}
+
+sub fileurl {
+	my $class = shift;
+
+	return Slim::Utils::Misc::fileURLFromPath( $class->filename );
+}
+
+sub toplevel {
+	return 	shift->{'opml'}->{'body'}[0]->{'outline'} ||= [];
+}
+
+sub error {
+	return shift->{'error'};
+}
+
+sub clearerror {
+	delete shift->{'error'};
+}
+
+sub level {
+	my $class    = shift;
+	my $index    = shift;
+	my $contains = shift; # return the level containing the index rather than level for index
+
+	my @ind;
+	my @prefix;
+	my $pos = $class->toplevel;
+
+	if (ref $index eq 'ARRAY') {
+		@ind = @$index;
+	} else {
+		@ind = split(/\./, $index);
+	}
+
+	my $count = scalar @ind - ($contains && scalar @ind && 1);
+
+	while ($count && exists $pos->[$ind[0]]->{'outline'}) {
+		push @prefix, $ind[0];
+		$pos = $pos->[shift @ind]->{'outline'};
+		$count--;
+	}
+
+	unless ($count) {
+		if ($contains && $pos->[ $ind[0] ]) {
+			return $pos, $ind[0], @prefix;
+		} else {
+			return $pos, undef, @prefix;
+		}
+	}
+
+	return undef, undef, undef;
+}
+
+sub entry {
+	my $class    = shift;
+	my $index    = shift;
+
+	my @ind;
+	my $pos = $class->{'opml'}->{'body'}[0];
+
+	if (ref $index eq 'ARRAY') {
+		@ind = @$index;
+	} else {
+		@ind = split(/\./, $index);
+	}
+
+	while (@ind && ref $pos->{'outline'}->[ $ind[0] ] eq 'HASH') {
+		$pos = $pos->{'outline'}->[shift @ind];
+	}
+
+	return @ind ? undef : $pos;
 }
 
 1;
