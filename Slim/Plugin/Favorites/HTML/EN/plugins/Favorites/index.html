@@ -3,54 +3,7 @@
 
 [% IF errormsg %]<p>[% errormsg %]</p>[% END %]
 
-[% IF newentry %]
-	<p>[% "PLUGIN_FAVORITES_ADD_DESC" | string %]</p>
-	<form name="newentry" method="get" action="[% webroot %]plugins/Favorites/index.html">
-		<table width="100%">
-		<tr><td colspan="5"><h3>[% "PLUGIN_FAVORITES_ADDSTREAM" | string %]</h3></td></tr>
-		<tr><td style="width:5%">[% "TITLE" | string %]</td>
-		<td style="width:40%"><input type="text" class="stdedit" name="streamtitle" style="width: 100%"></td>
-		<td style="width:6%; text-align: right">[% "URL" | string %]</td>
-		<td><input type="text" class="stdedit" name="streamurl"	style="width: 100%"></td>
-		<td><center><input type="submit" class="stdclick" name="newstream" value=[% "ADD" | string %]></center></td></tr>
-		<tr><td colspan="5"><h3>[% "PLUGIN_FAVORITES_ADDMENU" | string %]</h3></td></tr>
-		<tr><td style="width:5%;">[% "TITLE" | string %]</td>
-		<td colspan="3" style="width: 35%"><input type="text" class="stdedit" name="menutitle" style="width: 100%;"></td>
-		<td><center><input type="submit" class="stdclick" name="newmenu" value=[% "ADD" | string %]></center></td></tr>
-		<tr><td colspan="5"><h3>[% "PLUGIN_FAVORITES_ADDOPMLMENU" | string %]</h3></td></tr>
-		<tr><td>[% "TITLE" | string %]</td><td><input type="text" class="stdedit" name="opmlmenutitle" style="width: 100%"></td>
-		<td style="width:6%; text-align: right">[% "URL" | string %]</td><td><input type="text" class="stdedit" name="opmlmenuurl" style="width: 100%"></<td>
-		<td><center><input type="submit" class="stdclick" name="newopmlmenu" value=[% "ADD" | string %]></center></td></tr>
-
-		[% IF external %]
-
-		[% FOREACH source = external %]
-			<tr><td colspan="5"><h3>[% source.title | getstring %]</h3></td></tr>
-			[% FOREACH menu = source.menu %]
-				<tr><td colspan="1">[% menu.name | getstring %]</td>
-				<td	colspan="3"><select class="stdedit"	name="extval.[% source.ind %].[% menu.ind %]" style="width: 100%">
-				[% FOREACH item = menu.opts %]
-					<option>[% item %]</option>
-				[% END %]
-				</select></td>
-				<td><center><input type="submit" class="stdclick" name="extsel.[% source.ind %].[% menu.ind %]" value=[% "ADD" | string %]></center></td></tr>
-				</tr>
-			[% END %]
-		[% END %]		
-
-		[% END %]
-
-		</table>
-
-		<p></p>
-
-		<input type="hidden" name="index" value="[% levelindex %]">
-		[% IF NOT newentrymore AND advanced %]<input type="submit" name="newentrymore" class="stdclick" value=[% "PLUGIN_FAVORITES_MORE" | string %]>[% END %]
-		
-		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
-	</form>
-
-[% ELSIF loaddialog %]
+[% IF load %]
 
 	<form name="loadfile" method="get" action="[% webroot %]plugins/Favorites/index.html">
 	[% "PLUGIN_FAVORITES_LOADFILE" | string %]
@@ -60,7 +13,7 @@
 		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 	</form>
 
-[% ELSIF savedialog %]
+[% ELSIF save %]
 
 	<form name="savefile" method="get" action="[% webroot %]plugins/Favorites/index.html">
 	[% "PLUGIN_FAVORITES_SAVEFILE" | string %]
@@ -70,7 +23,7 @@
 		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 	</form>
 
-[% ELSIF importdialog %]
+[% ELSIF import %]
 
 	[% "PLUGIN_FAVORITES_IMPORT_DESC" | string %]
 	<p></p>
@@ -94,7 +47,7 @@
 
 [% ELSE %]
 
-	[% IF NOT favorites %]<h4><a href="[% webroot %]plugins/Favorites/index.html?action=edittitle&index=[% index %]">[% title %]</a></h4>[% END %]
+	[% IF NOT favorites %]<h4><a href="[% webroot %]plugins/Favorites/index.html?edittitle=1&index=[% index %]">[% title %]</a></h4>[% END %]
 	
 	[% odd = 1 %]
 		
@@ -140,18 +93,20 @@
 					<form name="edittitle" width="100%" method="get" action="[% webroot %]plugins/Favorites/index.html">
 						<input type="hidden" name="index" value="[% entry.index %]">					
 						<input type="hidden" name="action" value="editset">
+						<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
 						<input style="width: 80%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]">
 						<input type="submit" class="stdclick" name="editset" value=[% "SAVE" | string %]>
-						<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
+						<input type="submit" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 					</form>
 				[% ELSE %]
 					<form name="edittitleurl" width="100%" method="get" action="[% webroot %]plugins/Favorites/index.html">
 						<input type="hidden" name="index" value="[% entry.index %]">
 						<input type="hidden" name="action" value="editset">
+						<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
 						<input style="width: 39%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]">
 						<input style="width: 39%;" type="text" class="stdedit" name="entryurl" value="[% entry.url %]">
 						<input type="submit" class="stdclick" name="editset" value=[% "SAVE" | string %]>
-						<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
+						<input type="submit" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 					</form>
 				[% END %]
 				[% END %]
@@ -179,9 +134,10 @@
 	[% END %]
 
 	<p></p>
-	<form name="loadsave" method="get" action="[% webroot %]plugins/Favorites/index.html">
-		<input type="hidden" name="index" value="[% indexlevel %]">
-		<input type="submit" class="stdclick" name="newentry" value="[% "ADD" | string %]">
+	<form name="buttons" method="get" action="[% webroot %]plugins/Favorites/index.html">
+		<input type="hidden" name="index" value="[% levelindex %]">
+		<input type="submit" class="stdclick" name="newentry" value="[% "PLUGIN_FAVORITES_NEWENTRY" | string %]">
+		<input type="submit" class="stdclick" name="newlevel" value="[% "PLUGIN_FAVORITES_NEWFOLDER" | string %]">
 		<input type="submit" class="stdclick" name="import" value="[% "PLUGIN_FAVORITES_IMPORT" | string %]">
 		[% IF NOT favorites %]
 		<input type="submit" class="stdclick" name="load" value="[% "PLUGIN_FAVORITES_LOAD" | string %]">

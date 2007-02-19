@@ -27,7 +27,6 @@ use Slim::Utils::Strings qw(string);
 
 use Slim::Plugin::Favorites::Opml;
 use Slim::Plugin::Favorites::OpmlFavorites;
-use Slim::Plugin::Favorites::Directory;
 use Slim::Plugin::Favorites::Settings;
 use Slim::Plugin::Favorites::Playlist;
 
@@ -195,7 +194,7 @@ sub indexHandler {
 		my $filename = $params->{'filename'};
 		my $playlist;
 
-		if ($filename =~ /\.opml/) {
+		if ($filename =~ /\.opml$/) {
 
 			$playlist = Slim::Plugin::Favorites::Opml->new($filename)->toplevel;
 
@@ -226,10 +225,6 @@ sub indexHandler {
 
 		if ($action eq 'edit') {
 			$edit = $indexLevel;
-		}
-
-		if ($action eq 'edittitle') {
-			$params->{'edittitle'} = 1;
 		}
 
 		if ($action eq 'delete') {
@@ -267,12 +262,31 @@ sub indexHandler {
 			$client->execute(['playlist', $action, $stream]);
 		}
 
-		if ($action eq 'editset' && $params->{'editset'} && defined $params->{'index'}) {
+		if ($action eq 'editset' && defined $params->{'index'}) {
 
-			my $entry = $opml->entry($params->{'index'});
+			if ($params->{'cancel'} && $params->{'removeoncancel'}) {
 
-			$entry->{'text'} = $params->{'entrytitle'};
-			$entry->{'URL'} = $params->{'entryurl'} if defined($params->{'entryurl'});
+				# cancel on a new item - remove it
+				splice @$level, $indexLevel, 1;
+
+			} if ($params->{'editset'}) {
+
+				# editted item - modify including possibly changing type
+				my $entry = @$level[$indexLevel];
+
+				$entry->{'text'} = $params->{'entrytitle'};
+
+				if (defined $params->{'entryurl'}) {
+
+					$entry->{'URL'} = $params->{'entryurl'};
+
+					if ($params->{'entryurl'} =~ /\.opml$/) {
+						delete $entry->{'type'};
+					} else {
+						$entry->{'type'} = 'audio';
+					}
+				}
+			}
 
 			$changed = 1;
 		}
@@ -291,94 +305,35 @@ sub indexHandler {
 		$changed = 1;
 	}
 
-	if ($params->{'newmenu'}) {
-
-		push @$level, {
-			'text'   => $params->{'menutitle'},
-			'outline'=> [],
-		};
-
-		$changed = 1;
-	}
-
-	if ($params->{'newstream'}) {
+	if ($params->{'newentry'}) {
 
 		push @$level,{
-			'text' => $params->{'streamtitle'},
-			'URL'  => $params->{'streamurl'},
+			'text' => string('PLUGIN_FAVORITES_NEWENTRY'),
+			'URL'  => string('PLUGIN_FAVORITES_NEWURL'),
 			'type' => 'audio',
 		};
 
+		$edit = scalar @$level - 1;
+		$params->{'removeoncancel'} = 1;
 		$changed = 1;
 	}
 
-	if ($params->{'newopmlmenu'}) {
+	if ($params->{'newlevel'}) {
 
 		push @$level, {
-			'text' => $params->{'opmlmenutitle'},
-			'URL'  => $params->{'opmlmenuurl'},
+			'text'   => string('PLUGIN_FAVORITES_NEWFOLDER'),
+			'outline'=> [],
 		};
 
+		$edit = scalar @$level - 1;
+		$params->{'removeoncancel'} = 1;
 		$changed = 1;
-	}
-
-	if ($params->{'newentrymore'}) {
-
-		$params->{'newentry'} = 1;
-
-		my $sourceInd = 1;
-
-		for my $infoSource (Slim::Utils::Prefs::getArray('plugin_favorites_directories')) {
-
-			my $directory = Slim::Plugin::Favorites::Directory->new($infoSource);
-
-			my $extEntry = {
-				'ind'   => $sourceInd++,
-				'title' => $directory->title
-			};
-
-			my $catInd = 1;
-
-			for my $cat (@{$directory->categories}) {
-				push @{$extEntry->{'menu'}}, {
-					'ind'  => $catInd++,
-					'name' => $cat,
-					'opts' => $directory->itemNames($cat),
-				};
-			}
-
-			push @{$params->{'external'}}, $extEntry;
-		}
-	}
-
-	# search for external information source selection in key: extsel.$sourceIndex.$categoryIndex
-	if ($params->{'url_query'} =~ /extsel\./) {
-
-		for my $key (keys %$params) {
-
-			if ($key =~ /^extsel\.(\d+)\.(\d+)/) {
-
-				my $source = Slim::Utils::Prefs::getInd('plugin_favorites_directories', $1 - 1);
-				my $name = $params->{"extval.$1.$2"};
-
-				my $entry = Slim::Plugin::Favorites::Directory->new($source)->item($2 - 1, $name);
-
-				push @$level, $entry if $entry;
-
-				$changed = 1;
-				last;
-			}
-		}
 	}
 
 	# save each change if in favorites mode
 	if ($changed && $opml && $opml->isa('Slim::Plugin::Favorites::OpmlFavorites')) {
 		$opml->save;
 	}
-
-	if ($params->{'load'}  ) { $params->{'loaddialog'} = 1;   }
-	if ($params->{'save'}  ) { $params->{'savedialog'} = 1;   }
-	if ($params->{'import'}) { $params->{'importdialog'} = 1; }
 
 	# set params for page build
 	if (defined $opml) {

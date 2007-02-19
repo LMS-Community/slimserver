@@ -2,50 +2,8 @@
 
 	<div class="settingSection">
 
-		<div class="prefHead">[% "SETUP_PLUGIN_FAVORITES_ADVANCED" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_PLUGIN_FAVORITES_ADVANCED_DESC" | string %]</div>
-
-		<div class="prefDesc">[% "ENABLE" | string %]
-		<input name="advanced" type="checkbox" [% IF advanced %] checked [% END %]>
-		</div>
-		
-		[% IF advanced %]
-
-		<p></p>
-
-		<div class="prefDesc">[% "SETUP_PLUGIN_FAVORITES_ADD_DIRECTORY_DESC" | string %]</div>
-
-		<table border="0" cellspacing="7" cellpadding="7">
-
-			<tr>
-			<td><label for="new_feed" class="stdlabel">[% "SETUP_PLUGIN_FAVORITES_ADD_DIRECTORY" | string %]</label></td>
-
-			</tr>
-			<tr><td><input type="text" class="stdedit" name="plugin_favorites_directories" id="new_feed" value="" size="100" /></td></tr>
-
-			<tr></tr>
-			<tr></tr>
-
-			<tr><td><label>[% "SETUP_PLUGIN_FAVORITES_EXISTING_DIRECTORIES" | string %]</label></td><td></td></tr>
-
-		[% FOREACH pref = dirs %]
-
-			<tr>
-
-			<td><input type="text" class="stdedit" name="plugin_favorites_directories" id="plugin_favorites_directories" value="[% pref %]" size="100" /></td>
-
-			</tr>
-
-		[% END %]
-
-		</table>
-
-		<input name="reset" type="submit" class="stdclick" value="[% "SETUP_PLUGIN_FAVORITES_RESET" | string %]">
-
-		[% END %]
-
-		<div class="prefHead">[% "SETUP_PLUGIN_FAVORITES_EDIT" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_PLUGIN_FAVORITES_EDIT_DESC" | string %]</div>
+		<div class="prefHead">[% "PLUGIN_FAVORITES_PLAYLIST_EDITOR" | string | upper %]</div>
+		<div class="prefDesc">[% "PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC" | string %]</div>
 
 		<div class="prefDesc">[% "ENABLE" | string %]
 		<input name="opmleditor" type="checkbox" [% IF opmleditor %] checked [% END %]>
