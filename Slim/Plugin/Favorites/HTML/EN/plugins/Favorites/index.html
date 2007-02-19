@@ -112,7 +112,7 @@
 				[% END %]
 			[% ELSE %]
 				[% WRAPPER contentitem controls = 'favoritescontrol' %]
-					<a href="[% webroot	%]plugins/Favorites/index.html?index=[% entry.index	%][% IF entry.audio %]&action=edit[% END %]">[% entry.title %]</a>
+					<a href="[% webroot	%]plugins/Favorites/index.html?index=[% entry.index	%]">[% entry.title %]</a>
 				[% END %]
 			[% END %]
 			
@@ -136,7 +136,7 @@
 	<p></p>
 	<form name="buttons" method="get" action="[% webroot %]plugins/Favorites/index.html">
 		<input type="hidden" name="index" value="[% levelindex %]">
-		<input type="submit" class="stdclick" name="newentry" value="[% "PLUGIN_FAVORITES_NEWENTRY" | string %]">
+		<input type="submit" class="stdclick" name="newentry" value="[% favorites ? "PLUGIN_FAVORITES_NEWFAVORITE" : "PLUGIN_FAVORITES_NEWENTRY" | string %]">
 		<input type="submit" class="stdclick" name="newlevel" value="[% "PLUGIN_FAVORITES_NEWFOLDER" | string %]">
 		<input type="submit" class="stdclick" name="import" value="[% "PLUGIN_FAVORITES_IMPORT" | string %]">
 		[% IF NOT favorites %]

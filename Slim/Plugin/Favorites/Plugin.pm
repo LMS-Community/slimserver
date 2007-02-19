@@ -278,7 +278,7 @@ sub indexHandler {
 				# cancel on a new item - remove it
 				splice @$level, $indexLevel, 1;
 
-			} if ($params->{'editset'}) {
+			} elsif ($params->{'editset'}) {
 
 				# editted item - modify including possibly changing type
 				my $entry = @$level[$indexLevel];
@@ -317,8 +317,8 @@ sub indexHandler {
 	if ($params->{'newentry'}) {
 
 		push @$level,{
-			'text' => string('PLUGIN_FAVORITES_NEWENTRY'),
-			'URL'  => string('PLUGIN_FAVORITES_NEWURL'),
+			'text' => string('PLUGIN_FAVORITES_NAME'),
+			'URL'  => string('PLUGIN_FAVORITES_URL'),
 			'type' => 'audio',
 		};
 
@@ -330,7 +330,7 @@ sub indexHandler {
 	if ($params->{'newlevel'}) {
 
 		push @$level, {
-			'text'   => string('PLUGIN_FAVORITES_NEWFOLDER'),
+			'text'   => string('PLUGIN_FAVORITES_NAME'),
 			'outline'=> [],
 		};
 
