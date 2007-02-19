@@ -234,6 +234,15 @@ sub indexHandler {
 			$changed = 1;
 		}
 
+		if ($action eq 'move' && defined $params->{'to'} && $params->{'to'} < scalar @$level) {
+
+			my $entry = splice @$level, $indexLevel, 1;
+
+			splice @$level, $params->{'to'}, 0, $entry;
+
+			$changed = 1;
+		}
+
 		if ($action eq 'movedown') {
 
 			my $entry = splice @$level, $indexLevel, 1;
