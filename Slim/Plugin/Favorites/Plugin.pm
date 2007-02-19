@@ -351,8 +351,8 @@ sub indexHandler {
 		$params->{'filename'}  = $opml->filename;
 	}
 
-	$params->{'deleted'}   = defined $deleted ? $deleted->{'text'} : undef;
-	$params->{'advanced'}  = Slim::Utils::Prefs::get('plugin_favorites_advanced');
+	$params->{'deleted'}  = defined $deleted ? $deleted->{'text'} : undef;
+	$params->{'editmode'} = defined $edit;
 
 	if ($opml && $opml->error) {
 		$params->{'errormsg'} = string('PLUGIN_FAVORITES_' . $opml->error) . " " . $opml->filename;
