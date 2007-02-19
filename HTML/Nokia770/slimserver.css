@@ -511,3 +511,23 @@ table.floater {
         margin-right: 10px;
 }
 
+input.searchButton {
+    FONT-SIZE:12pt;
+    FONT-FAMILY: Verdana;
+    COLOR: #666666;
+    background-image:url(html/images/button_gray.gif);
+    BORDER-LEFT: black 0pt none;
+    BORDER-RIGHT: black 0pt none;
+    BORDER-TOP: black 0pt none;
+    BORDER-BOTTOM: black 0pt none;
+    WIDTH: 265;
+    HEIGHT: 44;
+}
+input.searchForm {
+    border: 1px solid black;
+    FONT-SIZE: 20pt;
+    FONT-FAMILY: Verdana;
+    WIDTH: 400;
+    HEIGHT: 50;
+    padding: 10;
+}

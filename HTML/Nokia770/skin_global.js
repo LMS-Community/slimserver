@@ -79,3 +79,25 @@ function resize(src,width) {
 		src.width = width;
 	}
 }
+
+function toggleGalleryView(artwork) {
+	var thisdoc = document;
+	if (thisdoc.location.pathname != '') {
+		myString = new String(thisdoc.location.href);
+		if (artwork) {
+			setCookie( 'SlimServer-albumView', "1" );
+			if (thisdoc.location.href.indexOf('start') == -1) {
+				thisdoc.location=thisdoc.location.href+"&artwork=1";
+			} else {
+				myString = new String(thisdoc.location.href);
+				var rExp = /\&start=/gi;
+				thisdoc.location=myString.replace(rExp, "&artwork=1&start=");
+			}
+		} else {
+			setCookie( 'SlimServer-albumView', "" );
+			var rExp = /\&artwork=1/gi;
+			thisdoc.location=myString.replace(rExp, "");
+		}
+	}
+}
+
