@@ -9,7 +9,7 @@
 	<form name="title" method="get" action="[% webroot %]plugins/Favorites/index.html">
 		[% "TITLE" | string %]
 		<input type="hidden" name="index" value="[% levelindex %]">
-		<input type="text" class="stdedit" name="title" style="width: 75%;" value="[% title %]" onClick="this.value=''">
+		<input type="text" class="stdedit" name="title" style="width: 75%;" value="[% title %]" [% IF newentry %] onClick="this.value=''"[% END %] >
 		<input type="submit" class="stdclick" value=[% "SAVE" | string %]>
 		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 	</form>
@@ -64,7 +64,7 @@
 						<input type="hidden" name="index" value="[% entry.index %]">					
 						<input type="hidden" name="action" value="editset">
 						<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
-						<input style="width: 80%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" onClick="this.value=''">
+						<input style="width: 80%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newlevel %] onClick="this.value=''"[% END %]>
 						<input type="submit" class="stdclick" name="editset" value=[% "SAVE" | string %]>
 						<input type="submit" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 					</form>
@@ -73,8 +73,8 @@
 						<input type="hidden" name="index" value="[% entry.index %]">
 						<input type="hidden" name="action" value="editset">
 						<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
-						<input style="width: 39%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" onClick="this.value=''">
-						<input style="width: 39%;" type="text" class="stdedit" name="entryurl" value="[% entry.url %]" onClick="this.value=''">
+						<input style="width: 39%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newentry %] onClick="this.value=''"[% END %]>
+						<input style="width: 39%;" type="text" class="stdedit" name="entryurl" value="[% entry.url %]" [% IF newentry %] onClick="this.value=''"[% END %]>
 						<input type="submit" class="stdclick" name="editset" value=[% "SAVE" | string %]>
 						<input type="submit" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 					</form>
@@ -120,7 +120,7 @@
 
 	<form name="savefile" method="get" action="[% webroot %]plugins/Favorites/index.html">
 		<input type="hidden" name="index" value="[% levelindex %]">
-		<input type="text" class="stdedit" name="filename" style="width: 80%;" value="[% filename ? filename : "PLUGIN_FAVORITES_SAVEFILE" | getstring %]" onClick="this.value=''">
+		<input type="text" class="stdedit" name="filename" style="width: 80%;" value="[% filename ? filename : "PLUGIN_FAVORITES_SAVEFILE" | getstring %] [% UNLESS filename %] onClick="this.value=''" [% END %]">
 		<input type="submit" class="stdclick" name="savefile" value=[% "PLUGIN_FAVORITES_SAVE" | string %]>
 		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 	</form>
