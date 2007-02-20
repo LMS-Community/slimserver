@@ -3,6 +3,19 @@
 
 [% IF errormsg %]<p>[% errormsg %]</p>[% END %]
 
+[% IF edittitle %]
+
+<p>
+	<form name="title" method="get" action="[% webroot %]plugins/Favorites/index.html">
+		[% "TITLE" | string %]
+		<input type="hidden" name="index" value="[% levelindex %]">
+		<input type="text" class="stdedit" name="title" style="width: 75%;" value="[% title %]">
+		<input type="submit" class="stdclick" value=[% "SAVE" | string %]>
+		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
+	</form>
+</p>
+
+[% ELSE %]
 
 	[% IF NOT favorites %]<h4><a href="[% webroot %]plugins/Favorites/index.html?edittitle=1&index=[% index %]">[% title %]</a></h4>[% END %]
 	
@@ -92,12 +105,13 @@
 
 	<p></p>
 
+[% END %]
+
 [% IF load %]
 
 	<form name="loadfile" method="get" action="[% webroot %]plugins/Favorites/index.html">
-	[% "PLUGIN_FAVORITES_LOADFILE" | string %]
 		<input type="hidden" name="index" value="[% levelindex %]">
-		<input type="text" class="stdedit" name="filename" size="60">
+		<input type="text" class="stdedit" name="filename" style="width: 80%;" value="[% "PLUGIN_FAVORITES_LOADFILE" | string %]">
 		<input type="submit" class="stdclick" name="loadfile" value=[% "PLUGIN_FAVORITES_LOAD" | string %]>
 		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 	</form>
@@ -105,36 +119,22 @@
 [% ELSIF save %]
 
 	<form name="savefile" method="get" action="[% webroot %]plugins/Favorites/index.html">
-	[% "PLUGIN_FAVORITES_SAVEFILE" | string %]
 		<input type="hidden" name="index" value="[% levelindex %]">
-		<input type="text" class="stdedit" name="filename" value="[% filename %]" size="60">
+		<input type="text" class="stdedit" name="filename" style="width: 80%;" value="[% filename ? filename : "PLUGIN_FAVORITES_SAVEFILE" | getstring %]">
 		<input type="submit" class="stdclick" name="savefile" value=[% "PLUGIN_FAVORITES_SAVE" | string %]>
 		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 	</form>
 
 [% ELSIF import %]
 
-	[% "PLUGIN_FAVORITES_IMPORT_DESC" | string %]
-	<p></p>
 	<form name="importfile" method="get" action="[% webroot %]plugins/Favorites/index.html">
-	[% "PLUGIN_FAVORITES_IMPORTFILE" | string %]
 		<input type="hidden" name="index" value="[% levelindex %]">
-		<input type="text" class="stdedit" name="filename" size="60">
+		<input type="text" class="stdedit" name="filename" style="width: 78%;" value="[% "PLUGIN_FAVORITES_IMPORTFILE" | string %]">
 		<input type="submit" class="stdclick" name="importfile" value="[% "PLUGIN_FAVORITES_IMPORT" | string %]">
 		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 	</form>
 
-[% ELSIF edittitle %]
-
-	<form name="title" method="get" action="[% webroot %]plugins/Favorites/index.html">
-		[% "TITLE" | string %]
-		<input type="hidden" name="index" value="[% levelindex %]">
-		<input type="text" class="stdedit" name="title" size="60" value="[% title %]">
-		<input type="submit" class="stdclick" value=[% "SAVE" | string %]>
-		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
-	</form>
-
-[% ELSIF NOT editmode %]
+[% ELSIF NOT editmode AND NOT edittitle%]
 
 	<form name="buttons" method="get" action="[% webroot %]plugins/Favorites/index.html">
 		<input type="hidden" name="index" value="[% levelindex %]">

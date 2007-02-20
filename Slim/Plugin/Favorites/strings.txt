@@ -25,20 +25,13 @@ PLUGIN_FAVORITES_IMPORT
 	EN	Import
 
 PLUGIN_FAVORITES_LOADFILE
-	DE	Bitte geben Sie den Dateinamen oder die zu ladende URL an
-	EN	Enter filename/url to load
+	EN	Filename/Url
 
 PLUGIN_FAVORITES_SAVEFILE
-	DE	Bitte geben Sie einen Dateinamen an
-	EN	Enter filename to save
-
-PLUGIN_FAVORITES_IMPORT_DESC
-	DE	Den Inhalt einer Wiedergabeliste auf der aktuellen Ebene einfügen
-	EN	Import the contents of a playlist at the current level
+	EN	Filename
 
 PLUGIN_FAVORITES_IMPORTFILE
-	DE	Bitte geben Sie den Dateinamen oder die zu importierende URL an
-	EN	Enter filename/url to import
+	EN	Filename/Url
 
 PLUGIN_FAVORITES_NOFILE
 	DE	Datei nicht gefunden
