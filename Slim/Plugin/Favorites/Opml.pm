@@ -243,5 +243,18 @@ sub entry {
 	return @ind ? undef : $pos;
 }
 
+sub xmlbrowser {
+	my $class = shift;
+
+	return {
+		'head' => {
+			'title' => $class->title,
+		},
+		'body' => {
+			'outline' => Storable::dclone($class->toplevel),
+		}
+	};
+}
+
 1;
 

@@ -54,13 +54,13 @@ sub initPlugin {
 
 sub setMode {
 	my $class = shift;
-    my $client = shift;
-    my $method = shift;
+	my $client = shift;
+	my $method = shift;
 
-    if ( $method eq 'pop' ) {
-        Slim::Buttons::Common::popMode($client);
-        return;
-    }
+	if ( $method eq 'pop' ) {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
 
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
@@ -155,12 +155,12 @@ sub indexHandler {
 	# get the level to operate on - this is the level containing the index if action is set, otherwise the level specified by index
 	my ($level, $indexLevel, @indexPrefix) = $opml->level($params->{'index'}, defined $params->{'action'});
 
-	if (!defined $level && $opml->isa('Slim::Plugin::Favorites::OpmlFavorites')) {
+	if (!defined $level) {
 		# favorites editor cannot follow remote links, so pass through to xmlbrowser as index does not appear to be edittable
 		$log->info("passing through to xmlbrowser");
 
 		return Slim::Web::XMLBrowser->handleWebIndex( {
-			feed   => $opml->fileurl,
+			feed   => Slim::Formats::XML::parseOPML( $opml->xmlbrowser ),
 			args   => [$client, $params, @_],
 		} );
 	}
@@ -169,7 +169,7 @@ sub indexHandler {
 
 		$opml->load($params->{'filename'});
 
-		($level, $indexLevel, @indexPrefix) = ($opml->toplevel, undef, undef);
+		($level, $indexLevel, @indexPrefix) = $opml->level(undef, undef);
 		$deleted = undef;
 	}
 
@@ -278,7 +278,7 @@ sub indexHandler {
 				# cancel on a new item - remove it
 				splice @$level, $indexLevel, 1;
 
-			} elsif ($params->{'editset'}) {
+			} elsif ($params->{'entrytitle'}) {
 
 				# editted item - modify including possibly changing type
 				my $entry = @$level[$indexLevel];
