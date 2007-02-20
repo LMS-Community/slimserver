@@ -34,6 +34,7 @@ function changePlayer(player_List) {
 	player = escape(player);
 	
 	var newPlayer = "=" + player;
+	newHref(parent.frames['status'].document,newPlayer);
 	refreshPlaylist(player);
 	
 	var args = 'player=' + player + '&ajaxRequest=1&s=' + Math.random();
@@ -96,7 +97,9 @@ function toggleStatus(divs) {
 
 function resizePlaylist(page) {
 	//$('playlist').height = document.body.clientHeight - $('playlistframe').offsetTop;
-	top.document.getElementById('player_frame').rows = $('playlistStatus').offsetTop+20+', *';
+	if ($('playlistStatus')) {
+		top.document.getElementById('player_frame').rows = $('playlistStatus').offsetTop+20+', *';
+	}
 }
 
 function openRemote() {
