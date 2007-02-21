@@ -1,11 +1,12 @@
 [%- FILTER null %]
-[% statusroot = 'status.html' %]
-[% noHomeLink = 1 %]
+[% statusroot      = 'status.html' %]
+[% noHomeLink      = 1 %]
 [% controlGraphics = 1 %]
-[% useTabList = 1 %]
+[% useTabList      = 1 %]
+[% useAJAX         = 1 %]
 
 [%# Default to no targets for links %]
-[% notarget = 1 %]
+[% notarget        = 1 %]
 
 [% BLOCK cmdlink %]
 <td class="[% isCurrent ? "listing2" : "listing" %]" align="center">

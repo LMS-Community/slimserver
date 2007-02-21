@@ -2,12 +2,16 @@
 <html>
       <head>
             [% PROCESS standardheader.html %]
+	[% IF pageHeaderScripts %]
+		[% pageHeaderScripts %]
+	[% ELSE %]
 		<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
 		<script src="[% webroot %]html/prototype.js?r=[% revision %]"></script>
 		<script>
 		[% IF thispage == 'status' %][% PROCESS status.js %][% ELSIF thispage == 'search' %][% PROCESS search.js %][% ELSIF thispage == 'playlist' %][% PROCESS playlist.js %][% ELSIF thispage == 'artwork' || ( artwork == 1 && (levelName == 'album' || levelName == 'age')) %][% PROCESS artwork.js %][% ELSE %][% PROCESS browse.js %][% END %]
 
 		</script>
+	[% END %]
       </head>
 
 <body [% IF class %]class = '[% class %]'[% END %] marginwidth=0 marginheight=0>
