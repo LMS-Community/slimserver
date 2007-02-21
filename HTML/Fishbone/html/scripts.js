@@ -5,7 +5,7 @@ var playerExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 
 function homelink() {
 	if (homestring) {
-		$('homelink').innerHTML = homestring;
+		document.getElementById('homelink').innerHTML = homestring;
 	}
 }
 
@@ -220,14 +220,14 @@ function toggleText(set) {
 				
 				thisdiv.style.display = 'inline';
 				setCookie('SlimServer-fishbone-showtext',1);
-				$('showText').style.display = 'none';
-				$('hideText').style.display = 'inline';
+				document.getElementById('showText').style.display = 'none';
+				document.getElementById('hideText').style.display = 'inline';
 
 			} else {
 				thisdiv.style.display = 'none';
 				setCookie('SlimServer-fishbone-showtext',0);
-				$('hideText').style.display = 'none';
-				$('showText').style.display = 'inline';
+				document.getElementById('hideText').style.display = 'none';
+				document.getElementById('showText').style.display = 'inline';
 			}
 		}
 	}
