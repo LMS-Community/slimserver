@@ -111,6 +111,9 @@ sub save {
 	my $cache = Slim::Utils::Cache->new();
 	$cache->remove( $class->fileurl . '_parsedXML' );
 
+	# remove cached hash for xmlbrowser
+	$class->{'xmlbrowser'} = undef;
+
     my $dir = $filename ? dirname($filename) : undef;
 
 	if (-w $dir) {
@@ -246,14 +249,14 @@ sub entry {
 sub xmlbrowser {
 	my $class = shift;
 
-	return {
+	return $class->{'xmlbrowser'} ||= Slim::Formats::XML::parseOPML ( {
 		'head' => {
 			'title' => $class->title,
 		},
 		'body' => {
 			'outline' => Storable::dclone($class->toplevel),
 		}
-	};
+	} );
 }
 
 1;

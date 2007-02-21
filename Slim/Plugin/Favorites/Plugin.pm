@@ -160,10 +160,13 @@ sub indexHandler {
 		$log->info("passing through to xmlbrowser");
 
 		return Slim::Web::XMLBrowser->handleWebIndex( {
-			feed   => Slim::Formats::XML::parseOPML( $opml->xmlbrowser ),
+			feed   => $opml->xmlbrowser,
 			args   => [$client, $params, @_],
 		} );
 	}
+
+	# if not editting favorites create favs class so we can add or delete urls from favorites
+	my $favs = $opml->isa('Slim::Plugin::Favorites::OpmlFavorites') ? undef : Slim::Plugin::Favorites::OpmlFavorites->new($client);
 
 	if ($params->{'loadfile'}) {
 
@@ -181,11 +184,9 @@ sub indexHandler {
 
 		$changed = undef unless $opml->error;
 
-		my $favorites = Slim::Plugin::Favorites::OpmlFavorites->new($client);
-
-		if ($favorites && $opml != $favorites && $opml->filename eq $favorites->filename) {
+		if ($favs && $opml != $favs && $opml->filename eq $favs->filename) {
 			# overwritten the favorites file - force favorites to be reloaded
-			$favorites->load;
+			$favs->load;
 		}
 	}
 
@@ -261,7 +262,7 @@ sub indexHandler {
 			$changed = 1;
 		}
 
-		if ($action =~ /play|add/ && $client) {
+		if ($action =~ /^play$|^add$/ && $client) {
 
 			my $entry = $opml->entry($params->{'index'});
 			my $stream = $entry->{'URL'} || $entry->{'url'};
@@ -298,6 +299,20 @@ sub indexHandler {
 			}
 
 			$changed = 1;
+		}
+
+		if ($action eq 'favadd' && defined $params->{'index'} && $favs) {
+
+			my $entry = @$level[$indexLevel];
+
+			$favs->add( $entry->{'URL'}, $entry->{'text'} );
+		}
+
+		if ($action eq 'favdel' && defined $params->{'index'} && $favs) {
+
+			my $entry = @$level[$indexLevel];
+
+			$favs->deleteUrl( $entry->{'URL'} );
 		}
 	}
 
@@ -340,13 +355,13 @@ sub indexHandler {
 	}
 
 	# save each change if in favorites mode
-	if ($changed && $opml && $opml->isa('Slim::Plugin::Favorites::OpmlFavorites')) {
+	if ($changed && $opml && !$favs) {
 		$opml->save;
 	}
 
 	# set params for page build
 	if (defined $opml) {
-		$params->{'favorites'} = $opml->isa('Slim::Plugin::Favorites::OpmlFavorites');
+		$params->{'favorites'} = !$favs;
 		$params->{'title'}     = $opml->title;
 		$params->{'filename'}  = $opml->filename;
 	}
@@ -364,7 +379,7 @@ sub indexHandler {
 	my $i = 0;
 
 	foreach my $opmlEntry (@$level) {
-		push @entries, {
+		my $entry = {
 			'title'   => $opmlEntry->{'text'} || '',
 			'url'     => $opmlEntry->{'URL'} || $opmlEntry->{'url'} || '',
 			'audio'   => (defined $opmlEntry->{'type'} && $opmlEntry->{'type'} eq 'audio'),
@@ -372,6 +387,12 @@ sub indexHandler {
 			'edit'    => (defined $edit && $edit == $i),
 			'index'   => join '.', (@indexPrefix, $i++),
 		};
+
+		if ($favs && $entry->{'url'}) {
+			$entry->{'favorites'} = $favs->hasUrl($entry->{'url'}) ? 2 : 1;
+		}
+
+		push @entries, $entry;
 	}
 
 	$params->{'entries'} = \@entries;

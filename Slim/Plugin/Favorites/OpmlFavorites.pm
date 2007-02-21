@@ -74,7 +74,7 @@ sub _urlindex {
 
 	for my $entry (@{$level}) {
 
-		if ($entry->{'type'} eq 'audio' && ($entry->{'URL'} || $entry->{'url'}) ) {
+		if ($entry->{'URL'} || $entry->{'url'}) {
 			$class->{'urlindex'}->{ $entry->{'URL'} || $entry->{'url'} } = {
 				'text' => $entry->{'text'},
 				'ind'  => $index."$i",
@@ -136,16 +136,28 @@ sub add {
 		return $fav->{'num'};
 	}
 
-	# add it to end of top level
-	push @{$class->toplevel}, {
+	my $entry = {
 		'text' => $title,
 		'URL'  => $url,
-		'type' => 'audio',
 	};
+
+	if ($url !~ /\.opml$/) {
+		$entry->{'type'} = 'audio';
+	};
+
+	# add it to end of top level
+	push @{$class->toplevel}, $entry;
 
 	$class->save;
 
 	return scalar @{$class->toplevel} - 1;
+}
+
+sub hasUrl {
+	my $class = shift;
+	my $url   = shift;
+
+	return (defined $class->{'urlindex'}->{ $url });
 }
 
 sub findUrl {
