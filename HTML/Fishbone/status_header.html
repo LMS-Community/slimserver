@@ -60,12 +60,13 @@
 <head>
 	[% pagetitle = player_name %]
 	[% PROCESS customheader.html %]
+	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
 	<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
-	<script type="text/javascript" src="[% webroot %]html/prototype.js" ></script>
-	<script TYPE="text/javascript" src="[% webroot %]html/songprogress.js"></script>
+	<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
+	<script TYPE="text/javascript" src="[% webroot %]html/songprogress.js?r=[% revision %]"></script>
 	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
-	<script TYPE="text/javascript" language="JavaScript">[% PROCESS html/ajax.js %]</script>
-	[% IF playercount == '0' %]<script TYPE="text/javascript" language="JavaScript">
+	<script TYPE="text/javascript">[% PROCESS html/ajax.js %]</script>
+	[% IF playercount == '0' %]<script TYPE="text/javascript">
 		<!--Hide
 		[% IF undock %]self.close();[% ELSE %]
 		location="status.html";[% END %]

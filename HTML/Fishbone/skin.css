@@ -112,12 +112,6 @@ DIV.playlistform,DIV#TopMenu2 TABLE {
 	border-collapse: collapse;
 }
 
-div#browsedbList {
-	clear: left;
-	width: auto;
-	height: auto;
-}
-
 .viewSelect
 {
 	float: right;
