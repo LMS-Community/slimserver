@@ -1,111 +1,135 @@
+[% BLOCK editentry %]
+	[% WRAPPER contentitem lineclass = 'browsedbListItemFullWidth' %]
+		[% IF entry.outline %]
+			<form name="edittitle" width="100%" method="">
+				<input type="hidden" name="index" value="[% entry.index %]">
+				<input type="hidden" name="action" value="editset">
+				<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
+				<input id="edit_title_[% entry.index %]" style="width: 72%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newlevel %] onClick="this.value=''"[% END %]>
+				[% IF useAJAX %]
+					<input type="button" width="10%" value=[% "SAVE" | string %] onclick="editSave([% entry.index %]); return false;" />
+					<input type="button" width="10%" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel([% entry.index %][% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
+				[% ELSE %]
+					<input type="submit" class="stdclick" name="editset" value=[% "SAVE" | string %]>
+					<input type="submit" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
+				[% END %]
+			</form>
+		[% ELSE %]
+			<form name="edittitleurl" width="100%" method="">
+				<input type="hidden" name="index" value="[% entry.index %]">
+				<input type="hidden" name="action" value="editset">
+				<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
+				<input id="edit_title_[% entry.index %]" style="width: 36%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newentry %] onClick="this.value=''"[% END %]>
+				<input id="edit_url_[% entry.index %]" style="width: 36%;" type="text" class="stdedit" name="entryurl" value="[% entry.url %]" [% IF newentry %] onClick="this.value=''"[% END %]>
+				[% IF useAJAX %]
+					<input type="button" width="10%" value=[% "SAVE" | string %] onclick="editSave([% entry.index %]); return false;" />
+					<input type="button" width="10%" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel([% entry.index %][% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
+				[% ELSE %]
+					<input type="submit" class="stdclick" name="editset" value=[% "SAVE" | string %]>
+					<input type="submit" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
+				[% END %]
+			</form>
+		[% END %]
+	[% END %]
+[% END %]
+
+[% BLOCK favoritescontrol %]
+	[% WRAPPER editlink noTarget=1 -%]
+		[%- IF useAJAX -%]href="javascript:void(0);" onClick="edit([% entry.index %]);"
+		[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=edit&amp;index=[% entry.index %]"
+		[%- END -%]
+	[%- END %]
+	[%- IF NOT useAJAX %][% WRAPPER moveuplink noTarget=1 -%]
+			href="[% webroot %]plugins/Favorites/index.html?action=moveup&amp;index=[% entry.index %]" onClick="refreshStatus();"
+		[%- END %]
+		[% WRAPPER movedownlink noTarget=1 -%]
+			href="[% webroot %]plugins/Favorites/index.html?action=movedown&amp;index=[% entry.index %]" onClick="refreshStatus();"
+	[%- END %][% END %]
+	[% WRAPPER removelink noTarget=1 -%]
+		[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=delete&amp;index=[% entry.index %]');"
+		[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=delete&amp;index=[% entry.index %]"
+		[%- END -%]
+	[%- END %]
+[% END %]
+
+[% BLOCK playcontrols %]
+	[%- IF entry.audio -%]
+		[% WRAPPER playlink noTarget=1 -%]
+			href="[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% entry.index %]"
+		[%- END %]
+		[% WRAPPER addlink noTarget=1 -%]
+			href="[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% entry.index %]"
+		[%- END %]
+	[%- ELSE -%]
+		[% PROCESS dummylink %]
+		[% PROCESS dummylink %]
+	[%- END -%]
+[% END %]
+
+[% BLOCK entryblock -%]
+	[%- WRAPPER contentitem controls = 'favoritescontrol' %]
+		[% PROCESS playcontrols %]
+		<a id="dragitemhref_[% entry.index %]" href="[% webroot %]plugins/Favorites/index.html?&amp;index=[% entry.index %]"><span id="dragitemtitle_[% entry.index %]">[% entry.title %]</span></a>
+	[% END -%]
+[% END %]
+	
+[% IF action == 'edit' %]
+	[% odd = 1 - (index % 2) %]
+	[% PROCESS editentry entry = entries.$index %]
+[% ELSIF action == "editset" %]
+	[% odd = 1 - (index % 2) %]
+	[% PROCESS entryblock entry = entries.$index %]
+[% ELSE %]
+	
 [% pagetitle = title | getstring; pageicon = 'PLUGINS' %]
+	
+[% IF useAJAX %][% pageHeaderScripts = BLOCK %]
+	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
+	<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
+	<script type="text/javascript" src="[% webroot %]html/scriptaculous/scriptaculous.js?load=effects,dragdrop&amp;r=[% revision %]"></script>
+	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
+	<script TYPE="text/javascript" src="[% webroot %]plugins/Favorites/html/favorites.js?r=[% revision %]"></script>
+[% END %][% END %]
+	
 [% PROCESS pageheader.html %]
 
 [% IF errormsg %]<p>[% errormsg %]</p>[% END %]
 
-[% IF edittitle %]
+[% IF NOT favorites %]<h4><a href="[% webroot %]plugins/Favorites/index.html?edittitle=1&amp;index=[% index %]">[% title %]</a></h4>[% END %]
 
-<p>
-	<form name="title" method="get" action="[% webroot %]plugins/Favorites/index.html">
-		[% "TITLE" | string %]
-		<input type="hidden" name="index" value="[% levelindex %]">
-		<input type="text" class="stdedit" name="title" style="width: 75%;" value="[% title %]" [% IF newentry %] onClick="this.value=''"[% END %] >
-		<input type="submit" class="stdclick" value=[% "SAVE" | string %]>
-		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
-	</form>
-</p>
-
-[% ELSE %]
-
-	[% IF NOT favorites %]<h4><a href="[% webroot %]plugins/Favorites/index.html?edittitle=1&index=[% index %]">[% title %]</a></h4>[% END %]
+[% odd = 1 %]
 	
-	[% odd = 1 %]
-		
-	[% WRAPPER contentcontainer %]
-		[% FOREACH entry = entries %]
-	
- 			[% BLOCK favoritescontrol %]
-
-				[% WRAPPER editlink noTarget=1 %]
-					href="[% webroot %]plugins/Favorites/index.html?action=edit&index=[% entry.index %]"
-				[% END %]
-				[% WRAPPER moveuplink noTarget=1 %]
-					href="[% webroot %]plugins/Favorites/index.html?action=moveup&index=[% entry.index %]"
-				[% END %]
-				[% WRAPPER movedownlink noTarget=1 %]
-					href="[% webroot %]plugins/Favorites/index.html?action=movedown&index=[% entry.index %]"
-				[% END %]
-				[% WRAPPER removelink noTarget=1 %]
-					href="[% webroot %]plugins/Favorites/index.html?action=delete&index=[% entry.index %]"
-				[% END %]
-
-				[% PROCESS dummylink %]
-
-				[% IF entry.audio %]
-					[% WRAPPER playlink noTarget=1 %]
-						href="[% webroot %]plugins/Favorites/index.html?action=play&index=[% entry.index %]"
-					[% END %]
-					[% WRAPPER addlink noTarget=1 %]
-						href="[% webroot %]plugins/Favorites/index.html?action=add&index=[% entry.index %]"
-					[% END %]
-				[% ELSE %]
-					[% PROCESS dummylink %]
-					[% WRAPPER descendlink noTarget=1 %]
-						href="[% webroot %]plugins/Favorites/index.html?index=[% entry.index %]"
-					[% END %]
-				[% END %]
-
-			[% END %]
-
-			[% IF entry.edit %]
-				[% WRAPPER contentitem lineclass = 'browsedbListItemFullWidth' %]
-				[% IF entry.outline %]	
-					<form name="edittitle" width="100%" method="get" action="[% webroot %]plugins/Favorites/index.html">
-						<input type="hidden" name="index" value="[% entry.index %]">					
-						<input type="hidden" name="action" value="editset">
-						<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
-						<input style="width: 80%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newlevel %] onClick="this.value=''"[% END %]>
-						<input type="submit" class="stdclick" name="editset" value=[% "SAVE" | string %]>
-						<input type="submit" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
-					</form>
-				[% ELSE %]
-					<form name="edittitleurl" width="100%" method="get" action="[% webroot %]plugins/Favorites/index.html">
-						<input type="hidden" name="index" value="[% entry.index %]">
-						<input type="hidden" name="action" value="editset">
-						<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
-						<input style="width: 39%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newentry %] onClick="this.value=''"[% END %]>
-						<input style="width: 39%;" type="text" class="stdedit" name="entryurl" value="[% entry.url %]" [% IF newentry %] onClick="this.value=''"[% END %]>
-						<input type="submit" class="stdclick" name="editset" value=[% "SAVE" | string %]>
-						<input type="submit" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
-					</form>
-				[% END %]
-				[% END %]
-			[% ELSE %]
-				[% WRAPPER contentitem controls = 'favoritescontrol' %]
-					<a href="[% webroot	%]plugins/Favorites/index.html?index=[% entry.index	%]">[% entry.title %]</a>
-				[% END %]
-			[% END %]
-			
-			[% odd = (not odd) %]
-		[% END %]
-	[% END %]
-
-	[% IF deleted %]
-		[% BLOCK favoritesdeleteditem %]
-			[% WRAPPER removelink noTarget=1 %]
-				href="[% webroot %]plugins/Favorites/index.html?forgetdelete&index=[% levelindex %]"
-			[% END %]
-			[% PROCESS dummylink %]	[% PROCESS dummylink %]	[% PROCESS dummylink %]
-		[% END %]
-		[% WRAPPER contentitem controls = 'favoritesdeleteditem'%]
-			<a href="[% webroot	%]plugins/Favorites/index.html?insert&index=[% levelindex %]"><b><I>[% "PLUGIN_FAVORITES_INSERTDEL" | string %]</b> [ [% deleted %] ]</I></a>
-		[% END %]
-		[% odd = (not odd) %]
-	[% END %]
-
-	<p></p>
-
+[% WRAPPER contentcontainer %]
+	<ol id="draglist" style="padding: 0px; margin: 0px; border: 0px;">
+	[% FOREACH entry = entries %]
+		<li id="dragitem_[% entry.index %]" style="margin: 0px; padding: 0px; border: 0px;" onMouseDown="Event.observe('dragitem_[% entry.index %]', 'click', function(event) { checkSortable(event); });">
+		[% IF entry.edit -%]
+			[%- PROCESS editentry -%]
+		[%- ELSE -%]
+			[%- PROCESS entryblock -%]
+		[%- END %]
+		</li>
+		[%- odd = (not odd) -%]
+	[%- END %]
+	</ol>
 [% END %]
+
+[% IF deleted %]
+	[% BLOCK favoritesdeleteditem %]
+		[% WRAPPER removelink noTarget=1 %]
+		[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('forgetdelete&amp;index=[% levelindex %]');"
+		[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?forgetdelete&amp;index=[% levelindex %]"
+		[%- END -%]
+		[% END %]
+		
+	[% END %]
+	[% WRAPPER contentitem controls = 'favoritesdeleteditem'%]
+		<a href="[% webroot %]plugins/Favorites/index.html?insert&amp;index=[% levelindex %]"><b><I>[% "PLUGIN_FAVORITES_INSERTDEL" | string %]</b> [ [% deleted %] ]</I></a>
+	[% END %]
+	[% odd = (not odd) %]
+[% END %]
+
+<p></p>
 
 [% IF load %]
 
@@ -133,20 +157,23 @@
 		<input type="submit" class="stdclick" name="importfile" value="[% "PLUGIN_FAVORITES_IMPORT" | string %]">
 		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 	</form>
+[% END %]
 
-[% ELSIF NOT editmode AND NOT edittitle%]
-
+<div id="defaultform" [% IF editmode OR edittitle OR import %]style="display: none;"[% END %]>
 	<form name="buttons" method="get" action="[% webroot %]plugins/Favorites/index.html">
 		<input type="hidden" name="index" value="[% levelindex %]">
 		<input type="submit" class="stdclick" name="newentry" value="[% favorites ? "PLUGIN_FAVORITES_NEWFAVORITE" : "PLUGIN_FAVORITES_NEWENTRY" | string %]">
 		<input type="submit" class="stdclick" name="newlevel" value="[% "PLUGIN_FAVORITES_NEWFOLDER" | string %]">
 		<input type="submit" class="stdclick" name="import" value="[% "PLUGIN_FAVORITES_IMPORT" | string %]">
 		[% IF NOT favorites %]
-		<input type="submit" class="stdclick" name="load" value="[% "PLUGIN_FAVORITES_LOAD" | string %]">
-		<input type="submit" class="stdclick" name="save" value="[% "PLUGIN_FAVORITES_SAVE" | string %]">
+			<input type="submit" class="stdclick" name="load" value="[% "PLUGIN_FAVORITES_LOAD" | string %]">
+			<input type="submit" class="stdclick" name="save" value="[% "PLUGIN_FAVORITES_SAVE" | string %]">
 		[% END %]
 	</form>
+</div>
 
-[% END %]
+[% IF useAJAX %]<script TYPE="text/javascript">initListSortable('draglist'[% IF levelindex %], [% levelindex %][% END %]);</script>[% END %]
 
 [% PROCESS pagefooter.html %]
+
+[% END %]
