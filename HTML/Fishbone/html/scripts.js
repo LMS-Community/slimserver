@@ -5,7 +5,7 @@ var playerExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 
 function homelink() {
 	if (homestring) {
-		document.getElementById('homelink').innerHTML = homestring;
+		$('homelink').innerHTML = homestring;
 	}
 }
 
@@ -40,7 +40,8 @@ function changePlayer(player_List) {
 	var args = 'player=' + player + '&ajaxRequest=1&s=' + Math.random();
 	getStatusData(args, refreshNewPlayer);
 	
-	if (parent.browser.location.href.indexOf('settings') == -1) {
+	if (parent.browser.location.href.indexOf('settings') == -1 &&
+	    parent.browser.location.href.indexOf('plugins') == -1) {
 		newHref(parent.browser.document,newPlayer);
 		newHref(parent.header.document,newPlayer);
 		newValue(parent.browser.document,unescape(player));
@@ -219,14 +220,14 @@ function toggleText(set) {
 				
 				thisdiv.style.display = 'inline';
 				setCookie('SlimServer-fishbone-showtext',1);
-				document.getElementById('showText').style.display = 'none';
-				document.getElementById('hideText').style.display = 'inline';
+				$('showText').style.display = 'none';
+				$('hideText').style.display = 'inline';
 
 			} else {
 				thisdiv.style.display = 'none';
 				setCookie('SlimServer-fishbone-showtext',0);
-				document.getElementById('hideText').style.display = 'none';
-				document.getElementById('showText').style.display = 'inline';
+				$('hideText').style.display = 'none';
+				$('showText').style.display = 'inline';
 			}
 		}
 	}

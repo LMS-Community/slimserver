@@ -125,7 +125,8 @@ function switchPlayer(player_List) {
 		window.location = "status_header.html?player" + newPlayer;
 		
 		if (doc.location.href.indexOf('home')    == -1 &&
-		    doc.location.href.indexOf('settings') == -1) {
+		    doc.location.href.indexOf('settings') == -1 &&
+		    doc.location.href.indexOf('plugins') == -1) {
 	
 			for (var j=0;j < doc.document.links.length; j++) {
 				var myString = new String(doc.document.links[j].href);
