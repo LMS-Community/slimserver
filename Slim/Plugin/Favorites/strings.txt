@@ -93,7 +93,9 @@ PLUGIN_FAVORITES_URL
 	EN	URL
 
 PLUGIN_FAVORITES_ADD
+	DE	Zu Favoriten hinzufügen
 	EN	Add to Favorites
 
 PLUGIN_FAVORITES_REMOVE
+	DE	Aus Favoriten entfernen 
 	EN	Remove from Favorites
