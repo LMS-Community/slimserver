@@ -54,7 +54,7 @@
 		// request and update with new list html
 		//TODO target something more appropriate than document.body since we're retrieving the entire html, head and all.
 		function updateList(params) {
-			new Ajax.Updater( { success: document.body }, webroot + 'xmlbrowser.html', {
+			new Ajax.Updater( { success: document.body }, 'index.html', {
 				method: 'post',
 				postBody: params,
 				evalScripts: true,
@@ -236,16 +236,16 @@
 	[% END %]
 	
 	[% BLOCK favoritescontrol %]
-		[% IF items.favorites == 1 %]
+		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
-				[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=favadd&index=[% index _ (start + loop.index) %]')"
-				[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=favadd&index=[% index _ (start + loop.index) %]"
+				[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=favadd&index=[% index _ (start + loop.index) %]&player=[% player | uri %]')"
+				[%- ELSE       -%]href="index.html?action=favadd&index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"
 				[%- END -%]
 			[% END %]
-		[% ELSIF items.favorites == 2 %]
+		[% ELSIF item.favorites == 2 %]
 			[% WRAPPER favdellink noTarget=1 %]
-				[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=favdel&index=[% index _ (start + loop.index) %]')"
-				[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=favdel&index=[% index _ (start + loop.index) %]"
+				[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=favdel&index=[% index _ (start + loop.index) %]&player=[% player | uri %]')"
+				[%- ELSE       -%]href="index.html?action=favdel&index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"
 				[%- END -%]
 			[% END %]
 		[% END %]
@@ -270,10 +270,11 @@
 					[% WRAPPER playlink %]href="index.html?[% searchquery %]action=play&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
 					[% WRAPPER addlink %]href="index.html?[% searchquery %]action=add&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
 				[% ELSE %]
-					[%- WRAPPER descendlink %]href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[%- END %]
+					[% PROCESS dummylink %]
+					[% PROCESS dummylink %]
 				[% END %]
 			[%- END %]
-			[%- WRAPPER contentitem leftcontrols = 'gencontrol' %]
+			[%- WRAPPER contentitem leftcontrols = 'gencontrol' rightcontrols = 'favoritescontrol' %]
 				<a id="dragitemhref_[% entry.index %]" href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]">
 					<span id="dragitemtitle_[% entry.index %]">[% item.name || item.title %]</span>
 				</a>

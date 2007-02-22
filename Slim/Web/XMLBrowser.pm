@@ -16,6 +16,7 @@ use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Favorites;
 use Slim::Web::HTTP;
 use Slim::Web::Pages;
 
@@ -115,6 +116,16 @@ sub handleFeed {
 		@index = split /\./, $stash->{'index'};
 	}
 
+	# favorites class to allow add/del of urls from favorites
+	my $favs = Slim::Utils::Favorites->new($client);
+	my $favsItem;
+
+	# action is add/delete favorite: pop the last item off the index as we want to display the whole page not the item
+	# keep item id in $favsItem so we can process it later
+	if ($stash->{'action'} && $stash->{'action'} =~ /^(favadd|favdel)$/ && @index) {
+		$favsItem = pop @index;
+	}
+
 	if ( scalar @index ) {
 		
 		# index links for each crumb item
@@ -177,6 +188,24 @@ sub handleFeed {
 		$stash->{'crumb'}     = \@crumb;
 		$stash->{'items'}     = $subFeed->{'items'};
 		$stash->{'index'}     = join( '.', @index ) . '.';
+
+		if ($favs) {
+			my @items = @{$stash->{'items'}};
+
+			if (defined $favsItem && $items[$favsItem]) {
+				if ($stash->{'action'} eq 'favadd') {
+					$favs->add($items[$favsItem]->{'url'}, $items[$favsItem]->{'name'});
+				} elsif ($stash->{'action'} eq 'favdel') {
+					$favs->deleteUrl($items[$favsItem]->{'url'});
+				}
+			}
+
+			for my $item (@items) {
+				if ($item->{'url'}) {
+					$item->{'favorites'} = $favs->hasUrl($item->{'url'}) ? 2 : 1;
+				}
+			}
+		}
 	}
 	else {
 		$stash->{'pagetitle'} = $feed->{'title'} || string($params->{'title'});
