@@ -12349,12 +12349,15 @@ ARTWORK_PROGRESS
 	EN	Artwork Scan
 
 CLEANUP1_PROGRESS
+	DE	Datenbankbereinigung 1. Durchgang
 	EN	Database Cleanup #1
 
 CLEANUP2_PROGRESS
+	DE	Datenbankbereinigung 2. Durchgang
 	EN	Database Cleanup #2
 
 DBOPTIMIZE_PROGRESS
+	DE	Datenbank Optimierung
 	EN	Database Optimize
 
 IMPORTER_PROGRESS
@@ -12378,6 +12381,7 @@ PROGRESS_IMPORTER_COMPLETE_DESC
 	EN	SlimServer has finished scanning your music collection.
 
 PROGRESS_IMPORTER_NO_INFO
+	DE	Fortschritts-Informationen des letzten Scans stehen nicht zur Verfügung.
 	EN	Progress information from the previous scan is not available.
 
 TOTAL_TIME
