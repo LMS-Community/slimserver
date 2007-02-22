@@ -188,24 +188,6 @@ sub handleFeed {
 		$stash->{'crumb'}     = \@crumb;
 		$stash->{'items'}     = $subFeed->{'items'};
 		$stash->{'index'}     = join( '.', @index ) . '.';
-
-		if ($favs) {
-			my @items = @{$stash->{'items'}};
-
-			if (defined $favsItem && $items[$favsItem]) {
-				if ($stash->{'action'} eq 'favadd') {
-					$favs->add($items[$favsItem]->{'url'} || $items[$favsItem]->{'feedurl'}, $items[$favsItem]->{'name'});
-				} elsif ($stash->{'action'} eq 'favdel') {
-					$favs->deleteUrl($items[$favsItem]->{'url'} || $items[$favsItem]->{'feedurl'});
-				}
-			}
-
-			for my $item (@items) {
-				if ($item->{'url'} || $item->{'feedurl'}) {
-					$item->{'favorites'} = $favs->hasUrl( $item->{'url'} || $item->{'feedurl'} ) ? 2 : 1;
-				}
-			}
-		}
 	}
 	else {
 		$stash->{'pagetitle'} = $feed->{'title'} || string($params->{'title'});
@@ -314,6 +296,24 @@ sub handleFeed {
 
 		if ($stash->{'pageinfo'}{'totalpages'} > 1) {
 			@{ $stash->{'items'} } = splice @{ $stash->{'items'} }, $stash->{'start'}, $stash->{'pageinfo'}{'itemsperpage'};
+		}
+	}
+
+	if ($favs) {
+		my @items = @{$stash->{'items'}};
+
+		if (defined $favsItem && $items[$favsItem]) {
+			if ($stash->{'action'} eq 'favadd') {
+				$favs->add($items[$favsItem]->{'url'} || $items[$favsItem]->{'feedurl'}, $items[$favsItem]->{'name'});
+			} elsif ($stash->{'action'} eq 'favdel') {
+				$favs->deleteUrl($items[$favsItem]->{'url'} || $items[$favsItem]->{'feedurl'});
+			}
+		}
+	
+		for my $item (@items) {
+			if ($item->{'url'} || $item->{'feedurl'}) {
+				$item->{'favorites'} = $favs->hasUrl( $item->{'url'} || $item->{'feedurl'} ) ? 2 : 1;
+			}
 		}
 	}
 
