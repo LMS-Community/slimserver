@@ -51,7 +51,7 @@
 	[% END %]
 [% END %]
 
-[% BLOCK editcontrols %]
+[% BLOCK editcontrols %]<span id="editcontrols[% entry.index %]" style="display: none;">
 	[% WRAPPER editlink noTarget=1 -%]
 		[%- IF useAJAX -%]href="javascript:void(0);" onClick="edit([% entry.index %]);"
 		[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=edit&amp;index=[% entry.index %]"
@@ -67,7 +67,7 @@
 		[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=delete&amp;index=[% entry.index %]');"
 		[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=delete&amp;index=[% entry.index %]"
 		[%- END -%]
-	[%- END %]
+	[%- END %]</span>
 [% END %]
 
 [% BLOCK playcontrols %]
@@ -86,7 +86,8 @@
 
 [% BLOCK entryblock -%]
 	[%- WRAPPER contentitem controls = 'favoritescontrol' leftcontrols = 'playcontrols' rightcontrols = 'editcontrols' %]
-		<a id="dragitemhref_[% entry.index %]" href="[% webroot %]plugins/Favorites/index.html?&amp;index=[% entry.index %]"><span id="dragitemtitle_[% entry.index %]">[% entry.title %]</span></a>
+		<a id="dragitemhref_[% entry.index %]" href="[% webroot %]plugins/Favorites/index.html?&amp;index=[% entry.index %]">
+		   <span id="dragitemtitle_[% entry.index %]">[% entry.title %]</span></a>
 	[% END -%]
 [% END %]
 	
@@ -119,7 +120,10 @@
 [% WRAPPER contentcontainer %]
 	<ol id="draglist" style="padding: 0px; margin: 0px; border: 0px;">
 	[% FOREACH entry = entries %]
-		<li id="dragitem_[% entry.index %]" style="margin: 0px; padding: 0px; border: 0px;" [% IF useAJAX %]onMouseDown="Event.observe('dragitem_[% entry.index %]', 'click', function(event) { checkSortable(event); });"[% END %]>
+		<li id="dragitem_[% entry.index %]" style="margin: 0px; padding: 0px; border: 0px;" 
+			[% IF useAJAX %]onMouseDown="Event.observe('dragitem_[% entry.index %]', 'click', function(event) { checkSortable(event); });"
+			onMouseOver="showControls('editcontrols[% entry.index %]');"
+			onMouseOut="hideControls('editcontrols[% entry.index %]')"[% END %]>
 		[% IF entry.edit -%]
 			[%- PROCESS editentry -%]
 		[%- ELSE -%]

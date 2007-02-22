@@ -138,3 +138,15 @@ function editSave(id) {
 		}
 	} );
 }
+
+function showControls(id) {
+	if (document.getElementById(id)) {
+		document.getElementById(id).style.display = 'inline';
+	}
+}
+
+function hideControls(id) {
+	if (document.getElementById(id)) {
+		document.getElementById(id).style.display = 'none';
+	}
+}

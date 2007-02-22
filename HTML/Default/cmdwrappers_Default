@@ -5,7 +5,7 @@
 [% useAJAX = 1 %]
 
 [% BLOCK cmdlink -%]
-	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %].gif" width=13 height=13 alt="[% cmdtitle | string %]" title="[% cmdtitle | string %]"></a>
+	<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %].gif" width=13 height=13 alt="[% cmdtitle | string | ucfirst %]" title="[% cmdtitle | string | ucfirst %]"></a>
 [%- END %]
 
 [% BLOCK dummylink -%]

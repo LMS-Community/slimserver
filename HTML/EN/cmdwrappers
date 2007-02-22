@@ -43,7 +43,7 @@
 [%# this is to wrap around an href which does an add-to-favorites command, with a default image for skins that support it %]
 [%- BLOCK favaddlink -%]
 	[%- PROCESS cmdlink
-		cmdtitle = "ADD_TO_PLAYLIST"
+		cmdtitle = "PLUGIN_FAVORITES_ADD"
 		cmdimage = "b_favorite" -%]
 [%- END -%]
 
@@ -70,7 +70,7 @@
 [%# this is to wrap around an href which does a delete-from-favorites command, with default image reference %]
 [%- BLOCK favdellink -%]
 	[%- PROCESS cmdlink
-		cmdtitle = "DELETE"
+		cmdtitle = "PLUGIN_FAVORITES_REMOVE"
 		cmdimage = "b_favorite_remove" -%]
 [%- END -%]
 
@@ -157,7 +157,7 @@ END %]
 	
 	<div class="[% lineclass || 'browsedbListItem' %]">
 		[%- IF leftcontrols -%]
-			<span class="browsedbLeftControls">
+			<span class="browsedControls">
 			[%- PROCESS $leftcontrols -%]
 			</span>
 		[%- END %]
@@ -169,7 +169,7 @@ END %]
 		[%- END %]
 		[%- IF controls AND rightcontrols; PROCESS dummylink; END %]
 		[%- IF rightcontrols -%]
-			<span class="browsedbControls">
+			<span class="browsedbRightControls">
 			[%- PROCESS $rightcontrols -%]
 			</span>
 		[%- END %]

@@ -395,7 +395,21 @@ div#homeMenu {
 	position: absolute;
 	top: 0px;
 	padding-top: 6px;
+	right: 50px;
+}
+
+.browsedbRightControls {
+	position: absolute;
+	top: 0px;
+	padding-top: 6px;
 	right: 10px;
+}
+
+.browsedbLeftControls {
+	position: absolute;
+	top: 0px;
+	padding-top: 6px;
+	left: 0px;
 }
 
 .playlistControls {
