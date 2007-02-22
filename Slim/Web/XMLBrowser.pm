@@ -194,15 +194,15 @@ sub handleFeed {
 
 			if (defined $favsItem && $items[$favsItem]) {
 				if ($stash->{'action'} eq 'favadd') {
-					$favs->add($items[$favsItem]->{'url'}, $items[$favsItem]->{'name'});
+					$favs->add($items[$favsItem]->{'url'} || $items[$favsItem]->{'feedurl'}, $items[$favsItem]->{'name'});
 				} elsif ($stash->{'action'} eq 'favdel') {
-					$favs->deleteUrl($items[$favsItem]->{'url'});
+					$favs->deleteUrl($items[$favsItem]->{'url'} || $items[$favsItem]->{'feedurl'});
 				}
 			}
 
 			for my $item (@items) {
-				if ($item->{'url'}) {
-					$item->{'favorites'} = $favs->hasUrl($item->{'url'}) ? 2 : 1;
+				if ($item->{'url'} || $item->{'feedurl'}) {
+					$item->{'favorites'} = $favs->hasUrl( $item->{'url'} || $item->{'feedurl'} ) ? 2 : 1;
 				}
 			}
 		}
@@ -357,7 +357,8 @@ sub handleSubFeed {
 	# XXX: this is a bit slow as it has to re-fetch each level
 	if ( ref $subFeed->{'url'} eq 'CODE' ) {
 		
-		# Clear URL so it's not fetched again
+		# Clear URL so it's not fetched again, save for favorites use first
+		$subFeed->{'feedurl'} = $subFeed->{'url'};
 		$subFeed->{'url'} = undef;
 		
 		# Clear passthrough data as it won't be needed again
@@ -365,7 +366,8 @@ sub handleSubFeed {
 	}
 	else {
 		
-		# Clear URL so it's not fetched again
+		# Clear URL so it's not fetched again, save for favorites use first
+		$subFeed->{'feedurl'} = $subFeed->{'url'};
 		$subFeed->{'url'} = undef;
 		
 		# re-cache the parsed XML to include the sub-feed
