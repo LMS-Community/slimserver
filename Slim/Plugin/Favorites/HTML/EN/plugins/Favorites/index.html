@@ -1,32 +1,34 @@
 [% BLOCK editentry %]
 	[% WRAPPER contentitem lineclass = 'browsedbListItemFullWidth' %]
+		[% PROCESS dummylink %]
+		[% PROCESS dummylink %]
 		[% IF entry.outline %]
-			<form name="edittitle" width="100%" method="">
+			<form name="edittitle" method="" style="display: inline; width: 100%;">
 				<input type="hidden" name="index" value="[% entry.index %]">
 				<input type="hidden" name="action" value="editset">
 				<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
-				<input id="edit_title_[% entry.index %]" style="width: 72%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newlevel %] onClick="this.value=''"[% END %]>
+				<input id="edit_title_[% entry.index %]" style="width: 71%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newlevel %] onClick="this.value=''"[% END %]>
 				[% IF useAJAX %]
-					<input type="button" width="10%" value=[% "SAVE" | string %] onclick="editSave([% entry.index %]); return false;" />
-					<input type="button" width="10%" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel([% entry.index %][% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
+					<input type="button" style="display: inline; width: 10%;" value=[% "SAVE" | string %] onclick="editSave([% entry.index %]); return false;" />
+					<input type="button" style="display: inline; width: 10%;" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel([% entry.index %][% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
 				[% ELSE %]
-					<input type="submit" class="stdclick" name="editset" value=[% "SAVE" | string %]>
-					<input type="submit" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
+					<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="editset" value=[% "SAVE" | string %]>
+					<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 				[% END %]
 			</form>
 		[% ELSE %]
-			<form name="edittitleurl" width="100%" method="">
+			<form name="edittitleurl" method="" style="display: inline; width: 100%;">
 				<input type="hidden" name="index" value="[% entry.index %]">
 				<input type="hidden" name="action" value="editset">
 				<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
-				<input id="edit_title_[% entry.index %]" style="width: 36%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newentry %] onClick="this.value=''"[% END %]>
-				<input id="edit_url_[% entry.index %]" style="width: 36%;" type="text" class="stdedit" name="entryurl" value="[% entry.url %]" [% IF newentry %] onClick="this.value=''"[% END %]>
+				<input id="edit_title_[% entry.index %]" style="display: inline; width: 35%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newentry %] onClick="this.value=''"[% END %]>
+				<input id="edit_url_[% entry.index %]" style="display: inline; width: 35%;" type="text" class="stdedit" name="entryurl" value="[% entry.url %]" [% IF newentry %] onClick="this.value=''"[% END %]>
 				[% IF useAJAX %]
-					<input type="button" width="10%" value=[% "SAVE" | string %] onclick="editSave([% entry.index %]); return false;" />
-					<input type="button" width="10%" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel([% entry.index %][% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
+					<input type="button" style="display: inline; width: 10%;" value=[% "SAVE" | string %] onclick="editSave([% entry.index %]); return false;" />
+					<input type="button" style="display: inline; width: 10%;" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel([% entry.index %][% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
 				[% ELSE %]
-					<input type="submit" class="stdclick" name="editset" value=[% "SAVE" | string %]>
-					<input type="submit" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
+					<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="editset" value=[% "SAVE" | string %]>
+					<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 				[% END %]
 			</form>
 		[% END %]
@@ -34,16 +36,32 @@
 [% END %]
 
 [% BLOCK favoritescontrol %]
+	[% IF entry.favorites == 1 %]
+		[% WRAPPER favaddlink noTarget=1 %]
+			[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=favadd&index=[% entry.index %]')"
+			[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=favadd&index=[% entry.index %]"
+			[%- END -%]
+		[% END %]
+	[% ELSIF entry.favorites == 2 %]
+		[% WRAPPER favdellink noTarget=1 %]
+			[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=favdel&index=[% entry.index %]')"
+			[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=favdel&index=[% entry.index %]"
+			[%- END -%]
+		[% END %]
+	[% END %]
+[% END %]
+
+[% BLOCK editcontrols %]
 	[% WRAPPER editlink noTarget=1 -%]
 		[%- IF useAJAX -%]href="javascript:void(0);" onClick="edit([% entry.index %]);"
 		[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=edit&amp;index=[% entry.index %]"
 		[%- END -%]
 	[%- END %]
 	[%- IF NOT useAJAX %][% WRAPPER moveuplink noTarget=1 -%]
-			href="[% webroot %]plugins/Favorites/index.html?action=moveup&amp;index=[% entry.index %]" onClick="refreshStatus();"
+			href="[% webroot %]plugins/Favorites/index.html?action=moveup&amp;index=[% entry.index %]"
 		[%- END %]
 		[% WRAPPER movedownlink noTarget=1 -%]
-			href="[% webroot %]plugins/Favorites/index.html?action=movedown&amp;index=[% entry.index %]" onClick="refreshStatus();"
+			href="[% webroot %]plugins/Favorites/index.html?action=movedown&amp;index=[% entry.index %]"
 	[%- END %][% END %]
 	[% WRAPPER removelink noTarget=1 -%]
 		[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=delete&amp;index=[% entry.index %]');"
@@ -55,10 +73,10 @@
 [% BLOCK playcontrols %]
 	[%- IF entry.audio -%]
 		[% WRAPPER playlink noTarget=1 -%]
-			href="[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% entry.index %]"
+			href="[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% entry.index %]" onClick="refreshStatus();"
 		[%- END %]
 		[% WRAPPER addlink noTarget=1 -%]
-			href="[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% entry.index %]"
+			href="[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% entry.index %]" onClick="refreshStatus();"
 		[%- END %]
 	[%- ELSE -%]
 		[% PROCESS dummylink %]
@@ -67,16 +85,15 @@
 [% END %]
 
 [% BLOCK entryblock -%]
-	[%- WRAPPER contentitem controls = 'favoritescontrol' %]
-		[% PROCESS playcontrols %]
+	[%- WRAPPER contentitem controls = 'favoritescontrol' leftcontrols = 'playcontrols' rightcontrols = 'editcontrols' %]
 		<a id="dragitemhref_[% entry.index %]" href="[% webroot %]plugins/Favorites/index.html?&amp;index=[% entry.index %]"><span id="dragitemtitle_[% entry.index %]">[% entry.title %]</span></a>
 	[% END -%]
 [% END %]
 	
-[% IF action == 'edit' %]
+[% IF action == 'edit' AND useAJAX %]
 	[% odd = 1 - (index % 2) %]
 	[% PROCESS editentry entry = entries.$index %]
-[% ELSIF action == "editset" %]
+[% ELSIF action == "editset" AND useAJAX %]
 	[% odd = 1 - (index % 2) %]
 	[% PROCESS entryblock entry = entries.$index %]
 [% ELSE %]
@@ -102,7 +119,7 @@
 [% WRAPPER contentcontainer %]
 	<ol id="draglist" style="padding: 0px; margin: 0px; border: 0px;">
 	[% FOREACH entry = entries %]
-		<li id="dragitem_[% entry.index %]" style="margin: 0px; padding: 0px; border: 0px;" onMouseDown="Event.observe('dragitem_[% entry.index %]', 'click', function(event) { checkSortable(event); });">
+		<li id="dragitem_[% entry.index %]" style="margin: 0px; padding: 0px; border: 0px;" [% IF useAJAX %]onMouseDown="Event.observe('dragitem_[% entry.index %]', 'click', function(event) { checkSortable(event); });"[% END %]>
 		[% IF entry.edit -%]
 			[%- PROCESS editentry -%]
 		[%- ELSE -%]

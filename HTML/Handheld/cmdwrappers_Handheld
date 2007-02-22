@@ -29,6 +29,12 @@
 [% BLOCK infolink %]
 [% END %]
 
+[% BLOCK dummylink -%]
+	<td align="center" width="13" bgcolor="[% PROCESS oddOrEvenC %]">
+		<img src="[% webroot %]html/images/spacer.gif" width=13 height=13>
+	</td>
+[%- END %]
+
 [% BLOCK descendlink -%]
 	[% PROCESS cmdlink
 		cmdtitle = "NEXT"
@@ -74,7 +80,12 @@
 
 [% BLOCK contentitem -%]
 [% IF not odd.defined; odd = 1; END %]
-<table cellspacing="0" border="0" cellpadding="0" width="100%"><tr><td bgcolor="[% PROCESS oddOrEvenC %]" width="100%">
+<table cellspacing="0" border="0" cellpadding="0" width="100%"><tr>
+	[%- IF leftcontrols -%]
+		[%- PROCESS $leftcontrols -%]
+	[%- END %]
+	<td bgcolor="[% PROCESS oddOrEvenC %]" width="100%">
+	
 	[%- IF anchor %]
 		<a name="[% anchor | uri%]"></a>
 	[%- END %]
@@ -83,6 +94,9 @@
 	</td>
 	[%- IF controls -%]
 		[%- PROCESS $controls -%]
+	[%- END %]
+	[%- IF rightcontrols -%]
+		[%- PROCESS $rightcontrols -%]
 	[%- END %]
 	</tr></table>
 [%- END %]

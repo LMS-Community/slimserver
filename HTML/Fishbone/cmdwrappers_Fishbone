@@ -13,7 +13,7 @@
 [%- END -%]
 
 [% BLOCK dummylink -%]
-<a><img src="[% webroot %]html/images/spacer.gif" alt="" title="" width="7"></a>
+<a><img src="[% webroot %]html/images/spacer.gif" alt="" title="" width="10"></a>
 [%- END %]
 
 [% BLOCK infolink %]
@@ -84,11 +84,22 @@
 	[%- END -%]
 	
 	<div class="[% lineclass || 'browsedbListItem' %]">
+		[%- IF leftcontrols -%]
+			<span class="browsedbLeftControls">
+			[%- PROCESS $leftcontrols -%]
+			</span>
+		[%- END %]
 		[%- content | indent(4) %]
 		[%- IF controls -%]
-			<div class="browsedbControls">
+			<span class="browsedbControls">
 			[%- PROCESS $controls -%]
-			</div>
+			</span>
+		[%- END %]
+		[%- IF controls AND rightcontrols; PROCESS dummylink; END %]
+		[%- IF rightcontrols -%]
+			<span class="browsedbControls">
+			[%- PROCESS $rightcontrols -%]
+			</span>
 		[%- END %]
 	</div>
 </div>

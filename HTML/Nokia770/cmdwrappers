@@ -112,25 +112,27 @@
 [%- END %]
 
 [% BLOCK contentcontainer %]
-<table border="0" cellspacing="0" cellpadding="0" width="100%">
+<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr><td>
 		[%- content | indent(4) %]
-</table>
+</td></tr></table>
 [%- END %]
 
 [% BLOCK contentitem -%]
-<tr>[%- IF anchor %]
+[%- IF anchor %]
 <a name = "[% anchor %]"></a>
 [% END %]
 
-	[% IF controls %]<table><tr>
+	[% IF controls || rightcontrols || leftcontrols %]<table><tr>
+	[% IF leftcontrols %][%- PROCESS $leftcontrols %][% END %]
 	[%- PROCESS $controls %]
+	[% IF rightcontrols %][%- PROCESS $rightcontrols %][% END %]
 	[%- END -%]
 	<td class = 'listing' width = '20'>&nbsp;</td>
 	<td class="listing" align="left">
 	[%- content | indent(4) %]
 	</td>
-	[% IF controls %]</tr></table>[% END %]
-</tr>
+	[% IF controls || rightcontrols || leftcontrols %]</tr></table>[% END %]
+
 [%- END %]
 
 [% BLOCK playlistcontrols %]

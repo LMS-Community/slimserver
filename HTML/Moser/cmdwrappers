@@ -18,6 +18,12 @@
 		cmdshown = "<span>+</span>" -%]
 [%- END %]
 
+[% BLOCK favaddlink -%]
+	[%- PROCESS cmdlink
+		cmdtitle = "ADD_TO_PLAYLIST"
+		cmdshown = "<span>+</span>" -%]
+[%- END %]
+
 [% BLOCK descendlink -%]
 <li><a [% content %] title="[% "NEXT" | string%]"><span>&gt;|</span></a></li>
 [%- END %]
@@ -29,6 +35,22 @@
 [%- END %]
 
 [% BLOCK removelink -%]
+	[%- PROCESS cmdlink
+		cmdtitle = "DELETE"
+		cmdshown = "<span>&times;</span>" -%]
+[%- END %]
+
+[% BLOCK editlink -%]
+	[%- PROCESS cmdlink
+		cmdtitle = "EDIT"
+		cmdshown = "<span>/</span>" -%]
+[%- END %]
+
+[% BLOCK dummylink -%]
+[%- END %]
+
+
+[% BLOCK favdellink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "DELETE"
 		cmdshown = "<span>&times;</span>" -%]
@@ -111,10 +133,24 @@
   [%- IF anchor %]
   <a name="[% anchor | uri %]"></a>
   [%- END %]
+  [%- IF leftcontrols %][%# allow for a line with no controls %]
+  <div class="controls">
+    <ul class="songctl">
+    [%- PROCESS $leftcontrols | indent(2) -%]
+    </ul>
+  </div>
+  [%- END %]
   [%- IF controls %][%# allow for a line with no controls %]
   <div class="controls">
     <ul class="songctl">
     [%- PROCESS $controls | indent(2) -%]
+    </ul>
+  </div>
+  [%- END %]
+  [%- IF rightcontrols %][%# allow for a line with no controls %]
+  <div class="controls">
+    <ul class="songctl">
+    [%- PROCESS $rightcontrols | indent(2) -%]
     </ul>
   </div>
   [%- END %]

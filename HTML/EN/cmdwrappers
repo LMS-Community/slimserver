@@ -40,6 +40,14 @@
 		cmdimage = "b_add" -%]
 [%- END -%]
 
+[%# this is to wrap around an href which does an add-to-favorites command, with a default image for skins that support it %]
+[%- BLOCK favaddlink -%]
+	[%- PROCESS cmdlink
+		cmdtitle = "ADD_TO_PLAYLIST"
+		cmdimage = "b_favorite" -%]
+[%- END -%]
+
+
 [%# this is to wrap around an href which does an insert command %]
 [%- BLOCK insertlink -%]
 	[%- PROCESS cmdlink
@@ -57,6 +65,13 @@
 	[%- PROCESS cmdlink
 		cmdtitle = "DELETE"
 		cmdimage = "b_delete" -%]
+[%- END -%]
+
+[%# this is to wrap around an href which does a delete-from-favorites command, with default image reference %]
+[%- BLOCK favdellink -%]
+	[%- PROCESS cmdlink
+		cmdtitle = "DELETE"
+		cmdimage = "b_favorite_remove" -%]
 [%- END -%]
 
 [%# this is to wrap around an href which does a url edit command, with default image reference %]
@@ -141,11 +156,22 @@ END %]
 	[%- END -%]
 	
 	<div class="[% lineclass || 'browsedbListItem' %]">
+		[%- IF leftcontrols -%]
+			<span class="browsedbLeftControls">
+			[%- PROCESS $leftcontrols -%]
+			</span>
+		[%- END %]
 		[%- content | indent(4) %]
 		[%- IF controls -%]
-			<div class="browsedbControls">
+			<span class="browsedbControls">
 			[%- PROCESS $controls -%]
-			</div>
+			</span>
+		[%- END %]
+		[%- IF controls AND rightcontrols; PROCESS dummylink; END %]
+		[%- IF rightcontrols -%]
+			<span class="browsedbControls">
+			[%- PROCESS $rightcontrols -%]
+			</span>
 		[%- END %]
 	</div>
 </div>
