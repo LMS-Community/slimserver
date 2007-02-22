@@ -85,11 +85,22 @@ our %skinTemplates  = ();
 
 our @templateDirs = ();
 
+# this holds pointers to functions handling a given path
 our %pageFunctions = ();
 tie %pageFunctions, 'Tie::RegexpHash';
 
+# we fork the server to execute those pageFunctions
 our %forkFunctions = ();
 tie %forkFunctions, 'Tie::RegexpHash';
+
+# we bypass most of the template stuff to execute those
+our %rawFunctions = ();
+tie %rawFunctions, 'Tie::RegexpHash';
+
+# we call these whenever we close a connection
+our @closeHandlers = ();
+
+
 
 our $pageBuild = Slim::Utils::PerfMon->new('Web Page Build', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
 
@@ -318,10 +329,42 @@ sub skins {
 sub processHTTP {
 	my $httpClient = shift || return;
 
-	my $params     = {};
-	my $request    = $httpClient->get_request();
+### OLD ORDER ###
+	# Set the request date (write $request)
+	# CSRF auth code management (write $request)
+	# Read cookies (write $params)
+	# Icy-MetaData (write sendMetaData)
+	# Create response (from $request but it's a ref so?)
+	# Log headers
+	# if get/head/post
+	## Icy-MetaData (write sendMetaData)
+	## Authorization header (returns if nok)
+	## Parse URI (write $params)
+	## Skins (write params & path, redirected if nok)
+	## More CSRF mgmt (looks at the modified path)
+	# else
+	## Send bad request
+### NEW ORDER ###
+	# Create response (from $request but it's a ref so?)
+	# Log raw headers
+	# if get/head/post
+	## Authorization header (returns if nok)
+	## Persistent connection (write $response $keepAlive)
+	## Set the request date (write $request)
+	## CSRF auth code management (write $request)
+	## Read cookies (write $params)
+	## Icy-MetaData (write sendMetaData)
+	## Parse URI (write $params)
+	## Skins (write params & path, redirected if nok)
+	## More CSRF mgmt (looks at the modified path)	
+	## Log processed headers
+	# else
+	## Send bad request
+
 
 	$log->info("Reading request...");
+
+	my $request    = $httpClient->get_request();
 
 	# socket half-closed from client
 	if (!defined $request) {
@@ -331,56 +374,31 @@ sub processHTTP {
 		closeHTTPSocket($httpClient);
 		return;
 	}
-
-	# Set the request time - for If-Modified-Since
-	$request->client_date(time());
+	
 
 	$log->info(
 		"HTTP request: from $peeraddr{$httpClient} ($httpClient) for " .
 		join(' ', ($request->method(), $request->protocol(), $request->uri()))
 	);
 
-	# remove our special X-Slim-CSRF header if present
-	$request->remove_header("X-Slim-CSRF");
+	$log->debug("Raw request headers: [\n" . $request->as_string() . "]");
 
-	# store CSRF auth code in fake request header if present
-	if (defined($request->uri()) && ($request->uri() =~ m|^(.*)\;cauth\=([0-9a-f]{32})$|) ) {
 
-		my $plainURI = $1;
-		my $csrfAuth = $2;
-
-		$log->info("Found CSRF auth token \"$csrfAuth\" in URI \"".$request->uri()."\", so resetting request URI to \"$plainURI\"");
-
-		# change the URI so later code doesn't "see" the cauth part
-		$request->uri($plainURI);
-
-		# store the cauth code in the request object (headers are handy!)
-		$request->push_header("X-Slim-CSRF",$csrfAuth);
-	}
-	
-	# Read cookie(s)
-	if ( my $cookie = $request->header('Cookie') ) {
-		$params->{'cookies'} = { CGI::Cookie->parse($cookie) };
-	}
+	# this will hold our context and is used to fill templates
+	my $params     = {};
 
 	# this bundles up all our response headers and content
 	my $response = HTTP::Response->new();
 
-	# respond in kind.
+	# by default, respond in kind.
 	$response->protocol($request->protocol());
 	$response->request($request);
 
-	$log->debug("Request Headers: [\n" . $request->as_string() . "]");
 
+	# handle stuff we know about or abort
 	if ($request->method() eq 'GET' || $request->method() eq 'HEAD' || $request->method() eq 'POST') {
 
-		$sendMetaData{$httpClient} = 0;
-		
-		if ($request->header('Icy-MetaData')) {
-			$sendMetaData{$httpClient} = 1;
-		}
-		
-		# authorization header.
+		# Manage authorization
 		my $authorized = !Slim::Utils::Prefs::get('authorize');
 
 		if (my ($user, $pass) = $request->authorization_basic()) {
@@ -400,10 +418,111 @@ sub processHTTP {
 			closeHTTPSocket($httpClient);
 			return;
 		}
-		
-		# parse out URI:
+
+
+		# HTTP/1.1 Persistent connections or HTTP 1.0 Keep-Alives
+		# XXX - MAXKEEPALIVES should be a preference
+		# This always add a Connection: close header if we want the connection to be closed.
+		if (defined $keepAlives{$httpClient} && $keepAlives{$httpClient} >= MAXKEEPALIVES) {
+
+			# This will close the client socket & remove the
+			# counter in sendResponse()
+			$response->header('Connection' => 'close');
+
+			$log->info("Hit MAXKEEPALIVES, will close connection.");
+
+		} else {
+
+			# If the client requests a close or a keep-alive, 
+			# set the initial response to the same.
+			$response->header('Connection' => $request->header('Connection'));
+
+			if ($httpClient->proto_ge('1.1')) {
+
+				# 1.1 defaults to persistent
+				if (!$request->header('Connection') || $request->header('Connection') ne 'close') {
+					$keepAlives{$httpClient}++;
+				}
+
+			} else {
+
+				# otherwise, it's 1.0, and only if it's not
+				# 'close', be persistent
+				if ($request->header('Connection') && $request->header('Connection') ne 'close') {
+					$keepAlives{$httpClient}++;
+				}
+
+				# Put in an explicit close even if there wasn't
+				# one passed in. This ensures that the response
+				# logic will close the socket.
+				else {
+					$response->header('Connection' => 'close');
+
+				}
+			}
+		}
+
+		# extract the URI and raw path
+		# the path is modified below for skins and stuff
 		my $uri   = $request->uri();
 		my $path  = $uri->path();
+		
+		$log->debug("Raw path is [$path]");
+
+		# break here for raw HTTP code
+		# we hand the $response object only, it contains the almost unmodified request
+		# we took care above of basic HTTP stuff and authorization
+		# $rawFunc shall call addHTTPResponse
+		if (my $rawFunc = $rawFunctions{$path}) {
+
+			$log->info("Handling [$path] using raw function");
+
+			if (ref($rawFunc) eq 'CODE') {
+				
+				# XXX: should this use eval?
+				&{$rawFunc}($httpClient, $response);
+				return;
+			}
+		}
+
+		# Set the request time - for If-Modified-Since
+		$request->client_date(time());
+	
+	
+		# remove our special X-Slim-CSRF header if present
+		$request->remove_header("X-Slim-CSRF");
+	
+		# store CSRF auth code in fake request header if present
+		if (defined($request->uri()) && ($request->uri() =~ m|^(.*)\;cauth\=([0-9a-f]{32})$|) ) {
+	
+			my $plainURI = $1;
+			my $csrfAuth = $2;
+	
+			$log->info("Found CSRF auth token \"$csrfAuth\" in URI \"".$request->uri()."\", so resetting request URI to \"$plainURI\"");
+	
+			# change the URI so later code doesn't "see" the cauth part
+			$request->uri($plainURI);
+	
+			# store the cauth code in the request object (headers are handy!)
+			$request->push_header("X-Slim-CSRF",$csrfAuth);
+		}
+		
+		
+		# Read cookie(s)
+		if ( my $cookie = $request->header('Cookie') ) {
+			$params->{'cookies'} = { CGI::Cookie->parse($cookie) };
+		}
+
+
+		# Icy-MetaData
+		$sendMetaData{$httpClient} = 0;
+		
+		if ($request->header('Icy-MetaData')) {
+			$sendMetaData{$httpClient} = 1;
+		}
+
+
+		# parse out URI		
 		my $query = ($request->method() eq "POST") ? $request->content() : $uri->query();
 
 		$params->{url_query} = $query;
@@ -463,7 +582,8 @@ sub processHTTP {
 			}
 		}
 
-		# 
+
+		# Skins 
 		if ($path) {
 
 			$params->{'webroot'} = '/';
@@ -532,6 +652,7 @@ sub processHTTP {
 			$params->{"host"} = $request->header('Host');
 		}
 
+
 		# apply CSRF protection logic to "dangerous" commands
 		foreach my $d ( keys %dangerousCommands ) {
 
@@ -552,48 +673,11 @@ sub processHTTP {
 			}
 		}
 
-		# HTTP/1.1 Persistent connections or HTTP 1.0 Keep-Alives
-		# XXX - MAXKEEPALIVES should be a preference
-		if (defined $keepAlives{$httpClient} && $keepAlives{$httpClient} >= MAXKEEPALIVES) {
 
-			# This will close the client socket & remove the
-			# counter in sendResponse()
-			$response->header('Connection' => 'close');
+		$log->debug("Processed request headers: [\n" . $request->as_string() . "]");
 
-			$log->info("Hit MAXKEEPALIVES, will close connection.");
 
-		} else {
-
-			# If the client requests a close or a keep-alive, 
-			# set the initial response to the same.
-			$response->header('Connection' => $request->header('Connection'));
-
-			if ($httpClient->proto_ge('1.1')) {
-
-				# 1.1 defaults to persistent
-				if (!$request->header('Connection') || $request->header('Connection') ne 'close') {
-					$keepAlives{$httpClient}++;
-				}
-
-			} else {
-
-				# otherwise, it's 1.0, and only if it's not
-				# 'close', be persistent
-				if ($request->header('Connection') && $request->header('Connection') ne 'close') {
-					$keepAlives{$httpClient}++;
-				}
-
-				# Put in an explicit close even if there wasn't
-				# one passed in. This ensures that the response
-				# logic will close the socket.
-				else {
-					$response->header('Connection' => 'close');
-
-				}
-			}
-		}
-
-		# process the commands
+		# process the command
 		processURL($httpClient, $response, $params);
 
 	} else {
@@ -711,9 +795,6 @@ sub processURL {
 	}
 
 	# if we don't have a player specified, just pick one if there is one...
-#	if (!defined($client) && Slim::Player::Client::clientCount() > 0) {
-#		$client = (Slim::Player::Client::clients())[0];
-#	}
 	$client = Slim::Player::Client::clientRandom() if !defined $client;
 
 	if (blessed($client) && $client->can('id')) {
@@ -899,6 +980,8 @@ sub generateHTTPResponse {
 		$::perfmon && (my $startTime = Time::HiRes::time());
 
 		if (ref($classOrCode) eq 'CODE') {
+
+			# XXX: should this use eval?
 
 			$body = &{$classOrCode}(
 				$client,
@@ -1430,7 +1513,8 @@ sub prepareResponseForSending {
 		contentHasBeenModified($response);
 	}
 
-	addHTTPResponse($httpClient, $response, $body);
+	# buffer our response, including headers, and we have no more data
+	addHTTPResponse($httpClient, $response, $body, 1, 0);
 
 	return 0;
 }
@@ -1456,44 +1540,96 @@ sub _stringifyHeaders {
 	return $data;
 }
 
-=pod
+# addHTTPResponse
+# buffers an HTTP response $response with body $body for $httpClient
+#  $response is used to get the headers and the desired chunking/closing behaviour
+#  headers are sent if $sendheaders is 1 (the default)
+#  if chunking is used, a last chunk is sent if Connection:Close or $more is 0 (the default)
 
-=head1 This section handles standard HTTP responses
+# Example for normal use
+#  addHTPPResponse($httpClient, $response, $body, 1, 0)
+#   buffers headers and body, chunked or not, closing or not
 
-=cut
+# Example for chunking use
+#  1. addHTTPResponse($client, $response, $body, 1, 1)
+#   buffers headers and first body part
+#  2. addHTTPResponse($client, $response, $body, 0, 1)
+#   buffers more body
+#  3. addHTTPResponse($client, $response, $body, 0, 0)
+#   buffers more body and last chunk (or close)
 
 sub addHTTPResponse {
-	my $httpClient = shift;
-	my $response   = shift;
-	my $body       = shift;
+	my $httpClient  = shift;
+	my $response    = shift;
+	my $body        = shift;
+	my $sendheaders = shift;
+	my $more        = shift || 0;
+
+
+	# determine our closing/chunking behaviour
+	# code above is responsible to set the headers right...
+	my $close = ($response->header('Connection') =~ /close/i);
+	my $chunked = ($response->header('Transfer-Encoding') =~ /chunked/i);
+
+	# if we have more, don't close now!
+	if ($more) {
+		$close = 0;
+	}
 
 	# Force byte semantics on $body and length($$body) - otherwise we'll
 	# try to write out multibyte characters with invalid byte lengths in
 	# sendResponse() below.
 	use bytes;
 
-	# First add the headers
-	my $headers = _stringifyHeaders($response) . $CRLF;
 
-	push @{$outbuf{$httpClient}}, {
-		'data'     => \$headers,
-		'offset'   => 0,
-		'length'   => length($headers),
-		'response' => $response,
-	};
+	# First add the headers, if requested
+	if (!defined($sendheaders) || $sendheaders == 1) {
+
+		my $headers = _stringifyHeaders($response) . $CRLF;
+	
+		push @{$outbuf{$httpClient}}, {
+			'data'     => \$headers,
+			'offset'   => 0,
+			'length'   => length($headers),
+			'close'    => $close,
+		};
+	}
 
 	# And now the body.
 	# Don't send back any content on a HEAD or 304 response.
 	if ($response->request()->method() ne 'HEAD' && 
 		$response->code() ne RC_NOT_MODIFIED &&
 		$response->code() ne RC_PRECONDITION_FAILED) {
+		
+		# use chunks if we have a transfer-encoding that says so
+		if ($chunked) {
+			
+			# add chunk...
+			my $newbody = sprintf("%X", length($$body)) . $CRLF . $$body . $CRLF;
 
-		push @{$outbuf{$httpClient}}, {
-			'data'     => $body,
-			'offset'   => 0,
-			'length'   => length($$body),
-			'response' => $response,
-		};
+			push @{$outbuf{$httpClient}}, {
+				'data'     => \$newbody,
+				'offset'   => 0,
+				'length'   => length($newbody),
+				'close'    => $close,
+			};
+			
+			# add a last empty chunk if we're closing the connection or if there's nothing more
+			if ($close || !$more) {
+				
+				addHTTPLastChunk($httpClient, $close);
+			}
+
+			
+		} else {
+
+			push @{$outbuf{$httpClient}}, {
+				'data'     => $body,
+				'offset'   => 0,
+				'length'   => length($$body),
+				'close'    => $close,
+			};
+		}
 	}
 	
 	# Don't use select if we've forked
@@ -1511,6 +1647,27 @@ sub addHTTPResponse {
 	Slim::Networking::Select::addWrite($httpClient, \&sendResponse);
 }
 
+sub addHTTPLastChunk {
+	my $httpClient = shift;
+	my $close = shift;
+	
+	my $emptychunk = "0" . $CRLF;
+
+	push @{$outbuf{$httpClient}}, {
+		'data'     => \$emptychunk,
+		'offset'   => 0,
+		'length'   => length($emptychunk),
+		'close'    => $close,
+	};
+	
+	Slim::Networking::Select::addWrite($httpClient, \&sendResponse);
+}
+
+# sendResponse
+# callback for write select
+# pops a data segment for the given httpclient and sends it
+# optionally closes the connection *if* there's no more segments.
+# expects segments to be hashrefs with items 'data', 'offset', 'length' and 'close'
 sub sendResponse {
 	my $httpClient = shift;
 
@@ -1519,18 +1676,19 @@ sub sendResponse {
 	my $segment    = shift(@{$outbuf{$httpClient}});
 	my $sentbytes  = 0;
 
-	# abort early if we don't have anything.
+	# abort early if we're not connected
 	if (!$httpClient->connected) {
 
-		$log->warn("Got nothing for message to $peeraddr{$httpClient}, closing socket");
+		$log->warn("Not connected with $peeraddr{$httpClient}, closing socket");
 
 		closeHTTPSocket($httpClient);
 		return;
 	}
 
+	# abort early if we don't have anything.
 	if (!$segment) {
 
-		$log->info("No segment to send to $peeraddr{$httpClient}, waiting for next request..");
+		$log->info("No segment to send to $peeraddr{$httpClient}, waiting for next request...");
 
 		# Nothing to send, so we take the socket out of the write list.
 		# When we process the next request, it will get put back on.
@@ -1583,25 +1741,20 @@ sub sendResponse {
 		if (@{$outbuf{$httpClient}} == 0) {
 
 			# no more messages to send
-			$log->info("No more messages to send to $peeraddr{$httpClient}");
+			$log->info("No more segments to send to $peeraddr{$httpClient}");
 
-			my $connection = 0;
-
-			if ($segment->{'response'}) {
-				$connection = $segment->{'response'}->header('Connection');
-			}
-
-			# if either the client or the server has requested a close, respect that.
-			if (!$connection || $connection =~ /close/i) {
-
-				$log->info("End request, connection closing for: $httpClient");
+			
+			# close the connection if requested by the higher God pushing segments
+			if ($segment->{'close'} && $segment->{'close'} == 1) {
+				
+				$log->info("End request, connection closing for: $peeraddr{$httpClient}");
 
 				closeHTTPSocket($httpClient);
 			}
 
 		} else {
 
-			$log->info("More to send to $peeraddr{$httpClient}");
+			$log->info("More segments to send to $peeraddr{$httpClient}");
 			
 			if ( $inChild ) {
 				return 1;
@@ -2356,6 +2509,8 @@ sub closeHTTPSocket {
 	my $httpClient = shift;
 	my $streaming = shift;
 	
+	$log->info("Closing HTTP socket $httpClient with $peeraddr{$httpClient}");
+
 	Slim::Networking::Select::removeRead($httpClient);
 	Slim::Networking::Select::removeWrite($httpClient);
 	Slim::Networking::Select::removeError($httpClient);
@@ -2368,7 +2523,17 @@ sub closeHTTPSocket {
 	delete($keepAlives{$httpClient});
 	delete($peerclient{$httpClient});
 	delete($lastSegLen{$httpClient}) if (defined $lastSegLen{$httpClient});
-
+	
+	# heads up to handlers, if any
+	for my $func (@closeHandlers) {
+		if (ref($func) eq 'CODE') {
+		
+			# XXX: should this use eval?
+			&{$func}($httpClient);
+		}
+	}
+	
+	
 	# Fix for bug 1289. A close on its own wasn't always actually
 	# sending a FIN or RST packet until significantly later for
 	# streaming connections. The call to shutdown seems to be a
@@ -2461,6 +2626,32 @@ sub addPageFunction {
 		$forkFunctions{$regexp} = 1;
 	}
 }
+
+# addRawFunction
+# adds a function to be called when the raw URI matches $regexp
+# prototype: function($httpClient, $response), no return value
+#            $response is a HTTP::Response object.
+sub addRawFunction {
+	my ($regexp, $funcPtr) = @_;
+
+	my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
+	$log->info("Adding RAW handler: /$regexp/ -> $funcName");
+
+	$rawFunctions{$regexp} = $funcPtr;
+}
+
+# addCloseHandler
+# defines a function to be called when $httpClient is closed
+# prototype: func($httpClient), no return value
+sub addCloseHandler{
+	my $funcPtr = shift;
+	
+	my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
+	$log->info("Adding Close handler: $funcName");
+	
+	push @closeHandlers, $funcPtr;
+}
+	
 
 sub addTemplateDirectory {
 	my $dir = shift;

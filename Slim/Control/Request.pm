@@ -773,24 +773,30 @@ sub executeRequest {
 
 =head2 unregisterAutoExecute ( $connectionID )
 
-Removes all subscriptions for this $connectionID.
+Removes all subscriptions for this $connectionID. Returns 1 if there were any, else 0.
 
 =cut
 sub unregisterAutoExecute{
 	my $connectionID = shift;
 	
-	# kill any timers
-	for my $name (keys %{$subscribers{$connectionID}}) {
-		for my $clientid (keys %{$subscribers{$connectionID}{$name}}) {
-			
-			my $request = $subscribers{$connectionID}{$name}{$clientid};
-			
-			Slim::Utils::Timers::killTimers($request, \&__autoexecute);
-		}
-	}
+	if ($subscribers{$connectionID}) {
 	
-	# delete everything linked to connection
-	delete $subscribers{$connectionID};
+		# kill any timers
+		for my $name (keys %{$subscribers{$connectionID}}) {
+			for my $clientid (keys %{$subscribers{$connectionID}{$name}}) {
+				
+				my $request = $subscribers{$connectionID}{$name}{$clientid};
+				
+				Slim::Utils::Timers::killTimers($request, \&__autoexecute);
+			}
+		}
+		
+		# delete everything linked to connection
+		delete $subscribers{$connectionID};
+		
+		return 1;
+	}
+	return 0;
 }
 
 
@@ -2241,8 +2247,11 @@ sub __autoexecute{
 
 		my $name = $self->getRequestString();
 		my $clientid = $self->clientid() || 'global';
+		my $request2del = $subscribers{$cnxid}{$name}{$clientid};
 		delete $subscribers{$cnxid}{$name}{$clientid};
+		# there should not be any of those, but just to be sure
 		Slim::Utils::Timers::killTimers($self, \&__autoexecute);
+		Slim::Utils::Timers::killTimers($request2del, \&__autoexecute);
 	}
 
 }
