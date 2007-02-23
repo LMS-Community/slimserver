@@ -124,6 +124,7 @@ sub handleFeed {
 	# keep item id in $favsItem so we can process it later
 	if ($stash->{'action'} && $stash->{'action'} =~ /^(favadd|favdel)$/ && @index) {
 		$favsItem = pop @index;
+		$stash->{'index'} = undef;
 	}
 
 	if ( scalar @index ) {
