@@ -7,6 +7,7 @@ body, table, input, select, textarea, select, p, li {
 body {
 	margin: 0;
 	padding: 0;
+	background: #FFFFFF;
 }
 
 /* Hack for IE to prevent horizontal scrollbars with frames */

@@ -90,15 +90,13 @@
 			</span>
 		[%- END %]
 		[%- content | indent(4) %]
-		[%- IF controls -%]
+		[%- IF rightcontrols -%]
+			<span class="browsedbRightControls">
+			[%- PROCESS $rightcontrols -%]
+			</span>
+		[%- ELSIF controls -%]
 			<span class="browsedbControls">
 			[%- PROCESS $controls -%]
-			</span>
-		[%- END %]
-		[%- IF controls AND rightcontrols; PROCESS dummylink; END %]
-		[%- IF rightcontrols -%]
-			<span class="browsedbControls">
-			[%- PROCESS $rightcontrols -%]
 			</span>
 		[%- END %]
 	</div>

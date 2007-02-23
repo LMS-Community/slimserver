@@ -137,14 +137,16 @@ div#pagetitle {
 	padding-right: 100px;
 }
 
-.browsedbControls,.playlistControls {
+.browsedbControls,.playlistControls, .browseDbRightControls {
+	position: absolute;
+	top: 0px;
 	right: 1px;
 	padding: 0px;
 	margin: 0px;
 	float: right;
 }
 
-.browsedbControls a, .playlistControls a {
+.browsedbControls a, .playlistControls a, .browseDbRightControls a {
 	vertical-align: middle;
 	float: left;
 	position: relative;
@@ -152,7 +154,7 @@ div#pagetitle {
 	padding-top: 2px;
 }
 
-.browsedbControls img, .playlistControls img {
+.browsedbControls img, .playlistControls img, .browseDbRightControls img {
 	padding: 0px;
 	margin: 0px;
 }

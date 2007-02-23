@@ -92,11 +92,10 @@
 	
 	[%- content | indent(4) %]
 	</td>
-	[%- IF controls -%]
-		[%- PROCESS $controls -%]
-	[%- END %]
 	[%- IF rightcontrols -%]
 		[%- PROCESS $rightcontrols -%]
+	[%- ELSIF controls -%]
+		[%- PROCESS $controls -%]
 	[%- END %]
 	</tr></table>
 [%- END %]
