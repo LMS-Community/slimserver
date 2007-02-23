@@ -103,7 +103,7 @@ function editSave(id) {
 	var params = 'action=editset&index=' + id + '&entrytitle=' + escape(newTitle.value);
 	
 	if ($('edit_url_'   + id)) {
-		var newURL = escape($('edit_url_'   + id));
+		var newURL = escape($('edit_url_'   + id).value);
 		params     = params + '&entryurl=' + newURL
 	}
 	
@@ -124,6 +124,42 @@ function editSave(id) {
 		}
 	} );
 }
+
+function editTitle(id) {
+	var element = $('titleheader');
+	
+	// backup copy of line item in case of cancel
+	editHTML['titleheader'] = element.innerHTML;
+	
+	// pull an edit form via Ajax
+	new Ajax.Updater( { success: element }, webroot + 'plugins/Favorites/index.html?action=edittitle&index=' + id, {
+		method: 'get',
+		asynchronous: true,
+		onFailure: function(t) {
+			alert('Error -- ' + t.responseText);
+		}
+	} );
+}
+
+function cancelTitle() {
+	var element = $('titleheader');
+	element.innerHTML = editHTML['titleheader'];
+	delete editHTML['titleheader'];
+}
+
+function saveTitle(id) {
+	var element = $('titleheader');
+	
+	if (!id) {
+		id = '';
+	}
+	
+	var newTitle = $('newtitle');
+	var params = 'index=' + id + '&title=' + escape(newTitle.value);
+	
+	ajaxUpdate('index.html',params);
+}
+
 
 function showControls(id) {
 	if (document.getElementById(id)) {

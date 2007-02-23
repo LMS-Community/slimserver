@@ -336,7 +336,6 @@ sub indexHandler {
 		push @$level,{
 			'text' => string('PLUGIN_FAVORITES_NAME'),
 			'URL'  => string('PLUGIN_FAVORITES_URL'),
-			'type' => 'audio',
 		};
 
 		$edit = scalar @$level - 1;

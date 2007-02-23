@@ -21,7 +21,7 @@
 	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
 [% END %][% END %]
 
-[% PROCESS pageheader.html %]
+[% IF NOT ajaxUpdate %][% PROCESS pageheader.html %]<div id="mainbody">[% END %]
 
 [% IF msg %][% WRAPPER contentcontainer %]
 	<b>[% msg %]</b>
@@ -204,5 +204,5 @@
 	[% END %]
 [%- END %]
 
-[% PROCESS pagefooter.html %]
+[% IF NOT ajaxUpdate %]</div>[% PROCESS pagefooter.html %][% END %]
 
