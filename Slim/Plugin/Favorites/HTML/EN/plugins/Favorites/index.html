@@ -1,7 +1,5 @@
 [% BLOCK editentry %]
-	[% WRAPPER contentitem lineclass = 'browsedbListItemFullWidth' %]
-		[% PROCESS dummylink %]
-		[% PROCESS dummylink %]
+	[% WRAPPER contentitem leftcontrols = 'playcontrols' lineclass = 'browsedbListItemFullWidth' %]
 		[% IF entry.outline %]
 			<form name="edittitle" method="" style="display: inline; width: 100%;">
 				<input type="hidden" name="index" value="[% entry.index %]">
@@ -52,6 +50,19 @@
 [% END %]
 
 [% BLOCK editcontrols %]<span id="editcontrols[% entry.index %]" style="display: none;">
+	[% IF entry.favorites == 1 %]
+		[% WRAPPER favaddlink noTarget=1 %]
+			[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=favadd&index=[% entry.index %]')"
+			[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=favadd&index=[% entry.index %]"
+			[%- END -%]
+		[% END %]
+	[% ELSIF entry.favorites == 2 %]
+		[% WRAPPER favdellink noTarget=1 %]
+			[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=favdel&index=[% entry.index %]')"
+			[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=favdel&index=[% entry.index %]"
+			[%- END -%]
+		[% END %]
+	[% END %]
 	[% WRAPPER editlink noTarget=1 -%]
 		[%- IF useAJAX -%]href="javascript:void(0);" onClick="edit([% entry.index %]);"
 		[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=edit&amp;index=[% entry.index %]"
@@ -85,7 +96,7 @@
 [% END %]
 
 [% BLOCK entryblock -%]
-	[%- WRAPPER contentitem controls = 'favoritescontrol' leftcontrols = 'playcontrols' rightcontrols = 'editcontrols' %]
+	[%- WRAPPER contentitem leftcontrols = 'playcontrols' rightcontrols = 'editcontrols' %]
 		<a id="dragitemhref_[% entry.index %]" href="[% webroot %]plugins/Favorites/index.html?&amp;index=[% entry.index %]">
 		   <span id="dragitemtitle_[% entry.index %]">[% entry.title %]</span></a>
 	[% END -%]
@@ -133,7 +144,7 @@
 		[%- odd = (not odd) -%]
 	[%- END %]
 	</ol>
-[% END %]
+
 
 [% IF deleted %]
 	[% BLOCK favoritesdeleteditem %]
@@ -150,37 +161,42 @@
 	[% odd = (not odd) %]
 [% END %]
 
-<p></p>
-
+[%# clear the last entry info %]
+[% entry = '' %]
 [% IF load %]
-
+	[% WRAPPER contentitem leftcontrols = 'playcontrols' lineclass = 'browsedbListItemFullWidth' %]
 	<form name="loadfile" method="get" action="[% webroot %]plugins/Favorites/index.html">
 		<input type="hidden" name="index" value="[% levelindex %]">
-		<input type="text" class="stdedit" name="filename" style="width: 80%;" value="[% "PLUGIN_FAVORITES_LOADFILE" | string %]" onClick="this.value=''">
+		<input type="text" class="stdedit" name="filename" style="width: 71%;" value="[% "PLUGIN_FAVORITES_LOADFILE" | string %]" onClick="this.value=''">
 		<input type="submit" class="stdclick" name="loadfile" value=[% "PLUGIN_FAVORITES_LOAD" | string %]>
 		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 	</form>
+	[% END %]
 
 [% ELSIF save %]
-
-	<form name="savefile" method="get" action="[% webroot %]plugins/Favorites/index.html">
+	[% WRAPPER contentitem leftcontrols = 'playcontrols' lineclass = 'browsedbListItemFullWidth' %]
+	<form name="savefile" method="get" action="[% webroot %]plugins/Favorites/index.html" style="display: inline; width: 100%;">
 		<input type="hidden" name="index" value="[% levelindex %]">
-		<input type="text" class="stdedit" name="filename" style="width: 80%;" value="[% filename ? filename : "PLUGIN_FAVORITES_SAVEFILE" | getstring %] [% UNLESS filename %] onClick="this.value=''" [% END %]">
+		<input type="text" class="stdedit" name="filename" style="width: 71%;" value="[% filename ? filename : "PLUGIN_FAVORITES_SAVEFILE" | getstring %] [% UNLESS filename %] onClick="this.value=''" [% END %]">
 		<input type="submit" class="stdclick" name="savefile" value=[% "PLUGIN_FAVORITES_SAVE" | string %]>
 		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 	</form>
+	[% END %]
 
 [% ELSIF import %]
-
-	<form name="importfile" method="get" action="[% webroot %]plugins/Favorites/index.html">
+	[% WRAPPER contentitem leftcontrols = 'playcontrols' lineclass = 'browsedbListItemFullWidth' %]
+	<form name="importfile" method="get" action="[% webroot %]plugins/Favorites/index.html" style="display: inline; width: 100%;">
 		<input type="hidden" name="index" value="[% levelindex %]">
-		<input type="text" class="stdedit" name="filename" style="width: 78%;" value="[% "PLUGIN_FAVORITES_IMPORTFILE" | string %]" onClick="this.value=''">
+		<input type="text" class="stdedit" name="filename" style="width: 71%;" value="[% "PLUGIN_FAVORITES_IMPORTFILE" | string %]" onClick="this.value=''">
 		<input type="submit" class="stdclick" name="importfile" value="[% "PLUGIN_FAVORITES_IMPORT" | string %]">
 		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
 	</form>
+	[% END %]
 [% END %]
 
-<div id="defaultform" [% IF editmode OR edittitle OR import %]style="display: none;"[% END %]>
+[% END %]
+[% WRAPPER contentcontainer %]
+<div id="defaultform" [% IF editmode OR edittitle OR import %] style="display: none;"[% END %]>
 	<form name="buttons" method="get" action="[% webroot %]plugins/Favorites/index.html">
 		<input type="hidden" name="index" value="[% levelindex %]">
 		<input type="submit" class="stdclick" name="newentry" value="[% favorites ? "PLUGIN_FAVORITES_NEWFAVORITE" : "PLUGIN_FAVORITES_NEWENTRY" | string %]">
@@ -192,7 +208,7 @@
 		[% END %]
 	</form>
 </div>
-
+[% END %]
 [% IF useAJAX %]<script TYPE="text/javascript">initListSortable('draglist'[% IF levelindex %], [% levelindex %][% END %]);</script>[% END %]
 
 [% PROCESS pagefooter.html %]
