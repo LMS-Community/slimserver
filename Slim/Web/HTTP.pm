@@ -1505,7 +1505,8 @@ sub prepareResponseForSending {
 
 	# Set the Content-Length - valid for either HEAD or GET
 	$response->content_length(length($$body));
-	$response->date(time());
+	
+	$response->header( Date => time2str(time) );
 
 	# If we're already a 304 - that means we've already checked before the static content fetch.
 	if ($response->code() ne RC_NOT_MODIFIED) {
@@ -1527,8 +1528,6 @@ sub _stringifyHeaders {
 	my $data = '';
 
 	$data .= sprintf("%s %s %s%s", $response->protocol(), $code, status_message($code) || "", $CRLF);
-
-	$data .= sprintf("Date: %s%s", time2str(time), $CRLF);
 
 	$data .= sprintf("Server: SlimServer (%s - %s)%s", $::VERSION, $::REVISION, $CRLF);
 
