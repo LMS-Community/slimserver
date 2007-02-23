@@ -132,8 +132,8 @@ sub add {
 	$log->info(sprintf("url: %s title: %s", $url, $title));
 
 	# if its already a favorite, don't add it again
-	if (my $fav = $class->findUrl($url)) {
-		return $fav->{'num'};
+	if ($class->hasUrl($url)) {
+		return undef;
 	}
 
 	my $entry = {

@@ -16,6 +16,7 @@ sub initPlugin {
 
 	my $name  = $class->displayName;
 	my $menu  = $class->playerMenu;
+	my $mode  = $class->modeName;
 
 	# This is a bit of a hack, but since Slim::Buttons::Common is such a
 	# disaster, and has no concept of OO, we need to wrap 'setMode' (an
@@ -25,11 +26,11 @@ sub initPlugin {
 
 		my $exitMode = $class->can('exitMode') ? sub { $class->exitMode(@_) } : undef;
 
-		Slim::Buttons::Common::addMode($class, $class->getFunctions, sub { $class->setMode(@_) }, $exitMode);
+		Slim::Buttons::Common::addMode($mode, $class->getFunctions, sub { $class->setMode(@_) }, $exitMode);
 	}
 
 	my %params = (
-		'useMode' => $class,
+		'useMode' => $mode,
 		'header'  => $name,
 	);
 
@@ -52,7 +53,7 @@ sub initPlugin {
 
 	if ($class->can('defaultMap')) {
 
-		Slim::Hardware::IR::addModeDefaultMapping($class, $class->defaultMap);
+		Slim::Hardware::IR::addModeDefaultMapping($mode, $class->defaultMap);
 	}
 }
 
@@ -66,6 +67,12 @@ sub playerMenu {
 	my $class = shift;
 
 	return $class->_pluginDataFor('playerMenu') || PLUGINMENU;
+}
+
+sub modeName {
+	my $class = shift;
+
+	return $class;
 }
 
 sub _pluginDataFor {

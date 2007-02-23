@@ -862,6 +862,17 @@ sub playlistXitemCommand {
 
 	my $path = $url;
 
+	# check whether url is for local file or db entry, if so pass to playlistXtracksCommand
+	if ($path =~ /^file:\/\/|^db:/) {
+
+		if (my @tracks = _playlistXtracksCommand_parseDbItem($client, $path)) {
+
+			$client->execute([ 'playlist', $cmd . 'tracks' , 'listRef', \@tracks ]);
+			$request->setStatusDone();
+			return;
+		}
+	}
+
 	# correct the path
 	# this only seems to be useful for playlists?
 	if (!Slim::Music::Info::isRemoteURL($path) && !-e $path && !(Slim::Music::Info::isPlaylistURL($path))) {
@@ -1071,10 +1082,6 @@ sub playlistXtracksCommand {
 	if ($what =~ /listRef/i) {
 
 		@tracks = _playlistXtracksCommand_parseListRef($client, $what, $listref);
-
-	} elsif ($what =~ /favorite/i) {
-
-		@tracks = _playlistXtracksCommand_parseFavorite($client, $what, $listref);
 
 	} elsif ($what =~ /searchRef/i) {
 
@@ -2358,9 +2365,8 @@ sub _playlistXtracksCommand_parseSearchRef {
 }
 
 # Allow any URL to be a favorite - this includes things like iTunes playlists.
-sub _playlistXtracksCommand_parseFavorite {
+sub _playlistXtracksCommand_parseDbItem {
 	my $client  = shift;
-	my $what    = shift;
 	my $url     = shift;
 
 	my $class   = 'Track';
@@ -2368,11 +2374,6 @@ sub _playlistXtracksCommand_parseFavorite {
 	my $terms   = undef;
 
 	$log->debug("Begin Function");
-
-	# If coming from the web UI.
-	if ($what =~ /favorite=(.+?)\&/i) {
-		$url = Slim::Utils::Misc::unescape($1);
-	}
 
 	# Bug: 2569
 	# We need to ask for the right type of object.

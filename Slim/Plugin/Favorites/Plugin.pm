@@ -52,6 +52,8 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['favorites', 'delete', '_index'], [0, 0, 0, \&cliDelete]);
 }
 
+sub modeName { 'FAVORITES' };
+
 sub setMode {
 	my $class = shift;
 	my $client = shift;
