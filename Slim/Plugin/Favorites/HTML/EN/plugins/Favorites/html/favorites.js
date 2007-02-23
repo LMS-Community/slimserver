@@ -22,25 +22,11 @@ function reorderlist(order, offset, from) {
 			}
 			
 			// pull a background result of the move command
-			updateList("action=move&index=" + offset + from + "&to=" + i);
+			ajaxUpdate('index.html', "action=move&index=" + offset + from + "&to=" + i);
 			
 			break;
 		}
 	}
-}
-
-// request and update with new list html
-//TODO target something more appropriate than document.body since we're retrieving the entire html, head and all.
-function updateList(params) {
-	new Ajax.Updater( { success: document.body }, webroot + 'plugins/Favorites/index.html', {
-		method: 'post',
-		postBody: params,
-		evalScripts: true,
-		asynchronous: true,
-		onFailure: function(t) {
-			alert('Error -- ' + t.responseText);
-		}
-	} );
 }
 
 // swallow click event if sortable in progress

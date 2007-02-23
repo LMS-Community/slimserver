@@ -19,88 +19,6 @@
 	<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
 	<script type="text/javascript" src="[% webroot %]html/scriptaculous/scriptaculous.js?load=effects,dragdrop&amp;r=[% revision %]"></script>
 	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
-	<script TYPE="text/javascript">
-		// track if sortable effect in use.
-		var sortableReordered = false;
-		
-		var movefromHTML;
-		var movetoHTML;
-		
-		// parse new order for source and target indices
-		function reorderlist(order, offset, from) {
-			var params;
-			
-			for (var i=0; i < order.length; i++) {
-				var rexp = new RegExp("\\d+$");
-				var id = rexp.exec(order[i]);
-				
-				if (id == from) {
-					
-					// format level offset for url params
-					if (offset) {
-						offset = offset + ".";
-					} else {
-						offset = "";
-					}
-					
-					// pull a background result of the move command
-					updateList("action=move&index=" + offset + from + "&to=" + i);
-					
-					break;
-				}
-			}
-		}
-		
-		// request and update with new list html
-		//TODO target something more appropriate than document.body since we're retrieving the entire html, head and all.
-		function updateList(params) {
-			new Ajax.Updater( { success: document.body }, 'index.html', {
-				method: 'post',
-				postBody: params,
-				evalScripts: true,
-				asynchronous: true,
-				onFailure: function(t) {
-					alert('Error -- ' + t.responseText);
-				}
-			} );
-		}
-		
-		// swallow click event if sortable in progress
-		function checkSortable(event) {
-			if (sortableReordered) {
-				Event.stop(event);
-				sortableReordered = false;
-			}
-		}
-		
-		// drag and dropfavorites list, scrolling window when needed.
-		var activeElem = null;
-		function initListSortable(element, offset) {
-		
-			if (! $(element)) {
-				return;
-			}
-			
-			Position.includeScrollOffsets = true;
-			
-			var activeElem = null;
-			//<![CDATA[
-			Sortable.create(element, {
-				onChange: function(item) {
-					var rexp = new RegExp("\\d+$");
-					var id = rexp.exec(item.id);
-					activeElem = parseInt(id);
-					sortableReordered = true;
-				},
-				onUpdate: function() {
-					reorderlist(Sortable.sequence(element), offset, activeElem);
-				},
-				scroll: window,
-				revert: true
-			});
-			//]]>
-		}
-	</script>
 [% END %][% END %]
 
 [% PROCESS pageheader.html %]
@@ -238,13 +156,13 @@
 	[% BLOCK favoritescontrol %]
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
-				[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=favadd&index=[% index _ (start + loop.index) %]&player=[% player | uri %]')"
+				[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=favadd&index=[% index _ (start + loop.index) %]')"
 				[%- ELSE       -%]href="index.html?action=favadd&index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"
 				[%- END -%]
 			[% END %]
 		[% ELSIF item.favorites == 2 %]
 			[% WRAPPER favdellink noTarget=1 %]
-				[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=favdel&index=[% index _ (start + loop.index) %]&player=[% player | uri %]')"
+				[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=favdel&index=[% index _ (start + loop.index) %]')"
 				[%- ELSE       -%]href="index.html?action=favdel&index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"
 				[%- END -%]
 			[% END %]
@@ -262,9 +180,8 @@
 			[%- END %]
 			[%- odd = (not odd) %]
 		[% END %]
-		<ol id="draglist" style="padding: 0px; margin: 0px; border: 0px;">
+		
 		[%- FOREACH item = items %]
-			<li id="dragitem_[% entry.index %]" style="margin: 0px; padding: 0px; border: 0px;" [% IF useAJAX %]onMouseDown="Event.observe('dragitem_[% entry.index %]', 'click', function(event) { checkSortable(event); });"[% END %]>
 			[%- BLOCK gencontrol -%]
 				[% IF item.type == 'audio' || item.enclosure %]
 					[% WRAPPER playlink %]href="index.html?[% searchquery %]action=play&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
@@ -275,14 +192,11 @@
 				[% END %]
 			[%- END %]
 			[%- WRAPPER contentitem leftcontrols = 'gencontrol' rightcontrols = 'favoritescontrol' %]
-				<a id="dragitemhref_[% entry.index %]" href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]">
-					<span id="dragitemtitle_[% entry.index %]">[% item.name || item.title %]</span>
-				</a>
+				<a href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]">[% item.name || item.title %]</a>
 			[%- END %]
-			</li>
 			[%- odd = (not odd) %]
 		[%- END %]
-		</ol>
+
 	[%- END %]
 	[% IF hasPagebar %]
 		[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]

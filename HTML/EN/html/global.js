@@ -54,6 +54,10 @@ function ajaxRequest(thisurl,params, action) {
 		requesttype = 'get';
 	}
 
+	if (!action) {
+		action = refreshNothing;
+	}
+
 	var myAjax = new Ajax.Request(
 	thisurl,
 	{
@@ -63,6 +67,19 @@ function ajaxRequest(thisurl,params, action) {
 		onComplete: action,
 		requestHeaders:['Referer', document.location.href]
 	});
+}
+
+// request and update with new list html
+function ajaxUpdate(url, params) {
+	new Ajax.Updater( { success: document.body }, url, {
+		method: 'post',
+		postBody: params+'&player='+player,
+		evalScripts: true,
+		asynchronous: true,
+		onFailure: function(t) {
+			alert('Error -- ' + t.responseText);
+		}
+	} );
 }
 
 // Parse the raw data and return the requested hash.

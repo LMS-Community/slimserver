@@ -36,13 +36,13 @@
 [% BLOCK favoritescontrol %]
 	[% IF entry.favorites == 1 %]
 		[% WRAPPER favaddlink noTarget=1 %]
-			[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=favadd&index=[% entry.index %]')"
+			[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=favadd&index=[% entry.index %]')"
 			[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=favadd&index=[% entry.index %]"
 			[%- END -%]
 		[% END %]
 	[% ELSIF entry.favorites == 2 %]
 		[% WRAPPER favdellink noTarget=1 %]
-			[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=favdel&index=[% entry.index %]')"
+			[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=favdel&index=[% entry.index %]')"
 			[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=favdel&index=[% entry.index %]"
 			[%- END -%]
 		[% END %]
@@ -52,13 +52,13 @@
 [% BLOCK editcontrols %]<span id="editcontrols[% entry.index %]" style="display: none;">
 	[% IF entry.favorites == 1 %]
 		[% WRAPPER favaddlink noTarget=1 %]
-			[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=favadd&index=[% entry.index %]')"
+			[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'index.html', 'action=favadd&index=[% entry.index %]')"
 			[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=favadd&index=[% entry.index %]"
 			[%- END -%]
 		[% END %]
 	[% ELSIF entry.favorites == 2 %]
 		[% WRAPPER favdellink noTarget=1 %]
-			[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=favdel&index=[% entry.index %]')"
+			[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=favdel&index=[% entry.index %]')"
 			[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=favdel&index=[% entry.index %]"
 			[%- END -%]
 		[% END %]
@@ -75,7 +75,7 @@
 			href="[% webroot %]plugins/Favorites/index.html?action=movedown&amp;index=[% entry.index %]"
 	[%- END %][% END %]
 	[% WRAPPER removelink noTarget=1 -%]
-		[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('action=delete&amp;index=[% entry.index %]');"
+		[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=delete&amp;index=[% entry.index %]');"
 		[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=delete&amp;index=[% entry.index %]"
 		[%- END -%]
 	[%- END %]</span>
@@ -84,10 +84,14 @@
 [% BLOCK playcontrols %]
 	[%- IF entry.audio -%]
 		[% WRAPPER playlink noTarget=1 -%]
-			href="[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% entry.index %]" onClick="refreshStatus();"
+			[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxRequest('index.html', 'action=play&amp;index=[% entry.index %]', refreshStatus);"
+			[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% entry.index %]" onClick="refreshStatus();"
+			[%- END -%]
 		[%- END %]
 		[% WRAPPER addlink noTarget=1 -%]
-			href="[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% entry.index %]" onClick="refreshStatus();"
+			[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxRequest('index.html', 'action=add&amp;index=[% entry.index %]', refreshStatus);"
+			[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% entry.index %]" onClick="refreshStatus();"
+			[%- END -%]
 		[%- END %]
 	[%- ELSE -%]
 		[% PROCESS dummylink %]
@@ -114,6 +118,7 @@
 	
 [% IF useAJAX %][% pageHeaderScripts = BLOCK %]
 	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
+	<script type="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]" ></script>
 	<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
 	<script type="text/javascript" src="[% webroot %]html/scriptaculous/scriptaculous.js?load=effects,dragdrop&amp;r=[% revision %]"></script>
 	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
@@ -122,9 +127,14 @@
 	
 [% PROCESS pageheader.html %]
 
-[% IF errormsg %]<p>[% errormsg %]</p>[% END %]
+[%- IF errormsg %]<p>[% errormsg %]</p>[% END -%]
 
-[% IF NOT favorites %]<h4><a href="[% webroot %]plugins/Favorites/index.html?edittitle=1&amp;index=[% index %]">[% title %]</a></h4>[% END %]
+[%- IF NOT favorites %]<h4><a [% IF useAJAX -%]
+		     href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=edittitle&amp;index=[% entry.index %]');"
+		   [%- ELSE %]
+		     href="[% webroot %]plugins/Favorites/index.html?action=edittitle&amp;index=[% index %]"
+		   [%- END %]>[% title %]</a></h4>
+[% END -%]
 
 [% odd = 1 %]
 	
@@ -145,53 +155,71 @@
 	[%- END %]
 	</ol>
 
-
 [% IF deleted %]
 	[% BLOCK favoritesdeleteditem %]
 		[% WRAPPER removelink noTarget=1 %]
-		[%- IF useAJAX -%]href="javascript:void(0);" onClick="updateList('forgetdelete&amp;index=[% levelindex %]');"
+		[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'forgetdelete&amp;index=[% levelindex %]');"
 		[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?forgetdelete&amp;index=[% levelindex %]"
 		[%- END -%]
 		[% END %]
 		
 	[% END %]
 	[% WRAPPER contentitem controls = 'favoritesdeleteditem'%]
-		<a href="[% webroot %]plugins/Favorites/index.html?insert&amp;index=[% levelindex %]"><b><I>[% "PLUGIN_FAVORITES_INSERTDEL" | string %]</b> [ [% deleted %] ]</I></a>
+		<a [% IF useAJAX -%]
+		     href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'insert&index=[% levelindex %]');"
+		   [%- ELSE %]
+		     href="[% webroot %]plugins/Favorites/index.html?insert&amp;index=[% levelindex %]"
+		   [%- END %]><b><I>[% "PLUGIN_FAVORITES_INSERTDEL" | string %]</b> [ [% deleted %] ]</I></a>
 	[% END %]
 	[% odd = (not odd) %]
 [% END %]
 
 [%# clear the last entry info %]
 [% entry = '' %]
-[% IF load %]
+[% IF load %]<div id='loadfile' >
 	[% WRAPPER contentitem leftcontrols = 'playcontrols' lineclass = 'browsedbListItemFullWidth' %]
-	<form name="loadfile" method="get" action="[% webroot %]plugins/Favorites/index.html">
+	<form id='lodafile' name="loadfile" method="get" action="[% webroot %]plugins/Favorites/index.html" style="display: inline; width: 100%;">
 		<input type="hidden" name="index" value="[% levelindex %]">
-		<input type="text" class="stdedit" name="filename" style="width: 71%;" value="[% "PLUGIN_FAVORITES_LOADFILE" | string %]" onClick="this.value=''">
-		<input type="submit" class="stdclick" name="loadfile" value=[% "PLUGIN_FAVORITES_LOAD" | string %]>
-		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
+		<input type="text" class="stdedit" name="filename" style="width: 71%;" value="[% 'PLUGIN_FAVORITES_LOADFILE' | string %]" onClick="this.value=''">
+		[% IF useAJAX %]
+			<input type="button" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_LOAD' | string %]" onclick="editSave([% entry.index %]); return false;" />
+			<input type="button" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]" onclick="Element.remove('loadfile'); showElements(['defaultform']);" />
+		[% ELSE %]
+			<input type="submit" class="stdclick" name="loadfile" value="[% 'PLUGIN_FAVORITES_LOAD' | string %]">
+			<input type="submit" class="stdclick" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]">
+		[% END %]
 	</form>
-	[% END %]
+	[% END %]</div>
 
-[% ELSIF save %]
+[% ELSIF save %]<div id='savefile'>
 	[% WRAPPER contentitem leftcontrols = 'playcontrols' lineclass = 'browsedbListItemFullWidth' %]
-	<form name="savefile" method="get" action="[% webroot %]plugins/Favorites/index.html" style="display: inline; width: 100%;">
+	<form  name="savefile" method="get" action="[% webroot %]plugins/Favorites/index.html" style="display: inline; width: 100%;">
 		<input type="hidden" name="index" value="[% levelindex %]">
-		<input type="text" class="stdedit" name="filename" style="width: 71%;" value="[% filename ? filename : "PLUGIN_FAVORITES_SAVEFILE" | getstring %] [% UNLESS filename %] onClick="this.value=''" [% END %]">
-		<input type="submit" class="stdclick" name="savefile" value=[% "PLUGIN_FAVORITES_SAVE" | string %]>
-		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
+		<input type="text" class="stdedit" name="filename" style="width: 71%;" value="[% filename ? filename : 'PLUGIN_FAVORITES_SAVEFILE' | getstring %]" [% UNLESS filename %] onClick="this.value=''" [% END %]">
+		[% IF useAJAX %]
+			<input type="button" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_SAVE' | string %]" onclick="editSave([% entry.index %]); return false;" />
+			<input type="button" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]" onclick="Element.remove('savefile'); showElements(['defaultform']);" />
+		[% ELSE %]
+			<input type="submit" class="stdclick" name="savefile" value="[% 'PLUGIN_FAVORITES_SAVE' | string %]">
+			<input type="submit" class="stdclick" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]">
+		[% END %]
 	</form>
-	[% END %]
+	[% END %]</div>
 
-[% ELSIF import %]
+[% ELSIF import %]<div id='importfile'>
 	[% WRAPPER contentitem leftcontrols = 'playcontrols' lineclass = 'browsedbListItemFullWidth' %]
 	<form name="importfile" method="get" action="[% webroot %]plugins/Favorites/index.html" style="display: inline; width: 100%;">
 		<input type="hidden" name="index" value="[% levelindex %]">
-		<input type="text" class="stdedit" name="filename" style="width: 71%;" value="[% "PLUGIN_FAVORITES_IMPORTFILE" | string %]" onClick="this.value=''">
-		<input type="submit" class="stdclick" name="importfile" value="[% "PLUGIN_FAVORITES_IMPORT" | string %]">
-		<input type="submit" class="stdclick" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
+		<input type="text" class="stdedit" name="filename" style="width: 71%;" value="[% 'PLUGIN_FAVORITES_IMPORTFILE' | string %]" onClick="this.value=''">
+		[% IF useAJAX %]
+			<input type="button" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_IMPORT' | string %]" onclick="editSave([% entry.index %]); return false;" />
+			<input type="button" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]" onclick="Element.remove('importfile'); showElements(['defaultform']);" />
+		[% ELSE %]
+			<input type="submit" class="stdclick" name="importfile" value="[% 'PLUGIN_FAVORITES_IMPORT' | string %]">
+			<input type="submit" class="stdclick" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]">
+		[% END %]
 	</form>
-	[% END %]
+	[% END %]</div>
 [% END %]
 
 [% END %]
@@ -199,12 +227,23 @@
 <div id="defaultform" [% IF editmode OR edittitle OR import %] style="display: none;"[% END %]>
 	<form name="buttons" method="get" action="[% webroot %]plugins/Favorites/index.html">
 		<input type="hidden" name="index" value="[% levelindex %]">
-		<input type="submit" class="stdclick" name="newentry" value="[% favorites ? "PLUGIN_FAVORITES_NEWFAVORITE" : "PLUGIN_FAVORITES_NEWENTRY" | string %]">
-		<input type="submit" class="stdclick" name="newlevel" value="[% "PLUGIN_FAVORITES_NEWFOLDER" | string %]">
-		<input type="submit" class="stdclick" name="import" value="[% "PLUGIN_FAVORITES_IMPORT" | string %]">
+		[% IF useAJAX %]
+			<input type="button" style="display: inline;" value="[% favorites ? 'PLUGIN_FAVORITES_NEWFAVORITE' : 'PLUGIN_FAVORITES_NEWENTRY' | string %]" onclick="ajaxUpdate('index.html', 'newentry&index=[% levelindex %]');">
+			<input type="button" style="display: inline;" value="[% 'PLUGIN_FAVORITES_NEWFOLDER' | string %]" onclick="ajaxUpdate('index.html', 'newlevel&index=[% levelindex %]');">
+			<input type="button" style="display: inline;" value="[% "PLUGIN_FAVORITES_IMPORT" | string %]" onclick="ajaxUpdate('index.html', 'import&index=[% levelindex %]');">
+		[% ELSE %]
+			<input type="submit" class="stdclick" name="newentry" value="[% favorites ? "PLUGIN_FAVORITES_NEWFAVORITE" : "PLUGIN_FAVORITES_NEWENTRY" | string %]">
+			<input type="submit" class="stdclick" name="newlevel" value="[% 'PLUGIN_FAVORITES_NEWFOLDER' | string %]">
+			<input type="submit" class="stdclick" name="import" value="[% 'PLUGIN_FAVORITES_IMPORT' | string %]">
+		[% END %]
 		[% IF NOT favorites %]
-			<input type="submit" class="stdclick" name="load" value="[% "PLUGIN_FAVORITES_LOAD" | string %]">
-			<input type="submit" class="stdclick" name="save" value="[% "PLUGIN_FAVORITES_SAVE" | string %]">
+			[% IF useAJAX %]
+				<input type="button" style="display: inline;" value="[% 'PLUGIN_FAVORITES_LOAD' | string %]" onclick="ajaxUpdate('index.html', 'load&index=[% levelindex %]');">
+				<input type="button" style="display: inline;" value="[% 'PLUGIN_FAVORITES_SAVE' | string %]" onclick="ajaxUpdate('index.html', 'save&index=[% levelindex %]');">
+			[% ELSE %]
+				<input type="submit" class="stdclick" name="load" value="[% 'PLUGIN_FAVORITES_LOAD' | string %]">
+				<input type="submit" class="stdclick" name="save" value="[% 'PLUGIN_FAVORITES_SAVE' | string %]">
+			[% END %]
 		[% END %]
 	</form>
 </div>
