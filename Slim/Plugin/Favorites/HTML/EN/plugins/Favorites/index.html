@@ -172,7 +172,7 @@
 		</span>
 	[% END %]
 
-	[% IF useAJAX %]<span onMouseOver="showElememts('favoritesdeletedcontrol', 'inline');" onMouseOut="hideElements('favoritesdeletedcontrol')">
+	[% IF useAJAX %]<span onMouseOver="showElements(['favoritesdeletedcontrol'], 'inline');" onMouseOut="hideElements(['favoritesdeletedcontrol'])">
 	[% END %]
 	[% WRAPPER contentitem rightcontrols = 'favoritesdeleteditem' %]
 		[% PROCESS dummylink %]
