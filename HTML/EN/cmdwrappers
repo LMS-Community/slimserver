@@ -157,7 +157,7 @@ END %]
 	
 	<div class="[% lineclass || 'browsedbListItem' %]">
 		[%- IF leftcontrols -%]
-			<span class="browsedControls">
+			<span class="browsedbLeftControls">
 			[%- PROCESS $leftcontrols -%]
 			</span>
 		[%- END %]
