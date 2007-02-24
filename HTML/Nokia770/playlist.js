@@ -1,5 +1,5 @@
-var pageFirstItem = [% pageinfo.startitem %];
-var pageLastItem =  [% playlist_items.last.num %];
+var pageFirstItem = [% IF pageinfo.startitem %][% pageinfo.startitem %][% ELSE %]0[% END %];
+var pageLastItem =  [% IF playlist_items.last.num %][% playlist_items.last.num %][% ELSE %]0[% END %];
 var player = '[% playerURI %]';
 var url = 'playlist.html';
 var timeoutID = false;
@@ -15,7 +15,6 @@ var thatTrack;
 var timeToRefresh = 20000;
 var previousState = new Object();
 
-[% PROCESS html/global.js %]
 [% PROCESS skin_global.js %]
 
 // parses the data if it has not been done already
