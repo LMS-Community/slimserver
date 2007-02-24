@@ -24,13 +24,13 @@
 [% END %]
 
 [% BLOCK listitem %]
-	<td class="listing" align="left">
+	<div class="listing" align="left">
 		[% IF content == '' %]
 			[% title %]		
 		[% ELSE %]
 			<a [% content %] >[% title %]</a>
 		[% END %]
-	</td>
+	</div>
 [% END %]
 
 [% BLOCK descendlink -%]

@@ -34,7 +34,7 @@ function changePlayer(player_List) {
 	player = escape(player);
 	
 	var newPlayer = "=" + player;
-	newHref(parent.frames['status'].document,newPlayer);
+	newHref(parent.status.document,newPlayer);
 	refreshPlaylist(player);
 	
 	var args = 'player=' + player + '&ajaxRequest=1&s=' + Math.random();

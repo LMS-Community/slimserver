@@ -8,12 +8,17 @@ function convert(url)
 }
 
 function doAjaxRefresh(light) {
-	var args = 'player='+player+'&ajaxRequest=1&s='+Math.random();
+	var args = 'player=' + player + '&ajaxRequest=1&s='+Math.random();
+	
 	if (light) {
 		args = args + "&light=1";
 	}
 	
-	getStatusData(args, refreshAll);
+	if (light == 'onload') {
+		ajaxRequest(url, args, refreshNewPlayer);
+	} else {
+		ajaxRequest(url, args, refreshAll);
+	}
 }
 
 function processState(param) {
