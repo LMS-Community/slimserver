@@ -64,7 +64,7 @@
 	[% END %]
 [% END %]
 
-[% BLOCK editcontrols %]<span id="editcontrols[% entry.index %]" style="display: none;">
+[% BLOCK editcontrols %]<span id="editcontrols[% entry.index %]" [% IF useAJAX %]style="display: none;"[% END %]>
 	[% PROCESS favoritescontrol %]
 	[% WRAPPER editlink noTarget=1 -%]
 		[%- IF useAJAX -%]href="javascript:void(0);" onClick="edit([% entry.index %]);"
@@ -148,10 +148,10 @@
 [% WRAPPER contentcontainer %]
 	<ol id="draglist" style="padding: 0px; margin: 0px; border: 0px;">
 	[% FOREACH entry = entries %]
-		<li id="dragitem_[% entry.index %]" style="margin: 0px; padding: 0px; border: 0px;" 
+		<li id="dragitem_[% entry.index %]"
 			[% IF useAJAX %]onMouseDown="Event.observe('dragitem_[% entry.index %]', 'click', function(event) { checkSortable(event); });"
-			onMouseOver="showControls('editcontrols[% entry.index %]');"
-			onMouseOut="hideControls('editcontrols[% entry.index %]')"[% END %]>
+			onMouseOver="showElements(['editcontrols[% entry.index %]'], 'inline');"
+			onMouseOut="hideElements(['editcontrols[% entry.index %]'])"[% END %]>
 		[% IF entry.edit -%]
 			[%- PROCESS editentry -%]
 		[%- ELSE -%]
@@ -163,7 +163,7 @@
 	</ol>
 
 [% IF deleted %]
-	[% BLOCK favoritesdeleteditem %]<span id="favoritesdeletedcontrol" style="display: none;">
+	[% BLOCK favoritesdeleteditem %]<span id="favoritesdeletedcontrol" [% IF useAJAX %]style="display: none;"[% END %]>
 		[% WRAPPER removelink noTarget=1 %]
 		[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'forgetdelete&amp;index=[% levelindex %]');"
 		[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?forgetdelete&amp;index=[% levelindex %]"
@@ -172,9 +172,7 @@
 		</span>
 	[% END %]
 
-	[% IF useAJAX %]<span style="margin: 0px; padding: 0px; border: 0px;" 
-		onMouseOver="showControls('favoritesdeletedcontrol');"
-		onMouseOut="hideControls('favoritesdeletedcontrol')">
+	[% IF useAJAX %]<span onMouseOver="showElememts('favoritesdeletedcontrol', 'inline');" onMouseOut="hideElements('favoritesdeletedcontrol')">
 	[% END %]
 	[% WRAPPER contentitem rightcontrols = 'favoritesdeleteditem' %]
 		[% PROCESS dummylink %]
@@ -190,6 +188,7 @@
 	[% IF useAJAX %]</span>[% END %]
 	[% odd = (not odd) %]
 [% END %]
+
 
 [%# clear the last entry info %]
 [% entry = '' %]
@@ -269,7 +268,6 @@
 
 [% IF useAJAX %]<script TYPE="text/javascript">initListSortable('draglist'[% IF levelindex %], [% levelindex %][% END %]);</script>[% END %]
 
-[% IF NOT ajaxUpdate %]</div>
-[% PROCESS pagefooter.html %][% END %]
+[% IF NOT ajaxUpdate %]</div>[% PROCESS pagefooter.html %][% END %]
 
 [% END %]

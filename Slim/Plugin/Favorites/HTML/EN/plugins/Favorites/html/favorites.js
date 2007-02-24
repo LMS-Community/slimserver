@@ -159,16 +159,3 @@ function saveTitle(id) {
 	
 	ajaxUpdate('index.html',params);
 }
-
-
-function showControls(id) {
-	if (document.getElementById(id)) {
-		document.getElementById(id).style.display = 'inline';
-	}
-}
-
-function hideControls(id) {
-	if (document.getElementById(id)) {
-		document.getElementById(id).style.display = 'none';
-	}
-}

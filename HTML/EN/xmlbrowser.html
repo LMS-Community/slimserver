@@ -153,7 +153,7 @@
 		[% PROCESS pagebar %]
 	[% END %]
 	
-	[% BLOCK favoritescontrol %]
+	[% BLOCK favoritescontrol %]<span id="controls[% index _ (start + loop.index) %]" [% IF useAJAX %]style="display: none;"[% END %]>
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
 				[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=favadd&index=[% index _ (start + loop.index) %]')"
@@ -166,7 +166,7 @@
 				[%- ELSE       -%]href="index.html?action=favdel&index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"
 				[%- END -%]
 			[% END %]
-		[% END %]
+		[% END %]</span>
 	[% END %]
 	
 	[%- WRAPPER contentcontainer %]
@@ -191,9 +191,14 @@
 					[% PROCESS dummylink %]
 				[% END %]
 			[%- END %]
+			[% IF useAJAX %]<span style="margin: 0px; padding: 0px; border: 0px;" 
+				onMouseOver="showElements(['controls[% index _ (start + loop.index) %]'], 'inline');"
+				onMouseOut="hideElements(['controls[% index _ (start + loop.index) %]'])">
+			[% END %]
 			[%- WRAPPER contentitem leftcontrols = 'gencontrol' rightcontrols = 'favoritescontrol' %]
 				<a href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]">[% item.name || item.title %]</a>
 			[%- END %]
+			[% IF useAJAX %]</span>[% END %]
 			[%- odd = (not odd) %]
 		[%- END %]
 
