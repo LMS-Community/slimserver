@@ -9,7 +9,7 @@
 [%- END %]
 
 [% BLOCK dummylink -%]
-	<img src="[% webroot %]html/images/spacer.gif" width=13 height=13>
+	<img src="[% webroot %]html/images/spacer.gif" width="13" height="13" alt="" title="">
 [%- END %]
 
 [% BLOCK descendlink -%]
