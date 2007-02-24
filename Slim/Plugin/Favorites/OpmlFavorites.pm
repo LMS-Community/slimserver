@@ -113,6 +113,18 @@ sub _loadOldFavorites {
 	$class->save;
 }
 
+sub xmlbrowser {
+	my $class = shift;
+
+	return $class->{'xmlbrowser'} if $class->{'xmlbrowser'};
+
+	$class->SUPER::xmlbrowser;
+
+	$class->{'xmlbrowser'}->{'favorites'} = 1;
+
+	return $class->{'xmlbrowser'};
+}
+
 sub add {
 	my $class  = shift;
 	my $url    = shift;

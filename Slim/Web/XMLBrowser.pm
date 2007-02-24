@@ -116,8 +116,8 @@ sub handleFeed {
 		@index = split /\./, $stash->{'index'};
 	}
 
-	# favorites class to allow add/del of urls from favorites
-	my $favs = Slim::Utils::Favorites->new($client);
+	# favorites class to allow add/del of urls to favorites, but not when browsing favorites list itself
+	my $favs = Slim::Utils::Favorites->new($client) unless $feed->{'favorites'};
 	my $favsItem;
 
 	# action is add/delete favorite: pop the last item off the index as we want to display the whole page not the item
