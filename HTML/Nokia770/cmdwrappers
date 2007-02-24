@@ -122,16 +122,16 @@
 <a name = "[% anchor %]"></a>
 [% END %]
 
-	[% IF controls || rightcontrols || leftcontrols %]<table><tr>
-	[% IF leftcontrols %][%- PROCESS $leftcontrols %][% END %]
-	[%- PROCESS $controls %]
+	[% IF controls OR rightcontrols OR leftcontrols %]<table><tr>
+	[% IF leftcontrols  %][%- PROCESS $leftcontrols  %][% END %]
+	[% IF controls      %][%- PROCESS $controls      %][% END %]
 	[% IF rightcontrols %][%- PROCESS $rightcontrols %][% END %]
 	[%- END -%]
 	<td class = 'listing' width = '20'>&nbsp;</td>
 	<td class="listing" align="left">
 	[%- content | indent(4) %]
 	</td>
-	[% IF controls || rightcontrols || leftcontrols %]</tr></table>[% END %]
+	[% IF controls OR rightcontrols OR leftcontrols %]</tr></table>[% END %]
 
 [%- END %]
 
