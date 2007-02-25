@@ -10,6 +10,7 @@ use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+use Slim::Music::Info;
 
 use XML::Simple;
 use File::Basename;
@@ -34,13 +35,13 @@ my $nullopml = {
 
 sub new {
 	my $class = shift;
-	my $name  = shift;
+	my $args  = shift;
 
 	my $ref = bless {}, $class;
 
-	if ($name) {
+	if ($args) {
 
-		$ref->load($name);
+		$ref->load($args);
 
 	} else {
 
@@ -52,34 +53,19 @@ sub new {
 
 sub load {
 	my $class = shift;
-    my $name  = shift;
+	my $args  = shift;
 
-	my $filename = $class->filename($name);
-	my $file;
+	my $url      = $args->{'url'};
+	my $content  = $args->{'content'};
+	my $remote   = exists $args->{'content'};
+
+	my $filename = $class->filename($url);
 
 	$class->{'opml'} = undef;
 
-	if (Slim::Music::Info::isRemoteURL($filename)) {
+	if (!$remote || $content) {
 
-		$log->info("Fetching $filename");
-
-		my $http = Slim::Player::Protocols::HTTP->new( { 'url' => $filename, 'create' => 0, 'timeout' => 10 } );
-
-		if (defined $http) {
-			# NB this is not async at present - the following blocks the server user interface but not streaming
-			$file = \$http->content;
-			$http->close;
-		}
-
-	} else {
-
-		$file = $filename;
-
-	}
-
-	if (defined $file) {
-
-		$class->{'opml'} = eval { XMLin( $file, forcearray => [ 'outline', 'body' ], SuppressEmpty => undef ) };
+		$class->{'opml'} = eval { XMLin( $content || $filename, forcearray => [ 'outline', 'body' ], SuppressEmpty => undef ) };
 
 		if (defined $class->{'opml'}) {
 
@@ -90,13 +76,12 @@ sub load {
 		} else {
 
 			$log->warn("Failed to load from $filename ($!)");
-
 		}
-    }
+	}
 
-	$class->{'opml'} = $nullopml;
+	$class->{'opml'} = Storable::dclone($nullopml);
 
-	$class->{'error'} = 'loaderror';
+	$class->{'error'} = $remote ? 'remoteloaderror' : 'loaderror';
 
     return $class->{'opml'};
 }
@@ -165,9 +150,12 @@ sub filename {
 
 	return $class->{'filename'} unless $name;
 
-	if ($name =~ /^file\:\/\//) {
+	if ( Slim::Music::Info::isFileURL($name) ) {
+
 		$name = Slim::Utils::Misc::pathFromFileURL($name);
-	} elsif (dirname($name) eq '.' && Slim::Utils::Prefs::get("playlistdir")) {
+
+	} elsif ( !Slim::Music::Info::isURL($name) && dirname($name) eq '.' && Slim::Utils::Prefs::get("playlistdir") ) {
+
 		$name = catdir(Slim::Utils::Prefs::get("playlistdir"), $name);
 	}
 

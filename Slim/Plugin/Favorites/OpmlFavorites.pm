@@ -28,7 +28,7 @@ sub new {
 
 	if (-r $favs->filename) {
 
-		$favs->load($favs->filename);
+		$favs->load({ 'url' => $favs->filename });
 
 	} else {
 

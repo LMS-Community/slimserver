@@ -24,6 +24,7 @@ use Slim::Utils::Favorites;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+use Slim::Music::Info;
 
 use Slim::Plugin::Favorites::Opml;
 use Slim::Plugin::Favorites::OpmlFavorites;
@@ -130,7 +131,6 @@ sub indexHandler {
 	my $params = shift;
 
 	my $edit;     # index of entry to edit if set
-	my $errorMsg; # error message to display at top of page
 	my $changed;  # opml has been changed
 
 	# Debug:
@@ -172,7 +172,21 @@ sub indexHandler {
 
 	if ($params->{'loadfile'}) {
 
-		$opml->load($params->{'filename'});
+		my $url = $params->{'filename'};
+
+		if (Slim::Music::Info::isRemoteURL($url)) {
+
+			if (!$params->{'fetched'}) {
+				Slim::Networking::SimpleAsyncHTTP->new(	\&asyncCB, \&asyncCB, { 'args' => [$client, $params, @_] } )->get( $url );
+				return;
+			}
+
+			$opml->load({ 'url' => $url, 'content' => $params->{'fetchedcontent'} });
+
+		} else {
+
+			$opml->load({ 'url' => $url });
+		}
 
 		($level, $indexLevel, @indexPrefix) = $opml->level(undef, undef);
 		$deleted = undef;
@@ -194,19 +208,31 @@ sub indexHandler {
 
 	if ($params->{'importfile'}) {
 
-		my $filename = $params->{'filename'};
+		my $url = $params->{'filename'};
 		my $playlist;
 
-		if ($filename =~ /\.opml$/) {
+		if ($url =~ /\.opml$/) {
 
-			$playlist = Slim::Plugin::Favorites::Opml->new($filename)->toplevel;
+			if (Slim::Music::Info::isRemoteURL($url)) {
+
+				if (!$params->{'fetched'}) {
+					Slim::Networking::SimpleAsyncHTTP->new(	\&asyncCB, \&asyncCB, { 'args' => [$client, $params, @_] } )->get( $url );
+					return;
+				}
+
+				$playlist = Slim::Plugin::Favorites::Opml->new({ 'url' => $url, 'content' => $params->{'fetchedcontent'} })->toplevel;
+
+			} else {
+
+				$playlist = Slim::Plugin::Favorites::Opml->new({ 'url' => $url })->toplevel;
+			}
 
 		} else {
 
-			$playlist = Slim::Plugin::Favorites::Playlist->read($filename);
+			$playlist = Slim::Plugin::Favorites::Playlist->read($url);
 		}
 
-		if ($playlist) {
+		if ($playlist && scalar @$playlist) {
 
 			for my $entry (@$playlist) {
 				push @$level, $entry;
@@ -216,7 +242,7 @@ sub indexHandler {
 
 		} else {
 
-			$params->{'errormsg'} = string('PLUGIN_FAVORITES_IMPORTERROR') . " " . $filename;
+			$params->{'errormsg'} = string('PLUGIN_FAVORITES_IMPORTERROR') . " " . $url;
 		}
 	}
 
@@ -415,7 +441,23 @@ sub indexHandler {
 		};
 	}
 
-	return Slim::Web::HTTP::filltemplatefile('plugins/Favorites/index.html', $params);
+	# fill template and send back response
+	my $callback = shift;
+	my $output = Slim::Web::HTTP::filltemplatefile('plugins/Favorites/index.html', $params);
+
+	$callback->($client, $params, $output, @_);
+}
+
+sub asyncCB {
+	# callback for async http callback and error callback
+	# causes indexHandler to be processed again with stored params + fetched content
+	my $http = shift;
+	my ($client, $params, $callback, $httpClient, $response) = @{ $http->params('args') };
+
+	$params->{'fetched'}        = 1;
+	$params->{'fetchedcontent'} = $http->content;
+
+	indexHandler($client, $params, $callback, $httpClient, $response);
 }
 
 sub cliBrowse {

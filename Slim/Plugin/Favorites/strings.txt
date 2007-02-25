@@ -74,6 +74,9 @@ PLUGIN_FAVORITES_LOADERROR
 	DE	Fehler beim Laden der Datei
 	EN	Error Loading File
 
+PLUGIN_FAVORITES_REMOTELOADERROR
+	EN	Error Loading URL
+
 PLUGIN_FAVORITES_SAVEERROR
 	DE	Fehler beim Speichern der Datei
 	EN	Error Saving File
