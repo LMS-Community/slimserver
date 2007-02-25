@@ -75,10 +75,7 @@ sub _urlindex {
 	for my $entry (@{$level}) {
 
 		if ($entry->{'URL'} || $entry->{'url'}) {
-			$class->{'urlindex'}->{ $entry->{'URL'} || $entry->{'url'} } = {
-				'text' => $entry->{'text'},
-				'ind'  => $index."$i",
-			};
+			$class->{'urlindex'}->{ $entry->{'URL'} || $entry->{'url'} } = $index . $i;
 		}
 
 		if ($entry->{'outline'}) {
@@ -178,15 +175,11 @@ sub findUrl {
 
 	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs (Live365)
 
-	if ($class->{'urlindex'}->{ $url }) {
+	if (my $index = $class->{'urlindex'}->{ $url }) {
 
-		$log->info("Match $url at index ".$class->{'urlindex'}->{ $url }->{'ind'});
+		$log->info("Match $url at index $index");
 
-		return {
-			'url'   => $url,
-			'title' => $class->{'urlindex'}->{ $url }->{'text'},
-			'index' => $class->{'urlindex'}->{ $url }->{'ind'},
-		};
+		return $index;
 	}
 
 	$log->info("No match for $url");
@@ -206,7 +199,7 @@ sub deleteUrl {
 
 	if ($class->{'urlindex'}->{ $url }) {
 
-		$class->deleteIndex($class->{'urlindex'}->{ $url }->{'ind'});
+		$class->deleteIndex($class->{'urlindex'}->{ $url });
 
 	} else {
 

@@ -62,11 +62,9 @@ sub setMode {
 	# 
 	# Only allow adding to favorites if the URL is something we can play.
 
-	my $fav;
+	my $favIndex;
 
 	if (Slim::Utils::Favorites->enabled && (Slim::Music::Info::isSong($url) || Slim::Music::Info::isPlaylist($url)) ) {
-
-		$fav = Slim::Utils::Favorites->new($client)->findUrl($url);
 
 		unshift @list, {
 			value => $url,
@@ -101,6 +99,8 @@ sub setMode {
 				}
 			}
 		};
+
+		$favIndex = Slim::Utils::Favorites->new($client)->findUrl($url);
 	}
 
 	# now use another mode for the heavy lifting
@@ -109,7 +109,7 @@ sub setMode {
 		'listRef'  => \@list,
 		'url'      => $url,
 		'title'    => $title,
-		'favorite' => $fav ? $fav->{'index'} : undef,
+		'favorite' => $favIndex,
 
 		# play music when play is pressed
 		'onPlay'   => sub {

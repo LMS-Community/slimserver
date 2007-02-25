@@ -338,9 +338,7 @@ sub loadDataForTrack {
 
 	if (Slim::Music::Info::isURL($track->url) && Slim::Utils::Favorites->enabled) {
 
-		my $fav = Slim::Utils::Favorites->new($client)->findUrl($track->url);
-
-		$client->modeParam( 'favorite', $fav ? $fav->{'index'} : undef );
+		$client->modeParam( 'favorite', Slim::Utils::Favorites->new($client)->findUrl($track->url) );
 
 		push (@{$client->trackInfoLines}, 'FAVORITE'); # replaced in lines()
 		push (@{$client->trackInfoContent}, {

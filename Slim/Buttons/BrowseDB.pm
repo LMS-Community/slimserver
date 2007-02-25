@@ -799,9 +799,7 @@ sub setMode {
 
 		if (blessed($track) && $track->can('id')) {
 
-			my $fav = Slim::Utils::Favorites->new($client)->findUrl($track);
-
-			$client->modeParam('favorite', $fav ? $fav->{'index'} : undef);
+			$client->modeParam('favorite', Slim::Utils::Favorites->new($client)->findUrl($track) );
 
 			push @items, 'FAVORITE';
 		}

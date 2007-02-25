@@ -46,7 +46,8 @@ sub enabled {
 #
 # sub new         ( $class, $client      ) - contructor
 # sub add         ( $class, $url, $title ) - add $url with $title to favorites
-# sub findUrl     ( $class, $url         ) - returns favorite hash or undef for $url from favorites
+# sub hasUrl      ( $class, $url         ) - return true or false whether $url is in favorites
+# sub findUrl     ( $class, $url         ) - returns index or undef for $url
 # sub deleteUrl   ( $class, $url         ) - deletes $url from favorites
 # sub deleteIndex ( $class, $index       ) - deletes favorite with index $index
 
