@@ -1,5 +1,10 @@
 var mp = 0;
 var currentID = 0;
+var playingstart;
+var showingstart;
+var DEBUG = 1;
+
+try { console.log('init console... done'); } catch(e) { console = { log: function() {} } }
 
 function convert(url)
 {
@@ -7,22 +12,31 @@ function convert(url)
 	return url.replace(re, "&");
 }
 
-function doAjaxRefresh(light) {
-	var args = 'player=' + player + '&ajaxRequest=1&s='+Math.random();
-	
-	if (light) {
-		args = args + "&light=1";
-	}
-	
-	if (light == 'onload') {
-		ajaxRequest(url, args, refreshNewPlayer);
-	} else {
-		ajaxRequest(url, args, refreshAll);
+function debug() {
+	if (DEBUG) {
+		console.log(arguments);
 	}
 }
 
+function doAjaxRefresh(light) {
+	var args = 'player=' + getPlayer('SlimServer-player') +'&ajaxRequest=1&s='+Math.random();
+	var prev_url = url;
+	if (light) {
+		args = args + "&light=1";
+	} else {
+		url = 'status.html'
+	}
+	//debug(url);
+	if (light == 'onload') {
+		ajaxRequest('status.html', args, refreshNewPlayer);
+	} else {
+		ajaxRequest(url, args, refreshAll);
+	}
+	url = prev_url;
+}
+
 function processState(param) {
-	getStatusData(param + "&player="+player+"&ajaxRequest=1&s="+Math.random(), refreshState);
+	getStatusData(param + "&player="+ getPlayer('SlimServer-player') +"&ajaxRequest=1&s="+Math.random(), refreshState);
 }
 
 function refreshState(theData) {
@@ -75,12 +89,12 @@ function refreshState(theData) {
 
 function processBarClick (num) {
 	var pos = parseInt((_progressEnd/20) * (num - 0.5));
-	var param = 'p0=time&p1='+pos+'&player='+player;
-	getStatusData(param + "&ajaxRequest=1&s="+Math.random(), refreshInfo);
+	var param = 'p0=time&p1='+pos+'&player='+ getPlayer('SlimServer-player');
+	ajaxRequest(url, param + "&ajaxRequest=1&s="+Math.random(), refreshInfo);
 }
 
 function processVolume(param) {
-	getStatusData(param + "&player="+player+"&ajaxRequest=1&s="+Math.random(), refreshVolume);
+	ajaxRequest(url, param + "&player="+ getPlayer('SlimServer-player') +"&ajaxRequest=1&s="+Math.random(), refreshVolume);
 }
 
 function refreshVolume(theData) {
@@ -103,7 +117,7 @@ function refreshVolume(theData) {
 }
 
 function processSleepLink(param) {
-	getStatusData(param + "&player=" + player + "&ajaxRequest=1&s=" + Math.random(), refreshSleepTime);
+	ajaxRequest(url, param + "&player="+ getPlayer('SlimServer-player') +"&ajaxRequest=1&s="+Math.random(), refreshSleepTime);
 }
 
 function refreshSleepTime(theData) {
@@ -117,14 +131,24 @@ function refreshSleepTime(theData) {
 }
 
 function processPlayControls(param) {
-	getStatusData(param + "&player="+player+"&ajaxRequest=1&s="+Math.random(), refreshPlayControls);
+	ajaxRequest(url, param + "&player="+ getPlayer('SlimServer-player') +"&ajaxRequest=1&s="+Math.random(), refreshPlayControls);
+}
+
+function processCommand(param, id) {
+
+	//ajaxRequest('status_header.html', param + "&ajaxRequest=1&s="+Math.random(), null);
+	ajaxRequest('status.html', param + "&ajaxRequest=1&force=1&s="+Math.random(), function(theData) {refreshAll(theData,1)});
+	//console.log(id);
+	//getPlaylistData();
+	//doAjaxRefresh();
+	//playlistChecker();
 }
 
 function refreshPlayControls(theData,force) {
 	var parsedData = fillDataHash(theData);
 	
 	var controls = ['stop', 'play', 'pause'];
-
+	//debug("playcontrols " + parsedData['playmode']);
 	var activestyle = getActiveStyleSheet();
 	var curstyle = '';
 	
@@ -136,15 +160,15 @@ function refreshPlayControls(theData,force) {
 		var objID = $('playCtl' + controls[i] + curstyle);
 		
 		if (parsedData['playmode'] == i) {
-			objID.src = webroot + 'html/images/' + controls[i] + '_s' + curstyle + '.gif';
+			objID.src = parsedData['webroot'] + 'html/images/'+controls[i]+'_s'+curstyle+'.gif';
 			
 			if (controls[i] !='play') {
-				if ($("progressBar").src.indexOf('_s') == -1) {$("progressBar").src = webroot + 'html/images/pixel.green_s.gif'}
+				if ($("progressBar").src.indexOf('_s') == -1) {$("progressBar").src = parsedData['webroot'] + 'html/images/pixel.green_s.gif'}
 			} else {
-				if ($("progressBar").src.indexOf('_s') != -1) {$("progressBar").src = webroot + 'html/images/pixel.green.gif'}
+				if ($("progressBar").src.indexOf('_s') != -1) {$("progressBar").src = parsedData['webroot'] + 'html/images/pixel.green.gif'}
 			}
 		} else {
-			objID.src = webroot + 'html/images/'+controls[i] + curstyle + '.gif';
+			objID.src = parsedData['webroot'] + 'html/images/'+controls[i]+curstyle+'.gif';
 		}
 	}
 
@@ -155,17 +179,17 @@ function refreshPlayControls(theData,force) {
 			var objID = $('playCtl' + controls[i] + curstyle);
 			
 			if (parsedData['rate'] == controls[i]) {
-				objID.src = webroot + 'html/images/' + controls[i] + '_s' + curstyle + '.gif';
+				objID.src = parsedData['webroot'] + 'html/images/'+controls[i]+'_s'+curstyle+'.gif';
 				
 			} else {
-				objID.src = webroot + 'html/images/' + controls[i] + curstyle + '.gif';
+				objID.src = parsedData['webroot'] + 'html/images/'+controls[i]+curstyle+'.gif';
 			}
 		}
 		
 		if (parsedData['mute'] == 1) {
-			if ($('playCtl' + 'mute').src.indexOf('_s') != -1) {$('playCtl' + 'mute').src = webroot + 'html/images/mute_s' + curstyle + '.gif';}
+			if ($('playCtl' + 'mute').src.indexOf('_s') != -1) {$('playCtl' + 'mute').src = parsedData['webroot'] + 'html/images/mute_s'+curstyle+'.gif';}
 		} else {
-			if ($('playCtl' + 'mute').src.indexOf('_s') == -1) {$('playCtl' + 'mute').src = webroot + 'html/images/mute' + curstyle + '.gif';}
+			if ($('playCtl' + 'mute').src.indexOf('_s') == -1) {$('playCtl' + 'mute').src = parsedData['webroot'] + 'html/images/mute'+curstyle+'.gif';}
 		}
 	}
 
@@ -174,6 +198,8 @@ function refreshPlayControls(theData,force) {
 	} else {
 		mp = 0;
 	}
+	
+	//debug("now do info");
 	refreshInfo(parsedData, force, curstyle);
 }
 
@@ -184,7 +210,7 @@ function refreshInfo(theData, force, curstyle) {
 	if (parsedData['player_id']) {
 		hideElements(['waiting']);
 	}
-
+	//debug("refreshinfo "+ parsedData['player_id']);
 	if (curstyle == null) {
 		var activestyle = getActiveStyleSheet();
 		var curstyle = '';
@@ -195,7 +221,7 @@ function refreshInfo(theData, force, curstyle) {
 	}
 
 	refreshSleepTime(parsedData);
-	
+
 	var myString = new String($('songtitlehref').innerHTML);
 	var rExp     = new RegExp("item=(.+?)&amp;player","i");
 
@@ -203,8 +229,9 @@ function refreshInfo(theData, force, curstyle) {
 
 	var a = rExp.exec(myString);
 	var newsong = 1;
-
-	if (force != 1 && !(parsedData['songtitleid'] && $('nowplaying').style.display == 'none')) {
+	
+	//debug(force, a, parsedData['songtitleid'], $('nowplaying').style.display);
+	if (force != 1 || (!parsedData['songtitleid'] && $('nowplaying').style.display == 'none')) {
 		if (a == null || a[1] == parsedData['songtitleid']) {newsong = 0;}
 	}
 	
@@ -212,8 +239,8 @@ function refreshInfo(theData, force, curstyle) {
 		//doAjaxRefresh();
 		//return true;
 	//}
-		
-	//alert([newsong,parsedData['songtitleid'] ,$('nowplaying').style.display]);
+
+	//debug([newsong,parsedData['songtitleid']]);
 	var elems = ['thissongnum', 'playtextmode', 'songcount'];
 	if (newsong) {
 		elems.push('songtitle');
@@ -228,7 +255,7 @@ function refreshInfo(theData, force, curstyle) {
 	if (parsedData['durationseconds']) {
 		updateTime(parsedData['songtime'],parsedData['durationseconds'], curstyle);
 	}
-	
+
 	if (parsedData['thissongnum']) {
 		hideElements(['notplaying']);
 		showElements(['nowplaying']);
@@ -239,6 +266,7 @@ function refreshInfo(theData, force, curstyle) {
 		$('coverarthref').href = "javascript:void();";
 	}
 
+	//debug("update player state\n");
 	var playeronly = ['playCtlffwd', 'playCtlrew', 'playCtlmute', 'volumeControl'];
 	for (var i=0; i < playeronly.length; i++) {
 		var key = playeronly[i];
@@ -255,13 +283,13 @@ function refreshInfo(theData, force, curstyle) {
 	
 	// refresh cover art
 	if ($('coverartpath') && newsong) {
+		debug("update covers");
 		var coverPath = null;
 		if (parsedData['coverartpath'].match('cover') || parsedData['coverartpath'].match('radio')) {
 			coverPath = parsedData['coverartpath'];
 		} else {
 			coverPath = '/music/'+parsedData['coverartpath']+'/cover_100x100_f_000000.jpg';
 		}
-		
 		$('coverartpath').src   = coverPath;
 		
 		var tooltip = "";
@@ -281,6 +309,7 @@ function refreshInfo(theData, force, curstyle) {
 	
 	// refresh href content
 	if (newsong) {
+		debug("update hrefs");
 		if (parsedData['albumid']) {
 			refreshHrefElement('albumhref', parsedData['albumid'],"album.id=");
 			refreshHrefElement('coverhref', parsedData['albumid'],"album.id=");
@@ -290,6 +319,9 @@ function refreshInfo(theData, force, curstyle) {
 		refreshHrefElement('songtitlehref', parsedData['songtitleid'],"item=");
 		refreshHrefElement('yearhref', parsedData['year'],"year.id=");
 		refreshHrefElement('zaphref', parsedData['thissongnum']-1,"p2=");
+	}
+	
+	if (parsedData['songtitleid']) {
 		currentID = parsedData['songtitleid'];
 	}
 
@@ -302,6 +334,7 @@ function refreshInfo(theData, force, curstyle) {
 	}
 	
 	if (newsong) {
+		debug("last block");
 		var elems = ['duration', 'bitrate'];
 		for (var i=0; i < elems.length; i++) {
 			var key = elems[i];
@@ -313,7 +346,7 @@ function refreshInfo(theData, force, curstyle) {
 			}
 		}
 		
-		if(parsedData['album']) {
+		if(parsedData['albumid']) {
 			showElements(['albuminfo']);
 			showElements(['albumhref'], 'inline');
 			showElements(['yearinfo'], 'inline');
@@ -332,104 +365,112 @@ function refreshInfo(theData, force, curstyle) {
 		}
 		
 		if(parsedData['playermodel']) {
-			$('logoimage' + curstyle).src = webroot + 'html/images/' + parsedData['playermodel'] + '_logo.small' + curstyle + '.gif';
+			$('logoimage' + curstyle).src = parsedData['webroot'] + 'html/images/' + parsedData['playermodel'] + '_logo.small' + curstyle + '.gif';
 		}
-		playlistChecker();
+		debug("check playlist");
+
+		playlistChecker(parsedData);
 		
-		//also do a secondary check 10s into songs.
-		setTimeout( "playlistChecker()", 10*1000);
+		//also do a secondary check 1s into songs.
+		//setTimeout( "playlistChecker()", 1000);
 	}
 	return true;
 }
 
 // reload undock window
 function refreshUndock() {
-	var args = 'player=' + player + '&ajaxRequest=1&s=' + Math.random();
-	getStatusData(args, refreshAll);
-	//window.location.replace('status.html?player='+player+'&undock=1');
-}
+	var player = getPlayer('SlimServer-player')
 
-function refreshPlaylist(newPlayer) {
-	if (newPlayer == null) newPlayer = player;
-	try {
-		if (parent.playlist.location.host != '') {
-			// Putting a time-dependant string in the URL seems to be the only way to make Safari
-			// refresh properly. Stitching it together as below is needed to put the salt before
-			// the hash (#currentsong).
-			var plloc = top.frames.playlist.location;
-			
-			var newloc = plloc.protocol + '//' + plloc.host + plloc.pathname
-				+ plloc.search.replace(/&d=\d+/, '') + '&d=' + new Date().getTime();
-			
-			newloc=newloc.replace(playerExp, '=' + newPlayer);
-			newloc=newloc.replace(/&start=\d+&/, '&');
-			newloc=newloc + '#currentsong';
-			plloc.replace(newloc);
-		}
-	}
-	catch (err) {
-		// first load can fail, so swallow that initial exception.
-	}
+	var args = 'player=' + player + '&ajaxRequest=1&s='+Math.random();
+	getStatusData(args, refreshAll);
 }
 
 var last;
 var first;
 function currentSong(theData) {
 	var parsedData = fillDataHash(theData);
-
-	var doc = parent.playlist.document;
+	
+	var doc = document;
+	var currentsong;
+	
+	if (parent.playlist) {doc = parent.playlist.document };
+	
+	if (parsedData['currentsongnum']) {
+		currentsong = parsedData['currentsongnum'];
+	} else if (parsedData['thissongnum']) {
+		currentsong = parsedData['thissongnum'] - 1;
+	}
+	debug("playlist now at: "+currentsong);
 	var found = 0;
 	var refresh = 0;
 	
-	if (parsedData['playlistsize'] == 0) {
-		refreshPlaylist();
+	if (parsedData['playlistsize'] == 0 || parsedData['songcount'] == 0) {
+		// playlist is empty, should refresh
+		debug("shortcut currentsong");
+		
+		getPlaylistData();
+		return;
+	} else if (!$('playlist_draglist')) {
+		//playlist is new, refresh
+		debug("new playlist");
+		getPlaylistData();
 		return;
 	}
 	
-	if (first == null || first == parsedData['first_item']) {
-		first = parsedData['first_item'];
+	if (showingstart == parsedData['first_item'] || showingstart == playingstart) {
 
-		for (var i = first; i <= parsedData['last_item']; i++) {
+		for (var i = showingstart; i <= parsedData['last_item']; i++) {
 			
 			// make sure we have matching item counts, refresh if not.
 			var item = doc.getElementById('playlistitem' + i);
-			
+			//debug([i, item, item.className]);
 			if (item) {
 				
-				if (i == parsedData['currentsongnum']) {
+				if (i == currentsong) {
 					item.className = "currentListItem";
 					found = parsedData['item_'+i];
+					debug("found: "+found+" "+i);
 				} else {
-					item.className = "browsedbListItem";
+					item.className = "playListItem";
 				}
 				
 				// Check the id's of each item, refresh if any don't match.
 				var myString = new String(doc.getElementById('playlistitem' + i).innerHTML);
-				var rExp     = new RegExp("item=(.*?)&amp;player","i");
-				if (rExp.exec(myString) == null) {rExp= new RegExp("item=(.*?)&player","i");}
+				var rExp     = new RegExp("trackid_(\\d+)","i");
 				var a = rExp.exec(myString);
 				
 				if (a == null || a[1] != parsedData['item_'+i]) {
+					//debug(a[1], parsedData['item_'+i]);
 					refresh = 1;
 				}
+				
 			} else {
+				debug('missing item: must refresh');
 				refresh = 1;
 			}
 		}
 
 		// refresh the playlist if we're not finding the current song
 		if (currentID != found) {
+			debug('missing current id '+currentID+': must refresh');
 			refresh = 1;
 		} 
 	} else {
-		first = parsedData['first_item'];
-		playlistChecker(first);
+		debug("not showing current page");
+		if (showingstart != parsedData['first_item'] && showingstart == playingstart) {
+			playlistChecker(parsedData['first_item']);
+		}
 	}
 
 	if (refresh != 0) {
-		refreshPlaylist();
+		getPlaylistData();
 	} else {
-		doc.location.hash = 'currentPlaylistItem'+currentsong;
+		debug("current: "+ currentsong);
+		if (!isNaN(currentsong)) {
+			doc.location.hash = 'playlistitem'+currentsong;
+			//console.log('scrolling');
+			//Element.scrollTo('playlistitem'+currentsong);
+		}
 	}
 }
 
@@ -445,9 +486,13 @@ function refreshAll(theData,force) {
 		if (parsedData['isplayer']) {
 			refreshVolume(parsedData);
 		}
-		
+
 		refreshPlayControls(parsedData,force);
 		refreshState(parsedData);
+		
+		if (!document.location.hash && parsedData['thissongnum']) {
+			currentSong(parsedData);
+		}
 	} else {
 		showElements(['waiting'],'inline');
 		updateTime(0,0);
@@ -491,16 +536,156 @@ function getOptionData(params, action) {
 	ajaxRequest(homeloc, params, action);
 }
 
-function playlistChecker(start) {
-	var prev_url = url;
-	url = 'playlist.html';
-	var args = 'player=' + player + '&ajaxRequest=1&s=' + Math.random();
-	
-	if(start != null && start != '') {
-		refreshPlaylist();
-		args = args + "&start=" + start;
+function playlistChecker(theData) {
+	var parsedData = fillDataHash(theData);
+	debug(parsedData['first_item'], parsedData['start'], playingstart, showingstart);
+	if (isNaN(parsedData['first_item']) || ((parsedData['start'] != playingstart) && (playingstart == showingstart))) {
+		debug("get new playlist data");
+		showingstart = parsedData['start'];
+		playingstart = parsedData['start'];
+		getPlaylistData(parsedData['start']);
 	} else {
-		getStatusData(args, currentSong);
+		debug("parse current song info");
+		currentSong(theData);
+		//var prev_url = url;
+	
+		//url = 'playlist.html';
+	
+		//var args = 'player=' + getPlayer('SlimServer-player') +'&ajaxRequest=1&s='+Math.random();
+		
+		//if(!isNaN(start)) {
+		//	debug('getplaylist');
+		//	getPlaylistData(start);
+		//	args = args + "&start="+start;
+		//} else if (!isNaN(playingstart)){
+		//	debug("playlist check at "+ playingstart);
+		//	args = args + "&start=" + playingstart;
+		//}
+		//debug('set current song');
+		//ajaxRequest(url, args, currentSong);
+		//url = prev_url;
 	}
-	url = prev_url;
+}
+
+
+function getPlaylistData(start, params, player) {
+	var requesttype = 'get';
+	var thisplayer;
+
+	if (player) {
+		thisplayer = player;
+	} else {
+		thisplayer = getPlayer('SlimServer-player');
+	}
+	
+	var args = 'player='+ thisplayer +'&s='+Math.random();
+
+	if(params != null && params != '') {
+		args = params + "&" + args;
+	}
+
+	if(!isNaN(start)) {
+		debug("playlist page override "+start);
+		args = args + "&start=" + start;
+		showingstart = start;
+	} else if (!isNaN(showingstart)) {
+		debug("playlist refresh at "+showingstart);
+		args = args + "&start=" + showingstart;
+	}
+	
+
+	var myAjax = new Ajax.Updater(
+	'playlistframe',
+	'playlist.html',
+	{
+		asynchronous:true,
+		//evalScripts:true,
+		method: requesttype,
+		postBody: args,
+		parameters: args,
+		onComplete: function(req) {playlistDone(start,req)},
+		requestHeaders:['Referer', document.location.href]
+	});
+}
+
+function playlistDone(start,req) {
+	$('playlistframe').innerHTML = req.responseText;
+	initSortable('playlist_draglist');
+}
+
+function setStart(start) {
+	if (isNaN(showingstart)) showingstart = start;
+	if (isNaN(playingstart)) playingstart = start;
+	debug("init: showing"+showingstart+", playing"+playingstart);
+}
+
+
+function reorderplaylist(order, start, from) {
+	var params;
+	
+	for (var i=0; i < order.length; i++) {
+		if (order[i] == from) {
+
+			if(start != null && start != '') {
+				from = from + start;
+				i = i + start;
+			}
+			
+			params = "p0=playlist&p1=move&p2=" + from + "&p3=" + i;
+			break;
+		}
+	}
+	
+	debug("move "+from+" to "+i);
+	getPlaylistData(start,params);
+}
+
+function initSortable(element) {
+
+	if (! $(element)) {
+		return;
+	}
+	
+	Position.includeScrollOffsets = true;
+	
+	var activeElem = null;
+	//<![CDATA[
+	Sortable.create(element, {
+		onChange: function(item) {
+			var rexp = new RegExp("\\d+$");
+			var id = rexp.exec(item.id);
+			activeElem = parseInt(id);
+			debug(activeElem, showingstart);
+		},
+		onUpdate: function() {
+			new Effect.Highlight(element, { endcolor: "#d50000" });
+			reorderplaylist(Sortable.sequence(element), showingstart, activeElem);
+		},
+		endeffect: function() {
+			Effect.Shrink('deleteitem');
+			$('playlistStatus').style.backgroundColor = null;
+		},
+		starteffect: function() {
+			Effect.Grow('deleteitem');
+			$('deleteitem').style.backgroundColor = 'maroon';
+		},
+		scroll:'playlistframe',
+		revert: true
+	});
+	//]]>
+}
+
+function deletePlaylistItem(element, start) {
+
+	var rexp = /\d+$/;
+	var id = rexp.exec(element.id);
+	var args;
+	
+	if(start != null && showingstart != '') {
+		id = id + showingstart;
+		args = "start=" + showingstart + "&";
+	}
+
+	params = "p0=playlist&p1=delete&p2=" + id;
+	getPlaylistData(start,params);
 }

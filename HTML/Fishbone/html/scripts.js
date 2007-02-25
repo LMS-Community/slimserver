@@ -5,7 +5,7 @@ var playerExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 
 function homelink() {
 	if (homestring) {
-		document.getElementById('homelink').innerHTML = homestring;
+		$('homelink').innerHTML = homestring;
 	}
 }
 
@@ -16,29 +16,21 @@ function loadBrowser(force) {
 	}
 }
 
-function doSearch(value)
-{
-	selectLink();
-	parent.browser.location='search.html?manualSearch=1&query=' + value + '&player' + getPlayer('SlimServer-player');
-}
-
-function goHome()
-{
-	var homepage = getPage();
-	chooseBrowser(null,homepage);
-}
-	
 function changePlayer(player_List) {
 	player = player_List.options[player_List.selectedIndex].value;
-	
+	//setCookie('SlimServer-player', player);
 	player = escape(player);
 	
 	var newPlayer = "=" + player;
-	newHref(parent.status.document,newPlayer);
-	refreshPlaylist(player);
+	console.log("new player"+player);
+	newHref(parent.frames['status'].document,newPlayer);
+	getPlaylistData(null,null,player);
 	
-	var args = 'player=' + player + '&ajaxRequest=1&s=' + Math.random();
-	getStatusData(args, refreshNewPlayer);
+	var args = 'player='+player+'&ajaxRequest=1&s='+Math.random();
+	ajaxRequest('status.html', args, refreshNewPlayer);
+	
+	//var newpage = '';
+	//var rExp= new RegExp("&page=(.*?)$");
 	
 	if (parent.browser.location.href.indexOf('settings') == -1 &&
 	    parent.browser.location.href.indexOf('plugins') == -1) {
@@ -46,17 +38,23 @@ function changePlayer(player_List) {
 		newHref(parent.header.document,newPlayer);
 		newValue(parent.browser.document,unescape(player));
 	} else {
-		newpage = '';
+		//newpage = '';
 		browseURL = new String(parent.browser.location.href);
 		parent.browser.location=browseURL.replace(playerExp, newPlayer);
 	}
 
+	//var myString = getHomeCookie('SlimServer-Browserpage');
+	//if (rExp.exec(myString)) newpage = "&page=" + rExp.exec(myString)[1];
+
+	//headerURL = new String(parent.header.location.href);
+	//newloc = headerURL.replace(playerExp, newPlayer);
+	
 	if (document.all) { //certain versions of IE will just have to reload the header
 		parent.header.location = "home.html?player=" + player;
 	}
 	
 	var page = parent.header.document.getElementById('homepage').innerHTML;
-	selectLink("", page);
+	selectLink("",page);
 }
 
 // change browse/plugin/radio hrefs to proper player
@@ -64,18 +62,8 @@ function newHref(doc,plyr) {
 
 	for (var j=0;j < doc.links.length; j++){
 		var myString = new String(doc.links[j].href);
-		var rString  = plyr;
+		var rString = plyr;
 		doc.links[j].href = myString.replace(playerExp, rString);
-	}
-}
-
-function newValue(doc,plyr) {
-
-	for (var j=0;j < doc.forms.length; j++){
-
-		if (doc.forms[j].player) {
-			doc.forms[j].player.value = plyr;
-		}
 	}
 }
 
@@ -84,23 +72,27 @@ function toggleStatus(divs) {
 	for (var i=0; i < divs.length; i++) {
 
 		if ($(divs[i]).style.display == "none") {
-			$(divs[i]).style.display          = "block";
-			$('statusImg_up').style.display   = "inline";
+			$(divs[i]).style.display = "block";
+			$('statusImg_up').style.display = "inline";
 			$('statusImg_down').style.display = "none";
 
 		} else {
-			$(divs[i]).style.display          = "none";
-			$('statusImg_up').style.display   = "none";
+			$(divs[i]).style.display = "none";
+			$('statusImg_up').style.display = "none";
 			$('statusImg_down').style.display = "inline";
 		}
 	}
 }
 
-function resizePlaylist(page) {
-	//$('playlist').height = document.body.clientHeight - $('playlistframe').offsetTop;
-	if ($('playlistStatus')) {
-		top.document.getElementById('player_frame').rows = $('playlistStatus').offsetTop+20+', *';
+function resizePlaylist() {
+
+	if (! $$('playlistframe')) {
+		return;
 	}
+
+	$('playlistframe').style.height = document.body.clientHeight - $('playlistframe').offsetTop - 5;
+
+	initSortable('playlist_draglist');
 }
 
 function openRemote() {
@@ -136,7 +128,12 @@ function getPlayer(Player)
 	return plyr;
 }
 
-// grab homepage cookie
+function goHome(plyr)
+{
+	var loc = getHomeCookie('SlimServer-Browserpage')+'&player='+plyr;
+	parent.browser.location = loc;
+}
+
 function getHomeCookie(Name) 
 {
 	var url = getCookie(Name);
@@ -144,12 +141,11 @@ function getHomeCookie(Name)
 	var re  = new RegExp(/artwork,/i);
 	var m   = re.exec(url);
 
-	if (!url || m) return "browsedb.html?hierarchy=album,track&level=0";
+	if (!url || m) return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
 
 	return url;
 }
 
-// parse the page name token (handles old style full href cookie)
 function getPage() {
 	var url = getHomeCookie('SlimServer-Browserpage');
 
@@ -189,7 +185,7 @@ function selectLink(lnk,reset) {
 		selectedLink=lnk;
 	}
 	if (reset == 1) {
-		parent.header.document.forms[0].browse.options[0].selected = "true";
+		document.forms[0].browse.options[0].selected = "true";
 
 	} else {
 		if (reset) {
@@ -203,11 +199,10 @@ function selectLink(lnk,reset) {
 	}
 }
 
-function setLink(lnk) {
-	lnk.href=getHomeCookie('SlimServer-Browserpage') + "&player=" + getPlayer('SlimServer-player');
+function setLink(lnk, player) {
+	lnk.href=getHomeCookie('SlimServer-Browserpage') + "&player" + player;
 }
 
-// function to turn off text under album images while in gallery view.
 function toggleText(set) {
 	for (var i=0; i < document.getElementsByTagName("div").length; i++) {
 
@@ -220,15 +215,84 @@ function toggleText(set) {
 				
 				thisdiv.style.display = 'inline';
 				setCookie('SlimServer-fishbone-showtext',1);
-				document.getElementById('showText').style.display = 'none';
-				document.getElementById('hideText').style.display = 'inline';
+				$('showText').style.display = 'none';
+				$('hideText').style.display = 'inline';
 
 			} else {
 				thisdiv.style.display = 'none';
 				setCookie('SlimServer-fishbone-showtext',0);
-				document.getElementById('hideText').style.display = 'none';
-				document.getElementById('showText').style.display = 'inline';
+				$('hideText').style.display = 'none';
+				$('showText').style.display = 'inline';
 			}
 		}
 	}
+}
+
+function showSongInfo (args) {
+	//console.log("showsonginfo", args[1]);
+	var webroot = args[0];
+	var item = args[1];
+	var player = args[2];
+	
+	parent.browser.location = webroot + 'songinfo.html?item='+ item +'&amp;player=' + player;
+}
+
+var dcTime=250;    // doubleclick time
+var dcDelay=100;   // no clicks after doubleclick
+var dcAt=0;        // time of doubleclick
+var savEvent=null; // save Event for handling doClick().
+var savAction = null;
+var savArgs = null;
+var savEvtTime=0;  // save time of click event.
+var savTO=null;    // handle of click setTimeOut
+
+function hadDoubleClick() {
+	var d = new Date();
+	var now = d.getTime();
+	if ((now - dcAt) < dcDelay) {
+		return true;
+	}
+	return false;
+}
+
+function handleClick(which, action, args) {
+	switch (which) {
+		case "click": 
+			// If we've just had a doubleclick then ignore it
+			if (hadDoubleClick()) return false;
+			// Otherwise set timer to act.  It may be preempted by a doubleclick.
+			savEvent = which;
+			savAction = action;
+			savArgs = args;
+			d = new Date();
+			savEvtTime = d.getTime();
+			savTO = setTimeout("doClick(savEvent, savAction, savArgs)", dcTime);
+			break;
+		case "dblclick":
+			doDoubleClick(which, action, args);
+			break;
+		default:
+	}
+}
+
+function doClick(which, action, args) {
+	 // preempt if DC occurred after original click.
+
+	if (savEvtTime - dcAt <= 0) {
+		return false;
+	}
+	action(args);
+	//console.log("click", action);
+}
+
+function doDoubleClick(which, action, args) {
+	var d = new Date();
+	dcAt = d.getTime();
+
+	if (savTO != null) {
+		clearTimeout( savTO );          // Clear pending Click  
+		savTO = null;
+	}
+	action(args);
+	//console.log("double click", action);
 }

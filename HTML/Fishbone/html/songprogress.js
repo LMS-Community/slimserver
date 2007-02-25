@@ -2,7 +2,7 @@
 var timerID = false;
 
 // refresh data interval (1s for progress updates, 10s for only status)
-var interval = 1000;
+var interval = 900;
 
 // update timer counter, waits for 10 updates when update interval is 1s
 var inc = 0;
@@ -30,16 +30,22 @@ function updateTime(at,end, style) {
 	
 	_progressAt  = at;
 	_progressEnd = end;
-	
+	//debug("update:", at, "of", end, "seconds");
+	// track fishbone alternate stylesheets
 	if (style != null) {
 		_curstyle    = style;
 	}
 }
 
+function resetTime(at,end, style) {
+	
+	inc = 0;
+	updateTime(at, end, style);
+}
 // Update the progress dialog with the current state
 function ProgressUpdate(mp) {
 
-	// lame way to detect playode using the state of the play graphics.
+	// lame way to detect playode using teh state of the play graphics.
 	if ($('playCtlplay') != null) {
 		if ($('playCtlplay'+ _curstyle).src.indexOf('_s') != -1) {
 			mp = 1;
@@ -52,16 +58,20 @@ function ProgressUpdate(mp) {
 	}
 	
 	timerID = setTimeout("ProgressUpdate( "+mp+")", interval);
-
+	
 	inc++;
+	
+	//debug("refresh " + refreshtime);
 	if (mp) _progressAt++;
-
+//var time = new Date();
+//console.log(inc, time.getSeconds());
 	if(_progressAt > _progressEnd) _progressAt = _progressAt % _progressEnd;
 	
 	if ($(inc)) {
-		refreshElement('inc',inc);
+		refreshElement('inc',inc + " - " + _progressAt);
 	}
 
+	//debug("timeCheck:", _progressAt, inc);
 	// Refresh just after song change.  If stopped, lock progress and inc at 0 for when things start again
 	if (_progressAt > 0 && inc > _progressAt) {
 		doAjaxRefresh();

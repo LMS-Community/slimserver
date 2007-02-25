@@ -1,6 +1,6 @@
 [%- IF ajaxRequest -%]
 	<pre>
-	[% PROCESS ajaxRequest.txt page = 'status' %][% PROCESS FBajaxRequest.txt page = 'status' %]
+	[% PROCESS ajaxRequest.txt page = 'status' %][% IF NOT light %][% PROCESS ajaxRequest.txt page = 'playlist' %][% END %][% PROCESS FBajaxRequest.txt page = 'status' %]
 	</pre>
 [%- ELSE -%]
 [%- FILTER null %]
@@ -63,9 +63,10 @@
 	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
 	<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
 	<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
+	<script type="text/javascript" src="[% webroot %]html/scriptaculous/scriptaculous.js?r=[% revision %]"></script>
 	<script TYPE="text/javascript" src="[% webroot %]html/songprogress.js?r=[% revision %]"></script>
-	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
 	<script TYPE="text/javascript">[% PROCESS html/ajax.js %]</script>
+	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
 	[% IF playercount == '0' %]<script TYPE="text/javascript">
 		<!--Hide
 		[% IF undock %]self.close();[% ELSE %]
@@ -74,7 +75,7 @@
 	</script>[% END %]
 </head>
 
-<body bgcolor="#FFFFFF" style="margin: 0;padding:0;" [% IF NOT undock %]onload="refreshPlaylist('[% playerURI %]'); doAjaxRefresh('onload');"[% END %]>
+<body bgcolor="#FFFFFF" style="margin: 0;padding:0;" TOPMARGIN="0" LEFTMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0" onresize="resizePlaylist();" [% IF NOT undock %]onload="doAjaxRefresh('onload');"[% END %]>
 	<div ID="header">
 		<div id="mastHead">
 			<div id="playerlogo">
@@ -116,7 +117,7 @@
 		</div>
 [% END %]
 
-		<script TYPE="text/javascript" language="JavaScript">
+		<script TYPE="text/javascript">
 		<!--
 		if (document.all||document.getElementById)
 			insertProgressBar([% IF modeplay %]1[% ELSE %]0[% END %],[% IF durationseconds %][% durationseconds %][% ELSE %][% refresh %][% END %],[% IF songtime %][% songtime %][% ELSE %]0[% END %]);
@@ -148,7 +149,7 @@
 				
 				<div id="albuminfo" class="label">[% "ALBUM" | string %]&nbsp;<span id="removealbumhref">[% PROCESS remove param="album.id" value = "$itemobj.album.id" %]</span></div>
 				<span id="albumhref"><a [% albumHRef %] target="browser"><span id="album">[% itemobj.album.title | html %]</span></a>&nbsp;</span>
-				<span id="yearinfo">(<span id="yearhref"><a [% yearHRef %] target="browser"><span id="year">[% itemobj.year %]</span></a></span>)</span>
+				<span id="yearinfo">[% IF itemobj.year %]([% END %]<span id="yearhref"><a [% yearHRef %] target="browser"><span id="year"></span></a></span>[% IF itemobj.year %])[% END %]</span>
 			</div>
 		</div>
 	
@@ -211,12 +212,43 @@
 				[% IF current_playlist %][% current_playlist_name %]
 				([% IF myClientState; myClientState.playlist.size; END; %] [% "SONGS" | string %])[% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
 			</div>
+			
+			<div id="deleteitem" style="display:none;" onMouseOut="$('deleteitem').style.backgroundColor = 'maroon';">Drag here to delete</div>
+			
 			<div id="playlistLinks">
 				[% img = '' %]<span id="saveplaylist" style="display:none;">[% PROCESS savePlaylistLink %] / </span>
 				[% PROCESS downloadPlaylistLink %] /
-				[% PROCESS clearPlaylistLink %]
+				<a href="javascript:processPlayControls('p0=playlist&amp;p1=clear');">[% "CLEAR" | string %]</a>
 			</div>
 		</div>
+
+		<div id = "playlistframe">[% playlist %]</div>
+		<script type="text/javascript">
+			
+			resizePlaylist();
+			
+			//var playlist = document.getElementsByClassName('listing');
+			//for (var i = 0; i < playlist.length; i++) {
+			//	new Draggable(playlist[i].id, {
+			//		revert:true,
+			//		constraint: "vertical"
+			//	});
+			//};
+			
+			Droppables.add(
+				'playlistStatus', 
+				{
+					onHover: function () {
+						$('deleteitem').style.backgroundColor = 'limegreen';
+					},
+					onDrop: function (element) {
+						hideElements([element.id]),
+						deletePlaylistItem(element, [% IF start %][% start %][% ELSE %]0[% END %]);
+						Sortable.destroy('playlist_draglist');
+					}
+				}
+			);
+		</script>
 [% END %]
 [% PROCESS pagefooter.html %]
 [% END %]

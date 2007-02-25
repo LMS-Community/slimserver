@@ -3,22 +3,7 @@
 	[% PROCESS ajaxRequest.txt page = 'playlist' light = 1 %]
 </pre>
 [%- ELSE -%]
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-	<head>
-		[% PROCESS customheader.html %]
-		<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
-<!--[if IE]>
-<style type="text/css">
-	body {width: 97%;}
-	.playlistControls {
-		padding-right: 8px;
-	}
-</style>
-<![endif]-->
 
-	</head>
-	<body bgcolor="#000000" style="margin: 0;" onload="javascript:to_currentsong();">
 	[% IF playercount == '0' %]
 	[% ELSIF not playlist_items %]<div class="list"><a name="currentsong"></a></p>[% "EMPTY" | string %]</div>
 	[% ELSE %]
@@ -31,15 +16,20 @@
 			<p>[% "NO_PLAYER_DETAILS" | string %]</p>
 		[% ELSE %]
 			[% IF playlist_items %]
+				<ol id="playlist_draglist" style="counter-reset: item [% start %];">
 				[% FOREACH item = playlist_items %]
-					[% PROCESS status_list.html %]
+					<li class="listing" id="draglist_[% loop.index %]" onmouseover="this.className='oddactive';" onmouseout="this.className='odd';">[% PROCESS status_list.html %]</li>
 				[% END %]
+				</ol>
 			[% ELSE %]<p>[% "EMPTY" | string %]<a name="currentsong"></a></p>[% END %]
 		[% END %]
 	</div>
 		[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar addSummary = 1 %][% END %]
 	</div>
+	
+	<script type="text/javascript">
+		setStart([% start %]);
+	</script>
+	
 	[% END %]
-	</body>
-</html>
 [% END %]

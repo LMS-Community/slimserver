@@ -43,15 +43,13 @@
 [% BLOCK homelink %][% END %]
 
 [% BLOCK playlistcontrols -%]
-	[% width='9' height='11' target='status' %]
-	[%- WRAPPER playlink     -%][%- PROCESS cmdHRef cmdType = 'jump'                           -%][%- END -%]
-	[%- WRAPPER insertlink   -%][%- PROCESS cmdHRef cmdType = 'move' moveTo = item.nextsongind -%][%- END -%]
-	[%- WRAPPER moveuplink   -%][%- PROCESS cmdHRef cmdType = 'move' moveTo = MoveUp           -%][%- END -%]
-	[%- WRAPPER movedownlink -%][%- PROCESS cmdHRef cmdType = 'move' moveTo = MoveDown         -%][%- END -%]
-	[%- WRAPPER removelink   -%][%- PROCESS cmdHRef cmdType = 'delete'                         -%][%- END -%]
-		[% IF item.mixerlinks %]<span class="mixers">[%- FOREACH mixer = item.mixerlinks.values.sort -%]
-			[%- PROCESS $mixer -%]
-		[%- END %]</span>[% END %]
+	[% width='9' height='11' target='status' %][% useJSControls = 1 %]
+	[%- WRAPPER playlink   -%][%- PROCESS cmdHRef cmdType = 'jump'                           -%][%- END -%]
+	[%- WRAPPER insertlink -%][%- PROCESS cmdHRef cmdType = 'move' moveTo = item.nextsongind -%][%- END -%]
+	[%- WRAPPER removelink -%][%- PROCESS cmdHRef cmdType = 'delete'                         -%][%- END -%]
+	[% IF item.mixerlinks %]<span class="mixers">[%- FOREACH mixer = item.mixerlinks.values.sort -%]
+		[%- PROCESS $mixer -%]
+	[%- END %]</span>[% END %]
 [%- END %]
 
 [% BLOCK browsecontrols -%]
@@ -61,12 +59,12 @@
 		[% WRAPPER addlink  noTarget = 1 %]href="[% addallhref %]"[% END %]
 	[% ELSIF showdescend && href %]
 		[% WRAPPER descendlink %][% href %][% END %]
-		[% IF showplay %]
+		[% IF showplay %][% useJSControls = 1 %]
 			[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
 			[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
 		[% END %]
-	[% ELSE %]
-		[%- WRAPPER playlink   -%][%- PROCESS cmdHRef cmdType='play'   -%][%- END %]
+	[% ELSE %][% useJSControls = 1 %]
+		[%- WRAPPER playlink   -%][%- PROCESS cmdHRef cmdType='play' -%][%- END %]
 		[%- WRAPPER insertlink -%][%- PROCESS cmdHRef cmdType='insert' -%][%- END %]
 		[%- WRAPPER addlink    -%][%- PROCESS cmdHRef cmdType='add'    -%][%- END %]
 		[%- WRAPPER removelink -%][%- PROCESS cmdHRef cmdType='remove' -%][%- END %]
@@ -103,6 +101,19 @@
 </div>
 [%- END %]
 
+[%# taken from EN/cmdwrappers as an override %]
+[%# use this to add/play/insert/remove tracks and remote URLs %]
+[% BLOCK cmdHRef -%][% IF useJSControls %]href="javascript:processCommand('[% ELSE %]
+href="[% webroot %][% statusroot %]?[% END %][% 
+	IF numcmdFor.$cmdType; # better way to determine this?
+		PROCESS cmdNumericQuery;
+	ELSIF (itemobj.isRemoteURL  || !attributes || itemobj.content_type() == 'dir');
+		PROCESS cmdRemoteURLQuery;
+	ELSE;
+		PROCESS cmdLocalQuery;
+	END; %]&amp;player=[% playerURI %][% IF useJSControls %]',this.name)[% END %]"
+[%- END %]
+
 [% BLOCK trackinfo %]
 	[% IF item.currentsong %]
 		<a name="currentsong"></a>
@@ -131,8 +142,8 @@
 [% BLOCK pagebar %]
 [%- IF pageinfo.alphamap; PROCESS alphapagecalc; ELSE; PROCESS pagebarcalc pagesperbar = 15; END %]
 <div class="pagebar">[% IF NOT pageinfo.alphamap %][% "PAGES" | string %][% "COLON" | string %][% END %]
-[% IF pagesstart %]  <a href="[% pageinfo.path %]?start=0&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_first.gif" alt="[% "FIRST" | string %]" width="13" height="13" align="top"></a> [% END %]
-[% IF pageprev || pageprev == '0' %] <a href="[% pageinfo.path %]?start=[% pageprev %]&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_prev.gif" alt="[% "PREVIOUS" | string %]" width="13" height="13" align="top"></a> [% END %]
+[% IF pagesstart %]  <a href="[% IF pageinfo.path.match('status') OR pageinfo.path.match('playlist') %]javascript:getPlaylistData([% pagesstart %]);[% ELSE %][% pageinfo.path %]?start=0&amp;[% pageinfo.otherparams | html %][% END %]"><img src="[% webroot %]html/images/b_first.gif" alt="[% "FIRST" | string %]" width="13" height="13" align="top"></a> [% END %]
+[% IF pageprev || pageprev == '0' %] <a href="[% IF pageinfo.path.match('status') OR pageinfo.path.match('playlist') %]javascript:getPlaylistData([% pageprev %]);[% ELSE %][% pageinfo.path %]?start=[% pageprev %]&amp;[% pageinfo.otherparams | html %][% END %]"><img src="[% webroot %]html/images/b_prev.gif" alt="[% "PREVIOUS" | string %]" width="13" height="13" align="top"></a> [% END %]
 [%- IF pageinfo.alphamap %]
 [%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
  [%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
@@ -141,12 +152,12 @@
 [%- ELSE %]
 [%- FOREACH ind=[pagebarstart..pagebarend] -%]
  [%- IF ind == pageinfo.currentpage %] <b>[% ind + 1 %]</b> 
- [%- ELSE %] <a href="[% pageinfo.path  | html %]?[% pageinfo.otherparams  | html %]&amp;start=[% ind * pageinfo.itemsperpage %]">[% ind + 1 %]</a> 
+ [%- ELSE %] <a href="[% IF pageinfo.path.match('status') OR pageinfo.path.match('playlist') %]javascript:getPlaylistData([% ind * pageinfo.itemsperpage %]);[% ELSE %][% pageinfo.path  | html %]?[% pageinfo.otherparams  | html %]&amp;start=[% ind * pageinfo.itemsperpage %][% END %]">[% ind + 1 %]</a> 
  [%- END %]
 [% END %]
 [%- END %]
-[% IF pagenext %] <a href="[% pageinfo.path %]?start=[% pagenext %]&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_next.gif" alt="[% "NEXT" | string %]" width="13" height="13" align="top"></a> [% END %]
-[% IF pagesend %] <a href="[% pageinfo.path %]?start=[% pagesend %]&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_last.gif" alt="[% "LAST" | string %]" width="13" height="13" align="top"></a> [% END %]
+[% IF pagenext %] <a href="[% IF pageinfo.path.match('status') OR pageinfo.path.match('playlist') %]javascript:getPlaylistData([% pagenext %]);[% ELSE %][% pageinfo.path %]?start=[% pagenext %]&amp;[% pageinfo.otherparams | html %][% END %]"><img src="[% webroot %]html/images/b_next.gif" alt="[% "NEXT" | string %]" width="13" height="13" align="top"></a> [% END %]
+[% IF pagesend %] <a href="[% IF pageinfo.path.match('status') OR pageinfo.path.match('playlist') %]javascript:getPlaylistData([% pagesend %]);[% ELSE %][% pageinfo.path %]?start=[% pagesend %]&amp;[% pageinfo.otherparams | html %][% END %]"><img src="[% webroot %]html/images/b_last.gif" alt="[% "LAST" | string %]" width="13" height="13" align="top"></a> [% END %]
 [% IF NOT pageinfo.alphamap && addSummary %]&nbsp;|&nbsp;[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
 </div>
 [% END %]

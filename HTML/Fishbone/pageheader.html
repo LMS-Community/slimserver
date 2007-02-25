@@ -2,6 +2,9 @@
 <html>
 <head>
 	[% PROCESS customheader.html %]
+		<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
+		<script TYPE="text/javascript" src="[% webroot %]html/ajax.js?r=[% revision %]"></script>
+		<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
 	[% IF pageHeaderScripts %]
 		[% pageHeaderScripts %]
 	[% ELSE %]
@@ -19,14 +22,14 @@
 
 <!--[if IE]>
 <style type="text/css">
-	body {width: 97%;}
+	body {width: 100%;}
 	.thumbwrap li, .thumbwrap {
 		display: inline;
 		height: 0;
-		he\ight: auto;
+		height: auto;
 	}
 	.browsedbControls {
-		padding-right: 20px;
+		padding-right: 8px;
 	}
 	.playlistControls {
 		padding-right: 8px;
@@ -39,7 +42,7 @@
 
 [% IF NOT home %]
 	[% IF newVersion %]<br>[% newVersion %]<br>[% END %]
-	[% UNLESS nodiv %]<div class="list">[% END %]
+	[% UNLESS nodiv %]<div class="homeMenu">[% END %]
 	[% IF pagetitle %]<div class="largeAttribute" id="pagetitle">[% pagetitle %][% IF artwork && (levelName == 'album' || levelName == 'age')%] [% "GALLERY" | string %][% END %]</div>[% END %]
 	
 	[% PROCESS galleryselect.html %]

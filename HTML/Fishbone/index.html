@@ -10,14 +10,12 @@
 			<frame name="header" ID="header" scrolling="no" src="home.html?player=[% playerURI %]">
 			<frame name="browser" ID="browser" src="html/black.html">
 		</frameset>
-		<frameset name="player_frame" ID="player_frame" frameborder="no" rows="260,*">
-			<frame ID="status" name="status" scrolling="no" src="status_header.html?player=[% playerURI %]">
-			<frame ID="playlist" name="playlist" src="playlist.html?player=[% playerURI %]">
-		</frameset>
+		
+		<frame ID="status" name="status" scrolling="no" src="status.html?player=[% playerURI %]">
 	</frameset>
 	<noframes>
 	<body bgcolor="#000000">
-		This page requires Frames.
+		<span style="color: white;">This page requires Frames.</span>
 	</body>
 	</noframes>
 </html>

@@ -78,7 +78,7 @@ div#statusMessage form{
 	line-height: 100%;
 }
 
-.list,.playlist
+.homeMenu,.playlist
 {
 	padding: 0 8px 0 8px;
 	margin: 0px;
@@ -112,6 +112,12 @@ DIV.playlistform,DIV#TopMenu2 TABLE {
 	border-collapse: collapse;
 }
 
+div#browsedbList {
+	clear: left;
+	width: auto;
+	height: auto;
+}
+
 .viewSelect
 {
 	float: right;
@@ -134,16 +140,28 @@ div#pagetitle {
 .browsedbListItem {
 	position: relative;
 	padding: 0px;
-	padding-right: 100px;
+	padding-right: 60px;
 }
 
-.browsedbControls,.playlistControls, .browseDbRightControls {
+.playListItem {
+	position: relative;
+	padding: 0px;
+	padding-right: 50px;
+	margin: 0px;
+}
+
+
+.browsedbControls,.playlistControls, .browsedbRightControls {
 	position: absolute;
 	top: 0px;
 	right: 1px;
 	padding: 0px;
 	margin: 0px;
 	float: right;
+}
+
+.browsedbLeftControls a {
+	vertical-align: middle;
 }
 
 .browsedbControls a, .playlistControls a, .browseDbRightControls a {
@@ -680,6 +698,7 @@ A.linkbtn:link {
 	top: -5px;
 	float: left;
 	border: 0px;
+	overflow:auto;
 }
 
 #playlistframe IFRAME {
@@ -695,7 +714,7 @@ A.linkbtn:link {
 	position: relative;
 }
 
-#currentPlaylist,#playerlogo, #coverart, #browseForm, #SDlogo, #playerForm {
+#currentPlaylist, #deleteitem, #playerlogo, #coverart, #browseForm, #SDlogo, #playerForm {
 	float: left;
 }
 
@@ -764,12 +783,12 @@ A.linkbtn:link {
 
 .currentListItem
 {
-	background:#333;
+	background-color:#333;
 	border-top:solid 1px #EE3823;
 	border-bottom:solid 1px #EE3823;
 	position: relative;
 	padding: 0px;
-	padding-right: 100px;
+	padding-right: 50px;
 }
 
 .listinghead
@@ -791,3 +810,31 @@ DIV.playlistform
 	color:white;
 }
 
+#playlist_draglist {
+	padding: 0px;
+	margin: 0px;
+}
+
+#playlist_draglist li {
+	padding: 0px;
+	margin: 0px;
+	list-style: none;
+}
+
+#playlist_draglist li .itemnumber {
+	cursor: move;
+}
+
+#currentPlaylist {
+	width: 33%;
+}
+
+#deleteitem {
+	margin:0 auto;
+	padding: 0px;
+	color:white;
+	height: 18px;
+	width: 33%;
+	position: relative; 
+	text-align: center;
+}
