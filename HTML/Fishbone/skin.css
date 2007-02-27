@@ -164,7 +164,7 @@ div#pagetitle {
 	vertical-align: middle;
 }
 
-.browsedbControls a, .playlistControls a, .browseDbRightControls a {
+.browsedbControls a, .playlistControls a, .browsedbRightControls a {
 	vertical-align: middle;
 	float: left;
 	position: relative;
@@ -172,9 +172,13 @@ div#pagetitle {
 	padding-top: 2px;
 }
 
-.browsedbControls img, .playlistControls img, .browseDbRightControls img {
+.browsedbControls img, .playlistControls img, .browsedbRightControls img {
 	padding: 0px;
 	margin: 0px;
+}
+
+.artworkImage {
+	padding-top: 5px;
 }
 
 .artworkControls {
@@ -191,6 +195,7 @@ div#pagetitle {
 	overflow: hidden;
 	color: #999;
 	display: none;
+	padding-bottom: 5px;
 }
 
 .artworkText A {
@@ -369,14 +374,14 @@ A:link, A:visited {
 }
 
 .linkbtn {
-	font-size : 8pt;
+	font-size : 100%;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-weight: bold;
-	color: #EE3823;
+	color: yellow; /* #EE3823;*/
 	background-color : Black;
 	border-width : thin;
 	border-style : outset;
-	padding : 0em 0.3em 0em 0.5em;
+	padding : 0px;
 }
 
 A.linkbtn:visited {
@@ -837,4 +842,36 @@ DIV.playlistform
 	width: 33%;
 	position: relative; 
 	text-align: center;
+}
+
+div#albumPopup {
+	position: fixed;
+	z-index: 99;
+	top: 25%;
+	left: 25%;
+	width: 50%;
+	bottom: 10%;
+	background-color: black;
+	color: white;
+	padding: 5px;
+	border: 1px solid white;
+	overflow: auto;
+}
+
+div#closeAlbumPopup {
+	position: relative;
+	float: right;
+}
+
+div#albumBackground {
+	position: fixed;
+	z-index: 60;
+	top: 0%;
+	left: 0%;
+	width: 100%;
+	bottom: 0%;
+	background-color: silver;
+	opacity:.75;
+	filter: alpha(opacity=75);
+	-moz-opacity: 0.75;
 }

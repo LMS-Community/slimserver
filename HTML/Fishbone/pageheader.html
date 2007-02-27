@@ -3,22 +3,14 @@
 <head>
 	[% PROCESS customheader.html %]
 		<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
-		<script TYPE="text/javascript" src="[% webroot %]html/ajax.js?r=[% revision %]"></script>
 		<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
 	[% IF pageHeaderScripts %]
 		[% pageHeaderScripts %]
 	[% ELSE %]
+		<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
 		<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
 	[% END %]
-
-[% IF artwork && levelName == 'album' %]
-<style type="text/css">
-	.browsedbListItem {
-		margin-bottom: 10px;
-		border-bottom: solid 1px #333;
-	}
-</style>
-[% END %]
+	<script TYPE="text/javascript" src="[% webroot %]html/ajax.js?r=[% revision %]"></script>
 
 <!--[if IE]>
 <style type="text/css">
@@ -33,6 +25,16 @@
 	}
 	.playlistControls {
 		padding-right: 8px;
+	}
+	
+	div#albumPopup {
+		position: absolute;
+		height: 60%;
+	}
+	
+	div#albumBackground {
+		position: absolute;
+		height: 100%;
 	}
 </style>
 <![endif]-->

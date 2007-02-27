@@ -21,16 +21,17 @@ function debug() {
 function doAjaxRefresh(light) {
 	var args = 'player=' + getPlayer('SlimServer-player') +'&ajaxRequest=1&s='+Math.random();
 	var prev_url = url;
-	if (light) {
+	if (light && light != 'onload') {
 		args = args + "&light=1";
 	} else {
 		url = 'status.html'
 	}
 	//debug(url);
 	if (light == 'onload') {
+		debug("new player refresh");
 		ajaxRequest('status.html', args, refreshNewPlayer);
 	} else {
-		ajaxRequest(url, args, refreshAll);
+		ajaxRequest('status.html', args, refreshAll);
 	}
 	url = prev_url;
 }
@@ -346,7 +347,7 @@ function refreshInfo(theData, force, curstyle) {
 			}
 		}
 		
-		if(parsedData['albumid']) {
+		if(parsedData['album']) {
 			showElements(['albuminfo']);
 			showElements(['albumhref'], 'inline');
 			showElements(['yearinfo'], 'inline');
@@ -538,8 +539,8 @@ function getOptionData(params, action) {
 
 function playlistChecker(theData) {
 	var parsedData = fillDataHash(theData);
-	debug(parsedData['first_item'], parsedData['start'], playingstart, showingstart);
-	if (isNaN(parsedData['first_item']) || ((parsedData['start'] != playingstart) && (playingstart == showingstart))) {
+	debug(parsedData['first_item'], parseInt(parsedData['start']), playingstart, showingstart);
+	if (isNaN(parsedData['first_item']) || ((parseInt(parsedData['start']) != playingstart) && (playingstart == showingstart))) {
 		debug("get new playlist data");
 		showingstart = parsedData['start'];
 		playingstart = parsedData['start'];
@@ -589,6 +590,7 @@ function getPlaylistData(start, params, player) {
 		args = args + "&start=" + start;
 		showingstart = start;
 	} else if (!isNaN(showingstart)) {
+		if (showingstart == null) showingstart = 0;
 		debug("playlist refresh at "+showingstart);
 		args = args + "&start=" + showingstart;
 	}

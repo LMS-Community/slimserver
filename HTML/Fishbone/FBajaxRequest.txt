@@ -17,3 +17,4 @@ coverartpath|
 [% END %]
 
 playlistTime|[% currentPlaylistChangeTime %]
+start|[% start %]

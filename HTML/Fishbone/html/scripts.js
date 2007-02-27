@@ -23,7 +23,7 @@ function changePlayer(player_List) {
 	
 	var newPlayer = "=" + player;
 	console.log("new player"+player);
-	newHref(parent.frames['status'].document,newPlayer);
+	newHref(this.document,newPlayer);
 	getPlaylistData(null,null,player);
 	
 	var args = 'player='+player+'&ajaxRequest=1&s='+Math.random();
