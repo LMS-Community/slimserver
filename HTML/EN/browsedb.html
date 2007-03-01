@@ -2,7 +2,17 @@
 	[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].
 [% END; END %]  
 
-[% pagetitle = browseby | string; pageicon = browseby; noSpacer = 1 %] [% PROCESS pageheader.html %]
+[% pagetitle = browseby | string; pageicon = browseby; noSpacer = 1 %]
+
+[% IF useAJAX %][% pageHeaderScripts = BLOCK %]
+	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
+	<script type="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]" ></script>
+	<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
+	<script type="text/javascript" src="[% webroot %]html/scriptaculous/scriptaculous.js?r=[% revision %]"></script>
+	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
+[% END %][% END %]
+
+[% IF NOT ajaxUpdate %][% PROCESS pageheader.html %]
 
 <div id="browsedbHeader">
 	[% IF artwork != 1 %]
@@ -12,23 +22,38 @@
 
 	[% IF hasPagebar %][% PROCESS pagebar %][% END %]
 </div>
+[% END %]
+
 [%- IF artwork == 1 && (levelName == 'album' || levelName == 'age');
 		container = 'gallerycontainer';
 	ELSE;
 		container = 'contentcontainer';
 	END;
 %]
+
+
 [% WRAPPER $container %]
-	[% IF coverArt %]
+	[% IF coverArt AND tree != 1 %]
 		<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
 	[% END %]
 	[% FOREACH item = browse_items %]
+		[% IF useAJAX %][% IF item.hreftype == 'browseTree' %][% itemid = "$item.itemobj.id"_"."_"$loop.index" %][% ELSE %][% itemid =  "$level"_"."_"$loop.index" %][% END %][% END %]
 		[% PROCESS browsedbitems_list.html %]
+		[% IF useAJAX %]
+			<div id="descendinfo[% itemid %]" class="descendinfo" style="display:none;"><div id="item[% itemid %]" class="descenditem"></div></div>
+		[% END %]
 	[% END %]
 [% END %]
 
+[% IF NOT ajaxUpdate %]
 <div id="browsedbFooter">
 	[% IF pageinfo.totalpages && pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %][% PROCESS pagebar %][% END %]
 </div>
 
 [% PROCESS pagefooter.html %]
+<div id='albumBackground' style="display:none;"><img src = "[% webroot %]html/images/cdspin3.gif" alt="" title="" onClick = "javascript:hideAlbumInfo();" style="position: absolute; top: 45%; left: 45%;"></div>
+<div id = 'albumPopup' style="display:none;">
+	<div id = 'closeAlbumPopup'><span id="closeAlbumText"><a href="javascript:void(1);" onClick = "javascript:hideAlbumInfo();">Close</a></span></div>
+	<div id = 'trackInfo'></div>
+</div>
+[% END %]

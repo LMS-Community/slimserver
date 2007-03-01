@@ -270,3 +270,72 @@ function globalOnload() {
 	refreshLibraryInfo();
 }
 
+function hideAlbumInfo() {
+	new Effect.Fade('albumPopup', { duration:0.4 });
+	new Effect.Fade('albumBackground', { duration:0.4 });
+}
+
+function popUpAlbumInfo(attributes) {
+	
+	// here we go-- get the album track details via an ajax call
+	// pop up a list of the tracks in an inline div, including play/add buttons next to tracks
+	// add a close button for the div to hide it
+	if ($('albumPopup')) {
+		new Effect.Appear('albumBackground', { from: 0, to: 0.5, duration: 0.5 });
+		
+		$('albumPopup').style.border='1px solid white';
+		
+		new Ajax.Updater( { success: 'trackInfo' }, webroot + 'browsedb.html', {
+			method: 'post',
+			asynchronous: true,
+			postBody: 'hierarchy=album,track&level=1&ajaxUpdate=1&player='+player+attributes,
+			onFailure: function(t) {
+				alert('Error -- ' + t.responseText);
+			},
+			onSuccess: function() {
+				new Effect.Appear('albumPopup');
+			}
+		} );
+	}
+}
+
+function showTree(id, page, attributes) {
+	
+	// get next level details through an ajax request and expand tree.
+	if ($("descendinfo"+id)) {
+		Element.hide("descend"+id);
+		Element.hide("close"+id);
+		Element.show("wait"+id);
+		
+		var url = page.toLowerCase();
+		
+		new Ajax.Updater( { success: "item"+id }, webroot + url + '.html', {
+			method: 'post',
+			asynchronous: true,
+			postBody: attributes + '&ajaxUpdate=1&tree=1&artwork=0&player='+player, 
+			onFailure: function(t) {
+				alert('Error -- ' + t.responseText);
+				Element.hide("wait"+id);
+				Element.show("descend"+id);
+			},
+			onComplete: function() {
+				new Effect.SlideDown("descendinfo"+id, { duration: 0.4 });
+				Element.show("close"+id);
+				Element.hide("wait"+id);
+			}
+		} );
+	}
+}
+
+// Collapse the next level tree.
+function hideTree(id) {
+	new Effect.SlideUp("descendinfo"+id, {
+		duration: 0.4,
+		afterFinish: function() {
+			$("item"+id).innerHTML = '';
+		}
+	});
+	
+	Element.hide("close"+id);
+	Element.show("descend"+id);
+}

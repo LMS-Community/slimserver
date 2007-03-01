@@ -198,3 +198,73 @@ div#browsedbHeader {
 
 .playingSongControls {
 }
+
+div#albumPopup {
+	position: fixed;
+	z-index: 90;
+	top: 96px;
+	left: 15%;
+	width: 70%;
+	bottom: 10%;
+	background-color: white;
+	color: black;
+	padding: 5px;
+	border: 1px solid grey;
+	overflow: auto;
+}
+
+div#closeAlbumPopup {
+	position: relative;
+	height: 12px;
+}
+
+#closeAlbumText {
+	float: right;
+	border: 1px solid #888;
+}
+
+div#albumBackground {
+	position: fixed;
+	z-index: 60;
+	top: 0%;
+	left: 0%;
+	width: 100%;
+	bottom: 0%;
+	background-color: silver;
+	opacity:.75;
+	filter: alpha(opacity=75);
+	-moz-opacity: 0.75;
+}
+
+.linkbtn {
+	color: black;
+	cursor: pointer;
+}
+
+.descendinfo {
+}
+
+.descenditem {
+	padding-left:18px;
+}
+
+.descendlinkbtn {
+	background-image:url("html/images/b_descend.gif");
+	background-repeat:no-repeat;
+	cursor: pointer;
+	padding: 0px 5px 1px 5px;
+}
+
+.waitlinkbtn {
+	background-image:url("html/images/b_wait.gif");
+	background-repeat:no-repeat;
+	cursor: pointer;
+	padding: 0px 5px 1px 5px;
+}
+
+.closelinkbtn {
+	background-image:url("html/images/b_ascend.gif");
+	background-repeat:no-repeat;
+	cursor: pointer;
+	padding: 0px 5px 1px 5px;
+}

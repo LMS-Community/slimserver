@@ -269,6 +269,10 @@ A.linkbtn:link {
 	color: black;
 }
 
+#playlistframe {
+	color: black;
+}
+
 /* top of right frame*/
 DIV.playlistform,#TopMenu2
 {
@@ -282,4 +286,12 @@ DIV.playlistform,#TopMenu2
 
 .artworkText A {
 	color : #996600 ! important;
+}
+
+div#albumPopup {
+	background-color: #fcf2d4;
+}
+
+.descendinfo {
+	background-color: #D1B586;
 }

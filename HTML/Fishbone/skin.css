@@ -847,9 +847,9 @@ DIV.playlistform
 div#albumPopup {
 	position: fixed;
 	z-index: 99;
-	top: 25%;
-	left: 25%;
-	width: 50%;
+	top: 60;
+	left: 15%;
+	width: 70%;
 	bottom: 10%;
 	background-color: black;
 	color: white;
@@ -874,4 +874,32 @@ div#albumBackground {
 	opacity:.75;
 	filter: alpha(opacity=75);
 	-moz-opacity: 0.75;
+}
+
+.descendinfo {
+}
+
+.descenditem {
+	padding-left:14px;
+}
+
+.descendlinkbtn {
+	background-image:url("html/images/b_descend.gif");
+	background-repeat:no-repeat;
+	cursor: pointer;
+	padding: 0px 5px 1px 5px;
+}
+
+.waitlinkbtn {
+	background-image:url("html/images/b_wait.gif");
+	background-repeat:no-repeat;
+	cursor: pointer;
+	padding: 0px 5px 1px 5px;
+}
+
+.closelinkbtn {
+	background-image:url("html/images//b_ascend.gif");
+	background-repeat:no-repeat;
+	cursor: pointer;
+	padding: 0px 5px 1px 5px;
 }

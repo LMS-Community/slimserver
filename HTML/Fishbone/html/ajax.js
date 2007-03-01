@@ -621,7 +621,6 @@ function setStart(start) {
 	debug("init: showing"+showingstart+", playing"+playingstart);
 }
 
-
 function reorderplaylist(order, start, from) {
 	var params;
 	
