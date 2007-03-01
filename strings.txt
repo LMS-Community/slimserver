@@ -12411,3 +12411,8 @@ SETUP_VIEW_SCANNING
 SETUP_VIEW_NOT_SCANNING
 	DE	Zeige Details zur vorherige Suche
 	EN	View Previous Scan Details
+
+CLOSE
+	DE	Schliessen
+	EN	Close
+
