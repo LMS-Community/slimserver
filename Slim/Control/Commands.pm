@@ -815,7 +815,7 @@ sub playlistXalbumCommand {
 		$attrs->{'join'} = \@joins;
 	}
 
-	my @results = Slim::Schema->search('Track', $find, $attrs)->all;
+	my @results = Slim::Schema->search('Track', $find, $attrs)->distinct->all;
 
 	$cmd =~ s/album/tracks/;
 
