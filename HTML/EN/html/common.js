@@ -84,23 +84,27 @@ function ajaxRefresh() {
 
 	// add a random number to the params as IE loves to cache the heck out of 
 	var args = 'd=' + Math.random();
-	ajaxRequest('html/ping.html', args, ajaxCallback);
-}
+	//ajaxRequest('html/ping.html', args, ajaxCallback);
+	
+	var requesttype = 'post';
 
-function ajaxCallback(theData) {
-	
-	// firefox needs to know we have a reponse first
-	if (theData.responseText) {
-	
-		// then make sure response is ok
-		if (theData.status == 200){
+	var myAjax = new Ajax.Request(
+	'html/ping.html',
+	{
+		method: requesttype,
+		postBody: 'd=' + Math.random(),
+		onSuccess: function(t) {
+			setTimeout( "ajaxRefresh()", refreshtime*1000);
 			refresh();
-		}
-	} else {
-	
-		// do another background ping every 60 seconds
-		setTimeout( "ajaxRefresh()", 1000);
-	}
+		},
+		onFailure: function(t) {
+			setTimeout( "ajaxRefresh()", refreshtime*500);
+		},
+		onException: function(t) {
+			setTimeout( "ajaxRefresh()", refreshtime*500);
+		},
+		requestHeaders:['Referer', document.location.href]
+	});
 }
 
 function chooseAlbumOrderBy(value, option)
