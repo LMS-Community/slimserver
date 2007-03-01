@@ -171,10 +171,14 @@ sub dirsFor {
 	# Debian specific paths.
 	} elsif (isDebian()) {
 
-		if ($dir =~ /^(?:Plugins|Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
+		if ($dir =~ /^(?:Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
 
 			push @dirs, "/usr/share/slimserver/$dir";
 
+		} elsif ($dir eq 'Plugins') {
+			
+			push @dirs, "/usr/share/perl5";
+		
 		} elsif ($dir eq 'strings' || $dir eq 'revision') {
 
 			push @dirs, "/usr/share/slimserver";
@@ -203,10 +207,15 @@ sub dirsFor {
 	# RedHat/Fedora specific paths.
 	} elsif (isRHELorFC()) {
 
-		if ($dir =~ /^(?:Plugins|Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
+		if ($dir =~ /^(?:Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
 
 			push @dirs, "/usr/share/slimserver/$dir";
 
+		} elsif ($dir eq 'Plugins') {
+			
+			use Config;
+			push @dirs, catdir($Config{installsitelib},"Slim/Plugin");
+		
 		} elsif ($dir eq 'strings' || $dir eq 'revision') {
 
 			push @dirs, "/usr/share/slimserver";
