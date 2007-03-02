@@ -259,10 +259,10 @@ sub handleFeed {
 			$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
 			
 			if ( $play ) {
-				$client->execute([ 'playlist', 'loadtracks', 'listref', \@urls ]);
+				$client->execute([ 'playlist', 'play', \@urls ]);
 			}
 			else {
-				$client->execute([ 'playlist', 'addtracks', 'listref', \@urls ]);
+				$client->execute([ 'playlist', 'add', \@urls ]);
 			}
 
 			my $webroot = $stash->{'webroot'};
@@ -301,7 +301,15 @@ sub handleFeed {
 		$stash->{'start'} = $stash->{'pageinfo'}{'startitem'};
 
 		if ($stash->{'pageinfo'}{'totalpages'} > 1) {
-			@{ $stash->{'items'} } = splice @{ $stash->{'items'} }, $stash->{'start'}, $stash->{'pageinfo'}{'itemsperpage'};
+
+			# the following ensures the original array is not altered by creating a slice to show this page only
+			my $start = $stash->{'start'};
+			my $finish = $start + $stash->{'pageinfo'}{'itemsperpage'};
+			$finish = $itemCount if ($itemCount < $finish);
+
+			my @items = @{ $stash->{'items'} };
+			my @slice = @items [ $start .. $finish - 1 ];
+			$stash->{'items'} = \@slice;
 		}
 	}
 
