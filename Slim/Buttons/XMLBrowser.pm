@@ -186,19 +186,54 @@ sub gotPlaylist {
 
 	# must unblock now, before pushMode is called by getRSS or gotOPML
 	$client->unblock;
+	$client->update;
 
 	my @urls = ();
 
 	for my $item (@{$feed->{'items'}}) {
+		
+		# Only add audio items in the playlist
+		next unless $item->{'type'} eq 'audio';
 
 		push @urls, $item->{'url'};
 		Slim::Music::Info::setTitle( 
 			$item->{'url'}, 
 			$item->{'name'} || $item->{'title'}
 		);
+		
+		# If there's a mime attribute, use it to set the content type properly
+		# This is needed for an as-yet-unreleased plugin, where we have a URL
+		# with possibly any number of formats
+		if ( my $mime = $item->{'mime'} ) {
+			$log->info( "Setting content-type to $mime for " . $item->{'url'} );
+
+			Slim::Music::Info::setContentType( $item->{'url'}, $mime );
+		}
+		
+		# If there's a duration attribute, use it to set the length
+		if ( my $secs = $item->{'duration'} ) {
+			$log->info( "Setting duration to $secs for " . $item->{'url'} );
+			
+			Slim::Music::Info::setDuration( $item->{'url'}, $secs );
+		}
 	}
 
-	$client->execute(['playlist', 'loadtracks', 'listref', \@urls]);
+	my $action = 'play';
+	
+	if ( !$params->{'action'} ) {
+		# check cached action
+		$action = Slim::Utils::Cache->new->get( $client->id . '_playlist_action' ) || 'play';
+	}
+	else {
+		$action = $params->{'action'};
+	}
+	
+	if ( $action eq 'play' ) {
+		$client->execute([ 'playlist', 'play', \@urls ]);
+	}
+	else {
+		$client->execute([ 'playlist', 'addtracks', 'listref', \@urls ]);
+	}
 }
 
 sub gotRSS {
@@ -791,6 +826,14 @@ sub playItem {
 		if ( ref $url eq 'CODE' ) {
 			# get passthrough params if supplied
 			my $pt = $item->{'passthrough'} || [];
+			
+			# This is not flexible enough to support passthrough items for
+			# gotPlaylist(), so we need to cache the action the user wants,
+			# or else an add will work like play
+			if ( $action ne 'play' ) {
+				Slim::Utils::Cache->new->set( $client->id . '_playlist_action', $action, 60 );
+			}
+			
 			return $url->( $client, \&gotPlaylist, @{$pt} );
 		}
 		
@@ -799,6 +842,7 @@ sub playItem {
 			\&gotError,
 			{
 				'client' => $client,
+				'action' => $action,
 				'url'    => $url,
 				'parser' => $parser,
 				'feedTitle' => $title,
@@ -1013,7 +1057,7 @@ sub _cliQuery_done {
 					$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
 					
 					if ( $method =~ /play|load/i ) {
-						$client->execute([ 'playlist', 'loadtracks', 'listref', \@urls ]);
+						$client->execute([ 'playlist', 'play', \@urls ]);
 					}
 					else {
 						$client->execute([ 'playlist', 'addtracks', 'listref', \@urls ]);

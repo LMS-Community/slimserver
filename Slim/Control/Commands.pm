@@ -851,6 +851,13 @@ sub playlistXitemCommand {
 
 	my $jumpToIndex; # This should be undef - see bug 2085
 	my $results;
+	
+	# If we're playing a list of URLs (from XMLBrowser), only work on the first item
+	my $list;
+	if ( ref $item eq 'ARRAY' ) {
+		$list = $item;
+		$item = shift @{$item};
+	}
 
 	my $url  = blessed($item) ? $item->url : $item;
 
@@ -995,6 +1002,11 @@ sub playlistXitemCommand {
 			'client'   => $client,
 			'callback' => sub {
 				my ( $foundItems, $error ) = @_;
+				
+				# If we are playing a list of URLs, add the other items now
+				if ( ref $list eq 'ARRAY' ) {
+					push @{$foundItems}, @{$list};
+				}
 
 				push @{ Slim::Player::Playlist::playList($client) }, @{$foundItems};
 
