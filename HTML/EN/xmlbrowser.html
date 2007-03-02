@@ -183,9 +183,9 @@
 		
 		[%- FOREACH item = items %]
 			[%- BLOCK gencontrol -%]
-				[% IF item.type == 'audio' || item.enclosure %]
-					[% WRAPPER playlink %]href="index.html?[% searchquery %]action=play&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
-					[% WRAPPER addlink %]href="index.html?[% searchquery %]action=add&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
+				[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure %]
+					[% WRAPPER playlink %]href="index.html?[% searchquery %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
+					[% WRAPPER addlink %]href="index.html?[% searchquery %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
 				[% ELSE %]
 					[% PROCESS dummylink %]
 					[% PROCESS dummylink %]
