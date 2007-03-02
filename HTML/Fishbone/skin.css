@@ -118,7 +118,7 @@ div#browsedbList {
 	height: auto;
 }
 
-.viewSelect
+#viewSelect
 {
 	float: right;
 	padding-top: 0px;
@@ -847,10 +847,10 @@ DIV.playlistform
 div#albumPopup {
 	position: fixed;
 	z-index: 99;
-	top: 60;
+	top: 10%;
 	left: 15%;
 	width: 70%;
-	bottom: 10%;
+	max-height: 70%;
 	background-color: black;
 	color: white;
 	padding: 5px;

@@ -31,13 +31,12 @@
 	END;
 %]
 
-
 [% WRAPPER $container %]
 	[% IF coverArt AND tree != 1 %]
 		<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
 	[% END %]
 	[% FOREACH item = browse_items %]
-		[% IF useAJAX %][% IF item.hreftype == 'browseTree' %][% itemid = "$item.itemobj.id"_"."_"$loop.index" %][% ELSE %][% itemid =  "$level"_"."_"$loop.index" %][% END %][% END %]
+		[% IF useAJAX %][% itemid = "$item.itemobj.id"_"."_"$loop.index" %][% IF level %][% itemid = "$level"_"."_"$itemid" %][% END %][% END %]
 		[% PROCESS browsedbitems_list.html %]
 		[% IF useAJAX %]
 			<div id="descendinfo[% itemid %]" class="descendinfo" style="display:none;"><div id="item[% itemid %]" class="descenditem"></div></div>

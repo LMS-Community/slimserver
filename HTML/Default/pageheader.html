@@ -5,12 +5,37 @@
 	[% PROCESS standardheader.html %]
 <!--[if IE]>
 <style type="text/css">
+	body {width: 100%;height:100%;}
 	.thumbwrap li, .thumbwrap {
 		display: inline;
 		height: 0;
-		he\ight: auto;
+		height: auto;
 	}
-	.thumbwrap { width: 97%}
+	.browsedbControls {
+		padding-right: 8px;
+	}
+	.playlistControls {
+		padding-right: 8px;
+	}
+	
+	div#albumPopup {
+		position: absolute;
+		z-index: 90;
+		top: 10%;
+		left: 15%;
+		width: 70%;
+		height: expression(document.getElementById('homeMenu').offsetHeight > document.documentElement.clientHeight * 0.75 ? document.documentElement.clientHeight * 0.75 : "auto");
+		background-color: white;
+		color: black;
+		padding: 5px;
+		border: 1px solid grey;
+		overflow: auto;
+	}
+	
+	div#albumBackground {
+		position: absolute;
+		height: 100%;
+	}
 </style>
 <![endif]-->
 	[% IF pageHeaderScripts %]

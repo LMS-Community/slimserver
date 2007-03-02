@@ -198,7 +198,7 @@ function resize(src,width)
 		}
 	}
 
-	if (src.width > width )
+	if (src.width > width || !src.width)
 	{
 		src.width = width;
 	}

@@ -273,6 +273,7 @@ function globalOnload() {
 function hideAlbumInfo() {
 	new Effect.Fade('albumPopup', { duration:0.4 });
 	new Effect.Fade('albumBackground', { duration:0.4 });
+	new Effect.Appear('viewSelect', { duration:0.4 });
 }
 
 function popUpAlbumInfo(attributes) {
@@ -288,12 +289,14 @@ function popUpAlbumInfo(attributes) {
 		new Ajax.Updater( { success: 'trackInfo' }, webroot + 'browsedb.html', {
 			method: 'post',
 			asynchronous: true,
+			evalScripts: true,
 			postBody: 'hierarchy=album,track&level=1&ajaxUpdate=1&player='+player+attributes,
 			onFailure: function(t) {
 				alert('Error -- ' + t.responseText);
 			},
 			onSuccess: function() {
 				new Effect.Appear('albumPopup');
+				new Effect.Fade('viewSelect', { duration:0.4 });
 			}
 		} );
 	}

@@ -23,14 +23,16 @@ body {
 	font-size: 11px;
 }
 
-.viewSelect
+#viewSelect
 {
-	float: right;
+	position: absolute;
+	top: 115px;
+	right: 15px;
 	padding-right: 8px;
 	padding-top: 6px;
 }
 
-.viewSelect img {
+#viewSelect img {
 	vertical-align: middle;
 }
 
@@ -509,10 +511,10 @@ div#playList #browsedbHeader {
 div#albumPopup {
 	position: fixed;
 	z-index: 90;
-	top: 96px;
+	top: 10%;
 	left: 15%;
 	width: 70%;
-	bottom: 10%;
+	max-height: 70%;
 	background-color: white;
 	color: black;
 	padding: 5px;

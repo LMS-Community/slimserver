@@ -29,7 +29,8 @@
 	
 	div#albumPopup {
 		position: absolute;
-		height: 60%;
+		height: expression((document.getElementById('homeMenu') && document.getElementById('homeMenu').offsetHeight 
+			> document.documentElement.clientHeight * 0.75) ? document.documentElement.clientHeight * 0.75 : "auto");
 	}
 	
 	div#albumBackground {

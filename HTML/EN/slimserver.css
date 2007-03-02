@@ -101,14 +101,14 @@ div#browsedbHeader {
 	position: relative;
 }
 
-.viewSelect
+#viewSelect
 {
 	float: right;
 	padding-right: 8px;
 	padding-top: 6px;
 }
 
-.viewSelect img {
+#viewSelect img {
 	vertical-align: middle;
 }
 
