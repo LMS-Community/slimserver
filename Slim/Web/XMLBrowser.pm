@@ -150,6 +150,8 @@ sub handleFeed {
 				# Setup passthrough args
 				my $args = {
 					'url'          => $subFeed->{'url'},
+					'feedTitle'    => $subFeed->{'name'} || $subFeed->{'title'},
+					'parser'       => $subFeed->{'parser'},
 					'expires'      => $params->{'expires'},
 					'parent'       => $feed,
 					'parentURL'    => $params->{'parentURL'} || $params->{'url'},

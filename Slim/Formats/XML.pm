@@ -127,12 +127,39 @@ sub getFeedAsync {
 sub gotViaHTTP {
 	my $http = shift;
 	my $params = $http->params();
+	my $feed;
 
 	$log->debug("Got ", $http->url);
 	$log->debug("Content type is ", $http->headers()->content_type);
 
 	# Try and turn the content we fetched into a parsed data structure.
-	my $feed = eval { parseXMLIntoFeed($http->contentRef) };
+	if (my $parser = $params->{'params'}->{'parser'}) {
+
+		$log->info("Parsing with parser $parser");
+
+		eval "use $parser";
+
+		$log->warn("$@") if $@;
+
+		$feed = eval { $parser->parse($http) };
+
+		if ($feed->{'type'} && $feed->{'type'} eq 'redirect') {
+
+			my $url = $feed->{'url'};
+
+			$log->info("Redirected to $url");
+
+			$params->{'params'}->{'url'} = $url;
+
+			$http->get($url);
+
+			return;
+		}
+
+	} else {
+
+		$feed = eval { parseXMLIntoFeed($http->contentRef) };
+	}
 
 	if ($@) {
 		# call ecb

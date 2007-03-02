@@ -51,6 +51,7 @@ sub setMode {
 	my $title  = $client->modeParam('title');
 	my $url    = $client->modeParam('url');
 	my $search = $client->modeParam('search');
+	my $parser = $client->modeParam('parser');
 
 	# if no url, error
 	if (!$url) {
@@ -109,6 +110,7 @@ sub setMode {
 				'onSuccess' => $onSuccess,
 				'onFailure' => $onFailure,
 				'feedTitle' => $title,
+				'parser'    => $parser,
 			},
 		);
 
@@ -350,6 +352,7 @@ sub gotOPML {
 			my $isAudio  = ($item->{'type'} && $item->{'type'} eq 'audio') ? 1 : 0;
 			my $itemURL  = $item->{'url'}  || $item->{'value'};
 			my $title    = $item->{'name'} || $item->{'title'};
+			my $parser   = $item->{'parser'};
 			
 			# Allow text-only items that RadioTime uses
 			if ( $item->{'type'} && $item->{'type'} eq 'text' ) {
@@ -377,6 +380,7 @@ sub gotOPML {
 					'title'  => $title,
 					'header' => fitTitle( $client, $title ),
 					'item'   => $item,
+					'parser' => $parser,
 				);
 
 				if ($isAudio) {
@@ -736,6 +740,7 @@ sub playItem {
 	my $url   = $item->{'url'}  || $item->{'enclosure'}->{'url'};
 	my $title = $item->{'name'} || $item->{'title'} || 'Unknown';
 	my $type  = $item->{'type'} || $item->{'enclosure'}->{'type'} || '';
+	my $parser= $item->{'parser'};
 
 	if ($type eq 'audio') {
 
@@ -795,6 +800,8 @@ sub playItem {
 			{
 				'client' => $client,
 				'url'    => $url,
+				'parser' => $parser,
+				'feedTitle' => $title,
 			},
 		);
 
