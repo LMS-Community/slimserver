@@ -571,7 +571,7 @@ sub contentType {
 		$track   = $self->objectForUrl($url);
 		$blessed = blessed($track);
 
-		if ($blessed eq 'Slim::Schema::Track' || $blessed eq 'Slim::Schema::Playlist') {
+		if ($blessed && ($blessed eq 'Slim::Schema::Track' || $blessed eq 'Slim::Schema::Playlist') ) {
 
 			$contentType = $track->content_type;
 		}
