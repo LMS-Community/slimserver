@@ -394,7 +394,7 @@ A.linkbtn:link {
 	text-decoration : none; 
 }
 
-.stdclick, input[type=submit], input[type=button] {
+.stdclick, input[type=submit], input[type=button], input[type=reset] {
 	font : 9px Arial; 
 	color: Yellow;
 	background-color : rgb(25,25,25);
