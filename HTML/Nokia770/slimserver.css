@@ -531,3 +531,7 @@ input.searchForm {
     HEIGHT: 50;
     padding: 10;
 }
+
+.listing {
+	padding-left: 10px;
+}

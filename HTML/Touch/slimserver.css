@@ -560,3 +560,7 @@ input.searchButton {
     WIDTH: 265;
     HEIGHT: 44;
 }
+
+.listing {
+	padding-left: 15px;
+}
