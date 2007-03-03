@@ -145,8 +145,8 @@ sub advancedSearch {
 				$params->{$key} *= 1000;
 			}
 
-			# Duration is also special
-			if ($key =~ /age$/) {
+			# Date Modified is also special
+			if ($key =~ /timestamp$/) {
 				$params->{$key} = str2time($params->{$key});
 			}
 
