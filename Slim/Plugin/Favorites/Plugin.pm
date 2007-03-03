@@ -314,7 +314,7 @@ sub indexHandler {
 
 				$entry->{'text'} = $params->{'entrytitle'};
 
-				if (defined $params->{'entryurl'}) {
+				if (defined $params->{'entryurl'} && $params->{'entryurl'} ne $entry->{'URL'}) {
 
 					$entry->{'URL'} = $params->{'entryurl'};
 
@@ -333,7 +333,7 @@ sub indexHandler {
 
 			my $entry = @$level[$indexLevel];
 
-			$favs->add( $entry->{'URL'}, $entry->{'text'} );
+			$favs->add( $entry->{'URL'}, $entry->{'text'}, $entry->{'type'}, $entry->{'parser'} );
 		}
 
 		if ($action eq 'favdel' && defined $params->{'index'} && $favs) {

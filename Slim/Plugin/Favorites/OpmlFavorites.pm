@@ -126,6 +126,8 @@ sub add {
 	my $class  = shift;
 	my $url    = shift;
 	my $title  = shift;
+	my $type   = shift;
+	my $parser = shift;
 
 	if (!$url) {
 		logWarning("No url passed! Skipping.");
@@ -138,7 +140,7 @@ sub add {
 
 	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs (Live365)
 
-	$log->info(sprintf("url: %s title: %s", $url, $title));
+	$log->info(sprintf("url: %s title: %s type: %s parser: %s", $url, $title, $type, $parser));
 
 	# if its already a favorite, don't add it again
 	if ($class->hasUrl($url)) {
@@ -150,7 +152,13 @@ sub add {
 		'URL'  => $url,
 	};
 
-	if ($url !~ /\.opml$/) {
+	if ($parser) {
+
+		$entry->{'parser'} = $parser;
+		$entry->{'type'}   = $type if $type;
+
+	} elsif ($url !~ /\.opml$/) {
+
 		$entry->{'type'} = 'audio';
 	};
 
@@ -197,7 +205,7 @@ sub deleteUrl {
 
 	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs (Live365)
 
-	if ($class->{'urlindex'}->{ $url }) {
+	if (exists $class->{'urlindex'}->{ $url }) {
 
 		$class->deleteIndex($class->{'urlindex'}->{ $url });
 
