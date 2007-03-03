@@ -203,10 +203,10 @@ tr.playing {
 	background-color: #9ef5f6;
 }
 
-tr.odd, td.odd {
+tr.odd, td.odd, div.odd {
 	background-color: #d0d0d0;
 }
-tr.even, td.even {
+tr.even, td.even, div.even {
 	background-color: #FFFFFF;
 }
 

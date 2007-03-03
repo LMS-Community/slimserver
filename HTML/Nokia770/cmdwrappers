@@ -9,12 +9,11 @@
 [% notarget        = 1 %]
 
 [% BLOCK cmdlink %]
-<td class="[% isCurrent ? "listing2" : "listing" %]" align="center">
 	<a [% content %]><img src="[% webroot %]html/images/[% cmdimage %]" border=0 height="20" alt='[% cmdtitle | string | ucfirst %]' title='[% cmdtitle | string | ucfirst %]'></a>
-</td>
 [% END %]
 
 [% BLOCK dummylink -%]
+	<img src="[% webroot %]html/images/spacer.gif" width="20" height="20" alt="" title="">
 [%- END %]
 
 [% BLOCK playlink %]
@@ -112,27 +111,30 @@
 [%- END %]
 
 [% BLOCK contentcontainer %]
-<table border="0" cellspacing="0" cellpadding="0" width="100%"><tr><td>
-		[%- content | indent(4) %]
-</td></tr></table>
+<div id="[% listid || 'browsedbList' %]">
+	[%- content | indent(4) %]
+</div>
 [%- END %]
 
 [% BLOCK contentitem -%]
+<div class="[% odd ? "odd" : "even" %]">
 [%- IF anchor %]
 <a name = "[% anchor %]"></a>
 [% END %]
 
-	[% IF controls OR rightcontrols OR leftcontrols %]<table><tr>
+	<div class="[% lineclass || 'browsedbListItem' %]">
+	[% IF controls OR leftcontrols %]
+	<span class="browsedbControls" style="padding-left: 2px;">
 	[% IF leftcontrols  %][%- PROCESS $leftcontrols  %][% END %]
 	[% IF controls      %][%- PROCESS $controls      %][% END %]
-	[% IF rightcontrols %][%- PROCESS $rightcontrols %][% END %]
+	</span>
 	[%- END -%]
-	<td class = 'listing' width = '20'>&nbsp;</td>
-	<td class="listing" align="left">
 	[%- content | indent(4) %]
-	</td>
-	[% IF controls OR rightcontrols OR leftcontrols %]</tr></table>[% END %]
-
+	[% IF rightcontrols %]<span class="browsedbControls" style="position: absolute; right:2px;">
+	[%- PROCESS $rightcontrols %]
+	</span>[% END %]
+	</div>
+</div>
 [%- END %]
 
 [% BLOCK playlistcontrols %]
@@ -157,9 +159,9 @@
 		[% END %]
 	[% ELSE %]
 		[%- IF playLink == 'ajax' %]
-			<td class = 'listing' align = 'center'>
+			<span class = 'listing' align = 'center'>
 				<img src="[% webroot %]html/images/play.this.gif" onClick = 'changeOSD("[% IF itemobj.title == '' %][% "ALL_SONGS" | string %][% ELSE %][% itemobj.title FILTER html FILTER replace('\'', '&#39;') %][% END %] [% "NOW_PLAYING" | string %]"); addItem("[% PROCESS ajaxCmdHRef cmdType='play' %]");' border=0 height="20" alt='Play Now' title='Play Now'>
-			</td>
+			</span>
 		[%- ELSE %]
 			[% WRAPPER playlink   %][% PROCESS cmdHRef cmdType='play' statusroot = 'status.html'  %][% END %]
 		[%- END %]
@@ -167,12 +169,12 @@
 		[%- IF addLink == 'noajax' %]
 		[% WRAPPER addlink    %][% PROCESS cmdHRef cmdType='add' statusroot = 'playlist.html' %][% END %]
 		[%- ELSE %]
-			<td class = 'listing' align = 'center'>
+			<span class = 'listing' align = 'center'>
 				<img src="[% webroot %]html/images/add.gif" onClick = 'changeOSD("[% "ADDING_TO_PLAYLIST" | string %] [% IF itemobj.title == '' %][% "ALL_SONGS" | string %][% ELSE %][% itemobj.title FILTER html FILTER replace('\'','&#39;')  %][% END %]"); addItem("[% PROCESS ajaxCmdHRef cmdType='add' %]");' border=0 height="20" alt='Add to playlist' title='Add to playlist'>
-			</td>
+			</span>
 		[%- END %]
 		[% FOREACH mixer = mixerlinks.values.sort %]
-			<td class="[% isCurrent ? "listing2" : "listing" %]" align="center">[% PROCESS $mixer %]</td>
+			<span class="[% isCurrent ? "listing2" : "listing" %]" align="center">[% PROCESS $mixer %]</span>
 		[% END %]
 	[% END %]
 [% END %]

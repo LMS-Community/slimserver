@@ -7,7 +7,6 @@ var inc = 0;
 var intervalID = false;
 var incr;
 
-[% PROCESS html/global.js %]
 [% PROCESS skin_global.js %]
 
 var args = 'player='+player+'&ajaxRequest=1';

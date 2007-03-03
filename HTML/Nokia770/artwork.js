@@ -11,7 +11,6 @@ var aAT = 'javascript:changeOSD("[% "ADDING_TO_PLAYLIST" | string %] AlBuM"); ad
 
 var thisAlbum, thatAlbum, clickedItem;
 
-[% PROCESS html/global.js %]
 [% PROCESS skin_global.js %]
 
 function addItem(args) {

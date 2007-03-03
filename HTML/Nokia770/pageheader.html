@@ -71,6 +71,23 @@
 </td></tr></table>
 </div>
 </div>
+
 <!-- /Element pageheader.html -->
 [% PROCESS menu.html thispage = thispage %]
 [% pageHeaderInfo %]
+<!--
+<div id = 'crumblist'>
+<table border="0" cellspacing="0" cellpadding="0" width="100%" bgcolor="#EEEEEE">
+                <td valign = 'top'>&nbsp;&nbsp;[% PROCESS crumblist noHomeLink = 1%]
+                </td>
+        </tr>
+        <tr>
+                <td class="pagebartext">
+                        [%- IF pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %]&nbsp;[% IF artwork == 2 %][% PROCESS pagebar artwork = 2 %][% ELSE %][% PROCESS pagebar %][% END %]
+                                [%- IF NOT pageinfo.alphamap %]&nbsp;|&nbsp;[% PROCESS pagebarheader %][% END %]
+                        [%- END %]
+                </td>
+        </tr>
+</table>
+</div>
+-->

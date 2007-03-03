@@ -1,6 +1,5 @@
 var url = 'status.html';
 
-[% PROCESS html/global.js %]
 [% PROCESS skin_global.js %]
 
 function changeThumbSize (action, albumArtDOMId, albumArtId) {
