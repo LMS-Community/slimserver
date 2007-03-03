@@ -128,12 +128,6 @@ function getPlayer(Player)
 	return plyr;
 }
 
-function goHome(plyr)
-{
-	var loc = getHomeCookie('SlimServer-Browserpage')+'&player='+plyr;
-	parent.browser.location = loc;
-}
-
 function getHomeCookie(Name) 
 {
 	var url = getCookie(Name);
@@ -141,7 +135,7 @@ function getHomeCookie(Name)
 	var re  = new RegExp(/artwork,/i);
 	var m   = re.exec(url);
 
-	if (!url || m) return "browsedb.html?hierarchy=album,track&level=0&page=BROWSE_BY_ALBUM";
+	if (!url || m) return "BROWSE_BY_ALBUM";
 
 	return url;
 }
@@ -197,10 +191,6 @@ function selectLink(lnk,reset) {
 			}
 		}
 	}
-}
-
-function setLink(lnk, player) {
-	lnk.href=getHomeCookie('SlimServer-Browserpage') + "&player" + player;
 }
 
 function toggleText(set) {

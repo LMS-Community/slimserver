@@ -89,6 +89,11 @@
 					case "STATISTICS":
 						url = "hitlist.html"
 						//page = "STATISTICS"
+					break
+					default:
+						url = "[% additionalLinks.browse.BROWSE_BY_ALBUM %]"
+						homestring = [% "BROWSE_BY_ALBUM" | string %]
+						cookie = 1
 					}
 			
 					if (option) {
@@ -97,6 +102,9 @@
 							//parent.header.location =  "home.html?player' + getPlayer('SlimServer-player');
 						}
 						
+						parent.browser.location = url + '?player' + getPlayer('SlimServer-player');
+					} else {
+						setCookie("SlimServer-Browserpage","BROWSE_BY_ALBUM");
 						parent.browser.location = url + '?player' + getPlayer('SlimServer-player');
 					}
 					
