@@ -7,10 +7,10 @@
 [% FILTER null %]
 [% MACRO logicalSelectionBlock BLOCK %]
 	<select name="[% name %]">
-		<option value="=" >[% "EQUALS" | string %]</option>
-		<option value="&lt;" >[% "LESSTHAN" | string %]</option>
-		<option value="&gt;" >[% "GREATERTHAN" | string %]</option>
-		<option value="!=" >[% "NOT" | string %]</option>
+		<option [% IF $name == "=" %]selected[% END %] value="=" >[% "EQUALS" | string %]</option>
+		<option [% IF $name == "<" %]selected[% END %] value="&lt;" >[% "LESSTHAN" | string %]</option>
+		<option [% IF $name == ">" %]selected[% END %] value="&gt;" >[% "GREATERTHAN" | string %]</option>
+		<option [% IF $name == "!=" %]selected[% END %] value="!=" >[% "NOT" | string %]</option>
 	</select>
 [% END %]
 
@@ -18,9 +18,9 @@
 
 [% MACRO timeSelectionBlock BLOCK %]
 	<select name="[% name %]">
-		<option value="=" >[% "IS" | string %]</option>
-		<option value="&lt;" >[% "BEFORE" | string %]</option>
-		<option value="&gt;" >[% "AFTER" | string %]</option>
+		<option [% IF $name == "=" %]selected[% END %] value="=" >[% "IS" | string %]</option>
+		<option [% IF $name == "<" %]selected[% END %] value="&lt;" >[% "BEFORE" | string %]</option>
+		<option [% IF $name == ">" %]selected[% END %] value="&gt;" >[% "AFTER" | string %]</option>
 	</select>
 [% END %]
 
@@ -55,13 +55,10 @@
 	<select name="search.genre">
 		<option value="">[% "ANY_GENRE" | string %]</option>
 
-		[% WHILE (genre = genres.next) %]
-
-			[% NEXT IF NOT genre.name %]
-
+		[%- WHILE (genre = genres.next) -%]
+			[%- NEXT IF NOT genre.name -%]
 			<option value="[% genre.id %]" [% IF search.genre.value == genre.id %]selected[% END %]>[% genre.name | html %]</option>
-
-		[% END %]
+		[% END -%]
 	</select>
 [% END %]
 
@@ -98,8 +95,8 @@
 		<option value="">[% "ANY_VALUE" | string %]</option>
 
 		[% FOREACH bitRate = [ 32 40 48 56 64 80 96 112 128 160 192 224 256 320 ] %]
-			<option value="[% bitRate %]" [% IF search.bitrate.value == (bitRate * 1000) %]selected[% END %]>[% bitRate %]</option>
-		[% END %]
+			<option value="[% bitRate %]" [% IF search.bitrate.value == bitRate %]selected[% END %]>[% bitRate %]</option>
+		[%- END %]
 
 	</select> [% "KBPS" | string %]
 [% END %]
@@ -128,7 +125,7 @@
 
 		[% FOREACH type = fileTypes.keys %]
 			<option value="[% type %]" [% IF search.content_type.value == type %]selected[% END %]>[% fileTypes.$type %]</option>
-		[% END %]
+		[%- END %]
 	</select>
 [% END %]
 
@@ -142,7 +139,7 @@
 	<tr>
 		<td class="content" align="right" nowrap="nowrap" valign="middle" width="25%">[% "COMMENT" | string %]&nbsp;</td>
 		<td class="content" align="left" valign="middle" width="75%">
-			<input name="search.comments.value" value="" size="[% size %]" maxlength="1000" type="text">
+			<input name="search.comments_value" value="[% search.comments_value.value %]" size="[% size %]" maxlength="1000" type="text">
 		</td>
 	</tr>
 

@@ -111,7 +111,7 @@ sub advancedSearch {
 	$params->{'dateFormat'} = Slim::Utils::DateTime::shortDateF();
 
 	# Check for valid search terms
-	for my $key (keys %$params) {
+	for my $key (sort keys %$params) {
 		
 		next unless $key =~ /^search\.(\S+)/;
 		next unless $params->{$key};
@@ -134,7 +134,7 @@ sub advancedSearch {
 			next unless $params->{$key};
 
 			# Do the same for 'op's
-			$params->{'search'}->{$newKey}->{'op'} = $params->{$key};
+			$params->{'search'}->{$newKey}->{'op'} = $params->{$key.'.op'};
 
 			# add these onto the query string. kinda jankey.
 			push @qstring, join('=', "$key.op", $op);
@@ -166,7 +166,7 @@ sub advancedSearch {
 		# 
 		# Turn the track_title into track.title for the query.
 		# We need the _'s in the form, because . means hash key.
-		if ($newKey =~ s/_(titlesearch|namesearch)$/\.$1/) {
+		if ($newKey =~ s/_(titlesearch|namesearch|value)$/\.$1/) {
 
 			$params->{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($params->{$key}) };
 		}
