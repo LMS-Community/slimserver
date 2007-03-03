@@ -198,13 +198,13 @@ tr.playing {
 	padding-bottom: 10px;
 }
 
-tr.odd, td.odd {
+tr.odd, td.odd, div.odd {
 	background-color: #d0d0d0;
 	padding-top: 10px;
 	padding-bottom: 10px;
 }
 
-tr.even, td.even {
+tr.even, td.even, div.odd {
 	background-color: #FFFFFF;
 	padding-top: 10px;
 	padding-bottom: 10px;
