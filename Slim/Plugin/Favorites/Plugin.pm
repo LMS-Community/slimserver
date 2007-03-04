@@ -125,6 +125,7 @@ sub addEditLink {
 
 my $opml;    # opml hash for current editing session
 my $deleted; # any deleted sub tree which may be added back
+my $autosave;# save each change
 
 sub indexHandler {
 	my $client = shift;
@@ -143,14 +144,26 @@ sub indexHandler {
 		$log->info("opening favorites edditing session");
 
 		$opml = Slim::Plugin::Favorites::OpmlFavorites->new($client);
-		$deleted = undef;
+		$deleted  = undef;
+		$autosave = 1;
 	}
 
-	if ($params->{'new'}) {
+	if (my $url = $params->{'new'}) {
 
-		$log->info("new opml editting session");
+		if (Slim::Music::Info::isURL($url)) {
 
-		$opml = Slim::Plugin::Favorites::Opml->new;
+			$log->info("opening $url in opml edittor");
+
+			$opml = Slim::Plugin::Favorites::Opml->new({ 'url' => $url });
+
+		} else {
+
+			$log->info("new opml editting session");
+
+			$opml = Slim::Plugin::Favorites::Opml->new();
+		}
+
+		$autosave = $params->{'autosave'};
 		$deleted = undef;
 	}
 
@@ -381,13 +394,14 @@ sub indexHandler {
 		$changed = 1;
 	}
 
-	# save each change if in favorites mode
-	if ($changed && $opml && !$favs) {
+	# save each change if autosave set
+	if ($changed && $opml && $autosave) {
 		$opml->save;
 	}
 
 	# set params for page build
 	if (defined $opml) {
+		$params->{'autosave'}  = $autosave;
 		$params->{'favorites'} = !$favs;
 		$params->{'title'}     = $opml->title;
 		$params->{'filename'}  = $opml->filename;

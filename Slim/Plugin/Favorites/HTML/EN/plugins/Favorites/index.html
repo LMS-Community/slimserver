@@ -133,7 +133,7 @@
 
 [%- IF errormsg %]<p>[% errormsg %]</p>[% END -%]
 
-[%- IF NOT favorites %][% IF edittitle %][% PROCESS titleedit %][% ELSE %]
+[%- IF NOT autosave %][% IF edittitle %][% PROCESS titleedit %][% ELSE %]
 <div id='titleheader'><h4><a [% IF useAJAX -%]
      href="javascript:void(0);" onClick="editTitle('[% index %]');"
    [%- ELSE %]
@@ -251,7 +251,7 @@
 			<input type="submit" class="stdclick" name="newlevel" value="[% 'PLUGIN_FAVORITES_NEWFOLDER' | string %]">
 			<input type="submit" class="stdclick" name="import" value="[% 'PLUGIN_FAVORITES_IMPORT' | string %]">
 		[% END %]
-		[% IF NOT favorites %]
+		[% IF NOT autosave %]
 			[% IF useAJAX %]
 				<input type="button" class="stdclick" style="display: inline;" value="[% 'PLUGIN_FAVORITES_LOAD' | string %]" onclick="ajaxUpdate('index.html', 'load&amp;index=[% levelindex %]');">
 				<input type="button" class="stdclick" style="display: inline;" value="[% 'PLUGIN_FAVORITES_SAVE' | string %]" onclick="ajaxUpdate('index.html', 'save&amp;index=[% levelindex %]');">
