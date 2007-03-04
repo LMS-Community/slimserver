@@ -224,7 +224,7 @@ function showSongInfo (args) {
 	var item = args[1];
 	var player = args[2];
 	
-	parent.browser.location = webroot + 'songinfo.html?item='+ item +'&amp;player=' + player;
+	parent.browser.location = webroot + 'songinfo.html?item='+ item +'&player=' + getPlayer('SlimServer-player');
 }
 
 var dcTime=250;    // doubleclick time

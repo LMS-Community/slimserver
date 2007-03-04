@@ -13,7 +13,7 @@
 [%- END -%]
 
 [% BLOCK dummylink -%]
-<a><img src="[% webroot %]html/images/spacer.gif" alt="" title="" width="10"></a>
+<a><img src="[% webroot %]html/images/spacer.gif" alt="" title="" width="7"></a>
 [%- END %]
 
 [% BLOCK infolink %]

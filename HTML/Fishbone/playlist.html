@@ -18,7 +18,10 @@
 			[% IF playlist_items %]
 				<ol id="playlist_draglist" style="counter-reset: item [% start %];">
 				[% FOREACH item = playlist_items %]
-					<li class="listing" id="draglist_[% loop.index %]" onmouseover="this.className='oddactive';" onmouseout="this.className='odd';">[% PROCESS status_list.html %]</li>
+					<li class="listing" id="draglist_[% loop.index %]" 
+						onmouseover="this.className='oddactive';" 
+						onmouseout="this.className='odd';" 
+						onMouseDown="Event.observe('draglist_[% loop.index %]', 'click', function(event) { checkPlaylistSortable(event); });">[% PROCESS status_list.html %]</li>
 				[% END %]
 				</ol>
 			[% ELSE %]<p>[% "EMPTY" | string %]<a name="currentsong"></a></p>[% END %]

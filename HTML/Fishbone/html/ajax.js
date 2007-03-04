@@ -3,6 +3,7 @@ var currentID = 0;
 var playingstart;
 var showingstart;
 var DEBUG = 1;
+var playlistReordered = false;
 
 try { console.log('init console... done'); } catch(e) { console = { log: function() {} } }
 
@@ -657,6 +658,7 @@ function initSortable(element) {
 			var id = rexp.exec(item.id);
 			activeElem = parseInt(id);
 			debug(activeElem, showingstart);
+			var playlistReordered = true;
 		},
 		onUpdate: function() {
 			new Effect.Highlight(element, { endcolor: "#d50000" });
@@ -675,6 +677,16 @@ function initSortable(element) {
 	});
 	//]]>
 }
+
+// swallow click event if sortable in progress
+function checkPlaylistSortable(event) {
+	if (playlistReordered) {
+		Event.stop(event);
+		playlistReordered = false;
+	}
+}
+
+
 
 function deletePlaylistItem(element, start) {
 

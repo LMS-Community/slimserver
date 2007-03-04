@@ -1,7 +1,7 @@
 <div id="playlistitem[% item.num %]" [% IF item.currentsong %]class="currentListItem"[% ELSE %]class="playListItem"[% END %]>
 
 	<span class="itemnumber" id="itemnumber_[% item.num %]">&nbsp;[% item.num + 1 %].&nbsp;</span>
-	<b><a href="javascript:void(0)" onClick="handleClick(event.type, showSongInfo ,['[% webroot %]','[% item.itemobj.id %]','[% playerURI %]'])" onDblClick="handleClick(event.type, processPlayControls,'p0=playlist&amp;p1=jump&amp;p2=[% item.num %]')">[% item.title | html %]</a></b>
+	<b><a href="javascript:void(0)" onClick="handleClick(event.type, showSongInfo ,['[% webroot %]','[% item.itemobj.id %]'])" onDblClick="handleClick(event.type, processPlayControls,'p0=playlist&amp;p1=jump&amp;p2=[% item.num %]')">[% item.title | html %]</a></b>
 	<span id="trackid_[% item.itemobj.id %]"></span>
 	[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 	
