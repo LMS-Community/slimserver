@@ -19,8 +19,8 @@
 				<ol id="playlist_draglist" style="counter-reset: item [% start %];">
 				[% FOREACH item = playlist_items %]
 					<li class="listing" id="draglist_[% loop.index %]" 
-						onmouseover="this.className='oddactive';" 
-						onmouseout="this.className='odd';" 
+						onMouseOver="this.className='oddactive';" 
+						onMouseOut="this.className='odd';" 
 						onMouseDown="Event.observe('draglist_[% loop.index %]', 'click', function(event) { checkPlaylistSortable(event); });">[% PROCESS status_list.html %]</li>
 				[% END %]
 				</ol>
