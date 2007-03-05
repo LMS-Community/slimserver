@@ -146,7 +146,7 @@ div#pagetitle {
 .playListItem {
 	position: relative;
 	padding: 0px;
-	padding-right: 50px;
+	/* padding-right: 50px; */
 	margin: 0px;
 }
 
@@ -158,6 +158,15 @@ div#pagetitle {
 	padding: 0px;
 	margin: 0px;
 	float: right;
+	z-index: 100;
+	opacity:1;
+	filter: alpha(opacity=100);
+	-moz-opacity: 1;
+}
+
+.playlistControls {
+	background-color: #40464a;
+	height: 13px;
 }
 
 .browsedbLeftControls a {
@@ -764,7 +773,7 @@ A.linkbtn:link {
 .listing, .listing2, .even, .odd 
 {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
-	background:black;
+	background-color:black;
 	color:#999;
 	padding-left: 1px;
 	margin: 0px;

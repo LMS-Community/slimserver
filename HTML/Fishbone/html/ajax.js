@@ -658,7 +658,6 @@ function initSortable(element) {
 			var id = rexp.exec(item.id);
 			activeElem = parseInt(id);
 			debug(activeElem, showingstart);
-			var playlistReordered = true;
 		},
 		onUpdate: function() {
 			new Effect.Highlight(element, { endcolor: "#d50000" });
@@ -671,6 +670,7 @@ function initSortable(element) {
 		starteffect: function() {
 			Effect.Grow('deleteitem');
 			$('deleteitem').style.backgroundColor = 'maroon';
+			playlistReordered = true;
 		},
 		scroll:'playlistframe',
 		revert: true

@@ -8,7 +8,7 @@
 	[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %][% "FROM" | string %]
 	<i><a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">[% item.itemobj.album.title | html %]</a></i>[% END %]
 
-	<div class="playlistControls">
+	<div class="playlistControls" id="playlistControls[% item.num %]" style="display: none;">
 		[% PROCESS playlistcontrols
 		num = item.num
 		useStart = 1 %]

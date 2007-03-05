@@ -227,12 +227,14 @@ A.linkbtn:link {
 	border-bottom:solid 2px #cc9966;
 }
 
+.playlistControls {
+	background-color: #cc9966;
+}
 
 .listing A, .listing2 A, .odd A, .even A, .oddactive A, .evenactive A
 {
 	color : #663300 ! important;
 	font-family: Arial, Helvetica, sans-serif;
-
 }
 
 .currentListItem
