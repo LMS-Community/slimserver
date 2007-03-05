@@ -638,7 +638,6 @@ sub tickerLines {
 
 		$parts = {
 			'line'   => [ $line1 ],
-			'overlay' => [ Slim::Utils::DateTime::timeF(undef,Slim::Utils::Prefs::get('screensaverTimeFormat')) ],
 			'ticker' => [ undef, $line2 ],
 		};
 
