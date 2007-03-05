@@ -968,6 +968,8 @@ sub _cliQuery_done {
 					\&_cliQuery_error,
 					{
 						'url'          => $subFeed->{'url'},
+						'feedTitle'    => $subFeed->{'name'} || $subFeed->{'title'},
+						'parser'       => $subFeed->{'parser'},
 						'parent'       => $feed,
 						'parentURL'    => $params->{'parentURL'} || $params->{'url'},
 						'currentIndex' => \@crumbIndex,
@@ -998,7 +1000,7 @@ sub _cliQuery_done {
 							}
 						}
 					}
-					elsif ($subFeed->{$data} && $data !~ /^(name|title)$/) {
+					elsif ($subFeed->{$data} && $data !~ /^(name|title|parser)$/) {
 						$request->addResult($data, $subFeed->{$data});
 					}
 				}
@@ -1137,7 +1139,7 @@ sub _cliQuery_done {
 						elsif ($data eq 'url') {
 							$request->addResultLoop($loopname, $cnt, $data, $item->{$data}) if $want_url;
 						}						
-						elsif ($item->{$data} && $data !~ /^(name|title)$/) {
+						elsif ($item->{$data} && $data !~ /^(name|title|parser)$/) {
 							$request->addResultLoop($loopname, $cnt, $data, $item->{$data});
 						}
 					}
