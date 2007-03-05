@@ -286,3 +286,8 @@ function doDoubleClick(which, action, args) {
 	action(args);
 	//console.log("double click", action);
 }
+
+function doSearch(value) {
+	selectLink();
+	parent.browser.location='search.html?manualSearch=1&query=' + value + '&player' + getPlayer('SlimServer-player');
+}
