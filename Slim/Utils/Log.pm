@@ -177,7 +177,7 @@ sub reInit {
 	# SQL debugging is special - we need to turn on DBIx::Class debugging.
 	if ($INC{'Slim/Schema.pm'}) {
 
-		Slim::Schema->toggleDebug(logger('database.sql')->is_info);
+		Slim::Schema->updateDebug;
 	}
 }
 

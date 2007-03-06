@@ -48,6 +48,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
 use Slim::Utils::Unicode;
 use Slim::Utils::Progress;
+use Slim::Schema::Debug;
 
 my $log = logger('database.info');
 
@@ -188,7 +189,10 @@ sub init {
 	$trackAttrs = Slim::Schema::Track->attributes;
 	$class->driver($driver);
 
-	$class->toggleDebug(logger('database.sql')->is_info);
+	# Use our debug and stats class to get logging and perfmon for db queries
+	$class->storage->debugobj('Slim::Schema::Debug');
+
+	$class->updateDebug;
 
 	$class->_buildValidHierarchies;
 
@@ -210,29 +214,19 @@ sub throw_exception {
 	logBacktrace($msg);
 }
 
-=head2 toggleDebug( 0 | 1 )
+=head2 updateDebug
 
-Not so much a toggle, as an explict setting. Turn SQL debugging output on or
-off. Equivalent to setting DBIC_TRACE for L<DBIx::Class::Storage::DBI>, but
-run through L<Slim::Utils::Misc::msg>
+Check and update debug status for the storage class.
+Debugging is normally disabled, but must be enabled if either logging for database.sql or perfmon is required
 
 =cut
 
-sub toggleDebug {
+sub updateDebug {
 	my $class  = shift;
-	my $debug  = shift;
-	my $logger = logger('database.sql');
+
+	my $debug  = logger('database.sql')->is_info || $::perfmon;
 
 	$class->storage->debug($debug);
-
-	$class->storage->debugcb(sub {
-
-		#if ($_[0] eq 'SELECT') {
-		#	logBacktrace();
-		#}
-
-		$logger->info($_[1]);
-	});
 }
 
 =head2 disconnect()

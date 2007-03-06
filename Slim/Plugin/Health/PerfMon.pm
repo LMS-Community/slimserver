@@ -29,10 +29,10 @@ my @perfmonLogs = (
 	{ 'type' => 'server', 'name' => 'request',   'monitor' => \$Slim::Control::Request::requestTask,    'warn' => 1 },
 	{ 'type' => 'server', 'name' => 'scheduler', 'monitor' => \$Slim::Utils::Scheduler::schedulerTask,  'warn' => 1 },
 	{ 'type' => 'server', 'name' => 'async',     'monitor' => \$Slim::Networking::SimpleAsyncHTTP::callbackTask, 'warn' => 1 },
-	{ 'type' => 'server', 'name' => 'timerlate', 'monitor' => \$Slim::Utils::Timers::timerLate,                     },
-	{ 'type' => 'server', 'name' => 'dbaccess',  'monitor' => \$Slim::Schema::Storage::dbAccess,                    },
+	{ 'type' => 'server', 'name' => 'dbaccess',  'monitor' => \$Slim::Schema::Debug::dbAccess,          'warn' => 1 },
 	{ 'type' => 'server', 'name' => 'pagebuild', 'monitor' => \$Slim::Web::HTTP::pageBuild,                         },
 	{ 'type' => 'server', 'name' => 'template',  'monitor' => \$Slim::Web::Template::Context::procTemplate,         },
+	{ 'type' => 'server', 'name' => 'timerlate', 'monitor' => \$Slim::Utils::Timers::timerLate,                     },
 	{ 'type' => 'server', 'name' => 'irqueue',   'monitor' => \$Slim::Hardware::IR::irPerf,                         },
 	{ 'type' => 'player', 'name' => 'signal',    'monitor' => \&Slim::Player::Client::signalStrengthLog, },
 	{ 'type' => 'player', 'name' => 'buffer',    'monitor' => \&Slim::Player::Client::bufferFullnessLog, },
@@ -210,9 +210,11 @@ sub handleIndex {
 	if ($params->{'perf'}) {
 		if ($params->{'perf'} eq 'on') {
 			$::perfmon = 1;
+			Slim::Schema->updateDebug;
 			clearAllCounters();
 		} elsif ($params->{'perf'} eq 'off') {
 			$::perfmon = 0;
+			Slim::Schema->updateDebug;
 		}
 		if ($params->{'perf'} eq 'clear') {
 			clearAllCounters();
