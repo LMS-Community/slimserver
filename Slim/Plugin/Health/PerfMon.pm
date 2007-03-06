@@ -75,15 +75,22 @@ sub parseCmdLine {
 	} elsif ($cmdline =~ /=/) {
 		for my $statement (split /\s*,\s*/, $cmdline) {
 			my ($name, $thresh) = split /=/, $statement;
-			next if ($thresh !~ /^\d+$|^\d+\.\d+$/);
-			foreach my $mon (@perfmonLogs) {
-				if ($mon->{'type'} eq 'server' && $mon->{'name'} eq $name) {
-					${$mon->{'monitor'}}->setWarnHigh($thresh);
+			my $bt;
+			if ($thresh =~ /(.*)\+bt$/) {
+				$thresh = $1;
+				$bt = 1;
+			}
+			if ($thresh =~ /^\d+$|^\d+\.\d+$/) {
+				foreach my $mon (@perfmonLogs) {
+					if ($mon->{'type'} eq 'server' && $mon->{'name'} eq $name) {
+						${$mon->{'monitor'}}->setWarnHigh($thresh);
+						${$mon->{'monitor'}}->setWarnBt($bt);
+					}
 				}
 			}
 		}
 	} else {
-		print "Valid perfwarn options: [--perfwarn=<threshold secs>] | [--perfwarn <monitor1>=<threshold1>,<monitor2>=<threshold2>,...]\n";
+		print "Valid perfwarn options: [--perfwarn=<threshold secs>] | [--perfwarn <monitor1>=<threshold1>[+bt],<monitor2>=<threshold2>[+bt],...]\n";
 		print "monitors: ";
 		foreach my $mon (@perfmonLogs) {
 			if ($mon->{'type'} eq 'server') {
