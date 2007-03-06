@@ -13,6 +13,8 @@ function loadBrowser(force) {
 	if (force || parent.browser.location.href.match('black.html')) {
 		page = getPage();
 		chooseBrowser(null,page);
+	} else {
+		loader = setTimeout("loadBrowser()", 1000);
 	}
 }
 
