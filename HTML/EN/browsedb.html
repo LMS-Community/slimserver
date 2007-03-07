@@ -15,12 +15,12 @@
 [% IF NOT ajaxUpdate %][% PROCESS pageheader.html %]
 
 <div id="browsedbHeader">
-	[% IF artwork != 1 %]
+	[% IF artwork != 1 -%]
 		[% IF hasPagebar %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
-	[% END %]
-	[% IF warn %]<p>[% PROCESS scanwarning %] [% END %]
+	[% END -%]
+	[% IF warn -%]<p>[% PROCESS scanwarning %] [%- END %]
 
-	[% IF hasPagebar %][% PROCESS pagebar %][% END %]
+	[% IF hasPagebar -%][% PROCESS pagebar %][%- END %]
 </div>
 [% END %]
 
@@ -31,28 +31,32 @@
 	END;
 %]
 
-[% WRAPPER $container %]
-	[% IF coverArt AND tree != 1 %]
+[%- WRAPPER $container %]
+	[% IF coverArt AND tree != 1 -%]
 		<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
-	[% END %]
-	[% FOREACH item = browse_items %]
-		[% IF useAJAX %][% itemid = "$item.itemobj.id"_"."_"$loop.index" %][% IF level %][% itemid = "$level"_"."_"$itemid" %][% END %][% END %]
-		[% PROCESS browsedbitems_list.html %]
-		[% IF useAJAX && NOT (artwork == 1 && (item.levelName == 'album' || item.levelName == 'age')) %]
+	[% END -%]
+	[% FOREACH item = browse_items -%]
+		[%- IF useAJAX %][% itemid = "$item.itemobj.id"_"."_"$loop.index" %][% IF level %][% itemid = "$level"_"."_"$itemid" %][% END %][% END -%]
+		[%- PROCESS browsedbitems_list.html -%]
+		[%- IF useAJAX && NOT (artwork == 1 && (item.levelName == 'album' || item.levelName == 'age')) %]
 			<div id="descendinfo[% itemid %]" class="descendinfo" style="display:none;"><div id="item[% itemid %]" class="descenditem"></div></div>
-		[% END %]
-	[% END %]
+		[% END -%]
+	[%- END %]
+[% END -%]
+
+[% IF useAJAX && (artwork == 1 && (item.levelName == 'album' || item.levelName == 'age')) %]
+<div id='albumBackground' style="display:none;"><img src = "[% webroot %]html/images/cdspin3.gif" alt="" title="" onClick = "javascript:hideAlbumInfo();" style="position: absolute; top: 45%; left: 45%;"></div>
+<div id = 'albumPopup' style="display:none;">
+	<div id = 'closeAlbumPopup'><span id="closeAlbumText"><a href="javascript:void(1);" onClick = "javascript:hideAlbumInfo();"><img src = "[% webroot %]html/images/b_delete.gif" alt="[% "CLOSE" | string %]" title ="[% "CLOSE" | string %]"></a></span></div>
+	<div id = 'trackInfo'></div>
+</div>
 [% END %]
 
 [% IF NOT ajaxUpdate %]
 <div id="browsedbFooter">
 	[% IF pageinfo.totalpages && pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %][% PROCESS pagebar %][% END %]
 </div>
-<div id='albumBackground' style="display:none;"><img src = "[% webroot %]html/images/cdspin3.gif" alt="" title="" onClick = "javascript:hideAlbumInfo();" style="position: absolute; top: 45%; left: 45%;"></div>
-<div id = 'albumPopup' style="display:none;">
-	<div id = 'closeAlbumPopup'><span id="closeAlbumText"><a href="javascript:void(1);" onClick = "javascript:hideAlbumInfo();"><img src = "[% webroot %]html/images/b_delete.gif" alt="[% "CLOSE" | string %]" title ="[% "CLOSE" | string %]"></a></span></div>
-	<div id = 'trackInfo'></div>
-</div>
+
 [% PROCESS pagefooter.html %]
 
 [% END %]

@@ -3,12 +3,12 @@
 ELSE;
 	contentwrapper = 'contentitem';
 END;
-%]
-[% IF item.heading %]
+-%]
+[%- IF item.heading %]
 	<div class="searchHeader">
 		[% "$item.heading" _ "SMATCHING" | string %] "[% query %]"[% "COLON" | string %][% item.numresults %]
 	</div>
-[% ELSE %]
+[%- ELSE -%]
 	[% WRAPPER $contentwrapper
 			controls    = 'browsecontrols'
 			itemobj     = item.itemobj
@@ -24,5 +24,5 @@ END;
 			href        = item.href %]
 		
 	[% PROCESS iteminfo %]
-	[% END %]
-[% END %]
+	[% END -%]
+[%- END %]

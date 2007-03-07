@@ -13,7 +13,7 @@
 [% controlGraphics  = 0 %]
 
 [%# set browserTarget to the name of the frame used for browser lists, if your skin uses frames %]
-[% browserTarget  = 0 %]
+[% browserTarget  = "" %]
 
 [# set this to set whether or not the skin is capable of using javascript. %]
 [% useAJAX = 1 %]
@@ -27,25 +27,25 @@
 [%- END %]
 
 [%# this is to wrap around an href which does a play command, with a default image for skins that support it %]
-[%- BLOCK playlink -%]
+[% BLOCK playlink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "PLAY"
 		cmdimage = "b_play" -%]
-[%- END -%]
+[%- END %]
 
 [%# this is to wrap around an href which does an add command, with a default image for skins that support it %]
-[%- BLOCK addlink -%]
+[% BLOCK addlink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "ADD_TO_PLAYLIST"
 		cmdimage = "b_add" -%]
-[%- END -%]
+[%- END %]
 
 [%# this is to wrap around an href which does an add-to-favorites command, with a default image for skins that support it %]
-[%- BLOCK favaddlink -%]
+[% BLOCK favaddlink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "PLUGIN_FAVORITES_ADD"
 		cmdimage = "b_favorite" -%]
-[%- END -%]
+[%- END %]
 
 [%# this is to wrap around an href which does an insert command %]
 [%- BLOCK insertlink -%]
@@ -183,13 +183,13 @@ END %]
 [%- END -%]
 	<div class="artworkImage" style="width: [% item.size %];">
 
-		[% IF item.coverThumb %]
+		[%- IF item.coverThumb %]
 			<div style="width:[% item.size %]px;height:[% item.size %]px;overflow:hidden;">
 			<a [% IF useAJAX %]onClick = 'popUpAlbumInfo("[% item.attributes | html %]");'[% ELSE %][% PROCESS browseDbItemHRef %] target="browser"[% END %]>[% PROCESS thumbnailItemImg height="$item.size" %]</a>
 			</div>
 		[% ELSE %]
 			<a [% IF useAJAX %]onClick = 'popUpAlbumInfo("[% item.attributes | html %]");'[% ELSE %][% PROCESS browseDbItemHRef %] target="browser"[% END %]>[% PROCESS dummyItemImg height="$item.size" %]</a>
-		[% END %]
+		[% END -%]
 	</div>
 
 	[% SET class = 'even' odd = 0 %]
@@ -203,32 +203,32 @@ END %]
 [%- END %]
 
 [%# these are the links to be shown with items on the playlist %]
-[% BLOCK playlistcontrols %]
+[% BLOCK playlistcontrols -%]
 	[% WRAPPER playlink %][% PROCESS cmdHRef cmdType = 'jump' num = item.num %][% END %]
 	[% WRAPPER removelink %][% PROCESS cmdHRef cmdType='delete' %][% END %]
-[% END %]
+[%- END %]
 
 [%# These are the controls to be shown when browsing the music library %]
 [% BLOCK browsecontrols %]
-	[% SET class = odd ? 'odd" bgcolor="#d0d0d0':'even" bgcolor="#FFFFFF' target='status' %]
-	[% header='1' width='13' height='13' %]
-	[% IF showplayall %]
+	[%- SET class = odd ? 'odd" bgcolor="#d0d0d0':'even" bgcolor="#FFFFFF' target='status' -%]
+	[%- header='1' width='13' height='13' -%]
+	[% IF showplayall -%]
 		[% WRAPPER playlink noTarget = 1 %]href="[% playallhref %]"[% END %]
 		[% WRAPPER addlink  noTarget = 1 %]href="[% addallhref %]"[% END %]
-	[% ELSIF showdescend && href %]
-		[% WRAPPER descendlink %][% href %][% END %]
-		[% IF showplay %]
+	[% ELSIF showdescend && href -%]
+		[%- WRAPPER descendlink %][%- href -%][% END -%]
+		[% IF showplay -%]
 			[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
 			[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
-		[% END %]
+		[%- END %]
 	[% ELSE %]
 		[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
 		[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
-		[% FOREACH mixer = mixerlinks.values.sort %]
+		[% FOREACH mixer = mixerlinks.values.sort -%]
 			[% PROCESS $mixer %]
 		[% END %]
-	[% END %]
-[% END %]
+	[%- END %]
+[%- END %]
 
 [%# These are the controls to be shown when browsing the music library %]
 [% BLOCK radiocontrols %]
@@ -264,23 +264,23 @@ END %]
 	[% IF item.currentsong %]</b>[% END %]
 [% END %]
 
-[% BLOCK iteminfo %]
-	[% IF item.descend %][% IF item.hierarchy %]
-	[% IF useAJAX AND (container == 'contentcontainer') AND item.itemobj -%]
+[% BLOCK iteminfo -%]
+	[%- IF item.descend %][% IF item.hierarchy -%]
+	[%- IF useAJAX AND (container == 'contentcontainer') AND item.itemobj -%]
 	<span  id='descend[% itemid %]' class="descendlinkbtn"                      onClick='showTree("[% itemid %]","[% item.hreftype %]","hierarchy=[% item.hierarchy %][% IF item.level %]&amp;level=[% item.level %][% END %][% item.attributes | html %]")'>&nbsp;</span
 	><span id='wait[% itemid %]'    class="waitlinkbtn"  style="display: none;" onClick='hideTree("[% itemid %]")'>&nbsp;</span
 	><span id='close[% itemid %]'   class="closelinkbtn" style="display: none;" onClick='hideTree("[% itemid %]")'>&nbsp;</span>
-	[%- END -%]
-	<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% item.text | html %][% IF item.hierarchy %]</a>[% END %]
-	[% IF item.showYear && item.year %]<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END %]
+	[%- END %]
+	<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% item.text | html %][% IF item.hierarchy %]</a>[% END -%]
+	[% IF item.showYear && item.year -%]<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END -%]
 
 		<!-- Include the artist for the album view -->
-		[% IF item.artist.name && item.artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END %]
+		[%- IF item.artist.name && item.artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj; END -%]
 
-	[% ELSE %]
+	[%- ELSE -%]
 		[% PROCESS trackinfo %]
-	[% END %]
-[% END %]
+	[%- END %]
+[%- END %]
 
 
 [%# This is to build the pagebar or alphapagebar, it should be PROCESSed %]

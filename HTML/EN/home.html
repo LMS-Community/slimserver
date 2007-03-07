@@ -45,7 +45,7 @@
 	<div>[% "BROWSE_MUSIC" | string | upper %]</div>
 	<ul>
 	[%- FOREACH link = additionalLinks.browse %]
-		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a></li>
+		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string | html %]</a></li>
 	[%- END %]
 	</ul>
 </div>
@@ -54,7 +54,7 @@
 	<div>[% "SEARCH" | string | upper %]</div>
 	<ul>
 	[%- FOREACH key = additionalLinks.search.keys %]
-		<li><a href="[% additionalLinks.search.$key | html %]player=[% playerURI %]">[% key | string %]</a></li>
+		<li><a href="[% additionalLinks.search.$key | html %]player=[% playerURI %]">[% key | string | html %]</a></li>
 	[%- END %]
 	</ul>
 </div>
@@ -63,9 +63,9 @@
 	<div>[% "RADIO" | string | upper %]</div>
 	<ul>
 	[%- FOREACH link = additionalLinks.radio %]
-		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a></li>
+		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string | html %]</a></li>
 	[%- END %]
-		<li><a href="tunein.html?player=[% playerURI %]">[% "RADIO_TUNEIN" | string %]</a></li>
+		<li><a href="tunein.html?player=[% playerURI %]">[% "RADIO_TUNEIN" | string | html %]</a></li>
 	</ul>	
 </div>
 
@@ -82,7 +82,7 @@
 	[%- END %]
 
 	[%- FOREACH key = additionalLinks.settings.keys %]
-		<li><a href="[% additionalLinks.settings.$key | html %]player=[% playerURI %]">[% key | string %]</a></li>
+		<li><a href="[% additionalLinks.settings.$key | html %]player=[% playerURI %]">[% key | string | html %]</a></li>
 	[%- END %]
 	</ul>
 </div>
@@ -93,7 +93,7 @@
 	<div>[% "PLUGINS" | string | upper %]</div>
 	<ul>
 		[%- FOREACH link = additionalLinks.plugins %]
-			<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a></li>
+			<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string | html %]</a></li>
 		[%- END %]
 	</ul>
 </div>
@@ -103,7 +103,7 @@
 	<div>[% "HELP" | string | upper %]</div>
 	<ul>
 	[%- FOREACH link = additionalLinks.help %]
-		<li><a href="[% link.value | html %][% IF NOT link.value.match('^http') %]player=[% playerURI %][% END %]" [% IF link.value.match('^http') %]target="_new"[% END %]>[% link.key | string %]</a></li>
+		<li><a href="[% link.value | html %][% IF NOT link.value.match('^http') %]player=[% playerURI %][% END %]" [% IF link.value.match('^http') %]target="_new"[% END %]>[% link.key | string | html %]</a></li>
 	[%- END %]
 	</ul>
 </div>
