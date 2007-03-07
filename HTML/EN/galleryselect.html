@@ -16,7 +16,7 @@
 
 	[% IF NOT noLabel %]<label for="orderBy" class="stdlabel">[% "SORT_BY" | string %]</label>[% END %]
 
-	<select class="stdedit" name="orderBy" onChange="chooseAlbumOrderBy(selectedIndex,options[selectedIndex].value)">
+	<select class="stdedit" name="orderBy" id="orderBy" onChange="chooseAlbumOrderBy(selectedIndex,options[selectedIndex].value)">
 
 	[% FOREACH orderType = orderByList.keys.sort %]
 		<option [% IF orderType == orderBy %]selected[% END %] value="[% orderType %]">[% orderByList.$orderType | string %]</option>

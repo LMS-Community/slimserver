@@ -47,7 +47,6 @@
 		cmdimage = "b_favorite" -%]
 [%- END -%]
 
-
 [%# this is to wrap around an href which does an insert command %]
 [%- BLOCK insertlink -%]
 	[%- PROCESS cmdlink
@@ -186,10 +185,10 @@ END %]
 
 		[% IF item.coverThumb %]
 			<div style="width:[% item.size %]px;height:[% item.size %]px;overflow:hidden;">
-			<a [% IF useAJAX %]onClick = 'popUpAlbumInfo("[% item.attributes %]");'[% ELSE %][% PROCESS browseDbItemHRef %] target="browser"[% END %]>[% PROCESS thumbnailItemImg height="$item.size" %]</a>
+			<a [% IF useAJAX %]onClick = 'popUpAlbumInfo("[% item.attributes | html %]");'[% ELSE %][% PROCESS browseDbItemHRef %] target="browser"[% END %]>[% PROCESS thumbnailItemImg height="$item.size" %]</a>
 			</div>
 		[% ELSE %]
-			<a [% IF useAJAX %]onClick = 'popUpAlbumInfo("[% item.attributes %]");'[% ELSE %][% PROCESS browseDbItemHRef %] target="browser"[% END %]>[% PROCESS dummyItemImg height="$item.size" %]</a>
+			<a [% IF useAJAX %]onClick = 'popUpAlbumInfo("[% item.attributes | html %]");'[% ELSE %][% PROCESS browseDbItemHRef %] target="browser"[% END %]>[% PROCESS dummyItemImg height="$item.size" %]</a>
 		[% END %]
 	</div>
 
@@ -268,7 +267,7 @@ END %]
 [% BLOCK iteminfo %]
 	[% IF item.descend %][% IF item.hierarchy %]
 	[% IF useAJAX AND (container == 'contentcontainer') AND item.itemobj -%]
-	<span  id='descend[% itemid %]' class="descendlinkbtn"                      onClick='showTree("[% itemid %]","[% item.hreftype %]","hierarchy=[% item.hierarchy %][% IF item.level %]&amp;level=[% item.level %][% END %][% item.attributes %]")'>&nbsp;</span
+	<span  id='descend[% itemid %]' class="descendlinkbtn"                      onClick='showTree("[% itemid %]","[% item.hreftype %]","hierarchy=[% item.hierarchy %][% IF item.level %]&amp;level=[% item.level %][% END %][% item.attributes | html %]")'>&nbsp;</span
 	><span id='wait[% itemid %]'    class="waitlinkbtn"  style="display: none;" onClick='hideTree("[% itemid %]")'>&nbsp;</span
 	><span id='close[% itemid %]'   class="closelinkbtn" style="display: none;" onClick='hideTree("[% itemid %]")'>&nbsp;</span>
 	[%- END -%]
