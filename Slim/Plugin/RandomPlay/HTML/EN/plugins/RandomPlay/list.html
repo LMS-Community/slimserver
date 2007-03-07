@@ -15,7 +15,7 @@
 [%# Following block generates links that submit the form if javascript is enabled.  This allows
      users to make setting changes then click on a new mix without having to press the submit button. %]
 [% BLOCK href %]
-href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&player=[% player | uri %]&addOnly=[% addOnly %]"
+href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% player | uri %]&amp;addOnly=[% addOnly %]"
 		 onclick='document.genreForm.type.value = "[% type %]";
 							document.genreForm.addOnly.value = [% addOnly %]
 							document.genreForm.submit();
