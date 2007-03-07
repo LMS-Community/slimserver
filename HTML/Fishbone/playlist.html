@@ -4,11 +4,12 @@
 </pre>
 [%- ELSE -%]
 
+	<div id="playList" class="playlist">
 	[% IF playercount == '0' %]
-	[% ELSIF not playlist_items %]<div class="list"><a name="currentsong"></a></p>[% "EMPTY" | string %]</div>
+	[% ELSIF not playlist_items %]<div class="list"><a name="currentsong"></a><p></p>[% "EMPTY" | string %]</div>
 	[% ELSE %]
 	
-	<div id="playList" class="playlist">
+	
 		
 		[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar addSummary = 1 %][% END %]
 	<div id="browsedbList">
@@ -28,11 +29,12 @@
 		[% END %]
 	</div>
 		[% IF pageinfo.totalpages > 1 %][% PROCESS pagebar addSummary = 1 %][% END %]
-	</div>
+	
 	
 	<script type="text/javascript">
 		setStart([% start %]);
 	</script>
 	
 	[% END %]
+	</div>
 [% END %]

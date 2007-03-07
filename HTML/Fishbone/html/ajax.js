@@ -22,7 +22,7 @@ function debug() {
 function doAjaxRefresh(light) {
 	var args = 'player=' + getPlayer('SlimServer-player') +'&ajaxRequest=1&s='+Math.random();
 	var prev_url = url;
-	if (light && light != 'onload') {
+	if (light && light != 'onload' && !isNaN(currentID)) {
 		args = args + "&light=1";
 	} else {
 		url = 'status.html'
@@ -212,7 +212,7 @@ function refreshInfo(theData, force, curstyle) {
 	if (parsedData['player_id']) {
 		hideElements(['waiting']);
 	}
-	//debug("refreshinfo "+ parsedData['player_id']);
+	debug("refreshinfo "+ parsedData['player_id']);
 	if (curstyle == null) {
 		var activestyle = getActiveStyleSheet();
 		var curstyle = '';
@@ -232,17 +232,24 @@ function refreshInfo(theData, force, curstyle) {
 	var a = rExp.exec(myString);
 	var newsong = 1;
 	
-	//debug(force, a, parsedData['songtitleid'], $('nowplaying').style.display);
-	if (force != 1 || (!parsedData['songtitleid'] && $('nowplaying').style.display == 'none')) {
+	debug(force, a, parsedData['songtitleid'], $('nowplaying').style.display);
+	if (force != 1 && !(parsedData['songtitleid'] && $('nowplaying').style.display == 'none')) {
 		if (a == null || a[1] == parsedData['songtitleid']) {newsong = 0;}
 	}
+	//if (!parsedData['songtitleid'] && $('nowplaying').style.display == 'none' || parsedData['songtitleid']) {
+	//	if ((!parsedData['songtitleid'] && a == null) || (a != null && a[1] == parsedData['songtitleid'])) {newsong = 0;}
+	//}
+	
+	//if (force) {
+	//	newsong = force;
+	//}
 	
 	//if (newsong && !parsedData['artisthtml']) {
 		//doAjaxRefresh();
 		//return true;
 	//}
 
-	//debug([newsong,parsedData['songtitleid']]);
+	debug([newsong,parsedData['songtitleid']]);
 	var elems = ['thissongnum', 'playtextmode', 'songcount'];
 	if (newsong) {
 		elems.push('songtitle');
@@ -265,7 +272,7 @@ function refreshInfo(theData, force, curstyle) {
 	} else {
 		hideElements(['nowplaying']);
 		showElements(['notplaying']);
-		$('coverarthref').href = "javascript:void();";
+		$('coverarthref').href = "javascript:void(1);";
 	}
 
 	//debug("update player state\n");
@@ -324,7 +331,10 @@ function refreshInfo(theData, force, curstyle) {
 	}
 	
 	if (parsedData['songtitleid']) {
+		debug("setting current song "+parsedData['songtitleid']);
 		currentID = parsedData['songtitleid'];
+	} else {
+		debug("no songid found!");
 	}
 
 	//refresh text elements
@@ -425,7 +435,7 @@ function currentSong(theData) {
 			
 			// make sure we have matching item counts, refresh if not.
 			var item = doc.getElementById('playlistitem' + i);
-			//debug([i, item, item.className]);
+			debug([i, item, item.className]);
 			if (item) {
 				
 				if (i == currentsong) {

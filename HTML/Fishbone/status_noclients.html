@@ -1,8 +1,10 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 	<meta http-equiv="refresh" content="10; url=status.html">
 	[% PROCESS customheader.html %]
-<script>
+<script TYPE="text/javascript">
 <!-- HIDE
 [% IF undock %]self.close();[% END %]
 function checkLoad ()
@@ -19,14 +21,14 @@ function checkLoad ()
 -->
 </script>
 </head>
-<body bgcolor="#FFFFFF" marginwidth="0" marginheight="0" topmargin="0" leftmargin="0">
+<body bgcolor="#FFFFFF" style="margin: 0;">
 	<div id="masthead">
-		<img class="gray" border="0" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" width="98" height="17">
-		<img class="tan" border="0" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" width="98" height="17">
+		<img class="gray" border="0" src="[% webroot %]html/images/[% playermodel %]_logo.small.gif" alt='[% playermodel %]' title='[% playermodel %]' width="98" height="17">
+		<img class="tan" border="0" src="[% webroot %]html/images/squeezebox_logo.small_tan.gif" alt='[% playermodel %]' title='[% playermodel %]' width="98" height="17">
 	</div><div id="menuHeader"></div>
 	<div id="TopMenu1">
 		<p class="songtitle"><b>[% "NO_PLAYER_FOUND" | string %]</b></p><p>&nbsp;</p>
-		<p>[% "NO_PLAYER_DETAILS" | string %]</p>
+		<p>[% "NO_PLAYER_DETAILS" | string %]
 	</div>
 </body>
 </html>

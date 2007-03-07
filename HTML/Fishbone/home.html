@@ -26,7 +26,7 @@
 	[%- BLOCK addBrowseLinks -%]
 		[%- IF links -%]
 			[%- FOREACH link = links -%]
-				<OPTION value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</OPTION>
+				<OPTION value="[% link.key %]" label="[% link.key | string | html %]">[% link.key | string | html %]</OPTION>
 			[%- END -%]
 		[%- END -%]
 	[%- END -%]
