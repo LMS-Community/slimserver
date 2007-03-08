@@ -54,9 +54,13 @@
 		Deprecated the tag &quot;year_id&quot; in favour of &quot;year&quot; in the 
 		&quot;<a href="#playlistcontrol">playlistcontrol</a>&quot; command.
 	</li>
+	<li>
+		Changed how the &quot;<a href="#status">status</a>&quot; query behaves if
+		the player one is subscribed to disappears.
+	</li>
 </ul>
 <p>
-	The following changes or new commands & queries are available starting with
+	The following changes or new commands &amp; queries are available starting with
 	SlimServer 7.0. These changes should not have any impact on existing 
 	clients:
 </p>
@@ -644,9 +648,10 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </ul>
 
 
-<!----------------------------------------------------------------------------->
+<!--#########################################################################-->
 <!-- GENERAL COMMANDS                                                        -->
-<!----------------------------------------------------------------------------->
+<!--#########################################################################-->
+
 
 <hr>
 <h2 id="GC">
@@ -1006,9 +1011,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </blockquote>
 
 
-<!----------------------------------------------------------------------------->
+<!--#########################################################################-->
 <!-- PLAYER COMMANDS                                                         -->
-<!----------------------------------------------------------------------------->
+<!--#########################################################################-->
 <hr>
 <h2 id="PC">
 	Players commands and queries
@@ -2305,9 +2310,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	&lt;LF&gt;&quot;</p>
 </blockquote>
 
-<!----------------------------------------------------------------------------->
+<!--#########################################################################-->
 <!-- DATABASE COMMANDS                                                       -->
-<!----------------------------------------------------------------------------->
+<!--#########################################################################-->
 <hr>
 <h2 id="DB">
 	Database commands and queries
@@ -4701,9 +4706,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 
 
 
-<!----------------------------------------------------------------------------->
+<!--#########################################################################-->
 <!-- PLAYLIST COMMANDS                                                       -->
-<!----------------------------------------------------------------------------->
+<!--#########################################################################-->
 
 <hr>
 <h2 id="PL">
@@ -5624,9 +5629,9 @@ in the saved playlists folder.</p>
 </blockquote>
 
 
-<!----------------------------------------------------------------------------->
+<!--#########################################################################-->
 <!-- COMPOUND QUERIES                                                        -->
-<!----------------------------------------------------------------------------->
+<!--#########################################################################-->
 
 <hr>
 <h2 id="CQ">
@@ -5986,8 +5991,8 @@ in the saved playlists folder.</p>
 			change detection &quot;algorithm&quot;.
 			<br>
 			If the player is manually (through the web page) or automatically
-			deleted from SlimServer, &quot;client forget&quot; is sent instead
-			of the status query and the subscription is terminated.
+			deleted from SlimServer, the status query returns the &quot;error&quot;
+			tag with value &quot;invalid player&quot; and the subscription is terminated.
 			<br>
 			Please note this mechanism is completely distinct from the 
 			&quot;listen&quot; and &quot;subscribe&quot; commands described 
@@ -6015,6 +6020,17 @@ in the saved playlists folder.</p>
 			Returned with value 1 if the SlimServer is still scanning the
 			database. The results may therefore be incomplete. Not returned if
 			no scan is in progress.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			error
+		</td>
+		<td>
+			Returned with value &quot;invalid player&quot; if the player this
+			subscription query referred to does no longer exist.<br>
+			In non subscription mode, the query simply echoes itself (i.e.
+			produces no result) if &lt;playerid&gt; is wrong.
 		</td>
 	</tr>
 	<tr>
@@ -6320,9 +6336,9 @@ in the saved playlists folder.</p>
 </blockquote>
 
 
-<!----------------------------------------------------------------------------->
+<!--#########################################################################-->
 <!-- NOTIFICATIONS                                                           -->
-<!----------------------------------------------------------------------------->
+<!--#########################################################################-->
 
 <hr>
 <h2 id="NC">
@@ -6410,9 +6426,9 @@ in the saved playlists folder.</p>
 </p>
 
 
-<!----------------------------------------------------------------------------->
+<!--#########################################################################-->
 <!-- PLUGIN COMMANDS                                                         -->
-<!----------------------------------------------------------------------------->
+<!--#########################################################################-->
 
 <hr>
 <h2 id="PG">
@@ -7249,9 +7265,9 @@ in the saved playlists folder.</p>
 </blockquote>
 
 
-<!----------------------------------------------------------------------------->
+<!--#########################################################################-->
 <!-- DEPRECATED COMMANDS                                                     -->
-<!----------------------------------------------------------------------------->
+<!--#########################################################################-->
 
 <hr>
 <h2 id="DC">

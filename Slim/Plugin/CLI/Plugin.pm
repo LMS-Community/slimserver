@@ -602,10 +602,6 @@ sub cli_process {
 
 			} else {
 
-				# check if this command or query needs CLI subscription 
-				# processing
-				cli_request_check_subscribe($client_socket, $request);
-				
 				# handle async commands
 				if ($request->isStatusProcessing()) {
 				
@@ -655,23 +651,6 @@ sub cli_request_write {
 	}
 }
 
-# check for subscribe parameters in suitable commands
-sub cli_request_check_subscribe {
-	my $client_socket = shift;
-	my $request = shift;
-
-	# we must have a subscribe param
-	my $subparam = $request->getParam('subscribe') || return;
-
-	# and we only care about status
-	if (!$request->isQuery([['status']])) {
-		return;
-	}
-
-	$log->debug("Begin Function");
-
-	cli_subscribe_status($client_socket, $request, $subparam);
-}
 
 ################################################################################
 # CLI commands & queries
@@ -854,8 +833,6 @@ sub subscribeCommand {
 # .. listen:      * to get everything
 #                 array ref containing array ref containing list of cmds to get
 #                 (in Request->isCommand form, i.e. [['cmd1', 'cmd2', 'cmd3']])
-# .. status:      hash ref:
-#                   ..<clientid> : Request object to use for client
 
 
 # cancels all subscriptions
@@ -892,42 +869,6 @@ sub cli_subscribe_terms {
 	cli_subscribe_manage();
 }
 
-# monitor status for a given client
-sub cli_subscribe_status {
-	my $client_socket = shift;
-	my $request = shift;
-	my $subparam = shift;
-	
-	$log->debug("Begin Function");
-
-	my $clientid = $request->clientid();
-	
-	# kill any previous subscription we might have laying around
-	my $statusrequest = $connections{$client_socket}{'subscribe'}{'status'}{$clientid};
-
-	delete $connections{$client_socket}{'subscribe'}{'status'}{$clientid};
-
-	Slim::Utils::Timers::killOneTimer($statusrequest,
-		\&cli_subscribe_status_output);
-
-	# store the new subscription if this is what is asked of us
-	if ($subparam ne '-') {
-		
-		# copy the request
-		my $statusrequest = $request->virginCopy();
-
-		$connections{$client_socket}{'subscribe'}{'status'}{$clientid} = $statusrequest;
-
-		if ($subparam > 0) {
-			# start the timer
-			Slim::Utils::Timers::setTimer($statusrequest, 
-				Time::HiRes::time() + $subparam,
-				\&cli_subscribe_status_output);
-		}
-	}
-	
-	cli_subscribe_manage();
-}
 
 # subscribes or unsubscribes to the Request notification system
 sub cli_subscribe_manage {
@@ -1004,84 +945,6 @@ sub cli_subscribe_notification {
 				}
 			}
 		}
-
-		# commands we ignore for status (to change if other subscriptions are supported!)
-		next if $request->isCommand([['ir', 'button', 'debug', 'pref', 'playerpref', 'display']]);
-		next if $request->isCommand([['playlist'], ['open', 'jump']]);
-
-		# retrieve the clientid
-		my $clientid = $request->clientid();
-		next if !defined $clientid;
-		
-		# handle status sending on changes
-		if (defined (my $statusrequest = $connections{$client_socket}{'subscribe'}{'status'}{$clientid})) {
-
-			# special case: the client is gone!
-			if ($request->isCommand([['client'], ['forget']])) {
-
-				# abandon ship, client is gone!
-				cli_subscribe_status($client_socket, $statusrequest, '-');
-
-				# notify listener if not already done
-				cli_request_write($request, $client_socket) if !$sent;
-			}
-
-			# something happened to our client, send status
-			else {
-
-				# don't delay for newsong
-				if ($request->isCommand([['playlist'], ['newsong']])) {
-
-					cli_subscribe_status_output($statusrequest);
-				}
-				
-				else {
-
-					# send everyother notif with a small delay to accomodate
-					# bursts of commands
-
-					Slim::Utils::Timers::killOneTimer($statusrequest,
-						\&cli_subscribe_status_output);
-
-					Slim::Utils::Timers::setTimer($statusrequest, 
-						Time::HiRes::time() + 0.3,
-						\&cli_subscribe_status_output);
-				}
-			}
-		}
-	}
-}
-
-sub cli_subscribe_status_output {
-	my $request = shift;
-
-	$log->debug("Begin Function");
-
-	$request->cleanResults();
-	$request->execute();
-	
-	my $client_socket = $request->connectionID();
-
-	cli_request_write($request);
-
-	# kill the delay timer (there is at most one)
-	Slim::Utils::Timers::killOneTimer($request, \&cli_subscribe_status_output);
-
-	# set the timer according to the subscribe value
-	my $delay = $request->getParam('subscribe');
-
-	if (!defined $delay || $delay eq '-') {
-		# Houston we have a problem, this should not happen!
-		cli_subscribe_status($client_socket, $request, '-');
-	}
-
-	elsif ($delay > 0) {
-
-		Slim::Utils::Timers::setTimer(
-			$request, 
-			Time::HiRes::time() + $delay,
-			\&cli_subscribe_status_output
-		);
 	}
 }
 

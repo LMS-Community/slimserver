@@ -632,8 +632,8 @@ sub addDispatch {
 	my $DBp     = \%dispatchDB;	    # pointer to the current table level
 	my $CRindex = 0;                # current index into $arrayCmdRef
 	my $done    = 0;                # are we done
-	my $oldDR;						# if we replace, what did we?
-	
+	my $oldDR;                      # if we replace, what did we?
+
 	while (!$done) {
 	
 		# check if we have a subsequent verb in the command
@@ -2233,18 +2233,28 @@ sub __autoexecute{
 	# we shall have a connection id to send as param
 	my $cnxid = $self->connectionID() || return;
 	
+	# delete the sub in case of error
+	my $deleteSub = 0;
+	
 	# execute ourself after some cleanup
 	$self->cleanResults;
 	$self->execute();
 	
-	# execute the callback
+	if ($self->isStatusError()) {
+		$deleteSub = 1;
+	}
+	
+	# execute the callback in all cases.
 	eval { &{$funcPtr}($self, $cnxid) };
 
 	# oops, failed
 	if ($@) {
 		my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
 		logError("While trying to run function coderef [$funcName]: [$@] => deleting subscription");
-
+		$deleteSub = 1;
+	}
+	
+	if ($deleteSub) {
 		my $name = $self->getRequestString();
 		my $clientid = $self->clientid() || 'global';
 		my $request2del = $subscribers{$cnxid}{$name}{$clientid};

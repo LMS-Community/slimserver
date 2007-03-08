@@ -1339,7 +1339,7 @@ sub serverstatusQuery {
 	
 		# the filter function decides, based on a notified request, if the serverstatus
 		# query must be re-executed.
-		sub filter{
+		sub serverstatusFilter{
 			my $self = shift;
 			my $request = shift;
 			
@@ -1365,7 +1365,7 @@ sub serverstatusQuery {
 		}
 		
 		# register ourselves to be automatically re-executed on timeout or filter
-		$request->registerAutoExecute($timeout, \&filter);
+		$request->registerAutoExecute($timeout, \&serverstatusFilter);
 	}
 	
 	$request->setStatusDone();
@@ -1428,9 +1428,21 @@ sub statusQuery {
 		return;
 	}
 	
+	if (Slim::Music::Import->stillScanning()) {
+		$request->addResult('rescan', "1");
+	}
+	
 	# get the initial parameters
 	my $client = $request->client();
 	
+	# accomodate the fact we can be called automatically when the client is gone
+	if (!defined($client)) {
+		$request->addResult('error', "invalid player");
+		$request->registerAutoExecute('-');
+		$request->setStatusDone();
+		return;
+	}
+		
 	my $SP3  = ($client->model() eq 'slimp3');
 	my $SQ   = ($client->model() eq 'softsqueeze');
 	my $SB   = ($client->model() eq 'squeezebox');
@@ -1445,10 +1457,6 @@ sub statusQuery {
 	my $songCount = Slim::Player::Playlist::count($client);
 	my $idx = 0;
 		
-	if (Slim::Music::Import->stillScanning()) {
-		$request->addResult('rescan', "1");
-	}
-	
 	# add player info...
 	$request->addResult("player_name", $client->name());
 	$request->addResult("player_connected", $connected);
@@ -1619,6 +1627,52 @@ sub statusQuery {
 				}
 			}
 		}
+	}
+
+
+	# manage the subscription
+	if (defined(my $timeout = $request->getParam('subscribe'))) {
+	
+		# the filter function decides, based on a notified request, if the status
+		# query must be re-executed.
+		sub statusFilter{
+			my $self = shift;
+			my $request = shift;
+			
+			# retrieve the clientid, abort if not about us
+			my $clientid = $request->clientid();
+			return 0 if !defined $clientid;
+			return 0 if $clientid ne $self->clientid();
+			
+			# commands we ignore
+			return 0 if $request->isCommand([['ir', 'button', 'debug', 'pref', 'playerpref', 'display']]);
+			return 0 if $request->isCommand([['playlist'], ['open', 'jump']]);
+
+			# special case: the client is gone!
+			if ($request->isCommand([['client'], ['forget']])) {
+				
+				# pretend we do not need a client, otherwise execute() fails
+				# and validate() deletes the client info!
+				$self->needClient(0);
+				
+				# we'll unsubscribe above if there is no client
+				return 1;
+			}
+
+
+			# don't delay for newsong
+			if ($request->isCommand([['playlist'], ['newsong']])) {
+
+				return 1;
+			}
+
+			# send everyother notif with a small delay to accomodate
+			# bursts of commands
+			return 1;
+		}
+		
+		# register ourselves to be automatically re-executed on timeout or filter
+		$request->registerAutoExecute($timeout, \&statusFilter);
 	}
 	
 	$request->setStatusDone();
