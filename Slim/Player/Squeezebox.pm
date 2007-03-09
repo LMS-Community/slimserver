@@ -1084,7 +1084,35 @@ sub sendFrame {
 
 	assert(length($type) == 4);
 	
-	my $frame = pack('n', $len + 4) . $type . $$dataRef;
+	my $frame;
+	
+	if ( $type eq 'grfe' && $client->hasCompression ) {
+		# Compress only graphic frames, other frames are very small
+		# or don't compress well.
+		my $compressed = Compress::LZF::compress($$dataRef);
+		
+		# XXX: This should be fixed in a future version of Compress::LZF
+		# Replace Perl header with C header so we can decompress
+		# properly in the firmware
+		if ( ord( substr $compressed, 0, 1 ) == 0 ) {
+			# The data wasn't able to be compressed
+			my $c_header = "ZV\0" . pack('n', $len);
+			substr $compressed, 0, 1, $c_header;
+		}
+		else {
+			my $csize = length($compressed) - 2;
+			my $c_header = "ZV\1" . pack('n', $csize) . pack('n', $len);
+			substr $compressed, 0, 2, $c_header;
+		}
+		
+		$frame
+			= pack( 'n', length($compressed) + 4 ) 
+			. ( $type | pack( 'N', 0x80000000 ) )
+			. $compressed;
+	}
+	else {
+		$frame = pack('n', $len + 4) . $type . $$dataRef;
+	}
 
 	logger('network.protocol.slimproto')->debug("sending squeezebox frame: $type, length: $len");
 

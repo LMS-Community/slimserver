@@ -98,24 +98,28 @@ sub resetDisplay {
 	$display->killAnimation();
 }	
 
-sub bytesPerColumn {
+sub bytesPerColumn () {
 	return 2;
 }
 
-sub displayHeight {
+sub displayHeight () {
 	return 16;
 }
 
-sub displayWidth {
+sub displayWidth () {
 	return 280;
 }
 
-sub vfdmodel {
+sub vfdmodel () {
 	return 'graphic-280x16';
 }
 
 sub brightnessMap {
 	return (0, 1, 4, 16, 30);
+}
+
+sub graphicCommand () {
+	return 'grfd';
 }
 
 sub updateScreen {
@@ -148,15 +152,12 @@ sub modes {
 	return \@modes;
 }
 
-sub nmodes {
+sub nmodes () {
 	return $nmodes;
 }
 
-sub scrollHeader {
-	my $display = shift;
-	my $header = 'grfd' . pack('n', $GRAPHICS_FRAMEBUF_LIVE);
-
-	return pack('n', length($header) + $display->screenBytes ) . $header;
+sub scrollHeader () {
+	return pack('n', $GRAPHICS_FRAMEBUF_LIVE);
 }
 
 # Server based push/bump animations

@@ -91,6 +91,10 @@ sub hasPolarityInversion() {
 	return 0;
 }
 
+sub hasCompression() {
+	return 0;
+}
+
 sub canDirectStream {
 	my $client = shift;
 	my $url = shift;

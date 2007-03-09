@@ -157,11 +157,11 @@ sub resetDisplay {
 	$display->killAnimation();
 }	
 
-sub bytesPerColumn {
+sub bytesPerColumn () {
 	return 4;
 }
 
-sub displayHeight {
+sub displayHeight () {
 	return 32;
 }
 
@@ -177,12 +177,16 @@ sub displayWidth {
 	return $display->modes->[$mode || 0]{width};
 }
 
-sub vfdmodel {
+sub vfdmodel () {
 	return 'graphic-320x32';
 }
 
 sub brightnessMap {
 	return (65535, 0, 1, 3, 4);
+}
+
+sub graphicCommand () {
+	return 'grfe';
 }
 
 # update screen - supressing unchanged screens
@@ -280,7 +284,7 @@ sub modes {
 	return \@modes;
 }
 
-sub nmodes {
+sub nmodes () {
 	return $nmodes;
 }
 
@@ -300,12 +304,9 @@ sub scrollUpdateBackground {
     $display->SUPER::scrollUpdateBackground($screen, $screenNo) if $screen->{changed};
 }
 
-# preformed frame header for fast scolling - contains header added by sendFrame and drawFrameBuf
-sub scrollHeader {
-	my $display = shift;
-	my $header = 'grfe' . pack('n', 0) . 'c' . pack ('c', 0);
-
-	return pack('n', length($header) + $display->screenBytes ) . $header;
+# preformed frame header for fast scolling - contains header added by drawFrameBuf
+sub scrollHeader () {
+	return pack('n', 0) . 'c' . pack ('c', 0);
 }
 
 sub pushLeft {

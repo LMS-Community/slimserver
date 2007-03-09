@@ -129,7 +129,7 @@ sub modes {
 	return \@modes;
 }
 
-sub nmodes {
+sub nmodes () {
 	return $nmodes;
 }
 
@@ -137,11 +137,11 @@ sub visualizerModes {
 	return \@visualizers;
 }
 
-sub visualizerNModes {
+sub visualizerNModes () {
 	return $nvisualizers;
 }
 
-sub hasScreen2 { 1 }
+sub hasScreen2 () { 1 }
 
 sub init {
 	my $display = shift;
@@ -166,19 +166,19 @@ sub resetDisplay {
 	$display->killAnimation(undef, 2);
 }	
 
-sub bytesPerColumn {
+sub bytesPerColumn () {
 	return 4;
 }
 
-sub displayHeight {
+sub displayHeight () {
 	return 32;
 }
 
-sub displayWidth {
+sub displayWidth () {
 	return 320;
 }
 
-sub vfdmodel {
+sub vfdmodel () {
 	return 'graphic-320x32';
 }
 
@@ -204,9 +204,8 @@ sub scrollHeader {
 	my $screenNo = shift;
 
 	my $offset = ($screenNo && $screenNo == 2) ? 640 : 0;
-	my $header = 'grfe' . pack('n', $offset) . 'c' . pack ('c', 0);
-
-	return pack('n', length($header) + $display->screenBytes ) . $header;
+	
+	return pack('n', $offset) . 'c' . pack ('c', 0);
 }
 
 sub pushUp {

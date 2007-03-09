@@ -486,14 +486,16 @@ sub scrollUpdateDisplay {
 	my $display = shift;
 	my $scroll = shift;
 	my $client = $display->client;
-
-	my $frame = $scroll->{scrollHeader} . 
-		(${$scroll->{bitsref}} | substr(${$scroll->{scrollbitsref}}, $scroll->{offset}, $scroll->{overlaystart}));
-
-	# check for congestion on slimproto socket and send update if not congested
-	if ((Slim::Networking::Select::writeNoBlockQLen($client->tcpsock) == 0) && (length($frame) == $scroll->{scrollFrameSize})) {
-		Slim::Networking::Select::writeNoBlock($client->tcpsock, \$frame);
+	
+	# don't send update if the slimproto socket is congested
+	if ( Slim::Networking::Select::writeNoBlockQLen($client->tcpsock) != 0 ) {
+		return;
 	}
+	
+	my $data = $scroll->{scrollHeader} . 
+		(${$scroll->{bitsref}} | substr(${$scroll->{scrollbitsref}}, $scroll->{offset}, $scroll->{overlaystart}));
+	
+	$client->sendFrame( $display->graphicCommand, \$data );
 }
 
 sub scrollUpdateTicker {

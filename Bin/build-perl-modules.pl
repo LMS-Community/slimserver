@@ -25,6 +25,7 @@ my $dlext  = $Config{'dlext'};
 # The list of all the packages needed.
 my %packages = (
 	'Compress::Zlib'     => 'Compress-Zlib-1.41.tar.gz',
+	'Compress::LZF'      => 'Compress-LZF-1.71.tar.gz',
 	'DBI'                => 'DBI-1.50.tar.gz',
 	'DBD::mysql'         => 'DBD-mysql-3.0002.tar.gz',
 	'Digest::SHA1'       => 'Digest-SHA1-2.11.tar.gz',

@@ -716,6 +716,11 @@ sub hasDisableDac() {
 	return 1;
 }
 
+sub hasCompression() {
+	# XXX: This will be enabled when the next firmware is checked in
+	return 0;
+}
+
 sub audio_outputs_enable { 
 	my $client = shift;
 	my $enabled = shift;

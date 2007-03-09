@@ -51,7 +51,7 @@ use Symbol;
 
 # Here's what we want to try and load. This will need to be updated
 # when a new XS based module is added to our CPAN tree.
-my @default_required_modules = qw(Time::HiRes DBD::mysql DBI XML::Parser::Expat HTML::Parser Compress::Zlib Digest::SHA1 YAML::Syck);
+my @default_required_modules = qw(Time::HiRes DBD::mysql DBI XML::Parser::Expat HTML::Parser Compress::LZF Compress::Zlib Digest::SHA1 YAML::Syck);
 my @default_optional_modules = qw(GD Locale::Hebrew);
 
 my $d_startup                = (grep { /d_startup/ } @ARGV) ? 1 : 0;
@@ -231,7 +231,7 @@ sub tryModuleLoad {
 		# Don't spit out any redefined warnings
 		local $^W = 0;
 
-		eval "use $module";
+		eval "use $module ()";
 
 		# NB: YAML::Syck has a local $@; in it's BEGIN, so if XSLoader
 		# or Dynaloader fails, the module still appears to load. Try
