@@ -2251,6 +2251,7 @@ sub newSkinTemplate {
 		},
 
 		EVAL_PERL => 1,
+		ABSOLUTE  => 1,
 	});
 
 	return $skinTemplates{$skin};
@@ -2295,13 +2296,13 @@ sub _generateContentFromFile {
 		$skin = 'Default';
 	}
 	
-	$log->info("generating from $path");
-
+	$log->info("generating from $path with type: $type");
+	
 	# Make sure we have a skin template for fixHttpPath to use.
 	my $template = $skinTemplates{$skin} || newSkinTemplate($skin);
 
 	if ($type eq 'fill') {
-		
+
 		my $output = '';
 
 		# Always set the locale
@@ -2317,7 +2318,9 @@ sub _generateContentFromFile {
 			$params->{'LOCALE'} = Slim::Utils::Unicode::currentLocale() || 'iso-8859-1';
 		}
 
-		if (!$template->process($path,$params,\$output)) {
+		$path = fixHttpPath($skin, $path);
+
+		if (!$template->process($path, $params, \$output)) {
 
 			logError($template->error);
 		}
@@ -2350,11 +2353,12 @@ sub _getFileContent {
 
 	my ($content, $template, $mtime, $inode, $size);
 
-	$log->info("Reading http file for ($skin $path)");
+	$path = fixHttpPath($skin, $path) || return;
 
-	my $skinpath = fixHttpPath($skin, $path) || return;
+	$log->info("Reading http file for ($path)");
 
-	open($template, $skinpath . '.' . lc(Slim::Utils::Prefs::get('language'))) || open($template, $skinpath);
+	open($template, $path);
+
 	($inode, $size, $mtime) = (stat($template))[1,7,9];
 
 	# If we only want the file attributes and not the content - close the
@@ -2397,16 +2401,34 @@ sub fixHttpPath {
 	my $template = $skinTemplates{$skin} || return undef;
 	my $skindirs = $template->context()->{'CONFIG'}->{'INCLUDE_PATH'};
 
+	my $lang     = lc(Slim::Utils::Prefs::get('language'));
+
 	for my $dir (@{$skindirs}) {
 
 		my $fullpath = catdir($dir, $path);
 
-		$log->info("Checking for $fullpath.");
+		# We can have $file.$language files that need to be processed.
+		my $langpath = join('.', $fullpath, $lang);
+		my $found    = '';
 
-		if (-r $fullpath) {
-			return $fullpath;
+		if ($lang ne 'en' && -f $langpath) {
+
+			$found = $langpath;
+
+		} elsif (-r $fullpath) {
+
+			$found = $fullpath;
+		}
+
+		if ($found) {
+
+			$log->info("Found path $found");
+
+			return $found;
 		}
 	} 
+
+	$log->info("Couldn't find path: $path");
 
 	return undef;
 }
