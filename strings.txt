@@ -3785,18 +3785,18 @@ SETUP_AUDIODIR
 	ZH_CN	音乐文件夹
 
 SETUP_AUDIODIR_DESC
-	CS	Zde můžete určit složku obsahující hudební soubory, kterou bude SlimServer kontrolovat a obsah přidávat do hudebního archivu. Vložte cestu k této složce. Můžete také hodnotu nechat prázdnou, pakliže chcete importovat hudebni archiv prostřednictvím iTunes nebo MoodLogic.
-	DE	Definieren Sie ein Verzeichnis, welches SlimServer nach Musikdateien durchsuchen und zur Musiksammlung hinzufügen soll. Sie können den Eintrag leer lassen, falls Sie die Musiksammlung von iTunes oder MoodLogic verwenden.
-	EN	You can specify a folder containing music files that SlimServer will scan and add to your music library.  Enter the path to the folder below.  You can leave this field blank if you are importing your music library information from iTunes or MoodLogic.
-	ES	Se puede especificar una carpeta que contenga archivos de música que SlimServer va a recopilar y añadir a la colección musical. Ingrese el camino a la carpeta debajo. Se puede dejar este campo en blanco si se está importando la información de la colección musical desde iTunes o MoodLogic.
-	FI	Voit määritellä hakemiston, joka sisältää musiikkitiedostoja, jotka SlimServer lukee musiikki kirjastoonsa. Syötä hakemiston polku allaolevaan kenttään. Voit jättää kentän tyhjäksi jos musiikkikirjastosi tiedot tulevat iTunesista tai MoodLogicista.
-	FR	Vous pouvez spécifier un dossier contenant vos fichiers musicaux afin que le SlimServer le répertorie et ajoute son contenu à votre collection de musique. Entrez le chemin ci-dessous. Vous pouvez ignorer ce champ si vous utilisez iTunes ou Moodlogic pour gérer votre collection de musique.
+	CS	Zde můžete určit složku obsahující hudební soubory, kterou bude SlimServer kontrolovat a obsah přidávat do hudebního archivu. Vložte cestu k této složce. Můžete také hodnotu nechat prázdnou, pakliže chcete importovat hudebni archiv prostřednictvím iTunes nebo MusicIP.
+	DE	Definieren Sie ein Verzeichnis, welches SlimServer nach Musikdateien durchsuchen und zur Musiksammlung hinzufügen soll. Sie können den Eintrag leer lassen, falls Sie die Musiksammlung von iTunes oder MusicIP verwenden.
+	EN	You can specify a folder containing music files that SlimServer will scan and add to your music library.  Enter the path to the folder below.  You can leave this field blank if you are importing your music library information from iTunes or MusicIP.
+	ES	Se puede especificar una carpeta que contenga archivos de música que SlimServer va a recopilar y añadir a la colección musical. Ingrese el camino a la carpeta debajo. Se puede dejar este campo en blanco si se está importando la información de la colección musical desde iTunes o MusicIP.
+	FI	Voit määritellä hakemiston, joka sisältää musiikkitiedostoja, jotka SlimServer lukee musiikki kirjastoonsa. Syötä hakemiston polku allaolevaan kenttään. Voit jättää kentän tyhjäksi jos musiikkikirjastosi tiedot tulevat iTunesista tai MusicIP.
+	FR	Vous pouvez spécifier un dossier contenant vos fichiers musicaux afin que le SlimServer le répertorie et ajoute son contenu à votre collection de musique. Entrez le chemin ci-dessous. Vous pouvez ignorer ce champ si vous utilisez iTunes ou MusicIP pour gérer votre collection de musique.
 	HE	ספריית קבצי המוזיקה אותה השרת יסרוק באופן קבוע ואשר תהווה בסיס לספריית המוזיקה
-	IT	Puoi indicare una cartella contenente file musicali che lo SlimServer analizzera' e aggiungera' alla tua libreria musicale. Inserisci il percorso della cartella qui' sotto. Puoi lasciare il campo vuoto se stai importando la libreria musicale da iTunes o MoodLogic.
+	IT	Puoi indicare una cartella contenente file musicali che lo SlimServer analizzera' e aggiungera' alla tua libreria musicale. Inserisci il percorso della cartella qui' sotto. Puoi lasciare il campo vuoto se stai importando la libreria musicale da iTunes o MusicIP.
 	JA	SlimServerが検索するフォルダーを指定することができます。iTunesまたはムードロジックの情報を利用する場合はブランクで構いません。
-	NL	Je kunt de folder specificeren waarin de muziekbestanden staan die SlimServer scant en toevoegt aan de muziekcollectie. Je kunt dit veld leeg laten als je muziek importeert vanuit iTunes of Moodlogic.
-	SV	Du kan ange en mapp som SlimServer kommer scanna för att lägga till musik till ditt bibliotek. Ange sökvägen till mappen nedan. Om du importerar MoodLogic eller iTunes behöver ingenting anges.
-	ZH_CN	您可以指定SlimServer所扫描和用来增加您的音乐库的音乐文件夹。请在以下的资料栏内输入此文件夹的完整路径。如果您从iTunes或MoodLogic导入您音乐库信息，您可以让此资料栏空白。
+	NL	Je kunt de folder specificeren waarin de muziekbestanden staan die SlimServer scant en toevoegt aan de muziekcollectie. Je kunt dit veld leeg laten als je muziek importeert vanuit iTunes of MusicIP.
+	SV	Du kan ange en mapp som SlimServer kommer scanna för att lägga till musik till ditt bibliotek. Ange sökvägen till mappen nedan. Om du importerar MusicIP eller iTunes behöver ingenting anges.
+	ZH_CN	您可以指定SlimServer所扫描和用来增加您的音乐库的音乐文件夹。请在以下的资料栏内输入此文件夹的完整路径。如果您从iTunes或MusicIP导入您音乐库信息，您可以让此资料栏空白。
 
 SETUP_AUDIODIR_OK
 	CS	SlimServer použije cestu k složce s hudebním archivem:
@@ -12274,8 +12274,8 @@ SETUP_DEBUG_SCANNER_LOG
 	EN	Scanner Log File
 
 SETUP_DEBUG_SCANNER_LOG_DESC
-	DE	SlimServer schreibt Logs der Aktivitäten im Zusammenhang mit dem Scanner (Musikdateien, iTunes, MusicIP, MoodLogic) in folgende Datei:
-	EN	SlimServer keeps a log file for all scanning related activities, including iTunes, MusicIP & MoodLogic here:
+	DE	SlimServer schreibt Logs der Aktivitäten im Zusammenhang mit dem Scanner (Musikdateien, iTunes, MusicIP) in folgende Datei:
+	EN	SlimServer keeps a log file for all scanning related activities, including iTunes & MusicIP here:
 
 SETUP_DEBUG_LEVEL_OFF
 	CS	Vypnuto
