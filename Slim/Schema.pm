@@ -1588,6 +1588,24 @@ sub _preCheckAttributes {
 		}
 	}
 
+	# Bug 4823 - check boundaries set by our tinyint schema.
+	for my $tag (qw(DISC DISCC)) {
+
+		if (!defined $attributes->{$tag}) {
+			next;
+		}
+
+		if ($attributes->{$tag} > 254) {
+
+			$attributes->{$tag} = 254;
+		}
+
+		if ($attributes->{$tag} < 0) {
+
+			$attributes->{$tag} = 0;
+		}
+	}
+
 	# Bug 3759 - Set undef years to 0, so they're included in the count.
 	# Bug 3643 - rating is specified as a tinyint - users running their
 	# own SQL server may have strict mode turned on.
