@@ -37,7 +37,7 @@ use vars qw(
 
 # $Id$
 ($REVISION) = ' $Revision: 1.19 $ ' =~ /\$Revision:\s+([^\s]+)/;
-$VERSION = '1.21';
+$VERSION = '1.22';
 
 # JRF: Whether we're debugging the ID3v2.4 support
 $debug_24 = 0;
@@ -665,7 +665,7 @@ sub _get_v1tag {
 }
 
 sub _parse_v2tag {
-	my ($raw_v2, $v2, $info) = @_;
+	my ($ver, $raw_v2, $v2, $info) = @_;
 
 	# Make sure any existing TXXX flags are an array.
 	# As we might need to append comments to it below.
@@ -1030,13 +1030,13 @@ sub _parse_v2tag {
 						# If we have multiple values
 						# for the same key - turn them
 						# into an array ref.
-						if ($info->{$key} && !ref($info->{$key})) {
+						if ($ver == 2 && $info->{$key} && !ref($info->{$key})) {
 
 							my $old = delete $info->{$key};
 
 							@{$info->{$key}} = ($old, $data);
 
-						} elsif (ref($info->{$key}) eq 'ARRAY') {
+						} elsif ($ver == 2 && ref($info->{$key}) eq 'ARRAY') {
 
 							push @{$info->{$key}}, $data;
 
@@ -1453,7 +1453,7 @@ sub _get_v2tagdata {
 
 		} else {
 
-			_parse_v2tag($raw, $v2, $info);
+			_parse_v2tag($ver, $raw, $v2, $info);
 
 			if ($ver == 0 && $info->{'TAGVERSION'}) {
 				$info->{'TAGVERSION'} .= ' / ' . $v2h->{'version'};
