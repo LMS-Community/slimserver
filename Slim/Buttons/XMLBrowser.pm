@@ -1206,14 +1206,17 @@ sub _cliQuerySubFeed_done {
 	}
 
 	$subFeed->{'fetched'} = 1;
-	
-	# re-cache the parsed XML to include the sub-feed
-	my $cache   = Slim::Utils::Cache->new();
-	my $expires = $Slim::Formats::XML::XML_CACHE_TIME;
 
-	$log->info("Re-caching parsed XML for $expires seconds.");
+	if ($params->{'parentURL'} ne 'NONE') {
+		# parent url of 'NONE' should not be recached as we are being passed a preparsed hash
+		# re-cache the parsed XML to include the sub-feed
+		my $cache   = Slim::Utils::Cache->new();
+		my $expires = $Slim::Formats::XML::XML_CACHE_TIME;
 
-	$cache->set( $params->{'parentURL'} . '_parsedXML', $parent, $expires );
+		$log->info("Re-caching parsed XML for $expires seconds.");
+
+		$cache->set( $params->{'parentURL'} . '_parsedXML', $parent, $expires );
+	}
 	
 	_cliQuery_done( $parent, $params );
 }

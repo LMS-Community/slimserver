@@ -389,8 +389,8 @@ sub handleSubFeed {
 		# Clear passthrough data as it won't be needed again
 		delete $subFeed->{'passthrough'};
 	}
-	else {
-
+	elsif ($params->{'parentURL'} ne 'NONE') {
+		# parentURL of 'NONE' indicates we were called with preparsed hash which should not be cached
 		# re-cache the parsed XML to include the sub-feed
 		my $cache = Slim::Utils::Cache->new();
 		my $expires = $Slim::Formats::XML::XML_CACHE_TIME;
