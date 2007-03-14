@@ -1082,6 +1082,7 @@ sub _cliQuery_done {
 		my $quantity = $request->getParam('_quantity');
 		my $search   = $request->getParam('search');
 		my $want_url = $request->getParam('want_url') || 0;
+		my $want_title = $request->getParam('want_title') || 0;
 	
 		# allow searching in the name field
 		if ($search && @{$subFeed->{'items'}}) {
@@ -1114,8 +1115,12 @@ sub _cliQuery_done {
 				for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
 					$hasItems = 0;
 					$request->addResultLoop($loopname, $cnt, 'id', join('.', @crumbIndex, defined $item->{'_slim_id'} ? $item->{'_slim_id'} : $start + $cnt));
-					$request->addResultLoop($loopname, $cnt, 'name', $item->{'name'}) if defined $item->{'name'};
-					$request->addResultLoop($loopname, $cnt, 'title', $item->{'title'}) if defined $item->{'title'};
+					if ($want_title) {
+						$request->addResultLoop($loopname, $cnt, 'title', $item->{'name'} || $item->{'title'});
+					} else {
+						$request->addResultLoop($loopname, $cnt, 'name', $item->{'name'}) if defined $item->{'name'};
+						$request->addResultLoop($loopname, $cnt, 'title', $item->{'title'}) if defined $item->{'title'};
+					}
 
 					foreach my $data (keys %{$item}) {
 						if (ref($item->{$data}) eq 'ARRAY') {

@@ -476,55 +476,15 @@ sub asyncCB {
 
 sub cliBrowse {
 	my $request = shift;
+	my $client  = $request->client;
 
-	if ($request->isNotQuery([['favorites']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
+	$request->addRequest('items');
+	$request->addParam('want_title', 1);
+	$request->addParam('want_url', 1);
 
-	my $client   = $request->client();
-	my $index    = $request->getParam('_index');
-	my $quantity = $request->getParam('_quantity');
+	my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($client);
 
-	if (my $item_id  = $request->getParam('item_id')) {
-		$index = $item_id . '.' . $index;
-	}
-
-	my ($level, $start, $prefix) = Slim::Plugin::Favorites::OpmlFavorites->new($client)->level($index, 'contains');
-
-	my $count = $level ? scalar @$level : 0;
-
-	$request->addResult('count', $count);
-
-	if (defined $start) {
-
-		$log->info("found start index $index in favorites, returning entries");
-
-		my $ind = $start;
-		my $cnt = 0;
-
-		while ($level->[$ind] && $cnt < $quantity) {
-
-			my $entry = $level->[$ind];
-
-			$request->addResultLoop('@favorites', $cnt, 'id',    $prefix . $ind );
-			$request->addResultLoop('@favorites', $cnt, 'title', $entry->{'text'});
-			$request->addResultLoop('@favorites', $cnt, 'url',   $entry->{'URL'} || $entry->{'url'});
-
-			if ($entry->{'outline'} && ref $entry->{'outline'} eq 'ARRAY') {
-				$request->addResultLoop('@favorites', $cnt, 'hasitems',  scalar @{$entry->{'outline'}} );
-			}
-
-			++$ind;
-			++$cnt;
-		}
-
-	} else {
-
-		$log->info("start index $index does not exist in favorites");
-	}
-
-	$request->setStatusDone();
+	Slim::Buttons::XMLBrowser::cliQuery('favorites', $favs->xmlbrowser, $request);
 }
 
 sub cliAdd {
