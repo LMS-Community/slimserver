@@ -145,10 +145,11 @@ sub handleFeed {
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
 			$subFeed->{'type'} ||= '';
-			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} ) {
+			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'}) {
 				
 				# Setup passthrough args
 				my $args = {
+					'item'         => $subFeed,
 					'url'          => $subFeed->{'url'},
 					'feedTitle'    => $subFeed->{'name'} || $subFeed->{'title'},
 					'parser'       => $subFeed->{'parser'},
@@ -243,7 +244,7 @@ sub handleFeed {
 		my $play  = ($stash->{'action'} eq 'playall');
 		
 		my @urls;
-		for my $item ( @{ $stash->{'items'} } ) {
+		for my $item ( @{ $stash->{'items'} }, $stash->{'streaminfo'}->{'item'} ) {
 			if ( $item->{'type'} eq 'audio' && $item->{'url'} ) {
 				push @urls, $item->{'url'};
 				Slim::Music::Info::setTitle( $item->{'url'}, $item->{'name'} || $item->{'title'} );
@@ -319,15 +320,15 @@ sub handleFeed {
 		if (defined $favsItem && $items[$favsItem]) {
 			my $item = $items[$favsItem];
 			if ($stash->{'action'} eq 'favadd') {
-				$favs->add($item->{'url'} || $item->{'feedurl'}, $item->{'name'}, $item->{'type'}, $item->{'parser'});
+				$favs->add($item->{'url'}, $item->{'name'}, $item->{'type'}, $item->{'parser'});
 			} elsif ($stash->{'action'} eq 'favdel') {
-				$favs->deleteUrl($item->{'url'} || $item->{'feedurl'});
+				$favs->deleteUrl($item->{'url'});
 			}
 		}
 	
 		for my $item (@items) {
-			if ($item->{'url'} || $item->{'feedurl'}) {
-				$item->{'favorites'} = $favs->hasUrl( $item->{'url'} || $item->{'feedurl'} ) ? 2 : 1;
+			if ($item->{'url'}) {
+				$item->{'favorites'} = $favs->hasUrl($item->{'url'}) ? 2 : 1;
 			}
 		}
 	}
@@ -360,31 +361,36 @@ sub handleSubFeed {
 	my ( $feed, $params ) = @_;
 	my ( $client, $stash, $callback, $httpClient, $response ) = @{ $params->{'args'} };
 	
-	# insert the sub-feed data into the original feed
+	# find insertion point for sub-feed data in the original feed
 	my $parent = $params->{'parent'};
 	my $subFeed = $parent;
 	for my $i ( @{ $params->{'currentIndex'} } ) {
 		$subFeed = $subFeed->{'items'}->[$i];
 	}
-	$subFeed->{'items'} = $feed->{'items'};
-	
+
+	if ($subFeed->{'type'} && $subFeed->{'type'} eq 'playlist' && scalar @{ $feed->{'items'} } == 1) {
+		# in the case of a playlist of one update previous entry
+		my $item = $feed->{'items'}[0];
+		for my $key (keys %$item) {
+			$subFeed->{ $key } = $item->{ $key };
+		}
+	} else {
+		# otherwise insert items as subfeed
+		$subFeed->{'items'} = $feed->{'items'};
+	}
+
+	# set flag to avoid fetching this url again
+	$subFeed->{'fetched'} = 1;
+
 	# No caching for callback-based plugins
 	# XXX: this is a bit slow as it has to re-fetch each level
 	if ( ref $subFeed->{'url'} eq 'CODE' ) {
-		
-		# Clear URL so it's not fetched again, save for favorites use first
-		$subFeed->{'feedurl'} = $subFeed->{'url'};
-		$subFeed->{'url'} = undef;
 		
 		# Clear passthrough data as it won't be needed again
 		delete $subFeed->{'passthrough'};
 	}
 	else {
-		
-		# Clear URL so it's not fetched again, save for favorites use first
-		$subFeed->{'feedurl'} = $subFeed->{'url'};
-		$subFeed->{'url'} = undef;
-		
+
 		# re-cache the parsed XML to include the sub-feed
 		my $cache = Slim::Utils::Cache->new();
 		my $expires = $Slim::Formats::XML::XML_CACHE_TIME;

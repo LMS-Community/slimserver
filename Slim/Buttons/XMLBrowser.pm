@@ -111,6 +111,7 @@ sub setMode {
 				'onFailure' => $onFailure,
 				'feedTitle' => $title,
 				'parser'    => $parser,
+				'item'      => $item,
 			},
 		);
 
@@ -346,6 +347,23 @@ sub gotRSS {
 sub gotOPML {
 	my ($client, $url, $opml, $params) = @_;
 
+	# Push staight into remotetrackinfo if a playlist of one was returned
+	if ($params->{'item'}->{'type'} && $params->{'item'}->{'type'} eq 'playlist' && scalar @{ $opml->{'items'} || [] } == 1)  {
+		my $item  = $opml->{'items'}[0];
+		my $title = $item->{'name'} || $item->{'title'};
+		my %params = (
+			'url'     => $item->{'url'},
+			'title'   => $title,
+			'header'  => fitTitle( $client, $title),
+		);
+
+		if ($item->{'description'}) {
+			$params{'details'} = [ $item->{'description'} ];
+		}
+
+		return Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
+	}
+
 	my $title = $opml->{'name'} || $opml->{'title'};
 	
 	# Add search option only if we are at the top level
@@ -444,6 +462,10 @@ sub gotOPML {
 					if ( $item->{'source'} ) {
 						# LMA Source
 						push @details, '{SOURCE}: ' . $item->{'source'};
+					}
+
+					if ( $item->{'description'} ) {
+						push @details, $item->{'description'};
 					}
 
 					$params{'details'} = \@details;
@@ -845,7 +867,6 @@ sub playItem {
 				'action' => $action,
 				'url'    => $url,
 				'parser' => $parser,
-				'feedTitle' => $title,
 			},
 		);
 
@@ -962,11 +983,12 @@ sub _cliQuery_done {
 			
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
-			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} ) {
+			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'}) {
 				Slim::Formats::XML->getFeedAsync(
 					\&_cliQuerySubFeed_done,
 					\&_cliQuery_error,
 					{
+						'item'         => $subFeed,
 						'url'          => $subFeed->{'url'},
 						'feedTitle'    => $subFeed->{'name'} || $subFeed->{'title'},
 						'parser'       => $subFeed->{'parser'},
@@ -1000,7 +1022,7 @@ sub _cliQuery_done {
 							}
 						}
 					}
-					elsif ($subFeed->{$data} && $data !~ /^(name|title|parser)$/) {
+					elsif ($subFeed->{$data} && $data !~ /^(name|title|parser|fetched)$/) {
 						$request->addResult($data, $subFeed->{$data});
 					}
 				}
@@ -1018,7 +1040,7 @@ sub _cliQuery_done {
 
 		if ($client && $method =~ /^(add|play|insert|load)$/i) {
 			# single item
-			if ((defined $subFeed->{'url'} || defined $subFeed->{'enclosure'})
+			if ((defined $subFeed->{'url'} && $subFeed->{'type'} eq 'audio' || defined $subFeed->{'enclosure'})
 				&& (defined $subFeed->{'name'} || defined $subFeed->{'title'})) {
 	
 				my $title = $subFeed->{'name'} || $subFeed->{'title'};
@@ -1144,7 +1166,7 @@ sub _cliQuery_done {
 						elsif ($data eq 'url') {
 							$request->addResultLoop($loopname, $cnt, $data, $item->{$data}) if $want_url;
 						}						
-						elsif ($item->{$data} && $data !~ /^(name|title|parser)$/) {
+						elsif ($item->{$data} && $data !~ /^(name|title|parser|fetched)$/) {
 							$request->addResultLoop($loopname, $cnt, $data, $item->{$data});
 						}
 					}
@@ -1171,8 +1193,19 @@ sub _cliQuerySubFeed_done {
 	for my $i ( @{ $params->{'currentIndex'} } ) {
 		$subFeed = $subFeed->{'items'}->[$i];
 	}
-	$subFeed->{'items'} = $feed->{'items'};
-	$subFeed->{'url'}   = undef;
+
+	if ($subFeed->{'type'} && $subFeed->{'type'} eq 'playlist' && scalar @{ $feed->{'items'} } == 1) {
+		# in the case of a playlist of one update previous entry
+		my $item = $feed->{'items'}[0];
+		for my $key (keys %$item) {
+			$subFeed->{ $key } = $item->{ $key };
+		}
+	} else {
+		# otherwise insert items as subfeed
+		$subFeed->{'items'} = $feed->{'items'};
+	}
+
+	$subFeed->{'fetched'} = 1;
 	
 	# re-cache the parsed XML to include the sub-feed
 	my $cache   = Slim::Utils::Cache->new();
