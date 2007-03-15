@@ -219,10 +219,13 @@ sub extent {
 sub loadExtent {
 	my $fontname = shift;
 
-	my $extentbytes = string($fontname, chr(0x1f));	
-	
+	my $extent = 0;
+
 	# count the number of set bits in the extent bytes (up to 32)
-	my $extent = unpack( '%32b*', $extentbytes ); 
+	if (scalar @{ $fonts->{ $fontname }} >= 0x1f) {
+		my $extentbytes = string($fontname, chr(0x1f));
+		$extent = unpack( '%32b*', $extentbytes );
+	}
 	
 	if ($fontname =~ /\.1/) { $extent = -$extent; }
 	
