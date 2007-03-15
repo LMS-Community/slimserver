@@ -55,6 +55,7 @@ my %appenders     = ();
 my %runningConfig = ();
 my $needsReInit   = 0;
 my $hasConfigFile = 0;
+my %debugLine     = ();
 
 my @validLevels   = qw(OFF FATAL ERROR WARN INFO DEBUG);
 
@@ -309,10 +310,10 @@ sub addLogCategory {
 	if (my $category = $args->{'category'}) {
 
 		$class->setLogLevelForCategory(
-			$category, ($args->{'defaultLevel'} || 'WARN'),
+			$category, ($debugLine{$category} || $args->{'defaultLevel'} || 'WARN'),
 		);
 
-                if (my $desc = $args->{'description'}) {
+		if (my $desc = $args->{'description'}) {
 
 			$descriptions{$category} = $desc;
 		}
@@ -612,6 +613,8 @@ sub parseDebugLine {
 		}
 
 		$class->setLogLevelForCategory($category, $level);
+
+		$debugLine{$category} = $level;
 	}
 }
 
