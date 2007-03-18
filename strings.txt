@@ -3314,16 +3314,22 @@ ALBUMREPLAYGAIN
 SETUP_MP3STREAMINGMETHOD
 	DE	MP3 Streaming Methode
 	EN	MP3 Streaming Method
+	NL	MP3 streaming methode
 
 SETUP_MP3STREAMINGMETHOD_DESC
 	DE	Bei der Wiedergabe von MP3 Internet Radio Stationen kann das Streaming auf zwei Arten gehandhabt werden: "Direct Streaming" lässt den Player sich direkt mit dem Streaming Server verbinden, was die Last auf dem SlimServer geringfügig verringert. Zudem kann die Wiedergabe weiter laufen, falls die Verbindung zum SlimServer abbricht. "Proxied Streaming" lässt den Musik-Strom über den SlimServer laufen. Standardmässig  wird Direct Streaming verwendet. Falls Sie jedoch Probleme, Verbindungsunterbrüche o.ä. erfahren, so testen Sie, ob Proxied Streaming das Problem behebt. Wenn zwei oder mehr Geräte einen MP3 Strom synchronisiert wiedergeben, so wird stets Proxied Streaming angewendet, um die benötigte Bandbreite zu reduzieren.
 	EN	When playing an MP3 Internet stream, the streaming can be done in one of two ways.  Direct Streaming causes the player to make a direct connection to the audio streaming server, reducing the load on SlimServer slightly and allowing the stream to continue playing if the SlimServer connection is lost.  Proxied Streaming causes SlimServer to handle the connection, passing the audio through to the player.  Direct Streaming is the default, but if you experience problems with MP3 streams, try changing this setting to Proxied Streaming.  Note that if two or more players are synchronized to an MP3 stream, proxied streaming is always used to reduce bandwidth usage.
+	NL	Het afspelen van een MP3 Internet stream kan op twee manieren.<BR>  Directe streaming: De speler maakt een directe connectie naar de audio streaming server op het Internet. Dit geeft minder belasting op je SlimServer en de MP3 stream speelt door als de connectie tussen de speler en de SlimServer verloren gaat. <BR>  Proxy streaming: De SlimServer zorgt voor de connectie en geeft de audio stream door aan de speler.  <BR>  Directe streaming is de standaard. Probeer proxy streaming als je problemen hebt met directe streaming.  <BR>  Let op: Als je twee of meer spelers synchroniseert  wordt altijd automatisch proxy streaming ingesteld om de gebruikte bandbreedte te minimaliseren.
 
 MP3_STREAMING_DIRECT
+	DE	Direktes Streaming
 	EN	Direct Streaming
+	NL	Directe streaming
 
 MP3_STREAMING_PROXIED
+	DE	Streaming über Proxy
 	EN	Proxied Streaming
+	NL	Proxy streaming
 
 SETUP_TRANSITIONTYPE
 	DE	Überblendung
@@ -3354,7 +3360,7 @@ SETUP_TRANSITIONDURATION
 	FR	Durée transition
 	HE	אורך המיזוג
 	IT	Durata dissolvenza
-	NL	Crossfade tijdsduur
+	NL	Muziek overvloei tijdsduur
 	SV	Korstoningslängd
 	ZH_CN	音频同时淡出淡入的持久时间
 
@@ -3366,7 +3372,7 @@ SETUP_TRANSITIONDURATION_DESC
 	FR	Entrez la durée de l'effet de transition entre deux morceaux en secondes. Le maximum est de 10 secondes.
 	HE	קבע פרק זמן בו השיר הנכנס והשיר היוצא חופפים
 	IT	Inserisci, in secondi, la durata delle transizioni tra i brani. La durata massima e' 10 secondi.
-	NL	Geef op in seconden hoe lang een crossfade mag duren tussen liedjes. Het maximum is 10 seconden.
+	NL	Geef op in seconden hoe lang het muziekovervloeien mag duren tussen liedjes. Het maximum is 10 seconden.
 	SV	Ange korstoningslängd i sekunder. Max är 10 sekunder.
 	ZH_CN	请以秒为单位输入在歌曲之间音频同时淡出淡入的持久时间。最大值为10秒。
 
@@ -3386,6 +3392,7 @@ TRANSITION_CROSSFADE
 	FR	Fondu enchaîné
 	HE	מזג בין השירים
 	IT	Dissolvenza
+	NL	Muziek overvloeien
 	SV	Korstoning
 	ZH_CN	音频同时淡出淡入
 
@@ -3396,6 +3403,7 @@ TRANSITION_FADE_IN
 	FR	Fondu ascendant
 	HE	הגבר בתחילת שיר
 	IT	In entrata
+	NL	Invloeien
 	SV	Tona in
 	ZH_CN	音频淡入
 
@@ -3406,7 +3414,7 @@ TRANSITION_FADE_OUT
 	FR	Fondu descendant
 	HE	הנמך בסוף שיר	
 	IT	In uscita
-	NL	Fade uit
+	NL	Uitvloeien
 	SV	Tona ut
 	ZH_CN	音频淡出
 
@@ -6849,6 +6857,7 @@ PITCH
 	ES	Modulación
 	FR	Voix
 	JA	ピッチ
+	NL	Pitch
 	NO	Pitch
 	SV	Pitch
 	ZH_CN	音调
@@ -9795,6 +9804,7 @@ MUTE
 	FI	Vaimennus
 	FR	Silence
 	JA	ミュート
+	NL	Dempen
 	NO	Mute - ingen lyd
 	SV	Mute - ljud avstängt
 	ZH_CN	消音

@@ -38,6 +38,7 @@ ITUNES_PODCASTS
 	EN	iTunes Podcasts
 	ES	Podcasts de iTunes
 	FR	Podcasts iTunes
+	NL	iTunes podcasts
 	ZH_CN	iTunes Podcasts
 
 SETUP_ITUNESPLAYLISTPREFIX
