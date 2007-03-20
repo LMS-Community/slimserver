@@ -87,7 +87,7 @@ sub scanPathOrURL {
 		}
 
 		# Always let the user know what's going on..
-		msg("Finding valid files in: $pathOrUrl\n");
+		$log->info("Finding valid files in: $pathOrUrl");
 
 		# Non-async directory scan
 		my $foundItems = $class->scanDirectory( $args, 'return' );
