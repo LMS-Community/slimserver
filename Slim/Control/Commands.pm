@@ -869,7 +869,8 @@ sub playlistXitemCommand {
 
 	my $path = $url;
 
-	# check whether url is for local file or db entry, if so pass to playlistXtracksCommand
+	# check whether url is potentially for a local file or db entry, if so pass to playlistXtracksCommand
+	# this avoids rescanning items already in the database and allows playlist and other favorites to be played
 	if ($path =~ /^file:\/\/|^db:/) {
 
 		if (my @tracks = _playlistXtracksCommand_parseDbItem($client, $path)) {
@@ -2383,7 +2384,6 @@ sub _playlistXtracksCommand_parseDbItem {
 
 	my $class   = 'Track';
 	my $obj     = undef;
-	my $terms   = undef;
 
 	$log->debug("Begin Function");
 
@@ -2409,17 +2409,21 @@ sub _playlistXtracksCommand_parseDbItem {
 
 		$obj = Slim::Schema->rs($class)->objectForUrl({
 			'url'      => $url,
-			'create'   => 1,
-			'readTags' => 1
 		});
 	}
 
-	if (blessed($obj)) {
+	# Bug 4790: we get a track object of content type 'dir' if a fileurl for a directory is passed
+	# this needs scanning so pass empty list back to playlistXitemCommand in this case
+	if (blessed($obj) && $obj->can('content_type') && $obj->content_type ne 'dir') {
 
-		$terms = sprintf('%s.id=%d', lc($class), $obj->id);
+		my $terms = sprintf('%s.id=%d', lc($class), $obj->id);
+
+		return _playlistXtracksCommand_parseSearchTerms($client, $terms);
+
+	} else {
+
+		return ();
 	}
-
-	return _playlistXtracksCommand_parseSearchTerms($client, $terms);
 }
 
 sub _showCommand_done {
