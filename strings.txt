@@ -33,6 +33,19 @@ LANGUAGE_CHOICES
 	SV	Svenska
 	ZH_CN	简体中文
 
+LANGUAGE_POSIX
+	CS	cz
+	DA	dan
+	DE	deu
+	EN	en
+	ES	sp
+	FI	fin
+	FR	fra
+	IT	ita
+	NL	nld
+	NO	nor
+	SV	sve
+
 CREDITS
 	CS	Roman Smetak
 	DA	Ulrik Mehr, Morten Fischer-Madsen
