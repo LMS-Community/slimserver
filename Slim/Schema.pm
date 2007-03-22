@@ -2178,16 +2178,18 @@ sub _postCheckAttributes {
 
 			# Update the album title - the user might have changed it.
 			$albumObj->title($album);
-
-			# Remove all the previous mappings
-			$self->search('ContributorAlbum', { 'album' => $albumObj->id })->delete_all;
-
-			$log->debug("-- Deleting previous contributorAlbum links");
 		}
 
 		while (my ($role, $contributorList) = each %{$contributors}) {
 
 			for my $contributorObj (@{$contributorList}) {
+
+				# Remove all the previous contributor album mappings
+				# for the contributor & album combination.
+				$self->search('ContributorAlbum', {
+					'album'       => $albumObj->id,
+					'contributor' => $contributorObj->id,
+				})->delete_all;
 
 				$self->resultset('ContributorAlbum')->find_or_create({
 					'album'       => $albumObj->id,
