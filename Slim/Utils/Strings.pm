@@ -163,7 +163,7 @@ sub loadStrings {
 
 	$defaultStrings = $strings->{$currentLang};
 
-	setlocale( LC_TIME, string('LANGUAGE_POSIX') );
+	setlocale( LC_TIME, string('LOCALE' . (Slim::Utils::OSDetect::OS() eq 'win' ? '_WIN' : '') ) );
 }
 
 sub stringsFiles {

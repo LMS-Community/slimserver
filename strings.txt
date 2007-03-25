@@ -18,8 +18,8 @@
 
 LANGUAGE_CHOICES
 	CS	Česky
-	DE	Deutsch
 	DA	Dansk
+	DE	Deutsch
 	EN	English
 	ES	Español
 	FI	Suomi
@@ -33,7 +33,7 @@ LANGUAGE_CHOICES
 	SV	Svenska
 	ZH_CN	简体中文
 
-LANGUAGE_POSIX
+LOCALE_WIN
 	CS	cz
 	DA	dan
 	DE	deu
@@ -45,6 +45,23 @@ LANGUAGE_POSIX
 	NL	nld
 	NO	nor
 	SV	sve
+
+LOCALE
+	CS	cs_CZ
+	DA	da_DK
+	DE	de_DE
+	EN	en_US
+	ES	es_ES
+	FI	fi_FI
+	FR	fr_FR
+	HE	he_IL
+	IT	it_IT
+	JA	ja_JP
+	NL	nl_NL
+	NO	no_NO
+	PT	pt_PT
+	SV	sv_SE
+	ZH_CN	zh_CN
 
 CREDITS
 	CS	Roman Smetak
