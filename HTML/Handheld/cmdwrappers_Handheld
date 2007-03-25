@@ -158,19 +158,25 @@
 	[%# current playlist items %]
 	[% IF item.infohref %]
 		<a [% item.infohref %]>[% ( item.text || item.title ) | html %]</a>
+
 	[% ELSIF item.num || item.num == 0 %]
 		<a name=[% item.num %]>
-		<a [% PROCESS cmdHRef cmdType = 'jump' num = item.num %]>[% item.num + 1 %].</a>&nbsp;
-		<a [% PROCESS songinfoItemHRef %]>[% item.title %]</a>
+		[% UNLESS item.noHref %]<a [% PROCESS songinfoItemHRef %]>[% END %]
+		[% item.title | html %][% UNLESS item.noHref %]</a>[% END %]
+
 	[%# browse list items %]
 	[%# no level info means its a music folder item, and check for itemobj to make sure it isn't just a text item %]
 	[% ELSIF item.item || !item.defined('level') && item.itemobj %]
 		<a [% PROCESS songinfoItemHRef %]>[% item.text | html %]</a>
+
 	[% ELSIF item.songtitle %]
 		<a [% PROCESS songinfoItemHRef %]>[% item.songtitle | html %]</a>
+
 	[% ELSE %]
 		[% item.text | html %]
 	[% END %]
+
+	[% IF item.includeArtist && item.itemobj.artist && item.itemobj.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 [% END %]
 
 [% BLOCK pagebar %]
