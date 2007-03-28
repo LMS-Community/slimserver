@@ -2,7 +2,7 @@ package Slim::Control::Commands;
 
 # $Id: Commands.pm 5121 2005-11-09 17:07:36Z dsully $
 #
-# SlimServer Copyright (c) 2001-2006  Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006  Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

@@ -3,21 +3,21 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_PICKS_MODULE_NAME
-	DE	Slim Devices Auswahl
-	EN	Slim Devices Picks
-	ES	Preferidas de Slim Devices
-	FR	Sélection Slim Devices
+	DE	Slim Auswahl
+	EN	Slim Picks
+	ES	Preferidas de Slim
+	FR	Sélection Slim
 	HE	המומלצים
-	NL	De beste van Slim Devices
+	NL	De beste van Slim
 
 PLUGIN_PICKS_MODULE_NAME_DESC
-	DE	Slim Devices Auswahl von Internet Radio Stationen
-	EN	Slim Devices Picks - Best of Internet Radio
+	DE	Slim Auswahl von Internet Radio Stationen
+	EN	Slim Picks - Best of Internet Radio
 
 PLUGIN_PICKS_LOADING_PICKS
-	DE	Lade Slim Devices Picks...
-	EN	Loading Slim Devices Picks...
-	ES	Cargando las Preferidas de Slim Devices...
+	DE	Lade Slim Picks...
+	EN	Loading Slim Picks...
+	ES	Cargando las Preferidas de Slim...
 	FR	Chargement sélection...
 	HE	טוען מועדפים
-	NL	Laden van de beste van Slim Devices...
+	NL	Laden van de beste van Slim...

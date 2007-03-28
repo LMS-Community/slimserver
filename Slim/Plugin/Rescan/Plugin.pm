@@ -6,7 +6,7 @@ package Slim::Plugin::Rescan::Plugin;
 
 # This code is derived from code with the following copyright message:
 #
-# SliMP3 Server Copyright (C) 2001-2006 Sean Adams, Slim Devices Inc.
+# SliMP3 Server Copyright (C) 2001-2006 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

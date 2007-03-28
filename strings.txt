@@ -217,21 +217,21 @@ PLAYER_VERSION
 	ZH_CN	播放机韧件版本
 
 ABOUT_SLIMDEVICES
-	CS	O Slim Devices
-	DA	Om Slim Devices
-	DE	Über Slim Devices
-	EN	About Slim Devices
-	ES	Acerca de Slim Devices
+	CS	O Slim Devices/Logitech
+	DA	Om Slim Devices/Logitech
+	DE	Über Slim Devices/Logitech
+	EN	About Slim Devices/Logitech
+	ES	Acerca de Slim Devices/Logitech
 	FI	Yleistä Slimdevicesista
-	FR	A propos de Slim Devices
-	HE	Slim Devices אודות
-	IT	A proposito della Slim Devices
+	FR	A propos de Slim Devices/Logitech
+	HE	Slim Devices/Logitech אודות
+	IT	A proposito della Slim Devices/Logitech
 	JA	スリムデバイス社について
-	NL	Over Slim Devices
-	NO	Om Slim Devices
-	PT	Acerca de Slim Devices
-	SV	Om Slim Devices
-	ZH_CN	关于Slim Devices
+	NL	Over Slim Devices/Logitech
+	NO	Om Slim Devices/Logitech
+	PT	Acerca de Slim Devices/Logitech
+	SV	Om Slim Devices/Logitech
+	ZH_CN	关于Slim Devices/Logitech
 
 #
 # Player user interface, sent by the server
@@ -10468,21 +10468,21 @@ PLAYER_SETUP
 	ZH_CN	播放机设置
 
 USING_REMOTE
-	CS	Požívání dálkového ovládání Slim Devices Remote
-	DE	Die Slim Devices Fernbedienung verwenden
-	DA	Anvendelse af Slim Devices-fjernbetjeningen (Engelsk)
-	EN	Using the Slim Devices Remote
+	CS	Požívání dálkového ovládání Remote
+	DE	Die Fernbedienung verwenden
+	DA	Anvendelse af fjernbetjeningen (Engelsk)
+	EN	Using the Remote
 	ES	Cómo usar el control remoto
-	FI	Slim Devices kaukosäätimen käyttö
+	FI	Kaukosäätimen käyttö
 	FR	Utilisation de la télécommande
 	HE	עוד על השלט
-	IT	Come usare il telecomando Slim Devices
-	JA	Slim Devicesリモートを使う
-	NL	De Slim Devices afstandsbediening gebruiken
-	NO	Hvordan bruke Slim Devices fjernkontroll
+	IT	Come usare il telecomando
+	JA	リモートを使う
+	NL	De afstandsbediening gebruiken
+	NO	Hvordan bruke fjernkontroll
 	PT	Como usar o Controlo Remoto
 	SV	Att använda Slim-fjärrkontrollen
-	ZH_CN	使用Slim Devices遥控器
+	ZH_CN	使用 遥控器
 
 STATISTICS
 	CS	Statistiky

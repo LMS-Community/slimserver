@@ -6,7 +6,7 @@
         <module>Slim::Plugin::PreventStandby::Plugin</module>
         <version>1.0</version>
         <description>PLUGIN_PREVENTSTANDBY_DESC</description>
-        <creator>Julian Neil, Slim Devices</creator>
+        <creator>Julian Neil, Slim Devices/Logitech</creator>
 	<email>support@slimdevices.com</email>
 
 	<defaultState>enabled</defaultState>

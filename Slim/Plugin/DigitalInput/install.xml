@@ -6,7 +6,7 @@
         <module>Slim::Plugin::DigitalInput::Plugin</module>
         <version>1.0</version>
         <description>PLUGIN_DIGITAL_INPUT_DESC</description>
-        <creator>Slim Devices</creator>
+        <creator>Slim Devices/Logitech</creator>
         <email>support@slimdevices.com</email>
 
 	<defaultState>enabled</defaultState>

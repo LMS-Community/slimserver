@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# SlimServer Copyright (C) 2001-2006 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (C) 2001-2006 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -21,7 +21,7 @@ package PerlSvc;
 
 our %Config = (
 	DisplayName => 'SlimServer',
-	Description => "Slim Devices' SlimServer Music Server",
+	Description => "SlimServer Music Server",
 	ServiceName => "slimsvc",
 );
 

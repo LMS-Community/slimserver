@@ -7,7 +7,7 @@
         <playerMenu>RADIO</playerMenu>
         <version>1.0</version>
         <description>PLUGIN_RADIOTIME_MODULE_NAME_DESC</description>
-        <creator>Slim Devices</creator>
+        <creator>Slim Devices/Logitech</creator>
         <email>support@slimdevices.com</email>
 
 	<defaultState>enabled</defaultState>

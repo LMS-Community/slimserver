@@ -7,7 +7,7 @@
         <version>1.0</version>
 	<playerMenu>GAMES</playerMenu>
         <description>SLIMTRIS_DESC</description>
-        <creator>Slim Devices</creator>
+        <creator>Slim Devices/Logitech</creator>
 	<email>support@slimdevices.com</email>
 
 	<defaultState>enabled</defaultState>

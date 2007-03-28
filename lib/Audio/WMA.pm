@@ -1217,7 +1217,7 @@ Dan Sully, E<lt>daniel@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2003-2007 by Dan Sully & Slim Devices, Inc.
+Copyright 2003-2007 by Dan Sully & Logitech.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 

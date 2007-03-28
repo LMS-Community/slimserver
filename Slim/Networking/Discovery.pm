@@ -2,7 +2,7 @@ package Slim::Networking::Discovery;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -22,7 +22,7 @@ Slim::Networking::Discovery
 
 =head1 DESCRIPTION
 
-This module implements a UDP discovery protocol, used by all Slim Devices hardware.
+This module implements a UDP discovery protocol, used by Squeezebox, SLIMP3 and Transporter hardware.
 
 =head1 FUNCTIONS
 

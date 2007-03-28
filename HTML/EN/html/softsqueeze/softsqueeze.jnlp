@@ -17,8 +17,8 @@
     <title>Softsqueeze 3.3</title>
     <vendor>Richard Titmuss, et.al.</vendor>
     <homepage href="http://softsqueeze.sourceforge.net"/>
-    <description>Softsqueeze Slim Devices Squeezebox Emulator</description>
-    <description kind="short">Softsqueeze Slim Devices Squeezebox Emulator</description>
+    <description>Softsqueeze Squeezebox Emulator</description>
+    <description kind="short">Softsqueeze Squeezebox Emulator</description>
     <icon width="400" height="200" kind="splash" href="icons/splash.gif" />
     <icon width="64" height="64" href="icons/icon64.gif" />
     <offline-allowed />

@@ -449,11 +449,11 @@ Call ->title, ->creator, ->trackList, etc to get the values for the correspondin
 
 =head1 AUTHOR
 
-Dan Sully E<lt>dan | at | slimdevices.comE<gt> & Slim Devices, Inc.
+Dan Sully E<lt>dan | at | slimdevices.comE<gt> & Logitech
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (c) 2006 Dan Sully & Slim Devices, Inc. All rights reserved. 
+Copyright (c) 2006 Dan Sully & Logitech All rights reserved. 
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.6 or,

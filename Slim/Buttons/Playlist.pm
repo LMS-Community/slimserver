@@ -2,7 +2,7 @@ package Slim::Buttons::Playlist;
 
 # $Id$
 
-# Slim Server Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
+# Slim Server Copyright (c) 2001-2006 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -18,7 +18,7 @@ Slim::Buttons::Playlist::jump($client,$index);
 =head1 DESCRIPTION
 
 L<Slim::Buttons::Playlist> contains functions for browsing the current playlist, and displaying the information 
-on a Slim Devices player display.
+on a player display.
 
 =cut
 

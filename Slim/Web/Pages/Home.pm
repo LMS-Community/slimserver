@@ -2,7 +2,7 @@ package Slim::Web::Pages::Home;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2004 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2004 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -20,8 +20,6 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^home\.(?:htm|xml)/, sub {$class->home(@_)});
 	Slim::Web::HTTP::addPageFunction(qr/^index\.(?:htm|xml)/, sub {$class->home(@_)});
 	Slim::Web::HTTP::addPageFunction(qr/^squeezenetwork\.(?:htm|xml)/, sub {$class->squeezeNetwork(@_)});
-	
-	$class->addPageLinks("plugins", {'SQUEEZENETWORK_SWITCH' => 'squeezenetwork.html'});
 
 	$class->addPageLinks("help",{'GETTING_STARTED' => "html/docs/quickstart.html"});
 	$class->addPageLinks("help",{'PLAYER_SETUP' => "html/docs/ipconfig.html"});

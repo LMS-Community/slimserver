@@ -6,7 +6,7 @@
         <module>Slim::Plugin::xPL::Plugin</module>
         <version>1.0</version>
         <description>PLUGIN_XPL</description>
-        <creator>Slim Devices</creator>
+        <creator>Slim Devices/Logitech</creator>
 	<email>support@slimdevices.com</email>
 
 	<defaultState>disabled</defaultState>

@@ -2,7 +2,7 @@ package Slim::Plugin::RadioIO::Plugin;
 
 # $Id: Plugin.pm 7196 2006-04-28 22:00:45Z andy $
 
-# SlimServer Copyright (c) 2001-2004 Vidur Apparao, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2004 Vidur Apparao, Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

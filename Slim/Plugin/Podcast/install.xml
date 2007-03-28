@@ -6,7 +6,7 @@
         <module>Slim::Plugin::Podcast::Plugin</module>
         <version>1.0</version>
         <description>PLUGIN_PODCAST_DESC</description>
-        <creator>Slim Devices</creator>
+        <creator>Slim Devices/Logitech</creator>
         <email>support@slimdevices.com</email>
 
 	<defaultState>enabled</defaultState>

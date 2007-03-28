@@ -2,12 +2,12 @@ package Slim::Networking::UDP;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2006 Sean Adams, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
-# This module implements a UDP discovery protocol, used by all Slim Devices hardware.
+# This module implements a UDP discovery protocol, used by Squeezebox, Transporter and SLIMP3 hardware.
 
 use strict;
 use IO::Socket;
@@ -95,7 +95,7 @@ sub readUDP {
 				# also, it does not send the MAC address until the [h]ello packet.
 				# Squeezebox sends all fields correctly.
 				#
-				# All Slim Devices hardware sends discovery packets
+				# All players send discovery packets
 	
 				my ($msgtype, $deviceid, $revision, @mac) = unpack 'axCCxxxxxxxxH2H2H2H2H2H2', $msg;
 

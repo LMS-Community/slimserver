@@ -2767,7 +2767,7 @@ Justin Fletcher.
 
 =head1 CURRENT AUTHOR 
 
-Dan Sully E<lt>dan | at | slimdevices.comE<gt> & Slim Devices, Inc.
+Dan Sully E<lt>dan | at | slimdevices.comE<gt> & Logitech.
 
 =head1 AUTHOR EMERITUS
 
@@ -2775,7 +2775,7 @@ Chris Nandor E<lt>pudge@pobox.comE<gt>, http://pudge.net/
 
 =head1 COPYRIGHT AND LICENSE 
 
-Copyright (c) 2006 Dan Sully & Slim Devices, Inc. All rights reserved. 
+Copyright (c) 2006 Dan Sully & Logitech. All rights reserved. 
 
 Copyright (c) 1998-2005 Chris Nandor. All rights reserved. 
 
@@ -2786,7 +2786,7 @@ the same terms as Perl itself.
 
 =over 4
 
-=item Slim Devices
+=item Logitech/Slim Devices
 
 	http://www.slimdevices.com/
 

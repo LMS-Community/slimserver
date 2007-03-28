@@ -1,4 +1,4 @@
-# Live365 tuner plugin for Slim Devices SlimServer
+# Live365 tuner plugin for SlimServer
 # Copyright (C) 2004  Jim Knepley
 #
 # This program is free software; you can redistribute it and/or

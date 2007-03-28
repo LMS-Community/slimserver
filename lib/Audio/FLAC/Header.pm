@@ -1,6 +1,6 @@
 package Audio::FLAC::Header;
 
-# $Id: Header.pm 12 2007-01-05 03:10:38Z dsully $
+# $Id$
 
 use strict;
 use File::Basename;
@@ -970,9 +970,9 @@ Dan Sully, E<lt>daniel@cpan.orgE<gt> for XS code.
 
 Pure perl code Copyright (c) 2003-2004, Erik Reckase.
 
-Pure perl code Copyright (c) 2003-2007, Dan Sully & Slim Devices.
+Pure perl code Copyright (c) 2003-2007, Dan Sully & Logitech.
 
-XS code Copyright (c) 2004-2007, Dan Sully & Slim Devices.
+XS code Copyright (c) 2004-2007, Dan Sully & Logitech.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.2 or,

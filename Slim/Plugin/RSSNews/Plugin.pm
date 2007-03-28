@@ -1,7 +1,7 @@
 package Slim::Plugin::RSSNews::Plugin;
 
 # RSS News Browser
-# Copyright (c) 2006 Slim Devices, Inc. (www.slimdevices.com)
+# Copyright (c) 2006 Logitech
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 

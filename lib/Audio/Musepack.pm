@@ -366,7 +366,7 @@ from Dan Sully, E<lt>daniel@cpan.orgE<gt>
 =head1 COPYRIGHT
 
 Copyright (c) 2003-2006, Erik Reckase.
-Copyright (c) 2003-2006, Dan Sully & Slim Devices.
+Copyright (c) 2003-2006, Dan Sully & Logitech.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.2 or,

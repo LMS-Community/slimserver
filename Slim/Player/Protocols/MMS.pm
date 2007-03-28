@@ -2,7 +2,7 @@ package Slim::Player::Protocols::MMS;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2006 Vidur Apparao, Slim Devices Inc.
+# SlimServer Copyright (c) 2001-2006 Vidur Apparao, Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

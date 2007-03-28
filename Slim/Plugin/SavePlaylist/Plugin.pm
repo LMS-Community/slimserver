@@ -3,7 +3,7 @@ package Slim::Plugin::SavePlaylist::Plugin;
 # $Id: Plugin.pm 11071 2007-01-01 15:47:59Z adrian $
 # This code is derived from code with the following copyright message:
 #
-# SliMP3 Server Copyright (C) 2001 Sean Adams, Slim Devices Inc.
+# SliMP3 Server Copyright (C) 2001 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

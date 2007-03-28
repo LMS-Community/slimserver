@@ -7,7 +7,7 @@ use warnings;
 # First four bytes of stream are always OggS
 use constant OGGHEADERFLAG => 'OggS';
 
-# Heavily modified by dsully - Slim Devices.
+# Heavily modified by dsully - Logitech/Slim Devices.
 our $VERSION = '0.1';
 
 sub new {
