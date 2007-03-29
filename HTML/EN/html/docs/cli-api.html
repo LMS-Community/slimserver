@@ -66,6 +66,10 @@
 </p>
 <ul>
 	<li>
+		Added the &quot;prefs&quot; tag to the &quot;<a href="#players">players</a>&quot; query, 
+		to enable returning the given preference values along with each player.
+	</li>
+	<li>
 		Added the &quot;<a href="#years">years</a>&quot; query, to enable
 		Browse by Year functionality.
 	</li>
@@ -1997,6 +2001,14 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			prefs
+		</td>
+		<td>
+			Comma separated list of preference values to return (for each player).
+		</td>
+	</tr>
+	<tr>
+		<td>
 			charset
 		</td>
 		<td>
@@ -2102,19 +2114,37 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&quot;<a href="#connected ?">&lt;playerid&gt; connected ?</a>&quot;.
 		</td>
 	</tr>
+	<tr>
+		<td>
+			<em>
+				For each defined pref requested:
+			</em>
+		</td>
+		<td>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;<em>prefName<em>
+		</td>
+		<td>
+			Preference value. Only if the value is defined. Equivalent to 
+			&quot;<a href="#playerpref">playerpref prefName ?</a>&quot;.
+		</td>
+	</tr>
 </table>
 <p>
 	Example:
 </p>
 <blockquote> 
 	<p>
-		Request: &quot;players 0 2&lt;LF&gt;&quot;
+		Request: &quot;players 0 2 prefs:doublesize,idleBrightness&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;players 0 2 count:2 
 		playerindex:0 playerid:a5:41:d2:cd:cd:05 ip:127.0.0.1:60488 
-		name:127.0.0.1 model:softsqueeze displaytype:graphic-280x16 connected:1 
+		name:127.0.0.1 model:softsqueeze displaytype:graphic-280x16 connected:1 doublesize:0 idleBrightness:2
 		playerindex:1 playerid:00:04:20:02:00:c8 ip:192.168.1.22:3483 
-		name:Movy model:slimp3 displaytype:noritake-katakana connected:1&lt;LF&gt;&quot;
+		name:Movy model:slimp3 displaytype:noritake-katakana connected:1 doublesize:1 idleBrightness:1&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 

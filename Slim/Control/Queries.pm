@@ -808,6 +808,14 @@ sub playersQuery {
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 	
+	my @prefs;
+	if (defined(my $pref_list = $request->getParam('prefs'))) {
+
+		# split on commas
+		@prefs = split(/,/, $pref_list);
+	}
+	
+	
 	my $count = Slim::Player::Client::clientCount();
 	$request->addResult('count', $count);
 
@@ -836,6 +844,13 @@ sub playersQuery {
 					unless ($eachclient->model() eq 'http');
 				$request->addResultLoop('@players', $cnt, 
 					'connected', ($eachclient->connected() || 0));
+
+				for my $pref (@prefs) {
+					if (defined(my $value = $eachclient->prefGet($pref))) {
+						$request->addResultLoop('@players', $cnt, 
+							$pref, $value);
+					}
+				}
 					
 				$idx++;
 				$cnt++;
