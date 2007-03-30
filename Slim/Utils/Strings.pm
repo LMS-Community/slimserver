@@ -40,7 +40,6 @@ use Exporter::Lite;
 
 our @EXPORT_OK = qw(string);
 
-use POSIX qw(setlocale LC_TIME);
 use File::Spec::Functions qw(:ALL);
 use Storable;
 
@@ -163,7 +162,6 @@ sub loadStrings {
 
 	$defaultStrings = $strings->{$currentLang};
 
-	setlocale( LC_TIME, string('LOCALE' . (Slim::Utils::OSDetect::OS() eq 'win' ? '_WIN' : '') ) );
 }
 
 sub stringsFiles {

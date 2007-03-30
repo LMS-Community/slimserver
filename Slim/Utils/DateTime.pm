@@ -8,7 +8,7 @@ package Slim::Utils::DateTime;
 use strict;
 
 use Date::Parse;
-use POSIX qw(strftime);
+use POSIX qw(strftime setlocale LC_TIME);
 
 use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
@@ -35,8 +35,6 @@ Returns date & time information based on date & time prefs formatting settings.
 # remove the leading zeros for single digit dates and hours
 # where a | is specified in the format
 
-# The LC_TIME is set in ::Unicode when we start.
-
 =head2 longDateF( $time, $format )
 
 Returns a string of the time passed (or current time if none passed),
@@ -50,8 +48,14 @@ sub longDateF {
 	my $time = shift || time();
 	my $format = shift || Slim::Utils::Prefs::get('longdateFormat');
 
+	# change LC_TIME temporarily to the user's language
+	my $locale = setlocale(LC_TIME);
+	setlocale( LC_TIME, Slim::Utils::Strings::string('LOCALE' . (Slim::Utils::OSDetect::OS() eq 'win' ? '_WIN' : '')) );
+
 	my $date = strftime($format, localtime($time));
 	   $date =~ s/\|0*//;
+
+	setlocale(LC_TIME, $locale);
 
 	return Slim::Utils::Unicode::utf8decode_locale($date);
 }
