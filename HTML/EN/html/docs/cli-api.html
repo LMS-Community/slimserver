@@ -5715,7 +5715,15 @@ in the saved playlists folder.</p>
 			prefs
 		</td>
 		<td>
-			Comma separated list of preference values to return.
+			Comma separated list of server preference values to return.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			playerprefs
+		</td>
+		<td>
+			Comma separated list of player preference values to return (for each player).
 		</td>
 	</tr>
 	<tr>
@@ -5918,6 +5926,24 @@ in the saved playlists folder.</p>
 		<td>
 			Connected state. Equivalent to 
 			&quot;<a href="#connected ?">&lt;playerid&gt; connected ?</a>&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<em>
+				For each defined player pref requested:
+			</em>
+		</td>
+		<td>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;<em>prefName<em>
+		</td>
+		<td>
+			Preference value. Only if the value is defined. Equivalent to 
+			&quot;<a href="#playerpref">playerpref prefName ?</a>&quot;.
 		</td>
 	</tr>
 </table>

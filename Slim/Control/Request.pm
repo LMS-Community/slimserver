@@ -1862,12 +1862,13 @@ sub renderAsArray {
 	
 	# push the parameters
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
+		
+		# no output
+		next if ($key =~ /^__/);
 
 		$val = Slim::Utils::Unicode::encode($encoding, $val) if $encoding;
 
-		if ($key =~ /^__/) {
-			# no output
-		} elsif ($key =~ /^_/) {
+		if ($key =~ /^_/) {
 			push @returnArray, $val;
 		} else {
 			push @returnArray, ($key . ":" . $val);
@@ -1877,8 +1878,10 @@ sub renderAsArray {
  	# push the results
 	while (my ($key, $val) = each %{$self->{'_results'}}) {
 
-		$val = Slim::Utils::Unicode::encode($encoding, $val) if $encoding;
+		# no output
+		next if ($key =~ /^__/);
 
+		# loop
 		if ($key =~ /^@/) {
 
 			# loop over each elements
@@ -1900,10 +1903,20 @@ sub renderAsArray {
 					}
 				}	
 			}
-
-		} elsif ($key =~ /^__/) {
-			# no output
-		} elsif ($key =~ /^_/) {
+			next;
+		}
+		
+		# array unrolled
+#		if ($key =~ /^$_(.+)/)
+		
+		if (ref $val eq 'ARRAY') {
+			$val = join (',', @{$val})
+		}
+		if (ref $val eq 'SCALAR') {		
+			$val = Slim::Utils::Unicode::encode($encoding, $val) if $encoding;
+		}
+		
+		if ($key =~ /^_/) {
 			push @returnArray, $val;
 		} else {
 			push @returnArray, ($key . ':' . $val);

@@ -1300,17 +1300,25 @@ sub serverstatusQuery {
 	$request->addResult("info total genres", Slim::Schema->count('Genre'));
 	$request->addResult("info total songs", Slim::Schema->rs('Track')->browse->count);
 
-	my @prefs;
+	my %savePrefs;
 	if (defined(my $pref_list = $request->getParam('prefs'))) {
-		# split on commas
 
-		@prefs = split(/,/, $pref_list);
+		# split on commas
+		my @prefs = split(/,/, $pref_list);
+		$savePrefs{'server'} = \@prefs;
 	
-		for my $pref (@prefs) {
+		for my $pref (@{$savePrefs{'server'}}) {
 			if (defined(my $value = Slim::Utils::Prefs::get($pref))) {
 				$request->addResult($pref, $value);
 			}
 		}
+	}
+	if (defined(my $pref_list = $request->getParam('playerprefs'))) {
+
+		# split on commas
+		my @prefs = split(/,/, $pref_list);
+		$savePrefs{'player'} = \@prefs;
+		
 	}
 
 
@@ -1343,6 +1351,12 @@ sub serverstatusQuery {
 					unless ($eachclient->model() eq 'http');
 				$request->addResultLoop('@players', $cnt, 
 					'connected', ($eachclient->connected() || 0));
+				for my $pref (@{$savePrefs{'player'}}) {
+					if (defined(my $value = $eachclient->prefGet($pref))) {
+						$request->addResultLoop('@players', $cnt, 
+							$pref, $value);
+					}
+				}
 					
 				$cnt++;
 			}	
@@ -1364,8 +1378,15 @@ sub serverstatusQuery {
 			}
 			
 			# we want to know about any pref in our array
-			if (defined(my $prefsPtr = $self->privateData())) {
+			if (defined(my $prefsPtr = $self->privateData()->{'server'})) {
 				if ($request->isCommand([['pref']])) {
+					if (defined(my $reqpref = $request->getParam('_prefname'))) {
+						return grep($reqpref, @{$prefsPtr});
+					}
+				}
+			}
+			if (defined(my $prefsPtr = $self->privateData()->{'player'})) {
+				if ($request->isCommand([['playerpref']])) {
 					if (defined(my $reqpref = $request->getParam('_prefname'))) {
 						return grep($reqpref, @{$prefsPtr});
 					}
@@ -1375,9 +1396,7 @@ sub serverstatusQuery {
 		}
 	
 		# store the prefs array as private data so our filter above can find it back
-		if (scalar @prefs) {
-			$request->privateData(\@prefs);
-		}
+		$request->privateData(\%savePrefs);
 		
 		# register ourselves to be automatically re-executed on timeout or filter
 		$request->registerAutoExecute($timeout, \&serverstatusFilter);
