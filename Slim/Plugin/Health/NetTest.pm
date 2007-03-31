@@ -19,7 +19,7 @@ use Class::C3;
 
 use strict;
 
-our @testRates = ( 64, 128, 192, 256, 320, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000, 6000);
+our @testRates = ( 64, 128, 192, 256, 320, 500, 1000, 1500, 2000, 2500, 3000, 4000, 5000);
 
 our %functions = (
 	'left' => sub  {
@@ -75,6 +75,7 @@ sub displayName {
 sub setMode {
 	my $class  = shift;
 	my $client = shift;
+	my $display= $client->display;
 
 	if (!$client->display->isa("Slim::Display::Graphics")) {
 		$client->lines(\&errorLines);
@@ -96,8 +97,7 @@ sub setMode {
 		'Qlen0'  => 0,
 		'Qlen1'  => 0, 
 		'log'    => Slim::Utils::PerfMon->new('Network Throughput', [10, 20, 30, 40, 50, 60, 70, 75, 80, 85, 90, 95, 100]),
-		'header' => $client->display->scrollHeader(),
-		'frameLen'=> length($client->display->scrollHeader()) + $client->display->screenBytes(),
+		'header' => $display->scrollHeader,
 		'refresh'=> Time::HiRes::time(), 
 	};
 
@@ -196,16 +196,17 @@ sub sendDisplay {
 
 	$slimprotoQLen ? $params->{'Qlen1'}++ : $params->{'Qlen0'}++;
 
-	if (($slimprotoQLen == 0) && (length($frame) == $params->{'frameLen'})) {
-		Slim::Networking::Select::writeNoBlock($client->tcpsock, \$frame);
+	if ($slimprotoQLen == 0) {
+		$client->sendFrame($client->display->graphicCommand, \$frame);
 	}
 
 	if ($params->{'int'}) {
-		my $timenow = Time::HiRes::time();
+		$params->{'refresh'} += $params->{'int'};
 		# skip if running late [reduces actual rate sent, but avoids recording throughput drop when timers are late]
-		do {
-			$params->{'refresh'} += $params->{'int'};
-		} while ($params->{'refresh'} < $timenow);
+		my $timenow = Time::HiRes::time();
+		if ($params->{'refresh'} < $timenow && ($params->{'refresh'} + $params->{'int'} * 3) < $timenow) {
+			$params->{'refresh'} = $timenow;
+		}
 	} else {
 		$params->{'refresh'} += 0.5;
 	}
