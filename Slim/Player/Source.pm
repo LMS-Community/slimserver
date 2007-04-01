@@ -368,6 +368,9 @@ sub playmode {
 
 	# if we're playing, then open the new song the master.		
 	if ($newmode eq "play") {
+		
+		# Clear previous metadata title when starting a new track
+		$client->metaTitle( undef );
 
 		# if the player is off, we automatically power on when we start to play
 		if (!$client->power()) {

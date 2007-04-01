@@ -177,6 +177,7 @@ sub new {
 	$client->[112] = 0; # knobSync
 	$client->[113] = {}; # pendingPrefChanges
 	$client->[114] = 0; # bufferStarted, tracks when players begin buffering/rebuffering
+	$client->[117] = undef; # metaTitle, current remote stream metadata title
 
 	$clientHash{$id} = $client;
 
@@ -1713,6 +1714,11 @@ sub pendingPrefChanges {
 sub bufferStarted {
 	my $r = shift;
 	@_ ? ($r->[114] = shift) : $r->[114];
+}
+
+sub metaTitle {
+	my $r = shift;
+	@_ ? ($r->[117] = shift) : $r->[117];
 }
 
 1;

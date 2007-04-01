@@ -130,9 +130,10 @@ sub parseMetadata {
 
 		my $newTitle = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
 
-		my $oldTitle = Slim::Music::Info::getCurrentTitle($client, $url) || '';
+		my $metaTitle = $client->metaTitle || '';
 
 		# capitalize titles that are all lowercase
+		# XXX: Why do we do this?  Shouldn't we let metadata display as-is?
 		if (lc($newTitle) eq $newTitle) {
 			$newTitle =~ s/ (
 					  (^\w)    #at the beginning of the line
@@ -144,7 +145,7 @@ sub parseMetadata {
 				/\U$1/xg;
 		}
 
-		if ($newTitle && ($oldTitle ne $newTitle)) {
+		if ($newTitle && ($metaTitle ne $newTitle)) {
 			
 			# Some mp3 stations can have 10-15 seconds in the buffer.
 			# This will delay metadata updates according to how much is in
@@ -159,12 +160,14 @@ sub parseMetadata {
 				$delay = $decodeBuffer + $outputBuffer;
 			}
 			
-			# No delay on the initial metadata (when old title is the station's title)
-			if ( $oldTitle eq Slim::Music::Info::title($url) ) {
+			# No delay on the initial metadata
+			if ( !$metaTitle ) {
 				$delay = 0;
 			}
 			
 			logger('player.streaming')->info("Delaying metadata title set by $delay secs");
+			
+			$client->metaTitle( $newTitle );
 			
 			Slim::Utils::Timers::setTimer(
 				$client,
@@ -175,7 +178,7 @@ sub parseMetadata {
 			);
 		}
 
-		return $newTitle;
+		return $metaTitle;
 	}
 
 	return undef;
