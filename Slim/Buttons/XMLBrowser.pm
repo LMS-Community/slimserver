@@ -867,6 +867,7 @@ sub playItem {
 				'action' => $action,
 				'url'    => $url,
 				'parser' => $parser,
+				'item'   => $item,
 			},
 		);
 
