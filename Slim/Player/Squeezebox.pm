@@ -1048,7 +1048,9 @@ sub pcm_sample_sizes {
 				 32 => '4',
 				 );
 
-	return $pcm_sample_sizes{$track->samplesize()} || '1';
+	my $size = $pcm_sample_sizes{$track->samplesize()};
+
+	return defined $size ? $size : '1';
 }
 
 sub pcm_sample_rates {
@@ -1062,7 +1064,9 @@ sub pcm_sample_rates {
 				 48000 => '4',
 				 );
 
-	return $pcm_sample_rates{$track->samplerate()} || '3';
+	my $rate = $pcm_sample_rates{$track->samplerate()};
+
+	return defined $rate ? $rate : '3';
 }
 
 sub sendFrame {

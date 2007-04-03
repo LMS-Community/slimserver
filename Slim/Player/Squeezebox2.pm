@@ -853,7 +853,9 @@ sub pcm_sample_rates {
 				 96000 => '9',
 				 );
 
-	return $pcm_sample_rates{$track->samplerate()} || '3';
+	my $rate = $pcm_sample_rates{$track->samplerate()};
+
+	return defined $rate ? $rate : '3';
 }
 
 1;
