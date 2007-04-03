@@ -3,8 +3,8 @@
 # from        to
 # from1..from2 to
 
-1..29 29
+1..31 31
 
 # future versions may be downgraded to this one
-* 29
+* 31
 
