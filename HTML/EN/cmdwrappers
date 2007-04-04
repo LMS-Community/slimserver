@@ -193,7 +193,7 @@ END %]
 	</div>
 
 	[% SET class = 'even' odd = 0 %]
-	<div class="artworkControls">
+	<div class="artworkControls" style="width:[% item.size + 2 %]px;">
 		[%- PROCESS $controls -%]
 	</div>
 	<div class="artworkText" style="width:[% item.size %]px;"><span style="width:[% item.size %]px;">
