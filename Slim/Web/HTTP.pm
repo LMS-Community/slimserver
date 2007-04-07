@@ -1564,22 +1564,26 @@ sub addHTTPResponse {
 	my $sendheaders = shift;
 	my $more        = shift || 0;
 
-
 	# determine our closing/chunking behaviour
 	# code above is responsible to set the headers right...
-	my $close = ($response->header('Connection') =~ /close/i);
-	my $chunked = ($response->header('Transfer-Encoding') =~ /chunked/i);
+	my $close   = 0;
+	my $chunked = 0;
 
 	# if we have more, don't close now!
-	if ($more) {
-		$close = 0;
+	if (!$more && $response->header('Connection') && $response->header('Connection') =~ /close/i) {
+
+		$close = 1;
+	}
+
+	if ($response->header('Transfer-Encoding') && $response->header('Transfer-Encoding') =~ /chunked/i) {
+
+		$chunked = 1;
 	}
 
 	# Force byte semantics on $body and length($$body) - otherwise we'll
 	# try to write out multibyte characters with invalid byte lengths in
 	# sendResponse() below.
 	use bytes;
-
 
 	# First add the headers, if requested
 	if (!defined($sendheaders) || $sendheaders == 1) {
@@ -1619,7 +1623,6 @@ sub addHTTPResponse {
 				addHTTPLastChunk($httpClient, $close);
 			}
 
-			
 		} else {
 
 			push @{$outbuf{$httpClient}}, {

@@ -83,7 +83,9 @@ sub main {
 	});
 
 	# Redirect STDERR to the log file.
-	tie *STDERR, 'Slim::Utils::Log::Trapper';
+	if (!$progress) {
+		tie *STDERR, 'Slim::Utils::Log::Trapper';
+	}
 
 	STDOUT->autoflush(1);
 
