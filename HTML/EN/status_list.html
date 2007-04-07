@@ -15,8 +15,8 @@
 		</span>
 		<div class="playlistControls">
 			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=jump&amp;p2=[% item.num %]&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% "PLAY" | string %]</a>
-			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=move&amp;p2=[% item.num %]&amp;p3=+1&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% "DOWN" | string %]</a>
-			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=move&amp;p2=[% item.num %]&amp;p3=-1&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% "UP" | string %]</a>
+			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=move&amp;p2=[% item.num %]&amp;p3=%2B1&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% "DOWN" | string %]</a>
+			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=move&amp;p2=[% item.num %]&amp;p3=%2D1&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% "UP" | string %]</a>
 			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=delete&amp;p2=[% item.num %]&amp;start=[% start %]&amp;player=[% playerURI %]" target="status">[% "DELETE" | string %]</a>
 		</div>
 	</div>
