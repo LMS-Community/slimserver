@@ -8,7 +8,7 @@ use strict;
 use JSON ();
 
 
-$VERSION = '1.09';
+$VERSION = '1.11';
 
 BEGIN {
     eval 'require Scalar::Util';
@@ -99,22 +99,27 @@ sub _hashToJson {
     my ($k,$v);
     my %res;
 
+    if (my $class = tied %$obj) { # by ddascalescu+perl [at] gmail.com
+        $class =~ s/=.*//;
+        tie %res, $class;
+    }
+
     my ($pre,$post) = $self->_upIndent() if($JSON::Converter::pretty);
 
-    if(grep { $_ == $obj } @JSON::Converter::obj_addr){
+    if (grep { $_ == $obj } @JSON::Converter::obj_addr) {
         die "circle ref!";
     }
 
     push @JSON::Converter::obj_addr,$obj;
 
-    for my $k (keys %$obj){
+    for my $k (keys %$obj) {
         my $v = $obj->{$k};
         $res{$k} = $self->_toJson($v) || $self->_valueToJson($v);
     }
 
     pop @JSON::Converter::obj_addr;
 
-    if($JSON::Converter::pretty){
+    if ($JSON::Converter::pretty) {
         $self->_downIndent();
         my $del = $self->{_delstr};
         return "{$pre"
@@ -133,8 +138,13 @@ sub _hashToJson {
 
 
 sub _arrayToJson {
-	my ($self, $obj) = @_;
+    my ($self, $obj) = @_;
     my @res;
+
+    if (my $class = tied @$obj) {
+        $class =~ s/=.*//;
+        tie @res, $class;
+    }
 
     my ($pre,$post) = $self->_upIndent() if($JSON::Converter::pretty);
 
@@ -150,11 +160,11 @@ sub _arrayToJson {
 
     pop @JSON::Converter::obj_addr;
 
-    if($JSON::Converter::pretty){
+    if ($JSON::Converter::pretty) {
         $self->_downIndent();
         return "[$pre" . join(",$pre" ,@res) . "$post]";
     }
-    else{
+    else {
         return '[' . join(',' ,@res) . ']';
     }
 }
@@ -177,11 +187,8 @@ sub _valueToJson {
 
     if(!ref($value)){
         if($JSON::Converter::autoconv){
-
             return $value  if($value =~ /^-?(?:0|[1-9][\d]*)(?:\.\d*)?(?:[eE][-+]?\d+)?$/);
-#            return $value  if($value =~ /^-?(?:0|[1-9][\d]*)(?:\.[\d]*)?$/);
-#            return $value  if($value =~ /^-?(?:\d+)(?:\.\d*)?(?:[eE][-+]?\d+)?$/);
-            return $value  if($value =~ /^0[xX](?:[0-9a-zA-Z])+$/);
+            return $value  if($value =~ /^0[xX](?:[0-9a-fA-F])+$/);
             return 'true'  if($value =~ /^[Tt][Rr][Uu][Ee]$/);
             return 'false' if($value =~ /^[Ff][Aa][Ll][Ss][Ee]$/);
         }
@@ -195,7 +202,7 @@ sub _valueToJson {
     elsif( blessed($value) and  $value->isa('JSON::NotString') ){
         return defined $value->{value} ? $value->{value} : 'null';
     }
-    else{
+    else {
         die "Invalid value" unless($self->{skipinvalid});
         return 'null';
     }
@@ -212,13 +219,30 @@ my %esc = (
     "\"" => '\"',
     "\\" => '\\\\',
     "\'" => '\\\'',
+#    "/"  => '\\/', # TODO
 );
 
 
 sub _stringfy {
     my ($arg) = @_;
     $arg =~ s/([\\"\n\r\t\f\b])/$esc{$1}/eg;
-    $arg =~ s/([\x00-\x07\x0b\x0e-\x1f])/'\\u00' . unpack('H2',$1)/eg;
+
+    unless (JSON->USE_UTF8) {
+        $arg =~ s/([\x00-\x07\x0b\x0e-\x1f])/'\\u00' . unpack('H2',$1)/eg;
+        return '"' . $arg . '"';
+    }
+
+    # suggestion from rt#25727
+    $arg = join('',
+        map {
+            chr($_) =~ /[\x00-\x07\x0b\x0e-\x1f]/ ?
+                sprintf('\u%04x', $_) :
+            $_ <= 255 ?
+                chr($_) :
+            $_ <= 65535 ?
+                sprintf('\u%04x', $_) : sprintf('\u%04x', $_)
+        } unpack('U*', $arg)
+    );
 
     $JSON::Converter::utf8 and utf8::decode($arg);
 
@@ -229,7 +253,22 @@ sub _stringfy {
 sub _stringfy_single_quote {
     my $arg = shift;
     $arg =~ s/([\\\n'\r\t\f\b])/$esc{$1}/eg;
-    $arg =~ s/([\x00-\x07\x0b\x0e-\x1f])/'\\u00' . unpack('H2',$1)/eg;
+
+    unless (JSON->USE_UTF8) {
+        $arg =~ s/([\x00-\x07\x0b\x0e-\x1f])/'\\u00' . unpack('H2',$1)/eg;
+        return "'" . $arg ."'";
+    }
+
+    $arg = join('',
+        map {
+            chr($_) =~ /[\x00-\x07\x0b\x0e-\x1f]/ ?
+                sprintf('\u%04x', $_) :
+            $_ <= 255 ?
+                chr($_) :
+            $_ <= 65535 ?
+                sprintf('\u%04x', $_) : sprintf('\u%04x', $_)
+        } unpack('U*', $arg)
+    );
 
     $JSON::Converter::utf8 and utf8::decode($arg);
 
@@ -317,8 +356,9 @@ sub _getObjType {
 
 sub _blessedToNormal {
     my $type  = _getObjType($_[0]);
-    return $type eq 'HASH'  ? _blessedToNormalHash($_[0])  : 
-           $type eq 'ARRAY' ? _blessedToNormalArray($_[0]) : $_[0];
+    return $type eq 'HASH'   ? _blessedToNormalHash($_[0])   : 
+           $type eq 'ARRAY'  ? _blessedToNormalArray($_[0])  : 
+           $type eq 'SCALAR' ? _blessedToNormalScalar($_[0]) : $_[0];
 }
 
 
@@ -357,6 +397,23 @@ sub _blessedToNormalArray {
     pop @JSON::Converter::_blessedToNormal::obj_addr;
 
     return \@res;
+}
+
+
+sub _blessedToNormalScalar {
+    my ($obj) = @_;
+    my $res;
+
+    die "circle ref!" if(grep { overload::AddrRef($_) eq overload::AddrRef($obj) }
+    @JSON::Converter::_blessedToNormal::obj_addr);
+
+    push @JSON::Converter::_blessedToNormal::obj_addr, $obj;
+
+    $res = _blessedToNormal($$obj);
+
+    pop @JSON::Converter::_blessedToNormal::obj_addr;
+
+    return $res; # JSON can't really do scalar refs so it can't be \$res
 }
 
 ##############################################################################
