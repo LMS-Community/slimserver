@@ -2359,13 +2359,16 @@ sub _getFileContent {
 
 	open($template, $path);
 
-	($inode, $size, $mtime) = (stat($template))[1,7,9];
+
+	if ($template) {
+		($inode, $size, $mtime) = (stat($template))[1,7,9];
+	}
 
 	# If we only want the file attributes and not the content - close the
 	# filehandle before slurping in the bits.
-	if ($statOnly) {
+	if ($statOnly && $template) {
 
-		close $template if $template;
+		close $template;
 
 	} elsif ($template) {
 
