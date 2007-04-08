@@ -809,7 +809,7 @@ sub playersQuery {
 	my $quantity = $request->getParam('_quantity');
 	
 	my @prefs;
-	if (defined(my $pref_list = $request->getParam('prefs'))) {
+	if (defined(my $pref_list = $request->getParam('playerprefs'))) {
 
 		# split on commas
 		@prefs = split(/,/, $pref_list);
