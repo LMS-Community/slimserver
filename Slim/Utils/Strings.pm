@@ -40,6 +40,7 @@ use Exporter::Lite;
 
 our @EXPORT_OK = qw(string);
 
+use POSIX qw(setlocale LC_TIME);
 use File::Spec::Functions qw(:ALL);
 use Storable;
 
@@ -64,6 +65,7 @@ Initializes the module - called at server startup.
 sub init {
 	$currentLang = getLanguage();
 	loadStrings();
+	setLocale();
 
 	if ($::checkstrings) {
 		checkChangedStrings();
@@ -412,6 +414,7 @@ sub setLanguage {
 		$currentLang = $lang;
 
 		loadStrings({'ignoreCache' => 1});
+		setLocale();
 
 		for my $client ( Slim::Player::Client::clients() ) {
 			$client->display->displayStrings(clientStrings($client));
@@ -471,5 +474,10 @@ sub checkChangedStrings {
 
 	Slim::Utils::Timers::setTimer(undef, time + 1, \&checkChangedStrings);
 }
+
+sub setLocale {
+	setlocale( LC_TIME, string('LOCALE' . (Slim::Utils::OSDetect::OS() eq 'win' ? '_WIN' : '') ) );
+}
+
 
 1;
