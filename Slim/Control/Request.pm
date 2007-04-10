@@ -406,7 +406,8 @@ my @result = Slim::Control::Request::executeLegacy($client, ['playlist', 'save']
 use strict;
 
 use Scalar::Util qw(blessed);
-use Tie::LLHash;
+#use Tie::LLHash;
+use Tie::IxHash;
 
 use Slim::Control::Commands;
 use Slim::Control::Queries;
@@ -810,8 +811,10 @@ sub new {
 	my $requestLineRef = shift;    # reference to an array containing the 
                                    # request verbs
 	
-	tie (my %paramHash, "Tie::LLHash", {lazy => 1});
-	tie (my %resultHash, "Tie::LLHash", {lazy => 1});
+#	tie (my %paramHash, "Tie::LLHash", {lazy => 1});
+	tie (my %paramHash, "Tie::IxHash");
+#	tie (my %resultHash, "Tie::LLHash", {lazy => 1});
+	tie (my %resultHash, "Tie::IxHash");
 	
 	my $self = {
 		'_request'           => [],
@@ -866,7 +869,8 @@ sub virginCopy {
 	my @request = @{$self->{'_request'}};
 	$copy->{'_request'} = \@request;
 
-	tie (my %paramHash, "Tie::LLHash", {lazy => 1});	
+#	tie (my %paramHash, "Tie::LLHash", {lazy => 1});	
+	tie (my %paramHash, "Tie::IxHash");	
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
 		$paramHash{$key} = $val;
  	}
@@ -1259,7 +1263,8 @@ sub setResultFirst {
 
 	#${$self->{'_results'}}{$key} = $val;
 	
-	(tied %{$self->{'_results'}})->first($key => $val);
+#	(tied %{$self->{'_results'}})->first($key => $val);
+	(tied %{$self->{'_results'}})->Unshift($key => $val);
 }
 
 sub addResultLoop {
@@ -1278,7 +1283,8 @@ sub addResultLoop {
 	}
 	
 	if (!defined ${$self->{'_results'}}{$loop}->[$loopidx]) {
-		tie (my %paramHash, "Tie::LLHash", {lazy => 1});
+#		tie (my %paramHash, "Tie::LLHash", {lazy => 1});
+		tie (my %paramHash, "Tie::IxHash");
 		${$self->{'_results'}}{$loop}->[$loopidx] = \%paramHash;
 	}
 	
@@ -1381,7 +1387,8 @@ sub getResultLoop {
 sub cleanResults {
 	my $self = shift;
 
-	tie (my %resultHash, "Tie::LLHash", {lazy => 1});
+#	tie (my %resultHash, "Tie::LLHash", {lazy => 1});
+	tie (my %resultHash, "Tie::IxHash");
 	
 	# not sure this helps release memory, but can't hurt
 	delete $self->{'_results'};

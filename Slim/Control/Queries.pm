@@ -2110,8 +2110,9 @@ sub dynamicAutoQuery {
 		# $funcptr is undefined, we have everybody, now slice & count
 		else {
 			
+			my $count = $request->getResultLoopCount($loop);
 			$request->sliceResultLoop($loop, $index, $quantity);
-			$request->setResultFirst('count', $request->getResultLoopCount($loop));
+			$request->setResultFirst('count', $count);
 			
 			# don't forget to call that to trigger notifications, if any
 			$request->setStatusDone();
@@ -2141,7 +2142,8 @@ sub _addSong {
 	# add the prefix in the first position, use a fancy feature of
 	# Tie::LLHash
 	if (defined $prefixKey) {
-		(tied %{$hashRef})->first($prefixKey => $prefixVal);
+#		(tied %{$hashRef})->first($prefixKey => $prefixVal);
+		(tied %{$hashRef})->Unshift($prefixKey => $prefixVal);
 	}
 	
 	# add it directly to the result loop
@@ -2172,7 +2174,8 @@ sub _songData {
 	}
 	
 	# define an ordered hash for our results
-	tie (my %returnHash, "Tie::LLHash", {lazy => 1});
+#	tie (my %returnHash, "Tie::LLHash", {lazy => 1});
+	tie (my %returnHash, "Tie::IxHash");
 
 	# add fields present no matter $tags
 	$returnHash{'id'}    = $track->id;
