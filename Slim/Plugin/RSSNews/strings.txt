@@ -145,14 +145,6 @@ SETUP_PLUGIN_RSSNEWS_FEEDS
 	IT	Modifica i feed RSS
 	NL	Wijzig RSS kanalen
 
-SETUP_PLUGIN_RSSNEWS_FEEDS_DESC
-	DE	Dies ist die Liste der anzuzeigenden RSS Feeds. Um einen neuen zu abonnieren, tippen Sie einfach dessen URL in eine leere Zeile. Um einen Feed zu entfernen, löschen Sie dessen URL. Bestehende URLs können im entsprechenden Feld bearbeitet werden. Klicken Sie auf Ändern, um die Änderungen zu aktivieren.
-	EN	This is the list of RSS Feeds to display. To add a new one, just type its URL into the empty line. To remove one, simply delete the URL from the corresponding line. To change the URL of an existing feed, edit its text value. Click on the Change button when you are done.
-	ES	Esta es la lista de feeds de RSS. Para añadir un nuevo feed, escribir la URL en la línea vacía. Para elminar uno, simplemente borrar la URL de la línea correspondiente. Para cambiar la URL de un feed existente, editar el texto correspondiente. Hacer click en Cambiar cuando se haya finalizado.
-	FR	Ceci est la liste des flux RSS à afficher. Pour ajouter un flux, tapez son URL sur une ligne vide. Pour supprimer un flux, effacer l'URL de la ligne correspondante. Pour changer l'URL d'un flux existant, modifiez la ligne correspondante. Cliquez sur Modifier une fois les changements effectués.
-	IT	Questa e' la lista dei feed RSS da visualizzare. Per aggiungerne uno nuovo, digita la sua URL in una linea vuota. Per rimuoverne uno, cancella semplicemente la URL dalla linea corrispondente. Per cambiare la URL di un feed esistente, modifica il contenuto del testo. Premi il bottone Cambia quando hai finito.
-	NL	Dit is de lijst van RSS kanalen. Om een nieuwe toe te voegen type je de URL op een lege regel. Om een RSS kanaal te verwijderen maak je de regel leeg. Om een URL te wijzigen wijzig je de tekst. Klik op Veranderen als de wijzigingen compleet zijn.
-
 SETUP_PLUGIN_RSSNEWS_RESET
 	DE	Standard Feeds wieder herstellen
 	EN	Reset default RSS feeds
@@ -199,14 +191,9 @@ SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC
 	IT	E' il numero massimo di argomenti visualizzati per ogni feed mentre il salvaschermo e' attivo. Un valore piu' grande implica che il salvaschermo visualizzera' piu' argomenti prima di passare al prossimo feed.
 	NL	Het maximum aantal te tonen items per kanaal terwijl de schermbeveiliger actief is. Een hogere waarde laat meer items van een kanaal zien voordat naar het volgende kanaal gesprongen wordt.
 
-SETUP_PLUGIN_RSSNEWS_FEEDS_CHANGE
-	DE	RSS Feed Liste wurde geändert.
-	EN	RSS Feeds list changed.
-	ES	Lista de feeds de RSS modificada.
-	FR	Liste des flux RSS modifiée.
-	IT	Lista dei feed RSS cambiata.
-	NL	RSS kanalenlijst gewijzigd.
-
 SETUP_PLUGIN_RSSNEWS_EXISTING_FEEDS
 	DE	Eingetragene Feeds:
 	EN	Existing feeds:
+
+SETUP_PLUGIN_RSSNEWS_INVALID_FEED
+	EN	Invalid Feed - Could not connect to %s

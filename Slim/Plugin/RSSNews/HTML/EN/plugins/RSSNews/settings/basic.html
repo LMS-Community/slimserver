@@ -9,32 +9,33 @@
 		<div class="prefHead">[% "SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC" | string %]</div>
 
-		<input type="text" class="stdedit" name="plugin_RssNews_items_per_feed" id="plugin_RssNews_items_per_feed" value="[% prefs.plugin_RssNews_items_per_feed %]" size="5" />
+		<input type="text" class="stdedit" name="items_per_feed" value="[% prefs.items_per_feed %]" size="5" />
 
 	</div>
 
 	<div class="settingSection">
 		<div class="prefHead">[% "SETUP_PLUGIN_RSSNEWS_FEEDS" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_PLUGIN_RSSNEWS_FEEDS_DESC" | string %]</div>
 
 		<table border="0" cellspacing="7" cellpadding="7">
 
 			<tr>
 			<td><label for="new_feed" class="stdlabel">[% "PLUGIN_RSSNEWS_ADD_NEW" | string %]</label></td>
 
-			<td><input type="text" class="stdedit" name="plugin_RssNews_feeds" id="new_feed" value="" size="60" /></td>
+			<td><input type="text" class="stdedit" name="newfeed" value="[% newfeedval %]" size="60" /></td>
 			</tr>
 
 			<tr></tr>
 			<tr></tr>
-			<tr><td><label>[% "SETUP_PLUGIN_RSSNEWS_EXISTING_FEEDS" | string %]</label></td><td></td></tr>
+			<tr><td><label>[% "SETUP_PLUGIN_RSSNEWS_EXISTING_FEEDS" | string %]</label></td><td></td><td>[% "DELETE" | string %]</td></tr>
 
 		[% FOREACH pref = prefs.feeds %]
 
 			<tr>
-			<td><label for="plugin_RssNews_feeds" class="stdlabel">[% pref.1 %]</label></td>
+			<td><label for="feeds" class="stdlabel">[% pref.1 %]</label></td>
 
-			<td><input type="text" class="stdedit" name="plugin_RssNews_feeds" id="plugin_RssNews_feeds" value="[% pref.0 %]" size="60" /></td>
+			<td><label for="urls"  class="stdlabel">[% pref.0 %]</label></td>
+
+			<td><input name="delete" type="checkbox" value="[% pref.0 %]"></td>
 
 			</tr>
 

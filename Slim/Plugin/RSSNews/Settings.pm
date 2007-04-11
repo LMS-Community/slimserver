@@ -8,54 +8,162 @@ package Slim::Plugin::RSSNews::Settings;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use Slim::Utils::Log;
+use Slim::Utils::Prefs;
+
+my $log   = logger('plugin.rssnews');
+my $prefs = preferences('rssnews');
+
+use constant FEED_VERSION => 2; # bump this number when changing the defaults below
+
+# Default feed list
+my @default_feeds = (
+	{
+		name  => 'BBC News World Edition',
+		value => 'http://news.bbc.co.uk/rss/newsonline_world_edition/front_page/rss.xml',
+	},
+	{
+		name  => 'CNET News.com',
+		value => 'http://news.com.com/2547-1_3-0-5.xml',
+	},
+	{
+		name  => 'New York Times Home Page',
+		value => 'http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml',
+	},
+	{
+		name  => 'RollingStone.com Music News',
+		value => 'http://www.rollingstone.com/rssxml/music_news.xml',
+	},
+	{
+		name  => 'Slashdot',
+		value => 'http://rss.slashdot.org/Slashdot/slashdot',
+	},
+	{
+		name  => 'Yahoo! News: Business',
+		value => 'http://rss.news.yahoo.com/rss/business',
+	},
+);
+
+# migrate old prefs across
+$prefs->migrate(1, sub {
+	my @names  = @{Slim::Utils::Prefs::OldPrefs->get('plugin_RssNews_names')};
+	my @values = @{Slim::Utils::Prefs::OldPrefs->get('plugin_RssNews_feeds')};
+	my @feeds;
+
+	for my $name (@names) {
+		push @feeds, { 'name' => $name, 'value' => shift @values };
+	}
+
+	if (@feeds) {
+		$prefs->set('feeds', \@feeds);
+		$prefs->set('modified', 1);
+	}
+
+	$prefs->set('items_per_feed', Slim::Utils::Prefs::OldPrefs->get('plugin_RssNews_items_per_feed') || 3);
+});
+
+# migrate to latest version of default feeds if they have not been modified
+$prefs->migrate(FEED_VERSION, sub {
+	$prefs->set('feeds', \@default_feeds) unless $prefs->get('modified');
+	1;
+});
+
 sub name {
-        return 'PLUGIN_RSSNews';
+	return 'PLUGIN_RSSNews';
 }
 
 sub page {
-        return 'plugins/RSSNews/settings/basic.html';
+	return 'plugins/RSSNews/settings/basic.html';
+}
+
+sub prefs {
+	return ($prefs, 'items_per_feed');
 }
 
 sub handler {
 	my ($class, $client, $params) = @_;
 
-	my @prefs = qw(
-		plugin_RssNews_items_per_feed
-	);
-
 	if ($params->{'reset'}) {
-		Slim::Plugin::RSSNews::Plugin::revertToDefaults();
+
+		$prefs->set('feeds', \@default_feeds);
+		$prefs->set('modified', 0);
+
+		Slim::Plugin::RSSNews::Plugin::updateOPMLCache(\@default_feeds);
 	}
 
 	if ($params->{'saveSettings'}) {
 
-		# Remove empty feeds.
-		my @feeds = grep { $_ ne '' } @{$params->{'plugin_RssNews_feeds'}};
+		my @feeds       = @{ $prefs->get('feeds') };
+		my $newFeedUrl  = $params->{'newfeed'};
+		my $newFeedName = validateFeed($newFeedUrl);
 
-		Slim::Utils::Prefs::set('plugin_RssNews_feeds', \@feeds);
+		if ($newFeedUrl && $newFeedName) {
 
-		Slim::Plugin::RSSNews::Plugin::updateFeedNames();
+			push @feeds, {
+				'name'  => $newFeedName,
+				'value' => $newFeedUrl,
+			};
 
-		for my $pref (@prefs) {
+		} elsif ($newFeedUrl) {
 
-			Slim::Utils::Prefs::set($pref, $params->{$pref});
+			$params->{'warning'} .= sprintf Slim::Utils::Strings::string('SETUP_PLUGIN_RSSNEWS_INVALID_FEED'), $newFeedUrl;
+			$params->{'newfeedval'} = $params->{'newfeed'};
 		}
+
+		my @delete = @{ ref $params->{'delete'} eq 'ARRAY' ? $params->{'delete'} : [ $params->{'delete'} ] };
+
+		for my $deleteItem (@delete) {
+			my $i = 0;
+			while ($i < scalar @feeds) {
+				if ($deleteItem eq $feeds[$i]->{'value'}) {
+					splice @feeds, $i, 1;
+					next;
+				}
+				$i++;
+			}
+		}
+
+		$prefs->set('feeds', \@feeds);
+		$prefs->set('modified', 1);
+
+		Slim::Plugin::RSSNews::Plugin::updateOPMLCache(\@feeds);
 	}
 
-	my @feeds = Slim::Utils::Prefs::getArray('plugin_RssNews_feeds');
-	my @names = Slim::Utils::Prefs::getArray('plugin_RssNews_names');
+	for my $feed (@{ $prefs->get('feeds') }) {
 
-	for (my $i = 0; $i < @feeds; $i++) {
-
-		push @{$params->{'prefs'}->{'feeds'}}, [ $feeds[$i], $names[$i] ];
-	}
-
-	for my $pref (@prefs) {
-
-		$params->{'prefs'}->{$pref} = Slim::Utils::Prefs::get($pref);
+		push @{$params->{'prefs'}->{'feeds'}}, [ $feed->{'value'}, $feed->{'name'} ];
 	}
 
 	return $class->SUPER::handler($client, $params);
+}
+
+sub validateFeed {
+	my $url = shift || return undef;
+
+	$log->info("validating $url");
+
+	# this is synchronous at present
+	my $xml = Slim::Formats::XML->getFeedSync($url);
+
+	if ($xml && exists $xml->{'channel'}->{'title'}) {
+
+		# here for podcasts and RSS
+		return Slim::Formats::XML::unescapeAndTrim($xml->{'channel'}->{'title'});
+
+	} elsif ($xml && exists $xml->{'head'}->{'title'}) {
+
+		# here for OPML
+		return Slim::Formats::XML::unescapeAndTrim($xml->{'head'}->{'title'});
+
+	} elsif ($xml) {
+
+		# got xml but can't find title - use url
+		return $url;
+	}
+
+	$log->warn("unable to connect to $url");
+
+	return undef;
 }
 
 1;

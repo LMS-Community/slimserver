@@ -15,12 +15,8 @@ package Slim::Plugin::RSSNews::Plugin;
 use strict;
 use base qw(Slim::Plugin::Base);
 
-use constant FEEDS_VERSION => 1.0;
-
 use HTML::Entities;
 use XML::Simple;
-
-use Slim::Plugin::RSSNews::Settings;
 
 use Slim::Buttons::XMLBrowser;
 use Slim::Formats::XML;
@@ -28,34 +24,7 @@ use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
-
-# Default feed list
-my @default_feeds = (
-	{
-		name  => 'BBC News World Edition',
-		value => 'http://news.bbc.co.uk/rss/newsonline_world_edition/front_page/rss.xml',
-	},
-	{
-		name  => 'CNET News.com',
-		value => 'http://news.com.com/2547-1_3-0-5.xml',
-	},
-	{
-		name  => 'New York Times Home Page',
-		value => 'http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml',
-	},
-	{
-		name  => 'RollingStone.com Music News',
-		value => 'http://www.rollingstone.com/rssxml/music_news.xml',
-	},
-	{
-		name  => 'Slashdot',
-		value => 'http://rss.slashdot.org/Slashdot/slashdot',
-	},
-	{
-		name  => 'Yahoo! News: Business',
-		value => 'http://rss.news.yahoo.com/rss/business',
-	},
-);
+use Slim::Utils::Prefs;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.rssnews',
@@ -63,11 +32,9 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
-my @feeds = ();
-my %feed_names; # cache of feed names
+use Slim::Plugin::RSSNews::Settings;
 
-# in screensaver mode, number of items to display per channel before switching
-my $screensaver_items_per_feed;
+my $prefs = preferences('rssnews');
 
 # $refresh_sec is the minimum time in seconds between refreshes of the ticker from the RSS.
 # Please do not lower this value. It prevents excessive queries to the RSS.
@@ -87,20 +54,6 @@ sub initPlugin {
 
 	Slim::Buttons::Common::addMode('PLUGIN.RSS', getFunctions(), \&setMode);
 
-	my @feedURLPrefs  = Slim::Utils::Prefs::getArray("plugin_RssNews_feeds");
-	my @feedNamePrefs = Slim::Utils::Prefs::getArray("plugin_RssNews_names");
-	my $feedsModified = Slim::Utils::Prefs::get("plugin_RssNews_feeds_modified");
-	my $version       = Slim::Utils::Prefs::get("plugin_RssNews_feeds_version");
-	
-	$screensaver_items_per_feed = Slim::Utils::Prefs::get('plugin_RssNews_items_per_feed');
-	if (!defined $screensaver_items_per_feed) {
-
-		$screensaver_items_per_feed = 3;
-		Slim::Utils::Prefs::set('plugin_RssNews_items_per_feed', $screensaver_items_per_feed);
-	}
-
-	@feeds = ();
-
 #        |requires Client
 #        |  |is a Query
 #        |  |  |has Tags
@@ -117,32 +70,11 @@ sub initPlugin {
 		'PLUGIN_RSSNEWS_SCREENSAVER'
 	);
 
-	# No prefs set or we've had a version change and they weren't modified, 
-	# so we'll use the defaults
-	if (scalar(@feedURLPrefs) == 0 ||
-		(!$feedsModified && (!$version  || $version != FEEDS_VERSION))) {
-		# use defaults
-		# set the prefs so the web interface will work.
-		revertToDefaults();
-	} else {
-		# use prefs
-		my $i = 0;
-		while ($i < scalar(@feedNamePrefs)) {
-
-			push @feeds, {
-				name  => $feedNamePrefs[$i],
-				value => $feedURLPrefs[$i],
-				type  => 'link',
-			};
-			$i++;
-		}
-	}
-
 	if ($log->is_debug) {
 
 		$log->debug("RSS Feed Info:");
 
-		for my $feed (@feeds) {
+		for my $feed (@{ $prefs->get('feeds') }) {
 
 			$log->debug(join(', ', ($feed->{'name'}, $feed->{'value'})));
 		}
@@ -150,30 +82,7 @@ sub initPlugin {
 		$log->debug("");
 	}
 
-	# feed_names should reflect current names
-	%feed_names = ();
-
-	map { $feed_names{$_->{'value'} } = $_->{'name'}} @feeds;
-	
-	updateOPMLCache( \@feeds );
-}
-
-sub revertToDefaults {
-	@feeds = @default_feeds;
-
-	my @urls  = map { $_->{'value'} } @feeds;
-	my @names = map { $_->{'name'}  } @feeds;
-
-	Slim::Utils::Prefs::set('plugin_RssNews_feeds', \@urls);
-	Slim::Utils::Prefs::set('plugin_RssNews_names', \@names);
-	Slim::Utils::Prefs::set('plugin_RssNews_feeds_version', FEEDS_VERSION);
-
-	# feed_names should reflect current names
-	%feed_names = ();
-
-	map { $feed_names{$_->{'value'}} = $_->{'name'} } @feeds;
-	
-	updateOPMLCache( \@feeds );
+	updateOPMLCache( $prefs->get('feeds') );
 }
 
 sub getDisplayName {
@@ -197,7 +106,7 @@ sub setMode {
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
 		header => '{PLUGIN_RSSNEWS} {count}',
-		listRef => \@feeds,
+		listRef => $prefs->get('feeds'),
 		modeName => 'RSS Plugin',
 		onRight => sub {
 			my $client = shift;
@@ -227,7 +136,6 @@ sub cliQuery {
 	Slim::Buttons::XMLBrowser::cliQuery('rss', $opml, $request, $refresh_sec);
 }
 
-
 # Update the hashref of RSS feeds for use with the web UI
 sub updateOPMLCache {
 	my $feeds = shift;
@@ -252,92 +160,6 @@ sub updateOPMLCache {
 		
 	my $cache = Slim::Utils::Cache->new();
 	$cache->set( 'rss_opml', $opml, '10days' );
-}
-
-sub updateFeedNames {
-	my @feedURLPrefs = Slim::Utils::Prefs::getArray("plugin_RssNews_feeds");
-	my @feedNamePrefs;
-
-	# verbose debug
-	$log->debug("URLs: " . Data::Dump::dump(\@feedURLPrefs));
-
-	# case 1: we're reverting to default
-	if (scalar(@feedURLPrefs) == 0) {
-		revertToDefaults();
-	} else {
-		# case 2: url list edited
-
-		my $i = 0;
-		while ($i < scalar(@feedURLPrefs)) {
-
-			my $url = $feedURLPrefs[$i];
-			my $name = $feed_names{$url};
-
-			if ($name && $name !~ /^http\:/) {
-
-				# no change
-				$feedNamePrefs[$i] = $name;
-
-			} elsif ($url =~ /^http\:/) {
-
-				# does a synchronous get
-				# XXX: This should use async instead, but not a very high priority 
-				# as this code is not used very much
-				my $xml = Slim::Formats::XML->getFeedSync($url);
-
-				if ($xml && exists $xml->{'channel'}->{'title'}) {
-
-					# here for podcasts and RSS
-					$feedNamePrefs[$i] = Slim::Formats::XML::unescapeAndTrim($xml->{'channel'}->{'title'});
-
-				} elsif ($xml && exists $xml->{'head'}->{'title'}) {
-
-					# here for OPML
-					$feedNamePrefs[$i] = Slim::Formats::XML::unescapeAndTrim($xml->{'head'}->{'title'});
-
-				} else {
-					# use url as title since we have nothing else
-					$feedNamePrefs[$i] = $url;
-				}
-
-			} else {
-				# use url as title since we have nothing else
-				$feedNamePrefs[$i] = $url;
-			}
-
-			$i++;
-		}
-
-		# if names array contains more than urls, delete the extras
-		while ($feedNamePrefs[$i]) {
-			delete $feedNamePrefs[$i];
-			$i++;
-		}
-
-		# save updated names to prefs
-		Slim::Utils::Prefs::set('plugin_RssNews_names', \@feedNamePrefs);
-
-		# runtime list must reflect changes
-		@feeds = ();
-		$i = 0;
-
-		while ($i < scalar(@feedNamePrefs)) {
-
-			push @feeds, {
-				name => $feedNamePrefs[$i],
-				value => $feedURLPrefs[$i]
-			};
-
-			$i++;
-		}
-
-		# feed_names should reflect current names
-		%feed_names = ();
-
-		map { $feed_names{$_->{'value'}} = $_->{'name'} } @feeds;
-		
-		updateOPMLCache( \@feeds );
-	}
 }
 
 ################################
@@ -405,6 +227,8 @@ sub tickerUpdate {
 
 sub getNextFeed {
 	my $client = shift;
+
+	my @feeds = @{ $prefs->get('feeds') };
 	
 	# select the next feed and fetch it
 	my $index = $savers->{$client}->{feed_index} || 0;
@@ -472,7 +296,7 @@ sub gotError {
 	$errors++;
 	$savers->{$client}->{feed_error} = $errors;
 	
-	if ( $errors == scalar @feeds ) {
+	if ( $errors == scalar @{ $prefs->get('feeds') } ) {
 
 		logError("All feeds failed, giving up!!");
 		
@@ -598,6 +422,8 @@ sub tickerLines {
 		# we need to limit the number of characters we add to the ticker, 
 		# because the server could crash rendering on pre-SqueezeboxG displays.
 		my $screensaver_chars_per_item = 1024;
+
+		my $screensaver_items_per_feed = $prefs->get('items_per_feed');
 		
 		my $line2 = sprintf(
 			$screensaver_item_format,
