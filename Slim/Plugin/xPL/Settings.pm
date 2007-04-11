@@ -8,17 +8,26 @@ package Slim::Plugin::xPL::Settings;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('xpl');
+
+$prefs->migrate(1, sub {
+	$prefs->set('interval', Slim::Utils::Prefs::OldPrefs->get('xplinterval') || 5);
+	$prefs->set('ir', Slim::Utils::Prefs::OldPrefs->get('xplir') || 'none');
+	1;
+});
+
 sub name {
-        return 'PLUGIN_XPL';
+	return 'PLUGIN_XPL';
 }
 
 sub page {
-        return 'plugins/xPL/settings/basic.html';
+	return 'plugins/xPL/settings/basic.html';
 }
 
 sub prefs {
-
-	return qw(xplinterval xplir);
+	return ($prefs, qw(interval ir) );
 }
 
 1;

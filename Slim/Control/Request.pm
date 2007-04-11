@@ -589,6 +589,7 @@ sub init {
     addDispatch(['playlist',       'cant_open',      '_url'],                                          [1, 0, 0, undef]);
     addDispatch(['rescan',         'done'],                                                            [0, 0, 0, undef]);
     addDispatch(['unknownir',      '_ircode',        '_time'],                                         [1, 0, 0, undef]);
+    addDispatch(['prefset'],                                                                           [0, 0, 1, undef]);
 
 # DEPRECATED
 	addDispatch(['mode',           'pause'],                                                           [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);

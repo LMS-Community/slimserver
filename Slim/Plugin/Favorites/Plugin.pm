@@ -25,6 +25,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Music::Info;
+use Slim::Utils::Prefs;
 
 use Slim::Plugin::Favorites::Opml;
 use Slim::Plugin::Favorites::OpmlFavorites;
@@ -32,6 +33,8 @@ use Slim::Plugin::Favorites::Settings;
 use Slim::Plugin::Favorites::Playlist;
 
 my $log = logger('favorites');
+
+my $prefs = preferences('favorites');
 
 sub initPlugin {
 	my $class = shift;
@@ -118,7 +121,7 @@ sub webPages {
 }
 
 sub addEditLink {
-	my $enabled = Slim::Utils::Prefs::get('plugin_favorites_opmleditor');
+	my $enabled = $prefs->get('opmleditor');
 
 	Slim::Web::Pages->addPageLinks('plugins', {	'PLUGIN_FAVORITES_PLAYLIST_EDITOR' => $enabled ? 'plugins/Favorites/index.html?new' : undef });
 }

@@ -41,6 +41,8 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
+my $prefs = preferences('xpl');
+
 ################################################################################
 # PLUGIN CODE
 ################################################################################
@@ -54,19 +56,7 @@ sub initPlugin {
 
 	$localip = inet_ntoa((gethostbyname($computername))[4]);
 
-	$xpl_interval =	Slim::Utils::Prefs::get("xplinterval");
-
-	if (!defined($xpl_interval)) {
-		$xpl_interval = 5;
-		Slim::Utils::Prefs::set("xplinterval",$xpl_interval);
-	}
-
-	$xpl_ir = Slim::Utils::Prefs::get("xplir");
-
-	if (!defined($xpl_ir)) {
-		$xpl_ir = 'none'; 
-		Slim::Utils::Prefs::set("xplir",$xpl_ir);
-	}
+	$xpl_interval =	$prefs->get('interval');
 
 	$xpl_port = 50000;
 
@@ -541,8 +531,8 @@ sub handleConfigResponse {
 		$xpl_ir = $new_ir;
 	}
 
-	Slim::Utils::Prefs::set("xplinterval",$xpl_interval);
-	Slim::Utils::Prefs::set("xplir",$xpl_ir);
+	$prefs->set('interval', $xpl_interval);
+	$prefs->set('ir', $xpl_ir);
 	sendXplHBeatMsg($client);
 }
 

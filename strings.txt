@@ -12456,3 +12456,5 @@ CLOSE
 	DE	Schliessen
 	EN	Close
 
+SETTINGS_INVALIDVALUE
+	EN	Invalid value "%s" for %s

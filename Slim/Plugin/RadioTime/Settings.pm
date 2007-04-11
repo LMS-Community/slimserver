@@ -8,16 +8,24 @@ package Slim::Plugin::RadioTime::Settings;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('radiotime');
+
+$prefs->migrate(1, sub {
+	$prefs->set('username', Slim::Utils::Prefs::OldPrefs->get('plugin_radiotime_username')); 1;
+});
+
 sub name {
-        return 'PLUGIN_RADIOTIME_MODULE_NAME';
+	return 'PLUGIN_RADIOTIME_MODULE_NAME';
 }
 
 sub page {
-        return 'plugins/RadioTime/settings/basic.html';
+	return 'plugins/RadioTime/settings/basic.html';
 }
 
 sub prefs {
-	return qw(plugin_radiotime_username);
+	return ($prefs, 'username');
 }
 
 1;

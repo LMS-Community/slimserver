@@ -8,6 +8,10 @@ package Slim::Plugin::Favorites::Settings;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('favorites');
+
 sub name {
 	return 'FAVORITES';
 }
@@ -16,21 +20,21 @@ sub page {
 	return 'plugins/Favorites/settings/basic.html';
 }
 
+sub prefs {
+	return ($prefs, 'opmleditor');
+}
+
 sub handler {
 	my ($class, $client, $params) = @_;
 
-	if ($params->{'saveSettings'}) {
+	my $ret = $class->SUPER::handler($client, $params);
 
-		Slim::Utils::Prefs::set('plugin_favorites_opmleditor', exists $params->{'opmleditor'});
+	if ($params->{'saveSettings'}) {
 
 		Slim::Plugin::Favorites::Plugin::addEditLink();
 	}
 
-	$params->{'opmleditor'} = Slim::Utils::Prefs::get('plugin_favorites_opmleditor');
-
-	delete $params->{'playerid'};
-
-	return $class->SUPER::handler($client, $params);
+	return $ret;
 }
 
 1;

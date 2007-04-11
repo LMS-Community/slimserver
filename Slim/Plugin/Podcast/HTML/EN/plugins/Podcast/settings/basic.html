@@ -9,19 +9,21 @@
 			<tr>
 			<td><label for="new_feed" class="stdlabel">[% "SETUP_PLUGIN_PODCAST_ADD_FEED" | string %]</label></td>
 
-			<td><input type="text" class="stdedit" name="plugin_podcast_feeds" id="new_feed" value="" size="60" /></td>
+			<td><input type="text" class="stdedit" name="newfeed" value="[% newfeedval %]" size="60" /></td>
 			</tr>
 
 			<tr></tr>
 			<tr></tr>
-			<tr><td><label>[% "SETUP_PLUGIN_PODCAST_EXISTING_FEEDS" | string %]</label></td><td></td></tr>
+			<tr><td><label>[% "SETUP_PLUGIN_PODCAST_EXISTING_FEEDS" | string %]</label></td><td></td><td>[% "DELETE" | string %]</td></tr>
 
 		[% FOREACH pref = prefs %]
 
 			<tr>
-			<td><label for="plugin_podcast_feeds" class="stdlabel">[% pref.1 %]</label></td>
+			<td><label for="feeds" class="stdlabel">[% pref.1 %]</label></td>
 
-			<td><input type="text" class="stdedit" name="plugin_podcast_feeds" id="plugin_podcast_feeds" value="[% pref.0 %]" size="60" /></td>
+			<td><label for="urls"  class="stdlabel">[% pref.0 %]</label></td>
+
+			<td><input name="delete" type="checkbox" value="[% pref.0 %]"></td>
 
 			</tr>
 

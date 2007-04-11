@@ -12,6 +12,8 @@ use Slim::Utils::Prefs;
 
 use Slim::Plugin::DateTime::Settings;
 
+my $prefs = preferences('datetime');
+
 sub getDisplayName {
 	return 'PLUGIN_SCREENSAVER_DATETIME';
 }
@@ -32,17 +34,6 @@ sub initPlugin {
 	$class->SUPER::initPlugin();
 
 	Slim::Plugin::DateTime::Settings->new;
-
-	# Default to screensaverDateFormat, screensaverTimeFormat to '' or update from '0'
-	# Having screensaverDateFormat set to '' means that the server wide formats are used
-
-	if (!Slim::Utils::Prefs::get('screensaverDateFormat')) {
-		Slim::Utils::Prefs::set('screensaverDateFormat','')
-	}
-
-	if (!Slim::Utils::Prefs::get('screensaverTimeFormat')) {
-		Slim::Utils::Prefs::set('screensaverTimeFormat','')
-	}
 
 	Slim::Buttons::Common::addSaver(
 		'SCREENSAVER.datetime',
@@ -151,8 +142,8 @@ sub screensaverDateTimelines {
 	Slim::Buttons::Common::syncPeriodicUpdates($client, int($nextUpdate)) if (($nextUpdate - int($nextUpdate)) > 0.01);
 
 	my $display = {
-		'center' => [ Slim::Utils::DateTime::longDateF(undef,Slim::Utils::Prefs::get('screensaverDateFormat')),
-				  Slim::Utils::DateTime::timeF(undef,Slim::Utils::Prefs::get('screensaverTimeFormat')), ],
+		'center' => [ Slim::Utils::DateTime::longDateF(undef, $prefs->get('dateformat')),
+					  Slim::Utils::DateTime::timeF(undef, $prefs->get('timeformat')) ],
 		'overlay'=> [ ($alarmOn ? $client->symbols('bell') : undef) ],
 		'fonts'  => $fontDef,
 	};

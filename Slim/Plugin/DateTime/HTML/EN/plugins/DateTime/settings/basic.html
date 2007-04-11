@@ -4,25 +4,25 @@
 		<div class="groupHead">[% "SETUP_GROUP_DATETIME" | string | upper %]</div>
 		<div class="groupDesc">[% "SETUP_GROUP_DATETIME_DESC" | string %]</div>
 
-		<select name="screensaverDateFormat">
+		<select name="dateformat">
 
-		<option value="" [% IF NOT prefs.screensaverTimeFormat %]selected[% END %]>[% "SETUP_GROUP_DATETIME_DEFAULTTIME" | string %]</option>
+		<option value="" [% IF NOT prefs.dateformat %]selected[% END %]>[% "SETUP_GROUP_DATETIME_DEFAULTTIME" | string %]</option>
 
 		[% FOREACH format = dateFormats %]
 
-			<option value="[% format.key %]" [% IF prefs.screensaverDateFormat == format %]selected[% END %]>[% format.value %]</option>
+			<option value="[% format.key %]" [% IF prefs.dateformat == format.key %]selected[% END %]>[% format.value %]</option>
 
 		[% END %]
 
 		</select>
 
-		<select name="screensaverTimeFormat">
+		<select name="timeformat">
 
-		<option value="" [% IF NOT prefs.screensaverTimeFormat %]selected[% END %]>[% "SETUP_GROUP_DATETIME_DEFAULTTIME" | string %]</option>
+		<option value="" [% IF NOT prefs.timeformat %]selected[% END %]>[% "SETUP_GROUP_DATETIME_DEFAULTTIME" | string %]</option>
 
 		[% FOREACH format = timeFormats %]
 
-			<option value="[% format.key %]" [% IF prefs.screensaverTimeFormat == format %]selected[% END %]>[% format.value %]</option>
+			<option value="[% format.key %]" [% IF prefs.timeformat == format.key %]selected[% END %]>[% format.value %]</option>
 
 		[% END %]
 

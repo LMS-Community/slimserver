@@ -34,10 +34,11 @@ our %prefChange = ();
 
 my $DEFAULT_DBSOURCE = 'dbi:mysql:hostname=127.0.0.1;port=9092;database=%s';
 
-# Prefs is special - we need to be loaded before logging, but use logging later on.
-my $log = undef;
+my $log = logger('prefs');
 
 sub init {
+
+	init_new();
 
 	# These are scripts that are run once on old prefs file to bring them
 	# up-to-date with specific changes we want to push out to default prefs.
@@ -1230,6 +1231,113 @@ sub loadOldPrefs {
 	}
 	close(NUPREFS);	
 }	
+
+
+########################################################################################################
+# new object based preferences - some of above will migrate to use these, both used during migration
+########################################################################################################
+
+=head1 NAME
+
+Slim::Utils::Prefs
+
+=head1 SYNOPSIS
+
+use Slim::Utils::Pres;
+
+my $prefs = preferences('demo');
+
+$prefs->set('pref1', 1); or $prefs->pref1(1);
+
+$prefs->get('pref1'); or $prefs->pref1;
+
+$prefs->client($client)->set('clientpref1', 1); or $prefs->client($client)->clientpref1(1);
+
+$prefs->client($client)->get('clientpref1'); or $prefs->client($client)->clientpref1;
+
+$prefs->init({ 'pref1' => 1, 'pref2' => 2 });
+
+$pref->remove( 'pref1' );
+
+$prefs->migrate(1, sub {
+	$prefs->set('skin', Slim::Utils::Prefs::OldPrefs->get('skin') );
+	1;
+});
+
+$prefs->setValidate('int', 'pref1');
+
+$prefs->setChange(\&myCallback, 'pref1');
+
+=head1 DESCRIPTION
+
+Object based preferences supporing multiple namespaces so the server and
+each plugin can have their own preference namespace.
+Supports both global and client preferences within a namespace.
+
+This implementation stores preferences in YAML files with one YAML file per namespace.
+
+=head2 Each preference may be associated with:
+
+=item validation function to verify the new value for a preference before setting it
+
+=item on change callback to execute when a preference is set
+
+=head2 Each namespace supports:
+
+=item migration functions to update preferences to a new version number
+(each namespace has a global and per client version number)
+
+=head2 SEE ALSO
+
+L<Slim::Utils::Prefs::Base>
+L<Slim::Utils::Prefs::Namespace>
+L<Slim::Utils::Prefs::Client>
+L<Slim::Utils::Preds::OldPrefs>
+
+=cut
+
+use Slim::Utils::Prefs::Namespace;
+use Slim::Utils::Prefs::OldPrefs;
+
+use Exporter::Lite;
+
+our @EXPORT = qw(preferences);
+
+my $path = Slim::Utils::OSDetect::dirsFor('prefs');
+
+my $prefs = preferences('server');
+
+my %namespaces;
+
+sub preferences {
+	my $namespace = shift;
+
+	return $namespaces{$namespace} ||= Slim::Utils::Prefs::Namespace->new($namespace, $path);
+}
+
+sub init_new {
+	$prefs->migrate(1, sub {
+		unless (-d $path) {
+			mkdir $path;
+		}
+
+		unless (-d $path) {
+			logError("can't create new preferences directory at $path");
+		}
+
+		0;
+	});
+}
+
+sub namespaces {
+	return [ keys %namespaces ];
+}
+
+sub writeAll {
+	for my $n (values %namespaces) {
+		$n->savenow;
+	}
+}
 
 1;
 

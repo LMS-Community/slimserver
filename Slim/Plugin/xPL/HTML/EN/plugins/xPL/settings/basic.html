@@ -9,19 +9,19 @@
 		<tr>
 			<td><label for="xplinterval">[% "SETUP_XPLINTERVAL_CHOOSE" | string %]</label></td>
 			<td>
-				<input type="text" class="stdedit" name="xplinterval" id="xplinterval" value="[% prefs.xplinterval %]" size="5">
+				<input type="text" class="stdedit" name="interval" id="xplinterval" value="[% prefs.interval %]" size="5">
 			</td>
 		</tr>
 
 		<tr>
 			<td><label for="xplir">[% "SETUP_XPLIR_CHOOSE" | string %]</label></td>
 			<td>
-				<select name="xplir">
+				<select name="ir">
 
-				<option value="none" [% IF prefs.xplir == "none" %]selected[% END %]>[% "SETUP_XPLIR_NONE" | string %]</option>
-				<option value="buttons" [% IF prefs.xplir == "buttons" %]selected[% END %]>[% "SETUP_XPLIR_BUTTONS" | string %]</option>
-				<option value="raw" [% IF prefs.xplir == "raw" %]selected[% END %]>[% "SETUP_XPLIR_RAW" | string %]</option>
-				<option value="both" [% IF prefs.xplir == "both" %]selected[% END %]>[% "SETUP_XPLIR_BOTH" | string %]</option>
+				<option value="none" [% IF prefs.ir == "none" %]selected[% END %]>[% "SETUP_XPLIR_NONE" | string %]</option>
+				<option value="buttons" [% IF prefs.ir == "buttons" %]selected[% END %]>[% "SETUP_XPLIR_BUTTONS" | string %]</option>
+				<option value="raw" [% IF prefs.ir == "raw" %]selected[% END %]>[% "SETUP_XPLIR_RAW" | string %]</option>
+				<option value="both" [% IF prefs.ir == "both" %]selected[% END %]>[% "SETUP_XPLIR_BOTH" | string %]</option>
 
 				</select>
 			</td>

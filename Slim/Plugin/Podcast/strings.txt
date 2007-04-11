@@ -62,3 +62,6 @@ SETUP_PLUGIN_PODCAST_ADD_FEED
 SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
 	DE	Eingetragene Feeds:
 	EN	Existing feeds:
+
+SETUP_PLUGIN_PODCAST_INVALID_FEED
+	EN	Invalid Feed - Can't connect to %s

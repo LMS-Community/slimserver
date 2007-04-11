@@ -15,6 +15,8 @@ use Slim::Utils::Log;
 use Slim::Web::HTTP;
 use Slim::Web::Pages;
 
+use Scalar::Util qw(blessed);
+
 sub new {
 	my $class = shift;
 
@@ -62,14 +64,34 @@ sub handler {
 	# programatic validation via the prefs rework.
 	my @prefs = $class->prefs;
 
+	my $prefsClass = shift @prefs if (@prefs && blessed($prefs[0]));
+
 	for my $pref (@prefs) {
 
 		if ($paramRef->{'saveSettings'}) {
 
-			Slim::Utils::Prefs::set($pref, $paramRef->{$pref});
+			if ($prefsClass) {
+
+				my (undef, $ok) = $prefsClass->set($pref, $paramRef->{$pref});
+
+				if (!$ok) {
+					$paramRef->{'warning'} .= sprintf(Slim::Utils::Strings::string('SETTINGS_INVALIDVALUE'), $paramRef->{$pref}, $pref);
+				}
+
+			} else {
+
+				Slim::Utils::Prefs::set($pref, $paramRef->{$pref});
+			}
 		}
 
-		$paramRef->{'prefs'}->{$pref} = Slim::Utils::Prefs::get($pref);
+		if ($prefsClass) {
+
+			$paramRef->{'prefs'}->{$pref} = $prefsClass->get($pref);
+
+		} else {
+
+			$paramRef->{'prefs'}->{$pref} = Slim::Utils::Prefs::get($pref);
+		}
 	}
 
 	# Common values

@@ -17,6 +17,7 @@ use Slim::Control::Request;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
+use Slim::Utils::Prefs;
 
 # This plugin provides a command-line interface to the server via a TCP/IP port.
 # See cli-api.html for documentation.
@@ -59,6 +60,8 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => 'PLUGIN_CLI',
 });
 
+my $prefs = preferences('cli');
+
 ################################################################################
 # PLUGIN CODE
 ################################################################################
@@ -67,12 +70,6 @@ my $log = Slim::Utils::Log->addLogCategory({
 sub initPlugin {
 
 	$log->info("Initializing");
-
-	# make sure we have a default value for our preference
-	if (!defined Slim::Utils::Prefs::get('cliport')) {
-
-		Slim::Utils::Prefs::set('cliport', 9090);
-	}
 
 	Slim::Plugin::CLI::Settings->new;
 
@@ -175,7 +172,7 @@ sub cli_socket_change {
 	$log->debug("Begin Function");
 
 	# get the port we must use
-	my $newport = Slim::Utils::Prefs::get('cliport');
+	my $newport = $prefs->get('cliport');
 
 	# if the port changed...
 	if ($cli_socket_port != $newport) {

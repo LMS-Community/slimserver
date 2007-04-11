@@ -234,11 +234,7 @@ sub init {
 	msg("SlimServer OSDetect init...\n");
 	Slim::Utils::OSDetect::init();
 
-	# initialize slimserver subsystems
-	msg("SlimServer settings init...\n");
-	initSettings();
-
-	# Now that the user might have changed - open the log files.
+	# open the log files
 	Slim::Utils::Log->init({
 		'logconf' => $logconf,
 		'logdir'  => $logdir,
@@ -247,11 +243,12 @@ sub init {
 		'debug'   => $debug,
 	});
 
+	# initialize slimserver subsystems
+	msg("SlimServer settings init...\n");
+	initSettings();
+
 	# Redirect STDERR to the log file.
 	tie *STDERR, 'Slim::Utils::Log::Trapper';
-
-	# Load a log handler for prefs now.
-	Slim::Utils::Prefs::loadLogHandler();
 
 	my $log = logger('server');
 
@@ -871,6 +868,8 @@ sub cleanup {
 	if (Slim::Utils::Prefs::writePending()) {
 		Slim::Utils::Prefs::writePrefs();
 	}
+
+	Slim::Utils::Prefs::writeAll();
 
 	Slim::Networking::mDNS->stopAdvertising;
 

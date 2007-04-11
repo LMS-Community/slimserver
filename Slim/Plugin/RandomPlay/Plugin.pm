@@ -21,6 +21,7 @@ use Slim::Buttons::Home;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Prefs;
 
 my %stopcommands = ();
 
@@ -42,6 +43,23 @@ my $log          = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
+my $prefs = preferences('randomplay');
+
+$prefs->migrate(1, sub {
+	$prefs->set('newtracks', Slim::Utils::Prefs::OldPrefs->get('plugin_random_number_of_tracks')     || 10 );
+	$prefs->set('oldtracks', Slim::Utils::Prefs::OldPrefs->get('plugin_random_number_of_old_tracks') || 0  );
+	$prefs->set('continue',  Slim::Utils::Prefs::OldPrefs->get('plugin_random_keep_adding_tracks')   || 1  );
+	$prefs->set('exclude_genres', Slim::Utils::Prefs::OldPrefs->get('plugin_random_exclude_genres')  || [] );
+	1;
+});
+
+$prefs->migrateClient(1, sub {
+	my ($clientprefs, $client) = @_;
+	$clientprefs->set('type', Slim::Utils::Prefs::OldPrefs->clientGet($client, 'plugin_random_type')); 1;
+});
+
+$prefs->setValidate('int', qw(newtracks oldtracks) );
+
 sub getDisplayName {
 	return 'PLUGIN_RANDOM';
 }
@@ -61,8 +79,6 @@ sub initPlugin {
 		'loadalbum'  => 1, # old style multi-item load
 		'playalbum'  => 1, # old style multi-item play
 	);
-	
-	checkDefaults();
 
 	generateGenreNameMap();
 
@@ -225,7 +241,7 @@ sub getGenres {
 
 	# Extract each genre name into a hash
 	my %clientGenres = ();
-	my @exclude      = Slim::Utils::Prefs::getArray('plugin_random_exclude_genres');
+	my @exclude      = @{$prefs->get('exclude_genres')};
 
 	while (my $genre = $rs->next) {
 
@@ -310,7 +326,7 @@ sub playRandom {
 	$type = lc($type);
 
 	# Whether to keep adding tracks after generating the initial playlist
-	my $continuousMode = Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks');
+	my $continuousMode = $prefs->get('continuous');
 
 	# If this is a new mix, store the start time
 	my $startTime = undef;
@@ -319,7 +335,7 @@ sub playRandom {
 
 		$mixInfo{$client->masterOrSelf->id}->{'idList'} = undef;
 
-		$client->prefSet('plugin_random_type', $type) unless ($type eq 'disable');
+		$prefs->client($client)->set('type', $type) unless ($type eq 'disable');
 
 		$startTime = time() if $continuousMode;
 	}
@@ -335,7 +351,7 @@ sub playRandom {
 	if ($type eq 'track') {
 
 		# Add new tracks if there aren't enough after the current track
-		my $numRandomTracks = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
+		my $numRandomTracks = $prefs->get('newtracks');
 
 		if (!$addOnly) {
 
@@ -606,7 +622,7 @@ sub toggleGenreState {
 		$genres{$client}->{$item->{'name'}}->{'enabled'} = ! $genres{$client}->{$item->{'name'}}->{'enabled'};
 	}
 
-	Slim::Utils::Prefs::set('plugin_random_exclude_genres', getFilteredGenres($client, 1, 1));
+	$prefs->set('exclude_genres', getFilteredGenres($client, 1, 1) );
 
 	$client->update;
 }
@@ -718,7 +734,7 @@ sub commandCallback {
 		return;
 	}
 
-	if (!defined $client || !defined $mixInfo{$client->masterOrSelf->id}->{'type'} || !Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks')) {
+	if (!defined $client || !defined $mixInfo{$client->masterOrSelf->id}->{'type'} || !$prefs->get('continuous')) {
 		return;
 	}
 
@@ -753,9 +769,9 @@ sub commandCallback {
 			}
 		}
 
-		my $songsToKeep = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
+		my $songsToKeep = $prefs->get('oldtracks'); # 0 = keep all
 
-		if ($songIndex && $songsToKeep ne '' && $songIndex > $songsToKeep) {
+		if ($songIndex && $songsToKeep && $songIndex > $songsToKeep) {
 
 			$log->info(sprintf("Stripping off %i completed track(s)", $songIndex - $songsToKeep));
 
@@ -835,7 +851,7 @@ sub getFunctions {
 sub buttonStart {
 	my $client = shift;
 
-	playRandom($client, $client->prefGet('plugin_random_type') || 'track');
+	playRandom($client, $prefs->client($client)->get('type') || 'track');
 }
 
 sub webPages {
@@ -856,11 +872,11 @@ sub handleWebList {
 
 	if ($client) {
 		# Pass on the current pref values and now playing info
-		$params->{'pluginRandomGenreList'} = getGenres($client);
-		$params->{'pluginRandomNumTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
-		$params->{'pluginRandomNumOldTracks'} = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
-		$params->{'pluginRandomContinuousMode'} = Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks');
-		$params->{'pluginRandomNowPlaying'} = $mixInfo{$client->masterOrSelf->id}->{'type'};
+		$params->{'pluginRandomGenreList'}     = getGenres($client);
+		$params->{'pluginRandomNumTracks'}     = $prefs->get('newtracks');
+		$params->{'pluginRandomNumOldTracks'}  = $prefs->get('oldtracks') || ''; # convert 0 to ''
+		$params->{'pluginRandomContinuousMode'}= $prefs->get('continuous');
+		$params->{'pluginRandomNowPlaying'}    = $mixInfo{$client->masterOrSelf->id}->{'type'};
 	}
 	
 	return Slim::Web::HTTP::filltemplatefile($htmlTemplate, $params);
@@ -891,65 +907,13 @@ sub handleWebSettings {
 		}
 	}
 
-	Slim::Utils::Prefs::set('plugin_random_exclude_genres', [keys %{$genres}]);	
-
-	if ($params->{'numTracks'} =~ /^[0-9]+$/) {
-
-		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', $params->{'numTracks'});
-
-	} else {
-
-		$log->warn("Warning: Invalid value for numTracks");
-	}
-
-	if ($params->{'numOldTracks'} eq '' || $params->{'numOldTracks'} =~ /^[0-9]+$/) {
-
-		Slim::Utils::Prefs::set('plugin_random_number_of_old_tracks', $params->{'numOldTracks'});	
-
-	} else {
-
-		$log->warn("Warning: Invalid value for numOldTracks");
-	}
-
-	Slim::Utils::Prefs::set('plugin_random_keep_adding_tracks', $params->{'continuousMode'} ? 1 : 0);
+	$prefs->set('exclude_genres', [keys %{$genres}]);
+ 	$prefs->set('newtracks', $params->{'numTracks'});
+ 	$prefs->set('oldtracks', $params->{'numOldTracks'} || 0); # convert '' to 0
+	$prefs->set('continuous', $params->{'continuousMode'} ? 1 : 0);
 
 	# Pass on to check if the user requested a new mix as well
 	handleWebMix($client, $params);
-}
-
-sub checkDefaults {
-	my $prefVal = Slim::Utils::Prefs::get('plugin_random_number_of_tracks');
-
-	if (! defined $prefVal || $prefVal !~ /^[0-9]+$/) {
-
-		$log->debug("Defaulting plugin_random_number_of_tracks to 10");
-
-		Slim::Utils::Prefs::set('plugin_random_number_of_tracks', 10);
-	}
-	
-	$prefVal = Slim::Utils::Prefs::get('plugin_random_number_of_old_tracks');
-
-	if (! defined $prefVal || $prefVal !~ /^$|^[0-9]+$/) {
-
-		# Default to keeping all tracks
-		$log->debug("Defaulting plugin_random_number_of_old_tracks to ''");
-
-		Slim::Utils::Prefs::set('plugin_random_number_of_old_tracks', '');
-	}
-
-	if (! defined Slim::Utils::Prefs::get('plugin_random_keep_adding_tracks')) {
-
-		# Default to continous mode
-		$log->debug("Defaulting plugin_random_keep_adding_tracks to 1");
-
-		Slim::Utils::Prefs::set('plugin_random_keep_adding_tracks', 1);
-	}
-
-	if (!Slim::Utils::Prefs::isDefined('plugin_random_exclude_genres')) {
-
-		# Include all genres by default
-		Slim::Utils::Prefs::set('plugin_random_exclude_genres', []);
-	}
 }
 
 sub active {

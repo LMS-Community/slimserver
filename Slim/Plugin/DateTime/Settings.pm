@@ -8,6 +8,16 @@ package Slim::Plugin::DateTime::Settings;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('datetime');
+
+$prefs->migrate(1, sub {
+	$prefs->set('timeformat', Slim::Utils::Prefs::OldPrefs->get('screensaverTimeFormat') || '');
+	$prefs->set('dateformat', Slim::Utils::Prefs::OldPrefs->get('screensaverDateFormat') || '');
+	1;
+});
+
 my $timeFormats = Slim::Utils::DateTime::timeFormats();
 
 my $dateFormats = {
@@ -16,35 +26,24 @@ my $dateFormats = {
 };
 
 sub name {
-        return 'PLUGIN_SCREENSAVER_DATETIME';
+	return 'PLUGIN_SCREENSAVER_DATETIME';
 }
 
 sub page {
-        return 'plugins/DateTime/settings/basic.html';
+	return 'plugins/DateTime/settings/basic.html';
+}
+
+sub prefs {
+	return ($prefs, qw(timeformat dateformat) );
 }
 
 sub handler {
-        my ($class, $client, $params) = @_;
-
-	my @prefs = qw(
-		screensaverTimeFormat
-		screensaverDateFormat
-	);
-
-	for my $pref (@prefs) {
-
-		if ($params->{'saveSettings'}) {
-
-			Slim::Utils::Prefs::set($pref, $params->{$pref});
-		}
-
-		$params->{'prefs'}->{$pref} = Slim::Utils::Prefs::get($pref);
-        }
+	my ($class, $client, $params) = @_;
 
 	$params->{'timeFormats'} = $timeFormats;
 	$params->{'dateFormats'} = $dateFormats;
 
-        return $class->SUPER::handler($client, $params);
+	return $class->SUPER::handler($client, $params);
 }
 
 1;

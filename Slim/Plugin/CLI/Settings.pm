@@ -8,6 +8,17 @@ package Slim::Plugin::CLI::Settings;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('cli');
+
+$prefs->migrate(1, sub {
+	$prefs->set('cliport', Slim::Utils::Prefs::OldPrefs->get('cliport') || 9090); 1;
+});
+
+$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1024, 'high' => 65535 }, 'cliport');
+$prefs->setChange(\&Slim::Plugin::CLI::Plugin::cli_socket_change, 'cliport');
+
 sub name {
 	return 'PLUGIN_CLI';
 }
@@ -16,30 +27,8 @@ sub page {
 	return 'plugins/CLI/settings/basic.html';
 }
 
-sub handler {
-	 my ($class, $client, $params) = @_;
-
-	my @prefs = qw(
-		cliport
-	);
-
-	for my $pref (@prefs) {
-
-		if ($params->{'saveSettings'}) {
-
-			# XXX - validate port
-			Slim::Utils::Prefs::set($pref, $params->{$pref});
-
-			if ($params->{$pref} != Slim::Utils::Prefs::get($pref)) {
-
-				Slim::Plugin::CLI::Plugin::cli_socket_change();
-			}
-		}
-
-		$params->{'prefs'}->{$pref} = Slim::Utils::Prefs::get($pref);
-	}
-
-	return $class->SUPER::handler($client, $params);
+sub prefs {
+	return ($prefs, 'cliport');
 }
 
 1;

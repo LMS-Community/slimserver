@@ -6,33 +6,23 @@ package Slim::Plugin::TT::Prefs;
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
+# TT wrapper to access prefs, e.g of use:
+#
+# [% USE Prefs; FOREACH namespace = Prefs.namespaces %] <h3>[% namespace %]</h3>
+# [% prefs = Prefs.preferences(namespace) %]
+# [% FOREACH pref = prefs.all.keys %] [% pref %] = [% prefs.get(pref) %]<br>[% END %]
+# [% END %]
+
 use strict;
 use base qw(Template::Plugin);
 
-sub load {
-	my ($class, $context) = @_;
-
-	return $class;
+sub namespaces {
+	return Slim::Utils::Prefs::namespaces();
 }
 
-sub new {
-	my ($class, $context, @params) = @_;
-	bless {}, $class;
-}
-
-sub get {
+sub preferences {
 	my $self = shift;
-	return Slim::Utils::Prefs::get(@_);
-}
-
-sub getInd {
-	my $self = shift;
-	return Slim::Utils::Prefs::getInd(@_);
-}
-
-sub clientGet {
-	my $self = shift;
-	return Slim::Utils::Prefs::clientGet(@_);
+	return Slim::Utils::Prefs::preferences(@_);
 }
 
 1;

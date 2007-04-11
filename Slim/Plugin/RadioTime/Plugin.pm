@@ -23,6 +23,7 @@ use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
 use Slim::Utils::Strings qw( string );
 use Slim::Web::XMLBrowser;
+use Slim::Utils::Prefs;
 
 my $FEED = 'http://opml.radiotime.com/Index.aspx';
 my $cli_next;
@@ -32,6 +33,8 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'defaultLevel' => 'WARN',
 	'description'  => getDisplayName(),
 });
+
+my $prefs = preferences('radiotime');
 
 sub initPlugin {
 	my $class = shift;
@@ -91,7 +94,7 @@ sub radioTimeURL {
 		$username = $client->prefGet('plugin_radiotime_username', undef, 1);
 	}
 	else {
-		$username = Slim::Utils::Prefs::get('plugin_radiotime_username');
+		$username = $prefs->get('username');
 	}
 	
 	my $url = $FEED;

@@ -627,11 +627,11 @@ Returns the location of the default config file for the platform.
 sub defaultConfigFile {
 	my $class = shift;
 
-	my $cacheDir = Slim::Utils::Prefs::get('cachedir');
+	my $logDir = Slim::Utils::OSDetect::dirsFor('log');
 
-	if (defined $cacheDir && -d $cacheDir) {
+	if (defined $logDir && -d $logDir) {
 
-		return File::Spec->catdir($cacheDir, 'log.conf');
+		return File::Spec->catdir($logDir, 'log.conf');
 	}
 }
 
