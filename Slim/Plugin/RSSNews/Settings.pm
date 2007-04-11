@@ -12,7 +12,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
 my $log   = logger('plugin.rssnews');
-my $prefs = preferences('rssnews');
+my $prefs = preferences('plugin.rssnews');
 
 use constant FEED_VERSION => 2; # bump this number when changing the defaults below
 

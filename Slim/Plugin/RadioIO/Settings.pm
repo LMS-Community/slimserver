@@ -8,44 +8,42 @@ package Slim::Plugin::RadioIO::Settings;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('plugin.radioio');
+
+$prefs->migrate(1, sub {
+	$prefs->set('username', Slim::Utils::Prefs::OldPrefs->get('plugin_radioio_username'));
+	$prefs->set('password', Slim::Utils::Prefs::OldPrefs->get('plugin_radioio_password'));
+	1;
+});
+
 sub name {
-        return 'PLUGIN_RADIOIO_MODULE_NAME';
+	return 'PLUGIN_RADIOIO_MODULE_NAME';
 }
 
 sub page {
-        return 'plugins/RadioIO/settings/basic.html';
+	return 'plugins/RadioIO/settings/basic.html';
+}
+
+sub prefs {
+	return ($prefs, qw(username password));
 }
 
 sub handler {
-        my ($class, $client, $params) = @_;
+	my ($class, $client, $params) = @_;
 
-	my @prefs = qw(
-		plugin_radioio_username
-		plugin_radioio_password
-	);
+	if ($params->{'saveSettings'}) {
 
-	for my $pref (@prefs) {
+		if ($params->{'password'}) {
 
-		if ($params->{'saveSettings'}) {
+			$params->{'password'} = MIME::Base64::encode_base64($params->{'password'});
 
-			if ($pref eq 'plugin_radioio_password') {
-
-				$params->{$pref} = MIME::Base64::encode_base64($params->{$pref});
-				chomp($params->{$pref});
-			}
-
-			Slim::Utils::Prefs::set($pref, $params->{$pref});
+			chomp($params->{'password'});
 		}
+	}
 
-		# Do we want to display the password?
-		if ($pref eq 'plugin_radioio_password') {
-			next;
-		}
-
-		$params->{'prefs'}->{$pref} = Slim::Utils::Prefs::get($pref);
-        }
-
-        return $class->SUPER::handler($client, $params);
+	return $class->SUPER::handler($client, $params);
 }
 
 1;

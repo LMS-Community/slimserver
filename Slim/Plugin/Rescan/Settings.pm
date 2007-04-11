@@ -8,55 +8,40 @@ package Slim::Plugin::Rescan::Settings;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use Slim::Utils::Prefs;
 use Slim::Utils::DateTime;
 
+my $prefs = preferences('plugin.rescan');
+
+$prefs->migrate(1, sub {
+	$prefs->set('time',      Slim::Utils::Prefs::OldPrefs->get('rescan-time')      || 9 * 60 * 60 );
+	$prefs->set('scheduled', Slim::Utils::Prefs::OldPrefs->get('rescan-scheduled') || 0           );
+	$prefs->set('type',      Slim::Utils::Prefs::OldPrefs->get('rescan-type')      || '1rescan'   );
+	1;
+});
+
 sub name {
-        return 'PLUGIN_RESCAN_MUSIC_LIBRARY';
+	return 'PLUGIN_RESCAN_MUSIC_LIBRARY';
 }
 
 sub page {
-        return 'plugins/Rescan/settings/basic.html';
+	return 'plugins/Rescan/settings/basic.html';
+}
+
+sub prefs {
+	return ($prefs, qw(scheduled type) );
 }
 
 sub handler {
-        my ($class, $client, $params) = @_;
+	my ($class, $client, $params) = @_;
 
-	my @prefs = qw(
-		rescan-scheduled
-		rescan-time
-		rescan-type
-	);
+	if ($params->{'saveSettings'} && $params->{'time'}) {
+		$prefs->set('time', Slim::Utils::DateTime::prettyTimeToSecs($params->{'time'}));
+	}
 
-	for my $pref (@prefs) {
+	$params->{'prefs'}->{'time'} = Slim::Utils::DateTime::secsToPrettyTime($prefs->get('time'));
 
-		if ($params->{'saveSettings'}) {
-
-			if ($pref eq 'rescan-time') {
-
-				$params->{$pref} = Slim::Utils::DateTime::prettyTimeToSecs($params->{$pref});
-			}
-
-			Slim::Utils::Prefs::set($pref, $params->{$pref});
-		}
-
-		$params->{'prefs'}->{$pref} = Slim::Utils::Prefs::get($pref);
-
-		if ($pref eq 'rescan-time') {
-
-			$params->{'prefs'}->{$pref} = Slim::Utils::DateTime::secsToPrettyTime(
-				$params->{'prefs'}->{$pref}
-			);
-		}
-
-		# Hack prefs - Template Toolkit doesn't like the dashes.
-		my $value = delete $params->{'prefs'}->{$pref};
-
-		$pref =~ s/-(\w)/\u$1/;
-
-		$params->{'prefs'}->{$pref} = $value;
-        }
-
-        return $class->SUPER::handler($client, $params);
+	return $class->SUPER::handler($client, $params);
 }
 
 1;

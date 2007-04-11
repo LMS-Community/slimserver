@@ -34,7 +34,7 @@ use Slim::Plugin::Favorites::Playlist;
 
 my $log = logger('favorites');
 
-my $prefs = preferences('favorites');
+my $prefs = preferences('plugin.favorites');
 
 sub initPlugin {
 	my $class = shift;

@@ -25,8 +25,11 @@ use Slim::Buttons::XMLBrowser;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Strings qw( string );
 use Slim::Web::XMLBrowser;
+use Slim::Utils::Prefs;
 
 use Slim::Plugin::RadioIO::ProtocolHandler;
+
+my $prefs = preferences('plugin.radioio');
 
 my $FEED = 'http://www.radioio.com/opml/channelsLOGIN.php?device=Squeezebox&speed=high';
 my $cli_next;
@@ -86,16 +89,8 @@ sub setMode {
 sub radioIOURL {
 	my $client = shift;
 	
-	my ($username, $password);
-	
-	if ( $ENV{SLIM_SERVICE} ) {
-		$username = $client->prefGet('plugin_radioio_username', undef, 1);
-		$password = $client->prefGet('plugin_radioio_password', undef, 1);
-	}
-	else {
-		$username = Slim::Utils::Prefs::get('plugin_radioio_username');
-		$password = Slim::Utils::Prefs::get('plugin_radioio_password');
-	}
+	my $username = $prefs->get('username');
+	my $password = $prefs->get('password');
 	
 	my $url = $FEED;
 	

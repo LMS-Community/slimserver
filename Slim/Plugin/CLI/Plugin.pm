@@ -60,7 +60,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => 'PLUGIN_CLI',
 });
 
-my $prefs = preferences('cli');
+my $prefs = preferences('plugin.cli');
 
 ################################################################################
 # PLUGIN CODE

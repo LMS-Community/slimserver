@@ -10,7 +10,7 @@ use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Prefs;
 
-my $prefs = preferences('favorites');
+my $prefs = preferences('plugin.favorites');
 
 sub name {
 	return 'FAVORITES';

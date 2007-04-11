@@ -12,7 +12,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
 my $log   = logger('plugin.podcast');
-my $prefs = preferences('podcast');
+my $prefs = preferences('plugin.podcast');
 
 use constant FEED_VERSION => 2; # bump this number when changing the defaults below
 

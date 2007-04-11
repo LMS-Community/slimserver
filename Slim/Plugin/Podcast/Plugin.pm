@@ -27,7 +27,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
-my $prefs = preferences('podcast');
+my $prefs = preferences('plugin.podcast');
 
 use Slim::Plugin::Podcast::Settings;
 

@@ -10,7 +10,7 @@ use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Prefs;
 
-my $prefs = preferences('radiotime');
+my $prefs = preferences('plugin.radiotime');
 
 $prefs->migrate(1, sub {
 	$prefs->set('username', Slim::Utils::Prefs::OldPrefs->get('plugin_radiotime_username')); 1;

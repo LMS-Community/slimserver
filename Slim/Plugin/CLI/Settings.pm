@@ -10,7 +10,7 @@ use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Prefs;
 
-my $prefs = preferences('cli');
+my $prefs = preferences('plugin.cli');
 
 $prefs->migrate(1, sub {
 	$prefs->set('cliport', Slim::Utils::Prefs::OldPrefs->get('cliport') || 9090); 1;

@@ -1245,7 +1245,7 @@ Slim::Utils::Prefs
 
 use Slim::Utils::Pres;
 
-my $prefs = preferences('demo');
+my $prefs = preferences('plugin.demo');
 
 $prefs->set('pref1', 1); or $prefs->pref1(1);
 
@@ -1275,6 +1275,8 @@ each plugin can have their own preference namespace.
 Supports both global and client preferences within a namespace.
 
 This implementation stores preferences in YAML files with one YAML file per namespace.
+Namespaces of the form 'dir.name' are saved as filename 'name.prefs' in sub directory 'dir'.
+Preferences for plugins are expected to be stored in namespaces prefixed by 'plugin.'
 
 =head2 Each preference may be associated with:
 
@@ -1287,12 +1289,7 @@ This implementation stores preferences in YAML files with one YAML file per name
 =item migration functions to update preferences to a new version number
 (each namespace has a global and per client version number)
 
-=head2 SEE ALSO
-
-L<Slim::Utils::Prefs::Base>
-L<Slim::Utils::Prefs::Namespace>
-L<Slim::Utils::Prefs::Client>
-L<Slim::Utils::Preds::OldPrefs>
+=head1 METHODS
 
 =cut
 
@@ -1309,10 +1306,28 @@ my $prefs = preferences('server');
 
 my %namespaces;
 
+=head2 preferences( $namespace )
+
+Returns a prefs object for the namespace $namespace.
+
+It is usual to prefix plugin namespaces with "plugin.", e.g. preferences('plugin.demo').
+
+=cut
+
 sub preferences {
 	my $namespace = shift;
 
 	return $namespaces{$namespace} ||= Slim::Utils::Prefs::Namespace->new($namespace, $path);
+}
+
+=head2 namespaces( )
+
+Returns an array of all active preference namespaces.
+
+=cut
+
+sub namespaces {
+	return [ keys %namespaces ];
 }
 
 sub init_new {
@@ -1329,15 +1344,20 @@ sub init_new {
 	});
 }
 
-sub namespaces {
-	return [ keys %namespaces ];
-}
-
 sub writeAll {
 	for my $n (values %namespaces) {
 		$n->savenow;
 	}
 }
+
+=head2 SEE ALSO
+
+L<Slim::Utils::Prefs::Base>
+L<Slim::Utils::Prefs::Namespace>
+L<Slim::Utils::Prefs::Client>
+L<Slim::Utils::Preds::OldPrefs>
+
+=cut
 
 1;
 

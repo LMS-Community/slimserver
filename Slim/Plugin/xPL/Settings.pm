@@ -10,7 +10,7 @@ use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Prefs;
 
-my $prefs = preferences('xpl');
+my $prefs = preferences('plugin.xpl');
 
 $prefs->migrate(1, sub {
 	$prefs->set('interval', Slim::Utils::Prefs::OldPrefs->get('xplinterval') || 5);

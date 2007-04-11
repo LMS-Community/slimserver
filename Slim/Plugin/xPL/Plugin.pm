@@ -41,7 +41,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
-my $prefs = preferences('xpl');
+my $prefs = preferences('plugin.xpl');
 
 ################################################################################
 # PLUGIN CODE

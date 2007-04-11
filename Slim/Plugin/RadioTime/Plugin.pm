@@ -34,7 +34,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
-my $prefs = preferences('radiotime');
+my $prefs = preferences('plugin.radiotime');
 
 sub initPlugin {
 	my $class = shift;

@@ -12,7 +12,7 @@ use Slim::Utils::Prefs;
 
 use Slim::Plugin::DateTime::Settings;
 
-my $prefs = preferences('datetime');
+my $prefs = preferences('plugin.datetime');
 
 sub getDisplayName {
 	return 'PLUGIN_SCREENSAVER_DATETIME';

@@ -22,6 +22,9 @@ use Scalar::Util qw(blessed);
 
 use Slim::Control::Request;
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('plugin.rescan');
 
 our $interval = 1; # check every x seconds
 our @browseMenuChoices;
@@ -83,12 +86,6 @@ sub setMode {
 		'PLUGIN_RESCAN_PRESS_PLAY',
 	);
 
-	# get previous alarm time or set a default
-	if (!defined Slim::Utils::Prefs::get("rescan-time")) {
-
-		Slim::Utils::Prefs::set("rescan-time", 9 * 60 * 60 );
-	}
-	
 	if ( Slim::Music::Import->stillScanning ) {
 
 		Slim::Buttons::Common::pushMode($client, 'scanProgress');
@@ -110,10 +107,11 @@ sub setMode {
 
 					if($_[1] =~ /PLUGIN_RESCAN_TIMER_O/) {
 
-						return (undef, Slim::Buttons::Common::checkBoxOverlay( $client, Slim::Utils::Prefs::get("rescan-scheduled")));
+						return (undef, Slim::Buttons::Common::checkBoxOverlay( $client, $prefs->get('scheduled')));
+
 					} elsif ($_[1] ne 'PLUGIN_RESCAN_PRESS_PLAY') {
 
-						return (undef, $_[0]->symbols('rightarrow')) 
+						return (undef, $_[0]->symbols('rightarrow'))
 					}
 
 				},
@@ -122,7 +120,7 @@ sub setMode {
 				my $client = shift;
 				my $value  = shift;
 				
-				if (Slim::Utils::Prefs::get("rescan-scheduled") && $value eq 'PLUGIN_RESCAN_TIMER_OFF') {
+				if ($prefs->get('scheduled') && $value eq 'PLUGIN_RESCAN_TIMER_OFF') {
 	
 					return $client->string('PLUGIN_RESCAN_TIMER_ON');
 				}
@@ -297,13 +295,13 @@ sub rescanExitHandler {
 		my $valueref = $client->modeParam('valueRef');
 	
 		if ($$valueref eq 'PLUGIN_RESCAN_TIMER_SET') {
-			my $value = Slim::Utils::Prefs::get("rescan-time");
+			my $value = $prefs->get('time');
 			
 			my %params = (
 				'header' => $client->string('PLUGIN_RESCAN_TIMER_SET'),
 				'valueRef' => \$value,
 				'cursorPos' => 1,
-				'pref' => 'rescan-time',
+				'pref' => 'time',
 				'callback' => \&settingsExitHandler
 			);
 			
@@ -311,20 +309,21 @@ sub rescanExitHandler {
 	
 		} elsif ($$valueref eq 'PLUGIN_RESCAN_TIMER_OFF') {
 	
-			Slim::Utils::Prefs::set("rescan-scheduled", 1);
+			$prefs->set('scheduled', 1);
 			$$valueref = 'PLUGIN_RESCAN_TIMER_ON';
 			setTimer($client);
 			$client->update;
 	
 		} elsif ($$valueref eq 'PLUGIN_RESCAN_TIMER_ON') {
 	
-			Slim::Utils::Prefs::set("rescan-scheduled", 0);
+			$prefs->set('scheduled', 0);
 			$$valueref = 'PLUGIN_RESCAN_TIMER_OFF';
 			setTimer($client);
 			$client->update;
 		
 		} elsif ($$valueref eq 'PLUGIN_RESCAN_TIMER_TYPE') {
-			my $value = Slim::Utils::Prefs::get("rescan-type");
+
+			my $value = $prefs->get('type');
 
 			my %params = (
 				'listRef'  => [
@@ -341,11 +340,11 @@ sub rescanExitHandler {
 						value  => '3playlist',
 					},
 				],
-				'onPlay'   => sub { Slim::Utils::Prefs::set("rescan-type",$_[1]->{'value'}); },
-				'onAdd'    => sub { Slim::Utils::Prefs::set("rescan-type",$_[1]->{'value'}); },
-				'onRight'  => sub { Slim::Utils::Prefs::set("rescan-type",$_[1]->{'value'}); },
+				'onPlay'   => sub { $prefs->set('type', $_[1]->{'value'}); },
+				'onAdd'    => sub { $prefs->set('type', $_[1]->{'value'}); },
+				'onRight'  => sub { $prefs->set('type', $_[1]->{'value'}); },
 				'header'   => '{PLUGIN_RESCAN_TIMER_TYPE}{count}',
-				'pref'     => sub { return Slim::Utils::Prefs::get("rescan-type"); },
+				'pref'     => sub { return $prefs->get('type'); },
 				'valueRef' => \$value,
 			);
 
@@ -366,7 +365,7 @@ sub settingsExitHandler {
 
 	if ($exittype eq 'LEFT') {
 
-		Slim::Utils::Prefs::set($client->modeParam('pref'),${$client->modeParam('valueRef')});
+		$prefs->set($client->modeParam('pref'), ${$client->modeParam('valueRef')});
 
 		Slim::Buttons::Common::popModeRight($client);
 
@@ -403,9 +402,9 @@ sub checkScanTimer {
 		$interval = 1;
 	}
 
-	if (Slim::Utils::Prefs::get("rescan-scheduled")) {
+	if ($prefs->get('scheduled')) {
 
-		my $scantime =  Slim::Utils::Prefs::get("rescan-time");
+		my $scantime = $prefs->get('time');
 
 		if ($scantime && $time == $scantime) {
 
@@ -426,7 +425,7 @@ sub executeRescan {
 	my $client = shift;
 	
 	my $rescanType = ['rescan'];
-	my $rescanPref = Slim::Utils::Prefs::get('rescan-type') || '';
+	my $rescanPref = $prefs->get('type') || '';
 
 	if ($rescanPref eq '2wipedb') {
 

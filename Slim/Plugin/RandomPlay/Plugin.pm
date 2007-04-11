@@ -43,7 +43,7 @@ my $log          = Slim::Utils::Log->addLogCategory({
 	'description'  => getDisplayName(),
 });
 
-my $prefs = preferences('randomplay');
+my $prefs = preferences('plugin.randomplay');
 
 $prefs->migrate(1, sub {
 	$prefs->set('newtracks', Slim::Utils::Prefs::OldPrefs->get('plugin_random_number_of_tracks')     || 10 );

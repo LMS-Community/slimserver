@@ -49,9 +49,20 @@ sub new {
 	my $namespace = shift;
 	my $path      = shift;
 
+	my $filename;
+
+	# split namespace into dir and filename if appropriate
+	if ($namespace =~ /(.*)\.(.*)/) {
+		$path     = catdir($path, $1);
+		$filename = catdir($path, "$2.prefs");
+		mkdir $path unless -d $path;
+	} else {
+		$filename = catdir($path, "$namespace.prefs");
+	}
+
 	my $class = bless {
 		'namespace' => $namespace,
-		'file'      => catdir($path, "$namespace.prefs"),
+		'file'      => $filename,
 		'clients'   => {},
 		'validators'=> {},
 		'validparam'=> {},

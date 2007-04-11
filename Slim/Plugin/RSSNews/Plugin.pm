@@ -34,7 +34,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 use Slim::Plugin::RSSNews::Settings;
 
-my $prefs = preferences('rssnews');
+my $prefs = preferences('plugin.rssnews');
 
 # $refresh_sec is the minimum time in seconds between refreshes of the ticker from the RSS.
 # Please do not lower this value. It prevents excessive queries to the RSS.
