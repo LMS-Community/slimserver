@@ -196,4 +196,5 @@ SETUP_PLUGIN_RSSNEWS_EXISTING_FEEDS
 	EN	Existing feeds:
 
 SETUP_PLUGIN_RSSNEWS_INVALID_FEED
+	DE	Ungültiger Feed - konnte %s nicht herunterladen
 	EN	Invalid Feed - Could not connect to %s

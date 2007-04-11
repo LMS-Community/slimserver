@@ -12457,4 +12457,5 @@ CLOSE
 	EN	Close
 
 SETTINGS_INVALIDVALUE
+	DE	"%s" ist kein gültiger Wert für %s
 	EN	Invalid value "%s" for %s

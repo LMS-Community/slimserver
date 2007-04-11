@@ -64,4 +64,5 @@ SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
 	EN	Existing feeds:
 
 SETUP_PLUGIN_PODCAST_INVALID_FEED
+	DE	Ungültiger Feed - konnte nicht zu %s verbinden
 	EN	Invalid Feed - Can't connect to %s
