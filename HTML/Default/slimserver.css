@@ -308,7 +308,7 @@ div#topGraphicMenu3 #statusSongRemoveButton {
 
 div#homeMenu {
 	background-color: #ffffff;
-	height: auto;
+	height: 0;
 	width: auto;
 	margin-top: 5px;
 	margin-left: 8px;
