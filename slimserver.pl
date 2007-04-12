@@ -111,6 +111,7 @@ if (!$@) {
 }
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 use Slim::Utils::PerfMon;
 use Slim::Buttons::Common;
@@ -140,7 +141,6 @@ use Slim::Player::Playlist;
 use Slim::Player::Sync;
 use Slim::Player::Source;
 use Slim::Utils::Cache;
-use Slim::Utils::Prefs;
 use Slim::Utils::Scanner;
 use Slim::Utils::Scheduler;
 use Slim::Networking::Select;
@@ -483,7 +483,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
           [--httpport <portnumber> [--httpaddr <listenip>]]
           [--cliport <portnumber> [--cliaddr <listenip>]]
           [--priority <priority>]
-          [--prefsfile <prefsfilepath> [--pidfile <pidfilepath>]]
+          [--prefsdir <prefspath> [--pidfile <pidfilepath>]]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
           [--checkstrings] [--debug]
 
@@ -512,7 +512,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
                         command line interface server.
     --cliaddr        => Activate the command line interface TCP/IP 
                         interface on the specified IP address.
-    --prefsfile      => Specify the path of the the preferences file
+    --prefsdir       => Specify the location of the preferences directory
     --pidfile        => Specify where a process ID file should be stored
     --quiet          => Minimize the amount of text output
     --playeraddr     => Specify the _server's_ IP address to use to connect 
@@ -559,6 +559,7 @@ sub initOptions {
 		'stdio'	        => \$stdio,
 		'streamaddr=s'  => \$localStreamAddr,
 		'prefsfile=s'   => \$prefsfile,
+		# prefsdir is parsed by Slim::Utils::Prefs prior to initOptions being run
 		'quiet'	        => \$quiet,
 		'nosetup'       => \$nosetup,
 		'noserver'      => \$noserver,

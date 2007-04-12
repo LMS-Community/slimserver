@@ -17,6 +17,9 @@ use strict;
 use YAML::Syck;
 use FindBin qw($Bin);
 use File::Spec::Functions qw(:ALL);
+use Slim::Utils::Log;
+
+my $log = logger('prefs');
 
 my $oldprefs;
 
@@ -30,7 +33,7 @@ sub get {
 	my $class = shift;
 	my $pref  = shift;
 
-	$oldprefs ||= LoadFile(_oldPath());
+	$oldprefs ||= eval { LoadFile(_oldPath()) } || {};
 
 	$oldprefs->{ $pref };
 }
@@ -46,33 +49,49 @@ sub clientGet {
 	my $client = shift;
 	my $pref  = shift;
 
-	$oldprefs ||= LoadFile(_oldPath());
+	$oldprefs ||= eval { LoadFile(_oldPath()) } || {};
 
 	$oldprefs->{'clients'}->{ $client->id }->{ $pref } if $oldprefs->{'clients'}->{ $client->id };
 }
 
 sub _oldPath {
 
+	my $oldPrefs;
+
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 
-		return catdir($ENV{'HOME'}, 'Library', 'SlimDevices', 'slimserver.pref');
+		$oldPrefs = catdir($ENV{'HOME'}, 'Library', 'SlimDevices', 'slimserver.pref');
 
 	} elsif (Slim::Utils::OSDetect::OS() eq 'win')  {
 
-		return catdir($Bin, 'slimserver.pref');
+		$oldPrefs = catdir($Bin, 'slimserver.pref');
+
+	} elsif (-r $::prefsfile) {
+
+		$oldPrefs = $::prefsfile;
 
 	} elsif (-r '/etc/slimserver.conf') {
 
-		return '/etc/slimserver.conf';
+		$oldPrefs = '/etc/slimserver.conf';
 
 	} elsif (-r catdir(Slim::Utils::OSDetect::dirsFor('prefs'), 'slimserver.pref')) {
 
-		return catdir(Slim::Utils::OSDetect::dirsFor('prefs'), 'slimserver.pref');
+		$oldPrefs = catdir(Slim::Utils::OSDetect::dirsFor('prefs'), 'slimserver.pref');
+
+	} elsif (-r catdir($ENV{'HOME'}, 'slimserver.pref')) {
+
+		$oldPrefs = catdir($ENV{'HOME'}, 'slimserver.pref');
 
 	} else {
 
-	 	return catdir($ENV{'HOME'}, 'slimserver.pref');
+		$log->warn("no old preference file found - using default preferences");
+
+		return undef;
 	}
+
+	$log->info("using old preference file $oldPrefs for conversion");
+
+	return $oldPrefs;
 }
 
 =head2 SEE ALSO

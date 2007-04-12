@@ -46,8 +46,8 @@ my @default_feeds = (
 
 # migrate old prefs across
 $prefs->migrate(1, sub {
-	my @names  = @{Slim::Utils::Prefs::OldPrefs->get('plugin_RssNews_names')};
-	my @values = @{Slim::Utils::Prefs::OldPrefs->get('plugin_RssNews_feeds')};
+	my @names  = @{Slim::Utils::Prefs::OldPrefs->get('plugin_RssNews_names') || [] };
+	my @values = @{Slim::Utils::Prefs::OldPrefs->get('plugin_RssNews_feeds') || [] };
 	my @feeds;
 
 	for my $name (@names) {
@@ -60,6 +60,8 @@ $prefs->migrate(1, sub {
 	}
 
 	$prefs->set('items_per_feed', Slim::Utils::Prefs::OldPrefs->get('plugin_RssNews_items_per_feed') || 3);
+
+	1;
 });
 
 # migrate to latest version of default feeds if they have not been modified

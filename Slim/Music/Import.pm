@@ -82,6 +82,8 @@ sub launchScan {
 		$args->{"prefsfile=$::prefsfile"} = 1;
 	}
 
+	$args->{ "prefsdir=" . Slim::Utils::Prefs->dir } = 1;
+
 	if (Slim::Utils::Log->writeConfig) {
 
 		$args->{sprintf("logconfig=%s", Slim::Utils::Log->defaultConfigFile)} = 1;

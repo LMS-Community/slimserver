@@ -29,16 +29,16 @@ use Getopt::Long;
 use File::Path;
 use File::Spec::Functions qw(:ALL);
 
+use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Music::Import;
 use Slim::Music::Info;
 use Slim::Music::MusicFolderScan;
 use Slim::Music::PlaylistFolderScan;
-use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::MySQLHelper;
 use Slim::Utils::OSDetect;
 use Slim::Utils::PluginManager;
-use Slim::Utils::Prefs;
 use Slim::Utils::Progress;
 use Slim::Utils::Scanner;
 use Slim::Utils::Strings qw(string);
@@ -59,6 +59,7 @@ sub main {
 		'itunes'       => \$itunes,
 		'musicmagic'   => \$musicmagic,
 		'prefsfile=s'  => \$prefsFile,
+		# prefsdir parsed by Slim::Utils::Prefs
 		'progress'     => \$progress,
 		'priority=i'   => \$priority,
 		'logfile=s'    => \$logfile,
@@ -261,7 +262,7 @@ Command line options:
 	--itunes       Run the iTunes Importer.
 	--musicmagic   Run the MusicMagic/MusicIP Importer.
 	--progress     Show a progress bar of the scan.
-	--prefsfile    Specify an alternate prefs file.
+	--prefsdir     Specify alternative preferences directory.
 	--priority     set process priority from -20 (high) to 20 (low)
 	--logfile      Send all debugging messages to the specified logfile.
 	--logdir       Specify folder location for log file

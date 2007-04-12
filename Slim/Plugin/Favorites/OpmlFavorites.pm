@@ -93,8 +93,8 @@ sub _loadOldFavorites {
 
 	$log->info("No opml favorites file found - loading old favorites");
 
-	my @urls   = @{Slim::Utils::Prefs::OldPrefs->get('favorite_urls')};
-	my @titles = @{Slim::Utils::Prefs::OldPrefs->get('favorite_titles')};
+	my @urls   = @{Slim::Utils::Prefs::OldPrefs->get('favorite_urls')   || []};
+	my @titles = @{Slim::Utils::Prefs::OldPrefs->get('favorite_titles') || []} ;
 
 	while (@urls) {
 

@@ -1297,10 +1297,16 @@ use Slim::Utils::Prefs::Namespace;
 use Slim::Utils::Prefs::OldPrefs;
 
 use Exporter::Lite;
+use Getopt::Long qw(:config pass_through);
 
 our @EXPORT = qw(preferences);
 
-my $path = Slim::Utils::OSDetect::dirsFor('prefs');
+my $path; # path to directory where preferences are stored
+
+# we need to check for prefsdir being set on cmdline as we are run before the server parses options
+Getopt::Long::GetOptions('prefsdir=s' => \$path);
+
+$path ||= Slim::Utils::OSDetect::dirsFor('prefs');
 
 my $prefs = preferences('server');
 
@@ -1342,12 +1348,20 @@ sub init_new {
 
 		0;
 	});
+
+	unless (-d $path && -w $path) {
+		logError("unable to write to preferences directory $path");
+	}
 }
 
 sub writeAll {
 	for my $n (values %namespaces) {
 		$n->savenow;
 	}
+}
+
+sub dir {
+	return $path;
 }
 
 =head2 SEE ALSO

@@ -33,8 +33,8 @@ our @default_feeds = (
 
 # migrate old prefs across
 $prefs->migrate(1, sub {
-	my @names  = @{Slim::Utils::Prefs::OldPrefs->get('plugin_podcast_names')};
-	my @values = @{Slim::Utils::Prefs::OldPrefs->get('plugin_podcast_feeds')};
+	my @names  = @{Slim::Utils::Prefs::OldPrefs->get('plugin_podcast_names') || [] };
+	my @values = @{Slim::Utils::Prefs::OldPrefs->get('plugin_podcast_feeds') || [] };
 	my @feeds;
 
 	for my $name (@names) {
@@ -45,6 +45,8 @@ $prefs->migrate(1, sub {
 		$prefs->set('feeds', \@feeds);
 		$prefs->set('modified', 1);
 	}
+
+	1;
 });
 
 # migrate to latest version of default feeds if they have not been modified
