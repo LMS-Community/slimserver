@@ -23,6 +23,7 @@ use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Prefs;
 
 my $lastMusicLibraryFinishTime = undef;
 my $lastITunesMusicLibraryDate = 0;
@@ -40,6 +41,8 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.itunes',
 	'defaultLevel' => 'WARN',
 });
+
+my $prefs = preferences('plugin.itunes');
 
 # mac file types
 our %filetypes = (
@@ -72,7 +75,7 @@ sub initPlugin {
 	Slim::Music::Import->addImporter($class, {
 		'reset'        => \&resetState,
 		'playlistOnly' => 1,
-		'use'          => Slim::Utils::Prefs::get('itunes'),
+		'use'          => $prefs->get('itunes'),
 	});
 
 	Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
@@ -245,7 +248,7 @@ sub handleTrack {
 		# we want to fall back to the real file path from the XML file
 		#
 		# Bug 3717 - check this after we've checked the locale above.
-		if (!-e $file && Slim::Utils::Prefs::get('itunes_library_music_path')) {
+		if (!-e $file && $prefs->get('music_path')) {
 
 			$url  = $class->normalize_location($location, 'fallback');
 			$file = Slim::Utils::Misc::pathFromFileURL($url);
@@ -264,7 +267,7 @@ sub handleTrack {
 	$tracks{$id} = $url;
 
 	# skip track if Disabled in iTunes
-	if ($curTrack->{'Disabled'} && !Slim::Utils::Prefs::get('ignoredisableditunestracks')) {
+	if ($curTrack->{'Disabled'} && !$prefs->get('ignore_disabled')) {
 
 		$log->info("Deleting disabled track $url");
 
@@ -436,8 +439,8 @@ sub handlePlaylist {
 
 	$cacheEntry->{'CT'}    = 'itu';
 	$cacheEntry->{'TITLE'} = join($name, 
-		Slim::Utils::Prefs::get('iTunesplaylistprefix'),
-		Slim::Utils::Prefs::get('iTunesplaylistsuffix')
+		$prefs->get('playlist_prefix'),
+		$prefs->get('playlist_suffix')
 	);
 
 	Slim::Music::Info::updateCacheEntry($url, $cacheEntry);

@@ -14,22 +14,17 @@ use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Prefs;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.itunes',
 	'defaultLevel' => 'WARN',
 });
 
+my $prefs = preferences('plugin.itunes');
+
 sub getDisplayName {
 	return 'SETUP_ITUNES';
-}
-
-sub enabled {
-	return ($::VERSION ge '6.1');
-}
-
-sub getFunctions {
-	return '';
 }
 
 sub initPlugin {
@@ -72,7 +67,7 @@ sub checker {
 	my $class     = shift;
 	my $firstTime = shift || 0;
 
-	if (!Slim::Utils::Prefs::get('itunes')) {
+	if (!$prefs->get('itunes')) {
 
 		return 0;
 	}
@@ -85,7 +80,7 @@ sub checker {
 	# make sure we aren't doing this more than once...
 	Slim::Utils::Timers::killTimers(0, \&checker);
 
-	my $interval = Slim::Utils::Prefs::get('itunesscaninterval') || 3600;
+	my $interval = $prefs->get('scan_interval') || 3600;
 
 	# the very first time, we do want to scan right away
 	if ($firstTime) {

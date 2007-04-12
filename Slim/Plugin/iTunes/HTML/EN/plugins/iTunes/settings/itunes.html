@@ -4,19 +4,15 @@
 		<div class="prefHead">[% "ITUNES" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_ITUNES_DESC" | string %]</div>
 
-		<input type="checkbox" [% IF prefs.itunes %]checked [% END %] class="stdedit" name="itunes" id="itunes" />
+		<input type="checkbox" [% IF prefs.itunes %]checked [% END %] class="stdedit" name="itunes" />
 
-		<!--
-		<option [% IF NOT prefs.itunes %]selected [% END %]value="0">[% 'DONT_USE_ITUNES' | getstring %]</option>
-		<option [% IF prefs.itunes %]selected [% END %]value="1">[% 'USE_ITUNES' | getstring %]</option>
-		-->
 	</div>
 
 	<div class="settingSection">
 		<div class="prefHead">[% "SETUP_ITUNESSCANINTERVAL" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_ITUNESSCANINTERVAL_DESC" | string %]</div>
 
-		<input type="text" class="stdedit" name="itunesscaninterval" id="itunesscaninterval" value="[% prefs.itunesscaninterval %]" size="5">
+		<input type="text" class="stdedit" name="scan_interval" value="[% prefs.scan_interval %]" size="5">
 	</div>
 
 	<div class="settingSection">
@@ -24,13 +20,13 @@
 		<div class="groupHead">[% "SETUP_IGNOREDISABLEDITUNESTRACKS" | string | upper %]</div>
 		<div class="groupDesc">[% "SETUP_IGNOREDISABLEDITUNESTRACKS_DESC" | string %]</div>
 
-		<select class="stdedit" name="ignoredisableditunestracks" id="rescantype">
+		<select class="stdedit" name="ignore_disabled" id="rescantype">
 
-			<option value="0" [% IF NOT prefs.ignoredisableditunestracks %]selected[% END %]>
+			<option value="0" [% IF NOT prefs.ignore_disabled %]selected[% END %]>
 				[% "SETUP_IGNOREDISABLEDITUNESTRACKS_0" | string %]
 			</option>
 
-			<option value="1" [% IF prefs.ignoredisableditunestracks %]selected[% END %]>
+			<option value="1" [% IF prefs.ignore_disabled %]selected[% END %]>
 				[% "SETUP_IGNOREDISABLEDITUNESTRACKS_1" | string %]
 			</option>
 
@@ -42,23 +38,23 @@
 		<div class="prefHead">[% "SETUP_ITUNES_LIBRARY_XML_PATH" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_ITUNES_LIBRARY_XML_PATH_DESC" | string %]</div>
 
-		<input type="text" class="stdedit" name="itunes_library_xml_path" id="itunes_library_xml_path" value="[% prefs.itunes_library_xml_path %]" size="40">
+		<input type="text" class="stdedit" name="xml_file" value="[% prefs.xml_file %]" size="40">
 	</div>
 
 	<div class="settingSection">
 		<div class="prefHead">[% "SETUP_ITUNES_LIBRARY_MUSIC_PATH" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC" | string %]</div>
 
-		<input type="text" class="stdedit" name="itunes_library_music_path" id="itunes_library_music_path" value="[% prefs.itunes_library_music_path %]" size="40">
+		<input type="text" class="stdedit" name="music_path" value="[% prefs.music_path %]" size="40">
 	</div>
 
 	<div class="settingSection">
 		<div class="groupHead">[% "SETUP_ITUNESPLAYLISTFORMAT" | string | upper %]</div>
 		<div class="groupDesc">[% "SETUP_ITUNESPLAYLISTFORMAT_DESC" | string %]</div>
 
-		[% "SETUP_PLAYLISTPREFIX_CHOOSE" | string %]<input type="text" class="stdedit" name="iTunesplaylistprefix" id="iTunesplaylistprefix" value="[% prefs.iTunesplaylistprefix %]" size="40">
+		[% "SETUP_PLAYLISTPREFIX_CHOOSE" | string %]<input type="text" class="stdedit" name="playlist_prefix" value="[% prefs.playlist_prefix %]" size="40">
 		<br>
-		[% "SETUP_PLAYLISTSUFFIX_CHOOSE" | string %]<input type="text" class="stdedit" name="iTunesplaylistsuffix" id="iTunesplaylistsuffix" value="[% prefs.iTunesplaylistsuffix %]" size="40">
+		[% "SETUP_PLAYLISTSUFFIX_CHOOSE" | string %]<input type="text" class="stdedit" name="playlist_suffix" value="[% prefs.playlist_suffix %]" size="40">
 	</div>
 
 [% PROCESS settings/footer.html %]

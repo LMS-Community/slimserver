@@ -35,8 +35,11 @@ use File::Basename;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Prefs;
 
 my $log = logger('plugin.itunes');
+
+my $prefs = preferences('plugin.itunes');
 
 {
 	my $class = __PACKAGE__;
@@ -56,10 +59,10 @@ sub useiTunesLibrary {
 	my $newValue = shift;
 
 	if (defined($newValue)) {
-		Slim::Utils::Prefs::set('itunes', $newValue);
+		$prefs->set('itunes', $newValue);
 	}
 
-	my $use = Slim::Utils::Prefs::get('itunes');
+	my $use = $prefs->get('itunes');
 	my $can = $class->canUseiTunesLibrary();
 
 	Slim::Music::Import->useImporter($class, $use && $can);
@@ -147,7 +150,7 @@ sub findLibraryFromRegistry {
 sub findMusicLibraryFile {
 	my $class = shift;
 
-	my $explicit_xml_path = Slim::Utils::Prefs::get('itunes_library_xml_path');
+	my $explicit_xml_path = $prefs->get('xml_file');
 
 	if ($explicit_xml_path) {
 
@@ -170,7 +173,7 @@ sub findMusicLibraryFile {
 
 		$log->info("Found path via iTunes preferences at: $path");
 
-		Slim::Utils::Prefs::set( 'itunes_library_xml_path', $path );
+		$prefs->set('xml_file', $path );
 
 		return $path;
 	}
@@ -181,7 +184,7 @@ sub findMusicLibraryFile {
 
 		$log->info("Found path via Windows registry at: $path");
 
-		Slim::Utils::Prefs::set( 'itunes_library_xml_path', $path );
+		$prefs->set('xml_file', $path );
 
 		return $path;
 	}
@@ -238,7 +241,7 @@ sub isMusicLibraryFileChanged {
 
 	if ($fileMTime > $lastiTunesChange) {
 
-		my $scanInterval = Slim::Utils::Prefs::get('itunesscaninterval');
+		my $scanInterval = $prefs->get('scan_interval');
 
 		$log->debug("lastiTunesChange: " . scalar localtime($lastiTunesChange));
 		$log->debug("lastScanTime    : $lastScanTime");
@@ -283,7 +286,7 @@ sub normalize_location {
 	my $stripped = $class->strip_automounter($location);
 
 	# on non-mac or windows, we need to substitute the itunes library path for the one in the iTunes xml file
-	my $explicit_path = Slim::Utils::Prefs::get('itunes_library_music_path');
+	my $explicit_path = $prefs->get('music_path');
 
 	if ( $explicit_path && !$fallback ) {
 
@@ -333,29 +336,28 @@ sub strip_automounter {
 sub checkDefaults {
 	my $class = shift;
 
-	if (!Slim::Utils::Prefs::isDefined('itunesscaninterval')) {
-
-		Slim::Utils::Prefs::set('itunesscaninterval', $class->iTunesScanInterval);
+	if (!defined $prefs->get('scan_interval')) {
+		$prefs->set('scan_interval', $class->iTunesScanInterval);
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('iTunesplaylistprefix')) {
-		Slim::Utils::Prefs::set('iTunesplaylistprefix','iTunes: ');
+	if (!defined $prefs->get('playlist_prefix')) {
+		$prefs->set('playlist_prefix','iTunes: ');
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('iTunesplaylistsuffix')) {
-		Slim::Utils::Prefs::set('iTunesplaylistsuffix','');
+	if (!defined $prefs->get('playlist_suffix')) {
+		$prefs->set('playlist_suffix','');
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('ignoredisableditunestracks')) {
-		Slim::Utils::Prefs::set('ignoredisableditunestracks',0);
+	if (!defined $prefs->get('ignore_disabled')) {
+		$prefs->set('ignore_disabled',0);
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('lastITunesMusicLibraryDate')) {
-		Slim::Utils::Prefs::set('lastITunesMusicLibraryDate',0);
+	if (!defined $prefs->get('lastITunesMusicLibraryDate')) {
+		$prefs->set('lastITunesMusicLibraryDate',0);
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('itunes') && defined findMusicLibraryFile()) {
-		Slim::Utils::Prefs::set('itunes', 1);
+	if (!defined $prefs->get('itunes') && defined findMusicLibraryFile()) {
+		$prefs->set('itunes', 1);
 	}
 }
 
