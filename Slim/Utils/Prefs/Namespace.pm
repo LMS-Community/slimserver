@@ -42,6 +42,8 @@ my $simpleValidators = {
 	'hash'     => sub { ref $_[1] eq 'HASH' },
 	'defined'  => sub { defined $_[1] },
 	'false'    => sub { 0 },
+	'file'     => sub { -e $_[1] },
+	'dir'      => sub { -d $_[1] },
 };
 
 sub new {
@@ -83,7 +85,7 @@ sub _root { shift }
 
 Associates a validator function with the preferences listed by list.
 
-$args may either be one of the following: 'int', 'num', 'array', 'hash', 'defined', 'false'
+$args may either be one of the following: 'int', 'num', 'array', 'hash', 'defined', 'false', 'file', 'dir'
 
 or a hash containing the key 'validator' which specifies either 'intlimit' or 'numlimit' of a callback function.
 

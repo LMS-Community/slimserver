@@ -86,7 +86,10 @@ sub set {
 
 		$root->save;
 
-		if ($change) {
+		if ($change && (!defined $old || !defined $new || $old ne $new || ref $new)) {
+
+			$log->debug("excuting on change function");
+
 			$change->($pref, $new, $class->_obj);
 		}
 
