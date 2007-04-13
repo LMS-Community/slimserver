@@ -52,7 +52,8 @@ sub browsetree {
 
 			push @{$params->{'pwd_list'}}, {
 				'hreftype'     => 'browseTree',
-				'title'        => $i == 0 ? string('MUSIC') : $obj->title,
+				'title'        => $i == 0 ? string('MUSIC') :
+						($obj->title ? $obj->title : Slim::Music::Info::fileName($obj->url)),
 				'hierarchy'    => join('/', @levels[0..$i]),
 			};
 		}
@@ -76,7 +77,7 @@ sub browsetree {
 	if ($count) {
 		my %form = %$params;
 
-		$form{'hierarchy'}	  = undef;
+		$form{'hierarchy'}   = undef;
 		$form{'descend'}     = 1;
 		$form{'text'}        = string('ALL_SONGS');
 		$form{'itemobj'}     = $topLevelObj;

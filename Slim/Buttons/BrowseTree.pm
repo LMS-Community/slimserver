@@ -393,12 +393,15 @@ sub setMode {
 	} else {
 
 		# one level down we show the folder name, below that we show two levels
-		my $level = (scalar @levels > 2) ? $levels[-2] : $levels[-1];
-		my $obj   = Slim::Schema->find('Track', $level);
 
-		if (blessed($obj) && $obj->can('title')) {
+		for (my $x = (scalar @levels > 2 ? -2 : -1); $x <= -1; $x++) {
 
-			push @headers, $obj->title;
+			my $obj   = Slim::Schema->find('Track', $levels[$x]);
+
+			if (blessed($obj) && $obj->can('title')) {
+
+				push @headers, ($obj->title ? $obj->title : Slim::Music::Info::fileName($obj->url));
+			}
 		}
 	}
 	
