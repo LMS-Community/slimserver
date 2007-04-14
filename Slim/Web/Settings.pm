@@ -62,7 +62,7 @@ sub handler {
 
 	# Handle the simple case where no validation is needed. Or we can do
 	# programatic validation via the prefs rework.
-	my @prefs = $class->prefs;
+	my @prefs = $class->needsClient ? $class->prefs($client) : $class->prefs;
 
 	my $prefsClass = shift @prefs if (@prefs && blessed($prefs[0]));
 
