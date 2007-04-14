@@ -17,6 +17,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Prefs;
 use Slim::Utils::Versions;
 
 my $initialized = 0;
@@ -31,6 +32,8 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'defaultLevel' => 'WARN',
 });
 
+my $prefs = preferences('plugin.musicmagic');
+
 sub useMusicMagic {
 	my $class    = shift;
 	my $newValue = shift;
@@ -40,28 +43,28 @@ sub useMusicMagic {
 	if (defined($newValue)) {
 
 		if (!$can) {
-			Slim::Utils::Prefs::set('musicmagic', 0);
+			$prefs->set('enabled', 0);
 		} else {
-			Slim::Utils::Prefs::set('musicmagic', $newValue);
+			$prefs->set('enabled', $newValue);
 		}
 	}
 
-	my $use = Slim::Utils::Prefs::get('musicmagic');
+	my $use = $prefs->get('enabled');
 
 	if (!defined($use) && $can) { 
 
-		Slim::Utils::Prefs::set('musicmagic', 1);
+		$prefs->set('enabled', 1);
 
 	} elsif (!defined($use) && !$can) {
 
-		Slim::Utils::Prefs::set('musicmagic', 0);
+		$prefs->set('enabled', 0);
 	}
 
-	$use = Slim::Utils::Prefs::get('musicmagic') && $can;
+	$use = $prefs->get('enabled') && $can;
 
 	Slim::Music::Import->useImporter($class, $use);
 
-	$log->info("Using musicmagic: $use");
+	$log->info("Using musicip: $use");
 
 	return $use;
 }
@@ -85,11 +88,11 @@ sub initPlugin {
 
 		$initialized = 0;
 
-		return 0;		
+		return 0;
 	}
 
-	$MMSport = Slim::Utils::Prefs::get('MMSport');
-	$MMSHost = Slim::Utils::Prefs::get('MMSHost');
+	$MMSport = $prefs->get('port');
+	$MMSHost = $prefs->get('host');
 
 	$log->info("Testing for API on $MMSHost:$MMSport");
 
@@ -107,7 +110,7 @@ sub initPlugin {
 		Slim::Music::Import->addImporter($class, {
 			'reset'        => \&resetState,
 			'playlistOnly' => 1,
-			'use'          => Slim::Utils::Prefs::get('musicmagic'),
+			'use'          => $prefs->get('enabled'),
 		});
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
@@ -170,8 +173,8 @@ sub doneScanning {
 sub exportFunction {
 	my $class = shift;
 
-	$MMSport = Slim::Utils::Prefs::get('MMSport') unless $MMSport;
-	$MMSHost = Slim::Utils::Prefs::get('MMSHost') unless $MMSHost;
+	$MMSport = $prefs->get('port') unless $MMSport;
+	$MMSHost = $prefs->get('host') unless $MMSHost;
 
 	my $count = get("http://$MMSHost:$MMSport/api/getSongCount");
 
@@ -408,9 +411,9 @@ sub _updatePlaylist {
 
 	# add this list of duplicates to our playlist library
 	$attributes{'TITLE'} = join('', 
-		Slim::Utils::Prefs::get('MusicMagicplaylistprefix'),
+		$prefs->get('playlist_prefix'),
 		$name,
-		Slim::Utils::Prefs::get('MusicMagicplaylistsuffix'),
+		$prefs->get('playlist_suffix'),
 	);
 
 	$attributes{'LIST'}  = [];

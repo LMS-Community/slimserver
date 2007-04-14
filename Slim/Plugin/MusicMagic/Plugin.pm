@@ -12,8 +12,10 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings;
+use Slim::Utils::Prefs;
 
 use Slim::Plugin::MusicMagic::Settings;
+use Slim::Plugin::MusicMagic::ClientSettings;
 
 use Slim::Plugin::MusicMagic::Common;
 use Slim::Plugin::MusicMagic::PlayerSettings;
@@ -28,6 +30,8 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.musicmagic',
 	'defaultLevel' => 'WARN',
 });
+
+my $prefs = preferences('plugin.musicmagic');
 
 our %mixMap  = (
 	'add.single' => 'play_1',
@@ -56,23 +60,23 @@ sub useMusicMagic {
 	
 	if (defined($newValue)) {
 		if (!$can) {
-			Slim::Utils::Prefs::set('musicmagic', 0);
+			$prefs->set('enabled', 0);
 		} else {
-			Slim::Utils::Prefs::set('musicmagic', $newValue);
+			$prefs->set('enabled', $newValue);
 		}
 	}
 	
-	my $use = Slim::Utils::Prefs::get('musicmagic');
+	my $use = $prefs->get('enabled');
 	
 	if (!defined($use) && $can) { 
-		Slim::Utils::Prefs::set('musicmagic', 1);
+		$prefs->set('enabled', 1);
 	} elsif (!defined($use) && !$can) {
-		Slim::Utils::Prefs::set('musicmagic', 0);
+		$prefs->set('enabled', 0);
 	}
 	
-	$use = Slim::Utils::Prefs::get('musicmagic') && $can;
+	$use = $prefs->get('enabled') && $can;
 
-	$log->info("Using musicmagic: $use");
+	$log->info("Using musicip: $use");
 
 	return $use;
 }
@@ -121,8 +125,8 @@ sub initPlugin {
 		return 0;		
 	}
 
-	$MMSport = Slim::Utils::Prefs::get('MMSport');
-	$MMSHost = Slim::Utils::Prefs::get('MMSHost');
+	$MMSport = $prefs->get('port');
+	$MMSHost = $prefs->get('host');
 
 	$log->info("Testing for API on $MMSHost:$MMSport");
 
@@ -163,6 +167,7 @@ sub initPlugin {
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
 
 		Slim::Plugin::MusicMagic::Settings->new;
+		Slim::Plugin::MusicMagic::ClientSettings->new;
 
 		if (scalar @{grabMoods()}) {
 
@@ -270,7 +275,7 @@ sub isMusicLibraryFileChanged {
 
 	if ($fileMTime > $lastMMMChange) {
 
-		my $scanInterval = Slim::Utils::Prefs::get('musicmagicscaninterval');
+		my $scanInterval = $prefs->get('scan_interval');
 
 		$log->debug("MusicMagic: music library has changed!");
 		$log->debug("Details:");
@@ -281,7 +286,7 @@ sub isMusicLibraryFileChanged {
 
 		if (!$scanInterval) {
 
-			# only scan if musicmagicscaninterval is non-zero.
+			# only scan if scaninterval is non-zero.
 			$log->info("Scan Interval set to 0, rescanning disabled");
 
 			return 0;
@@ -301,7 +306,7 @@ sub isMusicLibraryFileChanged {
 sub checker {
 	my $firstTime = shift || 0;
 	
-	if (!Slim::Utils::Prefs::get('musicmagic')) {
+	if (!$prefs->get('enabled')) {
 		return;
 	}
 
@@ -354,8 +359,8 @@ sub grabMoods {
 		return %moodHash;
 	}
 	
-	$MMSport = Slim::Utils::Prefs::get('MMSport') unless $MMSport;
-	$MMSHost = Slim::Utils::Prefs::get('MMSHost') unless $MMSHost;
+	$MMSport = $prefs->get('port') unless $MMSport;
+	$MMSHost = $prefs->get('host') unless $MMSHost;
 
 	$log->debug("Get moods list");
 
@@ -449,7 +454,7 @@ sub mixerFunction {
 	my $paramref = defined $client->modeParam('parentParams') ? $client->modeParam('parentParams') : $client->modeParameterStack(-1);
 	
 	# if prefs say to offer player settings, and we're not already in that mode, then go into settings.
-	if (Slim::Utils::Prefs::get('MMMPlayerSettings') && !$noSettings) {
+	if ($prefs->get('player_settings') && !$noSettings) {
 
 		Slim::Buttons::Common::pushModeLeft($client, 'MMMsettings', { 'parentParams' => $paramref });
 		return;
@@ -536,7 +541,7 @@ sub mixerlink {
 	}
 
 	# only add link if enabled and usable
-	if (canUseMusicMagic() && Slim::Utils::Prefs::get('musicmagic')) {
+	if (canUseMusicMagic() && $prefs->get('enabled')) {
 
 		# set up a musicmagic link
 		$form->{'mixerlinks'}{Slim::Plugin::MusicMagic::Plugin->title()} = "plugins/MusicMagic/mixerlink.html";
@@ -586,56 +591,56 @@ sub getMix {
 	if (defined $client) {
 		%args = (
 			# Set the size of the list (default 12)
-			'size'       => $client->prefGet('MMMSize') || Slim::Utils::Prefs::get('MMMSize'),
+			'size'       => $prefs->client($client)->get('mix_size') || $prefs->get('mix_size'),
 	
 			# (tracks|min|mb) Set the units for size (default tracks)
-			'sizetype'   => $type[$client->prefGet('MMMMixType') || Slim::Utils::Prefs::get('MMMMixType')],
+			'sizetype'   => $type[$prefs->client($client)->get('mix_type') || $prefs->get('mix_type')],
 	
 			# Set the style slider (default 20)
-			'style'      => $client->prefGet('MMMStyle') || Slim::Utils::Prefs::get('MMMStyle'),
+			'style'      => $prefs->client($client)->get('mix_style') || $prefs->get('mix_style'),
 	
 			# Set the variety slider (default 0)
-			'variety'    => $client->prefGet('MMMVariety') || Slim::Utils::Prefs::get('MMMVariety'),
+			'variety'    => $prefs->client($client)->get('mix_variety') || $prefs->get('mix_variety'),
 
 			# mix genres or stick with that of the seed. (Default: match seed)
-			'mixgenre'   => $client->prefGet('MMMMixGenre') || Slim::Utils::Prefs::get('MMMMixGenre'),
+			'mixgenre'   => $prefs->client($client)->get('mix_genre') || $prefs->get('mix_genre'),
 	
 			# Set the number of songs before allowing dupes (default 12)
-			'rejectsize' => $client->prefGet('MMMRejectSize') || Slim::Utils::Prefs::get('MMMRejectSize'),
+			'rejectsize' => $prefs->client($client)->get('reject_size') || $prefs->get('reject_size'),
 		);
 	} else {
 		%args = (
 			# Set the size of the list (default 12)
-			'size'       => Slim::Utils::Prefs::get('MMMSize') || 12,
+			'size'       => $prefs->get('mix_size') || 12,
 	
 			# (tracks|min|mb) Set the units for size (default tracks)
-			'sizetype'   => $type[Slim::Utils::Prefs::get('MMMMixType') || 0],
+			'sizetype'   => $type[$prefs->get('mix_type') || 0],
 	
 			# Set the style slider (default 20)
-			'style'      => Slim::Utils::Prefs::get('MMMStyle') || 20,
+			'style'      => $prefs->get('mix_style') || 20,
 	
 			# Set the variety slider (default 0)
-			'variety'    => Slim::Utils::Prefs::get('MMMVariety') || 0,
+			'variety'    => $prefs->get('mix_variety') || 0,
 
 			# mix genres or stick with that of the seed. (Default: match seed)
-			'mixgenre'   => Slim::Utils::Prefs::get('MMMMixGenre') || 0,
+			'mixgenre'   => $prefs->get('mix_genre') || 0,
 	
 			# Set the number of songs before allowing dupes (default 12)
-			'rejectsize' => Slim::Utils::Prefs::get('MMMRejectSize') || 12,
+			'rejectsize' => $prefs->get('reject_size') || 12,
 		);
 	}
 
 	# (tracks|min|mb) Set the units for rejecting dupes (default tracks)
 	my $rejectType = defined $client ?
-		($client->prefGet('MMMRejectType') || Slim::Utils::Prefs::get('MMMRejectType')) : 
-		(Slim::Utils::Prefs::get('MMMRejectType') || 0);
+		($prefs->client($client)->get('reject_type') || $prefs->get('reject_type')) : 
+		($prefs->get('reject_type') || 0);
 	
 	# assign only if a rejectType found.  suppresses a warning when trying to access the array with no value.
 	if ($rejectType) {
 		$args{'rejecttype'} = $type[$rejectType];
 	}
 
-	my $filter = defined $client ? $client->prefGet('MMMFilter') || Slim::Utils::Prefs::get('MMMFilter') : Slim::Utils::Prefs::get('MMMFilter');
+	my $filter = defined $client ? $prefs->client($client)->get('mix_filter') || $prefs->get('mix_filter') : $prefs->get('mix_filter');
 
 	if ($filter) {
 
@@ -715,7 +720,7 @@ sub getMix {
 	return \@mix;
 }
 
-sub musicmagic_moods {
+sub musicmaigc_moods {
 	my ($client, $params) = @_;
 
 	$params->{'mood_list'} = grabMoods();
@@ -892,19 +897,6 @@ sub musicmagic_mix {
 	}
 
 	return Slim::Web::HTTP::filltemplatefile("plugins/MusicMagic/musicmagic_mix.html", $params);
-}
-
-sub playerGroup {
-
-	my %group = (
-		'Groups' => {
-			'Default' => {
-				'PrefOrder' => [qw(MMMSize MMMMixType MMMStyle MMMVariety MMMFilter MMMMixGenre MMMRejectType MMMRejectSize)]
-			},
-		},
-	);
-	
-	return \%group;
 }
 
 1;

@@ -7,13 +7,17 @@ package Slim::Plugin::MusicMagic::PlayerSettings;
 
 use strict;
 
+use Slim::Utils::Prefs;
+
 # button functions for browse directory
-our @defaultSettingsChoices = qw(MMMSize MMMMixType MMMStyle MMMVariety MMMFilter MMMMixGenre MMMRejectType MMMRejectSize);
+our @defaultSettingsChoices = qw(mix_size mix_type mix_style mix_variety mix_filter mix_genre reject_type reject_size);
 
 our @settingsChoices = ();
 our %current = ();
 our %menuParams = ();
 our %functions = ();
+
+my $prefs = preferences('plugin.musicmagic');
 
 sub init {
 	Slim::Buttons::Common::addMode('MMMsettings',getFunctions(),\&setMode);
@@ -43,6 +47,7 @@ sub init {
 
 		'MMMsettings' => {
 			'listRef'         => \@defaultSettingsChoices,
+			'externRef'      => sub { return 'SETUP_'.$_[1]; },
 			'stringExternRef' => 1,
 			'header'          => 'SETUP_MMMSETTINGS',
 			'stringHeader'    => 1,
@@ -52,24 +57,24 @@ sub init {
 			'overlayRefArgs'  => 'C',
 		},
 		
-		'MMMsettings/MMMSize' => {
+		'MMMsettings/mix_size' => {
 			'useMode'        => 'INPUT.Bar',
-			'header'         => 'SETUP_MMMSIZE',
+			'header'         => 'SETUP_MIX_SIZE',
 			'stringHeader'   => 1,
 			'headerValue'    =>'unscaled',
 			'min'            => 0,
 			'max'            => 200,
 			'increment'      => 1,
 			'onChange'       => \&setPref,
-			'pref'           => "MMMSize",
-			'initialValue'   => "MMMSize",
+			'pref'           => "mix_size",
+			'initialValue'   => "mix_size",
 			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
 			'overlayRefArgs' => 'C',
 		},
 
-		'MMMsettings/MMMMixType' => {
+		'MMMsettings/mix_type' => {
 			'useMode'        => 'INPUT.List',
-			'header'         => 'SETUP_MMMMIXTYPE',
+			'header'         => 'SETUP_MIX_TYPE',
 			'stringHeader'   => 1,
 			'listRef'        => [0,1,2],
 			'externRef'      => {
@@ -78,57 +83,57 @@ sub init {
 				'2' => Slim::Utils::Strings::string('MMMMIXTYPE_MBYTES'),
 			},
 			'onChange'       => \&setPref,
-			'pref'           => "MMMMixType",
-			'initialValue'   => "MMMStyle",
+			'pref'           => "mix_type",
+			'initialValue'   => "mix_type",
 			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
 			'overlayRefArgs' => 'C',
 		},
 
-		'MMMsettings/MMMStyle' => {
+		'MMMsettings/mix_style' => {
 			'useMode'        => 'INPUT.Bar',
-			'header'         => 'SETUP_MMMSTYLE',
+			'header'         => 'SETUP_MIX_STYLE',
 			'stringHeader'   => 1,
 			'headerValue'    => 'unscaled',
 			'min'            => 0,
 			'max'            => 200,
 			'onChange'       => \&setPref,
-			'pref'           => "MMMStyle",
-			'initialValue'   => "MMMStyle",
+			'pref'           => "mix_style",
+			'initialValue'   => "mix_style",
 			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
 			'overlayRefArgs' => 'C',
 		},
 
-		'MMMsettings/MMMVariety' => {
+		'MMMsettings/mix_variety' => {
 			'useMode'        => 'INPUT.Bar',
-			'header'         => 'SETUP_MMMVARIETY',
+			'header'         => 'SETUP_MIX_VARIETY',
 			'stringHeader'   => 1,
 			'headerValue'    =>'unscaled',
 			'min'            => 0,
 			'max'            => 9,
 			'increment'      => 1,
 			'onChange'       => \&setPref,
-			'pref'           => "MMMVariety",
-			'initialValue'   => "MMMVariety",
+			'pref'           => "mix_variety",
+			'initialValue'   => "mix_variety",
 			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
 			'overlayRefArgs' => 'C',
 		},
 
-		'MMMsettings/MMMFilter' => {
+		'MMMsettings/mix_filter' => {
 			'useMode'        => 'INPUT.List',
-			'header'         => 'SETUP_MMMFILTER',
+			'header'         => 'SETUP_MIX_FILTER',
 			'stringHeader'   => 1,
 			'listRef'        => undef,
 			'externRef'      => undef,
 			'onChange'       => \&setPref,
-			'pref'           => "MMMFilter",
-			'initialValue'   => "MMMFilter",
+			'pref'           => "mix_filter",
+			'initialValue'   => "mix_filter",
 			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
 			'overlayRefArgs' => 'C',
 		},
 
-		'MMMsettings/MMMMixGenre' => {
+		'MMMsettings/mix_genre' => {
 			'useMode'        => 'INPUT.List',
-			'header'         => 'SETUP_MMMMIXGENRE',
+			'header'         => 'SETUP_MIX_GENRE',
 			'stringHeader'   => 1,
 			'listRef'        => [0,1],
 			'externRef'      => {
@@ -136,15 +141,15 @@ sub init {
 				'1' => Slim::Utils::Strings::string('YES'),
 			},
 			'onChange'       => \&setPref,
-			'pref'           => "MMMMixGenre",
-			'initialValue'   => "MMMMixGenre",
+			'pref'           => "mix_genre",
+			'initialValue'   => "mix_genre",
 			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
 			'overlayRefArgs' => 'C',
 		},
 		
-		'MMMsettings/MMMRejectType' => {
+		'MMMsettings/reject_type' => {
 			'useMode'        => 'INPUT.List',
-			'header'         => 'SETUP_MMMREJECTTYPE',
+			'header'         => 'SETUP_REJECT_TYPE',
 			'stringHeader'   => 1,
 			'listRef'        => [0,1,2],
 			'externRef'      => {
@@ -153,23 +158,23 @@ sub init {
 				'2' => Slim::Utils::Strings::string('MMMMIXTYPE_MBYTES'),
 			},
 			'onChange'       => \&setPref,
-			'pref'           => "MMMRejectType",
-			'initialValue'   => "MMMRejectType",
+			'pref'           => "reject_type",
+			'initialValue'   => "reject_type",
 			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
 			'overlayRefArgs' => 'C',
 		},
 		
-		'MMMsettings/MMMRejectSize' => {
+		'MMMsettings/reject_size' => {
 			'useMode'        => 'INPUT.Bar',
-			'header'         => 'SETUP_MMMREJECTSIZE',
+			'header'         => 'SETUP_REJECT_SIZE',
 			'stringHeader'   => 1,
 			'headerValue'    =>'unscaled',
 			'min'            => 0,
 			'max'            => 200,
 			'increment'      => 1,
 			'onChange'       => \&setPref,
-			'pref'           => "MMMRejectSize",
-			'initialValue'   => "MMMRejectSize",
+			'pref'           => "reject_size",
+			'initialValue'   => "reject_size",
 			'overlayRef'     => sub { return ($_[0]->string('MUSICMAGIC_MIXRIGHT'),undef) },
 			'overlayRefArgs' => 'C',
 		},
@@ -182,7 +187,7 @@ sub setPref {
 	
 	my $pref = $client->modeParam('pref');
 	
-	$client->prefSet($pref,$value);
+	$prefs->client($client)->set($pref, $value);
 }
 
 sub executeCommand {
@@ -198,33 +203,44 @@ sub executeCommand {
 sub settingsExitHandler {
 	my ($client,$exittype) = @_;
 	$exittype = uc($exittype);
+
 	if ($exittype eq 'LEFT') {
 		Slim::Buttons::Common::popModeRight($client);
+
 	} elsif ($exittype eq 'RIGHT') {
 		my $nextmenu = 'MMMsettings/'.$current{$client};
+
 		if (defined($client->modeParam('useMode'))) {
 			#in a submenu of settings and exiting right.
 			Slim::Plugin::MusicMagic::Plugin::mixerFunction($client,1);
+
 		} elsif (exists($menuParams{$nextmenu})) {
 			my %nextParams = %{$menuParams{$nextmenu}};
+
 			$nextParams{'callback'} = \&settingsExitHandler;
 			$nextParams{'parentParams'} = $client->modeParam('parentParams');
+
 			if (($nextParams{'useMode'} eq 'INPUT.List' || $nextParams{'useMode'} eq 'INPUT.Bar')  && exists($nextParams{'initialValue'})) {
 				#set up valueRef for current pref
 				my $value;
+
 				if (ref($nextParams{'initialValue'}) eq 'CODE') {
 					$value = $nextParams{'initialValue'}->($client);
 				} else {
-					$value = $client->prefGet($nextParams{'initialValue'});
+				
+					# grab client pref, or fall back to server pref if not defined
+					$value = $prefs->client($client)->get($nextParams{'initialValue'}) || $prefs->get($nextParams{'initialValue'});
 				}
+
 				$nextParams{'valueRef'} = \$value;
 			}
-			if ($nextmenu eq 'MMMsettings/MMMFilter') {
-				my %filters = Slim::Plugin::MusicMagic::Plugin::grabFilters();
+
+			if ($nextmenu eq 'MMMsettings/mix_filter') {
+				my $filters = Slim::Plugin::MusicMagic::Settings::grabFilters();
 				
-				$nextParams{'listRef'} = [keys %filters];
-				$nextParams{'externRef'} = {Slim::Plugin::MusicMagic::Plugin::grabFilters()};
-				$nextParams{'listIndex'} = $client->prefGet('MMMFilter');
+				$nextParams{'listRef'} = [keys %{$filters}];
+				$nextParams{'externRef'} = $filters;
+				$nextParams{'listIndex'} = $prefs->client($client)->get('mix_filter');
 				
 			}
 			
@@ -233,9 +249,11 @@ sub settingsExitHandler {
 				,$nextParams{'useMode'}
 				,\%nextParams
 			);
+
 		} else {
 			Slim::Plugin::MusicMagic::Plugin::mixerFunction($client,1);
 		}
+
 	} else {
 		return;
 	}

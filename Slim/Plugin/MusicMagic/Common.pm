@@ -8,18 +8,21 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings;
+use Slim::Utils::Prefs;
 
 my $os  = Slim::Utils::OSDetect::OS();
 my $log = logger('plugin.musicmagic');
 
+my $prefs = preferences('plugin.musicmagic');
+
 sub convertPath {
 	my $mmsPath = shift;
 	
-	if (Slim::Utils::Prefs::get('MMSHost') eq 'localhost') {
+	if ($prefs->get('host') eq 'localhost') {
 		return $mmsPath;
 	}
 	
-	my $remoteRoot = Slim::Utils::Prefs::get('MMSremoteRoot');
+	my $remoteRoot = $prefs->get('remote_root');
 	my $nativeRoot = Slim::Utils::Prefs::get('audiodir');
 	my $original   = $mmsPath;
 	my $winPath    = $mmsPath =~ m/\\/; # test if this is a windows path
@@ -29,7 +32,7 @@ sub convertPath {
 		# we are unix
 		if ($winPath) {
 
-			# we are running music magic on winders but
+			# we are running musicmagic on windows but
 			# slim server is running on unix
 
 			# convert any windozes paths to unix style
@@ -70,44 +73,44 @@ sub convertPath {
 
 sub checkDefaults {
 
-	if (!Slim::Utils::Prefs::isDefined('musicmagic')) {
-		Slim::Utils::Prefs::set('musicmagic',0)
+	if (!defined $prefs->get('enabled')) {
+		$prefs->set('enabled',0)
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('MMMMixType')) {
-		Slim::Utils::Prefs::set('MMMMixType',0)
+	if (!defined $prefs->get('mix_type')) {
+		$prefs->set('mix_type',0)
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('MMMStyle')) {
-		Slim::Utils::Prefs::set('MMMStyle',0);
+	if (!defined $prefs->get('mix_style')) {
+		$prefs->set('mix_style',0);
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('MMMVariety')) {
-		Slim::Utils::Prefs::set('MMMVariety',0);
+	if (!defined $prefs->get('mix_variety')) {
+		$prefs->set('mix_variety',0);
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('MMMSize')) {
-		Slim::Utils::Prefs::set('MMMSize',12);
+	if (!defined $prefs->get('mix_size')) {
+		$prefs->set('mix_size',12);
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('MusicMagicplaylistprefix')) {
-		Slim::Utils::Prefs::set('MusicMagicplaylistprefix','MusicMagic: ');
+	if (!defined $prefs->get('playlist_prefix')) {
+		$prefs->set('playlist_prefix','MusicMagic: ');
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('MusicMagicplaylistsuffix')) {
-		Slim::Utils::Prefs::set('MusicMagicplaylistsuffix','');
+	if (!defined $prefs->get('playlist_suffix')) {
+		$prefs->set('playlist_suffix','');
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('musicmagicscaninterval')) {
-		Slim::Utils::Prefs::set('musicmagicscaninterval',60);
+	if (!defined $prefs->get('scan_interval')) {
+		$prefs->set('scan_interval',3600);
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('MMSport')) {
-		Slim::Utils::Prefs::set('MMSport',10002);
+	if (!defined $prefs->get('port')) {
+		$prefs->set('port',10002);
 	}
 
-	if (!Slim::Utils::Prefs::isDefined('MMSHost')) {
-		Slim::Utils::Prefs::set('MMSHost','localhost');
+	if (!defined $prefs->get('host')) {
+		$prefs->set('host','localhost');
 	}
 }
 

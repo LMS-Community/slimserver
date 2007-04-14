@@ -11,11 +11,52 @@ use base qw(Slim::Web::Settings);
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Prefs;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.musicmagic',
 	'defaultLevel' => 'WARN',
 });
+
+my $prefs = preferences('plugin.musicmagic');
+
+$prefs->migrate(1, sub {
+	$prefs->set('enabled',         Slim::Utils::Prefs::OldPrefs->get('musicmagic'));
+	$prefs->set('scan_interval',   Slim::Utils::Prefs::OldPrefs->get('musicmagicscaninterval') || 3600            );
+	$prefs->set('player_settings', Slim::Utils::Prefs::OldPrefs->get('MMMPlayerSettings') || 0                    );
+	$prefs->set('port',            Slim::Utils::Prefs::OldPrefs->get('MMSport') || 10002                          );
+	$prefs->set('mix_filter',      Slim::Utils::Prefs::OldPrefs->get('MMMFilter')                                 );
+	$prefs->set('reject_size',     Slim::Utils::Prefs::OldPrefs->get('MMMRejectSize') || 0                        );
+	$prefs->set('reject_type',     Slim::Utils::Prefs::OldPrefs->get('MMMRejectType')                             );
+	$prefs->set('mix_genre',       Slim::Utils::Prefs::OldPrefs->get('MMMMixGenre')                               );
+	$prefs->set('mix_variety',     Slim::Utils::Prefs::OldPrefs->get('MMMVariety') || 0                           );
+	$prefs->set('mix_style',       Slim::Utils::Prefs::OldPrefs->get('MMMStyle') || 0                             );
+	$prefs->set('mix_type',        Slim::Utils::Prefs::OldPrefs->get('MMMMixType')                                );
+	$prefs->set('mix_size',        Slim::Utils::Prefs::OldPrefs->get('MMMSize') || 12                             );
+	$prefs->set('playlist_prefix', Slim::Utils::Prefs::OldPrefs->get('MusicMagicplaylistprefix') || 'MusicIP: '   );
+	$prefs->set('playlist_suffix', Slim::Utils::Prefs::OldPrefs->get('MusicMagicplaylistsuffix') || ''            );
+
+	$prefs->set('enabled', 0) unless defined $prefs->get('enabled'); # default to on if not previously set
+	
+	# use new naming of the old default wasn't changed
+	if ($prefs->get('playlist_prefix') eq 'MusicMagic: ') {
+		$prefs->set('playlist_prefix', 'MusicIP: ');
+	}
+	1;
+});
+
+$prefs->setValidate('num', qw(scan_interval port mix_variety mix_style reject_size));
+
+$prefs->setChange(
+	sub {
+		Slim::Music::Import->useImporter('Plugin::iTunes::Plugin', $_[1]);
+
+		for my $c (Slim::Player::Client::clients()) {
+			Slim::Buttons::Home::updateMenu($c);
+		}
+	},
+	'enabled',
+);
 
 sub name {
 	return 'MUSICMAGIC';
@@ -25,58 +66,18 @@ sub page {
 	return 'plugins/MusicMagic/settings/musicmagic.html';
 }
 
+sub prefs {
+	return ($prefs, qw(enabled scan_interval player_settings port mix_filter reject_size reject_type 
+			   mix_genre mix_variety mix_style mix_type mix_size playlist_prefix playlist_suffix));
+}
+
 sub handler {
 	my ($class, $client, $params) = @_;
 
-	# These are lame preference names.
-	my @prefs = qw(
-		musicmagic
-		MMMPlayerSettings
-		MMMSize
-		MMMMixType
-		MMMStyle
-		MMMVariety
-		MMMMixGenre
-		MMMRejectType
-		MMMRejectSize
-		MMMFilter
-		musicmagicscaninterval
-		MMSport
-		MusicMagicplaylistprefix
-		MusicMagicplaylistsuffix
-	);
-
 	# Cleanup the checkbox
-	$params->{'musicmagic'} = defined $params->{'musicmagic'} ? 1 : 0;
+	$params->{'enabled'} = defined $params->{'enabled'} ? 1 : 0;
 
-	if ($params->{'saveSettings'}) {
-
-		if ($params->{'musicmagic'} != Slim::Utils::Prefs::get('musicmagic')) {
-
-			for my $c (Slim::Player::Client::clients()) {
-
-				Slim::Buttons::Home::updateMenu($c);
-			}
-
-			Slim::Music::Import->useImporter('Plugin::MusicMagic::Plugin', $params->{'musicmagic'});
-		}
-
-		for my $pref (@prefs) {
-
-			# XXX - need validation!
-			#'itunesscaninterval' => { 'validate' => \&Slim::Utils::Validate::number, },
-			#'itunes_library_xml_path' => { 'validate' => \&Slim::Utils::Validate::isFile, },
-			#'itunes_library_music_path' => { 'validate' => \&Slim::Utils::Validate::isDir, },
-
-			Slim::Utils::Prefs::set($pref, $params->{$pref});
-		}
-	}
-
-	for my $pref (@prefs) {
-
-		$params->{'prefs'}->{$pref} = Slim::Utils::Prefs::get($pref);
-	}
-	$params->{'filters'}        = grabFilters();
+	$params->{'filters'}  = grabFilters();
 
 	return $class->SUPER::handler($client, $params);
 }
@@ -85,8 +86,8 @@ sub grabFilters {
 	my @filters    = ();
 	my %filterHash = ();
 	
-	my $MMSport = Slim::Utils::Prefs::get('MMSport');
-	my $MMSHost = Slim::Utils::Prefs::get('MMSHost');
+	my $MMSport = $prefs->get('port');
+	my $MMSHost = $prefs->get('host');
 
 	$log->debug("Get filters list");
 
@@ -128,8 +129,6 @@ sub grabFilters {
 
 	return \%filterHash;
 }
-
-
 
 1;
 

@@ -29,28 +29,28 @@ SETUP_MUSICMAGICPLAYLISTFORMAT_DESC
 	SV	Denna inställning styr format vid import av MusicIP-låtlistor
 	ZH_CN	这个选项决定了导入MusicIP播放表所使用的格式。
 
-SETUP_MMMMIXTYPE
+SETUP_MIX_TYPE
 	DE	MusicIP Mix Typ
 	EN	MusicIP Mix Type
 	ES	Tipo de mezcla de MusicIP
 	NL	MusicIP Mix type
 	ZH_CN	MusicIP混音类型
 
-SETUP_MMMMIXTYPE_DESC
+SETUP_MIX_TYPE_DESC
 	DE	Die Grösse des gewünschten MusicIP Mixes kann über drei Grössen definiert werden: Anzahl Lieder, Länge in Minuten oder Anzahl Megabytes. (Vorgabe: Länge)
 	EN	Your MusicIP Mix size may be set by the number of three types: Tracks, Minutes, MegaBytes (default tracks)
 	ES	La tamaño de la mezcla de MusicIP puede establecerse utilizando 3 valores: Pistas, Minutos, MegaBytes (por defecto se utiliza Pistas)
 	NL	Je MusicIP mixgrootte kun je instellen op drie types: liedjes, minuten, Megabytes (standaard liedjes)
 	ZH_CN	您的MusicIP混音量可从三种数量设置做选择：轨道、分钟、兆字节（缺省轨道）
 
-SETUP_MMMSIZE
+SETUP_MIX_SIZE
 	DE	MusicIP Mix Grösse
 	EN	MusicIP Mix Size
 	ES	Tamaño de mezcla de MusicIP
 	NL	MusicIP Mix grootte
 	ZH_CN	MusicIP混音量
 
-SETUP_MMMSIZE_DESC
+SETUP_MIX_SIZE_DESC
 	CS	Vyberte Mix Size
 	DE	Wählen Sie die Mix-Grösse
 	EN	Choose Mix Size
@@ -58,55 +58,55 @@ SETUP_MMMSIZE_DESC
 	NL	Kies mixgrootte
 	ZH_CN	请选择MusicIP混音量
 
-SETUP_MMMFILTER
+SETUP_MIX_FILTER
 	EN	MusicIP Mix Filter
 	ES	Filtro de Mezcla de MusicIP
 	NL	MusicIP Mix filter
 	ZH_CN	MusicIP混音过滤器
 
-SETUP_MMMFILTER_DESC
+SETUP_MIX_FILTER_DESC
 	DE	In MusicIP können Sie Filtersets unter einem Namen abspeichern. Wählen Sie hier eines dieser Sets, das auf die MusicIP Mixes im SlimServer angewendet werden soll.
 	EN	You can create named sets of filter conditions in MusicIP and choose from the list here to apply those filters to MusicIP Mixes in SlimServer.
 	ES	Se puede dar un nombre a conjuntos de condiciones de filtro creadas en MusicIP y elegir de esta lista para aplicar esos filtros a las Mezclas de MusicIP en SlimServer.
 	NL	Je kunt filtersets met condities maken in MusicIP. Kies vanuit de lijst hier de filtersets om toe te voegen in SlimServer voor MusicIP mixes.
 	ZH_CN	您可以利用MusicIP设立过滤器，并且从这表中选择应用在SlimServer内MusicIP混音的那些过滤器。
 
-SETUP_MMMMIXGENRE
+SETUP_MIX_GENRE
 	DE	MusicIP Mix Musikstil
 	EN	MusicIP Mix Genre
 	ES	Género de mezcla de MusicIP
 	NL	MusicIP mix genre
 	ZH_CN	MusicIP混音曲风
 
-SETUP_MMMMIXGENRE_DESC
+SETUP_MIX_GENRE_DESC
 	DE	Beschränken Sie den Mix auf die Musikstile des Seeds (Vorgabe: nein)
 	EN	Restrict mix to the genre of the seed (Default: no)
 	ES	Restringir la mezcla al género de la canción inicial (Por defecto: no)
 	NL	Beperk mix tot het genre van bron (standaard: Nee)
 	ZH_CN	将混音限制于种子的曲风（确省：不）
 
-SETUP_MMMREJECTTYPE
+SETUP_REJECT_TYPE
 	DE	MusicIP Ablehnungsart
 	EN	MusicIP Reject Type
 	ES	Tipo de Rechazo en MusicIP
 	NL	MusicIP afkeurtype
 	ZH_CN	MusicIP拒绝种类
 
-SETUP_MMMREJECTTYPE_DESC
+SETUP_REJECT_TYPE_DESC
 	DE	Definieren Sie die Einheit für die Ablehnungsgrösse. (Vorgabe: Lieder)
 	EN	Set the units for reject size. (Default: tracks)
 	ES	Establecer las unidades para el tamaño del rechazo. (Por Defecto: canciones/tracks)
 	NL	Stel de eenheid in voor de afkeurgrootte (standaard: liedjes).
 	ZH_CN	配置拒绝量单位（确省：音轨）
 
-SETUP_MMMREJECTSIZE
+SETUP_REJECT_SIZE
 	DE	MusicIP Ablehnungsgrösse
 	EN	MusicIP Reject Size.
 	ES	Tamaño de Rechazo de MusicIP
 	NL	MusicMagix afkeurgrootte.
 	ZH_CN	MusicIP拒绝量
 
-SETUP_MMMREJECTSIZE_DESC
+SETUP_REJECT_SIZE_DESC
 	DE	Definieren Sie die Anzahl an Einträgen, die übersprungen werden sollen, bevor ein Typ wiederholt wird.
 	EN	Set the number of items to skip before repeating a type. (Default: 12)
 	ES	Establecer el número de items a saltearse antes de repetir un tipo. (Por defecto: 12)
@@ -126,28 +126,28 @@ SETUP_MMSHOST_DESC
 	NL	Kies een hostnaam of IP adres van de lokale MusicIP server of die op afstand.
 	ZH_CN	请选择主机名或远程或本地的MusicIP服务器的IP地址
 
-SETUP_MMMSTYLE
+SETUP_MIX_STYLE
 	DE	MusicIP Mix Stil
 	EN	MusicIP Mix Style
 	ES	Estilo de mezcla de MusicIP
 	NL	MusicIP Mix stijl
 	ZH_CN	MusicIP混音风格
 
-SETUP_MMMSTYLE_DESC
+SETUP_MIX_STYLE_DESC
 	DE	Wie ähnlich muss der Stil des Interpreten sein (0=nicht berücksichtigen (Vorgabe), 200=sehr ähnlich)
 	EN	How much like the artist style ( 0 = ignore (default), 200 = strict )
 	ES	Qué tan parecido al estilo del artista ( 0 = ignorar (por defecto), 200 = estricto )
 	NL	Hoeveel lijkend op de artieststijl (0=negeren (standaard), 200=Strikt)
 	ZH_CN	有多接近艺人的风格 （0=不理睬（缺省），200=严格）
 
-SETUP_MMMVARIETY
+SETUP_MIX_VARIETY
 	DE	MusicIP Mix Vielseitigkeit
 	EN	MusicIP Mix Variety
 	ES	Variedad de Mezcla de MusicIP
 	NL	MusicIP Mix gevarieerdheid
 	ZH_CN	MusicIP混音品种变化
 
-SETUP_MMMVARIETY_DESC
+SETUP_MIX_VARIETY_DESC
 	DE	Wie vielseitig soll der Mix sein (0 = weniger (Vorgabe), 9 = mehr)
 	EN	How much variety in the mix ( 0 = less (default), 9 = more )
 	ES	Cuánta variedad en la mezcla ( 0 = menos (por defecto), 9 = más )
