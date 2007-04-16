@@ -45,6 +45,7 @@ use File::Spec::Functions qw(:ALL);
 use Storable;
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 
 our $strings = {};
 our $defaultStrings;
@@ -53,6 +54,8 @@ my $currentLang;
 my $failsafeLang  = 'EN';
 
 my $log = logger('server');
+
+my $prefs = preferences('server');
 
 =head1 METHODS
 
@@ -91,7 +94,7 @@ sub loadStrings {
 
 	my ($newest, $files) = stringsFiles();
 
-	my $stringCache = catdir( Slim::Utils::Prefs::get('cachedir'),
+	my $stringCache = catdir( $prefs->get('cachedir'),
 		Slim::Utils::OSDetect::OS() eq 'unix' ? 'stringcache' : 'strings.bin');
 
 	my $stringCacheVersion = 1; # Version number for cache file
@@ -402,7 +405,7 @@ sub languageOptions {
 }
 
 sub getLanguage {
-	return Slim::Utils::Prefs::get('language') || $failsafeLang;
+	return $prefs->get('language') || $failsafeLang;
 }
 
 sub setLanguage {
@@ -410,7 +413,7 @@ sub setLanguage {
 
 	if ($strings->{'langchoices'}->{$lang}) {
 
-		Slim::Utils::Prefs::set('language', $lang);
+		$prefs->set('language', $lang);
 		$currentLang = $lang;
 
 		loadStrings({'ignoreCache' => 1});
@@ -447,7 +450,7 @@ sub clientStrings {
 
 sub storeFailsafe {
 	return ($currentLang ne $failsafeLang &&
-			(Slim::Utils::Prefs::get('loadFontsSqueezeboxG') || Slim::Utils::Prefs::get('loadFontsText') ) &&
+			($prefs->get('loadFontsSqueezeboxG') || $prefs->get('loadFontsText') ) &&
 			$currentLang !~ /CS|DE|DA|EN|ES|FI|FR|IT|NL|NO|PT|SV/ ) ? 1 : 0;
 }
 

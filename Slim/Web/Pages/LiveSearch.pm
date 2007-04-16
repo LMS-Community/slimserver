@@ -15,8 +15,11 @@ use Scalar::Util qw(blessed);
 use Slim::Music::Info;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
+use Slim::Utils::Prefs;
 
 use constant MAXRESULTS => 10;
+
+my $prefs = preferences('server');
 
 sub outputAsXHTML {
 	my $class   = shift;
@@ -131,7 +134,7 @@ sub renderItem {
 		$name = Slim::Music::Info::standardTitle(undef, $item) || '';
 		
 		# Starting work on the standard track list format, but its a work in progress.
-		my $webFormat = Slim::Utils::Prefs::getInd("titleFormat",Slim::Utils::Prefs::get("titleFormatWeb")) || '';
+		my $webFormat = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ] || '';
 
 		# This is rather redundant from Pages.pm
 		if ($webFormat !~ /ARTIST/ && $item->can('artist') && $item->artist) {

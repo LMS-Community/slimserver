@@ -10,6 +10,8 @@ package Slim::Web::Settings::Server::Behavior;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use Slim::Utils::Prefs;
+
 sub name {
 	return 'BEHAVIOR_SETTINGS';
 }
@@ -18,55 +20,12 @@ sub page {
 	return 'settings/server/behavior.html';
 }
 
-sub handler {
-	my ($class, $client, $paramRef, $pageSetup) = @_;
-
-	my @prefs = qw(
-		displaytexttimeout
-		checkVersion
-		noGenreFilter
-		playtrackalbum
-		searchSubString
-		ignoredarticles
-		splitList
-		browseagelimit
-		groupdiscs
-		persistPlaylists
-		reshuffleOnRepeat
-		saveShuffled
-		composerInArtists
-		conductorInArtists
-		bandInArtists
-		variousArtistAutoIdentification
-		useBandAsAlbumArtist
-		variousArtistsString
-	);
-
-	my %scanOn = map { $_ => 1 } qw(splitList ignoredarticles groupDiscs);
-
-	for my $pref (@prefs) {
-
-		# If this is a settings update
-		if ($paramRef->{'saveSettings'}) {
-
-			if (exists $scanOn{$pref} && $paramRef->{$pref} ne Slim::Utils::Prefs::get($pref)) {
-
-				logWarning("$pref changed - starting wipe scan");
-
-				Slim::Utils::Prefs::set($pref, $paramRef->{$pref});
-
-				Slim::Control::Request::executeRequest($client, ['wipecache']);
-
-			} else {
-
-				Slim::Utils::Prefs::set($pref, $paramRef->{$pref});
-			}
-		}
-
-		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
-	}
-	
-	return $class->SUPER::handler($client, $paramRef, $pageSetup);
+sub prefs {
+	return (preferences('server'),
+			qw(displaytexttimeout checkVersion noGenreFilter playtrackalbum searchSubString ignoredarticles splitList
+			   browseagelimit groupdiscs persistPlaylists reshuffleOnRepeat saveShuffled composerInArtists conductorInArtists
+			   bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist variousArtistsString)
+		   );
 }
 
 1;

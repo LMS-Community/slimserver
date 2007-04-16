@@ -43,6 +43,9 @@ use strict;
 use Slim::Buttons::Common;
 use Slim::Utils::DateTime;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 Slim::Buttons::Common::addMode('INPUT.Time',getFunctions(),\&setMode);
 
@@ -128,7 +131,7 @@ our %functions = (
 			
 			my $c = $client->modeParam('cursorPos');
 
-			my $ampm = (Slim::Utils::Prefs::get('timeFormat') =~ /%p/);
+			my $ampm = ($prefs->get('timeFormat') =~ /%p/);
 
 			my $max = 9;
 			if ($c == 0) {
@@ -193,7 +196,7 @@ our %functions = (
 			
 			$$valueRef = Slim::Utils::DateTime::timeDigitsToTime($h0, $h1, $m0, $m1, $p);
 	
-			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + Slim::Utils::Prefs::get("displaytexttimeout"), \&nextChar);
+			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $prefs->get('displaytexttimeout'), \&nextChar);
 			
 			#update the display
 			my $onChange = $client->modeParam('onChange');
@@ -402,7 +405,7 @@ sub moveCursor {
 
 	my $charIndex;
 
-	if ($cursorPos > ((Slim::Utils::Prefs::get('timeFormat') =~ /%p/) ? 4 : 3)) {
+	if ($cursorPos > (($prefs->get('timeFormat') =~ /%p/) ? 4 : 3)) {
 		exitInput($client,'right');
 		return;
 	}
@@ -448,7 +451,7 @@ Takes as arguments, the $client structure and a reference to the array of discre
 sub prepKnob {
 	my ($client, $digits) = @_;
 	
-	my $ampm = (Slim::Utils::Prefs::get('timeFormat') =~ /%p/);
+	my $ampm = ($prefs->get('timeFormat') =~ /%p/);
 	my $c    = $client->modeParam('cursorPos');
 	
 	if ($c == 0) {
@@ -504,7 +507,7 @@ sub scrollTime {
 	
 	my ($h0, $h1, $m0, $m1, $p) = Slim::Utils::DateTime::timeDigits($valueRef);
 
-	my $ampm = (Slim::Utils::Prefs::get('timeFormat') =~ /%p/);
+	my $ampm = ($prefs->get('timeFormat') =~ /%p/);
 	
 	$p = ($p && $p eq 'PM') ? 1 : 0;
 

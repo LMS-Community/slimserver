@@ -65,6 +65,7 @@ use strict;
 
 use Slim::Buttons::Common;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
 # default arrays for numberLetterRef
 
@@ -208,7 +209,7 @@ our %functions = (
 		$client->modeParam('listIndex', $index);
 
 		# set up a timer to automatically skip ahead
-		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + Slim::Utils::Prefs::get("displaytexttimeout"), \&nextChar);
+		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + preferences('server')->get('displaytexttimeout'), \&nextChar);
 
 		#update the display
 		$client->update();

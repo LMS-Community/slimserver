@@ -12,6 +12,9 @@ use Slim::Music::Info;
 use Slim::Utils::DateTime;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 our @allColumns = (qw(
 	id url content_type title titlesort titlesearch album tracknum
@@ -369,7 +372,7 @@ sub contributorRoles {
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
-	my $format = Slim::Utils::Prefs::getInd("titleFormat", Slim::Utils::Prefs::get("titleFormatWeb"));
+	my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
 
 	# Go directly to infoFormat, as standardTitle is more client oriented.
 	$form->{'text'}     = Slim::Music::TitleFormatter::infoFormat($self, $format, 'TITLE');

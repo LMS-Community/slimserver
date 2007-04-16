@@ -48,6 +48,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Progress;
 use Slim::Utils::Strings;
+use Slim::Utils::Prefs;
 
 my $log = logger('scan.scanner');
 
@@ -1083,7 +1084,7 @@ sub scanWMAStreamDone {
 		
 		# Look through all available streams and select the one with the highest bitrate still below
 		# the user's preferred max bitrate
-		my $max = Slim::Utils::Prefs::get('maxWMArate') || 9999;
+		my $max = preferences('server')->get('maxWMArate') || 9999;
 	
 		my $bitrate = 0;
 		for my $stream ( @{ $wma->stream } ) {

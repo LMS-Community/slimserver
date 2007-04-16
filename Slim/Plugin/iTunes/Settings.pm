@@ -34,8 +34,8 @@ $prefs->migrate(1, sub {
 });
 
 $prefs->setValidate('num', 'scan_interval');
-$prefs->setValidate( sub { !$_[1] || -e $_[1] }, 'xml_file');   # empty or a file
-$prefs->setValidate( sub { !$_[1] || -d $_[1] }, 'music_path'); # empty or a directory
+$prefs->setValidate('file', 'xml_file');
+$prefs->setValidate('dir', 'music_path');
 
 $prefs->setChange(
 	sub {

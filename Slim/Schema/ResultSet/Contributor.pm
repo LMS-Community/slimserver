@@ -81,7 +81,7 @@ sub browse {
 		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
 	}
 
-	if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+	if (preferences('server')->get('variousArtistAutoIdentification')) {
 
 		$cond->{'album.compilation'} = [ { 'is' => undef }, { '=' => 0 } ];
 

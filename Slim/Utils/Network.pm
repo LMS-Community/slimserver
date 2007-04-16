@@ -69,7 +69,7 @@ Returns true or false, if the host or allowed is not.
 
 sub isAllowedHost {
 	my $host = shift;
-	my $allowedHosts = shift || Slim::Utils::Prefs::get('allowedHosts');
+	my $allowedHosts = shift || preferences('server')->get('allowedHosts');
 	my @rules = split /\,/, $allowedHosts;
 
 	foreach my $item (@rules) {

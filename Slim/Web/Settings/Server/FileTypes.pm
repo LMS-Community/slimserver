@@ -14,6 +14,8 @@ use Slim::Player::TranscodingHelper;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 
+my $prefs = preferences('server');
+
 sub name {
 	return 'FORMATS_SETTINGS';
 }
@@ -28,17 +30,17 @@ sub handler {
 	# If this is a settings update
 	if ($paramRef->{'saveSettings'}) {
 
-		Slim::Utils::Prefs::set('disabledextensionsaudio',    $paramRef->{'disabledextensionsaudio'});
-		Slim::Utils::Prefs::set('disabledextensionsplaylist', $paramRef->{'disabledextensionsplaylist'});
+		$prefs->set('disabledextensionsaudio',    $paramRef->{'disabledextensionsaudio'});
+		$prefs->set('disabledextensionsplaylist', $paramRef->{'disabledextensionsplaylist'});
 
-		my %disabledformats = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledformats');
+		my %disabledformats = map { $_ => 1 } @{ $prefs->get('disabledformats') };
 
-		Slim::Utils::Prefs::delete('disabledformats');
+		my @disabled = ();
 
 		my $formatslistref = Slim::Player::TranscodingHelper::Conversions();
 
 		foreach my $profile (sort {$a cmp $b} (grep {$_ !~ /transcode/} (keys %{$formatslistref}))) {
-			
+
 			# If the conversion pref is enabled confirm that 
 			# it's allowed to be checked.
 			if ($paramRef->{$profile} ne 'DISABLED' && $disabledformats{$profile}) {
@@ -48,17 +50,19 @@ sub handler {
 					$paramRef->{'warning'} .= 
 						string('SETUP_FORMATSLIST_MISSING_BINARY') . " $@ " . string('FOR') ." $profile<br>";
 
-					Slim::Utils::Prefs::push('disabledformats', $profile);
+					push @disabled, $profile;
 				}
 
 			} elsif ($paramRef->{$profile} eq 'DISABLED') {
 
-				Slim::Utils::Prefs::push('disabledformats', $profile);
+				push @disabled, $profile;
 			}
 		}
+
+		$prefs->set('disabledformats', \@disabled);
 	}
 
-	my %disabledformats = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledformats');
+	my %disabledformats = map { $_ => 1 } @{ $prefs->get('disabledformats') };
 	my $formatslistref  = Slim::Player::TranscodingHelper::Conversions();
 	my @formats         = (); 
 
@@ -101,8 +105,8 @@ sub handler {
 	
 	$paramRef->{'formats'} = \@formats;
 
-	$paramRef->{'disabledextensionsaudio'}  = Slim::Utils::Prefs::get('disabledextensionsaudio');
-	$paramRef->{'disabledextensionsplaylist'} = Slim::Utils::Prefs::get('disabledextensionsplaylist');
+	$paramRef->{'disabledextensionsaudio'}  = $prefs->get('disabledextensionsaudio');
+	$paramRef->{'disabledextensionsplaylist'} = $prefs->get('disabledextensionsplaylist');
 
 	return $class->SUPER::handler($client, $paramRef, $pageSetup);
 }

@@ -61,6 +61,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 my $prefs = preferences('plugin.cli');
+my $prefsServer = preferences('server');
 
 ################################################################################
 # PLUGIN CODE
@@ -218,7 +219,7 @@ sub cli_socket_accept {
 	$log->debug("Begin Function");
 
 	# Check max connections
-	if (scalar keys %connections > Slim::Utils::Prefs::get("tcpConnectMaximum")) {
+	if (scalar keys %connections > $prefsServer->get('tcpConnectMaximum')) {
 
 		$log->warn("Warning: Did not accept connection: too many connections open!");
 
@@ -233,7 +234,7 @@ sub cli_socket_accept {
 
 		# Check allowed hosts
 		
-		if (!(Slim::Utils::Prefs::get('filterHosts')) || (Slim::Utils::Network::isAllowedHost($tmpaddr))) {
+		if (!($prefsServer->get('filterHosts')) || (Slim::Utils::Network::isAllowedHost($tmpaddr))) {
 
 			Slim::Networking::Select::addRead($client_socket, \&client_socket_read);
 			Slim::Networking::Select::addError($client_socket, \&client_socket_close);
@@ -242,7 +243,7 @@ sub cli_socket_accept {
 			$connections{$client_socket}{'id'} = $tmpaddr.':'.$client_socket->peerport;
 			$connections{$client_socket}{'inbuff'} = '';
 			$connections{$client_socket}{'outbuff'} = ();
-			$connections{$client_socket}{'auth'} = !Slim::Utils::Prefs::get('authorize');
+			$connections{$client_socket}{'auth'} = !$prefsServer->get('authorize');
 			$connections{$client_socket}{'terminator'} = $LF;
 
 			$log->info("Accepted connection from $connections{$client_socket}{'id'} (" . (keys %connections) . " active connections)");

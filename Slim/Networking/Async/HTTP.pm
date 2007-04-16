@@ -47,6 +47,8 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
+my $prefs = preferences('server');
+
 __PACKAGE__->mk_classaccessors( qw(
 	uri request response saveAs fh
 ) );
@@ -102,7 +104,7 @@ sub use_proxy {
 	my $self = shift;
 	
 	# Proxy will be used for non-local HTTP requests
-	if ( my $proxy = Slim::Utils::Prefs::get('webproxy') ) {
+	if ( my $proxy = $prefs->get('webproxy') ) {
 		my $host   = $self->request->uri->host;
 		my $scheme = $self->request->uri->scheme;
 		if ( $scheme ne 'https' && $host !~ /(?:localhost|127.0.0.1)/ ) {
@@ -351,7 +353,7 @@ sub _http_read {
 		$self->socket->set( passthrough => [ $self, $args ] );
 		
 		# Timer in case the server never sends any body data
-		my $timeout = Slim::Utils::Prefs::get('remotestreamtimeout') || 10;
+		my $timeout = $prefs->get('remotestreamtimeout') || 10;
 		Slim::Utils::Timers::setTimer( $self->socket, Time::HiRes::time() + $timeout, \&_http_socket_error, $self, $args );
 		
 		Slim::Networking::Select::addError( $self->socket, \&_http_socket_error );
@@ -427,7 +429,7 @@ sub _http_read_body {
 		# More body data to read
 		
 		# Some servers may never send EOF, but we want to return whatever data we've read
-		my $timeout = Slim::Utils::Prefs::get('remotestreamtimeout') || 10;
+		my $timeout = $prefs->get('remotestreamtimeout') || 10;
 		Slim::Utils::Timers::setTimer( $socket, Time::HiRes::time() + $timeout, \&_http_read_timeout, $self, $args );
 	}
 }

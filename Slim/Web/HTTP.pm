@@ -43,6 +43,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 use Slim::Web::Pages;
 use Slim::Web::Graphics;
+use Slim::Utils::Prefs;
 
 BEGIN {
 
@@ -120,6 +121,8 @@ our $inChild;
 
 my $log = logger('network.http');
 
+my $prefs = preferences('server');
+
 # initialize the http server
 sub init {
 
@@ -150,8 +153,8 @@ sub init {
 sub init2 {
 	# open HTTP port if specified
 	# split into second init function so this can be performed after all server init is complete
-	if (Slim::Utils::Prefs::get('httpport')) {
-		Slim::Web::HTTP::openport(Slim::Utils::Prefs::get('httpport'), $::httpaddr);
+	if ($prefs->get('httpport')) {
+		Slim::Web::HTTP::openport($prefs->get('httpport'), $::httpaddr);
 	} else {
 		$openedport = 0; # init complete but no port opened
 	}
@@ -209,18 +212,14 @@ sub _adjustHTTPPortCallback {
 	}
 
 	# open new port if specified
-	if (Slim::Utils::Prefs::get('httpport')) {
+	if ($prefs->get('httpport')) {
 
-		Slim::Web::HTTP::openport(Slim::Utils::Prefs::get('httpport'), $::httpaddr);
+		Slim::Web::HTTP::openport($prefs->get('httpport'), $::httpaddr);
 
 		# Need to restart mDNS after changing the HTTP port.
 		Slim::Networking::mDNS->startAdvertising;
 	}
 }
-
-# TODO: Turn this back on
-#		my $tcpReadMaximum = Slim::Utils::Prefs::get("tcpReadMaximum");
-#		my $streamWriteMaximum = Slim::Utils::Prefs::get("tcpWriteMaximum");
 
 sub connectedSocket {
 	return $connected;
@@ -245,7 +244,7 @@ sub acceptHTTP {
 		$peer = inet_ntoa($peer);
 
 		# Check if source address is valid
-		if (!(Slim::Utils::Prefs::get('filterHosts')) ||
+		if (!($prefs->get('filterHosts')) ||
 		     (Slim::Utils::Network::isAllowedHost($peer))) {
 
 			# this is the timeout for the client connection.
@@ -399,7 +398,7 @@ sub processHTTP {
 	if ($request->method() eq 'GET' || $request->method() eq 'HEAD' || $request->method() eq 'POST') {
 
 		# Manage authorization
-		my $authorized = !Slim::Utils::Prefs::get('authorize');
+		my $authorized = !$prefs->get('authorize');
 
 		if (my ($user, $pass) = $request->authorization_basic()) {
 			$authorized = checkAuthorization($user, $pass);
@@ -960,7 +959,7 @@ sub generateHTTPResponse {
 		# execute that, and hand it a callback to send the data.
 
 		# fork for certain read-only operations i.e. browsedb
-		if ( $forkFunctions{$path} && $^O !~ /Win32/ && Slim::Utils::Prefs::get('forkedWeb') ) {
+		if ( $forkFunctions{$path} && $^O !~ /Win32/ && $prefs->get('forkedWeb') ) {
 
 			if ( my $pid = fork ) {
 
@@ -1024,7 +1023,7 @@ sub generateHTTPResponse {
 		$metaDataBytes{$httpClient} = - length($headers);
 		
 		# fork for streaming
-		if ( $^O !~ /Win32/ && Slim::Utils::Prefs::get('forkedStreaming') ) {
+		if ( $^O !~ /Win32/ && $prefs->get('forkedStreaming') ) {
 			
 			# This doesn't support synced players at the moment
 			if ( !Slim::Player::Sync::isSynced($client) ) {
@@ -1094,7 +1093,7 @@ sub generateHTTPResponse {
 			if ($songHandle) {
 				
 				# fork for sending large file downloads
-				if ( $^O !~ /Win32/ && Slim::Utils::Prefs::get('forkedWeb') ) {
+				if ( $^O !~ /Win32/ && $prefs->get('forkedWeb') ) {
 
 					if ( my $pid = fork ) {
 
@@ -2262,7 +2261,7 @@ sub newSkinTemplate {
 
 sub templateCacheDir {
 
-	return catdir( Slim::Utils::Prefs::get('cachedir'), 'templates' );
+	return catdir( $prefs->get('cachedir'), 'templates' );
 }
 
 sub initSkinTemplateCache {
@@ -2292,7 +2291,7 @@ sub getStaticContentForTemplate {
 sub _generateContentFromFile {
 	my ($type, $path, $params) = @_;
 
-	my $skin = $params->{'skinOverride'} || Slim::Utils::Prefs::get('skin');
+	my $skin = $params->{'skinOverride'} || $prefs->get('skin');
 
 	# Default2 is gone, so redirect to Default.
 	if ($skin =~ /^(?:Default2)$/i) {
@@ -2407,7 +2406,7 @@ sub fixHttpPath {
 	my $template = $skinTemplates{$skin} || return undef;
 	my $skindirs = $template->context()->{'CONFIG'}->{'INCLUDE_PATH'};
 
-	my $lang     = lc(Slim::Utils::Prefs::get('language'));
+	my $lang     = lc($prefs->get('language'));
 
 	for my $dir (@{$skindirs}) {
 
@@ -2608,15 +2607,15 @@ sub checkAuthorization {
 	my $ok = 0;
 
 	# No authorization needed
-	if (!Slim::Utils::Prefs::get('authorize')) {
+	if (!$prefs->get('authorize')) {
 
 		$ok = 1;
 		return $ok;
 	}
 
-	if ($username eq Slim::Utils::Prefs::get('username')) {
+	if ($username eq $prefs->get('username')) {
 
-		my $pwd  = Slim::Utils::Prefs::get('password');
+		my $pwd  = $prefs->get('password');
 
 		if ($pwd eq $password && $pwd eq '') {
 
@@ -2691,7 +2690,7 @@ sub addTemplateDirectory {
 sub isCsrfAuthCodeValid {
 	
 	my $req = shift;
-	my $csrfProtectionLevel = Slim::Utils::Prefs::get("csrfProtectionLevel");
+	my $csrfProtectionLevel = $prefs->get('csrfProtectionLevel');
 
 	if (! defined($csrfProtectionLevel) ) {
 
@@ -2711,7 +2710,7 @@ sub isCsrfAuthCodeValid {
 		return 0;
 	}
 
-	my $secret = Slim::Utils::Prefs::get("securitySecret");
+	my $secret = $prefs->get('securitySecret');
 
 	if ( (!defined($secret)) || ($secret !~ m|^[0-9a-f]{32}$|) ) {
 
@@ -2802,7 +2801,7 @@ sub isRequestCSRFSafe {
 sub makeAuthorizedURI {
 
 	my $uri = shift;
-	my $secret = Slim::Utils::Prefs::get("securitySecret");
+	my $secret = $prefs->get('securitySecret');
 
 	if ( (!defined($secret)) || ($secret !~ m|^[0-9a-f]{32}$|) ) {
 
@@ -2812,7 +2811,7 @@ sub makeAuthorizedURI {
 		return undef;
 	}
 
-	my $csrfProtectionLevel = Slim::Utils::Prefs::get("csrfProtectionLevel");
+	my $csrfProtectionLevel = $prefs->get('csrfProtectionLevel');
 
 	if (! defined($csrfProtectionLevel) ) {
 
@@ -2853,7 +2852,7 @@ sub throwCSRFError {
 	$msg .= string('CSRF_ERROR_INFO'); 
 	$msg .= "<br>\n<br>\n<A HREF=\"${authURI}\">${authURL}</A></p>";
 	
-	my $csrfProtectionLevel = Slim::Utils::Prefs::get("csrfProtectionLevel");
+	my $csrfProtectionLevel = $prefs->get('csrfProtectionLevel');
 	
 	if ( defined($csrfProtectionLevel) && $csrfProtectionLevel == 1 ) {
 		$msg .= string('CSRF_ERROR_MEDIUM');

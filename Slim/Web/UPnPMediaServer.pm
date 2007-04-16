@@ -14,6 +14,7 @@ use URI::Escape qw(uri_escape uri_unescape);
 use Slim::Utils::UPnPMediaServer;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Prefs;
 
 sub init {
 	Slim::Web::HTTP::addPageFunction( qr/^browseupnp\.(?:htm|xml)/, \&browseUPnP );
@@ -42,7 +43,7 @@ sub browseUPnP {
 		udn         => $device,
 		id          => $id,
 		method      => $browse,
-		limit       => $params->{itemsPerPage} || Slim::Utils::Prefs::get('itemsPerPage'),
+		limit       => $params->{itemsPerPage} || preferences('server')->get('itemsPerPage'),
 		start       => $params->{start} || 0,
 		callback    => \&gotContainer,
 		passthrough => [ $client, $params, $callback, $httpClient, $response ],

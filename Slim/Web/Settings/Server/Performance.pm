@@ -10,6 +10,8 @@ package Slim::Web::Settings::Server::Performance;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use Slim::Utils::Prefs;
+
 sub name {
 	return 'PERFORMANCE_SETTINGS';
 }
@@ -18,10 +20,12 @@ sub page {
 	return 'settings/server/performance.html';
 }
 
+sub prefs {
+	return (preferences('server'), qw(disableStatistics serverPriority scannerPriority) );
+}
+
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
-
-	my @prefs = qw(disableStatistics prefsWriteDelay serverPriority scannerPriority);
 
 	$paramRef->{'options'} = {
 		''   => 'SETUP_PRIORITY_CURRENT',
@@ -33,16 +37,6 @@ sub handler {
 			  15 => 'SETUP_PRIORITY_LOW'
 			}->{$_} } (-20 .. 20)
 	};
-
-	for my $pref (@prefs) {
-
-		if ($paramRef->{'saveSettings'}) {
-
-			Slim::Utils::Prefs::set($pref, $paramRef->{$pref});
-		}
-
-		$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
-	}
 
 	return $class->SUPER::handler($client, $paramRef, $pageSetup);
 }

@@ -32,7 +32,7 @@ sub browse {
 	return $self->search($cond, {
 		'order_by' => 'tracks.timestamp desc, tracks.disc, tracks.tracknum, tracks.titlesort',
 		'join'     => 'tracks',
-		'limit'    => (Slim::Utils::Prefs::get('browseagelimit') - 1),
+		'limit'    => (preferences('server')->get('browseagelimit') - 1),
 	});
 }
 

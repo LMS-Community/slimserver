@@ -56,6 +56,9 @@ require Slim::Utils::Strings;
 require Slim::Utils::Unicode;
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 {
 	if ($^O =~ /Win32/) {
@@ -625,8 +628,8 @@ sub fixPath {
 
 	# the only kind of absolute file we like is one in 
 	# the music directory or the playlist directory...
-	my $audiodir = Slim::Utils::Prefs::get("audiodir");
-	my $savedplaylistdir = Slim::Utils::Prefs::get("playlistdir");
+	my $audiodir = $prefs->get('audiodir');
+	my $savedplaylistdir = $prefs->get('playlistdir');
 
 	if ($audiodir && $file =~ /^\Q$audiodir\E/) {
 
@@ -770,7 +773,7 @@ sub _checkInFolder {
 	$path = fixPath($path) || return 0;
 	$path = pathFromFileURL($path) || return 0;
 
-	my $checkdir = Slim::Utils::Prefs::get($pref);
+	my $checkdir = $prefs->get($pref);
 
 	if ($checkdir && $path =~ /^\Q$checkdir\E/) {
 		return 1;
@@ -821,7 +824,7 @@ sub readDirectory {
 	my @diritems = ();
 	my $log      = logger('os.files');
 
-	my $ignore = Slim::Utils::Prefs::get('ignoreDirRE') || '';
+	my $ignore = $prefs->get('ignoreDirRE') || '';
 
 	opendir(DIR, $dirname) || do {
 
@@ -891,7 +894,7 @@ sub readDirectory {
 
 sub findAndScanDirectoryTree {
 	my $levels   = shift;
-	my $urlOrObj = shift || Slim::Utils::Misc::fileURLFromPath(Slim::Utils::Prefs::get('audiodir'));
+	my $urlOrObj = shift || Slim::Utils::Misc::fileURLFromPath($prefs->get('audiodir'));
 
 	# Find the db entry that corresponds to the requested directory.
 	# If we don't have one - that means we're starting out from the root audiodir.
@@ -956,7 +959,7 @@ sub findAndScanDirectoryTree {
 
 		# Bug: 3841 - check for new artwork
 		# But don't search at the root level.
-		if ($path ne Slim::Utils::Prefs::get('audiodir')) {
+		if ($path ne $prefs->get('audiodir')) {
 
 			Slim::Music::Artwork->findArtwork($topLevelObj);
 		}
@@ -989,7 +992,7 @@ sub userAgentString {
 		$osDetails->{'os'},
 		$osDetails->{'osName'},
 		($osDetails->{'osArch'} || 'Unknown'),
-		Slim::Utils::Prefs::get('language'),
+		$prefs->get('language'),
 		Slim::Utils::Unicode::currentLocale(),
 	);
 
@@ -1016,7 +1019,7 @@ sub settingsDiagString {
 		$::VERSION,
 		$::REVISION,
 		$osDetails->{'osName'},
-		Slim::Utils::Prefs::get('language'),
+		$prefs->get('language'),
 		Slim::Utils::Unicode::currentLocale(),
 	);
 	

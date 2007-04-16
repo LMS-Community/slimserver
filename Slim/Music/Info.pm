@@ -34,6 +34,7 @@ use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
 use Slim::Utils::Unicode;
+use Slim::Utils::Prefs;
 
 # three hashes containing the types we know about, populated by the loadTypesConfig routine below
 # hash of default mime type index by three letter content type e.g. 'mp3' => audio/mpeg
@@ -64,6 +65,8 @@ tie our %isFile, 'Tie::Cache::LRU', 16;
 tie our %urlToTypeCache, 'Tie::Cache::LRU', 16;
 
 my $log = logger('database.info');
+
+my $prefs = preferences('server');
 
 sub init {
 
@@ -508,18 +511,18 @@ sub standardTitleFormat {
 		# $titleFormat[$clientTitleFormat[$clientTitleFormatCurr]] get
 		# the title format
 
-		return Slim::Utils::Prefs::getInd("titleFormat",
+		return $prefs->get('titleFormat')->[
 			# at the array index of the client titleformat array
 			$client->prefGet("titleFormat",
 				# which is currently selected
 				$client->prefGet('titleFormatCurr')
 			)
-		);
+		   ];
 
 	} else {
 
 		# in array syntax this would be $titleFormat[$titleFormatWeb]
-		return Slim::Utils::Prefs::getInd("titleFormat", Slim::Utils::Prefs::get("titleFormatWeb"));
+		return $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
 	}
 }
 
@@ -599,7 +602,7 @@ sub guessTags {
 	$file =~ s/\\/\//g;
 	
 	# Get the candidate file name formats
-	my @guessformats = Slim::Utils::Prefs::getArray("guessFileFormats");
+	my @guessformats = @{ $prefs->('guessFileFormats') };
 
 	# Check each format
 	foreach my $guess ( @guessformats ) {
@@ -755,7 +758,7 @@ sub splitTag {
 	}
 
 	my @splitTags = ();
-	my $splitList = Slim::Utils::Prefs::get('splitList');
+	my $splitList = $prefs->get('splitList');
 
 	# only bother if there are some characters in the pref
 	if ($splitList) {
@@ -1107,8 +1110,8 @@ sub disabledExtensions {
 	my $findTypes = shift || '';
 
 	my @disabled  = ();
-	my @audio     = split(/\s*,\s*/, Slim::Utils::Prefs::get('disabledextensionsaudio'));
-	my @playlist  = split(/\s*,\s*/, Slim::Utils::Prefs::get('disabledextensionsplaylist'));
+	my @audio     = split(/\s*,\s*/, $prefs->get('disabledextensionsaudio'));
+	my @playlist  = split(/\s*,\s*/, $prefs->get('disabledextensionsplaylist'));
 
 	if ($findTypes eq 'audio') {
 
@@ -1273,7 +1276,7 @@ sub typeFromPath {
 
 sub variousArtistString {
 
-	return (Slim::Utils::Prefs::get('variousArtistsString') || string('VARIOUSARTISTS'));
+	return ($prefs->get('variousArtistsString') || string('VARIOUSARTISTS'));
 }
 
 

@@ -40,6 +40,8 @@ use Slim::Utils::OSDetect;
 my $artworkDir = '';
 my $log        = logger('artwork');
 
+my $prefs = preferences('server');
+
 tie my %lastFile, 'Tie::Cache::LRU', 32;
 
 # Public class methods
@@ -238,7 +240,7 @@ sub _readCoverArtFiles {
 	
 	# these seem to be in a particular order - not sure if that means anything.
 	my @filestotry = map { @{$nameslist{$_}} } @names;
-	my $artwork    = Slim::Utils::Prefs::get('coverArt');
+	my $artwork    = $prefs->get('coverArt');
 
 	# If the user has specified a pattern to match the artwork on, we need
 	# to generate that pattern. This is nasty.
@@ -261,7 +263,7 @@ sub _readCoverArtFiles {
 
 		my ($body, $contentType) = $class->getImageContentAndType($artPath);
 
-		my $artDir  = dir(Slim::Utils::Prefs::get('artfolder'));
+		my $artDir  = dir($prefs->get('artfolder'));
 
 		if (!$body && defined $artDir) {
 

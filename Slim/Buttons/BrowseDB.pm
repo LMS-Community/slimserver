@@ -29,6 +29,9 @@ use Slim::Buttons::TrackInfo;
 use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 our %functions = ();
 our $mixer;
@@ -218,7 +221,7 @@ sub init {
 				}
 
 				# In some cases just deal with the song individually
-				if ($addorinsert || !$container || !Slim::Utils::Prefs::get('playtrackalbum')) {
+				if ($addorinsert || !$container || !$prefs->get('playtrackalbum')) {
 
 					$command = 'playtracks';
 					$command = 'addtracks'    if $addorinsert == 1;
@@ -441,7 +444,7 @@ sub browsedbExitCallback {
 
 				if ($field eq 'contributor' && 
 					$currentItem->id eq Slim::Schema->variousArtistsObject->id &&
-					Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+					$prefs->get('variousArtistAutoIdentification')) {
 
 					$findCriteria->{'album.compilation'} = 1;
 				}
@@ -560,7 +563,7 @@ sub browsedbItemName {
 		my @name         = $item->name;
 		my $findCriteria = $client->modeParam('findCriteria') || {};
 
-		if (Slim::Utils::Prefs::get('showYear') && !$findCriteria->{'year.id'}) {
+		if ($prefs->get('showYear') && !$findCriteria->{'year.id'}) {
 
 			if (my $year = $item->year) {
 
@@ -568,7 +571,7 @@ sub browsedbItemName {
 			}
 		}
 
-		if (Slim::Utils::Prefs::get('showArtist') && !$findCriteria->{'contributor.id'}) {
+		if ($prefs->get('showArtist') && !$findCriteria->{'contributor.id'}) {
 
 			my @artists  = ();
 			my $noArtist = $client->string('NO_ARTIST');
@@ -731,7 +734,7 @@ sub setMode {
 
 		if ($levels[$level] eq 'age') {
 
-			@items = $topRS->slice(0, (Slim::Utils::Prefs::get('browseagelimit') - 1));
+			@items = $topRS->slice(0, ($prefs->get('browseagelimit') - 1));
 
 		} else {
 
@@ -782,7 +785,7 @@ sub setMode {
 	}
 
 	# Dynamically create a VA/Compilation item under artists, like iTunes does.
-	if ($levels[$level] eq 'contributor' && !$search && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+	if ($levels[$level] eq 'contributor' && !$search && $prefs->get('variousArtistAutoIdentification')) {
 
 		# Only show VA if there exists valid data below this level.
 		if (Slim::Schema->variousArtistsAlbumCount($filters)) {

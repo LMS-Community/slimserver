@@ -24,6 +24,7 @@ use Socket;
 use Slim::Networking::Select;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
 __PACKAGE__->mk_classaccessors( qw(
 	nameserver socket
@@ -94,7 +95,7 @@ sub open {
 	}
 	
 	# Timeout defaults to the Radio Station Timeout pref
-	$args->{Timeout} ||= Slim::Utils::Prefs::get('remotestreamtimeout') || 10;
+	$args->{Timeout} ||= preferences('server')->get('remotestreamtimeout') || 10;
 
 	# Skip async DNS if we know the IP address or are using a proxy (skipDNS)
 	if ( $args->{skipDNS} || $args->{PeerAddr} || Net::IP::ip_is_ipv4( $args->{Host} ) ) {

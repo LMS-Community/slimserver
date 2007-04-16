@@ -24,6 +24,7 @@ use strict;
 use File::Spec::Functions qw(:ALL);
 use File::Spec::Functions qw(updir);
 use Slim::Buttons::Common;
+use Slim::Utils::Prefs;
 
 # button functions for search directory
 my @defaultSearchChoices = qw(ARTISTS ALBUMS SONGS);
@@ -201,9 +202,11 @@ sub searchTerm {
 
 	my $term = '';
 
+	my $prefs = preferences('server');
+
 	# Bug #738
 	# Which should be the default? Old - which is substring always?
-	if (Slim::Utils::Prefs::get('searchSubString')) {
+	if ($prefs->get('searchSubString')) {
 		$term = '%';
 	}
 
@@ -219,7 +222,7 @@ sub searchTerm {
 	# If we're searching in substrings, return - otherwise append another
 	# search which is effectively \b for the query. We might (should?)
 	# deal with alternate separator characters other than space.
-	if (Slim::Utils::Prefs::get('searchSubString')) {
+	if ($prefs->get('searchSubString')) {
 		return [ $term ];
 	}
 

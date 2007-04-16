@@ -20,6 +20,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
 use Slim::Web::Pages;
 use Slim::Web::Pages::LiveSearch;
+use Slim::Utils::Prefs;
 
 sub init {
 	
@@ -277,7 +278,7 @@ sub fillInSearchResults {
 
 	# Set some reasonable defaults
 	$params->{'numresults'}   = $count;
-	$params->{'itemsPerPage'} ||= Slim::Utils::Prefs::get('itemsPerPage');
+	$params->{'itemsPerPage'} ||= preferences('server')->get('itemsPerPage');
 
 	# This is handed to pageInfo to generate the pagebar 1 2 3 >> links.
 	my $otherParams = 'player=' . Slim::Utils::Misc::escape($player) . 

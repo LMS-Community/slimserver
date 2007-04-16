@@ -28,6 +28,7 @@ use strict;
 
 use Slim::Utils::Log;
 use Slim::Utils::Network;
+use Slim::Utils::Prefs;
 
 ######################################################################
 # Validation Functions
@@ -401,7 +402,7 @@ sub hasText {
 
 sub password {
 	my $val = shift;
-	my $currentPassword = Slim::Utils::Prefs::get('password');
+	my $currentPassword = preferences('server')->get('password');
 
 	if (defined($val) && $val ne '' && $val ne $currentPassword) {
 		srand (time());

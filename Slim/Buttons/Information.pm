@@ -49,6 +49,7 @@ use Slim::Buttons::Common;
 use Slim::Music::Info;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
+use Slim::Utils::Prefs;
 
 our $modules = ();
 our %enabled = ();
@@ -164,7 +165,7 @@ sub init {
 				sub { $::VERSION },
 				\&Slim::Utils::Misc::settingsDiagString,
 				sub { 3483 },
-				sub { Slim::Utils::Prefs::get('httpport') },
+				sub { preferences('server')->get('httpport') },
 				\&Slim::Utils::Network::hostName,
 				\&Slim::Utils::Network::serverAddr,
 				\&Slim::Player::Client::clientCount,

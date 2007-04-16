@@ -29,6 +29,9 @@ use Slim::Buttons::Common;
 use Slim::Control::Request;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 our %functions = ();
 my %playlistParams = ();
@@ -265,7 +268,7 @@ sub init {
 		
 		'zap' => sub {
 			my $client = shift;
-			my $zapped = catfile(Slim::Utils::Prefs::get('playlistdir'), $client->string('ZAPPED_SONGS') . '.m3u');
+			my $zapped = catfile($prefs->get('playlistdir'), $client->string('ZAPPED_SONGS') . '.m3u');
 
 			if (Slim::Player::Playlist::count($client) > 0) {
 

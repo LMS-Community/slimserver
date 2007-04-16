@@ -9,6 +9,10 @@ package Slim::Utils::Text;
 
 use strict;
 
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
+
 our %caseArticlesCache = ();
 
 # Article list to ignore.
@@ -90,7 +94,7 @@ sub ignoreArticles {
 
 	if (!defined($ignoredArticles)) {
 
-		$ignoredArticles = Slim::Utils::Prefs::get("ignoredarticles");
+		$ignoredArticles = $prefs->get('ignoredarticles');
 
 		# allow a space seperated list in preferences (easier for humans to deal with)
 		$ignoredArticles =~ s/\s+/|/g;
@@ -167,7 +171,7 @@ sub searchStringSplit {
 	my $search  = shift;
 	my $searchSubString = shift;
 
-	$searchSubString = defined $searchSubString ? $searchSubString : Slim::Utils::Prefs::get('searchSubString');
+	$searchSubString = defined $searchSubString ? $searchSubString : $prefs->get('searchSubString');
 
 	# normalize the string
 	$search = Slim::Utils::Unicode::utf8decode_locale($search);

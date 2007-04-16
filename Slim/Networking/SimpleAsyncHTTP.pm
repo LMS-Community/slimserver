@@ -27,6 +27,7 @@ use base 'Class::Data::Accessor';
 use Slim::Networking::Async::HTTP;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 
 use HTTP::Date ();
 use HTTP::Request;
@@ -125,7 +126,7 @@ sub _createHTTPRequest {
 	
 	my $timeout 
 		=  $self->{params}->{Timeout} 
-		|| Slim::Utils::Prefs::get('remotestreamtimeout')
+		|| preferences('server')->get('remotestreamtimeout')
 		|| 10;
 		
 	my $request = HTTP::Request->new( $type => $url );

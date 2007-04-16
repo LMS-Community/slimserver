@@ -27,6 +27,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Prefs;
 
 use constant SLIMPROTO_PORT => 3483;
 
@@ -156,7 +157,7 @@ sub slimproto_accept {
 		
 	my $tmpaddr = inet_ntoa($peer);
 
-	if (Slim::Utils::Prefs::get('filterHosts') && !(Slim::Utils::Network::isAllowedHost($tmpaddr))) {
+	if (preferences('server')->get('filterHosts') && !(Slim::Utils::Network::isAllowedHost($tmpaddr))) {
 
 		$log->error("unauthorized host, accept denied: $tmpaddr");
 

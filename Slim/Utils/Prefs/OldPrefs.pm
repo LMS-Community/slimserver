@@ -66,7 +66,7 @@ sub _oldPath {
 
 		$oldPrefs = catdir($Bin, 'slimserver.pref');
 
-	} elsif (-r $::prefsfile) {
+	} elsif ($::prefsfile && -r $::prefsfile) {
 
 		$oldPrefs = $::prefsfile;
 

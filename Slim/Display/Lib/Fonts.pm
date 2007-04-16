@@ -43,6 +43,9 @@ use Tie::Cache::LRU;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 our $fonts;
 our $fonthash;
@@ -428,7 +431,7 @@ sub graphicsDirs {
 }
 
 sub fontCacheFile {
-	return catdir( Slim::Utils::Prefs::get('cachedir'), 
+	return catdir( $prefs->get('cachedir'),
 		Slim::Utils::OSDetect::OS() eq 'unix' ? 'fontcache' : 'fonts.bin');
 }
 
@@ -538,8 +541,8 @@ sub loadFonts {
 		# store height and then skip font if never seen a player requiring it
 		$fonts->{'height'}->{$font} = $height - 1;
 
-		next if ($height == 17 && !Slim::Utils::Prefs::get('loadFontsSqueezeboxG'));
-		next if ($height == 33 && !Slim::Utils::Prefs::get('loadFontsSqueezeboxII'));
+		next if ($height == 17 && !$prefs->get('loadFontsSqueezeboxG'));
+		next if ($height == 33 && !$prefs->get('loadFontsSqueezebox2'));
 
 		$log->debug("loading...");
 

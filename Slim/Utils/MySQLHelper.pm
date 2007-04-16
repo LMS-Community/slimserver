@@ -34,6 +34,7 @@ use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Prefs;
 use Slim::Utils::SQLHelper;
+use Slim::Utils::Prefs;
 
 {
         my $class = __PACKAGE__;
@@ -45,6 +46,9 @@ use Slim::Utils::SQLHelper;
 }
 
 my $log = logger('database.mysql');
+
+my $prefs = preferences('server');
+
 my $OS  = Slim::Utils::OSDetect::OS();
 
 my $serviceName = 'SlimServerMySQL';
@@ -60,7 +64,7 @@ sub init {
 
 	# Check to see if our private port is being used. If not, we'll assume
 	# the user has setup their own copy of MySQL.
-	if (Slim::Utils::Prefs::get('dbsource') !~ /port=9092/) {
+	if ($prefs->get('dbsource') !~ /port=9092/) {
 
 		$log->info("Not starting MySQL - looks to be user configured.");
 
@@ -92,7 +96,7 @@ sub init {
 		}
 	}
 
-	my $cacheDir = Slim::Utils::Prefs::get('cachedir');
+	my $cacheDir = $prefs->get('cachedir');
 
 	$class->socketFile( catdir($cacheDir, 'slimserver-mysql.sock') ),
 	$class->pidFile(    catdir($cacheDir, 'slimserver-mysql.pid') );
@@ -463,7 +467,7 @@ sub dbh {
 
 	if ($OS eq 'win') {
 
-		$dsn = Slim::Utils::Prefs::get('dbsource');
+		$dsn = $prefs->get('dbsource');
 		$dsn =~ s/;database=.+;?//;
 
 	} else {
@@ -488,7 +492,7 @@ sub createDatabase {
 	my $class  = shift;
 	my $dbh    = shift;
 
-	my $source = Slim::Utils::Prefs::get('dbsource');
+	my $source = $prefs->get('dbsource');
 
 	# Set a reasonable default. :)
 	my $dbname = 'slimserver';

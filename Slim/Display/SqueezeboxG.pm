@@ -24,6 +24,10 @@ use strict;
 
 use base qw(Slim::Display::Graphics);
 
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
+
 # constants
 my $display_maxLine = 1; # render up to 2 lines [0..$display_maxLine]
 
@@ -74,8 +78,8 @@ sub init {
 	my $display = shift;
 	
 	# load fonts for this display if not already loaded and remember to load at startup in future
-	if (!Slim::Utils::Prefs::get('loadFontsSqueezeboxG')) {
-		Slim::Utils::Prefs::set('loadFontsSqueezeboxG', 1);
+	if (!$prefs->get('loadFontsSqueezeboxG')) {
+		$prefs->set('loadFontsSqueezeboxG', 1);
 		Slim::Display::Lib::Fonts::loadFonts(1);
 	}
 

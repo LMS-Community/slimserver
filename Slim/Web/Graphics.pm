@@ -7,6 +7,7 @@ use Scalar::Util qw(blessed);
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Cache;
+use Slim::Utils::Prefs;
 
 my %typeToMethod = (
 	'image/gif'  => 'newFromGifData',
@@ -188,13 +189,15 @@ sub processCoverArtRequest {
 						$returnedWidth  = $requestedWidth;
 						$returnedHeight = $requestedHeight;
 
+						my $prefs = preferences('server');
+
 						# don't cache if width or height not set so pref can be changed
 						unless (defined($returnedWidth)) {
-							$returnedWidth = Slim::Utils::Prefs::get('thumbSize') || 100;
+							$returnedWidth = $prefs->get('thumbSize') || 100;
 							$cacheKey = undef;
 						}
 						unless (defined($returnedHeight)) {
-							$returnedHeight = Slim::Utils::Prefs::get('thumbSize') || 100;
+							$returnedHeight = $prefs->get('thumbSize') || 100;
 							$cacheKey = undef;
 						}
 

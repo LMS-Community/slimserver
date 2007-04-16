@@ -16,12 +16,15 @@ use Scalar::Util qw(blessed);
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 sub init {
 	
 	Slim::Web::HTTP::addPageFunction( qr/^browsetree\.(?:htm|xml)/, \&browsetree, 'fork' );
 	
-	if (Slim::Utils::Prefs::get('audiodir')) {
+	if ($prefs->get('audiodir')) {
 		Slim::Web::Pages->addPageLinks("browse",{'BROWSE_MUSIC_FOLDER'   => "browsetree.html"});
 	} else {
 		Slim::Web::Pages->addPageLinks("browse",{'BROWSE_MUSIC_FOLDER' => undef});
@@ -33,7 +36,7 @@ sub browsetree {
 
 	my $hierarchy  = $params->{'hierarchy'} || '';
 	my $player     = $params->{'player'};
-	my $itemsPer   = $params->{'itemsPerPage'} || Slim::Utils::Prefs::get('itemsPerPage');
+	my $itemsPer   = $params->{'itemsPerPage'} || $prefs->get('itemsPerPage');
 
 	my @levels     = split(/\//, $hierarchy);
 	my $itemnumber = 0;

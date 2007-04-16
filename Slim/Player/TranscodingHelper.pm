@@ -29,6 +29,8 @@ sub Conversions {
 
 my $log = logger('player.source');
 
+my $prefs = preferences('server');
+
 sub loadConversionTables {
 
 	my @convertFiles = ();
@@ -100,21 +102,19 @@ sub enabledFormat {
 
 	$log->debug("Checking to see if $profile is enabled");
 
-	my $count = Slim::Utils::Prefs::getArrayMax('disabledformats');
+	my @disabled = @{ $prefs->get('disabledformats') };
 
-	if (!defined($count) || $count < 0) {
+	if (!@disabled) {
 		return 1;
 	}
 
-	$log->debug("There are $count disabled formats...");
+	$log->debug("There are " . scalar @disabled . " disabled formats...");
 
-	for (my $i = $count; $i >= 0; $i--) {
+	for my $format (@disabled) {
 
-		my $disabled = Slim::Utils::Prefs::getInd('disabledformats', $i);
+		$log->debug("Testing $format vs $profile");
 
-		$log->debug("Testing $disabled vs $profile");
-
-		if ($disabled eq $profile) {
+		if ($format eq $profile) {
 
 			$log->debug("** $profile Disabled **");
 

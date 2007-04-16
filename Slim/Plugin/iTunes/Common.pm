@@ -40,6 +40,7 @@ use Slim::Utils::Prefs;
 my $log = logger('plugin.itunes');
 
 my $prefs = preferences('plugin.itunes');
+my $prefsServer = preferences('server');
 
 {
 	my $class = __PACKAGE__;
@@ -197,7 +198,7 @@ sub findMusicLibraryFile {
 		$base,
 	);
 
-	my $audiodir = Slim::Utils::Prefs::get('audiodir');
+	my $audiodir = $prefsServer->get('audiodir');
 
 	if (defined $audiodir) {
 		push @searchdirs, (

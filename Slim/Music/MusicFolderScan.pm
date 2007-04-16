@@ -21,6 +21,7 @@ use base qw(Class::Data::Inheritable);
 use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Utils::Scanner;
+use Slim::Utils::Prefs;
 
 {
 
@@ -29,12 +30,14 @@ use Slim::Utils::Scanner;
 
 my $log = logger('scan.import');
 
+my $prefs = preferences('server');
+
 sub init {
 	my $class = shift;
 
 	# Enable Folder scan only if audiodir is set and is a valid directory
 	my $enabled  = 0;
-	my $audioDir = Slim::Utils::Prefs::get('audiodir');
+	my $audioDir = $prefs->get('audiodir');
 
 	if (defined $audioDir && -d $audioDir) {
 
@@ -47,7 +50,7 @@ sub init {
 
 sub startScan {
 	my $class   = shift;
-	my $dir     = shift || Slim::Utils::Prefs::get('audiodir');
+	my $dir     = shift || $prefs->get('audiodir');
 	my $recurse = shift;
 
 	if (!defined $dir || !-d $dir) {

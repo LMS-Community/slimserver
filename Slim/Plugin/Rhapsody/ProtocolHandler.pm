@@ -10,10 +10,13 @@ use Slim::Formats::Playlists::M3U;
 use Slim::Utils::IPDetect;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
 my %radioTracks = ();
 
 my $log = logger('plugin.rhapsody');
+
+my $prefsServer = preferences('server');
 
 sub new {
 	my $class  = shift;
@@ -145,7 +148,7 @@ sub requestString {
 	}
 	
 	# Use full path for proxy servers
-	my $proxy = Slim::Utils::Prefs::get('webproxy');
+	my $proxy = $prefsServer->get('webproxy');
 	if ( $proxy ) {
 		$path = "http://$host:$port$path";
 	}

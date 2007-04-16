@@ -28,6 +28,9 @@ use Slim::Buttons::TrackInfo;
 use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 our %functions = ();
 our $mixer;
@@ -50,7 +53,7 @@ sub init {
 		'hierarchy' => '',
 	};
 
-	if (Slim::Utils::Prefs::get('audiodir')) {
+	if ($prefs->get('audiodir')) {
 		Slim::Buttons::Common::addMode($mode, Slim::Buttons::BrowseTree::getFunctions(), \&Slim::Buttons::BrowseTree::setMode);
 	
 		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $name, $menu);
@@ -112,7 +115,7 @@ sub init {
 				'overlay' => [ undef, $client->symbols('notesymbol') ]
 			});
 
-			if ($descend || !Slim::Utils::Prefs::get('playtrackalbum') || $addorinsert || !Slim::Music::Info::isSong($currentItem)) {
+			if ($descend || !$prefs->get('playtrackalbum') || $addorinsert || !Slim::Music::Info::isSong($currentItem)) {
 
 				$client->execute(['playlist', $command, $currentItem]);
 

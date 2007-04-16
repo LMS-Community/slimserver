@@ -6,6 +6,9 @@ use strict;
 use base 'Slim::Schema::DBI';
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 {
 	my $class = __PACKAGE__;
@@ -79,7 +82,7 @@ sub title {
 
 	return $self->set_column('title', shift) if @_;
 
-	if (Slim::Utils::Prefs::get('groupdiscs')) {
+	if ($prefs->get('groupdiscs')) {
 
 		return $self->get_column('title');
 	}
@@ -101,12 +104,12 @@ sub displayAsHTML {
 
 	$form->{'text'}       = $self->title;
 	$form->{'coverThumb'} = $self->artwork || 0;
-	$form->{'size'}       = Slim::Utils::Prefs::get('thumbSize');
+	$form->{'size'}       = $prefs->get('thumbSize');
 
 	$form->{'item'}       = $self->title;
 
 	# Show the year if pref set or storted by year first
-	if (my $showYear = Slim::Utils::Prefs::get('showYear') || ($sort && $sort =~ /^album\.year/)) {
+	if (my $showYear = $prefs->get('showYear') || ($sort && $sort =~ /^album\.year/)) {
 
 		$form->{'showYear'} = $showYear;
 		$form->{'year'}     = $self->year;
@@ -115,7 +118,7 @@ sub displayAsHTML {
 	# Show the artist in the album view
 	my $showArtists = ($sort && $sort =~ /^contributor\.namesort/);
 
-	if (Slim::Utils::Prefs::get('showArtist') || $showArtists) {
+	if ($prefs->get('showArtist') || $showArtists) {
 
 		# XXX - only show the contributor when there are multiple
 		# contributors in the album view.
@@ -176,13 +179,13 @@ sub artists {
 	my @artists = $self->artistsForRoles('ALBUMARTIST');
 
 	# If the user wants to use TPE2 as album artist, pull that.
-	if (scalar @artists == 0 && Slim::Utils::Prefs::get('useBandAsAlbumArtist')) {
+	if (scalar @artists == 0 && $prefs->get('useBandAsAlbumArtist')) {
 
 		@artists = $self->artistsForRoles('BAND');
 	}
 
 	# Nothing there, and we're not a compilation? Get a list of artists.
-	if (scalar @artists == 0 && (!Slim::Utils::Prefs::get('variousArtistAutoIdentification') || !$self->compilation)) {
+	if (scalar @artists == 0 && (!$prefs->get('variousArtistAutoIdentification') || !$self->compilation)) {
 
 		@artists = $self->artistsForRoles('ARTIST');
 	}

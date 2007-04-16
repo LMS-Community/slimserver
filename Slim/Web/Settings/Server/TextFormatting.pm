@@ -10,6 +10,10 @@ package Slim::Web::Settings::Server::TextFormatting;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
+
 sub name {
 	return 'FORMATTING_SETTINGS';
 }
@@ -18,83 +22,47 @@ sub page {
 	return 'settings/server/formatting.html';
 }
 
+sub prefs {
+	return ($prefs, qw(longdateFormat shortdateFormat timeFormat showArtist showYear titleFormatWeb) );
+}
+
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
-	my @prefs = qw(
-		guessFileFormats
-		titleFormat
-		titleFormatWeb
-		longdateFormat
-		shortdateFormat
-		timeFormat
-		showArtist
-		showYear
-	);
+	# handle array prefs in this handler, scalar prefs in SUPER::handler
+	my @prefs = qw(guessFileFormats titleFormat);
 
-	# If this is a settings update
 	if ($paramRef->{'saveSettings'}) {
 
 		for my $pref (@prefs) {
 
-			if ($pref eq 'titleFormat' || $pref eq 'guessFileFormats') {
+			my @array;
 
-				Slim::Utils::Prefs::delete($pref);
+			for (my $i = 0; defined $paramRef->{$pref.$i}; $i++) {
 
-				my $i = 0;
-
-				while (defined $paramRef->{$pref.$i}) {
-
-					if (!$paramRef->{$pref.$i}) {
-						$i++;
-						next;
-					}
-
-					Slim::Utils::Prefs::push($pref,$paramRef->{$pref.$i});
-
-					$i++;
-				}
-				
-			} else {
-
-				if ($paramRef->{'titleformatWeb'} ne Slim::Utils::Prefs::get('titleFormatWeb')) {
-	
-					for my $client (Slim::Player::Client::clients()) {
-
-						$client->currentPlaylistChangeTime(time);
-					}
-				}
-	
-				Slim::Utils::Prefs::set($pref, $paramRef->{$pref});
+				push @array, $paramRef->{$pref.$i} if $paramRef->{$pref.$i};
 			}
-			
+
+			$prefs->set($pref, \@array);
+		}
+
+		if ($paramRef->{'titleformatWeb'} ne $prefs->get('titleFormatWeb')) {
+
+			for my $client (Slim::Player::Client::clients()) {
+
+				$client->currentPlaylistChangeTime(time);
+			}
 		}
 	}
 
 	for my $pref (@prefs) {
-
-		if ($pref eq 'guessFileFormats') {
-
-			$paramRef->{$pref} = [Slim::Utils::Prefs::getArray($pref)];
-
-			push @{$paramRef->{$pref}},"";
-
-		} elsif ($pref eq 'titleFormat') {
-
-			$paramRef->{$pref} = [Slim::Utils::Prefs::getArray($pref)];
-
-			push @{$paramRef->{$pref}},"";
-
-		} else {
-
-			$paramRef->{$pref} = Slim::Utils::Prefs::get($pref);
-		}
+		$paramRef->{'prefs'}->{ $pref } = [ @{ $prefs->get($pref) || [] }, '' ];
 	}
-	
+
 	$paramRef->{'longdateoptions'}  = Slim::Utils::DateTime::longDateFormats();
 	$paramRef->{'shortdateoptions'} = Slim::Utils::DateTime::shortDateFormats();
 	$paramRef->{'timeoptions'}      = Slim::Utils::DateTime::timeFormats();
-	
+
 	return $class->SUPER::handler($client, $paramRef, $pageSetup);
 }
 

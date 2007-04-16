@@ -12,6 +12,9 @@ use strict;
 use Slim::Player::Playlist;
 use File::Spec::Functions qw(:ALL);
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
+
+my $prefsServer = preferences('server');
 
 our %context = ();
 
@@ -50,7 +53,7 @@ sub setMode {
 	
 	$client->lines(\&lines);
 	
-	if (!Slim::Utils::Prefs::get('playlistdir')) {
+	if (!$prefsServer->get('playlistdir')) {
 		# do nothing if there is no playlist folder defined.
 		
 	} elsif ($push ne 'push') {
@@ -103,10 +106,10 @@ sub lines {
 	my ($line1, $line2, $arrow);
 	
 	my $newUrl   = Slim::Utils::Misc::fileURLFromPath(
-		catfile(Slim::Utils::Prefs::get('playlistdir'), $context{$client} . '.m3u')
+		catfile($prefsServer->get('playlistdir'), $context{$client} . '.m3u')
 	);
 
-	if (!Slim::Utils::Prefs::get('playlistdir')) {
+	if (!$prefsServer->get('playlistdir')) {
 
 		$line1 = $client->string('NO_PLAYLIST_DIR');
 		$line2 = $client->string('NO_PLAYLIST_DIR_MORE');

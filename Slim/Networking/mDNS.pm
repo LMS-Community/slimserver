@@ -31,7 +31,9 @@ use Slim::Utils::OSDetect;
 }
 
 my $log = logger('network.mdns');
- 
+
+my $prefs = preferences('server');
+
 my %services = ();
 
 sub init {
@@ -46,7 +48,7 @@ sub init {
 
 	$log->info("Initializing..");
 
-	my $cacheDir = Slim::Utils::Prefs::get('cachedir');
+	my $cacheDir = $prefs->get('cachedir');
 
 	if (!-d $cacheDir) {
 
@@ -68,7 +70,7 @@ sub addService {
 		return if !$class->init;
 	}
 
-	my $name = Slim::Utils::Prefs::get('mDNSname');
+	my $name = $prefs->get('mDNSname');
 
 	if (!$name) {
 

@@ -10,6 +10,7 @@ package Slim::Web::Setup;
 use strict;
 
 use File::Spec::Functions qw(:ALL);
+use Slim::Utils::Log;
 
 sub initSetup {
 
@@ -41,6 +42,10 @@ sub loadSettingsModules {
 				if (!$@) {
 
 					$class->new;
+
+				} else {
+
+					logError ("can't load $class - $@");
 				}
 			}
 

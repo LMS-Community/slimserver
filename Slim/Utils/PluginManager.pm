@@ -98,7 +98,7 @@ sub init {
 sub pluginCacheFile {
 	my $class = shift;
 
-	return catdir( Slim::Utils::Prefs::get('cachedir'), 'plugin-data.yaml' );
+	return catdir( preferences('server')->get('cachedir'), 'plugin-data.yaml' );
 }
 
 sub writePluginCache {

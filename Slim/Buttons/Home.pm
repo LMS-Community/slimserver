@@ -38,8 +38,11 @@ use Slim::Buttons::TrackInfo;
 use Slim::Buttons::RemoteTrackInfo;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
 my $log = logger('player.menu');
+
+my $prefs = preferences('server');
 
 our %home = ();
 our %defaultParams = ();
@@ -510,16 +513,10 @@ sub createList {
 
 	my @list = ();
 
-	my %disabledplugins = map { $_ => 1 } Slim::Utils::Prefs::getArray('disabledplugins');
-	
-	for my $sub (sort {((Slim::Utils::Prefs::get("rank-$b") || 0) <=> 
-		(Slim::Utils::Prefs::get("rank-$a") || 0)) || 
+	for my $sub (sort {(($prefs->get("rank-$b") || 0) <=> 
+		($prefs->get("rank-$a") || 0)) || 
 		(lc(cmpString($client, $a)) cmp lc(cmpString($client, $b)))} 
 		keys %{$params->{'submenus'}}) {
-
-		if (exists $disabledplugins{$sub}) {
-			next;
-		}
 
 		# Leakage of the DigitalInput plugin..
 		if ($sub eq 'PLUGIN_DIGITAL_INPUT' && !$client->hasDigitalIn) {
@@ -642,11 +639,11 @@ sub menuOptions {
 	
 	for my $menuOption (sort keys %home) {
 
-		if ($menuOption eq 'BROWSE_MUSIC_FOLDER' && !Slim::Utils::Prefs::get('audiodir')) {
+		if ($menuOption eq 'BROWSE_MUSIC_FOLDER' && !$prefs->get('audiodir')) {
 			next;
 		}
 
-		if ($menuOption eq 'SAVED_PLAYLISTS' && !Slim::Utils::Prefs::get('playlistdir')) {
+		if ($menuOption eq 'SAVED_PLAYLISTS' && !$prefs->get('playlistdir')) {
 			next;
 		}
 

@@ -13,6 +13,10 @@ use POSIX ();
 
 use base qw(Slim::Web::Pages);
 
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
+
 sub init {
 	my $class = shift;
 	
@@ -66,7 +70,7 @@ sub home {
 		$class->addPageLinks("help", {'TECHNICAL_INFORMATION' => "html/docs/index.html"});
 	}
 
-	if (Slim::Utils::Prefs::get('audiodir')) {
+	if ($prefs->get('audiodir')) {
 
 		$class->addPageLinks("browse", {'BROWSE_MUSIC_FOLDER'   => "browsetree.html"});
 
@@ -77,7 +81,7 @@ sub home {
 	}
 
 	# Show playlists if any exists
-	if (Slim::Utils::Prefs::get('playlistdir') || Slim::Schema->rs('Playlist')->getPlaylists->count) {
+	if ($prefs->get('playlistdir') || Slim::Schema->rs('Playlist')->getPlaylists->count) {
 
 		$class->addPageLinks("browse", {'SAVED_PLAYLISTS' => "browsedb.html?hierarchy=playlist,playlistTrack&level=0"});
 	}

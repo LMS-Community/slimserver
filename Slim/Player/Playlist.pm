@@ -17,6 +17,8 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
+my $prefs = preferences('server');
+
 our %validSubCommands = map { $_ => 1 } qw(play append load_done loadalbum addalbum loadtracks addtracks clear delete move sync);
 
 our %shuffleTypes = (
@@ -653,7 +655,7 @@ sub scheduleWriteOfPlaylist {
 	# This can happen if the user removes the
 	# playlist - because this is a closure, we get
 	# a bogus object back)
-	if (!blessed($playlistObj) || !$playlistObj->can('tracks') || !Slim::Utils::Prefs::get('playlistdir')) {
+	if (!blessed($playlistObj) || !$playlistObj->can('tracks') || !$prefs->get('playlistdir')) {
 
 		return 0;
 	}
@@ -689,7 +691,7 @@ sub removePlaylistFromDisk {
 
 	} else {
 
-		unlink catfile(Slim::Utils::Prefs::get('playlistdir'), $playlistObj->title . '.m3u');
+		unlink catfile($prefs->get('playlistdir'), $playlistObj->title . '.m3u');
 	}
 }
 
@@ -711,7 +713,7 @@ sub newSongPlaylistCallback {
 
 	return if Slim::Music::Info::isRemoteURL($playlist) || Slim::Player::Playlist::shuffle($client);
 
-	if (Slim::Utils::Prefs::get('playlistdir')) {
+	if ($prefs->get('playlistdir')) {
 
 		logger('player.playlist')->info("Calling writeCurTrackForM3U()");
 
@@ -730,7 +732,7 @@ sub modifyPlaylistCallback {
 
 	$log->info("Checking if persistPlaylists is set..");
 
-	if (!$client || !Slim::Utils::Prefs::get('persistPlaylists') ||
+	if (!$client || !$prefs->get('persistPlaylists') ||
 		exists &Slim::Plugin::RandomPlay::Plugin::active && Slim::Plugin::RandomPlay::Plugin::active($client) ) {
 
 		return;

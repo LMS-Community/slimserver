@@ -120,7 +120,7 @@ sub new {
 	my $cache = Cache::FileCache->new( {
 		namespace          => $namespace,
 		default_expires_in => $DEFAULT_EXPIRES_TIME,
-		cache_root         => Slim::Utils::Prefs::get('cachedir'),
+		cache_root         => preferences('server')->get('cachedir'),
 		directory_umask    => umask(),
 	} );
 	

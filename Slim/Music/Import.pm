@@ -17,7 +17,7 @@ Slim::Music::Import
 	Slim::Music::Import->addImporter($class);
 
 	# Turn the importer on or off
-	Slim::Music::Import->useImporter($class, Slim::Utils::Prefs::get('itunes'));
+	Slim::Music::Import->useImporter($class, $prefs->get('itunes'));
 
 	# Start a serial scan of all importers.
 	Slim::Music::Import->runScan;
@@ -49,6 +49,7 @@ use Slim::Music::Info;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::OSDetect;
+use Slim::Utils::Prefs;
 
 {
 	my $class = __PACKAGE__;
@@ -65,6 +66,7 @@ our %Importers      = ();
 
 my $folderScanClass = 'Slim::Music::MusicFolderScan';
 my $log             = logger('scan.import');
+my $prefs           = preferences('server');
 
 =head2 launchScan( \%args )
 
@@ -82,6 +84,8 @@ sub launchScan {
 		$args->{"prefsfile=$::prefsfile"} = 1;
 	}
 
+	Slim::Utils::Prefs->writeAll;
+
 	$args->{ "prefsdir=" . Slim::Utils::Prefs->dir } = 1;
 
 	if (Slim::Utils::Log->writeConfig) {
@@ -96,7 +100,7 @@ sub launchScan {
 	# Add in the various importer flags
 	for my $importer (qw(itunes musicmagic)) {
 
-		if (Slim::Utils::Prefs::get($importer)) {
+		if ($prefs->get($importer)) {
 
 			$args->{$importer} = 1;
 		}
@@ -105,7 +109,7 @@ sub launchScan {
 	# Set scanner priority.  Use the current server priority unless 
 	# scannerPriority has been specified.
 
-	my $scannerPriority = Slim::Utils::Prefs::get("scannerPriority");
+	my $scannerPriority = $prefs->get('scannerPriority');
 
 	unless (defined $scannerPriority && $scannerPriority ne "") {
 		$scannerPriority = Slim::Utils::Misc::getPriority();

@@ -50,6 +50,7 @@ use Slim::Buttons::Block;
 use Slim::Buttons::SqueezeNetwork;
 use Slim::Buttons::XMLBrowser;
 use Slim::Buttons::Volume;
+use Slim::Utils::Prefs;
 
 # hash of references to functions to call when we leave a mode
 our %leaveMode = ();
@@ -93,6 +94,8 @@ my $holdTimeBeforeScroll = 0.300;
 our $scrollClientHash = {};
 
 my $log = logger('player.ui');
+
+my $prefs = preferences('server');
 
 =head1 METHODS
 
@@ -1475,7 +1478,7 @@ sub numberLetter {
 	my $now = Time::HiRes::time();
 	# if the user has hit new button or hasn't hit anything for 1.0 seconds, use the first letter
 	if (($digit ne $client->lastLetterDigit) ||
-		($client->lastLetterTime + Slim::Utils::Prefs::get("displaytexttimeout") < $now)) {
+		($client->lastLetterTime + $prefs->get('displaytexttimeout') < $now)) {
 		$index = 0;
 	} else {
 		$index = $client->lastLetterIndex + 1;
@@ -1492,7 +1495,7 @@ sub numberLetter {
 sub testSkipNextNumberLetter {
 	my $client = shift;
 	my $digit = shift;
-	return (($digit ne $client->lastLetterDigit) && (($client->lastLetterTime + Slim::Utils::Prefs::get("displaytexttimeout")) > Time::HiRes::time()));
+	return (($digit ne $client->lastLetterDigit) && (($client->lastLetterTime + $prefs->get('displaytexttimeout')) > Time::HiRes::time()));
 }
 
 sub numberScroll {
@@ -1520,7 +1523,7 @@ sub numberScroll {
 		}else{
 			my $now = Time::HiRes::time();
 			# If the user hasn't pressed a button for the last 1.0 seconds then jump straight to the requested item
-			if ($client->lastDigitTime + Slim::Utils::Prefs::get("displaytexttimeout") < $now) {
+			if ($client->lastDigitTime + $prefs->get('displaytexttimeout') < $now) {
 				$i = ($digit - 1) % 10;
 			}else{
 				$i = $client->lastDigitIndex * 10 + $digit - 1;

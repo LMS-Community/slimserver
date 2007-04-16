@@ -27,6 +27,8 @@ use constant MAXCHUNKSIZE => 32768;
 
 my $log = logger('player.streaming.remote');
 
+my $prefs = preferences('server');
+
 sub open {
 	my $class = shift;
 	my $args  = shift;
@@ -41,8 +43,8 @@ sub open {
 		return;
 	}
 
-	my $timeout = $args->{'timeout'} || Slim::Utils::Prefs::get('remotestreamtimeout');
-	my $proxy   = Slim::Utils::Prefs::get('webproxy');
+	my $timeout = $args->{'timeout'} || $prefs->get('remotestreamtimeout');
+	my $proxy   = $prefs->get('webproxy');
 
 	my $peeraddr = "$server:$port";
 

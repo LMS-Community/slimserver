@@ -39,8 +39,11 @@ use Slim::Utils::Alarms;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Scanner;
+use Slim::Utils::Prefs;
 
 my $log = logger('control.command');
+
+my $prefs = preferences('server');
 
 sub alarmCommand {
 	# functions designed to execute requests have a single parameter, the
@@ -689,7 +692,7 @@ sub playlistSaveCommand {
 	my $playlistObj = Slim::Schema->rs('Playlist')->updateOrCreate({
 
 		'url' => Slim::Utils::Misc::fileURLFromPath(
-			catfile( Slim::Utils::Prefs::get('playlistdir'), $title . '.m3u')
+			catfile( $prefs->get('playlistdir'), $title . '.m3u')
 		),
 
 		'attributes' => {
@@ -700,7 +703,7 @@ sub playlistSaveCommand {
 
 	my $annotatedList = [];
 
-	if (Slim::Utils::Prefs::get('saveShuffled')) {
+	if ($prefs->get('saveShuffled')) {
 
 		for my $shuffleitem (@{Slim::Player::Playlist::shuffleList($client)}) {
 			push @$annotatedList, @{Slim::Player::Playlist::playList($client)}[$shuffleitem];
@@ -885,7 +888,7 @@ sub playlistXitemCommand {
 	# this only seems to be useful for playlists?
 	if (!Slim::Music::Info::isRemoteURL($path) && !-e $path && !(Slim::Music::Info::isPlaylistURL($path))) {
 
-		my $easypath = catfile(Slim::Utils::Prefs::get('playlistdir'), basename($url) . ".m3u");
+		my $easypath = catfile($prefs->get('playlistdir'), basename($url) . ".m3u");
 
 		if (-e $easypath) {
 
@@ -893,7 +896,7 @@ sub playlistXitemCommand {
 
 		} else {
 
-			$easypath = catfile(Slim::Utils::Prefs::get('playlistdir'), basename($url) . ".pls");
+			$easypath = catfile($prefs->get('playlistdir'), basename($url) . ".pls");
 
 			if (-e $easypath) {
 				$path = $easypath;
@@ -993,7 +996,7 @@ sub playlistXitemCommand {
 				$line2 = $client->string('CHECKING_STREAM');
 			}
 			
-			my $timeout = Slim::Utils::Prefs::get('remotestreamtimeout') || 10;
+			my $timeout = $prefs->get('remotestreamtimeout') || 10;
 			$client->showBriefly( $line1, $line2, $timeout + 5 );
 		}
 
@@ -1200,7 +1203,7 @@ sub playlistZapCommand {
 
 	my $playlistObj = Slim::Schema->rs('Playlist')->updateOrCreate({
 		'url'        => Slim::Utils::Misc::fileURLFromPath(
-			catfile( Slim::Utils::Prefs::get('playlistdir'), $zapped . '.m3u')
+			catfile( $prefs->get('playlistdir'), $zapped . '.m3u')
 		),
 
 		'attributes' => {
@@ -1587,7 +1590,7 @@ sub playlistsRenameCommand {
 	$newName     =~ tr|.:\x00-\x1f\/\\| |s;
 	
 	my $newUrl   = Slim::Utils::Misc::fileURLFromPath(
-		catfile(Slim::Utils::Prefs::get('playlistdir'), $newName . '.m3u')
+		catfile($prefs->get('playlistdir'), $newName . '.m3u')
 	);
 
 	my $existingPlaylist = Slim::Schema->rs('Playlist')->objectForUrl({

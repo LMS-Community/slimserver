@@ -27,6 +27,8 @@ use Slim::Utils::Strings;
 use Slim::Utils::Timers;
 use Slim::Web::HTTP;
 
+my $prefs = preferences('server');
+
 # depricated, use $client->maxVolume
 our $maxVolume = 100;
 
@@ -375,7 +377,7 @@ sub startup {
 	Slim::Player::Sync::restoreSync($client);
 	
 	# restore the old playlist if we aren't already synced with somebody (that has a playlist)
-	if (!Slim::Player::Sync::isSynced($client) && Slim::Utils::Prefs::get('persistPlaylists')) {
+	if (!Slim::Player::Sync::isSynced($client) && $prefs->get('persistPlaylists')) {
 
 		my $playlist = Slim::Music::Info::playlistForClient($client);
 		my $currsong = $client->prefGet('currentSong');

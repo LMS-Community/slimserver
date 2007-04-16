@@ -29,7 +29,7 @@ sub dbh {
 	# Try and bring up the database if we can't connect.
 	if ($@ && $@ =~ /Connection failed/) {
 
-		my $lockFile = File::Spec->catdir(Slim::Utils::Prefs::get('cachedir'), 'mysql.startup');
+		my $lockFile = File::Spec->catdir(preferences('server')->get('cachedir'), 'mysql.startup');
 
 		if (!-f $lockFile) {
 

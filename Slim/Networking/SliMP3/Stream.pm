@@ -14,6 +14,7 @@ use Slim::Player::SLIMP3;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Timers;
+use Slim::Utils::Prefs;
 
 ###
 ### lots o' knobs:
@@ -451,7 +452,7 @@ sub sendNextChunk {
 		return 0;
 	}
 
-	my $requestedChunkSize = Slim::Utils::Prefs::get('udpChunkSize');
+	my $requestedChunkSize = preferences('server')->get('udpChunkSize');
 
 	my $remainingSpace = $client->bufferSize() - ($curWptr * 2);
 

@@ -17,8 +17,8 @@ use Digest::MD5;
 use YAML::Syck qw(DumpFile LoadFile Dump);
 
 use Slim::Utils::Log;
-use Slim::Utils::Misc;
-use Slim::Utils::Network;
+#use Slim::Utils::Misc;
+#use Slim::Utils::Network;
 use Slim::Utils::Unicode;
 
 our %prefs = ();
@@ -159,7 +159,7 @@ sub init {
 		"username"		=> '',
 		"password"		=> '',
 		"filterHosts"		=> 0,				# No filtering by default
-		"allowedHosts"		=> join(',', Slim::Utils::Network::hostAddr()),
+#		"allowedHosts"		=> join(',', Slim::Utils::Network::hostAddr()),
 		"tcpReadMaximum"	=> 20,
 		"tcpWriteMaximum"	=> 20,
 		"tcpConnectMaximum"	=> 30,
@@ -481,7 +481,7 @@ sub makeCacheDir {
 
 sub homeURL {
         my $host = $main::httpaddr || Slim::Utils::Network::hostname() || '127.0.0.1';
-        my $port = Slim::Utils::Prefs::get('httpport');
+        my $port = preferences('server')->get('httpport');
 
         return "http://$host:$port/";
 }
@@ -1337,28 +1337,186 @@ sub namespaces {
 }
 
 sub init_new {
+	my %defaults = (
+		# Server Prefs not settable from web pages
+		'dbsource'              => $DEFAULT_DBSOURCE,
+		'dbusername'            => 'slimserver',
+		'dbpassword'            => '',
+		'cachedir'              => \&defaultCacheDir,
+		'securitySecret'        => \&makeSecuritySecret,
+		'ignoreDirRE'           => '',
+		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
+		# Server Settings - Basic
+		'language'              => 'EN',
+		'audiodir'              => \&defaultAudioDir,
+		'playlistdir'           => \&defaultPlaylistDir,
+		# Server Settings - Behaviour
+		'displaytexttimeout'    => 1,
+		'checkVersion'          => 1,
+		'checkVersionInterval'	=> 60*60*24,
+		'noGenreFilter'         => 0,
+		'playtrackalbum'        => 1,
+		'searchSubString'       => 0,
+		'ignoredarticles'       => "The El La Los Las Le Les",
+		'splitList'             => '',
+		'browseagelimit'        => 100,
+		'groupdiscs'            => 0,
+		'persistPlaylists'      => 1,
+		'reshuffleOnRepeat'     => 0,
+		'saveShuffled'          => 0,
+		'composerInArtists'     => 0,
+		'conductorInArtists'    => 0,
+		'bandInArtists'         => 0,
+		'variousArtistAutoIdentification' => 0,
+		'useBandAsAlbumArtist'  => 0,
+		'variousArtistsString'  => undef,
+		# Server Settings - FileTypes
+		'disabledextensionsaudio'    => '',
+		'disabledextensionsplaylist' => '',
+		'disabledformats'       => [],
+		# Server Settings - Networking
+		'webproxy'              => '',
+		'httpport'              => 9000,
+		'bufferSecs'            => 3,
+		'remotestreamtimeout'   => 5,
+		'maxWMArate'            => 9999,
+		'tcpConnectMaximum'	    => 30,             # not on web page
+		'udpChunkSize'          => 1400,           # only used for Slimp3
+		'mDNSname'              => 'SlimServer',
+		# Server Settings - Performance
+		'disableStatistics'     => 0,
+		'serverPriority'        => '',
+		'scannerPriority'       => 0,
+		# Server Settings - Security
+		'filterHosts'           => 0,
+		'allowedHosts'          => sub { join(',', Slim::Utils::Network::hostAddr()) },
+		'csrfProtectionLevel'   => 1,
+		'authorize'             => 0,
+		'username'              => '',
+		'password'              => '',
+		# Server Settings - TextFormatting
+		'longdateFormat'        => q(%A, %B |%d, %Y),
+		'shortdateFormat'       => q(%m/%d/%Y),
+		'timeFormat'            => q(|%I:%M:%S %p),
+		'showArtist'            => 0,
+		'showYear'              => 0,
+		'guessFileFormats'	    => [
+									'(ARTIST - ALBUM) TRACKNUM - TITLE',
+									'/ARTIST/ALBUM/TRACKNUM - TITLE',
+									'/ARTIST/ALBUM/TRACKNUM TITLE',
+									'/ARTIST/ALBUM/TRACKNUM. TITLE'
+								   ],
+		'titleFormat'		    => [
+									'TITLE',
+									'DISC-TRACKNUM. TITLE',
+									'TRACKNUM. TITLE',
+									'TRACKNUM. ARTIST - TITLE',
+									'TRACKNUM. TITLE (ARTIST)',
+									'TRACKNUM. TITLE - ARTIST - ALBUM',
+									'FILE.EXT',
+									'TRACKNUM. TITLE from ALBUM by ARTIST',
+									'TITLE (ARTIST)',
+									'ARTIST - TITLE'
+								   ],
+		'titleFormatWeb'        => 1,
+		# Server Settings - UserInterface
+		'skin'                  => 'Default',
+		'itemsPerPage'          => 50,
+		'refreshRate'           => 30,
+		'coverArt'              => '',
+		'artfolder'             => '',
+		'thumbSize'             => 100,
+	);
+
+	# migrate old prefs across
 	$prefs->migrate(1, sub {
-		unless (-d $path) {
-			mkdir $path;
+		unless (-d $path) { mkdir $path; }
+		unless (-d $path) { logError("can't create new preferences directory at $path"); }
+
+		for my $pref (keys %defaults) {
+			my $old = Slim::Utils::Prefs::OldPrefs->get($pref);
+			$prefs->set($pref, $old) if !$prefs->exists($pref) && defined $old;
 		}
 
-		unless (-d $path) {
-			logError("can't create new preferences directory at $path");
-		}
-
-		0;
+		0; # FIXME - set this to 1 once migration complete!
 	});
 
 	unless (-d $path && -w $path) {
 		logError("unable to write to preferences directory $path");
 	}
+
+	# initialise any new prefs
+	$prefs->init(\%defaults);
+
+	# set validation functions
+	$prefs->setValidate( 'num',   qw(displaytexttimeout browseagelimit remotestreamtimeout) );
+	$prefs->setValidate( 'dir',   qw(cachedir playlistdir audiodir artfolder) );
+	$prefs->setValidate( 'array', qw(guessFileFormats titleFormat disabledformats) );
+
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1024, 'high' => 65535 }, 'httpport'    );
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    3, 'high' =>    30 }, 'bufferSecs'  );
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    1, 'high' =>  4096 }, 'udpChunkSize');
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    1,                 }, 'itemsPerPage');
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    2,                 }, 'refreshRate' );
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>   25, 'high' =>   250 }, 'thumbSize'   );
+
+	# set on change functions
+	$prefs->setChange( \&Slim::Web::HTTP::adjustHTTPPort,                              'httpport'    );
+	$prefs->setChange( sub { Slim::Utils::Strings::setLanguage($_[1]) },               'language'    );
+	$prefs->setChange( \&main::checkVersion,                                           'checkVersion');
+
+	$prefs->setChange( sub { Slim::Control::Request::executeRequest(undef, ['wipecache']) }, qw(splitList groupdiscs) );
+
+	$prefs->setChange( sub {
+		Slim::Utils::Text::clearCaseArticleCache();
+		Slim::Control::Request::executeRequest(undef, ['wipecache'])
+	}, 'ignoredarticles');
+
+	$prefs->setChange( sub {
+		Slim::Buttons::BrowseTree->init;
+		Slim::Music::MusicFolderScan->init;
+		Slim::Control::Request::executeRequest(undef, ['wipecache']);
+	}, 'audiodir');
+
+	$prefs->setChange( sub {
+		Slim::Music::PlaylistFolderScan->init;
+		Slim::Control::Request::executeRequest(undef, ['rescan', 'playlists']);
+		for my $client (Slim::Player::Client::clients()) {
+			Slim::Buttons::Home::updateMenu($client);
+		}
+	}, 'playlistdir');
+
+	$prefs->setChange( sub {
+		if ($_[1]) {
+			Slim::Control::Request::subscribe(\&Slim::Player::Playlist::modifyPlaylistCallback, [['playlist']]);
+			for my $client (Slim::Player::Client::clients()) {
+				next if Slim::Player::Sync::isSlave($client);
+				my $request = Slim::Control::Request->new($client, ['playlist','load_done']);
+				Slim::Player::Playlist::modifyPlaylistCallback($request);
+			}
+		} else {
+			Slim::Control::Request::unsubscribe(\&Slim::Player::Playlist::modifyPlaylistCallback);
+		}
+	}, 'persistPlaylists');
 }
+
+=head2 writeAll( )
+
+Write all pending preference changes to disk.
+
+=cut
 
 sub writeAll {
 	for my $n (values %namespaces) {
 		$n->savenow;
 	}
 }
+
+=head2 dir( )
+
+Returns path to preference files.
+
+=cut
 
 sub dir {
 	return $path;

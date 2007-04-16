@@ -15,6 +15,9 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 sub init {
 
@@ -254,7 +257,7 @@ sub browsedb {
 
 		# Force the limit if we're going by age.
 		if ($levelName eq 'age') {
-			$browseRS = $browseRS->slice(0, (Slim::Utils::Prefs::get('browseagelimit') - 1));
+			$browseRS = $browseRS->slice(0, ($prefs->get('browseagelimit') - 1));
 		}
 
 		$count = $browseRS->count;
@@ -348,7 +351,7 @@ sub browsedb {
 	}
 
 	# Dynamic VA/Compilation listing
-	if ($levelName eq 'contributor' && Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+	if ($levelName eq 'contributor' && $prefs->get('variousArtistAutoIdentification')) {
 
 		# Only show VA item if there's valid listings below the current level.
 		my %attributes = %attrs;

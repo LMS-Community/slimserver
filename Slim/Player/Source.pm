@@ -31,11 +31,14 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 use Slim::Utils::OSDetect;
+use Slim::Utils::Prefs;
 
 my $TRICKSEGMENTDURATION = 1.0;
 my $FADEVOLUME         = 0.3125;
 
 my $log = logger('player.source');
+
+my $prefs = preferences('server');
 
 use constant STATUS_STREAMING => 0;
 use constant STATUS_PLAYING => 1;
@@ -1341,7 +1344,7 @@ sub nextsong {
 		# play the next song and start over if necessary
 		if (Slim::Player::Playlist::shuffle($client) && 
 			Slim::Player::Playlist::repeat($client) == 2 &&
-			Slim::Utils::Prefs::get('reshuffleOnRepeat')) {
+			$prefs->get('reshuffleOnRepeat')) {
 			
 			Slim::Player::Playlist::reshuffle($client, 1);
 		}
@@ -1888,7 +1891,7 @@ sub readNextChunk {
 	my $givenChunkSize = shift;
 
 	if (!defined($givenChunkSize)) {
-		$givenChunkSize = Slim::Utils::Prefs::get('udpChunkSize') * 10;
+		$givenChunkSize = $prefs->get('udpChunkSize') * 10;
 	} 
 
 	my $chunksize = $givenChunkSize;

@@ -38,9 +38,11 @@ use Slim::Utils::Misc qw(specified);
 use Slim::Utils::Alarms;
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
+use Slim::Utils::Prefs;
 
 my $log = logger('control.queries');
 
+my $prefs = preferences('server');
 
 sub alarmsQuery {
 	my $request = shift;
@@ -338,7 +340,7 @@ sub artistsQuery {
 	# searching, or if we have a track
 	my $count_va = 0;
 
-	if (Slim::Utils::Prefs::get('variousArtistAutoIdentification') &&
+	if ($prefs->get('variousArtistAutoIdentification') &&
 		!defined $search && !defined $trackID) {
 
 		# Only show VA item if there are any
@@ -1165,7 +1167,7 @@ sub prefQuery {
 		return;
 	}
 
-	$request->addResult('_p2', Slim::Utils::Prefs::get($prefName));
+	$request->addResult('_p2', $prefs->get($prefName));
 	
 	$request->setStatusDone();
 }
@@ -1308,7 +1310,7 @@ sub serverstatusQuery {
 		$savePrefs{'server'} = \@prefs;
 	
 		for my $pref (@{$savePrefs{'server'}}) {
-			if (defined(my $value = Slim::Utils::Prefs::get($pref))) {
+			if (defined(my $value = $prefs->get($pref))) {
 				$request->addResult($pref, $value);
 			}
 		}
@@ -1633,7 +1635,7 @@ sub statusQuery {
 					::idleStreams() ;
 				}
 				
-				my $repShuffle = Slim::Utils::Prefs::get('reshuffleOnRepeat');
+				my $repShuffle = $prefs->get('reshuffleOnRepeat');
 				my $canPredictFuture = ($repeat == 2)  			# we're repeating all
 										&& 						# and
 										(	($shuffle == 0)		# either we're not shuffling

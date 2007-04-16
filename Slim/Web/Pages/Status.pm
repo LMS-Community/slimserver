@@ -19,6 +19,9 @@ use Slim::Player::TranscodingHelper;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::HTTP;
 use Slim::Web::Pages;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 sub init {
 	
@@ -40,7 +43,7 @@ sub status {
 
 	Slim::Web::Pages->addPlayerList($client, $params);
 
-	$params->{'refresh'} = Slim::Utils::Prefs::get('refreshRate');
+	$params->{'refresh'} = $prefs->get('refreshRate');
 
 	if (!defined($client)) {
 
@@ -161,7 +164,7 @@ sub status {
 			$params->{'bitrate'} = string('CONVERTED_TO')." ".Slim::Utils::Prefs::maxRate($client).string('KBPS').' ABR';
 		}
 
-		if (Slim::Utils::Prefs::get("playlistdir")) {
+		if ($prefs->get('playlistdir')) {
 			$params->{'cansave'} = 1;
 		}
 	}

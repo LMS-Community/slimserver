@@ -17,8 +17,11 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Web::Pages;
+use Slim::Utils::Prefs;
 
 my $log = logger('player.playlist');
+
+my $prefs = preferences('server');
 
 use constant CACHE_TIME => 300;
 
@@ -52,7 +55,7 @@ sub playlist {
 	$params->{'playlist_items'} = '';
 	$params->{'skinOverride'} ||= '';
 	
-	my $count = Slim::Utils::Prefs::get('itemsPerPage');
+	my $count = $prefs->get('itemsPerPage');
 
 	unless (defined($params->{'start'}) && $params->{'start'} ne '') {
 
@@ -102,7 +105,7 @@ sub playlist {
 
 			$log->info("Rebuilding playlist from cached params.");
 
-			if (Slim::Utils::Prefs::get("playlistdir")) {
+			if ($prefs->get('playlistdir')) {
 				$params->{'cansave'} = 1;
 			}
 
@@ -139,8 +142,8 @@ sub playlist {
 
 	my $currsongind   = Slim::Player::Source::playingSongIndex($client);
 
-	my $itemsPerPage = Slim::Utils::Prefs::get('itemsPerPage');
-	my $composerIn   = Slim::Utils::Prefs::get('composerInArtists');
+	my $itemsPerPage = $prefs->get('itemsPerPage');
+	my $composerIn   = $prefs->get('composerInArtists');
 
 	my $titleFormat  = Slim::Music::Info::standardTitleFormat();
 
@@ -206,7 +209,7 @@ sub playlist {
 		# For the moment cache html for Default, other skins only cache params
 		# Later consider caching as html unless an ajaxRequest
 		# my $cacheHtml = !$params->{'ajaxRequest'};
-		my $cacheHtml = (($params->{'skinOverride'} || Slim::Utils::Prefs::get('skin')) eq 'Default');
+		my $cacheHtml = (($params->{'skinOverride'} || $prefs->get('skin')) eq 'Default');
 
 		my $time = time();
 

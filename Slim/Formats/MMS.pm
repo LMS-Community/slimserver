@@ -123,7 +123,7 @@ sub requestString {
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
 
 	# Use full path for proxy servers
-	my $proxy = Slim::Utils::Prefs::get('webproxy');
+	my $proxy = preferences('server')->get('webproxy');
 	if ( $proxy && $server !~ /(?:localhost|127.0.0.1)/ ) {
 		$path = "http://$server:$port$path";
 	}

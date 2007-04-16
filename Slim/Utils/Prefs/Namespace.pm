@@ -31,19 +31,23 @@ use Slim::Utils::Log;
 
 my $log = logger('prefs');
 
-# Simple validator functions which may be references by name in setValidate calls
+# Simple validator functions which may be referenced by name in setValidate calls
 my $simpleValidators = {
 	#                   $_[0] = pref, $_[1] = value, $_[2] = params hash, $_[3] = old value, $_[4] = object (client) if appropriate
 	'int'      => sub { $_[1] =~ /^-?\d+$/ },
 	'num'      => sub { $_[1] =~ /^-?\.?\d+\.?\d*$/ },
-	'intlimit' => sub { $_[1] =~ /^-?\d+$/ && $_[1] >= $_[2]->{'low'} && $_[1] <= $_[2]->{'high'} },
-	'numlimit' => sub { $_[1] =~ /^-?\.?\d+\.?\d*$/ && $_[1] >= $_[2]->{'low'} && $_[1] <= $_[2]->{'high'} },
 	'array'    => sub { ref $_[1] eq 'ARRAY' },
 	'hash'     => sub { ref $_[1] eq 'HASH' },
 	'defined'  => sub { defined $_[1] },
 	'false'    => sub { 0 },
-	'file'     => sub { -e $_[1] },
-	'dir'      => sub { -d $_[1] },
+	'file'     => sub { !$_[1] || -e $_[1] },
+	'dir'      => sub { !$_[1] || -d $_[1] },
+	'intlimit' => sub { $_[1] =~ /^-?\d+$/ &&
+						(!defined $_[2]->{'low'}  || $_[1] >= $_[2]->{'low'} ) &&
+						(!defined $_[2]->{'high'} || $_[1] <= $_[2]->{'high'}) },
+	'numlimit' => sub { $_[1] =~ /^-?\.?\d+\.?\d*$/ &&
+						(!defined $_[2]->{'low'}  || $_[1] >= $_[2]->{'low'} ) &&
+						(!defined $_[2]->{'high'} || $_[1] <= $_[2]->{'high'}) },
 };
 
 sub new {
@@ -90,7 +94,7 @@ $args may either be one of the following: 'int', 'num', 'array', 'hash', 'define
 or a hash containing the key 'validator' which specifies either 'intlimit' or 'numlimit' of a callback function.
 
 In the case of a hash the hash is stored and passed to the validator function to provide parameters to the validation function.
-The built in 'intlimit' and 'num' limit require 'low' and 'high' parameters:
+The built in 'intlimit' and 'numlimit' use 'low' and/or 'high' parameters to perform range validation.
 
 e.g. $prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1 'high' => 10 }, 'pref1');
 

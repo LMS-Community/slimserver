@@ -71,7 +71,7 @@ sub descendContributor {
 	my $rs   = $self->search($cond)->search_related('genreTracks');
 
 	# If we are automatically identifiying VA albums, constrain the query.
-	if (Slim::Utils::Prefs::get('variousArtistAutoIdentification')) {
+	if (preferences('server')->get('variousArtistAutoIdentification')) {
 
 		$rs = $rs->search_related('track', {
 			'album.compilation' => [ { 'is' => undef }, { '=' => 0 } ]

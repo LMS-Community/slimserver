@@ -16,6 +16,7 @@ use Scalar::Util qw(blessed);
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Prefs;
 
 use Slim::Web::Pages::Search;
 use Slim::Web::Pages::BrowseDB;
@@ -27,6 +28,8 @@ use Slim::Web::Pages::History;
 use Slim::Web::Pages::EditPlaylist;
 use Slim::Web::Pages::Progress;
 use Slim::Utils::Progress;
+
+my $prefs = preferences('server');
 
 our %additionalLinks = ();
 
@@ -133,7 +136,7 @@ sub addLibraryStats {
 		return;
 	}
 
-	if (Slim::Utils::Prefs::get('disableStatistics')) {
+	if ($prefs->get('disableStatistics')) {
 
 		$params->{'song_count'}   = 0;
 		$params->{'album_count'}  = 0;
@@ -333,7 +336,7 @@ sub simpleHeader {
 	my $startRef     = $args->{'startRef'};
 	my $headerRef    = $args->{'headerRef'};
 	my $skinOverride = $args->{'skinOverride'};
-	my $count		 = $args->{'perPage'} || Slim::Utils::Prefs::get('itemsPerPage');
+	my $count		 = $args->{'perPage'} || $prefs->get('itemsPerPage');
 	my $offset		 = $args->{'offset'} || 0;
 
 	my $start = (defined($$startRef) && $$startRef ne '') ? $$startRef : 0;
@@ -397,7 +400,7 @@ sub pageInfo {
 	my $results      = $args->{'results'};
 	my $otherparams  = $args->{'otherParams'};
 	my $start        = $args->{'start'};
-	my $itemsPerPage = $args->{'perPage'} || Slim::Utils::Prefs::get('itemsPerPage');
+	my $itemsPerPage = $args->{'perPage'} || $prefs->get('itemsPerPage');
 
 	my %pageinfo  = ();
 	my %alphamap  = ();

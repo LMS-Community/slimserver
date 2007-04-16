@@ -20,6 +20,9 @@ use Slim::Player::TranscodingHelper;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 use constant DEFAULT_TYPE => 'wma';
 
@@ -122,7 +125,7 @@ sub requestString {
 	my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($url);
 
 	# Use full path for proxy servers
-	my $proxy = Slim::Utils::Prefs::get('webproxy');
+	my $proxy = $prefs->get('webproxy');
 	if ( $proxy && $server !~ /(?:localhost|127.0.0.1)/ ) {
 		$path = "http://$server:$port$path";
 	}

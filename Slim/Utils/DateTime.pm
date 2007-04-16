@@ -13,6 +13,8 @@ use POSIX qw(strftime);
 use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
 
+my $prefs = preferences('server');
+
 =head1 NAME 
 
 Slim::Utils::DateTime
@@ -48,7 +50,7 @@ Encoding is the current locale.
 
 sub longDateF {
 	my $time = shift || time();
-	my $format = shift || Slim::Utils::Prefs::get('longdateFormat');
+	my $format = shift || $prefs->get('longdateFormat');
 
 	my $date = strftime($format, localtime($time));
 	   $date =~ s/\|0*//;
@@ -67,7 +69,7 @@ Encoding is the current locale.
 
 sub shortDateF {
 	my $time = shift || time();
-	my $format = shift || Slim::Utils::Prefs::get('shortdateFormat');
+	my $format = shift || $prefs->get('shortdateFormat');
 
 	my $date = strftime($format, localtime($time));
 	   $date =~ s/\|0*//;
@@ -86,7 +88,7 @@ Encoding is the current locale.
 
 sub timeF {
 	my $ltime = shift || time();
-	my $format = shift || Slim::Utils::Prefs::get('timeFormat');
+	my $format = shift || $prefs->get('timeFormat');
 
 	# remove leading zero if another digit follows
 	my $time  = strftime($format, localtime($ltime));
@@ -182,7 +184,7 @@ sub timeDigits {
 	my $m = int(($time - $h * 60 * 60) / 60);
 	my $p = undef;
 
-	if (Slim::Utils::Prefs::get('timeFormat') =~ /%p/) {
+	if ($prefs->get('timeFormat') =~ /%p/) {
 		$p = 'AM';
 
 		if ($h > 11) { $h -= 12; $p = 'PM'; }

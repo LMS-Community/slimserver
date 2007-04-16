@@ -131,7 +131,7 @@ sub descendTrack {
 	};
 
 	# Filter by genre if requested.
-	if (!Slim::Utils::Prefs::get('noGenreFilter') && defined $find->{'genre.id'}) {
+	if (!preferences('server')->get('noGenreFilter') && defined $find->{'genre.id'}) {
 
 		push @{$attr->{'join'}}, 'genreTracks';
 		$cond->{'genreTracks.genre'} = $find->{'genre.id'};

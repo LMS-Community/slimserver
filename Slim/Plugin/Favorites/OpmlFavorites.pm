@@ -13,8 +13,11 @@ use Scalar::Util qw(blessed);
 
 use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
+use Slim::Utils::Prefs;
 
 my $log = logger('favorites');
+
+my $prefsServer = preferences('server');
 
 my $favs; # single instance for all callers
 
@@ -41,7 +44,7 @@ sub new {
 sub filename {
 	my $class = shift;
 
-	my $dir = Slim::Utils::Prefs::get('playlistdir') || Slim::Utils::Prefs::get('cachedir');
+	my $dir = $prefsServer->get('playlistdir') || $prefsServer->get('cachedir');
 
 	return catdir($dir, "favorites.opml");
 }

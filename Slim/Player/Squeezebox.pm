@@ -26,6 +26,9 @@ use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 # We inherit new() completely from our parent class.
 
@@ -150,7 +153,7 @@ sub play {
 
 		# If we know the bitrate of the stream, we instead buffer a certain number of seconds of audio
 		if ( my $bitrate = Slim::Music::Info::getBitrate( $params->{url} ) ) {
-			my $bufferSecs = Slim::Utils::Prefs::get('bufferSecs') || 3;
+			my $bufferSecs = $prefs->get('bufferSecs') || 3;
 			$params->{bufferThreshold} = ( int($bitrate / 8) * $bufferSecs ) / 1000;
 			
 			# Max threshold is 255
@@ -921,7 +924,7 @@ sub stream {
 				my ($server, $port, $path, $user, $password) = Slim::Utils::Misc::crackURL($server_url);
 				
 				# If a proxy server is set, change ip/port
-				my $proxy = Slim::Utils::Prefs::get('webproxy');
+				my $proxy = $prefs->get('webproxy');
 				if ( $proxy ) {
 					my ($pserver, $pport) = split /:/, $proxy;
 					$server = $pserver;
@@ -965,7 +968,7 @@ sub stream {
 
 				$request_string = sprintf("GET /stream.mp3?player=%s HTTP/1.0\n", $client->id);
 			
-				if (Slim::Utils::Prefs::get('authorize')) {
+				if ($prefs->get('authorize')) {
 
 					$client->password(generate_random_string(10));
 				
@@ -974,7 +977,7 @@ sub stream {
 					$request_string .= "Authorization: Basic $password\n";
 				}
 
-				$server_port = Slim::Utils::Prefs::get('httpport');
+				$server_port = $prefs->get('httpport');
 
 				# server IP of 0 means use IP of control server
 				$server_ip = 0;
@@ -1020,7 +1023,7 @@ sub stream {
 			$outputThreshold,
 			0,		# reserved
 			$client->canDoReplayGain($params->{replay_gain}),		
-			$server_port || Slim::Utils::Prefs::get('httpport'),  # use slim server's IP
+			$server_port || $prefs->get('httpport'),  # use slim server's IP
 			$server_ip || 0,
 		);
 	

@@ -11,6 +11,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Music::Info;
+use Slim::Utils::Prefs;
 
 use XML::Simple;
 use File::Basename;
@@ -19,6 +20,8 @@ use File::Temp qw(tempfile);
 use Storable;
 
 my $log = logger('favorites');
+
+my $prefsServer = preferences('server');
 
 my $nullopml = {
 	'head' => {
@@ -154,9 +157,9 @@ sub filename {
 
 		$name = Slim::Utils::Misc::pathFromFileURL($name);
 
-	} elsif ( !Slim::Music::Info::isURL($name) && dirname($name) eq '.' && Slim::Utils::Prefs::get("playlistdir") ) {
+	} elsif ( !Slim::Music::Info::isURL($name) && dirname($name) eq '.' && $prefsServer->get("playlistdir") ) {
 
-		$name = catdir(Slim::Utils::Prefs::get("playlistdir"), $name);
+		$name = catdir($prefsServer->get("playlistdir"), $name);
 	}
 
 	return $class->{'filename'} = $name;

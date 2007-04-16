@@ -8,10 +8,13 @@ use File::Basename;
 use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 
 use strict;
 
 my $log = logger('favorites');
+
+my $prefsServer = preferences('server');
 
 sub read {
 	my $class = shift;
@@ -23,7 +26,7 @@ sub read {
 
 	} elsif (dirname($name) eq '.') {
 
-		$name = catdir(Slim::Utils::Prefs::get("playlistdir"), $name);
+		$name = catdir($prefsServer->get('playlistdir'), $name);
 	}
 
 	my $type = Slim::Music::Info::contentType($name);

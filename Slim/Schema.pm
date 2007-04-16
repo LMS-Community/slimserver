@@ -48,9 +48,12 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Text;
 use Slim::Utils::Unicode;
 use Slim::Utils::Progress;
+use Slim::Utils::Prefs;
 use Slim::Schema::Debug;
 
 my $log = logger('database.info');
+
+my $prefs = preferences('server');
 
 # Singleton objects for Unknowns
 our ($_unknownArtist, $_unknownGenre, $_unknownAlbum) = ('', '', '');
@@ -267,9 +270,9 @@ from the current settings.
 sub sourceInformation {
 	my $class = shift;
 
-	my $source   = sprintf(Slim::Utils::Prefs::get('dbsource'), 'slimserver');
-	my $username = Slim::Utils::Prefs::get('dbusername');
-	my $password = Slim::Utils::Prefs::get('dbpassword');
+	my $source   = sprintf($prefs->get('dbsource'), 'slimserver');
+	my $username = $prefs->get('dbusername');
+	my $password = $prefs->get('dbpassword');
 	my ($driver) = ($source =~ /^dbi:(\w+):/);
 
 	# Bug 3443 - append a socket if needed
@@ -1361,7 +1364,7 @@ sub artistOnlyRoles {
 	# Loop through each pref to see if the user wants to show that contributor role.
 	for my $role (Slim::Schema::Contributor->contributorRoles) {
 
-		if (Slim::Utils::Prefs::get(sprintf('%sInArtists', lc($role)))) {
+		if ($prefs->get(sprintf('%sInArtists', lc($role)))) {
 
 			$roles{$role} = 1;
 		}
@@ -1927,7 +1930,7 @@ sub _postCheckAttributes {
 		# if we have a disc, provided we're not in the iTunes situation (disc == discc == 1)
 		my $checkDisc = 0;
 
-		if (!Slim::Utils::Prefs::get('groupdiscs') && 
+		if (!$prefs->get('groupdiscs') && 
 			(($disc && $discc && $discc > 1) || ($disc && !$discc))) {
 
 			$checkDisc = 1;
@@ -2121,7 +2124,7 @@ sub _postCheckAttributes {
 
 		# Make sure we have a good value for DISCC if grouping
 		# or if one is supplied
-		if (Slim::Utils::Prefs::get('groupdiscs') || $discc) {
+		if ($prefs->get('groupdiscs') || $discc) {
 
 			$discc = max(($disc || 0), ($discc || 0), ($albumObj->discc || 0));
 
