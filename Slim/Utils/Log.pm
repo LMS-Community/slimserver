@@ -82,16 +82,16 @@ sub init {
 
 	my %config  = ($class->_defaultCategories, $class->_defaultAppenders);
 
-	# If the user has specified a log config, or there is a log config written
-	# out (ie: the user has changed settings in the web UI) - look for that.
-	my $logconf = $args->{'logconf'} || $class->defaultConfigFile;
-	my $logtype = $args->{'logtype'} || 'server';
-
 	# If the user passed logdir, that wins when the file callback is run.
 	if ($args->{'logdir'} && -d $args->{'logdir'}) {
 
 		$logDir = $args->{'logdir'};
 	}
+
+	# If the user has specified a log config, or there is a log config written
+	# out (ie: the user has changed settings in the web UI) - look for that.
+	my $logconf = $args->{'logconf'} || $class->defaultConfigFile;
+	my $logtype = $args->{'logtype'} || 'server';
 
 	# If the user has specified any --debug commands, parse those.
 	if ($args->{'debug'} || $::logCategories) {
@@ -627,11 +627,11 @@ Returns the location of the default config file for the platform.
 sub defaultConfigFile {
 	my $class = shift;
 
-	my $logDir = Slim::Utils::OSDetect::dirsFor('log');
+	my $dir = $logDir || Slim::Utils::OSDetect::dirsFor('log');;
 
-	if (defined $logDir && -d $logDir) {
+	if (defined $dir && -d $dir) {
 
-		return File::Spec->catdir($logDir, 'log.conf');
+		return File::Spec->catdir($dir, 'log.conf');
 	}
 }
 
