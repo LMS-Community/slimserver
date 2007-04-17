@@ -178,6 +178,8 @@ our @AUTHORS = (
 	'Richard Titmuss',
 );
 
+my $prefs        = preferences('server');
+
 our $VERSION     = '7.0a1';
 our $REVISION    = undef;
 our $audiodir    = undef
@@ -288,7 +290,7 @@ sub init {
 	if (defined $priority) {
 		Slim::Utils::Misc::setPriority($priority);
 	} else {
-		Slim::Utils::Misc::setPriority( Slim::Utils::Prefs::get("serverPriority") );
+		Slim::Utils::Misc::setPriority( $prefs->get('serverPriority') );
 	}
 
 	$log->info("SlimServer strings init...");
@@ -370,7 +372,7 @@ sub init {
 	# regular server has a couple more initial operations.
 	$log->info("SlimServer persist playlists...");
 
-	if (Slim::Utils::Prefs::get('persistPlaylists')) {
+	if ($prefs->get('persistPlaylists')) {
 
 		Slim::Control::Request::subscribe(
 			\&Slim::Player::Playlist::modifyPlaylistCallback, [['playlist']]
@@ -581,70 +583,61 @@ sub initSettings {
 	Slim::Utils::Prefs::load($prefsfile, $nosetup || $noserver);
 	Slim::Utils::Prefs::checkServerPrefs();
 
-	# upgrade splitchars => splitList
-	if (my $splitChars = Slim::Utils::Prefs::get('splitchars')) {
-
-		Slim::Utils::Prefs::delete("splitchars");
-
-		# Turn the old splitchars list into a space separated list.
-		my $splitList = join(' ', map { $_ } (split /\s+/, $splitChars)); 
-
-		Slim::Utils::Prefs::set("splitList", $splitList);
-	}
-	
 	# options override existing preferences
 	if (defined($audiodir)) {
-		Slim::Utils::Prefs::set("audiodir", $audiodir);
+		$prefs->set('audiodir', $audiodir);
 	}
 
 	if (defined($playlistdir)) {
-		Slim::Utils::Prefs::set("playlistdir", $playlistdir);
+		$prefs->set('playlistdir', $playlistdir);
 	}
 	
 	if (defined($cachedir)) {
-		Slim::Utils::Prefs::set("cachedir", $cachedir);
+		$prefs->set('cachedir', $cachedir);
 	}
 	
 	if (defined($httpport)) {
-		Slim::Utils::Prefs::set("httpport", $httpport);
+		$prefs->set('httpport', $httpport);
 	}
 
 	if (defined($cliport)) {
-		Slim::Utils::Prefs::set("cliport", $cliport);
+		$prefs->set('cliport', $cliport);
 	}
 
 	# Bug: 583 - make sure we are using the actual case of the directories
 	# and that they do not end in / or \
 	# 
 	# Bug: 3760 - don't strip the trailing slash before going to fixPath
-	if (defined(Slim::Utils::Prefs::get("playlistdir")) && Slim::Utils::Prefs::get("playlistdir") ne '') {
 
-		$playlistdir = Slim::Utils::Prefs::get("playlistdir");
+	# FIXME - can these be done at pref set time rather than here which is once per startup
+	if (defined($prefs->get('playlistdir')) && $prefs->get('playlistdir') ne '') {
+
+		$playlistdir = $prefs->get('playlistdir');
 		$playlistdir = Slim::Utils::Misc::fixPath($playlistdir);
 		$playlistdir = Slim::Utils::Misc::pathFromFileURL($playlistdir);
 		$playlistdir =~ s|[/\\]$||;
 
-		Slim::Utils::Prefs::set("playlistdir",$playlistdir);
+		$prefs->set('playlistdir',$playlistdir);
 	}
 
-	if (defined(Slim::Utils::Prefs::get("audiodir")) && Slim::Utils::Prefs::get("audiodir") ne '') {
+	if (defined($prefs->get('audiodir')) && $prefs->get('audiodir') ne '') {
 
-		$audiodir = Slim::Utils::Prefs::get("audiodir");
+		$audiodir = $prefs->get('audiodir');
 		$audiodir = Slim::Utils::Misc::fixPath($audiodir);
 		$audiodir = Slim::Utils::Misc::pathFromFileURL($audiodir);
 		$audiodir =~ s|[/\\]$||;
 
-		Slim::Utils::Prefs::set("audiodir",$audiodir);
+		$prefs->set('audiodir',$audiodir);
 	}
 	
-	if (defined(Slim::Utils::Prefs::get("cachedir")) && Slim::Utils::Prefs::get("cachedir") ne '') {
+	if (defined($prefs->get('cachedir')) && $prefs->get('cachedir') ne '') {
 
-		$cachedir = Slim::Utils::Prefs::get("cachedir");
+		$cachedir = $prefs->get('cachedir');
 		$cachedir = Slim::Utils::Misc::fixPath($cachedir);
 		$cachedir = Slim::Utils::Misc::pathFromFileURL($cachedir);
 		$cachedir =~ s|[/\\]$||;
 
-		Slim::Utils::Prefs::set("cachedir",$cachedir);
+		$prefs->set('cachedir',$cachedir);
 	}
 
 	Slim::Utils::Prefs::makeCacheDir();	
@@ -753,8 +746,9 @@ sub changeEffectiveUserAndGroup {
 
 sub checkDataSource {
 
-	if (!(defined Slim::Utils::Prefs::get("audiodir") && 
-		-d Slim::Utils::Prefs::get("audiodir")) && !$quiet && !Slim::Music::Import->countImporters()) {
+	my $audiodir = $prefs->get('audiodir');
+
+	if (!(defined $audiodir && -d $audiodir) && !$quiet && !Slim::Music::Import->countImporters()) {
 
 		msg("\n", 0, 1);
 		msg(string('SETUP_DATASOURCE_1') . "\n", 0, 1);
@@ -763,10 +757,9 @@ sub checkDataSource {
 
 	} else {
 
-		if (defined(Slim::Utils::Prefs::get("audiodir")) && Slim::Utils::Prefs::get("audiodir") =~ m|[/\\]$|) {
-			$audiodir = Slim::Utils::Prefs::get("audiodir");
+		if (defined $audiodir && $audiodir =~ m|[/\\]$|) {
 			$audiodir =~ s|[/\\]$||;
-			Slim::Utils::Prefs::set("audiodir",$audiodir);
+			$prefs->set('audiodir',$audiodir);
 		}
 
 		if (Slim::Schema->schemaUpdated || Slim::Schema->count('Track', { 'me.audio' => 1 }) == 0) {
@@ -780,26 +773,26 @@ sub checkDataSource {
 
 sub checkVersion {
 
-	if (!Slim::Utils::Prefs::get("checkVersion")) {
+	if (!$prefs->get('checkVersion')) {
 
 		$newVersion = undef;
 		return;
 	}
 
-	my $lastTime = Slim::Utils::Prefs::get('checkVersionLastTime');
+	my $lastTime = $prefs->get('checkVersionLastTime');
 	my $log      = logger('server.timers');
 
 	if ($lastTime) {
 
 		my $delta = Time::HiRes::time() - $lastTime;
 
-		if (($delta > 0) && ($delta < Slim::Utils::Prefs::get('checkVersionInterval'))) {
+		if (($delta > 0) && ($delta < $prefs->get('checkVersionInterval'))) {
 
 			$log->info(sprintf("Checking version in %s seconds",
-				($lastTime + Slim::Utils::Prefs::get('checkVersionInterval') + 2 - Time::HiRes::time())
+				($lastTime + $prefs->get('checkVersionInterval') + 2 - Time::HiRes::time())
 			));
 
-			Slim::Utils::Timers::setTimer(0, $lastTime + Slim::Utils::Prefs::get('checkVersionInterval') + 2, \&checkVersion);
+			Slim::Utils::Timers::setTimer(0, $lastTime + $prefs->get('checkVersionInterval') + 2, \&checkVersion);
 
 			return;
 		}
@@ -813,8 +806,8 @@ sub checkVersion {
 	# will call checkVersionCB when complete
 	$http->get($url);
 
-	Slim::Utils::Prefs::set('checkVersionLastTime', Time::HiRes::time());
-	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + Slim::Utils::Prefs::get('checkVersionInterval'), \&checkVersion);
+	$prefs->set('checkVersionLastTime', Time::HiRes::time());
+	Slim::Utils::Timers::setTimer(0, Time::HiRes::time() + $prefs->get('checkVersionInterval'), \&checkVersion);
 }
 
 # called when check version request is complete
@@ -874,7 +867,7 @@ sub cleanup {
 
 	Slim::Networking::mDNS->stopAdvertising;
 
-	if (Slim::Utils::Prefs::get('persistPlaylists')) {
+	if ($prefs->get('persistPlaylists')) {
 		Slim::Control::Request::unsubscribe(
 			\&Slim::Player::Playlist::modifyPlaylistCallback);
 	}

@@ -50,6 +50,8 @@ sub main {
 
 	our $LogTimestamp = 1;
 
+	my $prefs = preferences('server');
+
 	GetOptions(
 		'force'        => \$force,
 		'cleanup'      => \$cleanup,
@@ -99,7 +101,7 @@ sub main {
 	if (defined $priority) {
 		Slim::Utils::Misc::setPriority($priority);
 	} else {
-		Slim::Utils::Misc::setPriority( Slim::Utils::Prefs::get("scannerPriority") );
+		Slim::Utils::Misc::setPriority( $prefs->get('scannerPriority') );
 	}
 
 	if (!$force && Slim::Music::Import->stillScanning) {
@@ -212,7 +214,7 @@ sub main {
 	}
 
 	# Wipe templates if they exist.
-	rmtree( catdir(Slim::Utils::Prefs::get('cachedir'), 'templates') );
+	rmtree( catdir($prefs->get('cachedir'), 'templates') );
 }
 
 sub initializeFrameworks {
@@ -230,7 +232,7 @@ sub initializeFrameworks {
 	Slim::Utils::Prefs::init();
 	Slim::Utils::Prefs::load($::prefsFile);
 
-	Slim::Utils::Prefs::set('prefsWriteDelay', 0);
+#	Slim::Utils::Prefs::set('prefsWriteDelay', 0);
 
 	Slim::Utils::Prefs::checkServerPrefs();
 
