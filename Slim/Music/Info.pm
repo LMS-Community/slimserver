@@ -602,7 +602,7 @@ sub guessTags {
 	$file =~ s/\\/\//g;
 	
 	# Get the candidate file name formats
-	my @guessformats = @{ $prefs->('guessFileFormats') };
+	my @guessformats = @{ $prefs->get('guessFileFormats') };
 
 	# Check each format
 	foreach my $guess ( @guessformats ) {
