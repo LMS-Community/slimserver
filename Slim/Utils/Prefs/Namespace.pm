@@ -69,6 +69,7 @@ sub new {
 	my $class = bless {
 		'namespace' => $namespace,
 		'file'      => $filename,
+		'readonly'  => 0,
 		'clients'   => {},
 		'validators'=> {},
 		'validparam'=> {},
@@ -128,7 +129,7 @@ sub setValidate {
 	}
 }
 
-=head2 setchange( $callback, list )
+=head2 setChange( $callback, list )
 
 Associates callback function $callback with the preferences listed by list.
 
@@ -180,6 +181,19 @@ sub _load {
 	}
 
 	return $prefs;
+}
+
+=head2 readonly( )
+
+Sets this namespace to readonly.
+
+=cut
+
+sub readonly {
+	my $class  = shift;
+	my $flag   = shift;
+
+	$class->{'readonly'} = 1;
 }
 
 =head2 save( )

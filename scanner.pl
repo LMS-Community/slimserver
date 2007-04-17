@@ -52,6 +52,8 @@ sub main {
 
 	my $prefs = preferences('server');
 
+	$prefs->readonly;
+
 	GetOptions(
 		'force'        => \$force,
 		'cleanup'      => \$cleanup,

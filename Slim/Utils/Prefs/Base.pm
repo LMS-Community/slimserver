@@ -72,11 +72,19 @@ sub set {
 
 	my $root  = $class->_root;
 	my $change = $root->{'onchange'}->{ $pref };
+	my $readonly  = $root->{'readonly'};
 	my $validator = $root->{'validators'}->{ $pref };
 	my $namespace = $root->{'namespace'};
 	my $clientid  = $class->{'clientid'} || '';
 
 	my $valid  = $validator ? $validator->($pref, $new, $root->{'validparams'}->{ $pref }, $old, $class->_obj) : 1;
+
+	if ($readonly) {
+
+		logBacktrace(sprintf "attempt to set %s:%s:%s while namespace is readonly", $namespace, $clientid, $pref);
+
+		return wantarray ? ($old, 0) : $old;
+	}
 
 	if ($valid && $pref !~ /^_/) {
 

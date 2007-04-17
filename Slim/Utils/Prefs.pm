@@ -1428,6 +1428,12 @@ sub init_new {
 		'thumbSize'             => 100,
 	);
 
+	# add entry to dispatch table if it is loaded (it isn't in scanner.pl) as migration may call notify for this
+	# this is required as Slim::Control::Request::init will not have run at this point
+	if (exists &Slim::Control::Request::addDispatch) {
+		Slim::Control::Request::addDispatch(['prefset'], [0, 0, 1, undef]);
+	}
+
 	# migrate old prefs across
 	$prefs->migrate(1, sub {
 		unless (-d $path) { mkdir $path; }

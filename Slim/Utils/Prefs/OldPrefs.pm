@@ -58,17 +58,17 @@ sub _oldPath {
 
 	my $oldPrefs;
 
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
+	if ($::prefsfile && -r $::prefsfile) {
+
+		$oldPrefs = $::prefsfile;
+
+	} elsif (Slim::Utils::OSDetect::OS() eq 'mac' && -r catdir($ENV{'HOME'}, 'Library', 'SlimDevices', 'slimserver.pref')) {
 
 		$oldPrefs = catdir($ENV{'HOME'}, 'Library', 'SlimDevices', 'slimserver.pref');
 
-	} elsif (Slim::Utils::OSDetect::OS() eq 'win')  {
+	} elsif (Slim::Utils::OSDetect::OS() eq 'win' && -r catdir($Bin, 'slimserver.pref'))  {
 
 		$oldPrefs = catdir($Bin, 'slimserver.pref');
-
-	} elsif ($::prefsfile && -r $::prefsfile) {
-
-		$oldPrefs = $::prefsfile;
 
 	} elsif (-r '/etc/slimserver.conf') {
 
