@@ -15,7 +15,7 @@
     [% IF modestop %][% "STOPPED_ON" | string %][% END %]
     [% IF currentsong %][% currentsong %] [% "OUT_OF" | string %] [% songcount %][% END %][% "COLON" | string %]
    </div>
-   <div class="playingSong"><a [% songinfoHRef %] target="browser">[% songtitle %]</a><
+   <div class="playingSong"><a [% songinfoHRef %] target="browser">[% songtitle %]</a>
    [% IF itemobj.album.title && itemobj.album.title != noAlbum %]
     [% "FROM" | string %] <a [% albumHRef %] target="browser">[% itemobj.album.title | html %]</a>
    [%- END %]
