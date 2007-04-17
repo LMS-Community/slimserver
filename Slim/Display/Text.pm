@@ -27,7 +27,7 @@ use base qw(Slim::Display::Display);
 use Slim::Display::Lib::TextVFD;
 use Slim::Utils::Prefs;
 
-my $prefs = preference('server');
+my $prefs = preferences('server');
 
 my $scroll_pad_scroll = 6; # chars of padding between scrolling text
 my $scroll_pad_ticker = 8; # chars of padding in ticker mode
