@@ -34,6 +34,7 @@ use MPEG::Audio::Frame;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::SoundCheck;
+use Slim::Utils::Strings qw(string);
 
 my %tagMapping = (
 	'Unique file identifier'	=> 'MUSICBRAINZ_ID',
@@ -451,11 +452,13 @@ sub scanBitrate {
 			},
 		});
 		
-		$log->debug("Read ID3 tags from stream: " . Data::Dump::dump(\%tags));
+		if ( $log->is_debug ) {
+			$log->debug("Read ID3 tags from stream: " . Data::Dump::dump(\%tags));
+		}
 		
 		my $title = $tags{TITLE};
-		$title .= ' - ' . $tags{ARTIST} if $tags{ARTIST};
-		$title .= ' - ' . $tags{ALBUM}  if $tags{ALBUM};
+		$title .= ' ' . string('BY') . ' ' . $tags{ARTIST} if $tags{ARTIST};
+		$title .= ' ' . string('FROM') . ' ' . $tags{ALBUM}  if $tags{ALBUM};
 		
 		Slim::Music::Info::setCurrentTitle( $url, $title );
 	}
