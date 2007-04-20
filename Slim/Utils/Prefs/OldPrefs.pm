@@ -33,9 +33,7 @@ sub get {
 	my $class = shift;
 	my $pref  = shift;
 
-	$oldprefs ||= eval { LoadFile(_oldPath()) } || {};
-
-	$oldprefs->{ $pref };
+	$class->_oldPrefs->{ $pref };
 }
 
 =head2 clientGet( $client, $prefname )
@@ -49,9 +47,38 @@ sub clientGet {
 	my $client = shift;
 	my $pref  = shift;
 
-	$oldprefs ||= eval { LoadFile(_oldPath()) } || {};
+	my $prefs = $class->_oldPrefs;
 
-	$oldprefs->{'clients'}->{ $client->id }->{ $pref } if $oldprefs->{'clients'}->{ $client->id };
+	if ($prefs->{'clients'} && $prefs->{'clients'}->{ $client->id } ) {
+
+		return $prefs->{'clients'}->{ $client->id }->{ $pref };
+	}
+
+	return undef;
+}
+
+sub _oldPrefs {
+	my $class = shift;
+
+	return $oldprefs if $oldprefs;
+
+	if ( my $path = _oldPath() ) {
+
+		$oldprefs = eval { LoadFile($path) };
+
+		if (!$@ && ref $oldprefs eq 'HASH') {
+
+			$log->info("loaded $path");
+
+			return $oldprefs;
+
+		} else {
+
+			$log->warn("failed to load $path [$@]");
+		}
+	}
+
+	return $oldprefs = {};
 }
 
 sub _oldPath {
