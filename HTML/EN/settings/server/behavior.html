@@ -6,15 +6,15 @@
 		<div class="groupDesc">[% "SETUP_COMPOSERINARTISTS_DESC" | string %]</div>
 
 		<input type=hidden name="composerInArtists" value="0" />
-		<input type=checkbox [% IF composerInArtists %]checked [% END %] class="stdedit" name="composerInArtists" id="composerInArtists" value="1" />
+		<input type=checkbox [% IF prefs.composerInArtists %]checked [% END %] class="stdedit" name="composerInArtists" id="composerInArtists" value="1" />
 		<label for="composerInArtists" class="stdlabel">[% "COMPOSER" | string %]</label><br>
 
 		<input type=hidden name="conductorInArtists" value="0" />
-		<input type=checkbox [% IF conductorInArtists %]checked [% END %] class="stdedit" name="conductorInArtists" id="conductorInArtists" value="1" />
+		<input type=checkbox [% IF prefs.conductorInArtists %]checked [% END %] class="stdedit" name="conductorInArtists" id="conductorInArtists" value="1" />
 		<label for="conductorInArtists" class="stdlabel">[% "CONDUCTOR" | string %]</label><br>
 
 		<input type=hidden name="bandInArtists" value="0" />
-		<input type=checkbox [% IF bandInArtists %]checked [% END %] class="stdedit" name="bandInArtists" id="bandInArtists" value="1" />
+		<input type=checkbox [% IF prefs.bandInArtists %]checked [% END %] class="stdedit" name="bandInArtists" id="bandInArtists" value="1" />
 		<label for="bandInArtists" class="stdlabel">[% "BAND" | string %]</label>
 
 	</div>
@@ -26,8 +26,8 @@
 
 		<select class="stdedit" name="variousArtistAutoIdentification" id="variousArtistAutoIdentification">
 
-			<option [% IF NOT variousArtistAutoIdentification %]selected [% END %]value="0">[% 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0' | getstring %]</option>
-			<option [% IF variousArtistAutoIdentification %]selected [% END %]value="1">[% 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1' | getstring %]</option>
+			<option [% IF NOT prefs.variousArtistAutoIdentification %]selected [% END %]value="0">[% 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0' | getstring %]</option>
+			<option [% IF prefs.variousArtistAutoIdentification %]selected [% END %]value="1">[% 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1' | getstring %]</option>
 		
 		</select>
 
@@ -35,14 +35,14 @@
 
 		<select class="stdedit" name="useBandAsAlbumArtist" id="useBandAsAlbumArtist">
 
-			<option [% IF NOT useBandAsAlbumArtist %]selected [% END %]value="0">[% 'SETUP_USEBANDASALBUMARTIST_0' | getstring %]</option>
-			<option [% IF useBandAsAlbumArtist %]selected [% END %]value="1">[% 'SETUP_USEBANDASALBUMARTIST_1' | getstring %]</option>
+			<option [% IF NOT prefs.useBandAsAlbumArtist %]selected [% END %]value="0">[% 'SETUP_USEBANDASALBUMARTIST_0' | getstring %]</option>
+			<option [% IF prefs.useBandAsAlbumArtist %]selected [% END %]value="1">[% 'SETUP_USEBANDASALBUMARTIST_1' | getstring %]</option>
 		
 		</select>
 
 		<div class="prefDesc">[% "SETUP_VARIOUSARTISTSSTRING_DESC" | string %]</div>
 
-		<input type=text class="stdedit" name="variousArtistsString" id="variousArtistsString" value="[% variousArtistsString %]" size="40">
+		<input type=text class="stdedit" name="variousArtistsString" id="variousArtistsString" value="[% prefs.variousArtistsString %]" size="40">
 
 	</div>
 	
@@ -51,15 +51,15 @@
 		<div class="prefHead">[% "SETUP_DISPLAYTEXTTIMEOUT" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_DISPLAYTEXTTIMEOUT_DESC" | string %]</div>
 
-		[% "SETUP_DISPLAYTEXTTIMEOUT_CHOOSE" | string %]<input type=text class="stdedit" name="displaytexttimeout" id="displaytexttimeout" value="[% displaytexttimeout %]" size="15">
+		[% "SETUP_DISPLAYTEXTTIMEOUT_CHOOSE" | string %]<input type=text class="stdedit" name="displaytexttimeout" id="displaytexttimeout" value="[% prefs.displaytexttimeout %]" size="15">
 
 		<div class="prefHead">[% "SETUP_CHECKVERSION" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_CHECKVERSION_DESC" | string %]</div>
 
 		<select class="stdedit" name="checkVersion" id="checkVersion">
 
-			<option [% IF NOT checkVersion %]selected [% END %]value="0">[% 'SETUP_CHECKVERSION_0' | string %]</option>
-			<option [% IF checkVersion %]selected [% END %]value="1">[% 'SETUP_CHECKVERSION_1' | string %]</option>
+			<option [% IF NOT prefs.checkVersion %]selected [% END %]value="0">[% 'SETUP_CHECKVERSION_0' | string %]</option>
+			<option [% IF prefs.checkVersion %]selected [% END %]value="1">[% 'SETUP_CHECKVERSION_1' | string %]</option>
 		
 		</select>
 
@@ -68,8 +68,8 @@
 
 		<select class="stdedit" name="noGenreFilter" id="noGenreFilter">
 
-			<option [% IF NOT noGenreFilter %]selected [% END %]value="0">[% 'SETUP_NOGENREFILTER_0' | string %]</option>
-			<option [% IF noGenreFilter%]selected [% END %]value="1">[% 'SETUP_NOGENREFILTER_1' | string %]</option>
+			<option [% IF NOT prefs.noGenreFilter %]selected [% END %]value="0">[% 'SETUP_NOGENREFILTER_0' | string %]</option>
+			<option [% IF prefs.noGenreFilter%]selected [% END %]value="1">[% 'SETUP_NOGENREFILTER_1' | string %]</option>
 		
 		</select>
 
@@ -78,8 +78,8 @@
 
 		<select class="stdedit" name="playtrackalbum" id="playtrackalbum">
 
-			<option [% IF NOT playtrackalbum %]selected [% END %]value="0">[% 'SETUP_PLAYTRACKALBUM_0' | string %]</option>
-			<option [% IF playtrackalbum %]selected [% END %]value="1">[% 'SETUP_PLAYTRACKALBUM_1' | string %]</option>
+			<option [% IF NOT prefs.playtrackalbum %]selected [% END %]value="0">[% 'SETUP_PLAYTRACKALBUM_0' | string %]</option>
+			<option [% IF prefs.playtrackalbum %]selected [% END %]value="1">[% 'SETUP_PLAYTRACKALBUM_1' | string %]</option>
 		
 		</select>
 
@@ -88,33 +88,33 @@
 
 		<select class="stdedit" name="searchSubString" id="searchSubString">
 
-			<option [% IF NOT searchSubString %]selected [% END %]value="0">[% 'SETUP_SEARCHSUBSTRING_0' | string %]</option>
-			<option [% IF searchSubString %]selected [% END %]value="1">[% 'SETUP_SEARCHSUBSTRING_1' | string %]</option>
+			<option [% IF NOT prefs.searchSubString %]selected [% END %]value="0">[% 'SETUP_SEARCHSUBSTRING_0' | string %]</option>
+			<option [% IF prefs.searchSubString %]selected [% END %]value="1">[% 'SETUP_SEARCHSUBSTRING_1' | string %]</option>
 		
 		</select>
 
 		<div class="prefHead">[% "SETUP_IGNOREDARTICLES" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_IGNOREDARTICLES_DESC" | string %]</div>
 
-		<input type=text class="stdedit" name="ignoredarticles" id="ignoredarticles" value="[% ignoredarticles %]" size="40">
+		<input type=text class="stdedit" name="ignoredarticles" id="ignoredarticles" value="[% prefs.ignoredarticles %]" size="40">
 
 		<div class="prefHead">[% "SETUP_SPLITLIST" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_SPLITLIST_DESC" | string %]</div>
 
-		<input type=text class="stdedit" name="splitList" id="splitList" value="[% splitList %]" size="40">
+		<input type=text class="stdedit" name="splitList" id="splitList" value="[% prefs.splitList %]" size="40">
 
 		<div class="prefHead">[% "SETUP_BROWSEAGELIMIT" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_BROWSEAGELIMIT_DESC" | string %]</div>
 
-		<input type=text class="stdedit" name="browseagelimit" id="browseagelimit" value="[% browseagelimit %]" size="15">
+		<input type=text class="stdedit" name="browseagelimit" id="browseagelimit" value="[% prefs.browseagelimit %]" size="15">
 
 		<div class="prefHead">[% "SETUP_GROUPDISCS" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_GROUPDISCS_DESC" | string %]</div>
 
 		<select class="stdedit" name="groupdiscs" id="groupdiscs">
 
-			<option [% IF NOT groupdiscs %]selected [% END %]value="0">[% 'SETUP_GROUPDISCS_0' | string %]</option>
-			<option [% IF groupdiscs %]selected [% END %]value="1">[% 'SETUP_GROUPDISCS_1' | string %]</option>
+			<option [% IF NOT prefs.groupdiscs %]selected [% END %]value="0">[% 'SETUP_GROUPDISCS_0' | string %]</option>
+			<option [% IF prefs.groupdiscs %]selected [% END %]value="1">[% 'SETUP_GROUPDISCS_1' | string %]</option>
 		
 		</select>
 
@@ -123,8 +123,8 @@
 
 		<select class="stdedit" name="persistPlaylists" id="persistPlaylists">
 
-			<option [% IF NOT persistPlaylists %]selected [% END %]value="0">[% 'SETUP_PERSISTPLAYLISTS_0' | string %]</option>
-			<option [% IF persistPlaylists %]selected [% END %]value="1">[% 'SETUP_PERSISTPLAYLISTS_1' | string %]</option>
+			<option [% IF NOT prefs.persistPlaylists %]selected [% END %]value="0">[% 'SETUP_PERSISTPLAYLISTS_0' | string %]</option>
+			<option [% IF prefs.persistPlaylists %]selected [% END %]value="1">[% 'SETUP_PERSISTPLAYLISTS_1' | string %]</option>
 		
 		</select>
 
@@ -133,8 +133,8 @@
 
 		<select class="stdedit" name="reshuffleOnRepeat" id="reshuffleOnRepeat">
 
-			<option [% IF NOT reshuffleOnRepeat %]selected [% END %]value="0">[% 'SETUP_RESHUFFLEONREPEAT_0' | string %]</option>
-			<option [% IF reshuffleOnRepeat %]selected [% END %]value="1">[% 'SETUP_RESHUFFLEONREPEAT_1' | string %]</option>
+			<option [% IF NOT prefs.reshuffleOnRepeat %]selected [% END %]value="0">[% 'SETUP_RESHUFFLEONREPEAT_0' | string %]</option>
+			<option [% IF prefs.reshuffleOnRepeat %]selected [% END %]value="1">[% 'SETUP_RESHUFFLEONREPEAT_1' | string %]</option>
 		
 		</select>
 
@@ -143,8 +143,8 @@
 
 		<select class="stdedit" name="saveShuffled" id="saveShuffled">
 
-			<option [% IF NOT saveShuffled %]selected [% END %]value="0">[% 'SETUP_SAVESHUFFLED_0' | string %]</option>
-			<option [% IF saveShuffled %]selected [% END %]value="1">[% 'SETUP_SAVESHUFFLED_1' | string %]</option>
+			<option [% IF NOT prefs.saveShuffled %]selected [% END %]value="0">[% 'SETUP_SAVESHUFFLED_0' | string %]</option>
+			<option [% IF prefs.saveShuffled %]selected [% END %]value="1">[% 'SETUP_SAVESHUFFLED_1' | string %]</option>
 		
 		</select>
 

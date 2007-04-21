@@ -9,7 +9,7 @@
 
 		[% FOREACH option = longdateoptions.keys %]
 
-			<option [% IF longdateFormat == option %]selected [% END %]value="[% option %]">[% longdateoptions.$option %]</option>
+			<option [% IF prefs.longdateFormat == option %]selected [% END %]value="[% option %]">[% longdateoptions.$option %]</option>
 
 		[%- END -%]
 		
@@ -22,7 +22,7 @@
 
 		[% FOREACH option = shortdateoptions.keys %]
 
-			<option [% IF shortdateFormat == option %]selected [% END %]value="[% option %]">[% shortdateoptions.$option %]</option>
+			<option [% IF prefs.shortdateFormat == option %]selected [% END %]value="[% option %]">[% shortdateoptions.$option %]</option>
 
 		[%- END -%]
 		
@@ -35,7 +35,7 @@
 
 		[% FOREACH option = timeoptions.keys %]
 
-			<option [% IF timeFormat == option %]selected [% END %]value="[% option %]">[% timeoptions.$option %]</option>
+			<option [% IF prefs.timeFormat == option %]selected [% END %]value="[% option %]">[% timeoptions.$option %]</option>
 
 		[%- END -%]
 		
@@ -46,8 +46,8 @@
 
 		<select class="stdedit" name="showArtist" id="showArtist">
 
-			<option [% IF NOT showArtist %]selected [% END %]value="0">[% 'DISABLED' | getstring %]</option>
-			<option [% IF showArtist %]selected [% END %]value="1">[% 'ENABLED' | getstring %]</option>
+			<option [% IF NOT prefs.showArtist %]selected [% END %]value="0">[% 'DISABLED' | getstring %]</option>
+			<option [% IF prefs.showArtist %]selected [% END %]value="1">[% 'ENABLED' | getstring %]</option>
 		
 		</select>
 
@@ -56,8 +56,8 @@
 
 		<select class="stdedit" name="showYear" id="showYear">
 
-			<option [% IF NOT showYears %]selected [% END %]value="0">[% 'DISABLED' | getstring %]</option>
-			<option [% IF showYear %]selected [% END %]value="1">[% 'ENABLED' | getstring %]</option>
+			<option [% IF NOT prefs.showYears %]selected [% END %]value="0">[% 'DISABLED' | getstring %]</option>
+			<option [% IF prefs.showYear %]selected [% END %]value="1">[% 'ENABLED' | getstring %]</option>
 		
 		</select>
 
@@ -68,8 +68,8 @@
 		<div class="groupHead">[% "SETUP_TITLEFORMAT" | string | upper %]</div>
 		<div class="groupDesc">[% "SETUP_GROUP_TITLEFORMATS_DESC" | string %]</div>
 		
-		[% FOREACH format = titleFormat %]
-			<input type=radio [% IF titleFormatWeb == loop.index %]checked [% END %]value="[% loop.index %]" name="titleFormatWeb">
+		[% FOREACH format = prefs.titleFormat %]
+			<input type=radio [% IF prefs.titleFormatWeb == loop.index %]checked [% END %]value="[% loop.index %]" name="titleFormatWeb">
 			<input type="text" class="stdedit" name="titleFormat[% loop.index %]" id="titleFormat[% loop.index %]" value="[% format %]" size="40"><br>
 		[% END %]
 	
@@ -80,7 +80,7 @@
 		<div class="groupHead">[% "SETUP_GUESSFILEFORMATS" | string | upper %]</div>
 		<div class="groupDesc">[% "SETUP_GROUP_GUESSFILEFORMATS_DESC" | string %]</div>
 
-		[% FOREACH format = guessFileFormats %]
+		[% FOREACH format = prefs.guessFileFormats %]
 			<input type="text" class="stdedit" name="guessFileFormats[% loop.index %]" id="guessFileFormats[% loop.index %]" value="[% format %]" size="40"><br>
 		[% END %]
 	

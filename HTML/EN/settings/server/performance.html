@@ -7,15 +7,17 @@
 
 		<select class="stdedit" name="disableStatistics" id="disableStatistics">
 
-			<option [% IF NOT disableStatistics %]selected [% END %]value="0">[% 'SETUP_ENABLE_STATISTICS' | getstring %]</option>
-			<option [% IF disableStatistics %]selected [% END %]value="1">[% 'SETUP_DISABLE_STATISTICS' | getstring %]</option>
+			<option [% IF NOT prefs.disableStatistics %]selected [% END %]value="0">[% 'SETUP_ENABLE_STATISTICS' | getstring %]</option>
+			<option [% IF prefs.disableStatistics %]selected [% END %]value="1">[% 'SETUP_DISABLE_STATISTICS' | getstring %]</option>
 		
 		</select>
 
+		[% IF prefs.exists('forkedWeb') %]
 		<div class="prefHead">[% "SETUP_PREFSWRITEDELAY" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_PREFSWRITEDELAY_DESC" | string %]</div>
 
-		<input type=text class="stdedit" name="prefsWriteDelay" id="prefsWriteDelay" value="[% prefsWriteDelay %]" size="15">
+		<input type=text class="stdedit" name="prefsWriteDelay" id="prefsWriteDelay" value="[% prefs.prefsWriteDelay %]" size="15">
+		[% END %]
 
 		<div class="prefHead">[% "SETUP_SERVERPRIORITY" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_SERVERPRIORITY_DESC" | string %]</div>
@@ -23,9 +25,9 @@
 		<select class="stdedit" name="serverPriority" id="serverPriority">
 
 		[% option = "" %]
-		<option [% IF serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
+		<option [% IF prefs.serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
 		[% FOREACH option = [-20..20] %]
-			<option [% IF serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
+			<option [% IF prefs.serverPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
 		[%- END -%]
 
 		</select>
@@ -36,21 +38,21 @@
 		<select class="stdedit" name="scannerPriority" id="scannerPriority">
 
 		[% option = "" %]
-		<option [% IF scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
+		<option [% IF prefs.scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
 		[% FOREACH option = [-20..20] %]
-			<option [% IF scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
+			<option [% IF prefs.scannerPriority == option %]selected [% END %]value="[% option %]">[% option %] [% options.$option | getstring %]</option>
 		[%- END -%]
 
 		</select>
 
-		[% IF forkingPrefs %]
+		[% IF prefs.exists('forkedWeb') || prefs.exists('forkedStreaming') %]
 		<div class="prefHead">[% "SETUP_FORKEDWEB" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_FORKEDWEB_DESC" | string %]</div>
 
 		<select class="stdedit" name="forkedWeb" id="forkedWeb">
 
-			<option [% IF NOT forkedWeb %]selected [% END %]value="0">[% 'SETUP_FORKEDWEB_DISABLE' | getstring %]</option>
-			<option [% IF forkedWeb %]selected [% END %]value="1">[% 'SETUP_FORKEDWEB_ENABLE' | getstring %]</option>
+			<option [% IF NOT prefs.forkedWeb %]selected [% END %]value="0">[% 'SETUP_FORKEDWEB_DISABLE' | getstring %]</option>
+			<option [% IF prefs.forkedWeb %]selected [% END %]value="1">[% 'SETUP_FORKEDWEB_ENABLE' | getstring %]</option>
 		
 		</select>
 		
@@ -59,8 +61,8 @@
 
 		<select class="stdedit" name="forkedStreaming" id="forkedStreaming">
 
-			<option [% IF NOT forkedStreaming %]selected [% END %]value="0">[% 'SETUP_FORKEDSTREAMING_DISABLE' | getstring %]</option>
-			<option [% IF forkedStreaming %]selected [% END %]value="1">[% 'SETUP_FORKEDSTREAMING_ENABLE' | getstring %]</option>
+			<option [% IF NOT prefs.forkedStreaming %]selected [% END %]value="0">[% 'SETUP_FORKEDSTREAMING_DISABLE' | getstring %]</option>
+			<option [% IF prefs.forkedStreaming %]selected [% END %]value="1">[% 'SETUP_FORKEDSTREAMING_ENABLE' | getstring %]</option>
 		
 		</select>
 		[% END %]

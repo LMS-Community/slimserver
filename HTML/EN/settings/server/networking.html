@@ -6,23 +6,23 @@
 		<div class="prefDesc">[% "SETUP_WEBPROXY_DESC" | string %]</div>
 
 		<label for="webproxy" class="stdlabel">[% "SETUP_WEBPROXY_CHOOSE" | string %]</label>
-		<input type=text class="stdedit" name="webproxy" id="webproxy" value="[% webproxy %]" size="40">
+		<input type=text class="stdedit" name="webproxy" id="webproxy" value="[% prefs.webproxy %]" size="40">
 
 		<div class="prefHead">[% "SETUP_HTTPPORT" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_HTTPPORT_DESC" | string %]</div>
 
-		<input type=text class="stdedit" name="httpport" id="httpport" value="[% httpport %]" size="15">
+		<input type=text class="stdedit" name="httpport" id="httpport" value="[% prefs.httpport %]" size="15">
 
 		<div class="prefHead">[% "SETUP_BUFFERSECS" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_BUFFERSECS_DESC" | string %]</div>
 
-		<input type=text class="stdedit" name="bufferSecs" id="bufferSecs" value="[% bufferSecs %]" size="15">
+		<input type=text class="stdedit" name="bufferSecs" id="bufferSecs" value="[% prefs.bufferSecs %]" size="15">
 
 		<div class="prefHead">[% "SETUP_REMOTESTREAMTIMEOUT" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_REMOTESTREAMTIMEOUT_DESC" | string %]</div>
 
 		<label for="remotestreamtimeout" class="stdlabel">[% "SETUP_REMOTESTREAMTIMEOUT_CHOOSE" | string %]</label>
-		<input type=text class="stdedit" name="remotestreamtimeout" id="remotestreamtimeout" value="[% remotestreamtimeout %]" size="15">
+		<input type=text class="stdedit" name="remotestreamtimeout" id="remotestreamtimeout" value="[% prefs.remotestreamtimeout %]" size="15">
 
 		<div class="prefHead">[% "SETUP_MAXWMARATE" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_MAXWMARATE_DESC" | string %]</div>
@@ -30,7 +30,7 @@
 		<select class="stdedit" name="maxWMArate" id="maxWMArate">
 
 		[% FOREACH option = ['9999', '32', '64', '96', '128', '160', '192', '256', '320'] %]
-			<option [% IF maxWMArate == option %]selected [% END %]value="[% option %]">
+			<option [% IF prefs.maxWMArate == option %]selected [% END %]value="[% option %]">
 				[% IF option == 9999 %][% "NO_LIMIT" | string %][% ELSE %][% option %] [% 'KBPS' | string %][% END %]</option>
 		[%- END -%]
 
@@ -41,33 +41,39 @@
 		<div class="prefDesc">[% "SETUP_MDNSNAME_DESC" | string %]</div>
 		
 		<label for="mDNSname" class="stdlabel">[% "SETUP_MDNSNAME_CHOOSE" | string %]</label>
-		<input type=text class="stdedit" name="mDNSname" id="mDNSname" value="[% mDNSname %]" size="20">
+		<input type=text class="stdedit" name="mDNSname" id="mDNSname" value="[% prefs.mDNSname %]" size="20">
 		[% END %]
 
 	</div>
+	[% IF prefs.exists('tcpReadMaximum') || prefs.exists('tcpWriteMaximum') || prefs.exists('udpChunkSize') %]
 	<div class="settingSection">
 
 		<div class="groupHead">[% "SETUP_GROUP_TCP_PARAMS" | string | upper %]</div>
 		<div class="groupDesc">[% "SETUP_GROUP_TCP_PARAMS_DESC" | string %]</div>
 				
 		<table border="0" width="100%">
+		[% IF prefs.exists('tcpReadMaximum') %]
 		<tr>
 		<td><label for="tcpReadMaximum" class="stdlabel">[% "SETUP_TCPREADMAXIMUM_CHOOSE" | string %]</label></td>
-		<td><input type="text" class="stdedit" name="tcpReadMaximum" id="tcpReadMaximum" value="[% tcpReadMaximum %]" size="15"></td>
+		<td><input type="text" class="stdedit" name="tcpReadMaximum" id="tcpReadMaximum" value="[% prefs.tcpReadMaximum %]" size="15"></td>
 		</tr>
-		
+		[% END %]
+		[% IF prefs.exists('tcpWriteMaximum') %]
 		<tr>
 		<td><label for="tcpWriteMaximum" class="stdlabel">[% "SETUP_TCPWRITEMAXIMUM_CHOOSE" | string %]</label></td>
-		<td><input type="text" class="stdedit" name="tcpWriteMaximum" id="tcpWriteMaximum" value="[% tcpWriteMaximum %]" size="15"></td>
+		<td><input type="text" class="stdedit" name="tcpWriteMaximum" id="tcpWriteMaximum" value="[% prefs.tcpWriteMaximum %]" size="15"></td>
 		</tr>
-		
+		[% END %]
+		[% IF prefs.exists('udpChunkSize') %]
 		<tr>
 		<td><label for="udpChunkSize" class="stdlabel">[% "SETUP_UDPCHUNKSIZE_CHOOSE" | string %]</label></td>
-		<td><input type="text" class="stdedit" name="udpChunkSize" id="udpChunkSize" value="[% udpChunkSize %]" size="15"></td>
+		<td><input type="text" class="stdedit" name="udpChunkSize" id="udpChunkSize" value="[% prefs.udpChunkSize %]" size="15"></td>
 		</tr>
+		[% END %]
 		</table>
 		
 	</div>
+	[% END %]
 
 [% PROCESS settings/footer.html %]
 
