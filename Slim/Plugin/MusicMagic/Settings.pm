@@ -21,7 +21,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 my $prefs = preferences('plugin.musicmagic');
 
 $prefs->migrate(1, sub {
-	$prefs->set('enabled',         Slim::Utils::Prefs::OldPrefs->get('musicmagic'));
+	$prefs->set('musicmagic',      Slim::Utils::Prefs::OldPrefs->get('musicmagic'));
 	$prefs->set('scan_interval',   Slim::Utils::Prefs::OldPrefs->get('musicmagicscaninterval') || 3600            );
 	$prefs->set('player_settings', Slim::Utils::Prefs::OldPrefs->get('MMMPlayerSettings') || 0                    );
 	$prefs->set('port',            Slim::Utils::Prefs::OldPrefs->get('MMSport') || 10002                          );
@@ -36,7 +36,7 @@ $prefs->migrate(1, sub {
 	$prefs->set('playlist_prefix', Slim::Utils::Prefs::OldPrefs->get('MusicMagicplaylistprefix') || 'MusicIP: '   );
 	$prefs->set('playlist_suffix', Slim::Utils::Prefs::OldPrefs->get('MusicMagicplaylistsuffix') || ''            );
 
-	$prefs->set('enabled', 0) unless defined $prefs->get('enabled'); # default to on if not previously set
+	$prefs->set('musicmagic', 0) unless defined $prefs->get('musicmagic'); # default to on if not previously set
 	
 	# use new naming of the old default wasn't changed
 	if ($prefs->get('playlist_prefix') eq 'MusicMagic: ') {
@@ -49,13 +49,13 @@ $prefs->setValidate('num', qw(scan_interval port mix_variety mix_style reject_si
 
 $prefs->setChange(
 	sub {
-		Slim::Music::Import->useImporter('Plugin::iTunes::Plugin', $_[1]);
+		Slim::Music::Import->useImporter('Plugin::MusicMagic::Plugin', $_[1]);
 
 		for my $c (Slim::Player::Client::clients()) {
 			Slim::Buttons::Home::updateMenu($c);
 		}
 	},
-	'enabled',
+	'musicmagic',
 );
 
 sub name {
@@ -67,7 +67,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(enabled scan_interval player_settings port mix_filter reject_size reject_type 
+	return ($prefs, qw(musicmagic scan_interval player_settings port mix_filter reject_size reject_type 
 			   mix_genre mix_variety mix_style mix_type mix_size playlist_prefix playlist_suffix));
 }
 
@@ -75,7 +75,7 @@ sub handler {
 	my ($class, $client, $params) = @_;
 
 	# Cleanup the checkbox
-	$params->{'enabled'} = defined $params->{'enabled'} ? 1 : 0;
+	$params->{'musicmagic'} = defined $params->{'musicmagic'} ? 1 : 0;
 
 	$params->{'filters'}  = grabFilters();
 

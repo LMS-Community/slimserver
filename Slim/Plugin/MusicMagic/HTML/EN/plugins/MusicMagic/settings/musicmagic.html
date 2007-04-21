@@ -1,12 +1,12 @@
 [% PROCESS settings/header.html %]
 
-	[% IF prefs.exists('enabled') %]
+	[% IF prefs.exists('musicmagic') %]
 	<div class="settingSection">
 		<div class="prefHead">[% "MUSICMAGIC" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_MUSICMAGIC_DESC" | string %]</div>
 
-		<label for="enabled" class="stdlabel">[% "USE_MUSICMAGIC" | string %]</label>
-		<input type="checkbox" [% IF prefs.enabled %]checked [% END %] class="stdedit" name="enabled" id="enabled" />
+		<label for="musicmagic" class="stdlabel">[% "USE_MUSICMAGIC" | string %]</label>
+		<input type="checkbox" [% IF prefs.musicmagic %]checked [% END %] class="stdedit" name="musicmagic" id="musicmagic" />
 
 	</div>
 	[% END %]

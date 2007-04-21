@@ -98,8 +98,10 @@ sub launchScan {
 	}
 
 	# Add in the various importer flags
+	# TODO: rework to only access prefs IF Importer is active
 	for my $importer (qw(itunes musicmagic)) {
-
+		my $prefs = preferences("plugin.$importer");
+		
 		if ($prefs->get($importer)) {
 
 			$args->{$importer} = 1;

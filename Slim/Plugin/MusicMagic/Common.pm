@@ -73,8 +73,8 @@ sub convertPath {
 
 sub checkDefaults {
 
-	if (!defined $prefs->get('enabled')) {
-		$prefs->set('enabled',0)
+	if (!defined $prefs->get('musicmagic')) {
+		$prefs->set('musicmagic',0)
 	}
 
 	if (!defined $prefs->get('mix_type')) {

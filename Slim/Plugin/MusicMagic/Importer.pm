@@ -43,24 +43,24 @@ sub useMusicMagic {
 	if (defined($newValue)) {
 
 		if (!$can) {
-			$prefs->set('enabled', 0);
+			$prefs->set('musicmagic', 0);
 		} else {
-			$prefs->set('enabled', $newValue);
+			$prefs->set('musicmagic', $newValue);
 		}
 	}
 
-	my $use = $prefs->get('enabled');
+	my $use = $prefs->get('musicmagic');
 
 	if (!defined($use) && $can) { 
 
-		$prefs->set('enabled', 1);
+		$prefs->set('musicmagic', 1);
 
 	} elsif (!defined($use) && !$can) {
 
-		$prefs->set('enabled', 0);
+		$prefs->set('musicmagic', 0);
 	}
 
-	$use = $prefs->get('enabled') && $can;
+	$use = $prefs->get('musicmagic') && $can;
 
 	Slim::Music::Import->useImporter($class, $use);
 
@@ -110,7 +110,7 @@ sub initPlugin {
 		Slim::Music::Import->addImporter($class, {
 			'reset'        => \&resetState,
 			'playlistOnly' => 1,
-			'use'          => $prefs->get('enabled'),
+			'use'          => $prefs->get('musicmagic'),
 		});
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);

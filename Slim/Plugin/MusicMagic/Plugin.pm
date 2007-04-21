@@ -60,21 +60,21 @@ sub useMusicMagic {
 	
 	if (defined($newValue)) {
 		if (!$can) {
-			$prefs->set('enabled', 0);
+			$prefs->set('musicmagic', 0);
 		} else {
-			$prefs->set('enabled', $newValue);
+			$prefs->set('musicmagic', $newValue);
 		}
 	}
 	
-	my $use = $prefs->get('enabled');
+	my $use = $prefs->get('musicmagic');
 	
 	if (!defined($use) && $can) { 
-		$prefs->set('enabled', 1);
+		$prefs->set('musicmagic', 1);
 	} elsif (!defined($use) && !$can) {
-		$prefs->set('enabled', 0);
+		$prefs->set('musicmagic', 0);
 	}
 	
-	$use = $prefs->get('enabled') && $can;
+	$use = $prefs->get('musicmagic') && $can;
 
 	$log->info("Using musicip: $use");
 
@@ -306,7 +306,7 @@ sub isMusicLibraryFileChanged {
 sub checker {
 	my $firstTime = shift || 0;
 	
-	if (!$prefs->get('enabled')) {
+	if (!$prefs->get('musicmagic')) {
 		return;
 	}
 
@@ -541,7 +541,7 @@ sub mixerlink {
 	}
 
 	# only add link if enabled and usable
-	if (canUseMusicMagic() && $prefs->get('enabled')) {
+	if (canUseMusicMagic() && $prefs->get('musicmagic')) {
 
 		# set up a musicmagic link
 		$form->{'mixerlinks'}{Slim::Plugin::MusicMagic::Plugin->title()} = "plugins/MusicMagic/mixerlink.html";
