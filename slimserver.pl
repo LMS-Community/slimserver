@@ -601,7 +601,7 @@ sub initSettings {
 	}
 
 	if (defined($cliport)) {
-		$prefs->set('cliport', $cliport);
+		preferences('plugin.cli')->set('cliport', $cliport);
 	}
 
 	# Bug: 583 - make sure we are using the actual case of the directories
