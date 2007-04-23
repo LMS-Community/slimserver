@@ -216,7 +216,7 @@ sub parseXMLIntoFeed {
 	my $xml = xmlToHash($content);
 
 	# convert XML into data structure
-	if ($xml && $xml->{'body'} && $xml->{'body'}->{'outline'}) {
+	if ($xml && $xml->{'body'}) {
 
 		$log->debug("Parsing body as OPML");
 
