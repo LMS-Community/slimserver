@@ -479,7 +479,10 @@ sub checkChangedStrings {
 }
 
 sub setLocale {
-	setlocale( LC_TIME, string('LOCALE' . (Slim::Utils::OSDetect::OS() eq 'win' ? '_WIN' : '') ) );
+	my $locale = string('LOCALE' . (Slim::Utils::OSDetect::OS() eq 'win' ? '_WIN' : '') );
+	$locale .= Slim::Utils::Unicode::currentLocale() =~ /utf8/i ? '.UTF-8' : '';
+
+	setlocale( LC_TIME, $locale );
 }
 
 
