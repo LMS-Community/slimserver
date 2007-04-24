@@ -82,14 +82,7 @@ sub setMode {
 		my $item = $client->modeParam('item');
 
 		# give user feedback while loading
-		my $string = $client->modeParam('header');
-
-		$string = Slim::Utils::Strings::stringExists($string) ? $client->string($string) : $client->string('XML_LOADING');
-
-		$client->block(
-			$string,
-			$title || $url,
-		);
+		$client->block();
 		
 		# Some plugins may give us a callback we should use to get OPML data
 		# instead of fetching it ourselves.
@@ -839,10 +832,7 @@ sub playItem {
 
 		# URL is remote, load it asynchronously...
 		# give user feedback while loading
-		$client->block(
-			$client->string('XML_LOADING'),
-			$title || $url,
-		);
+		$client->block();
 		
 		# we may have a callback as URL
 		if ( ref $url eq 'CODE' ) {

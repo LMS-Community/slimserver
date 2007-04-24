@@ -97,7 +97,11 @@ sub block {
 
 	my $parts  = $line1;
 
-	if (ref($line1) ne 'HASH') {
+	if ( !$line1 ) {
+		# Default to what's currently on the screen
+		$parts = $client->curDisplay();
+	}
+	elsif (ref($line1) ne 'HASH') {
 
 		$parts = $client->parseLines( { 'line' => [ $line1, shift] } );
 	}
