@@ -27,12 +27,12 @@ hasPagebar = (pageinfo && pageinfo.totalpages > 1 && pageinfo.totalalphapages !=
 
 [%#href for downloading the current playlist %]
 [% BLOCK downloadPlaylistLink; downloadString = "DOWNLOAD" | string -%]
-	[% "<a href=\"status.m3u?player=$playerURI\" target=\"";$target or 'playlist';"\">";img or downloadString;"</a>" -%]
+	[% IF playlist_items %][% "<a href=\"status.m3u?player=$playerURI\" target=\"";$target or 'playlist';"\">";img or downloadString;"</a>" -%][%- END %]
 [%- END %]
 
 [%# href for clear current playlist command %]
 [% BLOCK clearPlaylistLink; clearString = "CLEAR" | string -%]
-	[% "<a href=\"$statusroot?p0=playlist&amp;p1=clear&amp;player=$playerURI\" target=\"";$target or 'status';"\" >";img or clearString;"</a>" -%]
+	[% IF playlist_items %][% "<a href=\"$statusroot?p0=playlist&amp;p1=clear&amp;player=$playerURI\" target=\"";$target or 'status';"\" >";img or clearString;"</a>" -%][%- END %]
 [%- END %]
 
 [%# img tag for album thumbnail in the now playing status context %]
