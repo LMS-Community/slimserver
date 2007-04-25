@@ -27,9 +27,7 @@ sub init {
 
 	$class->addPageLinks("help",{'GETTING_STARTED' => "html/docs/quickstart.html"});
 	$class->addPageLinks("help",{'PLAYER_SETUP' => "html/docs/ipconfig.html"});
-	$class->addPageLinks("help",{'USING_REMOTE' => "html/docs/interface.html"});
 	$class->addPageLinks("help",{'HELP_REMOTE' => "html/help_remote.html"});
-	$class->addPageLinks("help",{'HELP_RADIO' => "html/docs/radio.html"});
 	$class->addPageLinks("help",{'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
 	$class->addPageLinks("help",{'FAQ' => "http://faq.slimdevices.com/"},1);
 	$class->addPageLinks("help",{'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
@@ -61,9 +59,7 @@ sub home {
 	if (!exists $Slim::Web::Pages::additionalLinks{"help"}) {
 		$class->addPageLinks("help", {'GETTING_STARTED' => "html/docs/quickstart.html"});
 		$class->addPageLinks("help", {'PLAYER_SETUP' => "html/docs/ipconfig.html"});
-		$class->addPageLinks("help", {'USING_REMOTE' => "html/docs/interface.html"});
 		$class->addPageLinks("help", {'HELP_REMOTE' => "html/help_remote.html"});
-		$class->addPageLinks("help", {'HELP_RADIO' => "html/docs/radio.html"});
 		$class->addPageLinks("help", {'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
 		$class->addPageLinks("help", {'FAQ' => "html/docs/faq.html"});
 		$class->addPageLinks("help", {'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
