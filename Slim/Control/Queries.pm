@@ -2235,6 +2235,7 @@ sub _songData {
 
 		  'l' => ['album',            'album',       'title'],      #->album.title
 		  'q' => ['disccount',        'album',       'discc'],      #->album.discc
+		  'J' => ["artwork_track_id", 'album',       'artwork'],    #->album.artwork
 
 		  'g' => ['genre',            'genre',       'name'],       #->genre_track->genre.name
 		  'p' => ['genre_id',         'genre',       'id'],         #->genre_track->genre.id

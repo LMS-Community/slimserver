@@ -81,6 +81,15 @@
 		Added a tag to return the artist from the &quot;<a href="#albums">albums</a>&quot; query.
 	</li>
 	<li>
+		Updated queries <a href="#status">status</a>&quot;, 
+		<a href="#titles">titles</a>&quot;,
+		<a href="#playlists tracks">playlists tracks</a>&quot; and
+		<a href="#status">songinfo</a>&quot;
+		to support a new tag J to return the artwork_track_id (as returned by the
+		&quot;<a href="#albums">albums</a>&quot;). This enables clients to cache one
+		image for all songs of the same album.
+	</li>
+	<li>
 		Added the &quot;<a href="#serverstatus">serverstatus</a>&quot; query, to return
 		compound server status in a single query.
 	</li>
@@ -4089,6 +4098,19 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			1 if coverart is available for this song. Not listed otherwise.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>J</b>
+		</td>
+		<td>
+			artwork_track_id
+		</td>
+		<td>
+			Identifier of the album track used by the server to 
+			display the album's artwork. Not listed if artwork is not
+			available for this album.
 		</td>
 	</tr>
 	<tr>
