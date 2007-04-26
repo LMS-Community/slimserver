@@ -7,10 +7,10 @@ BODY {
 
 H3 {
 	font-size : 20pt;
-	font-weight : bold;	
+	font-weight : bold;
 	text-align : left;
 	margin:0in; 
-	margin-bottom:6pt;	
+	margin-bottom:6pt;
 }
 
 TD, P, DIV, A {
@@ -53,7 +53,6 @@ A:hover, A.selected {
 }
 
 div#homeMenu {
-	background-color: #000000;
 	position: relative;
 	height: auto;
 	width: auto;
