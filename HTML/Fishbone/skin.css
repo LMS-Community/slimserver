@@ -154,10 +154,11 @@ div#pagetitle {
 .browsedbControls,.playlistControls, .browsedbRightControls {
 	position: absolute;
 	top: 0px;
+	position: absolute;
+	top: 0px;
 	right: 1px;
 	padding: 0px;
 	margin: 0px;
-	float: right;
 	z-index: 100;
 	opacity:1;
 	filter: alpha(opacity=100);
@@ -513,7 +514,7 @@ A.linkbtn:link {
 	padding: 0px;
 	top: 0px;
 	float: left;
-	width: 5%;
+	width: 4.9%;
 }
 
 #TopMenu1
