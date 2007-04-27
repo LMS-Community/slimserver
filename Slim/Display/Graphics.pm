@@ -250,7 +250,7 @@ sub render {
 				$sc->{scrollline} = undef;
 			}
 
-			# if in sinle line mode and nothing on line[1], copy line[0] - don't do in ticker mode
+			# if in single line mode and nothing on line[1], copy line[0] - don't do in ticker mode
 			if (!($sfonts->{line}[0] || $dfonts->{line}[0]) && (!$screen->{line}[1] || $screen->{line}[1] eq '') && 
 				!exists($screen->{ticker})) {
 				$screen->{line}[1] = $screen->{line}[0];
