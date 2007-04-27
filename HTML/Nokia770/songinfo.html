@@ -123,7 +123,7 @@
 					[% "YEAR" | string %][% "COLON" | string %]
 				</td>
 				<td class = 'smallitemtext' valign = 'top'>
-					[% itemobj.year %]
+					<a href="browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=[% itemobj.year %]&amp;player=[% playerURI %]" style="text-decoration:none">[% itemobj.year| html %]</a>
 				</td>
 			</tr>
 				[% END %] [% IF itemobj.replay_gain.defined %] 
