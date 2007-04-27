@@ -450,7 +450,7 @@ sub listExitHandler {
 			Slim::Buttons::Common::pushMode($client, 'browsedb', {
 				'hierarchy'         => 'year,album,track',
 				'level'             => 1,
-				'findCriteria'      => { 'year.id' => $curObj->id },
+				'findCriteria'      => { 'year.id' => $curObj },
 				'selectionCriteria' => $selectionCriteria,
 			});
 
