@@ -4,3 +4,6 @@
 <meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]">
 <link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css">
 <link rel="stylesheet" type="text/css" href="[% webroot %]skin.css">
+[% USE Prefs %]
+[% prefs = Prefs.preferences('server') %]
+[% IF prefs.get('language') == 'HE' %]<style type="text/css">html { direction:rtl; }</style>[% END %]
