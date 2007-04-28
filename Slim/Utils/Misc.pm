@@ -597,8 +597,12 @@ sub fixPathCase {
 
 # there's not really a better way to do this..
 sub fixPath {
-	my $file = shift || return;
+	my $file = shift;
 	my $base = shift;
+
+	if (!defined($file)) {
+		return;
+	}
 
 	my $fixed;
 

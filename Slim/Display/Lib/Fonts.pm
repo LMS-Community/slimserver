@@ -239,7 +239,11 @@ sub loadExtent {
 
 sub string {
 	my $defaultFontname = shift || return (0, '');
-	my $string = shift || return (0, '');
+	my $string = shift;
+	
+	if (!defined $string) {
+		return (0, '');
+	}
 
 	my $defaultFont = $fonts->{$defaultFontname} || do {
 

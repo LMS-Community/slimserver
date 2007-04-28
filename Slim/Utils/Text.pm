@@ -39,7 +39,11 @@ Strips any punctuation, compacts multiple spaces, and removes leading & trailing
 =cut
 
 sub ignorePunct {
-	my $s = shift || return undef;
+	my $s = shift;
+
+	if (!defined $s) {
+		return undef;
+	}
 
 	my $orig = $s;
 
@@ -62,7 +66,11 @@ Also merges ISO-8859-1 strings like AE (\xC3\x86) into 'AE'.
 =cut
 
 sub matchCase {
-	my $s = shift || return undef;
+	my $s = shift;
+
+	if (!defined $s) {
+		return undef;
+	}
 
 	# Upper case and fold latin1 diacritical characters into their plain versions, surprisingly useful.
 	$s =~ tr{abcdefghijklmnopqrstuvwxyzÀÁÂÃÄÅßŞÇ¢ĞÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜ×İàáâãäåşçèéêëìíîïñòóôõöøùúûüÿığ¡°}
@@ -90,7 +98,11 @@ Removes leading articles as defined by the 'ignoredarticles' preference.
 =cut
 
 sub ignoreArticles {
-	my $item = shift || return;
+	my $item = shift;
+
+	if (!defined $item) {
+		return undef;
+	}
 
 	if (!defined($ignoredArticles)) {
 
@@ -116,7 +128,11 @@ strip out characters beyond U+FFFF as MySQL doesn't like them in TEXT fields.
 =cut
 
 sub ignoreCaseArticles {
-	my $s = shift || return undef;
+	my $s = shift;
+
+	if (!defined $s) {
+		return undef;
+	}
 
 	# We don't handle references of any kind.
 	if (ref($s)) {
