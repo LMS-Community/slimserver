@@ -5131,14 +5131,7 @@ SETUP_BROWSEAGELIMIT
 	ZH_CN	新进音乐数量显示限制
 
 SETUP_BROWSEAGELIMIT_DESC
-	CS	Vyberte počet zobrazovaných skladeb při pocházení novinkami. Defaultně je nastaveno 100.
-	DE	Geben Sie an, wie viele Lieder die Liste der neuen Musikstücke enthalten soll. Vorgabe ist 100.
-	EN	Choose the number of tracks to display when browsing for new music. Default is 100
-	ES	Elegir el número de temas a mostrar cuendo se examina Música Nueva. Por defecto es 100
-	FR	Spécifiez le nombre d'éléments à afficher dans la rubrique Nouveautés. Le nombre par défaut est 100.
-	IT	Scegli il numero di tracce da visualizzare quando sfogli la musica recente. Di default sono 100.
-	NL	Kies het aantal te tonen liedjes bij "Bekijk nieuwe muziek". Standaard waarde is 100.
-	ZH_CN	请指定浏览新进音乐时显示歌曲的数量限制。缺省为100。
+	EN	Choose the number of recent albums to display when browsing for new music. Default is 100
 
 SETUP_ANIMATIONLEVEL
 	CS	Animace
