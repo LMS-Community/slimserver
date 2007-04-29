@@ -1,0 +1,50 @@
+[% pageicon = 'help' %]
+[% pagetitle = 'Player Network Setup' %] [% PROCESS helpheader.html %]
+
+<p>
+La configurazione di Squeezebox o Transporter per la rete &egrave; analoga alla configurazione di un computer in rete. &Egrave; necessario disporre delle seguenti informazioni:
+</p>
+
+<ul>
+<li>La rete supporta il protocollo DHCP? In tal caso non &egrave; necessaria alcuna configurazione. Il lettore ottiene automaticamente l'indirizzo IP e rileva il computer server in rete.
+<li>Se la rete non supporta il protocollo DHCP, &egrave; necessario configurare il lettore utilizzando un indirizzo IP statico. &Egrave; necessario conoscere l'indirizzo IP del computer e disporre di un indirizzo IP da assegnare a Squeezebox o Transporter.
+</ul>
+
+<h4>Menu di configurazione</h4>
+
+<p> All'accensione del lettore viene chiesto se si desidera modificare le impostazioni di rete. </p>
+
+<img src="vfdshots/setup.gif">
+
+<p>
+Utilizzare i pulsanti freccia SU e GI&Ugrave; per selezionare un'opzione. &Egrave; possibile accedere al menu di configurazione o utilizzare le impostazioni precedenti. Premere una volta il pulsante freccia GI&Ugrave; per selezionare l'opzione per accedere al menu di configurazione, quindi premere il pulsante freccia DESTRA.</p>
+
+<img src="vfdshots/choose_auto.gif">
+
+<p>Sono disponibili tre opzioni:</p>
+
+<ul>
+  <li><b>Interamente automatica</b>. &Egrave; l'opzione pi&ugrave; semplice per la maggior parte delle reti. Il lettore ottiene il proprio indirizzo IP tramite il protocollo DHCP e rileva il server automaticamente tramite Slim Discovery Protocol. 
+  <li><b>Specifica il server manualmente</b>. Viene utilizzato il protocollo DHCP, ma l'indirizzo IP del server viene immesso manualmente. Utilizzare questa opzione se il server non appartiene alla stessa rete LAN del lettore. Per ulteriori informazioni su questa opzione, visualizzare il documento successivo relativo alle opzioni di rete avanzate.
+  <li><b>Immetti tutti i dati manualmente</b>. Vengono utilizzati indirizzi IP statici per tutte le impostazioni di configurazione. Selezionare questa opzione se la rete non supporta il protocollo DHCP.
+</ul>
+
+<h4>Utilizzo del protocollo DHCP</h4>
+
+<p>
+Per utilizzare il protocollo DHCP, selezionare l'opzione Interamente automatica, quindi premere il pulsante freccia DESTRA. Viene chiesto di confermare la selezione. Premere nuovamente il pulsante freccia DESTRA per confermare. La configurazione &egrave; stata completata. Sar&agrave; necessario qualche secondo affinch&eacute; venga rilevato il server DHCP e attivata la connessione.
+</p>
+
+<h4>Utilizzo dell'indirizzo IP statico</h4>
+
+<p>
+Per configurare il lettore utilizzando indirizzi IP statici, scegliere Immetti tutti i dati manualmente.  Verranno visualizzate quattro schermate in cui &egrave; possibile immettere l'indirizzo IP del lettore, la subnet mask, l'indirizzo del router e l'indirizzo IP del server. Per immettere gli indirizzi, utilizzare i pulsanti freccia SINISTRA e DESTRA per selezionare la cifra da modificare e il pulsanti SU e GI&Ugrave; per apportare le modifiche. Premere OK per passare alla schermata successiva. Il pulsante OK si trova in basso a destra dei pulsanti freccia.
+</p>
+
+<img src="vfdshots/setup_myip.gif">
+
+<p>Una volta immessi tutti gli indirizzi, viene visualizzato il seguente messaggio. &Egrave; quindi possibile premere il pulsante freccia SINISTRA per tornare indietro e rivedere le impostazioni, oppure premere il pulsante freccia DESTRA per salvare le modifiche e uscire dal menu di configurazione.</p>
+
+<img src="vfdshots/setup_done.gif">
+
+[% PROCESS helpfooter.html %]

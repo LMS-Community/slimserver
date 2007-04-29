@@ -1,0 +1,28 @@
+[% pageicon = 'help' %]
+[% pagetitle = 'REMOTE_STREAMING' | string %] [% PROCESS helpheader.html %]
+<p>SlimServer &egrave; stato progettato per effettuare lo streaming di file mp3 a un lettore musicale di rete Slim Device/Logitech.  Tuttavia &egrave; anche possibile effettuare lo streaming degli stessi file tramite Internet a un lettore software mp3 quale Winamp e iTunes.
+
+<p>Di seguito il computer in cui &egrave; in esecuzione SlimServer verr&agrave; indicato come computer remoto.
+
+<p>Installare il software SlimServer nel computer remoto e avviarlo. Assicurarsi che sia rilevabile tramite Internet.  In caso contrario, &egrave; necessario aprire la porta 9000 sul router.
+
+<p>Seguire le istruzioni qui indicate:
+<ol>
+<li>Aprire il flusso denominato http://hostlocale:9000/stream.mp3 nel lettore software mp3  (sostituire &quot;hostlocale&quot; con l'indirizzo IP del computer remoto). In questo modo viene comunicato a SlimServer che il lettore software &egrave; pronto a ricevere un flusso.
+
+<li>Aprire l'interfaccia Web di SlimServer in esecuzione sul computer remoto visualizzando la pagina Web http://hostlocale:9000 (sostituire &quot;hostlocale&quot; con l'indirizzo IP del computer remoto). Si noter&agrave; un lettore corrispondente all'indirizzo IP del computer in cui &egrave; installato il lettore software mp3. 
+
+<li>Utilizzare il riquadro di sinistra dell'interfaccia Web di SlimServer per sfogliare e selezionare i file e gli elenchi di riproduzione.  Una volta selezionati, i brani musicali vengono visualizzati nel riquadro di destra dell'interfaccia Web.
+
+<li>Fare clic su PLAY nel riquadro di destra dell'interfaccia Web per avviare la riproduzione dei brani musicali. 
+
+<li>Dopo qualche secondo verr&agrave; avviata la riproduzione della musica tramite il lettore software mp3. Il ritardo &egrave; dovuto al buffering da parte del lettore software. 
+
+<li>Per cambiare il brano riprodotto, utilizzare SlimServer nel computer remoto.
+
+<li>Se si utilizza una password di sicurezza per SlimServer, &egrave; necessario modificare l'URL nel modo seguente: http://nomeutente:password@hostlocale:9000/stream.mp3
+</ol>
+<p>&Egrave; anche possibile eseguire lo streaming dei brani musicali verso un lettore musicale di rete Squeezebox o Transporter per ascoltare la musica attraverso un impianto stereo.  Per ulteriori informazioni sul prodotto e per visualizzare la sezione delle domande frequenti, visitare il sito Web <a href="http://www.slimdevices.com/">www.slimdevices.com</a>.
+
+<p>In caso di domande o problemi contattare support@slimdevices.com o visitare il forum utenti all'indirizzo Internet <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a>
+

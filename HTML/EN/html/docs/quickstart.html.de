@@ -1,0 +1,49 @@
+[% pageicon = 'help' %]
+[% pagetitle = 'Getting Started' %] [% PROCESS helpheader.html %]
+	
+<br><h4>Einleitung</h4>
+<p>Vielen Dank, dass Sie sich f&uuml;r einen Netzwerk-Musikplayer von Slim Devices/Logitech entschieden haben.</p>
+<p>Das Handbuch &quot;Erste Schritte&quot; enth&auml;lt Anweisungen zur Einrichtung sowie Beschreibungen der Grundfunktionen des Players.</p>
+<p>Weitere Informationen zu den Funktionen und detaillierte Dokumentation f&uuml;r Entwickler finden Sie auf unserer Website unter <a href="http://www.slimdevices.com/">http://www.slimdevices.com/</a>.</p>
+<p>Die SlimServer-Software ist das Produkt einer weltweiten Zusammenarbeit von Softwareentwicklern in einem offenen Forum. Wir sind unserer Community sehr dankbar, deren Beitr&auml;ge dieses gro&szlig;artige Produkt weiter st&auml;ndig verbessern.</p>
+<p>Wenn Sie Hilfe bei der Installation des Players ben&ouml;tigen, besuchen Sie unsere Website oder wenden Sie sich per E-Mail an <a href="mailto:support@slimdevices.com">support@slimdevices.com</a>.</p>
+<p>Wie hoffen, dass Sie viel Freude an unserem Produkt haben werden. Wenn es Ihnen gef&auml;llt, empfehlen Sie Squeezebox und Transporter doch auch Ihren Freunden.</p>
+<h4>Anschlie&szlig;en des Players</h4>
+
+<ol>
+<li>Verbinden Sie den Player mit einem Cinch-Kabel mit dem Stereoverst&auml;rker oder -empf&auml;nger mit den roten und wei&szlig;en Steckern. Sie k&ouml;nnen auch ein digitales optisches oder Koaxialkabel zum Anschluss verwenden.  Wenn Sie Kopfh&ouml;rer oder Lautsprecher mit eigener Stromversorgung verwenden, k&ouml;nnen Sie diese &uuml;ber den 3,5-mm-Anschluss verbinden. 
+<li>Wenn Sie eine Kabelverbindung verwenden, verbinden Sie den Player mit einem Ethernet-Kabel mit Ihrem Hub oder Switch.
+<li>Legen Sie zwei Batterien vom Typ AAA in die Fernbedienung ein.
+<li>Stellen Sie die Stromversorgung des Players her. Sie k&ouml;nnen den Player immer angeschlossen lassen. Wenn Sie ihn nicht verwenden, wird der Standby-Modus aufgerufen und die Anzeige deaktiviert. 
+</ol>
+
+<p>Hinweis: Squeezebox wird mit einem reguliertem Netzteil ausgeliefert. Verwenden Sie keine anderen Netzteile, da diese den Player besch&auml;digen k&ouml;nnen.
+
+<h4>Konfigurieren des Players</h4>
+<p>Wenn Sie den Player anschlie&szlig;en, wird kurz das Logitech-Logo angezeigt und danach eine Begr&uuml;&szlig;ungsmeldung. Netzwerk einrichten
+<ol>
+<li>Dr&uuml;cken Sie auf der Fernbedienung RECHTS. Die Men&uuml;option &quot;Netzwerk einrichten&quot; wird angezeigt.
+<li>Dr&uuml;cken Sie RECHTS erneut, um das Netzwerk-Setup aufzurufen.
+<li>Wenn Sie Squeezebox mit einer Kabelverbindung verwenden, fahren Sie mit Schritt 8 fort. W&auml;hlen Sie sonst, ob Sie den Player mit einem kabellosen oder Kabelnetzwerk verbinden m&ouml;chten, indem Sie NACH OBEN und NACH UNTEN dr&uuml;cken. Dr&uuml;cken Sie zur Auswahl RECHTS.
+<li>Der Player fragt nach der Region oder dem Land. Dr&uuml;cken Sie NACH UNTEN, um die Liste zu durchsuchen. Dr&uuml;cken Sie RECHTS, um Ihr Land auszuw&auml;hlen. Hinweis: Die Auswahl eines anderen als Ihres Landes verst&ouml;&szlig;t evtl. gegen geltende Gesetze.
+<li>Der Player sucht nach dem kabellosen Netzwerk.  W&auml;hlen Sie den Netzwerknamen (SSID) und dr&uuml;cken Sie RECHTS. Falls mehrere kabellose Netzwerke verf&uuml;gbar sein sollten, suchen Sie nach dem Netzwerk, das Sie verwenden m&ouml;chten. Wenn der Router den Netzwerknamen nicht ver&ouml;ffentlicht, m&uuml;ssen Sie &quot;Netzwerkname eingeben&quot; w&auml;hlen. 
+<p>Tipp: Sie k&ouml;nnen mit den Zahlentasten der Fernbedienung Text wie bei einem Mobiltelefon eingeben. Dr&uuml;cken Sie ADD als R&uuml;cktaste und PLAY, um einen Buchstaben einzuf&uuml;gen. 
+<li>W&auml;hlen Sie die im Netzwerk verwendete Verschl&uuml;sselung. Wenn Sie nicht sicher sind, welche Verschl&uuml;sselung verwendet wird, &uuml;berpr&uuml;fen Sie das Handbuch des Wireless Routers. Sie haben die Wahl zwischen &quot;Kein Kennwort/keine Verschl&uuml;sselung&quot;, &quot;64-Bit WEP&quot;, &quot;128-Bit WEP&quot;, &quot;WPA Personal&quot; und &quot;WPA2 (AES)&quot;. W&auml;hlen Sie die gew&uuml;nschte Option und dr&uuml;cken Sie RECHTS. 
+<li>Wenn das Netzwerk mit WEP oder WPA verschl&uuml;sselt ist, m&uuml;ssen Sie das Netzwerkkennwort oder den Netzwerkschl&uuml;ssel &uuml;ber die Fernbedienung eingeben und danach RECHTS dr&uuml;cken. 
+<p>Tipp: WEP-Schl&uuml;ssel bestehen aus einer zehn- oder 26-stelligen Zahlen- oder Buchstabenfolge (A bis F). WPA-Kennw&ouml;rter bestehen aus einer Zeichenfolge von Buchstaben, Zahlen und Zeichen. Der Player wird mit dem kabellosen Netzwerk verbunden. Wenn der Player keine Verbindung zum kabellosen Zugriffpunkt herstellen kann, erhalten Sie weitere Informationen in den <a href="http://faq.slimdevices.com">FAQ</a>. 
+<li>W&auml;hlen Sie, ob der Player eine IP-Adresse automatisch &uuml;ber DHCP abrufen soll oder Sie eine statische IP-Adresse zuweisen m&ouml;chten. In den meisten Netzwerken kann der Player eine Adresse automatisch abrufen. Dr&uuml;cken Sie RECHTS. Wenn Sie dem Player eine statische IP zuweisen m&ouml;chten, geben Sie diese &uuml;ber die Fernbedienung ein. Dr&uuml;cken Sie RECHTS, um die Adresse zu speichern.
+<p>Tipp: Verwenden Sie f&uuml;hrende Nullen, um Zahlen mit weniger als drei Stellen anzugeben. Beispiel: 010.001.004.231 f&uuml;r 10.1.4.231. Geben Sie die Subnetzmaske des Netzwerks, die Standard-Gateway-IP-Adresse und die Adresse des DNS-Servers ein und dr&uuml;cken Sie RECHTS, um zur n&auml;chsten Eingabe zu gelangen. 
+</ol>
+
+<h4>Verbinden mit SlimServer</h4>
+<ol>
+<li>Starten Sie SlimServer, wenn er nicht bereits ausgef&uuml;hrt wird. Der Player durchsucht das lokale Netzwerk nach dem Computer auf dem SlimServer l&auml;uft. Wenn Sie SlimServer nach dem Setup gestartet haben, m&uuml;ssen Sie evtl. einen Bildlauf durchf&uuml;hren, um ihn zu finden. 
+<li>W&auml;hlen Sie den gew&uuml;nschten Computer aus. Wenn SlimServer auf mehreren Computern im lokalen Netzwerk ausgef&uuml;hrt wird, k&ouml;nnen Sie mit NACH UNTEN und NACH OBEN den gew&uuml;nschten ausw&auml;hlen.
+<li>Dr&uuml;cken Sie RECHTS, um die Verbindung herzustellen.
+</ol>
+
+<p>Das Setup ist abgeschlossen.
+
+<p>Tipp: Wenn Sie zu einem sp&auml;teren Zeitpunkt zum Setup zur&uuml;ckkehren m&ouml;chten, dr&uuml;cken Sie LINKS f&uuml;r f&uuml;nf Sekunden. Damit rufen Sie das Men&uuml; &quot;Netzwerk einrichten&quot; auf.
+  
+[% PROCESS helpfooter.html %]

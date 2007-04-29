@@ -1,0 +1,49 @@
+[% pageicon = 'help' %]
+[% pagetitle = 'Getting Started' %] [% PROCESS helpheader.html %]
+	
+<br><h4>Introduzione</h4>
+<p>Grazie per avere acquistato il lettore musicale di rete Slim Devices/Logitech.</p>
+<p>Questa guida introduttiva contiene istruzioni per la configurazione e descrive le operazioni di base eseguibili con il lettore.</p>
+<p>&Egrave; possibile consultare ulteriori informazioni sulle funzioni pi&ugrave; recenti e la documentazione dettagliata per gli sviluppatori sul sito Web <a href="http://www.slimdevices.com/">http://www.slimdevices.com/</a>.</p>
+<p>Il software SlimServer &egrave; stato realizzato da pi&ugrave; sviluppatori situati in varie parti del mondo che collaborano attraverso un forum aperto. Rivolgiamo i nostri pi&ugrave; sentiti ringraziamenti alla nostra community, i cui contributi consentono di migliorare continuamente il prodotto.</p>
+<p>Per assistenza nell'installazione del lettore, visitare il sito nostro Web o contattarci all'indirizzo di posta elettronica <a href="mailto:support@slimdevices.com">support@slimdevices.com</a>.</p>
+<p>Ci auguriamo che il prodotto sia di vostro gradimento. Se Squeezebox e Transporter incontrano la vostra approvazione, fateli conoscere agli amici.</p>
+<h4>Connessione al lettore</h4>
+
+<ol>
+<li>Collegare il lettore all'amplificatore stereo o al ricevitore tramite un cavo RCA utilizzando i connettori rosso e bianco. &Egrave; anche possibile collegare un cavo ottico digitale al connettore quadrato o un cavo coassiale al connettore arancione.  Se si utilizzano cuffie o altoparlanti alimentati, &egrave; possibile collegarli a un miniconnettore da 0,125&quot;. 
+<li>Se si utilizza una connessione con cavi, adoperare un cavo Ethernet per collegare il lettore all'hub o allo switch.
+<li>Inserire le due batterie AAA nel telecomando.
+<li>Collegare l'alimentatore di corrente al lettore e alla presa di corrente. &Egrave; possibile lasciare il lettore sempre collegato. Quando il lettore non &egrave; utilizzato, viene attivata la modalit&agrave; standby e il display si spegne. 
+</ol>
+
+<p>Nota: Squeezebox viene fornito con un alimentatore di corrente regolato. L'utilizzo di un alimentatore diverso potrebbe danneggiare il lettore.
+
+<h4>Configurazione del lettore</h4>
+<p>Quando si collega il lettore, viene visualizzato per breve tempo il logo Logitech, seguito dalla schermata iniziale. Configurazione della rete:
+<ol>
+<li>Premere il pulsante DESTRA sul telecomando. Viene visualizzata l'opzione di menu Configurazione della rete.
+<li>Premere il pulsante DESTRA per accedere alla configurazione della rete.
+<li>Se si possiede uno Squeezebox con cavi, passare al punto 8. In caso contrario, scegliere se si desidera connettere il lettore a una rete con o senza fili premendo i pulsanti SU e GI&Ugrave; sul telecomando. Dopo avere effettuato la selezione, premere il pulsante DESTRA.
+<li>Viene chiesto di immettere il paese di residenza. Scorrere fra le opzioni con il pulsante GI&Ugrave; per individuare il paese. Premere il pulsante DESTRA per selezionarlo. Nota: la selezione del paese corretto &egrave; necessaria per garantire il rispetto delle normative locali.
+<li>Viene eseguita la scansione per il rilevamento della rete senza fili.  Selezionare il nome SSID della rete senza fili e premere il pulsante DESTRA. Se nel locale di utilizzo vi sono pi&ugrave; reti senza fili, &egrave; possibile usare il pulsante GI&Ugrave; del telecomando per selezionare quella desiderata. Se il router non trasmette il nome di rete, &egrave; necessario selezionare Immetti nome rete. 
+<p>Suggerimento: &egrave; possibile utilizzare i pulsanti dei numeri sul telecomando per immettere del testo analogamente come si fa con un telefono cellulare. Utilizzare il pulsante ADD sul telecomando come tasto Backspace e il pulsante PLAY per inserire una lettera. 
+<li>Selezionare il tipo di crittografia utilizzata dalla rete senza fili. In caso di dubbi consultare il manuale fornito con il router senza fili. Le opzioni disponibili sono Nessuna password/crittografia, WEP a 64 bit, WEP a 128 bit, WPA Personal o WPA2 (AES). Selezionare l'opzione desiderata e premere il pulsante DESTRA. 
+<li>Se la rete &egrave; protetta con crittografia WEP o WPA, &egrave; necessario immettere una password o una chiave di rete utilizzando i numeri e le lettere del telecomando, quindi premere il pulsante DESTRA. 
+<p>Suggerimento: La chiave WEP &egrave; costituita da una stringa di 10 o 26 cifre o lettere da A ad F. La password WPA &egrave; costituita da una stringa di lettere, numeri o caratteri di punteggiatura. Il lettore viene connesso alla rete senza fili. Se la connessione con il punto di acceso non viene effettuata, visitare la sezione delle <a href="http://faq.slimdevices.com">FAQ Domande ricorrenti</a> per suggerimenti per la risoluzione dei problemi. 
+<li>Scegliere se si desidera ottenere un indirizzo IP per il lettore automaticamente tramite DHCP o se si desidera assegnarvi un indirizzo statico. Con la maggior parte delle reti &egrave; possibile ottenere un indirizzo automaticamente. Premere il pulsante DESTRA. Se si sceglie di assegnare al lettore un indirizzo IP statico, immetterlo tramite i pulsanti dei numeri sul telecomando. Premere il pulsante DESTRA per salvare l'indirizzo.
+<p>Suggerimento: utilizzare zeri iniziali per specificare gruppi di numeri con meno di tre cifre. Ad esempio, per 10.1.4.231 immettere 010.001.004.231. Immettere la subnet mask di rete, l'indirizzo IP del gateway predefinito e l'indirizzo del server DNS premendo il pulsante DESTRA al termine di ciascuna immissione per passare a quella successiva. 
+</ol>
+
+<h4>Connessione a SlimServer</h4>
+<ol>
+<li>Se SlimServer non &egrave; gi&agrave; in esecuzione, avviarlo. Viene eseguita la scansione della rete locale per individuare il computer in cui &egrave; in esecuzione SlimServer. Se SlimServer &egrave; stato avviato dopo avere iniziato la configurazione, potrebbe essere necessario scorrere fra le opzioni disponibili per individuare il computer. 
+<li>Selezionare il computer che si desidera utilizzare. Se SlimServer &egrave; in esecuzione in pi&ugrave; computer della rete locale, &egrave; possibile utilizzare il pulsante GI&Ugrave; per selezionare il computer desiderato.
+<li>Premere il pulsante DESTRA sul telecomando per attivare la connessione.
+</ol>
+
+<p>La configurazione &egrave; stata completata.
+
+<p>Suggerimento: per tornare alle opzioni di configurazione in seguito, tenere premuto il pulsante SINISTRA sul telecomando per cinque secondi. Verr&agrave; visualizzato nuovamente il menu Configurazione della rete.
+  
+[% PROCESS helpfooter.html %]

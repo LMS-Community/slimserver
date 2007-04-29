@@ -1,0 +1,50 @@
+[% pageicon = 'help' %]
+[% pagetitle = 'Player Network Setup' %] [% PROCESS helpheader.html %]
+
+<p>
+La proc&eacute;dure de mise en r&eacute;seau de la Squeezebox ou de Transporter est assez similaire &agrave; celle de la mise en r&eacute;seau d'un ordinateur. Vous devez disposer des informations suivantes.
+</p>
+
+<ul>
+<li>Votre r&eacute;seau prend-il le protocole DHCP en charge? Si oui, aucune configuration n'est requise. La platine obtient son adresse IP automatiquement et d&eacute;tecte le serveur sur le r&eacute;seau.
+<li>Si le r&eacute;seau ne prend pas le protocole DHCP en charge, vous devez configurer la platine &agrave; l'aide d'adresses IP fixes. Vous devez conna&icirc;tre l'adresse IP de l'ordinateur et vous devez en assigner une &agrave; la Squeezebox ou &agrave; Transporter.
+</ul>
+
+<h4>Menu de configuration</h4>
+
+<p> Lorsque vous mettez la platine sous tension pour la premi&egrave;re fois, vous &ecirc;tes invit&eacute; &agrave; modifier les param&egrave;tres de mise en r&eacute;seau. </p>
+
+<img src="vfdshots/setup.gif">
+
+<p>
+Utilisez les fl&egrave;ches HAUT et BAS pour s&eacute;lectionner une option. Vous pouvez choisir de vous rendre au menu de configuration, ou ignorer cette &eacute;tape et utiliser les r&eacute;glages pr&eacute;c&eacute;dents. Appuyez sur BAS une fois pour s&eacute;lectionner l'option permettant de se rendre au menu de configuration, puis appuyez sur DROITE.</p>
+
+<img src="vfdshots/choose_auto.gif">
+
+<p>Vous avez le choix entre trois options.</p>
+
+<ul>
+  <li><b>Enti&egrave;rement automatique</b>: il s'agit du choix le plus simple, convenant &agrave; la plupart des r&eacute;seaux. La platine obtient son adresse IP &agrave; l'aide du protocole DHCP et d&eacute;tecte le serveur automatiquement &agrave; l'aide du protocole Slim Discovery. 
+  <li><b>Sp&eacute;cifier le serveur manuellement</b>: le protocole DHCP est utilis&eacute;, mais l'adresse IP du serveur doit &ecirc;tre saisie manuellement. Utilisez cette option si le serveur et la platine se situent sur des serveurs diff&eacute;rents. Reportez-vous au document relatif &agrave; la mise en r&eacute;seau avanc&eacute;e pour en savoir plus sur cette option.
+  <li><b>Sp&eacute;cifier les informations manuellement</b>: des adresse IP fixes sont utilis&eacute;es. S&eacute;lectionnez cette option si le r&eacute;seau ne prend pas le protocole DHCP en charge.
+</ul>
+
+<h4>Utilisation du protocole DHCP</h4>
+
+<p>
+Pour utiliser le protocole DHCP, s&eacute;lectionnez Enti&egrave;rement automatique, et appuyez sur DROITE. La platine vous invite &agrave; confirmer votre s&eacute;lection. Appuyez &agrave; nouveau sur DROITE. La proc&eacute;dure est termin&eacute;e. La platine recherche le serveur DHCP pendant quelques secondes, puis la connexion est &eacute;tablie.
+</p>
+
+<h4>Utilisation d'une adresse IP fixe</h4>
+
+<p>
+Pour configurer la platine &agrave; l'aide d'adresses IP fixes, s&eacute;lectionnez Sp&eacute;cifier les informations manuellement.  Vous pourrez ainsi acc&eacute;der &agrave; quatre &eacute;crans, vous permettant de de saisir les adresses IP de la platine, du masque de sous-r&eacute;seau, du routeur et du serveur. Pour saisir les adresses, utilisez les boutons GAUCHE et DROITE pour s&eacute;lectionner les chiffres &agrave; modifier, puis les boutons HAUT et BAS pour effectuer les modifications. Appuyez sur &quot;ok&quot; pour acc&eacute;der &agrave; l'&eacute;cran suivant. Ce bouton se situe en bas &agrave; droite des touches fl&eacute;ch&eacute;es.
+</p>
+
+<img src="vfdshots/setup_myip.gif">
+
+<p>Lorsque vous avez termin&eacute; de sp&eacute;cifier les adresses, le message suivant s'affiche. Vous pouvez alors appuyer sur GAUCHE pour revenir en arri&egrave;re et v&eacute;rifier les informations sp&eacute;cifi&eacute;es, ou sur DROITE pour enregistrer les modifications et quitter le menu de configuration.</p>
+
+<img src="vfdshots/setup_done.gif">
+
+[% PROCESS helpfooter.html %]

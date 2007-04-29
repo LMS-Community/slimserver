@@ -1,0 +1,50 @@
+[% pageicon = 'help' %]
+[% pagetitle = 'Player Network Setup' %] [% PROCESS helpheader.html %]
+
+<p>
+Die Einrichtung von Squeezebox oder Transporter im Netzwerk &auml;hnelt der Einrichtung eines PCs. Sie ben&ouml;tigen folgende Informationen:
+</p>
+
+<ul>
+<li>Unterst&uuml;tzt das Netzwerk DHCP? Falls ja, dann ist keine Konfiguration erforderlich. Der Player erh&auml;lt seine IP-Adresse automatisch und findet den Server-PC im Netzwerk.
+<li>Wenn das Netzwerk DHCP nicht unterst&uuml;tzt, m&uuml;ssen Sie den Player mit einer statischen IP-Adresse konfigurieren. Sie m&uuml;ssen die IP-Adresse des Computers kennen und eine IP-Adresse verf&uuml;gbar haben, die Sie der SqueezeBox oder dem Transporter zuweisen k&ouml;nnen.
+</ul>
+
+<h4>Setup-Men&uuml;</h4>
+
+<p> Beim ersten Start des Players werden Sie gefragt, ob die Netzwerkeinstellungen ge&auml;ndert werden sollen. </p>
+
+<img src="vfdshots/setup.gif">
+
+<p>
+W&auml;hlen Sie eine Option mit NACH OBEN und NACH UNTEN. Sie k&ouml;nnen entweder das Setup-Men&uuml; aufrufen oder das Setup &uuml;berspringen und die vorhandenen Einstellungen &uuml;bernehmen. Dr&uuml;cken Sie einmal NACH UNTEN, um &quot;Ja, Setup-Men&uuml; aufrufen&quot; zu w&auml;hlen, und dr&uuml;cken Sie dann RECHTS.</p>
+
+<img src="vfdshots/choose_auto.gif">
+
+<p>Sie haben drei Optionen zur Wahl:</p>
+
+<ul>
+  <li><b>Vollautomatisch</b> - Die einfachste Vorgehensweise f&uuml;r die meisten Netzwerke. Der Player erh&auml;lt seine IP-Adresse &uuml;ber DHCP und findet den Server automatisch mit dem Slim Discovery Protocol. 
+  <li><b>Server manuell angeben</b> - Es wird DHCP verwendet, aber die IP-Adresse des Servers wird manuell eingegeben. Verwenden Sie diese Option, wenn sich der Server nicht in demselben LAN wie der Player befindet. Weitere Informationen zu dieser Option finden Sie unter &quot;Erweiterte Netzwerke&quot;.
+  <li><b>Angaben manuell eingeben</b> - Es werden nur statische IP-Adressen verwendet. W&auml;hlen Sie diese Option, wenn das Netzwerk kein DHCP unterst&uuml;tzt.
+</ul>
+
+<h4>Verwenden von DHCP</h4>
+
+<p>
+Wenn Sie DHCP verwenden m&ouml;chten, w&auml;hlen Sie &quot;Vollautomatisch&quot; und dr&uuml;cken RECHTS. Der Player fordert Sie zur Best&auml;tigung der Auswahl auf. Dr&uuml;cken Sie erneut RECHTS zur Best&auml;tigung. Das ist alles. Der Player braucht einige Sekunden, um den DHCP-Server zu finden, und dann werden Sie verbunden.
+</p>
+
+<h4>Verwenden statischer IP-Adressen</h4>
+
+<p>
+W&auml;hlen Sie &quot;Angaben manuell eingeben&quot;, um den Player mit statischen IP-Adressen einzurichten.  Dieser Vorgang ist in vier Abschnitte aufgeteilt, in denen Sie die IP-Adresse des Players, die Netzmaske, die Adresse des Routers und die IP-Adresse des Servers eingeben. Zur Eingabe der Adressen verwenden Sie die Tasten RECHTS und LINKS zur Auswahl der Ziffern und NACH OBEN/NACH UNTEN zum &Auml;ndern der Ziffer. Dr&uuml;cken Sie &quot;OK&quot;, um zum n&auml;chsten Eingabefeld zu gelangen (die Taste &quot;OK&quot; befindet sich rechts unterhalb der Pfeiltasten).
+</p>
+
+<img src="vfdshots/setup_myip.gif">
+
+<p>Nachdem Sie alle Adressen eingegeben haben wird folgende Meldung angezeigt. Hier k&ouml;nnen Sie entweder LINKS dr&uuml;cken, um &Auml;nderungen an den Einstellungen vorzunehmen, oder RECHTS, um die &Auml;nderungen zu speichern und das Setup zu beenden.</p>
+
+<img src="vfdshots/setup_done.gif">
+
+[% PROCESS helpfooter.html %]

@@ -1,0 +1,28 @@
+[% pageicon = 'help' %]
+[% pagetitle = 'REMOTE_STREAMING' | string %] [% PROCESS helpheader.html %]
+<p>SlimServer wurde zum Streaming von MP3-Dateien auf einen Netzwerk-Musikplayer von Slim Devices/Logitech entwickelt.  Es k&ouml;nnen jedoch auch dieselben Dateien &uuml;ber das Internet an einen MP3-Software-Player wie Winamp und iTunes &uuml;bertragen werden.
+
+<p>In diesem Beispiel wird der Computer auf dem SlimServer ausgef&uuml;hrt wird Remote-Computer genannt.
+
+<p>Installieren Sie zuerst die SlimServer-Software auf diesem Computer. Vergewissern Sie sich, dass er &uuml;ber das Internet erreicht werden kann.  Wenn dies nicht der Fall ist, m&uuml;ssen Sie Port 9000 auf dem Router &ouml;ffnen.
+
+<p>Gehen Sie wie folgt vor:
+<ol>
+<li>&Ouml;ffnen Sie den Stream http://localhost:9000/stream.mp3 in Ihrem MP3-Software-Player.  (Ersetzen Sie &quot;localhost&quot; durch die IP-Adresse des Remote-Computers.) Dadurch erkennt SlimServer, dass der Software-Player bereit ist.
+
+<li>&Ouml;ffnen Sie die Web-Benutzeroberfl&auml;che von SlimServer auf dem Remote-Computer, indem Sie die Seite http://localhost:9000 aufrufen (ersetzen Sie &quot;localhost&quot; durch die IP-Adresse des Remote-Computers). Es wird ein &quot;Player&quot; entsprechend der IP-Adresse des Computers mit dem MP3-Software-Player angezeigt. 
+
+<li>Suchen Sie auf der linken Seite der SlimServer-Web-Benutzeroberfl&auml;che nach Dateien und Wiedergabelisten und w&auml;hlen Sie sie aus.  Ausgew&auml;hlte Eintr&auml;ge werden auf der rechten Seite angezeigt.
+
+<li>Klicken Sie auf der rechten Seite der SlimServer-Web-Benutzeroberfl&auml;che auf &quot;Wiedergabe&quot;, um die Musik zu starten. 
+
+<li>Nach wenigen Sekunden wird die Musik &uuml;ber den MP3-Software-Player ausgegeben. (Die Verz&ouml;gerung entsteht durch Puffern in der MP3-Player-Software.) 
+
+<li>Verwenden Sie den SlimServer auf dem Remote-Computer, wenn Sie andere Inhalte wiedergeben m&ouml;chten.
+
+<li>Wenn Sie SlimServer durch ein Kennwort gesch&uuml;tzt haben, m&uuml;ssen Sie die URL wie folgt anpassen: http://Benutzername:Kennwort@localhost:9000/stream.mp3
+</ol>
+<p>Die Musik kann auch an einen Squeezebox oder Transporter Netzwerk-Musikplayer zur Wiedergabe &uuml;ber eine Stereoanlage &uuml;bertragen werden.  Weitere Informationen zu diesem Produkt sowie FAQ finden Sie unter <a href="http://www.slimdevices.com/">www.slimdevices.com</a>.
+
+<p>Wenden Sie sich bei Fragen oder Problemen an support@slimdevices.com oder besuchen Sie unter Benutzerforum unter <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a>
+
