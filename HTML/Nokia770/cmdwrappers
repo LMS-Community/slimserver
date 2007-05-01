@@ -227,7 +227,7 @@
 		<a [% PROCESS songinfoItemHRef %]>[% item.text | html %][% IF showYear && item.year %] ([% item.year %])[% END %]</a>
 [% IF verbose %]
                 [% "FROM" | string %]
-                <a href="[% webroot %]browsedb.html?hierarchy=album,track&level=1&album=[% item.itemobj.album.id %]&player=[% playerURI %]">[% item.itemobj.album.title | html %]</a>
+                <a [% PROCESS albumItemHRef %]>[% item.itemobj.album.title | html %]</a>
 	[% PROCESS artistsAsHTML.html notarget=1 %]
 [% END %]
 [%# IF includeArtist && artist; PROCESS artistsAsHTML.html notarget = 1; END %]
