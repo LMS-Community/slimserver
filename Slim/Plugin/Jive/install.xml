@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<extension>
+	<id>B9145737-A509-4DD9-JIVE-A2D31D0FF1B5</id>
+        <name>PLUGIN_JIVE</name>
+        <module>Slim::Plugin::Jive::Plugin</module>
+        <version>0.1</version>
+        <description>PLUGIN_JIVE_DESC</description>
+        <creator>The wild jungle rabbit</creator>
+        <email>wild@junglerabbit.com</email>
+
+	<defaultState>enabled</defaultState>
+        
+        <homepageURL>http://www.slimdevices.com/</homepageURL>
+	<type>2</type><!-- type=extension -->
+
+        <targetApplication>
+  	        <id>SlimServer</id>
+                <minVersion>7.0a</minVersion>
+                <maxVersion>7.0+</maxVersion>
+        </targetApplication>
+
+</extension>
