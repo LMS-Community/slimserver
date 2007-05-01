@@ -44,7 +44,7 @@ sub basicSearch {
 	$params->{'artwork'}      = 0;
 
 	# short circuit
-	if (!defined($query) || ($params->{'manualSearch'} && !$query)) {
+	if (!defined($query) || ($params->{'manualSearch'} && $query eq '')) {
 		return Slim::Web::HTTP::filltemplatefile("search.html", $params);
 	}
 
@@ -272,7 +272,7 @@ sub fillInSearchResults {
 	my ($params, $rs, $qstring, $advancedSearch) = @_;
 
 	my $player = $params->{'player'};
-	my $query  = $params->{'query'}  || '';
+	my $query  = defined($params->{'query'}) ? $params->{'query'} : '';
 	my $type   = lc($rs->result_source->source_name) || 'track';
 	my $count  = $rs->count || return 0;
 
