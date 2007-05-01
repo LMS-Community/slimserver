@@ -26,7 +26,7 @@ sub init {
 	Slim::Web::HTTP::addPageFunction(qr/^squeezenetwork\.(?:htm|xml)/, sub {$class->squeezeNetwork(@_)});
 
 	$class->addPageLinks("help",{'GETTING_STARTED' => "html/docs/quickstart.html"});
-	$class->addPageLinks("help",{'HELP_REMOTE' => "html/help_remote.html"});
+	$class->addPageLinks("help",{'HELP_REMOTE' => "html/docs/remote.html"});
 	$class->addPageLinks("help",{'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
 	$class->addPageLinks("help",{'FAQ' => "http://faq.slimdevices.com/"},1);
 	$class->addPageLinks("help",{'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
@@ -57,7 +57,7 @@ sub home {
 
 	if (!exists $Slim::Web::Pages::additionalLinks{"help"}) {
 		$class->addPageLinks("help", {'GETTING_STARTED' => "html/docs/quickstart.html"});
-		$class->addPageLinks("help", {'HELP_REMOTE' => "html/help_remote.html"});
+		$class->addPageLinks("help", {'HELP_REMOTE' => "html/docs/remote.html"});
 		$class->addPageLinks("help", {'REMOTE_STREAMING' => "html/docs/remotestreaming.html"});
 		$class->addPageLinks("help", {'FAQ' => "html/docs/faq.html"});
 		$class->addPageLinks("help", {'SOFTSQUEEZE' => "html/softsqueeze/index.html"});

@@ -1,83 +1,87 @@
-<html>
+[% pageicon = 'help' %]
+[% pagetitle = "HELP_REMOTE" | string %]
+[% PROCESS helpheader.html %]
 
-	<head>
-  <title>Getting Started</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]">
-  <meta name="CVS-ident" content="$id$" />
-    <link rel="stylesheet" href="[% webroot %]slimserver.css" type="text/css">
-    <link rel="stylesheet" href="[% webroot %]skin.css" type="text/css">
-</head>
-
-	<body>
-		<p></p>
-		<h3>Getting Started</h3>
-		<p><a href="[% webroot %]index.html?player=[% player | uri %]" target="_top">[% "HOME" | string %]</a> / <b>Getting Started</b></p>
-		<hr>
-		<br>
-		<h2>Guide: Remote</h2>
-		<hr noshade size="1" color="#000000">
-		<h3>Remote Control</h3>
 		<table>
-				<tr>
-					<td valign=top><img src="[% webroot %]html/images/remote.gif" alt="" width="167" height="700" border="0"></td>
-					<td>
+			<tr>
+				<td valign=top width=180><img src="[% webroot %]html/images/remote.gif" alt="" width="167" height="700" border="0"></td>
+				<td>
 					<h4>Setting up the remote</h4>
-					<p>The remote control requires two AAA battery cells&#151;alkaline cells are recommended. Keep batteries fresh. Weak batteries cause the vast majority of problems with poor remote control performance. You can peel off the protective plastic sheet that surrounds the buttons on the remote.</p>
-					<h3>Buttons</h3>
-			<p>POWER - Press POWER to put the player into standby mode. This will dim the display, stop the music and show a clock display. Press POWER again to wake up.</p><p>
-			VOLUME - Use the blue volume controls to adjust the volume of the audio the player is producing. </p><p>
-			NOW PLAYING - Press the gray NOW PLAYING button to view the current song playing in the playlist. Use the gray UP and DOWN buttons to scroll through the current playlist. Press NOW PLAYING again to switch between display of minutes and seconds into the current song, minutes and seconds remaining in a song, a bar graph of progress through the song, or a combination of time and progress.</p><p>
-			REW - Press the light blue REW button to immediately start playing the current song again. Press REW again immediately to skip to the previous song. Press and hold the REW button to scan backwards through the current song.</p><p>
-			PAUSE - Press the light blue PAUSE button to pause the currently playing song. Press PAUSE again or PLAY to continue.</p><p>
-			FWD - Press the light blue FWD button to skip to the next song. Press and hold the FWD button to scan forward through the current song.</p>
-			<p>
-			PLAY - Press the light blue PLAY button to play the currently displayed item:<ul>
-			<li> A directory&#151;the player plays all songs in that directory, repeating the first song after the last one has played.
-			<li> A song&#151;the player plays that song.
-			<li> A playlist file&#151;the player plays all of the songs within that playlist.</ul>
-			</p>
-			
-			<p>
-			ADD - Press the gray ADD button to add the currently displayed item to the current playlist (the list of songs to play):<ul>
-			<li>If the currently displayed item is a directory, add all songs within that directory recursively
-			<li>If the currently displayed item is a song, add that song only.
-			<li>If the currently displayed item is a playlist file, play all songs within that playlist.
-			<li>If you are browsing in the current playlist, pressing the ADD button will remove the song from the playlist.  Press and hold the ADD button to remove the song from the playlist and add it to the end of the playlist named Zapped Songs in the Saved Playlists area.
-			</ul></p><p>
-			UP, DOWN, LEFT, RIGHT - Use the gray UP, DOWN, LEFT, and RIGHT buttons to navigate within the music library. UP displays the previous item in a directory, DOWN the next item. Press LEFT to go up one level in the directory structure. Press RIGHT when displaying a directory or playlist file to view the items in that directory or playlist. Press RIGHT when viewing a song to display additional information about that song. </p><p>
-			0-9 - You can use the number buttons to enter letters (similar to entering text with a cell phone.) For example, press the 2 button once for &#147;A,&#148; twice for &#147;B,&#148; three times for &#147;C,&#148; and four times for &#147;2.&#148; In addition, 0 can be used for spaces, and pressing 1 repeatedly displays punctuation symbols. In sorted lists you press the number buttons to jump to the first item that starts with the corresponding letter.  In unsorted lists (like playlists), press the number buttons to jump proportionally through the list. Finally, use the number buttons to enter text for search.</p><p>
-			SEARCH - Press the gray SEARCH button to search for Albums, Artists, or Songs. Once the player is in Search Music mode, press the gray RIGHT button to begin entering your search text.</p><p>
-			SHUFFLE - Press the gray SHUFFLE button to shuffle the order of the songs in the current playlist. Press SHUFFLE again to return the items to the order in which they were added to the current playlist.</p><p>
-			REPEAT &#150; Press the REPEAT button to switch between repeat settings: Repeat Off (stop playing at the end of the current playlist), Repeat Current Song and Repeat All Songs. </p><p>
-			SLEEP - Press the gray SLEEP button to activate the player sleep function. You can add 15 minute increments to the sleep function, up to a total of 90 minutes by pressing the SLEEP button repeatedly. If you wish to cancel the Sleep function, press the SLEEP button again repeatedly until the player says, &#147;Sleep cancelled.&#148; At the end of the sleep time, the player will turn itself off.</p><p>
-			NOW PLAYING - Press the gray NOW PLAYING button to display the currently playing song.</p><p>
-			SIZE - Press the gray SIZE button to toggle between displaying standard and extra-large characters on the player display. </p><p>
-			BRIGHTNESS - Press the gray BRIGHTNESS button to cycle through the player display brightness levels. You can do this both while the player is powered on and off.</p>
+					<p>The remote control requires two AA batteries&#151;alkaline cells are recommended. Keep batteries fresh. Weak batteries can cause poor remote control performance.</p>
+					<h4>Buttons</h4>
+
+					<p>Press <b>POWER</b> to put Squeezebox into standby mode. This will dim the display, stop the music and show a clock. Press <b>POWER</b> again to wake Squeezebox. 
 					
+					<p>Use the <b>VOLUME</b> buttons to adjust the loudness of the audio Squeezebox is producing. 
 					
+					<p>Press <b>REW</b> to immediately begin the current song again. Press <b>REW</b> twice to skip to the previous song. Press and hold <b>REW</b> to scan backwards through the current song. 
 					
+					<p>Press <b>PAUSE</b> to pause the current song. Press <b>PAUSE</b> again to continue. Press and hold <b>PAUSE</b> to stop playback. 
 					
-					</td>
-				</tr>
-			</table>
-			<!--#include virtual="/footer.html" -->
-	</body>
+					<p>Press <b>FWD</b> to skip to the next song. Press and hold <b>FWD</b> to scan forward through the current song. 
+					
+					<p>Use the <b>UP</b>, <b>DOWN</b>, <b>LEFT</b>, and <b>RIGHT</b> arrows to navigate within the music library. Up displays the previous item within a list, <b>DOWN</b> the next item. Press <b>LEFT</b> to go out of the current list. Press <b>RIGHT</b> to go into the item or to display additional information about a song. 
+					
+					<p>Press <b>PLAY</b> to play the songs contained within the displayed selection. If you press <b>PLAY</b> while displaying: 
+					
+					<ul>
+						<li> Genre, artist or album&mdash;Squeezebox plays all the songs for the displayed genre, artist, or album 
+						<li> Song&mdash;Squeezebox plays that song. If that song is displayed within the rest of an album, the whole album is played, starting at the song on the display.
+						<li> Playlist&mdash;Squeezebox plays all of the songs in that playlist. 
+						<li> Folder&mdash;Squeezebox plays all songs in that folder and sub-folders. 
+					</ul>
 
+					<p><i>Tip:</i> To save a playlist, press <b>NOW PLAYING</b> then press and hold <b>PLAY</b>. You will be prompted to save the current playlist for use later. 
 
+					<p>Press <b>ADD</b>  to append the displayed selection to the end of the current playlist. If you press <b>ADD</b> while displaying a 
+					<ul>
+						<li> Genre, artist or album&mdash;Squeezebox adds all the songs for the displayed genre, artist, or album to the end of the Now Playing playlist 
+						<li> Song&mdash;Squeezebox adds that song to the end of the list. 
+						<li> Playlist&mdash;Squeezebox adds all of the songs in that playlist. 
+						<li> Folder&mdash;Squeezebox adds all the songs in that folder and sub-folders. 
+					</ul>
+					
+					<p><i>Tip:</i> You can press and hold Add to insert the item on the screen to be played immediately after the currently playing song. 
 
+					<p><i>Tip:</i> When in the Now Playing list: Press Add to remove the visible song from the playlist. Press and hold Add to move the song from the current playlist to the end of the Zapped Songs playlist. 
+					
+					<p>Press <b>FAVORITES</b> to jump to the list of favorite items you've saved. Press and hold <b>FAVORITES</b> while displaying a song, radio station or playlist name to add it to your favorites list 
+					
+					<p>Press <b>BROWSE</b> to browse through your music library by Genre, Artist, Album, and more. 
+					
+					<p>Press <b>SEARCH</b> to search for Albums, Artists, or Songs. When Squeezebox displays Search Music, press the <b>RIGHT</b> arrow to enter your search text. Use the number buttons to enter letters (just like entering text with a cell phone.) For example, press the 2 button once for "A," twice for "B," three times for "C," and four times for "2". Use 0 for spaces. Press 1 to cycle through punctuation. Press <b>RIGHT</b> to see the results of your search.
+					
+					<p><i>Tip:</i> In sorted lists such as lists of artists, albums or genres, press the number buttons to jump to the first item that starts with the corresponding letter. 
+					
+					<p><i>Tip:</i>	In unsorted lists such as playlists, press a number button to jump proportionally through the list. 
+					
+					<p>Press <b>SHUFFLE</b> to cycle between the following settings: 
+					<ul>
+						<li> Shuffle All Songs 
+						<li> Shuffle By Album 
+						<li> No Shuffle 
+					</ul>
+					
+					<p>Press <b>REPEAT</b> to cycle between the following settings: 
+					<ul>
+						<li> Repeat Off (stop playing at the end of the current playlist) 
+						<li> Repeat Current Song 
+						<li> Repeat All Songs 
+					</ul>
+					
+					<p>Press <b>SLEEP</b> to tell Squeezebox to turn itself off in 15 minutes. Add 15 minute increments (up to a total of 90 minutes) by pressing <b>SLEEP</b> repeatedly. If you wish to cancel the Sleep function, press <b>SLEEP</b> until the player displays Sleep Cancelled. 
+					
+					<p>Press <b>NOW PLAYING</b> to display the song you are listening to. Press <b>NOW PLAYING</b> again to cycle through different display formats for the now playing song, including graphic visualizers and progress meters. 
+					
+					<p>Press <b>SIZE</b> to cycle between different display font sizes. You can do this while Squeezebox is powered on or off. 
+					
+					<p>Press <b>BRIGHTNESS</b> to cycle through Squeezebox display brightness levels. You can do this while Squeezebox is powered either on or off. If you want to dim the display completely, press <b>BRIGHTNESS</b> to cycle to a completely dark screen. If Squeezebox is powered off, it will stay dark until you power it back on or press <b>BRIGHTNESS</b> again. If Squeezebox is powered on, press any button on the remote to turn on the display.				
+				</td>
+			</tr>
+		</table>
+	</td>
+	</tr>
+	</table>
+[% PROCESS helpfooter.html %]
 
-
-	
-	
-	
-		
-			
-		
-		
-	
-	
-	
-		
-			
-		
 
