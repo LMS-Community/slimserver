@@ -274,9 +274,10 @@ sub loadDataForTrack {
 	}
 
 	if ( my $bitrate = ( Slim::Music::Info::getCurrentBitrate($track->url) || $track->prettyBitRate ) ) {
-
-		if ( $track->bitrate > 0 ) {
-
+		
+		# A bitrate of -1 is set by Scanner::scanBitrate or Formats::*::scanBitrate when the
+		# bitrate of a remote stream can't be determined
+		if ( $bitrate ne '-1' ) {
 			my $undermax = Slim::Player::TranscodingHelper::underMax($client, $track->url);
 			my $rate     = $bitrate;
 			my $convert  = '';
