@@ -99,7 +99,7 @@ sub initPlugin {
 	
 	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_TRACK','track');
 	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_ALBUM','album');
-	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_CONTRIBUTOR','artist');
+	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_CONTRIBUTOR','contributor');
 
 	# register handler for starting mix of last type on remote button press [Default is press and hold shuffle]
 	Slim::Buttons::Common::setFunction('randomPlay', \&buttonStart);
