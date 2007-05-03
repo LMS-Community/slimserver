@@ -1546,7 +1546,7 @@ sub playlistsDeleteCommand {
 	# transform the playlist id in a playlist obj
 	my $playlistObj = Slim::Schema->find('Playlist', $playlist_id);
 
-	if (!blessed($playlistObj)) {
+	if (!blessed($playlistObj) || !$playlistObj->isPlaylist()) {
 		$request->setStatusBadParams();
 		return;
 	}
