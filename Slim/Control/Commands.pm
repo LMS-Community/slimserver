@@ -469,8 +469,13 @@ sub playlistClearCommand {
 		$playlistObj->update;
 	}
 
-	$client->currentPlaylist(undef);
-	$client->currentPlaylistChangeTime(time());
+	# called by Slim::Player::Playlist::clear above
+	# $client->currentPlaylist(undef);
+	
+	# called by currentPlaylistUpdateTime below
+	# $client->currentPlaylistChangeTime(time());
+	
+	$client->currentPlaylistUpdateTime(time());
 	
 	# The above changes the playlist but I am not sure this is ever
 	# executed, or even if it should be
@@ -503,7 +508,8 @@ sub playlistDeleteCommand {
 	Slim::Player::Playlist::removeTrack($client, $index);
 
 	$client->currentPlaylistModified(1);
-	$client->currentPlaylistChangeTime(time());
+	#$client->currentPlaylistChangeTime(time());
+	$client->currentPlaylistUpdateTime(time());
 	Slim::Player::Playlist::refreshPlaylist($client);
 	
 	$request->setStatusDone();
@@ -584,7 +590,8 @@ sub playlistDeleteitemCommand {
 	$contents = [];
 
 	$client->currentPlaylistModified(1);
-	$client->currentPlaylistChangeTime(time());
+	#$client->currentPlaylistChangeTime(time());
+	$client->currentPlaylistUpdateTime(time());
 	Slim::Player::Playlist::refreshPlaylist($client);
 	
 	$request->setStatusDone();
@@ -639,7 +646,8 @@ sub playlistMoveCommand {
 
 	Slim::Player::Playlist::moveSong($client, $fromindex, $toindex);
 	$client->currentPlaylistModified(1);
-	$client->currentPlaylistChangeTime(time());
+	#$client->currentPlaylistChangeTime(time());
+	$client->currentPlaylistUpdateTime(time());
 	
 	Slim::Player::Playlist::refreshPlaylist($client);
 	
@@ -750,7 +758,8 @@ sub playlistShuffleCommand {
 	
 	Slim::Player::Playlist::shuffle($client, $newvalue);
 	Slim::Player::Playlist::reshuffle($client);
-	$client->currentPlaylistChangeTime(time());
+	#$client->currentPlaylistChangeTime(time());
+	$client->currentPlaylistUpdateTime(time());
 	
 	# Does the above change the playlist?
 	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
@@ -1049,7 +1058,8 @@ sub playlistXitemCommand_done {
 	# Not sure anyone depends on this behaviour...
 	$request->addParam('_item', $path);
 
-	$client->currentPlaylistChangeTime(time());
+	#$client->currentPlaylistChangeTime(time());
+	$client->currentPlaylistUpdateTime(time());
 
 	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
 
@@ -1167,7 +1177,7 @@ sub playlistXtracksCommand {
 	}
 
 	if ($load || $add || $insert || $delete) {
-		$client->currentPlaylistChangeTime(time);
+		$client->currentPlaylistUpdateTime(time);
 	}
 
 	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
@@ -1218,7 +1228,7 @@ sub playlistZapCommand {
 	Slim::Player::Playlist::scheduleWriteOfPlaylist($client, $playlistObj);
 
 	$client->currentPlaylistModified(1);
-	$client->currentPlaylistChangeTime(time());
+	$client->currentPlaylistUpdateTime(time());
 	Slim::Player::Playlist::refreshPlaylist($client);
 	
 	$request->setStatusDone();

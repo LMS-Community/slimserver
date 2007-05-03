@@ -44,7 +44,7 @@
 
  
 <hr>
-<h4>Changes starting from SlimServer 7.0</h4>
+<h4 id="7">Changes starting from SlimServer 7.0</h4>
 <p>
 	The following syntax changes apply to the CLI in SlimServer 7.0. <b>These 
 	changes may impact CLI clients.</b>
@@ -57,6 +57,10 @@
 	<li>
 		Changed how the &quot;<a href="#status">status</a>&quot; query behaves if
 		the player one is subscribed to disappears.
+	</li>
+	<li>
+		Updated the &quot;<a href="#status">status</a>&quot; query to return
+		the time stamp of the last change to the current player playlist.
 	</li>
 </ul>
 <p>
@@ -100,7 +104,7 @@
 	</li>
 </ul>
 
-<h4>Changes starting from SlimServer 6.5</h4>
+<h4 id="6.5">Changes starting from SlimServer 6.5</h4>
 <p>
 	The following changes or new commands are available starting with
 	SlimServer 6.5:
@@ -6313,11 +6317,12 @@ in the saved playlists folder.</p>
 	</tr>
 	<tr>
 		<td>
-			&nbsp;&nbsp;playlist_cur_index
+			&nbsp;&nbsp;playlist_timestamp
 		</td>
 		<td>
-			Index (first is 0) of the current song in the playlist. Only if 
-			there is a playlist.
+			Timestamp of the current playlist, in seconds. Changes to the playlist 
+			(insertion/removal/shuffling) result in an increase of this value. This can be
+			used to detect the entire playlist has to be reacquired.
 		</td>
 	</tr>
 	<tr>

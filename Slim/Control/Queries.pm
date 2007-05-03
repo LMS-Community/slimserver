@@ -1582,6 +1582,7 @@ sub statusQuery {
 		if ($songCount > 0) {
 			$idx = Slim::Player::Source::playingSongIndex($client);
 			$request->addResult("playlist_cur_index", $idx);
+			$request->addResult("playlist_timestamp", $client->currentPlaylistUpdateTime())
 		}
 
 		$request->addResult("playlist_tracks", $songCount);

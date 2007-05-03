@@ -81,10 +81,13 @@ sub new {
 
 	# The following indexes are unused:
 	# 2, 3, 8, 11, 12, 13, 16, 23, 24, 25, 26, 27, 33, 34, 53
-	# 64, 65, 66, 67, 68, 72, 82,
+	# 64, 65, 66, 67, 68, 72,
 
 	$client->[0] = $id;
 	$client->[1] = Slim::Utils::Prefs::getClientPrefs($id); # _prefs
+
+#	$client->[2]
+#	$client->[3]
 
 	# client variables id and version info
 	$client->[4] = undef; # revision
@@ -93,22 +96,43 @@ sub new {
 	
 	$client->[7] = undef; # startupPlaylistLoading
 
+#	$client->[8]
+
 	# client hardware information
 	$client->[9] = undef; # udpsock
 	$client->[10] = undef; # tcpsock
+
+#	$client->[11]
+#	$client->[12]
+#	$client->[13]
+
 	$client->[14] = 0; # readytosync
 	$client->[15] = undef; # streamformat
+
+#	$client->[16]
+
 	$client->[17] = undef; # streamingsocket
 	$client->[18] = undef; # audioFilehandle
 	$client->[19] = 0; # audioFilehandleIsSocket
 	$client->[20] = []; # chunks
 	$client->[21] = 0; # songStartStreamTime
 	$client->[22] = 0; # remoteStreamStartTime
+
+#	$client->[23]
+#	$client->[24]
+#	$client->[25]
+#	$client->[26]
+#	$client->[27]
+
 	$client->[28] = []; # playlist
 	$client->[29] = []; # shufflelist
 	$client->[30] = []; # currentsongqueue
 	$client->[31] = 'stop'; # playmode
 	$client->[32] = 1; # rate
+
+#	$client->[33]
+#	$client->[34]
+
 	$client->[35] = 0; # outputBufferFullness
 	$client->[36] = undef; # irRefTime
 	$client->[37] = 0; # bytesReceived
@@ -126,6 +150,9 @@ sub new {
 	$client->[50] = 0; # startirhold
 	$client->[51] = 0; # irtimediff
 	$client->[52] = 0; # irrepeattime
+
+#	$client->[53]
+
 	$client->[54] = Time::HiRes::time(); # epochirtime
 	$client->[55] = []; # modeStack
 	$client->[56] = []; # modeParameterStack
@@ -136,9 +163,19 @@ sub new {
 	$client->[61] = undef; # blocklines
 	$client->[62] = {}; # curSelection
 	$client->[63] = undef; # pluginsSelection
+
+#	$client->[64]
+#	$client->[65]
+#	$client->[66]
+#	$client->[67]
+#	$client->[68]
+
 	$client->[69] = undef; # curDepth
 	$client->[70] = undef; # searchFor
 	$client->[71] = []; # searchTerm
+
+#	$client->[72]
+
 	$client->[73] = 0;  # lastLetterIndex
 	$client->[74] = ''; # lastLetterDigit
 	$client->[75] = 0;  # lastLetterTime
@@ -148,6 +185,7 @@ sub new {
 	$client->[79] = undef; # irRefTimeStored
 	$client->[80] = undef; # syncSelection
 	$client->[81] = []; # syncSelections
+	$client->[82] = Time::HiRes::time(); #currentPlaylistUpdateTime (only changes to the playlist (see 96))
 	$client->[83] = undef; # suppressStatus
 	$client->[84] = 0; # songBytes
 	$client->[85] = 0; # pauseTime
@@ -156,11 +194,11 @@ sub new {
 	$client->[89] = 0; # streamBytes
 	$client->[90] = undef; # trickSegmentRemaining
 	$client->[91] = undef; # currentPlaylist
-	$client->[92] = undef; # currentPlaylistModified
+	$client->[92] = undef; # currentPlaylistModified 
 	$client->[93] = undef; # songElapsedSeconds
 	$client->[94] = undef; # customPlaylistLines
 	# 95 is currentPlaylistRender
-	# 96 is currentPlaylistChangeTime
+	# 96 is currentPlaylistChangeTime (updated on song changes (see 82))
 	$client->[97] = undef; # tempVolume temporary volume setting
 	$client->[98] = undef; # directurl
 	$client->[99] = undef; # directbody
@@ -1557,6 +1595,21 @@ sub syncSelections {
 	my $i;
 	@_ ? ($i = shift) : return $r->[81];
 	@_ ? ($r->[81]->[$i] = shift) : $r->[81]->[$i];
+}
+
+sub currentPlaylistUpdateTime {
+	# This needs to be the same for all synced clients
+	my $r = Slim::Player::Sync::masterOrSelf(shift);
+
+	if (@_) {
+		my $time = shift;
+		$r->[82] = $time;
+		# update playlistChangeTime
+		$r->currentPlaylistChangeTime($time);
+		return;
+	}
+
+	return $r->[82];
 }
 
 sub suppressStatus {
