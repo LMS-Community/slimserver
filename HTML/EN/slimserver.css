@@ -78,7 +78,6 @@ div#browsedbList {
 
 .browsedbListItem {
 	position: relative;
-	padding-right: 100px;
 }
 
 .browsedbListItemFullWidth {
@@ -91,9 +90,7 @@ div#browsedbList {
 }
 
 .browsedbControls {
-	position: absolute;
-	top: 0px;
-	right: 0px;
+	text-align:right;
 }
 
 div#browsedbHeader {
