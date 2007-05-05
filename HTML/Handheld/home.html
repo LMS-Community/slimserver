@@ -28,8 +28,8 @@
 		[% PROCESS menu menutitle='PLUGINS' menulist=additionalLinks.plugins additionalmenu={} %]
 	[% END %]
 	
-	[% PROCESS menu menutitle='HELP' menulist={} additionalmenu.link = 'html/help.html' additionalmenu.text = 'HELP'%]
-	
+	[% PROCESS menu menutitle='HELP' menulist=additionalLinks.help %]
+
 	[% IF warn && NOT pageHeaderInfo; pageHeaderInfo = BLOCK %]
 		<b>[% "NOTE" | string %]</b> [% "HOME_SCAN_WARNING" | string %] (<a href="progress.html">[% "SCANNER_PROGRESS" | string %]</a>)
 	[% END %]

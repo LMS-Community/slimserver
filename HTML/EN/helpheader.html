@@ -1,17 +1,15 @@
 <html>
 <head>
-  <title>[% pagetitle %]</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]">
-  <meta name="CVS-ident" content="$id$" />
-    <link rel="stylesheet" href="[% webroot %]slimserver.css" type="text/css">
-    <link rel="stylesheet" href="[% webroot %]skin.css" type="text/css">
+	<title>[% pagetitle %]</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]">
+	<meta name="CVS-ident" content="$id$" />
+	<link rel="stylesheet" href="[% webroot %]slimserver.css" type="text/css">
+	<link rel="stylesheet" href="[% webroot %]skin.css" type="text/css">
 </head>
 <body>
-    <p>
+	<p><h3>[% pagetitle %]</h3><p>
 
-    <h3>[% pagetitle %]</h3><p>
-
-    <a href="[% webroot %]index.html?player=[% playerURI %]" target="_top">[% "HOME" | string %]</a> /
- 					[% IF techinfo %]<a href="[% webroot %]html/docs/index.html?player=[% playerURI %]">[% 'TECHNICAL_INFORMATION' | string %]</a> /[% END %]
+	<a href="[% webroot %]index.html?player=[% playerURI %]" target="_top">[% "HOME" | string %]</a> /
 	[% 'HELP' | string %] /
-  <b>[% pagetitle %]</b>
+	[% IF techinfo %]<a href="[% webroot %]html/docs/index.html?player=[% playerURI %]">[% 'TECHNICAL_INFORMATION' | string %]</a> /[% END %]
+	<b>[% pagetitle %]</b>

@@ -10329,7 +10329,7 @@ RADIO_TUNED_IN
 
 HELP
 	CS	Nápověda
-	DE	Hilfe (Englisch)
+	DE	Hilfe
 	DA	Hjælp
 	EN	Help
 	ES	Ayuda
