@@ -84,9 +84,7 @@ div#browsedbList {
 }
 
 .playlistControls {
-	position: absolute;
-	top: 0px;
-	right: 0px;
+	text-align:right;
 }
 
 .browsedbControls {
