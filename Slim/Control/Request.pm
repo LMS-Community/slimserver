@@ -24,9 +24,7 @@ NOTIFICATIONS below).
 Function "Slim::Control::Request::executeRequest" accepts the usual parameters
 of client, command array and callback params, and returns the request object.
 
-Slim::Control::Request::executeRequest($client, ['stop']);
-
-my @result = Slim::Control::Request::executeLegacy($client, ['playlist', 'save']);
+my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 
 =cut
 
@@ -1275,8 +1273,12 @@ sub addResultLoop {
 	my $key = shift;
 	my $val = shift;
 
-	if ($loop !~ /^@.*/) {
-		$loop = '@' . $loop;
+	if ($loop =~ /^@(.*)/) {
+		$loop = $1 . "_loop";
+		$log->warn("Loop starting with \@: $1 -- deprecated; please use $1_loop");
+	}
+	if ($loop !~ /.*_loop$/) {
+		$loop = $loop . '_loop';
 	}
 	
 	if (!defined ${$self->{'_results'}}{$loop}) {
@@ -1284,7 +1286,6 @@ sub addResultLoop {
 	}
 	
 	if (!defined ${$self->{'_results'}}{$loop}->[$loopidx]) {
-#		tie (my %paramHash, "Tie::LLHash", {lazy => 1});
 		tie (my %paramHash, "Tie::IxHash");
 		${$self->{'_results'}}{$loop}->[$loopidx] = \%paramHash;
 	}
@@ -1311,8 +1312,12 @@ sub setResultLoopHash {
 	my $loopidx = shift;
 	my $hashRef = shift;
 	
-	if ($loop !~ /^@.*/) {
-		$loop = '@' . $loop;
+	if ($loop =~ /^@(.*)/) {
+		$loop = $1 . "_loop";
+		$log->warn("Loop starting with \@: $1 -- deprecated; please use $1_loop");
+	}
+	if ($loop !~ /.*_loop$/) {
+		$loop = $loop . '_loop';
 	}
 	
 	if (!defined ${$self->{'_results'}}{$loop}) {
@@ -1328,16 +1333,16 @@ sub sliceResultLoop {
 	my $start    = shift;
 	my $quantity = shift || 0;
 	
-	if ($loop !~ /^@.*/) {
-		$loop = '@' . $loop;
+	if ($loop =~ /^@(.*)/) {
+		$loop = $1 . "_loop";
+		$log->warn("Loop starting with \@: $1 -- deprecated; please use $1_loop");
+	}
+	if ($loop !~ /.*_loop$/) {
+		$loop = $loop . '_loop';
 	}
 	
 	if (defined ${$self->{'_results'}}{$loop}) {
 		
-#		my @sliced = ${$self->{'_results'}}{$loop}->[$from..$to];
-#		msg (scalar @sliced . "\n");
-#		${$self->{'_results'}}{$loop} = \@sliced;
-
 		if ($start) {
 			splice ( @{${$self->{'_results'}}{$loop}} , 0, $start);
 		}
@@ -1358,8 +1363,12 @@ sub getResultLoopCount {
 	my $self = shift;
 	my $loop = shift;
 	
-	if ($loop !~ /^@.*/) {
-		$loop = '@' . $loop;
+	if ($loop =~ /^@(.*)/) {
+		$loop = $1 . "_loop";
+		$log->warn("Loop starting with \@: $1 -- deprecated; please use $1_loop");
+	}
+	if ($loop !~ /.*_loop$/) {
+		$loop = $loop . '_loop';
 	}
 	
 	if (defined ${$self->{'_results'}}{$loop}) {
@@ -1373,8 +1382,12 @@ sub getResultLoop {
 	my $loopidx = shift;
 	my $key = shift || return undef;
 
-	if ($loop !~ /^@.*/) {
-		$loop = '@' . $loop;
+	if ($loop =~ /^@(.*)/) {
+		$loop = $1 . "_loop";
+		$log->warn("Loop starting with \@: $1 -- deprecated; please use $1_loop");
+	}
+	if ($loop !~ /.*_loop$/) {
+		$loop = $loop . '_loop';
 	}
 	
 	if (defined ${$self->{'_results'}}{$loop} && 
@@ -1388,7 +1401,6 @@ sub getResultLoop {
 sub cleanResults {
 	my $self = shift;
 
-#	tie (my %resultHash, "Tie::LLHash", {lazy => 1});
 	tie (my %resultHash, "Tie::IxHash");
 	
 	# not sure this helps release memory, but can't hurt
@@ -1862,7 +1874,7 @@ sub renderAsArray {
 	# conventions: 
 	# -- parameter or result with key starting with "_": value outputted
 	# -- parameter or result with key starting with "__": no output
-	# -- result starting with "@": is a loop
+	# -- result starting with key ending in "_loop": is a loop
 	# -- anything else: output "key:value"
 	
 	# push the request terms
@@ -1890,7 +1902,7 @@ sub renderAsArray {
 		next if ($key =~ /^__/);
 
 		# loop
-		if ($key =~ /^@/) {
+		if ($key =~ /_loop$/) {
 
 			# loop over each elements
 			foreach my $hash (@{${$self->{'_results'}}{$key}}) {
@@ -1980,7 +1992,7 @@ sub dump {
 
 	while (my ($key, $val) = each %{$self->{'_results'}}) {
 
-		if ($key =~ /^@/) {
+		if ($key =~ /_loop$/) {
 
 			my $count = scalar @{${$self->{'_results'}}{$key}};
 

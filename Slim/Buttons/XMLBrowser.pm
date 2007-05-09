@@ -1120,7 +1120,7 @@ sub _cliQuery_done {
 		
 			my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 		
-			my $loopname = '@loop';
+			my $loopname = 'loop_loop';
 			my $cnt = 0;
 			my $hasItems = 0;
 		

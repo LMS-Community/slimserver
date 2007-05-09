@@ -1030,7 +1030,7 @@ sub cli_genresQuery_cb {
 
 		if ($valid) {
 
-			my $loopname = '@genres';
+			my $loopname = 'genres_loop';
 			my $cnt = 0;
 			for my $genre (@genreList[$start..$end]) {
 				$request->addResultLoop($loopname, $cnt, 'id', @$genre[1]);
@@ -1171,24 +1171,24 @@ sub cli_stationsQuery_cb {
 
 		my $cnt = 0;
 		for my $station (@$slist[$start..$end]) {
-			$request->addResultLoop('@stations', $cnt, 'id', $station->{STATION_ID});
-			$request->addResultLoop('@stations', $cnt, 'name', $station->{STATION_TITLE});
-			$request->addResultLoop('@stations', $cnt, 'listeners', $station->{STATION_LISTENERS_ACTIVE});
-			$request->addResultLoop('@stations', $cnt, 'maxlisteners', $station->{STATION_LISTENERS_MAX});
-			$request->addResultLoop('@stations', $cnt, 'bitrate', $station->{STATION_CONNECTION});
-			$request->addResultLoop('@stations', $cnt, 'rating', $station->{STATION_RATING});
-			$request->addResultLoop('@stations', $cnt, 'quality', $station->{STATION_QUALITY_LEVEL});
-			$request->addResultLoop('@stations', $cnt, 'access', $station->{LISTENER_ACCESS});
-			$request->addResultLoop('@stations', $cnt, 'location', $station->{STATION_LOCATION});
-			$request->addResultLoop('@stations', $cnt, 'broadcaster', $station->{STATION_BROADCASTER});
+			$request->addResultLoop('stations_loop', $cnt, 'id', $station->{STATION_ID});
+			$request->addResultLoop('stations_loop', $cnt, 'name', $station->{STATION_TITLE});
+			$request->addResultLoop('stations_loop', $cnt, 'listeners', $station->{STATION_LISTENERS_ACTIVE});
+			$request->addResultLoop('stations_loop', $cnt, 'maxlisteners', $station->{STATION_LISTENERS_MAX});
+			$request->addResultLoop('stations_loop', $cnt, 'bitrate', $station->{STATION_CONNECTION});
+			$request->addResultLoop('stations_loop', $cnt, 'rating', $station->{STATION_RATING});
+			$request->addResultLoop('stations_loop', $cnt, 'quality', $station->{STATION_QUALITY_LEVEL});
+			$request->addResultLoop('stations_loop', $cnt, 'access', $station->{LISTENER_ACCESS});
+			$request->addResultLoop('stations_loop', $cnt, 'location', $station->{STATION_LOCATION});
+			$request->addResultLoop('stations_loop', $cnt, 'broadcaster', $station->{STATION_BROADCASTER});
 			
 			# can be added if requested. Need tag?
-			#$request->addResultLoop('@stations', $cnt, 'genres', $station->{STATION_GENRE}); # 'alternative, power pop, indie rock',
-			#$request->addResultLoop('@stations', $cnt, 'description', $station->{STATION_DESCRIPTION}); # 'Music for people in their 30\'s who feel like they are in their 20\'s',
-			#$request->addResultLoop('@stations', $cnt, 'broadcaster_url', $station->{STATION_BROADCASTER_URL}); # 'http://www.live365.com/stations/chickenjuggler',
-			#$request->addResultLoop('@stations', $cnt, 'playlist', $station->{STATION_PLAYLIST_INFO}); # {'PlaylistEntry' => { 'Album' => 'RAISING HELL', 'Artist' => '   RUN-D.M.C.', 'Title' => 'YOU BE ILLIN\'' }},
-			#$request->addResultLoop('@stations', $cnt, 'keywords', $station->{STATION_KEYWORDS}); # 'remix mix tivo itunes mobile dj party live free schedule email vip beer cigarettes rent'
-			#$request->addResultLoop('@stations', $cnt, 'live365_attr', $station->{LIVE365_ATTRIBUTES}); # {'STATION_ATTR' => [ [Editor\'s pick]', [Professional]' ] },
+			#$request->addResultLoop('stations_loop', $cnt, 'genres', $station->{STATION_GENRE}); # 'alternative, power pop, indie rock',
+			#$request->addResultLoop('stations_loop', $cnt, 'description', $station->{STATION_DESCRIPTION}); # 'Music for people in their 30\'s who feel like they are in their 20\'s',
+			#$request->addResultLoop('stations_loop', $cnt, 'broadcaster_url', $station->{STATION_BROADCASTER_URL}); # 'http://www.live365.com/stations/chickenjuggler',
+			#$request->addResultLoop('stations_loop', $cnt, 'playlist', $station->{STATION_PLAYLIST_INFO}); # {'PlaylistEntry' => { 'Album' => 'RAISING HELL', 'Artist' => '   RUN-D.M.C.', 'Title' => 'YOU BE ILLIN\'' }},
+			#$request->addResultLoop('stations_loop', $cnt, 'keywords', $station->{STATION_KEYWORDS}); # 'remix mix tivo itunes mobile dj party live free schedule email vip beer cigarettes rent'
+			#$request->addResultLoop('stations_loop', $cnt, 'live365_attr', $station->{LIVE365_ATTRIBUTES}); # {'STATION_ATTR' => [ [Editor\'s pick]', [Professional]' ] },
 			$cnt++;
 		}
 	}

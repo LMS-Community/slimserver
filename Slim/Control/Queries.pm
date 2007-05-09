@@ -103,7 +103,7 @@ sub alarmsQuery {
 
 	if ($valid) {
 
-		my $loopname = '@alarms';
+		my $loopname = 'alarms_loop';
 		my $cnt = 0;
 		
 		for my $eachitem (@results[$start..$end]) {
@@ -226,7 +226,7 @@ sub albumsQuery {
 
 	if ($valid) {
 
-		my $loopname = '@albums';
+		my $loopname = 'albums_loop';
 		my $cnt = 0;
 
 		for my $eachitem ($rs->slice($start, $end)) {
@@ -355,7 +355,7 @@ sub artistsQuery {
 
 	if ($valid || $count) {
 
-		my $loopname = '@artists';
+		my $loopname = 'artists_loop';
 		my $cnt = 0;
 
 		# Various artist handling. Don't do if pref is off, or if we're
@@ -623,7 +623,7 @@ sub genresQuery {
 
 	if ($valid) {
 
-		my $loopname = '@genres';
+		my $loopname = 'genres_loop';
 		my $cnt = 0;
 
 		for my $eachitem ($rs->slice($start, $end)) {
@@ -831,25 +831,25 @@ sub playersQuery {
 		if (scalar(@players) > 0) {
 
 			for my $eachclient (@players[$start..$end]) {
-				$request->addResultLoop('@players', $cnt, 
+				$request->addResultLoop('players_loop', $cnt, 
 					'playerindex', $idx);
-				$request->addResultLoop('@players', $cnt, 
+				$request->addResultLoop('players_loop', $cnt, 
 					'playerid', $eachclient->id());
-				$request->addResultLoop('@players', $cnt, 
+				$request->addResultLoop('players_loop', $cnt, 
 					'ip', $eachclient->ipport());
-				$request->addResultLoop('@players', $cnt, 
+				$request->addResultLoop('players_loop', $cnt, 
 					'name', $eachclient->name());
-				$request->addResultLoop('@players', $cnt, 
+				$request->addResultLoop('players_loop', $cnt, 
 					'model', $eachclient->model());
-				$request->addResultLoop('@players', $cnt, 
+				$request->addResultLoop('players_loop', $cnt, 
 					'displaytype', $eachclient->vfdmodel())
 					unless ($eachclient->model() eq 'http');
-				$request->addResultLoop('@players', $cnt, 
+				$request->addResultLoop('players_loop', $cnt, 
 					'connected', ($eachclient->connected() || 0));
 
 				for my $pref (@prefs) {
 					if (defined(my $value = $eachclient->prefGet($pref))) {
-						$request->addResultLoop('@players', $cnt, 
+						$request->addResultLoop('players_loop', $cnt, 
 							$pref, $value);
 					}
 				}
@@ -1089,9 +1089,9 @@ sub playlistsQuery {
 
 			for my $eachitem ($rs->slice($start, $end)) {
 
-				$request->addResultLoop('@playlists', $cnt, "id", $eachitem->id);
-				$request->addResultLoop('@playlists', $cnt, "playlist", $eachitem->title);
-				$request->addResultLoop('@playlists', $cnt, "url", $eachitem->url) if ($tags =~ /u/);
+				$request->addResultLoop('playlists_loop', $cnt, "id", $eachitem->id);
+				$request->addResultLoop('playlists_loop', $cnt, "playlist", $eachitem->title);
+				$request->addResultLoop('playlists_loop', $cnt, "url", $eachitem->url) if ($tags =~ /u/);
 
 				$cnt++;
 			}
@@ -1261,7 +1261,7 @@ sub searchQuery {
 
 		$request->addResult("${type}s_count", $count);
 
-		my $loopName  = "\@${type}s";
+		my $loopName  = "${type}s_loop";
 		my $loopCount = 0;
 
 		for my $result ($results{$type}->{'rs'}->slice(0, $quantity)) {
@@ -1340,22 +1340,22 @@ sub serverstatusQuery {
 		if (scalar(@players) > 0) {
 
 			for my $eachclient (@players[$start..$end]) {
-				$request->addResultLoop('@players', $cnt, 
+				$request->addResultLoop('players_loop', $cnt, 
 					'playerid', $eachclient->id());
-				$request->addResultLoop('@players', $cnt, 
+				$request->addResultLoop('players_loop', $cnt, 
 					'ip', $eachclient->ipport());
-				$request->addResultLoop('@players', $cnt, 
+				$request->addResultLoop('players_loop', $cnt, 
 					'name', $eachclient->name());
-				$request->addResultLoop('@players', $cnt, 
+				$request->addResultLoop('players_loop', $cnt, 
 					'model', $eachclient->model());
-				$request->addResultLoop('@players', $cnt, 
+				$request->addResultLoop('players_loop', $cnt, 
 					'displaytype', $eachclient->vfdmodel())
 					unless ($eachclient->model() eq 'http');
-				$request->addResultLoop('@players', $cnt, 
+				$request->addResultLoop('players_loop', $cnt, 
 					'connected', ($eachclient->connected() || 0));
 				for my $pref (@{$savePrefs{'player'}}) {
 					if (defined(my $value = $eachclient->prefGet($pref))) {
-						$request->addResultLoop('@players', $cnt, 
+						$request->addResultLoop('players_loop', $cnt, 
 							$pref, $value);
 					}
 				}
@@ -2014,7 +2014,7 @@ sub yearsQuery {
 
 	if ($valid) {
 
-		my $loopname = '@years';
+		my $loopname = 'years_loop';
 		my $cnt = 0;
 
 		for my $eachitem ($rs->slice($start, $end)) {
