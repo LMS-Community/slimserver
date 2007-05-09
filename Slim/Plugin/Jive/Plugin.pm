@@ -435,10 +435,12 @@ Called by Slim::Web::HTTP
 sub closeHandler {
 	my $httpClient = shift;
 
-	$log->debug("Closing any subscriptions for $httpClient");
+	if ( defined $contexts{$httpClient} ) {
+		$log->debug("Closing any subscriptions for $httpClient");
 	
-	Slim::Control::Request::unregisterAutoExecute($httpClient);
-	delete $contexts{$httpClient};
+		Slim::Control::Request::unregisterAutoExecute($httpClient);
+		delete $contexts{$httpClient};
+	}
 }
 
 ################################################################################
