@@ -7,7 +7,7 @@
 [% PROCESS pageheader.html class = thispage thispage = thispage %]
 <script type="text/javascript" src="/html/prototype.js"></script>
 
-[% IF not query %]
+[% IF not query AND query != '0' %]
 	[% PROCESS searchinput.html %]
 [% ELSE %]
 	<div id="search-results"></div>

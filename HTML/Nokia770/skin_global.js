@@ -5,10 +5,10 @@ var thumbHrefTemplate = '/music/COVER/thumb_'+thumbSize+'x'+thumbSize+'_f_000000
 
 function chooseAlbumOrderBy(value, option, artwork)
 {
-	if (!artwork) {
+	if (!artwork && artwork != 0) {
 		artwork = 1;
 	}
-        var url = '[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %][% IF artwork %]&artwork='+artwork+'[% END %]&player=[% playerURI %]'; 
+        var url = '[% webroot %]browsedb.html?hierarchy=[% hierarchy %]&level=[% level %][% attributes %][% IF artwork OR artwork == '0' %]&artwork='+artwork+'[% END %]&player=[% playerURI %]'; 
         if (option) {
                 url = url + '&orderBy=' + option;
         }
