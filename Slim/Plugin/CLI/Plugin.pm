@@ -616,7 +616,7 @@ sub cli_process {
 		
 		else {
 
-			$log->warn("Request [$cmd] unkown or missing client -- will echo as is...");
+			$log->warn("Request [$cmd] unknown or missing client -- will echo as is...");
 		}
 	}
 		

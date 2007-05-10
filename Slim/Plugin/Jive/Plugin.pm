@@ -68,6 +68,18 @@ sub initPlugin {
 	# add our close handler, we want to be called if a connection closes to
 	# clear our contexts.
 	Slim::Web::HTTP::addCloseHandler(\&closeHandler);
+	
+	# register our functions
+	
+#        |requires Client
+#        |  |is a Query
+#        |  |  |has Tags
+#        |  |  |  |Function to call
+#        C  Q  T  F
+
+    Slim::Control::Request::addDispatch(['menu', '_index', '_quantity'], 
+        [1, 1, 1, \&menuQuery]);
+
 }
 
 =head2 getDisplayName()
@@ -672,5 +684,142 @@ sub playermenuProcedure {
 		
 	generateJSONResponse($context, $menu);
 }
+
+
+######
+# CLI QUERIES
+
+# handles the "menu" query
+sub menuQuery {
+	my $request = shift;
+ 
+	$log->debug("Begin Function");
+ 
+	if ($request->isNotQuery([['menu']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $client        = $request->client();
+	my $index         = $request->getParam('_index');
+	my $quantity      = $request->getParam('_quantity');
+
+
+	my @menu = (
+		{
+			'id' => 'nowplaying',
+			'title' => 'Now Playing',
+			'action' => 'browse',
+			'hierarchy' => ['status', 'info'],
+		},
+		{
+			'id' => 'albums',
+			'title' => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'), #'Albums',
+			'action' => 'browse',
+			'hierarchy' => ['album', 'track', 'info'],
+		},
+		{
+			'id' => 'artists',
+			'title' => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'), #'Artists',
+			'action' => 'browse',
+			'hierarchy' => ['contributor', 'album', 'track', 'info'],
+		},
+		{
+			'id' => 'genres',
+			'title' => Slim::Utils::Strings::string('BROWSE_BY_GENRE'), #'Genres',
+			'action' => 'browse',
+			'hierarchy' => ['genre', 'contributor', 'album', 'track', 'info'],
+		},
+		{
+			'id' => 'years',
+			'title' => Slim::Utils::Strings::string('BROWSE_BY_YEAR'), #'Years',
+			'action' => 'browse',
+			'hierarchy' => ['year', 'album', 'track', 'info'],
+		},
+		{
+			'id' => 'newmusic',
+			'title' => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'), #'New Music',
+			'action' => 'browse',
+			'hierarchy' => ['age', 'track', 'info'],
+		},
+# 		{
+# 			'title' => 'Favorites',
+# 			'action' => '',
+# 		},
+		{
+			'id' => 'playlists',
+			'title' => 'Playlists',
+			'action' => 'browse',
+			'hierarchy' => ['playlist', 'playlisttrack', 'info'],
+		},
+# 		{
+# 			'title' => 'Search',
+# 			'action' => 'items',
+# 			'@items' => [
+# 				{
+# 					'title' => 'Artists',
+# 					'action' => '',
+# 				},
+# 				{
+# 					'title' => 'Albums',
+# 					'action' => '',
+# 				},
+# 			],
+# 		},
+		{
+			'id' => 'internetradio',
+			'title' => 'Internet Radio',
+			'action' => 'browse',
+			'hierarchy' => ['radios'],
+		},
+# 		{
+# 			'title' => 'Settings',
+# 			'action' => ''
+# 		},
+		{
+			'id' => 'exit',
+			'title' => 'Exit',
+			'action' => 'exit',
+		},
+	);
+
+	my $numitems = scalar(@menu);
+
+	$request->addResult("count", $numitems);
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $numitems);
+
+	if ($valid) {
+		
+		my $cnt = 0;
+
+		for my $eachmenu (@menu[$start..$end]) {
+			$request->addResultLoop('menu_loop', $cnt, 
+				'id', $eachmenu->{'id'});
+			while (my ($key, $value) = each %{$eachmenu}) {
+				if ($key !~ /^id$/) {
+					$request->addResultLoop('menu_loop', $cnt, 
+						$key, $value);
+				} 
+			}
+			$cnt++;
+		}
+	}
+
+	$request->setStatusDone();
+}
+
+
+# menu cnt:8 id:B level:kup display:artists
+
+# kup cnt:8 k
+
+
+# genres 0 10 id:1 genre:Bla
+
+# artists 0 10 genre_id:1
+
+
 
 1;

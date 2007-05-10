@@ -1031,7 +1031,7 @@ sub playlistsTracksQuery {
 
 			for my $eachitem ($iterator->slice($start, $end)) {
 
-				_addSong($request, '@playlisttracks', $cnt, $eachitem, $tags, 
+				_addSong($request, 'playlisttracks_loop', $cnt, $eachitem, $tags, 
 						"playlist index", $cur);
 
 				$cur++;
@@ -1596,7 +1596,7 @@ sub statusQuery {
 		my $quantity = $request->getParam('_quantity');
 	
 		$tags = 'gald' if !defined $tags;
-		my $loop = '@playlist';
+		my $loop = 'playlist_loop';
 
 		# we can return playlist data.
 		# which mode are we in?
@@ -1948,7 +1948,7 @@ sub titlesQuery {
 
 		for my $item ($rs->slice($start, $end)) {
 
-			_addSong($request, '@titles', $cnt++, $item, $tags);
+			_addSong($request, 'titles_loop', $cnt++, $item, $tags);
 
 			::idleStreams();
 		}
@@ -2085,7 +2085,7 @@ sub dynamicAutoQuery {
 	# we have multiple times the same resultset, so we need a loop, named
 	# after the query name (this is never printed, it's just used to distinguish
 	# loops in the same request results.
-	my $loop = '@' . $query . 's';
+	my $loop = $query . 's_loop';
 
 	# if the caller asked for results in the query ("radios 0 0" returns 
 	# immediately)
