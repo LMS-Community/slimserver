@@ -14,10 +14,12 @@ use strict;
 use File::Slurp;
 use HTML::Entities;
 use Scalar::Util qw(weaken);
+use URI::Escape qw(uri_escape);
 use XML::Simple;
 
 use Slim::Music::Info;
 use Slim::Networking::SimpleAsyncHTTP;
+use Slim::Networking::SqueezeNetwork;
 use Slim::Player::Protocols::HTTP;
 use Slim::Utils::Cache;
 use Slim::Utils::Misc;
@@ -107,7 +109,8 @@ sub getFeedAsync {
 			'cb'      => $cb,
 			'ecb'     => $ecb,
 			'cache'   => 1,
-			'expires' => $params->{'expires'}, 
+			'expires' => $params->{'expires'},
+			'Timeout' => $params->{'timeout'},
 	});
 
 	$log->info("Async request: $url");
@@ -121,6 +124,41 @@ sub getFeedAsync {
 		'User-Agent'   => $ua,
 		'Icy-Metadata' => '',
 	);
+	
+	# If the URL requires a SqueezeNetwork session, add it to the headers or login first
+	if ( $params->{'snLogin'} ) {
+		# Make sure the URL we are fetching is on SN
+		my $snBase = Slim::Networking::SqueezeNetwork->url();
+		
+		if ( $url =~ /^$snBase/ ) {
+			
+			$log->info("URL requires SqueezeNetwork session");
+			
+			if ( my $sid = $params->{'client'}->snSession ) {
+				$headers{'Cookie'} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
+				$log->info("Using existing SN session ID $sid");
+			}
+			else {
+				$log->info("Logging in to SqueezeNetwork to obtain session ID");
+			
+				# Login and get a session ID
+				Slim::Networking::SqueezeNetwork->login(
+					client   => $params->{'client'},
+					callback => sub {
+						if ( my $sid = $params->{'client'}->snSession ) {
+							$headers{'Cookie'} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
+					
+							$log->info("Got SqueezeNetwork session ID: $sid");
+						}
+					
+						$http->get( $url, %headers );
+					},
+				);
+			
+				return;
+			}
+		}
+	}
 
 	$http->get( $url, %headers );
 }

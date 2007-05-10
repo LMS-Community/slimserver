@@ -218,6 +218,8 @@ sub new {
 	$client->[113] = {}; # pendingPrefChanges
 	$client->[114] = 0; # bufferStarted, tracks when players begin buffering/rebuffering
 	$client->[117] = undef; # metaTitle, current remote stream metadata title
+	$client->[118] = undef; # SN session ID
+	$client->[119] = 1; # showBuffering
 
 	$clientHash{$id} = $client;
 
@@ -1774,6 +1776,16 @@ sub bufferStarted {
 sub metaTitle {
 	my $r = shift;
 	@_ ? ($r->[117] = shift) : $r->[117];
+}
+
+sub snSession {
+	my $r = shift;
+	@_ ? ($r->[118] = shift) : $r->[118];
+}
+
+sub showBuffering {
+	my $r = shift;
+	@_ ? ($r->[119] = shift) : $r->[119];
 }
 
 1;

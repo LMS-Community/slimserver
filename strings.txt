@@ -455,6 +455,22 @@ RADIO
 	SV	Internetradio
 	ZH_CN	互联网收音机
 
+MUSIC_ON_DEMAND
+	DE	Musik auf Abruf
+	EN	Music On Demand
+	ES	Música a petición
+	FR	Musique à la demande
+	IT	Musica a richiesta
+	NL	Muziek op aanvraag
+
+MY_MUSIC
+	DE	Eigene Musik
+	EN	My Music
+	ES	Mi música
+	FR	Ma musique
+	IT	Musica
+	NL	Mijn muziek
+
 GAMES
 	CS	Hry
 	DA	Spil
@@ -6245,6 +6261,18 @@ SETUP_GROUPDISCS_1
 	SV	Behandla multipla diskar som del av samma album
 	ZH_CN	把多个光碟组成的合集视为单一的专辑
 
+SETUP_SN_EMAIL
+	EN	Email Address
+
+SETUP_SN_EMAIL_DESC
+	EN	Enter the email address used to login to your SqueezeNetwork account.
+
+SETUP_SN_PASSWORD
+	EN	Password
+
+SETUP_SN_PASSWORD_DESC
+	EN	Enter the password for your SqueezeNetwork account.
+
 #
 # Web interface
 #
@@ -8963,6 +8991,9 @@ NETWORK_SETTINGS
 	PT	Rede
 	SV	Nätverk
 	ZH_CN	网络
+
+SQUEEZENETWORK_SETTINGS
+	EN	SqueezeNetwork
 
 SETUP_GROUP_DEBUG_DESC
 	DE	SlimServer kennt einige Einstellungen, um die Aufzeichnung von Informationen zu den Aktivitäten des Servers zu ermöglichen. Jede Kategorie hat mehrere Stufen, die den Schweregrad definieren: "Debug" ist am ausführlichsten, generiert viele Meldungen, während "Aus" keine erzeugt.

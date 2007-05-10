@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<extension>
+	<id>D91733B9-C52A-4D15-AEBC-8C0257FC3E0A</id>
+	<name>PLUGIN_MP3TUNES_MODULE_NAME</name>
+	<module>Slim::Plugin::MP3tunes::Plugin</module>
+	<playerMenu>MY_MUSIC</playerMenu>
+	<version>1.0</version>
+	<description>PLUGIN_MP3TUNES_MODULE_NAME_DESC</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<type>2</type>
+	<targetApplication>
+		<id>SlimServer</id>
+		<minVersion>7.0a</minVersion>
+		<maxVersion>7.0+</maxVersion>
+	</targetApplication>
+</extension>

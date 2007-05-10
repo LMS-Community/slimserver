@@ -27,6 +27,7 @@ use Slim::Control::Request;
 use Slim::Formats::XML;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Timers;
 
 # XXXX - not the best category, but better than d_plugins, which is what it was.
 my $log = logger('formats.xml');
@@ -80,6 +81,12 @@ sub setMode {
 		
 		# the item is passed as a param so we can get passthrough params
 		my $item = $client->modeParam('item');
+		
+		# If the feed requires we are logged into SqueezeNetwork with a session ID
+		my $snLogin = $client->modeParam('snLogin');
+		
+		# Adjust HTTP timeout value to match the API on the other end
+		my $timeout = $client->modeParam('timeout') || 5;
 
 		# give user feedback while loading
 		$client->block();
@@ -105,6 +112,8 @@ sub setMode {
 				'feedTitle' => $title,
 				'parser'    => $parser,
 				'item'      => $item,
+				'snLogin'   => $snLogin,
+				'timeout'   => $timeout,
 			},
 		);
 
@@ -159,15 +168,10 @@ sub gotError {
 		$cb->( $client, $url, $err );
 	}
 
-	my @lines = (
-		"{XML_GET_FAILED} <$url>",
-		$err,
-	);
-
 	#TODO: display the error on the client
 	my %params = (
 		'header'  => "{XML_ERROR} {count}",
-		'listRef' => \@lines,
+		'listRef' => [ $err ],
 	);
 
 	Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice', \%params);
@@ -196,8 +200,7 @@ sub gotPlaylist {
 		);
 		
 		# If there's a mime attribute, use it to set the content type properly
-		# This is needed for an as-yet-unreleased plugin, where we have a URL
-		# with possibly any number of formats
+		# This is needed to support MP3tunes, where a URL may be any number of formats
 		if ( my $mime = $item->{'mime'} ) {
 			$log->info( "Setting content-type to $mime for " . $item->{'url'} );
 
@@ -368,15 +371,27 @@ sub gotOPML {
 		};
 	}
 	
-	# Add value keys to all items, so INPUT.Choice remembers state properly
+	my $snLogin = $params->{'snLogin'};
 	for my $item ( @{ $opml->{'items'} || [] } ) {
+		
+		# Add value keys to all items, so INPUT.Choice remembers state properly
 		if ( !defined $item->{'value'} ) {
 			$item->{'value'} = $item->{'name'};
 		}
+		
+		# Remember if we need to use a SqueezeNetwork session
+		if ( $snLogin ) {
+			$item->{'snLogin'} = $snLogin;
+		}
 	}
+	
+	# Remember previous timeout value
+	my $timeout = $params->{'timeout'};
 
 	my %params = (
 		'url'        => $url,
+		'snLogin'    => $snLogin,
+		'timeout'    => $timeout,
 		'item'       => $opml,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
 		'modeName'   => "XMLBrowser:$url:$title",
@@ -422,11 +437,13 @@ sub gotOPML {
 
 				# follow a link
 				my %params = (
-					'url'    => $itemURL,
-					'title'  => $title,
-					'header' => fitTitle( $client, $title ),
-					'item'   => $item,
-					'parser' => $parser,
+					'url'     => $itemURL,
+					'snLogin' => $snLogin,
+					'timeout' => $timeout,
+					'title'   => $title,
+					'header'  => fitTitle( $client, $title ),
+					'item'    => $item,
+					'parser'  => $parser,
 				);
 
 				if ($isAudio) {
@@ -487,7 +504,14 @@ sub gotOPML {
 			my $client = shift;
 			my $item   = shift;
 
-			playItem($client, $item);
+			if ( $opml->{'playall'} || $item->{'playall'} ) {
+				# Play all items from this level
+				playItem( $client, $item, 'play', $opml->{'items'} );
+			}
+			else {
+				# Play just a single item
+				playItem( $client, $item );
+			}
 		},
 		'onAdd'      => sub {
 			my $client = shift;
@@ -781,22 +805,21 @@ sub playItem {
 	my $client = shift;
 	my $item   = shift;
 	my $action = shift || 'play';
+	my $others = shift || [];      # other items to add to playlist (action=play only)
 
 	# verbose debug
-	#msg("Podcast playing item\n");
-	#use Data::Dumper;
-	#print Dumper($item);
+	#warn Data::Dump::dump($item, $others);
 
 	my $url   = $item->{'url'}  || $item->{'enclosure'}->{'url'};
 	my $title = $item->{'name'} || $item->{'title'} || 'Unknown';
 	my $type  = $item->{'type'} || $item->{'enclosure'}->{'type'} || '';
 	my $parser= $item->{'parser'};
-
-	if ($type eq 'audio') {
+	
+	if ( $type =~ /audio/i ) {
 
 		my $string;
 		my $duration;
-
+		
 		if ($action eq 'add') {
 
 			$string = $client->string('ADDING_TO_PLAYLIST');
@@ -807,14 +830,10 @@ sub playItem {
 
 				$string = $client->string('PLAYING_RANDOMLY_FROM');
 
-			} elsif (Slim::Music::Info::isRemoteURL($url)) {
-
-				$string = $client->string('NOW_PLAYING') . ' (' . $client->string('CONNECTING_FOR') . ')';
-				$duration = 10;
-
 			} else {
 
-				$string = $client->string('NOW_PLAYING');
+				$string   = $client->string('NOW_PLAYING') . ' (' . $client->string('CONNECTING_FOR') . ')';
+				$duration = 10;
 			}
 		}
 
@@ -824,9 +843,72 @@ sub playItem {
 			'duration' => $duration
 		});
 		
-		Slim::Music::Info::setTitle( $url, $title );
+		if ( scalar @{$others} ) {
+			# Emulate normal track behavior where playing a single track adds
+			# all other tracks from that album to the playlist.
+			
+			# Add everything from $others to the playlist, it will include the item
+			# we want to play.  Then jump to the index of the selected item
+			my @urls;
+			
+			# Index to jump to
+			my $index = 0;
+			
+			my $count = 0;
+			
+			for my $other ( @{$others} ) {
+				my $otherURL = $other->{'url'}  || $other->{'enclosure'}->{'url'};
+				my $title    = $other->{'name'} || $other->{'title'} || 'Unknown';
+				
+				# Don't add non-audio items
+				next if !$other->{'type'} || $other->{'type'} ne 'audio';
+				
+				push @urls, $otherURL;
+				
+				$log->info( "Setting title to $title for $otherURL" );
+				Slim::Music::Info::setTitle( $otherURL, $title );
+				
+				if ( my $mime = $other->{'mime'} ) {
+					$log->info( "Setting content-type to $mime for $otherURL" );
 
-		$client->execute([ 'playlist', $action, $url, $title ]);
+					Slim::Music::Info::setContentType( $otherURL, $mime );
+				}
+
+				# If there's a duration attribute, use it to set the length
+				if ( my $secs = $other->{'duration'} ) {
+
+					$log->info( "Setting duration to $secs for $otherURL" );
+
+					Slim::Music::Info::setDuration( $otherURL, $secs );
+				}
+				
+				# Is this item the one to jump to?
+				if ( $url eq $otherURL ) {
+					$index = $count;
+				}
+				
+				$count++;
+			}
+			
+			$client->execute([ 'playlist', 'clear' ]);
+			$client->execute([ 'playlist', 'addtracks', 'listref', \@urls ]);
+			
+			# jump index on a timer, so it executes after addtracks
+			Slim::Utils::Timers::setTimer(
+				$client,
+				Time::HiRes::time(),
+				sub {
+					Slim::Player::Source::jumpto( $client, $index );					
+					$client->update();
+				},
+			);
+		}
+		else {
+			$log->info( "Setting title to $title for $url" );
+			Slim::Music::Info::setTitle( $url, $title );
+			
+			$client->execute([ 'playlist', $action, $url, $title ]);
+		}
 	}
 	elsif ($type eq 'playlist') {
 
@@ -853,26 +935,35 @@ sub playItem {
 			\&gotPlaylist,
 			\&gotError,
 			{
-				'client' => $client,
-				'action' => $action,
-				'url'    => $url,
-				'parser' => $parser,
-				'item'   => $item,
+				'client'  => $client,
+				'action'  => $action,
+				'url'     => $url,
+				'snLogin' => $item->{'snLogin'},
+				'parser'  => $parser,
+				'item'    => $item,
 			},
 		);
 
-	}
-	elsif ($item->{'enclosure'} && ($type eq 'audio' || Slim::Music::Info::typeFromSuffix($url) ne 'unk')) {
-		
-		Slim::Music::Info::setTitle( $url, $title );
-		
-		$client->execute([ 'playlist', $action, $url, $title ]);
-		
 	}
 	elsif ( ref($item->{'items'}) eq 'ARRAY' && scalar @{$item->{'items'}} ) {
 
 		# it's not an audio item, so recurse into OPML item
 		gotOPML($client, $client->modeParam('url'), $item);
+	}
+	elsif ( $url && $title ) {
+		
+		# Push into the URL as if the user pressed right
+		my %params = (
+			'url'     => $url,
+			'snLogin' => $item->{'snLogin'},
+			'timeout' => $client->modeParam('timeout'),
+			'title'   => $title,
+			'header'  => fitTitle( $client, $title ),
+			'parser'  => $parser,
+			'item'    => $item,
+		);
+		
+		Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
 	}
 	else {
 
