@@ -513,6 +513,10 @@ sub pageInfo {
 			}
 		}
 
+		if ($newend == $end && $itemCount > $end) {
+			$newend = $itemCount -1;
+		}
+
 		$pageinfo{'enditem'}         = $newend;
 		$pageinfo{'totalalphapages'} = scalar(@pagestarts);
 
