@@ -614,14 +614,47 @@ sub playlistJumpCommand {
 	my $index  = $request->getParam('_index');;
 	my $noplay = $request->getParam('_noplay');;
 	
-	Slim::Player::Source::jumpto($client, $index, $noplay);
+	my $jumpCallback = sub {	
+		Slim::Player::Source::jumpto($client, $index, $noplay);
 
-	# Does the above change the playlist?
-	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
+		# Does the above change the playlist?
+		Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
 	
-	$request->setStatusDone();
-}
+		$request->setStatusDone();
+	};
+	
+	# Allow protocol handler to perform async handling before jumpto is called
+	if ( defined $index ) {
+		my $jumpIndex = $index;
+		
+		if ( $index =~ /[+-]/ ) {
+			$jumpIndex = Slim::Player::Source::playingSongIndex($client) + $index;
+			
+			# Handle skip in repeat mode
+			if ( $jumpIndex >= Slim::Player::Playlist::count($client) ) {
+				# play the next song and start over if necessary
+				if (Slim::Player::Playlist::shuffle($client) && 
+					Slim::Player::Playlist::repeat($client) == 2 &&
+					Slim::Utils::Prefs::get('reshuffleOnRepeat')) {
 
+					Slim::Player::Playlist::reshuffle($client, 1);
+				}
+
+				$jumpIndex = 0;
+			}
+		}
+
+		my $jumpURL   = Slim::Player::Playlist::url( $client, $jumpIndex );
+		my $handler   = Slim::Player::ProtocolHandlers->handlerForURL($jumpURL);
+		
+		if ( $handler && $handler->can('onJump') ) {
+			$handler->onJump( $client, $jumpURL, $jumpCallback );
+			return;
+		}
+	}
+	
+	$jumpCallback->();
+}
 
 sub playlistMoveCommand {
 	my $request = shift;
@@ -995,24 +1028,34 @@ sub playlistXitemCommand {
 		# Display some feedback for the player on remote URLs
 		if ( $cmd eq 'play' && Slim::Music::Info::isRemoteURL($path) && !Slim::Music::Info::isDigitalInput($path) ) {
 		
-			$log->info("Display some feedback for the player on remote URLs");
+			my $showBuffering = 1;
 			
-			my $line1 = $client->string('NOW_PLAYING') . ' (' . $client->string('CHECKING_STREAM') . ')';
-			my $line2 = Slim::Music::Info::title($path) || $path;
-			
-			if ( $client->linesPerScreen() == 1 ) {
-			
-				$line2 = $client->string('CHECKING_STREAM');
+			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($path);
+			if ( $handler && $handler->can('showBuffering') ) {
+				$showBuffering = $handler->showBuffering( $client, $path );
 			}
 			
-			my $timeout = $prefs->get('remotestreamtimeout') || 10;
-			$client->showBriefly( $line1, $line2, $timeout + 5 );
+			if ( $showBuffering ) {
+				$log->info("Display some feedback for the player on remote URLs");
+			
+				my $line1 = $client->string('NOW_PLAYING') . ' (' . $client->string('CHECKING_STREAM') . ')';
+				my $line2 = Slim::Music::Info::title($path) || $path;
+			
+				if ( $client->linesPerScreen() == 1 ) {
+			
+					$line2 = $client->string('CHECKING_STREAM');
+				}
+			
+				my $timeout = $prefs->get('remotestreamtimeout') || 10;
+				$client->showBriefly( $line1, $line2, $timeout + 5 );
+			}
 		}
 
 		Slim::Utils::Scanner->scanPathOrURL({
 			'url'      => $path,
 			'listRef'  => Slim::Player::Playlist::playList($client),
 			'client'   => $client,
+			'cmd'      => $cmd,
 			'callback' => sub {
 				my ( $foundItems, $error ) = @_;
 				

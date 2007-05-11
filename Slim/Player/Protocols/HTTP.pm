@@ -334,6 +334,46 @@ sub parseDirectBody {
 	return $track;
 }
 
+# Whether or not to display buffering info while a track is loading
+sub showBuffering {
+	my ( $class, $client, $url ) = @_;
+	
+	return $client->showBuffering;
+}
+
+# Perform processing during play/add, before actual playback begins
+sub onCommand {
+	my ( $class, $client, $cmd, $url, $callback ) = @_;
+	
+	# Only handle 'play'
+	if ( $cmd eq 'play' ) {
+		# Display buffering info on loading the next track
+		$client->showBuffering( 1 );
+	}
+	
+	return $callback->();
+}
+
+# Handle normal advances to the next track
+sub onDecoderUnderrun {
+	my ( $class, $client, $nextURL, $callback ) = @_;
+	
+	# Flag that we don't want any buffering messages while loading the next track,
+	$client->showBuffering( 0 );
+	
+	return $callback->();
+}
+
+# On skip, load the next track before playback
+sub onJump {
+    my ( $class, $client, $nextURL, $callback ) = @_;
+
+	# Display buffering info on loading the next track
+	$client->showBuffering( 1 );
+
+	return $callback->();
+}
+
 1;
 
 __END__

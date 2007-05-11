@@ -407,6 +407,23 @@ sub scanRemoteURL {
 		$track->content_type( Slim::Music::Info::typeFromPath($url) );
 		
 		push @{$foundItems}, $track;
+		
+		# Protocol Handlers may want to perform additional actions in an async manner
+		# such as Rhapsody Direct.  If so, we assume it's an audio URL, and let the
+		# handler call us back when done 
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+		if ( $handler && $handler->can('onCommand') ) { # this needs a better name
+			$log->debug("scanRemoteURL: Letting $handler handle onCommand operations");
+			$handler->onCommand(
+				$args->{'client'}, 
+				$args->{'cmd'}, 
+				$url, 
+				sub {
+					$cb->( $foundItems, @{$pt} );
+				}
+			);
+			return;
+		}
 
 		return $cb->( $foundItems, @{$pt} );
 	}

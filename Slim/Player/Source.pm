@@ -149,7 +149,8 @@ sub songTime {
 	my $songtime    = $client->songElapsedSeconds();
 	my $startStream = $client->songStartStreamTime();
 	
-	$log->debug("rate: $rate -songtime: $songtime -startStream: $startStream");
+	# verbose debugging
+	#$log->debug("rate: $rate -songtime: $songtime -startStream: $startStream");
 	
 	return $songtime+$startStream if $rate == 1 && defined($songtime);
 
@@ -330,18 +331,23 @@ sub playmode {
 	}
 	
 	my $currentURL = Slim::Player::Playlist::url($client, streamingSongIndex($client));
+	
 	# Some protocol handlers don't allow pausing of active streams.
 	# We check if that's the case before continuing.
 	if ($newmode eq "pause" && defined($currentURL)) {
 
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($currentURL);
+		# Always allow pausing to rebuffer even on protocols that don't allow it (Rhapsody Radio)
+		my $caller = (caller(1))[3];
+		if ( $caller !~ /outputUnderrun/ ) {
+			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($currentURL);
 
-		if ($handler && $handler->can("canDoAction") &&
-			!$handler->canDoAction($client, $currentURL, 'pause')) {
+			if ($handler && $handler->can("canDoAction") &&
+				!$handler->canDoAction($client, $currentURL, 'pause')) {
 
-			$log->warn("Protocol handler doesn't allow pausing. Let's try stopping.");
+				$log->warn("Protocol handler doesn't allow pausing. Let's try stopping.");
 
-			return playmode($client, "stop", $seekoffset);
+				return playmode($client, "stop", $seekoffset);
+			}
 		}
 	}
 
@@ -595,12 +601,32 @@ sub decoderUnderrun {
 	# we want to defer until the output underruns, not the decoder
 	return if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::song($client, nextsong($client))));
 
-	if (!Slim::Player::Sync::isSynced($client) &&
-		($client->rate() == 0 || $client->rate() == 1) &&
-		($client->playmode eq 'playout-play')) {
+	my $skipaheadCallback = sub {
+		if (!Slim::Player::Sync::isSynced($client) &&
+			($client->rate() == 0 || $client->rate() == 1) &&
+			($client->playmode eq 'playout-play')) {
 
-		skipahead($client);
+			skipahead($client);
+		}
+	};
+		
+	# Allow protocol handler to perform async commands after an underrun.  This is used by
+	# Rhapsody Direct to set up the next track for playback
+	my $nextSong = nextsong($client);
+	if ( defined $nextSong ) {
+		my $nextURL = Slim::Player::Playlist::url( $client, $nextSong );
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $nextURL );
+		if ( $handler && $handler->can('onDecoderUnderrun') ) {
+			$handler->onDecoderUnderrun(
+				$client,
+				$nextURL,
+				$skipaheadCallback,
+			);
+			return;
+		}
 	}
+
+	$skipaheadCallback->();
 }
 
 sub underrun {
@@ -611,28 +637,44 @@ sub underrun {
 	$log->info($client->id, ": Underrun while this mode: ", $client->playmode);
 
 	# if we're synced, then we tell the player to stop and then let resync restart us.
+	
+	my $underrunCallback = sub {
+		if (Slim::Player::Sync::isSynced($client)) {
 
-	if (Slim::Player::Sync::isSynced($client)) {
+			if ($client->playmode =~ /playout/) {
+				$client->stop();
+			}
 
-		if ($client->playmode =~ /playout/) {
-			$client->stop();
-		}
+			skipahead($client);
 
-		skipahead($client);
+		} elsif ($client->playmode eq 'playout-stop') {
 
-	} elsif ($client->playmode eq 'playout-stop') {
+			playmode($client, 'stop');
+			streamingSongIndex($client, 0, 1);
 
-		playmode($client, 'stop');
-		streamingSongIndex($client, 0, 1);
+			$client->currentPlaylistChangeTime(time());
 
-		$client->currentPlaylistChangeTime(time());
+			Slim::Player::Playlist::refreshPlaylist($client);
 
-		Slim::Player::Playlist::refreshPlaylist($client);
-
-		$client->update();
+			$client->update();
 		
-		Slim::Control::Request::notifyFromArray($client, ['stop']);
+			Slim::Control::Request::notifyFromArray($client, ['stop']);
+		}
+	};
+	
+	# Allow protocol handler to perform async commands after an underrun.
+	my $url     = Slim::Player::Playlist::url( $client );
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+	if ( $handler && $handler->can('onUnderrun') ) {
+		$handler->onUnderrun(
+			$client,
+			$url,
+			$underrunCallback,
+		);
+		return;
 	}
+	
+	$underrunCallback->();
 }
 
 sub notSupported {
@@ -655,6 +697,20 @@ sub outputUnderrun {
 		my $decoder = $client->bufferFullness();
 		my $output  = $client->outputBufferFullness();
 		$log->debug( "Output buffer underrun (decoder: $decoder / output: $output)" );
+	}
+	
+	# If playing Rhapsody, underrun means getEA may be failing, so log it
+	if ( $ENV{SLIM_SERVICE} ) {
+		my $url = Slim::Player::Playlist::url($client);
+		
+		if ( $url =~ /^rhapd:/ ) {
+			my $decoder = $client->bufferFullness();
+			my $output  = $client->outputBufferFullness();
+		
+			SDI::Service::EventLog::logEvent( 
+				$client->id, 'rhapsody_error', 'UNDERRUN', "decoder: $decoder / output: $output",
+			);
+		}
 	}
 	
 	playmode( $client, 'pause' );

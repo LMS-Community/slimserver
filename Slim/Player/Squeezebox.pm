@@ -150,6 +150,8 @@ sub play {
 	if ( Slim::Music::Info::isRemoteURL( $params->{url} ) ) {
 		# begin playback once we have this much data in the decode buffer (in KB)
 		$params->{bufferThreshold} = 20;
+		
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $params->{url} );
 
 		# If we know the bitrate of the stream, we instead buffer a certain number of seconds of audio
 		if ( my $bitrate = Slim::Music::Info::getBitrate( $params->{url} ) ) {
@@ -160,15 +162,24 @@ sub play {
 			$params->{bufferThreshold} = 255 if $params->{bufferThreshold} > 255;
 		}
 		
+		# Check with the protocol handler on whether or not to show buffering messages
+		my $showBuffering = 1;
+		
+		if ( $handler && $handler->can('showBuffering') ) {
+			$showBuffering = $handler->showBuffering( $client, $params->{url} );
+		}
+		
 		# Set a timer for feedback during buffering
-		$client->bufferStarted( Time::HiRes::time() ); # track when we started buffering
-		Slim::Utils::Timers::killTimers( $client, \&buffering );
-		Slim::Utils::Timers::setTimer(
-			$client,
-			Time::HiRes::time() + 0.125,
-			\&buffering,
-			$params->{bufferThreshold} * 1024
-		);
+		if ( $showBuffering ) {
+			$client->bufferStarted( Time::HiRes::time() ); # track when we started buffering
+			Slim::Utils::Timers::killTimers( $client, \&buffering );
+			Slim::Utils::Timers::setTimer(
+				$client,
+				Time::HiRes::time() + 0.125,
+				\&buffering,
+				$params->{bufferThreshold} * 1024
+			);
+		}
 	}
 
 	$client->stream('s', $params);
@@ -862,9 +873,15 @@ sub stream {
 			# going to have the mms/http chunking headers.
 			if ($server_url) {
 
-				if ($server_url =~ /^rhap:/) {
+				if ( $server_url =~ /\.rad$/ ) {
+					# Rhapsody Direct
+					$pcmsamplesize = 3;
+				}
+				elsif ( $server_url =~ /^rhap:/ ) {
+					# Rhapsody UPnP
 					$pcmsamplesize = 2;
-				} else {
+				}
+				else {
 					$pcmsamplesize = 1;
 				}
 

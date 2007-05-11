@@ -99,6 +99,14 @@ sub open {
 
 	# Skip async DNS if we know the IP address or are using a proxy (skipDNS)
 	if ( $args->{skipDNS} || $args->{PeerAddr} || Net::IP::ip_is_ipv4( $args->{Host} ) ) {
+		
+		# If caller only wanted to lookup the DNS, callback now
+		if ( my $onDNS = $args->{onDNS} ) {
+			my $pt = $args->{passthrough} || [];
+			$onDNS->( $args->{PeerAddr} || $args->{Host}, @{$pt} );
+			return;
+		}
+		
 		return $self->connect( $args );
 	}
 
@@ -199,6 +207,13 @@ sub _dns_read {
 				$bgsock->close;
 				undef $bgsock;
 				
+				# If caller only wanted to lookup the DNS, callback now
+				if ( my $onDNS = $args->{onDNS} ) {
+					my $pt = $args->{passthrough} || [];
+					$onDNS->( $args->{PeerAddr} || $args->{Host}, @{$pt} );
+					return;
+				}
+				
 				return $self->connect( $args );
 			}
 		}
@@ -287,6 +302,7 @@ sub write_async {
 			Host        => $args->{host},
 			PeerPort    => $args->{port},
 			skipDNS     => $args->{skipDNS},
+			Timeout     => $args->{Timeout},
 			onConnect   => \&write_async,
 			onError     => \&_async_error,
 			passthrough => [ $self, $args ],

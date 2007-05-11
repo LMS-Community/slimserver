@@ -1,0 +1,106 @@
+PLUGIN_RHAPSODY_DIRECT_MODULE_NAME
+	DE	Rhapsody
+	EN	Rhapsody
+	ES	Rhapsody
+	FR	Rhapsody
+	IT	Rhapsody
+	NL	Rhapsody
+
+PLUGIN_RHAPSODY_DIRECT_ERROR
+	DE	Rhapsody-Fehler
+	EN	Rhapsody Error
+	ES	Error de Rhapsody
+	FR	Erreur Rhapsody
+	IT	Errore Rhapsody
+	NL	Rhapsody-fout
+
+PLUGIN_RHAPSODY_DIRECT_RPDS_FAULT
+	DE	Interner Rhapsody-Fehler: %s
+	EN	Internal Rhapsody Error: %s
+	ES	Error interno de Rhapsody: %s
+	FR	Erreur interne Rhapsody: %s
+	IT	Errore interno Rhapsody: %s
+	NL	Interne Rhapsody-fout: %s
+
+PLUGIN_RHAPSODY_DIRECT_RPDS_INVALID
+	DE	Ungültige Rhapsody-Reaktion vom Player.
+	EN	Invalid Rhapsody response from player.
+	ES	Respuesta no válida de Rhapsody desde reproductor.
+	FR	Réponse Rhapsody non valide de la part de la platine.
+	IT	Risposta Rhapsody non valida dal lettore.
+	NL	Ongeldige Rhapsody-respons van speler.
+
+PLUGIN_RHAPSODY_DIRECT_RPDS_TIMEOUT
+	DE	Verbindung mit Rhapsody nicht möglich.
+	EN	Unable to communicate with Rhapsody.
+	ES	Imposible comunicarse con Rhapsody.
+	FR	Communication avec Rhapsody impossible.
+	IT	Impossibile comunicare con Rhapsody.
+	NL	Geen communicatie mogelijk met Rhapsody.
+
+PLUGIN_RHAPSODY_DIRECT_RPDS_SSL_ERROR
+	DE	Player konnnte keine Verbindung mit Rhapsody herstellen.
+	EN	Player was unable to communicate with Rhapsody.
+	ES	El reproductor no se pudo comunicar con Rhapsody.
+	FR	La platine n'a pas pu communiquer avec Rhapsody.
+	IT	Il lettore non è stato in grado di comunicare con Rhapsody.
+	NL	Speler kan niet met Rhapsody communiceren.
+
+PLUGIN_RHAPSODY_DIRECT_PLAYER_REQUIRED
+	DE	Für Rhapsody ist Squeezebox 2, 3 oder Transporter erforderlich.
+	EN	Please select a Squeezebox 2, 3, or Transporter to use Rhapsody.
+	ES	Seleccione Squeezebox 2, 3 o Transporter para usar Rhapsody.
+	FR	Sélectionnez une Squeezebox2, 3 ou Transporter pour utiliser Rhapsody.
+	IT	Per usare Rhapsody, selezionare uno Squeezebox 2 o 3 o un Transporter.
+	NL	Selecteer een Squeezebox 2, 3, of Transporter om Rhapsody te gebruiken.
+
+PLUGIN_RHAPSODY_DIRECT_US_ONLY
+	DE	Rhapsody ist leider derzeit nur in den USA verfügbar.
+	EN	Sorry, Rhapsody is currently available in the U.S. only.
+	ES	Rhapsody sólo está disponible en EE UU.
+	FR	Rhapsody est uniquement disponible aux Etats-Unis actuellement.
+	IT	Spiacenti, al momento Rhapsody è disponibile solo negli USA.
+	NL	Sorry, Rhapsody is momenteel alleen beschikbaar in de VS.
+
+PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED
+	DE	Audio-Stream-Fehler, nächster Titel wird aufgerufen.
+	EN	Audio stream failed, skipping to next track.
+	ES	Error de secuencia de audio; salto a pista siguiente.
+	FR	Echec du flux audio, lecture du morceau suivant.
+	IT	Errore di flusso audio. Passaggio al brano seguente.
+	NL	Audiogegevensstroom mislukt. Volgend nummer wordt geprobeerd.
+
+PLUGIN_RHAPSODY_DIRECT_LOGGING_IN
+	DE	Anmelden bei Rhapsody läuft ...
+	EN	Logging in to Rhapsody...
+	ES	Iniciando sesión en Rhapsody...
+	FR	Connexion à Rhaposdy...
+	IT	Accesso a Rhapsody...
+	NL	Bezig met aanmelden bij Rhapsody...
+
+PLUGIN_RHAPSODY_DIRECT_GETTING_TRACK_INFO
+	DE	Titelinfos werden geladen ...
+	EN	Getting track info...
+	ES	Obteniendo información de pista...
+	FR	Obtention des informations sur le morceau...
+	IT	Recupero info su brano...
+	NL	Nummerinfo wordt opgehaald...
+
+PLUGIN_RHAPSODY_DIRECT_NO_TRACK
+	DE	Titel für Sender konnte nicht geladen werden.
+	EN	Unable to retrieve track for channel.
+	ES	Imposible obtener pista para canal.
+	FR	Impossible de récupérer le morceau pour le canal.
+	IT	Impossibile recuperare brano per canale.
+	NL	Kan nummer voor kanaal niet ophalen.
+
+PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK
+	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
+	EN	Unable to retrieve next track, press PLAY to try again.
+	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
+	FR	Impossible d'accéder à la piste suivante, appuyez sur PLAY pour réessayer.
+	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
+	NL	Kan volgende nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
+
+PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT
+	EN	Unable to retrieve account details from SqueezeNetwork.

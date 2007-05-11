@@ -220,6 +220,7 @@ sub new {
 	$client->[117] = undef; # metaTitle, current remote stream metadata title
 	$client->[118] = undef; # SN session ID
 	$client->[119] = 1; # showBuffering
+	$client->[120] = {}; # pluginData, plugin-specific state data
 
 	$clientHash{$id} = $client;
 
@@ -1786,6 +1787,39 @@ sub snSession {
 sub showBuffering {
 	my $r = shift;
 	@_ ? ($r->[119] = shift) : $r->[119];
+}
+
+sub pluginData {
+	my ( $client, $key, $value ) = @_;
+	
+	my $namespace;
+	
+	# if called from a plugin, we automatically use the plugin's namespace for keys
+	my $package = caller(0);
+	if ( $package =~ /Slim::Plugin::(\w+)/ ) {
+		$namespace = $1;
+	}
+	
+	if ( $namespace && !defined $key ) {
+		return $client->[120]->{$namespace};
+	}
+	
+	if ( defined $value ) {
+		if ( $namespace ) {
+			$client->[120]->{$namespace}->{$key} = $value;
+		}
+		else {
+			$client->[120]->{$key} = $value;
+		}
+	}
+	
+	if ( $namespace ) {
+		my $val = $client->[120]->{$namespace}->{$key};
+		return ( defined $val ) ? $val : undef;
+	}
+	else {
+		return $client->[120];
+	}
 }
 
 1;

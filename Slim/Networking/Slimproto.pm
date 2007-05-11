@@ -732,7 +732,7 @@ sub _http_metadata_handler {
 	my $client = shift;
 	my $data_ref = shift;
 
-	logger('player.streaming.direct')->info("metadata (len: ". length($$data_ref) .") $$data_ref");
+	logger('player.streaming.direct')->info("metadata (len: ". length($$data_ref) .")");
 
 	if ($client->can('directMetadata')) {
 		$client->directMetadata($$data_ref);
