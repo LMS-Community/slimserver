@@ -2,7 +2,7 @@ package Slim::Formats::FLAC;
 
 # $tagsd: FLAC.pm,v 1.5 2003/12/15 17:57:50 daniel Exp $
 
-# SlimServer Copyright (c) 2001-2006 Logitech.
+# SlimServer Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

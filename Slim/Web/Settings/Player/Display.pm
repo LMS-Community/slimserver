@@ -2,7 +2,7 @@ package Slim::Web::Settings::Player::Display;
 
 # $Id: Basic.pm 10633 2006-11-09 04:26:27Z kdf $
 
-# SlimServer Copyright (c) 2001-2006 Logitech.
+# SlimServer Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
