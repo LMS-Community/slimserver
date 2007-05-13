@@ -184,7 +184,7 @@ sub processRequest {
 		
 	} elsif ($requestmethod eq 'GET') {
 		
-		# not supported, but should for json 1.1
+		# FIXME: not supported, but should for json 1.1
 		# should parse $procedure from $input	
 	}	
 	
@@ -283,7 +283,7 @@ sub processRequest {
 	# FIXME: accept a hash here for params (JSON 1.1)
 
 	# Check our operational mode using our X-Jive header
-	# We must be deaing with a 1.1 client because X-Jive uses chunked transfers
+	# We must be delaing with a 1.1 client because X-Jive uses chunked transfers
 	# We must not be closing the connection
 	if (defined(my $xjive = $httpResponse->request()->header('X-Jive')) &&
 		$httpClient->proto_ge('1.1') &&
@@ -477,9 +477,15 @@ Handles 'slim.request' calls. Creates a request object and executes it.
 sub requestProcedure {
 	my $context = shift;
 
+	# get the JSON-RPC params
 	my $reqParams = $context->{'procedure'}->{'params'};
 
 	$log->debug( sub { return "requestProcedure(" . Data::Dumper::Dumper($reqParams) . ")" } );
+	
+	# current style : [<player>, [cmd]]
+	# proposed style: [{player:xxx, cmdarray:[xxx], params:{xxx}}, {}]
+	# benefit: more than one command in single request
+	# HOW DOES RECEIVER PARSE???
 	
 	my $commandargs = $reqParams->[1];
 
@@ -528,15 +534,15 @@ sub requestProcedure {
 
  		} else {
  		
-# 			# handle async commands
-# 			if ($request->isStatusProcessing()) {
-# 				
-# 				$log->info("Request is async: will be back");
-# 						
-# 				# add our write routine as a callback
-# 				$request->callbackParameters(\&requestWrite);
-# 				return;
-#			}
+ 			# handle async commands
+ 			if ($request->isStatusProcessing()) {
+ 				
+ 				$log->info("Request is async: will be back");
+ 						
+ 				# add our write routine as a callback
+ 				$request->callbackParameters(\&requestWrite);
+ 				return;
+			}
 			
 			# the request was successful and is not async, send results back to caller!
 			requestWrite($request, $context->{'httpClient'}, $context);
@@ -549,10 +555,10 @@ sub requestProcedure {
 	}	
 }
 
-=head2 requestWrite( $request [, $context])
+=head2 requestWrite( $request $httpClient, $context)
 
-Writes a request downstream. Can be called without a $context in which case it is retrieved
-from the %contexts.
+Writes a request downstream. $httpClient and $context are retrieved if not
+provided (from the request->connectionID and from the contexts array, respectively)
 
 =cut
 sub requestWrite {
@@ -560,7 +566,13 @@ sub requestWrite {
 	my $httpClient = shift;
 	my $context = shift;
 
-	#log->debug("requestWrite()");
+	#$log->debug("requestWrite()");
+	
+	if (!$httpClient) {
+		
+		# recover our http client
+		$httpClient = $request->connectionID();
+	}
 	
 	if (!$context) {
 	
@@ -568,13 +580,13 @@ sub requestWrite {
 		$context = $contexts{$httpClient};
 		
 		if (!$context) {
-			log->error("Context not found in requestWrite!!!!");
+			$log->error("Context not found in requestWrite!!!!");
 			return;
 		}
 	} else {
 
 		if (!$httpClient) {
-			log->error("httpClient not found in requestWrite!!!!");
+			$log->error("httpClient not found in requestWrite!!!!");
 			return;
 		}
 	}
@@ -707,52 +719,58 @@ sub menuQuery {
 
 
 	my @menu = (
+		# {
+		# 	'id' => 'nowplaying',
+		# 	'title' => 'Now Playing',
+		# 	'action' => 'browse',
+		# 	'hierarchy' => ['status', 'info'],
+		# },
 		{
-			'id' => 'nowplaying',
-			'title' => 'Now Playing',
-			'action' => 'browse',
-			'hierarchy' => ['status', 'info'],
+			'text' => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
+			'b_action' => {'cmdarray' => [], 'tags' => {}}
+			'b_play' => {'cmdarray' => ['playlistctrl']}
+			#b_playH
+			#b_
+			#'id' => 'albums',
+			#'title' => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'), #'Albums',
+			#'action' => 'browse',
+			#'cmd' => {'cmdarray' => ['albums'], 'tags' => {'menu'=>'track'}}
+			#'hierarchy' => ['album', 'track', 'info'],
 		},
-		{
-			'id' => 'albums',
-			'title' => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'), #'Albums',
-			'action' => 'browse',
-			'hierarchy' => ['album', 'track', 'info'],
-		},
-		{
-			'id' => 'artists',
-			'title' => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'), #'Artists',
-			'action' => 'browse',
-			'hierarchy' => ['contributor', 'album', 'track', 'info'],
-		},
-		{
-			'id' => 'genres',
-			'title' => Slim::Utils::Strings::string('BROWSE_BY_GENRE'), #'Genres',
-			'action' => 'browse',
-			'hierarchy' => ['genre', 'contributor', 'album', 'track', 'info'],
-		},
-		{
-			'id' => 'years',
-			'title' => Slim::Utils::Strings::string('BROWSE_BY_YEAR'), #'Years',
-			'action' => 'browse',
-			'hierarchy' => ['year', 'album', 'track', 'info'],
-		},
-		{
-			'id' => 'newmusic',
-			'title' => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'), #'New Music',
-			'action' => 'browse',
-			'hierarchy' => ['age', 'track', 'info'],
-		},
+		# {
+		# 	'id' => 'artists',
+		# 	'title' => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'), #'Artists',
+		# 	'action' => 'browse',
+		# 	'hierarchy' => ['contributor', 'album', 'track', 'info'],
+		# },
+		# {
+		# 	'id' => 'genres',
+		# 	'title' => Slim::Utils::Strings::string('BROWSE_BY_GENRE'), #'Genres',
+		# 	'action' => 'browse',
+		# 	'hierarchy' => ['genre', 'contributor', 'album', 'track', 'info'],
+		# },
+		# {
+		# 	'id' => 'years',
+		# 	'title' => Slim::Utils::Strings::string('BROWSE_BY_YEAR'), #'Years',
+		# 	'action' => 'browse',
+		# 	'hierarchy' => ['year', 'album', 'track', 'info'],
+		# },
+		# {
+		# 	'id' => 'newmusic',
+		# 	'title' => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'), #'New Music',
+		# 	'action' => 'browse',
+		# 	'hierarchy' => ['age', 'track', 'info'],
+		# },
 # 		{
 # 			'title' => 'Favorites',
 # 			'action' => '',
 # 		},
-		{
-			'id' => 'playlists',
-			'title' => 'Playlists',
-			'action' => 'browse',
-			'hierarchy' => ['playlist', 'playlisttrack', 'info'],
-		},
+		# {
+		# 	'id' => 'playlists',
+		# 	'title' => 'Playlists',
+		# 	'action' => 'browse',
+		# 	'hierarchy' => ['playlist', 'playlisttrack', 'info'],
+		# },
 # 		{
 # 			'title' => 'Search',
 # 			'action' => 'items',
@@ -767,21 +785,21 @@ sub menuQuery {
 # 				},
 # 			],
 # 		},
-		{
-			'id' => 'internetradio',
-			'title' => 'Internet Radio',
-			'action' => 'browse',
-			'hierarchy' => ['radios'],
-		},
+		# {
+		# 	'id' => 'internetradio',
+		# 	'title' => 'Internet Radio',
+		# 	'action' => 'browse',
+		# 	'hierarchy' => ['radios'],
+		# },
 # 		{
 # 			'title' => 'Settings',
 # 			'action' => ''
 # 		},
-		{
-			'id' => 'exit',
-			'title' => 'Exit',
-			'action' => 'exit',
-		},
+		# {
+		# 	'id' => 'exit',
+		# 	'title' => 'Exit',
+		# 	'action' => 'exit',
+		# },
 	);
 
 	my $numitems = scalar(@menu);
@@ -809,17 +827,5 @@ sub menuQuery {
 
 	$request->setStatusDone();
 }
-
-
-# menu cnt:8 id:B level:kup display:artists
-
-# kup cnt:8 k
-
-
-# genres 0 10 id:1 genre:Bla
-
-# artists 0 10 genre_id:1
-
-
 
 1;
