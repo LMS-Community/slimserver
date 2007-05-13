@@ -695,11 +695,16 @@ sub removePlaylistFromDisk {
 	}
 }
 
-sub newSongPlaylistCallback {
-	my $request = shift;
 
-	my $client = $request->client() || return;
+sub newSongPlaylist {
+	my $client = shift || return;
+	my $reset = shift;
+	
+	logger('player.playlist')->debug("Begin function - reset: " . $reset);
 
+	return if Slim::Player::Playlist::shuffle($client);
+	return if !$prefs->get('playlistdir');
+	
 	my $playlist = '';
 
 	if ($client->currentPlaylist && blessed($client->currentPlaylist)) {
@@ -711,18 +716,27 @@ sub newSongPlaylistCallback {
 		$playlist = $client->currentPlaylist;
 	}
 
-	return if Slim::Music::Info::isRemoteURL($playlist) || Slim::Player::Playlist::shuffle($client);
+	return if Slim::Music::Info::isRemoteURL($playlist);
 
-	if ($prefs->get('playlistdir')) {
+	logger('player.playlist')->info("Calling writeCurTrackForM3U()");
 
-		logger('player.playlist')->info("Calling writeCurTrackForM3U()");
-
-		Slim::Formats::Playlists::M3U->writeCurTrackForM3U(
-			$playlist,
-			$request->getParam('reset') ? 0 : Slim::Player::Source::playingSongIndex($client)
-		);
-	}
+	Slim::Formats::Playlists::M3U->writeCurTrackForM3U(
+		$playlist,
+		$reset ? 0 : Slim::Player::Source::playingSongIndex($client)
+	);
 }
+
+
+sub newSongPlaylistCallback {
+	my $request = shift;
+
+	logger('player.playlist')->debug("Begin function");
+
+	my $client = $request->client() || return;
+	
+	newSongPlaylist($client)
+}
+
 
 sub modifyPlaylistCallback {
 	my $request = shift;

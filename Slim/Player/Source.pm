@@ -1318,11 +1318,10 @@ sub resetSongQueue {
 	$log->info("Song queue is now " . join(',', map { $_->{'index'} } @$queue));
 	
 	# update CURTRACK of a known playlist back to start
-	my $request = Slim::Control::Request->new( (blessed($client) ? $client->id() : undef));
+	#my $request = Slim::Control::Request->new( (blessed($client) ? $client->id() : undef));
+	#$request->addParam('reset',1);
 
-	$request->addParam('reset',1);
-
-	Slim::Player::Playlist::newSongPlaylistCallback($request);
+	Slim::Player::Playlist::newSongPlaylist($client, 1);
 	
 	$client->sendParent( {
 		command => 'currentsongqueue',
