@@ -804,15 +804,30 @@ sub unregisterAutoExecute{
 # Constructors
 ################################################################################
 
+=head2 new ( clientid, requestLineRef, paramsRef )
+
+Creates a new Request object. All parameters are optional. clientid is the
+client ID the request applies to. requestLineRef is a reference to an array
+containing the request terms (f.e. ['pause']). paramsRef is a reference to
+a hash containing the request parameters (tags in CLI lingo, f.e. {sort=>albums}).
+
+requestLinRef is parsed to match an entry in the dispatch table, and parameters
+found there are added to the params. It best to use requestLineRef for all items
+defined in the dispatch table and paramsRef only for tags.
+
+
+=cut
 sub new {
 	my $class          = shift;    # class to construct
 	my $clientid       = shift;    # clientid, if any, to which the request applies
 	my $requestLineRef = shift;    # reference to an array containing the 
                                    # request verbs
+	my $paramsRef      = shift;    # reference to a hash containing the params
 	
-#	tie (my %paramHash, "Tie::LLHash", {lazy => 1});
-	tie (my %paramHash, "Tie::IxHash");
-#	tie (my %resultHash, "Tie::LLHash", {lazy => 1});
+	if (!defined $paramsRef) {
+		tie (my %paramsHash, "Tie::IxHash");
+		$paramsRef = \%paramsHash;
+	}
 	tie (my %resultHash, "Tie::IxHash");
 	
 	my $self = {
@@ -820,7 +835,7 @@ sub new {
 		'_isQuery'           => undef,
 		'_clientid'          => $clientid,
 		'_needClient'        => 0,
-		'_params'            => \%paramHash,
+		'_params'            => $paramsRef,
 		'_curparam'          => 0,
 		'_status'            => 0,
 		'_results'           => \%resultHash,
@@ -868,7 +883,6 @@ sub virginCopy {
 	my @request = @{$self->{'_request'}};
 	$copy->{'_request'} = \@request;
 
-#	tie (my %paramHash, "Tie::LLHash", {lazy => 1});	
 	tie (my %paramHash, "Tie::IxHash");	
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
 		$paramHash{$key} = $val;
