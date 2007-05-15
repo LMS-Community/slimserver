@@ -3,57 +3,80 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_PODCAST
+	DE	Podcasts
 	EN	Podcasts
+	ES	Podcasts
+	FR	Podcasts
+	HE	פריטי Podcast
+	IT	Podcast
+	NL	Podcasts
 
 PLUGIN_PODCAST_DESC
 	DE	Zugang zu Podcasts
 	EN	Access to Podcasts
 
 PODCAST_NOTHING_TO_PLAY
-	DE	Nichts zu spielen
+	DE	Kein Material vorhanden
 	EN	Nothing to play
-	ES	Nada para escuchar
-	FR	Rien à lire
+	ES	Nada para reproducir
+	FR	Aucun podcast à lire
+	HE	אין פריטים להפעלה
 	IT	Niente da riprodurre
 	NL	Niets om af te spelen
 
 PODCAST_GROUP_DESC
-	DE	Der Podcast Browser erlaubt es, Podcasts anzusehen und abzuspielen.
+	DE	Mit dem Podcast-Browser können Sie Podcasts wiedergeben.
 	EN	The Podcast Browser plugin allows you to view and listen to podcasts.
-	ES	El plugin Navegador de Podcasts permite ver y escuchar podcasts.
-	FR	Le module d'extension Podcast vous permet d'afficher et d'écouter des podcasts.
-	NL	Met de Podcast browser plugin kun je podcasts bekijken en beluisteren.
+	ES	El complemento Examinador de podcasts permite ver y escuchar podcasts.
+	FR	Le plugin Podcast vous permet d'afficher et d'écouter des podcasts.
+	HE	יישום ה-Plugin 'דפדפן Podcast' מאפשר לך להציג ולהאזין לפריטי Podcast.
+	IT	Il plugin Podcast Browser consente di visualizzare e ascoltare podcast.
+	NL	Met de Podcast-browserplugin kun je podcasts bekijken en beluisteren.
 
 PODCAST_RESET_BUTTON
 	DE	Zurücksetzen
 	EN	Reset
-	ES	Reinicializar
-	FR	Défaut
-	NL	Herstel
+	ES	Restablecer
+	FR	Réinitialiser
+	HE	איפוס
+	IT	Reimposta
+	NL	Opnieuw instellen
 
 PODCAST_RESETTING
-	DE	Setze Podcasts zurück
+	DE	Standard-Podcasts werden wiederhergestellt
 	EN	Resetting to default podcasts
-	ES	Reestableciendo podcasts por defecto
-	FR	Liste des podcasts par défaut rétablie
-	NL	Herstellen van de standaard podcasts
+	ES	Restableciendo podcasts predeterminados
+	FR	Réinitialisation des podcasts par défaut
+	HE	איפוס לפריטי ה-Podcast המוגדרים כברירת מחדל
+	IT	Reimpostazione dei podcast predefiniti
+	NL	Standaard-podcasts worden opnieuw ingesteld
 
 PODCAST_FEEDS_CHANGE
-	DE	Die Podcast Liste wurde geändert.
+	DE	Die Podcast-Liste wurde geändert.
 	EN	Podcast list changed.
-	ES	Lista de Podcast modificada.
+	ES	La lista de podcasts ha cambiado.
 	FR	Liste des podcasts modifiée.
-	NL	Podcast lijst gewijzigd.
+	HE	רשימת פריטי ה-Podcast השתנתה.
+	IT	Elenco Podcast modificato.
+	NL	Podcast-lijst gewijzigd.
 
 SETUP_PLUGIN_PODCAST_FEEDS
+	DE	Podcasts
 	EN	Podcasts
+	ES	Podcasts
+	FR	Podcasts
+	HE	פריטי Podcast
+	IT	Podcast
+	NL	Podcasts
 
 SETUP_PLUGIN_PODCAST_RESET
-	DE	Podcasts zurücksetzen
+	DE	Standard-Podcasts zurücksetzen
 	EN	Reset default Podcasts
-	ES	Reinicializar Podcasts por defecto
+	ES	Restablecer podcasts predeterminados
 	FR	Rétablir la liste des podcasts par défaut
-	NL	Herstel default podcasts
+	HE	איפוס פריטי Podcast המוגדרים כברירת מחדל
+	IT	Reimposta podcast predefiniti
+	NL	Standaard-podcasts opnieuw instellen
 
 SETUP_PLUGIN_PODCAST_ADD_FEED
 	DE	Neuen Feed hinzufügen:

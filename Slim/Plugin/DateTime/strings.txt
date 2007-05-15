@@ -4,38 +4,56 @@
 
 PLUGIN_SCREENSAVER_DATETIME
 	CS	Datumový spořič
-	DE	Datum/Zeit Bildschirmschoner
+	DE	Bildschirmschoner: Datum/Zeit
 	EN	Date and Time Screensaver
-	ES	Salvapantallas de Fecha y Hora
+	ES	Protector de pantalla de fecha y hora
 	FR	Ecran de veille Date/Heure
-	HE	שומר מסך תאריכון
-	IT	Data e ora
-	NL	Datum en tijd
+	HE	שומר מסך של תאריך ושעה
+	IT	Screen saver con data e ora
+	NL	Datum en tijd-schermbeveiliger
 
 PLUGIN_SCREENSAVER_DATETIME_DESC
-	DE	Bildschirmschoner zur Anzeige von Datum und Zeit 
+	CS	Datumový spořič
+	DE	Bildschirmschoner: Datum/Zeit
 	EN	Date and Time Screensaver
+	ES	Protector de pantalla de fecha y hora
+	FR	Ecran de veille Date/Heure
+	HE	שומר מסך של תאריך ושעה
+	IT	Screen saver con data e ora
+	NL	Datum en tijd-schermbeveiliger
 
 SETUP_GROUP_DATETIME
-	DE	Datum/Zeit Bildschirmschoner Einstellungen
+	DE	Einstellungen für den Bildschirmschoner \'Datum/Zeit\'
 	EN	Date and Time Screensaver Settings
+	ES	Configuración de protector de pantalla de fecha y hora
 	FR	Paramètres Ecran de veille Date/Heure
-	NL	Instellingen datum en tijd schermbeveiliger
+	HE	הגדרות שומר המסך של תאריך ושעה
+	IT	Impostazioni screen saver con data e ora
+	NL	Instellingen datum en tijd-schermbeveiliger
 
 SETUP_GROUP_DATETIME_DESC
-	DE	Hier können Sie das Format des Datum/Zeit Bildschirmschoners festlegen.
+	DE	Hier können Sie das Format des Bildschirmschoners \'Datum/Zeit\' festlegen.
 	EN	These settings control the behavior of the Date and Time Screensaver
-	FR	Ces réglages ajustent les paramètres de l'Ecran de veille Date/Heure.
-	NL	Deze instellingen stellen het gedrag in van de datum en tijd schermbeveiliger
+	ES	Estos parámetros controlan el comportamiento del protector de pantalla de fecha y hora
+	FR	Ces réglages ajustent les paramètres de l\'Ecran de veille Date/Heure.
+	HE	הגדרות אלה שולטות בהתנהגות של שומר המסך של תאריך ושעה.
+	IT	Queste impostazioni consentono di controllare il funzionamento dello screen saver con data e ora
+	NL	Deze instellingen bepalen het gedrag van de datum en tijd-schermbeveiliger
 
 SETUP_GROUP_DATETIME_DEFAULTTIME
-	DE	Slimserver Standard
+	DE	SlimServer-Standard
 	EN	Slimserver Default
+	ES	Predeterminado de SlimServer
 	FR	Défaut serveur
-	NL	SlimServer standaard
+	HE	ברירת המחדל של Slimserver
+	IT	Impostazioni predefinite di SlimServer
+	NL	SlimServer-standaardinstellingen
 
 SETUP_GROUP_DATETIME_DEFAULTDATE
-	DE	Slimserver Standard
+	DE	SlimServer-Standard
 	EN	Slimserver Default
+	ES	Predeterminado de SlimServer
 	FR	Défaut serveur
-	NL	SlimServer standaard
+	HE	ברירת המחדל של Slimserver
+	IT	Impostazioni predefinite di SlimServer
+	NL	SlimServer-standaardinstellingen

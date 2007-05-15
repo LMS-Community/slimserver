@@ -3,45 +3,85 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_RHAPSODY_MODULE_NAME
+	DE	Real Rhapsody
 	EN	Real Rhapsody
+	ES	Real Rhapsody
+	FR	Real Rhapsody
+	HE	Real Rhapsody
+	IT	Real Rhapsody
+	NL	Real Rhapsody
 
 PLUGIN_RHAPSODY_DESC
 	EN	Real Rhapsody
 
 RHAPSODY
+	DE	Rhapsody
 	EN	Rhapsody
+	ES	Rhapsody
+	FR	Rhapsody
+	HE	Rhapsody
+	IT	Rhapsody
+	NL	Rhapsody
 
 PLUGIN_RHAPSODY_UNSUPPORTED
-	DE	Fehler: Rhapsody benötigt eine SB2 oder neuer
+	DE	Fehler: Rhapsody benötigt SB2 oder neuer
 	EN	Error: Rhapsody requires SB2 or higher
-	NL	Fout: Rhapsody heeft een SB2 of hoger nodig
+	ES	Error: Rhapsody requiere SB2 o posterior
+	FR	Erreur: Rhapsody nécessite la SB2 ou version ultérieure.
+	HE	שגיאה: עבור Rhapsody יש צורך ב-SB2 ואילך.
+	IT	Errore: Rhapsody richiede SB2 o versioni successive
+	NL	Fout: Rhapsody vereist SB2 of hoger
 
 PLUGIN_RHAPSODY_ERROR_UNAUTH
-	DE	Rhapsody: Unberechtigte Anfrage.
+	DE	Rhapsody: Unberechtigte Anforderung.
 	EN	Rhapsody: Unauthorized request.
-	NL	Rhapsody: Verzoek niet toegestaan.
+	ES	Rhapsody: Solicitud no autorizada.
+	FR	Rhapsody: requête non autorisée.
+	HE	Rhapsody: בקשה לא מורשית.
+	IT	Rhapsody: richiesta non autorizzata.
+	NL	Rhapsody: Niet-geautoriseerd verzoek
 
 PLUGIN_RHAPSODY_ERROR_FORBIDDEN
-	DE	Rhapsody: Verbotene Anfrage.
+	DE	Rhapsody: Unzulässige Anforderung.
 	EN	Rhapsody: Request forbidden.
-	NL	Rhapsody: Verzoek niet toegestaan.
-	
+	ES	Rhapsody: No se permite la solicitud.
+	FR	Rhapsody: requête non autorisée.
+	HE	Rhapsody: בקשה אסורה.
+	IT	Rhapsody: richiesta vietata.
+	NL	Rhapsody: Verzoek verboden.
+
 PLUGIN_RHAPSODY_ERROR_FILE_NOT_FOUND
 	DE	Rhapsody: Datei nicht gefunden.
 	EN	Rhapsody: File not found.
+	ES	Rhapsody: No se ha encontrado el archivo.
+	FR	Rhapsody: fichier introuvable.
+	HE	Rhapsody: הקובץ לא נמצא.
+	IT	Rhapsody: file non trovato.
 	NL	Rhapsody: Bestand niet gevonden.
 
 PLUGIN_RHAPSODY_ERROR_BUSY
 	DE	Rhapsody: Die Anwendung ist ausgelastet.
 	EN	Rhapsody: Application is busy.
-	NL	Rhapsody: Programma is bezig.
+	ES	Rhapsody: La aplicación está ocupada.
+	FR	Rhapsody: application occupée.
+	HE	Rhapsody: היישום נמצא בשימוש.
+	IT	Rhapsody: l'applicazione è occupata.
+	NL	Rhapsody: Toepassing is bezig.
 
 PLUGIN_RHAPSODY_ERROR_STALE
-	DE	Rhapsody: Bitte überprüfen Sie die Anwendung.
+	DE	Rhapsody: Zeitlimit überschritten.
 	EN	Rhapsody: Session has timed out.
-	NL	Rhapsody: Sessie time-out.
+	ES	Rhapsody: La sesión ha caducado.
+	FR	Rhapsody: la session a expiré.
+	HE	Rhapsody: פג תוקף ההפעלה.
+	IT	Rhapsody: sessione scaduta.
+	NL	Rhapsody: Time-out van sessie.
 
 PLUGIN_RHAPSODY_ERROR_INTERNAL
-	DE	Rhapsody: Interner Serverfehler, bitte überprüfen Sie die Rhapsody Anwendung.
+	DE	Rhapsody: Interner Serverfehler, überprüfen Sie Rhapsody.
 	EN	Rhapsody: Internal server error, please check the Rhapsody application.
-	NL	Rhapsody: Interne serverfout. Controleer het Rhapsody programma.
+	ES	Rhapsody: Error interno del servidor, compruebe la aplicación Rhapsody.
+	FR	Rhapsody: erreur de serveur interne, veuillez vérifier l'application Rhapsody.
+	HE	Rhapsody: שגיאה פנימית בשרת, בדוק את היישום Rhapsody.
+	IT	Rhapsody: errore interno del server. Controllare l'applicazione Rhapsody.
+	NL	Rhapsody: Interne serverfout. Controleer de Rhapsody-toepassing.

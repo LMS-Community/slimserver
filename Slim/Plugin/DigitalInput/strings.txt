@@ -5,36 +5,57 @@
 PLUGIN_DIGITAL_INPUT
 	DE	Digitale Eingänge
 	EN	Digital Inputs
-	NL	Digitale invoer
+	ES	Entradas digitales
+	FR	Entrées numériques
+	HE	פריטי קלט דיגיטלי
+	IT	Ingressi digitali
+	NL	Digitale ingangen
 
 PLUGIN_DIGITAL_INPUT_DESC
 	DE	Digitale Eingänge für den Transporter
 	EN	Digital Input for Transporter
 
 PLUGIN_DIGITAL_INPUT_BALANCED_AES
+	DE	Ausgeglichenes AES/EBU
 	EN	Balanced AES/EBU
-	ES	AES/EBU Balanceada
-	FR	AES/EBU symétrique
+	ES	AES/EBU equilibrado
+	FR	AES/EBU équilibré
+	HE	AES/EBU מאוזן
+	IT	AES/EBU bilanciato
 	NL	Gebalanceerde AES/EBU
-	
+
 PLUGIN_DIGITAL_INPUT_BNC_SPDIF
+	DE	BNC Koax S/PDIF
 	EN	BNC Coax S/PDIF
-	ES	S/PDIF BNC Coax 
-	FR	S/PDIF coaxial BNC
-	NL	BNC coax S/PDIF
-	
+	ES	BNC Coax S/PDIF
+	FR	Coax BNC S/PDIF
+	HE	BNC Coax S/PDIF
+	IT	S/PDIF coassiale per BNC
+	NL	BNC coaxiale S/PDIF
+
 PLUGIN_DIGITAL_INPUT_RCA_SPDIF
+	DE	Cinch Koax S/PDIF
 	EN	RCA Coax S/PDIF
-	ES	S/PDIF RCA Coax
-	FR	S/PDIF coaxial RCA
-	NL	RCA coax S/PDIF
-	
+	ES	RCA Coax S/PDIF
+	FR	Coax RCA S/PDIF
+	HE	RCA Coax S/PDIF
+	IT	S/PDIF RCA coassiale
+	NL	RCA coaxiale S/PDIF
+
 PLUGIN_DIGITAL_INPUT_OPTICAL_SPDIF
 	DE	Optisch S/PDIF (TOSLINK)
 	EN	Optical S/PDIF (TOSLINK)
+	ES	S/PDIF óptico (TOSLINK)
+	FR	S/PDIF optique (TOSLINK)
+	HE	Optical S/PDIF (TOSLINK)‎
+	IT	S/PDIF ottico (TOSLINK)
 	NL	Optische S/PDIF (TOSLINK)
 
 PLUGIN_DIGITAL_INPUT_CHOOSE_BELOW
 	DE	Wählen Sie einen digitalen Eingang:
 	EN	Choose a Digital Input option below:
-	NL	Kies hieronder een digitale invoeroptie:
+	ES	Elija una opción de entrada digital:
+	FR	Sélectionnez une option d'entrée numérique ci-dessous:
+	HE	בחר אחת מאפשרויות הקלט הדיגיטלי הבאות:
+	IT	Scegliere una delle seguenti opzioni di ingresso digitale:
+	NL	Kies hieronder een digitale-ingangsoptie:
