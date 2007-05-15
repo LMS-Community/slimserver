@@ -12217,6 +12217,9 @@ DEBUG_NETWORK_UPNP
 	DE	UPnP Server & Geräte Information (Rhapsody)
 	EN	UPnP Server & Device Information (Rhapsody)
 
+DEBUG_NETWORK_JSONRPC
+	EN	JSON-RPC API Debugging
+
 DEBUG_FORMATS_AUDIO
 	DE	Datei Metadaten & Audio Parsing
 	EN	File Metadata & Audio Parsing Information

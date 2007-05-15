@@ -43,6 +43,7 @@ use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
 use Slim::Web::Pages;
 use Slim::Web::Graphics;
+use Slim::Web::JSONRPC;
 use Slim::Utils::Prefs;
 
 BEGIN {
@@ -148,6 +149,9 @@ sub init {
 
 	# Initialize graphics resizing
 	Slim::Web::Graphics::init();
+	
+	# Initialize JSON RPC
+	Slim::Web::JSONRPC::init();
 }
 
 sub init2 {
