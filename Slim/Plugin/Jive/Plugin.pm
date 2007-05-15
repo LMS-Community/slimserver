@@ -727,8 +727,8 @@ sub menuQuery {
 		# },
 		{
 			'text' => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
-			'b_action' => {'cmdarray' => [], 'tags' => {}}
-			'b_play' => {'cmdarray' => ['playlistctrl']}
+			'b_action' => {'cmdarray' => [], 'tags' => {}},
+			'b_play' => {'cmdarray' => ['playlistctrl']},
 			#b_playH
 			#b_
 			#'id' => 'albums',
