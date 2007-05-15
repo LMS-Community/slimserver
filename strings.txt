@@ -24,7 +24,7 @@ LANGUAGE_CHOICES
 	ES	Español
 	FI	Suomi
 	FR	Français
-	HE	Hebrew
+	HE	עברית
 	IT	Italiano
 	JA	日本語
 	NL	Nederlands
