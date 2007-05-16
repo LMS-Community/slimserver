@@ -660,7 +660,7 @@ sub scheduleWriteOfPlaylist {
 		return 0;
 	}
 
-	if ($playlistObj->title eq $client->string('UNTITLED')) {
+	if ($playlistObj->title eq Slim::Utils::Strings::string('UNTITLED')) {
 
 		logger('player.playlist')->warn("Not writing out untitled playlist.");
 
@@ -672,7 +672,7 @@ sub scheduleWriteOfPlaylist {
 		undef,
 		$playlistObj->path,
 		1,
-		Slim::Player::Source::playingSongIndex($client),
+		defined($client) ? Slim::Player::Source::playingSongIndex($client) : 0,
 	);
 }
 

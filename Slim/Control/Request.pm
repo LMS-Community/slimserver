@@ -63,6 +63,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  N    playlists       <startindex>                <numitems>                  <tagged parameters>
  N    playlists       tracks                      <startindex>                <numitems>       <tagged parameters>
  N    playlists       edit                        <tagged parameters>
+ N    playlists       new                         <tagged parameters>
 
 =head2 PLAYERS
 
@@ -543,6 +544,7 @@ sub init {
     addDispatch(['playlists',      '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::playlistsQuery]);
     addDispatch(['playlists',      'edit'],                                                            [0, 0, 1, \&Slim::Control::Commands::playlistsEditCommand]);
     addDispatch(['playlists',      'delete'],                                                          [0, 0, 1, \&Slim::Control::Commands::playlistsDeleteCommand]);
+    addDispatch(['playlists',      'new'],                                                             [0, 0, 1, \&Slim::Control::Commands::playlistsNewCommand]);
     addDispatch(['playlists',      'rename'],                                                          [0, 0, 1, \&Slim::Control::Commands::playlistsRenameCommand]);
     addDispatch(['playlists',      'tracks',         '_index',     '_quantity'],                       [0, 1, 1, \&Slim::Control::Queries::playlistsTracksQuery]);
     addDispatch(['power',          '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::powerQuery]);
@@ -1058,6 +1060,7 @@ my %statusMap = (
 	102 => 'Bad params!',
 	103 => 'Missing client!',
 	104 => 'Unkown in dispatch table',
+	105 => 'Bad slimserver config',
 );
 
 # validate the Request, make sure we are dispatchable
@@ -1179,6 +1182,16 @@ sub setStatusNotDispatchable {
 sub isStatusNotDispatchable {
 	my $self = shift;
 	return ($self->__status() == 104);
+}
+
+sub setStatusBadConfig {
+	my $self = shift;	
+	$self->__status(105);
+}
+
+sub isStatusBadConfig {
+	my $self = shift;
+	return ($self->__status() == 105);
 }
 
 sub getStatusText {

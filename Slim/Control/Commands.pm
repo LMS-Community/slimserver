@@ -724,11 +724,20 @@ sub playlistSaveCommand {
 		$request->setStatusBadDispatch();
 		return;
 	}
+	
+	# can't do much without playlistdir!
+	if (!$prefs->get('playlistdir')) {
+		$request->setStatusBadConfig();
+		return;
+	}
 
 	# get the parameters
 	my $client = $request->client();
 	my $title  = $request->getParam('_title');
 	my $titlesort = Slim::Utils::Text::ignoreCaseArticles($title);
+
+	# don't allow periods, colons, control characters, slashes, backslashes, just to be safe.
+	$title     =~ tr|.:\x00-\x1f\/\\| |s;
 
 	my $playlistObj = Slim::Schema->rs('Playlist')->updateOrCreate({
 
@@ -1604,6 +1613,70 @@ sub playlistsDeleteCommand {
 
 	Slim::Schema->forceCommit;
 
+	$request->setStatusDone();
+}
+
+
+sub playlistsNewCommand {
+	my $request = shift;
+	
+	$log->debug("Begin Function");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['playlists'], ['new']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# can't do much without playlistdir!
+	if (!$prefs->get('playlistdir')) {
+		$request->setStatusBadConfig();
+		return;
+	}
+
+	# get the parameters
+	my $title  = $request->getParam('name');
+
+	# don't allow periods, colons, control characters, slashes, backslashes, just to be safe.
+	$title     =~ tr|.:\x00-\x1f\/\\| |s;
+	my $titlesort = Slim::Utils::Text::ignoreCaseArticles($title);
+
+	# create the playlist URL
+	my $newUrl   = Slim::Utils::Misc::fileURLFromPath(
+		catfile($prefs->get('playlistdir'), $title . '.m3u')
+	);
+
+	my $existingPlaylist = Slim::Schema->rs('Playlist')->objectForUrl({
+		'url' => $newUrl,
+	});
+
+	if (blessed($existingPlaylist)) {
+
+		# the name already exists!
+		$request->addResult("overwritten_playlist_id", $existingPlaylist->id());
+	}
+	else {
+
+		my $playlistObj = Slim::Schema->rs('Playlist')->updateOrCreate({
+
+			'url' => $newUrl,
+
+			'attributes' => {
+				'TITLE' => $title,
+				'CT'    => 'ssp',
+			},
+		});
+
+		$playlistObj->set_column('titlesort', $titlesort);
+		$playlistObj->update;
+
+		Slim::Schema->forceCommit;
+
+		Slim::Player::Playlist::scheduleWriteOfPlaylist(undef, $playlistObj);
+
+		$request->addResult('playlist_id', $playlistObj->id);
+	}
+	
 	$request->setStatusDone();
 }
 
