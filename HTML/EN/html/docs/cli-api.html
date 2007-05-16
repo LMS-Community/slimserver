@@ -62,6 +62,10 @@
 		Updated the &quot;<a href="#status">status</a>&quot; query to return
 		the time stamp of the last change to the current player playlist.
 	</li>
+	<li>
+		Updated the &quot;<a href="#playlist newsong">playlist newsong</a>&quot; 
+		notification to return the song title and playlist index.
+	</li>
 </ul>
 <p>
 	The following changes or new commands &amp; queries are available starting with
@@ -6460,7 +6464,7 @@ in the saved playlists folder.</p>
 </p>
 
 <br>
-<p>
+<p id="rescan done">
 	<strong>
 		<code>
 			rescan
@@ -6474,7 +6478,7 @@ in the saved playlists folder.</p>
 </p>
 
 <br>
-<p>
+<p id="unknownir">
 	<strong>
 		<code>
 			&lt;playerid&gt;
@@ -6490,22 +6494,23 @@ in the saved playlists folder.</p>
 </p>
 
 <br>
-<p>
+<p id="playlist newsong">
 	<strong>
 		<code>
 			&lt;playerid&gt;
 			playlist
 			newsong
 			[&lt;current_title&gt;]
+			[&lt;playlist index&gt;]
 		</code>
 	</strong>
 </p>
 <p>
-	This signals the start of a new song as reported by the player hardware
-	(SB1/2/3 only; for SliMP3 players, this happens a couple of seconds before
-	music starts on the player) and/or the start of a new song as reported
-	by the listened to radio station (in which case the &quot;current_title
-	&quot; information is provided for convenience).
+	This signals the start of a new song, along with its &quot;current_title
+	&quot; and &quot;playlist index&quot;, as reported by the player hardware
+	(SB1/2/3/Transporter only; for SliMP3 players, this happens a couple of seconds before
+	music starts on the player). For radio stations, only the &quot;current_title
+	&quot; information is provided.
 </p>
 
 

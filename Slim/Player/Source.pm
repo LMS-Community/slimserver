@@ -1370,7 +1370,20 @@ sub trackStartEvent {
 	$client->currentPlaylistChangeTime(time());
 
 	Slim::Player::Playlist::refreshPlaylist($client);
-	Slim::Control::Request::notifyFromArray($client, ['playlist', 'newsong']);
+	Slim::Control::Request::notifyFromArray($client,
+		[
+			'playlist', 
+			'newsong', 
+			Slim::Music::Info::standardTitle(
+				$client, 
+				Slim::Player::Playlist::song(
+					$client,
+					$last_song->{'index'}
+				)
+			),
+			$last_song->{'index'}
+		]
+	);
 
 	$log->info("Song queue is now " . join(',', map { $_->{'index'} } @$queue));
 }
@@ -1935,7 +1948,7 @@ sub openSong {
 	# make sure newsong comes after open, like it does for sbs
 	if (!$client->reportsTrackStart()) {
 
-		Slim::Control::Request::notifyFromArray($client, ['playlist', 'newsong']);
+		Slim::Control::Request::notifyFromArray($client, ['playlist', 'newsong', Slim::Music::Info::standardTitle($client, $track), playingSongIndex($client)]);
 	}
 
 	return 1;
