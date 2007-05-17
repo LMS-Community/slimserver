@@ -8,6 +8,7 @@ package JSON::Parser;
 use vars qw($VERSION $USE_UTF8 $USE_UnicodeString);
 use strict;
 use JSON ();
+use Carp ();
 
 BEGIN { # suggested by philip.tellis[at]gmail.com
     if ($] < 5.008) {
@@ -29,7 +30,7 @@ BEGIN { # suggested by philip.tellis[at]gmail.com
 }
 
 
-$VERSION  = '1.04';
+$VERSION  = '1.07';
 
 # TODO: I made 1.03, but that will be used after JSON 1.90
 
@@ -100,10 +101,10 @@ sub new {
         $s = '';
 
         if($ch eq '"' or ($apos and $ch eq "'")){
-            my $boundChar = $ch;
+            my $boundChar = $ch if ($apos);
 
             OUTER: while( defined(next_chr()) ){
-                if($ch eq '"' or ($apos and $ch eq $boundChar)){
+                if((!$apos and $ch eq '"') or ($apos and $ch eq $boundChar)){
                     next_chr();
                     $utf8 and utf8::decode($s);
                     return $s;
@@ -343,8 +344,15 @@ sub new {
 
 
     sub error {
-        my $error = shift;
-        die "$error at $at in $text.";
+        my $error  = shift;
+
+        local $Carp::CarpLevel = 1;
+
+        my $str = substr($text, $at);
+
+        unless (length $str) { $str = '(end of string)'; }
+
+        Carp::croak "$error, at character offset $at ($str)";
     }
 
 
@@ -374,11 +382,25 @@ use overload (
           ! defined $_[0]->{value}  ? undef
         : $_[0]->{value} eq 'false' ? 0 : 1;
     },
+    'eq'   => sub { (defined $_[0]->{value} ? $_[0]->{value} : 'null') eq $_[1] },
+    'ne'   => sub { (defined $_[0]->{value} ? $_[0]->{value} : 'null') ne $_[1] },
+    '=='   => sub { (!defined $_[0]->{value} ? -1 : $_[0]->{value} eq 'false' ? 0 : 1) == $_[1] },
+    '!='   => sub { (!defined $_[0]->{value} ? -1 : $_[0]->{value} eq 'false' ? 0 : 1) != $_[1] },
 );
 
 1;
 
 __END__
+
+    'eq'   => sub {
+        if (ref($_[1]) eq 'JSON::NotString') {
+            return $_[0]->{value} eq $_[1]->{value};
+        }
+        else {
+            return $_[0]->{value} eq $_[1];
+        }
+    },
+
 
 =head1 SEE ALSO
 

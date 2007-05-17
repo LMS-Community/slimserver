@@ -6,9 +6,10 @@ use Carp;
 use vars qw($VERSION $USE_UTF8);
 use strict;
 use JSON ();
+use B ();
 
 
-$VERSION = '1.11';
+$VERSION = '1.13';
 
 BEGIN {
     eval 'require Scalar::Util';
@@ -21,6 +22,13 @@ BEGIN {
         *JSON::Converter::blessed = sub {
             local($@, $SIG{__DIE__}, $SIG{__WARN__});
             ref($_[0]) ? eval { $_[0]->a_sub_not_likely_to_be_here } : undef;
+        };
+    }
+
+    if ($] < 5.006) {
+        eval q{
+            sub B::SVf_IOK () { 0x00010000; }
+            sub B::SVf_NOK () { 0x00020000; }
         };
     }
 
@@ -192,6 +200,12 @@ sub _valueToJson {
             return 'true'  if($value =~ /^[Tt][Rr][Uu][Ee]$/);
             return 'false' if($value =~ /^[Ff][Aa][Ll][Ss][Ee]$/);
         }
+
+        my $b_obj = B::svref_2object(\$value);  # for round trip problem
+        # SvTYPE is IV or NV?
+        return $value # as is 
+                if ($b_obj->FLAGS & B::SVf_IOK or $b_obj->FLAGS & B::SVf_NOK);
+
         return _stringfy($value);
     }
     elsif($JSON::Converter::execcoderef and ref($value) eq 'CODE'){
