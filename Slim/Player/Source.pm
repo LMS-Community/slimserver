@@ -317,11 +317,6 @@ sub playmode {
 
 	$log->info($client->id, ": Switching to mode $newmode from $prevmode");
 
-	if ($log->is_debug) {
-
-		$log->debug(bt(1));
-	}
-
 	# don't switch modes if it's the same 
 	if ($newmode eq $prevmode && !$seekoffset) {
 
@@ -1502,8 +1497,10 @@ sub explodeSong {
 	# insert the list onto the playlist
 	splice @{Slim::Player::Playlist::playList($client)}, streamingSongIndex($client), 1, @{$tracks};
 
-	# update the shuffle list
-	Slim::Player::Playlist::reshuffle($client);
+	# update the shuffle list only if we have more than 1 track
+	if ( scalar @{$tracks} > 1 ) {
+		Slim::Player::Playlist::reshuffle($client);
+	}
 }
 
 sub openSong {
