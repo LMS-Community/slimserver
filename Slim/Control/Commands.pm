@@ -909,6 +909,13 @@ sub playlistXitemCommand {
 	# If we're playing a list of URLs (from XMLBrowser), only work on the first item
 	my $list;
 	if ( ref $item eq 'ARRAY' ) {
+		
+		# If in shuffle mode, we need to shuffle the list of items as
+		# soon as we get it
+		if ( Slim::Player::Playlist::shuffle($client) == 1 ) {
+			Slim::Player::Playlist::fischer_yates_shuffle($item);
+		}
+		
 		$list = $item;
 		$item = shift @{$item};
 	}
@@ -1069,8 +1076,12 @@ sub playlistXitemCommand {
 				my ( $foundItems, $error ) = @_;
 				
 				# If we are playing a list of URLs, add the other items now
+				my $noShuffle = 0;
 				if ( ref $list eq 'ARRAY' ) {
 					push @{$foundItems}, @{$list};
+					
+					# If we had a list of tracks, we already shuffled above
+					$noShuffle = 1;
 				}
 
 				push @{ Slim::Player::Playlist::playList($client) }, @{$foundItems};
@@ -1083,6 +1094,7 @@ sub playlistXitemCommand {
 					scalar @{Slim::Player::Playlist::playList($client)},
 					$path,
 					$error,
+					$noShuffle,
 				);
 
 				playlistXitemCommand_done( $client, $request, $path );
@@ -2189,14 +2201,16 @@ sub _mixer_mute {
 }
 
 sub _playlistXitem_load_done {
-	my ($client, $index, $callbackf, $callbackargs, $count, $url, $error) = @_;
+	my ($client, $index, $callbackf, $callbackargs, $count, $url, $error, $noShuffle) = @_;
 
 	$log->debug("Begin Function");
-
+	
 	# dont' keep current song on loading a playlist
-	Slim::Player::Playlist::reshuffle($client,
-		(Slim::Player::Source::playmode($client) eq "play" || ($client->power && Slim::Player::Source::playmode($client) eq "pause")) ? 0 : 1
-	);
+	if ( !$noShuffle ) {
+		Slim::Player::Playlist::reshuffle($client,
+			(Slim::Player::Source::playmode($client) eq "play" || ($client->power && Slim::Player::Source::playmode($client) eq "pause")) ? 0 : 1
+		);
+	}
 
 	if (defined($index)) {
 		Slim::Player::Source::jumpto($client, $index);
