@@ -502,7 +502,12 @@ sub fade_volume {
 sub _fadeVolumeUpdate {
 	my $client = shift;
 	my $f = shift;
-
+	
+	# If the user manually changed the volume, stop fading
+	if ( $f->{'vol'} && $f->{'vol'} != $client->volume ) {
+		return;
+	}
+	
 	my $now = Time::HiRes::time();
 
 	# new vol based on time since fade started to minise impact of timers firing late

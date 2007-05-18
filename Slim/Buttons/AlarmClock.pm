@@ -479,7 +479,9 @@ sub checkAlarms {
 				}
 
 				# fade volume over 20s if enabled.
-				$client->fade_volume($client->prefGet("alarmfadeseconds") * $FADESECONDS);
+				if ( $client->prefGet("alarmfadeseconds") ) {
+					$client->fade_volume( $FADESECONDS );
+				}
 
 				my $playlist = $client->prefGet("alarmplaylist", $day);
 				
