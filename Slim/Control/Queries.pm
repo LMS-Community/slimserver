@@ -2081,6 +2081,7 @@ sub dynamicAutoQuery {
 	# get our parameters
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity') || 0;
+	my $sort     = $request->getParam('sort');
 
 	# we have multiple times the same resultset, so we need a loop, named
 	# after the query name (this is never printed, it's just used to distinguish
@@ -2113,6 +2114,12 @@ sub dynamicAutoQuery {
 		# $funcptr is undefined, we have everybody, now slice & count
 		else {
 			
+			# sort if requested to do so
+			if ($sort) {
+				$request->sortResultLoop($loop, $sort);
+			}
+			
+			# slice as needed
 			my $count = $request->getResultLoopCount($loop);
 			$request->sliceResultLoop($loop, $index, $quantity);
 			$request->setResultFirst('count', $count);

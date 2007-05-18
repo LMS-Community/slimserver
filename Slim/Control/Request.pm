@@ -1379,6 +1379,28 @@ sub sliceResultLoop {
 	}
 }
 
+# sortResultLoop
+# sort the result loop $loop using field $field.
+sub sortResultLoop {
+	my $self     = shift;
+	my $loop     = shift;
+	my $field    = shift;
+	
+	if ($loop =~ /^@(.*)/) {
+		$loop = $1 . "_loop";
+		$log->warn("Loop starting with \@: $1 -- deprecated; please use $1_loop");
+	}
+	if ($loop !~ /.*_loop$/) {
+		$loop = $loop . '_loop';
+	}
+	
+	if (defined ${$self->{'_results'}}{$loop}) {
+		
+		my @data = sort { $a->{$field} cmp $b->{$field} } @{${$self->{'_results'}}{$loop}};
+		${$self->{'_results'}}{$loop} = \@data;
+	}
+}
+
 sub getResult {
 	my $self = shift;
 	my $key = shift || return;
