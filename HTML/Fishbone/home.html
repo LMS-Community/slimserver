@@ -122,9 +122,9 @@
 		[% END %]
 		
 		[% IF warn %]
-			[% bodyscript = 'onload="doLoad(1);"' %]
+			[% bodyscript = 'onload="doLoad(1);loadBrowser(1);"' %]
 		[% ELSE %]
-			[% bodyscript = 'onload="loadBrowser();"' %]
+			[% bodyscript = 'onload="loadBrowser(1);"' %]
 		[% END %]
 	
 	[% END %]
