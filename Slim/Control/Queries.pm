@@ -289,10 +289,15 @@ sub artistsQuery {
  		$where->{'me.namesearch'} = {'like', Slim::Utils::Text::searchStringSplit($search)};
  	}
 
+	my $rs;
+
 	# Manage joins 
 	if (defined $trackID) {
 		$where->{'contributorTracks.track'} = $trackID;
 		push @{$attr->{'join'}}, 'contributorTracks';
+		
+		# don't use browse here as it filters VA...
+		$rs = Slim::Schema->rs('Contributor')->search($where, $attr);
 	}
 	else {
 		if (defined $genreID) {
@@ -327,13 +332,16 @@ sub artistsQuery {
 				}
 			}
 		}
+		
+		# use browse here
+		$rs = Slim::Schema->rs('Contributor')->browse->search($where, $attr);
 	}
 	
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult('rescan', 1);
 	}
 
-	my $rs = Slim::Schema->rs('Contributor')->browse->search($where, $attr);
+#	my $rs = Slim::Schema->rs('Contributor')->browse->search($where, $attr);
 
 	
 	# Various artist handling. Don't do if pref is off, or if we're
