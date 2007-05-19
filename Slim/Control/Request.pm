@@ -556,6 +556,7 @@ sub init {
     addDispatch(['remote',         '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['rescan',         '?'],                                                               [0, 1, 0, \&Slim::Control::Queries::rescanQuery]);
     addDispatch(['rescan',         '_playlists'],                                                      [0, 0, 0, \&Slim::Control::Commands::rescanCommand]);
+    addDispatch(['rescanprogress'],                                                                    [0, 1, 1, \&Slim::Control::Queries::rescanprogressQuery]);
     addDispatch(['search',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::searchQuery]);
     addDispatch(['serverstatus',   '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::serverstatusQuery]);
     addDispatch(['show'],                                                                              [1, 0, 1, \&Slim::Control::Commands::showCommand]);

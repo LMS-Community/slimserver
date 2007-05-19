@@ -1220,6 +1220,58 @@ sub rescanQuery {
 }
 
 
+sub rescanprogressQuery {
+	my $request = shift;
+	
+	$log->debug("Begin Function");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['rescanprogress']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# no params for the rescanprogress query
+
+	if (Slim::Music::Import->stillScanning) {
+		$request->addResult('rescan', 1);
+
+		# get progress from DB
+		my $args = {
+			'type' => 'importer',
+		};
+
+		my @progress = Slim::Schema->rs('Progress')->search( $args, { 'order_by' => 'start,id' } )->all;
+
+		# calculate total elapsed time
+		my $total_time = 0;
+		for my $p (@progress) {
+			my $runtime = ($p->finish || time()) - $p->start;
+			$total_time += $runtime;
+		}
+
+		# report it
+		my $hrs  = int($total_time / 3600);
+		my $mins = int(($total_time - $hrs * 60)/60);
+		my $sec  = $total_time - 3600 * $hrs - 60 * $mins;
+		$request->addResult('totaltime', sprintf("%02d:%02d:%02d", $hrs, $mins, $sec));
+
+		# now indicate % completion for all importers
+		for my $p (@progress) {
+
+			my $percComplete = $p->finish ? 100 : $p->total ? $p->done / $p->total * 100 : -1;
+			$request->addResult($p->name(), int($percComplete));
+		}
+	
+	# if we're not scanning, just say so...
+	} else {
+		$request->addResult('rescan', 0);
+	}
+
+	$request->setStatusDone();
+}
+
+
 sub searchQuery {
 	my $request = shift;
 
