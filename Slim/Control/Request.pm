@@ -50,6 +50,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 =head2 DATABASE
 
  N    rescan          <|playlists|?>
+ N    rescanprogress  <tagged parameters>
  N    wipecache
  
  N    albums          <startindex>                <numitems>                  <tagged parameters>
@@ -59,6 +60,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  N    songinfo        <startindex>                <numitems>                  <tagged parameters>
  N    titles          <startindex>                <numitems>                  <tagged parameters>
  N    years           <startindex>                <numitems>                  <tagged parameters>
+ N    musicfolder     <startindex>                <numitems>                  <tagged parameters>
  
  N    playlists       <startindex>                <numitems>                  <tagged parameters>
  N    playlists       tracks                      <startindex>                <numitems>       <tagged parameters>
@@ -484,6 +486,7 @@ sub init {
     addDispatch(['mixer',          'volume',         '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
     addDispatch(['mixer',          'volume',         '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
     addDispatch(['mode',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::modeQuery]);
+    addDispatch(['musicfolder',    '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::musicfolderQuery]);
     addDispatch(['path',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['pause',          '_newvalue'],                                                       [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
     addDispatch(['play'],                                                                              [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);

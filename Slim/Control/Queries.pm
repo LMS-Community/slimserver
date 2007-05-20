@@ -747,6 +747,105 @@ sub modeQuery {
 }
 
 
+sub musicfolderQuery {
+	my $request = shift;
+	
+	$log->debug("musicfolderQuery()");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['musicfolder']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get our parameters
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+	my $folderId = $request->getParam('folder_id');
+
+
+	if (Slim::Music::Import->stillScanning()) {
+		$request->addResult("rescan", 1);
+	}
+
+	# Pull the directory list, which will be used for looping.
+	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree( { 'id' => $folderId } );
+
+	# create filtered data
+	
+	my $topPath = $topLevelObj->path;
+	my $osName  = Slim::Utils::OSDetect::OS();
+	my @data;
+
+	for my $relPath (@$items) {
+
+		$log->debug("relPath: $relPath" );
+		
+		my $url  = Slim::Utils::Misc::fixPath($relPath, $topPath) || next;
+
+		$log->debug("url: $url" );
+
+		# Amazingly, this just works. :)
+		# Do the cheap compare for osName first - so non-windows users
+		# won't take the penalty for the lookup.
+		if ($osName eq 'win' && Slim::Music::Info::isWinShortcut($url)) {
+			$url = Slim::Utils::Misc::fileURLFromWinShortcut($url);
+		}
+	
+		my $item = Slim::Schema->rs('Track')->objectForUrl({
+			'url'      => $url,
+			'create'   => 1,
+			'readTags' => 1,
+		});
+	
+		if (!blessed($item) || !$item->can('content_type')) {
+
+			next;
+		}
+
+		# Bug: 1360 - Don't show files referenced in a cuesheet
+		next if ($item->content_type eq 'cur');
+
+		push @data, $item;
+	}
+
+	$count = scalar(@data);
+
+	$request->addResult('count', $count);
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+		
+		my $cnt = 0;
+		my $loopname = "folder_loop";
+		
+		for my $eachitem (@data[$start..$end]) {
+			
+			$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id());
+			$request->addResultLoop($loopname, $cnt, 'title', Slim::Music::Info::fileName($eachitem->url()));
+			
+			if (Slim::Music::Info::isDir($eachitem)) {
+				$request->addResultLoop($loopname, $cnt, 'type', 'folder');
+			} elsif (Slim::Music::Info::isPlaylist($eachitem)) {
+				$request->addResultLoop($loopname, $cnt, 'type', 'playlist');
+			} elsif (Slim::Music::Info::isSong($eachitem)) {
+				$request->addResultLoop($loopname, $cnt, 'type', 'track');
+			} elsif (Slim::Music::Info::isSong($eachitem)) {
+				$request->addResultLoop($loopname, $cnt, 'type', 'unknown');
+			}
+			
+			$cnt++;
+		}
+	}
+
+	# we might have changed - flush to the db to be in sync.
+	$topLevelObj->update;
+	
+	$request->setStatusDone();
+}
+
+
 sub playerXQuery {
 	my $request = shift;
 

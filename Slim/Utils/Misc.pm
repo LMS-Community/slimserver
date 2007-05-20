@@ -890,52 +890,54 @@ sub readDirectory {
 	return sort(@diritems);
 }
 
-=head2 findAndScanDirectoryTree( $levels, [ $urlOrObj ])
+=head2 findAndScanDirectoryTree($params)
 
+Finds and scans a directory tree, starting from a variety of datums as defined by $params. Returns
+the top level object, the items in the directory and their numbers.
+
+$params is a hash with the following keys, by order of priority:
+#obj: a track object (of content type 'dir')
+#id: a track id
+#url: a url
 	
 
 =cut
 
 sub findAndScanDirectoryTree {
-	my $levels   = shift;
-	my $urlOrObj = shift || Slim::Utils::Misc::fileURLFromPath($prefs->get('audiodir'));
-
+	my $params = shift;
+	
 	# Find the db entry that corresponds to the requested directory.
 	# If we don't have one - that means we're starting out from the root audiodir.
 	my $topLevelObj;
+		
+	if (blessed($params->{'obj'})) {
 
-	if (blessed($urlOrObj)) {
+		$topLevelObj = $params->{'obj'};
 
-		$topLevelObj = $urlOrObj;
+	} elsif (defined($params->{'id'})) {
 
-	} elsif (scalar @$levels) {
-
-		$topLevelObj = Slim::Schema->find('Track', $levels->[-1]);
+		$topLevelObj = Slim::Schema->find('Track', $params->{'id'});
 
 	} else {
+		
+		my $url = $params->{'url'};
+		
+		# make sure we have a valid URL...
+		if (!defined $url) {
+			$url = Slim::Utils::Misc::fileURLFromPath($prefs->get('audiodir'));
+		}
 
 		$topLevelObj = Slim::Schema->rs('Track')->objectForUrl({
-			'url'      => $urlOrObj,
+			'url'      => $url,
 			'create'   => 1,
 			'readTags' => 1,
 			'commit'   => 1,
 		});
-
-		if (blessed($topLevelObj) && $topLevelObj->can('id')) {
-
-			push @$levels, $topLevelObj->id;
-		}
 	}
 
-	if (!blessed($topLevelObj) || !$topLevelObj->can('path')) {
+	if (!blessed($topLevelObj) || !$topLevelObj->can('path') || !$topLevelObj->can('id')) {
 
 		logError("Couldn't find a topLevelObj!");
-
-		if (scalar @$levels) {
-			logError("Passed in value was: $levels->[-1]");
-		} else {
-			logError("Starting from audiodir! Is it not set?");
-		}
 
 		return ();
 	}

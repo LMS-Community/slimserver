@@ -42,7 +42,10 @@ sub browsetree {
 	my $itemnumber = 0;
 
 	# Pull the directory list, which will be used for looping.
-	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree(\@levels);
+	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree( { 'id' => $levels[-1] } );
+
+	# FIXME?: this will die if findAndScanDirectoryTree does not return a valid $topLevelObj
+	push @levels, $topLevelObj->id();
 
 	# Page title
 	$params->{'browseby'} = 'MUSIC';
