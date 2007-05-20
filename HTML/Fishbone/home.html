@@ -26,7 +26,7 @@
 	[%- BLOCK addBrowseLinks -%]
 		[%- IF links -%]
 			[%- FOREACH link = links -%]
-				<OPTION value="[% link.key %]" label="[% link.key | string | html %]">[% link.key | string | html %]</OPTION>
+				<OPTION value="[% link.key %]" label="[% link.key | getstring | html %]">[% link.key | getstring | html %]</OPTION>
 			[%- END -%]
 		[%- END -%]
 	[%- END -%]
@@ -92,7 +92,7 @@
 					break
 					default:
 						url = "[% additionalLinks.browse.BROWSE_BY_ALBUM %]"
-						homestring = '[% "BROWSE_BY_ALBUM" | string %]'
+						homestring = '[% "BROWSE_BY_ALBUM" | getstring %]'
 						cookie = 1
 					}
 			

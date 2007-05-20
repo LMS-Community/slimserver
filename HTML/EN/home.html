@@ -45,7 +45,7 @@
 	<div>[% "BROWSE_MUSIC" | string | upper %]</div>
 	<ul>
 	[%- FOREACH link = additionalLinks.browse %]
-		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string | html %]</a></li>
+		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
 	[%- END %]
 	</ul>
 </div>
@@ -54,7 +54,7 @@
 	<div>[% "SEARCH" | string | upper %]</div>
 	<ul>
 	[%- FOREACH key = additionalLinks.search.keys %]
-		<li><a href="[% additionalLinks.search.$key | html %]player=[% playerURI %]">[% key | string | html %]</a></li>
+		<li><a href="[% additionalLinks.search.$key | html %]player=[% playerURI %]">[% key | getstring | html %]</a></li>
 	[%- END %]
 	</ul>
 </div>
@@ -63,7 +63,7 @@
 	<div>[% "RADIO" | string | upper %]</div>
 	<ul>
 	[%- FOREACH link = additionalLinks.radio %]
-		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string | html %]</a></li>
+		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
 	[%- END %]
 		<li><a href="tunein.html?player=[% playerURI %]">[% "RADIO_TUNEIN" | string | html %]</a></li>
 		<li><a href="squeezenetwork.html?player=[% playerURI %]">[% "SQUEEZENETWORK_SWITCH" | string %]</a></li>
@@ -83,7 +83,7 @@
 	[%- END %]
 
 	[%- FOREACH key = additionalLinks.settings.keys %]
-		<li><a href="[% additionalLinks.settings.$key | html %]player=[% playerURI %]">[% key | string | html %]</a></li>
+		<li><a href="[% additionalLinks.settings.$key | html %]player=[% playerURI %]">[% key | getstring | html %]</a></li>
 	[%- END %]
 	</ul>
 </div>
@@ -94,7 +94,7 @@
 	<div>[% "PLUGINS" | string | upper %]</div>
 	<ul>
 		[%- FOREACH link = additionalLinks.plugins %]
-			<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string | html %]</a></li>
+			<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
 		[%- END %]
 	</ul>
 </div>
