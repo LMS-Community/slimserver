@@ -74,10 +74,6 @@
 </p>
 <ul>
 	<li>
-		Added the &quot;prefs&quot; tag to the &quot;<a href="#players">players</a>&quot; query, 
-		to enable returning the given preference values along with each player.
-	</li>
-	<li>
 		Added the &quot;<a href="#years">years</a>&quot; query, to enable
 		Browse by Year functionality.
 	</li>
@@ -90,8 +86,16 @@
 		scanning progress.
 	</li>
 	<li>
-		Order of tracks passed to &quot;<a href="#playlistcontrol">playlistcontrol</a>&quot;
-		command is maintained.
+		Added the &quot;<a href="#serverstatus">serverstatus</a>&quot; query, to return
+		compound server status in a single query.
+	</li>
+	<li>
+		Added the &quot;<a href="#playlists new">playlists new</a>&quot;
+		command to create a stored playlist.
+	</li>
+	<li>
+		Added the &quot;prefs&quot; tag to the &quot;<a href="#players">players</a>&quot; query, 
+		to enable returning the given preference values along with each player.
 	</li>
 	<li>
 		Added a tag to return the artist from the &quot;<a href="#albums">albums</a>&quot; query.
@@ -100,212 +104,22 @@
 		Added a tag to allow sorting the results of the &quot;<a href="#radios">radios</a>&quot; query.
 	</li>
 	<li>
-		Updated queries <a href="#status">status</a>&quot;, 
-		<a href="#titles">titles</a>&quot;,
-		<a href="#playlists tracks">playlists tracks</a>&quot; and
-		<a href="#status">songinfo</a>&quot;
+		Updated queries &quot;<a href="#status">status</a>&quot;, 
+		&quot;<a href="#titles">titles</a>&quot;,
+		&quot;<a href="#playlists tracks">playlists tracks</a>&quot; and
+		&quot;<a href="#status">songinfo</a>&quot;
 		to support a new tag J to return the artwork_track_id (as returned by the
 		&quot;<a href="#albums">albums</a>&quot;). This enables clients to cache one
 		image for all songs of the same album.
 	</li>
 	<li>
-		Added the &quot;<a href="#serverstatus">serverstatus</a>&quot; query, to return
-		compound server status in a single query.
-	</li>
-	<li>
-		Added the 
-		&quot;<a href="#playlists new">playlists new</a>&quot;
-		command to create a stored playlist.
+		Order of tracks passed to &quot;<a href="#playlistcontrol">playlistcontrol</a>&quot;
+		command is maintained.
 	</li>
 	<li>
 		Slightly reorganised this document to introduce a &quot;Compound queries&quot; section to
 		document queries &quot;<a href="#serverstatus">serverstatus</a>&quot; and 
 		&quot;<a href="#status">status</a>&quot;.
-	</li>
-</ul>
-
-<h4 id="6.5">Changes starting from SlimServer 6.5</h4>
-<p>
-	The following changes or new commands are available starting with
-	SlimServer 6.5:
-</p>
-<ul>
-	<li>
-		The Command Line Interface is now a plugin. It can be disabled if not
-		used.
-	</li>
-	<li>
-		The charset parameter now applies only to field values, and no longer to
-		tags as well. See the <a href="#Notes">charset notes</a>.
-	</li>
-	<li>
-		Changed &quot;<a href="#sync">sync ?</a>&quot; to return &quot;-&quot;
-		instead of nothing if the player is not synced. This is coherent with
-		using &quot;-&quot; to unsync the player.
-	</li>
-	<li>
-		Changed &quot;<a href="#sync">sync</a>&quot; and 
-		&quot;<a href="#status">status</a>&quot; queries to return their list of 
-		synced players as comma-separated (instead of space-separated).
-	</li>
-	<li>
-		Updated the &quot;<a href="#status">status</a>&quot; query to only
-		return bass, treble and/or pitch information for players that supports
-		it.
-	</li>
-	<li>
-		Updated the &quot;<a href="#status">status</a>&quot; query to return
-		the current song title for remote sources and to return the stored
-		playlist information if appropriate.
-	</li>
-	<li>
-		Command &quot;<a href="#mode">mode &lt;play|pause|stop&gt;</a>&quot;
-		is deprecated. Please use commands 
-		&quot;<a href="#play">play</a>&quot;, 
-		&quot;<a href="#stop">stop</a>&quot; and
-		&quot;<a href="#pause">pause</a>&quot;. The query 
-		&quot;<a href="#mode ?">mode ?</a>&quot; is not affected by this change.
-	</li>
-	<li>
-		Query &quot;<a href="#playlisttracks">playlisttracks</a>&quot; is
-		deprecated and replaced by the 
-		&quot;<a href="#playlists tracks">playlists tracks</a>&quot; query.
-	</li>
-	<li>
-		Added the ability for plugins to define CLI commands and queries. In
-		particular, all Internet Radio plugins now have CLI support, along with
-		a convienent &quot;<a href="#radios">radios</a>&quot; query. Please
-		refer to <a href="#PG">Plugins</a></strong> section.
-	</li>
-	<li>
-		Added the &quot;<a href="#can">can</a>&quot; query, useful to determine
-		if a certain command or query is available
-	</li>
-	<li>
-		Added the &quot;<a href="#client forget">client forget</a>&quot; command.
-	</li>
-	<li>
-		Added the &quot;<a href="#alarms">alarms</a>&quot; extended query and 
-		its companion the &quot;<a href="#alarm">alarm</a>&quot; extended 
-		command.
-	</li>
-	<li>
-		Added the &quot;<a href="#shutdown">shutdown</a>&quot; command.
-	</li>
-	<li>
-		Added the &quot;<a href="#subscribe">subscribe</a>&quot; command.
-	</li>
-	<li>
-		Added the &quot;<a href="#cursonginfo">remote</a>&quot; and 
-		&quot;<a href="#playlistXinfo">playlist remote</a>&quot; queries.
-		Likewise, added the &quot;remote&quot; field to the 
-		<a href="#status">status</a>&quot;, <a href="#titles">titles</a>&quot;,
-		<a href="#playlists tracks">playlists tracks</a>&quot; and
-		<a href="#status">songinfo</a>&quot; queries.
-	</li>
-	<li>
-		Added the &quot;<a href="#cursonginfo">current_title</a>&quot; query.
-		Likewise, added the &quot;current_title&quot; field to the 
-		<a href="#status">status</a>&quot; query.
-	</li>
-	<li>
-		Added the &quot;<a href="#show">show</a>&quot; command.
-	</li>
-	<li>
-		Added the &quot;<a href="#search">search</a>&quot; query.
-	</li>
-	<li>
-		Added the &quot;subscribe&quot; parameter to the
-		&quot;<a href="#status">status</a>&quot; query.
-	</li>
-	<li>
-		Added the 
-		&quot;<a href="#playlists edit">playlists edit</a>&quot;,
-		&quot;<a href="#playlists rename">playlists rename</a>&quot;,
-		and &quot;<a href="#playlists delete">playlists delete</a>&quot;
-		command to manipulate stored playlists.
-	</li>
-	<li>
-		Added the 
-		&quot;<a href="#playlist playlistsinfo">playlist playlistsinfo</a>&quot;
-		query to return information on the stored playlist currently playing,
-		including its id.
-	</li>
-	<li>
-		Updated command 
-		&quot;<a href="#playlistcontrol">playlistcontrol</a>&quot; 
-		to accept a list of comma-separated track_ids as parameter as well
-		as a playlist name.
-	</li>
-	<li>
-		Updated query &quot;<a href="#albums">albums</a>&quot; 
-		to return additional information about albums (year, artwork_track,
-		etc), including the ability to sort the list by &quot;new&quot; (to
-		replicate the &quot;New Music&quot; web GUI browse mode). Also added
-		the ability to filter the list by &quot;year&quot; and 
-		&quot;track_id&quot;.
-	</li>
-	<li>
-		Updated query &quot;<a href="#artists">artists</a>&quot; 
-		to return the &quot;Various Artists&quot; pseudo-artist. Also added
-		the ability to filter the list by &quot;year&quot; and 
-		&quot;track_id&quot;.
-	</li>
-	<li>
-		Updated queries <a href="#status">status</a>&quot;, 
-		<a href="#titles">titles</a>&quot;,
-		<a href="#playlists tracks">playlists tracks</a>&quot; and
-		<a href="#status">songinfo</a>&quot;
-		to return lyrics.
-	</li>
-	<li>
-		Updates queries &quot;<a href="#titles">titles</a>&quot; and 
-		&quot;<a href="#genres">genres</a>&quot; to accept a year as a filter 
-		criteria.
-	</li>
-	<li>
-		Updated the CLI for the latest player model, <b>Transporter</b>. Queries
-		&quot;<a href="#player model ?">player model ?</a>&quot; and 
-		&quot;<a href="#players">players</a>&quot; return 
-		&quot;transporter&quot; for Transporters. <br>
-		See also the <a href="#Notes">notes</a> for information about management
-		of Transporter digital inputs.
-	</li>
-	<li>
-		0x00 is now a valid end of line / command separator. In addition, the
-		server replies with whatever combination of CR, LF and 0x00 was used in
-		the query.
-	</li>
-	<li>
-		Documented correctly system support for 
-		&quot;<a href="#mixer bass">mixer bass</a>&quot;, 
-		&quot;<a href="#mixer treble">mixer treble</a>&quot; and
-		&quot;<a href="#mixer pitch">mixer pitch</a>&quot;. These 3 options are
-		not (yet) supported on the most recent players. Pitch is only supported
-		by Squeezebox1 players; bass and treble are supported by SliMP3 and 
-		Squeezebox1 players.
-	</li>
-	<li>
-		Changed &quot;<a href="#mixer muting">mixer muting</a>&quot; to be
-		coherent with other commands. There is now a query mode &quot;mixer
-		muting ?&quot;, and parameters 1 or 0 are accepted.
-	</li>
-	<li>
-		Added a <a href="#Notes">note</a> about paths and urls being double URL
-		encoded and in the filesystem character set.
-	</li>
-	<li>
-		Added a <a href="#DC">Deprecated commands</a> section.
-	</li>
-	<li>
-		Added a <a href="#NC">Notifications</a> section to describe
-		some echoed commands available when using commands
-		&quot;<a href="#listen">listen</a>&quot; or 
-		&quot;<a href="#subscribe">subscribe</a>&quot;.
-	</li>
-	<li>
-		Updated the &quot;<a href="#status">status</a>&quot; query to return
-		correct information in case the player is a remote streaming connection.
 	</li>
 </ul>
 
