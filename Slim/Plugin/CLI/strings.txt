@@ -3,27 +3,34 @@
 # $Id: strings.txt 10924 2006-12-10 10:07:21Z mherger $
 
 PLUGIN_CLI
+	DE	Befehlszeilenschnittstelle (CLI)
 	EN	Command Line Interface (CLI)
-	ES	Interface de Línea de Comando (CLI)
-	FR	Interface Ligne de commande (CLI)
-	NL	Commandoregel interface (CLI)
+	ES	Interfaz de línea de comandos (CLI)
+	FR	Interface de ligne de commande (CLI)
+	HE	ממשק שורת פקודה (CLI)
+	IT	Interfaccia della riga di comando
+	NL	Opdrachtregelinterface
 
 PLUGIN_CLI_DESC
-	DE	Mit Hilfe des Command Line Interface Plugins können SlimServer und Squeezeboxen über eine TCP/IP Verbindung ferngesteuert werden.  
+	DE	Mithilfe des Befehlszeilen-Plugin können SlimServer und Squeezebox über eine TCP/IP-Verbindung ferngesteuert werden (z.B. über ein Automatisierungsystem eines anderen Herstellers wie AMX oder Creston).
 	EN	The Command Line Interface plugin allows SlimServer and the Squeezeboxen to be controlled remotely over a TCP/IP connection, for example by a third party automation system like AMX or Crestron.
-	NL	De commandoregel interface (CLI) maakt het mogelijk om de SlimServer en de Squeezeboxen te bedienen op afstand over een TCP/IP connectie. Bijvoorbeeld door een automatiseringssysteem van een derde partij zoals AMX of Creston.
+	ES	El complemento de interfaz de línea de comandos permite el control remoto de SlimServer y de Squeezeboxen a través de una conexión TCP/IP mediante, por ejemplo, un sistema de domótica de otro fabricante como AMX o Crestron.
+	FR	Le plugin d'interface de ligne de commande permet de contrôler le SlimServer et les Squeezeboxen à distance par le biais d'une connexion TCP/IP, par un système d'automatisation tiers tel qu'AMX ou Crestron, par exemple.
+	HE	יישום ה-Plugin‏ 'ממשק שורת פקודה' מאפשר שליטה מרחוק ב-SlimServer וב-Squeezebox באמצעות קישור TCP/IP, לדוגמה, על-ידי מערכת אוטומציה של צד שלישי כגון AMX או Crestron.
+	IT	Il plugin dell'interfaccia della riga di comando consente di controllare SlimServer e Squeezeboxen in remoto su una connessione TCP/IP mediante, ad esempio, un sistema di automatizzazione di terze parti, quale AMX o Crestron.
+	NL	De opdrachtregelinterface-plugin maakt het mogelijk om de SlimServer en de Squeezeboxen op afstand te bedienen via een TCP/IP-verbinding, bijvoorbeeld door een automatiseringssysteem van een derde partij zoals AMX of Creston.
 
 SETUP_CLIPORT
 	CS	Číslo portu příkazové řádky
-	DE	Kommandozeilen-Schnittstellen Port-Nummer
 	DA	Port-nummer for Command Line Interface
+	DE	Anschlussnummer der BefehlszeilenSchnittstelle
 	EN	Command Line Interface Port Number
-	ES	Número de puerto para la interfaz de linea de comandos
-	FR	Numéro de port de l'interface en ligne de commande
-	HE	פורט לממשק שורת הפקודה
-	IT	Numero della porta dell'Interfaccia a linea di comando
+	ES	Número de puerto de la interfaz de línea de comandos
+	FR	Numéro de port de l'interface de ligne de commande
+	HE	מספר היציאה של ממשק שורת הפקודה
+	IT	Numero della porta dell'interfaccia a riga di comando
 	JA	コマンドライン インターフェース ポートナンバー
-	NL	Poortnummer van de Opdrachtprompt interface
+	NL	Poortnummer van de opdrachtregelinterface
 	NO	Portnummer for terminalgrensesnitt
 	PT	Porta TCP da Interface de Linha de Comando
 	SV	Portnummer för terminalgränssnitt
@@ -31,15 +38,15 @@ SETUP_CLIPORT
 
 SETUP_CLIPORT_DESC
 	CS	Můžete změnit číslo portu, který bude použit k ovládání přehrávače z příkazové řádky.
-	DE	Definieren Sie den Port, der für das CLI verwendet werden soll.
 	DA	Du kan ændre hvilket port-nummer der anvendes til at styre player-afspilleren via Command Line Interfacet.
+	DE	Sie können die Anschlussnummer ändern, die von der Befehlszeilenschnittstelle zum Steuern des Players verwendet werden soll.
 	EN	You can change the port number that is used to by a command line interface to control the player.
-	ES	Puede cambiar el número de puerto que se usa para controlar el reproductor con la linea de comandos.
-	FR	Vous pouvez changer le port utilisé par l'interface en ligne de commande pour contrôler la platine.
-	HE	פורט זה משמש לשליטה על נגנים
-	IT	Puoi cambiare il numero della porta usata dall'interfaccia a linea di comando per controllare il lettore. (Imposta a zero per disabilitare l'interfaccia a linea di comando).
+	ES	Se puede cambiar el número de puerto que se usa para controlar el reproductor con la línea de comandos.
+	FR	Vous pouvez changer le port utilisé par l'interface de ligne de commande pour contrôler la platine.
+	HE	באפשרותך לשנות את מספר היציאה המשמשת את ממשק שורת הפקודה לשליטה בנגן.
+	IT	È possibile modificare il numero della porta usata dall'interfaccia a riga di comando per controllare il lettore.
 	JA	プレーヤーをコントロールする、コマンドライン インターフェースに使われるポートナンバーを変更することができます。
-	NL	Je kunt het poortnummer aanpassen dat gebruikt wordt om de player via een opdrachtprompt interface te bedienen.
+	NL	Je kunt het poortnummer veranderen dat door een opdrachtregelinterface gebruikt wordt om de speler te bedienen.
 	NO	Du kan endre portnummeret som brukes for å kontrollere din spiller via et terminalgrensesnitt.
 	PT	Pode mudar o número da porta para ligação da interface de linha de comando do player.
 	SV	Du kan ändra portnumret som används för att kontrollera din spelare via ett terminalgränssnitt.
@@ -47,14 +54,15 @@ SETUP_CLIPORT_DESC
 
 SETUP_CLIPORT_OK
 	CS	Nyní bude používán následující port pro ovládaní příkazovým řádkem
-	DE	Der folgende Port wird für die Kommandozeilen-Schnittstelle verwendet:
 	DA	Anvender nu følgende port til Command Line Interfacet:
+	DE	Der folgende Anschluss wird für die Befehlszeilenschnittstelle verwendet:
 	EN	Now using the following port for the command line interface:
-	ES	Utilizando puerto:
-	FR	L'interface en ligne de commande utilise maintenant le port :
-	IT	E' attualmente in uso la seguente porta per l'interfaccia a linea di comando:
+	ES	Para la interfaz de la línea de comandos se usa el puerto:
+	FR	L'interface de ligne de commande utilise maintenant le port:
+	HE	כרגע נעשה שימוש ביציאה הבאה עבור ממשק שורת הפקודה:
+	IT	Per l'interfaccia a riga di comando viene attualmente utilizzata la seguente porta:
 	JA	現在コマンドライン インターフェースには、以下のポートが使われています:
-	NL	De volgende poort wordt gebruikt voor de opdrachtprompt interface:
+	NL	De volgende poort wordt gebruikt voor de opdrachtregelinterface:
 	NO	Bruker nå følgende portnummer for terminalgrensesnitt:
 	PT	A porta para acesso via linha de comando é
 	SV	Använder nu följande portnummer för terminalgränssnittet:

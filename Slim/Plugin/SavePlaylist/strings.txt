@@ -6,12 +6,12 @@ SAVE_PLAYLIST
 	CS	Uložit playlist
 	DE	Wiedergabeliste speichern
 	EN	Save Playlist
-	ES	Guardar Lista
+	ES	Guardar lista de reproducción
 	FR	Enregistrer la liste de lecture
-	HE	שומר רשימות ניגון
-	IT	Salva lista di esecuzione
+	HE	שמירת רשימת ההשמעה
+	IT	Salva elenco di riproduzione
 	JA	プレイリストを保存する
-	NL	Bewaar playlist
+	NL	Playlist opslaan
 	NO	Lagre spilleliste
 	SV	Lagra låtlista
 	ZH_CN	保存播放表
@@ -21,50 +21,55 @@ SAVE_PLAYLIST_DESC
 	EN	Save Playlists from the Player UI
 
 PLAYLIST_OVERWRITE
-	DE	RECHTS drücken zum Überschreiben der existierenden Datei:
+	DE	Drücken Sie RECHTS, um die vorhandene Wiedergabeliste zu überschreiben:
 	EN	Go right to replace existing playlist:
-	ES	Presionar DERECHA para reemplazar la lista existente:
-	FR	Appuyez sur DROITE pour remplacer la liste de lecture existante :
-	NL	Druk -> om de bestaande playlist te vervangen:
+	ES	Pulse DERECHA para reemplazar la lista de reproducción existente:
+	FR	Appuyez sur DROITE pour remplacer la liste de lecture existante:
+	HE	עבור ימינה להחלפת רשימת ההשמעה הנוכחית:
+	IT	Premere DESTRA per sostituire l'elenco di riproduzione corrente:
+	NL	Rechts om de bestaande playlist te vervangen:
 
 PLAYLIST_SAVE
 	CS	Stiskněte znovu tlačítko DOPRAVA, uložíte aktuální playlist jako:
-	DE	Zum Speichern der Wiedergabeliste RECHTS drücken:
+	DE	Drücken Sie zum Speichern der Wiedergabeliste RECHTS:
 	EN	Right again to save playlist as:
-	ES	Presionar DERECHA para guardar la lista como:
+	ES	Pulse DERECHA de nuevo para guardar la lista de reproducción como:
 	FI	Paina OIKEALLE uudestaan tallentaaksesi soittolistan nimellä:
-	FR	Appuyez à nouveau sur DROITE pour sauver la liste de lecture sous :
-	IT	Premi DESTRA ancora per salvare la lista di esecuzione come:
+	FR	Appuyez à nouveau sur DROITE pour enregistrer la liste de lecture sous:
+	HE	עבור ימינה פעם נוספת לשמירת רשימת ההשמעה בשם:
+	IT	Premere DESTRA nuovamente per salvare l'elenco di riproduzione col nome:
 	JA	プレイリストを保存するにはRIGHTをもう一度押してください :
-	NL	Druk -> opnieuw om playlist te bewaren als:
+	NL	Opnieuw rechts om playlist op te slaan als:
 	NO	Trykk HØYRE pil igjen for å lagre spillelisten som:
 	SV	Klicka Högerpil igen för att lagra låtlistan som:
 	ZH_CN	保存播放表请按右方向键：
 
 PLAYLIST_AS
 	CS	Uložit aktuální playlist jako:
-	DE	Wiedergabeliste unter folgendem Namen speichern:
+	DE	Aktuelle Wiedergabeliste speichern unter:
 	EN	Save current playlist as:
-	ES	Guardar la lista actual como:
+	ES	Guardar la lista de reproducción actual como:
 	FI	Tallenna nykyinen soittolista nimellä:
-	FR	Enregistrer la liste de lecture sous :
-	IT	Salva la lista di esecuzione in uso come:
+	FR	Enregistrer la liste de lecture sous:
+	HE	שמירת רשימת ההשמעה הנוכחית בשם:
+	IT	Salva l'elenco di riproduzione corrente col nome:
 	JA	現在のプレイリストを別の名前で保存する :
-	NL	Bewaar huidige playlist als:
+	NL	Huidige playlist opslaan als:
 	NO	Lagre spillelisten som:
 	SV	Lagra aktuell låtlista som:
 	ZH_CN	保存当前的播放表：
 
 PLAYLIST_SAVING
 	CS	Uložit aktuální playlist jako:
-	DE	Speichere Wiedergabeliste als:
+	DE	Wiedergabeliste wird gespeichert unter:
 	EN	Saving current playlist as:
-	ES	Guardando la lista actual como:
+	ES	Guardando la lista de reproducción actual como:
 	FI	Tallennetaan nykyinen soittolista nimellä:
-	FR	Enregistre la liste de lecture sous :
-	IT	Salvataggio della lista di esecuzione in uso come:
+	FR	Enregistre la liste de lecture sous:
+	HE	שמירת רשימת ההשמעה הנוכחית בשם:
+	IT	Salvataggio dell'elenco di riproduzione corrente col nome:
 	JA	現在のプレイリストを別の名前で保存する :
-	NL	Bewaar huidige playlist als:
+	NL	Huidige playlist opslaan als:
 	NO	Lagrer spillelisten som:
 	SV	Lagrar aktuell låtlista som:
 	ZH_CN	正在保存当前的播放表：
@@ -72,29 +77,29 @@ PLAYLIST_SAVING
 NO_PLAYLIST_DIR
 	CS	Chyba: Není uložen žádný playlist.
 	DA	Problem: Der findes ingen folder med gemte playlister.
-	DE	Problem: kein Wiedergabelisten Ordner
+	DE	Problem: kein Wiedergabelisten-Ordner
 	EN	Problem: No Saved Playlist folder.
-	ES	Problem: No existe una carpeta de Listas Guardadas
+	ES	Problema: No existe una carpeta de listas de reproducción guardadas.
 	FI	Ongelma: Tallenettujen soittolistojen hakemistoa ei ole.
 	FR	Dossier Listes de lecture enregistrées introuvable.
-	HE	אין ספרייה מוגדרת לרשימות ניגון
+	HE	בעיה: אין תיקייה של רשימות השמעה שמורות.
+	IT	Problema: nessuna cartella per gli elenchi di riproduzione salvati.
 	JA	エラー: プレイ  リストがみつかりません
-	NL	Probleem: geen bewaarde playlistfolder.
+	NL	Probleem: geen map met opgeslagen playlists.
 	SV	Problem: Det finns ingen mapp för sparade spellistor
 	ZH_CN	失误：播放表保存文件夹不存在
 
 NO_PLAYLIST_DIR_MORE
 	CS	Přejít na nastavení serveru a opravit.
 	DA	Gå til serverindstillinger for at korrigere dette.
-	DE	Bitte Server Einstellungen überprüfen
+	DE	Beheben Sie dieses Problem in den Server-Einstellungen.
 	EN	Visit Server Settings to fix this.
-	ES	Ver Configuración del Servidor para solucionar esto.
+	ES	Acceda a Configuración de servidor para solucionar esto.
 	FI	Korjaa tämä palvelimen asetuksista.
-	FR	Consultez "Réglages du serveur".
-	HE	תקן זאת בשרת
-	IT	Rivedi le impostazioni del Server per sistemare il problema.
+	FR	Consultez les réglages du serveur.
+	HE	עבור אל 'הגדרות שרת' כדי לתקן את הבעיה.
+	IT	Verificare le impostazioni del server per risolvere il problema.
 	JA	サーバー セッティングを調整して下さい
 	NL	Ga naar serverinstellingen om dit te corrigeren.
 	SV	Ändra serverinställningar för att korrigera detta.
 	ZH_CN	请参考服务器配置以便修正
-

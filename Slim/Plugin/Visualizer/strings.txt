@@ -3,42 +3,50 @@
 # $Id: strings.txt 10821 2006-12-01 21:44:53Z adrian $
 
 PLUGIN_SCREENSAVER_VISUALIZER
-	DE	Visualizer Bildschirmschoner
+	DE	Visualisierungs-Bildschirmschoner
 	EN	Visualizer Screensaver
-	ES	Salvapantallas de Visualizador
+	ES	Protector de pantalla de visualizador
 	FI	Visualisointi ruudunsäästäjä
 	FR	Ecran de veille Visualisation
-	IT	Salvaschermo grafici
-	NL	Visualisatie schermbeveiliger
+	HE	שומר מסך מייצג ויזואלי
+	IT	Screen saver con visualizzatore
+	NL	Visualisatieschermbeveiliger
 
 PLUGIN_SCREENSAVER_VISUALIZER_NEEDS_SQUEEZEBOX2
-	DE	Benötigt Squeezebox2
+	DE	Squeezebox2 erforderlich
 	EN	Needs Squeezebox2
 	ES	Requiere Squeezebox2
 	FR	Squeezebox2 requise
-	IT	Necessita Squeezebox2/3
-	NL	Squeezebox2/3 nodig
+	HE	יש צורך בנגן Squeezebox2
+	IT	È richiesto Squeezebox2
+	NL	Vereist Squeezebox2
 
 PLUGIN_SCREENSAVER_VISUALIZER_PRESS_RIGHT_TO_CHOOSE
-	DE	RECHTS drücken zum Aktivieren des Bildschirmschoners
+	DE	Drücken Sie RECHTS zum Aktivieren des Bildschirmschoners
 	EN	Press -> to enable this screensaver
-	ES	Presionar -> para activar este salvapantallas
-	NL	Druk -> om deze schermbeveiliger te activeren
+	ES	Pulse -> para activar este protector de pantalla
+	FR	Appuyez sur DROITE pour activer cet écran de veille
+	HE	לחץ על ‎->‎ כדי לאפשר את הפעלת שומר המסך
+	IT	Premere -> per attivare questo screen saver
+	NL	Druk op -> om deze schermbeveiliger te activeren
 
 PLUGIN_SCREENSAVER_VISUALIZER_ENABLED
 	CS	Spořič je nastaven
 	DE	Bildschirmschoner aktiviert
 	EN	This screensaver is enabled
-	ES	Este salvapantallas está activo
+	ES	Este protector de pantalla está activo
 	FI	Tämä ruudunsäästäjä on kytketty
-	IT	Questo salvaschermo e' abilitato
+	FR	Cet écran de veille est activé
+	HE	שומר המסך מופעל
+	IT	Questo screen saver è attivato
 	NL	Deze schermbeveiliger is actief
 
 PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	CS	Výchozí spořič
-	DE	Standard Bildschirmschoner
+	DE	Standard-Bildschirmschoner
 	EN	Default screenaver
-	ES	Salvapantallas por defecto
+	ES	Protector de pantalla predeterminado
 	FR	Ecran de veille par défaut
-	IT	Salvaschermo di default
-	NL	Standaard schermbeveiliger
+	HE	ברירת מחדל
+	IT	Screen saver predefinito
+	NL	Standaardschermbeveiliger
