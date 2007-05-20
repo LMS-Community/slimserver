@@ -823,7 +823,7 @@ sub musicfolderQuery {
 		for my $eachitem (@data[$start..$end]) {
 			
 			$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id());
-			$request->addResultLoop($loopname, $cnt, 'title', Slim::Music::Info::fileName($eachitem->url()));
+			$request->addResultLoop($loopname, $cnt, 'filename', Slim::Music::Info::fileName($eachitem->url()));
 			
 			if (Slim::Music::Info::isDir($eachitem)) {
 				$request->addResultLoop($loopname, $cnt, 'type', 'folder');

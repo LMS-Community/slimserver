@@ -82,6 +82,10 @@
 		Browse by Year functionality.
 	</li>
 	<li>
+		Added the &quot;<a href="#musicfolder">musicfolder</a>&quot; query, to enable
+		Browse Music Folder functionality.
+	</li>
+	<li>
 		Added the &quot;<a href="#rescanprogress">rescanprogress</a>&quot; query, to report details on
 		scanning progress.
 	</li>
@@ -2411,6 +2415,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#years">years</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#musicfolder">musicfolder</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#playlists">playlists</a></code></strong>
 	</li>
 	<li>
@@ -3402,6 +3409,136 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		year:1985 year:1987 year:1988 
 		year:2002 year:2003 year:2004
 		&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+
+<br>
+<p id="musicfolder">
+	<strong>
+		<code>
+			musicfolder
+			&lt;start&gt;
+			&lt;itemsPerResponse&gt;
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;musicfolder&quot; query returns the content of a given music
+	folder, starting from the top level directory configured in SlimServer.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			folder_id
+		</td>
+		<td>
+			Browses the folder identified by &quot;folder_id&quot;.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			charset
+		</td>
+		<td>
+			Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.
+		</td>
+	</tr>
+</table>
+<p>
+	Returned tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			rescan
+		</td>
+		<td>
+			Returned with value 1 if the server is still scanning 
+			the database. The results may therefore be incomplete.
+			Not returned if no scan is in progress.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			count
+		</td>
+		<td>
+			Number of results returned by the query.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<em>For each item in the folder:</em>
+		</td>
+		<td>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;<b>id</b>
+		</td>
+		<td>
+			Track, playlist or folder ID. Item delimiter.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;filename
+		</td>
+		<td>
+			File name
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;type
+		</td>
+		<td>
+			One of &quot;track&quot;, &quot;folder&quot;, &quot;playlist&quot;, or &quot;unknown&quot;.
+		</td>
+	</tr>
+</table>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;musicfolder 0 10&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;musicfolder 0 10 count:26 
+		id:1 title:03%20Barbie%20Girl.mp3 type:audio 
+		id:2 title:12%20-%20If%20I%20Had%20You.mp3 type:audio 
+		id:313 title:A-Ha type:dir 
+		id:50 title:Test.m3u type:playlist&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;musicfolder 0 10 folder_id:313&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;musicfolder 0 10 folder_id:313 count:2 
+		id:335 title:Lifelines type:dir 
+		id:336 title:Minor%20Earth%20Major%20Sky type:dir&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 
@@ -7229,7 +7366,7 @@ in the saved playlists folder.</p>
 		Response: &quot;live365 genres 252 2 
 		count:262
 		id:community name:Talk%20-%20Community
-		id:educational name%3ATalk%20-%20Educational
+		id:educational name:Talk%20-%20Educational
 		&lt;LF&gt;&quot;
 	</p>
 </blockquote>
