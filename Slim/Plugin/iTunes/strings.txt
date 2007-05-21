@@ -12,87 +12,100 @@ ITUNES_DESC
 
 SETUP_ITUNESPLAYLISTFORMAT
 	CS	Formát playlistu iTunes
-	DE	iTunes Wiedergabelisten Format
+	DE	iTunes-Wiedergabelistenformat
 	EN	iTunes Playlist Format
-	ES	Formato de Lista de iTunes
+	ES	Formato de lista de reproducción de iTunes
 	FR	Format des listes de lecture iTunes
+	HE	תבנית רשימות ההשמעה של iTunes
+	IT	Formato dell'elenco di riproduzione di iTunes
 	JA	iTunesプレイリストフォーマット
-	NL	iTunes playlistformaat
+	NL	iTunes-playlistformaat
 	NO	iTunes spillieliste format
 	SV	Format iTunes låtlista
 	ZH_CN	iTunes播放表
 
 SETUP_ITUNESPLAYLISTFORMAT_DESC
-	DE	Diese Option definiert das Format der von iTunes importierten Wiedergabelisten.
+	DE	Diese Option definiert das Format der aus iTunes importierten Wiedergabelisten.
 	EN	This option determines the format used when importing iTunes playlists.
-	ES	Esta opción determina el formato utilizado cuando se importan listas de iTunes.
+	ES	Esta opción determina el formato usado cuando se importan listas de reproducción de iTunes.
 	FR	Ce réglage détermine le format utilisé lors de l'importation des listes de lecture iTunes.
-	IT	Questa opzione determina il formato usato nell'importazione delle liste di esecuzione di iTunes.
+	HE	אפשרות זו קובעת את התבנית שבה נעשה שימוש בעת ייבוא רשימות השמעה של iTunes.
+	IT	Questa opzione consente di specificare il formato utilizzato per l'importazione degli elenchi di riproduzione di iTunes.
 	JA	このオプションでは、iTunesプレイリストをインポートする時に使われるフォーマットを決めます。
-	NL	Deze optie bepaalt het te gebruiken formaat bij het importeren van iTunes playlists.
+	NL	Deze optie bepaalt welk formaat bij het importeren van iTunes-playlists gebruikt wordt.
 	NO	Denne innstillingen avgjør hvliket format som brukes ved import av iTunes spillelister.
 	SV	Denna inställning avgör vilket format som används vid import av iTunes-låtlistor
 	ZH_CN	这个选项决定了导入iTunes播放表所使用的格式。
 
 ITUNES_PODCASTS
+	DE	iTunes-Podcasts
 	EN	iTunes Podcasts
 	ES	Podcasts de iTunes
 	FR	Podcasts iTunes
-	NL	iTunes podcasts
+	HE	פריטי Podcast של iTunes
+	IT	Podcast iTunes
+	NL	iTunes-podcasts
 	ZH_CN	iTunes Podcasts
 
 SETUP_ITUNESPLAYLISTPREFIX
-	DE	Der Prefix für iTunes Wiedergabelisten wurde geändert auf:
+	DE	Das Präfix für iTunes-Wiedergabelisten wurde geändert in:
 	EN	iTunes playlist prefix changed to:
-	ES	Prefijo de listas de iTunes cambiado a:
-	IT	Prefisso delle liste di esecuzione di iTunes modificato in:
-	NL	iTunes playlist voorvoegsel wijzigt in:
+	ES	Prefijo de listas de reproducción de iTunes cambiado a:
+	FR	Préfixe de liste de lecture iTunes modifié:
+	HE	קידומת רשימות ההשמעה של iTunes השתנתה ל:
+	IT	Prefisso degli elenchi di riproduzione di iTunes modificato in:
+	NL	iTunes-playlistvoorvoegsel gewijzigd in:
 	ZH_CN	iTunes播放表前缀被改为：
 
 SETUP_ITUNESPLAYLISTSUFFIX
-	DE	Der Suffix für iTunes Wiedergabelisten wurde geändert auf:
+	DE	Das Suffix für iTunes-Wiedergabelisten wurde geändert in:
 	EN	iTunes playlist suffix changed to:
-	ES	Sufijo de listas de iTunes cambiado a:
-	IT	Suffisso delle liste di esecuzione di iTunes modificato in:
-	NL	iTunes playlist achtervoegsel wijzigt in:
+	ES	Sufijo de listas de reproducción de iTunes cambiado a:
+	FR	Suffixe de liste de lecture iTunes modifié:
+	HE	סיומת רשימות ההשמעה של iTunes השתנתה ל:
+	IT	Suffisso degli elenchi di riproduzione di iTunes modificato in:
+	NL	iTunes-playlistachtervoegsel gewijzigd in:
 	ZH_CN	iTunes播放表词尾被改为：
 
 USING_ITUNES
 	CS	Server importuje iTunes informace.
-	DE	Der Server wird die Informationen aus iTunes importieren.
+	DE	Der Server importiert die Daten aus iTunes.
 	EN	The server will import iTunes information.
 	ES	El servidor importará información de iTunes.
 	FI	Palvelin tuo tietoja iTunesista
 	FR	Le SlimServer importera les données iTunes.
-	IT	Il server importera' le informazioni da iTunes.
+	HE	השרת לא ייבא מידע iTunes.
+	IT	Il server importerà le informazioni iTunes.
 	JA	サーバーはiTunesの情報をインポートします。
-	NL	De server zal iTunes informatie downloaden.
+	NL	De server zal iTunes-informatie importeren.
 	SV	SlimServer kommer att importera iTunes-information.
 	ZH_CN	服务器将导入iTunes信息。
 
 NOT_USING_ITUNES
-	DE	Der Server wird keine Informationen aus iTunes mehr importieren.
+	DE	Der Server importiert keine Daten aus iTunes mehr.
 	EN	The server will no longer import iTunes information.
 	ES	El servidor dejará de importar información de iTunes.
 	FI	Palvelin ei enää tuo tietoja iTunesista.
 	FR	Le SlimServer n'importera plus les données iTunes.
-	IT	Il server non importera' piu' le informazioni da iTunes.
+	HE	השרת לא ייבא עוד מידע iTunes.
+	IT	Non verranno più importate nel server le informazioni iTunes.
 	JA	サーバーはiTunesの情報をインポートしません。
-	NL	De server zal niet langer iTunes informatie importeren.
+	NL	De server zal iTunes-informatie niet langer importeren.
 	SV	SlimServer kommer inte att importera iTunes-information längre.
 	ZH_CN	服务器将不再导入iTunes信息。
 
 USE_ITUNES
 	CS	Použít iTunes
-	DE	Verwendung von iTunes
 	DA	Anvend iTunes
+	DE	iTunes verwenden
 	EN	Use iTunes
 	ES	Usar iTunes
 	FI	Käytä iTunesia
 	FR	Utiliser iTunes
+	HE	שימוש ב-iTunes
 	IT	Usa iTunes
 	JA	iTunesを使用する
-	NL	Gebruik iTunes
+	NL	iTunes gebruiken
 	NO	Bruk iTunes
 	PT	Usar iTunes
 	SV	Använd iTunes
@@ -102,12 +115,13 @@ DONT_USE_ITUNES
 	CS	Nepoužívat iTunes
 	DE	iTunes nicht verwenden
 	EN	Do Not Use iTunes
-	ES	No Utilizar iTunes
+	ES	No usar iTunes
 	FI	Älä käytä iTunesia
 	FR	Ne pas utiliser iTunes
+	HE	ללא שימוש ב-iTunes
 	IT	Non usare iTunes
 	JA	iTunesを使用しない
-	NL	Gebruik geen iTunes
+	NL	iTunes niet gebruiken 
 	SV	Använd inte iTunes
 	ZH_CN	不使用iTunes
 
@@ -116,6 +130,8 @@ SETUP_ITUNES
 	EN	iTunes
 	ES	iTunes
 	FR	iTunes
+	HE	iTunes
+	IT	iTunes
 	JA	iTunes
 	NL	iTunes
 	NO	iTunes
@@ -125,137 +141,154 @@ SETUP_ITUNES
 
 SETUP_ITUNES_OK
 	CS	Server bude importovat iTunes informace.
-	DE	Der Server wird die Informationen aus iTunes importieren.
+	DE	Der Server importiert die Daten aus iTunes.
 	EN	The server will import iTunes information.
 	ES	El servidor importará información de iTunes.
 	FR	Le SlimServer importera les données iTunes.
-	IT	Il server importera' le informazioni da iTunes.
+	HE	השרת לא ייבא מידע iTunes.
+	IT	Il server importa i dati di iTunes.
 	JA	サーバーはiTunesの情報をインポートします。
-	NL	De server zal iTunes informatie importeren.
+	NL	De server zal iTunes-gegevens importeren.
 	SV	SlimServer kommer att importera iTunes-information.
 	ZH_CN	服务器将导入iTunes信息。
 
 SETUP_ITUNES_DESC
-	DE	Der SlimServer kann ihre iTunes-Musiksammlung und -Wiedergabeliste verwenden. Alle Änderungen, die Sie in iTunes vornehmen, spiegeln sich auf dem Player wieder. Aktivieren Sie die folgende Checkbox, falls Sie die Informationen aus iTunes verwenden wollen.
+	DE	SlimServer kann die Musiksammlung und Wiedergabeliste aus iTunes nutzen. In iTunes vorgenommene Änderungen werden an den Player übertragen. Aktivieren Sie das Kontrollkästchen unten, wenn die iTunes-Musiksammlung importiert werden soll.
 	EN	SlimServer can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. Check the box below if you want to import your iTunes Music Library information.
-	ES	El SlimServer puede utilizar las listas y colección musical de iTunes. Cualquier cambio en iTunes se reflejará en el reproductor. Marcar la opción debajo si se quiere importar la información de la colección musical de iTunes.
-	FR	Le SlimServer peut utiliser votre bibliothèque et vos listes de lecture iTunes. Les modifications que vous apporterez dans iTunes seront répercutées sur votre platine. Cochez la case ci-dessous pour importer les données de votre bibliothèque iTunes.
-	IT	Lo Slimserver può usare la tua libreria musicale e le liste di esecuzione di iTunes. Qualsiasi cambiamento apportato in iTunes si rifletterà nl tuo lettore. Spunta il riquadro più sotto se vuoi importare le tue informazioni della libreria musicale di iTunes.
+	ES	SlimServer puede usar la biblioteca de música y las listas de reproducción de iTunes. Cualquier cambio que se realice en iTunes se reflejará en el reproductor. Marque la casilla siguiente si desea importar la información de la biblioteca de música de iTunes.
+	FR	Le SlimServer peut utiliser votre bibliothèque et vos listes de lecture iTunes. Les modifications apportées dans iTunes sont reportées sur votre platine. Cochez la case ci-dessous pour importer les données de la bibliothèque iTunes.
+	HE	SlimServer יכול להשתמש בספריית המוסיקה וברשימות ההשמעה של iTunes. כל שינוי שתבצע ב-iTunes ייוצג בנגן. סמן את התיבה שלהלן אם ברצונך לייבא את מידע ספריית המוסיקה של iTunes.
+	IT	In SlimServer è possibile utilizzare la libreria musicale e gli elenchi di riproduzione di iTunes. Le eventuali modifiche apportate in iTunes vengono estese al lettore. Selezionare la casella seguente se si desidera importare i dati della libreria musicale di iTunes.
 	JA	SlimServerはiTunesの音楽ライブラリーとプレイリストを使用することができます。iTunesにおける変更はプレーヤーに反映されます。iTunesの音楽ライブラリー情報を利用するには、以下の項目をチェックしてください。
-	NL	SlimServer kan gebruik maken van je iTunes muziekcollectie. Elke wijziging die je maakt in iTunes zal doorwerken naar je speler. Selecteer de box hieronder als je de iTunes muziekcollectie informatie wilt importeren.
+	NL	SlimServer kan gebruik maken van je iTunes-muziekcollectie en -playlists. Alle veranderingen in iTunes worden ook op je speler doorgevoerd. Selecteer het vakje hieronder als je de iTunes-muziekcollectiegegevens wilt importeren.
 	SV	SlimServer kan använda ditt iTunes-bibliotek och låtlistor. Alla förändringar som görs via iTunes kommer att få genomslag i din spelare. Klicka i rutan nedan om du vill importera iTunes-informationen.
 	ZH_CN	SlimServer可以使用您的iTunes音乐库和播放表。您在iTunes所作的所有变动都会显示在您的播放机。如果要导入您的iTunes音乐库信息，请点击如下的复选框。
 
 SETUP_ITUNESSCANINTERVAL
-	DE	iTunes Aktualisierungs-Intervall
+	DE	iTunes-Aktualisierungsintervall
 	EN	iTunes Reload Interval
 	ES	Intervalo de recarga de iTunes
 	FR	Délai d'actualisation iTunes
+	HE	מרווח הזמן לטעינה חוזרת של iTunes
 	IT	Intervallo di ricaricamento di iTunes
 	JA	iTunes更新時間
-	NL	iTunes herlaad interval
+	NL	iTunes-herlaadinterval
 	NO	iTunes Oppdateringsintervall
 	SV	iTunes uppdateringsintervall
 	ZH_CN	iTunes刷新间隔时间
 
 SETUP_ITUNESSCANINTERVAL_DESC
-	DE	Wenn sich die iTunes Musiksammlung ändert, wird SlimServer automatisch die Daten neu einlesen. Sie können die Mindestwartezeit (in Sekunden) definieren, die SlimServer warten soll, bevor er die iTunes Musiksammlung neu einliest. Ein Wert von 0 deaktiviert die automatische Aktualisierung.
+	DE	Wenn sich die iTunes-Musiksammlung ändert, importiert SlimServer die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die SlimServer mindestens warten soll, bevor die iTunes-Musiksammlung neu geladen wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
 	EN	When your iTunes Music Library changes SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your iTunes Music Library again. A value of zero disables the reload.
-	ES	Cuando la iTunes Music Library cambie, SlimServer importará automáticamente la información de esa colección. Se puede especificar el mínimo intervalo de tiempo (en segundos) que SlimServer esperará antes de recargar nuevamente la iTunes Music Library. Usar un valor 0 deshabilita la recarga.
-	FR	Le SlimServer importe automatiquement les changements apportés à votre bibliothèque iTunes. Vous pouvez spécifier le délai minimum en secondes avant que le SlimServer actualise la bibliothèque iTunes. La valeur zéro désactive cette fonctionnalité.
-	IT	Quando cambia la tua libreria musicale di iTunes, Slimserver importa automaticamente le informazioni modificate. Puoi specificare il periodo minimo (in secondi) che lo Slimserver attenderà prima di ricaricare la libreria musicale di iTunes. Un valore pari a zero disabiliterà questa funzionalità.
-	NL	Indien je iTunes muziekcollectie wijzigt zal SlimServer automatisch de informatie opnieuw importeren. Je kunt de minimum tijd specificeren (in seconden) die SlimServer zal wachten voor het opnieuw importeren van je iTunes muziekcollectie. Een waarde van 0 seconden schakelt het herladen uit.
+	ES	Cuando cambie la biblioteca de música de iTunes, SlimServer importará automáticamente la información de la biblioteca. Se puede especificar la cantidad de tiempo mínima (en segundos) que SlimServer esperará antes de volver a cargar la biblioteca de música de iTunes. Un valor de cero deshabilita la recarga.
+	FR	Le SlimServer importe automatiquement les informations de la collection musicale d'iTunes lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le SlimServer actualise la collection musicale d'iTunes. La valeur 0 désactive cette fonctionnalité.
+	HE	כאשר ספריית המוסיקה של iTunes משתנה, SlimServer מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על SlimServer להמתין לפני טעינה חוזרת של ספריית המוסיקה של iTunes. ערך אפס משבית את אפשרות הטעינה מחדש.
+	IT	Se si modifica la libreria musicale di iTunes, SlimServer importa automaticamente i nuovi dati. È possibile specificare per SlimServer il periodo minimo di attesa (in secondi) precedente al ricaricamento della libreria musicale di iTunes. Se si imposta il valore zero, la funzionalità viene disattivata.
+	NL	Wanneer je iTunes-muziekcollectie verandert, worden de collectiegegevens automatisch door SlimServer geïmporteerd. Je kunt opgeven (in seconden) hoe lang SlimServer minimaal moet wachten alvorens je iTunes-muziekcollectie te herladen. Een waarde van 0 seconden schakelt herladen uit.
 	ZH_CN	当您的iTunes音乐库改变时，SlimServer将自动地导入最新音乐库信息。您可以指定SlimServer再装您的iTunes数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_ITUNESSCANINTERVAL_OK
-	DE	Minimale Wartezeit fürs Einlesen der iTunes Musiksammlung
+	DE	Minimale Wartezeit für das Laden der iTunes-Musiksammlung
 	EN	Minimum iTunes Music Library reload time:
-	ES	Tiempo mínimo para recarga de iTunes Music Library:
-	FR	Délai minimum d'actualisation bibliothèque iTunes :
+	ES	Tiempo mínimo para recarga de biblioteca de música de iTunes:
+	FR	Délai minimal d'actualisation de la collection d'iTunes:
+	HE	פרק זמן מינימלי לטעינה מחדש של ספריית המוסיקה של iTunes:
 	IT	Intervallo minimo di ricaricamento della libreria musicale di iTunes:
 	JA	iTunes 音楽ライブラリー更新時間:
-	NL	Minimum iTunes muziekcollectie herlaad tijd:
+	NL	Minimumtijd voor herladen van iTunes-muziekcollectie:
 	NO	Minimum iTunes Musikkbibliotek oppdaterings tid:
 	SV	Minsta omläsningstid för iTunes musikbibliotek
 	ZH_CN	iTunes音乐库极少刷新时间
 
 SETUP_ITUNES_LIBRARY_XML_PATH
-	DE	Speicherort der iTunes Music Library.xml
+	DE	Speicherort von iTunes Music Library.xml
 	EN	iTunes Music Library.xml Location
 	ES	Ubicación del archivo iTunes Music Library.xml
-	FR	Emplacement de iTunes Music Library.xml
-	IT	Posizione della libreria.xml musicale di iTunes
+	FR	Emplacement du fichier iTunes Music Library.xml
+	HE	המיקום של iTunes Music Library.xml
+	IT	Posizione del file Music Library.xml di iTunes
 	JA	iTunes音楽ライブラリー xmlファイルの場所
-	NL	iTunes muziekcollectie Library.xml locatie
+	NL	Locatie van iTunes Music Library.xml
 	SV	Läge för filen "iTunes Music Library.xml"
 	ZH_CN	iTunes Music Library.xml地点
 
 SETUP_ITUNES_LIBRARY_XML_PATH_DESC
-	DE	Falls Sie iTunes auf einem anderen Rechner als SlimServer betreiben, so können Sie hier den kompletten Pfad zur Datei iTunes Music Library.xml angeben. Lassen Sie das Feld frei, falls iTunes auf demselben Rechner läuft wie der SlimServer.
+	DE	Falls iTunes auf einem anderen Rechner als SlimServer ausgeführt wird, können Sie hier den expliziten Pfad zur Datei 'iTunes Music Library.xml' angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie SlimServer installiert ist.
 	EN	If you are running iTunes on a different computer than SlimServer, you may specify an explicit path to the iTunes Music Library.xml file here.  Leave this blank if you are running iTunes on the same computer as SlimServer.
-	ES	Si se va a especificar la ubicación de la iTunes Music Library, ingresar aquí el camino hacia el archivo iTunes Music Library.xml ,incluyendo el nombre completo del archivo.
-	FR	Si vous avez choisi de spécifier l'emplacement de votre bibliothèque iTunes, entrez le chemin de votre fichier iTunes Music Library.xml ci-dessous, nom de fichier inclus.
-	IT	Se stai usando iTunes su un computer diverso da quello dello Slimserver, puoi indicare qui un indirizzo specifico alla cartella Musica.xml di iTunes. Lascia in bianco se iTunes gira sullo stesso computer dello Slimserver.
+	ES	Si ejecuta iTunes en un equipo distinto al de SlimServer, puede especificar aquí una ruta explícita a la carpeta de música de iTunes. Deje en blanco si ejecuta iTunes en el mismo equipo que SlimServer.
+	FR	Si vous exécutez iTunes sur un ordinateur différent de celui avec le SlimServer, vous pouvez spécifier ici un chemin d'accès vers le fichier iTunes Music Library.xml. Ne renseignez pas ce champ si la bibliothèque iTunes se trouve sur le même ordinateur que le SlimServer.
+	HE	אם אתה מפעיל את iTunes במחשב אחר מזה שמותקן בו SlimServer, באפשרותך לציין כאן נתיב מפורש לקובץ iTunes Music Library.xml. השאר שדה זה ריק אם אתה מפעיל את iTunes באותו מחשב שבו מותקן SlimServer.
+	IT	Se si utilizza iTunes in un computer diverso da quello in cui è installato SlimServer, è possibile indicare in questo campo il percorso del file Music Library.xml di iTunes. Se iTunes e SlimServer sono installati nello stesso computer, lasciare il campo vuoto.
 	JA	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここにファイル名を含めてxmlファイルへのパスを入力してください。
-	NL	Indien iTunes draait op een andere computer dan SlimServer kun je hier een expliciet pad opgeven naar het iTunes Music Library.xml bestand. Laat dit veld leeg als iTunes draait op dezelfde computer als SlimServer.
+	NL	Als iTunes op een andere computer draait dan SlimServer, kun je hier een expliciet pad naar het bestand iTunes Music Library.xml opgeven. Laat dit veld leeg als iTunes op dezelfde computer als SlimServer draait.
 	SV	Om du valt att specificera läget av ditt iTunes musikbibliotek manuellt anger du läget här, inklusive hela filnamnet
 	ZH_CN	如果您选择指定iTunes音乐库的地点，请在此输入iTunes Music Library.xml文件的路径及其文件名。
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH
-	DE	iTunes Musik Ordner
+	DE	iTunes-Musikordner
 	EN	iTunes Music Folder
-	ES	Carpeta de Música de iTunes
-	FR	Dossier musique iTunes
+	ES	Carpeta de música de iTunes
+	FR	Dossier de musique iTunes
+	HE	תיקיית המוסיקה של iTunes
 	IT	Cartella musicale di iTunes
 	JA	iTunes音楽フォルダー
-	NL	iTunes muziekfolder
+	NL	iTunes-muziekmap
 	SV	iTunes musikbibliotek
 	ZH_CN	iTunes音乐文件夹
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 	CS	Jestliže chete určit umístění vasí iTunes knihovny, zadejte cestu včetně jména složky, obsahující Vaši iTunes hudbu.
-	DE	Falls Sie iTunes auf einem anderen Rechner als SlimServer betreiben, so können Sie hier den kompletten Pfad zur iTunes Musiksammlung angeben. Lassen Sie das Feld frei, falls iTunes auf demselben Rechner läuft wie der SlimServer.
+	DE	Falls iTunes auf einem anderen Rechner als SlimServer ausgeführt wird, können Sie hier den vollständigen Pfad zur iTunes-Musiksammlung angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie SlimServer installiert ist.
 	EN	If you are running iTunes on a different computer than SlimServer, you may specify an explicit path to the iTunes Music folder here.  Leave this blank if you are running iTunes on the same computer as SlimServer.
-	ES	Si se va a especificar la ubicación de la iTunes Music Library, ingresar el camino, incluyendo el nombre de la carpeta que contiene a iTunes Music.
-	FR	Si vous avez choisi de spécifier l'emplacement de votre bibliothèque iTunes, entrez le chemin de celle-ci ci-dessous, nom de dossier inclus.
-	IT	Se stai usando iTunes su un computer diverso da quello dello Slimserver, puoi indicare qui un indirizzo specifico alla cartella Musica di iTunes. Lascia in bianco se iTunes gira sullo stesso computer dello Slimserver.
+	ES	Si ejecuta iTunes en un equipo distinto al de SlimServer, puede especificar aquí una ruta explícita a la carpeta de música de iTunes. Deje en blanco si ejecuta iTunes en el mismo equipo que SlimServer.
+	FR	Si vous exécutez iTunes sur un ordinateur différent de celui avec le SlimServer, vous pouvez spécifier ici un chemin d'accès vers la bibliothèque iTunes. Ne renseignez pas ce champ si la bibliothèque iTunes se trouve sur le même ordinateur que le SlimServer.
+	HE	אם אתה מפעיל את iTunes במחשב אחר מזה שמותקן בו SlimServer, באפשרותך לציין כאן נתיב מפורש לתיקיית המוסיקה של iTunes. השאר שדה זה ריק אם אתה מפעיל את iTunes באותו מחשב שבו מותקן SlimServer.
+	IT	Se si utilizza iTunes in un computer diverso da quello in cui è installato SlimServer, è possibile indicare in questo campo il percorso della cartella Musica di iTunes. Se iTunes e SlimServer sono installati nello stesso computer, lasciare il campo vuoto.
 	JA	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここに該当フォルダーへのパスを入力してください。
-	NL	Indien iTunes draait op een andere computer dan SlimServer kun je hier een expliciet pad opgeven naar de iTunes muziekfolder. Laat dit veld leeg als iTunes draait op dezelfde computer als SlimServer.
+	NL	Als iTunes op een andere computer draait dan SlimServer, kun je hier een expliciet pad naar de iTunes-muziekmap opgeven. Laat dit veld leeg als iTunes op dezelfde computer als SlimServer draait.
 	SV	Om du valt att specificera iTunes anger du läget på ditt iTunes musikbibliotek här
 	ZH_CN	如果您选择指定iTunes音乐库的地点，请在此输入存有您iTunes音乐的文件夹名及其路径。
 
 SETUP_IGNOREDISABLEDITUNESTRACKS
 	DE	Deaktivierte Lieder in iTunes
 	EN	Unchecked Songs in iTunes
-	ES	Canciones No Marcadas en iTunes
+	ES	Canciones no marcadas en iTunes
+	FR	Morceaux désélectionnés dans iTunes
+	HE	שירים לא מסומנים ב-iTunes
 	IT	Brani non selezionati in iTunes
-	NL	Niet gemarkeerde liedjes in iTunes
+	NL	Niet-geselecteerde liedjes in iTunes
 	ZH_CN	在iTunes中未经由复选框筛选的歌曲
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
-	DE	Standardmässig werden Lieder, bei welchen Sie in iTunes die Checkbox deaktivieren, in SlimServer nicht aufgeführt. Sie können dieses Verhalten hier ändern.
+	DE	Standardmäßig werden Titeln, die in iTunes deaktiviert sind, nicht in SlimServer angezeigt. Sie können dieses Verhalten hier ändern.
 	EN	By default, when you remove the check mark next to a song in iTunes, that song won't appear when you browse your music with SlimServer. You can change that behavior below.
-	ES	Por defecto, cuando se remueve la marca al lado de una canción en iTunes, esa canción no aparecerá cuando se examine la música con SlimServer. Se puede cambiar ese comportamiento debajo.
-	IT	Di default, quando rimuovi il segno di spunta di fianco ad un brano in iTunes, quello stesso brano non figurerà quando sfoglierai la musica con lo Slimserver. Puoi modificare il comportamento più sotto.
-	NL	Standaard zal een liedje niet bij Bekijk muziek te zien zijn als je het vinkje weghaald bij het liedje in iTunes. Je kunt dat gedrag hieronder instellen.
+	ES	De forma predeterminada, cuando se quita la marca de verificación junto a una canción en iTunes, esa canción no aparecerá cuando se examine la música con SlimServer. Ese comportamiento se puede cambiar a continuación.
+	FR	Par défaut, lorsque vous désélectionnez un morceau dans iTunes, celui-ci ne s'affiche pas lorsque vous parcourez votre musique grâce au SlimServer. Vous pouvez modifier ce comportement ci-dessous.
+	HE	כברירת מחדל, כאשר אתה מסיר את סימן הביקורת שמוצב ליד שיר ב-iTunes, השיר לא יופיע בעת עיון בפריטי המוסיקה באמצעות SlimServer. באפשרותך לשנות את ההתנהגות בהגדרות שלהלן.
+	IT	Per impostazione predefinita, se in iTunes si deseleziona la casella in corrispondenza di un brano, tale brano non viene visualizzato quando si sfoglia la raccolta musicale con SlimServer. È possibile modificare questa impostazione di seguito.
+	NL	Wanneer je het vinkje weghaalt naast een liedje in iTunes, wordt dat liedje standaard niet weergegeven wanneer je met SlimServer door je muziek bladert. Je kunt dit hieronder veranderen.
 	ZH_CN	根据缺省规定，当您去除iTunes歌曲旁边复选框的标志，该首歌曲就不会在您浏览SlimServer的音乐时出现。您可以在如下选择是否要遵照此缺省规定。
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_1
-	DE	Alle Lieder aufführen
+	DE	Alle Lieder einschließen
 	EN	Include all songs
 	ES	Incluir todas las canciones
 	FI	Sisällytä kaikki kappaleet
+	FR	Inclure tous les morceaux
+	HE	יש לכלול את כל השירים
 	IT	Includi tutti i brani
-	NL	Voeg alle liedjes toe
+	NL	Alle liedjes toevoegen
 	ZH_CN	包括所有歌曲在内
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_0
-	DE	Deaktivierte Lieder nicht aufführen
+	DE	Deaktivierte Lieder nicht einschließen
 	EN	Don't include unchecked songs
 	ES	No incluir las canciones no marcadas
 	FI	Älä sisällytä valitsemattomia kappaleita
+	FR	Ne pas inclure les morceaux désélectionnés
+	HE	אין לכלול שירים לא מסומנים
 	IT	Non includere i brani non selezionati
-	NL	Niet gemarkeerde liedjes niet toevoegen.
+	NL	Niet-geselecteerde liedjes niet toevoegen
 	ZH_CN	不要包括未经由复选框筛选的歌曲
 
 DEBUG_PLUGIN_ITUNES
