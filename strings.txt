@@ -10583,6 +10583,10 @@ ADVANCEDSEARCH
 	SV	Avancerad Sökning
 	ZH_CN	高等搜查
 
+EXAMPLE_SHORT
+	DE	z.B.
+	EN	ex:
+
 SEARCH
 	CS	Hledat v archivu
 	DA	Søg efter musik

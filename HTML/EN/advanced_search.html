@@ -85,7 +85,7 @@
 	[% timeSelectionBlock(name='search.timestamp.op') %]
 
 	<input name="search.timestamp" value="[% search.timestamp.value %]" size="10" maxlength="10" type="text">
-	&nbsp; ex: [% dateFormat %]
+	&nbsp; [% "EXAMPLE_SHORT" | string %] [% dateFormat %]
 [% END %]
 
 [% WRAPPER field title='BITRATE' %]
