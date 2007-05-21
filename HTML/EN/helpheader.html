@@ -3,13 +3,22 @@
 	<title>[% pagetitle %]</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]">
 	<meta name="CVS-ident" content="$id$" />
-	<link rel="stylesheet" href="[% webroot %]slimserver.css" type="text/css">
-	<link rel="stylesheet" href="[% webroot %]skin.css" type="text/css">
+    <link rel="stylesheet" href="[% webroot %]slimserver.css" type="text/css">
+    <link rel="stylesheet" href="[% webroot %]skin.css" type="text/css">
+	[% USE Prefs %][% IF Prefs.preferences('server').language == 'HE' %]<link rel="stylesheet" type="text/css" href="[% webroot %]rtl.css">[% END %]
+	[% IF lefttoright %]<style>table, td, th, tr { text-align: left; }</style>[% END %]
+
+
 </head>
 <body>
-	<p><h3>[% pagetitle %]</h3><p>
+    <p>
 
-	<a href="[% webroot %]index.html?player=[% playerURI %]" target="_top">[% "HOME" | string %]</a> /
+    <h3>[% pagetitle %]</h3><p>
+
+    <a href="[% webroot %]index.html?player=[% playerURI %]" target="_top">[% "HOME" | string %]</a> /
+ 					[% IF techinfo %]<a href="[% webroot %]html/docs/index.html?player=[% playerURI %]">[% 'TECHNICAL_INFORMATION' | string %]</a> /[% END %]
 	[% 'HELP' | string %] /
-	[% IF techinfo %]<a href="[% webroot %]html/docs/index.html?player=[% playerURI %]">[% 'TECHNICAL_INFORMATION' | string %]</a> /[% END %]
 	<b>[% pagetitle %]</b>
+
+  	[% IF lefttoright %]<div style="direction: ltr;">[% END %]
+  

@@ -1,6 +1,7 @@
 [% pageicon = 'help' %]
 [% pagetitle = 'SlimServer Plugins' %]
 [% techinfo = '1' %]
+[% lefttoright = '1' %]
 [% PROCESS helpheader.html %]
 
  <h4>Introduction</h4>
@@ -36,12 +37,10 @@ using the Perl language.</p>
 
   sub getDisplayName &#123; return "MY_PLUGIN_STRING_TOKEN")&#125;
 
-  sub strings &#123; 
-     return '
-  MY_PLUGIN_STRING_TOKEN
-  <i>&lt;tab&gt;</i>EN<i>&lt;tab&gt;</i>My Plugin English Name
-  ';
-  &#125;;
+  sub strings &#123; return '
+    MY_PLUGIN_STRING_TOKEN
+    &lt;tab&gt; EN &lt;tab&gt; My Plugin English Name
+'&#125;;
 
 			</pre></blockquote>
 <hr>

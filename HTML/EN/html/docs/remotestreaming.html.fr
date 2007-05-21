@@ -26,3 +26,4 @@
 
 <p>En cas de probl&egrave;me ou si vous avez des questions, envoyez un message &eacute;lectronique &agrave; l'adresse support@slimdevices.com ou visitez les forums pour utilisateurs &agrave; l'adresse <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a>.
 
+[% PROCESS helpfooter.html %]

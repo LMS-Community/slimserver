@@ -26,3 +26,4 @@
 
 <p>Heb je een vraag of probleem, neem dan contact op via 'support@slimdevices.com' of ga naar ons gebruikersforum op <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a>
 
+[% PROCESS helpfooter.html %]

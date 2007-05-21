@@ -1,5 +1,5 @@
-﻿&lrm;[% pageicon = 'help' %]&lrm;
-&lrm;[% pagetitle = 'Getting Started' %] [% PROCESS helpheader.html %]&lrm;
+﻿[% pageicon = 'help' %]
+[% pagetitle = "GETTING_STARTED" | string %] [% PROCESS helpheader.html %]
 	
 <br><h4>הקדמה</h4>
 <p>אנו מודים לך על רכישת נגן המוסיקה מבית Slim Devices/Logitech לשימוש ברשת.</p>

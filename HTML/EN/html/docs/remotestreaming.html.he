@@ -1,5 +1,5 @@
-﻿&lrm;[% pageicon = 'help' %]&lrm;
-&lrm;[% pagetitle = 'REMOTE_STREAMING' | string %] [% PROCESS helpheader.html %]&lrm;
+﻿[% pageicon = 'help' %]
+[% pagetitle = 'REMOTE_STREAMING' | string %] [% PROCESS helpheader.html %]
 <p>SlimServer תוכנן להזרים קובצי mp3 לנגני מוסיקה מבית Slim Devices/Logitech הפועלים ברשת.  עם זאת, באפשרותו להזרים את אותם קבצים באינטרנט גם לנגן תוכנות MP3 כגון Winamp או iTunes.
 
 <p>למטרות הדיון, המחשב שבו פועל SlimServer ייקרא המחשב המרוחק.
@@ -26,3 +26,4 @@
 
 <p>אם אתה נתקל בשאלה או בעיה, פנה אל support@slimdevices.com, או בקר בפורום המשתמשים שלנו בכתובת <a href="http://lists.slimdevices.com/">http://lists.slimdevices.com/&lrm;</a>.
 
+[% PROCESS helpfooter.html %]

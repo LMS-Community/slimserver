@@ -1,0 +1,86 @@
+[% pageicon = 'help' %]
+[% pagetitle = "HELP_REMOTE" | string %] [% PROCESS helpheader.html %]
+
+		<table>
+			<tr>
+				<td valign=top width=180><img src="[% webroot %]html/images/remote.gif" alt="" width="167" height="700" border="0"></td>
+				<td>
+					<h4>Configuration de la télécommande</h4>
+					<p>La télécommande nécessite deux piles de type AA (piles alcalines recommandées). Utilisez des piles neuves. Des piles déchargées risquent de nuire aux performances de la télécommande.</p>
+					<h4>Boutons</h4>
+
+					<p>Appuyez sur le bouton <b>MARCHE/ARRET</b> pour placer la Squeezebox en veille. L'éclairage de l'écran baisse, la musique s'arrête et une horloge s'affiche. Appuyez sur ce bouton à nouveau pour réactiver la Squeezebox.<b></b> 
+					
+					<p>Utilisez les boutons <b>VOLUME</b> pour régler le niveau sonore de la Squeezebox. 
+					
+					<p>Appuyez sur le bouton <b>REW</b> pour recommencer la lecture du morceau en cours. Appuyez deux fois dessus pour revenir au morceau précédent.<b></b> Maintenez ce bouton enfoncé pour effectuer un retour rapide dans le morceau en cours.<b></b> 
+					
+					<p>Appuyez sur <b>PAUSE</b> pour interrompre momentanément la lecture du morceau en cours. Appuyez sur ce bouton à nouveau pour reprendre la lecture.<b></b> Maintenez-le enfoncé pour arrêter la lecture.<b></b> 
+					
+					<p>Appuyez sur <b>FWD</b> pour passer au morceau suivant. Maintenez ce bouton enfoncé pour effectuer une avance rapide dans le morceau en cours.<b></b> 
+					
+					<p>Utilisez les flèches <b>HAUT</b>, <b>BAS</b>, <b>GAUCHE</b> et <b>DROITE</b> pour parcourir votre collection musicale. La flèche HAUT permet d'afficher l'élément précédent et la flèche BAS permet d'afficher l'élément suivant dans une liste.<b></b> La flèche <b>GAUCHE</b> permet de sortir de la liste en cours. La flèche <b>DROITE</b> permet d'entrer dans un menu ou d'afficher des informations supplémentaires sur un morceau. 
+					
+					<p>Appuyez sur <b>PLAY</b> pour lire les morceaux de la collection musicale sélectionnée. Effets du bouton <b>PLAY</b> pendant l'affichage des éléments suivants: 
+					
+					<ul>
+						<li> Genre, artiste ou album: la Squeezebox lit tous les morceaux du genre, de l'artiste ou de l'album affiché.
+						<li> Morceau: la Squeezebox lit le morceau. Si ce morceau est affiché parmi les autres morceaux d'un album, l'album est lu en entier, en commençant par le morceau sélectionné.
+						<li> Liste de lecture: la Squeezebox lit tous les morceaux contenus dans la liste de lecture. 
+						<li> Dossier: la Squeezebox lit tous les morceaux contenus dans le dossier et ses sous-dossiers. 
+					</ul>
+
+					<p><i>Conseil</i>: pour enregistrer une liste de lecture, appuyez sur <b>NOW PLAYING</b>, puis maintenez le bouton <b>PLAY</b> enfoncé. Vous serez invité à enregistrer la liste de lecture en cours. 
+
+					<p>Appuyez sur <b>ADD</b> pour ajouter la sélection en cours à la fin de la liste de lecture en cours. Effets du bouton <b>ADD</b> pendant l'affichage des éléments suivants: 
+					<ul>
+						<li> Genre, artiste ou album: la Squeezebox ajoute tous les morceaux du genre, de l'artiste ou de l'album affiché à la fin de la liste de lecture en cours.
+						<li> Morceau: la Squeezebox ajoute le morceau à la fin de la liste de lecture. 
+						<li> Liste de lecture: la Squeezebox ajoute tous les morceaux dans la liste de lecture. 
+						<li> Dossier: la Squeezebox ajoute tous les morceaux contenus dans le dossier et ses sous-dossiers. 
+					</ul>
+					
+					<p><i>Conseil:</i> maintenez le bouton ADD enfoncé pour insérer l'élément sélectionné à l'écran directement après le morceau en cours de lecture. 
+
+					<p><i>Conseil:</i> lorsque vous vous trouvez dans la liste en cours de lecture, appuyez sur ADD pour supprimer le morceau à l'écran de la liste de lecture. Maintenez le bouton ADD enfoncé pour déplacer le morceau de la liste de lecture en cours vers la fin de la liste des morceaux zappés. 
+					
+					<p>Appuyez sur <b>FAVORITES</b> pour accéder à la liste des morceaux favoris enregistrés. Maintenez le bouton <b>FAVORITES</b> enfoncé lors de l'affichage d'un morceau, d'une station de radio ou du nom d'une liste de lecture pour l'ajouter à la liste des favoris. 
+					
+					<p>Appuyez sur <b>BROWSE</b> pour parcourir la collection musicale par genre, par artiste, par album ou en fonction d'un critère différent. 
+					
+					<p>Appuyez sur <b>SEARCH</b> pour rechercher des albums, des artistes ou des morceaux. Lorsque la Squeezebox affiche Rechercher, appuyez sur la flèche <b>DROITE</b> pour saisir le texte de votre recherche. Utilisez les boutons numérotés pour saisir les lettres, comme avec un téléphone portable. Appuyez sur le bouton 2 une fois pour saisir A, deux fois pour saisir B, trois fois pour saisir C et quatre fois pour saisir 2, par exemple. Utilisez le bouton 0 pour insérer des espaces. Appuyez sur 1 pour sélectionner les signes de ponctuation. Appuyez sur la flèche <b>DROITE</b> pour afficher les résultats de la recherche.
+					
+					<p><i>Conseil:</i> dans les listes triées par artiste, album ou genre, appuyez sur un bouton numéroté pour rechercher le premier élément commençant par la lettre correspondante. 
+					
+					<p><i>Conseil:</i> dans les listes non triées comme les listes de lecture, appuyez sur un bouton numéroté pour parcourir la liste plus rapidement. 
+					
+					<p>Appuyez sur <b>SHUFFLE</b> pour passer en revue les options suivantes. 
+					<ul>
+						<li> Mélanger par morceau
+						<li> Mélanger par album
+						<li> Aucun mélange
+					</ul>
+					
+					<p>Appuyez sur <b>REPEAT</b> pour passer en revue les options suivantes. 
+					<ul>
+						<li> Répétition désactivée (arrête la lecture à la fin du morceau en cours)
+						<li> Répète le morceau en cours
+						<li> Répète tous les morceaux
+					</ul>
+					
+					<p>Appuyez sur <b>SLEEP</b> pour que la Squeezebox se mette en veille après 15 minutes. Appuyez sur <b>SLEEP</b> de manière répétée pour incrémenter ce délai par tranches de 15 minutes (jusqu'à 90 minutes). Si vous souhaitez annuler la fonction de veille, appuyez sur <b>SLEEP</b> jusqu'à ce que la platine affiche Mise en veille annulée. 
+					
+					<p>Appuyez sur <b>NOW PLAYING</b> pour afficher le morceau en cours de lecture. Appuyez sur ce bouton à nouveau pour passer en revue les différents formats d'affichage du morceau en cours de lecture, parmi lesquels des barres de progression ou des effets visuels graphiques.<b></b> 
+					
+					<p>Appuyez sur <b>SIZE</b> pour passer en revue les différentes tailles de police. Vous pouvez effectuer cette action lorsque la Squeezebox est activée ou désactivée. 
+					
+					<p>Appuyez sur <b>BRIGHTNESS</b> pour passer en revue les niveaux de luminosité de l'écran de la Squeezebox. Vous pouvez effectuer cette action lorsque la Squeezebox est activée ou désactivée. Si vous souhaitez entièrement réduire la luminosité de l'écran, appuyez sur <b>BRIGHTNESS</b> jusqu'à ce que l'écran soit noir. Si la Squeezebox est désactivée, l'écran reste noir jusqu'à ce que vous réactiviez l'appareil ou que vous appuyiez sur <b>BRIGHTNESS</b> à nouveau. Si la Squeezebox est activée, appuyez sur un bouton de la télécommande pour allumer l'écran.				
+				</td>
+			</tr>
+		</table>
+	</td>
+	</tr>
+	</table>
+[% PROCESS helpfooter.html %]
+
+

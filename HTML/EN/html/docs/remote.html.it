@@ -1,0 +1,86 @@
+[% pageicon = 'help' %]
+[% pagetitle = "HELP_REMOTE" | string %] [% PROCESS helpheader.html %]
+
+		<table>
+			<tr>
+				<td valign=top width=180><img src="[% webroot %]html/images/remote.gif" alt="" width="167" height="700" border="0"></td>
+				<td>
+					<h4>Impostazione del telecomando</h4>
+					<p>Il telecomando funziona con due batterie AA, preferibilmente alcaline. Usare sempre batterie cariche. Le prestazione del telecomando diminuiscono con batterie poco cariche.</p>
+					<h4>Pulsanti</h4>
+
+					<p>Premere il pulsante di <b>ACCENSIONE</b> per impostare la modalit&agrave; standby. Viene attenuata la luminosit&agrave; dello schermo, interrotta la riproduzione musicale e visualizzato un orologio. Per riattivare Squeezebox, premere nuovamente il pulsante di <b>ACCENSIONE</b>. 
+					
+					<p>Per regolare il livello dell'audio di Squeezebox, utilizzare i pulsanti <b>VOLUME</b>. 
+					
+					<p>Per riavviare immediatamente la riproduzione del brano corrente, premere il pulsante <b>REW</b>. Premere due volte il pulsante <b>REW</b> se si desidera passare alla riproduzione del brano precedente. Per avviare la riproduzione rapida a ritroso del brano corrente, tenere premuto il pulsante <b>REW</b>. 
+					
+					<p>Premere il pulsante <b>PAUSE</b> per sospendere la riproduzione del brano corrente. Per continuare, premere nuovamente il pulsante <b>PAUSE</b>. Per interrompere la riproduzione, tenere premuto il pulsante <b>PAUSE</b>. 
+					
+					<p>Per passare al brano successivo, premere il pulsante <b>FWD</b>. Per avviare la riproduzione rapida in avanti del brano corrente, tenere premuto il pulsante <b>FWD</b>. 
+					
+					<p>Utilizzare i pulsanti freccia <b>SU</b>, <b>GI&Ugrave;</b>, <b>SINISTRA</b> e <b>DESTRA</b> per spostarsi all'interno della libreria musicale. Il pulsante freccia SU consente di visualizzare la voce precedente di un elenco, mentre il pulsante freccia <b>GI&Ugrave;</b> consente di visualizzare quella successiva. Per uscire dall'elenco corrente, premere il pulsante freccia <b>SINISTRA</b>. Premere il pulsante freccia <b>DESTRA</b> per accedere alla voce o visualizzare ulteriori informazioni su un brano. 
+					
+					<p>Premere il pulsante <b>PLAY</b> per riprodurre i brani della selezione visualizzata. Se si preme <b>PLAY</b> quando &egrave; visualizzato: 
+					
+					<ul>
+						<li> Genere, artista o album: vengono riprodotti tutti i brani relativi a genere, artista o album visualizzato
+						<li> Brano: viene riprodotto il brano visualizzato. Se il brano fa parte di un album, viene riprodotto l'intero album, a partire dal brano visualizzato.
+						<li> Elenco di riproduzione: vengono riprodotti tutti i brani dell'elenco. 
+						<li> Cartella: vengono riprodotti tutti i brani presenti nella cartella e nelle relative sottocartelle. 
+					</ul>
+
+					<p><i>Suggerimento:</i> per salvare una sequenza di brani, premere il pulsante <b>NOW PLAYING</b>, quindi tenere premuto il pulsante <b>PLAY</b>. Viene visualizzato un messaggio in cui si chiede di salvare la sequenza di brani correnti per utilizzarla in seguito. 
+
+					<p>Premere <b>ADD</b> per aggiungere la selezione visualizzata alla fine della sequenza di brani corrente. Se si preme <b>ADD</b> quando &egrave; visualizzato: 
+					<ul>
+						<li> Genere, artista o album: tutti i brani relativi al genere, artista o album visualizzato vengono aggiunti alla fine della sequenza di brani dell'elenco Riproduzione in corso
+						<li> Brano: il brano visualizzato viene aggiunto alla fine della sequenza. 
+						<li> Elenco di riproduzione: vengono aggiunti tutti i brani dell'elenco. 
+						<li> Cartella: vengono aggiunti tutti i brani presenti nella cartella e nelle relative sottocartelle. 
+					</ul>
+					
+					<p><i>Suggerimento:</i> per inserire il brano visualizzato in modo da avviarne la riproduzione immediatamente dopo quella del brano corrente, tenere premuto il pulsante ADD. 
+
+					<p><i>Suggerimento:</i> nell'elenco Riproduzione in corso: premere ADD per rimuovere dall'elenco di riproduzione il brano visualizzato. Tenere premuto ADD per spostare il brano dall'elenco di riproduzione corrente alla fine dell'elenco Brani scelti con zappping. 
+					
+				<p>Premere il pulsante <b>FAVORITES</b> per passare all'elenco di brani preferiti salvato. Per aggiungere all'elenco dei preferiti un brano, una stazione radio o un elenco di riproduzione, tenere premuto <b>FAVORITES</b> quando &egrave; visualizzato l'elemento interessato. 
+					
+					<p>Premere <b>BROWSE</b> per esplorare la libreria musicale in base al genere, all'artista, all'album o ad altri elementi. 
+					
+					<p>Premere <b>SEARCH</b> per eseguire la ricerca di album, artisti o brani. Quando viene visualizzato il messaggio Ricerca musica, premere il pulsante freccia <b>DESTRA</b> per immettere il testo da cercare. Utilizzare i pulsanti numerici per immettere le lettere, come con un telefono cellulare. Ad esempio, premere il pulsante 2 una volta per immettere la lettera A, due volte per la lettera B, tre volte per la lettera C e quattro volte per immettere 2. Per inserire spazi, utilizzare il pulsante 0. Per scorrere i segni di punteggiatura, premere 1. Per visualizzare i risultati della ricerca, premere il pulsante freccia <b>DESTRA</b>.
+					
+					<p><i>Suggerimento:</i> negli elenchi in ordine alfabetico, ad esempio elenchi di artisti, album o generi, premere i pulsanti numerici per passare al primo elemento che inizia con la lettera corrispondente. 
+					
+					<p><i>Suggerimento:</i> negli elenchi con ordine casuale, ad esempio gli elenchi di riproduzione, premere un pulsante numerico per spostarsi di un numero corrispondente di posizioni all'interno dell'elenco. 
+					
+					<p>Premere il pulsante <b>SHUFFLE</b> per scorrere le seguenti impostazioni: 
+					<ul>
+						<li> Riproduzione casuale per brano
+						<li> Riproduzione casuale per album
+						<li> Disattiva la riproduzione casuale dei brani
+					</ul>
+					
+					<p>Premere il pulsante <b>REPEAT</b> per scorrere le seguenti impostazioni: 
+					<ul>
+						<li> Ripetizione disattivata (consente di interrompere la riproduzione al termine dell'elenco di riproduzione corrente)
+						<li> Ripeti il brano corrente
+						<li> Ripeti elenco di riproduzione
+					</ul>
+					
+					<p>Premere <b>SLEEP</b> per impostare lo spegnimento automatico di Squeezebox dopo 15 minuti. Per aggiungere incrementi di 15 minuti (fino a un massimo di 90 minuti), premere pi&ugrave; volte il pulsante <b>SLEEP</b>. Se si desidera disattivare la funzione di spegnimento automatico, premere il pulsante <b>SLEEP</b> fino a quando non viene visualizzato il messaggio Sospensione annullata. 
+					
+					<p>Premere il pulsante <b>NOW PLAYING</b> per visualizzare il brano in corso di riproduzione. Premere nuovamente <b>NOW PLAYING</b> per visualizzare diversi formati di visualizzazione del brano in corso di riproduzione, ad esempio diversi visualizzatori musicali e indicatori dell'avanzamento. 
+					
+					<p>Premere <b>SIZE</b> per scorrere le varie dimensioni disponibili per il carattere visualizzato. Questa operazione pu&ograve; essere eseguita sia se Squeezebox &egrave; acceso, sia se &egrave; spento. 
+					
+					<p>Per visualizzare i diversi livelli di luminosit&agrave; del display Squeezebox, premere il pulsante <b>BRIGHTNESS</b>. Questa operazione pu&ograve; essere eseguita sia se Squeezebox &egrave; acceso, sia se &egrave; spento. Se si desidera disattivare completamente la luminosit&agrave; del display, premere <b>BRIGHTNESS</b> fino a quando non viene visualizzato un display completamente scuro. Se Squeezebox &egrave; spento, il display resta disattivato fino a quando non si riaccende Squeezebox o si preme nuovamente il pulsante <b>BRIGHTNESS</b>. Se Squeezebox &egrave; acceso, per riattivare il display &egrave; sufficiente premere un pulsante del telecomando.				
+				</td>
+			</tr>
+		</table>
+	</td>
+	</tr>
+	</table>
+[% PROCESS helpfooter.html %]
+
+

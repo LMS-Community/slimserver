@@ -4,5 +4,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=[% LOCALE %]">
 <link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css">
 <link rel="stylesheet" type="text/css" href="[% webroot %]skin.css">
-[% USE Prefs %]
-[% IF Prefs.preferences('server').get('language') == 'HE' %]<style type="text/css">html { direction:rtl; }</style>[% END %]
+[% USE Prefs %][% IF Prefs.preferences('server').language == 'HE' %]
+	<link rel="stylesheet" type="text/css" href="[% webroot %]rtl.css">
+	[% IF lefttoright %]<style>table, td, th, tr { text-align: left; }</style>[% END %]
+[% END %]

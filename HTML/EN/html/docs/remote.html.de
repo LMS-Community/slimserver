@@ -1,0 +1,86 @@
+[% pageicon = 'help' %]
+[% pagetitle = "HELP_REMOTE" | string %] [% PROCESS helpheader.html %]
+
+		<table>
+			<tr>
+				<td valign=top width=180><img src="[% webroot %]html/images/remote.gif" alt="" width="167" height="700" border="0"></td>
+				<td>
+					<h4>Einrichten der Fernbedienung</h4>
+					<p>Es sind zwei AA-Batterien erforderlich (Alkalibatterien werden empfohlen). Achten Sie darauf, dass die Batterien frisch sind, da schwache Batterien den Betrieb der Fernbedienung beeintr&auml;chtigen k&ouml;nnen.</p>
+					<h4>Tasten</h4>
+
+					<p>Dr&uuml;cken Sie <b>POWER</b>, um Squeezebox in den Standbymodus zu versetzen. Das Display wird abgedunkelt, die Wiedergabe wird angehalten und die Uhr wird angezeigt. Dr&uuml;cken Sie <b>POWER</b> erneut, um Squeezebox aufzuwecken. 
+					
+					<p>Mit den Tasten unter <b>VOLUME</b> k&ouml;nnen Sie die Lautst&auml;rke der Squeezebox-Ausgabe regeln. 
+					
+					<p>Dr&uuml;cken Sie <b>REW</b>, um die Wiedergabe des aktuellen Titels von vorne zu wiederholen. Dr&uuml;cken Sie <b>REW</b> zweimal, um zum vorherigen Titel zu springen. Halten Sie <b>REW</b> gedr&uuml;ckt, um einen Suchlauf r&uuml;ckw&auml;rts im aktuellen Titel auszuf&uuml;hren. 
+					
+					<p>Dr&uuml;cken Sie <b>PAUSE</b>, um die Wiedergabe des aktuellen Titels anzuhalten. Dr&uuml;cken Sie <b>PAUSE</b> erneut, um die Wiedergabe fortzusetzen. Halten Sie <b>PAUSE</b> gedr&uuml;ckt, um die Wiedergabe zu beenden. 
+					
+					<p>Dr&uuml;cken Sie <b>FWD</b>, um zum n&auml;chsten Titel zu springen. Halten Sie <b>FWD</b> gedr&uuml;ckt, um einen Suchlauf vorw&auml;rts im aktuellen Titel auszuf&uuml;hren. 
+					
+					<p>Mit den Pfeiltasten <b>OBEN</b>, <b>UNTEN</b>, <b>LINKS</b> und <b>RECHTS</b> k&ouml;nnen Sie die Musikbibliothek durchsuchen. Dr&uuml;cken Sie <b>OBEN</b>, um den vorherigen bzw. <b>DOWN</b>, um den n&auml;chsten Eintrag einer Liste zu markieren. Dr&uuml;cken Sie <b>LINKS</b>, um die aktuelle Liste zu verlassen. Dr&uuml;cken Sie <b>RECHTS</b>, um den Eintrag zu &ouml;ffnen oder weitere Informationen &uuml;ber den Titel anzuzeigen. 
+					
+					<p>Dr&uuml;cken Sie <b>PLAY</b>, um die in der angezeigten Auswahl enthaltenen Titel wiederzugeben. Wenn Sie <b>PLAY</b> dr&uuml;cken, w&auml;hrend folgendes angezeigt wird: 
+					
+					<ul>
+						<li> Stilrichtung, Interpret oder Album: Squeezebox gibt alle entsprechenden Titel wieder.
+						<li> Titel: Squeezebox gibt diesen Titel wieder. Wird dieser Titel innerhalb eines Albums angezeigt, wird das ganze Album beginnend vom ausgew&auml;hlten Titel wiedergeben.
+						<li> Wiedergabeliste: Squeezebox gibt alle Titel in dieser Wiedergabeliste wieder. 
+						<li> Ordner: Squeezebox gibt alle Titel in diesem Ordner sowie den Unterordnern wieder. 
+					</ul>
+
+					<p><i>Tipp:</i> Dr&uuml;cken Sie zum Speichern einer Wiedergabeliste <b>NOW PLAYING</b> und halten Sie <b>PLAY</b> gedr&uuml;ckt. Sie werden aufgefordert, die aktuelle Wiedergabeliste zu speichern. 
+
+					<p>Dr&uuml;cken Sie <b>ADD</b>, um die angezeigte Auswahl am Ende der aktuellen Wiedergabeliste einzuf&uuml;gen. Wenn Sie <b>ADD</b> dr&uuml;cken, w&auml;hrend Folgendes angezeigt wird: 
+					<ul>
+						<li> Stilrichtung, Interpret oder Album: Squeezebox f&uuml;gt alle entsprechenden Titel am Ende der Wiedergabeliste &ldquo;Aktuelle Wiedergabe&rdquo; ein.
+						<li> Titel: Squeezebox f&uuml;gt diesen Titel am Ende der Liste ein. 
+						<li> Wiedergabeliste: Squeezebox f&uuml;gt alle Titel in dieser Wiedergabeliste ein. 
+						<li> Ordner: Squeezebox f&uuml;gt alle Titel in diesem Ordner sowie den Unterordnern ein. 
+					</ul>
+					
+					<p><i>Tipp:</i> Halten Sie <b>ADD</b> gedr&uuml;ckt, um das angezeigte Element sofort nach dem aktuellen Titel wiederzugeben. 
+
+					<p><i>Tipp:</i> Dr&uuml;cken Sie in der Wiedergabeliste &ldquo;Aktuelle Wiedergage&rdquo; <B>ADD</B>, um den sichtbaren Titel aus der Wiedergabeliste zu entfernen Halten Sie <b>ADD</b> gedr&uuml;ckt, um den Titel aus der aktuellen Wiedergabeliste an das Ende der Wiedergabeliste &ldquo;Zapped Songs&rdquo; zu verschieben. 
+					
+					<p>Dr&uuml;cken Sie <b>FAVORITES</b>, um die Liste der zusammengestellten Favoriten aufzurufen. Halten Sie <b>FAVORITES</b> gedr&uuml;ckt, w&auml;hrend der Name eines Titels, eines Radiosenders oder einer Wiedergabeliste angezeigt wird, um ihn in die Favoritenliste aufzunehmen. 
+					
+					<p>Dr&uuml;cken Sie <b>BROWSE</b>, um die Musikbibliothek nach Stilrichtung, Interpret, Album oder anderen Kriterien zu durchsuchen. 
+					
+					<p>Dr&uuml;cken Sie <b>SEARCH</b>, um nach Alben, Interpreten oder Titeln zu suchen. Wird auf Squeezebox &quot;Musik suchen&quot; angezeigt, dr&uuml;cken Sie <b>RECHTS</b>, und geben Sie den Suchtext ein. 	Geben Sie den Text &uuml;ber die Zifferntasten wie bei einem Mobiltelefon ein. Beispiel: Dr&uuml;cken Sie 2 einmal f&uuml;r &ldquo;A&rdquo;, zweimal f&uuml;r &ldquo;B&rdquo;, dreimal f&uuml;r &ldquo;C&rdquo; und viermal f&uuml;r &ldquo;2&rdquo;. Dr&uuml;cken Sie 0 zum Eingeben eines Leerzeichens. Dr&uuml;cken Sie 1, um durch die Satzzeichen zu schalten. Dr&uuml;cken Sie <b>RECHTS</b>, um die Suchergebnisse anzuzeigen.
+					
+					<p><i>Tipp:</i> In sortierten Listen (Interpreten, Alben, Stilrichtungen) k&ouml;nnen Sie eine Zifferntaste dr&uuml;cken, um den ersten Eintrag, der mit dem entsprechenden Buchstaben beginnt, anzuzeigen. 
+					
+					<p><i>Tipp</i>:	In unsortierten Listen (z.&nbsp;B. Wiedergabelisten) k&ouml;nnen Sie eine Zifferntaste dr&uuml;cken, um entsprechend schrittweise durch die Liste zu springen. 
+					
+					<p>Dr&uuml;cken Sie <b>SHUFFLE</b>, um zwischen den folgenden Einstellungen umzuschalten: 
+					<ul>
+						<li> Alle Titel zuf&auml;llig wiedergeben
+						<li> Zuf&auml;llige Albumreihenfolge
+						<li> Keine Zufallswiedergabe
+					</ul>
+					
+					<p>Dr&uuml;cken Sie <b>REPEAT</b>, um zwischen den folgenden Einstellungen umzuschalten: 
+					<ul>
+						<li> Wiederholung aus (die Wiedergabe wird am Ende der aktuellen Wiedergabeliste beendet)
+						<li> Aktuellen Titel wiederholen
+						<li> Alle Titel wiederholen
+					</ul>
+					
+					<p>Wenn Sie <b>SLEEP</b> dr&uuml;cken, wird Squeezebox nach 15 Minuten ausgeschaltet. Sie k&ouml;nnen <b>SLEEP</b> wiederholt dr&uuml;cken, um die Spielzeit um jeweils 15 Minuten (bis maximal 90 Minuten) zu verl&auml;ngern. Sie k&ouml;nnen den Schlafmodus abbrechen, indem Sie <b>SLEEP</b> dr&uuml;cken, bis &quot;Schlafmodus abgebrochen&quot; angezeigt wird. 
+					
+					<p>Dr&uuml;cken Sie <b>NOW PLAYING</b>, um den aktuellen Titel anzuzeigen. Dr&uuml;cken Sie <b>NOW PLAYING</b> erneut, um durch die verschiedenen Anzeigeformate (z.&nbsp;B. Visualisierung und Fortschrittsanzeige) f&uuml;r den aktuellen Titel zu schalten. 
+					
+					<p>Dr&uuml;cken Sie <b>SIZE</b>, um durch die verf&uuml;gbaren Schriftgr&ouml;&szlig;en zu schalten. Sie k&ouml;nnen dies tun, wenn Squeezebox ein- oder ausgeschaltet ist. 
+					
+					<p>Dr&uuml;cken Sie <b>BRIGHTNESS</b>, um durch die verf&uuml;gbaren Helligkeitsstufen zu schalten. Sie k&ouml;nnen dies tun, wenn Squeezebox ein- oder ausgeschaltet ist. Soll das Display vollst&auml;ndig abgedunkelt werden, dr&uuml;cken Sie <b>BRIGHTNESS</b>, bis das Display ganz dunkel ist. Ist Squeezebox ausgeschaltet, bleibt das Display dunkel, bis Sie das Ger&auml;t einschalten oder <b>BRIGHTNESS</b> erneut dr&uuml;cken. Ist Squeezebox eingeschaltet, dr&uuml;cken Sie eine beliebige Taste der Fernbedienung, um das Display zu aktivieren.				
+				</td>
+			</tr>
+		</table>
+	</td>
+	</tr>
+	</table>
+[% PROCESS helpfooter.html %]
+
+

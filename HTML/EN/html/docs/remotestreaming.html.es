@@ -26,3 +26,4 @@
 
 <p>Si tiene alguna pregunta o problema, p&oacute;ngase en contacto con support@slimdevices.com o visite nuestro foro de usuarios en <a href="http://forums.slimdevices.com/">http://forums.slimdevices.com/</a>
 
+[% PROCESS helpfooter.html %]

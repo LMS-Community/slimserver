@@ -1,7 +1,8 @@
 [% pageicon = 'help' %]
 [% pageHeaderMenu = BLOCK %]
-	[% 'HELP' | string %] /
 	[% IF techinfo %]<a href="[% webroot %]html/docs/index.html?player=[% playerURI %]">[% "TECHNICAL_INFORMATION" | string %]</a> /[% END %]
+	[% 'HELP' | string %] /
 	[% pagetitle %]&nbsp;
 [% END %]
 [% PROCESS pageheader.html %]
+  	[% IF lefttoright %]<div style="direction: ltr;">[% END %]

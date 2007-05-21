@@ -1,5 +1,5 @@
 [% pageicon = 'help' %]
-[% pagetitle = 'Getting Started' %] [% PROCESS helpheader.html %]
+[% pagetitle = "GETTING_STARTED" | string %] [% PROCESS helpheader.html %]
 	
 <br><h4>Einleitung</h4>
 <p>Vielen Dank, dass Sie sich f&uuml;r einen Netzwerk-Musikplayer von Slim Devices/Logitech entschieden haben.</p>

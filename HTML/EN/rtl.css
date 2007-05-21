@@ -1,0 +1,88 @@
+html { 
+	direction:rtl;
+}
+
+div#player_logo  {
+	padding-right: 6px;
+}
+
+div#sdi_logo {
+	padding-right: 6px;
+}
+
+table, td, tr, form {
+	text-align: right;
+}
+
+div#topGraphicMenu3 #playingSong {
+	position: absolute;
+	right: 22px;
+}
+
+#currentPlaylistLabel {
+	position: relative;
+	right: 9px;
+}
+
+#currentPlaylistCommands {
+	position: relative;
+	left: 9px;
+}
+
+div#topGraphicBox #playerChooser {
+	left: 20px;
+}
+
+div#topGraphicBox #playerChooser form {
+	float: left;
+}
+
+div#topGraphicMenu1 #powerButtons {
+	left: 18px;
+}
+
+div#topGraphicMenu3 #playingStatus {
+	right: 13px;
+}
+
+div#topGraphicMenu3 #statusSongRemoveButton {
+	position: absolute;
+	left: 18px;
+}
+
+div#topGraphicMenu3 #statusMessage {
+	padding-right: 7px;
+	float: right;
+}
+
+#statusSongRemoveButton img {
+	float: left;
+}
+
+.songInfo li {
+	clear: right;
+}
+
+.songInfoTitle {
+	float: right;
+}
+
+.songInfoText {
+	float: right;
+}
+
+div#browsedbList {
+	clear: right;
+}
+
+.browsedbListItem {
+	width: 100%;
+}
+
+.pagebar {
+	clear: right;
+}
+
+.browsedbArtItem {
+	float: right;
+}
