@@ -19,7 +19,7 @@ SETUP_MUSICMAGICPLAYLISTFORMAT
 	NL	MusicIP-playlistformaat
 	NO	MusicIP spilleliste format
 	SV	MusicIP låtlistsformat
-	ZH_CN	MusicMagic播放表格式
+	ZH_CN	MusicIP播放表格式
 
 SETUP_MUSICMAGICPLAYLISTFORMAT_DESC
 	DE	Diese Option definiert das Format, in welcher MusicIP-Wiedergabelisten importiert werden.
@@ -41,7 +41,7 @@ SETUP_MIX_TYPE
 	HE	סוג מיקס של MusicIP
 	IT	Tipo di raccolta MusicIP
 	NL	MusicIP-mixtype
-	ZH_CN	MusicMagic混音类型
+	ZH_CN	MusicIP混音类型
 
 SETUP_MIX_TYPE_DESC
 	DE	Die Grösse des gewünschten MusicIP-Mixes kann über drei Typen definiert werden: Titel, Minuten, MegaByte (Standardwert: Titel)
@@ -51,7 +51,7 @@ SETUP_MIX_TYPE_DESC
 	HE	ניתן לקבוע את גודל המיקס של MusicIP לפי שלושה סוגי מספרים: רצועות, דקות, מגה-בתים (רצועות ברירת מחדל)
 	IT	È possibile impostare le dimensioni della raccolta MusicIP in base al numero di brani (impostazione predefinita), minuti o megabyte
 	NL	Je kunt de MusicIP-mixgrootte volgens drie typen instellen: tracks, minuten, megabytes (standaardtracks)
-	ZH_CN	您的MusicMagic混音量可从三种数量设置做选择：轨道、分钟、兆字节（缺省轨道）
+	ZH_CN	您的MusicIP混音量可从三种数量设置做选择：轨道、分钟、兆字节（缺省轨道）
 
 SETUP_MIX_SIZE
 	DE	MusicIP-Mix: Größe
@@ -61,7 +61,7 @@ SETUP_MIX_SIZE
 	HE	גודל מיקס של MusicIP
 	IT	Dimensioni della raccolta MusicIP
 	NL	MusicIP-mixgrootte
-	ZH_CN	MusicMagic混音量
+	ZH_CN	MusicIP混音量
 
 SETUP_MIX_SIZE_DESC
 	CS	Vyberte Mix Size
@@ -72,7 +72,7 @@ SETUP_MIX_SIZE_DESC
 	HE	בחירת גודל מיקס
 	IT	Scegliere le dimensioni della raccolta
 	NL	Mixgrootte kiezen
-	ZH_CN	请选择MusicMagic混音量
+	ZH_CN	请选择MusicIP混音量
 
 SETUP_MIX_FILTER
 	DE	MusicIP-Mixfilter
