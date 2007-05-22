@@ -432,7 +432,7 @@ sub listExitHandler {
 				'level'             => 1,
 				'findCriteria'      => {
 					'contributor.id'   => $curObj->id,
-					#'contributor.role' => $curType,
+					'contributor.role' => $curType,
 				},
 				'selectionCriteria' => $selectionCriteria,
 			});

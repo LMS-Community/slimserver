@@ -26,7 +26,7 @@
 	
 					<div class="songInfoText">[% FOREACH contributor = contributors %]
 	
-						[% contributorHTMLFrag = "<a href=\"browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=$contributor.id&amp;player=$playerURI\" target=\"browser\">$contributor.name</a>" %]
+						[% contributorHTMLFrag = "<a href=\"browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=$contributor.id&amp;contributor.role=$role&amp;player=$playerURI\" target=\"browser\">$contributor.name</a>" %]
 	
 						[% contributorsHTML.push(contributorHTMLFrag) %]
 	

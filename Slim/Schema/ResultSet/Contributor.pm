@@ -119,7 +119,22 @@ sub descendAlbum {
 		'order_by' => $sort,
 	};
 
-	if (my $roles = Slim::Schema->artistOnlyRoles($find->{'contributor.role'})) {
+	# Bug: 4694 - if role has been specified descend using this role, otherwise descend for all artist only roles
+	my $roles;
+
+	if ($find->{'contributor.role'}) {
+
+		if ($find->{'contributor.role'} ne 'ALL') {
+
+			$roles = [ Slim::Schema::Contributor->typeToRole($find->{'contributor.role'}) ];
+		}
+
+	} else {
+
+		$roles = Slim::Schema->artistOnlyRoles;
+	}
+
+	if ($roles) {
 
 		$cond->{'contributorAlbums.role'} = { 'in' => $roles };
 	}
