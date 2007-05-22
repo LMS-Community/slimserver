@@ -2187,13 +2187,10 @@ sub _postCheckAttributes {
 
 			for my $contributorObj (@{$contributorList}) {
 
-				# Remove all the previous contributor album mappings
-				# for the contributor & album combination.
-				$self->search('ContributorAlbum', {
-					'album'       => $albumObj->id,
-					'contributor' => $contributorObj->id,
-				})->delete_all;
+				# Bug 4882 - Don't remove contributor <-> album mappings here as its impossible to remove only stale ones
+				# Instead recreate this table post scan in the sql optimise script so we can base it on all tracks in an album
 
+				# The following is retained at present to add mappings for BMF, entries created will be deleted in the optimise phase
 				$self->resultset('ContributorAlbum')->find_or_create({
 					'album'       => $albumObj->id,
 					'contributor' => $contributorObj->id,
