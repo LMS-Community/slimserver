@@ -762,14 +762,24 @@ sub musicfolderQuery {
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity');
 	my $folderId = $request->getParam('folder_id');
-
-
+	my $url      = $request->getParam('url');
+	
+	# url overrides any folderId
+	my $params = ();
+	
+	if (defined $url) {
+		$params->{'url'} = $url;
+	} else {
+		# findAndScanDirectory sorts it out if $folderId is undef
+		$params->{'id'} = $folderId;
+	}
+	
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult("rescan", 1);
 	}
 
 	# Pull the directory list, which will be used for looping.
-	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree( { 'id' => $folderId } );
+	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree($params);
 
 	# create filtered data
 	

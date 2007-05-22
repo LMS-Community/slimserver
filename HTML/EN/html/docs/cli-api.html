@@ -118,6 +118,10 @@
 		command is maintained.
 	</li>
 	<li>
+		Command &quot;<a href="#playlistcontrol">playlistcontrol</a>&quot; now accepts also
+		a folder_id as returned by the new &quot;<a href="#musicfolder">musicfolder</a>&quot; query.
+	</li>
+	<li>
 		Slightly reorganised this document to introduce a &quot;Compound queries&quot; section to
 		document queries &quot;<a href="#serverstatus">serverstatus</a>&quot; and 
 		&quot;<a href="#status">status</a>&quot;.
@@ -3265,6 +3269,19 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			url
+		</td>
+		<td>
+			Browses the folder identified by &quot;url&quot;. If the content
+			of &quot;url&quot; did not happen to be in the SlimServer database, it is
+			added to it.
+			<br>
+			&quot;url&quot; has precedence over &quot;folder_id&quot; if both are
+			provided.
+		</td>
+	</tr>
+	<tr>
+		<td>
 			charset
 		</td>
 		<td>
@@ -5699,38 +5716,54 @@ in the saved playlists folder.</p>
 	</p>
 </blockquote>
 
-<br><p id="playlist tracks ?"><strong><code>&lt;playerid&gt; playlist tracks ?</code></strong></p>
-<p>The &quot;playlist tracks&quot; command returns the the total number 
-  of tracks in the current playlist</p>
-<p> Example: </p>
-<blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 playlist tracks ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist tracks 7&lt;LF&gt;&quot;</p>
+<p><br></p>
+<p id="playlist tracks ?">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			playlist
+			tracks
+			?
+		</code>
+	</strong>
+</p>
+<p>The "playlist tracks" command returns the the total number of tracks in the current playlist</p>
+<p>Example:</p>
+<blockquote>
+	<p>Request: "04:20:00:12:23:45 playlist tracks ?&lt;LF&gt;"<br>
+	Response: "04:20:00:12:23:45 playlist tracks 7&lt;LF&gt;"</p>
 </blockquote>
 
-<br><p id="playlist shuffle"><strong><code>&lt;playerid&gt; playlist shuffle &lt;0|1|2|?|&gt;</code></strong></p>
-<p>The &quot;playlist shuffle&quot; command is used to shuffle, unshuffle or query 
-    the shuffle state for the current playlist. A value of &quot;0&quot; indicates 
-    that the playlist is not shuffled, &quot;1&quot; indicates that the playlist 
-   is shuffled by song, and &quot;2&quot; indicates that the playlist is shuffled
-   by album. Used with no parameter, the command toggles the shuffling state.</p>
-<p> Example: </p>
-<blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 playlist shuffle ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist shuffle 1&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 playlist shuffle 0&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist shuffle 0&lt;LF&gt;&quot;</p>
+<p><br></p>
+
+<p id="playlist shuffle"><strong><code>&lt;playerid&gt; playlist shuffle &lt;0|1|2|?|&gt;</code></strong></p>
+
+<p>The "playlist shuffle" command is used to shuffle, unshuffle or query the shuffle state for the current playlist. A value of "0" indicates that the playlist is not shuffled, "1" indicates that the playlist is shuffled by song, and "2" indicates that the playlist is shuffled by album. Used with no parameter, the command toggles the shuffling state.</p>
+
+<p>Example:</p>
+
+<blockquote>
+	<p>Request: "04:20:00:12:23:45 playlist shuffle ?&lt;LF&gt;"<br>
+	Response: "04:20:00:12:23:45 playlist shuffle 1&lt;LF&gt;"</p>
+
+	<p>Request: "04:20:00:12:23:45 playlist shuffle 0&lt;LF&gt;"<br>
+	Response: "04:20:00:12:23:45 playlist shuffle 0&lt;LF&gt;"</p>
 </blockquote>
 
-<br><p id="playlist repeat"><strong><code>&lt;playerid&gt; playlist repeat &lt;0|1|2|?|&gt;</code></strong></p>
-<p>The &quot;playlist repeat&quot; command is used to indicate or query if the 
-  player will stop playing at the end of the playlist, repeat the current song 
-  indefinitely, or repeat the current playlist indefinitely. A value of &quot;0&quot; 
-  indicates that the player will stop at the end of the playlist, &quot;1&quot; 
-  indicates that the player will repeat the current song indefinitely and a value 
-  of &quot;2&quot; indicates that the player will repeat the entire playlist indefinitely.
-  Used with no parameter, the command toggles the repeat state.</p>
-<p> Example: </p>
-<blockquote> 
-  <p>Request: &quot;04:20:00:12:23:45 playlist repeat ?&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist repeat 2&lt;LF&gt;&quot;</p>
-  <p>Request: &quot;04:20:00:12:23:45 playlist repeat 0&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist repeat 0&lt;LF&gt;&quot;</p>
+<p><br></p>
+
+<p id="playlist repeat"><strong><code>&lt;playerid&gt; playlist repeat &lt;0|1|2|?|&gt;</code></strong></p>
+
+<p>The "playlist repeat" command is used to indicate or query if the player will stop playing at the end of the playlist, repeat the current song indefinitely, or repeat the current playlist indefinitely. A value of "0" indicates that the player will stop at the end of the playlist, "1" indicates that the player will repeat the current song indefinitely and a value of "2" indicates that the player will repeat the entire playlist indefinitely. Used with no parameter, the command toggles the repeat state.</p>
+
+<p>Example:</p>
+
+<blockquote>
+	<p>Request: "04:20:00:12:23:45 playlist repeat ?&lt;LF&gt;"<br>
+	Response: "04:20:00:12:23:45 playlist repeat 2&lt;LF&gt;"</p>
+
+	<p>Request: "04:20:00:12:23:45 playlist repeat 0&lt;LF&gt;"<br>
+	Response: "04:20:00:12:23:45 playlist repeat 0&lt;LF&gt;"</p>
 </blockquote>
 
 <br>
@@ -5797,6 +5830,14 @@ in the saved playlists folder.</p>
 		    track_id parameter is ignored.</td>
 	</tr>
 	<tr>
+		<td>folder_id</td>
+		<td>Folder ID, to restrict the results to files in this folder_id. If this
+		    parameter is provided, then any all the others are ignored.
+			<br>
+			Note that &quot;cmd:delete&quot; is not supported for folders.
+		</td>
+	</tr>
+	<tr>
 		<td>playlist_name</td>
 		<td>Playlist name, to restrict the results to this playlist_name. If this
 		    parameter is provided, then any genre_id, artist_id, album_id,
@@ -5818,7 +5859,7 @@ in the saved playlists folder.</p>
 	<tr>
 		<td>count</td>
 		<td>Number of elements loaded/added/inserted or max number of elements 
-			deleted</td>
+			deleted. For folders, only 1 is returned.</td>
 	</tr>
 </table>
 <p>Example:</p>

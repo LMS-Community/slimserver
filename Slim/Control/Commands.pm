@@ -1122,7 +1122,6 @@ sub playlistXitemCommand_done {
 	# Not sure anyone depends on this behaviour...
 	$request->addParam('_item', $path);
 
-	#$client->currentPlaylistChangeTime(time());
 	$client->currentPlaylistUpdateTime(time());
 
 	Slim::Player::Playlist::refreshPlaylist($client) if $client->currentPlaylistModified();
@@ -1327,6 +1326,32 @@ sub playlistcontrolCommand {
 	my $insert = ($cmd eq 'insert');
 	my $add    = ($cmd eq 'add');
 	my $delete = ($cmd eq 'delete');
+	
+	# shortcut to playlist $cmd url if given a folder_id...
+	# the acrobatics it does are too risky to replicate
+	if (defined(my $folderId = $request->getParam('folder_id'))) {
+		
+		# unfortunately playlist delete is not supported
+		if ($delete) {
+			$request->setStatusBadParams();
+			return;
+		}
+		
+		my $folder = Slim::Schema->find('Track', $folderId);
+		
+		# make sure it's a folder
+		if (!blessed($folder) || !$folder->can('url') || !$folder->can('content_type') || $folder->content_type() ne 'dir') {
+			$request->setStatusBadParams();
+			return;
+		}
+		
+		Slim::Control::Request::executeRequest(
+			$client, ['playlist', $cmd, $folder->url()]
+		);
+		$request->addResult('count', 1);
+		$request->setStatusDone();
+		return;
+	}
 
 	# if loading, first stop everything
 	if ($load) {
