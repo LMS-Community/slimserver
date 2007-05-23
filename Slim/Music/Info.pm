@@ -620,7 +620,7 @@ sub guessTags {
 
 		$log->info("Using format \"$guess\" = /$pat/...");
 
-		$pat = qr/$pat/;
+		$pat = qr/$pat$/;
 
 		# Check if this format matches		
 		my @matches = ();
