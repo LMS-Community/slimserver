@@ -963,6 +963,9 @@ sub findAndScanDirectoryTree {
 			'recursive' => 0,
 		});
 
+		# Bug: 4812 - notify those interested that the database has changed.
+		Slim::Control::Request::notifyFromArray(undef, [qw(rescan done)]);
+
 		# Bug: 3841 - check for new artwork
 		# But don't search at the root level.
 		if ($path ne $prefs->get('audiodir')) {
