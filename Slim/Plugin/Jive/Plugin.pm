@@ -78,7 +78,7 @@ sub initPlugin {
 #        C  Q  T  F
 
     Slim::Control::Request::addDispatch(['menu', '_index', '_quantity'], 
-        [1, 1, 1, \&menuQuery]);
+        [0, 1, 1, \&menuQuery]);
 
 }
 
@@ -713,10 +713,9 @@ sub menuQuery {
 	}
 
 	# get our parameters
-	my $client        = $request->client();
+#	my $client        = $request->client();
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
-
 
 	my @menu = (
 		# {
@@ -727,28 +726,16 @@ sub menuQuery {
 		# },
 		{
 			'text' => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
-			'b_action' => {'cmdarray' => [], 'tags' => {}},
-			'b_play' => {'cmdarray' => ['playlistctrl']},
-			#b_playH
-			#b_
-			#'id' => 'albums',
-			#'title' => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'), #'Albums',
-			#'action' => 'browse',
-			#'cmd' => {'cmdarray' => ['albums'], 'tags' => {'menu'=>'track'}}
-			#'hierarchy' => ['album', 'track', 'info'],
 		},
-		# {
-		# 	'id' => 'artists',
-		# 	'title' => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'), #'Artists',
-		# 	'action' => 'browse',
-		# 	'hierarchy' => ['contributor', 'album', 'track', 'info'],
-		# },
-		# {
-		# 	'id' => 'genres',
-		# 	'title' => Slim::Utils::Strings::string('BROWSE_BY_GENRE'), #'Genres',
-		# 	'action' => 'browse',
-		# 	'hierarchy' => ['genre', 'contributor', 'album', 'track', 'info'],
-		# },
+		{
+			'text' => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
+		},
+		{
+			'text' => Slim::Utils::Strings::string('BROWSE_BY_GENRE'),
+		},
+		{
+			'text' => Slim::Utils::Strings::string('BROWSE_BY_YEAR'),
+		},
 		# {
 		# 	'id' => 'years',
 		# 	'title' => Slim::Utils::Strings::string('BROWSE_BY_YEAR'), #'Years',
@@ -812,15 +799,8 @@ sub menuQuery {
 		
 		my $cnt = 0;
 
-		for my $eachmenu (@menu[$start..$end]) {
-			$request->addResultLoop('menu_loop', $cnt, 
-				'id', $eachmenu->{'id'});
-			while (my ($key, $value) = each %{$eachmenu}) {
-				if ($key !~ /^id$/) {
-					$request->addResultLoop('menu_loop', $cnt, 
-						$key, $value);
-				} 
-			}
+		for my $eachmenu (@menu[$start..$end]) {			
+			$request->setResultLoopHash('list_loop', $cnt, $eachmenu);
 			$cnt++;
 		}
 	}
