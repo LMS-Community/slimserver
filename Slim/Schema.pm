@@ -1178,7 +1178,9 @@ sub mergeVariousArtistsAlbums {
 	my $cursor  = $self->search('Album', {
 
 		'me.compilation' => undef,
-		'me.title'       => { '!=' => string('NO_ALBUM') },
+		
+		# BUG4193: allow processing 'no album' so we resolve the multiple artists
+		#'me.title'       => { '!=' => string('NO_ALBUM') },
 
 	})->distinct;
 
