@@ -7477,6 +7477,22 @@ HIGH
 	NL	Hoog
 	ZH_CN	高
 
+FULL
+	DE	Voll
+	EN	Full
+
+LIGHT
+	DE	Klein
+	EN	Light
+
+THREELINE
+	DE	3 Zeilig
+	EN	Threeline
+
+STANDARD
+	DE	Standard
+	EN	Standard
+
 TITLEFORMAT
 	CS	Formát názvu skladby
 	DA	Format for sangtitler
