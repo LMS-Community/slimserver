@@ -16,3 +16,12 @@ ALTER TABLE comments collate utf8_general_ci;
 ALTER TABLE pluginversion collate utf8_general_ci;
 ALTER TABLE years collate utf8_general_ci;
 
+-- Delete unused rows
+
+ALTER TABLE tracks DROP thumb;
+ALTER TABLE tracks DROP moodlogic_id;
+ALTER TABLE tracks DROP moodlogic_mixable;
+ALTER TABLE contributors DROP moodlogic_id;
+ALTER TABLE contributors DROP moodlogic_mixable;
+ALTER TABLE genres DROP moodlogic_id;
+ALTER TABLE genres DROP moodlogic_mixable;
