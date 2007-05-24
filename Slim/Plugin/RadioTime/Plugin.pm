@@ -144,14 +144,23 @@ sub cliQuery {
 
 sub cliRadiosQuery {
 	my $request = shift;
-	
-	# what we want the query to report about ourself
-	my $data = {
-		'cmd'  => 'radiotime',
-		'name' => Slim::Utils::Strings::string(getDisplayName()),
-		'type' => 'xmlbrowser',
-	};
+	my $menu = $request->getParam('menu');
 
+	my $data;
+	# what we want the query to report about ourself
+	if (defined $menu) {
+		$data = {
+			'text' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+		};
+	}
+	else {
+		$data = {
+			'cmd'  => 'radiotime',
+			'name' => Slim::Utils::Strings::string(getDisplayName()),
+			'type' => 'xmlbrowser',
+		};
+	}
+	
 	# let our super duper function do all the hard work
 	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
 }

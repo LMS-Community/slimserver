@@ -765,57 +765,75 @@ sub menuQuery {
 				},
 			},
 		},
-		# {
-		# 	'id' => 'years',
-		# 	'title' => Slim::Utils::Strings::string('BROWSE_BY_YEAR'), #'Years',
-		# 	'action' => 'browse',
-		# 	'hierarchy' => ['year', 'album', 'track', 'info'],
-		# },
-		# {
-		# 	'id' => 'newmusic',
-		# 	'title' => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'), #'New Music',
-		# 	'action' => 'browse',
-		# 	'hierarchy' => ['age', 'track', 'info'],
-		# },
-# 		{
-# 			'title' => 'Favorites',
-# 			'action' => '',
-# 		},
-		# {
-		# 	'id' => 'playlists',
-		# 	'title' => 'Playlists',
-		# 	'action' => 'browse',
-		# 	'hierarchy' => ['playlist', 'playlisttrack', 'info'],
-		# },
-# 		{
-# 			'title' => 'Search',
-# 			'action' => 'items',
-# 			'@items' => [
-# 				{
-# 					'title' => 'Artists',
-# 					'action' => '',
-# 				},
-# 				{
-# 					'title' => 'Albums',
-# 					'action' => '',
-# 				},
-# 			],
-# 		},
-		# {
-		# 	'id' => 'internetradio',
-		# 	'title' => 'Internet Radio',
-		# 	'action' => 'browse',
-		# 	'hierarchy' => ['radios'],
-		# },
-# 		{
-# 			'title' => 'Settings',
-# 			'action' => ''
-# 		},
-		# {
-		# 	'id' => 'exit',
-		# 	'title' => 'Exit',
-		# 	'action' => 'exit',
-		# },
+		{
+			'text' => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'),
+			'actions' => {
+				'action' => {
+					'cmd' => ['albums'],
+					'tags' => {
+						'menu' => 'track',
+						'sort' => 'new',
+					},
+				},
+			},
+			'window' => {
+				'style' => 'album',
+			},
+		},
+		{
+			'text' => 'Favorites',
+		},
+		{
+			'text' => 'Music Folder',
+			'actions' => {
+				'action' => {
+					'cmd' => ['musicfolder'],
+					'tags' => {
+						'menu' => 'musicfolder',
+					},
+				},
+			},
+		},
+		{
+			'text' => 'Playlists',
+			'actions' => {
+				'action' => {
+					'cmd' => ['playlists'],
+					'tags' => {
+						'menu' => 'track',
+					},
+				},
+			},
+		},
+		{
+			'text' => 'Search',
+			'count' => 3,
+			'list_loop' => [
+				{
+					'text' => 'Artists',
+				},
+				{
+					'text' => 'Albums',
+				},
+				{
+					'text' => 'Songs',
+				},
+				{
+					'text' => 'Playlists',
+				},
+			],
+		},
+		{
+			'text' => 'Internet Radio',
+			'actions' => {
+				'action' => {
+					'cmd' => ['radios'],
+					'tags' => {
+						'menu' => 'radio',
+					},
+				},
+			},
+		},
 	);
 
 	my $numitems = scalar(@menu);

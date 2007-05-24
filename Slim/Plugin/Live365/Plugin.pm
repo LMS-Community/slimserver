@@ -975,14 +975,22 @@ sub initPlugin {
 sub cli_radiosQuery {
 	my $request = shift;
 
-	$log->debug("Begin Function");
+	my $menu = $request->getParam('menu');
 
+	my $data;
 	# what we want the query to report about ourself
-	my $data = {
-		'cmd'  => 'live365',                    # cmd label
-		'name' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
-		'type' => 'live365',              # type
-	};
+	if (defined $menu) {
+		$data = {
+			'text' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+		};
+	}
+	else {
+		$data = {
+			'cmd'  => 'live365',                    # cmd label
+			'name' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+			'type' => 'live365',              # type
+		};
+	}
 	
 	# let our super duper function do all the hard work
 	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);

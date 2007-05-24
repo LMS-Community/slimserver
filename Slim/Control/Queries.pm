@@ -237,6 +237,7 @@ sub albumsQuery {
 					'cmd' => [$actioncmd],
 					'tags' => {
 						'menu' => $nextMenu,
+						'sort' => 'tracknum',
 					},
 					'itemsParams' => 'params',
 				},
@@ -279,7 +280,7 @@ sub albumsQuery {
 				# we want the text to be album\nartist
 				my @artists = $eachitem->artists();
 				my $artist = $artists[0]->name();
-				my $text = $eachitem->name;
+				my $text = $eachitem->title;
 				if (defined $artist) {
 					$text = $text . "\n" . $artist;
 				}
@@ -295,6 +296,12 @@ sub albumsQuery {
 					'text' => $eachitem->name,
 				};
 				$request->addResultLoop($loopname, $cnt, 'window', $window);
+				
+				# artwork if we have it
+				my $artworkId = $eachitem->artwork;
+				if (defined $artworkId) {
+					$request->addResultLoop($loopname, $cnt, 'artworkId', $artworkId);
+				}
 			}
 			else {
 				$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
@@ -697,8 +704,7 @@ sub genresQuery {
 	
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
-	
-	
+		
 	# get them all by default
 	my $where = {};
 	
@@ -941,6 +947,10 @@ sub musicfolderQuery {
 	my $quantity = $request->getParam('_quantity');
 	my $folderId = $request->getParam('folder_id');
 	my $url      = $request->getParam('url');
+	my $menu          = $request->getParam('menu');
+	
+	# menu/jive mgmt
+	my $menuMode = defined $menu;
 	
 	# url overrides any folderId
 	my $params = ();
@@ -952,10 +962,6 @@ sub musicfolderQuery {
 		$params->{'id'} = $folderId;
 	}
 	
-	if (Slim::Music::Import->stillScanning()) {
-		$request->addResult("rescan", 1);
-	}
-
 	# Pull the directory list, which will be used for looping.
 	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree($params);
 
@@ -999,30 +1005,184 @@ sub musicfolderQuery {
 
 	$count = scalar(@data);
 
+	# now build the result
+	
+	if ($menuMode) {
+
+		# decide what is the next step down
+		# assume we have a folder, for other types we will override in the item
+		# we go to musicfolder from musicfolder :)
+
+		# build the base element
+		my $base = {
+			'actions' => {
+				'action' => {
+					'cmd' => ["musicfolder"],
+					'tags' => {
+						'menu' => 'musicfolder',
+					},
+					'itemsParams' => 'params',
+				},
+				'play' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'tags' => {
+						'cmd' => 'load',
+					},
+					'itemsParams' => 'params',
+				},
+				'add' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'tags' => {
+						'cmd' => 'add',
+					},
+					'itemsParams' => 'params',
+				},
+			},
+		};
+		$request->addResult('base', $base);
+	}
+
+	if (Slim::Music::Import->stillScanning()) {
+		$request->addResult("rescan", 1);
+	}
+
 	$request->addResult('count', $count);
 
-	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+	my ($valid, $start, $end) = $request->normalize(
+		scalar($index), scalar($quantity), $count
+	);
 
 	if ($valid) {
 		
 		my $cnt = 0;
-		my $loopname = "folder_loop";
+		my $loopname =  $menuMode?'list_loop':'folder_loop';
 		
 		for my $eachitem (@data[$start..$end]) {
 			
-			$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id());
-			$request->addResultLoop($loopname, $cnt, 'filename', Slim::Music::Info::fileName($eachitem->url()));
+			my $filename = Slim::Music::Info::fileName($eachitem->url());
 			
-			if (Slim::Music::Info::isDir($eachitem)) {
-				$request->addResultLoop($loopname, $cnt, 'type', 'folder');
-			} elsif (Slim::Music::Info::isPlaylist($eachitem)) {
-				$request->addResultLoop($loopname, $cnt, 'type', 'playlist');
-			} elsif (Slim::Music::Info::isSong($eachitem)) {
-				$request->addResultLoop($loopname, $cnt, 'type', 'track');
-			} elsif (Slim::Music::Info::isSong($eachitem)) {
-				$request->addResultLoop($loopname, $cnt, 'type', 'unknown');
+			if ($menuMode) {
+				$request->addResultLoop($loopname, $cnt, 'text', $filename);
+				
+				# each item is different, but most items are folders
+				# the base assumes so above, we override it here
+				
+				# assumed case, folder
+				if (Slim::Music::Info::isDir($eachitem)) {
+
+					my $params = {
+						'folder_id' =>  $eachitem->id, 
+					};
+					$request->addResultLoop($loopname, $cnt, 'params', $params);
+
+				# playlist
+				} elsif (Slim::Music::Info::isPlaylist($eachitem)) {
+					
+					my $actions = {
+						'action' => {
+							'cmd' => ['playlists', 'tracks'],
+							'tags' => {
+								'menu' => 'songinfo',
+								'playlist_id' => $eachitem->id,
+							},
+						},
+						'play' => {
+							'player' => 0,
+							'cmd' => ['playlistcontrol'],
+							'tags' => {
+								'cmd' => 'load',
+								'playlist_id' => $eachitem->id,
+							},
+						},
+						'add' => {
+							'player' => 0,
+							'cmd' => ['playlistcontrol'],
+							'tags' => {
+								'cmd' => 'add',
+								'playlist_id' => $eachitem->id,
+							},
+						},
+					};
+					$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+
+				# song
+				} elsif (Slim::Music::Info::isSong($eachitem)) {
+					
+					my $actions = {
+						'action' => {
+							'cmd' => ['songinfo'],
+							'tags' => {
+								'menu' => 'nowhere',
+								'track_id' => $eachitem->id,
+							},
+						},
+						'play' => {
+							'player' => 0,
+							'cmd' => ['playlistcontrol'],
+							'tags' => {
+								'cmd' => 'load',
+								'track_id' => $eachitem->id,
+							},
+						},
+						'add' => {
+							'player' => 0,
+							'cmd' => ['playlistcontrol'],
+							'tags' => {
+								'cmd' => 'add',
+								'track_id' => $eachitem->id,
+							},
+						},
+					};
+					$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+
+				# not sure
+				} else {
+					
+					# don't know what that is, abort!
+					my $actions = {
+						'action' => {
+							'cmd' => ["musicfolder"],
+							'tags' => {
+								'menu' => 'musicfolder',
+							},
+							'itemsParams' => 'params',
+						},
+						'play' => {
+							'player' => 0,
+							'cmd' => ['playlistcontrol'],
+							'tags' => {
+								'cmd' => 'load',
+							},
+							'itemsParams' => 'params',
+						},
+						'add' => {
+							'player' => 0,
+							'cmd' => ['playlistcontrol'],
+							'tags' => {
+								'cmd' => 'add',
+							},
+							'itemsParams' => 'params',
+						},
+					};
+					$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+				}
 			}
+			else {
+				$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
+				$request->addResultLoop($loopname, $cnt, 'filename', $filename);
 			
+				if (Slim::Music::Info::isDir($eachitem)) {
+					$request->addResultLoop($loopname, $cnt, 'type', 'folder');
+				} elsif (Slim::Music::Info::isPlaylist($eachitem)) {
+					$request->addResultLoop($loopname, $cnt, 'type', 'playlist');
+				} elsif (Slim::Music::Info::isSong($eachitem)) {
+					$request->addResultLoop($loopname, $cnt, 'type', 'track');
+				} else {
+					$request->addResultLoop($loopname, $cnt, 'type', 'unknown');
+				}
+			}
 			$cnt++;
 		}
 	}
@@ -1294,21 +1454,64 @@ sub playlistsTracksQuery {
 		$request->setStatusBadParams();
 		return;
 	}
-
+	my $menu          = $request->getParam('menu');
+	
+	# menu/jive mgmt
+	my $menuMode = defined $menu;
+		
 	# did we have override on the defaults?
 	$tags = $tagsprm if defined $tagsprm;
 
 	my $iterator;
 	my @tracks;
 
-	if (Slim::Music::Import->stillScanning()) {
-		$request->addResult("rescan", 1);
-	}
-
 	my $playlistObj = Slim::Schema->find('Playlist', $playlistID);
 
 	if (blessed($playlistObj) && $playlistObj->can('tracks')) {
 		$iterator = $playlistObj->tracks();
+	}
+
+	# now build the result
+	
+	if ($menuMode) {
+
+		# decide what is the next step down
+		# generally, we go to songingo after playlists tracks, so we get menu:songinfo
+		# from the artists we'll go to albums
+
+		# build the base element
+		my $base = {
+			'actions' => {
+				'action' => {
+					'cmd' => ['songinfo'],
+					'tags' => {
+						'menu' => 'nowhere',
+					},
+					'itemsParams' => 'params',
+				},
+				'play' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'tags' => {
+						'cmd' => 'load',
+					},
+					'itemsParams' => 'params',
+				},
+				'add' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'tags' => {
+						'cmd' => 'add',
+					},
+					'itemsParams' => 'params',
+				},
+			},
+		};
+		$request->addResult('base', $base);
+	}
+
+	if (Slim::Music::Import->stillScanning()) {
+		$request->addResult("rescan", 1);
 	}
 
 	if (defined $iterator) {
@@ -1319,16 +1522,30 @@ sub playlistsTracksQuery {
 		
 		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
-		my $cur = $start;
-		my $cnt = 0;
-
 		if ($valid) {
+
+			my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
+			my $cur = $start;
+			my $loopname = $menuMode?'list_loop':'playlisttracks_loop';
+			my $cnt = 0;
 
 			for my $eachitem ($iterator->slice($start, $end)) {
 
-				_addSong($request, 'playlisttracks_loop', $cnt, $eachitem, $tags, 
-						"playlist index", $cur);
+				if ($menuMode) {
+					
+					my $text = Slim::Music::TitleFormatter::infoFormat($eachitem, $format, 'TITLE');
+					$request->addResultLoop($loopname, $cnt, 'text', $text);
+					my $params = {
+						'track_id' =>  $eachitem->id, 
+					};
+					$request->addResultLoop($loopname, $cnt, 'params', $params);
 
+				}
+				else {
+					_addSong($request, $loopname, $cnt, $eachitem, $tags, 
+							"playlist index", $cur);
+				}
+				
 				$cur++;
 				$cnt++;
 			}
@@ -1359,17 +1576,60 @@ sub playlistsQuery {
 	my $quantity = $request->getParam('_quantity');
 	my $search	 = $request->getParam('search');
 	my $tags     = $request->getParam('tags') || '';
+	my $menu     = $request->getParam('menu');
+	
+	# menu/jive mgmt
+	my $menuMode = defined $menu;
 
 	# Normalize any search parameters
 	if (defined $search) {
 		$search = Slim::Utils::Text::searchStringSplit($search);
 	}
 
+	my $rs = Slim::Schema->rs('Playlist')->getPlaylists('all', $search);
+
+	# now build the result
+	
+	if ($menuMode) {
+
+		# decide what is the next step down
+		# generally, we go to playlists tracks after playlists, so we get menu:track
+		# from the tracks we'll go to songinfo
+		
+		# build the base element
+		my $base = {
+			'actions' => {
+				'action' => {
+					'cmd' => ['playlists', 'tracks'],
+					'tags' => {
+						'menu' => 'songinfo',
+					},
+					'itemsParams' => 'params',
+				},
+				'play' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'tags' => {
+						'cmd' => 'load',
+					},
+					'itemsParams' => 'params',
+				},
+				'add' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'tags' => {
+						'cmd' => 'add',
+					},
+					'itemsParams' => 'params',
+				},
+			},
+		};
+		$request->addResult('base', $base);
+	}
+
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult("rescan", 1);
 	}
-
-	my $rs = Slim::Schema->rs('Playlist')->getPlaylists('all', $search);
 
 	if (defined $rs) {
 
@@ -1377,20 +1637,34 @@ sub playlistsQuery {
 		
 		$request->addResult("count", $numitems);
 		
-		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $numitems);
+		my ($valid, $start, $end) = $request->normalize(
+			scalar($index), scalar($quantity), $numitems);
 
 		if ($valid) {
+			
+			my $loopname = $menuMode?'list_loop':'playlists_loop';
 			my $cnt = 0;
 
 			for my $eachitem ($rs->slice($start, $end)) {
 
-				$request->addResultLoop('playlists_loop', $cnt, "id", $eachitem->id);
-				$request->addResultLoop('playlists_loop', $cnt, "playlist", $eachitem->title);
-				$request->addResultLoop('playlists_loop', $cnt, "url", $eachitem->url) if ($tags =~ /u/);
-
+				if ($menuMode) {
+					$request->addResultLoop($loopname, $cnt, 'text', $eachitem->title);
+					my $params = {
+						'playlist_id' =>  $eachitem->id, 
+					};
+					$request->addResultLoop($loopname, $cnt, 'params', $params);
+				}
+				else {
+					$request->addResultLoop($loopname, $cnt, "id", $eachitem->id);
+					$request->addResultLoop($loopname, $cnt, "playlist", $eachitem->title);
+					$request->addResultLoop($loopname, $cnt, "url", $eachitem->url) if ($tags =~ /u/);
+				}
 				$cnt++;
 			}
 		}
+	}
+	else {
+		$request->addResult("count", 0);
 	} 
 	
 	$request->setStatusDone();
@@ -2074,12 +2348,8 @@ sub songinfoQuery {
 		return;
 	}
 
-	my $tags  = 'abcdefghijklmnopqrstvwxyz'; # all letter EXCEPT u
+	my $tags  = 'abcdefghijJklmnopqrstvwxyz'; # all letter EXCEPT u
 	my $track;
-
-	if (Slim::Music::Import->stillScanning()) {
-		$request->addResult("rescan", 1);
-	}
 
 	# get our parameters
 	my $index    = $request->getParam('_index');
@@ -2087,6 +2357,10 @@ sub songinfoQuery {
 	my $url	     = $request->getParam('url');
 	my $trackID  = $request->getParam('track_id');
 	my $tagsprm  = $request->getParam('tags');
+	my $menu     = $request->getParam('menu');
+	
+	# menu/jive mgmt
+	my $menuMode = defined $menu;
 
 	if (!defined $trackID && !defined $url) {
 		$request->setStatusBadParams();
@@ -2113,24 +2387,72 @@ sub songinfoQuery {
 		}
 	}
 	
+	# now build the result
+	
+	if (Slim::Music::Import->stillScanning()) {
+		$request->addResult("rescan", 1);
+	}
+
 	if (blessed($track) && $track->can('id')) {
 
 		my $hashRef = _songData($track, $tags);
 		my $count = scalar (keys %{$hashRef});
+
+		if ($menuMode) {
+
+			# decide what is the next step down
+			# generally, we go nowhere after songingo, so we get menu:nowhere...
+
+			# build the base element
+			my $base = {
+				'actions' => {
+					# no action, we ain't going anywhere!
+					
+					# we play/add the current track id
+					'play' => {
+						'player' => 0,
+						'cmd' => ['playlistcontrol'],
+						'tags' => {
+							'cmd' => 'load',
+							'track_id' => $track->id,
+						},
+					},
+					'add' => {
+						'player' => 0,
+						'cmd' => ['playlistcontrol'],
+						'tags' => {
+							'cmd' => 'add',
+							'track_id' => $track->id,
+						},
+					},
+				},
+			};
+			$request->addResult('base', $base);
+		}
 
 		$request->addResult("count", $count);
 
 		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 		if ($valid) {
+			
 			my $idx = 0;
+			my $cnt = 0;
+			my $loopname = $menuMode?'list_loop':'songinfo_loop';
 
 			while (my ($key, $val) = each %{$hashRef}) {
 
 				if ($idx >= $start && $idx <= $end) {
-					$request->addResult($key, $val);
+					
+					if ($menuMode) {
+						$request->addResultLoop($loopname, $cnt, 'text', $key . ":" . $val);
+					}
+					else {
+						$request->addResultLoop($loopname, $cnt, $key, $val);
+					}
 				}
 
+				$cnt++;
 				$idx++;
  			}
 		}
@@ -2214,6 +2536,10 @@ sub titlesQuery {
 	my $contributorID = $request->getParam('artist_id');
 	my $albumID       = $request->getParam('album_id');
 	my $year          = $request->getParam('year');
+	my $menu          = $request->getParam('menu');
+	
+	# menu/jive mgmt
+	my $menuMode = defined $menu;
 
 	if ($request->paramNotOneOfIfDefined($sort, ['title', 'tracknum'])) {
 		$request->setStatusBadParams();
@@ -2240,8 +2566,8 @@ sub titlesQuery {
 	}
 
 	# we don't want client playlists (Now playing), transporter sources,
-	# or playlists.
-	$where->{'me.content_type'} = {'!=', ['cpl', 'src', 'ssp']};
+	# directories, or playlists.
+	$where->{'me.content_type'} = {'!=', ['cpl', 'src', 'ssp', 'dir']};
 
 	# Manage joins
 	if (defined $genreID) {
@@ -2277,27 +2603,84 @@ sub titlesQuery {
 		$attr->{'order_by'} =  "me.titlesort";
 	}
 
-	if (Slim::Music::Import->stillScanning) {
-		$request->addResult("rescan", 1);
-	}
-
 	my $rs = Slim::Schema->rs('Track')->search($where, $attr)->distinct;
 
 	my $count = $rs->count;
+
+	# now build the result
+	
+	if ($menuMode) {
+
+		# decide what is the next step down
+		# generally, we go to songinfo after albums, so we get menu:track
+		# from songinfo we go nowhere...
+		my $actioncmd = 'songinfo';
+		my $nextMenu = 'nowhere';
+		
+		# build the base element
+		my $base = {
+			'actions' => {
+				'action' => {
+					'cmd' => [$actioncmd],
+					'tags' => {
+						'menu' => $nextMenu,
+					},
+					'itemsParams' => 'params',
+				},
+				'play' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'tags' => {
+						'cmd' => 'load',
+					},
+					'itemsParams' => 'params',
+				},
+				'add' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'tags' => {
+						'cmd' => 'add',
+					},
+					'itemsParams' => 'params',
+				},
+			},
+		};
+		$request->addResult('base', $base);
+	}
+
+	if (Slim::Music::Import->stillScanning) {
+		$request->addResult("rescan", 1);
+	}
 
 	$request->addResult("count", $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	if ($valid) {
-
+		
+		my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
+		my $loopname = $menuMode?'list_loop':'titles_loop';
 		my $cnt = 0;
 
 		for my $item ($rs->slice($start, $end)) {
-
-			_addSong($request, 'titles_loop', $cnt++, $item, $tags);
-
-			::idleStreams();
+			
+			if ($menuMode) {
+				my $text = Slim::Music::TitleFormatter::infoFormat($item, $format, 'TITLE');
+				$request->addResultLoop($loopname, $cnt, 'text', $text);
+				my $params = {
+					'track_id' =>  $item->id, 
+				};
+				$request->addResultLoop($loopname, $cnt, 'params', $params);
+			}
+			else {
+				_addSong($request, $loopname, $cnt, $item, $tags);
+			}
+			$cnt++;
+			
+			# give peace a chance...
+			if ($cnt % 5) {
+				::idleStreams();
+			}
 		}
 	}
 
@@ -2338,6 +2721,10 @@ sub yearsQuery {
 	# get our parameters
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');	
+	my $menu          = $request->getParam('menu');
+	
+	# menu/jive mgmt
+	my $menuMode = defined $menu;
 	
 	# get them all by default
 	my $where = {};
@@ -2347,13 +2734,57 @@ sub yearsQuery {
 		'distinct' => 'me.id'
 	};
 
-	if (Slim::Music::Import->stillScanning()) {
-		$request->addResult('rescan', 1);
-	}
-
 	my $rs = Slim::Schema->resultset('Year')->browse->search($where, $attr);
 
 	my $count = $rs->count;
+
+	# now build the result
+	
+	if ($menuMode) {
+
+		# decide what is the next step down
+		# generally, we go to albums after years, so we get menu:album
+		# from the albums we'll go to tracks
+		my $actioncmd = $menu . 's';
+		my $nextMenu = 'track';
+		
+		# build the base element
+		my $base = {
+			'actions' => {
+				'action' => {
+					'cmd' => [$actioncmd],
+					'tags' => {
+						'menu' => $nextMenu,
+					},
+					'itemsParams' => 'params',
+				},
+				'play' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'tags' => {
+						'cmd' => 'load',
+					},
+					'itemsParams' => 'params',
+				},
+				'add' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'tags' => {
+						'cmd' => 'add',
+					},
+					'itemsParams' => 'params',
+				},
+			},
+			'window' => {
+				'style' => 'album'
+			}
+		};
+		$request->addResult('base', $base);
+	}
+
+	if (Slim::Music::Import->stillScanning()) {
+		$request->addResult('rescan', 1);
+	}
 
 	$request->addResult('count', $count);
 
@@ -2361,11 +2792,20 @@ sub yearsQuery {
 
 	if ($valid) {
 
-		my $loopname = 'years_loop';
+		my $loopname = $menuMode?'list_loop':'years_loop';
 		my $cnt = 0;
 
 		for my $eachitem ($rs->slice($start, $end)) {
-			$request->addResultLoop($loopname, $cnt, 'year', $eachitem->id);
+			if ($menuMode) {
+				$request->addResultLoop($loopname, $cnt, 'text', $eachitem->name);
+				my $params = {
+					'year' =>  $eachitem->id, 
+				};
+				$request->addResultLoop($loopname, $cnt, 'params', $params);
+			}
+			else {
+				$request->addResultLoop($loopname, $cnt, 'year', $eachitem->id);
+			}
 			$cnt++;
 		}
 	}
@@ -2429,11 +2869,14 @@ sub dynamicAutoQuery {
 	my $index    = $request->getParam('_index');
 	my $quantity = $request->getParam('_quantity') || 0;
 	my $sort     = $request->getParam('sort');
+	my $menu     = $request->getParam('menu');
+
+	my $menuMode = defined $menu;
 
 	# we have multiple times the same resultset, so we need a loop, named
 	# after the query name (this is never printed, it's just used to distinguish
 	# loops in the same request results.
-	my $loop = $query . 's_loop';
+	my $loop = $menuMode?'list_loop':$query . 's_loop';
 
 	# if the caller asked for results in the query ("radios 0 0" returns 
 	# immediately)
@@ -2499,7 +2942,6 @@ sub _addSong {
 	# add the prefix in the first position, use a fancy feature of
 	# Tie::LLHash
 	if (defined $prefixKey) {
-#		(tied %{$hashRef})->first($prefixKey => $prefixVal);
 		(tied %{$hashRef})->Unshift($prefixKey => $prefixVal);
 	}
 	
@@ -2531,7 +2973,6 @@ sub _songData {
 	}
 	
 	# define an ordered hash for our results
-#	tie (my %returnHash, "Tie::LLHash", {lazy => 1});
 	tie (my %returnHash, "Tie::IxHash");
 
 	# add fields present no matter $tags
