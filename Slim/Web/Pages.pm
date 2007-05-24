@@ -592,6 +592,11 @@ sub update_firmware {
 
 sub tuneIn {
 	my ($client, $params) = @_;
+	
+	if ( $params->{'url'} ) {
+		$client->execute( [ 'playlist', 'play', $params->{'url'} ] );
+	}
+	
 	return Slim::Web::HTTP::filltemplatefile('tunein.html', $params);
 }
 

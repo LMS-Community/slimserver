@@ -7,21 +7,24 @@
 
 <br>
 
-[% IF p2 %]
+[% IF url %]
 	<p><b>
-	[% 'RADIO_TUNED_IN' | string %] [% p2 %]
-	</p></b>
+	[% 'RADIO_TUNED_IN' | string %] [% url %]
+	</b></p>
+	
+	<script type="text/javascript" language="JavaScript">
+	// Reload the status frame in 5 seconds to display the newly added playlist item
+	setTimeout( "refreshStatus()", 5000 );
+	</script>
 [% END %]
 
 <p>[% 'RADIO_TUNEIN_DESC' | string %]</p>
 
 <form name="tune" method="get" action="[% webroot %]tunein.html">
-	<input type="hidden" name="p0" value="playlist">
-	<input type="hidden" name="p1" value="play">
 	<input type="hidden" name="player" value="[% player %]">
 	[% 'RADIO_TUNEIN_RADIOURL' | string %]
-	<input type="text" class="stdedit" name="p2" size="40">
-	<input type="submit" class="stdclick" value="[% 'RADIO_TUNEIN_CHOOSE' | string %]" [% INCLUDE reloadStatusFrame.html %]>
+	<input type="text" class="stdedit" name="url" size="40">
+	<input type="submit" class="stdclick" value="[% 'RADIO_TUNEIN_CHOOSE' | string %]">
 </form>
 
 <br>
