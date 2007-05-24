@@ -139,12 +139,13 @@ sub displayAsHTML {
 		}
 
 		my @info;
+		my $vaString = Slim::Music::Info::variousArtistString();
 
 		for my $contributor (@artists) {
 			push @info, {
 				'artist'     => $contributor,
 				'name'       => $contributor->name,
-				'attributes' => 'contributor.id=' . $contributor->id,
+				'attributes' => 'contributor.id=' . $contributor->id . ($contributor->name eq $vaString ? "&album.compilation=1" : ''),
 			};
 		}
 
