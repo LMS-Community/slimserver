@@ -943,11 +943,11 @@ sub generateHTTPResponse {
 	}
 
 	# this might do well to break up into methods
-	if ($contentType =~ /image/) {
+	if ($contentType =~ /(?:image|javascript|css)/) {
 
-		# images should expire from cache one year from now
-		$response->expires(time() + HALFYEAR);
-		$response->header('Cache-Control' => sprintf('max-age=%d, public', 3600));
+		# static content should expire from cache in one hour
+		$response->expires( time() + 3600 );
+		$response->header('Cache-Control' => 'max-age=3600');
 	}
 
 	if ($contentType =~ /text/ && $path !~ /memoryusage/) {
