@@ -143,11 +143,15 @@ sub albumsQuery {
 	my $trackID       = $request->getParam('track_id');
 	my $year          = $request->getParam('year');
 	my $sort          = $request->getParam('sort');
-			
+	my $menu          = $request->getParam('menu');
+	
 	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album'])) {
 		$request->setStatusBadParams();
 		return;
 	}
+
+	# menu/jive mgmt
+	my $menuMode = defined $menu;
 
 	if (!defined $tags) {
 		$tags = 'l';
@@ -216,6 +220,47 @@ sub albumsQuery {
 
 	my $count = $rs->count;
 
+	# now build the result
+	
+	if ($menuMode) {
+
+		# decide what is the next step down
+		# generally, we go to tracks after albums, so we get menu:track
+		# from the tracks we'll go to songinfo
+		my $actioncmd = $menu . 's';
+		my $nextMenu = 'songinfo';
+		
+		# build the base element
+		my $base = {
+			'actions' => {
+				'action' => {
+					'cmd' => [$actioncmd],
+					'tags' => {
+						'menu' => $nextMenu,
+					},
+					'itemsParams' => 'params',
+				},
+				'play' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'tags' => {
+						'cmd' => 'load',
+					},
+					'itemsParams' => 'params',
+				},
+				'add' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'tags' => {
+						'cmd' => 'add',
+					},
+					'itemsParams' => 'params',
+				},
+			},
+		};
+		$request->addResult('base', $base);
+	}
+	
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult('rescan', 1);
 	}
@@ -226,21 +271,44 @@ sub albumsQuery {
 
 	if ($valid) {
 
-		my $loopname = 'albums_loop';
+		my $loopname = $menuMode?'list_loop':'albums_loop';
 		my $cnt = 0;
 
 		for my $eachitem ($rs->slice($start, $end)) {
-			$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
-			$tags =~ /l/ && $request->addResultLoop($loopname, $cnt, 'album', $eachitem->title);
-			$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'year', $eachitem->year);
-			$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'artwork_track_id', $eachitem->artwork);
-			$tags =~ /t/ && $request->addResultLoop($loopname, $cnt, 'title', $eachitem->rawtitle);
-			$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'disc', $eachitem->disc);
-			$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'disccount', $eachitem->discc);
-			$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'compilation', $eachitem->compilation);
-			if ($tags =~ /a/) {
+			if ($menuMode) {
+				# we want the text to be album\nartist
 				my @artists = $eachitem->artists();
-				$request->addResultLoopIfValueDefined($loopname, $cnt, 'artist', $artists[0]->name());
+				my $artist = $artists[0]->name();
+				my $text = $eachitem->name;
+				if (defined $artist) {
+					$text = $text . "\n" . $artist;
+				}
+				$request->addResultLoop($loopname, $cnt, 'text', $text);
+				
+				my $params = {
+					'album_id' =>  $eachitem->id, 
+				};
+				$request->addResultLoop($loopname, $cnt, 'params', $params);
+				
+				# style the windows, use only the album name
+				my $window = {
+					'text' => $eachitem->name,
+				};
+				$request->addResultLoop($loopname, $cnt, 'window', $window);
+			}
+			else {
+				$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
+				$tags =~ /l/ && $request->addResultLoop($loopname, $cnt, 'album', $eachitem->title);
+				$tags =~ /y/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'year', $eachitem->year);
+				$tags =~ /j/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'artwork_track_id', $eachitem->artwork);
+				$tags =~ /t/ && $request->addResultLoop($loopname, $cnt, 'title', $eachitem->rawtitle);
+				$tags =~ /i/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'disc', $eachitem->disc);
+				$tags =~ /q/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'disccount', $eachitem->discc);
+				$tags =~ /w/ && $request->addResultLoopIfValueDefined($loopname, $cnt, 'compilation', $eachitem->compilation);
+				if ($tags =~ /a/) {
+					my @artists = $eachitem->artists();
+					$request->addResultLoopIfValueDefined($loopname, $cnt, 'artist', $artists[0]->name());
+				}
 			}
 			$cnt++;
 		}
@@ -269,7 +337,11 @@ sub artistsQuery {
 	my $genreID  = $request->getParam('genre_id');
 	my $trackID  = $request->getParam('track_id');
 	my $albumID  = $request->getParam('album_id');
-
+	my $menu     = $request->getParam('menu');
+	
+	# menu/jive mgmt
+	my $menuMode = defined $menu;
+	
 	# get them all by default
 	my $where = {};
 	
@@ -337,13 +409,6 @@ sub artistsQuery {
 		$rs = Slim::Schema->rs('Contributor')->browse->search($where, $attr);
 	}
 	
-	if (Slim::Music::Import->stillScanning()) {
-		$request->addResult('rescan', 1);
-	}
-
-#	my $rs = Slim::Schema->rs('Contributor')->browse->search($where, $attr);
-
-	
 	# Various artist handling. Don't do if pref is off, or if we're
 	# searching, or if we have a track
 	my $count_va = 0;
@@ -357,28 +422,87 @@ sub artistsQuery {
 
 	my $count = $rs->count + ($count_va?1:0);
 
+
+	# now build the result
+	
+	if ($menuMode) {
+
+		# decide what is the next step down
+		# generally, we go to albums after artists, so we get menu:album
+		# from the albums we'll go to tracks
+		my $actioncmd = $menu . 's';
+		my $nextMenu = 'track';
+		
+		# build the base element
+		my $base = {
+			'actions' => {
+				'action' => {
+					'cmd' => [$actioncmd],
+					'tags' => {
+						'menu' => $nextMenu,
+					},
+					'itemsParams' => 'params'
+				},
+				'play' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'tags' => {
+						'cmd' => 'load',
+					},
+					'itemsParams' => 'params'
+				},
+				'add' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'tags' => {
+						'cmd' => 'add',
+					},
+					'itemsParams' => 'params'
+				},
+			},
+			# style correctly the window that opens for the action element
+			'window' => {
+				'style' => 'album',
+			}
+		};
+		$request->addResult('base', $base);
+	}
+	
+	if (Slim::Music::Import->stillScanning()) {
+		$request->addResult('rescan', 1);
+	}
+
 	$request->addResult('count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 	if ($valid || $count) {
 
-		my $loopname = 'artists_loop';
+		my $loopname = $menuMode?'list_loop':'artists_loop';
 		my $cnt = 0;
-
+		
+		my @data = $rs->slice($start, $end);
+		
 		# Various artist handling. Don't do if pref is off, or if we're
 		# searching, or if we have a track
 		if ($count_va) {
-			my $vaObj = Slim::Schema->variousArtistsObject;
-
-			$request->addResultLoop($loopname, $cnt, 'id', $vaObj->id);
-			$request->addResultLoop($loopname, $cnt, 'artist', $vaObj->name);
-			$cnt++;
+			unshift @data, Slim::Schema->variousArtistsObject;
 		}
 
-		for my $eachitem ($rs->slice($start, $end)) {
-			$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
-			$request->addResultLoop($loopname, $cnt, 'artist', $eachitem->name);
+		for my $obj (@data) {
+
+			if ($menuMode){
+				$request->addResultLoop($loopname, $cnt, 'text', $obj->name);
+				my $params = {
+					'artist_id' =>  $obj->id, 
+				};
+				$request->addResultLoop($loopname, $cnt, 'params', $params);
+			}
+			else {
+				$request->addResultLoop($loopname, $cnt, 'id', $obj->id);
+				$request->addResultLoop($loopname, $cnt, 'artist', $obj->name);
+			}
+
 			$cnt++;
 		}
 	}
@@ -569,6 +693,10 @@ sub genresQuery {
 	my $contributorID = $request->getParam('artist_id');
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
+	my $menu          = $request->getParam('menu');
+	
+	# menu/jive mgmt
+	my $menuMode = defined $menu;
 	
 	
 	# get them all by default
@@ -617,13 +745,54 @@ sub genresQuery {
 		}
 	}
 
-	if (Slim::Music::Import->stillScanning()) {
-		$request->addResult('rescan', 1);
-	}
-
 	my $rs = Slim::Schema->resultset('Genre')->browse->search($where, $attr);
 
 	my $count = $rs->count;
+
+	# now build the result
+	
+	if ($menuMode) {
+
+		# decide what is the next step down
+		# generally, we go to artists after genres, so we get menu:artist
+		# from the artists we'll go to albums
+		my $actioncmd = $menu . 's';
+		my $nextMenu = 'album';
+		
+		# build the base element
+		my $base = {
+			'actions' => {
+				'action' => {
+					'cmd' => [$actioncmd],
+					'tags' => {
+						'menu' => $nextMenu,
+					},
+					'itemsParams' => 'params',
+				},
+				'play' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'tags' => {
+						'cmd' => 'load',
+					},
+					'itemsParams' => 'params',
+				},
+				'add' => {
+					'player' => 0,
+					'cmd' => ['playlistcontrol'],
+					'tags' => {
+						'cmd' => 'add',
+					},
+					'itemsParams' => 'params',
+				},
+			},
+		};
+		$request->addResult('base', $base);
+	}
+	
+	if (Slim::Music::Import->stillScanning()) {
+		$request->addResult('rescan', 1);
+	}
 
 	$request->addResult('count', $count);
 
@@ -631,12 +800,21 @@ sub genresQuery {
 
 	if ($valid) {
 
-		my $loopname = 'genres_loop';
+		my $loopname = $menuMode?'list_loop':'genres_loop';
 		my $cnt = 0;
 
 		for my $eachitem ($rs->slice($start, $end)) {
-			$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
-			$request->addResultLoop($loopname, $cnt, 'genre', $eachitem->name);
+			if ($menuMode) {
+				$request->addResultLoop($loopname, $cnt, 'text', $eachitem->name);
+				my $params = {
+					'genre_id' =>  $eachitem->id, 
+				};
+				$request->addResultLoop($loopname, $cnt, 'params', $params);
+			}
+			else {
+				$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
+				$request->addResultLoop($loopname, $cnt, 'genre', $eachitem->name);
+			}
 			$cnt++;
 		}
 	}

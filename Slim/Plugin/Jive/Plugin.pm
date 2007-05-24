@@ -718,23 +718,52 @@ sub menuQuery {
 	my $quantity      = $request->getParam('_quantity');
 
 	my @menu = (
-		# {
-		# 	'id' => 'nowplaying',
-		# 	'title' => 'Now Playing',
-		# 	'action' => 'browse',
-		# 	'hierarchy' => ['status', 'info'],
-		# },
 		{
 			'text' => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
+			'actions' => {
+				'action' => {
+					'cmd' => ['albums'],
+					'tags' => {
+						'menu' => 'track',
+					},
+				},
+			},
+			'window' => {
+				'style' => 'album',
+			},
 		},
 		{
 			'text' => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
+			'actions' => {
+				'action' => {
+					'cmd' => ['artists'],
+					'tags' => {
+						'menu' => 'album',
+					},
+				},
+			},
 		},
 		{
 			'text' => Slim::Utils::Strings::string('BROWSE_BY_GENRE'),
+			'actions' => {
+				'action' => {
+					'cmd' => ['genres'],
+					'tags' => {
+						'menu' => 'artist',
+					},
+				},
+			},
 		},
 		{
 			'text' => Slim::Utils::Strings::string('BROWSE_BY_YEAR'),
+			'actions' => {
+				'action' => {
+					'cmd' => ['years'],
+					'tags' => {
+						'menu' => 'album',
+					},
+				},
+			},
 		},
 		# {
 		# 	'id' => 'years',
