@@ -7,6 +7,8 @@ package Slim::Plugin::RhapsodyDirect::RPDS;
 use strict;
 
 use Exporter::Lite;
+use HTML::Entities qw(encode_entities);
+use MIME::Base64 qw(decode_base64);
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
