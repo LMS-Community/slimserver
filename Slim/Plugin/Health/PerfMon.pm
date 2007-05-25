@@ -312,10 +312,10 @@ sub handleGraphs {
 		if (defined $params->{'monitor'} && ($params->{'monitor'} eq $mon->{'name'} || $params->{'monitor'} eq 'all') ) {
 			if (exists($params->{'setwarn'})) {
 				if (defined $monitor->warnHigh() || $params->{'warnhi'} ne '') {
-					$monitor->setWarnHigh(Slim::Utils::Validate::number($params->{'warnhi'}));
+					$monitor->setWarnHigh($params->{'warnhi'});
 				}
 				if (defined $monitor->warnLow() || $params->{'warnlo'} ne '') {
-					$monitor->setWarnLow(Slim::Utils::Validate::number($params->{'warnlo'}));
+					$monitor->setWarnLow($params->{'warnlo'});
 				}
 				if (defined $monitor->warnBt() || $params->{'warnbt'} ne '') {
 					$monitor->setWarnBt($params->{'warnbt'});
