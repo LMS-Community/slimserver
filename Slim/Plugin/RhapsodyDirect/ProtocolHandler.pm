@@ -229,7 +229,7 @@ sub gotPlaybackSession {
 			# Get the next track and call us back
 			$log->debug('Radio mode: Getting next track...');
 		
-			Plugins::RhapsodyDirect::Plugin::getNextTrack( $client, {
+			getNextRadioTrack( $client, {
 				stationId   => $stationId,
 				callback    => \&gotPlaybackSession,
 				passthrough => [ $client, $data, $url, $callback ],
@@ -378,8 +378,7 @@ sub getNextTrackInfo {
 			# Get the next track and call us back
 			$log->debug("Radio mode: Getting info about next track ($nextURL)...");
 
-			# XXX: FIXME
-			Plugins::RhapsodyDirect::Plugin::getNextTrack( $client, {
+			getNextRadioTrack( $client, {
 				stationId   => $stationId,
 				callback    => \&getNextTrackInfo,
 				passthrough => [ $client, undef, $nextURL, $callback ],
@@ -441,6 +440,132 @@ sub onUnderrun {
 	}
 	
 	$callback->();
+}
+
+sub getNextRadioTrack {
+	my ( $client, $params ) = @_;
+	
+	my $stationId = $params->{stationId};
+	
+	# Talk to SN and get the next track to play
+	my $radioURL = Slim::Networking::SqueezeNetwork->url(
+		"/api/rhapsody/radio/getNextTrack?stationId=$stationId"
+	);
+	
+	my $http = Slim::Networking::SqueezeNetwork->new(
+		\&gotNextRadioTrack,
+		\&gotNextRadioTrackError,
+		{
+			client => $client,
+			params => $params,
+		},
+	);
+	
+	$log->debug("Getting next radio track from SqueezeNetwork");
+	
+	$http->get( $radioURL );
+}
+
+sub gotNextRadioTrack {
+	my $http   = shift;
+	my $client = $http->params->{client};
+	my $params = $http->params->{params};
+	
+	my $track = eval { JSON::Syck::Load( $http->content ) };
+	
+	if ( $track->{error} ) {
+		# We didn't get the next track to play
+		
+		my $url = Slim::Player::Playlist::url($client);
+		if ( $url && $url =~ /\.rdr/ ) {
+			# User was already playing, display 'unable to get track' error
+			Slim::Music::Info::setCurrentTitle( $url, $client->string('PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK') );
+		
+			$client->update();
+
+			Slim::Player::Source::playmode( $client, 'stop' );
+		}
+		else {
+			# User was just starting a radio station
+			$client->showBriefly( {
+				line1 => string( $client, 'PLUGIN_RHAPSODY_DIRECT_ERROR' ),
+				line2 => string( $client, 'PLUGIN_RHAPSODY_DIRECT_NO_TRACK' ),
+			},
+			{
+				scroll => 1,
+			} );
+		}
+		
+		return;
+	}
+	
+	# Watch for playlist commands in radio mode
+	Slim::Control::Request::subscribe( 
+		\&playlistCallback, 
+		[['playlist'], ['repeat', 'newsong']],
+	);
+	
+	# Force repeating for Rhapsody radio
+	Slim::Player::Playlist::repeat( $client, 2 );
+	
+	# set metadata for track, will be set on playlist newsong callback
+	my $url   = 'rhapd://' . $track->{trackId} . '.wma';
+	my $title = $track->{name} . ' ' . 
+			$client->string('BY') . ' ' . $track->{displayArtistName} . ' ' . 
+			$client->string('FROM') . ' ' . $track->{displayAlbumName};
+	
+	$client->pluginData( radioTrack => $url );
+	$client->pluginData( radioTitle => $title );
+	
+	my $cb = $params->{callback};
+	my $pt = $params->{passthrough} || [];
+	$cb->( @{$pt} );
+}
+
+sub gotNextRadioTrackError {
+	my $http   = shift;
+	my $client = $http->params('client');
+	
+	handleError( $client, $http->error );
+}
+
+sub playlistCallback {
+	my $request = shift;
+	my $client  = $request->client();
+	my $p1      = $request->getRequest(1);
+	
+	return unless defined $client;
+	
+	# check that user is still using Rhapsody Radio
+	my $url = Slim::Player::Playlist::url($client);
+	
+	if ( !$url || $url !~ /\.rdr$/ ) {
+		# stop listening for playback events
+		Slim::Control::Request::unsubscribe( \&playlistCallback );
+		return;
+	}
+	
+	# The user has changed the repeat setting.  Radio requires a repeat
+	# setting of '2' (repeat all) to work properly
+	if ( $p1 eq 'repeat' ) {
+
+		$log->debug("Radio mode, user changed repeat setting, forcing back to 2");
+		
+		Slim::Player::Playlist::repeat( $client, 2 );
+		
+		if ( $client->playmode =~ /playout/ ) {
+			$client->playmode( 'playout-play' );
+		}
+	}
+	elsif ( $p1 eq 'newsong' ) {
+		# A new song has started playing.  We use this to change titles
+		
+		my $title = $client->pluginData('radioTitle');
+		
+		$log->debug("Setting title for radio station to $title");
+		
+		Slim::Music::Info::setCurrentTitle( $url, $title );
+	}
 }
 
 sub gotTrackInfo {

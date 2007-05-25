@@ -53,7 +53,6 @@ sub setMode {
 	my %params = (
 		header   => 'PLUGIN_RHAPSODY_DIRECT_LOGGING_IN',
 		modeName => 'Rhapsody Direect Plugin',
-		snLogin  => 1, # Needs SN login/session ID
 		url      => $FEED,
 		title    => $client->string(getDisplayName()),
 		timeout  => 35,
