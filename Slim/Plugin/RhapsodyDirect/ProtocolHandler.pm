@@ -721,7 +721,7 @@ sub stopCallback {
 			}
 			
 			# Call endPlaybackSession when stopping
-			Plugins::RhapsodyDirect::Plugin::rpds( $client, {
+			rpds( $client, {
 				data        => $data,
 				callback    => \&endPlaybackSession,
 				onError     => sub {
