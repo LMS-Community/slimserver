@@ -1252,6 +1252,9 @@ sub shouldCacheURL {
 	
 	return 0 if $host !~ /\./;
 	
+	# No caching for SqueezeNetwork API URLs
+	return 0 if $host =~ /squeezenetwork\.com/;
+	
 	# If the host doesn't start with a number, cache it
 	return 1 if $host !~ /^\d/;
 	

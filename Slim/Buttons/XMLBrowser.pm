@@ -82,9 +82,6 @@ sub setMode {
 		# the item is passed as a param so we can get passthrough params
 		my $item = $client->modeParam('item');
 		
-		# If the feed requires we are logged into SqueezeNetwork with a session ID
-		my $snLogin = $client->modeParam('snLogin');
-		
 		# Adjust HTTP timeout value to match the API on the other end
 		my $timeout = $client->modeParam('timeout') || 5;
 
@@ -112,7 +109,6 @@ sub setMode {
 				'feedTitle' => $title,
 				'parser'    => $parser,
 				'item'      => $item,
-				'snLogin'   => $snLogin,
 				'timeout'   => $timeout,
 			},
 		);
@@ -371,17 +367,11 @@ sub gotOPML {
 		};
 	}
 	
-	my $snLogin = $params->{'snLogin'};
 	for my $item ( @{ $opml->{'items'} || [] } ) {
 		
 		# Add value keys to all items, so INPUT.Choice remembers state properly
 		if ( !defined $item->{'value'} ) {
 			$item->{'value'} = $item->{'name'};
-		}
-		
-		# Remember if we need to use a SqueezeNetwork session
-		if ( $snLogin ) {
-			$item->{'snLogin'} = $snLogin;
 		}
 	}
 	
@@ -390,7 +380,6 @@ sub gotOPML {
 
 	my %params = (
 		'url'        => $url,
-		'snLogin'    => $snLogin,
 		'timeout'    => $timeout,
 		'item'       => $opml,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
@@ -438,7 +427,6 @@ sub gotOPML {
 				# follow a link
 				my %params = (
 					'url'     => $itemURL,
-					'snLogin' => $snLogin,
 					'timeout' => $timeout,
 					'title'   => $title,
 					'header'  => fitTitle( $client, $title ),
@@ -938,7 +926,6 @@ sub playItem {
 				'client'  => $client,
 				'action'  => $action,
 				'url'     => $url,
-				'snLogin' => $item->{'snLogin'},
 				'parser'  => $parser,
 				'item'    => $item,
 			},
@@ -955,7 +942,6 @@ sub playItem {
 		# Push into the URL as if the user pressed right
 		my %params = (
 			'url'     => $url,
-			'snLogin' => $item->{'snLogin'},
 			'timeout' => $client->modeParam('timeout'),
 			'title'   => $title,
 			'header'  => fitTitle( $client, $title ),

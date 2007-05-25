@@ -39,7 +39,7 @@ sub url {
 	
 	$path ||= '';
 	
-	if ( $ENV{SLIM_SERVICE} ) {
+	if ( $ENV{SLIM_SERVICE} || $ENV{SN_DEV} ) {
 		my $ip = Slim::Utils::IPDetect::IP();
 		$base  = ( $ip =~ /^192.168.254/ ) 
 			? 'http://192.168.254.200' # Production
@@ -50,6 +50,15 @@ sub url {
 	}
 	
 	return $base . $path;
+}
+
+# Is a URL on SN?
+sub isSNURL {
+	my ( $class, $url ) = @_;
+	
+	my $snBase = $class->url();
+	
+	return $url =~ /^$snBase/;
 }
 
 # Login to SN and obtain a session ID
@@ -111,6 +120,7 @@ sub get {
 
 		if ( my $sid = $client->snSession ) {
 			$headers{Cookie} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
+			$headers{'X-Player-MAC'} = $client->id;
 		}
 		else {
 			$log->info("Logging in to SqueezeNetwork to obtain session ID");
@@ -121,6 +131,7 @@ sub get {
 				callback => sub {
 					if ( my $sid = $client->snSession ) {
 						$headers{Cookie} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
+						$headers{'X-Player-MAC'} = $client->id;
 			
 						$log->info("Got SqueezeNetwork session ID: $sid");
 					}
