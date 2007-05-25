@@ -292,10 +292,10 @@ sub albumsQuery {
 				$request->addResultLoop($loopname, $cnt, 'params', $params);
 				
 				# style the windows, use only the album name
-				my $window = {
-					'text' => $eachitem->name,
-				};
-				$request->addResultLoop($loopname, $cnt, 'window', $window);
+#				my $window = {
+#					'text' => $eachitem->name,
+#				};
+#				$request->addResultLoop($loopname, $cnt, 'window', $window);
 				
 				# artwork if we have it
 				my $artworkId = $eachitem->artwork;
