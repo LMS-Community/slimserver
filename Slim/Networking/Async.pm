@@ -30,6 +30,9 @@ __PACKAGE__->mk_classaccessors( qw(
 	nameserver socket
 ) );
 
+# OpenDNS server to use if we can't find a working local nameserver
+my $OpenDNS = '208.67.222.222';
+
 # At startup time, we need to query all available nameservers to make sure
 # we use a valid server during bgsend() calls
 sub init {
@@ -70,8 +73,9 @@ sub init {
 		$log->debug("  Lookup failed");
 	}
 
-	logWarning("No DNS servers responded, you may have trouble with network connections.");
-	logWarning("Please check your network settings.");
+	logWarning("No DNS servers responded, falling back to OpenDNS server $OpenDNS.");
+	
+	$class->nameserver( $OpenDNS );
 }
 
 sub new {
