@@ -61,6 +61,8 @@ sub save {
 
 	$class->SUPER::save(@_);
 	$class->_urlindex;
+
+	Slim::Control::Request::notifyFromArray(undef, ['favorites', 'changed']);
 }
 
 sub _urlindex {

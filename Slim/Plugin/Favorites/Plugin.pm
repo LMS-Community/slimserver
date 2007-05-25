@@ -54,6 +54,8 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['favorites', 'add', '_url', '_title'], [0, 0, 1, \&cliAdd]);
 	Slim::Control::Request::addDispatch(['favorites', 'addlevel', '_title'], [0, 0, 1, \&cliAdd]);
 	Slim::Control::Request::addDispatch(['favorites', 'delete', '_index'], [0, 0, 0, \&cliDelete]);
+	# register notification
+	Slim::Control::Request::addDispatch(['favorites', 'changed'], [0, 0, 0, undef]);
 }
 
 sub modeName { 'FAVORITES' };
