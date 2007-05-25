@@ -298,9 +298,9 @@ sub albumsQuery {
 #				$request->addResultLoop($loopname, $cnt, 'window', $window);
 				
 				# artwork if we have it
-				my $artworkId = $eachitem->artwork;
-				if (defined $artworkId) {
-					$request->addResultLoop($loopname, $cnt, 'icon', $artworkId);
+				my $iconId = $eachitem->artwork;
+				if (defined $iconId) {
+					$request->addResultLoop($loopname, $cnt, 'icon-id', $iconId);
 				}
 			}
 			else {
