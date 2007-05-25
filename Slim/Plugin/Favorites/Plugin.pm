@@ -50,10 +50,11 @@ sub initPlugin {
 	Slim::Buttons::Common::setFunction('playFavorite', \&playFavorite);
 
 	# register cli handlers
-	Slim::Control::Request::addDispatch(['favorites', '_index', '_quantity'], [0, 1, 1, \&cliBrowse]);
-	Slim::Control::Request::addDispatch(['favorites', 'add', '_url', '_title'], [0, 0, 1, \&cliAdd]);
-	Slim::Control::Request::addDispatch(['favorites', 'addlevel', '_title'], [0, 0, 1, \&cliAdd]);
-	Slim::Control::Request::addDispatch(['favorites', 'delete', '_index'], [0, 0, 0, \&cliDelete]);
+	Slim::Control::Request::addDispatch(['favorites', 'items', '_index', '_quantity'], [0, 1, 1, \&cliBrowse]);
+	Slim::Control::Request::addDispatch(['favorites', 'add'], [0, 0, 1, \&cliAdd]);
+	Slim::Control::Request::addDispatch(['favorites', 'addlevel'], [0, 0, 1, \&cliAdd]);
+	Slim::Control::Request::addDispatch(['favorites', 'delete'], [0, 0, 0, \&cliDelete]);
+	Slim::Control::Request::addDispatch(['favorites', 'playlist', '_method' ],[1, 1, 1, \&cliBrowse]);
 	# register notification
 	Slim::Control::Request::addDispatch(['favorites', 'changed'], [0, 0, 0, undef]);
 }
@@ -483,10 +484,6 @@ sub cliBrowse {
 	my $request = shift;
 	my $client  = $request->client;
 
-	$request->addRequest('items');
-	$request->addParam('want_title', 1);
-	$request->addParam('want_url', 1);
-
 	my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($client);
 
 	Slim::Buttons::XMLBrowser::cliQuery('favorites', $favs->xmlbrowser, $request);
@@ -502,8 +499,8 @@ sub cliAdd {
 
 	my $client = $request->client();
 	my $command= $request->getRequest(1);
-	my $url    = $request->getParam('_url');
-	my $title  = $request->getParam('_title');
+	my $url    = $request->getParam('url');
+	my $title  = $request->getParam('title');
 	my $index  = $request->getParam('item_id');
 
 	my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($client);
@@ -523,6 +520,8 @@ sub cliAdd {
 				'URL'  => $url,
 				'type' => 'audio',
 			};
+			
+			$request->addResult('count', 1);
 
 		} elsif ($command eq 'addlevel' && defined $title) {
 
@@ -532,6 +531,8 @@ sub cliAdd {
 				'text'    => $title,
 				'outline' => [],
 			};
+
+			$request->addResult('count', 1);
 
 		} else {
 

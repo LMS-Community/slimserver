@@ -22,6 +22,9 @@ through Podcast entries, RSS & OPML Outlines and play audio enclosures.
 
 use strict;
 
+use Tie::IxHash;
+
+
 use Slim::Buttons::Common;
 use Slim::Control::Request;
 use Slim::Formats::XML;
@@ -979,9 +982,9 @@ sub fitTitle {
 }
 
 sub cliQuery {
-	my ( $query, $feed, $request, $expires ) = @_;
+	my ( $query, $feed, $request, $expires, $forceTitle ) = @_;
 	
-	$log->info("Begin Function");
+	$log->info("cliQuery($query)");
 
 	# check this is the correct query.
 	if ($request->isNotQuery([[$query], ['items', 'playlist']])) {
@@ -993,23 +996,28 @@ sub cliQuery {
 	
 	# If the feed is already XML data (Podcast List), send it to handleFeed
 	if ( ref $feed eq 'HASH' ) {
+		
+		$log->debug("Feed is already XML data!");
 		_cliQuery_done( $feed, {
-			'request' => $request,
-			'url'     => $feed->{'url'},
-			'query'   => $query,
-			'expires' => $expires
+			'request'    => $request,
+			'url'        => $feed->{'url'},
+			'query'      => $query,
+			'expires'    => $expires,
+#			'forceTitle' => $forceTitle,
 		} );
 		return;
 	}
 
+	$log->debug("Asynchronously fetching feed - will be back!");
 	Slim::Formats::XML->getFeedAsync(
 		\&_cliQuery_done,
 		\&_cliQuery_error,
 		{
-			'request' => $request,
-			'url'     => $feed,
-			'query'   => $query,
-			'expires' => $expires
+			'request'    => $request,
+			'url'        => $feed,
+			'query'      => $query,
+			'expires'    => $expires
+#			'forceTitle' => $forceTitle,
 		}
 	);
 }
@@ -1017,11 +1025,12 @@ sub cliQuery {
 sub _cliQuery_done {
 	my ( $feed, $params ) = @_;
 
-	$log->info("Begin Function");
+	$log->info("_cliQuery_done()");
 
-	my $request = $params->{'request'};
-	my $query   = $params->{'query'};
-	my $expires = $params->{'expires'};
+	my $request    = $params->{'request'};
+	my $query      = $params->{'query'};
+	my $expires    = $params->{'expires'};
+#	my $forceTitle = $params->{'forceTitle'};
 
 	my $isItemQuery = my $isPlaylistCmd = 0;
 	if ($request->isQuery([[$query], ['playlist']])) {
@@ -1031,20 +1040,40 @@ sub _cliQuery_done {
 		$isItemQuery = 1;
 	}
 
+	# get our parameters
+	my $index      = $request->getParam('_index');
+	my $quantity   = $request->getParam('_quantity');
+	my $search     = $request->getParam('search');
+	my $want_url   = $request->getParam('want_url') || 0;
+	my $item_id    = $request->getParam('item_id');
+	my $menu       = $request->getParam('menu');
+	
+	# menu/jive mgmt
+	my $menuMode = defined $menu;
+
 	# select the proper list of items
 	my @index = ();
 
-	if (my $item_id = $request->getParam('item_id')) {
+	if (defined($item_id)) {
+		
+		$log->debug("Splitting $item_id");
 
 		@index = split /\./, $item_id;
 	}
 	
 	my $subFeed = $feed;
+	
+#	use Data::Dumper;
+#	print Data::Dumper::Dumper($subFeed);
+	
 	my @crumbIndex = ();
 	if ( scalar @index > 0 ) {
 
 		# descend to the selected item
 		for my $i ( @index ) {
+
+			$log->debug("Considering item $i");
+
 			$subFeed = $subFeed->{'items'}->[$i];
 
 			push @crumbIndex, $i;
@@ -1052,6 +1081,9 @@ sub _cliQuery_done {
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
 			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'}) {
+				
+				$log->debug("Asynchronously fetching subfeed - will be back!");
+				
 				Slim::Formats::XML->getFeedAsync(
 					\&_cliQuerySubFeed_done,
 					\&_cliQuery_error,
@@ -1072,28 +1104,90 @@ sub _cliQuery_done {
 			}
 
 			# If the feed is an audio feed or Podcast enclosure, display the audio info
+			# This is a leaf item, so show as much info as we have and go packing after that.
+			
+			
 			if ( $isItemQuery && $subFeed->{'type'} eq 'audio' || $subFeed->{'enclosure'} ) {
-				$request->addResult('id', join '.', @index);
-				$request->addResult('name', $subFeed->{'name'}) if defined $subFeed->{'name'};
-				$request->addResult('title', $subFeed->{'title'}) if defined $subFeed->{'title'};
 				
-				foreach my $data (keys %{$subFeed}) {
-					if (ref($subFeed->{$data}) eq 'ARRAY') {
-						if (scalar @{$subFeed->{$data}}) {
-							$request->addResult('hasitems', scalar @{$subFeed->{$data}});
-						}
-					}
-					elsif ($data =~ /enclosure/i && defined $subFeed->{$data}) {
-						foreach my $enclosuredata (keys %{$subFeed->{$data}}) {
-							if ($subFeed->{$data}->{$enclosuredata}) {
-								$request->addResult($data . '_' . $enclosuredata, $subFeed->{$data}->{$enclosuredata});
+				$log->debug("Adding results for audio or enclosure subfeed");
+
+				if ($menuMode) {
+
+					# decide what is the next step down
+					# generally, we go nowhere after this, so we get menu:nowhere...
+
+					# build the base element
+					my $base = {
+						'actions' => {
+							# no go, we ain't going anywhere!
+					
+							# we play/add the current track id
+							'play' => {
+								'player' => 0,
+								'cmd' => [$query, 'playlist', 'load'],
+								'tags' => {
+									'item_id' => $item_id,
+								},
+							},
+							'add' => {
+								'player' => 0,
+								'cmd' => [$query, 'playlist', 'add'],
+								'tags' => {
+									'item_id' => $item_id,
+								},
+							},
+						},
+					};
+					$request->addResult('base', $base);
+				}
+
+				
+				$request->addResult('count', 1);
+				my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), 1);
+				
+				if ($valid) {
+					
+					my $loopname = $menuMode?'item_loop':'loop_loop';
+					my $cnt = 0;
+
+					# create an ordered hash to store this stuff...
+					tie (my %hash, "Tie::IxHash");
+
+					$hash{'id'} = $item_id;
+					$hash{'name'} = $subFeed->{'name'} if defined $subFeed->{'name'};
+					$hash{'title'} = $subFeed->{'title'} if defined $subFeed->{'title'};
+				
+					foreach my $data (keys %{$subFeed}) {
+						if (ref($subFeed->{$data}) eq 'ARRAY') {
+							if (scalar @{$subFeed->{$data}}) {
+								$hash{'hasitems'} = scalar @{$subFeed->{$data}};
 							}
 						}
+						elsif ($data =~ /enclosure/i && defined $subFeed->{$data}) {
+							foreach my $enclosuredata (keys %{$subFeed->{$data}}) {
+								if ($subFeed->{$data}->{$enclosuredata}) {
+									$hash{$data . '_' . $enclosuredata} = $subFeed->{$data}->{$enclosuredata};
+								}
+							}
+						}
+						elsif ($subFeed->{$data} && $data !~ /^(name|title|parser|fetched)$/) {
+							$hash{$data} = $subFeed->{$data};
+						}
 					}
-					elsif ($subFeed->{$data} && $data !~ /^(name|title|parser|fetched)$/) {
-						$request->addResult($data, $subFeed->{$data});
+					
+					if ($menuMode) {
+						while ( my ($key, $value) = each(%hash)) {
+							$request->addResultLoop($loopname, $cnt, 'text', $key . ":" . $value);
+							$cnt++;
+						}
+					}
+					
+					else {
+						$request->setResultLoopHash($loopname, $cnt, \%hash);
 					}
 				}
+				$request->setStatusDone();
+				return;
 			}
 		}
 	}
@@ -1167,12 +1261,6 @@ sub _cliQuery_done {
 
 		$log->info("Get items.");
 
-		# get our parameters
-		my $index    = $request->getParam('_index');
-		my $quantity = $request->getParam('_quantity');
-		my $search   = $request->getParam('search');
-		my $want_url = $request->getParam('want_url') || 0;
-		my $want_title = $request->getParam('want_title') || 0;
 	
 		# allow searching in the name field
 		if ($search && @{$subFeed->{'items'}}) {
@@ -1191,54 +1279,80 @@ sub _cliQuery_done {
 	
 		my $count = defined @{$subFeed->{'items'}} ? @{$subFeed->{'items'}} : 0;
 		
-		# only add item count if there are any items to add
+		# now build the result
+	
+		if ($menuMode) {
+
+			# decide what is the next step down
+			# we go to xxx items from xx items :)
+
+			# build the base element
+			my $base = {
+				'actions' => {
+					'go' => {
+						'cmd' => [$query, 'items'],
+						'tags' => {
+							'menu' => $query,
+						},
+						'itemsParams' => 'params',
+					},
+					'play' => {
+						'player' => 0,
+						'cmd' => [$query, 'playlist', 'play'],
+						'itemsParams' => 'params',
+					},
+					'add' => {
+						'player' => 0,
+						'cmd' => [$query, 'playlist', 'add'],
+						'itemsParams' => 'params',
+					},
+				},
+			};
+			$request->addResult('base', $base);
+		}
+		
+		$request->addResult('count', $count);
+		
 		if ($count) {
-			$request->addResult('count', $count);
 		
 			my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 		
-			my $loopname = 'loop_loop';
+			my $loopname = $menuMode?'item_loop':'loop_loop';
 			my $cnt = 0;
-			my $hasItems = 0;
 		
 			if ($valid) {
+				
 				for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
-					$hasItems = 0;
-					$request->addResultLoop($loopname, $cnt, 'id', join('.', @crumbIndex, defined $item->{'_slim_id'} ? $item->{'_slim_id'} : $start + $cnt));
-					if ($want_title) {
-						$request->addResultLoop($loopname, $cnt, 'title', $item->{'name'} || $item->{'title'});
-					} else {
-						$request->addResultLoop($loopname, $cnt, 'name', $item->{'name'}) if defined $item->{'name'};
-						$request->addResultLoop($loopname, $cnt, 'title', $item->{'title'}) if defined $item->{'title'};
-					}
+					
+					my $hasItems = 1;
+					
+					# create an ordered hash to store this stuff...
+					tie (my %hash, "Tie::IxHash");
+					
+					$hash{'id'} = join('.', @crumbIndex, defined $item->{'_slim_id'} ? $item->{'_slim_id'} : $start + $cnt);
+					$hash{'name'} = $item->{'name'} if defined $item->{'name'};
+					$hash{'title'} = $item->{'title'} if defined $item->{'title'};
+					$hash{'url'} = $item->{'url'} if $want_url && defined $item->{'url'};
 
 					foreach my $data (keys %{$item}) {
 						if (ref($item->{$data}) eq 'ARRAY') {
 							if (scalar @{$item->{$data}}) {
-								$request->addResultLoop($loopname, $cnt, 'hasitems', scalar @{$item->{$data}}) if !$hasItems;
-								$hasItems++;
+								$hasItems = scalar @{$item->{$data}};
 							}
 						}
-						elsif ($data =~ /enclosure/i && defined $item->{$data}) {
-							foreach my $enclosuredata (keys %{$item->{$data}}) {
-								if ($item->{$data}->{$enclosuredata}) {
-									$request->addResultLoop($loopname, $cnt, $data . '_' . $enclosuredata, $item->{$data}->{$enclosuredata});
-								}
-							}
-						}
-						# Only add value if different from url
-						elsif ($data eq 'value') {
-							$request->addResultLoop($loopname, $cnt, $data, $item->{$data}) if ($item->{$data} ne $item->{'url'});
-						}
-						# Only add url if requested
-						elsif ($data eq 'url') {
-							$request->addResultLoop($loopname, $cnt, $data, $item->{$data}) if $want_url;
-						}						
-						elsif ($item->{$data} && $data !~ /^(name|title|parser|fetched)$/) {
-							$request->addResultLoop($loopname, $cnt, $data, $item->{$data});
-						}
+					}		
+					$hash{'hasitems'} = $hasItems;
+
+					if ($menuMode) {
+						$request->addResultLoop($loopname, $cnt, 'text', $hash{'name'} || $hash{'title'});
+						my $params = {
+							'item_id' =>  $hash{'id'},
+						};
+						$request->addResultLoop($loopname, $cnt, 'params', $params);
 					}
-					$request->addResultLoop($loopname, $cnt, 'hasitems', 1) if !$hasItems;
+					else {
+						$request->setResultLoopHash($loopname, $cnt, \%hash);
+					}
 					$cnt++;
 				}
 			}

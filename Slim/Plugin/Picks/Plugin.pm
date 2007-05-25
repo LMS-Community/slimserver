@@ -76,6 +76,14 @@ sub cliRadiosQuery {
 	if (defined $menu) {
 		$data = {
 			'text' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+			'actions' => {
+				'go' => {
+					'cmd' => ['picks', 'items'],
+					'tags' => {
+						'menu' => 'picks',
+					},
+				},
+			},
 		};
 	}
 	else {

@@ -407,7 +407,6 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 use strict;
 
 use Scalar::Util qw(blessed);
-#use Tie::LLHash;
 use Tie::IxHash;
 
 use Slim::Control::Commands;

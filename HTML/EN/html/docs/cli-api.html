@@ -2263,9 +2263,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<li>
 		<strong><code><a href="#search">search</a></code></strong>
 	</li>
-	<li>
-		<strong><a href="#Favorites">Favorites</a></strong>
-	</li>
 </ul>
 
 
@@ -4746,188 +4743,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </blockquote>
 
 
-<h3 id="Favorites">
-	Favorites
-</h3>
-<ul>
-	<li>
-		<strong><code><a href="#favorites">favorites</a></code></strong>
-	</li>
-	<li>
-		<strong><code><a href="#favorites add">favorites add</a></code></strong>
-	</li>
-	<li>
-		<strong><code><a href="#favorites move">favorites move</a></code></strong>
-	</li>
-	<li>
-		<strong><code><a href="#favorites delete">favorites delete</a></code></strong>
-	</li>
-</ul>
-
-<p id="favorites">
-	<strong>
-		<code>
-			favorites
-			&lt;start&gt;
-			&lt;itemsPerResponse&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;favorites&quot; query returns all server favorites.
-</p>
-<p>
-	Returned tagged parameters:
-</p>
-<table border="0" spacing="50">
-	<tr>
-		<td width="100">
-			<b>
-				Tag
-			</b>
-		</td>
-		<td>
-			<b>
-				Description
-			</b>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			count
-		</td>
-		<td>
-			Number of favorites defined.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<em>
-				For each favorite:
-			</em>
-		</td>
-		<td>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			&nbsp;&nbsp;<b>id</b>
-		</td>
-		<td>
-			Favorite ID. Item delimiter.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			&nbsp;&nbsp;title
-		</td>
-		<td>
-			Favorite title.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			&nbsp;&nbsp;url
-		</td>
-		<td>
-			URL of the favorite. The favorite can be played using the 
-			&quot;<a href="#playlist play">playlist play</a>&quot; command.
-		</td>
-	</tr>
-</table>
-<p>
-	Example:
-</p>
-<blockquote> 
-	<p>
-		Request: &quot;favorites 0 1&lt;LF&gt;&quot;
-		<br>
-		Response: &quot;favorites 0 1 count:2 
-		id:0 title:Un%20Monde%20Sans%20Frime 
-		url:file://Music/Hotel/Un%2520Monde%2520Sans%2520Frime.mp3 
-		&lt;LF&gt;&quot;
-	</p>
-</blockquote>
-
-<br>
-<p id="favorites add">
-	<strong>
-		<code>
-			favorites
-			add
-			 &lt;url&gt;
-			 &lt;title&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;favorites add&quot; command adds a favorite.
-</p>
-<p>
-	Example:
-</p>
-<blockquote> 
-	<p>
-		Request:  &quot;favorites add file:///... BestSong&lt;LF&gt;&quot;
-		<br>
-		Response: &quot;favorites add file:///... BestSong&lt;LF&gt;&quot;
-	</p>
-</blockquote>
-
-<br>
-<p id="favorites move">
-	<strong>
-		<code>
-			favorites
-			move
-			 &lt;fromindex&gt;
-			 &lt;toindex&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;favorites move&quot; command moves the favorite at the specified 
-	index to a new index. The first favorite has index 0.
-</p>
-<p>
-	Example:
-</p>
-<blockquote> 
-	<p>
-		Request:  &quot;favorites move 0 1&lt;LF&gt;&quot;
-		<br>
-		Response: &quot;favorites move 0 1&lt;LF&gt;&quot;
-	</p>
-</blockquote>
-
-<br>
-<p id="favorites delete">
-	<strong>
-		<code>
-			favorites
-			delete
-			 &lt;index&gt;
-		</code>
-	</strong>
-</p>
-<p>
-	The &quot;favorites delete&quot; command deletes the favorite at the 
-	specified index (that is, empties the favorite slot). 
-	The first favorite has index 0.
-</p>
-<p>
-	Example:
-</p>
-<blockquote> 
-	<p>
-		Request:  &quot;favorites delete 0&lt;LF&gt;&quot;
-		<br>
-		Response: &quot;favorites delete 0&lt;LF&gt;&quot;
-	</p>
-</blockquote>
-
-
-
 
 <!--#########################################################################-->
 <!-- PLAYLIST COMMANDS                                                       -->
@@ -6700,6 +6515,20 @@ in the saved playlists folder.</p>
 	&quot; information is provided.
 </p>
 
+<br>
+<p id="favorites changed">
+	<strong>
+		<code>
+			favorites
+			changed
+		</code>
+	</strong>
+</p>
+<p>
+	Sent everytime the favorite database is changed, for any reason, by
+	any process (so the favorites command below will result in this notification being sent).
+</p>
+
 
 <!--#########################################################################-->
 <!-- PLUGIN COMMANDS                                                         -->
@@ -6727,6 +6556,9 @@ in the saved playlists folder.</p>
 	</li>
 	<li>
 		<strong><a href="#Live365">Live365</a></strong>
+	</li>
+	<li>
+		<strong><a href="#Favorites">Favorites</a></strong>
 	</li>
 	<li>
 		<strong><a href="#RandomPlay">RandomPlay</a></strong>
@@ -7515,6 +7347,440 @@ in the saved playlists folder.</p>
 		Request: &quot;6e:ef:54:e9:02:b0 live365 playlist play station_id:201489&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;6e:ef:54:e9:02:b0 live365 playlist play station_id:201489&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+
+<h3 id="Favorites">
+	Favorites
+</h3>
+<ul>
+	<li>
+		<strong><code><a href="#favorites items">favorites items</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#favorites add">favorites add</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#favorites addlevel">favorites addlevel</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#favorites delete">favorites delete</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#favorites playlist">favorites playlist</a></code></strong>
+	</li>
+</ul>
+
+<p id="favorites items">
+	<strong>
+		<code>
+			favorites
+			items
+			&lt;start&gt;
+			&lt;itemsPerResponse&gt;
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;favorites items&quot; query returns all server favorites. This query is based on XMLBrowser.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			item_id
+		</td>
+		<td>
+			The id of a favorite to be returned. The id represents the hierarchical 
+			structure of the file using a dotted syntax similar to the one used
+			in SNMP, like eg. 2.0.9.3
+		</td>
+	</tr>
+	<tr>
+		<td>
+			search
+		</td>
+		<td>
+			When a list of items is to be returned, it can be filtered by it's
+			name or title.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			want_url
+		</td>
+		<td>
+			If set to 1, urls are returned by the query, otherwise they aren't.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			charset
+		</td>
+		<td>
+			Character set to use to return data. See 
+			<a href="#Notes">charset notes</a> above.
+		</td>
+	</tr>
+</table>
+<p>
+	Returned tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100">
+			<b>
+				Tag
+			</b>
+		</td>
+		<td>
+			<b>
+				Description
+			</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			count
+		</td>
+		<td>
+			The number of items available at the selected level.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<em>For each element:</em>
+		</td>
+		<td>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;<b>id</b>
+		</td>
+		<td>
+			An item's hierarchical id. Item delimiter.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;name
+		</td>
+		<td>
+			An item's  (favorite or folder) name.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;hasitems
+		</td>
+		<td>
+			Whether or not an item has sub-items. May indicate the number of
+			sub-items.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			&nbsp;&nbsp;url
+		</td>
+		<td>
+			URL of the station or track (only returned if parameter 
+			&quot;want_url&quot; is set to 1). Although, the station can be 
+			played using the 
+			&quot;<a href="#playlist play">playlist play</a>&quot; command, an 
+			equivalent command that operates on the id is provided below.
+		</td>
+	</tr>
+</table>
+<p>
+	Example: See other XMLBrowser based queries above.
+</p>
+
+<br>
+<p id="favorites add">
+	<strong>
+		<code>
+			favorites
+			add
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;favorites add&quot; command adds a favorite.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			item_id
+		</td>
+		<td>
+			The id of a favorite to be inserted. The id represents the hierarchical 
+			structure of the file using a dotted syntax similar to the one used
+			in SNMP, like eg. 2.0.9.3. 
+			<br>
+			Room is made to accommodate the new favorite. If no item_id is provided,
+			the favorite is added at position 0.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			title
+		</td>
+		<td>
+			Favorite title (mandatory)
+		</td>
+	</tr>
+	<tr>
+		<td>
+			url
+		</td>
+		<td>
+			Favorite url (mandatory)
+		</td>
+	</tr>
+</table>
+<p>
+	Returned tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100">
+			<b>
+				Tag
+			</b>
+		</td>
+		<td>
+			<b>
+				Description
+			</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			count
+		</td>
+		<td>
+			Returned with value 1 if adding the favorite was successful.
+		</td>
+	</tr>
+</table>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request:  &quot;favorites add url:file:///... title:BestSong&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;favorites add url:file:///... title:BestSong count:1&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="favorites addlevel">
+	<strong>
+		<code>
+			favorites
+			addlevel
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;favorites addlevel&quot; command adds a favorite level (a folder).
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			item_id
+		</td>
+		<td>
+			The id of a level to be inserted. The id represents the hierarchical 
+			structure of the level using a dotted syntax similar to the one used
+			in SNMP, like eg. 2.0.9.3. 
+			<br>
+			Room is made to accommodate the new level. If no item_id is provided,
+			the level is added at position 0.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			title
+		</td>
+		<td>
+			Level title (mandatory)
+		</td>
+	</tr>
+</table>
+<p>
+	Returned tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="100">
+			<b>
+				Tag
+			</b>
+		</td>
+		<td>
+			<b>
+				Description
+			</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			count
+		</td>
+		<td>
+			Returned with value 1 if adding the level was successful.
+		</td>
+	</tr>
+</table>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request:  &quot;favorites addlevel title:Favourites&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;favorites addlevel title:Favourites count:1&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+
+<br>
+<p id="favorites delete">
+	<strong>
+		<code>
+			favorites
+			delete
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;favorites delete&quot; command deletes a favorite or a level.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			item_id
+		</td>
+		<td>
+			The id of a favorite or level to be deleted. The id represents the hierarchical 
+			structure of the file using a dotted syntax similar to the one used
+			in SNMP, like eg. 2.0.9.3. 
+			<br>
+			This parameter is mandatory.
+		</td>
+	</tr>
+</table>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request:  &quot;favorites delete 1.2.3.4.5&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;favorites delete 1.2.3.4.5&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<p id="favorites playlist">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			&lt;favorites&gt;
+			playlist
+			&lt;play|load|insert|add&gt;
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	This command adds or plays a favorite.
+	<br>
+	If item_id defines an item that can't be played, but contains playable 
+	subitems, then these will be played instead. This allows to eg. play all 
+	tracks of a genre.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			item_id
+		</td>
+		<td>
+			The id of an item to be played. The id represents the hierarchical 
+			structure of the file using a dotted syntax similar to the one used
+			in SNMP, like eg. 2.0.9.3
+		</td>
+	</tr>
+</table>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;6e:ef:54:e9:02:b0 favorites playlist play item_id:1.1&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;6e:ef:54:e9:02:b0 favorites playlist play item_id:1.1&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 

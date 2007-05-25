@@ -139,6 +139,14 @@ sub cliRadiosQuery {
 	if (defined $menu) {
 		$data = {
 			'text' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+			'actions' => {
+				'go' => {
+					'cmd' => ['radioio', 'items'],
+					'tags' => {
+						'menu' => 'radioio',
+					},
+				},
+			},
 		};
 	}
 	else {
