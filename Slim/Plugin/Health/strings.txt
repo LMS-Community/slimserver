@@ -602,7 +602,7 @@ PLUGIN_HEALTH_RESPONSE_DESC
 	IT	Tempo di risposta del server, ovvero il tempo intercorso tra la selezione di chiamate successive. 
 	NL	De serverreactietijd: de tijd tussen achtereenvolgende aanroepen voor selectie. 
 
-PLUGIN_HEALTH_SELECTTASK
+PLUGIN_HEALTH_SELECT
 	DE	Taskdauer wählen
 	EN	Select Task Duration
 	ES	Duración de tareas de selección
@@ -611,7 +611,7 @@ PLUGIN_HEALTH_SELECTTASK
 	IT	Durata attività selezionata
 	NL	Taakduur selecteren
 
-PLUGIN_HEALTH_SELECTTASK_DESC
+PLUGIN_HEALTH_SELECT_DESC
 	DE	Die von jedem durch Auswählen ausgeführten Task benötigte Zeit.
 	EN	The length of time taken by each task run by select.
 	ES	El tiempo requerido por cada tarea ejecutada por selección.
@@ -620,7 +620,7 @@ PLUGIN_HEALTH_SELECTTASK_DESC
 	IT	Tempo richiesto per l\'esecuzione di ciascuna attività selezionata.
 	NL	De tijd die elke geselecteerde taak in beslag neemt.
 
-PLUGIN_HEALTH_SCHEDULERTASK
+PLUGIN_HEALTH_SCHEDULER
 	DE	Dauer geplanter Tasks
 	EN	Scheduler Task Duration
 	ES	Duración de tareas programadas
@@ -629,7 +629,7 @@ PLUGIN_HEALTH_SCHEDULERTASK
 	IT	Durata attività pianificata
 	NL	Taakduur plannen
 
-PLUGIN_HEALTH_SCHEDULERTASK_DESC
+PLUGIN_HEALTH_SCHEDULER_DESC
 	DE	Die von jedem geplanten Task benötigte Zeit.
 	EN	The length of time taken by each scheduled task.
 	ES	El tiempo requerido por cada tarea programada.
@@ -638,7 +638,7 @@ PLUGIN_HEALTH_SCHEDULERTASK_DESC
 	IT	Tempo richiesto per ciascuna attività pianificata.
 	NL	De tijd die elke geplande taak in beslag neemt.
 
-PLUGIN_HEALTH_TIMERTASK
+PLUGIN_HEALTH_TIMER
 	DE	Dauer des Zeitgebertasks
 	EN	Timer Task Duration
 	ES	Duración de tarea de temporizador
@@ -647,7 +647,7 @@ PLUGIN_HEALTH_TIMERTASK
 	IT	Durata attività timer
 	NL	Duur van timertaak
 
-PLUGIN_HEALTH_TIMERTASK_DESC
+PLUGIN_HEALTH_TIMER_DESC
 	DE	Die von jedem Zeitgebertask benötigte Zeit.
 	EN	The length of time taken by each timer task.
 	ES	El tiempo requerido por cada tarea de temporizador.
@@ -746,7 +746,7 @@ PLUGIN_HEALTH_DBACCESS_DESC
 	IT	Tempo richiesto per il recupero delle informazioni dal database.
 	NL	Hoe lang het duurt om informatie uit de database op te halen.
 
-PLUGIN_HEALTH_PROCTEMPLATE
+PLUGIN_HEALTH_TEMPLATE
 	DE	Verarbeitungsvorlage
 	EN	Process Template
 	ES	Plantilla de procesos
@@ -755,7 +755,7 @@ PLUGIN_HEALTH_PROCTEMPLATE
 	IT	Modello processo
 	NL	Processjabloon
 
-PLUGIN_HEALTH_PROCTEMPLATE_DESC
+PLUGIN_HEALTH_TEMPLATE_DESC
 	DE	Die beim Aufbauen von Webseiten zum Verarbeiten von Vorlage-Toolkit-Vorlagen benötigte Zeit.
 	EN	The time to process each Template Toolkit template when building web pages.
 	ES	El tiempo necesario para procesar cada plantilla del kit de herramientas de plantillas al crear páginas Web.
@@ -763,3 +763,9 @@ PLUGIN_HEALTH_PROCTEMPLATE_DESC
 	HE	משך הזמן לעיבוד כל תבנית של Template Toolkit בעת בניית דפי אינטרנט.
 	IT	Tempo richiesto per l\'elaborazione di ciascun modello Template Toolkit durante la costruzione delle pagine Web.
 	NL	De tijd die nodig is om elk gereedschapssjabloon bij het opbouwen van webpagina\'s te verwerken.
+
+PLUGIN_HEALTH_ASYNC
+	EN	Async HTTP Task Duration
+
+PLUGIN_HEALTH_ASYNC_DESC
+	EN	The length of time taken by each asynchronous http callback function.

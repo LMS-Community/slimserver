@@ -301,7 +301,7 @@ sub parseStrings {
 
 		} else {
 
-			$log->error("Parsing line $ln: $line");
+			logError("Parsing line $ln: $line");
 		}
 	}
 
