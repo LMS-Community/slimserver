@@ -721,7 +721,7 @@ sub menuQuery {
 		{
 			'text' => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
 			'actions' => {
-				'action' => {
+				'go' => {
 					'cmd' => ['albums'],
 					'tags' => {
 						'menu' => 'track',
@@ -735,7 +735,7 @@ sub menuQuery {
 		{
 			'text' => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
 			'actions' => {
-				'action' => {
+				'go' => {
 					'cmd' => ['artists'],
 					'tags' => {
 						'menu' => 'album',
@@ -746,7 +746,7 @@ sub menuQuery {
 		{
 			'text' => Slim::Utils::Strings::string('BROWSE_BY_GENRE'),
 			'actions' => {
-				'action' => {
+				'go' => {
 					'cmd' => ['genres'],
 					'tags' => {
 						'menu' => 'artist',
@@ -757,7 +757,7 @@ sub menuQuery {
 		{
 			'text' => Slim::Utils::Strings::string('BROWSE_BY_YEAR'),
 			'actions' => {
-				'action' => {
+				'go' => {
 					'cmd' => ['years'],
 					'tags' => {
 						'menu' => 'album',
@@ -768,7 +768,7 @@ sub menuQuery {
 		{
 			'text' => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'),
 			'actions' => {
-				'action' => {
+				'go' => {
 					'cmd' => ['albums'],
 					'tags' => {
 						'menu' => 'track',
@@ -786,7 +786,7 @@ sub menuQuery {
 		{
 			'text' => 'Music Folder',
 			'actions' => {
-				'action' => {
+				'go' => {
 					'cmd' => ['musicfolder'],
 					'tags' => {
 						'menu' => 'musicfolder',
@@ -797,7 +797,7 @@ sub menuQuery {
 		{
 			'text' => 'Playlists',
 			'actions' => {
-				'action' => {
+				'go' => {
 					'cmd' => ['playlists'],
 					'tags' => {
 						'menu' => 'track',
@@ -808,7 +808,7 @@ sub menuQuery {
 		{
 			'text' => 'Search',
 			'count' => 3,
-			'list_loop' => [
+			'item_loop' => [
 				{
 					'text' => 'Artists',
 				},
@@ -826,7 +826,7 @@ sub menuQuery {
 		{
 			'text' => 'Internet Radio',
 			'actions' => {
-				'action' => {
+				'go' => {
 					'cmd' => ['radios'],
 					'tags' => {
 						'menu' => 'radio',
@@ -847,7 +847,7 @@ sub menuQuery {
 		my $cnt = 0;
 
 		for my $eachmenu (@menu[$start..$end]) {			
-			$request->setResultLoopHash('list_loop', $cnt, $eachmenu);
+			$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
 			$cnt++;
 		}
 	}

@@ -233,7 +233,7 @@ sub albumsQuery {
 		# build the base element
 		my $base = {
 			'actions' => {
-				'action' => {
+				'go' => {
 					'cmd' => [$actioncmd],
 					'tags' => {
 						'menu' => $nextMenu,
@@ -272,7 +272,7 @@ sub albumsQuery {
 
 	if ($valid) {
 
-		my $loopname = $menuMode?'list_loop':'albums_loop';
+		my $loopname = $menuMode?'item_loop':'albums_loop';
 		my $cnt = 0;
 
 		for my $eachitem ($rs->slice($start, $end)) {
@@ -300,7 +300,7 @@ sub albumsQuery {
 				# artwork if we have it
 				my $artworkId = $eachitem->artwork;
 				if (defined $artworkId) {
-					$request->addResultLoop($loopname, $cnt, 'artworkId', $artworkId);
+					$request->addResultLoop($loopname, $cnt, 'icon', $artworkId);
 				}
 			}
 			else {
@@ -443,7 +443,7 @@ sub artistsQuery {
 		# build the base element
 		my $base = {
 			'actions' => {
-				'action' => {
+				'go' => {
 					'cmd' => [$actioncmd],
 					'tags' => {
 						'menu' => $nextMenu,
@@ -485,7 +485,7 @@ sub artistsQuery {
 
 	if ($valid || $count) {
 
-		my $loopname = $menuMode?'list_loop':'artists_loop';
+		my $loopname = $menuMode?'item_loop':'artists_loop';
 		my $cnt = 0;
 		
 		my @data = $rs->slice($start, $end);
@@ -768,7 +768,7 @@ sub genresQuery {
 		# build the base element
 		my $base = {
 			'actions' => {
-				'action' => {
+				'go' => {
 					'cmd' => [$actioncmd],
 					'tags' => {
 						'menu' => $nextMenu,
@@ -806,7 +806,7 @@ sub genresQuery {
 
 	if ($valid) {
 
-		my $loopname = $menuMode?'list_loop':'genres_loop';
+		my $loopname = $menuMode?'item_loop':'genres_loop';
 		my $cnt = 0;
 
 		for my $eachitem ($rs->slice($start, $end)) {
@@ -1016,7 +1016,7 @@ sub musicfolderQuery {
 		# build the base element
 		my $base = {
 			'actions' => {
-				'action' => {
+				'go' => {
 					'cmd' => ["musicfolder"],
 					'tags' => {
 						'menu' => 'musicfolder',
@@ -1057,7 +1057,7 @@ sub musicfolderQuery {
 	if ($valid) {
 		
 		my $cnt = 0;
-		my $loopname =  $menuMode?'list_loop':'folder_loop';
+		my $loopname =  $menuMode?'item_loop':'folder_loop';
 		
 		for my $eachitem (@data[$start..$end]) {
 			
@@ -1081,7 +1081,7 @@ sub musicfolderQuery {
 				} elsif (Slim::Music::Info::isPlaylist($eachitem)) {
 					
 					my $actions = {
-						'action' => {
+						'go' => {
 							'cmd' => ['playlists', 'tracks'],
 							'tags' => {
 								'menu' => 'songinfo',
@@ -1111,7 +1111,7 @@ sub musicfolderQuery {
 				} elsif (Slim::Music::Info::isSong($eachitem)) {
 					
 					my $actions = {
-						'action' => {
+						'go' => {
 							'cmd' => ['songinfo'],
 							'tags' => {
 								'menu' => 'nowhere',
@@ -1142,7 +1142,7 @@ sub musicfolderQuery {
 					
 					# don't know what that is, abort!
 					my $actions = {
-						'action' => {
+						'go' => {
 							'cmd' => ["musicfolder"],
 							'tags' => {
 								'menu' => 'musicfolder',
@@ -1482,7 +1482,7 @@ sub playlistsTracksQuery {
 		# build the base element
 		my $base = {
 			'actions' => {
-				'action' => {
+				'go' => {
 					'cmd' => ['songinfo'],
 					'tags' => {
 						'menu' => 'nowhere',
@@ -1526,7 +1526,7 @@ sub playlistsTracksQuery {
 
 			my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
 			my $cur = $start;
-			my $loopname = $menuMode?'list_loop':'playlisttracks_loop';
+			my $loopname = $menuMode?'item_loop':'playlisttracks_loop';
 			my $cnt = 0;
 
 			for my $eachitem ($iterator->slice($start, $end)) {
@@ -1599,7 +1599,7 @@ sub playlistsQuery {
 		# build the base element
 		my $base = {
 			'actions' => {
-				'action' => {
+				'go' => {
 					'cmd' => ['playlists', 'tracks'],
 					'tags' => {
 						'menu' => 'songinfo',
@@ -1642,7 +1642,7 @@ sub playlistsQuery {
 
 		if ($valid) {
 			
-			my $loopname = $menuMode?'list_loop':'playlists_loop';
+			my $loopname = $menuMode?'item_loop':'playlists_loop';
 			my $cnt = 0;
 
 			for my $eachitem ($rs->slice($start, $end)) {
@@ -2406,7 +2406,7 @@ sub songinfoQuery {
 			# build the base element
 			my $base = {
 				'actions' => {
-					# no action, we ain't going anywhere!
+					# no go, we ain't going anywhere!
 					
 					# we play/add the current track id
 					'play' => {
@@ -2438,7 +2438,7 @@ sub songinfoQuery {
 			
 			my $idx = 0;
 			my $cnt = 0;
-			my $loopname = $menuMode?'list_loop':'songinfo_loop';
+			my $loopname = $menuMode?'item_loop':'songinfo_loop';
 
 			while (my ($key, $val) = each %{$hashRef}) {
 
@@ -2620,7 +2620,7 @@ sub titlesQuery {
 		# build the base element
 		my $base = {
 			'actions' => {
-				'action' => {
+				'go' => {
 					'cmd' => [$actioncmd],
 					'tags' => {
 						'menu' => $nextMenu,
@@ -2659,7 +2659,7 @@ sub titlesQuery {
 	if ($valid) {
 		
 		my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
-		my $loopname = $menuMode?'list_loop':'titles_loop';
+		my $loopname = $menuMode?'item_loop':'titles_loop';
 		my $cnt = 0;
 
 		for my $item ($rs->slice($start, $end)) {
@@ -2751,7 +2751,7 @@ sub yearsQuery {
 		# build the base element
 		my $base = {
 			'actions' => {
-				'action' => {
+				'go' => {
 					'cmd' => [$actioncmd],
 					'tags' => {
 						'menu' => $nextMenu,
@@ -2792,7 +2792,7 @@ sub yearsQuery {
 
 	if ($valid) {
 
-		my $loopname = $menuMode?'list_loop':'years_loop';
+		my $loopname = $menuMode?'item_loop':'years_loop';
 		my $cnt = 0;
 
 		for my $eachitem ($rs->slice($start, $end)) {
@@ -2876,7 +2876,7 @@ sub dynamicAutoQuery {
 	# we have multiple times the same resultset, so we need a loop, named
 	# after the query name (this is never printed, it's just used to distinguish
 	# loops in the same request results.
-	my $loop = $menuMode?'list_loop':$query . 's_loop';
+	my $loop = $menuMode?'item_loop':$query . 's_loop';
 
 	# if the caller asked for results in the query ("radios 0 0" returns 
 	# immediately)
