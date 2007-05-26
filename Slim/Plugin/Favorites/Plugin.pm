@@ -55,8 +55,7 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['favorites', 'addlevel'], [0, 0, 1, \&cliAdd]);
 	Slim::Control::Request::addDispatch(['favorites', 'delete'], [0, 0, 0, \&cliDelete]);
 	Slim::Control::Request::addDispatch(['favorites', 'playlist', '_method' ],[1, 1, 1, \&cliBrowse]);
-	# register notification
-	Slim::Control::Request::addDispatch(['favorites', 'changed'], [0, 0, 0, undef]);
+
 }
 
 sub modeName { 'FAVORITES' };
@@ -483,6 +482,11 @@ sub asyncCB {
 sub cliBrowse {
 	my $request = shift;
 	my $client  = $request->client;
+
+	if ($request->isNotQuery([['favorites'], ['items']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
 
 	my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($client);
 
