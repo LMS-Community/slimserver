@@ -725,7 +725,7 @@ sub getMix {
 	return \@mix;
 }
 
-sub musicmaigc_moods {
+sub musicmagic_moods {
 	my ($client, $params) = @_;
 
 	$params->{'mood_list'} = grabMoods();
