@@ -947,7 +947,7 @@ sub musicfolderQuery {
 	my $quantity = $request->getParam('_quantity');
 	my $folderId = $request->getParam('folder_id');
 	my $url      = $request->getParam('url');
-	my $menu          = $request->getParam('menu');
+	my $menu     = $request->getParam('menu');
 	
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
@@ -2125,7 +2125,7 @@ sub statusQuery_filter {
 sub statusQuery {
 	my $request = shift;
 	
-	$log->debug("Begin Function");
+	$log->debug("statusQuery()");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['status']])) {
@@ -2133,13 +2133,13 @@ sub statusQuery {
 		return;
 	}
 	
-	if (Slim::Music::Import->stillScanning()) {
-		$request->addResult('rescan', "1");
-	}
-	
 	# get the initial parameters
 	my $client = $request->client();
+	my $menu = $request->getParam('menu');
 	
+	# menu/jive mgmt
+	my $menuMode = defined $menu;
+
 	# accomodate the fact we can be called automatically when the client is gone
 	if (!defined($client)) {
 		$request->addResult('error', "invalid player");
@@ -2161,7 +2161,14 @@ sub statusQuery {
 	my $shuffle   = Slim::Player::Playlist::shuffle($client);
 	my $songCount = Slim::Player::Playlist::count($client);
 	my $idx = 0;
-		
+
+
+	# now add the data...
+
+	if (Slim::Music::Import->stillScanning()) {
+		$request->addResult('rescan', "1");
+	}
+	
 	# add player info...
 	$request->addResult("player_name", $client->name());
 	$request->addResult("player_connected", $connected);
@@ -2194,16 +2201,15 @@ sub statusQuery {
 			
 			my $track = Slim::Schema->rs('Track')->objectForUrl($song);
 
-			my $dur   = 0;
-
 			if (blessed($track) && $track->can('secs')) {
 
-				$dur = $track->secs;
+				my $dur = $track->secs;
+
+				if ($dur) {
+					$request->addResult('duration', $dur);
+				}
 			}
 
-			if ($dur) {
-				$request->addResult('duration', $dur);
-			}
 		}
 		
 		if ($client->currentSleepTime()) {
@@ -2250,11 +2256,19 @@ sub statusQuery {
 
 		if ($songCount > 0) {
 			$idx = Slim::Player::Source::playingSongIndex($client);
-			$request->addResult("playlist_cur_index", $idx);
+			$request->addResult(
+				$menuMode ? "offset" : "playlist_cur_index", 
+				$idx
+			);
 			$request->addResult("playlist_timestamp", $client->currentPlaylistUpdateTime())
 		}
 
 		$request->addResult("playlist_tracks", $songCount);
+	}
+	
+	# give a count in menu mode no matter what
+	if ($menuMode) {
+		$request->addResult("count", $songCount);
 	}
 	
 	if ($songCount > 0 && $power) {
@@ -2265,7 +2279,7 @@ sub statusQuery {
 		my $quantity = $request->getParam('_quantity');
 	
 		$tags = 'gald' if !defined $tags;
-		my $loop = 'playlist_loop';
+		my $loop = $menuMode?'item_loop':'playlist_loop';
 
 		# we can return playlist data.
 		# which mode are we in?
@@ -2278,11 +2292,22 @@ sub statusQuery {
 		# if repeat is 1 (song) and modecurrent, then show the current song
 		if ($modecurrent && ($repeat == 1) && $quantity) {
 
-			_addSong($request, $loop, 0, 
-				Slim::Player::Playlist::song($client, $idx), $tags,
-				'playlist index', $idx
-			);
+			my $track = Slim::Player::Playlist::song($client, $idx);
 
+			if ($menuMode) {
+				my $text = $track->title;
+				my $album = $track->album->title();
+				my $artist = $track->artist->name();
+				$text = $text . "\n" . (defined($album)?$album:"");
+				$text = $text . "\n" . (defined($artist)?$artist:"");
+				$request->addResultLoop($loop, 0, 'text', $text);
+			}
+			else {
+				_addSong($request, $loop, 0, 
+					$track, $tags,
+					'playlist index', $idx
+				);
+			}
 		} else {
 
 			my ($valid, $start, $end);
@@ -2297,39 +2322,62 @@ sub statusQuery {
 				my $count = 0;
 
 				for ($idx = $start; $idx <= $end; $idx++){
-					_addSong(	$request, $loop, $count, 
-								Slim::Player::Playlist::song($client, $idx), $tags,
-								'playlist index', $idx
-							);
+					
+					my $track = Slim::Player::Playlist::song($client, $idx);
+
+					if ($menuMode) {
+						my $text = $track->title;
+						my $album = $track->album->title();
+						my $artist = $track->artist->name();
+						$text = $text . "\n" . (defined($album)?$album:"");
+						$text = $text . "\n" . (defined($artist)?$artist:"");
+						$request->addResultLoop($loop, $count, 'text', $text);
+					}
+					else {
+						_addSong(	$request, $loop, $count, 
+									$track, $tags,
+									'playlist index', $idx
+								);
+					}
+
 					$count++;
-					::idleStreams() ;
+					
+					# give peace a chance...
+					if ($count % 5) {
+						::idleStreams();
+					}
 				}
 				
-				my $repShuffle = $prefs->get('reshuffleOnRepeat');
-				my $canPredictFuture = ($repeat == 2)  			# we're repeating all
-										&& 						# and
-										(	($shuffle == 0)		# either we're not shuffling
-											||					# or
-											(!$repShuffle));	# we don't reshuffle
+				#we don't do that in menu mode!
+				if (!$menuMode) {
 				
-				if ($modecurrent && $canPredictFuture && ($count < scalar($quantity))) {
+					my $repShuffle = $prefs->get('reshuffleOnRepeat');
+					my $canPredictFuture = ($repeat == 2)  			# we're repeating all
+											&& 						# and
+											(	($shuffle == 0)		# either we're not shuffling
+												||					# or
+												(!$repShuffle));	# we don't reshuffle
+				
+					if ($modecurrent && $canPredictFuture && ($count < scalar($quantity))) {
 
-					# wrap around the playlist...
-					($valid, $start, $end) = $request->normalize(0, (scalar($quantity) - $count), $songCount);		
+						# wrap around the playlist...
+						($valid, $start, $end) = $request->normalize(0, (scalar($quantity) - $count), $songCount);		
 
-					if ($valid) {
+						if ($valid) {
 
-						for ($idx = $start; $idx <= $end; $idx++){
+							for ($idx = $start; $idx <= $end; $idx++){
 
-							_addSong($request, $loop, $count, 
-								Slim::Player::Playlist::song($client, $idx), $tags,
-								'playlist index', $idx
-							);
+								_addSong($request, $loop, $count, 
+									Slim::Player::Playlist::song($client, $idx), $tags,
+									'playlist index', $idx
+								);
 
-							$count++;
-							::idleStreams() ;
+								$count++;
+								::idleStreams() ;
+							}
 						}
 					}
+
 				}
 			}
 		}
