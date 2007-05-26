@@ -154,7 +154,7 @@ sub cliRadiosQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => ['radiotime', 'items'],
-					'tags' => {
+					'params' => {
 						'menu' => 'radiotime',
 					},
 				},

@@ -723,7 +723,7 @@ sub menuQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => ['albums'],
-					'tags' => {
+					'params' => {
 						'menu' => 'track',
 					},
 				},
@@ -737,7 +737,7 @@ sub menuQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => ['artists'],
-					'tags' => {
+					'params' => {
 						'menu' => 'album',
 					},
 				},
@@ -748,7 +748,7 @@ sub menuQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => ['genres'],
-					'tags' => {
+					'params' => {
 						'menu' => 'artist',
 					},
 				},
@@ -759,7 +759,7 @@ sub menuQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => ['years'],
-					'tags' => {
+					'params' => {
 						'menu' => 'album',
 					},
 				},
@@ -770,7 +770,7 @@ sub menuQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => ['albums'],
-					'tags' => {
+					'params' => {
 						'menu' => 'track',
 						'sort' => 'new',
 					},
@@ -781,32 +781,40 @@ sub menuQuery {
 			},
 		},
 		{
-			'text' => 'Favorites',
+			'text' => Slim::Utils::Strings::string('PLUGIN_FAVORITES_NAME'),
+			'actions' => {
+				'go' => {
+					'cmd' => ['favorites', 'items'],
+					'params' => {
+						'menu' => 'favorites',
+					},
+				},
+			},
 		},
 		{
-			'text' => 'Music Folder',
+			'text' => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
 			'actions' => {
 				'go' => {
 					'cmd' => ['musicfolder'],
-					'tags' => {
+					'params' => {
 						'menu' => 'musicfolder',
 					},
 				},
 			},
 		},
 		{
-			'text' => 'Playlists',
+			'text' => Slim::Utils::Strings::string('SAVED_PLAYLISTS'),
 			'actions' => {
 				'go' => {
 					'cmd' => ['playlists'],
-					'tags' => {
+					'params' => {
 						'menu' => 'track',
 					},
 				},
 			},
 		},
 		{
-			'text' => 'Search',
+			'text' => Slim::Utils::Strings::string('SEARCHMUSIC'),
 			'count' => 3,
 			'item_loop' => [
 				{
@@ -828,7 +836,7 @@ sub menuQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => ['radios'],
-					'tags' => {
+					'params' => {
 						'menu' => 'radio',
 					},
 				},

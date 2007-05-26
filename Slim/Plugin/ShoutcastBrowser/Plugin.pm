@@ -83,7 +83,7 @@ sub cliRadiosQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => ['shoutcast', 'items'],
-					'tags' => {
+					'params' => {
 						'menu' => 'shoutcast',
 					},
 				},

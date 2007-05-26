@@ -181,6 +181,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  Y    playlist        cant_open                   <url>
  N    rescan          done
  Y    unknownir       <ircode>                    <timestamp>
+ N    prefset         <namespace>                 <prefname>                  <newvalue>
 
 =head2 PLUGINS
 
@@ -592,7 +593,7 @@ sub init {
     addDispatch(['playlist',       'cant_open',      '_url'],                                          [1, 0, 0, undef]);
     addDispatch(['rescan',         'done'],                                                            [0, 0, 0, undef]);
     addDispatch(['unknownir',      '_ircode',        '_time'],                                         [1, 0, 0, undef]);
-    addDispatch(['prefset'],                                                                           [0, 0, 1, undef]);
+    addDispatch(['prefset',        '_namespace',     '_prefname',  '_newvalue'],                       [0, 0, 1, undef]);
 
 # DEPRECATED
 	addDispatch(['mode',           'pause'],                                                           [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
@@ -2293,7 +2294,10 @@ sub __parse {
 				
 	} else {
 
-		$log->warn("Request [" . join(' ', @{$requestLineRef}) . "]: no match in dispatchDB!");
+		# don't complain loudly here
+		# the request will end up as invalid. If this causes a problem, the caller can complain.
+		# we do not have to 
+		$log->info("Request [" . join(' ', @{$requestLineRef}) . "]: no match in dispatchDB!");
 
 		# handle the remaining params, if any...
 		# only for the benefit of CLI echoing...

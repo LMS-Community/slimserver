@@ -79,7 +79,7 @@ sub cliRadiosQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => ['picks', 'items'],
-					'tags' => {
+					'params' => {
 						'menu' => 'picks',
 					},
 				},

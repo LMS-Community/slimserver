@@ -235,7 +235,7 @@ sub albumsQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => [$actioncmd],
-					'tags' => {
+					'params' => {
 						'menu' => $nextMenu,
 						'sort' => 'tracknum',
 					},
@@ -244,7 +244,7 @@ sub albumsQuery {
 				'play' => {
 					'player' => 0,
 					'cmd' => ['playlistcontrol'],
-					'tags' => {
+					'params' => {
 						'cmd' => 'load',
 					},
 					'itemsParams' => 'params',
@@ -252,7 +252,7 @@ sub albumsQuery {
 				'add' => {
 					'player' => 0,
 					'cmd' => ['playlistcontrol'],
-					'tags' => {
+					'params' => {
 						'cmd' => 'add',
 					},
 					'itemsParams' => 'params',
@@ -445,7 +445,7 @@ sub artistsQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => [$actioncmd],
-					'tags' => {
+					'params' => {
 						'menu' => $nextMenu,
 					},
 					'itemsParams' => 'params'
@@ -453,7 +453,7 @@ sub artistsQuery {
 				'play' => {
 					'player' => 0,
 					'cmd' => ['playlistcontrol'],
-					'tags' => {
+					'params' => {
 						'cmd' => 'load',
 					},
 					'itemsParams' => 'params'
@@ -461,7 +461,7 @@ sub artistsQuery {
 				'add' => {
 					'player' => 0,
 					'cmd' => ['playlistcontrol'],
-					'tags' => {
+					'params' => {
 						'cmd' => 'add',
 					},
 					'itemsParams' => 'params'
@@ -770,7 +770,7 @@ sub genresQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => [$actioncmd],
-					'tags' => {
+					'params' => {
 						'menu' => $nextMenu,
 					},
 					'itemsParams' => 'params',
@@ -778,7 +778,7 @@ sub genresQuery {
 				'play' => {
 					'player' => 0,
 					'cmd' => ['playlistcontrol'],
-					'tags' => {
+					'params' => {
 						'cmd' => 'load',
 					},
 					'itemsParams' => 'params',
@@ -786,7 +786,7 @@ sub genresQuery {
 				'add' => {
 					'player' => 0,
 					'cmd' => ['playlistcontrol'],
-					'tags' => {
+					'params' => {
 						'cmd' => 'add',
 					},
 					'itemsParams' => 'params',
@@ -1018,7 +1018,7 @@ sub musicfolderQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => ["musicfolder"],
-					'tags' => {
+					'params' => {
 						'menu' => 'musicfolder',
 					},
 					'itemsParams' => 'params',
@@ -1026,7 +1026,7 @@ sub musicfolderQuery {
 				'play' => {
 					'player' => 0,
 					'cmd' => ['playlistcontrol'],
-					'tags' => {
+					'params' => {
 						'cmd' => 'load',
 					},
 					'itemsParams' => 'params',
@@ -1034,7 +1034,7 @@ sub musicfolderQuery {
 				'add' => {
 					'player' => 0,
 					'cmd' => ['playlistcontrol'],
-					'tags' => {
+					'params' => {
 						'cmd' => 'add',
 					},
 					'itemsParams' => 'params',
@@ -1083,7 +1083,7 @@ sub musicfolderQuery {
 					my $actions = {
 						'go' => {
 							'cmd' => ['playlists', 'tracks'],
-							'tags' => {
+							'params' => {
 								'menu' => 'songinfo',
 								'playlist_id' => $eachitem->id,
 							},
@@ -1091,7 +1091,7 @@ sub musicfolderQuery {
 						'play' => {
 							'player' => 0,
 							'cmd' => ['playlistcontrol'],
-							'tags' => {
+							'params' => {
 								'cmd' => 'load',
 								'playlist_id' => $eachitem->id,
 							},
@@ -1099,7 +1099,7 @@ sub musicfolderQuery {
 						'add' => {
 							'player' => 0,
 							'cmd' => ['playlistcontrol'],
-							'tags' => {
+							'params' => {
 								'cmd' => 'add',
 								'playlist_id' => $eachitem->id,
 							},
@@ -1113,7 +1113,7 @@ sub musicfolderQuery {
 					my $actions = {
 						'go' => {
 							'cmd' => ['songinfo'],
-							'tags' => {
+							'params' => {
 								'menu' => 'nowhere',
 								'track_id' => $eachitem->id,
 							},
@@ -1121,7 +1121,7 @@ sub musicfolderQuery {
 						'play' => {
 							'player' => 0,
 							'cmd' => ['playlistcontrol'],
-							'tags' => {
+							'params' => {
 								'cmd' => 'load',
 								'track_id' => $eachitem->id,
 							},
@@ -1129,7 +1129,7 @@ sub musicfolderQuery {
 						'add' => {
 							'player' => 0,
 							'cmd' => ['playlistcontrol'],
-							'tags' => {
+							'params' => {
 								'cmd' => 'add',
 								'track_id' => $eachitem->id,
 							},
@@ -1144,7 +1144,7 @@ sub musicfolderQuery {
 					my $actions = {
 						'go' => {
 							'cmd' => ["musicfolder"],
-							'tags' => {
+							'params' => {
 								'menu' => 'musicfolder',
 							},
 							'itemsParams' => 'params',
@@ -1152,7 +1152,7 @@ sub musicfolderQuery {
 						'play' => {
 							'player' => 0,
 							'cmd' => ['playlistcontrol'],
-							'tags' => {
+							'params' => {
 								'cmd' => 'load',
 							},
 							'itemsParams' => 'params',
@@ -1160,7 +1160,7 @@ sub musicfolderQuery {
 						'add' => {
 							'player' => 0,
 							'cmd' => ['playlistcontrol'],
-							'tags' => {
+							'params' => {
 								'cmd' => 'add',
 							},
 							'itemsParams' => 'params',
@@ -1484,7 +1484,7 @@ sub playlistsTracksQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => ['songinfo'],
-					'tags' => {
+					'params' => {
 						'menu' => 'nowhere',
 					},
 					'itemsParams' => 'params',
@@ -1492,7 +1492,7 @@ sub playlistsTracksQuery {
 				'play' => {
 					'player' => 0,
 					'cmd' => ['playlistcontrol'],
-					'tags' => {
+					'params' => {
 						'cmd' => 'load',
 					},
 					'itemsParams' => 'params',
@@ -1500,7 +1500,7 @@ sub playlistsTracksQuery {
 				'add' => {
 					'player' => 0,
 					'cmd' => ['playlistcontrol'],
-					'tags' => {
+					'params' => {
 						'cmd' => 'add',
 					},
 					'itemsParams' => 'params',
@@ -1601,7 +1601,7 @@ sub playlistsQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => ['playlists', 'tracks'],
-					'tags' => {
+					'params' => {
 						'menu' => 'songinfo',
 					},
 					'itemsParams' => 'params',
@@ -1609,7 +1609,7 @@ sub playlistsQuery {
 				'play' => {
 					'player' => 0,
 					'cmd' => ['playlistcontrol'],
-					'tags' => {
+					'params' => {
 						'cmd' => 'load',
 					},
 					'itemsParams' => 'params',
@@ -1617,7 +1617,7 @@ sub playlistsQuery {
 				'add' => {
 					'player' => 0,
 					'cmd' => ['playlistcontrol'],
-					'tags' => {
+					'params' => {
 						'cmd' => 'add',
 					},
 					'itemsParams' => 'params',
@@ -2412,7 +2412,7 @@ sub songinfoQuery {
 					'play' => {
 						'player' => 0,
 						'cmd' => ['playlistcontrol'],
-						'tags' => {
+						'params' => {
 							'cmd' => 'load',
 							'track_id' => $track->id,
 						},
@@ -2420,7 +2420,7 @@ sub songinfoQuery {
 					'add' => {
 						'player' => 0,
 						'cmd' => ['playlistcontrol'],
-						'tags' => {
+						'params' => {
 							'cmd' => 'add',
 							'track_id' => $track->id,
 						},
@@ -2622,7 +2622,7 @@ sub titlesQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => [$actioncmd],
-					'tags' => {
+					'params' => {
 						'menu' => $nextMenu,
 					},
 					'itemsParams' => 'params',
@@ -2630,7 +2630,7 @@ sub titlesQuery {
 				'play' => {
 					'player' => 0,
 					'cmd' => ['playlistcontrol'],
-					'tags' => {
+					'params' => {
 						'cmd' => 'load',
 					},
 					'itemsParams' => 'params',
@@ -2638,7 +2638,7 @@ sub titlesQuery {
 				'add' => {
 					'player' => 0,
 					'cmd' => ['playlistcontrol'],
-					'tags' => {
+					'params' => {
 						'cmd' => 'add',
 					},
 					'itemsParams' => 'params',
@@ -2753,7 +2753,7 @@ sub yearsQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => [$actioncmd],
-					'tags' => {
+					'params' => {
 						'menu' => $nextMenu,
 					},
 					'itemsParams' => 'params',
@@ -2761,7 +2761,7 @@ sub yearsQuery {
 				'play' => {
 					'player' => 0,
 					'cmd' => ['playlistcontrol'],
-					'tags' => {
+					'params' => {
 						'cmd' => 'load',
 					},
 					'itemsParams' => 'params',
@@ -2769,7 +2769,7 @@ sub yearsQuery {
 				'add' => {
 					'player' => 0,
 					'cmd' => ['playlistcontrol'],
-					'tags' => {
+					'params' => {
 						'cmd' => 'add',
 					},
 					'itemsParams' => 'params',

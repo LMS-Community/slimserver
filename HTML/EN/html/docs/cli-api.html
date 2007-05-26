@@ -72,6 +72,9 @@
 		Updated the &quot;<a href="#playlist newsong">playlist newsong</a>&quot; 
 		notification to return the song title and playlist index.
 	</li>
+	<li>
+		New notification mechanism for preference changes: &quot;<a href="#prefset">prefset</a>&quot;.
+	</li>
 </ul>
 <p>
 	The following changes or new commands &amp; queries are available starting with
@@ -6518,6 +6521,22 @@ in the saved playlists folder.</p>
 	(SB1/2/3/Transporter only; for SliMP3 players, this happens a couple of seconds before
 	music starts on the player). For radio stations, only the &quot;current_title
 	&quot; information is provided.
+</p>
+
+<br>
+<p id="prefset">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			prefset
+			[&lt;namespace&gt;]
+			[&lt;prefname&gt;]
+			[&lt;value&gt;]
+		</code>
+	</strong>
+</p>
+<p>
+	This signals a preference change.
 </p>
 
 <br>

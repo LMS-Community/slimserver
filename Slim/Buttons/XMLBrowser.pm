@@ -1125,14 +1125,14 @@ sub _cliQuery_done {
 							'play' => {
 								'player' => 0,
 								'cmd' => [$query, 'playlist', 'load'],
-								'tags' => {
+								'params' => {
 									'item_id' => $item_id,
 								},
 							},
 							'add' => {
 								'player' => 0,
 								'cmd' => [$query, 'playlist', 'add'],
-								'tags' => {
+								'params' => {
 									'item_id' => $item_id,
 								},
 							},
@@ -1291,7 +1291,7 @@ sub _cliQuery_done {
 				'actions' => {
 					'go' => {
 						'cmd' => [$query, 'items'],
-						'tags' => {
+						'params' => {
 							'menu' => $query,
 						},
 						'itemsParams' => 'params',

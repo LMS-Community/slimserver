@@ -1431,7 +1431,7 @@ sub init_new {
 	# add entry to dispatch table if it is loaded (it isn't in scanner.pl) as migration may call notify for this
 	# this is required as Slim::Control::Request::init will not have run at this point
 	if (exists &Slim::Control::Request::addDispatch) {
-		Slim::Control::Request::addDispatch(['prefset'], [0, 0, 1, undef]);
+		Slim::Control::Request::addDispatch(['prefset', '_namespace', '_prefname', '_newvalue'], [0, 0, 1, undef]);
 	}
 
 	# migrate old prefs across

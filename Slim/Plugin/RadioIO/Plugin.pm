@@ -142,7 +142,7 @@ sub cliRadiosQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => ['radioio', 'items'],
-					'tags' => {
+					'params' => {
 						'menu' => 'radioio',
 					},
 				},

@@ -309,7 +309,7 @@ sub requestMethod {
 	$log->debug( sub { return "requestMethod(" . Data::Dumper::Dumper($reqParams) . ")" } );
 	
 	# current style : [<player>, [cmd]]
-	# proposed style: [{player:xxx, cmdarray:[xxx], params:{xxx}}, {}]
+	# proposed style: [{player:xxx, cmd:[xxx], params:{xxx}}]
 	# benefit: more than one command in single request
 	# HOW DOES RECEIVER PARSE???
 	

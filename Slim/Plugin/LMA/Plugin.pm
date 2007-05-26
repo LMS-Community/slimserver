@@ -91,7 +91,7 @@ sub cliRadiosQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => ['lma', 'items'],
-					'tags' => {
+					'params' => {
 						'menu' => 'lma',
 					},
 				},

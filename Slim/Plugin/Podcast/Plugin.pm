@@ -171,7 +171,7 @@ sub cliRadiosQuery {
 			'actions' => {
 				'go' => {
 					'cmd' => ['podcast', 'items'],
-					'tags' => {
+					'params' => {
 						'menu' => 'podcast',
 					},
 				},
