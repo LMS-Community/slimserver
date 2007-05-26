@@ -1899,10 +1899,47 @@ sub searchQuery {
 }
 
 
+# the filter function decides, based on a notified request, if the serverstatus
+# query must be re-executed.
+sub serverstatusQuery_filter {
+	my $self = shift;
+	my $request = shift;
+	
+	# we want to know about rescan and all client notifs
+	# FIXME: wipecache and rescan are synonyms...
+	if ($request->isCommand([['wipecache', 'rescan', 'client']])) {
+		return 1.3;
+	}
+	
+	# FIXME: prefset???
+	# we want to know about any pref in our array
+	if (defined(my $prefsPtr = $self->privateData()->{'server'})) {
+		if ($request->isCommand([['pref']])) {
+			if (defined(my $reqpref = $request->getParam('_prefname'))) {
+				if (grep($reqpref, @{$prefsPtr})) {
+					return 1.3;
+				}
+			}
+		}
+	}
+	if (defined(my $prefsPtr = $self->privateData()->{'player'})) {
+		if ($request->isCommand([['playerpref']])) {
+			if (defined(my $reqpref = $request->getParam('_prefname'))) {
+				if (grep($reqpref, @{$prefsPtr})) {
+					return 1.3;
+				}
+			}
+		}
+	}
+	
+	return 0;
+}
+
+
 sub serverstatusQuery {
 	my $request = shift;
 	
-	$log->debug("Begin Function");
+	$log->debug("serverstatusQuery()");
 
 	# check this is the correct query
 	if ($request->isNotQuery([['serverstatus']])) {
@@ -1989,40 +2026,11 @@ sub serverstatusQuery {
 	# manage the subscription
 	if (defined(my $timeout = $request->getParam('subscribe'))) {
 	
-		# the filter function decides, based on a notified request, if the serverstatus
-		# query must be re-executed.
-		sub serverstatusFilter{
-			my $self = shift;
-			my $request = shift;
-			
-			# we want to know about rescan and all client notifs
-			if ($request->isCommand([['rescan', 'client']])) {
-				return 1;
-			}
-			
-			# we want to know about any pref in our array
-			if (defined(my $prefsPtr = $self->privateData()->{'server'})) {
-				if ($request->isCommand([['pref']])) {
-					if (defined(my $reqpref = $request->getParam('_prefname'))) {
-						return grep($reqpref, @{$prefsPtr});
-					}
-				}
-			}
-			if (defined(my $prefsPtr = $self->privateData()->{'player'})) {
-				if ($request->isCommand([['playerpref']])) {
-					if (defined(my $reqpref = $request->getParam('_prefname'))) {
-						return grep($reqpref, @{$prefsPtr});
-					}
-				}
-			}
-			return 0;
-		}
-	
 		# store the prefs array as private data so our filter above can find it back
 		$request->privateData(\%savePrefs);
 		
 		# register ourselves to be automatically re-executed on timeout or filter
-		$request->registerAutoExecute($timeout, \&serverstatusFilter);
+		$request->registerAutoExecute($timeout, \&serverstatusQuery_filter);
 	}
 	
 	$request->setStatusDone();
@@ -2072,6 +2080,46 @@ sub sleepQuery {
 	
 	$request->setStatusDone();
 }
+
+
+# the filter function decides, based on a notified request, if the status
+# query must be re-executed.
+sub statusQuery_filter {
+	my $self = shift;
+	my $request = shift;
+	
+	# retrieve the clientid, abort if not about us
+	my $clientid = $request->clientid();
+	return 0 if !defined $clientid;
+	return 0 if $clientid ne $self->clientid();
+	
+	# commands we ignore
+	return 0 if $request->isCommand([['ir', 'button', 'debug', 'pref', 'playerpref', 'display']]);
+	return 0 if $request->isCommand([['playlist'], ['open', 'jump']]);
+
+	# special case: the client is gone!
+	if ($request->isCommand([['client'], ['forget']])) {
+		
+		# pretend we do not need a client, otherwise execute() fails
+		# and validate() deletes the client info!
+		$self->needClient(0);
+		
+		# we'll unsubscribe above if there is no client
+		return 1;
+	}
+
+
+	# don't delay for newsong
+	if ($request->isCommand([['playlist'], ['newsong']])) {
+
+		return 1;
+	}
+
+	# send everyother notif with a small delay to accomodate
+	# bursts of commands
+	return 1.3;
+}
+
 
 
 sub statusQuery {
@@ -2291,46 +2339,8 @@ sub statusQuery {
 	# manage the subscription
 	if (defined(my $timeout = $request->getParam('subscribe'))) {
 	
-		# the filter function decides, based on a notified request, if the status
-		# query must be re-executed.
-		sub statusFilter{
-			my $self = shift;
-			my $request = shift;
-			
-			# retrieve the clientid, abort if not about us
-			my $clientid = $request->clientid();
-			return 0 if !defined $clientid;
-			return 0 if $clientid ne $self->clientid();
-			
-			# commands we ignore
-			return 0 if $request->isCommand([['ir', 'button', 'debug', 'pref', 'playerpref', 'display']]);
-			return 0 if $request->isCommand([['playlist'], ['open', 'jump']]);
-
-			# special case: the client is gone!
-			if ($request->isCommand([['client'], ['forget']])) {
-				
-				# pretend we do not need a client, otherwise execute() fails
-				# and validate() deletes the client info!
-				$self->needClient(0);
-				
-				# we'll unsubscribe above if there is no client
-				return 1;
-			}
-
-
-			# don't delay for newsong
-			if ($request->isCommand([['playlist'], ['newsong']])) {
-
-				return 1;
-			}
-
-			# send everyother notif with a small delay to accomodate
-			# bursts of commands
-			return 1;
-		}
-		
 		# register ourselves to be automatically re-executed on timeout or filter
-		$request->registerAutoExecute($timeout, \&statusFilter);
+		$request->registerAutoExecute($timeout, \&statusQuery_filter);
 	}
 	
 	$request->setStatusDone();

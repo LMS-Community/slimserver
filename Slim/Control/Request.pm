@@ -1587,7 +1587,7 @@ sub normalize {
 sub execute {
 	my $self = shift;
 	
-	$log->info('Enter');
+	$log->debug('Enter');
 
 	if ($log->is_debug) {
 		$self->dump("Request");
@@ -1753,6 +1753,8 @@ sub callback {
 sub notify {
 	my $self = shift || return;
 
+	$log->info(sprintf("Notifying %s", $self->getRequestString()));
+
 	for my $listener (keys %listeners) {
 
 		if ( $listeners{$listener} ) {
@@ -1824,7 +1826,16 @@ sub notify {
 				}
 				
 				if ($relevant) {
-					$request->__autoexecute();
+					
+					# delay answers by the amount returned by relevant-1
+					Slim::Utils::Timers::killOneTimer($request,
+						\&__autoexecute);
+
+					Slim::Utils::Timers::setTimer($request, 
+						Time::HiRes::time() + $relevant - 1,
+						\&__autoexecute);
+
+#					$request->__autoexecute();
 				}
 			}
 		}
@@ -1842,6 +1853,8 @@ sub registerAutoExecute{
 	my $self = shift || return;
 	my $timeout = shift;
 	my $filterFunc = shift;
+	
+	$log->debug("registerAutoExecute()");
 	
 	# we shall be a query
 	return unless $self->{'_isQuery'};
@@ -1862,19 +1875,29 @@ sub registerAutoExecute{
 	# (for this query/client/connection)
 	my $oldrequest = $subscribers{$cnxid}{$name}{$clientid};
 
-	delete $subscribers{$cnxid}{$name}{$clientid};
+	if (defined $oldrequest) {
 
-	Slim::Utils::Timers::killTimers($oldrequest, \&__autoexecute);
+		$log->info("Old friend: $cnxid - $name - $clientid");
 
+		delete $subscribers{$cnxid}{$name}{$clientid};
+		Slim::Utils::Timers::killTimers($oldrequest, \&__autoexecute);
+	}
+	else {
+		$log->info("New buddy: $cnxid - $name - $clientid");
+	}
+	
 	# store the new subscription if this is what is asked of us
 	if ($timeout ne '-') {
 		
+		$log->debug(".. set ourself up");
+
 		# copy the request
 		my $request = $self->virginCopy();
 
 		$subscribers{$cnxid}{$name}{$clientid} = $request;
 
 		if ($timeout > 0) {
+			$log->debug(".. starting timer: $timeout");
 			# start the timer
 			Slim::Utils::Timers::setTimer($request, 
 				Time::HiRes::time() + $timeout,
@@ -2169,7 +2192,7 @@ sub __parse {
 
 		if ($isDebug) {
 			$log->debug("..Trying to match [$match]");
-			$log->debug(Data::Dump::dump($DBp));
+			#$log->debug(Data::Dump::dump($DBp));
 		}
 
 		# our verb does not match in the hash 
@@ -2347,6 +2370,7 @@ sub __autoexecute{
 		my $name = $self->getRequestString();
 		my $clientid = $self->clientid() || 'global';
 		my $request2del = $subscribers{$cnxid}{$name}{$clientid};
+		$log->debug("__autoexecute: deleting $cnxid - $name - $clientid");
 		delete $subscribers{$cnxid}{$name}{$clientid};
 		# there should not be any of those, but just to be sure
 		Slim::Utils::Timers::killTimers($self, \&__autoexecute);
