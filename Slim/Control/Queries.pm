@@ -274,6 +274,7 @@ sub albumsQuery {
 
 		my $loopname = $menuMode?'item_loop':'albums_loop';
 		my $cnt = 0;
+		$request->addResult('offset', $start) if $menuMode;
 
 		for my $eachitem ($rs->slice($start, $end)) {
 			if ($menuMode) {
@@ -487,7 +488,8 @@ sub artistsQuery {
 
 		my $loopname = $menuMode?'item_loop':'artists_loop';
 		my $cnt = 0;
-		
+		$request->addResult('offset', $start) if $menuMode;
+
 		my @data = $rs->slice($start, $end);
 		
 		# Various artist handling. Don't do if pref is off, or if we're
@@ -808,7 +810,8 @@ sub genresQuery {
 
 		my $loopname = $menuMode?'item_loop':'genres_loop';
 		my $cnt = 0;
-
+		$request->addResult('offset', $start) if $menuMode;
+		
 		for my $eachitem ($rs->slice($start, $end)) {
 			if ($menuMode) {
 				$request->addResultLoop($loopname, $cnt, 'text', $eachitem->name);
@@ -1056,8 +1059,9 @@ sub musicfolderQuery {
 
 	if ($valid) {
 		
-		my $cnt = 0;
 		my $loopname =  $menuMode?'item_loop':'folder_loop';
+		my $cnt = 0;
+		$request->addResult('offset', $start) if $menuMode;
 		
 		for my $eachitem (@data[$start..$end]) {
 			
@@ -1528,7 +1532,8 @@ sub playlistsTracksQuery {
 			my $cur = $start;
 			my $loopname = $menuMode?'item_loop':'playlisttracks_loop';
 			my $cnt = 0;
-
+			$request->addResult('offset', $start) if $menuMode;
+			
 			for my $eachitem ($iterator->slice($start, $end)) {
 
 				if ($menuMode) {
@@ -1644,6 +1649,7 @@ sub playlistsQuery {
 			
 			my $loopname = $menuMode?'item_loop':'playlists_loop';
 			my $cnt = 0;
+			$request->addResult('offset', $start) if $menuMode;
 
 			for my $eachitem ($rs->slice($start, $end)) {
 
@@ -2257,7 +2263,7 @@ sub statusQuery {
 		if ($songCount > 0) {
 			$idx = Slim::Player::Source::playingSongIndex($client);
 			$request->addResult(
-				$menuMode ? "offset" : "playlist_cur_index", 
+				"playlist_cur_index", 
 				$idx
 			);
 			$request->addResult("playlist_timestamp", $client->currentPlaylistUpdateTime())
@@ -2268,7 +2274,7 @@ sub statusQuery {
 	
 	# give a count in menu mode no matter what
 	if ($menuMode) {
-		$request->addResult("count", $songCount);
+		$request->addResult("count", $power?$songCount:0);
 	}
 	
 	if ($songCount > 0 && $power) {
@@ -2292,6 +2298,7 @@ sub statusQuery {
 		# if repeat is 1 (song) and modecurrent, then show the current song
 		if ($modecurrent && ($repeat == 1) && $quantity) {
 
+			$request->addResult('offset', $idx) if $menuMode;
 			my $track = Slim::Player::Playlist::song($client, $idx);
 
 			if ($menuMode) {
@@ -2301,6 +2308,10 @@ sub statusQuery {
 				$text = $text . "\n" . (defined($album)?$album:"");
 				$text = $text . "\n" . (defined($artist)?$artist:"");
 				$request->addResultLoop($loop, 0, 'text', $text);
+
+				if (defined(my $iconId = $track->album->artwork())) {
+					$request->addResultLoop($loop, 0, 'icon-id', $iconId);
+				}
 			}
 			else {
 				_addSong($request, $loop, 0, 
@@ -2320,6 +2331,7 @@ sub statusQuery {
 
 			if ($valid) {
 				my $count = 0;
+				$request->addResult('offset', $start) if $menuMode;
 
 				for ($idx = $start; $idx <= $end; $idx++){
 					
@@ -2332,6 +2344,10 @@ sub statusQuery {
 						$text = $text . "\n" . (defined($album)?$album:"");
 						$text = $text . "\n" . (defined($artist)?$artist:"");
 						$request->addResultLoop($loop, $count, 'text', $text);
+						
+						if (defined(my $iconId = $track->album->artwork())) {
+							$request->addResultLoop($loop, $count, 'icon-id', $iconId);
+						}
 					}
 					else {
 						_addSong(	$request, $loop, $count, 
@@ -2497,6 +2513,7 @@ sub songinfoQuery {
 			my $idx = 0;
 			my $cnt = 0;
 			my $loopname = $menuMode?'item_loop':'songinfo_loop';
+			$request->addResult('offset', $start) if $menuMode;
 
 			while (my ($key, $val) = each %{$hashRef}) {
 
@@ -2719,6 +2736,8 @@ sub titlesQuery {
 		my $format = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ];
 		my $loopname = $menuMode?'item_loop':'titles_loop';
 		my $cnt = 0;
+		$request->addResult('offset', $start) if $menuMode;
+
 
 		for my $item ($rs->slice($start, $end)) {
 			
@@ -2852,6 +2871,7 @@ sub yearsQuery {
 
 		my $loopname = $menuMode?'item_loop':'years_loop';
 		my $cnt = 0;
+		$request->addResult('offset', $start) if $menuMode;
 
 		for my $eachitem ($rs->slice($start, $end)) {
 			if ($menuMode) {
@@ -2970,6 +2990,7 @@ sub dynamicAutoQuery {
 			# slice as needed
 			my $count = $request->getResultLoopCount($loop);
 			$request->sliceResultLoop($loop, $index, $quantity);
+			$request->addResult('offset', $index) if $menuMode;
 			$request->setResultFirst('count', $count);
 			
 			# don't forget to call that to trigger notifications, if any

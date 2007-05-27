@@ -42,7 +42,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 my %procedures = (
 	'system.describe'     => \&describeProcedure,
 	'slim.request'        => \&requestProcedure,
-	'slim.playermenu'     => \&playermenuProcedure,
+	'slim.playermenu'     => \&playermenuProcedure, #remove me once branch is merged
 );
 
 our %contexts = ();
@@ -606,7 +606,7 @@ sub requestWrite {
 Handles 'slim.playermenu' calls. For now returns a standard menu.
 
 =cut
-
+# FIXME: REMOVE ME ONCE BRANCH IS MERGED
 sub playermenuProcedure {
 	my $context = shift;
 
@@ -781,7 +781,7 @@ sub menuQuery {
 			},
 		},
 		{
-			'text' => Slim::Utils::Strings::string('PLUGIN_FAVORITES_NAME'),
+			'text' => 'Favorites',
 			'actions' => {
 				'go' => {
 					'cmd' => ['favorites', 'items'],
@@ -853,6 +853,7 @@ sub menuQuery {
 	if ($valid) {
 		
 		my $cnt = 0;
+		$request->addResult('offset', $start);
 
 		for my $eachmenu (@menu[$start..$end]) {			
 			$request->setResultLoopHash('item_loop', $cnt, $eachmenu);

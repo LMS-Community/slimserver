@@ -1141,7 +1141,6 @@ sub _cliQuery_done {
 					$request->addResult('base', $base);
 				}
 
-				
 				$request->addResult('count', 1);
 				my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), 1);
 				
@@ -1149,6 +1148,7 @@ sub _cliQuery_done {
 					
 					my $loopname = $menuMode?'item_loop':'loop_loop';
 					my $cnt = 0;
+					$request->addResult('offset', $start) if $menuMode;
 
 					# create an ordered hash to store this stuff...
 					tie (my %hash, "Tie::IxHash");
@@ -1319,7 +1319,8 @@ sub _cliQuery_done {
 		
 			my $loopname = $menuMode?'item_loop':'loop_loop';
 			my $cnt = 0;
-		
+			$request->addResult('offset', $start) if $menuMode;
+
 			if ($valid) {
 				
 				for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
