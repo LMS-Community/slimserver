@@ -2354,11 +2354,11 @@ sub statusQuery {
 				}
 				$text = $text . "\n" . (defined($artist)?$artist:"");
 				
-				$request->addResultLoop($loop, $count, 'text', $text);
+				$request->addResultLoop($loop, 0, 'text', $text);
 				
 				if (defined($iconId)) {
 					$iconId += 0;
-					$request->addResultLoop($loop, $count, 'icon-id', $iconId);
+					$request->addResultLoop($loop, 0, 'icon-id', $iconId);
 				}
 			}
 			else {
