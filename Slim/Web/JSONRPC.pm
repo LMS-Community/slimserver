@@ -230,7 +230,7 @@ sub writeResponse {
 
 	# convert Perl object into JSON
 	# FIXME: Use JSON here and not Syck because Syck does not like tied ordered hashes...
-	my $jsonResponse = objToJson($responseRef, {utf8 => 1});
+	my $jsonResponse = objToJson($responseRef, {utf8 => 1, autoconv=>0});
 	$jsonResponse = Slim::Utils::Unicode::encode('utf8', $jsonResponse);
 
 	$log->info("JSON raw response: [$jsonResponse]");

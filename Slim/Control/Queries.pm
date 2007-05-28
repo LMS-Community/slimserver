@@ -97,6 +97,7 @@ sub alarmsQuery {
 	my $count = scalar @results;
 
 	$request->addResult('fade', $client->prefGet('alarmfadeseconds'));
+	$count += 0;
 	$request->addResult('count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
@@ -266,6 +267,7 @@ sub albumsQuery {
 		$request->addResult('rescan', 1);
 	}
 
+	$count += 0;
 	$request->addResult('count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
@@ -287,8 +289,10 @@ sub albumsQuery {
 				}
 				$request->addResultLoop($loopname, $cnt, 'text', $text);
 				
+				my $id = $eachitem->id();
+				$id += 0;
 				my $params = {
-					'album_id' =>  $eachitem->id, 
+					'album_id' =>  $id, 
 				};
 				$request->addResultLoop($loopname, $cnt, 'params', $params);
 				
@@ -299,8 +303,8 @@ sub albumsQuery {
 #				$request->addResultLoop($loopname, $cnt, 'window', $window);
 				
 				# artwork if we have it
-				my $iconId = $eachitem->artwork;
-				if (defined $iconId) {
+				if (defined(my $iconId = $eachitem->artwork())) {
+					$iconId += 0;
 					$request->addResultLoop($loopname, $cnt, 'icon-id', $iconId);
 				}
 			}
@@ -480,6 +484,7 @@ sub artistsQuery {
 		$request->addResult('rescan', 1);
 	}
 
+	$count += 0;
 	$request->addResult('count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
@@ -500,15 +505,18 @@ sub artistsQuery {
 
 		for my $obj (@data) {
 
+			my $id = $obj->id();
+			$id += 0;
+
 			if ($menuMode){
 				$request->addResultLoop($loopname, $cnt, 'text', $obj->name);
 				my $params = {
-					'artist_id' =>  $obj->id, 
+					'artist_id' => $id, 
 				};
 				$request->addResultLoop($loopname, $cnt, 'params', $params);
 			}
 			else {
-				$request->addResultLoop($loopname, $cnt, 'id', $obj->id);
+				$request->addResultLoop($loopname, $cnt, 'id', $id);
 				$request->addResultLoop($loopname, $cnt, 'artist', $obj->name);
 			}
 
@@ -802,6 +810,7 @@ sub genresQuery {
 		$request->addResult('rescan', 1);
 	}
 
+	$count += 0;
 	$request->addResult('count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
@@ -813,15 +822,20 @@ sub genresQuery {
 		$request->addResult('offset', $start) if $menuMode;
 		
 		for my $eachitem ($rs->slice($start, $end)) {
+			
+			my $id = $eachitem->id();
+			$id += 0;
+			
 			if ($menuMode) {
 				$request->addResultLoop($loopname, $cnt, 'text', $eachitem->name);
+				
 				my $params = {
-					'genre_id' =>  $eachitem->id, 
+					'genre_id' =>  $id, 
 				};
 				$request->addResultLoop($loopname, $cnt, 'params', $params);
 			}
 			else {
-				$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
+				$request->addResultLoop($loopname, $cnt, 'id', $id);
 				$request->addResultLoop($loopname, $cnt, 'genre', $eachitem->name);
 			}
 			$cnt++;
@@ -1051,6 +1065,7 @@ sub musicfolderQuery {
 		$request->addResult("rescan", 1);
 	}
 
+	$count += 0;
 	$request->addResult('count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(
@@ -1066,6 +1081,8 @@ sub musicfolderQuery {
 		for my $eachitem (@data[$start..$end]) {
 			
 			my $filename = Slim::Music::Info::fileName($eachitem->url());
+			my $id = $eachitem->id();
+			$id += 0;
 			
 			if ($menuMode) {
 				$request->addResultLoop($loopname, $cnt, 'text', $filename);
@@ -1073,11 +1090,12 @@ sub musicfolderQuery {
 				# each item is different, but most items are folders
 				# the base assumes so above, we override it here
 				
+
 				# assumed case, folder
 				if (Slim::Music::Info::isDir($eachitem)) {
 
 					my $params = {
-						'folder_id' =>  $eachitem->id, 
+						'folder_id' => $id, 
 					};
 					$request->addResultLoop($loopname, $cnt, 'params', $params);
 
@@ -1089,7 +1107,7 @@ sub musicfolderQuery {
 							'cmd' => ['playlists', 'tracks'],
 							'params' => {
 								'menu' => 'songinfo',
-								'playlist_id' => $eachitem->id,
+								'playlist_id' => $id,
 							},
 						},
 						'play' => {
@@ -1097,7 +1115,7 @@ sub musicfolderQuery {
 							'cmd' => ['playlistcontrol'],
 							'params' => {
 								'cmd' => 'load',
-								'playlist_id' => $eachitem->id,
+								'playlist_id' => $id,
 							},
 						},
 						'add' => {
@@ -1105,7 +1123,7 @@ sub musicfolderQuery {
 							'cmd' => ['playlistcontrol'],
 							'params' => {
 								'cmd' => 'add',
-								'playlist_id' => $eachitem->id,
+								'playlist_id' => $id,
 							},
 						},
 					};
@@ -1119,7 +1137,7 @@ sub musicfolderQuery {
 							'cmd' => ['songinfo'],
 							'params' => {
 								'menu' => 'nowhere',
-								'track_id' => $eachitem->id,
+								'track_id' => $id,
 							},
 						},
 						'play' => {
@@ -1127,7 +1145,7 @@ sub musicfolderQuery {
 							'cmd' => ['playlistcontrol'],
 							'params' => {
 								'cmd' => 'load',
-								'track_id' => $eachitem->id,
+								'track_id' => $id,
 							},
 						},
 						'add' => {
@@ -1135,7 +1153,7 @@ sub musicfolderQuery {
 							'cmd' => ['playlistcontrol'],
 							'params' => {
 								'cmd' => 'add',
-								'track_id' => $eachitem->id,
+								'track_id' => $id,
 							},
 						},
 					};
@@ -1174,7 +1192,7 @@ sub musicfolderQuery {
 				}
 			}
 			else {
-				$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
+				$request->addResultLoop($loopname, $cnt, 'id', $id);
 				$request->addResultLoop($loopname, $cnt, 'filename', $filename);
 			
 				if (Slim::Music::Info::isDir($eachitem)) {
@@ -1278,6 +1296,7 @@ sub playersQuery {
 	
 	
 	my $count = Slim::Player::Client::clientCount();
+	$count += 0;
 	$request->addResult('count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
@@ -1522,6 +1541,7 @@ sub playlistsTracksQuery {
 
 		my $count = $iterator->count();
 
+		$count += 0;
 		$request->addResult("count", $count);
 		
 		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
@@ -1540,8 +1560,10 @@ sub playlistsTracksQuery {
 					
 					my $text = Slim::Music::TitleFormatter::infoFormat($eachitem, $format, 'TITLE');
 					$request->addResultLoop($loopname, $cnt, 'text', $text);
+					my $id = $eachitem->id();
+					$id += 0;
 					my $params = {
-						'track_id' =>  $eachitem->id, 
+						'track_id' =>  $id, 
 					};
 					$request->addResultLoop($loopname, $cnt, 'params', $params);
 
@@ -1639,7 +1661,8 @@ sub playlistsQuery {
 	if (defined $rs) {
 
 		my $numitems = $rs->count;
-		
+	
+		$numitems += 0;
 		$request->addResult("count", $numitems);
 		
 		my ($valid, $start, $end) = $request->normalize(
@@ -1653,15 +1676,18 @@ sub playlistsQuery {
 
 			for my $eachitem ($rs->slice($start, $end)) {
 
+				my $id = $eachitem->id();
+				$id += 0;
+
 				if ($menuMode) {
 					$request->addResultLoop($loopname, $cnt, 'text', $eachitem->title);
 					my $params = {
-						'playlist_id' =>  $eachitem->id, 
+						'playlist_id' =>  $id, 
 					};
 					$request->addResultLoop($loopname, $cnt, 'params', $params);
 				}
 				else {
-					$request->addResultLoop($loopname, $cnt, "id", $eachitem->id);
+					$request->addResultLoop($loopname, $cnt, "id", $id);
 					$request->addResultLoop($loopname, $cnt, "playlist", $eachitem->title);
 					$request->addResultLoop($loopname, $cnt, "url", $eachitem->url) if ($tags =~ /u/);
 				}
@@ -1880,12 +1906,14 @@ sub searchQuery {
 		$totalCount += $count;
 	}
 
+	$totalCount += 0;
 	$request->addResult('count', $totalCount);
 
 	for my $type (@types) {
 
 		my $count = $results{$type}->{'count'};
 
+		$count += 0;
 		$request->addResult("${type}s_count", $count);
 
 		my $loopName  = "${type}s_loop";
@@ -1993,6 +2021,7 @@ sub serverstatusQuery {
 	my $quantity = $request->getParam('_quantity');
 	
 	my $count = Slim::Player::Client::clientCount();
+	$count += 0;
 	$request->addResult('player count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
@@ -2180,6 +2209,7 @@ sub statusQuery {
 	$request->addResult("player_connected", $connected);
 	
 	if (!$RSC) {
+		$power += 0;
 		$request->addResult("power", $power);
 	}
 	
@@ -2212,6 +2242,7 @@ sub statusQuery {
 				my $dur = $track->secs;
 
 				if ($dur) {
+					$dur += 0;
 					$request->addResult('duration', $dur);
 				}
 			}
@@ -2239,7 +2270,9 @@ sub statusQuery {
 	
 		if (!$RSC) {
 			# undefined for remote streams
-			$request->addResult("mixer volume", $client->prefGet("volume"));
+			my $vol = $client->prefGet("volume");
+			$vol += 0;
+			$request->addResult("mixer volume", $vol);
 		}
 		
 		if ($SB || $SP3) {
@@ -2251,7 +2284,9 @@ sub statusQuery {
 			$request->addResult("mixer pitch", $client->pitch());
 		}
 
-		$request->addResult("playlist repeat", $repeat); 
+		$repeat += 0;
+		$request->addResult("playlist repeat", $repeat);
+		$shuffle += 0;
 		$request->addResult("playlist shuffle", $shuffle); 
 	
 		if (defined (my $playlistObj = $client->currentPlaylist())) {
@@ -2274,6 +2309,7 @@ sub statusQuery {
 	
 	# give a count in menu mode no matter what
 	if ($menuMode) {
+		$songCount += 0;
 		$request->addResult("count", $power?$songCount:0);
 	}
 	
@@ -2303,14 +2339,26 @@ sub statusQuery {
 
 			if ($menuMode) {
 				my $text = $track->title;
-				my $album = $track->album->title();
-				my $artist = $track->artist->name();
+				my $album;
+				my $albumObj = $track->album();
+				my $iconId;
+				if(defined($albumObj)) {
+					$album = $albumObj->title();
+					$iconId = $albumObj->artwork();
+				}
 				$text = $text . "\n" . (defined($album)?$album:"");
+				
+				my $artist;
+				if(defined(my $artistObj = $track->artist())) {
+					$artist = $artistObj->name();
+				}
 				$text = $text . "\n" . (defined($artist)?$artist:"");
-				$request->addResultLoop($loop, 0, 'text', $text);
-
-				if (defined(my $iconId = $track->album->artwork())) {
-					$request->addResultLoop($loop, 0, 'icon-id', $iconId);
+				
+				$request->addResultLoop($loop, $count, 'text', $text);
+				
+				if (defined($iconId)) {
+					$iconId += 0;
+					$request->addResultLoop($loop, $count, 'icon-id', $iconId);
 				}
 			}
 			else {
@@ -2331,6 +2379,7 @@ sub statusQuery {
 
 			if ($valid) {
 				my $count = 0;
+				$start += 0;
 				$request->addResult('offset', $start) if $menuMode;
 
 				for ($idx = $start; $idx <= $end; $idx++){
@@ -2338,14 +2387,27 @@ sub statusQuery {
 					my $track = Slim::Player::Playlist::song($client, $idx);
 
 					if ($menuMode) {
+						
 						my $text = $track->title;
-						my $album = $track->album->title();
-						my $artist = $track->artist->name();
+						my $album;
+						my $albumObj = $track->album();
+						my $iconId;
+						if(defined($albumObj)) {
+							$album = $albumObj->title();
+							$iconId = $albumObj->artwork();
+						}
 						$text = $text . "\n" . (defined($album)?$album:"");
+						
+						my $artist;
+						if(defined(my $artistObj = $track->artist())) {
+							$artist = $artistObj->name();
+						}
 						$text = $text . "\n" . (defined($artist)?$artist:"");
+						
 						$request->addResultLoop($loop, $count, 'text', $text);
 						
-						if (defined(my $iconId = $track->album->artwork())) {
+						if (defined($iconId)) {
+							$iconId += 0;
 							$request->addResultLoop($loop, $count, 'icon-id', $iconId);
 						}
 					}
@@ -2478,6 +2540,8 @@ sub songinfoQuery {
 			# generally, we go nowhere after songingo, so we get menu:nowhere...
 
 			# build the base element
+			my $trackId = $track->id();
+			$trackId += 0;
 			my $base = {
 				'actions' => {
 					# no go, we ain't going anywhere!
@@ -2488,7 +2552,7 @@ sub songinfoQuery {
 						'cmd' => ['playlistcontrol'],
 						'params' => {
 							'cmd' => 'load',
-							'track_id' => $track->id,
+							'track_id' => $trackId,
 						},
 					},
 					'add' => {
@@ -2496,7 +2560,7 @@ sub songinfoQuery {
 						'cmd' => ['playlistcontrol'],
 						'params' => {
 							'cmd' => 'add',
-							'track_id' => $track->id,
+							'track_id' => $trackId,
 						},
 					},
 				},
@@ -2504,6 +2568,7 @@ sub songinfoQuery {
 			$request->addResult('base', $base);
 		}
 
+		$count += 0;
 		$request->addResult("count", $count);
 
 		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
@@ -2727,6 +2792,7 @@ sub titlesQuery {
 		$request->addResult("rescan", 1);
 	}
 
+	$count += 0;
 	$request->addResult("count", $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
@@ -2744,8 +2810,10 @@ sub titlesQuery {
 			if ($menuMode) {
 				my $text = Slim::Music::TitleFormatter::infoFormat($item, $format, 'TITLE');
 				$request->addResultLoop($loopname, $cnt, 'text', $text);
+				my $id = $item->id();
+				$id += 0;
 				my $params = {
-					'track_id' =>  $item->id, 
+					'track_id' =>  $id, 
 				};
 				$request->addResultLoop($loopname, $cnt, 'params', $params);
 			}
@@ -2863,6 +2931,7 @@ sub yearsQuery {
 		$request->addResult('rescan', 1);
 	}
 
+	$count += 0;
 	$request->addResult('count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
@@ -2874,15 +2943,19 @@ sub yearsQuery {
 		$request->addResult('offset', $start) if $menuMode;
 
 		for my $eachitem ($rs->slice($start, $end)) {
+
+			my $id = $eachitem->id();
+			$id += 0;
+
 			if ($menuMode) {
 				$request->addResultLoop($loopname, $cnt, 'text', $eachitem->name);
 				my $params = {
-					'year' =>  $eachitem->id, 
+					'year' =>  $id, 
 				};
 				$request->addResultLoop($loopname, $cnt, 'params', $params);
 			}
 			else {
-				$request->addResultLoop($loopname, $cnt, 'year', $eachitem->id);
+				$request->addResultLoop($loopname, $cnt, 'year', $id);
 			}
 			$cnt++;
 		}
@@ -2991,6 +3064,7 @@ sub dynamicAutoQuery {
 			my $count = $request->getResultLoopCount($loop);
 			$request->sliceResultLoop($loop, $index, $quantity);
 			$request->addResult('offset', $index) if $menuMode;
+			$count += 0;
 			$request->setResultFirst('count', $count);
 			
 			# don't forget to call that to trigger notifications, if any

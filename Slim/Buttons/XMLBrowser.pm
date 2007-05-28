@@ -1353,9 +1353,13 @@ sub _cliQuery_done {
 					$hash{'hasitems'} = $hasItems;
 
 					if ($menuMode) {
+						
 						$request->addResultLoop($loopname, $cnt, 'text', $hash{'name'} || $hash{'title'});
+						
+						my $id = $hash{'id'};
+						"$id"; #stringify, make sure it's a string
 						my $params = {
-							'item_id' =>  $hash{'id'},
+							'item_id' => $id,
 						};
 						$request->addResultLoop($loopname, $cnt, 'params', $params);
 					}

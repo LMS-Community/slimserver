@@ -816,6 +816,7 @@ sub menuQuery {
 		{
 			'text' => Slim::Utils::Strings::string('SEARCHMUSIC'),
 			'count' => 3,
+			'offset' => 0,
 			'item_loop' => [
 				{
 					'text' => 'Artists',
