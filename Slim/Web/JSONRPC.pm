@@ -19,10 +19,6 @@ use Scalar::Util qw(blessed);
 
 use Slim::Web::HTTP;
 use Slim::Utils::Log;
-#use Slim::Utils::Misc;
-#use Slim::Utils::Prefs;
-#use Slim::Utils::Strings qw(string);
-#use Data::Dumper;
 
 
 my $log = logger('network.jsonrpc');

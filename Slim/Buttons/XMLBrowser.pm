@@ -1107,7 +1107,14 @@ sub _cliQuery_done {
 			# This is a leaf item, so show as much info as we have and go packing after that.
 			
 			
-			if ( $isItemQuery && $subFeed->{'type'} eq 'audio' || $subFeed->{'enclosure'} ) {
+			if (	$isItemQuery &&
+					(
+						!defined($subFeed->{'items'}) ||
+						scalar(@{$subFeed->{'items'}}) == 0 ||
+						$subFeed->{'type'} eq 'audio' || 
+						$subFeed->{'enclosure'} 
+					)
+				) {
 				
 				$log->debug("Adding results for audio or enclosure subfeed");
 
@@ -1141,7 +1148,7 @@ sub _cliQuery_done {
 					$request->addResult('base', $base);
 				}
 
-				$request->addResult('count', 1);
+				$request->addResult('count', 1) if !$menuMode;
 				my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), 1);
 				
 				if ($valid) {
@@ -1159,9 +1166,9 @@ sub _cliQuery_done {
 				
 					foreach my $data (keys %{$subFeed}) {
 						if (ref($subFeed->{$data}) eq 'ARRAY') {
-							if (scalar @{$subFeed->{$data}}) {
-								$hash{'hasitems'} = scalar @{$subFeed->{$data}};
-							}
+#							if (scalar @{$subFeed->{$data}}) {
+#								$hash{'hasitems'} = scalar @{$subFeed->{$data}};
+#							}
 						}
 						elsif ($data =~ /enclosure/i && defined $subFeed->{$data}) {
 							foreach my $enclosuredata (keys %{$subFeed->{$data}}) {
@@ -1180,6 +1187,7 @@ sub _cliQuery_done {
 							$request->addResultLoop($loopname, $cnt, 'text', $key . ":" . $value);
 							$cnt++;
 						}
+						$request->addResult('count', $cnt)
 					}
 					
 					else {
