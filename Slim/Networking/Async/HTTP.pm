@@ -50,7 +50,7 @@ use Slim::Utils::Timers;
 my $prefs = preferences('server');
 
 __PACKAGE__->mk_classaccessors( qw(
-	uri request response saveAs fh
+	uri request response saveAs fh timeout
 ) );
 
 # Body buffer size
@@ -122,6 +122,10 @@ sub send_request {
 		$self->maxRedirect( $args->{maxRedirect} );
 	}
 	
+	if ( $args->{Timeout} ) {
+		$self->timeout( $args->{Timeout} );
+	}
+	
 	# option to save directly to a file
 	if ( $args->{saveAs} ) {
 		$self->saveAs( $args->{saveAs} );
@@ -148,6 +152,7 @@ sub send_request {
 		host        => $self->request->uri->host,
 		port        => $self->request->uri->port,
 		content_ref => \&_format_request,
+		Timeout     => $self->timeout,
 		skipDNS     => ( $self->use_proxy ) ? 1 : 0,
 		onError     => \&_http_error,
 		onRead      => \&_http_read,
@@ -353,7 +358,7 @@ sub _http_read {
 		$self->socket->set( passthrough => [ $self, $args ] );
 		
 		# Timer in case the server never sends any body data
-		my $timeout = $prefs->get('remotestreamtimeout') || 10;
+		my $timeout = $self->timeout || $prefs->get('remotestreamtimeout') || 10;
 		Slim::Utils::Timers::setTimer( $self->socket, Time::HiRes::time() + $timeout, \&_http_socket_error, $self, $args );
 		
 		Slim::Networking::Select::addError( $self->socket, \&_http_socket_error );
@@ -429,7 +434,7 @@ sub _http_read_body {
 		# More body data to read
 		
 		# Some servers may never send EOF, but we want to return whatever data we've read
-		my $timeout = $prefs->get('remotestreamtimeout') || 10;
+		my $timeout = $self->timeout || $prefs->get('remotestreamtimeout') || 10;
 		Slim::Utils::Timers::setTimer( $socket, Time::HiRes::time() + $timeout, \&_http_read_timeout, $self, $args );
 	}
 }

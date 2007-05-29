@@ -369,17 +369,22 @@ sub gotOPML {
 			items  => [],
 		};
 	}
-	
+
+	# Remember previous timeout value
+	my $timeout = $params->{'timeout'};
+
 	for my $item ( @{ $opml->{'items'} || [] } ) {
 		
 		# Add value keys to all items, so INPUT.Choice remembers state properly
 		if ( !defined $item->{'value'} ) {
 			$item->{'value'} = $item->{'name'};
 		}
+		
+		# Copy timeout to items with a URL
+		if ( $item->{'url'} ) {
+			$item->{'timeout'} = $timeout;
+		}
 	}
-	
-	# Remember previous timeout value
-	my $timeout = $params->{'timeout'};
 
 	my %params = (
 		'url'        => $url,
@@ -412,15 +417,26 @@ sub gotOPML {
 				undef $itemURL;
 			}
 			
-			if ( $item->{'search'} ) {
+			if ( $item->{'search'} || $item->{'type'} eq 'search' ) {
+				
+				my $title;
+				
+				if ( $item->{'search'} ) {
+					# Old-style search interface
+					$title = $params->{'feedTitle'} . ' - ' . $client->string('SEARCH_STREAMS');
+				}
+				else {
+					# New-style URL search interface
+					$title = $item->{'name'};
+				}
 				
 				my %params = (
-					'header'          => $params->{'feedTitle'} . ' - ' . $client->string('SEARCH_STREAMS'),
+					'header'          => $title,
 					'cursorPos'       => 0,
 					'charsRef'        => 'UPPER',
 					'numberLetterRef' => 'UPPER',
 					'callback'        => \&handleSearch,
-					'_search'         => $item->{'search'},
+					'item'            => $item,
 				);
 				
 				Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Text', \%params);
@@ -482,7 +498,14 @@ sub gotOPML {
 			elsif ( $hasItems && ref($item->{'items'}) eq 'ARRAY' ) {
 
 				# recurse into OPML item
-				gotOPML($client, $client->modeParam('url'), $item);
+				gotOPML(
+					$client,
+					$client->modeParam('url'),
+					$item,
+					{
+						timeout => $timeout,
+					},
+				);
 
 			}
 			else {
@@ -528,28 +551,49 @@ sub handleSearch {
 	}
 	elsif ( $exitType eq 'NEXTCHAR' ) {
 		
-		my $searchURL    = $client->modeParam('_search');
+		my $item         = $client->modeParam('item');
+		my $oldSearchURL = $item->{'search'};
+		my $searchURL    = $item->{'url'};
 		my $searchString = ${ $client->modeParam('valueRef') };
 		
 		# Don't allow null search string
 		return $client->bumpRight if $searchString eq '';
 		
-		$client->block( 
-			$client->string('SEARCHING'),
-			$searchString
-		);
-		
 		$log->info("Search query [$searchString]");
-
-		Slim::Formats::XML->openSearch(
-			\&gotFeed,
-			\&gotError,
-			{
-				'search' => $searchURL,
-				'query'  => $searchString,
-				'client' => $client,
-			},
-		);
+		
+		if ( $oldSearchURL ) {
+		
+			# Old OpenSearch method
+			$client->block( 
+				$client->string('SEARCHING'),
+				$searchString
+			);
+			
+			Slim::Formats::XML->openSearch(
+				\&gotFeed,
+				\&gotError,
+				{
+					'search' => $searchURL,
+					'query'  => $searchString,
+					'client' => $client,
+				},
+			);
+		}
+		else {
+			
+			# New URL method, replace {QUERY} with search query
+			$searchURL =~ s/{QUERY}/$searchString/g;
+			
+			my %params = (
+				'header'   => 'SEARCHING',
+				'modeName' => "XMLBrowser:$searchURL:$searchString",
+				'url'      => $searchURL,
+				'title'    => $searchString,
+				'timeout'  => $item->{'timeout'},
+			);
+			
+			Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
+		}
 	}
 	else {
 		

@@ -159,6 +159,7 @@ sub _createHTTPRequest {
 		request     => $request,
 		maxRedirect => $self->{params}->{maxRedirect},
 		saveAs      => $self->{params}->{saveAs},
+		Timeout     => $timeout,
 		onError     => \&onError,
 		onBody      => \&onBody,
 		passthrough => [ $self ],
