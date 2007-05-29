@@ -73,7 +73,13 @@ sub typeToRole {
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
+	my $vaString = Slim::Music::Info::variousArtistString();
+
 	$form->{'text'} = $self->name;
+	
+	if ($self->name eq $vaString) {
+		$form->{'attributes'} .= "&album.compilation=1";
+	}
 
 	my $Imports = Slim::Music::Import->importers;
 
