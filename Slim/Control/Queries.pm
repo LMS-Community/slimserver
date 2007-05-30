@@ -295,13 +295,7 @@ sub albumsQuery {
 					'album_id' =>  $id, 
 				};
 				$request->addResultLoop($loopname, $cnt, 'params', $params);
-				
-				# style the windows, use only the album name
-#				my $window = {
-#					'text' => $eachitem->name,
-#				};
-#				$request->addResultLoop($loopname, $cnt, 'window', $window);
-				
+
 				# artwork if we have it
 				if (defined(my $iconId = $eachitem->artwork())) {
 					$iconId += 0;
@@ -2590,9 +2584,8 @@ sub songinfoQuery {
 					else {
 						$request->addResultLoop($loopname, $cnt, $key, $val);
 					}
+					$cnt++;
 				}
-
-				$cnt++;
 				$idx++;
  			}
 		}
@@ -2816,6 +2809,39 @@ sub titlesQuery {
 					'track_id' =>  $id, 
 				};
 				$request->addResultLoop($loopname, $cnt, 'params', $params);
+				
+				
+				# open a window with icon etc...
+				
+				my $text2 = $item->title;
+				my $album;
+				my $albumObj = $item->album();
+				my $iconId;
+				if(defined($albumObj)) {
+					$album = $albumObj->title();
+					$iconId = $albumObj->artwork();
+				}
+				$text2 = $text2 . "\n" . (defined($album)?$album:"");
+				
+				my $artist;
+				if(defined(my $artistObj = $item->artist())) {
+					$artist = $artistObj->name();
+				}
+				$text2 = $text2 . "\n" . (defined($artist)?$artist:"");
+				
+				#$request->addResultLoop($loop, 0, 'text', $text);
+				my $window = {
+					'text' => $text2,
+				};
+				
+				if (defined($iconId)) {
+					$iconId += 0;
+					$window->{'icon-id'} = $iconId;
+					#$request->addResultLoop($loop, 0, 'icon-id', $iconId);
+				}
+
+				$request->addResultLoop($loopname, $cnt, 'window', $window);
+				
 			}
 			else {
 				_addSong($request, $loopname, $cnt, $item, $tags);

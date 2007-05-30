@@ -35,7 +35,7 @@ Provides a JSON-RPC API over HTTP
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.jive',
-	'defaultLevel' => 'DEBUG',
+	'defaultLevel' => 'WARN',
 	'description'  => getDisplayName(),
 });
 
