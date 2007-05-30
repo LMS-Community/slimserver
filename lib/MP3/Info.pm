@@ -657,6 +657,9 @@ sub _get_v1tag {
 		}
 
 		$info->{$key} = Encode::decode(ref($icode) ? $icode->name : 'iso-8859-1', $info->{$key});
+		
+		# Trim any trailing nuls
+		$info->{$key} =~ s/\x00+$//g;
 	}
 
 	Encode::Guess->set_suspects(keys %{$oldSuspects});
@@ -840,6 +843,8 @@ sub _parse_v2tag {
 					$data =~ s/^(?:...)//;		# strip language
 				}
 
+				# JRF: I believe this should probably only be applied to the text frames
+				#      and not every single frame.
 				if ($UNICODE) {
 
 					if ($encoding eq "\001" || $encoding eq "\002") {  # UTF-16, UTF-16BE
@@ -983,16 +988,41 @@ sub _parse_v2tag {
 
 						$data = $data->[0];
 					}
+
+				} elsif ($id =~ /^T...?$/ && $id ne 'TXXX') {
+					
+					# In ID3v2.4 there's a slight content change for text fields.
+					#      They can contain multiple values which are nul terminated
+					#      within the frame. We ONLY want to split these into multiple
+					#      array values if they didn't request raw values (1).
+					#        raw_v2 = 0 => parse simply
+					#        raw_v2 = 1 => don't parse
+					#        raw_v2 = 2 => do split into arrayrefs
+					
+					if ($data =~ /\x00/ && ($raw_v2 == 2 || $raw_v2 == 0))
+					{
+						# There are embedded nuls in the string, which means an ID3v2.4
+						# multi-value frame. And they wanted arrays rather than simple
+						# values.
+						# Strings are already UTF-8, so any double nuls from 16 bit
+						# characters will have already been reduced to single nuls.
+						$data = [ split /\000/, $data ];
+					}
 				}
 
-				if ($raw_v2 == 2 && $desc) {
+				if ($desc)
+				{
+					# It's a frame with a description, so we may need to construct a hash
+					# for the data, rather than an array.
+					if ($raw_v2 == 2) {
 
-					$data = { $desc => $data };
+						$data = { $desc => $data };
 
-				} elsif ($desc && $desc =~ /^iTun/) {
+					} elsif ($desc =~ /^iTun/) {
 
-					# leave iTunes tags alone.
-					$data = join(' ', $desc, $data);
+						# leave iTunes tags alone.
+						$data = join(' ', $desc, $data);
+					}
 				}
 
 				if ($raw_v2 == 2 && exists $info->{$hash->{$id}}) {
@@ -1032,9 +1062,15 @@ sub _parse_v2tag {
 						# into an array ref.
 						if ($ver == 2 && $info->{$key} && !ref($info->{$key})) {
 
-							my $old = delete $info->{$key};
-
-							@{$info->{$key}} = ($old, $data);
+							if (ref($data) eq "ARRAY") {
+							
+								$info->{$key} = [ $info->{$key}, @$data ];
+							} else {
+							
+								my $old = delete $info->{$key};
+							
+								@{$info->{$key}} = ($old, $data);
+							}
 
 						} elsif ($ver == 2 && ref($info->{$key}) eq 'ARRAY') {
 
@@ -1101,13 +1137,13 @@ sub _get_v2tag {
 	    for $i ( 0..$#chk )
 	    {
 	      my $ielement = $chk[$i];
-	      if (defined $chk[$i])
+	      if (defined $ielement)
 	      {
 	        for $o ( ($i+1)..$#chk )
 	        {
-	          $chk[$o] = undef if (defined $ielement && defined $o && defined $chk[$o] && $ielement eq $chk[$o]);
+	          $chk[$o] = undef if (defined $o && defined $chk[$o] && ($ielement eq $chk[$o]));
 	        }
-	        push @array, $chk[$i];
+	        push @array, $ielement;
 	      }
 	    }
 	    # We may have reduced the array to a single element. If so, just assign
