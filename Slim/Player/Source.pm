@@ -350,6 +350,11 @@ sub playmode {
 		$newmode = "resume";
 	}
 	
+	# When pausing, we must remember if we were in play or playout mode
+	if ( $newmode eq 'pause' ) {
+		$client->prevPlaymode($prevmode);
+	}
+	
 	# This function is likely doing too much.
 	if ($newmode eq "pause" && $client->rate != 1) {
 		$newmode = "pausenow";
@@ -429,18 +434,11 @@ sub playmode {
 
 			$everyclient->resume();
 			
-			my $song = Slim::Player::Source::streamingSong($client);
-			my $songLengthInBytes = $song->{totalbytes};
-			my $pos		      = $client->songBytes() || 0; 
+			my $prevmode = $client->prevPlaymode() || 'play';
 			
-			$log->info("(pos: ", $client->songBytes, ", totalbytes: $song->{'totalbytes'})");
+			$log->info($everyclient->id() . ": Resume, resetting mode: $prevmode");
 			
-			# if song pos matches totalbytes, previous playmode was playout-play
-			if ($songLengthInBytes - $pos == 0) {
-				$everyclient->playmode("playout-play");
-			} else {
-				$everyclient->playmode("play");
-			}
+			$everyclient->playmode($prevmode);
 			
 		} elsif ($newmode eq "pausenow") {
 
@@ -1701,7 +1699,7 @@ sub openSong {
 	
 		my $filepath = $track->path;
 
-		my ($size, $duration, $offset, $samplerate, $blockalign, $endian,$drm) = (0, 0, 0, 0, 0, undef,undef);
+		my ($size, $duration, $offset, $samplerate, $blockalign, $endian, $drm) = (0, 0, 0, 0, 0, undef, undef);
 		
 		# don't try and read this if we're a pipe
 		if (!-p $filepath) {
@@ -1865,6 +1863,8 @@ sub openSong {
 			$client->remoteStreamStartTime(Time::HiRes::time());
 			$client->pauseTime(0);
 			
+			# XXX: This will reset size and thus $song->{totalbytes} to 0
+			# if not using bitrate limiting, is this what we want?? -andy
 			$size   = $duration * ($maxRate * 1000) / 8;
 			$offset = 0;
 		}

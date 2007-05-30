@@ -217,6 +217,7 @@ sub new {
 	$client->[112] = 0; # knobSync
 	$client->[113] = {}; # pendingPrefChanges
 	$client->[114] = 0; # bufferStarted, tracks when players begin buffering/rebuffering
+	$client->[115] = undef; # prevPlaymode, previous play mode when paused
 	$client->[117] = undef; # metaTitle, current remote stream metadata title
 	$client->[118] = undef; # SN session ID
 	$client->[119] = 1; # showBuffering
@@ -1773,6 +1774,11 @@ sub pendingPrefChanges {
 sub bufferStarted {
 	my $r = shift;
 	@_ ? ($r->[114] = shift) : $r->[114];
+}
+
+sub prevPlaymode {
+	my $r = shift;
+	@_ ? ($r->[115] = shift) : $r->[115];
 }
 
 sub metaTitle {
