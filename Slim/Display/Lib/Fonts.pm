@@ -71,7 +71,7 @@ my $canUseHebrew = eval {
 
 my $gdError = $@;
 
-my ($gd, $GDBlack, $GDWhite, $TTFFontFile, $useTTFCache, $useTTF);
+my ($gd, $GDBlack, $GDWhite, $TTFFontFile, $useTTFCache, $useTTF, $FreeSans);
 
 # Keep a cache of up to 256 characters at a time.
 tie my %TTFCache, 'Tie::Cache::LRU', 256;
@@ -139,19 +139,29 @@ sub init {
 		FONTDIRS:
 		for my $fontFolder (graphicsDirs()) {
 
-			# Initialize an image for working (1 character=32x32) and some variables...
 			# Try a few different fonts..
 			for my $fontFile (qw(arialuni.ttf ARIALUNI.TTF CODE2000.TTF Cyberbit.ttf CYBERBIT.TTF)) {
 		
 				$TTFFontFile = catdir($fontFolder, $fontFile);
 
-				if ($canUseGD && -e $TTFFontFile) {
+				if (-e $TTFFontFile) {
 					$useTTF = 1;
 					last FONTDIRS;
 				}
 			}
 		}
-	
+		
+		# Look for the preferred hebrew font, FreeSans
+		FREESANS:
+		for my $fontFolder (graphicsDirs()) {
+			my $freeSansPath = catdir($fontFolder, 'FreeSans.ttf');
+			if (-e $freeSansPath) {
+				$FreeSans = $freeSansPath;
+				$useTTF = 1;
+				last FREESANS;
+			}
+		}
+			
 		if ($useTTF) {
 
 			$log->info("Using TTF for Unicode on Player Display. Font: [$TTFFontFile]");
@@ -367,7 +377,10 @@ sub string {
 						$ord = 0x25af; # 0x25af  = 'White Vertical Rectangle'
 					}
 					
-					my @GDBounds = $gd->stringFT(-1*$GDBlack, $TTFFontFile, $GDFontSize, 0, 0, $GDBaseline, "&#${ord};");
+					# use the FreeSans font if we've got it and this is hebrew.
+					my $fontPath = $FreeSans && (chr($ord) =~ $bidiR) ? $FreeSans : $TTFFontFile;
+					
+					my @GDBounds = $gd->stringFT(-1*$GDBlack, $fontPath, $GDFontSize, 0, 0, $GDBaseline, "&#${ord};");
 
 					# Construct the bitmap
 					for (my $x = 0; $x <= $GDBounds[2]; $x++) {
