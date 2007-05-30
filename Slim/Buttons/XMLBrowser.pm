@@ -1401,9 +1401,8 @@ sub _cliQuery_done {
 						$request->addResultLoop($loopname, $cnt, 'text', $hash{'name'} || $hash{'title'});
 						
 						my $id = $hash{'id'};
-						"$id"; #stringify, make sure it's a string
 						my $params = {
-							'item_id' => $id,
+							'item_id' => "$id", #stringify, make sure it's a string
 						};
 						$request->addResultLoop($loopname, $cnt, 'params', $params);
 					}
