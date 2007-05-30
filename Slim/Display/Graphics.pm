@@ -26,6 +26,10 @@ use Slim::Display::Lib::Fonts;
 
 use base qw(Slim::Display::Display);
 
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
+
 # constants
 my $scroll_pad_scroll = 40; # lines of padding between scrolling text
 my $scroll_pad_ticker = 60; # lines of padding in ticker mode
@@ -37,7 +41,9 @@ our $defaultPrefs = {
 
 sub init {
 	my $display = shift;
-	Slim::Utils::Prefs::initClientPrefs($display->client, $defaultPrefs);
+
+	$prefs->client($display->client)->init($defaultPrefs);
+
 	$display->SUPER::init();
 }
 
@@ -52,7 +58,7 @@ sub validateFonts {
 
 	my $fontsOK = 1;
 
-	foreach my $font (@{$client->prefGet('activeFont')}, @{$client->prefGet('idleFont')}) {
+	foreach my $font (@{$prefs->client($client)->get('activeFont')}, @{$prefs->client($client)->get('idleFont')}) {
 		my $fontheight = Slim::Display::Lib::Fonts::fontheight($font.".2");
 		if (!$fontheight || $fontheight != $height) {
 			$fontsOK = 0;
@@ -61,7 +67,7 @@ sub validateFonts {
 
 	unless ($fontsOK) {
 		foreach my $pref (keys %{$defaultFontPrefs}) {
-			$client->prefSet($pref, $defaultFontPrefs->{$pref});
+			$prefs->client($client)->set($pref, $defaultFontPrefs->{$pref});
 		}
 	}
 }
@@ -396,7 +402,7 @@ sub render {
 				if ($scroll == 1) {
 					# normal wrapped text scrolling
 					my $padBytes = $scroll_pad_scroll * $bytesPerColumn;
-					my $pixels = $client->paramOrPref($display->linesPerScreen() == 1 ? 'scrollPixelsDouble': 'scrollPixels');
+					my $pixels = $prefs->client($client)->get($display->linesPerScreen() == 1 ? 'scrollPixelsDouble': 'scrollPixels');
 					my $bytesPerScroll = $pixels * $bytesPerColumn;
 					my $len = $padBytes + $sc->{linefinish}[$l];
 					if ($pixels > 1) {
@@ -533,7 +539,7 @@ sub textSize {
 	my $prefname = ($client->power()) ? "activeFont" : "idleFont";
 	
 	if (defined($newsize)) {
-		my $size = $client->prefSet($prefname."_curr", $newsize);
+		my $size = $prefs->client($client)->set($prefname."_curr", $newsize);
 
 		if ($display->animateState() == 5) {
 			# currently in showBriefly - end it
@@ -548,7 +554,7 @@ sub textSize {
 		return $size;
 
 	} else {
-		return $client->prefGet($prefname."_curr");
+		return $prefs->client($client)->get($prefname."_curr");
 	}
 }
 
@@ -556,7 +562,8 @@ sub maxTextSize {
 	my $display = shift;
 
 	my $prefname = ($display->client->power()) ? "activeFont" : "idleFont";
-	$display->client->prefGetArrayMax($prefname);
+
+	return scalar @{ $prefs->client($display->client)->get($prefname)} - 1;
 }
 
 sub measureText {
@@ -672,7 +679,7 @@ sub fonts {
 		
 	# grab base for prefname depending on mode
 	my $prefname = ($client->power()) ? "activeFont" : "idleFont";
-	my $font = $client->prefGet($prefname, $size);
+	my $font = @{ $prefs->client($client)->get($prefname) }->[ $size ];
 	
 	my $fontref = Slim::Display::Lib::Fonts::gfonthash();
 

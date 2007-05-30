@@ -415,7 +415,7 @@ sub playmode {
 
 		$log->info($everyclient->id, " New play mode: $newmode");
 
-		next if $everyclient->prefGet('silent');
+		next if $prefs->client($everyclient)->get('silent');
 
 		# set up a callback to handle repeat changes during buffer drain
 		if ($newmode =~ /^playout/) {
@@ -475,7 +475,7 @@ sub playmode {
 		} elsif ($newmode eq "play") {
 
 			$everyclient->readytosync(0);
-			if ($everyclient->prefGet('syncVolume')) {
+			if ($prefs->client($everyclient)->get('syncVolume')) {
 				$everyclient->volume($client->volume(),1);
 				$everyclient->fade_volume($FADEVOLUME) unless $client->volume();
 			}
@@ -522,7 +522,7 @@ sub playmode {
 
 		} elsif ($newmode eq "resumenow") {
 
-			if ($everyclient->prefGet('syncVolume')) {
+			if ($prefs->client($everyclient)->get('syncVolume')) {
 				$everyclient->volume($client->volume(),1);
 			}
 			else {
@@ -970,7 +970,7 @@ sub gototime {
 
 	for my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
 
-		if ($everybuddy->prefGet('silent')) {
+		if ($prefs->client($everybuddy)->get('silent')) {
 			next;
 		}
 
@@ -992,7 +992,7 @@ sub gototime {
 
 	for my $everybuddy ($client, Slim::Player::Sync::slaves($client)) {
 
-		if ($everybuddy->prefGet('silent')) {
+		if ($prefs->client($everybuddy)->get('silent')) {
 			next;
 		}
 
@@ -1609,7 +1609,7 @@ sub openSong {
 					} else {
 
 						my $maxRate = Slim::Utils::Prefs::maxRate($client);
-						my $quality = $client->prefGet('lameQuality');
+						my $quality = $prefs->client($client)->get('lameQuality');
 						
 						$command = Slim::Player::TranscodingHelper::tokenizeConvertCommand(
 							$command, $type, '-', $fullpath, 0 , $maxRate, 1, $quality
@@ -1827,7 +1827,7 @@ sub openSong {
 						
 		} else {
 
-			my $quality = $client->prefGet('lameQuality');
+			my $quality = $prefs->client($client)->get('lameQuality');
 
 			$command = Slim::Player::TranscodingHelper::tokenizeConvertCommand(
 				$command, $type, $filepath, $fullpath, $samplerate, $maxRate, undef, $quality
@@ -1971,7 +1971,7 @@ sub readNextChunk {
 		# use the maximum silence prelude for the whole sync group...
 		foreach my $buddy (Slim::Player::Sync::syncedWith($client), $client) {
 
-			my $asilence = $buddy->prefGet('mp3SilencePrelude');
+			my $asilence = $prefs->client($buddy)->get('mp3SilencePrelude');
 
 			if ($asilence && ($asilence > $silence)) {
 				$silence = $asilence;
@@ -2224,7 +2224,7 @@ sub pauseSynced {
 
 	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
 
-		next if ($everyclient->prefGet('silent'));
+		next if ($prefs->client($everyclient)->get('silent'));
 
 		$everyclient->pause();
 

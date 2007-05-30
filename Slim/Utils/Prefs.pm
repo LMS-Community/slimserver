@@ -663,6 +663,7 @@ sub clientGetArrayMax {
 # getArray($arrayPref)
 sub getArray {
 	my $arrayPref = shift;
+
 	if (defined($prefs{($arrayPref)}) && ref($prefs{$arrayPref}) eq 'ARRAY') {
 		return @{$prefs{($arrayPref)}};
 	} else {
@@ -683,7 +684,7 @@ sub clientGetArray {
 # creates an empty hash if none currently exists.
 sub getClientPrefs {
 	my $clientid = shift;
-	
+
 	if (!defined $prefs{'clients'}{$clientid} || ref($prefs{'clients'}{$clientid}) ne "HASH") {
 
 		$prefs{'clients'}{$clientid} = {};
@@ -694,6 +695,7 @@ sub getClientPrefs {
 
 # get($pref)
 sub get { 
+
 	return $prefs{$_[0]};
 }
 
@@ -910,7 +912,7 @@ sub maxRate {
 	my $soloRate = shift;
 
 	# The default for a new client will be undef.
-	my $rate     = $client->prefGet('maxBitrate');
+	my $rate     = preferences('server')->client($client)->get('maxBitrate');
 
 	if (!defined $rate) {
 
@@ -1450,6 +1452,34 @@ sub init_new {
 	unless (-d $path && -w $path) {
 		logError("unable to write to preferences directory $path");
 	}
+
+	# migrate old preferences to new client preferences
+	$prefs->migrateClient(1, sub {
+		my ($clientprefs, $client) = @_;
+
+		my @migrate = qw(
+						 alarmfadeseconds alarm alarmtime alarmvolume alarmplaylist
+						 powerOnresume lame maxBitrate lameQuality
+						 synchronize syncVolume syncPower powerOffDac disableDac transitionType transitionDuration digitalVolumeControl
+						 mp3SilencePrelude preampVolumeControl digitalOutputEncoding clockSource polarityInversion wordClockOutput
+						 replayGainMode mp3StreamingMethod
+						 playername titleFormat titleFormatCurr playingDisplayMode playingDisplayModes
+						 screensaver idlesaver offsaver screensavertimeout visualMode visualModes
+						 powerOnBrightness powerOffBrightness idleBrightness autobrightness
+						 scrollMode scrollPause scrollPauseDouble scrollRate scrollRateDouble scrollPixels scrollPixelsDouble
+						 activeFont idleFont activeFont_curr idleFont_curr doublesize offDisplaySize largeTextFont
+						 menuItem
+						 irmap disabledirsets
+						 mute silent volume bass treble pitch repeat shuffle currentSong
+						);
+
+		for my $pref (@migrate) {
+			my $old = Slim::Utils::Prefs::OldPrefs->clientGet($client, $pref);
+			$clientprefs->set($pref, $old) if !$clientprefs->exists($pref) && defined $old;
+		}
+
+		0; # FIXME - set this to 1 once migration complete!
+	});
 
 	# initialise any new prefs
 	$prefs->init(\%defaults);

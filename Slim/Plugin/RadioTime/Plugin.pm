@@ -88,14 +88,7 @@ sub setMode {
 sub radioTimeURL {
 	my $client = shift;
 	
-	my $username;
-	
-	if ( $ENV{SLIM_SERVICE} ) { # SqueezeNetwork
-		$username = $client->prefGet('plugin_radiotime_username', undef, 1);
-	}
-	else {
-		$username = $prefs->get('username');
-	}
+	my $username = $prefs->get('username');
 	
 	my $url = $FEED;
 	

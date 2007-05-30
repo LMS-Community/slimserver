@@ -25,6 +25,9 @@ use Slim::Player::Player;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 our $defaultPrefs = {
 	'clockSource'  => 0,
@@ -51,7 +54,8 @@ sub init {
 	my $client = shift;
 
 	# make sure any preferences unique to this client may not have set are set to the default
-	Slim::Utils::Prefs::initClientPrefs($client, $defaultPrefs);
+
+	$prefs->client($client)->init($defaultPrefs);
 
 	$client->SUPER::init();
 }
@@ -141,7 +145,7 @@ sub power {
 	my ($client, $on) = @_;
 
 	# can't use the result below because power is sometimes called recursively through other display functions
-	my $was = $client->prefGet('power');
+	my $was = $prefs->client($client)->get('power');
 
 	my $result = $client->SUPER::power($on);
 
@@ -176,15 +180,15 @@ sub setDigitalInput {
 
 	$log->info("Switching to digital input $input");
 
-	$client->prefSet('digitalInput', $input);
+	$prefs->client($client)->set('digitalInput', $input);
 	$client->sendFrame('audp', \pack('C', $input));
 }
 
 sub updateClockSource {
 	my $client = shift;
 
-	my $data = pack('C', $client->prefGet("clockSource"));
-	$client->sendFrame('audc', \$data);	
+	my $data = pack('C', $prefs->client($client)->get('clockSource'));
+	$client->sendFrame('audc', \$data);
 }
 
 sub updateKnob {

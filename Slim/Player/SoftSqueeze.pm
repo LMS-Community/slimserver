@@ -17,15 +17,12 @@ use Slim::Player::ProtocolHandlers;
 use Slim::Player::Transporter;
 use Slim::Utils::Prefs;
 
-use Slim::Player::ProtocolHandlers;
-use Slim::Utils::Prefs;
-
 sub new {
 	my $class = shift;
 
 	my $client = $class->SUPER::new(@_);
 
-	$client->prefSet('autobrightness', 0);
+	preferences('server')->client($client)->set('autobrightness', 0);
 
 	return $client;
 }

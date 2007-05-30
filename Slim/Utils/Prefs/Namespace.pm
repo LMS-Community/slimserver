@@ -122,7 +122,7 @@ sub setValidate {
 
 	while (my $pref = shift) {
 
-		$log->debug(sprintf "registering %s for $class->{'namespace'}:$pref", Slim::Utils::PerlRunTime::realNameForCodeRef($validator));
+		$log->isInitialized && $log->debug(sprintf "registering %s for $class->{'namespace'}:$pref", Slim::Utils::PerlRunTime::realNameForCodeRef($validator));
 
 		$class->{'validators'}->{ $pref }  = $validator;
 		$class->{'validparams'}->{ $pref } = $params if $params;
@@ -145,7 +145,7 @@ sub setChange {
 
 	while (my $pref = shift) {
 
-		$log->debug(sprintf "registering %s for $class->{'namespace'}:$pref", Slim::Utils::PerlRunTime::realNameForCodeRef($change));
+		$log->isInitialized && $log->debug(sprintf "registering %s for $class->{'namespace'}:$pref", Slim::Utils::PerlRunTime::realNameForCodeRef($change));
 
 		$class->{'onchange'}->{ $pref } = $change;
 	}
@@ -288,7 +288,7 @@ sub migrateClient {
 	my $version  = shift;
 	my $callback = shift;
 
-	$log->info("registering client migrate function for $class->{'namespace'} to version $version");
+	$log->isInitialized && $log->info("registering client migrate function for $class->{'namespace'} to version $version");
 
 	$class->{'migratecb'}->{ $version } = $callback;
 }

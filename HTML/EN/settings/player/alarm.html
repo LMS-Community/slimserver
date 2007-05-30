@@ -4,9 +4,9 @@
 		<div class="groupHead">[% "SETUP_GROUP_ALARM" | string | upper %]</div>
 		<div class="groupDesc">[% "SETUP_GROUP_ALARM_DESC" | string %]</div>
 
+		<label for="alarmfadeseconds" class="stdlabel">[% "ALARM_FADE" | string %][% "COLON" | string %]</label>
 		<input type=hidden name="alarmfadeseconds" value="0" />
 		<input type=checkbox [% IF alarmfadeseconds %]checked [% END %] class="stdedit" name="alarmfadeseconds" id="alarmfadeseconds" value="1" />
-		<label for="alarmfadeseconds" class="stdlabel">[% "ALARM_FADE" | string %][% "COLON" | string %]</label>
 
 	</div>
 

@@ -27,6 +27,9 @@ use Time::HiRes;
 use Slim::Buttons::Common;
 use Slim::Hardware::IR;
 use Slim::Utils::Timers;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 my $AUTO_EXIT_TIME = 3.0; # seconds to leave volume automatically
 
@@ -73,8 +76,8 @@ sub setMode {
 		'onChange'     => \&Slim::Buttons::Settings::executeCommand,
 		'command'      => 'mixer',
 		'subcommand'   => 'volume',
-		'initialValue' => sub { return $_[0]->prefGet('volume') },
-		'valueRef'     => $client->prefGet('volume'),
+		'initialValue' => sub { return $prefs->client($_[0])->get('volume') },
+		'valueRef'     => $prefs->client($client)->get('volume'),
 		'callback'     => \&volumeExitHandler,
 		'increment'    => 1,
 		'lines'        => $client->customVolumeLines(),

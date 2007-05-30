@@ -105,7 +105,7 @@ sub alarmCommand {
 	if (defined $alarm) {
 		if ($cmd eq 'set' || $cmd eq 'update') {
 		
-			$client->prefSet('alarmfadeseconds', $fade) if defined $fade;
+			$prefs->client($client)->set('alarmfadeseconds', $fade) if defined $fade;
 			$alarm->time($time) if defined $time;
 			$alarm->playlistid($playlistid) if defined $playlistid;
 			$alarm->playlist($playlisturl) if defined $playlisturl;
@@ -300,7 +300,7 @@ sub mixerCommand {
 	
 	if ($entity eq 'muting') {
 	
-		my $curmute = $client->prefGet("mute");
+		my $curmute = $prefs->client($client)->get('mute');
 	
 		if (!defined $newvalue) { # toggle
 			$newvalue = !$curmute;
@@ -315,7 +315,7 @@ sub mixerCommand {
 				# need to un-mute volume
 				$log->info("Unmuting, volume is [$vol]");
 
-				$client->prefSet("mute", 0);
+				$prefs->client($client)->set('mute', 0);
 				$fade = 0.3125;
 
 			} else {
@@ -323,7 +323,7 @@ sub mixerCommand {
 				# need to mute volume
 				$log->info("Muting, volume is [$vol]");
 
-				$client->prefSet("mute", 1);
+				$prefs->client($client)->set('mute', 1);
 				$fade = -0.3125;
 			}
 	
@@ -331,7 +331,7 @@ sub mixerCommand {
 	
 			for my $eachclient (@buddies) {
 
-				if ($eachclient->prefGet('syncVolume')) {
+				if ($prefs->client($eachclient)->get('syncVolume')) {
 
 					$eachclient->fade_volume($fade, \&_mixer_mute, [$eachclient]);
 				}
@@ -341,7 +341,7 @@ sub mixerCommand {
 	} else {
 
 		my $newval;
-		my $oldval = $client->prefGet($entity);
+		my $oldval = $prefs->client($client)->get($entity);
 
 		if ($newvalue =~ /^[\+\-]/) {
 			$newval = $oldval + $newvalue;
@@ -351,15 +351,15 @@ sub mixerCommand {
 
 		if ($entity eq 'volume' && defined $client->tempVolume && $client->tempVolume == 0 && $oldval > 0) {
 			# only set pref as volume is temporarily set to 0
-			$client->prefSet('volume', $newval) if ($newval <= $client->maxVolume);
+			$prefs->client($client)->set('volume', $newval) if ($newval <= $client->maxVolume);
 		} else {
 			# change current setting - this will also set the pref
 			$newval = $client->$entity($newval);
 		}
 
 		for my $eachclient (@buddies) {
-			if ($eachclient->prefGet('syncVolume')) {
-				$eachclient->prefSet($entity, $newval);
+			if ($prefs->client($eachclient)->get('syncVolume')) {
+				$prefs->client($eachclient)->set($entity, $newval);
 				$eachclient->$entity($newval);
 				$eachclient->mixerDisplay('volume') if $entity eq 'volume';
 			}
@@ -635,7 +635,7 @@ sub playlistJumpCommand {
 				# play the next song and start over if necessary
 				if (Slim::Player::Playlist::shuffle($client) && 
 					Slim::Player::Playlist::repeat($client) == 2 &&
-					Slim::Utils::Prefs::get('reshuffleOnRepeat')) {
+					$prefs->get('reshuffleOnRepeat')) {
 
 					Slim::Player::Playlist::reshuffle($client, 1);
 				}
@@ -1816,7 +1816,7 @@ sub playerprefCommand {
 		return;
 	}	
 
-	$client->prefSet($prefName, $newValue);
+	$prefs->client($client)->set($prefName, $newValue);
 	
 	$request->setStatusDone();
 }
@@ -1849,7 +1849,7 @@ sub powerCommand {
 		my @buddies = Slim::Player::Sync::syncedWith($client);
 		
 		for my $eachclient (@buddies) {
-			$eachclient->power($newpower) if $eachclient->prefGet('syncPower');
+			$eachclient->power($newpower) if $prefs->client($eachclient)->get('syncPower');
 		}
 	}
 

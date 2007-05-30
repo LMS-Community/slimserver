@@ -110,10 +110,10 @@ sub shuffle {
 	$client = Slim::Player::Sync::masterOrSelf($client);
 
 	if (defined($shuffle)) {
-		$client->prefSet("shuffle", $shuffle);
+		$prefs->client($client)->set('shuffle', $shuffle);
 	}
 	
-	return $client->prefGet("shuffle");
+	return $prefs->client($client)->get('shuffle');
 }
 
 sub repeat {
@@ -123,10 +123,10 @@ sub repeat {
 	$client = Slim::Player::Sync::masterOrSelf($client);
 
 	if (defined($repeat)) {
-		$client->prefSet("repeat", $repeat);
+		$prefs->client($client)->set('repeat', $repeat);
 	}
 	
-	return $client->prefGet("repeat");
+	return $prefs->client($client)->get('repeat');
 }
 
 sub copyPlaylist {
@@ -138,8 +138,8 @@ sub copyPlaylist {
 
 	Slim::Player::Source::streamingSongIndex($toClient, Slim::Player::Source::streamingSongIndex($fromClient), 1);
 
-	$toClient->prefSet("shuffle", $fromClient->prefGet("shuffle"));
-	$toClient->prefSet("repeat", $fromClient->prefGet("repeat"));
+	$prefs->client($toClient)->set('shuffle', $prefs->client($fromClient)->get('shuffle'));
+	$prefs->client($toClient)->set('repeat',  $prefs->client($fromClient)->get('repeat'));
 }
 
 sub removeTrack {
@@ -563,7 +563,7 @@ sub reshuffle {
 		# Not quite sure what this is doing - not changing the current song?
 		if ($realsong == -1 && !$dontpreservecurrsong) {
 
-			my $index = $client->prefGet('currentSong');
+			my $index = $prefs->client($client)->get('currentSong');
 
 			if (defined $index && defined $listRef->[$index]) {
 				$realsong = $listRef->[$index];
@@ -808,7 +808,7 @@ sub modifyPlaylistCallback {
 
 		if ($saveCurrentSong) {
 
-			$eachclient->prefSet('currentSong', $currsong);
+			$prefs->client($eachclient)->set('currentSong', $currsong);
 		}
 	}
 

@@ -83,8 +83,8 @@ sub init {
 		Slim::Display::Lib::Fonts::loadFonts(1);
 	}
 
-	Slim::Utils::Prefs::initClientPrefs($display->client, $defaultPrefs);
-	Slim::Utils::Prefs::initClientPrefs($display->client, $defaultFontPrefs);
+	$prefs->client($display->client)->init($defaultPrefs);
+	$prefs->client($display->client)->init($defaultFontPrefs);
 
 	$display->SUPER::init();
 
@@ -95,6 +95,7 @@ sub resetDisplay {
 	my $display = shift;
 
 	my $cache = $display->renderCache();
+	$cache->{'defaultfont'} = undef;
 	$cache->{'screens'} = 1;
 	$cache->{'maxLine'} = $display_maxLine;
 	$cache->{'screen1'} = { 'ssize' => 0, 'fonts' => {} };

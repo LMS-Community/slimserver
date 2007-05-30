@@ -28,9 +28,12 @@ use Slim::Player::Playlist;
 use Slim::Buttons::Common;
 use Slim::Utils::DateTime;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
 use Scalar::Util qw(blessed);
 use Time::HiRes;
+
+my $prefs = preferences('server');
 
 my $interval    = 1;  # check every x seconds
 my $FADESECONDS = 20; # fade-in of 20 seconds
@@ -67,7 +70,7 @@ sub useWeekday {
 	my $client = shift;
 	my $pref = shift;
 	
-	return $client->prefGetArrayMax($pref) ? weekDay($client) : undef;
+	return ref $prefs->client($client)->get($pref) ? weekDay($client) : undef;
 }
 
 sub playlistName {
@@ -111,7 +114,7 @@ sub init {
 				
 				# show alarm state when the right menu item is selected.  otherwise, 
 				# just show the string for the other menu items as selected.
-				if ($client->prefGet("alarm", weekDay($client)) && $value eq 'ALARM_OFF') {
+				if ($prefs->client($client)->get('alarm')->[ weekDay($client) ] && $value eq 'ALARM_OFF') {
 					return $client->string('ALARM_ON');
 				
 				} else {
@@ -131,7 +134,7 @@ sub init {
 		'alarm/ALARM_OFF'  => {
 			'useMode'      => 'boolean',
 			'pref'         => 'alarm',
-			'initialValue' => sub { return $_[0]->prefGet("alarm", weekDay($_[0])) },
+			'initialValue' => sub { $prefs->client($_[0])->get('alarm')->[ weekDay($_[0]) ] },
 			'onchange'     => sub { setTimer($_[0]) },
 			'onChangeArgs' => 'C',
 		},
@@ -139,14 +142,14 @@ sub init {
 		'alarm/ALARM_FADE' => {
 			'useMode'      => 'boolean',
 			'pref'         => 'alarmfadeseconds',
-			'initialValue' => sub { return $_[0]->prefGet("alarmfadeseconds") },
+			'initialValue' => sub { $prefs->client($_[0])->get('alarmfadeseconds') },
 		},
 		
 		'alarm/ALARM_SET'  => {
 			'useMode'      => 'INPUT.Time',
 			'header'       => 'ALARM_SET',
 			'stringHeader' => 1,
-			'initialValue' => sub { return $_[0]->prefGet("alarmtime", weekDay($_[0])) },
+			'initialValue' => sub { $prefs->client($_[0])->get('alarmtime')->[ weekDay($_[0]) ] },
 			'cursorPos'    => 0,
 			'callback'     => \&exitSetHandler,
 		},
@@ -162,8 +165,13 @@ sub init {
 			'headerArgs'   => 'C',
 			'increment'    => 1,
 			'headerValue'  => sub { return $_[0]->volumeString($_[1]) },
-			'onChange'     => sub { $_[0]->prefSet("alarmvolume", $_[1], weekDay($_[0])) },
-			'initialValue' => sub { return $_[0]->prefGet("alarmvolume", weekDay($_[0])) },
+			'onChange'     => sub { 
+				my ($client, $val) = @_;
+				my $volumes = $prefs->client($client)->get('alarmvolume');
+				$volumes->[ weekDay($client) ] = $val;
+				$prefs->client($client)->set('alarmvolume', $volumes);
+			},
+			'initialValue' => sub { $prefs->client($_[0])->get('alarmvolume')->[ weekDay($_[0]) ] },
 		},
 
 		'alarm/ALARM_SELECT_PLAYLIST' => {
@@ -174,22 +182,21 @@ sub init {
 			'name'           => sub { playlistName(@_) },
 			'onRight'        => sub { 
 				my ( $client, $item ) = @_;
-				
-				$client->prefSet(
-					"alarmplaylist", 
-					exists $specialPlaylists{$_[1]} ? $_[1] : $_[1]->url,
-					weekDay($_[0])
-				);
+
+				my $playlist = $prefs->client($client)->get('alarmplaylists');
+				$playlist->[ weekday($client) ] = exists $specialPlaylists{$item} ? $item : $item->url;
+				$prefs->client($client)->set('alarmplaylists', $playlist);
+
 				$client->update();
 			},
-			'initialValue'   => sub { return $_[0]->prefGet("alarmplaylist", weekDay($_[0])) },
+			'initialValue'   => sub { $prefs->client($_[0])->get('alarmplaylist')->[ weekDay($_[0]) ] },
 			'overlayRef'     => sub {
 				my ( $client, $item ) = @_;
 				my $overlay;
 				
 				$item = ( ref $item ) ? $item->url : $item;
 
-				if ( $item eq $client->prefGet( "alarmplaylist", weekDay($client) ) ) {
+				if ( $item eq $prefs->client($client)->get('alarmplaylist')->[ weekDay($client) ] ) {
 					$overlay = Slim::Buttons::Common::checkBoxOverlay( $client, 1 );
 				} else {
 					$overlay = Slim::Buttons::Common::checkBoxOverlay( $client, 0 );
@@ -208,13 +215,13 @@ sub init {
 
 				my $dowString = $client->string("ALARM_DAY$dayOfWeek");
 
-				if ($client->prefGet('alarm', $dayOfWeek)) {
+				if ($prefs->client($client)->get('alarm')->[ $dayOfWeek ]) {
 
 					$dowString .= sprintf(" (%s)",
 						Slim::Buttons::Input::Time::timeString( 
 							$client,
 							Slim::Utils::DateTime::timeDigits(
-								$client->prefGet('alarmtime', $dayOfWeek)
+								$prefs->client($client)->get('alarmtime')->[ $dayOfWeek ]
 							),
 							-1  # hide the cursor
 						) 
@@ -325,7 +332,9 @@ sub exitSetHandler {
 
 	if ($exittype eq 'LEFT' || $exittype eq 'PLAY') {
 
-		$client->prefSet("alarmtime", ${$client->modeParam('valueRef')}, weekDay($client));
+		my $times = $prefs->client($client)->get('alarmtime');
+		$times->[ weekDay($client) ] = ${$client->modeParam('valueRef')};
+		$prefs->client($client)->set('alarmtime', $times);
 
 		Slim::Buttons::Common::popModeRight($client);
 
@@ -363,7 +372,13 @@ sub alarmExitHandler {
 						$newval = 1;
 					}
 					
-					$client->prefSet($nextParams{'pref'}, $newval, useWeekday($client,$nextParams{'pref'}));
+					my $tmp = $prefs->client($client)->get($nextParams{'pref'});
+					if (ref $tmp) {
+						$tmp->[ useWeekday($client,$nextParams{'pref'}) ] = $newval;
+						$prefs->client($client)->set($nextParams{'pref'}, $tmp);
+					} else {
+						$prefs->client($client)->set($nextParams{'pref'}, $newval);
+					}
 				}
 				
 				if (ref($nextParams{'onChange'}) eq 'CODE') {
@@ -395,7 +410,7 @@ sub alarmExitHandler {
 					$value = $nextParams{'initialValue'}->($client);
 					
 				} else {
-					$value = $client->prefGet($nextParams{'initialValue'});
+					$value = $prefs->client($client)->get($nextParams{'initialValue'});
 				}
 
 				$nextParams{'valueRef'} = \$value;
@@ -458,9 +473,9 @@ sub checkAlarms {
 		for my $day (0, $wday) {
 
 			# don't bother for inactive alarms.
-			next unless $client->prefGet("alarm", $day);
+			next unless $prefs->client($client)->get('alarm')->[ $day ];
 
-			my $alarmtime = $client->prefGet("alarmtime", $day) || next;
+			my $alarmtime = $prefs->client($client)->get('alarmtime')->[ $day ] || next;
 
 			if ($time == ($alarmtime + 60)) {
 
@@ -472,18 +487,18 @@ sub checkAlarms {
 
 				$client->execute(['stop']);
 
-				my $volume = $client->prefGet("alarmvolume", $day);
+				my $volume = $prefs->client($client)->get('alarmvolume')->[ $day ];
 
 				if (defined ($volume)) {
 					$client->execute(["mixer", "volume", $volume]);
 				}
 
 				# fade volume over 20s if enabled.
-				if ( $client->prefGet("alarmfadeseconds") ) {
+				if ( $prefs->client($client)->get('alarmfadeseconds') ) {
 					$client->fade_volume( $FADESECONDS );
 				}
 
-				my $playlist = $client->prefGet("alarmplaylist", $day);
+				my $playlist = $prefs->client($client)->get('alarmplaylist')->[ $day ];
 				
 				# if a random playlist option is chosen, make sure that the plugin is installed and enabled.
 				if ($specialPlaylists{$playlist}) {
@@ -546,7 +561,7 @@ sub alarmLines {
 	my $line1 = $client->string('ALARM_NOW_PLAYING');
 	my $line2 = '';
 
-	my $playlist = $client->prefGet("alarmplaylist", weekDay($client));
+	my $playlist = $prefs->client($client)->get('alarmplaylist')->[ weekDay($client) ];
 	
 	# special playlists, just show the localised string for the option
 	if (exists $specialPlaylists{$playlist}) {
@@ -579,10 +594,11 @@ sub overlayFunc {
 		my %nextParams = %{$menuParams{$nextmenu}};
 		
 		if ($nextParams{'useMode'} eq 'boolean') {
+			my $pref = $prefs->client($client)->get($nextParams{'pref'});
 			return (
 				undef,
 				Slim::Buttons::Common::checkBoxOverlay($client,
-					$client->prefGet($nextParams{'pref'},useWeekday($client,$nextParams{'pref'}))
+					ref $pref ? $pref->[ useWeekday($client) ] : $pref
 				),
 			);
 		}

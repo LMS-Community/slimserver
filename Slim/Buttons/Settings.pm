@@ -26,6 +26,8 @@ use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 use Slim::Buttons::Information;
 
+my $prefs = preferences('server');
+
 # button functions for browse directory
 our @defaultSettingsChoices = qw(VOLUME REPEAT SHUFFLE TITLEFORMAT TEXTSIZE SCREENSAVERS);
 
@@ -154,7 +156,7 @@ sub init {
 					'onRight'      => \&setPref,
 					'header'       => '{REPLAYGAIN}{count}',
 					'pref'            => "replayGainMode",
-					'initialValue'    => sub { return $_[0]->prefGet('replayGainMode') },
+					'initialValue'    => sub { $prefs->client(shift)->get('replayGainMode') },
 					'condition'   => sub {
 						my $client = shift;
 						return $client->canDoReplayGain(0);
@@ -220,17 +222,17 @@ sub init {
 					'onAdd'        => \&setPref,
 					'onRight'      => \&setPref,
 					'pref'         => 'titleFormatCurr',
-					'initialValue' => sub { shift->prefGet('titleFormatCurr') },
+					'initialValue' => sub { $prefs->client(shift)->get('titleFormatCurr') },
 					'init'         => sub {
 						my $client = shift;
 
 						my @externTF = ();
 						my $i        = 0;
 
-						for my $format ($client->prefGetArray('titleFormat')) {
+						for my $format (@{ $prefs->client($client)->get('titleFormat') }) {
 
 							push @externTF, {
-								'name'  => Slim::Utils::Prefs::getInd('titleFormat', $format),
+								'name'  => $prefs->get('titleFormat')->[ $format ],
 								'value' => $i++
 							};
 						}
@@ -252,14 +254,14 @@ sub init {
 						$_[0]->textSize($_[1]->{'value'})
 					},,
 					'pref'         => 'activeFont_curr',
-					'initialValue' => sub { shift->prefGet('activeFont_curr') },
+					'initialValue' => sub { $prefs->client(shift)->get('activeFont_curr') },
 					'init'         => sub {
 						my $client = shift;
 
 						my @fonts = ();
 						my $i        = 0;
 
-						for my $font ($client->prefGetArray('activeFont')) {
+						for my $font (@{ $prefs->client($client)->get('activeFont') }) {
 
 							push @fonts, {
 								'name'  => $font,
@@ -315,7 +317,7 @@ sub init {
 					'onRight'      => \&setPref,
 					'header'       => '{SETUP_TRANSITIONTYPE}{count}',
 					'pref'         => 'transitionType',
-					'initialValue' => sub { return $_[0]->prefGet('transitionType') },
+					'initialValue' => sub { $prefs->client(shift)->get('transitionType') },
 					'condition'    => sub { return $_[0]->isa('Slim::Player::Squeezebox2') },
 				},
 
@@ -338,7 +340,7 @@ sub init {
 							'onRight'       => \&setPref,
 							'pref'          => "screensaver",
 							'header'        => '{SETUP_SCREENSAVER}{count}',
-							'initialValue'  => sub { return $_[0]->prefGet('screensaver') },
+							'initialValue'  => sub { $prefs->client(shift)->get('screensaver') },
 							'init'          => \&screensaverInit,
 						},
 						
@@ -349,7 +351,7 @@ sub init {
 							'onRight'       => \&setPref,
 							'pref'          => "offsaver",
 							'header'        => '{SETUP_OFFSAVER}{count}',
-							'initialValue'  => sub { return $_[0]->prefGet('offsaver') },
+							'initialValue'  => sub { $prefs->client(shift)->get('offsaver') },
 							'init'          => \&screensaverInit,
 						},
 				
@@ -360,7 +362,7 @@ sub init {
 							'onRight'       => \&setPref,
 							'pref'          => "idlesaver",
 							'header'        => '{SETUP_IDLESAVER}{count}',
-							'initialValue'  => sub { return $_[0]->prefGet('idlesaver') },
+							'initialValue'  => sub { $prefs->client(shift)->get('idlesaver') },
 							'init'          => \&screensaverInit,
 						},
 					},
@@ -373,7 +375,7 @@ sub init {
 					'onRight'      => \&updateVisualMode,
 					'header'       => '{SETUP_VISUALIZERMODE}{count}',
 					'pref'         => 'visualMode',
-					'initialValue' => sub { return $_[0]->prefGet('visualMode') },
+					'initialValue' => sub { $prefs->client(shift)->get('visualMode') },
 					'condition'    => sub { return $_[0]->display->isa('Slim::Display::Transporter') },
 					'init'          => \&visualInit,
 				},
@@ -395,7 +397,7 @@ sub setPref {
 
 	my $pref = $client->modeParam('pref');
 	
-	$client->prefSet($pref,$value);
+	$prefs->client($client)->set($pref,$value);
 }
 
 sub executeCommand {
@@ -452,7 +454,7 @@ sub settingsMenu {
 
 sub visualInit {
 	my $client = shift;
-	my $modes = $client->prefGet('visualModes');
+	my $modes = $prefs->client($client)->get('visualModes');
 	my $modeDefs = $client->display->visualizerModes();
 
 	my @visualModes;
@@ -481,7 +483,7 @@ sub updateVisualMode {
 	my $client = shift;
 	my $value = shift;
 
-	$client->prefSet('visualMode', $value->{'value'});
+	$prefs->client($client)->get('visualMode', $value->{'value'});
 	Slim::Buttons::Common::updateScreen2Mode($client);
 };
 

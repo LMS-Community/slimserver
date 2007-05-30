@@ -116,7 +116,7 @@ sub reconnect {
 
 	$client->display->resetDisplay();
 
-	$client->brightness($client->prefGet($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
+	$client->brightness($prefs->client($client)->get($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 
 	$client->update( { 'screen1' => {}, 'screen2' => {} } );
 
@@ -587,9 +587,9 @@ sub upgradeFirmware_SDK4 {
 	if (ref $client ) {
 
 		$ip = $client->ip;
-		$client->prefSet("powerOnBrightness", 4);
-		$client->prefSet("powerOffBrightness", 1);
-		$client->brightness($client->prefGet($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
+		$prefs->client($client)->set('powerOnBrightness', 4);
+		$prefs->client($client)->set('powerOffBrightness', 1);
+		$client->brightness($prefs->client($client)->get($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 
 	} else {
 
@@ -762,10 +762,10 @@ sub stream {
 		my $bufferThreshold;
 
 		if ($params->{'paused'}) {
-			$bufferThreshold = $params->{bufferThreshold} || $client->prefGet('syncBufferThreshold');
+			$bufferThreshold = $params->{bufferThreshold} || $prefs->client($client)->get('syncBufferThreshold');
 		}
 		else {
-			$bufferThreshold = $params->{bufferThreshold} || $client->prefGet('bufferThreshold');
+			$bufferThreshold = $params->{bufferThreshold} || $prefs->client($client)->get('bufferThreshold');
 		}
 		
 		my $formatbyte;
@@ -1020,7 +1020,7 @@ sub stream {
 		my $flags = 0;
 		$flags |= 0x40 if $params->{reconnect};
 		$flags |= 0x80 if $params->{loop};
-		$flags |= ($client->prefGet('polarityInversion') || 0);
+		$flags |= ($prefs->client($client)->get('polarityInversion') || 0);
 
 		$log->info("flags: $flags");
 
@@ -1034,8 +1034,8 @@ sub stream {
 			$pcmendian,
 			$bufferThreshold,
 			0,		# s/pdif auto
-			$client->prefGet('transitionDuration') || 0,
-			$client->prefGet('transitionType') || 0,
+			$prefs->client($client)->get('transitionDuration') || 0,
+			$prefs->client($client)->get('transitionType') || 0,
 			$flags,		# flags	     
 			$outputThreshold,
 			0,		# reserved
@@ -1226,7 +1226,7 @@ sub volume {
 		# default, but then have knobs so you can tune it for max headphone power, lowest noise at low volume, 
 		# fixed/variable s/pdif, etc.
 	
-		if ($client->prefGet('digitalVolumeControl')) {
+		if ($prefs->client($client)->get('digitalVolumeControl')) {
 			# here's one way to do it: adjust digital gains, leave fixed 3db boost on the main volume control
 			# this does achieve good analog output voltage (important for headphone power) but is not optimal
 			# for low volume levels. If only the analog outputs are being used, and digital gain is not required, then 

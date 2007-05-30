@@ -77,6 +77,11 @@ sub set {
 	my $namespace = $root->{'namespace'};
 	my $clientid  = $class->{'clientid'} || '';
 
+	if (!ref $new && defined $new && defined $old && $new eq $old) {
+		# suppress set when scalar and no change
+		return wantarray ? ($new, 1) : $new;
+	}
+
 	my $valid  = $validator ? $validator->($pref, $new, $root->{'validparams'}->{ $pref }, $old, $class->_obj) : 1;
 
 	if ($readonly) {
@@ -134,7 +139,7 @@ sub init {
 			my $value = ref $hash->{ $pref } eq 'CODE' ? $hash->{ $pref }->() : $hash->{ $pref };
 
 			$log->info("init " . $class->_root->{'namespace'} . ":" . ($class->{'clientid'} || '') . ":" . $pref .
-					   " to " . defined $value ? $value : 'undef');
+					   " to " . (defined $value ? $value : 'undef'));
 
 			$class->{'prefs'}->{ $pref } = $value;
 		}

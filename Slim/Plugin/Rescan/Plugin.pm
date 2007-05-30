@@ -244,7 +244,7 @@ sub progressUpdate {
 		# Block screensaver while checking progress and still scanning
 		Slim::Hardware::IR::setLastIRTime(
 			$client,
-			Time::HiRes::time() + ($client->prefGet("screensavertimeout") * 5),
+			Time::HiRes::time() + ($prefs->client($client)->get('screensavertimeout') * 5),
 		);
 		
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&progressUpdate);

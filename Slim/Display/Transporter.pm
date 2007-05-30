@@ -25,6 +25,10 @@ use strict;
 
 use base qw(Slim::Display::Squeezebox2);
 
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
+
 # constants
 my $display_maxLine = 2; # render up to 3 lines [0..$display_maxLine]
 
@@ -146,7 +150,9 @@ sub hasScreen2 () { 1 }
 sub init {
 	my $display = shift;
 	my $client = $display->client;
-	Slim::Utils::Prefs::initClientPrefs($client, $defaultPrefs);
+
+	$prefs->client($client)->init($defaultPrefs);
+
 	$display->SUPER::init();
 
 	# register default handler for periodic screen2 updates on visual screen
@@ -157,6 +163,7 @@ sub resetDisplay {
 	my $display = shift;
 
 	my $cache = $display->renderCache();
+	$cache->{'defaultfont'} = undef;
 	$cache->{'screens'} = 2;
 	$cache->{'maxLine'} = $display_maxLine;
 	$cache->{'screen1'} = { 'ssize' => 0, 'fonts' => {} };
@@ -272,7 +279,7 @@ sub visualizerParams {
 	my $display = shift;
 	my $client = $display->client;
 
-	my $visu = $client->prefGet('visualModes', $client->prefGet('visualMode')) || 0;
+	my $visu = $prefs->client($client)->get('visualModes')->[ $prefs->client($client)->get('visualMode') ] || 0;
 	
 	$visu = 0 if (!$display->showVisualizer());
 	
@@ -303,7 +310,7 @@ sub showExtendedText {
 
 	return 0 if (!$client->power());
 
-	my $visu = $client->prefGet('visualModes', $client->prefGet('visualMode')) || 0;
+	my $visu = $prefs->client($client)->get('visualModes')->[ $prefs->client($client)->get('visualMode') ] || 0;
 	
 	return $visualizers[$visu]{text};
 }

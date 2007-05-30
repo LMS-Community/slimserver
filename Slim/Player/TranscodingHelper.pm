@@ -199,7 +199,7 @@ sub getConvertCommand {
 		# make sure we only test formats that are supported.
 		foreach my $everyclient (@playergroup) {
 			
-			next if $everyclient->prefGet('silent');
+			next if $prefs->client($everyclient)->get('silent');
 			
 			$audibleplayers++;
 			

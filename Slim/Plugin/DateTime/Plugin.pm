@@ -64,10 +64,10 @@ our %functions = (
 		
 		my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
 		
-		if ($client->prefGet($saver) ne 'SCREENSAVER.datetime') {
-			$client->prefSet($saver,'SCREENSAVER.datetime');
+		if ($prefs->client($client)->get($saver) ne 'SCREENSAVER.datetime') {
+			$prefs->client($client)->set($saver,'SCREENSAVER.datetime');
 		} else {
-			$client->prefSet($saver, $Slim::Player::Player::defaultPrefs->{$saver});
+			$prefs->client($client)->set($saver, $Slim::Player::Player::defaultPrefs->{$saver});
 		}
 	},
 	'stop' => sub {
@@ -81,7 +81,7 @@ sub lines {
 	
 	my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
 	my $line2 = $client->string('SETUP_SCREENSAVER_USE');
-	my $overlay2 = Slim::Buttons::Common::checkBoxOverlay($client, $client->prefGet($saver) eq 'SCREENSAVER.datetime');
+	my $overlay2 = Slim::Buttons::Common::checkBoxOverlay($client, $prefs->client($client)->get($saver) eq 'SCREENSAVER.datetime');
 	
 	return {
 		'line'    => [ $client->string('PLUGIN_SCREENSAVER_DATETIME'), $line2 ],
@@ -136,7 +136,9 @@ my $fontDef = {
 sub screensaverDateTimelines {
 	my $client = shift;
 	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
-	my $alarmOn = $client->prefGet("alarm", 0) || $client->prefGet("alarm", $wday);
+
+	my $alarm = preferences('server')->client($client)->get('alarm');
+	my $alarmOn = $alarm->[ 0 ] || $alarm->[ $wday ];
 
 	my $nextUpdate = $client->periodicUpdateTime();
 	Slim::Buttons::Common::syncPeriodicUpdates($client, int($nextUpdate)) if (($nextUpdate - int($nextUpdate)) > 0.01);

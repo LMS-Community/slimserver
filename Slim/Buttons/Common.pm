@@ -585,15 +585,15 @@ our %functions = (
 
 			my $lastIR  = Slim::Hardware::IR::lastIRTime($client);
 			my $saver   = 0;
-			my $timeout = Time::HiRes::time() - $client->prefGet('screensavertimeout');
+			my $timeout = Time::HiRes::time() - $prefs->client($client)->get('screensavertimeout');
 
-			if ($mode eq $client->prefGet('screensaver') ||
-			    $mode eq $client->prefGet('idlesaver')) {
+			if ($mode eq $prefs->client($client)->get('screensaver') ||
+			    $mode eq $prefs->client($client)->get('idlesaver')) {
 
 				$saver = 1;
 			}
 
-			if (($saver || $client->prefGet('autobrightness')) && ($lastIR && $lastIR < $timeout)) {
+			if (($saver || $prefs->client($client)->get('autobrightness')) && ($lastIR && $lastIR < $timeout)) {
 
 				$brightmode = 'idleBrightness';
 			}
@@ -633,7 +633,7 @@ our %functions = (
 			}
 		}
 
-		$client->prefSet($brightmode, $newBrightness);
+		$prefs->client($client)->set($brightmode, $newBrightness);
 
 		$client->brightness($newBrightness);
 	},
@@ -673,7 +673,7 @@ our %functions = (
 
 		} elsif ($buttonarg =~ /^[0-5]$/) {
 
-			$client->prefSet("playingDisplayMode", $buttonarg);
+			$prefs->client($client)->set('playingDisplayMode', $buttonarg);
 		}
 	},
 
@@ -682,8 +682,8 @@ our %functions = (
 		my $button = shift;
 		my $buttonarg = shift;
 		
-		my $visModes = $client->prefGetArrayMax('visualModes') + 1;
-		my $vm       = $client->prefGet('visualMode');
+		my $visModes = scalar @{ $prefs->client($client)->get('visualModes') };
+		my $vm       = $prefs->client($client)->get('visualMode');
 
 		if (!defined $vm || $vm > $visModes) {
 			$vm = 0;
@@ -702,7 +702,7 @@ our %functions = (
 			$vm = $buttonarg;
 		}
 
-		$client->prefSet('visualMode', $vm);
+		$prefs->client($client)->set('visualMode', $vm);
 
 		updateScreen2Mode($client);
 
@@ -931,7 +931,7 @@ our %functions = (
 		my $client = shift;
 
 		# try to avoid toggle commands, they make life difficult for listeners
-		my $mute = !($client->prefGet("mute"));
+		my $mute = !($prefs->client($client)->get('mute'));
 
 		$client->execute(["mixer", "muting", $mute]);
 	},
@@ -1054,9 +1054,9 @@ our %functions = (
 		my $client = shift;
 
 		# rotate the titleFormat
-		$client->prefSet("titleFormatCurr" , 
-			($client->prefGet("titleFormatCurr") + 1) %
-			($client->prefGetArrayMax("titleFormat") + 1)
+		$prefs->client($client)->set('titleFormatCurr' ,
+			($prefs->client($client)->get('titleFormatCurr') + 1) %
+			(scalar @{ $prefs->client($client)->get('titleFormat') })
 		);
 
 		$client->update();
@@ -1144,7 +1144,7 @@ our %functions = (
 			return;
 		}
 
-		$client->prefSet('irmap',$maps{$functarg});
+		$prefs->client($client)->set('irmap',$maps{$functarg});
 
 		$client->showBriefly( {
 			'line' => [ $client->string('SETUP_IRMAP') . ':', $functarg ]
@@ -1440,7 +1440,7 @@ sub mixer {
 		return;
 	}
 	
-	my $currVal = $client->prefGet($feature);
+	my $currVal = $prefs->client($client)->get($feature);
 	if ($setting  eq 'up') {
 		$cmd = "+$inc";
 		if ($currVal < ($midpoint - 1.5) && ($currVal + $inc) >= ($midpoint - 1.5)) {
@@ -1646,11 +1646,6 @@ sub checkBoxOverlay {
 sub param {
 	my $client = shift;
 	return $client->modeParam(@_);
-}
-
-sub paramOrPref {
-	my $client = shift;
-	return $client->paramOrPref(@_);
 }
 
 =head2 pushMode ( $client, $setmode, [ $paramHashRef ])

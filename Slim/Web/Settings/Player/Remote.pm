@@ -11,7 +11,10 @@ use strict;
 use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
+
+my $prefs = preferences('server');
 
 sub name {
 	return 'REMOTE_SETTINGS';
@@ -25,69 +28,45 @@ sub needsClient {
 	return 1;
 }
 
+sub prefs {
+	my ($class, $client) = @_;
+
+	my @prefs = ();
+
+	push @prefs, 'irmap' if (scalar(keys %{Slim::Hardware::IR::mapfiles()}) > 1);
+
+	return ($prefs->client($client), @prefs);
+}
+
 sub handler {
 	my ($class, $client, $paramRef) = @_;
 
-	my @prefs = ('disabledirsets');
-
 	if ($client->isPlayer()) {
 
-		if (scalar(keys %{Slim::Hardware::IR::mapfiles()}) > 1) {  
-
-			push @prefs, 'irmap';  
-		}
-		
-		# If this is a settings update
+		# handle disabledirsets here
 		if ($paramRef->{'saveSettings'}) {
-	
-			my @changed = ();
 
-			for my $pref (@prefs) {
-	
-				# parse indexed array prefs.
-				if ($paramRef->{$pref} ne $client->prefGet($pref)) {
-
-					push @changed, $pref;
-				}
-				
-				if (defined $paramRef->{$pref}) {
-
-					$client->prefSet($pref, $paramRef->{$pref});
-				}
-			}
-			
-			$client->prefDelete('disabledirsets');
-			
 			my @irsets = keys %{Slim::Hardware::IR::irfiles($client)};
+			my @disabled = ();
 
 			for my $i (0 .. (scalar(@irsets)-1)) {
-			
+
 				if ($paramRef->{'irsetlist'.$i}) {
 
-					$client->prefPush('disabledirsets',$paramRef->{'irsetlist'.$i});
+					push @disabled, $paramRef->{'irsetlist'.$i};
 				}
 
 				Slim::Hardware::IR::loadIRFile($irsets[$i]);
 			}
-			
-			$class->_handleChanges($client, \@changed, $paramRef);
+
+			$prefs->client($client)->set('disabledirsets', \@disabled);
 		}
-	
+
+		$paramRef->{'prefs'}->{'disabledirsets'} = { map {$_ => 1} @{ $prefs->client($client)->get('disabledirsets') } };
+
 		$paramRef->{'irmapOptions'}   = { %{Slim::Hardware::IR::mapfiles()}};
 		$paramRef->{'irsetlist'}      = { map {$_ => Slim::Hardware::IR::irfileName($_)} sort(keys %{Slim::Hardware::IR::irfiles($client)})};
-		
-		# Set current values for prefs
-		# load into prefs hash so that web template can detect exists/!exists
-		for my $pref (@prefs) {
-		
-			if ($pref eq 'disabledirsets') {
-				$paramRef->{'prefs'}->{$pref} = { map {$_ => 1} $client->prefGetArray('disabledirsets')};
-			} else {
-			
-				$paramRef->{'prefs'}->{$pref} = $client->prefGet($pref);
-			}
-		}
-		
+
 	} else {
 
 		# non-SD player, so no applicable display settings

@@ -96,7 +96,7 @@ sub alarmsQuery {
 
 	my $count = scalar @results;
 
-	$request->addResult('fade', $client->prefGet('alarmfadeseconds'));
+	$request->addResult('fade', $prefs->client($client)->get('alarmfadeseconds'));
 	$count += 0;
 	$request->addResult('count', $count);
 
@@ -910,10 +910,10 @@ sub mixerQuery {
 	my $entity = $request->getRequest(1);
 
 	if ($entity eq 'muting') {
-		$request->addResult("_$entity", $client->prefGet("mute"));
+		$request->addResult("_$entity", $prefs->client($client)->get("mute"));
 	}
 	elsif ($entity eq 'volume') {
-		$request->addResult("_$entity", $client->prefGet("volume"));
+		$request->addResult("_$entity", $prefs->client($client)->get("volume"));
 	} else {
 		$request->addResult("_$entity", $client->$entity());
 	}
@@ -1320,7 +1320,7 @@ sub playersQuery {
 					'connected', ($eachclient->connected() || 0));
 
 				for my $pref (@prefs) {
-					if (defined(my $value = $eachclient->prefGet($pref))) {
+					if (defined(my $value = $prefs->client($eachclient)->get($pref))) {
 						$request->addResultLoop('players_loop', $cnt, 
 							$pref, $value);
 					}
@@ -1717,7 +1717,7 @@ sub playerprefQuery {
 		return;
 	}
 
-	$request->addResult('_p2', $client->prefGet($prefName));
+	$request->addResult('_p2', $prefs->client($client)->get($prefName));
 	
 	$request->setStatusDone();
 }
@@ -2041,7 +2041,7 @@ sub serverstatusQuery {
 				$request->addResultLoop('players_loop', $cnt, 
 					'connected', ($eachclient->connected() || 0));
 				for my $pref (@{$savePrefs{'player'}}) {
-					if (defined(my $value = $eachclient->prefGet($pref))) {
+					if (defined(my $value = $prefs->client($eachclient)->get($pref))) {
 						$request->addResultLoop('players_loop', $cnt, 
 							$pref, $value);
 					}
@@ -2264,7 +2264,7 @@ sub statusQuery {
 	
 		if (!$RSC) {
 			# undefined for remote streams
-			my $vol = $client->prefGet("volume");
+			my $vol = $prefs->client($client)->get('volume');
 			$vol += 0;
 			$request->addResult("mixer volume", $vol);
 		}

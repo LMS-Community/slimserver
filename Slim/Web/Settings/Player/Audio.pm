@@ -11,7 +11,10 @@ use strict;
 use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
+
+my $prefs = preferences('server');
 
 sub name {
 	return 'AUDIO_SETTINGS';
@@ -28,7 +31,7 @@ sub needsClient {
 sub handler {
 	my ($class, $client, $paramRef) = @_;
 
-	my @prefs = qw(powerOnresume lame maxBitrate lameQuality);
+	my @prefs = qw(powerOnresume maxBitrate lameQuality);
 
 	if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0))  {
 		push @prefs,qw(synchronize syncVolume syncPower);
@@ -82,20 +85,10 @@ sub handler {
 	# If this is a settings update
 	if ($paramRef->{'saveSettings'}) {
 
-		my @changed = ();
-
 		for my $pref (@prefs) {
 
-			# parse indexed array prefs.
-			if ($paramRef->{$pref} ne $client->prefGet($pref)) {
-
-				push @changed, $pref;
-			}
-			
-			$client->prefSet($pref, $paramRef->{$pref} ) if defined $paramRef->{$pref};
+			$prefs->client($client)->set($pref, $paramRef->{$pref}) if defined $paramRef->{$pref};
 		}
-		
-		$class->_handleChanges($client, \@changed, $paramRef);
 	}
 
 	# Load any option lists for dynamic options.
@@ -120,7 +113,7 @@ sub handler {
 
 				$paramRef->{'prefs'}->{$pref} = $client->id();
 
-			} elsif ( my $syncgroupid = $client->prefGet('syncgroupid') ) {
+			} elsif ( my $syncgroupid = $prefs->client($client)->get('syncgroupid') ) {
 
 				# Bug 3284, we want to show powered off players that will resync when turned on
 				my @players = Slim::Player::Client::clients();
@@ -129,7 +122,7 @@ sub handler {
 
 					next if $other eq $client;
 
-					my $othersyncgroupid = Slim::Utils::Prefs::clientGet($other,'syncgroupid');
+					my $othersyncgroupid = $prefs->client($other)->get('syncgroupid');
 
 					if ( $syncgroupid == $othersyncgroupid ) {
 
@@ -145,11 +138,11 @@ sub handler {
 		} elsif ($pref eq 'powerOnResume') {
 			
 			$paramRef->{'prefs'}->{$pref} = Slim::Player::Sync::syncGroupPref($client,'powerOnResume') || 
-								$client->prefGet('powerOnResume');
+								$prefs->client($client)->get('powerOnResume');
 
 		} else {
 
-			$paramRef->{'prefs'}->{$pref} = $client->prefGet($pref);
+			$paramRef->{'prefs'}->{$pref} = $prefs->client($client)->get($pref);
 		}
 	}
 	

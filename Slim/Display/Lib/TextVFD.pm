@@ -23,6 +23,7 @@ use strict;
 
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
+use Slim::Utils::Prefs;
 
 my $log = logger('player.text');
 
@@ -1036,7 +1037,7 @@ sub doubleSize {
 	my ($newline1, $newline2) = ("", "");
 	my $line2 = $undoubled;
 
-	my $doublechars = $client->pref('largeTextFont') ? $doubleModern : $doubleClassic;
+	my $doublechars = preferences('server')->client($client)->get('largeTextFont') ? $doubleModern : $doubleClassic;
 	
 	$line2 =~ s/$cursorpos//g;
 	$line2 =~ s/^(\s*)(.*)/$2/;

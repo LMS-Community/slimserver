@@ -165,7 +165,11 @@
 		[% IF macaddress %]
 			<p>[% "PLAYER_MAC_ADDRESS" | string %] [% macaddress %]</p>
 		[% END %] 
-	
+
+		[% IF version %]
+			<p>[% "PLAYER_VERSION" | string %][% "COLON" | string %] [% version %]</p>
+		[% END %] 
+
 		[% IF signalstrength %]
 			<p>[% "INFORMATION_PLAYER_SIGNAL_STRENGTH" | string %][% "COLON" | string %] [% signalstrength %]%</p>
 		[% END %] 

@@ -29,6 +29,21 @@ use Slim::Web::HTTP;
 
 my $prefs = preferences('server');
 
+our $defaultPrefs = {
+	'maxBitrate'       => undef, # will be set by the client device OR default to server pref when accessed.
+	'alarmvolume'      => [50,50,50,50,50,50,50,50],
+	'alarmfadeseconds' => 0, # fade in alarm, 0 means disabled
+	'alarm'            => [0,0,0,0,0,0,0,0],
+	'alarmtime'        => [0,0,0,0,0,0,0,0],
+	'alarmplaylist'	   => ['','','','','','','',''],
+	'lameQuality'      => 9,
+	'playername'       => undef,
+	'repeat'           => 2,
+	'shuffle'          => 0,
+	'titleFormat'      => [5, 1, 3, 6],
+	'titleFormatCurr'  => 1,
+};
+
 # depricated, use $client->maxVolume
 our $maxVolume = 100;
 
@@ -50,21 +65,6 @@ The following object contains all the state that we keep about each player.
 =head1 METHODS
 
 =cut
-
-our $defaultPrefs = {
-	'maxBitrate'       => undef, # will be set by the client device OR default to server pref when accessed.
-	'alarmvolume'      => [50,50,50,50,50,50,50,50],
-	'alarmfadeseconds' => 0, # fade in alarm, 0 means disabled
-	'alarm'            => [0,0,0,0,0,0,0,0],
-	'alarmtime'        => [0,0,0,0,0,0,0,0],
-	'alarmplaylist'	   => ['','','','','','','',''],
-	'lameQuality'      => 9,
-	'playername'       => undef,
-	'repeat'           => 2,
-	'shuffle'          => 0,
-	'titleFormat'      => [5, 1, 3, 6],
-	'titleFormatCurr'  => 1,
-};
 
 # XXX - this is gross. Move to Class::Accessor or Object::InsideOut
 sub new {
@@ -233,7 +233,8 @@ sub init {
 	my $client = shift;
 
 	# make sure any preferences unique to this client may not have set are set to the default
-	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
+
+	$prefs->client($client)->init($defaultPrefs);
 
 	# init display including setting any display specific preferences to default
 	if ($client->display) {
@@ -336,11 +337,11 @@ sub name {
 
 	if (defined $name) {
 
-		$client->prefSet("playername", $name);
+		$prefs->client($client)->set('playername', $name);
 
 	} else {
 
-		$name = $client->prefGet("playername");
+		$name = $prefs->client($client)->get('playername');
 	}
 
 	if (!defined $name) {
@@ -421,7 +422,7 @@ sub startup {
 	if (!Slim::Player::Sync::isSynced($client) && $prefs->get('persistPlaylists')) {
 
 		my $playlist = Slim::Music::Info::playlistForClient($client);
-		my $currsong = $client->prefGet('currentSong');
+		my $currsong = $prefs->client($client)->get('currentSong');
 
 		if (blessed($playlist)) {
 
@@ -492,9 +493,9 @@ sub initial_add_done {
 		Slim::Player::Source::streamingSongIndex($client, $currsong, 1);
 	}
 
-	$client->prefSet('currentSong', $currsong);
+	$prefs->client($client)->set('currentSong', $currsong);
 
-	if ($client->prefGet('autoPlay') || Slim::Utils::Prefs::get('autoPlay')) {
+	if ($prefs->client($client)->get('autoPlay') || $prefs->get('autoPlay')) {
 
 		$client->execute(['play']);
 	}
@@ -688,7 +689,7 @@ sub volume {
 		} else {
 
 			# persist only if $temp not set
-			$client->prefSet("volume", $volume);
+			$prefs->client($client)->set('volume', $volume);
 
 			# forget any previous temporary volume
 			$client->[97] = undef;
@@ -702,7 +703,7 @@ sub volume {
 
 	} else {
 
-		return $client->prefGet("volume");
+		return $prefs->client($client)->get('volume');
 	}
 }
 
@@ -744,10 +745,10 @@ sub _mixerPrefs {
 			$value = $client->$min();
 		}
 
-		$client->prefSet($pref, $value);
+		$prefs->client($client)->set($pref, $value);
 	}
 
-	return $client->prefGet($pref);
+	return $prefs->client($client)->get($pref);
 }
 
 # stub out display functions, some players may not have them.
@@ -893,7 +894,7 @@ sub paramOrPref {
 		return $mode->{$name};
 	}
 
-	return $client->prefGet($name);
+	return $prefs->client($client)->get($name);
 }
 	
 sub getPref {

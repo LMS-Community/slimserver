@@ -61,7 +61,7 @@ sub new {
 
 	if (defined($client)) {
 		$maxRate = Slim::Utils::Prefs::maxRate($client);
-		$quality = $client->prefGet('lameQuality');
+		$quality = $prefs->client($client)->get('lameQuality');
 	}
 
 	$command = Slim::Player::TranscodingHelper::tokenizeConvertCommand($command, $type, $url, $url, 0, $maxRate, 1, $quality);

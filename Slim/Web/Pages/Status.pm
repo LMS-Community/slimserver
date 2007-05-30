@@ -135,8 +135,8 @@ sub status {
 
 			$params->{'sleeptime'} = $client->currentSleepTime();
 			$params->{'isplayer'}  = 1;
-			$params->{'mute'}      = $client->prefGet('mute');
-			$params->{'volume'}    = int($client->prefGet("volume") + 0.5);
+			$params->{'mute'}      = $prefs->client($client)->get('mute');
+			$params->{'volume'}    = int($prefs->client($client)->get('volume') + 0.5);
 			$params->{'bass'}      = int($client->bass() + 0.5);
 			$params->{'treble'}    = int($client->treble() + 0.5);
 			$params->{'pitch'}     = int($client->pitch() + 0.5);
@@ -144,7 +144,7 @@ sub status {
 			$params->{'sleep'} = $client->prettySleepTime();
 		}
 		
-		$params->{'fixedVolume'} = !$client->prefGet('digitalVolumeControl');
+		$params->{'fixedVolume'} = !$prefs->client($client)->get('digitalVolumeControl');
 		$params->{'player'} = $client->id();
 	}
 	

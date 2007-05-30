@@ -30,6 +30,9 @@ use Slim::Player::Protocols::MMS;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Unicode;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 our $defaultPrefs = {
 	'transitionType'     => 0,
@@ -59,8 +62,10 @@ sub new {
 
 sub init {
 	my $client = shift;
+
 	# make sure any preferences unique to this client may not have set are set to the default
-	Slim::Utils::Prefs::initClientPrefs($client,$defaultPrefs);
+	$prefs->client($client)->init($defaultPrefs);
+
 	$client->SUPER::init();
 }
 
@@ -142,7 +147,7 @@ sub volume {
 	my $newvolume = shift;
 
 	my $volume = $client->Slim::Player::Client::volume($newvolume, @_);
-	my $preamp = 255 - int(2 * $client->prefGet("preampVolumeControl"));
+	my $preamp = 255 - int(2 * $prefs->client($client)->get('preampVolumeControl'));
 
 	if (defined($newvolume)) {
 		# Old style volume:
@@ -159,7 +164,7 @@ sub volume {
 			$newGain = dBToFixed($db);
 		}
 
-		my $data = pack('NNCCNN', $oldGain, $oldGain, $client->prefGet("digitalVolumeControl"), $preamp, $newGain, $newGain);
+		my $data = pack('NNCCNN', $oldGain, $oldGain, $prefs->client($client)->get('digitalVolumeControl'), $preamp, $newGain, $newGain);
 		$client->sendFrame('audg', \$data);
 	}
 	return $volume;
@@ -249,7 +254,7 @@ sub stop {
 	# update pending pref changes in the firmware
 	foreach my $pref (keys %{$client->pendingPrefChanges()}) {
 
-	    $client->setPlayerSetting($pref, $client->prefGet($pref));
+	    $client->setPlayerSetting($pref, $prefs->client($client)->get($pref));
 
 	}
 }
@@ -737,23 +742,25 @@ our $pref_settings = {
 		firmwareid => 0,
 		pack => 'Z*',
 	},
-    	'digitalOutputEncoding' => {
+	'digitalOutputEncoding' => {
 		firmwareid => 1,
 		pack => 'C',
 	},
-    	'wordClockOutput' => {
+	'wordClockOutput' => {
 		firmwareid => 2,
 		pack => 'C',
 	},
-    	'powerOffDac' => { # (Transporter only)
+	'powerOffDac' => { # (Transporter only)
 		firmwareid => 3,
 		pack => 'C',
 	},
-    	'disableDac' => { # (Squezebox2/3 only)
+	'disableDac' => { # (Squezebox2/3 only)
 		firmwareid => 4,
 		pack => 'C',
 	},
 };
+
+$prefs->setChange( sub { my ($pref, $val, $client) = @_; $client->setPlayerSetting($pref, $val); }, keys %{$pref_settings});
 
 # Request a pref from the player firmware
 sub getPlayerSetting {
@@ -772,7 +779,9 @@ sub getPlayerSetting {
 sub setPlayerSetting {
 	my $client = shift;
 	my $pref   = shift;
-	my $value  = shift || return;
+	my $value  = shift;
+
+	return unless defined $value;
 
 	logger('prefs')->info("Setting pref: [$pref] to [$value]");
 
@@ -816,24 +825,11 @@ sub playerSettingsFrame {
 		logger('prefs')->info(sprintf("Pref [%s] = [%s]", $pref, (defined $value ? $value : 'undef')));
 
 		if (!defined $value) {
-			$client->setPlayerSetting($pref, $client->prefGet($pref));
+			$client->setPlayerSetting($pref, $prefs->client($client)->get($pref));
 		} else {
-			$client->SUPER::prefSet($pref, $value);
+			$prefs->client($client)->set($pref, $value);
 		}
 	}
-}
-
-sub prefSet {
-	my $client = shift;
-	my $pref = shift;
-	my $value = shift;
-	my $ind = shift;
-
-	if (exists $pref_settings->{$pref}) {
-		$client->setPlayerSetting($pref, $value);
-	}
-
-	$client->SUPER::prefSet($pref, $value, $ind);
 }
 
 sub pcm_sample_rates {

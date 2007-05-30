@@ -23,6 +23,9 @@ use strict;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Timers;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 # Display routines use the following state variables: 
 #   $display->updateMode(), $display->screen2updateOK(), $display->animateState(), $display->scrollState()
@@ -94,7 +97,7 @@ sub new {
 sub init {
 	my $display = shift;
 
-	Slim::Utils::Prefs::initClientPrefs($display->client, $defaultPrefs);
+	$prefs->client($display->client)->init($defaultPrefs);
 
 	$display->displayStrings(Slim::Utils::Strings::clientStrings($display->client));
 }
@@ -182,7 +185,7 @@ sub update {
 	}
 
 	if (!defined $scrollMode) {
-		$scrollMode = $client->paramOrPref('scrollMode') || 0;
+		$scrollMode = $prefs->client($client)->get('scrollMode') || 0;
 	}
 
 	my ($scroll, $scrollonce);
@@ -293,7 +296,7 @@ sub showBriefly {
 	
 	if (defined($brightness)) {
 		if ($brightness =~ /powerOn|powerOff|idle/) {
-			$brightness = $display->client->prefGet($brightness.'Brightness');
+			$brightness = $prefs->client($display->client)->get($brightness.'Brightness');
 		}
 		$callbackData->{'brightness'} = $display->brightness();
 		$display->brightness($brightness);
@@ -551,8 +554,8 @@ sub scrollInit {
 
 	my $ticker = ($screen->{scroll} == 2);
 
-	my $refresh = $client->paramOrPref($display->linesPerScreen() == 1 ? 'scrollRateDouble': 'scrollRate');
-	my $pause = $client->paramOrPref($display->linesPerScreen() == 1 ? 'scrollPauseDouble': 'scrollPause');	
+	my $refresh = $prefs->client($client)->get($display->linesPerScreen() == 1 ? 'scrollRateDouble': 'scrollRate'  );
+	my $pause   = $prefs->client($client)->get($display->linesPerScreen() == 1 ? 'scrollPauseDouble': 'scrollPause');
 
 	my $now = Time::HiRes::time();
 	my $start = $now + ($ticker ? 0 : (($pause > 0.5) ? $pause : 0.5));
@@ -575,7 +578,7 @@ sub scrollInit {
 
 	if (defined($screen->{bitsref})) {
 		# graphics display
-		my $pixels = $client->paramOrPref($display->linesPerScreen() == 1 ? 'scrollPixelsDouble': 'scrollPixels');	
+		my $pixels = $prefs->client($client)->get($display->linesPerScreen() == 1 ? 'scrollPixelsDouble': 'scrollPixels');
 		$scroll->{shift} = $pixels * $display->bytesPerColumn() * $screen->{scrolldir};
 		$scroll->{scrollHeader} = $display->scrollHeader($screenNo);
 		$scroll->{scrollFrameSize} = length($display->scrollHeader) + $display->screenBytes($screenNo);

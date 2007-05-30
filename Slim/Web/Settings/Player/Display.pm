@@ -11,7 +11,13 @@ use strict;
 use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
+
+my $prefs = preferences('server');
+
+$prefs->setValidate('num', qw(scrollRate scrollRateDouble scrollPause scrollPauseDouble));
+$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1, 'high' => 20 }, qw(scrollPixels scrollPixelsDouble));
 
 sub name {
 	return 'DISPLAY_SETTINGS';
@@ -25,96 +31,64 @@ sub needsClient {
 	return 1;
 }
 
+sub prefs {
+	my $class  = shift;
+	my $client = shift;
+
+	if (!$client || !$client->isPlayer) {
+		return ();
+	}
+
+	my @prefs = qw(powerOnBrightness powerOffBrightness idleBrightness autobrightness
+				   scrollMode scrollPause scrollPauseDouble scrollRate scrollRateDouble
+				  );
+
+	if ($client->display->isa("Slim::Display::Graphics")) {
+
+		push @prefs, qw(activeFont_curr idleFont_curr scrollPixels scrollPixelsDouble);
+
+	} else {
+
+		push @prefs, qw(doublesize offDisplaySize largeTextFont);
+	}
+
+	return ($prefs->client($client), @prefs);
+}
+
 sub handler {
 	my ($class, $client, $paramRef) = @_;
 
-	my @prefs = ();
+	if ($client && $client->isPlayer) {
 
-	# set up prefs array for all conditions.
-	if ($client->isPlayer()) {
+		if ($client->display->isa('Slim::Display::Graphics')) {
 
-		push @prefs, qw(powerOnBrightness powerOffBrightness idleBrightness autobrightness);
-		
-		if ($client->display->isa("Slim::Display::Graphics")) {
+			if ($paramRef->{'saveSettings'}) {
 
-			push @prefs, qw(
-				activeFont activeFont_curr
-				idleFont idleFont_curr
-				scrollMode
-				scrollPause scrollPauseDouble
-				scrollRate scrollRateDouble
-				scrollPixels scrollPixelsDouble
-			);
+				# activeFont and idleFont handled here, all other prefs by SUPER::handler
+				for my $pref (qw(activeFont idleFont)) {
 
-		} else {
-
-			push @prefs, qw(
-				doublesize offDisplaySize
-				largeTextFont
-				scrollMode
-				scrollPause scrollPauseDouble
-				scrollRate scrollRateDouble
-			);
-		}
-
-		# If this is a settings update
-		if ($paramRef->{'saveSettings'}) {
-	
-			for my $pref (@prefs) {
-	
-				# parse indexed array prefs.
-				if ($pref eq 'activeFont' || $pref eq 'idleFont') {
-	
-					$client->prefDelete($pref);
-	
+					my @array;
 					my $i = 0;
-	
-					while (defined $paramRef->{$pref.$i}) {
-	
-						if ($paramRef->{$pref.$i} eq "-1") {
-							last;
-						}
-	
-						$client->prefPush($pref,$paramRef->{$pref.$i});
-	
+
+					while (defined $paramRef->{$pref.$i} && $paramRef->{$pref.$i} eq "-1") {
+
+						push @array, $paramRef->{$pref.$i};
+
 						$i++;
 					}
 
-				} elsif (defined $paramRef->{$pref}) {
-
-					$client->prefSet($pref, $paramRef->{$pref});
-				}
-				
-				if ($pref eq 'doublesize') {
-					$client->textSize($paramRef->{'doublesize'});
+					$prefs->client($client)->set($pref, \@array);
 				}
 			}
+
+			$paramRef->{'prefs'}->{'activeFont'} = [ @{ $prefs->client($client)->get('activeFont') }, "-1" ];
+			$paramRef->{'prefs'}->{'idleFont'}   = [ @{ $prefs->client($client)->get('idleFont') }, "-1" ];
 		}
-	
+
 		# Load any option lists for dynamic options.
 		$paramRef->{'brightnessOptions' } = getBrightnessOptions($client);
 		$paramRef->{'maxBrightness' }     = $client->maxBrightness;
 		$paramRef->{'fontOptions'}        = getFontOptions($client);
-
-		# Set current values for prefs
-		# load into prefs hash so that web template can detect exists/!exists
-		for my $pref (@prefs) {
-	
-			if ($pref eq 'activeFont' || $pref eq 'idleFont') {
-	
-				$paramRef->{'prefs'}->{$pref} = [$client->prefGetArray($pref)];
-	
-				push @{$paramRef->{'prefs'}->{$pref}},"-1";
-	
-			} elsif ($pref eq 'doubleSize') {
-				
-				$paramRef->{'prefs'}->{$pref} = $client->textSize;
-				
-			} else {
-	
-				$paramRef->{'prefs'}->{$pref} = $client->prefGet($pref);
-			}
-		}
 
 	} else {
 
@@ -122,7 +96,16 @@ sub handler {
 		$paramRef->{'warning'} = Slim::Utils::Strings::string('SETUP_NO_PREFS');
 	}
 
-	return $class->SUPER::handler($client, $paramRef);
+	my $page = $class->SUPER::handler($client, $paramRef);
+
+	# update the player display after changing any settings
+	if ($paramRef->{'saveSettings'}) {
+		$client->display->resetDisplay;
+		$client->display->brightness($paramRef->{'prefs'}->{ $client->power ? 'powerOnBrightness' : 'powerOffBrightness' });
+		$client->display->update;
+	}
+
+	return $page;
 }
 
 sub getFontOptions {
@@ -140,7 +123,7 @@ sub getFontOptions {
 
 	for my $font (@{Slim::Display::Lib::Fonts::fontnames()}) {
 
-		if ($height && $height == Slim::Display::Lib::Fonts::fontheight("$font.2") && 
+		if ($height && $height == Slim::Display::Lib::Fonts::fontheight("$font.2") &&
 			Slim::Display::Lib::Fonts::fontchars("$font.2") > 255 ) {
 
 			$fonts->{$font} = Slim::Utils::Strings::getString($font);
@@ -170,7 +153,7 @@ sub getBrightnessOptions {
 
 		$brightnesses{4} = 4;
 
-		$brightnesses{$client->maxBrightness} = sprintf('%s (%s)', 
+		$brightnesses{$client->maxBrightness} = sprintf('%s (%s)',
 			$client->maxBrightness, string('BRIGHTNESS_BRIGHTEST')
 		);
 	}

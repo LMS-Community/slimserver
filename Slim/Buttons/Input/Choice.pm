@@ -55,6 +55,7 @@ use warnings;
 use Slim::Buttons::Common;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
 # TODO: move browseCache into Client object, where it will be cleaned up after client is forgotten
 our %browseCache = (); # remember where each client is browsing
@@ -445,7 +446,7 @@ sub lines {
 	} elsif (my $pref = getParam($client,'pref')) {
 		
 		# assume a single non-descending list of items, 'pref' item must be given in the params
-		my $val = ref $pref eq 'CODE' ? $pref->($client) : $client->prefGet($pref);
+		my $val = ref $pref eq 'CODE' ? $pref->($client) : preferences('server')->client($client)->get($pref);
 		$overlay2 = Slim::Buttons::Common::checkBoxOverlay($client, $val eq getItemValue($client));
 	}
 

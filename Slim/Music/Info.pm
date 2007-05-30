@@ -513,9 +513,9 @@ sub standardTitleFormat {
 
 		return $prefs->get('titleFormat')->[
 			# at the array index of the client titleformat array
-			$client->prefGet("titleFormat",
+			$prefs->client($client)->get('titleFormat',
 				# which is currently selected
-				$client->prefGet('titleFormatCurr')
+				$prefs->client($client)->get('titleFormatCurr')
 			)
 		   ];
 

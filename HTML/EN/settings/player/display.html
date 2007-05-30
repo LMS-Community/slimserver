@@ -82,7 +82,7 @@
 			[% num = loop.index %][% last = loop.max %]
 			[% FOREACH option = fontOptions.keys %]
 	
-				<option [% IF prefs.activeFont.$num == fontOptions.$option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% fontOptions.$option %]">[% fontOptions.$option %]</option>
+				<option [% IF prefs.activeFont.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% fontOptions.$option %]</option>
 	
 			[%- END -%]
 			
@@ -109,7 +109,7 @@
 			
 			[% FOREACH option = fontOptions.keys %]
 	
-				<option [% IF prefs.idleFont.$num == fontOptions.$option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% fontOptions.$option %]">[% fontOptions.$option %]</option>
+				<option [% IF prefs.idleFont.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% fontOptions.$option %]</option>
 	
 			[%- END -%]
 			

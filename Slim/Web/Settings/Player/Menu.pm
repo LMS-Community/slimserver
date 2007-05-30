@@ -11,6 +11,7 @@ use strict;
 use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 
 sub name {
@@ -30,76 +31,68 @@ sub handler {
 
 	if ($client->isPlayer()) {
 
-		my @prefs = ('menuItem');
-	
-		# If this is a settings update
-		for (my $i = $client->prefGetArrayMax('menuItem'); $i >= 0; $i--) {
+		my $prefs = preferences('server');
 
-			if (exists $paramRef->{'Action' . $i}) {
-	
-				my $newval   = $paramRef->{'Action' . $i};
-				my $tempItem = $client->prefGet('menuItem', $i);
+		my @menu  = @{ $prefs->client($client)->get('menuItem') };
 
-				if (defined $newval) {
+		for (my $i = $#menu; $i >= 0; $i--) {
 
-					if ($newval eq 'Remove') {
-					
-						$client->prefDelete('menuItem', $i);
+			if (my $action = $paramRef->{'Action' . $i}) {
 
-					} elsif ($newval eq 'Up' && $i > 0) {
-						
-						$client->prefSet('menuItem', $client->prefGet('menuItem', $i - 1), $i);
-						$client->prefSet('menuItem', $tempItem, $i - 1);
+				if ($action eq 'Remove') {
 
-					} elsif ($newval eq 'Down' && $i < $client->prefGetArrayMax('menuItem')) {
-					
-						$client->prefSet('menuItem', $client->prefGet('menuItem', $i + 1), $i);
-						$client->prefSet('menuItem', $tempItem, $i + 1);
-					}
+					splice @menu, $i, 1;
+
+				} elsif ($action eq 'Up' && $i > 0) {
+
+					my $temp = splice @menu, $i, 1;
+
+					splice @menu, $i - 1, 0, $temp;
+
+				} elsif ($action eq 'Down' && $i < $#menu) {
+
+					my $temp = splice @menu, $i, 1;
+
+					splice @menu, $i + 1, 0, $temp;
 				}
 			}
-		}
-		
-		if ($client->prefGetArrayMax('menuItem') < 0) {
 
-			$client->prefSet('menuItem','NOW_PLAYING',0);
-		}
-		
-		if ($paramRef->{'removeItems'}) {
+			if ($paramRef->{'removeItems'} && $paramRef->{'menuItemRemove' . $i}) {
 
-			for (my $i = $client->prefGetArrayMax('menuItem'); $i >= 0; $i--) {
-
-				if ($paramRef->{'menuItemRemove' . $i}) {
-
-					$client->prefDelete('menuItem', $i);
-				}
+				splice @menu, $i, 1;
 			}
 		}
-		
+
 		if ($paramRef->{'addItems'}) {
-			
+
 			for my $i (0..$paramRef->{'nonMenuItems'}) {
 
 				if ($paramRef->{'nonMenuItemAdd' . $i}) {
 
-					$client->prefPush('menuItem', $paramRef->{'nonMenuItemAdd' . $i});
+					push @menu, $paramRef->{'nonMenuItemAdd' . $i};
 				}
 			}
-	
+
 			for my $i (0..$paramRef->{'pluginItems'}) {
-			
+
 				if (exists $paramRef->{'pluginItemAdd' . $i}) {
 
-					$client->prefPush('menuItem', $paramRef->{'pluginItemAdd' . $i});
+					push @menu, $paramRef->{'pluginItemAdd' . $i};
 				}
 			}
-	
 		}
-	
+
+		if (!@menu) {
+
+			push @menu, 'NOW_PLAYING';
+		}
+
+		$prefs->client($client)->set('menuItem', \@menu);
+
 		Slim::Buttons::Home::updateMenu($client);
-	
-		$paramRef->{'menuItems'}     = [ $client->prefGetArray('menuItem') ];
-		$paramRef->{'menuItemNames'} = { map {$_ => menuItemName($client, $_)} $client->prefGetArray('menuItem') };
+
+		$paramRef->{'menuItems'}     = \@menu;
+		$paramRef->{'menuItemNames'} = { map {$_ => menuItemName($client, $_)} @menu };
 		$paramRef->{'nonMenuItems'}  = { map {$_ => menuItemName($client, $_)} Slim::Buttons::Home::unusedMenuOptions($client) };
 		#$paramRef->{'pluginItems'}   = { map {$_ => menuItemName($client, $_)} Slim::Utils::PluginManager->unusedPluginOptions($client) };
 

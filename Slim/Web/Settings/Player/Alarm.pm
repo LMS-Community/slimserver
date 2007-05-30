@@ -12,6 +12,7 @@ use base qw(Slim::Web::Settings);
 
 use Slim::Utils::DateTime;
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 
 sub name {
 	return 'ALARM_SETTINGS';
@@ -28,61 +29,38 @@ sub needsClient {
 sub handler {
 	my ($class, $client, $paramRef) = @_;
 
+	my $prefs = preferences('server');
+
 	my @prefs = qw(alarmfadeseconds alarm alarmtime alarmvolume alarmplaylist);
-	
+
 	# If this is a settings update
 	if ($paramRef->{'saveSettings'}) {
-
-		my @changed = ();
 
 		for my $pref (@prefs) {
 
 			if ($pref eq 'alarmfadeseconds') {
-			
-				# parse indexed array prefs.
-				if ($paramRef->{$pref} ne $client->prefGet($pref)) {
 
-					push @changed, $pref;
-				}
-				
-				if (defined $paramRef->{$pref}) {
-
-					$client->prefSet($pref, $paramRef->{$pref});
-				}
+				$prefs->client($client)->set( $paramRef->{$pref} ? 1 : 0 );
 
 			} else {
-			
+
+				my $array = $prefs->client($client)->get($pref);
+
 				for my $i (0..7) {
-
-					# parse indexed array prefs.
-					if ($pref ne 'alarmtime' && $paramRef->{$pref.$i} ne $client->prefGet($pref, $i)) {
-
-						push @changed, $pref.$i;
-					}
 
 					if ($pref eq 'alarmtime') {
 
-						my $newTime = Slim::Utils::DateTime::prettyTimeToSecs($paramRef->{"alarmtime$i"});
-
-						if ($newTime != $client->prefGet('alarmtime', $i)) {
-
-							push @changed, 'alarmtime'.$i;
-						}
-
-						$client->prefSet('alarmtime', $newTime, $i);
+						$array->[$i] = Slim::Utils::DateTime::prettyTimeToSecs($paramRef->{$pref.$i});
 
 					} else {
-					
-						if (defined $paramRef->{$pref.$i}) {
 
-							$client->prefSet($pref.$i, $paramRef->{$pref.$i});
-						}
+						$array->[$i] = $paramRef->{$pref.$i};
 					}
 				}
+
+				$prefs->client($client)->set($pref, $array);
 			}
 		}
-		
-		$class->_handleChanges($client, \@changed, $paramRef);
 	}
 
 	# Load any option lists for dynamic options.
@@ -107,26 +85,19 @@ sub handler {
 	# Set current values for prefs
 	# load into prefs hash so that web template can detect exists/!exists
 	for my $pref (@prefs) {
-		
-		if ($pref eq 'alarmfadeseconds') {
-		
-			$paramRef->{'prefs'}->{$pref} = $client->prefGet($pref);
 
-		} else {
-
-			@{$paramRef->{'prefs'}->{$pref}} = $client->prefGetArray($pref);
-		}
-		
 		if ($pref eq 'alarmtime') {
+
+			my $time = $prefs->client($client)->get('alarmtime');
 
 			for my $i (0..7) {
 
-				my $time = Slim::Utils::DateTime::secsToPrettyTime(
-					$client->prefGet('alarmtime', $i)
-				);
-				
-				${$paramRef->{'prefs'}->{'alarmtime'}}[$i] = $time;
+				${$paramRef->{'prefs'}->{'alarmtime'}}[$i] = Slim::Utils::DateTime::secsToPrettyTime($time->[$i]);
 			}
+
+		} else {
+
+			$paramRef->{'prefs'}->{$pref} = $prefs->client($client)->get($pref);
 		}
 	}
 

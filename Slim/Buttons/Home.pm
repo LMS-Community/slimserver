@@ -470,7 +470,7 @@ sub homeExitHandler {
 
 					} else {
 
-						$value = $client->prefGet($nextParams->{'initialValue'});
+						$value = $prefs->client($client)->get($nextParams->{'initialValue'});
 					}
 
 					$params{'valueRef'} = \$value;
@@ -710,7 +710,7 @@ sub updateMenu {
 	my $client = shift;
 	my @home = ();
 	
-	for my $menuItem ($client->prefGetArray('menuItem')) {
+	for my $menuItem (@{ $prefs->client($client)->get('menuItem') }) {
 
 		my $plugin = Slim::Utils::PluginManager->dataForPlugin($menuItem);
 

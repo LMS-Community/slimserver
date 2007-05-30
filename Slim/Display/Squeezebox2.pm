@@ -142,8 +142,8 @@ sub init {
 		Slim::Display::Lib::Fonts::loadFonts(1);
 	}
 
-	Slim::Utils::Prefs::initClientPrefs($display->client, $defaultPrefs);
-	Slim::Utils::Prefs::initClientPrefs($display->client, $defaultFontPrefs);
+	$prefs->client($display->client)->init($defaultPrefs);
+	$prefs->client($display->client)->init($defaultFontPrefs);
 
 	$display->SUPER::init();
 
@@ -154,6 +154,7 @@ sub resetDisplay {
 	my $display = shift;
 
 	my $cache = $display->renderCache();
+	$cache->{'defaultfont'} = undef;
 	$cache->{'screens'} = 1;
 	$cache->{'maxLine'} = $display_maxLine;
 	$cache->{'screen1'} = { 'ssize' => 0, 'fonts' => {} };
@@ -176,7 +177,8 @@ sub displayWidth {
 	# if we're showing the always-on visualizer & the current buttonmode 
 	# hasn't overridden, then use the playing display mode to index
 	# into the display width, otherwise, it's fullscreen.
-	my $mode = ($display->showVisualizer() && !defined($client->modeParam('visu'))) ? ${[$client->prefGetArray('playingDisplayModes')]}[$client->prefGet("playingDisplayMode")] : 0;
+	my $mode = ($display->showVisualizer() && !defined($client->modeParam('visu'))) ?
+		$prefs->client($client)->get('playingDisplayModes')->[ $prefs->client($client)->get('playingDisplayMode') ] : 0;
 
 	return $display->modes->[$mode || 0]{width};
 }
@@ -269,7 +271,7 @@ sub visualizerParams {
 	my $display = shift;
 	my $client = $display->client;
 
-	my $visu = $client->prefGet('playingDisplayModes',$client->prefGet("playingDisplayMode"));
+	my $visu = $prefs->client($client)->get('playingDisplayModes')->[ $prefs->client($client)->get('playingDisplayMode') ];
 	
 	$visu = 0 if (!$display->showVisualizer());
 	

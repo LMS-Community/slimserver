@@ -24,16 +24,19 @@ use Slim::Hardware::IR;
 use Slim::Player::Client;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
 my $log = logger('player.ui');
+
+my $prefs = preferences('server');
 
 our $defaultPrefs = {
 	'bass'                 => 50,
 	'digitalVolumeControl' => 1,
 	'preampVolumeControl'  => 0,
 	'disabledirsets'       => [],
-	'doublesize'           => 0,
-	'irmap'                => Slim::Hardware::IR::defaultMapFile(),
+#	'doublesize'           => 0,
+	'irmap'                => \&Slim::Hardware::IR::defaultMapFile(),
 	'menuItem'             => [qw(
 		NOW_PLAYING
 		BROWSE_MUSIC
@@ -46,7 +49,7 @@ our $defaultPrefs = {
 		PLUGINS
 	)],
 	'mp3SilencePrelude'    => 0,
-	'offDisplaySize'       => 0,
+#	'offDisplaySize'       => 0,
 	'pitch'                => 100,
 	'power'                => 1,
 	'powerOffBrightness'   => 1,
@@ -59,13 +62,13 @@ our $defaultPrefs = {
 	'syncPower'            => 0,
 	'syncVolume'           => 0,
 	'treble'               => 50,
-	'upgrade-5.4b1-script' => 1,
-	'upgrade-5.4b2-script' => 1,
-	'upgrade-6.1b1-script' => 1,
-	'upgrade-6.2-script'   => 1,
-	'upgrade-R4627-script' => 1,
-	'upgrade-R8775-script' => 1,
-	'upgrade-R9279-script' => 1,
+#	'upgrade-5.4b1-script' => 1,
+#	'upgrade-5.4b2-script' => 1,
+#	'upgrade-6.1b1-script' => 1,
+#	'upgrade-6.2-script'   => 1,
+#	'upgrade-R4627-script' => 1,
+#	'upgrade-R8775-script' => 1,
+#	'upgrade-R9279-script' => 1,
 	'volume'               => 50,
 	'syncBufferThreshold'  => 128,
 	'bufferThreshold'      => 255,
@@ -280,26 +283,19 @@ sub init {
 
 	# make sure any preferences this client may not have set are set to the default
 	# This should be a method on client!
-	Slim::Utils::Prefs::initClientPrefs($client, $defaultPrefs);
+	$prefs->client($client)->init($defaultPrefs);
 
 	$client->SUPER::init();
-
-	for my $version (sort keys %upgradeScripts) {
-		if ($client->prefGet("upgrade-$version-script")) {
-			&{$upgradeScripts{$version}}($client);
-			$client->prefSet( "upgrade-$version-script", 0);
-		}
-	}
 
 	Slim::Buttons::Home::updateMenu($client);
 
 	# fire it up!
-	$client->power($client->prefGet('power'));
+	$client->power($prefs->client($client)->get('power'));
 	$client->startup();
 
 	# start the screen saver
 	Slim::Buttons::ScreenSaver::screenSaver($client);
-	$client->brightness($client->prefGet($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
+	$client->brightness($prefs->client($client)->get($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 }
 
 # usage	- float	buffer fullness as a percentage
@@ -361,16 +357,16 @@ sub power {
 	my $client = shift;
 	my $on = shift;
 	
-	my $currOn = $client->prefGet('power') || 0;
+	my $currOn = $prefs->client($client)->get('power') || 0;
 
 	return $currOn unless defined $on;
 	return unless (!defined(Slim::Buttons::Common::mode($client)) || ($currOn != $on));
 
 	$client->display->renderCache()->{defaultfont} = undef;
 
-	$client->prefSet( 'power', $on);
+	$prefs->client($client)->set('power', $on);
 
-	my $resume = Slim::Player::Sync::syncGroupPref($client, 'powerOnResume') || $client->prefGet('powerOnResume');
+	my $resume = Slim::Player::Sync::syncGroupPref($client, 'powerOnResume') || $prefs->client($client)->get('powerOnResume');
 	$resume =~ /(.*)Off-(.*)On/;
 	my ($resumeOff, $resumeOn) = ($1,$2);
 
@@ -378,11 +374,11 @@ sub power {
 
 		# turning player off - move to off mode and unsync/pause/stop player
 		$client->killAnimation();
-		$client->brightness($client->prefGet("powerOffBrightness"));
+		$client->brightness($prefs->client($client)->get('powerOffBrightness'));
 
 		Slim::Buttons::Common::setMode($client, 'off');
 
-		my $sync = $client->prefGet('syncPower');
+		my $sync = $prefs->client($client)->get('syncPower');
 
 		if (defined $sync && $sync == 0) {
 
@@ -425,11 +421,11 @@ sub power {
 		$client->updateMode(0); # unblock updates
 		
 		# restore the saved brightness, unless its completely dark...
-		my $powerOnBrightness = $client->prefGet("powerOnBrightness");
+		my $powerOnBrightness = $prefs->client($client)->get('powerOnBrightness');
 
-		if ($powerOnBrightness < 1) { 
+		if ($powerOnBrightness < 1) {
 			$powerOnBrightness = 1;
-			$client->prefSet("powerOnBrightness", $powerOnBrightness);
+			$prefs->client($client)->set('powerOnBrightness', $powerOnBrightness);
 		}
 		$client->brightness($powerOnBrightness);
 
@@ -484,7 +480,7 @@ sub fade_volume {
 
 	my $int = 0.05; # interval between volume updates
 
-	my $vol = abs($client->prefGet("volume"));
+	my $vol = abs($prefs->client($client)->get("volume"));
 	
 	Slim::Utils::Timers::killHighTimers($client, \&_fadeVolumeUpdate);
 
@@ -541,8 +537,8 @@ sub mute {
 		return 1;
 	}
 
-	my $vol = $client->prefGet("volume");
-	my $mute = $client->prefGet("mute");
+	my $vol = $prefs->client($client)->get('volume');
+	my $mute = $prefs->client($client)->get('mute');
 	
 	if (($vol < 0) && ($mute)) {
 		# mute volume
@@ -555,7 +551,7 @@ sub mute {
 		$client->volume($vol);
 	}
 
-	$client->prefSet( "volume", $vol);
+	$prefs->client($client)->set('volume', $vol);
 	$client->mixerDisplay('volume');
 }
 
@@ -688,7 +684,7 @@ sub nowPlayingModeLines {
 	my $fractioncomplete = 0;
 	my $songtime = '';
 
-	my $mode = $client->prefGet('playingDisplayModes',$client->prefGet("playingDisplayMode"));
+	my $mode = $prefs->client($client)->get('playingDisplayModes')->[ $prefs->client($client)->get('playingDisplayMode') ];
 
 	unless (defined $mode) { $mode = 1; };
 
@@ -807,7 +803,7 @@ sub mixerDisplay {
 		return;
 	}
 
-	my $featureValue = $client->prefGet($feature);
+	my $featureValue = $prefs->client($client)->get($feature);
 
 	# Check for undefined - 0 is a valid value.
 	if (!defined $featureValue) {

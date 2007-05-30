@@ -789,13 +789,13 @@ sub processURL {
 				last if ($i <= $params->{'bitrate'}); 	 
 			}
 
-			$client->prefSet('transcodeBitrate',$temprate); 	 
+			$prefs->client($client)->set('transcodeBitrate',$temprate); 	 
 
 			$log->info("Setting transcode bitrate to $temprate");
 
 		} else {
 
-			$client->prefSet('transcodeBitrate',undef);
+			$prefs->client($client)->set('transcodeBitrate',undef);
 		}
 	}
 	
@@ -2469,7 +2469,7 @@ sub buildStatusHeaders {
 		
 		if ($client->isPlayer()) {
 	
-			$headers{"x-playervolume"} = int($client->prefGet("volume") + 0.5);
+			$headers{"x-playervolume"} = int($prefs->client($client)->get('volume') + 0.5);
 			$headers{"x-playermode"}   = Slim::Buttons::Common::mode($client) eq "power" ? "off" : Slim::Player::Source::playmode($client);
 	
 			my $sleep = $client->sleepTime() - Time::HiRes::time();

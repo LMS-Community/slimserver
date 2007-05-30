@@ -33,6 +33,8 @@ my $scroll_pad_scroll = 6; # chars of padding between scrolling text
 my $scroll_pad_ticker = 8; # chars of padding in ticker mode
 
 our $defaultPrefs = {
+	'doublesize'          => 0,
+	'offDisplaySize'      => 0,
 	'largeTextFont'       => 1,
 	'playingDisplayMode'  => 0,
 	'playingDisplayModes' => [0..5]
@@ -73,7 +75,8 @@ sub init {
 		$prefs->set('loadFontsText', 1);
 	}
 
-	Slim::Utils::Prefs::initClientPrefs($display->client, $defaultPrefs);
+	$prefs->client($display->client)->init($defaultPrefs);
+
 	$display->SUPER::init();
 }
 
@@ -684,9 +687,9 @@ sub textSize {
 	my $prefname = ($client->power()) ? "doublesize" : "offDisplaySize";
 	
 	if (defined($newsize)) {
-		return	$client->prefSet( $prefname, $newsize);
+		return	$prefs->client($client)->set($prefname, $newsize);
 	} else {
-		return	$client->prefGet($prefname);
+		return	$prefs->client($client)->get($prefname);
 	}
 }
 

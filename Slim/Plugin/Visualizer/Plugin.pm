@@ -16,6 +16,8 @@ package Slim::Plugin::Visualizer::Plugin;
 use strict;
 use base qw(Slim::Plugin::Base);
 
+use Slim::Utils::Prefs;
+
 my $VISUALIZER_NONE = 0;
 my $VISUALIZER_VUMETER = 1;
 my $VISUALIZER_SPECTRUM_ANALYZER = 2;
@@ -166,7 +168,7 @@ sub setMode {
 		'onAdd'          => \&setVis,
 		'onRight'        => \&setVis,
 		'pref'           => $saver,
-		'initialValue'   => sub { return $_[0]->prefGet($saver) },
+		'initialValue'   => sub { preferences('server')->client($_[0])->get($saver) },
 	);
 		
 	my @externTF = ();
@@ -190,7 +192,7 @@ sub setVis {
 
 	my $pref = $client->modeParam('pref');
 	
-	$client->prefSet($pref,$value->{'value'});
+	preferences('server')->client($client)->set($pref, $value->{'value'});
 }
 
 ##################################################

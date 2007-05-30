@@ -18,6 +18,7 @@ use Slim::Player::TranscodingHelper;
 use Slim::Utils::Errno;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 use Slim::Utils::Unicode;
 
 use constant MAXCHUNKSIZE => 32768;
@@ -223,7 +224,7 @@ sub canDirectStream {
 	}
 
 	# Allow user pref to select the method for streaming
-	if ( my $method = $client->prefGet('mp3StreamingMethod') ) {
+	if ( my $method = preferences('server')->client($client)->get('mp3StreamingMethod') ) {
 		if ( $method == 1 ) {
 			logger('player.streaming')->debug("Not direct streaming because of mp3StreamingMethod pref");
 			return 0;

@@ -17,10 +17,12 @@ use Slim::Player::Source;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
+my $prefs = preferences('server');
+
 sub fetchGainMode {
 	my $class  = shift;
 	my $client = shift;
-	my $rgmode = $client->prefGet('replayGainMode');
+	my $rgmode = $prefs->client($client)->get('replayGainMode');
 
 	# Mode 0 is ignore replay gain
 	return undef if !$rgmode;

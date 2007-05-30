@@ -14,6 +14,8 @@ use Scalar::Util qw(blessed);
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
+my $prefs = preferences('server');
+
 my %possibleSpecialPlaylistsIDs = (
 	'CURRENT_PLAYLIST'          => -1,
 	'PLUGIN_RANDOM_TRACK'	    => -2,
@@ -185,21 +187,37 @@ sub playlistid {
 sub save {
 	my $self = shift;
 	my $client = $self->{'_client'};
-	
-	$client->prefSet('alarm',         $self->{'_enabled'},  $self->{'_dow'});
-	$client->prefSet('alarmtime',     $self->{'_time'},     $self->{'_dow'});
-	$client->prefSet('alarmplaylist', $self->{'_playlist'}, $self->{'_dow'});
-	$client->prefSet('alarmvolume',   $self->{'_volume'},   $self->{'_dow'});
+	my $dow    = $self->{'_dow'};
+
+	my $clientprefs = $prefs->client($client);
+
+	my $alarm    = $clientprefs->get('alarm');
+	my $time     = $clientprefs->get('alarmtime');
+	my $playlist = $clientprefs->get('alarmplaylist');
+	my $volume   = $clientprefs->get('alarmvolume');
+
+	$alarm->[ $dow ]    = $self->{'_enabled'};
+	$time->[ $dow ]     = $self->{'_time'};
+	$playlist->[ $dow ] = $self->{'_playlist'};
+	$volume->[ $dow ]   = $self->{'_volume'};
+
+	$clientprefs->set('alarm',        $alarm   );
+	$clientprefs->set('alarmtime',    $time    );
+	$clientprefs->set('alarmplaylist',$playlist);
+	$clientprefs->set('alarmvolume',  $volume  );
 }
 
 sub load {
 	my $self = shift;
 	my $client = $self->{'_client'};
-	
-	$self->{'_enabled'}  = $client->prefGet('alarm',         $self->{'_dow'});
-	$self->{'_time'}     = $client->prefGet('alarmtime',     $self->{'_dow'});
-	$self->{'_playlist'} = $client->prefGet('alarmplaylist', $self->{'_dow'});
-	$self->{'_volume'}   = $client->prefGet('alarmvolume',   $self->{'_dow'});
+	my $dow    = $self->{'_dow'};
+
+	my $clientprefs = $prefs->client($client);
+
+	$self->{'_enabled'}  = $clientprefs->get('alarm')->[ $dow ];
+	$self->{'_time'}     = $clientprefs->get('alarmtime')->[ $dow ];
+	$self->{'_playlist'} = $clientprefs->get('alarmplaylist')->[ $dow ];
+	$self->{'_volume'}   = $clientprefs->get('alarmvolume')->[ $dow ];
 }
 
 1;

@@ -62,11 +62,11 @@ sub init {
 			my $client = shift;
 			my $button = shift;
 			my $buttonarg = shift;
-			my $pdm = $client->prefGet('playingDisplayModes',$client->prefGet("playingDisplayMode"));
+			my $pdm = $prefs->client($client)->get('playingDisplayModes')->[ $prefs->client($client)->get('playingDisplayMode') ];
 			my $index = -1;
 			
 			#find index of the existing display mode in the pref array
-			for ($client->prefGetArray('playingDisplayModes')) {
+			for (@{ $prefs->client($client)->get('playingDisplayModes') }) {
 				$index++;
 				last if $pdm == $_;
 			}
@@ -82,7 +82,7 @@ sub init {
 
 				if (($playlistlen > 0) && (showingNowPlaying($client))) {
 
-					$pdm = ($pdm + 1) % ($client->prefGetArrayMax('playingDisplayModes') +1);
+					$pdm = ($pdm + 1) % (scalar @{ $prefs->client($client)->get('playingDisplayModes') });
 
 				} elsif ($playlistlen > 0) {
 
@@ -90,13 +90,13 @@ sub init {
 				}
 
 			} else {
-				if ($buttonarg && $buttonarg < ($client->prefGetArrayMax('playingDisplayModes') +1)) {
+				if ($buttonarg && $buttonarg < scalar @{ $prefs->client($client)->get('playingDisplayModes') }) {
 					$pdm = $buttonarg;
 				}
 			}
 
 			#find mode number at the new index, and save to the prefs
-			$client->prefSet("playingDisplayMode", $pdm);
+			$prefs->client($client)->set('playingDisplayMode', $pdm);
 			$client->update();
 		},
 

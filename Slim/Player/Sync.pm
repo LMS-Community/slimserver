@@ -11,8 +11,11 @@ use strict;
 use Scalar::Util qw(blessed);
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
 my $log = logger('player.sync');
+
+my $prefs = preferences('server');
 
 # playlist synchronization routines
 sub syncname {
@@ -157,7 +160,7 @@ sub unsync {
 
 		next if ($other->power || $other eq $client );
 
-		push @inGroup, $other if (Slim::Utils::Prefs::clientGet($other,'syncgroupid') == $syncgroupid);
+		push @inGroup, $other if ($prefs->client($other)->get('syncgroupid') == $syncgroupid);
 	}
 
 	if (scalar @inGroup == 1) {
@@ -212,11 +215,11 @@ sub sync {
 	$buddy = masterOrSelf($buddy);
 
 	# if the buddy is silent, switch them, so we don't have any silent masters.
-	if ($buddy->prefGet('silent')) {
+	if ($prefs->client($buddy)->get('silent')) {
 		($client, $buddy) = ($buddy, $client);
 	}
 
-	if ($buddy->prefGet('silent')) {
+	if ($prefs->client($buddy)->get('silent')) {
 
 		$log->warn($buddy->id . " is silent and we're trying to make it a master!");
 	}
@@ -253,8 +256,8 @@ sub saveSyncPrefs {
 		# Save Status to Prefs file
 		$log->info("Saving $clientID as a slave to $masterID");
 
-		$client->prefSet('syncgroupid', $masterID);
-		$client->master->prefSet('syncgroupid', $masterID);
+		$prefs->client($client)->set('syncgroupid', $masterID);
+		$prefs->client($client->master)->set('syncgroupid', $masterID);
 		
 	}
 }
@@ -270,30 +273,30 @@ sub deleteSyncPrefs {
 
 		$log->info("Deleting Sync group prefs for group: $syncgroupid");
 
-		Slim::Utils::Prefs::delete("$syncgroupid-Sync");
+		$prefs->remove('$syncgroupid-Sync');
 	}
 
 	$log->info("Clearing Sync master for $clientID");
 
 	$client->syncgroupid(undef);
-	$client->prefDelete('syncgroupid');
+	$prefs->client($client)->remove('syncgroupid');
 }
 
 # Restore Sync Operation
 sub restoreSync {
 	my $client = shift;
-	my $masterID = ($client->prefGet('syncgroupid'));
+	my $masterID = ($prefs->client($client)->get('syncgroupid'));
 
-	if ($masterID && ($client->power() || $client->prefGet('syncPower'))) {
+	if ($masterID && ($client->power() || $prefs->client($client)->get('syncPower'))) {
 
 		my @players = Slim::Player::Client::clients();
 
 		foreach my $other (@players) {
 
 			next if ($other eq $client);
-			next if (!$other->power() && !Slim::Utils::Prefs::clientGet($other,'syncPower'));
+			next if (!$other->power() && !$prefs->client($other)->get('syncPower'));
 
-			my $othermasterID = Slim::Utils::Prefs::clientGet($other,'syncgroupid');
+			my $othermasterID = $prefs->client($other)->get('syncgroupid');
 
 			if ($othermasterID && ($othermasterID eq $masterID)) {
 				$client->syncgroupid($masterID);
@@ -408,7 +411,7 @@ sub checkSync {
 		$client->id, scalar(@{$client->chunks}), $client->usage
 	));
 
-	if (!isSynced($client) || $client->prefGet('silent')) {
+	if (!isSynced($client) || $prefs->client($client)->get('silent')) {
 		return;
 	}
 
@@ -427,7 +430,7 @@ sub checkSync {
 		# track.  This situation is detected if $client->songElapsedSeconds is not 0
 		if ( $client->songElapsedSeconds == 0 ) {
 			
-			my $threshold = $client->prefGet('syncBufferThreshold');
+			my $threshold = $prefs->client($client)->get('syncBufferThreshold');
 		
 			# Threshold is 128 bytes for local tracks, but it needs to be about 20K for remote streams
 			eval {
@@ -559,28 +562,35 @@ sub isSynced {
 sub syncGroupPref {
 	my ($client, $pref, $val) = @_;
 
-	my $syncgroupid = $client->prefGet('syncgroupid') || return undef;
+	my $syncgroupid = $prefs->client($client)->get('syncgroupid') || return undef;
 
-	if ($val) {
-		Slim::Utils::Prefs::set("$syncgroupid-Sync", $val, $pref);
+	if (defined $val) {
+
+		my $hash = $prefs->get("$syncgroupid-Sync");
+
+		$hash->{$pref} = $val;
+
+		$prefs->set("$syncgroupid-Sync", $hash);
 
 		return undef;
 	}
 
-	my $ret = Slim::Utils::Prefs::getInd("$syncgroupid-Sync", $pref);
+	my $ret = ($prefs->get("$syncgroupid-Sync") || {})->{ $pref };
 
 	if (!defined($ret)) {
 
-		$ret = masterOrSelf($client)->prefGet($pref);
+		my $hash = $prefs->get("$syncgroupid-Sync") || {};
+
+		$ret = $hash->{$pref} = $prefs->client(masterOrSelf($client))->get($pref);
 
 		$log->info("Creating Sync group pref for: $pref group: $syncgroupid");
 
-		Slim::Utils::Prefs::set("$syncgroupid-Sync", $ret, $pref);
+		$prefs->set("$syncgroupid-Sync", $hash);
 	}
 
 	return $ret;
 }
-				
+
 1;
 
 __END__

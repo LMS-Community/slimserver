@@ -25,6 +25,7 @@ use Time::HiRes qw(gettimeofday);
 
 use Slim::Buttons::Common;
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 
 my %irCodes = ();
@@ -50,6 +51,8 @@ my $maxIRQTime = 3.0;
 our $irPerf = Slim::Utils::PerfMon->new('IR Delay', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
 
 my $log = logger('player.ir');
+
+my $prefs = preferences('server');
 
 sub init {
 
@@ -382,7 +385,7 @@ sub lookupCodeBytes {
 
 		if ($client) {
 
-			map { delete $enabled{$_} } $client->prefGetArray('disabledirsets');
+			map { delete $enabled{$_} } @{ $prefs->client($client)->get('disabledirsets') };
 		}
 
 		for my $irset (keys %enabled) {
@@ -416,7 +419,7 @@ sub lookup {
 	
 	my %enabled = %irCodes;
 
-	for ($client->prefGetArray('disabledirsets')) {
+	for (@{ $prefs->client($client)->get('disabledirsets')}) {
 		delete $enabled{$_};
 	}
 
@@ -448,7 +451,7 @@ sub lookupFunction {
 		$mode = Slim::Buttons::Common::mode($client);
 	}
 
-	my $map = $client->prefGet('irmap');
+	my $map = $prefs->client($client)->get('irmap');
 	
 	if (!-e $map) {
 	
@@ -456,7 +459,7 @@ sub lookupFunction {
 		# resave the pref with path also stripping to basename as a way to try to fix an invalid path
 		my @dirs = IRFileDirs();
 		$map = file($dirs[0], basename($map))->stringify;
-		$client->prefSet('irmap', $map);
+		$prefs->client($client)->set('irmap', $map);
 	}
 	
 	my $function = '';

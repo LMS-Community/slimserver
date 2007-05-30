@@ -11,7 +11,10 @@ use strict;
 use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
+
+my $prefs = preferences('server');
 
 sub name {
 	return 'BASIC_PLAYER_SETTINGS';
@@ -25,80 +28,64 @@ sub needsClient {
 	return 1;
 }
 
-sub handler {
-	my ($class, $client, $paramRef) = @_;
+sub prefs {
+	my ($class, $client) = @_;
 
-	my @prefs = qw(playername titleFormat titleFormatCurr);
+	my @prefs = qw(playername titleFormatCurr);
 
-	# isPlayer means not a HTTP client.
-	if (defined $client && $client->isPlayer()) {
+	if ($client->isPlayer) {
 
-		push @prefs, qw(playingDisplayMode playingDisplayModes);
-		
-		if ($client->display->isa('Slim::Display::Transporter')) {
+		push @prefs, qw(playingDisplayMode);
 
-			push @prefs, qw(visualMode visualModes);
-		}
-		
-		my $savers = Slim::Buttons::Common::hash_of_savers();
-
-		if (scalar(keys %{$savers}) > 0) {
+		if (scalar(keys %{ Slim::Buttons::Common::hash_of_savers() }) > 0) {
 
 			push @prefs, qw(screensaver idlesaver offsaver screensavertimeout);
 		}
-	}
-	
-	# If this is a settings update
-	if (defined $client && $paramRef->{'saveSettings'}) {
 
-		my @changed = ();
+		if ($client->display->isa('Slim::Display::Transporter')) {
 
-		my $vismodeChange = 0;
-
-		if (${$paramRef->{'visualModes'}}[$paramRef->{'visualMode'}] ne $client->prefGet('visualModes',$paramRef->{'visualMode'})) {
-
-			$vismodeChange = 1;
+			push @prefs, qw(visualMode);
 		}
+	}
+
+	return ($prefs->client($client), @prefs);
+}
+
+sub handler {
+	my ($class, $client, $paramRef) = @_;
+
+	# array prefs handled by this handler not handler::SUPER
+	my @prefs = qw(titleFormat);
+
+	if (defined $client && $client->isPlayer()) {
+
+		push @prefs, qw(playingDisplayModes);
+
+		if ($client->display->isa('Slim::Display::Transporter')) {
+
+			push @prefs, qw(visualModes);
+		}
+	}
+
+	if ($paramRef->{'saveSettings'}) {
 
 		for my $pref (@prefs) {
 
-			if ($pref eq 'visualModes' || $pref eq 'playingDisplayModes' || $pref eq 'titleFormat') {
+			my $i = 0;
+			my @array;
 
-				$client->prefDelete($pref);
+			while (defined $paramRef->{$pref.$i} && $paramRef->{$pref.$i} ne "-1") {
 
-				my $i = 0;
-
-				while (defined $paramRef->{$pref.$i}) {
-
-					if ($paramRef->{$pref.$i} eq "-1") {
-						last;
-					}
-
-					$client->prefPush($pref, $paramRef->{$pref.$i});
-
-					$i++;
-				}
-
-			} else {
-			
-				if ($paramRef->{$pref} ne $client->prefGet($pref)) {
-					push @changed, $pref;
-				}
-			
-				if (defined $paramRef->{$pref}) {
-
-					$client->prefSet($pref, $paramRef->{$pref});
-				}
+				push @array, $paramRef->{$pref.$i};
+				$i++;
 			}
-		}
-		
-		if ($vismodeChange) {
 
-			Slim::Buttons::Common::updateScreen2Mode();
+			$prefs->client($client)->set($pref, \@array);
 		}
-		
-		$class->_handleChanges($client, \@changed, $paramRef);
+	}
 
+	for my $pref (@prefs) {
+		$paramRef->{'prefs'}->{$pref} = [ @{ $prefs->client($client)->get($pref) }, "-1" ];
 	}
 
 	$paramRef->{'titleFormatOptions'}    = hashOfPrefs('titleFormat');
@@ -106,35 +93,19 @@ sub handler {
 	$paramRef->{'visualModeOptions'}     = getVisualModes($client);
 	$paramRef->{'screensavers'}          = Slim::Buttons::Common::hash_of_savers();
 
-	for my $pref (@prefs) {
-
-		if ($pref eq 'visualModes' || $pref eq 'playingDisplayModes' || $pref eq 'titleFormat') {
-
-			$paramRef->{'prefs'}->{$pref} = [ $client->prefGetArray($pref) ];
-
-			push @{$paramRef->{'prefs'}->{$pref}}, "-1";
-
-		} else {
-
-			$paramRef->{'prefs'}->{$pref} = $client->prefGet($pref);
-		}
-	}
-
-	if (defined $client->revision) {
-
-		$paramRef->{'versionInfo'} = sprintf("%s%s%s", 
-			string("PLAYER_VERSION"),
-			string("COLON"),
-			$client->revision,
-		);
-	}
-	
+	$paramRef->{'version'}        = $client->revision;
 	$paramRef->{'ipaddress'}      = $client->ipport;
 	$paramRef->{'macaddress'}     = $client->macaddress;
 	$paramRef->{'signalstrength'} = $client->signalStrength;
 	$paramRef->{'voltage'}        = $client->voltage;
 
-	return $class->SUPER::handler($client, $paramRef);
+	my $page = $class->SUPER::handler($client, $paramRef);
+
+	if ($client && $client->display->isa('Slim::Display::Transporter')) {
+		Slim::Buttons::Common::updateScreen2Mode();
+	}
+
+	return $page;
 }
 
 # returns a hash of title formats with the key being their array index and the
@@ -149,7 +120,7 @@ sub hashOfPrefs {
 
 	my $i = 0;
 
-	for my $item (Slim::Utils::Prefs::getArray($pref)) {
+	for my $item (@{ $prefs->get($pref) }) {
 
 		if (Slim::Utils::Strings::stringExists($item)) {
 
@@ -166,7 +137,7 @@ sub hashOfPrefs {
 
 sub getPlayingDisplayModes {
 	my $client = shift || return {};
-	
+
 	my $display = {
 		'-1' => ' '
 	};
@@ -190,7 +161,7 @@ sub getPlayingDisplayModes {
 
 sub getVisualModes {
 	my $client = shift;
-	
+
 	if (!defined $client || !$client->display->isa('Slim::Display::Transporter')) {
 
 		return {};
