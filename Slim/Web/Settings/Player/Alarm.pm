@@ -40,7 +40,7 @@ sub handler {
 
 			if ($pref eq 'alarmfadeseconds') {
 
-				$prefs->client($client)->set( $paramRef->{$pref} ? 1 : 0 );
+				$prefs->client($client)->set($pref, $paramRef->{$pref} ? 1 : 0 );
 
 			} else {
 
