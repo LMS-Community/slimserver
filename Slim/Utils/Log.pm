@@ -163,7 +163,9 @@ sub reInit {
 
 		$class->writeConfig($args->{'logconf'});
 
-	} elsif (!$hasConfigFile) {
+	# $hasConfigFile will never be negative even when there is a default config
+	#} elsif (!$hasConfigFile) {
+	} else {
 
 		$class->writeConfig;
 	}
