@@ -729,7 +729,7 @@ sub menuQuery {
 				},
 			},
 			'window' => {
-				'style' => 'album',
+				'menuStyle' => 'album',
 			},
 		},
 		{

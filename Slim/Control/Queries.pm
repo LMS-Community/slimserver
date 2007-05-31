@@ -259,6 +259,9 @@ sub albumsQuery {
 					'itemsParams' => 'params',
 				},
 			},
+			'window' => {
+				'titleStyle' => "album",
+			}
 		};
 		$request->addResult('base', $base);
 	}
@@ -468,7 +471,7 @@ sub artistsQuery {
 			},
 			# style correctly the window that opens for the action element
 			'window' => {
-				'style' => 'album',
+				'menuStyle' => 'album',
 			}
 		};
 		$request->addResult('base', $base);
@@ -2777,6 +2780,9 @@ sub titlesQuery {
 					'itemsParams' => 'params',
 				},
 			},
+			'window' => {
+				'titleStyle' => 'album',
+			}
 		};
 		$request->addResult('base', $base);
 	}
@@ -2947,7 +2953,7 @@ sub yearsQuery {
 				},
 			},
 			'window' => {
-				'style' => 'album'
+				'menuStyle' => 'album'
 			}
 		};
 		$request->addResult('base', $base);
