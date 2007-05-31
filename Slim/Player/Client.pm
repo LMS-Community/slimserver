@@ -777,6 +777,7 @@ sub prevline2 {}
 sub currBrightness {}
 sub linesPerScreen {}
 sub knobListPos {}
+sub setPlayerSetting {}
 
 sub pause {
 	my $client = shift;
