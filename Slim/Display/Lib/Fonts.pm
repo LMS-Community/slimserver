@@ -277,7 +277,7 @@ sub string {
 
 	my @ords = unpack($unpackTemplate, $string);
 
-	if (max(@ords) > 255) {
+	if (@ords && max(@ords) > 255) {
 
 		if ($useTTFNow) {
 
