@@ -1470,7 +1470,7 @@ sub resetSong {
 }
 
 sub errorOpening {
-	my $client = shift;
+	my ( $client, $error ) = @_;
 
 	if ($client->reportsTrackStart()) {
 
@@ -1479,13 +1479,26 @@ sub errorOpening {
 		markStreamingTrackAsPlayed($client);
 	}
 	
-	my $line1 = shift || $client->string('PROBLEM_OPENING');
+	my $line1;
+	$error ||= 'PROBLEM_OPENING';
+	
 	my $line2 = Slim::Music::Info::standardTitle($client, Slim::Player::Playlist::song($client, streamingSongIndex($client)));
 	
 	my $url = Slim::Player::Playlist::url($client, streamingSongIndex($client));
-	Slim::Control::Request::notifyFromArray($client, ['playlist', 'cant_open', $url, $line1]);
+	Slim::Control::Request::notifyFromArray($client, ['playlist', 'cant_open', $url, $error]);
 	
-	$client->showBriefly($line1, $line2, 5, 1, 1);
+	if ( uc($error) eq $error ) {
+		$line1 = $client->string($error);
+	}
+	else {
+		$line1 = $error;
+	}
+	
+	# Show an error message
+	$client->showBriefly({
+		'line1'    => $line1,
+		'line2'    => $line2,
+	}, { 'scroll' => 1, 'firstline' => 1 });
 }
 
 sub explodeSong {

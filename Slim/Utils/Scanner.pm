@@ -497,7 +497,7 @@ sub scanRemoteURL {
 
 			logError("Can't connect to remote server to retrieve playlist: $error.");
 
-			push @{$pt}, 'PLAYLIST_PROBLEM_CONNECTING';
+			push @{$pt}, $error;
 			return $cb->( $foundItems, @{$pt} );
 		},
 		'passthrough' => [ $args, $originalURL ],
@@ -947,7 +947,7 @@ sub scanPlaylistURLs {
 	}
 	else {
 		# no more items left to scan and no audio found, return error
-		push @{$pt}, 'PLAYLIST_NO_ITEMS_FOUND';
+		push @{$pt}, $error || 'PLAYLIST_NO_ITEMS_FOUND';
 		return $cb->( $foundItems, @{$pt} );
 	}
 }
@@ -1153,10 +1153,6 @@ sub scanWMAStreamError {
 	my ( $http, $error, $args ) = @_;
 	
 	$log->error("Error: $error");
-	
-	if ( !Slim::Utils::Strings::stringExists($error) ) {
-		$error = 'PROBLEM_CONNECTING';
-	}
 	
 	my $cb         = $args->{'callback'};
 	my $pt         = $args->{'passthrough'} || [];
