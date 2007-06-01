@@ -1207,6 +1207,9 @@ sub _cliQuery_done {
 					$hash{'id'} = $item_id;
 					$hash{'name'} = $subFeed->{'name'} if defined $subFeed->{'name'};
 					$hash{'title'} = $subFeed->{'title'} if defined $subFeed->{'title'};
+					my $hasAudio = defined(hasAudio($subFeed)) + 0;
+					$hash{'isaudio'} = $hasAudio;
+				
 				
 					foreach my $data (keys %{$subFeed}) {
 						if (ref($subFeed->{$data}) eq 'ARRAY') {
@@ -1225,7 +1228,7 @@ sub _cliQuery_done {
 							$hash{$data} = $subFeed->{$data};
 						}
 					}
-					
+										
 					if ($menuMode) {
 						while ( my ($key, $value) = each(%hash)) {
 							$request->addResultLoop($loopname, $cnt, 'text', $key . ":" . $value);
@@ -1386,6 +1389,9 @@ sub _cliQuery_done {
 					$hash{'name'} = $item->{'name'} if defined $item->{'name'};
 					$hash{'title'} = $item->{'title'} if defined $item->{'title'};
 					$hash{'url'} = $item->{'url'} if $want_url && defined $item->{'url'};
+
+					my $hasAudio = defined(hasAudio($item)) + 0;
+					$hash{'isaudio'} = $hasAudio;
 
 					foreach my $data (keys %{$item}) {
 						if (ref($item->{$data}) eq 'ARRAY') {
