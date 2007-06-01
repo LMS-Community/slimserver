@@ -47,7 +47,7 @@ sub init {
 	my @ns = $res->nameservers();
 	
 	# domain to check
-	my $domain = 'www.google.com';
+	my $domain = ('a'..'m')[ int(rand(13)) ] . '.root-servers.net';
 	
 	for my $ns ( @ns ) {
 
