@@ -31,7 +31,7 @@ sub needsClient {
 sub handler {
 	my ($class, $client, $paramRef) = @_;
 
-	my @prefs = qw(powerOnresume maxBitrate lameQuality);
+	my @prefs = qw(powerOnResume maxBitrate lameQuality);
 
 	if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0))  {
 		push @prefs,qw(synchronize syncVolume syncPower);
