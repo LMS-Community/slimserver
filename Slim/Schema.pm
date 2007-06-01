@@ -2179,7 +2179,7 @@ sub _postCheckAttributes {
 		}
 
 		# Now create a contributors <-> album mapping
-		if (!$create && !$self->_albumIsUnknownAlbum($albumObj)) {
+		if (!$create && !$self->_albumIsUnknownAlbum($albumObj) && $album) {
 
 			# Update the album title - the user might have changed it.
 			$albumObj->title($album);
