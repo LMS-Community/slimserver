@@ -918,8 +918,14 @@ sub handleWebSettings {
 
 sub active {
 	my $client = shift;
-
-	return $mixInfo{$client->masterOrSelf->id} ? 1 : 0;
+	
+	my $id = $client->masterOrSelf->id;
+	
+	if ( exists $mixInfo{$id} && exists $mixInfo{$id}->{'type'} ) {
+		return 1;
+	}
+	
+	return 0;
 }
 
 1;

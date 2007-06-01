@@ -746,9 +746,16 @@ sub modifyPlaylistCallback {
 
 	$log->info("Checking if persistPlaylists is set..");
 
-	if (!$client || !$prefs->get('persistPlaylists') ||
-		exists &Slim::Plugin::RandomPlay::Plugin::active && Slim::Plugin::RandomPlay::Plugin::active($client) ) {
-
+	if ( !$client || !$prefs->get('persistPlaylists') ) {
+		$log->debug("no client or persistPlaylists not set, not saving playlist");
+		return;
+	}
+	
+	# If Random Play mode is active, we don't save the playlist
+	if (   exists $INC{'Slim/Plugin/RandomPlay/Plugin.pm'} 
+		&& Slim::Plugin::RandomPlay::Plugin::active($client)
+	) {
+		$log->debug("Random play mode active, not saving playlist");
 		return;
 	}
 
