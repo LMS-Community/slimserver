@@ -173,7 +173,7 @@ sub advancedSearch {
 		}
 
 		# Wildcard searches
-		if ($newKey =~ /comment/ || $newKey =~ /lyrics/) {
+		if ($newKey =~ /lyrics/) {
 
 			$params->{$key} = { 'like' => Slim::Utils::Text::searchStringSplit($params->{$key}) };
 		}
