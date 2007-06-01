@@ -2157,7 +2157,8 @@ sub readNextChunk {
 
 			} else {
 
-				$log->debug("Read $readlen bytes from source");
+				# too verbose
+				# $log->debug("Read $readlen bytes from source");
 			}
 		}
 
@@ -2202,7 +2203,8 @@ bail:
 
 	if ($chunkLength > 0) {
 
-		$log->debug("Read a chunk of $chunkLength length");
+		# too verbose
+		# $log->debug("Read a chunk of $chunkLength length");
 
 		$client->songBytes($client->songBytes() + $chunkLength);
 		$client->streamBytes($client->streamBytes() + $chunkLength);
