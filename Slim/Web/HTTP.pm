@@ -1158,7 +1158,8 @@ sub generateHTTPResponse {
 			($body, $mtime, $inode, $size) = getStaticContent($path, $params);
 		}
 
-	} elsif ($path =~ /status\.txt/) {
+	# XXX: log.txt needs to be put back here
+	} elsif ($path =~ /(?:status|robots)\.txt/) {
 
 		# if the HTTP client has asked for a text file, then always return the text on the display
 		$contentType = "text/plain";
@@ -1166,17 +1167,20 @@ sub generateHTTPResponse {
 		$response->header("Refresh" => "30; url=$path");
 		$response->header("Content-Type" => "text/plain; charset=utf-8");
 
-		# This code is deprecated. Jonas Salling is the only user
-		# anymore, and we're trying to move him to use the CLI.
-		buildStatusHeaders($client, $response, $p);
+		if ( $path =~ /status/ ) {
+			# This code is deprecated. Jonas Salling is the only user
+			# anymore, and we're trying to move him to use the CLI.
+			buildStatusHeaders($client, $response, $p);
 
-		if (defined($client)) {
-			my $parsed = $client->parseLines($client->curLines());
-			my $line1 = $parsed->{line}[0] || '';
-			my $line2 = $parsed->{line}[1] || '';
-			$$body = $line1 . $CRLF . $line2 . $CRLF;
-		} else {
-			$$body = '';
+			if (defined($client)) {
+				my $parsed = $client->parseLines($client->curLines());
+				my $line1 = $parsed->{line}[0] || '';
+				my $line2 = $parsed->{line}[1] || '';
+				$$body = $line1 . $CRLF . $line2 . $CRLF;
+			}
+		}
+		elsif ( $path =~ /robots/ ) {
+			($body, $mtime, $inode, $size) = getStaticContent($path, $params);
 		}
 
 	} elsif ($path =~ /status\.m3u/) {
