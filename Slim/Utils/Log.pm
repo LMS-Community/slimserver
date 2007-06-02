@@ -411,10 +411,11 @@ sub allCategories {
 	my %categories = ();
 	my %config     = ($class->_defaultCategories, $class->_customCategories);
 
-	while (my ($key, $value) = each %config) {
+	for my $key (keys %config) {
 
 		# hide the following as they are not debugging categories
 		next if ($key =~ /additivity|perfmon/);
+		my $value = $runningConfig{$key};
 
 		$key =~ s/^log4perl\.logger\.//;
 
