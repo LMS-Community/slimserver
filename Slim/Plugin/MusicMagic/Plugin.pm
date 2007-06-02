@@ -157,7 +157,7 @@ sub initPlugin {
 		Slim::Music::Import->addImporter($class, {
 			'mixer'     => \&mixerFunction,
 			'mixerlink' => \&mixerlink,
-			'use'       => Slim::Utils::Prefs::get($class->prefName),
+			'use'       => $prefs->get($class->prefName),
 		});
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
