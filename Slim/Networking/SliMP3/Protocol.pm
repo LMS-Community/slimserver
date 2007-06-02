@@ -18,8 +18,11 @@ use Slim::Networking::Select;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
+use Slim::Utils::Prefs;
 
 my $log = logger('network.protocol.slimp3');
+
+my $prefs = preferences('server');
 
 sub processMessage {
 	my ($client, $msg) = @_;
@@ -100,6 +103,14 @@ sub getUdpClient {
 
 			$client->macaddress($mac);
 			$client->init;
+
+			# remember all slimp3 clients so we can say hello to them on next server startup
+			my %slimp3s = map { $_ => 1 } @{ $prefs->get('slimp3clients') };
+
+			if (!$slimp3{$id}) {
+				$slimp3{$id} = 1;
+				$prefs->set('slimp3clients', [ keys %slimp3 ]);
+			}
 
 		} else {
 

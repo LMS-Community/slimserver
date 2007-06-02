@@ -87,15 +87,6 @@ sub initPlugin {
 
 	Slim::Plugin::MusicMagic::Common::checkDefaults();
 
-	if (grep {$_ eq 'MusicMagic::Plugin'} Slim::Utils::Prefs::getArray('disabledplugins')) {
-
-		$log->info("Not initializing: disabled.");
-
-		$initialized = 0;
-
-		return 0;
-	}
-
 	$MMSport = $prefs->get('port');
 	$MMSHost = $prefs->get('host');
 

@@ -580,9 +580,6 @@ sub initSettings {
 
 	Slim::Utils::Prefs::init();
 
-	Slim::Utils::Prefs::load($prefsfile, $nosetup || $noserver);
-	Slim::Utils::Prefs::checkServerPrefs();
-
 	# options override existing preferences
 	if (defined($audiodir)) {
 		$prefs->set('audiodir', $audiodir);
@@ -858,10 +855,6 @@ sub cleanup {
 	}
 
 	Slim::Utils::PluginManager->shutdownPlugins();
-
-	if (Slim::Utils::Prefs::writePending()) {
-		Slim::Utils::Prefs::writePrefs();
-	}
 
 	Slim::Utils::Prefs::writeAll();
 

@@ -48,7 +48,7 @@ sub init {
 	Slim::Networking::Select::addRead($udpsock, \&readUDP);
 
 	# say hello to the old slimp3 clients that we might remember...
-	for my $clientID (Slim::Utils::Prefs::getKeys('clients')) {
+	for my $clientID (@{ preferences('server')->get('slimp3clients') || [] }) {
 
 		# make sure any new preferences get set to default values
 		assert($clientID);

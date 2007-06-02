@@ -232,11 +232,6 @@ sub initializeFrameworks {
 	$log->info("SlimServer settings init...");
 
 	Slim::Utils::Prefs::init();
-	Slim::Utils::Prefs::load($::prefsFile);
-
-#	Slim::Utils::Prefs::set('prefsWriteDelay', 0);
-
-	Slim::Utils::Prefs::checkServerPrefs();
 
 	Slim::Utils::Prefs::makeCacheDir();	
 

@@ -54,7 +54,6 @@ sub init {
 	my $client = shift;
 
 	# make sure any preferences unique to this client may not have set are set to the default
-
 	$prefs->client($client)->init($defaultPrefs);
 
 	$client->SUPER::init();

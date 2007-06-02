@@ -35,7 +35,6 @@ our $defaultPrefs = {
 	'digitalVolumeControl' => 1,
 	'preampVolumeControl'  => 0,
 	'disabledirsets'       => [],
-#	'doublesize'           => 0,
 	'irmap'                => \&Slim::Hardware::IR::defaultMapFile(),
 	'menuItem'             => [qw(
 		NOW_PLAYING
@@ -49,7 +48,6 @@ our $defaultPrefs = {
 		PLUGINS
 	)],
 	'mp3SilencePrelude'    => 0,
-#	'offDisplaySize'       => 0,
 	'pitch'                => 100,
 	'power'                => 1,
 	'powerOffBrightness'   => 1,
@@ -62,207 +60,11 @@ our $defaultPrefs = {
 	'syncPower'            => 0,
 	'syncVolume'           => 0,
 	'treble'               => 50,
-#	'upgrade-5.4b1-script' => 1,
-#	'upgrade-5.4b2-script' => 1,
-#	'upgrade-6.1b1-script' => 1,
-#	'upgrade-6.2-script'   => 1,
-#	'upgrade-R4627-script' => 1,
-#	'upgrade-R8775-script' => 1,
-#	'upgrade-R9279-script' => 1,
 	'volume'               => 50,
 	'syncBufferThreshold'  => 128,
 	'bufferThreshold'      => 255,
 	'powerOnResume'        => 'PauseOff-NoneOn',
 };
-
-our %upgradeScripts = (
-
-	# Allow the "upgrading" of old menu items to new ones.
-	'5.4b1' => sub {
-
-		my $client = shift;
-		my $index  = 0;
-
-		foreach my $menuItem ($client->prefGetArray('menuItem')) {
-
-			if ($menuItem eq 'ShoutcastBrowser') {
-				$client->prefSet('menuItem', 'RADIO', $index);
-				last;
-			}
-
-			$index++;
-		}
-	},
-
-	'5.4b2' => sub {
-		my $client = shift;
-
-		my $addedBrowse = 0;
-		my @newitems = ();
-
-		foreach my $menuItem ($client->prefGetArray('menuItem')) {
-
-			if ($menuItem =~ 'BROWSE_') {
-
-				if (!$addedBrowse) {
-					push @newitems, 'BROWSE_MUSIC';
-					$addedBrowse = 1;
-				}
-
-			} else {
-
-				push @newitems, $menuItem;
-			}
-		}
-
-		$client->prefSet('menuItem', \@newitems);
-	},
-
-	'6.1b1' => sub {
-		my $client = shift;
-
-		if (Slim::Buttons::SqueezeNetwork::clientIsCapable($client)) {
-			# append a menu item to connect to squeezenetwork to the home menu
-			$client->prefPush('menuItem', 'SQUEEZENETWORK_CONNECT');
-		}
-	},
-
-	'6.2' => sub {
-		my $client = shift;
-		#kill all alarm settings
-		my $alarm = $client->prefGet('alarm') || 0;
-		
-		if (ref $alarm ne 'ARRAY') {
-			my $alarmTime = $client->prefGet('alarmtime') || 0;
-			my $alarmplaylist = $client->prefGet('alarmplaylist') || '';
-			my $alarmvolume = $client->prefGet('alarmvolume') || 50;
-			$client->prefDelete('alarm');
-			$client->prefDelete('alarmtime');
-			$client->prefDelete('alarmplaylist');
-			$client->prefDelete('alarmvolume');
-			$client->prefSet('alarm',[$alarm,0,0,0,0,0,0,0]);
-			$client->prefSet('alarmtime',[$alarmTime,0,0,0,0,0,0,0]);
-			$client->prefSet('alarmplaylist',[$alarmplaylist,'','','','','','','']);
-			$client->prefSet('alarmvolume',[$alarmvolume,50,50,50,50,50,50,50]);
-		}
-	},
-
-	'R4627' => sub {
-		my $client = shift;
-		my $menuItem = $client->prefGet('menuItem') || 0;
-		
-		# Add RandomMix to home and clear unused prefs
-		if (ref $menuItem eq 'ARRAY') {
-
-			my $insertPos = undef;
-			my $randomMixFound = 0;
-
-			for (my $i = 0; $i < @$menuItem; $i++) {
-
-				if (@$menuItem[$i] eq 'RandomPlay::Plugin') {
-					$randomMixFound = 1;
-					last;
-				} elsif (@$menuItem[$i] eq 'SEARCH') {
-					$insertPos = $i + 1;
-				}
-			}
-
-			if (!$randomMixFound) {
-
-				if (defined $insertPos) {
-
-					# Insert random mix after SEARCH
-					splice(@$menuItem, $insertPos, 0, 'RandomPlay::Plugin');
-				} else {
-					push (@$menuItem, 'RandomPlay::Plugin');
-				}
-
-				$client->prefSet('menuItem', $menuItem);
-			}
-
-			# Clear old prefs
-			$client->prefDelete('plugin_random_exclude_genres');
-			Slim::Utils::Prefs::delete('plugin_random_remove_old_tracks');
-		}
-	},
-
-	'R8775' => sub {
-		my $client = shift;
-		my $menuItem = $client->prefGet('menuItem') || 0;
-
-		# Add Favorites to home
-		if (ref($menuItem) ne 'ARRAY') {
-			return;
-		}
-
-		my $insertPos = undef;
-
-		# Insert Favorites before SAVED_PLAYLISTS
-		for (my $i = 0; $i < @$menuItem; $i++) {
-
-			if (@$menuItem[$i] eq 'FAVORITES') {
-
-				return;
-
-			} elsif (@$menuItem[$i] eq 'SAVED_PLAYLISTS') {
-
-				$insertPos = $i;
-			}
-		}
-
-		if (defined $insertPos) {
-
-			splice(@$menuItem, $insertPos, 0, 'FAVORITES');
-
-		} else {
-
-			push (@$menuItem, 'FAVORITES');
-		}
-
-		$client->prefSet('menuItem', $menuItem);
-	},
-	
-	'R9279' => sub {
-		my $client = shift;
-		my $menuItem = $client->prefGet('menuItem') || 0;
-
-		# Add Favorites to home
-		if (ref($menuItem) ne 'ARRAY') {
-			return;
-		}
-		
-		# DigitalInput menu item for Transporter only
-		if (blessed($client) ne 'Slim::Player::Transporter') {
-			return;
-		}
-
-		my $insertPos = undef;
-
-		# Insert DigitalInput before SETTINGS
-		for (my $i = 0; $i < @$menuItem; $i++) {
-
-			if (@$menuItem[$i] eq 'DigitalInput::Plugin') {
-
-				return;
-
-			} elsif (@$menuItem[$i] eq 'SETTINGS') {
-
-				$insertPos = $i;
-			}
-		}
-
-		if (defined $insertPos) {
-
-			splice(@$menuItem, $insertPos, 0, 'DigitalInput::Plugin');
-
-		} else {
-
-			push (@$menuItem, 'DigitalInput::Plugin');
-		}
-
-		$client->prefSet('menuItem', $menuItem);
-	},
-);
 
 sub new {
 	my $class    = shift;

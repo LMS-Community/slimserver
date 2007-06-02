@@ -80,11 +80,11 @@ sub new {
 	assert(!defined(getClient($id)));
 
 	# The following indexes are unused:
-	# 2, 3, 8, 11, 12, 13, 16, 23, 24, 25, 26, 27, 33, 34, 53
+	# 1, 2, 3, 8, 11, 12, 13, 16, 23, 24, 25, 26, 27, 33, 34, 53
 	# 64, 65, 66, 67, 68, 72,
 
 	$client->[0] = $id;
-	$client->[1] = Slim::Utils::Prefs::getClientPrefs($id); # _prefs
+#	$client->[1]
 
 #	$client->[2]
 #	$client->[3]
@@ -234,7 +234,6 @@ sub init {
 	my $client = shift;
 
 	# make sure any preferences unique to this client may not have set are set to the default
-
 	$prefs->client($client)->init($defaultPrefs);
 
 	# init display including setting any display specific preferences to default
@@ -886,201 +885,6 @@ sub getMode {
 	return $client->modeStack(-1);
 }
 
-sub paramOrPref {
-	my $client = shift;
-	my $name   = shift;
-
-	my $mode   = $client->modeParameterStack(-1) || return undef;
-
-	if (defined $mode && defined $mode->{$name}) {
-		return $mode->{$name};
-	}
-
-	return $prefs->client($client)->get($name);
-}
-	
-sub getPref {
-	prefGet(@_);
-}
-
-sub setPref {
-	prefSet(@_);
-}
-
-# method for getting/setting prefs
-# for non-indexed prefs the first parameter should be the pref name
-# for indexed prefs the first parameter should be a two element array reference
-# with the pref name first and the index second
-sub pref {
-	my $client = shift;
-	my $pref = shift;
-	my $value = shift;
-
-	my $ind = undef;
-
-	return undef unless defined $pref;
-
-	if (ref($pref) eq "ARRAY") {
-		($pref,$ind) = @$pref;
-	}
-
-	if (defined $value) {
-		return $client->prefSet($pref,$value,$ind);
-	} else {
-		return $client->prefGet($pref,$ind);
-	}
-}
-
-sub prefGet {
-	my $client = shift;
-	my $pref = shift;
-	my $ind = shift;
-
-	if (defined $ind) {
-		$client->prefGetInd($pref,$ind);
-	} else {
-		return $client->_prefs()->{$pref};
-	}
-}
-
-sub prefGetInd {
-	my $client = shift;
-	my $pref = shift;
-	my $index = shift;
-
-	my $prefs = $client->_prefs();
-
-	if (defined $prefs->{$pref}) {
-		if (ref $prefs->{$pref} eq 'ARRAY') {
-			return $prefs->{$pref}[$index];
-		} elsif (ref $prefs->{$pref} eq 'HASH') {
-			return $prefs->{$pref}{$index};
-		}
-	}
-	return undef;
-}
-
-sub prefGetArray {
-	my $client = shift;
-	my $arrayPref = shift;
-	
-	my $prefs = $client->_prefs();
-
-	if (defined($prefs->{$arrayPref}) && ref($prefs->{$arrayPref}) eq 'ARRAY') {
-		return @{$prefs->{$arrayPref}};
-	} else {
-		return ();
-	}
-}
-
-sub prefGetArrayMax{
-	my $client = shift;
-	my $arrayPref = shift;
-	
-	my $prefs = $client->_prefs();
-	
-	if (defined($prefs->{$arrayPref}) && ref($prefs->{$arrayPref}) eq 'ARRAY') {
-		my @prefArray = @{$prefs->{$arrayPref}};
-		my $max = $#prefArray;
-		return $max;
-	} else {
-		return undef;
-	}
-}
-
-sub prefGetHash {
-	my $client = shift;
-	my $hashPref = shift;
-	
-	my $prefs = $client->_prefs();
-
-	if (defined($prefs->{$hashPref}) && ref($prefs->{$hashPref}) eq 'HASH') {
-		return %{$prefs->{$hashPref}};
-	} else {
-		return ();
-	}
-}
-
-sub prefGetKeys {
-	my $client = shift;
-	my $hashPref = shift;
-	
-	my $prefs = $client->_prefs();
-
-	if (defined($prefs->{$hashPref}) && ref($prefs->{$hashPref}) eq 'HASH') {
-		return keys %{$prefs->{$hashPref}};
-	} else {
-		return ();
-	}
-}
-
-sub prefIsDefined {
-	my $client = shift;
-	my $key = shift;
-	my $ind = shift;
-	
-	my $prefs = $client->_prefs();
-	
-	if (defined($ind)) {
-		if (defined $prefs->{$key}) {
-			if (ref $prefs->{$key} eq 'ARRAY') {
-				return defined $prefs->{$key}[$ind];
-			} elsif (ref $prefs->{$key} eq 'HASH') {
-				return defined $prefs->{$key}{$ind};
-			}
-		}
-	}
-	return defined $prefs->{$key};
-}
-
-# using wrappers for methods which involve changing the preference
-# so that we don't have to worry about writing out the preferences
-
-=head2 prefSet( $client, $prefName, $value, $index )
-
-Sets the client preference to the specified value.
-
-See L<Slim::Utils::Prefs::set>
-
-=cut
-
-sub prefSet {
-	my $client = shift;
-	my $pref = shift;
-	my $value = shift;
-	my $ind = shift;
-	
-	return Slim::Utils::Prefs::set($pref,$value,$ind,$client,$client->_prefs());
-}
-
-=head2 prefPush( $client, $prefName, $value )
-
-Appends the value to the specified client array preference.
-
-=cut
-
-sub prefPush {
-	my $client = shift;
-	my $pref = shift;
-	my $value = shift;
-	
-	Slim::Utils::Prefs::push($pref,$value,$client->_prefs());
-}
-
-=head2 prefDelete( $client, $prefName, $index )
-
-Removes a client pref specified by the name and index.
-
-=cut
-
-sub prefDelete {
-	my $client = shift;
-	my $pref = shift;
-	my $ind = shift;
-	
-	Slim::Utils::Prefs::delete($pref,$ind,$client->_prefs());
-}
-
 =head2 masterOrSelf( $client )
 
 See L<Slim::Player::Sync> for more information.
@@ -1252,13 +1056,6 @@ Returns the client ID - in the form of a MAC Address.
 sub id {
 	my $r = shift;
 	@_ ? ($r->[0] = shift) : $r->[0];
-}
-
-# the _prefs method should not be used to access individual prefs
-# use the pref* methods for working with client prefs
-sub _prefs {
-	my $r = shift;
-	@_ ? ($r->[1] = shift) : $r->[1];
 }
 
 =head2 revision()
