@@ -99,13 +99,13 @@ sub getUdpClient {
 				Slim::Utils::Network::paddr2ipaddress($clientpaddr)
 			);
 
-			$client = Slim::Player::SLIMP3->new($id, $clientpaddr, $revision, $sock);			
+			$client = Slim::Player::SLIMP3->new($id, $clientpaddr, $revision, $sock);
 
 			$client->macaddress($mac);
 			$client->init;
 
 			# remember all slimp3 clients so we can say hello to them on next server startup
-			my %slimp3s = map { $_ => 1 } @{ $prefs->get('slimp3clients') };
+			my %slimp3 = map { $_ => 1 } @{ $prefs->get('slimp3clients') };
 
 			if (!$slimp3{$id}) {
 				$slimp3{$id} = 1;
