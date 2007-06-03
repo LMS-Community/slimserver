@@ -264,7 +264,10 @@ sub init {
 	$prefs->setValidate( 'dir',   qw(cachedir playlistdir audiodir artfolder) );
 	$prefs->setValidate( 'array', qw(guessFileFormats titleFormat disabledformats) );
 
-	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1024, 'high' => 65535 }, 'httpport'    );
+	# allow users to set a port below 1024 on windows which does not require admin for this
+	my $minP = Slim::Utils::OSDetect::OS() eq 'win' ? 1 : 1024;
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => $minP,'high'=> 65535 }, 'httpport'    );
+
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    3, 'high' =>    30 }, 'bufferSecs'  );
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    1, 'high' =>  4096 }, 'udpChunkSize');
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    1,                 }, 'itemsPerPage');
