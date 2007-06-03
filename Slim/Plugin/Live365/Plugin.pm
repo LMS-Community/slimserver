@@ -24,6 +24,7 @@ use strict;
 use Slim::Player::ProtocolHandlers;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Control::Request;
 
 # Need this to include the other modules now that we split up Live365.pm
@@ -39,6 +40,8 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'defaultLevel' => 'WARN',
 	'description'  => getDisplayName(),
 });
+
+my $prefs = preferences('plugin.live365');
 
 our $live365 = {};
 our %channelModeFunctions;
@@ -197,8 +200,8 @@ sub mainExitHandler {
 			$selection->[1] eq 'PLUGIN_LIVE365_BROWSEALL' && do {
 
 				$stationParams = {
-					'sort'	       => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
-					'searchfields' => Slim::Utils::Prefs::get( 'plugin_live365_search_fields' )
+					'sort'	       => $prefs->get( 'sort_order' ),
+					'searchfields' => $prefs->get( 'search_fields' )
 				};
 
 				$success = 1;
@@ -209,8 +212,8 @@ sub mainExitHandler {
 			$selection->[1] eq 'PLUGIN_LIVE365_BROWSEPICKS' && do {
 
 				$stationParams = {
-					'sort'	       => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
-					'searchfields' => Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
+					'sort'	       => $prefs->get( 'sort_order' ),
+					'searchfields' => $prefs->get( 'search_fields' ),
 					'genre'        => 'ESP'
 				};
 
@@ -222,8 +225,8 @@ sub mainExitHandler {
 			$selection->[1] eq 'PLUGIN_LIVE365_BROWSEPROS' && do {
 
 				$stationParams = {
-					'sort'	       => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
-					'searchfields' => Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
+					'sort'	       => $prefs->get( 'sort_order' ),
+					'searchfields' => $prefs->get( 'search_fields' ),
 					'genre'	       => 'Pro'
 				};
 
@@ -273,8 +276,8 @@ sub loginMode {
 	
 	my $silent = $args->{'silent'};
 
-	my $userID   = Slim::Utils::Prefs::get( 'plugin_live365_username' );
-	my $password = Slim::Utils::Prefs::get( 'plugin_live365_password' );
+	my $userID   = $prefs->get( 'username' );
+	my $password = $prefs->get( 'password' );
 	my $loggedIn = $live365->{$client}->isLoggedIn();
 
 	if (defined $password) {
@@ -316,8 +319,8 @@ sub loginDone {
 
 	if( $loginStatus == 0 ) {
 
-		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', $live365->{$client}->getSessionID() );
-		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', $live365->{$client}->getMemberStatus() );
+		$prefs->set( 'sessionid', $live365->{$client}->getSessionID() );
+		$prefs->set( 'memberstatus', $live365->{$client}->getMemberStatus() );
 
 		if (!$silent) {
 			$client->showBriefly({'line1' => $client->string( 'PLUGIN_LIVE365_LOGIN_SUCCESS' )});
@@ -329,8 +332,8 @@ sub loginDone {
 
 	} else {
 
-		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', undef );
-		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', undef );
+		$prefs->set( 'sessionid', undef );
+		$prefs->set( 'memberstatus', undef );
 
 		$client->showBriefly({'line1' => $client->string( $statusText[ $loginStatus ] )});
 
@@ -362,7 +365,7 @@ sub logoutDone {
 
 	$live365->{$client}->setLoggedIn( 0 );
 
-	Slim::Utils::Prefs::set( 'plugin_live365_sessionid', '' );
+	$prefs->set( 'sessionid', '' );
 }
 
 sub noLoginMode {
@@ -457,8 +460,8 @@ sub genreExitHandler {
 		
 		my $stationParams = {
 			'genre'	       => $genrePointer->[1],
-			'sort'         => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
-			'searchfields' => Slim::Utils::Prefs::get( 'plugin_live365_search_fields' )
+			'sort'         => $prefs->get( 'sort_order' ),
+			'searchfields' => $prefs->get( 'search_fields' )
 		};
 
 		Slim::Buttons::Common::pushModeLeft($client, 'Live365Channels', {
@@ -872,7 +875,7 @@ sub doSearch {
 
 	my $stationParams = {
 		'searchdesc'   => $searchString{$client},
-		'sort'         => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
+		'sort'         => $prefs->get( 'sort_order' ),
 		'searchfields' => $searchfields
 	};
 

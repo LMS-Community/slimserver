@@ -31,12 +31,15 @@ use Slim::Player::Source;
 use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
 # Need this to create a new API object
 use Slim::Plugin::Live365::Live365API;
 
 my $log = logger('plugin.live365');
+
+my $prefs = preferences('plugin.live365');
 
 # XXX: I don't believe new() is called at all when direct streaming
 sub new {
@@ -66,7 +69,7 @@ sub new {
 		# if our URL doesn't look like a handle, don't try to get a playlist
 		if ($handle =~ /[a-zA-Z]/) {
 
-			my $isVIP = Slim::Utils::Prefs::get( 'plugin_live365_memberstatus' );
+			my $isVIP = $prefs->get( 'memberstatus' );
 
 			Slim::Utils::Timers::setTimer(
 				$client,
@@ -126,7 +129,7 @@ sub canDirectStream {
 	# if our URL doesn't look like a handle, don't try to get a playlist
 	if ($handle =~ /[a-zA-Z]/) {
 
-		my $isVIP = Slim::Utils::Prefs::get( 'plugin_live365_memberstatus' );
+		my $isVIP = $prefs->get( 'memberstatus' );
 		
 		$log->debug("Setting getPlaylist timer.");
 		

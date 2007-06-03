@@ -8,6 +8,10 @@ package Slim::Plugin::Live365::Settings;
 use strict;
 use base qw(Slim::Web::Settings);
 
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('plugin.live365');
+
 sub name {
         return 'PLUGIN_LIVE365_MODULE_NAME';
 }
@@ -19,33 +23,28 @@ sub page {
 sub handler {
         my ($class, $client, $params) = @_;
 
-	my @prefs = qw(
-		plugin_live365_username
-		plugin_live365_password
-		plugin_live365_sort_order
-		plugin_live365_web_show_details
-	);
+	my @prefs = qw(username password sort_order web_show_details);
 
 	for my $pref (@prefs) {
 
 		if ($params->{'saveSettings'}) {
 
-			if ($pref eq 'plugin_live365_password') {
+			if ($pref eq 'password') {
 
 				$params->{$pref} = pack('u', $params->{$pref});
 
 				chomp($params->{$pref});
 			}
 
-			Slim::Utils::Prefs::set($pref, $params->{$pref});
+			$prefs->set($pref, $params->{$pref});
 		}
 
 		# Do we want to display the password?
-		if ($pref eq 'plugin_live365_password') {
+		if ($pref eq 'password') {
 			next;
 		}
 
-		$params->{'prefs'}->{$pref} = Slim::Utils::Prefs::get($pref);
+		$params->{'prefs'}->{$pref} = $prefs->get($pref);
         }
 
         return $class->SUPER::handler($client, $params);

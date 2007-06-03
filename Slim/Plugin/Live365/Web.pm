@@ -45,6 +45,7 @@ use File::Spec::Functions qw(:ALL);
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
 use Slim::Plugin::Live365::Live365API;
 
@@ -52,6 +53,8 @@ use constant ROWS_TO_RETRIEVE => 50;
 
 my $API = Slim::Plugin::Live365::Live365API->new;
 my $log = logger('plugin.live365');
+
+my $prefs = preferences('plugin.live365');
 
 #  Handle play or add actions on a station
 sub handleAction {
@@ -104,7 +107,7 @@ sub handleBrowseGenre {
 	# Errcode < 0 means normal completion with no async stuff needed.
 	if ($errcode != 0) {
 		if ($errcode > 0) {
-			$params->{'errmsg'} = "PLUGIN_LIVE365_LOADING_GENRES_ERROR";
+			$params->{'errmsg'} = "LOADING_GENRES_ERROR";
 		}
 		return handleIndex($client,$params);
 	}
@@ -141,9 +144,9 @@ sub startBrowseGenre {
 		$API->loadStationDirectory(
 			$genreid, $client, \&completeBrowseGenre, \&errorBrowseGenre, 0,
 			'genre'	       => $genreid,
-			'sort'         => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
+			'sort'         => $prefs->get( 'sort_order' ),
 			'rows'         => ROWS_TO_RETRIEVE,
-			'searchfields' => Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
+			'searchfields' => $prefs->get( 'search_fields' ),
 			@optionalFirstParam
 		);
 	}
@@ -167,7 +170,7 @@ sub completeBrowseGenre {
 
 		if (scalar @genreList == 0) {
 
-			$params->{'errmsg'} = "PLUGIN_LIVE365_LOADING_GENRES_ERROR";
+			$params->{'errmsg'} = "LOADING_GENRES_ERROR";
 			$body = handleIndex($client,$params);
 
 		} else {
@@ -217,10 +220,10 @@ sub errorBrowseGenre {
 	my $genreid    = $params->{'id'};
 
 	if ($genreid eq 'root') {
-		$params->{'errmsg'} = "PLUGIN_LIVE365_LOADING_GENRES_ERROR";
+		$params->{'errmsg'} = "LOADING_GENRES_ERROR";
 		$body = handleIndex($client,$params);
 	} else {
-		$params->{'errmsg'} = "PLUGIN_LIVE365_LOADING_GENRES_ERROR";
+		$params->{'errmsg'} = "LOADING_GENRES_ERROR";
 		$body = filltemplatefile("live365_browse.html", $params);
 	}
 
@@ -243,7 +246,7 @@ sub handleBrowseStation {
 	if ($errcode != 0) {
 
 		if ($errcode > 0) {
-			$params->{'errmsg'} = "PLUGIN_LIVE365_LOGIN_ERROR_ACTION";
+			$params->{'errmsg'} = "LOGIN_ERROR_ACTION";
 		}
 
 		return handleIndex($client,$params);
@@ -261,18 +264,18 @@ sub handleBrowseStation {
 }
 
 my %lookupStrings = (
-	"presets"     => "PLUGIN_LIVE365_PRESETS",
-	"picks"       => "PLUGIN_LIVE365_BROWSEPICKS",
-	"pro"         => "PLUGIN_LIVE365_BROWSEPROS",
-	"all"         => "PLUGIN_LIVE365_BROWSEALL",
-	"tac"         => "PLUGIN_LIVE365_SEARCH_TAC",
-	"artist"      => "PLUGIN_LIVE365_SEARCH_A",
-	"track"       => "PLUGIN_LIVE365_SEARCH_T",
-	"cd"          => "PLUGIN_LIVE365_SEARCH_C",
-	"station"     => "PLUGIN_LIVE365_SEARCH_E",
-	"location"    => "PLUGIN_LIVE365_SEARCH_L",
-	"broadcaster" => "PLUGIN_LIVE365_SEARCH_H",
-	"genres"      => "PLUGIN_LIVE365_BROWSEGENRES",
+	"presets"     => "PRESETS",
+	"picks"       => "BROWSEPICKS",
+	"pro"         => "BROWSEPROS",
+	"all"         => "BROWSEALL",
+	"tac"         => "SEARCH_TAC",
+	"artist"      => "SEARCH_A",
+	"track"       => "SEARCH_T",
+	"cd"          => "SEARCH_C",
+	"station"     => "SEARCH_E",
+	"location"    => "SEARCH_L",
+	"broadcaster" => "SEARCH_H",
+	"genres"      => "BROWSEGENRES",
 );
 
 my %lookupGenres = (
@@ -316,8 +319,8 @@ sub startBrowseStation {
 			\&completeBrowseStation,
 			\&errorBrowseStation,
 			0,
-			'sort'         => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
-			'searchfields' => Slim::Utils::Prefs::get( 'plugin_live365_search_fields' ),
+			'sort'         => $prefs->get( 'sort_order' ),
+			'searchfields' => $prefs->get( 'search_fields' ),
 			'rows'         => ROWS_TO_RETRIEVE,
 			'genre'	       => $lookupGenres{$brtype},
 			@optionalFirstParam
@@ -351,9 +354,9 @@ sub errorBrowseStation {
 	my $params = $fullparams->{'params'};
 	
         if ($API->isLoggedIn()) {
-                $params->{'errmsg'} = "PLUGIN_LIVE365_NOSTATIONS";
+                $params->{'errmsg'} = "NOSTATIONS";
         } else {
-                $params->{'errmsg'} = "PLUGIN_LIVE365_NOT_LOGGED_IN";
+                $params->{'errmsg'} = "NOT_LOGGED_IN";
         }
 
 	my $body = handleIndex($client,$params);
@@ -398,7 +401,7 @@ sub buildStationBrowseHTML {
 	# If we have nothing to show, show an error.
 	if ($totalcount == 0) {
 
-		$params->{'errmsg'} = "PLUGIN_LIVE365_NOSTATIONS";
+		$params->{'errmsg'} = "NOSTATIONS";
 
 	} else {
 	
@@ -467,7 +470,7 @@ sub handleBrowse {
 	my ($client, $params) = @_;
 
 	if (!($API->isLoggedIn())) {
-		$params->{'errmsg'} = "PLUGIN_LIVE365_NOT_LOGGED_IN";
+		$params->{'errmsg'} = "NOT_LOGGED_IN";
 		return handleIndex(@_);
 	}
 
@@ -478,7 +481,7 @@ sub handleBrowse {
 	$params->{'pwd_list'} = [
 		{
 			'hreftype' => 'Live365Index',
-			'title' => string("PLUGIN_LIVE365_MODULE_NAME"),
+			'title' => string("MODULE_NAME"),
 		},
 		{
 			'hreftype' => 'Live365Browse',
@@ -507,7 +510,7 @@ sub handleSearch {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
 
 	if (!($API->isLoggedIn())) {
-		$params->{'errmsg'} = "PLUGIN_LIVE365_NOT_LOGGED_IN";
+		$params->{'errmsg'} = "NOT_LOGGED_IN";
 		return handleIndex(@_);
 	}
 
@@ -518,11 +521,11 @@ sub handleSearch {
 	$params->{'pwd_list'} = [
 		{
 			'hreftype' => 'Live365Index',
-			'title' => string("PLUGIN_LIVE365_MODULE_NAME"),
+			'title' => string("MODULE_NAME"),
 		},
 		{
 			'hreftype' => 'Live365Search',
-			'title' => string("PLUGIN_LIVE365_SEARCH"),
+			'title' => string("SEARCH"),
 			'type' => $brtype,
 		},
 	];
@@ -543,7 +546,7 @@ sub handleSearch {
 	if ($errcode != 0) {
 
 		if ($errcode > 0) {
-			$params->{'errmsg'} = "PLUGIN_LIVE365_NOSTATIONS";
+			$params->{'errmsg'} = "NOSTATIONS";
 		}
 
 		return filltemplatefile("live365_search.html", $params);
@@ -602,7 +605,7 @@ sub startSearch {
 		\&completeSearch,
 		\&errorSearch,
 		0,
-		'sort'         => Slim::Utils::Prefs::get( 'plugin_live365_sort_order' ),
+		'sort'         => $prefs->get( 'sort_order' ),
 		'searchfields' => $lookupSearchFields{$type},
 		'rows'         => ROWS_TO_RETRIEVE,
 		'searchdesc'   => $query,
@@ -619,7 +622,7 @@ sub completeSearch {
 	my $params = $fullparams->{'params'};
 	my $brtype = $params->{'type'};
 
-	my $showDetails = Slim::Utils::Prefs::get( 'plugin_live365_web_show_details' );
+	my $showDetails = $prefs->get( 'web_show_details' );
 
 	push @{$params->{'pwd_list'}}, {
 		'hreftype' => 'Live365Search',
@@ -642,7 +645,7 @@ sub errorSearch {
 
 	my $fullparams = fetchAsyncRequest('xxx','search');
 	my $params = $fullparams->{'params'};
-	$params->{'errmsg'} = "PLUGIN_LIVE365_NOSTATIONS";
+	$params->{'errmsg'} = "NOSTATIONS";
 
 	my $body = filltemplatefile("live365_search.html", $params);
 		
@@ -731,7 +734,7 @@ sub handleLogin {
 	if ($errcode != 0) {
 
 		if ($errcode > 0) {
-			$params->{'errmsg'} = "PLUGIN_LIVE365_NO_CREDENTIALS";
+			$params->{'errmsg'} = "NO_CREDENTIALS";
 		}
 
 		return handleIndex($client,$params);
@@ -741,13 +744,13 @@ sub handleLogin {
 }
 
 my @login_statusText = qw(
-	PLUGIN_LIVE365_LOGIN_SUCCESS
-	PLUGIN_LIVE365_LOGIN_ERROR_NAME
-	PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
-	PLUGIN_LIVE365_LOGIN_ERROR_ACTION
-	PLUGIN_LIVE365_LOGIN_ERROR_ORGANIZATION
-	PLUGIN_LIVE365_LOGIN_ERROR_SESSION
-	PLUGIN_LIVE365_LOGIN_ERROR_HTTP
+	LOGIN_SUCCESS
+	LOGIN_ERROR_NAME
+	LOGIN_ERROR_LOGIN
+	LOGIN_ERROR_ACTION
+	LOGIN_ERROR_ORGANIZATION
+	LOGIN_ERROR_SESSION
+	LOGIN_ERROR_HTTP
 );
 
 sub doLoginLogout {
@@ -755,8 +758,8 @@ sub doLoginLogout {
 	
 	my $action = $params->{'action'};
 
-	my $userID   = Slim::Utils::Prefs::get( 'plugin_live365_username' );
-	my $password = Slim::Utils::Prefs::get( 'plugin_live365_password' );
+	my $userID   = $prefs->get( 'username' );
+	my $password = $prefs->get( 'password' );
 
 	if (defined $password) {
 		$password = unpack('u', $password);
@@ -797,8 +800,8 @@ sub webLoginDone {
 
 	if( $loginStatus == 0 ) {
 
-		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', $API->getSessionID() );
-		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', $API->getMemberStatus() );
+		$prefs->set( 'sessionid', $API->getSessionID() );
+		$prefs->set( 'memberstatus', $API->getMemberStatus() );
 
 		$API->setLoggedIn( 1 );
 
@@ -806,8 +809,8 @@ sub webLoginDone {
 
 	} else {
 
-		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', undef );
-		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', undef );
+		$prefs->set( 'sessionid', undef );
+		$prefs->set( 'memberstatus', undef );
 
 		$API->setLoggedIn( 0 );
 
@@ -826,7 +829,7 @@ sub webLogoutDone {
 
 	$API->setLoggedIn( 0 );
 
-	Slim::Utils::Prefs::set( 'plugin_live365_sessionid', '' );
+	$prefs->set( 'sessionid', '' );
 
 	#my $params = fetchAsyncRequest($client->id(),'login');
 	my $params = fetchAsyncRequest('xxx', 'login');
@@ -899,8 +902,8 @@ sub cli_login {
 	my $request = shift;
 	
 	# get user and password
-	my $userID   = Slim::Utils::Prefs::get( 'plugin_live365_username' );
-	my $password = Slim::Utils::Prefs::get( 'plugin_live365_password' );
+	my $userID   = $prefs->get( 'username' );
+	my $password = $prefs->get( 'password' );
 
 	# unpack pwd
 	if (defined $password) {
@@ -929,8 +932,8 @@ sub cli_login_cb {
 
 	if( $loginStatus == 0 ) {
 
-		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', $API->getSessionID() );
-		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', $API->getMemberStatus() );
+		$prefs->set( 'sessionid', $API->getSessionID() );
+		$prefs->set( 'memberstatus', $API->getMemberStatus() );
 
 		$API->setLoggedIn( 1 );
 
@@ -938,8 +941,8 @@ sub cli_login_cb {
 
 	} else {
 
-		Slim::Utils::Prefs::set( 'plugin_live365_sessionid', undef );
-		Slim::Utils::Prefs::set( 'plugin_live365_memberstatus', undef );
+		$prefs->set( 'sessionid', undef );
+		$prefs->set( 'memberstatus', undef );
 
 		$API->setLoggedIn( 0 );
 
@@ -1103,7 +1106,7 @@ sub cli_stationsQuery {
 			$sort = $cli_sort_lookup{$sort};
 		}
 		else {
-			$sort = Slim::Utils::Prefs::get( 'plugin_live365_sort_order' );
+			$sort = $prefs->get( 'sort_order' );
 		}
 		
 		# use default search field of lookup definition
@@ -1111,7 +1114,7 @@ sub cli_stationsQuery {
 			$queryf = $lookupSearchFields{$queryf};
 		}
 		else {
-			$queryf = Slim::Utils::Prefs::get( 'plugin_live365_search_fields' );
+			$queryf = $prefs->get( 'search_fields' );
 		}
 	
 		# make sure genre is defined
