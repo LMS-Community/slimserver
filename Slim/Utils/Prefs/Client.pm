@@ -48,13 +48,13 @@ sub new {
 
 			if ($parent->{'migratecb'}->{ $version }->($class, $client)) {
 
-				$log->info("migrating client prefs $parent->{'namespace'}::$class->{'clientid'} to version $version");
+				$log->info("migrating client prefs $parent->{'namespace'}:$class->{'clientid'} to version $version");
 
 				$class->{'prefs'}->{'_version'} = $version;
 
 			} else {
 
-				$log->warn("failed to migrate client prefs for $parent->{'namespace'}::$class->{'clientid'} to version $version");
+				$log->warn("failed to migrate client prefs for $parent->{'namespace'}:$class->{'clientid'} to version $version");
 			}
 		}
 	}
