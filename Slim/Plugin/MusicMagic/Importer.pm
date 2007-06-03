@@ -207,7 +207,7 @@ sub exportSongs {
 
 		$log->info("Fetching ALL song data via songs/extended..");
 
-		my $MMMSongData = catdir( Slim::Utils::Prefs::get('cachedir'), 'mmm-song-data.txt' );
+		my $MMMSongData = catdir( preferences('server')->get('cachedir'), 'mmm-song-data.txt' );
 
 		my $MMMDataURL  = "http://$MMSHost:$MMSport/api/songs?extended";
 

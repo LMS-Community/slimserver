@@ -21,6 +21,8 @@ use Getopt::Long;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
+my $prefs = preferences('server');
+
 sub main {
 
 	my $prefsFile = undef;
@@ -35,9 +37,9 @@ sub main {
 	Slim::Utils::Prefs::init();
 	Slim::Utils::Prefs::load($prefsFile);
 
-	my $source   = sprintf(Slim::Utils::Prefs::get('dbsource'), 'slimserver');
-	my $username = Slim::Utils::Prefs::get('dbusername');
-	my $password = Slim::Utils::Prefs::get('dbpassword');
+	my $source   = sprintf($prefs->get('dbsource'), 'slimserver');
+	my $username = $prefs->get('dbusername');
+	my $password = $prefs->get('dbpassword');
 
 	DBI::Shell->new($source, $username, $password)->run;
 }

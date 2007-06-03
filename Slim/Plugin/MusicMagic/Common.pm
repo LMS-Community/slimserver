@@ -28,7 +28,7 @@ sub convertPath {
 	}
 	
 	my $remoteRoot = $prefs->get('remote_root');
-	my $nativeRoot = Slim::Utils::Prefs::get('audiodir');
+	my $nativeRoot = preferences('server')->get('audiodir');
 	my $original   = $mmsPath;
 	my $winPath    = $mmsPath =~ m/\\/; # test if this is a windows path
 

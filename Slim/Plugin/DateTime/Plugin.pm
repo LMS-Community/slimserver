@@ -153,7 +153,7 @@ sub screensaverDateTimelines {
 # BUG 3964: comment out until Dean has a final word on the UI for this.	
 # 	if ($client->display->hasScreen2) {
 # 		if ($client->display->linesPerScreen == 1) {
-# 			$display->{'screen2'}->{'center'} = [undef,Slim::Utils::DateTime::longDateF(undef,Slim::Utils::Prefs::get('screensaverDateFormat'))];
+# 			$display->{'screen2'}->{'center'} = [undef,Slim::Utils::DateTime::longDateF(undef,$prefs->get('dateformat'))];
 # 		} else {
 # 			$display->{'screen2'} = {};
 # 		}
