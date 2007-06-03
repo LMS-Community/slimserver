@@ -37,6 +37,7 @@ BEGIN {
 
 	if ($^O =~ /Win32/) {
 		require Win32;
+		require Win32::FileSecurity;
 	}
 }
 
@@ -163,6 +164,10 @@ sub dirsFor {
 				push @dirs, "$ENV{'HOME'}/Library/Logs/SlimServer";
 			}
 
+		} elsif ($dir eq 'cache') {
+
+			push @dirs, catdir($ENV{'HOME'}, '/Library/Caches/SlimServer');
+
 		} else {
 
 			push @dirs, catdir($Bin, $dir);
@@ -241,9 +246,33 @@ sub dirsFor {
 			Slim::Utils::Misc::errorMsg("dirsFor: Didn't find a match request: [$dir]\n");
 		}
 
+	} elsif (isVista()) {
+
+		# Windows Vista - need to store files which the server writes outside the $Bin directory
+		if ($dir =~ /^(?:strings|revision|convert|types)$/) {
+
+			push @dirs, $Bin;
+
+		} elsif ($dir eq 'log') {
+
+			push @dirs, vistaWritablePath('Logs');
+
+		} elsif ($dir eq 'cache') {
+
+			push @dirs, vistaWritablePath('Cache');
+
+		} elsif ($dir eq 'prefs') {
+
+			push @dirs, vistaWritablePath('prefs');
+
+		} else {
+
+			push @dirs, catdir($Bin, $dir);
+		}
+
 	} else {
 
-		# Everyone else - Windows, and *nix.
+		# Everyone else - Windows 2000/XP, and *nix.
 		if ($dir =~ /^(?:strings|revision|convert|types)$/) {
 
 			push @dirs, $Bin;
@@ -251,6 +280,10 @@ sub dirsFor {
 		} elsif ($dir eq 'log') {
 
 			push @dirs, catdir($Bin, 'Logs');
+
+		} elsif ($dir eq 'cache') {
+
+			push @dirs, catdir($Bin, 'Cache');
 
 		} else {
 
@@ -297,6 +330,15 @@ sub isRHELorFC {
 	}
 
 	return 0;
+}
+
+sub isVista {
+
+	# Initialize
+	my $OS      = OS();
+	my $details = details();
+
+	return ($OS eq 'win' && $details->{'osName'} =~ /Vista/) ? 1 : 0;
 }
 
 sub initDetailsForWin32 {
@@ -399,6 +441,51 @@ sub initDetailsForUnix {
 	$osDetails{'osName'} = $Config{'osname'} || 'Unix';
 	$osDetails{'uid'}    = getpwuid($>);
 	$osDetails{'osArch'} = $Config{'myarchname'};
+}
+
+
+# Return a path which is expected to be writable by all users on Vista without virtualisation
+# this should mean that the server always sees consistent versions of files under this path
+
+# NB on vista, if a normal user saves a file under C:\Program Files, this is virtualised and the
+# actual file is saved as \User\<username>\AppData\Local\VirtualStore\Program File\<rest of path>
+# This means that different users see different version of the same file.  We therefore try to avoid
+# this by not storing writable files under C:\Program Files...
+
+sub vistaWritablePath {
+	my $folder = shift;
+
+	# store files in %ALLUSERSPROFILE%\SlimServer - normally C:\ProgramData\SlimServer
+	my $root = catdir($ENV{'ALLUSERSPROFILE'}, 'SlimServer');
+	my $path = catdir($root, $folder);
+
+	return $path if -d $path;
+
+	if (! -d $root) {
+		mkdir $root;
+		_vistaOpenPath($root);
+	}
+
+	mkdir $path;
+	_vistaOpenPath($path);
+
+	return $path;
+}
+
+sub _vistaOpenPath {
+	my $path = shift;
+
+	my %perms;
+
+	Win32::FileSecurity::Get($path, \%perms);
+
+	# set file security to open for all users on system
+	# this should probably be changed to only cover locally defined users?
+	for my $uid (keys %perms) {
+		$perms{$uid} = Win32::FileSecurity::MakeMask( qw( FULL  GENERIC_ALL ) );
+	}
+
+	Win32::FileSecurity::Set($path, \%perms);
 }
 
 1;

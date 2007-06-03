@@ -93,9 +93,17 @@ sub _oldPath {
 
 		$oldPrefs = catdir($ENV{'HOME'}, 'Library', 'SlimDevices', 'slimserver.pref');
 
-	} elsif (Slim::Utils::OSDetect::OS() eq 'win' && -r catdir($Bin, 'slimserver.pref'))  {
+	} elsif (Slim::Utils::OSDetect::OS() eq 'win') {
 
-		$oldPrefs = catdir($Bin, 'slimserver.pref');
+		if (Slim::Utils::OSDetect::isVista() && -r catdir(Slim::Utils::OSDetect::vistaWritablePath(), 'slimserver.pref')) {
+
+			$oldPrefs = catdir(Slim::Utils::OSDetect::vistaWritablePath(), 'slimserver.pref');
+
+		} elsif (!Slim::Utils::OSDetect::isVista() && -r catdir($Bin, 'slimserver.pref'))  {
+
+			$oldPrefs = catdir($Bin, 'slimserver.pref');
+
+		}
 
 	} elsif (-r '/etc/slimserver.conf') {
 

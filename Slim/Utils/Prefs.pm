@@ -438,18 +438,7 @@ sub defaultPlaylistDir {
 }
 
 sub defaultCacheDir {
-	my $CacheDir = catdir($Bin,'Cache');
-
-	my $os = Slim::Utils::OSDetect::OS();
-
-	if ($os eq 'mac') {
-
-		$CacheDir = catdir($ENV{'HOME'}, '/Library/Caches/SlimServer');
-
-	} elsif ($os eq 'unix') {
-
-		$CacheDir = catdir($ENV{'HOME'},'Cache');
-	}
+	my $CacheDir = Slim::Utils::OSDetect::dirsFor('cache');
 
 	my @CacheDirs = splitdir($CacheDir);
 	pop @CacheDirs;

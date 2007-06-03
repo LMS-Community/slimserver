@@ -208,7 +208,7 @@ sub startServer {
 
 		my %status = ();
 
-        	Win32::Service::GetStatus('', $serviceName, \%status);
+		Win32::Service::GetStatus('', $serviceName, \%status);
 
 		if ($status{'CurrentState'} == 0x04) {
 
@@ -232,7 +232,7 @@ sub startServer {
 		$log->logdie("FATAL: Couldn't find a executable for 'mysqld'! Exiting.");
 	};
 
-	my $confFile = $class->confFile;                                                                                                                    
+	my $confFile = $class->confFile;
 	my $process  = undef;
 
 	# Bug: 3461
@@ -251,27 +251,23 @@ sub startServer {
 
 		my %status = ();
 
-        	Win32::Service::GetStatus('', $serviceName, \%status);
+		Win32::Service::GetStatus('', $serviceName, \%status);
 
-		# Install the service, if it isn't.
-       		if (scalar keys %status == 0) {
+		# Attempt to install the service, if it isn't.
+		# NB mysqld fails immediately if install is not allowed by user account so don't add this to @commands
+		if (scalar keys %status == 0) {
 
-			push @commands, ("--install $serviceName", pop @commands);
-
-			system(join(' ', @commands));
-
-        		Win32::Service::GetStatus('', $serviceName, \%status);
-
-       			if (scalar keys %status == 0) {
-
-				logError("Couldn't install MySQL as a service! Will run as a process!");
-				$service = 0;
-			}
+			system( sprintf "%s --install %s %s", $commands[0], $serviceName, $commands[1] );
 		}
 
-		if ($service) {
+		Win32::Service::StartService('', $serviceName);
 
-			Win32::Service::StartService('', $serviceName);
+		Win32::Service::GetStatus('', $serviceName, \%status);
+
+		if (scalar keys %status == 0 || ($status{'CurrentState'} != 0x02 && $status{'CurrentState'} != 0x04)) {
+
+			logError("Couldn't install MySQL as a service! Will run as a process!");
+			$service = 0;
 		}
 	}
 
@@ -323,10 +319,10 @@ sub stopServer {
 	if ($OS eq 'win') {
 
 		my %status = ();
-
+		
 		Win32::Service::GetStatus('', $serviceName, \%status);
 
-       		if (scalar keys %status != 0) {
+		if (scalar keys %status != 0 && ($status{'CurrentState'} == 0x02 || $status{'CurrentState'} == 0x04)) {
 
 			$log->info("Running service shutdown.");
 
@@ -334,7 +330,7 @@ sub stopServer {
 
 				return;
 			}
-
+			
 			$log->warn("Running service shutdown failed!");
 		}
 	}
