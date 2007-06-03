@@ -28,9 +28,11 @@ sub new {
 	my $class   = shift;
 	my $source  = shift;
 	my $command = shift;
-	
+	my $local = shift;  # flag to indicate that pipeline is used for transcoding of local files and pipeline should not close on pause
+
 	my $self = $class->SUPER::new();
 	my ($reader, $writer);
+
 	if ($^O =~ /Win32/) {
 
 		my $listenReader = IO::Socket::INET->new(
@@ -68,8 +70,22 @@ sub new {
 
 		my $newcommand = '"' . Slim::Utils::Misc::findbin('socketwrapper') .  '" ';
 
+		my $createMode = Win32::Process::NORMAL_PRIORITY_CLASS() | Win32::Process::CREATE_NO_WINDOW();
+
+		if ($log->is_info || $log->is_debug) {
+
+			$newcommand .= $log->is_debug ? ' -D ' : ' -d ';       # socketwrapper debugging (-D = verbose)
+
+			$createMode = Win32::Process::NORMAL_PRIORITY_CLASS(); # create window so it is seen
+		}
+
+
 		if ($listenWriter) {
 			$newcommand .= '-i ' . $writerPort . ' ';
+		}
+
+		if (!$local) {
+			$newcommand .= ' -w ';                                 # enable checking of stream in socketwrapper
 		}
 
 		$newcommand .=  '-o ' . $readerPort . ' -c "' .  $command . '"';
@@ -85,7 +101,7 @@ sub new {
 			Slim::Utils::Misc::findbin("socketwrapper"),
 			$newcommand,
 			0,
-			Win32::Process::CREATE_NO_WINDOW() | Win32::Process::NORMAL_PRIORITY_CLASS(),
+			$createMode,
 			".")
 		) {
 

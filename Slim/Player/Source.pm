@@ -1853,7 +1853,7 @@ sub openSong {
 			# that, since it calls Win32::Process::Create()
 			if (Slim::Utils::OSDetect::OS() eq 'win' && Slim::Utils::Misc::runningAsService()) {
 
-				my $pipeline = Slim::Player::Pipeline->new(undef, $command);
+				my $pipeline = Slim::Player::Pipeline->new(undef, $command, 'local');
 
 				if (!defined($pipeline)) {
 
