@@ -41,7 +41,7 @@ my $log = logger('player.source');
 my $prefs = preferences('server');
 
 use constant STATUS_STREAMING => 0;
-use constant STATUS_PLAYING => 1;
+use constant STATUS_PLAYING   => 1;
 
 sub systell {
 	$_[0]->sysseek(0, SEEK_CUR) if $_[0]->can('sysseek');
@@ -593,6 +593,14 @@ sub decoderUnderrun {
 	# in the case that we're starting up a digital input, 
 	# we want to defer until the output underruns, not the decoder
 	return if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::song($client, nextsong($client))));
+	
+	# Bug 5103, the firmware can handle only 2 tracks at a time: one playing and one streaming,
+	# and on very short tracks we may get multiple decoder underrun events during playback of a single
+	# track.  We need to ignore decoder underrun events if there's already a streaming track in the queue
+	if ( scalar @{ $client->currentsongqueue } > 1 ) {
+		$::d_source && msg( $client->id . ": Ignoring decoder underrun, player already has 2 tracks\n" );
+		return;
+	}
 
 	my $skipaheadCallback = sub {
 		if (!Slim::Player::Sync::isSynced($client) &&
@@ -1379,6 +1387,16 @@ sub trackStartEvent {
 	);
 
 	$log->info("Song queue is now " . join(',', map { $_->{'index'} } @$queue));
+	
+	# Bug 5103
+	# We can now start streaming the next track, if the player was already handling
+	# 2 tracks the last time we got a decoder underrun event
+	if (   !Slim::Player::Sync::isSynced($client)
+		&& ( $client->rate() == 0 || $client->rate() == 1 )
+		&& ( $client->playmode eq 'playout-play' )
+	) {
+		skipahead($client);
+	}
 }
 
 # nextsong is for figuring out what the next song will be.
