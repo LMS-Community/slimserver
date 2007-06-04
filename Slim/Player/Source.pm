@@ -598,7 +598,7 @@ sub decoderUnderrun {
 	# and on very short tracks we may get multiple decoder underrun events during playback of a single
 	# track.  We need to ignore decoder underrun events if there's already a streaming track in the queue
 	if ( scalar @{ $client->currentsongqueue } > 1 ) {
-		$::d_source && msg( $client->id . ": Ignoring decoder underrun, player already has 2 tracks\n" );
+		$log->info( $client->id, ': Ignoring decoder underrun, player already has 2 tracks' );
 		return;
 	}
 
