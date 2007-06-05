@@ -597,16 +597,23 @@ sub decoderUnderrun {
 	# Bug 5103, the firmware can handle only 2 tracks at a time: one playing and one streaming,
 	# and on very short tracks we may get multiple decoder underrun events during playback of a single
 	# track.  We need to ignore decoder underrun events if there's already a streaming track in the queue
+	
+	# XXX: This probably breaks the async handling below
 	if ( scalar @{ $client->currentsongqueue } > 1 ) {
 		$log->info( $client->id, ': Ignoring decoder underrun, player already has 2 tracks' );
 		return;
 	}
+	
+	my $playmode = $client->playmode();
+	if ( $playmode eq 'pause' ) {
+		$playmode = $client->prevPlaymode();
+	}
 
 	my $skipaheadCallback = sub {
-		if (!Slim::Player::Sync::isSynced($client) &&
-			($client->rate() == 0 || $client->rate() == 1) &&
-			($client->playmode eq 'playout-play')) {
-
+		if (   !Slim::Player::Sync::isSynced($client)
+			&& ( $client->rate() == 0 || $client->rate() == 1 )
+			&& ( $playmode eq 'playout-play' )
+		) {
 			skipahead($client);
 		}
 	};
@@ -640,15 +647,20 @@ sub underrun {
 	# if we're synced, then we tell the player to stop and then let resync restart us.
 	
 	my $underrunCallback = sub {
+		my $playmode = $client->playmode();
+		if ( $playmode eq 'pause' ) {
+			$playmode = $client->prevPlaymode();
+		}
+		
 		if (Slim::Player::Sync::isSynced($client)) {
-
-			if ($client->playmode =~ /playout/) {
+			if ($playmode =~ /playout/) {
 				$client->stop();
 			}
-
+		} elsif ($playmode eq 'playout-play') {
+			
 			skipahead($client);
-
-		} elsif ($client->playmode eq 'playout-stop') {
+			
+		} elsif ($playmode eq 'playout-stop') {
 
 			playmode($client, 'stop');
 			streamingSongIndex($client, 0, 1);
@@ -1149,20 +1161,37 @@ sub gotoNext {
 			$client, Slim::Player::Playlist::song($client, $nextsong)
 		);
 		
+		# Determine the current playmode or if paused, the previous playmode
+		my $playmode = $client->playmode();
+		if ( $playmode eq 'pause' ) {
+			$playmode = $client->prevPlaymode();
+		}
+		
 		# here's where we decide whether to start the next song in a new stream after playing out
 		# the current song or to just continue streaming
-		if (($client->playmode() eq 'play') && 
-			(($oldstreamformat ne $newstreamformat) || 
-			Slim::Player::Sync::isSynced($client) || 
-			 $client->isa("Slim::Player::Squeezebox2") ||
-			($client->rate() != 1))) {
+		if (
+			( $playmode eq 'play' )
+			&& 
+			(
+				   ( $oldstreamformat ne $newstreamformat )
+				|| Slim::Player::Sync::isSynced($client) 
+			 	|| $client->isa("Slim::Player::Squeezebox2")
+				|| ( $client->rate() != 1 )
+			)
+		) {
 
 			$log->info(
 				"Playing out before starting next song. (old format: ",
 				"$oldstreamformat, new: $newstreamformat)"
 			);
 
-			playmode($client, 'playout-play');
+			if ( $client->playmode() eq 'pause' ) {
+				# XXX: This may not work, playmode() does lots of other stuff
+				$client->prevPlaymode( 'playout-play' );
+			}
+			else {
+				playmode($client, 'playout-play');
+			}
 			
 			# We're done streaming the song, so drop the streaming
 			# connection to the client.
@@ -1391,9 +1420,14 @@ sub trackStartEvent {
 	# Bug 5103
 	# We can now start streaming the next track, if the player was already handling
 	# 2 tracks the last time we got a decoder underrun event
+	my $playmode = $client->playmode();
+	if ( $playmode eq 'pause' ) {
+		$playmode = $client->prevPlaymode();
+	}
+	
 	if (   !Slim::Player::Sync::isSynced($client)
 		&& ( $client->rate() == 0 || $client->rate() == 1 )
-		&& ( $client->playmode eq 'playout-play' )
+		&& ( $playmode eq 'playout-play' )
 	) {
 		skipahead($client);
 	}
