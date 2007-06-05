@@ -218,6 +218,7 @@ sub new {
 	$client->[113] = {}; # pendingPrefChanges
 	$client->[114] = 0; # bufferStarted, tracks when players begin buffering/rebuffering
 	$client->[115] = undef; # prevPlaymode, previous play mode when paused
+	$client->[116] = 0; # streamAtTrackStart, Source.pm flag indicating we should start streaming the next track on a track start event
 	$client->[117] = undef; # metaTitle, current remote stream metadata title
 	$client->[118] = undef; # SN session ID
 	$client->[119] = 1; # showBuffering
@@ -1577,6 +1578,11 @@ sub bufferStarted {
 sub prevPlaymode {
 	my $r = shift;
 	@_ ? ($r->[115] = shift) : $r->[115];
+}
+
+sub streamAtTrackStart {
+	my $r = shift;
+	@_ ? ($r->[116] = shift) : $r->[116];
 }
 
 sub metaTitle {

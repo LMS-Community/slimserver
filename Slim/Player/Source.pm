@@ -601,8 +601,18 @@ sub decoderUnderrun {
 	# XXX: This probably breaks the async handling below
 	if ( scalar @{ $client->currentsongqueue } > 1 ) {
 		$log->info( $client->id, ': Ignoring decoder underrun, player already has 2 tracks' );
+		
+		# Flag this situation so we know to load the next track on the next track start event
+		$client->streamAtTrackStart(1);
+		
 		return;
 	}
+	
+	streamNextTrack($client);
+}
+
+sub streamNextTrack {
+	my $client = shift;
 	
 	my $playmode = $client->playmode();
 	if ( $playmode eq 'pause' ) {
@@ -1420,16 +1430,11 @@ sub trackStartEvent {
 	# Bug 5103
 	# We can now start streaming the next track, if the player was already handling
 	# 2 tracks the last time we got a decoder underrun event
-	my $playmode = $client->playmode();
-	if ( $playmode eq 'pause' ) {
-		$playmode = $client->prevPlaymode();
-	}
-	
-	if (   !Slim::Player::Sync::isSynced($client)
-		&& ( $client->rate() == 0 || $client->rate() == 1 )
-		&& ( $playmode eq 'playout-play' )
-	) {
-		skipahead($client);
+	if ( $client->streamAtTrackStart() ) {
+		
+		streamNextTrack($client);
+		
+		$client->streamAtTrackStart(0);
 	}
 }
 
