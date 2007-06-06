@@ -594,12 +594,33 @@ sub decoderUnderrun {
 	# we want to defer until the output underruns, not the decoder
 	return if (Slim::Music::Info::isDigitalInput(Slim::Player::Playlist::song($client, nextsong($client))));
 	
+	my $queue = $client->currentsongqueue();
+	
+	# If the song that was underrun was not yet playing, mark it as played
+	my $song = streamingSong($client);
+	if ( $song->{status} == STATUS_STREAMING ) {
+		$log->info('Track failed before playback, marking as played');
+		
+		markStreamingTrackAsPlayed($client);
+		
+		# If we now have 2 tracks in the queue, pop the failed one off,
+		# so we are able to continue with the next track
+		if ( scalar @{$queue} > 1 ) {
+			pop @{$queue};
+		}
+		
+		# If the track that failed was the final one, stop
+		if ( noMoreValidTracks($client) ) {
+			playmode( $client, 'stop' );
+		}
+	}
+	
 	# Bug 5103, the firmware can handle only 2 tracks at a time: one playing and one streaming,
 	# and on very short tracks we may get multiple decoder underrun events during playback of a single
 	# track.  We need to ignore decoder underrun events if there's already a streaming track in the queue
 	
 	# XXX: This probably breaks the async handling below
-	if ( scalar @{ $client->currentsongqueue } > 1 ) {
+	if ( scalar @{$queue} > 1 ) {
 		$log->info( $client->id, ': Ignoring decoder underrun, player already has 2 tracks' );
 		
 		# Flag this situation so we know to load the next track on the next track start event
