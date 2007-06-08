@@ -23,6 +23,9 @@ use Slim::Networking::Select;
 use Slim::Networking::Async::Socket::UDP;
 use Slim::Utils::Log;
 
+# A global socket that listens for UPnP events
+our $sock;
+
 # all devices we currently know about
 our $devices = {};
 
@@ -57,7 +60,7 @@ MX: $mx
 
 	$ssdp_header =~ s/\r?\n/\015\012/g;
 	
-	my $sock = Slim::Networking::Async::Socket::UDP->new(
+	$sock = Slim::Networking::Async::Socket::UDP->new(
 		LocalPort => $Net::UPnP::SSDP_PORT,
 		ReuseAddr => 1,
 	);
@@ -80,6 +83,23 @@ MX: $mx
 	
 	# send the search query
 	$sock->mcast_send( $ssdp_header, $mcast_addr );
+}
+
+# Stop listening for UPnP events
+sub shutdown {
+	my $class = shift;
+	
+	if ( defined $sock ) {
+		Slim::Networking::Select::removeRead( $sock );
+	
+		$sock->close;
+	
+		$sock = undef;
+	}
+	
+	while ( my ($udn, $device) = each %{$devices} ) {
+		removeDevice( $device );
+	}
 }
 
 # A way for other code to remove a device

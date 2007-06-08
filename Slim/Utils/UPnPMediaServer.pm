@@ -22,9 +22,14 @@ use Slim::Utils::IPDetect;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 
+our %devices             = ();
 our $registeredCallbacks = [];
 
+my $log = logger('network.upnp');
+
 sub init {
+	$log->info('UPnP: Starting up');
+	
 	Slim::Buttons::BrowseUPnPMediaServer::init();
 	Slim::Web::UPnPMediaServer::init();
 	
@@ -35,10 +40,20 @@ sub init {
 	} );
 }
 
+sub shutdown {
+	$log->info('UPnP: Shutting down');
+	
+	Slim::Networking::UPnP::ControlPoint->shutdown();
+	
+	while ( my ($udn, $device) = each %devices ) {
+		$log->info( sprintf( "UPnP: Removing device %s", $device->getfriendlyname ) );
+		
+		foundDevice( $device, 'remove' );
+	}
+}		
+
 sub foundDevice {
 	my ( $device, $event ) = @_;
-
-	my $log = logger('network.upnp');
 	
 	# We'll get a callback for all UPnP devices, but we only look for media servers
 	if ( $device->getdevicetype =~ /MediaServer/ ) {
@@ -47,6 +62,8 @@ sub foundDevice {
 		if ( $event eq 'add' ) {
 
 			$log->info("Adding new media server: $menuName");
+			
+			$devices{ $device->getudn } = $device;
 		
 			addDeviceMenus( $device, $menuName );
 			
@@ -55,6 +72,8 @@ sub foundDevice {
 			Slim::Utils::Timers::setTimer( $device, time() + 60, \&checkServerHealth );
 		}
 		elsif ( $event eq 'remove' ) {
+			delete $devices{ $device->getudn };
+			
 			removeDeviceMenus( $device, $menuName );
 			
 			Slim::Utils::Timers::killTimers( $device, \&checkServerHealth );
@@ -80,8 +99,6 @@ sub registerCallback {
 	my $callback = shift;
 	
 	push @{$registeredCallbacks}, $callback;
-
-	my $log = logger('network.upnp');
 	
 	if ($log->is_debug) {
 

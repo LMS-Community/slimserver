@@ -3351,6 +3351,18 @@ SETUP_MAXWMARATE_DESC
 	IT	Per eseguire lo streaming di alcuni flussi WMA sono disponibili diverse velocità in bit. Per impostazione predefinita in SlimServer viene utilizzato il flusso con la velocità in bit più elevata, ma se si dispone di una connessione a Internet lenta, è possibile impostare qui un valore più basso per limitare la velocità massima selezionabile per questi flussi con velocità molteplici.
 	NL	Sommige WMA-streams hebben meerdere bitsnelheden voor streaming. SlimServer selecteert standaard de hoogste bitsnelheid die voor de stream beschikbaar is. Als je een langzamere internetverbinding hebt, kun je een lagere waarde instellen om de maximumsnelheid die gekozen kan worden, te beperken.
 
+SETUP_NOUPNP
+	EN	UPnP Client
+
+SETUP_NOUPNP_DESC
+	EN	Should SlimServer look for other UPnP media servers on your network?
+
+SETUP_UPNP_ENABLE
+	EN	Enabled, look for other UPnP media servers.
+
+SETUP_UPNP_DISABLE
+	EN	Disabled, do not look for other UPnP media servers.
+
 SETUP_MAXBITRATE
 	DE	Bitraten-Beschränkung
 	EN	Bitrate Limiting

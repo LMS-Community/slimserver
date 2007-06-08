@@ -337,7 +337,7 @@ sub init {
 	$log->info("Cache init...");
 	Slim::Utils::Cache->init();
 
-	if (!$noupnp) {
+	unless ( $noupnp || $prefs->get('noupnp') ) {
 		$log->info("UPnP init...");
 		Slim::Utils::UPnPMediaServer::init();
 	}

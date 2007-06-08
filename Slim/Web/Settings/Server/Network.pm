@@ -25,7 +25,7 @@ sub page {
 }
 
 sub prefs {
-	my @prefs = qw(webproxy httpport bufferSecs remotestreamtimeout maxWMArate);
+	my @prefs = qw(webproxy httpport bufferSecs remotestreamtimeout maxWMArate noupnp);
 
 	# Bug 2724 - only show the mDNS settings if we have a binary for it.
 	if (Slim::Utils::Misc::findbin('mDNSResponderPosix')) {
@@ -60,6 +60,16 @@ sub handler {
 			);
 		}
 		# warning for invalid value created by base class
+	}
+	
+	if ( defined $paramRef->{'noupnp'} && $paramRef->{'noupnp'} ne $prefs->get('noupnp') ) {
+		# Shut down all UPnP activity
+		Slim::Utils::UPnPMediaServer::shutdown();
+		
+		# Start it up again if the user enabled it
+		if ( !$paramRef->{'noupnp'} ) {
+			Slim::Utils::UPnPMediaServer::init();
+		}
 	}
 
 	return $class->SUPER::handler($client, $paramRef, $pageSetup);

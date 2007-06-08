@@ -35,6 +35,18 @@
 		[%- END -%]
 
 		</select>
+		
+		<div class="prefHead">[% "SETUP_NOUPNP" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_NOUPNP_DESC" | string %]</div>
+		
+		<select class="stdedit" name="noupnp" id="noupnp">
+			<option [% IF prefs.noupnp == 0 %]selected="selected" [% END %]value="0">
+				[% 'SETUP_UPNP_ENABLE' | string %]
+			</option>
+			<option [% IF prefs.noupnp == 1 %]selected="selected" [% END %]value="1">
+				[% 'SETUP_UPNP_DISABLE' | string %]
+			</option>
+		</select>
 
 		[% IF mDNSname.size %]
 		<div class="prefHead">[% "SETUP_MDNSNAME" | string | upper %]</div>
