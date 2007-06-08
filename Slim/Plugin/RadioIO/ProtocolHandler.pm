@@ -23,64 +23,35 @@ sub new {
 	my $class  = shift;
 	my $args   = shift;
 
-	my $url    = $args->{'url'};
-	my $client = $args->{'client'};
+	my $url    = $args->{url};
+	my $client = $args->{client};
 
-	if ($url !~ /^radioio:\/\/(.*?)\.mp3/) {
-		return undef;
+	if ( $url !~ m{^radioio://(.*?)\.mp3} ) {
+		return;
 	}
+	
+	my $url = Slim::Plugin::RadioIO::Plugin::getHTTPURL($1) || return;
 
-	my $sock = $class->SUPER::new({
-		'url'    => Slim::Plugin::RadioIO::Plugin::getHTTPURL($1),
-		'client' => $client
-	}) || return undef;
+	my $sock = $class->SUPER::new( {
+		url    => $url,
+		client => $client
+	} ) || return;
 }
 
 sub canDirectStream {
 	my ($self, $client, $url) = @_;
 
-	if ($url =~ /^radioio:\/\/stream\/(.*)/) {
-		return 'http://' . Slim::Plugin::RadioIO::Plugin::decrypt($1);
-	}
-	elsif ($url =~ /^radioio:\/\/(.*?)\.mp3/) {
+	if ( $url =~ m{^radioio://(.*?)\.mp3} ) {
 		return Slim::Plugin::RadioIO::Plugin::getHTTPURL($1);
 	}
 
-	return undef;
+	return;
 }
 
 sub getHTTPURL {
 	my ( $self, $url ) = @_;
 	
 	return $self->canDirectStream( undef, $url );
-}
-
-sub parseDirectBody {
-	my $self  = shift;
-	my $url   = shift;
-	my $body  = shift;
-
-	my $io    = IO::String->new($body);
-
-	# Need to tell the parser that the playlist is in pls format.
-	my $pls   = Slim::Plugin::RadioIO::Plugin::getHTTPURL($url);
-	my @items = Slim::Formats::Playlists->parseList($pls, $io);
-
-	return () unless scalar(@items);
-
-	my $stream = $items[0];
-	$stream =~ s/http:\/\///;
-	$stream = 'radioio://stream/' . Slim::Plugin::RadioIO::Plugin::decrypt($stream);
-
-	my $currentDB = Slim::Music::Info::getCurrentDataStore();
-	my $track = $currentDB->objectForUrl($url);
-
-	if (blessed($track) && $track->can('title')) {
-
-		Slim::Music::Info::setTitle($stream, $track->title());
-	}
-
-	return ($stream);
 }
 
 1;

@@ -165,44 +165,38 @@ sub cliRadiosQuery {
 # The below code for backwards-compat with old-style radioio:// protocol links
 
 our %stations = (
-	'radioio70s'       => '3765',			
-	'radioio70sPOP'    => '3910',			
-	'radioio80s'       => '3795',
-	'radioio80sPOP'    => '3935',	
-	'radioio90s'       => '3860',
-	'radioioACOUSTIC'  => '3675',
-	'radioioAMBIENT'   => '3605',
-	'radioioBEAT'      => '3725',
-	'radioioCLASSICAL' => '3635',
-	'radioioCOUNTRY'   => '3055',				 
-	'radioioECLECTIC'  => '3586',
-	'radioioEDGE'      => '3995',
-	'radioioHISTORY'   => '3845',
-	'radioioJAM'       => '3970',
-	'radioioJAZZ'      => '3545',
-	'radioioONE'       => '3900',
-	'radioioPOP'       => '3965',
-	'radioioROCK'      => '3515',
-	'radioioWORLD'     => '3820',
+	radioio70s       => 3,			
+	radioio70sPOP    => 21,			
+	radioio80s       => 39,
+	radioio80sPOP    => 57,	
+	radioio90s       => 75,
+	radioioACOUSTIC  => 93,
+	radioioAMBIENT   => 111,
+	radioioBEAT      => 129,
+	radioioCLASSICAL => 147,
+	radioioCOUNTRY   => 165,
+	radioioDEAD      => 183,
+	radioioDISCO     => 202,				 
+	radioioECLECTIC  => 220,
+	radioioEDGE      => 238,
+	radioioHISTORY   => 256,
+	radioioJAM       => 274,
+	radioioJAZZ      => 292,
+	radioioPOP       => 310,
+	radioioROCK      => 328,
+	radioioSEASONS   => 346,
+	radioioUNLIMITED => 364,
+	radioioWORLD     => 382,
+	radioioONE       => 400,
 );
 
 our @station_names = sort keys %stations;
 
-# Just so we don't have plain text URLs in the code.
-sub decrypt {
-	my $str = shift;
-	
-	$str =~ tr/a-zA-Z/n-za-mN-ZA-M/;
-	$str =~ tr/0-9/5-90-4/;
-
-	return $str;
-}
-
 sub getHTTPURL {
 	my $key = shift;
-	my $port = $stations{$key};
-	my $url = "http://" . decrypt("enqvbvb.fp.yyajq.arg") . ":" . decrypt($port);
-	return $url;
+	my $id  = $stations{$key} || return;
+	
+	return "http://streampoint.radioio.com/streams/$id/45ec8c85a2a8a/";
 }
 
 sub getRadioIOURL {
