@@ -1922,35 +1922,24 @@ sub openSong {
 				$command, $type, $filepath, $fullpath, $samplerate, $maxRate, undef, $quality
 			);
 
+			$client->audioFilehandle( FileHandle->new() );
+
 			# Bug: 4318
-			# When SlimServer is running as an app, spawning a
-			# piped process will open a cmd.exe window on Win32.
-			# Lame.
-			#
-			# Use pipeline with a undef $sock (writer) to avoid
-			# that, since it calls Win32::Process::Create()
-			if (Slim::Utils::OSDetect::OS() eq 'win' && !Slim::Utils::Misc::runningAsService()) {
+			# On windows ensure a child window is not opened if $command includes transcode processes
+			if (Slim::Utils::OSDetect::OS() eq 'win') {
 
-				my $pipeline = Slim::Player::Pipeline->new(undef, $command, 'local');
+				Win32::SetChildShowWindow(0);
 
-				if (!defined($pipeline)) {
+				$client->audioFilehandle->open($command);
 
-					logError("While creating conversion pipeline for: [$command]");
-					errorOpening($client);
-
-					return undef;
-				}
-
-				$client->audioFilehandle($pipeline);
-				$client->audioFilehandleIsSocket(2);
+				Win32::SetChildShowWindow();
 
 			} else {
 
-				$client->audioFilehandle( FileHandle->new() );
 				$client->audioFilehandle->open($command);
-				$client->audioFilehandleIsSocket(1);
 			}
-			
+
+			$client->audioFilehandleIsSocket(1);
 			$client->remoteStreamStartTime(Time::HiRes::time());
 			$client->pauseTime(0);
 			
