@@ -568,7 +568,7 @@ NOW_PLAYING
 	EN	Now Playing
 	ES	Reproduciendo
 	FI	Soittaa kappaletta
-	FR	En cours de lecture
+	FR	Lecture
 	HE	מושמע כעת
 	IT	Riproduzione in corso
 	JA	再生中
@@ -635,7 +635,7 @@ PLAYING
 	EN	Now playing
 	ES	Reproduciendo
 	FI	Soittaa kappaletta
-	FR	En cours de lecture
+	FR	Lecture
 	HE	מושמע כעת
 	IT	Riproduzione in corso
 	JA	再生中
@@ -652,7 +652,7 @@ PLAYING_RANDOMLY
 	EN	Now Playing
 	ES	Reproduciendo
 	FI	Soittaa kappaletta
-	FR	En cours de lecture
+	FR	Lecture
 	HE	מושמע כעת
 	IT	Riproduzione in corso casuale
 	JA	再生中
@@ -3021,7 +3021,7 @@ SETUP_PLAYINGDISPLAYMODE
 	DE	Informationen zur aktuellen Wiedergabe
 	EN	Now Playing Information
 	ES	Información de lo que se está reproduciendo
-	FR	Informations en mode En cours de lecture
+	FR	Informations en mode Lecture
 	HE	מידע 'מושמע כעת'
 	IT	Informazioni sulla riproduzione in corso
 	JA	現在再生中の曲の情報
@@ -8356,7 +8356,7 @@ BYTES
 	EN	Bytes
 	ES	Bytes
 	FI	Tavua
-	FR	Octets
+	FR	octets
 	HE	בתים
 	IT	Byte
 	JA	バイト
@@ -8535,7 +8535,7 @@ KBPS
 	EN	kbps
 	ES	kbps
 	FI	kbps
-	FR	Ko/s
+	FR	Kbps
 	HE	kbps
 	IT	kbps
 	JA	kbps
