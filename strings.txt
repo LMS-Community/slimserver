@@ -7942,7 +7942,7 @@ ALBUM
 
 DISC
 	CS	Disk
-	DE	Datenträger
+	DE	Disk
 	EN	Disc
 	ES	Disco
 	FI	Levy
