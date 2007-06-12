@@ -65,6 +65,7 @@ Preferences for plugins are expected to be stored in namespaces prefixed by 'plu
 use strict;
 
 use Exporter::Lite;
+use File::Path qw(mkpath);
 use Getopt::Long qw(:config pass_through);
 
 use Slim::Utils::Prefs::Namespace;
