@@ -526,7 +526,7 @@ sub gotNextRadioTrackError {
 	my $http   = shift;
 	my $client = $http->params('client');
 	
-	handleError( $client, $http->error );
+	handleError( $http->error, $client );
 }
 
 sub playlistCallback {
