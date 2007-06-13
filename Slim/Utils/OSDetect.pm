@@ -206,7 +206,7 @@ sub dirsFor {
 
 		} else {
 
-			Slim::Utils::Misc::errorMsg("dirsFor: Didn't find a match request: [$dir]\n");
+			warn "dirsFor: Didn't find a match request: [$dir]\n";
 		}
 
 	# RedHat/Fedora specific paths.
@@ -243,7 +243,7 @@ sub dirsFor {
 
 		} else {
 
-			Slim::Utils::Misc::errorMsg("dirsFor: Didn't find a match request: [$dir]\n");
+			warn "dirsFor: Didn't find a match request: [$dir]\n";
 		}
 
 	} elsif (isVista()) {
