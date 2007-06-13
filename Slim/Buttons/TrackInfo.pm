@@ -142,11 +142,20 @@ sub setMode {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
+	
+	# Protocol Handlers can setup their own track info
+	my $track   = track($client);
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
+	if ( $handler && $handler->can('trackInfo') ) {
+		# trackInfo method is responsible for pushing its own mode
+		$handler->trackInfo( $client, $track );
+		return;
+	}
 
-	loadDataForTrack($client, track($client));
+	loadDataForTrack( $client, $track );
 
 	my %params = (
-		'header'         => sub { return Slim::Music::Info::getCurrentTitle($_[0], track($_[0]))},
+		'header'         => sub { return Slim::Music::Info::getCurrentTitle( $client, $track->url )},
 		'headerArgs'     => 'CVI',
 		'listRef'        => $client->trackInfoLines,
 		'externRef'      => \&infoLine,

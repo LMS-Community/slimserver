@@ -206,13 +206,36 @@ sub rpds_handler {
 		if ( $ENV{SLIM_SERVICE} ) {
 			logError( $client, 'RPDS_NO_SESSION' );
 		}
-		
-		# XXX: What if this isn't available in pluginData?
+
 		my $account = $client->pluginData('account');
 		
 		if ( !$account ) {
-			bt();
-			die "No Rhapsody account info available";
+			my $accountURL = Slim::Networking::SqueezeNetwork->url( '/api/rhapsody/account' );
+
+			my $http = Slim::Networking::SqueezeNetwork->new(
+				\&Slim::Plugin::RhapsodyDirect::ProtocolHandler::gotAccount,
+				\&Slim::Plugin::RhapsodyDirect::ProtocolHandler::gotAccountError,
+				{
+					client => $client,
+					cb     => sub {
+						# reset the rpds and try again
+						$rpds_args->{$client} = $rpds;
+						$data_ref = pack 'c', '-2';
+						rpds_handler( $client, \$data_ref );
+					},
+					ecb    => sub {
+						my $error = shift;
+						$error = $client->string('PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT') . ": $error";
+						handleError( $error, $client );
+					},
+				},
+			);
+
+			$log->debug("Getting Rhapsody account from SqueezeNetwork");
+
+			$http->get( $accountURL );
+
+			return;
 		}
 
 		my $packet = pack 'cC/a*C/a*C/a*C/a*', 

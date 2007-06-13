@@ -777,27 +777,21 @@ sub trackInfo {
 	
 	$log->debug( "Getting track information for $trackId" );
 	
+	# SN URL to fetch track info menu
+	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
+		'/api/rhapsody/opml/metadata/getTrack?trackId=' . $trackId
+	);
+	
+	if ( $track->url =~ m{rhapd://(.+)\.rdr} ) {
+		$trackInfoURL .= '&stationId=' . $1;
+	}
+	
 	# let XMLBrowser handle all our display
-	# XXX: Get this menu from SN
 	my %params = (
 		header   => 'PLUGIN_RHAPSODY_DIRECT_GETTING_TRACK_DETAILS',
 		modeName => 'Rhapsody Now Playing',
 		title    => Slim::Music::Info::getCurrentTitle( $client, $url ),
-		url      => \&Plugins::RhapsodyDirect::Plugin::callMetadataMethod,
-		item     => {
-			passthrough => [
-			 	Plugins::RhapsodyDirect::Plugin::getAPI($client),
-				{
-					method => 'getTrack',
-					params => {
-						trackId         => $trackId,
-						filterRightsKey => 0, # allow this to work for all tracks
-					},
-				},
-				\&Plugins::RhapsodyDirect::Plugin::trackInfoGotTrack,
-				$track->title,
-			],
-		},
+		url      => $trackInfoURL,
 	);
 
 	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );

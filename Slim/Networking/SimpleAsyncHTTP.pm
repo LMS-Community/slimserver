@@ -64,7 +64,7 @@ sub new {
 		params => $params,
 	};
 
-	return bless $self, $class;
+	return bless $self, ref($class) || $class;
 }
 
 sub params {
