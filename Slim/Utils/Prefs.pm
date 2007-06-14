@@ -12,7 +12,7 @@ Slim::Utils::Prefs
 
 =head1 SYNOPSIS
 
-use Slim::Utils::Pres;
+use Slim::Utils::Prefs;
 
 my $prefs = preferences('plugin.demo');
 
