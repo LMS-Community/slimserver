@@ -13,6 +13,7 @@ use Scalar::Util qw(blessed);
 
 use Slim::Music::Info;
 use Slim::Player::Playlist;
+use Slim::Player::ProtocolHandlers;
 use Slim::Player::Source;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -24,10 +25,16 @@ sub fetchGainMode {
 	my $client = shift;
 	my $rgmode = $prefs->client($client)->get('replayGainMode');
 
+	my $url = Slim::Player::Playlist::url($client, Slim::Player::Source::streamingSongIndex($client));
+	
+	# Allow plugins to override replaygain (i.e. Pandora should always use track gain)
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+	if ( $handler && $handler->can('trackGain') ) {
+		return $handler->trackGain( $client, $url );
+	}
+	
 	# Mode 0 is ignore replay gain
 	return undef if !$rgmode;
-
-	my $url = Slim::Player::Playlist::song($client, Slim::Player::Source::streamingSongIndex($client));
 
 	if (!$url) {
 

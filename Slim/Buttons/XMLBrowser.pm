@@ -341,6 +341,12 @@ sub gotRSS {
 # recusively browse OPML outline
 sub gotOPML {
 	my ($client, $url, $opml, $params) = @_;
+	
+	# If there's a command we need to run, run it (used by Pandora)
+	if ( $opml->{'command'} ) {
+		my @p = split / /, $opml->{'command'};
+		$client->execute( \@p );
+	}
 
 	# Push staight into remotetrackinfo if a playlist of one was returned
 	if ($params->{'item'}->{'type'} && $params->{'item'}->{'type'} eq 'playlist' && scalar @{ $opml->{'items'} || [] } == 1)  {

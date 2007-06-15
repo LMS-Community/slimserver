@@ -1,0 +1,620 @@
+PLUGIN_PANDORA_MODULE_NAME
+	DE	Pandora Radio
+	EN	Pandora Radio
+	ES	Radio Pandora
+	FR	Pandora Radio
+	HE	רדיו Pandora
+	IT	Radio Pandora
+	NL	Radio Pandora
+
+PLUGIN_PANDORA_PERSONALIZED_RADIO
+	DE	Benutzerdefiniertes Radio (Pandora)
+	EN	Personalized Radio (Pandora)
+	ES	Radio personalizada (Pandora)
+	FR	Radio personnalisée (Pandora)
+	HE	רדיו מותאם אישית (Pandora)
+	IT	Radio personalizzata (Pandora)
+	NL	Gepersonaliseerde radio (Pandora)
+
+PLUGIN_PANDORA_FIRMWARE_UPGRADE_REQUIRED
+	DE	Software muss aktualisiert werden
+	EN	Software Update Required
+	ES	Se requiere actualización de software
+	FR	Mise à jour du logiciel Squeezebox nécessaire
+	HE	יש לבצע עדכון תוכנה
+	IT	È necessario aggiornare il software
+	NL	Software-update vereist
+
+PLUGIN_PANDORA_FIRMWARE_UPGRADE
+	DE	Halten Sie zum Verwenden von Pandora BRIGHTNESS gedrückt, um die Anzeige zu aktualisieren.
+	EN	To use Pandora, press and hold BRIGHTNESS to update.
+	ES	Para usar Pandora, mantenga presionado BRIGHTNESS para actualizar.
+	FR	Pour utiliser Pandora, maintenez BRIGHTNESS enfoncé pour effectuer la mise à jour.
+	HE	כדי להשתמש ב-Pandora, לחץ לחיצה ממושכת על BRIGHTNESS (בהירות) לביצוע עדכון.
+	IT	Per usare Pandora, tenere premuto BRIGHTNESS per aggiornare.
+	NL	Als je Pandora wilt gebruiken, houd je BRIGHTNESS ingedrukt om te updaten.
+
+PLUGIN_PANDORA_ERROR
+	DE	Pandora-Fehler
+	EN	Pandora Error
+	ES	Error de Pandora
+	FR	Erreur Pandora
+	HE	שגיאה ב-Pandora
+	IT	Errore Pandora
+	NL	Pandora-fout
+
+PLUGIN_PANDORA_CONNECTION_REFUSED
+	DE	Verbindung zu Pandora-Server nicht möglich. Versuchen Sie es später noch einmal.
+	EN	Unable to connect to Pandora server. Please try again later.
+	ES	Imposible conectar a servidor Pandora. Vuelva a intentarlo más tarde.
+	FR	Impossible de se connecter au serveur Pandora. Veuillez réessayer ultérieurement.
+	HE	לא ניתן להתחבר לשרת Pandora. נסה שוב מאוחר יותר.
+	IT	Impossibile connettersi al server Pandora. Riprovare più tardi.
+	NL	Kan geen verbinding met Pandora-server maken. Probeer het later opnieuw.
+
+PLUGIN_PANDORA_STREAM_FAILED
+	DE	Audio-Stream unterbrochen, nächster Titel wird aufgerufen.
+	EN	Audio stream disconnected, skipping to next track.
+	ES	Secuencia de audio desconectada; salto a pista siguiente.
+	FR	Flux audio déconnecté, lecture du morceau suivant.
+	HE	זרימת השמע התנתקה, מדלג אל הרצועה הבאה.
+	IT	Flusso audio disconnesso. Passaggio al brano seguente.
+	NL	Verbinding met audiogegevensstroom verbroken. Volgend nummer wordt geprobeerd.
+
+PLUGIN_PANDORA_DEFAULT_ERROR
+	DE	Unerwarteter Fehler. Versuchen Sie es später noch einmal.
+	EN	An unexpected error occurred. Please try again later.
+	ES	Se ha producido un error inesperado. Vuelva a intentarlo más tarde.
+	FR	Une erreur inattendue est survenue. Veuillez réessayer ultérieurement.
+	HE	אירעה שגיאה לא צפויה. נסה שוב מאוחר יותר.
+	IT	Errore non previsto. Riprovare più tardi.
+	NL	Er is een onverwachte fout opgetreden. Probeer het later opnieuw.
+
+PLUGIN_PANDORA_NO_ACCOUNT
+	DE	Pandora-Konto nicht eingerichtet. Registrieren Sie sich auf squeezenetwork.com.
+	EN	Pandora account not set, please visit squeezenetwork.com to register.
+	ES	No se ha configurado cuenta Pandora. Visite squeezenetwork.com para registrarse.
+	FR	Compte Pandora non défini, veuillez visiter squeezenetwork.com pour vous enregistrer.
+	HE	לא הוגדר חשבון Pandora, עבור אל squeezenetwork.com להרשמה.
+	IT	Account Pandora non impostato. Visitare squeezenetwork.com per registrarsi.
+	NL	Pandora-account niet ingesteld. Ga naar squeezenetwork.com voor registratie.
+
+PLUGIN_PANDORA_NO_ACCESS
+	DE	Sie sind zum Einsatz von Pandora nicht berechtigt.
+	EN	You are not authorized to use Pandora.
+	ES	No tiene autorización para usar Pandora.
+	FR	Vous n'êtes pas autorisé à utiliser Pandora.
+	HE	אינך מורשה להשתמש ב-Pandora.
+	IT	Utente non autorizzato a usare Pandora.
+	NL	Je hebt geen rechten om Pandora te gebruiken.
+
+PLUGIN_PANDORA_LIST_STATIONS
+	DE	Ihre Pandora-Sender
+	EN	Your Pandora Stations
+	ES	Emisoras Pandora
+	FR	Vos stations Pandora
+	HE	תחנות Pandora שלך
+	IT	Stazioni Pandora
+	NL	Jouw Pandora-stations
+
+PLUGIN_PANDORA_SEARCH_MUSIC
+	DE	Sender suchen und erstellen
+	EN	Search and create a station
+	ES	Buscar y crear una emisora
+	FR	Rechercher et créer une station
+	HE	חיפוש ויצירה של תחנה
+	IT	Cerca e crea una stazione
+	NL	Een station zoeken en aanmaken
+
+PLUGIN_PANDORA_SEARCH_PROMPT
+	DE	Interpret oder Titel eingeben
+	EN	Enter an artist or song title
+	ES	Introducir artista o título de canción
+	FR	Spécifier un artiste ou un titre de morceau
+	HE	הזן שם מבצע או שיר
+	IT	Immettere un artista o il titolo di un brano
+	NL	Een artiest of titel invoeren
+
+PLUGIN_PANDORA_LOADING_STATIONS
+	DE	Pandora-Sender werden geladen ...
+	EN	Loading Your Pandora Stations...
+	ES	Cargando emisoras Pandora...
+	FR	Chargement de vos stations Pandora...
+	HE	טוען את תחנות Pandora...
+	IT	Caricamento stazioni Pandora...
+	NL	Jouw Pandora-stations worden geladen...
+
+PLUGIN_PANDORA_CREATE_STATION
+	DE	Drücken Sie PLAY, um einen Sender zu erstellen.
+	EN	Press PLAY to create a station from this
+	ES	Pulse PLAY para crear una emisora a partir de ésta
+	FR	Appuyez sur PLAY pour créer une station
+	HE	לחץ על PLAY (הפעלה) ליצירת תחנה מפריט זה
+	IT	Premere PLAY per creare una stazione
+	NL	Druk op PLAY om hier een nieuw station van te maken
+
+PLUGIN_PANDORA_PLAY_STATION
+	DE	Drücken Sie PLAY, um diesen Sender zu hören.
+	EN	Press PLAY to listen to this station
+	ES	Pulse PLAY para escuchar esta emisora
+	FR	Appuyez sur PLAY pour écouter cette station
+	HE	לחץ על PLAY (הפעלה) להאזנה לתחנה זו
+	IT	Premere PLAY per ascoltare questa stazione
+	NL	Druk op PLAY om naar dit station te luisteren
+
+PLUGIN_PANDORA_ALREADY_PLAYING
+	DE	Dieser Sender wird bereits wiedergegeben.
+	EN	This station is already playing.
+	ES	Esta emisora ya se está reproduciendo.
+	FR	Vous écoutez déjà cette station.
+	HE	תחנה זו מושמעת כבר.
+	IT	Questa stazione è già in riproduzione.
+	NL	Dit station speelt al.
+
+PLUGIN_PANDORA_ADD_FAVORITES
+	DE	Sender zu Favoriten hinzufügen
+	EN	Add station to favorites
+	ES	Agregar emisora a favoritos
+	FR	Ajouter la station aux favoris
+	HE	הוסף תחנה למועדפים
+	IT	Aggiungi stazione ai preferiti
+	NL	Station aan favorieten toevoegen
+
+PLUGIN_PANDORA_DEL_FAVORITES
+	DE	Sender aus Favoriten entfernen
+	EN	Remove station from favorites
+	ES	Quitar emisora de favoritos
+	FR	Supprimer la station des favoris
+	HE	הסר תחנה ממועדפים
+	IT	Rimuovi stazione dai preferiti
+	NL	Station uit favorieten verwijderen
+
+PLUGIN_PANDORA_DELETE_STATION
+	DE	Diesen Sender löschen
+	EN	Delete this station
+	ES	Eliminar esta emisora
+	FR	Supprimer cette station
+	HE	מחק את התחנה
+	IT	Elimina questa stazione
+	NL	Dit station verwijderen
+
+PLUGIN_PANDORA_RENAME_STATION
+	DE	Diesen Sender umbenennen
+	EN	Rename this station
+	ES	Cambiar nombre de esta emisora
+	FR	Renommer cette station
+	HE	שנה את שם התחנה
+	IT	Rinomina questa stazione
+	NL	Naam van dit station wijzigen
+
+PLUGIN_PANDORA_RENAME_PROMPT
+	DE	Sender umbenennen in ...
+	EN	Rename station to...
+	ES	Cambiar nombre de emisora a...
+	FR	Renommer cette station en...
+	HE	שנה את שם התחנה ל...
+	IT	Cambia il nome della stazione in...
+	NL	Naam van station wijzigen naar...
+
+PLUGIN_PANDORA_RENAMING_STATION
+	DE	Sender wird umbenannt in ...
+	EN	Renaming station...
+	ES	Cambiando nombre de emisora...
+	FR	Attribution du nouveau nom en cours...
+	HE	משנה את שם התחנה...
+	IT	Ridenominazione stazione...
+	NL	Naam van station wordt gewijzigd...
+
+PLUGIN_PANDORA_CONFIRM_DELETE_STATION
+	DE	Drücken Sie zum Löschen RECHTS
+	EN	Press RIGHT to delete
+	ES	Pulse DERECHA para eliminar
+	FR	Appuyez sur DROITE pour supprimer
+	HE	לחץ על החץ ימינה למחיקה
+	IT	Premere DESTRA per eliminare
+	NL	Druk RECHTS om te verwijderen
+
+PLUGIN_PANDORA_DELETING_STATION
+	DE	Sender wird gelöscht ...
+	EN	Deleting station...
+	ES	Eliminando emisora...
+	FR	Suppression de la station en cours...
+	HE	מוחק תחנה...
+	IT	Eliminazione stazione...
+	NL	Station wordt verwijderd...
+
+PLUGIN_PANDORA_LOADING_PLAYLIST
+	DE	Wiedergabeliste wird geladen für ...
+	EN	Loading playlist for...
+	ES	Cargando lista de reproducción para...
+	FR	Chargement de la liste de lecture pour...
+	HE	טוען רשימת השמעה עבור...
+	IT	Caricamento elenco riproduzione per...
+	NL	Playlist wordt geladen voor...
+
+PLUGIN_PANDORA_SEARCHING
+	DE	Pandora wird nach Musik durchsucht ...
+	EN	Searching Pandora for music...
+	ES	Buscando música en Pandora...
+	FR	Recherche de musique sur Pandora...
+	HE	מחפש מוסיקה ב-Pandora...
+	IT	Ricerca di musica in Pandora...
+	NL	Bezig met zoeken naar muziek bij Pandora...
+
+PLUGIN_PANDORA_SEARCH_ERROR
+	DE	Fehler beim Durchsuchen von Pandora.
+	EN	There was an error while searching Pandora.
+	ES	Se produjo en error al buscar en Pandora.
+	FR	Une erreur s'est produite au cours de la recherche sur Pandora.
+	HE	אירעה שגיאה במהלך החיפוש ב-Pandora.
+	IT	Errore durante la ricerca in Pandora.
+	NL	Er is een fout opgetreden tijdens het zoeken bij Pandora.
+
+PLUGIN_PANDORA_ARTIST_OR_SONG
+	DE	Interpret oder Titel?
+	EN	Artist or song?
+	ES	¿Artista o canción?
+	FR	Artiste ou morceau?
+	HE	מבצע או שיר?
+	IT	Artista o brano?
+	NL	Artiest of liedje?
+
+PLUGIN_PANDORA_ARTIST_SEARCH_RESULTS
+	DE	Suchergebnisse nach Interpret
+	EN	Artist search results
+	ES	Resultados de búsqueda por artista
+	FR	Résultats de la recherche par artiste
+	HE	תוצאות חיפוש של מבצע
+	IT	Risultati ricerca artista
+	NL	Zoekresultaten voor artiest
+
+PLUGIN_PANDORA_SONG_SEARCH_RESULTS
+	DE	Suchergebnisse nach Titel
+	EN	Song search results
+	ES	Resultados de búsqueda por canción
+	FR	Résultats de la recherche par morceau
+	HE	תוצאות חיפוש של שיר
+	IT	Risultati ricerca brano
+	NL	Zoekresultaten voor liedje
+
+PLUGIN_PANDORA_SEARCH_RESULTS
+	DE	Pandora-Suchergebnisse
+	EN	Pandora Search Results
+	ES	Resultados de búsqueda en Pandora
+	FR	Résultats de la recherche Pandora
+	HE	תוצאות חיפוש ב-Pandora
+	IT	Risultati ricerca in Pandora
+	NL	Zoekresultaten bij Pandora
+
+PLUGIN_PANDORA_SEARCH_NO_RESULTS
+	DE	Die Pandora-Suche erzielte keine Ergebnisse.
+	EN	There are no results for your Pandora search.
+	ES	No hay resultados para la búsqueda en Pandora.
+	FR	La recherche Pandora n'a donné aucun résultat.
+	HE	לא נמצאו תוצאות בחיפוש ב-Pandora.
+	IT	Nessun risultato della ricerca in Pandora.
+	NL	Er zijn geen resultaten voor jouw Pandora-zoekopdracht.
+
+PLUGIN_PANDORA_CREATING_STATION
+	DE	Pandora-Sender werden geladen ...
+	EN	Creating new Pandora station...
+	ES	Creando emisora Pandora...
+	FR	Création de la station Pandora...
+	HE	יוצר תחנת Pandora חדשה...
+	IT	Creazione di nuova stazione Pandora...
+	NL	Nieuw Pandora-station wordt aangemaakt...
+
+PLUGIN_PANDORA_CREATING_STATION_EXACT_MATCH
+	DE	Sender wird erstellt anhand von
+	EN	Creating station based on
+	ES	Creando emisora a partir de
+	FR	Création de la station en se basant sur
+	HE	יוצר תחנה בהתבסס על
+	IT	Creazione della stazione basata su
+	NL	Station wordt aangemaakt op basis van
+
+PLUGIN_PANDORA_AUTH_LOGIN
+	DE	Sie werden bei Pandora angemeldet ...
+	EN	Logging into Pandora...
+	ES	Iniciando sesión en Pandora...
+	FR	Connexion à Pandora...
+	HE	נכנס למערכת Pandora...
+	IT	Accesso a Pandora...
+	NL	Bezig met aanmelden bij Pandora...
+
+PLUGIN_PANDORA_IS_AN
+	DE	ist ein
+	EN	is an
+	ES	es un/a
+	FR	est un
+	HE	הוא/היא
+	IT	è un
+	NL	is een
+
+PLUGIN_PANDORA_IS_A
+	DE	ist ein
+	EN	is a
+	ES	es un/a
+	FR	est un
+	HE	הוא/היא
+	IT	è un
+	NL	is een
+
+PLUGIN_PANDORA_ARTIST
+	DE	Interpret
+	EN	artist
+	ES	artista
+	FR	artiste
+	HE	מבצע
+	IT	artista
+	NL	artiest
+
+PLUGIN_PANDORA_SONG
+	DE	Titel
+	EN	song
+	ES	canción
+	FR	morceau
+	HE	שיר
+	IT	brano
+	NL	liedje
+
+PLUGIN_PANDORA_BY
+	DE	von
+	EN	by
+	ES	por
+	FR	par
+	HE	לפי
+	IT	di
+	NL	van
+
+PLUGIN_PANDORA_FROM
+	DE	aus
+	EN	from
+	ES	de
+	FR	de
+	HE	מתוך
+	IT	da
+	NL	van
+
+PLUGIN_PANDORA_STATION
+	DE	Sender
+	EN	Station
+	ES	Emisora
+	FR	Station
+	HE	תחנה
+	IT	Stazione
+	NL	Station
+
+PLUGIN_PANDORA_I_LIKE
+	DE	Dieser Titel gefällt mir
+	EN	I like this song
+	ES	Me gusta esta canción
+	FR	J'aime ce morceau
+	HE	אוהב את השיר
+	IT	Mi piace questo brano
+	NL	Ik vind dit een leuk liedje
+
+PLUGIN_PANDORA_I_DONT_LIKE
+	DE	Dieser Titel gefällt mir nicht
+	EN	I don't like this song
+	ES	No me gusta esta canción
+	FR	Je n'aime pas ce morceau
+	HE	לא אוהב את השיר
+	IT	Non mi piace questo brano
+	NL	Ik vind dit geen leuk liedje
+
+PLUGIN_PANDORA_BOOKMARK_SONG
+	DE	Diesen Titel zu meiner Pandora-Seite hinzufügen
+	EN	Add this song to my Pandora.com personal page
+	ES	Agregar esta canción a mi página personal Pandora.com
+	FR	Ajouter ce morceau à ma page personnelle Pandora.com
+	HE	הוסף את השיר לדף האישי שלי ב-Pandora.com
+	IT	Aggiungi questo brano alla mia pagina personale di Pandora.com
+	NL	Dit liedje aan mijn persoonlijke pagina op Pandora.com toevoegen
+
+PLUGIN_PANDORA_BOOKMARKING
+	DE	Titel mit Lesezeichen versehen ...
+	EN	Bookmarking track...
+	ES	Marcando pista...
+	FR	Ajout du morceau dans les signets...
+	HE	מוסיף רצועה לסימניות...
+	IT	Assegnazione segnalibro al brano...
+	NL	Nummer wordt van bladwijzer voorzien...
+
+PLUGIN_PANDORA_BOOKMARKING_LINE2
+	DE	Lesezeichen auf meiner Pandora-Seite anzeigen
+	EN	Visit your Pandora.com personal page to view bookmarks.
+	ES	Visitar página personal Pandora.com para ver marcadores.
+	FR	Visitez votre page personnelle Pandora.com pour afficher les signets.
+	HE	בקר בדף האישי שלך ב-Pandora.com להצגת הסימניות.
+	IT	Per vedere i segnalibri, visitare la pagina personale di Pandora.com.
+	NL	Ga naar jouw persoonlijke pagina op Pandora.com om bladwijzers te bekijken.
+
+PLUGIN_PANDORA_WHY_PLAYED
+	DE	Warum wurde dieser Titel gespielt?
+	EN	Why did you play this song?
+	ES	¿Por qué reprodujo esta canción?
+	FR	Pourquoi avez-vous lu ce morceau?
+	HE	מדוע השמעת את השיר?
+	IT	Perché hai scelto questo brano?
+	NL	Waarom heb je dit liedje afgespeeld?
+
+PLUGIN_PANDORA_FROM_STATION
+	DE	Aus Sender
+	EN	From station
+	ES	Desde emisora
+	FR	De la station
+	HE	מתחנה
+	IT	Dalla stazione
+	NL	Van station
+
+PLUGIN_PANDORA_PLEASE_WAIT
+	DE	Bitte warten ...
+	EN	Please wait...
+	ES	Espere...
+	FR	Veuillez patienter...
+	HE	אנא המתן...
+	IT	Attendere...
+	NL	Even wachten...
+
+PLUGIN_PANDORA_PLAYING_BECAUSE
+	DE	Dieser Titel wurde gespielt, weil er Folgendes enthält
+	EN	We're playing this song because it features
+	ES	Reproducimos esta canción porque tiene
+	FR	Nous lisons ce morceau car il représente
+	HE	אנו משמיעים את השיר מכיוון שהוא
+	IT	Trasmettiamo questo brano perché fa parte di
+	NL	We spelen dit liedje af vanwege
+
+PLUGIN_PANDORA_CREATE_FROM_SONG
+	DE	Einen neuen Sender aus diesem Titel erstellen
+	EN	Make a new station from this song
+	ES	Crear emisora a partir de esta canción
+	FR	Créer une station à partir de ce morceau
+	HE	תור תחנה חדשה משיר זה
+	IT	Crea una nuova stazione da questo brano
+	NL	Een nieuw station van dit liedje maken
+
+PLUGIN_PANDORA_RATING_POSITIVE
+	DE	Titel positiv bewerten ...
+	EN	Giving track a thumbs up...
+	ES	Aprobando pista...
+	FR	Approbation du morceau en cours...
+	HE	מסמן רצועה לחיוב...
+	IT	Approvazione del brano...
+	NL	Een klik op de duim omhoog...
+
+PLUGIN_PANDORA_RATING_POSITIVE_LINE2
+	DE	Schön, wir versuchen, ähnliche Titel zu finden.
+	EN	Cool, we'll try to play similar songs.
+	ES	Bien. Intentaremos reproducir canciones similares.
+	FR	Nous allons essayer de trouver des morceaux similaires.
+	HE	סבבה, נשתדל להשמיע שירים דומים.
+	IT	Bene, cercheremo di trasmettere brani simili.
+	NL	Cool, we zullen proberen zulke liedjes te spelen.
+
+PLUGIN_PANDORA_RATING_NEGATIVE
+	DE	Titel negativ bewerten ...
+	EN	Giving track a thumbs down...
+	ES	Desaprobando pista...
+	FR	Désapprobation du morceau en cours...
+	HE	מסמן רצועה לשלילה...
+	IT	Disapprovazione del brano...
+	NL	Een klik op de duim omlaag...
+
+PLUGIN_PANDORA_RATING_NEGATIVE_LINE2
+	DE	Wir spielen diesen Titel nicht noch einmal.
+	EN	Sorry, we won't play this song again.
+	ES	No volveremos a reproducir esta canción.
+	FR	Nous ne rejouerons plus ce morceau à l'avenir.
+	HE	סליחה, לא נשמיע את השיר שוב.
+	IT	Ci dispiace. Non trasmetteremo più questo brano.
+	NL	Sorry, dit liedje gaan we niet meer spelen.
+
+PLUGIN_PANDORA_SEARCH_RHAPSODY
+	DE	Auf Rhapsody nach %s suchen
+	EN	Search for %s on Rhapsody
+	ES	Buscar %s en Rhapsody
+	FR	Recherche de %s sur Rhapsody
+	HE	חפש %s ב-Rhapsody
+	IT	Cerca %s in Rhapsody.
+	NL	Naar %s zoeken op Rhapsody
+
+PLUGIN_PANDORA_SKIPS_EXCEEDED
+	DE	Kein Überspringen mehr möglich, versuchen Sie es später noch einmal.
+	EN	Hourly skip limit exceeded, you may skip again later.
+	ES	Se ha excedido el límite de omisiones por hora. Puede volver a omitir más tarde.
+	FR	Nombre limite de sauts par heure dépassé. Vous pourrez à nouveau effectuer cette action ultérieurement.
+	HE	חריגה ממכסת הדילוג בשעה, תוכל לדלג שוב בהמשך.
+	IT	Limite orario superato. Sarà possibile saltare brani solo più tardi.
+	NL	Uurlimiet voor springen overschreden. Je kunt het later opnieuw proberen.
+
+PLUGIN_PANDORA_AUTH_INVALID_USERNAME_PASSWORD
+	DE	Benutzername oder Kennwort ungültig. Aktualisieren Sie Ihre Kontoangaben auf squeezenetwork.com.
+	EN	Invalid username or password. Please visit squeezenetwork.com to update your account information.
+	ES	Nombre de usuario o contraseña no válida. Visite squeezenetwork.com para actualizar la información de cuenta.
+	FR	Nom d'utilisateur ou mot de passe non valide. Rendez-vous sur squeezenetwork.com pour mettre les informations de votre compte à jour.
+	HE	שם משתמש או סיסמה לא חוקיים. עבור אל squeezenetwork.com לעדכון פרטי החשבון.
+	IT	Nome utente o password non valido. Visitare squeezenetwork.com per aggiornare i dati dell'account.
+	NL	Ongeldige gebruikersnaam of ongeldig wachtwoord. Ga naar squeezenetwork.com om jouw accountgegevens te updaten.
+
+PLUGIN_PANDORA_AUTH_INVALID_TOKEN
+	DE	Auth-Token ungültig, versuchen Sie es noch einmal.
+	EN	Invalid auth token, please try again.
+	ES	Token de aut. no válido. Vuelva a intentarlo.
+	FR	Jeton d'authentification non valide, veuillez réessayer.
+	HE	אסימון אימות לא חוקי, נסה שוב.
+	IT	Token di autoriz. non valido. Riprovare.
+	NL	Ongeldig aut-token. Probeer het opnieuw.
+
+PLUGIN_PANDORA_LISTENER_ACCOUNT_IN_USE
+	DE	Pandora-Konto wird bereits genutzt.
+	EN	Pandora account already in use
+	ES	Cuenta Pandora en uso
+	FR	Compte Pandora déjà en cours d'utilisation
+	HE	חשבון Pandora נמצא כבר בשימוש
+	IT	Account Pandora già in uso
+	NL	Pandora-account wordt al gebruikt
+
+PLUGIN_PANDORA_LISTENER_NOT_AUTHORIZED
+	DE	Pandora-Konto ist für diesen Sender nicht autorisiert, versuchen Sie es noch einmal.
+	EN	Pandora account not authorized for this station, please try again.
+	ES	Cuenta Pandora no autorizada para esta emisora. Vuelva a intentarlo.
+	FR	Le compte Pandora n'est pas autorisé pour cette station, veuillez réessayer.
+	HE	חשבון Pandora לא מורשה עבור תחנה זו, נסה שוב.
+	IT	Account Pandora non autorizzato per questa stazione. Riprovare.
+	NL	Pandora-account heeft geen rechten voor dit station. Probeer het opnieuw.
+
+PLUGIN_PANDORA_STATION_NOT_FOUND
+	DE	Pandora-Sender nicht gefunden.
+	EN	Pandora station not found.
+	ES	No se ha encontrado emisora Pandora.
+	FR	Station Pandora introuvable.
+	HE	תחנת Pandora לא נמצאה.
+	IT	Stazione Pandora non trovata.
+	NL	Pandora-station niet gevonden.
+
+PLUGIN_PANDORA_NO_TRACKS
+	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
+	EN	Unable to retrieve next track, press PLAY to try again.
+	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
+	FR	Impossible d'accéder à la piste suivante, appuyez sur PLAY pour réessayer.
+	HE	לא ניתן לאחזר את הרצועה הבאה, לחץ על PLAY (הפעלה) כדי לנסות שוב.
+	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
+	NL	Kan volgende nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
+
+PLUGIN_PANDORA_PLAYLIST_END
+	DE	Nächster Titel konnte nicht geladen werden, drücken Sie zum Wiederholen PLAY.
+	EN	Unable to retrieve next track, press PLAY to try again.
+	ES	Imposible obtener pista siguiente. Pulse PLAY para volver a intentarlo.
+	FR	Impossible d'accéder à la piste suivante, appuyez sur PLAY pour réessayer.
+	HE	לא ניתן לאחזר את הרצועה הבאה, לחץ על PLAY (הפעלה) כדי לנסות שוב.
+	IT	Impossibile recuperare brano successivo. Premere PLAY per riprovare.
+	NL	Kan volgend nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
+
+PLUGIN_PANDORA_IDLE_STOPPING
+	DE	Erlaubte Pandora-Pause überschritten, drücken Sie zum Weiterhören PLAY.
+	EN	Pandora idle time exceeded, press PLAY to continue listening.
+	ES	Se ha excedido el tiempo de inactividad en Pandora. Pulse PLAY para continuar escuchando.
+	FR	Temps d'inactivité Pandora dépassé, appuyez sur PLAY pour continuer l'écoute.
+	HE	חריגה ממשך הזמן המוקצב לחוסר פעילות ב-Pandora, לחץ על PLAY (הפעלה) כדי להמשיך בהאזנה.
+	IT	Tempo di inattività di Pandora superato. Premere PLAY per proseguire l'ascolto.
+	NL	Niet-actieve tijd van Pandora overschreden. Druk op PLAY om door te gaan.
+
+PLUGIN_PANDORA_READONLY_MODE
+	DE	Pandora befindet sich im schreibgeschützten Modus, versuchen Sie es später noch einmal.
+	EN	Pandora is in read-only mode, please try your request again later.
+	ES	Pandora está en modo de sólo lectura. Vuelva a realizar su solicitud más tarde.
+	FR	Pandora est en lecture seule, veuillez relancer votre requête ultérieurement.
+	HE	Pandora במצב לקריאה בלבד, נסה לבצע את הבקשה מאוחר יותר.
+	IT	Pandora è in modalità sola lettura. Riprovare più tardi.
+	NL	Pandora is in alleen-lezen modus. Probeer jouw verzoek later opnieuw.
+
+PLUGIN_PANDORA_MAINTENANCE_MODE
+	DE	Pandora ist vorübergehend aufgrund geplanter Wartungsarbeiten nicht verfügbar.  Versuchen Sie es später noch einmal und genießen Sie die Musik!
+	EN	Pandora is temporarily down for scheduled service improvements.  Please check back soon, and enjoy the music!
+	ES	Pandora está temporalmente fuera de servicio por mejoras de servicio planificadas. Vuelva a intentarlo pronto y disfrute de la música.
+	FR	Pandora est momentanément indisponible en raison d'opérations de maintenance programmées.  Revenez bientôt, et vive la musique!
+	HE	Pandora מושבת באופן זמני לצורך שיפור מתוכנן. חזור בקרוב כדי ליהנות מהמוסיקה!
+	IT	Pandora non è temporaneamente disponibile in seguito ad attività di manutenzione periodica.  Torna presto e goditi la musica!
+	NL	Pandora is tijdelijk niet beschikbaar voor geplande serviceverbeteringen.  Probeer het straks weer, om van de muziek te genieten!

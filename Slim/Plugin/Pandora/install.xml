@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<extension>
+	<id>EAF3A57B-2698-4244-A895-CE1FC6BAB52B</id>
+	<name>PLUGIN_PANDORA_MODULE_NAME</name>
+	<module>Slim::Plugin::Pandora::Plugin</module>
+	<playerMenu>RADIO</playerMenu>
+	<version>3.0</version>
+	<description>PLUGIN_PANDORA_MODULE_NAME_DESC</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<type>2</type>
+	<targetApplication>
+		<id>SlimServer</id>
+		<minVersion>7.0a</minVersion>
+		<maxVersion>7.0+</maxVersion>
+	</targetApplication>
+</extension>

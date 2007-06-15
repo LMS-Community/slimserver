@@ -425,6 +425,11 @@ sub parseOPML {
 		'title' => unescapeAndTrim($xml->{'head'}->{'title'}),
 		'items' => _parseOPMLOutline($xml->{'body'}->{'outline'}),
 	};
+	
+	# Optional command to run (used by Pandora)
+	if ( $xml->{'command'} ) {
+		$opml->{'command'} = $xml->{'command'};
+	}
 
 	$xml = undef;
 
