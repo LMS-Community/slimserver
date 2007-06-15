@@ -1886,7 +1886,7 @@ sub prefCommand {
 		return;
 	}	
 
-	Slim::Utils::Prefs::set($prefName, $newValue);
+	$prefs->set($prefName, $newValue);
 	
 	$request->setStatusDone();
 }
