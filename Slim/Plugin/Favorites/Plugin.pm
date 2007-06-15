@@ -485,7 +485,7 @@ sub cliBrowse {
 	my $request = shift;
 	my $client  = $request->client;
 
-	if ($request->isNotQuery([['favorites'], ['items']])) {
+	if ($request->isNotQuery([['favorites'], ['items', 'playlist']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
