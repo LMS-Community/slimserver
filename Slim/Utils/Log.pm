@@ -159,12 +159,10 @@ sub reInit {
 	%runningConfig = %config;
 
 	# Write out the config if requested
-	if ($hasConfigFile && $args->{'overwriteCustomConfig'}) {
+	if ($hasConfigFile && ($args->{'overwriteCustomConfig'} || $debugLine{'persist'})) {
 
 		$class->writeConfig($args->{'logconf'});
 
-	# $hasConfigFile will never be negative even when there is a default config
-	#} elsif (!$hasConfigFile) {
 	} else {
 
 		$class->writeConfig;
