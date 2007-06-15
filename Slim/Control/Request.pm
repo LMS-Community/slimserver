@@ -498,6 +498,7 @@ sub init {
     addDispatch(['player',         'model',          '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
     addDispatch(['player',         'name',           '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
     addDispatch(['playerpref',     '_prefname',      '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playerprefQuery]);
+    addDispatch(['playerpref',     'validate',       '_prefname',  '_newvalue'],                       [1, 1, 0, \&Slim::Control::Queries::prefValidateQuery]);
     addDispatch(['playerpref',     '_prefname',      '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::playerprefCommand]);
     addDispatch(['players',        '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::playersQuery]);
     addDispatch(['playlist',       'add',            '_item'],                                         [1, 0, 0, \&Slim::Control::Commands::playlistXitemCommand]);
@@ -553,6 +554,7 @@ sub init {
     addDispatch(['power',          '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::powerQuery]);
     addDispatch(['power',          '_newvalue'],                                                       [1, 0, 0, \&Slim::Control::Commands::powerCommand]);
     addDispatch(['pref',           '_prefname',      '?'],                                             [0, 1, 0, \&Slim::Control::Queries::prefQuery]);
+    addDispatch(['pref',           'validate',       '_prefname',  '_newvalue'],                       [0, 1, 0, \&Slim::Control::Queries::prefValidateQuery]);
     addDispatch(['pref',           '_prefname',      '_newvalue'],                                     [0, 0, 0, \&Slim::Control::Commands::prefCommand]);
     addDispatch(['rate',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::rateQuery]);
     addDispatch(['rate',           '_newvalue'],                                                       [1, 0, 0, \&Slim::Control::Commands::rateCommand]);

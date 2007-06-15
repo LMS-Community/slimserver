@@ -66,19 +66,24 @@ sub handler {
 	# Handle the simple case where validation is done by prefs obj.
 	my ($prefsClass, @prefs) = $class->prefs($client);
 
+	my @doValidate;
 	for my $pref (@prefs) {
-
+		
 		if ($paramRef->{'saveSettings'}) {
 
 			my (undef, $ok) = $prefsClass->set($pref, $paramRef->{$pref});
 
 			if (!$ok) {
-				$paramRef->{'warning'} .= sprintf(Slim::Utils::Strings::string('SETTINGS_INVALIDVALUE'), $paramRef->{$pref}, $pref);
+				$paramRef->{'warning'} .= sprintf(Slim::Utils::Strings::string('SETTINGS_INVALIDVALUE'), $paramRef->{$pref}, $pref) . '<br/>';
 			}
 		}
 
+		push @doValidate, $pref if (defined $prefsClass->{'validators'}->{$pref});
 		$paramRef->{'prefs'}->{$pref} = $prefsClass->get($pref);
 	}
+
+	# values that can be validated client-side
+	$paramRef->{'validate'} = \@doValidate;
 
 	# Common values
 	$paramRef->{'page'} = $class->name;
@@ -89,6 +94,8 @@ sub handler {
 	if (defined $client) {
 		$paramRef->{'playername'} = $client->name();
 	}
+
+	$paramRef->{'namespace'} = $prefsClass->{'namespace'};
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
 }

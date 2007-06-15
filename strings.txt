@@ -6202,6 +6202,14 @@ SETUP_BAD_VALUE
 	SV	Felaktigt värde angett: %s
 	ZH_CN	指定价值无效: %s
 
+SETTINGS_INVALIDVALUE
+	DE	"%s" ist kein gültiger Wert für %s
+	EN	Invalid value "%s" for %s
+
+SETUP_VALIDATION_FAILED
+	DE	Einige Werte konnten nicht verifiziert werden.\nWollen Sie dennoch fortfahren?
+	EN	Some values could not be validated.\nDo you want to continue?
+	
 SETUP_CURRENT
 	CS	Aktuální
 	DA	Aktiv
@@ -13487,7 +13495,3 @@ SETUP_VIEW_NOT_SCANNING
 CLOSE
 	DE	Schliessen
 	EN	Close
-
-SETTINGS_INVALIDVALUE
-	DE	"%s" ist kein gültiger Wert für %s
-	EN	Invalid value "%s" for %s

@@ -1811,12 +1811,19 @@ sub playerprefCommand {
 	my $prefName = $request->getParam('_prefname');
 	my $newValue = $request->getParam('_newvalue');
 
-	if (!defined $prefName || !defined $newValue) {
+	# split pref name from namespace: name.space.pref:
+	my $namespace = 'server';
+	if ($prefName =~ /^(.*):(\w+)$/) {
+		$namespace = $1;
+		$prefName = $2;
+	}
+	
+	if (!defined $prefName || !defined $newValue || !defined $namespace) {
 		$request->setStatusBadParams();
 		return;
 	}	
 
-	$prefs->client($client)->set($prefName, $newValue);
+	preferences($namespace)->client($client)->set($prefName, $newValue);
 	
 	$request->setStatusDone();
 }
@@ -1876,17 +1883,24 @@ sub prefCommand {
 		$request->setStatusBadDispatch();
 		return;
 	}
-	
+
 	# get our parameters
 	my $prefName = $request->getParam('_prefname');
 	my $newValue = $request->getParam('_newvalue');
 
-	if (!defined $prefName || !defined $newValue) {
+	# split pref name from namespace: name.space.pref:
+	my $namespace = 'server';
+	if ($prefName =~ /^(.*):(\w+)$/) {
+		$namespace = $1;
+		$prefName = $2;
+	}
+	
+	if (!defined $prefName || !defined $newValue || !defined $namespace) {
 		$request->setStatusBadParams();
 		return;
 	}	
 
-	$prefs->set($prefName, $newValue);
+	preferences($namespace)->set($prefName, $newValue);
 	
 	$request->setStatusDone();
 }

@@ -1714,13 +1714,54 @@ sub playerprefQuery {
 	# get the parameters
 	my $client   = $request->client();
 	my $prefName = $request->getParam('_prefname');
+
+	# split pref name from namespace: name.space.pref:
+	my $namespace = 'server';
+	if ($prefName =~ /^(.*):(\w+)$/) {
+		$namespace = $1;
+		$prefName = $2;
+	}
 	
-	if (!defined $prefName) {
+	if (!defined $prefName || !defined $namespace) {
 		$request->setStatusBadParams();
 		return;
 	}
 
-	$request->addResult('_p2', $prefs->client($client)->get($prefName));
+	$request->addResult('_p2', preferences($namespace)->client($client)->get($prefName));
+	
+	$request->setStatusDone();
+}
+
+
+sub playerprefValidateQuery {
+	my $request = shift;
+	
+	$log->debug("Begin Function");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['playerpref'], ['validate']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $client   = $request->client();
+	my $prefName = $request->getParam('_prefname');
+	my $newValue = $request->getParam('_newvalue');
+
+	# split pref name from namespace: name.space.pref:
+	my $namespace = 'server';
+	if ($prefName =~ /^(.*):(\w+)$/) {
+		$namespace = $1;
+		$prefName = $2;
+	}
+	
+	if (!defined $prefName || !defined $namespace || !defined $newValue) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	$request->addResult('valid', preferences($namespace)->client($client)->validate($prefName, $newValue) ? 1 : 0);
 	
 	$request->setStatusDone();
 }
@@ -1759,13 +1800,53 @@ sub prefQuery {
 	
 	# get the parameters
 	my $prefName = $request->getParam('_prefname');
+
+	# split pref name from namespace: name.space.pref:
+	my $namespace = 'server';
+	if ($prefName =~ /^(.*):(\w+)$/) {
+		$namespace = $1;
+		$prefName = $2;
+	}
 	
-	if (!defined $prefName) {
+	if (!defined $prefName || !defined $namespace) {
 		$request->setStatusBadParams();
 		return;
 	}
 
-	$request->addResult('_p2', $prefs->get($prefName));
+	$request->addResult('_p2', preferences($namespace)->get($prefName));
+	
+	$request->setStatusDone();
+}
+
+
+sub prefValidateQuery {
+	my $request = shift;
+	
+	$log->debug("Begin Function");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['pref'], ['validate']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $prefName = $request->getParam('_prefname');
+	my $newValue = $request->getParam('_newvalue');
+
+	# split pref name from namespace: name.space.pref:
+	my $namespace = 'server';
+	if ($prefName =~ /^(.*):(\w+)$/) {
+		$namespace = $1;
+		$prefName = $2;
+	}
+	
+	if (!defined $prefName || !defined $namespace || !defined $newValue) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	$request->addResult('valid', preferences($namespace)->validate($prefName, $newValue) ? 1 : 0);
 	
 	$request->setStatusDone();
 }

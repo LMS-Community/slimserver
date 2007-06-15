@@ -19,6 +19,8 @@
 
 	[% pageHeaderScripts = BLOCK %]
 		[% pageHeaderScripts %]
+		<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
+		<script type="text/javascript" src="[% webroot %]html/scriptaculous/scriptaculous.js?load=effects&r=[% revision %]" ></script>
 		<script TYPE="text/javascript">[% PROCESS html/settings.js %]</script>
 	[% END %]
 
@@ -32,8 +34,9 @@
 	[% END %]
 </div>
 
-<form method="post" action="[% webroot %][% path %][% IF playerid %]?playerid=[% playerid | uri %][% END %]">
+<form name="settingsForm" id="settingsForm" method="post" action="[% webroot %][% path %][% IF playerid %]?playerid=[% playerid | uri %][% END %]">
 
+<div id="settingsRegion">
 	<input type=hidden value="[% page %]" name="page">
 	[% IF playerid %]<input type=hidden value="[% playerid %]" name="playerid">[% END %]
 	[% IF player %]<input type=hidden value="[% player %]" name="player">[% END %]

@@ -97,6 +97,18 @@ a:hover {
 	color: #737373;
 }
 
+#settingsRegion {
+	overflow: auto;
+	width: 100%;
+	height: 50%;
+}
+
+#prefsSubmit {
+	border-top: 2px solid #c5c5c5;
+	background-color: #ececec;
+	padding-bottom: 5px;
+}
+
 .valueBold, .valueSelected, .bar {
 	color: #c5c5c5;
 	padding-right: 1px;

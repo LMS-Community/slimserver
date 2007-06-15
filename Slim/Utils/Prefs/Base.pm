@@ -50,6 +50,20 @@ sub exists {
 	exists shift->{'prefs'}->{ $_[0] };
 }
 
+
+sub validate {
+	my $class = shift;
+	my $pref  = shift;
+	my $new   = shift;
+
+	my $old   = $class->{'prefs'}->{ $pref };
+	my $root  = $class->_root;
+	my $validator = $root->{'validators'}->{ $pref };
+
+	return $validator ? $validator->($pref, $new, $root->{'validparams'}->{ $pref }, $old, $class->_obj) : 1;
+}
+
+
 =head2 set( $prefname, $value )
 
 Sets preference $prefname to $value.
@@ -73,7 +87,6 @@ sub set {
 	my $root  = $class->_root;
 	my $change = $root->{'onchange'}->{ $pref };
 	my $readonly  = $root->{'readonly'};
-	my $validator = $root->{'validators'}->{ $pref };
 	my $namespace = $root->{'namespace'};
 	my $clientid  = $class->{'clientid'} || '';
 
@@ -82,7 +95,7 @@ sub set {
 		return wantarray ? ($new, 1) : $new;
 	}
 
-	my $valid  = $validator ? $validator->($pref, $new, $root->{'validparams'}->{ $pref }, $old, $class->_obj) : 1;
+	my $valid = $class->validate($pref, $new);
 
 	if ($readonly) {
 
