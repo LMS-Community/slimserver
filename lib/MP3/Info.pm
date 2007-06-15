@@ -2056,13 +2056,17 @@ sub _find_id3_chunk {
 	my($fh, $filetype) = @_;
 	my($bytes, $size, $tag, $pat, $mat);
 
-	read $fh, $bytes, 1;
+	# CHANGE 10616 introduced a read optimization in _get_v2head:
+	#  10 bytes are read, not 3, so reading one here hoping to get the last letter of the
+	#  tag is a bad idea, as it always fails...
+	
+#	read $fh, $bytes, 1;
 	if ($filetype eq 'RIF') {  # WAV
-		return 0 if $bytes ne 'F';
+#		return 0 if $bytes ne 'F';
 		$pat = 'a4V';
 		$mat = 'id3 ';
 	} elsif ($filetype eq 'FOR') { # AIFF
-		return 0 if $bytes ne 'M';
+#		return 0 if $bytes ne 'M';
 		$pat = 'a4N';
 		$mat = 'ID3 ';
 	}
