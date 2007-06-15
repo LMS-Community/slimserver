@@ -14,7 +14,7 @@ package Slim::Web::Template::Context;
 use strict;
 use base 'Template::Context';
 
-our $procTemplate = Slim::Utils::PerfMon->new('Process Template', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
+our $procTemplate = Slim::Utils::PerfMon->new('Process Template', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
 
 # Following allow timing of template processing excluding time in idleStreams and log4perl
 my $depth = 0;   # depth of template being processed

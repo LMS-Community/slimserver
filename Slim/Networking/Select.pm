@@ -47,8 +47,8 @@ our $selects = {
 	'is_error' => IO::Select->new,
 };
 
-our $responseTime = Slim::Utils::PerfMon->new('Response Time', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
-our $selectTask = Slim::Utils::PerfMon->new('Select Task', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
+our $responseTime = Slim::Utils::PerfMon->new('Response Time', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
+our $selectTask = Slim::Utils::PerfMon->new('Select Task', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
 
 my $endSelectTime;
 

@@ -104,7 +104,7 @@ our @closeHandlers = ();
 
 
 
-our $pageBuild = Slim::Utils::PerfMon->new('Web Page Build', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
+our $pageBuild = Slim::Utils::PerfMon->new('Web Page Build', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
 
 our %dangerousCommands = (
 	# name of command => regexp for URI patterns that make it dangerous

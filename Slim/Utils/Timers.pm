@@ -89,8 +89,8 @@ our $high = ( hasXS() )
 my $checkingNormalTimers = 0; # Semaphore to avoid normal timer callbacks executing inside each other
 my $checkingHighTimers = 0;   # Semaphore for high priority timers
 
-our $timerLate = Slim::Utils::PerfMon->new('Timer Late', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
-our $timerTask = Slim::Utils::PerfMon->new('Timer Task', [0.002, 0.005, 0.01, 0.015, 0.025, 0.05, 0.1, 0.5, 1, 5]);
+our $timerLate = Slim::Utils::PerfMon->new('Timer Late', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
+our $timerTask = Slim::Utils::PerfMon->new('Timer Task', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
 
 my $log = logger('server.timers');
 

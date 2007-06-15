@@ -427,7 +427,7 @@ our %subscribers = ();          # contains the requests being subscribed to
                                 
 our @notificationQueue;         # contains the Requests waiting to be notified
 
-our $requestTask = Slim::Utils::PerfMon->new('Request Task', [0.002, 0.005, 0.010, 0.015, 0.025, 0.050, 0.1, 0.5, 1, 5]);
+our $requestTask = Slim::Utils::PerfMon->new('Request Task', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
 
 my $log = logger('control.command');
 
