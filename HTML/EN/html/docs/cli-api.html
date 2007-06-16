@@ -73,6 +73,10 @@
 		notification to return the song title and playlist index.
 	</li>
 	<li>
+		Updated the &quot;<a href="#pref">pref</a>&quot; and &quot;<a href="#playerpref">playerpref</a>&quot; 
+		commands to support the namespaces for preferences.
+	</li>
+	<li>
 		New notification mechanism for preference changes: &quot;<a href="#prefset">prefset</a>&quot;.
 	</li>
 </ul>
@@ -105,6 +109,11 @@
 	<li>
 		Added the &quot;prefs&quot; tag to the &quot;<a href="#players">players</a>&quot; query, 
 		to enable returning the given preference values along with each player.
+	</li>
+	<li>
+		Added the &quot;<a href="#pref validate">pref validate</a>&quot; and
+		&quot;<a href="#playerpref validate">playerpref validate</a>&quot; queries to validate
+		preferences without setting them. 
 	</li>
 	<li>
 		Added a tag to return the artist from the &quot;<a href="#albums">albums</a>&quot; query.
@@ -728,7 +737,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<strong>
 		<code>
 			pref 
-			&lt;prefname&gt; 
+			&lt;prefname|namespace:prefname&gt; 
 			&lt;prefvalue|?&gt;
 		</code>
 	</strong>
@@ -764,6 +773,10 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</ul>
 </p>
 <p>
+	If you want to query/set a preference from an other namespace than &quot;server&quot;
+	(eg. a plugin), you'll have to prepend the desired namespace to the prefname.
+</p>
+<p>
 	Examples:
 </p>
 <blockquote>
@@ -774,11 +787,51 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			%2fUsers%2fdean%2fDesktop%2ftest%20music&lt;LF&gt;&quot;
 	</p>
 	<p>
+		Request: &quot;pref plugin.rescan:time ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;pref plugin.rescan:time 32400&lt;LF&gt;&quot;
+	</p>
+	<p>
 		Request: &quot;pref playlistdir 
 			%2fUsers%2fdean%2fplaylists&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;pref playlistdir 
 			%2fUsers%2fdean%2fplaylists&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="pref validate">
+	<strong>
+		<code>
+			pref 
+			validate
+			&lt;prefname|namespace:prefname&gt; 
+			&lt;prefvalue&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;pref validate&quot; command allows the caller to validate a 
+	SlimServer's internal preference value without setting it.
+</p>
+<p>
+	If you want to validate a preference from an other namespace than &quot;server&quot;
+	(eg. a plugin), you'll have to prepend the desired namespace to the prefname.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;pref validate bufferSecs 10&quot;
+		<br>
+		Response: &quot;pref validate bufferSecs valid:1&quot;
+	</p>
+	<p>
+		Request: &quot;pref validate audiodir /some/incorrect/filepath&quot;
+		<br>
+		Response: &quot;pref validate audiodir valid:0&quot;
 	</p>
 </blockquote>
 
@@ -1740,7 +1793,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<code>
 			&lt;playerid&gt;
 			playerpref 
-			&lt;prefname&gt; 
+			&lt;prefname|namespace:prefname&gt; 
 			&lt;prefvalue|?&gt;
 		</code>
 	</strong>
@@ -1748,6 +1801,10 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	The &quot;playerpref&quot; command allows the caller to set and query the 
 	SlimServer's internal player-specific preferences values.
+</p>
+<p>
+	If you want to query/set a preference from an other namespace than &quot;server&quot;
+	(eg. a plugin), you'll have to prepend the desired namespace to the prefname.
 </p>
 <p>
 	Examples:
@@ -1762,6 +1819,42 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request: &quot;04:20:00:12:23:45 playerpref doublesize 0&quot;
 		<br>
 		Response: &quot;04:20:00:12:23:45 playerpref doublesize 0&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="playerpref validate">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			playerpref 
+			validate
+			&lt;prefname|namespace:prefname&gt; 
+			&lt;prefvalue&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;playerpref validate&quot; command allows the caller to validate a 
+	SlimServer's internal player-specific preference value without setting it.
+</p>
+<p>
+	If you want to validate a preference from an other namespace than &quot;server&quot;
+	(eg. a plugin), you'll have to prepend the desired namespace to the prefname.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;04:20:00:12:23:45 playerpref validate scrollPause 3&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 playerpref validate scrollPause valid:1&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 playerpref validate scrollRate fast&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 playerpref validate scrollRate valid:0&quot;
 	</p>
 </blockquote>
 
