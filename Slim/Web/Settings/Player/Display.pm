@@ -70,7 +70,7 @@ sub handler {
 					my @array;
 					my $i = 0;
 
-					while (defined $paramRef->{$pref.$i} && $paramRef->{$pref.$i} eq "-1") {
+					while (defined $paramRef->{$pref.$i} && $paramRef->{$pref.$i} ne "-1") {
 
 						push @array, $paramRef->{$pref.$i};
 

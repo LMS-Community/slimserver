@@ -50,6 +50,11 @@ sub exists {
 	exists shift->{'prefs'}->{ $_[0] };
 }
 
+=head2 validate( $pref, $new )
+
+Validates new value for a preference.
+
+=cut
 
 sub validate {
 	my $class = shift;
@@ -62,7 +67,6 @@ sub validate {
 
 	return $validator ? $validator->($pref, $new, $root->{'validparams'}->{ $pref }, $old, $class->_obj) : 1;
 }
-
 
 =head2 set( $prefname, $value )
 
@@ -196,6 +200,31 @@ sub all {
 	}
 
 	return \%prefs;
+}
+
+=head2 hasValidator( $pref )
+
+Returns whether preference $pref has a validator function defined.
+
+=cut
+
+sub hasValidator {
+	my $class = shift;
+	my $pref  = shift;
+
+	return $class->_root->{'validators'}->{ $pref }  ? 1 : 0;
+}
+
+=head2 namespace( )
+
+Returns namespace for this preference object.
+
+=cut
+
+sub namespace {
+	my $class = shift;
+
+	return $class->_root->{'namespace'};
 }
 
 sub AUTOLOAD {
