@@ -36,6 +36,8 @@ sub handler {
 			);
 		}
 
+		Slim::Utils::Log->persist($paramRef->{'persist'} ? 1 : 0);
+
 		# $paramRef might have the overwriteCustomConfig flag.
 		Slim::Utils::Log->reInit($paramRef);
 	}
@@ -59,6 +61,7 @@ sub handler {
 	#$paramRef->{'categories'} = [ sort { $a->{'label'} cmp $b->{'label'} } @categories ];
 	$paramRef->{'categories'} = \@categories;
 	$paramRef->{'logLevels'}  = \@validLogLevels;
+	$paramRef->{'persist'}    = Slim::Utils::Log->persist;
 
 	$paramRef->{'debugServerLog'}  = Slim::Utils::Log->serverLogFile;
 	$paramRef->{'debugScannerLog'} = Slim::Utils::Log->scannerLogFile;

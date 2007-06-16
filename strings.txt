@@ -13495,3 +13495,6 @@ SETUP_VIEW_NOT_SCANNING
 CLOSE
 	DE	Schliessen
 	EN	Close
+
+PERSIST_DEBUG_SETTINGS
+	EN	Save debugging settings for use at next server restart

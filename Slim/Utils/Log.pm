@@ -56,6 +56,7 @@ my %runningConfig = ();
 my $needsReInit   = 0;
 my $hasConfigFile = 0;
 my %debugLine     = ();
+my $persist       = 0;
 
 my @validLevels   = qw(OFF FATAL ERROR WARN INFO DEBUG);
 
@@ -98,18 +99,6 @@ sub init {
 
 		$class->parseDebugLine($args->{'debug'} || $::logCategories);
 	}
-
-	# If the user has specified a log file, check for a pipe, etc.
-	if ($args->{'logfile'}) {
-
-		# Bug 4407 - specifying a log file is overriden in serverLogFile().
-		#$class->addLogAppender({
-		#	'filename' => $args->{'logfile'},
-		#});
-	}
-
-	# Anything passed on the command line will override the config file.
-	$class->parseDebugLine($args->{'debug'} || $::logCategories);
 
 	if ($logconf && -r $logconf) {
 
@@ -158,14 +147,22 @@ sub reInit {
 	# For next time.
 	%runningConfig = %config;
 
-	# Write out the config if requested
-	if ($hasConfigFile && ($args->{'overwriteCustomConfig'} || $debugLine{'persist'})) {
+	# Write out the config if $persist set or not yet written
+	if ($hasConfigFile) {
 
-		$class->writeConfig($args->{'logconf'});
+		if ($persist) {
+
+			$class->writeConfig($args->{'logconf'});
+		}
 
 	} else {
 
 		$class->writeConfig;
+
+		if (-r $class->defaultConfigFile) {
+
+			$hasConfigFile = 1;
+		}
 	}
 
 	# and reinitialize.
@@ -192,6 +189,23 @@ sub needsReInit {
 	my $class = shift;
 
 	return $needsReInit;
+}
+
+=head2 persist ( [ $val ] )
+
+Get or set flag which updates saved logging levels when logging levels are changed
+
+=cut
+
+sub persist {
+	my $class = shift;
+	my $val   = shift;
+
+	if (defined $val) {
+		$persist = $val;
+	}
+
+	return $persist;
 }
 
 =head2 logger( [ $category ] )
@@ -590,9 +604,11 @@ Returns the string token for the description of the given category.
 
 $line can look like:
 
-network.protocol.slimproto=info,plugin.itunes=WARN,plugin.rs232
+network.protocol.slimproto=info,plugin.itunes=WARN,plugin.rs232,persist
 
 If no log level is given, the category will the verbose 'DEBUG' level.
+
+'persist' enables the debug persistence flag so all changes are saved.
 
 =cut
 
@@ -601,6 +617,13 @@ sub parseDebugLine {
 	my $line  = shift || return;
 
 	for my $statement (split /\s*,\s*/, $line) {
+
+		if ($statement eq 'persist') {
+
+			$persist = 1;
+
+			next;
+		}
 
 		my ($category, $level) = split /=/, $statement;
 
