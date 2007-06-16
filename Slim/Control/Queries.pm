@@ -3215,6 +3215,35 @@ sub _addSong {
 	$request->setResultLoopHash($loop, $index, $hashRef);
 }
 
+# Title:          title (TITLE)
+# Artist:      a  artist->name (!contributors...)
+# Album:       l  album->title (ALBUM)
+# Genre:       g  genre->name (GENRE, many possible)
+# Disc:        i  disc (DISC)
+# Track:       t  tracknum (TRACK)
+# Compilation: ?  album->compilation (COMPILATION/YES)
+# File Format: o  content_type (TYPE)
+# Duration:    d  secs (duration?) (LENGTH)
+# Volume adj:  ?  replay_gain (REPLAYGAIN (format('%2.2f'))) dB
+# Alb Vol adj: ?  album->replay_gain (ALBUMREPLAYGAIN) dB
+# Year:        y  year (YEAR)
+# Rating:      ?  rating (RATING)/100
+# Comments:    k  comment (COMMENT)
+# Lyrics:      w  lyrics (LYRICS)
+# File Length: f  filesize       Slim::Utils::Misc::delimitThousands($track->filesize); (FILELENGTH + BYTES)
+# Bitrate:     r  bitrate        $track->prettyBitRate (BITRATE)
+# Sample Rate: ?  samplerate     $track->prettySampleRate (SAMPLERATE)
+# Sample Size: ?  samplesize     (SAMPLESIZE) BITS
+# bpm:         m  bpm (BPM)
+# ID3 Tag ver: v  tagversion (TAGVERSION)
+# Location:    u  url -- (path? LOCATION, unuri, utf8dec
+# Date mod:    n  modificationTime (MODTIME)
+# 
+# // drm
+# // coverart
+
+
+
 
 sub _songData {
 	my $pathOrObj = shift; # song path or object
