@@ -357,9 +357,6 @@ sub init {
 	$log->info("SlimServer Plugins init...");
 	Slim::Utils::PluginManager->init();
 
-	$log->info("mDNS startAdvertising...");
-	Slim::Networking::mDNS->startAdvertising;
-
 	# Reinitialize logging, as plugins may have been added.
 	if (Slim::Utils::Log->needsReInit) {
 
@@ -383,6 +380,10 @@ sub init {
 
 	$log->info("SlimServer HTTP enable...");
 	Slim::Web::HTTP::init2();
+
+	# advertise once we are ready...
+	$log->info("mDNS startAdvertising...");
+	Slim::Networking::mDNS->startAdvertising;
 
 	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();

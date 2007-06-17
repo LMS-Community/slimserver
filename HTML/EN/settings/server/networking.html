@@ -48,7 +48,7 @@
 			</option>
 		</select>
 
-		[% IF mDNSname.size %]
+		[% IF prefs.exists('mDNSname') %]
 		<div class="prefHead">[% "SETUP_MDNSNAME" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_MDNSNAME_DESC" | string %]</div>
 		
