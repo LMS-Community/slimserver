@@ -65,7 +65,7 @@ sub validate {
 	my $root  = $class->_root;
 	my $validator = $root->{'validators'}->{ $pref };
 
-	return $validator ? $validator->($pref, $new, $root->{'validparams'}->{ $pref }, $old, $class->_obj) : 1;
+	return $validator ? $validator->($pref, $new, $root->{'validparam'}->{ $pref }, $old, $class->_obj) : 1;
 }
 
 =head2 set( $prefname, $value )

@@ -124,8 +124,8 @@ sub setValidate {
 
 		$log->isInitialized && $log->debug(sprintf "registering %s for $class->{'namespace'}:$pref", Slim::Utils::PerlRunTime::realNameForCodeRef($validator));
 
-		$class->{'validators'}->{ $pref }  = $validator;
-		$class->{'validparams'}->{ $pref } = $params if $params;
+		$class->{'validators'}->{ $pref } = $validator;
+		$class->{'validparam'}->{ $pref } = $params if $params;
 	}
 }
 
