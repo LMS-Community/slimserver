@@ -2758,8 +2758,7 @@ SETUP_DISABLEDEXTENSIONSPLAYLIST_DESC
 	HE	SlimServer יבצע חיפוש בתיקיית המוסיקה ההשמעה אחר כל סוגי הקבצים הנתמכים (קבצים וגיליונות סימנים של רשימות השמעה). כדי להשבית סוגי קבצים ספציפיים כך שלא יעובדו בעת סריקה של תיקיית רשימות ההשמעה, הזן בשדה שלהלן רשימה המופרדת באמצעות פסיקים של סיומות קבצים. לדוגמה: m3u, pls, cue
 	IT	SlimServer cercherà nella cartella degli elenchi di riproduzione tutti i tipi di file supportati (elenchi di riproduzione e cue sheet.). Per ignorare tipi di file specifici, inserire qui sotto l'elenco delle estensioni corrispondenti separate da una virgola. Ad esempio, m3u, pls, cue
 	NL	SlimServer zoekt in de playlistmap naar alle ondersteunde bestandstypen (playlist- en cue-bestanden). Je kunt hieronder een kommagescheiden lijst met bestandsextensies invoeren om ervoor te zorgen dat specifieke bestandstypen bij het scannen worden overgeslagen. Bijv.: m3u, pls, cue
-	NO	SlimServer søker i spillelistemappen etter alle filtyper som støttes (spillelister og «cue sheets»). For å hindre gitte filtyper fra å bli med i dette søket, skriv inn en kommaseparert
-liste over filendelser under. For eksempel: m3u, pls, cue
+	NO	SlimServer søker i spillelistemappen etter alle filtyper som støttes (spillelister og «cue sheets»). For å hindre gitte filtyper fra å bli med i dette søket, skriv inn en kommaseparert liste over filendelser under. For eksempel: m3u, pls, cue
 	SV	SlimServer kommer att söka igenom Spellistemappen efter alla filtyper som stöds (spellistor och cue sheets). För att avaktivera givna filtyper från att bearbetas vid genomsökning av Spellistemappen, ange en kommaseparerad lista med filändelser nedan. Ex: m3u, pls, cue
 	ZH_CN	SlimServer会在播放表文件夹内寻找各式所支持的播放表或cue sheet文件。 如想要把某些格式除外，便在以下输入其格式扩展名，以逗号为分隔。例如: m3u, pls, cue
 
