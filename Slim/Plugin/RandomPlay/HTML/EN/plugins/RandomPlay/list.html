@@ -79,9 +79,9 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 			[%- FOREACH genrerow = table.rows %]
 				<tr class="[% odd ? "odd" : "even" %]">
 				[%- FOREACH genre = genrerow %]
-				[%- genreid = "genre_" _ pluginRandomGenreList.$genre.id %]
-					<td><input type="checkbox" name="[% genreid %]" id="[% genreid %]" value="1" [% pluginRandomGenreList.$genre.enabled ? "checked" : "" %] onclick="changeNumSelected(this)">
-					<label for="[% genreid %]">[% pluginRandomGenreList.$genre.name | html %]</label></td>
+				[%- genreid = "genre_" _ pluginRandomGenreList.item("$genre").id %]
+					<td><input type="checkbox" name="[% genreid %]" id="[% genreid %]" value="1" [% pluginRandomGenreList.item("$genre").enabled ? "checked" : "" %] onclick="changeNumSelected(this)">
+					<label for="[% genreid %]">[% pluginRandomGenreList.item("$genre").name | html %]</label></td>
 				[%- END %]
 				</tr>
 				[% odd = (not odd) %]
