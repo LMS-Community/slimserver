@@ -3440,18 +3440,22 @@ SETUP_MAXWMARATE_DESC
 	NL	Sommige WMA-streams hebben meerdere bitsnelheden voor streaming. SlimServer selecteert standaard de hoogste bitsnelheid die voor de stream beschikbaar is. Als je een langzamere internetverbinding hebt, kun je een lagere waarde instellen om de maximumsnelheid die gekozen kan worden, te beperken.
 
 SETUP_NOUPNP
+	DE	UPnP-Client
 	EN	UPnP Client
 	NO	UPnP-klient
 
 SETUP_NOUPNP_DESC
+	DE	Soll SlimServer im Netzwerk nach UPnP Mediaservern suchen? 
 	EN	Should SlimServer look for other UPnP media servers on your network?
 	NO	Skal SlimServer se etter andre UPnP-mediatjenere i ditt nettverk?
 
 SETUP_UPNP_ENABLE
+	DE	Aktiviert, nach UPnP Mediaservern suchen
 	EN	Enabled, look for other UPnP media servers.
 	NO	Påskrudd. SlimServer vil se etter andre UPnP-mediatjenere.
 
 SETUP_UPNP_DISABLE
+	DE	Deaktiviert, nicht nach UPnP Mediaservern suchen
 	EN	Disabled, do not look for other UPnP media servers.
 	NO	Avskrudd. SlimServer vil ikke se etter andre UPnP-mediatjenere.
 
@@ -5302,7 +5306,7 @@ SETUP_NOGENREFILTER
 	ZH_CN	在专辑和音轨的层面过滤音乐风格。
 
 SETUP_NOGENREFILTER_1
-	DE	Titel und Alben eines Interpreten anzeigen
+	DE	Alle Titel und Alben eines Interpreten anzeigen
 	EN	Show any tracks & albums for an artist
 	ES	Mostrar cualquier pista y álbum de un artista
 	FR	Afficher tous les albums et morceaux de l'artiste
@@ -5313,7 +5317,7 @@ SETUP_NOGENREFILTER_1
 	ZH_CN	显示某个艺人所属的音轨和专辑
 
 SETUP_NOGENREFILTER_0
-	DE	Nur zur gewählten Stilrichtung passende Alben und Titel für den Interpreten anzeigen
+	DE	Nur zur gewählten Stilrichtung passende Alben und Titel anzeigen
 	EN	Only show tracks or albums matching the selected genre for an artist
 	ES	Mostrar solo pistas o álbumes que coincidan con el género seleccionado para un artista.
 	FR	Afficher uniquement les albums et morceaux du genre sélectionné
@@ -6885,15 +6889,19 @@ SETUP_GROUPDISCS_1
 	ZH_CN	把多个光碟组成的合集视为单一的专辑
 
 SETUP_SN_EMAIL
+	DE	Mail-Adresse
 	EN	Email Address
 
 SETUP_SN_EMAIL_DESC
+	DE	Geben Sie bitte die Mail-Adresse an, welche Sie zum Anmelden an SqueezeNetwork verwenden.
 	EN	Enter the email address used to login to your SqueezeNetwork account.
 
 SETUP_SN_PASSWORD
+	DE	Passwort
 	EN	Password
 
 SETUP_SN_PASSWORD_DESC
+	DE	Geben Sie bitte das Passwort für ihren SqueezeNetwork-Zugang an.
 	EN	Enter the password for your SqueezeNetwork account.
 
 #
@@ -9870,9 +9878,8 @@ SQUEEZENETWORK_SETTINGS
 SQUEEZENETWORK_LOGGING
 	EN	SqueezeNetwork Logging
 
-
 SETUP_GROUP_DEBUG_DESC
-	DE	SlimServer enthält eine Reihe von Debugging-Einstellungen, mit denen Sie umfangreiche Angaben über den Betrieb des Servers aufzeichnen können. Aktivieren Sie die Punkte, die protokolliert werden sollen, und klicken Sie auf 'Ändern', um das Protokollieren der entsprechenden Information zu aktivieren. Hier <a href="/log.txt" target="log">können Sie die aktuellen Protokolleinträge anzeigen</a>.
+	DE	SlimServer enthält eine Reihe von Debugging-Einstellungen, mit denen Sie umfangreiche Angaben über den Betrieb des Servers aufzeichnen können. Aktivieren Sie die Punkte, die protokolliert werden sollen, und klicken Sie auf 'Ändern', um das Protokollieren der entsprechenden Information zu aktivieren. <a href="/log.txt" target="log">Hier können Sie die aktuellen Protokolleinträge anzeigen</a>.
 	EN	SlimServer has a number of debugging settings that can be used to record detailed information about the server & scanner operation. Each debugging category has a severity for logging. With "Debug" being the most verbose, and "Off" being the least.
 	ES	SlimServer tiene diversos parámetros de depuración que se pueden usar para registrar información detallada del funcionamiento del servidor. Marque los elementos que desea que se registren para mostrarlos y haga clic en Cambiar para iniciar el registro de esa información. Las entradas de registro más recientes se pueden ver <a href="/log.txt" target="log">aquí</a>.
 	FR	Le SlimServer est doté d'un certain nombre de réglages de débogage pouvant enregistrer des informations détaillées sur le fonctionnement du serveur. Sélectionnez les éléments à enregistrer et cliquez sur "Modifier" pour commencer l'enregistrement des informations. Vous pouvez consulter les entrées les plus récentes <a href="/log.txt" target="log">ici</a>.
@@ -10531,7 +10538,7 @@ NO_PLAYER_FOUND
 NO_PLAYER_DETAILS
 	CS	<p><b>Pakliže používáte Squeezebox:</b></p><li> Ujistěte se, že je Váš přehrávač připojen a že máte správně nastavená síťová nastavení. Klikněte na tlačítko 'Obnovit' jestliže je přehrávač připojen.</li>  <br>  <p><b>Pokud nepoužíváte Squeezebox:</p></b>   <li>Můžete poslouchat obsah hudebního archivu použitím SoftSqueeze - softwarové verze Squeezeboxu.</li>  <li>Můžet také použít softwarový MP3 přehrávač (jako je WinAmp, MusicJukebox, Windows Media Player, nebo iTunes)  a poslouchat Váš hudební archiv otevřením URL: http://localhost:9000/stream.mp3 v přehrávači.</li>
 	DA	Kontroller at din afspiller er sluttet til og at dens netværksindstillinger er korrekte. Tryk F5 (Refresh/Genindlæs) i din web-browser for at prøve at forbinde til afspilleren igen.
-	DE	<b>Sie besitzen Squeezebox oder Transporter:</b><ul><li>Überprüfen Sie, ob der Player korrekt angeschlossen ist und die Netzwerkeinstellungen stimmen und klicken Sie im Browser auf 'Aktualisieren', wenn der Player angeschlossen ist.</ul><p><b>Sie besitzen weder Squeezebox noch Transporter:</b><ul><li>Sie können mit<a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, einer Software-Version der Squeezebox, ihre Musiksammlung anhören.<li>Mit einer Software zur Wiedergabe von MP3 (z.B. WinAmp oder iTunes) können Sie über folgende URL auf SlimServer zugreifen:  http://localhost:9000/stream.mp3
+	DE	<b>Sie besitzen Squeezebox oder Transporter:</b><ul><li>Überprüfen Sie, ob der Player korrekt angeschlossen ist und die Netzwerkeinstellungen stimmen und klicken Sie im Browser auf 'Aktualisieren', wenn der Player angeschlossen ist.</ul><p><b>Sie besitzen weder Squeezebox noch Transporter:</b><ul><li>Sie können mit <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, einer Software-Version der Squeezebox, ihre Musiksammlung anhören.<li>Mit einer Software zur Wiedergabe von MP3 (z.B. WinAmp oder iTunes) können Sie über folgende URL auf SlimServer zugreifen:  http://localhost:9000/stream.mp3
 	EN	<b>If you own a Squeezebox or Transporter:</b><ul><li>Make sure that your player is plugged in and its networking settings are correct. Click the Refresh button once your player is connected.</ul><p><b>If you do not own a Squeezebox or Transporter:</b><ul><li>You can listen to your music library using <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, a software version of Squeezebox.<li>You can use MP3 player software (such as WinAmp or iTunes) to listen to your music library with SlimServer by connecting to this URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
 	ES	<b>Si posee un Squeezebox o un Transporter:</b><ul><li>Asegúrese de que el reproductor está conectado y de que la configuración de red es correcta. Haga clic en el botón Actualizar cuando el reproductor esté conectado.</ul><p><b>Si no posee un Squeezebox o un Transporter:</b><ul><li>Se puede escuchar la biblioteca de música mediante<a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, una versión en software de Squeezebox.<li>Se puede usar un reproductor en software de MP3 (como WinAmp o iTunes) para escuchar la biblioteca de música con SlimServer conectándose a esta URL: http://localhost:9000/stream.mp3  
 	FI	<td><b>Jos omistat Squeezeboxin:</b>  <ul>  <li>Varmista, että soittimesi on kytketty verkkoon ja että verkkoasetuksesi ovat oikein. Kun soittimesi on kytketty verkkoon, paina "Refresh" nappulaa</ul>  <p>  <b>Jos et omista Squeezeboxia:</b>  <ul><li>  Voit kuunnella musiikkikirjastosi sisältöä ohjelmallisella versiolla Squeezeboxista: <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>  <li>Voit myös käyttää median toistoohjelmistoja (kuten WinAmp tai iTunes) kuunnellaksesi musiikkikirjastoasi SlimServerin kautta ottamalla yhteyttä osoitteeseen:<a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul> </td>
@@ -13431,6 +13438,7 @@ DEBUG_NETWORK_UPNP
 	EN	UPnP Server & Device Information (Rhapsody)
 
 DEBUG_NETWORK_JSONRPC
+	DE	JSON-RPC API Fehlerbehebung
 	EN	JSON-RPC API Debugging
 
 DEBUG_FORMATS_AUDIO
@@ -13697,4 +13705,5 @@ CLOSE
 	EN	Close
 
 PERSIST_DEBUG_SETTINGS
+	DE	Fehlerbehebungs-Einstellungen beim nächsten Serverstart beibehalten
 	EN	Save debugging settings for use at next server restart

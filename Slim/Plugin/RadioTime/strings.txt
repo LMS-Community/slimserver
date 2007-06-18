@@ -52,7 +52,7 @@ SETUP_PLUGIN_RADIOTIME_USERNAME
 	NL	Voer je RadioTime-gebruikersnaam in.
 
 SETUP_PLUGIN_RADIOTIME_USERNAME_DESC
-	DE	Melden Sie sich bei <a href='http://www.radiotime.com' target='_new'>radiotime.com</b> <b>kostenlos</b> an. Fügen Sie Sender oder Sendungen zu ihrer 'My Radio'-Liste hinzu und geben Sie sie auf Squeezebox oder Transporter wieder.
+	DE	Melden Sie sich bei <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> <b>kostenlos</b> an. Fügen Sie Sender oder Sendungen zu ihrer 'My Radio'-Liste hinzu und geben Sie sie auf Squeezebox oder Transporter wieder.
 	EN	Visit <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> to sign up for <b>free</b>.  Add stations and shows to My Radio then listen on your Squeezebox or Transporter.
 	ES	Visite <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> para registrarse <b>gratis</b>. Agregue emisoras y programas a Mi radio y escuche en Squeezebox o Transporter.
 	FR	Inscrivez-vous <b>gratuitement</b> sur <a href='http://www.radiotime.com' target='_new'>radiotime.com</a>. Ajoutez des stations et des émissions à votre liste et écoutez-les sur la Squeezebox ou sur Transporter.
