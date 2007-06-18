@@ -2550,7 +2550,6 @@ sub statusQuery {
 	$request->setStatusDone();
 }
 
-
 sub songinfoQuery {
 	my $request = shift;
 
@@ -2562,7 +2561,7 @@ sub songinfoQuery {
 		return;
 	}
 
-	my $tags  = 'abcdefghijJklmnopqrstvwxyz'; # all letter EXCEPT u
+	my $tags  = 'abcdefghijJklmnopqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'; # all letter EXCEPT u
 	my $track;
 
 	# get our parameters
@@ -2609,9 +2608,6 @@ sub songinfoQuery {
 
 	if (blessed($track) && $track->can('id')) {
 
-		my $hashRef = _songData($track, $tags);
-		my $count = scalar (keys %{$hashRef});
-
 		if ($menuMode) {
 
 			# decide what is the next step down
@@ -2644,7 +2640,11 @@ sub songinfoQuery {
 				},
 			};
 			$request->addResult('base', $base);
+			$tags = 'algitCodGAyRkwfrTSmvun';
 		}
+
+		my $hashRef = _songData($track, $tags, $menuMode);
+		my $count = scalar (keys %{$hashRef});
 
 		$count += 0;
 		$request->addResult("count", $count);
@@ -2663,7 +2663,40 @@ sub songinfoQuery {
 				if ($idx >= $start && $idx <= $end) {
 					
 					if ($menuMode) {
-						$request->addResultLoop($loopname, $cnt, 'text', $key . ":" . $val);
+						
+						# pretty print some of the stuff...
+						# the web interface does it in the template (partially)
+						
+						if ($key eq 'COMPILATION') {
+							$val = Slim::Utils::Strings::string('YES');
+						}
+						elsif ($key eq 'TYPE') {
+							$val = Slim::Utils::Strings::string($val);
+						}
+						elsif ($key eq 'LENGTH') {
+							$val = $track->duration();
+						}
+						elsif ($key eq 'ALBUMREPLAYGAIN' || $key eq 'REPLAYGAIN') {
+							$val = sprintf("%2.2f", $val) . " dB";
+						}
+						elsif ($key eq 'RATING') {
+							$val = $val / 100;
+						}
+						elsif ($key eq 'FILELENGTH') {
+							$val = Slim::Utils::Misc::delimitThousands($val) . " " . Slim::Utils::Strings::string('BYTES');
+						}
+						elsif ($key eq 'SAMPLERATE') {
+							$val = $track->prettySampleRate();
+						}
+						elsif ($key eq 'SAMPLESIZE') {
+							$val = $val . " " . Slim::Utils::Strings::string('BITS');
+						}
+						elsif ($key eq 'LOCATION') {
+							$val = $track->path();
+						}
+						
+						
+						$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string($key) . ":" . $val);
 					}
 					else {
 						$request->addResultLoop($loopname, $cnt, $key, $val);
@@ -3248,7 +3281,10 @@ sub _addSong {
 sub _songData {
 	my $pathOrObj = shift; # song path or object
 	my $tags      = shift; # tags to use
+	my $menuMode  = shift; # if true, we're in Menu mode
 
+
+	# figure out the track object
 	my $track     = Slim::Schema->rs('Track')->objectForUrl($pathOrObj);
 
 	if (!blessed($track) || !$track->can('id')) {
@@ -3267,74 +3303,89 @@ sub _songData {
 		}
 	}
 	
+	
 	# define an ordered hash for our results
 	tie (my %returnHash, "Tie::IxHash");
 
+	# in normal mode, we want to add a tag name and a "raw" value
+	# in menu mode, we want to add a i8n tag string and a "pretty" value
+	
+
+	my $keyIndex = 0;
+
 	# add fields present no matter $tags
-	$returnHash{'id'}    = $track->id;
-	$returnHash{'title'} = $track->title;
+	if ($menuMode) {
+		$returnHash{'TITLE'} = $track->title;
+		
+		# use token as key in menuMode
+		$keyIndex = 1;
+	}
+	else {
+		$returnHash{'id'}    = $track->id;
+		$returnHash{'title'} = $track->title;
+	}
 
 	my %tagMap = (
-		# Tag    Tag name             Track method         Track field
-		#-------------------------------------------------------------
-		# '.' => ['id',               'id'],               #id
-		  'u' => ['url',              'url'],              #url
-		  'o' => ['type',             'content_type'],     #content_type
-		# '.' => ['title',            'title'],            #title
-		#                                                  #titlesort 
-		#                                                  #titlesearch 
-		  'e' => ['album_id',         'albumid'],          #album 
-		  't' => ['tracknum',         'tracknum'],         #tracknum
-		  'n' => ['modificationTime', 'modificationTime'], #timestamp
-		  'f' => ['filesize',         'filesize'],         #filesize
-		#                                                  #tag 
-		  'i' => ['disc',             'disc'],             #disc
-		  'j' => ['coverart',         'coverArtExists'],   #cover
-		  'x' => ['remote',           'remote'],           #remote 
-		#                                                  #audio 
-		#                                                  #audio_size 
-		#                                                  #audio_offset
-		  'y' => ['year',             'year'],             #year
-		  'd' => ['duration',         'secs'],             #secs
-		#                                                  #vbr_scale 
-		  'r' => ['bitrate',          'prettyBitRate'],    #bitrate
-		#                                                  #samplerate 
-		#                                                  #samplesize 
-		#                                                  #channels 
-		#                                                  #block_alignment
-		#                                                  #endian 
-		  'm' => ['bpm',              'bpm'],              #bpm
-		  'v' => ['tagversion',       'tagversion'],       #tagversion
-		  'z' => ['drm',              'drm'],              #drm
-		#                                                  #musicmagic_mixable
-		#                                                  #musicbrainz_id 
-		#                                                  #playcount 
-		#                                                  #lastplayed 
-		#                                                  #lossless 
-		  'w' => ['lyrics',           'lyrics'],           #lyrics 
-		#                                                  #rating 
-		#                                                  #replay_gain 
-		#                                                  #replay_peak
+		# Tag    Tag name             Token            Track method         Track field
+		#------------------------------------------------------------------------------
+		# '.' => ['id',               '',              'id'],               #id
+		  'u' => ['url',              'LOCATION',      'url'],              #url
+		  'o' => ['type',             'TYPE',          'content_type'],     #content_type
+		# '.' => ['title',            'TITLE',         'title'],            #title
+		#                                                                   #titlesort 
+		#                                                                   #titlesearch 
+		  'e' => ['album_id',         '',              'albumid'],          #album 
+		  't' => ['tracknum',         'TRACK',         'tracknum'],         #tracknum
+		  'n' => ['modificationTime', 'MODTIME',       'modificationTime'], #timestamp
+		  'f' => ['filesize',         'FILELENGTH',    'filesize'],         #filesize
+		#                                                                   #tag 
+		  'i' => ['disc',             'DISC',          'disc'],             #disc
+		  'j' => ['coverart',         '',              'coverArtExists'],   #cover
+		  'x' => ['remote',           '',              'remote'],           #remote 
+		#                                                                   #audio 
+		#                                                                   #audio_size 
+		#                                                                   #audio_offset
+		  'y' => ['year',             'YEAR',          'year'],             #year
+		  'd' => ['duration',         'LENGTH',        'secs'],             #secs
+		#                                                                   #vbr_scale 
+		  'r' => ['bitrate',          'BITRATE',       'prettyBitRate'],    #bitrate
+		  'T' => ['samplerate',       'SAMPLERATE',    'samplerate'],       #samplerate 
+		  'S' => ['samplesize',       'SAMPLESIZE',    'samplesize'],       #samplesize 
+		#                                                                   #channels 
+		#                                                                   #block_alignment
+		#                                                                   #endian 
+		  'm' => ['bpm',              'BPM',           'bpm'],              #bpm
+		  'v' => ['tagversion',       'TAGVERSION',    'tagversion'],       #tagversion
+		# 'z' => ['drm',              '',              'drm'],              #drm
+		#                                                                   #musicmagic_mixable
+		#                                                                   #musicbrainz_id 
+		#                                                                   #playcount 
+		#                                                                   #lastplayed 
+		#                                                                   #lossless 
+		  'w' => ['lyrics',           'LYRICS',        'lyrics'],           #lyrics 
+		  'R' => ['rating',           'RATING',        'rating'],           #rating 
+		  'G' => ['replay_gain',      'REPLAYGAIN',    'replay_gain'],      #replay_gain 
+		#                                                                   #replay_peak
 
-		# Tag    Tag name             Relationship   Method         Track relationship
-		#--------------------------------------------------------------------
-		  'a' => ['artist',           'artist',      'name'],       #->contributors
-		  'b' => ['band',             'band'],                      #->contributors
-		  'c' => ['composer',         'composer'],                  #->contributors
-		  'h' => ['conductor',        'conductor'],                 #->contributors
-		  's' => ['artist_id',        'artist',      'id'],         #->contributors
 
-		  'l' => ['album',            'album',       'title'],      #->album.title
-		  'q' => ['disccount',        'album',       'discc'],      #->album.discc
-		  'J' => ["artwork_track_id", 'album',       'artwork'],    #->album.artwork
-
-		  'g' => ['genre',            'genre',       'name'],       #->genre_track->genre.name
-		  'p' => ['genre_id',         'genre',       'id'],         #->genre_track->genre.id
-
-		  'k' => ['comment',          'comment'],                   #->comment_object
-
-		# Tag    Tag name             Track method         Track relationship
-		#--------------------------------------------------------------------
+		# Tag    Tag name              Token              Relationship   Method          Track relationship
+		#--------------------------------------------------------------------------------------------------
+		  'a' => ['artist',            'ARTIST',           'artist',      'name'],        #->contributors
+		  'b' => ['band',              'B',                'band'],                       #->contributors
+		  'c' => ['composer',          'C',                'composer'],                   #->contributors
+		  'h' => ['conductor',         'D',                'conductor'],                  #->contributors
+		  's' => ['artist_id',         '',                'artist',      'id'],          #->contributors
+                                                                     
+		  'l' => ['album',             'ALBUM',           'album',       'title'],       #->album.title
+		  'q' => ['disccount',         '',                'album',       'discc'],       #->album.discc
+		  'J' => ["artwork_track_id",  '',                'album',       'artwork'],     #->album.artwork
+		  'C' => ['compilation',       'COMPILATION',     'album',       'compilation'], #->album.compilation
+		  'A' => ['album_replay_gain', 'ALBUMREPLAYGAIN', 'album',       'replay_gain'], #->album.replay_gain
+                                                                     
+		  'g' => ['genre',             'GENRE',           'genre',       'name'],        #->genre_track->genre.name
+		  'p' => ['genre_id',          '',                'genre',       'id'],          #->genre_track->genre.id
+                                                                     
+		  'k' => ['comment',           'COMMENT',         'comment'],                    #->comment_object
 
 	);
 
@@ -3342,13 +3393,13 @@ sub _songData {
 	for my $tag (split //, $tags) {
 
 		# if we have a method for the tag
-		if (defined(my $method = $tagMap{$tag}->[1])) {
+		if (defined(my $method = $tagMap{$tag}->[2])) {
 			
 			if ($method ne '') {
 
 				my $value;
 
-				if (defined(my $submethod = $tagMap{$tag}->[2])) {
+				if (defined(my $submethod = $tagMap{$tag}->[3])) {
 					if (defined(my $related = $track->$method)) {
 						$value = $related->$submethod();
 					}
@@ -3361,7 +3412,7 @@ sub _songData {
 				if (defined $value && $value ne '') {
 
 					# add the tag to the result
-					$returnHash{$tagMap{$tag}->[0]} = $value;
+					$returnHash{$tagMap{$tag}->[$keyIndex]} = $value;
 				}
 			}
 		}
