@@ -107,7 +107,7 @@ sub handleBrowseGenre {
 	# Errcode < 0 means normal completion with no async stuff needed.
 	if ($errcode != 0) {
 		if ($errcode > 0) {
-			$params->{'errmsg'} = "LOADING_GENRES_ERROR";
+			$params->{'errmsg'} = "PLUGIN_LIVE365_LOADING_GENRES_ERROR";
 		}
 		return handleIndex($client,$params);
 	}
@@ -170,7 +170,7 @@ sub completeBrowseGenre {
 
 		if (scalar @genreList == 0) {
 
-			$params->{'errmsg'} = "LOADING_GENRES_ERROR";
+			$params->{'errmsg'} = "PLUGIN_LIVE365_LOADING_GENRES_ERROR";
 			$body = handleIndex($client,$params);
 
 		} else {
@@ -220,10 +220,10 @@ sub errorBrowseGenre {
 	my $genreid    = $params->{'id'};
 
 	if ($genreid eq 'root') {
-		$params->{'errmsg'} = "LOADING_GENRES_ERROR";
+		$params->{'errmsg'} = "PLUGIN_LIVE365_LOADING_GENRES_ERROR";
 		$body = handleIndex($client,$params);
 	} else {
-		$params->{'errmsg'} = "LOADING_GENRES_ERROR";
+		$params->{'errmsg'} = "PLUGIN_LIVE365_LOADING_GENRES_ERROR";
 		$body = filltemplatefile("live365_browse.html", $params);
 	}
 
@@ -246,7 +246,7 @@ sub handleBrowseStation {
 	if ($errcode != 0) {
 
 		if ($errcode > 0) {
-			$params->{'errmsg'} = "LOGIN_ERROR_ACTION";
+			$params->{'errmsg'} = "PLUGIN_LIVE365_LOGIN_ERROR_ACTION";
 		}
 
 		return handleIndex($client,$params);
@@ -264,18 +264,18 @@ sub handleBrowseStation {
 }
 
 my %lookupStrings = (
-	"presets"     => "PRESETS",
-	"picks"       => "BROWSEPICKS",
-	"pro"         => "BROWSEPROS",
-	"all"         => "BROWSEALL",
-	"tac"         => "SEARCH_TAC",
-	"artist"      => "SEARCH_A",
-	"track"       => "SEARCH_T",
-	"cd"          => "SEARCH_C",
-	"station"     => "SEARCH_E",
-	"location"    => "SEARCH_L",
-	"broadcaster" => "SEARCH_H",
-	"genres"      => "BROWSEGENRES",
+	"presets"     => "PLUGIN_LIVE365_PRESETS",
+	"picks"       => "PLUGIN_LIVE365_BROWSEPICKS",
+	"pro"         => "PLUGIN_LIVE365_BROWSEPROS",
+	"all"         => "PLUGIN_LIVE365_BROWSEALL",
+	"tac"         => "PLUGIN_LIVE365_SEARCH_TAC",
+	"artist"      => "PLUGIN_LIVE365_SEARCH_A",
+	"track"       => "PLUGIN_LIVE365_SEARCH_T",
+	"cd"          => "PLUGIN_LIVE365_SEARCH_C",
+	"station"     => "PLUGIN_LIVE365_SEARCH_E",
+	"location"    => "PLUGIN_LIVE365_SEARCH_L",
+	"broadcaster" => "PLUGIN_LIVE365_SEARCH_H",
+	"genres"      => "PLUGIN_LIVE365_BROWSEGENRES",
 );
 
 my %lookupGenres = (
@@ -354,9 +354,9 @@ sub errorBrowseStation {
 	my $params = $fullparams->{'params'};
 	
         if ($API->isLoggedIn()) {
-                $params->{'errmsg'} = "NOSTATIONS";
+                $params->{'errmsg'} = "PLUGIN_LIVE365_NOSTATIONS";
         } else {
-                $params->{'errmsg'} = "NOT_LOGGED_IN";
+                $params->{'errmsg'} = "PLUGIN_LIVE365_NOT_LOGGED_IN";
         }
 
 	my $body = handleIndex($client,$params);
@@ -401,7 +401,7 @@ sub buildStationBrowseHTML {
 	# If we have nothing to show, show an error.
 	if ($totalcount == 0) {
 
-		$params->{'errmsg'} = "NOSTATIONS";
+		$params->{'errmsg'} = "PLUGIN_LIVE365_NOSTATIONS";
 
 	} else {
 	
@@ -470,7 +470,7 @@ sub handleBrowse {
 	my ($client, $params) = @_;
 
 	if (!($API->isLoggedIn())) {
-		$params->{'errmsg'} = "NOT_LOGGED_IN";
+		$params->{'errmsg'} = "PLUGIN_LIVE365_NOT_LOGGED_IN";
 		return handleIndex(@_);
 	}
 
@@ -481,7 +481,7 @@ sub handleBrowse {
 	$params->{'pwd_list'} = [
 		{
 			'hreftype' => 'Live365Index',
-			'title' => string("MODULE_NAME"),
+			'title' => string("PLUGIN_LIVE365_MODULE_NAME"),
 		},
 		{
 			'hreftype' => 'Live365Browse',
@@ -510,7 +510,7 @@ sub handleSearch {
 	my ($client, $params, $callback, $httpClient, $response) = @_;
 
 	if (!($API->isLoggedIn())) {
-		$params->{'errmsg'} = "NOT_LOGGED_IN";
+		$params->{'errmsg'} = "PLUGIN_LIVE365_NOT_LOGGED_IN";
 		return handleIndex(@_);
 	}
 
@@ -521,11 +521,11 @@ sub handleSearch {
 	$params->{'pwd_list'} = [
 		{
 			'hreftype' => 'Live365Index',
-			'title' => string("MODULE_NAME"),
+			'title' => string("PLUGIN_LIVE365_MODULE_NAME"),
 		},
 		{
 			'hreftype' => 'Live365Search',
-			'title' => string("SEARCH"),
+			'title' => string("PLUGIN_LIVE365_SEARCH"),
 			'type' => $brtype,
 		},
 	];
@@ -546,7 +546,7 @@ sub handleSearch {
 	if ($errcode != 0) {
 
 		if ($errcode > 0) {
-			$params->{'errmsg'} = "NOSTATIONS";
+			$params->{'errmsg'} = "PLUGIN_LIVE365_NOSTATIONS";
 		}
 
 		return filltemplatefile("live365_search.html", $params);
@@ -645,7 +645,7 @@ sub errorSearch {
 
 	my $fullparams = fetchAsyncRequest('xxx','search');
 	my $params = $fullparams->{'params'};
-	$params->{'errmsg'} = "NOSTATIONS";
+	$params->{'errmsg'} = "PLUGIN_LIVE365_NOSTATIONS";
 
 	my $body = filltemplatefile("live365_search.html", $params);
 		
@@ -734,7 +734,7 @@ sub handleLogin {
 	if ($errcode != 0) {
 
 		if ($errcode > 0) {
-			$params->{'errmsg'} = "NO_CREDENTIALS";
+			$params->{'errmsg'} = "PLUGIN_LIVE365_NO_CREDENTIALS";
 		}
 
 		return handleIndex($client,$params);
@@ -744,13 +744,13 @@ sub handleLogin {
 }
 
 my @login_statusText = qw(
-	LOGIN_SUCCESS
-	LOGIN_ERROR_NAME
-	LOGIN_ERROR_LOGIN
-	LOGIN_ERROR_ACTION
-	LOGIN_ERROR_ORGANIZATION
-	LOGIN_ERROR_SESSION
-	LOGIN_ERROR_HTTP
+	PLUGIN_LIVE365_LOGIN_SUCCESS
+	PLUGIN_LIVE365_LOGIN_ERROR_NAME
+	PLUGIN_LIVE365_LOGIN_ERROR_LOGIN
+	PLUGIN_LIVE365_LOGIN_ERROR_ACTION
+	PLUGIN_LIVE365_LOGIN_ERROR_ORGANIZATION
+	PLUGIN_LIVE365_LOGIN_ERROR_SESSION
+	PLUGIN_LIVE365_LOGIN_ERROR_HTTP
 );
 
 sub doLoginLogout {
