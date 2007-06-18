@@ -263,6 +263,11 @@ sub albumsQuery {
 				'titleStyle' => "album",
 			}
 		};
+		if (!$prefs->get('noGenreFilter') && defined $genreID) {
+			$base->{'actions'}->{'go'}->{'params'}->{'genre_id'} = $genreID;
+			$base->{'actions'}->{'play'}->{'params'}->{'genre_id'} = $genreID;
+			$base->{'actions'}->{'add'}->{'params'}->{'genre_id'} = $genreID;
+		}
 		$request->addResult('base', $base);
 	}
 	
@@ -474,6 +479,11 @@ sub artistsQuery {
 				'menuStyle' => 'album',
 			}
 		};
+		if (!$prefs->get('noGenreFilter') && defined $genreID) {
+			$base->{'actions'}->{'go'}->{'params'}->{'genre_id'} = $genreID;
+			$base->{'actions'}->{'play'}->{'params'}->{'genre_id'} = $genreID;
+			$base->{'actions'}->{'add'}->{'params'}->{'genre_id'} = $genreID;
+		}
 		$request->addResult('base', $base);
 	}
 	
