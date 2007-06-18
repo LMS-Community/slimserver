@@ -1,0 +1,4 @@
+warning|[% warning%]
+[%- FOREACH valid = validated %]
+[% valid.key %]|[% valid.value %]
+[%- END %]

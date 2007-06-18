@@ -33,20 +33,28 @@ function chooseSettings(value,option)
 		case "HOME":
 			url = "[% webroot %]home.html?"
 		break
-		case "BASIC_PLAYER_SETTINGS":
-			url = "[% webroot %]setup.html?page=BASIC_PLAYER_SETTINGS&amp;playerid=[% playerid | uri %]"
-		break
-		case "BASIC_SERVER_SETTINGS":
-			url = "[% webroot %]setup.html?page=BASIC_SERVER_SETTINGS&amp;"
-		break
 	}
 
 	if (option) {
-		window.location = url + 'player=[% playerURI %][% IF playerid %]&playerid=[% playerid | uri %][% END %]';
+		// change the mouse cursor so user gets some feedback
+		$('settingsForm').setStyle({cursor:'wait'});		
+		new Ajax.Updater( { success: 'settingsRegion' }, url, {
+			method: 'post',
+			postBody: 'ajaxUpdate=1&player=[% playerURI %][% IF playerid %]&playerid=[% playerid | uri %][% END %]',
+			evalScripts: true,
+			asynchronous: true,
+			onFailure: function(t) {
+				alert('Error -- ' + t.responseText);
+			},
+			onComplete: function(t) {
+				$('settingsForm').setStyle({cursor:'auto'});
+				$('statusarea').update('');		
+			}
+		} );
+		document.forms.settingsForm.action = url;
 	}
 }
 
-var validateAll = true;
 function prefValidate(myPref, sync) {
 	new Ajax.Request('/jsonrpc.js', {
 		method: 'post',
@@ -70,18 +78,7 @@ function prefValidate(myPref, sync) {
 			var json = response.responseText.evalJSON();
 
 			// preference did not validate - highlight the field
-			if (json.result.valid == '0') {
-				myPref.style.background = '#ffcccc';
-				validateAll = false;
-			}
-			else {
-				new Effect.Highlight(myPref.name, {
-				duration: 0.5,
-					startcolor: '#99ff99',
-					endcolor: '#ffffff',
-					restorecolor: '#ffffff'
-				});
-			}
+			highlightField(myPref, (json.result.valid == '1'));
 		}
 	});
 }
@@ -107,9 +104,9 @@ function resizeSettingsSection() {
 
 new Event.observe(window, 'load', function(){
 	// add event handlers to all fields which have a validator
-	[%- FOREACH item = validate %]
-	new Event.observe('[% item %]', 'blur', function(){ prefValidate($('[% item %]')); } );
-	[%- END %]
+	[%- FOREACH pref = validate; IF pref.value %]
+	new Event.observe('[% pref.key %]', 'blur', function(){ prefValidate($('[% pref.key %]')); } );
+	[%- END; END %]
 	
 	// try to redirect all form submissions by return key to the default submit button
 	// listen for keypress events on all form elements except submit
@@ -129,17 +126,47 @@ new Event.observe(window, 'load', function(){
 	new Event.observe(window, 'resize', function(){resizeSettingsSection();});
 
 	new Event.observe('saveSettings', 'click', function(e){
-		[%- FOREACH item = validate %]
-		prefValidate($('[% item %]'), true);
-		[%- END %]
+		$('settingsForm').setStyle({cursor:'wait'});		
+		Event.stop(e);
+		$('settingsForm').request({
+			parameters: { useAJAX: 1, rescan: '' },		
+			onComplete: function(response) {
+				var results = parseData(response.responseText);
 
-		// if validation fails and user doesn't force the submit, cancel
-		if (!validateAll && !confirm("[% "SETUP_VALIDATION_FAILED" | string %]")) {
-			Event.stop(e);
-			validateAll = true;
-		}
+				$('statusarea').update(results['warning']);
+				resizeSettingsSection();
+
+				// highlight fields
+				for (field in results) {
+					if ($(field)) {
+						highlightField($(field), (results[field] == '1'));
+					}
+				}
+
+				$('settingsForm').setStyle({cursor:'auto'});		
+			}
+		});
 	});
 
 	resizeSettingsSection();
 });
 
+var bgColors = new Array;
+function highlightField(field, valid) {
+	if (!bgColors[field]) {
+		bgColors[field] = field.getStyle('backgroundColor'); 
+	}
+
+	if (valid) {
+		// restore the background before calling the effect
+		// using it as targetcolor didn't work
+		field.setStyle({backgroundColor: bgColors[field]});
+		new Effect.Highlight(field, {
+			duration: 0.5,
+			startcolor: '#99ff99'
+		});
+	}
+	else {
+		field.setStyle({backgroundColor: '#ffcccc'});
+	}
+}

@@ -20,6 +20,7 @@
 
 </div>
 
+[% IF NOT ajaxUpdate %]
 <div id="prefsSubmit">
 [% IF prefs || NOT playerid %]
 	[% IF NOT nosubmit %]<input name="saveSettings" id="saveSettings" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]">[% END %]
@@ -31,3 +32,6 @@
 <!-- End settingsfooter.html -->
 [% PROCESS pagefooter.html %]
 
+[% ELSE %]
+</form>
+[% END %]

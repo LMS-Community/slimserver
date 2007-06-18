@@ -261,7 +261,7 @@ sub init {
 	$prefs->init(\%defaults);
 
 	# set validation functions
-	$prefs->setValidate( 'num',   qw(displaytexttimeout browseagelimit remotestreamtimeout) );
+	$prefs->setValidate( 'num',   qw(displaytexttimeout browseagelimit remotestreamtimeout screensavertimeout) );
 	$prefs->setValidate( 'dir',   qw(cachedir playlistdir audiodir artfolder) );
 	$prefs->setValidate( 'array', qw(guessFileFormats titleFormat disabledformats) );
 

@@ -1,34 +1,30 @@
+[% IF NOT ajaxUpdate %]
 <!-- Begin settingsheader.html -->
 [% FILTER null %]
 
 	[% pwd_list = BLOCK %]
-
-		[% IF playerid %]
-			<a href="[% webroot %]settings/player/basic.html[% IF playerid %]?playerid=[% playerid | uri %][% END %]">[% "PLAYER_SETTINGS" | string %] [% IF playername %][% "FOR" | string %] [% playername %][% END %]</a>
-		[% ELSE %]
-			<a href="[% webroot %]settings/server/basic.html">[% "SERVER_SETTINGS" | string %]</a>
-		[% END %]
-
-		 / <a href="[% webroot %][% path %][% IF playerid %]?playerid=[% playerid | uri %][% ELSIF player %]?player=[% playerURI %][% END %]">[% page | string %]</a>
-
-	[% END %]
-
-	[% pageHeaderInfo = BLOCK %]
 		[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
 	[% END %]
+
 
 	[% pageHeaderScripts = BLOCK %]
 		[% pageHeaderScripts %]
 		<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
 		<script type="text/javascript" src="[% webroot %]html/scriptaculous/scriptaculous.js?load=effects&r=[% revision %]" ></script>
+		<script type="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]" ></script>
 		<script TYPE="text/javascript">[% PROCESS html/settings.js %]</script>
 	[% END %]
 
+	[% pageHeaderInfo = BLOCK %]
+ 		[%#- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
+ 	[% END %]
+ 	
 [% END %]
 
-[% pagetitle = page | string; pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %] 
+[% IF playerid; pagetitle='PLAYER_SETTINGS' | string; ELSE; pagetitle = 'SERVER_SETTINGS' | string; END %]
+[% pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %]
 
-<div class="statusarea">
+<div id="statusarea" class="statusarea">
 	[% IF warning %]
 		[% warning %]
 	[% END %]
@@ -37,6 +33,8 @@
 <form name="settingsForm" id="settingsForm" method="post" action="[% webroot %][% path %][% IF playerid %]?playerid=[% playerid | uri %][% END %]">
 
 <div id="settingsRegion">
+[% END %]
+	<input type=hidden value="0" name="useAJAX">
 	<input type=hidden value="[% page %]" name="page">
 	[% IF playerid %]<input type=hidden value="[% playerid %]" name="playerid">[% END %]
 	[% IF player %]<input type=hidden value="[% player %]" name="player">[% END %]

@@ -66,7 +66,7 @@ sub handler {
 	# Handle the simple case where validation is done by prefs obj.
 	my ($prefsClass, @prefs) = $class->prefs($client);
 
-	my @doValidate;
+	my (@valid);
 
 	for my $pref (@prefs) {
 
@@ -74,22 +74,26 @@ sub handler {
 
 			my (undef, $ok) = $prefsClass->set($pref, $paramRef->{$pref});
 
-			if (!$ok) {
+			if ($ok) {
+				$paramRef->{'validated'}->{$pref} = 1; 
+			}
+			else { 
 				$paramRef->{'warning'} .= sprintf(Slim::Utils::Strings::string('SETTINGS_INVALIDVALUE'), $paramRef->{$pref}, $pref) . '<br/>';
+				$paramRef->{'validated'}->{$pref} = 0;
 			}
 		}
 
-		push @doValidate, $pref if $prefsClass->hasValidator($pref);
-
+		$paramRef->{'validate'}->{$pref} = $prefsClass->hasValidator($pref);			
 		$paramRef->{'prefs'}->{$pref} = $prefsClass->get($pref);
 	}
-
-	# values that can be validated client-side
-	$paramRef->{'validate'} = \@doValidate;
 
 	if ($prefsClass) {
 		$paramRef->{'namespace'} = $prefsClass->namespace;
 	}
+
+	if ($paramRef->{'saveSettings'} && !$paramRef->{'warning'}) {
+		$paramRef->{'warning'} = Slim::Utils::Strings::string('SETUP_CHANGES_SAVED');
+	}	
 
 	# Common values
 	$paramRef->{'page'} = $class->name;
@@ -101,7 +105,7 @@ sub handler {
 		$paramRef->{'playername'} = $client->name();
 	}
 
-	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
+	return Slim::Web::HTTP::filltemplatefile($paramRef->{'useAJAX'} ? 'settings/ajaxSettings.txt' : $class->page, $paramRef);
 }
 
 1;
