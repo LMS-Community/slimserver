@@ -77,6 +77,13 @@
 		commands to support the namespaces for preferences.
 	</li>
 	<li>
+		Updated queries &quot;<a href="#status">status</a>&quot;, 
+		&quot;<a href="#titles">titles</a>&quot;,
+		&quot;<a href="#playlists tracks">playlists tracks</a>&quot; and
+		&quot;<a href="#status">songinfo</a>&quot;
+		for artist(s) and genre(s) tags. Multiple items may now be returned.
+	</li>
+	<li>
 		New notification mechanism for preference changes: &quot;<a href="#prefset">prefset</a>&quot;.
 	</li>
 </ul>
@@ -132,6 +139,13 @@
 		to support a new tag J to return the artwork_track_id (as returned by the
 		&quot;<a href="#albums">albums</a>&quot;). This enables clients to cache one
 		image for all songs of the same album.
+	</li>
+	<li>
+		Updated queries &quot;<a href="#status">status</a>&quot;, 
+		&quot;<a href="#titles">titles</a>&quot;,
+		&quot;<a href="#playlists tracks">playlists tracks</a>&quot; and
+		&quot;<a href="#status">songinfo</a>&quot;
+		to support new tags for previously missing information like sample rate/size, rating, etc.
 	</li>
 	<li>
 		Order of tracks passed to &quot;<a href="#playlistcontrol">playlistcontrol</a>&quot;
@@ -761,8 +775,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&quot;<a href="#artists">artists</a>&quot; query.
 		</li>
 		<li>
-			<b>splitList</b>: delimiter for multiple items in tags. Affects the
-			&quot;<a href="#genres">genres</a>&quot; query.
+			<b>splitList</b>: delimiter for multiple items in tags. Affects all the
+			queries returning genres, mainly &quot;<a href="#genres">genres</a>&quot;.
 		</li>
 		<li>
 			<b>composerInArtists</b>, <b>conductorInArtists</b>, 
@@ -4060,7 +4074,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<td>
 			Determines which tags are returned. Each returned tag is identified
 			by a letter (see below). The default value is all info except the
-			url, depending on the given parameter.
+			url (u) and the multi-valued tags for genre(s) (G &amp; P) and artists (A &amp; S)
 		</td>
 	</tr>
 	<tr>
@@ -4143,6 +4157,17 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			<b>G</b>
+		</td>
+		<td>
+			genres
+		</td>
+		<td>
+			Genre names, separated by commas (only useful if the server is set to handle multiple items in tags).
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<b>p</b>
 		</td>
 		<td>
@@ -4154,13 +4179,24 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			<b>P</b>
+		</td>
+		<td>
+			genre_ids
+		</td>
+		<td>
+			Genre IDs, separated by commas (only useful if the server is set to handle multiple items in tags).
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<b>a</b>
 		</td>
 		<td>
 			artist
 		</td>
 		<td>
-			Artist name. Only if known.
+			Artist name.
 		</td>
 	</tr>
 	<tr>
@@ -4171,40 +4207,30 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			artist_id
 		</td>
 		<td>
-			Artist ID. Only if known.
+			Artist ID.
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<b>c</b>
+			<b>A</b>
 		</td>
 		<td>
-			composer
+			&lt;role&gt;
 		</td>
 		<td>
-			Composer name. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<b>b</b>
-		</td>
-		<td>
-			band
-		</td>
-		<td>
-			Band name. Only if known.
+			For every artist role (one of &quot;artist&quot;, &quot;composer&quot;, &quot;conductor&quot;,
+			&quot;band&quot;, &quot;albumartist&quot; or &quot;trackartist&quot;), a comma separated list of names.
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<b>h</b>
+			<b>S</b>
 		</td>
 		<td>
-			conductor
+			&lt;role&gt;_ids
 		</td>
 		<td>
-			Conductor name. Only if known.
+			For each role as defined above, the list of ids.
 		</td>
 	</tr>
 	<tr>
@@ -4352,17 +4378,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
-			<b>z</b>
-		</td>
-		<td>
-			drm
-		</td>
-		<td>
-			Digital rights information. Only if known.
-		</td>
-	</tr>
-	<tr>
-		<td>
 			<b>j</b>
 		</td>
 		<td>
@@ -4398,6 +4413,72 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>
+			<b>C</b>
+		</td>
+		<td>
+			compilation
+		</td>
+		<td>
+			1 if the album this track belongs to is a compilation
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>Y</b>
+		</td>
+		<td>
+			replay_gain
+		</td>
+		<td>
+			Replay gain (in dB), if any
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>X</b>
+		</td>
+		<td>
+			album_replay_gain
+		</td>
+		<td>
+			Replay gain of the album (in dB), if any
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>R</b>
+		</td>
+		<td>
+			rating
+		</td>
+		<td>
+			Song rating, if known and greater than 0.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>T</b>
+		</td>
+		<td>
+			samplerate
+		</td>
+		<td>
+			Song sample rate (in KHz)
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<b>I</b>
+		</td>
+		<td>
+			samplesize
+		</td>
+		<td>
+			Song sample size (in bits)
+		</td>
+	</tr>
+	<tr>
+		<td>
 			<b>u</b>
 		</td>
 		<td>
@@ -4426,7 +4507,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			remote
 		</td>
 		<td>
-			Remote track.
+			If 1, this is a remote track.
 		</td>
 	</tr>
 </table>
@@ -4435,10 +4516,16 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <blockquote> 
 	<p>
-		Request: &quot;songinfo 0 6 url:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%2520Outside%2520Alone.mp3&lt;LF&gt;&quot;
+		Request: &quot;songinfo 0 100 track_id:2&lt;LF&gt;&quot;
 		<br>
-		Response: &quot;songinfo 0 6 url:file:///Users/dean/slimp3/Music/Anastacia/Anastacia/Left%2520Outside%2520Alone.mp3 count:6
-		id:483 title:Left%20Outside%20Alone genre:Pop artist:Anastacia composer:D.%20Austin/G.%20Ballard album:Anastacia&lt;LF&gt;&quot;
+		Response: &quot;songinfo 0 100 track_id:2 count:26 
+		id:2 title:If%20I%20Had%20You artist:Diana%20Krall duration:297.117 album_id:2 filesize:5952369 genre:Vocal 
+		comment:Pianist%2Fvocalist%20Diana%20Krall%20pays%20tribute%20to%20the%20Nat%20King%20Cole%20Trio.... 
+		album:All%20for%20You modificationTime:Thursday%2C%20March%201%2C%202007%2C%209:21:58%20PM 
+		type:mp3 genre_id:2 bitrate:160kbps%20VBR artist_id:3 tracknum:12 tagversion:ID3v2.3.0
+		year:1995 samplerate:44100
+		url:file:%2F%2F%2FUsers%2Ffred%2FPrograms%2FSlimServer%2FMusic%2F12%2520-%2520If%2520I%2520Had%2520You.mp3
+		&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 

@@ -2561,7 +2561,7 @@ sub songinfoQuery {
 		return;
 	}
 
-	my $tags  = 'abcdefghijJklmnopqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'; # all letter EXCEPT u
+	my $tags  = 'abcdefghijJklmnopqrstvwxyzBCDEFHIJKLMNOQRTUVWXYZ'; # all letter EXCEPT u, A & S, G & P
 	my $track;
 
 	# get our parameters
@@ -2585,10 +2585,6 @@ sub songinfoQuery {
 
 	# find the track
 	if (defined $trackID){
-
-		if ($tags !~ /u/) {
-			$tags .= 'u';
-		}
 
 		$track = Slim::Schema->find('Track', $trackID);
 
@@ -2640,7 +2636,7 @@ sub songinfoQuery {
 				},
 			};
 			$request->addResult('base', $base);
-			$tags = 'algitCodGAyRkwfrTSmvun';
+			$tags = 'AlGitCodYXyRkwfrTImvun';
 		}
 
 		my $hashRef = _songData($track, $tags, $menuMode);
@@ -2665,7 +2661,10 @@ sub songinfoQuery {
 					if ($menuMode) {
 						
 						# pretty print some of the stuff...
-						# the web interface does it in the template (partially)
+						# it's done all over the place for the web interface:
+						## some of it in the template!
+						## some of it in Pages::addSongInfo
+						## the rest is using pretty printing methods of track
 						
 						if ($key eq 'COMPILATION') {
 							$val = Slim::Utils::Strings::string('YES');
@@ -3307,10 +3306,8 @@ sub _songData {
 	# define an ordered hash for our results
 	tie (my %returnHash, "Tie::IxHash");
 
-	# in normal mode, we want to add a tag name and a "raw" value
-	# in menu mode, we want to add a i8n tag string and a "pretty" value
-	
-
+	# in normal mode, we want to use a tag name as key
+	# in menu mode, we want to use a string token we can i8n as key
 	my $keyIndex = 0;
 
 	# add fields present no matter $tags
@@ -3350,7 +3347,7 @@ sub _songData {
 		#                                                                   #vbr_scale 
 		  'r' => ['bitrate',          'BITRATE',       'prettyBitRate'],    #bitrate
 		  'T' => ['samplerate',       'SAMPLERATE',    'samplerate'],       #samplerate 
-		  'S' => ['samplesize',       'SAMPLESIZE',    'samplesize'],       #samplesize 
+		  'I' => ['samplesize',       'SAMPLESIZE',    'samplesize'],       #samplesize 
 		#                                                                   #channels 
 		#                                                                   #block_alignment
 		#                                                                   #endian 
@@ -3364,55 +3361,96 @@ sub _songData {
 		#                                                                   #lossless 
 		  'w' => ['lyrics',           'LYRICS',        'lyrics'],           #lyrics 
 		  'R' => ['rating',           'RATING',        'rating'],           #rating 
-		  'G' => ['replay_gain',      'REPLAYGAIN',    'replay_gain'],      #replay_gain 
+		  'Y' => ['replay_gain',      'REPLAYGAIN',    'replay_gain'],      #replay_gain 
 		#                                                                   #replay_peak
 
 
-		# Tag    Tag name              Token              Relationship   Method          Track relationship
+		# Tag    Tag name              Token              Relationship     Method          Track relationship
 		#--------------------------------------------------------------------------------------------------
-		  'a' => ['artist',            'ARTIST',           'artist',      'name'],        #->contributors
-		  'b' => ['band',              'B',                'band'],                       #->contributors
-		  'c' => ['composer',          'C',                'composer'],                   #->contributors
-		  'h' => ['conductor',         'D',                'conductor'],                  #->contributors
-		  's' => ['artist_id',         '',                'artist',      'id'],          #->contributors
-                                                                     
-		  'l' => ['album',             'ALBUM',           'album',       'title'],       #->album.title
-		  'q' => ['disccount',         '',                'album',       'discc'],       #->album.discc
-		  'J' => ["artwork_track_id",  '',                'album',       'artwork'],     #->album.artwork
-		  'C' => ['compilation',       'COMPILATION',     'album',       'compilation'], #->album.compilation
-		  'A' => ['album_replay_gain', 'ALBUMREPLAYGAIN', 'album',       'replay_gain'], #->album.replay_gain
-                                                                     
-		  'g' => ['genre',             'GENRE',           'genre',       'name'],        #->genre_track->genre.name
-		  'p' => ['genre_id',          '',                'genre',       'id'],          #->genre_track->genre.id
-                                                                     
-		  'k' => ['comment',           'COMMENT',         'comment'],                    #->comment_object
+		  'a' => ['artist',            'ARTIST',          'artist',        'name'],         #->contributors
+		  's' => ['artist_id',         '',                'artist',        'id'],           #->contributors
+		  'A' => ['<role>',            '<ROLE>',          'contributors',  'name'],         #->contributors[role].name
+		  'S' => ['<role>_ids',        '',                'contributors',  'id'],           #->contributors[role].id
+#		  'b' => ['band',              'B',               'band'],                          #->contributors
+#		  'c' => ['composer',          'C',               'composer'],                      #->contributors
+#		  'h' => ['conductor',         'D',               'conductor'],                     #->contributors
+                                                                            
+		  'l' => ['album',             'ALBUM',           'album',         'title'],        #->album.title
+		  'q' => ['disccount',         '',                'album',         'discc'],        #->album.discc
+		  'J' => ["artwork_track_id",  '',                'album',         'artwork'],      #->album.artwork
+		  'C' => ['compilation',       'COMPILATION',     'album',         'compilation'],  #->album.compilation
+		  'X' => ['album_replay_gain', 'ALBUMREPLAYGAIN', 'album',         'replay_gain'],  #->album.replay_gain
+                                                                            
+		  'g' => ['genre',             'GENRE',           'genre',         'name'],         #->genre_track->genre.name
+		  'p' => ['genre_id',          '',                'genre',         'id'],           #->genre_track->genre.id
+		  'G' => ['genres',            'GENRE',           'genres',        'name'],         #->genre_track->genres.name
+		  'P' => ['genre_ids',         '',                'genres',        'id'],           #->genre_track->genres.id
+                                                                            
+		  'k' => ['comment',           'COMMENT',         'comment'],                       #->comment_object
 
 	);
 
 	# loop so that stuff is returned in the order given...
 	for my $tag (split //, $tags) {
 
-		# if we have a method for the tag
-		if (defined(my $method = $tagMap{$tag}->[2])) {
+		# special case artists (tag A and S)
+		if ($tag eq 'A' || $tag eq 'S') {
+			
+			if (defined(my $submethod = $tagMap{$tag}->[3])) {
+				
+				my $postfix = ($tag eq 'S')?"_ids":"";
+			
+				foreach my $type (Slim::Schema::Contributor::contributorRoles()) {
+				
+					my $key = $menuMode?uc($type):lc($type).$postfix;
+					my $value = join(', ', map { $_ = $_->$submethod() } $track->contributorsOfType($type)->all);
+				
+					if (defined $value && $value ne '') {
+
+						# add the tag to the result
+						$returnHash{$key} = $value;
+					}
+				}
+			}
+		}
+
+		# if we have a method/relationship for the tag
+		elsif (defined(my $method = $tagMap{$tag}->[2])) {
 			
 			if ($method ne '') {
 
 				my $value;
+				my $key = $tagMap{$tag}->[$keyIndex];
 
+				# tag with submethod
 				if (defined(my $submethod = $tagMap{$tag}->[3])) {
+
 					if (defined(my $related = $track->$method)) {
-						$value = $related->$submethod();
+
+						if ( blessed($related) && $related->isa('Slim::Schema::ResultSet::Genre')) {
+							$value = join(', ', map { $_ = $_->$submethod() } $related->all);
+						}
+						else {
+							$value = $related->$submethod();
+						}
 					}
 				}
+				
+				# simple track method
 				else {
 					$value = $track->$method();
+				}
+				
+				# correct values
+				if (($tag eq 'R' || $tag eq 'x') && $value == 0) {
+					$value = undef;
 				}
 				
 				# if we have a value
 				if (defined $value && $value ne '') {
 
 					# add the tag to the result
-					$returnHash{$tagMap{$tag}->[$keyIndex]} = $value;
+					$returnHash{$key} = $value;
 				}
 			}
 		}
