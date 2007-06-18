@@ -84,9 +84,6 @@ function prefValidate(myPref, sync) {
 }
 
 function resizeSettingsSection() {
-	// if there's no div for the submit botton, don't resize the region (eg. Nokia, Handheld)
-	if (!$('prefsSubmit')) { return; }
-
 	var winHeight = (
 		document.documentElement && document.documentElement.clientHeight
 		? parseInt(window.innerHeight, 10)

@@ -2,9 +2,9 @@
 <!-- Begin settingsheader.html -->
 [% FILTER null %]
 
-	[% pwd_list = BLOCK %]
+	[% IF NOT useTabList; pwd_list = BLOCK %]
 		[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
-	[% END %]
+	[% END; END %]
 
 
 	[% pageHeaderScripts = BLOCK %]
@@ -15,9 +15,9 @@
 		<script TYPE="text/javascript">[% PROCESS html/settings.js %]</script>
 	[% END %]
 
-	[% pageHeaderInfo = BLOCK %]
- 		[%#- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
- 	[% END %]
+	[% IF useTabList; pageHeaderInfo = BLOCK %]
+ 		[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
+ 	[% END; END %]
  	
 [% END %]
 
