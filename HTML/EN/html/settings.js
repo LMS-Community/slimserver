@@ -55,20 +55,19 @@ function chooseSettings(value,option)
 	}
 }
 
-function prefValidate(myPref, sync) {
+function prefValidate(myPref, namespace) {
 	new Ajax.Request('/jsonrpc.js', {
 		method: 'post',
 
 		postBody: Object.toJSON({
 			id: 1, 
-			asynchronous: (sync ? false : true),
 			method: 'slim.request', 
 			params: [
 				'', 
 				[
 					'pref', 
 					'validate', 
-					myPref.name, 
+					namespace + ':' + myPref.name, 
 					myPref.value
 				]
 			]
@@ -100,11 +99,6 @@ function resizeSettingsSection() {
 }
 
 new Event.observe(window, 'load', function(){
-	// add event handlers to all fields which have a validator
-	[%- FOREACH pref = validate; IF pref.value %]
-	new Event.observe('[% pref.key %]', 'blur', function(){ prefValidate($('[% pref.key %]')); } );
-	[%- END; END %]
-	
 	// try to redirect all form submissions by return key to the default submit button
 	// listen for keypress events on all form elements except submit
 	$('settingsForm').getElements().each(function(ele) {

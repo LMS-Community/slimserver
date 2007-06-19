@@ -87,9 +87,7 @@ sub handler {
 		$paramRef->{'prefs'}->{$pref} = $prefsClass->get($pref);
 	}
 
-	if ($prefsClass) {
-		$paramRef->{'namespace'} = $prefsClass->namespace;
-	}
+	$paramRef->{'namespace'} = $prefsClass->namespace;
 
 	if ($paramRef->{'saveSettings'} && !$paramRef->{'warning'}) {
 		$paramRef->{'warning'} = Slim::Utils::Strings::string('SETUP_CHANGES_SAVED');

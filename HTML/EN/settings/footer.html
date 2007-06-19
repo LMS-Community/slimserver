@@ -20,6 +20,13 @@
 
 </div>
 
+[%# add event handlers to all fields which have a validator %]
+<script type="text/javascript">
+[%- FOREACH pref = validate; IF pref.value %]
+new Event.observe('[% pref.key %]', 'blur', function(){ prefValidate($('[% pref.key %]'), '[% namespace %]'); } );
+[%- END; END %]
+</script>
+
 [% IF NOT ajaxUpdate %]
 <div id="prefsSubmit">
 [% IF prefs || NOT playerid %]
