@@ -21,13 +21,9 @@ function chooseSettings(value,option)
 	switch(option)
 	{
 		[% IF playerid -%]
-
 			[% PROCESS addSetupCaseLinks setuplinks=additionalLinks.playersetup  %]
-
 		[%- ELSE -%]
-
 			[% PROCESS addSetupCaseLinks setuplinks=additionalLinks.setup   %]
-
 		[%- END %]
 
 		case "HOME":
@@ -37,7 +33,7 @@ function chooseSettings(value,option)
 
 	if (option) {
 		// change the mouse cursor so user gets some feedback
-		$('settingsForm').setStyle({cursor:'wait'});		
+		$('settingsForm').setStyle({cursor:'wait'});
 		new Ajax.Updater( { success: 'settingsRegion' }, url, {
 			method: 'post',
 			postBody: 'ajaxUpdate=1&player=[% playerURI %][% IF playerid %]&playerid=[% playerid | uri %][% END %]',
@@ -48,7 +44,7 @@ function chooseSettings(value,option)
 			},
 			onComplete: function(t) {
 				$('settingsForm').setStyle({cursor:'auto'});
-				$('statusarea').update('');		
+				$('statusarea').update('');
 			}
 		} );
 		document.forms.settingsForm.action = url;
@@ -113,14 +109,23 @@ new Event.observe(window, 'load', function(){
 		}
 	});
 
+	new Event.observe('choose_setting', 'keypress', function(e){ 
+		var cKeyCode = e.keyCode || e.which;
+		if (cKeyCode == Event.KEY_UP || cKeyCode == Event.KEY_DOWN) {
+			Event.stop(e);
+			var t = $('choose_setting');
+			chooseSettings(t.selectedIndex,t.options[t.selectedIndex].value);
+		}
+	});
+
 	// resize the scrolling part of the settings page
 	new Event.observe(window, 'resize', function(){resizeSettingsSection();});
 
 	new Event.observe('saveSettings', 'click', function(e){
-		$('settingsForm').setStyle({cursor:'wait'});		
+		$('settingsForm').setStyle({cursor:'wait'});
 		Event.stop(e);
 		$('settingsForm').request({
-			parameters: { useAJAX: 1, rescan: '' },		
+			parameters: { useAJAX: 1, rescan: '' },
 			onComplete: function(response) {
 				var results = parseData(response.responseText);
 
@@ -134,7 +139,7 @@ new Event.observe(window, 'load', function(){
 					}
 				}
 
-				$('settingsForm').setStyle({cursor:'auto'});		
+				$('settingsForm').setStyle({cursor:'auto'});
 			}
 		});
 	});

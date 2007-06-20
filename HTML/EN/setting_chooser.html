@@ -22,8 +22,8 @@
 	[% END %]
 [% END %]
 
-<form name="setup_chooser" method="get" action="[% webroot %]setup.html" target="header">
-	<select NAME="browse" class="stdedit" style="width:17em;" onchange="chooseSettings(selectedIndex,options[selectedIndex].value)">
+<form id="setup_chooser" name="setup_chooser" method="get" action="[% webroot %]setup.html" target="header">
+	<select ID="choose_setting" NAME="choose_setting" class="stdedit" style="width:17em;" onchange="chooseSettings(selectedIndex,options[selectedIndex].value)">
 		[% UNLESS setting_chooser_noHome %]<option [% IF page == "HOME" %]selected[% END %] value="HOME" label="[% "HOME" | string %]">[% "HOME" | string %]</option>[% END %]
 		[% IF playerid %][% PROCESS addSetupLinks   setuplinks=additionalLinks.playersetup %]
 		[% ELSE %][% PROCESS addSetupLinks  setuplinks=additionalLinks.setup %][% END %]
