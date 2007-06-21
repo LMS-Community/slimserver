@@ -31,6 +31,7 @@ sub init {
 	$class->addPageLinks("help",{'FAQ' => "http://faq.slimdevices.com/"},1);
 	$class->addPageLinks("help",{'SOFTSQUEEZE' => "html/softsqueeze/index.html"});
 	$class->addPageLinks("help",{'TECHNICAL_INFORMATION' => "html/docs/index.html"});
+	$class->addPageLinks("radio",{'SQUEEZENETWORK_SWITCH' => "squeezenetwork.html"});
 }
 
 sub home {
