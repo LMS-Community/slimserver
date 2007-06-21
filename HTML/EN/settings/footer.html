@@ -18,6 +18,7 @@
 
 [% END %]
 
+[% IF NOT ajaxUpdate %]
 </div>
 
 [%# add event handlers to all fields which have a validator %]
@@ -27,7 +28,6 @@ new Event.observe('[% pref.key %]', 'blur', function(){ prefValidate($('[% pref.
 [%- END; END %]
 </script>
 
-[% IF NOT ajaxUpdate %]
 <div id="prefsSubmit">
 [% IF prefs || NOT playerid %]
 	[% IF NOT nosubmit %]<input name="saveSettings" id="saveSettings" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]">[% END %]
@@ -39,6 +39,4 @@ new Event.observe('[% pref.key %]', 'blur', function(){ prefValidate($('[% pref.
 <!-- End settingsfooter.html -->
 [% PROCESS pagefooter.html %]
 
-[% ELSE %]
-</form>
 [% END %]
