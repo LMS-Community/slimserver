@@ -3442,21 +3442,41 @@ SETUP_MAXWMARATE_DESC
 SETUP_NOUPNP
 	DE	UPnP-Client
 	EN	UPnP Client
+	ES	Cliente UPnP
+	FR	Client UPnP
+	HE	לקוח UPnP
+	IT	Client UPnP
+	NL	UPnP-client
 	NO	UPnP-klient
 
 SETUP_NOUPNP_DESC
-	DE	Soll SlimServer im Netzwerk nach UPnP Mediaservern suchen? 
+	DE	Soll SlimServer nach weiteren UPnP-Medienservern in Ihrem Netzwerk suchen?
 	EN	Should SlimServer look for other UPnP media servers on your network?
+	ES	¿Debe SlimServer buscar otros servidores de medios UPnP en la red?
+	FR	Le SlimServer doit-il rechercher d'autres serveurs UPnP sur le réseau?
+	HE	האם ברצונך ש-SlimServer יחפש אחר שרתי מדיה אחרים מסוג UPnP ברשת שלך?
+	IT	Cercare altri server multimediali UPnP nella rete?
+	NL	Moet SlimServer naar andere UPnP-mediaservers op je netwerk zoeken?
 	NO	Skal SlimServer se etter andre UPnP-mediatjenere i ditt nettverk?
 
 SETUP_UPNP_ENABLE
-	DE	Aktiviert, nach UPnP Mediaservern suchen
+	DE	Ja, nach weiteren UPnP-Medienservern suchen.
 	EN	Enabled, look for other UPnP media servers.
+	ES	Habilitado, buscar otros servidores de medios UPnP.
+	FR	Activé, rechercher d'autres serveurs UPnP.
+	HE	מופעל, חפש אחר שרתי מדיה אחרים מסוג UPnP.
+	IT	Attivato. Cerca altri server multimediali UPnP.
+	NL	Ingeschakeld, naar andere UPnP-mediaservers zoeken.
 	NO	Påskrudd. SlimServer vil se etter andre UPnP-mediatjenere.
 
 SETUP_UPNP_DISABLE
-	DE	Deaktiviert, nicht nach UPnP Mediaservern suchen
+	DE	Nein, nicht nach UPnP-Medienservern suchen.
 	EN	Disabled, do not look for other UPnP media servers.
+	ES	Deshabilitado, no buscar otros servidores de medios UPnP.
+	FR	Désactivé, ne pas rechercher d'autres serveurs UPnP.
+	HE	מושבת, אל תחפש אחר שרתי מדיה אחרים מסוג UPnP.
+	IT	Disattivato. Non cercare altri server multimediali UPnP.
+	NL	Uitgeschakeld, niet naar andere UPnP-mediaservers zoeken.
 	NO	Avskrudd. SlimServer vil ikke se etter andre UPnP-mediatjenere.
 
 SETUP_MAXBITRATE
@@ -7686,21 +7706,41 @@ HIGH
 FULL
 	DE	Voll
 	EN	Full
+	ES	Gruesa
+	FR	Plein
+	HE	מלא
+	IT	Spesso
+	NL	Vol
 	NO	Full
 
 LIGHT
 	DE	Klein
 	EN	Light
+	ES	Fina
+	FR	Léger
+	HE	דק
+	IT	Chiaro
+	NL	Licht
 	NO	Lys
 
 THREELINE
 	DE	3 Zeilig
 	EN	Threeline
+	ES	Tres líneas
+	FR	Trois lignes
+	HE	שלוש שורות
+	IT	Su tre righe
+	NL	Drieregelig
 	NO	Tre-linjet
 
 STANDARD
 	DE	Standard
 	EN	Standard
+	ES	Estándar
+	FR	Standard
+	HE	רגיל
+	IT	Standard
+	NL	Standaard
 	NO	Standard
 
 TITLEFORMAT
@@ -10832,6 +10872,11 @@ ADVANCEDSEARCH
 EXAMPLE_SHORT
 	DE	z.B.
 	EN	ex:
+	ES	ej.:
+	FR	ex:
+	HE	דוגמא:
+	IT	es:
+	NL	bijv.
 
 SEARCH
 	CS	Hledat v archivu
@@ -12383,7 +12428,7 @@ UPNP_REQUEST_FAILED
 	ES	Fallo de solicitud UPnP, compruebe el servidor UPnP.
 	FR	Echec de la requête UPnP. Veuillez vérifier le serveur UPnP.
 	HE	כשל בבקשת UPnP, בדוק את שרת ה-UPnP.
-	IT	Richiesta UpnP non riuscita. Verificare il server UpnP.
+	IT	Richiesta UPnP non riuscita. Verificare il server UPnP.
 	NL	UPnP-verzoek mislukt. Controleer de UPnP-server.
 	ZH_CN	UPnP请求失败，请检查UPnP服务器。
 
