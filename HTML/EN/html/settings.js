@@ -121,28 +121,32 @@ new Event.observe(window, 'load', function(){
 	// resize the scrolling part of the settings page
 	new Event.observe(window, 'resize', function(){resizeSettingsSection();});
 
-	new Event.observe('saveSettings', 'click', function(e){
-		$('settingsForm').setStyle({cursor:'wait'});
-		Event.stop(e);
-		$('settingsForm').request({
-			parameters: { useAJAX: 1, rescan: '' },
-			onComplete: function(response) {
-				var results = parseData(response.responseText);
-
-				$('statusarea').update(results['warning']);
-				resizeSettingsSection();
-
-				// highlight fields
-				for (field in results) {
-					if ($(field)) {
-						highlightField($(field), (results[field] == '1'));
+	if ($('saveSettings')) {
+		new Event.observe('saveSettings', 'click', function(e){
+			Event.stop(e);
+			if ($('settingsForm').page.value != 'PLUGINS') {
+				$('settingsForm').setStyle({cursor:'wait'});
+				$('settingsForm').request({
+					parameters: { useAJAX: 1, rescan: '' },
+					onComplete: function(response) {
+						var results = parseData(response.responseText);
+		
+						$('statusarea').update(results['warning']);
+						resizeSettingsSection();
+		
+						// highlight fields
+						for (field in results) {
+							if ($(field)) {
+								highlightField($(field), (results[field] == '1'));
+							}
+						}
+		
+						$('settingsForm').setStyle({cursor:'auto'});
 					}
-				}
-
-				$('settingsForm').setStyle({cursor:'auto'});
+				});
 			}
 		});
-	});
+	}
 
 	resizeSettingsSection();
 });

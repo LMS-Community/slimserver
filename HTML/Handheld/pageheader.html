@@ -5,8 +5,12 @@
 	[% PROCESS standardheader.html %]
 	[%# Add a unique parameter (timestamp) as PocketIE wouldn't refresh to the same URL... see http://bugs.slimdevices.com/show_bug.cgi?id=2084 for details %]
 	[% IF refresh && refreshurl %]<meta http-equiv="refresh" content="[% refresh %]; [% refreshurl %]&player=[% playerURI %]&timestamp=[% USE Date; Date.format(Date.now, '%Y%m%d%M%S'); %]">[% END %]
-	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
-	<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
+	[% IF pageHeaderScripts %]
+		[% pageHeaderScripts %]
+	[% ELSE %]
+		<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
+		<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
+	[% END %]
 </head>
 
 [%- BLOCK submenu -%]

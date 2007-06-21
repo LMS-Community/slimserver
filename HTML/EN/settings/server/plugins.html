@@ -1,17 +1,11 @@
 [% PROCESS settings/header.html %]
 
-	<script type="text/javascript" src="/html/prototype.js"></script>
-	<script type="text/javascript" src="/html/scriptaculous/scriptaculous.js"></script>
-	<script type="text/javascript" src="/html/scriptaculous/effects.js"></script>
-
 	<div class="settingSection">
 	
 		<div class="prefHead">[% "SETUP_GROUP_PLUGINS" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_GROUP_PLUGINS_DESC" | string %]</div>
 
 		<p/>
-
-		<form method="POST" action="/settings/server/plugins.html">
 
 		[% FOREACH plugin = plugins.keys.sort %]
 
@@ -52,15 +46,54 @@
 					<!-- XXXX - need to check for pending uninstall / install -->
 					[% IF enabled %]
 
-					<input type="submit" name="[% name %].disable" value="[% 'DISABLE' | string %]">
+					<input type="submit" id="[% name %].toggle" name="[% name %].disable" value="[% 'DISABLE' | string %]">
 
 					[% ELSE %]
 
-					<input type="submit" name="[% name %].enable" value="[% 'ENABLE' | string %]">
+					<input type="submit" id="[% name %].toggle" name="[% name %].enable" value="[% 'ENABLE' | string %]">
 
 					[% END %]
 
-					<input type="submit" name="[% name %].uninstall" value="[% 'UNINSTALL' | string %]">
+					<input type="submit" id="[% name %].uninstall" name="[% name %].uninstall" value="[% 'UNINSTALL' | string %]">
+
+					[% IF NOT useTabList %]
+					<script type="text/javascript">
+						new Event.observe($('[% name %].toggle'), 'click', function(e) {
+							$('settingsForm').setStyle({cursor:'wait'});
+							Event.stop(e);
+							new Ajax.Request($('settingsForm').action, {
+								parameters: { useAJAX: 1, '[% name _ '.' _ (enabled ? 'disable' : 'enable') %]': 1},
+								onSuccess: function() {
+									if ($('[% name %].toggle').name == '[% name %].enable') {
+										$('[% name %].toggle').name = '[% name %].disable';
+										$('[% name %].toggle').value = '[% "DISABLE" | string %]';
+									}
+									else {
+										$('[% name %].toggle').name = '[% name %].enable';
+										$('[% name %].toggle').value = '[% "ENABLE" | string %]';
+									}
+									resizeSettingsSection();
+									$('settingsForm').setStyle({cursor:'auto'});
+								}
+							});
+						});
+
+						new Event.observe($('[% name %].uninstall'), 'click', function(e) {
+							$('settingsForm').setStyle({cursor:'wait'});
+							Event.stop(e);
+							new Ajax.Request($('settingsForm').action, {
+								parameters: { useAJAX: 1, '[% name %].uninstall': 1 },
+								onSuccess: function(response) {
+									var results = parseData(response.responseText);
+									$('statusarea').update(results['warning']);
+									resizeSettingsSection();
+									$('settingsForm').setStyle({cursor:'auto'});
+								}
+							});
+						});
+
+					</script>
+					[% END %]
 				</td>
 			</tr>
 			</table>
@@ -68,8 +101,6 @@
 			<hr width="90%" /><p/>
 
 		[%- END -%]
-
-		</form>
 		
 	</div>
 
