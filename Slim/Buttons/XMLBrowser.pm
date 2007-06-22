@@ -379,6 +379,7 @@ sub gotOPML {
 	# Remember previous timeout value
 	my $timeout = $params->{'timeout'};
 
+	my $index = 0;
 	for my $item ( @{ $opml->{'items'} || [] } ) {
 		
 		# Add value keys to all items, so INPUT.Choice remembers state properly
@@ -390,6 +391,25 @@ sub gotOPML {
 		if ( $item->{'url'} ) {
 			$item->{'timeout'} = $timeout;
 		}
+		
+		# Wrap text if needed
+		if ( $item->{'wrap'} ) {
+			my ($curline, @lines) = _breakItemIntoLines( $client, $item );
+			
+			my @wrapped;
+			for my $line ( @lines ) {
+				push @wrapped, {
+					name  => $line,
+					value => $line,
+					type  => 'text',
+					items => [],
+				};
+			}
+			
+			splice @{ $opml->{'items'} }, $index, 1, @wrapped;
+		}
+		
+		$index++;
 	}
 
 	my %params = (
@@ -671,7 +691,7 @@ sub _breakItemIntoLines {
 
 	my @lines   = ();
 	my $curline = '';
-	my $description = $item->{'description'};
+	my $description = $item->{'description'} || $item->{'name'};
 
 	while ($description =~ /(\S+)/g) {
 
