@@ -6,6 +6,8 @@ package Slim::Plugin::Pandora::ProtocolHandler;
 
 use strict;
 
+use Slim::Utils::Misc;
+
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.pandora',
 	'defaultLevel' => $ENV{PANDORA_DEV} ? 'DEBUG' : 'WARN',
@@ -121,10 +123,23 @@ sub gotNextTrack {
 		[['playlist'], ['repeat', 'newsong']],
 	);
 	
+	# Watch for button commands jump_fwd/jump_rew
+	Slim::Control::Request::subscribe(
+		\&buttonCallback,
+		[['button']],
+	);
+	
 	# Force repeating
 	Slim::Player::Playlist::repeat( $client, 2 );
 	
-	# Save metadata for this track
+	# Save the previous track's metadata, in case the user wants track info
+	# after the next track begins buffering
+	$client->pluginData( prevTrack => $client->pluginData('currentTrack') );
+	
+	# Save the time difference between SN and SlimServer
+	$track->{timediff} = $track->{now} - time();
+	
+	# Save metadata for this track, and save the previous track
 	$client->pluginData( currentTrack => $track );
 	
 	my $cb = $params->{callback};
@@ -162,11 +177,6 @@ sub onJump {
 
 	# Display buffering info on loading the next track
 	$client->pluginData( showBuffering => 1 );
-	
-	# Track skip if playmode was play
-	if ( $client->playmode =~ /play/ ) {
-		# XXX: check skip, track skip
-	}
 	
 	# Get next track
 	my ($stationId) = $nextURL =~ m{^pandora://([^.]+)\.mp3};
@@ -224,15 +234,39 @@ sub handleDirectError {
 	$client->execute([ 'playlist', 'play', $url ]);
 }
 
+# Check if player is allowed to skip, 
+# based on nextSkipAt value from SN
+sub canSkip {
+	my $client = shift;
+	
+	if ( my $track = $client->pluginData('currentTrack') ) {
+		my $nextSkip = $track->{timediff} + $track->{nextSkipAt};
+		
+		if ( time() < $nextSkip ) {
+			return 0;
+		}
+	}
+	
+	return 1;
+}	
+
 # Disallow skips after the limit is reached
 sub canDoAction {
 	my ( $class, $client, $url, $action ) = @_;
 	
-	if ( $url =~ /^pandora/ && $action eq 'stop' ) {
-		# XXX: check with SN to see if skip is allowed
-		#if ( !canSkip($client) ) {
-		#	return 0;
-		#}
+	if ( $action eq 'stop' && !canSkip($client) ) {
+		# Is skip allowed?
+		$log->debug("Pandora: Skip limit exceeded, disallowing skip");
+
+		$client->showBriefly( {
+			line1 => $client->string('PLUGIN_PANDORA_MODULE_NAME'),
+			line2 => $client->string('PLUGIN_PANDORA_SKIPS_EXCEEDED'),
+		},
+		{
+			scroll => 1,
+		} );
+				
+		return 0;
 	}
 	
 	return 1;
@@ -282,6 +316,49 @@ sub playlistCallback {
 				  . $track->{albumName};
 		
 		Slim::Music::Info::setCurrentTitle( $url, $title );
+		
+		# Remove the previous track metadata
+		$client->pluginData( prevTrack => 0 );
+	}
+}
+
+sub buttonCallback {
+	my $request = shift;
+	my $client  = $request->client();
+	my $cmd     = $request->getParam('_buttoncode');
+	
+	return unless $client && $cmd;
+	
+	# ignore if user is not using Pandora
+	my $url = Slim::Player::Playlist::url($client);
+	if ( !$url || $url !~ /^pandora/ ) {
+		# No longer playing Pandora, unsubscribe
+		Slim::Control::Request::unsubscribe( \&buttonCallback );
+		return;
+	}
+	
+	# if the user hit FWD or REW, track it as a skip
+	if ( $cmd eq 'jump_fwd' || $cmd eq 'jump_rew' ) {
+		my ($stationId) = $url =~ m{^pandora://([^.]+)\.mp3};
+		
+		my $track   = $client->pluginData('currentTrack');
+		my $trackId = $track->{trackToken};
+		
+		$log->debug( "Reporting skip for track " . $track->{songName} );
+		
+		my $skipURL = Slim::Networking::SqueezeNetwork->url(
+			"/api/pandora/playback/trackSkip?&stationId=$stationId&trackId=$trackId"
+		);
+
+		my $http = Slim::Networking::SqueezeNetwork->new(
+			sub {},
+			sub {},
+			{
+				client => $client,
+			},
+		);
+
+		$http->get( $skipURL );
 	}
 }
 
@@ -308,8 +385,10 @@ sub trackInfo {
 
 	my ($stationId) = $url =~ m{^pandora://([^.]+)\.mp3};
 	
-	# XXX: this will break after the next track starts streaming
-	my $currentTrack = $client->pluginData('currentTrack');
+	# Get the current track
+	my $currentTrack = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
+	
+	warn "Current track: " . Data::Dump::dump($currentTrack);
 	
 	# SN URL to fetch track info menu
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(

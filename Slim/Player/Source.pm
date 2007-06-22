@@ -1074,16 +1074,25 @@ sub jumpto {
 		return;
 	}
 	
-	if ($offset && $offset =~ /([\+\-])(\d+)/ && ($1 eq '-' || $2 eq '0')) {
+	my $currentURL = Slim::Player::Playlist::url($client, streamingSongIndex($client));
+	my $handler    = Slim::Player::ProtocolHandlers->handlerForURL($currentURL);
 
-		my $currentURL = Slim::Player::Playlist::url($client, streamingSongIndex($client));
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($currentURL);
+	if ($offset && $offset =~ /([\+\-])(\d+)/ && ($1 eq '-' || $2 eq '0')) {
 
 		if ($handler && 
 			$handler->can("canDoAction") &&
 			!$handler->canDoAction($client, $currentURL, 'rew')) {
 			return;
 		}
+	}
+	
+	# Allow Pandora to disallow skips completely
+	if ( $handler &&
+		$handler->can("canDoAction") &&
+		$client->playmode =~ /play/ && 
+		!$handler->canDoAction($client, $currentURL, 'stop')
+	) {
+		return;
 	}
 
 	playmode($client, 'stop');
