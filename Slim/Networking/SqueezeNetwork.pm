@@ -46,7 +46,9 @@ sub url {
 			: 'http://127.0.0.1:3000';  # Local dev
 	}
 	else {
-		$base = 'http://www.squeezenetwork.com';
+		# XXX: Port 3000 is the SN beta website, this will change back to 
+		# port 80 before release.
+		$base = 'http://www.squeezenetwork.com:3000';
 	}
 	
 	return $base . $path;
