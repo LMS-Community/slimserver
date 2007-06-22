@@ -1902,9 +1902,13 @@ sub _postCheckAttributes {
 	# Album should probably have an add() method
 	if ($create && $isLocal && !$album) {
 
-		if (!$_unknownAlbum) {
+		my $string = string('NO_ALBUM');
 
-			my $string = string('NO_ALBUM');
+		# let the external scanner make an attempt to find any existing "No Album" in the 
+		# database before we assume there are none from previous scans
+		$_unknownAlbum = Slim::Schema->rs('album')->searchNames($string)->first;
+
+		if (!$_unknownAlbum) {
 
 			$_unknownAlbum = $self->resultset('Album')->update_or_create({
 				'title'       => $string,
