@@ -289,7 +289,7 @@ sub string {
 
 			# flip BiDi R text and decide if scrolling should be reversed
 			if ($canUseHebrew && $string =~ $bidiR) {
-				$reverse = ($string !~ $bidiL);
+				$reverse = ($prefs->get('language') eq 'HE' || $string !~ $bidiL);
 				$string = Locale::Hebrew::hebrewflip($string);
 				@ords = ();
 			}
