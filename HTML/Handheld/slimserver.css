@@ -138,3 +138,35 @@ small {
 {
 	white-space: nowrap;
 }
+
+div.fileselector {
+	position: absolute;
+	width: 200px;
+	height: 100px;
+	overflow: auto;
+	background-color: white;
+	border: 1px solid #888;
+	margin: 0px;
+	padding: 0px;
+}
+
+div.fileselector ul {
+	list-style-type: none;
+	margin: 0px;
+	padding: 0px;
+}
+
+div.fileselector ul li.selected {
+	background-color: navy;
+	color: white;
+}
+
+div.fileselector ul li {
+	list-style-type: none;
+	display: block;
+	margin: 0;
+	padding: 2px;
+	height: 12px;
+	cursor: pointer;
+	white-space: nowrap
+}

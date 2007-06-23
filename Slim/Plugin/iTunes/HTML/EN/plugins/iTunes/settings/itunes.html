@@ -38,14 +38,14 @@
 		<div class="prefHead">[% "SETUP_ITUNES_LIBRARY_XML_PATH" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_ITUNES_LIBRARY_XML_PATH_DESC" | string %]</div>
 
-		<input type="text" class="stdedit" name="xml_file" id="xml_file" value="[% prefs.xml_file %]" size="40">
+		<input type="text" class="stdedit selectFile" name="xml_file" id="xml_file" value="[% prefs.xml_file %]" size="40">
 	</div>
 
 	<div class="settingSection">
 		<div class="prefHead">[% "SETUP_ITUNES_LIBRARY_MUSIC_PATH" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC" | string %]</div>
 
-		<input type="text" class="stdedit" name="music_path" id="music_path" value="[% prefs.music_path %]" size="40">
+		<input type="text" class="stdedit selectFolder" name="music_path" id="music_path" value="[% prefs.music_path %]" size="40">
 	</div>
 
 	<div class="settingSection">
@@ -56,5 +56,4 @@
 		<br>
 		[% "SETUP_PLAYLISTSUFFIX_CHOOSE" | string %]<input type="text" class="stdedit" name="playlist_suffix" id="playlist_suffix" value="[% prefs.playlist_suffix %]" size="40">
 	</div>
-
 [% PROCESS settings/footer.html %]

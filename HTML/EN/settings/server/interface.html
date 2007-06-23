@@ -33,7 +33,7 @@
 		<div class="prefHead">[% "SETUP_ARTFOLDER" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_ARTFOLDER_DESC" | string %]</div>
 
-		<input type="text" class="stdedit" name="artfolder" id="artfolder" value="[% prefs.artfolder %]" size="40">
+		<input type="text" class="stdedit selectFolder" name="artfolder" id="artfolder" value="[% prefs.artfolder %]" size="40">
 
 		<div class="prefHead">[% "SETUP_THUMBSIZE" | string | upper %]</div>
 		<div class="prefDesc">[% "SETUP_THUMBSIZE_DESC" | string %]</div>
@@ -41,6 +41,5 @@
 		<input type="text" class="stdedit" name="thumbSize" id="thumbSize" value="[% prefs.thumbSize %]" size="15">
 
 	</div>
-
 [% PROCESS settings/footer.html %]
 

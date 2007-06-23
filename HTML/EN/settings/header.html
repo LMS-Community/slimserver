@@ -10,9 +10,14 @@
 	[% pageHeaderScripts = BLOCK %]
 		[% pageHeaderScripts %]
 		<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
-		<script type="text/javascript" src="[% webroot %]html/scriptaculous/scriptaculous.js?load=effects&r=[% revision %]" ></script>
+		<script type="text/javascript" src="[% webroot %]html/scriptaculous/scriptaculous.js?load=effects,controls&r=[% revision %]" ></script>
 		<script type="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]" ></script>
-		<script type="text/javascript">[% PROCESS html/settings.js %]</script>
+		<script type="text/javascript">
+			[% PROCESS html/settings.js %]
+			[%- IF NOT useTabList %]
+			new Event.observe(window, 'load', function(){ initSettingsForm(); });
+			[%- END %]
+		</script>
 	[% END %]
 
 	[% IF useTabList; pageHeaderInfo = BLOCK %]
@@ -31,6 +36,9 @@
 </div>
 
 <form name="settingsForm" id="settingsForm" method="post" action="[% webroot %][% path %][% IF playerid %]?playerid=[% playerid | uri %][% END %]">
+
+<div id="fileselector" class="fileselector" style="display:none"></div>
+<div id="fileselectorindicator" class="fileselectorindicator" style="display:none"><img src="/html/images/wait.gif"></div>
 
 <div id="settingsRegion">
 [% END %]

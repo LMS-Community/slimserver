@@ -23,6 +23,15 @@
 	[%- FOREACH pref = validate; IF pref.value %]
 	new Event.observe('[% pref.key %]', 'blur', function(){ prefValidate($('[% pref.key %]'), '[% namespace %]'); } );
 	[%- END; END %]
+
+	// add an event handler to folder/file selector fields
+	$$('.selectFolder').each(function(ele) {
+		new Ajax.FileSelector(ele, true);
+	});	
+
+	$$('.selectFile').each(function(ele) {
+		new Ajax.FileSelector(ele, false);
+	});	
 </script>
 
 [% IF NOT ajaxUpdate %]

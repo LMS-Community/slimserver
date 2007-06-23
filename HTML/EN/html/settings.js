@@ -94,7 +94,7 @@ function resizeSettingsSection() {
 	}
 }
 
-new Event.observe(window, 'load', function(){
+function initSettingsForm() {
 	// try to redirect all form submissions by return key to the default submit button
 	// listen for keypress events on all form elements except submit
 	$('settingsForm').getElements().each(function(ele) {
@@ -108,7 +108,7 @@ new Event.observe(window, 'load', function(){
 			});
 		}
 	});
-
+	
 	new Event.observe('choose_setting', 'keypress', function(e){ 
 		var cKeyCode = e.keyCode || e.which;
 		if (cKeyCode == Event.KEY_UP || cKeyCode == Event.KEY_DOWN) {
@@ -149,7 +149,7 @@ new Event.observe(window, 'load', function(){
 	}
 
 	resizeSettingsSection();
-});
+};
 
 var bgColors = new Array;
 function highlightField(field, valid) {
@@ -170,3 +170,35 @@ function highlightField(field, valid) {
 		field.setStyle({backgroundColor: '#ffcccc'});
 	}
 }
+
+Ajax.FileSelector = Class.create();
+Object.extend(Object.extend(Ajax.FileSelector.prototype, Ajax.Autocompleter.prototype), {
+	initialize: function(element, foldersOnly) {
+		this.baseInitialize(element, 'fileselector', {
+				paramName: 'currDir',
+				parameters: (foldersOnly ? 'foldersonly=1' : ''),
+				frequency: 0.7,
+				indicator: $('fileselectorindicator'),
+				afterUpdateElement: function(item) {
+					if (bgColors[item])
+						item.setStyle({backgroundColor: bgColors[item]});
+					item.focus();
+				}
+			}
+		);
+		this.options.asynchronous = true;
+		this.options.onComplete = this.onComplete.bind(this);
+		this.url = '/settings/server/fileselector.html';
+	},
+
+	startIndicator: function() {
+		var indicatorStyle = this.options.indicator.style;
+		Position.clone(this.element, this.options.indicator, {
+			setHeight: false,
+			setWidth: false,
+			offsetLeft: this.element.offsetWidth
+		});
+		this.options.indicator.style.position = 'absolute';
+		Element.show(this.options.indicator);
+	}
+});
