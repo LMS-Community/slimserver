@@ -316,9 +316,10 @@ sub handleFeed {
 
 	if ($favs) {
 		my @items = @{$stash->{'items'}};
+		my $start = $stash->{'start'} || 0;
 
-		if (defined $favsItem && $items[$favsItem]) {
-			my $item = $items[$favsItem];
+		if (defined $favsItem && $items[$favsItem - $start]) {
+			my $item = $items[$favsItem - $start];
 			if ($stash->{'action'} eq 'favadd') {
 				$favs->add($item->{'url'}, $item->{'name'}, $item->{'type'}, $item->{'parser'});
 			} elsif ($stash->{'action'} eq 'favdel') {

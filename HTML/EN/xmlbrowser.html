@@ -156,14 +156,14 @@
 	[% BLOCK favoritescontrol %]<span id="controls[% index _ (start + loop.index) %]" [% IF useAJAX %]style="display: none;"[% END %]>
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
-				[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=favadd&index=[% index _ (start + loop.index) %]')"
-				[%- ELSE       -%]href="index.html?action=favadd&index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"
+				[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=favadd&index=[% index _ (start + loop.index) %]&start=[% pageinfo.startitem %]')"
+				[%- ELSE       -%]href="index.html?action=favadd&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]"
 				[%- END -%]
 			[% END %]
 		[% ELSIF item.favorites == 2 %]
 			[% WRAPPER favdellink noTarget=1 %]
-				[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=favdel&index=[% index _ (start + loop.index) %]')"
-				[%- ELSE       -%]href="index.html?action=favdel&index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"
+				[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=favdel&index=[% index _ (start + loop.index) %]&start=[% pageinfo.startitem %]')"
+				[%- ELSE       -%]href="index.html?action=favdel&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]"
 				[%- END -%]
 			[% END %]
 		[% END %]</span>
