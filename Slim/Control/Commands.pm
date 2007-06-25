@@ -2487,6 +2487,10 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 	} else {
 
+		# on search, only grab audio items.
+		$find{'audio'} = 1;
+		$find{'remote'} = 0;
+
 		# Bug 2271 - allow VA albums.
 		if (defined $find{'album.compilation'} && $find{'album.compilation'} == 1) {
 
