@@ -34,7 +34,6 @@ sub handler {
 	
 	if (Slim::Utils::OSDetect::OS() eq 'win') {
 		$currDir = undef if ($currDir =~ /^\\+$/);
-		#$currDir =~ s/\\/\//g;
 	}
 
 	# a correct folder	
