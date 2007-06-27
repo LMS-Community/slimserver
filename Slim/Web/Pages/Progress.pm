@@ -35,7 +35,7 @@ sub progress {
 		my $runtime = ($p->finish || time()) - $p->start;
 
 		my $hrs  = int($runtime / 3600);
-		my $mins = int(($runtime - $hrs * 60)/60);
+		my $mins = int(($runtime - $hrs * 3600)/60);
 		my $sec  = $runtime - 3600 * $hrs - 60 * $mins;
 
 		my $item = {
@@ -59,9 +59,9 @@ sub progress {
 			$params->{'message'}    = Slim::Utils::Strings::string('PROGRESS_IMPORTER_COMPLETE_DESC');
 
 			my $hrs  = int($total_time / 3600);
-			my $mins = int(($total_time - $hrs * 60)/60);
+			my $mins = int(($total_time - $hrs * 3600)/60);
 			my $sec  = $total_time - 3600 * $hrs - 60 * $mins;
-
+			
 			$params->{'total_time'} = sprintf("%02d:%02d:%02d", $hrs, $mins, $sec);
 
 		} else {
