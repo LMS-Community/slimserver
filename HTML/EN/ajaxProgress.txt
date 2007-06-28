@@ -7,7 +7,7 @@ Total[% num %]|[% item.obj.total %]
 Active[% num %]|[% IF item.obj.active %][% "RUNNING" | string %][% ELSE %][% "COMPLETE" | string %][% END %]
 Time[% num %]|[% item.time %]
 Bar[% num %]|[% item.bar %]
-Info[% num %]|[% item.obj.info %]
+Info[% num %]|XXXXX[% item.obj.info | utf8decode | html %]
 
 [% num = num +1 %]
 
