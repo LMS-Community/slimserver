@@ -52,6 +52,19 @@ sub handler {
 			$rescanType = [qw(rescan playlists)];
 		}
 
+		for my $pref (qw(audiodir playlistdir)) {
+	
+			my (undef, $ok) = preferences('server')->set($pref, $paramRef->{$pref});
+
+			if ($ok) {
+				$paramRef->{'validated'}->{$pref} = 1; 
+			}
+			else { 
+				$paramRef->{'warning'} .= sprintf(Slim::Utils::Strings::string('SETTINGS_INVALIDVALUE'), $paramRef->{$pref}, $pref) . '<br/>';
+				$paramRef->{'validated'}->{$pref} = 0;
+			}
+		}
+
 		logger('scan.scanner')->info(sprintf("Initiating scan of type: %s",join (" ",@{$rescanType})));
 
 		Slim::Control::Request::executeRequest(undef, $rescanType);
