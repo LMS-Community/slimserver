@@ -2087,7 +2087,7 @@ sub _unpack_head {
 
 sub _grab_int_16 {
         my $data  = shift;
-        my $value = unpack('s',substr($$data,0,2));
+        my $value = unpack('s', pack('S', unpack('n',substr($$data,0,2))));
         $$data    = substr($$data,2);
         return $value;
 }
