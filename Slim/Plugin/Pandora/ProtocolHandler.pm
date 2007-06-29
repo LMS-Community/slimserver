@@ -5,6 +5,7 @@ package Slim::Plugin::Pandora::ProtocolHandler;
 # Handler for pandora:// URLs
 
 use strict;
+use base qw(Slim::Player::Protocols::HTTP);
 
 use Slim::Utils::Misc;
 
@@ -13,6 +14,33 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'defaultLevel' => $ENV{PANDORA_DEV} ? 'DEBUG' : 'WARN',
 	'description'  => 'PLUGIN_PANDORA_MODULE_NAME',
 });
+
+# To support remote streaming (synced players, slimp3/SB1), we need to subclass Protocols::HTTP
+sub new {
+	my $class  = shift;
+	my $args   = shift;
+
+	my $client = $args->{client};
+	my $track  = $client->pluginData('currentTrack') || {};
+
+	return unless $track->{audioUrl};
+
+	my $sock = $class->SUPER::new( {
+		url    => $track->{audioUrl},
+		client => $client
+	} ) || return;
+	
+	${*$sock}{contentType} = 'audio/mpeg';
+	
+	# XXX: Need some way to get the track length for remote streaming mode
+	
+	# XXX: Time counter is not right, it starts from 0:00 as soon as next track 
+	# begins streaming
+	
+	# XXX: Sync not working yet (players will play different tracks)
+	
+	return $sock;
+}
 
 sub getFormatForURL () { 'mp3' }
 
@@ -151,6 +179,9 @@ sub gotNextTrackError {
 	my $client = $http->params('client');
 	
 	handleError( $http->error, $client );
+	
+	# Make sure we re-enable readNextChunkOk
+	$client->readNextChunkOk(1);
 }
 
 # Handle normal advances to the next track

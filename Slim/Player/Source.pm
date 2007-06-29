@@ -226,7 +226,7 @@ sub songTime {
 
 	if ($songtime && $duration) {
 
-		$log->info("[$songtime] = ($realpos(realpos) / $songLengthInBytes(size) * ",
+		0 && $log->info("[$songtime] = ($realpos(realpos) / $songLengthInBytes(size) * ",
 			"$duration(duration) * $rate(rate)) + $startStream(time offset of started stream)");
 	}
 
@@ -2043,6 +2043,11 @@ sub openSong {
 sub readNextChunk {
 	my $client = shift;
 	my $givenChunkSize = shift;
+	
+	if ( !$client->readNextChunkOk ) {
+		# We're waiting for an async callback, return nothing
+		return;
+	}
 
 	if (!defined($givenChunkSize)) {
 		$givenChunkSize = $prefs->get('udpChunkSize') * 10;
@@ -2265,14 +2270,53 @@ bail:
 
 			markStreamingTrackAsPlayed($client);
 		}
-
-		if (!gotoNext($client, 1)) {
-
-			$log->info($client->id, ": Can't opennext, returning no chunk.");
-		}
 		
-		# we'll have to be called again to get a chunk from the next song.
-		return undef;
+		if ( !$client->reportsTrackStart ) {
+			# For older players, this is basically the same as a decoder underrun
+			# Allow plugins that have onDecoderUnderrun callbacks to be called here
+			# for these players
+			
+			my $callback = sub {
+				$client->readNextChunkOk(1);
+				if (!gotoNext($client, 1)) {
+
+					$log->info($client->id, ": Can't opennext, returning no chunk.");
+				}
+			};
+			
+			my $nextSong = nextsong($client);
+			if ( defined $nextSong ) {
+				my $nextURL = Slim::Player::Playlist::url( $client, $nextSong );
+				my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $nextURL );
+				if ( $handler && $handler->can('onDecoderUnderrun') ) {
+					$handler->onDecoderUnderrun(
+						$client,
+						$nextURL,
+						$callback,
+					);
+					
+					# Flag that we don't want to try to read any more chunks
+					# until our callback is called.
+					$client->readNextChunkOk(0);
+					
+					return;
+				}
+			}
+			
+			$callback->();
+			
+			return;
+		}
+		else {
+
+			if (!gotoNext($client, 1)) {
+
+				$log->info($client->id, ": Can't opennext, returning no chunk.");
+			}
+		
+			# we'll have to be called again to get a chunk from the next song.
+			return undef;
+		}
 	}
 
 	my $chunkLength = length($chunk);

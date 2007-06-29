@@ -223,6 +223,7 @@ sub new {
 	$client->[118] = undef; # SN session ID
 	$client->[119] = 1; # showBuffering
 	$client->[120] = {}; # pluginData, plugin-specific state data
+	$client->[121] = 1; # readNextChunkOk (flag used when we are waiting for an async response in readNextChunk)
 
 	$clientHash{$id} = $client;
 
@@ -1631,6 +1632,11 @@ sub pluginData {
 	else {
 		return $client->[120];
 	}
+}
+
+sub readNextChunkOk {
+	my $r = shift;
+	@_ ? ($r->[121] = shift) : $r->[121];
 }
 
 1;
