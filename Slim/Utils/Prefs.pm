@@ -222,7 +222,7 @@ sub init {
 			$prefs->set($pref, $old) if !$prefs->exists($pref) && defined $old;
 		}
 
-		0; # FIXME - set this to 1 once migration complete!
+		1;
 	});
 
 	unless (-d $path && -w $path) {
@@ -254,7 +254,7 @@ sub init {
 			$clientprefs->set($pref, $old) if !$clientprefs->exists($pref) && defined $old;
 		}
 
-		0; # FIXME - set this to 1 once migration complete!
+		1;
 	});
 
 	# initialise any new prefs
