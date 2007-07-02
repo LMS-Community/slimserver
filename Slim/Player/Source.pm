@@ -629,6 +629,12 @@ sub decoderUnderrun {
 		return;
 	}
 	
+	# Don't advance if we are sleeping within the next 10 seconds
+	if ( $client->currentSleepTime() && $client->currentSleepTime() < 10 ) {
+		$log->info( $client->id . ": Ignoring decoder underrun, playing is sleeping" );
+		return;
+	}
+	
 	streamNextTrack($client);
 }
 
@@ -674,6 +680,13 @@ sub underrun {
 	$client->readytosync(-1);
 	
 	$log->info($client->id, ": Underrun while this mode: ", $client->playmode);
+	
+	# Don't advance if we are sleeping within the next 10 seconds
+	if ( $client->currentSleepTime() && $client->currentSleepTime() < 10 ) {
+		$log->info( $client->id . ": Ignoring underrun, playing is sleeping" );
+		$client->stop();
+		return;
+	}
 
 	# if we're synced, then we tell the player to stop and then let resync restart us.
 	
