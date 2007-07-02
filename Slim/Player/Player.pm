@@ -317,7 +317,6 @@ sub _fadeVolumeUpdate {
 		   !$rate 
 		|| ( $rate < 0 && $f->{'vol'} < $f->{'endVol'} )
 		|| ( $rate > 0 && $f->{'vol'} > $f->{'endVol'} )
-		|| !$client->power
 	) {
 
 		# reached end of fade
