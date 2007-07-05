@@ -50,8 +50,10 @@ sub handler {
 			my @disabled = ();
 
 			for my $i (0 .. (scalar(@irsets)-1)) {
-
-				if ($paramRef->{'irsetlist'.$i}) {
+				
+				# The HTML form contains 2 irsetlistN items, so if the user
+				# unchecks the box to disable a set, we won't get an arrayref
+				if ( !ref $paramRef->{'irsetlist'.$i} ) {
 
 					push @disabled, $paramRef->{'irsetlist'.$i};
 				}
