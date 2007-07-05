@@ -161,6 +161,8 @@ sub init {
 					   " to " . (defined $value ? $value : 'undef'));
 
 			$class->{'prefs'}->{ $pref } = $value;
+			
+			$class->{'prefs'}->{ '_ts_' . $pref } = time();
 		}
 	}
 
@@ -180,7 +182,9 @@ sub remove {
 
 		$log->info("removing " . $class->_root->{'namespace'} . ":" . ($class->{'clientid'} || '') . ":" . $pref);
 
-		delete ($class->{'prefs'}->{ $pref });
+		delete $class->{'prefs'}->{ $pref };
+		
+		delete $class->{'prefs'}->{ '_ts_' . $pref };
 	}
 
 	$class->_root->save;
