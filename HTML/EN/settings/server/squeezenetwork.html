@@ -13,6 +13,18 @@
 		<div class="prefDesc">[% "SETUP_SN_PASSWORD_DESC" | string %]</div>
 
 		<input type="password" class="stdedit" name="sn_password" id="sn_password" value="[% prefs.sn_password %]" size="40">
+		
+		<div class="prefHead">[% "SETUP_SN_SYNC" | string | upper %]</div>
+		<div class="prefDesc">[% "SETUP_SN_SYNC_DESC" | string %]</div>
+		
+		<select class="stdedit" name="sn_sync" id="sn_sync">
+			<option [% IF prefs.sn_sync == 1 %]selected="selected" [% END %]value="1">
+				[% 'SETUP_SN_SYNC_ENABLE' | string %]
+			</option>
+			<option [% IF !prefs.sn_sync %]selected="selected" [% END %]value="0">
+				[% 'SETUP_SN_SYNC_DISABLE' | string %]
+			</option>
+		</select>
 
 	</div>
 

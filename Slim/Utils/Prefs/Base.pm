@@ -113,6 +113,8 @@ sub set {
 		$log->debug(sprintf "setting %s:%s:%s to %s", $namespace, $clientid, $pref, defined $new ? $new : 'undef');
 
 		$class->{'prefs'}->{ $pref } = $new;
+		
+		$class->{'prefs'}->{ '_ts_' . $pref } = time();
 
 		$root->save;
 
@@ -225,6 +227,22 @@ sub namespace {
 	my $class = shift;
 
 	return $class->_root->{'namespace'};
+}
+
+=head2 timestamp( $pref )
+
+Returns last-modified timestamp for this preference
+
+=cut
+
+sub timestamp {
+	my ( $class, $pref, $wipe ) = @_;
+	
+	if ( $wipe ) {
+		$class->{'prefs'}->{ '_ts_' . $pref } = -1;
+	}
+	
+	return $class->{'prefs'}->{ '_ts_' . $pref } ||= 0;
 }
 
 sub AUTOLOAD {

@@ -39,6 +39,9 @@ our $defaultPrefs = {
 	'transitionDuration' => 0,
 	'replayGainMode'     => 0,
 	'disableDac'         => 0,
+	'snLastSyncUp'       => -1,
+	'snLastSyncDown'     => -1,
+	'snSyncInterval'     => 30,
 };
 
 # Keep track of direct stream redirects

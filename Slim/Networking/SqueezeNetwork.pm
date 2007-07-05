@@ -5,16 +5,14 @@ package Slim::Networking::SqueezeNetwork;
 # Async interface to SqueezeNetwork API
 
 use strict;
-use warnings;
 use base qw(Slim::Networking::SimpleAsyncHTTP);
 
-use Digest::SHA1 qw(sha1_base64);
-#use JSON::XS qw(from_json);
-use JSON::Syck;
 use MIME::Base64 qw(decode_base64);
 use URI::Escape qw(uri_escape);
 
+use Slim::Networking::SqueezeNetwork::PrefSync;
 use Slim::Utils::IPDetect;
+use JSON::Syck;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
@@ -26,6 +24,80 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 my $prefs = preferences('server');
+
+# Initialize by fetching the SN server time and storing our time difference
+sub init {
+	my $class = shift;
+	
+	$log->info('SqueezeNetwork Sync Init');
+	
+	my $timeURL = $class->url( '/api/v1/time' );
+	
+	my $http = $class->new(
+		\&_init_done,
+		\&_init_error,
+	);
+	
+	$http->get( $timeURL );
+}
+
+sub _init_done {
+	my $http = shift;
+	
+	my $snTime = $http->content;
+	
+	if ( $snTime !~ /^\d+$/ ) {
+		$http->error( "Invalid SqueezeNetwork server timestamp" );
+		return _init_error( $http );
+	}
+	
+	my $diff = $snTime - time();
+	
+	$log->info("Got SqueezeNetwork server time: $snTime, diff: $diff");
+	
+	$prefs->set( 'sn_timediff' => $diff );
+	
+	# Clear error counter
+	$prefs->remove( 'snInitErrors' );
+	
+	# Init pref syncing
+	Slim::Networking::SqueezeNetwork::PrefSync->init();
+}
+
+sub _init_error {
+	my $http  = shift;
+	my $error = $http->error;
+	
+	$log->error( "Unable to get SqueezeNetwork server time, sync is disabled: $error" );
+	
+	$prefs->remove('sn_timediff');
+	
+	# back off if we keep getting errors
+	my $count = $prefs->get('snInitErrors') || 0;
+	$prefs->set( snInitErrors => $count + 1 );
+	
+	my $retry = 300 * ( $count + 1 );
+	
+	$log->error( "SqueezeNetwork sync init failed: $error, will retry in $retry" );
+	
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time() + $retry,
+		sub { 
+			__PACKAGE__->init();
+		}
+	);
+}
+
+# Stop all communication with SN, if the user removed their login info for example
+sub shutdown {
+	my $class = shift;
+	
+	$prefs->remove('sn_timediff');
+	
+	# Shutdown pref syncing
+	Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
+}
 
 # Return a correct URL for SqueezeNetwork
 sub url {
@@ -82,7 +154,7 @@ sub login {
 		$password = $prefs->get('sn_password');
 		
 		if ( $password ) {
-			$password = sha1_base64( decode_base64( $password ) );
+			$password = decode_base64( $password );
 		}
 	}
 	
@@ -113,16 +185,16 @@ sub login {
 	$self->get( $url );
 }
 
-# Override GET to add session cookie header
-sub get {
-	my ( $self, $url, %headers ) = @_;
+# Override to add session cookie header
+sub _createHTTPRequest {
+	my ( $self, $type, $url, @args ) = @_;
 	
 	# Add session cookie if we have it
 	if ( my $client = $self->params('client') ) {
 
 		if ( my $sid = $client->snSession ) {
-			$headers{Cookie} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
-			$headers{'X-Player-MAC'} = $client->id;
+			unshift @args, 'Cookie', 'sdi_squeezenetwork_session=' . uri_escape($sid);
+			unshift @args, 'X-Player-MAC', $client->id;	
 		}
 		else {
 			$log->info("Logging in to SqueezeNetwork to obtain session ID");
@@ -132,13 +204,13 @@ sub get {
 				client   => $client,
 				callback => sub {
 					if ( my $sid = $client->snSession ) {
-						$headers{Cookie} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
-						$headers{'X-Player-MAC'} = $client->id;
+						unshift @args, 'Cookie', 'sdi_squeezenetwork_session=' . uri_escape($sid);
+						unshift @args, 'X-Player-MAC', $client->id;
 			
 						$log->info("Got SqueezeNetwork session ID: $sid");
 					}
 			
-					$self->SUPER::get( $url, %headers );
+					$self->SUPER::_createHTTPRequest( $type, $url, @args );
 				},
 			);
 	
@@ -146,14 +218,13 @@ sub get {
 		}
 	}
 	
-	$self->SUPER::get( $url, %headers );
-}	
+	$self->SUPER::_createHTTPRequest( $type, $url, @args );
+}
 
 sub _login_done {
 	my $self   = shift;
 	my $params = $self->params('params');
 	
-	#my $json = eval { from_json( $self->content ) };
 	my $json = eval { JSON::Syck::Load( $self->content ) };
 	
 	if ( $@ ) {
@@ -177,7 +248,7 @@ sub _error {
 	
 	# XXX: Error handling
 	
-	$params->{callback}->();
+	$log->error( "Unable to login to SN: $error" );
 }
 
 sub _construct_url {

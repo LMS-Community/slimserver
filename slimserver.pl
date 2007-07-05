@@ -144,6 +144,7 @@ use Slim::Utils::Cache;
 use Slim::Utils::Scanner;
 use Slim::Utils::Scheduler;
 use Slim::Networking::Select;
+use Slim::Networking::SqueezeNetwork;
 use Slim::Networking::UDP;
 use Slim::Web::Setup;
 use Slim::Control::Stdio;
@@ -336,6 +337,11 @@ sub init {
 	
 	$log->info("Cache init...");
 	Slim::Utils::Cache->init();
+	
+	if ( $prefs->get('sn_email') && $prefs->get('sn_sync') ) {
+		$log->info("SqueezeNetwork Sync Init...");
+		Slim::Networking::SqueezeNetwork->init();
+	}
 
 	unless ( $noupnp || $prefs->get('noupnp') ) {
 		$log->info("UPnP init...");

@@ -6924,6 +6924,18 @@ SETUP_SN_PASSWORD_DESC
 	DE	Geben Sie bitte das Passwort für ihren SqueezeNetwork-Zugang an.
 	EN	Enter the password for your SqueezeNetwork account.
 
+SETUP_SN_SYNC
+	EN	SqueezeNetwork Integration
+
+SETUP_SN_SYNC_DESC
+	EN	By default, many player settings are synchronized between SlimServer and SqueezeNetwork.  To disable this feature, select the Disabled option below.
+
+SETUP_SN_SYNC_ENABLE
+	EN	Enabled, keep player settings in sync.
+
+SETUP_SN_SYNC_DISABLE
+	EN	Disabled, do not keep player settings in sync.
+
 #
 # Web interface
 #
