@@ -17,11 +17,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 
-my $log = Slim::Utils::Log->addLogCategory({
-	'category'     => 'network.squeezenetwork',
-	'defaultLevel' => 'DEBUG',
-	'description'  => 'SQUEEZENETWORK_LOGGING',
-});
+my $log   = logger('network.squeezenetwork');
 
 my $prefs = preferences('server');
 

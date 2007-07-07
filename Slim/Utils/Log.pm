@@ -743,6 +743,7 @@ sub _defaultCategories {
 		'network.protocol.slimp3'    => 'WARN',
 		'network.upnp'               => 'WARN',
 		'network.jsonrpc'            => 'WARN',
+		'network.squeezenetwork'     => 'WARN',
 
 		'formats.audio'              => 'WARN',
 		'formats.xml'                => 'WARN',
