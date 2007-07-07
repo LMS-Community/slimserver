@@ -21,11 +21,14 @@ use Slim::Networking::UPnP::ControlPoint;
 use Slim::Utils::IPDetect;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
 our %devices             = ();
 our $registeredCallbacks = [];
 
 my $log = logger('network.upnp');
+
+my $prefs = preferences('server');
 
 sub init {
 	$log->info('UPnP: Starting up');
@@ -50,6 +53,8 @@ sub shutdown {
 		
 		foundDevice( $device, 'remove' );
 	}
+	
+	$prefs->remove('upnpServers');
 }		
 
 sub foundDevice {
@@ -78,6 +83,9 @@ sub foundDevice {
 			
 			Slim::Utils::Timers::killTimers( $device, \&checkServerHealth );
 		}
+		
+		# Store all device URLs in a pref
+		$prefs->set( upnpServers => [ map { $_->getlocation } values %devices ] );
 		
 		# notify anyone who is interested in devices (i.e. Rhapsody plugin)
 		for my $callback ( @{$registeredCallbacks} ) {
