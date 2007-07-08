@@ -264,7 +264,7 @@ sub init {
 
 	# set validation functions
 	$prefs->setValidate( 'num',   qw(displaytexttimeout browseagelimit remotestreamtimeout screensavertimeout 
-					itemsPerPage refreshRate thumbSize httpport bufferSecs remotestreamtimeout) );
+									 itemsPerPage refreshRate thumbSize httpport bufferSecs remotestreamtimeout) );
 	$prefs->setValidate( 'dir',   qw(cachedir playlistdir audiodir artfolder) );
 	$prefs->setValidate( 'array', qw(guessFileFormats titleFormat disabledformats) );
 
@@ -316,6 +316,12 @@ sub init {
 			Slim::Control::Request::unsubscribe(\&Slim::Player::Playlist::modifyPlaylistCallback);
 		}
 	}, 'persistPlaylists');
+
+	$prefs->setChange( sub {
+		my $client = $_[2] || return;
+		$client->display->renderCache()->{'defaultfont'} = undef;
+	}, qw(activeFont idleFont activeFont_curr idleFont_curr) );
+		
 }
 
 =head2 writeAll( )

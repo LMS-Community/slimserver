@@ -531,7 +531,6 @@ sub scrollUpdateTicker {
 sub textSize {
 	my $display = shift;
 	my $newsize = shift;
-	my $suppressUpdate = shift;
 
 	my $client = $display->client;
 
@@ -539,17 +538,17 @@ sub textSize {
 	my $prefname = ($client->power()) ? "activeFont" : "idleFont";
 	
 	if (defined($newsize)) {
+
 		my $size = $prefs->client($client)->set($prefname."_curr", $newsize);
 
 		if ($display->animateState() == 5) {
 			# currently in showBriefly - end it
-			Slim::Utils::Timers::killTimers($display, \&Slim::Display::Display::endAnimation);	
+			Slim::Utils::Timers::killTimers($display, \&Slim::Display::Display::endAnimation);
 			$display->endAnimation();
 		}
 
-		# update screen with existing text and new font
-		$display->renderCache()->{defaultfont} = undef;
-		$display->update($display->renderCache()) unless $suppressUpdate;
+		# prefchanged callback will reset render cache defaultfont, so just redisplay here
+		$display->update($display->renderCache());
 		
 		return $size;
 
