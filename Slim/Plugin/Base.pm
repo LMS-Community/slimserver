@@ -27,24 +27,22 @@ sub initPlugin {
 		my $exitMode = $class->can('exitMode') ? sub { $class->exitMode(@_) } : undef;
 
 		Slim::Buttons::Common::addMode($mode, $class->getFunctions, sub { $class->setMode(@_) }, $exitMode);
+
+		my %params = (
+			'useMode' => $mode,
+			'header'  => $name,
+		);
+
+		# Add toplevel info for the option of having a plugin at the top level.
+		Slim::Buttons::Home::addMenuOption($name, \%params);
+
+		Slim::Buttons::Home::addSubMenu($menu, $name, \%params);
+
+		if ($menu ne PLUGINMENU) {
+
+			Slim::Buttons::Home::addSubMenu(PLUGINMENU, $menu, Slim::Buttons::Home::getMenu("-$menu"));
+		}
 	}
-
-	my %params = (
-		'useMode' => $mode,
-		'header'  => $name,
-	);
-
-	# Add toplevel info for the option of having a plugin at the top level.
-	Slim::Buttons::Home::addMenuOption($name, \%params);
-
-	Slim::Buttons::Home::addSubMenu($menu, $name, \%params);
-
-	if ($menu ne PLUGINMENU) {
-
-		Slim::Buttons::Home::addSubMenu(PLUGINMENU, $menu, Slim::Buttons::Home::getMenu("-$menu"));
-	}
-
-	#logWarning("Adding $name to menu $menu");
 
 	if ($class->can('webPages')) {
 
@@ -93,14 +91,6 @@ sub getFunctions {
 	my $class = shift;
 
 	return {};
-}
-
-sub setMode {
-	my $class = shift;
-	my $client = shift;
-	my $method = shift;
-
-	return;
 }
 
 1;
