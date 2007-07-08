@@ -258,6 +258,8 @@ sub showBriefly {
 		$parsed = { 'line' => [ $parts, shift ] };
 	}
 
+	$log->debug(sub { Data::Dump::dump $parsed });
+
 	my $args = shift;
 	if (ref($args) eq 'HASH') {
 		$duration    = $args->{'duration'} || 1; # duration - default to 1 second
