@@ -290,7 +290,7 @@ function popUpAlbumInfo(attributes) {
 			method: 'post',
 			asynchronous: true,
 			evalScripts: true,
-			postBody: 'hierarchy=album,track&level=1&ajaxUpdate=1&player='+player+attributes,
+			postBody: attributes + '&ajaxUpdate=1&player=' + player,
 			onFailure: function(t) {
 				alert('Error -- ' + t.responseText);
 			},
