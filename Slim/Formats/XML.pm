@@ -141,8 +141,8 @@ sub getFeedAsync {
 		
 			# Login and get a session ID
 			Slim::Networking::SqueezeNetwork->login(
-				client   => $params->{'client'},
-				callback => sub {
+				client => $params->{'client'},
+				cb     => sub {
 					if ( my $sid = $params->{'client'}->snSession ) {
 						$headers{'Cookie'} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
 						$headers{'X-Player-MAC'} = $params->{'client'}->id;
@@ -151,6 +151,10 @@ sub getFeedAsync {
 					}
 				
 					$http->get( $url, %headers );
+				},
+				ecb   => sub {
+					my ( $http, $error ) = @_;
+					$ecb->( $error, $params );
 				},
 			);
 		

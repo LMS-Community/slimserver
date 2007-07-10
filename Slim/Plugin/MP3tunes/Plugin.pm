@@ -37,7 +37,6 @@ sub setMode {
 	my %params = (
 		header   => 'PLUGIN_MP3TUNES_LOADING',
 		modeName => 'MP3Tunes Plugin',
-		snLogin  => 1, # Needs SN login/session ID
 		url      => $FEED,
 		title    => $client->string(getDisplayName()),
 		timeout  => 35,

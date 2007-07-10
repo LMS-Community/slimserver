@@ -12,7 +12,7 @@ use URI::Escape qw(uri_escape);
 
 use Slim::Networking::SqueezeNetwork::PrefSync;
 use Slim::Utils::IPDetect;
-use JSON::Syck;
+use JSON::XS qw(from_json);
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
@@ -156,8 +156,9 @@ sub login {
 	
 	# Return if we don't have any SN login information
 	if ( !$username || !$password ) {
-		$log->info("No SN login info found for " . $client->id . ", $username, $password");
-		return $params{callback}->();
+		my $error = "No SN login info found for " . $client->id . ", $username";
+		$log->info( $error );
+		return $params{ecb}->( undef, $error );
 	}
 	
 	$log->info("Logging in to SN as $username");
@@ -197,8 +198,8 @@ sub _createHTTPRequest {
 	
 			# Login and get a session ID
 			$self->login(
-				client   => $client,
-				callback => sub {
+				client => $client,
+				cb     => sub {
 					if ( my $sid = $client->snSession ) {
 						unshift @args, 'Cookie', 'sdi_squeezenetwork_session=' . uri_escape($sid);
 						unshift @args, 'X-Player-MAC', $client->id;
@@ -207,6 +208,11 @@ sub _createHTTPRequest {
 					}
 			
 					$self->SUPER::_createHTTPRequest( $type, $url, @args );
+				},
+				ecb    => sub {
+					my ( $http, $error ) = @_;
+					$self->error( $error ); 
+					$self->{ecb}->( $self, $error );
 				},
 			);
 	
@@ -221,7 +227,7 @@ sub _login_done {
 	my $self   = shift;
 	my $params = $self->params('params');
 	
-	my $json = eval { JSON::Syck::Load( $self->content ) };
+	my $json = eval { from_json( $self->content ) };
 	
 	if ( $@ ) {
 		return $self->_error( $@ );
@@ -235,16 +241,18 @@ sub _login_done {
 		$params->{client}->snSession( $sid );
 	}
 	
-	$params->{callback}->();
+	$params->{cb}->();
 }
 
 sub _error {
 	my ( $self, $error ) = @_;
 	my $params = $self->params('params');
 	
-	# XXX: Error handling
-	
 	$log->error( "Unable to login to SN: $error" );
+	
+	$self->error( $error );
+	
+	$params->{ecb}->( $self, $error );
 }
 
 sub _construct_url {

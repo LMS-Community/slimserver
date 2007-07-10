@@ -8,7 +8,7 @@ use strict;
 
 use File::Basename qw(basename dirname);
 use File::Spec::Functions qw(catfile);
-use JSON::Syck;
+use JSON::XS qw(to_json from_json);
 
 use Slim::Control::Request;
 use Slim::Hardware::IR;
@@ -40,7 +40,7 @@ sub init {
 sub _init_done {
 	my $http = shift;
 	
-	my $res = eval { JSON::Syck::Load( $http->content ) };
+	my $res = eval { from_json( $http->content ) };
 	if ( $@ || ref $res ne 'ARRAY' ) {
 		$http->error( $@ || 'Invalid JSON response' );
 		return _init_error( $http );
@@ -150,7 +150,7 @@ sub syncDown {
 		$log->debug( "Syncing down from SN: " . Data::Dump::dump($sync) );
 	}
 	
-	my $json = eval { JSON::Syck::Dump($sync) };
+	my $json = eval { to_json($sync) };
 	if ( $@ ) {
 		$http->error( $@ );
 		return _syncDown_error( $http );
@@ -163,7 +163,7 @@ sub _syncDown_done {
 	my $http   = shift;
 	my $client = $http->params('client');
 	
-	my $content = eval { JSON::Syck::Load( $http->content ) };
+	my $content = eval { from_json( $http->content ) };
 	if ( $@ || $content->{error} ) {
 		$http->error( $@ || $content->{error} );
 		return _syncDown_error( $http );
@@ -245,6 +245,7 @@ sub _syncDown_error {
 }
 
 # Callback whenever a pref is changed
+# XXX: Support changes to global prefs
 sub prefEvent {
 	my $request = shift;
 	my $client  = $request->client || return;
@@ -319,7 +320,7 @@ sub syncUp {
 		$log->debug( 'Syncing up to SN: ' . Data::Dump::dump($sync) );
 	}
 	
-	my $json = eval { JSON::Syck::Dump($sync) };
+	my $json = eval { to_json($sync) };
 	if ( $@ ) {
 		$log->error( "Unable to sync up: $@" );
 		return;
@@ -341,7 +342,7 @@ sub syncUp {
 sub _syncUp_done {
 	my $http = shift;
 	
-	my $content = eval { JSON::Syck::Load( $http->content ) };
+	my $content = eval { from_json( $http->content ) };
 	
 	if ( $@ || $content->{error} ) {
 		$http->error( $@ || $content->{error} );
