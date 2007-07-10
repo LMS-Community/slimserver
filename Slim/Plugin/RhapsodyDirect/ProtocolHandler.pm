@@ -8,8 +8,7 @@ use strict;
 use warnings;
 
 use HTML::Entities qw(encode_entities);
-#use JSON::XS qw(from_json);
-use JSON::Syck;
+use JSON::XS qw(from_json);
 use MIME::Base64 qw(decode_base64);
 
 use Slim::Plugin::RhapsodyDirect::RPDS;
@@ -190,7 +189,7 @@ sub gotAccount {
 	my $params = $http->params;
 	my $client = $params->{client};
 	
-	my $account = eval { JSON::Syck::Load( $http->content ) };
+	my $account = eval { from_json( $http->content ) };
 	
 	if ( ref $account eq 'HASH' ) {
 		$client->pluginData( account => $account );
@@ -471,7 +470,7 @@ sub gotNextRadioTrack {
 	my $client = $http->params->{client};
 	my $params = $http->params->{params};
 	
-	my $track = eval { JSON::Syck::Load( $http->content ) };
+	my $track = eval { from_json( $http->content ) };
 	
 	if ( $track->{error} ) {
 		# We didn't get the next track to play

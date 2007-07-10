@@ -9,7 +9,7 @@ use strict;
 use base qw(Slim::Plugin::Base);
 
 use HTTP::Status;
-use JSON::Syck;
+use JSON::XS qw(from_json);
 use JSON;
 use Scalar::Util qw(blessed);
 
@@ -178,9 +178,9 @@ sub processRequest {
 
 	if ($requestmethod eq 'POST') {
 
-		# Use Syck to convert JSON to Perl
+		# Convert JSON to Perl
 		# FIXME: JSON 1.0 accepts multiple requests ? How do we parse that efficiently?
-		$procedure = JSON::Syck::Load($input);
+		$procedure = from_json($input);
 		
 	} elsif ($requestmethod eq 'GET') {
 		
@@ -402,7 +402,7 @@ sub writeResponse {
 	}
 
 	# convert Perl object into JSON
-	# FIXME: Use JSON here and not Syck because Syck does not like tied ordered hashes...
+	# FIXME: Use JSON here because JSON::XS does not like tied ordered hashes...
 	my $jsonResponse = objToJson($responseRef, {utf8 => 1});
 	$jsonResponse = Slim::Utils::Unicode::encode('utf8', $jsonResponse);
 

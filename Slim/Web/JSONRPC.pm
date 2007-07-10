@@ -13,7 +13,7 @@ package Slim::Web::JSONRPC;
 use strict;
 
 use HTTP::Status;
-use JSON::Syck;
+use JSON::XS qw(from_json);
 use JSON;
 use Scalar::Util qw(blessed);
 
@@ -109,9 +109,9 @@ sub handleURI {
 	$log->info("POST data: [$input]");
 
 	# Parse the input
-	# Use Syck to convert JSON to Perl
+	# Convert JSON to Perl
 	# FIXME: JSON 1.0 accepts multiple requests ? How do we parse that efficiently?
-	my $procedure = JSON::Syck::Load($input);
+	my $procedure = from_json($input);
 	
 	
 	# Validate the procedure

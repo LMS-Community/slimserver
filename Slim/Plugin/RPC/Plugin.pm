@@ -4,7 +4,7 @@ package Slim::Plugin::RPC::Plugin;
 
 use strict;
 use HTTP::Status;
-use JSON::Syck;
+use JSON::XS qw(to_json from_json);
 use RPC::XML::Parser;
 use Scalar::Util qw(blessed);
 
@@ -200,7 +200,7 @@ sub handleReqJSON {
 
 	my @resparr = ();
 
-	my $objlist = JSON::Syck::Load($input);
+	my $objlist = from_json($input);
 	   $objlist = [ $objlist ] if ref($objlist) eq 'HASH';
 
 	if (ref($objlist) ne 'ARRAY') {
@@ -241,7 +241,7 @@ sub handleReqJSON {
 	}
 
 	my $respobj     = scalar @resparr == 1 ? $resparr[0] : \@resparr;
-	my $rpcresponse = JSON::Syck::Dump($respobj);
+	my $rpcresponse = to_json($respobj);
 
 	if ($params->{'asyncId'}) {
 		$rpcresponse = "JXTK2.JSONRPC.asyncDispatch(" . $params->{'asyncId'} . "," . $rpcresponse . ")";

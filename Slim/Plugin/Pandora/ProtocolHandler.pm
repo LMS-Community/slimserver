@@ -7,6 +7,8 @@ package Slim::Plugin::Pandora::ProtocolHandler;
 use strict;
 use base qw(Slim::Player::Protocols::HTTP);
 
+use JSON::XS qw(from_json);
+
 use Slim::Utils::Misc;
 
 my $log = Slim::Utils::Log->addLogCategory({
@@ -126,7 +128,7 @@ sub gotNextTrack {
 	my $client = $http->params->{client};
 	my $params = $http->params->{params};
 	
-	my $track = eval { JSON::Syck::Load( $http->content ) };
+	my $track = eval { from_json( $http->content ) };
 	
 	if ( $log->is_debug ) {
 		$log->debug( "Got Pandora track: " . Data::Dump::dump($track) );
