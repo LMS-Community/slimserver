@@ -185,6 +185,11 @@ sub stringsFiles {
 	# custom string file
 	push @files, catdir($serverPath, 'custom-strings.txt');
 
+	# plugin custom string files
+	for my $path ( Slim::Utils::PluginManager->pluginRootDirs() ) {
+		push @files, catdir($path, 'custom-strings.txt');
+	}
+
 	# prune out files which don't exist and find newest
 	my $i = 0;
 	while (my $file = $files[$i]) {
