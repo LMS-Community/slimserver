@@ -37,7 +37,7 @@ sub handler {
 
 		for my $client (Slim::Player::Client::clients()) {
 
-			$client->currentPlaylistChangeTime(time);
+			$client->currentPlaylistChangeTime(Time::HiRes::time());
 		}
 	}
 

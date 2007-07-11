@@ -781,7 +781,7 @@ sub modifyPlaylistCallback {
 	my $playlist = Slim::Player::Playlist::playList($client);
 	my $currsong = (Slim::Player::Playlist::shuffleList($client))->[Slim::Player::Source::playingSongIndex($client)];
 
-	$client->currentPlaylistChangeTime(time());
+	$client->currentPlaylistChangeTime(Time::HiRes::time());
 
 	for my $eachclient (@syncedclients) {
 

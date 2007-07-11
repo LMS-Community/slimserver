@@ -709,7 +709,7 @@ sub underrun {
 			playmode($client, 'stop');
 			streamingSongIndex($client, 0, 1);
 
-			$client->currentPlaylistChangeTime(time());
+			$client->currentPlaylistChangeTime(Time::HiRes::time());
 
 			Slim::Player::Playlist::refreshPlaylist($client);
 
@@ -1143,7 +1143,7 @@ sub jumpto {
 		streamingSongIndex($client, 0, 1);
 	}
 
-	$client->currentPlaylistChangeTime(time());
+	$client->currentPlaylistChangeTime(Time::HiRes::time());
 
 	Slim::Buttons::Common::syncPeriodicUpdates($client, Time::HiRes::time() + 0.1);
 
@@ -1450,7 +1450,7 @@ sub trackStartEvent {
 		$last_song->{'status'} = STATUS_PLAYING;
 	}
 
-	$client->currentPlaylistChangeTime(time());
+	$client->currentPlaylistChangeTime(Time::HiRes::time());
 
 	Slim::Player::Playlist::refreshPlaylist($client);
 	Slim::Control::Request::notifyFromArray($client,
@@ -2038,7 +2038,7 @@ sub openSong {
 
 	if (!$client->reportsTrackStart()) {
 
-		$client->currentPlaylistChangeTime(time());
+		$client->currentPlaylistChangeTime(Time::HiRes::time());
 		Slim::Player::Playlist::refreshPlaylist($client);
 	}
 
