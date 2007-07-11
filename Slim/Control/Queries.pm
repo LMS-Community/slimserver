@@ -698,6 +698,92 @@ sub displaynowQuery {
 }
 
 
+sub displaystatusQuery_filter {
+	my $self = shift;
+	my $request = shift;
+
+	# we only listen to display messages
+	return 0 if !$request->isCommand([['displaynotify']]);
+
+	# retrieve the clientid, abort if not about us
+	my $clientid = $request->clientid();
+	return 0 if !defined $clientid;
+	return 0 if $clientid ne $self->clientid();
+
+	my $subs  = $self->getParam('subscribe');
+	my $type  = $request->getParam('_type');
+	my $parts = $request->getParam('_parts') || $request->client->curDisplay;
+
+	# check displaynotify type against subscription ('showbriefly', 'update' or 'all')
+	if ($subs eq $type || $subs eq 'all') {
+
+		# display forwarding is suppressed for this subscriber source
+		return 0 if exists $parts->{ lc $self->source } && !$parts->{ lc $self->source };
+
+		# store display info in request so it can be accessed later
+		$self->privateData({
+			'type'     => $type,
+			'parts'    => $parts,
+		});
+
+		# execute the query immediately
+		$self->__autoexecute;
+	}
+
+	return 0;
+}
+
+sub displaystatusQuery {
+	my $request = shift;
+	
+	$log->debug("displaystatusQuery()");
+
+	# check this is the correct query
+	if ($request->isNotQuery([['displaystatus']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# return any previously stored display info from displaynotify
+	if (my $pd = $request->privateData) {
+
+		my $source= $request->source;
+		my $parts = $pd->{'parts'};
+		my $type  = $pd->{'type'};
+
+		$request->addResult('type', $type);
+
+		if ($source eq 'CLI') {
+			# format display for cli
+			# return screen1 info if more than one screen
+			$parts = $parts->{'screen1'} if $parts->{'screen1'};
+			for my $c (keys %$parts) {
+				next unless $c =~ /line|center|overlay/;
+				for my $l (0..$#{$parts->{$c}}) {
+					$request->addResult("$c$l", $parts->{$c}[$l]) if ($parts->{$c}[$l] ne '');
+				}
+			}
+		} else {
+			# send the whole display hash
+			$request->addResult('display', $parts);			
+		}
+			
+		$request->privateData({});
+
+	} else {
+
+		# no private data this must be the first query - check for subscription management
+		if ($request->getParam('subscribe')) {
+			$request->registerAutoExecute(0, \&displaystatusQuery_filter);
+		} else {
+			$request->registerAutoExecute('-');
+		}
+	}
+		
+	$request->setStatusDone();
+}
+
+
 sub genresQuery {
 	my $request = shift;
 

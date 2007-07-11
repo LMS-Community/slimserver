@@ -664,6 +664,9 @@ sub mixerDisplay {
 		'noOverlay' => 1,
 	});
 
+	# suppress display forwarding
+	$parts->{'jiv'} = $parts->{'cli'} = undef;
+
 	$client->display->showBriefly($parts, { 'name' => 'mixer' } );
 
 	# Turn the visualizer back to it's old value.

@@ -91,6 +91,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  Y    connected       ?
  Y    display         ?                           ?
  Y    displaynow      ?                           ?
+ Y    displaystatus   <tagged parameters>
  Y    show
  N    player          count                       ?
  N    player          ip                          <index or ID>               ?
@@ -466,6 +467,7 @@ sub init {
     addDispatch(['display',        '?',              '?'],                                             [1, 1, 0, \&Slim::Control::Queries::displayQuery]);
     addDispatch(['display',        '_line1',         '_line2',     '_duration'],                       [1, 0, 0, \&Slim::Control::Commands::displayCommand]);
     addDispatch(['displaynow',     '?',              '?'],                                             [1, 1, 0, \&Slim::Control::Queries::displaynowQuery]);
+	addDispatch(['displaystatus'],                                                                     [1, 1, 1, \&Slim::Control::Queries::displaystatusQuery]);
     addDispatch(['duration',       '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['genre',          '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['genres',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::genresQuery]);
@@ -596,6 +598,7 @@ sub init {
     addDispatch(['rescan',         'done'],                                                            [0, 0, 0, undef]);
     addDispatch(['unknownir',      '_ircode',        '_time'],                                         [1, 0, 0, undef]);
     addDispatch(['prefset',        '_namespace',     '_prefname',  '_newvalue'],                       [0, 0, 1, undef]);
+	addDispatch(['displaynotify',  '_type',          '_parts'],                                        [1, 0, 0, undef]);
 
 # DEPRECATED
 	addDispatch(['mode',           'pause'],                                                           [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
@@ -1754,10 +1757,11 @@ sub callback {
 # notify listeners...
 sub notify {
 	my $self = shift || return;
+	my $specific = shift; # specific target of notify if we have a single known target
 
 	$log->info(sprintf("Notifying %s", $self->getRequestString()));
 
-	for my $listener (keys %listeners) {
+	for my $listener ($specific || keys %listeners) {
 
 		if ( $listeners{$listener} ) {
 
@@ -1804,7 +1808,7 @@ sub notify {
 	# handle subscriptions
 	# send the notification to all filters...
 	for my $cnxid (keys %subscribers) {
-		for my $name (keys %{$subscribers{$cnxid}}) {
+		for my $name ($specific || keys %{$subscribers{$cnxid}}) {
 			for my $clientid (keys %{$subscribers{$cnxid}{$name}}) {
 				
 				my $request = $subscribers{$cnxid}{$name}{$clientid};

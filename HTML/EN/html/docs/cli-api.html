@@ -160,6 +160,10 @@
 		document queries &quot;<a href="#serverstatus">serverstatus</a>&quot; and 
 		&quot;<a href="#status">status</a>&quot;.
 	</li>
+	<li>
+		Added the &quot;<a href="#displaystatus">displaystatus</a>&quot; query which allows subscription
+		to display update messages.
+	</li>
 </ul>
 
 <hr>
@@ -5897,6 +5901,9 @@ in the saved playlists folder.</p>
 	<li>
 		<strong><code><a href="#status">status</a></code></strong>
 	</li>
+	<li>
+		<strong><code><a href="#displaystatus">displaystatus</a></code></strong>
+	</li>
 </ul>
 
 
@@ -6615,6 +6622,44 @@ in the saved playlists folder.</p>
 	</p>
 </blockquote>
 
+
+<p id="displaystatus">
+	<strong>
+		<code>
+			displaystatus 
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;displaystatus&quot; query allows subscription to display
+	update events for a player.  Details of the latest display change are automatically returned
+	whenever the relavent display update event occurs on that player.
+	<br>
+	Clients may subscribe to only receive status and warning (showbriefly) messages,
+	receive normal display updates, or receive all display updates including menu transitions.
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			subscribe
+		</td>
+		<td>
+			'showbriefly', 'update' or 'all' to subscribe and '-' or nothing to unsubscribe
+		</td>
+	</tr>
+</table>
 
 <!--#########################################################################-->
 <!-- NOTIFICATIONS                                                           -->

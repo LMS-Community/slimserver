@@ -273,6 +273,9 @@ sub pushBumpAnimate {
 
 	$display->animateState(1);
 	$display->updateMode(1);
+
+	# notify cli/jive of animation - if there is a subscriber this will grab the curDisplay
+	$display->notify("animate-$trans");
 }
 
 sub visualizerParams {

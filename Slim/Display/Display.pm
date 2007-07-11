@@ -232,6 +232,9 @@ sub update {
 
 	# return any old display if stored
 	$display->returnOldDisplay($render) if (!$s2periodic && $display->sbOldDisplay());
+
+	# notify cli/jive of update - if there is a subscriber this will grab the curDisplay
+	$display->notify('update');
 }
 
 # show text briefly and then return to original display
@@ -280,6 +283,9 @@ sub showBriefly {
 		$callbackargs = shift;
 		$name         = shift;
 	}
+
+	# notify cli/jive of the show briefly message
+	$display->notify('showbriefly', $parts);
 
 	if ($firstLine && ($display->linesPerScreen() == 1)) {
 		$parsed->{line}[1] = $parsed->{line}[0];
@@ -774,6 +780,15 @@ sub doubleString {
 	my $strings = shift->displayStrings;
 	my $name = uc(shift);
 	return $strings->{$name.'_DBL'} || $strings->{$name} || logBacktrace("missing string $name") && '';
+}
+
+sub notify {
+	my $display = shift;
+	my $type    = shift;
+	my $info    = shift;
+
+	# send a notification for this display update to 'displaystatus' queries
+	Slim::Control::Request->new($display->client->id, ['displaynotify', $type, $info])->notify('displaystatus');
 }
 
 =head1 SEE ALSO
