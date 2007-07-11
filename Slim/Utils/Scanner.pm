@@ -395,6 +395,28 @@ sub scanRemoteURL {
 
 		return $cb->( $foundItems, @{$pt} );
 	}
+	
+	# Let protocol handlers adjust the URL before scanning
+	# This is currently used by Live365 to dynamically add the correct
+	# session ID to the URL before scanning.
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+	if ( $handler && $handler->can('onScan') && !$args->{'onScanDone'} ) {
+		$log->debug("scanRemoteURL: Letting $handler handle onScan");
+		$handler->onScan(
+			$args->{'client'},
+			$url,
+			sub {
+				my $newURL = shift;
+				
+				# rescan with new URL
+				$args->{'url'}        = $newURL;
+				$args->{'onScanDone'} = 1;
+				
+				return $class->scanRemoteURL( $args );
+			},
+		);
+		return;
+	}
 
 	if ( Slim::Music::Info::isAudioURL($url) ) {
 
@@ -411,7 +433,6 @@ sub scanRemoteURL {
 		# Protocol Handlers may want to perform additional actions in an async manner
 		# such as Rhapsody Direct.  If so, we assume it's an audio URL, and let the
 		# handler call us back when done 
-		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
 		if ( $handler && $handler->can('onCommand') ) { # this needs a better name
 			$log->debug("scanRemoteURL: Letting $handler handle onCommand operations");
 			$handler->onCommand(
@@ -617,7 +638,7 @@ sub readRemoteHeaders {
 			if ( $originalURL !~ /^(?:http|mms)/ ) {
 				my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $originalURL );
 				if ( $handler && $handler->can('notifyOnRedirect') ) {
-					$handler->notifyOnRedirect( $originalURL, $url );
+					$handler->notifyOnRedirect( $args->{'client'}, $originalURL, $url );
 					
 					# reset the URL back to the original URL
 					$url = $originalURL;

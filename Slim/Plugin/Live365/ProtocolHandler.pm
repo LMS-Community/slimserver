@@ -1,94 +1,136 @@
-# Live365 tuner plugin for SlimServer
-# Copyright (C) 2004  Jim Knepley
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-#
+package Slim::Plugin::Live365::ProtocolHandler;
 
 # $Id$
-
-package Slim::Plugin::Live365::ProtocolHandler;
 
 use strict;
 use base qw( Slim::Player::Protocols::HTTP );
 
-use IO::Socket;
-use XML::Simple;
+use JSON::XS qw(from_json);
+use URI::Escape qw(uri_escape);
 
 use Slim::Player::Playlist;
 use Slim::Player::Source;
-use Slim::Utils::Cache;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
-use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
-
-# Need this to create a new API object
-use Slim::Plugin::Live365::Live365API;
 
 my $log = logger('plugin.live365');
 
-my $prefs = preferences('plugin.live365');
-
-# XXX: I don't believe new() is called at all when direct streaming
 sub new {
 	my $class = shift;
 	my $args  = shift;
 	
-	my $url    = $args->{'url'};
-	my $client = $args->{'client'};
-	my $self   = $args->{'self'};
+	my $url    = $args->{url};
+	my $client = $args->{client};
+	my $self   = $args->{self};
 
-	my $api = Slim::Plugin::Live365::Live365API->new;
+	if ( $url =~ m{^live365://} ) {
 
-	if (my ($station, $handle) = $url =~ m{live365://(www.live365.com/play/([^/?]+).*)$}) {
-
-		$log->info("Requested: $url ($handle)");
+		$log->info("Requested: $url");
 
 		my $realURL = $url;
-		$realURL =~ s/live365\:/http\:/;
+		$realURL =~ s/^live365/http/;
 
-		$self = $class->SUPER::new({ 
-			'url'     => $realURL, 
-			'client'  => $client, 
-			'infoUrl' => $url,
-			'create'  => 1,
-		});
+		$self = $class->SUPER::new( { 
+			url     => $realURL, 
+			client  => $client, 
+			infoUrl => $url,
+			create  => 1,
+		} );
+		
+		Slim::Utils::Timers::killTimers( $client, \&getPlaylist );
 
-		# if our URL doesn't look like a handle, don't try to get a playlist
-		if ($handle =~ /[a-zA-Z]/) {
+		Slim::Utils::Timers::setTimer(
+			$client,
+			Time::HiRes::time(),
+			\&getPlaylist,
+			$url,
+		);
 
-			my $isVIP = $prefs->get( 'memberstatus' );
-
-			Slim::Utils::Timers::setTimer(
-				$client,
-				Time::HiRes::time() + 5,
-				\&getPlaylist,
-				( $self, $handle, $url, $isVIP )
-			);
-		}
-
-	} else {
-
+	}
+	else {
+		
 		$log->info("Not a Live365 station URL: $url");
 	}
 
 	return $self;
 }
 
+# Perform processing before scan
+sub onScan {
+	my ( $class, $client, $url, $callback ) = @_;
+	
+	# Get the user's session ID from SN, this is so we
+	# don't have to worry about old session ID's in favorites
+	my $sessionURL = Slim::Networking::SqueezeNetwork->url(
+		'/api/live365/sessionid'
+	);
+
+	my $http = Slim::Networking::SqueezeNetwork->new(
+		\&gotSession,
+		\&gotSessionError,
+		{
+			client   => $client,
+			url      => $url,
+			callback => $callback,
+		},
+	);
+	
+	$http->get( $sessionURL );
+}
+
+sub gotSession {
+	my $http     = shift;
+	my $client   = $http->params->{client};
+	my $url      = $http->params->{url};
+	my $callback = $http->params->{callback};
+	
+	my $session = eval { from_json( $http->content ) };
+	if ( $@ ) {
+		$http->error( $@ );
+		return gotSessionError( $http, $@ );
+	}
+	
+	$log->debug( "Got Live365 sessionid from SN: " . $session->{session_id} );
+	
+	# Remove any existing session id
+	$url =~ s/\?sessionid.+//;
+	
+	# Transfer the title to the new URL
+	my $title = Slim::Music::Info::title( $url );
+	
+	# Add the current session id
+	$url .= '?sessionid=' . uri_escape( $session->{session_id} );
+
+	if ( !$title ) {
+		# No title, go get one from SN
+		getTitle( $client, $url );
+	}
+	else {
+		$log->debug( "Setting title for $url to $title" );
+		Slim::Music::Info::setTitle( $url, $title );
+	}
+	
+	$callback->( $url );
+}
+
+sub gotSessionError {
+	my $http     = shift;
+	my $url      = $http->params->{url};
+	my $callback = $http->params->{callback};
+	
+	$log->error( "Error getting Live365 session ID: " . $http->error );
+	
+	# Callback to scanner with unchanged URL
+	$callback->( $url );
+}
+
+sub getTitle {
+	
+}
+
 sub notifyOnRedirect {
-	my ($self, $originalURL, $redirURL) = @_;
+	my ( $class, $client, $originalURL, $redirURL ) = @_;
 	
 	# Live365 redirects like so:
 	# http://www.live365.com/play/rocklandusa?sessionid=foo:bar ->
@@ -99,193 +141,123 @@ sub notifyOnRedirect {
 	
 	$log->debug("Caching redirect URL: $redirURL");
 	
-	Slim::Utils::Cache->new->set( "live365_$originalURL", $redirURL, '1 hour' );
+	$client->pluginData( redirURL => $redirURL );
 }
 
 sub canDirectStream {
 	my ($self, $client, $url) = @_;
 
-	if ($url !~ m{^live365://(www.live365.com/play/([^/?]+).*)$}) {
-	    return undef;
-	}
-
-	my $realURL = $url;
-	$realURL =~ s/live365\:/http\:/;
-	
-	if ( $client->playmode eq 'stop' ) {
-
-		# playmode stop means we were called from S::P::Squeezebox to check if
-		# direct streaming is supported, not to actually direct stream
-		return 1;
-	}
-	
-	my ($station, $handle) = $url =~ m{live365://(www.live365.com/play/([^/?]+).*)$};
-
-	$log->debug("Requested: $url ($handle)");
-
-	# a fake $self for getPlaylist
-	$self = IO::Socket->new;
-
-	# if our URL doesn't look like a handle, don't try to get a playlist
-	if ($handle =~ /[a-zA-Z]/) {
-
-		my $isVIP = $prefs->get( 'memberstatus' );
+	Slim::Utils::Timers::killTimers( $client, \&getPlaylist );
 		
-		$log->debug("Setting getPlaylist timer.");
-		
-		Slim::Utils::Timers::setTimer(
-			$client,
-			Time::HiRes::time() + 5,
-			\&getPlaylist,
-			( $self, $handle, $url, $isVIP )
-		);
-	}
+	Slim::Utils::Timers::setTimer(
+		$client,
+		Time::HiRes::time(),
+		\&getPlaylist,
+		$url,
+	);
 	
-	# Get the real URL from cache
-	if ( my $cachedURL = Slim::Utils::Cache->new->get( "live365_$url" ) ) {
-		$realURL = $cachedURL;
-	}
+	my $redirURL = $client->pluginData('redirURL') || 0;
 
-	return $realURL;
+	return $redirURL;
 }
 
 sub getPlaylist {
-	my ($client, $self, $handle, $url, $isVIP) = @_;
+	my ( $client, $url ) = @_;
 
-	if (!defined $client) {
+	if ( !defined $client ) {
 		return;
 	}
 
 	my $currentSong = Slim::Player::Playlist::url($client);
 	my $currentMode = Slim::Player::Source::playmode($client);
 	 
-	if ($currentSong ne $url || $currentMode ne 'play') {
+	if ( $currentSong ne $url || $currentMode ne 'play' ) {
+		$log->debug( "Track changed, stopping playlist fetch" );
+		return;
+	}
+	
+	# Talk to SN and get the playlist info
+	my ($station) = $url =~ m{play/([^/?]+)};
+	
+	my $playlistURL = Slim::Networking::SqueezeNetwork->url(
+		'/api/live365/playlist/' . uri_escape($station),
+	);
+	
+	my $http = Slim::Networking::SqueezeNetwork->new(
+		\&gotPlaylist,
+		\&gotPlaylistError,
+		{
+			client => $client,
+			url    => $url,
+		},
+	);
+	
+	$log->debug("Getting playlist from SqueezeNetwork");
+	
+	$http->get( $playlistURL );
+}
+
+sub gotPlaylist {
+	my $http   = shift;
+	my $client = $http->params->{client};
+	my $url    = $http->params->{url};
+	
+	my $track = eval { from_json( $http->content ) };
+	
+	if ( $log->is_debug ) {
+		$log->debug( "Got current track: " . Data::Dump::dump($track) );
+	}
+	
+	if ( $@ || $track->{error} ) {
+		$log->error( "Error getting current track: " . ( $@ || $track->{error} ) );
+		
+		# Display the station name
+		my $title = Slim::Music::Info::title($url);
+		Slim::Music::Info::setCurrentTitle( $url, $title );
+		
 		return;
 	}
 
-	# store the original title as a fallback, once.
-	${*$self}{live365_original_title} ||= Slim::Music::Info::getCurrentTitle( $client, $currentSong );
-
-	my $api = ${*$self}{live365_api} ||= Slim::Plugin::Live365::Live365API->new;
-
-	$api->GetLive365Playlist($isVIP, $handle, \&playlistLoaded, {
-		client => $client,
-		self   => $self,
-		url    => $url,
-		handle => $handle,
-		isVIP  => $isVIP
-	});
+	my $newTitle = $track->{title};
+	
+	if ( $track->{artist} ) {
+		$newTitle .= ' ' . $client->string('BY') . ' ' . $track->{artist};
+	}
+	
+	if ( $track->{album} ) {
+		$newTitle .= ' ' . $client->string('FROM') . ' ' . $track->{album};
+	}
+	
+	Slim::Music::Info::setCurrentTitle( $url, $newTitle);
+	
+	Slim::Utils::Timers::setTimer(
+		$client,
+		Time::HiRes::time() + $track->{refresh},
+		\&getPlaylist,
+		$url,
+	);
 }
 
-sub playlistLoaded {
-	my ($playlist, $args) = @_;
-
-	my $client = $args->{client};
-	my $self   = $args->{self};
-	my $url    = $args->{url};
-	my $handle = $args->{handle};
-	my $isVIP  = $args->{isVIP};
-
-	my $newTitle = '';
-	my $nowPlaying;
-	my $nextRefresh;
-
-	if (defined $playlist) {
-
-		$log->info("Got playlist response: $playlist");
-
-		$nowPlaying = eval { XMLin(\$playlist, ForceContent => 1, ForceArray => [ "PlaylistEntry" ]) };
-
-		if ($@) {
-			 logError("Live365 playlist didn't parse: '$@'");
-		}
-	}
-
-	if( defined $nowPlaying && defined $nowPlaying->{PlaylistEntry} && defined $nowPlaying->{Refresh} ) {
-
-		$nextRefresh = $nowPlaying->{Refresh}->{content} || 60;
-
-		my @titleComponents = ();
-
-		if ( my $title = $nowPlaying->{PlaylistEntry}->[0]->{Title}->{content} ) {
-
-			if ( $title eq 'NONE' ) {
-				# no title, it's probably an ad, so display the description
-				push @titleComponents, $nowPlaying->{PlaylistEntry}->[0]->{desc}->{content};
-			}
-			else {
-				push @titleComponents, $title;
-			}
-		}
-
-		if ($nowPlaying->{PlaylistEntry}->[0]->{Artist}->{content}) {
-
-			push @titleComponents, $nowPlaying->{PlaylistEntry}->[0]->{Artist}->{content};
-		}
-
-		if ($nowPlaying->{PlaylistEntry}->[0]->{Album}->{content}) {
-
-			push @titleComponents, $nowPlaying->{PlaylistEntry}->[0]->{Album}->{content};
-		}
-
-		$newTitle = join(" - ", @titleComponents);
-	}
-	else {
-
-		$log->warn("Warning: Playlist handler returned an invalid response, falling back to the station title");
-
-		$newTitle = ${*$self}{live365_original_title};
-	}
-
-	if ( $newTitle and $newTitle ne Slim::Music::Info::getCurrentTitle( $client, Slim::Player::Playlist::url($client) ) ) {
-
-		$log->info("Now Playing: $newTitle");
-		$log->info("Next update: $nextRefresh seconds");
-		
-		$client->killAnimation();
-
-		Slim::Music::Info::setCurrentTitle( $url, $newTitle);
-		
-		#XXX Fixme $client->songDuration doesn't exist any more, need
-		# a different way to set the time. perhaps changing setTitle above
-		# to setInfo and accept an args hash.
-		#$$log->debug("Setting songtime: $nextRefresh");
-		$client->remoteStreamStartTime(Time::HiRes::time());
-		#$client->songduration($nextRefresh) if $nextRefresh;
-	}
-
-	my $currentSong = Slim::Player::Playlist::url($client);
-	my $currentMode = Slim::Player::Source::playmode($client);
-	 
-	return if ($currentSong ne $url || $currentMode ne 'play');
-
-	if ( $nextRefresh and $currentSong =~ /^live365:/ and $currentMode eq 'play' ) {
-
-		Slim::Utils::Timers::setTimer(
-			$client,
-			Time::HiRes::time() + $nextRefresh,
-			\&getPlaylist,
-			( $self, $handle, $url, $isVIP )
-		);
-	}
-}
-
-sub DESTROY {
-	my $self = shift;
-
-	$log->info(ref($self) . " shutting down");
-
-	Slim::Utils::Timers::killTimers( ${*$self}{client}, \&getPlaylist ) || do {
-
-		logWarning("Live365 failed to kill playlist job timer.");
-	};
-
-	my $api = ${*$self}{live365_api};
-
-	if (defined $api) {
-
-		$api->stopLoading;
-	}
+sub gotPlaylistError {
+	my $http  = shift;
+	my $error = $http->error;
+	
+	my $client = $http->params->{client};
+	my $url    = $http->params->{url};
+	
+	$log->error( "Error getting current track: $error" );
+	
+	# Display the station name
+	my $title = Slim::Music::Info::getTitle($url);
+	Slim::Music::Info::setCurrentTitle( $url, $title );
+	
+	# Try again
+	Slim::Utils::Timers::setTimer(
+		$client,
+		Time::HiRes::time() + 30,
+		\&getPlaylist,
+		$url,
+	);
 }
 
 1;
