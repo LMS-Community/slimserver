@@ -568,7 +568,9 @@ sub fixPathCase {
 	my $orig = $path;
 
 	if ($^O =~ /Win32/) {
-		$path = Win32::GetLongPathName($path);
+		# XXX: Bug 2475, we can't call GetLongPathName on an 8.3 path
+		# Commenting out for now, I am not sure if this will break anything
+		#$path = Win32::GetLongPathName($path);
 	}
 
 	# abs_path() will resolve any case sensetive filesystem issues (HFS+)
