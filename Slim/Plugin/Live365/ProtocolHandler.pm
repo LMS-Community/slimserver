@@ -220,12 +220,17 @@ sub gotPlaylist {
 
 	my $newTitle = $track->{title};
 	
-	if ( $track->{artist} ) {
+	if ( !ref $track->{artist} ) {
 		$newTitle .= ' ' . $client->string('BY') . ' ' . $track->{artist};
 	}
 	
-	if ( $track->{album} ) {
+	if ( !ref $track->{album} ) {
 		$newTitle .= ' ' . $client->string('FROM') . ' ' . $track->{album};
+	}
+	
+	if ( $newTitle eq 'NONE' ) {
+		# No title means it's an ad, use the desc field
+		$newTitle = $track->{desc};
 	}
 	
 	Slim::Music::Info::setCurrentTitle( $url, $newTitle);
