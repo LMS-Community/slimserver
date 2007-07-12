@@ -753,19 +753,20 @@ sub displaystatusQuery {
 
 		$request->addResult('type', $type);
 
+		# return screen1 info if more than one screen
+		$parts = $parts->{'screen1'} if $parts->{'screen1'};
+
 		if ($source eq 'CLI') {
 			# format display for cli
-			# return screen1 info if more than one screen
-			$parts = $parts->{'screen1'} if $parts->{'screen1'};
 			for my $c (keys %$parts) {
 				next unless $c =~ /line|center|overlay/;
 				for my $l (0..$#{$parts->{$c}}) {
 					$request->addResult("$c$l", $parts->{$c}[$l]) if ($parts->{$c}[$l] ne '');
 				}
 			}
-		} else {
-			# send the whole display hash
-			$request->addResult('display', $parts);			
+		} elsif ($source eq 'JIV') {
+			# send an array to jive from one of the following components
+			$request->addResult('display', $parts->{'jiv'} || $parts->{'line'} || $parts->{'center'});
 		}
 			
 		$request->privateData({});
