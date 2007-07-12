@@ -285,7 +285,7 @@ sub showBriefly {
 	}
 
 	# notify cli/jive of the show briefly message
-	$display->notify('showbriefly', $parts);
+	$display->notify('showbriefly', $parsed);
 
 	if ($firstLine && ($display->linesPerScreen() == 1)) {
 		$parsed->{line}[1] = $parsed->{line}[0];
