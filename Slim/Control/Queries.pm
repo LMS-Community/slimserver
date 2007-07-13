@@ -712,10 +712,10 @@ sub displaystatusQuery_filter {
 
 	my $subs  = $self->getParam('subscribe');
 	my $type  = $request->getParam('_type');
-	my $parts = $request->getParam('_parts') || $request->client->curDisplay;
+	my $parts = $request->getParam('_parts');
 
 	# check displaynotify type against subscription ('showbriefly', 'update' or 'all')
-	if ($subs eq $type || $subs eq 'all') {
+	if ($subs eq $type || $subs eq 'all' || $subs eq 'bits') {
 
 		# display forwarding is suppressed for this subscriber source
 		return 0 if exists $parts->{ lc $self->source } && !$parts->{ lc $self->source };
@@ -747,24 +747,43 @@ sub displaystatusQuery {
 	# return any previously stored display info from displaynotify
 	if (my $pd = $request->privateData) {
 
+		my $client= $request->client;
 		my $source= $request->source;
-		my $parts = $pd->{'parts'};
+		my $subs  = $request->getParam('subscribe');
 		my $type  = $pd->{'type'};
+		my $parts = $type eq 'showbriefly' ? $pd->{'parts'} : $client->display->renderCache;
 
 		$request->addResult('type', $type);
 
 		# return screen1 info if more than one screen
 		$parts = $parts->{'screen1'} if $parts->{'screen1'};
 
-		if ($source eq 'CLI') {
+		if ($subs eq 'bits' && $parts->{'bitsref'}) {
+			
+			# send the display bitmap if it exists (graphics display)
+			use bytes;
+
+			my $bits = ${$parts->{'bitsref'}};
+			if ($parts->{'scroll'}) {
+				$bits |= substr(${$parts->{'scrollbitsref'}}, 0, $parts->{'overlaystart'}[$parts->{'scrollline'}]);
+			}
+
+			# for the moment expand to one character per pixel...
+			$bits = unpack("b*", $bits);
+
+			$request->addResult('bits', $bits );
+
+		} elsif ($source eq 'CLI') {
+
 			# format display for cli
 			for my $c (keys %$parts) {
-				next unless $c =~ /line|center|overlay/;
+				next unless $c =~ /^(line|center|overlay)$/;
 				for my $l (0..$#{$parts->{$c}}) {
 					$request->addResult("$c$l", $parts->{$c}[$l]) if ($parts->{$c}[$l] ne '');
 				}
 			}
 		} elsif ($source eq 'JIV') {
+
 			# send an array to jive from one of the following components
 			$request->addResult('display', $parts->{'jiv'} || $parts->{'line'} || $parts->{'center'});
 		}
