@@ -182,7 +182,7 @@ sub dirsFor {
 
 		} elsif ($dir eq 'Plugins') {
 			
-			push @dirs, "/usr/share/perl5";
+			push @dirs, "/usr/share/perl5/Slim/Plugin";
 		
 		} elsif ($dir eq 'strings' || $dir eq 'revision') {
 
