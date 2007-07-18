@@ -188,7 +188,7 @@ sub dirsFor {
 
 			push @dirs, "/usr/share/slimserver";
 
-		} elsif ($dir =~ /^(?:types|convert|pref)$/) {
+		} elsif ($dir =~ /^(?:types|convert|prefs)$/) {
 
 			push @dirs, "/etc/slimserver";
 
@@ -225,7 +225,7 @@ sub dirsFor {
 
 			push @dirs, "/usr/share/slimserver";
 
-		} elsif ($dir =~ /^(?:types|convert|pref)$/) {
+		} elsif ($dir =~ /^(?:types|convert|prefs)$/) {
 
 			push @dirs, "/etc/slimserver";
 
