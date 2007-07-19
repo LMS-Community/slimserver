@@ -383,9 +383,14 @@ sub setMode {
 
 	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree( { 'id' => $levels[-1] } );
 
-	# FIXME: ?? this will die if findAndScanDirectoryTree does not return a valid $topLevelObj
-	push @levels, $topLevelObj->id();
-
+	# if we have no level, we just sent undef to findAndScanDirectoryTree with our $levels[-1]
+	# findAndScanDirectoryTree will fall back to some sensible default if sent undef
+	# use this sensible default to create the @levels array
+	if (!scalar(@levels)) {
+		# FIXME: ?? this will die if findAndScanDirectoryTree does not return a valid $topLevelObj
+		push @levels, $topLevelObj->id();
+	}
+	
 	$client->unblock;
 
 	# Next get the first line of the mode
