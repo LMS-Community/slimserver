@@ -45,7 +45,7 @@ sub browsetree {
 	my ($topLevelObj, $items, $count) = Slim::Utils::Misc::findAndScanDirectoryTree( { 'id' => $levels[-1] } );
 
 	# FIXME?: this will die if findAndScanDirectoryTree does not return a valid $topLevelObj
-	push @levels, $topLevelObj->id();
+	#push @levels, $topLevelObj->id();
 
 	# Page title
 	$params->{'browseby'} = 'MUSIC';
