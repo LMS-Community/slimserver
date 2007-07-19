@@ -83,7 +83,7 @@ sub handler {
 			}
 		}
 
-		$paramRef->{'validate'}->{$pref} = $prefsClass->hasValidator($pref);			
+		$paramRef->{'validate'}->{$pref} = $prefsClass->hasValidator($pref);
 		$paramRef->{'prefs'}->{$pref} = $prefsClass->get($pref);
 	}
 
