@@ -287,7 +287,7 @@ sub getConvertCommand {
 		}
 
 		# only finish if the rate isn't over the limit
-		if ($command && (!defined($client) || underMax($client, $url, $format))) {
+		if ($command && (!defined($client) || underMax($client, $url, $format, $checkFormat))) {
 			last;
 		}
 	}
@@ -363,11 +363,18 @@ sub tokenizeConvertCommand {
 }
 
 sub underMax {
-	my $client   = shift;
-	my $fullpath = shift;
-	my $type     = shift || Slim::Music::Info::contentType($fullpath);
+	my $client     = shift;
+	my $fullpath   = shift;
+	my $type       = shift || Slim::Music::Info::contentType($fullpath);
+	my $outputType = shift;
 
 	my $maxRate  = Slim::Utils::Prefs::maxRate($client);
+
+	# Bug 4707 - Sanity check:
+	# If maxRate is 0 and the output format is mp3, force 320 limit instead of no limit
+	if ($maxRate == 0 && defined $outputType && $outputType eq 'mp3') {
+		$maxRate = 320;
+	}
 
 	# If we're not rate limited, we're under the maximum.
 	# If we don't have lame, we can't transcode, so we
