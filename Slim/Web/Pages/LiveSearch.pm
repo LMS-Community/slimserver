@@ -122,11 +122,10 @@ sub outputAsXML {
 sub renderItem {
 	my ($rowType, $type, $item, $player) = @_;
 
-	my $id     = $item->id,
-	my @xml    = ();
-	my $name   = '';
-	my $album  = '';
-	my $artist = '';
+	my $id         = $item->id,
+	my @xml        = ();
+	my $name       = '';
+	my $showExtra  = '';
 
 	# Track case, followed by album & artist.
 	if (blessed($item) eq 'Slim::Schema::Track') {
@@ -139,7 +138,7 @@ sub renderItem {
 		# This is rather redundant from Pages.pm
 		if ($webFormat !~ /ARTIST/ && $item->can('artist') && $item->artist) {
 
-			$artist = sprintf(
+			$showExtra .= sprintf(
 				' %s <a href="browsedb.html?hierarchy=contributor,album,track&level=1&contributor.id=%d\&amp;player=%s">%s</a>',
 				string('BY'), $item->artist->id, $player, $item->artist->name,
 			);
@@ -147,12 +146,35 @@ sub renderItem {
 
 		if ($webFormat !~ /ALBUM/ && $item->can('album') && $item->album) {
 
-			$album = sprintf(
+			$showExtra .= sprintf(
 				' %s <a href="browsedb.html?hierarchy=album,track&level=1&album.id=%d\&amp;player=%s">%s</a>',
 				string('FROM'), $item->album->id, $player, $item->album->title,
 			);
 		}
 
+	} elsif (blessed($item) eq 'Slim::Schema::Album') { 
+		
+		$name = $item->name;
+		
+		# This is rather redundant from the Album displayAsHTML Schema
+		if ($prefs->get('showYear') && $item->can('year') && $item->year) {
+
+			$showExtra .= sprintf(
+				' %s<a href="browsedb.html?hierarchy=year,album,track&level=1&year.id=%d\&amp;player=%s">%s</a>%s ',
+				'(', $item->year, $player, $item->year, ')',
+			);
+		}
+		
+		# This is rather redundant from the Album displayAsHTML Schema
+		if ($prefs->get('showArtist') && $item->can('artists') && $item->artists) {
+			my @artists = $item->artists;
+
+			$showExtra .= sprintf(
+				' %s <a href="browsedb.html?hierarchy=contributor,album,track&level=1&contributor.id=%d\&amp;player=%s">%s</a>',
+				string('BY'), $artists[0]->id, $player, $artists[0]->name,
+			);
+		}
+		
 	} else {
 
 		$name = $item->name;
@@ -175,7 +197,7 @@ sub renderItem {
 	}
 
 	push @xml,"<div class=\"$rowType\">\n<div class=\"browsedbListItem\">
-			<a href=\"$url\&amp;player=$player\">$name</a>$artist $album";
+			<a href=\"$url\&amp;player=$player\">$name</a>$showExtra";
 
 	push @xml,"<div class=\"browsedbControls\">
 
