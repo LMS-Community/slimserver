@@ -302,7 +302,7 @@ sub _loadComments {
 		# then the comment itself
 		$byteCount += $comment_length;
 
-		my ($key, $value) = split(/=/, substr($buffer, 0, $comment_length, ''));
+		my ($key, $value) = split(/=/, substr($buffer, 0, $comment_length, ''), 2);
 
 		my $lcKey = lc($key);
 
