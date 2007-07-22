@@ -1075,8 +1075,6 @@ sub _parse_v2tag {
 						} elsif ($ver == 2 && ref($info->{$key}) eq 'ARRAY') {
 							
 							if (ref($data) eq "ARRAY") {
-							
-							if (ref($data) eq "ARRAY") {
 
 								push @{$info->{$key}}, @$data;
 
