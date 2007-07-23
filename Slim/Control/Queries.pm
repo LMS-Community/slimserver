@@ -744,12 +744,13 @@ sub displaystatusQuery {
 		return;
 	}
 
+	my $subs  = $request->getParam('subscribe');
+
 	# return any previously stored display info from displaynotify
 	if (my $pd = $request->privateData) {
 
 		my $client= $request->client;
 		my $source= $request->source;
-		my $subs  = $request->getParam('subscribe');
 		my $type  = $pd->{'type'};
 		my $parts = $type eq 'showbriefly' ? $pd->{'parts'} : $client->display->renderCache;
 
@@ -768,10 +769,8 @@ sub displaystatusQuery {
 				$bits |= substr(${$parts->{'scrollbitsref'}}, 0, $parts->{'overlaystart'}[$parts->{'scrollline'}]);
 			}
 
-			# for the moment expand to one character per pixel...
-			$bits = unpack("b*", $bits);
-
-			$request->addResult('bits', $bits );
+			$request->addResult('bits', MIME::Base64::encode_base64($bits) );
+			$request->addResult('ext', $parts->{'extent'});
 
 		} elsif ($source eq 'CLI') {
 
@@ -793,8 +792,9 @@ sub displaystatusQuery {
 	} else {
 
 		# no private data this must be the first query - check for subscription management
-		if ($request->getParam('subscribe')) {
+		if ($subs && $subs ne '-') {
 			$request->registerAutoExecute(0, \&displaystatusQuery_filter);
+			$request->client->update unless $subs eq 'showbriefly';
 		} else {
 			$request->registerAutoExecute('-');
 		}
