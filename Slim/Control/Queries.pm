@@ -2813,6 +2813,38 @@ sub songinfoQuery {
 								};
 							}
 							
+							# album -- not multi, but _songData simulates it in menuMode so we can add our action here
+							elsif ($key eq 'ALBUM') {
+								$actions = {
+									'go' => {
+										'cmd' => ['tracks'],
+										'params' => {
+											'menu' => 'songinfo',
+											'album_id' => $id,
+											'sort' => 'tracknum',
+										},
+									},
+									'play' => {
+										'player' => 0,
+										'cmd' => ['playlistcontrol'],
+										'params' => {
+											'cmd' => 'load',
+											'album_id' => $id,
+										},
+									},
+									'add' => {
+										'player' => 0,
+										'cmd' => ['playlistcontrol'],
+										'params' => {
+											'cmd' => 'add',
+											'album_id' => $id,
+										},
+									},
+								};
+								# style correctly the title that opens for the action element
+								$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'album' } );
+							}
+							
 							#or one of the artist role -- we don't test explicitely !!!
 							else {
 								
@@ -3598,7 +3630,7 @@ sub _songData {
 					# call submethod
 					if (defined(my $related = $track->$method)) {
 						
-						# array returned...
+						# array returned/genre
 						if ( blessed($related) && $related->isa('Slim::Schema::ResultSet::Genre')) {
 							
 							if ($menuMode) {
@@ -3610,6 +3642,13 @@ sub _songData {
 							else {
 								$value = join(', ', map { $_ = $_->$submethod() } $related->all);
 							}
+						}
+						# special case album in menuMode
+						elsif ($menuMode && $key eq 'ALBUM') {
+							# send a dummy key::0 to trigger adding action in songinfo
+							# and return an [id, name] array
+							$key = $key . "::0";
+							$value = [ $track->albumid(), $related->$submethod() ];
 						}
 						else {
 							$value = $related->$submethod();
