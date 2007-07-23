@@ -2776,13 +2776,86 @@ sub songinfoQuery {
 					
 					if ($menuMode) {
 						
+						# catch multi-genres or artists
+						if ($key =~ /(\w+)::(\d+)/) {
+						
+							$key = $1;
+							my $id = $val->[0] + 0;
+							$val = $val->[1];
+							my $actions;
+							
+							# genre
+							if ($key eq 'GENRE') {
+								$actions = {
+									'go' => {
+										'cmd' => ['artists'],
+										'params' => {
+											'menu' => 'album',
+											'genre_id' => $id,
+										},
+									},
+									'play' => {
+										'player' => 0,
+										'cmd' => ['playlistcontrol'],
+										'params' => {
+											'cmd' => 'load',
+											'genre_id' => $id,
+										},
+									},
+									'add' => {
+										'player' => 0,
+										'cmd' => ['playlistcontrol'],
+										'params' => {
+											'cmd' => 'add',
+											'genre_id' => $id,
+										},
+									},
+								};
+							}
+							
+							#or one of the artist role -- we don't test explicitely !!!
+							else {
+								
+								$actions = {
+									'go' => {
+										'cmd' => ['albums'],
+										'params' => {
+											'menu' => 'track',
+											'artist_id' => $id,
+										},
+									},
+									'play' => {
+										'player' => 0,
+										'cmd' => ['playlistcontrol'],
+										'params' => {
+											'cmd' => 'load',
+											'artist_id' => $id,
+										},
+									},
+									'add' => {
+										'player' => 0,
+										'cmd' => ['playlistcontrol'],
+										'params' => {
+											'cmd' => 'add',
+											'artist_id' => $id,
+										},
+									},
+								};
+								
+								# style correctly the window that opens for the action element
+								$request->addResultLoop($loopname, $cnt, 'window', { 'menuStyle' => 'album' } );
+							}
+							
+							$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+						}
+
 						# pretty print some of the stuff...
 						# it's done all over the place for the web interface:
 						## some of it in the template!
 						## some of it in Pages::addSongInfo
 						## the rest is using pretty printing methods of track
 						
-						if ($key eq 'COMPILATION') {
+						elsif ($key eq 'COMPILATION') {
 							$val = Slim::Utils::Strings::string('YES');
 						}
 						elsif ($key eq 'TYPE') {
@@ -3363,35 +3436,6 @@ sub _addSong {
 	$request->setResultLoopHash($loop, $index, $hashRef);
 }
 
-# Title:          title (TITLE)
-# Artist:      a  artist->name (!contributors...)
-# Album:       l  album->title (ALBUM)
-# Genre:       g  genre->name (GENRE, many possible)
-# Disc:        i  disc (DISC)
-# Track:       t  tracknum (TRACK)
-# Compilation: ?  album->compilation (COMPILATION/YES)
-# File Format: o  content_type (TYPE)
-# Duration:    d  secs (duration?) (LENGTH)
-# Volume adj:  ?  replay_gain (REPLAYGAIN (format('%2.2f'))) dB
-# Alb Vol adj: ?  album->replay_gain (ALBUMREPLAYGAIN) dB
-# Year:        y  year (YEAR)
-# Rating:      ?  rating (RATING)/100
-# Comments:    k  comment (COMMENT)
-# Lyrics:      w  lyrics (LYRICS)
-# File Length: f  filesize       Slim::Utils::Misc::delimitThousands($track->filesize); (FILELENGTH + BYTES)
-# Bitrate:     r  bitrate        $track->prettyBitRate (BITRATE)
-# Sample Rate: ?  samplerate     $track->prettySampleRate (SAMPLERATE)
-# Sample Size: ?  samplesize     (SAMPLESIZE) BITS
-# bpm:         m  bpm (BPM)
-# ID3 Tag ver: v  tagversion (TAGVERSION)
-# Location:    u  url -- (path? LOCATION, unuri, utf8dec
-# Date mod:    n  modificationTime (MODTIME)
-# 
-# // drm
-# // coverart
-
-
-
 
 sub _songData {
 	my $pathOrObj = shift; # song path or object
@@ -3518,13 +3562,23 @@ sub _songData {
 			
 				foreach my $type (Slim::Schema::Contributor::contributorRoles()) {
 				
-					my $key = $menuMode?uc($type):lc($type).$postfix;
-					my $value = join(', ', map { $_ = $_->$submethod() } $track->contributorsOfType($type)->all);
+					if ($menuMode) {
+						my $key = uc($type);
+						my $idx = 0;
+						foreach my $contrib ($track->contributorsOfType($type)->all) {
+							$returnHash{$key . "::" . $idx++} = [$contrib->id(), $contrib->name()];
+						}
+					}
+					else {
+						
+						my $key = lc($type) . $postfix;
+						my $value = join(', ', map { $_ = $_->$submethod() } $track->contributorsOfType($type)->all);
 				
-					if (defined $value && $value ne '') {
+						if (defined $value && $value ne '') {
 
-						# add the tag to the result
-						$returnHash{$key} = $value;
+							# add the tag to the result
+							$returnHash{$key} = $value;
+						}
 					}
 				}
 			}
@@ -3541,10 +3595,21 @@ sub _songData {
 				# tag with submethod
 				if (defined(my $submethod = $tagMap{$tag}->[3])) {
 
+					# call submethod
 					if (defined(my $related = $track->$method)) {
-
+						
+						# array returned...
 						if ( blessed($related) && $related->isa('Slim::Schema::ResultSet::Genre')) {
-							$value = join(', ', map { $_ = $_->$submethod() } $related->all);
+							
+							if ($menuMode) {
+								my $idx = 0;
+								foreach my $genre ($related->all) {
+									$returnHash{$key . "::" . $idx++} = [$genre->id(), $genre->name()];
+								}
+							} 
+							else {
+								$value = join(', ', map { $_ = $_->$submethod() } $related->all);
+							}
 						}
 						else {
 							$value = $related->$submethod();
