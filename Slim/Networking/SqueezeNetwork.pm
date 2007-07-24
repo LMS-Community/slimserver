@@ -135,6 +135,8 @@ sub isSNURL {
 sub login {
 	my ( $class, %params ) = @_;
 	
+	$class = ref $class || $class;
+	
 	my $client = $params{client};
 	
 	my ($username, $password);
