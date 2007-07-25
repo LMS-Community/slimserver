@@ -6924,6 +6924,9 @@ SETUP_SN_PASSWORD_DESC
 	DE	Geben Sie bitte das Passwort für ihren SqueezeNetwork-Zugang an.
 	EN	Enter the password for your SqueezeNetwork account.
 
+SETUP_SN_INVALID_LOGIN
+	EN	Invalid SqueezeNetwork email address or password.
+
 SETUP_SN_SYNC
 	EN	SqueezeNetwork Integration
 

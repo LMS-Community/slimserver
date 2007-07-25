@@ -32,17 +32,41 @@ sub prefs {
 }
 
 sub handler {
-	my ($class, $client, $params) = @_;
+	my ($class, $client, $params, $callback, @args) = @_;
 
 	if ( $params->{saveSettings} ) {
 
-		if ( $params->{sn_password} ) {
-			$params->{sn_password} = MIME::Base64::encode_base64( $params->{sn_password}, '' );
-		}
+		if ( $params->{sn_email} && $params->{sn_password} ) {
 		
-		# XXX: Verify username/password
-			
+			# Verify username/password
+			Slim::Networking::SqueezeNetwork->login(
+				username => $params->{sn_email},
+				password => $params->{sn_password},
+				client   => $client,
+				cb       => sub {
+					my $body = $class->saveSettings( $client, $params );
+					$callback->( $client, $params, $body, @args );
+				},
+				ecb      => sub {
+					$params->{warning} .= Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN') . '<br/>';
+					
+					delete $params->{sn_email};
+					delete $params->{sn_password};
+					
+					my $body = $class->saveSettings( $client, $params );
+					$callback->( $client, $params, $body, @args );
+				},
+			);
+		
+			return;
+		}
 	}
+
+	return $class->SUPER::handler($client, $params);
+}
+
+sub saveSettings {
+	my ( $class, $client, $params ) = @_;
 	
 	if (   $params->{sn_email}
 		&& $params->{sn_password}

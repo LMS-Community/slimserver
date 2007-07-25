@@ -7,7 +7,6 @@ package Slim::Networking::SqueezeNetwork;
 use strict;
 use base qw(Slim::Networking::SimpleAsyncHTTP);
 
-use MIME::Base64 qw(decode_base64);
 use URI::Escape qw(uri_escape);
 
 use Slim::Networking::SqueezeNetwork::PrefSync;
@@ -139,20 +138,19 @@ sub login {
 	
 	my $client = $params{client};
 	
-	my ($username, $password);
+	my $username = $params{username};
+	my $password = $params{password};
 	
-	# Get these directly if running on SN
-	if ( $ENV{SLIM_SERVICE} ) {
-		my $user  = $client->playerData->userid;
-		$username = $user->email;
-		$password = $user->password;
-	}
-	else {
-		$username = $prefs->get('sn_email');
-		$password = $prefs->get('sn_password');
-		
-		if ( $password ) {
-			$password = decode_base64( $password );
+	if ( !$username || !$password ) {
+		# Get these directly if running on SN
+		if ( $ENV{SLIM_SERVICE} ) {
+			my $user  = $client->playerData->userid;
+			$username = $user->email;
+			$password = $user->password;
+		}
+		else {
+			$username = $prefs->get('sn_email');
+			$password = $prefs->get('sn_password');
 		}
 	}
 	
@@ -240,7 +238,9 @@ sub _login_done {
 	}
 	
 	if ( my $sid = $json->{sid}	) {
-		$params->{client}->snSession( $sid );
+		if ( $params->{client} ) {
+			$params->{client}->snSession( $sid );
+		}
 	}
 	
 	$params->{cb}->();
