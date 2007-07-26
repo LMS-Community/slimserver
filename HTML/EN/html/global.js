@@ -7,38 +7,70 @@
 // appear whenever an ajax request is in progress. Look at Nokia770/pageheader.html for
 // an example
 var myGlobalHandlers = {
-	onCreate: function(){
+	onCreate: function(request){
 		if ($('systemNotWorking')) {
 			Element.hide('systemNotWorking');
-		}
+		};
+		
 		if ($('systemWorking')) {
 			// this causes spinner.gif to start at beginning of animation
 			if ($('spinner')) {
 				$('spinner').src = "[% webroot %]html/images/spinner.gif";
 			}
+			
 			Element.show('systemWorking');
-		}
+		};
+		request['timeoutId'] = window.setTimeout (
+				function() {
+				if (callInProgress(request.transport)) {
+					request.transport.abort();
+					
+					if (request.options['onFailure']) {
+						request.option['onFailure'](request.transport, request.json);
+					}
+				}
+			}, 30*1000
+		);
 	},
 	onComplete: function() {
 		if(Ajax.activeRequestCount == 0) {
 			if ($('systemWorking')) {
 				Element.hide('systemWorking');
 			}
+			
 			if ($('systemNotWorking')) {
 				Element.show('systemNotWorking');
 			}
 		}
+		window.clearTimeout(request['timeoutId']);
 	},
 	onException: function() {
 		if ($('systemWorking')) {
 			Element.hide('systemWorking');
 		}
+		
 		if ($('systemNotWorking')) {
 			Element.show('systemNotWorking');
 		}
 	}
 };
 Ajax.Responders.register(myGlobalHandlers);
+
+
+function callInProgress (xmlhttp) {
+	switch (xmlhttp.readyState) {
+
+		case 1: case 2: case 3:
+		return true;
+		break;
+	
+	// Case 4 and 0
+
+	default:
+		return false;
+		break;
+	}
+}
 
 // getStatusData
 // params is a list of args to send to url
@@ -285,9 +317,9 @@ function popUpAlbumInfo(attributes) {
 		new Effect.Appear('albumBackground', { from: 0, to: 0.5, duration: 0.5 });
 		
 		$('albumPopup').style.border='1px solid white';
-		
-		new Ajax.Updater( { success: 'trackInfo' }, webroot + 'browsedb.html', {
-			method: 'post',
+		alert(attributes);
+		new Ajax.Updater( { success: 'trackInfo' }, webroot + 'browsedb.html?ajaxUpdate=1&player=' + player + '&' + attributes, {
+			method: 'get',
 			asynchronous: true,
 			evalScripts: true,
 			postBody: attributes + '&ajaxUpdate=1&player=' + player,
