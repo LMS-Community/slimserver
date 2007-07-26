@@ -26,6 +26,13 @@ our %Config = (
 );
 
 sub Startup {
+	# Tell PerlSvc to bundle these modules
+	if (0) {
+		require Encode::CN;
+		require Encode::JP;
+		require Encode::KR;
+		require Encode::TW;
+	}
 
 	# added to workaround a problem with 5.8 and perlsvc.
 	# $SIG{BREAK} = sub {} if RunningAsService();
