@@ -657,12 +657,12 @@ sub processHTTP {
 		# BUG: 4911 detect Internet Explorer and redirect if using the Nokia770 skin, as IE will not support the styles
 		# Touch is similar in most ways and works nicely with IE
 		# BUG: 5093 make sure that Nokia Opera isn't spoofing as IE, causing incorrect redirect
-		if (	$request->header('user-agent') &&
+		if ($request->header('user-agent') &&
 			$request->header('user-agent') =~ /MSIE/ &&
 			$request->header('user-agent') !~ /Opera/  && 
 			$request->header('user-agent') !~ /Linux/ && 
 			$request->header('user-agent') !~ /arm/ && 
-			($params->{'skinOverride'} || Slim::Utils::Prefs::get('skin')) eq 'Nokia770'
+			($params->{'skinOverride'} || $prefs->get('skin')) eq 'Nokia770'
 			) 
 		{
 			$log->debug("Internet Explorer Detected with Nokia Skin, redirecting to Touch");
