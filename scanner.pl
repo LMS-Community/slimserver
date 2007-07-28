@@ -18,6 +18,14 @@ use warnings;
 use FindBin qw($Bin);
 use lib $Bin;
 
+# Tell PerlApp to bundle these modules
+if (0) {
+	require Encode::CN;
+	require Encode::JP;
+	require Encode::KR;
+	require Encode::TW;
+}
+
 BEGIN {
 	use Slim::bootstrap;
 	use Slim::Utils::OSDetect;
