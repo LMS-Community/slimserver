@@ -10,8 +10,10 @@
 <ul>
 	<li>Bug Fixes:
 	<ul>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=5179">#5179</a> - SlimServer crashes on startup on Chinese/Japanese Windows</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=2475">#2475</a> - Problems with filenames containing non-current-codepage (foreign language, double byte) characters</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=5166">#5166</a> - Scanner crashes with multiple ALBUMARTIST tags</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=5179">#5179</a> - SlimServer crashes on startup on Chinese/Japanese Windows</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=5188">#5188</a> - SlimServer should report more accurate bitrate for Ogg files</li>
 	</ul>
 	</li>
 </ul>
@@ -58,7 +60,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4357">#4357</a> - add an option to not show UPnP servers under browse</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4437">#4437</a> - Navigating unsorted lists with the number keys doesn't work</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4686">#4686</a> - SlimServer mangles Vorbis tags containing the equals (=) character</li>
-		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4694">#4694</a> - When "Composer, band and orchestra in artists" are disabled, song info items for composer, conductor &amp; orchestra are displayed but show "Empty" when moving right</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4694">#4694</a> - When "Composer, band and orchestra in artists" are disabled, song info items for composer, conductor & orchestra are displayed but show "Empty" when moving right</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4710">#4710</a> - AIFF & WAV id3 tags no longer read by Slimserver</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4812">#4812</a> - Rescan done callback not called in all situations</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4817">#4817</a> - last 10 seconds of sleep are loud, blip from next song</li>
@@ -107,6 +109,7 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4203">#4203</a> - alac crashes</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4517">#4517</a> - Crash on loading remote.html link</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4525">#4525</a> - Podcast-xml with enclosing url starting with &quot;Http&quot; instead of &quot;http&quot; fails to play</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4544">#4544</a> - 6.5.1 lost gap, songs cut off or truncated</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4613">#4613</a> - playlistcontrol change tracks sorting</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4639">#4639</a> - Player output dies after trying to play a particular MP3</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4646">#4646</a> - Year on song info page isn't a hyperlink with Nokia770 skin</li>
@@ -122,16 +125,22 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4735">#4735</a> - slimp3 logo missing for tan style in fishbone skin</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4737">#4737</a> - Basic search: empty search should say something</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4738">#4738</a> - 22khz and 11khz songs no longer play with 6.5.1 or sound poor</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4742">#4742</a> - Socketwrapper kills transcode processes without warning</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4748">#4748</a> - Slimserver web interface won't open on Vista</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4750">#4750</a> - gapless mp3's don't work for pcutmp3 tracks</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4753">#4753</a> - fishbone skin improvements</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4765">#4765</a> - --httpport command line option cause server to die</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4772">#4772</a> - SlimServer install wizard reports 6.5.1 while installing 6.5.2</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4794">#4794</a> - CLI alarm documentation example incorrect</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4788">#4788</a> - playlist *album commands queue two instances of each track</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4823">#4823</a> - Disc number higher then 255 may crash the scanner</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4852">#4852</a> - down arrow moves song to 2nd position in playlist</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4872">#4872</a> - Installer: Error creating INI entry in Logitech.url</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4891">#4891</a> - "Play this song" and "Add this song to playlist" links are not always visible.</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4898">#4898</a> - Some users must disable Vista's UAC</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4899">#4899</a> - SlimTray's stop SlimServer option doesn't work on Vista</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4902">#4902</a> - BMF: correctly display and follow Windows shortcuts pointing to a drive; fix an issue with the path display on the player interface</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4905">#4905</a> - Error while opening web page in Vista, "Can't open [path]: Permission denied"</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4907">#4907</a> - Dark Skin:  Song Info not visible.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4908">#4908</a> - Dark Skin:  Some text overlap.</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4910">#4910</a> - Fishbone skin:  Some texts are cut off.</li>
@@ -142,6 +151,8 @@
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4940">#4940</a> - Error! url:[0] is empty or a track could not be read</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4944">#4944</a> - Using "playlists delete playlist_id:$plid" deletes songs from disk!</li>
 		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4950">#4950</a> - Nokia770 song search results are missing album information and hyperlinks</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=4966">#4966</a> - Error "Bad string Stop" when you right click Slimtray</li>
+		<li><a href="http://bugs.slimdevices.com/show_bug.cgi?id=5066">#5066</a> - Transcoding non native file formats fails on windows if certain security software is installed</li>
 	</ul>
 	<br />
 	<li>Other:
