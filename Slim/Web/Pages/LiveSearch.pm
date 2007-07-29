@@ -58,7 +58,8 @@ sub outputAsXHTML {
 		push @xml, @output if $count;
 
 		if ($total && $total > MAXRESULTS) {
-			push @xml, sprintf("<div class=\"even\">\n<div class=\"browsedbListItem\"><a href=\"search.html?manualSearch=1&amp;query=%s&amp;type=%s&amp;player=%s\">%s</a></p></div></div>\n",
+			push @xml, 
+				sprintf("<div class=\"even\">\n<div class=\"browsedbListItem\"><a href=\"search.html?manualSearch=1\&amp;query=%s\&amp;type=%s\&amp;player=%s\">%s</a></div></div>\n",
 				$query, $type, $player, Slim::Utils::Strings::string('MORE_MATCHES')
 			);
 		}
@@ -139,7 +140,7 @@ sub renderItem {
 		if ($webFormat !~ /ARTIST/ && $item->can('artist') && $item->artist) {
 
 			$showExtra .= sprintf(
-				' %s <a href="browsedb.html?hierarchy=contributor,album,track&level=1&contributor.id=%d\&amp;player=%s">%s</a>',
+				' %s <a href="browsedb.html?hierarchy=contributor,album,track&amp;level=1\&amp;contributor.id=%d&amp;player=%s">%s</a>',
 				string('BY'), $item->artist->id, $player, $item->artist->name,
 			);
 		}
@@ -147,7 +148,7 @@ sub renderItem {
 		if ($webFormat !~ /ALBUM/ && $item->can('album') && $item->album) {
 
 			$showExtra .= sprintf(
-				' %s <a href="browsedb.html?hierarchy=album,track&level=1&album.id=%d\&amp;player=%s">%s</a>',
+				' %s <a href="browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=%d&amp;player=%s">%s</a>',
 				string('FROM'), $item->album->id, $player, $item->album->title,
 			);
 		}
@@ -160,7 +161,7 @@ sub renderItem {
 		if ($prefs->get('showYear') && $item->can('year') && $item->year) {
 
 			$showExtra .= sprintf(
-				' %s<a href="browsedb.html?hierarchy=year,album,track&level=1&year.id=%d\&amp;player=%s">%s</a>%s ',
+				' %s<a href="browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=%d&amp;player=%s">%s</a>%s ',
 				'(', $item->year, $player, $item->year, ')',
 			);
 		}
@@ -170,7 +171,7 @@ sub renderItem {
 			my @artists = $item->artists;
 
 			$showExtra .= sprintf(
-				' %s <a href="browsedb.html?hierarchy=contributor,album,track&level=1&contributor.id=%d\&amp;player=%s">%s</a>',
+				' %s <a href="browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=%d&amp;player=%s">%s</a>',
 				string('BY'), $artists[0]->id, $player, $artists[0]->name,
 			);
 		}
@@ -189,14 +190,14 @@ sub renderItem {
 
 	} elsif ($type eq 'album') {
 
-		$url = "browsedb.html?hierarchy=album,track\&amp;level=1\&amp;album.id=$id";
+		$url = "browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=$id";
 
 	} elsif ($type eq 'contributor') {
 
-		$url = "browsedb.html?hierarchy=contributor,album,track\&amp;level=1\&amp;contributor.id=$id&contributor.role=ALL";
+		$url = "browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=$id&amp;contributor.role=ALL";
 	}
 
-	push @xml,"<div class=\"$rowType\">\n<div class=\"browsedbListItem\">
+	push @xml,"\n<div class=\"$rowType\">\n<div class=\"browsedbListItem\">
 			<a href=\"$url\&amp;player=$player\">$name</a>$showExtra";
 
 	push @xml,"<div class=\"browsedbControls\">
