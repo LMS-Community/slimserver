@@ -51,8 +51,9 @@ sub outputAsXHTML {
 			$count++;
 		}
 
-		push @xml, sprintf("<div class=\"even\">\n<div class=\"browsedbListItem\"><hr width=\"75%%\"/><br/>%s \"$query\": $total<br/><br/></div></div>", 
-			Slim::Utils::Strings::string(uc($type . 'SMATCHING'))
+		push @xml, sprintf("<div class=\"even\">\n<div class=\"browsedbListItem\"><hr width=\"75%%\"/><br/>%s \"%s\": $total<br/><br/></div></div>", 
+			Slim::Utils::Strings::string(uc($type . 'SMATCHING')),
+			Slim::Utils::Unicode::utf8decode($query)
 		);
 
 		push @xml, @output if $count;

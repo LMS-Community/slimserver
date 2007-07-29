@@ -85,6 +85,8 @@ sub basicSearch {
 
 			fillInSearchResults($params, $rs, [ 'manualSearch=1' ]);
 		}
+		
+		$params->{'query'} = Slim::Utils::Unicode::utf8decode($query);
 
 		return Slim::Web::HTTP::filltemplatefile("search.html", $params);
 
@@ -264,6 +266,8 @@ sub advancedSearch {
 	}
 
 	fillInSearchResults($params, $rs, \@qstring, 1);
+	
+	$params->{'query'} = Slim::Utils::Unicode::utf8decode($query);
 
 	return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
 }
