@@ -123,7 +123,7 @@ sub getTag {
 	$tags->{'SIZE'}	    = -s $file;
 
 	$tags->{'SECS'}	    = $ogg->info('length');
-	$tags->{'BITRATE'}  = $ogg->info('bitrate_nominal');
+	$tags->{'BITRATE'}  = $ogg->info('bitrate_average') || $ogg->info('bitrate_nominal');
 	$tags->{'STEREO'}   = $ogg->info('channels') == 2 ? 1 : 0;
 	$tags->{'CHANNELS'} = $ogg->info('channels');
 	$tags->{'RATE'}	    = $ogg->info('rate');

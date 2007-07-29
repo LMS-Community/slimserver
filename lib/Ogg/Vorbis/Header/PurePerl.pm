@@ -377,7 +377,8 @@ sub _calculateTrackLength {
  	my $granule_position = _decodeInt(substr($buf, 0, 8, ''));
 
 	if ($granule_position && $data->{'INFO'}{'rate'}) {
-		$data->{'INFO'}{'length'} = int($granule_position / $data->{'INFO'}{'rate'});
+		$data->{'INFO'}{'length'}          = int($granule_position / $data->{'INFO'}{'rate'});
+		$data->{'INFO'}{'bitrate_average'} = sprintf( "%d", ( $data->{'filesize'} * 8 ) / $data->{'INFO'}{'length'} );
 	}
 }
 
