@@ -720,6 +720,9 @@ sub displaystatusQuery_filter {
 		# display forwarding is suppressed for this subscriber source
 		return 0 if exists $parts->{ lc $self->source } && !$parts->{ lc $self->source };
 
+		# don't send updates if there is no change
+		return 0 if ($type eq 'update' && !$self->client->display->renderCache->{'screen1'}->{'changed'});
+
 		# store display info in request so it can be accessed later
 		$self->privateData({
 			'type'     => $type,
@@ -794,7 +797,10 @@ sub displaystatusQuery {
 		# no private data this must be the first query - check for subscription management
 		if ($subs && $subs ne '-') {
 			$request->registerAutoExecute(0, \&displaystatusQuery_filter);
-			$request->client->update unless $subs eq 'showbriefly';
+			if ($subs ne 'showbriefly') {
+				$request->client->display->resetDisplay;
+				$request->client->update;
+			}
 		} else {
 			$request->registerAutoExecute('-');
 		}
