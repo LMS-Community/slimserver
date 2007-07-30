@@ -124,7 +124,7 @@ sub advancedSearch {
 		# Stuff the requested item back into the params hash, under
 		# the special "search" hash. Because Template Toolkit uses '.'
 		# as a delimiter for hash access.
-		$params->{'search'}->{$newKey}->{'value'} = $params->{$key};
+		$params->{'search'}->{$newKey}->{'value'} = Slim::Utils::Unicode::utf8decode($params->{$key});
 
 		# Apply the logical operator to the item in question.
 		if ($key =~ /\.op$/) {
@@ -266,8 +266,6 @@ sub advancedSearch {
 	}
 
 	fillInSearchResults($params, $rs, \@qstring, 1);
-	
-	$params->{'query'} = Slim::Utils::Unicode::utf8decode($query);
 
 	return Slim::Web::HTTP::filltemplatefile("advanced_search.html", $params);
 }
