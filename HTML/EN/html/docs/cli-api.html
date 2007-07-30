@@ -102,6 +102,10 @@
 		Browse Music Folder functionality.
 	</li>
 	<li>
+		Added the &quot;<a href="#filesystem">filesystem</a>&quot; query, to browse
+		file systems from the server's point of view (local & network shares)
+	</li>
+	<li>
 		Added the &quot;<a href="#rescanprogress">rescanprogress</a>&quot; query, to report details on
 		scanning progress.
 	</li>
@@ -5904,6 +5908,9 @@ in the saved playlists folder.</p>
 	<li>
 		<strong><code><a href="#displaystatus">displaystatus</a></code></strong>
 	</li>
+	<li>
+		<strong><code><a href="#filesystem">filesystem</a></code></strong>
+	</li>
 </ul>
 
 
@@ -6660,6 +6667,96 @@ in the saved playlists folder.</p>
 		</td>
 	</tr>
 </table>
+<br>
+
+
+<p id="filesystem">
+	<strong>
+		<code>
+			filesystem
+			&lt;start&gt;
+			&lt;itemsPerResponse&gt;
+			&lt;taggedParameters&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;filesystem&quot; query allows to browse filesystems from the server's point of view.
+	This can be used to eg. select music folders. Local filesystems are supported, as are UNC paths 
+	on Windows systems (eg. \\server\musicshare).
+	<br>
+	Please note that on Windows systems the back slashes must either be escaped or replaced by
+	normal slashes. The above path would better be written //server/musicshare. 
+</p>
+<p>
+	Accepted tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			folder
+		</td>
+		<td>
+			the path to the folder to be displayed, eg. c:/music, /Users/mh/Music, 
+			//server/share etc.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			filter
+		</td>
+		<td>
+			'foldersonly', 'filesonly', or any filter expression to be used when listing the 
+			folder's content.
+		</td>
+	</tr>
+</table>
+<p>
+	Returned tagged parameters:
+</p>
+<table border="0" spacing="50">
+	<tr>
+		<td width="150">
+			<b>Tag</b>
+		</td>
+		<td>
+			<b>Description</b>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			item
+		</td>
+		<td>
+			The folder's item: folder, files etc.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			isfolder
+		</td>
+		<td>
+			A flag whether an item is a folder or not.
+		</td>
+	</tr>
+</table>
+<p>
+	Example:
+</p>
+<blockquote>
+		Request: &quot;filesystem 0 10 root://edelzwerg/mp3&quot;
+		<br>
+		Response: &quot;filesystem 0 10 root%3A%2F%2Fedelzwerg%2Fmp3 count%3A251 item%3A%5C%5Cedelzwerg%5Cmp3%5CAerosmith isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAir isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAlanis%20Morissette isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAldo%20Romano%2C%20Michel%20Benita%2C%20Glenn%20Ferris%2C%20Paolo%20Fresu isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAli%20Farka%20Toure isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAll%20Saints isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CManu%20Katche isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CSinead%20O'Connor isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CShakira isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAnastacia isdir%3A1&quot;
+</blockquote> 
+
 
 <!--#########################################################################-->
 <!-- NOTIFICATIONS                                                           -->

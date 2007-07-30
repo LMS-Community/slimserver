@@ -810,6 +810,63 @@ sub displaystatusQuery {
 }
 
 
+sub filesystemQuery {
+	my $request = shift;
+
+	$log->debug("filesystemQuery");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['filesystem']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $index        = $request->getParam('_index');
+	my $quantity     = $request->getParam('_quantity');
+	my $folder       = $request->getParam('folder');
+	my $filter       = $request->getParam('filter');
+
+	if ($filter) {
+		if ($filter =~ /^foldersonly$/) {
+			$filter = sub { -d };
+		}
+		elsif ($filter =~ /^filesonly$/) {
+			$filter = sub { -f };				
+		}
+	}
+
+	# get file system items in $folder
+	my $fsitems = Slim::Utils::Filesystem::getChildren($folder, $filter);
+	
+	my $count = @$fsitems;
+	$count += 0;
+	$request->addResult('count', $count);
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+		my $idx = $start;
+		my $cnt = 0;
+
+		if (scalar(@$fsitems) > 0) {
+			for my $item (@$fsitems[$start..$end]) {
+				$request->addResultLoop('fsitems_loop', $cnt, 'path', $item);
+				$request->addResultLoop('fsitems_loop', $cnt, 'name', 
+					($item =~ m|[\/\\]([^\/\\]*)$| ? $1 : $item)
+				);
+				$request->addResultLoop('fsitems_loop', $cnt, 'isfolder', -d $item || 0);
+
+				$idx++;
+				$cnt++;
+			}	
+		}
+	}
+
+	$request->setStatusDone();	
+}
+
+
 sub genresQuery {
 	my $request = shift;
 

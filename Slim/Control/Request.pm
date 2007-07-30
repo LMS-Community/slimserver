@@ -467,8 +467,9 @@ sub init {
     addDispatch(['display',        '?',              '?'],                                             [1, 1, 0, \&Slim::Control::Queries::displayQuery]);
     addDispatch(['display',        '_line1',         '_line2',     '_duration'],                       [1, 0, 0, \&Slim::Control::Commands::displayCommand]);
     addDispatch(['displaynow',     '?',              '?'],                                             [1, 1, 0, \&Slim::Control::Queries::displaynowQuery]);
-	addDispatch(['displaystatus'],                                                                     [1, 1, 1, \&Slim::Control::Queries::displaystatusQuery]);
+    addDispatch(['displaystatus'],                                                                     [1, 1, 1, \&Slim::Control::Queries::displaystatusQuery]);
     addDispatch(['duration',       '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
+    addDispatch(['filesystem',     '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::filesystemQuery]);
     addDispatch(['genre',          '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['genres',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::genresQuery]);
     addDispatch(['info',           'total',          'albums',     '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
@@ -598,10 +599,10 @@ sub init {
     addDispatch(['rescan',         'done'],                                                            [0, 0, 0, undef]);
     addDispatch(['unknownir',      '_ircode',        '_time'],                                         [1, 0, 0, undef]);
     addDispatch(['prefset',        '_namespace',     '_prefname',  '_newvalue'],                       [0, 0, 1, undef]);
-	addDispatch(['displaynotify',  '_type',          '_parts'],                                        [1, 0, 0, undef]);
+    addDispatch(['displaynotify',  '_type',          '_parts'],                                        [1, 0, 0, undef]);
 
 # DEPRECATED
-	addDispatch(['mode',           'pause'],                                                           [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
+    addDispatch(['mode',           'pause'],                                                           [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
     addDispatch(['mode',           'play'],                                                            [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
     addDispatch(['mode',           'stop'],                                                            [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
 	# use commands "pause", "play" and "stop"
