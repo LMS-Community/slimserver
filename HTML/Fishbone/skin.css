@@ -918,16 +918,16 @@ div#albumBackground {
 	padding: 0px 5px 1px 5px;
 }
 
-div.fileselector {
+div.fileselectorautocomplete {
 	background:#ddd;
 	color:#444;
 }
 
-div.fileselector ul li.selected {
+div.fileselectorautocomplete ul li.selected {
 	background: navy;
 	color: white;
 }
 
-div.fileselector ul li {
+div.fileselectorautocomplete ul li {
 	height: 11px;
 }

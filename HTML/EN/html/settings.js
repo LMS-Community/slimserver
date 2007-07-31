@@ -174,7 +174,7 @@ function highlightField(field, valid) {
 Ajax.FileSelector = Class.create();
 Object.extend(Object.extend(Ajax.FileSelector.prototype, Ajax.Autocompleter.prototype), {
 	initialize: function(element, foldersOnly) {
-		this.baseInitialize(element, 'fileselector', {
+		this.baseInitialize(element, 'fileselectorautocomplete', {
 				paramName: 'currDir',
 				parameters: (foldersOnly ? 'foldersonly=1' : ''),
 				frequency: 0.7,
@@ -188,7 +188,7 @@ Object.extend(Object.extend(Ajax.FileSelector.prototype, Ajax.Autocompleter.prot
 		);
 		this.options.asynchronous = true;
 		this.options.onComplete = this.onComplete.bind(this);
-		this.url = '/settings/server/fileselector.html';
+		this.url = '/settings/server/fileselector_autocomplete.html';
 	},
 
 	startIndicator: function() {

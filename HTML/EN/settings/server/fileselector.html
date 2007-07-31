@@ -1,5 +1,38 @@
-<ul>
-[%- FOREACH folder = folders %]
-	<li>[% folder %]</li>
-[%- END %]
-</ul>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+	<head>
+		<title>[% SLIMSERVER | string %]</title>
+	
+		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
+		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/xtheme-gray.css" />
+		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
+		<script type="text/javascript" src="/html/ext/ext-all.js"></script>
+		<script type="text/javascript" src="/html/fileselector.js"></script>
+
+		<style type="text/css">
+		<!--
+			.x-tree-node-leaf .x-tree-node-alwayscollapsed {
+				background-image:url(/html/ext/resources/images/default/tree/folder.gif);
+			}
+		-->
+		</style>
+	</head>
+	<body>
+		<div id="fileselector" style="overflow:auto; height:300px; width:400px;"></div>
+
+		<script type="text/javascript">		
+			function getSelected() {
+				var selected = tree.getSelectionModel().getSelectedNode();
+				if (selected != null && selected.id) {
+					alert("[% "SETUP_OK_USING" | string %]\n" + selected.id);
+				}
+				else {
+					alert("nothing selected");
+				}
+			}
+		</script>
+		
+		<input type="button" name="show" value="Ok" onclick="getSelected();">
+	</body>
+</html>

@@ -11,8 +11,21 @@ use base qw(Slim::Web::Settings);
 use Slim::Utils::Prefs;
 use Slim::Utils::Filesystem;
 
+my $pages = {
+	'autocomplete' => 'settings/server/fileselector_autocomplete.html',
+	'fileselector' => 'settings/server/fileselector.html'
+};
+
+sub new {
+	my $class = shift;
+
+	Slim::Web::HTTP::addPageFunction($pages->{'autocomplete'}, \&autoCompleteHandler);
+
+	$class->SUPER::new($class);
+}
+
 sub page {
-	return 'settings/server/fileselector.html';
+	return $pages->{'fileselector'};
 }
 
 sub handler {
@@ -21,6 +34,14 @@ sub handler {
 	$paramRef->{'folders'} = Slim::Utils::Filesystem::getChildren($paramRef->{'currDir'}, $paramRef->{'foldersonly'} ? sub { -d } : undef);
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
+}
+
+sub autoCompleteHandler {
+	my ($client, $paramRef) = @_;
+
+	$paramRef->{'folders'} = Slim::Utils::Filesystem::getChildren($paramRef->{'currDir'}, $paramRef->{'foldersonly'} ? sub { -d } : undef);
+
+	return Slim::Web::HTTP::filltemplatefile($pages->{'autocomplete'}, $paramRef);	
 }
 
 1;

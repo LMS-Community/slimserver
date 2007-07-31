@@ -565,7 +565,7 @@ input.searchButton {
 	padding-left: 15px;
 }
 
-div.fileselector {
+div.fileselectorautocomplete {
 	position: absolute;
 	width: 250px;
 	height: 100px;
@@ -576,18 +576,18 @@ div.fileselector {
 	padding: 0px;
 }
 
-div.fileselector ul {
+div.fileselectorautocomplete ul {
 	list-style-type: none;
 	margin: 0px;
 	padding: 0px;
 }
 
-div.fileselector ul li.selected {
+div.fileselectorautocomplete ul li.selected {
 	background-color: navy;
 	color: white;
 }
 
-div.fileselector ul li {
+div.fileselectorautocomplete ul li {
 	list-style-type: none;
 	display: block;
 	margin: 0;

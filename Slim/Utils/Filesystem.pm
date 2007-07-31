@@ -55,15 +55,15 @@ sub getChildren {
 			my $dir  = Path::Class::Dir->new($parent);
 			@subdirs = grep { /$currDir/i } $dir->children();
 		}
-	}
 
-	# didn't find anything useful - display a list of reasonable choices (root, drive letters)
-	if (Slim::Utils::OSDetect::OS() eq 'win' && !@subdirs) {
-		@subdirs = map { "$_:" } Win32::DriveInfo::DrivesInUse();
-	}
-	elsif (!@subdirs) {
-		my $dir  = Path::Class::Dir->new('/');
-		@subdirs = map { $_->stringify() } $dir->children();
+		# didn't find anything useful - display a list of reasonable choices (root, drive letters)
+		if (Slim::Utils::OSDetect::OS() eq 'win' && !@subdirs) {
+			@subdirs = map { "$_:" } Win32::DriveInfo::DrivesInUse();
+		}
+		elsif (!@subdirs) {
+			my $dir  = Path::Class::Dir->new('/');
+			@subdirs = map { $_->stringify() } $dir->children();
+		}
 	}
 
 	if (ref $filter eq 'CODE') {
@@ -72,6 +72,18 @@ sub getChildren {
 	elsif ($filter) {
 		@subdirs = grep /$filter/i, @subdirs;
 	}
-	
+
+	# sort folders before files
+	@subdirs = sort { 
+		if (-d $a) {
+			if (-d $b) { uc($a) cmp uc($b) }
+			else { -1 }
+		}
+		else {
+			if (-d $b) { 1 }
+			else { uc($a) cmp uc($b) }
+		}
+	} map { Slim::Utils::Unicode::utf8decode_locale($_) } @subdirs;
+
 	return \@subdirs;
 }
