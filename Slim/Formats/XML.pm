@@ -25,6 +25,7 @@ use Slim::Utils::Cache;
 use Slim::Utils::Misc;
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Utils::Strings qw(string);
 
 # How long to cache parsed XML data
 our $XML_CACHE_TIME = 300;
@@ -129,6 +130,15 @@ sub getFeedAsync {
 	if ( Slim::Networking::SqueezeNetwork->isSNURL($url) ) {
 
 		$log->info("URL requires SqueezeNetwork session");
+		
+		# Sometimes from the web we won't have a client, so pick a random one
+		$params->{'client'} ||= Slim::Player::Client::clientRandom();
+
+		if ( !$params->{'client'} ) {
+			# No player connected, cannot continue
+			$ecb->( string('SQUEEZENETWORK_NO_PLAYER_CONNECTED'), $params );
+			return;
+		}
 		
 		if ( my $sid = $params->{'client'}->snSession ) {
 			$headers{'Cookie'} = 'sdi_squeezenetwork_session=' . uri_escape($sid);

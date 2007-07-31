@@ -12437,6 +12437,9 @@ SQUEEZENETWORK_SB2_REQUIRED
 	NL	Sorry, nieuwere Squeezebox nodig.
 	ZH_CN	抱歉，需要Squeezebox2。
 
+SQUEEZENETWORK_NO_PLAYER_CONNECTED
+	EN	Cannot access SqueezeNetwork services without a player connected.
+
 UPNP_REQUEST_FAILED
 	DE	Fehler bei der UPnP-Anforderung. Prüfen Sie den UPnP-Server.
 	EN	UPnP request failed, please check the UPnP server.

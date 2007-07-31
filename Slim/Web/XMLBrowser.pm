@@ -25,6 +25,7 @@ my $log = logger('formats.xml');
 sub handleWebIndex {
 	my ( $class, $args ) = @_;
 
+	my $client    = $args->{'client'};
 	my $feed      = $args->{'feed'};
 	my $title     = $args->{'title'};
 	my $search    = $args->{'search'};
@@ -83,6 +84,7 @@ sub handleWebIndex {
 		\&handleFeed,
 		\&handleError,
 		{
+			'client'  => $client,
 			'url'     => $feed,
 			'title'   => $title,
 			'search'  => $search,

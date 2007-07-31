@@ -23,24 +23,20 @@ use Slim::Plugin::RadioIO::Settings;
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
 use Slim::Player::ProtocolHandlers;
+use Slim::Networking::SqueezeNetwork;
 use Slim::Utils::Strings qw( string );
 use Slim::Web::XMLBrowser;
 use Slim::Utils::Prefs;
 
-use Slim::Plugin::RadioIO::ProtocolHandler;
-
 my $prefs = preferences('plugin.radioio');
 
-my $FEED = 'http://www.radioio.com/opml/channelsLOGIN.php?device=Squeezebox&speed=high';
+my $FEED = Slim::Networking::SqueezeNetwork->url( '/api/radioio/opml' );
 my $cli_next;
 
 sub initPlugin {
 	my $class = shift;
 
 	$class->SUPER::initPlugin();
-
-	# Backwards-compat with radioio:// protocol links
-	Slim::Player::ProtocolHandlers->registerHandler('radioio', 'Slim::Plugin::RadioIO::ProtocolHandler');
 
 	Slim::Plugin::RadioIO::Settings->new;
 
@@ -95,7 +91,7 @@ sub radioIOURL {
 	my $url = $FEED;
 	
 	if ( $username && $password ) {
-		$url .= '&membername=' . uri_escape($username) . '&pw=' . uri_escape( decode_base64( $password ) );
+		$url .= '?membername=' . uri_escape($username) . '&pw=' . uri_escape( decode_base64( $password ) );
 	}
 	
 	return $url;
@@ -116,6 +112,7 @@ sub webPages {
 		my $url = radioIOURL($client);
 
 		Slim::Web::XMLBrowser->handleWebIndex( {
+			client => $client,
 			feed   => $url,
 			title  => $title,
 			args   => \@_
@@ -159,61 +156,6 @@ sub cliRadiosQuery {
 	
 	# let our super duper function do all the hard work
 	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
-}
-
-###
-# The below code for backwards-compat with old-style radioio:// protocol links
-
-our %stations = (
-	radioio70s       => 3,			
-	radioio70sPOP    => 21,			
-	radioio80s       => 39,
-	radioio80sPOP    => 57,	
-	radioio90s       => 75,
-	radioioACOUSTIC  => 93,
-	radioioAMBIENT   => 111,
-	radioioBEAT      => 129,
-	radioioCLASSICAL => 147,
-	radioioCOUNTRY   => 165,
-	radioioDEAD      => 183,
-	radioioDISCO     => 202,				 
-	radioioECLECTIC  => 220,
-	radioioEDGE      => 238,
-	radioioHISTORY   => 256,
-	radioioJAM       => 274,
-	radioioJAZZ      => 292,
-	radioioPOP       => 310,
-	radioioROCK      => 328,
-	radioioSEASONS   => 346,
-	radioioUNLIMITED => 364,
-	radioioWORLD     => 382,
-	radioioONE       => 400,
-);
-
-our @station_names = sort keys %stations;
-
-sub getHTTPURL {
-	my $key = shift;
-	my $id  = $stations{$key} || return;
-	
-	return "http://streampoint.radioio.com/streams/$id/45ec8c85a2a8a/";
-}
-
-sub getRadioIOURL {
-	my $num = shift;
-
-	my $key = $station_names[$num];
-	my $url = "radioio://" . $key . ".mp3";
-
-	my %cacheEntry = (
-		'TITLE' => $key,
-		'CT'    => 'mp3',
-		'VALID' => 1,
-	);
-
-	Slim::Music::Info::updateCacheEntry($url, \%cacheEntry);
-
-	return $url;
 }
 
 1;

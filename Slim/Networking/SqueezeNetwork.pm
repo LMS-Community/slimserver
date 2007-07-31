@@ -186,6 +186,9 @@ sub login {
 sub _createHTTPRequest {
 	my ( $self, $type, $url, @args ) = @_;
 	
+	# Indicate our language preference
+	unshift @args, 'Accept-Language', lc( $prefs->get('language') ) || 'en';
+	
 	# Add session cookie if we have it
 	if ( my $client = $self->params('client') ) {
 
