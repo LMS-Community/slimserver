@@ -91,7 +91,7 @@ sub radioIOURL {
 	my $url = $FEED;
 	
 	if ( $username && $password ) {
-		$url .= '?membername=' . uri_escape($username) . '&pw=' . uri_escape( decode_base64( $password ) );
+		$url .= '?username=' . uri_escape($username) . '&password=' . uri_escape( decode_base64( $password ) );
 	}
 	
 	return $url;
