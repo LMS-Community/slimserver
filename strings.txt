@@ -126,6 +126,7 @@ DEFAULT_SKIN
 	JA	スタンダード
 	NL	Standaard
 	NO	Standard
+	SV	Standard
 	ZH_CN	缺省
 
 DEFAULT_MAP
@@ -7882,6 +7883,7 @@ NAME
 	IT	Nome:
 	NL	Naam:
 	NO	Navn:
+	SV	Namn:
 	ZH_CN	名：
 
 SAVED_PLAYLISTS
@@ -8069,6 +8071,7 @@ CONFIRM_DELETE
 	IT	Conferma eliminazione
 	NL	Verwijdering bevestigen
 	NO	Bekreft sletting
+	SV	Konfirmera borttagning
 	ZH_CN	确定删除
 
 TRACK
@@ -8263,6 +8266,7 @@ DIR
 	IT	Directory
 	NL	Directory
 	NO	Katalog
+	SV	Bibliotek
 	ZH_CN	目录
 
 APE
@@ -9761,6 +9765,7 @@ BASIC_SERVER_SETTINGS
 	HE	הגדרות בסיסיות
 	IT	Impostazioni di base
 	NL	Basisinstellingen
+	SV	Grundinställningar
 	ZH_CN	基本配置
 
 SERVER_SETTINGS
@@ -10151,6 +10156,7 @@ VISUALIZER_SPECTRUM_ANALYZER_SMALL
 	HE	ספקטרום קטן
 	IT	Spettro piccolo
 	NL	Klein spectrum
+	SV	Litet spectrum
 	ZH_CN	小音谱
 
 VISUALIZER_VUMETER_SMALL
@@ -10174,6 +10180,7 @@ VISUALIZER_VUMETER
 	HE	מד VU
 	IT	Indicatore VU
 	NL	VU-meter
+	SV	VU mätare
 	ZH_CN	音量表
 
 BLANK
@@ -11332,6 +11339,7 @@ CREATE_MIX
 	HE	יצירת מיקס
 	IT	Crea raccolta
 	NL	Mix maken
+	SV	Skapa mix
 	ZH_CN	产生混音
 
 RADIO_TUNEIN
@@ -12073,6 +12081,7 @@ BEFORE
 	IT	prima
 	JA	前に
 	NL	voor
+	SV	före
 	ZH_CN	之前
 
 AFTER
