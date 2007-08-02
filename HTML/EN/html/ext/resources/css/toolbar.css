@@ -1,5 +1,5 @@
 /*
- * Ext JS Library 1.1 RC 1
+ * Ext JS Library 1.1
  * Copyright(c) 2006-2007, Ext JS, LLC.
  * licensing@extjs.com
  * 
@@ -13,6 +13,7 @@
 	padding:2px;
     background:#d0def0 url(../images/default/layout/panel-title-light-bg.gif) repeat-x;
     position:relative;
+    zoom:1;
 }
 .x-toolbar .x-item-disabled .x-btn-icon {
     opacity: .35;

@@ -3,6 +3,8 @@ Copyright (c) 2006-2007, Ext JS, LLC
 All rights reserved.
 licensing@extjs.com
 
+http://extjs.com/license
+
 The CSS and Graphics ("Assets") distributed with Ext are licensed for use ONLY
 with their associated Ext JavaScript component ("Component"). Use of the Assets in
 any way that does not also include the Component is prohibited without explicit
@@ -12,7 +14,7 @@ to bypass this license is also prohibited.
 --
 
 The JavaScript code distributed with Ext (the "Software") is licensed under the
-Lesser GNU (LGPL) open source license version 2.1.
+Lesser GNU (LGPL) open source license version 3.0.
 
 http://www.gnu.org/licenses/lgpl.html
 
