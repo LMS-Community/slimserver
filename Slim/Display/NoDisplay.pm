@@ -44,6 +44,7 @@ sub killAnimation {}
 sub resetDisplay {}
 sub endAnimation {}
 sub vfdmodel { 'http' }
+sub linesPerScreen {}
 
 =head1 SEE ALSO
 
