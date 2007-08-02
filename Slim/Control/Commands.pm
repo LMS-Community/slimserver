@@ -437,7 +437,7 @@ sub playcontrolCommand {
 		Slim::Player::Source::rate($client, 1);
 		
 		# update the display
-		$client->update();
+		$client->showBriefly($client->currentSongLines());
 	}
 		
 	$request->setStatusDone();
@@ -1063,7 +1063,11 @@ sub playlistXitemCommand {
 				}
 			
 				my $timeout = $prefs->get('remotestreamtimeout') || 10;
-				$client->showBriefly( $line1, $line2, $timeout + 5 );
+
+				$client->showBriefly({
+					'line' => [$line1, $line2],
+					'jiv'  => { 'icon' => 'play', text => [ $line2 ], 'icon-id' => 0 },
+				}, { 'duration' => $timeout + 5 });
 			}
 		}
 
@@ -1461,6 +1465,17 @@ sub playlistcontrolCommand {
 
 	# don't call Xtracks if we got no songs
 	if (@tracks) {
+
+		if ($load || $add) {
+			$client->showBriefly({ 
+				'jiv' => { 
+					'icon'    => $load ? 'play' : 'add', 
+					'icon-id' => $tracks[0]->album->artwork || 0,
+					'text'    => [ Slim::Music::Info::displayText($client, $tracks[0], 'TITLE'),
+								   Slim::Music::Info::displayText($client, $tracks[0], 'ARTIST') ]
+				}
+			});
+		}
 
 		$cmd .= "tracks";
 

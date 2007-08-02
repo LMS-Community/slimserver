@@ -441,7 +441,8 @@ sub currentSongLines {
 			}
 		} 
 
-		my $currentTitle = Slim::Music::Info::getCurrentTitle($client, Slim::Player::Playlist::url($client));
+		my $song = Slim::Player::Playlist::song($client);
+		my $currentTitle = Slim::Music::Info::getCurrentTitle($client, $song->url);
 
 		$parts->{line}[1] = $currentTitle;
 
@@ -454,8 +455,6 @@ sub currentSongLines {
 		if ($client->display->showExtendedText() && !$suppressScreen2) {
 			
 			my ($s2line1, $s2line2);
-
-			my $song = Slim::Player::Playlist::song($client);
 
 			if ($song && $song->isRemoteURL) {
 
@@ -476,6 +475,12 @@ sub currentSongLines {
 				'line' => [ $s2line1, $s2line2 ],
 			};
 		}
+
+		$parts->{'jiv'} = {
+			'icon'    => Slim::Player::Source::playmode($client),
+			'icon-id' => $song->album ? $song->album->artwork : 0,
+			'text'    => [ $currentTitle, Slim::Music::Info::displayText($client, $song, 'ARTIST') ],
+		};
 	}
 
 	return $parts;

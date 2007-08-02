@@ -784,10 +784,21 @@ sub displaystatusQuery {
 					$request->addResult("$c$l", $parts->{$c}[$l]) if ($parts->{$c}[$l] ne '');
 				}
 			}
+
 		} elsif ($source eq 'JIV') {
 
-			# send an array to jive from one of the following components
-			$request->addResult('display', $parts->{'jiv'} || $parts->{'line'} || $parts->{'center'});
+			# send display to jive from one of the following components
+			if (my $ref = $parts->{'jiv'} && ref $parts->{'jiv'}) {
+				if ($ref eq 'CODE') {
+					$request->addResult('display', $parts->{'jiv'}->() );
+				} elsif($ref eq 'ARRAY') {
+					$request->addResult('display', { 'text' => $parts->{'jiv'} });
+				} else {
+					$request->addResult('display', $parts->{'jiv'} );
+				}
+			} else {
+				$request->addResult('display', { 'text' => $parts->{'line'} || $parts->{'center'} });
+			}
 		}
 			
 		$request->privateData({});
