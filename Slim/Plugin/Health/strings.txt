@@ -765,7 +765,9 @@ PLUGIN_HEALTH_TEMPLATE_DESC
 	NL	De tijd die nodig is om elk gereedschapssjabloon bij het opbouwen van webpagina's te verwerken.
 
 PLUGIN_HEALTH_ASYNC
+	DE	Asynchrone HTTP Task Dauer
 	EN	Async HTTP Task Duration
 
 PLUGIN_HEALTH_ASYNC_DESC
+	DE	Die zur Ausführen von asynchronen HTTP Callback Funktionen benötigte Zeit.
 	EN	The length of time taken by each asynchronous http callback function.

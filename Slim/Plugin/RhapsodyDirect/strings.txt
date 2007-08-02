@@ -103,4 +103,5 @@ PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK
 	NL	Kan volgende nummer niet ophalen. Druk op PLAY om het nogmaals te proberen.
 
 PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT
+	DE	Konnte über das SqueezeNetwork keine Account-Informationen finden.
 	EN	Unable to retrieve account details from SqueezeNetwork.

@@ -6925,18 +6925,22 @@ SETUP_SN_PASSWORD_DESC
 	EN	Enter the password for your SqueezeNetwork account.
 
 SETUP_SN_INVALID_LOGIN
+	DE	Ungültige SqueezeNetwork Mail-Adresse oder Passwort
 	EN	Invalid SqueezeNetwork email address or password.
 
 SETUP_SN_SYNC
 	EN	SqueezeNetwork Integration
 
 SETUP_SN_SYNC_DESC
+	DE	Standardmässig werden zahlreiche Player-Einstellungen zwischen SlimServer und SqueezeNetwork synchronisiert. Hier können Sie diese Funktionalität deaktivieren.
 	EN	By default, many player settings are synchronized between SlimServer and SqueezeNetwork.  To disable this feature, select the Disabled option below.
 
 SETUP_SN_SYNC_ENABLE
+	DE	Aktiv, Player-Einstellungen synchronisieren
 	EN	Enabled, keep player settings in sync.
 
 SETUP_SN_SYNC_DISABLE
+	DE	Inaktiv, Player-Einstellungen nicht synchronisieren
 	EN	Disabled, do not keep player settings in sync.
 
 #
@@ -12438,6 +12442,7 @@ SQUEEZENETWORK_SB2_REQUIRED
 	ZH_CN	抱歉，需要Squeezebox2。
 
 SQUEEZENETWORK_NO_PLAYER_CONNECTED
+	DE	Sie können sich ohne Player nicht zum SqueezeNetwork verbinden.
 	EN	Cannot access SqueezeNetwork services without a player connected.
 
 UPNP_REQUEST_FAILED

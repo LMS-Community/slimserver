@@ -10,4 +10,5 @@ PLUGIN_MP3TUNES_LOADING
 	NL	Bezig met aanmelden...
 
 PLUGIN_MP3TUNES_MODULE_NAME_DESC
+	DE	Zugriff auf den MP3tunes Music Locker gewähren. Dieses Plugin benötigt einen SqueezeNetwork Account.
 	EN	Access music from your MP3tunes Music Locker. This plugin requires a SqueezeNetwork account.
