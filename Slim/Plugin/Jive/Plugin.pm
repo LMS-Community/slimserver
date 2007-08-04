@@ -815,20 +815,75 @@ sub menuQuery {
 		},
 		{
 			'text' => Slim::Utils::Strings::string('SEARCHMUSIC'),
-			'count' => 3,
+			'count' => 4,
 			'offset' => 0,
 			'item_loop' => [
 				{
-					'text' => 'Artists',
+					'text' => Slim::Utils::Strings::string('ARTISTS'),
+					'input' => 3,
+					'actions' => {
+						'go' => {
+							'cmd' => ['artists'],
+							'params' => {
+								'menu' => 'album',
+								'search' => '__INPUT__',
+							},
+						},
+					},
+					'window' => {
+						'text' => Slim::Utils::Strings::string('SEARCHFOR_ARTISTS'),
+					},
 				},
 				{
-					'text' => 'Albums',
+					'text' => Slim::Utils::Strings::string('ALBUMS'),
+					'input' => 3,
+					'actions' => {
+						'go' => {
+							'cmd' => ['albums'],
+							'params' => {
+								'menu' => 'track',
+								'search' => '__INPUT__',
+							},
+						},
+					},
+					'window' => {
+						'text' => Slim::Utils::Strings::string('SEARCHFOR_ALBUMS'),
+						'menuStyle' => 'album',
+					},
 				},
 				{
-					'text' => 'Songs',
+					'text' => Slim::Utils::Strings::string('SONGS'),
+					'input' => 3,
+					'actions' => {
+						'go' => {
+							'cmd' => ['tracks'],
+							'params' => {
+								'menu' => 'track',
+								'search' => '__INPUT__',
+							},
+						},
+					},
+					'window' => {
+						'textareaStyle' => 'whatever',
+						'text' => Slim::Utils::Strings::string('SEARCHFOR_SONGS'),
+					},
 				},
 				{
-					'text' => 'Playlists',
+					'text' => Slim::Utils::Strings::string('PLAYLISTS'),
+					'input' => 3,
+					'actions' => {
+						'go' => {
+							'cmd' => ['playlists'],
+							'params' => {
+								'menu' => 'track',
+								'search' => '__INPUT__',
+							},
+						},
+					},
+					'window' => {
+						'textareaStyle' => 'whatever',
+#						'text' => Slim::Utils::Strings::string('SEARCHFOR_ARTISTS'),
+					},
 				},
 			],
 		},
