@@ -2158,7 +2158,7 @@ sub searchQuery {
 	}
 
 	my $totalCount = 0;
-        my $search     = Slim::Utils::Text::searchStringSplit($query);
+	my $search     = Slim::Utils::Text::searchStringSplit($query);
 	my %results    = ();
 	my @types      = Slim::Schema->searchTypes;
 

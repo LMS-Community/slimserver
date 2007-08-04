@@ -864,7 +864,6 @@ sub menuQuery {
 						},
 					},
 					'window' => {
-						'textareaStyle' => 'whatever',
 						'text' => Slim::Utils::Strings::string('SEARCHFOR_SONGS'),
 					},
 				},
@@ -880,10 +879,9 @@ sub menuQuery {
 							},
 						},
 					},
-					'window' => {
-						'textareaStyle' => 'whatever',
+#					'window' => {
 #						'text' => Slim::Utils::Strings::string('SEARCHFOR_ARTISTS'),
-					},
+#					},
 				},
 			],
 		},
