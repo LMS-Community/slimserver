@@ -1425,42 +1425,33 @@ sub playlistcontrolCommand {
 
 	} else {
 
-		my $find  = {};
-		my @joins = ();
-
+		# rather than re-invent the wheel, use _playlistXtracksCommand_parseSearchTerms
+		
+		my $what = {};
+		
 		if (defined(my $genre_id = $request->getParam('genre_id'))) {
-
-			$find->{'genreTracks.genre'} = $genre_id;
-
-			push @joins, 'genreTracks';
+			$what->{'genre.id'} = $genre_id;
 		}
 
 		if (defined(my $artist_id = $request->getParam('artist_id'))) {
-
-			$find->{'contributorTracks.contributor'} = $artist_id;
-
-			push @joins, 'contributorTracks';
+			$what->{'contributor.id'} = $artist_id;
 		}
 
 		if (defined(my $album_id = $request->getParam('album_id'))) {
-
-			$find->{'me.album'} = $album_id;
+			$what->{'album.id'} = $album_id;
 		}
 
 		if (defined(my $year = $request->getParam('year'))) {
 
-			$find->{'me.year'} = $year;
+			$what->{'year.id'} = $year;
 		}
 		# Fred: form year_id DEPRECATED in 7.0
 		if (defined(my $year_id = $request->getParam('year_id'))) {
 
-			$find->{'me.year'} = $year_id;
+			$what->{'year.id'} = $year_id;
 		}
-
-		@tracks = Slim::Schema->search('Track', $find, {
-			'order_by' => 'me.disc, me.tracknum, me.titlesort',
-			'join'     => \@joins,
-		})->distinct->all;
+		
+		@tracks = _playlistXtracksCommand_parseSearchTerms($client, $what);
 	}
 
 	# don't call Xtracks if we got no songs
