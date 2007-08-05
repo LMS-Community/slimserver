@@ -879,9 +879,9 @@ sub menuQuery {
 							},
 						},
 					},
-#					'window' => {
-#						'text' => Slim::Utils::Strings::string('SEARCHFOR_ARTISTS'),
-#					},
+					'window' => {
+						'text' => Slim::Utils::Strings::string('SEARCHFOR_PLAYLISTS'),
+					},
 				},
 			],
 		},

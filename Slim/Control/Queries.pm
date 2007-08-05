@@ -238,6 +238,7 @@ sub albumsQuery {
 					'cmd' => [$actioncmd],
 					'params' => {
 						'menu' => $nextMenu,
+						'menu_all' => '1',
 						'sort' => 'tracknum',
 					},
 					'itemsParams' => 'params',
@@ -263,6 +264,8 @@ sub albumsQuery {
 				'titleStyle' => "album",
 			}
 		};
+		
+		# adapt actions to SS preference
 		if (!$prefs->get('noGenreFilter') && defined $genreID) {
 			$base->{'actions'}->{'go'}->{'params'}->{'genre_id'} = $genreID;
 			$base->{'actions'}->{'play'}->{'params'}->{'genre_id'} = $genreID;
@@ -287,7 +290,10 @@ sub albumsQuery {
 		$request->addResult('offset', $start) if $menuMode;
 
 		for my $eachitem ($rs->slice($start, $end)) {
+			
+			# Jive result formatting
 			if ($menuMode) {
+				
 				# we want the text to be album\nartist
 				my @artists = $eachitem->artists();
 				my $artist = $artists[0]->name();
@@ -310,6 +316,8 @@ sub albumsQuery {
 					$request->addResultLoop($loopname, $cnt, 'icon-id', $iconId);
 				}
 			}
+			
+			# "raw" result formatting (for CLI or JSON RPC)
 			else {
 				$request->addResultLoop($loopname, $cnt, 'id', $eachitem->id);
 				$tags =~ /l/ && $request->addResultLoop($loopname, $cnt, 'album', $eachitem->title);
@@ -324,6 +332,7 @@ sub albumsQuery {
 					$request->addResultLoopIfValueDefined($loopname, $cnt, 'artist', $artists[0]->name());
 				}
 			}
+			
 			$cnt++;
 		}
 	}
@@ -3080,10 +3089,13 @@ sub titlesQuery {
 	my $contributorID = $request->getParam('artist_id');
 	my $albumID       = $request->getParam('album_id');
 	my $year          = $request->getParam('year');
+	
 	my $menu          = $request->getParam('menu');
+	my $insert        = $request->getParam('menu_all');
 	
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
+	my $insertAll = $menuMode && defined $insert;
 
 	if ($request->paramNotOneOfIfDefined($sort, ['title', 'tracknum'])) {
 		$request->setStatusBadParams();
@@ -3193,6 +3205,9 @@ sub titlesQuery {
 			}
 		};
 		$request->addResult('base', $base);
+		
+		# correct count if we insert "Play all songs"
+		$count++ if $insertAll;
 	}
 
 	if (Slim::Music::Import->stillScanning) {
@@ -3211,10 +3226,68 @@ sub titlesQuery {
 		my $cnt = 0;
 		$request->addResult('offset', $start) if $menuMode;
 
+		# first PLAY ALL item
+		if ($insertAll) {
+			
+			# insert first item if needed
+			if ($start == 0) {
+				$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string('JIVE_PLAY_ALL_SONGS'));
+
+				# get all our params
+				my $params = $request->getParamsCopy();
+				my $paramsAdd = {};
+				my $paramsGoPlay = {};
+				# remove keys starting with _ (internal or positional) and make copies
+				while (my ($key, $val) = each %{$params}) {
+					if ($key =~ /^_/ || $key eq 'menu' || $key eq 'menu_all') {
+						next;
+					}
+					$paramsAdd->{$key} = $val;
+					$paramsGoPlay->{$key} = $val;
+				}
+			
+				$paramsAdd->{'cmd'} = 'add';
+				$paramsGoPlay->{'cmd'} = 'load';
+
+				# override the actions, babe!
+				my $actions = {
+					'do' => {
+						'player' => 0,
+						'cmd' => ['playlistcontrol'],
+						'params' => $paramsGoPlay,
+					},
+					'play' => {
+						'player' => 0,
+						'cmd' => ['playlistcontrol'],
+						'params' => $paramsGoPlay,
+					},
+					'add' => {
+						'player' => 0,
+						'cmd' => ['playlistcontrol'],
+						'params' => $paramsAdd,
+					},
+				};
+				$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+				$cnt++;
+			}
+
+			# correct db slice!
+			else {
+				# we are not adding our item but it is counted in $start
+				# (a query for tracks 1 10 needs to start at db 0! -- and go to db 9 (instead of 10))
+				# (a query for tracks 0 10 ALSO needs to start at db 0! -- and go to db 8 (instead of 9))
+				$start--;
+			}
+			# always fix $end 
+			$end--;
+		}
+
 
 		for my $item ($rs->slice($start, $end)) {
 			
+			# jive formatting
 			if ($menuMode) {
+				
 				my $text = Slim::Music::TitleFormatter::infoFormat($item, $format, 'TITLE');
 				$request->addResultLoop($loopname, $cnt, 'text', $text);
 				my $id = $item->id();
@@ -3223,10 +3296,10 @@ sub titlesQuery {
 					'track_id' =>  $id, 
 				};
 				$request->addResultLoop($loopname, $cnt, 'params', $params);
-				
-				
+			
+			
 				# open a window with icon etc...
-				
+			
 				my $text2 = $item->title;
 				my $album;
 				my $albumObj = $item->album();
@@ -3236,30 +3309,30 @@ sub titlesQuery {
 					$iconId = $albumObj->artwork();
 				}
 				$text2 = $text2 . "\n" . (defined($album)?$album:"");
-				
+			
 				my $artist;
 				if(defined(my $artistObj = $item->artist())) {
 					$artist = $artistObj->name();
 				}
 				$text2 = $text2 . "\n" . (defined($artist)?$artist:"");
-				
-				#$request->addResultLoop($loop, 0, 'text', $text);
+			
 				my $window = {
 					'text' => $text2,
 				};
-				
+			
 				if (defined($iconId)) {
 					$iconId += 0;
 					$window->{'icon-id'} = $iconId;
-					#$request->addResultLoop($loop, 0, 'icon-id', $iconId);
 				}
 
 				$request->addResultLoop($loopname, $cnt, 'window', $window);
-				
 			}
+			
+			# regular formatting
 			else {
 				_addSong($request, $loopname, $cnt, $item, $tags);
 			}
+			
 			$cnt++;
 			
 			# give peace a chance...

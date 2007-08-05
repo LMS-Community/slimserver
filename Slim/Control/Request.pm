@@ -895,11 +895,7 @@ sub virginCopy {
 	my @request = @{$self->{'_request'}};
 	$copy->{'_request'} = \@request;
 
-	tie (my %paramHash, "Tie::IxHash");	
-	while (my ($key, $val) = each %{$self->{'_params'}}) {
-		$paramHash{$key} = $val;
- 	}
-	$copy->{'_params'} = \%paramHash;
+	$copy->{'_params'} = $self->getParamsCopy();
 	
 	$self->validate();
 	
@@ -1280,6 +1276,17 @@ sub deleteParam {
 	delete ${$self->{'_params'}}{$key};
 }
 
+# returns a copy of all parameters
+sub getParamsCopy {
+	my $self = shift;
+	
+	tie (my %paramHash, "Tie::IxHash");	
+	while (my ($key, $val) = each %{$self->{'_params'}}) {
+		$paramHash{$key} = $val;
+ 	}
+	return \%paramHash;
+}
+
 ################################################################################
 # Result mgmt
 ################################################################################
@@ -1595,7 +1602,7 @@ sub execute {
 	
 	$log->debug('Enter');
 
-	if ($log->is_debug) {
+	if ($log->is_info) {
 		$self->dump("Request");
 	}
 
@@ -1760,7 +1767,7 @@ sub notify {
 	my $self = shift || return;
 	my $specific = shift; # specific target of notify if we have a single known target
 
-	$log->info(sprintf("Notifying %s", $self->getRequestString()));
+	$log->debug(sprintf("Notifying %s", $self->getRequestString()));
 
 	for my $listener ($specific || keys %listeners) {
 

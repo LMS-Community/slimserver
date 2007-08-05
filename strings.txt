@@ -13784,3 +13784,9 @@ CLOSE
 PERSIST_DEBUG_SETTINGS
 	DE	Fehlerbehebungs-Einstellungen beim nächsten Serverstart beibehalten
 	EN	Save debugging settings for use at next server restart
+
+JIVE_PLAY_ALL_SONGS
+	EN	Play all songs
+
+SEARCHFOR_PLAYLISTS
+	EN	Search for playlists
