@@ -87,9 +87,13 @@ sub handler {
 
 		for my $pref (@prefs) {
 
-			if ($pref eq 'synchronize' && defined $paramRef->{'synchronize'}) {
+			if ($pref eq 'synchronize') {
 			
-				Slim::Player::Sync::sync($client, Slim::Player::Client::getClient($paramRef->{$pref}));
+				if (my $otherClient = Slim::Player::Client::getClient($paramRef->{$pref})) {
+					Slim::Player::Sync::sync($client, $otherClient);
+				} else {
+					Slim::Player::Sync::unsync($client);
+				}
 			
 			} else {
 
