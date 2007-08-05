@@ -2769,10 +2769,13 @@ sub songinfoQuery {
 	my $url	     = $request->getParam('url');
 	my $trackID  = $request->getParam('track_id');
 	my $tagsprm  = $request->getParam('tags');
-	my $menu     = $request->getParam('menu');
 	
+	my $menu     = $request->getParam('menu');
+	my $insert   = $request->getParam('menu_play');
+
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
+	my $insertPlay = $menuMode && defined $insert;
 
 	if (!defined $trackID && !defined $url) {
 		$request->setStatusBadParams();
@@ -2803,14 +2806,15 @@ sub songinfoQuery {
 
 	if (blessed($track) && $track->can('id')) {
 
+		my $trackId = $track->id();
+		$trackId += 0;
+
 		if ($menuMode) {
 
 			# decide what is the next step down
 			# generally, we go nowhere after songingo, so we get menu:nowhere...
 
 			# build the base element
-			my $trackId = $track->id();
-			$trackId += 0;
 			my $base = {
 				'actions' => {
 					# no go, we ain't going anywhere!
@@ -2841,6 +2845,9 @@ sub songinfoQuery {
 		my $hashRef = _songData($track, $tags, $menuMode);
 		my $count = scalar (keys %{$hashRef});
 
+		# correct count if we insert "Play all songs"
+		$count++ if $insertPlay;
+
 		$count += 0;
 		$request->addResult("count", $count);
 
@@ -2852,6 +2859,40 @@ sub songinfoQuery {
 			my $cnt = 0;
 			my $loopname = $menuMode?'item_loop':'songinfo_loop';
 			$request->addResult('offset', $start) if $menuMode;
+
+			# first PLAY item
+			if ($insertPlay) {
+			
+				# insert first item if needed
+				if ($start == 0) {
+					$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string('JIVE_PLAY_THIS_SONGS'));
+
+					# override the actions, babe!
+					my $actions = {
+						'do' => {
+							'player' => 0,
+							'cmd' => ['playlistcontrol'],
+							'params' => {
+								'cmd' => 'load',
+								'track_id' => $trackId,
+							},
+						},
+						# play/add taken care of in base
+					};
+					$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+					$cnt++;
+				}
+
+				# correct db slice!
+				else {
+					# we are not adding our item but it is counted in $start
+					# (a query for tracks 1 10 needs to start at db 0! -- and go to db 9 (instead of 10))
+					# (a query for tracks 0 10 ALSO needs to start at db 0! -- and go to db 8 (instead of 9))
+					$start--;
+				}
+				# always fix $end 
+				$end--;
+			}
 
 			while (my ($key, $val) = each %{$hashRef}) {
 
@@ -3180,6 +3221,7 @@ sub titlesQuery {
 					'cmd' => [$actioncmd],
 					'params' => {
 						'menu' => $nextMenu,
+						'menu_play' => '1',
 					},
 					'itemsParams' => 'params',
 				},
@@ -3281,7 +3323,6 @@ sub titlesQuery {
 			# always fix $end 
 			$end--;
 		}
-
 
 		for my $item ($rs->slice($start, $end)) {
 			
