@@ -6944,6 +6944,84 @@ SETUP_SN_SYNC_DISABLE
 	DE	Inaktiv, Player-Einstellungen nicht synchronisieren
 	EN	Disabled, do not keep player settings in sync.
 
+SETUP_WIZARD_LANG_DESC
+	EN	If you want to change the language, select it here:
+
+SETUP_WIZARD_WELCOME
+	EN	Welcome to the SlimServer Setup wizard
+
+SETUP_WIZARD_WELCOME_DESC
+	EN	Thank you for buying a Logitech digital music player! We're sure you'll enjoy it a lot...<br><br>This wizard will guide you through the necessary steps to get your SlimServer and music player up and running.<br>Some more blah, blah...
+
+SETUP_WIZARD_PROXY
+	EN	SlimServer Setup: Proxy Settings
+
+SETUP_WIZARD_PROXY_DESC
+	EN	SlimServer wasn't able to connect to the web. <br/>If your network is protected by a web proxy, then you can specify the IP address and port for the proxy to use when SlimServer connects to servers outside your local network.  Use the format xx.xx.xx.xx:yyyy where xx.xx.xx.xx is the IP address of the proxy, and yyyy is the port number.  Leave this field blank if you don't use a HTTP web proxy.
+
+SETUP_WIZARD_SQN
+	EN	SlimServer Setup: SqueezeNetwork Account
+
+SETUP_WIZARD_SQN_DESC
+	EN	SqueezeNetwork allows you to get the most out of your new Logitech digital music player. Some of the advanced online media services such as Rhapsody or Pandora are only available through SqueezeNetwork.<br/><br/>If you haven't subscribed to SqueezeNetwork yet, please visit <a href="http://www.squeezenetwork.com" target="_blank">http://www.squeezenetwork.com</a>.<br/><br/>Please enter the email address and password used to login to your SqueezeNetwork account.
+
+SETUP_WIZARD_SOURCE
+	EN	SlimServer Setup: Music Source
+
+SETUP_WIZARD_SOURCE_DESC
+	EN	Please select your local music source.
+
+SETUP_WIZARD_SOURCE_AUDIODIR
+	EN	<em>Music Folder<em><br/>SlimServer can access music files stored on your computer or another computer in your local network, such as eg. a network attached storage (NAS).
+
+SETUP_WIZARD_SOURCE_ITUNES
+	EN	<em>iTunes<em><br/>SlimServer can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. For more information about iTunes please visit <a href="http://www.apple.com/itunes" target="_blank">http://www.apple.com/itunes</a>.
+
+SETUP_WIZARD_SOURCE_MUSICIP
+	EN	<em>MusicIP Integration</em><br/>SlimServer can use MusicIP as your source for title and genre information. Additionally MusicIP allows you to generate mixes based on genre, artist and songs. For more information about MusicIP please visit <a href="http://www.musicip.com/mixer/" target="_blank">http://www.musicip.com</a>
+
+SETUP_WIZARD_AUDIODIR
+	EN	SlimServer Setup: Local Music Folder
+
+SETUP_WIZARD_AUDIODIR_DESC
+	EN	Please select the path to your local music collection.
+
+SETUP_WIZARD_PLAYLISTDIR
+	EN	SlimServer Setup: Playlist Folder
+
+SETUP_WIZARD_PLAYLISTDIR_DESC
+	EN	Please select the path to your playlist folder.
+
+SETUP_WIZARD_ITUNES
+	EN	SlimServer Setup: iTunes Integration
+
+SETUP_WIZARD_ITUNES_DESC
+	EN	Please select your iTunes XML file...
+
+SETUP_WIZARD_MUSICIP
+	EN	SlimServer Setup: MusicIP Integration
+
+SETUP_WIZARD_MUSICIP_DESC
+	EN	Please select your MusicIP settings...
+
+SETUP_WIZARD_SUMMARY
+	EN	SlimServer Setup: Summary
+
+SETUP_WIZARD_SUMMARY_DESC
+	EN	Here's a summary of your settings...
+
+SETUP_WIZARD_NEXT
+	DE	Weiter
+	EN	Next
+
+SETUP_WIZARD_PREVIOUS
+	DE	Zurück
+	EN	Previous
+
+SETUP_WIZARD_FINISH
+	DE	Abschliessen
+	EN	Finish
+
 #
 # Web interface
 #

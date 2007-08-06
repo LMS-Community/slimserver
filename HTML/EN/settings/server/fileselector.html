@@ -8,7 +8,25 @@
 		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/xtheme-gray.css" />
 		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
 		<script type="text/javascript" src="/html/ext/ext-all.js"></script>
+
 		<script type="text/javascript" src="/html/fileselector.js"></script>
+
+		<script type="text/javascript">		
+			function getSelected() {
+				var selected = tree.getSelectionModel().getSelectedNode();
+
+				if (selected != null && selected.id) {
+					alert("[% "SETUP_OK_USING" | string %]\n" + selected.id);
+				}
+				else {
+					alert("nothing selected");
+				}
+			}
+			
+			var audiodir = "[% audiodir %]";
+			
+			Ext.onReady(FileTree.init, FileTree, false);
+		</script>
 
 		<style type="text/css">
 		<!--
@@ -18,20 +36,9 @@
 		-->
 		</style>
 	</head>
+
 	<body>
 		<div id="fileselector" style="overflow:auto; height:300px; width:400px;"></div>
-
-		<script type="text/javascript">		
-			function getSelected() {
-				var selected = tree.getSelectionModel().getSelectedNode();
-				if (selected != null && selected.id) {
-					alert("[% "SETUP_OK_USING" | string %]\n" + selected.id);
-				}
-				else {
-					alert("nothing selected");
-				}
-			}
-		</script>
 		
 		<input type="button" name="show" value="Ok" onclick="getSelected();">
 	</body>

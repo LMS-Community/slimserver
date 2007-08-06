@@ -31,7 +31,15 @@ sub page {
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
-	$paramRef->{'folders'} = Slim::Utils::Filesystem::getChildren($paramRef->{'currDir'}, $paramRef->{'foldersonly'} ? sub { -d } : undef);
+	$paramRef->{'audiodir'} = '';
+
+	my $prev = '';
+	foreach (split /\//, preferences('server')->get('audiodir')) {
+		if ($_) {
+			$prev .= "/$_";
+			$paramRef->{'audiodir'} .= '|' . $prev;
+		}
+	}
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
 }

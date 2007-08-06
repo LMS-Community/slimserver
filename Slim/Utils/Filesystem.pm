@@ -66,6 +66,9 @@ sub getChildren {
 		}
 	}
 
+	# don't show dot files (TODO: make this optional?)
+	@subdirs = grep { $_ !~ m|/\.| } @subdirs;
+
 	if (ref $filter eq 'CODE') {
 		@subdirs = grep { &$filter } @subdirs;
 	}
