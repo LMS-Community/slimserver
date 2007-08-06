@@ -241,6 +241,7 @@ sub power {
 					'text'           => 2,
 				},
 			'screen2' => {},
+			'jiv' => undef,
 		}, undef, undef, 1);
 
 		# check if there is a sync group to restore
