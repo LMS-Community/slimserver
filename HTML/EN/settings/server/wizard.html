@@ -11,21 +11,9 @@
 		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
 		<script type="text/javascript" src="/html/ext/ext-all.js"></script>
 
-		<script type="text/javascript">		
-			function getSelected() {
-				var selected = tree.getSelectionModel().getSelectedNode();
-
-				if (selected != null && selected.id) {
-					alert("[% "SETUP_OK_USING" | string %]\n" + selected.id);
-				}
-				else {
-					alert("nothing selected");
-				}
-			}
-
+		<script type="text/javascript">
 			var firstpage = [% showLanguage ? 1 : 0 %];
 			var showproxy = [% showProxy %];
-			var audiodir_tree = "[% audiodir_tree %]";
 			var showitunes = [% showiTunes ? 1 : 0 %];
 
 			Ext.onReady(function(){
@@ -40,8 +28,7 @@
 				});
 
 				new FileSelector('itunespathselector', {
-					filter: 'foldersonly',
-					input: '.xml'
+					input: 'xml_path'
 				});
 			});
 		</script>

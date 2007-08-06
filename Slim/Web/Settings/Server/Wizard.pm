@@ -60,17 +60,6 @@ sub handler {
 		}
 	}
 
-	# build the tree for the currently set music path
-	# The tree control is expecting something like 
-	# |/|/home|/home/myself|/home/myself/music
-	my $prev = '';
-	foreach (split /\//, $prefs->get('audiodir')) {
-		if ($_) {
-			$prev .= "/$_";
-			$paramRef->{'audiodir_tree'} .= '|' . $prev;
-		}
-	}
-
 	$paramRef->{'showiTunes'} = (preferences('plugin.itunes')->get('xml_file') || Slim::Plugin::iTunes::Common->canUseiTunesLibrary() == undef);
 	$paramRef->{'showProxy'} = $showProxy;
 	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
