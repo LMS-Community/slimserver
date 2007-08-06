@@ -81,6 +81,7 @@ Wizard = function(){
 Ext.EventManager.onDocumentReady(Wizard.init, Wizard, true);
 
 function flipPages(newPage) {
+
 	for (x = 0; x < pages.length; x++) {
 		if (el = Ext.get(pages[x] + '_h')) {
 			el.setVisible(newPage == x, false);

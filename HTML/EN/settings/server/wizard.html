@@ -27,6 +27,23 @@
 			var showproxy = [% showProxy %];
 			var audiodir_tree = "[% audiodir_tree %]";
 			var showitunes = [% showiTunes ? 1 : 0 %];
+
+			Ext.onReady(function(){
+				new FileSelector('audiodirselector', {
+					filter: 'foldersonly',
+					input: 'audiodir'
+				});
+
+				new FileSelector('playlistdirselector', {
+					filter: 'foldersonly',
+					input: 'playlistdir'
+				});
+
+				new FileSelector('itunespathselector', {
+					filter: 'foldersonly',
+					input: '.xml'
+				});
+			});
 		</script>
 
 		<script type="text/javascript" src="/html/fileselector.js"></script>
@@ -72,6 +89,13 @@
 			
 			.page {
 				position: absolute;
+			}
+			
+			.folderselector {
+				overflow:scroll;
+				height:300px;
+				width:400px;
+				border: 1px black solid;
 			}
 		-->
 		</style>
@@ -153,20 +177,20 @@
 
 			<div id="audiodir_m" class="page">
 				<div>[% "SETUP_WIZARD_AUDIODIR_DESC" | string %]</div>
-				<div id="fileselector" style="overflow:auto; height:300px; width:400px;"></div>			
-				<div><input type="text" name="audiodir" value="[% prefs.audiodir %]" class="stdedit"></div>
-				<input type="button" name="show" value="Ok" onclick="getSelected();" class="stdedit">
+				<div id="audiodirselector" class="folderselector"></div>			
+				<div><input type="text" name="audiodir" id="audiodir" value="[% prefs.audiodir %]" class="stdedit" size="50"></div>
 			</div>
 
 			<div id="playlistdir_m" class="page">
 				<div>[% "SETUP_WIZARD_PLAYLISTDIR_DESC" | string %]</div>
-				<div id="fileselector" style="overflow:auto; height:300px; width:400px;"></div>			
-				<div><input type="text" name="playlistdir" value="[% prefs.playlistdir %]" class="stdedit"></div>
-				<input type="button" name="show" value="Ok" onclick="getSelected();" class="stdedit">
+				<div id="playlistdirselector" class="folderselector"></div>
+				<div><input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir %]" class="stdedit" size="50"></div>
 			</div>
 
 			<div id="itunes_m" class="page">
 				<div>[% "SETUP_WIZARD_ITUNES_DESC" | string %]</div>
+				<div id="itunespathselector" class="folderselector"></div>
+				<div><input type="text" name="xml_path" id="xml_path" value="[% prefs.xml_path %]" class="stdedit" size="50"></div>
 			</div>
 
 			<div id="musicip_m" class="page">

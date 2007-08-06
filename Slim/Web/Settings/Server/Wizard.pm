@@ -55,7 +55,7 @@ sub handler {
 
 			# Cleanup the checkbox
 			if ($pref =~ /itunes|musicmagic/) {
-				$paramRef->{$pref} = defined $paramRef->{$pref} ? 1 : 0;
+				$paramRef->{'prefs'}->{$pref} = defined $paramRef->{'prefs'}->{$pref} ? 1 : 0;
 			}
 		}
 	}

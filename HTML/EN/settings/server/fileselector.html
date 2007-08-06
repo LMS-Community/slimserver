@@ -13,8 +13,8 @@
 
 		<script type="text/javascript">		
 			function getSelected() {
-				var selected = tree.getSelectionModel().getSelectedNode();
-
+//				var selected = FileTree.tree.getSelectionModel().getSelectedNode();
+selected = Ext.get('audiodir');
 				if (selected != null && selected.id) {
 					alert("[% "SETUP_OK_USING" | string %]\n" + selected.id);
 				}
@@ -25,7 +25,6 @@
 			
 			var audiodir = "[% audiodir %]";
 			
-			Ext.onReady(FileTree.init, FileTree, false);
 		</script>
 
 		<style type="text/css">
@@ -39,7 +38,13 @@
 
 	<body>
 		<div id="fileselector" style="overflow:auto; height:300px; width:400px;"></div>
-		
+		<input type="text" name="audiodir" id="audiodir" value="[% audiodir %]" size="80">
 		<input type="button" name="show" value="Ok" onclick="getSelected();">
 	</body>
+	<script type="text/javascript">		
+		new FileSelector('fileselector', {
+			filter: 'foldersonly',
+			input: 'audiodir'
+		});
+	</script>
 </html>
