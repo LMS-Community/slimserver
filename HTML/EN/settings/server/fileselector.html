@@ -23,8 +23,6 @@ selected = Ext.get('audiodir');
 				}
 			}
 			
-			var audiodir = "[% audiodir %]";
-			
 		</script>
 
 		<style type="text/css">
@@ -37,14 +35,22 @@ selected = Ext.get('audiodir');
 	</head>
 
 	<body>
-		<div id="fileselector" style="overflow:auto; height:300px; width:400px;"></div>
+		<h1>A folder selector</h1>
+		<div id="folderselector" style="overflow:auto; height:200px; width:400px;"></div>
 		<input type="text" name="audiodir" id="audiodir" value="[% audiodir %]" size="80">
-		<input type="button" name="show" value="Ok" onclick="getSelected();">
+
+		<h1>A file selector</h1>
+		<div id="fileselector" style="overflow:auto; height:200px; width:400px;"></div>
+		<input type="text" name="xml_path" id="xml_path" value="[% xml_path %]" size="80">
 	</body>
 	<script type="text/javascript">		
-		new FileSelector('fileselector', {
+		new FileSelector('folderselector', {
 			filter: 'foldersonly',
 			input: 'audiodir'
+		});
+
+		new FileSelector('fileselector', {
+			input: 'xml_path'
 		});
 	</script>
 </html>
