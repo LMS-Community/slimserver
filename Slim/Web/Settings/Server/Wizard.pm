@@ -25,7 +25,17 @@ sub new {
 
 	# try to connect to squeezenetwork.com to test for the need of proxy settings
 	# just don't start the wizard before the request has been answered/failed
-	my $http = Slim::Networking::SimpleAsyncHTTP->new(\&checkSqnCB, \&checkSqnError);
+	my $http = Slim::Networking::SimpleAsyncHTTP->new(
+		sub {
+			my $http = shift;
+			# TODO: check for a proxy server's answer
+			$showProxy = 0;
+		},
+		sub {
+			my $http = shift;
+			logger('wizard')->error("Couldn't connect to squeezenetwork.com - do we need a proxy?\n" . $http->error);
+		}
+	);
 	$http->get('http://www.squeezenetwork.com/');
 
 	$class->SUPER::new($class);
@@ -46,7 +56,7 @@ sub handler {
 
 	foreach my $namespace (keys %prefs) {
 		foreach my $pref (@{$prefs{$namespace}}) {
-			if ($paramRef->{'saveSettings'}) {	
+			if ($paramRef->{'saveSettings'} && defined $paramRef->{$pref}) {	
 				my (undef, $ok) = preferences($namespace)->set($pref, $paramRef->{$pref});
 			}
 
@@ -64,21 +74,6 @@ sub handler {
 	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
-}
-
-sub checkSqnCB {
-	my $http = shift;
-
-	# TODO: check for a proxy server's answer
-#	if ($http->{code} =~ /^[24]\d\d/) {
-		$showProxy = 0;
-#	}
-}
-
-sub checkSqnError {
-	my $http = shift;
-
-	logger('wizard')->error("Couldn't connect to squeezenetwork.com - do we need a proxy?\n" . $http->error);
 }
 
 1;

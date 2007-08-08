@@ -1,3 +1,5 @@
+[% IF AJAX %][% validated.valid %]|[% warning %][% ELSE %]
+
 [% PROCESS settings/header.html %]
 
 	<!-- XXX: This will eventually have more stuff like a way to register for a new account, etc. -->
@@ -30,3 +32,4 @@
 
 [% PROCESS settings/footer.html %]
 
+[% END %]

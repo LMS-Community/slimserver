@@ -45,10 +45,21 @@ sub handler {
 				client   => $client,
 				cb       => sub {
 					my $body = $class->saveSettings( $client, $params );
+
+					if ($params->{'AJAX'}) {
+						$params->{'warning'} = Slim::Utils::Strings::string('SETUP_SN_VALID_LOGIN');
+						$params->{'validated'}->{'valid'} = 1;
+					}
 					$callback->( $client, $params, $body, @args );
 				},
 				ecb      => sub {
-					$params->{warning} .= Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN') . '<br/>';
+					if ($params->{'AJAX'}) {
+						$params->{'warning'} = Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN'); 
+						$params->{'validated'}->{'valid'} = 0;
+					}
+					else {
+						$params->{warning} .= Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN') . '<br/>';						
+					}
 					
 					delete $params->{sn_email};
 					delete $params->{sn_password};
@@ -59,6 +70,16 @@ sub handler {
 			);
 		
 			return;
+		}
+		else {
+			if ($params->{'AJAX'}) {
+				$params->{'warning'} = Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN'); 
+				$params->{'validated'}->{'valid'} = 0;
+			}
+			else {
+				$params->{warning} .= Slim::Utils::Strings::string('SETUP_SN_INVALID_LOGIN') . '<br/>';						
+			}
+			delete $params->{'saveSettings'};
 		}
 	}
 

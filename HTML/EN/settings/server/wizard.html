@@ -12,8 +12,7 @@
 		<script type="text/javascript" src="/html/ext/ext-all.js"></script>
 
 		<script type="text/javascript">
-			var showproxy = [% showProxy %];
-			var showitunes = [% showiTunes ? 1 : 0 %];
+			var showproxy = [% showProxy ? "true" : "false" %];
 		</script>
 
 		<script type="text/javascript" src="/html/fileselector.js"></script>
@@ -78,7 +77,6 @@
 			<div id="sqn_h" class="page">[% "SETUP_WIZARD_SQN" | string %]</div>
 			<div id="source_h" class="page">[% "SETUP_WIZARD_SOURCE" | string %]</div>
 			<div id="audiodir_h" class="page">[% "SETUP_WIZARD_AUDIODIR" | string %]</div>
-			<div id="playlistdir_h" class="page">[% "SETUP_WIZARD_PLAYLISTDIR" | string %]</div>
 			<div id="itunes_h" class="page">[% "SETUP_WIZARD_ITUNES" | string %]</div>
 			<div id="musicip_h" class="page">[% "SETUP_WIZARD_MUSICIP" | string %]</div>
 			<div id="summary_h" class="page">[% "SETUP_WIZARD_SUMMARY" | string %]</div>
@@ -124,7 +122,12 @@
 						<td>[% "SETUP_SN_PASSWORD" | string %][% "COLON" | string %]&nbsp;</td>
 						<td><input type="password" class="stdedit" name="sn_password" id="sn_password" value="[% prefs.sn_password %]" size="40"></td>
 					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td><input type="button" class="stdedit" name="sn_verify" id="sn_verify" value="[% "SETUP_WIZARD_SQN_VERIFY" | string %]"></td>
+					</tr>
 				</table></div>
+				<div id="sn_result"></div>
 			</div>
 
 			<div id="source_m" class="page">
@@ -135,11 +138,11 @@
 						<td>[% "SETUP_WIZARD_SOURCE_AUDIODIR" | string %]</td>
 					</tr>
 					<tr>
-						<td><input type="checkbox" name="itunes" id="itunes" [% IF prefs.itunes %]checked [% END %] value="1" class="stdedit"></td>
+						<td><input type="checkbox" name="useiTunes" id="useiTunes" [% IF prefs.itunes %]checked [% END %] value="1" class="stdedit"></td>
 						<td>[% "SETUP_WIZARD_SOURCE_ITUNES" | string %]</td>
 					</tr>
 					<tr>
-						<td><input type="checkbox" [% IF prefs.musicmagic %]checked [% END %] value="1" class="stdedit"></td>
+						<td><input type="checkbox" name="useMusicIP" id="useMusicIP" [% IF prefs.musicmagic %]checked [% END %] value="1" class="stdedit"></td>
 						<td>[% "SETUP_WIZARD_SOURCE_MUSICIP" | string %]</td>
 					</tr>
 				</table></div>
@@ -149,12 +152,6 @@
 				<div>[% "SETUP_WIZARD_AUDIODIR_DESC" | string %]</div>
 				<div id="audiodirselector"></div>
 				<div><input type="text" name="audiodir" id="audiodir" value="[% prefs.audiodir %]" class="stdedit" size="50"></div>
-			</div>
-
-			<div id="playlistdir_m" class="page">
-				<div>[% "SETUP_WIZARD_PLAYLISTDIR_DESC" | string %]</div>
-				<div id="playlistdirselector"></div>
-				<div><input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir %]" class="stdedit" size="50"></div>
 			</div>
 
 			<div id="itunes_m" class="page">

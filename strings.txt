@@ -6929,6 +6929,9 @@ SETUP_SN_INVALID_LOGIN
 	DE	Ungültige SqueezeNetwork Mail-Adresse oder Passwort
 	EN	Invalid SqueezeNetwork email address or password.
 
+SETUP_SN_VALID_LOGIN
+	EN	Connected successfully to SqueezeNetwork.
+
 SETUP_SN_SYNC
 	EN	SqueezeNetwork Integration
 
@@ -6965,6 +6968,9 @@ SETUP_WIZARD_SQN
 SETUP_WIZARD_SQN_DESC
 	EN	SqueezeNetwork allows you to get the most out of your new Logitech digital music player. Some of the advanced online media services such as Rhapsody or Pandora are only available through SqueezeNetwork.<br/><br/>If you haven't subscribed to SqueezeNetwork yet, please visit <a href="http://www.squeezenetwork.com" target="_blank">http://www.squeezenetwork.com</a>.<br/><br/>Please enter the email address and password used to login to your SqueezeNetwork account.
 
+SETUP_WIZARD_SQN_VERIFY
+	EN	Verify
+
 SETUP_WIZARD_SOURCE
 	EN	SlimServer Setup: Music Source
 
@@ -6986,12 +6992,6 @@ SETUP_WIZARD_AUDIODIR
 SETUP_WIZARD_AUDIODIR_DESC
 	EN	Please select the path to your local music collection.
 
-SETUP_WIZARD_PLAYLISTDIR
-	EN	SlimServer Setup: Playlist Folder
-
-SETUP_WIZARD_PLAYLISTDIR_DESC
-	EN	Please select the path to your playlist folder.
-
 SETUP_WIZARD_ITUNES
 	EN	SlimServer Setup: iTunes Integration
 
@@ -7008,7 +7008,7 @@ SETUP_WIZARD_SUMMARY
 	EN	SlimServer Setup: Summary
 
 SETUP_WIZARD_SUMMARY_DESC
-	EN	Here's a summary of your settings...
+	EN	You're finished setting up your SlimServer.<br>If you selected a local music source, SlimServer will now start indexing your collection. Have fun! blah, blah...
 
 SETUP_WIZARD_NEXT
 	DE	Weiter
