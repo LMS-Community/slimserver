@@ -102,7 +102,7 @@
 		Browse Music Folder functionality.
 	</li>
 	<li>
-		Added the &quot;<a href="#filesystem">filesystem</a>&quot; query, to browse
+		Added the &quot;<a href="#readdirectory">readdirectory</a>&quot; query, to browse
 		file systems from the server's point of view (local & network shares)
 	</li>
 	<li>
@@ -5909,7 +5909,7 @@ in the saved playlists folder.</p>
 		<strong><code><a href="#displaystatus">displaystatus</a></code></strong>
 	</li>
 	<li>
-		<strong><code><a href="#filesystem">filesystem</a></code></strong>
+		<strong><code><a href="#readdirectory">readdirectory</a></code></strong>
 	</li>
 </ul>
 
@@ -6670,10 +6670,10 @@ in the saved playlists folder.</p>
 <br>
 
 
-<p id="filesystem">
+<p id="readdirectory">
 	<strong>
 		<code>
-			filesystem
+			readdirectory
 			&lt;start&gt;
 			&lt;itemsPerResponse&gt;
 			&lt;taggedParameters&gt;
@@ -6681,7 +6681,7 @@ in the saved playlists folder.</p>
 	</strong>
 </p>
 <p>
-	The &quot;filesystem&quot; query allows to browse filesystems from the server's point of view.
+	The &quot;readdirectory&quot; query allows to browse filesystems from the server's point of view.
 	This can be used to eg. select music folders. Local filesystems are supported, as are UNC paths 
 	on Windows systems (eg. \\server\musicshare).
 	<br>
@@ -6713,9 +6713,13 @@ in the saved playlists folder.</p>
 		<td>
 			filter
 		</td>
-		<td>
-			'foldersonly', 'filesonly', or any filter expression to be used when listing the 
-			folder's content.
+		<td>Filter the output according to one of the following keywords (regulare expressions can be used):
+			<ul>
+				<li>filter:foldersonly - list folders only
+				<li>filter:filesonly - list files only
+				<li>filter:filename:xy - list files with "xy" in the filename only
+				<li>filter:filetype:xyz - list file type .xyz only
+				<li>filter:xyz - any expression filter path/filenames
 		</td>
 	</tr>
 </table>
@@ -6752,9 +6756,9 @@ in the saved playlists folder.</p>
 	Example:
 </p>
 <blockquote>
-		Request: &quot;filesystem 0 10 root://edelzwerg/mp3&quot;
+		Request: &quot;readdirectory 0 10 root://edelzwerg/mp3&quot;
 		<br>
-		Response: &quot;filesystem 0 10 root%3A%2F%2Fedelzwerg%2Fmp3 count%3A251 item%3A%5C%5Cedelzwerg%5Cmp3%5CAerosmith isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAir isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAlanis%20Morissette isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAldo%20Romano%2C%20Michel%20Benita%2C%20Glenn%20Ferris%2C%20Paolo%20Fresu isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAli%20Farka%20Toure isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAll%20Saints isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CManu%20Katche isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CSinead%20O'Connor isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CShakira isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAnastacia isdir%3A1&quot;
+		Response: &quot;readdirectory 0 10 root%3A%2F%2Fedelzwerg%2Fmp3 count%3A251 item%3A%5C%5Cedelzwerg%5Cmp3%5CAerosmith isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAir isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAlanis%20Morissette isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAldo%20Romano%2C%20Michel%20Benita%2C%20Glenn%20Ferris%2C%20Paolo%20Fresu isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAli%20Farka%20Toure isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAll%20Saints isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CManu%20Katche isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CSinead%20O'Connor isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CShakira isdir%3A1 item%3A%5C%5Cedelzwerg%5Cmp3%5CAnastacia isdir%3A1&quot;
 </blockquote> 
 
 

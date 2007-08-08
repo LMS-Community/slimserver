@@ -10,7 +10,6 @@ use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
-use Slim::Utils::Filesystem;
 
 my $showProxy = 1;
 my $prefs = preferences('server');

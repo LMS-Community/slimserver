@@ -9,7 +9,18 @@ use strict;
 use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Prefs;
-use Slim::Utils::Filesystem;
+use Slim::Utils::Log;
+use Slim::Utils::Misc qw(readDirectory);
+use File::Spec::Functions qw(:ALL);
+
+BEGIN {
+        if ($^O =~ /Win32/) {
+                require Win32::File;
+                require Win32::DriveInfo;
+        }
+}
+
+my $log = logger('os.files');
 
 my $pages = {
 	'autocomplete' => 'settings/server/fileselector_autocomplete.html',
@@ -47,7 +58,50 @@ sub handler {
 sub autoCompleteHandler {
 	my ($client, $paramRef) = @_;
 
-	$paramRef->{'folders'} = Slim::Utils::Filesystem::getChildren($paramRef->{'currDir'}, $paramRef->{'foldersonly'} ? sub { -d } : undef);
+	my @subdirs;
+	my $currDir = $paramRef->{'currDir'};
+
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
+		$currDir = undef if ($currDir =~ /^\\+$/);
+	}
+
+	# a correct folder	
+	if (-d $currDir) {
+		$log->debug('regular folder: ' . $currDir);
+		@subdirs = readDirectory($currDir, qr/./);
+	}
+
+	# something else...
+	elsif ($currDir) {
+		$log->debug('unknown folder: ' . $currDir);
+
+		# partial file/foldernames - filter the list of the parent folder
+		my ($parent, $file);
+		if ($currDir =~ /^(\\\\\w.*)\\.+/ && Slim::Utils::OSDetect::OS() eq 'win') {
+			$parent = $1;
+		}
+		else {
+			(my $vol, $parent, $file) = eval { splitpath($currDir) };
+		}
+
+		if ($parent && $parent ne '.' && -d $parent) {
+			@subdirs = grep /^$file/i, readDirectory($parent, qr/./);
+			$currDir = $parent;
+		}
+
+		# didn't find anything useful - display a list of reasonable choices (root, drive letters)
+		if (Slim::Utils::OSDetect::OS() eq 'win' && !@subdirs) {
+			@subdirs = map { "$_:" } Win32::DriveInfo::DrivesInUse();
+		}
+		elsif (!@subdirs && !$parent) {
+			@subdirs = readDirectory('/', qr/./);
+		}
+	}
+
+	@subdirs = map { catdir($currDir, $_) } @subdirs;
+	@subdirs = grep { -d } @subdirs if ($paramRef->{'foldersonly'});
+
+	$paramRef->{'folders'} = \@subdirs;
 
 	return Slim::Web::HTTP::filltemplatefile($pages->{'autocomplete'}, $paramRef);	
 }

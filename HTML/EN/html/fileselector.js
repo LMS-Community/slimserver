@@ -8,7 +8,7 @@ Ext.extend(FileTreeLoader, Ext.tree.TreeLoader, {
 
 	getParams: function(node){
 		var cliQuery = [
-			'filesystem',
+			'readdirectory',
 			0,
 			99999
 		];
@@ -83,7 +83,8 @@ FileSelector = function(container, config){
 
 	// set the root node
 	var root = new Ext.tree.AsyncTreeNode({
-		text: 'root'
+		text: 'root',
+		id: '/'
 	});
 	this.setRootNode(root);
 

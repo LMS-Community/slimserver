@@ -469,7 +469,7 @@ sub init {
     addDispatch(['displaynow',     '?',              '?'],                                             [1, 1, 0, \&Slim::Control::Queries::displaynowQuery]);
     addDispatch(['displaystatus'],                                                                     [1, 1, 1, \&Slim::Control::Queries::displaystatusQuery]);
     addDispatch(['duration',       '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
-    addDispatch(['filesystem',     '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::filesystemQuery]);
+    addDispatch(['readdirectory',  '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::readDirectoryQuery]);
     addDispatch(['genre',          '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['genres',         '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::genresQuery]);
     addDispatch(['info',           'total',          'albums',     '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);

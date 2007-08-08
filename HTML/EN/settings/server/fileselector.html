@@ -39,7 +39,7 @@ selected = Ext.get('audiodir');
 		<div id="folderselector" style="overflow:auto; height:200px; width:400px;"></div>
 		<input type="text" name="audiodir" id="audiodir" value="[% audiodir %]" size="80">
 
-		<h1>A file selector</h1>
+		<h1>A file selector (XML files only)</h1>
 		<div id="fileselector" style="overflow:auto; height:200px; width:400px;"></div>
 		<input type="text" name="xml_path" id="xml_path" value="[% xml_path %]" size="80">
 	</body>
@@ -50,6 +50,7 @@ selected = Ext.get('audiodir');
 		});
 
 		new FileSelector('fileselector', {
+			filter: 'filetype:xml',
 			input: 'xml_path'
 		});
 	</script>
