@@ -1,7 +1,8 @@
 Wizard = function(){
 	// we do not always show the language selection page
-	page = firstpage;
+	page = 0;
 	pages = new Array('welcome', 'proxy', 'sqn', 'source', 'audiodir', 'playlistdir', 'itunes', 'musicip', 'summary');
+	folderselectors = new Array();
 
 	return {
 		init : function(){
@@ -31,6 +32,21 @@ Wizard = function(){
 			layout.add('center', new Ext.ContentPanel('main'));
 			layout.endUpdate();
 			flipPages(page);
+
+			folderselectors['audiodir'] = new FileSelector('audiodirselector', {
+				filter: 'foldersonly',
+				input: 'audiodir'
+			});
+
+			folderselectors['playlistdir'] = new FileSelector('playlistdirselector', {
+				filter: 'foldersonly',
+				input: 'playlistdir'
+			});
+
+			folderselectors['itunes'] = new FileSelector('itunespathselector', {
+				input: 'xml_path',
+				filter: 'filetype:xml'
+			});
 
 			Ext.get('previous').on('click', this.onPrevious);
 			Ext.get('next').on('click', this.onNext);
@@ -64,7 +80,7 @@ Wizard = function(){
 					break;
 			}
 
-			page = Math.max(page, firstpage);
+			page = Math.max(page, 0);
 			flipPages(page);
 		},
 		
@@ -81,7 +97,6 @@ Wizard = function(){
 Ext.EventManager.onDocumentReady(Wizard.init, Wizard, true);
 
 function flipPages(newPage) {
-
 	for (x = 0; x < pages.length; x++) {
 		if (el = Ext.get(pages[x] + '_h')) {
 			el.setVisible(newPage == x, false);
@@ -90,10 +105,19 @@ function flipPages(newPage) {
 		if (el = Ext.get(pages[x] + '_m')) {
 			el.setVisible(newPage == x, false);
 		}
+		
+		// workaround for FF problem: frame would be displayed on wrong page,
+		// if class is applied in the HTML code
+		if (folderselector = folderselectors[pages[x]]) {
+			el = Ext.get(folderselector.id);
+			if (el && newPage == x) {
+				el.addClass("folderselector");
+			}
+			else if (el) {
+				el.removeClass("folderselector");
+			}
+		}
 	}
-	
-	// update buttons
-	if (newPage == pages.length-1) {
-	}
+
 }
 
