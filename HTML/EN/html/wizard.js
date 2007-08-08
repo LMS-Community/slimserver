@@ -34,7 +34,8 @@ Wizard = function(){
 
 			folderselectors['audiodir'] = new FileSelector('audiodirselector', {
 				filter: 'foldersonly',
-				input: 'audiodir'
+				input: 'audiodir',
+				gotoBtn: 'gotoAudiodir'
 			});
 
 			folderselectors['itunes'] = new FileSelector('itunespathselector', {

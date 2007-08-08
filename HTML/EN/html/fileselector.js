@@ -117,7 +117,7 @@ Ext.extend(FileSelector, Ext.tree.TreePanel, {
 	selectMyPath: function(){
 		// select the current setting, if available
 		input = Ext.get(this.input);
-		if (input != null && input.dom.value != null) {
+		if (input != null && input.dom.value != null && input.dom.value != '') {
 			separator = '/';
 			if (input.dom.value.match(/^[a-z]:\\/i)){
 				separator = '\\';
@@ -133,7 +133,22 @@ Ext.extend(FileSelector, Ext.tree.TreePanel, {
 				prev += (x==0 ? '' : separator) + path[x];
 				target += '|' + prev;
 			}
-			this.selectPath(target);
+
+			this.selectPath(target, null, function(success, selNode){
+				if (!success) {
+					// if that path is a Windows share, try adding it to the tree
+					result = input.dom.value.match(/^\\\\[\_\w\-]+\\[\-\_\w ]+[^\\]/);
+					if (result) {
+						root = this.getRootNode();
+						root.appendChild(new Ext.tree.AsyncTreeNode({
+							id: result[0],
+							text: result[0],
+							iconCls: 'x-tree-node-alwayscollapsed'
+						}));
+						this.selectMyPath();
+					}
+				}
+			}.createDelegate(this));
 		}
 	},
 

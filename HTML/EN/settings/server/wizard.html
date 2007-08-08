@@ -151,13 +151,19 @@
 			<div id="audiodir_m" class="page">
 				<div>[% "SETUP_WIZARD_AUDIODIR_DESC" | string %]</div>
 				<div id="audiodirselector"></div>
-				<div><input type="text" name="audiodir" id="audiodir" value="[% prefs.audiodir %]" class="stdedit" size="50"></div>
+				<div>
+					<input type="text" name="audiodir" id="audiodir" value="[% prefs.audiodir %]" class="stdedit" size="50">
+					<input type="button" class="stdedit" name="gotoAudiodir" id="gotoAudiodir" value="&gt;">
+				</div>
 			</div>
 
 			<div id="itunes_m" class="page">
 				<div>[% "SETUP_WIZARD_ITUNES_DESC" | string %]</div>
 				<div id="itunespathselector"></div>
-				<div><input type="text" name="xml_path" id="xml_path" value="[% prefs.xml_path %]" class="stdedit" size="50"></div>
+				<div>
+					<input type="text" name="xml_path" id="xml_path" value="[% prefs.xml_path %]" class="stdedit" size="50">
+					<input type="button" class="stdedit" name="gotoiTunesDir" id="gotoiTunesDir" value="&gt;">
+				</div>
 			</div>
 
 			<div id="musicip_m" class="page">
