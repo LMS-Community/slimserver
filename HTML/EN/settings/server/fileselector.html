@@ -11,20 +11,6 @@
 
 		<script type="text/javascript" src="/html/fileselector.js"></script>
 
-		<script type="text/javascript">		
-			function getSelected() {
-//				var selected = FileTree.tree.getSelectionModel().getSelectedNode();
-selected = Ext.get('audiodir');
-				if (selected != null && selected.id) {
-					alert("[% "SETUP_OK_USING" | string %]\n" + selected.id);
-				}
-				else {
-					alert("nothing selected");
-				}
-			}
-			
-		</script>
-
 		<style type="text/css">
 		<!--
 			.x-tree-node-leaf .x-tree-node-alwayscollapsed {
@@ -37,21 +23,25 @@ selected = Ext.get('audiodir');
 	<body>
 		<h1>A folder selector</h1>
 		<div id="folderselector" style="overflow:auto; height:200px; width:400px;"></div>
-		<input type="text" name="audiodir" id="audiodir" value="[% audiodir %]" size="80">
+		<input type="text" name="audiodir" id="audiodir" value="[% audiodir %]" size="45">
+		<input type="button" name"gotoAudiodir" id="gotoAudiodir" value="&gt;">
 
 		<h1>A file selector (XML files only)</h1>
 		<div id="fileselector" style="overflow:auto; height:200px; width:400px;"></div>
-		<input type="text" name="xml_path" id="xml_path" value="[% xml_path %]" size="80">
+		<input type="text" name="xml_path" id="xml_path" value="[% xml_path %]" size="45">
+		<input type="button" name="gotoXML_path" id="gotoXML_path" value="&gt;">
 	</body>
 	<script type="text/javascript">		
 		new FileSelector('folderselector', {
 			filter: 'foldersonly',
-			input: 'audiodir'
+			input: 'audiodir',
+			gotoBtn: 'gotoAudiodir'
 		});
 
 		new FileSelector('fileselector', {
 			filter: 'filetype:xml',
-			input: 'xml_path'
+			input: 'xml_path',
+			gotoBtn: 'gotoXML_path'
 		});
 	</script>
 </html>

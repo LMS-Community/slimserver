@@ -830,103 +830,6 @@ sub displaystatusQuery {
 }
 
 
-sub readDirectoryQuery {
-	my $request = shift;
-
-	$log->debug("readDirectoryQuery");
-
-	# check this is the correct query.
-	if ($request->isNotQuery([['readdirectory']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	# get our parameters
-	my $index        = $request->getParam('_index');
-	my $quantity     = $request->getParam('_quantity');
-	my $folder       = $request->getParam('folder');
-	my $filter       = $request->getParam('filter');
-
-	use File::Spec::Functions qw(catdir);
-	my @fsitems;
-	if ($folder eq '/' && Slim::Utils::OSDetect::OS() eq 'win') {
-		@fsitems = map { "$_:" } Win32::DriveInfo::DrivesInUse();
-	}
-	else {
-		$filter ||= '';
-
-		my $filterRE = qr/./;
-
-		# search within filename
-		if ($filter =~ /^filename:(.*)/) {
-		#	@fsitems = grep { $_ !~ /$1/i ? not -f catdir($folder, $_) : 1 } @fsitems;
-			$log->debug("filename: $1");
-			$filterRE = qr/$1/i;
-		}
-		elsif ($filter =~ /^filetype:(.*)/) {
-			$log->debug("filetype: $1");
-			$filterRE = qr/\.(?:$1)$/;
-		}
-
-		# get file system items in $folder
-		@fsitems = Slim::Utils::Misc::readDirectory($folder, $filterRE);
-
-		if ($filter =~ /^foldersonly$/) {
-			@fsitems = grep { -d catdir($folder, $_) } @fsitems;
-		}
-		elsif ($filter =~ /^filesonly$/) {
-			@fsitems = grep { -f catdir($folder, $_) } @fsitems;
-		}
-		# search anywhere within path/filename
-		elsif ($filter && $filter !~ /^(?:filename|filetype):/) {
-			@fsitems = grep { catdir($folder, $_) =~ /$filter/i } @fsitems;
-		}
-	}
-
-	my $count = @fsitems;
-	$count += 0;
-	$request->addResult('count', $count);
-
-	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
-
-	if ($valid) {
-		my $idx = $start;
-		my $cnt = 0;
-
-		if (scalar(@fsitems) > 0) {
-			# sort folders < files
-			@fsitems = sort { 
-				my $aa = catdir($folder, $a);
-				my $bb = catdir($folder, $b);
-		
-				if (-d $aa) {
-					if (-d $bb) { uc($a) cmp uc($b) }
-					else { -1 }
-				}
-				else {
-					if (-d $bb) { 1 }
-					else { uc($a) cmp uc($b) }
-				}
-			} @fsitems;
-
-			my $path;
-			for my $item (@fsitems[$start..$end]) {
-				$path = catdir($folder, $item);
-
-				$request->addResultLoop('fsitems_loop', $cnt, 'path', $path);
-				$request->addResultLoop('fsitems_loop', $cnt, 'name', $item );
-				$request->addResultLoop('fsitems_loop', $cnt, 'isfolder', -d $path || 0);
-
-				$idx++;
-				$cnt++;
-			}	
-		}
-	}
-
-	$request->setStatusDone();	
-}
-
-
 sub genresQuery {
 	my $request = shift;
 
@@ -2108,6 +2011,101 @@ sub rateQuery {
 	$request->addResult('_rate', Slim::Player::Source::rate($client));
 	
 	$request->setStatusDone();
+}
+
+
+sub readDirectoryQuery {
+	my $request = shift;
+
+	$log->debug("readDirectoryQuery");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['readdirectory']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $index        = $request->getParam('_index');
+	my $quantity     = $request->getParam('_quantity');
+	my $folder       = $request->getParam('folder');
+	my $filter       = $request->getParam('filter');
+
+	use File::Spec::Functions qw(catdir);
+	my @fsitems;
+	if ($folder eq '/' && Slim::Utils::OSDetect::OS() eq 'win') {
+		@fsitems = map { "$_:" } Win32::DriveInfo::DrivesInUse();
+		$folder = '';
+	}
+	else {
+		$filter ||= '';
+
+		my $filterRE = qr/./;
+
+		# search within filename
+		if ($filter =~ /^filename:(.*)/) {
+			$filterRE = qr/$1/i;
+		}
+		elsif ($filter =~ /^filetype:(.*)/) {
+			$filterRE = qr/\.(?:$1)$/;
+		}
+
+		# get file system items in $folder
+		@fsitems = Slim::Utils::Misc::readDirectory(catdir($folder), $filterRE);
+
+		if ($filter =~ /^foldersonly$/) {
+			@fsitems = grep { -d catdir($folder, $_) } @fsitems;
+		}
+		elsif ($filter =~ /^filesonly$/) {
+			@fsitems = grep { -f catdir($folder, $_) } @fsitems;
+		}
+		# search anywhere within path/filename
+		elsif ($filter && $filter !~ /^(?:filename|filetype):/) {
+			@fsitems = grep { catdir($folder, $_) =~ /$filter/i } @fsitems;
+		}
+	}
+
+	my $count = @fsitems;
+	$count += 0;
+	$request->addResult('count', $count);
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+
+	if ($valid) {
+		my $idx = $start;
+		my $cnt = 0;
+
+		if (scalar(@fsitems) > 0) {
+			# sort folders < files
+			@fsitems = sort { 
+				my $aa = catdir($folder, $a);
+				my $bb = catdir($folder, $b);
+		
+				if (-d $aa) {
+					if (-d $bb) { uc($a) cmp uc($b) }
+					else { -1 }
+				}
+				else {
+					if (-d $bb) { 1 }
+					else { uc($a) cmp uc($b) }
+				}
+			} @fsitems;
+
+			my $path;
+			for my $item (@fsitems[$start..$end]) {
+				$path = $folder ? catdir($folder, $item) : $item;
+
+				$request->addResultLoop('fsitems_loop', $cnt, 'path', $path);
+				$request->addResultLoop('fsitems_loop', $cnt, 'name', $item );
+				$request->addResultLoop('fsitems_loop', $cnt, 'isfolder', -d $path || 0);
+
+				$idx++;
+				$cnt++;
+			}	
+		}
+	}
+
+	$request->setStatusDone();	
 }
 
 

@@ -92,20 +92,12 @@ FileSelector = function(container, config){
 	
 	// render the tree
 	this.render();
-
-	// select the current setting, if available
-	input = Ext.get(this.input);
-	if (input != null && input.dom.value != null) {
-		path = input.dom.value.split('/');
-		prev = '';
-		target = '|' + root.id;
-		for (x=1; x<path.length; x++) {
-			prev += '/' + path[x];
-			target += '|' + prev;
-		}
-		this.selectPath(target);
+	this.selectMyPath();	
+	// activate button to add path to the selector box
+	gotoBtn = Ext.get(this.gotoBtn);
+	if (gotoBtn != null) {
+		gotoBtn.on('click', this.showPath, this)
 	}
-
 };
 
 
@@ -120,7 +112,66 @@ Ext.extend(FileSelector, Ext.tree.TreePanel, {
 		if (input != null && input.dom.value != null) {
 			input.dom.value = node.id;
 		}
-		else alert(this.input);
+	},
+	
+	selectMyPath: function(){
+		// select the current setting, if available
+		input = Ext.get(this.input);
+		if (input != null && input.dom.value != null) {
+			separator = '/';
+			if (input.dom.value.match(/^[a-z]:\\/i)){
+				separator = '\\';
+			}
+
+			path = input.dom.value.split(separator);
+			prev = '';
+			target = '|' + this.root.id;
+
+			// we don't need the root element on *X systems, but on Windows...
+			for (x=(path[0]=='/' ? 1 : 0); x<path.length; x++) {
+				if (path[x] == '') continue;
+				prev += (x==0 ? '' : separator) + path[x];
+				target += '|' + prev;
+			}
+			this.selectPath(target);
+		}
+	},
+
+	// select path (if available) or try to add it to the tree if it's a network share
+	showPath: function(){
+		input = Ext.get(this.input);
+		if (input != null && input.dom.value != null) {
+			Ext.Ajax.request({
+				url: '/jsonrpc.js',
+
+				params: Ext.util.JSON.encode({ 
+					id: 1,
+					method: "slim.request",
+					params: [
+						"",
+						[
+							'pref',
+							'validate',
+							'audiodir',
+							input.dom.value
+						]
+					]
+				}),
+
+				scope: this,
+
+				success: function(response, options){
+					result = Ext.util.JSON.decode(response.responseText);
+					if (result.result.valid == '1') {
+						this.selectMyPath();
+					}
+					else {
+						// need to give some reasonable feedback here...
+						alert("incorrect path or something...:\n" + input.dom.value);
+					}
+				}
+			});
+		}
 	}
 });
 
