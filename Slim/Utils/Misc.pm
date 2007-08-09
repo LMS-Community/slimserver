@@ -64,11 +64,11 @@ my $prefs = preferences('server');
 	if ($^O =~ /Win32/) {
 		require Win32;
 		require Win32::API;
-		require Win32::File;
 		require Win32::FileOp;
 		require Win32::Process;
 		require Win32::Service;
 		require Win32::Shortcut;
+		use Win32::File qw(GetAttributes HIDDEN SYSTEM);
 	}
 }
 
@@ -857,12 +857,21 @@ sub readDirectory {
 
 		my $fullpath = catdir($dirname, $item);
 
+		# Don't display hidden/system files on Windows
+		if (Slim::Utils::OSDetect::OS() eq "win") {
+			my $attributes;
+			GetAttributes($fullpath, $attributes);
+			next if ($attributes & HIDDEN) || ($attributes & SYSTEM);
+		}
+
+
 		# We only want files, directories and symlinks Bug #441
 		# Otherwise we'll try and read them, and bad things will happen.
 		# symlink must come first so an lstat() is done.
 		unless (-l $fullpath || -d _ || -f _) {
 			next;
 		}
+
 
 		# Don't bother with file types we don't understand.
 		if ($validRE && -f _) {
