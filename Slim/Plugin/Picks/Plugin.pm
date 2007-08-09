@@ -11,7 +11,8 @@ use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
 use Slim::Web::XMLBrowser;
 
-my $FEED = 'http://www.slimdevices.com/picks/radio.opml';
+# use spilt version of picks opml so each level can be added as a favorite
+my $FEED = 'http://www.slimdevices.com/picks/split/picks.opml';
 my $cli_next;
 
 sub initPlugin {
