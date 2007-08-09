@@ -64,11 +64,11 @@ my $prefs = preferences('server');
 	if ($^O =~ /Win32/) {
 		require Win32;
 		require Win32::API;
+		require Win32::File;
 		require Win32::FileOp;
 		require Win32::Process;
 		require Win32::Service;
 		require Win32::Shortcut;
-		use Win32::File qw(GetAttributes HIDDEN SYSTEM);
 	}
 }
 
@@ -860,8 +860,8 @@ sub readDirectory {
 		# Don't display hidden/system files on Windows
 		if (Slim::Utils::OSDetect::OS() eq "win") {
 			my $attributes;
-			GetAttributes($fullpath, $attributes);
-			next if ($attributes & HIDDEN) || ($attributes & SYSTEM);
+			Win32::File::GetAttributes($fullpath, $attributes);
+			next if ($attributes & Win32::File::HIDDEN()) || ($attributes & Win32::File::SYSTEM());
 		}
 
 
