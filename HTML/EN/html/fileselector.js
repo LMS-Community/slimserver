@@ -89,7 +89,19 @@ FileSelector = function(container, config){
 	this.setRootNode(root);
 
 	this.on('click', this.onclick);
-	
+
+	// clean up collapsed nodes so we can refresh a view
+	this.on('collapse', function(node){
+		while(node.firstChild){
+			node.removeChild(node.firstChild);
+		}
+		node.childrenRendered = false;
+		node.loaded = false;
+		// add dummy node to prevent file icon instead of folder
+		node.appendChild([]);
+	});
+
+
 	// render the tree
 	this.render();
 	this.selectMyPath();	
@@ -125,13 +137,13 @@ Ext.extend(FileSelector, Ext.tree.TreePanel, {
 
 			path = input.dom.value.split(separator);
 			prev = '';
-			target = '|' + this.root.id;
+			target = this.pathSeparator + this.root.id;
 
 			// we don't need the root element on *X systems, but on Windows...
 			for (x=(path[0]=='/' ? 1 : 0); x<path.length; x++) {
 				if (path[x] == '') continue;
 				prev += (x==0 ? '' : separator) + path[x];
-				target += '|' + prev;
+				target += this.pathSeparator + prev;
 			}
 
 			this.selectPath(target, null, function(success, selNode){

@@ -1,7 +1,7 @@
 Wizard = function(){
 	// we do not always show the language selection page
 	page = 0;
-	pages = new Array('welcome', 'proxy', 'sqn', 'source', 'audiodir', 'itunes', 'musicip', 'summary');
+	pages = new Array('welcome', 'proxy', 'sqn', 'source', 'audiodir', 'playlistdir', 'itunes', 'musicip', 'summary');
 	folderselectors = new Array();
 	sqnValidated = false;
 
@@ -38,8 +38,14 @@ Wizard = function(){
 				gotoBtn: 'gotoAudiodir'
 			});
 
+			folderselectors['playlistdir'] = new FileSelector('playlistdirselector', {
+				filter: 'foldersonly',
+				input: 'playlistdir',
+				gotoBtn: 'gotoPlaylistdir'
+			});
+
 			folderselectors['itunes'] = new FileSelector('itunespathselector', {
-				input: 'xml_path',
+				input: 'xml_file',
 				filter: 'filetype:xml'
 			});
 
@@ -64,8 +70,10 @@ Wizard = function(){
 		},
 		
 		whichPage : function(oldValue, offset){
-			if (pages[oldValue] == 'sqn')
+			// launch verification in the background
+			if (pages[oldValue] == 'sqn') {
 				this.verifySqnAccount();
+			}
 
 			newPage = oldValue + offset;
 			if (offset < 0) newPage = Math.max(newPage, 0);
@@ -84,16 +92,23 @@ Wizard = function(){
 					}
 					break;
 
-				case 'itunes' :
-					if (el = Ext.get('useiTunes')) {
+				case 'playlistdir' :
+					if (el = Ext.get('useAudiodir')) {
 						if (!el.dom.checked)
 							newPage = this.whichPage(newPage, offset);
 					}
 					break;
 
+				case 'itunes' :
+					if (el = Ext.get('itunes')) {
+						if (! (el.dom.checked && showitunes))
+							newPage = this.whichPage(newPage, offset);
+					}
+					break;
+
 				case 'musicip' :
-					if (el = Ext.get('useMusicIP')) {
-						if (!el.dom.checked)
+					if (el = Ext.get('musicmagic')) {
+						if (! (el.dom.checked && showmusicip))
 							newPage = this.whichPage(newPage, offset);
 					}
 					break;

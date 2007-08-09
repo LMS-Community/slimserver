@@ -14,9 +14,14 @@ use Slim::Utils::Prefs;
 my $showProxy = 1;
 my $prefs = preferences('server');
 
+my $log = Slim::Utils::Log->addLogCategory({
+	'category'     => 'wizard',
+	'defaultLevel' => 'DEBUG',
+});
+
 my %prefs = (
-	'server' => ['language', 'weproxy', 'sn_email', 'sn_password', 'audiodir', 'playlistdir'],
-	'plugin.itunes' => ['itunes', 'xml_path'],
+	'server' => ['weproxy', 'sn_email', 'sn_password', 'audiodir', 'playlistdir'],
+	'plugin.itunes' => ['itunes', 'xml_file'],
 	'plugin.musicmagic' => ['musicmagic', 'port']
 );
 
@@ -33,7 +38,7 @@ sub new {
 		},
 		sub {
 			my $http = shift;
-			logger('wizard')->error("Couldn't connect to squeezenetwork.com - do we need a proxy?\n" . $http->error);
+			$log->error("Couldn't connect to squeezenetwork.com - do we need a proxy?\n" . $http->error);
 		}
 	);
 	$http->get('http://www.squeezenetwork.com/');
@@ -48,29 +53,46 @@ sub page {
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
-	# don't display the language selection when run for the first time on Windows,
-	# as this should have been set by the Windows installer
-	if (Slim::Utils::OSDetect::OS() eq 'win' && not $prefs->get('wizarddone')) {
-		$paramRef->{'showLanguage'} = 1;	
+	# handle language separately, as it is in its own form
+	if ($paramRef->{'saveLanguage'}) {
+		preferences('server')->set('language', $paramRef->{'language'});		
 	}
+	$paramRef->{'prefs'}->{'language'} = preferences('server')->get('language');
 
 	foreach my $namespace (keys %prefs) {
 		foreach my $pref (@{$prefs{$namespace}}) {
-			if ($paramRef->{'saveSettings'} && defined $paramRef->{$pref}) {	
-				my (undef, $ok) = preferences($namespace)->set($pref, $paramRef->{$pref});
+			if ($paramRef->{'saveSettings'}) {
+				
+				# reset audiodir if it had been disabled
+				if ($pref eq 'audiodir' && !$paramRef->{'useAudiodir'})	{
+					$paramRef->{'audiodir'} = '';
+				}
+
+				if ($pref eq 'itunes' && !$paramRef->{'itunes'})	{
+					$paramRef->{'itunes'} = '0';
+				}
+
+				if ($pref eq 'musicmagic' && !$paramRef->{'musicmagic'})	{
+					$paramRef->{'musicmagic'} = '0';
+				}
+
+				$log->debug("$namespace.$pref: " . $paramRef->{$pref});
+
+				preferences($namespace)->set($pref, $paramRef->{$pref});
 			}
 
 			$paramRef->{'prefs'}->{$pref} = preferences($namespace)->get($pref);
 
 			# Cleanup the checkbox
 			if ($pref =~ /itunes|musicmagic/) {
-				$paramRef->{'prefs'}->{$pref} = defined $paramRef->{'prefs'}->{$pref} ? 1 : 0;
+				$paramRef->{'prefs'}->{$pref} = defined $paramRef->{'prefs'}->{$pref} ? $paramRef->{'prefs'}->{$pref} : 0;
 			}
 		}
 	}
 
-	$paramRef->{'showiTunes'} = (preferences('plugin.itunes')->get('xml_file') || Slim::Plugin::iTunes::Common->canUseiTunesLibrary() == undef);
 	$paramRef->{'showProxy'} = $showProxy;
+	$paramRef->{'showiTunes'} = !Slim::Plugin::iTunes::Common->canUseiTunesLibrary();
+	$paramRef->{'showMusicIP'} = !Slim::Plugin::MusicMagic::Plugin::canUseMusicMagic();
 	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);

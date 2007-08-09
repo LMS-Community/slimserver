@@ -6992,17 +6992,29 @@ SETUP_WIZARD_AUDIODIR
 SETUP_WIZARD_AUDIODIR_DESC
 	EN	Please select the path to your local music collection.
 
+SETUP_WIZARD_PLAYLISTDIR
+	EN	SlimServer Setup: Playlist Folder
+
+SETUP_WIZARD_PLAYLISTDIR_DESC
+	EN	Please select the path to your playlist folder.
+
 SETUP_WIZARD_ITUNES
 	EN	SlimServer Setup: iTunes Integration
 
 SETUP_WIZARD_ITUNES_DESC
-	EN	Please select your iTunes XML file...
+	EN	SlimServer wasn't able to find your iTunes library automatically. Please select your iTunes XML file...
 
 SETUP_WIZARD_MUSICIP
 	EN	SlimServer Setup: MusicIP Integration
 
 SETUP_WIZARD_MUSICIP_DESC
-	EN	Please select your MusicIP settings...
+	EN	SlimServer wasn't able to connect to your MusicIP Mixer. If you're using a non-standard port (default: 10002) for your MusicIP Mixer, please enter the port number in this field.
+
+SETUP_WIZARD_MUSICIP_DESC2
+	EN	MusicIP Mixer must be started before SlimServer. If you have trouble connecting to MusicIP you might need to restart SlimServer after having configured MusicIP Mixer.
+
+SETUP_WIZARD_MUSICIP_DESC3
+	EN	For more information about the MusicIP Mixer configuration and SlimServer please visit <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">musicip.com</a>.
 
 SETUP_WIZARD_SUMMARY
 	EN	SlimServer Setup: Summary
