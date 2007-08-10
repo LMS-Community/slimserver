@@ -100,6 +100,37 @@
 				background: url(/html/wizard/inner_bottom_right.gif) no-repeat bottom right; 
 			}
 
+			.titlebox {
+				background: url(/html/wizard/title_background.gif) repeat;
+				margin-left: 5px;
+				margin-right: 5px; 
+			}
+
+			.titlebox_content {
+				background: url(/html/wizard/title_background.gif) repeat;
+				margin-left: 10px;
+				height: 15px;
+			}
+			.titlebox_top div { 
+				height: 10px;
+				background: url(/html/wizard/title_top_left.gif) no-repeat top left;
+			}
+
+			.titlebox_top {
+				height: 10px;
+				background: url(/html/wizard/title_top_right.gif) no-repeat top right; 
+			}
+
+			.titlebox_bottom div { 
+				height: 10px;
+				background: url(/html/wizard/title_bottom_left.gif) no-repeat bottom left; 
+			}
+
+			.titlebox_bottom { 
+				height: 10px;
+				background: url(/html/wizard/title_bottom_right.gif) no-repeat bottom right; 
+			}
+
 			#mainbody {
 				position: relative;
 				width: 100%;
@@ -108,6 +139,10 @@
 
 			#main {
 				overflow: hidden;
+			}
+			
+			#formpanel {
+				margin: 7px;
 			}
 			
 			.folderselector {
@@ -120,6 +155,7 @@
 			
 			.page {
 				position: absolute;
+				width: 95%;
 			}
 
 			// overwrite some extjs.com defaults
@@ -142,20 +178,8 @@
 		<div id="mainbody">
 
 			<div id="header">
-				<div id="header_logo">
-					<img src="/html/wizard/header_left.png">
-				</div>
-				<div id="header_content">
-					<div id="welcome_h" class="page">[% "SETUP_WIZARD_WELCOME" | string %]</div>
-					<div id="proxy_h" class="page">[% "SETUP_WIZARD_PROXY" | string %]</div>
-					<div id="sqn_h" class="page">[% "SETUP_WIZARD_SQN" | string %]</div>
-					<div id="source_h" class="page">[% "SETUP_WIZARD_SOURCE" | string %]</div>
-					<div id="audiodir_h" class="page">[% "SETUP_WIZARD_AUDIODIR" | string %]</div>
-					<div id="playlistdir_h" class="page">[% "SETUP_WIZARD_PLAYLISTDIR" | string %]</div>
-					<div id="itunes_h" class="page">[% "SETUP_WIZARD_ITUNES" | string %]</div>
-					<div id="musicip_h" class="page">[% "SETUP_WIZARD_MUSICIP" | string %]</div>
-					<div id="summary_h" class="page">[% "SETUP_WIZARD_SUMMARY" | string %]</div>
-				</div>
+				<div id="header_logo"><img src="/html/wizard/header_left.png"></div>
+				<div id="header_content">&nbsp;</div>
 			</div>
 	
 			<div id="main">
@@ -163,107 +187,125 @@
 					<div class="inner_top"><div></div></div>
 					<div class="inner_content" id="maincontent">
 
-						<div id="welcome_m" class="page">
-							<form name="languageForm" id="languageForm" method="post" action="[% webroot %][% path %]">
-								<div>[% "SETUP_WIZARD_WELCOME_DESC" | string %]</div>
-								<div>
-									[% "CHOOSE_A_LANGUAGE" | string %]
-									<select class="stdedit" name="language" id="language">
-							
-									[% FOREACH option = languageoptions %]
-										<option [% IF prefs.language == option.key %]selected="selected" [% END %]value="[% option.key %]">[% option.value %]</option>
-									[%- END -%]
-									
-									</select>
+						<div class="titlebox">
+							<div class="titlebox_top"><div></div></div>
+							<div class="titlebox_content">
+								<div id="welcome_h" class="page">[% "SETUP_WIZARD_WELCOME" | string %]</div>
+								<div id="proxy_h" class="page">[% "SETUP_WIZARD_PROXY" | string %]</div>
+								<div id="sqn_h" class="page">[% "SETUP_WIZARD_SQN" | string %]</div>
+								<div id="source_h" class="page">[% "SETUP_WIZARD_SOURCE" | string %]</div>
+								<div id="audiodir_h" class="page">[% "SETUP_WIZARD_AUDIODIR" | string %]</div>
+								<div id="playlistdir_h" class="page">[% "SETUP_WIZARD_PLAYLISTDIR" | string %]</div>
+								<div id="itunes_h" class="page">[% "SETUP_WIZARD_ITUNES" | string %]</div>
+								<div id="musicip_h" class="page">[% "SETUP_WIZARD_MUSICIP" | string %]</div>
+								<div id="summary_h" class="page">[% "SETUP_WIZARD_SUMMARY" | string %]</div>
+							</div>
+							<div class="titlebox_bottom"><div></div></div>
+						</div>
+					
+						<div id="formpanel">
+							<div id="welcome_m" class="page">
+								<form name="languageForm" id="languageForm" method="post" action="[% webroot %][% path %]">
+									<div>[% "SETUP_WIZARD_WELCOME_DESC" | string %]</div>
+									<div>
+										[% "CHOOSE_A_LANGUAGE" | string %]
+										<select class="stdedit" name="language" id="language">
+								
+										[% FOREACH option = languageoptions %]
+											<option [% IF prefs.language == option.key %]selected="selected" [% END %]value="[% option.key %]">[% option.value %]</option>
+										[%- END -%]
+										
+										</select>
+									</div>
+									<input name="saveLanguage" type="hidden" value="1">
+								</form>
+							</div>
+	
+							<form name="wizardForm" id="wizardForm" method="post" action="[% webroot %][% path %]">
+								<div id="proxy_m" class="page">
+									<div>[% "SETUP_WIZARD_PROXY_DESC" | string %]</div>
+									<div>[% "SETUP_WEBPROXY_CHOOSE" | string %][% "COLON" | string %] <input type="text" name="webproxy" value="[% prefs.webproxy %]"></div>
 								</div>
-								<input name="saveLanguage" type="hidden" value="1">
+					
+								<div id="sqn_m" class="page">
+									<div>[% "SETUP_WIZARD_SQN_DESC" | string %]</div>
+					
+									<div><table>
+										<tr>
+											<td>[% "SETUP_SN_EMAIL" | string %][% "COLON" | string %]</td>
+											<td><input type="text" class="stdedit" name="sn_email" id="sn_email" value="[% prefs.sn_email %]" size="40"></td>
+										</tr>
+										<tr>
+											<td>[% "SETUP_SN_PASSWORD" | string %][% "COLON" | string %]&nbsp;</td>
+											<td><input type="password" class="stdedit" name="sn_password" id="sn_password" value="[% prefs.sn_password %]" size="40"></td>
+										</tr>
+										<tr>
+											<td>&nbsp;</td>
+											<td><input type="button" class="stdedit" name="sn_verify" id="sn_verify" value="[% "SETUP_WIZARD_SQN_VERIFY" | string %]"></td>
+										</tr>
+									</table></div>
+									<div id="sn_result"></div>
+								</div>
+					
+								<div id="source_m" class="page">
+									<div>[% "SETUP_WIZARD_SOURCE_DESC" | string %]</div>
+									<div><table>
+										<tr>
+											<td><input type="checkbox" name="useAudiodir" id="useAudiodir" [% IF prefs.audiodir %]checked="checked" [% END %] class="stdedit">&nbsp;</td>
+											<td>[% "SETUP_WIZARD_SOURCE_AUDIODIR" | string %]</td>
+										</tr>
+										<tr>
+											<td><input type="checkbox" name="itunes" id="itunes" [% IF prefs.itunes %]checked="checked" [% END %] value="1" class="stdedit"></td>
+											<td>[% "SETUP_WIZARD_SOURCE_ITUNES" | string %]</td>
+										</tr>
+										<tr>
+											<td><input type="checkbox" name="musicmagic" id="musicmagic" [% IF prefs.musicmagic %]checked="checked" [% END %] value="1" class="stdedit"></td>
+											<td>[% "SETUP_WIZARD_SOURCE_MUSICIP" | string %]</td>
+										</tr>
+									</table></div>
+								</div>
+					
+								<div id="audiodir_m" class="page">
+									<div>[% "SETUP_WIZARD_AUDIODIR_DESC" | string %]</div>
+									<div id="audiodirselector"></div>
+									<div>
+										<input type="text" name="audiodir" id="audiodir" value="[% prefs.audiodir %]" class="stdedit" size="50">
+										<input type="button" class="stdedit" name="gotoAudiodir" id="gotoAudiodir" value="&gt;">
+									</div>
+								</div>
+					
+								<div id="playlistdir_m" class="page">
+									<div>[% "SETUP_WIZARD_PLAYLISTDIR_DESC" | string %]</div>
+									<div id="playlistdirselector"></div>
+									<div>
+										<input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir %]" class="stdedit" size="50">
+										<input type="button" class="stdedit" name="gotoPlaylistdir" id="gotoPlaylistdir" value="&gt;">
+									</div>
+								</div>
+					
+								<div id="itunes_m" class="page">
+									<div>[% "SETUP_WIZARD_ITUNES_DESC" | string %]</div>
+									<div id="itunespathselector"></div>
+									<div>
+										<input type="text" name="xml_file" id="xml_file" value="[% prefs.xml_file %]" class="stdedit" size="50">
+										<input type="button" class="stdedit" name="gotoiTunesDir" id="gotoiTunesDir" value="&gt;">
+									</div>
+								</div>
+					
+								<div id="musicip_m" class="page">
+									<div>[% "SETUP_WIZARD_MUSICIP_DESC" | string %]</div>
+									<div><input type="text" name="port" id="port" value="[% prefs.port %]" class="stdedit" size="20"></div>
+									<div>[% "SETUP_WIZARD_MUSICIP_DESC2" | string %]</div>
+									<div>[% "SETUP_WIZARD_MUSICIP_DESC3" | string %]</div>
+								</div>
+					
+								<div id="summary_m" class="page">
+									<div>[% "SETUP_WIZARD_SUMMARY_DESC" | string %]</div>
+								</div>
+					
+								<input name="saveSettings" type="hidden" value="1">
 							</form>
 						</div>
-			
-						<form name="wizardForm" id="wizardForm" method="post" action="[% webroot %][% path %]">
-							<div id="proxy_m" class="page">
-								<div>[% "SETUP_WIZARD_PROXY_DESC" | string %]</div>
-								<div>[% "SETUP_WEBPROXY_CHOOSE" | string %][% "COLON" | string %] <input type="text" name="webproxy" value="[% prefs.webproxy %]"></div>
-							</div>
-				
-							<div id="sqn_m" class="page">
-								<div>[% "SETUP_WIZARD_SQN_DESC" | string %]</div>
-				
-								<div><table>
-									<tr>
-										<td>[% "SETUP_SN_EMAIL" | string %][% "COLON" | string %]</td>
-										<td><input type="text" class="stdedit" name="sn_email" id="sn_email" value="[% prefs.sn_email %]" size="40"></td>
-									</tr>
-									<tr>
-										<td>[% "SETUP_SN_PASSWORD" | string %][% "COLON" | string %]&nbsp;</td>
-										<td><input type="password" class="stdedit" name="sn_password" id="sn_password" value="[% prefs.sn_password %]" size="40"></td>
-									</tr>
-									<tr>
-										<td>&nbsp;</td>
-										<td><input type="button" class="stdedit" name="sn_verify" id="sn_verify" value="[% "SETUP_WIZARD_SQN_VERIFY" | string %]"></td>
-									</tr>
-								</table></div>
-								<div id="sn_result"></div>
-							</div>
-				
-							<div id="source_m" class="page">
-								<div>[% "SETUP_WIZARD_SOURCE_DESC" | string %]</div>
-								<div><table>
-									<tr>
-										<td><input type="checkbox" name="useAudiodir" id="useAudiodir" [% IF prefs.audiodir %]checked="checked" [% END %] class="stdedit">&nbsp;</td>
-										<td>[% "SETUP_WIZARD_SOURCE_AUDIODIR" | string %]</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" name="itunes" id="itunes" [% IF prefs.itunes %]checked="checked" [% END %] value="1" class="stdedit"></td>
-										<td>[% "SETUP_WIZARD_SOURCE_ITUNES" | string %]</td>
-									</tr>
-									<tr>
-										<td><input type="checkbox" name="musicmagic" id="musicmagic" [% IF prefs.musicmagic %]checked="checked" [% END %] value="1" class="stdedit"></td>
-										<td>[% "SETUP_WIZARD_SOURCE_MUSICIP" | string %]</td>
-									</tr>
-								</table></div>
-							</div>
-				
-							<div id="audiodir_m" class="page">
-								<div>[% "SETUP_WIZARD_AUDIODIR_DESC" | string %]</div>
-								<div id="audiodirselector"></div>
-								<div>
-									<input type="text" name="audiodir" id="audiodir" value="[% prefs.audiodir %]" class="stdedit" size="50">
-									<input type="button" class="stdedit" name="gotoAudiodir" id="gotoAudiodir" value="&gt;">
-								</div>
-							</div>
-				
-							<div id="playlistdir_m" class="page">
-								<div>[% "SETUP_WIZARD_PLAYLISTDIR_DESC" | string %]</div>
-								<div id="playlistdirselector"></div>
-								<div>
-									<input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir %]" class="stdedit" size="50">
-									<input type="button" class="stdedit" name="gotoPlaylistdir" id="gotoPlaylistdir" value="&gt;">
-								</div>
-							</div>
-				
-							<div id="itunes_m" class="page">
-								<div>[% "SETUP_WIZARD_ITUNES_DESC" | string %]</div>
-								<div id="itunespathselector"></div>
-								<div>
-									<input type="text" name="xml_file" id="xml_file" value="[% prefs.xml_file %]" class="stdedit" size="50">
-									<input type="button" class="stdedit" name="gotoiTunesDir" id="gotoiTunesDir" value="&gt;">
-								</div>
-							</div>
-				
-							<div id="musicip_m" class="page">
-								<div>[% "SETUP_WIZARD_MUSICIP_DESC" | string %]</div>
-								<div><input type="text" name="port" id="port" value="[% prefs.port %]" class="stdedit" size="20"></div>
-								<div>[% "SETUP_WIZARD_MUSICIP_DESC2" | string %]</div>
-								<div>[% "SETUP_WIZARD_MUSICIP_DESC3" | string %]</div>
-							</div>
-				
-							<div id="summary_m" class="page">
-								<div>[% "SETUP_WIZARD_SUMMARY_DESC" | string %]</div>
-							</div>
-				
-							<input name="saveSettings" type="hidden" value="1">
-						</form>
 					</div>
 					<div class="inner_bottom"><div></div></div>
 				</div>

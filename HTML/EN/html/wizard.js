@@ -169,7 +169,7 @@ Wizard = function(){
 			Ext.get('mainbody').setHeight(dimensions.height-35);
 			Ext.get('maincontent').setHeight(dimensions.height-195);
 			
-			myHeight = dimensions.height - 230;
+			myHeight = dimensions.height - 270;
 			for (var i in folderselectors) {
 				if (s = folderselectors[i].id)
 					Ext.get(s).setHeight(myHeight);
