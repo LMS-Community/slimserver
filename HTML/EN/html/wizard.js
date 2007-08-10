@@ -22,9 +22,9 @@ Wizard = function(){
 			});
 			
 			layout.beginUpdate();
-			layout.add('north', new Ext.ContentPanel('header', {fitToFrame:true}));
-			layout.add('south', new Ext.ContentPanel('footer', {fitToFrame:true}));
-			layout.add('center', new Ext.ContentPanel('main'));
+			layout.add('north', new Ext.ContentPanel('header', {fitToFrame:true, fitContainer:true}));
+			layout.add('south', new Ext.ContentPanel('footer', {fitToFrame:true, fitContainer:true}));
+			layout.add('center', new Ext.ContentPanel('main', {fitToFrame:true, fitContainer:true}));
 
 			folderselectors['audiodir'] = new FileSelector('audiodirselector', {
 				filter: 'foldersonly',
@@ -62,8 +62,8 @@ Wizard = function(){
 			Ext.get('language').on('change', this.onLanguageChange, this);
 			Ext.get('sn_verify').on('click', this.verifySqnAccount, this);
 
-			Ext.EventManager.onWindowResize(this.onResize, this);
-			this.onResize();
+			Ext.EventManager.onWindowResize(this.onResize, layout);
+			Ext.EventManager.onDocumentReady(this.onResize, layout, true);
 
 			this.flipPages(page);
 			layout.endUpdate();
@@ -163,14 +163,19 @@ Wizard = function(){
 			document.forms.languageForm.submit();
 		},
 		
+		// resize panels, folder selectors etc.
 		onResize : function(){
-			el = Ext.get('mainbody');
 			dimensions = Ext.fly(document.body).getViewSize();
-			el.setHeight(dimensions.height-35);
-			el.repaint();
-			el = Ext.get('maincontent');
-			el.setHeight(dimensions.height-190);
-			el.repaint();
+			Ext.get('mainbody').setHeight(dimensions.height-35);
+			Ext.get('maincontent').setHeight(dimensions.height-195);
+			
+			myHeight = dimensions.height - 230;
+			for (var i in folderselectors) {
+				if (s = folderselectors[i].id)
+					Ext.get(s).setHeight(myHeight);
+			}
+
+			this.layout();			
 		},
 
 		verifySqnAccount : function(){
