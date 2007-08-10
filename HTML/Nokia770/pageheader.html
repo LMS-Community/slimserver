@@ -17,7 +17,7 @@
 	[% END %]
       </head>
 
-<body [% IF class %]class = '[% class %]'[% END %] marginwidth=0 marginheight=0>
+<body [% IF class %]class = '[% class %]'[% END %] marginwidth=0 marginheight=0 [% bodyscript %]>
 
 <div id = 'OSD' style='display:none'>Added to playlist</div>
 <div id = 'page[% UNLESS thispage == 'artwork' || thispage == 'home' || thispage == 'status' || thispage == 'search' %]_with_bar[% END %]'>

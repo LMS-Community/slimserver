@@ -3,8 +3,11 @@
 <html>
 <head>
 [% PROCESS standardheader.html | replace('">', '" />') | indent(2) %]
+[% IF pageHeaderScripts %]
+	[% pageHeaderScripts %]
+[% END %]
 </head>
-<body>
+<body [% bodyscript %]>
   [% IF pagetitle %]<h3>[% pagetitle %]</h3>[% END %]
 [%- SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list %]
   [%- PROCESS crumblist IF pwd_list %]
