@@ -62,7 +62,8 @@ Wizard = function(){
 			Ext.get('language').on('change', this.onLanguageChange, this);
 			Ext.get('sn_verify').on('click', this.verifySqnAccount, this);
 
-//			Ext.EventManager.onWindowResize(this.onResize, this);
+			Ext.EventManager.onWindowResize(this.onResize, this);
+			this.onResize();
 
 			this.flipPages(page);
 			layout.endUpdate();
@@ -162,15 +163,16 @@ Wizard = function(){
 			document.forms.languageForm.submit();
 		},
 		
-/*		onResize : function(width, height){
+		onResize : function(){
 			el = Ext.get('mainbody');
-			x = Ext.lib.Dom.getViewHeight();
-			el.setHeight(x-40);
-//			Ext.get('mainbody').fitToParent(true);
-			Ext.get('mainpanel').fitToParent(true);
-			Ext.get('maincontent').fitToParent(true);
+			dimensions = Ext.fly(document.body).getViewSize();
+			el.setHeight(dimensions.height-35);
+			el.repaint();
+			el = Ext.get('maincontent');
+			el.setHeight(dimensions.height-190);
+			el.repaint();
 		},
-*/		
+
 		verifySqnAccount : function(){
 			email = Ext.get('sn_email');
 			pw = Ext.get('sn_password');
