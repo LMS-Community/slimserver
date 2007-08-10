@@ -7,29 +7,23 @@ Wizard = function(){
 
 	return {
 		init : function(){
-			var layout = new Ext.BorderLayout(document.body, {
+			var layout = new Ext.BorderLayout('mainbody', {
 				north: {
 					split:false,
-					initialSize: 35
+					initialSize: 45
 				},
 				south: {
 					split:false,
-					initialSize: 20
-				},
-				west: {
-					split:false,
-					initialSize: 200,
-					collapsible: false
+					initialSize: 38
 				},
 				center: {
-					autoScroll: true
+					autoScroll: false
 				}
 			});
 			
 			layout.beginUpdate();
 			layout.add('north', new Ext.ContentPanel('header', {fitToFrame:true}));
 			layout.add('south', new Ext.ContentPanel('footer', {fitToFrame:true}));
-			layout.add('west', new Ext.ContentPanel('west', {fitToFrame:true}));
 			layout.add('center', new Ext.ContentPanel('main'));
 
 			folderselectors['audiodir'] = new FileSelector('audiodirselector', {
@@ -49,11 +43,26 @@ Wizard = function(){
 				filter: 'filetype:xml'
 			});
 
-			Ext.get('previous').on('click', this.onPrevious, this);
-			Ext.get('next').on('click', this.onNext, this);
-			Ext.get('finish').on('click', this.onFinish, this);
+			new Ext.Button('previous', {
+				text: strings['previous'],
+				handler: this.onPrevious,
+				scope: this
+			});
+			new Ext.Button('next', {
+				text: strings['next'],
+				handler: this.onNext,
+				scope: this
+			});
+			new Ext.Button('finish', {
+				text: strings['finish'],
+				handler: this.onFinish,
+				scope: this
+			});
+
 			Ext.get('language').on('change', this.onLanguageChange, this);
 			Ext.get('sn_verify').on('click', this.verifySqnAccount, this);
+
+//			Ext.EventManager.onWindowResize(this.onResize, this);
 
 			this.flipPages(page);
 			layout.endUpdate();
@@ -153,6 +162,15 @@ Wizard = function(){
 			document.forms.languageForm.submit();
 		},
 		
+/*		onResize : function(width, height){
+			el = Ext.get('mainbody');
+			x = Ext.lib.Dom.getViewHeight();
+			el.setHeight(x-40);
+//			Ext.get('mainbody').fitToParent(true);
+			Ext.get('mainpanel').fitToParent(true);
+			Ext.get('maincontent').fitToParent(true);
+		},
+*/		
 		verifySqnAccount : function(){
 			email = Ext.get('sn_email');
 			pw = Ext.get('sn_password');
