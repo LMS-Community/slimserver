@@ -1607,7 +1607,7 @@ sub pluginData {
 	
 	# if called from a plugin, we automatically use the plugin's namespace for keys
 	my $package = caller(0);
-	if ( $package =~ /Slim::Plugin::(\w+)/ ) {
+	if ( $package =~ /^(?:Slim::Plugin|Plugins)::(\w+)/ ) {
 		$namespace = $1;
 	}
 	
