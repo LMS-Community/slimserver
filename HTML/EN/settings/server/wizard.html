@@ -17,6 +17,7 @@
 			strings['previous'] = "[% "SETUP_WIZARD_PREVIOUS" | string %]";
 			strings['next'] = "[% "SETUP_WIZARD_NEXT" | string %]";
 			strings['finish'] = "[% "SETUP_WIZARD_FINISH" | string %]";
+			strings['sn_verify'] = "[% "SETUP_WIZARD_SQN_VERIFY" | string %]";
 		</script>
 
 		<script type="text/javascript" src="/html/fileselector.js"></script>
@@ -159,7 +160,7 @@
 			}
 			
 			.folderselector_path {
-				width:48%;
+				width: 90%;
 			}
 			
 			.page {
@@ -177,6 +178,52 @@
 			
 			.x-layout-panel {
 				border: 0px none;
+			}
+
+			.x-btn-text, .x-btn button {
+				color: #d1d1d1;
+				font-weight: bold;
+			}
+
+			.x-btn-left{
+				width:3px;
+				height:22px;
+				background:url(/html/wizard/btn-sprite.png) no-repeat 0 0;
+			}
+			
+			.x-btn-right{
+				width:3px;
+				height:22px;
+				background:url(/html/wizard/btn-sprite.png) no-repeat 0 -22px;
+			}
+			
+			.x-btn-center{
+				background:url(/html/wizard/btn-sprite.png) repeat-x 0 -44px;
+				vertical-align: middle;
+				text-align:center;
+				padding:0 5px;
+				cursor:pointer;
+				white-space:nowrap;
+			}
+
+			.x-btn-over .x-btn-left{
+				background-position:0 0px;
+			}
+
+			.x-btn-over .x-btn-right{
+				background-position:0 -22px;
+			}
+
+			.x-btn-over .x-btn-center{
+				background-position:0 -44px;
+			}
+
+			.x-btn-click .x-btn-center, .x-btn-menu-active .x-btn-center{
+				background-position:0 -44px;
+			}
+
+			.x-btn-menu-arrow-wrap .x-btn-center button {
+			    height:22px;
 			}
 		-->
 		</style>
@@ -249,7 +296,7 @@
 										</tr>
 										<tr>
 											<td>&nbsp;</td>
-											<td><input type="button" name="sn_verify" id="sn_verify" value="[% "SETUP_WIZARD_SQN_VERIFY" | string %]"></td>
+											<td><span id="sn_verify"></span></td>
 										</tr>
 									</table></div>
 									<div id="sn_result"></div>
@@ -277,8 +324,10 @@
 									<div>[% "SETUP_WIZARD_AUDIODIR_DESC" | string %]</div>
 									<div id="audiodirselector"></div>
 									<div>
-										<input type="text" name="audiodir" id="audiodir" value="[% prefs.audiodir %]" class="folderselector_path">
-										<input type="button" name="gotoAudiodir" id="gotoAudiodir" value="&gt;">
+										<table><tr>
+											<td><input type="text" name="audiodir" id="audiodir" value="[% prefs.audiodir %]" class="folderselector_path"></td>
+											<td><span id="gotoAudiodir"></span></td>
+										</tr></table>
 									</div>
 								</div>
 					
@@ -286,8 +335,10 @@
 									<div>[% "SETUP_WIZARD_PLAYLISTDIR_DESC" | string %]</div>
 									<div id="playlistdirselector"></div>
 									<div>
-										<input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir %]" size="50">
-										<input type="button" name="gotoPlaylistdir" id="gotoPlaylistdir" value="&gt;">
+										<table><tr>
+											<td><input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir %]" size="50"></td>
+											<td><span id="gotoPlaylistdir"></span></td>
+										</tr></table>
 									</div>
 								</div>
 					
@@ -295,8 +346,10 @@
 									<div>[% "SETUP_WIZARD_ITUNES_DESC" | string %]</div>
 									<div id="itunespathselector"></div>
 									<div>
-										<input type="text" name="xml_file" id="xml_file" value="[% prefs.xml_file %]" size="50">
-										<input type="button" name="gotoiTunesDir" id="gotoiTunesDir" value="&gt;">
+										<table><tr>
+											<td><input type="text" name="xml_file" id="xml_file" value="[% prefs.xml_file %]" size="50"></td>
+											<td><span id="gotoiTunesDir"></span></td>
+										</tr></table>
 									</div>
 								</div>
 					
@@ -323,7 +376,7 @@
 			<div id="footer">
 				<img src="/html/wizard/footer_left.png" id="footer_logo">
 				<div id="footer_content">
-					<table style="float: right">
+					<table style="float: right; margin-top:5px; margin-right:10px;">
 						<tr>
 							<td><span id="previous"></span></td>
 							<td><span id="next"></span></td>

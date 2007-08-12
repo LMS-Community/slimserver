@@ -48,11 +48,13 @@ Wizard = function(){
 				handler: this.onPrevious,
 				scope: this
 			});
+
 			new Ext.Button('next', {
 				text: strings['next'],
 				handler: this.onNext,
 				scope: this
 			});
+
 			new Ext.Button('finish', {
 				text: strings['finish'],
 				handler: this.onFinish,
@@ -60,7 +62,12 @@ Wizard = function(){
 			});
 
 			Ext.get('language').on('change', this.onLanguageChange, this);
-			Ext.get('sn_verify').on('click', this.verifySqnAccount, this);
+
+			new Ext.Button('sn_verify', {
+				text: strings['sn_verify'],
+				handler: this.verifySqnAccount,
+				scope: this
+			});
 
 			Ext.EventManager.onWindowResize(this.onResize, layout);
 			Ext.EventManager.onDocumentReady(this.onResize, layout, true);

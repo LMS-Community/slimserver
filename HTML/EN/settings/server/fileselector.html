@@ -5,7 +5,6 @@
 		<title>[% SLIMSERVER | string %]</title>
 	
 		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
-		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/xtheme-gray.css" />
 		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
 		<script type="text/javascript" src="/html/ext/ext-all.js"></script>
 
@@ -24,12 +23,12 @@
 		<h1>A folder selector</h1>
 		<div id="folderselector" style="overflow:auto; height:200px; width:400px;"></div>
 		<input type="text" name="audiodir" id="audiodir" value="[% audiodir %]" size="45">
-		<input type="button" name"gotoAudiodir" id="gotoAudiodir" value="&gt;">
+		<span id="gotoAudiodir"></span>
 
 		<h1>A file selector (XML files only)</h1>
 		<div id="fileselector" style="overflow:auto; height:200px; width:400px;"></div>
 		<input type="text" name="xml_file" id="xml_file" value="[% xml_file %]" size="45">
-		<input type="button" name="gotoXML_path" id="gotoXML_path" value="&gt;">
+		<span id="gotoXML_path"></span>
 	</body>
 	<script type="text/javascript">
 		new FileSelector('folderselector', {

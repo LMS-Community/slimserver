@@ -108,7 +108,11 @@ FileSelector = function(container, config){
 	// activate button to add path to the selector box
 	gotoBtn = Ext.get(this.gotoBtn);
 	if (gotoBtn != null) {
-		gotoBtn.on('click', this.showPath, this)
+		new Ext.Button(gotoBtn, {
+			text: '>',
+			handler: this.showPath,
+			scope: this
+		});
 	}
 };
 
