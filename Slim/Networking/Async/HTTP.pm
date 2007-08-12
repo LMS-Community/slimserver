@@ -38,8 +38,10 @@ use base 'Slim::Networking::Async';
 use HTTP::Headers;
 use HTTP::Request;
 use HTTP::Response;
+use HTTP::Cookies;
 use MIME::Base64 qw(encode_base64);
 use URI;
+use File::Spec::Functions qw(:ALL);
 
 use Slim::Networking::Async::Socket::HTTP;
 use Slim::Utils::Log;
@@ -48,6 +50,9 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
 my $prefs = preferences('server');
+
+my $cookieJar = HTTP::Cookies->new(	file => catdir($prefs->get('cachedir'), 'cookies.dat'), autosave => 1 );
+
 
 __PACKAGE__->mk_classaccessors( qw(
 	uri request response saveAs fh timeout
@@ -184,6 +189,14 @@ sub add_headers {
 	$headers->init_header( 'Cache-Control' => 'no-cache' );
 	$headers->init_header( Connection      => 'close' );
 	$headers->init_header( 'Icy-Metadata'  => 1 );
+
+	# Add cookies
+	$cookieJar->add_cookie_header( $self->request );
+}
+
+# allow people to access our cookie jar
+sub cookie_jar {
+	return $cookieJar;
 }
 
 sub _format_request {
@@ -294,6 +307,11 @@ sub _http_read {
 		
 		# Save previous response
 		$self->response->previous( $previous );
+		
+		$self->response->request( $self->request );
+
+		# Save cookies
+		$cookieJar->extract_cookies( $self->response );
 		
 		if ( $log->is_debug ) {
 
