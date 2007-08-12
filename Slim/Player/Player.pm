@@ -377,10 +377,14 @@ sub currentSongLines {
 	my $suppressScreen2 = shift;
 
 	my $parts;
+	my $status;
 	
+	my $playmode    = Slim::Player::Source::playmode($client);
 	my $playlistlen = Slim::Player::Playlist::count($client);
 
 	if ($playlistlen < 1) {
+
+		$status = $client->string('NOTHING');
 
 		$parts = { 'line' => [ $client->string('NOW_PLAYING'), $client->string('NOTHING') ] };
 
@@ -390,16 +394,18 @@ sub currentSongLines {
 
 	} else {
 
-		if (Slim::Player::Source::playmode($client) eq "pause") {
+		if ($playmode eq "pause") {
+
+			$status = $client->string('PAUSED');
 
 			if ( $playlistlen == 1 ) {
 
-				$parts->{line}[0] = $client->string('PAUSED');
+				$parts->{line}[0] = $status;
 
 			} else {
 
 				$parts->{line}[0] = sprintf(
-					$client->string('PAUSED')." (%d %s %d) ",
+					$status." (%d %s %d) ",
 					Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
 				);
 			}
@@ -408,25 +414,34 @@ sub currentSongLines {
 		# this will cause the display to show the "Now playing" screen to show when paused.
 		# line1 = "Now playing" . sprintf " (%d %s %d) ", Slim::Player::Source::playingSongIndex($client) + 1, string('OUT_OF'), $playlistlen;
 
-		} elsif (Slim::Player::Source::playmode($client) eq "stop") {
+		} elsif ($playmode eq "stop") {
+
+			$status = $client->string('STOPPED');
 
 			if ( $playlistlen == 1 ) {
-				$parts->{line}[0] = $client->string('STOPPED');
+				$parts->{line}[0] = $status;
 			}
 			else {
 				$parts->{line}[0] = sprintf(
-					$client->string('STOPPED')." (%d %s %d) ",
+					$status." (%d %s %d) ",
 					Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
 				);
 			}
 
 		} else {
 
+			$status = $client->string('PLAYING');
+
 			if (Slim::Player::Source::rate($client) != 1) {
-				$parts->{line}[0] = $client->string('NOW_SCANNING') . ' ' . Slim::Player::Source::rate($client) . 'x';
+
+				$status = $parts->{line}[0] = client->string('NOW_SCANNING') . ' ' . Slim::Player::Source::rate($client) . 'x';
+
 			} elsif (Slim::Player::Playlist::shuffle($client)) {
+
 				$parts->{line}[0] = $client->string('PLAYING_RANDOMLY');
+
 			} else {
+
 				$parts->{line}[0] = $client->string('PLAYING');
 			}
 			
@@ -478,9 +493,9 @@ sub currentSongLines {
 		}
 
 		$parts->{'jiv'} = {
-			'icon'    => Slim::Player::Source::playmode($client),
-			'icon-id' => $song->album ? $song->album->artwork : 0,
-			'text'    => [ $currentTitle, Slim::Music::Info::displayText($client, $song, 'ARTIST') ],
+			'type'    => 'song',
+			'text'    => [ $status, $song->title ],
+			'icon-id' => $song->remote ? 0 : $song->album->artwork || 0,
 		};
 	}
 

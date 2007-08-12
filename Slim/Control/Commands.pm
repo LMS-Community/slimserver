@@ -1066,7 +1066,7 @@ sub playlistXitemCommand {
 
 				$client->showBriefly({
 					'line' => [$line1, $line2],
-					'jiv'  => { 'icon' => 'play', text => [ $line2 ], 'icon-id' => 0 },
+					'jiv'  => { 'type' => 'song', text => [ $line2 ], 'icon-id' => 0 },
 				}, { 'duration' => $timeout + 5 });
 			}
 		}
@@ -1460,10 +1460,9 @@ sub playlistcontrolCommand {
 		if ($load || $add) {
 			$client->showBriefly({ 
 				'jiv' => { 
-					'icon'    => $load ? 'play' : 'add', 
-					'icon-id' => $tracks[0]->album->artwork || 0,
-					'text'    => [ Slim::Music::Info::displayText($client, $tracks[0], 'TITLE'),
-								   Slim::Music::Info::displayText($client, $tracks[0], 'ARTIST') ]
+					'type'    => 'song',
+					'text'    => $add ? [ 'Adding', $tracks[0]->title, 'to Playlist...' ] : [ 'Playing', $tracks[0]->title ],
+					'icon-id' => $tracks[0]->album->artwork,
 				}
 			});
 		}
