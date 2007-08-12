@@ -175,7 +175,7 @@ Wizard = function(){
 					Ext.get(s).setHeight(myHeight);
 			}
 
-			this.layout();			
+			this.layout();
 		},
 
 		verifySqnAccount : function(){
