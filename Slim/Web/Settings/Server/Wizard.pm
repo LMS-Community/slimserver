@@ -94,6 +94,7 @@ sub handler {
 	$paramRef->{'showiTunes'} = !Slim::Plugin::iTunes::Common->canUseiTunesLibrary();
 	$paramRef->{'showMusicIP'} = !Slim::Plugin::MusicMagic::Plugin::canUseMusicMagic();
 	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
+	$paramRef->{'serverOS'} = Slim::Utils::OSDetect::OS();
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
 }

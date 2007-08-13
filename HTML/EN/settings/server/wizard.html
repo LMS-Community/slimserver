@@ -2,7 +2,7 @@
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 	<head>
-		<title>[% SLIMSERVER | string %]</title>
+		<title>[% "SLIMSERVER" | string %]</title>
 
 		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
 		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
@@ -18,6 +18,11 @@
 			strings['next'] = "[% "SETUP_WIZARD_NEXT" | string %]";
 			strings['finish'] = "[% "SETUP_WIZARD_FINISH" | string %]";
 			strings['sn_verify'] = "[% "SETUP_WIZARD_SQN_VERIFY" | string %]";
+
+			strings['summary_none'] = "[% "NONE" | string %]";
+			strings['summary_audiodir'] = "[% "SETUP_AUDIODIR" | string %][% "COLON" | string %]";
+			strings['summary_itunes'] = "[% "ITUNES_DESC" | string %]";
+			strings['summary_musicmagic'] = "[% "MUSICMAGIC_DESC" | string %]";
 		</script>
 
 		<script type="text/javascript" src="/html/fileselector.js"></script>
@@ -35,13 +40,9 @@
 				font-family: sans-serif;
 			}
 
-			body {
-				margin: 20px;
-			}
+			body { margin: 20px; }
 
-			a {
-				color: white;
-			}
+			a { color: white; }
 
 			#header {
 				background: url(/html/wizard/header_background.png) repeat;
@@ -116,6 +117,7 @@
 				background: url(/html/wizard/title_background.gif) repeat;
 				margin-left: 10px;
 				height: 15px;
+				font-weight: bold;
 			}
 			.titlebox_top div { 
 				height: 10px;
@@ -147,25 +149,55 @@
 				overflow: hidden;
 			}
 			
-			#formpanel {
-				margin: 7px;
-			}
-
 			.folderselector {
-				overflow:scroll;
+				overflow: auto;
 				height: 300px;
 				width: 50%;
 				border: 2px inset grey;
 				background: white;
 			}
-			
-			.folderselector_path {
-				width: 90%;
+
+			.wz_path {
+				width: 45%;
+				vertical-align:top;
 			}
-			
-			.page {
+
+			#wz_formpanel {
+				margin: 7px;
+				position: relative;
+			}
+
+			.wz_page {
 				position: absolute;
 				width: 95%;
+			}
+
+			.wz_logo {
+				float: right;
+				margin-left: 30px;
+			}
+			
+			.wz_desc_right {
+				position: absolute;
+				left: 55%;
+				float: right;
+				width: 45%;
+			}
+			
+			#wz_musicsource td {
+				vertical-align: top;
+				padding-top: 5px;
+			}
+			
+			#wz_buttonbar {
+				float: right; 
+				margin-top:5px; 
+				margin-right:10px;
+			}
+
+			.wz_summary_list {
+				list-style-type: circle;
+				margin-left: 20px;
 			}
 
 			.x-tree-node-leaf .x-tree-node-alwayscollapsed {
@@ -178,6 +210,10 @@
 			
 			.x-layout-panel {
 				border: 0px none;
+			}
+
+			.x-btn {
+				display: inline;
 			}
 
 			.x-btn-text, .x-btn button {
@@ -245,24 +281,25 @@
 						<div class="titlebox">
 							<div class="titlebox_top"><div></div></div>
 							<div class="titlebox_content">
-								<div id="welcome_h" class="page">[% "SETUP_WIZARD_WELCOME" | string %]</div>
-								<div id="proxy_h" class="page">[% "SETUP_WIZARD_PROXY" | string %]</div>
-								<div id="sqn_h" class="page">[% "SETUP_WIZARD_SQN" | string %]</div>
-								<div id="source_h" class="page">[% "SETUP_WIZARD_SOURCE" | string %]</div>
-								<div id="audiodir_h" class="page">[% "SETUP_WIZARD_AUDIODIR" | string %]</div>
-								<div id="playlistdir_h" class="page">[% "SETUP_WIZARD_PLAYLISTDIR" | string %]</div>
-								<div id="itunes_h" class="page">[% "SETUP_WIZARD_ITUNES" | string %]</div>
-								<div id="musicip_h" class="page">[% "SETUP_WIZARD_MUSICIP" | string %]</div>
-								<div id="summary_h" class="page">[% "SETUP_WIZARD_SUMMARY" | string %]</div>
+								<div id="welcome_h" class="wz_page">[% "SETUP_WIZARD_WELCOME" | string %]</div>
+								<div id="proxy_h" class="wz_page">[% "SETUP_WIZARD_PROXY" | string %]</div>
+								<div id="sqn_h" class="wz_page">[% "SETUP_WIZARD_SQN" | string %]</div>
+								<div id="source_h" class="wz_page">[% "SETUP_WIZARD_SOURCE" | string %]</div>
+								<div id="audiodir_h" class="wz_page">[% "SETUP_WIZARD_AUDIODIR" | string %]</div>
+								<div id="playlistdir_h" class="wz_page">[% "SETUP_WIZARD_PLAYLISTDIR" | string %]</div>
+								<div id="itunes_h" class="wz_page">[% "SETUP_WIZARD_ITUNES" | string %]</div>
+								<div id="musicip_h" class="wz_page">[% "SETUP_WIZARD_MUSICIP" | string %]</div>
+								<div id="summary_h" class="wz_page">[% "SETUP_WIZARD_SUMMARY" | string %]</div>
 							</div>
 							<div class="titlebox_bottom"><div></div></div>
 						</div>
 					
-						<div id="formpanel">
-							<div id="welcome_m" class="page">
+						<div id="wz_formpanel">
+							<div id="welcome_m" class="wz_page">
+								<div class="wz_logo"><img src="[% webroot %]html/images/squeezebox.gif"></div>
 								<form name="languageForm" id="languageForm" method="post" action="[% webroot %][% path %]">
 									<div>[% "SETUP_WIZARD_WELCOME_DESC" | string %]</div>
-									<div>
+									<div><br/>
 										[% "CHOOSE_A_LANGUAGE" | string %]
 										<select name="language" id="language">
 								
@@ -277,12 +314,16 @@
 							</div>
 	
 							<form name="wizardForm" id="wizardForm" method="post" action="[% webroot %][% path %]">
-								<div id="proxy_m" class="page">
+								<div id="proxy_m" class="wz_page">
 									<div>[% "SETUP_WIZARD_PROXY_DESC" | string %]</div>
 									<div>[% "SETUP_WEBPROXY_CHOOSE" | string %][% "COLON" | string %] <input type="text" name="webproxy" value="[% prefs.webproxy %]"></div>
 								</div>
 					
-								<div id="sqn_m" class="page">
+								<div id="sqn_m" class="wz_page">
+									<div class="wz_logo">
+<!--										<img src="[% webroot %]html/images/squeezenetwork.gif"> -->
+									</div>
+									
 									<div>[% "SETUP_WIZARD_SQN_DESC" | string %]</div>
 					
 									<div><table>
@@ -302,9 +343,9 @@
 									<div id="sn_result"></div>
 								</div>
 					
-								<div id="source_m" class="page">
+								<div id="source_m" class="wz_page">
 									<div>[% "SETUP_WIZARD_SOURCE_DESC" | string %]</div>
-									<div><table>
+									<div><table id="wz_musicsource">
 										<tr>
 											<td><input type="checkbox" name="useAudiodir" id="useAudiodir" [% IF prefs.audiodir %]checked="checked" [% END %]>&nbsp;</td>
 											<td>[% "SETUP_WIZARD_SOURCE_AUDIODIR" | string %]</td>
@@ -320,48 +361,63 @@
 									</table></div>
 								</div>
 					
-								<div id="audiodir_m" class="page">
-									<div>[% "SETUP_WIZARD_AUDIODIR_DESC" | string %]</div>
+								<div id="audiodir_m" class="wz_page">
+									<div class="wz_desc_right">
+										[% "SETUP_WIZARD_AUDIODIR_DESC" | string %]
+										[% serverOS == "win" ? "SETUP_WIZARD_SHARE_WIN" : "SETUP_WIZARD_SHARE_OTHERS" | string %]
+									</div>
 									<div id="audiodirselector"></div>
 									<div>
-										<table><tr>
-											<td><input type="text" name="audiodir" id="audiodir" value="[% prefs.audiodir %]" class="folderselector_path"></td>
-											<td><span id="gotoAudiodir"></span></td>
-										</tr></table>
+										<input type="text" name="audiodir" id="audiodir" value="[% prefs.audiodir %]" class="wz_path">
+										<span id="gotoAudiodir"></span>
 									</div>
 								</div>
 					
-								<div id="playlistdir_m" class="page">
-									<div>[% "SETUP_WIZARD_PLAYLISTDIR_DESC" | string %]</div>
+								<div id="playlistdir_m" class="wz_page">
+									<div class="wz_desc_right">
+										[% "SETUP_WIZARD_PLAYLISTDIR_DESC" | string %]
+										[% serverOS == "win" ? "SETUP_WIZARD_SHARE_WIN" : "SETUP_WIZARD_SHARE_OTHERS" | string %]
+									</div>
 									<div id="playlistdirselector"></div>
 									<div>
-										<table><tr>
-											<td><input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir %]" size="50"></td>
-											<td><span id="gotoPlaylistdir"></span></td>
-										</tr></table>
+										<input type="text" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir %]" class="wz_path">
+										<span id="gotoPlaylistdir"></span>
 									</div>
 								</div>
-					
-								<div id="itunes_m" class="page">
-									<div>[% "SETUP_WIZARD_ITUNES_DESC" | string %]</div>
+
+								<div id="itunes_m" class="wz_page">
+									<div>
+										[% "SETUP_WIZARD_ITUNES_DESC" | string %]
+										[% serverOS == "win" ? "SETUP_WIZARD_SHARE_WIN" : "SETUP_WIZARD_SHARE_OTHERS" | string %]
+									</div>
 									<div id="itunespathselector"></div>
 									<div>
-										<table><tr>
-											<td><input type="text" name="xml_file" id="xml_file" value="[% prefs.xml_file %]" size="50"></td>
-											<td><span id="gotoiTunesDir"></span></td>
-										</tr></table>
+										<input type="text" name="xml_file" id="xml_file" value="[% prefs.xml_file %]" class="wz_path">
+										<span id="gotoiTunesDir"></span>
 									</div>
 								</div>
 					
-								<div id="musicip_m" class="page">
+								<div id="musicip_m" class="wz_page">
 									<div>[% "SETUP_WIZARD_MUSICIP_DESC" | string %]</div>
+									<br/>
 									<div><input type="text" name="port" id="port" value="[% prefs.port %]" size="20"></div>
+									<br/>
 									<div>[% "SETUP_WIZARD_MUSICIP_DESC2" | string %]</div>
 									<div>[% "SETUP_WIZARD_MUSICIP_DESC3" | string %]</div>
 								</div>
 					
-								<div id="summary_m" class="page">
+								<div id="summary_m" class="wz_page">
 									<div>[% "SETUP_WIZARD_SUMMARY_DESC" | string %]</div>
+									<br/>
+									<div>[% "SETUP_WIZARD_SUMMARY_SQN" | string %]</div>
+									<ul class="wz_summary_list">
+										<li><span id="sn_email_summary"></span> <span id="sn_result_summary"></span></li>
+									</ul>
+									<br/>
+									<div>[% "SETUP_WIZARD_SUMMARY_MUSICSOURCE" | string %][% "COLON" | string %]</div>
+									<ul class="wz_summary_list" id="summary"></ul>
+									<br/>
+									<div>[% "SETUP_WIZARD_SUMMARY_RESCAN" | string %]</div>
 								</div>
 					
 								<input name="saveSettings" type="hidden" value="1">
@@ -376,7 +432,7 @@
 			<div id="footer">
 				<img src="/html/wizard/footer_left.png" id="footer_logo">
 				<div id="footer_content">
-					<table style="float: right; margin-top:5px; margin-right:10px;">
+					<table id="wz_buttonbar">
 						<tr>
 							<td><span id="previous"></span></td>
 							<td><span id="next"></span></td>

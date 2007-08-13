@@ -130,6 +130,20 @@ Wizard = function(){
 					}
 					break;
 
+				case 'summary' :
+					a = (!(Ext.get('useAudiodir').dom.checked || Ext.get('itunes').dom.checked || Ext.get('musicmagic').dom.checked) ? '<li>' + strings['summary_none'] + '</li>' : '');
+					b = (Ext.get('useAudiodir').dom.checked ? '<li>' + strings['summary_audiodir'] + Ext.get('audiodir').dom.value + '</li>' : '');
+					c = (Ext.get('itunes').dom.checked ? '<li>' + strings['summary_itunes'] + '</li>' : '');
+					d = (Ext.get('musicmagic').dom.checked ? '<li>' + strings['summary_musicmagic'] + '</li>' : '');
+					
+					Ext.get('summary').update(
+						(!(Ext.get('useAudiodir').dom.checked || Ext.get('itunes').dom.checked || Ext.get('musicmagic').dom.checked) ? '<li>' + strings['summary_none'] + '</li>' : '') +
+						(Ext.get('useAudiodir').dom.checked ? '<li>' + strings['summary_audiodir'] + Ext.get('audiodir').dom.value + '</li>' : '') +
+						(Ext.get('itunes').dom.checked ? '<li>' + strings['summary_itunes'] + '</li>' : '') +
+						(Ext.get('musicmagic').dom.checked ? '<li>' + strings['summary_musicmagic'] + '</li>' : '')
+					);
+					break;
+
 				default :
 					break;
 			}
@@ -194,6 +208,8 @@ Wizard = function(){
 				pw = pw.dom.value;
 
 				Ext.get('sn_result').update('');
+				Ext.get('sn_email_summary').update(email);
+				Ext.get('sn_result_summary').update('');
 
 				Ext.Ajax.request({
 					url: '/settings/server/squeezenetwork.html',
@@ -203,6 +219,7 @@ Wizard = function(){
 					success: function(response, options){
 						result = response.responseText.split('|');
 						Ext.get('sn_result').update(result[1]);
+						Ext.get('sn_result_summary').update('(' + result[1] + ')');
 						this.sqnValidated = (result[0] == '1');
 					}
 				});
