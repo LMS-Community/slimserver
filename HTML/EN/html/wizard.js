@@ -212,10 +212,17 @@ Wizard = function(){
 	
 					success: function(response, options){
 						result = response.responseText.split('|');
-						Ext.get('sn_result').update(result[0] == '0' ? result[1] : strings['sn_success']);
-							
-						Ext.get('sn_result_summary').update('(' + result[1] + ')');
-						this.sqnValidated = (result[0] == '1');
+						
+						if (result[0] == '0') {
+							Ext.get('sn_result').update(result[1]);
+							Ext.get('sn_result_summary').update('(' + result[1] + ')');
+							this.sqnValidated = false;
+						}
+						else {							
+							Ext.get('sn_result').update(strings['sn_success']);
+							Ext.get('sn_result_summary').update('');
+							this.sqnValidated = true;
+						}
 					}
 				});
 			}
