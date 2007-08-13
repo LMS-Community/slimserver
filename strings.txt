@@ -6966,7 +6966,7 @@ SETUP_WIZARD_SQN
 	EN	SlimServer Setup: SqueezeNetwork Account
 
 SETUP_WIZARD_SQN_DESC
-	EN	SqueezeNetwork allows you to get the most out of your new Logitech digital music player. Some of the advanced online media services such as Rhapsody or Pandora are only available through SqueezeNetwork.<br/><br/>If you haven't subscribed to SqueezeNetwork yet, please visit <a href="http://www.squeezenetwork.com" target="_blank">http://www.squeezenetwork.com</a>.<br/><br/>Please enter the email address and password used to login to your SqueezeNetwork account.
+	EN	SqueezeNetwork allows you to get the most out of your new Logitech digital music player. Some of the advanced online media services such as Rhapsody or Pandora require a SqueezeNetwork account.<br/><br/>If you haven't subscribed to SqueezeNetwork yet, please visit <a href="http://www.squeezenetwork.com" target="_blank">http://www.squeezenetwork.com</a>.<br/><br/>Please enter the email address and password used to login to your SqueezeNetwork account.
 
 SETUP_WIZARD_SQN_VERIFY
 	EN	Verify
@@ -6975,7 +6975,7 @@ SETUP_WIZARD_SOURCE
 	EN	SlimServer Setup: Music Source
 
 SETUP_WIZARD_SOURCE_DESC
-	EN	You have several ways to integrate your local music files with SlimServer. Please select one of the following:
+	EN	You have several ways to integrate your local music files with SlimServer. Please select from the following list:
 
 SETUP_WIZARD_SOURCE_AUDIODIR
 	EN	<em>Local Music Folder<em><br/>SlimServer can access music files stored on your computer or another computer in your local network, such as eg. a network attached storage (NAS).
