@@ -197,8 +197,7 @@ Ext.extend(FileSelector, Ext.tree.TreePanel, {
 						this.selectMyPath();
 					}
 					else {
-						// need to give some reasonable feedback here...
-						alert("incorrect path or something...:\n" + input.dom.value);
+						input.highlight('#ff8888');
 					}
 				}
 			});

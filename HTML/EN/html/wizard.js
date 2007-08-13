@@ -1,5 +1,4 @@
 Wizard = function(){
-	// we do not always show the language selection page
 	page = 0;
 	pages = new Array('welcome', 'proxy', 'sqn', 'source', 'audiodir', 'playlistdir', 'itunes', 'musicip', 'summary');
 	folderselectors = new Array();
