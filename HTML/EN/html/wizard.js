@@ -3,6 +3,7 @@ Wizard = function(){
 	pages = new Array('welcome', 'proxy', 'sqn', 'source', 'audiodir', 'playlistdir', 'itunes', 'musicip', 'summary');
 	folderselectors = new Array();
 	sqnValidated = false;
+	var nextBtn;
 
 	return {
 		init : function(){
@@ -48,15 +49,9 @@ Wizard = function(){
 				scope: this
 			});
 
-			new Ext.Button('next', {
+			this.nextBtn = new Ext.Button('next', {
 				text: strings['next'],
 				handler: this.onNext,
-				scope: this
-			});
-
-			new Ext.Button('finish', {
-				text: strings['finish'],
-				handler: this.onFinish,
 				scope: this
 			});
 
@@ -87,14 +82,30 @@ Wizard = function(){
 		
 		whichPage : function(oldValue, offset){
 			// launch verification in the background
-			if (pages[oldValue] == 'sqn') {
-				this.verifySqnAccount();
+			switch (pages[oldValue]) {
+				case 'sqn' :
+					this.verifySqnAccount();
+					break;
+				
+				case 'summary' :
+					if (offset > 0) {
+						document.forms.wizardForm.submit();
+						window.close();
+					}
+					else {
+						this.nextBtn.setText(strings['next']);
+					}
+					
+					break;
+				
+				default :
+					break;
 			}
 
 			newPage = oldValue + offset;
 			if (offset < 0) newPage = Math.max(newPage, 0);
 			else newPage = Math.min(newPage, pages.length-1);
-			
+
 			switch (pages[newPage]) {
 				case 'proxy' :
 					if (!showproxy)
@@ -136,6 +147,9 @@ Wizard = function(){
 						(Ext.get('itunes').dom.checked ? '<li>' + strings['summary_itunes'] + '</li>' : '') +
 						(Ext.get('musicmagic').dom.checked ? '<li>' + strings['summary_musicmagic'] + '</li>' : '')
 					);
+
+					this.nextBtn.setText(strings['finish']);
+
 					break;
 
 				default :
@@ -167,11 +181,6 @@ Wizard = function(){
 				}
 			}
 		
-		},		
-		
-		onFinish : function(){
-			document.forms.wizardForm.submit();
-//			window.close();
 		},
 		
 		onLanguageChange : function(){
