@@ -6,6 +6,30 @@
 
 		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
 
+		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
+		<script type="text/javascript" src="/html/ext/ext-all.js"></script>
+
+		<script type="text/javascript">
+			var showproxy = [% showProxy ? "true" : "false" %];
+			var showitunes = [% showiTunes ? "true" : "false" %];
+			var showmusicip = [% showMusicIP ? "true" : "false" %];
+			
+			var strings = new Array();
+			strings['previous'] = "[% "SETUP_WIZARD_PREVIOUS" | string %]";
+			strings['next'] = "[% "SETUP_WIZARD_NEXT" | string %]";
+			strings['finish'] = "[% "SETUP_WIZARD_FINISH" | string %]";
+			strings['sn_verify'] = "[% "SETUP_WIZARD_SQN_VERIFY" | string %]";
+			strings['sn_success'] = "[% "SETUP_SN_VALID_LOGIN" | string %]";
+
+			strings['summary_none'] = "[% "NONE" | string %]";
+			strings['summary_audiodir'] = "[% "SETUP_AUDIODIR" | string %][% "COLON" | string %]";
+			strings['summary_itunes'] = "[% "ITUNES_DESC" | string %]";
+			strings['summary_musicmagic'] = "[% "MUSICMAGIC_DESC" | string %]";
+		</script>
+
+		<script type="text/javascript" src="/html/fileselector.js"></script>
+		<script type="text/javascript" src="/html/wizard.js"></script>
+
 		<style type="text/css">
 		<!--
 			html, body {
@@ -244,30 +268,6 @@
 	</head>
 
 	<body>
-		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
-		<script type="text/javascript" src="/html/ext/ext-all.js"></script>
-
-		<script type="text/javascript">
-			var showproxy = [% showProxy ? "true" : "false" %];
-			var showitunes = [% showiTunes ? "true" : "false" %];
-			var showmusicip = [% showMusicIP ? "true" : "false" %];
-			
-			var strings = new Array();
-			strings['previous'] = "[% "SETUP_WIZARD_PREVIOUS" | string %]";
-			strings['next'] = "[% "SETUP_WIZARD_NEXT" | string %]";
-			strings['finish'] = "[% "SETUP_WIZARD_FINISH" | string %]";
-			strings['sn_verify'] = "[% "SETUP_WIZARD_SQN_VERIFY" | string %]";
-			strings['sn_success'] = "[% "SETUP_SN_VALID_LOGIN" | string %]";
-
-			strings['summary_none'] = "[% "NONE" | string %]";
-			strings['summary_audiodir'] = "[% "SETUP_AUDIODIR" | string %][% "COLON" | string %]";
-			strings['summary_itunes'] = "[% "ITUNES_DESC" | string %]";
-			strings['summary_musicmagic'] = "[% "MUSICMAGIC_DESC" | string %]";
-		</script>
-
-		<script type="text/javascript" src="/html/fileselector.js"></script>
-		<script type="text/javascript" src="/html/wizard.js"></script>
-
 		<div id="mainbody">
 
 			<div id="header">
