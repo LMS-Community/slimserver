@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		[% PROCESS standardheader.html %]
+
+		[% IF pageHeaderScripts %]
+			[% pageHeaderScripts %]
+		[% END %]
+
+		<!--[if gte IE 6]>
+		<link href="[% webroot %]ie.css" type="text/css" rel="stylesheet">
+		<![endif]-->
+	</head>
+	<body>
+		<div class="titlebox">
+			<div class="titlebox_top"><div></div></div>
+			<div class="titlebox_content">
+				<div>[% "HOME" | string %]</div>
+			</div>
+			<div class="titlebox_bottom"><div></div></div>
+		</div>
+
+		<div class="content">

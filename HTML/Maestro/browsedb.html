@@ -1,0 +1,27 @@
+[% IF song_count; pageHeaderInfo = BLOCK %]
+	<div>[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].</div>
+[% END; END %]  
+
+[% pagetitle = browseby | string; pageicon = browseby; noSpacer = 1 %]
+
+[% pageHeaderScripts = BLOCK %]
+[% END %]
+
+[% PROCESS pageheader.html %]
+
+<div id="browsedbHeader">
+	[% IF artwork != 1 -%]
+		[% IF hasPagebar %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
+	[% END -%]
+	[% IF warn -%]<p>[% PROCESS scanwarning %] [%- END %]
+
+	[% IF hasPagebar -%][% PROCESS pagebar %][%- END %]
+</div>
+
+[%- WRAPPER contentcontainer %]
+	[% FOREACH item = browse_items -%]
+		[%- PROCESS browsedbitems_list.html -%]
+	[%- END %]
+[% END -%]
+
+[% PROCESS pagefooter.html %]

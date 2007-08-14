@@ -1,0 +1,112 @@
+[% pageHeaderScripts = BLOCK %]
+	<script type="text/javascript" src="html/ext/adapter/ext/ext-base.js"></script>
+	<script type="text/javascript" src="html/ext/ext-all.js"></script>
+	<script type="text/javascript">
+		var MainMenu = function(){
+			url = new Array();
+
+			return {
+				init : function(){
+					menuItems = Ext.DomQuery.select('div.homeMenuItem');
+					for(var i = 0; i < menuItems.length; i++) {
+						el = Ext.get(menuItems[i].id);
+						if (el) {
+							el.addClassOnOver('mouseOver');
+							el.on('click', function(e, item){
+								this.doMenu(item.id);
+							}, this);
+							
+							// fill array with URLs, if available
+							[%- FOREACH category = additionalLinks %]
+								[%- category = category.key %]
+								[%- FOREACH link = additionalLinks.$category %]
+									url['[% link.key %]'] = '[% link.value | html %]player=[% playerURI %]';
+								[%- END %]
+							[%- END %]
+						}
+					}
+					
+					this.showPanel('mainMenu');
+				},
+				
+				doMenu : function(item){
+					switch (item) {
+						case 'MY_MUSIC':
+							this.showPanel('musicMenu');
+							break;
+
+						case 'RADIO':
+							this.showPanel('radioMenu');
+							break;
+
+						case 'MUSIC_ON_DEMAND':
+							alert('...soon to come');
+							break;
+
+						case 'OTHER_SERVICES':
+							alert('...soon to come');
+							break;
+							
+						default:
+							if (url[item]) {
+								document.location.href = url[item];
+							}
+//							alert(item);
+							break;
+					}
+				},
+				
+				showPanel : function(panel){
+					menuItems = Ext.DomQuery.select('div.homeMenuSection');
+					for(var i = 0; i < menuItems.length; i++) {
+						el = Ext.get(menuItems[i].id);
+						if (el) {
+							el.setVisible(panel == menuItems[i].id);
+						}
+					}
+				}
+			}
+		}();
+
+		Ext.EventManager.onDocumentReady(MainMenu.init, MainMenu, true);
+
+	</script>	
+[% END %]
+[% PROCESS pageheader.html %]
+
+[% BLOCK menuItem %]
+	<div class="homeMenuItem" id="[% token %]">
+		[% token | string %]
+	</div>
+[% END %]
+
+<div class="homeMenuSection" id="mainMenu">
+	[% PROCESS menuItem token="FAVORITES" %]
+	[% PROCESS menuItem token="MY_MUSIC" %]
+	[% PROCESS menuItem token="RADIO" %]
+	[% PROCESS menuItem token="MUSIC_ON_DEMAND" %]
+	[% PROCESS menuItem token="OTHER_SERVICES" %]
+</div>
+
+<div class="homeMenuSection" id="musicMenu">
+	[%- FOREACH link = additionalLinks.browse %]
+		[% IF link.key != 'FAVORITES' %]
+			[% PROCESS menuItem token=link.key %]
+		[%- END %]
+	[%- END %]
+</div>
+
+
+<div class="homeMenuSection" id="radioMenu">
+	[%- FOREACH link = additionalLinks.radio %]
+		[% IF link.key != 'FAVORITES' %]
+			[% PROCESS menuItem token=link.key %]
+		[%- END %]
+	[%- END %]
+</div>
+
+<script type="text/javascript">
+	
+</script>
+
+[% PROCESS pagefooter.html %]

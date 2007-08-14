@@ -1,0 +1,61 @@
+.x-tree-node-leaf .x-tree-node-alwayscollapsed {
+	background-image:url(/html/ext/resources/images/default/tree/folder.gif);
+}
+
+.x-layout-panel-body {
+	background: #23415e;
+}
+
+.x-layout-panel {
+	border: 0px none;
+}
+
+.x-btn {
+	display: inline;
+}
+
+.x-btn-text, .x-btn button {
+	color: #d1d1d1;
+	font-weight: bold;
+}
+
+.x-btn-left{
+	width:3px;
+	height:22px;
+	background:url(/html/wizard/btn-sprite.png) no-repeat 0 0;
+}
+
+.x-btn-right{
+	width:3px;
+	height:22px;
+	background:url(/html/wizard/btn-sprite.png) no-repeat 0 -22px;
+}
+
+.x-btn-center{
+	background:url(/html/wizard/btn-sprite.png) repeat-x 0 -44px;
+	vertical-align: middle;
+	text-align:center;
+	padding:0 5px;
+	cursor:pointer;
+	white-space:nowrap;
+}
+
+.x-btn-over .x-btn-left{
+	background-position:0 0px;
+}
+
+.x-btn-over .x-btn-right{
+	background-position:0 -22px;
+}
+
+.x-btn-over .x-btn-center{
+	background-position:0 -44px;
+}
+
+.x-btn-click .x-btn-center, .x-btn-menu-active .x-btn-center{
+	background-position:0 -44px;
+}
+
+.x-btn-menu-arrow-wrap .x-btn-center button {
+    height:22px;
+}

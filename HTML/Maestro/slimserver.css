@@ -1,0 +1,190 @@
+html, body {
+	padding: 0;
+	margin: 0;
+	border: 0 none;
+	overflow: hidden;
+	height: 100%;
+	color: white;
+	background: url(/html/wizard/inner_background.gif) repeat;
+	font-size: 12px;
+	font-family: sans-serif;
+}
+
+a { color: white; }
+img { border: 0; }
+
+
+/* browse pages */
+.browsedbListItem {
+	position: relative;
+	padding: 6px;
+	padding-right: 80px;
+}
+
+.browsedbControls {
+	position: absolute;
+	top: 0px;
+	padding-top: 6px;
+	right: 10px;
+}
+
+.browsedbRightControls {
+	position: absolute;
+	top: 0px;
+	padding-top: 6px;
+	right: 10px;
+}
+
+.browsedbLeftControls {
+	padding-top: 6px;
+}
+
+#browsedbHeader {
+	margin: 10px;
+}
+
+#browsedbList {
+	overflow: auto;
+	margin: 5px;
+	height: 400px;;
+}
+
+
+/* Home menu */
+.homeMenuSection {
+	position: absolute;
+	width: 100%;
+	margin-top: 20px;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.homeMenuItem {
+	position: relative;
+	margin: 0;
+	margin-right: 10px;
+	padding: 5px;
+	font-size: 120%;
+}
+
+.homeMenuItem a {
+	text-decoration: none;
+}
+
+.homeMenuItem a:hover, .homeMenuSection .mouseOver {
+	background: url(html/images/pointer.gif) no-repeat right white;
+	color: gray;
+}
+
+
+/* styles for the basic layout */
+#header {
+	background: url(/html/wizard/header_background.png) repeat;
+}
+
+#header_content {
+	height: 40px;
+	margin-left: 230px;
+	padding-top: 11px;
+	background: url(/html/wizard/header_right.png) no-repeat top right;
+	color: white;
+	font-size: 14px;
+}
+
+#header_logo {
+	left: 0px;
+	position: absolute;
+}
+
+#footer{
+	background: url(/html/wizard/header_background.png) repeat;
+}
+
+#footer_content {
+	height: 38px;
+	background: url(/html/wizard/footer_right.png) no-repeat bottom right;
+}
+
+#footer_logo {
+	left: 0px;
+	vertical-align: bottom;
+	position: absolute;
+}
+
+.inner {
+	background: url(/html/wizard/inner_background.gif) repeat;
+	margin: 20px; 
+}
+
+.inner_content {
+	background: url(/html/wizard/inner_background.gif) repeat;
+	margin: 10px;
+	height: 330px;
+}
+.inner_top div { 
+	height: 10px;
+	background: url(/html/wizard/inner_top_left.gif) no-repeat top left;
+}
+
+.inner_top {
+	height: 10px;
+	background: url(/html/wizard/inner_top_right.gif) no-repeat top right; 
+}
+
+.inner_bottom div { 
+	height: 10px;
+	background: url(/html/wizard/inner_bottom_left.gif) no-repeat bottom left; 
+}
+
+.inner_bottom { 
+	height: 10px;
+	background: url(/html/wizard/inner_bottom_right.gif) no-repeat bottom right; 
+}
+
+.titlebox {
+	background: url(/html/wizard/title_background.gif) repeat;
+	margin-left: 5px;
+	margin-right: 5px; 
+}
+
+.titlebox_content {
+	background: url(/html/wizard/title_background.gif) repeat;
+	margin-left: 10px;
+	height: 15px;
+	font-size: 120%;
+	font-weight: bold;
+}
+.titlebox_top div { 
+	height: 10px;
+	background: url(/html/wizard/title_top_left.gif) no-repeat top left;
+}
+
+.titlebox_top {
+	height: 10px;
+	background: url(/html/wizard/title_top_right.gif) no-repeat top right; 
+}
+
+.titlebox_bottom div { 
+	height: 10px;
+	background: url(/html/wizard/title_bottom_left.gif) no-repeat bottom left; 
+}
+
+.titlebox_bottom { 
+	height: 10px;
+	background: url(/html/wizard/title_bottom_right.gif) no-repeat bottom right; 
+}
+
+#mainbody {
+	position: relative;
+	width: 100%;
+	height: 500px;
+}
+
+#main {
+	overflow: hidden;
+	background: #23415e;
+}
+
+.content {
+	width: 100%;
+}
