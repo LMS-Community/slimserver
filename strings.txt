@@ -13734,6 +13734,9 @@ DEBUG_SCAN_IMPORT
 	DE	Datei & Wiedergabelisten Metadaten-Import
 	EN	File & Playlist Metadata Import Debugging
 
+DEBUG_WIZARD
+       EN      Setup Wizard activity logging
+
 SETUP_DEBUG_SERVER_LOG
 	DE	Server Logdatei
 	EN	Server Log File
