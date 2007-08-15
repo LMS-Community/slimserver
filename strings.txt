@@ -492,6 +492,9 @@ MY_MUSIC
 	NL	Mijn muziek
 	NO	Min musikk
 
+OTHER_SERVICES
+	EN	Other Services
+
 GAMES
 	CS	Hry
 	DA	Spil
@@ -6993,7 +6996,7 @@ SETUP_WIZARD_AUDIODIR_DESC
 	EN	On the left you can select the local folder where your music collection is stored. 
 
 SETUP_WIZARD_SHARE_WIN
-	EN	<br/><br/>If you want to use a network share hosted on another computer or a NAS, you can do this by entering the UNC path to the share in the form \\yourserver\share in the text field below. Then press the > button.<br/><br/>Make sure either the music share is configured for anonymous access or make SlimServer run as a user known to the fileserver hosting your music files.
+	EN	<br/><br/>If you want to use a network share hosted on another computer or a NAS, you can do this by entering the UNC path to the share in the form \\yourserver\share in the text field below. Then press the > button.<br/><br/>Make sure either the music share is configured for anonymous access or make SlimServer run as a user known to the fileserver hosting your music files.<br/><br/>Please note, that SlimServer can't access letters mapped drive to network shares.
 
 SETUP_WIZARD_SHARE_OTHERS
 	EN	<br/><br/>If you want to use a network share hosted on another computer or a NAS, you'll need to first mount the share to your filesystem. It will then be available in the folder tree.

@@ -90,7 +90,8 @@ Wizard = function(){
 				case 'summary' :
 					if (offset > 0) {
 						document.forms.wizardForm.submit();
-						window.close();
+						if (!firsttimerun)
+							window.close();
 					}
 					else {
 						this.nextBtn.setText(strings['next']);

@@ -10,6 +10,7 @@ package Slim::Web::Pages::Home;
 use strict;
 
 use POSIX ();
+use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 
 use base qw(Slim::Web::Pages);
 
@@ -35,8 +36,17 @@ sub init {
 }
 
 sub home {
-	my ($class, $client, $params) = @_;
+	my ($class, $client, $params, $gugus, $httpClient, $response) = @_;
+
+	my $template = $params->{"path"} =~ /home\.(htm|xml)/ ? 'home.html' : 'index.html';
 	
+	# redirect to the setup wizard if it has never been run before 
+	if (!$prefs->get('wizardDone')) {
+		$response->code(RC_MOVED_TEMPORARILY);
+		$response->header('Location' => '/settings/server/wizard.html');
+		return Slim::Web::HTTP::filltemplatefile($template, $params);
+	}
+
 	my %listform = %$params;
 
 	$params->{'nosetup'}  = 1 if $::nosetup;
@@ -107,8 +117,6 @@ sub home {
 	
 	$class->addLibraryStats($params);
 
-	my $template = $params->{"path"}  =~ /home\.(htm|xml)/ ? 'home.html' : 'index.html';
-	
 	return Slim::Web::HTTP::filltemplatefile($template, $params);
 }
 

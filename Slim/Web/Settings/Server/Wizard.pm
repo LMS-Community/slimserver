@@ -7,12 +7,14 @@ package Slim::Web::Settings::Server::Wizard;
 
 use strict;
 use base qw(Slim::Web::Settings);
+use I18N::LangTags qw(extract_language_tags);
+use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
 my $showProxy = 1;
-my $prefs = preferences('server');
+my $serverPrefs = preferences('server');
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'wizard',
@@ -51,13 +53,42 @@ sub page {
 }
 
 sub handler {
-	my ($class, $client, $paramRef, $pageSetup) = @_;
+	my ($class, $client, $paramRef, $pageSetup, $httpClient, $response) = @_;
 
+	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
+
+	# make sure we only enforce the wizard at the very first startup
+	if (!$serverPrefs->get('wizardDone')) {
+		$serverPrefs->set('wizardDone', 1);
+		$paramRef->{'firstTimeRun'} = 1;
+
+		# try to guess the local language setting
+		# only on non-Windows systems, as the Windows installer is setting the langugae
+		if (Slim::Utils::OSDetect::OS() ne 'win'
+			&& defined $response->{'_request'}->{'_headers'}->{'accept-language'}) {
+
+			$log->debug("Accepted-Languages: " . $response->{'_request'}->{'_headers'}->{'accept-language'});
+
+			foreach my $language (extract_language_tags($response->{'_request'}->{'_headers'}->{'accept-language'})) {
+				$language = uc($language);
+				$language =~ s/-/_/;  # we're using zh_cn, the header says zh-cn
+	
+				$log->debug("trying language: " . $language);
+				if (defined $paramRef->{'languageoptions'}->{$language}) {
+					$serverPrefs->set('language', $language);
+					$log->info("selected language: " . $language);
+					last;
+				}
+			}
+
+		}
+	}
+	
 	# handle language separately, as it is in its own form
 	if ($paramRef->{'saveLanguage'}) {
-		preferences('server')->set('language', $paramRef->{'language'});		
+		$serverPrefs->set('language', $paramRef->{'language'});		
 	}
-	$paramRef->{'prefs'}->{'language'} = preferences('server')->get('language');
+	$paramRef->{'prefs'}->{'language'} = Slim::Utils::Strings::getLanguage();
 
 	foreach my $namespace (keys %prefs) {
 		foreach my $pref (@{$prefs{$namespace}}) {
@@ -90,11 +121,17 @@ sub handler {
 		}
 	}
 
-	$paramRef->{'showProxy'} = $showProxy;
-	$paramRef->{'showiTunes'} = !Slim::Plugin::iTunes::Common->canUseiTunesLibrary();
-	$paramRef->{'showMusicIP'} = !Slim::Plugin::MusicMagic::Plugin::canUseMusicMagic();
-	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
-	$paramRef->{'serverOS'} = Slim::Utils::OSDetect::OS();
+	# if the wizard has been run for the first time, redirect to the main we page
+	if ($paramRef->{'firstTimeRunCompleted'}) {
+		$response->code(RC_MOVED_TEMPORARILY);
+		$response->header('Location' => '/');
+	}
+	else {
+		$paramRef->{'showProxy'} = $showProxy;
+		$paramRef->{'showiTunes'} = !Slim::Plugin::iTunes::Common->canUseiTunesLibrary();
+		$paramRef->{'showMusicIP'} = !Slim::Plugin::MusicMagic::Plugin::canUseMusicMagic();
+		$paramRef->{'serverOS'} = Slim::Utils::OSDetect::OS();
+	}
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
 }

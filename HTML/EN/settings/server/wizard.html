@@ -13,6 +13,7 @@
 			var showproxy = [% showProxy ? "true" : "false" %];
 			var showitunes = [% showiTunes ? "true" : "false" %];
 			var showmusicip = [% showMusicIP ? "true" : "false" %];
+			var firsttimerun = [% firstTimeRun ? "true" : "false" %];
 			
 			var strings = new Array();
 			strings['previous'] = "[% "SETUP_WIZARD_PREVIOUS" | string %]";
@@ -422,6 +423,9 @@
 									<div>[% "SETUP_WIZARD_SUMMARY_RESCAN" | string %]</div>
 								</div>
 					
+								[% IF firstTimeRun %]
+								<input name="firstTimeRunCompleted" type="hidden" value="1">
+								[% END %]
 								<input name="saveSettings" type="hidden" value="1">
 							</form>
 						</div>
