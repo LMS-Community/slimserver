@@ -248,35 +248,40 @@ sub _readCoverArtFiles {
 
 		my $suffix = $2 ? $2 : ".jpg";
 
-		$artwork = Slim::Music::TitleFormatter::infoFormat(
-			Slim::Utils::Misc::fileURLFromPath($track->url), $1
-		) . $suffix;
-
-		$log->info("Variable cover: $artwork from $1");
-
-		if (Slim::Utils::OSDetect::OS() eq 'win') {
-			# Remove illegal characters from filename.
-			$artwork =~ s/\\|\/|\:|\*|\?|\"|<|>|\|//g;
-		}
-
-		my $artPath = $parentDir->file($artwork)->stringify;
-
-		my ($body, $contentType) = $class->getImageContentAndType($artPath);
-
-		my $artDir  = dir($prefs->get('artfolder'));
-
-		if (!$body && defined $artDir) {
-
-			$artPath = $artDir->file($artwork)->stringify;
-
-			($body, $contentType) = $class->getImageContentAndType($artPath);
-		}
-
-		if ($body && $contentType) {
-
-			$log->info("Found image file: $artPath");
-
-			return ($body, $contentType, $artPath);
+		if (my $prefix = Slim::Music::TitleFormatter::infoFormat(
+				Slim::Utils::Misc::fileURLFromPath($track->url), $1)) {
+		
+			$artwork = $prefix . $suffix;
+	
+			$log->info("Variable cover: $artwork from $1");
+	
+			if (Slim::Utils::OSDetect::OS() eq 'win') {
+				# Remove illegal characters from filename.
+				$artwork =~ s/\\|\/|\:|\*|\?|\"|<|>|\|//g;
+			}
+	
+			my $artPath = $parentDir->file($artwork)->stringify;
+	
+			my ($body, $contentType) = $class->getImageContentAndType($artPath);
+	
+			my $artDir  = dir($prefs->get('artfolder'));
+	
+			if (!$body && defined $artDir) {
+	
+				$artPath = $artDir->file($artwork)->stringify;
+	
+				($body, $contentType) = $class->getImageContentAndType($artPath);
+			}
+	
+			if ($body && $contentType) {
+	
+				$log->info("Found image file: $artPath");
+	
+				return ($body, $contentType, $artPath);
+			}
+		} else {
+			
+			$log->info("Variable cover: no match from $1");
 		}
 
 	} elsif (defined $artwork) {
