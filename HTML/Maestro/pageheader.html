@@ -21,4 +21,9 @@
 			<div class="titlebox_bottom"><div></div></div>
 		</div>
 
+		<div id="crumblist">
+			[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
+			[%- PROCESS crumblist IF pwd_list %]
+		</div>
+
 		<div class="content">

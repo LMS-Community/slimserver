@@ -5,160 +5,13 @@
 		<title>[% "SLIMSERVER" | string %]</title>
 
 		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
-
-		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
-		<script type="text/javascript" src="/html/ext/ext-all.js?r=[% revision %]"></script>
-
-		<script type="text/javascript">
-			var showproxy = [% showProxy ? "true" : "false" %];
-			var showitunes = [% showiTunes ? "true" : "false" %];
-			var showmusicip = [% showMusicIP ? "true" : "false" %];
-			var firsttimerun = [% firstTimeRun ? "true" : "false" %];
-			
-			var strings = new Array();
-			strings['previous'] = "[% "SETUP_WIZARD_PREVIOUS" | string %]";
-			strings['next'] = "[% "SETUP_WIZARD_NEXT" | string %]";
-			strings['finish'] = "[% "SETUP_WIZARD_FINISH" | string %]";
-			strings['sn_verify'] = "[% "SETUP_WIZARD_SQN_VERIFY" | string %]";
-			strings['sn_success'] = "[% "SETUP_SN_VALID_LOGIN" | string %]";
-
-			strings['summary_none'] = "[% "NONE" | string %]";
-			strings['summary_audiodir'] = "[% "SETUP_AUDIODIR" | string %][% "COLON" | string %]";
-			strings['summary_itunes'] = "[% "ITUNES_DESC" | string %]";
-			strings['summary_musicmagic'] = "[% "MUSICMAGIC_DESC" | string %]";
-		</script>
-
-		<script type="text/javascript" src="/html/fileselector.js?r=[% revision %]"></script>
-		<script type="text/javascript" src="/html/wizard.js?r=[% revision %]"></script>
+		<link rel="stylesheet" type="text/css" href="/Maestro/slim-ext.css" />
+		<link rel="stylesheet" type="text/css" href="/Maestro/slimserver.css" />
 
 		<style type="text/css">
 		<!--
-			html, body {
-				padding: 0;
-				border: 0 none;
-				overflow: hidden;
-				height: 100%;
-				color: white;
-				font-size: 12px;
-				font-family: sans-serif;
-			}
-
+			html, body { background: white; }
 			body { margin: 20px; }
-
-			a { color: white; }
-
-			#header {
-				background: url(/html/wizard/header_background.png) repeat;
-			}
-
-			#header_content {
-				height: 40px;
-				margin-left: 230px;
-				padding-top: 11px;
-				background: url(/html/wizard/header_right.png) no-repeat top right;
-				color: white;
-				font-size: 14px;
-			}
-
-			#header_logo {
-				left: 0px;
-				position: absolute;
-			}
-
-			#footer{
-				background: url(/html/wizard/header_background.png) repeat;
-			}
-
-			#footer_content {
-				height: 38px;
-				background: url(/html/wizard/footer_right.png) no-repeat bottom right;
-			}
-
-			#footer_logo {
-				left: 0px;
-				vertical-align: bottom;
-				position: absolute;
-			}
-
-			.inner {
-				background: url(/html/wizard/inner_background.gif) repeat;
-				margin: 20px; 
-			}
-
-			.inner_content {
-				background: url(/html/wizard/inner_background.gif) repeat;
-				margin: 10px;
-				height: 330px;
-			}
-			.inner_top div { 
-				height: 10px;
-				background: url(/html/wizard/inner_top_left.gif) no-repeat top left;
-			}
-
-			.inner_top {
-				height: 10px;
-				background: url(/html/wizard/inner_top_right.gif) no-repeat top right; 
-			}
-
-			.inner_bottom div { 
-				height: 10px;
-				background: url(/html/wizard/inner_bottom_left.gif) no-repeat bottom left; 
-			}
-
-			.inner_bottom { 
-				height: 10px;
-				background: url(/html/wizard/inner_bottom_right.gif) no-repeat bottom right; 
-			}
-
-			.titlebox {
-				background: url(/html/wizard/title_background.gif) repeat;
-				margin-left: 5px;
-				margin-right: 5px; 
-			}
-
-			.titlebox_content {
-				background: url(/html/wizard/title_background.gif) repeat;
-				margin-left: 10px;
-				height: 15px;
-				font-weight: bold;
-			}
-			.titlebox_top div { 
-				height: 10px;
-				background: url(/html/wizard/title_top_left.gif) no-repeat top left;
-			}
-
-			.titlebox_top {
-				height: 10px;
-				background: url(/html/wizard/title_top_right.gif) no-repeat top right; 
-			}
-
-			.titlebox_bottom div { 
-				height: 10px;
-				background: url(/html/wizard/title_bottom_left.gif) no-repeat bottom left; 
-			}
-
-			.titlebox_bottom { 
-				height: 10px;
-				background: url(/html/wizard/title_bottom_right.gif) no-repeat bottom right; 
-			}
-
-			#mainbody {
-				position: relative;
-				width: 100%;
-				height: 500px;
-			}
-
-			#main {
-				overflow: hidden;
-			}
-			
-			.folderselector {
-				overflow: auto;
-				height: 300px;
-				width: 50%;
-				border: 2px inset grey;
-				background: white;
-			}
 
 			.wz_path {
 				width: 45%;
@@ -202,78 +55,41 @@
 				list-style-type: circle;
 				margin-left: 20px;
 			}
-
-			.x-tree-node-leaf .x-tree-node-alwayscollapsed {
-				background-image:url(/html/ext/resources/images/default/tree/folder.gif);
-			}
-			
-			.x-layout-panel-body {
-				background: #23415e;
-			}
-			
-			.x-layout-panel {
-				border: 0px none;
-			}
-
-			.x-btn {
-				display: inline;
-			}
-
-			.x-btn-text, .x-btn button {
-				color: #d1d1d1;
-				font-weight: bold;
-			}
-
-			.x-btn-left{
-				width:3px;
-				height:22px;
-				background:url(/html/wizard/btn-sprite.png) no-repeat 0 0;
-			}
-			
-			.x-btn-right{
-				width:3px;
-				height:22px;
-				background:url(/html/wizard/btn-sprite.png) no-repeat 0 -22px;
-			}
-			
-			.x-btn-center{
-				background:url(/html/wizard/btn-sprite.png) repeat-x 0 -44px;
-				vertical-align: middle;
-				text-align:center;
-				padding:0 5px;
-				cursor:pointer;
-				white-space:nowrap;
-			}
-
-			.x-btn-over .x-btn-left{
-				background-position:0 0px;
-			}
-
-			.x-btn-over .x-btn-right{
-				background-position:0 -22px;
-			}
-
-			.x-btn-over .x-btn-center{
-				background-position:0 -44px;
-			}
-
-			.x-btn-click .x-btn-center, .x-btn-menu-active .x-btn-center{
-				background-position:0 -44px;
-			}
-
-			.x-btn-menu-arrow-wrap .x-btn-center button {
-			    height:22px;
-			}
 		-->
 		</style>
+
+		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="/html/ext/ext-all.js?r=[% revision %]"></script>
+
+		<script type="text/javascript">
+			var showproxy = [% showProxy ? "true" : "false" %];
+			var showitunes = [% showiTunes ? "true" : "false" %];
+			var showmusicip = [% showMusicIP ? "true" : "false" %];
+			var firsttimerun = [% firstTimeRun ? "true" : "false" %];
+			
+			var strings = new Array();
+			strings['previous'] = "[% "SETUP_WIZARD_PREVIOUS" | string %]";
+			strings['next'] = "[% "SETUP_WIZARD_NEXT" | string %]";
+			strings['finish'] = "[% "SETUP_WIZARD_FINISH" | string %]";
+			strings['sn_verify'] = "[% "SETUP_WIZARD_SQN_VERIFY" | string %]";
+			strings['sn_success'] = "[% "SETUP_SN_VALID_LOGIN" | string %]";
+
+			strings['summary_none'] = "[% "NONE" | string %]";
+			strings['summary_audiodir'] = "[% "SETUP_AUDIODIR" | string %][% "COLON" | string %]";
+			strings['summary_itunes'] = "[% "ITUNES_DESC" | string %]";
+			strings['summary_musicmagic'] = "[% "MUSICMAGIC_DESC" | string %]";
+		</script>
+
+		<script type="text/javascript" src="/html/fileselector.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="/html/wizard.js?r=[% revision %]"></script>
 	</head>
 
 	<body>
 		<div id="mainbody">
 
 			<div id="header">
-				<div id="header_logo"><img src="/html/wizard/header_left.png"></div>
-				<div id="header_content">&nbsp;</div>
+				<div id="header_left"></div>
+				<div id="header_content"></div>
 			</div>
 	
 			<div id="main">
@@ -436,7 +252,7 @@
 			</div>
 
 			<div id="footer">
-				<img src="/html/wizard/footer_left.png" id="footer_logo">
+				<div id="footer_left"></div>
 				<div id="footer_content">
 					<table id="wz_buttonbar">
 						<tr>

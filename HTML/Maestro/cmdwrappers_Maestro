@@ -3,6 +3,7 @@
 	[% controlGraphics  = 1 %]
 	[% browserTarget  = "browser" %]
 	[% useAJAX = 1 %]
+	[% crumbSeparator = ">" %]
 	
 	[% BLOCK cmdlink -%]
 		<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %].png" width=13 height=13 alt="[% cmdtitle | string | ucfirst %]" title="[% cmdtitle | string | ucfirst %]"></a>

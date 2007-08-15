@@ -22,17 +22,17 @@
 .x-btn-left{
 	width:3px;
 	height:22px;
-	background:url(/html/wizard/btn-sprite.png) no-repeat 0 0;
+	background:url(/Maestro/html/images/btn-sprite.png) no-repeat 0 0;
 }
 
 .x-btn-right{
 	width:3px;
 	height:22px;
-	background:url(/html/wizard/btn-sprite.png) no-repeat 0 -22px;
+	background:url(/Maestro/html/images/btn-sprite.png) no-repeat 0 -22px;
 }
 
 .x-btn-center{
-	background:url(/html/wizard/btn-sprite.png) repeat-x 0 -44px;
+	background:url(/Maestro/html/images/btn-sprite.png) repeat-x 0 -44px;
 	vertical-align: middle;
 	text-align:center;
 	padding:0 5px;
