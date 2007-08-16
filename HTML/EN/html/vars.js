@@ -2,6 +2,7 @@
 	var webroot       = "[% webroot %]";
 	[% IF refresh %]var refreshtime   = "[% refresh %]";[% END %]
 	var player        = "[% playerURI %]";
+	var playerid      = "[% player %]";
 	var url           = "[% statusroot %]";
 	var statusroot    = "[% statusroot %]";
 	var browserTarget;

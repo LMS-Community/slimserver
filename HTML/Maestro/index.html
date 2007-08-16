@@ -7,12 +7,10 @@
 		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slim-ext.css" />
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" />
+
 		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
 		<script type="text/javascript" src="/html/ext/ext-all.js"></script>
-
-		<script type="text/javascript">
-			var strings = new Array();
-		</script>
+		<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>		
 
 		<style>
 			html, body {
@@ -35,6 +33,11 @@
 				border: 0;
 				scroll
 			}
+
+			.section_header { color: #fff; font-size: 13px; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight: bold; padding-left: 6px; }
+			.selector { color: #333; font-size: 12px; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight: bold; line-height: 16px; padding-left: 6px; }
+			.current_track { color: white; font-size: 10px; font-family: Arial, Verdana, Helvetica, sans-serif; padding-left: 4px; }
+			.current_track_exp { color: white; font-size: 11px; font-family: Verdana, Arial, Helvetica, sans-serif; padding-left: 6px; }
 		</style>
 
 		<script type="text/javascript" src="[% webroot %]html/index.js"></script>
@@ -109,23 +112,23 @@
 												<td colspan="4">
 													<table width="100%" border="0" cellspacing="0" cellpadding="0">
 														<tr>
-															<td rowspan="6" width="96"><img src="[% webroot %]music/0/cover_96x96.jpg" alt="" height="96" width="96" border="0" /></td>
-															<td class="section_header">Current Track</td>
+															<td rowspan="6" width="96" id="ctrlCurrentArt"><img src="[% webroot %]music/0/cover_96x96.jpg" alt="" height="96" width="96" border="0" /></td>
+															<td class="section_header" id="ctrlCurrentTitle"></td>
 														</tr>
 														<tr>
 															<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="12" width="12" border="0" /></td>
 														</tr>
 														<tr>
-															<td class="current_track_exp">Song: Gasoline</td>
+															<td class="current_track_exp">[% "ARTIST" | string %][% "COLON" | string %] <span id="ctrlCurrentArtist">Audioslave</span></td>
 														</tr>
 														<tr>
-															<td class="current_track_exp">Artist: Audioslave</td>
+															<td class="current_track_exp">[% "ALBUM" | string %][% "COLON" | string %] <span id="ctrlCurrentAlbum">Audioslave</span></td>
 														</tr>
 														<tr>
-															<td class="current_track_exp">Album: Audioslave</td>
+															<td class="current_track_exp" id="ctrlPlaytime"><!-- 4:32 -->&nbsp;</td>
 														</tr>
 														<tr>
-															<td class="current_track_exp">4:32</td>
+															<td class="current_track_exp"><!-- [% "SONG" | string %][% "COLON" | string %] <span id="ctrlCurrentSong">Gasoline</span> -->&nbsp;</td>
 														</tr>
 													</table>
 												</td>
