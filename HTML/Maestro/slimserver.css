@@ -135,6 +135,12 @@ img { border: 0; }
 	position: absolute;
 }
 
+#playerControlPanel {
+	margin-top:20px;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
 .inner {
 	background: url(/Maestro/html/images/inner_background.gif) repeat;
 	margin: 20px; 

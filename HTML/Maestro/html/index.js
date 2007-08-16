@@ -40,10 +40,10 @@ Main = function(){
 
 			right = Ext.get('rightcontent');
 			right.setWidth(colWidth);
-			right.setHeight(colHeight);
+			right.setHeight(colHeight-165);
 
 			Ext.get('leftpanel').setHeight(colHeight + 10);
-			Ext.get('rightpanel').setHeight(colHeight + 10);
+			Ext.get('rightpanel').setHeight(colHeight - 155);
 
 			this.layout();
 		}
