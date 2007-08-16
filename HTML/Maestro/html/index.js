@@ -90,6 +90,11 @@ Main = function(){
 							Ext.get('ctrlCurrentArt').update('<img src="/music/' + result.playlist_loop[0].id + '/cover_96x96.jpg">');
 						}
 		
+						modeImg = '<img src="' + webroot + 'html/images/' + (result.mode=='play' ? 'btn_pause_normal.png' : 'btn_pause_normal.png') + '">';
+						el = Ext.get('ctrlMode');
+						el.update(modeImg);
+						Ext.get('ctrlMode').update('<img src="' + webroot + 'html/images/' + (result.mode=='play' ? 'btn_play_normal.png' : 'btn_pause_normal.png') + '">');
+
 						playerStatus = {
 							power: result.power,
 							mode: result.mode,
@@ -208,7 +213,8 @@ Main = function(){
 		},
 
 		ctrlNext : function(){ this.playerControl(['playlist', 'index', '+1']) },
-		ctrlPrevious : function(){ this.playerControl(['playlist', 'index', '-1']) }
+		ctrlPrevious : function(){ this.playerControl(['playlist', 'index', '-1']) },
+		ctrlTogglePause : function(){ this.playerControl(['pause']) }
 
 	};   
 }();
