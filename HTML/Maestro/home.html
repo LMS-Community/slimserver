@@ -1,4 +1,4 @@
-[% pageHeaderScripts = BLOCK %]
+[% maestroScripts = BLOCK %]
 	<script type="text/javascript">
 		var MainMenu = function(){
 			url = new Array();
@@ -18,7 +18,7 @@
 							[%- FOREACH category = additionalLinks %]
 								[%- category = category.key %]
 								[%- FOREACH link = additionalLinks.$category %]
-									url['[% link.key %]'] = '[% link.value | html %]player=[% playerURI %]';
+									url['[% link.key %]:[% category %]'] = '[% link.value | html %]player=[% playerURI %]';
 								[%- END %]
 							[%- END %]
 						}
@@ -83,14 +83,14 @@
 [% PROCESS pageheader.html noHomeLink=1 %]
 
 [% BLOCK menuItem %]
-	<div class="homeMenuItem" id="[% token %]">
+	<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
 		[% token | string %]
 	</div>
 [% END %]
 
 <div class="homeMenuSection" id="mainMenu">
-	[% PROCESS menuItem token="FAVORITES" %]
-	[% PROCESS menuItem token="MY_MUSIC" %]
+	[% PROCESS menuItem token="FAVORITES" category='browse' %]
+	[% category=''; PROCESS menuItem token="MY_MUSIC" %]
 	[% PROCESS menuItem token="RADIO" %]
 	[% PROCESS menuItem token="MUSIC_ON_DEMAND" %]
 	[% PROCESS menuItem token="OTHER_SERVICES" %]
@@ -99,7 +99,7 @@
 <div class="homeMenuSection" id="musicMenu">
 	[%- FOREACH link = additionalLinks.browse %]
 		[% IF link.key != 'FAVORITES' %]
-			[% PROCESS menuItem token=link.key %]
+			[% PROCESS menuItem token=link.key category='browse' %]
 		[%- END %]
 	[%- END %]
 </div>
@@ -108,7 +108,7 @@
 <div class="homeMenuSection" id="radioMenu">
 	[%- FOREACH link = additionalLinks.radio %]
 		[% IF link.key != 'FAVORITES' %]
-			[% PROCESS menuItem token=link.key %]
+			[% PROCESS menuItem token=link.key category='radio' %]
 		[%- END %]
 	[%- END %]
 </div>

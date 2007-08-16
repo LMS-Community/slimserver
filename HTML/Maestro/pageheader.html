@@ -4,11 +4,35 @@
 	<head>
 		[% PROCESS standardheader.html %]
 
-		<script type="text/javascript" src="html/ext/adapter/ext/ext-base.js"></script>
-		<script type="text/javascript" src="html/ext/ext-all.js"></script>
+		[% IF maestroScripts %]
+			<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
+			<script type="text/javascript" src="/html/ext/ext-all.js"></script>
 
-		[% IF pageHeaderScripts %]
-			[% pageHeaderScripts %]
+			<script type="text/javascript">
+				var Tools = function(){
+					return {
+						addBrowseListClass : function(){
+							Ext.select('div.browsedbListItem').on('mouseover', function(ev) {
+								if (ev.target.tagName != 'DIV')
+									return;
+		
+								// remove highlighting from the other DIVs
+								items = Ext.DomQuery.select('div.mouseOver');
+								for(var i = 0; i < items.length; i++) {
+									el = Ext.get(items[i].id);
+									if (el) {
+										el.removeClass('mouseOver');
+									}
+								}
+		
+								Ext.get(ev.target).addClass('mouseOver');
+							});
+						}
+					}
+				}();
+			</script>
+			
+			[% maestroScripts %]
 		[% END %]
 
 		<!--[if gte IE 6]>

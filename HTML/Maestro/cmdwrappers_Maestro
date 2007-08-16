@@ -2,27 +2,12 @@
 
 	[% controlGraphics  = 1 %]
 	[% browserTarget  = "browser" %]
-	[% useAJAX = 1 %]
+	[% useAJAX = 0 %]
 	[% crumbSeparator = ">" %]
 	
 
 	[% BLOCK cmdlink -%]
 		<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %].png" width=13 height=13 alt="[% cmdtitle | string | ucfirst %]" title="[% cmdtitle | string | ucfirst %]"></a>
-	[%- END %]
-
-	[% BLOCK cmdlinkXX -%]
-		<img src="[% webroot %]html/images/[% cmdimage %].png" width=13 height=13 alt="[% cmdtitle | string | ucfirst %]" title="[% cmdtitle | string | ucfirst %]">
-	[%- END %]
-	
-	[% BLOCK dummylinkXXX -%]
-		<img src="[% webroot %]html/images/spacer.gif" width="13" height="13" alt="" title="">
-	[%- END %]
-	
-	[% BLOCK descendlinkXX -%]
-		[% PROCESS cmdlink
-			cmdtitle = "NEXT"
-			cmdimage = "b_next" 
-			noTarget = 1 %]
 	[%- END %]
 
 

@@ -1,0 +1,206 @@
+[% maestroScripts = BLOCK %]
+	<script type="text/javascript">
+		Ext.EventManager.onDocumentReady(Tools.addBrowseListClass, Tools, true);
+	</script>	
+[% END %]
+
+[% IF query %]
+	[%# Add the search query to each link if available %]
+	[% searchquery = 'query=' _ query _ '&amp;' %]
+[% END %]
+
+[% FILTER null %]
+[% pageicon = 'RADIO'; noSpacer = NOT streaminfo; %]
+[% pwd_list = [];
+	FOREACH crumb IN crumb;
+		crumbItem = BLOCK %]
+			<a href="index.html?[% searchquery %]player=[% playerURI %]&amp;index=[% crumb.index %]">[% crumb.name %]</a>
+		[% END %]
+		[% pwd_list.push(crumbItem) %]
+	[% END %]
+[% END # filter -%]
+
+[% IF NOT ajaxUpdate %][% PROCESS pageheader.html %]<div id="mainbody">[% END %]
+
+[% IF msg %][% WRAPPER contentcontainer %]
+	<b>[% msg %]</b>
+[% END %][% END %]
+
+[% IF streaminfo %]
+	[% IF streaminfo.item.enclosure || streaminfo.item.url %]
+	<div id="songInfoHeader">
+		[% WRAPPER playlink %]href="index.html?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "PLAY_THIS_SONG" | string %]<br />
+		[% WRAPPER addlink %]href="index.html?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]
+	</div>
+	[% END %]
+	
+<div class="songInfo">
+	
+	[% IF streaminfo.item.image %]
+	<ul>
+		<img src="[% streaminfo.item.image %]" />
+	</ul>
+	[% END %]
+	
+	<ul>
+		<li><div class="songInfoTitle">[% "TITLE" | string; "COLON" | string %]</div>
+			<div class="songInfoText">[% (streaminfo.item.name || streaminfo.item.title) | html %]</div>
+		</li>
+		
+		[% IF streaminfo.item.subtitle %]
+		<li><div class="songInfoTitle">[% "XML_SUBTITLE" | string; "COLON" | string %]</div>
+			<div class="songInfoText">[% streaminfo.item.subtitle | html %]</div>
+		</li>
+		[% END %]
+		
+		[% IF streaminfo.item.pubdate %]
+		<li><div class="songInfoTitle">[% "XML_DATE" | string; "COLON" | string %]</div>
+			<div class="songInfoText">[% streaminfo.item.pubdate | html %]</div>
+		</li>
+		[% END %]
+		
+		[% IF streaminfo.item.url %]
+		<li><div class="songInfoTitle">[% "URL" | string; "COLON" | string %]</div>
+			<div class="songInfoText"><a href="[% streaminfo.item.url | html %]" target="_blank">[% streaminfo.item.url | html %]</a></div>
+		</li>
+		[% END %]
+		
+		[% IF streaminfo.item.description %]
+		<li><div class="songInfoTitle">[% "DESCRIPTION" | string; "COLON" | string %]</div>
+			<div class="songInfoText">[% streaminfo.item.description | html %]</div>
+		</li>
+		[% END %]
+		
+		[% IF streaminfo.item.summary %]
+		<li><div class="songInfoTitle">[% "XML_SUMMARY" | string; "COLON" | string %]</div>
+			<div class="songInfoText">[% streaminfo.item.summary | html %]</div>
+		</li>
+		[% END %]
+		
+		[% IF streaminfo.item.link %]
+		<li><div class="songInfoTitle">[% "XML_LINK" | string; "COLON" | string %]</div>
+			<div class="songInfoText"><a href="[% streaminfo.item.link | html %]" target="_blank">[% streaminfo.item.link | html %]</a></div>
+		</li>
+		[% END %]
+		
+		[% IF streaminfo.item.enclosure %]
+		<li><div class="songInfoTitle">[% "XML_ENCLOSURE" | string; "COLON" | string %]</div>
+			<div class="songInfoText">
+				<a href="[% streaminfo.item.enclosure.url | html %]" target="_blank">[% streaminfo.item.enclosure.url | html %]</a><br />
+				[% FILTER format('%.2f'); streaminfo.item.enclosure.length / 1048576; END %] MB
+			</div>
+		</li>
+		[% END %]
+		
+		[% IF streaminfo.item.duration %]
+		<li><div class="songInfoTitle">[% "LENGTH" | string; "COLON" | string %]</div>
+			<div class="songInfoText">[% streaminfo.item.duration | html %]</div>
+		</li>
+		[% END %]
+		
+		[% IF streaminfo.item.explicit %]
+		<li><div class="songInfoTitle">[% "XML_EXPLICIT" | string; "COLON" | string %]</div>
+			<div class="songInfoText">[% streaminfo.item.explicit | html %]</div>
+		</li>
+		[% END %]
+		
+		[% IF streaminfo.item.bitrate %]
+		<li><div class="songInfoTitle">[% "BITRATE" | string; "COLON" | string %]</div>
+			<div class="songInfoText">[% streaminfo.item.bitrate | html %] [% "KBPS" | string %]</div>
+		</li>
+		[% END %]
+		
+		[% IF streaminfo.item.listeners %]
+		<li><div class="songInfoTitle">[% "NUMBER_OF_LISTENERS" | string; "COLON" | string %]</div>
+			<div class="songInfoText">[% streaminfo.item.listeners | html %]</div>
+		</li>
+		[% END %]
+		
+		[% IF streaminfo.item.current_track %]
+		<li><div class="songInfoTitle">[% "NOW_PLAYING" | string; "COLON" | string %]</div>
+			<div class="songInfoText">[% streaminfo.item.current_track | html %]</div>
+		</li>
+		[% END %]
+		
+		[% IF streaminfo.item.genre %]
+		<li><div class="songInfoTitle">[% "GENRE" | string; "COLON" | string %]</div>
+			<div class="songInfoText">[% streaminfo.item.genre | html %]</div>
+		</li>
+		[% END %]
+		
+		[% IF streaminfo.item.source %]
+		<li><div class="songInfoTitle">[% "SOURCE" | string; "COLON" | string %]</div>
+			<div class="songInfoText">[% streaminfo.item.source | html %]</div>
+		</li>
+		[% END %]
+	</ul>
+</div>
+[% END %]
+
+[% IF search %]
+	<form id="searchForm" name="searchForm" method="GET">
+		<input type="text" id="query" name="query" size="40" value="[% query %]"/>
+		<input name="submit" type="submit" class="stdclick" value="[% "SEARCH" | string %]"><p>
+		<input type="hidden" value="[% player %]" name="player">
+	</form>
+[% END %]
+
+[%- odd = 1 %]
+[%- IF items -%]
+	<div id="browsedbHeader">
+		[% IF hasPagebar %]
+			[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]
+			[% PROCESS pagebar %]
+		[% END %]
+	</div>
+	
+	[% BLOCK favoritescontrol %]<span id="controls[% index _ (start + loop.index) %]" [% IF useAJAX %]style="display: none;"[% END %]>
+		[% IF item.favorites == 1 %]
+			[% WRAPPER favaddlink noTarget=1 %]
+				href="index.html?action=favadd&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]"
+			[% END %]
+		[% ELSIF item.favorites == 2 %]
+			[% WRAPPER favdellink noTarget=1 %]
+				href="index.html?action=favdel&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]"
+			[% END %]
+		[% END %]</span>
+	[% END %]
+	
+	[%- WRAPPER contentcontainer %]
+		[% IF itemsHaveAudio %]
+			[%- BLOCK allcontrol -%]
+				[% WRAPPER playlink %]href="index.html?[% searchquery %]action=playall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]"[% END %]
+				[% WRAPPER addlink %]href="index.html?[% searchquery %]action=addall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]"[% END %]
+			[%- END %]
+			[%- WRAPPER contentitem leftcontrols = 'allcontrol' %]
+				[% "ALL_SONGS" | string %]
+			[%- END %]
+			[%- odd = (not odd) %]
+		[% END %]
+		
+		[%- FOREACH item = items %]
+			[%- BLOCK gencontrol -%]
+				[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure %]
+					[% WRAPPER playlink %]href="index.html?[% searchquery %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
+					[% WRAPPER addlink %]href="index.html?[% searchquery %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
+				[% ELSE %]
+					[% PROCESS dummylink %]
+					[% PROCESS dummylink %]
+				[% END %]
+			[%- END %]
+			[%- WRAPPER contentitem leftcontrols = 'gencontrol' rightcontrols = 'favoritescontrol' %]
+				<a href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]" class="browseItemLink">[% item.name || item.title %]</a>
+			[%- END %]
+			[% IF useAJAX %]</span>[% END %]
+			[%- odd = (not odd) %]
+		[%- END %]
+
+	[%- END %]
+	[% IF hasPagebar %]
+		[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]
+		[% PROCESS pagebar %]
+	[% END %]
+[%- END %]
+
+[% IF NOT ajaxUpdate %]</div>[% PROCESS pagefooter.html %][% END %]
+
