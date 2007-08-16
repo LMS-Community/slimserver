@@ -205,9 +205,8 @@ Main = function(){
 						action
 					]
 				}),
-				success: function(response){
-					this.getUpdate(response);
-				},
+				success: this.getUpdate,
+
 				scope: this
 			});
 		},

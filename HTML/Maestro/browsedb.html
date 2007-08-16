@@ -21,10 +21,12 @@
 	[% IF hasPagebar -%][% PROCESS pagebar %][%- END %]
 </div>
 
+<div class="scrollingPanel">
 [%- WRAPPER contentcontainer %]
 	[% FOREACH item = browse_items -%]
 		[%- PROCESS browsedbitems_list.html -%]
 	[%- END %]
 [% END -%]
+</div>
 
 [% PROCESS pagefooter.html %]
