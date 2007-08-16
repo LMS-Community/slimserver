@@ -719,199 +719,217 @@ sub menuQuery {
 
 	my @menu = (
 		{
-			'text' => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
-			'actions' => {
-				'go' => {
-					'cmd' => ['albums'],
-					'params' => {
-						'menu' => 'track',
-					},
-				},
-			},
-			'window' => {
-				'menuStyle' => 'album',
-			},
-		},
-		{
-			'text' => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
-			'actions' => {
-				'go' => {
-					'cmd' => ['artists'],
-					'params' => {
-						'menu' => 'album',
-					},
-				},
-			},
-		},
-		{
-			'text' => Slim::Utils::Strings::string('BROWSE_BY_GENRE'),
-			'actions' => {
-				'go' => {
-					'cmd' => ['genres'],
-					'params' => {
-						'menu' => 'artist',
-					},
-				},
-			},
-		},
-		{
-			'text' => Slim::Utils::Strings::string('BROWSE_BY_YEAR'),
-			'actions' => {
-				'go' => {
-					'cmd' => ['years'],
-					'params' => {
-						'menu' => 'album',
-					},
-				},
-			},
-		},
-		{
-			'text' => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'),
-			'actions' => {
-				'go' => {
-					'cmd' => ['albums'],
-					'params' => {
-						'menu' => 'track',
-						'sort' => 'new',
-					},
-				},
-			},
-			'window' => {
-				'menuStyle' => 'album',
-			},
-		},
-		{
-			'text' => 'Favorites',
-			'actions' => {
-				'go' => {
-					'cmd' => ['favorites', 'items'],
-					'params' => {
-						'menu' => 'favorites',
-					},
-				},
-			},
-		},
-		{
-			'text' => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
-			'actions' => {
-				'go' => {
-					'cmd' => ['musicfolder'],
-					'params' => {
-						'menu' => 'musicfolder',
-					},
-				},
-			},
-		},
-		{
-			'text' => Slim::Utils::Strings::string('SAVED_PLAYLISTS'),
-			'actions' => {
-				'go' => {
-					'cmd' => ['playlists'],
-					'params' => {
-						'menu' => 'track',
-					},
-				},
-			},
-		},
-		{
-			'text' => Slim::Utils::Strings::string('SEARCHMUSIC'),
-			'count' => 4,
+			'text' => Slim::Utils::Strings::string('MY_MUSIC'),
+			'count' => 8,
 			'offset' => 0,
 			'item_loop' => [
-				{
-					'text' => Slim::Utils::Strings::string('ARTISTS'),
-					'input' => {
-						'len' => 2, # Richard says "we can't search for U2!"
-						'help' => {
-							'text' => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+			{
+				'text' => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
+				'actions' => {
+					'go' => {
+						'cmd' => ['albums'],
+						'params' => {
+							'menu' => 'track',
 						},
-					},
-					'actions' => {
-						'go' => {
-							'cmd' => ['artists'],
-							'params' => {
-								'menu' => 'album',
-								'search' => '__INPUT__',
-							},
-						},
-					},
-					'window' => {
-						'text' => Slim::Utils::Strings::string('SEARCHFOR_ARTISTS'),
 					},
 				},
-				{
-					'text' => Slim::Utils::Strings::string('ALBUMS'),
-					'input' => {
-						'len' => 3,
-						'help' => {
-							'text' => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+				'window' => {
+					'menuStyle' => 'album',
+				},
+			},
+			{
+				'text' => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
+				'actions' => {
+					'go' => {
+						'cmd' => ['artists'],
+						'params' => {
+							'menu' => 'album',
 						},
-					},
-					'actions' => {
-						'go' => {
-							'cmd' => ['albums'],
-							'params' => {
-								'menu' => 'track',
-								'search' => '__INPUT__',
-							},
-						},
-					},
-					'window' => {
-						'text' => Slim::Utils::Strings::string('SEARCHFOR_ALBUMS'),
-						'menuStyle' => 'album',
 					},
 				},
-				{
-					'text' => Slim::Utils::Strings::string('SONGS'),
-					'input' => {
-						'len' => 3,
-						'help' => {
-							'text' => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+			},
+			{
+				'text' => Slim::Utils::Strings::string('BROWSE_BY_GENRE'),
+				'actions' => {
+					'go' => {
+						'cmd' => ['genres'],
+						'params' => {
+							'menu' => 'artist',
 						},
-					},
-					'actions' => {
-						'go' => {
-							'cmd' => ['tracks'],
-							'params' => {
-								'menu' => 'track',
-								'search' => '__INPUT__',
-							},
-						},
-					},
-					'window' => {
-						'text' => Slim::Utils::Strings::string('SEARCHFOR_SONGS'),
 					},
 				},
-				{
-					'text' => Slim::Utils::Strings::string('PLAYLISTS'),
-					'input' => {
-						'len' => 3,
-						'help' => {
-							'text' => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+			},
+			{
+				'text' => Slim::Utils::Strings::string('BROWSE_BY_YEAR'),
+				'actions' => {
+					'go' => {
+					'cmd' => ['years'],
+						'params' => {
+							'menu' => 'album',
 						},
-					},
-					'actions' => {
-						'go' => {
-							'cmd' => ['playlists'],
-							'params' => {
-								'menu' => 'track',
-								'search' => '__INPUT__',
-							},
-						},
-					},
-					'window' => {
-						'text' => Slim::Utils::Strings::string('SEARCHFOR_PLAYLISTS'),
 					},
 				},
+			},
+			{
+				'text' => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'),
+				'actions' => {
+					'go' => {
+						'cmd' => ['albums'],
+						'params' => {
+							'menu' => 'track',
+							'sort' => 'new',
+						},
+					},
+				},
+				'window' => {
+					'menuStyle' => 'album',
+				},
+			},
+			{
+				'text' => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
+				'actions' => {
+					'go' => {
+						'cmd' => ['musicfolder'],
+						'params' => {
+							'menu' => 'musicfolder',
+						},
+					},
+				},
+			},
+			{
+				'text' => Slim::Utils::Strings::string('SAVED_PLAYLISTS'),
+				'actions' => {
+					'go' => {
+						'cmd' => ['playlists'],
+						'params' => {
+							'menu' => 'track',
+						},
+					},
+				},
+			},
+			{
+				'text' => Slim::Utils::Strings::string('SEARCHMUSIC'),
+				'count' => 4,
+				'offset' => 0,
+				'item_loop' => [
+					{
+						'text' => Slim::Utils::Strings::string('ARTISTS'),
+						'input' => {
+							'len' => 2, # Richard says "we can't search for U2!"
+							'help' => {
+								'text' => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+							},
+						},
+						'actions' => {
+							'go' => {
+								'cmd' => ['artists'],
+								'params' => {
+									'menu' => 'album',
+									'search' => '__INPUT__',
+								},
+							},
+						},
+						'window' => {
+							'text' => Slim::Utils::Strings::string('SEARCHFOR_ARTISTS'),
+						},
+					},
+					{
+						'text' => Slim::Utils::Strings::string('ALBUMS'),
+						'input' => {
+							'len' => 3,
+							'help' => {
+								'text' => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+							},
+						},
+						'actions' => {
+							'go' => {
+								'cmd' => ['albums'],
+								'params' => {
+									'menu' => 'track',
+									'search' => '__INPUT__',
+								},
+							},
+						},
+						'window' => {
+							'text' => Slim::Utils::Strings::string('SEARCHFOR_ALBUMS'),
+							'menuStyle' => 'album',
+						},
+					},
+					{
+						'text' => Slim::Utils::Strings::string('SONGS'),
+						'input' => {
+							'len' => 3,
+							'help' => {
+								'text' => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+							},
+						},
+						'actions' => {
+							'go' => {
+								'cmd' => ['tracks'],
+								'params' => {
+									'menu' => 'track',
+									'search' => '__INPUT__',
+								},
+							},
+						},
+						'window' => {
+							'text' => Slim::Utils::Strings::string('SEARCHFOR_SONGS'),
+						},
+					},
+					{
+						'text' => Slim::Utils::Strings::string('PLAYLISTS'),
+						'input' => {
+							'len' => 3,
+							'help' => {
+								'text' => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+							},
+						},
+						'actions' => {
+							'go' => {
+								'cmd' => ['playlists'],
+								'params' => {
+									'menu' => 'track',
+									'search' => '__INPUT__',
+								},
+							},
+						},
+						'window' => {
+							'text' => Slim::Utils::Strings::string('SEARCHFOR_PLAYLISTS'),
+						},
+					},
+				],
+			},
 			],
 		},
 		{
-			'text' => 'Internet Radio',
+			'text' => Slim::Utils::Strings::string('RADIO'),
 			'actions' => {
 				'go' => {
 					'cmd' => ['radios'],
 					'params' => {
 						'menu' => 'radio',
+					},
+				},
+			},
+		},
+		{
+			'text' => Slim::Utils::Strings::string('MUSIC_SERVICES'),
+			'actions' => {
+				'go' => {
+					'cmd' => ['services'],
+					'params' => {
+						'menu' => 'services',
+					},
+				},
+			},
+		},
+		{
+			'text' => Slim::Utils::Strings::string('FAVORITES'),
+			'actions' => {
+				'go' => {
+					'cmd' => ['favorites', 'items'],
+					'params' => {
+						'menu' => 'favorites',
 					},
 				},
 			},

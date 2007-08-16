@@ -474,6 +474,9 @@ RADIO
 	SV	Internetradio
 	ZH_CN	互联网收音机
 
+MUSIC_SERVICES
+	EN	Music Services
+
 MUSIC_ON_DEMAND
 	DE	Musik auf Abruf
 	EN	Music On Demand
