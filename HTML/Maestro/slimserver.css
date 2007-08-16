@@ -44,7 +44,6 @@ img { border: 0; }
 }
 
 #browsedbList {
-	overflow: auto;
 	margin: 5px;
 	height: 400px;;
 }
@@ -71,14 +70,32 @@ img { border: 0; }
 	text-decoration: none;
 }
 
-.homeMenuItem a:hover, .homeMenuSection .mouseOver {
+#browsedbListItem a:hover,
+#browsedbList .mouseOver,
+.homeMenuItem a:hover, 
+.homeMenuSection .mouseOver {
 	background: url(/Maestro/html/images/pointer.gif) no-repeat right white;
 	cursor: pointer;
 	color: gray;
 }
 
+.mouseOver .browseItemLink {
+	color: gray;
+}
+
 
 /* styles for the basic layout */
+.scrollingPanel {
+	height: 100%;
+	overflow: auto;
+}
+
+.overlappingCrumblist {
+	position: absolute;
+	top=0;
+	left=0;
+}
+
 #header {
 	background: url(/Maestro/html/images/header_background.png) repeat;
 }

@@ -243,16 +243,16 @@ END %]
 	[% IF item.currentsong %][% item.noHref=1 %]<b>[% END %]
 	
 	[% IF item.infohref %]
-			<a [% item.infohref %] target="browser">[% ( item.text || item.title ) | html %]</a>
+			<a [% item.infohref %] target="browser" class="browseItemLink">[% ( item.text || item.title ) | html %]</a>
 	[% ELSIF item.num || item.num == 0 %]
 			[% UNLESS item.noHref %]<a [% PROCESS songinfoItemHRef %] target="browser">[% END %]
 			[% item.title | html %][% UNLESS item.noHref %]</a>[% END %]
 	[%# browse list items %]
 	[%# no level info means its a music folder item, and check for itemobj to make sure it isn't just a text item %]
 	[% ELSIF item.item || !item.defined('level') && item.itemobj %]
-		<a [% PROCESS songinfoItemHRef %] target="browser">[% item.text | html %]</a>
+		<a [% PROCESS songinfoItemHRef %] target="browser" class="browseItemLink">[% item.text | html %]</a>
 	[% ELSIF item.songtitle %]
-		<a [% PROCESS songinfoItemHRef %] target="browser">[% item.songtitle | html %]</a>
+		<a [% PROCESS songinfoItemHRef %] target="browser" class="browseItemLink">[% item.songtitle | html %]</a>
 	[% ELSE %]
 		[% item.text | html %]
 	[% END %]
@@ -260,7 +260,7 @@ END %]
 	[% IF item.includeArtist && item.itemobj.artist && item.itemobj.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 	
 	[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %][% "FROM" | string %]
-	<i><a [% PROCESS albumItemHRef %] target="browser">[% item.itemobj.album.title | html %]</a></i>[% END %]
+	<i><a [% PROCESS albumItemHRef %] target="browser" class="browseItemLink">[% item.itemobj.album.title | html %]</a></i>[% END %]
 	[% IF item.currentsong %]</b>[% END %]
 [% END %]
 
@@ -271,7 +271,7 @@ END %]
 	><span id='wait[% itemid %]'    class="waitlinkbtn"  style="display: none;" onClick='hideTree("[% itemid %]")'>&nbsp;</span
 	><span id='close[% itemid %]'   class="closelinkbtn" style="display: none;" onClick='hideTree("[% itemid %]")'>&nbsp;</span>
 	[%- END %]
-	<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% item.text | html %][% IF item.hierarchy %]</a>[% END -%]
+	<a [% PROCESS "${item.hreftype}ItemHRef" %] class="browseItemLink">[% END %][% item.text | html %][% IF item.hierarchy %]</a>[% END -%]
 	[% IF item.showYear && item.year -%]<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END -%]
 
 		<!-- Include the artist for the album view -->

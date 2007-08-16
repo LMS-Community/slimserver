@@ -1,6 +1,4 @@
 [% pageHeaderScripts = BLOCK %]
-	<script type="text/javascript" src="html/ext/adapter/ext/ext-base.js"></script>
-	<script type="text/javascript" src="html/ext/ext-all.js"></script>
 	<script type="text/javascript">
 		var MainMenu = function(){
 			url = new Array();
@@ -26,17 +24,17 @@
 						}
 					}
 					
-					this.showPanel('mainMenu');
+					this.showPanel('main');
 				},
 				
 				doMenu : function(item){
 					switch (item) {
 						case 'MY_MUSIC':
-							this.showPanel('musicMenu');
+							this.showPanel('music');
 							break;
 
 						case 'RADIO':
-							this.showPanel('radioMenu');
+							this.showPanel('radio');
 							break;
 
 						case 'MUSIC_ON_DEMAND':
@@ -49,7 +47,7 @@
 							
 						default:
 							if (url[item]) {
-								document.location.href = url[item];
+								location.href = url[item];
 							}
 //							alert(item);
 							break;
@@ -57,12 +55,16 @@
 				},
 				
 				showPanel : function(panel){
-					menuItems = Ext.DomQuery.select('div.homeMenuSection');
-					for(var i = 0; i < menuItems.length; i++) {
-						el = Ext.get(menuItems[i].id);
-						if (el) {
-							el.setVisible(panel == menuItems[i].id);
-						}
+					items = Ext.DomQuery.select('div.homeMenuSection');
+					for(var i = 0; i < items.length; i++) {
+						if (el = Ext.get(items[i].id))
+							el.setVisible(panel + 'Menu' == items[i].id);
+					}
+
+					items = Ext.DomQuery.select('span.overlappingCrumblist');
+					for(var i = 0; i < items.length; i++) {
+						if (el = Ext.get(items[i].id))
+							el.setVisible(panel + 'Crumblist' == items[i].id);
 					}
 				}
 			}
@@ -72,7 +74,13 @@
 
 	</script>	
 [% END %]
-[% PROCESS pageheader.html %]
+[% pagetitle = BLOCK %][% "HOME" | string %][% END %]
+[% pwd_list = BLOCK %]
+	<span id="musicCrumblist" class="overlappingCrumblist"><a href="#" onclick="MainMenu.showPanel('main');">[% "HOME" | string %]</a> [% crumbSeparator %] <a href="#">[% "MY_MUSIC" | string %]</a></span>
+	<span id="radioCrumblist" class="overlappingCrumblist"><a href="#" onclick="MainMenu.showPanel('main');">[% "HOME" | string %]</a> [% crumbSeparator %] <a href="#">[% "RADIO" | string %]</a></span>
+[% END %]
+
+[% PROCESS pageheader.html noHomeLink=1 %]
 
 [% BLOCK menuItem %]
 	<div class="homeMenuItem" id="[% token %]">
@@ -105,8 +113,5 @@
 	[%- END %]
 </div>
 
-<script type="text/javascript">
-	
-</script>
 
 [% PROCESS pagefooter.html %]

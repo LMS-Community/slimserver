@@ -4,6 +4,9 @@
 	<head>
 		[% PROCESS standardheader.html %]
 
+		<script type="text/javascript" src="html/ext/adapter/ext/ext-base.js"></script>
+		<script type="text/javascript" src="html/ext/ext-all.js"></script>
+
 		[% IF pageHeaderScripts %]
 			[% pageHeaderScripts %]
 		[% END %]
@@ -16,7 +19,9 @@
 		<div class="titlebox">
 			<div class="titlebox_top"><div></div></div>
 			<div class="titlebox_content">
-				<div>[% "HOME" | string %]</div>
+				<div>
+					[% pagetitle %]
+				</div>
 			</div>
 			<div class="titlebox_bottom"><div></div></div>
 		</div>
