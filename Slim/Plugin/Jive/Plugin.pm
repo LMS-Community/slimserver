@@ -820,7 +820,12 @@ sub menuQuery {
 			'item_loop' => [
 				{
 					'text' => Slim::Utils::Strings::string('ARTISTS'),
-					'input' => 3,
+					'input' => {
+						'len' => 2, # Richard says "we can't search for U2!"
+						'help' => {
+							'text' => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+						},
+					},
 					'actions' => {
 						'go' => {
 							'cmd' => ['artists'],
@@ -836,7 +841,12 @@ sub menuQuery {
 				},
 				{
 					'text' => Slim::Utils::Strings::string('ALBUMS'),
-					'input' => 3,
+					'input' => {
+						'len' => 3,
+						'help' => {
+							'text' => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+						},
+					},
 					'actions' => {
 						'go' => {
 							'cmd' => ['albums'],
@@ -853,7 +863,12 @@ sub menuQuery {
 				},
 				{
 					'text' => Slim::Utils::Strings::string('SONGS'),
-					'input' => 3,
+					'input' => {
+						'len' => 3,
+						'help' => {
+							'text' => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+						},
+					},
 					'actions' => {
 						'go' => {
 							'cmd' => ['tracks'],
@@ -869,7 +884,12 @@ sub menuQuery {
 				},
 				{
 					'text' => Slim::Utils::Strings::string('PLAYLISTS'),
-					'input' => 3,
+					'input' => {
+						'len' => 3,
+						'help' => {
+							'text' => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+						},
+					},
 					'actions' => {
 						'go' => {
 							'cmd' => ['playlists'],
