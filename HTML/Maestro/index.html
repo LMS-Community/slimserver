@@ -34,7 +34,16 @@
 				scroll
 			}
 
-			.section_header { color: #fff; font-size: 13px; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight: bold; padding-left: 6px; }
+			#ctrlCurrentArt {
+				height: 96px;
+			}
+	
+			.section_header { 
+				height: 16px;
+				font-size: 13px; 
+				font-weight: bold; 
+				padding-left: 6px; 
+			}
 			.selector { color: #333; font-size: 12px; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight: bold; line-height: 16px; padding-left: 6px; }
 			.current_track { color: white; font-size: 10px; font-family: Arial, Verdana, Helvetica, sans-serif; padding-left: 4px; }
 			.current_track_exp { color: white; font-size: 11px; font-family: Verdana, Arial, Helvetica, sans-serif; padding-left: 6px; }
@@ -78,11 +87,11 @@
 												<td>
 													<table border="0" cellspacing="0" cellpadding="0">
 														<tr>
-															<td><img src="[% webroot %]html/images/btn_previous_normal.png" alt="" height="22" width="28" border="0" /></td>
+															<td><img src="[% webroot %]html/images/btn_previous_normal.png" alt="" height="22" width="28" border="0" onclick="Main.ctrlPrevious();" /></td>
 															<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
 															<td><img src="[% webroot %]html/images/btn_play_normal.png" alt="" height="22" width="51" border="0" /></td>
 															<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
-															<td><img src="[% webroot %]html/images/btn_next_normal.png" alt="" height="22" width="28" border="0" /></td>
+															<td><img src="[% webroot %]html/images/btn_next_normal.png" alt="" height="22" width="28" border="0" onclick="Main.ctrlNext();" /></td>
 														</tr>
 													</table>
 												</td>

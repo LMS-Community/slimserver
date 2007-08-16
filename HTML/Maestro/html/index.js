@@ -10,8 +10,8 @@ Main = function(){
 
 	return {
 		init : function(){
-			pollTimer = new Ext.util.DelayedTask(Main.pollStatus, this);
-			this.pollStatus();
+			pollTimer = new Ext.util.DelayedTask(Main.getStatus, this);
+			this.getStatus();
 
 			var layout = new Ext.BorderLayout('mainbody', {
 				north: {
@@ -115,14 +115,40 @@ Main = function(){
 			}
 			pollTimer.delay(5000);
 		},
+
+		getUpdate : function(response){
+			Ext.Ajax.request({
+				method: 'POST',
+				url: '/jsonrpc.js', 
+				timeout: 4000,
+				failure: this.updateStatus,
+				success: this.updateStatus,
+
+				params: Ext.util.JSON.encode({
+					id: 1, 
+					method: "slim.request", 
+					params: [ 
+						playerid,
+						[ 
+							"status",
+							"-",
+							1,
+							"tags:gabehldiqtyru"
+						]
+					]
+				}),
+				scope: this
+			});
+		},
 		
 		
 		// only poll to see whether the currently playing song has changed
 		// don't request all status info to minimize performance impact on the server
-		pollStatus : function() {
+		getStatus : function() {
 			Ext.Ajax.request({
 				url: '/jsonrpc.js',
 				method: 'POST',
+				timeout: 4000,
 				params: Ext.util.JSON.encode({
 					id: 1, 
 					method: "slim.request", 
@@ -149,47 +175,40 @@ Main = function(){
 								(result.current_title && result.current_title != playerStatus.title) ||
 								(result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track))
 							{
-								
-								Ext.Ajax.request({
-									method: 'POST',
-									url: '/jsonrpc.js', 
-									timeout: 4000,
-//									failure: this.updateStatus,
-//									success: this.updateStatus,
-
-									failure: function(response){
-										this.updateStatus(response);
-									},
-
-									success: function(response){
-										this.updateStatus(response);
-									},
-
-									params: Ext.util.JSON.encode({
-										id: 1, 
-										method: "slim.request", 
-										params: [ 
-											playerid,
-											[ 
-												"status",
-												"-",
-												1,
-												"tags:gabehldiqtyru"
-											]
-										]
-									}),
-									scope: this
-								});
+								this.getUpdate();
 							}
 						}
 					}
 				},
-				
+
 				scope: this
 			});
 			
 			pollTimer.delay(5000);
-		}
+		},
+
+		playerControl : function(action){
+			Ext.Ajax.request({
+				method: 'POST',
+				url: '/jsonrpc.js', 
+				timeout: 4000,
+				params: Ext.util.JSON.encode({
+					id: 1, 
+					method: "slim.request", 
+					params: [ 
+						playerid,
+						action
+					]
+				}),
+				success: function(response){
+					this.getUpdate(response);
+				},
+				scope: this
+			});
+		},
+
+		ctrlNext : function(){ this.playerControl(['playlist', 'index', '+1']) },
+		ctrlPrevious : function(){ this.playerControl(['playlist', 'index', '-1']) }
 
 	};   
 }();
