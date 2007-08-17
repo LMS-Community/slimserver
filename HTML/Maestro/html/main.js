@@ -1,22 +1,6 @@
 Main = function(){
-	var pollTimer;
-
-	var playerStatus = {
-		power: null,
-		modus: null,
-		title: null,
-		track: null
-	};
-
 	return {
 		init : function(){
-			Ext.Ajax.method = 'POST';
-			Ext.Ajax.url = '/jsonrpc.js'; 
-			Ext.Ajax.timeout = 4000;
-
-			pollTimer = new Ext.util.DelayedTask(Main.getStatus, this);
-			this.getStatus();
-
 			var layout = new Ext.BorderLayout('mainbody', {
 				north: {
 					split:false,
@@ -62,9 +46,32 @@ Main = function(){
 			Ext.get('rightpanel').setHeight(colHeight - 155);
 
 			this.layout();
+		}
+	};   
+}();
+
+
+Player = function(){
+	var pollTimer;
+
+	var playerStatus = {
+		power: null,
+		modus: null,
+		title: null,
+		track: null,
+		volume: null
+	};
+
+	return {
+		init : function(){
+			Ext.Ajax.method = 'POST';
+			Ext.Ajax.url = '/jsonrpc.js'; 
+			Ext.Ajax.timeout = 4000;
+
+			pollTimer = new Ext.util.DelayedTask(Player.getStatus, this);
+			this.getStatus();
 		},
-		
-		
+
 		updateStatus : function(response) {
 
 			if (response && response.responseText) {
@@ -103,7 +110,8 @@ Main = function(){
 							power: result.power,
 							mode: result.mode,
 							title: result.current_title,
-							track: result.playlist_loop[0].url
+							track: result.playlist_loop[0].url/*,
+							volume: result.'mixer volume'*/
 						};
 					}
 		
@@ -207,8 +215,15 @@ Main = function(){
 
 		ctrlNext : function(){ this.playerControl(['playlist', 'index', '+1']) },
 		ctrlPrevious : function(){ this.playerControl(['playlist', 'index', '-1']) },
-		ctrlTogglePause : function(){ this.playerControl(['pause']) }
+		ctrlTogglePlay : function(){
+			if (playerStatus.power == '0' || playerStatus.mode == 'stop')
+				this.playerControl(['play']);
+			else
+				this.playerControl(['pause']);
+		},
 
-	};   
+		openPlayerControl : function(){
+			window.open(webroot + 'status_header.html', "gaasd", "width=500,height=165");
+		}
+	}
 }();
-Ext.EventManager.onDocumentReady(Main.init, Main, true);

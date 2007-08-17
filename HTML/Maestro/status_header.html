@@ -1,0 +1,106 @@
+[%- IF !embedded %]
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		[% PROCESS standardheader.html %]
+
+		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
+		<script type="text/javascript" src="/html/ext/ext-all.js"></script>
+		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
+
+		<style>
+			html, body {
+				background: white;
+			}
+			
+			body { 
+				margin: 10px;
+			}
+		</style>
+
+		<!--[if gte IE 6]>
+		<link href="[% webroot %]ie.css" type="text/css" rel="stylesheet">
+		<![endif]-->
+	</head>
+	<body>
+		<div class="content">
+[% END %]
+
+<script type="text/javascript" src="[% webroot %]html/main.js"></script>
+<script type="text/javascript">
+	Ext.EventManager.onDocumentReady(Player.init, Player, true);
+</script>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="6"><img src="[% webroot %]html/images/playerbase_exp_left.png" alt="" height="143" width="6" border="0" /></td>
+		<td background="[% webroot %]html/images/playerbase_std_mid.png">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td>
+						<table border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td><img src="[% webroot %]html/images/btn_previous_normal.png" alt="" height="22" width="28" border="0" onclick="Player.ctrlPrevious();" /></td>
+								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
+								<td id="ctrlMode" onclick="Player.ctrlTogglePlay();"><img src="[% webroot %]html/images/btn_play_normal.png" alt="" height="22" width="51" border="0" /></td>
+								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
+								<td><img src="[% webroot %]html/images/btn_next_normal.png" alt="" height="22" width="28" border="0" onclick="Player.ctrlNext();" /></td>
+							</tr>
+						</table>
+					</td>
+					<td align="center"><img src="[% webroot %]html/images/btn_repeat_normal.png" alt="" height="22" width="34" border="0" /></td>
+					<td align="center"><img src="[% webroot %]html/images/btn_shuffle_normal.png" alt="" height="22" width="34" border="0" /></td>
+					<td align="right">
+						<table border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td><img src="[% webroot %]html/images/btn_volume_low_normal.png" alt="" height="22" width="22" border="0" /></td>
+								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
+								<td><img src="[% webroot %]html/images/level_5.png" alt="" height="22" width="57" border="0" /></td>
+								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
+								<td><img src="[% webroot %]html/images/btn_volume_hi_normal.png" alt="" height="22" width="22" border="0" /></td>
+							</tr>
+						</table>
+					</td>
+					<td align="right"><img src="[% webroot %]html/images/btn_power_normal.png" alt="" height="24" width="24" border="0" /></td>
+				</tr>
+				<tr>
+					<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="8" width="32" border="0" /></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td colspan="4">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+							<tr>
+								<td rowspan="6" width="96" id="ctrlCurrentArt"><img src="[% webroot %]music/0/cover_96x96.jpg" alt="" height="96" width="96" border="0" /></td>
+								<td class="section_header" id="ctrlCurrentTitle"></td>
+							</tr>
+							<tr>
+								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="12" width="12" border="0" /></td>
+							</tr>
+							<tr>
+								<td class="current_track_exp">[% "ARTIST" | string %][% "COLON" | string %] <span id="ctrlCurrentArtist">&nbsp;</span></td>
+							</tr>
+							<tr>
+								<td class="current_track_exp">[% "ALBUM" | string %][% "COLON" | string %] <span id="ctrlCurrentAlbum">&nbsp;</span></td>
+							</tr>
+							<tr>
+								<td class="current_track_exp" id="ctrlPlaytime"><!-- 4:32 -->&nbsp;</td>
+							</tr>
+							<tr>
+								<td class="current_track_exp"><!-- [% "SONG" | string %][% "COLON" | string %] <span id="ctrlCurrentSong">Gasoline</span> -->&nbsp;</td>
+							</tr>
+						</table>
+					</td>
+					<td align="right" valign="top" onclick="Player.openPlayerControl();"><img src="[% webroot %]html/images/toggle_player_std.png" alt="" height="14" width="24" border="0" /></td>
+				</tr>
+			</table>
+		</td>
+		<td align="right" width="6"><img src="[% webroot %]html/images/playerbase_exp_right.png" alt="" height="143" width="6" border="0" /></td>
+	</tr>
+</table>
+
+[% IF !embedded; PROCESS pagefooter.html; END %]
