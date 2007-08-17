@@ -45,7 +45,8 @@ img { border: 0; }
 
 #browsedbList {
 	margin: 5px;
-	height: 400px;;
+	height: 400px;
+	overflow: auto;
 }
 
 
