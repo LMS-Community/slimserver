@@ -40,7 +40,7 @@
 [% IF isplayer %]<br>
 
     [% "PLAYER" | string %][% "COLON" | string %]
-               [% IF mode == 'off' %]<a target="_top" href="index.html?player=[% playerURI %]amp;p0=power&amp;p1=1">[% END %][% IF mode != 'off' %]<b>[% END %][% "ON" | string %][% IF mode != 'off' %]</b>[% END %][% IF mode == 'off' %]</a>[% END %]/[% IF mode != 'off' %]<a
+               [% IF mode == 'off' %]<a target="_top" href="index.html?player=[% playerURI %]&amp;p0=power&amp;p1=1">[% END %][% IF mode != 'off' %]<b>[% END %][% "ON" | string %][% IF mode != 'off' %]</b>[% END %][% IF mode == 'off' %]</a>[% END %]/[% IF mode != 'off' %]<a
                target="_top" href="index.html?player=[% playerURI %]&amp;p0=power&amp;p1=0">[% END %][% IF mode == 'off' %]<b>[% END %][% "OFF" | string %][% IF mode == 'off' %]</b>[% END %][% IF mode != 'off' %]</a>[% END %]
 
 <br><br>
