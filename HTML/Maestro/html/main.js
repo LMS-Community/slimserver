@@ -55,6 +55,7 @@ Player = function(){
 	var pollTimer;
 	var playTimeTimer;
 	var playTime = 0;
+	var volumeClicked = 0;
 
 	var playerStatus = {
 		power: null,
@@ -69,6 +70,56 @@ Player = function(){
 			Ext.Ajax.method = 'POST';
 			Ext.Ajax.url = '/jsonrpc.js'; 
 			Ext.Ajax.timeout = 4000;
+
+			volumeUp = new Ext.util.ClickRepeater('ctrlVolumeUp', {
+				accelerate: true
+			});
+
+			// volume buttons can be held
+			volumeUp.on({
+				'click': {
+					fn: function(){
+						volumeClicked++;
+						if (volumeClicked > 4) {
+							this.setVolume(volumeClicked, '+');
+							volumeClicked = 0;
+						}
+					},
+					scope: this
+				},
+				'mouseup': {
+					fn: function(){
+						this.setVolume(volumeClicked, '+');
+						volumeClicked = 0;
+					},
+					scope: this
+				}
+			});
+
+			volumeDown = new Ext.util.ClickRepeater('ctrlVolumeDown', {
+				accelerate: true
+			});
+			
+			volumeDown.on({
+				'click': {
+					fn: function(){
+						volumeClicked++;
+						if (volumeClicked > 4) {
+							this.setVolume(volumeClicked, '-');
+							volumeClicked = 0;
+						}
+					},
+					scope: this
+				},
+				'mouseup': {
+					fn: function(){
+						this.setVolume(volumeClicked, '-');
+						volumeClicked = 0;
+					},
+					scope: this
+				}
+			});
+
 
 // TODO: set volume when clicking on volume bar - broken in FF&Safari, getting negative values :-(
 /*			Ext.get('ctrlVolume').on('click', function(ev, target){
@@ -271,7 +322,13 @@ Player = function(){
 		},
 
 		// values could be adjusted if not enough
-		volumeUp : function(){ this.playerControl(['mixer', 'volume', '+2.5']) },
-		volumeDown : function(){ this.playerControl(['mixer', 'volume', '-2.5']) }
+		volumeUp : function(){ this.setVolume(1, '+') },
+		volumeDown : function(){ this.setVolume(1, '-') },
+		setVolume : function(amount, d){
+			amount *= 2.5;
+			if (d)
+				amount = d + amount;
+			this.playerControl(['mixer', 'volume', amount]);
+		}
 	}
 }();
