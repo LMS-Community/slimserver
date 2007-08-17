@@ -720,7 +720,7 @@ sub menuQuery {
 	my @menu = (
 		{
 			'text' => Slim::Utils::Strings::string('MY_MUSIC'),
-			'count' => 8,
+			'count' => 9,
 			'offset' => 0,
 			'item_loop' => [
 			{
@@ -786,6 +786,17 @@ sub menuQuery {
 				},
 			},
 			{
+				'text' => Slim::Utils::Strings::string('FAVORITES'),
+				'actions' => {
+					'go' => {
+						'cmd' => ['favorites', 'items'],
+						'params' => {
+							'menu' => 'favorites',
+						},
+					},
+				},
+			},
+			{
 				'text' => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
 				'actions' => {
 					'go' => {
@@ -808,7 +819,7 @@ sub menuQuery {
 				},
 			},
 			{
-				'text' => Slim::Utils::Strings::string('SEARCHMUSIC'),
+				'text' => Slim::Utils::Strings::string('SEARCH'),
 				'count' => 4,
 				'offset' => 0,
 				'item_loop' => [
