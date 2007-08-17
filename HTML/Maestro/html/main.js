@@ -25,7 +25,7 @@ Main = function(){
 
 			layout.endUpdate();
 		},
-		
+
 		// resize panels, folder selectors etc.
 		onResize : function(){
 			dimensions = Ext.fly(document.body).getViewSize();
@@ -110,8 +110,8 @@ Player = function(){
 							power: result.power,
 							mode: result.mode,
 							title: result.current_title,
-							track: result.playlist_loop[0].url/*,
-							volume: result.'mixer volume'*/
+							track: result.playlist_loop[0].url,
+							volume: result['mixer volume']
 						};
 					}
 		

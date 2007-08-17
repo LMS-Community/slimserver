@@ -10,6 +10,52 @@
 		<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %].png" width=13 height=13 alt="[% cmdtitle | string | ucfirst %]" title="[% cmdtitle | string | ucfirst %]"></a>
 	[%- END %]
 
+	[% BLOCK contentitem -%]
+	<div class="[% odd ? "odd" : "even" %]">		
+		<div class="[% lineclass || 'browsedbListItem' %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
+			[%- IF leftcontrols -%]
+				<span class="browsedbLeftControls">
+				[%- PROCESS $leftcontrols -%]
+				</span>
+			[%- END %]
+			[%- content | indent(4) %]
+			[%- IF rightcontrols -%]
+				<span class="browsedbRightControls">
+				[%- PROCESS $rightcontrols -%]
+				</span>
+			[%- ELSIF controls -%]
+				<span class="browsedbControls">
+				[%- PROCESS $controls -%]
+				</span>
+			[%- END %]
+		</div>
+	</div>
+	[%- END %]
 
+	[%# This is to build the pagebar or alphapagebar, it should be PROCESSed %]
+	[% BLOCK pagebar %]
+		[%- IF NOT pageinfo.alphamap; PROCESS pagebarcalc pagesperbar = 15; END %]
+		<div class="pagebar">
+			[% IF pagesstart %]  <a href="[% pageinfo.path %]?start=0&amp;[% pageinfo.otherparams | html %]">[% "FIRST" | string %]</a> [% END %]
+			[% IF pageprev || pageprev == '0' %] <a href="[% pageinfo.path %]?start=[% pageprev %]&amp;[% pageinfo.otherparams | html %]">[% "PREVIOUS" | string %]</a> [% END %]
+			[%- IF pageinfo.alphamap %]
+			[%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
+			[%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
+			[% IF curpage %]<span onclick="Browse.gotoAnchor('[% alphakey | uri %]');" style="text-decoration:underline;cursor: pointer;"><b>[% alphakey | html %]</b></span>
+			[% ELSE %] 
+				<a href="[% pageinfo.path | html %]?[% pageinfo.otherparams | html %]&amp;start=[% pageinfo.alphamap.item(alphakey) %]#[% alphakey | uri %]">[% alphakey | html %]</a>
+			[% END %]
+			[%- END %]
+			[%- ELSE %]
+			[%- FOREACH ind=[pagebarstart..pagebarend] -%]
+			[%- IF ind == pageinfo.currentpage %] <b>[% ind + 1 %]</b> 
+			[%- ELSE %] <a href="[% pageinfo.path  | html %]?[% pageinfo.otherparams  | html %]&amp;start=[% ind * pageinfo.itemsperpage %]">[% ind + 1 %]</a> 
+			[%- END %]
+			[% END %]
+			[%- END %]
+			[% IF pagenext %] <a href="[% pageinfo.path %]?start=[% pagenext %]&amp;[% pageinfo.otherparams | html %]">[% "NEXT" | string %]</a> [% END %]
+			[% IF pagesend %] <a href="[% pageinfo.path %]?start=[% pagesend %]&amp;[% pageinfo.otherparams | html %]">[% "LAST" | string %]</a> [% END %]
+		</div>
+	[% END %]
 
 [% END -%]

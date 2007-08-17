@@ -12,23 +12,6 @@
 			<script type="text/javascript">
 				var Tools = function(){
 					return {
-						addBrowseListClass : function(){
-							Ext.select('div.browsedbListItem').on('mouseover', function(ev) {
-								if (ev.target.tagName != 'DIV')
-									return;
-		
-								// remove highlighting from the other DIVs
-								items = Ext.DomQuery.select('div.mouseOver');
-								for(var i = 0; i < items.length; i++) {
-									el = Ext.get(items[i].id);
-									if (el) {
-										el.removeClass('mouseOver');
-									}
-								}
-		
-								Ext.get(ev.target).addClass('mouseOver');
-							});
-						}
 					}
 				}();
 			</script>

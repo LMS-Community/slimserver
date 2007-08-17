@@ -1,7 +1,5 @@
 [% maestroScripts = BLOCK %]
-	<script type="text/javascript">
-		Ext.EventManager.onDocumentReady(Tools.addBrowseListClass, Tools, true);
-	</script>	
+	<script type="text/javascript" src="[% webroot %]html/browse.js"></script>	
 [% END %]
 
 [% IF query %]
@@ -145,7 +143,6 @@
 	</form>
 [% END %]
 
-[%- odd = 1 %]
 [%- IF items -%]
 	<div id="browsedbHeader">
 		[% IF hasPagebar %]
@@ -175,7 +172,6 @@
 			[%- WRAPPER contentitem leftcontrols = 'allcontrol' %]
 				[% "ALL_SONGS" | string %]
 			[%- END %]
-			[%- odd = (not odd) %]
 		[% END %]
 		
 		[%- FOREACH item = items %]
@@ -192,14 +188,9 @@
 				<a href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]" class="browseItemLink">[% item.name || item.title %]</a>
 			[%- END %]
 			[% IF useAJAX %]</span>[% END %]
-			[%- odd = (not odd) %]
 		[%- END %]
 
 	[%- END %]
-	[% IF hasPagebar %]
-		[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]
-		[% PROCESS pagebar %]
-	[% END %]
 [%- END %]
 
 [% IF NOT ajaxUpdate %]</div>[% PROCESS pagefooter.html %][% END %]
