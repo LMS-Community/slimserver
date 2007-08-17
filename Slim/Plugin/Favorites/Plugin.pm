@@ -53,7 +53,7 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['favorites', 'items', '_index', '_quantity'], [0, 1, 1, \&cliBrowse]);
 	Slim::Control::Request::addDispatch(['favorites', 'add'], [0, 0, 1, \&cliAdd]);
 	Slim::Control::Request::addDispatch(['favorites', 'addlevel'], [0, 0, 1, \&cliAdd]);
-	Slim::Control::Request::addDispatch(['favorites', 'delete'], [0, 0, 0, \&cliDelete]);
+	Slim::Control::Request::addDispatch(['favorites', 'delete'], [0, 0, 1, \&cliDelete]);
 	Slim::Control::Request::addDispatch(['favorites', 'playlist', '_method' ],[1, 1, 1, \&cliBrowse]);
 	
 	# register notifications
@@ -571,14 +571,16 @@ sub cliDelete {
 	}
 
 	my $client = $request->client();
-	my $index  = $request->getParam('_index');
+	my $index  = $request->getParam('item_id');
 
-	if (!defined $index) {
+	my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($client);
+
+	if (!defined $index || !defined $favs->entry($index)) {
 		$request->setStatusBadParams();
 		return;
 	}
 
-	Slim::Plugin::Favorites::OpmlFavorites->new($client)->deleteIndex($index);
+	$favs->deleteIndex($index);
 
 	$request->setStatusDone();
 }
