@@ -10,6 +10,10 @@ Main = function(){
 
 	return {
 		init : function(){
+			Ext.Ajax.method = 'POST';
+			Ext.Ajax.url = '/jsonrpc.js'; 
+			Ext.Ajax.timeout = 4000;
+
 			pollTimer = new Ext.util.DelayedTask(Main.getStatus, this);
 			this.getStatus();
 
@@ -123,9 +127,6 @@ Main = function(){
 
 		getUpdate : function(response){
 			Ext.Ajax.request({
-				method: 'POST',
-				url: '/jsonrpc.js', 
-				timeout: 4000,
 				failure: this.updateStatus,
 				success: this.updateStatus,
 
@@ -151,9 +152,6 @@ Main = function(){
 		// don't request all status info to minimize performance impact on the server
 		getStatus : function() {
 			Ext.Ajax.request({
-				url: '/jsonrpc.js',
-				method: 'POST',
-				timeout: 4000,
 				params: Ext.util.JSON.encode({
 					id: 1, 
 					method: "slim.request", 
@@ -194,9 +192,6 @@ Main = function(){
 
 		playerControl : function(action){
 			Ext.Ajax.request({
-				method: 'POST',
-				url: '/jsonrpc.js', 
-				timeout: 4000,
 				params: Ext.util.JSON.encode({
 					id: 1, 
 					method: "slim.request", 
@@ -206,7 +201,6 @@ Main = function(){
 					]
 				}),
 				success: this.getUpdate,
-
 				scope: this
 			});
 		},
