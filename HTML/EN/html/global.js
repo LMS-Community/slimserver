@@ -317,7 +317,7 @@ function popUpAlbumInfo(attributes) {
 		new Effect.Appear('albumBackground', { from: 0, to: 0.5, duration: 0.5 });
 		
 		$('albumPopup').style.border='1px solid white';
-		alert(attributes);
+		
 		new Ajax.Updater( { success: 'trackInfo' }, webroot + 'browsedb.html?ajaxUpdate=1&player=' + player + '&' + attributes, {
 			method: 'get',
 			asynchronous: true,
