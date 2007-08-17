@@ -54,11 +54,11 @@
 					<td align="right">
 						<table border="0" cellspacing="0" cellpadding="0">
 							<tr>
-								<td><img src="[% webroot %]html/images/btn_volume_low_normal.png" alt="" height="22" width="22" border="0" /></td>
+								<td onclick="Player.volumeDown();"><img src="[% webroot %]html/images/btn_volume_low_normal.png" alt="" height="22" width="22" border="0" /></td>
 								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
-								<td><img src="[% webroot %]html/images/level_5.png" alt="" height="22" width="57" border="0" /></td>
+								<td id="ctrlVolume"><img src="[% webroot %]html/images/level_5.png" alt="" height="22" width="57" border="0" /></td>
 								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
-								<td><img src="[% webroot %]html/images/btn_volume_hi_normal.png" alt="" height="22" width="22" border="0" /></td>
+								<td onclick="Player.volumeUp();"><img src="[% webroot %]html/images/btn_volume_hi_normal.png" alt="" height="22" width="22" border="0" /></td>
 							</tr>
 						</table>
 					</td>
@@ -82,16 +82,16 @@
 								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="12" width="12" border="0" /></td>
 							</tr>
 							<tr>
-								<td class="current_track_exp">[% "ARTIST" | string %][% "COLON" | string %] <span id="ctrlCurrentArtist">&nbsp;</span></td>
+								<td class="current_track_exp">[% "ARTIST" | string %][% "COLON" | string %] <span id="ctrlCurrentArtist"></span></td>
 							</tr>
 							<tr>
-								<td class="current_track_exp">[% "ALBUM" | string %][% "COLON" | string %] <span id="ctrlCurrentAlbum">&nbsp;</span></td>
+								<td class="current_track_exp">[% "ALBUM" | string %][% "COLON" | string %] <span id="ctrlCurrentAlbum"></span></td>
 							</tr>
 							<tr>
-								<td class="current_track_exp" id="ctrlPlaytime"><!-- 4:32 -->&nbsp;</td>
+								<td class="current_track_exp"><span id="ctrlPlaytime"></span><span id="ctrlTotalTime"></span></td>
 							</tr>
 							<tr>
-								<td class="current_track_exp"><!-- [% "SONG" | string %][% "COLON" | string %] <span id="ctrlCurrentSong">Gasoline</span> -->&nbsp;</td>
+								<td class="current_track_exp">[% "BITRATE" | string %][% "COLON" | string %] <span id="ctrlBitrate"></span></td>
 							</tr>
 						</table>
 					</td>

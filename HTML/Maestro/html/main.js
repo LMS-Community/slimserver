@@ -53,6 +53,8 @@ Main = function(){
 
 Player = function(){
 	var pollTimer;
+	var playTimeTimer;
+	var playTime = 0;
 
 	var playerStatus = {
 		power: null,
@@ -68,8 +70,47 @@ Player = function(){
 			Ext.Ajax.url = '/jsonrpc.js'; 
 			Ext.Ajax.timeout = 4000;
 
-			pollTimer = new Ext.util.DelayedTask(Player.getStatus, this);
+// TODO: set volume when clicking on volume bar - broken in FF&Safari, getting negative values :-(
+/*			Ext.get('ctrlVolume').on('click', function(ev, target){
+				if (el = Ext.get(target)) {
+					x = el.getX();
+					x = Ext.fly(target).getX();
+					x = 100 * (ev.getPageX() - el.getX()) / el.getWidth();
+					alert(x);
+				}
+			});
+*/
+			pollTimer = new Ext.util.DelayedTask(this.getStatus, this);
+			playTimeTimer = new Ext.util.DelayedTask(this.updatePlayTime, this);
 			this.getStatus();
+		},
+
+		updatePlayTime : function(time, totalTime){
+			if (playerStatus.mode == 'play') {
+				if (! isNaN(time))
+					playTime = time;
+	
+				if (! isNaN(totalTime))
+					Ext.get('ctrlTotalTime').update(' (' + this.formatTime(totalTime) + ')');
+					
+				Ext.get('ctrlPlaytime').update(this.formatTime(playTime));
+				playTime += 0.5;
+			}
+			else
+				Ext.get('ctrlPlaytime').update(this.formatTime(0));
+			
+			playTimeTimer.delay(500);
+		},
+
+		formatTime : function(seconds){
+			hours = Math.floor(seconds / 3600);
+			minutes = Math.floor((seconds - hours*3600) / 60);
+			seconds = Math.floor(seconds % 60);
+
+			formattedTime = (hours ? hours + ':' : '');
+			formattedTime += (minutes ? (minutes < 10 && hours ? '0' : '') + minutes : '0') + ':';
+			formattedTime += (seconds ? (seconds < 10 ? '0' : '') + seconds : '00');
+			return formattedTime;
 		},
 
 		updateStatus : function(response) {
@@ -82,29 +123,40 @@ Player = function(){
 					var result = responseText.result;
 					if (result.power && result.playlist_tracks > 0) {
 						Ext.get('ctrlCurrentTitle').update(
-							result.current_title ? result.current_title :
-							result.playlist_loop[0].tracknum + ". " + result.playlist_loop[0].title
+							result.current_title ? result.current_title : (
+								(result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
+								+ result.playlist_loop[0].tracknum + ". " + result.playlist_loop[0].title
+							)
 						);
 //						Ext.get('statusSongCount').update(result.playlist_tracks);
 //						Ext.get('statusPlayNum').update(result.playlist_cur_index + 1);
-//						Ext.get('statusBitrate').update(result.playlist_loop[0].bitrate);
+						Ext.get('ctrlBitrate').update(result.playlist_loop[0].bitrate);
 						Ext.get('ctrlCurrentArtist').update(result.playlist_loop[0].artist);
-						Ext.get('ctrlCurrentAlbum').update(result.playlist_loop[0].album);
-//						Ext.get('statusYear').update(result.playlist_loop[0].year);
-		
-/*						var playlistUpdater = Ext.get('playlist').getUpdateManager();
-						playlistUpdater.setDefaultUrl(webroot + 'playlist.html');
-						playlistUpdater.showLoadIndicator = false;
-						playlistUpdater.refresh();
-*/		
+						Ext.get('ctrlCurrentAlbum').update(
+							result.playlist_loop[0].album 
+							+ (result.playlist_loop[0].year ? ' (' + result.playlist_loop[0].year +')' : '')
+						);
+
+						this.updatePlayTime(result.time ? result.time : 0, result.duration ? result.duration : 0);
+
 						if (result.playlist_loop[0].id) {
 							Ext.get('ctrlCurrentArt').update('<img src="/music/' + result.playlist_loop[0].id + '/cover_96x96.jpg">');
 						}
-		
-						modeImg = '<img src="' + webroot + 'html/images/' + (result.mode=='play' ? 'btn_pause_normal.png' : 'btn_pause_normal.png') + '">';
-						el = Ext.get('ctrlMode');
-						el.update(modeImg);
+
+						// update play/pause button
 						Ext.get('ctrlMode').update('<img src="' + webroot + 'html/images/' + (result.mode=='play' ? 'btn_play_normal.png' : 'btn_pause_normal.png') + '">');
+
+						// update volume button
+						volumeIcon = 'level_5';
+						if (result['mixer volume'] <= 0)
+							volumeIcon = 'level_0';
+						else if (result['mixer volume'] >= 100)
+							volumeIcon = 'level_11';
+						else {
+							volVal = Math.ceil(result['mixer volume']/9.9);
+							volumeIcon = 'level_' + volVal;
+						}
+						Ext.get('ctrlVolume').update('<img src="' + webroot + 'html/images/' + volumeIcon + '.png">');
 
 						playerStatus = {
 							power: result.power,
@@ -114,21 +166,7 @@ Player = function(){
 							volume: result['mixer volume']
 						};
 					}
-		
-/*					else if (playerStatus.name) {
-							var playlistUpdater = Ext.get('playlist').getUpdateManager();
-							playlistUpdater.setDefaultUrl(webroot + 'playlist.html');
-							playlistUpdater.showLoadIndicator = false;
-							playlistUpdater.refresh();
-							
-							playerStatus = {
-								power: null,
-								mode: null,
-								title: null,
-								track: null
-							};
-					}
-*/				}
+				}
 			}
 			pollTimer.delay(5000);
 		},
@@ -188,6 +226,12 @@ Player = function(){
 							{
 								this.getUpdate();
 							}
+
+							else if (result['mixer volume'] && result['mixer volume'] != playerStatus.volume) {
+								this.updateStatus(response)
+							}
+							else
+								this.updatePlayTime(result.time, result.duration);
 						}
 					}
 				},
@@ -224,6 +268,10 @@ Player = function(){
 
 		openPlayerControl : function(){
 			window.open(webroot + 'status_header.html', "gaasd", "width=500,height=165");
-		}
+		},
+
+		// values could be adjusted if not enough
+		volumeUp : function(){ this.playerControl(['mixer', 'volume', '+2.5']) },
+		volumeDown : function(){ this.playerControl(['mixer', 'volume', '-2.5']) }
 	}
 }();
