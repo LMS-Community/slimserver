@@ -261,7 +261,7 @@ sub acceptHTTP {
 
 			$connected++;
 
-			$log->info("Accepted connection $connected from $peeraddr{$httpClient}");
+			$log->info("Accepted connection $connected from $peeraddr{$httpClient}:" . $httpClient->peerport);
 
 		} else {
 
@@ -380,7 +380,7 @@ sub processHTTP {
 	
 
 	$log->info(
-		"HTTP request: from $peeraddr{$httpClient} ($httpClient) for " .
+		"HTTP request: from $peeraddr{$httpClient}:" . $httpClient->peerport . " ($httpClient) for " .
 		join(' ', ($request->method(), $request->protocol(), $request->uri()))
 	);
 
@@ -1605,18 +1605,14 @@ sub addHTTPResponse {
 	# try to write out multibyte characters with invalid byte lengths in
 	# sendResponse() below.
 	use bytes;
+	
+	# Collect all our output into one chunk, to reduce TCP packets
+	my $outbuf;
 
 	# First add the headers, if requested
 	if (!defined($sendheaders) || $sendheaders == 1) {
 
-		my $headers = _stringifyHeaders($response) . $CRLF;
-	
-		push @{$outbuf{$httpClient}}, {
-			'data'     => \$headers,
-			'offset'   => 0,
-			'length'   => length($headers),
-			'close'    => $close,
-		};
+		$outbuf .= _stringifyHeaders($response) . $CRLF;
 	}
 
 	# And now the body.
@@ -1629,29 +1625,17 @@ sub addHTTPResponse {
 		if ($chunked) {
 			
 			# add chunk...
-			my $newbody = sprintf("%X", length($$body)) . $CRLF . $$body . $CRLF;
-
-			push @{$outbuf{$httpClient}}, {
-				'data'     => \$newbody,
-				'offset'   => 0,
-				'length'   => length($newbody),
-				'close'    => $close,
-			};
+			$outbuf .= sprintf("%X", length($$body)) . $CRLF . $$body . $CRLF;
 			
 			# add a last empty chunk if we're closing the connection or if there's nothing more
 			if ($close || !$more) {
 				
-				addHTTPLastChunk($httpClient, $close);
+				$outbuf .= '0' . $CRLF;
 			}
 
 		} else {
 
-			push @{$outbuf{$httpClient}}, {
-				'data'     => $body,
-				'offset'   => 0,
-				'length'   => length($$body),
-				'close'    => $close,
-			};
+			$outbuf .= $$body;
 		}
 	}
 	
@@ -1666,6 +1650,13 @@ sub addHTTPResponse {
 
 		exit 0;
 	}
+	
+	push @{$outbuf{$httpClient}}, {
+		'data'     => \$outbuf,
+		'offset'   => 0,
+		'length'   => length($outbuf),
+		'close'    => $close,
+	};
 
 	Slim::Networking::Select::addWrite($httpClient, \&sendResponse);
 }
@@ -1698,11 +1689,12 @@ sub sendResponse {
 
 	my $segment    = shift(@{$outbuf{$httpClient}});
 	my $sentbytes  = 0;
+	my $port       = $httpClient->peerport();
 
 	# abort early if we're not connected
 	if (!$httpClient->connected) {
 
-		$log->warn("Not connected with $peeraddr{$httpClient}, closing socket");
+		$log->warn("Not connected with $peeraddr{$httpClient}:$port, closing socket");
 
 		closeHTTPSocket($httpClient);
 		return;
@@ -1711,7 +1703,7 @@ sub sendResponse {
 	# abort early if we don't have anything.
 	if (!$segment) {
 
-		$log->info("No segment to send to $peeraddr{$httpClient}, waiting for next request...");
+		$log->info("No segment to send to $peeraddr{$httpClient}:$port, waiting for next request...");
 
 		# Nothing to send, so we take the socket out of the write list.
 		# When we process the next request, it will get put back on.
@@ -1727,7 +1719,7 @@ sub sendResponse {
 
 	if ($! == EWOULDBLOCK) {
 
-		$log->info("Would block while sending. Resetting sentbytes for: $peeraddr{$httpClient}");
+		$log->info("Would block while sending. Resetting sentbytes for: $peeraddr{$httpClient}:$port");
 
 		if (!defined $sentbytes) {
 			$sentbytes = 0;
@@ -1737,7 +1729,7 @@ sub sendResponse {
 	if (!defined($sentbytes)) {
 
 		# Treat $httpClient with suspicion
-		$log->info("Send to $peeraddr{$httpClient} had error, closing and aborting.");
+		$log->info("Send to $peeraddr{$httpClient}:$port had error, closing and aborting.");
 
 		closeHTTPSocket($httpClient);
 
@@ -1758,26 +1750,26 @@ sub sendResponse {
 
 	} else {
 		
-		$log->info("Sent $sentbytes to $peeraddr{$httpClient}");
+		$log->info("Sent $sentbytes to $peeraddr{$httpClient}:$port");
 
 		# sent full message
 		if (@{$outbuf{$httpClient}} == 0) {
 
 			# no more messages to send
-			$log->info("No more segments to send to $peeraddr{$httpClient}");
+			$log->info("No more segments to send to $peeraddr{$httpClient}:$port");
 
 			
 			# close the connection if requested by the higher God pushing segments
 			if ($segment->{'close'} && $segment->{'close'} == 1) {
 				
-				$log->info("End request, connection closing for: $peeraddr{$httpClient}");
+				$log->info("End request, connection closing for: $peeraddr{$httpClient}:$port");
 
 				closeHTTPSocket($httpClient);
 			}
 
 		} else {
 
-			$log->info("More segments to send to $peeraddr{$httpClient}");
+			$log->info("More segments to send to $peeraddr{$httpClient}:$port");
 			
 			if ( $inChild ) {
 				return 1;
