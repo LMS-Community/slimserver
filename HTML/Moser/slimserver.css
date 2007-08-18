@@ -375,3 +375,15 @@ body > div {
 	clear: left;
 }
 
+div#homeMenu {
+	position: relative;
+	height: auto;
+	width: auto;
+	padding-bottom: 40px;
+}
+
+.homeMenuSection div {
+	font-weight: bold;
+}
+
+
