@@ -166,9 +166,9 @@ END %]
 			[%- PROCESS $rightcontrols -%]
 			</span>
 		[%- ELSIF controls -%]
-			<span class="browsedbControls">
+			<div class="browsedbControls">
 			[%- PROCESS $controls -%]
-			</span>
+			</div>
 		[%- END %]
 	</div>
 </div>
