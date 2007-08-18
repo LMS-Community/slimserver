@@ -336,7 +336,7 @@ sub requestMethod {
 		$request->fixEncoding();
 
 		# remember we're the source and the $httpClient
-		$request->source('JIV');
+		$request->source('JSONRPC');
 		$request->connectionID($context->{'httpClient'});
 		
 		if ($context->{'x-jive'}) {

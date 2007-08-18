@@ -794,7 +794,7 @@ sub displaystatusQuery {
 				}
 			}
 
-		} elsif ($source eq 'JIV') {
+		} elsif ( $source =~ m{^(?:JSONRPC|/)} ) { # Return this for JSONRPC or Cometd requests (start with /)
 
 			# send display to jive from one of the following components
 			if (my $ref = $parts->{'jiv'} && ref $parts->{'jiv'}) {

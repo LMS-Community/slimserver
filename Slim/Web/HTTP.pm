@@ -41,9 +41,11 @@ use Slim::Utils::Network;
 use Slim::Utils::OSDetect;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Unicode;
+use Slim::Web::HTTP::ClientConn;
 use Slim::Web::Pages;
 use Slim::Web::Graphics;
 use Slim::Web::JSONRPC;
+use Slim::Web::Cometd;
 use Slim::Utils::Prefs;
 
 BEGIN {
@@ -152,6 +154,9 @@ sub init {
 	
 	# Initialize JSON RPC
 	Slim::Web::JSONRPC::init();
+	
+	# Initialize Cometd
+	Slim::Web::Cometd::init();
 }
 
 sub init2 {
@@ -231,7 +236,7 @@ sub connectedSocket {
 
 sub acceptHTTP {
 	# try and pull the handle
-	my $httpClient = $http_server_socket->accept() || do {
+	my $httpClient = $http_server_socket->accept('Slim::Web::HTTP::ClientConn') || do {
 
 		$log->info("Did not accept connection, accept returned nothing");
 		return;
@@ -372,7 +377,7 @@ sub processHTTP {
 	# socket half-closed from client
 	if (!defined $request) {
 
-		$log->info("Client at $peeraddr{$httpClient} disconnected. (half-closed)");
+		$log->info("Client at $peeraddr{$httpClient}:" . $httpClient->peerport . " disconnected. (half-closed)");
 
 		closeHTTPSocket($httpClient);
 		return;

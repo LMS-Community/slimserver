@@ -744,6 +744,7 @@ sub _defaultCategories {
 		'network.upnp'               => 'WARN',
 		'network.jsonrpc'            => 'WARN',
 		'network.squeezenetwork'     => 'WARN',
+		'network.cometd'             => 'WARN',
 
 		'formats.audio'              => 'WARN',
 		'formats.xml'                => 'WARN',
