@@ -19,7 +19,6 @@ package Slim::Web::Cometd;
 use strict;
 
 use bytes;
-use Data::UUID;
 use Digest::SHA1 qw(sha1_hex);
 use HTTP::Date;
 use JSON::XS qw(to_json from_json);
@@ -30,11 +29,10 @@ use Slim::Control::Request;
 use Slim::Web::Cometd::Manager;
 use Slim::Web::HTTP;
 use Slim::Utils::Log;
+use Slim::Utils::Network;
 use Slim::Utils::Timers;
 
 my $log = logger('network.cometd');
-
-my $uuid = Data::UUID->new;
 
 my $manager = Slim::Web::Cometd::Manager->new;
 
@@ -141,7 +139,7 @@ sub handler {
 				$clid = $obj->{clientId};
 			}
 			elsif ( $obj->{channel} eq '/meta/handshake' ) {
-				$clid = lc( $uuid->create_hex );
+				$clid = new_uuid();
 				$manager->register_clid( $clid );
 			}
 			else {
@@ -339,7 +337,7 @@ sub handler {
 			
 			# A non-subscription request
 			my $request = $obj->{data};
-			my $id      = $obj->{id} || lc( $uuid->create_hex ); # unique id for this request
+			my $id      = $obj->{id} || new_uuid(); # unique id for this request
 			
 			if ( $request && $id ) {
 				my $result = handleRequest( $clid, $request, $obj->{channel}, $id );
@@ -562,6 +560,11 @@ sub disconnectClient {
 		# Remove client from manager
 		$manager->remove_client( $clid );
 	}
+}
+
+# Create a new UUID
+sub new_uuid {
+	return sha1_hex( Time::HiRes::time() . $$ . Slim::Utils::Network::hostName() );
 }
 
 1;
