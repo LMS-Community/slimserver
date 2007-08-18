@@ -142,15 +142,15 @@
 				<span id="playtextmode">[% IF currentsong %][% status | string %][% END %]</span>
 				<span id="thissongnum">[% IF currentsong %][% currentsong %][% END %]</span><span id="outof">&nbsp;[% "OUT_OF" | string %]&nbsp;</span><span id="songcount">[% IF songcount %][% songcount %][% END %]</span>&nbsp;
 				<span id="zaphref"><a class="label" href="[% statusroot %]?p0=playlist&amp;p1=zap&amp;p2=[% thissongnum %]&amp;player=[% playerURI %]" title='Move to Zapped playlist'>[zap]</a></span>[% "COLON" | string %]</div>
-				<div id="songtitlehref" class="currentSongData"><a class="songtitle" [% songinfoHRef %] target="browser"><span id="songtitle">[% itemobj.title %]</span></a>
+				<div id="songtitlehref" class="currentSongData"><a class="songtitle" [% songinfoHRef %] target="browser"><span id="songtitle">[% IF itemobj.title %][% itemobj.title %][% END %]</span></a>
 				&nbsp;<span id="duration">[% IF itemobj.duration %]([% itemobj.duration | html %])[% END %]</span>&nbsp;<span id="bitrate">[% IF bitrate %]([% bitrate %])[% END %]</span></div>
 				
 				<div id="artistinfo" class="label">[% "ARTIST" | string %]&nbsp;<span id="removeartisthref">[% PROCESS remove param="contributor.id" value = "$itemobj.artist.id" %]</span></div>
 				<span id="artisthtml">[% PROCESS artistsAsHTML.html noby=1 %]</span>
 				
 				<div id="albuminfo" class="label">[% "ALBUM" | string %]&nbsp;<span id="removealbumhref">[% PROCESS remove param="album.id" value = "$itemobj.album.id" %]</span></div>
-				<span id="albumhref"><a [% albumHRef %] target="browser"><span id="album">[% itemobj.album.title | html %]</span></a>&nbsp;</span>
-				<span id="yearinfo">(<span id="yearhref"><a [% yearHRef %] target="browser"><span id="year">[% itemobj.year %]</span></a></span>)</span>
+				<span id="albumhref"><a [% albumHRef %] target="browser"><span id="album">[% IF itemobj.album.title %][% itemobj.album.title | html %][% END %]</span></a>&nbsp;</span>
+				<span id="yearinfo">(<span id="yearhref"><a [% yearHRef %] target="browser"><span id="year">[% IF itemobj.year %][% itemobj.year %][% END %]</span></a></span>)</span>
 			</div>
 		</div>
 	
@@ -218,8 +218,8 @@
 			
 			<div id="playlistLinks">
 				[% img = '' %]<span id="saveplaylist" style="display:none;">[% PROCESS savePlaylistLink %] / </span>
-				[% PROCESS downloadPlaylistLink %] /
-				<a href="javascript:processPlayControls('p0=playlist&amp;p1=clear');">[% "CLEAR" | string %]</a>
+				<span id="playlistdownload" style="display:none;">[% PROCESS downloadPlaylistLink playlist_items = 1 %] /</span>
+				<span id="playlistclear" style="display:none;"><a href="javascript:processPlayControls('p0=playlist&amp;p1=clear');">[% "CLEAR" | string %]</a></span>
 			</div>
 		</div>
 
