@@ -45,7 +45,7 @@ use Slim::Web::HTTP::ClientConn;
 use Slim::Web::Pages;
 use Slim::Web::Graphics;
 use Slim::Web::JSONRPC;
-use Slim::Web::Cometd;
+#use Slim::Web::Cometd;
 use Slim::Utils::Prefs;
 
 BEGIN {
@@ -156,7 +156,7 @@ sub init {
 	Slim::Web::JSONRPC::init();
 	
 	# Initialize Cometd
-	Slim::Web::Cometd::init();
+	#Slim::Web::Cometd::init();
 }
 
 sub init2 {
