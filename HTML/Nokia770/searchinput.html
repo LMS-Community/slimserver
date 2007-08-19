@@ -1,9 +1,9 @@
 <!-- searchinput.html -->
 
 <center>
+<form name="FormSong" method="Get" action = '[% webroot %]search.html'>
 <table width = '100%' bgcolor = '#EEEEEE'>
 <tr><td>
-<form name="FormSong" method="Get" action = '[% webroot %]search.html'>
 <table width="100%" bgcolor="#EEEEEE" cellpadding="0" cellspacing="0" border="0">
 
 <tr>
@@ -13,16 +13,18 @@
 <tr><td height="20"></td></tr>
 
 <tr><td colspan="8" height="30" align = 'center'>
-	      <input type=hidden value="track" name="type">
-              &nbsp;<input type=text name="query" value="[% query %]" size="20" class = 'searchForm'>
+              &nbsp;<input type='text' name="query" value="[% query %]" size="20" class = 'searchForm'>
+	</td>
+</tr>
 <tr><td height="10"></td></tr>
 
 <tr><td colspan="8" align="center">
 <br><center>
-	      <input type=submit value="[% "SEARCH" | string %]" name="Go" class = 'searchButton'>
-	     <input type=reset value="[% "CLEAR" | string %]" name="Reset" class = 'searchButton'>
-              <input type=hidden value="[% player %]" name="player">
-              <input type=hidden value="1" name="manualSearch">
+		<input type=submit value="[% "SEARCH" | string %]" name="Go" class = 'searchButton'>
+		<input type=reset value="[% "CLEAR" | string %]" name="Reset" class = 'searchButton'>
+		<input type=hidden value="track" name="type">
+		<input type=hidden value="[% player %]" name="player">
+		<input type=hidden value="1" name="manualSearch">
               [% IF nofolder %]<input type=hidden value="1" name="nofolder">[% END %]
 
 

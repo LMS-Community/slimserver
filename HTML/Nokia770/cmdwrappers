@@ -9,7 +9,7 @@
 [% notarget        = 1 %]
 
 [% BLOCK cmdlink %]
-	<a [% content %]><img src="[% webroot %]html/images/[% cmdimage %]" border=0 height="20" alt='[% cmdtitle | string | ucfirst %]' title='[% cmdtitle | string | ucfirst %]'></a>
+	<span class = 'buttonControls'><a [% content %]><img src="[% webroot %]html/images/[% cmdimage %]" border=0 alt='[% cmdtitle | string | ucfirst %]' title='[% cmdtitle | string | ucfirst %]'></a></span>
 [% END %]
 
 [% BLOCK dummylink -%]
@@ -161,6 +161,7 @@
 [% END %]
 
 [% BLOCK browsecontrols_abbr %]
+	<span class="[% isCurrent ? "listing2" : "listing" %]" align="center">
 	[% width='20' height='20'  %]
 	[% IF showplayall %]
 		[% WRAPPER playlink noTarget = 1 %]href="[% playallhref %]"[% END %]
@@ -173,9 +174,7 @@
 		[% END %]
 	[% ELSE %]
 		[%- IF playLink == 'ajax' %]
-			<span class = 'listing' align = 'center'>
-				<img src="[% webroot %]html/images/play.this.gif" onClick = 'changeOSD("[% IF itemobj.title == '' %][% "ALL_SONGS" | string %][% ELSE %][% itemobj.title FILTER html FILTER replace('\'', '&#39;') %][% END %] [% "NOW_PLAYING" | string %]"); addItem("[% PROCESS ajaxCmdHRef cmdType='play' %]");' border=0 height="20" alt='Play Now' title='Play Now'>
-			</span>
+				<span class = 'buttonControls'><img src="[% webroot %]html/images/play.this.gif" onClick = 'changeOSD("[% IF itemobj.title == '' %][% "ALL_SONGS" | string %][% ELSE %][% itemobj.title FILTER html FILTER replace('\'', '&#39;') %][% END %] [% "NOW_PLAYING" | string %]"); addItem("[% PROCESS ajaxCmdHRef cmdType='play' %]");' border=0 height="20" alt='Play Now' title='Play Now'></span>
 		[%- ELSE %]
 			[% WRAPPER playlink   %][% PROCESS cmdHRef cmdType='play' statusroot = 'status.html'  %][% END %]
 		[%- END %]
@@ -183,14 +182,13 @@
 		[%- IF addLink == 'noajax' %]
 		[% WRAPPER addlink    %][% PROCESS cmdHRef cmdType='add' statusroot = 'playlist.html' %][% END %]
 		[%- ELSE %]
-			<span class = 'listing' align = 'center'>
-				<img src="[% webroot %]html/images/add.gif" onClick = 'changeOSD("[% "ADDING_TO_PLAYLIST" | string %] [% IF itemobj.title == '' %][% "ALL_SONGS" | string %][% ELSE %][% itemobj.title FILTER html FILTER replace('\'','&#39;')  %][% END %]"); addItem("[% PROCESS ajaxCmdHRef cmdType='add' %]");' border=0 height="20" alt='Add to playlist' title='Add to playlist'>
-			</span>
+				<span class = 'buttonControls'><img src="[% webroot %]html/images/add.gif" onClick = 'changeOSD("[% "ADDING_TO_PLAYLIST" | string %] [% IF itemobj.title == '' %][% "ALL_SONGS" | string %][% ELSE %][% itemobj.title FILTER html FILTER replace('\'','&#39;')  %][% END %]"); addItem("[% PROCESS ajaxCmdHRef cmdType='add' %]");' border=0 alt='Add to playlist' title='Add to playlist'></span>
 		[%- END %]
 		[% FOREACH mixer = mixerlinks.values.sort %]
-			<span class="[% isCurrent ? "listing2" : "listing" %]" align="center">[% PROCESS $mixer %]</span>
+			<span class = 'buttonControls'>[% PROCESS $mixer %]</span>
 		[% END %]
 	[% END %]
+	</span>
 [% END %]
 
 [% BLOCK browsecontrols %]
@@ -237,7 +235,7 @@
 		[% item.text | html %]
 	[% END %]
 
-	[%# INCLUDE by_from_info %]
+	[% INCLUDE by_from_info %]
 [% END %]
 
 [% BLOCK ajax_by_from_info %]

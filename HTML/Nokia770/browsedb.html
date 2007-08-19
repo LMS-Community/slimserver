@@ -110,13 +110,13 @@
 
 <table width = '100%' class = 'noborder' bgcolor = 'white'>
 	<tr>
-[% IF coverArt %]
 		<td valign = 'top' width = '205'>
+[% IF coverArt %]
 			<img src="/music/[% coverArt %]/thumb_[% IF thumbSize %][% thumbSize %]x[% thumbSize %][% ELSE %]200x200[% END %]_f_000000.jpg" STYLE="border: 1px solid black" id = 'albumArt'>
-		</td>
 [% END %]
-		<td valign = 'top'>
-		<table cellspacing="0" border="0" cellpadding="0" width="100%" bgcolor = 'white' id = 'browsetable'>
+		</td>
+	</tr>
+</table>
 			[% IF browse_items %]
 				[% FOREACH item = browse_items %]
 					[% PROCESS browsedbitems_list.html %]
@@ -124,10 +124,6 @@
 			[% ELSE %]
 				[% browse_list %]
 			[% END %]
-		</table>
-		</td>
-	</tr>
-</table>
 [% END %]
 <p>
 <table border="0" class = 'floater' width="100%" bgcolor="#EEEEEE">

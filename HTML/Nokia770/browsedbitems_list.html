@@ -4,10 +4,8 @@
 	[% "$item.heading" _ "SMATCHING" | string %] "[% query %]"[% "COLON" | string %][% item.numresults %]
 	</div>
 [% ELSE %]
-<tr [% IF rowClass %]class = "[% rowClass %]"[% ELSIF item.odd %]class="odd"[% ELSE %]class="even"[% END %]>
-	<td width = '80'>
-		<table width = '100%' class = 'noborder'>
-		<tr>
+<div [% IF rowClass %]class = "[% rowClass %][% ELSIF item.odd %]class="even[% ELSE %]class="odd[% END %] buffered">
+		
 	[% PROCESS browsecontrols_abbr
 		itemobj     = item.itemobj
 		attributes  = item.attributes
@@ -20,21 +18,15 @@
 		playallhref = item.playallhref
 		addallhref  = item.addallhref
 		href        = item.href %]
-		</tr>
-		</table>
-	</td>
-	<td align = 'left'>
-		<table width = '100%' class = 'noborder'>
-			<tr>
-			<td class = '[% IF textClass %][% textClass %][% ELSE %]itemtext[% END %]' align = 'left'>
+			<span class = '[% IF textClass %][% textClass %][% ELSE %]itemtext[% END %]' align = 'left'>
+			<span class = 'rowtext'>
 			[%- IF noLink %]
 				[% item.text | html %]
 			[%- ELSE %]
 				[% PROCESS iteminfo %]
 			[%- END %]
-			</td>
-			</tr>
-		</table>
-	</td>
-</tr>
+		
+			</span>
+			</span>
+</div>
 [% END %]

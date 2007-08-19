@@ -210,6 +210,11 @@ tr.even, td.even, div.even {
 	background-color: #FFFFFF;
 }
 
+div.buffered {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
 div#page {
 	width: 800px;
 	z-index: -100;
@@ -329,6 +334,15 @@ div#playlistbox {
 	overflow: hidden;
 }
 
+
+span.buttonControls {
+	padding: 8 8 8 8;
+}
+
+
+span.rowtext {
+	padding: 8 8 8 8;
+}
 
 div#controls {
        position: absolute;
@@ -534,6 +548,7 @@ input.searchForm {
 
 .listing {
 	padding-left: 10px;
+	clear: none;
 }
 
 div.fileselectorautocomplete {

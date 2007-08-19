@@ -18,6 +18,14 @@ body.search {
 	background-color: #EEEEEE;
 }
 
+div {
+	overflow: visible;
+}
+
+img {
+	border: 0;
+}
+
 a {
 	outline: none;
 }
@@ -166,13 +174,7 @@ td.listing {
 	padding-bottom: 8px;
 }
 
-div {
-	overflow: visible;
-}
 
-img {
-	border: 0;
-}
 
 div#pagecontainer {
          top: 80; height: 85%;  overflow-y: auto; width: 100%; position: absolute; z-index: 2;
@@ -204,7 +206,7 @@ tr.odd, td.odd, div.odd {
 	padding-bottom: 10px;
 }
 
-tr.even, td.even, div.odd {
+tr.even, td.even, div.even {
 	background-color: #FFFFFF;
 	padding-top: 10px;
 	padding-bottom: 10px;
@@ -595,4 +597,19 @@ div.fileselectorautocomplete ul li {
 	height: 12px;
 	cursor: pointer;
 	white-space: nowrap
+}
+
+div.buffered {
+       padding-top: 5px;
+       padding-bottom: 5px;
+}
+
+ 
+span.buttonControls {
+       padding: 8 8 8 8;
+}
+
+
+span.rowtext {
+       padding: 8 8 8 8;
 }
