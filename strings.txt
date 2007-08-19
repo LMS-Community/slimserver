@@ -7043,6 +7043,12 @@ SETUP_WIZARD_SUMMARY_MUSICSOURCE
 SETUP_WIZARD_SUMMARY_RESCAN
 	EN	If you selected a local music source, SlimServer will now start indexing your collection.<br/><br/>Have fun!
 
+SETUP_WIZARD_DONE
+	EN	SlimServer Setup: Done!
+
+SETUP_WIZARD_DONE_DESC
+	EN	Your settings have been saved. You're now ready to use your SlimServer.<br/><br/>If you selected a local music source, SlimServer will now start indexing your collection. Please be patient - you'll soon have easy access to all your music files.<br/><br/>You can now close this window or <a href="/">click here</a> to proceed to SlimServer's web interface.<br/><br/>Have fun!
+
 SETUP_WIZARD_NEXT
 	DE	Weiter
 	EN	Next
@@ -7054,6 +7060,10 @@ SETUP_WIZARD_PREVIOUS
 SETUP_WIZARD_FINISH
 	DE	Abschliessen
 	EN	Finish
+
+SETUP_WIZARD_CLOSE
+	DE	Schliessen
+	EN	Close
 
 #
 # Web interface

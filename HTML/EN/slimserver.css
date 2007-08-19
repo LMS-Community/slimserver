@@ -301,3 +301,18 @@ div.fileselectorautocomplete ul li {
 	cursor: pointer;
 	white-space: nowrap
 }
+
+
+/* some styles used in extjs styles - overwrite them for the wizard */
+.x-tree-node-leaf .x-tree-node-alwayscollapsed {
+	background-image:url(/html/ext/resources/images/default/tree/folder.gif);
+}
+
+.x-layout-panel {
+	border: 0px none;
+}
+
+.x-btn {
+	display: inline;
+}
+

@@ -58,13 +58,18 @@ sub handler {
 	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
 
 	# make sure we only enforce the wizard at the very first startup
-	if (!$serverPrefs->get('wizardDone')) {
+	if ($paramRef->{'saveSettings'}) {
 		$serverPrefs->set('wizardDone', 1);
+		$paramRef->{'wizardDone'} = 1;
+		delete $paramRef->{'firstTimeRun'};		
+	}
+
+	if (!$serverPrefs->get('wizardDone')) {
 		$paramRef->{'firstTimeRun'} = 1;
 
 		# try to guess the local language setting
 		# only on non-Windows systems, as the Windows installer is setting the langugae
-		if (Slim::Utils::OSDetect::OS() ne 'win'
+		if (Slim::Utils::OSDetect::OS() ne 'win'  && !$paramRef->{'saveLanguage'}
 			&& defined $response->{'_request'}->{'_headers'}->{'accept-language'}) {
 
 			$log->debug("Accepted-Languages: " . $response->{'_request'}->{'_headers'}->{'accept-language'});

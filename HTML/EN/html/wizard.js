@@ -26,47 +26,61 @@ Wizard = function(){
 			layout.add('south', new Ext.ContentPanel('footer', {fitToFrame:true, fitContainer:true}));
 			layout.add('center', new Ext.ContentPanel('main', {fitToFrame:true, fitContainer:true}));
 
-			folderselectors['audiodir'] = new FileSelector('audiodirselector', {
-				filter: 'foldersonly',
-				input: 'audiodir',
-				gotoBtn: 'gotoAudiodir'
-			});
-
-			folderselectors['playlistdir'] = new FileSelector('playlistdirselector', {
-				filter: 'foldersonly',
-				input: 'playlistdir',
-				gotoBtn: 'gotoPlaylistdir'
-			});
-
-			folderselectors['itunes'] = new FileSelector('itunespathselector', {
-				input: 'xml_file',
-				filter: 'filetype:xml'
-			});
-
-			new Ext.Button('previous', {
-				text: strings['previous'],
-				handler: this.onPrevious,
-				scope: this
-			});
-
-			this.nextBtn = new Ext.Button('next', {
-				text: strings['next'],
-				handler: this.onNext,
-				scope: this
-			});
-
-			Ext.get('language').on('change', this.onLanguageChange, this);
-
-			new Ext.Button('sn_verify', {
-				text: strings['sn_verify'],
-				handler: this.verifySqnAccount,
-				scope: this
-			});
+			if (wizarddone) {
+				Ext.get('done_h').show();
+				Ext.get('done_m').show();
+				this.nextBtn = new Ext.Button('next', {
+					text: strings['close'],
+					handler: function(){
+						window.open('javascript:window.close();','_self','');
+					},
+					scope: this
+				});
+			}
+			else {
+				folderselectors['audiodir'] = new FileSelector('audiodirselector', {
+					filter: 'foldersonly',
+					input: 'audiodir',
+					gotoBtn: 'gotoAudiodir'
+				});
+	
+				folderselectors['playlistdir'] = new FileSelector('playlistdirselector', {
+					filter: 'foldersonly',
+					input: 'playlistdir',
+					gotoBtn: 'gotoPlaylistdir'
+				});
+	
+				folderselectors['itunes'] = new FileSelector('itunespathselector', {
+					input: 'xml_file',
+					filter: 'filetype:xml'
+				});
+	
+				new Ext.Button('previous', {
+					text: strings['previous'],
+					handler: this.onPrevious,
+					scope: this
+				});
+	
+				this.nextBtn = new Ext.Button('next', {
+					text: strings['next'],
+					handler: this.onNext,
+					scope: this
+				});
+	
+				Ext.get('language').on('change', this.onLanguageChange, this);
+	
+				new Ext.Button('sn_verify', {
+					text: strings['sn_verify'],
+					handler: this.verifySqnAccount,
+					scope: this
+				});
+			}
 
 			Ext.EventManager.onWindowResize(this.onResize, layout);
 			Ext.EventManager.onDocumentReady(this.onResize, layout, true);
 
-			this.flipPages(page);
+			if (!wizarddone)
+				this.flipPages(page);
 			layout.endUpdate();
 		},
 
@@ -91,7 +105,7 @@ Wizard = function(){
 					if (offset > 0) {
 						document.forms.wizardForm.submit();
 						if (!firsttimerun)
-							window.close();
+							window.open('javascript:window.close();','_self','');
 					}
 					else {
 						this.nextBtn.setText(strings['next']);

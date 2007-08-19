@@ -85,6 +85,10 @@ img { border: 0; }
 }
 
 
+#sn_result_summary {
+	color: yellow;
+}
+
 /* styles for the basic layout */
 .scrollingPanel {
 	height: 100%;

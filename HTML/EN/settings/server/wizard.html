@@ -24,6 +24,7 @@
 			}
 
 			.wz_page {
+				visibility: hidden;
 				position: absolute;
 				width: 95%;
 			}
@@ -66,11 +67,13 @@
 			var showitunes = [% showiTunes ? "true" : "false" %];
 			var showmusicip = [% showMusicIP ? "true" : "false" %];
 			var firsttimerun = [% firstTimeRun ? "true" : "false" %];
+			var wizarddone = [% wizardDone ? "true" : "false" %];
 			
 			var strings = new Array();
 			strings['previous'] = "[% "SETUP_WIZARD_PREVIOUS" | string %]";
 			strings['next'] = "[% "SETUP_WIZARD_NEXT" | string %]";
 			strings['finish'] = "[% "SETUP_WIZARD_FINISH" | string %]";
+			strings['close'] = "[% "SETUP_WIZARD_CLOSE" | string %]";
 			strings['sn_verify'] = "[% "SETUP_WIZARD_SQN_VERIFY" | string %]";
 			strings['sn_success'] = "[% "SETUP_SN_VALID_LOGIN" | string %]";
 
@@ -109,6 +112,7 @@
 								<div id="itunes_h" class="wz_page">[% "SETUP_WIZARD_ITUNES" | string %]</div>
 								<div id="musicip_h" class="wz_page">[% "SETUP_WIZARD_MUSICIP" | string %]</div>
 								<div id="summary_h" class="wz_page">[% "SETUP_WIZARD_SUMMARY" | string %]</div>
+								<div id="done_h" class="wz_page">[% "SETUP_WIZARD_DONE" | string %]</div>
 							</div>
 							<div class="titlebox_bottom"><div></div></div>
 						</div>
@@ -244,6 +248,10 @@
 								[% END %]
 								<input name="saveSettings" type="hidden" value="1">
 							</form>
+
+							<div id="done_m" class="wz_page">
+								<div>[% "SETUP_WIZARD_DONE_DESC" | string %]</div>
+							</div>
 						</div>
 					</div>
 					<div class="inner_bottom"><div></div></div>
