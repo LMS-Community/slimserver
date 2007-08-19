@@ -613,3 +613,7 @@ span.buttonControls {
 span.rowtext {
        padding: 8 8 8 8;
 }
+
+.favoritesText {
+	font-size: 160%;
+}

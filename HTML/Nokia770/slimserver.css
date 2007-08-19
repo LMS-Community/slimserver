@@ -204,9 +204,13 @@ tr.playing {
 }
 
 tr.odd, td.odd, div.odd {
+	padding-top: 2px;
+	padding-bottom: 2px;
 	background-color: #d0d0d0;
 }
 tr.even, td.even, div.even {
+	padding-top: 2px;
+	padding-bottom: 2px;
 	background-color: #FFFFFF;
 }
 
@@ -581,4 +585,8 @@ div.fileselectorautocomplete ul li {
 	height: 12px;
 	cursor: pointer;
 	white-space: nowrap
+}
+
+.favoritesText {
+	font-size: 160%;
 }
