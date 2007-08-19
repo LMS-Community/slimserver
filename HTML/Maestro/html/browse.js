@@ -3,8 +3,8 @@ Browse = function(){
 		init : function(){
 			// add highlighter class
 			Ext.addBehaviors({
-				'div.browsedbListItem@mouseover': function(ev, target){
-					if (target.tagName != 'DIV')
+				'.selectorMarker@mouseover': function(ev, target){
+					if (target.tagName != 'DIV' || !Ext.get(target).hasClass('selectorMarker'))
 						return;
 
 					// remove highlighting from the other DIVs
@@ -12,11 +12,14 @@ Browse = function(){
 					for(var i = 0; i < items.length; i++) {
 						el = Ext.get(items[i].id);
 						if (el) {
-							el.removeClass('mouseOver');
+							el.replaceClass('mouseOver', 'selectorMarker');
 						}
 					}
 
-					Ext.get(target).addClass('mouseOver');
+					el = Ext.get(target);
+					if (el) {
+						el.replaceClass('selectorMarker', 'mouseOver');
+					}
 				}
 			});
 							

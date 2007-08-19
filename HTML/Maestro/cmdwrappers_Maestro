@@ -11,7 +11,7 @@
 	[%- END %]
 
 	[% BLOCK contentitem -%]
-	<div class="[% odd ? "odd" : "even" %]">		
+	<div class="selectorMarker"><div class="_topRight"><div class="_topLeft"><div class="_bottomRight"><div class="_bottomLeft">
 		<div class="[% lineclass || 'browsedbListItem' %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			[%- IF leftcontrols -%]
 				<span class="browsedbLeftControls">
@@ -28,7 +28,7 @@
 				[%- PROCESS $controls -%]
 				</span>
 			[%- END %]
-		</div>
+		</div></div></div></div></div>
 	</div>
 	[%- END %]
 
