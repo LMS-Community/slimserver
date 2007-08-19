@@ -348,18 +348,26 @@ sub gotOPML {
 		$client->execute( \@p );
 	}
 
-	# Push staight into remotetrackinfo if a playlist of one was returned
-	if ($params->{'item'}->{'type'} && $params->{'item'}->{'type'} eq 'playlist' && scalar @{ $opml->{'items'} || [] } == 1)  {
+	# Push staight into remotetrackinfo if asked to replace item or a playlist of one was returned
+	if ($params->{'item'}->{'type'} && $params->{'item'}->{'type'} =~ /^(replace|playlist)$/ && scalar @{ $opml->{'items'} || [] } == 1) {
 		my $item  = $opml->{'items'}[0];
 		my $title = $item->{'name'} || $item->{'title'};
+		my $url   = $item->{'url'};
+
 		my %params = (
-			'url'     => $item->{'url'},
-			'title'   => $title,
-			'header'  => fitTitle( $client, $title),
+			'url'    => $url,
+			'title'  => $title,
+			'header' => fitTitle($client, $title),
 		);
 
+		if (!defined $url) {
+			$params{'hideTitle'} = 1;
+			$params{'hideURL'}   = 1;
+		}
+
 		if ($item->{'description'}) {
-			$params{'details'} = [ $item->{'description'} ];
+			my ($curline, @lines) = _breakItemIntoLines( $client, $item );
+			$params{'details'} = \@lines;
 		}
 
 		return Slim::Buttons::Common::pushModeLeft($client, 'remotetrackinfo', \%params);
@@ -434,10 +442,15 @@ sub gotOPML {
 
 			my $hasItems = ( ref $item->{'items'} eq 'ARRAY' ) ? scalar @{$item->{'items'}} : 0;
 			my $isAudio  = ($item->{'type'} && $item->{'type'} eq 'audio') ? 1 : 0;
-			my $itemURL  = $item->{'url'}  || $item->{'value'};
+			my $itemURL  = $item->{'url'};
 			my $title    = $item->{'name'} || $item->{'title'};
 			my $parser   = $item->{'parser'};
 			
+			# Set itemURL to value, but only if value was not created from the name above
+			if (!defined $itemURL && $item->{'value'} && $item->{'value'} ne $item->{'name'}) {
+				$itemURL = $item->{'value'};
+			}
+
 			# Allow text-only items that RadioTime uses
 			if ( $item->{'type'} && $item->{'type'} eq 'text' ) {
 				undef $itemURL;
@@ -534,6 +547,11 @@ sub gotOPML {
 				);
 
 			}
+			elsif (hasDescription($item)) {
+
+				displayItemDescription($client, $item);
+
+			} 
 			else {
 
 				$client->bumpRight();
@@ -1464,9 +1482,12 @@ sub _cliQuerySubFeed_done {
 		$subFeed = $subFeed->{'items'}->[$i];
 	}
 
-	if ($subFeed->{'type'} && $subFeed->{'type'} eq 'playlist' && scalar @{ $feed->{'items'} } == 1) {
-		# in the case of a playlist of one update previous entry
+	if ($subFeed->{'type'} && $subFeed->{'type'} =~ /^(replace|playlist)$/ && scalar @{ $feed->{'items'} } == 1) {
+		# in the case of a replacable menu or playlist of one update previous entry to avoid new menu level
 		my $item = $feed->{'items'}[0];
+		if ($subFeed->{'type'} eq 'replace') {
+			delete $subFeed->{'url'};
+		}
 		for my $key (keys %$item) {
 			$subFeed->{ $key } = $item->{ $key };
 		}
@@ -1481,7 +1502,7 @@ sub _cliQuerySubFeed_done {
 		# parent url of 'NONE' should not be recached as we are being passed a preparsed hash
 		# re-cache the parsed XML to include the sub-feed
 		my $cache   = Slim::Utils::Cache->new();
-		my $expires = $Slim::Formats::XML::XML_CACHE_TIME;
+		my $expires = $feed->{'cachetime'} || $Slim::Formats::XML::XML_CACHE_TIME;
 
 		$log->info("Re-caching parsed XML for $expires seconds.");
 

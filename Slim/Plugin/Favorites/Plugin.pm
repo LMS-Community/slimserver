@@ -338,7 +338,7 @@ sub indexHandler {
 
 					$entry->{'URL'} = $params->{'entryurl'};
 
-					if ($params->{'entryurl'} =~ /\.opml$/) {
+					if ($params->{'entryurl'} =~ /\.(opml|xml|rss)$/) {
 						delete $entry->{'type'};
 					} else {
 						$entry->{'type'} = 'audio';

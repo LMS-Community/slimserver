@@ -229,11 +229,12 @@ sub gotViaHTTP {
 	# Cache the parsed XML
 	if ( Slim::Utils::Misc::shouldCacheURL( $http->url ) ) {
 
-		my $cache = Slim::Utils::Cache->new();
+		my $cache   = Slim::Utils::Cache->new();
+		my $expires = $feed->{'cachetime'} || $XML_CACHE_TIME;
 
-		$log->info("Caching parsed XML for $XML_CACHE_TIME seconds");
+		$log->info("Caching parsed XML for $expires seconds");
 
-		$cache->set( $http->url() . '_parsedXML', $feed, $XML_CACHE_TIME );
+		$cache->set( $http->url() . '_parsedXML', $feed, $expires );
 	}
 	else {
 

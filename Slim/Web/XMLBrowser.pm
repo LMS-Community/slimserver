@@ -371,9 +371,12 @@ sub handleSubFeed {
 		$subFeed = $subFeed->{'items'}->[$i];
 	}
 
-	if ($subFeed->{'type'} && $subFeed->{'type'} eq 'playlist' && scalar @{ $feed->{'items'} } == 1) {
-		# in the case of a playlist of one update previous entry
+	if ($subFeed->{'type'} && $subFeed->{'type'} =~ /^(replace|playlist)$/ && scalar @{ $feed->{'items'} } == 1) {
+		# in the case of a replace entry or playlist of one update previous entry to avoid adding a new menu level
 		my $item = $feed->{'items'}[0];
+		if ($subFeed->{'type'} eq 'replace') {
+			delete $subFeed->{'url'};
+		}
 		for my $key (keys %$item) {
 			$subFeed->{ $key } = $item->{ $key };
 		}
@@ -396,7 +399,7 @@ sub handleSubFeed {
 		# parentURL of 'NONE' indicates we were called with preparsed hash which should not be cached
 		# re-cache the parsed XML to include the sub-feed
 		my $cache = Slim::Utils::Cache->new();
-		my $expires = $Slim::Formats::XML::XML_CACHE_TIME;
+		my $expires = $feed->{'cachetime'} || $Slim::Formats::XML::XML_CACHE_TIME;
 
 		$log->info("Re-caching parsed XML for $expires seconds.");
 
