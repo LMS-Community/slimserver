@@ -11,10 +11,13 @@ use strict;
 use IO::Socket;
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;
 
 my $log = logger('network.protocol');
+
+my $prefs = preferences('server');
 
 =head1 NAME
 
@@ -70,7 +73,7 @@ sub sayHello {
 
 =head2 gotDiscoveryRequest( $udpsock, $clientpaddr, $deviceid, $revision, $mac )
 
-Respond to a response packet from a client device, sending it the hostname we found.
+Respond to a discovery request from a client device, sending it the hostname we found.
 
 =cut
 
@@ -104,6 +107,77 @@ sub gotDiscoveryRequest {
 
 	$log->info("gotDiscoveryRequest: Sent discovery response.");
 }
+
+my %TLVhandlers = (
+	# Requests
+	'NAME' => \&Slim::Utils::Network::hostName,        # send full host name - no truncation
+	'IPAD' => sub { $::httpaddr },                     # send ipaddress as a string only if it is set
+	'JSON' => sub { $prefs->get('httpport') },         # send port as a string
+	# Info only
+	'JVID' => sub { $log->is_info && $log->info("Jive: " . join(':', unpack( 'H2H2H2H2H2H2', shift))); return undef; },
+);
+
+=head2 gotTLVRequest( $udpsock, $clientpaddr, $msg )
+
+Process TLV based discovery request and send appropriate response.
+
+=cut
+
+sub gotTLVRequest {
+	my ($udpsock, $clientpaddr, $msg) = @_;
+
+	use bytes;
+
+	# Discovery request and responses contain TLVs of the format:
+	# T (4 bytes), L (1 byte unsigned), V (0-255 bytes)
+	# To escape from previous discovery format, request are prepended by 'e', responses by 'E'
+
+	unless ($msg =~ /^e/) {
+		$log->warn("bad discovery packet - ignoring");
+		return;
+	}
+
+	$log->info("discovery packet:");
+
+	# chop of leading character
+	$msg = substr($msg, 1);
+	
+	my $len = length($msg);
+	my ($t, $l, $v);
+	my $response = 'E';
+
+	# parse TLVs
+	while ($len > 0) {
+		$t = substr($msg, 0, 4);
+		$l = unpack("xxxxC", $msg);
+		$v = $l ? substr($msg, 5, $l) : undef;
+
+		$log->debug(" TLV: $t len: $l");
+
+		if ($TLVhandlers{$t}) {
+			if (my $r = $TLVhandlers{$t}->($v)) {
+				if (length $r > 255) {
+					$log->warn("Response: $t too long truncating!");
+					$r = substr($r, 0, 255);
+				}
+				$response .= $t . pack("C", length $r) . $r;
+			}
+		}
+
+		$msg = substr($msg, $l + 5);
+		$len = $len - $l - 5;
+	}
+
+	if (length $response > 1450) {
+		$log->warn("Response packet too long not sending!");
+		return;
+	}
+
+	$log->info("sending response");
+
+	$udpsock->send($response, 0, $clientpaddr);
+}
+
 
 =head1 SEE ALSO
 

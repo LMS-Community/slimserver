@@ -100,6 +100,12 @@ sub readUDP {
 				my ($msgtype, $deviceid, $revision, @mac) = unpack 'axCCxxxxxxxxH2H2H2H2H2H2', $msg;
 
 				Slim::Networking::Discovery::gotDiscoveryRequest($sock, $clientpaddr, $deviceid, $revision, join(':', @mac));
+
+			} elsif ($msg =~/^e/) {
+
+				# New extensible discovery format - pass to handler for processing
+
+				Slim::Networking::Discovery::gotTLVRequest($sock, $clientpaddr, $msg);
 	
 			} else {
 
