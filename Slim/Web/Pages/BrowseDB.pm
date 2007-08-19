@@ -452,6 +452,10 @@ sub browsedb {
 			if ($firstItem->can('coverArt') && $firstItem->coverArt) {
 
 				$params->{'coverArt'} = $firstItem->id;
+				if (!$firstItem->album->artwork) {
+					$firstItem->album->artwork($firstItem->id);
+					$firstItem->album->update;
+				}
 			}
 		}
 	}
