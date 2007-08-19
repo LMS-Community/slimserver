@@ -612,7 +612,7 @@ function getPlaylistData(start, params, player) {
 	'playlist.html',
 	{
 		asynchronous:true,
-		//evalScripts:true,
+		evalScripts:true,
 		method: requesttype,
 		postBody: args,
 		parameters: args,
