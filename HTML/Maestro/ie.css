@@ -5,3 +5,7 @@
 .browsedbControls {
 	right: 25px;
 }
+
+.mouseOver .selector_bottomRight { 
+	height: 14px;
+} 

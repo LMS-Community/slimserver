@@ -1,0 +1,21 @@
+<div>
+	[% IF hasPagebar %][% PROCESS pagebar %][% END %]
+	<div id="playList">
+		[% IF playercount == '0' %]
+			<p>[% "NO_PLAYER_DETAILS" | string %]</p>
+		[% ELSE %]
+			[% IF playlist_items %]
+				[% FOREACH item = playlist_items %]
+					[% PROCESS status_list.html %]
+				[% END %]
+			[% ELSE %]<p>[% "EMPTY" | string %]<a name="currentsong"></a></p>[% END %]
+		[% END %]
+	</div>
+
+	[% IF playercount != '0' %]
+		<div id="currentPlaylistLabel">
+		<span id="currentPlaylistCommands">[% img = '' %][% IF cansave %][% PROCESS savePlaylistLink %] <span class="bar">|</span> [% END %][% PROCESS downloadPlaylistLink %] <span class="bar">|</span> [% PROCESS clearPlaylistLink %]
+		[% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
+		</span></div>
+	[% END %]
+</div>

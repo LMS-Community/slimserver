@@ -17,33 +17,27 @@ img { border: 0; }
 /* browse pages */
 .browsedbListItem {
 	position: relative;
-	padding: 6px;
+	padding-left: 6px;
 	padding-right: 80px;
 }
 
 .browsedbControls {
 	position: absolute;
 	top: 0px;
-	padding-top: 6px;
 	right: 10px;
 }
 
 .browsedbRightControls {
 	position: absolute;
 	top: 0px;
-	padding-top: 6px;
 	right: 10px;
-}
-
-.browsedbLeftControls {
-	padding-top: 6px;
 }
 
 #browsedbHeader {
 	margin: 10px;
 }
 
-#browsedbList {
+#browsedbList, #playList {
 	margin: 5px;
 	height: 400px;
 	overflow: auto;
@@ -60,15 +54,16 @@ img { border: 0; }
 }
 
 .homeMenuItem {
+	margin-left: 6px;
 	position: relative;
-	padding: 6px;
 }
 
 .homeMenuItem a {
 	text-decoration: none;
 }
 
-.mouseOver .browseItemLink {
+.mouseOver .browseItemLink,
+.mouseOver .homeMenuItem {
 	color: gray;
 }
 
@@ -229,37 +224,42 @@ img { border: 0; }
 /* list selector */
 .mouseOver {
 	cursor: pointer;
-	padding: 1px;
+	padding-top: 0;
+	padding-bottom: 0;
 }
 
-.mouseOver ._topRight {
+.mouseOver .selector_topRight {
 	background: #cccccc url(html/images/selector_top_right.gif) no-repeat top right;
 } 
-.mouseOver ._topLeft { 
+.mouseOver .selector_topLeft { 
+	padding-top: 9px;
 	background: transparent url(html/images/selector_top_left.gif) no-repeat top left; 
 } 
-.mouseOver ._bottomRight { 
+.mouseOver .selector_bottomRight { 
+	padding: 0px;
 	background: transparent url(html/images/selector_bottom_right.gif) no-repeat bottom right; 
 } 
-.mouseOver ._bottomLeft { 
+.mouseOver .selector_bottomLeft { 
+	padding-bottom: 9px;
 	background: transparent url(html/images/selector_bottom_left.gif) no-repeat bottom left; 
 }
 
 .selectorMarker {
 	cursor: pointer;
-	padding: 1px;
+	padding-top: 9px;
+	padding-bottom: 9px;
 	background: none;
 }
 
-._topRight {
+.selector_topRight {
 	background: none;
 }
-._topLeft {
+.selector_topLeft {
 	background: none;
 } 
-._bottomRight { 
+.selector_bottomRight { 
 	background: none;
 } 
-._bottomLeft {
+.selector_bottomLeft {
 	background: none;
 }

@@ -11,7 +11,7 @@
 	[%- END %]
 
 	[% BLOCK contentitem -%]
-	<div class="selectorMarker"><div class="_topRight"><div class="_topLeft"><div class="_bottomRight"><div class="_bottomLeft">
+	<div class="selectorMarker"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 		<div class="[% lineclass || 'browsedbListItem' %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			[%- IF leftcontrols -%]
 				<span class="browsedbLeftControls">

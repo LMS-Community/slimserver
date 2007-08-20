@@ -5,29 +5,31 @@
 
 			return {
 				init : function(){
+					Ext.addBehaviors({
+						'.selectorMarker@mouseover': function(ev, target){
+							if (target.tagName != 'DIV' || !Ext.get(target).hasClass('selectorMarker'))
+								return;
+		
+							// remove highlighting from the other DIVs
+							items = Ext.DomQuery.select('div.mouseOver');
+							for(var i = 0; i < items.length; i++) {
+								el = Ext.get(items[i].id);
+								if (el) {
+									el.replaceClass('mouseOver', 'selectorMarker');
+								}
+							}
+		
+							el = Ext.get(target);
+							if (el) {
+								el.replaceClass('selectorMarker', 'mouseOver');
+							}
+						}
+					});
+
 					menuItems = Ext.DomQuery.select('div.homeMenuItem');
 					for(var i = 0; i < menuItems.length; i++) {
 						el = Ext.get(menuItems[i].id);
 						if (el) {
-							el.on('mouseover', function(ev, item){
-								if (item.tagName != 'DIV' || !Ext.get(item).hasClass('selectorMarker'))
-									return;
-			
-								// remove highlighting from the other DIVs
-								items = Ext.DomQuery.select('div.mouseOver');
-								for(var i = 0; i < items.length; i++) {
-									el = Ext.get(items[i].id);
-									if (el) {
-										el.replaceClass('mouseOver', 'selectorMarker');
-									}
-								}
-			
-								el = Ext.get(item);
-								if (el) {
-									el.replaceClass('selectorMarker', 'mouseOver');
-								}
-							}, this);
-
 							el.on('click', function(e, item){
 								this.doMenu(item.id);
 							}, this);
@@ -101,7 +103,7 @@
 [% PROCESS pageheader.html noHomeLink=1 %]
 
 [% BLOCK menuItem %]
-	<div class="selectorMarker"><div class="_topRight"><div class="_topLeft"><div class="_bottomRight"><div class="_bottomLeft">
+	<div class="selectorMarker"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 		<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
 			[% token | string %]
 		</div>

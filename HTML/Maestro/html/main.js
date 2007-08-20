@@ -20,6 +20,12 @@ Main = function(){
 			layout.add('south', new Ext.ContentPanel('footer', {fitToFrame:true, fitContainer:true}));
 			layout.add('center', new Ext.ContentPanel('main', {fitToFrame:true, fitContainer:true}));
 
+			Ext.get('rightcontent').load(
+				webroot + 'playlist.html',
+				'playerid=' + player,
+				this.onResize.createDelegate(layout)
+			);
+
 			Ext.EventManager.onWindowResize(this.onResize, layout);
 			Ext.EventManager.onDocumentReady(this.onResize, layout, true);
 
@@ -41,6 +47,10 @@ Main = function(){
 			right = Ext.get('rightcontent');
 			right.setWidth(colWidth);
 			right.setHeight(colHeight-165);
+
+			pl = Ext.get('playList');
+			if (pl)
+				pl.setHeight(colHeight-160 - pl.getTop() + right.getTop());
 
 			Ext.get('leftpanel').setHeight(colHeight + 10);
 			Ext.get('rightpanel').setHeight(colHeight - 155);
