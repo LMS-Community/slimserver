@@ -110,20 +110,22 @@
 
 <table width = '100%' class = 'noborder' bgcolor = 'white'>
 	<tr>
-		<td valign = 'top' width = '205'>
 [% IF coverArt %]
+		<td valign = 'top'>
 			<img src="/music/[% coverArt %]/thumb_[% IF thumbSize %][% thumbSize %]x[% thumbSize %][% ELSE %]200x200[% END %]_f_000000.jpg" STYLE="border: 1px solid black" id = 'albumArt'>
+		</td>
 [% END %]
+		<td valign = 'top'>
+			[%- IF browse_items %]
+				[%- FOREACH item = browse_items %]
+					[% PROCESS browsedbitems_list.html %]
+				[% END -%]
+			[%- ELSE -%]
+				[% browse_list -%]
+			[% END -%]
 		</td>
 	</tr>
 </table>
-			[% IF browse_items %]
-				[% FOREACH item = browse_items %]
-					[% PROCESS browsedbitems_list.html %]
-				[% END %]
-			[% ELSE %]
-				[% browse_list %]
-			[% END %]
 [% END %]
 <p>
 <table border="0" class = 'floater' width="100%" bgcolor="#EEEEEE">

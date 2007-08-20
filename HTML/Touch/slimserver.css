@@ -174,10 +174,8 @@ td.listing {
 	padding-bottom: 8px;
 }
 
-
-
 div#pagecontainer {
-         top: 80; height: 85%;  overflow-y: auto; width: 100%; position: absolute; z-index: 2;
+         top: 80; height: 100%;  overflow-y: auto; width: 100%; position: absolute; z-index: 2;
 }
 
 div#innerSanctum {
@@ -611,7 +609,7 @@ span.buttonControls {
 
 
 span.rowtext {
-       padding: 8 8 8 8;
+	padding: 8 8 8 8;
 }
 
 .favoritesText {
