@@ -1,14 +1,14 @@
 <!--browsedb_artwork.html-->
 
-	<table class = 'floater' height = '200' width = '105' class = 'noborder'>
+	<table class = 'floater noborder' height = '200' width = '130'>
 	<tr>
 		<td width="100">
 		[% IF item.coverThumb %]
-			<a onClick = 'popUpAlbumInfo("[% item.album %]", 1)'>
-			[% PROCESS thumbnailItemImg height="100" width="100" style='STYLE="border: 1px solid black"' %]</a>
+			<a onClick = 'popUpAlbumInfo("[% item.itemobj.id %]", 1)'>
+			[% PROCESS thumbnailItemImg height="125" width="125" style='STYLE="border: 1px solid black"' %]</a>
 		[% ELSE %]
-			<a onClick = 'popUpAlbumInfo("[% item.album %]", 1)'>
-			[% PROCESS dummyItemImg height="100" width="100" style='STYLE="border: 1px solid black"' %]</a>
+			<a onClick = 'popUpAlbumInfo("[% item.itemobj.id %]", 1)'>
+			[% PROCESS dummyItemImg height="125" width="125" style='STYLE="border: 1px solid black"' %]</a>
 		[% END %]
 		</td>
 	</tr>

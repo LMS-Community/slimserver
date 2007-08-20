@@ -1,0 +1,32 @@
+<!--browsedb_artwork.html-->
+
+	<table class = 'floater noborder' height = '300' width = '250'>
+	<tr>
+		<td width="100" valign = 'bottom'>
+		[% IF item.coverThumb %]
+			<a onClick = 'popUpAlbumInfo("[% item.itemobj.id %]", 1)'>
+			[% PROCESS thumbnailItemImg height="225" width="225" style='STYLE="border: 1px solid black"' %]</a>
+		[% ELSE %]
+			<a onClick = 'popUpAlbumInfo("[% item.itemobj.id %]", 1)'>
+			[% PROCESS dummyItemImg height="225" width="225" style='STYLE="border: 1px solid black"' %]</a>
+		[% END %]
+		</td>
+	</tr>
+	<tr>
+		<td align = 'center' valign = 'bottom'>
+		<table cellspacing = '0' cellpadding = '0' border = '0' width = 100%>
+			<tr>
+			[% IF item.item %]<tr><td nowrap class = 'supertinytext'>[% item.item | truncate(30) %]</td></tr>[% END %]
+			[% IF item.artist %][% itemobj = item.itemobj %]<tr><td nowrap class = 'supertinytext'>[%- artistlist = PROCESS artistsAsText.html %][% artistlist | truncate(30)%]</td></tr>[% END %]
+			<td><table width = '100%'><tr>
+       			 [% PROCESS browsecontrols_abbr
+       	         itemobj = item.itemobj
+       	         attributes = item.attributes
+       	         odd = item.odd
+       	         mixerlinks = item.mixerlinks %]
+			</tr></table></td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+	</table>

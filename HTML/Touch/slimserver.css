@@ -451,10 +451,10 @@ div#volumeOSD{
 div#albumInfo {
         position: absolute;
         z-index: 99;
-        top: 10;
+        top: 50;
         left: 200;
-	width: 500;
-	bottom: 10;
+	width: 700;
+	bottom: 50;
         background-color: white;
         color: black;
         padding: 5px;
