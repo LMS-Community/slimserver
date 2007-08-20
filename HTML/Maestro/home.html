@@ -21,6 +21,11 @@
 	<span id="radioCrumblist" class="overlappingCrumblist"><a href="#" onclick="MainMenu.showPanel('main');">[% "HOME" | string %]</a> [% crumbSeparator %] <a href="#">[% "RADIO" | string %]</a></span>
 [% END %]
 
+[% infoTab = BLOCK %]
+	<span id="albumcount">[% album_count %]</span> [% "WITH" | string -%] 
+	<span id="songcount">[%- song_count %]</span> [% "BY" | string %] <span id="artistcount">[% artist_count %]</span>.
+[% END %]
+
 [% PROCESS pageheader.html noHomeLink=1 %]
 
 [% BLOCK menuItem %]
@@ -31,6 +36,7 @@
 	</div></div></div></div></div>
 [% END %]
 
+<div class="homeMenuSection" id="activeMenu"></div>
 
 <div class="homeMenuSection" id="mainMenu">
 	[% PROCESS menuItem token="FAVORITES" category='browse' %]

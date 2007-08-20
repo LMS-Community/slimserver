@@ -37,22 +37,20 @@ Main = function(){
 			Ext.get('mainbody').setHeight(dimensions.height-35);
 
 			colWidth = Math.floor((dimensions.width - 168) / 2);
-			colHeight = dimensions.height-210;
 
 			left = Ext.get('leftcontent');
 			left.setWidth(colWidth);
-			left.setHeight(colHeight);
+			left.setHeight(dimensions.height - 160);
 
 			right = Ext.get('rightcontent');
 			right.setWidth(colWidth);
-			right.setHeight(colHeight-165);
+			right.setHeight(dimensions.height-375);
 
 			pl = Ext.get('playList');
 			if (pl)
-				pl.setHeight(colHeight-160 - pl.getTop() + right.getTop());
+				pl.setHeight(dimensions.height-370 - pl.getTop() + right.getTop());
 
-			Ext.get('leftpanel').setHeight(colHeight + 10);
-			Ext.get('rightpanel').setHeight(colHeight - 155);
+			Ext.get('rightpanel').setHeight(dimensions.height-365);
 
 			this.layout();
 		}

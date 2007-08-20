@@ -10,6 +10,11 @@
 			<script type="text/javascript">[% PROCESS html/vars.js %]</script>
 			<script type="text/javascript" src="[% webroot %]html/utils.js"></script>
 
+			<script type="text/javascript">
+				Ext.EventManager.onWindowResize(Utils.resizeContent);
+				Ext.EventManager.onDocumentReady(Utils.resizeContent);		
+			</script>
+
 			[% maestroScripts %]
 		[% END %]
 
@@ -18,19 +23,24 @@
 		<![endif]-->
 	</head>
 	<body>
-		<div class="titlebox">
-			<div class="titlebox_top"><div></div></div>
-			<div class="titlebox_content">
-				<div>
-					[% pagetitle %]
+		<div id="edge_top_left">&nbsp;</div>
+		<div id="edge_top_right">&nbsp;</div>
+
+		<div class="inner_content">
+
+			<div class="titlebox">
+				<div class="titlebox_top"><div></div></div>
+				<div class="titlebox_content">
+					<div>
+						[% pagetitle %]
+					</div>
 				</div>
+				<div class="titlebox_bottom"><div></div></div>
 			</div>
-			<div class="titlebox_bottom"><div></div></div>
-		</div>
-
-		<div id="crumblist">
-			[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
-			[%- PROCESS crumblist IF pwd_list %]
-		</div>
-
-		<div class="content">
+	
+			<div id="crumblist">
+				[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
+				[%- PROCESS crumblist IF pwd_list %]
+			</div>
+	
+			<div id="content" class="scrollingPanel">

@@ -62,7 +62,6 @@ img { border: 0; }
 	margin-top: 20px;
 	margin-left: 5px;
 	margin-right: 15px;
-	width: 99%;
 }
 
 .homeMenuItem {
@@ -88,7 +87,6 @@ img { border: 0; }
 
 /* styles for the basic layout */
 .scrollingPanel {
-	height: 100%;
 	overflow: auto;
 }
 
@@ -187,6 +185,7 @@ img { border: 0; }
 	font-size: 120%;
 	font-weight: bold;
 }
+
 .titlebox_top div { 
 	height: 10px;
 	background: url(/Maestro/html/images/title_top_left.gif) no-repeat top left;
@@ -207,6 +206,69 @@ img { border: 0; }
 	background: url(/Maestro/html/images/title_bottom_right.gif) no-repeat bottom right; 
 }
 
+#leftcontent {
+	margin-left: 20px;
+}
+
+#edge_top_left, #edge_top_right,
+#edge_bottom_left, #edge_bottom_right {
+	position: fixed;
+	height: 10px;
+	width: 10px;
+}
+
+
+#edge_top_left {
+	background: url(/Maestro/html/images/inner_top_left.gif) no-repeat top left;
+	left: 0;
+	top: 0;	
+}
+
+#edge_top_right {
+	background: url(/Maestro/html/images/inner_top_right.gif) no-repeat top right;
+	right: 0;
+	top: 0;
+}
+
+#edge_bottom_left {
+	background: url(/Maestro/html/images/inner_bottom_left.gif) no-repeat bottom left;
+	left: 0;
+	bottom: 0;
+}
+
+#edge_bottom_right {
+	background: url(/Maestro/html/images/inner_bottom_right.gif) no-repeat bottom right;
+	right: 0;
+	bottom: 0;
+}
+
+.infoTab {
+	position: fixed;
+	bottom: 0;
+	text-align: center;
+	width: 100%;
+}
+
+.infoTab_content {
+	background: url(/Maestro/html/images/infotab_background.gif) repeat;
+	margin-left: 20px;
+	margin-right: 20px;
+	height: 25px;
+	vertical-align: middle;
+	font-size: 95%;
+}
+
+.infoTab_top div { 
+	height: 10px;
+	background: url(/Maestro/html/images/infotab_top_left.gif) no-repeat top left;
+}
+
+.infoTab_top {
+	height: 10px;
+	background: url(/Maestro/html/images/infotab_top_right.gif) no-repeat top right; 
+}
+
+
 #mainbody {
 	position: relative;
 	width: 100%;
@@ -223,7 +285,7 @@ img { border: 0; }
 	height: 20px;
 }
 
-.content {
+#content {
 	width: 100%;
 }
 

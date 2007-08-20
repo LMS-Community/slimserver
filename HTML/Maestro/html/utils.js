@@ -21,6 +21,18 @@ var Utils = function(){
 					}
 				}
 			});
+		},
+
+		resizeContent : function(){
+			infoHeight = 0;
+			if (el = Ext.get('infoTab'))
+				infoHeight = el.getHeight();
+
+			el = Ext.get('content');
+			if (el && el.hasClass('scrollingPanel')) {
+				el.setHeight(Ext.fly(document.body).getHeight() - el.getTop() - infoHeight);
+			}
 		}
+
 	};
 }();

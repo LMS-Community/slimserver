@@ -5,6 +5,9 @@ var MainMenu = function(){
 		init : function(){
 			Utils.addBrowseMouseOver();
 
+			Ext.EventManager.onWindowResize(this.onResize, this);
+			Ext.EventManager.onDocumentReady(this.onResize, this, true);
+
 			menuItems = Ext.DomQuery.select('div.homeMenuItem');
 			for(var i = 0; i < menuItems.length; i++) {
 				el = Ext.get(menuItems[i].id);
@@ -59,6 +62,15 @@ var MainMenu = function(){
 			for(var i = 0; i < items.length; i++) {
 				if (el = Ext.get(items[i].id))
 					el.setVisible(panel + 'Crumblist' == items[i].id);
+			}
+		},
+		
+		onResize : function(){
+			items = Ext.DomQuery.select('div.homeMenuSection');
+			for(var i = 0; i < items.length; i++) {
+				if (el = Ext.get(items[i].id)) {
+					el.setWidth(Ext.get('content').getWidth()-10);
+				}
 			}
 		}
 	}
