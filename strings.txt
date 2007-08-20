@@ -13921,3 +13921,18 @@ SEARCHFOR_PLAYLISTS
 JIVE_SEARCHFOR_HELP
 	EN	Use the scroll wheel to change letters, then press the center button to select that letter. Press the center button again to start your search.
 	FR	Utiliser le bidule pour choisir une lettre, plus appuyer sur le bouton central afin de la sélectionner. Appuyer à nouveau sur le bouton central pour démarrer la recherche.
+
+JIVE_POPUP_ADDING
+	EN	Adding
+
+JIVE_POPUP_REMOVING
+	EN	Removing
+
+JIVE_POPUP_TO_PLAYLIST
+	EN	to Playlist...
+
+JIVE_POPUP_FROM_PLAYLIST
+	EN	from Playlist...
+
+JIVE_POPUP_NOW_PLAYING
+	EN	Now Playing
