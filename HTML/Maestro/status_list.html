@@ -12,7 +12,7 @@
 			</div>
 		[% END %]
 		<div class="playlistSongDetail">
-			[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+			[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html noby=1 itemobj = item.itemobj; END %]
 		</div>
 		[% IF item.currentsong %]<span id="playlistCurrentSong"></span>[% END %]
 		<span id="playlistSong[% item.num %]"></span>
