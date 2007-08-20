@@ -312,10 +312,11 @@ sub handler {
 				}
 				else {
 					push @{$events}, {
-						channel    => '/meta/subscribe',
-						clientId   => $clid,
-						successful => JSON::True,
-						ext        => $obj->{ext},
+						channel      => '/meta/subscribe',
+						clientId     => $clid,
+						successful   => JSON::True,
+						subscription => $subscription, # XXX: out of spec but should be sent!
+						ext          => $obj->{ext},
 					};
 					
 					# If the request was not async, we can add it now
