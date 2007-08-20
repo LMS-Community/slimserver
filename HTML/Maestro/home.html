@@ -1,98 +1,19 @@
 [% maestroScripts = BLOCK %]
+	<script type="text/javascript" src="[% webroot %]html/home.js"></script>
+
 	<script type="text/javascript">
-		var MainMenu = function(){
-			url = new Array();
-
-			return {
-				init : function(){
-					Ext.addBehaviors({
-						'.selectorMarker@mouseover': function(ev, target){
-							if (target.tagName != 'DIV' || !Ext.get(target).hasClass('selectorMarker'))
-								return;
-		
-							// remove highlighting from the other DIVs
-							items = Ext.DomQuery.select('div.mouseOver');
-							for(var i = 0; i < items.length; i++) {
-								el = Ext.get(items[i].id);
-								if (el) {
-									el.replaceClass('mouseOver', 'selectorMarker');
-								}
-							}
-		
-							el = Ext.get(target);
-							if (el) {
-								el.replaceClass('selectorMarker', 'mouseOver');
-							}
-						}
-					});
-
-					menuItems = Ext.DomQuery.select('div.homeMenuItem');
-					for(var i = 0; i < menuItems.length; i++) {
-						el = Ext.get(menuItems[i].id);
-						if (el) {
-							el.on('click', function(e, item){
-								this.doMenu(item.id);
-							}, this);
-							
-							// fill array with URLs, if available
-							[%- FOREACH category = additionalLinks %]
-								[%- category = category.key %]
-								[%- FOREACH link = additionalLinks.$category %]
-									url['[% link.key %]:[% category %]'] = '[% link.value | html %]player=[% playerURI %]';
-								[%- END %]
-							[%- END %]
-						}
-					};
-					
-					this.showPanel('main');
-				},
-				
-				doMenu : function(item){
-					switch (item) {
-						case 'MY_MUSIC':
-							this.showPanel('music');
-							break;
-
-						case 'RADIO':
-							this.showPanel('radio');
-							break;
-
-						case 'MUSIC_ON_DEMAND':
-							alert('...soon to come');
-							break;
-
-						case 'OTHER_SERVICES':
-							alert('...soon to come');
-							break;
-							
-						default:
-							if (url[item]) {
-								location.href = url[item];
-							}
-//							alert(item);
-							break;
-					}
-				},
-				
-				showPanel : function(panel){
-					items = Ext.DomQuery.select('div.homeMenuSection');
-					for(var i = 0; i < items.length; i++) {
-						if (el = Ext.get(items[i].id))
-							el.setVisible(panel + 'Menu' == items[i].id);
-					}
-
-					items = Ext.DomQuery.select('span.overlappingCrumblist');
-					for(var i = 0; i < items.length; i++) {
-						if (el = Ext.get(items[i].id))
-							el.setVisible(panel + 'Crumblist' == items[i].id);
-					}
-				}
-			}
-		}();
-
-		Ext.EventManager.onDocumentReady(MainMenu.init, MainMenu, true);
-
-	</script>	
+		Ext.EventManager.onDocumentReady(function(){
+			MainMenu.init();
+			
+			// fill array with URLs, if available
+			[%- FOREACH category = additionalLinks %]
+				[%- category = category.key %]
+				[%- FOREACH link = additionalLinks.$category %]
+					MainMenu.addUrl('[% link.key %]:[% category %]', '[% link.value | html %]player=[% playerURI %]');
+				[%- END %]
+			[%- END %]
+		});
+	</script>
 [% END %]
 [% pagetitle = BLOCK %][% "HOME" | string %][% END %]
 [% pwd_list = BLOCK %]

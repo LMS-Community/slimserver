@@ -19,9 +19,10 @@ img { border: 0; }
 	position: relative;
 	padding-left: 6px;
 	padding-right: 80px;
+	clear: left;
 }
 
-.browsedbControls {
+.browsedbControls, .playlistControls {
 	position: absolute;
 	top: 0px;
 	right: 10px;
@@ -33,6 +34,13 @@ img { border: 0; }
 	right: 10px;
 }
 
+.playlistCover {
+	position: absolute;
+	left: 10px;
+	top: -5px;
+}
+
+
 #browsedbHeader {
 	margin: 10px;
 }
@@ -43,6 +51,10 @@ img { border: 0; }
 	overflow: auto;
 }
 
+.playlistSongDetail {
+	margin-left: 60px;
+	margin-top: 2px;
+}
 
 /* Home menu */
 .homeMenuSection {
@@ -62,6 +74,8 @@ img { border: 0; }
 	text-decoration: none;
 }
 
+.currentSong a,
+.currentSong .playlistSongDetail,
 .mouseOver .browseItemLink,
 .mouseOver .homeMenuItem {
 	color: gray;
@@ -222,23 +236,30 @@ img { border: 0; }
 }
 
 /* list selector */
-.mouseOver {
+.mouseOver, .currentSong {
 	cursor: pointer;
 	padding-top: 0;
 	padding-bottom: 0;
 }
 
+.currentSong .selector_topRight,
 .mouseOver .selector_topRight {
 	background: #cccccc url(html/images/selector_top_right.gif) no-repeat top right;
 } 
+
+.currentSong .selector_topLeft,
 .mouseOver .selector_topLeft { 
 	padding-top: 9px;
 	background: transparent url(html/images/selector_top_left.gif) no-repeat top left; 
-} 
+}
+
+.currentSong .selector_bottomRight,
 .mouseOver .selector_bottomRight { 
 	padding: 0px;
 	background: transparent url(html/images/selector_bottom_right.gif) no-repeat bottom right; 
 } 
+
+.currentSong .selector_bottomLeft,
 .mouseOver .selector_bottomLeft { 
 	padding-bottom: 9px;
 	background: transparent url(html/images/selector_bottom_left.gif) no-repeat bottom left; 

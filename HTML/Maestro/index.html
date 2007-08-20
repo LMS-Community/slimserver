@@ -10,7 +10,8 @@
 
 		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
 		<script type="text/javascript" src="/html/ext/ext-all.js"></script>
-		<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>		
+		<script type="text/javascript">[% PROCESS html/vars.js %]</script>		
+		<script type="text/javascript" src="[% webroot %]html/utils.js"></script>		
 
 		<style>
 			html, body {
@@ -44,13 +45,13 @@
 				font-weight: bold; 
 				padding-left: 6px; 
 			}
-			.selector { color: #333; font-size: 12px; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight: bold; line-height: 16px; padding-left: 6px; }
-			.current_track { color: white; font-size: 10px; font-family: Arial, Verdana, Helvetica, sans-serif; padding-left: 4px; }
-			.current_track_exp { color: white; font-size: 11px; font-family: Verdana, Arial, Helvetica, sans-serif; padding-left: 6px; }
 		</style>
 
 		<script type="text/javascript" src="[% webroot %]html/main.js"></script>
 		<script type="text/javascript">
+			var strings = new Array();
+			strings['loading'] = "[% "LOADING" | string %]";
+
 			Ext.EventManager.onDocumentReady(Main.init, Main, true);
 		</script>
 		

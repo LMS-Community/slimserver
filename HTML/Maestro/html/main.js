@@ -1,7 +1,10 @@
 Main = function(){
+	var layout;
 	return {
 		init : function(){
-			var layout = new Ext.BorderLayout('mainbody', {
+			Ext.UpdateManager.defaults.indicatorText = '<div class="loading-indicator">' + strings['loading'] + '</div>';
+
+			layout = new Ext.BorderLayout('mainbody', {
 				north: {
 					split:false,
 					initialSize: 45
@@ -20,11 +23,7 @@ Main = function(){
 			layout.add('south', new Ext.ContentPanel('footer', {fitToFrame:true, fitContainer:true}));
 			layout.add('center', new Ext.ContentPanel('main', {fitToFrame:true, fitContainer:true}));
 
-			Ext.get('rightcontent').load(
-				webroot + 'playlist.html',
-				'playerid=' + player,
-				this.onResize.createDelegate(layout)
-			);
+			Playlist.load();
 
 			Ext.EventManager.onWindowResize(this.onResize, layout);
 			Ext.EventManager.onDocumentReady(this.onResize, layout, true);
@@ -60,6 +59,50 @@ Main = function(){
 	};   
 }();
 
+
+Playlist = function(){
+	return {
+		load : function(){
+			Ext.get('rightcontent').load(
+				webroot + 'playlist.html',
+				'playerid=' + player,
+				this.onUpdated
+			);
+		},
+		
+		onUpdated : function(){
+			colHeight = Ext.get('rightcontent').getHeight() + 5;
+			pl = Ext.get('playList');
+			if (pl)
+				pl.setHeight(colHeight - pl.getTop() + right.getTop());
+				
+			Playlist.highlightCurrent();
+		},
+		
+		highlightCurrent : function(id){
+			el = Ext.get('playList');
+			plPos = el.getScroll();
+			plView = el.getViewSize();
+			
+			if (el = Ext.get(id || 'playlistCurrentSong')) {
+				if (el.getTop() > plPos.top + plView.height
+					|| el.getBottom() < plPos.top)
+						el.scrollIntoView('playList');
+			}
+
+			menuItems = Ext.DomQuery.select('div.currentSong');
+			for(var i = 0; i < menuItems.length; i++) {
+				el = Ext.get(menuItems[i].id);
+				if (el)
+					el.replaceClass('currentSong', 'selectorMarker')
+			};
+			
+			el = Ext.get((id || 'playlistCurrentSong') + 'Selector');
+				if (el)
+					el.replaceClass('selectorMarker', 'currentSong')
+		}
+	}
+}();
 
 Player = function(){
 	var pollTimer;
@@ -183,6 +226,11 @@ Player = function(){
 				if (responseText.result && responseText.result.player_connected) {
 					var result = responseText.result;
 					if (result.power && result.playlist_tracks > 0) {
+						// update the playlist if it's available
+						if (Ext.get('playList') && result.playlist_cur_index) {
+							Playlist.highlightCurrent('playlistSong' + result.playlist_cur_index);
+						}
+
 						Ext.get('ctrlCurrentTitle').update(
 							result.current_title ? result.current_title : (
 								(result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
@@ -205,7 +253,7 @@ Player = function(){
 						}
 
 						// update play/pause button
-						Ext.get('ctrlMode').update('<img src="' + webroot + 'html/images/' + (result.mode=='play' ? 'btn_play_normal.png' : 'btn_pause_normal.png') + '">');
+						Ext.get('ctrlMode').update('<img src="' + webroot + 'html/images/' + (result.mode=='play' ? 'btn_pause_normal.png' : 'btn_play_normal.png') + '">');
 
 						// update volume button
 						volumeIcon = 'level_5';

@@ -1,0 +1,26 @@
+<div class="selectorMarker" id="playlistSong[% item.num %]Selector"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+	<div class="browsedbListItem">
+		<span class="playlistCover">
+			<img src="/music/[% item.itemobj.id %]/cover_50x50_F.jpg">
+		</span>
+		<div class="playlistSongDetail">
+			<a href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" class="browseItemLink">[% item.title | html %]</a>
+		</div>
+		[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
+			<div class="playlistSongDetail">
+				<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" class="browseItemLink">[% item.itemobj.album.title | html %]</a>
+			</div>
+		[% END %]
+		<div class="playlistSongDetail">
+			[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+		</div>
+		[% IF item.currentsong %]<span id="playlistCurrentSong"></span>[% END %]
+		<span id="playlistSong[% item.num %]"></span>
+		<div class="playlistControls">
+			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=jump&amp;p2=[% item.num %]&amp;start=[% start %]&amp;player=[% playerURI %]" target="status"><img src="[% webroot %]html/images/b_play.png" width=13 height=13 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
+			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=move&amp;p2=[% item.num %]&amp;p3=%2B1&amp;start=[% start %]&amp;player=[% playerURI %]" target="status"><img src="[% webroot %]html/images/b_down.png" width=13 height=13 alt="[% "DOWN" | string%]" title="[% "DOWN" | string %]"></a>
+			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=move&amp;p2=[% item.num %]&amp;p3=%2D1&amp;start=[% start %]&amp;player=[% playerURI %]" target="status"><img src="[% webroot %]html/images/b_up.png" width=13 height=13 alt="[% "UP" | string %]" title="[% "UP" | string %]"></a>
+			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=delete&amp;p2=[% item.num %]&amp;start=[% start %]&amp;player=[% playerURI %]" target="status"><img src="[% webroot %]html/images/b_delete.png" width=13 height=13 alt="[% "DELETE" | string %]" title="[% "DELETE" | string %]"></a>
+		</div>
+	</div>
+</div></div></div></div></div>
