@@ -1029,6 +1029,28 @@ sub autoExecuteCallback {
 	return $self->{'_ae_callback'};
 }
 
+# remove the autoExecuteCallback for this request
+sub removeAutoExecuteCallback {
+	my $self = shift;
+	
+	$self->{'_ae_callback'} = undef;
+	
+	my $cnxid       = $self->connectionID();
+	my $name        = $self->getRequestString();
+	my $clientid    = $self->clientid() || 'global';
+	my $request2del = $subscribers{$cnxid}{$name}{$clientid};
+	
+	$log->debug("removeAutoExecuteCallback: deleting $cnxid - $name - $clientid");
+	
+	delete $subscribers{$cnxid}{$name}{$clientid};
+	
+	# there should not be any of those, but just to be sure
+	Slim::Utils::Timers::killTimers( $self, \&__autoexecute );
+	Slim::Utils::Timers::killTimers( $request2del, \&__autoexecute );
+	
+	return 1;
+}
+
 # sets/returns the source subscribe callback
 sub autoExecuteFilter {
 	my $self = shift;

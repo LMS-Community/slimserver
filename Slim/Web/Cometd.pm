@@ -334,6 +334,28 @@ sub handler {
 				}
 			}
 		}
+		elsif ( $obj->{channel} eq '/meta/unsubscribe' ) {
+			my $subscriptions = $obj->{subscription};
+			
+			# a channel name or a channel pattern or an array of channel names and channel patterns.
+			if ( !ref $subscriptions ) {
+				$subscriptions = [ $subscriptions ];
+			}
+			
+			# We can't actually unsubscribe here because we need a request object
+			# but we can tell the manager to dump them the next time they are
+			# received
+			$manager->unsubscribe( $clid, $subscriptions );
+			
+			for my $sub ( @{$subscriptions} ) {
+				push @{$events}, {
+					channel      => '/meta/unsubscribe',
+					clientId     => $clid,
+					subscription => $sub,
+					successful   => JSON::True,
+				};
+			}
+		}			
 		elsif ( $obj->{channel} eq '/slim/request' ) {
 			
 			# A non-subscription request
@@ -512,6 +534,15 @@ sub requestCallback {
 	if ( $channel eq '/meta/subscribe' ) {
 		$channel = $id;
 		$id      = undef;
+	}
+	
+	# Do we need to unsubscribe from this request?
+	if ( $manager->should_unsubscribe_from( $clid, $channel ) ) {
+		$log->debug( "requestCallback: unsubscribing from $clid / $channel" );
+		
+		$request->removeAutoExecuteCallback();
+			
+		return;
 	}
 	
 	# Construct event response

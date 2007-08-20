@@ -35,6 +35,7 @@ sub register_clid {
 	
 	$self->{clients}->{$clid} = {
 		pending_events       => {},    # stores most recent event per channel
+		to_unsubscribe       => {},    # channels to unsubscribe from
 		streaming_connection => undef, # streaming connection to use
 		streaming_response   => undef, # response object for streaming
 	};
@@ -46,6 +47,24 @@ sub is_valid_clid {
 	my ( $self, $clid ) = @_;
 	
 	return exists $self->{clients}->{$clid};
+}
+
+sub unsubscribe {
+	my ( $self, $clid, $subs ) = @_;
+	
+	my $client = $self->{clients}->{$clid};
+	
+	for my $sub ( @{$subs} ) {
+		$client->{to_unsubscribe}->{$sub} = 1;
+	}
+	
+	return 1;
+}
+
+sub should_unsubscribe_from {
+	my ( $self, $clid, $sub ) = @_;
+	
+	return exists $self->{clients}->{$clid}->{to_unsubscribe}->{$sub};
 }
 
 sub remove_client {
