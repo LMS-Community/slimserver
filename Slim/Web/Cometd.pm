@@ -11,7 +11,7 @@ package Slim::Web::Cometd;
 # The primary purpose is for handling Jive connections, but it may also
 # be used in the future for real-time updates to the web interface.
 #
-# Much of this code is thanks to David Davis' cometd-perl implementation.
+# Some of this code is thanks to David Davis' cometd-perl implementation.
 #
 # Current protocol documentation is available at
 # http://svn.xantus.org/shortbus/trunk/bayeux/bayeux.html
@@ -21,7 +21,8 @@ use strict;
 use bytes;
 use Digest::SHA1 qw(sha1_hex);
 use HTTP::Date;
-use JSON::XS qw(to_json from_json);
+use JSON;
+use JSON::XS qw(from_json);
 use Scalar::Util qw(blessed);
 use URI::Escape qw(uri_unescape);
 
@@ -37,7 +38,6 @@ my $log = logger('network.cometd');
 my $manager = Slim::Web::Cometd::Manager->new;
 
 use constant PROTOCOL_VERSION => '1.0';
-use constant HASH_KEY		  => 'sl1ms3rv3r';
 use constant RETRY_DELAY      => 5000;
 
 sub init {
@@ -91,7 +91,7 @@ sub handler {
 		sendResponse( 
 			$httpClient,
 			$httpResponse,
-			[ { successful => JSON::XS::false, error => 'no bayeux message found' } ]
+			[ { successful => JSON::False, error => 'no bayeux message found' } ]
 		);
 		return;
 	}
@@ -101,7 +101,7 @@ sub handler {
 		sendResponse( 
 			$httpClient,
 			$httpResponse,
-			[ { successful => JSON::XS::false, error => "$@" } ]
+			[ { successful => JSON::False, error => "$@" } ]
 		);
 		return;
 	}
@@ -110,7 +110,7 @@ sub handler {
 		sendResponse( 
 			$httpClient,
 			$httpResponse,
-			[ { successful => JSON::XS::false, error => 'bayeux message not an array' } ]
+			[ { successful => JSON::False, error => 'bayeux message not an array' } ]
 		);
 		return;
 	}
@@ -128,7 +128,7 @@ sub handler {
 			sendResponse( 
 				$httpClient,
 				$httpResponse,
-				[ { successful => JSON::XS::false, error => 'bayeux event not a hash' } ]
+				[ { successful => JSON::False, error => 'bayeux event not a hash' } ]
 			);
 			return;
 		}
@@ -161,7 +161,7 @@ sub handler {
 				version					 => PROTOCOL_VERSION,
 				supportedConnectionTypes => [ 'long-polling', 'streaming' ],
 				clientId				 => $clid,
-				successful				 => JSON::XS::true,
+				successful				 => JSON::True,
 				advice					 => {
 					reconnect => 'retry',     # one of "none", "retry", "handshake", "recover"
 					interval  => RETRY_DELAY, # retry delay in ms
@@ -176,7 +176,7 @@ sub handler {
 				push @{$events}, {
 					channel    => '/meta/connect',
 					clientId   => undef,
-					successful => JSON::XS::false,
+					successful => JSON::False,
 					timestamp  => time2str( time() ),
 					error      => 'invalid clientId',
 					advice     => {
@@ -191,7 +191,7 @@ sub handler {
 				push @{$events}, {
 					channel    => '/meta/connect',
 					clientId   => $clid,
-					successful => JSON::XS::true,
+					successful => JSON::True,
 					timestamp  => time2str( time() ),
 				};
 			
@@ -224,7 +224,7 @@ sub handler {
 				
 				push @{$events}, {
 					channel    => '/meta/reconnect',
-					successful => JSON::XS::false,
+					successful => JSON::False,
 					timestamp  => time2str( time() ),
 					error      => 'invalid clientId',
 					advice     => {
@@ -240,7 +240,7 @@ sub handler {
 				
 				push @{$events}, {
 					channel    => '/meta/reconnect',
-					successful => JSON::XS::true,
+					successful => JSON::True,
 					timestamp  => time2str( time() ),
 				};
 				
@@ -277,7 +277,7 @@ sub handler {
 				push @{$events}, {
 					channel    => '/meta/disconnect',
 					clientId   => undef,
-					successful => JSON::XS::false,
+					successful => JSON::False,
 					error      => 'invalid clientId',
 				};
 			}
@@ -287,7 +287,7 @@ sub handler {
 				push @{$events}, {
 					channel    => '/meta/disconnect',
 					clientId   => $clid,
-					successful => JSON::XS::true,
+					successful => JSON::True,
 					timestamp  => time2str( time() ),
 				};
 				
@@ -314,7 +314,7 @@ sub handler {
 					push @{$events}, {
 						channel    => '/meta/subscribe',
 						clientId   => $clid,
-						successful => JSON::XS::true,
+						successful => JSON::True,
 						ext        => $obj->{ext},
 					};
 					
@@ -351,7 +351,7 @@ sub handler {
 						channel    => '/slim/request',
 						clientId   => $clid,
 						id         => $id,
-						successful => JSON::XS::true,
+						successful => JSON::True,
 						ext        => $obj->{data},
 					};
 					
@@ -370,7 +370,7 @@ sub handler {
 		for my $error ( @errors ) {
 			push @{$out}, {
 				channel    => $error->[0],
-				successful => JSON::XS::false,
+				successful => JSON::False,
 				error      => $error->[1],
 			};
 		}
@@ -396,9 +396,9 @@ sub sendResponse {
 	$httpResponse->header( 'Cache-Control' => 'no-cache' );
 	$httpResponse->header( 'Content-Type' => 'application/json' );
 	
-	$out = eval { to_json( $out ) };
+	$out = eval { objToJson( $out, { utf8 => 1, autoconv => 0 } ) };
 	if ( $@ ) {
-		$out = to_json( [ { successful => JSON::XS::false, error => "$@" } ] );
+		$out = objToJson( [ { successful => JSON::False, error => "$@" } ] );
 	}
 	
 	my $sendheaders = 1; # should we send headers?
@@ -459,9 +459,6 @@ sub handleRequest {
 		# fix the encoding and/or manage charset param
 		$request->fixEncoding;
 		
-		# We don't want tied hashes
-		$request->disableTiedHashes;
-
 		# remember channel, request id and client id
 		$request->source( "$channel|$id" );
 		$request->connectionID( $clid );

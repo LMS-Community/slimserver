@@ -860,7 +860,6 @@ sub new {
 		'_ae_callback'       => undef,
 		'_ae_filter'         => undef,
 		'_private'           => undef,
-		'_disableTied'       => 0,
 	};
 
 	bless $self, $class;
@@ -871,17 +870,6 @@ sub new {
 	$self->validate();
 	
 	return $self;
-}
-
-# Disable tied hashes
-sub disableTiedHashes {
-	my $self = shift;
-	
-	$self->{_disableTied} = 1;
-	
-	# Copy tied hashes back into normal hashes
-	$self->{_params}  = { %{ $self->{_params} } };
-	$self->{_results} = { %{ $self->{_results} } };
 }
 
 # makes a request out of another one, discarding results and callback data.
@@ -902,7 +890,6 @@ sub virginCopy {
 	$copy->{'_ae_callback'} = $self->{'_ae_callback'};
 	$copy->{'_ae_filter'} = $self->{'_ae_filter'};
 	$copy->{'_curparam'} = $self->{'_curparam'};
-	$copy->{'_disableTied'} = $self->{'_disableTied'};
 	
 	# duplicate the arrays and hashes
 	my @request = @{$self->{'_request'}};
@@ -1293,11 +1280,7 @@ sub deleteParam {
 sub getParamsCopy {
 	my $self = shift;
 	
-	my %paramHash;
-	
-	if ( !$self->{'_disableTied'} ) {
-		tie %paramHash, 'Tie::IxHash';
-	}
+	tie my %paramHash, 'Tie::IxHash';
 	
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
 		$paramHash{$key} = $val;
@@ -1348,10 +1331,7 @@ sub addResultLoop {
 	}
 	
 	if (!defined ${$self->{'_results'}}{$loop}->[$loopidx]) {
-		my %paramHash;
-		if ( !$self->{'_disableTied'} ) {
-			tie %paramHash, 'Tie::IxHash';
-		}
+		tie my %paramHash, 'Tie::IxHash';
 		
 		${$self->{'_results'}}{$loop}->[$loopidx] = \%paramHash;
 	}
@@ -1495,11 +1475,7 @@ sub getResultLoop {
 sub cleanResults {
 	my $self = shift;
 
-	my %resultHash;
-	
-	if ( !$self->{'_disableTied'} ) {
-		tie %resultHash, 'Tie::IxHash';
-	}
+	tie my %resultHash, 'Tie::IxHash';
 	
 	# not sure this helps release memory, but can't hurt
 	delete $self->{'_results'};
