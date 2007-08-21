@@ -1,3 +1,7 @@
 #browsedbList, #playList {
 	position: relative;
 }
+
+#playerControlPanel {
+	padding-top: 10px;
+}

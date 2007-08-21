@@ -24,3 +24,7 @@
 .infoTab, #edge_bottom_left, #edge_bottom_right {
 	bottom: -1px;
 }
+
+#browsedbList, #playList {
+	position: relative;
+}

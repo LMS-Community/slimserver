@@ -10,7 +10,7 @@ html, body {
 }
 
 body { background: url(/Maestro/html/images/inner_background.gif) repeat; }
-a { color: white; }
+b, a { color: white; font-size: 12px; }
 img { border: 0; }
 
 
@@ -76,6 +76,7 @@ img { border: 0; }
 .homeMenuItem a,
 .browseItemLink {
 	text-decoration: none;
+	font-size: 12px;
 }
 
 .currentSong a,
@@ -143,9 +144,9 @@ img { border: 0; }
 }
 
 #playerControlPanel {
-	margin-top:20px;
-	margin-left: 20px;
-	margin-right: 20px;
+	padding-top: 20px;
+	padding-left: 20px;
+	padding-right: 20px;
 }
 
 .inner {
@@ -215,6 +216,11 @@ img { border: 0; }
 
 #leftcontent {
 	margin-left: 20px;
+	margin-top: 20px;
+}
+
+#leftpanel, #rightpanel {
+	vertical-align: top;
 }
 
 #edge_top_left, #edge_top_right,

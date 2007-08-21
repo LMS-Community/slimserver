@@ -36,26 +36,56 @@ Main = function(){
 
 		// resize panels, folder selectors etc.
 		onResize : function(){
-			dimensions = Ext.fly(document.body).getViewSize();
-			Ext.get('mainbody').setHeight(dimensions.height-35);
+			// some browser dependant offsets... argh...
+			offset = new Array();
+			offset['bottom'] = 75;
+			offset['playlistbottom'] = 77;
+			offset['playlist'] = 20;
 
-			colWidth = Math.floor((dimensions.width - 168) / 2);
+			if (Ext.isIE) {
+				offset['bottom'] = 55;
+				offset['playlistbottom'] = 88;
+				if (!Ext.isIE7)
+					offset['playlist'] = 42;
+			}
+			else if (Ext.isOpera) {
+				offset['bottom'] = 60;
+				offset['playlistbottom'] = 79;
+			}
+			else if (Ext.isSafari) {
+				offset['playlistbottom'] = 96;
+			}
 
+			dimensions = new Array();
+			dimensions['maxHeight'] = Ext.get(document.body).getHeight();
+			dimensions['footer'] = Ext.get('footer').getHeight();
+			dimensions['colWidth'] = Math.floor((Ext.get(document.body).getWidth() - 6*20) / 2);
+			dimensions['rightHeight'] = dimensions['maxHeight'] - dimensions['footer'] * 2 - 163 - 50 - offset['playlistbottom'];
+
+			right = Ext.get('rightpanel');
 			left = Ext.get('leftcontent');
-			left.setWidth(colWidth);
-			left.setHeight(dimensions.height - 160);
 
-			right = Ext.get('rightcontent');
-			right.setWidth(colWidth);
-			right.setHeight(dimensions.height-375);
+			Ext.get('mainbody').setHeight(dimensions['maxHeight']-35);
 
-			pl = Ext.get('playList');
-			if (pl)
-				pl.setHeight(dimensions.height-370 - pl.getTop() + right.getTop());
+			// left column
+			left.setHeight(dimensions['maxHeight'] - Ext.get('leftpanel').getTop() - dimensions['footer'] - offset['bottom']);
+			left.setWidth(dimensions['colWidth']);
 
-			Ext.get('rightpanel').setHeight(dimensions.height-365);
+			// right column
+			Ext.get('playerControlPanel').setWidth(dimensions['colWidth']);
 
-			this.layout();
+			right.setHeight(dimensions['rightHeight']);
+
+			if (el = Ext.DomQuery.selectNode('div.inner_content', right.dom))
+				Ext.get(el).setHeight(dimensions['rightHeight']);
+
+			// playlist field
+			if (pl = Ext.get('playList')) {
+				pl.setHeight(dimensions['rightHeight'] - offset['playlist']);
+			}
+
+			try { this.layout(); }
+			catch(e) {}
 		}
 	};   
 }();
@@ -72,23 +102,20 @@ Playlist = function(){
 		},
 		
 		onUpdated : function(){
-			colHeight = Ext.get('rightcontent').getHeight() + 5;
-			pl = Ext.get('playList');
-			if (pl)
-				pl.setHeight(colHeight - pl.getTop() + right.getTop());
-				
+			Main.onResize();
 			Playlist.highlightCurrent();
 		},
-		
+
 		highlightCurrent : function(id){
-			el = Ext.get('playList');
-			plPos = el.getScroll();
-			plView = el.getViewSize();
-			
-			if (el = Ext.get(id || 'playlistCurrentSong')) {
-				if (el.getTop() > plPos.top + plView.height
-					|| el.getBottom() < plPos.top)
-						el.scrollIntoView('playList');
+			if (el = Ext.get('playList')) {
+				plPos = el.getScroll();
+				plView = el.getViewSize();
+				
+				if (el = Ext.get(id || 'playlistCurrentSong')) {
+					if (el.getTop() > plPos.top + plView.height
+						|| el.getBottom() < plPos.top)
+							el.scrollIntoView('playList');
+				}
 			}
 
 			menuItems = Ext.DomQuery.select('div.currentSong');

@@ -19,18 +19,21 @@
 			}
 		</style>
 
-		<!--[if gte IE 6]>
+		<script type="text/javascript" src="[% webroot %]html/main.js"></script>
+		<script type="text/javascript">
+			Ext.EventManager.onDocumentReady(Player.init, Player, true);
+		</script>
+
+		<!--[if IE 6]>
 		<link href="[% webroot %]ie.css" type="text/css" rel="stylesheet">
+		<![endif]-->
+		<!--[if IE 7]>
+		<link href="[% webroot %]ie7.css" type="text/css" rel="stylesheet">
 		<![endif]-->
 	</head>
 	<body>
 		<div class="content">
 [% END %]
-
-<script type="text/javascript" src="[% webroot %]html/main.js"></script>
-<script type="text/javascript">
-	Ext.EventManager.onDocumentReady(Player.init, Player, true);
-</script>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 	<tr>

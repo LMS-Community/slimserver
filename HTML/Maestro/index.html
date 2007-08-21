@@ -92,28 +92,29 @@
 
 				<table width="100%">
 					<tr>
-						<td rowspan="2">
+						<td rowspan="2" id="leftpanel">
 							<iframe src="[% webroot %]home.html?player=[% playerURI %]" name="browser" id="leftcontent" frameborder="0" scrolling="no"></iframe>
 						</td>
 
-						<td id="spacer" rowspan="2"></td>
-
-						<td height="163">
-							<div id="playerControlPanel">
-								[% PROCESS status_header.html embedded=1 %]
-							</div>
-							
-							
+						<td height="163" id="playerControlPanel">
+							[% PROCESS status_header.html embedded=1 %]
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td id="rightpanel">
 							<div class="inner">
 								<div class="inner_top"><div></div></div>
-								<div id="rightpanel" class="inner_content">
+								<div class="inner_content">
 									<div id="rightcontent"><div id="playList"></div></div>
 								</div>
-								<div class="inner_bottom"><div></div></div>
+								<div class="inner_bottom"><div>
+<!--									<div id="playlistTab" class="infoTab">
+										<div class="infoTab_content">
+											<div class="infoTab_top"><div></div></div>
+											adsf
+										</div>
+									</div>
+	-->							</div></div>
 							</div>
 						</td>
 					</tr>
