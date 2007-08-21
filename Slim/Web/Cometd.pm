@@ -519,7 +519,7 @@ sub handleRequest {
 		};
 	}
 	else {
-		return { error => 'invalid slim.request' };
+		return { error => 'invalid slim.request: ' . $request->getStatusText };
 	}
 }
 
