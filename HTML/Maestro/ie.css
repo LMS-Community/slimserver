@@ -2,6 +2,11 @@
 	overflow-x: hidden;
 }
 
+.titlebox {
+	top: 20px;
+}
+
+
 .browsedbControls {
 	right: 25px;
 }

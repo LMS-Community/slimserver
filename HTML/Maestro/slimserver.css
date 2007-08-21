@@ -181,8 +181,8 @@ img { border: 0; }
 
 .titlebox {
 	background: url(/Maestro/html/images/title_background.gif) repeat;
-	margin-left: 5px;
-	margin-right: 5px; 
+	margin: 5px;
+	margin-top: 15px;
 }
 
 .titlebox_content {
