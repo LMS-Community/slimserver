@@ -1,10 +1,8 @@
-[% IF song_count; infoTab = BLOCK %]
+[%- IF song_count; infoTab = BLOCK -%]
 	<div>[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].</div>
-[% END; END %]  
-
-[% pagetitle = browseby | string; pageicon = browseby; noSpacer = 1 %]
-
-[% maestroScripts = BLOCK %]
+[%- END; END -%]  
+[%- pagetitle = browseby | string; pageicon = browseby; noSpacer = 1 -%]
+[%- maestroScripts = BLOCK -%]
 	<script type="text/javascript" src="[% webroot %]html/browse.js"></script>
 	<script type="text/javascript">
 		function resize(src,width)
@@ -27,9 +25,8 @@
 			}
 		}
 	</script>
-[% END %]
-
-[% PROCESS pageheader.html %]
+[%- END -%]
+[%- PROCESS pageheader.html -%]
 
 <div id="browsedbHeader">
 	[% IF hasPagebar %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]

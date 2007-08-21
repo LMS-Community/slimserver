@@ -19,9 +19,12 @@
 			[% maestroScripts %]
 		[% END %]
 
-		<!--[if IE 6]>
+		<!--[if lte IE 6]>
 		<link href="[% webroot %]ie.css" type="text/css" rel="stylesheet">
 		<![endif]-->
+		<!--[if IE 7]>
+		<link href="[% webroot %]ie7.css" type="text/css" rel="stylesheet">
+		<![endif]-->		
 	</head>
 	<body>
 [% END %]
@@ -45,4 +48,4 @@
 				[%- PROCESS crumblist IF pwd_list %]
 			</div>
 	
-			<div id="content" class="scrollingPanel">
+			<div id="content" class="scrollingPanelXXX">
