@@ -17,7 +17,7 @@ img { border: 0; }
 /* browse pages */
 .browsedbListItem {
 	position: relative;
-	padding-left: 6px;
+	margin-left: 6px;
 	padding-right: 80px;
 	clear: left;
 }
@@ -34,7 +34,7 @@ img { border: 0; }
 	right: 10px;
 }
 
-.playlistCover {
+.playlistCover, .browseCover {
 	position: absolute;
 	left: 10px;
 	top: -5px;
@@ -51,9 +51,9 @@ img { border: 0; }
 	overflow: auto;
 }
 
-.playlistSongDetail {
-	margin-left: 60px;
-	margin-top: 2px;
+.playlistSongDetail, .browseItemDetail {
+	padding-left: 70px;
+	padding-top: 2px;
 }
 
 /* Home menu */
@@ -69,15 +69,18 @@ img { border: 0; }
 	position: relative;
 }
 
-.homeMenuItem a {
+.homeMenuItem a,
+.browseItemLink {
 	text-decoration: none;
 }
 
 .currentSong a,
 .currentSong .playlistSongDetail,
+.mouseOver .browseItemDetail,
 .mouseOver .browseItemLink,
 .mouseOver .homeMenuItem {
-	color: gray;
+	color: #343434;
+	font-weight: bold;
 }
 
 
