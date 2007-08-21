@@ -34,10 +34,9 @@ Browse = function(){
 		},
 		
 		hideAlbumInfo : function(){
-			//new Effect.Fade('albumPopup', { duration:0.4 });
-			Ext.get('albumPopup').hide();
-			//new Effect.Fade('albumBackground', { duration:0.4 });
-			Ext.get('albumBackground').hide();
+			Ext.get('albumPopup').fadeOut({ duration: 0.4});
+			Ext.get('albumBackground').fadeOut({ duration: 0.4});
+			Ext.get('browsedbList').setStyle('overflow', 'hidden');
 			//new Effect.Appear('viewSelect', { duration:0.4 });
 		},
 
@@ -47,8 +46,7 @@ Browse = function(){
 			// pop up a list of the tracks in an inline div, including play/add buttons next to tracks
 			// add a close button for the div to hide it
 			if (Ext.get('albumPopup')) {
-				//new Effect.Appear('albumBackground', { from: 0, to: 0.5, duration: 0.5 });
-				Ext.get('albumBackground').show();
+				Ext.get('albumBackground').fadeIn({ endOpacity: 0.5, duration: 0.4});
 				
 				Ext.get('albumPopup').setStyle('border', '1px solid white');
 				
