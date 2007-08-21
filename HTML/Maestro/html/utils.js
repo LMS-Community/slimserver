@@ -12,12 +12,20 @@ var Utils = function(){
 						el = Ext.get(items[i].id);
 						if (el) {
 							el.replaceClass('mouseOver', 'selectorMarker');
+						
+							if (controls = Ext.DomQuery.selectNode('span.browsedbControls', el.dom)) {
+								Ext.get(controls).hide();
+							}
 						}
 					}
 
 					el = Ext.get(target);
 					if (el) {
 						el.replaceClass('selectorMarker', 'mouseOver');
+						
+						if (controls = Ext.DomQuery.selectNode('span.browsedbControls', el.dom)) {
+							Ext.get(controls).show();
+						}
 					}
 				}
 			});
