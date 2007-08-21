@@ -6,15 +6,11 @@
 	right: 25px;
 }
 
-.mouseOver .selector_bottomRight { 
-	min-height: 24px;
+.mouseOver .selector_bottomRight, 
+.mouseOver .selector_topLeft { 
+	height: 24px;
 	bottom: 0;
 }
-
-.mouseOver .selector_bottomLeft { 
-	bottom: 0;
-}
-
 
 .itemWithCover { 
 	height: 40px;
