@@ -42,7 +42,7 @@
 		
 			[% IF item.coverThumb %]
 				<span class="browseCover">
-					[% PROCESS thumbnailItemImg height="50" %]
+					<a  onClick = 'Browse.popUpAlbumInfo("hierarchy=[% item.hierarchy %][% IF item.level %]&amp;level=[% item.level %][% END %][% item.attributes | html %]");'>[% PROCESS thumbnailItemImg height="50" %]</a>
 				</span>
 				<div class="browseItemDetail">
 					[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %] class="browseItemLink">[% END %][% item.text | html %][% IF item.hierarchy %]</a>[% END -%]

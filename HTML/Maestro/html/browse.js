@@ -31,7 +31,39 @@ Browse = function(){
 
 			el = Ext.get('browsedbList');
 			el.setHeight(Ext.fly(document.body).getHeight() - el.getTop() - infoHeight);
-		}
+		},
+		
+		hideAlbumInfo : function(){
+			//new Effect.Fade('albumPopup', { duration:0.4 });
+			Ext.get('albumPopup').hide();
+			//new Effect.Fade('albumBackground', { duration:0.4 });
+			Ext.get('albumBackground').hide();
+			//new Effect.Appear('viewSelect', { duration:0.4 });
+		},
+
+		popUpAlbumInfo : function(attributes) {
+			
+			// here we go-- get the album track details via an ajax call
+			// pop up a list of the tracks in an inline div, including play/add buttons next to tracks
+			// add a close button for the div to hide it
+			if (Ext.get('albumPopup')) {
+				//new Effect.Appear('albumBackground', { from: 0, to: 0.5, duration: 0.5 });
+				Ext.get('albumBackground').show();
+				
+				Ext.get('albumPopup').setStyle('border', '1px solid white');
+				
+				Ext.get("trackInfo").load({
+					url: webroot + 'browsedb.html',
+					params: 'ajaxUpdate=1&player=' + player + '&' + attributes,
+					callback: this.onAlbumUpdated
+					//text: "Loading Foo..."
+				});
+			}
+		},
+	
+		onAlbumUpdated : function(){
+			Ext.get('albumPopup').show();
+		},
 	};
 }();
 

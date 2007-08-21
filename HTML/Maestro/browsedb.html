@@ -43,4 +43,12 @@
 	[%- END %]
 [% END -%]
 
-[% PROCESS pagefooter.html %]
+[% IF artwork == 1 && (item.levelName == 'album' || item.levelName == 'age') %]
+<div id='albumBackground' style="display:none;"><img src = "[% webroot %]html/images/cdspin3.gif" alt="" title="" onClick = "javascript:Browse.hideAlbumInfo();" style="position: absolute; top: 45%; left: 45%;"></div>
+<div id = 'albumPopup' style="display:none;">
+	<div id = 'Browse.closeAlbumPopup'><span id="closeAlbumText"><a href="javascript:void(1);" onClick = "javascript:Browse.hideAlbumInfo();"><img src = "[% webroot %]html/images/b_delete.png" alt="[% "CLOSE" | string %]" title ="[% "CLOSE" | string %]"></a></span></div>
+	<div id = 'trackInfo'></div>
+</div>
+[% END %]
+
+[% IF NOT ajaxUpdate %][% PROCESS pagefooter.html %][% END %]
