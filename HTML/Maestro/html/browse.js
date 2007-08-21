@@ -7,11 +7,6 @@ Browse = function(){
 			Ext.EventManager.onWindowResize(this.onResize, this);
 			Ext.EventManager.onDocumentReady(this.onResize, this, true);
 
-			// remove the default scrolling panel, we're using our own
-			if (el = Ext.get('content')) {
-				el.removeClass('scrollingPanel');
-			}
-
 			// jump to anchor
 			anchor = document.location.href.match(/#(.*)$/)
 			if (anchor && anchor[1]) {

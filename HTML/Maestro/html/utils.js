@@ -1,5 +1,13 @@
 var Utils = function(){
 	return {
+		init : function(){
+			if (el = Ext.get('content'))
+				if (el && el.hasClass('scrollingPanel')) {
+					Ext.EventManager.onWindowResize(Utils.resizeContent);
+					Ext.EventManager.onDocumentReady(Utils.resizeContent);
+				}
+		},
+
 		addBrowseMouseOver: function(){
 			Ext.addBehaviors({
 				'.selectorMarker@mouseover': function(ev, target){
@@ -44,3 +52,12 @@ var Utils = function(){
 
 	};
 }();
+Ext.EventManager.onDocumentReady(Utils.init, Utils, true);
+
+// some legacy scripts
+
+// update the status if the Player is available
+function refreshStatus() {
+	try { Player.getUpdate() }
+	catch(e) {}
+}

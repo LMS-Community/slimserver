@@ -5,15 +5,13 @@
 	<head>
 		[% PROCESS standardheader.html %]
 
-		[% IF maestroScripts %]
-			<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
-			<script type="text/javascript" src="/html/ext/ext-all.js"></script>
-			<script type="text/javascript">[% PROCESS html/vars.js %]</script>
-			<script type="text/javascript" src="[% webroot %]html/utils.js"></script>
+		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
+		<script type="text/javascript" src="/html/ext/ext-all.js"></script>
+		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
+		<script type="text/javascript" src="[% webroot %]html/utils.js"></script>
 
+		[% IF maestroScripts %]
 			<script type="text/javascript">
-				Ext.EventManager.onWindowResize(Utils.resizeContent);
-				Ext.EventManager.onDocumentReady(Utils.resizeContent);		
 			</script>
 
 			[% maestroScripts %]
@@ -48,4 +46,4 @@
 				[%- PROCESS crumblist IF pwd_list %]
 			</div>
 	
-			<div id="content" class="scrollingPanelXXX">
+			<div id="content"[% IF !dontscroll %] class="scrollingPanel"[% END %]>
