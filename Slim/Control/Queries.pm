@@ -2034,7 +2034,7 @@ sub readDirectoryQuery {
 	use File::Spec::Functions qw(catdir);
 	my @fsitems;
 	if ($folder eq '/' && Slim::Utils::OSDetect::OS() eq 'win') {
-		@fsitems = map { "$_:" } Win32::DriveInfo::DrivesInUse();
+		@fsitems = map { "$_:" } grep /^[^AB]/i, Win32::DriveInfo::DrivesInUse();
 		$folder = '';
 	}
 	else {

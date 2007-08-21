@@ -91,7 +91,7 @@ sub autoCompleteHandler {
 
 		# didn't find anything useful - display a list of reasonable choices (root, drive letters)
 		if (Slim::Utils::OSDetect::OS() eq 'win' && !@subdirs) {
-			@subdirs = map { "$_:" } Win32::DriveInfo::DrivesInUse();
+			@subdirs = map { "$_:" } grep /^[^AB]/i, Win32::DriveInfo::DrivesInUse();
 		}
 		elsif (!@subdirs && !$parent) {
 			@subdirs = readDirectory('/', qr/./);
