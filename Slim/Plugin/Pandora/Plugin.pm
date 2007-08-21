@@ -29,8 +29,14 @@ sub initPlugin {
 	# Commands init
 	Slim::Control::Request::addDispatch(['pandora', 'skipTrack'],
 		[0, 1, 1, \&skipTrack]);
-	
-	# XXX: CLI support
+
+	# CLI support
+    Slim::Control::Request::addDispatch(['pandora', 'items', '_index', '_quantity'],
+        [0, 1, 1, \&cliQuery]);
+	Slim::Control::Request::addDispatch(['pandora', 'playlist', '_method' ],
+		[1, 1, 1, \&cliQuery]);
+	$cli_next=Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
+		[0, 1, 1, \&cliRadiosQuery]);
 
 	$class->SUPER::initPlugin();
 }
@@ -80,6 +86,45 @@ sub skipTrack {
 	$client->execute(["playlist", "jump", "+1"]);
 }
 
-# XXX: CLI/Web support
+# XXX: Web support
+
+# XXX: Move this into a super-class, Slim::Plugin::OPMLBased or something
+sub cliQuery {
+	my $request = shift;
+	
+	Slim::Buttons::XMLBrowser::cliQuery('pandora', $FEED, $request);
+}
+
+sub cliRadiosQuery {
+	my $request = shift;
+
+	my $menu = $request->getParam('menu');
+
+	my $data;
+	# what we want the query to report about ourself
+	if (defined $menu) {
+		$data = {
+			'text' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+			'actions' => {
+				'go' => {
+					'cmd' => ['pandora', 'items'],
+					'params' => {
+						'menu' => 'pandora',
+					},
+				},
+			},
+		};
+	}
+	else {
+		$data = {
+			'cmd' => 'pandora',                    # cmd label
+			'name' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+			'type' => 'xmlbrowser',              # type
+		};
+	}
+	
+	# let our super duper function do all the hard work
+	Slim::Control::Queries::dynamicAutoQuery($request, 'radios', $cli_next, $data);
+}
 
 1;
