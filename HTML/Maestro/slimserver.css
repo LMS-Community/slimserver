@@ -57,7 +57,6 @@ img { border: 0; }
 
 .playlistSongDetail, .browseItemDetail {
 	padding-left: 70px;
-	padding-top: 2px;
 }
 
 /* Home menu */
@@ -149,6 +148,21 @@ img { border: 0; }
 	padding-right: 20px;
 }
 
+#ctrlCurrentArt {
+	height: 96px;
+}
+
+#ctrlCurrentTitle { 
+	font-size: 13px; 
+	font-weight: bold; 
+	padding-left: 6px; 
+}
+
+.currentTrackInfo { 
+	font-size: 11px; 
+	padding-left: 6px; 
+}
+
 .inner {
 	background: url(/Maestro/html/images/inner_background.gif) repeat;
 	margin: 20px; 
@@ -221,6 +235,7 @@ img { border: 0; }
 
 #leftpanel, #rightpanel {
 	vertical-align: top;
+	width: 50%;
 }
 
 #edge_top_left, #edge_top_right,

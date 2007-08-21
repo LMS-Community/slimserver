@@ -96,6 +96,10 @@ CHOOSE_A_LANGUAGE
 	SV	Välj språk
 	ZH_CN	请选择语言
 
+LOADING_SLIMSERVER
+	DE	SlimServer wird geladen...
+	EN	Loading SlimServer...
+
 BASE_SKIN
 	CS	Světlý
 	DA	Lys

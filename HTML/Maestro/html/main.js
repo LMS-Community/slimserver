@@ -24,6 +24,7 @@ Main = function(){
 			layout.add('center', new Ext.ContentPanel('main', {fitToFrame:true, fitContainer:true}));
 
 			Playlist.load();
+			Player.init();
 
 			Ext.EventManager.onWindowResize(this.onResize, layout);
 			Ext.EventManager.onDocumentReady(this.onResize, layout, true);

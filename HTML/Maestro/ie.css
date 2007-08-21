@@ -16,7 +16,7 @@
 	bottom: 0;
 }
 
-.itemWithCover { 
+.itemWithCover, .currentSong { 
 	height: 40px;
 }
 
