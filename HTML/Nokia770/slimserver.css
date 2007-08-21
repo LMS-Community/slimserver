@@ -204,11 +204,13 @@ tr.playing {
 }
 
 tr.odd, td.odd, div.odd {
+	text-align: left;
 	padding-top: 2px;
 	padding-bottom: 2px;
 	background-color: #d0d0d0;
 }
 tr.even, td.even, div.even {
+	text-align: left;
 	padding-top: 2px;
 	padding-bottom: 2px;
 	background-color: #FFFFFF;

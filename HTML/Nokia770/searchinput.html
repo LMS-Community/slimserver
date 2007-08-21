@@ -1,74 +1,32 @@
 <!-- searchinput.html -->
-
-<center>
 <form name="FormSong" method="Get" action = '[% webroot %]search.html'>
-<table width = '100%' bgcolor = '#EEEEEE'>
-<tr><td>
 <table width="100%" bgcolor="#EEEEEE" cellpadding="0" cellspacing="0" border="0">
-
 <tr>
-<td colspan = '8' align="left" height="45" valign="bottom" style="padding-left:40px;"><font class="headertext">[% "SEARCH" | string %]</td>
+	<td align="left" height="45" valign="bottom" style="padding-left:40px;">		<font class="headertext">[% "SEARCH" | string %]</font>
+	</td>
 </tr>
 
-<tr><td height="20"></td></tr>
+<tr>
+	<td height = '50'>&nbsp;</td>
+</tr>
 
-<tr><td colspan="8" height="30" align = 'center'>
+<tr>
+	<td height="30" align = 'center'>
               &nbsp;<input type='text' name="query" value="[% query %]" size="20" class = 'searchForm'>
 	</td>
 </tr>
+
 <tr><td height="10"></td></tr>
 
-<tr><td colspan="8" align="center">
-<br><center>
-		<input type=submit value="[% "SEARCH" | string %]" name="Go" class = 'searchButton'>
-		<input type=reset value="[% "CLEAR" | string %]" name="Reset" class = 'searchButton'>
-		<input type=hidden value="track" name="type">
-		<input type=hidden value="[% player %]" name="player">
-		<input type=hidden value="1" name="manualSearch">
-              [% IF nofolder %]<input type=hidden value="1" name="nofolder">[% END %]
-
-
+<tr>
+	<td align="center">
+		<input type='submit' value="[% "SEARCH" | string %]" name="Go" class = 'searchButton'>
+		<input type='reset' value="[% "CLEAR" | string %]" name="Reset" class = 'searchButton'>
+		<input type='hidden' value="[% player %]" name="player">
+		<input type='hidden' value="1" name="manualSearch">
+              [%- IF nofolder %]<input type='hidden' value="1" name="nofolder">[% END %]
           </td>
       </tr>
-	<tr><td height="10"></td></tr>
-</table>
-</form>
-	</td>
-</tr>
-<tr>
-	<td>
-	[% INCLUDE searchButtons %]
-	</td>
-</tr>
-</table>
-
-<table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#EEEEEE">
-<tr><td>&nbsp;</td></tr>
 </table>
 </form>
 <!-- /Element searchinput.html -->
-
-[% BLOCK searchButtons %]
-<table width="100%" cellspacing="0" cellpadding="0" border="0" bgcolor="#EEEEEE">
-<form name="Keyboard">
-<tr>
-<td width="100"></td>
-<td><p align="center"><img src="html/images/active.gif" name="ButtonSong"></td>
-<td><p align="center"><img src="html/images/inactive.gif" name="ButtonArtist"></td>
-<td><p align="center"><img src="html/images/inactive.gif" name="ButtonAlbum"></td>
-<td width="100"></td>
-</tr>
-<tr><td height="10"></td></tr>
-
-<tr>
-<td></td>
-<td>
-<center><input type=button value="[% "SONGS" | string %]" name="Song" onclick="Activate('Song');Mode('track')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
-</td><td>
-<center><input type=button value="[% "ARTISTS" | string %]" name="Artist" onclick="Activate('Artist');Mode('contributor')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
-</td><td>
-<center><input type=button value="[% "ALBUMS" | string %]" name="Album" onclick="Activate('Album');Mode('album')" style="FONT-SIZE:12pt;FONT-FAMILY: Verdana;COLOR: #666666;background-image:url(html/images/button.gif);BORDER-LEFT: black 0pt none;BORDER-RIGHT: black 0pt none;BORDER-TOP: black 0pt none;BORDER-BOTTOM: black 0pt none;WIDTH: 132;HEIGHT: 44;">
-</td></tr>
-	<tr><td height="15"></td></tr>
-</table>
-[% END %]

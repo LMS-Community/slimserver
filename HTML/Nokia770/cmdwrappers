@@ -161,7 +161,7 @@
 [% END %]
 
 [% BLOCK browsecontrols_abbr %]
-	<span class="[% isCurrent ? "listing2" : "listing" %]" align="center">
+	<span class="[% isCurrent ? "listing2" : "listing" %]">
 	[% width='20' height='20'  %]
 	[% IF showplayall %]
 		[% WRAPPER playlink noTarget = 1 %]href="[% playallhref %]"[% END %]
