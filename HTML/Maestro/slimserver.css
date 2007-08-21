@@ -15,6 +15,10 @@ img { border: 0; }
 
 
 /* browse pages */
+.itemWithCover {
+	min-height: 40px;
+}
+
 .browsedbListItem {
 	position: relative;
 	margin-left: 6px;
@@ -215,9 +219,11 @@ img { border: 0; }
 
 #edge_top_left, #edge_top_right,
 #edge_bottom_left, #edge_bottom_right {
-	position: fixed;
+	position: absolute;
 	height: 10px;
 	width: 10px;
+	margin: 0;
+	padding: 0;
 }
 
 
@@ -246,7 +252,7 @@ img { border: 0; }
 }
 
 .infoTab {
-	position: fixed;
+	position: absolute;
 	bottom: 0;
 	text-align: center;
 	width: 100%;
@@ -284,6 +290,7 @@ img { border: 0; }
 }
 
 #crumblist {
+	position: relative;
 	margin: 10px;
 	height: 20px;
 }

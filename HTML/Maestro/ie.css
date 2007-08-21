@@ -7,5 +7,15 @@
 }
 
 .mouseOver .selector_bottomRight { 
-	height: 14px;
-} 
+	min-height: 24px;
+	bottom: 0;
+}
+
+.mouseOver .selector_bottomLeft { 
+	bottom: 0;
+}
+
+
+.itemWithCover { 
+	height: 40px;
+}

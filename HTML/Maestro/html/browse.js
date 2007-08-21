@@ -6,10 +6,11 @@ Browse = function(){
 
 			Ext.EventManager.onWindowResize(this.onResize, this);
 			Ext.EventManager.onDocumentReady(this.onResize, this, true);
-			
+
 			// remove the default scrolling panel, we're using our own
-			if (el = Ext.get('content'))
+			if (el = Ext.get('content')) {
 				el.removeClass('scrollingPanel');
+			}
 
 			// jump to anchor
 			anchor = document.location.href.match(/#(.*)$/)
@@ -26,8 +27,10 @@ Browse = function(){
 
 		onResize : function(){
 			infoHeight = 0;
-			if (el = Ext.get('infoTab'))
+
+			if (el = Ext.get('infoTab')) {
 				infoHeight = el.getHeight();
+			}
 
 			el = Ext.get('browsedbList');
 			el.setHeight(Ext.fly(document.body).getHeight() - el.getTop() - infoHeight);
@@ -61,7 +64,7 @@ Browse = function(){
 	
 		onAlbumUpdated : function(){
 			Ext.get('albumPopup').show();
-		},
+		}
 	};
 }();
 

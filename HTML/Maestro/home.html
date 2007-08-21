@@ -17,8 +17,8 @@
 [% END %]
 [% pagetitle = BLOCK %][% "HOME" | string %][% END %]
 [% pwd_list = BLOCK %]
-	<span id="musicCrumblist" class="overlappingCrumblist"><a href="#" onclick="MainMenu.showPanel('main');">[% "HOME" | string %]</a> [% crumbSeparator %] <a href="#">[% "MY_MUSIC" | string %]</a></span>
-	<span id="radioCrumblist" class="overlappingCrumblist"><a href="#" onclick="MainMenu.showPanel('main');">[% "HOME" | string %]</a> [% crumbSeparator %] <a href="#">[% "RADIO" | string %]</a></span>
+	<span id="musicCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('main');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "MY_MUSIC" | string %]</span>
+	<span id="radioCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('main');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "RADIO" | string %]</span>
 [% END %]
 
 [% infoTab = BLOCK %]
@@ -35,8 +35,6 @@
 		</div>
 	</div></div></div></div></div>
 [% END %]
-
-<div class="homeMenuSection" id="activeMenu"></div>
 
 <div class="homeMenuSection" id="mainMenu">
 	[% PROCESS menuItem token="FAVORITES" category='browse' %]
