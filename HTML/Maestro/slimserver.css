@@ -389,3 +389,22 @@ div#albumBackground {
 }
 
 
+#loading {
+	position: absolute;
+	left: 40%;
+	top: 40%;
+	text-align: center;
+	z-index: 20001;
+	display: none;
+}
+
+#noJS {
+	position: absolute;
+	background: white;
+	z-index: 20002;
+}
+
+#loading .loading-indicator,
+#noJS {
+	color:#003366;
+}

@@ -58,6 +58,21 @@
 			}
 		-->
 		</style>
+	</head>
+
+	<body>
+		<div id="loading-mask" style="width:100%;height:100%;background:white;position:absolute;z-index:20000;left:0;top:0;">&#160;</div>
+		<div id="loading">
+			<div class="loading-indicator">
+				[% "LOADING" | string %]
+			</div>
+		</div>
+		<div id="noJS">[% "SETUP_NO_JAVASCRIPT" | string %]</div>
+		
+		<script type="text/javascript">
+			document.getElementById('noJS').style.display = 'none';
+			document.getElementById('loading').style.display = 'block';
+		</script>
 
 		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
 		<script type="text/javascript" src="/html/ext/ext-all.js?r=[% revision %]"></script>
@@ -85,9 +100,7 @@
 
 		<script type="text/javascript" src="/html/fileselector.js?r=[% revision %]"></script>
 		<script type="text/javascript" src="/html/wizard.js?r=[% revision %]"></script>
-	</head>
 
-	<body>
 		<div id="mainbody">
 
 			<div id="header">

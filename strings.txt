@@ -6953,6 +6953,9 @@ SETUP_SN_SYNC_DISABLE
 	DE	Inaktiv, Player-Einstellungen nicht synchronisieren
 	EN	Disabled, do not keep player settings in sync.
 
+SETUP_NO_JAVASCRIPT
+	EN	In order to access SlimServer, please make sure you have JavaScript enabled in your browser.
+
 SETUP_WIZARD_LANG_DESC
 	EN	If you want to change the language, select it here:
 

@@ -8,11 +8,6 @@
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slim-ext.css" />
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" />
 
-		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
-		<script type="text/javascript" src="/html/ext/ext-all.js"></script>
-		<script type="text/javascript">[% PROCESS html/vars.js %]</script>		
-		<script type="text/javascript" src="[% webroot %]html/utils.js"></script>		
-
 		<style>
 			html, body {
 				background: white;
@@ -51,17 +46,35 @@
 			.current_track_exp { color: white; font-size: 11px; font-family: Verdana, Arial, Helvetica, sans-serif; padding-left: 6px; }
 		</style>
 
+	</head>
+
+	<body>
+		<div id="loading-mask" style="width:100%;height:100%;background:white;position:absolute;z-index:20000;left:0;top:0;">&#160;</div>
+		<div id="loading">
+			<div class="loading-indicator">
+				[% "LOADING" | string %]
+			</div>
+		</div>
+		<div id="noJS">[% "SETUP_NO_JAVASCRIPT" | string %]</div>
+		
+		<script type="text/javascript">
+			document.getElementById('noJS').style.display = 'none';
+			document.getElementById('loading').style.display = 'block';
+		</script>
+
+		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
+		<script type="text/javascript" src="/html/ext/ext-all.js"></script>
+		<script type="text/javascript">[% PROCESS html/vars.js %]</script>		
+		<script type="text/javascript" src="[% webroot %]html/utils.js"></script>		
+
 		<script type="text/javascript" src="[% webroot %]html/main.js"></script>
 		<script type="text/javascript">
 			var strings = new Array();
 			strings['loading'] = "[% "LOADING" | string %]";
 
 			Ext.EventManager.onDocumentReady(Main.init, Main, true);
-		</script>
-		
-	</head>
+		</script>		
 
-	<body>
 		<div id="mainbody">
 
 			<div id="header">

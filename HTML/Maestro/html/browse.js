@@ -27,7 +27,7 @@ Browse = function(){
 		onResize : function(){
 			infoHeight = 0;
 			if (el = Ext.get('infoTab'))
-				infoHeight = el.getHeight() - 5;
+				infoHeight = el.getHeight();
 
 			el = Ext.get('browsedbList');
 			el.setHeight(Ext.fly(document.body).getHeight() - el.getTop() - infoHeight);

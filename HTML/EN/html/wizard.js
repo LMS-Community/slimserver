@@ -82,6 +82,9 @@ Wizard = function(){
 			if (!wizarddone)
 				this.flipPages(page);
 			layout.endUpdate();
+
+			Ext.get('loading').hide();
+			Ext.get('loading-mask').hide();
 		},
 
 		onNext : function(){

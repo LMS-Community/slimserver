@@ -29,6 +29,9 @@ Main = function(){
 			Ext.EventManager.onDocumentReady(this.onResize, layout, true);
 
 			layout.endUpdate();
+
+			Ext.get('loading').hide();
+			Ext.get('loading-mask').hide();
 		},
 
 		// resize panels, folder selectors etc.
