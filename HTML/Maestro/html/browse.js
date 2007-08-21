@@ -1,9 +1,6 @@
 Browse = function(){
 	return {
 		init : function(){
-			// add highlighter class
-			Utils.addBrowseMouseOver();
-
 			Ext.EventManager.onWindowResize(this.onResize, this);
 			Ext.EventManager.onDocumentReady(this.onResize, this, true);
 

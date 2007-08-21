@@ -6,6 +6,10 @@ var Utils = function(){
 					Ext.EventManager.onWindowResize(Utils.resizeContent);
 					Ext.EventManager.onDocumentReady(Utils.resizeContent);
 				}
+
+			// add highlighter class
+			this.addBrowseMouseOver();
+
 		},
 
 		addBrowseMouseOver: function(){

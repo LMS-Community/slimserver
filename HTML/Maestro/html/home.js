@@ -3,8 +3,6 @@ var MainMenu = function(){
 
 	return {
 		init : function(){
-			Utils.addBrowseMouseOver();
-
 			Ext.EventManager.onWindowResize(this.onResize, this);
 			Ext.EventManager.onDocumentReady(this.onResize, this, true);
 
