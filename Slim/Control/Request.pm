@@ -1087,7 +1087,7 @@ my %statusMap = (
 	101 => 'Bad dispatch!',
 	102 => 'Bad params!',
 	103 => 'Missing client!',
-	104 => 'Unkown in dispatch table',
+	104 => 'Unknown in dispatch table',
 	105 => 'Bad slimserver config',
 );
 
