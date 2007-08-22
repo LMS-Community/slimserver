@@ -210,54 +210,56 @@ Player = function(){
 				handler: this.volumeUp
 			});
 
-			volumeUp = new Ext.util.ClickRepeater('ctrlVolumeUp', {
-				accelerate: true
-			});
-
-			// volume buttons can be held
-			volumeUp.on({
-				'click': {
-					fn: function(){
-						volumeClicked++;
-						if (volumeClicked > 4) {
+			if (Ext.isIE7 || !Ext.isIE) {
+				volumeUp = new Ext.util.ClickRepeater('ctrlVolumeUp', {
+					accelerate: true
+				});
+	
+				// volume buttons can be held
+				volumeUp.on({
+					'click': {
+						fn: function(){
+							volumeClicked++;
+							if (volumeClicked > 4) {
+								this.setVolume(volumeClicked, '+');
+								volumeClicked = 0;
+							}
+						},
+						scope: this
+					},
+					'mouseup': {
+						fn: function(){
 							this.setVolume(volumeClicked, '+');
 							volumeClicked = 0;
-						}
+						},
+						scope: this
+					}
+				});
+	
+				volumeDown = new Ext.util.ClickRepeater('ctrlVolumeDown', {
+					accelerate: true
+				});
+				
+				volumeDown.on({
+					'click': {
+						fn: function(){
+							volumeClicked++;
+							if (volumeClicked > 4) {
+								this.setVolume(volumeClicked, '-');
+								volumeClicked = 0;
+							}
+						},
+						scope: this
 					},
-					scope: this
-				},
-				'mouseup': {
-					fn: function(){
-						this.setVolume(volumeClicked, '+');
-						volumeClicked = 0;
-					},
-					scope: this
-				}
-			});
-
-			volumeDown = new Ext.util.ClickRepeater('ctrlVolumeDown', {
-				accelerate: true
-			});
-			
-			volumeDown.on({
-				'click': {
-					fn: function(){
-						volumeClicked++;
-						if (volumeClicked > 4) {
+					'mouseup': {
+						fn: function(){
 							this.setVolume(volumeClicked, '-');
 							volumeClicked = 0;
-						}
-					},
-					scope: this
-				},
-				'mouseup': {
-					fn: function(){
-						this.setVolume(volumeClicked, '-');
-						volumeClicked = 0;
-					},
-					scope: this
-				}
-			});
+						},
+						scope: this
+					}
+				});
+			}
 
 			Ext.get('ctrlVolume').on('click', function(ev, target){
 				
