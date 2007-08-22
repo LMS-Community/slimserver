@@ -22,8 +22,8 @@ through Podcast entries, RSS & OPML Outlines and play audio enclosures.
 
 use strict;
 
+use Scalar::Util qw(blessed);
 use Tie::IxHash;
-
 
 use Slim::Buttons::Common;
 use Slim::Control::Request;
@@ -87,6 +87,12 @@ sub setMode {
 		
 		# Adjust HTTP timeout value to match the API on the other end
 		my $timeout = $client->modeParam('timeout') || 5;
+		
+		# Should we remember where the user was browsing? (default: yes)
+		my $remember = $client->modeParam('remember');
+		if ( !defined $remember ) {
+			$remember = 1;
+		}
 
 		# give user feedback while loading
 		$client->block();
@@ -113,6 +119,7 @@ sub setMode {
 				'parser'    => $parser,
 				'item'      => $item,
 				'timeout'   => $timeout,
+				'remember'  => $remember,
 			},
 		);
 
@@ -138,7 +145,7 @@ sub gotFeed {
 	# "feed" was originally an RSS feed.  Now it could be either RSS or an OPML outline.
 	if ($feed->{'type'} eq 'rss') {
 
-		gotRSS($client, $url, $feed);
+		gotRSS($client, $url, $feed, $params);
 
 	} elsif ($feed->{'type'} eq 'opml') {
 
@@ -190,6 +197,11 @@ sub gotPlaylist {
 	for my $item (@{$feed->{'items'}}) {
 		
 		# Only add audio items in the playlist
+		if ( $item->{'play'} ) {
+			$item->{'url'}  = $item->{'play'};
+			$item->{'type'} = 'audio';
+		}
+		
 		next unless $item->{'type'} eq 'audio';
 
 		push @urls, $item->{'url'};
@@ -233,7 +245,7 @@ sub gotPlaylist {
 }
 
 sub gotRSS {
-	my ($client, $url, $feed) = @_;
+	my ($client, $url, $feed, $params) = @_;
 
 	# Include an item to access feed info
 	if (($feed->{'items'}->[0]->{'value'} ne 'description') &&
@@ -293,7 +305,7 @@ sub gotRSS {
 		'url'      => $url,
 		'feed'     => $feed,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
-		'modeName' => "XMLBrowser:$url",
+		'modeName' => ( $params->{'remember'} ) ? "XMLBrowser:$url" : undef,
 		'header'   => fitTitle( $client, $feed->{'title'} ),
 
 		# TODO: we show only items here, we skip the description of the entire channel
@@ -419,13 +431,47 @@ sub gotOPML {
 		
 		$index++;
 	}
+	
+	# If there is only 1 item and it has a 'showBriefly' attribute, it's a message that 
+	# should be shown with showBriefly, not pushed
+	if ( scalar @{ $opml->{'items'} } == 1 && $opml->{'items'}->[0]->{'showBriefly'} ) {
+		my $item = $opml->{'items'}->[0];
+		
+		# If it also has a 'nowplaying' attribute, return to Now Playing afterwards
+		my $callback = sub {};
+		if ( $item->{'nowPlaying'} ) {
+			$callback = sub {
+				if ( blessed($client) ) {
+					Slim::Buttons::Common::pushMode( $client, 'playlist' );
+				}
+			};
+		}
+		else {
+			$callback = sub {
+				if ( blessed($client) ) {
+					Slim::Buttons::Common::popMode($client);
+				}
+			};
+		}
+		
+		$client->showBriefly( {
+			line1 => $opml->{'title'},
+			line2 => $item->{'value'},
+		},
+		{
+			scroll   => 1,
+			callback => $callback,
+		} );
+		
+		return;
+	}
 
 	my %params = (
 		'url'        => $url,
 		'timeout'    => $timeout,
 		'item'       => $opml,
 		# unique modeName allows INPUT.Choice to remember where user was browsing
-		'modeName'   => "XMLBrowser:$url:$title",
+		'modeName'   => ( $params->{'remember'} ) ? "XMLBrowser:$url:$title" : undef,
 		'header'     => fitTitle( $client, $title, scalar @{ $opml->{'items'} } ),
 		'listRef'    => $opml->{'items'},
 
@@ -667,17 +713,17 @@ sub overlaySymbol {
 
 sub hasAudio {
 	my $item = shift;
-
-	if ($item->{'type'} && $item->{'type'} =~ /^(?:audio|playlist)$/) {
-
+	
+	if ( $item->{'play'} ) {
+		return $item->{'play'};
+	}
+	elsif ( $item->{'type'} && $item->{'type'} =~ /^(?:audio|playlist)$/ ) {
 		return $item->{'url'};
-
-	} elsif ($item->{'enclosure'} && ($item->{'enclosure'}->{'type'} =~ /audio/)) {
-
+	}
+	elsif ( $item->{'enclosure'} && ( $item->{'enclosure'}->{'type'} =~ /audio/ ) ) {
 		return $item->{'enclosure'}->{'url'};
-
-	} else {
-
+	}
+	else {
 		return undef;
 	}
 }
@@ -894,6 +940,17 @@ sub playItem {
 	my $type  = $item->{'type'} || $item->{'enclosure'}->{'type'} || '';
 	my $parser= $item->{'parser'};
 	
+	# If the item has a 'play' attribute, use that URL to play
+	if ( $item->{'play'} ) {
+		$url  = $item->{'play'};
+		$type = 'audio';
+	}
+	elsif ( $item->{'playlist'} ) {
+		# Or if there's a playlist attribute, use that as the playlist
+		$url  = $item->{'playlist'};
+		$type = 'playlist';
+	}
+	
 	if ( $type =~ /audio/i ) {
 
 		my $string;
@@ -971,16 +1028,7 @@ sub playItem {
 			
 			$client->execute([ 'playlist', 'clear' ]);
 			$client->execute([ 'playlist', 'addtracks', 'listref', \@urls ]);
-			
-			# jump index on a timer, so it executes after addtracks
-			Slim::Utils::Timers::setTimer(
-				$client,
-				Time::HiRes::time(),
-				sub {
-					Slim::Player::Source::jumpto( $client, $index );					
-					$client->update();
-				},
-			);
+			$client->execute([ 'playlist', 'jump', $index ]);
 		}
 		else {
 			$log->info( "Setting title to $title for $url" );
