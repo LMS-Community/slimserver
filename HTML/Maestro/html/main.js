@@ -138,6 +138,7 @@ Player = function(){
 	var playTimeTimer;
 	var playTime = 0;
 	var volumeClicked = 0;
+	var btnTogglePlay;
 
 	var playerStatus = {
 		power: null,
@@ -152,6 +153,62 @@ Player = function(){
 			Ext.Ajax.method = 'POST';
 			Ext.Ajax.url = '/jsonrpc.js'; 
 			Ext.Ajax.timeout = 4000;
+
+			new Slim.Button('ctrlPrevious', {
+				icon: 'html/images/btn_previous.png',
+				width: 28,
+				height: 22,
+				scope: this,
+				handler: this.ctrlPrevious
+			});
+
+			btnTogglePlay = new Slim.Button('ctrlTogglePlay', {
+				icon: 'html/images/btn_play.png',
+				width: 51,
+				height: 22,
+				scope: this,
+				handler: this.ctrlTogglePlay
+			});
+
+			new Slim.Button('ctrlNext', {
+				icon: 'html/images/btn_next.png',
+				width: 28,
+				height: 22,
+				scope: this,
+				handler: this.ctrlNext
+			});
+
+			new Slim.Button('ctrlRepeat', {
+				icon: 'html/images/btn_repeat.png',
+				width: 34,
+				height: 22,
+				scope: this,
+				handler: this.ctrlRepeat
+			});
+
+			new Slim.Button('ctrlShuffle', {
+				icon: 'html/images/btn_shuffle.png',
+				width: 34,
+				height: 22,
+				scope: this,
+				handler: this.ctrlShuffle
+			});
+
+			new Slim.Button('ctrlVolumeDown', {
+				icon: 'html/images/btn_volume_decrease.png',
+				width: 22,
+				height: 22,
+				scope: this,
+				handler: this.volumeDown
+			});
+
+			new Slim.Button('ctrlVolumeUp', {
+				icon: 'html/images/btn_volume_increase.png',
+				width: 22,
+				height: 22,
+				scope: this,
+				handler: this.volumeUp
+			});
 
 			volumeUp = new Ext.util.ClickRepeater('ctrlVolumeUp', {
 				accelerate: true
@@ -212,6 +269,14 @@ Player = function(){
 					x = 100 * (ev.getPageX() - el.getX() - (Ext.isGecko * 20)) / el.getWidth();
 					Player.playerControl(['mixer', 'volume', x]);
 				}
+			});
+
+			new Slim.Button('ctrlPower', {
+				icon: 'html/images/btn_power.png',
+				width: 24,
+				height: 24,
+				scope: this,
+				handler: this.ctrlPower
 			});
 
 			pollTimer = new Ext.util.DelayedTask(this.getStatus, this);
@@ -283,7 +348,9 @@ Player = function(){
 						}
 
 						// update play/pause button
-						Ext.get('ctrlMode').update('<img src="' + webroot + 'html/images/' + (result.mode=='play' ? 'btn_pause_normal.png' : 'btn_play_normal.png') + '">');
+						btnTogglePlay.icon = webroot + 'html/images/' + (result.mode=='play' ? 'btn_pause.png' : 'btn_play.png');
+						btnTogglePlay.onBlur();
+//						Ext.get('ctrlTogglePlay').update('<img src="' + webroot + 'html/images/' + (result.mode=='play' ? 'btn_pause.png' : 'btn_play.png') + '">');
 
 						// update volume button
 						volumeIcon = 'level_5';
@@ -305,6 +372,8 @@ Player = function(){
 							volume: result['mixer volume']
 						};
 					}
+					else if (!result.power)
+						playerStatus.power = 0;
 				}
 			}
 			pollTimer.delay(5000);
@@ -398,11 +467,16 @@ Player = function(){
 
 		ctrlNext : function(){ this.playerControl(['playlist', 'index', '+1']) },
 		ctrlPrevious : function(){ this.playerControl(['playlist', 'index', '-1']) },
+
 		ctrlTogglePlay : function(){
 			if (playerStatus.power == '0' || playerStatus.mode == 'stop')
 				this.playerControl(['play']);
 			else
 				this.playerControl(['pause']);
+		},
+
+		ctrlPower : function(){
+			this.playerControl(['power', (playerStatus.power == '1' ? '0' : '1')]);
 		},
 
 		openPlayerControl : function(){
@@ -417,6 +491,10 @@ Player = function(){
 			if (d)
 				amount = d + amount;
 			this.playerControl(['mixer', 'volume', amount]);
-		}
+		},
+		
+		// TODO: first ask, then change
+		ctrlRepeat : function(){ this.playerControl(['playlist', 'repeat', '?']); },
+		ctrlShuffle : function(){ this.playerControl(['playlist', 'shuffle', '?']); }
 	}
 }();

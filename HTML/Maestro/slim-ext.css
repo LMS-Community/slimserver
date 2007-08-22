@@ -22,17 +22,17 @@
 .x-btn-left{
 	width:3px;
 	height:22px;
-	background:url(/Maestro/html/images/btn-sprite.png) no-repeat 0 0;
+	background:url(html/images/btn_generic.png) no-repeat 0 0;
 }
 
 .x-btn-right{
 	width:3px;
 	height:22px;
-	background:url(/Maestro/html/images/btn-sprite.png) no-repeat 0 -22px;
+	background:url(html/images/btn_generic.png) no-repeat 0 -22px;
 }
 
 .x-btn-center{
-	background:url(/Maestro/html/images/btn-sprite.png) repeat-x 0 -44px;
+	background:url(html/images/btn_generic.png) repeat-x 0 -44px;
 	vertical-align: middle;
 	text-align:center;
 	padding:0 5px;
@@ -41,19 +41,27 @@
 }
 
 .x-btn-over .x-btn-left{
-	background-position:0 0px;
+	background-position:0 -66px;
 }
 
 .x-btn-over .x-btn-right{
-	background-position:0 -22px;
+	background-position:0 -88px;
 }
 
 .x-btn-over .x-btn-center{
-	background-position:0 -44px;
+	background-position:0 -110px;
 }
 
-.x-btn-click .x-btn-center, .x-btn-menu-active .x-btn-center{
-	background-position:0 -44px;
+.x-btn-click .x-btn-left{
+	background-position:0 -132px;
+}
+
+.x-btn-click .x-btn-right{
+	background-position:0 -154px;
+}
+
+.x-btn-click .x-btn-center{
+	background-position:0 -176px;
 }
 
 .x-btn-menu-arrow-wrap .x-btn-center button {

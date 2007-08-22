@@ -1204,7 +1204,6 @@ sub generateHTTPResponse {
 		}
 
 	} elsif ($path =~ /html\//) {
-
 		# content is in the "html" subdirectory within the template directory.
 
 		# if it's HTML then use the template mechanism

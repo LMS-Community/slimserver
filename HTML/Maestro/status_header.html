@@ -3,6 +3,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 	<head>
+		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
+		<link rel="stylesheet" type="text/css" href="[% webroot %]slim-ext.css" />
+
 		[% PROCESS standardheader.html %]
 
 		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
@@ -19,6 +22,7 @@
 			}
 		</style>
 
+		<script type="text/javascript" src="[% webroot %]html/utils.js"></script>
 		<script type="text/javascript" src="[% webroot %]html/main.js"></script>
 		<script type="text/javascript">
 			Ext.EventManager.onDocumentReady(Player.init, Player, true);
@@ -44,28 +48,28 @@
 					<td>
 						<table border="0" cellspacing="0" cellpadding="0">
 							<tr>
-								<td><img src="[% webroot %]html/images/btn_previous_normal.png" alt="" height="22" width="28" border="0" onclick="Player.ctrlPrevious();" /></td>
+								<td id="ctrlPrevious"></td>
 								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
-								<td id="ctrlMode" onclick="Player.ctrlTogglePlay();"><img src="[% webroot %]html/images/btn_play_normal.png" alt="" height="22" width="51" border="0" /></td>
+								<td id="ctrlTogglePlay"></td>
 								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
-								<td><img src="[% webroot %]html/images/btn_next_normal.png" alt="" height="22" width="28" border="0" onclick="Player.ctrlNext();" /></td>
+								<td id="ctrlNext"></td>
 							</tr>
 						</table>
 					</td>
-					<td align="center"><img src="[% webroot %]html/images/btn_repeat_normal.png" alt="" height="22" width="34" border="0" /></td>
-					<td align="center"><img src="[% webroot %]html/images/btn_shuffle_normal.png" alt="" height="22" width="34" border="0" /></td>
+					<td align="center" id="ctrlRepeat"></td>
+					<td align="center" id="ctrlShuffle"></td>
 					<td align="right">
 						<table border="0" cellspacing="0" cellpadding="0">
 							<tr>
-								<td id="ctrlVolumeDown"><img src="[% webroot %]html/images/btn_volume_low_normal.png" alt="" height="22" width="22" border="0" /></td>
+								<td id="ctrlVolumeDown"></td>
 								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
 								<td id="ctrlVolume"><img src="[% webroot %]html/images/level_5.png" alt="" height="22" width="57" border="0" /></td>
 								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
-								<td id="ctrlVolumeUp"><img src="[% webroot %]html/images/btn_volume_hi_normal.png" alt="" height="22" width="22" border="0" /></td>
+								<td id="ctrlVolumeUp"></td>
 							</tr>
 						</table>
 					</td>
-					<td align="right" id="ctrlPower"><img src="[% webroot %]html/images/btn_power_normal.png" alt="" height="24" width="24" border="0" /></td>
+					<td align="right"><span id="ctrlPower"></span></td>
 				</tr>
 				<tr>
 					<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="8" width="32" border="0" /></td>

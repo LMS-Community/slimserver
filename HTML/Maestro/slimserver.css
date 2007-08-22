@@ -9,7 +9,7 @@ html, body {
 	font-family: sans-serif;
 }
 
-body { background: url(/Maestro/html/images/inner_background.gif) repeat; }
+body { background: url(html/images/inner_background.gif) repeat; }
 b, a { color: white; font-size: 12px; }
 img { border: 0; }
 
@@ -104,20 +104,20 @@ img { border: 0; }
 }
 
 #header {
-	background: url(/Maestro/html/images/header_background.png) repeat;
+	background: url(html/images/header_background.png) repeat;
 }
 
 #header_content {
 	height: 40px;
 	margin-left: 230px;
 	padding-top: 11px;
-	background: url(/Maestro/html/images/header_right.png) no-repeat top right;
+	background: url(html/images/header_right.png) no-repeat top right;
 	color: white;
 	font-size: 14px;
 }
 
 #header_left {
-	background: url(/Maestro/html/images/header_left.png) no-repeat top left;
+	background: url(html/images/header_left.png) no-repeat top left;
 	height: 38px;
 	width: 219px;
 	left: 0px;
@@ -125,16 +125,16 @@ img { border: 0; }
 }
 
 #footer{
-	background: url(/Maestro/html/images/header_background.png) repeat;
+	background: url(html/images/header_background.png) repeat;
 }
 
 #footer_content {
 	height: 38px;
-	background: url(/Maestro/html/images/footer_right.png) no-repeat bottom right;
+	background: url(html/images/footer_right.png) no-repeat bottom right;
 }
 
 #footer_left {
-	background: url(/Maestro/html/images/footer_left.png) no-repeat 0 0;
+	background: url(html/images/footer_left.png) no-repeat 0 0;
 	height: 38px;
 	width: 17px;
 	left: 0px;
@@ -168,44 +168,44 @@ img { border: 0; }
 }
 
 .inner {
-	background: url(/Maestro/html/images/inner_background.gif) repeat;
+	background: url(html/images/inner_background.gif) repeat;
 	margin: 20px; 
 }
 
 .inner_content {
-	background: url(/Maestro/html/images/inner_background.gif) repeat;
+	background: url(html/images/inner_background.gif) repeat;
 	margin: 10px;
 	height: 330px;
 }
 
 .inner_top div { 
 	height: 10px;
-	background: url(/Maestro/html/images/inner_top_left.gif) no-repeat top left;
+	background: url(html/images/inner_top_left.gif) no-repeat top left;
 }
 
 .inner_top {
 	height: 10px;
-	background: url(/Maestro/html/images/inner_top_right.gif) no-repeat top right; 
+	background: url(html/images/inner_top_right.gif) no-repeat top right; 
 }
 
 .inner_bottom div { 
 	height: 10px;
-	background: url(/Maestro/html/images/inner_bottom_left.gif) no-repeat bottom left; 
+	background: url(html/images/inner_bottom_left.gif) no-repeat bottom left; 
 }
 
 .inner_bottom { 
 	height: 10px;
-	background: url(/Maestro/html/images/inner_bottom_right.gif) no-repeat bottom right; 
+	background: url(html/images/inner_bottom_right.gif) no-repeat bottom right; 
 }
 
 .titlebox {
-	background: url(/Maestro/html/images/title_background.gif) repeat;
+	background: url(html/images/title_background.gif) repeat;
 	margin: 5px;
 	margin-top: 15px;
 }
 
 .titlebox_content {
-	background: url(/Maestro/html/images/title_background.gif) repeat;
+	background: url(html/images/title_background.gif) repeat;
 	margin-left: 10px;
 	height: 15px;
 	font-size: 120%;
@@ -214,22 +214,22 @@ img { border: 0; }
 
 .titlebox_top div { 
 	height: 10px;
-	background: url(/Maestro/html/images/title_top_left.gif) no-repeat top left;
+	background: url(html/images/title_top_left.gif) no-repeat top left;
 }
 
 .titlebox_top {
 	height: 10px;
-	background: url(/Maestro/html/images/title_top_right.gif) no-repeat top right; 
+	background: url(html/images/title_top_right.gif) no-repeat top right; 
 }
 
 .titlebox_bottom div { 
 	height: 10px;
-	background: url(/Maestro/html/images/title_bottom_left.gif) no-repeat bottom left; 
+	background: url(html/images/title_bottom_left.gif) no-repeat bottom left; 
 }
 
 .titlebox_bottom { 
 	height: 10px;
-	background: url(/Maestro/html/images/title_bottom_right.gif) no-repeat bottom right; 
+	background: url(html/images/title_bottom_right.gif) no-repeat bottom right; 
 }
 
 #leftcontent {
@@ -253,25 +253,25 @@ img { border: 0; }
 
 
 #edge_top_left {
-	background: url(/Maestro/html/images/inner_top_left.gif) no-repeat top left;
+	background: url(html/images/inner_top_left.gif) no-repeat top left;
 	left: 0;
 	top: 0;	
 }
 
 #edge_top_right {
-	background: url(/Maestro/html/images/inner_top_right.gif) no-repeat top right;
+	background: url(html/images/inner_top_right.gif) no-repeat top right;
 	right: 0;
 	top: 0;
 }
 
 #edge_bottom_left {
-	background: url(/Maestro/html/images/inner_bottom_left.gif) no-repeat bottom left;
+	background: url(html/images/inner_bottom_left.gif) no-repeat bottom left;
 	left: 0;
 	bottom: 0;
 }
 
 #edge_bottom_right {
-	background: url(/Maestro/html/images/inner_bottom_right.gif) no-repeat bottom right;
+	background: url(html/images/inner_bottom_right.gif) no-repeat bottom right;
 	right: 0;
 	bottom: 0;
 }
@@ -284,7 +284,7 @@ img { border: 0; }
 }
 
 .infoTab_content {
-	background: url(/Maestro/html/images/infotab_background.gif) repeat;
+	background: url(html/images/infotab_background.gif) repeat;
 	margin-left: 20px;
 	margin-right: 20px;
 	height: 25px;
@@ -294,12 +294,12 @@ img { border: 0; }
 
 .infoTab_top div { 
 	height: 10px;
-	background: url(/Maestro/html/images/infotab_top_left.gif) no-repeat top left;
+	background: url(html/images/infotab_top_left.gif) no-repeat top left;
 }
 
 .infoTab_top {
 	height: 10px;
-	background: url(/Maestro/html/images/infotab_top_right.gif) no-repeat top right; 
+	background: url(html/images/infotab_top_right.gif) no-repeat top right; 
 }
 
 
