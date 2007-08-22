@@ -138,7 +138,7 @@ sub gotNextTrack {
 		# We didn't get the next track to play
 		my $url = Slim::Player::Playlist::url($client);
 
-		setCurrentTitle( $client, $client->string('PLUGIN_PANDORA_NO_TRACKS') );
+		setCurrentTitle( $client, $url, $client->string('PLUGIN_PANDORA_NO_TRACKS') );
 		
 		$client->update();
 
@@ -348,7 +348,7 @@ sub playlistCallback {
 				  . $track->{artistName} . ' ' . $client->string('FROM') . ' '
 				  . $track->{albumName};
 		
-		setCurrentTitle( $client, $title );
+		setCurrentTitle( $client, $url, $title );
 		
 		# Remove the previous track metadata
 		$client->pluginData( prevTrack => 0 );
@@ -446,11 +446,15 @@ sub trackInfo {
 }
 
 sub setCurrentTitle {
-    my ( $client, $title ) = @_;
-    
-    # We can't use the normal setCurrentTitle method because it would cause multiple
-    # players playing the same station to get the same titles
-    $client->pluginData( currentTitle => $title );
+	my ( $client, $url, $title ) = @_;
+	
+	# We can't use the normal getCurrentTitle method because it would cause multiple
+	# players playing the same station to get the same titles
+	$client->pluginData( currentTitle => $title );
+	
+	# Call the normal setCurrentTitle method anyway, so it triggers callbacks to
+	# update the display
+	Slim::Music::Info::setCurrentTitle( $url, $title );
 }
 
 sub getCurrentTitle {
