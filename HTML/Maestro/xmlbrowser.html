@@ -18,7 +18,7 @@
 	[% END %]
 [% END # filter -%]
 
-[% IF NOT ajaxUpdate %][% PROCESS pageheader.html %]<div id="mainbody">[% END %]
+[% IF NOT ajaxUpdate %][% PROCESS pageheader.html dontscroll=1 %]<div id="mainbody">[% END %]
 
 [% IF msg %][% WRAPPER contentcontainer %]
 	<b>[% msg %]</b>
