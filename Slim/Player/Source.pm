@@ -1099,15 +1099,6 @@ sub jumpto {
 		}
 	}
 	
-	# Allow Pandora to disallow skips completely
-	if ( $handler &&
-		$handler->can("canDoAction") &&
-		$client->playmode =~ /play/ && 
-		!$handler->canDoAction($client, $currentURL, 'stop')
-	) {
-		return;
-	}
-
 	playmode($client, 'stop');
 
 	if ($songcount != 1) {

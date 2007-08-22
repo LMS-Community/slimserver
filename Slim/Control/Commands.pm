@@ -636,7 +636,6 @@ sub playlistJumpCommand {
 		$request->setStatusDone();
 	};
 	
-	# Allow protocol handler to perform async handling before jumpto is called
 	if ( defined $index ) {
 		my $jumpIndex = $index;
 		
@@ -660,6 +659,19 @@ sub playlistJumpCommand {
 		my $jumpURL   = Slim::Player::Playlist::url( $client, $jumpIndex );
 		my $handler   = Slim::Player::ProtocolHandlers->handlerForURL($jumpURL);
 		
+		# Allow Pandora and Slacker to disallow skip
+		if ( 
+			$client->playmode =~ /play/
+			&& $handler
+			&& $handler->can('canDoAction')
+			&& !$handler->canDoAction( $client, $jumpURL, 'stop' )
+		) {
+			$log->debug("Skip for $jumpURL disallowed by protocol handler");
+			$request->setStatusDone();
+			return;
+		}
+		
+		# Allow protocol handler to perform async handling before jumpto is called
 		if ( $handler && $handler->can('onJump') ) {
 			$handler->onJump( $client, $jumpURL, $jumpCallback );
 			return;
