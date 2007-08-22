@@ -202,17 +202,18 @@ Player = function(){
 				}
 			});
 
-
-// TODO: set volume when clicking on volume bar - broken in FF&Safari, getting negative values :-(
-/*			Ext.get('ctrlVolume').on('click', function(ev, target){
+			Ext.get('ctrlVolume').on('click', function(ev, target){
+				
 				if (el = Ext.get(target)) {
 					x = el.getX();
 					x = Ext.fly(target).getX();
-					x = 100 * (ev.getPageX() - el.getX()) / el.getWidth();
-					alert(x);
+					
+					// factor in the body margin for FF
+					x = 100 * (ev.getPageX() - el.getX() - (Ext.isGecko * 20)) / el.getWidth();
+					Player.playerControl(['mixer', 'volume', x]);
 				}
 			});
-*/
+
 			pollTimer = new Ext.util.DelayedTask(this.getStatus, this);
 			playTimeTimer = new Ext.util.DelayedTask(this.updatePlayTime, this);
 			this.getStatus();
@@ -221,7 +222,7 @@ Player = function(){
 		updatePlayTime : function(time, totalTime){
 			if (playerStatus.mode == 'play') {
 				if (! isNaN(time))
-					playTime = time;
+					playTime = parseInt(time); //force integer type from results
 	
 				if (! isNaN(totalTime))
 					Ext.get('ctrlTotalTime').update(' (' + this.formatTime(totalTime) + ')');
