@@ -17,6 +17,7 @@ use Slim::Utils::Log;
 #use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 #use Slim::Utils::Strings qw(string);
+use Slim::Player::Playlist qw(repeat shuffle);
 use Data::Dumper;
 
 
@@ -946,18 +947,18 @@ sub menuQuery {
 				},
 			},
 		},
-#		{
-#			text => Slim::Utils::Strings::string('SETTINGS'),
-#			actions => {
-#				go => {
-#					cmd => ['menusettings'],
-#					player => 0,
-#					params => {
-#						menu => 'settings',
-#					},
-#				},
-#			},
-#		},
+		{
+			text => Slim::Utils::Strings::string('SETTINGS'),
+			actions => {
+				go => {
+					cmd => ['menusettings'],
+					player => 0,
+					params => {
+						menu => 'settings',
+					},
+				},
+			},
+		},
 	);
 
 	my $numitems = scalar(@menu);
@@ -996,17 +997,22 @@ sub menusettingsQuery {
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
 
+	my %currentValue = (
+	REPEAT               => Slim::Player::Playlist::repeat($client),
+	SHUFFLE              => Slim::Player::Playlist::shuffle($client),
+	SETUP_TRANSITIONTYPE =>  $prefs->client($client)->get('transitionType'),
+	);
+
 	my @menu = (
 		# To fill based on the $client type
 		{
 		text => Slim::Utils::Strings::string('REPEAT'),
 		count => 3,
 		offset => 0,
-		#initialValue => sub { Slim::Player::Playlist::repeat(shift) },
 		item_loop => [
 			{
-				text => Slim::Utils::Strings::string("REPEAT_OFF"),
-				radio	=> 1,
+				text=> Slim::Utils::Strings::string("REPEAT_OFF"),
+				radio	=> ($currentValue{'REPEAT'} == 0) + 0, # 0 is added to force data type to number
 				actions => {
 					do => {
 						player => 0,
@@ -1016,7 +1022,7 @@ sub menusettingsQuery {
 			},
 			{
 				text => Slim::Utils::Strings::string("REPEAT_ONE"),
-				radio	=> 1,
+				radio	=> ($currentValue{'REPEAT'} == 1) + 0, # 0 is added to force the data type to number
 				actions => {
 					do => {
 						player => 0,
@@ -1026,7 +1032,7 @@ sub menusettingsQuery {
 			},
 			{
 				text => Slim::Utils::Strings::string("REPEAT_ALL"),
-				radio	=> 1,
+				radio	=> ($currentValue{'REPEAT'} == 2) + 0, # 0 is added to force the data type to number
 				actions => {
 					do => {
 						player => 0,
@@ -1040,11 +1046,10 @@ sub menusettingsQuery {
 		text => Slim::Utils::Strings::string('SHUFFLE'),
 		count => 3,
 		offset => 0,
-		#initialValue => sub{ return Slim::Player::Playlist::shuffle(shift)},
 		item_loop => [
 			{
 				text => Slim::Utils::Strings::string("SHUFFLE_OFF"),
-				radio	=> 1,
+				radio	=> ($currentValue{'SHUFFLE'} == 0) + 0, # 0 is added to force the data type to number
 				actions => {
 					do => {
 						player => 0,
@@ -1054,6 +1059,7 @@ sub menusettingsQuery {
 			},
 			{
 				text => Slim::Utils::Strings::string("SHUFFLE_ON_SONGS"),
+				radio	=> ($currentValue{'SHUFFLE'} == 1) + 0, # 0 is added to force the data type to number
 				radio	=> 1,
 				actions => {
 					do => {
@@ -1064,7 +1070,7 @@ sub menusettingsQuery {
 			},
 			{
 				text => Slim::Utils::Strings::string("SHUFFLE_ON_ALBUMS"),
-				radio	=> 1,
+				radio	=> ($currentValue{'SHUFFLE'} == 2) + 0, # 0 is added to force the data type to number
 				actions => {
 					do => {
 						player => 0,
@@ -1078,12 +1084,11 @@ sub menusettingsQuery {
 		text => Slim::Utils::Strings::string('SETUP_TRANSITIONTYPE'),
 		count => 5,
 		offset => 0,
-		#initialValue => sub { $prefs->client(shift)->get('transitionType') },
 		#condition    => sub { return $_[0]->isa('Slim::Player::Squeezebox2') },
 		item_loop => [
 			{
 				text => Slim::Utils::Strings::string("TRANSITION_NONE"),
-				radio	=> 1,
+				radio	=> ($currentValue{'SETUP_TRANSITIONTYPE'} == 0) + 0, # 0 is added to force the data type to number
 				actions => {
 					do => {
 						player => 0,
@@ -1093,7 +1098,7 @@ sub menusettingsQuery {
 			},
 			{
 				text => Slim::Utils::Strings::string("TRANSITION_CROSSFADE"),
-				radio	=> 1,
+				radio	=> ($currentValue{'SETUP_TRANSITIONTYPE'} == 1) + 0, # 0 is added to force the data type to number
 				actions => {
 					do => {
 						player => 0,
@@ -1103,7 +1108,7 @@ sub menusettingsQuery {
 			},
 			{
 				text => Slim::Utils::Strings::string("TRANSITION_FADE_IN"),
-				radio	=> 1,
+				radio	=> ($currentValue{'SETUP_TRANSITIONTYPE'} == 2) + 0, # 0 is added to force the data type to number
 				actions => {
 					do => {
 						player => 0,
@@ -1113,7 +1118,7 @@ sub menusettingsQuery {
 			},
 			{
 				text => Slim::Utils::Strings::string("TRANSITION_FADE_OUT"),
-				radio	=> 1,
+				radio	=> ($currentValue{'SETUP_TRANSITIONTYPE'} == 3) + 0, # 0 is added to force the data type to number
 				actions => {
 					do => {
 						player => 0,
@@ -1123,7 +1128,7 @@ sub menusettingsQuery {
 			},
 			{
 				text => Slim::Utils::Strings::string("TRANSITION_FADE_IN_OUT"),
-				radio	=> 1,
+				radio	=> ($currentValue{'SETUP_TRANSITIONTYPE'} == 4) + 0,
 				actions => {
 					do => {
 						player => 0,
