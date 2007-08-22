@@ -146,7 +146,6 @@
 [%- IF items -%]
 	<div id="browsedbHeader">
 		[% IF hasPagebar %]
-			[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]
 			[% PROCESS pagebar %]
 		[% END %]
 	</div>
@@ -192,6 +191,10 @@
 
 	[%- END %]
 [%- END %]
+
+[%- IF hasPagebar; infoTab = BLOCK -%]
+	<div>[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]</div>
+[%- END; END -%]  
 
 [% IF NOT ajaxUpdate %]</div>[% PROCESS pagefooter.html %][% END %]
 

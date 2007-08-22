@@ -1,6 +1,3 @@
-[%- IF song_count; infoTab = BLOCK -%]
-	<div>[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].</div>
-[%- END; END -%]  
 [%- pagetitle = browseby | string; pageicon = browseby; noSpacer = 1 -%]
 [%- maestroScripts = BLOCK -%]
 	<script type="text/javascript" src="[% webroot %]html/browse.js"></script>
@@ -33,6 +30,10 @@
 	[% IF warn -%]<p>[% PROCESS scanwarning %] [%- END %]
 	[% IF hasPagebar -%][% PROCESS pagebar %][%- END %]
 </div>
+
+[%- IF song_count; infoTab = BLOCK -%]
+	<div>[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].</div>
+[%- END; END -%]  
 
 [%- WRAPPER contentcontainer %]
 	[% FOREACH item = browse_items -%]
