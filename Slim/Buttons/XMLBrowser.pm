@@ -497,12 +497,11 @@ sub gotOPML {
 				$itemURL = $item->{'value'};
 			}
 
-			# Allow text-only items that RadioTime uses
+			# Allow text-only items that go nowhere and just bump
 			if ( $item->{'type'} && $item->{'type'} eq 'text' ) {
-				undef $itemURL;
+				$client->bumpRight();
 			}
-			
-			if ( $item->{'search'} || $item->{'type'} eq 'search' ) {
+			elsif ( $item->{'search'} || $item->{'type'} eq 'search' ) {
 				
 				my $title;
 				
@@ -593,7 +592,7 @@ sub gotOPML {
 				);
 
 			}
-			elsif (hasDescription($item)) {
+			elsif ( hasDescription($item) ) {
 
 				displayItemDescription($client, $item);
 
