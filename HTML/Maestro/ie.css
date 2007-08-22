@@ -24,3 +24,8 @@
 .infoTab, #edge_bottom_left, #edge_bottom_right {
 	bottom: -1px;
 }
+
+/* PNG fix */
+img, div {
+/*	behavior: url(html/iepngfix.htc)*/
+}

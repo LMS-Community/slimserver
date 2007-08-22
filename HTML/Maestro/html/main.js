@@ -210,56 +210,54 @@ Player = function(){
 				handler: this.volumeUp
 			});
 
-			if (Ext.isIE7 || !Ext.isIE) {
-				volumeUp = new Ext.util.ClickRepeater('ctrlVolumeUp', {
-					accelerate: true
-				});
-	
-				// volume buttons can be held
-				volumeUp.on({
-					'click': {
-						fn: function(){
-							volumeClicked++;
-							if (volumeClicked > 4) {
-								this.setVolume(volumeClicked, '+');
-								volumeClicked = 0;
-							}
-						},
-						scope: this
-					},
-					'mouseup': {
-						fn: function(){
+			volumeUp = new Ext.util.ClickRepeater('ctrlVolumeUp', {
+				accelerate: true
+			});
+
+			// volume buttons can be held
+			volumeUp.on({
+				'click': {
+					fn: function(){
+						volumeClicked++;
+						if (volumeClicked > 4) {
 							this.setVolume(volumeClicked, '+');
 							volumeClicked = 0;
-						},
-						scope: this
-					}
-				});
-	
-				volumeDown = new Ext.util.ClickRepeater('ctrlVolumeDown', {
-					accelerate: true
-				});
-				
-				volumeDown.on({
-					'click': {
-						fn: function(){
-							volumeClicked++;
-							if (volumeClicked > 4) {
-								this.setVolume(volumeClicked, '-');
-								volumeClicked = 0;
-							}
-						},
-						scope: this
+						}
 					},
-					'mouseup': {
-						fn: function(){
+					scope: this
+				},
+				'mouseup': {
+					fn: function(){
+						this.setVolume(volumeClicked, '+');
+						volumeClicked = 0;
+					},
+					scope: this
+				}
+			});
+
+			volumeDown = new Ext.util.ClickRepeater('ctrlVolumeDown', {
+				accelerate: true
+			});
+			
+			volumeDown.on({
+				'click': {
+					fn: function(){
+						volumeClicked++;
+						if (volumeClicked > 4) {
 							this.setVolume(volumeClicked, '-');
 							volumeClicked = 0;
-						},
-						scope: this
-					}
-				});
-			}
+						}
+					},
+					scope: this
+				},
+				'mouseup': {
+					fn: function(){
+						this.setVolume(volumeClicked, '-');
+						volumeClicked = 0;
+					},
+					scope: this
+				}
+			});
 
 			Ext.get('ctrlVolume').on('click', function(ev, target){
 				
@@ -355,16 +353,15 @@ Player = function(){
 //						Ext.get('ctrlTogglePlay').update('<img src="' + webroot + 'html/images/' + (result.mode=='play' ? 'btn_pause.png' : 'btn_play.png') + '">');
 
 						// update volume button
-						volumeIcon = 'level_5';
+						volVal = 5;
 						if (result['mixer volume'] <= 0)
-							volumeIcon = 'level_0';
+							volVal = 0;
 						else if (result['mixer volume'] >= 100)
-							volumeIcon = 'level_11';
+							volVal = 11;
 						else {
 							volVal = Math.ceil(result['mixer volume']/9.9);
-							volumeIcon = 'level_' + volVal;
 						}
-						Ext.get('ctrlVolume').update('<img src="' + webroot + 'html/images/' + volumeIcon + '.png">');
+						Ext.get('ctrlVolume').setStyle('background', 'url(html/images/volume_levels.png) no-repeat 0px -' + String(volVal * 22) + 'px');
 
 						playerStatus = {
 							power: result.power,
