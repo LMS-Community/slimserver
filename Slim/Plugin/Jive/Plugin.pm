@@ -15,7 +15,7 @@ use Scalar::Util qw(blessed);
 
 use Slim::Utils::Log;
 #use Slim::Utils::Misc;
-#use Slim::Utils::Prefs;
+use Slim::Utils::Prefs;
 #use Slim::Utils::Strings qw(string);
 use Data::Dumper;
 
@@ -79,6 +79,8 @@ sub initPlugin {
 
     Slim::Control::Request::addDispatch(['menu', '_index', '_quantity'], 
         [0, 1, 1, \&menuQuery]);
+    Slim::Control::Request::addDispatch(['menusettings', '_index', '_quantity'], 
+        [1, 1, 1, \&menusettingsQuery]);
 
 }
 
@@ -713,199 +715,198 @@ sub menuQuery {
 	}
 
 	# get our parameters
-#	my $client        = $request->client();
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
 
 	my @menu = (
 		{
-			'text' => Slim::Utils::Strings::string('MY_MUSIC'),
-			'count' => 9,
-			'offset' => 0,
-			'item_loop' => [
+			text => Slim::Utils::Strings::string('MY_MUSIC'),
+			count => 9,
+			offset => 0,
+			item_loop => [
 			{
-				'text' => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
-				'actions' => {
-					'go' => {
-						'cmd' => ['albums'],
-						'params' => {
-							'menu' => 'track',
+				text => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
+				actions => {
+					go => {
+						cmd => ['albums'],
+						params => {
+							menu => 'track',
 						},
 					},
 				},
-				'window' => {
-					'menuStyle' => 'album',
+				window => {
+					menuStyle => 'album',
 				},
 			},
 			{
-				'text' => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
-				'actions' => {
-					'go' => {
-						'cmd' => ['artists'],
-						'params' => {
-							'menu' => 'album',
-						},
-					},
-				},
-			},
-			{
-				'text' => Slim::Utils::Strings::string('BROWSE_BY_GENRE'),
-				'actions' => {
-					'go' => {
-						'cmd' => ['genres'],
-						'params' => {
-							'menu' => 'artist',
+				text => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
+				actions => {
+					go => {
+						cmd => ['artists'],
+						params => {
+							menu => 'album',
 						},
 					},
 				},
 			},
 			{
-				'text' => Slim::Utils::Strings::string('BROWSE_BY_YEAR'),
-				'actions' => {
-					'go' => {
-					'cmd' => ['years'],
-						'params' => {
-							'menu' => 'album',
+				text => Slim::Utils::Strings::string('BROWSE_BY_GENRE'),
+				actions => {
+					go => {
+						cmd => ['genres'],
+						params => {
+							menu => 'artist',
 						},
 					},
 				},
 			},
 			{
-				'text' => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'),
-				'actions' => {
-					'go' => {
-						'cmd' => ['albums'],
-						'params' => {
-							'menu' => 'track',
-							'sort' => 'new',
-						},
-					},
-				},
-				'window' => {
-					'menuStyle' => 'album',
-				},
-			},
-			{
-				'text' => Slim::Utils::Strings::string('FAVORITES'),
-				'actions' => {
-					'go' => {
-						'cmd' => ['favorites', 'items'],
-						'params' => {
-							'menu' => 'favorites',
+				text => Slim::Utils::Strings::string('BROWSE_BY_YEAR'),
+				actions => {
+					go => {
+					cmd => ['years'],
+						params => {
+							menu => 'album',
 						},
 					},
 				},
 			},
 			{
-				'text' => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
-				'actions' => {
-					'go' => {
-						'cmd' => ['musicfolder'],
-						'params' => {
-							'menu' => 'musicfolder',
+				text => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'),
+				actions => {
+					go => {
+						cmd => ['albums'],
+						params => {
+							menu => 'track',
+							sort => 'new',
+						},
+					},
+				},
+				window => {
+					menuStyle => 'album',
+				},
+			},
+			{
+				text => Slim::Utils::Strings::string('FAVORITES'),
+				actions => {
+					go => {
+						cmd => ['favorites', 'items'],
+						params => {
+							menu => 'favorites',
 						},
 					},
 				},
 			},
 			{
-				'text' => Slim::Utils::Strings::string('SAVED_PLAYLISTS'),
-				'actions' => {
-					'go' => {
-						'cmd' => ['playlists'],
-						'params' => {
-							'menu' => 'track',
+				text => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
+				actions => {
+					go => {
+						cmd => ['musicfolder'],
+						params => {
+							menu => 'musicfolder',
 						},
 					},
 				},
 			},
 			{
-				'text' => Slim::Utils::Strings::string('SEARCH'),
-				'count' => 4,
-				'offset' => 0,
-				'item_loop' => [
+				text => Slim::Utils::Strings::string('SAVED_PLAYLISTS'),
+				actions => {
+					go => {
+						cmd => ['playlists'],
+						params => {
+							menu => 'track',
+						},
+					},
+				},
+			},
+			{
+				text => Slim::Utils::Strings::string('SEARCH'),
+				count => 4,
+				offset => 0,
+				item_loop => [
 					{
-						'text' => Slim::Utils::Strings::string('ARTISTS'),
-						'input' => {
-							'len' => 2, # Richard says "we can't search for U2!"
-							'help' => {
-								'text' => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+						text => Slim::Utils::Strings::string('ARTISTS'),
+						input => {
+							len => 2, # Richard says "we can't search for U2!"
+							help => {
+								text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
 							},
 						},
-						'actions' => {
-							'go' => {
-								'cmd' => ['artists'],
-								'params' => {
-									'menu' => 'album',
-									'search' => '__INPUT__',
+						actions => {
+							go => {
+								cmd => ['artists'],
+								params => {
+									menu => 'album',
+									search => '__INPUT__',
 								},
 							},
 						},
-						'window' => {
-							'text' => Slim::Utils::Strings::string('SEARCHFOR_ARTISTS'),
+						window => {
+							text => Slim::Utils::Strings::string('SEARCHFOR_ARTISTS'),
 						},
 					},
 					{
-						'text' => Slim::Utils::Strings::string('ALBUMS'),
-						'input' => {
-							'len' => 3,
-							'help' => {
-								'text' => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+						text => Slim::Utils::Strings::string('ALBUMS'),
+						input => {
+							len => 3,
+							help => {
+								text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
 							},
 						},
-						'actions' => {
-							'go' => {
-								'cmd' => ['albums'],
-								'params' => {
-									'menu' => 'track',
-									'search' => '__INPUT__',
+						actions => {
+							go => {
+								cmd => ['albums'],
+								params => {
+									menu => 'track',
+									search => '__INPUT__',
 								},
 							},
 						},
-						'window' => {
-							'text' => Slim::Utils::Strings::string('SEARCHFOR_ALBUMS'),
-							'menuStyle' => 'album',
+						window => {
+							text => Slim::Utils::Strings::string('SEARCHFOR_ALBUMS'),
+							menuStyle => 'album',
 						},
 					},
 					{
-						'text' => Slim::Utils::Strings::string('SONGS'),
-						'input' => {
-							'len' => 3,
-							'help' => {
-								'text' => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+						text => Slim::Utils::Strings::string('SONGS'),
+						input => {
+							len => 3,
+							help => {
+								text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
 							},
 						},
-						'actions' => {
-							'go' => {
-								'cmd' => ['tracks'],
-								'params' => {
-									'menu' => 'track',
-									'search' => '__INPUT__',
+						actions => {
+							go => {
+								cmd => ['tracks'],
+								params => {
+									menu => 'track',
+									search => '__INPUT__',
 								},
 							},
 						},
-						'window' => {
+						window => {
 							'text' => Slim::Utils::Strings::string('SEARCHFOR_SONGS'),
 						},
 					},
 					{
-						'text' => Slim::Utils::Strings::string('PLAYLISTS'),
-						'input' => {
-							'len' => 3,
-							'help' => {
-								'text' => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+						text => Slim::Utils::Strings::string('PLAYLISTS'),
+						input => {
+							len => 3,
+							help => {
+								text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
 							},
 						},
-						'actions' => {
-							'go' => {
-								'cmd' => ['playlists'],
-								'params' => {
-									'menu' => 'track',
-									'search' => '__INPUT__',
+						actions => {
+							go => {
+								cmd => ['playlists'],
+								params => {
+									menu => 'track',
+									search => '__INPUT__',
 								},
 							},
 						},
-						'window' => {
-							'text' => Slim::Utils::Strings::string('SEARCHFOR_PLAYLISTS'),
+						window => {
+							text => Slim::Utils::Strings::string('SEARCHFOR_PLAYLISTS'),
 						},
 					},
 				],
@@ -945,6 +946,18 @@ sub menuQuery {
 				},
 			},
 		},
+#		{
+#			text => Slim::Utils::Strings::string('SETTINGS'),
+#			actions => {
+#				go => {
+#					cmd => ['menusettings'],
+#					player => 0,
+#					params => {
+#						menu => 'settings',
+#					},
+#				},
+#			},
+#		},
 	);
 
 	my $numitems = scalar(@menu);
@@ -966,5 +979,181 @@ sub menuQuery {
 
 	$request->setStatusDone();
 }
+
+sub menusettingsQuery {
+	my $request = shift;
+ 
+	$log->debug("Begin Function");
+ 
+	if ($request->isNotQuery([['menusettings']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $client        = $request->client();
+	my $prefs         = preferences('server');
+	my $index         = $request->getParam('_index');
+	my $quantity      = $request->getParam('_quantity');
+
+	my @menu = (
+		# To fill based on the $client type
+		{
+		text => Slim::Utils::Strings::string('REPEAT'),
+		count => 3,
+		offset => 0,
+		#initialValue => sub { Slim::Player::Playlist::repeat(shift) },
+		item_loop => [
+			{
+				text => Slim::Utils::Strings::string("REPEAT_OFF"),
+				radio	=> 1,
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['playlist', 'repeat', '0'],
+					},
+				},
+			},
+			{
+				text => Slim::Utils::Strings::string("REPEAT_ONE"),
+				radio	=> 1,
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['playlist', 'repeat', '1'],
+					},
+				},
+			},
+			{
+				text => Slim::Utils::Strings::string("REPEAT_ALL"),
+				radio	=> 1,
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['playlist', 'repeat', '2'],
+					},
+				},
+			},
+		],
+		},
+		{
+		text => Slim::Utils::Strings::string('SHUFFLE'),
+		count => 3,
+		offset => 0,
+		#initialValue => sub{ return Slim::Player::Playlist::shuffle(shift)},
+		item_loop => [
+			{
+				text => Slim::Utils::Strings::string("SHUFFLE_OFF"),
+				radio	=> 1,
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['playlist', 'shuffle', '0'],
+					},
+				},
+			},
+			{
+				text => Slim::Utils::Strings::string("SHUFFLE_ON_SONGS"),
+				radio	=> 1,
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['playlist', 'shuffle', '1'],
+					},
+				},
+			},
+			{
+				text => Slim::Utils::Strings::string("SHUFFLE_ON_ALBUMS"),
+				radio	=> 1,
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['playlist', 'shuffle', '2'],
+					},
+				},
+			},
+		],
+		},
+		{
+		text => Slim::Utils::Strings::string('SETUP_TRANSITIONTYPE'),
+		count => 5,
+		offset => 0,
+		#initialValue => sub { $prefs->client(shift)->get('transitionType') },
+		#condition    => sub { return $_[0]->isa('Slim::Player::Squeezebox2') },
+		item_loop => [
+			{
+				text => Slim::Utils::Strings::string("TRANSITION_NONE"),
+				radio	=> 1,
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['playerpref', 'transitionType', '0'],
+					},
+				},
+			},
+			{
+				text => Slim::Utils::Strings::string("TRANSITION_CROSSFADE"),
+				radio	=> 1,
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['playerpref', 'transitionType', '1'],
+					},
+				},
+			},
+			{
+				text => Slim::Utils::Strings::string("TRANSITION_FADE_IN"),
+				radio	=> 1,
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['playerpref', 'transitionType', '2'],
+					},
+				}
+			},
+			{
+				text => Slim::Utils::Strings::string("TRANSITION_FADE_OUT"),
+				radio	=> 1,
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['playerpref', 'transitionType', '3'],
+					},
+				},
+			},
+			{
+				text => Slim::Utils::Strings::string("TRANSITION_FADE_IN_OUT"),
+				radio	=> 1,
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['playerpref', 'transitionType', '4'],
+					},
+				},
+			},
+		],
+		},
+	);
+
+	my $numitems = scalar(@menu);
+
+	$request->addResult("count", $numitems);
+
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $numitems);
+
+	if ($valid) {
+		
+		my $cnt = 0;
+		$request->addResult('offset', $start);
+
+		for my $eachmenu (@menu[$start..$end]) {			
+			$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
+			$cnt++;
+		}
+	}
+
+	$request->setStatusDone();
+}
+
 
 1;
