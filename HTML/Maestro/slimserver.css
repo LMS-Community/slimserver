@@ -152,6 +152,10 @@ img { border: 0; }
 	height: 96px;
 }
 
+#ctrlCurrentTitle, .currentTrackInfo { 
+	overflow: hidden;
+}
+
 #ctrlCurrentTitle { 
 	font-size: 13px; 
 	font-weight: bold; 
