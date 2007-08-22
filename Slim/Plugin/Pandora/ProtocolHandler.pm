@@ -209,7 +209,14 @@ sub onJump {
     my ( $class, $client, $nextURL, $callback ) = @_;
 
 	# Display buffering info on loading the next track
-	$client->pluginData( showBuffering => 1 );
+	# unless we shouldn't (when rating down)
+	if ( $client->pluginData('banMode') ) {
+		$client->pluginData( showBuffering => 0 );
+		$client->pluginData( banMode => 0 );
+	}
+	else {
+		$client->pluginData( showBuffering => 1 );
+	}
 	
 	# Get next track
 	my ($stationId) = $nextURL =~ m{^pandora://([^.]+)\.mp3};
@@ -261,6 +268,25 @@ sub handleDirectError {
 		block  => 1,
 		scroll => 1,
 	} );
+	
+	# Report the audio failure to Pandora
+	my ($stationId)  = $url =~ m{^pandora://([^.]+)\.mp3};
+	my $currentTrack = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
+	
+	my $url = Slim::Networking::SqueezeNetwork->url(
+		  '/api/pandora/opml/playback?audioError?stationId=' . $stationId 
+		. '&trackId=' . $currentTrack->{trackToken}
+	);
+	
+	my $http = Slim::Networking::SqueezeNetwork->new(
+		sub {},
+		sub {},
+		{
+			client => $client,
+		},
+	);
+	
+	$http->get( $url );
 	
 	# XXX: Stop after a certain number of errors in a row
 	
@@ -458,9 +484,9 @@ sub setCurrentTitle {
 }
 
 sub getCurrentTitle {
-    my ( $class, $client, $url ) = @_;
-    
-    return $client->pluginData('currentTitle');
+	my ( $class, $client, $url ) = @_;
+	
+	return $client->pluginData('currentTitle');
 }
 
 1;

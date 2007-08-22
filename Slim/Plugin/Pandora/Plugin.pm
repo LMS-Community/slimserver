@@ -81,7 +81,9 @@ sub skipTrack {
 		
 	$log->debug("Pandora: Skip requested");
 	
-	# XXX: figure out how to avoid buffering display
+	# Tell onJump not to display buffering info, so we don't
+	# mess up the showBriefly message
+	$client->pluginData( banMode => 1 );
 	
 	$client->execute(["playlist", "jump", "+1"]);
 }
