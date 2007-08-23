@@ -17,22 +17,26 @@ hasPagebar = (pageinfo && pageinfo.totalpages > 1 && pageinfo.totalalphapages !=
 
 [%# href for home page %]
 [% BLOCK homeLink; homeString = "HOME" | string -%]
-	[% "<a href=\"";webroot;"home.html?player=$playerURI\"" ; IF target; "target=\""; target; "\""; END; ">"; img or homeString; "</a>" -%]
+	[% "<a href=\"";webroot;"home.html?player=$playerURI\"" ; IF target; "target=\""; target; "\""; END; ">" %]
+	[% IF img; "<img src=\"html/images/";img;"\" >";ELSE; homeString; END;"</a>" -%]
 [%- END %]
 
 [%# href for save playlist command %]
 [% BLOCK savePlaylistLink; saveString = "SAVE" | string -%] 
-	[% "<a href=\"edit_playlist.html?player=$playerURI&amp;saveCurrentPlaylist=1\" target=\"";$target or 'browser';"\" >";img or saveString;"</a>" -%]
+	[% "<a href=\"edit_playlist.html?player=$playerURI&amp;saveCurrentPlaylist=1\" target=\"";$target or 'browser';"\" >" %]
+	[% IF img; "<img alt=\"";saveString;"\" src=\"html/images/";img;"\" >";ELSE; saveString; END;"</a>" -%]
 [%- END %]
 
 [%#href for downloading the current playlist %]
 [% BLOCK downloadPlaylistLink; downloadString = "DOWNLOAD" | string -%]
-	[% IF playlist_items %][% "<a href=\"status.m3u?player=$playerURI\" target=\"";$target or 'playlist';"\">";img or downloadString;"</a>" -%][%- END %]
+	[% IF playlist_items %][% "<a href=\"status.m3u?player=$playerURI\" target=\"";$target or 'playlist';"\">" %]
+	[% IF img; "<img alt=\"";downloadString;"\" src=\"html/images/";img;"\" >";ELSE; downloadString; END;"</a>" -%][%- END %]
 [%- END %]
 
 [%# href for clear current playlist command %]
 [% BLOCK clearPlaylistLink; clearString = "CLEAR" | string -%]
-	[% IF playlist_items %][% "<a href=\"$statusroot?p0=playlist&amp;p1=clear&amp;player=$playerURI\" target=\"";$target or 'status';"\" >";img or clearString;"</a>" -%][%- END %]
+	[% IF playlist_items %][% "<a href=\"$statusroot?p0=playlist&amp;p1=clear&amp;player=$playerURI\" target=\"";$target or 'status';"\" >" %]
+	[% IF img; "<img alt=\"";clearString;"\" src=\"html/images/";img;"\" >";ELSE; clearString; END;"</a>" -%][%- END %]
 [%- END %]
 
 [%# img tag for album thumbnail in the now playing status context %]
