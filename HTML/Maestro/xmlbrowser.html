@@ -27,8 +27,8 @@
 [% IF streaminfo %]
 	[% IF streaminfo.item.enclosure || streaminfo.item.url %]
 	<div id="songInfoHeader">
-		[% WRAPPER playlink %]href="index.html?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "PLAY_THIS_SONG" | string %]<br />
-		[% WRAPPER addlink %]href="index.html?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]
+		[% WRAPPER playlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]');"[% END %] [% "PLAY_THIS_SONG" | string %]<br />
+		[% WRAPPER addlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]');"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]
 	</div>
 	[% END %]
 	
@@ -165,8 +165,8 @@
 	[%- WRAPPER contentcontainer %]
 		[% IF itemsHaveAudio %]
 			[%- BLOCK allcontrol -%]
-				[% WRAPPER playlink %]href="index.html?[% searchquery %]action=playall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]"[% END %]
-				[% WRAPPER addlink %]href="index.html?[% searchquery %]action=addall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]"[% END %]
+				[% WRAPPER playlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=playall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]');"[% END %]
+				[% WRAPPER addlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=addall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]');"[% END %]
 			[%- END %]
 			[%- WRAPPER contentitem leftcontrols = 'allcontrol' %]
 				[% "ALL_SONGS" | string %]
@@ -176,8 +176,8 @@
 		[%- FOREACH item = items %]
 			[%- BLOCK gencontrol -%]
 				[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure %]
-					[% WRAPPER playlink %]href="index.html?[% searchquery %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
-					[% WRAPPER addlink %]href="index.html?[% searchquery %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
+					[% WRAPPER playlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]');"[% END %]
+					[% WRAPPER addlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]');"[% END %]
 				[% ELSE %]
 					[% PROCESS dummylink %]
 					[% PROCESS dummylink %]

@@ -60,20 +60,28 @@ var Utils = function(){
 				el.setHeight(myHeight);
 			}
 		},
-		
-		processCommand : function(param) {
-			Ext.Ajax.request({
-				method: 'POST',
-				url: 'status.html',
-				params: param + 'ajaxRequest=1&force=1'
-			});
 
-			// good luck...			
-			try { Player.getUpdate(); }
-			catch(e) {
-				try { parent.Player.getUpdate(); }
-				catch(e) {}
-			}
+		processPlaylistCommand : function(param) {
+			this.processRawCommand('status.html?' + param + 'ajaxRequest=1&force=1', true);
+		},
+
+		processRawCommand : function(myUrl, updateStatus) {
+			Ext.Ajax.request({
+				method: 'GET',
+				url: myUrl,
+				timeout: 5000,
+				disableCaching: true,
+				callback: function(){
+					// good luck...
+					if (updateStatus) {
+						try { Player.getUpdate(); }
+						catch(e) {
+							try { parent.Player.getUpdate(); }
+							catch(e) {}
+						}
+					}
+				}
+			});
 		}
 
 	};
