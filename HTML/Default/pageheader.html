@@ -20,6 +20,19 @@
 			[% maestroScripts %]
 		[% END %]
 
+		[% IF debug %]
+		<style>
+			.x-layout-panel-body {
+				background: white;
+			}
+			
+			.x-dlg .x-tabs-bottom .x-tabs-body {
+				background: white;
+				color: black;
+			}
+		</style>
+		[% END %]
+
 		<!--[if lte IE 6]>
 		<link href="[% webroot %]ie.css" type="text/css" rel="stylesheet">
 		<![endif]-->

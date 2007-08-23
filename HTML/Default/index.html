@@ -12,6 +12,17 @@
 		<style>
 			html, body { background: white; }
 			body { margin: 20px; }
+
+			[% IF debug %]
+			.x-layout-panel-body {
+				background: white;
+			}
+			
+			.x-dlg .x-tabs-bottom .x-tabs-body {
+				background: white;
+				color: black;
+			}
+			[% END %]
 		</style>
 
 		<!--[if lte IE 6]>
