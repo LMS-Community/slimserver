@@ -399,6 +399,8 @@ sub gotOPML {
 	# Remember previous timeout value
 	my $timeout = $params->{'timeout'};
 
+	my $radioDefault;
+
 	my $index = 0;
 	for my $item ( @{ $opml->{'items'} || [] } ) {
 		
@@ -410,6 +412,14 @@ sub gotOPML {
 		# Copy timeout to items with a URL
 		if ( $item->{'url'} ) {
 			$item->{'timeout'} = $timeout;
+		}
+		
+		# For radio buttons, copy default value to all other radio items
+		if ( $item->{type} eq 'radio' && $item->{default} ) {
+			$radioDefault = $item->{default};
+		}
+		elsif ( $item->{type} eq 'radio' ) {
+			$item->{default} = $radioDefault;
 		}
 		
 		# Wrap text if needed
@@ -496,9 +506,44 @@ sub gotOPML {
 			if (!defined $itemURL && $item->{'value'} && $item->{'value'} ne $item->{'name'}) {
 				$itemURL = $item->{'value'};
 			}
-
+			
+			# For type=radio items, don't push right, but submit the URL in the background.
+			# After a good response, update the checkbox to the newly selected value
+			if ( $item->{type} && $item->{type} eq 'radio' ) {
+				
+				# Did the user select a different item than the default?
+				if ( $item->{default} ne $item->{name} ) {
+						
+					# Submit the URL in the background
+					$client->block();
+					
+					$log->debug("Submitting $itemURL in the background for radio selection");
+				
+					Slim::Formats::XML->getFeedAsync(
+						sub { 
+							$log->debug("Status OK for $itemURL");
+							
+							# Change the default value in all other radio items
+							for my $sibling ( @{ $opml->{items} } ) {
+								next if $sibling->{type} ne 'radio';
+								$sibling->{default} = $item->{name};
+							}
+							
+							$client->unblock();
+							
+							$client->update();
+						},
+						\&gotError,
+						{
+							client => $client,
+							url    => $itemURL,
+						},
+					);
+				}
+			}
+			
 			# Allow text-only items that go nowhere and just bump
-			if ( $item->{'type'} && $item->{'type'} eq 'text' ) {
+			elsif ( $item->{'type'} && $item->{'type'} eq 'text' ) {
 				$client->bumpRight();
 			}
 			elsif ( $item->{'search'} || $item->{'type'} eq 'search' ) {
@@ -695,14 +740,19 @@ sub overlaySymbol {
 
 	my $overlay = '';
 
-	if (hasAudio($item)) {
+	if ( hasAudio($item) ) {
 
 		$overlay .= $client->symbols('notesymbol');
 	}
 	
-	$item->{'type'} ||= ''; # avoid warning but still display right arrow
-
-	if ( $item->{'type'} ne 'text' && ( hasDescription($item) || hasLink($item) ) ) {
+	$item->{type} ||= ''; # avoid warning but still display right arrow
+	
+	if ( $item->{type} eq 'radio' ) {
+		# Display check box overlay for type=radio
+		my $default = $item->{default};
+		$overlay = Slim::Buttons::Common::checkBoxOverlay( $client, $default eq $item->{name} );
+	}
+	elsif ( $item->{type} ne 'text' && ( hasDescription($item) || hasLink($item) ) ) {
 
 		$overlay .= $client->symbols('rightarrow');
 	}
