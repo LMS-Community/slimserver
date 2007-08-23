@@ -10,6 +10,10 @@
 	border: 0px none;
 }
 
+.x-layout-active-content {
+	background: white;
+}
+
 .x-btn {
 	display: inline;
 }

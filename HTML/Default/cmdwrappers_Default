@@ -1,7 +1,8 @@
 [%- FILTER null %]
+	[% debug = 0 %]
 
-	[% controlGraphics  = 1 %]
-	[% browserTarget  = "browser" %]
+	[% controlGraphics = 1 %]
+	[% browserTarget = "browser" %]
 	[% useAJAX = 0 %]
 	[% crumbSeparator = ">" %]
 	

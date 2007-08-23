@@ -9,7 +9,7 @@
 		[% PROCESS standardheader.html %]
 
 		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
-		<script type="text/javascript" src="/html/ext/ext-all.js"></script>
+		<script type="text/javascript" src="/html/ext/ext-all[% IF debug %]-debug[% END %].js"></script>
 		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
 		<script type="text/javascript" src="[% webroot %]html/utils.js"></script>
 
