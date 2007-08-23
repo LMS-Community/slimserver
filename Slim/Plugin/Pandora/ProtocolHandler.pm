@@ -471,8 +471,6 @@ sub trackInfo {
 	# Get the current track
 	my $currentTrack = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
 	
-	warn "Current track: " . Data::Dump::dump($currentTrack);
-	
 	# SN URL to fetch track info menu
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
 		  '/api/pandora/opml/trackinfo?stationId=' . $stationId 
