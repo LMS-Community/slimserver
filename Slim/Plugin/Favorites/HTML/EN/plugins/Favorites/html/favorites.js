@@ -110,19 +110,23 @@ function editSave(id) {
 	showElements(['defaultform']);
 	
 	// get an update of the edited line item
-	new Ajax.Updater( { success: element }, webroot + 'plugins/Favorites/index.html', {
+	new Ajax.Request(
+	webroot + 'plugins/Favorites/index.html',
+	{
 		method: 'post',
 		postBody: params,
 		asynchronous: true,
 		onSuccess: function(t) {
 			delete editHTML[id];
+			element.innerHTML = t.responseText;
 			new Effect.Highlight('dragitem_' + id, { endcolor: "#d5d5d5" });
 		},
 		onFailure: function(t) {
 			delete editHTML[id];
 			alert('Error -- ' + t.responseText);
-		}
-	} );
+		},
+		requestHeaders:['Referer', document.location.href]
+	});
 }
 
 function editTitle(id) {

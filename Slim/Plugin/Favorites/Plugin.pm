@@ -443,8 +443,9 @@ sub indexHandler {
 		push @entries, $entry;
 	}
 
-	$params->{'entries'} = \@entries;
-	$params->{'levelindex' } = join '.', @indexPrefix;
+	$params->{'entries'}       = \@entries;
+	$params->{'levelindex'}    = join '.', @indexPrefix;
+	$params->{'indexOnLevel'}  = $indexLevel;
 
 	# add the top level title to pwd_list
 	push @{$params->{'pwd_list'}}, {

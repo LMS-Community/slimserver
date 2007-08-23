@@ -7,8 +7,8 @@
 				<input type="hidden" name="removeoncancel" value="[% removeoncancel %]">
 				<input id="edit_title_[% entry.index %]" style="width: 71%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newlevel %] onClick="this.value=''"[% END %]>
 				[% IF useAJAX %]
-					<input type="button" class="stdclick" style="display: inline; width: 10%;" value=[% "SAVE" | string %] onclick="editSave([% entry.index %]); return false;" />
-					<input type="button" class="stdclick" style="display: inline; width: 10%;" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel([% entry.index %][% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
+					<input type="button" class="stdclick" style="display: inline; width: 10%;" value=[% "SAVE" | string %] onclick="editSave('[% entry.index %]'); return false;" />
+					<input type="button" class="stdclick" style="display: inline; width: 10%;" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel('[% entry.index %]'[% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
 				[% ELSE %]
 					<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="editset" value=[% "SAVE" | string %]>
 					<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
@@ -22,8 +22,8 @@
 				<input id="edit_title_[% entry.index %]" style="display: inline; width: 35%;" type="text" class="stdedit" name="entrytitle" value="[% entry.title %]" [% IF newentry %] onClick="this.value=''"[% END %]>
 				<input id="edit_url_[% entry.index %]" style="display: inline; width: 35%;" type="text" class="stdedit" name="entryurl" value="[% entry.url %]" [% IF newentry %] onClick="this.value=''"[% END %]>
 				[% IF useAJAX %]
-					<input type="button" class="stdclick" style="display: inline; width: 10%;" value=[% "SAVE" | string %] onclick="editSave([% entry.index %]); return false;" />
-					<input type="button" class="stdclick" style="display: inline; width: 10%;" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel([% entry.index %][% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
+					<input type="button" class="stdclick" style="display: inline; width: 10%;" value=[% "SAVE" | string %] onclick="editSave('[% entry.index %]'); return false;" />
+					<input type="button" class="stdclick" style="display: inline; width: 10%;" value=[% "PLUGIN_FAVORITES_CANCEL" | string %] onclick="editCancel('[% entry.index %]'[% IF removeoncancel %],[% removeoncancel %][% END %]); return false;" />
 				[% ELSE %]
 					<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="editset" value=[% "SAVE" | string %]>
 					<input type="submit" style="display: inline; width: 10%;" class="stdclick" name="cancel" value=[% "PLUGIN_FAVORITES_CANCEL" | string %]>
@@ -66,7 +66,7 @@
 [% BLOCK editcontrols %]<span id="editcontrols[% entry.index %]" [% IF useAJAX %]style="display: none;"[% END %]>
 	[% PROCESS favoritescontrol %]
 	[% WRAPPER editlink noTarget=1 -%]
-		[%- IF useAJAX -%]href="javascript:void(0);" onClick="edit([% entry.index %]);"
+		[%- IF useAJAX -%]href="javascript:void(0);" onClick="edit('[% entry.index %]');"
 		[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=edit&amp;index=[% entry.index %]"
 		[%- END -%]
 	[%- END %]
@@ -109,11 +109,15 @@
 [% END %]
 	
 [% IF action == 'edit' AND useAJAX %]
-	[% odd = 1 - (index % 2) %]
-	[% PROCESS editentry entry = entries.$index %]
+
+	[% odd = 1 - (indexOnLevel % 2) %]
+	[% PROCESS editentry entry = entries.$indexOnLevel %]
+
 [% ELSIF action == "editset" AND useAJAX %]
-	[% odd = 1 - (index % 2) %]
-	[% PROCESS entryblock entry = entries.$index %]
+
+	[% odd = 1 - (indexOnLevel % 2) %]
+	[% PROCESS entryblock entry = entries.$indexOnLevel %]
+
 [% ELSIF action == "edittitle" AND useAJAX %]
 	[% PROCESS titleedit %]
 [% ELSE %]
@@ -236,9 +240,7 @@
 	[% END %]</div>
 [% END %]
 
-[% END %]
 
-[% WRAPPER contentcontainer %]
 <div id="defaultform" [% IF editmode OR edittitle OR import OR load OR save %] style="display: none;"[% END %]>
 	<form name="buttons" method="get" action="[% webroot %]plugins/Favorites/index.html">
 		<input type="hidden" name="index" value="[% levelindex %]">
