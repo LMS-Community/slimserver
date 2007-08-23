@@ -53,7 +53,18 @@
 
 			<div id="header">
 				<div id="header_left"></div>
-				<div id="header_content"></div>
+				<div id="header_content">
+					<span id="playerChooser" style="position: absolute; right: 100px;">
+					<form id="playerForm" action="index.html">
+						[% "NOW_PLAYING" | string %]
+						[% IF player_chooser_list -%]
+							<select name="player" onchange="this.form.submit();" class="stdedit">[% player_chooser_list %]</select>
+						[%- ELSE -%]
+							[% IF player_name -%]<span class="songtitle">[% player_name %]</span>[%- END -%]
+							[%- IF sync %][% "SYNCHRONIZED_WITH" | string %] [% sync %][% END -%]
+						[%- END %]
+					</form></span>
+				</div>
 			</div>
 	
 			<div id="main">
@@ -92,7 +103,17 @@
 
 			<div id="footer">
 				<div id="footer_left"></div>
-				<div id="footer_content"></div>
+				<div id="footer_content">
+					<span id="helpLink"><img src="html/images/b_help.png"> [% "HELP" | string %]</span>
+					<span id="settingsLinks">
+							<span id="playerSettingsLink">
+								[%- IF player_list %]
+									<img src="html/images/b_player_settings.png"> [% "PLAYER_SETTINGS" | string %]
+								[%- END %]
+							</span>
+						<span id="settingsLink"><img src="html/images/b_settings.png"> [% "SERVER_SETTINGS" | string %]</span>
+					</span>
+				</div>
 			</div>
 
 		</div>

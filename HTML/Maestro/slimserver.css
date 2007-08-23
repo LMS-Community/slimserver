@@ -133,6 +133,29 @@ img { border: 0; }
 	background: url(html/images/footer_right.png) no-repeat bottom right;
 }
 
+#helpLink img, #settingsLinks img {
+	vertical-align: middle;
+}
+
+#helpLink {
+	font-size: 95%;
+	position: relative;
+	top: 5px;
+	left: 25px;
+}
+
+#settingsLinks {
+	font-size: 95%;
+	position: absolute;
+	top: 5px;
+	right: 25px;
+	text-align: right;
+}
+
+#settingsLink {
+	margin-left: 20px;
+}
+
 #footer_left {
 	background: url(html/images/footer_left.png) no-repeat 0 0;
 	height: 38px;

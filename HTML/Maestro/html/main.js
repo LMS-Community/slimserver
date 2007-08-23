@@ -26,6 +26,19 @@ Main = function(){
 			Playlist.load();
 			Player.init();
 
+			// TODO: these links need to go to the correct page!!!
+			Ext.get('helpLink').on('click', function(){ 
+				window.open(webroot + 'html/docs/quickstart.html', 'settings', 'dependent=yes,resizable=yes'); 
+			});
+
+			Ext.get('settingsLink').on('click', function(){ 
+				window.open(webroot + 'settings/server/basic.html', 'settings', 'dependent=yes,resizable=yes'); 
+			});
+
+			Ext.get('playerSettingsLink').on('click', function(){ 
+				window.open(webroot + 'settings/player/basic.html?playerid=' + player, 'playersettings', 'dependent=yes,resizable=yes'); 
+			});
+
 			Ext.EventManager.onWindowResize(this.onResize, layout);
 			Ext.EventManager.onDocumentReady(this.onResize, layout, true);
 
@@ -479,7 +492,7 @@ Player = function(){
 		},
 
 		openPlayerControl : function(){
-			window.open(webroot + 'status_header.html', "gaasd", "width=500,height=165");
+			window.open(webroot + 'status_header.html', 'playerControl', "width=500,height=165");
 		},
 
 		// values could be adjusted if not enough
