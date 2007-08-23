@@ -373,7 +373,7 @@ Player = function(){
 							Playlist.load();
 						}
 
-						if (result.playlist_cur_index) {
+						if (result.playlist_tracks > 0) {
 							Ext.get('ctrlCurrentTitle').update(
 								result.current_title ? result.current_title : (
 									(result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
