@@ -1,4 +1,4 @@
-<div class="selectorMarker" id="playlistSong[% item.num %]Selector"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+<div class="[% IF item.currentsong %]currentSong[% ELSE %]selectorMarker[% END %]" id="playlistSong[% item.num %]Selector"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 	<div class="browsedbListItem itemWithCover">
 		<span class="playlistCover">
 			<img src="/music/[% item.itemobj.id %]/cover_50x50_F.jpg">
@@ -14,7 +14,6 @@
 		<div class="playlistSongDetail">
 			[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj noby = 1; END %]
 		</div>
-		[% IF item.currentsong %]<span id="playlistCurrentSong"></span>[% END %]
 		<span id="playlistSong[% item.num %]"></span>
 		<div class="playlistControls">
 			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=jump&amp;p2=[% item.num %]&amp;start=[% start %]&amp;player=[% playerURI %]" target="status"><img src="[% webroot %]html/images/b_play.png" width=15 height=15 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>

@@ -120,28 +120,18 @@ Playlist = function(){
 			Playlist.highlightCurrent();
 		},
 
-		highlightCurrent : function(id){
+		highlightCurrent : function(){
 			if (el = Ext.get('playList')) {
 				plPos = el.getScroll();
 				plView = el.getViewSize();
-				
-				if (el = Ext.get(id || 'playlistCurrentSong')) {
+
+				if (el = Ext.DomQuery.selectNode('div.currentSong')) {
+					el = Ext.get(el);
 					if (el.getTop() > plPos.top + plView.height
 						|| el.getBottom() < plPos.top)
 							el.scrollIntoView('playList');
 				}
 			}
-
-			menuItems = Ext.DomQuery.select('div.currentSong');
-			for(var i = 0; i < menuItems.length; i++) {
-				el = Ext.get(menuItems[i].id);
-				if (el)
-					el.replaceClass('currentSong', 'selectorMarker')
-			};
-			
-			el = Ext.get((id || 'playlistCurrentSong') + 'Selector');
-				if (el)
-					el.replaceClass('selectorMarker', 'currentSong')
 		}
 	}
 }();
@@ -335,8 +325,8 @@ Player = function(){
 					var result = responseText.result;
 					if (result.power && result.playlist_tracks > 0) {
 						// update the playlist if it's available
-						if (Ext.get('playList') && result.playlist_cur_index) {
-							Playlist.highlightCurrent('playlistSong' + result.playlist_cur_index);
+						if (Ext.get('playList') && result.playlist_cur_index >= 0) {
+							Playlist.load();
 						}
 
 						Ext.get('ctrlCurrentTitle').update(
