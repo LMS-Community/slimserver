@@ -1,27 +1,6 @@
 [%- pagetitle = browseby | string; pageicon = browseby; noSpacer = 1 -%]
 [%- maestroScripts = BLOCK -%]
 	<script type="text/javascript" src="[% webroot %]html/browse.js"></script>
-	<script type="text/javascript">
-		function resize(src,width)
-		{
-			if (!width) {
-				// special case for IE (argh)
-				if (document.all) //if IE 4+
-				{
-					width = document.body.clientWidth*0.5;
-				}
-				else if (document.getElementById) //else if NS6+
-				{
-					width = window.innerWidth*0.5;
-				}
-			}
-		
-			if (src.width > width || !src.width)
-			{
-				src.width = width;
-			}
-		}
-	</script>
 [%- END -%]
 [%- PROCESS pageheader.html dontscroll=1 -%]
 
@@ -44,10 +23,10 @@
 	[%- END %]
 [% END -%]
 
-[% IF artwork == 1 && (item.levelName == 'album' || item.levelName == 'age') %]
-<div id='albumBackground' style="display:none;"><img src = "[% webroot %]html/images/cdspin3.gif" alt="" title="" onClick = "javascript:Browse.hideAlbumInfo();" style="position: absolute; top: 45%; left: 45%;"></div>
+[% IF (item.levelName == 'album' || item.levelName == 'age') %]
+<div id='albumBackground' style="display:none;"><img src = "[% webroot %]html/images/cdspin3.gif" alt="" title="" onclick="Browse.hideAlbumInfo();" style="position: absolute; top: 45%; left: 45%;"></div>
 <div id = 'albumPopup' style="display:none;">
-	<div id = 'Browse.closeAlbumPopup'><span id="closeAlbumText"><img src = "[% webroot %]html/images/b_delete.png" alt="[% "CLOSE" | string %]" title ="[% "CLOSE" | string %]"></span></div>
+	<div id = 'Browse.closeAlbumPopup'><span id="closeAlbumText"><img src = "[% webroot %]html/images/b_delete.png" alt="[% "CLOSE" | string %]" title ="[% "CLOSE" | string %]"  onclick="Browse.hideAlbumInfo();"></span></div>
 	<div id = 'trackInfo'></div>
 </div>
 [% END %]
