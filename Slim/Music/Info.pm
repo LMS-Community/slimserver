@@ -415,13 +415,15 @@ sub getCurrentTitle {
 	my $client = shift;
 	my $url    = shift || return undef;
 	
-	# Let plugins control the current title if they want
-	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
-	if ( $handler && $handler->can('getCurrentTitle') ) {
-	    if ( my $title = $handler->getCurrentTitle( $client, $url ) ) {
-	        return $title;
-        }
-    }
+	if ( blessed($client) ) {
+		# Let plugins control the current title if they want
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+		if ( $handler && $handler->can('getCurrentTitle') ) {
+		    if ( my $title = $handler->getCurrentTitle( $client, $url ) ) {
+		        return $title;
+	        }
+	    }
+	}
 
 	return $currentTitles{$url} || standardTitle($client, $url);
 }

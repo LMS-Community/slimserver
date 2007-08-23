@@ -10070,6 +10070,9 @@ SQUEEZENETWORK_SETTINGS
 DEBUG_NETWORK_SQUEEZENETWORK
 	EN	SqueezeNetwork Logging
 
+DEBUG_NETWORK_COMETD
+	EN	Cometd protocol logging
+
 SETUP_GROUP_DEBUG_DESC
 	DE	SlimServer enthält eine Reihe von Debugging-Einstellungen, mit denen Sie umfangreiche Angaben über den Betrieb des Servers aufzeichnen können. Aktivieren Sie die Punkte, die protokolliert werden sollen, und klicken Sie auf 'Ändern', um das Protokollieren der entsprechenden Information zu aktivieren. <a href="/log.txt" target="log">Hier können Sie die aktuellen Protokolleinträge anzeigen</a>.
 	EN	SlimServer has a number of debugging settings that can be used to record detailed information about the server & scanner operation. Each debugging category has a severity for logging. With "Debug" being the most verbose, and "Off" being the least.
