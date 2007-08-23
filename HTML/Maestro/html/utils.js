@@ -49,8 +49,13 @@ var Utils = function(){
 				infoHeight = el.getHeight();
 
 			el = Ext.get('content');
+
 			if (el && el.hasClass('scrollingPanel')) {
-				el.setHeight(Ext.fly(document.body).getHeight() - el.getTop() - infoHeight);
+
+				myHeight = Ext.fly(document.body).getHeight() - el.getTop() - infoHeight;
+				myHeight = Math.max(300, myHeight);
+
+				el.setHeight(myHeight);
 			}
 		}
 

@@ -56,9 +56,8 @@
 				<div id="header_content">
 					<span id="playerChooser" style="position: absolute; right: 100px;">
 					<form id="playerForm" action="index.html">
-						[% "NOW_PLAYING" | string %]
 						[% IF player_chooser_list -%]
-							<select name="player" onchange="this.form.submit();" class="stdedit">[% player_chooser_list %]</select>
+							<select id="playerList" name="player" onchange="this.form.submit();" class="stdedit">[% player_chooser_list %]</select>
 						[%- ELSE -%]
 							[% IF player_name -%]<span class="songtitle">[% player_name %]</span>[%- END -%]
 							[%- IF sync %][% "SYNCHRONIZED_WITH" | string %] [% sync %][% END -%]
