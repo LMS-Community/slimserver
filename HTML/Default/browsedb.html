@@ -36,6 +36,9 @@
 [%- END; END -%]  
 
 [%- WRAPPER contentcontainer %]
+	[% IF coverArt AND tree != 1 -%]
+		<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
+	[% END -%]
 	[% FOREACH item = browse_items -%]
 		[%- PROCESS browsedbitems_list.html -%]
 	[%- END %]
