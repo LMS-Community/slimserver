@@ -1042,7 +1042,7 @@ sub menusettingsQuery {
 		],
 	};
 	
-	
+
 	# always add shuffle
 	$val = Slim::Player::Playlist::shuffle($client);
 	push @menu, {
@@ -1084,6 +1084,77 @@ sub menusettingsQuery {
 		],
 	};
 
+	# always add sleep (?)
+	$val = $client->currentSleepTime();
+	my $sleeping_in = Slim::Utils::Strings::string('SLEEPING_IN');
+	my $minutes = Slim::Utils::Strings::string('MINUTES');
+	push @menu, {
+		text      => Slim::Utils::Strings::string('SLEEP'),
+		count     => 6,
+		offset    => 0,
+		item_loop => [
+			{
+				text    => Slim::Utils::Strings::string("NONE"),
+				radio	=> ($val == 0) + 0, # 0 is added to force the data type to number
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['sleep', '0'],
+					},
+				},
+			},
+			{
+				text    => $sleeping_in . ' 15 ' . $minutes,
+				radio	=> ($val == (15*60)) + 0, # 0 is added to force the data type to number
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['sleep', 15*60 ],
+					},
+				},
+			},
+			{
+				text    => $sleeping_in . ' 30 ' . $minutes,
+				radio	=> ($val == (30*60)) + 0, # 0 is added to force the data type to number
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['sleep', 30*60],
+					},
+				},
+			},
+			{
+				text    => $sleeping_in . ' 45 ' . $minutes,
+				radio	=> ($val == (45*60)) + 0, # 0 is added to force the data type to number
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['sleep', 45*60],
+					},
+				},
+			},
+			{
+				text    => $sleeping_in . ' 60 ' . $minutes,
+				radio	=> ($val == (60*60)) + 0, # 0 is added to force the data type to number
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['sleep', 60*60],
+					},
+				},
+			},
+			{
+				text    => $sleeping_in . ' 90 ' . $minutes,
+				radio	=> ($val == (90*60)) + 0, # 0 is added to force the data type to number
+				actions => {
+					do => {
+						player => 0,
+						cmd => ['sleep', 90*60],
+					},
+				},
+			},
+		],
+	};
 	# replay gain (volume adjustment)
 	if ($client->canDoReplayGain(0)) {
 		$val = $prefs->client($client)->get('replayGainMode');
