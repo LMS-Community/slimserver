@@ -3202,7 +3202,7 @@ sub titlesQuery {
 
 	# we don't want client playlists (Now playing), transporter sources,
 	# directories, or playlists.
-	$where->{'me.content_type'} = {'!=', ['cpl', 'src', 'ssp', 'dir']};
+	$where->{'me.content_type'} = [ -and => {'!=', 'cpl'},  {'!=', 'src'},  {'!=', 'ssp'}, {'!=', 'dir'} ];
 
 	# Manage joins
 	if (defined $genreID) {

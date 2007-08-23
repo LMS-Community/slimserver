@@ -790,6 +790,7 @@ sub playlistSaveCommand {
 	}
 
 	$playlistObj->set_column('titlesort', $titlesort);
+	$playlistObj->set_column('titlesearch', $titlesort);
 	$playlistObj->setTracks($annotatedList);
 	$playlistObj->update;
 
