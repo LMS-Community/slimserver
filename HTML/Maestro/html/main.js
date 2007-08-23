@@ -129,6 +129,9 @@ Playlist = function(){
 				},
 
 				'.currentSong@mouseout': function(ev, target){
+					if (Ext.get(target).findParent('.currentSong'))
+						return;
+
 					el = Ext.get(target);
 					if (el) {
 						if (controls = Ext.DomQuery.selectNode('div.playlistControls', el.dom)) {

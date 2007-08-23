@@ -72,7 +72,7 @@ var Utils = function(){
 				timeout: 5000,
 				disableCaching: true,
 				callback: function(){
-					// good luck...
+					// try updating the player control in this or the parent document
 					if (updateStatus) {
 						try { Player.getUpdate(); }
 						catch(e) {
