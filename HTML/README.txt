@@ -8,6 +8,10 @@ Bagpuss:
 	Owner: N/A
 	Description: Just a stylesheet - everything else is EN.
 
+Classic:
+	Owner: SlimDevices
+	Description: This is the previous Official skin for SlimServer
+
 Dark:
 	Owner: N/A
 	Description: Minimal changes - different icons than Default.
@@ -16,15 +20,11 @@ Default:
 	Owner: SlimDevices
 	Description: This is the Official skin for SlimServer
 
-Default2:
-	Owner: Jacob Potter
-	Description: AJAX'd skin similar to ExBrowse2, but looks like Default.
-
 EN:
 	Owner: SlimDevices
 	Description: Base template elements and generic fallback HTML for other skins.
 
-ExBrowse2:
+ExBrowse3:
 	Owner: Jacob Potter
 	Description: AJAX'd skin with a more dynamic nature than others.
 
@@ -43,6 +43,10 @@ Moser:
 NBMU:
 	Owner: N/A
 	Description: N/A
+
+Nokia770:
+	Owner: Ben Klaas
+	Description: Skin optimised for Nokia770/800 style web tablets
 
 Purple:
 	Owner: N/A

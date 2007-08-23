@@ -31,7 +31,7 @@ Main = function(){
 			});
 
 			Ext.get('settingsLink').on('click', function(){ 
-				window.open('/EN/Default/settings/server/basic.html', 'settings', 'dependent=yes,resizable=yes'); 
+				window.open('/EN/settings/server/basic.html', 'settings', 'dependent=yes,resizable=yes'); 
 			});
 
 			Ext.get('playerSettingsLink').on('click', function(){ 
