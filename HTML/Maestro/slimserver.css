@@ -156,6 +156,10 @@ img { border: 0; }
 	margin-left: 20px;
 }
 
+#helpLink, #settingsLink, #playerSettingsLink, .link {
+	cursor: pointer;
+}
+
 #footer_left {
 	background: url(html/images/footer_left.png) no-repeat 0 0;
 	height: 38px;
@@ -325,6 +329,15 @@ img { border: 0; }
 	background: url(html/images/infotab_top_right.gif) no-repeat top right; 
 }
 
+#playlistTab {
+	position: relative;
+	bottom: 5px;
+}
+
+#playlistTab .infoTab_content {
+	margin-left: 10px;
+	margin-right: 10px;
+}
 
 #mainbody {
 	position: relative;

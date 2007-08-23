@@ -13,11 +13,16 @@
 	</div>
 
 	[% IF playercount != '0' %]
-		<div id="currentPlaylistLabel">
-			<span id="currentPlaylistCommands">[% IF cansave %][% PROCESS savePlaylistLink img='b_save.png' %] [% END %]
-			[% PROCESS downloadPlaylistLink img='b_download.png' %] [% PROCESS clearPlaylistLink img='b_clear.png' %]
+	<div id="playlistTab" class="infoTab">
+		<div class="infoTab_content">
+			<div class="infoTab_top"><div></div></div>
+			<span id="playlistCommands">[% img = 'b_save.png' %][% IF cansave %][% PROCESS savePlaylistLink %][% END %]
+			[% img = 'b_download.png' %][% PROCESS downloadPlaylistLink %] <img onclick="Playlist.clear();" src="html/images/b_clear.png" class="link"/>
 			[% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
 			</span>
 		</div>
+	</div>
 	[% END %]
+
+
 </div>
