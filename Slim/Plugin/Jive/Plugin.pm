@@ -17,7 +17,7 @@ use Slim::Utils::Log;
 #use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
 #use Slim::Utils::Strings qw(string);
-use Slim::Player::Playlist qw(repeat shuffle);
+use Slim::Player::Playlist;
 use Data::Dumper;
 
 

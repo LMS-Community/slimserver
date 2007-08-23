@@ -788,43 +788,55 @@ sub _checkInFolder {
 	}
 }
 
-my %_ignoredItems = (
+my %_ignoredItems;
 
-	# always ignore . and ..
-	'.' => 1,
-	'..' => 1,
+if (Slim::Utils::OSDetect::OS() eq 'mac') {
+	%_ignoredItems = (
+		# Items we should ignore on a mac volume
+		'Icon' => 1,
+		'TheVolumeSettingsFolder' => 1,
+		'TheFindByContentFolder' => 1,
+		'Network Trash Folder' => 1,
+		'Temporary Items' => 1,
+		'.Trashes' => 1,
+		'.AppleDB' => 1,
+		'.AppleDouble' => 1,
+		'.Metadata' => 1,
+		'.DS_Store' => 1,
+		# Dean: "Essentially hide anything you can't see in the finder or explorer"
+		'automount' => 1,
+		'cores' => 1,
+		'bin' => 1,
+		'dev' => 1,
+		'etc' => 1,
+		'private' => 1,
+		'sbin' => 1,
+		'usr' => 1,
+		'var' => 1,
+		'opt' => 1,	
+	)
+}
 
-	# Items we should ignore on a mac volume
-	'Icon' => 1,
-	'TheVolumeSettingsFolder' => 1,
-	'TheFindByContentFolder' => 1,
-	'Network Trash Folder' => 1,
-	'Temporary Items' => 1,
-	'.Trashes' => 1,
-	'.AppleDB' => 1,
-	'.AppleDouble' => 1,
-	'.Metadata' => 1,
-	'.DS_Store' => 1,
-	# Dean: "Essentially hide anything you can't see in the finder or explorer"
-	'automount' => 1,
-	'cores' => 1,
-	'bin' => 1,
-	'dev' => 1,
-	'etc' => 1,
-	'private' => 1,
-	'sbin' => 1,
-	'usr' => 1,
-	'var' => 1,
-	'opt' => 1,
+elsif (Slim::Utils::OSDetect::OS() eq 'win') {
+	%_ignoredItems = (
+		# Items we should ignore  on a Windows volume
+		'System Volume Information' => 1,
+		'RECYCLER' => 1,
+		'Recycled' => 1,	
+	)
+}
 
-	# Items we should ignore on a linux vlume
-	'lost+found' => 1,
+else {
+	%_ignoredItems = (
+		# Items we should ignore on a linux vlume
+		'lost+found' => 1,
+	)	
+}
 
-	# Items we should ignore  on a Windows volume
-	'System Volume Information' => 1,
-	'RECYCLER' => 1,
-	'Recycled' => 1,
-);
+# always ignore . and ..
+$_ignoredItems{'.'}	= 1;
+$_ignoredItems{'..'}	= 1;
+
 
 =head2 readDirectory( $dirname, [ $validRE ])
 
