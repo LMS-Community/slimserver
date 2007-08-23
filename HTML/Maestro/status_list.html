@@ -15,11 +15,9 @@
 			[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj noby = 1; END %]
 		</div>
 		<span id="playlistSong[% item.num %]"></span>
-		<div class="playlistControls">
-			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=jump&amp;p2=[% item.num %]&amp;start=[% start %]&amp;player=[% playerURI %]" target="status"><img src="[% webroot %]html/images/b_play.png" width=15 height=15 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]"></a>
-			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=move&amp;p2=[% item.num %]&amp;p3=%2B1&amp;start=[% start %]&amp;player=[% playerURI %]" target="status"><img src="[% webroot %]html/images/b_down.png" width=15 height=15 alt="[% "DOWN" | string%]" title="[% "DOWN" | string %]"></a>
-			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=move&amp;p2=[% item.num %]&amp;p3=%2D1&amp;start=[% start %]&amp;player=[% playerURI %]" target="status"><img src="[% webroot %]html/images/b_up.png" width=15 height=15 alt="[% "UP" | string %]" title="[% "UP" | string %]"></a>
-			<a href="[% webroot %][% statusroot %]?p0=playlist&amp;p1=delete&amp;p2=[% item.num %]&amp;start=[% start %]&amp;player=[% playerURI %]" target="status"><img src="[% webroot %]html/images/b_delete.png" width=15 height=15 alt="[% "DELETE" | string %]" title="[% "DELETE" | string %]"></a>
+		<div class="playlistControls" style="display: none;">
+			<img onclick="Player.playerControl(['playlist', 'index', '[% start + item.num %]'])" src="[% webroot %]html/images/b_play.png" width=15 height=15 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]">
+			<img onclick="Player.playerControl(['playlist', 'delete', '[% start + item.num %]'])" src="[% webroot %]html/images/b_delete.png" width=15 height=15 alt="[% "DELETE" | string %]" title="[% "DELETE" | string %]"></a>
 		</div>
 	</div>
 </div></div></div></div></div>

@@ -7,8 +7,19 @@
 	
 
 	[% BLOCK cmdlink -%]
-		<a [% content %] [% UNLESS noTarget %]target="status"[% END %]><img src="[% webroot %]html/images/[% cmdimage %].png" width="15" height="15" alt="[% cmdtitle | string | ucfirst %]" title="[% cmdtitle | string | ucfirst %]"/></a>
+		<a [% content %] [><img src="[% webroot %]html/images/[% cmdimage %].png" width="15" height="15" alt="[% cmdtitle | string | ucfirst %]" title="[% cmdtitle | string | ucfirst %]"/></a>
 	[%- END %]
+
+	[% BLOCK cmdHRef -%]onclick="Utils.processCommand('[% 
+		IF numcmdFor.$cmdType; # better way to determine this?
+			PROCESS cmdNumericQuery;
+		ELSIF (itemobj.isRemoteURL  || !attributes || itemobj.content_type() == 'dir');
+			PROCESS cmdRemoteURLQuery;
+		ELSE;
+			PROCESS cmdLocalQuery;
+		END; %]&amp;player=[% playerURI %]',this.name)"
+	[%- END %]
+
 
 	[% BLOCK contentitem -%]
 	<div class="selectorMarker"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">

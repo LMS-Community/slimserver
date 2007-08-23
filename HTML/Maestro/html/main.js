@@ -23,7 +23,6 @@ Main = function(){
 			layout.add('south', new Ext.ContentPanel('footer', {fitToFrame:true, fitContainer:true}));
 			layout.add('center', new Ext.ContentPanel('main', {fitToFrame:true, fitContainer:true}));
 
-			Playlist.load();
 			Player.init();
 
 			// TODO: these links need to go to the correct page!!!
@@ -117,6 +116,39 @@ Playlist = function(){
 		
 		onUpdated : function(){
 			Main.onResize();
+			Utils.addBrowseMouseOver();
+
+			Ext.addBehaviors({
+				'.currentSong@mouseover': function(ev, target){
+					el = Ext.get(target);
+					if (el) {
+						if (controls = Ext.DomQuery.selectNode('div.playlistControls', el.dom)) {
+							Ext.get(controls).show();
+						}
+					}
+				},
+
+				'.currentSong@mouseout': function(ev, target){
+					el = Ext.get(target);
+					if (el) {
+						if (controls = Ext.DomQuery.selectNode('div.playlistControls', el.dom)) {
+							Ext.get(controls).hide();
+						}
+					}
+				}
+			});
+
+/*			items = Ext.DomQuery.select('div.selectorMarker');
+			for(var i = 0; i < items.length; i++) {
+				var dd = new Ext.dd.DD(items[i], 'playlist', {
+					scroll: false
+				});
+//				dd.setXConstraint(0, 0);
+				dd.onDragDrop = function(e, id) {
+					alert("dd was dropped on " + id);
+				}
+			}
+*/
 			Playlist.highlightCurrent();
 		},
 
@@ -381,7 +413,7 @@ Player = function(){
 			pollTimer.delay(5000);
 		},
 
-		getUpdate : function(response){
+		getUpdate : function(){
 			Ext.Ajax.request({
 				failure: this.updateStatus,
 				success: this.updateStatus,

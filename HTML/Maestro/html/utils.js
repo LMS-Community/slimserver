@@ -14,8 +14,10 @@ var Utils = function(){
 
 		addBrowseMouseOver: function(){
 			Ext.addBehaviors({
-				'.selectorMarker@mouseover': function(ev, target){
-					if (target.tagName != 'DIV' || !Ext.get(target).hasClass('selectorMarker'))
+				'.selectorMarker, .currentSong@mouseover': function(ev, target){
+					if (! (Ext.get(target).hasClass('selectorMarker') 
+						|| Ext.get(target).hasClass('currentSong')
+					))
 						return;
 
 					// remove highlighting from the other DIVs
@@ -24,8 +26,8 @@ var Utils = function(){
 						el = Ext.get(items[i].id);
 						if (el) {
 							el.replaceClass('mouseOver', 'selectorMarker');
-						
-							if (controls = Ext.DomQuery.selectNode('span.browsedbControls', el.dom)) {
+
+							if (controls = Ext.DomQuery.selectNode('span.browsedbControls, div.playlistControls', el.dom)) {
 								Ext.get(controls).hide();
 							}
 						}
@@ -35,11 +37,11 @@ var Utils = function(){
 					if (el) {
 						el.replaceClass('selectorMarker', 'mouseOver');
 						
-						if (controls = Ext.DomQuery.selectNode('span.browsedbControls', el.dom)) {
+						if (controls = Ext.DomQuery.selectNode('span.browsedbControls, div.playlistControls', el.dom)) {
 							Ext.get(controls).show();
 						}
 					}
-				}
+				}			
 			});
 		},
 
@@ -56,6 +58,21 @@ var Utils = function(){
 				myHeight = Math.max(300, myHeight);
 
 				el.setHeight(myHeight);
+			}
+		},
+		
+		processCommand : function(param) {
+			Ext.Ajax.request({
+				method: 'POST',
+				url: 'status.html',
+				params: param + 'ajaxRequest=1&force=1'
+			});
+
+			// good luck...			
+			try { Player.getUpdate(); }
+			catch(e) {
+				try { parent.Player.getUpdate(); }
+				catch(e) {}
 			}
 		}
 
