@@ -18,6 +18,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 #use Slim::Utils::Strings qw(string);
 use Slim::Player::Playlist;
+use Slim::Buttons::Information;
 use Data::Dumper;
 
 
@@ -721,15 +722,15 @@ sub menuQuery {
 
 	my @menu = (
 		{
-			text => Slim::Utils::Strings::string('MY_MUSIC'),
-			count => 9,
-			offset => 0,
+			text      => Slim::Utils::Strings::string('MY_MUSIC'),
+			count     => 9,
+			offset    => 0,
 			item_loop => [
 			{
-				text => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
+				text    => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
 				actions => {
 					go => {
-						cmd => ['albums'],
+						cmd    => ['albums'],
 						params => {
 							menu => 'track',
 						},
@@ -740,10 +741,10 @@ sub menuQuery {
 				},
 			},
 			{
-				text => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
+				text    => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
 				actions => {
 					go => {
-						cmd => ['artists'],
+						cmd    => ['artists'],
 						params => {
 							menu => 'album',
 						},
@@ -751,10 +752,10 @@ sub menuQuery {
 				},
 			},
 			{
-				text => Slim::Utils::Strings::string('BROWSE_BY_GENRE'),
+				text    => Slim::Utils::Strings::string('BROWSE_BY_GENRE'),
 				actions => {
 					go => {
-						cmd => ['genres'],
+						cmd    => ['genres'],
 						params => {
 							menu => 'artist',
 						},
@@ -762,10 +763,10 @@ sub menuQuery {
 				},
 			},
 			{
-				text => Slim::Utils::Strings::string('BROWSE_BY_YEAR'),
+				text    => Slim::Utils::Strings::string('BROWSE_BY_YEAR'),
 				actions => {
 					go => {
-					cmd => ['years'],
+						cmd    => ['years'],
 						params => {
 							menu => 'album',
 						},
@@ -773,10 +774,10 @@ sub menuQuery {
 				},
 			},
 			{
-				text => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'),
+				text    => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'),
 				actions => {
 					go => {
-						cmd => ['albums'],
+						cmd    => ['albums'],
 						params => {
 							menu => 'track',
 							sort => 'new',
@@ -788,10 +789,10 @@ sub menuQuery {
 				},
 			},
 			{
-				text => Slim::Utils::Strings::string('FAVORITES'),
+				text    => Slim::Utils::Strings::string('FAVORITES'),
 				actions => {
 					go => {
-						cmd => ['favorites', 'items'],
+						cmd    => ['favorites', 'items'],
 						params => {
 							menu => 'favorites',
 						},
@@ -799,10 +800,10 @@ sub menuQuery {
 				},
 			},
 			{
-				text => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
+				text    => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
 				actions => {
 					go => {
-						cmd => ['musicfolder'],
+						cmd    => ['musicfolder'],
 						params => {
 							menu => 'musicfolder',
 						},
@@ -810,10 +811,10 @@ sub menuQuery {
 				},
 			},
 			{
-				text => Slim::Utils::Strings::string('SAVED_PLAYLISTS'),
+				text    => Slim::Utils::Strings::string('SAVED_PLAYLISTS'),
 				actions => {
 					go => {
-						cmd => ['playlists'],
+						cmd    => ['playlists'],
 						params => {
 							menu => 'track',
 						},
@@ -821,14 +822,14 @@ sub menuQuery {
 				},
 			},
 			{
-				text => Slim::Utils::Strings::string('SEARCH'),
-				count => 4,
-				offset => 0,
+				text      => Slim::Utils::Strings::string('SEARCH'),
+				count     => 4,
+				offset    => 0,
 				item_loop => [
 					{
-						text => Slim::Utils::Strings::string('ARTISTS'),
+						text  => Slim::Utils::Strings::string('ARTISTS'),
 						input => {
-							len => 2, # Richard says "we can't search for U2!"
+							len  => 2, # Richard says "we can't search for U2!"
 							help => {
 								text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
 							},
@@ -847,7 +848,7 @@ sub menuQuery {
 						},
 					},
 					{
-						text => Slim::Utils::Strings::string('ALBUMS'),
+						text  => Slim::Utils::Strings::string('ALBUMS'),
 						input => {
 							len => 3,
 							help => {
@@ -869,7 +870,7 @@ sub menuQuery {
 						},
 					},
 					{
-						text => Slim::Utils::Strings::string('SONGS'),
+						text  => Slim::Utils::Strings::string('SONGS'),
 						input => {
 							len => 3,
 							help => {
@@ -890,7 +891,7 @@ sub menuQuery {
 						},
 					},
 					{
-						text => Slim::Utils::Strings::string('PLAYLISTS'),
+						text  => Slim::Utils::Strings::string('PLAYLISTS'),
 						input => {
 							len => 3,
 							help => {
@@ -915,43 +916,43 @@ sub menuQuery {
 			],
 		},
 		{
-			'text' => Slim::Utils::Strings::string('RADIO'),
-			'actions' => {
-				'go' => {
-					'cmd' => ['radios'],
-					'params' => {
-						'menu' => 'radio',
-					},
-				},
-			},
-		},
-		{
-			'text' => Slim::Utils::Strings::string('MUSIC_SERVICES'),
-			'actions' => {
-				'go' => {
-					'cmd' => ['services'],
-					'params' => {
-						'menu' => 'services',
-					},
-				},
-			},
-		},
-		{
-			'text' => Slim::Utils::Strings::string('FAVORITES'),
-			'actions' => {
-				'go' => {
-					'cmd' => ['favorites', 'items'],
-					'params' => {
-						'menu' => 'favorites',
-					},
-				},
-			},
-		},
-		{
-			text => Slim::Utils::Strings::string('SETTINGS'),
+			text    => Slim::Utils::Strings::string('RADIO'),
 			actions => {
 				go => {
-					cmd => ['menusettings'],
+					cmd => ['radios'],
+					params => {
+						menu => 'radio',
+					},
+				},
+			},
+		},
+		{
+			text    => Slim::Utils::Strings::string('MUSIC_SERVICES'),
+			actions => {
+				go => {
+					cmd => ['services'],
+					params => {
+						menu => 'services',
+					},
+				},
+			},
+		},
+		{
+			text    => Slim::Utils::Strings::string('FAVORITES'),
+			actions => {
+				go => {
+					cmd => ['favorites', 'items'],
+					params => {
+						menu => 'favorites',
+					},
+				},
+			},
+		},
+		{
+			text    => Slim::Utils::Strings::string('PLAYER_SETTINGS'),
+			actions => {
+				go => {
+					cmd    => ['menusettings'],
 					player => 0,
 					params => {
 						menu => 'settings',
@@ -1004,12 +1005,12 @@ sub menusettingsQuery {
 	# always add repeat
 	my $val = Slim::Player::Playlist::repeat($client);
 	push @menu, {
-		text => Slim::Utils::Strings::string('REPEAT'),
-		count => 3,
-		offset => 0,
+		text      => Slim::Utils::Strings::string('REPEAT'),
+		count     => 3,
+		offset    => 0,
 		item_loop => [
 			{
-				text=> Slim::Utils::Strings::string("REPEAT_OFF"),
+				text    => Slim::Utils::Strings::string("REPEAT_OFF"),
 				radio	=> ($val == 0) + 0, # 0 is added to force data type to number
 				actions => {
 					do => {
@@ -1019,7 +1020,7 @@ sub menusettingsQuery {
 				},
 			},
 			{
-				text => Slim::Utils::Strings::string("REPEAT_ONE"),
+				text    => Slim::Utils::Strings::string("REPEAT_ONE"),
 				radio	=> ($val == 1) + 0, # 0 is added to force the data type to number
 				actions => {
 					do => {
@@ -1029,7 +1030,7 @@ sub menusettingsQuery {
 				},
 			},
 			{
-				text => Slim::Utils::Strings::string("REPEAT_ALL"),
+				text    => Slim::Utils::Strings::string("REPEAT_ALL"),
 				radio	=> ($val == 2) + 0, # 0 is added to force the data type to number
 				actions => {
 					do => {
@@ -1045,12 +1046,12 @@ sub menusettingsQuery {
 	# always add shuffle
 	$val = Slim::Player::Playlist::shuffle($client);
 	push @menu, {
-		text => Slim::Utils::Strings::string('SHUFFLE'),
-		count => 3,
-		offset => 0,
+		text      => Slim::Utils::Strings::string('SHUFFLE'),
+		count     => 3,
+		offset    => 0,
 		item_loop => [
 			{
-				text => Slim::Utils::Strings::string("SHUFFLE_OFF"),
+				text    => Slim::Utils::Strings::string("SHUFFLE_OFF"),
 				radio	=> ($val == 0) + 0, # 0 is added to force the data type to number
 				actions => {
 					do => {
@@ -1060,7 +1061,7 @@ sub menusettingsQuery {
 				},
 			},
 			{
-				text => Slim::Utils::Strings::string("SHUFFLE_ON_SONGS"),
+				text    => Slim::Utils::Strings::string("SHUFFLE_ON_SONGS"),
 				radio	=> ($val == 1) + 0, # 0 is added to force the data type to number
 				radio	=> 1,
 				actions => {
@@ -1071,7 +1072,7 @@ sub menusettingsQuery {
 				},
 			},
 			{
-				text => Slim::Utils::Strings::string("SHUFFLE_ON_ALBUMS"),
+				text    => Slim::Utils::Strings::string("SHUFFLE_ON_ALBUMS"),
 				radio	=> ($val == 2) + 0, # 0 is added to force the data type to number
 				actions => {
 					do => {
@@ -1083,17 +1084,68 @@ sub menusettingsQuery {
 		],
 	};
 
+	# replay gain (volume adjustment)
+	if ($client->canDoReplayGain(0)) {
+		$val = $prefs->client($client)->get('replayGainMode');
+		push @menu, {
+			text      => Slim::Utils::Strings::string("REPLAYGAIN"),
+			count     => 4,
+			offset    => 0,
+			item_loop => [
+				{
+					text    => Slim::Utils::Strings::string("REPLAYGAIN_DISABLED"),
+					radio	=> ($val == 0) + 0, # 0 is added to force the data type to number
+					actions => {
+						do => {
+							player => 0,
+							cmd => ['replayGainMode', '0'],
+						},
+					},
+				},
+				{
+					text    => Slim::Utils::Strings::string("REPLAYGAIN_TRACK_GAIN"),
+					radio	=> ($val == 1) + 0, # 0 is added to force the data type to number
+					actions => {
+						do => {
+							player => 0,
+							cmd => ['replayGainMode', '1'],
+						},
+					},
+				},
+				{
+					text    => Slim::Utils::Strings::string("REPLAYGAIN_ALBUM_GAIN"),
+					radio	=> ($val == 2) + 0, # 0 is added to force the data type to number
+					actions => {
+						do => {
+							player => 0,
+							cmd => ['replayGainMode', '2'],
+						},
+					},
+				},
+				{
+					text    => Slim::Utils::Strings::string("REPLAYGAIN_SMART_GAIN"),
+					radio	=> ($val == 3) + 0, # 0 is added to force the data type to number
+					actions => {
+						do => {
+							player => 0,
+							cmd => ['replayGainMode', '3'],
+						},
+					},
+				},
+			],
+		};
+	}
 
 	# transition only for Sb2 and beyond
 	if ($client->isa('Slim::Player::Squeezebox2')) {
 		$val = $prefs->client($client)->get('transitionType');
 		push @menu, {
-			text => Slim::Utils::Strings::string('SETUP_TRANSITIONTYPE'),
-			count => 5,
-			offset => 0,
+			text      => Slim::Utils::Strings::string('SETUP_TRANSITIONTYPE'),
+			count     => 5,
+			offset    => 0,
 			item_loop => [
 				{
-					text => Slim::Utils::Strings::string("TRANSITION_NONE"),
+					text    => Slim::Utils::Strings::string("TRANSITION_NONE"),
 					radio	=> ($val == 0) + 0, # 0 is added to force the data type to number
 					actions => {
 						do => {
@@ -1103,7 +1155,7 @@ sub menusettingsQuery {
 					},
 				},
 				{
-					text => Slim::Utils::Strings::string("TRANSITION_CROSSFADE"),
+					text    => Slim::Utils::Strings::string("TRANSITION_CROSSFADE"),
 					radio	=> ($val == 1) + 0, # 0 is added to force the data type to number
 					actions => {
 						do => {
@@ -1113,7 +1165,7 @@ sub menusettingsQuery {
 					},
 				},
 				{
-					text => Slim::Utils::Strings::string("TRANSITION_FADE_IN"),
+					text    => Slim::Utils::Strings::string("TRANSITION_FADE_IN"),
 					radio	=> ($val == 2) + 0, # 0 is added to force the data type to number
 					actions => {
 						do => {
@@ -1123,7 +1175,7 @@ sub menusettingsQuery {
 					}
 				},
 				{
-					text => Slim::Utils::Strings::string("TRANSITION_FADE_OUT"),
+					text    => Slim::Utils::Strings::string("TRANSITION_FADE_OUT"),
 					radio	=> ($val == 3) + 0, # 0 is added to force the data type to number
 					actions => {
 						do => {
@@ -1133,7 +1185,7 @@ sub menusettingsQuery {
 					},
 				},
 				{
-					text => Slim::Utils::Strings::string("TRANSITION_FADE_IN_OUT"),
+					text    => Slim::Utils::Strings::string("TRANSITION_FADE_IN_OUT"),
 					radio	=> ($val == 4) + 0,
 					actions => {
 						do => {
@@ -1145,6 +1197,52 @@ sub menusettingsQuery {
 			],
 		};
 	}
+
+	# information, always display
+	push @menu, {
+		text      => Slim::Utils::Strings::string('INFORMATION'),
+		count     => 12,
+		offset    => 0,
+		item_loop => [
+			{
+				text    => Slim::Utils::Strings::string("INFORMATION_PLAYER_NAME") . ":",
+			},
+			{
+				text    => $client->name(),
+			},
+			{
+				text    => Slim::Utils::Strings::string("INFORMATION_PLAYER_MODEL") . ":",
+			},
+			{
+				text    => Slim::Buttons::Information::playerModel($client),
+			},
+			{
+				text    => Slim::Utils::Strings::string("INFORMATION_FIRMWARE") . ":",
+			},
+			{
+				text    => $client->revision(),
+			},
+			{
+				text    => Slim::Utils::Strings::string("INFORMATION_PLAYER_IP") . ":",
+			},
+			{
+				text    => $client->ip(),
+			},
+			{
+				text    => Slim::Utils::Strings::string("INFORMATION_PLAYER_PORT") . ":",
+			},
+			{
+				text    => $client->port(),
+			},
+			{
+				text    => Slim::Utils::Strings::string("INFORMATION_PLAYER_MAC") . ":",
+			},
+			{
+				text    => uc($client->macaddress()),
+			},
+		],
+
+	};
 
 	# now slice and ship
 	my $numitems = scalar(@menu);
