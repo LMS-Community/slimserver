@@ -79,6 +79,14 @@ img { border: 0; }
 	font-size: 12px;
 }
 
+#livesearch {
+	position: relative;
+	top: -2px;
+	height: 12px;
+	width: 100px;
+	font-size: 95%;
+}
+
 .currentSong a,
 .currentSong .playlistSongDetail,
 .mouseOver .browseItemDetail,

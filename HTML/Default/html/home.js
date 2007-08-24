@@ -1,5 +1,5 @@
 var MainMenu = function(){
-	url = new Array();
+	var url = new Array();
 
 	return {
 		init : function(){
@@ -16,6 +16,30 @@ var MainMenu = function(){
 				}
 			};
 			
+			
+			search = new Ext.form.TextField({
+				validationDelay: 1000,
+				validateOnBlur: false,
+
+				validator: function(value){
+					if (value.length > 2) {
+						Ext.get('search-results').load('search.xml', {
+								'query': value,
+								'player': player
+							},
+							function(){
+								MainMenu.showPanel('search');
+							}
+						);
+					}
+					else
+						MainMenu.showPanel('music');
+						
+					return true;
+				}
+			});
+			search.applyTo('livesearch');
+
 			this.showPanel('main');
 		},
 		
@@ -61,6 +85,12 @@ var MainMenu = function(){
 				if (el = Ext.get(items[i].id))
 					el.setVisible(panel + 'Crumblist' == items[i].id);
 			}
+
+			Ext.get('livesearch').setVisibilityMode(Ext.Element.DISPLAY);
+			if (panel == 'music' || panel == 'search')
+				Ext.get('livesearch').setVisible(true);
+			else
+				Ext.get('livesearch').setVisible(false);
 		},
 		
 		onResize : function(){
