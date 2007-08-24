@@ -55,7 +55,7 @@ Browse = function(){
 		},
 	
 		onAlbumUpdated : function(){
-			Ext.get('albumPopup').show();
+			Ext.get('albumPopup').fadeIn({ endOpacity: 1, duration: 0.4});
 		}
 	};
 }();
