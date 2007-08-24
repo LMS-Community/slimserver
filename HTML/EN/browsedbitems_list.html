@@ -1,4 +1,4 @@
-[%- IF artwork == 1 && (item.levelName == 'album' || item.levelName == 'age');
+[%- IF artwork == 1 && (item.levelName == 'album' || item.levelName == 'age') && !query;
 	contentwrapper = 'galleryitem';
 ELSE;
 	contentwrapper = 'contentitem';
