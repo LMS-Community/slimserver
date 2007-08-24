@@ -4,15 +4,17 @@
 [%- END -%]
 [%- PROCESS pageheader.html dontscroll=1 -%]
 
-<div id="browsedbHeader">
-	[% IF hasPagebar %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
-	[% IF warn -%]<p>[% PROCESS scanwarning %] [%- END %]
-	[% IF hasPagebar -%][% PROCESS pagebar %][%- END %]
-</div>
-
-[%- IF song_count; infoTab = BLOCK -%]
-	<div>[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].</div>
-[%- END; END -%]  
+[% IF NOT ajaxUpdate %]
+	<div id="browsedbHeader">
+		[% IF hasPagebar %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
+		[% IF warn -%]<p>[% PROCESS scanwarning %] [%- END %]
+		[% IF hasPagebar -%][% PROCESS pagebar %][%- END %]
+	</div>
+	
+	[%- IF song_count; infoTab = BLOCK -%]
+		<div>[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].</div>
+	[%- END; END -%]  
+[% END %]
 
 [%- WRAPPER contentcontainer %]
 	[% IF coverArt AND tree != 1 -%]
@@ -23,7 +25,7 @@
 	[%- END %]
 [% END -%]
 
-[% IF (item.levelName == 'album' || item.levelName == 'age') %]
+[% IF NOT ajaxUpdate && (item.levelName == 'album' || item.levelName == 'age') %]
 <div id='albumBackground' style="display:none;"><img src = "[% webroot %]html/images/cdspin3.gif" alt="" title="" onclick="Browse.hideAlbumInfo();" style="position: absolute; top: 45%; left: 45%;"></div>
 <div id = 'albumPopup' style="display:none;">
 	<div id = 'Browse.closeAlbumPopup'><span id="closeAlbumText"><img src = "[% webroot %]html/images/b_delete.png" alt="[% "CLOSE" | string %]" title ="[% "CLOSE" | string %]"  onclick="Browse.hideAlbumInfo();"></span></div>
