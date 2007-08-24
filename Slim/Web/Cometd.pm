@@ -420,6 +420,7 @@ sub sendResponse {
 	$httpResponse->header( 'Content-Type' => 'application/json' );
 	
 	$out = eval { objToJson( $out, { utf8 => 1, autoconv => 0 } ) };
+	$out = Slim::Utils::Unicode::encode('utf8', $out);
 	if ( $@ ) {
 		$out = objToJson( [ { successful => JSON::False, error => "$@" } ] );
 	}
