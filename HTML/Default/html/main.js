@@ -205,7 +205,7 @@ Player = function(){
 			Ext.Ajax.url = '/jsonrpc.js'; 
 
 			new Slim.Button('ctrlPrevious', {
-				icon: 'html/images/btn_previous.png',
+				icon: 'html/images/btn_previous.gif',
 				width: 28,
 				height: 22,
 				scope: this,
@@ -213,7 +213,7 @@ Player = function(){
 			});
 
 			btnTogglePlay = new Slim.Button('ctrlTogglePlay', {
-				icon: 'html/images/btn_play.png',
+				icon: 'html/images/btn_play.gif',
 				width: 51,
 				height: 22,
 				scope: this,
@@ -221,7 +221,7 @@ Player = function(){
 			});
 
 			new Slim.Button('ctrlNext', {
-				icon: 'html/images/btn_next.png',
+				icon: 'html/images/btn_next.gif',
 				width: 28,
 				height: 22,
 				scope: this,
@@ -229,7 +229,7 @@ Player = function(){
 			});
 
 			new Slim.Button('ctrlRepeat', {
-				icon: 'html/images/btn_repeat.png',
+				icon: 'html/images/btn_repeat.gif',
 				width: 34,
 				height: 22,
 				scope: this,
@@ -237,7 +237,7 @@ Player = function(){
 			});
 
 			new Slim.Button('ctrlShuffle', {
-				icon: 'html/images/btn_shuffle.png',
+				icon: 'html/images/btn_shuffle.gif',
 				width: 34,
 				height: 22,
 				scope: this,
@@ -245,7 +245,7 @@ Player = function(){
 			});
 
 			new Slim.Button('ctrlVolumeDown', {
-				icon: 'html/images/btn_volume_decrease.png',
+				icon: 'html/images/btn_volume_decrease.gif',
 				width: 22,
 				height: 22,
 				scope: this,
@@ -253,7 +253,7 @@ Player = function(){
 			});
 
 			new Slim.Button('ctrlVolumeUp', {
-				icon: 'html/images/btn_volume_increase.png',
+				icon: 'html/images/btn_volume_increase.gif',
 				width: 22,
 				height: 22,
 				scope: this,
@@ -322,7 +322,7 @@ Player = function(){
 			});
 
 			new Slim.Button('ctrlPower', {
-				icon: 'html/images/btn_power.png',
+				icon: 'html/images/btn_power.gif',
 				width: 24,
 				height: 24,
 				scope: this,
@@ -373,7 +373,16 @@ Player = function(){
 					if (result.power && result.playlist_tracks >= 0) {
 
 						// update the playlist if it's available
-						if (Ext.get('playList')) {
+						if (Ext.get('playList') && ((result.power && result.power != playerStatus.power) ||
+							(result.mode && result.mode != playerStatus.mode) ||
+							(result.current_title && result.current_title != playerStatus.title) ||
+							(result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track) ||
+							(playerStatus.track && !result.playlist_tracks) ||
+							(result.playlist_tracks && !playerStatus.track) ||
+							(result.playlist_tracks != null && result.playlist_tracks != playerStatus.tracks) ||
+							(result.playlist_cur_index && result.playlist_cur_index != playerStatus.index) ||
+							(result['playlist shuffle'] >= 0 && result['playlist shuffle'] != playerStatus.shuffle)
+						)){
 							Playlist.load();
 						}
 
@@ -411,7 +420,7 @@ Player = function(){
 						this.updatePlayTime(result.time ? result.time : 0, result.duration ? result.duration : 0);
 
 						// update play/pause button
-						btnTogglePlay.icon = webroot + 'html/images/' + (result.mode=='play' ? 'btn_pause.png' : 'btn_play.png');
+						btnTogglePlay.icon = webroot + 'html/images/' + (result.mode=='play' ? 'btn_pause.gif' : 'btn_play.gif');
 						btnTogglePlay.onBlur();
 
 						// update volume button
@@ -423,7 +432,7 @@ Player = function(){
 						else {
 							volVal = Math.ceil(result['mixer volume']/9.9);
 						}
-						Ext.get('ctrlVolume').setStyle('background', 'url(html/images/volume_levels.png) no-repeat 0px -' + String(volVal * 22) + 'px');
+						Ext.get('ctrlVolume').setStyle('background', 'url(html/images/volume_levels.gif) no-repeat 0px -' + String(volVal * 22) + 'px');
 
 						playerStatus = {
 							power: result.power,
@@ -500,7 +509,7 @@ Player = function(){
 								(result.playlist_tracks && !playerStatus.track) ||
 								(result.playlist_tracks != null && result.playlist_tracks != playerStatus.tracks) ||
 								(result.playlist_cur_index && result.playlist_cur_index != playerStatus.index) ||
-								(result['playlist shuffle'] > 0 && result['playlist shuffle'] != playerStatus.shuffle)
+								(result['playlist shuffle'] >= 0 && result['playlist shuffle'] != playerStatus.shuffle)
 							){
 								this.getUpdate();
 							}
