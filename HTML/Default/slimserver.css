@@ -73,6 +73,7 @@ img { border: 0; }
 }
 
 .homeMenuItem a,
+#crumblist a,
 .browseItemLink {
 	text-decoration: none;
 	font-size: 12px;
