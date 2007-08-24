@@ -150,7 +150,7 @@ Playlist = function(){
 				}
 			});
 
-/*			items = Ext.DomQuery.select('div.selectorMarker');
+			items = Ext.DomQuery.select('div.selectorMarker');
 			for(var i = 0; i < items.length; i++) {
 				var dd = new Ext.dd.DD(items[i], 'playlist', {
 					scroll: false
@@ -160,7 +160,8 @@ Playlist = function(){
 					alert("dd was dropped on " + id);
 				}
 			}
-*/
+			Ext.dd.ScrollManager.register('rightcontent');
+
 			Playlist.highlightCurrent();
 		},
 
@@ -189,10 +190,13 @@ Player = function(){
 
 	var playerStatus = {
 		power: null,
-		modus: null,
+		mode: null,
 		title: null,
 		track: null,
-		volume: null
+		tracks: null,
+		index: null,
+		volume: null,
+		shuffle: null
 	};
 
 	return {
@@ -425,8 +429,11 @@ Player = function(){
 							power: result.power,
 							mode: result.mode,
 							title: result.current_title,
-							track: result.playlist_cur_index ? result.playlist_loop[0].url : '',
-							volume: result['mixer volume']
+							track: result.playlist_tracks ? result.playlist_loop[0].url : '',
+							tracks: result.playlist_tracks,
+							index: result.playlist_cur_index,
+							volume: result['mixer volume'],
+							shuffle: result['playlist shuffle']
 						};
 					}
 					
@@ -488,8 +495,13 @@ Player = function(){
 							if ((result.power && result.power != playerStatus.power) ||
 								(result.mode && result.mode != playerStatus.mode) ||
 								(result.current_title && result.current_title != playerStatus.title) ||
-								(result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track))
-							{
+								(result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track) ||
+								(playerStatus.track && !result.playlist_tracks) ||
+								(result.playlist_tracks && !playerStatus.track) ||
+								(result.playlist_tracks != null && result.playlist_tracks != playerStatus.tracks) ||
+								(result.playlist_cur_index && result.playlist_cur_index != playerStatus.index) ||
+								(result['playlist shuffle'] > 0 && result['playlist shuffle'] != playerStatus.shuffle)
+							){
 								this.getUpdate();
 							}
 
