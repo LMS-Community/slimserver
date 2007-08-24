@@ -723,20 +723,20 @@ sub displaystatusQuery_filter {
 	my $type  = $request->getParam('_type');
 	my $parts = $request->getParam('_parts');
 
-	# check displaynotify type against subscription ('showbriefly', 'update' or 'all')
+	# check displaynotify type against subscription ('showbriefly', 'update', 'bits', 'all')
 	if ($subs eq $type || $subs eq 'all' || $subs eq 'bits') {
 
+		my $pd = $self->privateData;
+
 		# display forwarding is suppressed for this subscriber source
-		return 0 if exists $parts->{ lc $self->source } && !$parts->{ lc $self->source };
+		return 0 if exists $parts->{ $pd->{'format'} } && !$parts->{ $pd->{'format'} };
 
 		# don't send updates if there is no change
 		return 0 if ($type eq 'update' && !$self->client->display->renderCache->{'screen1'}->{'changed'});
 
-		# store display info in request so it can be accessed later
-		$self->privateData({
-			'type'     => $type,
-			'parts'    => $parts,
-		});
+		# store display info in subscription request so it can be accessed by displaystatusQuery
+		$pd->{'type'}  = $type;
+		$pd->{'parts'} = $parts;
 
 		# execute the query immediately
 		$self->__autoexecute;
@@ -762,7 +762,7 @@ sub displaystatusQuery {
 	if (my $pd = $request->privateData) {
 
 		my $client= $request->client;
-		my $source= $request->source;
+		my $format= $pd->{'format'};
 		my $type  = $pd->{'type'};
 		my $parts = $type eq 'showbriefly' ? $pd->{'parts'} : $client->display->renderCache;
 
@@ -784,7 +784,7 @@ sub displaystatusQuery {
 			$request->addResult('bits', MIME::Base64::encode_base64($bits) );
 			$request->addResult('ext', $parts->{'extent'});
 
-		} elsif ($source eq 'CLI') {
+		} elsif ($format eq 'cli') {
 
 			# format display for cli
 			for my $c (keys %$parts) {
@@ -794,35 +794,30 @@ sub displaystatusQuery {
 				}
 			}
 
-		} elsif ( $source =~ m{^(?:JSONRPC|/)} ) { # Return this for JSONRPC or Cometd requests (start with /)
+		} elsif ($format eq 'jive') {
 
 			# send display to jive from one of the following components
-			if (my $ref = $parts->{'jiv'} && ref $parts->{'jiv'}) {
+			if (my $ref = $parts->{'jive'} && ref $parts->{'jive'}) {
 				if ($ref eq 'CODE') {
-					$request->addResult('display', $parts->{'jiv'}->() );
+					$request->addResult('display', $parts->{'jive'}->() );
 				} elsif($ref eq 'ARRAY') {
-					$request->addResult('display', { 'text' => $parts->{'jiv'} });
+					$request->addResult('display', { 'text' => $parts->{'jive'} });
 				} else {
-					$request->addResult('display', $parts->{'jiv'} );
+					$request->addResult('display', $parts->{'jive'} );
 				}
 			} else {
 				$request->addResult('display', { 'text' => $parts->{'line'} || $parts->{'center'} });
 			}
 		}
-			
-		$request->privateData({});
 
-	} else {
+	} elsif ($subs =~ /showbriefly|update|bits|all/) {
+		# new subscription request - add subscription, assume cli or jive format for the moment
+		$request->privateData({ 'format' => $request->source eq 'CLI' ? 'cli' : 'jive' }); 
+		$request->registerAutoExecute(0, \&displaystatusQuery_filter);
 
-		# no private data this must be the first query - check for subscription management
-		if ($subs && $subs ne '-') {
-			$request->registerAutoExecute(0, \&displaystatusQuery_filter);
-			if ($subs ne 'showbriefly') {
-				$request->client->display->resetDisplay;
-				$request->client->update;
-			}
-		} else {
-			$request->registerAutoExecute('-');
+		if ($subs ne 'showbriefly') {
+			$request->client->display->resetDisplay;
+			$request->client->update;
 		}
 	}
 		

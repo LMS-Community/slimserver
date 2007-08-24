@@ -241,7 +241,7 @@ sub power {
 					'text'           => 2,
 				},
 			'screen2' => {},
-			'jiv' => undef,
+			'jive' => undef,
 		}, undef, undef, 1);
 
 		# check if there is a sync group to restore
@@ -492,7 +492,7 @@ sub currentSongLines {
 			};
 		}
 
-		$parts->{'jiv'} = {
+		$parts->{'jive'} = {
 			'type'    => 'song',
 			'text'    => [ $status, $song->title ],
 			'icon-id' => $song->remote ? 0 : $song->album->artwork || 0,
@@ -686,7 +686,7 @@ sub mixerDisplay {
 	});
 
 	# suppress display forwarding
-	$parts->{'jiv'} = $parts->{'cli'} = undef;
+	$parts->{'jive'} = $parts->{'cli'} = undef;
 
 	$client->display->showBriefly($parts, { 'name' => 'mixer' } );
 

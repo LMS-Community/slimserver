@@ -509,7 +509,7 @@ sub playlistDeleteCommand {
 
 	# FIXME - make this conditional on client being jive?
 	$client->showBriefly({
-		'jiv' => { 
+		'jive' => { 
 			'type'    => 'song',
 			'text'    => [ Slim::Utils::Strings::string('JIVE_POPUP_REMOVING'),
 						   $song->title,
@@ -1092,7 +1092,7 @@ sub playlistXitemCommand {
 
 				$client->showBriefly({
 					'line' => [$line1, $line2],
-					'jiv'  => { 'type' => 'song', text => [ $line2 ], 'icon-id' => 0 },
+					'jive' => { 'type' => 'song', text => [ $line2 ], 'icon-id' => 0 },
 				}, { 'duration' => $timeout + 5 });
 			}
 		}
@@ -1485,7 +1485,7 @@ sub playlistcontrolCommand {
 
 		if ($load || $add) {
 			$client->showBriefly({ 
-				'jiv' => { 
+				'jive' => { 
 					'type'    => 'song',
 					'text'    => $add
 						? [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $tracks[0]->title,
