@@ -31,6 +31,9 @@ sub init {
 	my $http = $class->new(
 		\&_init_done,
 		\&_init_error,
+		{
+			Timeout => 30,
+		},
 	);
 	
 	$http->get( $timeURL );
@@ -167,7 +170,8 @@ sub login {
 		\&_login_done,
 		\&_error,
 		{
-			params => \%params,
+			params  => \%params,
+			Timeout => 30,
 		},
 	);
 	

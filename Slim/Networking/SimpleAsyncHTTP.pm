@@ -125,7 +125,8 @@ sub _createHTTPRequest {
 	}
 	
 	my $timeout 
-		=  $self->{params}->{Timeout} 
+		=  $self->{params}->{Timeout}
+		|| $self->{params}->{timeout}
 		|| preferences('server')->get('remotestreamtimeout')
 		|| 10;
 		
