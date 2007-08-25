@@ -427,8 +427,8 @@ img { border: 0; }
 	background: none;
 }
 
-/* album popup styles */
-div#albumPopup {
+/* infopopup styles */
+#infoPopup {
 	position: fixed;
 	z-index: 90;
 	top: 96px;
@@ -436,23 +436,69 @@ div#albumPopup {
 	width: 70%;
 	bottom: 10%;
 	background-color: #23415e;
-	color: black;
-	padding: 5px;
+	margin: 0;
+	padding: 10px;
 	border: 1px solid grey;
 	overflow: hidden;
 }
 
-div#closeAlbumPopup {
-	position: relative;
-	height: 12px;
+#inner_popupcontent {
+	background: url(html/images/inner_background.gif) repeat;
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	right: 10px;
+	bottom: 10px;
+	overflow: hidden;
 }
 
-#closeAlbumText {
-	float: right;
-	border: 1px solid #888;
+#popup_top_left {
+	background: url(html/images/inner_top_left.gif) no-repeat top left;
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	left: 10px;
+	top: 10px;
 }
 
-div#albumBackground {
+#popup_top_right {
+	background: url(html/images/inner_top_right.gif) no-repeat top right;
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	right: 10px;
+	top: 10px;
+}
+
+#popup_bottom_left {
+	background: url(html/images/inner_bottom_left.gif) no-repeat bottom left;
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	left: 10px;
+	bottom: 10px;
+}
+
+#popup_bottom_right {
+	background: url(html/images/inner_bottom_right.gif) no-repeat bottom right;
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	right: 10px;
+	bottom: 10px;
+}
+
+#closePopup {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	border: 1px solid white;
+	cursor: pointer;
+	filter: alpha(opacity=75);
+	-moz-opacity: 0.75;
+}
+
+#popupBackground {
 	position: fixed;
 	z-index: 60;
 	top: 0%;
@@ -461,10 +507,25 @@ div#albumBackground {
 	bottom: 0%;
 	background-color: silver;
 	opacity:.75;
-	filter: alpha(opacity=75);
 	-moz-opacity: 0.75;
 }
 
+#popupList {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	overflow: auto;
+}
+
+#popupcontent {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	right: 10px;
+	bottom: 10px;
+}
 
 #loading {
 	position: absolute;

@@ -1,10 +1,11 @@
+[% IF NOT ajaxUpdate %]
 [%- pagetitle = browseby | string; pageicon = browseby; noSpacer = 1 -%]
 [%- maestroScripts = BLOCK -%]
 	<script type="text/javascript" src="[% webroot %]html/browse.js"></script>
 [%- END -%]
 [%- PROCESS pageheader.html dontscroll=1 -%]
 
-[% IF NOT ajaxUpdate %]
+
 	<div id="browsedbHeader">
 		[% IF hasPagebar %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
 		[% IF warn -%]<p>[% PROCESS scanwarning %] [%- END %]
@@ -16,6 +17,7 @@
 	[%- END; END -%]  
 [% END %]
 
+[% IF ajaxUpdate; listid = 'popupList' ; END %]
 [%- WRAPPER contentcontainer %]
 	[% IF coverArt AND tree != 1 -%]
 		<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
@@ -25,12 +27,19 @@
 	[%- END %]
 [% END -%]
 
-[% IF NOT ajaxUpdate && (item.levelName == 'album' || item.levelName == 'age') %]
-<div id='albumBackground' style="display:none;"><img src = "[% webroot %]html/images/cdspin3.gif" alt="" title="" onclick="Browse.hideAlbumInfo();" style="position: absolute; top: 45%; left: 45%;"></div>
-<div id = 'albumPopup' style="display:none;">
-	<div id = 'Browse.closeAlbumPopup'><span id="closeAlbumText"><img src = "[% webroot %]html/images/b_delete.png" alt="[% "CLOSE" | string %]" title ="[% "CLOSE" | string %]"  onclick="Browse.hideAlbumInfo();"></span></div>
-	<div id = 'trackInfo'></div>
+[% IF ajaxUpdate %]
+
+[% ELSE %]
+
+[% IF (item.levelName == 'album' || item.levelName == 'age') %]
+<div id='popupBackground' style="display:none;"><img src = "[% webroot %]html/images/cdspin3.gif" alt="" title="" onclick="Browse.hideInfoPopup();" style="position: absolute; top: 45%; left: 45%;"></div>
+<div id='infoPopup' style="display:none;">
+	<div id="inner_popupcontent"><div id="popupcontent"></div></div>
+	<div id="popup_top_left">&nbsp;</div><div id="popup_top_right">&nbsp;</div>
+	<div id="popup_bottom_left">&nbsp;</div><div id="popup_bottom_right">&nbsp;</div>
+	<div id="closePopup" onclick="Browse.hideInfoPopup();">[% "CLOSE" | string %]</div>
 </div>
 [% END %]
 
 [% PROCESS pagefooter.html %]
+[% END %]

@@ -1,4 +1,3 @@
-[%- IF NOT ajaxUpdate -%]
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
@@ -42,9 +41,9 @@
 
 		<div id="edge_top_left">&nbsp;</div>
 		<div id="edge_top_right">&nbsp;</div>
-[% END %]
+
 		<div class="inner_content">
-[% IF NOT ajaxUpdate %]
+
 			<div class="titlebox">
 				<div class="titlebox_top"><div></div></div>
 				<div class="titlebox_content">
@@ -59,5 +58,5 @@
 				[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
 				[%- PROCESS crumblist IF pwd_list %]
 			</div>
-[% END %]
+
 			<div id="content"[% IF !dontscroll %] class="scrollingPanel"[% END %]>

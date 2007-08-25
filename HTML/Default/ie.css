@@ -24,3 +24,14 @@
 .infoTab, #edge_bottom_left, #edge_bottom_right {
 	bottom: -1px;
 }
+
+#infoPopup {
+	position: absolute;
+	height: expression((document.getElementById('inner_content') && document.getElementById('inner_content').offsetHeight 
+		> document.documentElement.clientHeight * 0.75) ? document.documentElement.clientHeight * 0.75 : "auto");
+}
+
+#popupBackground {
+	position: absolute;
+	height: 100%;
+}
