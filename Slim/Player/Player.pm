@@ -495,7 +495,7 @@ sub currentSongLines {
 		$parts->{'jive'} = {
 			'type'    => 'song',
 			'text'    => [ $status, $song->title ],
-			'icon-id' => $song->remote ? 0 : $song->album->artwork || 0,
+			'icon-id' => $song->remote ? 0 : ($song->album->artwork || 0) + 0,
 		};
 	}
 

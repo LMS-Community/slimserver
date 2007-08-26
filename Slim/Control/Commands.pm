@@ -514,7 +514,7 @@ sub playlistDeleteCommand {
 			'text'    => [ Slim::Utils::Strings::string('JIVE_POPUP_REMOVING'),
 						   $song->title,
 						   Slim::Utils::Strings::string('JIVE_POPUP_FROM_PLAYLIST') ],
-			'icon-id' => $song->remote ? 0 : $song->album->artwork || 0,
+			'icon-id' => $song->remote ? 0 : ($song->album->artwork || 0) + 0,
 		}
 	});
 
@@ -1491,7 +1491,7 @@ sub playlistcontrolCommand {
 						? [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $tracks[0]->title,
 							Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST') ]
 						: [ Slim::Utils::Strings::string('JIVE_POPUP_NOW_PLAYING'), $tracks[0]->title ],
-					'icon-id' => $tracks[0]->album->artwork,
+					'icon-id' => $tracks[0]->album->artwork + 0,
 				}
 			});
 		}
