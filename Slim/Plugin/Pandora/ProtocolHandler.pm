@@ -9,6 +9,7 @@ use base qw(Slim::Player::Protocols::HTTP);
 
 use JSON::XS qw(from_json);
 
+use Slim::Player::Playlist;
 use Slim::Utils::Misc;
 
 my $log = Slim::Utils::Log->addLogCategory({
@@ -393,9 +394,10 @@ sub playlistCallback {
 		# A new song has started playing.  We use this to change titles
 		my $track = $client->pluginData('currentTrack');
 		
-		my $title = $track->{songName} . ' ' . $client->string('BY') . ' '
-				  . $track->{artistName} . ' ' . $client->string('FROM') . ' '
-				  . $track->{albumName};
+		my $title 
+			= $track->{songName} . ' ' . $client->string('BY') . ' '
+			. $track->{artistName} . ' ' . $client->string('FROM') . ' '
+			. $track->{albumName};
 		
 		setCurrentTitle( $client, $url, $title );
 		
@@ -509,6 +511,20 @@ sub getCurrentTitle {
 	my ( $class, $client, $url ) = @_;
 	
 	return $client->pluginData('currentTitle');
+}
+
+# Metadata hashref used by CLI/JSON clients
+sub getCurrentMeta {
+	my ( $class, $client, $url ) = @_;
+	
+	my $track = $client->pluginData('currentTrack') || return;
+	
+	return {
+		artist => $track->{artistName},
+		album  => $track->{albumName},
+		title  => $track->{songName},
+		cover  => $track->{albumArtUrl},
+	};
 }
 
 1;

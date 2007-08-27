@@ -387,20 +387,42 @@ Player = function(){
 						}
 
 						if (result.playlist_tracks > 0) {
+							
+							// Handle plugin-specific metadata, i.e. Pandora
+							if (result.current_meta) {
+								result.playlist_loop[0].id     = null;
+								result.playlist_loop[0].title  = result.current_meta.title;
+								result.playlist_loop[0].artist = result.current_meta.artist;
+								result.playlist_loop[0].album  = result.current_meta.album;
+								if (result.current_meta.cover) {
+									Ext.get('ctrlCurrentArt').update('<img src="' + result.current_meta.cover + '" height="96">');
+								}
+							}
+							
 							Ext.get('ctrlCurrentTitle').update(
-								result.current_title ? result.current_title : (
+								(result.current_title && !result.current_meta) ? result.current_title : (
 									(result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
-									+ result.playlist_loop[0].tracknum + ". " + result.playlist_loop[0].title
+									+ 
+									(result.playlist_loop[0].tracknum ? result.playlist_loop[0].tracknum + ". " : '')
+									+
+									result.playlist_loop[0].title
 								)
 							);
 	//						Ext.get('statusSongCount').update(result.playlist_tracks);
 	//						Ext.get('statusPlayNum').update(result.playlist_cur_index + 1);
 							Ext.get('ctrlBitrate').update(result.playlist_loop[0].bitrate);
-							Ext.get('ctrlCurrentArtist').update(result.playlist_loop[0].artist);
-							Ext.get('ctrlCurrentAlbum').update(
-								result.playlist_loop[0].album 
-								+ (result.playlist_loop[0].year ? ' (' + result.playlist_loop[0].year +')' : '')
-							);
+							
+							if (result.playlist_loop[0].artist) {
+								Ext.get('ctrlCurrentArtist').update(result.playlist_loop[0].artist);
+							}
+							
+							if (result.playlist_loop[0].album) {
+								Ext.get('ctrlCurrentAlbum').update(
+									result.playlist_loop[0].album 
+									+ (result.playlist_loop[0].year ? ' (' + result.playlist_loop[0].year +')' : '')
+								);
+							}
+							
 							if (result.playlist_loop[0].id) {
 								Ext.get('ctrlCurrentArt').update('<img src="/music/' + result.playlist_loop[0].id + '/cover_96x96.jpg">');
 							}

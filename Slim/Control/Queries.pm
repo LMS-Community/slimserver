@@ -2538,6 +2538,11 @@ sub statusQuery {
 				$request->addResult('remote', 1);
 				$request->addResult('current_title', 
 					Slim::Music::Info::getCurrentTitle($client, $song));
+				
+				my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song);
+				if ( $handler && $handler->can('getCurrentMeta') ) {
+					$request->addResult( 'current_meta', $handler->getCurrentMeta( $client, $song ) );
+				}
 			}
 			
 			$request->addResult('time', 
