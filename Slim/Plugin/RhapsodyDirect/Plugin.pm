@@ -35,6 +35,10 @@ sub initPlugin {
 	);
 }
 
+sub playerMenu () {
+	return 'MUSIC_ON_DEMAND';
+}
+
 sub getDisplayName () {
 	return 'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME';
 }

@@ -44,6 +44,7 @@ our $defaultPrefs = {
 		FAVORITES
 		SAVED_PLAYLISTS
 		RADIO
+		MUSIC_ON_DEMAND
 		SETTINGS
 		PLUGINS
 	)],

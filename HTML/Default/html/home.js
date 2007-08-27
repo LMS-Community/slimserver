@@ -70,7 +70,7 @@ var MainMenu = function(){
 					break;
 
 				case 'MUSIC_ON_DEMAND':
-					alert('...soon to come');
+					this.showPanel('music_on_demand');
 					break;
 
 				case 'OTHER_SERVICES':

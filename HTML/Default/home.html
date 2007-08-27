@@ -63,6 +63,14 @@
 	[%- END %]
 </div>
 
+<div class="homeMenuSection" id="music_on_demandMenu">
+	[%- FOREACH link = additionalLinks.music_on_demand %]
+		[% IF link.key != 'FAVORITES' %]
+			[% PROCESS menuItem token=link.key category='music_on_demand' %]
+		[%- END %]
+	[%- END %]
+</div>
+
 <div class="homeMenuSection" id="searchMenu">
 	<div id="search-results"></div>
 </div>

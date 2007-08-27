@@ -19,6 +19,10 @@ sub initPlugin {
 	);
 }
 
+sub playerMenu () {
+	return 'MUSIC_ON_DEMAND';
+}
+
 sub getDisplayName () {
 	return 'PLUGIN_MP3TUNES_MODULE_NAME';
 }
