@@ -1,10 +1,14 @@
 [% pagetitle = 'Search'; pageicon = 'Search' %]
+[% pageHeaderScripts = BLOCK %]
+	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
+	<script type="text/javascript" src="/html/prototype.js?r=[% revision %]"></script>
+	<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
+[% END %]
 [% bodyscript = 'onload="document.searchForm.query.focus();"' %]
 [% pwd_list = BLOCK %]
 <a href="search.html?player=[% playerURI %][% IF liveSearch %]&amp;livesearch=1[% END %]">[% "SEARCH" | string %]</a>
 [% END %]
-[% PROCESS pageheader.html %]
-<script type="text/javascript" src="/html/prototype.js"></script>
+[% PROCESS pageheader.html dontscroll=1 %]
 
 [% IF liveSearch %]
 

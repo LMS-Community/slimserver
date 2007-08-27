@@ -38,6 +38,11 @@ img { border: 0; }
 	right: 10px;
 }
 
+.searchHeader {
+	margin-top: 15px;
+	margin-bottom: 5px;
+}
+
 .playlistCover, .browseCover {
 	position: absolute;
 	left: 10px;

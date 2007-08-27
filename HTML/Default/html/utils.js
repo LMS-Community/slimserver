@@ -1,11 +1,8 @@
 var Utils = function(){
 	return {
 		init : function(){
-			if (el = Ext.get('content'))
-				if (el && el.hasClass('scrollingPanel')) {
-					Ext.EventManager.onWindowResize(Utils.resizeContent);
-					Ext.EventManager.onDocumentReady(Utils.resizeContent);
-				}
+			Ext.EventManager.onWindowResize(Utils.resizeContent);
+			Ext.EventManager.onDocumentReady(Utils.resizeContent);
 
 			// add highlighter class
 			this.addBrowseMouseOver();
@@ -58,6 +55,10 @@ var Utils = function(){
 				myHeight = Math.max(300, myHeight);
 
 				el.setHeight(myHeight);
+			}
+
+			if (el = Ext.get('browsedbList')) {	
+				el.setHeight(Ext.fly(document.body).getHeight() - el.getTop() - infoHeight);
 			}
 		},
 
