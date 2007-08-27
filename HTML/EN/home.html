@@ -69,6 +69,15 @@
 	</ul>	
 </div>
 
+<div class="homeMenuSection">
+	<div>[% "MUSIC_ON_DEMAND" | string | upper %]</div>
+	<ul>
+	[%- FOREACH link = additionalLinks.music_on_demand %]
+		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
+	[%- END %]
+	</ul>	
+</div>
+
 [% IF not nosetup %]
 <div class="homeMenuSection">
 	<div>[% "SETTINGS" | string | upper %]</div>
