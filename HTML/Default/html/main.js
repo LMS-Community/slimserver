@@ -338,12 +338,16 @@ Player = function(){
 			if (playerStatus.mode == 'play') {
 				if (! isNaN(time))
 					playTime = parseInt(time); //force integer type from results
-	
-				if (! isNaN(totalTime))
-					Ext.get('ctrlTotalTime').update(' (' + this.formatTime(totalTime) + ')');
 					
 				Ext.get('ctrlPlaytime').update(this.formatTime(playTime));
 				playTime += 0.5;
+	
+				if (! isNaN(totalTime)) {
+					Ext.get('ctrlTotalTime').update(' (' + this.formatTime(totalTime) + ')');
+
+					if (playTime >= totalTime-1)
+						this.getStatus();
+				}
 			}
 			else
 				Ext.get('ctrlPlaytime').update(this.formatTime(0));
