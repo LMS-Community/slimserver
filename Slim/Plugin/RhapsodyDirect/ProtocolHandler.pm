@@ -515,6 +515,7 @@ sub gotNextRadioTrack {
 	
 	$client->pluginData( radioTrack => $url );
 	$client->pluginData( radioTitle => $title );
+	$client->pluginData( currentTrack => $track );
 	
 	my $cb = $params->{callback};
 	my $pt = $params->{passthrough} || [];
@@ -796,6 +797,20 @@ sub trackInfo {
 	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
 	
 	$client->modeParam( 'handledTransition', 1 );
+}
+
+# Metadata hashref used by CLI/JSON clients
+sub getCurrentMeta {
+	my ( $class, $client, $url ) = @_;
+	
+	my $track = $client->pluginData('currentTrack') || return;
+	
+	return {
+		artist => $track->{displayArtistName},
+		album  => $track->{displayAlbumName},
+		title  => $track->{name},
+		cover  => $track->{cover},
+	};
 }
 
 # SN only, re-init upon reconnection
