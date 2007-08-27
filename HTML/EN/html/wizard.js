@@ -52,7 +52,8 @@ Wizard = function(){
 	
 				folderselectors['itunes'] = new FileSelector('itunespathselector', {
 					input: 'xml_file',
-					filter: 'filetype:xml'
+					filter: 'filetype:xml',
+					gotoBtn: 'gotoiTunesDir'
 				});
 	
 				new Ext.Button('previous', {
