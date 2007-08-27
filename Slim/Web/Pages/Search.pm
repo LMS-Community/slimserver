@@ -94,7 +94,7 @@ sub basicSearch {
 
 		# do it live - and send back the div
 		# this should be replaced with a call to filltemplatefile()
-		return Slim::Web::Pages::LiveSearch->outputAsXHTML($query, \@rsList, $player);
+		return Slim::Web::Pages::LiveSearch->outputAsXHTML($query, \@rsList, $player, $params);
 	}
 }
 
@@ -364,7 +364,7 @@ sub fillInSearchResults {
 
 		if ($type eq 'contributor') {
 
-			$form{'attributes'} .= '&amp;contributor.role=ALL';
+			$form{'attributes'} .= '&contributor.role=ALL';
 			$form{'hierarchy'}  = 'contributor,album,track';
 
 		} elsif ($type eq 'album') {
