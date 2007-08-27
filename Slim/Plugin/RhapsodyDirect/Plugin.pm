@@ -5,7 +5,7 @@ package Slim::Plugin::RhapsodyDirect::Plugin;
 # Browse Rhapsody Direct via SqueezeNetwork
 
 use strict;
-use base qw(Slim::Plugin::Base);
+use base 'Slim::Plugin::OPMLBased';
 
 use Slim::Networking::SqueezeNetwork;
 use Slim::Plugin::RhapsodyDirect::ProtocolHandler;
@@ -17,9 +17,6 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => 'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME',
 });
 
-my $FEED = Slim::Networking::SqueezeNetwork->url( '/api/rhapsody/opml' );
-my $cli_next;
-
 sub initPlugin {
 	my $class = shift;
 	
@@ -30,38 +27,16 @@ sub initPlugin {
 	Slim::Networking::Slimproto::addHandler( 
 		RPDS => \&Slim::Plugin::RhapsodyDirect::RPDS::rpds_handler
 	);
-	
-	# XXX: CLI support
 
-	$class->SUPER::initPlugin();
+	$class->SUPER::initPlugin(
+		feed => Slim::Networking::SqueezeNetwork->url('/api/rhapsody/opml'),
+		tag  => 'rhapsodydirect',
+		menu => 'music_on_demand',
+	);
 }
 
 sub getDisplayName () {
 	return 'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME';
-}
-
-sub setMode {
-	my ( $class, $client, $method ) = @_;
-
-	if ($method eq 'pop') {
-
-		Slim::Buttons::Common::popMode($client);
-		return;
-	}
-
-	# use INPUT.Choice to display the list of feeds
-	my %params = (
-		header   => 'PLUGIN_RHAPSODY_DIRECT_LOGGING_IN',
-		modeName => 'Rhapsody Direect Plugin',
-		url      => $FEED,
-		title    => $client->string(getDisplayName()),
-		timeout  => 35,
-	);
-
-	Slim::Buttons::Common::pushMode($client, 'xmlbrowser', \%params);
-
-	# we'll handle the push in a callback
-	$client->modeParam( 'handledTransition', 1 );
 }
 
 sub handleError {
@@ -90,7 +65,5 @@ sub handleError {
 		}
 	}
 }
-
-# XXX: CLI/Web support
 
 1;
