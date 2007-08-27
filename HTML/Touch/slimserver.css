@@ -181,7 +181,7 @@ td.listing {
 }
 
 div#pagecontainer {
-         top: 80; height: 100%;  overflow-y: auto; width: auto; position: absolute; z-index: 2;
+         top: 80; height: 100%;  overflow-y: auto; width: 100%; position: absolute; z-index: 2;
 }
 
 div#innerSanctum {

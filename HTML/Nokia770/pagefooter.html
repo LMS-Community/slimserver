@@ -3,16 +3,13 @@
 [% UNLESS noBuffer %]
 [% PROCESS heightSpacer buffer = '25' %]
 [% END %]
-<!-- end pagecontainer div -->
 <!--hack to help with viewing pagecontainer at bottom of page-->
 [% UNLESS thispage == 'home' || thispage == 'status' %]
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 [% END %]
-</div>
-
-<!-- end page div-->
+<!-- end pagecontainer div -->
 </div>
 
 <div id = '[% footer || 'footer' %]'>
@@ -34,6 +31,9 @@
 	</tr>
 </table>
 <!-- end footer div -->
+</div>
+
+<!-- end page div-->
 </div>
 
 </body>
