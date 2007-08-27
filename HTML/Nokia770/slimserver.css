@@ -8,6 +8,12 @@ body {
 	overflow: visible;
 }
 
+body.help {
+        overflow-y: visible;
+        margin: 10 10 10 10;
+        color: black;
+}
+
 body.default {
 	background-color: white;
 }

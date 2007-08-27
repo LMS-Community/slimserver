@@ -7,6 +7,12 @@ body {
 	overflow-y: hidden;
 }
 
+body.help {
+	overflow-y: visible;
+	margin: 20 20 20 20;
+	color: black;
+}
+
 body.default {
 	background-color: white;
 }
