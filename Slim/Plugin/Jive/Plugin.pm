@@ -19,6 +19,7 @@ use Slim::Utils::Prefs;
 #use Slim::Utils::Strings qw(string);
 use Slim::Player::Playlist;
 use Slim::Buttons::Information;
+use Slim::Player::Sync;
 use Data::Dumper;
 
 
@@ -1155,6 +1156,7 @@ sub menusettingsQuery {
 			},
 		],
 	};
+
 	# replay gain (volume adjustment)
 	if ($client->canDoReplayGain(0)) {
 		$val = $prefs->client($client)->get('replayGainMode');
@@ -1315,6 +1317,27 @@ sub menusettingsQuery {
 
 	};
 
+	# player name change, always display
+	push @menu, {
+		text      => Slim::Utils::Strings::string('CHANGE_PLAYER_NAME'),
+		input => {
+			len  => 1, # For those that want to name their player "X"
+			help => {
+				text => Slim::Utils::Strings::string('JIVE_CHANGEPLAYERNAME_HELP')
+			},
+		},
+		actions => {
+			go => {
+				player => 0,
+				cmd    => ['playerpref', 'playername'],
+				params => {
+					playerName     => '__INPUT__',
+					noFromQtyArgs  => 1,
+				},
+			},
+		},
+	};
+
 	# now slice and ship
 	my $numitems = scalar(@menu);
 
@@ -1335,6 +1358,5 @@ sub menusettingsQuery {
 
 	$request->setStatusDone();
 }
-
 
 1;

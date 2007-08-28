@@ -11874,6 +11874,9 @@ INFORMATION_PLAYER_NAME
 	SV	Spelarens namn
 	ZH_CN	播放机名字
 
+CHANGE_PLAYER_NAME
+	EN	Change Player Name
+
 INFORMATION_PLAYER_MODEL
 	CS	Typ přehrávače
 	DE	Player-Modell
@@ -13931,6 +13934,9 @@ SEARCHFOR_PLAYLISTS
 JIVE_SEARCHFOR_HELP
 	EN	Use the scroll wheel to change letters, then press the center button to select that letter. Press the center button again to start your search.
 	FR	Utiliser le bidule pour choisir une lettre, plus appuyer sur le bouton central afin de la sélectionner. Appuyer à nouveau sur le bouton central pour démarrer la recherche.
+
+JIVE_CHANGEPLAYERNAME_HELP
+	EN	Use the scroll wheel to change letters, then press the center button to select that letter. Press the center button again to change the name of your player.
 
 JIVE_POPUP_ADDING
 	EN	Adding

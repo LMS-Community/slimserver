@@ -512,7 +512,6 @@ sub init {
     addDispatch(['_IDorIndex',     'player',         'ip',         '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
     addDispatch(['_IDorIndex',     'player',         'model',      '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
     addDispatch(['_IDorIndex',     'player',         'name',       '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
-    addDispatch(['_IDorIndex',     'player',         'name',       '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
     addDispatch(['playerpref',     '_prefname',      '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playerprefQuery]);
     addDispatch(['playerpref',     'validate',       '_prefname',  '_newvalue'],                       [1, 1, 0, \&Slim::Control::Queries::prefValidateQuery]);
     addDispatch(['playerpref',     '_prefname',      '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::playerprefCommand]);
