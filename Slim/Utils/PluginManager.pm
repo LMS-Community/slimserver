@@ -90,6 +90,15 @@ sub init {
 		$class->runPendingOperations;
 	}
 
+	if (scalar keys %$plugins != scalar @$manifestFiles) {
+
+		$log->info("Reparsing plugin manifests - cache contains different number of plugins");
+
+		$plugins = {};
+
+		$class->readInstallManifests($manifestFiles);
+	}
+
 	$class->enablePlugins;
 
 	$class->writePluginCache;
