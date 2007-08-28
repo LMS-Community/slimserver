@@ -396,6 +396,13 @@ sub getNextTrackInfo {
 	# Get track URL for the next track
 	my ($trackId) = $nextURL =~ /(Tra\.[^.]+)/;
 	
+	# Get metadata for normal tracks
+	getTrackMetadata( $client, {
+		trackId     => $trackId,
+		callback    => \&gotTrackMetadata,
+		passthrough => [ $client ],
+	} );
+	
 	rpds( $client, {
 		data        => pack( 'cC/a*', 3, $trackId ),
 		callback    => \&gotTrackInfo,
@@ -868,7 +875,7 @@ sub getCurrentMeta {
 		artist => $track->{displayArtistName},
 		album  => $track->{displayAlbumName},
 		title  => $track->{name},
-		cover  => $track->{cover},
+		cover  => $track->{cover} || $track->{albumMetadata}->{albumArt162x162Url},
 	};
 }
 
