@@ -1363,6 +1363,8 @@ sub playerXQuery {
 	
 	# get our parameters
 	my $entity      = $request->getRequest(1);
+	# if element 1 is 'player', that means next element is the entity
+	$entity         = $request->getResults(2) if $entity eq 'player';  
 	my $clientparam = $request->getParam('_IDorIndex');
 	
 	if ($entity eq 'count') {

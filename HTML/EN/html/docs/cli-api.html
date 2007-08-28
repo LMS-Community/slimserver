@@ -86,6 +86,9 @@
 	<li>
 		New notification mechanism for preference changes: &quot;<a href="#prefset">prefset</a>&quot;.
 	</li>
+	<li>
+		&quot;<a href="#PC">Player commands</a>&quot; allow for alternate syntax, putting the mac address/player index as the first argument (needed for jive support).
+	</li>
 </ul>
 <p>
 	The following changes or new commands &amp; queries are available starting with
@@ -1084,6 +1087,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			?
 		</code>
 	</strong>
+	<br>or, alternatively<br>
+	<strong>
+		<code>
+			&lt;playerindex&gt;
+			player
+			id 
+			?
+		</code>
+	</strong>
 </p>
 <p>
 	The &quot;player id ?&quot; query returns the unique identifier of a player,
@@ -1096,7 +1108,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <blockquote> 
 	<p>
-		Request: &quot;player id 0 ?&lt;LF&gt;&quot;
+		Request: &quot;player id 0 ?&lt;LF&gt;&quot; (or)  "0 player id ?"
 		<br>
 		Response: &quot;player id 0 04:20:00:12:23:45&lt;LF&gt;&quot;
 	</p>
@@ -1112,6 +1124,16 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			?
 		</code>
 	</strong>
+	<br>or, alternatively<br>
+	<strong>
+		<code>
+			&lt;playerindex|playerid&gt;
+			player
+			name 
+			?
+		</code>
+	</strong>
+
 </p>
 <p>
 	The &quot;player name ?&quot; query returns the human-readable name for the
@@ -1123,7 +1145,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <blockquote> 
 	<p>
-		Request: &quot;player name 0 ?&lt;LF&gt;&quot;
+		Request: &quot;player name 0 ?&lt;LF&gt;&quot; or "0 player name ?"
 		<br>
 		Response: &quot;player name 0 Living Room&lt;LF&gt;&quot;
 	</p>
@@ -1139,6 +1161,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			?
 		</code>
 	</strong>
+	<br>or, alternatively<br>
+	<strong>
+		<code>
+			&lt;playerindex|playerid&gt;
+			player
+			ip 
+			?
+		</code>
+	</strong>
 </p>
 <p>
 	The &quot;player ip ?&quot; query returns the IP address (along with port 
@@ -1149,7 +1180,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <blockquote> 
 	<p>
-		Request: &quot;player ip 0 ?&lt;LF&gt;&quot;
+		Request: &quot;player ip 0 ?&lt;LF&gt;&quot; or "0 player ip ?"
 		<br>
 		Response: &quot;player ip 0 192.168.1.22:3483&lt;LF&gt;&quot;
 	</p>
@@ -1165,6 +1196,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			?
 		</code>
 	</strong>
+	<br>or, alternatively<br>
+	<strong>
+		<code>
+			&lt;playerindex|playerid&gt;
+			player
+			model
+			?
+		</code>
+	</strong>
 </p>
 <p>
 	The &quot;player model ?&quot; query returns the model of the player, 
@@ -1177,7 +1217,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <blockquote>
 	<p>
-		Request: &quot;player model 0 ?&lt;LF&gt;&quot;
+		Request: &quot;player model 0 ?&lt;LF&gt;&quot; or "0 player model ?"
 		<br>
 		Response: &quot;player model squeezebox&lt;LF&gt;&quot;
 	</p>
@@ -1193,6 +1233,15 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			?
 		</code>
 	</strong>
+	<br>or, alternatively<br>
+	<strong>
+		<code>
+			&lt;playerindex|playerid&gt;
+			player
+			displaytype
+			?
+		</code>
+	</strong>
 </p>
 <p>
 	The &quot;player displaytype ?&quot; query returns the display model of the
@@ -1204,7 +1253,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <blockquote>
 	<p>
-		Request: &quot;player displaytype 0 ?&lt;LF&gt;&quot;
+		Request: &quot;player displaytype 0 ?&lt;LF&gt;&quot; or "0 player displaytype ?"
 		<br>
 		Response: &quot;player displaytype 0 noritake-katakana&lt;LF&gt;&quot;
 	</p>
