@@ -81,7 +81,7 @@ sub cliRadiosQuery {
 		# what we want the query to report about ourself
 		if (defined $menu) {
 			$data = {
-				text => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+				text => Slim::Utils::Strings::string( $class->getDisplayName() ),  # nice name
 				actions => {
 					go => {
 						cmd => [ $tag, 'items' ],
