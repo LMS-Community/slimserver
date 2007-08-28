@@ -1424,12 +1424,6 @@ sub playersQuery {
 	my $quantity = $request->getParam('_quantity');
 	
 	my @prefs;
-	if (defined(my $pref_list = $request->getParam('playerprefs'))) {
-
-		# split on commas
-		@prefs = split(/,/, $pref_list);
-	}
-	
 	
 	my $count = Slim::Player::Client::clientCount();
 	$count += 0;
@@ -2277,6 +2271,9 @@ sub serverstatusQuery_filter {
 			}
 		}
 	}
+	if ($request->isCommand([['playerpref', 'playername']])) {
+		return 1;
+	}
 	
 	return 0;
 }
@@ -2319,14 +2316,6 @@ sub serverstatusQuery {
 			}
 		}
 	}
-	if (defined(my $pref_list = $request->getParam('playerprefs'))) {
-
-		# split on commas
-		my @prefs = split(/,/, $pref_list);
-		$savePrefs{'player'} = \@prefs;
-		
-	}
-
 
 	# get our parameters
 	my $index    = $request->getParam('_index');
@@ -2351,6 +2340,8 @@ sub serverstatusQuery {
 					'ip', $eachclient->ipport());
 				$request->addResultLoop('players_loop', $cnt, 
 					'name', $eachclient->name());
+				$request->addResultLoop('players_loop', $cnt, 
+					'playername', $eachclient->name());
 				$request->addResultLoop('players_loop', $cnt, 
 					'model', $eachclient->model());
 				$request->addResultLoop('players_loop', $cnt, 
@@ -2441,7 +2432,7 @@ sub statusQuery_filter {
 	return 0 if $clientid ne $self->clientid();
 	
 	# commands we ignore
-	return 0 if $request->isCommand([['ir', 'button', 'debug', 'pref', 'playerpref', 'display']]);
+	return 0 if $request->isCommand([['ir', 'button', 'debug', 'pref', 'display']]);
 	return 0 if $request->isCommand([['playlist'], ['open', 'jump']]);
 
 	# special case: the client is gone!
@@ -2455,9 +2446,17 @@ sub statusQuery_filter {
 		return 1;
 	}
 
+	# return immediately if 'playerpref playername', otherwise ignore playerpref
+	if ($request->isCommand([['playerpref']])) {
+		if ($request->isCommand([['playerpref', 'playername']])) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
 
-	# don't delay for newsong
-	if ($request->isCommand([['playlist'], ['newsong']])) {
+	# don't delay for newsong or playerpref (name change)
+	if ($request->isCommand([['playlist'], ['newsong'], ['playerpref']])) {
 
 		return 1;
 	}
