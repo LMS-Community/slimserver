@@ -38,6 +38,17 @@
     [% END %]
 [% END %]
       </ul>
+<h4><font color="#999999">[% "MUSIC_ON_DEMAND" | string %]</font></h4>
+      <ul>
+[% IF additionalLinks.music_on_demand %]
+    [% FOREACH link = additionalLinks.music_on_demand %]
+    <li>
+ 		<a href="[% link.value %]player=[% playerURI %]">[% link.key | string %]</a>
+ 	</li>
+    [% END %]
+[% END %]
+      </ul>
+
       <h4><font color="#999999">[% "SEARCH" | string %]</font></h4>
       <ul>
 [% IF additionalLinks.search %]

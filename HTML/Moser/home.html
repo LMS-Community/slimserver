@@ -2,13 +2,21 @@
     players = Clients.get("name") -%]
 [%- pagetitle = "HOME" | string -%]
 [%- WRAPPER leftside.html -%]
-[%- IF additionalLinks.browse %]
+ [%- IF additionalLinks.browse %]
   <h4>[% "BROWSE_MUSIC" | string %]</h4>
   <ul>
     [%- FOREACH link = additionalLinks.browse %]
     <li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a></li>
     [%- END %]
   </ul>
+ [%- END %]
+ [%- IF additionalLinks.music_on_demand %]
+  <h4>[% "MUSIC_ON_DEMAND" | string %]</h4>
+  <ul>
+    [%- FOREACH link = additionalLinks.music_on_demand %]
+    <li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
+    [%- END %]
+  </ul>	
  [%- END %]
  [%- IF additionalLinks.search %]
   <h4>[% "SEARCH" | string %]</h4>
