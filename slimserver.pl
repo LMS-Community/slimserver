@@ -684,75 +684,105 @@ sub changeEffectiveUserAndGroup {
 		return;
 	}
 
-	# Don't allow the server to be started as root.
-	# MySQL can't be run as root, and it's generally a bad idea anyways.
-	#
-	# See if there's a slimserver user we can switch to.
-	if ($> == 0 && !$user) {
+	# If we're not root and need to change user and group then die with a
+	# suitable message, else there's nothing more to do, so return.
+	if ($> != 0) {
 
-		my $testUser = 'slimserver';
-		my $uid      = getpwnam($testUser);
+		if (defined($user) || defined($group)) {
 
-		if ($> == 0 && (!defined $uid || $uid == 0)) {
-
-			# Don't allow the server to be started as root.
-			# MySQL can't be run as root, and it's generally a bad idea anyways.
-			print "* Error: SlimServer must not be run as root! Exiting! *\n";
-			exit;
-
-		} else {
-
-			$user = $testUser;
-		}
-	}
-
-	# Do we want to change the effective user or group?
-	if (defined($user) || defined($group)) {
-
-		# Can only change effective UID/GID if root
-		if ($> != 0) {
 			my $uname = getpwuid($>);
 			print STDERR "Current user is $uname\n";
 			print STDERR "Must run as root to change effective user or group.\n";
 			die "Aborting";
+
+		} else {
+
+			return;
+
 		}
 
-		# Change effective group ID if necessary
-		# Need to do this while still root, so do group first
-		if (defined($group)) {
+	}
 
-			my $gid = getgrnam($group);
+	my ($uid, $pgid, @sgids, $gid);
 
-			if (!defined $gid) {
-				die "Group $group not found.\n";
-			}
+	# Don't allow the server to be started as root.
+	# MySQL can't be run as root, and it's generally a bad idea anyways.
+	# Try starting as 'slimserver' instead.
+	if (!defined($user)) {
+		$user = 'slimserver';
+		print STDERR "Slimserver must not be run as root!  Trying user $user instead.\n";
+	}
 
-			$) = $gid;
 
-			# $) is a space separated list that begins with the effective gid then lists
-			# any supplementary group IDs, so compare against that.  On some systems
-			# no supplementary group IDs are present at system startup or at all.
-			if ( $) !~ /^$gid\b/) {
-				die "Unable to set effective group(s) to $group ($gid) is: $): $!\n";
-			}
-		}
+	# Get the uid and primary group id for the $user.
+	($uid, $pgid) = (getpwnam($user))[2,3];
 
-		# Change effective user ID if necessary
-		if (defined($user)) {
+	if (!defined ($uid)) {
+		die "User $user not found.\n";
+	}
 
-			my $uid = getpwnam($user);
 
-			if (!defined ($uid)) {
-				die "User $user not found.\n";
-			}
+	# Get the supplementary groups to which $user belongs
 
-			$> = $uid;
+	setgrent();
 
-			if ($> != $uid) {
-				die "Unable to set effective user to $user, ($uid)!\n";
-			}
+	while (my @grp = getgrent()) {
+		if ($grp[3] =~ m/\b$user\b/){ push @sgids, $grp[2] }
+	}
+
+	endgrent();
+
+	# If a group was specified, get the gid of it and add it to the 
+	# list of supplementary groups.
+	if (defined($group)) {
+		$gid = getgrnam($group);
+
+		if (!defined $gid) {
+			die "Group $group not found.\n";
+		} else {
+			push @sgids, $gid;
 		}
 	}
+
+	# Check that we're definately not trying to start as root, e.g. if
+	# we were passed '--user root' or any other used with uid 0.
+	if ($uid == 0) {
+		print STDERR "SlimServer must not be run as root! Exiting!\n";
+		die "Aborting";
+	}
+
+
+	# Change effective group. Need to do this while still root, so do group first
+
+	# $) is a space separated list that begins with the effective gid then lists
+	# any supplementary group IDs, so compare against that.  On some systems
+	# no supplementary group IDs are present at system startup or at all.
+
+	# We need to pass $pgid twice because setgroups only gets called if there's 
+	# more than one value.  For example, if we did:
+	# $) = "1234"
+	# then the effective primary group would become 1234, but we'd retain any 
+	# previously set supplementary groups.  To become a member of just 1234, the 
+	# correct way is to do:
+	# $) = "1234 1234"
+
+	undef $!;
+	$) = "$pgid $pgid " . join (" ", @sgids);
+
+	if ( $! ) {
+		die "Unable to set effective group(s) to $group ($gid) is: $): $!\n";
+	}
+
+	# Finally, change effective user id.
+
+	undef $!;
+	$> = $uid;
+
+	if ( $! ) {
+		die "Unable to set effective user to $user, ($uid)!\n";
+	}
+
+	logger('server')->info("Running as uid: $> / gid: $)");
 }
 
 sub checkDataSource {
