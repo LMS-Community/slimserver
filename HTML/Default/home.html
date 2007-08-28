@@ -20,6 +20,7 @@
 	<span id="musicCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('main');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "MY_MUSIC" | string %]</span>
 	<span id="radioCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('main');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "RADIO" | string %]</span>
 	<span id="searchCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('main');">[% "HOME" | string %]</span> [% crumbSeparator %] <span class="mouseOver" onclick="MainMenu.showPanel('music');">[% "MY_MUSIC" | string %]</span></span>
+	<span id="music_on_demandCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('main');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "MUSIC_ON_DEMAND" | string %]</span>
 [% END %]
 
 [% infoTab = BLOCK %]
@@ -65,9 +66,7 @@
 
 <div class="homeMenuSection" id="music_on_demandMenu">
 	[%- FOREACH link = additionalLinks.music_on_demand %]
-		[% IF link.key != 'FAVORITES' %]
-			[% PROCESS menuItem token=link.key category='music_on_demand' %]
-		[%- END %]
+		[% PROCESS menuItem token=link.key category='music_on_demand' %]
 	[%- END %]
 </div>
 
