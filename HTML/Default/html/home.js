@@ -34,14 +34,17 @@ var MainMenu = function(){
 						);
 					}
 					else
-						MainMenu.showPanel('music');
+						MainMenu.showPanel('my_music');
 						
 					return true;
 				}
 			});
 			search.applyTo('livesearch');
 
-			this.showPanel('main');
+			anchor = document.location.href.match(/#(.*)\?/)
+			if (!(anchor && anchor[1] && this.showPanel(anchor[1].toLowerCase()))) {
+				this.showPanel('main');
+			}
 		},
 		
 		addUrl : function(key, value){
@@ -51,7 +54,7 @@ var MainMenu = function(){
 		doMenu : function(item){
 			switch (item) {
 				case 'MY_MUSIC':
-					this.showPanel('music');
+					this.showPanel('my_music');
 					break;
 
 				case 'RADIO':
@@ -68,17 +71,22 @@ var MainMenu = function(){
 					
 				default:
 					if (url[item]) {
-						location.href = url[item];
+						cat = item.match(/:(.*)$/);
+						location.href = url[item] + (cat && cat.length >= 2 ? '&homeCategory=' + cat[1] : '');
 					}
 					break;
 			}
 		},
 		
 		showPanel : function(panel){
+			panelExists = false;
+
 			items = Ext.DomQuery.select('div.homeMenuSection');
 			for(var i = 0; i < items.length; i++) {
-				if (el = Ext.get(items[i].id))
+				if (el = Ext.get(items[i].id)) {
 					el.setVisible(panel + 'Menu' == items[i].id);
+					panelExists |= (panel + 'Menu' == items[i].id);
+				}
 			}
 
 			items = Ext.DomQuery.select('span.overlappingCrumblist');
@@ -88,10 +96,12 @@ var MainMenu = function(){
 			}
 
 			Ext.get('livesearch').setVisibilityMode(Ext.Element.DISPLAY);
-			if (panel == 'music' || panel == 'search')
+			if (panel == 'my_music' || panel == 'search')
 				Ext.get('livesearch').setVisible(true);
 			else
 				Ext.get('livesearch').setVisible(false);
+
+			return panelExists;
 		},
 		
 		onResize : function(){

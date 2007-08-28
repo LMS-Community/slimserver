@@ -4,12 +4,13 @@
 	[% controlGraphics = 1 %]
 	[% browserTarget = "browser" %]
 	[% useAJAX = 0 %]
-	[% crumbSeparator = ">" %]
+	[% crumbSeparator = "&gt;" %]
 	
 
 	[% BLOCK cmdlink -%]
 		<a [% content %] ><img src="[% webroot %]html/images/[% cmdimage %].png" width="15" height="15" alt="[% cmdtitle | string | ucfirst %]" title="[% cmdtitle | string | ucfirst %]"/></a>
 	[%- END %]
+
 
 	[% BLOCK cmdHRef -%]onclick="Utils.processPlaylistCommand('[% 
 		IF numcmdFor.$cmdType; # better way to determine this?
@@ -20,6 +21,7 @@
 			PROCESS cmdLocalQuery;
 		END; %]&amp;player=[% playerURI %]',this.name)"
 	[%- END %]
+
 
 	[% BLOCK contentitem -%]
 	<div class="selectorMarker"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
@@ -43,9 +45,11 @@
 	</div>
 	[%- END %]
 
+
 	[% BLOCK galleryitem -%]
 	[% PROCESS contentitem %]
 	[%- END %]
+
 
 	[% BLOCK iteminfo -%]
 		
@@ -82,6 +86,7 @@
 		[%- END %]
 	[%- END %]
 
+
 	[%# This is to build the pagebar or alphapagebar, it should be PROCESSed %]
 	[% BLOCK pagebar %]
 		[%- IF NOT pageinfo.alphamap; PROCESS pagebarcalc pagesperbar = 15; END %]
@@ -107,5 +112,4 @@
 			[% IF pagesend %] <a href="[% pageinfo.path %]?start=[% pagesend %]&amp;[% pageinfo.otherparams | html %]">[% "LAST" | string %]</a> [% END %]
 		</div>
 	[% END %]
-
 [% END -%]
