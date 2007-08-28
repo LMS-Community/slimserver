@@ -12,9 +12,8 @@ var Utils = function(){
 		addBrowseMouseOver: function(){
 			Ext.addBehaviors({
 				'.selectorMarker, .currentSong@mouseover': function(ev, target){
-					if (! (Ext.get(target).hasClass('selectorMarker') 
-						|| Ext.get(target).hasClass('currentSong')
-					))
+					// return if the target is a child of the main selector
+					if (Ext.get(target).findParent('.mouseOver'))
 						return;
 
 					// remove highlighting from the other DIVs
@@ -23,6 +22,7 @@ var Utils = function(){
 						el = Ext.get(items[i].id);
 						if (el) {
 							el.replaceClass('mouseOver', 'selectorMarker');
+							el.un('click', Utils.onSelectorClicked);
 
 							if (controls = Ext.DomQuery.selectNode('span.browsedbControls, div.playlistControls', el.dom)) {
 								Ext.get(controls).hide();
@@ -30,16 +30,32 @@ var Utils = function(){
 						}
 					}
 
-					el = Ext.get(target);
-					if (el) {
+					// always highlight the main selector, not its children
+					el = Ext.get(target).findParent('.selectorMarker');
+					if (el = Ext.get(el)) {
 						el.replaceClass('selectorMarker', 'mouseOver');
+						
+						el.on('click', Utils.onSelectorClicked);
 						
 						if (controls = Ext.DomQuery.selectNode('span.browsedbControls, div.playlistControls', el.dom)) {
 							Ext.get(controls).show();
 						}
 					}
-				}			
+				}
 			});
+		},
+		
+		onSelectorClicked : function(ev, target){
+			el = Ext.get(target).child('a.browseItemLink');
+			if (el && el.dom.href) {
+				location.href = el.dom.href;
+			}
+			else if (Ext.get(target).is('div.homeMenuItem')) {
+				MainMenu.doMenu(Ext.get(target).id);
+			}
+			else if (el = Ext.get(target).child('div.homeMenuItem')) {
+				MainMenu.doMenu(Ext.get(el).id);
+			}
 		},
 
 		resizeContent : function(){

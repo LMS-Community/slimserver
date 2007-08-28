@@ -6,17 +6,6 @@ var MainMenu = function(){
 			Ext.EventManager.onWindowResize(this.onResize, this);
 			Ext.EventManager.onDocumentReady(this.onResize, this, true);
 
-			menuItems = Ext.DomQuery.select('div.homeMenuItem');
-			for(var i = 0; i < menuItems.length; i++) {
-				el = Ext.get(menuItems[i].id);
-				if (el) {
-					el.on('click', function(e, item){
-						this.doMenu(item.id);
-					}, this);
-				}
-			};
-			
-			
 			search = new Ext.form.TextField({
 				validationDelay: 50,
 				validateOnBlur: false,
