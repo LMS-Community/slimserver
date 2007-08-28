@@ -5,8 +5,6 @@ package Slim::Web::Pages::LiveSearch;
 # This is a class that allows us to query the database with "raw" results -
 # don't turn them into objects for speed. For the Web UI, we can then return
 # the results as XMLish data stream, to be dynamically displayed in a <div>
-#
-# Todo - call filltemplate stuff instead? May be too slow.
 
 use strict;
 
@@ -26,37 +24,27 @@ sub outputAsXHTML {
 	my $query   = shift;
 	my $rsList  = shift;
 	my $player  = shift;
+	my $params  = shift;
 
 	my @xml = (
 		'<?xml version="1.0" encoding="utf-8" ?>',
 		'<div id="browsedbList">',
 	);
+	
+	$params->{'itemsPerPage'} = MAXRESULTS;
 
 	for my $rs (@$rsList) {
 
-		my $type   = lc($rs->result_source->source_name);
 		my $total  = $rs->count;
-		my $count  = 0;
-		my @output = ();
+		my $type   = lc($rs->result_source->source_name);
 
-		while (my $item = $rs->next) {
+		Slim::Web::Pages::Search::fillInSearchResults($params, $rs, []);
 
-			if ($count <= MAXRESULTS) {
+		push @xml, map {
+			$params->{item} = $_;
+			${Slim::Web::HTTP::filltemplatefile("browsedbitems_list.html", $params)};
+		} @{ $params->{browse_items} };
 
-				my $rowType = $count % 2 ? 'even' : 'odd';
-
-				push @output, renderItem($rowType, $type, $item, $player);
-			}
-
-			$count++;
-		}
-
-		push @xml, sprintf("<div class=\"even\">\n<div class=\"browsedbListItem\"><hr width=\"75%%\"/><br/>%s \"%s\": $total<br/><br/></div></div>", 
-			Slim::Utils::Strings::string(uc($type . 'SMATCHING')),
-			Slim::Utils::Unicode::utf8decode($query)
-		);
-
-		push @xml, @output if $count;
 
 		if ($total && $total > MAXRESULTS) {
 			push @xml, 
@@ -64,12 +52,15 @@ sub outputAsXHTML {
 				$query, $type, $player, Slim::Utils::Strings::string('MORE_MATCHES')
 			);
 		}
+		
+		$params->{browse_items} = undef;
 	}
 
 	push @xml, "</div>\n";
 
 	return \join('', @xml);
 }
+
 
 sub outputAsXML {
 	my $class   = shift;
@@ -90,8 +81,6 @@ sub outputAsXML {
 		my @output = ();
 
 		while (my $item = $rs->next) {
-
-			my $rowType = $count % 2 ? 'even' : 'odd';
 
 			if ($count <= MAXRESULTS) {
 
@@ -119,98 +108,6 @@ sub outputAsXML {
 	push @xml, "</livesearch>\n";
 
 	return \join('', @xml);
-}
-
-sub renderItem {
-	my ($rowType, $type, $item, $player) = @_;
-
-	my $id         = $item->id,
-	my @xml        = ();
-	my $name       = '';
-	my $showExtra  = '';
-
-	# Track case, followed by album & artist.
-	if (blessed($item) eq 'Slim::Schema::Track') {
-
-		$name = Slim::Music::Info::standardTitle(undef, $item) || '';
-		
-		# Starting work on the standard track list format, but its a work in progress.
-		my $webFormat = $prefs->get('titleFormat')->[ $prefs->get('titleFormatWeb') ] || '';
-
-		# This is rather redundant from Pages.pm
-		if ($webFormat !~ /ARTIST/ && $item->can('artist') && $item->artist) {
-
-			$showExtra .= sprintf(
-				' %s <a href="browsedb.html?hierarchy=contributor,album,track&amp;level=1\&amp;contributor.id=%d&amp;player=%s">%s</a>',
-				string('BY'), $item->artist->id, $player, $item->artist->name,
-			);
-		}
-
-		if ($webFormat !~ /ALBUM/ && $item->can('album') && $item->album) {
-
-			$showExtra .= sprintf(
-				' %s <a href="browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=%d&amp;player=%s">%s</a>',
-				string('FROM'), $item->album->id, $player, $item->album->title,
-			);
-		}
-
-	} elsif (blessed($item) eq 'Slim::Schema::Album') { 
-		
-		$name = $item->name;
-		
-		# This is rather redundant from the Album displayAsHTML Schema
-		if ($prefs->get('showYear') && $item->can('year') && $item->year) {
-
-			$showExtra .= sprintf(
-				' %s<a href="browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=%d&amp;player=%s">%s</a>%s ',
-				'(', $item->year, $player, $item->year, ')',
-			);
-		}
-		
-		# This is rather redundant from the Album displayAsHTML Schema
-		if ($prefs->get('showArtist') && $item->can('artists') && $item->artists) {
-			my @artists = $item->artists;
-
-			$showExtra .= sprintf(
-				' %s <a href="browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=%d&amp;player=%s">%s</a>',
-				string('BY'), $artists[0]->id, $player, $artists[0]->name,
-			);
-		}
-		
-	} else {
-
-		$name = $item->name;
-	}
-
-	# We need to handle the different urls that are needed for different result types
-	my $url;
-
-	if ($type eq 'track') {
-
-		$url = "songinfo.html?item=$id";
-
-	} elsif ($type eq 'album') {
-
-		$url = "browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=$id";
-
-	} elsif ($type eq 'contributor') {
-
-		$url = "browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=$id&amp;contributor.role=ALL";
-	}
-
-	push @xml,"\n<div class=\"$rowType\">\n<div class=\"browsedbListItem\">
-			<a href=\"$url\&amp;player=$player\">$name</a>$showExtra";
-
-	push @xml,"<div class=\"browsedbControls\">
-
-		<a href=\"status_header.html?command=playlist&amp;subcommand=loadtracks\&amp;$type.id=$id\&amp;player=$player\" target=\"status\">\n
-		<img src=\"html/images/b_play.gif\" width=\"13\" height=\"13\" alt=\"Play\" title=\"Play\"/></a>\n\n
-
-		<a href=\"status_header.html?command=playlist&amp;subcommand=addtracks\&amp;$type.id=$id\&amp;player=$player\" target=\"status\">\n
-		<img src=\"html/images/b_add.gif\" width=\"13\" height=\"13\" alt=\"Add to playlist\" title=\"Add to playlist\"/></a> \n
-		</div>\n</div>\n</div>\n";
-
-	return join('', @xml);
 }
 1;
 

@@ -96,6 +96,7 @@ img { border: 0; }
 .currentSong .playlistSongDetail,
 .mouseOver .browseItemDetail,
 .mouseOver .browseItemLink,
+.mouseOver .browsedbListItem,
 .mouseOver .homeMenuItem {
 	color: #343434;
 }
