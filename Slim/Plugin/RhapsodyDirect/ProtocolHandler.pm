@@ -236,10 +236,17 @@ sub gotPlaybackSession {
 			return;
 		}
 	}
-	
+
 	$log->debug("New playback session started");
 	
 	my ($trackId) = $url =~ /(Tra\.[^.]+)/;
+	
+	# Get metadata for normal tracks
+	getTrackMetadata( $client, {
+		trackId     => $trackId,
+		callback    => \&gotTrackMetadata,
+		passthrough => [ $client ],
+	} );
 	
 	# Get the track URL via the player
 	rpds( $client, {
@@ -439,6 +446,58 @@ sub onUnderrun {
 	}
 	
 	$callback->();
+}
+
+sub getTrackMetadata {
+	my ( $client, $params ) = @_;
+	
+	my $trackId = $params->{trackId};
+	
+	my $trackURL = Slim::Networking::SqueezeNetwork->url(
+		"/api/rhapsody/opml/metadata/getTrack?trackId=$trackId&json=1"
+	);
+	
+	my $http = Slim::Networking::SqueezeNetwork->new(
+		\&gotTrackMetadata,
+		\&gotTrackMetadataError,
+		{
+			client => $client,
+			params => $params,
+		},
+	);
+	
+	$log->debug("Getting track metadata for $trackId from SqueezeNetwork");
+	
+	$http->get( $trackURL );
+}
+
+sub gotTrackMetadata {
+	my $http   = shift;
+	my $client = $http->params->{client};
+	my $params = $http->params->{params};
+	
+	my $track = eval { from_json( $http->content ) };
+	if ( $@ ) {
+		$log->warn("Error getting track metadata from SN: $@");
+		$client->pluginData( currentTrack => 0 );
+		return;
+	}
+	
+	if ( $log->is_debug ) {
+		$log->debug( 'Got track metadata: ' . Data::Dump::dump($track) );
+	}
+	
+	$client->pluginData( currentTrack => $track );
+}
+
+sub gotTrackMetadataError {
+	my $http   = shift;
+	my $client = $http->params('client');
+	my $error  = $http->error;
+	
+	$log->warn("Error getting track metadata from SN: $error");
+	
+	$client->pluginData( currentTrack => 0 );
 }
 
 sub getNextRadioTrack {
