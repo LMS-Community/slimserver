@@ -25,6 +25,12 @@
 	bottom: -1px;
 }
 
+#playlistTab {
+	height: 10px;
+	position: absolute;
+	bottom: 15px;
+}
+
 #infoPopup {
 	position: absolute;
 	height: expression((document.getElementById('inner_content') && document.getElementById('inner_content').offsetHeight 

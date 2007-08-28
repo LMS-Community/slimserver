@@ -1,5 +1,5 @@
 <div>
-	[% IF hasPagebar %][% PROCESS pagebar %][% END %]
+	[% IF hasPagebar %][% PROCESS pagebar useJS="Playlist.load" %][% END %]
 	<div id="playList">
 		[% IF playercount == '0' %]
 			<p>[% "NO_PLAYER_DETAILS" | string %]</p>

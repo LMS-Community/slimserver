@@ -90,26 +90,27 @@
 	[%# This is to build the pagebar or alphapagebar, it should be PROCESSed %]
 	[% BLOCK pagebar %]
 		[%- IF NOT pageinfo.alphamap; PROCESS pagebarcalc pagesperbar = 15; END %]
-		<div class="pagebar">
-			[% IF pagesstart %]  <a href="[% pageinfo.path %]?start=0&amp;[% pageinfo.otherparams | html %]">[% "FIRST" | string %]</a> [% END %]
-			[% IF pageprev || pageprev == '0' %] <a href="[% pageinfo.path %]?start=[% pageprev %]&amp;[% pageinfo.otherparams | html %]">[% "PREVIOUS" | string %]</a> [% END %]
+		<div class="pagebar" id="pagebar">
+			[% IF pagesstart %]  <a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=0&amp;[% pageinfo.otherparams | html %][% IF useJS %]')[% END %]">[% "FIRST" | string %]</a> [% END %]
+			[% IF pageprev || pageprev == '0' %] <a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=[% pageprev %]&amp;[% pageinfo.otherparams | html %][% IF useJS %]')[% END %]">[% "PREVIOUS" | string %]</a> [% END %]
 			[%- IF pageinfo.alphamap %]
-			[%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
-			[%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
-			[% IF curpage %]<span onclick="Browse.gotoAnchor('[% alphakey | uri %]');" style="text-decoration:underline;cursor: pointer;"><b>[% alphakey | html %]</b></span>
-			[% ELSE %] 
-				<a href="[% pageinfo.path | html %]?[% pageinfo.otherparams | html %]&amp;start=[% pageinfo.alphamap.item(alphakey) %]#[% alphakey | uri %]">[% alphakey | html %]</a>
-			[% END %]
-			[%- END %]
+				[%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
+					[%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
+					[% IF curpage %]<span onclick="Browse.gotoAnchor('[% alphakey | uri %]');" style="text-decoration:underline;cursor: pointer;"><b>[% alphakey | html %]</b></span>
+					[% ELSE %]
+						<a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path | html %]?[% pageinfo.otherparams | html %]&amp;start=[% pageinfo.alphamap.item(alphakey) %]#[% alphakey | uri %][% IF useJS %]')[% END %]">[% alphakey | html %]</a>
+					[% END %]
+				[%- END %]
 			[%- ELSE %]
-			[%- FOREACH ind=[pagebarstart..pagebarend] -%]
-			[%- IF ind == pageinfo.currentpage %] <b>[% ind + 1 %]</b> 
-			[%- ELSE %] <a href="[% pageinfo.path  | html %]?[% pageinfo.otherparams  | html %]&amp;start=[% ind * pageinfo.itemsperpage %]">[% ind + 1 %]</a> 
+				[%- FOREACH ind=[pagebarstart..pagebarend] -%]
+					[%- IF ind == pageinfo.currentpage %] <b>[% ind + 1 %]</b> 
+					[%- ELSE %]
+						<a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path  | html %]?[% pageinfo.otherparams  | html %]&amp;start=[% ind * pageinfo.itemsperpage %][% IF useJS %]')[% END %]">[% ind + 1 %]</a> 
+					[%- END %]
+				[% END %]
 			[%- END %]
-			[% END %]
-			[%- END %]
-			[% IF pagenext %] <a href="[% pageinfo.path %]?start=[% pagenext %]&amp;[% pageinfo.otherparams | html %]">[% "NEXT" | string %]</a> [% END %]
-			[% IF pagesend %] <a href="[% pageinfo.path %]?start=[% pagesend %]&amp;[% pageinfo.otherparams | html %]">[% "LAST" | string %]</a> [% END %]
+			[% IF pagenext %] <a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=[% pagenext %]&amp;[% pageinfo.otherparams | html %][% IF useJS %]')[% END %]">[% "NEXT" | string %]</a> [% END %]
+			[% IF pagesend %] <a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=[% pagesend %]&amp;[% pageinfo.otherparams | html %][% IF useJS %]')[% END %]">[% "LAST" | string %]</a> [% END %]
 		</div>
 	[% END %]
 [% END -%]

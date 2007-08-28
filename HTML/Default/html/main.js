@@ -65,7 +65,7 @@ Main = function(){
 				}
 				else {
 					offset['playlistbottom'] = 97;
-					offset['playlist'] = 42;
+					offset['playlist'] = 4;
 				}
 			}
 			else if (Ext.isOpera) {
@@ -76,6 +76,9 @@ Main = function(){
 				offset['playlistbottom'] = 96;
 			}
 
+			if (pager = Ext.get('pagebar'))
+				offset['playlist'] += pager.getHeight() + (Ext.isIE ? 0 : 4);
+				
 			dimensions = new Array();
 			dimensions['maxHeight'] = Ext.get(document.body).getHeight();
 			dimensions['footer'] = Ext.get('footer').getHeight();
@@ -113,10 +116,13 @@ Main = function(){
 
 Playlist = function(){
 	return {
-		load : function(){
+		load : function(url){
 			Ext.get('rightcontent').load(
-				webroot + 'playlist.html',
-				'playerid=' + player,
+				{
+					url: url || webroot + 'playlist.html?playerid=' + player,
+					method: 'GET'
+				},
+				{},
 				this.onUpdated
 			);
 		},
@@ -149,19 +155,22 @@ Playlist = function(){
 					}
 				}
 			});
-
+			
+/*			Ext.dd.ScrollManager.register('playList');
 			items = Ext.DomQuery.select('div.selectorMarker');
 			for(var i = 0; i < items.length; i++) {
 				var dd = new Ext.dd.DD(items[i], 'playlist', {
+					containerScroll: true,
 					scroll: false
 				});
-//				dd.setXConstraint(0, 0);
+				dd.setXConstraint(0, 0);
 				dd.onDragDrop = function(e, id) {
 					alert("dd was dropped on " + id);
 				}
 			}
-			Ext.dd.ScrollManager.register('rightcontent');
-
+			
+//			Ext.dd.DragZone('playList', {containerScroll:true});
+*/
 			Playlist.highlightCurrent();
 		},
 
