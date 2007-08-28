@@ -43,7 +43,9 @@
 	[% PROCESS menuItem token="FAVORITES" category='browse' %]
 	[% category=''; PROCESS menuItem token="MY_MUSIC" %]
 	[% PROCESS menuItem token="RADIO" %]
-	[% PROCESS menuItem token="MUSIC_ON_DEMAND" %]
+	[% IF additionalLinks.music_on_demand %]
+		[% PROCESS menuItem token="MUSIC_ON_DEMAND" %]
+	[% END %]
 	[% PROCESS menuItem token="OTHER_SERVICES" %]
 </div>
 
@@ -58,9 +60,7 @@
 
 <div class="homeMenuSection" id="radioMenu">
 	[%- FOREACH link = additionalLinks.radio %]
-		[% IF link.key != 'FAVORITES' %]
-			[% PROCESS menuItem token=link.key category='radio' %]
-		[%- END %]
+		[% PROCESS menuItem token=link.key category='radio' %]
 	[%- END %]
 </div>
 

@@ -69,6 +69,7 @@
 	</ul>	
 </div>
 
+[% IF additionalLinks.music_on_demand %]
 <div class="homeMenuSection">
 	<div>[% "MUSIC_ON_DEMAND" | string | upper %]</div>
 	<ul>
@@ -77,6 +78,7 @@
 	[%- END %]
 	</ul>	
 </div>
+[%- END %]
 
 [% IF not nosetup %]
 <div class="homeMenuSection">

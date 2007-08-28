@@ -4,8 +4,10 @@
 		<SELECT NAME="browse" class="stdedit" style="width:17em;" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
 			<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
 			[% PROCESS addBrowseLinks links=additionalLinks.browse %]
-			<OPTION value="" label="">---[% "[% "MUSIC_ON_DEMAND" | string  %]---</option>
+			[% IF additionalLinks.music_on_demand %]
+			<OPTION value="" label="">---[% "MUSIC_ON_DEMAND" | string  %]---</option>
 			[% PROCESS addBrowseLinks links=additionalLinks.music_on_demand %]
+			[% END %]
 			<OPTION value="" label="">---[% "SEARCH" | string %]---</OPTION>
 			[% PROCESS addBrowseLinks links=additionalLinks.search %]
 			<OPTION value="" label="">---[% "RADIO" | string %]---</OPTION>
