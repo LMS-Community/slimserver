@@ -215,6 +215,7 @@ Player = function(){
 
 			new Slim.Button('ctrlPrevious', {
 				icon: 'html/images/btn_previous.gif',
+				tooltip: strings['previous'],
 				width: 28,
 				height: 22,
 				scope: this,
@@ -223,6 +224,7 @@ Player = function(){
 
 			btnTogglePlay = new Slim.Button('ctrlTogglePlay', {
 				icon: 'html/images/btn_play.gif',
+				tooltip: strings['play'],
 				width: 51,
 				height: 22,
 				scope: this,
@@ -231,6 +233,7 @@ Player = function(){
 
 			new Slim.Button('ctrlNext', {
 				icon: 'html/images/btn_next.gif',
+				tooltip: strings['next'],
 				width: 28,
 				height: 22,
 				scope: this,
@@ -239,6 +242,7 @@ Player = function(){
 
 			new Slim.Button('ctrlRepeat', {
 				icon: 'html/images/btn_repeat.gif',
+				tooltip: strings['repeat0'],
 				width: 34,
 				height: 22,
 				scope: this,
@@ -247,6 +251,7 @@ Player = function(){
 
 			new Slim.Button('ctrlShuffle', {
 				icon: 'html/images/btn_shuffle.gif',
+				tooltip: strings['shuffle0'],
 				width: 34,
 				height: 22,
 				scope: this,
@@ -255,6 +260,7 @@ Player = function(){
 
 			new Slim.Button('ctrlVolumeDown', {
 				icon: 'html/images/btn_volume_decrease.gif',
+				tooltip: strings['volumedown'],
 				width: 22,
 				height: 22,
 				scope: this,
@@ -263,6 +269,7 @@ Player = function(){
 
 			new Slim.Button('ctrlVolumeUp', {
 				icon: 'html/images/btn_volume_increase.gif',
+				tooltip: strings['volumeup'],
 				width: 22,
 				height: 22,
 				scope: this,
@@ -332,6 +339,7 @@ Player = function(){
 
 			new Slim.Button('ctrlPower', {
 				icon: 'html/images/btn_power.gif',
+				tooltip: strings['power'],
 				width: 24,
 				height: 24,
 				scope: this,
@@ -456,6 +464,8 @@ Player = function(){
 
 						// update play/pause button
 						btnTogglePlay.icon = webroot + 'html/images/' + (result.mode=='play' ? 'btn_pause.gif' : 'btn_play.gif');
+						if (el = btnTogglePlay.getEl().child('button:first'))
+							el.dom.title = (result.mode=='play' ? strings['pause'] : strings['play']);
 						btnTogglePlay.onBlur();
 
 						// update volume button
@@ -467,7 +477,10 @@ Player = function(){
 						else {
 							volVal = Math.ceil(result['mixer volume']/9.9);
 						}
-						Ext.get('ctrlVolume').setStyle('background', 'url(html/images/volume_levels.gif) no-repeat 0px -' + String(volVal * 22) + 'px');
+						volEl = Ext.get('ctrlVolume');
+						volEl.setStyle('background', 'url(html/images/volume_levels.gif) no-repeat 0px -' + String(volVal * 22) + 'px');
+						if (volEl = volEl.child('img:first'))
+							volEl.dom.title = strings['volume'] + ' ' + parseInt(result['mixer volume']);
 
 						playerStatus = {
 							power: result.power,

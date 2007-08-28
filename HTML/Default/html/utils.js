@@ -111,6 +111,8 @@ Slim = {};
 
 // graphical button, defined in three element sprite for normal, mouseover, pressed
 Slim.Button = function(renderTo, config){
+	this.tooltipType = config.tooltipType || 'title';
+
 	// I've given up on IE6 - don't animate those buttons :-(
 	if (Ext.isIE && !Ext.isIE7)
 		this.template = new Ext.Template('<img src="html/images/spacer.gif" height="{0}" width="{1}">');
@@ -172,7 +174,7 @@ Ext.extend(Slim.Button, Ext.Button, {
 			}
 		}
 	},
-   
+
 	onMouseOver: function(e){
 		if(!this.disabled && (myEl = this.el.child("button:first"))) {
 			myEl.setStyle('background', 'url(' + this.icon + ') no-repeat 0px -' + String(this.height) + 'px');
