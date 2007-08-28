@@ -1,4 +1,4 @@
-html, body {
+html, body, tr.odd, tr.even {
 	padding: 0;
 	margin: 0;
 	border: 0 none;
@@ -9,8 +9,9 @@ html, body {
 	font-family: sans-serif;
 }
 
-body { background: url(html/images/inner_background.gif) repeat; }
+body, iframe { background: url(html/images/inner_background.gif) repeat; }
 b, a { color: white; font-size: 12px; }
+input { color: black; font-size: 12px; }
 img { border: 0; }
 
 
