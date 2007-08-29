@@ -2657,7 +2657,7 @@ sub statusQuery {
 		my $quantity = $request->getParam('_quantity');
 	
 		$tags = 'gald' if !defined $tags;
-		my $loop = $menuMode?'item_loop':'playlist_loop';
+		my $loop = $menuMode ? 'item_loop' : 'playlist_loop';
 
 		# we can return playlist data.
 		# which mode are we in?
@@ -2740,12 +2740,28 @@ sub statusQuery {
 						}
 						$text = $text . "\n" . (defined($artist)?$artist:"");
 						
-						$request->addResultLoop($loop, $count, 'text', $text);
-						
 						if (defined($iconId)) {
 							$iconId += 0;
 							$request->addResultLoop($loop, $count, 'icon-id', $iconId);
 						}
+						
+						# Override with plugin metadata if available
+						if ( my $current_meta = $request->getResult('current_meta') ) {
+							$text = $current_meta->{title} . "\n";
+							if ( $current_meta->{album} ) {
+								$text .= $current_meta->{album};
+							}
+							$text .= "\n";
+							if ( $current_meta->{artist} ) {
+								$text .= $current_meta->{artist};
+							}
+						
+							if ( $current_meta->{cover} ) {
+								$request->addResultLoop( $loop, $count, 'icon', $current_meta->{cover} );
+							}
+						}
+						
+						$request->addResultLoop($loop, $count, 'text', $text);
 					}
 					else {
 						_addSong(	$request, $loop, $count, 
