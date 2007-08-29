@@ -65,7 +65,14 @@ div.thumbwrap {
 }
 
 .artworkText {
+	margin-top: 2px;
 	text-align: center;
+}
+
+#viewSelect {
+	position: absolute;
+	right: 25px;
+	top: -5px;
 }
 
 .searchHeader {

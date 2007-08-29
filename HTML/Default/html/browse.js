@@ -44,6 +44,14 @@ Browse = function(){
 					thisdoc.location=myString.replace(rExp, "");
 				}
 			}
+		},
+
+		chooseAlbumOrderBy: function(value, option) {
+			if (option) {
+				orderByUrl = orderByUrl + '&orderBy=' + option;
+			}
+			Utils.setCookie( 'SlimServer-orderBy', option );
+			window.location = orderByUrl;
 		}
 
 	};
@@ -51,7 +59,12 @@ Browse = function(){
 
 Ext.EventManager.onDocumentReady(Browse.init, Browse, true);
 
-// legacy call...
+// legacy calls for shared code...
 function toggleGalleryView(artwork) {
 	Browse.toggleGalleryView(artwork)
 }
+
+function chooseAlbumOrderBy(value, option) {
+	Browse.chooseAlbumOrderBy(value, option);
+}
+

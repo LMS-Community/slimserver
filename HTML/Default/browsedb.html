@@ -1,9 +1,12 @@
-[%- pagetitle = browseby | string; pageicon = browseby; noSpacer = 1; homeCategory = "MY_MUSIC" -%]
+[%- pagetitle = BLOCK %]
+	<span>[% browseby | string %]</span>
+	[% PROCESS galleryselect.html %]
+[%- END -%]
+[% pageicon = browseby; noSpacer = 1; homeCategory = "MY_MUSIC" -%]
 [%- maestroScripts = BLOCK -%]
 	<script type="text/javascript" src="[% webroot %]html/browse.js"></script>
 [%- END -%]
 [%- PROCESS pageheader.html dontscroll=1 -%]
-	[% PROCESS galleryselect.html %]
 
 	<div id="browsedbHeader">
 		[% IF artwork != 1 -%]
