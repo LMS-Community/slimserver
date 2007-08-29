@@ -23,7 +23,8 @@ img { border: 0; }
 .browsedbListItem {
 	position: relative;
 	margin-left: 6px;
-	padding-right: 80px;
+	padding-right: 6px;
+	font-size: 12px;
 	clear: left;
 }
 
@@ -94,6 +95,7 @@ img { border: 0; }
 }
 
 .currentSong a,
+.currentSong .browsedbListItem,
 .currentSong .playlistSongDetail,
 .mouseOver .browseItemDetail,
 .mouseOver .browseItemLink,

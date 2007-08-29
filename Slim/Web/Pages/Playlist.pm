@@ -209,7 +209,7 @@ sub playlist {
 		# For the moment cache html for Default, other skins only cache params
 		# Later consider caching as html unless an ajaxRequest
 		# my $cacheHtml = !$params->{'ajaxRequest'};
-		my $cacheHtml = (($params->{'skinOverride'} || $prefs->get('skin')) eq 'Default');
+		my $cacheHtml = (($params->{'skinOverride'} || $prefs->get('skin')) eq 'Classic');
 
 		my $time = time();
 

@@ -118,10 +118,17 @@ Main = function(){
 Playlist = function(){
 	return {
 		load : function(url){
-			Ext.get('rightcontent').load(
+			// try to reload previous page if no URL is defined
+			el = Ext.get('rightcontent');
+
+			if (!url)
+				url = el.getUpdateManager().defaultUrl;
+
+			el.load(
 				{
-					url: url || webroot + 'playlist.html?playerid=' + player,
-					method: 'GET'
+					url: url || webroot + 'playlist.html?player=' + playerid,
+					method: 'GET',
+					disableCaching: true
 				},
 				{},
 				this.onUpdated
@@ -187,6 +194,16 @@ Playlist = function(){
 							el.scrollIntoView('playList');
 				}
 			}
+		},
+
+		showCoverArt: function(){
+			Utils.setCookie('SlimServer-noPlaylistCover', 0);
+			this.load();
+		},
+
+		hideCoverArt: function(){
+			Utils.setCookie('SlimServer-noPlaylistCover', 1);
+			this.load();
 		}
 	}
 }();

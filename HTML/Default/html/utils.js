@@ -99,8 +99,15 @@ var Utils = function(){
 					}
 				}
 			});
-		}
+		},
 
+		setCookie: function(name, value) {
+			var expires = new Date();
+			expires.setTime(expires.getTime() + 1000*60*60*24*365);
+			document.cookie =
+				name + "=" + escape(value) +
+				((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
+		}
 	};
 }();
 Ext.EventManager.onDocumentReady(Utils.init, Utils, true);
@@ -243,4 +250,8 @@ function resize(src,width)
 	{
 		src.width = width;
 	}
+}
+
+function setCookie(name, value) {
+	Utils.setCookie(name, value);
 }

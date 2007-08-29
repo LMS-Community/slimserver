@@ -1,4 +1,5 @@
 <div>
+	[% noPlaylistCover = "SlimServer-noPlaylistCover"; noPlaylistCover = cookies.$noPlaylistCover.value %]
 	[% IF hasPagebar %][% PROCESS pagebar useJS="Playlist.load" %][% END %]
 	<div id="playList">
 		[% IF playercount == '0' %]
@@ -19,6 +20,7 @@
 			<span id="playlistCommands">[% img = 'b_save.png' %][% IF cansave %][% PROCESS savePlaylistLink %][% END %]
 			[% img = 'b_download.png' %][% PROCESS downloadPlaylistLink %] <img onclick="Playlist.clear();" src="html/images/b_clear.png" class="link"/>
 			[% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
+			<span onclick="Playlist.[% IF noPlaylistCover %]showCoverArt();">Show Artwork[% ELSE %]hideCoverArt();">Hide Artwork[% END %]</span>
 			</span>
 		</div>
 	</div>
