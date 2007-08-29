@@ -337,6 +337,7 @@ sub browsedb {
 		$form{'odd'}          = ($itemCount + 1) % 2;
 		$form{'skinOverride'} = $params->{'skinOverride'};
 		$form{'attributes'}   = _attributesToKeyValuePair(\%attrs);
+		$form{'levelName'}    = $levelName;
 
 		# For some queries - such as New Music - we want to
 		# get the list of tracks to play from the fieldInfo
