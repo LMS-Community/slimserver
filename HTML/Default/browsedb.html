@@ -3,25 +3,33 @@
 	<script type="text/javascript" src="[% webroot %]html/browse.js"></script>
 [%- END -%]
 [%- PROCESS pageheader.html dontscroll=1 -%]
-
+	[% PROCESS galleryselect.html %]
 
 	<div id="browsedbHeader">
-		[% IF hasPagebar %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
+		[% IF artwork != 1 -%]
+			[% IF hasPagebar %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
+		[% END -%]
 		[% IF warn -%]<p>[% PROCESS scanwarning %] [%- END %]
 		[% IF hasPagebar -%][% PROCESS pagebar %][%- END %]
 	</div>
 	
+	[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age');
+			container = 'gallerycontainer';
+		ELSE;
+			container = 'contentcontainer';
+		END %]
+
 	[%- IF song_count; infoTab = BLOCK -%]
 		<div>[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].</div>
 	[%- END; END -%]  
 
-[%- WRAPPER contentcontainer %]
-	[% IF coverArt AND tree != 1 -%]
-		<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
+	[%- WRAPPER $container %]
+		[% IF coverArt AND tree != 1 -%]
+			<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
+		[% END -%]
+		[% FOREACH item = browse_items -%]
+			[%- PROCESS browsedbitems_list.html -%]
+		[%- END %]
 	[% END -%]
-	[% FOREACH item = browse_items -%]
-		[%- PROCESS browsedbitems_list.html -%]
-	[%- END %]
-[% END -%]
 
 [% PROCESS pagefooter.html %]

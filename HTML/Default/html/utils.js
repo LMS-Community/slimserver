@@ -101,6 +101,7 @@ var Utils = function(){
 			});
 		},
 
+
 		setCookie: function(name, value) {
 			var expires = new Date();
 			expires.setTime(expires.getTime() + 1000*60*60*24*365);

@@ -1,3 +1,9 @@
+.thumbwrap li, .thumbwrap {
+	display: inline;
+	height: 0;
+	he\ight: auto;
+}
+
 #browsedbList, #playList {
 	position: relative;
 }

@@ -1,5 +1,5 @@
 [%- FILTER null %]
-	[% debug = 0 %]
+	[% debug = 1 %]
 
 	[% controlGraphics = 1 %]
 	[% browserTarget = "browser" %]
@@ -47,7 +47,23 @@
 
 
 	[% BLOCK galleryitem -%]
-	[% PROCESS contentitem %]
+	<li class="thumbwrap" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%] style="width:[% item.size + 10 %]px;">
+		<div class="selectorMarker"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft"><div class="thumbwrap">
+
+			[%- itemImg = item.coverThumb ? "thumbnailItemImg" : "dummyItemImg" %]
+			<div class="thumbArtwork" style="width:[% item.size %]px;position:relative">
+				<a [% PROCESS browseDbItemHRef %]>[% PROCESS $itemImg height="$item.size" %]</a>
+				<span class="browsedbControls" style="display: none;">
+					[%- PROCESS $controls -%]
+				</span>
+			</div>
+
+			<div class="artworkText" style="width:[% item.size %]px;"><span style="width:[% item.size %]px;">
+				[%- content | indent(4) %]
+			</span></div>
+
+		</div></div></div></div></div></div>
+	</li>
 	[%- END %]
 
 
@@ -55,7 +71,7 @@
 		
 		[%- IF item.descend %]
 		
-			[% IF item.coverThumb %]
+			[% IF item.coverThumb && !(artwork == 1 && (levelName == 'album' || levelName == 'age')) %]
 				<span class="browseCover">
 					[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% PROCESS thumbnailItemImg height="50" %][% IF item.hierarchy %]</a>[% END -%]
 				</span>
@@ -74,10 +90,13 @@
 			[% ELSE %]
 				
 				[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %] class="browseItemLink">[% END %][% item.text | html %][% IF item.hierarchy %]</a>[% END -%]
-				[% IF item.showYear && item.year -%]<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END -%]
-				
-				<!-- Include the artist for the album view -->
-				[%- IF item.artist.name && item.artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj noby=1; END -%]
+
+				[% IF artwork != 1%]
+					[% IF item.showYear && item.year -%]<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END -%]
+					
+					<!-- Include the artist for the album view -->
+					[%- IF item.artist.name && item.artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj noby=1; END -%]
+				[% END %]
 				
 			[% END %]
 		
@@ -96,7 +115,7 @@
 			[%- IF pageinfo.alphamap %]
 				[%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
 					[%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
-					[% IF curpage %]<span onclick="Browse.gotoAnchor('[% alphakey | uri %]');" style="text-decoration:underline;cursor: pointer;"><b>[% alphakey | html %]</b></span>
+					[% IF curpage %]<span onclick="Browse.gotoAnchor('[% alphakey | uri %]');" style="cursor: pointer;"><b>[% alphakey | html %]</b></span>
 					[% ELSE %]
 						<a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path | html %]?[% pageinfo.otherparams | html %]&amp;start=[% pageinfo.alphamap.item(alphakey) %]#[% alphakey | uri %][% IF useJS %]')[% END %]">[% alphakey | html %]</a>
 					[% END %]

@@ -34,10 +34,37 @@ img { border: 0; }
 	right: 10px;
 }
 
+.thumbArtwork .browsedbControls {
+	position: absolute;
+	top: auto;
+	bottom: 5px;
+	right: 5px;
+}
+
 .browsedbRightControls {
 	position: absolute;
 	top: 0px;
 	right: 10px;
+}
+
+.thumbwrap {
+	display: inline-block;
+	margin: 0px;
+}
+
+.thumbwrap li {
+	display: -moz-inline-box;  /* Moz */
+	display: inline-block;  /* Op, Saf, IE \*/
+	vertical-align: top;
+}
+
+div.thumbwrap {
+	padding-right: 10px;
+	padding-left: 10px;
+}
+
+.artworkText {
+	text-align: center;
 }
 
 .searchHeader {
