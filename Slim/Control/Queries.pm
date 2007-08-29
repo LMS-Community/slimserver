@@ -1425,6 +1425,12 @@ sub playersQuery {
 	
 	my @prefs;
 	
+	if (defined(my $pref_list = $request->getParam('playerprefs'))) {
+
+		# split on commas
+		@prefs = split(/,/, $pref_list);
+	}
+	
 	my $count = Slim::Player::Client::clientCount();
 	$count += 0;
 	$request->addResult('count', $count);
@@ -2316,6 +2322,14 @@ sub serverstatusQuery {
 			}
 		}
 	}
+	if (defined(my $pref_list = $request->getParam('playerprefs'))) {
+
+		# split on commas
+		my @prefs = split(/,/, $pref_list);
+		$savePrefs{'player'} = \@prefs;
+		
+	}
+
 
 	# get our parameters
 	my $index    = $request->getParam('_index');
