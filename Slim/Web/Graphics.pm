@@ -108,16 +108,18 @@ sub processCoverArtRequest {
 	}
 
 	unless ($cachedImage || $imageData) {
+
+		my $image = blessed($obj) && $obj->remote ? 'radio' : 'cover';
 		
 		$log->info("  missing artwork replaced by placeholder.");
 
-		$cacheKey = "BLANK-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour";	
+		$cacheKey = "$image-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour";	
 
 		$cachedImage = $cache->get($cacheKey);
 
 		unless ($cachedImage) {
 
-			($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/cover.png");
+			($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/$image.png");
 			$contentType = "image/png";
 			$imageData = $$body;
 		}
