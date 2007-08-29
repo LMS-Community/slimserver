@@ -2,6 +2,12 @@
 	<script type="text/javascript" src="[% webroot %]html/home.js"></script>
 
 	<script type="text/javascript">
+		strings['home']            = '[% "HOME" | string %]';
+		strings['my_music']        = '[% "MY_MUSIC" | string %]';
+		strings['radio']           = '[% "RADIO" | string %]';
+		strings['music_on_demand'] = '[% "MUSIC_ON_DEMAND" | string %]';
+//		strings[''] = '[% "" | string %]';
+
 		Ext.EventManager.onDocumentReady(function(){
 			MainMenu.init();
 			
@@ -15,16 +21,18 @@
 		});
 	</script>
 [% END %]
-[% pagetitle = BLOCK %][% "HOME" | string %][% END %]
+[% pagetitle = BLOCK %]
+	<span id="pagetitle"></span>
+	<input type="text" id="livesearch"></input>
+[% END %]
 [% pwd_list = BLOCK %]
-	<span id="my_musicCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('main');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "MY_MUSIC" | string %]</span>
-	<span id="radioCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('main');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "RADIO" | string %]</span>
-	<span id="searchCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('main');">[% "HOME" | string %]</span> [% crumbSeparator %] <span class="mouseOver" onclick="MainMenu.showPanel('my_music');">[% "MY_MUSIC" | string %]</span></span>
-	<span id="music_on_demandCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('main');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "MUSIC_ON_DEMAND" | string %]</span>
+	<span id="my_musicCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "MY_MUSIC" | string %]</span>
+	<span id="radioCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "RADIO" | string %]</span>
+	<span id="searchCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] <span class="mouseOver" onclick="MainMenu.showPanel('my_music');">[% "MY_MUSIC" | string %]</span></span>
+	<span id="music_on_demandCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "MUSIC_ON_DEMAND" | string %]</span>
 [% END %]
 
 [% infoTab = BLOCK %]
-	<input type="text" id="livesearch"></input>
 	<span id="albumcount">[% album_count %]</span> [% "WITH" | string -%] 
 	<span id="songcount">[%- song_count %]</span> [% "BY" | string %] <span id="artistcount">[% artist_count %]</span>.
 [% END %]
@@ -39,7 +47,7 @@
 	</div></div></div></div></div>
 [% END %]
 
-<div class="homeMenuSection" id="mainMenu">
+<div class="homeMenuSection" id="homeMenu">
 	[% PROCESS menuItem token="FAVORITES" category='browse' %]
 	[% category=''; PROCESS menuItem token="MY_MUSIC" %]
 	[% PROCESS menuItem token="RADIO" %]

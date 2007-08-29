@@ -43,7 +43,7 @@ var MainMenu = function(){
 
 			anchor = document.location.href.match(/#(.*)\?/)
 			if (!(anchor && anchor[1] && this.showPanel(anchor[1].toLowerCase()))) {
-				this.showPanel('main');
+				this.showPanel('home');
 			}
 		},
 		
@@ -77,7 +77,7 @@ var MainMenu = function(){
 					break;
 			}
 		},
-		
+
 		showPanel : function(panel){
 			panelExists = false;
 
@@ -95,6 +95,8 @@ var MainMenu = function(){
 					el.setVisible(panel + 'Crumblist' == items[i].id);
 			}
 
+			Ext.get('pagetitle').update(strings[panel] ? strings[panel] : strings['home']);
+
 			Ext.get('livesearch').setVisibilityMode(Ext.Element.DISPLAY);
 			if (panel == 'my_music' || panel == 'search')
 				Ext.get('livesearch').setVisible(true);
@@ -103,7 +105,7 @@ var MainMenu = function(){
 
 			return panelExists;
 		},
-		
+
 		onResize : function(){
 			items = Ext.DomQuery.select('div.homeMenuSection');
 			for(var i = 0; i < items.length; i++) {

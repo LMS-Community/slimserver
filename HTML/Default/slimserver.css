@@ -87,11 +87,11 @@ img { border: 0; }
 }
 
 #livesearch {
-	position: relative;
-	top: -2px;
-	height: 12px;
+	position: absolute;
+	right: 30px;
+	height: 12pt;
 	width: 100px;
-	font-size: 95%;
+	font-size: 11px;
 }
 
 .currentSong a,
