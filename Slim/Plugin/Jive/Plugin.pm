@@ -19,6 +19,7 @@ use Slim::Utils::Prefs;
 #use Slim::Utils::Strings qw(string);
 use Slim::Player::Playlist;
 use Slim::Buttons::Information;
+use Slim::Buttons::Synchronize;
 use Slim::Player::Sync;
 use Data::Dumper;
 
@@ -840,7 +841,7 @@ sub menuQuery {
 								cmd => ['artists'],
 								params => {
 									menu => 'album',
-									search => '__INPUT__',
+									search => '__TAGGEDINPUT__',
 								},
 							},
 						},
@@ -861,7 +862,7 @@ sub menuQuery {
 								cmd => ['albums'],
 								params => {
 									menu => 'track',
-									search => '__INPUT__',
+									search => '__TAGGEDINPUT__',
 								},
 							},
 						},
@@ -883,7 +884,7 @@ sub menuQuery {
 								cmd => ['tracks'],
 								params => {
 									menu => 'track',
-									search => '__INPUT__',
+									search => '__TAGGEDINPUT__',
 								},
 							},
 						},
@@ -904,7 +905,7 @@ sub menuQuery {
 								cmd => ['playlists'],
 								params => {
 									menu => 'track',
-									search => '__INPUT__',
+									search => '__TAGGEDINPUT__',
 								},
 							},
 						},
@@ -1085,6 +1086,8 @@ sub menusettingsQuery {
 		],
 	};
 
+# disable for now
+if (0) {
 	# always add sleep (?)
 	$val = $client->currentSleepTime();
 	my $sleeping_in = Slim::Utils::Strings::string('SLEEPING_IN');
@@ -1156,6 +1159,87 @@ sub menusettingsQuery {
 			},
 		],
 	};
+}
+
+# disable for now
+if (0) {
+	# alarm clock, always display (all platforms support alarms? softsqueeze? stream.mp3?)
+	$val = $prefs->client($client)->get('alarm')->[ 0 ];
+	push @menu, {
+		text      => Slim::Utils::Strings::string("ALARM"),
+		count     => 6,
+		offset    => 0,
+		item_loop => [
+			{ 
+				text     => Slim::Utils::Strings::string("ON"),
+				checkbox => ($val == 1) + 0,
+				actions  => {
+						on  => {
+							player => 0,
+							cmd    => ['alarm'],
+							params => { 
+								cmd     => 'set',
+								dow     => 0,
+								enabled => 1,
+							},
+						},
+						off => {
+							player => 0,
+							cmd    => ['alarm'],
+							params => { 
+								cmd     => 'set',
+								dow     => 0,
+								enabled => 0,
+							},
+						},
+				},
+			},
+			{ 
+				text => Slim::Utils::Strings::string("ALARM_SET"),
+				input => {
+					len          => 4,
+					allowedCharsArray => [
+							'012',
+							'012',
+							':',
+							'0123456789',
+							'0123456789',
+						],
+					help         => {
+							text => Slim::Utils::Strings::string('JIVE_ALARMSET_HELP')
+					},
+				},
+			},
+			{ 
+				text => Slim::Utils::Strings::string("ALARM_SELECT_PLAYLIST"),
+			},
+			{ 
+				text => Slim::Utils::Strings::string("ALARM_SET_VOLUME"),
+			},
+			{ 
+				text => Slim::Utils::Strings::string("ALARM_WEEKDAYS"),
+			},
+			{ 
+				text => Slim::Utils::Strings::string("ALARM_FADE"),
+			},
+		],
+	};
+}
+
+# disable for now
+if (0) {
+	# synchronization. only if numberOfPlayers > 1
+	my $playerCount = scalar(Slim::Player::Sync::canSyncWith($client));
+	if (scalar($playerCount > 0)) {
+		my $playersToSyncWith = getPlayersToSyncWith($client);
+		push @menu, {
+			text      => Slim::Utils::Strings::string("SYNCHRONIZE"),
+			count     => $playerCount,
+			offset    => 0,
+			item_loop => [ @$playersToSyncWith ],
+		};
+	}
+}
 
 	# replay gain (volume adjustment)
 	if ($client->canDoReplayGain(0)) {
@@ -1317,27 +1401,29 @@ sub menusettingsQuery {
 
 	};
 
+# skip for now
+if (0) {
 	# player name change, always display
 	push @menu, {
 		text      => Slim::Utils::Strings::string('CHANGE_PLAYER_NAME'),
 		input => {
-			len  => 1, # For those that want to name their player "X"
-			help => {
-				text => Slim::Utils::Strings::string('JIVE_CHANGEPLAYERNAME_HELP')
+			len          => 1, # For those that want to name their player "X"
+			allowedChars => 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz!@#$%^&*()_+{}|:\"\'<>?-=,./~`[];0123456789',
+			help         => {
+				           text => Slim::Utils::Strings::string('JIVE_CHANGEPLAYERNAME_HELP')
 			},
 		},
 		actions => {
-			go => {
+			do => {
 				player => 0,
 				cmd    => ['playerpref', 'playername'],
 				params => {
-					playerName     => '__INPUT__',
-					noFromQtyArgs  => 1,
+					playername => '__INPUT__',
 				},
 			},
 		},
 	};
-
+}
 	# now slice and ship
 	my $numitems = scalar(@menu);
 
@@ -1357,6 +1443,25 @@ sub menusettingsQuery {
 	}
 
 	$request->setStatusDone();
+}
+
+sub getPlayersToSyncWith() {
+	my $client = shift;
+	@{$client->syncSelections} = Slim::Player::Sync::canSyncWith($client);
+#	my @array = Slim::Player::Sync::canSyncWith($client);
+	warn @{$client->syncSelections};
+	my @return;
+	# go through available players to sync with and return a LoH with the correct values
+#	my $listRef = Slim::Buttons::Synchronize::lines;
+	for my $player (@{$client->syncSelections}) {
+		warn $player;
+		push @return, {
+			{
+				text => $player,
+			},
+		};
+	}
+	return \@return;
 }
 
 1;
