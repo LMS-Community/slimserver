@@ -1,4 +1,3 @@
-[% IF NOT ajaxUpdate %]
 [%- pagetitle = browseby | string; pageicon = browseby; noSpacer = 1; homeCategory = "MY_MUSIC" -%]
 [%- maestroScripts = BLOCK -%]
 	<script type="text/javascript" src="[% webroot %]html/browse.js"></script>
@@ -15,9 +14,7 @@
 	[%- IF song_count; infoTab = BLOCK -%]
 		<div>[% album_count %] [% "WITH" | string %] [% song_count %] [% "BY" | string %] [% artist_count %].</div>
 	[%- END; END -%]  
-[% END %]
 
-[% IF ajaxUpdate; listid = 'popupList' ; END %]
 [%- WRAPPER contentcontainer %]
 	[% IF coverArt AND tree != 1 -%]
 		<p><a [% coverArtHRef %] target="cover">[% PROCESS coverImg resize='1' %]</a></p>
@@ -27,19 +24,4 @@
 	[%- END %]
 [% END -%]
 
-[% IF ajaxUpdate %]
-
-[% ELSE %]
-
-[% IF (item.levelName == 'album' || item.levelName == 'age') %]
-<div id='popupBackground' style="display:none;"><img src = "[% webroot %]html/images/cdspin3.gif" alt="" title="" onclick="Browse.hideInfoPopup();" style="position: absolute; top: 45%; left: 45%;"></div>
-<div id='infoPopup' style="display:none;">
-	<div id="inner_popupcontent"><div id="popupcontent"></div></div>
-	<div id="popup_top_left">&nbsp;</div><div id="popup_top_right">&nbsp;</div>
-	<div id="popup_bottom_left">&nbsp;</div><div id="popup_bottom_right">&nbsp;</div>
-	<div id="closePopup" onclick="Browse.hideInfoPopup();">[% "CLOSE" | string %]</div>
-</div>
-[% END %]
-
 [% PROCESS pagefooter.html %]
-[% END %]

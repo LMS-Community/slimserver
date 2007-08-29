@@ -5,15 +5,3 @@
 #playerControlPanel {
 	padding-top: 10px;
 }
-
-#infoPopup {
-	position: absolute;
-	height: expression((document.getElementById('inner_content') && document.getElementById('inner_content').offsetHeight 
-		> document.documentElement.clientHeight * 0.75) ? document.documentElement.clientHeight * 0.75 : "auto");
-}
-
-#popupBackground {
-	position: absolute;
-	filter: alpha(opacity=75);
-	height: 100%;
-}
