@@ -1264,6 +1264,11 @@ sub _cliQuery_done {
 
 			push @crumbIndex, $i;
 			
+			if ( $isPlaylistCmd && $subFeed->{play} ) {
+				$subFeed->{url}  = $subFeed->{play};
+				$subFeed->{type} = 'audio';
+			}
+			
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
 			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'}) {
