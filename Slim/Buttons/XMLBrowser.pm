@@ -1548,10 +1548,14 @@ sub _cliQuery_done {
 						
 						$request->addResultLoop($loopname, $cnt, 'text', $hash{'name'} || $hash{'title'});
 						
-						my $id = $hash{'id'};
-						my $params = {
-							'item_id' => "$id", #stringify, make sure it's a string
-						};
+						if ( $item->{type} ne 'text' ) {							
+							my $id = $hash{id};
+							my $params = {
+								item_id => "$id", #stringify, make sure it's a string
+							};
+							
+							$request->addResultLoop( $loopname, $cnt, 'params', $params );
+						}
 						
 						if ( $item->{type} eq 'search' ) {
 							$params->{search} = '__INPUT__';
@@ -1566,7 +1570,7 @@ sub _cliQuery_done {
 							$request->addResultLoop( $loopname, $cnt, 'input', $input );
 						}
 						
-						$request->addResultLoop($loopname, $cnt, 'params', $params);
+						
 					}
 					else {
 						$request->setResultLoopHash($loopname, $cnt, \%hash);
