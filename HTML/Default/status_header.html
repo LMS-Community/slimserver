@@ -13,21 +13,13 @@
 		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
 
 		<style>
-			html, body {
-				background: white;
-			}
-			
-			body { 
-				margin: 10px;
-			}
+			html, body { background: white; }
+			body { margin: 10px; }
 		</style>
 
 		<script type="text/javascript" src="[% webroot %]html/utils.js"></script>
 		<script type="text/javascript" src="[% webroot %]html/main.js"></script>
 		<script type="text/javascript">
-			var strings = new Array();
-			strings['loading']  = "[% "LOADING" | string %]";
-
 			Ext.EventManager.onDocumentReady(Player.init, Player, true);
 		</script>
 

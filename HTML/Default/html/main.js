@@ -43,6 +43,7 @@ Main = function(){
 
 			layout.endUpdate();
 
+			Ext.QuickTips.init();
 			Ext.get('loading').hide();
 			Ext.get('loading-mask').hide();
 
@@ -419,33 +420,47 @@ Player = function(){
 									Ext.get('ctrlCurrentArt').update('<img src="' + result.current_meta.cover + '" height="96">');
 								}
 							}
-							
+
 							Ext.get('ctrlCurrentTitle').update(
-								(result.current_title && !result.current_meta) ? result.current_title : (
+								'<a href="' + webroot + 'songinfo.html?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser">'
+								+ 
+								((result.current_title && !result.current_meta) ? result.current_title : (
 									(result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
 									+ 
 									(result.playlist_loop[0].tracknum ? result.playlist_loop[0].tracknum + ". " : '')
 									+
 									result.playlist_loop[0].title
-								)
+								))
+								+
+								'</a>'
 							);
 	//						Ext.get('statusSongCount').update(result.playlist_tracks);
 	//						Ext.get('statusPlayNum').update(result.playlist_cur_index + 1);
 							Ext.get('ctrlBitrate').update(result.playlist_loop[0].bitrate);
 							
 							if (result.playlist_loop[0].artist) {
-								Ext.get('ctrlCurrentArtist').update(result.playlist_loop[0].artist);
+								Ext.get('ctrlCurrentArtist').update('<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=' + result.playlist_loop[0].artist_id + '&amp;artwork=1&amp;level=1&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].artist + '</a>');
 							}
 							
 							if (result.playlist_loop[0].album) {
 								Ext.get('ctrlCurrentAlbum').update(
-									result.playlist_loop[0].album 
-									+ (result.playlist_loop[0].year ? ' (' + result.playlist_loop[0].year +')' : '')
+									'<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].album + '</a>' 
+									+ (result.playlist_loop[0].year ? ' (' 
+										+ '<a href="' + webroot + 'browsedb.html?hierarchy=year,album,track&amp;artwork=1&amp;level=1&amp;year.id=' + result.playlist_loop[0].year + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].year + '</a>' 
+									+ ')' : '')
 								);
 							}
-							
-							if (result.playlist_loop[0].id) {
-								Ext.get('ctrlCurrentArt').update('<img src="/music/' + result.playlist_loop[0].id + '/cover_96x96.jpg">');
+
+							if (result.playlist_loop[0].id && (el = Ext.get('ctrlCurrentArt'))) {
+								coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96xX.jpg"></a>';
+								el.update(coverart);
+								el = el.child('img:first');
+								Ext.QuickTips.unregister(el);
+								Ext.QuickTips.register({
+									target: el,
+									text: '<img src="/music/' + result.playlist_loop[0].id + '/cover_250xX.jpg" width="250">',
+									minWidth: 250
+								});
 							}
 						}
 
@@ -457,7 +472,7 @@ Player = function(){
 							Ext.get('ctrlBitrate').update('');
 							Ext.get('ctrlCurrentArtist').update('');
 							Ext.get('ctrlCurrentAlbum').update('');
-							Ext.get('ctrlCurrentArt').update('<img src="/music/0/cover_96x96.jpg">');
+							Ext.get('ctrlCurrentArt').update('<img src="/music/0/cover_96xX.jpg">');
 						}
 
 						this.updatePlayTime(result.time ? result.time : 0, result.duration ? result.duration : 0);
@@ -515,7 +530,7 @@ Player = function(){
 							"status",
 							"-",
 							1,
-							"tags:gabehldiqtyru"
+							"tags:gabehldiqtyrsu"
 						]
 					]
 				}),

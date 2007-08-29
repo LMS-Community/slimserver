@@ -204,9 +204,21 @@ img { border: 0; }
 	padding-left: 6px; 
 }
 
+#ctrlCurrentTitle a { 
+	text-decoration: none;
+	font-size: 13px; 
+	font-weight: bold; 
+}
+
 .currentTrackInfo { 
+	text-decoration: none;
 	font-size: 11px; 
 	padding-left: 6px; 
+}
+
+.currentTrackInfo a { 
+	text-decoration: none;
+	font-size: 11px; 
 }
 
 .inner {
