@@ -338,6 +338,7 @@ sub browsedb {
 		$form{'skinOverride'} = $params->{'skinOverride'};
 		$form{'attributes'}   = _attributesToKeyValuePair(\%attrs);
 		$form{'levelName'}    = $levelName;
+		$form{'size'}         = $prefs->get('thumbSize');
 
 		# For some queries - such as New Music - we want to
 		# get the list of tracks to play from the fieldInfo
