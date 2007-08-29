@@ -1201,7 +1201,8 @@ sub cliQuery {
 			'request'    => $request,
 			'url'        => $feed,
 			'query'      => $query,
-			'expires'    => $expires
+			'expires'    => $expires,
+			'timeout'    => 35,
 #			'forceTitle' => $forceTitle,
 		}
 	);
@@ -1513,7 +1514,7 @@ sub _cliQuery_done {
 		
 			my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 		
-			my $loopname = $menuMode?'item_loop':'loop_loop';
+			my $loopname = $menuMode ? 'item_loop' : 'loop_loop';
 			my $cnt = 0;
 			$request->addResult('offset', $start) if $menuMode;
 
@@ -1551,6 +1552,20 @@ sub _cliQuery_done {
 						my $params = {
 							'item_id' => "$id", #stringify, make sure it's a string
 						};
+						
+						if ( $item->{type} eq 'search' ) {
+							$params->{search} = '__INPUT__';
+							
+							my $input = {
+								len  => 3,
+								help => {
+									text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+								},
+							};
+							
+							$request->addResultLoop( $loopname, $cnt, 'input', $input );
+						}
+						
 						$request->addResultLoop($loopname, $cnt, 'params', $params);
 					}
 					else {
