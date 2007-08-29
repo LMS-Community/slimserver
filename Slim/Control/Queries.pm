@@ -2446,7 +2446,7 @@ sub statusQuery_filter {
 	return 0 if $clientid ne $self->clientid();
 	
 	# commands we ignore
-	return 0 if $request->isCommand([['ir', 'button', 'debug', 'pref', 'display']]);
+	return 0 if $request->isCommand([['ir', 'button', 'debug', 'pref', 'display', 'prefset']]);
 	return 0 if $request->isCommand([['playlist'], ['open', 'jump']]);
 
 	# special case: the client is gone!
@@ -2469,10 +2469,16 @@ sub statusQuery_filter {
 		}
 	}
 
-	# don't delay for newsong or playerpref (name change)
-	if ($request->isCommand([['playlist'], ['newsong'], ['playerpref']])) {
+	# don't delay for newsong
+	if ($request->isCommand([['playlist'], ['newsong']])) {
 
 		return 1;
+	}
+
+	# suppress frequent updates during volume changes
+	if ($request->isCommand([['mixer'], ['volume']])) {
+
+		return 3;
 	}
 
 	# send everyother notif with a small delay to accomodate
