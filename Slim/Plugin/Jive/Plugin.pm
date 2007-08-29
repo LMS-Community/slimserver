@@ -928,12 +928,12 @@ sub menuQuery {
 			},
 		},
 		{
-			text    => Slim::Utils::Strings::string('MUSIC_SERVICES'),
+			text    => Slim::Utils::Strings::string('MUSIC_ON_DEMAND'),
 			actions => {
 				go => {
-					cmd => ['services'],
+					cmd => ['music_on_demand'],
 					params => {
-						menu => 'services',
+						menu => 'music_on_demand',
 					},
 				},
 			},

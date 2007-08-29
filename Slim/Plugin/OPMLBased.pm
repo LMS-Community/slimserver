@@ -34,10 +34,12 @@ sub initPlugin {
 		[ $args{tag}, 'playlist', '_method' ],
 		[ 1, 1, 1, $cliQuery ]
 	);
+	
+	my $cli_menu = $args{menu} eq 'music_on_demand' ? 'music_on_demand' : 'radios';	
 		
 	$cli_next{$class} = Slim::Control::Request::addDispatch(
-		[ 'radios', '_index', '_quantity' ],
-		[ 0, 1, 1, $class->cliRadiosQuery( $args{tag} ) ]
+		[ $cli_menu, '_index', '_quantity' ],
+		[ 0, 1, 1, $class->cliRadiosQuery( $args{tag}, $cli_menu ) ]
 	);
 	
 	$class->SUPER::initPlugin();
@@ -70,7 +72,7 @@ sub setMode {
 }
 
 sub cliRadiosQuery {
-	my ( $class, $tag ) = @_;
+	my ( $class, $tag, $cli_menu ) = @_;
 	
 	return sub {
 		my $request = shift;
@@ -101,7 +103,7 @@ sub cliRadiosQuery {
 		}
 	
 		# let our super duper function do all the hard work
-		Slim::Control::Queries::dynamicAutoQuery( $request, 'radios', $cli_next{$class}, $data );
+		Slim::Control::Queries::dynamicAutoQuery( $request, $cli_menu, $cli_next{$class}, $data );
 	};
 }
 
