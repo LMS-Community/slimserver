@@ -2,7 +2,9 @@
 	<div class="browsedbListItem[% IF !noPlaylistCover %] itemWithCover[% END %]">
 		[% IF !noPlaylistCover %]
 			<span class="playlistCover">
-				<img src="/music/[% item.itemobj.id %]/cover_50xX_F.jpg">
+				<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">
+					<img src="/music/[% item.itemobj.id %]/cover_50xX_F.jpg">
+				</a>
 			</span>
 			<div class="playlistSongDetail">
 				<a href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.title | html %]</a>
