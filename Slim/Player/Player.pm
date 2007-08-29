@@ -435,7 +435,7 @@ sub currentSongLines {
 
 			if (Slim::Player::Source::rate($client) != 1) {
 
-				$status = $parts->{line}[0] = client->string('NOW_SCANNING') . ' ' . Slim::Player::Source::rate($client) . 'x';
+				$status = $parts->{line}[0] = $client->string('NOW_SCANNING') . ' ' . Slim::Player::Source::rate($client) . 'x';
 
 			} elsif (Slim::Player::Playlist::shuffle($client)) {
 
