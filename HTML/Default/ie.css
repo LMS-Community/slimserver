@@ -20,6 +20,10 @@
 	height: 40px;
 }
 
+.thumbwrap {
+	position: static;
+}
+
 .thumbwrap li, .thumbwrap {
 	display: inline;
 	height: 0;
