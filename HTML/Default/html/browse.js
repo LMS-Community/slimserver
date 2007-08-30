@@ -10,46 +10,55 @@ Browse = function(){
 
 			// Album view selector
 			if (Ext.get('viewSelect')) {
+				viewMode = (Utils.getCookie('SlimServer-albumView') && Utils.getCookie('SlimServer-albumView').match(/[012]/) ? Utils.getCookie('SlimServer-albumView') : '0');
 				menu = new Ext.menu.Menu({
 					items: [
-						{
+						new Ext.menu.CheckItem({
 							text: strings['switch_to_list'],
 							cls: 'albumList',
-							handler: function(){ Browse.toggleGalleryView(2) }
-						},
-						{
+							handler: function(){ Browse.toggleGalleryView(2) },
+							group: 'viewMode',
+							checked: viewMode == 2
+						}),
+						new Ext.menu.CheckItem({
 							text: strings['switch_to_extended_list'],
 							cls: 'albumXList',
-							handler: function(){ Browse.toggleGalleryView(0) }
-						},
-						{
+							handler: function(){ Browse.toggleGalleryView(0) },
+							group: 'viewMode',
+							checked: viewMode == 0
+						}),
+						new Ext.menu.CheckItem({
 							text: strings['switch_to_gallery'],
 							cls: 'albumListGallery',
-							handler: function(){ Browse.toggleGalleryView(1) }
-						}
+							handler: function(){ Browse.toggleGalleryView(1) },
+							group: 'viewMode',
+							checked: viewMode == 1
+						})
 					]
 				});
 				
 				if (orderByList) {
 					menu.add(
-						'-', 
-						{ text: strings['sort_by'] + '...', id: 'sortTitle' }
+							'-', 
+							'<span class="menu-title">' + strings['sort_by'] + '...</span>'
 					);
-					menu.items.get('sortTitle').disable();
-				
+
+					sortOrder = Utils.getCookie('SlimServer-orderBy');
 					for (order in orderByList) {
-						menu.add({
+						menu.add(new Ext.menu.CheckItem({
 							text: order,
 							handler: function(ev){
 								Browse.chooseAlbumOrderBy(orderByList[ev.text]);
-							}
-						});
+							},
+							checked: (orderByList[order] == sortOrder),
+							group: 'sortOrder'
+						}));
 					}
 				}
 			
 			
 				new Ext.SplitButton('viewSelect', {
-					icon: webroot + 'html/images/albumlist' + (Utils.getCookie('SlimServer-albumView') && Utils.getCookie('SlimServer-albumView').match(/[012]/) ? Utils.getCookie('SlimServer-albumView') : '0') + '.png',
+					icon: webroot + 'html/images/albumlist' + viewMode  + '.png',
 					cls: 'x-btn-icon',
 					menu: menu,
 					handler: function(ev){

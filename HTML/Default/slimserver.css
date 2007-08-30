@@ -540,3 +540,11 @@ div.thumbwrap {
     background-image: url(html/images/albumlist2.png);
     background-repeat: no-repeat;
 }
+
+.menu-title{
+	font: bold 12px sans-serif;
+	color: #233D6D;
+	display: block;
+	padding: 3px;
+	padding-left: 30px;
+}

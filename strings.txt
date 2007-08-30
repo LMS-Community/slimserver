@@ -9265,26 +9265,16 @@ GALLERY
 	NL	Afbeeldingen
 
 SWITCH_TO_GALLERY
-	DE	Galerieansicht
-	EN	To Gallery View
-	ES	A vista de galería
-	FR	Mode Diaporama
-	HE	תצוגת גלריה
-	IT	Vista galleria
-	NL	Naar afbeeldingenoverzicht
+	DE	Grosse Plattenhüllen
+	EN	Large Artwork
 
 SWITCH_TO_LIST
-	DE	Listenansicht
-	EN	To List View
-	ES	A vista de lista
-	FR	Mode Liste
-	HE	תצוגת רשימה
-	IT	Vista elenco
-	NL	Naar lijstweergave
+	DE	Nur Text
+	EN	Text only
 
 SWITCH_TO_EXTENDED_LIST
-	DE	Erweiterte Listenansicht
-	EN	To Enhanced List View
+	DE	Kleine Plattenhüllen
+	EN	Small Artwork
 
 BROWSE
 	CS	Procházet
