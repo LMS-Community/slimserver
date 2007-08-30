@@ -1165,6 +1165,8 @@ if (0) {
 if (0) {
 	# alarm clock, always display (all platforms support alarms? softsqueeze? stream.mp3?)
 	$val = $prefs->client($client)->get('alarm')->[ 0 ];
+	my $alarm_playlist = 1;
+
 	push @menu, {
 		text      => Slim::Utils::Strings::string("ALARM"),
 		count     => 6,
@@ -1195,23 +1197,84 @@ if (0) {
 				},
 			},
 			{ 
-				text => Slim::Utils::Strings::string("ALARM_SET"),
-				input => {
-					len          => 4,
-					allowedCharsArray => [
-							'012',
-							'012',
-							':',
-							'0123456789',
-							'0123456789',
-						],
+				text    => Slim::Utils::Strings::string("ALARM_SET"),
+				input   => {
+					inputType    => 'time',
+					len          => 1,
 					help         => {
 							text => Slim::Utils::Strings::string('JIVE_ALARMSET_HELP')
+					},
+				},
+				actions => {
+					do => {
+						player => 0,
+						cmd    => ['alarm'],
+						params => {
+							cmd => 'set',
+							dow =>	0,
+							time => '__TAGGEDINPUT__',	
+						},
 					},
 				},
 			},
 			{ 
 				text => Slim::Utils::Strings::string("ALARM_SELECT_PLAYLIST"),
+				count     => 4,
+				offset    => 0,
+				item_loop => [
+					{
+						text    => Slim::Utils::Strings::string("CURRENT_PLAYLIST"),
+						radio	=> ($alarm_playlist == -1) + 0, # 0 is added to force the data type to number
+						actions => {
+							do => {
+								player => 0,
+								cmd    => ['alarms'],
+								params => {
+									playlist_id => '-1',
+								},
+							},
+						},
+					},
+					{
+						text    => Slim::Utils::Strings::string("PLUGIN_RANDOM_TRACK"),
+						radio	=> ($alarm_playlist == -2) + 0, # 0 is added to force the data type to number
+						actions => {
+							do => {
+								player => 0,
+								cmd    => ['alarms'],
+								params => {
+									playlist_id => '-2',
+								},
+							},
+						},
+					},
+					{
+						text    => Slim::Utils::Strings::string("PLUGIN_RANDOM_ALBUM"),
+						radio	=> ($alarm_playlist == -3) + 0, # 0 is added to force the data type to number
+						actions => {
+							do => {
+								player => 0,
+								cmd    => ['alarms'],
+								params => {
+									playlist_id => '-3',
+								},
+							},
+						},
+					},
+					{
+						text    => Slim::Utils::Strings::string("PLUGIN_RANDOM_CONTRIBUTOR"),
+						radio	=> ($alarm_playlist == -4) + 0, # 0 is added to force the data type to number
+						actions => {
+							do => {
+								player => 0,
+								cmd    => ['alarms'],
+								params => {
+									playlist_id => '-4',
+								},
+							},
+						},
+					},
+				],
 			},
 			{ 
 				text => Slim::Utils::Strings::string("ALARM_SET_VOLUME"),
