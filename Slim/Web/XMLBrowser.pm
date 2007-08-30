@@ -317,7 +317,7 @@ sub handleFeed {
 	}
 
 	if ($favs) {
-		my @items = @{$stash->{'items'}};
+		my @items = @{$stash->{'items'} || []};
 		my $start = $stash->{'start'} || 0;
 
 		if (defined $favsItem && $items[$favsItem - $start]) {

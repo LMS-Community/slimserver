@@ -78,7 +78,7 @@ sub load {
 
 		} else {
 
-			$log->warn("Failed to load from $filename ($!)");
+			$log->warn("Failed to load from $filename ($@)");
 		}
 	}
 
