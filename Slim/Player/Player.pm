@@ -175,12 +175,7 @@ sub power {
 
 	if (!$on) {
 
-		# turning player off - move to off mode and unsync/pause/stop player
-		$client->killAnimation();
-		$client->brightness($prefs->client($client)->get('powerOffBrightness'));
-
-		Slim::Buttons::Common::setMode($client, 'off');
-
+		# turning player off - unsync/pause/stop player and move to off mode
 		my $sync = $prefs->client($client)->get('syncPower');
 
 		if (defined $sync && $sync == 0) {
@@ -209,6 +204,12 @@ sub power {
 
 		# turn off audio outputs
 		$client->audio_outputs_enable(0);
+
+		# move display to off mode
+		$client->killAnimation();
+		$client->brightness($prefs->client($client)->get('powerOffBrightness'));
+
+		Slim::Buttons::Common::setMode($client, 'off');
 
 	} else {
 
