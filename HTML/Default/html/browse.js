@@ -31,15 +31,19 @@ Browse = function(){
 				});
 				
 				if (orderByList) {
-					menu.add('-');
+					menu.add(
+						'-', 
+						{ text: strings['sort_by'] + '...', id: 'sortTitle' }
+					);
+					menu.items.get('sortTitle').disable();
 				
 					for (order in orderByList) {
-						menu.addItem(new Ext.menu.Item({
+						menu.add({
 							text: order,
 							handler: function(ev){
 								Browse.chooseAlbumOrderBy(orderByList[ev.text]);
 							}
-						}));
+						});
 					}
 				}
 			
@@ -47,7 +51,15 @@ Browse = function(){
 				new Ext.SplitButton('viewSelect', {
 					icon: webroot + 'html/images/albumlist' + (Utils.getCookie('SlimServer-albumView') && Utils.getCookie('SlimServer-albumView').match(/[012]/) ? Utils.getCookie('SlimServer-albumView') : '0') + '.png',
 					cls: 'x-btn-icon',
-					menu: menu
+					menu: menu,
+					handler: function(ev){
+						if(this.menu && !this.menu.isVisible()){
+							this.menu.show(this.el, this.menuAlign);
+						}
+						this.fireEvent('arrowclick', this, ev);
+					},
+					arrowTooltip: strings['sort_by'] + '...',
+					tooltipType: 'title'
 				});
 			}
 		},
