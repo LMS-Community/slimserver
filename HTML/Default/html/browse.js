@@ -78,7 +78,7 @@ Browse = function(){
 				url = url + '&artwork=0';
 			}
 
-			if (target[0].match(/^#/))
+			if (target && target[0].match(/^#/))
 				url = url + target[0];
 			
 			window.location.href = url;
