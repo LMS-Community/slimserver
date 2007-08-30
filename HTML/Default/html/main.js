@@ -456,14 +456,14 @@ Player = function(){
 							Ext.get('ctrlBitrate').update(result.playlist_loop[0].bitrate);
 							
 							if (result.playlist_loop[0].artist) {
-								Ext.get('ctrlCurrentArtist').update('<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=' + result.playlist_loop[0].artist_id + '&amp;artwork=1&amp;level=1&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].artist + '</a>');
+								Ext.get('ctrlCurrentArtist').update('<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=' + result.playlist_loop[0].artist_id + '&amp;level=1&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].artist + '</a>');
 							}
 							
 							if (result.playlist_loop[0].album) {
 								Ext.get('ctrlCurrentAlbum').update(
 									'<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].album + '</a>' 
 									+ (result.playlist_loop[0].year ? ' (' 
-										+ '<a href="' + webroot + 'browsedb.html?hierarchy=year,album,track&amp;artwork=1&amp;level=1&amp;year.id=' + result.playlist_loop[0].year + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].year + '</a>' 
+										+ '<a href="' + webroot + 'browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=' + result.playlist_loop[0].year + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].year + '</a>' 
 									+ ')' : '')
 								);
 							}

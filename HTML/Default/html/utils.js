@@ -1,5 +1,158 @@
+// Extensions to ExtJS classes
+Slim = {};
+
+// our own cookie manager doesn't prepend 'ys-' to any cookie
+Slim.CookieManager = function(config){
+    Slim.CookieManager.superclass.constructor.call(this);
+};
+
+Ext.extend(Slim.CookieManager, Ext.state.CookieProvider, {
+    readCookies : function(){
+        var cookies = {};
+        var c = document.cookie + ";";
+        var re = /\s?(.*?)=(.*?);/g;
+    	var matches;
+    	while((matches = re.exec(c)) != null){
+            var name = matches[1];
+            var value = matches[2];
+            if(name){
+                cookies[name] = value;
+            }
+        }
+        return cookies;
+    },
+
+    
+    setCookie : function(name, value){
+        document.cookie = name + "=" + value +
+           ((this.expires == null) ? "" : ("; expires=" + this.expires.toGMTString())) +
+           ((this.path == null) ? "" : ("; path=" + this.path)) +
+           ((this.domain == null) ? "" : ("; domain=" + this.domain)) +
+           ((this.secure == true) ? "; secure" : "");
+    },
+
+    
+    clearCookie : function(name){
+        document.cookie = name + "=null; expires=Thu, 01-Jan-70 00:00:01 GMT" +
+           ((this.path == null) ? "" : ("; path=" + this.path)) +
+           ((this.domain == null) ? "" : ("; domain=" + this.domain)) +
+           ((this.secure == true) ? "; secure" : "");
+    }
+});
+
+
+// graphical button, defined in three element sprite for normal, mouseover, pressed
+Slim.Button = function(renderTo, config){
+	this.tooltipType = config.tooltipType || 'title';
+
+	// I've given up on IE6 - don't animate those buttons :-(
+	if (Ext.isIE && !Ext.isIE7)
+		this.template = new Ext.Template('<img src="html/images/spacer.gif" height="{0}" width="{1}">');
+	else
+		this.template = new Ext.Template('<span><button><img src="html/images/spacer.gif"></button></span>');
+
+	Slim.Button.superclass.constructor.call(this, renderTo, config);	
+};
+
+Ext.extend(Slim.Button, Ext.Button, {
+	render: function(renderTo){
+		if (Ext.isIE && !Ext.isIE7) {
+			this.el = Ext.get(renderTo);
+			this.el.setStyle({
+				'background': 'url(' + this.icon + ') no-repeat 0px 0px'
+			});
+			this.el.on({
+				'click': {
+					fn: function(e){
+						if (this.handler)
+							this.handler.call(this.scope || this, this, e)
+					},
+					scope: this
+				}
+			});
+
+			this.template.append(renderTo, [this.height, this.width]);
+		}
+		else {
+			Slim.Button.superclass.render.call(this, renderTo);
+			var btnFrm = this.el.child("button:first");
+			btnFrm.setStyle({
+				'width': this.width + 'px',
+				'height': this.height + 'px',
+				'padding': '0',
+				'margin': '0'
+			});
+		}
+	},
+
+	onClick : function(e){
+		if(e){
+			e.preventDefault();
+		}
+		if(e.button != 0){
+			return;
+		}
+		if(!this.disabled){
+			if(this.enableToggle){
+				this.toggle();
+			}
+			if(this.menu && !this.menu.isVisible()){
+				this.menu.show(this.el, this.menuAlign);
+			}
+			this.fireEvent("click", this, e);
+			if(this.handler){
+				this.onMouseUp();
+				this.handler.call(this.scope || this, this, e);
+			}
+		}
+	},
+
+	onMouseOver: function(e){
+		if(!this.disabled && (myEl = this.el.child("button:first"))) {
+			myEl.setStyle('background', 'url(' + this.icon + ') no-repeat 0px -' + String(this.height) + 'px');
+			this.fireEvent('mouseover', this, e);
+		}
+	},
+
+	onMouseOut : function(e){
+		if(!e.within(this.el,  true) && (myEl = this.el.child("button:first"))) {
+			myEl.setStyle('background', 'url(' + this.icon + ') no-repeat 0px 0px');
+			this.fireEvent('mouseout', this, e);
+		}
+	},
+
+	onFocus : function(e){
+		if(!this.disabled && (myEl = this.el.child("button:first"))) {
+			myEl.setStyle('background', 'url(' + this.icon + ') no-repeat 0px -' + String(this.height) + 'px');
+		}
+	},
+
+	onBlur : function(e){
+		if (myEl = this.el.child('button:first')) {
+			myEl.setStyle('background', 'url(' + this.icon + ') no-repeat 0px 0px');
+		}
+		else if (Ext.isIE && !Ext.isIE7) {
+			this.el.setStyle('background', 'url(' + this.icon + ') no-repeat 0px 0px');
+		}
+	},
+
+	onMouseDown : function(e){
+		if(!this.disabled && e.button == 0 && (myEl = this.el.child("button:first"))) {
+			myEl.setStyle('background', 'url(' + this.icon + ') no-repeat 0px -' + String(this.height * 2) + 'px');
+		}
+	},
+
+	onMouseUp : function(e){
+		if (myEl = this.el.child('button:first')) {
+			myEl.setStyle('background', 'url(' + this.icon + ') no-repeat 0px 0px');
+		}
+	}
+});
+
+
+
 var Utils = function(){
-	cookieManager = new Ext.state.CookieProvider({
+	cookieManager = new Slim.CookieManager({
 		expires: new Date(new Date().getTime() + 1000*60*60*24*365)
 	});
 
@@ -116,117 +269,6 @@ var Utils = function(){
 }();
 Ext.EventManager.onDocumentReady(Utils.init, Utils, true);
 
-
-// Extensions to ExtJS classes
-Slim = {};
-
-// graphical button, defined in three element sprite for normal, mouseover, pressed
-Slim.Button = function(renderTo, config){
-	this.tooltipType = config.tooltipType || 'title';
-
-	// I've given up on IE6 - don't animate those buttons :-(
-	if (Ext.isIE && !Ext.isIE7)
-		this.template = new Ext.Template('<img src="html/images/spacer.gif" height="{0}" width="{1}">');
-	else
-		this.template = new Ext.Template('<span><button><img src="html/images/spacer.gif"></button></span>');
-
-	Slim.Button.superclass.constructor.call(this, renderTo, config);	
-};
-
-Ext.extend(Slim.Button, Ext.Button, {
-	render: function(renderTo){
-		if (Ext.isIE && !Ext.isIE7) {
-			this.el = Ext.get(renderTo);
-			this.el.setStyle({
-				'background': 'url(' + this.icon + ') no-repeat 0px 0px'
-			});
-			this.el.on({
-				'click': {
-					fn: function(e){
-						if (this.handler)
-							this.handler.call(this.scope || this, this, e)
-					},
-					scope: this
-				}
-			});
-
-			this.template.append(renderTo, [this.height, this.width]);
-		}
-		else {
-			Slim.Button.superclass.render.call(this, renderTo);
-			var btnFrm = this.el.child("button:first");
-			btnFrm.setStyle({
-				'width': this.width + 'px',
-				'height': this.height + 'px',
-				'padding': '0',
-				'margin': '0'
-			});
-		}
-	},
-
-	onClick : function(e){
-		if(e){
-			e.preventDefault();
-		}
-		if(e.button != 0){
-			return;
-		}
-		if(!this.disabled){
-			if(this.enableToggle){
-				this.toggle();
-			}
-			if(this.menu && !this.menu.isVisible()){
-				this.menu.show(this.el, this.menuAlign);
-			}
-			this.fireEvent("click", this, e);
-			if(this.handler){
-				this.onMouseUp();
-				this.handler.call(this.scope || this, this, e);
-			}
-		}
-	},
-
-	onMouseOver: function(e){
-		if(!this.disabled && (myEl = this.el.child("button:first"))) {
-			myEl.setStyle('background', 'url(' + this.icon + ') no-repeat 0px -' + String(this.height) + 'px');
-			this.fireEvent('mouseover', this, e);
-		}
-	},
-
-	onMouseOut : function(e){
-		if(!e.within(this.el,  true) && (myEl = this.el.child("button:first"))) {
-			myEl.setStyle('background', 'url(' + this.icon + ') no-repeat 0px 0px');
-			this.fireEvent('mouseout', this, e);
-		}
-	},
-
-	onFocus : function(e){
-		if(!this.disabled && (myEl = this.el.child("button:first"))) {
-			myEl.setStyle('background', 'url(' + this.icon + ') no-repeat 0px -' + String(this.height) + 'px');
-		}
-	},
-
-	onBlur : function(e){
-		if (myEl = this.el.child('button:first')) {
-			myEl.setStyle('background', 'url(' + this.icon + ') no-repeat 0px 0px');
-		}
-		else if (Ext.isIE && !Ext.isIE7) {
-			this.el.setStyle('background', 'url(' + this.icon + ') no-repeat 0px 0px');
-		}
-	},
-
-	onMouseDown : function(e){
-		if(!this.disabled && e.button == 0 && (myEl = this.el.child("button:first"))) {
-			myEl.setStyle('background', 'url(' + this.icon + ') no-repeat 0px -' + String(this.height * 2) + 'px');
-		}
-	},
-
-	onMouseUp : function(e){
-		if (myEl = this.el.child('button:first')) {
-			myEl.setStyle('background', 'url(' + this.icon + ') no-repeat 0px 0px');
-		}
-	}
-});
 
 // some legacy scripts
 

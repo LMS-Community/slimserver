@@ -889,7 +889,7 @@ sub generateHTTPResponse {
 	if ($params->{'cookies'}->{'SlimServer-albumView'} && 
 		$params->{'cookies'}->{'SlimServer-albumView'}->value) {
 
-		$params->{'artwork'} = 1 unless defined $params->{'artwork'};
+		$params->{'artwork'} = $params->{'cookies'}->{'SlimServer-albumView'}->value unless defined $params->{'artwork'};
 	}
 
 	# Check for the album order cookie.
