@@ -45,7 +45,7 @@ Browse = function(){
 			
 			
 				new Ext.SplitButton('viewSelect', {
-					icon: webroot + 'html/images/albumlist' + (Utils.getCookie('SlimServer-albumView').match(/[012]/) ? Utils.getCookie('SlimServer-albumView') : '0') + '.png',
+					icon: webroot + 'html/images/albumlist' + (Utils.getCookie('SlimServer-albumView') && Utils.getCookie('SlimServer-albumView').match(/[012]/) ? Utils.getCookie('SlimServer-albumView') : '0') + '.png',
 					cls: 'x-btn-icon',
 					menu: menu
 				});
