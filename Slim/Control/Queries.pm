@@ -2717,8 +2717,10 @@ sub statusQuery {
 				my $count = 0;
 				$start += 0;
 				$request->addResult('offset', $start) if $menuMode;
+				
+				my $playlist_cur_index = Slim::Player::Source::playingSongIndex($client);
 
-				for ($idx = $start; $idx <= $end; $idx++){
+				for ($idx = $start; $idx <= $end; $idx++) {
 					
 					my $track = Slim::Player::Playlist::song($client, $idx);
 
@@ -2745,19 +2747,21 @@ sub statusQuery {
 							$request->addResultLoop($loop, $count, 'icon-id', $iconId);
 						}
 						
-						# Override with plugin metadata if available
-						if ( my $current_meta = $request->getResult('current_meta') ) {
-							$text = $current_meta->{title} . "\n";
-							if ( $current_meta->{album} ) {
-								$text .= $current_meta->{album};
-							}
-							$text .= "\n";
-							if ( $current_meta->{artist} ) {
-								$text .= $current_meta->{artist};
-							}
+						# Override with plugin metadata for the current track if available
+						if ( $idx == $playlist_cur_index ) {
+							if ( my $current_meta = $request->getResult('current_meta') ) {
+								$text = $current_meta->{title} . "\n";
+								if ( $current_meta->{album} ) {
+									$text .= $current_meta->{album};
+								}
+								$text .= "\n";
+								if ( $current_meta->{artist} ) {
+									$text .= $current_meta->{artist};
+								}
 						
-							if ( $current_meta->{cover} ) {
-								$request->addResultLoop( $loop, $count, 'icon', $current_meta->{cover} );
+								if ( $current_meta->{cover} ) {
+									$request->addResultLoop( $loop, $count, 'icon', $current_meta->{cover} );
+								}
 							}
 						}
 						
