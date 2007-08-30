@@ -72,7 +72,7 @@ var MainMenu = function(){
 				default:
 					if (url[item]) {
 						cat = item.match(/:(.*)$/);
-						location.href = url[item] + (cat && cat.length >= 2 ? '&homeCategory=' + cat[1] : '');
+						location.href = url[item] + (cat && cat.length >= 2 && cat[1] != 'browse' ? '&homeCategory=' + cat[1] : '');
 					}
 					break;
 			}
