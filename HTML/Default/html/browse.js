@@ -58,49 +58,35 @@ Browse = function(){
 		},
 
 		toggleGalleryView : function(artwork){
-			var thisdoc = document;
+			url = document.location.href;
+			url = url.replace(/&artwork=./, '');
+			target = url.match(/(#.*)$/);
+			url = url.replace(/#.*$/, '');
 
-			if (browserTarget && parent.frames[browserTarget]) {
-				thisdoc = parent.frames[browserTarget];
+			if (artwork == 1) {
+				Utils.setCookie( 'SlimServer-albumView', "1" );
+				url = url + '&artwork=1';
+			} 
+			
+			else if (artwork == 2) {
+				Utils.setCookie( 'SlimServer-albumView', "2" );
+				url = url + '&artwork=2';
+			} 
+			
+			else {
+				Utils.setCookie( 'SlimServer-albumView', "" );
+				url = url + '&artwork=0';
 			}
 
-			if (thisdoc.location.pathname != '') {
-				url = new String(thisdoc.location.href);
-				url = url.replace(/&artwork=./, '');
-
-				if (artwork == 1) {
-					Utils.setCookie( 'SlimServer-albumView', "1" );
-
-					if (thisdoc.location.href.indexOf('start') == -1) {
-						thisdoc.location = url + '&artwork=1';
-					} else {
-						thisdoc.location = url + '&artwork=1&start=';
-					}
-
-				} else if (artwork == 2) {
-					Utils.setCookie( 'SlimServer-albumView', "2" );
-
-					if (thisdoc.location.href.indexOf('start') == -1) {
-						thisdoc.location = url + '&artwork=2';
-					} else {
-						thisdoc.location = url + '&artwork=2&start=';
-					}
-
-				} else {
-					Utils.setCookie( 'SlimServer-albumView', "" );
-
-					if (thisdoc.location.href.indexOf('start') == -1) {
-						thisdoc.location = url + '&artwork=0';
-					} else {
-						thisdoc.location = url + '&artwork=0&start=';
-					}
-				}
-			}
+			if (target[0].match(/^#/))
+				url = url + target[0];
+			
+			window.location.href = url;
 		},
 
 		chooseAlbumOrderBy: function(option) {
 			Utils.setCookie('SlimServer-orderBy', option);
-			window.location = orderByUrl + (option ? '&orderBy=' + option : '') ;
+			window.location.href = orderByUrl + (option ? '&orderBy=' + option : '') ;
 		}
 
 	};
