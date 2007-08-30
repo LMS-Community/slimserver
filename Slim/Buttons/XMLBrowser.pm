@@ -354,7 +354,9 @@ sub gotRSS {
 sub gotOPML {
 	my ($client, $url, $opml, $params) = @_;
 	
-	# If there's a command we need to run, run it (used by Pandora)
+	# If there's a command we need to run, run it.  This is used in various
+	# places to trigger actions from an OPML result, such as to start playing
+	# a new Pandora radio station
 	if ( $opml->{'command'} ) {
 		my @p = split / /, $opml->{'command'};
 		$client->execute( \@p );
@@ -1193,7 +1195,7 @@ sub cliQuery {
 		return;
 	}
 
-	$log->debug("Asynchronously fetching feed - will be back!");
+	$log->debug("Asynchronously fetching feed $feed - will be back!");
 	Slim::Formats::XML->getFeedAsync(
 		\&_cliQuery_done,
 		\&_cliQuery_error,
@@ -1216,6 +1218,7 @@ sub _cliQuery_done {
 	my $request    = $params->{'request'};
 	my $query      = $params->{'query'};
 	my $expires    = $params->{'expires'};
+	my $timeout    = $params->{'timeout'};
 #	my $forceTitle = $params->{'forceTitle'};
 
 	my $isItemQuery = my $isPlaylistCmd = 0;
@@ -1236,7 +1239,7 @@ sub _cliQuery_done {
 	
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
-
+	
 	# select the proper list of items
 	my @index = ();
 
@@ -1273,7 +1276,12 @@ sub _cliQuery_done {
 			# current cached feed
 			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'}) {
 				
-				$log->debug("Asynchronously fetching subfeed - will be back!");
+				# Rewrite the URL if it was a search request
+				if ( $subFeed->{type} eq 'search' ) {
+					$subFeed->{url} =~ s/{QUERY}/$search/g;
+				}
+				
+				$log->debug("Asynchronously fetching subfeed " . $subFeed->{url} . " - will be back!");
 				
 				Slim::Formats::XML->getFeedAsync(
 					\&_cliQuerySubFeed_done,
@@ -1288,7 +1296,8 @@ sub _cliQuery_done {
 						'currentIndex' => \@crumbIndex,
 						'request'      => $request,
 						'query'        => $query,
-						'expires'      => $expires
+						'expires'      => $expires,
+						'timeout'      => $timeout,
 					},
 				);
 				return;
@@ -1344,7 +1353,7 @@ sub _cliQuery_done {
 				
 				if ($valid) {
 					
-					my $loopname = $menuMode?'item_loop':'loop_loop';
+					my $loopname = $menuMode ? 'item_loop' : 'loop_loop';
 					my $cnt = 0;
 					$request->addResult('offset', $start) if $menuMode;
 
@@ -1553,17 +1562,29 @@ sub _cliQuery_done {
 						
 						$request->addResultLoop($loopname, $cnt, 'text', $hash{'name'} || $hash{'title'});
 						
+						my $params = {};
+						my $id = $hash{id};
+						
 						if ( $item->{type} ne 'text' ) {							
-							my $id = $hash{id};
-							my $params = {
+							$params = {
 								item_id => "$id", #stringify, make sure it's a string
 							};
-							
-							$request->addResultLoop( $loopname, $cnt, 'params', $params );
 						}
 						
 						if ( $item->{type} eq 'search' ) {
-							$params->{search} = '__INPUT__';
+							#$params->{search} = '__INPUT__';
+							
+							# XXX: bug in Jive, this should really be handled by the base go action
+							my $actions = {
+								go => {
+									cmd    => [ $query, 'items' ],
+									params => {
+										item_id => "$id",
+										menu    => $query,
+										search  => '__TAGGEDINPUT__',
+									},
+								},
+							};									
 							
 							my $input = {
 								len  => 3,
@@ -1572,10 +1593,13 @@ sub _cliQuery_done {
 								},
 							};
 							
+							$request->addResultLoop( $loopname, $cnt, 'actions', $actions );
 							$request->addResultLoop( $loopname, $cnt, 'input', $input );
 						}
 						
-						
+						if ( scalar keys %{$params} ) {
+							$request->addResultLoop( $loopname, $cnt, 'params', $params );
+						}
 					}
 					else {
 						$request->setResultLoopHash($loopname, $cnt, \%hash);
@@ -1595,6 +1619,15 @@ sub _cliQuery_done {
 # After fetching, insert the contents into the original feed
 sub _cliQuerySubFeed_done {
 	my ( $feed, $params ) = @_;
+	
+	# If there's a command we need to run, run it.  This is used in various
+	# places to trigger actions from an OPML result, such as to start playing
+	# a new Pandora radio station
+	if ( $feed->{command} ) {
+		my @p = split / /, $feed->{command};
+		my $client = $params->{request}->client();
+		$client->execute( \@p );
+	}
 	
 	# insert the sub-feed data into the original feed
 	my $parent = $params->{'parent'};
