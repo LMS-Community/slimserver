@@ -184,19 +184,19 @@ sub init {
 				my ( $client, $item ) = @_;
 
 				my $playlist = $prefs->client($client)->get('alarmplaylists');
-				$playlist->[ weekday($client) ] = exists $specialPlaylists{$item} ? $item : $item->url;
+				$playlist->[ weekDay($client) ] = exists $specialPlaylists{$item} ? $item : $item->url;
 				$prefs->client($client)->set('alarmplaylists', $playlist);
 
 				$client->update();
 			},
-			'initialValue'   => sub { $prefs->client($_[0])->get('alarmplaylist')->[ weekDay($_[0]) ] },
+			'initialValue'   => sub { $prefs->client($_[0])->get('alarmplaylists')->[ weekDay($_[0]) ] },
 			'overlayRef'     => sub {
 				my ( $client, $item ) = @_;
 				my $overlay;
 				
 				$item = ( ref $item ) ? $item->url : $item;
 
-				if ( $item eq $prefs->client($client)->get('alarmplaylist')->[ weekDay($client) ] ) {
+				if ( $item eq $prefs->client($client)->get('alarmplaylists')->[ weekDay($_[0]) ] ) {
 					$overlay = Slim::Buttons::Common::checkBoxOverlay( $client, 1 );
 				} else {
 					$overlay = Slim::Buttons::Common::checkBoxOverlay( $client, 0 );
