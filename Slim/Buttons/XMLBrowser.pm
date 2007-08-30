@@ -1282,7 +1282,7 @@ sub _cliQuery_done {
 				}
 				
 				$log->debug("Asynchronously fetching subfeed " . $subFeed->{url} . " - will be back!");
-				
+
 				Slim::Formats::XML->getFeedAsync(
 					\&_cliQuerySubFeed_done,
 					\&_cliQuery_error,
@@ -1534,6 +1534,8 @@ sub _cliQuery_done {
 
 			if ($valid) {
 				
+				$request->addResult( 'title', $subFeed->{'name'} || $subFeed->{'title'} );
+				
 				for my $item ( @{$subFeed->{'items'}}[$start..$end] ) {
 					
 					my $hasItems = 1;
@@ -1648,6 +1650,11 @@ sub _cliQuerySubFeed_done {
 	} else {
 		# otherwise insert items as subfeed
 		$subFeed->{'items'} = $feed->{'items'};
+		
+		# Update the title value in case it's different from the previous menu
+		if ( $feed->{'title'} ) {
+			$subFeed->{'name'} = $feed->{'title'};
+		}
 	}
 
 	$subFeed->{'fetched'} = 1;
