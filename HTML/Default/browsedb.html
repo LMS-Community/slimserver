@@ -1,6 +1,8 @@
 [%- pagetitle = BLOCK %]
 	<span>[% browseby | string %]</span>
-	[% PROCESS galleryselect.html %]
+	[% IF levelName == 'album' || levelName == 'age' %]
+	<span id="viewSelect"></span>
+	[% END %]
 [%- END -%]
 [% pageicon = browseby; noSpacer = 1; homeCategory = "MY_MUSIC" -%]
 [%- maestroScripts = BLOCK -%]
@@ -10,6 +12,17 @@
 		strings['switch_to_list']          = '[% "SWITCH_TO_LIST" | string %]';
 		strings['switch_to_extended_list'] = '[% "SWITCH_TO_EXTENDED_LIST" | string %]';
 		strings['switch_to_gallery']       = '[% "SWITCH_TO_GALLERY" | string %]';
+
+		[% IF levelName == 'album' %]
+			var orderByList = new Object();
+			orderByList['[% "ALBUM" | string %]']                = 'album.titlesort';
+			orderByList['[% "SORT_YEARALBUM" | string %]']       = 'album.year,album.titlesort';
+			orderByList['[% "SORT_YEARARTISTALBUM" | string %]'] = 'album.year,contributor.namesort,album.titlesort';
+			orderByList['[% "SORT_ARTISTALBUM" | string %]']     = 'contributor.namesort,album.titlesort';
+			orderByList['[% "SORT_ARTISTYEARALBUM" | string %]'] = 'contributor.namesort,album.year,album.titlesort';
+			orderByList['[% "SORT_GENREALBUM" | string %]']      = 'genre.namesort,album.titlesort';
+			orderByList['[% "SORT_GENREARTISTALBUM" | string %]']= 'genre.namesort,contributor.namesort,album.titlesort';
+		[% END %]
 	</script>
 [%- END -%]
 [%- PROCESS pageheader.html dontscroll=1 -%]

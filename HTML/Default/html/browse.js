@@ -8,10 +8,9 @@ Browse = function(){
 					el.scrollIntoView('browsedbList');
 			}
 
-			new Ext.SplitButton('toggleGallery', {
-				icon: webroot + 'html/images/albumlist' + (Utils.getCookie('SlimServer-albumView') || '0') + '.png',
-				cls: 'x-btn-icon',
-				menu: new Ext.menu.Menu({
+			// Album view selector
+			if (Ext.get('viewSelect')) {
+				menu = new Ext.menu.Menu({
 					items: [
 						{
 							text: strings['switch_to_list'],
@@ -29,8 +28,28 @@ Browse = function(){
 							handler: function(){ Browse.toggleGalleryView(1) }
 						}
 					]
-				})
-			});
+				});
+				
+				if (orderByList) {
+					menu.add('-');
+				
+					for (order in orderByList) {
+						menu.addItem(new Ext.menu.Item({
+							text: order,
+							handler: function(ev){
+								Browse.chooseAlbumOrderBy(orderByList[ev.text]);
+							}
+						}));
+					}
+				}
+			
+			
+				new Ext.SplitButton('viewSelect', {
+					icon: webroot + 'html/images/albumlist' + (Utils.getCookie('SlimServer-albumView') || '0') + '.png',
+					cls: 'x-btn-icon',
+					menu: menu
+				});
+			}
 		},
 		
 		gotoAnchor : function(anchor){
@@ -79,12 +98,9 @@ Browse = function(){
 			}
 		},
 
-		chooseAlbumOrderBy: function(value, option) {
-			if (option) {
-				orderByUrl = orderByUrl + '&orderBy=' + option;
-			}
-			Utils.setCookie( 'SlimServer-orderBy', option );
-			window.location = orderByUrl;
+		chooseAlbumOrderBy: function(option) {
+			Utils.setCookie('SlimServer-orderBy', option);
+			window.location = orderByUrl + (option ? '&orderBy=' + option : '') ;
 		}
 
 	};
@@ -98,6 +114,6 @@ function toggleGalleryView(artwork) {
 }
 
 function chooseAlbumOrderBy(value, option) {
-	Browse.chooseAlbumOrderBy(value, option);
+	Browse.chooseAlbumOrderBy(option);
 }
 
