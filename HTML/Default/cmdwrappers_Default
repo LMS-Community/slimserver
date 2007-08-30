@@ -25,7 +25,7 @@
 
 	[% BLOCK contentitem -%]
 	<div class="selectorMarker"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-		<div class="[% lineclass || 'browsedbListItem' %][% IF item.coverThumb %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
+		<div class="[% lineclass || 'browsedbListItem' %][% IF item.coverThumb && !(artwork > 0 && (levelName == 'album' || levelName == 'age')) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			[%- IF leftcontrols -%]
 				<span class="browsedbLeftControls">
 				[%- PROCESS $leftcontrols -%]
@@ -71,7 +71,7 @@
 		
 		[%- IF item.descend %]
 		
-			[% IF item.coverThumb && !(artwork == 1 && (levelName == 'album' || levelName == 'age')) %]
+			[% IF item.coverThumb && !(artwork > 0 && (levelName == 'album' || levelName == 'age')) %]
 				<span class="browseCover">
 					[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% PROCESS thumbnailItemImg height="50" %][% IF item.hierarchy %]</a>[% END -%]
 				</span>
@@ -80,7 +80,7 @@
 				</div>
 				[% IF item.showYear && item.year -%]
 					<div class="browseItemDetail">
-						<a [% PROCESS yearItemHRef %] target="browser" class="browseItemLink">([% item.year %])</a>
+						<a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>
 					</div>
 				[% END %]
 				<div class="browseItemDetail">
@@ -92,7 +92,7 @@
 				[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %] class="browseItemLink">[% END %][% item.text | html %][% IF item.hierarchy %]</a>[% END -%]
 
 				[% IF artwork != 1%]
-					[% IF item.showYear && item.year -%]<a [% PROCESS yearItemHRef %] target="browser">([% item.year %])</a>[% END -%]
+					[% IF item.showYear && item.year -%]<a [% PROCESS yearItemHRef %] class="browseItemLink">([% item.year %])</a>[% END -%]
 					
 					<!-- Include the artist for the album view -->
 					[%- IF item.artist.name && item.artist.name != item.noArtist; PROCESS artistsAsHTML.html itemobj=item.itemobj noby=1; END -%]

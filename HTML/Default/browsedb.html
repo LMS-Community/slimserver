@@ -5,6 +5,12 @@
 [% pageicon = browseby; noSpacer = 1; homeCategory = "MY_MUSIC" -%]
 [%- maestroScripts = BLOCK -%]
 	<script type="text/javascript" src="[% webroot %]html/browse.js"></script>
+
+	<script type="text/javascript">
+		strings['switch_to_list']          = '[% "SWITCH_TO_LIST" | string %]';
+		strings['switch_to_extended_list'] = '[% "SWITCH_TO_EXTENDED_LIST" | string %]';
+		strings['switch_to_gallery']       = '[% "SWITCH_TO_GALLERY" | string %]';
+	</script>
 [%- END -%]
 [%- PROCESS pageheader.html dontscroll=1 -%]
 

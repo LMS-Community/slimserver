@@ -528,3 +528,15 @@ div.thumbwrap {
 	width: 72%;
 }
 
+.albumListGallery .x-menu-item-icon {
+    background-image: url(html/images/albumlist1.png);
+    background-repeat: no-repeat;
+}
+.albumXList .x-menu-item-icon {
+    background-image: url(html/images/albumlist0.png);
+    background-repeat: no-repeat;
+}
+.albumList .x-menu-item-icon {
+    background-image: url(html/images/albumlist2.png);
+    background-repeat: no-repeat;
+}

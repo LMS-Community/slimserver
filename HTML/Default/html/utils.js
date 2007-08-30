@@ -1,4 +1,8 @@
 var Utils = function(){
+	cookieManager = new Ext.state.CookieProvider({
+		expires: new Date(new Date().getTime() + 1000*60*60*24*365)
+	});
+
 	return {
 		init : function(){
 			Ext.EventManager.onWindowResize(Utils.resizeContent);
@@ -101,13 +105,12 @@ var Utils = function(){
 			});
 		},
 
+		setCookie : function(name, value) {
+			cookieManager.set(name, value);
+		},
 
-		setCookie: function(name, value) {
-			var expires = new Date();
-			expires.setTime(expires.getTime() + 1000*60*60*24*365);
-			document.cookie =
-				name + "=" + escape(value) +
-				((expires == null) ? "" : ("; expires=" + expires.toGMTString()));
+		getCookie : function(name, failover) {
+			return cookieManager.get(name, failover);
 		}
 	};
 }();

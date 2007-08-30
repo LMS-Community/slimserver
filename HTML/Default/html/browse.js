@@ -7,6 +7,30 @@ Browse = function(){
 				if (el = Ext.get('anchor' + anchor[1]))
 					el.scrollIntoView('browsedbList');
 			}
+
+			new Ext.SplitButton('toggleGallery', {
+				icon: webroot + 'html/images/albumlist' + (Utils.getCookie('SlimServer-albumView') || '0') + '.png',
+				cls: 'x-btn-icon',
+				menu: new Ext.menu.Menu({
+					items: [
+						{
+							text: strings['switch_to_list'],
+							cls: 'albumList',
+							handler: function(){ Browse.toggleGalleryView(2) }
+						},
+						{
+							text: strings['switch_to_extended_list'],
+							cls: 'albumXList',
+							handler: function(){ Browse.toggleGalleryView(0) }
+						},
+						{
+							text: strings['switch_to_gallery'],
+							cls: 'albumListGallery',
+							handler: function(){ Browse.toggleGalleryView(1) }
+						}
+					]
+				})
+			});
 		},
 		
 		gotoAnchor : function(anchor){
@@ -14,8 +38,7 @@ Browse = function(){
 				el.scrollIntoView('browsedbList');
 		},
 
-		toggleGalleryView: function(artwork){
-
+		toggleGalleryView : function(artwork){
 			var thisdoc = document;
 
 			if (browserTarget && parent.frames[browserTarget]) {
@@ -23,25 +46,35 @@ Browse = function(){
 			}
 
 			if (thisdoc.location.pathname != '') {
-				myString = new String(thisdoc.location.href);
+				url = new String(thisdoc.location.href);
+				url = url.replace(/&artwork=./, '');
 
-				if (artwork) {
+				if (artwork == 1) {
 					Utils.setCookie( 'SlimServer-albumView', "1" );
 
 					if (thisdoc.location.href.indexOf('start') == -1) {
-						thisdoc.location=thisdoc.location.href+"&artwork=1";
+						thisdoc.location = url + '&artwork=1';
 					} else {
-						myString = new String(thisdoc.location.href);
-
-						var rExp = /\&start=/gi;
-						thisdoc.location=myString.replace(rExp, "&artwork=1&start=");
+						thisdoc.location = url + '&artwork=1&start=';
 					}
-				} else {
 
+				} else if (artwork == 2) {
+					Utils.setCookie( 'SlimServer-albumView', "2" );
+
+					if (thisdoc.location.href.indexOf('start') == -1) {
+						thisdoc.location = url + '&artwork=2';
+					} else {
+						thisdoc.location = url + '&artwork=2&start=';
+					}
+
+				} else {
 					Utils.setCookie( 'SlimServer-albumView', "" );
 
-					var rExp = /\&artwork=1/gi;
-					thisdoc.location=myString.replace(rExp, "");
+					if (thisdoc.location.href.indexOf('start') == -1) {
+						thisdoc.location = url + '&artwork=0';
+					} else {
+						thisdoc.location = url + '&artwork=0&start=';
+					}
 				}
 			}
 		},

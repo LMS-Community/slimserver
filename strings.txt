@@ -9282,6 +9282,10 @@ SWITCH_TO_LIST
 	IT	Vista elenco
 	NL	Naar lijstweergave
 
+SWITCH_TO_EXTENDED_LIST
+	DE	Erweiterte Listenansicht
+	EN	To Enhanced List View
+
 BROWSE
 	CS	Procházet
 	DA	Gennemse
