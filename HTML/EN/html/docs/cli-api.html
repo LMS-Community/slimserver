@@ -86,9 +86,6 @@
 	<li>
 		New notification mechanism for preference changes: &quot;<a href="#prefset">prefset</a>&quot;.
 	</li>
-	<li>
-		&quot;<a href="#PC">Player commands</a>&quot; allow for alternate syntax, putting the mac address/player index as the first argument (needed for jive support).
-	</li>
 </ul>
 <p>
 	The following changes or new commands &amp; queries are available starting with
@@ -139,6 +136,13 @@
 		Added a tag to allow sorting the results of the &quot;<a href="#radios">radios</a>&quot; query.
 	</li>
 	<li>
+		Added the &quot;<a href="#name">name</a>&quot; command to change the player name.
+	</li>
+	<li>
+		Added the &quot;<a href="#displaystatus">displaystatus</a>&quot; query which allows subscription
+		to display update messages.
+	</li>
+	<li>
 		Updated queries &quot;<a href="#status">status</a>&quot;, 
 		&quot;<a href="#titles">titles</a>&quot;,
 		&quot;<a href="#playlists tracks">playlists tracks</a>&quot; and
@@ -166,10 +170,6 @@
 		Slightly reorganised this document to introduce a &quot;Compound queries&quot; section to
 		document queries &quot;<a href="#serverstatus">serverstatus</a>&quot; and 
 		&quot;<a href="#status">status</a>&quot;.
-	</li>
-	<li>
-		Added the &quot;<a href="#displaystatus">displaystatus</a>&quot; query which allows subscription
-		to display update messages.
 	</li>
 </ul>
 
@@ -986,6 +986,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#signalstrength ?">signalstrength ?</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#name">name</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#connected ?">connected ?</a></code></strong>
 	</li>
 	<li>
@@ -1087,15 +1090,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			?
 		</code>
 	</strong>
-	<br>or, alternatively<br>
-	<strong>
-		<code>
-			&lt;playerindex&gt;
-			player
-			id 
-			?
-		</code>
-	</strong>
 </p>
 <p>
 	The &quot;player id ?&quot; query returns the unique identifier of a player,
@@ -1124,16 +1118,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			?
 		</code>
 	</strong>
-	<br>or, alternatively<br>
-	<strong>
-		<code>
-			&lt;playerindex|playerid&gt;
-			player
-			name 
-			?
-		</code>
-	</strong>
-
 </p>
 <p>
 	The &quot;player name ?&quot; query returns the human-readable name for the
@@ -1158,15 +1142,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			player
 			ip 
 			&lt;playerindex|playerid&gt;
-			?
-		</code>
-	</strong>
-	<br>or, alternatively<br>
-	<strong>
-		<code>
-			&lt;playerindex|playerid&gt;
-			player
-			ip 
 			?
 		</code>
 	</strong>
@@ -1196,15 +1171,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			?
 		</code>
 	</strong>
-	<br>or, alternatively<br>
-	<strong>
-		<code>
-			&lt;playerindex|playerid&gt;
-			player
-			model
-			?
-		</code>
-	</strong>
 </p>
 <p>
 	The &quot;player model ?&quot; query returns the model of the player, 
@@ -1230,15 +1196,6 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			player
 			displaytype
 			&lt;playerindex|playerid&gt;
-			?
-		</code>
-	</strong>
-	<br>or, alternatively<br>
-	<strong>
-		<code>
-			&lt;playerindex|playerid&gt;
-			player
-			displaytype
 			?
 		</code>
 	</strong>
@@ -1281,6 +1238,30 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request: &quot;04:20:00:12:23:45 signalstrength ?&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;04:20:00:12:23:45 signalstrength 76&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="name">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			name
+			&lt;newname&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	Sets the name of the player.
+</p>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;04:20:00:12:23:45 name Buzz&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 name Buzz&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 
