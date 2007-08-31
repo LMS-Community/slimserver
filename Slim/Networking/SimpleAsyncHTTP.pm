@@ -179,8 +179,11 @@ sub onError {
 		
 		return $self->sendCachedResponse();
 	}
+	else {
+		logger('network.asynchttp')->warn("Failed to connect to $uri ($error)");
+	}
 	
-	$self->error( "Failed to connect to $uri ($error)\n" );
+	$self->error( $error );
 
 	$::perfmon && (my $now = Time::HiRes::time());
 	
