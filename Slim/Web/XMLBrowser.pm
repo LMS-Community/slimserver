@@ -180,14 +180,12 @@ sub handleFeed {
 				my $searchQuery;
 				if ( $i =~ /\d+_(.+)/ ) {
 					$searchQuery = $1;
-					warn "*** searchQuery for $i = $searchQuery\n";
 				}
 				
 				# Rewrite the URL if it was a search request
 				if ( $subFeed->{'type'} eq 'search' && ( $stash->{'q'} || $searchQuery ) ) {
 					my $search = $stash->{'q'} || $searchQuery;
 					$subFeed->{'url'} =~ s/{QUERY}/$search/g;
-					warn "*** Rewrote index $i search URL to " . $subFeed->{'url'} . "\n";
 				}
 				
 				# Setup passthrough args
