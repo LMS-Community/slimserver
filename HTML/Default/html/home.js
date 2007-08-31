@@ -102,6 +102,8 @@ var MainMenu = function(){
 				
 				subItems = Ext.get(panel.toLowerCase() + 'Menu');
 				if ((subPanel = Ext.get(panel + '_expanded')) && subItems){
+					subPanel.setVisibilityMode(Ext.Element.DISPLAY);
+					subPanel.setVisible(true);
 					subPanel.addClass('homeMenuSection_expanded');
 					subPanel.update(subItems.dom.innerHTML);
 				}
@@ -125,6 +127,8 @@ var MainMenu = function(){
 				el.removeClass('homeMenuItem_expanded');
 
 				if (subPanel = Ext.get(panel + '_expanded')){
+					subPanel.setVisibilityMode(Ext.Element.DISPLAY);
+					subPanel.setVisible(false);
 					subPanel.update('');
 					subPanel.removeClass('homeMenuSection_expanded');
 				}

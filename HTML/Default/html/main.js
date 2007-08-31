@@ -43,6 +43,8 @@ Main = function(){
 
 			layout.endUpdate();
 
+			Ext.get('leftcontent').dom.src = webroot + 'home.html?player=' + player; 
+
 			Ext.QuickTips.init();
 			Ext.get('loading').hide();
 			Ext.get('loading-mask').hide();
