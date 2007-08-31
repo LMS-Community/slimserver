@@ -2375,8 +2375,6 @@ sub serverstatusQuery {
 				$request->addResultLoop('players_loop', $cnt, 
 					'name', $eachclient->name());
 				$request->addResultLoop('players_loop', $cnt, 
-					'playername', $eachclient->name());
-				$request->addResultLoop('players_loop', $cnt, 
 					'model', $eachclient->model());
 				$request->addResultLoop('players_loop', $cnt, 
 					'displaytype', $eachclient->vfdmodel())
@@ -2466,7 +2464,7 @@ sub statusQuery_filter {
 	return 0 if $clientid ne $self->clientid();
 	
 	# commands we ignore
-	return 0 if $request->isCommand([['ir', 'button', 'debug', 'pref', 'display', 'prefset']]);
+	return 0 if $request->isCommand([['ir', 'button', 'debug', 'pref', 'display', 'prefset', 'playerpref']]);
 	return 0 if $request->isCommand([['playlist'], ['open', 'jump']]);
 
 	# special case: the client is gone!
@@ -2478,15 +2476,6 @@ sub statusQuery_filter {
 		
 		# we'll unsubscribe above if there is no client
 		return 1;
-	}
-
-	# return immediately if 'playerpref playername', otherwise ignore playerpref
-	if ($request->isCommand([['playerpref']])) {
-		if ($request->isCommand([['playerpref', 'playername']])) {
-			return 1;
-		} else {
-			return 0;
-		}
 	}
 
 	# don't delay for newsong
