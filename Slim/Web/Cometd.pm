@@ -305,7 +305,13 @@ sub handler {
 			my $subscription = $obj->{subscription};
 			
 			if ( $request && $subscription ) {
-				my $result = handleRequest( $clid, $request, $obj->{channel}, $subscription );
+				my $result = handleRequest( {
+					clid     => $clid, 
+					cmd      => $request, 
+					channel  => $obj->{channel}, 
+					id       => $subscription,
+					response => 1,
+				} );
 				
 				if ( $result->{error} ) {
 					push @errors, [ $obj->{channel}, $result->{error} ];
@@ -363,24 +369,37 @@ sub handler {
 			my $id      = $obj->{id} || new_uuid(); # unique id for this request
 			
 			if ( $request && $id ) {
-				my $result = handleRequest( $clid, $request, $obj->{channel}, $id );
+				my $result = handleRequest( {
+					clid     => $clid, 
+					cmd      => $request,
+					channel  => $obj->{channel}, 
+					id       => $id,
+					response => ( $obj->{ext} && $obj->{ext}->{'no-response'} ) ? 0 : 1,
+				} );
 				
 				if ( $result->{error} ) {
 					push @errors, [ $obj->{channel}, $result->{error} ];
 				}
 				else {
-					# This response is optional, but we do it anyway
-					push @{$events}, {
-						channel    => '/slim/request',
-						clientId   => $clid,
-						id         => $id,
-						successful => JSON::True,
-						ext        => $obj->{data},
-					};
+					# If the caller does not want a response, they will set ext->{'no-response'}
+					if ( $obj->{ext} && $obj->{ext}->{'no-response'} ) {
+						# do nothing
+						$log->debug('Not sending response to request, caller does not want it');
+					}
+					else {
+						# This response is optional, but we do it anyway
+						push @{$events}, {
+							channel    => '/slim/request',
+							clientId   => $clid,
+							id         => $id,
+							successful => JSON::True,
+							ext        => $obj->{data},
+						};
 					
-					# If the request was not async, we can add it now
-					if ( exists $result->{data} ) {
-						push @{$events}, $result;
+						# If the request was not async, we can add it now
+						if ( exists $result->{data} ) {
+							push @{$events}, $result;
+						}
 					}
 				}
 			}
@@ -461,9 +480,15 @@ sub sendResponse {
 }
 
 sub handleRequest {
-	my ( $clid, $params, $channel, $id ) = @_;
+	my $args = shift;
 	
-	my $args = $params->[1];
+	my $clid     = $args->{clid};
+	my $cmd      = $args->{cmd};
+	my $channel  = $args->{channel};
+	my $id       = $args->{id};
+	my $response = defined $args->{response} ? $args->{response} : 1;
+	
+	my $args = $cmd->[1];
 
 	if ( !$args || ref $args ne 'ARRAY' ) {
 		return { error => 'invalid slim.request arguments, array expected' };
@@ -471,7 +496,7 @@ sub handleRequest {
 	
 	my $clientid;
 	
-	if ( my $mac = $params->[0] ) {
+	if ( my $mac = $cmd->[0] ) {
 		my $client   = Slim::Player::Client::getClient($mac);
 		$clientid = blessed($client) ? $client->id : undef;
 	}
@@ -487,7 +512,9 @@ sub handleRequest {
 		$request->source( "$channel|$id" );
 		$request->connectionID( $clid );
 		
-		$request->autoExecuteCallback( \&requestCallback );
+		if ( $response ) {
+			$request->autoExecuteCallback( \&requestCallback );
+		}
 		
 		$request->execute();
 		
@@ -497,9 +524,15 @@ sub handleRequest {
 		
 		# handle async commands
 		if ( $request->isStatusProcessing ) {
-			$request->callbackParameters( \&requestCallback );
+			if ( $response ) {
+				# Only set a callback if the caller wants a response
+				$request->callbackParameters( \&requestCallback );
 			
-			$log->debug( "Request for $channel / $id is async, will callback" );
+				$log->debug( "Request for $channel / $id is async, will callback" );
+			}
+			else {
+				$log->debug( "Request for $channel / $id is async, but caller does not care about the response" );
+			}
 			
 			return { ok => 1 };
 		}
