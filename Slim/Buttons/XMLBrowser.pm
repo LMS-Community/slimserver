@@ -769,7 +769,7 @@ sub hasAudio {
 		return $item->{'play'};
 	}
 	elsif ( $item->{'type'} && $item->{'type'} =~ /^(?:audio|playlist)$/ ) {
-		return $item->{'url'};
+		return $item->{'playlist'} || $item->{'url'};
 	}
 	elsif ( $item->{'enclosure'} && ( $item->{'enclosure'}->{'type'} =~ /audio/ ) ) {
 		return $item->{'enclosure'}->{'url'};
@@ -1256,20 +1256,33 @@ sub _cliQuery_done {
 #	print Data::Dumper::Dumper($subFeed);
 	
 	my @crumbIndex = ();
-	if ( scalar @index > 0 ) {
+	if ( my $levels = scalar @index ) {
 
 		# descend to the selected item
+		my $depth = 0;
 		for my $i ( @index ) {
-
 			$log->debug("Considering item $i");
 
+			$depth++;
+			
 			$subFeed = $subFeed->{'items'}->[$i];
 
 			push @crumbIndex, $i;
 			
+			# Change URL if there is a play attribute
 			if ( $isPlaylistCmd && $subFeed->{play} ) {
 				$subFeed->{url}  = $subFeed->{play};
 				$subFeed->{type} = 'audio';
+			}
+
+			# Change URL if there is a playlist attribute and it's the last item
+			if ( 
+			       $subFeed->{playlist}
+				&& $depth == $levels
+				&& $isPlaylistCmd
+			) {
+				$subFeed->{type} = 'playlist';
+				$subFeed->{url}  = $subFeed->{playlist};
 			}
 			
 			# If the feed is another URL, fetch it and insert it into the
@@ -1423,6 +1436,11 @@ sub _cliQuery_done {
 				if ( my $enc = $subFeed->{'enclosure'} ) {
 					$url = $enc->{'url'};
 				}
+				
+				# Items with a 'play' attribute will use this for playback
+				if ( my $play = $subFeed->{'play'} ) {
+					$url = $play;
+				}
 	
 				if ( $url ) {
 
@@ -1446,6 +1464,10 @@ sub _cliQuery_done {
 					elsif ( $item->{'enclosure'} && $item->{'enclosure'}->{'url'} ) {
 						push @urls, $item->{'enclosure'}->{'url'};
 						Slim::Music::Info::setTitle( $item->{'url'}, $item->{'name'} || $item->{'title'} );
+					}
+					elsif ( $item->{'play'} ) {
+						push @urls, $item->{'play'};
+						Slim::Music::Info::setTitle( $item->{'play'}, $item->{'name'} || $item->{'title'} );
 					}
 				}
 				
@@ -1662,12 +1684,17 @@ sub _cliQuerySubFeed_done {
 	if ($params->{'parentURL'} ne 'NONE') {
 		# parent url of 'NONE' should not be recached as we are being passed a preparsed hash
 		# re-cache the parsed XML to include the sub-feed
-		my $cache   = Slim::Utils::Cache->new();
-		my $expires = $feed->{'cachetime'} || $Slim::Formats::XML::XML_CACHE_TIME;
+		if ( Slim::Utils::Misc::shouldCacheURL( $params->{'parentURL'} ) ) {
+			my $cache   = Slim::Utils::Cache->new();
+			my $expires = $feed->{'cachetime'} || $Slim::Formats::XML::XML_CACHE_TIME;
 
-		$log->info("Re-caching parsed XML for $expires seconds.");
+			$log->info("Re-caching parsed XML for $expires seconds.");
 
-		$cache->set( $params->{'parentURL'} . '_parsedXML', $parent, $expires );
+			$cache->set( $params->{'parentURL'} . '_parsedXML', $parent, $expires );
+		}
+		else {
+			$log->info( 'Not caching parsed XML for ' . $params->{'parentURL'} );
+		}
 	}
 	
 	_cliQuery_done( $parent, $params );

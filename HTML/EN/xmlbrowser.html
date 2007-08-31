@@ -170,6 +170,12 @@
 	[% END %]
 	
 	[%- WRAPPER contentcontainer %]
+		[% IF image %]
+		<ul>
+			<img src="[% image %]" />
+		</ul>
+		[% END %]
+		
 		[% IF itemsHaveAudio %]
 			[%- BLOCK allcontrol -%]
 				[% WRAPPER playlink %]href="index.html?[% searchquery %]action=playall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]"[% END %]
@@ -183,7 +189,7 @@
 		
 		[%- FOREACH item = items %]
 			[%- BLOCK gencontrol -%]
-				[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure %]
+				[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
 					[% WRAPPER playlink %]href="index.html?[% searchquery %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
 					[% WRAPPER addlink %]href="index.html?[% searchquery %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
 				[% ELSE %]
@@ -196,7 +202,13 @@
 				onMouseOut="hideElements(['controls[% index _ (start + loop.index) %]'])">
 			[% END %]
 			[%- WRAPPER contentitem leftcontrols = 'gencontrol' rightcontrols = 'favoritescontrol' %]
-				<a href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]">[% item.name || item.title %]</a>
+				[% IF item.type != 'text' %]
+				<a href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]">
+				[% END %]
+				[% item.name || item.title %]
+				[% IF item.type != 'text' %]
+				</a>
+				[% END %]
 			[%- END %]
 			[% IF useAJAX %]</span>[% END %]
 			[%- odd = (not odd) %]

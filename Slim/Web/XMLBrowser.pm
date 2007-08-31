@@ -99,7 +99,7 @@ sub handleWebIndex {
 sub handleFeed {
 	my ( $feed, $params ) = @_;
 	my ( $client, $stash, $callback, $httpClient, $response ) = @{ $params->{'args'} };
-
+	
 	$stash->{'pagetitle'} = $feed->{'title'} || string($params->{'title'});
 	
 	my $template = 'xmlbrowser.html';
@@ -128,14 +128,17 @@ sub handleFeed {
 		$favsItem = pop @index;
 	}
 
-	if ( scalar @index ) {
+	if ( my $levels = scalar @index ) {
 		
 		# index links for each crumb item
 		my @crumbIndex = ();
 		
 		# descend to the selected item
+		my $depth   = 0;
 		my $subFeed = $feed;
 		for my $i ( @index ) {
+			$depth++;
+			
 			$subFeed = $subFeed->{'items'}->[$i];
 			
 			push @crumbIndex, $i;
@@ -143,6 +146,21 @@ sub handleFeed {
 				'name'  => $subFeed->{'name'} || $subFeed->{'title'},
 				'index' => join '.', @crumbIndex,
 			};
+			
+			# Change type to audio if it's an action request and we have a play attribute
+			if ( $subFeed->{'play'} && $stash->{'action'} =~ /^(?:play|add)$/ ) {
+				$subFeed->{'type'} = 'audio';
+			}
+			
+			# Change URL if there is a playlist attribute and it's the last item
+			if ( 
+			       $subFeed->{'playlist'}
+				&& $depth == $levels
+				&& $stash->{'action'} =~ /^(?:playall|addall)$/
+			) {
+				$subFeed->{'type'} = 'playlist';
+				$subFeed->{'url'}  = $subFeed->{'playlist'};
+			}
 			
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
@@ -188,11 +206,12 @@ sub handleFeed {
 				'index' => join '.', @index,
 			};
 		}
-					
+		
 		$stash->{'pagetitle'} = $subFeed->{'name'};
 		$stash->{'crumb'}     = \@crumb;
 		$stash->{'items'}     = $subFeed->{'items'};
 		$stash->{'index'}     = join( '.', @index ) . '.';
+		$stash->{'image'}     = $subFeed->{'image'};
 	}
 	else {
 		$stash->{'pagetitle'} = $feed->{'title'} || string($params->{'title'});
@@ -220,6 +239,11 @@ sub handleFeed {
 		# Podcast enclosures
 		if ( my $enc = $stash->{'streaminfo'}->{'item'}->{'enclosure'} ) {
 			$url = $enc->{'url'};
+		}
+		
+		# Items with a 'play' attribute will use this for playback
+		if ( my $play = $stash->{'streaminfo'}->{'item'}->{'play'} ) {
+			$url = $play;
 		}
 		
 		if ( $url ) {
@@ -255,6 +279,10 @@ sub handleFeed {
 				push @urls, $item->{'enclosure'}->{'url'};
 				Slim::Music::Info::setTitle( $item->{'url'}, $item->{'name'} || $item->{'title'} );
 			}
+			elsif ( $item->{'play'} ) {
+				push @urls, $item->{'play'};
+				Slim::Music::Info::setTitle( $item->{'play'}, $item->{'name'} || $item->{'title'} );
+			}
 		}
 		
 		if ( @urls ) {
@@ -278,7 +306,7 @@ sub handleFeed {
 		# Check if any of our items contain audio, so we can display an
 		# 'All Songs' link
 		for my $item ( @{ $stash->{'items'} } ) {
-			if ( ( $item->{'type'} && $item->{'type'} eq 'audio' ) || $item->{'enclosure'} ) {
+			if ( ( $item->{'type'} && $item->{'type'} eq 'audio' ) || $item->{'enclosure'} || $item->{'play'} ) {
 				$stash->{'itemsHaveAudio'} = 1;
 				$stash->{'currentIndex'}   = join '.', @index;
 				last;
@@ -323,15 +351,15 @@ sub handleFeed {
 		if (defined $favsItem && $items[$favsItem - $start]) {
 			my $item = $items[$favsItem - $start];
 			if ($stash->{'action'} eq 'favadd') {
-				$favs->add($item->{'url'}, $item->{'name'}, $item->{'type'}, $item->{'parser'});
+				$favs->add( $item->{'play'} || $item->{'url'}, $item->{'name'}, $item->{'type'}, $item->{'parser'} );
 			} elsif ($stash->{'action'} eq 'favdel') {
-				$favs->deleteUrl($item->{'url'});
+				$favs->deleteUrl( $item->{'play'} || $item->{'url'} );
 			}
 		}
 	
 		for my $item (@items) {
 			if ($item->{'url'}) {
-				$item->{'favorites'} = $favs->hasUrl($item->{'url'}) ? 2 : 1;
+				$item->{'favorites'} = $favs->hasUrl( $item->{'play'} || $item->{'url'} ) ? 2 : 1;
 			}
 		}
 	}
@@ -383,6 +411,11 @@ sub handleSubFeed {
 	} else {
 		# otherwise insert items as subfeed
 		$subFeed->{'items'} = $feed->{'items'};
+		
+		# Update the title value in case it's different from the previous menu
+		if ( $feed->{'title'} ) {
+			$subFeed->{'name'} = $feed->{'title'};
+		}
 	}
 
 	# set flag to avoid fetching this url again
@@ -398,12 +431,17 @@ sub handleSubFeed {
 	elsif ($params->{'parentURL'} ne 'NONE') {
 		# parentURL of 'NONE' indicates we were called with preparsed hash which should not be cached
 		# re-cache the parsed XML to include the sub-feed
-		my $cache = Slim::Utils::Cache->new();
-		my $expires = $feed->{'cachetime'} || $Slim::Formats::XML::XML_CACHE_TIME;
+		if ( Slim::Utils::Misc::shouldCacheURL( $params->{'parentURL'} ) ) {
+			my $cache = Slim::Utils::Cache->new();
+			my $expires = $feed->{'cachetime'} || $Slim::Formats::XML::XML_CACHE_TIME;
 
-		$log->info("Re-caching parsed XML for $expires seconds.");
+			$log->info("Re-caching parsed XML for $expires seconds.");
 
-		$cache->set( $params->{'parentURL'} . '_parsedXML', $parent, $expires );
+			$cache->set( $params->{'parentURL'} . '_parsedXML', $parent, $expires );
+		}
+		else {
+			$log->info( 'Not caching parsed XML for ' . $params->{'parentURL'} );
+		}
 	}
 	
 	handleFeed( $parent, $params );
