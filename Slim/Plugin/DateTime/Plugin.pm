@@ -137,9 +137,17 @@ sub screensaverDateTimelines {
 	my $client = shift;
 	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 
+	# the alarm's days are sunday=7 based - 0 is daily
+
 	my $alarm = preferences('server')->client($client)->get('alarm');
-	
-	my $alarmOn = $alarm->[ 0 ] || $alarm->[ $wday || 7];
+
+	my $alarmtime = preferences('server')->client($client)->get('alarmtime');
+	my $currtime = $sec + 60*$min + 60*60*$hour;
+	my $tomorrow = ($wday+1) % 7 || 7;
+
+	my $alarmOn = $alarm->[ 0 ] 
+			|| ($alarm->[ $wday ] && $alarmtime->[ $wday ] > $currtime)
+			|| ($alarm->[ $tomorrow ] && $alarmtime->[ $tomorrow ] < $currtime);
 
 	my $nextUpdate = $client->periodicUpdateTime();
 	Slim::Buttons::Common::syncPeriodicUpdates($client, int($nextUpdate)) if (($nextUpdate - int($nextUpdate)) > 0.01);
