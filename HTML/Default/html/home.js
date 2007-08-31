@@ -44,7 +44,6 @@ var MainMenu = function(){
 			anchor = document.location.href.match(/#(.*)\?/)
 			if (!(anchor && anchor[1] && this.showPanel(anchor[1].toLowerCase()))) {
 				this.showPanel('home');
-				this.expandItem(Utils.getCookie('SlimServer-homeMenuExpanded'));
 			}
 		},
 		
@@ -95,17 +94,15 @@ var MainMenu = function(){
 			Utils.setCookie('SlimServer-homeMenuExpanded', panel);
 
 			if (el = Ext.get(panel)) {
-				if (icon = el.child('img:first', true)) {
+				if (icon = el.child('img:first', true))
 					icon.src =  webroot + 'html/images/triangle-down.gif';
-				}
+
 				el.addClass('homeMenuItem_expanded');
-				
-				subItems = Ext.get(panel.toLowerCase() + 'Menu');
-				if ((subPanel = Ext.get(panel + '_expanded')) && subItems){
+
+				if ((subPanel = Ext.get(panel + '_expanded'))){
 					subPanel.setVisibilityMode(Ext.Element.DISPLAY);
 					subPanel.setVisible(true);
 					subPanel.addClass('homeMenuSection_expanded');
-					subPanel.update(subItems.dom.innerHTML);
 				}
 				
 			}
@@ -120,16 +117,14 @@ var MainMenu = function(){
 				Utils.setCookie('SlimServer-homeMenuExpanded', '');
 
 			if (el = Ext.get(panel)) {
-				if (icon = el.child('img:first', true)) {
+				if (icon = el.child('img:first', true))
 					icon.src =  webroot + 'html/images/triangle-right.gif';
-				}
 
 				el.removeClass('homeMenuItem_expanded');
 
 				if (subPanel = Ext.get(panel + '_expanded')){
 					subPanel.setVisibilityMode(Ext.Element.DISPLAY);
 					subPanel.setVisible(false);
-					subPanel.update('');
 					subPanel.removeClass('homeMenuSection_expanded');
 				}
 			}
@@ -171,6 +166,10 @@ var MainMenu = function(){
 				Ext.get('livesearch').setVisible(true);
 			else
 				Ext.get('livesearch').setVisible(false);
+
+			if (panel == 'home')
+				this.expandItem(Utils.getCookie('SlimServer-homeMenuExpanded'));
+			
 
 			return panelExists;
 		},
