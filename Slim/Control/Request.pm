@@ -80,6 +80,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  Y    mixer           treble                      <0..100|-100..+100|?>
  Y    mixer           pitch                       <80..120|-100..+100|?>
  Y    mixer           muting                      <|?>
+ Y    name            <newname|?>
  Y    playerpref      <prefname>                  <prefvalue|?>
  Y    power           <0|1|?|>
  Y    sleep           <0..n|?>
@@ -100,7 +101,6 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  N    player          model                       <index or ID>               ?
  N    player          displaytype                 <index or ID>               ?
  N    players         <startindex>                <numitems>                  <tagged parameters>
- Y    <ID>            name                        <new player name>
 
 
 =head2 PLAYLISTS
@@ -491,6 +491,8 @@ sub init {
     addDispatch(['mixer',          'volume',         '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);
     addDispatch(['mode',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::modeQuery]);
     addDispatch(['musicfolder',    '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::musicfolderQuery]);
+    addDispatch(['name',           '_newvalue'],                                                       [1, 0, 0, \&Slim::Control::Commands::nameCommand]);
+    addDispatch(['name',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::nameQuery]);
     addDispatch(['path',           '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::cursonginfoQuery]);
     addDispatch(['pause',          '_newvalue'],                                                       [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
     addDispatch(['play'],                                                                              [1, 0, 0, \&Slim::Control::Commands::playcontrolCommand]);
@@ -501,7 +503,6 @@ sub init {
     addDispatch(['player',         'ip',             '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
     addDispatch(['player',         'model',          '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
     addDispatch(['player',         'name',           '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
-    addDispatch(['name',           '_newvalue'],                                                       [1, 0, 0, \&Slim::Control::Commands::playernameCommand]);
     addDispatch(['playerpref',     '_prefname',      '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playerprefQuery]);
     addDispatch(['playerpref',     'validate',       '_prefname',  '_newvalue'],                       [1, 1, 0, \&Slim::Control::Queries::prefValidateQuery]);
     addDispatch(['playerpref',     '_prefname',      '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::playerprefCommand]);

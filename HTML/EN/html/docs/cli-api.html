@@ -136,7 +136,7 @@
 		Added a tag to allow sorting the results of the &quot;<a href="#radios">radios</a>&quot; query.
 	</li>
 	<li>
-		Added the &quot;<a href="#name">name</a>&quot; command to change the player name.
+		Added the &quot;<a href="#name">name</a>&quot; query/command to get/change the player name.
 	</li>
 	<li>
 		Added the &quot;<a href="#displaystatus">displaystatus</a>&quot; query which allows subscription
@@ -1247,17 +1247,24 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<code>
 			&lt;playerid&gt;
 			name
-			&lt;newname&gt;
+			&lt;newname|?&gt;
 		</code>
 	</strong>
 </p>
 <p>
-	Sets the name of the player.
+	Sets the name of the player. You may query the player name 
+	by passing in &quot;?&quot; (equivalent to 
+	&quot;<a href="#player name ?">player name ?</a>&quot;.)
 </p>
 <p>
 	Example:
 </p>
 <blockquote> 
+	<p>
+		Request: &quot;04:20:00:12:23:45 name ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 name Lightyears&lt;LF&gt;&quot;
+	</p>
 	<p>
 		Request: &quot;04:20:00:12:23:45 name Buzz&lt;LF&gt;&quot;
 		<br>

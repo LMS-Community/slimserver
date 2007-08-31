@@ -1350,6 +1350,26 @@ sub musicfolderQuery {
 }
 
 
+sub nameQuery {
+	my $request = shift;
+
+	$log->debug("Begin Function");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['name']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get our parameters
+	my $client = $request->client();
+
+	$request->addResult("_value", $client->name());
+	
+	$request->setStatusDone();
+}
+
+
 sub playerXQuery {
 	my $request = shift;
 

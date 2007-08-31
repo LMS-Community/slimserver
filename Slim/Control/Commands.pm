@@ -369,6 +369,31 @@ sub mixerCommand {
 	$request->setStatusDone();
 }
 
+
+sub nameCommand {
+	my $request = shift;
+	$log->debug("Begin Function");
+
+	if ($request->isNotCommand([['name']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get our parameters
+	my $client = $request->client();
+	my $newValue = $request->getParam('_newvalue');
+
+	if (!defined $newValue || !defined $client) {
+		$request->setStatusBadParams();
+		return;
+	}	
+
+	$prefs->client($client)->set('playername', $newValue);
+	
+	$request->setStatusDone();
+}
+
+
 sub playcontrolCommand {
 	my $request = shift;
 	
@@ -1828,29 +1853,6 @@ sub playlistsRenameCommand {
 			);
 	}
 
-	$request->setStatusDone();
-}
-
-sub playernameCommand {
-	my $request = shift;
-	$log->debug("Begin Function");
-
-	if ($request->isNotCommand([['name']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-	
-	# get our parameters
-	my $client = $request->client();
-	my $newValue = $request->getParam('_newvalue');
-
-	if (!defined $newValue || !defined $client) {
-		$request->setStatusBadParams();
-		return;
-	}	
-
-	$prefs->client($client)->set('playername', $newValue);
-	
 	$request->setStatusDone();
 }
 
