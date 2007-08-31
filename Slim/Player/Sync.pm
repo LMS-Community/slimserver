@@ -17,6 +17,12 @@ my $log = logger('player.sync');
 
 my $prefs = preferences('server');
 
+my %nextCheckSyncTime;	# kept for each sync-group master player
+use constant CHECK_SYNC_INTERVAL        => 0.950;
+use constant MIN_DEVIATION_ADJUST       => 0.010;
+use constant MAX_DEVIATION_ADJUST       => 10.000;
+use constant PLAYPOINT_RECENT_THRESHOLD => 3.0;
+
 # playlist synchronization routines
 sub syncname {
 	my $client = shift;
@@ -72,15 +78,16 @@ sub unsync {
 	my $client = shift;
 	my $temp = shift;
 
-	$log->info($client->id . ": unsyncing");
-
 	# bail if we don't have sync state
 	if (!defined($client->syncgroupid)) {
 		return;
 	}
+	
+	$log->info($client->id . ": unsyncing");
 
 	my $syncgroupid = $client->syncgroupid;
 	my $lastInGroup;
+	my $master = $client->master;
 	
 	# if we're the master...
 	if (isMaster($client)) {
@@ -122,6 +129,20 @@ sub unsync {
 		$newmaster->audioFilehandle($client->audioFilehandle);
 		$client->audioFilehandle(undef);	
 
+		$newmaster->audioFilehandleIsSocket($client->audioFilehandleIsSocket);
+		$client->audioFilehandleIsSocket(0);	
+
+		$newmaster->frameData($client->frameData);
+		$client->frameData(undef);	
+
+		$newmaster->initialStreamBuffer($client->initialStreamBuffer);
+		$client->initialStreamBuffer(undef);	
+
+		$newmaster->streamformat($client->streamformat);
+		$client->streamformat(undef);	
+
+		$master = $newmaster;
+
 	} elsif (isSlave($client)) {
 
 		# if we're a slave, remove us from the master's list
@@ -139,7 +160,6 @@ sub unsync {
 		}	
 	
 		# and copy the playlist to the now freed slave
-		my $master = $client->master;
 		
 		$client->master(undef);
 		
@@ -150,6 +170,19 @@ sub unsync {
 	} else {
 
 		$lastInGroup = $client;
+	}
+	
+	if ($lastInGroup) {
+		Slim::Player::Source::resetFrameData($lastInGroup);
+	}
+	else {
+	    # do we still need to save frame data?
+	    my $needFrameData = 0;
+	    foreach ( $master, Slim::Player::Sync::slaves($master) ) {
+		    my $model = $_->model();
+		    last if $needFrameData = ($model eq 'slimp3' || $model eq 'squeezebox');
+	    }
+	    Slim::Player::Source::resetFrameData($master) unless ($needFrameData);
 	}
 
 	# check for any players in group which are off and hence not synced
@@ -327,7 +360,7 @@ sub syncedWith {
 
 				push @buddies, $otherclient;
 
-				$log->debug($client->id . ": is synced with other slave " . $otherclient->id);
+				# $log->debug($client->id . ": is synced with other slave " . $otherclient->id);
 			}
 		}
 	}
@@ -337,7 +370,7 @@ sub syncedWith {
 
 		push @buddies, $otherclient;
 
-		$log->debug($client->id . ": is synced with it's slave " . $otherclient->id);
+		# $log->debug($client->id . ": is synced with it's slave " . $otherclient->id);
 	}
 
 	return @buddies;
@@ -407,15 +440,17 @@ sub uniqueVirtualPlayers {
 sub checkSync {
 	my $client = shift;
 
-	$log->debug(sprintf("Player %s has %d chunks and %d%% full buffer", 
-		$client->id, scalar(@{$client->chunks}), $client->usage
-	));
-
 	if (!isSynced($client) || $prefs->client($client)->get('silent')) {
 		return;
 	}
 
 	return if $client->playmode eq 'stop';
+
+	if ( 0 && $log->is_debug && isSynced($client) ) {
+		$log->debug(sprintf("Player %s has %d chunks and %d%% full buffer, readyToSync=%s", 
+			$client->id, scalar(@{$client->chunks}), $client->usage, $client->readytosync()
+		));
+	}
 
 	my @group = ($client, syncedWith($client));
 
@@ -451,30 +486,41 @@ sub checkSync {
 
 				$client->readytosync(1);
 		
-				$log->info($client->id . " is ready to sync " . Time::HiRes::time());
+				$log->info($client->id . " is ready to sync");
 
 				my $allReady = 1;
+				my $playerStartDelay = 0;
 
 				for my $everyclient (@group) {
 
-					if (!$everyclient->readytosync) {
+					if ( !$everyclient->readytosync ) {
 						$allReady = 0;
+					}
+					else {
+						my $delay;
+						if ( $delay = $prefs->client($everyclient)->get('startDelay') && $delay > $playerStartDelay ) {
+							$playerStartDelay = $delay;
+						}
 					}
 				}
 			
 				if ($allReady) {
 
 					$log->info("all clients ready to sync now. unpausing them.");
+					
+					my $startAt = Time::HiRes::time() + $playerStartDelay
+								+ ( $prefs->get('syncStartDelay') || 0.100 );
 
 					for my $everyclient (@group) {
-						$everyclient->resume;
+						$everyclient->startAt( $startAt - ( $prefs->client($everyclient)->get('startDelay') || 0) );
 					}
 				}
 			}
 		}
 
 	# now check to see if every player has run out of data...
-	} elsif ($client->readytosync == -1) {
+	}
+	elsif ($client->readytosync == -1) {
 
 		$log->info($client->id . " has run out of data, checking to see if we can push on...");
 
@@ -507,6 +553,92 @@ sub checkSync {
 				Slim::Player::Source::playmode($client,'stop');
 
 				$client->update;
+			}
+		}
+	}
+	elsif ( isMaster($client) ) {
+		# check to see if resynchronization is necessary
+
+		my $now = Time::HiRes::time();
+
+		return if $now < $nextCheckSyncTime{$client};
+
+		$nextCheckSyncTime{$client} = $now + CHECK_SYNC_INTERVAL;
+
+		# $log->debug("checksync: checking for resync");
+
+		# need a recent play-point from all players in the group, otherwise give up
+		my $recentThreshold = $now - PLAYPOINT_RECENT_THRESHOLD;
+		my @playerPlayPoints;
+		foreach my $player (@group) {
+			next unless $prefs->client($player)->get('maintainSync');
+			my $playPoint = $player->playPoint();
+			if ( !defined $playPoint ) {
+				$log->debug($player->id() ." bailing as no playPoint");
+				return;
+			}
+			if ($playPoint->[0] > $recentThreshold) {
+				push(@playerPlayPoints, [$player, $playPoint->[1]]);
+			}
+			else {
+				$log->debug(
+					$player->id() ." bailing as playPoint too old: ".
+					($now - $playPoint->[0]) . "s"
+				);
+				return;
+			}
+		}
+		return unless scalar(@playerPlayPoints);
+
+		if ( $log->is_debug ) {
+			my $first = $playerPlayPoints[0][1];
+			my $str = sprintf("%s: %.3f", $playerPlayPoints[0][0]->id(), $first);
+			foreach ( @playerPlayPoints[1 .. $#playerPlayPoints] ) {
+				$str .= sprintf(", %s: %+5d", $_->[0]->id(), ($_->[1] - $first) * 1000);
+			}
+			$log->debug("playPoints: $str");
+		}
+
+		# sort the play-points by decreasing apparent-start-time
+		@playerPlayPoints = sort {$b->[1] <=> $a->[1]} @playerPlayPoints;
+
+		# clean up the list of stored frame data
+		# (do this now, so that it does not delay critial timers when using pauseFor())
+		Slim::Player::Source::purgeOldFrames( $client, $recentThreshold - $playerPlayPoints[0][1] );
+
+		# find the reference player - the most-behind that does not support skipAhead
+		my $reference;
+		for ( $reference = 0; $reference < $#playerPlayPoints; $reference++ ) {
+			last unless $playerPlayPoints[$reference][0]->can('skipAhead');
+		}
+		my $referenceTime = $playerPlayPoints[$reference][1];
+		# my $referenceMinAdjust = $prefs->client( $playerPlayPoints[$reference][0] )->get('minSyncAdjust');
+
+		# tell each player that is out-of-sync with the reference to adjust
+		for ( my $i = 0; $i < @playerPlayPoints; $i++ ) {
+			next if ($i == $reference);
+			my $player = $playerPlayPoints[$i][0];
+			my $delta = abs($playerPlayPoints[$i][1] - $referenceTime);
+			next if ($delta > MAX_DEVIATION_ADJUST
+				|| $delta < MIN_DEVIATION_ADJUST
+				|| $delta < $prefs->client($player)->get('minSyncAdjust')
+				# || $delta < $referenceMinAdjust
+				);
+			if ($i < $reference) {
+				if ( $log->is_debug ) {
+					$log->debug( sprintf("%s resync: skipAhead %dms", $player->id(), $delta * 1000) );
+				}
+				
+				$player->skipAhead($delta);
+				$nextCheckSyncTime{$client} += 1;
+			}
+			else {
+				if ( $log->is_debug ) {
+					$log->debug( sprintf("%s resync: pauseFor %dms", $player->id(), $delta * 1000) );
+				}
+				
+				$player->pauseForInterval($delta);
+				$nextCheckSyncTime{$client} += $delta;
 			}
 		}
 	}

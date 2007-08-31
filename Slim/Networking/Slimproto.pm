@@ -16,6 +16,7 @@ use IO::Socket;
 use FileHandle;
 use Sys::Hostname;
 use File::Spec::Functions qw(:ALL);
+use Math::VecStat;
 use Scalar::Util qw(blessed);
 
 use Slim::Networking::Select;
@@ -29,7 +30,9 @@ use Slim::Utils::Network;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
 
-use constant SLIMPROTO_PORT => 3483;
+use constant SLIMPROTO_PORT   => 3483;
+use constant LATENCY_LIST_MAX => 10;
+use constant LATENCY_LIST_MIN => 6;
 
 my @deviceids = (undef, undef, 'squeezebox', 'softsqueeze','squeezebox2','transporter', 'softsqueeze3');
 my $log       = logger('network.protocol.slimproto');
@@ -49,6 +52,8 @@ our %parser_frametype;   # frame type eg "HELO", "IR  ", etc.
 our %sock2client;	     # reference to client for each sonnected sock
 our %heartbeat;          # the last time we heard from a client
 our %status;
+our %latencyList;        # last few latencies
+our %latency;            # current published latency
 
 our %callbacks;
 our %callbacksRAWI;
@@ -211,11 +216,9 @@ sub check_all_clients {
 			slimproto_close( $client->tcpsock );
 			next;
 		}
-
-		# force a status request if we haven't heard from the player in a short while
-		if ( $last_heard >= $check_all_clients_time / 2 ) {
-			$client->requestStatus();
-		}
+		
+		# Always ask for status requests so we can use the result for latency tracking
+		$client->requestStatus();
 	}
 
 	$check_time = $now + $check_all_clients_time;
@@ -498,6 +501,8 @@ sub _ir_handler {
 	}
 
 	my ($irTime, $irCode) = unpack('NxxH8', $$data_ref);
+	
+	$client->trackJiffiesEpoch($irTime, Time::HiRes::time());
 
 	Slim::Hardware::IR::enqueue($client, $irCode, $irTime);
 
@@ -576,8 +581,10 @@ sub _stat_handler {
 	my $client = shift;
 	my $data_ref = shift;
 	
+	my $now = Time::HiRes::time();
+	
 	# update the heartbeat value for this player
-	$heartbeat{ $client->id } = time();
+	$heartbeat{ $client->id } = $now;
 
 	#struct status_struct {
 	#        u32_t event;
@@ -593,6 +600,8 @@ sub _stat_handler {
 	#        u32_t output_buffer_fullness;
 	#        u32_t elapsed_seconds;
 	#        u16_t voltage;
+	#        u32_t elapsed_milliseconds;
+	#        u32_t server_timestamp;
 	#
 	
 	# event types:
@@ -628,8 +637,29 @@ sub _stat_handler {
 		$status{$client}->{'output_buffer_fullness'},
 		$status{$client}->{'elapsed_seconds'},
 		$status{$client}->{'voltage'},
+		$status{$client}->{'elapsed_milliseconds'},
+		$status{$client}->{'server_timestamp'},
 
-	) = unpack ('a4CCCNNNNnNNNNn', $$data_ref);
+	) = unpack ('a4CCCNNNNnNNNNnNN', $$data_ref);
+	
+	# Track latency if we have a server timestamp
+	if ( $status{$client}->{'server_timestamp'} ) {
+		my $latency = (int($now * 1000 % 0xffffffff) - $status{$client}->{'server_timestamp'}) / 2;
+	
+		push (@{$latencyList{$client}}, $latency) if ($latency >= 0 && $latency < 1000);
+		shift(@{$latencyList{$client}}) if (@{$latencyList{$client}} > LATENCY_LIST_MAX);
+
+		$latency{$client} = Math::VecStat::min($latencyList{$client}) if (@{$latencyList{$client}} >= LATENCY_LIST_MIN);
+		
+		if ( $log->is_debug ) {
+			$log->debug(
+				$client->id() . " latency=$latency{$client}, from ("
+				. join(', ', @{$latencyList{$client}}) . ')'
+			);
+		}
+	}	
+		
+	$client->trackJiffiesEpoch($status{$client}->{'jiffies'}, $now);
 
 	$status{$client}->{'bytes_received'} = $status{$client}->{'bytes_received_H'} * 2**32 + $status{$client}->{'bytes_received_L'}; 
 
@@ -687,7 +717,8 @@ sub _stat_handler {
 
 		if (defined($status{$client}->{'output_buffer_size'})) {
 
-			my $msg = join("\n", 
+			my $msg = join("\n",
+				"",
 				"\toutput size:     $status{$client}->{'output_buffer_size'}",
 				"\toutput fullness: $status{$client}->{'output_buffer_fullness'}",
 				"\telapsed seconds: $status{$client}->{'elapsed_seconds'}",
@@ -696,6 +727,28 @@ sub _stat_handler {
 
 			$log->debug($msg);
 		}
+		
+		if (defined($status{$client}->{'elapsed_milliseconds'})) {
+			
+			my $msg = join("\n",
+				"",
+				"\telapsed milliseconds: $status{$client}->{'elapsed_milliseconds'}",
+				"\tserver timestamp:     $status{$client}->{'server_timestamp'}",
+				"",
+			);
+			
+			$log->debug($msg);
+		}
+	}
+	
+	if (   $client->model() eq 'squeezebox'
+		&& Slim::Player::Sync::isSynced($client)
+		&& Slim::Player::Source::playmode($client) eq 'play')
+	{
+		my $statusTime = $client->jiffiesToTimestamp( $status{$client}->{'jiffies'} );
+		if ( my $apparentStreamStartTime = $client->apparentStreamStartTime($statusTime) ) {
+			$client->publishPlayPoint( $statusTime, $apparentStreamStartTime, undef );
+		}
 	}
 
 	Slim::Player::Sync::checkSync($client);
@@ -703,6 +756,15 @@ sub _stat_handler {
 	my $callback = $callbacks{$status{$client}->{'event_code'}};
 
 	&$callback($client) if $callback;
+}
+
+sub getLatency {
+	return $latency{shift};
+}
+
+sub getPlayPointData {
+	my $client = shift;
+	return ($status{$client}->{'jiffies'}, $status{$client}->{'elapsed_milliseconds'});
 }
 	
 sub _update_request_handler {
@@ -936,6 +998,8 @@ sub _hello_handler {
 	}
 
 	$sock2client{$s} = $client;
+	
+	$latencyList{$client} = [];
 
 	if ($client->needsUpgrade()) {
 
@@ -975,7 +1039,7 @@ sub _hello_handler {
 		$client->volume($client->volume(), defined($client->tempVolume()));
 			
 		# add the player to the list of clients we're watching for signs of life
-		$heartbeat{ $client->id } = time();
+		$heartbeat{ $client->id } = Time::HiRes::time();
 	}
 }
 
@@ -985,6 +1049,8 @@ sub _button_handler {
 
 	# handle hard buttons
 	my ($time, $button) = unpack( 'NH8', $$data_ref);
+	
+	$client->trackJiffiesEpoch($time, Time::HiRes::time());
 
 	Slim::Hardware::IR::enqueue($client, $button, $time);
 
@@ -997,6 +1063,8 @@ sub _knob_handler {
 
 	# handle knob movement
 	my ($time, $position, $sync) = unpack('NNC', $$data_ref);
+	
+	$client->trackJiffiesEpoch($time, Time::HiRes::time());
 
 	# Perl doesn't have an unsigned network long format.
 	if ($position & 1<<31) {

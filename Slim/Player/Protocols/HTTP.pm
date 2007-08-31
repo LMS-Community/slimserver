@@ -60,12 +60,12 @@ sub readMetaData {
 
 			if ($! ne "Unknown error" && $! != EWOULDBLOCK) {
 
-			 	$log->warn("Warning: Metadata byte not read! $!");
+			 	#$log->warn("Warning: Metadata byte not read! $!");
 			 	return;
 
 			 } else {
 
-				$log->debug("Metadata byte not read, trying again: $!");  
+				#$log->debug("Metadata byte not read, trying again: $!");  
 			 }
 		}
 
@@ -87,12 +87,12 @@ sub readMetaData {
 			if ($!) {
 				if ($! ne "Unknown error" && $! != EWOULDBLOCK) {
 
-					$log->info("Metadata bytes not read! $!");
+					#$log->info("Metadata bytes not read! $!");
 					return;
 
 				} else {
 
-					$log->info("Metadata bytes not read, trying again: $!");
+					#$log->info("Metadata bytes not read, trying again: $!");
 				}
 			}
 
@@ -216,7 +216,7 @@ sub canDirectStream {
 	# stream for all players
 	if ( Slim::Player::Sync::isSynced($client) ) {
 
-		logger('player.streaming')->info(sprintf(
+		logger('player.streaming.direct')->info(sprintf(
 			"[%s] Not direct streaming because player is synced", $client->id
 		));
 
@@ -226,7 +226,7 @@ sub canDirectStream {
 	# Allow user pref to select the method for streaming
 	if ( my $method = preferences('server')->client($client)->get('mp3StreamingMethod') ) {
 		if ( $method == 1 ) {
-			logger('player.streaming')->debug("Not direct streaming because of mp3StreamingMethod pref");
+			logger('player.streaming.direct')->debug("Not direct streaming because of mp3StreamingMethod pref");
 			return 0;
 		}
 	}

@@ -133,7 +133,7 @@ sub new {
 #	$client->[33]
 #	$client->[34]
 
-	$client->[35] = 0; # outputBufferFullness
+	$client->[35] = undef; # outputBufferFullness
 	$client->[36] = undef; # irRefTime
 	$client->[37] = 0; # bytesReceived
 	$client->[38] = ''; # currentplayingsong
@@ -224,6 +224,15 @@ sub new {
 	$client->[119] = 1; # showBuffering
 	$client->[120] = {}; # pluginData, plugin-specific state data
 	$client->[121] = 1; # readNextChunkOk (flag used when we are waiting for an async response in readNextChunk)
+
+	# Sync data
+	$client->[122] = undef; # initialStreamBuffer, cache of initially-streamed data to calculate rate
+	$client->[123] = undef; # playPoint, (timeStamp, apparentStartTime) tuple;
+	$client->[124] = undef; # playPoints, set of (timeStamp, apparentStartTime) tuples to determine consistency;
+
+	$client->[125] = undef; # jiffiesEpoch
+	$client->[126] = [];	# jiffiesOffsetList; array tracking the relative deviations relative to our clock
+	$client->[127] = undef; # frameData; array of (stream-byte-offset, stream-time-offset) tuples
 
 	$clientHash{$id} = $client;
 
@@ -1603,6 +1612,8 @@ sub showBuffering {
 sub pluginData {
 	my ( $client, $key, $value ) = @_;
 	
+	$client = Slim::Player::Sync::masterOrSelf($client);
+	
 	my $namespace;
 	
 	# if called from a plugin, we automatically use the plugin's namespace for keys
@@ -1636,6 +1647,42 @@ sub pluginData {
 sub readNextChunkOk {
 	my $r = shift;
 	@_ ? ($r->[121] = shift) : $r->[121];
+}
+
+sub initialStreamBuffer {
+	my $r = shift;
+	@_ ? ($r->[122] = shift) : $r->[122];
+}
+
+sub playPoint {
+	my $r = shift;
+	if (@_) {
+		$r->[123] = my $new = shift;
+		playPoints($r, undef) if (!defined($new));
+		return $new;
+	} else {
+		return $r->[123];
+	}
+}
+
+sub playPoints {
+	my $r = shift;
+	@_ ? ($r->[124] = shift) : $r->[124];
+}
+
+sub jiffiesEpoch {
+	my $r = shift;
+	@_ ? ($r->[125] = shift) : $r->[125];
+}
+
+sub jiffiesOffsetList {
+	my $r = shift;
+	@_ ? ($r->[126] = shift) : $r->[126];
+}
+
+sub frameData {
+	my $r = shift;
+	@_ ? ($r->[127] = shift) : $r->[127];
 }
 
 1;

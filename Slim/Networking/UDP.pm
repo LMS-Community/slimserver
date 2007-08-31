@@ -71,6 +71,8 @@ sub readUDP {
 	my $msg = '';
 
 	do {
+		my $ts = Time::HiRes::time();
+		
 		$clientpaddr = recv($sock, $msg, 1500, 0);
 		
 		if ($clientpaddr) {
@@ -85,8 +87,8 @@ sub readUDP {
 				}
 
 				my $client = Slim::Networking::SliMP3::Protocol::getUdpClient($clientpaddr, $sock, $msg) || return;
-	
-				Slim::Networking::SliMP3::Protocol::processMessage($client, $msg);
+				
+				Slim::Networking::SliMP3::Protocol::processMessage($client, $msg, $ts);
 	
 			} elsif ($msg =~/^d/) {
 

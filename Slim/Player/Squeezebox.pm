@@ -205,6 +205,18 @@ sub resume {
 	return 1;
 }
 
+sub startAt {
+	my ($client, $at) = @_;
+
+	Slim::Utils::Timers::killTimers($client, \&buffering);
+	Slim::Utils::Timers::setHighTimer(
+			$client,
+			$at - $client->packetLatency(),
+			\&_unpauseAfterInterval
+		);
+	return 1;
+}
+
 #
 # pause
 #
@@ -214,7 +226,32 @@ sub pause {
 	Slim::Utils::Timers::killTimers($client, \&buffering);
 
 	$client->stream('p');
+	$client->playPoint(undef);
 	$client->SUPER::pause();
+	return 1;
+}
+
+sub pauseForInterval {
+	my $client   = shift;
+	my $interval = shift;
+
+	# TODO - show resyncing message briefly
+	# TODO - adjust interval for SB1 internal decode buffer
+	
+	$client->playPoint(undef);
+	$client->stream('p');
+	Slim::Utils::Timers::setHighTimer(
+				$client,
+				Time::HiRes::time() + $interval - 0.005,
+				\&_unpauseAfterInterval
+			);
+	return 1;
+}
+
+sub _unpauseAfterInterval {
+	my $client = shift;
+	$client->stream('u');
+	$client->playPoint(undef);
 	return 1;
 }
 
@@ -224,6 +261,7 @@ sub stop {
 	Slim::Utils::Timers::killTimers($client, \&buffering);
 
 	$client->stream('q');
+	$client->playPoint(undef);
 	Slim::Networking::Slimproto::stop($client);
 	# disassociate the streaming socket to the client from the client.  HTTP.pm will close the socket on the next select.
 	$client->streamingsocket(undef);
@@ -315,7 +353,7 @@ sub buffering {
 		if ( $stillBuffering ) {
 			Slim::Utils::Timers::setTimer(
 				$client,
-				Time::HiRes::time() + 0.125,
+				Time::HiRes::time() + 0.400, # was .125 but too fast sometimes in wireless settings
 				\&buffering,
 				$threshold,
 			);
@@ -1021,6 +1059,22 @@ sub stream {
 		$flags |= 0x40 if $params->{reconnect};
 		$flags |= 0x80 if $params->{loop};
 		$flags |= ($prefs->client($client)->get('polarityInversion') || 0);
+		
+		# ReplayGain field is also used for startAt, pauseAt, unpauseAt, timestamp
+		my $replayGain = 0;
+		my $interval = $params->{interval} || 0;
+		if ($command eq 'a' || $command eq 'p') {
+			$replayGain = int($interval * 1000);
+		}
+		elsif ($command eq 'u') {
+			 $replayGain = $interval;
+		}
+		elsif ($command eq 't') {
+			$replayGain = int(Time::HiRes::time() * 1000 % 0xffffffff);
+		}
+		else {
+			$replayGain = $client->canDoReplayGain($params->{replay_gain});
+		}
 
 		$log->info("flags: $flags");
 
@@ -1039,7 +1093,7 @@ sub stream {
 			$flags,		# flags	     
 			$outputThreshold,
 			0,		# reserved
-			$client->canDoReplayGain($params->{replay_gain}),		
+			$replayGain,	
 			$server_port || $prefs->get('httpport'),  # use slim server's IP
 			$server_ip || 0,
 		);

@@ -14,10 +14,17 @@ use strict;
 use Slim::Player::Player;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Prefs;
 
 use base qw(Slim::Player::Player);
 
+my $prefs = preferences('server');
+
 our $SLIMP3Connected = 0;
+
+our $defaultPrefs = {
+	syncBufferThreshold => 15000,
+};
 
 sub new {
 	my $class    = shift;
@@ -55,6 +62,8 @@ sub new {
 
 sub init {
 	my $client = shift;
+
+	$prefs->client($client)->init($defaultPrefs);
 
 	$client->SUPER::init();
 
@@ -128,6 +137,25 @@ sub resume {
 	return 1;
 }
 
+sub startAt {
+	my ($client, $at) = @_;
+
+	# make sure volume is set, without changing temp setting
+	$client->volume($client->volume(), defined($client->tempVolume()));
+
+	Slim::Networking::SliMP3::Stream::unpause($client, $at - $client->packetLatency());
+	return 1;
+}
+
+sub packetLatency {
+	my $client = shift;
+	return (
+		Slim::Networking::SliMP3::Stream::getMedianLatencyMicroSeconds($client) / 1000000
+		||
+		$client->SUPER::packetLatency()
+	);
+}
+
 #
 # pause
 #
@@ -139,6 +167,16 @@ sub pause {
 	$client->SUPER::pause();
 
 	return 1;
+}
+
+#
+# pauseForInterval
+#
+sub pauseForInterval {
+	my $client   = shift;
+	my $interval = shift;
+
+	return Slim::Networking::SliMP3::Stream::pause($client, $interval);
 }
 
 #
@@ -218,7 +256,9 @@ sub volume {
 		# I'm sure there's something optimal, but this is better.
 	
 		my $level = sprintf('%05X', 0x80000 * (($volume / $client->maxVolume) ** 2));
-	
+		
+		logger('network.protocol.slimp3')->debug($client->id() . " volume: newvolume=$newvolume volume=$volume level=$level");
+		
 		$client->i2c(
 			 Slim::Hardware::mas3507d::masWrite('ll', $level)
 			.Slim::Hardware::mas3507d::masWrite('rr', $level)

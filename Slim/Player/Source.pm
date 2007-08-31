@@ -16,6 +16,8 @@ use File::Spec::Functions qw(:ALL);
 use FileHandle;
 use FindBin qw($Bin);
 use IO::Socket qw(:DEFAULT :crlf);
+use MP3::Info;
+use MPEG::Audio::Frame;
 use Scalar::Util qw(blessed);
 use Time::HiRes;
 
@@ -194,9 +196,10 @@ sub songTime {
 
 		my $outputBufferFullness = $client->outputBufferFullness();
 		if (defined($outputBufferFullness)) {
-			# Assume 44.1KHz output sample rate. This will be slightly
+			# Default 44.1KHz output sample rate. This will be slightly
 			# off for anything that's 48Khz, but it's a guesstimate anyway.
-			$outputBufferSeconds = (($outputBufferFullness / (44100 * 8)) * $rate);
+			$outputBufferSeconds = $outputBufferFullness /
+				(($song->{'samplerate'} || 44100) * 8) * $rate;
 		}
 	}
 	# If we're moving forward and have started streaming the next
@@ -210,7 +213,7 @@ sub songTime {
 
 	if ($realpos < 0) {
 
-		$log->info("Negative position calculated, we are still playing out the previous song.");
+		$log->info($client->id, " Negative position calculated, we are still playing out the previous song.");
 		$log->info("Realpos $realpos calcuated from bytes received: " . 
 			$client->bytesReceived .  " minus buffer fullness: " . $client->bufferFullness);
 
@@ -609,8 +612,8 @@ sub decoderUnderrun {
 			pop @{$queue};
 		}
 		
-		# If the track that failed was the final one, stop
-		if ( noMoreValidTracks($client) ) {
+		# If the track that failed was the final one, stop, unless we're in repeat mode
+		if ( noMoreValidTracks($client) && !Slim::Player::Playlist::repeat($client) ) {
 			playmode( $client, 'stop' );
 		}
 	}
@@ -898,9 +901,9 @@ sub nextChunk {
 	} else {
 
 		#otherwise, read a new chunk
-		my $readfrom = Slim::Player::Sync::masterOrSelf($client);
+		my $master = Slim::Player::Sync::masterOrSelf($client);
 
-		$chunk = readNextChunk($readfrom, $maxChunkSize);
+		$chunk = readNextChunk($master, $maxChunkSize);
 
 		if (defined($chunk)) {
 
@@ -912,6 +915,35 @@ sub nextChunk {
 				foreach my $buddy (Slim::Player::Sync::syncedWith($client)) {
 
 					push @{$buddy->chunks}, $chunk;
+				}
+				
+				# And save the data for analysis, if we are synced.
+				# Only really need to do this if we have any SliMP3s or SB1s in the
+				# sync group.
+				if (Slim::Player::Sync::isMaster($master)) {
+					if (my $buf = $master->initialStreamBuffer()) {
+						$$buf .= $$chunk;
+
+						# Safety check - just make sure that we are not in the process
+						# of slurping up a perhaps-infinite stream without using it.
+						# XXX: we should give up way before we have 30MB in memory!! -andy
+						if (length($$buf) > 30000000 ||
+							defined($master->frameData) && @{$master->frameData} > 150000)
+						{
+							resetFrameData($master);
+						}
+					} elsif ($master->streamformat() eq 'mp3' && $master->streamBytes() <= $len) {
+						# do we need to save frame data?
+						my $needFrameData = 0;
+						foreach ($master, Slim::Player::Sync::slaves($master)) {
+							my $model = $_->model();
+							last if $needFrameData = ($model eq 'slimp3' || $model eq 'squeezebox');
+						}
+						if ($needFrameData) {		
+							my $savedChunk = $$chunk; 	# copy
+							$master->initialStreamBuffer(\$savedChunk);
+						}
+					}
 				}
 			}
 		}
@@ -1049,6 +1081,7 @@ sub gototime {
 	$client->songStartStreamTime($newtime);
 	$client->bytesReceivedOffset(0);
 	$client->trickSegmentRemaining(0);
+	resetFrameData($client);
 
 	$client->audioFilehandle()->sysseek($newoffset + $dataoffset, 0);
 
@@ -1803,8 +1836,9 @@ sub openSong {
 	
 		my $filepath = $track->path;
 
-		my ($size, $duration, $offset, $samplerate, $blockalign, $endian, $drm) = (0, 0, 0, 0, 0, undef, undef);
-		
+		my ($size, $duration, $offset, $bitrate, $samplerate, $samplesize, $channels, $blockalign, $endian, $drm) =
+			(0, 0, 0, undef, 0, 0, 0, 0, undef, undef);
+			
 		# don't try and read this if we're a pipe
 		if (!-p $filepath) {
 
@@ -1812,7 +1846,9 @@ sub openSong {
 			$size       = $track->audio_size() || -s $filepath;
 			$duration   = $track->durationSeconds();
 			$offset     = $track->audio_offset() || 0 + $seekoffset;
-			$samplerate = $track->samplerate();
+			$samplerate = $track->samplerate() || 0;
+			$samplesize = $track->samplesize() || 0;
+			$channels   = $track->channels() || 0;
 			$blockalign = $track->block_alignment() || 1;
 			$endian     = $track->endian() || '';
 			$drm        = $track->drm();
@@ -1859,6 +1895,7 @@ sub openSong {
 
 		# this case is when we play the file through as-is
 		if ($command eq '-') {
+			$bitrate = $track->bitrate();
 
 			# hack for little-endian aiff.
 			if ($format eq 'aif' && defined($endian) && !$endian) {
@@ -1884,33 +1921,58 @@ sub openSong {
 					$offset -= $seekoffset;
 				}
 				
-				if ($format eq 'mp3' && $log->is_debug) {
+				if ( $format eq 'mp3' ) {
 
 					# report whether the track should play back gapless or not
 					my $streamClass = streamClassForFormat($client, 'mp3');
 					my $frame       = $streamClass->getFrame( $client->audioFilehandle );
 					
 					# Look for the LAME header and delay data in the frame
-					my $io = IO::String->new( \$frame->asbin );
+					if ( $frame ) {
+						my $io = IO::String->new( \$frame->asbin );
 					
-					if ( my $info = MP3::Info::get_mp3info($io) ) {
-						if ( $info->{LAME} ) {
-
-							$log->info("MP3 file was encoded with $info->{'LAME'}->{'encoder_version'}");
+						if ( my $info = MP3::Info::get_mp3info($io) ) {
 							
-							if ( $info->{LAME}->{start_delay} ) {
+							if ( $log->is_debug ) {
+								if ( $info->{LAME} ) {
 
-								$log->info(sprintf("MP3 contains encoder delay information (%d/%d), will be played gapless",
-									$info->{LAME}->{start_delay},
-									$info->{LAME}->{end_padding},
-								));
+									$log->info("MP3 file was encoded with $info->{'LAME'}->{'encoder_version'}");
+							
+									if ( $info->{LAME}->{start_delay} ) {
+
+										$log->info(sprintf("MP3 contains encoder delay information (%d/%d), will be played gapless",
+											$info->{LAME}->{start_delay},
+											$info->{LAME}->{end_padding},
+										));
+									}
+									else {
+										$log->info("MP3 doesn't contain encoder delay information, won't play back gapless");
+									}
+								}
+								else {
+									$log->info("MP3 wasn't encoded with LAME, won't play back gapless");
+								}
 							}
-							else {
-								$log->info("MP3 doesn't contain encoder delay information, won't play back gapless");
+							
+							if ( $info->{BITRATE} ) {
+								if ($log->is_debug && $bitrate && $info->{BITRATE}*1000 != $bitrate) {
+									$log->debug(
+										"Track bitrate $bitrate differs from MP3::Info rate ".
+										($info->{BITRATE}*1000)
+									);
+							    }
+								$bitrate ||= $info->{BITRATE}*1000;
 							}
-						}
-						else {
-							$log->info("MP3 wasn't encoded with LAME, won't play back gapless");
+							
+							if ( $info->{FREQUENCY} ) {
+								my $frequency = int($info->{FREQUENCY} * 1000);
+								if ($log->is_debug && $samplerate && $frequency != $samplerate) {
+									$log->debug("Track samplerate $samplerate differs from MP3::Info rate $frequency");
+								}
+								$samplerate ||= $frequency;
+							}
+							
+							$channels ||= $info->{STEREO} ? 2 : 1;
 						}
 					}
 				}
@@ -1958,9 +2020,19 @@ sub openSong {
 			
 			# XXX: This will reset size and thus $song->{totalbytes} to 0
 			# if not using bitrate limiting, is this what we want?? -andy
-			$size   = $duration * ($maxRate * 1000) / 8;
-			$offset = 0;
+			$bitrate = $maxRate * 1000;
+			$size    = $duration * $bitrate / 8;
+			$offset  = 0;
 		}
+		
+		if ( $bitrate && $duration && $size && abs($bitrate / 8 * $duration - $size) / $size > 0.05 ) {
+			warn "openSong: bitrate $bitrate does not concur with duration $duration and size $size";
+		}
+
+		$song->{'bitrate'}    = $bitrate if ($bitrate);
+		$song->{'samplerate'} = $samplerate if ($samplerate);
+		$song->{'samplesize'} = $samplesize if ($samplesize);
+		$song->{'channels'}   = $channels if ($channels);
 
 		$song->{'totalbytes'} = $size;
 		$song->{'duration'}   = $duration;
@@ -2076,7 +2148,7 @@ sub readNextChunk {
 			}
 		}
 		
-		$log->debug("We need to send $silence seconds of silence...");
+		0 && $log->debug("We need to send $silence seconds of silence...");
 		
 		while ($silence > 0) {
 			$chunk .=  ${Slim::Web::HTTP::getStaticContent("html/lbrsilence.mp3")};
@@ -2212,7 +2284,7 @@ sub readNextChunk {
 
 				if ($! == EWOULDBLOCK) {
 
-					$log->debug("Would have blocked, will try again later.");
+					#$log->debug("Would have blocked, will try again later.");
 
 					return undef;	
 
@@ -2370,6 +2442,161 @@ sub pauseSynced {
 	}
 }
 
-1;
+use constant FRAME_BYTE_OFFSET => 0;
+use constant FRAME_TIME_OFFSET => 1;
 
-__END__
+sub streamBitrate {
+	my $client = Slim::Player::Sync::masterOrSelf($_[0]);
+
+	# Only do this for sync play, although there is no real reason not to do it otherwise
+	# Need to change this if we allow clients to join in mid song.
+	if( !Slim::Player::Sync::isSynced($client) ) {
+		return 0;
+	}
+
+	my $song = streamingSong($client);
+
+	# already know the answer
+	my $rate = $song->{'bitrate'};
+	if ( defined $rate ) {
+		return $rate;
+	}
+
+	my $format = $client->streamformat();
+	
+	if ( $format eq 'mp3' ) {
+		my $frames = $client->frameData();
+		if ( @{$frames} > 1 ) {
+			$rate = $frames->[-1][FRAME_BYTE_OFFSET] / $frames->[-1][FRAME_TIME_OFFSET] * 8;
+		}
+	}
+	elsif ( $format eq 'wav' ) {
+		# assume 44.1k, 16-bit, stereo
+		$rate = ($song->{'samplerate'} || 44100) * ($song->{'samplesize'} || 16) 
+				* ($song->{'channels'} || 2);
+		$song->{'bitrate'} = $rate; # save for later
+	}
+
+	return $rate;
+}
+
+
+sub resetFrameData {
+	my ($client) = @_;
+	return unless Slim::Player::Sync::isMaster($client);
+
+	$client->initialStreamBuffer(undef);
+	$client->frameData(undef);
+}
+	
+sub purgeOldFrames {
+	my $frames     = $_[0]->frameData() or return;
+	my $timeOffset = $_[1];
+
+	my ($i, $j, $k) = (0, @{$frames} - 1);
+
+	# sanity checks
+	return if $timeOffset < $frames->[$i][FRAME_TIME_OFFSET];
+	if ( $timeOffset > $frames->[$j][FRAME_TIME_OFFSET] ) {
+		$log->debug("purgeOldFrames: timeOffset $timeOffset beyond last entry: $frames->[$j][FRAME_TIME_OFFSET]");
+		return;
+	}
+
+	# weighted binary chop
+	while ( ($j - $i) > 1 ) {
+		$k = int ( ($i + $j) / 2 );
+		# $k = $i + (int(($timeOffset - $frames->[$i][FRAME_TIME_OFFSET]) / ($frames->[$j][FRAME_TIME_OFFSET] - $frames->[$i][FRAME_TIME_OFFSET]) * ($j - $i)) || 1);
+		if ( $timeOffset < $frames->[$k][FRAME_TIME_OFFSET] ) {
+			$j = $k;
+		}
+		else {
+			$i = $k;
+		}
+	}
+	
+	if ( $log->is_debug ) {
+		$log->debug(
+			"purgeOldFrames: timeOffset $timeOffset; removing "
+			. ($j+1) . " frames from total " . scalar(@{$frames}) 
+		);
+	}
+	
+	splice @{$frames}, 0, $j+1;	
+}
+
+sub findTimeForOffset {
+	my $client     = Slim::Player::Sync::masterOrSelf($_[0]);
+	my $byteOffset = $_[1];
+	my $buffer     = $client->initialStreamBuffer() or return;
+	my $frames     = $client->frameData();
+
+	return unless $byteOffset;
+
+	# check if there are any frames to analyse
+	if ( length($$buffer) > 400 ) { # make it worth our while
+	
+		my $pos = 0;
+
+		while ( my ($length, $nextPos, $seconds) = MPEG::Audio::Frame->read($buffer, $pos) ) {
+			last unless ($length);
+			# Note: $length may not equal ($nextPos - $pos) if tag data has been skipped
+			if ( !defined($frames) ) {
+				$client->frameData( $frames = [[$nextPos - $length, 0]] );
+				push @{$frames}, [$nextPos, $seconds];
+			}
+			else {
+				my $off = $frames->[-1][FRAME_BYTE_OFFSET] + $nextPos - $pos;
+				my $tim = $frames->[-1][FRAME_TIME_OFFSET] + $seconds;
+				push @{$frames}, [$off, $tim];
+			}
+			$pos = $nextPos;
+
+			if ( $log->is_debug ) {
+				$log->debug("recordFrameOffset: $frames->[-1][FRAME_BYTE_OFFSET] -> $frames->[-1][FRAME_TIME_OFFSET]");
+			}
+		}
+
+		if ($pos) {
+			my $newBuffer = substr $$buffer, $pos;
+			$client->initialStreamBuffer(\$newBuffer);
+		}
+	}
+
+	return unless ( defined @{$frames} && @{$frames} > 1 );
+
+	my ($i, $j, $k) = (0, @{$frames} - 1);
+
+	# sanity check
+	unless ($byteOffset - $frames->[$i][FRAME_BYTE_OFFSET] <= $byteOffset && $byteOffset <= $frames->[$j][FRAME_BYTE_OFFSET]) {
+		$log->debug("findTimeForOffset: byteOffset $byteOffset outside frame range: $frames->[$i][FRAME_BYTE_OFFSET] .. $frames->[$j][FRAME_BYTE_OFFSET]");
+		return;
+	}
+
+	# weighted binary chop
+	while ( ($j - $i) > 1 ) {
+		$k = int ( ($i + $j) / 2 );
+		use integer;
+		# $k = $i + (int(($j - $i) * ($byteOffset - $frames->[$i][FRAME_BYTE_OFFSET]) / ($frames->[$j][FRAME_BYTE_OFFSET] - $frames->[$i][FRAME_BYTE_OFFSET])) || 1);
+		if ( $byteOffset < $frames->[$k][FRAME_BYTE_OFFSET] ) {
+			$j = $k;
+		}
+		else {
+			$i = $k;
+		}
+	}
+	
+	my $frameByteOffset = $frames->[$i][FRAME_BYTE_OFFSET];
+	my $timeOffset = $frames->[$i][FRAME_TIME_OFFSET];
+	if ( $byteOffset > $frameByteOffset && @{$frames} - 1 > $i ) {
+		# interpolate within a frame
+		$timeOffset += ($byteOffset - $frameByteOffset) /
+			  ($frames->[$i+1][FRAME_BYTE_OFFSET] - $frameByteOffset)
+			* ($frames->[$i+1][FRAME_TIME_OFFSET] - $timeOffset);
+	}
+
+	$log->debug("findTimeForOffset: $byteOffset -> $timeOffset");
+
+	return $timeOffset;
+}
+
+1;

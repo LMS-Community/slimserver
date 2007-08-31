@@ -15,6 +15,7 @@ package Slim::Player::Player;
 
 use strict;
 
+use Math::VecStat;
 use Scalar::Util qw(blessed);
 
 use base qw(Slim::Player::Client);
@@ -65,6 +66,9 @@ our $defaultPrefs = {
 	'syncBufferThreshold'  => 128,
 	'bufferThreshold'      => 255,
 	'powerOnResume'        => 'PauseOff-NoneOn',
+	'maintainSync'         => 1,
+	'minSyncAdjust'        => 0.030,
+	'packetLatency'        => 0.002,	
 };
 
 sub new {
@@ -180,7 +184,9 @@ sub power {
 
 		if (defined $sync && $sync == 0) {
 
-			logger('player.sync')->info("Temporary Unsync " . $client->id);
+			if ( Slim::Player::Sync::isSynced($client) ) {
+				logger('player.sync')->info("Temporary Unsync " . $client->id);
+			}
 
 			Slim::Player::Sync::unsync($client, 1);
   		}
@@ -695,6 +701,150 @@ sub mixerDisplay {
 	# Turn the visualizer back to it's old value.
 	if ($savedvisu) {
 		$client->modeParam('visu', $oldvisu);
+	}
+}
+
+# Intended to be overridden by sub-classes who know better
+sub packetLatency {
+	return $prefs->client(shift)->get('packetLatency');
+}
+
+use constant JIFFIES_OFFSET_TRACKING_LIST_SIZE => 10;
+use constant JIFFIES_EPOCH_MIN_ADJUST          => 0.001;
+use constant JIFFIES_EPOCH_MAX_ADJUST          => 0.005;
+
+sub trackJiffiesEpoch {
+	my ($client, $jiffies, $timestamp) = @_;
+
+	# Note: we do not take the packet latency into account here;
+	# see jiffiesToTimestamp
+
+	my $jiffiesTime = $jiffies / $client->ticspersec;
+	my $offset      = $timestamp - $jiffiesTime;
+	my $epoch       = $client->jiffiesEpoch || 0;
+
+	logger('network.protocol')->debug($client->id() . " trackJiffiesEpoch: epoch=$epoch, offset=$offset");
+
+	if (   $offset < $epoch			# simply a better estimate, or
+		|| $offset - $epoch > 50	# we have had wrap-around (or first time)
+	) {
+		if ( logger('player.sync')->is_debug ) {
+			if ( abs($offset - $epoch) > 0.001 ) {
+				logger('player.sync')->debug( sprintf("%s adjust jiffies epoch %+.3fs", $client->id(), $offset - $epoch) );
+			}
+		}
+		
+		$client->jiffiesEpoch($epoch = $offset);	
+	}
+
+	my $diff = $offset - $epoch;
+	my $jiffiesOffsetList = $client->jiffiesOffsetList();
+
+	unshift @{$jiffiesOffsetList}, $diff;
+	pop @{$jiffiesOffsetList}
+		if (@{$jiffiesOffsetList} > JIFFIES_OFFSET_TRACKING_LIST_SIZE);
+
+	if (   $diff > 0.001
+		&& (@{$jiffiesOffsetList} == JIFFIES_OFFSET_TRACKING_LIST_SIZE)
+	) {
+		my $min_diff = Math::VecStat::min($jiffiesOffsetList);
+		if ( $min_diff > JIFFIES_EPOCH_MIN_ADJUST ) {
+			if ( $min_diff > JIFFIES_EPOCH_MAX_ADJUST ) {
+				$min_diff = JIFFIES_EPOCH_MAX_ADJUST;
+			}
+			logger('player.sync')->debug( sprintf("%s adjust jiffies epoch +%.3fs", $client->id(), $min_diff) );
+			$client->jiffiesEpoch($epoch += $min_diff);
+			$diff -= $min_diff;
+			@{$jiffiesOffsetList} = ();	# start tracking again
+		}
+	}
+	return $diff;
+}
+
+sub jiffiesToTimestamp {
+	my ($client, $jiffies) = @_;
+
+	# Note: we only take the packet latency into account here,
+	# rather than in trackJiffiesEpoch(), so that a bad calculated latency
+	# (which presumably would be transient) does not permanently effect
+	# our idea of the jiffies-epoch.
+	
+	return $client->jiffiesEpoch + $jiffies / $client->ticspersec - $client->packetLatency();
+}
+	
+# Only works for SliMP3s and (maybe) SB1s
+sub apparentStreamStartTime {
+	my ($client, $statusTime) = @_;
+
+	my $bytesPlayed = $client->bytesReceived()
+						- $client->bufferFullness()
+						- ($client->model() eq 'slimp3' ? 2000 : 2048);
+
+	my $format = Slim::Player::Sync::masterOrSelf($client)->streamformat();
+
+	my $timePlayed;
+
+	if ( $format eq 'mp3' ) {
+		$timePlayed = Slim::Player::Source::findTimeForOffset($client, $bytesPlayed) or return;
+	}
+	elsif ( $format eq 'wav' ) {
+		$timePlayed = $bytesPlayed * 8 / (streamBitrate($client) or return);
+	}
+	else {
+		return;
+	}
+
+	my $apparentStreamStartTime = $statusTime - $timePlayed;
+
+	if ( logger('player.sync')->is_debug ) {
+		logger('player.sync')->debug(
+			$client->id()
+			. " apparentStreamStartTime: $apparentStreamStartTime @ $statusTime \n"
+			. "timePlayed:$timePlayed (bytesReceived:" . $client->bytesReceived()
+			. " bufferFullness:" . $client->bufferFullness()
+			.")"
+		);
+	}
+
+	return $apparentStreamStartTime;
+}
+
+use constant PLAY_POINT_LIST_SIZE		=> 8;		# how many to keep
+use constant MAX_STARTTIME_VARIATION	=> 0.015;	# latest apparent-stream-start-time estimate
+													# must be this close to the average
+sub publishPlayPoint {
+	my ( $client, $statusTime, $apparentStreamStartTime, $cutoffTime ) = @_;
+
+	my $playPoints = $client->playPoints();
+	$client->playPoints($playPoints = []) if (!defined($playPoints));
+	
+	unshift(@{$playPoints}, [$statusTime, $apparentStreamStartTime]);
+
+	# remove all old and excessive play-points
+	pop @{$playPoints} if ( @{$playPoints} > PLAY_POINT_LIST_SIZE );
+	while( @{$playPoints} && $playPoints->[-1][0] < $cutoffTime ) {
+		pop @{$playPoints};
+	}
+
+	# Do we have a consistent set of playPoints so that we can publish one?
+	if ( @{$playPoints} == PLAY_POINT_LIST_SIZE ) {
+		my $meanStartTime = 0;
+		foreach my $point ( @{$playPoints} ) {
+			$meanStartTime += $point->[1];
+		}
+		$meanStartTime /= @{$playPoints};
+
+		if ( abs($apparentStreamStartTime - $meanStartTime) < MAX_STARTTIME_VARIATION ) {
+			# Ok, good enough, publish it!
+			$client->playPoint( [$statusTime, $meanStartTime] );
+			
+			if ( 0 && logger('player.sync')->is_debug ) {
+				logger('player.sync')->debug(
+					$client->id()
+					. " publishPlayPoint: $meanStartTime @ $statusTime"
+				);
+			}
+		}
 	}
 }
 

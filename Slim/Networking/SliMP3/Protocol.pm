@@ -25,7 +25,7 @@ my $log = logger('network.protocol.slimp3');
 my $prefs = preferences('server');
 
 sub processMessage {
-	my ($client, $msg) = @_;
+	my ($client, $msg, $msgTimeStamp) = @_;
 
 	my $type   = unpack('a',$msg);
 
@@ -42,7 +42,9 @@ sub processMessage {
 	if ($type eq 'i') {
 
 		# extract the IR code and the timestamp for the IR message
-		my ($irTime, $irCodeBytes) = unpack 'xxNxxH8', $msg;	
+		my ($irTime, $irCodeBytes) = unpack 'xxNxxH8', $msg;
+		
+		$client->trackJiffiesEpoch($irTime, $msgTimeStamp);	
 		
 		Slim::Hardware::IR::enqueue($client, $irCodeBytes, $irTime);
 
@@ -55,8 +57,8 @@ sub processMessage {
 	} elsif ($type eq 'a') {
 
 		my ($wptr, $rptr, $seq) = unpack 'xxxxxxnnn', $msg;
-
-		Slim::Networking::SliMP3::Stream::gotAck($client, $wptr, $rptr, $seq);
+		
+		Slim::Networking::SliMP3::Stream::gotAck($client, $wptr, $rptr, $seq, $msgTimeStamp);
 
 		Slim::Player::Sync::checkSync($client);
 
@@ -105,7 +107,7 @@ sub getUdpClient {
 			$client->init;
 
 			# remember all slimp3 clients so we can say hello to them on next server startup
-			my %slimp3 = map { $_ => 1 } @{ $prefs->get('slimp3clients') };
+			my %slimp3 = map { $_ => 1 } @{ $prefs->get('slimp3clients') || [] };
 
 			if (!$slimp3{$id}) {
 				$slimp3{$id} = 1;

@@ -10,7 +10,7 @@ package Slim::Networking::SliMP3::Stream;
 use strict;
 use bytes;
 
-use Slim::Player::SLIMP3;
+use Slim::Player::Source;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Timers;
@@ -19,26 +19,39 @@ use Slim::Utils::Prefs;
 ###
 ### lots o' knobs:
 ###
-my $TIMEOUT      		= 0.05;  # timeout
-my $ACK_TIMEOUT			= 30.0; # in seconds
+my $TIMEOUT               = 0.05;  # timeout
+my $ACK_TIMEOUT           = 30.0; # in seconds
 
-my $MAX_PACKET_SIZE		= 1400;
-my $BUFFER_SIZE			= 131072; # in bytes
-my $PAUSE_THRESHOLD		= $MAX_PACKET_SIZE; # pause until we refill the buffer
-my $UNPAUSE_THRESHOLD 		= $BUFFER_SIZE / 2; # fraction of buffer needed full in order to start playing
-my $BUFFER_FULL_THRESHOLD 	= $BUFFER_SIZE - $MAX_PACKET_SIZE * 2; # fraction of buffer to consider full up
+my $MAX_PACKET_SIZE       = 1400;
+my $BUFFER_SIZE           = 131072; # in bytes
+my $PAUSE_THRESHOLD       = $MAX_PACKET_SIZE; # pause until we refill the buffer
+my $UNPAUSE_THRESHOLD     = $BUFFER_SIZE / 2; # fraction of buffer needed full in order to start playing
+my $BUFFER_FULL_THRESHOLD = $BUFFER_SIZE - $MAX_PACKET_SIZE * 2; # fraction of buffer to consider full up
 
-my $BUFFER_FULL_DELAY		= 0.05; # seconds to wait until trying to resend packet when the buffer is full
+my $BUFFER_FULL_DELAY     = 0.05; # seconds to wait until trying to resend packet when the buffer is full
+my $WPTR_LIMIT            = $BUFFER_SIZE / 2; # point at which player decode buffer wraps around
+my $SEQ_LIMIT             = $WPTR_LIMIT; # pretty arbitray, not really related to wptr or anything else
 
 # for each client:
 our %streamState;		# the state of the stream
 our %curWptr;			# the highest outstanding wptr we've sent to the client
 our %bytesSent;			# bytes sent in this stream
 our %seq;				# the next sequence number to send
-our %packetInFlight;		# hash of references of  the packet in flight to this client
+our %dataPktInFlight;	# hash of references of the data packet in flight to this client
+our %emptyPktInFlight;	# hash of references of the empty packet in flight to this client
 our %fullness;			# number of bytes in the buffer as of the last packet
 our %lastAck;			# timeout in the case that the player disappears completely.
 our %lastByte;			# if we get an odd number of bytes from the upper level, hold on to the last one.
+
+# the following are used to track and correct synchronization with other players
+
+our %latencyList;		# array of most-recent packet round-trip-time measures
+use constant LATENCY_LIST_SIZELIMIT		=> 20;		# max number of samples to keep
+use constant LATENCY_LIST_MINSIZE		=> 7;		# min number of sample for valid measure
+our %samplePlayPointAfter;	# next time to sample the play-point
+use constant PLAY_POINT_SAMPLE_INTERVAL	=> 0.500;	# how often to check the play-point
+our %pauseUntil;		# send 'stop' instead of 'go' until past this time
+use constant MIN_DEVIATION_ADJUST		=> 0.030;	# minimum deviation to try and adjust;
 
 my $empty = '';
 
@@ -91,8 +104,16 @@ sub newStream {
 	}
 
 	$fullness{$client} = 0;
-	$packetInFlight{$client} = undef;
+	$dataPktInFlight{$client} = undef;
+	$emptyPktInFlight{$client} = undef;
 	$lastAck{$client} = Time::HiRes::time();
+	
+	if (!defined($latencyList{$client})) {
+		$latencyList{$client} = [];
+	}
+	
+	$client->playPoint(undef);
+	$pauseUntil{$client} = 0;
 
 	Slim::Utils::Timers::killOneTimer($client, \&sendNextChunk);
 	
@@ -112,9 +133,30 @@ Pauses playback (but keep filling the buffer)
 =cut
 
 sub pause {
-	my ($client) = @_;
+	my ($client, $interval) = @_;
 
-	$log->info($client->id, " pause");
+	$log->info( $client->id, " pause" . ($interval ? " for $interval" : '') );
+	
+	if ($interval) {
+		if ($streamState{$client} ne 'play' && $streamState{$client} ne 'eof') {
+			$::d_stream && msg("Attempted to pause a " . $streamState{$client} .  " stream.\n");
+			return 0;
+		}
+		if ($interval > MIN_DEVIATION_ADJUST) {
+			$interval -= 0.005;	# safety
+			# need to force drain of internal buffer
+			my $bitrate = Slim::Player::Source::streamBitrate($client) || 128000;
+			$interval += 1000 * 8 / $bitrate;
+			$::d_stream && msg($client->id() ." actual interval: $interval \n");
+			$pauseUntil{$client} = Time::HiRes::time() + $interval;
+			sendEmptyChunk($client);
+			$samplePlayPointAfter{$client} = $pauseUntil{$client} + PLAY_POINT_SAMPLE_INTERVAL;
+			$client->playPoint(undef);
+			return 1;
+		} else {
+			return 0;
+		}
+	}
 
 	if ($streamState{$client} ne 'play' && $streamState{$client} ne 'buffering') {
 
@@ -130,6 +172,7 @@ sub pause {
 	} else {
 		sendNextChunk($client);
 	}
+	$client->playPoint(undef);
 	
 	return 1;
 }
@@ -154,9 +197,12 @@ sub stop {
 
 	$streamState{$client} = 'stop';
 
-	sendNextChunk($client);	
+	sendEmptyChunk($client);	
 
 	$client->bytesReceived(0);
+	
+	$fullness{$client} = 0;
+	$client->playPoint(undef);
 
 	return 1;
 }
@@ -177,7 +223,7 @@ take effect until it has filled sufficiently.
 =cut
 
 sub unpause {
-	my ($client) = @_;
+	my ($client, $at) = @_;
 
 	$log->info($client->id, " unpause");
 
@@ -197,7 +243,12 @@ sub unpause {
 	} elsif  ($streamState{$client} eq 'paused') {
 
 		$streamState{$client} = 'play';
-		sendNextChunk($client);
+		
+		if ($at) {
+			$pauseUntil{$client} = $at - 0.010;
+		}
+		
+		sendEmptyChunk($client);
 		return 1;	
 
 	} else {
@@ -247,14 +298,9 @@ sub sendStreamPkt {
 	my $len  = $pkt->{'len'};
 	my $wptr = $pkt->{'wptr'};
 
-	$log->debug(
-		$client->id, 
-		" sending stream, seq = $seq len = $len wptr = $wptr state = $streamState{$client}",
-		" inflight = " . defined($packetInFlight{$client}),
-	);
-
 	my $control;
 	my $streamState = $streamState{$client};
+	my $now         = Time::HiRes::time();
 	
 	if (($streamState eq 'stop') || ($bytesSent{$client} == 0)) {
 
@@ -265,10 +311,12 @@ sub sendStreamPkt {
 	} elsif ($streamState eq 'buffering') {
 
 		$control = $streamControlCodes{'reset'};
+		$pauseUntil{$client} = 0;
 
 	} elsif ($streamState eq 'paused') {
 
 		$control = $streamControlCodes{'stop'};
+		$pauseUntil{$client} = 0;
 
 	} elsif ($streamState eq 'play') {
 
@@ -282,20 +330,37 @@ sub sendStreamPkt {
 
 		$log->logBacktrace("Bogus streamstate $streamState");
 	}
+	
+	if ($control == $streamControlCodes{'go'} && $pauseUntil{$client} > $now) {
+		$control = $streamControlCodes{'stop'};
+	}
+	
+	if ( $log->is_debug ) {
+		$log->debug(
+			$client->id() . 
+			" sending stream: seq:$seq, len:$len, wptr:$wptr, state:". 
+			$streamState{$client}.
+			", control:$control, inflight:" . (0 + defined($dataPktInFlight{$client}) + defined($emptyPktInFlight{$client}))
+		);
+	}
 
 	my $measuredlen = length(${$pkt->{'chunkref'}});
 
 	if ($len == $measuredlen && $len < 4097 ) {
 
 		$client->udpstream($control, $wptr, $seq, ${$pkt->{'chunkref'}});
+		$pkt->{'sendTimeStamp'} = $now;
 	
-		if ($log->warn && $packetInFlight{$client}) {
-
-			$log->logBacktrace("Sending packet when we have one in queue!!!!!!"); 
+		if ($log->is_warn && $len && $dataPktInFlight{$client}) {
+			$log->logBacktrace("Sending data packet when we have one in queue!!!!!!"); 
 		};
 		
-		$packetInFlight{$client} = $pkt;
-		$bytesSent{$client} += $len;
+		if ($len) {
+			$dataPktInFlight{$client}  = $pkt;
+			$bytesSent{$client}       += $len;
+		} else {
+			$emptyPktInFlight{$client} = $pkt;
+		}
 
 	} else {
 
@@ -303,41 +368,52 @@ sub sendStreamPkt {
 	}
 
 	# restart the timeout
-	Slim::Utils::Timers::setTimer($client, Time::HiRes::time()+$TIMEOUT, \&timeout, ($seq));
+	Slim::Utils::Timers::setTimer(
+		$client,
+		make_timeout($client, $TIMEOUT, $now),
+		\&timeout,
+		($seq)
+	);
 }
 
 # Retransmit timed out packet
 sub timeout {
-	my $client = shift;
-	my $seq = shift;
+	my ($client, $seq) = @_;
 		
 	Slim::Utils::Timers::killOneTimer($client, \&timeout);
 
-	return unless $packetInFlight{$client};
+	return unless ($dataPktInFlight{$client} || $emptyPktInFlight{$client});
 
-	my $packet = $packetInFlight{$client};
-
-	$log->warn($client->id, " Timeout on seq: $packet->{'seq'}");
-
-	$packetInFlight{$client} = undef;
-
+	$log->debug($client->id, " Timeout on seq: $seq");
+	
 	if (($lastAck{$client} + $ACK_TIMEOUT) < Time::HiRes::time()) {
 
 		# we haven't gotten an ack in a long time.  shut it down and don't bother resending.
-		Slim::Player::Sync::unsync($client);
+		Slim::Player::Sync::unsync($client, 1);
+		$dataPktInFlight{$client}  = undef;
+		$emptyPktInFlight{$client} = undef;
 		$client->execute(["stop"]);
 
 	} else {
-		sendStreamPkt($client, $packet);
+		# Resend the packet
+		my $packet;
+		if ($dataPktInFlight{$client}) {
+			$packet = $dataPktInFlight{$client};
+			$dataPktInFlight{$client}  = undef;
+			$emptyPktInFlight{$client} = undef;	# forget about retrying it
+			sendStreamPkt($client, $packet);
+		}
+		else {
+			$packet = $emptyPktInFlight{$client};
+			$emptyPktInFlight{$client} = undef;
+			sendStreamPkt($client, $packet);
+		}
 	}
 }
 
 # receive an ack, then send one or two more packets
 sub gotAck {
-	my ($client, $wptr, $rptr, $seq) = @_;
-	my $pkt;
-	my $pkt2;
-	my $eachpkt;
+	my ($client, $wptr, $rptr, $seq, $msgTimeStamp) = @_;
 
 	if (!defined($streamState{$client})) {
 
@@ -346,89 +422,141 @@ sub gotAck {
 		return;
 	}
 
-	$log->debug($client->id, " gotAck for seq: $seq ack: wptr:$wptr, rptr:$rptr, seq:$seq");
-
 	# calculate buffer usage
 	# todo: optimize usage calculations
-	my $bytesInFlight = 0;
+	my $bytesInFlight = $dataPktInFlight{$client} ? $dataPktInFlight{$client}->{'len'} : 0;
 
-	if ($packetInFlight{$client}) {
-
-		$bytesInFlight += $packetInFlight{$client}->{'len'};
+	# is this an expected packet?
+	my $packet;
+	if ($dataPktInFlight{$client} && $dataPktInFlight{$client}->{'seq'} == $seq) {
+		$packet = $dataPktInFlight{$client};
+		$dataPktInFlight{$client} = undef;
+	}
+	elsif ($emptyPktInFlight{$client} && $emptyPktInFlight{$client}->{'seq'} == $seq) {
+		$packet = $emptyPktInFlight{$client};
+		$emptyPktInFlight{$client} = undef;
 	}
 
-	my $fullness = $curWptr{$client} - $rptr;  
-
-	if ($fullness < 0) {
-		$fullness += $UNPAUSE_THRESHOLD;
-	} 
-
-	$fullness = $fullness * 2 + $bytesInFlight;
-
+	my $fullness = (($curWptr{$client} - $rptr + $WPTR_LIMIT) % $WPTR_LIMIT) * 2;
 	$fullness{$client} = $fullness;
 
-	$log->debug("bytesinflight:$bytesInFlight fullness:$fullness{$client}");
+	my $pktLatency = $packet
+		? int(($msgTimeStamp - $packet->{'sendTimeStamp'})*1000000/2) : -1;
 
-	if (!$packetInFlight{$client}) {
+	if ( $log->is_debug ) {
+		$log->debug(
+			$client->id() . " gotAck: wptr:$wptr rptr:$rptr seq:$seq " .
+			"inflight:$bytesInFlight fullness:$fullness{$client} latency:$pktLatency us"
+		);
+	}
 
-		$log->warn("Warning: Missing packet acked: $seq");
-
-	} elsif ($packetInFlight{$client}->{'seq'} != $seq) { 
-
-		$log->warn("Warning: Unexpected packet acked: $seq, was expecting " . $packetInFlight{$client}->{'seq'});
-
+	if ( !$packet ) {
+		if ( $log->is_debug ) {
+			if ( ($seq{$client} - $seq) % $SEQ_LIMIT > 2) {
+				$log->debug($client->id() . " ***Missing or unexpected packet acked: $seq");
+			}
+		}
+		
 	} else {
-
-		$client->bytesReceived($client->bytesReceived + $packetInFlight{$client}->{'len'});
-
-		$packetInFlight{$client} = undef;
+		# Keep track of effective network delay to this client;
+		# assume packet latency is half round-trip-time; stored in microseconds.
+		# Keep set of recent entries and assume that only values below the median are representative
+		my $latencyList = $latencyList{$client};
+		push(@{$latencyList}, $pktLatency); shift @{$latencyList} if (@{$latencyList} > LATENCY_LIST_SIZELIMIT);
 
 		Slim::Utils::Timers::killOneTimer($client, \&timeout);
 
-		$lastAck{$client} = Time::HiRes::time();
+		$client->bytesReceived($client->bytesReceived + $packet->{'len'});
+		$lastAck{$client} = $msgTimeStamp;
+
+		# Calculate and publish playPoint
+		#
+		# The following calculations are costly, so only do when necessary, and not too frequently.
+		my $medianLatency;
+		if (   Slim::Player::Sync::isSynced($client)
+			&& ($streamState{$client} eq 'play' || $streamState{$client} eq 'eof')
+			&& $msgTimeStamp > $samplePlayPointAfter{$client}
+			&& defined($medianLatency = getMedianLatencyMicroSeconds($client))
+		) {
+			if ($pktLatency <= $medianLatency) {
+				my $statusTime = $msgTimeStamp - $pktLatency / 1000000;
+				my $apparentStreamStartTime = $client->apparentStreamStartTime($statusTime);
+
+				$client->publishPlayPoint($statusTime, $apparentStreamStartTime, $pauseUntil{$client});
+
+				# only do this again after a short interval
+				$samplePlayPointAfter{$client} = $msgTimeStamp + PLAY_POINT_SAMPLE_INTERVAL;
+			}
+		}
 	}
+	
+	my $state = $streamState{$client};
 
 	if ($fullness <= 512) { 
 
-		$log->warn("Warning: Stream underrun: $fullness");
-
-		Slim::Player::Source::underrun($client);
-
-		if ($streamState{$client} eq 'eof') { 
-
-			$streamState{$client} = 'stop'; 
+		if ( $log->is_debug ) {
+			if ( $state eq 'play' || $state eq 'eof' ) {
+				$log->debug("***Stream underrun: $fullness");
+			}
+		}
+		
+		if ( $state eq 'play' ) {
+			Slim::Player::Source::outputUnderrun($client);
+		}
+		elsif ( $state eq 'eof' ) { 
+			Slim::Player::Source::underrun($client);
+			$state = $streamState{$client} = 'stop';
 		}
 	}
 
-	my $state = $streamState{$client};
+	sendNextChunk($client) unless ($state eq 'stop');
+}
 
-	if ($state eq 'stop') {
+sub make_timeout {
+	my ($client, $delta, $now) = @_;
 
-		# don't bother sending anything.
+	$now = Time::HiRes::time() unless defined($now);
 
-	} else {
+	my $pauseUntil = $pauseUntil{$client};
 
-		sendNextChunk($client);
+	if ($pauseUntil > $now) {
+		my $timeout = $now + $delta;
+		return $timeout > $pauseUntil ? $pauseUntil : $timeout;
+	}
+	else {
+		return $now + $delta;
 	}
 }
 
 # sends the next packet of data in the stream
 sub sendNextChunk {
-	my $client   = shift;
+	my $client   = $_[0];
 
 	my $fullness = $fullness{$client};
 	my $curWptr  = $curWptr{$client};
 
 	Slim::Utils::Timers::killOneTimer($client, \&sendNextChunk);
+	
+	my $streamState = $streamState{$client};
 
 	# if there's a packet in flight, come back later and try again...
-	if ($packetInFlight{$client}) {
-
-		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $BUFFER_FULL_DELAY, \&sendNextChunk);
+	if ($dataPktInFlight{$client} || $emptyPktInFlight{$client}) {
+		if ( $log->is_debug ) {
+			$log->debug(
+				$client->id() . "- $streamState - " .
+				($dataPktInFlight{$client} ? "data" : "empty") 
+				. " packet already in flight"
+			);
+		}
+		
+		Slim::Utils::Timers::setTimer(
+			$client, 
+			make_timeout($client, $BUFFER_FULL_DELAY),
+			\&sendNextChunk
+		);
+		
 		return 0;
 	}
-
-	my $streamState = $streamState{$client};
 	
 	if (($streamState eq 'stop')) { 
 
@@ -442,12 +570,13 @@ sub sendNextChunk {
 
 		$log->debug($client->id, "- $streamState - Buffer full, need to poll to see if there is space");
 
-		# if client's buffer is full, poll it every 50ms until there's room if we're playing
-		# otherwise, we can't send a chunk.
-		if ($streamState eq 'play' || $streamState eq 'eof') {
-
-			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $BUFFER_FULL_DELAY, \&sendEmptyChunk);
-		} 
+		# if client's buffer is full, poll it every 50ms until there's room 
+		# Note: already dealt with 'stop' case above; previous test for 'play' || 'eof' may have missed certain race conditions
+		Slim::Utils::Timers::setTimer(
+			$client, 
+			make_timeout($client, $BUFFER_FULL_DELAY),
+			\&sendEmptyChunk
+		);
 
 		return 0;
 	}
@@ -465,23 +594,26 @@ sub sendNextChunk {
 
 		$requestedChunkSize--;
 	}
+	
+	## TODO - if we are just about to unpause, then send an empty packet rather than waste time
+	# getting another chunk.
 
 	my $chunkRef = Slim::Player::Source::nextChunk($client, $requestedChunkSize);
 	
 	if (!defined($chunkRef)) {
 
-		$log->warn("Stream not readable");
+		0 && $log->warn("Stream not readable");
 
 		if ($streamState eq 'eof') {
 
 			$log->warn("Sending empty chunk...");
 
 			# we're going to poll after BUFFER_FULL_DELAY with an empty chunk so we can know when the player runs out.
-			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $BUFFER_FULL_DELAY, \&sendEmptyChunk);
+			Slim::Utils::Timers::setTimer($client, make_timeout($client, $BUFFER_FULL_DELAY), \&sendEmptyChunk);
 
 		} else {
 
-			Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $TIMEOUT, \&sendNextChunk);
+			Slim::Utils::Timers::setTimer($client, make_timeout($client, $TIMEOUT), \&sendNextChunk);
 		}
 
 		return 0;
@@ -515,9 +647,10 @@ sub sendNextChunk {
 
 	} elsif (($fullness < $PAUSE_THRESHOLD) && ($streamState eq 'play')) {
 
-		$log->info($client->id, "Buffer drained, pausing playback");
+		$log->info($client->id, " Buffer drained, pausing playback");
 
-		$streamState{$client}='buffering';
+		$streamState{$client} = 'buffering';
+		Slim::Player::Source::outputUnderrun($client);
 	}
 
 	my $pkt = {
@@ -526,14 +659,7 @@ sub sendNextChunk {
 		'chunkref' => $chunkRef,
 	};
 
-	$curWptr = $curWptr + $len/2;
-
-	if ($curWptr >= $UNPAUSE_THRESHOLD) {
-
-		$curWptr -= $UNPAUSE_THRESHOLD;
-	}
-	
-	$curWptr{$client} = $curWptr;
+	$curWptr{$client} = ($curWptr + $len/2) % $WPTR_LIMIT;
 	
 	sendPkt($client, $pkt);
 
@@ -545,7 +671,9 @@ sub sendNextChunk {
 sub sendEmptyChunk {
 	my $client = shift;
 
-	$log->debug($client->id);
+	$log->debug($client->id, ' sendEmptyChunk');
+	
+	Slim::Utils::Timers::killOneTimer($client, \&sendEmptyChunk);
 
 	my $pkt = {
 		'wptr'     => $curWptr{$client},
@@ -557,8 +685,7 @@ sub sendEmptyChunk {
 }
 
 sub sendPkt {
-	my $client = shift;
-	my $pkt    = shift;
+	my ($client, $pkt) = @_;
 
 	my $seq = $seq{$client};
 
@@ -566,16 +693,19 @@ sub sendPkt {
 
 	sendStreamPkt($client, $pkt);
 
-	$seq++;
+	$seq{$client} = ($seq + 1) % $SEQ_LIMIT;
+}
 
-	if ($seq >= $UNPAUSE_THRESHOLD) {
-
-		$seq -= $UNPAUSE_THRESHOLD;
+sub getMedianLatencyMicroSeconds {
+	my $client      = $_[0];
+	my $latencyList = $latencyList{$client};
+	
+	if ( @{$latencyList} > LATENCY_LIST_MINSIZE ) {
+		return (sort {$a <=> $b} @{$latencyList})[ int(@{$latencyList} / 2) ];
 	}
-
-	$seq{$client} = $seq;
+	else {
+		return;
+	}
 }
 
 1;
-
-__END__

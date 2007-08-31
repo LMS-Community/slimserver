@@ -39,6 +39,7 @@ our $defaultPrefs = {
 	'transitionDuration' => 0,
 	'replayGainMode'     => 0,
 	'disableDac'         => 0,
+	'minSyncAdjust'      => 0.010,
 	'snLastSyncUp'       => -1,
 	'snLastSyncDown'     => -1,
 	'snSyncInterval'     => 30,
@@ -241,7 +242,7 @@ sub reportsTrackStart {
 }
 
 sub requestStatus {
-	shift->sendFrame('stat');
+	shift->stream('t');
 }
 
 sub stop {
@@ -319,7 +320,7 @@ sub directHeaders {
 	
 	my $response = shift @headers;
 	
-	if (!$response || $response !~ / (\d\d\d)/) {
+	if (!$response || $response !~ m/ (\d\d\d)/) {
 
 		$log->warn("Invalid response code ($response) from remote stream $url");
 
@@ -850,6 +851,59 @@ sub pcm_sample_rates {
 	my $rate = $pcm_sample_rates{$track->samplerate()};
 
 	return defined $rate ? $rate : '3';
+}
+
+sub playPoint {
+	my $client = shift;
+
+	my ($jiffies, $elapsedMilliseconds) = Slim::Networking::Slimproto::getPlayPointData($client);
+
+	return unless $elapsedMilliseconds;
+
+	my $statusTime = $client->jiffiesToTimestamp($jiffies);
+	my $apparentStreamStartTime = $statusTime - ($elapsedMilliseconds / 1000);
+
+	0 && logger('player.sync')->debug($client->id() . " playPoint: jiffies=$jiffies, epoch="
+		. ($client->jiffiesEpoch) . ", statusTime=$statusTime, elapsedMilliseconds=$elapsedMilliseconds");
+
+	return [$statusTime, $apparentStreamStartTime];
+}
+
+sub startAt {
+	my ($client, $at) = @_;
+	
+	if ( logger('player.sync')->is_debug ) {
+		logger('player.sync')->debug( $client->id, ' startAt: ' . int(($at - $client->jiffiesEpoch()) * 1000) );
+	}
+
+	$client->stream( 'u', { 'interval' => int(($at - $client->jiffiesEpoch()) * 1000) } );
+	return 1;
+}
+
+sub pauseForInterval {
+	my $client   = shift;
+	my $interval = shift;
+
+	$client->stream( 'p', { 'interval' => $interval } );
+	return 1;
+}
+
+sub skipAhead {
+	my $client   = shift;
+	my $interval = shift;
+
+	$client->stream( 'a', { 'interval' => $interval } );
+	return 1;
+}
+
+sub packetLatency {
+	my $client = shift;
+	
+	return (
+		Slim::Networking::Slimproto::getLatency($client) / 1000
+		||
+		$client->SUPER::packetLatency()
+	);
 }
 
 1;
