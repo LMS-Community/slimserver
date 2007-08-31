@@ -163,6 +163,12 @@
 	[% END %]
 	
 	[%- WRAPPER contentcontainer %]
+		[% IF image %]
+		<ul>
+			<img src="[% image %]" />
+		</ul>
+		[% END %]
+		
 		[% IF itemsHaveAudio %]
 			[%- BLOCK allcontrol -%]
 				[% WRAPPER playlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=playall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]');"[% END %]
@@ -175,7 +181,7 @@
 		
 		[%- FOREACH item = items %]
 			[%- BLOCK gencontrol -%]
-				[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure %]
+				[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
 					[% WRAPPER playlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]');"[% END %]
 					[% WRAPPER addlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]');"[% END %]
 				[% ELSE %]
@@ -183,10 +189,27 @@
 					[% PROCESS dummylink %]
 				[% END %]
 			[%- END %]
-			[%- WRAPPER contentitem leftcontrols = 'gencontrol' rightcontrols = 'favoritescontrol' %]
-				<a href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;homeCategory=[% homeCategory %]" class="browseItemLink">[% item.name || item.title %]</a>
+			
+			[% IF item.type == 'search' %]
+				<form id="searchForm[% index _ (start + loop.index) %]" method="GET">
+					[% item.name || item.title %]
+					<input type="text" name="q" value=""/>
+					<input name="submit" type="submit" class="stdclick" value="[% "SEARCH" | string %]"><p>
+					<input type="hidden" value="[% player %]" name="player" />
+					<input type="hidden" value="[% index _ (start + loop.index) %]" name="index" />
+					<input type="hidden" value="[% homeCategory %]" name="homeCategory" />
+				</form>
+			[% ELSE %]
+				[%- WRAPPER contentitem leftcontrols = 'gencontrol' rightcontrols = 'favoritescontrol' %]
+					[% IF item.type != 'text' %]
+					<a href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;homeCategory=[% homeCategory %]" class="browseItemLink">
+					[% END %]
+					[% item.name || item.title %]
+					[% IF item.type != 'text' %]
+					</a>
+					[% END %]
+				[%- END %]
 			[%- END %]
-			[% IF useAJAX %]</span>[% END %]
 		[%- END %]
 
 	[%- END %]
