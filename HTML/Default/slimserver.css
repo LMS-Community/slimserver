@@ -107,6 +107,7 @@ div.thumbwrap {
 	margin-top: 20px;
 	margin-left: 5px;
 	margin-right: 15px;
+	overflow: auto;
 }
 
 .homeMenuSection_expanded .homeMenuItem {

@@ -82,7 +82,7 @@ var MainMenu = function(){
 		toggleItem : function(panel){
 			if (el = Ext.get(panel)) {
 				if (el.hasClass('homeMenuItem_expanded'))
-					this.collapseItem(panel);
+					this.collapseItem(panel, true);
 				else
 					this.expandItem(panel);
 			}
@@ -111,11 +111,11 @@ var MainMenu = function(){
 			Utils.addBrowseMouseOver();
 
 			this.onResize();
-			Utils.resizeContent();
 		},
 
-		collapseItem : function(panel){
-			Utils.setCookie('SlimServer-homeMenuExpanded', '');
+		collapseItem : function(panel, resetState){
+			if (resetState)
+				Utils.setCookie('SlimServer-homeMenuExpanded', '');
 
 			if (el = Ext.get(panel)) {
 				if (icon = el.child('img:first', true)) {
@@ -133,7 +133,6 @@ var MainMenu = function(){
 			Utils.addBrowseMouseOver();
 
 			this.onResize();
-			Utils.resizeContent();
 		},
 		
 		collapseAll : function(){
@@ -176,7 +175,9 @@ var MainMenu = function(){
 			items = Ext.DomQuery.select('div.homeMenuSection');
 			for(var i = 0; i < items.length; i++) {
 				if (el = Ext.get(items[i].id)) {
-					el.setWidth(Ext.get('content').getWidth()-10);
+					contEl = Ext.get('content');
+					el.setWidth(contEl.getWidth()-10);
+					el.setHeight(contEl.getHeight()-20);
 				}
 			}
 		}
