@@ -117,9 +117,10 @@ sub webPages {
 
 	Slim::Web::HTTP::addPageFunction( $url, sub {
 		Slim::Web::XMLBrowser->handleWebIndex( {
-			feed   => $class->feed(),
-			title  => $title,
-			args   => \@_
+			feed    => $class->feed(),
+			title   => $title,
+			timeout => 35,
+			args    => \@_
 		} );
 	} );
 }

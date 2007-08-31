@@ -197,20 +197,31 @@
 					[% PROCESS dummylink %]
 				[% END %]
 			[%- END %]
-			[% IF useAJAX %]<span style="margin: 0px; padding: 0px; border: 0px;" 
-				onMouseOver="showElements(['controls[% index _ (start + loop.index) %]'], 'inline');"
-				onMouseOut="hideElements(['controls[% index _ (start + loop.index) %]'])">
-			[% END %]
-			[%- WRAPPER contentitem leftcontrols = 'gencontrol' rightcontrols = 'favoritescontrol' %]
-				[% IF item.type != 'text' %]
-				<a href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]">
+			
+			[% IF item.type == 'search' %]
+				<form id="searchForm[% index _ (start + loop.index) %]" method="GET">
+					[% item.name || item.title %]
+					<input type="text" name="q" value=""/>
+					<input name="submit" type="submit" class="stdclick" value="[% "SEARCH" | string %]"><p>
+					<input type="hidden" value="[% player %]" name="player" />
+					<input type="hidden" value="[% index _ (start + loop.index) %]" name="index" />
+				</form>
+			[% ELSE %]
+				[% IF useAJAX %]<span style="margin: 0px; padding: 0px; border: 0px;" 
+					onMouseOver="showElements(['controls[% index _ (start + loop.index) %]'], 'inline');"
+					onMouseOut="hideElements(['controls[% index _ (start + loop.index) %]'])">
 				[% END %]
-				[% item.name || item.title %]
-				[% IF item.type != 'text' %]
-				</a>
-				[% END %]
+				[%- WRAPPER contentitem leftcontrols = 'gencontrol' rightcontrols = 'favoritescontrol' %]
+					[% IF item.type != 'text' %]
+					<a href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]">
+					[% END %]
+					[% item.name || item.title %]
+					[% IF item.type != 'text' %]
+					</a>
+					[% END %]
+				[%- END %]
+				[% IF useAJAX %]</span>[% END %]
 			[%- END %]
-			[% IF useAJAX %]</span>[% END %]
 			[%- odd = (not odd) %]
 		[%- END %]
 

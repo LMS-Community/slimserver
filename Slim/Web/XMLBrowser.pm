@@ -30,6 +30,7 @@ sub handleWebIndex {
 	my $title     = $args->{'title'};
 	my $search    = $args->{'search'};
 	my $expires   = $args->{'expires'};
+	my $timeout   = $args->{'timeout'};
 	my $asyncArgs = $args->{'args'};
 	my $item      = $args->{'item'} || {};
 	
@@ -89,6 +90,7 @@ sub handleWebIndex {
 			'title'   => $title,
 			'search'  => $search,
 			'expires' => $expires,
+			'timeout' => $timeout,
 			'args'    => $asyncArgs,
 		},
 	);
@@ -134,7 +136,8 @@ sub handleFeed {
 		my @crumbIndex = ();
 		
 		# descend to the selected item
-		my $depth   = 0;
+		my $depth = 0;
+		
 		my $subFeed = $feed;
 		for my $i ( @index ) {
 			$depth++;
@@ -142,11 +145,18 @@ sub handleFeed {
 			$subFeed = $subFeed->{'items'}->[$i];
 			
 			push @crumbIndex, $i;
+			my $crumbText = join '.', @crumbIndex;
+			
+			# Add search query to crumb list
+			if ( $subFeed->{'type'} && $subFeed->{'type'} eq 'search' && $stash->{'q'} ) {
+				$crumbText .= '_' . $stash->{'q'};
+			}
+			
 			push @crumb, {
 				'name'  => $subFeed->{'name'} || $subFeed->{'title'},
-				'index' => join '.', @crumbIndex,
+				'index' => $crumbText,
 			};
-			
+						
 			# Change type to audio if it's an action request and we have a play attribute
 			if ( $subFeed->{'play'} && $stash->{'action'} =~ /^(?:play|add)$/ ) {
 				$subFeed->{'type'} = 'audio';
@@ -167,6 +177,19 @@ sub handleFeed {
 			$subFeed->{'type'} ||= '';
 			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'}) {
 				
+				my $searchQuery;
+				if ( $i =~ /\d+_(.+)/ ) {
+					$searchQuery = $1;
+					warn "*** searchQuery for $i = $searchQuery\n";
+				}
+				
+				# Rewrite the URL if it was a search request
+				if ( $subFeed->{'type'} eq 'search' && ( $stash->{'q'} || $searchQuery ) ) {
+					my $search = $stash->{'q'} || $searchQuery;
+					$subFeed->{'url'} =~ s/{QUERY}/$search/g;
+					warn "*** Rewrote index $i search URL to " . $subFeed->{'url'} . "\n";
+				}
+				
 				# Setup passthrough args
 				my $args = {
 					'item'         => $subFeed,
@@ -174,6 +197,7 @@ sub handleFeed {
 					'feedTitle'    => $subFeed->{'name'} || $subFeed->{'title'},
 					'parser'       => $subFeed->{'parser'},
 					'expires'      => $params->{'expires'},
+					'timeout'      => $params->{'timeout'},
 					'parent'       => $feed,
 					'parentURL'    => $params->{'parentURL'} || $params->{'url'},
 					'currentIndex' => \@crumbIndex,
@@ -207,10 +231,17 @@ sub handleFeed {
 			};
 		}
 		
+		# Construct index param for each item in the list
+		my $itemIndex = join( '.', @index );
+		if ( $stash->{'q'} ) {
+			$itemIndex .= '_' . $stash->{'q'};
+		}
+		$itemIndex .= '.';
+		
 		$stash->{'pagetitle'} = $subFeed->{'name'};
 		$stash->{'crumb'}     = \@crumb;
 		$stash->{'items'}     = $subFeed->{'items'};
-		$stash->{'index'}     = join( '.', @index ) . '.';
+		$stash->{'index'}     = $itemIndex;
 		$stash->{'image'}     = $subFeed->{'image'};
 	}
 	else {
