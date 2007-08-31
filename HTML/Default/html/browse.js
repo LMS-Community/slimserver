@@ -58,7 +58,7 @@ Browse = function(){
 			
 			
 				new Ext.SplitButton('viewSelect', {
-					icon: webroot + 'html/images/albumlist' + viewMode  + '.png',
+					icon: webroot + 'html/images/albumlist' + viewMode  + '.gif',
 					cls: 'x-btn-icon',
 					menu: menu,
 					handler: function(ev){

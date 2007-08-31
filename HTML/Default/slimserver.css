@@ -533,17 +533,35 @@ div.thumbwrap {
 }
 
 .albumListGallery .x-menu-item-icon {
-    background-image: url(html/images/albumlist1.png);
+    background-image: url(html/images/albumlist1.gif);
     background-repeat: no-repeat;
 }
+
 .albumXList .x-menu-item-icon {
-    background-image: url(html/images/albumlist0.png);
+    background-image: url(html/images/albumlist0.gif);
     background-repeat: no-repeat;
 }
+
 .albumList .x-menu-item-icon {
-    background-image: url(html/images/albumlist2.png);
+    background-image: url(html/images/albumlist2.gif);
     background-repeat: no-repeat;
 }
+
+.x-menu-item-checked .albumListGallery .x-menu-item-icon {
+    background-image: url(html/images/albumlist1_on.gif);
+    background-repeat: no-repeat;
+}
+
+.x-menu-item-checked .albumXList .x-menu-item-icon {
+    background-image: url(html/images/albumlist0_on.gif);
+    background-repeat: no-repeat;
+}
+
+.x-menu-item-checked .albumList .x-menu-item-icon {
+    background-image: url(html/images/albumlist2_on.gif);
+    background-repeat: no-repeat;
+}
+
 
 .menu-title{
 	font: bold 12px sans-serif;

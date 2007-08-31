@@ -119,7 +119,7 @@ var MainMenu = function(){
 
 			if (el = Ext.get(panel)) {
 				if (icon = el.child('img:first', true)) {
-					icon.src =  webroot + 'html/images/triangle-right.png';
+					icon.src =  webroot + 'html/images/triangle-right.gif';
 				}
 
 				el.removeClass('homeMenuItem_expanded');
