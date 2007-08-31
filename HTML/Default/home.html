@@ -41,19 +41,25 @@
 [% BLOCK menuItem %]
 	<div class="selectorMarker"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 		<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
+			[% IF expandable %]
+				<span  onclick="MainMenu.toggleItem('[% token %]');"><img src="[% webroot %]html/images/triangle-right.gif"/></span>
+			[% END %]
 			[% token | string %]
 		</div>
 	</div></div></div></div></div>
+	[% IF expandable %]
+		<div id="[% token %]_expanded"></div>
+	[% END %]
 [% END %]
 
 <div class="homeMenuSection" id="homeMenu">
 	[% PROCESS menuItem token="FAVORITES" category='browse' %]
-	[% category=''; PROCESS menuItem token="MY_MUSIC" %]
+	[% category=''; expandable=1; PROCESS menuItem token="MY_MUSIC" %]
 	[% PROCESS menuItem token="RADIO" %]
 	[% IF additionalLinks.music_on_demand %]
 		[% PROCESS menuItem token="MUSIC_ON_DEMAND" %]
 	[% END %]
-	[% PROCESS menuItem token="OTHER_SERVICES" %]
+	[% PROCESS menuItem token="OTHER_SERVICES"; expandable=0 %]
 </div>
 
 <div class="homeMenuSection" id="my_musicMenu">

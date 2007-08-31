@@ -44,6 +44,7 @@ var MainMenu = function(){
 			anchor = document.location.href.match(/#(.*)\?/)
 			if (!(anchor && anchor[1] && this.showPanel(anchor[1].toLowerCase()))) {
 				this.showPanel('home');
+				this.expandItem(Utils.getCookie('SlimServer-homeMenuExpanded'));
 			}
 		},
 		
@@ -78,8 +79,73 @@ var MainMenu = function(){
 			}
 		},
 
+		toggleItem : function(panel){
+			if (el = Ext.get(panel)) {
+				if (el.hasClass('homeMenuItem_expanded'))
+					this.collapseItem(panel);
+				else
+					this.expandItem(panel);
+			}
+		},
+
+		expandItem : function(panel){
+			// we only allow for one open item
+			this.collapseAll();
+
+			Utils.setCookie('SlimServer-homeMenuExpanded', panel);
+
+			if (el = Ext.get(panel)) {
+				if (icon = el.child('img:first', true)) {
+					icon.src =  webroot + 'html/images/triangle-down.gif';
+				}
+				el.addClass('homeMenuItem_expanded');
+				
+				subItems = Ext.get(panel.toLowerCase() + 'Menu');
+				if ((subPanel = Ext.get(panel + '_expanded')) && subItems){
+					subPanel.addClass('homeMenuSection_expanded');
+					subPanel.update(subItems.dom.innerHTML);
+				}
+				
+			}
+
+			Utils.addBrowseMouseOver();
+
+			this.onResize();
+			Utils.resizeContent();
+		},
+
+		collapseItem : function(panel){
+			Utils.setCookie('SlimServer-homeMenuExpanded', '');
+
+			if (el = Ext.get(panel)) {
+				if (icon = el.child('img:first', true)) {
+					icon.src =  webroot + 'html/images/triangle-right.png';
+				}
+
+				el.removeClass('homeMenuItem_expanded');
+
+				if (subPanel = Ext.get(panel + '_expanded')){
+					subPanel.update('');
+					subPanel.removeClass('homeMenuSection_expanded');
+				}
+			}
+
+			Utils.addBrowseMouseOver();
+
+			this.onResize();
+			Utils.resizeContent();
+		},
+		
+		collapseAll : function(){
+			items = Ext.DomQuery.select('div.homeMenuItem_expanded');
+			for(var i = 0; i < items.length; i++) {
+				this.collapseItem(items[i].id);
+			}
+		},
+
 		showPanel : function(panel){
 			panelExists = false;
+			this.collapseAll();
 
 			items = Ext.DomQuery.select('div.homeMenuSection');
 			for(var i = 0; i < items.length; i++) {

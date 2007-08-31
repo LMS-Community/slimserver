@@ -109,6 +109,10 @@ div.thumbwrap {
 	margin-right: 15px;
 }
 
+.homeMenuSection_expanded .homeMenuItem {
+	padding-left: 18px;
+}
+
 .homeMenuItem {
 	margin-left: 6px;
 	position: relative;

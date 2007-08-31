@@ -173,19 +173,7 @@ var Utils = function(){
 					if (Ext.get(target).findParent('.mouseOver'))
 						return;
 
-					// remove highlighting from the other DIVs
-					items = Ext.DomQuery.select('div.mouseOver');
-					for(var i = 0; i < items.length; i++) {
-						el = Ext.get(items[i].id);
-						if (el) {
-							el.replaceClass('mouseOver', 'selectorMarker');
-							el.un('click', Utils.onSelectorClicked);
-
-							if (controls = Ext.DomQuery.selectNode('span.browsedbControls, div.playlistControls', el.dom)) {
-								Ext.get(controls).hide();
-							}
-						}
-					}
+					Utils.unHighlight();
 
 					// always highlight the main selector, not its children
 					el = Ext.get(target).findParent('.selectorMarker');
@@ -200,6 +188,22 @@ var Utils = function(){
 					}
 				}
 			});
+		},
+		
+		unHighlight: function(){
+			// remove highlighting from the other DIVs
+			items = Ext.DomQuery.select('div.mouseOver');
+			for(var i = 0; i < items.length; i++) {
+				el = Ext.get(items[i].id);
+				if (el) {
+					el.replaceClass('mouseOver', 'selectorMarker');
+					el.un('click', Utils.onSelectorClicked);
+
+					if (controls = Ext.DomQuery.selectNode('span.browsedbControls, div.playlistControls', el.dom)) {
+						Ext.get(controls).hide();
+					}
+				}
+			}
 		},
 		
 		onSelectorClicked : function(ev, target){
