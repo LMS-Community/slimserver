@@ -1975,6 +1975,9 @@ sub openSong {
 							$channels ||= $info->{STEREO} ? 2 : 1;
 						}
 					}
+					else {
+						$log->warn('Unable to find MP3 frame in file!');
+					}
 				}
 
 				# pipe is a socket
@@ -2537,7 +2540,7 @@ sub findTimeForOffset {
 	
 		my $pos = 0;
 
-		while ( my ($length, $nextPos, $seconds) = MPEG::Audio::Frame->read($buffer, $pos) ) {
+		while ( my ($length, $nextPos, $seconds) = MPEG::Audio::Frame->read_ref($buffer, $pos) ) {
 			last unless ($length);
 			# Note: $length may not equal ($nextPos - $pos) if tag data has been skipped
 			if ( !defined($frames) ) {

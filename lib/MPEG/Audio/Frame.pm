@@ -33,7 +33,13 @@ $mpeg25 = 1; # normally support it
 
 # constants and tables
 
-
+BEGIN {
+	if ($] <= 5.006){
+		require Fcntl; Fcntl->import(qw/SEEK_CUR/);
+	} else {
+		require POSIX; POSIX->import(qw/SEEK_CUR/);
+	}
+}
 
 my @version = (
 	1,		# 0b00 MPEG 2.5
@@ -181,14 +187,14 @@ BEGIN {
 	}
 }
 
-
-# constructor and work horse
-sub read {
+# A faster version of read that reads from a scalar ref containing 
+# frame data and only returns the length, pos, and seconds
+sub read_ref {
 	my $pkg = shift || return undef;
 	my $bufref = shift || return undef;
 	my $start = shift;
 
-	my $pos = $start;
+	my $pos = $start || 0;
 	my $len = length($$bufref);
 	
 	my $header; # the binary header data... what a fabulous pun.
@@ -249,6 +255,357 @@ sub read {
 
 	return ($length, $pos, $seconds);
 }
+
+# original read() method that takes a filehandle
+sub read {
+	my $pkg = shift || return undef;
+	my $fh = shift || return undef;
+	
+	local $/ = "\xff"; # get readline to find 8 bits of sync.
+	
+	my $offset;	# where in the handle
+	my $header; # the binary header data... what a fabulous pun.
+	my @hr; # an array of integer
+
+	OUTER: {
+		while (defined(<$fh>)){ # readline, readline, find me a header, make me a header, catch me a header. somewhate wasteful, perhaps. But I don't want to seek.
+			$header = "\xff";
+			(read $fh, $header, 3, 1 or return undef) == 3 or return undef; # read the rest of the header
+
+			my @hb = unpack("CCCC",$header); # an array of 4 integers for convenient access, each representing a byte of the header
+			# I wish vec could take non powers of 2 for the bit width param... *sigh*
+			# make sure there are no illegal values in the header
+			($hr[SYNC]		= ($hb[B_SYNC] 		& M_SYNC)		>> R_SYNC)		!= 0x07 and next; # see if the sync remains
+			($hr[VERSION]	= ($hb[B_VERSION]	& M_VERSION)	>> R_VERSION)	== 0x00 and ($mpeg25 or next);
+			($hr[VERSION])														== 0x01 and next;
+			($hr[LAYER]		= ($hb[B_LAYER]		& M_LAYER)		>> R_LAYER)		== 0x00 and next;
+			($hr[BITRATE]	= ($hb[B_BITRATE]	& M_BITRATE)	>> R_BITRATE)	== 0x0f and next;
+			($hr[SAMPLE]	= ($hb[B_SAMPLE]	& M_SAMPLE) 	>> R_SAMPLE)	== 0x03 and next;
+			($hr[EMPH]		= ($hb[B_EMPH]		& M_EMPH) 		>> R_EMPH)		== 0x02 and ($lax or next);
+			# and drink up all that we don't bother verifying
+			$hr[CRC]		= ($hb[B_CRC] & M_CRC) >> R_CRC;
+			$hr[PAD]		= ($hb[B_PAD] & M_PAD) >> R_PAD;
+			$hr[PRIVATE]	= ($hb[B_PRIVATE] & M_PRIVATE) >> R_PRIVATE;
+			$hr[CHANMODE]	= ($hb[B_CHANMODE] & M_CHANMODE) >> R_CHANMODE;
+			$hr[MODEXT]		= ($hb[B_MODEXT] & M_MODEXT) >> R_MODEXT;
+			$hr[COPY]		= ($hb[B_COPY] & M_COPY) >> R_COPY;
+			$hr[HOME]		= ($hb[B_HOME] & M_HOME) >> R_HOME;
+
+			# record the offset	
+			$offset = tell($fh) - 4;
+
+			last OUTER; # were done reading for the header
+		}
+		seek $fh, -3, SEEK_CUR;
+		return undef;
+	}
+
+	
+	my $sum = '';
+	if (!$hr[CRC]){
+		(read $fh, $sum, 2 or return undef) == 2 or return undef;
+	}
+
+	my $bitrate	= $bitrates[$version[$hr[VERSION]]][$layer[$hr[LAYER]]][$hr[BITRATE]] || $free_bitrate or return undef;
+	my $sample	= $samples[$hr[VERSION]][$hr[SAMPLE]];
+
+	my $use_smaller = $hr[VERSION] == 2 || $hr[VERSION] == 0; # FIXME VERSION == 2 means no support for MPEG2 multichannel
+	my $length = $layer[$hr[LAYER]]
+		?  (($use_smaller ? 72 : 144) * ($bitrate * 1000) / $sample + $hr[PAD])		# layers 2 & 3
+		: ((($use_smaller ? 6  : 12 ) * ($bitrate * 1000) / $sample + $hr[PAD]) * 4);	# layer 1
+	
+	my $clength = $length - 4 - ($hr[CRC] ? 0 : 2);
+	(read $fh, my($content), $clength or return undef) == $clength or return undef; # appearantly header length is included... learned this the hard way.
+	
+	my $self = bless {}, $pkg;
+	
+	%$self = (
+		binhead	=> $header,		# binary header
+		header	=> \@hr,		# array of integer header records
+		content	=> $content,	# the actuaol content of the frame, excluding the header and crc
+		length	=> $length,		# the length of the header + content == length($frame->content()) + 4 + ($frame->crc() ? 2 : 0);
+		bitrate	=> $bitrate,	# the bitrate, in kilobits
+		sample	=> $sample,		# the sample rate, in Hz
+		offset	=> $offset,		# the offset where the header was found in the handle, based on tell
+		crc_sum	=> $sum,		# the bytes of the network order short that is the crc sum
+	);
+
+	$self;
+}
+
+# methods
+
+sub asbin { # binary representation of the frame
+	my $self = shift;
+	$self->{binhead} . $self->{crc_sum} . $self->{content}
+}
+
+sub content { # byte content of frame, no header, no CRC sum
+	my $self = shift;
+	$self->{content}
+}
+
+sub header { # array of records in list context, binary header in scalar context
+	my $self = shift;
+	wantarray
+		? @{ $self->{header} }
+		: $self->{binhead}
+}
+
+sub crc	{ # the actual sum bytes
+	my $self = shift;
+	$self->{crc_sum}
+}
+
+sub has_crc { # does a crc exist?
+	my $self = shift;
+	not $self->{header}[CRC];
+}
+
+sub length { # length of frame in bytes, including header and header CRC
+	my $self = shift;
+	$self->{length}
+}
+
+sub bitrate { # symbolic bit rate
+	my $self = shift;
+	$self->{bitrate}
+}
+
+sub free_bitrate {
+	my $self = shift;
+	$self->{header}[BITRATE] == 0;
+}
+
+sub sample { # symbolic sample rate
+	my $self = shift;
+	$self->{sample}
+}
+
+sub channels { # the data we want is the data in the header in this case
+	my $self = shift;
+	$self->{header}[CHANMODE]
+}
+
+sub stereo {
+	my $self = shift;
+	$self->channels == 0;
+}
+
+sub joint_stereo {
+	my $self = shift;
+	$self->channels == 1;
+}
+
+sub dual_channel {
+	my $self = shift;
+	$self->channels == 2;
+}
+
+sub mono {
+	my $self = shift;
+	$self->channels == 3;
+}
+
+sub modext {
+	my $self = shift;
+	$self->{header}[MODEXT];
+}
+
+sub _jmodes {
+	my $self = shift;
+	$self->layer3 || die "Joint stereo modes only make sense with layer III"
+}
+
+sub normal_joint_stereo {
+	my $self = shift;
+	$self->_jmodes && $self->joint_stereo && !$self->intensity_stereo && !$self->ms_stereo;
+}
+
+sub intensity_stereo {
+	my $self = shift;
+	$self->_jmodes and $self->joint_stereo and $self->modext % 2 == 1;
+}
+
+sub intensity_stereo_only {
+	my $self = shift;
+	$self->_jmodes && $self->intensity_stereo && !$self->ms_stereo;
+}
+
+sub ms_stereo {
+	my $self = shift;
+	$self->_jmodes and $self->joint_stereo and $self->modext > 1;
+}
+
+sub ms_stereo_only {
+	my $self = shift;
+	$self->_jmodes and $self->ms_stereo && !$self->intensity_stereo;
+}
+
+sub ms_and_intensity_stereo {
+	my $self = shift;
+	$self->_jmodes and $self->ms_stereo && $self->intensity_stereo;
+}
+*intensity_and_ms_stereo = \&ms_and_intensity_stereo;
+
+sub _bands {
+	my $self = shift;
+	!$self->layer3 || die "Intensity stereo bands only make sense with layers I I";
+}
+
+sub band_4 {
+	my $self = shift;
+	$self->_bands and $self->modext == 0;
+}
+
+sub band_8 {
+	my $self = shift;
+	$self->_bands and $self->modext == 1;
+}
+
+sub band_12 {
+	my $self = shift;
+	$self->_bands and $self->modext == 2;
+}
+
+sub band_16 {
+	my $self = shift;
+	$self->_bands and $self->modext == 3;
+}
+
+sub any_stereo {
+	my $self = shift;
+	$self->stereo or $self->joint_stereo;
+}
+
+sub seconds { # duration in floating point seconds
+	my $self = shift;
+
+	no integer;
+	$layer[$self->{header}[LAYER]]
+		? (($version[$self->{header}[VERSION]] == 0 ? 1152 : 576) / $self->sample())
+		: (($version[$self->{header}[VERSION]] == 0 ? 384 : 192) / $self->sample())
+}
+
+sub framerate {
+	no integer;
+	1 / $_[0]->seconds();
+}
+
+sub pad	{
+	my $self = shift;
+	$self->{header}[PAD];
+}
+
+sub home {
+	my $self = shift;
+	$self->{header}[HOME];
+}
+
+sub copyright {
+	my $self = shift;
+	$self->{header}[COPY];
+}
+
+sub private {
+	my $self = shift;
+	$self->{header}[PRIVATE];
+}
+
+sub version {
+	my $self = shift;
+	$self->{header}[VERSION];
+}
+
+sub mpeg1 {
+	my $self = shift;
+	$self->version == 3;
+}
+
+sub mpeg2 {
+	my $self = shift;
+	$self->version == 2;
+}
+
+sub mpeg25 {
+	my $self = shift;
+	$self->version == 0;
+}
+
+sub layer {
+	my $self = shift;
+	$self->{header}[LAYER];
+}
+
+sub layer1 {
+	my $self = shift;
+	$self->layer == 3;
+}
+
+sub layer2 {
+	my $self = shift;
+	$self->layer == 2;
+}
+
+sub layer3 {
+	my $self = shift;
+	$self->layer == 1;
+}
+
+sub emph {
+	my $self = shift;
+	$self->{header}[EMPH];
+}
+*emphasize = \&emph;
+*emphasise = \&emph;
+*emphasis = \&emph;
+
+sub offset { # the position in the handle where the frame was found
+	my $self = shift;
+	$self->{offset}
+}
+
+sub crc_ok {
+	not shift->broken;
+}
+
+sub broken { # was the crc broken?
+    my $self = shift;
+    if (not defined $self->{broken}){
+		return $self->{broken} = 0 unless $self->has_crc; # we assume it's OK if we have no CRC at all
+		return $self->{broken} = 0 unless (($self->{header}[LAYER] & 0x02) == 0x00); # can't sum
+
+		my $bits = $protbits[$layer[$self->{header}[LAYER]]][$self->{header}[CHANMODE] == 0x03 ? 0 : 1 ];
+		my $i;
+			
+		my $c = 0xffff;
+			
+		$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ ord((substr($self->{binhead},2,1)))) & 0xff];
+		$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ ord((substr($self->{binhead},3,1)))) & 0xff];
+
+		for ($i = 0; $bits >= 32; do { $bits-=32; $i+=4 }){
+			my $data = unpack("N",substr($self->{content},$i,4));
+				
+			$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ ($data >> 24)) & 0xff];
+			$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ ($data >> 16)) & 0xff];
+			$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ ($data >>  8)) & 0xff];
+			$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ ($data >>  0)) & 0xff];
+				
+		}
+		while ($bits >= 8){
+			$c = ($c << 8) ^ $crc_table[(($c >> 8) ^ (ord(substr($self->{content},$i++,1)))) & 0xff];
+		} continue { $bits -= 8 }
+		$self->{broken} = (( $c & 0xffff ) != unpack("n",$self->{crc_sum})) ? 1 : 0;
+    }
+
+    return $self->{broken};
+}
+
+
+# tie hack
+
+sub TIEHANDLE { bless \$_[1],$_[0] } # encapsulate the handle to save on unblessing and stuff
+sub READLINE { (ref $_[0])->read(${$_[0]}) } # read from the encapsulated handle
 
 1; # keep your mother happy
 
