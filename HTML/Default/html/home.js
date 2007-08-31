@@ -6,40 +6,7 @@ var MainMenu = function(){
 			Ext.EventManager.onWindowResize(this.onResize, this);
 			Ext.EventManager.onDocumentReady(this.onResize, this, true);
 
-			search = new Ext.form.TextField({
-				validationDelay: 50,
-				validateOnBlur: false,
-
-				validator: function(value){
-					if (value.length > 2) {
-						el = Ext.get('search-results')
-						
-						// don't wait for an earlier update to finish
-						um = el.getUpdateManager();
-						if (um.isUpdating())
-							um.abort();
-						
-						el.load(
-							{
-								url: 'search.xml?query=' + value + '&player=' + player,
-								method: 'GET',
-								timeout: 5000
-							}, 
-							{},
-							function(){
-								Utils.addBrowseMouseOver();
-								MainMenu.showPanel('search');
-								MainMenu.onResize();
-							}
-						);
-					}
-					else
-						MainMenu.showPanel('my_music');
-						
-					return true;
-				}
-			});
-			search.applyTo('livesearch');
+			Utils.initSearch();
 
 			anchor = document.location.href.match(/#(.*)\?/)
 			if (!(anchor && anchor[1] && this.showPanel(anchor[1].toLowerCase()))) {

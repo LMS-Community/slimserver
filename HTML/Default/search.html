@@ -1,0 +1,75 @@
+[% pagetitle = 'Search'; pageicon = 'Search' %]
+[% maestroScripts = BLOCK %]
+	<script type="text/javascript">
+		Ext.EventManager.onDocumentReady(function(){
+			[% IF !browse_items.size %]
+			Utils.initSearch();
+			[% END %]
+
+			new Ext.Button('searchButton', {
+				text: '[% "SEARCH" | string %]',
+				type: 'submit',
+				handler: function(){
+					document.forms.searchForm.submit();
+				}
+			});
+
+			new Ext.Button('advSearchButton', {
+				text: '[% "ADVANCEDSEARCH" | string %]',
+				type: 'submit',
+				handler: function(){
+					Ext.get('searchForm').setVisibilityMode(Ext.Element.DISPLAY);
+					Ext.get('searchForm').setVisible(false);
+					Ext.get('search-results').update('');
+
+					if (el = Ext.get('browsedbList'))
+						el.update('');
+
+					if (el = Ext.get('advSearchForm'))
+						el.setVisible(true);
+				}
+			});
+		});
+	</script>
+[% END %]
+[% pwd_list = BLOCK %]
+	<a href="search.html?player=[% playerURI %][% IF liveSearch %]&amp;livesearch=1[% END %]">[% "SEARCH" | string %]</a>
+[% END %]
+[% PROCESS pageheader.html dontscroll=1 %]
+
+	<form id="searchForm" name="searchForm" method="GET" action="search.html">
+		<table><tr>
+			<td><input type="text" id="livesearch" name="query" size="40" 'value="[% query %]"/></td>
+			<td><span id="searchButton"></span></td>
+			<td><span id="advSearchButton"></span></td>
+		</tr></table>
+		<input type="hidden" value="1" name="manualSearch">
+		<input type="hidden" value="[% player %]" name="player">
+	</form>
+
+	[% PROCESS advanced_search.html ajaxUpdate=1 resultClass="resultsPage" %]
+	
+	<div id="browsedbHeader">
+		[% IF searchError %]
+			[% searchError %]
+		[% END %]
+		[% IF pageinfo.totalpages && pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
+	</div>
+	
+	<div id="search-results"></div>
+
+	[% IF browse_items.size %]
+		<div id="browsedbList">
+
+			[% FOREACH item = browse_items %]
+				[% PROCESS browsedbitems_list.html %]
+			[% END %]
+
+		</div>
+	[% ELSIF manualSearch %]
+		[% "NO_SEARCH_RESULTS" | string %]
+	[% END %]
+	
+	[% IF pageinfo.totalpages && pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
+
+[% PROCESS pagefooter.html %]

@@ -127,11 +127,23 @@ div.thumbwrap {
 }
 
 #livesearch {
-	position: absolute;
-	right: 30px;
 	height: 12pt;
 	width: 100px;
 	font-size: 11px;
+}
+
+#searchForm {
+	margin-left: 10px;
+}
+
+form#advSearchForm.resultsPage {
+	height: 0px;
+	display: none;
+}
+
+.titlebox_content #livesearch {
+	position: absolute;
+	right: 30px;
 }
 
 .currentSong a,

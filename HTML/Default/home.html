@@ -55,6 +55,11 @@
 			PROCESS menuItem token=link.key category='browse';
 		END;
 	END;
+	FOREACH link = additionalLinks.search;
+		IF link.key == 'SEARCHMUSIC';
+			PROCESS menuItem token=link.key category='search';
+		END;
+	END;
 END %]
 
 [% radioItems = BLOCK;

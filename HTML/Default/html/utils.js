@@ -262,6 +262,51 @@ var Utils = function(){
 			});
 		},
 
+
+		initSearch : function(searchField){
+			search = new Ext.form.TextField({
+				validationDelay: 50,
+				validateOnBlur: false,
+
+				validator: function(value){
+					if (value.length > 2) {
+						el = Ext.get('search-results')
+						
+						// don't wait for an earlier update to finish
+						um = el.getUpdateManager();
+						if (um.isUpdating())
+							um.abort();
+						
+						el.load(
+							{
+								url: 'search.xml?query=' + value + '&player=' + player,
+								method: 'GET',
+								timeout: 5000
+							}, 
+							{},
+							function(){
+								Utils.addBrowseMouseOver();
+								try {
+									MainMenu.showPanel('search');
+									MainMenu.onResize();
+								}
+								catch(e){}
+							}
+						);
+					}
+					else
+						try {
+							MainMenu.showPanel('my_music');
+						}
+						catch(e){}
+						
+					return true;
+				}
+			});
+			search.applyTo(searchField || 'livesearch');
+		},
+
+
 		setCookie : function(name, value) {
 			cookieManager.set(name, value);
 		},

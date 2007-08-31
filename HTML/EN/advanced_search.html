@@ -3,7 +3,7 @@
 [% pwd_list = BLOCK %]
 <a href="advanced_search.html?player=[% playerURI %]">[% "ADVANCEDSEARCH" | string %]</a>
 [% END %]
-[% PROCESS pageheader.html %]
+[% IF NOT ajaxUpdate; PROCESS pageheader.html dontscroll=1; END %]
 [% FILTER null %]
 [% MACRO logicalSelectionBlock BLOCK %]
 	<select name="[% name %]">
@@ -33,7 +33,7 @@
 	</tr>
 [% END %]
 [% END %]
-	<form action="advanced_search.html" method="GET" name="searchForm"><br>
+	<form action="advanced_search.html" method="GET" name="searchForm" id="advSearchForm" [% IF resultClass || browse_items.size %]class="[% resultClass || "resultsPage" %]"[% END %]><br>
 	<input type="hidden" value="[% player %]" name="player">
 
 	<table class="border" border="0" cellpadding="3" cellspacing="1" width="100%">
@@ -154,14 +154,12 @@
 		<td>&nbsp;</td>
 		<td class="content" valign="middle">
 			<br>
-			<input value="[% "SEARCH" | string %]" type="submit">
+			<input value="[% "SEARCH" | string %]" id="submitAdvSearch" type="submit">
 			<input value="[% "CLEAR"  | string %]" type="reset">
 		</td>
 	</tr>
 	
-	</tbody></table></form>
-
-	<br>
+	</tbody></table><br></form>
 
 	<div id="browsedbHeader">
 		[% IF searchError %]
@@ -171,21 +169,21 @@
 		[% IF pageinfo.totalpages && pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %] 
 	</div>
 
-	<div id="browsedbList">
 		
-		[% IF browse_items.size %]
+	[% IF browse_items.size %]
+		<div id="browsedbList">
 
 			[% FOREACH item = browse_items %]
 				[% PROCESS browsedbitems_list.html %]
 			[% END %]
 
-		[% ELSIF search %]
+		</div>
+	[% ELSIF search %]
 
-			[% "NO_SEARCH_RESULTS" | string %]
+		[% "NO_SEARCH_RESULTS" | string %]
 
-		[% END %]
-	</div>
+	[% END %]
 
 [% IF pageinfo.totalpages && pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
 
-[% PROCESS pagefooter.html %]
+[% IF not ajaxUpdate; PROCESS pagefooter.html; END %]
