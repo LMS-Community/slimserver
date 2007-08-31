@@ -31,7 +31,7 @@ L<Slim::Utils::Misc> serves as a collection of miscellaneous utility
 use strict;
 use Exporter::Lite;
 
-our @EXPORT = qw(assert bt msg msgf watchDog errorMsg specified);
+our @EXPORT = qw(assert bt msg msgf watchDog errorMsg specified validMacAddress);
 
 use Config;
 use Cwd ();
@@ -1306,6 +1306,27 @@ Returns true if running as a Windows service.
 sub runningAsService {
 
 	if (defined(&PerlSvc::RunningAsService) && PerlSvc::RunningAsService()) {
+		return 1;
+	}
+
+	return 0;
+}
+
+=head2 validMacAddress ( )
+
+Returns true if string is in correct form of a mac address
+
+=cut
+
+sub validMacAddress {
+
+	#return true if $string is a mac address, otherwise return false
+	my $string = shift;
+
+	my $d = "[0-9A-Fa-f]";
+	my $dd = $d . $d;
+
+	if ($string =~ /$dd:$dd:$dd:$dd:$dd:$dd/) {
 		return 1;
 	}
 

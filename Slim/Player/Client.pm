@@ -397,6 +397,8 @@ sub getClient {
 			return $value if (name($value) eq $id);
 			return $value if (id($value) eq $id);
 		}
+		# none of these matched, so return undef
+		return undef;
 	}
 
 	return($ret);

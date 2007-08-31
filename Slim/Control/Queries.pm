@@ -34,7 +34,7 @@ use strict;
 use Scalar::Util qw(blessed);
 use URI::Escape;
 
-use Slim::Utils::Misc qw(specified);
+use Slim::Utils::Misc qw( specified validMacAddress );
 use Slim::Utils::Alarms;
 use Slim::Utils::Log;
 use Slim::Utils::Unicode;
@@ -1362,9 +1362,10 @@ sub playerXQuery {
 	}
 	
 	# get our parameters
-	my $entity      = $request->getRequest(1);
+	my $entity;
+	$entity      = $request->getRequest(1);
 	# if element 1 is 'player', that means next element is the entity
-	$entity         = $request->getResults(2) if $entity eq 'player';  
+	$entity      = $request->getRequest(2) if $entity eq 'player';  
 	my $clientparam = $request->getParam('_IDorIndex');
 	
 	if ($entity eq 'count') {
@@ -1374,7 +1375,7 @@ sub playerXQuery {
 		my $client;
 		
 		# were we passed an ID?
-		if (defined $clientparam && Slim::Player::Client::getClient($clientparam)) {
+		if (defined $clientparam && Slim::Utils::Misc::validMacAddress($clientparam)) {
 
 			$client = Slim::Player::Client::getClient($clientparam);
 
@@ -1406,7 +1407,6 @@ sub playerXQuery {
 	
 	$request->setStatusDone();
 }
-
 
 sub playersQuery {
 	my $request = shift;
@@ -2277,8 +2277,8 @@ sub serverstatusQuery_filter {
 			}
 		}
 	}
-	if ($request->isCommand([['playerpref', 'playername']])) {
-		return 1;
+	if ($request->isCommand([['name']])) {
+		return 1.3;
 	}
 	
 	return 0;

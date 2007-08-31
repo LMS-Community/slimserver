@@ -100,12 +100,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  N    player          model                       <index or ID>               ?
  N    player          displaytype                 <index or ID>               ?
  N    players         <startindex>                <numitems>                  <tagged parameters>
- N    <index or ID>   player                      ip                          ?
- N    <index or ID>   player                      id|address                  ?
- N    <index or ID>   player                      name                        ?
- N    <index or ID>   player                      model                       ?
- N    <index or ID>   player                      displaytype                 ?
- N    <index or ID>   player                      name                        ?
+ Y    <ID>            name                        <new player name>
 
 
 =head2 PLAYLISTS
@@ -506,12 +501,7 @@ sub init {
     addDispatch(['player',         'ip',             '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
     addDispatch(['player',         'model',          '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
     addDispatch(['player',         'name',           '_IDorIndex', '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
-    addDispatch(['_IDorIndex',     'player',         'address',    '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
-    addDispatch(['_IDorIndex',     'player',         'displaytype','?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
-    addDispatch(['_IDorIndex',     'player',         'id',         '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
-    addDispatch(['_IDorIndex',     'player',         'ip',         '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
-    addDispatch(['_IDorIndex',     'player',         'model',      '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
-    addDispatch(['_IDorIndex',     'player',         'name',       '?'],                               [0, 1, 0, \&Slim::Control::Queries::playerXQuery]);
+    addDispatch(['_ID',            'name',           '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::playernameCommand]);
     addDispatch(['playerpref',     '_prefname',      '?'],                                             [1, 1, 0, \&Slim::Control::Queries::playerprefQuery]);
     addDispatch(['playerpref',     'validate',       '_prefname',  '_newvalue'],                       [1, 1, 0, \&Slim::Control::Queries::prefValidateQuery]);
     addDispatch(['playerpref',     '_prefname',      '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::playerprefCommand]);
