@@ -129,8 +129,9 @@ sub request {
 	my $class   = ref $self;
 	my $request = $self->requestString($args->{'client'}, $url, $post);
 	
-	${*$self}{'client'} = $args->{'client'};
-	${*$self}{'create'} = $args->{'create'};
+	${*$self}{'client'}  = $args->{'client'};
+	${*$self}{'create'}  = $args->{'create'};
+	${*$self}{'bitrate'} = $args->{'bitrate'};
 	
 	$log->info("Request: $request");
 

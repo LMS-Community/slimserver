@@ -24,23 +24,24 @@ sub new {
 	my $args   = shift;
 
 	my $client = $args->{client};
+	my $url    = $args->{url};
+	
 	my $track  = $client->pluginData('currentTrack') || {};
+	
+	$log->debug( 'Remote streaming Pandora track: ' . $track->{audioUrl} );
 
 	return unless $track->{audioUrl};
 
 	my $sock = $class->SUPER::new( {
-		url    => $track->{audioUrl},
-		client => $client
+		url     => $track->{audioUrl},
+		client  => $client,
+		bitrate => 128_000,
 	} ) || return;
 	
 	${*$sock}{contentType} = 'audio/mpeg';
-	
-	# XXX: Need some way to get the track length for remote streaming mode
-	
+
 	# XXX: Time counter is not right, it starts from 0:00 as soon as next track 
-	# begins streaming
-	
-	# XXX: Sync not working yet (players will play different tracks)
+	# begins streaming (slimp3/SB1 only)
 	
 	return $sock;
 }
@@ -153,12 +154,10 @@ sub gotNextTrack {
 	
 	my $track = eval { from_json( $http->content ) };
 	
-	if ( $log->is_debug ) {
-		$log->debug( "Got Pandora track: " . Data::Dump::dump($track) );
-	}
-	
-	if ( $track->{error} ) {
+	if ( $@ || $track->{error} ) {
 		# We didn't get the next track to play
+		$log->warn( 'Pandora error getting next track: ' . ( $@ || $track->{error} ) );
+		
 		my $url = Slim::Player::Playlist::url($client);
 
 		setCurrentTitle( $client, $url, $client->string('PLUGIN_PANDORA_NO_TRACKS') );
@@ -168,6 +167,10 @@ sub gotNextTrack {
 		Slim::Player::Source::playmode( $client, 'stop' );
 	
 		return;
+	}
+	
+	if ( $log->is_debug ) {
+		$log->debug( 'Got Pandora track: ' . Data::Dump::dump($track) );
 	}
 	
 	# Watch for playlist commands
@@ -213,6 +216,19 @@ sub gotNextTrackError {
 sub onDecoderUnderrun {
 	my ( $class, $client, $nextURL, $callback ) = @_;
 	
+	# Special handling needed when synced
+	if ( Slim::Player::Sync::isSynced($client) ) {
+		if ( !Slim::Player::Sync::isMaster($client) ) {
+			# Only the master needs to fetch next track info
+			$log->debug('Letting sync master fetch next Pandora track');
+			return;
+		}
+		else {
+			# XXX: Source does not call skipahead when synced for some reason
+			# Need to restart playback here?
+		}
+	}
+
 	# Flag that we don't want any buffering messages while loading the next track,
 	$client->pluginData( showBuffering => 0 );
 	
@@ -258,7 +274,7 @@ sub parseDirectHeaders {
 	my $url     = shift;
 	my @headers = @_;
 	
-	my $bitrate     = 128000;
+	my $bitrate     = 128_000;
 	my $contentType = 'mp3';
 	
 	# Clear previous duration, since we're using the same URL for all tracks
@@ -357,6 +373,13 @@ sub canDoAction {
 
 sub canDirectStream {
 	my ( $class, $client, $url ) = @_;
+	
+	# We need to check with the base class (HTTP) to see if we
+	# are synced or if the user has set mp3StreamingMethod
+	my $base = $class->SUPER::canDirectStream( $client, $url );
+	if ( !$base ) {
+		return 0;
+	}
 	
 	my $track = $client->pluginData('currentTrack') || {};
 	

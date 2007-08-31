@@ -124,22 +124,6 @@ sub onCommand {
 	# XXX: When hitting play while currently listening to another Rhapsody track,
 	# no logging is performed
 	
-	# Clear any previous outstanding rpds queries
-	cancel_rpds($client);
-	
-	# Always get a new playback session
-	$log->debug("Requesting new playback session...");
-	
-	# Update the 'Connecting...' text
-	$client->suppressStatus(1);
-	displayStatus( $client, $url, 'PLUGIN_RHAPSODY_DIRECT_GETTING_TRACK_INFO', 30 );
-	
-	# Clear old radio data if any
-	$client->pluginData( radioTrack => 0 );
-	
-	# Display buffering info on loading the next track
-	$client->pluginData( showBuffering => 1 );
-	
 	# Get login info from SN if we don't already have it
 	my $account = $client->pluginData('account');
 	
@@ -169,12 +153,61 @@ sub onCommand {
 		return;
 	}
 	
+	$log->debug("Ending any previous playback session");
+	
+	my @clients;
+	
+	if ( Slim::Player::Sync::isSynced($client) ) {
+		# if synced, send this packet to all slave players
+		my $master = Slim::Player::Sync::masterOrSelf($client);
+		push @clients, $master, @{ $master->slaves };
+	}
+	else {
+		push @clients, $client;
+	}
+	
+	for my $client ( @clients ) {
+		# Clear any previous outstanding rpds queries
+		cancel_rpds($client);
+		
+		rpds( $client, {
+			data        => pack( 'c', 6 ),
+			callback    => \&getPlaybackSession,
+			onError     => sub {
+				getPlaybackSession( $client, undef, $url, $callback );
+			},
+			passthrough => [ $url, $callback ],
+		} );
+	}
+}
+
+sub getPlaybackSession {
+	my ( $client, $data, $url, $callback ) = @_;
+	
+	# Always get a new playback session
+	$log->debug( $client->id, ' Requesting new playback session...');
+	
+	# Update the 'Connecting...' text
+	$client->suppressStatus(1);
+	displayStatus( $client, $url, 'PLUGIN_RHAPSODY_DIRECT_GETTING_TRACK_INFO', 30 );
+	
+	# Clear old radio data if any
+	$client->pluginData( radioTrack => 0 );
+	
+	# Display buffering info on loading the next track
+	$client->pluginData( showBuffering => 1 );
+	
+	# Get login info
+	my $account = $client->pluginData('account');
+	
 	my $packet = pack 'cC/a*C/a*C/a*C/a*', 
 		2,
 		encode_entities( $account->{username}->[0] ),
 		$account->{cobrandId}, 
 		encode_entities( decode_base64( $account->{password}->[0] ) ), 
 		$account->{clientType};
+	
+	# When synced, all players will make this request to get a new playback session
 	
 	rpds( $client, {
 		data        => $packet,
@@ -225,6 +258,12 @@ sub gotPlaybackSession {
 			$log->debug("Radio mode: Next track is $url");
 		}
 		else {
+			
+			if ( Slim::Player::Sync::isSynced($client) && !Slim::Player::Sync::isMaster($client) ) {
+				$log->debug('Radio mode: Letting master get next track');
+				return;
+			}
+			
 			# Get the next track and call us back
 			$log->debug('Radio mode: Getting next track...');
 		
@@ -242,13 +281,18 @@ sub gotPlaybackSession {
 	my ($trackId) = $url =~ /(Tra\.[^.]+)/;
 	
 	# Get metadata for normal tracks
-	getTrackMetadata( $client, {
-		trackId     => $trackId,
-		callback    => \&gotTrackMetadata,
-		passthrough => [ $client ],
-	} );
+	# If synced, only master should do this
+	
+	if ( !Slim::Player::Sync::isSynced($client) || Slim::Player::Sync::isMaster($client) ) {
+		getTrackMetadata( $client, {
+			trackId     => $trackId,
+			callback    => \&gotTrackMetadata,
+			passthrough => [ $client ],
+		} );
+	}
 	
 	# Get the track URL via the player
+	# When synced, all players will do this to initialize themselves for playback
 	rpds( $client, {
 		data        => pack( 'cC/a*', 3, $trackId ),
 		callback    => \&gotTrackInfo,
@@ -359,18 +403,22 @@ sub onJump {
 			onError     => sub {
 				# We don't really care if the logging call fails,
 				# so allow onError to work like the normal callback
-				getNextTrackInfo( $client, undef, $nextURL, $callback );
+				getNextTrackInfo( $client, undef, $nextURL, $callback, 'all' );
 			},
-			passthrough => [ $nextURL, $callback ],
+			passthrough => [ $nextURL, $callback, 'all' ],
 		} );
 	}
 	else {
-		getNextTrackInfo( $client, undef, $nextURL, $callback );
+		getNextTrackInfo( $client, undef, $nextURL, $callback, 'all' );
 	}
 }
 
 sub getNextTrackInfo {
-    my ( $client, undef, $nextURL, $callback ) = @_;
+    my ( $client, undef, $nextURL, $callback, $requestMode ) = @_;
+
+	# requestMode is used when synced to indicate whether only this client
+	# or all clients need to send RPDS 3 packets
+	$requestMode ||= 'client';
 
 	# Radio mode, get next track ID
 	if ( my ($stationId) = $nextURL =~ m{rhapd://(.+)\.rdr} ) {
@@ -381,13 +429,19 @@ sub getNextTrackInfo {
 			$log->debug("Radio mode: Next track is $nextURL");
 		}
 		else {
+			
+			if ( Slim::Player::Sync::isSynced($client) && !Slim::Player::Sync::isMaster($client) ) {
+				$log->debug('Radio mode: Letting master get next track');
+				return;
+			}
+			
 			# Get the next track and call us back
 			$log->debug("Radio mode: Getting info about next track ($nextURL)...");
 
 			getNextRadioTrack( $client, {
 				stationId   => $stationId,
 				callback    => \&getNextTrackInfo,
-				passthrough => [ $client, undef, $nextURL, $callback ],
+				passthrough => [ $client, undef, $nextURL, $callback, 'all' ],
 			} );
 			return;
 		}
@@ -397,18 +451,34 @@ sub getNextTrackInfo {
 	my ($trackId) = $nextURL =~ /(Tra\.[^.]+)/;
 	
 	# Get metadata for normal tracks
-	getTrackMetadata( $client, {
-		trackId     => $trackId,
-		callback    => \&gotTrackMetadata,
-		passthrough => [ $client ],
-	} );
+	# If synced, only the master should do this
+	if ( !Slim::Player::Sync::isSynced($client) || Slim::Player::Sync::isMaster($client) ) {
+		getTrackMetadata( $client, {
+			trackId     => $trackId,
+			callback    => \&gotTrackMetadata,
+			passthrough => [ $client ],
+		} );
+	}
 	
-	rpds( $client, {
-		data        => pack( 'cC/a*', 3, $trackId ),
-		callback    => \&gotTrackInfo,
-		onError     => \&gotTrackError,
-		passthrough => [ $nextURL, $callback ],
-	} );
+	my @clients;
+	
+	if ( Slim::Player::Sync::isSynced($client) && $requestMode eq 'all' ) {
+		# if synced and requestMode is all, send this packet to all slave players
+		my $master = Slim::Player::Sync::masterOrSelf($client);
+		push @clients, $master, @{ $master->slaves };
+	}
+	else {
+		push @clients, $client;
+	}
+	
+	for my $client ( @clients ) {
+		rpds( $client, {
+			data        => pack( 'cC/a*', 3, $trackId ),
+			callback    => \&gotTrackInfo,
+			onError     => \&gotTrackError,
+			passthrough => [ $nextURL, $callback ],
+		} );
+	}
 }
 
 # On an underrun, restart radio or skip to next track
@@ -659,15 +729,18 @@ sub gotTrackInfo {
 	# When done, callback to Scanner, which will continue on to playback
 	# This is a callback to Source::decoderUnderrun if we are loading the next track
 
-	my $dns = Slim::Networking::Async->new;
-	$dns->open( {
-		Host        => URI->new($mediaUrl)->host,
-		Timeout     => 3, # Default timeout of 10 is too long, 
-		                  # by the time it fails player will underrun and stop
-		onDNS       => $callback,
-		onError     => $callback, # even if it errors, keep going
-		passthrough => [],
-	} );
+	# If synced, only the master calls back
+	if ( !Slim::Player::Sync::isSynced($client) || Slim::Player::Sync::isMaster($client) ) {
+		my $dns = Slim::Networking::Async->new;
+		$dns->open( {
+			Host        => URI->new($mediaUrl)->host,
+			Timeout     => 3, # Default timeout of 10 is too long, 
+			                  # by the time it fails player will underrun and stop
+			onDNS       => $callback,
+			onError     => $callback, # even if it errors, keep going
+			passthrough => [],
+		} );
+	}
 	
 	# Watch for stop commands for logging purposes
 	Slim::Control::Request::subscribe( 
@@ -718,7 +791,8 @@ sub gotTrackError {
 		handleError( $error, $client );
 	}
 	else {
-		Slim::Player::Source::jumpto( $client, '+1' );
+		$client->execute([ 'playlist', 'jump', '+1' ]);
+		#Slim::Player::Source::jumpto( $client, '+1' );
 	}
 }
 
@@ -786,17 +860,29 @@ sub stopCallback {
 				$data = pack( 'cC/a*', 4, $songtime );
 			}
 			
-			# Call endPlaybackSession when stopping
-			rpds( $client, {
-				data        => $data,
-				callback    => \&endPlaybackSession,
-				onError     => sub {
-					# We don't really care if the logging call fails,
-					# so allow onError to work like the normal callback
-					endPlaybackSession( $client );
-				},
-				passthrough => [],
-			} );
+			my @clients;
+
+			if ( Slim::Player::Sync::isSynced($client) ) {
+				# if synced, send this packet to all slave players
+				my $master = Slim::Player::Sync::masterOrSelf($client);
+				push @clients, $master, @{ $master->slaves };
+			}
+			else {
+				push @clients, $client;
+			}
+			
+			for my $client ( @clients ) {
+				rpds( $client, {
+					data        => $data,
+					callback    => \&endPlaybackSession,
+					onError     => sub {
+						# We don't really care if the logging call fails,
+						# so allow onError to work like the normal callback
+						endPlaybackSession( $client );
+					},
+					passthrough => [],
+				} );
+			}
 		}
 	}
 }
@@ -807,7 +893,7 @@ sub endPlaybackSession {
 	rpds( $client, {
 		data        => pack( 'c', 6 ),
 		callback    => sub {},
-		onError     => sub {}, # doesn't matter if this one fails
+		onError     => sub {},
 		passthrough => [],
 	} );
 }

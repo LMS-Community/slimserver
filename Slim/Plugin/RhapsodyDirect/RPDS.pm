@@ -9,6 +9,7 @@ use strict;
 use Exporter::Lite;
 use HTML::Entities qw(encode_entities);
 use MIME::Base64 qw(decode_base64);
+use Scalar::Util qw(blessed);
 
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -35,6 +36,8 @@ sub rpds {
 	
 	Slim::Utils::Timers::killTimers( $client, \&rpds_timeout );
 	Slim::Utils::Timers::killTimers( $client, \&rpds_resend );
+	
+	return unless blessed($client);
 	
 	# Save callback info for rpds_handler
 	$rpds_args->{$client} = $args;
@@ -125,6 +128,7 @@ sub rpds_handler {
 		if ( $ENV{SLIM_SERVICE} ) {
 			logError( $client, 'RPDS_EA_FAILED' );
 		}
+		$log->debug('RPDS: getEA failed');
 		return;
 	}
 	
@@ -151,9 +155,6 @@ sub rpds_handler {
 			
 			my $error = $client->string('PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION');
 			
-			# Stop the player
-			Slim::Player::Source::playmode( $client, 'stop' );
-			
 			# Track session errors so we don't get in a loop
 			my $sessionErrors = $client->pluginData('sessionErrors') || 0;
 			$sessionErrors++;
@@ -164,12 +165,25 @@ sub rpds_handler {
 				# On the second error, give up
 				$log->debug("Giving up after multiple invalid session errors");
 				
+				# Stop the player
+				Slim::Player::Source::playmode( $client, 'stop' );
+				
 				handleError( $error, $client );
 				
 				return;
 			}
 			
 			$client->pluginData( sessionErrors => $sessionErrors );
+			
+			# Retry if command was 3 to get track info
+			if ( $sent_cmd eq '3' ) {
+				$log->debug( $client->id, ' Getting a new session and retrying' );
+				retry_new_session( $client, $rpds );
+				return;
+			}
+			
+			# Stop the player
+			Slim::Player::Source::playmode( $client, 'stop' );
 			
 			my $restart = sub {
 				# Clear radio data if any, so we always get a new radio track
@@ -201,57 +215,22 @@ sub rpds_handler {
 	elsif ( $got_cmd eq '-2' ) {
 		# Player indicates it needs a new session
 		
+		# Ignore if command was 6 to end a session
+		if ( $sent_cmd eq '6' ) {
+			my $cb = $rpds->{onError} || sub {};
+			$cb->();
+			return;
+		}
+		
 		$log->warn( $client->id . " Received RPDS -2, player needs a new session");
 		
 		if ( $ENV{SLIM_SERVICE} ) {
 			logError( $client, 'RPDS_NO_SESSION' );
 		}
-
-		my $account = $client->pluginData('account');
 		
-		if ( !$account ) {
-			my $accountURL = Slim::Networking::SqueezeNetwork->url( '/api/rhapsody/account' );
+		# Get a new session and retry the previous rpds command
+		retry_new_session( $client, $rpds );
 
-			my $http = Slim::Networking::SqueezeNetwork->new(
-				\&Slim::Plugin::RhapsodyDirect::ProtocolHandler::gotAccount,
-				\&Slim::Plugin::RhapsodyDirect::ProtocolHandler::gotAccountError,
-				{
-					client => $client,
-					cb     => sub {
-						# reset the rpds and try again
-						$rpds_args->{$client} = $rpds;
-						$data_ref = pack 'c', '-2';
-						rpds_handler( $client, \$data_ref );
-					},
-					ecb    => sub {
-						my $error = shift;
-						$error = $client->string('PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT') . ": $error";
-						handleError( $error, $client );
-					},
-				},
-			);
-
-			$log->debug("Getting Rhapsody account from SqueezeNetwork");
-
-			$http->get( $accountURL );
-
-			return;
-		}
-
-		my $packet = pack 'cC/a*C/a*C/a*C/a*', 
-			2,
-			encode_entities( $account->{username}->[0] ),
-			$account->{cobrandId}, 
-			encode_entities( decode_base64( $account->{password}->[0] ) ), 
-			$account->{clientType};
-		
-		rpds( $client, {
-			data        => $packet,
-			callback    => \&rpds_resend,
-			onError     => \&handleError,
-			passthrough => [ $rpds ],
-		} );
-		
 		return;
 	}
 	elsif ( $got_cmd eq '-3' ) {
@@ -292,7 +271,7 @@ sub rpds_handler {
 	}	
 	
 	if ( !$rpds || $got_cmd ne $sent_cmd ) {
-		$log->warn( $client->id . ' Received unrequested or old RPDS packet, ignoring' );
+		$log->warn( $client->id . " Ignoring unrequested or old RPDS packet (got $got_cmd, expected $sent_cmd)" );
 		
 		if ( $ENV{SLIM_SERVICE} ) {
 			logError( $client, 'RPDS_OLD', "got $got_cmd, ignoring" );
@@ -317,13 +296,66 @@ sub rpds_handler {
 sub rpds_resend {
 	my ( $client, undef, $rpds ) = @_;
 	
-	$log->warn( $client->id . ' Re-sending RPDS packet');
+	if ( $log->is_debug ) {
+		$log->debug( $client->id . ' Re-sending RPDS packet: ' . Data::Dump::dump( $rpds->{data} ) );
+	}
 	
 	rpds( $client, {
 		data        => $rpds->{data},
 		callback    => $rpds->{callback},
 		onError     => $rpds->{onError},
 		passthrough => $rpds->{passthrough},
+	} );
+}
+
+sub retry_new_session {
+	my ( $client, $rpds ) = @_;
+	
+	my $account = $client->pluginData('account');
+	
+	if ( !$account ) {
+		my $accountURL = Slim::Networking::SqueezeNetwork->url( '/api/rhapsody/account' );
+
+		my $http = Slim::Networking::SqueezeNetwork->new(
+			\&Slim::Plugin::RhapsodyDirect::ProtocolHandler::gotAccount,
+			\&Slim::Plugin::RhapsodyDirect::ProtocolHandler::gotAccountError,
+			{
+				client => $client,
+				cb     => sub {
+					# try again
+					retry_new_session( $client, $rpds );
+				},
+				ecb    => sub {
+					my $error = shift;
+					$error = $client->string('PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT') . ": $error";
+					handleError( $error, $client );
+				},
+			},
+		);
+
+		$log->debug("Getting Rhapsody account from SqueezeNetwork");
+
+		$http->get( $accountURL );
+
+		return;
+	}
+	
+	if ( $log->is_debug ) {
+		$log->debug( $client->id, ' Getting a new session and then retrying ' . Data::Dump::dump( $rpds->{data} ) );
+	}
+
+	my $packet = pack 'cC/a*C/a*C/a*C/a*', 
+		2,
+		encode_entities( $account->{username}->[0] ),
+		$account->{cobrandId}, 
+		encode_entities( decode_base64( $account->{password}->[0] ) ), 
+		$account->{clientType};
+	
+	rpds( $client, {
+		data        => $packet,
+		callback    => \&rpds_resend,
+		onError     => \&handleError,
+		passthrough => [ $rpds ],
 	} );
 }
 

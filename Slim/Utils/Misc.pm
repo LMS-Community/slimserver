@@ -855,7 +855,7 @@ sub readDirectory {
 
 	opendir(DIR, $dirname) || do {
 
-		logError("opendir on [$dirname] failed: $!");
+		$log->debug("opendir on [$dirname] failed: $!");
 
 		return @diritems;
 	};

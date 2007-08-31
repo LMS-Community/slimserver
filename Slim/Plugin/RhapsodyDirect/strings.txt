@@ -100,3 +100,6 @@ PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK
 PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT
 	DE	Konnte über das SqueezeNetwork keine Account-Informationen finden.
 	EN	Unable to retrieve account details from SqueezeNetwork.
+
+PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
+	EN	Invalid playback session.
