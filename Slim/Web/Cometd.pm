@@ -480,13 +480,13 @@ sub sendResponse {
 }
 
 sub handleRequest {
-	my $args = shift;
+	my $params = shift;
 	
-	my $clid     = $args->{clid};
-	my $cmd      = $args->{cmd};
-	my $channel  = $args->{channel};
-	my $id       = $args->{id};
-	my $response = defined $args->{response} ? $args->{response} : 1;
+	my $clid     = $params->{clid};
+	my $cmd      = $params->{cmd};
+	my $channel  = $params->{channel};
+	my $id       = $params->{id};
+	my $response = defined $params->{response} ? $params->{response} : 1;
 	
 	my $args = $cmd->[1];
 
