@@ -787,7 +787,11 @@ sub outputUnderrun {
 		$line2  = Slim::Music::Info::title($url);
 	}
 	
-	$client->showBriefly( $line1, $line2, 2 ) unless $client->display->sbName();
+	$client->showBriefly( {
+		line => [ $line1, $line2 ],
+		jive => undef,
+		cli  => undef,
+	}, 2 ) unless $client->display->sbName();
 	
 	# Setup a timer to check the buffer and unpause
 	$client->bufferStarted( Time::HiRes::time() ); # track when we started rebuffering
@@ -841,8 +845,12 @@ sub rebuffer {
 				my $url = Slim::Player::Playlist::url($client); 	 
 				$line2  = Slim::Music::Info::title($url);
 			}
-		
-			$client->showBriefly( $line1, $line2, 2 ) unless $client->display->sbName();
+
+			$client->showBriefly( {
+				line => [ $line1, $line2 ],
+				jive => undef,
+				cli  => undef,
+			}, 2 ) unless $client->display->sbName();
 		}
 		
 		Slim::Utils::Timers::setTimer( $client, Time::HiRes::time() + 1, \&rebuffer );

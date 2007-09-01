@@ -346,8 +346,13 @@ sub buffering {
 	my $nowPlaying = Slim::Buttons::Playlist::showingNowPlaying($client);
 	my $lastIR     = Slim::Hardware::IR::lastIRTime($client) || 0;
 	
-	if ( $nowPlaying || $lastIR < $client->bufferStarted() ) {
-		$client->showBriefly( $line1, $line2, 0.5 ) unless $client->display->sbName();
+	if ( !$client->display->sbName() && ($nowPlaying || $lastIR < $client->bufferStarted()) ) {
+
+		$client->showBriefly( {
+			line => [ $line1, $line2 ], 
+			jive => undef, 
+			cli  => undef
+		}, 0.5 );
 		
 		# Call again unless we've reached the threshold
 		if ( $stillBuffering ) {
@@ -597,6 +602,8 @@ sub upgradeFirmware_SDK5 {
 					'graphic-280x16' => 'small',
 					'text'           => 2,
 				},
+				'jive'  => undef,
+				'cli'   => undef,
 			} );
 
 			$lastFraction = $fraction;
