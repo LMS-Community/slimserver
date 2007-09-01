@@ -1,0 +1,26 @@
+# String file for InfoBrowser
+
+PLUGIN_INFOBROWSER
+	EN	Information Browser
+
+PLUGIN_INFOBROWSER_DESC
+	EN	Retrieve information from internet sources and displaying via Remote, Server or Player displays.  See the settings section for information about adding additional information sources.
+
+SETUP_PLUGIN_INFOBROWSER_DESC
+	EN	Information Browser allows you to read information from internet sources on your Squeezebox remote, server or player display.
+
+SETUP_PLUGIN_INFOBROWSER_EDIT
+	EN	Edit
+
+SETUP_PLUGIN_INFOBROWSER_EDIT_DESC
+	EN	Edit the top level Information Browser menu.  You may add RSS feeds, rearrange and delete items.
+
+SETUP_PLUGIN_INFOBROWSER_RESET
+	EN	Reset
+
+SETUP_PLUGIN_INFOBROWSER_RESET_DESC
+	EN	Reset the top level Information Browser menu to all default feeds plus all Addon feeds you have installed.
+
+SETUP_PLUGIN_INFOBROWSER_ADDONS
+	EN	Other information sources may be displayed by adding Information Browser addons.  More details of Information Browser addons can be found at: <a href="http://wiki.slimdevices.com/index.cgi?InformationBrowser">http://wiki.slimdevices.com/index.cgi?InformationBrowser</a>.
+

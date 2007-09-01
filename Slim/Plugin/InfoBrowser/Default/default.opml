@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="1.0">
+  <head title="Default Information Browser Sources">
+    <expansionState></expansionState>
+  </head>
+  <body>
+	<outline text="BBC News World" URL="http://news.bbc.co.uk/rss/newsonline_world_edition/front_page/rss.xml" />
+	<outline text="CNET News.com" URL="http://news.com.com/2547-1_3-0-5.xml" />
+	<outline text="New York Times" URL="http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml" />
+	<outline text="RollingStone.com Music News"	URL="http://www.rollingstone.com/rssxml/music_news.xml" />
+	<outline text="Slashdot" URL="http://rss.slashdot.org/Slashdot/slashdot" />
+	<outline text="Yahoo! Business" URL="http://rss.news.yahoo.com/rss/business" />
+  </body>
+</opml>
