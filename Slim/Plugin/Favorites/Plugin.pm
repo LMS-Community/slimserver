@@ -54,6 +54,8 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['favorites', 'add'], [0, 0, 1, \&cliAdd]);
 	Slim::Control::Request::addDispatch(['favorites', 'addlevel'], [0, 0, 1, \&cliAdd]);
 	Slim::Control::Request::addDispatch(['favorites', 'delete'], [0, 0, 1, \&cliDelete]);
+	Slim::Control::Request::addDispatch(['favorites', 'rename'], [0, 0, 1, \&cliRename]);
+	Slim::Control::Request::addDispatch(['favorites', 'move'], [0, 0, 1, \&cliMove]);
 	Slim::Control::Request::addDispatch(['favorites', 'playlist', '_method' ],[1, 1, 1, \&cliBrowse]);
 	
 	# register notifications
@@ -583,6 +585,68 @@ sub cliDelete {
 
 	$favs->deleteIndex($index);
 
+	$request->setStatusDone();
+}
+
+sub cliRename {
+	my $request = shift;
+
+	if ($request->isNotCommand([['favorites'], ['rename']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $client = $request->client();
+	my $index  = $request->getParam('item_id');
+	my $title  = $request->getParam('title');
+
+	my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($client);
+
+	if (!defined $index || !defined $favs->entry($index)) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	$log->info("rename index $index to $title");
+
+	$favs->entry($index)->{'text'} = $title;
+	$favs->save;
+
+	$request->setStatusDone();
+}
+
+sub cliMove {
+	my $request = shift;
+
+	if ($request->isNotCommand([['favorites'], ['move']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $client = $request->client();
+	my $from = $request->getParam('from_id');
+	my $to   = $request->getParam('to_id');
+
+	my $favs = Slim::Plugin::Favorites::OpmlFavorites->new($client);
+
+	my ($fromLevel, $fromIndex) = $favs->level($from, 1);
+	my ($toLevel,   $toIndex  ) = $favs->level($to, 1);
+
+	if (!$fromLevel || !$toLevel) {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	$log->info("moving item from index $from to index $to");
+
+	if ($fromLevel == $toLevel && $fromIndex > $toIndex) {
+		splice @$toLevel, $toIndex - 1, 0, (splice @$fromLevel, $fromIndex, 1);
+	} else {
+		splice @$toLevel, $toIndex, 0, (splice @$fromLevel, $fromIndex, 1);
+	}
+	
+	$favs->save;
+	
 	$request->setStatusDone();
 }
 
