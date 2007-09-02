@@ -78,14 +78,14 @@ END %]
 	[% PROCESS menuItem token="FAVORITES" category='browse' %]
 
 	[% category=''; expandable = 1; PROCESS menuItem token="MY_MUSIC" %]
-	<div id="MY_MUSIC_expanded" style="display:none;">[%- my_musicItems -%]</div>
+	<div id="MY_MUSIC_expanded" class="expandableHomeMenuItem">[%- my_musicItems -%]</div>
 
 	[% PROCESS menuItem token="RADIO" %]
-	<div id="RADIO_expanded" style="display:none;">[%- radioItems -%]</div>
+	<div id="RADIO_expanded" class="expandableHomeMenuItem">[%- radioItems -%]</div>
 
 	[% IF additionalLinks.music_on_demand %]
 		[% PROCESS menuItem token="MUSIC_ON_DEMAND" %]
-		<div id="MUSIC_ON_DEMAND_expanded" style="display:none;">[%- music_on_demandItems -%]</div>
+		<div id="MUSIC_ON_DEMAND_expanded" class="expandableHomeMenuItem">[%- music_on_demandItems -%]</div>
 	[% END %]
 	[% PROCESS menuItem token="OTHER_SERVICES"; expandable = 0 %]
 </div>

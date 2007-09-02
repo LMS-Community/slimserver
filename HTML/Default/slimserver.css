@@ -103,11 +103,9 @@ div.thumbwrap {
 
 /* Home menu */
 .homeMenuSection {
-	position: absolute;
 	margin-top: 20px;
 	margin-left: 5px;
 	margin-right: 15px;
-	overflow: auto;
 }
 
 .homeMenuSection_expanded .homeMenuItem {
@@ -164,12 +162,7 @@ form#advSearchForm.resultsPage {
 /* styles for the basic layout */
 .scrollingPanel {
 	overflow: auto;
-}
-
-.overlappingCrumblist {
-	position: absolute;
-	top=0;
-	left=0;
+	overflow-x: hidden;
 }
 
 #header {

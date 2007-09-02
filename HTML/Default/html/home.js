@@ -6,6 +6,16 @@ var MainMenu = function(){
 			Ext.EventManager.onWindowResize(this.onResize, this);
 			Ext.EventManager.onDocumentReady(this.onResize, this, true);
 
+			// use "display:none" to hide inactive elements
+			items = Ext.DomQuery.select('div.homeMenuSection, span.overlappingCrumblist, div#livesearch, div.expandableHomeMenuItem');
+			for(var i = 0; i < items.length; i++) {
+				if (el = Ext.get(items[i].id)) {
+					el.setVisibilityMode(Ext.Element.DISPLAY);
+					if (el.hasClass('expandableHomeMenuItem'))
+						el.setVisible(false);
+				}
+			}
+
 			Utils.initSearch();
 
 			anchor = document.location.href.match(/#(.*)\?/)
@@ -67,7 +77,6 @@ var MainMenu = function(){
 				el.addClass('homeMenuItem_expanded');
 
 				if ((subPanel = Ext.get(panel + '_expanded'))){
-					subPanel.setVisibilityMode(Ext.Element.DISPLAY);
 					subPanel.setVisible(true);
 					subPanel.addClass('homeMenuSection_expanded');
 				}
@@ -90,7 +99,6 @@ var MainMenu = function(){
 				el.removeClass('homeMenuItem_expanded');
 
 				if (subPanel = Ext.get(panel + '_expanded')){
-					subPanel.setVisibilityMode(Ext.Element.DISPLAY);
 					subPanel.setVisible(false);
 					subPanel.removeClass('homeMenuSection_expanded');
 				}
@@ -98,6 +106,7 @@ var MainMenu = function(){
 
 			Utils.addBrowseMouseOver();
 
+			Utils.resizeContent();
 			this.onResize();
 		},
 		
@@ -128,7 +137,6 @@ var MainMenu = function(){
 
 			Ext.get('pagetitle').update(strings[panel] ? strings[panel] : strings['home']);
 
-			Ext.get('livesearch').setVisibilityMode(Ext.Element.DISPLAY);
 			if (panel == 'my_music' || panel == 'search')
 				Ext.get('livesearch').setVisible(true);
 			else
@@ -143,11 +151,11 @@ var MainMenu = function(){
 
 		onResize : function(){
 			items = Ext.DomQuery.select('div.homeMenuSection');
+			contW = Ext.get('content').getWidth() - 10;
+
 			for(var i = 0; i < items.length; i++) {
 				if (el = Ext.get(items[i].id)) {
-					contEl = Ext.get('content');
-					el.setWidth(contEl.getWidth()-10);
-					el.setHeight(contEl.getHeight()-20);
+					el.setWidth(contW);
 				}
 			}
 		}
