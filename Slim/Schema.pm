@@ -1437,15 +1437,24 @@ sub _checkValidity {
 
 		$log->debug("Re-reading tags from $url as it has changed.");
 
+		my $oldid = $track->id;
+		
 		# Do a cascading delete for has_many relationships - this will
 		# clear out Contributors, Genres, etc.
 		$track->delete;
-
+		
 		$track = $self->newTrack({
 			'url'      => $url,
 			'readTags' => 1,
 			'commit'   => 1,
 		});
+		
+		if ($oldid == $track->album->artwork) {
+			$log->debug(sprintf("  Updating album artwork id %d with %d", $oldid, $track->id));
+			$track->album->artwork($track->id);
+			$track->album->update;
+		}
+		
 	}
 
 	return undef unless blessed($track);
