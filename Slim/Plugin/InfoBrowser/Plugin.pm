@@ -56,7 +56,8 @@ use Slim::Plugin::InfoBrowser::Settings;
 
 my $prefsServer = preferences('server');
 
-my $menuUrl; # store menu fileurl location
+my $menuUrl;    # menu fileurl location
+my @searchDirs; # search directories for menu opml files
 
 sub initPlugin {
 	my $class = shift;
@@ -158,11 +159,13 @@ sub menuUrl {
 
 sub searchDirs {
 	my $class = shift;
+
+	return @searchDirs if @searchDirs;
 	
-	my @pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
-	my @searchDirs = ();
+	push @searchDirs, $class->_pluginDataFor('basedir');
 
 	# find location of Addons dir and add this to the path searched for opml menus and @INC
+	my @pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
 	for my $dir (@pluginDirs) {
 		my $addonDir = catdir($dir, 'InfoBrowserAddons');
 		if (-r $addonDir) {
@@ -171,7 +174,7 @@ sub searchDirs {
 		}
 	}
 
-	return ($class->_pluginDataFor('basedir'), @searchDirs);
+	return @searchDirs;
 }
 
 
