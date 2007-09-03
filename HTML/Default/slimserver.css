@@ -97,6 +97,10 @@ div.thumbwrap {
 	overflow: auto;
 }
 
+#searchMenu #browsedbList {
+	overflow: visible;
+}
+
 .playlistSongDetail, .browseItemDetail {
 	padding-left: 70px;
 }

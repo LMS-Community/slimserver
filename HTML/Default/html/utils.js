@@ -286,6 +286,7 @@ var Utils = function(){
 							{},
 							function(){
 								Utils.addBrowseMouseOver();
+								Utils.resizeContent();
 								try {
 									MainMenu.showPanel('search');
 									MainMenu.onResize();
