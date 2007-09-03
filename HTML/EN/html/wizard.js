@@ -1,9 +1,16 @@
 Wizard = function(){
-	page = 0;
-	pages = new Array('welcome', 'proxy', 'sqn', 'source', 'audiodir', 'playlistdir', 'itunes', 'musicip', 'summary');
-	folderselectors = new Array();
-	sqnValidated = false;
+	var page = 0;
+	var pages = new Array('welcome', 'proxy', 'sqn', 'source', 'audiodir', 'playlistdir', 'itunes', 'musicip', 'summary');
+	var folderselectors = new Array();
+	var sqnValidated = false;
 	var nextBtn;
+	var windowSize = new Array(top.window.outerWidth, top.window.outerHeight);
+	
+	// some MSIE versions won't return a value
+	if (windowSize[0] == undefined || windowSize[1] == undefined) {
+		windowSize[0] = Ext.lib.Dom.getViewWidth() + 30;
+		windowSize[1] = Ext.lib.Dom.getViewHeight() + 130;  // viewport + guessed toolbar size etc...
+	}
 
 	return {
 		init : function(){
@@ -38,6 +45,8 @@ Wizard = function(){
 				});
 			}
 			else {
+				window.resizeTo(800, Ext.isIE ? 700 : 600);
+
 				folderselectors['audiodir'] = new FileSelector('audiodirselector', {
 					filter: 'foldersonly',
 					input: 'audiodir',
@@ -108,6 +117,10 @@ Wizard = function(){
 				case 'summary' :
 					if (offset > 0) {
 						document.forms.wizardForm.submit();
+
+						if (windowSize[0] && windowSize[1]);
+							window.resizeTo(windowSize[0], windowSize[1]);
+
 						if (!firsttimerun)
 							window.open('javascript:window.close();','_self','');
 					}
