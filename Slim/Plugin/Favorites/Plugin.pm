@@ -639,11 +639,7 @@ sub cliMove {
 
 	$log->info("moving item from index $from to index $to");
 
-	if ($fromLevel == $toLevel && $fromIndex > $toIndex) {
-		splice @$toLevel, $toIndex - 1, 0, (splice @$fromLevel, $fromIndex, 1);
-	} else {
-		splice @$toLevel, $toIndex, 0, (splice @$fromLevel, $fromIndex, 1);
-	}
+	splice @$toLevel, $toIndex, 0, (splice @$fromLevel, $fromIndex, 1);
 	
 	$favs->save;
 	
