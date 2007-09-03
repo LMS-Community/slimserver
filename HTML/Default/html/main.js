@@ -143,6 +143,8 @@ Playlist = function(){
 			Main.onResize();
 			Utils.addBrowseMouseOver();
 
+			current = Ext.DomQuery.selectNode('div.currentSong');
+
 			Ext.addBehaviors({
 				'.currentSong@mouseover': function(ev, target){
 					el = Ext.get(target);
@@ -153,17 +155,17 @@ Playlist = function(){
 					}
 				},
 
-				'.currentSong@mouseout': function(ev, target){
-					if (Ext.get(target).findParent('.currentSong'))
-						return;
+				// reset highlighter when exiting the playlist
+				'#rightpanel div.inner@mouseover': function(ev, target){
+					if (target == this)
+						Utils.unHighlight();
 
-					el = Ext.get(target);
-					if (el) {
-						if (controls = Ext.DomQuery.selectNode('div.playlistControls', el.dom)) {
+					if (!Ext.fly(current).contains(target)) {
+						if (controls = Ext.DomQuery.selectNode('.currentSong div.playlistControls')) {
 							Ext.get(controls).hide();
 						}
 					}
-				}
+				}				
 			});
 			
 /*			Ext.dd.ScrollManager.register('playList');
