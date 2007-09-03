@@ -333,6 +333,44 @@ form#advSearchForm.resultsPage {
 	background: url(html/images/title_bottom_right.gif) no-repeat bottom right; 
 }
 
+.pagerbox {
+	background: url(html/images/title_background.gif) repeat;
+}
+
+.pagerbox_content {
+	margin-left: 10px;
+	background: url(html/images/title_background.gif) repeat;
+}
+
+.pagerbox_top div { 
+	height: 5px;
+	background: url(html/images/title_top_left.gif) no-repeat top left;
+}
+
+.pagerbox_top {
+	height: 5px;
+	background: url(html/images/title_top_right.gif) no-repeat top right; 
+}
+
+.pagerbox_bottom div { 
+	height: 5px;
+	background: url(html/images/title_bottom_left.gif) no-repeat bottom left; 
+}
+
+.pagerbox_bottom { 
+	height: 5px;
+	background: url(html/images/title_bottom_right.gif) no-repeat bottom right; 
+}
+
+#pagebar a, #pagebar span {
+	text-decoration: none;
+}
+
+#pagebar a:hover, #pagebar span:hover, #pagebar b:hover {
+	background-color: #efefef;
+	color: #343434;
+}
+
 #leftcontent {
 	margin-left: 20px;
 	margin-top: 20px;
