@@ -2774,6 +2774,21 @@ sub statusQuery {
 							}
 						}
 						
+						# Add trackinfo menu actions
+						if ( my $url = $track->url ) {
+							my $actions = {
+								go => {
+									cmd    => [ 'trackinfo', 'items' ],
+									params => {
+										menu => 'menu',
+										url  => $url,
+									},
+								},
+							};
+							
+							$request->addResultLoop( $loop, $count, 'actions', $actions );
+						}
+						
 						$request->addResultLoop($loop, $count, 'text', $text);
 					}
 					else {

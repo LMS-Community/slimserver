@@ -1236,6 +1236,7 @@ sub _cliQuery_done {
 	my $want_url   = $request->getParam('want_url') || 0;
 	my $item_id    = $request->getParam('item_id');
 	my $menu       = $request->getParam('menu');
+	my $url        = $request->getParam('url');
 	
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
@@ -1520,13 +1521,19 @@ sub _cliQuery_done {
 			# we go to xxx items from xx items :)
 
 			# build the base element
+			my $params = {
+				'menu' => $query,
+			};
+			
+			if ( $url ) {
+				$params->{'url'} = $url;
+			}
+			
 			my $base = {
 				'actions' => {
 					'go' => {
-						'cmd' => [$query, 'items'],
-						'params' => {
-							'menu' => $query,
-						},
+						'cmd' => [ $query, 'items' ],
+						'params' => $params,
 						'itemsParams' => 'params',
 					},
 					'play' => {

@@ -518,6 +518,27 @@ sub trackInfo {
 	$client->modeParam( 'handledTransition', 1 );
 }
 
+# URL used for CLI trackinfo queries
+sub trackInfoURL {
+	my ( $class, $client, $url ) = @_;
+	
+	my $secs = Slim::Music::Info::getDuration($url);
+
+	my ($stationId) = $url =~ m{^pandora://([^.]+)\.mp3};
+	
+	# Get the current track
+	my $currentTrack = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
+	
+	# SN URL to fetch track info menu
+	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
+		  '/api/pandora/opml/trackinfo?stationId=' . $stationId 
+		. '&trackId=' . $currentTrack->{trackToken}
+		. '&secs=' . $secs
+	);
+	
+	return $trackInfoURL;
+}
+
 sub setCurrentTitle {
 	my ( $client, $url, $title ) = @_;
 	

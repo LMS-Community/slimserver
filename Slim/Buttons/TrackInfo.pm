@@ -34,6 +34,11 @@ our %functions = ();
 sub init {
 
 	Slim::Buttons::Common::addMode('trackinfo', getFunctions(), \&setMode);
+	
+	Slim::Control::Request::addDispatch(
+		[ 'trackinfo', 'items', '_index', '_quantity' ],
+		[ 1, 1, 1, \&cliQuery ]
+	);
 
 	%functions = (
 
@@ -45,6 +50,24 @@ sub init {
 			playOrAdd($client,$addOrInsert);
 		},
 	);
+}
+
+sub cliQuery {
+	my $request = shift;
+	
+	my $client = $request->client;
+	my $url    = $request->getParam('url');
+	
+	# Default menu, todo
+	my $feed = {};
+	
+	# Protocol Handlers can define their own track info OPML menus
+	my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $url );
+	if ( $handler && $handler->can('trackInfoURL') ) {
+		$feed = $handler->trackInfoURL( $client, $url );
+	}
+	
+	Slim::Buttons::XMLBrowser::cliQuery( 'trackinfo', $feed, $request );
 }
 
 sub playOrAdd {

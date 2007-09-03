@@ -951,6 +951,34 @@ sub trackInfo {
 	$client->modeParam( 'handledTransition', 1 );
 }
 
+# URL used for CLI trackinfo queries
+sub trackInfoURL {
+	my ( $class, $client, $url ) = @_;
+	
+	my $realURL;
+
+	if ( $url =~ /\.rdr$/ ) {
+		# Radio mode, pull track ID from lastURL
+		$realURL = $client->pluginData('lastURL');
+	}
+	else {
+		$realURL = $url;
+	}
+
+	my ($trackId) = $realURL =~ m{rhapd://(.+)\.wma};
+
+	# SN URL to fetch track info menu
+	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
+		'/api/rhapsody/opml/metadata/getTrack?trackId=' . $trackId
+	);
+
+	if ( $url =~ m{rhapd://(.+)\.rdr} ) {
+		$trackInfoURL .= '&stationId=' . $1;
+	}
+	
+	return $trackInfoURL;
+}
+
 # Metadata hashref used by CLI/JSON clients
 sub getCurrentMeta {
 	my ( $class, $client, $url ) = @_;
