@@ -453,12 +453,23 @@ Player = function(){
 								+
 								'</a>'
 							);
-	//						Ext.get('statusSongCount').update(result.playlist_tracks);
-	//						Ext.get('statusPlayNum').update(result.playlist_cur_index + 1);
-							Ext.get('ctrlBitrate').update(result.playlist_loop[0].bitrate);
+							Ext.get('ctlSongCount').update(result.playlist_tracks);
+							Ext.get('ctlPlayNum').update(result.playlist_cur_index + 1);
+							Ext.get('ctrlBitrate').update(
+								result.playlist_loop[0].bitrate
+								+ (result.playlist_loop[0].type 
+									? ', ' + result.playlist_loop[0].type
+									: ''
+								)
+							);
 							
 							if (result.playlist_loop[0].artist) {
 								Ext.get('ctrlCurrentArtist').update('<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=' + result.playlist_loop[0].artist_id + '&amp;level=1&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].artist + '</a>');
+								Ext.get('ctrlArtistTitle').show();
+							}
+							else {
+								Ext.get('ctrlCurrentArtist').update('');
+								Ext.get('ctrlArtistTitle').hide();
 							}
 							
 							if (result.playlist_loop[0].album) {
@@ -468,6 +479,11 @@ Player = function(){
 										+ '<a href="' + webroot + 'browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=' + result.playlist_loop[0].year + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].year + '</a>' 
 									+ ')' : '')
 								);
+								Ext.get('ctrlAlbumTitle').show();
+							}
+							else {
+								Ext.get('ctrlCurrentAlbum').update('');
+								Ext.get('ctrlAlbumTitle').hide();
 							}
 
 							if (result.playlist_loop[0].id && (el = Ext.get('ctrlCurrentArt'))) {
@@ -486,8 +502,8 @@ Player = function(){
 						// empty playlist
 						else {
 							Ext.get('ctrlCurrentTitle').update('');
-	//						Ext.get('statusSongCount').update('');
-	//						Ext.get('statusPlayNum').update('');
+							Ext.get('ctlSongCount').update('');
+							Ext.get('ctlPlayNum').update('');
 							Ext.get('ctrlBitrate').update('');
 							Ext.get('ctrlCurrentArtist').update('');
 							Ext.get('ctrlCurrentAlbum').update('');
@@ -549,7 +565,7 @@ Player = function(){
 							"status",
 							"-",
 							1,
-							"tags:gabehldiqtyrsu"
+							"tags:gabehldiqtyrsuo"
 						]
 					]
 				}),
@@ -558,7 +574,7 @@ Player = function(){
 		},
 		
 		
-		// only poll to see whether the currently playing song has changed
+		// only poll a minimum of information to see whether the currently playing song has changed
 		// don't request all status info to minimize performance impact on the server
 		getStatus : function() {
 			Ext.Ajax.request({
@@ -601,6 +617,11 @@ Player = function(){
 							}
 							else
 								this.updatePlayTime(result.time, result.duration);
+						}
+						
+						// TODO: display scanning information
+						if (responseText.result && responseText.result.rescan) {
+						 //	console.debug('scanning');
 						}
 					}
 				},

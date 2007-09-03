@@ -102,13 +102,13 @@
 								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="12" width="12" border="0" /></td>
 							</tr>
 							<tr>
-								<td><div class="currentTrackInfo">[% "ARTIST" | string %][% "COLON" | string %] <span id="ctrlCurrentArtist"></span></div></td>
+								<td><div class="currentTrackInfo" id="ctrlArtistTitle">[% "ARTIST" | string %][% "COLON" | string %] <span id="ctrlCurrentArtist"></span></div></td>
 							</tr>
 							<tr>
-								<td><div class="currentTrackInfo">[% "ALBUM" | string %][% "COLON" | string %] <span id="ctrlCurrentAlbum"></span></div></td>
+								<td><div class="currentTrackInfo" id="ctrlAlbumTitle">[% "ALBUM" | string %][% "COLON" | string %] <span id="ctrlCurrentAlbum"></span></div></td>
 							</tr>
 							<tr>
-								<td><div class="currentTrackInfo"><span id="ctrlPlaytime"></span><span id="ctrlTotalTime"></span></div></td>
+								<td><div class="currentTrackInfo"><span id="ctrlPlaytime"></span><span id="ctrlTotalTime"></span> - <span id="ctlPlayNum"></span> [% "OF" | string%] <span id="ctlSongCount"></span> </div></td>
 							</tr>
 							<tr>
 								<td><div class="currentTrackInfo">[% "BITRATE" | string %][% "COLON" | string %] <span id="ctrlBitrate"></span></div></td>
