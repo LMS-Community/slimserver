@@ -209,7 +209,12 @@ var Utils = function(){
 		onSelectorClicked : function(ev, target){
 			el = Ext.get(target).child('a.browseItemLink');
 			if (el && el.dom.href) {
-				location.href = el.dom.href;
+				if (el.dom.target) {
+					frames[el.dom.target].location.href = el.dom.href;
+				}
+				else {
+					location.href = el.dom.href;
+				}
 			}
 			else if (Ext.get(target).is('div.homeMenuItem')) {
 				MainMenu.doMenu(Ext.get(target).id);
@@ -229,7 +234,6 @@ var Utils = function(){
 			if (el && el.hasClass('scrollingPanel')) {
 
 				myHeight = Ext.fly(document.body).getHeight() - el.getTop() - infoHeight;
-//				myHeight = Math.max(300, myHeight);
 
 				el.setHeight(myHeight);
 			}
