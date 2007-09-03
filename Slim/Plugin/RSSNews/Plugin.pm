@@ -462,8 +462,12 @@ sub tickerLines {
 			$current_items->{$feed}->{'first_item'} = $current_items->{$feed}->{'next_item'};
 		}
 
+		my $format = preferences('server')->get('timeFormat');
+		$format =~ s/.\%S//i;
+		
 		$parts = {
 			'line'   => [ $line1 ],
+			'overlay' => [ Slim::Utils::DateTime::timeF(undef,$format) ],
 			'ticker' => [ undef, $line2 ],
 		};
 
