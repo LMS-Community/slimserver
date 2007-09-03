@@ -1,6 +1,13 @@
 <div class="[% IF item.currentsong %]currentSong[% ELSE %]selectorMarker[% END %]" id="playlistSong[% item.num %]"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-	<div class="browsedbListItem[% IF !noPlaylistCover %] itemWithCover[% END %]">
-		[% IF !noPlaylistCover %]
+	<div class="browsedbListItem[% IF !noPlaylistCover && item.itemobj.cover %] itemWithCover[% END %]">
+		[% IF noPlaylistCover || !item.itemobj.cover %]
+			<a href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.title | html %]</a>
+			[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
+				[% "FROM" | string %]
+				<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.itemobj.album.title | html %]</a>
+			[% END %]
+			[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
+		[% ELSE %]
 			<span class="playlistCover">
 				<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">
 					<img src="/music/[% item.itemobj.id %]/cover_50xX_F.jpg">
@@ -17,13 +24,6 @@
 			<div class="playlistSongDetail">
 				[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj noby = 1; END %]
 			</div>
-		[% ELSE %]
-			<a href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.title | html %]</a>
-			[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
-				[% "FROM" | string %]
-				<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.itemobj.album.title | html %]</a>
-			[% END %]
-			[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 		[% END %]
 		<div class="playlistControls" style="display: none;">
 			<img onclick="Player.playerControl(['playlist', 'index', '[% item.num %]'])" src="[% webroot %]html/images/b_play.png" width=15 height=15 alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]">
