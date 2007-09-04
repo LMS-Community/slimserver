@@ -201,7 +201,7 @@ sub menuQuery {
 					{
 						text  => Slim::Utils::Strings::string('ARTISTS'),
 						input => {
-							len  => 2, # Richard says "we can't search for U2!"
+							len  => 1, #bug 5318
 							help => {
 								text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
 							},
@@ -222,7 +222,7 @@ sub menuQuery {
 					{
 						text  => Slim::Utils::Strings::string('ALBUMS'),
 						input => {
-							len => 3,
+							len => 1, #bug 5318
 							help => {
 								text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
 							},
@@ -244,7 +244,7 @@ sub menuQuery {
 					{
 						text  => Slim::Utils::Strings::string('SONGS'),
 						input => {
-							len => 3,
+							len => 1, #bug 5318
 							help => {
 								text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
 							},
@@ -265,7 +265,7 @@ sub menuQuery {
 					{
 						text  => Slim::Utils::Strings::string('PLAYLISTS'),
 						input => {
-							len => 3,
+							len => 1, #bug 5318
 							help => {
 								text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
 							},
