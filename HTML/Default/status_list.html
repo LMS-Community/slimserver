@@ -1,6 +1,6 @@
 <div class="[% IF item.currentsong %]currentSong[% ELSE %]selectorMarker[% END %]" id="playlistSong[% item.num %]"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-	<div class="browsedbListItem[% IF !noPlaylistCover && item.itemobj.cover %] itemWithCover[% END %]">
-		[% IF noPlaylistCover || !item.itemobj.cover %]
+	<div class="browsedbListItem[% IF !noPlaylistCover %] itemWithCover[% END %]">
+		[% IF noPlaylistCover %]
 			<a href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.title | html %]</a>
 			[% IF item.includeAlbum && item.itemobj.album && item.itemobj.album.title != item.noAlbum && item.itemobj.album.title != "" %]
 				[% "FROM" | string %]
