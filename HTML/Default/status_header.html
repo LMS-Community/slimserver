@@ -3,13 +3,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
-		<link rel="stylesheet" type="text/css" href="[% webroot %]slim-ext.css" />
+		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css?r=[% revision %]" />
+		<link rel="stylesheet" type="text/css" href="[% webroot %]slim-ext.css?r=[% revision %]" />
 
 		[% PROCESS standardheader.html %]
 
-		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
-		<script type="text/javascript" src="/html/ext/ext-all.js"></script>
+		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="/html/ext/ext-all.js?r=[% revision %]"></script>
 		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
 
 		<style>
@@ -17,8 +17,8 @@
 			body { margin: 10px; }
 		</style>
 
-		<script type="text/javascript" src="[% webroot %]html/utils.js"></script>
-		<script type="text/javascript" src="[% webroot %]html/main.js"></script>
+		<script type="text/javascript" src="[% webroot %]html/utils.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="[% webroot %]html/main.js?r=[% revision %]"></script>
 		<script type="text/javascript">
 			var strings = new Array();
 
@@ -26,10 +26,10 @@
 		</script>
 
 		<!--[if IE 6]>
-		<link href="[% webroot %]ie.css" type="text/css" rel="stylesheet">
+		<link href="[% webroot %]ie.css?r=[% revision %]" type="text/css" rel="stylesheet">
 		<![endif]-->
 		<!--[if IE 7]>
-		<link href="[% webroot %]ie7.css" type="text/css" rel="stylesheet">
+		<link href="[% webroot %]ie7.css?r=[% revision %]" type="text/css" rel="stylesheet">
 		<![endif]-->
 	</head>
 	<body>

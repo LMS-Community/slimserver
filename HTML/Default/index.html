@@ -5,9 +5,9 @@
 		<title>[% "SLIMSERVER" | string %]</title>
 
 		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
-		<link rel="stylesheet" type="text/css" href="[% webroot %]slim-ext.css" />
-		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css" />
-		<link rel="stylesheet" type="text/css" href="[% webroot %]skin.css" />
+		<link rel="stylesheet" type="text/css" href="[% webroot %]slim-ext.css?r=[% revision %]" />
+		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css?r=[% revision %]" />
+		<link rel="stylesheet" type="text/css" href="[% webroot %]skin.css?r=[% revision %]" />
 
 		<style>
 			html, body { background: white; }
@@ -24,10 +24,10 @@
 		</style>
 
 		<!--[if lte IE 6]>
-		<link href="[% webroot %]ie.css" type="text/css" rel="stylesheet">
+		<link href="[% webroot %]ie.css?r=[% revision %]" type="text/css" rel="stylesheet">
 		<![endif]-->
 		<!--[if IE 7]>
-		<link href="[% webroot %]ie7.css" type="text/css" rel="stylesheet">
+		<link href="[% webroot %]ie7.css?r=[% revision %]" type="text/css" rel="stylesheet">
 		<![endif]-->		
 	</head>
 
@@ -45,12 +45,12 @@
 			document.getElementById('loading').style.display = 'block';
 		</script>
 
-		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js"></script>
-		<script type="text/javascript" src="/html/ext/ext-all[% IF debug %]-debug[% END %].js"></script>
+		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="/html/ext/ext-all[% IF debug %]-debug[% END %].js?r=[% revision %]"></script>
 		<script type="text/javascript">[% PROCESS html/vars.js %]</script>		
-		<script type="text/javascript" src="[% webroot %]html/utils.js"></script>		
+		<script type="text/javascript" src="[% webroot %]html/utils.js?r=[% revision %]"></script>		
 
-		<script type="text/javascript" src="[% webroot %]html/main.js"></script>
+		<script type="text/javascript" src="[% webroot %]html/main.js?r=[% revision %]"></script>
 		<script type="text/javascript">
 			var strings = new Array();
 			strings['loading']  = "[% "LOADING" | string %]";
