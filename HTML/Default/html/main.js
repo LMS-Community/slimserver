@@ -649,6 +649,7 @@ Player = function(){
 							if (responseText.result && responseText.result.count && responseText.result.players_loop) {
 								playerid = responseText.result.players_loop[0].playerid;
 								player = encodeURI(playerid);
+								Ext.get('playerSettingsLink').show();
 							}
 						}
 					}
