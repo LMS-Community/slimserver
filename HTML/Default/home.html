@@ -29,6 +29,7 @@
 	<span id="radioCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "RADIO" | string %]</span>
 	<span id="searchCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] <span class="mouseOver" onclick="MainMenu.showPanel('my_music');">[% "MY_MUSIC" | string %]</span></span>
 	<span id="music_on_demandCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "MUSIC_ON_DEMAND" | string %]</span>
+	<span id="other_servicesCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "OTHER_SERVICES" | string %]</span>
 [% END %]
 
 [% infoTab = BLOCK %]
@@ -74,6 +75,12 @@ END %]
 	END;
 END %]
 
+[% pluginsItems = BLOCK;
+	FOREACH link = additionalLinks.plugins;
+		PROCESS menuItem token=link.key category='plugins';
+	END;
+END %]
+
 <div class="homeMenuSection" id="homeMenu">
 	[% PROCESS menuItem token="FAVORITES" category='browse' %]
 
@@ -87,7 +94,11 @@ END %]
 		[% PROCESS menuItem token="MUSIC_ON_DEMAND" %]
 		<div id="MUSIC_ON_DEMAND_expanded" class="expandableHomeMenuItem">[%- music_on_demandItems -%]</div>
 	[% END %]
-	[% PROCESS menuItem token="OTHER_SERVICES"; expandable = 0 %]
+
+	[% IF additionalLinks.plugins %]
+		[% PROCESS menuItem token="OTHER_SERVICES"; expandable = 0 %]
+		<div id="OTHER_SERVICES_expanded" class="expandableHomeMenuItem">[%- pluginsItems -%]</div>
+	[% END %]
 </div>
 
 <div class="homeMenuSection" id="my_musicMenu">
@@ -102,6 +113,11 @@ END %]
 <div class="homeMenuSection" id="music_on_demandMenu">
 	[%- music_on_demandItems -%]
 </div>
+
+<div class="homeMenuSection" id="other_servicesMenu">
+	[%- pluginsItems -%]
+</div>
+
 
 <div class="homeMenuSection" id="searchMenu">
 	<div id="search-results"></div>

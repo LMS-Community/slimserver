@@ -43,7 +43,7 @@ var MainMenu = function(){
 					break;
 
 				case 'OTHER_SERVICES':
-					alert('...soon to come');
+					this.showPanel('other_services');
 					break;
 					
 				default:
@@ -120,6 +120,10 @@ var MainMenu = function(){
 		showPanel : function(panel){
 			panelExists = false;
 			this.collapseAll();
+			
+			// make plugins show up in the "Other Services" panel
+			if (panel == 'plugins')
+				panel = 'other_services';
 
 			items = Ext.DomQuery.select('div.homeMenuSection');
 			for(var i = 0; i < items.length; i++) {
