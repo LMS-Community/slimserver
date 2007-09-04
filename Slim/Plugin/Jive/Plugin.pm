@@ -847,7 +847,7 @@ if (0) {
 		actions => {
 			do => {
 				player => 0,
-				cmd    => ['playerpref', 'playername'],
+				cmd    => ['name'],
 				params => {
 					playername => '__INPUT__',
 				},
