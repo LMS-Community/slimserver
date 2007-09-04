@@ -418,15 +418,15 @@ Player = function(){
 						if (result.playlist_tracks > 0) {
 							
 							// Handle plugin-specific metadata, i.e. Pandora
-							if (result.current_meta) {
-								result.playlist_loop[0].id     = null;
-								result.playlist_loop[0].title  = result.current_meta.title;
-								result.playlist_loop[0].artist = result.current_meta.artist;
-								result.playlist_loop[0].album  = result.current_meta.album;
-								if (result.current_meta.cover) {
-									Ext.get('ctrlCurrentArt').update('<img src="' + result.current_meta.cover + '" height="96">');
-								}
-							}
+//							if (result.current_meta) {
+//								result.playlist_loop[0].id     = null;
+//								result.playlist_loop[0].title  = result.current_meta.title;
+//								result.playlist_loop[0].artist = result.current_meta.artist;
+//								result.playlist_loop[0].album  = result.current_meta.album;
+//								if (result.current_meta.cover) {
+//									Ext.get('ctrlCurrentArt').update('<img src="' + result.current_meta.cover + '" height="96">');
+//								}
+//							}
 
 							Ext.get('ctrlCurrentTitle').update(
 								'<a href="' + webroot + 'songinfo.html?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser">'

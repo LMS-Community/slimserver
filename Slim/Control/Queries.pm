@@ -2496,7 +2496,6 @@ sub statusQuery_filter {
 }
 
 
-
 sub statusQuery {
 	my $request = shift;
 	
@@ -2557,6 +2556,7 @@ sub statusQuery {
 		$request->addResult("signalstrength", ($client->signalStrength() || 0));
 	}
 	
+	my $playlist_cur_index;
 	# this will be true for http class players
 	if ($power) {
 	
@@ -2568,11 +2568,11 @@ sub statusQuery {
 				$request->addResult('remote', 1);
 				$request->addResult('current_title', 
 					Slim::Music::Info::getCurrentTitle($client, $song));
-				
-				my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song);
-				if ( $handler && $handler->can('getCurrentMeta') ) {
-					$request->addResult( 'current_meta', $handler->getCurrentMeta( $client, $song ) );
-				}
+# don't break the CLI				
+#				my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song);
+#				if ( $handler && $handler->can('getCurrentMeta') ) {
+#					$request->addResult( 'current_meta', $handler->getCurrentMeta( $client, $song ) );
+#				}
 			}
 			
 			$request->addResult('time', 
@@ -2641,10 +2641,10 @@ sub statusQuery {
 		}
 
 		if ($songCount > 0) {
-			$idx = Slim::Player::Source::playingSongIndex($client);
+			$playlist_cur_index = Slim::Player::Source::playingSongIndex($client);
 			$request->addResult(
 				"playlist_cur_index", 
-				$idx
+				$playlist_cur_index
 			);
 			$request->addResult("playlist_timestamp", $client->currentPlaylistUpdateTime())
 		}
@@ -2656,6 +2656,31 @@ sub statusQuery {
 	if ($menuMode) {
 		$songCount += 0;
 		$request->addResult("count", $power?$songCount:0);
+		
+		my $base = {
+			'actions' => {
+				'go' => {
+					'cmd' => ['songinfo'],
+					'params' => {
+						'menu' => 'nowhere',
+#						'menu_play' => '1',
+					},
+					'itemsParams' => 'params',
+				},
+#				'play' => {
+#					'player' => 0,
+#					'cmd' => ['playlist', 'jump'],
+#					'params' => {
+#						'cmd' => 'load',
+#					},
+#					'itemsParams' => 'params',
+#				},
+			},
+			'window' => {
+				'titleStyle' => 'album',
+			}
+		};
+		$request->addResult('base', $base);
 	}
 	
 	if ($songCount > 0 && $power) {
@@ -2680,38 +2705,18 @@ sub statusQuery {
 		if ($modecurrent && ($repeat == 1) && $quantity) {
 
 			$request->addResult('offset', $idx) if $menuMode;
-			my $track = Slim::Player::Playlist::song($client, $idx);
+			my $track = Slim::Player::Playlist::song($client, $playlist_cur_index);
 
 			if ($menuMode) {
-				my $text = $track->title;
-				my $album;
-				my $albumObj = $track->album();
-				my $iconId;
-				if(defined($albumObj)) {
-					$album = $albumObj->title();
-					$iconId = $albumObj->artwork();
-				}
-				$text = $text . "\n" . (defined($album)?$album:"");
-				
-				my $artist;
-				if(defined(my $artistObj = $track->artist())) {
-					$artist = $artistObj->name();
-				}
-				$text = $text . "\n" . (defined($artist)?$artist:"");
-				
-				$request->addResultLoop($loop, 0, 'text', $text);
-				
-				if (defined($iconId)) {
-					$iconId += 0;
-					$request->addResultLoop($loop, 0, 'icon-id', $iconId);
-				}
+				_addJiveSong($request, $loop, 0, 1, $track);
 			}
 			else {
 				_addSong($request, $loop, 0, 
 					$track, $tags,
-					'playlist index', $idx
+					'playlist index', $playlist_cur_index
 				);
 			}
+			
 		} else {
 
 			my ($valid, $start, $end);
@@ -2727,69 +2732,13 @@ sub statusQuery {
 				$start += 0;
 				$request->addResult('offset', $start) if $menuMode;
 				
-				my $playlist_cur_index = Slim::Player::Source::playingSongIndex($client);
-
 				for ($idx = $start; $idx <= $end; $idx++) {
 					
 					my $track = Slim::Player::Playlist::song($client, $idx);
+					my $current = ($idx == $playlist_cur_index);
 
 					if ($menuMode) {
-						
-						my $text = $track->title;
-						my $album;
-						my $albumObj = $track->album();
-						my $iconId;
-						if(defined($albumObj)) {
-							$album = $albumObj->title();
-							$iconId = $albumObj->artwork();
-						}
-						$text = $text . "\n" . (defined($album)?$album:"");
-						
-						my $artist;
-						if(defined(my $artistObj = $track->artist())) {
-							$artist = $artistObj->name();
-						}
-						$text = $text . "\n" . (defined($artist)?$artist:"");
-						
-						if (defined($iconId)) {
-							$iconId += 0;
-							$request->addResultLoop($loop, $count, 'icon-id', $iconId);
-						}
-						
-						# Override with plugin metadata for the current track if available
-						if ( $idx == $playlist_cur_index ) {
-							if ( my $current_meta = $request->getResult('current_meta') ) {
-								$text = $current_meta->{title} . "\n";
-								if ( $current_meta->{album} ) {
-									$text .= $current_meta->{album};
-								}
-								$text .= "\n";
-								if ( $current_meta->{artist} ) {
-									$text .= $current_meta->{artist};
-								}
-						
-								if ( $current_meta->{cover} ) {
-									$request->addResultLoop( $loop, $count, 'icon', $current_meta->{cover} );
-								}
-							}
-						}
-						
-						# Add trackinfo menu actions
-						if ( my $url = $track->url ) {
-							my $actions = {
-								go => {
-									cmd    => [ 'trackinfo', 'items' ],
-									params => {
-										menu => 'menu',
-										url  => $url,
-									},
-								},
-							};
-							
-							$request->addResultLoop( $loop, $count, 'actions', $actions );
-						}
-						
-						$request->addResultLoop($loop, $count, 'text', $text);
+						_addJiveSong($request, $loop, $count, $current, $track);
 					}
 					else {
 						_addSong(	$request, $loop, $count, 
@@ -3324,7 +3273,7 @@ sub titlesQuery {
 					'cmd' => [$actioncmd],
 					'params' => {
 						'menu' => $nextMenu,
-						'menu_play' => '1',
+#						'menu_play' => '1',
 					},
 					'itemsParams' => 'params',
 				},
@@ -3757,6 +3706,79 @@ sub _addSong {
 	
 	# add it directly to the result loop
 	$request->setResultLoopHash($loop, $index, $hashRef);
+}
+
+
+sub _addJiveSong {
+	my $request   = shift; # request
+	my $loop      = shift; # loop
+	my $count     = shift; # loop index
+	my $current   = shift;
+	my $track     = shift;
+	
+	my $text = $track->title;
+	my $album;
+	my $albumObj = $track->album();
+	my $iconId;
+	
+	if(defined($albumObj)) {
+		$album = $albumObj->title();
+		$iconId = $albumObj->artwork();
+	}
+	$text = $text . "\n" . (defined($album)?$album:"");
+	
+	my $artist;
+	if(defined(my $artistObj = $track->artist())) {
+		$artist = $artistObj->name();
+	}
+	$text = $text . "\n" . (defined($artist)?$artist:"");
+	
+	if (defined($iconId)) {
+		$iconId += 0;
+		$request->addResultLoop($loop, $count, 'icon-id', $iconId);
+	}
+	
+	# Override with plugin metadata for the current track if available
+#	if ( $current ) {
+#		if ( my $current_meta = $request->getResult('current_meta') ) {
+#			$text = $current_meta->{title} . "\n";
+#			if ( $current_meta->{album} ) {
+#				$text .= $current_meta->{album};
+#			}
+#			$text .= "\n";
+#			if ( $current_meta->{artist} ) {
+#				$text .= $current_meta->{artist};
+#			}
+#	
+#			if ( $current_meta->{cover} ) {
+#				$request->addResultLoop( $loop, $count, 'icon', $current_meta->{cover} );
+#			}
+#		}
+#	}
+
+	$request->addResultLoop($loop, $count, 'text', $text);
+
+	# Add trackinfo menu actions
+#	if ( my $url = $track->url ) {
+#		my $actions = {
+#			go => {
+#				cmd    => [ 'trackinfo', 'items' ],
+#				params => {
+#					menu => 'menu',
+#					url  => $url,
+#				},
+#			},
+#		};
+#		
+#		$request->addResultLoop( $loop, $count, 'actions', $actions );
+#	}
+
+	my $id = $track->id();
+	$id += 0;
+	my $params = {
+		'track_id' =>  $id, 
+	};
+	$request->addResultLoop($loop, $count, 'params', $params);
 }
 
 
