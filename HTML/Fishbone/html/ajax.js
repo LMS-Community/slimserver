@@ -86,6 +86,12 @@ function refreshState(theData) {
 		hideElements(['saveplaylist']);
 	}
 	
+	if (parseInt(parsedData['songcount']) > 0) {
+		showElements(['playlistdownload','playlistclear'],'inline');
+	} else {
+		hideElements(['playalistdownload','playlistclear']);
+	}
+		
 	return true;
 }
 
@@ -308,7 +314,10 @@ function refreshInfo(theData, force, curstyle) {
 				tooltip += " " + parsedData['by'] + " " + parsedData['artist'];
 			}
 			if (parsedData['year'] && parsedData['year'] != 0) {
+				showElements(['yearinfo'],'inline');
 				tooltip += " (" + parsedData['year'] + ")";
+			} else {
+				hideElements(['yearinfo']);
 			}
 		}
 		
