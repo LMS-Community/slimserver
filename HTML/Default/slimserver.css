@@ -473,6 +473,7 @@ form#advSearchForm.resultsPage {
 }
 
 #content {
+	position: relative;
 	width: 100%;
 }
 
