@@ -40,7 +40,7 @@
 [% END -%]
 
 [% BLOCK statectrl %]
-	<a id="[% item %][% IF item == 'playlist' %][% command %][% END %][% loop.index %]" class="[% IF not condition %]dark[% END %]button" href="javascript:processState('p0=[% item || 'playlist' %]&amp;p1=[% command %]&amp;p2=[% arg %]');[% IF command == 'shuffle' %]refreshPlaylist();[% END %]"><b>[% cmdstring | string | upper%]</b></a>
+	<a id="[% item %][% IF item == 'playlist' %][% command %][% END %][% loop.index %]" class="[% IF not condition %]dark[% END %]button" href="javascript:processState('p0=[% item || 'playlist' %]&amp;p1=[% command %]&amp;p2=[% arg %]');[% IF command == 'shuffle' %]getPlaylistData();[% END %]"><b>[% cmdstring | string | upper%]</b></a>
 [% END %]
 
 [% BLOCK playctl %]

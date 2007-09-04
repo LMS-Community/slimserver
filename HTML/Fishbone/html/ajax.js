@@ -4,6 +4,7 @@ var playingstart;
 var showingstart;
 var DEBUG = 1;
 var playlistReordered = false;
+var commandInProgress = false;
 
 try { console.log('init console... done'); } catch(e) { console = { log: function() {} } }
 
@@ -20,6 +21,10 @@ function debug() {
 }
 
 function doAjaxRefresh(light) {
+	
+	//bypass if there is a control command in progress
+	if (commandInProgress) return;
+	
 	var args = 'player=' + getPlayer('SlimServer-player') +'&ajaxRequest=1&s='+Math.random();
 	var prev_url = url;
 	if (light && light != 'onload' && !isNaN(currentID)) {
@@ -145,11 +150,17 @@ function processPlayControls(param) {
 function processCommand(param, id) {
 
 	//ajaxRequest('status_header.html', param + "&ajaxRequest=1&s="+Math.random(), null);
-	ajaxRequest('status.html', param + "&ajaxRequest=1&force=1&s="+Math.random(), function(theData) {refreshAll(theData,1)});
+	ajaxRequest('status.html', param + "&ajaxRequest=1&force=1&s="+Math.random(), function(theData) {commandResponse(theData,1)});
+	commandInProgress = true;
 	//console.log(id);
 	//getPlaylistData();
 	//doAjaxRefresh();
 	//playlistChecker();
+}
+
+function commandResponse(thedata, force) {
+	commandInProgress = false;
+	refreshAll(thedata,force);
 }
 
 function refreshPlayControls(theData,force) {
@@ -314,10 +325,7 @@ function refreshInfo(theData, force, curstyle) {
 				tooltip += " " + parsedData['by'] + " " + parsedData['artist'];
 			}
 			if (parsedData['year'] && parsedData['year'] != 0) {
-				showElements(['yearinfo'],'inline');
 				tooltip += " (" + parsedData['year'] + ")";
-			} else {
-				hideElements(['yearinfo']);
 			}
 		}
 		
@@ -370,11 +378,15 @@ function refreshInfo(theData, force, curstyle) {
 		if(parsedData['album']) {
 			showElements(['albuminfo']);
 			showElements(['albumhref'], 'inline');
-			showElements(['yearinfo'], 'inline');
 			refreshElement('album', parsedData['album']);
-			if (parsedData['year']) { refreshElement('year', parsedData['year']); }
+			if (parsedData['year'] && parsedData['year'] != 0) {
+				showElements(['yearinfo'],'inline');
+				refreshElement('year', parsedData['year']);
+			} else {
+				hideElements(['yearinfo']);
+			}
 		} else {
-			hideElements(['albuminfo', 'albumhref', 'yearinfo']);
+			hideElements(['albuminfo', 'albumhref']);
 		}
 		
 		if(parsedData['artist']) {
