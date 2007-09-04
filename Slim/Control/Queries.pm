@@ -2569,10 +2569,10 @@ sub statusQuery {
 				$request->addResult('current_title', 
 					Slim::Music::Info::getCurrentTitle($client, $song));
 # don't break the CLI				
-#				my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song);
-#				if ( $handler && $handler->can('getCurrentMeta') ) {
-#					$request->addResult( 'current_meta', $handler->getCurrentMeta( $client, $song ) );
-#				}
+				my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song);
+				if ( $handler && $handler->can('getCurrentMeta') ) {
+					$request->addResult( 'current_meta', $handler->getCurrentMeta( $client, $song ) );
+				}
 			}
 			
 			$request->addResult('time', 
@@ -2704,7 +2704,7 @@ sub statusQuery {
 		# if repeat is 1 (song) and modecurrent, then show the current song
 		if ($modecurrent && ($repeat == 1) && $quantity) {
 
-			$request->addResult('offset', $idx) if $menuMode;
+			$request->addResult('offset', $playlist_cur_index) if $menuMode;
 			my $track = Slim::Player::Playlist::song($client, $playlist_cur_index);
 
 			if ($menuMode) {
@@ -2722,7 +2722,7 @@ sub statusQuery {
 			my ($valid, $start, $end);
 			
 			if ($modecurrent) {
-				($valid, $start, $end) = $request->normalize($idx, scalar($quantity), $songCount);
+				($valid, $start, $end) = $request->normalize($playlist_cur_index, scalar($quantity), $songCount);
 			} else {
 				($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $songCount);
 			}
