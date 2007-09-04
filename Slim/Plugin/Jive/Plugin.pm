@@ -535,7 +535,7 @@ if (0) {
 if (0) {
 	# alarm clock, always display (all platforms support alarms? softsqueeze? stream.mp3?)
 	$val = $prefs->client($client)->get('alarm')->[ 0 ];
-	my $alarm_playlist = 1;
+	my $alarm_playlist = $prefs->client($client)->get('alarmplaylist')->[ 0 ];
 
 	push @menu, {
 		text      => Slim::Utils::Strings::string("ALARM"),
@@ -543,7 +543,7 @@ if (0) {
 		offset    => 0,
 		item_loop => [
 			{ 
-				text     => Slim::Utils::Strings::string("ON"),
+				text     => Slim::Utils::Strings::string("ALARM_ON"),
 				checkbox => ($val == 1) + 0,
 				actions  => {
 						on  => {
@@ -834,8 +834,6 @@ if (0) {
 
 	};
 
-# skip for now
-if (0) {
 	# player name change, always display
 	push @menu, {
 		text      => Slim::Utils::Strings::string('CHANGE_PLAYER_NAME'),
@@ -856,7 +854,7 @@ if (0) {
 			},
 		},
 	};
-}
+
 	# now slice and ship
 	my $numitems = scalar(@menu);
 
