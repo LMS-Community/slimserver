@@ -182,7 +182,7 @@ sub playlist {
 			if (Slim::Music::Info::isRemoteURL($track)) {
 				$form{'title'} = Slim::Music::Info::standardTitle(undef, $track) || $track->url;
 			} else {
-				$form{'title'} = Slim::Music::Info::getCurrentTitle($client, $track->url);
+				$form{'title'} = Slim::Music::Info::getCurrentTitle($client, $track->url, 'web');
 			}
 
 		} else {

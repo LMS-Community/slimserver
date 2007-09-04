@@ -414,6 +414,7 @@ sub setCurrentTitle {
 sub getCurrentTitle {
 	my $client = shift;
 	my $url    = shift || return undef;
+	my $web    = shift || 0;
 	
 	if ( blessed($client) ) {
 		# Let plugins control the current title if they want
@@ -424,8 +425,18 @@ sub getCurrentTitle {
 	        }
 	    }
 	}
+	
+	if ( $currentTitles{$url} ) {
+		return $currentTitles{$url};
+	}
+	
+	# If the request came from the web, we don't want to format the title
+	# using the client formatting pref
+	if ( $web ) {
+		return standardTitle( undef, $url ); 
+	}
 
-	return $currentTitles{$url} || standardTitle($client, $url);
+	return standardTitle( $client, $url );
 }
 
 # If no metadata is available,

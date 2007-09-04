@@ -261,7 +261,7 @@ sub addSongInfo {
 		$params->{'bitrate'}    = $track->prettyBitRate;
 
 		if ($getCurrentTitle) {
-			$params->{'songtitle'} = Slim::Music::Info::getCurrentTitle($client, $track->url);
+			$params->{'songtitle'} = Slim::Music::Info::getCurrentTitle($client, $track->url, 'web');
 		} else {
 			$params->{'songtitle'} = Slim::Music::Info::standardTitle(undef, $track);
 		}
