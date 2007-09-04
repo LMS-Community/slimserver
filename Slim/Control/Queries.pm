@@ -3761,20 +3761,20 @@ sub _addJiveSong {
 
 	$request->addResultLoop($loop, $count, 'text', $text);
 
-	# Add trackinfo menu actions
-#	if ( my $url = $track->url ) {
-#		my $actions = {
-#			go => {
-#				cmd    => [ 'trackinfo', 'items' ],
-#				params => {
-#					menu => 'menu',
-#					url  => $url,
-#				},
-#			},
-#		};
-#		
-#		$request->addResultLoop( $loop, $count, 'actions', $actions );
-#	}
+	# Add trackinfo menu action for remote URLs
+	if ( $track->remote ) {
+		my $actions = {
+			go => {
+				cmd    => [ 'trackinfo', 'items' ],
+				params => {
+					menu => 'menu',
+					url  => $track->url,
+				},
+			},
+		};
+		
+		$request->addResultLoop( $loop, $count, 'actions', $actions );
+	}
 
 	my $id = $track->id();
 	$id += 0;
