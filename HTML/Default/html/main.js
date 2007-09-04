@@ -607,8 +607,10 @@ Player = function(){
 								}
 								else
 									this.updatePlayTime(result.time, result.duration);
+
+								Ext.get('playerSettingsLink').show();
 							}
-							
+
 							// TODO: display scanning information
 							if (responseText.result && responseText.result.rescan) {
 							 //	console.debug('scanning');
@@ -619,6 +621,7 @@ Player = function(){
 					failure: function(){
 						player = '';
 						playerid = '';
+						Ext.get('playerSettingsLink').hide();
 					},
 	
 					scope: this
