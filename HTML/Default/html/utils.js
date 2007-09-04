@@ -244,7 +244,7 @@ var Utils = function(){
 		},
 
 		processPlaylistCommand : function(param) {
-			this.processRawCommand('status.html?' + param + 'ajaxRequest=1&force=1', true);
+			this.processRawCommand('/status.html?' + param + 'ajaxRequest=1&force=1', true);
 		},
 
 		processRawCommand : function(myUrl, updateStatus) {
