@@ -85,6 +85,9 @@ sub handler {
 
 		$paramRef->{'validate'}->{$pref} = $prefsClass->hasValidator($pref);
 		$paramRef->{'prefs'}->{$pref} = $prefsClass->get($pref);
+		if (defined $client && $pref eq 'playername') {
+			$client->execute(['name', $paramRef->{'prefs'}->{$pref}]);
+		}
 	}
 
 	if ($prefsClass) {
