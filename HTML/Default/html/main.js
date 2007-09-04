@@ -160,7 +160,7 @@ Playlist = function(){
 					if (target == this)
 						Utils.unHighlight();
 
-					if (!Ext.fly(current).contains(target)) {
+					if (!(Ext.fly(current) && Ext.fly(current).contains(target))) {
 						if (controls = Ext.DomQuery.selectNode('.currentSong div.playlistControls')) {
 							Ext.get(controls).hide();
 						}
