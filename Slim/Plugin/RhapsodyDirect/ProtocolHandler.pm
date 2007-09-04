@@ -192,7 +192,7 @@ sub getPlaybackSession {
 	displayStatus( $client, $url, 'PLUGIN_RHAPSODY_DIRECT_GETTING_TRACK_INFO', 30 );
 	
 	# Clear old radio data if any
-	$client->pluginData( radioTrack => 0 );
+	$client->pluginData( radioTrackURL => 0 );
 	
 	# Display buffering info on loading the next track
 	$client->pluginData( showBuffering => 1 );
@@ -252,8 +252,8 @@ sub gotPlaybackSession {
 	if ( my ($stationId) = $url =~ m{rhapd://(.+)\.rdr} ) {
 		
 		# Check if we've got the next track URL
-		if ( my $radioTrack = $client->pluginData('radioTrack') ) {
-			$url = $radioTrack;
+		if ( my $radioTrackURL = $client->pluginData('radioTrackURL') ) {
+			$url = $radioTrackURL;
 			
 			$log->debug("Radio mode: Next track is $url");
 		}
@@ -309,7 +309,7 @@ sub onDecoderUnderrun {
 	$client->pluginData( showBuffering => 0 );
 
 	# Clear radio data if any, so we always get a new radio track
-	$client->pluginData( radioTrack => 0 );
+	$client->pluginData( radioTrackURL => 0 );
 
 	# For decoder underrun, we log the full play time of the song
 	my $playtime = Slim::Player::Source::playingSongDuration($client);
@@ -365,7 +365,7 @@ sub onJump {
 	cancel_rpds($client);
 
 	# Clear radio data if any, so we always get a new radio track
-	$client->pluginData( radioTrack => 0 );
+	$client->pluginData( radioTrackURL => 0 );
 	
 	# Update the 'Connecting...' text
 	$client->suppressStatus(1);
@@ -423,8 +423,8 @@ sub getNextTrackInfo {
 	# Radio mode, get next track ID
 	if ( my ($stationId) = $nextURL =~ m{rhapd://(.+)\.rdr} ) {
 		# Check if we've got the next track URL
-		if ( my $radioTrack = $client->pluginData('radioTrack') ) {
-			$nextURL = $radioTrack;
+		if ( my $radioTrackURL = $client->pluginData('radioTrackURL') ) {
+			$nextURL = $radioTrackURL;
 
 			$log->debug("Radio mode: Next track is $nextURL");
 		}
@@ -500,7 +500,7 @@ sub onUnderrun {
 		$log->debug('Radio track failed, trying to restart');
 		
 		# Clear radio data if any, so we always get a new radio track
-		$client->pluginData( radioTrack => 0 );
+		$client->pluginData( radioTrackURL => 0 );
 		
 		$client->execute([ 'playlist', 'play', $url ]);
 	}
@@ -556,7 +556,6 @@ sub gotTrackMetadata {
 	my $track = eval { from_json( $http->content ) };
 	if ( $@ ) {
 		$log->warn("Error getting track metadata from SN: $@");
-		$client->pluginData( currentTrack => 0 );
 		return;
 	}
 	
@@ -564,7 +563,20 @@ sub gotTrackMetadata {
 		$log->debug( 'Got track metadata: ' . Data::Dump::dump($track) );
 	}
 	
-	$client->pluginData( currentTrack => $track );
+	# cache the metadata we need for display
+	my $meta = $client->pluginData('metaCache') || {};
+	my $url  = 'rhapd://' . $params->{trackId} . '.wma';
+	
+	$meta->{$url} = {
+		artist  => $track->{displayArtistName},
+		album   => $track->{displayAlbumName},
+		title   => $track->{name},
+		cover   => $track->{albumMetadata}->{albumArt162x162Url},
+		bitrate => '128k CBR',
+		type    => 'WMA (Rhapsody)',
+	};
+	
+	$client->pluginData( metaCache => $meta );
 }
 
 sub gotTrackMetadataError {
@@ -573,8 +585,6 @@ sub gotTrackMetadataError {
 	my $error  = $http->error;
 	
 	$log->warn("Error getting track metadata from SN: $error");
-	
-	$client->pluginData( currentTrack => 0 );
 }
 
 sub getNextRadioTrack {
@@ -649,9 +659,9 @@ sub gotNextRadioTrack {
 			$client->string('BY') . ' ' . $track->{displayArtistName} . ' ' . 
 			$client->string('FROM') . ' ' . $track->{displayAlbumName};
 	
-	$client->pluginData( radioTrack => $url );
-	$client->pluginData( radioTitle => $title );
-	$client->pluginData( currentTrack => $track );
+	$client->pluginData( radioTrackURL => $url );
+	$client->pluginData( radioTitle    => $title );
+	$client->pluginData( radioTrack    => $track );
 	
 	my $cb = $params->{callback};
 	my $pt = $params->{passthrough} || [];
@@ -801,8 +811,8 @@ sub canDirectStream {
 	
 	# Might be a radio station
 	if ( my ($stationId) = $url =~ m{rhapd://(.+)\.rdr} ) {
-		if ( my $radioTrack = $client->pluginData('radioTrack') ) {
-			$url = $radioTrack;
+		if ( my $radioTrackURL = $client->pluginData('radioTrackURL') ) {
+			$url = $radioTrackURL;
 		}
 	}
 	
@@ -979,18 +989,20 @@ sub trackInfoURL {
 	return $trackInfoURL;
 }
 
-# Metadata hashref used by CLI/JSON clients
-sub getCurrentMeta {
+# Metadata for a URL, used by CLI/JSON clients
+sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
 	
-	my $track = $client->pluginData('currentTrack') || return;
+	my $meta = $client->pluginData('metaCache') || {};
 	
-	return {
-		artist => $track->{displayArtistName},
-		album  => $track->{displayAlbumName},
-		title  => $track->{name},
-		cover  => $track->{cover} || $track->{albumMetadata}->{albumArt162x162Url},
-	};
+	if ( $url =~ /\.rdr$/ ) {
+		$url = $client->pluginData('radioTrackURL');
+	}
+	
+	# XXX: if metadata is not here, we should go fetch it so the next poll
+	# will include the data
+	
+	return $meta->{$url} || {};
 }
 
 # SN only, re-init upon reconnection

@@ -2568,11 +2568,6 @@ sub statusQuery {
 				$request->addResult('remote', 1);
 				$request->addResult('current_title', 
 					Slim::Music::Info::getCurrentTitle($client, $song));
-# don't break the CLI				
-				my $handler = Slim::Player::ProtocolHandlers->handlerForURL($song);
-				if ( $handler && $handler->can('getCurrentMeta') ) {
-					$request->addResult( 'current_meta', $handler->getCurrentMeta( $client, $song ) );
-				}
 			}
 			
 			$request->addResult('time', 
@@ -2894,7 +2889,7 @@ sub songinfoQuery {
 			$tags = 'AlGitCodYXyRkwfrTImvun';
 		}
 
-		my $hashRef = _songData($track, $tags, $menuMode);
+		my $hashRef = _songData($request, $track, $tags, $menuMode);
 		my $count = scalar (keys %{$hashRef});
 
 		# correct count if we insert "Play all songs"
@@ -3696,7 +3691,7 @@ sub _addSong {
 	my $prefixVal = shift; # prefix value, if any   
 
 	# get the hash with the data	
-	my $hashRef = _songData($pathOrObj, $tags);
+	my $hashRef = _songData($request, $pathOrObj, $tags);
 	
 	# add the prefix in the first position, use a fancy feature of
 	# Tie::LLHash
@@ -3716,45 +3711,53 @@ sub _addJiveSong {
 	my $current   = shift;
 	my $track     = shift;
 	
-	my $text = $track->title;
+	# If we have a remote track, check if a plugin can provide metadata
+	my $remoteMeta = {};
+	if ( $track->remote ) {
+		my $url     = $track->url;
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+		if ( $handler && $handler->can('getMetadataFor') ) {
+			$remoteMeta = $handler->getMetadataFor( $request->client, $url );
+			
+			# if we have a plugin-defined title, remove the current_title value
+			if ( $remoteMeta->{title} ) {
+				$request->addResult( 'current_title' => undef );
+			}
+		}
+	}
+	
+	my $text = $remoteMeta->{title} || $track->title;
 	my $album;
 	my $albumObj = $track->album();
 	my $iconId;
 	
-	if(defined($albumObj)) {
+	if ( defined $albumObj ) {
 		$album = $albumObj->title();
 		$iconId = $albumObj->artwork();
 	}
-	$text = $text . "\n" . (defined($album)?$album:"");
+	elsif ( $remoteMeta->{album} ) {
+		$album = $remoteMeta->{album};
+	}
+	
+	$text .= "\n" . ( defined $album ? $album : '' );
 	
 	my $artist;
-	if(defined(my $artistObj = $track->artist())) {
+	if ( defined( my $artistObj = $track->artist() ) ) {
 		$artist = $artistObj->name();
 	}
-	$text = $text . "\n" . (defined($artist)?$artist:"");
+	elsif ( $remoteMeta->{artist} ) {
+		$artist = $remoteMeta->{artist};
+	}
 	
-	if (defined($iconId)) {
+	$text .= "\n" . ( defined $artist ? $artist : '' );
+	
+	if ( defined $iconId ) {
 		$iconId += 0;
 		$request->addResultLoop($loop, $count, 'icon-id', $iconId);
 	}
-	
-	# Override with plugin metadata for the current track if available
-#	if ( $current ) {
-#		if ( my $current_meta = $request->getResult('current_meta') ) {
-#			$text = $current_meta->{title} . "\n";
-#			if ( $current_meta->{album} ) {
-#				$text .= $current_meta->{album};
-#			}
-#			$text .= "\n";
-#			if ( $current_meta->{artist} ) {
-#				$text .= $current_meta->{artist};
-#			}
-#	
-#			if ( $current_meta->{cover} ) {
-#				$request->addResultLoop( $loop, $count, 'icon', $current_meta->{cover} );
-#			}
-#		}
-#	}
+	elsif ( $remoteMeta->{cover} ) {
+		$request->addResultLoop( $loop, $count, 'icon', $remoteMeta->{cover} );
+	}
 
 	$request->addResultLoop($loop, $count, 'text', $text);
 
@@ -3776,13 +3779,14 @@ sub _addJiveSong {
 	my $id = $track->id();
 	$id += 0;
 	my $params = {
-		'track_id' =>  $id, 
+		'track_id' => $id, 
 	};
 	$request->addResultLoop($loop, $count, 'params', $params);
 }
 
 
 sub _songData {
+	my $request   = shift; # current request object
 	my $pathOrObj = shift; # song path or object
 	my $tags      = shift; # tags to use
 	my $menuMode  = shift; # if true, we're in Menu mode
@@ -3807,6 +3811,27 @@ sub _songData {
 		}
 	}
 	
+	# If we have a remote track, check if a plugin can provide metadata
+	my $remoteMeta = {};
+	if ( $track->remote ) {
+		my $url     = $track->url;
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+		if ( $handler && $handler->can('getMetadataFor') ) {
+			$remoteMeta = $handler->getMetadataFor( $request->client, $url );
+			
+			$remoteMeta->{a} = $remoteMeta->{artist};
+			$remoteMeta->{l} = $remoteMeta->{album};
+			$remoteMeta->{K} = $remoteMeta->{cover};
+			$remoteMeta->{Y} = $remoteMeta->{replay_gain};
+			$remoteMeta->{o} = $remoteMeta->{type};
+			$remoteMeta->{r} = $remoteMeta->{bitrate};
+			
+			# if we have a plugin-defined title, remove the current_title value
+			if ( $remoteMeta->{title} ) {
+				$request->addResult( 'current_title' => undef );
+			}
+		}
+	}
 	
 	# define an ordered hash for our results
 	tie (my %returnHash, "Tie::IxHash");
@@ -3817,14 +3842,14 @@ sub _songData {
 
 	# add fields present no matter $tags
 	if ($menuMode) {
-		$returnHash{'TITLE'} = $track->title;
+		$returnHash{'TITLE'} = $remoteMeta->{title} || $track->title;
 		
 		# use token as key in menuMode
 		$keyIndex = 1;
 	}
 	else {
 		$returnHash{'id'}    = $track->id;
-		$returnHash{'title'} = $track->title;
+		$returnHash{'title'} = $remoteMeta->{title} || $track->title;
 	}
 
 	my %tagMap = (
@@ -3892,14 +3917,22 @@ sub _songData {
 		  'P' => ['genre_ids',         '',                'genres',        'id'],           #->genre_track->genres.id
                                                                             
 		  'k' => ['comment',           'COMMENT',         'comment'],                       #->comment_object
+		  'K' => [''],                                                                      # artwork URL, not in db
 
 	);
-
+	
 	# loop so that stuff is returned in the order given...
 	for my $tag (split //, $tags) {
+		
+		# special case, artwork URL for remote tracks
+		if ($tag eq 'K') {
+			if ( my $meta = $remoteMeta->{$tag} ) {
+				$returnHash{artwork_url} = $meta;
+			}
+		}
 
 		# special case artists (tag A and S)
-		if ($tag eq 'A' || $tag eq 'S') {
+		elsif ($tag eq 'A' || $tag eq 'S') {
 			
 			if (defined(my $submethod = $tagMap{$tag}->[3])) {
 				
@@ -3936,9 +3969,14 @@ sub _songData {
 
 				my $value;
 				my $key = $tagMap{$tag}->[$keyIndex];
+				
+				# Override with remote track metadata if available
+				if ( defined $remoteMeta->{$tag} ) {
+					$value = $remoteMeta->{$tag};
+				}
 
 				# tag with submethod
-				if (defined(my $submethod = $tagMap{$tag}->[3])) {
+				elsif (defined(my $submethod = $tagMap{$tag}->[3])) {
 
 					# call submethod
 					if (defined(my $related = $track->$method)) {

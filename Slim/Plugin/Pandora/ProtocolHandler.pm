@@ -557,17 +557,20 @@ sub getCurrentTitle {
 	return $client->pluginData('currentTitle');
 }
 
-# Metadata hashref used by CLI/JSON clients
-sub getCurrentMeta {
+# Metadata for a URL, used by CLI/JSON clients
+sub getMetadataFor {
 	my ( $class, $client, $url ) = @_;
 	
-	my $track = $client->pluginData('currentTrack') || return;
+	my $track = $client->pluginData('prevTrack') || $client->pluginData('currentTrack') || return;
 	
 	return {
-		artist => $track->{artistName},
-		album  => $track->{albumName},
-		title  => $track->{songName},
-		cover  => $track->{albumArtUrl},
+		artist      => $track->{artistName},
+		album       => $track->{albumName},
+		title       => $track->{songName},
+		cover       => $track->{albumArtUrl},
+		replay_gain => $track->{trackGain},
+		bitrate     => '128k CBR',
+		type        => 'MP3 (Pandora)',
 	};
 }
 

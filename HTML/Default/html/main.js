@@ -417,21 +417,10 @@ Player = function(){
 
 						if (result.playlist_tracks > 0) {
 							
-							// Handle plugin-specific metadata, i.e. Pandora
-//							if (result.current_meta) {
-//								result.playlist_loop[0].id     = null;
-//								result.playlist_loop[0].title  = result.current_meta.title;
-//								result.playlist_loop[0].artist = result.current_meta.artist;
-//								result.playlist_loop[0].album  = result.current_meta.album;
-//								if (result.current_meta.cover) {
-//									Ext.get('ctrlCurrentArt').update('<img src="' + result.current_meta.cover + '" height="96">');
-//								}
-//							}
-
 							Ext.get('ctrlCurrentTitle').update(
 								'<a href="' + webroot + 'songinfo.html?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser">'
 								+ 
-								((result.current_title && !result.current_meta) ? result.current_title : (
+								(result.current_title ? result.current_title : (
 									(result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
 									+ 
 									(result.playlist_loop[0].tracknum ? result.playlist_loop[0].tracknum + ". " : '')
@@ -452,7 +441,11 @@ Player = function(){
 							);
 							
 							if (result.playlist_loop[0].artist) {
-								Ext.get('ctrlCurrentArtist').update('<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=' + result.playlist_loop[0].artist_id + '&amp;level=1&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].artist + '</a>');
+								Ext.get('ctrlCurrentArtist').update(
+									result.playlist_loop[0].artist_id
+										? '<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=' + result.playlist_loop[0].artist_id + '&amp;level=1&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].artist + '</a>'
+										: result.playlist_loop[0].artist
+								);
 								Ext.get('ctrlArtistTitle').show();
 							}
 							else {
@@ -462,7 +455,10 @@ Player = function(){
 							
 							if (result.playlist_loop[0].album) {
 								Ext.get('ctrlCurrentAlbum').update(
-									'<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].album + '</a>' 
+									(result.playlist_loop[0].album_id
+										? '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].album + '</a>'
+										: result.playlist_loop[0].album
+									)
 									+ (result.playlist_loop[0].year ? ' (' 
 										+ '<a href="' + webroot + 'browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=' + result.playlist_loop[0].year + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].year + '</a>' 
 									+ ')' : '')
@@ -476,12 +472,19 @@ Player = function(){
 
 							if (result.playlist_loop[0].id && (el = Ext.get('ctrlCurrentArt'))) {
 								coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96xX.jpg"></a>';
+								popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250xX.jpg" width="250">';
+								
+								if (result.playlist_loop[0].artwork_url) {
+									coverart = '<img src="' + result.playlist_loop[0].artwork_url + '" height="96" />';
+									popup    = '<img src="' + result.playlist_loop[0].artwork_url + ' />';
+								}
+								
 								el.update(coverart);
 								el = el.child('img:first');
 								Ext.QuickTips.unregister(el);
 								Ext.QuickTips.register({
 									target: el,
-									text: '<img src="/music/' + result.playlist_loop[0].id + '/cover_250xX.jpg" width="250">',
+									text: popup,
 									minWidth: 250
 								});
 							}
@@ -553,7 +556,7 @@ Player = function(){
 							"status",
 							"-",
 							1,
-							"tags:gabehldiqtyrsuo"
+							"tags:gabehldiqtyrsuoK"
 						]
 					]
 				}),
