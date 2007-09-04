@@ -167,22 +167,8 @@ Playlist = function(){
 					}
 				}				
 			});
-			
-/*			Ext.dd.ScrollManager.register('playList');
-			items = Ext.DomQuery.select('div.selectorMarker');
-			for(var i = 0; i < items.length; i++) {
-				var dd = new Ext.dd.DD(items[i], 'playlist', {
-					containerScroll: true,
-					scroll: false
-				});
-				dd.setXConstraint(0, 0);
-				dd.onDragDrop = function(e, id) {
-					alert("dd was dropped on " + id);
-				}
-			}
-			
-//			Ext.dd.DragZone('playList', {containerScroll:true});
-*/
+
+
 			Playlist.highlightCurrent();
 		},
 
@@ -579,58 +565,96 @@ Player = function(){
 		// only poll a minimum of information to see whether the currently playing song has changed
 		// don't request all status info to minimize performance impact on the server
 		getStatus : function() {
-			Ext.Ajax.request({
-				params: Ext.util.JSON.encode({
-					id: 1, 
-					method: "slim.request", 
-					params: [ 
-						playerid,
-						[ 
-							"status",
-							"-",
-							1,
-							"tags:u"
+			// only poll player state if there is one
+			if (player) {
+				Ext.Ajax.request({
+					params: Ext.util.JSON.encode({
+						id: 1, 
+						method: "slim.request", 
+						params: [ 
+							playerid,
+							[ 
+								"status",
+								"-",
+								1,
+								"tags:u"
+							]
 						]
-					]
-				}),
-
-				success: function(response){
-					if (response && response.responseText) {
-						var responseText = Ext.util.JSON.decode(response.responseText);
-						
-						// only continue if we got a result and player
-						if (responseText.result && responseText.result.player_connected) {
-							var result = responseText.result;
-							if ((result.power && result.power != playerStatus.power) ||
-								(result.mode && result.mode != playerStatus.mode) ||
-								(result.current_title && result.current_title != playerStatus.title) ||
-								(result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track) ||
-								(playerStatus.track && !result.playlist_tracks) ||
-								(result.playlist_tracks && !playerStatus.track) ||
-								(result.playlist_tracks != null && result.playlist_tracks != playerStatus.tracks) ||
-								(result.playlist_cur_index && result.playlist_cur_index != playerStatus.index) ||
-								(result['playlist shuffle'] >= 0 && result['playlist shuffle'] != playerStatus.shuffle)
-							){
-								this.getUpdate();
+					}),
+	
+					success: function(response){
+						if (response && response.responseText) {
+							var responseText = Ext.util.JSON.decode(response.responseText);
+							
+							// only continue if we got a result and player
+							if (responseText.result && responseText.result.player_connected) {
+								var result = responseText.result;
+								if ((result.power && result.power != playerStatus.power) ||
+									(result.mode && result.mode != playerStatus.mode) ||
+									(result.current_title && result.current_title != playerStatus.title) ||
+									(result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track) ||
+									(playerStatus.track && !result.playlist_tracks) ||
+									(result.playlist_tracks && !playerStatus.track) ||
+									(result.playlist_tracks != null && result.playlist_tracks != playerStatus.tracks) ||
+									(result.playlist_cur_index && result.playlist_cur_index != playerStatus.index) ||
+									(result['playlist shuffle'] >= 0 && result['playlist shuffle'] != playerStatus.shuffle)
+								){
+									this.getUpdate();
+								}
+	
+								else if (result['mixer volume'] && result['mixer volume'] != playerStatus.volume) {
+									this.updateStatus(response)
+								}
+								else
+									this.updatePlayTime(result.time, result.duration);
 							}
-
-							else if (result['mixer volume'] && result['mixer volume'] != playerStatus.volume) {
-								this.updateStatus(response)
+							
+							// TODO: display scanning information
+							if (responseText.result && responseText.result.rescan) {
+							 //	console.debug('scanning');
 							}
-							else
-								this.updatePlayTime(result.time, result.duration);
 						}
-						
-						// TODO: display scanning information
-						if (responseText.result && responseText.result.rescan) {
-						 //	console.debug('scanning');
+					},
+					
+					failure: function(){
+						player = '';
+						playerid = '';
+					},
+	
+					scope: this
+				});
+			}
+
+			// no player available - check for new players
+			else {
+				Ext.Ajax.request({
+					params: Ext.util.JSON.encode({
+						id: 1, 
+						method: "slim.request", 
+						params: [ 
+							'',
+							[ 
+								"players",
+								0,
+								99
+							]
+						]
+					}),
+	
+					success: function(response){
+						if (response && response.responseText) {
+							var responseText = Ext.util.JSON.decode(response.responseText);
+
+							// let's set the current player to the first player in the list
+							if (responseText.result && responseText.result.count && responseText.result.players_loop) {
+								playerid = responseText.result.players_loop[0].playerid;
+								player = encodeURI(playerid);
+							}
 						}
 					}
-				},
+				});
+			}
 
-				scope: this
-			});
-			
 			pollTimer.delay(5000);
 		},
 
