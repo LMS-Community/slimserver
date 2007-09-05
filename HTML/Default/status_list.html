@@ -9,9 +9,9 @@
 			[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj; END %]
 		[% ELSE %]
 			<span class="playlistCover">
-				<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">
+				[% IF item.itemobj.album.id %]<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">[% END %]
 					<img src="/music/[% item.itemobj.id %]/cover_50xX_F.jpg">
-				</a>
+				[% IF item.itemobj.album.id %]</a>[% END %]
 			</span>
 			<div class="playlistSongDetail">
 				<a href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.title | html %]</a>

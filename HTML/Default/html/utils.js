@@ -238,9 +238,13 @@ var Utils = function(){
 				el.setHeight(myHeight);
 			}
 
-			if (el = Ext.get('browsedbList')) {	
+			if (el = Ext.get('browsedbList')) {
 				el.setHeight(Ext.fly(document.body).getHeight() - el.getTop() - infoHeight);
 			}
+			if (el = Ext.get('songInfo')) {
+				el.setHeight(Ext.fly(document.body).getHeight() - el.getTop() - infoHeight);
+			}
+			
 		},
 
 		processPlaylistCommand : function(param) {

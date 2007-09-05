@@ -290,11 +290,11 @@ div#pagetitle {
 	padding-bottom: 5px;
 }
 
-.songInfo {
+#songInfo {
 	background: black;
 }
 
-.songInfo ul {
+#songInfo ul {
 	/* the list of song info items */
 	background-color: black;
 }

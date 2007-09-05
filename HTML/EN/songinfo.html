@@ -10,7 +10,7 @@
 <br>
 <a href="status_header.html?command=playlist&amp;subcommand=addtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]" target="status">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a>
 </div>
-<div class="songInfo">
+<div id="songInfo">
 	<ul>
 		<li><div class="songInfoTitle">[% "TITLE" | string; "COLON" | string %]</div>
 			<div class="songInfoText">[% itemobj.title | html %]</div>

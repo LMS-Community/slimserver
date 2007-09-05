@@ -91,7 +91,7 @@ div.thumbwrap {
 	margin: 10px;
 }
 
-#browsedbList, #playList {
+#browsedbList, #playList, #songInfo {
 	margin: 5px;
 	height: 400px;
 	overflow: auto;
@@ -557,14 +557,14 @@ form#advSearchForm.resultsPage {
 
 
 /* Song information page */
-.songInfo ul, #songInfoHeader {
+#songInfo ul, #songInfoHeader {
 	/* the list of song info items */
 	padding: 0px;
 	list-style: none;
 	margin: 8px;
 }
 
-.songInfo li {
+#songInfo li {
 	padding-top: 5px;
 	clear: left;
 }

@@ -59,7 +59,7 @@ div#topGraphicMenu3 #statusMessage {
 	float: left;
 }
 
-.songInfo li {
+#songInfo li {
 	clear: right;
 }
 
