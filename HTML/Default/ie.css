@@ -12,12 +12,12 @@
 
 .mouseOver .selector_bottomRight, 
 .mouseOver .selector_topLeft { 
-	height: 24px;
+	height: 18px;
 	bottom: 0;
 }
 
 .itemWithCover, .currentSong { 
-	height: 40px;
+	height: 34px;
 }
 
 .thumbwrap {
@@ -37,7 +37,6 @@
 }
 
 #playlistTab {
-	height: 10px;
 	position: absolute;
-	bottom: 15px;
+	bottom: -3px;
 }

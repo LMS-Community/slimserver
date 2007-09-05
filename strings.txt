@@ -8816,6 +8816,10 @@ BITRATE
 	SV	Bithastighet
 	ZH_CN	比特率
 
+PLAYTIME
+	DE	Laufzeit
+	EN	Playtime
+
 BPM
 	CS	Beatů za minutu
 	DE	Beats pro Minute

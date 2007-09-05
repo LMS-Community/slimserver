@@ -5,13 +5,13 @@ html, body, tr.odd, tr.even {
 	overflow: hidden;
 	height: 100%;
 	color: white;
-	font-size: 12px;
+	font-size: 11px;
 	font-family: sans-serif;
 }
 
 body, iframe { background: url(html/images/inner_background.gif) repeat; }
-b, a { color: white; font-size: 12px; }
-input { color: black; font-size: 12px; }
+b, a { color: white; font-size: 11px; }
+input { color: black; font-size: 11px; }
 img { border: 0; }
 
 
@@ -24,13 +24,13 @@ img { border: 0; }
 	position: relative;
 	margin-left: 6px;
 	padding-right: 6px;
-	font-size: 12px;
+	font-size: 11px;
 	clear: left;
 }
 
 .browsedbControls, .playlistControls {
 	position: absolute;
-	top: 0px;
+	top: -2px;
 	right: 10px;
 }
 
@@ -88,7 +88,7 @@ div.thumbwrap {
 
 
 #browsedbHeader {
-	margin: 10px;
+	margin: 5px;
 }
 
 #browsedbList, #playList, #songInfo {
@@ -107,7 +107,7 @@ div.thumbwrap {
 
 /* Home menu */
 .homeMenuSection {
-	margin-top: 20px;
+	margin-top: 5px;
 	margin-left: 5px;
 	margin-right: 15px;
 }
@@ -125,7 +125,7 @@ div.thumbwrap {
 #crumblist a,
 .browseItemLink {
 	text-decoration: none;
-	font-size: 12px;
+	font-size: 11px;
 }
 
 #livesearch {
@@ -204,14 +204,12 @@ form#advSearchForm.resultsPage {
 }
 
 #helpLink {
-	font-size: 95%;
 	position: relative;
 	top: 5px;
 	left: 25px;
 }
 
 #settingsLinks {
-	font-size: 95%;
 	position: absolute;
 	top: 5px;
 	right: 25px;
@@ -236,9 +234,9 @@ form#advSearchForm.resultsPage {
 }
 
 #playerControlPanel {
-	padding-top: 20px;
-	padding-left: 20px;
-	padding-right: 20px;
+	padding-top: 0px;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 
 #ctrlCurrentArt {
@@ -274,12 +272,13 @@ form#advSearchForm.resultsPage {
 
 .inner {
 	background: url(html/images/inner_background.gif) repeat;
-	margin: 20px; 
+	margin: 10px;
+	margin-top: 0px;
 }
 
 .inner_content {
 	background: url(html/images/inner_background.gif) repeat;
-	margin: 10px;
+	margin: 3px;
 	height: 330px;
 }
 
@@ -306,34 +305,36 @@ form#advSearchForm.resultsPage {
 .titlebox {
 	background: url(html/images/title_background.gif) repeat;
 	margin: 5px;
-	margin-top: 15px;
+	margin-top: 10px;
 }
 
 .titlebox_content {
 	background: url(html/images/title_background.gif) repeat;
 	margin-left: 10px;
 	height: 15px;
+	padding-top: 3px;
+	padding-bottom: 2px;
 	font-size: 120%;
 	font-weight: bold;
 }
 
 .titlebox_top div { 
-	height: 10px;
+	height: 5px;
 	background: url(html/images/title_top_left.gif) no-repeat top left;
 }
 
 .titlebox_top {
-	height: 10px;
+	height: 5px;
 	background: url(html/images/title_top_right.gif) no-repeat top right; 
 }
 
 .titlebox_bottom div { 
-	height: 10px;
+	height: 5px;
 	background: url(html/images/title_bottom_left.gif) no-repeat bottom left; 
 }
 
 .titlebox_bottom { 
-	height: 10px;
+	height: 5px;
 	background: url(html/images/title_bottom_right.gif) no-repeat bottom right; 
 }
 
@@ -376,8 +377,8 @@ form#advSearchForm.resultsPage {
 }
 
 #leftcontent {
-	margin-left: 20px;
-	margin-top: 20px;
+	margin-left: 10px;
+	margin-top: 10px;
 }
 
 #leftpanel, #rightpanel {
@@ -388,8 +389,8 @@ form#advSearchForm.resultsPage {
 #edge_top_left, #edge_top_right,
 #edge_bottom_left, #edge_bottom_right {
 	position: absolute;
-	height: 10px;
-	width: 10px;
+	height: 5px;
+	width: 5px;
 	margin: 0;
 	padding: 0;
 }
@@ -430,18 +431,17 @@ form#advSearchForm.resultsPage {
 	background: url(html/images/infotab_background.gif) repeat;
 	margin-left: 20px;
 	margin-right: 20px;
-	height: 25px;
+	height: 28px;
 	vertical-align: middle;
-	font-size: 95%;
 }
 
 .infoTab_top div { 
-	height: 10px;
+	height: 5px;
 	background: url(html/images/infotab_top_left.gif) no-repeat top left;
 }
 
 .infoTab_top {
-	height: 10px;
+	height: 5px;
 	background: url(html/images/infotab_top_right.gif) no-repeat top right; 
 }
 
@@ -451,8 +451,8 @@ form#advSearchForm.resultsPage {
 }
 
 #playlistTab .infoTab_content {
-	margin-left: 10px;
-	margin-right: 10px;
+	margin-left: 20px;
+	margin-right: 20px;
 }
 
 #mainbody {
@@ -499,7 +499,7 @@ form#advSearchForm.resultsPage {
 
 .currentSong .selector_topLeft,
 .mouseOver .selector_topLeft { 
-	padding-top: 9px;
+	padding-top: 7px;
 	background: transparent url(html/images/selector_top_left.gif) no-repeat top left; 
 }
 
@@ -511,14 +511,14 @@ form#advSearchForm.resultsPage {
 
 .currentSong .selector_bottomLeft,
 .mouseOver .selector_bottomLeft { 
-	padding-bottom: 9px;
+	padding-bottom: 5px;
 	background: transparent url(html/images/selector_bottom_left.gif) no-repeat bottom left; 
 }
 
 .selectorMarker {
 	cursor: pointer;
-	padding-top: 9px;
-	padding-bottom: 9px;
+	padding-top: 7px;
+	padding-bottom: 5px;
 	background: none;
 }
 
@@ -613,7 +613,7 @@ form#advSearchForm.resultsPage {
 
 
 .menu-title{
-	font: bold 12px sans-serif;
+	font: bold 11px sans-serif;
 	color: #233D6D;
 	display: block;
 	padding: 3px;

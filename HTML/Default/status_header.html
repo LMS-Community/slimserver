@@ -58,7 +58,7 @@
 		<td background="[% webroot %]html/images/playerbase_std_mid.png">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<td>
+					<td colspan="3">
 						<table border="0" cellspacing="0" cellpadding="0">
 							<tr>
 								<td id="ctrlPrevious"></td>
@@ -66,11 +66,13 @@
 								<td id="ctrlTogglePlay"></td>
 								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
 								<td id="ctrlNext"></td>
+								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
+								<td id="ctrlRepeat"></td>
+								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
+								<td id="ctrlShuffle"></td>
 							</tr>
 						</table>
 					</td>
-					<td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td id="ctrlRepeat"></td></tr></table></td>
-					<td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td id="ctrlShuffle"></td></tr></table></td>
 					<td align="right">
 						<table border="0" cellspacing="0" cellpadding="0">
 							<tr>
@@ -85,11 +87,7 @@
 					<td align="right"><span id="ctrlPower"></span></td>
 				</tr>
 				<tr>
-					<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="8" width="32" border="0" /></td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td></td>
+					<td colspan="5"><img src="[% webroot %]html/images/spacer.gif" alt="" height="8" width="32" border="0" /></td>
 				</tr>
 				<tr>
 					<td colspan="4">
@@ -108,10 +106,10 @@
 								<td><div class="currentTrackInfo" id="ctrlAlbumTitle">[% "ALBUM" | string %][% "COLON" | string %] <span id="ctrlCurrentAlbum"></span></div></td>
 							</tr>
 							<tr>
-								<td><div class="currentTrackInfo"><span id="ctrlPlaytime"></span><span id="ctrlTotalTime"></span>&nbsp;- <span id="ctlPlayNum"></span>&nbsp;[% "OF" | string%] <span id="ctlSongCount"></span> </div></td>
+								<td><div class="currentTrackInfo" id="ctrlBitrateTitle">[% "BITRATE" | string %][% "COLON" | string %] <span id="ctrlBitrate"></span></div></td>
 							</tr>
 							<tr>
-								<td><div class="currentTrackInfo">[% "BITRATE" | string %][% "COLON" | string %] <span id="ctrlBitrate"></span></div></td>
+								<td><div class="currentTrackInfo" id="ctrlPlayTimeTitle">[% "PLAYTIME" | string %][% "COLON" | string %] <span id="ctrlPlaytime"></span><span id="ctrlTotalTime"></span>&nbsp;- <span id="ctlPlayNum"></span>&nbsp;[% "OF" | string%] <span id="ctlSongCount"></span> </div></td>
 							</tr>
 						</table>
 					</td>

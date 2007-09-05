@@ -56,27 +56,26 @@ Main = function(){
 		onResize : function(){
 			// some browser dependant offsets... argh...
 			offset = new Array();
-			offset['bottom'] = 75;
-			offset['playlistbottom'] = 76;
-			offset['playlist'] = 5;
+			offset['bottom'] = 30;
+			offset['playlistbottom'] = 32;
+			offset['playlist'] = 15;
 
 			if (Ext.isIE) {
-				offset['bottom'] = 55;
+				offset['bottom'] = 22;
 				if (Ext.isIE7) {
-					offset['playlistbottom'] = 88;
-					offset['playlist'] = 9;
+					offset['playlistbottom'] = 30;
+					offset['playlist'] = 20;
 				}
 				else {
-					offset['playlistbottom'] = 97;
-					offset['playlist'] = 4;
+					offset['playlistbottom'] = 43;
 				}
 			}
 			else if (Ext.isOpera) {
-				offset['bottom'] = 60;
-				offset['playlistbottom'] = 79;
+				offset['bottom'] = 28;
+				offset['playlistbottom'] = 33;
 			}
 			else if (Ext.isSafari) {
-				offset['playlistbottom'] = 96;
+				offset['playlistbottom'] = 33;
 			}
 
 			if (pager = Ext.get('pagebar'))
@@ -85,13 +84,13 @@ Main = function(){
 			dimensions = new Array();
 			dimensions['maxHeight'] = Ext.get(document.body).getHeight();
 			dimensions['footer'] = Ext.get('footer').getHeight();
-			dimensions['colWidth'] = Math.floor((Ext.get(document.body).getWidth() - 6*20) / 2);
-			dimensions['rightHeight'] = dimensions['maxHeight'] - dimensions['footer'] * 2 - 163 - 50 - offset['playlistbottom'];
+			dimensions['colWidth'] = Math.floor((Ext.get(document.body).getWidth() - 6*5) / 2);
+			dimensions['rightHeight'] = dimensions['maxHeight'] - dimensions['footer'] * 2 - 163 - 27 - offset['playlistbottom'];
 
 			right = Ext.get('rightpanel');
 			left = Ext.get('leftcontent');
 
-			Ext.get('mainbody').setHeight(dimensions['maxHeight']-35);
+			Ext.get('mainbody').setHeight(dimensions['maxHeight']-10);
 
 			// left column
 			left.setHeight(dimensions['maxHeight'] - Ext.get('leftpanel').getTop() - dimensions['footer'] - offset['bottom']);
@@ -432,14 +431,7 @@ Player = function(){
 							);
 							Ext.get('ctlSongCount').update(result.playlist_tracks);
 							Ext.get('ctlPlayNum').update(result.playlist_cur_index + 1);
-							Ext.get('ctrlBitrate').update(
-								result.playlist_loop[0].bitrate
-								+ (result.playlist_loop[0].type 
-									? ', ' + result.playlist_loop[0].type
-									: ''
-								)
-							);
-							
+
 							if (result.playlist_loop[0].artist) {
 								Ext.get('ctrlCurrentArtist').update(
 									result.playlist_loop[0].artist_id
@@ -470,6 +462,21 @@ Player = function(){
 								Ext.get('ctrlAlbumTitle').hide();
 							}
 
+							if (result.playlist_loop[0].bitrate) {
+								Ext.get('ctrlBitrate').update(
+									result.playlist_loop[0].bitrate
+									+ (result.playlist_loop[0].type 
+										? ', ' + result.playlist_loop[0].type
+										: ''
+									)
+								);
+								Ext.get('ctrlBitrateTitle').show();
+							}
+							else {
+								Ext.get('ctrlBitrate').update('');
+								Ext.get('ctrlBitrateTitle').hide();
+							}
+							
 							if (result.playlist_loop[0].id && (el = Ext.get('ctrlCurrentArt'))) {
 								coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96xX.jpg"></a>';
 								popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250xX.jpg" width="250">';
