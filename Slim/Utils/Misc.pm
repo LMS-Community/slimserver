@@ -518,7 +518,8 @@ sub anchorFromURL {
 sub stripAnchorFromURL {
 	my $url = shift;
 
-	if ($url =~ /^(.*)#[\d\.]+-.*$/) {
+	# Bug 4709 - only strip anchor following a file extension
+	if ($url =~ /^(.*\..{2,4})#[\d\.]+-.*$/) {
 		return $1;
 	}
 
