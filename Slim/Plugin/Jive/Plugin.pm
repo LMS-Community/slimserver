@@ -104,7 +104,8 @@ sub menuQuery {
 					go => {
 						cmd    => ['albums'],
 						params => {
-							menu => 'track',
+							menu     => 'track',
+							menu_all => '1',
 						},
 					},
 				},
@@ -119,6 +120,7 @@ sub menuQuery {
 						cmd    => ['artists'],
 						params => {
 							menu => 'album',
+							menu_all => '1',
 						},
 					},
 				},
@@ -130,6 +132,7 @@ sub menuQuery {
 						cmd    => ['genres'],
 						params => {
 							menu => 'artist',
+							menu_all => '1',
 						},
 					},
 				},
@@ -141,6 +144,7 @@ sub menuQuery {
 						cmd    => ['years'],
 						params => {
 							menu => 'album',
+							menu_all => '1',
 						},
 					},
 				},
@@ -152,6 +156,7 @@ sub menuQuery {
 						cmd    => ['albums'],
 						params => {
 							menu => 'track',
+							menu_all => '1',
 							sort => 'new',
 						},
 					},
@@ -178,6 +183,7 @@ sub menuQuery {
 						cmd    => ['musicfolder'],
 						params => {
 							menu => 'musicfolder',
+							menu_all => '1',
 						},
 					},
 				},

@@ -145,6 +145,7 @@ sub albumsQuery {
 	my $year          = $request->getParam('year');
 	my $sort          = $request->getParam('sort');
 	my $menu          = $request->getParam('menu');
+	my $insert        = $request->getParam('menu_all');
 	
 	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album'])) {
 		$request->setStatusBadParams();
@@ -153,6 +154,7 @@ sub albumsQuery {
 
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
+	my $insertAll = $menuMode && defined $insert;
 
 	if (!defined $tags) {
 		$tags = 'l';
@@ -272,6 +274,8 @@ sub albumsQuery {
 			$base->{'actions'}->{'add'}->{'params'}->{'genre_id'} = $genreID;
 		}
 		$request->addResult('base', $base);
+		# add 1 to count if we are adding a 'Play All'
+		$count++ if $insertAll;
 	}
 	
 	if (Slim::Music::Import->stillScanning()) {
@@ -288,6 +292,11 @@ sub albumsQuery {
 		my $loopname = $menuMode?'item_loop':'albums_loop';
 		my $cnt = 0;
 		$request->addResult('offset', $start) if $menuMode;
+
+		# first PLAY ALL item
+		if ($insertAll) {
+			($start, $end, $cnt) = _playAll($start, $end, $cnt, $request, $loopname);
+		}
 
 		for my $eachitem ($rs->slice($start, $end)) {
 			
@@ -361,9 +370,11 @@ sub artistsQuery {
 	my $trackID  = $request->getParam('track_id');
 	my $albumID  = $request->getParam('album_id');
 	my $menu     = $request->getParam('menu');
+	my $insert   = $request->getParam('menu_all');
 	
 	# menu/jive mgmt
 	my $menuMode = defined $menu;
+	my $insertAll = $menuMode && defined $insert;
 	
 	# get them all by default
 	my $where = {};
@@ -462,7 +473,8 @@ sub artistsQuery {
 				'go' => {
 					'cmd' => [$actioncmd],
 					'params' => {
-						'menu' => $nextMenu,
+						menu     => $nextMenu,
+						menu_all => '1',
 					},
 					'itemsParams' => 'params'
 				},
@@ -494,6 +506,10 @@ sub artistsQuery {
 			$base->{'actions'}->{'add'}->{'params'}->{'genre_id'} = $genreID;
 		}
 		$request->addResult('base', $base);
+
+		# correct count if we insert "Play all"
+		$count++ if $insertAll;
+
 	}
 	
 	if (Slim::Music::Import->stillScanning()) {
@@ -517,6 +533,11 @@ sub artistsQuery {
 		# searching, or if we have a track
 		if ($count_va) {
 			unshift @data, Slim::Schema->variousArtistsObject;
+		}
+
+		# first PLAY ALL item
+		if ($insertAll) {
+			($start, $end, $cnt) = _playAll($start, $end, $cnt, $request, $loopname);
 		}
 
 		for my $obj (@data) {
@@ -845,9 +866,11 @@ sub genresQuery {
 	my $albumID       = $request->getParam('album_id');
 	my $trackID       = $request->getParam('track_id');
 	my $menu          = $request->getParam('menu');
+	my $insert        = $request->getParam('menu_all');
 	
 	# menu/jive mgmt
-	my $menuMode = defined $menu;
+	my $menuMode  = defined $menu;
+	my $insertAll = $menuMode && defined $insert;
 		
 	# get them all by default
 	my $where = {};
@@ -915,7 +938,8 @@ sub genresQuery {
 				'go' => {
 					'cmd' => [$actioncmd],
 					'params' => {
-						'menu' => $nextMenu,
+						menu     => $nextMenu,
+						menu_all => '1',
 					},
 					'itemsParams' => 'params',
 				},
@@ -938,6 +962,7 @@ sub genresQuery {
 			},
 		};
 		$request->addResult('base', $base);
+		$count++ if $insertAll;
 	}
 	
 	if (Slim::Music::Import->stillScanning()) {
@@ -955,6 +980,9 @@ sub genresQuery {
 		my $cnt = 0;
 		$request->addResult('offset', $start) if $menuMode;
 		
+		if ($insertAll) {
+			($start, $end, $cnt) = _playAll($start, $end, $cnt, $request, $loopname);
+		}
 		for my $eachitem ($rs->slice($start, $end)) {
 			
 			my $id = $eachitem->id();
@@ -1099,9 +1127,11 @@ sub musicfolderQuery {
 	my $folderId = $request->getParam('folder_id');
 	my $url      = $request->getParam('url');
 	my $menu     = $request->getParam('menu');
+	my $insert   = $request->getParam('menu_all');
 	
 	# menu/jive mgmt
-	my $menuMode = defined $menu;
+	my $menuMode  = defined $menu;
+	my $insertAll = $menuMode && defined $insert;
 	
 	# url overrides any folderId
 	my $params = ();
@@ -1170,7 +1200,8 @@ sub musicfolderQuery {
 				'go' => {
 					'cmd' => ["musicfolder"],
 					'params' => {
-						'menu' => 'musicfolder',
+						menu     => 'musicfolder',
+						menu_all => '1',
 					},
 					'itemsParams' => 'params',
 				},
@@ -1193,6 +1224,7 @@ sub musicfolderQuery {
 			},
 		};
 		$request->addResult('base', $base);
+		$count++ if $insertAll;
 	}
 
 	if (Slim::Music::Import->stillScanning()) {
@@ -1212,6 +1244,9 @@ sub musicfolderQuery {
 		my $cnt = 0;
 		$request->addResult('offset', $start) if $menuMode;
 		
+		if ($insertAll) {
+			($start, $end, $cnt) = _playAll($start, $end, $cnt, $request, $loopname);
+		}
 		for my $eachitem (@data[$start..$end]) {
 			
 			my $filename = Slim::Music::Info::fileName($eachitem->url());
@@ -1240,8 +1275,9 @@ sub musicfolderQuery {
 						'go' => {
 							'cmd' => ['playlists', 'tracks'],
 							'params' => {
-								'menu' => 'songinfo',
-								'playlist_id' => $id,
+								menu        => 'songinfo',
+								menu_all    => '1',
+								playlist_id => $id,
 							},
 						},
 						'play' => {
@@ -1760,9 +1796,11 @@ sub playlistsQuery {
 	my $search	 = $request->getParam('search');
 	my $tags     = $request->getParam('tags') || '';
 	my $menu     = $request->getParam('menu');
+	my $insert   = $request->getParam('menu_all');
 	
 	# menu/jive mgmt
-	my $menuMode = defined $menu;
+	my $menuMode  = defined $menu;
+	my $insertAll = $menuMode && defined $insert;
 
 	# Normalize any search parameters
 	if (defined $search) {
@@ -1772,6 +1810,7 @@ sub playlistsQuery {
 	my $rs = Slim::Schema->rs('Playlist')->getPlaylists('all', $search);
 
 	# now build the result
+	my $count = $rs->count;
 	
 	if ($menuMode) {
 
@@ -1785,7 +1824,8 @@ sub playlistsQuery {
 				'go' => {
 					'cmd' => ['playlists', 'tracks'],
 					'params' => {
-						'menu' => 'songinfo',
+						menu     => 'songinfo',
+						menu_all => '1',
 					},
 					'itemsParams' => 'params',
 				},
@@ -1808,6 +1848,7 @@ sub playlistsQuery {
 			},
 		};
 		$request->addResult('base', $base);
+		$count++ if $insertAll;
 	}
 
 	if (Slim::Music::Import->stillScanning()) {
@@ -1816,19 +1857,22 @@ sub playlistsQuery {
 
 	if (defined $rs) {
 
-		my $numitems = $rs->count;
 	
-		$numitems += 0;
-		$request->addResult("count", $numitems);
+		$count += 0;
+		$request->addResult("count", $count);
 		
 		my ($valid, $start, $end) = $request->normalize(
-			scalar($index), scalar($quantity), $numitems);
+			scalar($index), scalar($quantity), $count);
 
 		if ($valid) {
 			
 			my $loopname = $menuMode?'item_loop':'playlists_loop';
 			my $cnt = 0;
 			$request->addResult('offset', $start) if $menuMode;
+
+			if ($insertAll) {
+				($start, $end, $cnt) = _playAll($start, $end, $cnt, $request, $loopname);
+			}
 
 			for my $eachitem ($rs->slice($start, $end)) {
 
@@ -3295,7 +3339,7 @@ sub titlesQuery {
 		};
 		$request->addResult('base', $base);
 		
-		# correct count if we insert "Play all songs"
+		# correct count if we insert "Play all"
 		$count++ if $insertAll;
 	}
 
@@ -3317,59 +3361,9 @@ sub titlesQuery {
 
 		# first PLAY ALL item
 		if ($insertAll) {
-			
-			# insert first item if needed
-			if ($start == 0) {
-				$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string('JIVE_PLAY_ALL_SONGS'));
-
-				# get all our params
-				my $params = $request->getParamsCopy();
-				my $paramsAdd = {};
-				my $paramsGoPlay = {};
-				# remove keys starting with _ (internal or positional) and make copies
-				while (my ($key, $val) = each %{$params}) {
-					if ($key =~ /^_/ || $key eq 'menu' || $key eq 'menu_all') {
-						next;
-					}
-					$paramsAdd->{$key} = $val;
-					$paramsGoPlay->{$key} = $val;
-				}
-			
-				$paramsAdd->{'cmd'} = 'add';
-				$paramsGoPlay->{'cmd'} = 'load';
-
-				# override the actions, babe!
-				my $actions = {
-					'do' => {
-						'player' => 0,
-						'cmd' => ['playlistcontrol'],
-						'params' => $paramsGoPlay,
-					},
-					'play' => {
-						'player' => 0,
-						'cmd' => ['playlistcontrol'],
-						'params' => $paramsGoPlay,
-					},
-					'add' => {
-						'player' => 0,
-						'cmd' => ['playlistcontrol'],
-						'params' => $paramsAdd,
-					},
-				};
-				$request->addResultLoop($loopname, $cnt, 'actions', $actions);
-				$cnt++;
-			}
-
-			# correct db slice!
-			else {
-				# we are not adding our item but it is counted in $start
-				# (a query for tracks 1 10 needs to start at db 0! -- and go to db 9 (instead of 10))
-				# (a query for tracks 0 10 ALSO needs to start at db 0! -- and go to db 8 (instead of 9))
-				$start--;
-			}
-			# always fix $end 
-			$end--;
+			($start, $end, $cnt) = _playAll($start, $end, $cnt, $request, $loopname);
 		}
+
 
 		for my $item ($rs->slice($start, $end)) {
 			
@@ -3468,9 +3462,11 @@ sub yearsQuery {
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');	
 	my $menu          = $request->getParam('menu');
+	my $insert        = $request->getParam('menu_all');
 	
 	# menu/jive mgmt
-	my $menuMode = defined $menu;
+	my $menuMode  = defined $menu;
+	my $insertAll = $menuMode && defined $insert;
 	
 	# get them all by default
 	my $where = {};
@@ -3500,7 +3496,8 @@ sub yearsQuery {
 				'go' => {
 					'cmd' => [$actioncmd],
 					'params' => {
-						'menu' => $nextMenu,
+						menu     => $nextMenu,
+						menu_all => '1',
 					},
 					'itemsParams' => 'params',
 				},
@@ -3526,6 +3523,7 @@ sub yearsQuery {
 			}
 		};
 		$request->addResult('base', $base);
+		$count++ if $insertAll;
 	}
 
 	if (Slim::Music::Import->stillScanning()) {
@@ -3543,6 +3541,9 @@ sub yearsQuery {
 		my $cnt = 0;
 		$request->addResult('offset', $start) if $menuMode;
 
+		if ($insertAll) {
+			($start, $end, $cnt) = _playAll($start, $end, $cnt, $request, $loopname);
+		}
 		for my $eachitem ($rs->slice($start, $end)) {
 
 			my $id = $eachitem->id();
@@ -4030,6 +4031,60 @@ sub _songData {
 	return \%returnHash;
 }
 
+sub _playAll {
+	my ($start, $end, $cnt, $request, $loopname) = @_;
+	# insert first item if needed
+	if ($start == 0) {
+			$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string('JIVE_PLAY_ALL'));
+
+		# get all our params
+		my $params = $request->getParamsCopy();
+		my $paramsAdd = {};
+		my $paramsGoPlay = {};
+		# remove keys starting with _ (internal or positional) and make copies
+		while (my ($key, $val) = each %{$params}) {
+			if ($key =~ /^_/ || $key eq 'menu' || $key eq 'menu_all') {
+				next;
+			}
+			$paramsAdd->{$key} = $val;
+			$paramsGoPlay->{$key} = $val;
+		}
+				
+		$paramsAdd->{'cmd'} = 'add';
+		$paramsGoPlay->{'cmd'} = 'load';
+	
+		# override the actions, babe!
+		my $actions = {
+			'do' => {
+				'player' => 0,
+				'cmd' => ['playlistcontrol'],
+				'params' => $paramsGoPlay,
+			},
+			'play' => {
+				'player' => 0,
+				'cmd' => ['playlistcontrol'],
+				'params' => $paramsGoPlay,
+			},
+			'add' => {
+				'player' => 0,
+				'cmd' => ['playlistcontrol'],
+				'params' => $paramsAdd,
+			},
+		};
+		$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+		$cnt++;
+
+	# correct db slice!
+	} else {
+		# we are not adding our item but it is counted in $start
+		# (a query for tracks 1 10 needs to start at db 0! -- and go to db 9 (instead of 10))
+		# (a query for tracks 0 10 ALSO needs to start at db 0! -- and go to db 8 (instead of 9))
+		$start--;
+	}
+	# always fix $end 
+	$end--;
+	return($start, $end, $cnt);
+}
 =head1 SEE ALSO
 
 L<Slim::Control::Request.pm>

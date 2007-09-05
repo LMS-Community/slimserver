@@ -398,6 +398,9 @@ sub setPref {
 	my $pref = $client->modeParam('pref');
 	
 	$prefs->client($client)->set($pref,$value);
+	if ($pref eq 'playername') {
+		$client->execute(['name', $value]);
+	}
 }
 
 sub executeCommand {
