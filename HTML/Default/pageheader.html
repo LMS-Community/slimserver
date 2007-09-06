@@ -7,18 +7,23 @@
 
 		[% PROCESS standardheader.html %]
 
-		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
-		<script type="text/javascript" src="/html/ext/ext-all[% IF debug %]-debug[% END %].js?r=[% revision %]"></script>
-		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
-		<script type="text/javascript" src="[% webroot %]html/utils.js?r=[% revision %]"></script>
-
-		[% IF maestroScripts %]
-			<script type="text/javascript">
-				var strings = new Array();
-				strings['loading']  = '[% "LOADING" | string %]';
-			</script>
-
-			[% maestroScripts %]
+		
+		[% IF pageHeaderScripts && NOT maestroScripts %]
+			[% pageHeaderScripts %]
+		[% ELSE %]
+			<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
+			<script type="text/javascript" src="/html/ext/ext-all[% IF debug %]-debug[% END %].js?r=[% revision %]"></script>
+			<script type="text/javascript">[% PROCESS html/vars.js %]</script>
+			<script type="text/javascript" src="[% webroot %]html/utils.js?r=[% revision %]"></script>
+	
+			[% IF maestroScripts %]
+				<script type="text/javascript">
+					var strings = new Array();
+					strings['loading']  = '[% "LOADING" | string %]';
+				</script>
+	
+				[% maestroScripts %]
+			[% END %]
 		[% END %]
 
 		[% IF debug %]
@@ -39,7 +44,7 @@
 		<link href="[% webroot %]ie7.css?r=[% revision %]" type="text/css" rel="stylesheet">
 		<![endif]-->		
 	</head>
-	<body>
+	<body  [% IF bodyscript && NOT maestroScripts; bodyscript; END %]>
 
 		<div id="edge_top_left">&nbsp;</div>
 		<div id="edge_top_right">&nbsp;</div>

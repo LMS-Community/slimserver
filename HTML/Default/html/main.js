@@ -1,5 +1,6 @@
 Main = function(){
 	var layout;
+
 	return {
 		init : function(){
 			Ext.UpdateManager.defaults.indicatorText = '<div class="loading-indicator">' + strings['loading'] + '</div>';
@@ -25,7 +26,7 @@ Main = function(){
 
 			Player.init();
 
-			// TODO: these links need to go to the correct page!!!
+			// TODO: these links need to go to the correct pages
 			Ext.get('helpLink').on('click', function(){ 
 				window.open(webroot + 'html/docs/quickstart.html', 'settings', 'dependent=yes,resizable=yes'); 
 			});
@@ -38,8 +39,16 @@ Main = function(){
 				window.open('/EN/settings/player/basic.html?playerid=' + player, 'playersettings', 'dependent=yes,resizable=yes'); 
 			});
 
+			Ext.get('progressInfo').on('click', function(){ 
+				window.open('progress.html?type=importer', 'dependent=yes,resizable=yes'); 
+			});
+
 			Ext.EventManager.onWindowResize(this.onResize, layout);
 			Ext.EventManager.onDocumentReady(this.onResize, layout, true);
+
+			Ext.get('scanWarning').setVisibilityMode(Ext.Element.DISPLAY);
+			if (el = Ext.get('newVersion'))
+				el.setVisibilityMode(Ext.Element.DISPLAY);
 
 			layout.endUpdate();
 
@@ -51,6 +60,49 @@ Main = function(){
 
 			this.onResize();
 		},
+
+
+		// scan progress status updates
+		getScanStatus : function(){
+			Ext.Ajax.url = '/jsonrpc.js'; 
+			
+			Ext.Ajax.request({
+				params: Ext.util.JSON.encode({
+					id: 1,
+					method: "slim.request",
+					params: [
+						'',
+						['serverstatus'],
+					]
+				}),
+				success: this.scanUpdate,
+				scope: this
+			});
+		},
+		
+		scanUpdate : function (response){
+			if (response && response.responseText) {
+				var responseText = Ext.util.JSON.decode(response.responseText);
+				
+				// only continue if we got a result and player
+				if (responseText.result) {
+					var result = responseText.result;
+					
+					if (result.rescan) {
+						Ext.get('scanWarning').show();
+						if (total = Ext.get('progressTotal')) {
+							Ext.get('progressName').update(result.progressname);
+							Ext.get('progressDone').update(result.progressdone) || 0;
+							total.update(result.progresstotal || 0);
+						}
+					}
+					else {
+						Ext.get('scanWarning').hide();
+					}
+				}
+			}
+		},
+
 
 		// resize panels, folder selectors etc.
 		onResize : function(){
@@ -621,9 +673,14 @@ Player = function(){
 								Ext.get('playerSettingsLink').show();
 							}
 
-							// TODO: display scanning information
+							// display scanning information
 							if (responseText.result && responseText.result.rescan) {
-							 //	console.debug('scanning');
+								if (el = Ext.get('newVersion'))
+									el.hide();
+								Main.getScanStatus();
+							}
+							else {
+								Ext.get('scanWarning').hide();
 							}
 						}
 					},

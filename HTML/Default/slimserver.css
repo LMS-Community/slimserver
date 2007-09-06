@@ -101,13 +101,12 @@ div.thumbwrap {
 
 /* Home menu */
 .homeMenuSection {
-	margin-top: 5px;
 	margin-left: 5px;
 	margin-right: 15px;
 }
 
 .homeMenuSection_expanded .homeMenuItem {
-	padding-left: 18px;
+	padding-left: 12px;
 }
 
 .homeMenuItem {
@@ -193,24 +192,29 @@ form#advSearchForm.resultsPage {
 	background: url(html/images/footer_right.png) no-repeat bottom right;
 }
 
-#helpLink img, #settingsLinks img {
+#helpLink img, #settingsLinks img, #footerInfo img {
 	vertical-align: middle;
 }
 
-#helpLink {
+#helpLink, #footerInfo {
 	position: relative;
-	top: 5px;
-	left: 25px;
 }
 
 #settingsLinks {
 	position: absolute;
-	top: 5px;
+	top: 7px;
 	right: 25px;
 	text-align: right;
 }
 
-#settingsLink {
+#helpInfoSection {
+	display: inline;
+	position: absolute;
+	top: 7px;
+	left: 25px;
+}
+
+#settingsLink, #footerInfo {
 	margin-left: 20px;
 }
 
@@ -429,15 +433,11 @@ form#advSearchForm.resultsPage {
 	bottom: 0;
 }
 
-#scanWarning, #library_stats {
+#library_stats {
 	text-align: center;
 	width: 100%;
 	position: absolute; 
 	right: 0px;
-}
-
-#progressInfo {
-	cursor: pointer;
 }
 
 .infoTab {
@@ -495,6 +495,7 @@ form#advSearchForm.resultsPage {
 #content {
 	position: relative;
 	width: 100%;
+	padding-left: 10px;
 }
 
 .folderselector {

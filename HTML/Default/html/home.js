@@ -5,12 +5,6 @@ var MainMenu = function(){
 		init : function(){
 			Ext.EventManager.onWindowResize(this.onResize, this);
 			Ext.EventManager.onDocumentReady(this.onResize, this, true);
-			Ext.EventManager.onDocumentReady(this.getScanStatus, this, true);
-			scanStatusTimer = new Ext.util.DelayedTask(this.getScanStatus, this);
-
-			Ext.get('progressInfo').on('click', function(){ 
-				window.open('/EN/progress.html?type=importer', 'dependent=yes,resizable=yes'); 
-			});
 
 			// use "display:none" to hide inactive elements
 			items = Ext.DomQuery.select('div.homeMenuSection, span.overlappingCrumblist, div#livesearch, div.expandableHomeMenuItem');
@@ -166,51 +160,6 @@ var MainMenu = function(){
 			for(var i = 0; i < items.length; i++) {
 				if (el = Ext.get(items[i].id)) {
 					el.setWidth(contW);
-				}
-			}
-		},
-		
-		getScanStatus : function(){
-			Ext.Ajax.url = '/jsonrpc.js'; 
-			
-			Ext.Ajax.request({
-				params: Ext.util.JSON.encode({
-					id: 1,
-					method: "slim.request",
-					params: [
-						'',
-						['serverstatus'],
-					]
-				}),
-				success: this.scanUpdate,
-				scope: this
-			});
-		},
-		
-		scanUpdate : function (response){
-			if (response && response.responseText) {
-				var responseText = Ext.util.JSON.decode(response.responseText);
-				
-				// only continue if we got a result and player
-				if (responseText.result) {
-					var result = responseText.result;
-					
-					if (result.rescan) {
-						scanStatusTimer.delay(5000);
-						Ext.get('scanWarning').show();
-						if (total = Ext.get('progressTotal')) {
-							Ext.get('progressName').update(result.progressname);
-							Ext.get('progressDone').update(result.progressdone);
-							total.update(result.progresstotal);
-						}
-					} else {
-						Ext.get('scanWarning').hide();
-						Ext.get('library_stats').show();
-						Ext.get('albumcount').update(result['info total albums']);
-						Ext.get('artistcount').update(result['info total artists']);
-						Ext.get('songcount').update(result['info total songs']);
-						
-					}
 				}
 			}
 		}

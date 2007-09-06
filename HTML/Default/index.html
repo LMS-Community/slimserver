@@ -110,12 +110,39 @@
 			<div id="footer">
 				<div id="footer_left"></div>
 				<div id="footer_content">
-					<span id="helpLink"><img src="html/images/b_help.png"> [% "HELP" | string %]</span>
-					<span id="settingsLinks">
-							<span id="playerSettingsLink" style="display: none;">
-									<img src="html/images/b_player_settings.png"> [% "PLAYER_SETTINGS" | string %]
+					<span id="helpInfoSection">
+						<span id="helpLink">
+							<img src="html/images/b_help.png"/> [% "HELP" | string %]
+						</span>
+
+						<span id="footerInfo">
+							<span id="scanWarning" style="display:none;">
+								<img src="html/images/info.png"/>
+								[% "RESCANNING_SHORT" | string %]
+								<span id="progressInfo" class="link">
+									<span id="progressName"></span>
+									<span class="progress"> (</span><span id="progressDone"></span>
+									<span class="progress"> [% "OF" | string %] </span>
+									<span id="progressTotal"></span><span class="progress">) </span>
+								</span>
 							</span>
-						<span id="settingsLink"><img src="html/images/b_settings.png"> [% "SERVER_SETTINGS" | string %]</span>
+
+							[% IF newVersion %]
+								<span id="newVersion">
+									<img src="html/images/info.png"/> [% newVersion %] 
+								</span>
+							[% END %]
+						</span>
+
+					</span>
+
+					<span id="settingsLinks">
+						<span id="playerSettingsLink" style="display: none;">
+							<img src="html/images/b_player_settings.png"/> [% "PLAYER_SETTINGS" | string %]
+						</span>
+						<span id="settingsLink">
+							<img src="html/images/b_settings.png"/> [% "SERVER_SETTINGS" | string %]
+						</span>
 					</span>
 				</div>
 			</div>

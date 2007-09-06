@@ -32,22 +32,12 @@
 	<span id="other_servicesCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "OTHER_SERVICES" | string %]</span>
 [% END %]
 
-[% infoTab = BLOCK %]
-	<span id="scanWarning" style="display:none;">
-		[% "RESCANNING_SHORT" | string %]
-		<span id="progressInfo">
-			<span id="progressName"></span>
-			<span class="progress"> (</span><span id="progressDone"></span>
-			<span class="progress"> [% "OF" | string %] </span>
-			<span id="progressTotal"></span><span class="progress">) </span>
-		</span>
-	</span>
-
-	<span id="library_stats" style="display:none;">
+[% IF NOT warn %]
+	[% infoTab = BLOCK %]
 		<span id="albumcount">[% album_count %]</span> [% "ALBUMS" | string %] [% "WITH" | string -%] 
 		<span id="songcount">[%- song_count %]</span> [%- "SONGS" | string %] [% "BY" | string -%] 
 		<span id="artistcount">[% artist_count %]</span> [%- "ARTISTS" | string %].
-	</span>
+	[% END %]
 [% END %]
 
 [% PROCESS pageheader.html noHomeLink=1 %]
