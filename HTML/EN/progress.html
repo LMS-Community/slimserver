@@ -51,7 +51,7 @@
 		[% odd = (not odd) %]
 	[% END %]
 
-	<div id="message">[% IF message %][% message %][% END %][ % IF total_time %] [% "TOTAL_TIME" | string %][% total_time %][% END %]</div>
+	<div id="message">[% IF message %][% message %][% END %][% IF total_time %] [% "TOTAL_TIME" | string %][% total_time %][% END %]</div>
 
 [% PROCESS pagefooter.html %]
 [% END %]
