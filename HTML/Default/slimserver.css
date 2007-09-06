@@ -28,7 +28,7 @@ img { border: 0; }
 	clear: left;
 }
 
-.browsedbControls, .playlistControls {
+.browsedbControls, .playlistControls, .browsedbRightControls {
 	position: absolute;
 	top: -2px;
 	right: 10px;
@@ -39,12 +39,6 @@ img { border: 0; }
 	top: auto;
 	bottom: 5px;
 	right: 5px;
-}
-
-.browsedbRightControls {
-	position: absolute;
-	top: 0px;
-	right: 10px;
 }
 
 .thumbwrap {
