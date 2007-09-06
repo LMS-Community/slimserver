@@ -53,7 +53,15 @@
 		[% IF searchError %]
 			[% searchError %]
 		[% END %]
-		[% IF pageinfo.totalpages && pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
+		[% IF pageinfo.totalpages && pageinfo.totalpages > 1 %]
+			<div class="pagerbox">
+				<div class="pagerbox_top"><div></div></div>
+				<div class="pagerbox_content">
+					[% PROCESS pagebar %]
+				</div>
+				<div class="pagerbox_bottom"><div></div></div>
+			</div>
+		[% END %]
 	</div>
 	
 	<div id="search-results"></div>

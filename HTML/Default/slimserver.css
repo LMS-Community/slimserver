@@ -343,7 +343,7 @@ form#advSearchForm.resultsPage {
 }
 
 .pagerbox_content {
-	margin-left: 10px;
+	margin-left: 5px;
 	background: url(html/images/title_background.gif) repeat;
 }
 
@@ -367,11 +367,26 @@ form#advSearchForm.resultsPage {
 	background: url(html/images/title_bottom_right.gif) no-repeat bottom right; 
 }
 
-#pagebar a, #pagebar span {
-	text-decoration: none;
+#pagebar {
+	height: 12px;
+	margin: 0;
 }
 
-#pagebar a:hover, #pagebar span:hover, #pagebar b:hover {
+#pagebar a:link, #pagebar a:visited,
+#pagebar a, #pagebar span, #pagebar b {
+	top: 0;
+	text-decoration: none;
+	padding: 0 2px;
+	min-width: 9px;
+	text-align: center;
+	float: left;
+}
+
+#pagebar span, #pagebar b {
+	background-color: #888888;
+}
+
+#pagebar a:hover, #pagebar span:hover, #pagebar span:hover b {
 	background-color: #efefef;
 	color: #343434;
 }
