@@ -420,6 +420,17 @@ form#advSearchForm.resultsPage {
 	bottom: 0;
 }
 
+#scanWarning, #library_stats {
+	text-align: center;
+	width: 100%;
+	position: absolute; 
+	right: 0px;
+}
+
+#progressInfo {
+	cursor: pointer;
+}
+
 .infoTab {
 	position: absolute;
 	bottom: 0;

@@ -2360,12 +2360,18 @@ sub serverstatusQuery {
 		return;
 	}
 	
- 	if (Slim::Music::Import->stillScanning()) {
- 		$request->addResult('rescan', "1");
- 	}
- 	
- 	# add version
- 	$request->addResult('version', $::VERSION);
+	if (Slim::Music::Import->stillScanning()) {
+		$request->addResult('rescan', "1");
+		if (my $p = Slim::Schema->rs('Progress')->search({ 'type' => 'importer', 'active' => 1 })->first) {
+
+			$request->addResult('progressname', Slim::Utils::Strings::string($p->name."_PROGRESS"));
+			$request->addResult('progressdone', $p->done);
+			$request->addResult('progresstotal', $p->total);
+		}
+	}
+	
+	# add version
+	$request->addResult('version', $::VERSION);
 
 	# add totals
 	$request->addResult("info total albums", Slim::Schema->count('Album'));
