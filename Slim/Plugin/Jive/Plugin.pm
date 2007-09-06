@@ -845,7 +845,7 @@ if (0) {
 		text      => Slim::Utils::Strings::string('CHANGE_PLAYER_NAME'),
 		input => {
 			len          => 1, # For those that want to name their player "X"
-			allowedChars => 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz!@#$%^&*()_+{}|:\"\'<>?-=,./~`[];0123456789',
+			allowedChars => Slim::Utils::Strings::string('JIVE_ALLOWEDCHARS_WITHCAPS'),
 			help         => {
 				           text => Slim::Utils::Strings::string('JIVE_CHANGEPLAYERNAME_HELP')
 			},

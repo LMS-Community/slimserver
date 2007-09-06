@@ -13939,6 +13939,12 @@ JIVE_SEARCHFOR_HELP
 JIVE_CHANGEPLAYERNAME_HELP
 	EN	Use the scroll wheel to change letters, then press the center button to select that letter. Press the center button again to change the name of your player.
 
+JIVE_ALLOWEDCHARS_WITHCAPS
+	EN	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"\'<>?-=,./~`[];0123456789
+
+JIVE_ALLOWEDCHARS_NOCAPS
+	EN	abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"\'<>?-=,./~`[];0123456789
+
 JIVE_ALARMSET_HELP
 	EN	Use the scroll wheel to change clock digits, then press the center button to select that digit. Press the center button after time is entered to set the alarm time.
 
