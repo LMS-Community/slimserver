@@ -216,8 +216,9 @@ sub menuQuery {
 							go => {
 								cmd => ['artists'],
 								params => {
-									menu => 'album',
-									search => '__TAGGEDINPUT__',
+									menu     => 'album',
+									#menu_all => '1',
+									search   => '__TAGGEDINPUT__',
 								},
 							},
 						},
@@ -237,8 +238,9 @@ sub menuQuery {
 							go => {
 								cmd => ['albums'],
 								params => {
-									menu => 'track',
-									search => '__TAGGEDINPUT__',
+									menu     => 'track',
+									#menu_all => '1',
+									search   => '__TAGGEDINPUT__',
 								},
 							},
 						},
@@ -259,8 +261,9 @@ sub menuQuery {
 							go => {
 								cmd => ['tracks'],
 								params => {
-									menu => 'track',
-									search => '__TAGGEDINPUT__',
+									menu     => 'track',
+									#menu_all => '1',
+									search   => '__TAGGEDINPUT__',
 								},
 							},
 						},
@@ -280,8 +283,9 @@ sub menuQuery {
 							go => {
 								cmd => ['playlists'],
 								params => {
-									menu => 'track',
-									search => '__TAGGEDINPUT__',
+									menu     => 'track',
+									#menu_all => '1',
+									search   => '__TAGGEDINPUT__',
 								},
 							},
 						},
@@ -321,7 +325,8 @@ sub menuQuery {
 				go => {
 					cmd => ['favorites', 'items'],
 					params => {
-						menu => 'favorites',
+						menu     => 'favorites',
+						#menu_all => '1',
 					},
 				},
 			},
@@ -575,7 +580,7 @@ if (0) {
 			{ 
 				text    => Slim::Utils::Strings::string("ALARM_SET"),
 				input   => {
-					inputType    => 'time',
+					initialText    => '00:00',
 					len          => 1,
 					help         => {
 							text => Slim::Utils::Strings::string('JIVE_ALARMSET_HELP')
@@ -844,6 +849,7 @@ if (0) {
 	push @menu, {
 		text      => Slim::Utils::Strings::string('CHANGE_PLAYER_NAME'),
 		input => {
+			initialText  => $client->name(),
 			len          => 1, # For those that want to name their player "X"
 			allowedChars => Slim::Utils::Strings::string('JIVE_ALLOWEDCHARS_WITHCAPS'),
 			help         => {
