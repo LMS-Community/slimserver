@@ -534,7 +534,7 @@ Player = function(){
 							power: result.power,
 							mode: result.mode,
 							title: result.current_title,
-							track: result.playlist_tracks ? result.playlist_loop[0].url : '',
+							track: result.playlist_tracks > 0 ? result.playlist_loop[0].url : '',
 							tracks: result.playlist_tracks,
 							index: result.playlist_cur_index,
 							volume: result['mixer volume'],
