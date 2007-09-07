@@ -52,6 +52,8 @@ our $base = 'http://update.slimdevices.com/update/firmware';
 # Check interval when firmware can't be downloaded
 our $CHECK_TIME = 600;
 
+my $log = logger('player.firmware');
+
 =head2 init()
 
 Scans firmware version files and tries to download each missing firmware file using
@@ -62,6 +64,9 @@ download().
 sub init {
 	# the files we need to download
 	my $files = {};
+	
+	# Special handling is needed for Jive firmware
+	init_jive();
 	
 	for my $model ( @models ) {
 
@@ -90,7 +95,7 @@ sub init {
 				
 				if ( !-r $path ) {
 
-					logger('player.firmware')->info("Need to download $file\n");
+					$log->info("Need to download $file\n");
 
 					$files->{$file} = 1;
 				}
@@ -117,6 +122,81 @@ sub init {
 	
 	if ( !$ok ) {
 		logError("Some firmware failed to download, will try again in 10 minutes.  Please check your Internet connection.");
+	}
+}
+
+=head2 init_jive()
+
+Looks for a jive.version file and downloads firmware if missing.  If jive.version
+is missing, downloads that too.	 If we are not a released build, also checks for
+updated jive.version file.
+
+=cut
+
+sub init_jive {
+	my $url = $base . '/' . $::VERSION . '/jive.version';
+	
+	my $version_file = catdir( $dir, 'jive.version' );
+	
+	if ( !-e $version_file ) {
+		$log->info('Downloading new jive.version file...');
+		
+		if ( !download( $url, 'jive.version' ) ) {
+			logError('Unable to download jive.version file, to retry please restart SlimServer.');
+			return;
+		}
+	}
+	else {
+		# Check for a newer jive.version, only for svn users
+		if ( $::REVISION eq 'TRUNK' ) {		
+			$log->info('Checking for a newer jive.version file...');
+			
+			if ( !download( $url, 'jive.version' ) ) {
+				# not modified
+				$log->info("Jive version file is up to date");
+			}
+		}
+	}
+		
+	my $version = read_file($version_file);
+	
+	# jive.version format:
+	# PQP2 r444 r444M
+	# sdi@padbuild #23 Fri Sep 7 01:24:36 PDT 2007
+	my ($jive_rev, $jive_version) = $version =~ m/\s(r\d+\w*).*\s\#(\d+)\s/s;
+	
+	my $jive_file = "jive_${jive_version}_${jive_rev}.bin";
+	
+	if ( !-e catdir( $dir, $jive_file ) ) {		
+		$log->info("Downloading in the background: $jive_file");
+		
+		downloadAsync( $jive_file, \&init_jive_done, $jive_file );
+	}
+	else {
+		$log->info("Jive firmware is up to date: $jive_file");
+	}
+}
+
+=head2 init_jive_done($jive_file)
+
+Callback after Jive firmware has been downloaded.  Receives the filename
+of the newly downloaded firmware.  Removes old Jive firmware file if one exists.
+
+=cut
+
+sub init_jive_done {
+	my $jive_file = shift;
+	
+	opendir my ($dirh), $dir;
+	
+	my @files = grep { /^jive.*\.bin$/ } readdir $dirh;
+	
+	closedir $dirh;
+	
+	for my $file ( @files ) {
+		next if $file eq $jive_file;
+		$log->info("Removing old Jive firmware file: $file");
+		unlink catdir( $dir, $file ) or logError("Unable to remove old Jive firmware file: $file: $!");
 	}
 }
 
@@ -177,6 +257,11 @@ sub download {
 		$error = $res->status_line;
 	}
 	
+	if ( $res->code == 304 ) {
+		$log->info("File $file not modified");
+		return 0;
+	}
+	
 	logError("Unable to download firmware from $url: $error");
 
 	return 0;
@@ -189,7 +274,8 @@ This timer tries to download any missing firmware in the background every 10 min
 =cut
 
 sub downloadAsync {
-	my $file = shift;
+	my $file     = shift;
+	my ( $cb, @pt ) = @_;
 	
 	# URL to download
 	my $url = $base . '/' . $::VERSION . '/' . $file;
@@ -203,8 +289,12 @@ sub downloadAsync {
 		{
 			saveAs => $path,
 			file   => $file,
+			cb     => $cb,
+			pt     => \@pt,
 		},
 	);
+	
+	$log->info("Downloading in the background: $url");
 	
 	$http->get( $url );
 }
@@ -218,6 +308,8 @@ Callback after our firmware file has been downloaded.
 sub downloadAsyncDone {
 	my $http = shift;
 	my $file = $http->params('file');
+	my $cb   = $http->params('cb');
+	my $pt   = $http->params('pt');
 	my $url  = $http->url;
 	
 	# make sure we got the file
@@ -231,7 +323,9 @@ sub downloadAsyncDone {
 		\&downloadAsyncSHADone,
 		\&downloadAsyncError,
 		{
-			file   => $file,
+			file => $file,
+			cb   => $cb,
+			pt   => $pt,
 		},
 	);
 	
@@ -247,6 +341,8 @@ Callback after our firmware's SHA checksum file has been downloaded.
 sub downloadAsyncSHADone {
 	my $http = shift;
 	my $file = $http->params('file');
+	my $cb   = $http->params('cb');
+	my $pt   = $http->params('pt') || [];
 	
 	# get checksum
 	my ($sum) = $http->content =~ m/([a-f0-9]{40})/;
@@ -267,6 +363,10 @@ sub downloadAsyncSHADone {
 		rename $path, $real or return downloadAsyncError( $http, "Unable to rename temporary $path file" );
 		
 		logWarning("Successfully downloaded and verified $file.");
+		
+		if ( $cb && ref $cb eq 'CODE' ) {
+			$cb->( @{$pt} );
+		}
 	}
 	else {
 		downloadAsyncError( $http, "Validation of firmware $file failed, SHA1 checksum did not match" );
