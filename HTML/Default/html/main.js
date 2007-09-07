@@ -427,7 +427,7 @@ Player = function(){
 			if (! isNaN(totalTime)) {
 				Ext.get('ctrlTotalTime').update(' (' + this.formatTime(totalTime) + ')');
 
-				if (playTime >= totalTime-1)
+				if (totalTime > 0 && playTime >= totalTime-1)
 					this.getStatus();
 			}
 			
