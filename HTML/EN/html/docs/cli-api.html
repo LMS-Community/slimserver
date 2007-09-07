@@ -5070,6 +5070,12 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#playlist addalbum">playlist addalbum</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#playlist loadtracks">playlist loadtracks</a></code></strong>
+	</li>
+	<li>
+		<strong><code><a href="#playlist addtracks">playlist addtracks</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#playlist insertalbum">playlist insertalbum</a></code></strong>
 	</li>
 	<li>
@@ -5510,6 +5516,36 @@ in the saved playlists folder.</p>
 <blockquote> 
   <p>Request: &quot;04:20:00:12:23:45 playlist addalbum Rock Abba *&lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist addalbum Rock Abba *&lt;LF&gt;&quot;</p>
 </blockquote>
+
+<br><p id="playlist loadtracks"><strong><code>&lt;playerid&gt; playlist loadtracks &lt;searchparam&gt;</code></strong></p>
+<p>The &quot;playlist loadtracks&quot; command puts tracks matching the specified 
+  query on the playlist. Songs previously in the 
+  playlist are discarded. Note: you must provide a particular form to the searchparam (see examples)</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist loadtracks track.titlesearch=purple &lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist loadtracks track.titleseach=purple &lt;LF&gt;&quot;</p>
+</blockquote>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist loadtracks album.titlesearch=3121 &lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist loadtracks album.titlesearch=3121 &lt;LF&gt;&quot;</p>
+</blockquote>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist loadtracks contributor.namesearch=prince &lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist loadtracks contributor.namesearch=prince &lt;LF&gt;&quot;</p>
+
+<br><p id="playlist addtracks"><strong><code>&lt;playerid&gt; playlist addtracks &lt;searchparam&gt;</code></strong></p>
+<p> The &quot;playlist addtracks&quot; command appends all songs matching the 
+  specified criteria onto the end of the playlist. Songs currently playing 
+  or already on the playlist are not affected.  Note: you must provide a particular form to the searchparam (see examples)
+</p>
+<p>Examples: </p>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist addtracks track.titlesearch=purple &lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist addtracks track.titleseach=purple &lt;LF&gt;&quot;</p>
+</blockquote>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist addtracks album.titlesearch=3121 &lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist addtracks album.titlesearch=3121 &lt;LF&gt;&quot;</p>
+</blockquote>
+<blockquote> 
+  <p>Request: &quot;04:20:00:12:23:45 playlist addtracks contributor.namesearch=prince &lt;LF&gt;&quot;<br>Response: &quot;04:20:00:12:23:45 playlist addtracks contributor.namesearch=prince &lt;LF&gt;&quot;</p>
+
 
 <br><p id="playlist insertalbum"><strong><code>&lt;playerid&gt; playlist insertalbum &lt;genre&gt; &lt;artist&gt; &lt;album&gt;</code></strong></p>
 <p> The &quot;playlist insertalbum&quot; command inserts all songs matching the 
