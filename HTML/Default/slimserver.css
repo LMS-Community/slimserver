@@ -83,10 +83,12 @@ div.thumbwrap {
 
 #browsedbHeader {
 	margin: 5px;
+	margin-left: 0;
 }
 
 #browsedbList, #playList, #songInfo {
 	margin: 5px;
+	margin-left: 0;
 	height: 400px;
 	overflow: auto;
 }
@@ -101,7 +103,6 @@ div.thumbwrap {
 
 /* Home menu */
 .homeMenuSection {
-	margin-left: 5px;
 	margin-right: 15px;
 }
 

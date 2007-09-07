@@ -17,6 +17,7 @@
 					MainMenu.addUrl('[% link.key %]:[% category %]', '[% link.value | html %]player=[% playerURI %]');
 				[%- END %]
 			[%- END %]
+			MainMenu.addUrl('RADIO_TUNEIN:radio', 'tunein.html?player=[% playerURI %]');
 		});
 	</script>
 [% END %]
@@ -70,6 +71,7 @@ END %]
 	FOREACH link = additionalLinks.radio;
 		PROCESS menuItem token=link.key category='radio';
 	END;
+	PROCESS menuItem token='RADIO_TUNEIN' category='radio';
 END %]
 
 [% music_on_demandItems = BLOCK;

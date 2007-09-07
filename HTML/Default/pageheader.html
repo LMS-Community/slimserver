@@ -62,12 +62,17 @@
 			</div>
 	
 			<div id="crumblist">
-				[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
-				[% IF homeCategory && pwd_list;
-					item.title = homeCategory | string;
-					item.href = "href=\"" _ webroot _ "home.html#" _ homeCategory _ "?player=$playerURI\"";
-					item.hreftype = '';
-					pwd_list.unshift(item);
+				[% IF pageHeaderMenu and not pwd_list;
+					pwd_list = [ pageHeaderMenu ];
+				END  -%]
+				[% IF pwd_list AND NOT pwd_list.0;
+					pwd_list = [ pwd_list ];
+ 				END  -%]
+				[% IF homeCategory AND pwd_list;
+					category.title = homeCategory | string;
+					category.href = "href=\"" _ webroot _ "home.html#" _ homeCategory _ "?player=$playerURI\"";
+					category.hreftype = '';
+					pwd_list.unshift(category);
 				END -%]
 				[%- PROCESS crumblist IF pwd_list %]
 			</div>

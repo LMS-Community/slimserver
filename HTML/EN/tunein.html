@@ -1,7 +1,26 @@
 [% pagetitle = 'RADIO_TUNEIN' | string %]
 [% pageicon = 'RADIO' %]
+[% homeCategory = 'RADIO' %]
 [% pageHeaderMenu = BLOCK %]
 	/ [% 'RADIO_TUNEIN' | string %]
+[% END %]
+[% maestroScripts = BLOCK %]
+	<script type="text/javascript">
+		Ext.EventManager.onDocumentReady(function(){
+			tuneIn = new Ext.form.TextField();
+			tuneIn.applyTo('url');
+		
+			Ext.get('tuneInSubmit').hide();
+			new Ext.Button('tuneIn', {
+				text: '[% 'RADIO_TUNEIN_CHOOSE' | string %]',
+				type: 'submit',
+				handler: function(){
+					document.forms.tune.submit();
+				}
+			});
+			new Ext.Button
+		});
+	</script>
 [% END %]
 [% PROCESS pageheader.html %]
 
@@ -11,6 +30,7 @@
 	<p><b>
 	[% 'RADIO_TUNED_IN' | string %] [% url %]
 	</b></p>
+	<br/>
 	
 	<script type="text/javascript" language="JavaScript">
 	// Reload the status frame in 5 seconds to display the newly added playlist item
@@ -18,15 +38,18 @@
 	</script>
 [% END %]
 
-<p>[% 'RADIO_TUNEIN_DESC' | string %]</p>
-
-<form name="tune" method="get" action="[% webroot %]tunein.html">
+<form name="tune" method="get" action="[% webroot %]tunein.html?homeCategory=RADIO">
 	<input type="hidden" name="player" value="[% player %]">
 	[% 'RADIO_TUNEIN_RADIOURL' | string %]
-	<input type="text" class="stdedit" name="url" size="40">
-	<input type="submit" class="stdclick" value="[% 'RADIO_TUNEIN_CHOOSE' | string %]">
+	<input type="text" class="stdedit" name="url" id="url" size="40">
+	<span id="tuneIn" style="vertical-align:bottom;"></span>
+	<input type="submit" id="tuneInSubmit" class="stdclick" value="[% 'RADIO_TUNEIN_CHOOSE' | string %]">
 </form>
 
-<br>
+<br/>
+
+<p>[% 'RADIO_TUNEIN_DESC' | string %]</p>
+
+<br/>
 
 [% PROCESS pagefooter.html %]
