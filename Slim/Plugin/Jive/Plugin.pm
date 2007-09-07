@@ -217,8 +217,9 @@ sub menuQuery {
 								cmd => ['artists'],
 								params => {
 									menu     => 'album',
-									#menu_all => '1',
+									menu_all => '1',
 									search   => '__TAGGEDINPUT__',
+									_searchType => 'artists',
 								},
 							},
 						},
@@ -239,8 +240,9 @@ sub menuQuery {
 								cmd => ['albums'],
 								params => {
 									menu     => 'track',
-									#menu_all => '1',
+									menu_all => '1',
 									search   => '__TAGGEDINPUT__',
+									_searchType => 'albums',
 								},
 							},
 						},
@@ -262,8 +264,9 @@ sub menuQuery {
 								cmd => ['tracks'],
 								params => {
 									menu     => 'track',
-									#menu_all => '1',
+									menu_all => '1',
 									search   => '__TAGGEDINPUT__',
+									_searchType => 'tracks',
 								},
 							},
 						},
@@ -284,7 +287,6 @@ sub menuQuery {
 								cmd => ['playlists'],
 								params => {
 									menu     => 'track',
-									#menu_all => '1',
 									search   => '__TAGGEDINPUT__',
 								},
 							},

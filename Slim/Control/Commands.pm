@@ -2406,6 +2406,11 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 	$log->debug("Begin Function");
 
+	# if there isn't an = sign, then change the first : to a =
+	if ($what !~ /=/) {
+		$what =~ s/(.*)?:(.*)/$1=$2/;
+	}
+
 	my %find   = ();
 	my $terms  = {};
 	my %attrs  = ();

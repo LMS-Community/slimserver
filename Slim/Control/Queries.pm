@@ -4047,33 +4047,57 @@ sub _playAll {
 		my $params = $request->getParamsCopy();
 		my $paramsAdd = {};
 		my $paramsGoPlay = {};
+
+		my $searchType = $request->getParam('_searchType');
+		$paramsAdd->{'cmd'} = 'add';
+		$paramsGoPlay->{'cmd'} = 'load';
+	
+		my @playCmd = ('playlistcontrol');
+		my @addCmd = ('playlistcontrol');
+
 		# remove keys starting with _ (internal or positional) and make copies
 		while (my ($key, $val) = each %{$params}) {
 			if ($key =~ /^_/ || $key eq 'menu' || $key eq 'menu_all') {
 				next;
 			}
-			$paramsAdd->{$key} = $val;
-			$paramsGoPlay->{$key} = $val;
+			# search is a special case of _playAll, which needs to fire off a different cli command
+			if ($key eq 'search') {
+				@playCmd = ('playlist', 'loadtracks');
+				@addCmd  = ('playlist', 'addtracks');
+				# we don't need a cmd: tagged param for these
+				delete($paramsAdd->{'cmd'});
+				delete($paramsGoPlay->{'cmd'});
+				if ($searchType eq 'artists') {
+					$paramsAdd->{'contributor.namesearch'}    = $val;
+					$paramsGoPlay->{'contributor.namesearch'} = $val;
+				} elsif ($searchType eq 'albums') {
+					$paramsAdd->{'album.titlesearch'}    = $val;
+					$paramsGoPlay->{'album.titlesearch'} = $val;
+				} else {
+					$paramsAdd->{'track.titlesearch'}    = $val;
+					$paramsGoPlay->{'track.titlesearch'} = $val;
+				}
+			} else {
+				$paramsAdd->{$key} = $val;
+				$paramsGoPlay->{$key} = $val;
+			}
 		}
 				
-		$paramsAdd->{'cmd'} = 'add';
-		$paramsGoPlay->{'cmd'} = 'load';
-	
 		# override the actions, babe!
 		my $actions = {
 			'do' => {
 				'player' => 0,
-				'cmd' => ['playlistcontrol'],
+				'cmd' => [ @playCmd ],
 				'params' => $paramsGoPlay,
 			},
 			'play' => {
 				'player' => 0,
-				'cmd' => ['playlistcontrol'],
+				'cmd' => [ @playCmd ],
 				'params' => $paramsGoPlay,
 			},
 			'add' => {
 				'player' => 0,
-				'cmd' => ['playlistcontrol'],
+				'cmd' => [ @addCmd ],
 				'params' => $paramsAdd,
 			},
 		};
