@@ -155,7 +155,7 @@ var MainMenu = function(){
 
 		onResize : function(){
 			items = Ext.DomQuery.select('div.homeMenuSection');
-			contW = Ext.get('content').getWidth() - 10;
+			contW = Ext.get('content').getWidth() - 30;
 
 			for(var i = 0; i < items.length; i++) {
 				if (el = Ext.get(items[i].id)) {

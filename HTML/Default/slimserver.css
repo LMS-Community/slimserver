@@ -84,6 +84,7 @@ div.thumbwrap {
 #browsedbHeader {
 	margin: 5px;
 	margin-left: 0;
+	margin-right: 20px;
 }
 
 #browsedbList, #playList, #songInfo {
