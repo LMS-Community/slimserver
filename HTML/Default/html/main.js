@@ -533,7 +533,7 @@ Player = function(){
 							}
 							
 							if (result.playlist_loop[0].id && (el = Ext.get('ctrlCurrentArt'))) {
-								coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96xX.jpg"></a>';
+								coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96x96.jpg"></a>';
 								popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250xX.jpg" width="250">';
 								
 								if (result.playlist_loop[0].artwork_url) {

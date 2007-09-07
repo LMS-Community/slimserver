@@ -6,38 +6,39 @@
 [% PROCESS pageheader.html %] 
 
 [% BLOCK songInfoItem %]
-	<div>
+	<div id="[% title %]">
 		<span class="songInfoTitle">[% title | string; "COLON" | string %]</span>
 		<span class="songInfoText">[% item %]</span>
 	</div>
 [% END %]
 
 <div id="songInfoHeader">
-<a href="status_header.html?command=playlist&amp;subcommand=loadtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]" target="status">[% "PLAY_THIS_SONG" | string %]</a>
-<br>
-<a href="status_header.html?command=playlist&amp;subcommand=addtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]" target="status">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a>
+	<a href="status_header.html?command=playlist&amp;subcommand=loadtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]" target="status">[% "PLAY_THIS_SONG" | string %]</a>
+	<br>
+	<a href="status_header.html?command=playlist&amp;subcommand=addtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]" target="status">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a>
 </div>
+
 <div id="songInfo">
+	<div id="linkedSongInfoItems">
 		[% item = itemobj.title | html; title = "TITLE"; PROCESS songInfoItem %]
-
-
+	
 		[% FOREACH role = itemobj.contributorRoles.sort %]
 	
 			[% contributors = itemobj.contributorsOfType(role) %]
 			
 			[% IF contributors %]
 				[% contributorsHTML = [] %]
-
+	
 				[% FOREACH contributor = contributors %]
-
+	
 					[% contributorHTMLFrag = "<a href=\"browsedb.html?hierarchy=contributor,album,track&amp;level=1&amp;contributor.id=$contributor.id&amp;contributor.role=$role&amp;player=$playerURI\" target=\"browser\">$contributor.name</a>" %]
-
+	
 					[% contributorsHTML.push(contributorHTMLFrag) %]
-
+	
 				[% END %]
-
+	
 				[% item = contributorsHTML.join(', ') %]
-
+	
 				[% title = role | upper; PROCESS songInfoItem %]
 			[% END %]
 	
@@ -57,93 +58,94 @@
 			[% PROCESS songInfoItem title = "GENRE" %]
 		[% END %]
 	
-		[% IF itemobj.disc %] 
-			[% item = itemobj.disc | html; title = "DISC"; PROCESS songInfoItem %]
-		[% END %]
-	
-		[% IF itemobj.tracknum %] 
-			[% item = itemobj.tracknum | html; title = "TRACK"; PROCESS songInfoItem %]
-		[% END %]
-	
-		[% IF itemobj.album.compilation %] 
-			[% item = "YES" | string; title = "COMPILATION"; PROCESS songInfoItem %]
-		[% END %]
-	
-		[% IF itemobj.content_type %] 
-			[% item = itemobj.content_type | html; title = "TYPE"; PROCESS songInfoItem %]
-		[% END %]
-	
-		[% IF itemobj.duration %] 
-			[% item = itemobj.duration | html; title = "LENGTH"; PROCESS songInfoItem %]
-		[% END %]
-	
-		[% IF itemobj.replay_gain.defined %] 
-			[% item = itemobj.replay_gain | format('%2.2f') | html; title = "REPLAYGAIN"; PROCESS songInfoItem %]
-		[% END %]
-	
-		[% IF itemobj.album.replay_gain.defined %] 
-			[% item = itemobj.album.replay_gain | format('%2.2f') |html; title = "ALBUMREPLAYGAIN"; PROCESS songInfoItem %]
-		[% END %]
-	
 		[% IF itemobj.year %] 
 			[% item = BLOCK %]<a href="browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=[% itemobj.year %]&amp;player=[% playerURI %]" target="browser">[% itemobj.year| html %]</a>[% END %]
 			[% PROCESS songInfoItem title = "YEAR" %]
 		[% END %]
+	</div>
+
+	[% IF itemobj.disc %] 
+		[% item = itemobj.disc | html; title = "DISC"; PROCESS songInfoItem %]
+	[% END %]
+
+	[% IF itemobj.tracknum %] 
+		[% item = itemobj.tracknum | html; title = "TRACK"; PROCESS songInfoItem %]
+	[% END %]
+
+	[% IF itemobj.album.compilation %] 
+		[% item = "YES" | string; title = "COMPILATION"; PROCESS songInfoItem %]
+	[% END %]
+
+	[% IF itemobj.content_type %] 
+		[% item = itemobj.content_type | html; title = "TYPE"; PROCESS songInfoItem %]
+	[% END %]
+
+	[% IF itemobj.duration %] 
+		[% item = itemobj.duration | html; title = "LENGTH"; PROCESS songInfoItem %]
+	[% END %]
+
+	[% IF itemobj.replay_gain.defined %] 
+		[% item = itemobj.replay_gain | format('%2.2f') | html; title = "REPLAYGAIN"; PROCESS songInfoItem %]
+	[% END %]
+
+	[% IF itemobj.album.replay_gain.defined %] 
+		[% item = itemobj.album.replay_gain | format('%2.2f') |html; title = "ALBUMREPLAYGAIN"; PROCESS songInfoItem %]
+	[% END %]
+
+	[% IF itemobj.rating %] 
+		[% item = itemobj.rating | html; title = "RATING"; PROCESS songInfoItem %]
+	[% END %]
 		
-		[% IF itemobj.rating %] 
-			[% item = itemobj.rating | html; title = "RATING"; PROCESS songInfoItem %]
-		[% END %]
-			
-		[% IF comment %] 
-			[% item = comment | html; title = "COMMENT"; PROCESS songInfoItem %]
-		[% END %]
-	
-		[% IF itemobj.lyrics %] 
-			[% item = itemobj.lyrics | html; title = "LYRICS"; PROCESS songInfoItem %]
-		[% END %]
-	
-		[% IF filelength %] 
-			[% item = BLOCK %][% filelength | html %] [% "BYTES" | string %][% END %]
-			[% PROCESS songInfoItem title = "FILELENGTH" %]
-		[% END %]
-	
-		[% IF bitrate %] 
-			[% item = bitrate | html; title = "BITRATE"; PROCESS songInfoItem %]
-		[% END %]
-	
-		[% IF itemobj.samplerate %] 
-			[% item = itemobj.prettySampleRate | html; title = "SAMPLERATE"; PROCESS songInfoItem %]
-		[% END %]
-	
-		[% IF itemobj.samplesize %] 
-			[% item = itemobj.samplesize | html; title = "SAMPLESIZE"; PROCESS songInfoItem %]
-		[% END %]
-	
-		[% IF itemobj.bpm %]
-			[% item = itemobj.bpm | html; title = "BPM"; PROCESS songInfoItem %]
-		[% END %]
-	
-		[% IF itemobj.tagversion %] 
-			[% item = itemobj.tagversion | html; title = "TAGVERSION"; PROCESS songInfoItem %]
-		[% END %]
-	
-		[% IF itemobj.path %] 
-			[% item = BLOCK %][% itemobj.path | unuri | utf8decode | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a>[% END %]
-			[% PROCESS songInfoItem title = "LOCATION" %]
-		[% END %]
-	
-		[% IF itemobj.modificationTime %] 
-			[% item = itemobj.modificationTime | html; title = "MODTIME"; PROCESS songInfoItem %]
-		[% END %]
-	
-		[% IF itemobj.drm %]
-			[% item = "DRM" | string; title = "NOTE"; PROCESS songInfoItem %]
-		[% END %]
-	
-		[% IF itemobj.coverArt('cover', 1) %]
-			[% item = BLOCK %]<a href="/music/[% itemobj.id %]/cover.jpg" target="cover"><img src="/music/[% itemobj.id %]/cover.jpg" alt="coverArt" onLoad="resize(this)"></a>[% END %]
-			[% PROCESS songInfoItem title = "COVERART" %]
-		[% END %]
+	[% IF comment %] 
+		[% item = comment | html; title = "COMMENT"; PROCESS songInfoItem %]
+	[% END %]
+
+	[% IF itemobj.lyrics %] 
+		[% item = itemobj.lyrics | html; title = "LYRICS"; PROCESS songInfoItem %]
+	[% END %]
+
+	[% IF filelength %] 
+		[% item = BLOCK %][% filelength | html %] [% "BYTES" | string %][% END %]
+		[% PROCESS songInfoItem title = "FILELENGTH" %]
+	[% END %]
+
+	[% IF bitrate %] 
+		[% item = bitrate | html; title = "BITRATE"; PROCESS songInfoItem %]
+	[% END %]
+
+	[% IF itemobj.samplerate %] 
+		[% item = itemobj.prettySampleRate | html; title = "SAMPLERATE"; PROCESS songInfoItem %]
+	[% END %]
+
+	[% IF itemobj.samplesize %] 
+		[% item = itemobj.samplesize | html; title = "SAMPLESIZE"; PROCESS songInfoItem %]
+	[% END %]
+
+	[% IF itemobj.bpm %]
+		[% item = itemobj.bpm | html; title = "BPM"; PROCESS songInfoItem %]
+	[% END %]
+
+	[% IF itemobj.tagversion %] 
+		[% item = itemobj.tagversion | html; title = "TAGVERSION"; PROCESS songInfoItem %]
+	[% END %]
+
+	[% IF itemobj.path %] 
+		[% item = BLOCK %][% itemobj.path | unuri | utf8decode | html %] <a href="[% download %]">([% "DOWNLOAD" | string %])</a>[% END %]
+		[% PROCESS songInfoItem title = "LOCATION" %]
+	[% END %]
+
+	[% IF itemobj.modificationTime %] 
+		[% item = itemobj.modificationTime | html; title = "MODTIME"; PROCESS songInfoItem %]
+	[% END %]
+
+	[% IF itemobj.drm %]
+		[% item = "DRM" | string; title = "NOTE"; PROCESS songInfoItem %]
+	[% END %]
+
+	[% IF itemobj.coverArt('cover', 1) %]
+		[% item = BLOCK %]<a href="/music/[% itemobj.id %]/cover.jpg" target="cover"><img src="/music/[% itemobj.id %]/cover.jpg" alt="coverArt" onLoad="resize(this)"></a>[% END %]
+		[% PROCESS songInfoItem title = "COVERART" %]
+	[% END %]
 </div>
 
 [% PROCESS pagefooter.html %]

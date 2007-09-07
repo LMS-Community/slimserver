@@ -88,7 +88,6 @@ div.thumbwrap {
 
 #browsedbList, #playList, #songInfo {
 	margin: 5px;
-	margin-left: 0;
 	height: 400px;
 	overflow: auto;
 }
@@ -495,8 +494,8 @@ form#advSearchForm.resultsPage {
 
 #content {
 	position: relative;
-	width: 100%;
 	padding-left: 10px;
+	padding-right: 5px;
 }
 
 .folderselector {
@@ -579,11 +578,8 @@ form#advSearchForm.resultsPage {
 
 
 /* Song information page */
-#songInfo, #songInfoHeader {
-	/* the list of song info items */
-	padding: 0px;
-	list-style: none;
-	margin: 8px;
+#songInfo {
+	position: relative;
 }
 
 #songInfo div {
@@ -591,18 +587,64 @@ form#advSearchForm.resultsPage {
 	clear: left;
 }
 
+#songInfoHeader {
+	position: absolute;
+	left: 175px;
+	top: 125px;
+	z-index: 9999;
+}
+
+#songInfoHeader a {
+	text-decoration: none;
+}
+
 .songInfoTitle {
 	float: left;
-	padding: 0px;
-	width: 25%;
+	width: 150px;
 	text-align: right;
-	padding-right: 2px;
 }
 
 .songInfoText {
-	float: left;
-	padding: 0px;
-	width: 72%;
+	padding-left: 10px;
+}
+
+#TITLE .songInfoTitle,
+#COVERART .songInfoTitle {
+	display: none;
+}
+
+#TITLE .songInfoText {
+	font-weight: bold;
+	padding: 0;
+	font-size: 125%;
+}
+
+#COVERART .songInfoText {
+	padding: 0;
+	margin: 0;
+	position: absolute;
+	top: 0;
+}
+
+#COVERART .songInfoText img {
+	max-width: 150px;
+	max-height: 150px;
+}
+
+#linkedSongInfoItems {
+	top: 0px;
+	padding-left: 160px;
+	height: 150px;
+}
+
+#linkedSongInfoItems a {
+	font-weight: bold;
+	text-decoration: none;
+}
+
+#linkedSongInfoItems .songInfoTitle {
+	text-align: left;
+	width: auto;
 }
 
 .albumListGallery .x-menu-item-icon {
