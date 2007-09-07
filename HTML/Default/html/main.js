@@ -411,22 +411,25 @@ Player = function(){
 		},
 
 		updatePlayTime : function(time, totalTime){
-			if (playerStatus.mode == 'play') {
-				if (! isNaN(time))
-					playTime = parseInt(time); //force integer type from results
-					
-				Ext.get('ctrlPlaytime').update(this.formatTime(playTime));
+			// force 0 for current time when stopped
+			if (playerStatus.mode == 'stop') 
+				time = 0;
+			
+			if (! isNaN(time))
+				playTime = parseInt(time); //force integer type from results
+				
+			Ext.get('ctrlPlaytime').update(this.formatTime(playTime));
+			
+			// only increment interim value if playing
+			if (playerStatus.mode == 'play') 
 				playTime += 0.5;
-	
-				if (! isNaN(totalTime)) {
-					Ext.get('ctrlTotalTime').update(' (' + this.formatTime(totalTime) + ')');
 
-					if (playTime >= totalTime-1)
-						this.getStatus();
-				}
+			if (! isNaN(totalTime)) {
+				Ext.get('ctrlTotalTime').update(' (' + this.formatTime(totalTime) + ')');
+
+				if (playTime >= totalTime-1)
+					this.getStatus();
 			}
-			else
-				Ext.get('ctrlPlaytime').update(this.formatTime(0));
 			
 			playTimeTimer.delay(500);
 		},
