@@ -365,7 +365,7 @@ div#homeMenu {
 	height: auto;
 }
 
-#songInfo ul {
+#songInfo {
 	/* the list of song info items */
 	background-color: #ffffff;
 	padding: 0px;
@@ -373,7 +373,7 @@ div#homeMenu {
 	margin: 8px;
 }
 
-#songInfo li {
+#songInfo div {
 	padding-top: 5px;
 	clear: left;
 }

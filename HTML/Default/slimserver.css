@@ -84,7 +84,6 @@ div.thumbwrap {
 #browsedbHeader {
 	margin: 5px;
 	margin-left: 0;
-	margin-right: 20px;
 }
 
 #browsedbList, #playList, #songInfo {
@@ -580,14 +579,14 @@ form#advSearchForm.resultsPage {
 
 
 /* Song information page */
-#songInfo ul, #songInfoHeader {
+#songInfo, #songInfoHeader {
 	/* the list of song info items */
 	padding: 0px;
 	list-style: none;
 	margin: 8px;
 }
 
-#songInfo li {
+#songInfo div {
 	padding-top: 5px;
 	clear: left;
 }
@@ -596,6 +595,8 @@ form#advSearchForm.resultsPage {
 	float: left;
 	padding: 0px;
 	width: 25%;
+	text-align: right;
+	padding-right: 2px;
 }
 
 .songInfoText {

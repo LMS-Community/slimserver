@@ -106,7 +106,7 @@ small {
 	height: auto;
 }
 
-#songInfo ul {
+#songInfo {
 	/* the list of song info items */
 	background-color: #ffffff;
 	padding: 0px;
@@ -114,7 +114,7 @@ small {
 	margin: 8px;
 }
 
-#songInfo li {
+#songInfo div {
 	clear: left;
 }
 

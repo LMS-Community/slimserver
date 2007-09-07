@@ -155,14 +155,14 @@ div#browsedbHeader {
 	height: auto;
 }
 
-#songInfo ul {
+#songInfo {
 	/* the list of song info items */
 	padding: 0px;
 	list-style: none;
 	margin: 8px;
 }
 
-#songInfo li {
+#songInfo div {
 	padding-top: 5px;
 	clear: left;
 }
