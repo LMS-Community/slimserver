@@ -8,7 +8,7 @@
 		[% PROCESS standardheader.html %]
 
 		
-		[% IF pageHeaderScripts && NOT maestroScripts %]
+		[% IF pageHeaderScripts && NOT extJsScripts %]
 			[% pageHeaderScripts %]
 		[% ELSE %]
 			<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
@@ -16,13 +16,13 @@
 			<script type="text/javascript">[% PROCESS html/vars.js %]</script>
 			<script type="text/javascript" src="[% webroot %]html/utils.js?r=[% revision %]"></script>
 	
-			[% IF maestroScripts %]
+			[% IF extJsScripts %]
 				<script type="text/javascript">
 					var strings = new Array();
 					strings['loading']  = '[% "LOADING" | string %]';
 				</script>
 	
-				[% maestroScripts %]
+				[% extJsScripts %]
 			[% END %]
 		[% END %]
 
@@ -44,7 +44,7 @@
 		<link href="[% webroot %]ie7.css?r=[% revision %]" type="text/css" rel="stylesheet">
 		<![endif]-->		
 	</head>
-	<body  [% IF bodyscript && NOT maestroScripts; bodyscript; END %]>
+	<body  [% IF bodyscript && NOT extJsScripts; bodyscript; END %]>
 
 		<div id="edge_top_left">&nbsp;</div>
 		<div id="edge_top_right">&nbsp;</div>
