@@ -283,6 +283,20 @@ END %]
 [%- END %]
 
 
+[% BLOCK songInfoPlayLinks %]
+	[% WRAPPER playlink %]href="status_header.html?command=playlist&amp;subcommand=loadtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]"[% END %] [% "PLAY_THIS_SONG" | string %]</a>
+	<br>
+	[% WRAPPER addlink %]href="status_header.html?command=playlist&amp;subcommand=addtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]"[% END %] [% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a>
+[% END %]
+
+[% BLOCK songInfoItem %]
+	<div id="[% title %]">
+		<span class="songInfoTitle">[% title | string; "COLON" | string %]</span>
+		<span class="songInfoText">[% item %]</span>
+	</div>
+[% END %]
+
+
 [%# This is to build the pagebar or alphapagebar, it should be PROCESSed %]
 [% BLOCK pagebar %]
 [%- IF NOT pageinfo.alphamap; PROCESS pagebarcalc pagesperbar = 15; END %]

@@ -132,4 +132,11 @@
 			[% IF pagesend %] <a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=[% pagesend %]&amp;[% pageinfo.otherparams | html %][% IF useJS %]')[% END %]">[% "LAST" | string %]</a> [% END %]
 		</div>
 	[% END %]
+
+	[% BLOCK songInfoPlayLinks %]
+		[% WRAPPER playlink %]onclick="Utils.processRawCommand('status_header.html?command=playlist&amp;subcommand=loadtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]');"[% END %] [% "PLAY_THIS_SONG" | string %]
+		<br />
+		[% WRAPPER addlink %]onclick="Utils.processRawCommand('status_header.html?command=playlist&amp;subcommand=addtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]');"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]
+	[% END %]
+
 [% END -%]

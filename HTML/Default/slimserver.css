@@ -86,7 +86,7 @@ div.thumbwrap {
 	margin-left: 0;
 }
 
-#browsedbList, #playList, #songInfo {
+#browsedbList, #playList {
 	margin: 5px;
 	height: 400px;
 	overflow: auto;
@@ -218,7 +218,7 @@ form#advSearchForm.resultsPage {
 	margin-left: 20px;
 }
 
-#helpLink, #settingsLink, #playerSettingsLink, .link {
+#helpLink, #settingsLink, #playerSettingsLink, .link, #songInfoHeader a {
 	cursor: pointer;
 }
 
@@ -589,8 +589,15 @@ form#advSearchForm.resultsPage {
 
 #songInfoHeader {
 	position: absolute;
-	left: 175px;
-	top: 125px;
+	left: 172px;
+	top: 115px;
+	z-index: 9999;
+}
+
+.xmlStreamInfo #songInfoHeader {
+	position: absolute;
+	left: 160px;
+	top: 25px;
 	z-index: 9999;
 }
 
@@ -617,6 +624,11 @@ form#advSearchForm.resultsPage {
 	font-weight: bold;
 	padding: 0;
 	font-size: 125%;
+}
+
+.xmlStreamInfo #TITLE {
+	padding-left: 160px;
+	padding-bottom: 40px;
 }
 
 #COVERART .songInfoText {

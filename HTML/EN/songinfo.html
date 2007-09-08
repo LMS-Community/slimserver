@@ -5,17 +5,8 @@
 [% END %]
 [% PROCESS pageheader.html %] 
 
-[% BLOCK songInfoItem %]
-	<div id="[% title %]">
-		<span class="songInfoTitle">[% title | string; "COLON" | string %]</span>
-		<span class="songInfoText">[% item %]</span>
-	</div>
-[% END %]
-
 <div id="songInfoHeader">
-	<a href="status_header.html?command=playlist&amp;subcommand=loadtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]" target="status">[% "PLAY_THIS_SONG" | string %]</a>
-	<br>
-	<a href="status_header.html?command=playlist&amp;subcommand=addtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]" target="status">[% FILTER nbsp %][% "ADD_THIS_SONG_TO_PLAYLIST" | string %][% END %]</a>
+	[% PROCESS songInfoPlayLinks %]
 </div>
 
 <div id="songInfo">
