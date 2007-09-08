@@ -334,16 +334,23 @@ sub menuQuery {
 			},
 		},
 		{
-			text    => Slim::Utils::Strings::string('PLAYER_SETTINGS'),
-			actions => {
-				go => {
-					cmd    => ['menusettings'],
-					player => 0,
-					params => {
-						menu => 'settings',
+			text    => Slim::Utils::Strings::string('SETTINGS'),
+			count     => 1,
+			offset    => 0,
+			item_loop => [
+			{
+				text    => Slim::Utils::Strings::string('PLAYER_SETTINGS'),
+				actions => {
+					go => {
+						cmd    => ['menusettings'],
+						player => 0,
+						params => {
+							menu => 'settings',
+						},
 					},
 				},
 			},
+			],
 		},
 	);
 
