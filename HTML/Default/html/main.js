@@ -102,7 +102,17 @@ Main = function(){
 				}
 			}
 		},
-
+		
+		checkScanStatus : function(response){
+			if (response.result && response.result.rescan) {
+				if (el = Ext.get('newVersion'))
+					el.hide();
+				Main.getScanStatus();
+			}
+			else {
+				Ext.get('scanWarning').hide();
+			}
+		},
 
 		// resize panels, folder selectors etc.
 		onResize : function(){
@@ -677,14 +687,7 @@ Player = function(){
 							}
 
 							// display scanning information
-							if (responseText.result && responseText.result.rescan) {
-								if (el = Ext.get('newVersion'))
-									el.hide();
-								Main.getScanStatus();
-							}
-							else {
-								Ext.get('scanWarning').hide();
-							}
+							Main.checkScanStatus(responseText);
 						}
 					},
 					
@@ -707,9 +710,8 @@ Player = function(){
 						params: [ 
 							'',
 							[ 
-								"players",
-								0,
-								99
+								"serverstatus",
+								1
 							]
 						]
 					}),
@@ -718,11 +720,40 @@ Player = function(){
 						if (response && response.responseText) {
 							var responseText = Ext.util.JSON.decode(response.responseText);
 
+							// display scanning information
+							Main.checkScanStatus(responseText);
+
 							// let's set the current player to the first player in the list
-							if (responseText.result && responseText.result.count && responseText.result.players_loop) {
-								playerid = responseText.result.players_loop[0].playerid;
-								player = encodeURI(playerid);
-								Ext.get('playerSettingsLink').show();
+							if (responseText.result && responseText.result['player count']) {
+								Ext.Ajax.request({
+									params: Ext.util.JSON.encode({
+										id: 1, 
+										method: "slim.request", 
+										params: [ 
+											'',
+											[ 
+												"players",
+												0,
+												99
+											]
+										]
+									}),
+					
+									success: function(response){
+										if (response && response.responseText) {
+											var responseText = Ext.util.JSON.decode(response.responseText);
+				
+											// let's set the current player to the first player in the list
+											if (responseText.result && responseText.result.count && responseText.result.players_loop[0]) {
+												playerid = responseText.result.players_loop[0].playerid;
+												player = encodeURI(playerid);
+												Ext.get('playerSettingsLink').show();
+											}
+
+											Main.checkScanStatus(responseText);		
+										}
+									}
+								});
 							}
 						}
 					}
