@@ -64,6 +64,9 @@ sub initPlugin {
 
 	$class->SUPER::initPlugin;
 
+	$menuUrl    = $class->_menuUrl;
+	@searchDirs = $class->_searchDirs;
+
 	Slim::Plugin::InfoBrowser::Settings->new($class);
 	Slim::Plugin::InfoBrowser::Settings->importNewMenuFiles;
 
@@ -85,7 +88,7 @@ sub setMode {
 
 	my %params = (
 		modeName => 'InfoBrowser',
-		url      => $class->menuUrl,
+		url      => $menuUrl,
 		title    => getDisplayName(),
 	);
 
@@ -106,7 +109,7 @@ sub webPages {
 	Slim::Web::HTTP::addPageFunction($url, sub {
 
 		Slim::Web::XMLBrowser->handleWebIndex( {
-			feed   => $class->menuUrl,
+			feed   => $menuUrl,
 			title  => $title,
 			args   => \@_
 		} );
@@ -119,10 +122,12 @@ sub cliQuery {
 	Slim::Buttons::XMLBrowser::cliQuery('infobrowser', $menuUrl, $request);
 }
 
-sub menuUrl {
-	my $class = shift;
+sub searchDirs {
+	return @searchDirs;
+}
 
-	return $menuUrl if $menuUrl;
+sub _menuUrl {
+	my $class = shift;
 
 	my $dir = $prefsServer->get('playlistdir');
 
@@ -132,7 +137,7 @@ sub menuUrl {
 
 	my $file = catdir($dir, "infobrowser.opml");
 
-	$menuUrl = Slim::Utils::Misc::fileURLFromPath($file);
+	my $menuUrl = Slim::Utils::Misc::fileURLFromPath($file);
 
 	if (-r $file) {
 
@@ -157,10 +162,10 @@ sub menuUrl {
 	return $menuUrl;
 }
 
-sub searchDirs {
+sub _searchDirs {
 	my $class = shift;
 
-	return @searchDirs if @searchDirs;
+	my @searchDirs;
 	
 	push @searchDirs, $class->_pluginDataFor('basedir');
 
