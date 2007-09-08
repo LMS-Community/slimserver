@@ -65,7 +65,7 @@
 				[% IF pageHeaderMenu and not pwd_list;
 					pwd_list = [ pageHeaderMenu ];
 				END  -%]
-				[% IF pwd_list AND NOT pwd_list.0;
+				[% IF pwd_list && pwd_list.length > 0;
 					pwd_list = [ pwd_list ];
  				END  -%]
 				[% IF homeCategory AND pwd_list;
