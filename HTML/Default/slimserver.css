@@ -309,11 +309,14 @@ form#advSearchForm.resultsPage {
 .titlebox_content {
 	background: url(html/images/title_background.gif) repeat;
 	margin-left: 10px;
+	margin-right: 5px;
 	height: 15px;
 	padding-top: 3px;
 	padding-bottom: 2px;
 	font-size: 120%;
 	font-weight: bold;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 .titlebox_top div { 
@@ -597,7 +600,7 @@ form#advSearchForm.resultsPage {
 .xmlStreamInfo #songInfoHeader {
 	position: absolute;
 	left: 160px;
-	top: 25px;
+	top: 40px;
 	z-index: 9999;
 }
 
@@ -628,7 +631,7 @@ form#advSearchForm.resultsPage {
 
 .xmlStreamInfo #TITLE {
 	padding-left: 160px;
-	padding-bottom: 40px;
+	padding-bottom: 50px;
 }
 
 #COVERART .songInfoText {
