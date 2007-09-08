@@ -138,10 +138,14 @@
 
 					<span id="settingsLinks">
 						<span id="playerSettingsLink" style="display: none;">
-							<img src="html/images/b_player_settings.png"/> [% "PLAYER_SETTINGS" | string %]
+							[% IF NOT nosetup %]
+								<img src="html/images/b_player_settings.png"/> [% "PLAYER_SETTINGS" | string %]
+							[% END %]
 						</span>
 						<span id="settingsLink">
-							<img src="html/images/b_settings.png"/> [% "SERVER_SETTINGS" | string %]
+							[% IF NOT (nosetup || noserver) %]
+								<img src="html/images/b_settings.png"/> [% "SERVER_SETTINGS" | string %]
+							[% END %]
 						</span>
 					</span>
 				</div>
