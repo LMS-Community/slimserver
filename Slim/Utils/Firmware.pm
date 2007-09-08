@@ -161,9 +161,9 @@ sub init_jive {
 	my $version = read_file($version_file);
 	
 	# jive.version format:
-	# PQP2 r444 r444M
-	# sdi@padbuild #23 Fri Sep 7 01:24:36 PDT 2007
-	my ($jive_rev, $jive_version) = $version =~ m/\s(r\d+\w*).*\s\#(\d+)\s/s;
+	# 1 r457
+	# sdi@padbuild #24 Sat Sep 8 01:26:46 PDT 2007
+	my ($jive_version, $jive_rev) = $version =~ m/^(\d+)\s(r\d+\w*)/;
 	
 	my $jive_file = "jive_${jive_version}_${jive_rev}.bin";
 	
