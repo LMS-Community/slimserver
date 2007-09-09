@@ -248,9 +248,9 @@ sub jive_needs_upgrade {
 	my ($server_version, $server_rev) = $JIVE_FW =~ m/^jive_(\d+)_(r\d+\w*)\.bin$/;
 	
 	if ( 
-		( $server_version > $cur_version )
+		( $server_version != $cur_version )
 		||
-		( $server_rev > $cur_rev )
+		( $server_rev ne $cur_rev )
 	) {
 		$log->debug("Jive needs upgrade! (has: $current, needs: $server_version $server_rev)");
 		return 1;
