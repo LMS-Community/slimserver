@@ -240,6 +240,8 @@ sub update {
 # show text briefly and then return to original display
 sub showBriefly {
 	my $display = shift;
+	my $parts   = shift;
+	my $args    = shift;
 
 	my $client = $display->client;
 
@@ -252,18 +254,15 @@ sub showBriefly {
 	# return if update blocked
 	return if ($display->updateMode() == 2);
 
-	my ($parsed, $duration, $firstLine, $blockUpdate, $scrollToEnd, $brightness, $callback, $callbackargs, $name);
+	my ($duration, $firstLine, $blockUpdate, $scrollToEnd, $brightness, $callback, $callbackargs, $name);
 
-	my $parts = shift;
-	if (ref($parts) eq 'HASH') {
-		$parsed = $parts;
-	} else {
-		$parsed = { 'line' => [ $parts, shift ] };
+	if (ref($parts) ne 'HASH') {
+		logBacktrace("showBriefly should be passed a display hash");
+		return;
 	}
 
-	$log->debug(sub { Data::Dump::dump $parsed });
+	$log->debug(sub { Data::Dump::dump $parts });
 
-	my $args = shift;
 	if (ref($args) eq 'HASH') {
 		$duration    = $args->{'duration'} || 1; # duration - default to 1 second
 		$firstLine   = $args->{'firstline'};     # use 1st line in doubled mode
@@ -285,18 +284,18 @@ sub showBriefly {
 	}
 
 	# notify cli/jive of the show briefly message
-	$display->notify('showbriefly', $parsed);
+	$display->notify('showbriefly', $parts);
 
 	if ($firstLine && ($display->linesPerScreen() == 1)) {
-		$parsed->{line}[1] = $parsed->{line}[0];
+		$parts->{line}[1] = $parts->{line}[0];
 	}
 
 	my $oldDisplay = $display->sbOldDisplay() || $display->curDisplay();
 	$display->sbOldDisplay(undef);
 
-	$display->update($parsed, $scrollToEnd ? 3 : undef);
+	$display->update($parts, $scrollToEnd ? 3 : undef);
 	
-	$display->screen2updateOK( ($oldDisplay->{'screen2'} && !$parsed->{'screen2'} && !$display->updateMode) ? 1 : 0 );
+	$display->screen2updateOK( ($oldDisplay->{'screen2'} && !$parts->{'screen2'} && !$display->updateMode) ? 1 : 0 );
 	$display->updateMode( $blockUpdate ? 2 : 1 );
 	$display->animateState(5);
 

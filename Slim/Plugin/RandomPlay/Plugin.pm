@@ -472,10 +472,9 @@ sub playRandom {
 			# Don't do showBrieflys if visualiser screensavers are running as the display messes up
 			if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
 
-				$client->showBriefly(
-					string($addOnly ? 'ADDING_TO_PLAYLIST' : 'NOW_PLAYING'),
-					$string, 2, undef, undef, 1
-				);
+				$client->showBriefly( {
+					'line' => [ string($addOnly ? 'ADDING_TO_PLAYLIST' : 'NOW_PLAYING'), $string ]
+				}, 2, undef, undef, 1);
 			}
 		}
 
@@ -494,10 +493,9 @@ sub playRandom {
 		# the display messes up
 		if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
 
-			$client->showBriefly(
-				string('PLUGIN_RANDOM'), 
-				string('PLUGIN_RANDOM_DISABLED')
-			);
+			$client->showBriefly( {
+				'line' => [ string('PLUGIN_RANDOM'), string('PLUGIN_RANDOM_DISABLED') ]
+			} );
 		}
 
 		$mixInfo{$client->masterOrSelf->id} = undef;

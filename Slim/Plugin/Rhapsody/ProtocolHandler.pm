@@ -222,7 +222,9 @@ sub handleDirectError {
 		Slim::Utils::Timers::setTimer( $client, $stopAt, sub {
 			my $client = shift;
 			$client->execute(["stop"]);
-			$client->showBriefly( $client->string($error), undef, 3, undef );
+			$client->showBriefly( {
+				'line' => [ $client->string($error), undef ]
+			}, 3, undef );
 		} );
 	}
 	else {

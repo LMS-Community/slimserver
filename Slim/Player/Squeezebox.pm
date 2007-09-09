@@ -477,8 +477,7 @@ sub needsUpgrade {
 		
 		# display an error message
 		$client->showBriefly( {
-			'line1' => $client->string( 'FIRMWARE_MISSING' ),
-			'line2' => $client->string( 'FIRMWARE_MISSING_DESC' ),
+			'line' => [ $client->string( 'FIRMWARE_MISSING' ), $client->string( 'FIRMWARE_MISSING_DESC' ) ]
 		}, { 
 			'block' => 1, 'scroll' => 1, 'firstline' => 1,
 		} );

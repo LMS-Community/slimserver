@@ -567,7 +567,9 @@ sub exitInput {
 				if (defined($lines) && (ref($lines) eq 'ARRAY')) {
 
 					# if onRight returns lines, show them.
-					$client->showBriefly($lines->[0], $lines->[1], undef, 1);
+					$client->showBriefly( {
+						'line' => [ $lines->[0], $lines->[1] ]
+					}, undef, 1);
 
 				} elsif (getParam($client,'pref')) {
 		

@@ -467,8 +467,7 @@ sub gotOPML {
 		}
 		
 		$client->showBriefly( {
-			line1 => $opml->{'title'},
-			line2 => $item->{'value'},
+			line => [ $opml->{'title'}, $item->{'value'} ]
 		},
 		{
 			scroll   => 1,

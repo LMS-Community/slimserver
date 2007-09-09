@@ -1628,8 +1628,7 @@ sub errorOpening {
 	
 	# Show an error message
 	$client->showBriefly({
-		'line1'    => $line1,
-		'line2'    => $line2,
+		'line' => [ $line1, $line2 ]
 	}, { 'scroll' => 1, 'firstline' => 1 });
 }
 
@@ -1834,7 +1833,9 @@ sub openSong {
 				my $line1 = $client->string('PROBLEM_CONNECTING');
 				my $line2 = Slim::Music::Info::standardTitle($client, $track);
 	
-				$client->showBriefly($line1, $line2, 5, 1);
+				$client->showBriefly( {
+					'line' => [ $line1, $line2 ]
+				}, 5, 1);
 	
 				return undef;
 			}
@@ -2105,7 +2106,9 @@ sub openSong {
 		my $line1 = $client->string('PROBLEM_OPENING');
 		my $line2 = Slim::Music::Info::standardTitle($client, $track);
 
-		$client->showBriefly($line1, $line2, 5, 1);
+		$client->showBriefly( {
+			'line' => [$line1, $line2 ]
+		}, 5, 1);
 
 		return undef;
 	}

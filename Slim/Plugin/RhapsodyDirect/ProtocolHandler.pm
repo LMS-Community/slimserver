@@ -81,8 +81,7 @@ sub handleDirectError {
 	my $line2 = $client->string('PLUGIN_RHAPSODY_DIRECT_STREAM_FAILED');
 	
 	$client->showBriefly( {
-		line1 => $line1,
-		line2 => $line2,
+		line => [ $line1, $line2 ]
 	},
 	{
 		block  => 1,
@@ -633,8 +632,7 @@ sub gotNextRadioTrack {
 		else {
 			# User was just starting a radio station
 			$client->showBriefly( {
-				line1 => string( $client, 'PLUGIN_RHAPSODY_DIRECT_ERROR' ),
-				line2 => string( $client, 'PLUGIN_RHAPSODY_DIRECT_NO_TRACK' ),
+				line => [ string( $client, 'PLUGIN_RHAPSODY_DIRECT_ERROR' ), string( $client, 'PLUGIN_RHAPSODY_DIRECT_NO_TRACK' ) ]
 			},
 			{
 				scroll => 1,
@@ -918,7 +916,9 @@ sub displayStatus {
 		$line2 = $client->string($string);
 	}
 
-	$client->showBriefly( $line1, $line2, $time );
+	$client->showBriefly( {
+		line => [ $line1, $line2 ],
+	}, $time );
 }
 
 # Track Info menu

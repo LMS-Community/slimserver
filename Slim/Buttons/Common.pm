@@ -816,7 +816,9 @@ our %functions = (
 
 			if ($url && $title) {
 				Slim::Utils::Favorites->new($client)->add($url, $title);
-				$client->showBriefly($client->string('FAVORITES_ADDING'), $title);
+				$client->showBriefly( {
+					'line' => [ $client->string('FAVORITES_ADDING'), $title ]
+				} );
 
 			# if all of that fails, send the debug with a best guess helper for tracing back
 			} else {

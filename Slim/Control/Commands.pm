@@ -243,7 +243,9 @@ sub displayCommand {
 	
 	Slim::Buttons::ScreenSaver::wakeup($client);
 
-	$client->showBriefly($line1, $line2, $duration, $p4);
+	$client->showBriefly({
+		'line' => [ $line1, $line2 ],
+	}, $duration, $p4);
 	
 	$request->setStatusDone();
 }
