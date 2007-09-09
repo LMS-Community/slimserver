@@ -960,8 +960,6 @@ sub dateQuery {
 	}
 
 	my $hour = int($off / 3600);
-	my $min  = int($off % 3600 / 60);
-
 	if ( $hour > -10 && $hour < 10 ) {
 		$hour = "0" . abs($hour);
 	}
