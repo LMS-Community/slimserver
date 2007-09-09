@@ -126,6 +126,10 @@ sub searchDirs {
 	return @searchDirs;
 }
 
+sub menuUrl {
+	return $menuUrl;
+}
+
 sub _menuUrl {
 	my $class = shift;
 
