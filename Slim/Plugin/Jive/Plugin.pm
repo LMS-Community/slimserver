@@ -8,6 +8,7 @@ package Slim::Plugin::Jive::Plugin;
 use strict;
 use base qw(Slim::Plugin::Base);
 
+use POSIX;
 use Scalar::Util qw(blessed);
 
 use Slim::Utils::Log;
@@ -62,7 +63,10 @@ sub initPlugin {
         [0, 1, 1, \&menuQuery]);
     Slim::Control::Request::addDispatch(['menusettings', '_index', '_quantity'], 
         [1, 1, 1, \&menusettingsQuery]);
-
+	Slim::Control::Request::addDispatch(['date'],
+		[0, 1, 0, \&dateQuery]);
+	Slim::Control::Request::addDispatch(['firmwareupgrade'],
+		[0, 1, 1, \&firmwareUpgradeQuery]);
 }
 
 =head2 getDisplayName()
@@ -914,6 +918,90 @@ sub getPlayersToSyncWith() {
 		};
 	}
 	return \@return;
+}
+
+sub dateQuery {
+	my $request = shift;
+
+	if ( $request->isNotQuery([['date']]) ) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# Calculate the time zone offset, taken from Time::Timezone
+	my $time = time();
+	my @l    = localtime($time);
+	my @g    = gmtime($time);
+
+	my $off 
+		= $l[0] - $g[0]
+		+ ( $l[1] - $g[1] ) * 60
+		+ ( $l[2] - $g[2] ) * 3600;
+
+	# subscript 7 is yday.
+
+	if ( $l[7] == $g[7] ) {
+		# done
+	}
+	elsif ( $l[7] == $g[7] + 1 ) {
+		$off += 86400;
+	}
+	elsif ( $l[7] == $g[7] - 1 ) {
+			$off -= 86400;
+	} 
+	elsif ( $l[7] < $g[7] ) {
+		# crossed over a year boundry!
+		# localtime is beginning of year, gmt is end
+		# therefore local is ahead
+		$off += 86400;
+	}
+	else {
+		$off -= 86400;
+	}
+
+	my $hour = int($off / 3600);
+	my $min  = int($off % 3600 / 60);
+
+	if ( $hour > -10 && $hour < 10 ) {
+		$hour = "0" . abs($hour);
+	}
+	else {
+		$hour = abs($hour);
+	}
+
+	my $tzoff = ( $off >= 0 ) ? '+' : '-';
+	$tzoff .= sprintf( "%s:%02d", $hour, int( $off % 3600 / 60 ) );
+
+	# Return time in http://www.w3.org/TR/NOTE-datetime format
+	$request->addResult( 'date', strftime("%Y-%m-%dT%H:%M:%S", localtime) . $tzoff );
+
+	$request->setStatusDone();
+}
+
+sub firmwareUpgradeQuery {
+	my $request = shift;
+
+	if ( $request->isNotQuery([['firmwareupgrade']]) ) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $firmwareVersion = $request->getParam('firmwareVersion');
+	
+	# always send the upgrade url this is also used if the user opts to upgrade
+	if ( my $url = Slim::Utils::Firmware->jive_url() ) {
+		$request->addResult( firmwareUrl => $url );
+	}
+	
+	if ( Slim::Utils::Firmware->jive_needs_upgrade( $firmwareVersion ) ) {
+		# if this is true a firmware upgrade is forced
+		$request->addResult( firmwareUpgrade => 1 );
+	}
+	else {
+		$request->addResult( firmwareUpgrade => 0 );
+	}
+	
+	$request->setStatusDone();
 }
 
 1;

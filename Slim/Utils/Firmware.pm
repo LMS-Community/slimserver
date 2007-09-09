@@ -37,7 +37,9 @@ use LWP::UserAgent;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Network;
 use Slim::Utils::OSDetect;
+use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
 # Models to download firmware for
@@ -51,6 +53,9 @@ our $base = 'http://update.slimdevices.com/update/firmware';
 
 # Check interval when firmware can't be downloaded
 our $CHECK_TIME = 600;
+
+# Current Jive firmware file
+my $JIVE_FW;
 
 my $log = logger('player.firmware');
 
@@ -174,6 +179,7 @@ sub init_jive {
 	}
 	else {
 		$log->info("Jive firmware is up to date: $jive_file");
+		$JIVE_FW = $jive_file;
 	}
 }
 
@@ -198,6 +204,61 @@ sub init_jive_done {
 		$log->info("Removing old Jive firmware file: $file");
 		unlink catdir( $dir, $file ) or logError("Unable to remove old Jive firmware file: $file: $!");
 	}
+	
+	$JIVE_FW = $jive_file;
+}
+
+=head2 jive_url()
+
+Returns a URL for downloading the current Jive firmware.  Returns
+undef if firmware has not been downloaded.
+
+=cut
+
+sub jive_url {
+	my $class = shift;
+
+	return unless $JIVE_FW;
+	
+	return 'http://'
+		. Slim::Utils::Network::serverAddr() . ':'
+		. preferences('server')->get('httpport')
+		. "/firmware/$JIVE_FW";
+}
+
+=head2 jive_needs_upgrade( $current_version )
+
+Returns 1 if Jive needs an upgrade.  Returns undef if not, or
+if there is no firmware downloaded.
+
+=cut
+
+sub jive_needs_upgrade {
+	my ( $class, $current ) = @_;
+	
+	return unless $JIVE_FW;
+	
+	my ($cur_version, $cur_rev) = $current =~ m/^(\d+)\s(r\d+\w*)/;
+	
+	if ( !$cur_version || !$cur_rev ) {
+		logError("Jive sent invalid current version: $current");
+		return;
+	}
+	
+	my ($server_version, $server_rev) = $JIVE_FW =~ m/^jive_(\d+)_(r\d+\w*)\.bin$/;
+	
+	if ( 
+		( $server_version > $cur_version )
+		||
+		( $server_rev > $cur_rev )
+	) {
+		$log->debug("Jive needs upgrade! (has: $current, needs: $server_version $server_rev)");
+		return 1;
+	}
+	
+	$log->debug("Jive doesn't need an upgrade (has: $current, server has: $server_version $server_rev)");
+	
+	return;
 }
 
 =head2 download( $url, $file )

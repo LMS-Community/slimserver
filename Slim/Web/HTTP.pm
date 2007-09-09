@@ -612,7 +612,7 @@ sub processHTTP {
 
 				return;
 
-			} elsif ($path =~ m|^/(.+?)/.*| && $path !~ m{^/(?:html|music|plugins|settings)/}i) {
+			} elsif ($path =~ m|^/(.+?)/.*| && $path !~ m{^/(?:html|music|plugins|settings|firmware)/}i) {
 
 				my $desiredskin = $1;
 
@@ -915,6 +915,10 @@ sub generateHTTPResponse {
 
 	# lots of people need this
 	my $contentType = $params->{'Content-Type'} = $Slim::Music::Info::types{$type};
+	
+	if ( $path =~ m{firmware/.*\.bin$} ) {
+		$contentType = 'application/octet-stream';
+	}
 
 	# setup our defaults
 	$response->content_type($contentType);
@@ -1110,44 +1114,12 @@ sub generateHTTPResponse {
 		if (blessed($obj) && Slim::Music::Info::isSong($obj) && Slim::Music::Info::isFile($obj->url)) {
 
 			$log->info("Opening $obj to stream...");
-
-			my $songHandle =  FileHandle->new(Slim::Utils::Misc::pathFromFileURL($obj->url));
-
-			if ($songHandle) {
-				
-				# fork for sending large file downloads
-				if ( $^O !~ /Win32/ && $prefs->get('forkedWeb') ) {
-
-					if ( my $pid = fork ) {
-
-						$log->info("Forked $pid to handle file download");
-
-						closeHTTPSocket($httpClient);
-						return;
-					}
-					else {
-						$inChild = 1;
-						
-						$response->header('Connection' => 'close');
-					}
-				}
-
-				# Send the file down - and hint to the browser
-				# the correct filename to save it as.
-				$response->content_type( $Slim::Music::Info::types{$obj->content_type()} );
-				$response->content_length($obj->filesize());
-				$response->header('Content-Disposition', 
-					sprintf('attachment; filename="%s"', Slim::Utils::Misc::unescape(basename($obj->url())))
-				);
-
-				my $headers = _stringifyHeaders($response) . $CRLF;
-
-				$streamingFiles{$httpClient} = $songHandle;
-
-				addStreamingResponse($httpClient, $headers);
-
-				return 0;
-			}
+			
+			my $ct = $Slim::Music::Info::types{$obj->content_type()};
+			
+			sendStreamingFile( $httpClient, $response, $ct, Slim::Utils::Misc::pathFromFileURL($obj->url) );
+			
+			return 0;
 		}
 
 	} elsif ($path =~ /favicon\.ico/) {
@@ -1224,6 +1196,15 @@ sub generateHTTPResponse {
 			}
 		}
 
+	} elsif ( $path =~ m{^firmware/.*\.bin} ) {
+		# firmware downloads over HTTP
+		my $dir  = Slim::Utils::OSDetect::dirsFor('Firmware');
+		$path   =~ s{firmware/}{};		
+		my $file = catfile( $dir, $path );
+		
+		sendStreamingFile( $httpClient, $response, 'application/octet-stream', $file );
+		
+		return 0;
 	} else {
 		# who knows why we're here, we just know that something ain't right
 		$$body = undef;
@@ -1302,6 +1283,43 @@ sub generateHTTPResponse {
 	# if the reference to the body is itself undefined, then we've started
 	# generating the page in the background
 	return prepareResponseForSending($client, $params, $body, $httpClient, $response);
+}
+
+sub sendStreamingFile {
+	my ( $httpClient, $response, $contentType, $file ) = @_;
+	
+	# fork for sending large file downloads
+	if ( $^O !~ /Win32/ && $prefs->get('forkedWeb') ) {
+
+		if ( my $pid = fork ) {
+
+			$log->info("Forked $pid to handle file download");
+
+			closeHTTPSocket($httpClient);
+			return;
+		}
+		else {
+			$inChild = 1;
+			
+			$response->header('Connection' => 'close');
+		}
+	}
+
+	# Send the file down - and hint to the browser
+	# the correct filename to save it as.
+	$response->content_type( $contentType );
+	$response->content_length( -s $file );
+	$response->header('Content-Disposition', 
+		sprintf('attachment; filename="%s"', Slim::Utils::Misc::unescape(basename($file)))
+	);
+
+	my $headers = _stringifyHeaders($response) . $CRLF;
+
+	my $fh = FileHandle->new($file);
+	
+	$streamingFiles{$httpClient} = $fh;
+
+	addStreamingResponse($httpClient, $headers);
 }
 
 sub childRead {
