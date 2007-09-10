@@ -401,6 +401,7 @@ sub _http_read_body {
 	# Are we saving directly to a file?
 	if ( $self->saveAs && !$self->fh ) {
 		open my $fh, '>', $self->saveAs;
+		binmode $fh;
 
 		if ( !$fh ) {
 			return $self->_http_error( 'Unable to open ' . $self->saveAs . ' for writing', $args );
