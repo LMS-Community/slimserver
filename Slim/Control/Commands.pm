@@ -148,6 +148,11 @@ sub buttonCommand {
 		return;
 	}
 	
+	# if called from cli, json or comet then store this as the last button as we have bypassed the ir code
+	if ($request->source) {
+		$client->lastirbutton($button);
+	}
+
 	Slim::Hardware::IR::executeButton($client, $button, $time, undef, defined($orFunction) ? $orFunction : 1);
 	
 	$request->setStatusDone();
