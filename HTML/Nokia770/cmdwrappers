@@ -182,7 +182,7 @@
 		[%- IF addLink == 'noajax' %]
 		[% WRAPPER addlink    %][% PROCESS cmdHRef cmdType='add' statusroot = 'playlist.html' %][% END %]
 		[%- ELSE %]
-				<span class = 'buttonControls'><img src="[% webroot %]html/images/add.gif" onClick = 'changeOSD("[% "ADDING_TO_PLAYLIST" | string %] [% IF itemobj.title == '' %][% "ALL_SONGS" | string %][% ELSE %][% itemobj.title FILTER html FILTER replace('\'','&#39;')  %][% END %]"); addItem("[% PROCESS ajaxCmdHRef cmdType='add' %]");' border=0 alt='Add to playlist' title='Add to playlist'></span>
+				<span class = 'buttonControls'><img src="[% webroot %]html/images/add.gif" onClick = 'changeOSD("[% "ADDING_TO_PLAYLIST" | string %] [% IF itemobj.title == '' %][% "ALL_SONGS" | string %][% ELSE %][% itemobj.title FILTER html FILTER replace('\'','&#39;')  %][% END %]"); addItem("[% PROCESS ajaxCmdHRef cmdType='add' %]");' border=0 alt='[% "ADD_TO_PLAYLIST" | string %]' title='[% "ADD_TO_PLAYLIST" | string %]'></span>
 		[%- END %]
 		[% FOREACH mixer = mixerlinks.values.sort %]
 			<span class = 'buttonControls'>[% PROCESS $mixer %]</span>
