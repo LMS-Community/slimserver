@@ -30,6 +30,7 @@ file before being saved.
 use strict;
 
 use Digest::SHA1;
+use File::Basename;
 use File::Slurp qw(read_file);
 use File::Spec::Functions qw(:ALL);
 use LWP::UserAgent;
@@ -43,16 +44,19 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
 # Models to download firmware for
-our @models = qw( squeezebox squeezebox2 transporter );
+my @models = qw( squeezebox squeezebox2 transporter );
 
-# File location
-our $dir = Slim::Utils::OSDetect::dirsFor('Firmware');
+# Firmware location
+my $dir = Slim::Utils::OSDetect::dirsFor('Firmware');
+
+# Cache location
+my $cacheDir = Slim::Utils::OSDetect::dirsFor('Cache');
 
 # Download location
-our $base = 'http://update.slimdevices.com/update/firmware';
+my $base = 'http://update.slimdevices.com/update/firmware';
 
 # Check interval when firmware can't be downloaded
-our $CHECK_TIME = 600;
+my $CHECK_TIME = 600;
 
 # Current Jive firmware file
 my $JIVE_FW;
@@ -94,7 +98,7 @@ sub init {
 				my $file = "${model}_${version}.bin";
 				my $path = catdir( $dir, $file );
 
-				if ($files->{$file}) {
+				if ($files->{$path}) {
 					next;
 				}
 				
@@ -102,7 +106,7 @@ sub init {
 
 					$log->info("Need to download $file\n");
 
-					$files->{$file} = 1;
+					$files->{$path} = 1;
 				}
 			}
 		}
@@ -113,7 +117,7 @@ sub init {
 	my $ok = 1;
 
 	for my $file ( keys %{$files} ) {
-		my $url = $base . '/' . $::VERSION . '/' . $file;
+		my $url = $base . '/' . $::VERSION . '/' . basename($file);
 		
 		$ok = download( $url, $file );
 		
@@ -141,12 +145,12 @@ updated jive.version file.
 sub init_jive {
 	my $url = $base . '/' . $::VERSION . '/jive.version';
 	
-	my $version_file = catdir( $dir, 'jive.version' );
+	my $version_file = catdir( $cacheDir, 'jive.version' );
 	
 	if ( !-e $version_file ) {
 		$log->info('Downloading new jive.version file...');
 		
-		if ( !download( $url, 'jive.version' ) ) {
+		if ( !download( $url, $version_file ) ) {
 			logError('Unable to download jive.version file, to retry please restart SlimServer.');
 			return;
 		}
@@ -156,7 +160,7 @@ sub init_jive {
 		if ( $::REVISION eq 'TRUNK' ) {		
 			$log->info('Checking for a newer jive.version file...');
 			
-			if ( !download( $url, 'jive.version' ) ) {
+			if ( !download( $url, $version_file ) ) {
 				# not modified
 				$log->info("Jive version file is up to date");
 			}
@@ -170,10 +174,10 @@ sub init_jive {
 	# sdi@padbuild #24 Sat Sep 8 01:26:46 PDT 2007
 	my ($jive_version, $jive_rev) = $version =~ m/^(\d+)\s(r\d+\w*)/;
 	
-	my $jive_file = "jive_${jive_version}_${jive_rev}.bin";
+	my $jive_file = catdir( $cacheDir, "jive_${jive_version}_${jive_rev}.bin" );
 	
-	if ( !-e catdir( $dir, $jive_file ) ) {		
-		$log->info("Downloading in the background: $jive_file");
+	if ( !-e $jive_file ) {		
+		$log->info("Downloading Jive firmware to: $jive_file");
 		
 		downloadAsync( $jive_file, \&init_jive_done, $jive_file );
 	}
@@ -193,16 +197,16 @@ of the newly downloaded firmware.  Removes old Jive firmware file if one exists.
 sub init_jive_done {
 	my $jive_file = shift;
 	
-	opendir my ($dirh), $dir;
+	opendir my ($dirh), $cacheDir;
 	
 	my @files = grep { /^jive.*\.bin$/ } readdir $dirh;
 	
 	closedir $dirh;
 	
 	for my $file ( @files ) {
-		next if $file eq $jive_file;
+		next if $file eq basename($jive_file);
 		$log->info("Removing old Jive firmware file: $file");
-		unlink catdir( $dir, $file ) or logError("Unable to remove old Jive firmware file: $file: $!");
+		unlink catdir( $cacheDir, $file ) or logError("Unable to remove old Jive firmware file: $file: $!");
 	}
 	
 	$JIVE_FW = $jive_file;
@@ -223,7 +227,7 @@ sub jive_url {
 	return 'http://'
 		. Slim::Utils::Network::serverAddr() . ':'
 		. preferences('server')->get('httpport')
-		. "/firmware/$JIVE_FW";
+		. '/firmware/' . basename($JIVE_FW);
 }
 
 =head2 jive_needs_upgrade( $current_version )
@@ -245,7 +249,7 @@ sub jive_needs_upgrade {
 		return;
 	}
 	
-	my ($server_version, $server_rev) = $JIVE_FW =~ m/^jive_(\d+)_(r\d+\w*)\.bin$/;
+	my ($server_version, $server_rev) = $JIVE_FW =~ m/jive_(\d+)_(r\d+\w*)\.bin$/;
 	
 	if ( 
 		( $server_version != $cur_version )
@@ -267,6 +271,8 @@ Performs a synchronous file download at startup for all firmware files.
 If these fail, will set a timer for async downloads in the background in
 10 minutes or so.
 
+$file must be an absolute path.
+
 =cut
 
 sub download {
@@ -280,20 +286,18 @@ sub download {
 	
 	msg("Downloading firmware from $url, please wait...\n");
 	
-	my $path = catdir( $dir, $file );
-	
-	my $res = $ua->mirror( $url, $path );
+	my $res = $ua->mirror( $url, $file );
 	if ( $res->is_success ) {
 		
 		# Download the SHA1sum file to verify our download
-		my $res2 = $ua->mirror( "$url.sha", "$path.sha" );
+		my $res2 = $ua->mirror( "$url.sha", "$file.sha" );
 		if ( $res2->is_success ) {
 			
-			my $sumfile = read_file( "$path.sha" ) or fatal("Unable to read $file.sha to verify firmware\n");
+			my $sumfile = read_file( "$file.sha" ) or fatal("Unable to read $file.sha to verify firmware\n");
 			my ($sum) = $sumfile =~ m/([a-f0-9]{40})/;
-			unlink "$path.sha";
+			unlink "$file.sha";
 			
-			open my $fh, '<', $path or fatal("Unable to read $path to verify firmware\n");
+			open my $fh, '<', $file or fatal("Unable to read $file to verify firmware\n");
 			binmode $fh;
 			
 			my $sha1 = Digest::SHA1->new;
@@ -305,12 +309,12 @@ sub download {
 				return 1;
 			}
 			
-			unlink $path;
+			unlink $file;
 			
 			logError("Validation of firmware $file failed, SHA1 checksum did not match");
 		}
 		else {
-			unlink $path;
+			unlink $file;
 			$error = $res2->status_line;
 		}
 	}
@@ -339,16 +343,14 @@ sub downloadAsync {
 	my ( $cb, @pt ) = @_;
 	
 	# URL to download
-	my $url = $base . '/' . $::VERSION . '/' . $file;
+	my $url = $base . '/' . $::VERSION . '/' . basename($file);
 	
-	# File to save it in, we use a tmp file so we can check SHA
-	my $path = catdir( $dir, $file ) . '.tmp';
-	
+	# Save to a tmp file so we can check SHA
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		\&downloadAsyncDone,
 		\&downloadAsyncError,
 		{
-			saveAs => $path,
+			saveAs => "$file.tmp",
 			file   => $file,
 			cb     => $cb,
 			pt     => \@pt,
@@ -374,8 +376,7 @@ sub downloadAsyncDone {
 	my $url  = $http->url;
 	
 	# make sure we got the file
-	my $path = catdir( $dir, $file ) . '.tmp';
-	if ( !-e $path ) {
+	if ( !-e "$file.tmp" ) {
 		return downloadAsyncError( $http, 'File was not saved properly' );
 	}
 	
@@ -409,8 +410,7 @@ sub downloadAsyncSHADone {
 	my ($sum) = $http->content =~ m/([a-f0-9]{40})/;
 	
 	# open firmware file
-	my $path = catdir( $dir, $file ) . '.tmp';
-	open my $fh, '<', $path or return downloadAsyncError( $http, "Unable to read $path to verify firmware" );
+	open my $fh, '<', "$file.tmp" or return downloadAsyncError( $http, "Unable to read $file to verify firmware" );
 	binmode $fh;
 	
 	my $sha1 = Digest::SHA1->new;
@@ -420,8 +420,7 @@ sub downloadAsyncSHADone {
 	if ( $sha1->hexdigest eq $sum ) {
 				
 		# rename the tmp file
-		my $real = catdir( $dir, $file );
-		rename $path, $real or return downloadAsyncError( $http, "Unable to rename temporary $path file" );
+		rename "$file.tmp", $file or return downloadAsyncError( $http, "Unable to rename temporary $file file" );
 		
 		logWarning("Successfully downloaded and verified $file.");
 		
@@ -446,8 +445,7 @@ sub downloadAsyncError {
 	my $file = $http->params('file');
 	
 	# Clean up
-	my $path = catdir( $dir, $file ) . '.tmp';
-	unlink $path if -e $path;
+	unlink "$file.tmp" if -e "$file.tmp";
 	
 	logWarning(sprintf("Firmware: Failed to download %s (%s), will try again in 10 minutes.",
 		$http->url,

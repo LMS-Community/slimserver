@@ -1198,9 +1198,31 @@ sub generateHTTPResponse {
 
 	} elsif ( $path =~ m{^firmware/.*\.bin} ) {
 		# firmware downloads over HTTP
-		my $dir  = Slim::Utils::OSDetect::dirsFor('Firmware');
+		my $dir  = Slim::Utils::OSDetect::dirsFor('Cache');
 		$path   =~ s{firmware/}{};		
 		my $file = catfile( $dir, $path );
+		
+		# If file doesn't exist in cache, check the Firmware dir
+		if ( !-e $file ) {
+			$dir  = Slim::Utils::OSDetect::dirsFor('Firmware');
+			$file = catfile( $dir, $path );
+		}
+		
+		if ( !-e $file ) {
+			# 404 error
+			$response->content_type('text/html');
+			$response->code(RC_NOT_FOUND);
+
+			$body = filltemplatefile('html/errors/404.html', $params);
+
+			return prepareResponseForSending(
+				$client,
+				$params,
+				$body,
+				$httpClient,
+				$response,
+			);
+		}
 		
 		sendStreamingFile( $httpClient, $response, 'application/octet-stream', $file );
 		
