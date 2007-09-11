@@ -20,24 +20,24 @@
 }
 
 .x-btn-left{
-	width:3px;
-	height:22px;
-	background:url(html/images/btn_generic.png) no-repeat 0 0;
+	width: 5px;
+	height: 22px;
+	background: url(html/images/btn_generic.gif) no-repeat 0 0;
 }
 
 .x-btn-right{
-	width:3px;
-	height:22px;
-	background:url(html/images/btn_generic.png) no-repeat 0 -22px;
+	width: 5px;
+	height: 22px;
+	background: url(html/images/btn_generic.gif) no-repeat 0 -22px;
 }
 
 .x-btn-center{
-	background:url(html/images/btn_generic.png) repeat-x 0 -44px;
+	background: url(html/images/btn_generic.gif) repeat-x 0 -44px;
 	vertical-align: middle;
-	text-align:center;
-	padding:0 5px;
-	cursor:pointer;
-	white-space:nowrap;
+	text-align: center;
+	padding: 0 5px;
+	cursor: pointer;
+	white-space: nowrap;
 }
 
 .x-btn-over .x-btn-left{

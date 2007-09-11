@@ -405,8 +405,8 @@ form#advSearchForm.resultsPage {
 #edge_top_left, #edge_top_right,
 #edge_bottom_left, #edge_bottom_right {
 	position: absolute;
-	height: 5px;
-	width: 5px;
+	height: 8px;
+	width: 8px;
 	margin: 0;
 	padding: 0;
 }
@@ -699,4 +699,16 @@ form#advSearchForm.resultsPage {
 	display: block;
 	padding: 3px;
 	padding-left: 30px;
+}
+
+#playerbase_exp_left {
+	background: transparent url(html/images/playerbase_expanded.gif) no-repeat 0 0;		
+}
+
+#playerbase_exp_right {
+	background: transparent url(html/images/playerbase_expanded.gif) no-repeat 0 -286px;	
+}
+
+.playerbase {
+	background: transparent url(html/images/playerbase_expanded.gif) repeat 0 -143px	
 }
