@@ -23,6 +23,7 @@ use base qw(Slim::Player::Client);
 use Slim::Buttons::SqueezeNetwork;
 use Slim::Hardware::IR;
 use Slim::Player::Client;
+use Slim::Player::Source;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
@@ -788,7 +789,7 @@ sub apparentStreamStartTime {
 		$timePlayed = Slim::Player::Source::findTimeForOffset($client, $bytesPlayed) or return;
 	}
 	elsif ( $format eq 'wav' ) {
-		$timePlayed = $bytesPlayed * 8 / (streamBitrate($client) or return);
+		$timePlayed = $bytesPlayed * 8 / (Slim::Player::Source::streamBitrate($client) or return);
 	}
 	else {
 		return;
