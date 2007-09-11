@@ -119,56 +119,46 @@ Main = function(){
 			// some browser dependant offsets... argh...
 			offset = new Array();
 			offset['bottom'] = 30;
-			offset['playlistbottom'] = 32;
-			offset['playlist'] = 15;
+			offset['playlistbottom'] = 34;
+			offset['rightpanel'] = 23;
 
 			if (Ext.isIE) {
-				offset['bottom'] = 22;
 				if (Ext.isIE7) {
-					offset['playlistbottom'] = 30;
-					offset['playlist'] = 20;
+					offset['playlistbottom'] = 41;
 				}
 				else {
-					offset['playlistbottom'] = 43;
+					offset['rightpanel'] = 39;
+					offset['bottom'] = 27;
+					offset['playlistbottom'] = 30;
 				}
 			}
 			else if (Ext.isOpera) {
 				offset['bottom'] = 28;
-				offset['playlistbottom'] = 33;
+				offset['playlistbottom'] = 37;
 			}
-			else if (Ext.isSafari) {
-				offset['playlistbottom'] = 33;
-			}
-
-			if (pager = Ext.get('pagebar'))
-				offset['playlist'] += pager.getHeight() + (Ext.isIE ? 0 : 4);
 				
 			dimensions = new Array();
 			dimensions['maxHeight'] = Ext.get(document.body).getHeight();
 			dimensions['footer'] = Ext.get('footer').getHeight();
 			dimensions['colWidth'] = Math.floor((Ext.get(document.body).getWidth() - 6*5) / 2);
-			dimensions['rightHeight'] = dimensions['maxHeight'] - dimensions['footer'] * 2 - 163 - 27 - offset['playlistbottom'];
+			dimensions['colHeight'] = dimensions['maxHeight'] - Ext.get('leftpanel').getTop() - dimensions['footer'] - offset['bottom'];
 
-			right = Ext.get('rightpanel');
+			right = Ext.get('rightcontent');
 			left = Ext.get('leftcontent');
 
-			Ext.get('mainbody').setHeight(dimensions['maxHeight']-10);
+			Ext.get('mainbody').setHeight(dimensions['maxHeight'] - 10);
 
 			// left column
-			left.setHeight(dimensions['maxHeight'] - Ext.get('leftpanel').getTop() - dimensions['footer'] - offset['bottom']);
+			left.setHeight(dimensions['colHeight']);
 			left.setWidth(dimensions['colWidth']);
 
 			// right column
-			Ext.get('playerControlPanel').setWidth(dimensions['colWidth']);
-
-			right.setHeight(dimensions['rightHeight']);
-
-			if (el = Ext.DomQuery.selectNode('div.inner_content', right.dom))
-				Ext.get(el).setHeight(dimensions['rightHeight']);
+			right.setHeight(dimensions['colHeight'] - offset['rightpanel']);
+			Ext.get('playerControlPanel').setWidth(dimensions['colWidth'] - 20);
 
 			// playlist field
 			if (pl = Ext.get('playList')) {
-				pl.setHeight(dimensions['rightHeight'] - offset['playlist']);
+				pl.setHeight(dimensions['colHeight'] - pl.getTop() + offset['playlistbottom']);
 			}
 
 			try { this.layout(); }
@@ -182,7 +172,7 @@ Playlist = function(){
 	return {
 		load : function(url){
 			// try to reload previous page if no URL is defined
-			el = Ext.get('rightcontent');
+			el = Ext.get('playlistPanel');
 
 			if (!url)
 				url = el.getUpdateManager().defaultUrl;
@@ -337,7 +327,7 @@ Player = function(){
 			});
 
 			new Slim.Button('ctrlVolumeUp', {
-				icon: 'html/images/btn_volume_increase.gif',
+				icon: 'html/images/btn_volume_increase.png',
 				tooltip: strings['volumeup'],
 				width: 22,
 				height: 22,
@@ -409,8 +399,8 @@ Player = function(){
 			new Slim.Button('ctrlPower', {
 				icon: 'html/images/btn_power.gif',
 				tooltip: strings['power'],
-				width: 24,
-				height: 24,
+				width: 22,
+				height: 22,
 				scope: this,
 				handler: this.ctrlPower
 			});

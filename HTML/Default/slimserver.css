@@ -86,7 +86,7 @@ div.thumbwrap {
 	margin-left: 0;
 }
 
-#browsedbList, #playList {
+#browsedbList {
 	margin: 5px;
 	height: 400px;
 	overflow: auto;
@@ -233,9 +233,9 @@ form#advSearchForm.resultsPage {
 
 #playerControlPanel {
 	padding-top: 0px;
-	padding-left: 10px;
-	padding-right: 10px;
-}
+	padding-left: 5px;
+/*	padding-right: 10px;
+*/}
 
 #ctrlCurrentArt {
 	height: 96px;
@@ -278,6 +278,10 @@ form#advSearchForm.resultsPage {
 	background: url(html/images/inner_background.gif) repeat;
 	margin: 3px;
 	height: 330px;
+}
+
+#rightpanel .inner_content {
+	margin-top: 0px;
 }
 
 .inner_top div { 
@@ -397,6 +401,10 @@ form#advSearchForm.resultsPage {
 	margin-top: 10px;
 }
 
+#rightpanel {
+	padding-top: 10px;
+}
+
 #leftpanel, #rightpanel {
 	vertical-align: top;
 	width: 50%;
@@ -466,6 +474,17 @@ form#advSearchForm.resultsPage {
 .infoTab_top {
 	height: 5px;
 	background: url(html/images/infotab_top_right.gif) no-repeat top right; 
+}
+
+#playlistPanel {
+	padding: 5px;
+	padding-bottom: 0;
+}
+
+#browsedbList, #playList {
+	margin: 0px;
+	height: 400px;
+	overflow: auto;
 }
 
 #playlistTab {

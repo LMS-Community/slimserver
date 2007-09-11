@@ -79,21 +79,20 @@
 
 				<table width="100%">
 					<tr>
-						<td rowspan="2" id="leftpanel">
+						<td id="leftpanel">
 							<iframe name="browser" id="leftcontent" frameborder="0" scrolling="no"></iframe>
 						</td>
 
-						<td height="163" id="playerControlPanel">
-							[% PROCESS status_header.html embedded=1 %]
-						</td>
-					</tr>
-					<tr>
 						<td id="rightpanel">
 							<div class="inner">
 								<div class="inner_top"><div></div></div>
-								<div class="inner_content">
-									<div id="rightcontent">
-										<div id="playList"></div>										
+								<div class="inner_content" id="rightcontent">
+									<div id="playerControlPanel">
+										[% PROCESS status_header.html embedded=1 %]
+									</div>
+
+									<div id="playlistPanel">
+										<div id="playList"></div>
 									</div>
 								</div>
 								<div class="inner_bottom"><div></div>

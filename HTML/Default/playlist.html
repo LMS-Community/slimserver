@@ -1,6 +1,14 @@
 <div>
 	[% noPlaylistCover = "SlimServer-noPlaylistCover"; noPlaylistCover = cookies.$noPlaylistCover.value %]
-	[% IF hasPagebar %][% PROCESS pagebar useJS="Playlist.load" %][% END %]
+	[% IF hasPagebar %]
+		<div class="pagerbox">
+			<div class="pagerbox_top"><div></div></div>
+			<div class="pagerbox_content">
+				[% PROCESS pagebar useJS="Playlist.load" %]
+			</div>
+			<div class="pagerbox_bottom"><div></div></div>
+		</div>
+	[% END %]
 	<div id="playList">
 		[% IF playercount == '0' %]
 			<p>[% "NO_PLAYER_DETAILS" | string %]</p>
