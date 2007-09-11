@@ -9,7 +9,7 @@
 		[% PROCESS standardheader.html %]
 
 		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
-		<script type="text/javascript" src="/html/ext/ext-all.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="/html/ext/ext-all[% IF debug %]-debug[% END %].js?r=[% revision %]"></script>
 		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
 
 		<style>
@@ -31,6 +31,17 @@
 		<!--[if IE 7]>
 		<link href="[% webroot %]ie7.css?r=[% revision %]" type="text/css" rel="stylesheet">
 		<![endif]-->
+
+		[% IF debug %]
+		<style>
+			.x-layout-panel-body { background: white; }
+			.x-btn-text, .x-btn button { color: black; }
+			.x-dlg .x-tabs-bottom .x-tabs-body {
+				background: white;
+				color: black;
+			}
+		</style>
+		[% END %]
 	</head>
 	<body>
 		<div class="content">
@@ -78,7 +89,7 @@
 							<tr>
 								<td id="ctrlVolumeDown"></td>
 								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
-								<td id="ctrlVolume"><img src="[% webroot %]html/images/spacer.gif" alt="" height="22" width="57" border="0" /></td>
+								<td id="ctrlVolume"><img src="[% webroot %]html/images/spacer.gif" alt="" border="0" /></td>
 								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
 								<td id="ctrlVolumeUp"></td>
 							</tr>

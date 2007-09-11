@@ -1,5 +1,5 @@
 [%- FILTER null %]
-	[% debug = 0 %]
+	[% debug = 1 %]
 
 	[% controlGraphics = 1 %]
 	[% browserTarget = "browser" %]

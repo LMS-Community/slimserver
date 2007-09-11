@@ -46,7 +46,9 @@ Main = function(){
 			Ext.EventManager.onWindowResize(this.onResize, layout);
 			Ext.EventManager.onDocumentReady(this.onResize, layout, true);
 
-			Ext.get('scanWarning').setVisibilityMode(Ext.Element.DISPLAY);
+			if (el = Ext.get('scanWarning'))
+				el.setVisibilityMode(Ext.Element.DISPLAY);
+
 			if (el = Ext.get('newVersion'))
 				el.setVisibilityMode(Ext.Element.DISPLAY);
 
@@ -89,7 +91,9 @@ Main = function(){
 					var result = responseText.result;
 					
 					if (result.rescan) {
-						Ext.get('scanWarning').show();
+						if (el = Ext.get('scanWarning'))
+							el.show();
+
 						if (total = Ext.get('progressTotal')) {
 							Ext.get('progressName').update(result.progressname);
 							Ext.get('progressDone').update(result.progressdone) || 0;
@@ -97,7 +101,8 @@ Main = function(){
 						}
 					}
 					else {
-						Ext.get('scanWarning').hide();
+						if (el = Ext.get('scanWarning'))
+							el.hide();
 					}
 				}
 			}
@@ -110,7 +115,8 @@ Main = function(){
 				Main.getScanStatus();
 			}
 			else {
-				Ext.get('scanWarning').hide();
+				if (el = Ext.get('scanWarning'))
+					el.hide();
 			}
 		},
 
@@ -273,115 +279,59 @@ Player = function(){
 			Ext.Ajax.url = '/jsonrpc.js'; 
 
 			new Slim.Button('ctrlPrevious', {
-				icon: 'html/images/btn_previous.gif',
+				cls: 'btn-previous',
 				tooltip: strings['previous'],
-				width: 28,
-				height: 22,
+				minWidth: 28,
 				scope: this,
 				handler: this.ctrlPrevious
 			});
 
 			btnTogglePlay = new Slim.Button('ctrlTogglePlay', {
-				icon: 'html/images/btn_play.gif',
+				cls: 'btn-play',
 				tooltip: strings['play'],
-				width: 51,
-				height: 22,
+				minWidth: 51,
 				scope: this,
 				handler: this.ctrlTogglePlay
 			});
 
 			new Slim.Button('ctrlNext', {
-				icon: 'html/images/btn_next.gif',
+				cls: 'btn-next',
 				tooltip: strings['next'],
-				width: 28,
-				height: 22,
+				minWidth: 28,
 				scope: this,
 				handler: this.ctrlNext
 			});
 
 			new Slim.Button('ctrlRepeat', {
-				icon: 'html/images/btn_repeat.gif',
+				cls: 'btn-repeat',
 				tooltip: strings['repeat0'],
-				width: 34,
-				height: 22,
+				minWidth: 34,
 				scope: this,
 				handler: this.ctrlRepeat
 			});
 
 			new Slim.Button('ctrlShuffle', {
-				icon: 'html/images/btn_shuffle.gif',
+				cls: 'btn-shuffle',
 				tooltip: strings['shuffle0'],
-				width: 34,
-				height: 22,
+				minWidth: 34,
 				scope: this,
 				handler: this.ctrlShuffle
 			});
 
 			new Slim.Button('ctrlVolumeDown', {
-				icon: 'html/images/btn_volume_decrease.gif',
+				cls: 'btn-volume-decrease',
 				tooltip: strings['volumedown'],
-				width: 22,
-				height: 22,
+				minWidth: 22,
 				scope: this,
 				handler: this.volumeDown
 			});
 
 			new Slim.Button('ctrlVolumeUp', {
-				icon: 'html/images/btn_volume_increase.png',
+				cls: 'btn-volume-increase',
 				tooltip: strings['volumeup'],
-				width: 22,
-				height: 22,
+				minWidth: 22,
 				scope: this,
 				handler: this.volumeUp
-			});
-
-			volumeUp = new Ext.util.ClickRepeater('ctrlVolumeUp', {
-				accelerate: true
-			});
-
-			// volume buttons can be held
-			volumeUp.on({
-				'click': {
-					fn: function(){
-						volumeClicked++;
-						if (volumeClicked > 4) {
-							this.setVolume(volumeClicked, '+');
-							volumeClicked = 0;
-						}
-					},
-					scope: this
-				},
-				'mouseup': {
-					fn: function(){
-						this.setVolume(volumeClicked, '+');
-						volumeClicked = 0;
-					},
-					scope: this
-				}
-			});
-
-			volumeDown = new Ext.util.ClickRepeater('ctrlVolumeDown', {
-				accelerate: true
-			});
-			
-			volumeDown.on({
-				'click': {
-					fn: function(){
-						volumeClicked++;
-						if (volumeClicked > 4) {
-							this.setVolume(volumeClicked, '-');
-							volumeClicked = 0;
-						}
-					},
-					scope: this
-				},
-				'mouseup': {
-					fn: function(){
-						this.setVolume(volumeClicked, '-');
-						volumeClicked = 0;
-					},
-					scope: this
-				}
 			});
 
 			Ext.get('ctrlVolume').on('click', function(ev, target){
@@ -397,10 +347,9 @@ Player = function(){
 			});
 
 			new Slim.Button('ctrlPower', {
-				icon: 'html/images/btn_power.gif',
+				cls: 'btn-power',
 				tooltip: strings['power'],
-				width: 22,
-				height: 22,
+				minWidth: 22,
 				scope: this,
 				handler: this.ctrlPower
 			});
@@ -581,7 +530,8 @@ Player = function(){
 							volVal = Math.ceil(result['mixer volume']/9.9);
 						}
 						volEl = Ext.get('ctrlVolume');
-						volEl.setStyle('background', 'url(html/images/volume_levels.gif) no-repeat 0px -' + String(volVal * 22) + 'px');
+						volVal = Math.max(volVal-1, 0);
+						volEl.setStyle('background-position', '0px -' + String(volVal * 22) + 'px');
 						if (volEl = volEl.child('img:first'))
 							volEl.dom.title = strings['volume'] + ' ' + parseInt(result['mixer volume']);
 
@@ -667,13 +617,14 @@ Player = function(){
 									this.getUpdate();
 								}
 	
-								else if (result['mixer volume'] && result['mixer volume'] != playerStatus.volume) {
+								else if (result['mixer volume'] != null  && result['mixer volume'] != playerStatus.volume) {
 									this.updateStatus(response)
 								}
 								else
 									this.updatePlayTime(result.time, result.duration);
 
-								Ext.get('playerSettingsLink').show();
+								if (el = Ext.get('playerSettingsLink'))
+									el.show();
 							}
 
 							// display scanning information
@@ -684,7 +635,8 @@ Player = function(){
 					failure: function(){
 						player = '';
 						playerid = '';
-						Ext.get('playerSettingsLink').hide();
+						if (el = Ext.get('playerSettingsLink'))
+							el.hide();
 					},
 	
 					scope: this
@@ -737,7 +689,8 @@ Player = function(){
 											if (responseText.result && responseText.result.count && responseText.result.players_loop[0]) {
 												playerid = responseText.result.players_loop[0].playerid;
 												player = encodeURI(playerid);
-												Ext.get('playerSettingsLink').show();
+												if (el = Ext.get('playerSettingsLink'))
+													el.show();
 											}
 
 											Main.checkScanStatus(responseText);		
@@ -790,7 +743,7 @@ Player = function(){
 		volumeUp : function(){ this.setVolume(1, '+') },
 		volumeDown : function(){ this.setVolume(1, '-') },
 		setVolume : function(amount, d){
-			amount *= 2.5;
+			amount *= 10;
 			if (d)
 				amount = d + amount;
 			this.playerControl(['mixer', 'volume', amount]);

@@ -76,7 +76,6 @@ div.thumbwrap {
 
 .playlistCover, .browseCover {
 	position: absolute;
-	left: 10px;
 	top: -5px;
 }
 
@@ -234,8 +233,7 @@ form#advSearchForm.resultsPage {
 #playerControlPanel {
 	padding-top: 0px;
 	padding-left: 5px;
-/*	padding-right: 10px;
-*/}
+}
 
 #ctrlCurrentArt {
 	height: 96px;
@@ -729,5 +727,63 @@ form#advSearchForm.resultsPage {
 }
 
 .playerbase {
-	background: transparent url(html/images/playerbase_expanded.gif) repeat 0 -143px	
+	background: transparent url(html/images/playerbase_expanded.gif) repeat 0 -143px;	
+}
+
+/* player buttons */
+.btn-previous, .btn-previous button,
+.btn-play, .btn-play button,
+.btn-next, .btn-next button,
+.btn-repeat, .btn-repeat button,
+.btn-shuffle, .btn-shuffle button,
+.btn-volume-increase, .btn-volume-increase button,
+.btn-volume-decrease, .btn-volume-decrease button,
+.btn-power, .btn-power button {
+	height: 22px;
+}
+
+.btn-previous button {
+	background: transparent url(html/images/btn_previous.gif) no-repeat 0 0;
+}
+
+.btn-play button {
+	background: transparent url(html/images/btn_play.gif) no-repeat 0 0;
+}
+
+.btn-next button {
+	background: transparent url(html/images/btn_next.gif) no-repeat 0 0;
+}
+
+.btn-repeat button {
+	background: transparent url(html/images/btn_repeat.gif) no-repeat 0 0;
+}
+
+.btn-shuffle button {
+	background: transparent url(html/images/btn_shuffle.gif) no-repeat 0 0;
+}
+
+.btn-volume-increase button {
+	background: transparent url(html/images/btn_volume_increase.gif) no-repeat 0 0;
+}
+
+.btn-volume-decrease button {
+	background: transparent url(html/images/btn_volume_decrease.gif) no-repeat 0 0;
+}
+
+.btn-power button {
+	background: transparent url(html/images/btn_power.gif) no-repeat 0 0;
+}
+
+.x-btn-over button {
+	background-position: 0 -22px;
+}
+
+.x-btn-click button {
+	background-position: 0 -44px;
+}
+
+#ctrlVolume {
+	background: transparent url(html/images/volume_levels.gif) no-repeat 0 0;
+	width: 81px;
+	height: 22px;
 }
