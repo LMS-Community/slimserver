@@ -325,16 +325,18 @@ sub _http_read {
 		
 		# Handle redirects
 		if ( $code =~ /30[12]/ ) {
+
+			my $location = $self->response->header('Location');
 			
 			# check max redirects
-			if ( scalar @{$previous} < $self->maxRedirect ) {
+			if ( $location && scalar @{$previous} < $self->maxRedirect ) {
 				
 				$self->disconnect;
 			
 				# change the request object to the new location
 				delete $args->{request};
 				$self->request->uri(
-					URI->new_abs( $self->response->header('Location'), $self->request->uri )
+					URI->new_abs( $location, $self->request->uri )
 				);
 				
 				$log->info(sprintf("Redirecting to %s", $self->request->uri->as_string));
@@ -353,13 +355,15 @@ sub _http_read {
 			}
 			else {
 
-				$log->warn("Redirection limit exceeded");
+				my $error = $location ? 'Redirection limit exceeded' : 'Redirection without location';
+
+				$log->warn($error);
 				
 				$self->disconnect;
 				
 				if ( my $cb = $args->{onError} ) {
 					my $passthrough = $args->{passthrough} || [];
-					return $cb->( $self, 'Redirection limit exceeded', @{$passthrough} );
+					return $cb->( $self, $error, @{$passthrough} );
 				}
 				
 				return;
