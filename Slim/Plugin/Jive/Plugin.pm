@@ -556,34 +556,33 @@ if (0) {
 	};
 }
 
-# disable for now
 if (0) {
 	# alarm clock, always display (all platforms support alarms? softsqueeze? stream.mp3?)
 	# we need to pick up setting for alarm for all days (8 total alarms)
-	# each alarm has 4 preferences: on/off, alarm time, alarm volume, playlist (current playlist, random songs, random albums, random artists, list of saved playlists)
+	# each alarm has 4 preferences: 
+	# on/off, alarm time, alarm volume, and
+	# playlist (current playlist, random songs, random albums, random artists, list of saved playlists)
 	# need to figure out how to handle 24h vs. 12h clock format
 	# alarm fade-in is another optional setting to pick up
-	my $prefs = preferences("server");
-	my $alarm_playlist = $prefs->client($client)->get('alarmplaylist')->[ 0 ];
+
 	# array ref with 5 elements, each of which is a hashref
-	my $alarmList = populateAlarmElements($client, 0);
-	my $day1 = populateAlarmElements($client, 1);
+	my $day0 = populateAlarmElements($client, 0);
+
 	my @weekDays;
 	for my $day (1..7) {
 		# @weekDays becomes an array of arrayrefs of hashrefs, one element per weekday
-		my $dayRef = populateAlarmHash($client, $day);
-		push @weekDays, $dayRef;
-		#push @weekDays, populateAlarmHash($client, $day);
+		push @weekDays, populateAlarmHash($client, $day);
 	}
+
 	my %weekDayAlarms = (
 		text      => Slim::Utils::Strings::string("ALARM_WEEKDAYS"),
-		count     => 7,
+		count     => 6,
 		offset    => 0,
 		item_loop => \@weekDays,
-		);
+	);
 
 	# one item_loop to rule them all
-	my @allAlarms = ( @$day1, \%weekDayAlarms );
+	my @allAlarms = ( @$day0, \%weekDayAlarms );
 
 	push @menu, {
 		text      => Slim::Utils::Strings::string("ALARM"),
@@ -917,7 +916,7 @@ sub alarmOnHash {
 	my ($client, $prefs, $day) = @_;
 	my $val = $prefs->client($client)->get('alarm')->[ $day ];
 	my %return = (
-		text     => Slim::Utils::Strings::string("ALARM_ON"),
+		text     => Slim::Utils::Strings::string("ENABLED"),
 		checkbox => ($val == 1) + 0,
 		actions  => {
 			on  => {
@@ -975,12 +974,7 @@ sub alarmSetHash {
 sub alarmPlaylistHash {
 	my ($client, $prefs, $day) = @_;
 	my $alarm_playlist = $prefs->client($client)->get('alarmplaylist')->[ $day ];
-	my %return = 
-	( 
-		text => Slim::Utils::Strings::string("ALARM_SELECT_PLAYLIST"),
-		count     => 4,
-		offset    => 0,
-		item_loop => [
+	my @allPlaylists = (
 		{
 			text    => Slim::Utils::Strings::string("CURRENT_PLAYLIST"),
 			radio	=> ($alarm_playlist == -1) + 0, # 0 is added to force the data type to number
@@ -1037,26 +1031,84 @@ sub alarmPlaylistHash {
 				},
 			},
 		},
-		## here we need to figure out how to populate the remaining playlist items from saved playlists
-		],
+	);
+	## here we need to figure out how to populate the remaining playlist items from saved playlists
+	push @allPlaylists, getCustomPlaylists($client);
+
+	my %return = 
+	( 
+		text => Slim::Utils::Strings::string("ALARM_SELECT_PLAYLIST"),
+		count     => 4,
+		offset    => 0,
+		item_loop => \@allPlaylists,
 	);
 	return \%return;
 }
 
+sub getCustomPlaylists {
+	my @return = ();
+	return \@return;
+}
+
 sub alarmVolumeHash {
 	my ($client, $prefs, $day) = @_;
+	my $current_setting = $prefs->client($client)->get('alarmvolume')->[ $day ];
+	my @vol_settings;
+	for (my $i = 10; $i <= 100; $i = $i + 10) {
+		my %hash = (
+			text    => $i,
+			radio   => ($i == $current_setting) + 0,
+			actions => {
+				do => {
+					player => 0,
+					cmd    => ['alarm'],
+					params => {
+						cmd => 'set',
+						volume => $i,
+						dow => $day,
+					},
+				},
+			},
+		);
+		push @vol_settings, \%hash;
+	}
 	my %return = 
 	( 
-		text => Slim::Utils::Strings::string("ALARM_SET_VOLUME"),
+		text      => Slim::Utils::Strings::string("ALARM_SET_VOLUME"),
+		count     => 10,
+		offset    => 0,
+		item_loop => \@vol_settings,
 	);
 	return \%return;
 }
 
 sub alarmFadeHash {
 	my ($client, $prefs, $day) = @_;
+	my $current_setting = $prefs->client($client)->get('alarmfadeseconds');
 	my %return = 
 	( 
-		text => Slim::Utils::Strings::string("ALARM_FADE"),
+		text     => Slim::Utils::Strings::string("ALARM_FADE"),
+		checkbox => ($current_setting > 0) + 0,
+		actions  => {
+			on  => {
+				player => 0,
+				cmd    => ['alarm'],
+				params => { 
+					cmd     => 'set',
+					dow     => 0,
+					fade    => 1,
+				},
+			},
+			off  => {
+				player => 0,
+				cmd    => ['alarm'],
+				params => { 
+					cmd     => 'set',
+					dow     => 0,
+					fade    => 0,
+				},
+			},
+		},
 	);
 	return \%return;
 }
@@ -1077,8 +1129,8 @@ sub populateAlarmElements {
 		$alarm_set,
 		$alarm_playlist,
 		$alarm_volume,
-		$alarm_fade,
 	);
+	push @return, $alarm_fade if $day == 0;
 	return \@return;
 }
 
@@ -1089,7 +1141,7 @@ sub populateAlarmHash {
 	my $string = 'ALARM_DAY' . $day;
 	my %return = (
 		text      => Slim::Utils::Strings::string($string),
-		count     => 5,
+		count     => 4,
 		offset    => 0,
 		item_loop => $elements,
 	);
