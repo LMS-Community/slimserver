@@ -111,12 +111,12 @@
 				<div id="footer_content">
 					<span id="helpInfoSection">
 						<span id="helpLink">
-							<img src="html/images/b_help.png"/> [% "HELP" | string %]
+							<img src="[% webroot %]html/images/b_help.png"/> [% "HELP" | string %]
 						</span>
 
 						<span id="footerInfo">
 							<span id="scanWarning" style="display:none;">
-								<img src="html/images/info.png"/>
+								<img src="[% webroot %]html/images/info.png"/>
 								[% "RESCANNING_SHORT" | string %]
 								<span id="progressInfo" class="link">
 									<span id="progressName"></span>
@@ -128,7 +128,7 @@
 
 							[% IF newVersion %]
 								<span id="newVersion">
-									<img src="html/images/info.png"/> [% newVersion %] 
+									<img src="[% webroot %]html/images/info.png"/> [% newVersion %] 
 								</span>
 							[% END %]
 						</span>
@@ -138,12 +138,12 @@
 					<span id="settingsLinks">
 						<span id="playerSettingsLink" style="display: none;">
 							[% IF NOT nosetup %]
-								<img src="html/images/b_player_settings.png"/> [% "PLAYER_SETTINGS" | string %]
+								<img src="[% webroot %]html/images/b_player_settings.png"/> [% "PLAYER_SETTINGS" | string %]
 							[% END %]
 						</span>
 						<span id="settingsLink">
 							[% IF NOT (nosetup || noserver) %]
-								<img src="html/images/b_settings.png"/> [% "SERVER_SETTINGS" | string %]
+								<img src="[% webroot %]html/images/b_settings.png"/> [% "SERVER_SETTINGS" | string %]
 							[% END %]
 						</span>
 					</span>

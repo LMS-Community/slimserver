@@ -524,7 +524,10 @@ Player = function(){
 						this.updatePlayTime(result.time ? result.time : 0, result.duration ? result.duration : 0);
 
 						// update play/pause button
-						btnTogglePlay.icon = webroot + 'html/images/' + (result.mode=='play' ? 'btn_pause.gif' : 'btn_play.gif');
+						playEl = Ext.get('ctrlTogglePlay');
+						playEl.removeClass(['btn-play', 'btn-pause']);
+						playEl.addClass(result.mode=='play' ? 'btn-pause' : 'btn-play');
+
 						if (el = btnTogglePlay.getEl().child('button:first'))
 							el.dom.title = (result.mode=='play' ? strings['pause'] : strings['play']);
 						btnTogglePlay.onBlur();
@@ -539,7 +542,8 @@ Player = function(){
 						}
 
 						volEl = Ext.get('ctrlVolume');
-						volEl.setStyle('background-position', '0px -' + String(Math.max(volVal-1, 0) * 22) + 'px');
+						volEl.removeClass([ 'ctrlVolume0', 'ctrlVolume1', 'ctrlVolume2', 'ctrlVolume3', 'ctrlVolume4', 'ctrlVolume5', 'ctrlVolume6', 'ctrlVolume7', 'ctrlVolume8', 'ctrlVolume9', 'ctrlVolume10' ]);
+						volEl.addClass('ctrlVolume' + String(Math.max(volVal-1, 0)));
 
 						if (volEl = volEl.child('img:first'))
 							volEl.dom.title = strings['volume'] + ' ' + parseInt(result['mixer volume']);
