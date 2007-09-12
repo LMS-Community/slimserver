@@ -178,6 +178,8 @@ Main = function(){
 
 PlayerChooser = function(){
 	var playerList;
+	var playerDiscoveryTimer;
+
 	return {
 		init : function(){
 			playerList = new Ext.SplitButton('playerChooser', {
@@ -191,6 +193,7 @@ PlayerChooser = function(){
 				},
 				menu: new Ext.menu.Menu()
 			});
+			playerDiscoveryTimer = new Ext.util.DelayedTask(this.update, this);
 			
 			this.update();
 		},
@@ -203,7 +206,7 @@ PlayerChooser = function(){
 					params: [ 
 						'',
 						[ 
-							"players",
+							"serverstatus",
 							0,
 							99
 						]
@@ -217,13 +220,15 @@ PlayerChooser = function(){
 						var responseText = Ext.util.JSON.decode(response.responseText);
 	
 						// let's set the current player to the first player in the list
-						if (responseText.result && responseText.result.count > 0) {
+						if (responseText.result && responseText.result['player count'] > 0) {
 							playerList.menu.removeAll();
+							playerInList = false;
 
-							for (x=0; x<responseText.result.count; x++) {
+							for (x=0; x < responseText.result['player count']; x++) {
 								currentPlayer = false;
 								if (responseText.result.players_loop[x].playerid == playerid) {
 									currentPlayer = true;
+									playerInList = true;
 									playerList.setText(responseText.result.players_loop[x].name);
 								}
 
@@ -246,21 +251,47 @@ PlayerChooser = function(){
 									handler: function(){ Ext.MessageBox.alert(strings['synchronize'], 'Imagine some nice looking sync dialog here...'); }
 								})
 							);
-							
-							playerList.setVisible(responseText.result.count > 1);
+
+							playerList.setVisible(responseText.result['player count'] > 1 ? true : false);
+
+							if (!playerInList) {
+								PlayerChooser.selectPlayer({
+									text: responseText.result.players_loop[0].name,
+									value: responseText.result.players_loop[0].playerid
+								});
+							}
+
+							if (el = Ext.get('playerSettingsLink'))
+								el.setVisible(playerid ? true : false);			
+
+							// display scanning information
+							Main.checkScanStatus(responseText);
+						}
+						
+						else {
+							PlayerChooser.selectPlayer({
+								text: '',
+								value: ''
+							});
 						}
 					}
 				}
 			});
+
+			// poll more often when there's no player, to show them up as quickly as possible
+			playerDiscoveryTimer.delay(player ? 30000 : 10000);
 		},
 		
-		selectPlayer: function(ev, target){
+		selectPlayer: function(ev){
 			playerList.setText(ev.text);
 			playerid = ev.value;
 			player = encodeURI(playerid);
 			
+			if (el = Ext.get('playerSettingsLink'))
+				el.setVisible(playerid ? true : false);
+			
 			Playlist.resetUrl();
-			Player.getUpdate();
+			Player.getStatus();
 		}
 	}
 }();
@@ -367,8 +398,7 @@ Player = function(){
 		tracks: null,
 		index: null,
 		volume: null,
-		shuffle: null,
-		players: null
+		shuffle: null
 	};
 
 	return {
@@ -654,8 +684,7 @@ Player = function(){
 							tracks: result.playlist_tracks,
 							index: result.playlist_cur_index,
 							volume: result['mixer volume'],
-							shuffle: result['playlist shuffle'],
-							players: result['player_connected']
+							shuffle: result['playlist shuffle']
 						};
 					}
 					
@@ -667,167 +696,97 @@ Player = function(){
 		},
 		
 		getUpdate : function(){
-			Ext.Ajax.request({
-				params: Ext.util.JSON.encode({
-					id: 1, 
-					method: "slim.request", 
-					params: [ 
-						playerid,
-						[ 
-							"status",
-							"-",
-							1,
-							"tags:gabehldiqtyrsuoK"
+			if (player) {
+				Ext.Ajax.request({
+					params: Ext.util.JSON.encode({
+						id: 1, 
+						method: "slim.request", 
+						params: [ 
+							playerid,
+							[ 
+								"status",
+								"-",
+								1,
+								"tags:gabehldiqtyrsuoK"
+							]
 						]
-					]
-				}),
+					}),
+	
+					failure: this.updateStatus,
+					success: this.updateStatus,
+	
+					scope: this
+				});
 
-				failure: this.updateStatus,
-				success: this.updateStatus,
-
-				scope: this
-			});
+				pollTimer.delay(5000);
+			}
 		},
 		
 		
 		// don't request all status info to minimize performance impact on the server
 		getStatus : function() {
-			// only poll player state if there is one
-			if (player)
-				this.getPlayerStatus();
+			// only poll player state if there is a player connected
+			if (player) {
+				Ext.Ajax.request({
+					params: Ext.util.JSON.encode({
+						id: 1, 
+						method: "slim.request", 
+						params: [ 
+							playerid,
+							[ 
+								"status",
+								"-",
+								1,
+								"tags:u"
+							]
+						]
+					}),
+	
+					success: function(response){
+						if (response && response.responseText) {
+							var responseText = Ext.util.JSON.decode(response.responseText);
+							
+							// only continue if we got a result and player
+							if (responseText.result && responseText.result.player_connected) {
+								var result = responseText.result;
+								if ((result.power && result.power != playerStatus.power) ||
+									(result.mode && result.mode != playerStatus.mode) ||
+									(result.current_title && result.current_title != playerStatus.title) ||
+									(result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track) ||
+									(playerStatus.track && !result.playlist_tracks) ||
+									(result.playlist_tracks && !playerStatus.track) ||
+									(result.playlist_tracks != null && result.playlist_tracks != playerStatus.tracks) ||
+									(result.playlist_cur_index && result.playlist_cur_index != playerStatus.index) ||
+									(result['playlist shuffle'] >= 0 && result['playlist shuffle'] != playerStatus.shuffle)
+								){
+									this.getUpdate();
+								}
+	
+								else if (result['mixer volume'] != null  && result['mixer volume'] != playerStatus.volume) {
+									this.updateStatus(response)
+								}
+	
+								this.updatePlayTime(result.time, result.duration);
+							}
 
-			// no player available - check for new players
-			else
-				this.getServerStatus();
+							// display scanning information
+							Main.checkScanStatus(responseText);
+						}
+					},
+					
+					failure: function(){
+						playerid = '';
+						player = encodeURI(playerid);
+						PlayerChooser.update
+					},
+	
+					scope: this
+				});
 
-			pollTimer.delay(5000);
+				pollTimer.delay(5000);
+			}
 		},
 		
-		getPlayerStatus : function(){
-			Ext.Ajax.request({
-				params: Ext.util.JSON.encode({
-					id: 1, 
-					method: "slim.request", 
-					params: [ 
-						playerid,
-						[ 
-							"status",
-							"-",
-							1,
-							"tags:u"
-						]
-					]
-				}),
-
-				success: function(response){
-					if (response && response.responseText) {
-						var responseText = Ext.util.JSON.decode(response.responseText);
-						
-						// only continue if we got a result and player
-						if (responseText.result && responseText.result.player_connected) {
-							var result = responseText.result;
-							if ((result.power && result.power != playerStatus.power) ||
-								(result.mode && result.mode != playerStatus.mode) ||
-								(result.current_title && result.current_title != playerStatus.title) ||
-								(result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track) ||
-								(playerStatus.track && !result.playlist_tracks) ||
-								(result.playlist_tracks && !playerStatus.track) ||
-								(result.playlist_tracks != null && result.playlist_tracks != playerStatus.tracks) ||
-								(result.playlist_cur_index && result.playlist_cur_index != playerStatus.index) ||
-								(result['playlist shuffle'] >= 0 && result['playlist shuffle'] != playerStatus.shuffle)
-							){
-								this.getUpdate();
-							}
-
-							else if (result['mixer volume'] != null  && result['mixer volume'] != playerStatus.volume) {
-								this.updateStatus(response)
-							}
-
-							this.updatePlayTime(result.time, result.duration);
-
-							if (el = Ext.get('playerSettingsLink'))
-								el.show();
-						}
-
-						// display scanning information
-						Main.checkScanStatus(responseText);
-					}
-				},
-				
-				failure: function(){
-					player = '';
-					playerid = '';
-					if (el = Ext.get('playerSettingsLink'))
-						el.hide();
-
-					PlayerChooser.update();
-				},
-
-				scope: this
-			});
-		},
-
-		getServerStatus : function(){
-			Ext.Ajax.request({
-				params: Ext.util.JSON.encode({
-					id: 1, 
-					method: "slim.request", 
-					params: [ 
-						'',
-						[ 
-							"serverstatus",
-							1
-						]
-					]
-				}),
-
-				success: function(response){
-					if (response && response.responseText) {
-						var responseText = Ext.util.JSON.decode(response.responseText);
-
-						// display scanning information
-						Main.checkScanStatus(responseText);
-
-						// let's set the current player to the first player in the list
-						if (responseText.result && responseText.result['player count']) {
-							Ext.Ajax.request({
-								params: Ext.util.JSON.encode({
-									id: 1, 
-									method: "slim.request", 
-									params: [ 
-										'',
-										[ 
-											"players",
-											0,
-											99
-										]
-									]
-								}),
-				
-								success: function(response){
-									if (response && response.responseText) {
-										var responseText = Ext.util.JSON.decode(response.responseText);
-			
-										// let's set the current player to the first player in the list
-										if (responseText.result && responseText.result.count && responseText.result.players_loop[0]) {
-											playerid = responseText.result.players_loop[0].playerid;
-											player = encodeURI(playerid);
-
-											PlayerChooser.update();
-											if (el = Ext.get('playerSettingsLink'))
-												el.show();
-										}
-
-										Main.checkScanStatus(responseText);		
-									}
-								}
-							});
-						}
-					}
-				}
-			});
-		},
-
 		playerControl : function(action){
 			Ext.Ajax.request({
 				params: Ext.util.JSON.encode({
