@@ -334,17 +334,26 @@ Player = function(){
 				handler: this.volumeUp
 			});
 
-			Ext.get('ctrlVolume').on('click', function(ev, target){
-				
-				if (el = Ext.get(target)) {
-					x = el.getX();
-					x = Ext.fly(target).getX();
+			if (el = Ext.get('ctrlVolume').child('img:first'))
+				el.on('click', function(ev, target) {
 					
-					// factor in the body margin for FF
-					x = 100 * (ev.getPageX() - el.getX() - (Ext.isGecko * 20)) / el.getWidth();
-					Player.playerControl(['mixer', 'volume', x]);
-				}
-			});
+					if (el = Ext.get(target)) {
+						// I hate hard-coding this offset...
+						myStep = el.getWidth()/11;
+						myWidth = el.getWidth() - 2*myStep;
+						myX = ev.getPageX() - el.getX() - (Ext.isGecko * 10);
+
+						if (myX <= myStep)
+							volVal = 0;
+						else if (myX >= el.getWidth() - myStep)
+							volVal = 10;
+						else {
+							volVal = Math.ceil(myX / myStep) - 1;
+						}
+
+						Player.playerControl(['mixer', 'volume', volVal*10]);
+					}
+				});
 
 			new Slim.Button('ctrlPower', {
 				cls: 'btn-power',
@@ -521,17 +530,17 @@ Player = function(){
 						btnTogglePlay.onBlur();
 
 						// update volume button
-						volVal = 5;
 						if (result['mixer volume'] <= 0)
 							volVal = 0;
 						else if (result['mixer volume'] >= 100)
 							volVal = 11;
 						else {
-							volVal = Math.ceil(result['mixer volume']/9.9);
+							volVal = Math.ceil(result['mixer volume'] / 9.9);
 						}
+
 						volEl = Ext.get('ctrlVolume');
-						volVal = Math.max(volVal-1, 0);
-						volEl.setStyle('background-position', '0px -' + String(volVal * 22) + 'px');
+						volEl.setStyle('background-position', '0px -' + String(Math.max(volVal-1, 0) * 22) + 'px');
+
 						if (volEl = volEl.child('img:first'))
 							volEl.dom.title = strings['volume'] + ' ' + parseInt(result['mixer volume']);
 
@@ -553,7 +562,7 @@ Player = function(){
 			}
 			pollTimer.delay(5000);
 		},
-
+		
 		getUpdate : function(){
 			Ext.Ajax.request({
 				failure: this.updateStatus,

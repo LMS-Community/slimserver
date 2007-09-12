@@ -782,8 +782,11 @@ form#advSearchForm.resultsPage {
 	background-position: 0 -44px;
 }
 
-#ctrlVolume {
-	background: transparent url(html/images/volume_levels.gif) no-repeat 0 0;
+#ctrlVolume, #ctrlVolume img {
 	width: 81px;
 	height: 22px;
+}
+
+#ctrlVolume {
+	background: transparent url(html/images/volume_levels.gif) no-repeat 0 0;
 }
