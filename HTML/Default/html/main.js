@@ -338,18 +338,18 @@ Player = function(){
 				el.on('click', function(ev, target) {
 					
 					if (el = Ext.get(target)) {
-						// I hate hard-coding this offset...
 						myStep = el.getWidth()/11;
 						myWidth = el.getWidth() - 2*myStep;
-						myX = ev.getPageX() - el.getX() - (Ext.isGecko * 10);
+						myX = ev.getPageX() - el.getX() - (Ext.isGecko * 10) - (Ext.isSafari * 5);
 
-						if (myX <= myStep)
+						if (myX <= myStep + (Ext.isSafari * 3))
 							volVal = 0;
+
 						else if (myX >= el.getWidth() - myStep)
 							volVal = 10;
-						else {
+
+						else
 							volVal = Math.ceil(myX / myStep) - 1;
-						}
 
 						Player.playerControl(['mixer', 'volume', volVal*10]);
 					}
