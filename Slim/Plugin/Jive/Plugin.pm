@@ -576,7 +576,7 @@ if (0) {
 
 	my %weekDayAlarms = (
 		text      => Slim::Utils::Strings::string("ALARM_WEEKDAYS"),
-		count     => 6,
+		count     => 7,
 		offset    => 0,
 		item_loop => \@weekDays,
 	);
