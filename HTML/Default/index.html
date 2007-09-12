@@ -54,6 +54,7 @@
 		<script type="text/javascript">
 			var strings = new Array();
 			strings['loading']  = "[% "LOADING" | string %]";
+			strings['synchronize']  = "[% "SYNCHRONIZE" | string %]";
 
 			Ext.EventManager.onDocumentReady(Main.init, Main, true);
 		</script>		
@@ -63,9 +64,7 @@
 			<div id="header">
 				<div id="header_left"></div>
 				<div id="header_content">
-					<span id="playerChooser" style="position: absolute; right: 100px;">
-						<select id="playerList" name="player" onchange="this.form.submit();" class="stdedit">[% player_chooser_list %]</select>
-					</span>
+					<span id="playerChooser" style="position: absolute; right: 100px;"></span>
 				</div>
 			</div>
 	
