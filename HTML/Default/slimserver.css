@@ -790,3 +790,13 @@ form#advSearchForm.resultsPage {
 #ctrlVolume {
 	background: transparent url(html/images/volume_levels.gif) no-repeat 0 0;
 }
+
+.disclosure_home {
+	width: 11px;
+	height: 11px;
+	background: transparent url(html/images/disclosure_home.gif) no-repeat 0 0;
+}
+
+.disclosure_expanded{
+	background-position: 0 -11px;
+}

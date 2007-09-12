@@ -72,7 +72,8 @@ var MainMenu = function(){
 
 			if (el = Ext.get(panel)) {
 				if (icon = el.child('img:first', true))
-					icon.src =  webroot + 'html/images/triangle-down.gif';
+//					icon.src =  webroot + 'html/images/triangle-down.gif';
+					Ext.get(icon).addClass('disclosure_expanded');
 
 				el.addClass('homeMenuItem_expanded');
 
@@ -94,7 +95,8 @@ var MainMenu = function(){
 
 			if (el = Ext.get(panel)) {
 				if (icon = el.child('img:first', true))
-					icon.src =  webroot + 'html/images/triangle-right.gif';
+					Ext.get(icon).removeClass('disclosure_expanded');
+//					icon.src =  webroot + 'html/images/triangle-right.gif';
 
 				el.removeClass('homeMenuItem_expanded');
 
