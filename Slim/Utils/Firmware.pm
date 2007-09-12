@@ -58,8 +58,10 @@ my $base = 'http://update.slimdevices.com/update/firmware';
 # Check interval when firmware can't be downloaded
 my $CHECK_TIME = 600;
 
-# Current Jive firmware file
+# Current Jive firmware file and version/revision
 my $JIVE_FW;
+my $JIVE_VER;
+my $JIVE_REV;
 
 my $log = logger('player.firmware');
 
@@ -140,14 +142,26 @@ Looks for a jive.version file and downloads firmware if missing.  If jive.versio
 is missing, downloads that too.	 If we are not a released build, also checks for
 updated jive.version file.
 
+To allow for locally built jive images, first looks for the files: custom.jive.version
+and custom.jive.bin in the cachedir.  If these exist then these are used in preference.
+
 =cut
 
 sub init_jive {
 	my $url = $base . '/' . $::VERSION . '/jive.version';
+		
+	my $version_file   = catdir( $cacheDir, 'jive.version' );
+
+	my $custom_version = catdir( $cacheDir, 'custom.jive.version' );
+	my $custom_image   = catdir( $cacheDir, 'custom.jive.bin' );
 	
-	my $version_file = catdir( $cacheDir, 'jive.version' );
-	
-	if ( !-e $version_file ) {
+	if ( -r $custom_version && -r $custom_image ) {
+		$log->info("Using custom jive firmware $custom_version $custom_image");
+
+		$version_file = $custom_version;
+		$JIVE_FW = $custom_image;
+	}
+	elsif ( !-e $version_file ) {
 		$log->info('Downloading new jive.version file...');
 		
 		if ( !download( $url, $version_file ) ) {
@@ -172,18 +186,20 @@ sub init_jive {
 	# jive.version format:
 	# 1 r457
 	# sdi@padbuild #24 Sat Sep 8 01:26:46 PDT 2007
-	my ($jive_version, $jive_rev) = $version =~ m/^(\d+)\s(r\d+\w*)/;
+	($JIVE_VER, $JIVE_REV) = $version =~ m/^(\d+)\s(r.*)/;
+
+	if (!$JIVE_FW) {	
+		my $jive_file = catdir( $cacheDir, "jive_${JIVE_VER}_${JIVE_REV}.bin" );
 	
-	my $jive_file = catdir( $cacheDir, "jive_${jive_version}_${jive_rev}.bin" );
-	
-	if ( !-e $jive_file ) {		
-		$log->info("Downloading Jive firmware to: $jive_file");
+		if ( !-e $jive_file ) {		
+			$log->info("Downloading Jive firmware to: $jive_file");
 		
-		downloadAsync( $jive_file, \&init_jive_done, $jive_file );
-	}
-	else {
-		$log->info("Jive firmware is up to date: $jive_file");
-		$JIVE_FW = $jive_file;
+			downloadAsync( $jive_file, \&init_jive_done, $jive_file );
+		}
+		else {
+			$log->info("Jive firmware is up to date: $jive_file");
+			$JIVE_FW = $jive_file;
+		}
 	}
 }
 
@@ -242,25 +258,23 @@ sub jive_needs_upgrade {
 	
 	return unless $JIVE_FW;
 	
-	my ($cur_version, $cur_rev) = $current =~ m/^(\d+)\s(r\d+\w*)/;
+	my ($cur_version, $cur_rev) = $current =~ m/^(\d+)\s(r.*)/;
 	
 	if ( !$cur_version || !$cur_rev ) {
 		logError("Jive sent invalid current version: $current");
 		return;
 	}
 	
-	my ($server_version, $server_rev) = $JIVE_FW =~ m/jive_(\d+)_(r\d+\w*)\.bin$/;
-	
 	if ( 
-		( $server_version != $cur_version )
+		( $JIVE_VER != $cur_version )
 		||
-		( $server_rev ne $cur_rev )
+		( $JIVE_REV ne $cur_rev )
 	) {
-		$log->debug("Jive needs upgrade! (has: $current, needs: $server_version $server_rev)");
+		$log->debug("Jive needs upgrade! (has: $current, needs: $JIVE_VER $JIVE_REV)");
 		return 1;
 	}
 	
-	$log->debug("Jive doesn't need an upgrade (has: $current, server has: $server_version $server_rev)");
+	$log->debug("Jive doesn't need an upgrade (has: $current, server has: $JIVE_VER $JIVE_REV)");
 	
 	return;
 }
