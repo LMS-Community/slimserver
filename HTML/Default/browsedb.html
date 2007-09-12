@@ -1,8 +1,8 @@
 [%- pagetitle = BLOCK %]
 	<span>[% browseby | string %]</span>
-	[% IF levelName == 'album' || levelName == 'age' %]
-	<span id="viewSelect"></span>
-	[% END %]
+	[% IF levelName == 'album' || levelName == 'age'; titleRight = BLOCK %]
+	<div id="viewSelect"></div>
+	[% END; END %]
 [%- END -%]
 [% pageicon = browseby; noSpacer = 1; homeCategory = "MY_MUSIC" -%]
 [%- extJsScripts = BLOCK -%]
