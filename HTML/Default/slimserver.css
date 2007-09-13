@@ -14,7 +14,6 @@ b, a { color: white; font-size: 11px; }
 input { color: black; font-size: 11px; }
 img { border: 0; }
 
-
 /* browse pages */
 .itemWithCover {
 	min-height: 40px;
@@ -162,33 +161,55 @@ form#advSearchForm.resultsPage {
 }
 
 #header {
-	background: url(html/images/header_background.png) repeat;
+	background: url(html/images/header_background.gif) repeat;
 }
 
 #header_content {
 	height: 40px;
-	margin-left: 230px;
 	padding-top: 11px;
-	background: url(html/images/header_right.png) no-repeat top right;
-	color: white;
-	font-size: 14px;
+	background: url(html/images/header_right.gif) no-repeat top right;
 }
 
 #header_left {
-	background: url(html/images/header_left.png) no-repeat top left;
-	height: 38px;
-	width: 219px;
+	background: url(html/images/header_left.gif) no-repeat top left;
+	height: 40px;
+	width: 8px;
 	left: 0px;
 	position: absolute;
 }
 
+#squeezeCenterLogo {
+	margin-left: 15px;
+	height: 21px;
+	width: 193px;
+	background: url(html/images/slimserver.gif) no-repeat;
+}
+
+#logitechLogo {
+	position: absolute;
+	top: 7px;
+	right: 15px;
+	height: 30px;
+	width: 38px;
+	background: url(html/images/logitech.gif) no-repeat;
+}
+
 #footer{
-	background: url(html/images/header_background.png) repeat;
+	background: url(html/images/header_background.gif) repeat;
 }
 
 #footer_content {
-	height: 38px;
-	background: url(html/images/footer_right.png) no-repeat bottom right;
+	height: 40px;
+	background: url(html/images/footer_right.gif) no-repeat bottom right;
+}
+
+#footer_left {
+	background: url(html/images/footer_left.gif) no-repeat 0 0;
+	height: 40px;
+	width: 8px;
+	left: 0px;
+	vertical-align: bottom;
+	position: absolute;
 }
 
 #helpLink img, #settingsLinks img, #footerInfo img {
@@ -219,15 +240,6 @@ form#advSearchForm.resultsPage {
 
 #helpLink, #settingsLink, #playerSettingsLink, .link, #songInfoHeader a {
 	cursor: pointer;
-}
-
-#footer_left {
-	background: url(html/images/footer_left.png) no-repeat 0 0;
-	height: 38px;
-	width: 17px;
-	left: 0px;
-	vertical-align: bottom;
-	position: absolute;
 }
 
 #playerControlPanel {
