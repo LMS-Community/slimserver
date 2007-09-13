@@ -12,7 +12,12 @@
 	[%- END %]
 
 
-	[% BLOCK cmdHRef -%]onclick="Utils.processPlaylistCommand('[% 
+	[% BLOCK cmdHRef -%]onclick="Utils.processPlaylistCommand('[%
+		# single quotes aren't url encoded, but can con fuse JS
+		IF itemobj.url;
+			itemobj.url = itemobj.url | replace("'", "%27");
+		END;
+		 
 		IF numcmdFor.$cmdType; # better way to determine this?
 			PROCESS cmdNumericQuery;
 		ELSIF (itemobj.isRemoteURL  || !attributes || itemobj.content_type() == 'dir');
