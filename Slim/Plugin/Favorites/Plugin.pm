@@ -199,7 +199,9 @@ sub indexHandler {
 		if (Slim::Music::Info::isRemoteURL($url)) {
 
 			if (!$params->{'fetched'}) {
-				Slim::Networking::SimpleAsyncHTTP->new(	\&asyncCB, \&asyncCB, { 'args' => [$client, $params, @_] } )->get( $url );
+				Slim::Networking::SimpleAsyncHTTP->new(
+					\&asyncCBContent, \&asyncCBContent, { 'args' => [$client, $params, @_] }
+				)->get( $url );
 				return;
 			}
 
@@ -238,7 +240,9 @@ sub indexHandler {
 			if (Slim::Music::Info::isRemoteURL($url)) {
 
 				if (!$params->{'fetched'}) {
-					Slim::Networking::SimpleAsyncHTTP->new(	\&asyncCB, \&asyncCB, { 'args' => [$client, $params, @_] } )->get( $url );
+					Slim::Networking::SimpleAsyncHTTP->new(
+						\&asyncCBContent, \&asyncCBContent,	{ 'args' => [$client, $params, @_] }
+					)->get( $url );
 					return;
 				}
 
@@ -338,13 +342,58 @@ sub indexHandler {
 
 				if (defined $params->{'entryurl'} && $params->{'entryurl'} ne $entry->{'URL'}) {
 
-					$entry->{'URL'} = $params->{'entryurl'};
+					my $url = $params->{'entryurl'};
 
-					if ($params->{'entryurl'} =~ /\.(opml|xml|rss)$/) {
-						delete $entry->{'type'};
-					} else {
-						$entry->{'type'} = 'audio';
+					if ($entry->{'type'} eq 'check') {
+
+						if ($url !~ /^http:/) {
+
+							if ($url !~ /\.(xml|opml|rss)$/) {
+
+								$entry->{'type'} = 'audio';
+
+							} else {
+
+								delete $entry->{'type'};
+							}
+
+						} elsif (!$params->{'fetched'}) {
+
+							$log->info("checking content type for $url");
+
+							Slim::Networking::Async::HTTP->new()->send_request( {
+								'request'     => HTTP::Request->new( GET => $url ),
+								'onHeaders'   => \&asyncCBContentType,
+								'onError'     => \&asyncCBContentType,
+								'passthrough' => [ $client, $params, @_ ],
+							} );
+
+							return;
+
+						} elsif (my $type = $params->{'fetchedtype'}) {
+
+							if (Slim::Music::Info::isSong(undef, $type) || Slim::Music::Info::isPlaylist(undef, $type)) {
+
+								$log->info("  got content type $type - treating as audio");
+																
+								$entry->{'type'} = 'audio';
+
+							} else {
+
+								$log->info("  got content type $type - treating as non audio");
+															
+								delete $entry->{'type'};
+							}
+								
+						} else {
+
+							$log->info("  error fetching content type - treating as non audio");
+													
+							delete $entry->{'type'};
+						}
 					}
+
+					$entry->{'URL'} = $url;
 				}
 			}
 
@@ -384,6 +433,7 @@ sub indexHandler {
 		push @$level,{
 			'text' => string('PLUGIN_FAVORITES_NAME'),
 			'URL'  => string('PLUGIN_FAVORITES_URL'),
+			'type' => 'check',
 		};
 
 		$edit = scalar @$level - 1;
@@ -472,14 +522,30 @@ sub indexHandler {
 	$callback->($client, $params, $output, @_);
 }
 
-sub asyncCB {
-	# callback for async http callback and error callback
+sub asyncCBContent {
+	# callback for async http content fetching
 	# causes indexHandler to be processed again with stored params + fetched content
 	my $http = shift;
 	my ($client, $params, $callback, $httpClient, $response) = @{ $http->params('args') };
 
 	$params->{'fetched'}        = 1;
 	$params->{'fetchedcontent'} = $http->content;
+
+	indexHandler($client, $params, $callback, $httpClient, $response);
+}
+
+sub asyncCBContentType {
+	# callback for establishing content type
+	# causes indexHandler to be processed again with stored params + fetched content type
+	my $http = shift;
+	my ($client, $params, $callback, $httpClient, $response) = @_;
+
+	$params->{'fetched'} = 1;
+
+	if ($http->response) {
+		$params->{'fetchedtype'} = Slim::Music::Info::mimeToType( $http->response->content_type ) || $http->response->content_type;
+		$http->disconnect;
+	}
 
 	indexHandler($client, $params, $callback, $httpClient, $response);
 }
