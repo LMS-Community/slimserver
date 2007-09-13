@@ -48,20 +48,21 @@ my $prefs = preferences('plugin.randomplay');
 $prefs->migrate(1, sub {
 	$prefs->set('newtracks', Slim::Utils::Prefs::OldPrefs->get('plugin_random_number_of_tracks')     || 10 );
 	$prefs->set('oldtracks', Slim::Utils::Prefs::OldPrefs->get('plugin_random_number_of_old_tracks') || 0  );
-	$prefs->set('continue',  Slim::Utils::Prefs::OldPrefs->get('plugin_random_keep_adding_tracks')   || 1  );
+	$prefs->set('continuous',  Slim::Utils::Prefs::OldPrefs->get('plugin_random_keep_adding_tracks')   || 1  );
 	$prefs->set('exclude_genres', Slim::Utils::Prefs::OldPrefs->get('plugin_random_exclude_genres')  || [] );
 	1;
 });
 
 $prefs->migrateClient(1, sub {
 	my ($clientprefs, $client) = @_;
-	$clientprefs->set('type', Slim::Utils::Prefs::OldPrefs->clientGet($client, 'plugin_random_type')); 1;
+	$clientprefs->set('type', Slim::Utils::Prefs::OldPrefs->clientGet($client, 'plugin_random_type'));
+	1;
 });
 
 $prefs->setValidate('int', qw(newtracks oldtracks) );
 
 sub getDisplayName {
-	return 'PLUGIN_RANDOM';
+	return 'PLUGIN_RANDOMPLAY';
 }
 
 sub initPlugin {
@@ -215,7 +216,7 @@ sub findAndAdd {
 	]);
 
 	# indicate request source
-	$request->source('PLUGIN_RANDOM');
+	$request->source('PLUGIN_RANDOMPLAY');
 
 	# Add the remaining items to the end
 	if ($type eq 'track') {
@@ -226,7 +227,7 @@ sub findAndAdd {
 
 			$request = $client->execute(['playlist', 'addtracks', 'listRef', \@results ]);
 
-			$request->source('PLUGIN_RANDOM');
+			$request->source('PLUGIN_RANDOMPLAY');
 		}
 	}
 
@@ -494,7 +495,7 @@ sub playRandom {
 		if (Slim::Buttons::Common::mode($client) !~ /^SCREENSAVER./) {
 
 			$client->showBriefly( {
-				'line' => [ string('PLUGIN_RANDOM'), string('PLUGIN_RANDOM_DISABLED') ]
+				'line' => [ string('PLUGIN_RANDOMPLAY'), string('PLUGIN_RANDOM_DISABLED') ]
 			} );
 		}
 
@@ -507,7 +508,11 @@ sub playRandom {
 			$continuousMode ? 'continuous' : 'static', $type, Slim::Player::Playlist::count($client)
 		));
 
-		$mixInfo{$client->masterOrSelf->id}->{'type'} = $type;
+		#BUG 5444: store the status so that users re-visiting the random mix 
+		#will see a continuous mode state.
+		if ($continuousMode) {
+			$mixInfo{$client->masterOrSelf->id}->{'type'} = $type;
+		}
 
 		# $startTime will only be defined if this is a new (or restarted) mix
 		if (defined $startTime) {
@@ -668,7 +673,7 @@ sub setMode {
 
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
-		header     => '{PLUGIN_RANDOM} {count}',
+		header     => '{PLUGIN_RANDOMPLAY} {count}',
 		listRef    => [qw(track album contributor year genreFilter)],
 		name       => \&getDisplayText,
 		overlayRef => \&getOverlay,
@@ -728,7 +733,7 @@ sub commandCallback {
 	my $client  = $request->client();
 
 	# Don't respond to callback for ourself.
-	if ($request->source && $request->source eq 'PLUGIN_RANDOM') {
+	if ($request->source && $request->source eq 'PLUGIN_RANDOMPLAY') {
 		return;
 	}
 
@@ -777,7 +782,7 @@ sub commandCallback {
 			for (my $i = 0; $i < $songIndex - $songsToKeep; $i++) {
 
 				my $request = $client->execute(['playlist', 'delete', 0]);
-				$request->source('PLUGIN_RANDOM');
+				$request->source('PLUGIN_RANDOMPLAY');
 			}
 		}
 
@@ -794,7 +799,7 @@ sub commandCallback {
 sub generateGenreNameMap {
 	my $request = shift;
 
-	if ($request && $request->source && $request->source eq 'PLUGIN_RANDOM') {
+	if ($request && $request->source && $request->source eq 'PLUGIN_RANDOMPLAY') {
 		return;
 	}
 
@@ -857,7 +862,7 @@ sub webPages {
 
         my $urlBase = 'plugins/RandomPlay';
 
-	Slim::Web::Pages->addPageLinks("browse", { 'PLUGIN_RANDOM' => $htmlTemplate });
+	Slim::Web::Pages->addPageLinks("browse", { 'PLUGIN_RANDOMPLAY' => $htmlTemplate });
 
         Slim::Web::HTTP::addPageFunction("$urlBase/list.html", \&handleWebList);
         Slim::Web::HTTP::addPageFunction("$urlBase/mix.html", \&handleWebMix);

@@ -2,7 +2,7 @@
 
 <extension>
 	<id>8946D8D2-4C44-470C-ACF9-74E91E8F29AE</id>
-        <name>PLUGIN_RANDOM</name>
+        <name>PLUGIN_RANDOMPLAY</name>
         <module>Slim::Plugin::RandomPlay::Plugin</module>
         <version>1.0</version>
         <description>PLUGIN_RANDOM_DESC</description>
