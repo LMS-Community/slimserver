@@ -96,6 +96,9 @@ Main = function(){
 						if (el = Ext.get('scanWarning'))
 							el.show();
 
+						if ((el = Ext.get('progressInfo')) && result.progresstotal) 
+							el.show();
+
 						if (total = Ext.get('progressTotal')) {
 							Ext.get('progressName').update(result.progressname);
 							Ext.get('progressDone').update(result.progressdone) || 0;
@@ -118,6 +121,8 @@ Main = function(){
 			}
 			else {
 				if (el = Ext.get('scanWarning'))
+					el.hide();
+				if (el = Ext.get('progressInfo'))
 					el.hide();
 			}
 		},
