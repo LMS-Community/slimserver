@@ -223,7 +223,7 @@ Wizard = function(){
 		onResize : function(){
 			dimensions = Ext.fly(document.body).getViewSize();
 			Ext.get('mainbody').setHeight(dimensions.height-35);
-			Ext.get('maincontent').setHeight(dimensions.height-195);
+			Ext.get('maincontent').setHeight(dimensions.height-170);
 			
 			myHeight = dimensions.height - 270;
 			for (var i in folderselectors) {
