@@ -27,8 +27,8 @@
 			<div class="infoTab_top"><div></div></div>
 			<span id="playlistCommands">[% img = 'b_save.png' %][% IF cansave %][% PROCESS savePlaylistLink %][% END %]
 			<img onclick="Playlist.clear();" src="html/images/b_clear.png" class="link"/>
-			[% IF current_playlist %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
 			<img onclick="Playlist.[% IF noPlaylistCover %]showCoverArt();" src="html/images/b_showart.png"[% ELSE %]hideCoverArt();" src="html/images/b_hideart.png"[% END %]>
+			[% IF current_playlist %][% "CURRENT_PLAYLIST" | string %][% "COLON" | string %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %][% END %]
 			</span>
 		</div>
 	</div>
