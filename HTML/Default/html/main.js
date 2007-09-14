@@ -398,6 +398,7 @@ Player = function(){
 	var playerStatus = {
 		power: null,
 		mode: null,
+		current_title: null,
 		title: null,
 		track: null,
 		tracks: null,
@@ -549,7 +550,8 @@ Player = function(){
 						// update the playlist if it's available
 						if (Ext.get('playList') && ((result.power && result.power != playerStatus.power) ||
 							(result.mode && result.mode != playerStatus.mode) ||
-							(result.current_title && result.current_title != playerStatus.title) ||
+							(result.current_title && result.current_title != playerStatus.current_title) ||
+							(result.playlist_tracks > 0 && result.playlist_loop[0].title != playerStatus.title) ||
 							(result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track) ||
 							(playerStatus.track && !result.playlist_tracks) ||
 							(result.playlist_tracks && !playerStatus.track) ||
@@ -684,7 +686,8 @@ Player = function(){
 						playerStatus = {
 							power: result.power,
 							mode: result.mode,
-							title: result.current_title,
+							current_title: result.current_title,
+							title: result.playlist_tracks > 0 ? result.playlist_loop[0].title : '',
 							track: result.playlist_tracks > 0 ? result.playlist_loop[0].url : '',
 							tracks: result.playlist_tracks,
 							index: result.playlist_cur_index,
@@ -756,7 +759,8 @@ Player = function(){
 								var result = responseText.result;
 								if ((result.power && result.power != playerStatus.power) ||
 									(result.mode && result.mode != playerStatus.mode) ||
-									(result.current_title && result.current_title != playerStatus.title) ||
+									(result.current_title && result.current_title != playerStatus.current_title) ||
+									(result.playlist_tracks > 0 && result.playlist_loop[0].title != playerStatus.title) ||
 									(result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track) ||
 									(playerStatus.track && !result.playlist_tracks) ||
 									(result.playlist_tracks && !playerStatus.track) ||
@@ -764,6 +768,7 @@ Player = function(){
 									(result.playlist_cur_index && result.playlist_cur_index != playerStatus.index) ||
 									(result['playlist shuffle'] >= 0 && result['playlist shuffle'] != playerStatus.shuffle)
 								){
+									alert('calling getUpdate');
 									this.getUpdate();
 								}
 	
