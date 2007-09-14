@@ -768,7 +768,6 @@ Player = function(){
 									(result.playlist_cur_index && result.playlist_cur_index != playerStatus.index) ||
 									(result['playlist shuffle'] >= 0 && result['playlist shuffle'] != playerStatus.shuffle)
 								){
-									alert('calling getUpdate');
 									this.getUpdate();
 								}
 	
