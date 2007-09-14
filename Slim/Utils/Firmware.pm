@@ -49,9 +49,6 @@ my @models = qw( squeezebox squeezebox2 transporter );
 # Firmware location
 my $dir = Slim::Utils::OSDetect::dirsFor('Firmware');
 
-# Cache location
-my $cacheDir = Slim::Utils::OSDetect::dirsFor('Cache');
-
 # Download location
 my $base = 'http://update.slimdevices.com/update/firmware';
 
@@ -64,6 +61,8 @@ my $JIVE_VER;
 my $JIVE_REV;
 
 my $log = logger('player.firmware');
+
+my $prefs = preferences('server');
 
 =head2 init()
 
@@ -150,10 +149,10 @@ and custom.jive.bin in the cachedir.  If these exist then these are used in pref
 sub init_jive {
 	my $url = $base . '/' . $::VERSION . '/jive.version';
 		
-	my $version_file   = catdir( $cacheDir, 'jive.version' );
+	my $version_file   = catdir( $prefs->get('cachedir'), 'jive.version' );
 
-	my $custom_version = catdir( $cacheDir, 'custom.jive.version' );
-	my $custom_image   = catdir( $cacheDir, 'custom.jive.bin' );
+	my $custom_version = catdir( $prefs->get('cachedir'), 'custom.jive.version' );
+	my $custom_image   = catdir( $prefs->get('cachedir'), 'custom.jive.bin' );
 	
 	if ( -r $custom_version && -r $custom_image ) {
 		$log->info("Using custom jive firmware $custom_version $custom_image");
@@ -189,7 +188,7 @@ sub init_jive {
 	($JIVE_VER, $JIVE_REV) = $version =~ m/^(\d+)\s(r.*)/;
 
 	if (!$JIVE_FW) {	
-		my $jive_file = catdir( $cacheDir, "jive_${JIVE_VER}_${JIVE_REV}.bin" );
+		my $jive_file = catdir( $prefs->get('cachedir'), "jive_${JIVE_VER}_${JIVE_REV}.bin" );
 	
 		if ( !-e $jive_file ) {		
 			$log->info("Downloading Jive firmware to: $jive_file");
@@ -213,7 +212,7 @@ of the newly downloaded firmware.  Removes old Jive firmware file if one exists.
 sub init_jive_done {
 	my $jive_file = shift;
 	
-	opendir my ($dirh), $cacheDir;
+	opendir my ($dirh), $prefs->get('cachedir');
 	
 	my @files = grep { /^jive.*\.bin$/ } readdir $dirh;
 	
@@ -222,7 +221,7 @@ sub init_jive_done {
 	for my $file ( @files ) {
 		next if $file eq basename($jive_file);
 		$log->info("Removing old Jive firmware file: $file");
-		unlink catdir( $cacheDir, $file ) or logError("Unable to remove old Jive firmware file: $file: $!");
+		unlink catdir( $prefs->get('cachedir'), $file ) or logError("Unable to remove old Jive firmware file: $file: $!");
 	}
 	
 	$JIVE_FW = $jive_file;

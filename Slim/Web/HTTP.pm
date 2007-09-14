@@ -1198,7 +1198,7 @@ sub generateHTTPResponse {
 
 	} elsif ( $path =~ m{^firmware/.*\.bin} ) {
 		# firmware downloads over HTTP
-		my $dir  = Slim::Utils::OSDetect::dirsFor('Cache');
+		my $dir  = $prefs->get('cachedir');
 		$path   =~ s{firmware/}{};		
 		my $file = catfile( $dir, $path );
 		
