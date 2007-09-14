@@ -364,7 +364,7 @@ sub indexHandler {
 							Slim::Networking::Async::HTTP->new()->send_request( {
 								'request'     => HTTP::Request->new( GET => $url ),
 								'onHeaders'   => \&asyncCBContentType,
-								'onError'     => \&asyncCBContentType,
+								'onError'     => \&asyncCBContentTypeError,
 								'passthrough' => [ $client, $params, @_ ],
 							} );
 
@@ -537,15 +537,21 @@ sub asyncCBContent {
 sub asyncCBContentType {
 	# callback for establishing content type
 	# causes indexHandler to be processed again with stored params + fetched content type
-	my $http = shift;
-	my ($client, $params, $callback, $httpClient, $response) = @_;
+	my ($http, $client, $params, $callback, $httpClient, $response) = @_;
 
 	$params->{'fetched'} = 1;
+	$params->{'fetchedtype'} = Slim::Music::Info::mimeToType( $http->response->content_type ) || $http->response->content_type;
 
-	if ($http->response) {
-		$params->{'fetchedtype'} = Slim::Music::Info::mimeToType( $http->response->content_type ) || $http->response->content_type;
-		$http->disconnect;
-	}
+	$http->disconnect;
+
+	indexHandler($client, $params, $callback, $httpClient, $response);
+}
+
+sub asyncCBContentTypeError {
+	# error callback for establishing content type - causes indexHandler to be processed again with stored params
+	my ($http, $error, $client, $params, $callback, $httpClient, $response) = @_;
+
+	$params->{'fetched'} = 1;
 
 	indexHandler($client, $params, $callback, $httpClient, $response);
 }
