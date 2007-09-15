@@ -329,6 +329,9 @@ sub handler {
 					if ( exists $result->{data} ) {
 						push @{$events}, $result;
 					}
+
+					# Remove any pending unsubscribe requests - this is a new subscription which may replace a previous one
+					$manager->remove_unsubscribe_from( $clid, $subscription );
 				}
 			}
 			else {
@@ -574,6 +577,7 @@ sub requestCallback {
 	if ( $manager->should_unsubscribe_from( $clid, $channel ) ) {
 		$log->debug( "requestCallback: unsubscribing from $clid / $channel" );
 		
+		$manager->remove_unsubscribe_from( $clid, $channel );
 		$request->removeAutoExecuteCallback();
 			
 		return;

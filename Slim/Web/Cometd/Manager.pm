@@ -67,6 +67,12 @@ sub should_unsubscribe_from {
 	return exists $self->{clients}->{$clid}->{to_unsubscribe}->{$sub};
 }
 
+sub remove_unsubscribe_from {
+	my ( $self, $clid, $sub ) = @_;
+	
+	delete $self->{clients}->{$clid}->{to_unsubscribe}->{$sub};
+}
+
 sub remove_client {
 	my ( $self, $clid ) = @_;
 	
