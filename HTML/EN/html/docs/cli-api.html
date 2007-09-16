@@ -6754,8 +6754,17 @@ in the saved playlists folder.</p>
 	update events for a player.  Details of the latest display change are automatically returned
 	whenever the relavent display update event occurs on that player.
 	<br>
-	Clients may subscribe to only receive status and warning (showbriefly) messages,
-	receive normal display updates, or receive all display updates including menu transitions.
+	Clients may subscribe to only receive status and warning ('showbriefly') messages,
+	receive normal display updates ('update'), or receive all display updates
+	including menu transitions ('all').
+	<br>
+	Clients may also subscribe to receive the bitmap which comprises
+	each display update ('bits').  For SB2 and later players, this
+	forwards the display bitmap to the client encoded in base64.
+	Clients may request a reduced width display by setting the
+	width parameter in the status subscription.  Note this reduces the
+	width of the display shown on the live player screen as well as
+	for the display forwared to the cli client.
 </p>
 <p>
 	Accepted tagged parameters:
@@ -6774,7 +6783,15 @@ in the saved playlists folder.</p>
 			subscribe
 		</td>
 		<td>
-			'showbriefly', 'update' or 'all' to subscribe and '-' or nothing to unsubscribe
+			'showbriefly', 'update', 'all' or 'bits' to subscribe and nothing to unsubscribe
+		</td>
+	</tr>
+	<tr>
+		<td>
+			width
+		</td>
+		<td>
+			Reduced width for the display, only used with a	subscription for 'bits'
 		</td>
 	</tr>
 </table>

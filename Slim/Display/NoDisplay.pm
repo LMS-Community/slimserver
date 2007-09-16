@@ -54,7 +54,3 @@ L<Slim::Display::Display>
 
 1;
 
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:

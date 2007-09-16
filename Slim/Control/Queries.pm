@@ -834,10 +834,20 @@ sub displaystatusQuery {
 	} elsif ($subs =~ /showbriefly|update|bits|all/) {
 		# new subscription request - add subscription, assume cli or jive format for the moment
 		$request->privateData({ 'format' => $request->source eq 'CLI' ? 'cli' : 'jive' }); 
-		$request->registerAutoExecute(0, \&displaystatusQuery_filter);
+
+		if ($subs eq 'bits') {
+
+			$request->registerAutoExecute(0, \&displaystatusQuery_filter, sub {
+				$request->client->display->widthOverride(1, undef);
+				$request->client->update;
+			});
+			$request->client->display->widthOverride(1, $request->getParam('width'));
+
+		} else {
+			$request->registerAutoExecute(0, \&displaystatusQuery_filter);
+		}
 
 		if ($subs ne 'showbriefly') {
-			$request->client->display->resetDisplay;
 			$request->client->update;
 		}
 	}

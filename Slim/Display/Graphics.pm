@@ -86,7 +86,8 @@ sub linesPerScreen {
 
 sub screenBytes {
 	my $display = shift;
-	return $display->bytesPerColumn() * $display->displayWidth();
+	my $screen  = shift;
+	return $display->bytesPerColumn() * $display->displayWidth($screen);
 }
 
 # main render routine for all types of graphic display
@@ -764,10 +765,5 @@ L<Slim::Display::Lib::Fonts>
 =cut
 
 1;
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:
 
 

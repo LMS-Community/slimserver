@@ -474,7 +474,7 @@ sub currentSongLines {
 		$parts->{overlay}[1] = $client->symbols('notesymbol');
 
 		# add in the progress bar and time...
-		$client->nowPlayingModeLines($parts);
+		$client->nowPlayingModeLines($parts, $suppressScreen2);
 
 		# add screen2 information if required
 		if ($client->display->showExtendedText() && !$suppressScreen2) {
@@ -512,7 +512,7 @@ sub currentSongLines {
 }
 
 sub nowPlayingModeLines {
-	my ($client, $parts) = @_;
+	my ($client, $parts, $screen2) = @_;
 
 	my $display = $client->display;
 
@@ -528,8 +528,8 @@ sub nowPlayingModeLines {
 
 	my $showBar      = $modeOpts->{bar};
 	my $showTime     = $modeOpts->{secs};
-	my $displayWidth = $modeOpts->{width};
 	my $showFullness = $modeOpts->{fullness};
+	my $displayWidth = $display->displayWidth($screen2 ? 2 : 1);
 	
 	# check if we don't know how long the track is...
 	if (!Slim::Player::Source::playingSongDuration($client)) {

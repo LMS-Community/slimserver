@@ -88,6 +88,7 @@ sub new {
 	$display->[10]= undef;    # sbName
 	$display->[11]= 0;        # screen2updateOK
 	$display->[12]= {};       # displayStrings - strings for this display
+	$display->[13]= [];       # widthOverride - element 1 = screen1 (undef if default for display)
 
 	$display->resetDisplay(); # init render cache
 
@@ -155,6 +156,11 @@ sub screen2updateOK {
 sub displayStrings {
 	my $r = shift;
 	@_ ? ($r->[12] = shift) : $r->[12];
+}
+sub widthOverride {
+	my $r = shift;
+	my $s = shift || 1;
+	@_ ? ($r->[13][$s] = shift) : $r->[13][$s];
 }
 
 ################################################################################################
@@ -759,8 +765,8 @@ sub killAnimation {}
 sub fonts {}
 sub displayHeight {}
 sub showExtendedText {}
-sub modes() { [] }
-sub nmodes() { 0 }
+sub modes { [] }
+sub nmodes { 0 }
 sub hasScreen2 { 0 }
 sub vfdmodel {}
 

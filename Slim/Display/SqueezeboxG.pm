@@ -103,19 +103,19 @@ sub resetDisplay {
 	$display->killAnimation();
 }	
 
-sub bytesPerColumn () {
+sub bytesPerColumn {
 	return 2;
 }
 
-sub displayHeight () {
+sub displayHeight {
 	return 16;
 }
 
-sub displayWidth () {
+sub displayWidth {
 	return 280;
 }
 
-sub vfdmodel () {
+sub vfdmodel {
 	return 'graphic-280x16';
 }
 
@@ -123,7 +123,7 @@ sub brightnessMap {
 	return (0, 1, 4, 16, 30);
 }
 
-sub graphicCommand () {
+sub graphicCommand {
 	return 'grfd';
 }
 
@@ -157,11 +157,11 @@ sub modes {
 	return \@modes;
 }
 
-sub nmodes () {
+sub nmodes {
 	return $nmodes;
 }
 
-sub scrollHeader () {
+sub scrollHeader {
 	return pack('n', $GRAPHICS_FRAMEBUF_LIVE);
 }
 
@@ -307,10 +307,5 @@ L<Slim::Display::Graphics>
 =cut
 
 1;
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:
 
 

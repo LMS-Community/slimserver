@@ -162,11 +162,11 @@ sub resetDisplay {
 	$display->killAnimation();
 }	
 
-sub bytesPerColumn () {
+sub bytesPerColumn {
 	return 4;
 }
 
-sub displayHeight () {
+sub displayHeight {
 	return 32;
 }
 
@@ -180,10 +180,10 @@ sub displayWidth {
 	my $mode = ($display->showVisualizer() && !defined($client->modeParam('visu'))) ?
 		$prefs->client($client)->get('playingDisplayModes')->[ $prefs->client($client)->get('playingDisplayMode') ] : 0;
 
-	return $display->modes->[$mode || 0]{width};
+	return $display->widthOverride || $display->modes->[$mode || 0]{width};
 }
 
-sub vfdmodel () {
+sub vfdmodel {
 	return 'graphic-320x32';
 }
 
@@ -191,7 +191,7 @@ sub brightnessMap {
 	return (65535, 0, 1, 3, 4);
 }
 
-sub graphicCommand () {
+sub graphicCommand {
 	return 'grfe';
 }
 
@@ -224,7 +224,7 @@ sub drawFrameBuf {
 		my $framebuf = pack('n', $offset) .    # offset [transporter screen 2 = offset of 640]
 						   $transition .       # transition
 						   pack('c', $param) . # param byte
-						   substr($$framebufref, 0, $display->screenBytes(1) + $display->screenBytes(2) );
+						   $$framebufref;
 	
 		$client->sendFrame('grfe', \$framebuf);
 	}
@@ -290,7 +290,7 @@ sub modes {
 	return \@modes;
 }
 
-sub nmodes () {
+sub nmodes {
 	return $nmodes;
 }
 
@@ -311,7 +311,7 @@ sub scrollUpdateBackground {
 }
 
 # preformed frame header for fast scolling - contains header added by drawFrameBuf
-sub scrollHeader () {
+sub scrollHeader {
 	return pack('n', 0) . 'c' . pack ('c', 0);
 }
 
@@ -422,10 +422,3 @@ L<Slim::Display::Graphics>
 =cut
 
 1;
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:
-
-

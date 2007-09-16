@@ -133,7 +133,7 @@ sub modes {
 	return \@modes;
 }
 
-sub nmodes () {
+sub nmodes {
 	return $nmodes;
 }
 
@@ -141,11 +141,11 @@ sub visualizerModes {
 	return \@visualizers;
 }
 
-sub visualizerNModes () {
+sub visualizerNModes {
 	return $nvisualizers;
 }
 
-sub hasScreen2 () { 1 }
+sub hasScreen2 { 1 }
 
 sub init {
 	my $display = shift;
@@ -173,19 +173,19 @@ sub resetDisplay {
 	$display->killAnimation(undef, 2);
 }	
 
-sub bytesPerColumn () {
+sub bytesPerColumn {
 	return 4;
 }
 
-sub displayHeight () {
+sub displayHeight {
 	return 32;
 }
 
-sub displayWidth () {
-	return 320;
+sub displayWidth {
+	return shift->widthOverride(@_) || 320;
 }
 
-sub vfdmodel () {
+sub vfdmodel {
 	return 'graphic-320x32';
 }
 
@@ -252,9 +252,17 @@ sub pushBumpAnimate {
 	my $param1 = shift || 0;
 	my $param2 = shift || 0;
 
+	use bytes;
+
 	if ($render->{screen1}->{changed} && $render->{screen2}->{changed}) {
 		# animate both screens
-		my $twoScreen = ${$render->{screen1}->{bitsref}} . ${$render->{screen2}->{bitsref}};
+		my $twoScreen;
+		if ($display->widthOverride(1)) {
+			my $pad = chr(0) x ($display->bytesPerColumn * (320 - $display->widthOverride(1)));
+			$twoScreen = ${$render->{screen1}->{bitsref}} . $pad . ${$render->{screen2}->{bitsref}};
+		} else {
+			$twoScreen = ${$render->{screen1}->{bitsref}} . ${$render->{screen2}->{bitsref}};
+		}
 		$display->killAnimation(undef, 1);
 		$display->killAnimation(undef, 2);
 		$display->drawFrameBuf(\$twoScreen, 0, $trans, $param1);
@@ -317,6 +325,7 @@ sub showExtendedText {
 	
 	return $visualizers[$visu]{text};
 }
+
 =head1 SEE ALSO
 
 L<Slim::Display::Squeezebox2>
@@ -324,10 +333,3 @@ L<Slim::Display::Squeezebox2>
 =cut
 
 1;
-
-# Local Variables:
-# tab-width:4
-# indent-tabs-mode:t
-# End:
-
-
