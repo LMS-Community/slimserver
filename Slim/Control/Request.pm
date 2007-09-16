@@ -802,6 +802,10 @@ sub unregisterAutoExecute{
 				
 				my $request = $subscribers{$connectionID}{$name}{$clientid};
 				
+				if (my $cleanup = $request->autoExecuteCleanup()) {
+					eval { &{$cleanup}($request, $connectionID) };
+				}
+
 				Slim::Utils::Timers::killTimers($request, \&__autoexecute);
 			}
 		}
@@ -862,6 +866,7 @@ sub new {
 		'_connectionid'      => undef,
 		'_ae_callback'       => undef,
 		'_ae_filter'         => undef,
+		'_ae_cleanup'        => undef,
 		'_private'           => undef,
 	};
 
@@ -892,6 +897,7 @@ sub virginCopy {
 	$copy->{'_connectionid'} = $self->{'_connectionid'};
 	$copy->{'_ae_callback'} = $self->{'_ae_callback'};
 	$copy->{'_ae_filter'} = $self->{'_ae_filter'};
+	$copy->{'_ae_cleanup'} = $self->{'_ae_cleanup'};
 	$copy->{'_curparam'} = $self->{'_curparam'};
 	
 	# duplicate the arrays and hashes
@@ -1032,6 +1038,16 @@ sub autoExecuteCallback {
 	return $self->{'_ae_callback'};
 }
 
+# sets/returns the cleanup function for when autoexecute is cleared
+sub autoExecuteCleanup {
+	my $self = shift;
+	my $newvalue = shift;
+	
+	$self->{'_ae_cleanup'} = $newvalue if defined $newvalue;
+	
+	return $self->{'_ae_cleanup'};
+}
+
 # remove the autoExecuteCallback for this request
 sub removeAutoExecuteCallback {
 	my $self = shift;
@@ -1041,9 +1057,14 @@ sub removeAutoExecuteCallback {
 	my $cnxid       = $self->connectionID();
 	my $name        = $self->getRequestString();
 	my $clientid    = $self->clientid() || 'global';
+	my $cleanup     = $self->autoExecuteCleanup();
 	my $request2del = $subscribers{$cnxid}{$name}{$clientid};
 	
 	$log->debug("removeAutoExecuteCallback: deleting $cnxid - $name - $clientid");
+
+	if ($cleanup) {
+		eval { &{$cleanup}($self, $cnxid) };
+	}
 	
 	delete $subscribers{$cnxid}{$name}{$clientid};
 	
@@ -1900,6 +1921,7 @@ sub registerAutoExecute{
 	my $self = shift || return;
 	my $timeout = shift;
 	my $filterFunc = shift;
+	my $cleanupFunc = shift;
 	
 	$log->debug("registerAutoExecute()");
 	
@@ -1918,6 +1940,11 @@ sub registerAutoExecute{
 	# store the filterFunc in the request
 	$self->autoExecuteFilter($filterFunc);
 	
+	# store cleanup function if it exists - this is called whenever the autoexecute is cancelled
+	if ($cleanupFunc) {
+		$self->autoExecuteCleanup($cleanupFunc);
+	}
+
 	# kill any previous subscription we might have laying around 
 	# (for this query/client/connection)
 	my $oldrequest = $subscribers{$cnxid}{$name}{$clientid};
@@ -1925,6 +1952,10 @@ sub registerAutoExecute{
 	if (defined $oldrequest) {
 
 		$log->info("Old friend: $cnxid - $name - $clientid");
+
+		if (my $cleanup = $oldrequest->autoExecuteCleanup()) {
+			eval { &{$cleanup}($oldrequest, $cnxid) };
+		}
 
 		delete $subscribers{$cnxid}{$name}{$clientid};
 		Slim::Utils::Timers::killTimers($oldrequest, \&__autoexecute);
@@ -2418,6 +2449,9 @@ sub __autoexecute{
 		my $clientid = $self->clientid() || 'global';
 		my $request2del = $subscribers{$cnxid}{$name}{$clientid};
 		$log->debug("__autoexecute: deleting $cnxid - $name - $clientid");
+		if (my $cleanup = $self->autoExecuteCleanup()) {
+			eval { &{$cleanup}($self, $cnxid) };
+		}
 		delete $subscribers{$cnxid}{$name}{$clientid};
 		# there should not be any of those, but just to be sure
 		Slim::Utils::Timers::killTimers($self, \&__autoexecute);
