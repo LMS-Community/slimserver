@@ -8,7 +8,8 @@
 [% END %]
 
 [% FILTER null %]
-[% pageicon = 'RADIO'; noSpacer = NOT streaminfo; %]
+[% homeCategory = "OTHER_SERVICES" -%]
+[% IF NOT pagetitle; END %]
 [% pwd_list = [];
 	FOREACH crumb IN crumb;
 		crumbItem = BLOCK %]
@@ -25,16 +26,16 @@
 [% END %][% END %]
 
 [% IF streaminfo %]
-	<div class="xmlStreamInfo">
-		[% IF streaminfo.item.enclosure || streaminfo.item.url %]
-			<div id="songInfoHeader">
-				[% WRAPPER playlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]');"[% END %] [% "PLAY_THIS_SONG" | string %]<br />
+		[% IF streaminfo.item.enclosure || streaminfo.item.url; songInfoPlayLinks = BLOCK %]
+			[% item = BLOCK %]
+				[% WRAPPER playlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]');"[% END %] [% "PLAY_THIS_SONG" | string %]
+			[% END; title = ""; PROCESS songInfoItem %]
+			[% item = BLOCK %]
 				[% WRAPPER addlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]');"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]
-			</div>
-		[% END %]
+			[% END; title = ""; PROCESS songInfoItem %]
+		[% END; END %]
 	
-		[% PROCESS xmlbrowser_streaminfo.html %]
-	</div>
+		[% PROCESS xmlbrowser_details.html %]
 [% END %]
 
 [% IF search %]

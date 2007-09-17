@@ -14,10 +14,12 @@ b, a { color: white; font-size: 11px; }
 input { color: black; font-size: 11px; }
 img { border: 0; }
 
-/* browse pages */
-.itemWithCover {
-	min-height: 40px;
+img.cmdLinkIcon {
+	vertical-align: bottom;
 }
+
+/* browse pages */
+.itemWithCover { min-height: 40px; }
 
 .browsedbListItem {
 	position: relative;
@@ -614,59 +616,26 @@ form#advSearchForm.resultsPage {
 	position: relative;
 }
 
-#songInfo div {
-	padding-top: 5px;
-	clear: left;
+#songInfoPlayLinks div, #xmlInfoPlayLinks div, 
+.songInfoText, .songInfoTitle {
+	padding-bottom: 5px;
 }
 
-#songInfoHeader {
+#songInfoPlayLinks {
 	position: absolute;
-	left: 172px;
-	top: 115px;
-	z-index: 9999;
-}
-
-.xmlStreamInfo #songInfoHeader {
-	position: absolute;
+	bottom: 5px;
 	left: 160px;
-	top: 40px;
 	z-index: 9999;
 }
 
-#songInfoHeader a {
-	text-decoration: none;
-}
-
-.songInfoTitle {
-	float: left;
-	width: 150px;
-	text-align: right;
-}
-
-.songInfoText {
-	padding-left: 10px;
-}
-
-#TITLE .songInfoTitle,
-#COVERART .songInfoTitle {
-	display: none;
-}
-
-#TITLE .songInfoText {
-	font-weight: bold;
-	padding: 0;
-	font-size: 125%;
-}
-
-.xmlStreamInfo #TITLE {
-	padding-left: 160px;
-	padding-bottom: 50px;
+#xmlInfoPlayLinks {
+	margin-left: 160px;
 }
 
 #COVERART .songInfoText {
+	position: absolute;
 	padding: 0;
 	margin: 0;
-	position: absolute;
 	top: 0;
 }
 
@@ -679,6 +648,7 @@ form#advSearchForm.resultsPage {
 	top: 0px;
 	padding-left: 160px;
 	height: 150px;
+	position: relative;
 }
 
 #linkedSongInfoItems a {
@@ -689,6 +659,25 @@ form#advSearchForm.resultsPage {
 #linkedSongInfoItems .songInfoTitle {
 	text-align: left;
 	width: auto;
+	padding-right: 5px;
+}
+
+#songInfoItems {
+	display: table;
+}
+
+#songInfoItems div {
+	display: table-row;
+}
+
+.songInfoTitle, .songInfoText {
+	display: table-cell;
+}
+
+.songInfoTitle {
+	width: 150px;
+	text-align: right;
+	padding-right: 12px;
 }
 
 .albumListGallery .x-menu-item-icon {

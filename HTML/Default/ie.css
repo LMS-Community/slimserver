@@ -30,6 +30,19 @@
 	he\ight: auto;
 }
 
+#COVERART .songInfoText img {
+	width: 150px;
+	height: 150px;
+}
+
+.songInfoTitle {
+	width: 160px;
+	padding-bottom: 0;
+}
+
+#songInfo div {
+	padding-bottom: 5px;
+}
 
 /* IE6 is adding a pixel wide line below an element with bottom:0 */
 .infoTab, #edge_bottom_left, #edge_bottom_right {

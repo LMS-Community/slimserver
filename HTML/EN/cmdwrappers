@@ -291,7 +291,9 @@ END %]
 
 [% BLOCK songInfoItem %]
 	<div id="[% title %]">
-		<span class="songInfoTitle">[% title | string; "COLON" | string %]</span>
+		<span class="songInfoTitle">
+			[% IF title; title | string; "COLON" | string; END %]
+		</span>
 		<span class="songInfoText">[% item %]</span>
 	</div>
 [% END %]

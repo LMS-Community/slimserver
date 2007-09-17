@@ -4,6 +4,15 @@
 	he\ight: auto;
 }
 
+.songInfoTitle {
+	float: left;
+	width: 150px;
+}
+
+#songInfo div {
+	padding-bottom: 5px;
+}
+
 #browsedbList, #playList {
 	position: relative;
 }
