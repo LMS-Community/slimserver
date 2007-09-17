@@ -13,6 +13,10 @@
 	padding-bottom: 5px;
 }
 
+.songInfoText {
+	display: inline-block;
+}
+
 #browsedbList, #playList {
 	position: relative;
 }
