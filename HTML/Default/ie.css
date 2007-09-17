@@ -36,13 +36,19 @@
 }
 
 .songInfoTitle {
+	float: left;
 	width: 160px;
 	padding-bottom: 0;
 }
 
-#songInfo div {
-	padding-bottom: 5px;
+.songInfoText {
+	display: inline-block;
 }
+
+#songInfoPlayLinks {
+	width: 100%;
+}
+
 
 /* IE6 is adding a pixel wide line below an element with bottom:0 */
 .infoTab, #edge_bottom_left, #edge_bottom_right {

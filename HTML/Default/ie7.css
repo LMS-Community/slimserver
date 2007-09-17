@@ -9,12 +9,12 @@
 	width: 150px;
 }
 
-#songInfo div {
-	padding-bottom: 5px;
-}
-
 .songInfoText {
 	display: inline-block;
+}
+
+#songInfo div {
+	padding-bottom: 5px;
 }
 
 #browsedbList, #playList {
