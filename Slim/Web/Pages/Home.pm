@@ -106,7 +106,7 @@ sub home {
 	# More leakage from the DigitalInput 'plugin'
 	#
 	# If our current player has digital inputs, show the menu.
-	if ($client) {
+	if ($client && Slim::Utils::PluginManager->isEnabled('Plugin::DigitalInput::Plugin')) {
 
 		Slim::Plugin::DigitalInput::Plugin->webPages($client->hasDigitalIn);
 	}
