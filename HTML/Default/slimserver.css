@@ -245,11 +245,29 @@ form#advSearchForm.resultsPage {
 }
 
 #playerControlPanel {
-	padding-top: 0px;
-	padding-left: 5px;
+	padding: 0 5px 0 5px;
+}
+
+#expandedPlayerPanel {
+	margin-top: 5px;
+	position: relative;
+	height: 95px;
+}
+
+#collapsedPlayerPanel {
+	margin-top: 5px;
+	position: relative;
+	height: 20px;
+}
+
+#ctrlExpand, #ctrlCollapse {
+	position: absolute;
+	right: 0px;
+	background: url(html/images/btn_player_toggle_col.gif) no-repeat top left;
 }
 
 #ctrlCurrentArt {
+	float: left;
 	height: 96px;
 }
 
@@ -261,6 +279,7 @@ form#advSearchForm.resultsPage {
 	font-size: 13px; 
 	font-weight: bold; 
 	padding-left: 6px; 
+	margin-bottom: 5px;
 }
 
 #ctrlCurrentTitle a { 
@@ -316,6 +335,15 @@ form#advSearchForm.resultsPage {
 	background: url(html/images/inner_bottom_right.gif) no-repeat bottom right; 
 }
 
+.playerbox_content, .playerbox {
+	background: url(html/images/title_background.gif) repeat;
+}
+
+.playerbox_content {
+	margin-left: 10px;
+	margin-right: 5px;
+}
+
 .titlebox {
 	background: url(html/images/title_background.gif) repeat;
 	margin: 5px;
@@ -334,27 +362,27 @@ form#advSearchForm.resultsPage {
 	white-space: nowrap;
 }
 
-.titlebox_top div { 
+.titlebox_top, .titlebox_top div,
+.titlebox_bottom div, .titlebox_bottom, 
+.playerbox_top, .playerbox_top div, 
+.playerbox_bottom div, .playerbox_bottom { 
 	height: 5px;
 	font-size: 0px;
+}
+
+.titlebox_top div, .playerbox_top div { 
 	background: url(html/images/title_top_left.gif) no-repeat top left;
 }
 
-.titlebox_top {
-	height: 5px;
-	font-size: 0px;
+.titlebox_top, .playerbox_top {
 	background: url(html/images/title_top_right.gif) no-repeat top right; 
 }
 
-.titlebox_bottom div { 
-	height: 5px;
-	font-size: 0px;
+.titlebox_bottom div, .playerbox_bottom div { 
 	background: url(html/images/title_bottom_left.gif) no-repeat bottom left; 
 }
 
-.titlebox_bottom { 
-	height: 5px;
-	font-size: 0px;
+.titlebox_bottom, .playerbox_bottom { 
 	background: url(html/images/title_bottom_right.gif) no-repeat bottom right; 
 }
 
@@ -749,18 +777,6 @@ form#advSearchForm.resultsPage {
 	padding-left: 30px;
 }
 
-#playerbase_exp_left {
-	background: transparent url(html/images/playerbase_expanded.gif) no-repeat 0 0;		
-}
-
-#playerbase_exp_right {
-	background: transparent url(html/images/playerbase_expanded.gif) no-repeat 0 -286px;	
-}
-
-.playerbase {
-	background: transparent url(html/images/playerbase_expanded.gif) repeat 0 -143px;	
-}
-
 /* player buttons */
 .btn-previous, .btn-previous button,
 .btn-play, .btn-play button,
@@ -812,6 +828,28 @@ form#advSearchForm.resultsPage {
 
 .x-btn-over button { background-position: 0 -22px; }
 .x-btn-click button { background-position: 0 -44px; }
+
+.btn-collapse-player button {
+	background: transparent url(html/images/btn_player_toggle_col.gif) no-repeat 0 0;
+}
+
+.btn-expand-player button {
+	background: transparent url(html/images/btn_player_toggle_exp.gif) no-repeat 0 0;
+}
+
+.x-btn-over .btn-expand-player button,
+.x-btn-over .btn-collapse-player button {
+	background-position: 0 -18;
+}
+
+.x-btn-click .btn-expand-player button,
+.x-btn-click .btn-collapse-player button {
+	background-position: 0 -36;
+}
+
+#ctrlBar {
+	width: 100%;
+}
 
 #ctrlVolume, #ctrlVolume img {
 	width: 81px;

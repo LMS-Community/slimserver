@@ -2,6 +2,10 @@
 	overflow-x: hidden;
 }
 
+#ctrlBar {
+	width: 97%;
+}
+
 .browsedbControls {
 	right: 25px;
 }

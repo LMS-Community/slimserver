@@ -26,8 +26,8 @@
 		<div class="infoTab_content">
 			<div class="infoTab_top"><div></div></div>
 			<span id="playlistCommands">
-				<span>
-					<a href="#" id="playlistToggleArtwork" onclick="Playlist.[% IF noPlaylistCover %]showCoverArt()[% ELSE %]hideCoverArt()[% END %];"><img src="[% webroot %]html/images/spacer.gif" width="15" [% IF noPlaylistCover %]class="showCover"[% END %]/> [% "SHOW_ARTWORK" | string %]</a>
+				<span id="playlistToggleArtwork" onclick="Playlist.[% IF noPlaylistCover %]showCoverArt()[% ELSE %]hideCoverArt()[% END %];" class="link">
+					<img src="[% webroot %]html/images/spacer.gif" width="15" [% IF noPlaylistCover %]class="showCover"[% END %]/> [% "SHOW_ARTWORK" | string %]
 				</span>
 				
 				<span class="buttonsRight">

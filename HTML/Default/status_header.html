@@ -61,20 +61,22 @@
 	strings['volume']   = "[% "VOLUME" | string %][% "COLON" | string %]";
 	strings['volumeup'] = "[% "VOLUME_LOUDER" | string %]";
 	strings['volumedown'] = "[% "VOLUME_SOFTER" | string %]";
+	strings['collapse'] = "[% "COLLAPSE" | string %]";
+	strings['expand']   = "[% "EXPAND" | string %]";
 </script>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-	<tr>
-		<td width="6"><img src="[% webroot %]html/images/spacer.gif" id="playerbase_exp_left" alt="" height="143" width="6" border="0" /></td>
-		<td class="playerbase">
-			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<div class="playerbox">
+	<div class="playerbox_top"><div></div></div>
+	<div class="playerbox_content">
+		<div style="position:relative;">
+			<table id="ctrlBar" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<td colspan="3">
+					<td width="50%">
 						<table border="0" cellspacing="0" cellpadding="0">
 							<tr>
 								<td id="ctrlPrevious"></td>
 								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
-								<td id="ctrlTogglePlay"><img src="[% webroot %]html/images/spacer.gif" /></td>
+								<td id="ctrlTogglePlay"></td>
 								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
 								<td id="ctrlNext"></td>
 								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
@@ -84,7 +86,8 @@
 							</tr>
 						</table>
 					</td>
-					<td align="right">
+					
+					<td width="33%" align="right">
 						<table border="0" cellspacing="0" cellpadding="0">
 							<tr>
 								<td id="ctrlVolumeDown"></td>
@@ -95,42 +98,51 @@
 							</tr>
 						</table>
 					</td>
-					<td align="right"><span id="ctrlPower"></span></td>
-				</tr>
-				<tr>
-					<td colspan="5"><img src="[% webroot %]html/images/spacer.gif" alt="" height="8" width="32" border="0" /></td>
-				</tr>
-				<tr>
-					<td colspan="4">
-						<table width="100%" border="0" cellspacing="0" cellpadding="0">
-							<tr>
-								<td rowspan="6" width="96" id="ctrlCurrentArt"><img src="[% webroot %]music/0/cover_96x96.jpg" alt="" height="96" width="96" border="0" /></td>
-								<td><div id="ctrlCurrentTitle"></div></td>
-							</tr>
-							<tr>
-								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="12" width="12" border="0" /></td>
-							</tr>
-							<tr>
-								<td><div class="currentTrackInfo" id="ctrlArtistTitle">[% "ARTIST" | string %][% "COLON" | string %] <span id="ctrlCurrentArtist"></span></div></td>
-							</tr>
-							<tr>
-								<td><div class="currentTrackInfo" id="ctrlAlbumTitle">[% "ALBUM" | string %][% "COLON" | string %] <span id="ctrlCurrentAlbum"></span></div></td>
-							</tr>
-							<tr>
-								<td><div class="currentTrackInfo" id="ctrlBitrateTitle">[% "BITRATE" | string %][% "COLON" | string %] <span id="ctrlBitrate"></span></div></td>
-							</tr>
-							<tr>
-								<td><div class="currentTrackInfo" id="ctrlPlayTimeTitle">[% "PLAYTIME" | string %][% "COLON" | string %] <span id="ctrlPlaytime"></span><span id="ctrlTotalTime"></span>&nbsp;- <span id="ctlPlayNum"></span>&nbsp;[% "OF" | string%] <span id="ctlSongCount"></span> </div></td>
-							</tr>
-						</table>
-					</td>
-					<td align="right" valign="top" onclick="Player.openPlayerControl();"><img src="[% webroot %]html/images/toggle_player_std.png" alt="" height="14" width="24" border="0" /></td>
+					
+					<td width="17%" align="right"><span id="ctrlPower"></span></td>
 				</tr>
 			</table>
-		</td>
-		<td align="right" width="6"><img src="[% webroot %]html/images/spacer.gif" id="playerbase_exp_right" alt="" height="143" width="6" border="0" /></td>
-	</tr>
-</table>
+
+			<div id="expandedPlayerPanel">
+				<div id="ctrlCollapse"></div>
+				
+				<div id="ctrlCurrentArt">
+					<img src="[% webroot %]music/0/cover_96x96.jpg" alt="" height="96" width="96" border="0"/>
+				</div>
+				
+				<div id="ctrlCurrentSongInfo">
+					<div id="ctrlCurrentTitle"></div>
+					<div class="currentTrackInfo" id="ctrlArtistTitle">
+						[% "ARTIST" | string %][% "COLON" | string %] <span id="ctrlCurrentArtist"></span>
+					</div>
+					<div class="currentTrackInfo" id="ctrlAlbumTitle">
+						[% "ALBUM" | string %][% "COLON" | string %] <span id="ctrlCurrentAlbum"></span>
+					</div>
+					<div class="currentTrackInfo" id="ctrlBitrateTitle">
+						[% "BITRATE" | string %][% "COLON" | string %] <span id="ctrlBitrate"></span>
+					</div>
+					<div class="currentTrackInfo" id="ctrlPlayTimeTitle">
+						[% "PLAYTIME" | string %][% "COLON" | string %] 
+						<span id="ctrlPlaytime"></span>
+						<span id="ctrlTotalTime"></span>&nbsp;- 
+						<span id="ctlPlayNum"></span>&nbsp;[% "OF" | string%] 
+						<span id="ctlSongCount"></span>
+					</div>
+				</div>
+			</div>
+
+			<div id="collapsedPlayerPanel">
+				<div id="ctrlExpand"></div>
+				
+				<div>
+					<img src="[% webroot %]html/images/icon_nowplaying.gif">
+					all you ever wanted to know about your song...
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="playerbox_bottom"><div></div></div>
+</div>
 
 [% IF !embedded %]
 	</body>

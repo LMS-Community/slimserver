@@ -1147,6 +1147,14 @@ POWER
 	SV	Strömförsörjning
 	ZH_CN	电源开关
 
+EXPAND
+	DE	Erweitern
+	EN	Expand
+
+COLLAPSE
+	DE	Verkleinern
+	EN	Collapse
+
 ALARM
 	CS	Budík
 	DA	Alarm
@@ -7632,6 +7640,10 @@ CLEAR_PLAYLIST
 	SV	Rensa låtlista
 	ZH_CN	清除播放表
 
+SHOW_ARTWORK
+	DE	Plattenhüllen anzeigen
+	EN	Show Artwork
+
 VOLUME
 	CS	Hlasitost
 	DA	Volume
@@ -7920,7 +7932,7 @@ TITLEFORMAT_DBL
 CURRENT_PLAYLIST
 	CS	Aktuální playlist
 	DA	Aktiv playliste
-	DE	Die aktuelle Wiedergabeliste
+	DE	Aktuelle Wiedergabeliste
 	EN	The current playlist
 	ES	Lista de reproducción actual
 	FI	Soittolista

@@ -538,6 +538,30 @@ Player = function(){
 				handler: this.ctrlPower
 			});
 
+			if (el = Ext.get('expandedPlayerPanel'))
+				el.setVisibilityMode(Ext.Element.DISPLAY);
+
+			new Slim.Button('ctrlCollapse', {
+				cls: 'btn-collapse-player',
+				tooltip: strings['collapse'],
+				minWidth: 18,
+				scope: this,
+				handler: this.collapseExpand
+			});
+
+			if (el = Ext.get('collapsedPlayerPanel')) {
+				el.setVisibilityMode(Ext.Element.DISPLAY);
+				el.hide();
+			}
+
+			new Slim.Button('ctrlExpand', {
+				cls: 'btn-expand-player',
+				tooltip: strings['expand'],
+				minWidth: 18,
+				scope: this,
+				handler: this.collapseExpand
+			});
+
 			pollTimer = new Ext.util.DelayedTask(this.getStatus, this);
 			playTimeTimer = new Ext.util.DelayedTask(this.updatePlayTime, this);
 			this.getStatus();
@@ -700,7 +724,8 @@ Player = function(){
 						this.updatePlayTime(result.time ? result.time : 0, result.duration ? result.duration : 0);
 
 						// update play/pause button
-						playEl = Ext.get('ctrlTogglePlay');
+						playEl = Ext.DomQuery.selectNode('table:first', Ext.get('ctrlTogglePlay').dom);
+						playEl = Ext.get(playEl);
 						playEl.removeClass(['btn-play', 'btn-pause']);
 						playEl.addClass(result.mode=='play' ? 'btn-pause' : 'btn-play');
 
@@ -850,6 +875,17 @@ Player = function(){
 				success: this.getUpdate,
 				scope: this
 			});
+		},
+
+		collapseExpand : function(){
+			if (el = Ext.get('collapsedPlayerPanel'))
+				el.toggle();
+
+			if (el = Ext.get('expandedPlayerPanel'))
+				el.toggle();
+				
+			try { Main.onResize(); }
+			catch(e) {}
 		},
 
 		ctrlNext : function(){ this.playerControl(['playlist', 'index', '+1']) },
