@@ -745,7 +745,7 @@ sub displaystatusQuery_filter {
 	my $parts = $request->getParam('_parts');
 
 	# check displaynotify type against subscription ('showbriefly', 'update', 'bits', 'all')
-	if ($subs eq $type || $subs eq 'all' || $subs eq 'bits') {
+	if ($subs eq $type || ($subs eq 'bits' && $type ne 'showbriefly') || $subs eq 'all') {
 
 		my $pd = $self->privateData;
 
@@ -851,7 +851,7 @@ sub displaystatusQuery {
 			$request->client->update;
 		}
 	}
-		
+	
 	$request->setStatusDone();
 }
 
