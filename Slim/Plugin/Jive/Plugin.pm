@@ -763,7 +763,7 @@ if (0) {
 
 	# player name change, always display
 	push @menu, {
-		text      => Slim::Utils::Strings::string('CHANGE_PLAYER_NAME'),
+		text      => Slim::Utils::Strings::string('INFORMATION_PLAYER_NAME'),
 		input => {
 			initialText  => $client->name(),
 			len          => 1, # For those that want to name their player "X"
