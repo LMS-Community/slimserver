@@ -326,7 +326,6 @@ form#advSearchForm.resultsPage {
 	background: url(html/images/title_background.gif) repeat;
 	margin-left: 10px;
 	margin-right: 5px;
-	height: 15px;
 	padding-top: 3px;
 	padding-bottom: 2px;
 	font-size: 120%;
@@ -337,21 +336,25 @@ form#advSearchForm.resultsPage {
 
 .titlebox_top div { 
 	height: 5px;
+	font-size: 0px;
 	background: url(html/images/title_top_left.gif) no-repeat top left;
 }
 
 .titlebox_top {
 	height: 5px;
+	font-size: 0px;
 	background: url(html/images/title_top_right.gif) no-repeat top right; 
 }
 
 .titlebox_bottom div { 
 	height: 5px;
+	font-size: 0px;
 	background: url(html/images/title_bottom_left.gif) no-repeat bottom left; 
 }
 
 .titlebox_bottom { 
 	height: 5px;
+	font-size: 0px;
 	background: url(html/images/title_bottom_right.gif) no-repeat bottom right; 
 }
 
@@ -480,11 +483,13 @@ form#advSearchForm.resultsPage {
 
 .infoTab_top div { 
 	height: 5px;
+	font-size: 0px;
 	background: url(html/images/infotab_top_left.gif) no-repeat top left;
 }
 
 .infoTab_top {
 	height: 5px;
+	font-size: 0px;
 	background: url(html/images/infotab_top_right.gif) no-repeat top right; 
 }
 
@@ -502,11 +507,36 @@ form#advSearchForm.resultsPage {
 #playlistTab {
 	position: relative;
 	bottom: 5px;
+	text-align: left;
 }
 
 #playlistTab .infoTab_content {
 	margin-left: 20px;
 	margin-right: 20px;
+}
+
+#playlistCommands {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+#playlistCommands .buttonsRight {
+	position: absolute;
+	right: 30px;
+}
+
+#playlistToggleArtwork {
+	text-decoration: none;
+}
+
+#playlistToggleArtwork img {
+	height: 13px;
+	background: url(html/images/checkbox_panefooter.gif) no-repeat 0 -13px;
+	vertical-align: bottom;
+}
+
+#playlistToggleArtwork img.showCover {
+	background: url(html/images/checkbox_panefooter.gif) no-repeat 0 0;
 }
 
 #mainbody {

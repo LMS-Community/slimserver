@@ -334,8 +334,14 @@ Playlist = function(){
 				this.onUpdated
 			);
 		},
+
+		clear : function(){ 
+			Player.playerControl(['playlist', 'clear']); 
+		},
 		
-		clear : function(){ Player.playerControl(['playlist', 'clear']); },
+		save : function(){
+			frames.browser.location = webroot + 'edit_playlist.html?player=' + player + '&saveCurrentPlaylist=1';
+		},
 		
 		resetUrl : function(){
 			if(el = Ext.get('playlistPanel'))
@@ -373,6 +379,28 @@ Playlist = function(){
 
 
 			Playlist.highlightCurrent();
+
+			new Ext.Button('btnPlaylistClear', {
+				cls: 'btn-small',
+				text: strings['clear_playlist'],
+				icon: webroot + 'html/images/icon_playlist_clear.gif',
+				handler: Playlist.clear
+			});
+
+			// playlist name is too long to be displayed
+			// try to use it as the Save button's tooltip
+			tooltip = null;
+			if (el = Ext.get('currentPlaylistName'))
+				tooltip = el.dom.innerHTML;
+
+			new Ext.Button('btnPlaylistSave', {
+				cls: 'btn-small',
+				text: strings['save'],
+				icon: webroot + 'html/images/icon_playlist_save.gif',
+				tooltip: tooltip,
+				tooltipType: 'title',
+				handler: Playlist.save
+			});
 		},
 
 		highlightCurrent : function(){

@@ -11,27 +11,34 @@
 }
 
 .x-btn {
-	display: inline;
+	display: inline-table;
 }
 
+.x-btn-menu-arrow-wrap .x-btn-center button {
+    height:22px;
+    background-image: url(html/images/btn-arrow.gif);
+}
+
+
+/* standard buttons */
 .x-btn-text, .x-btn button {
 	color: #d1d1d1;
 	font-weight: bold;
 }
 
-.x-btn-left{
+.x-btn-left {
 	width: 5px;
 	height: 22px;
 	background: url(html/images/btn_generic.gif) no-repeat 0 0;
 }
 
-.x-btn-right{
+.x-btn-right {
 	width: 5px;
 	height: 22px;
 	background: url(html/images/btn_generic.gif) no-repeat 0 -22px;
 }
 
-.x-btn-center{
+.x-btn-center {
 	background: url(html/images/btn_generic.gif) repeat-x 0 -44px;
 	vertical-align: middle;
 	text-align: center;
@@ -40,30 +47,47 @@
 	white-space: nowrap;
 }
 
-.x-btn-over .x-btn-left{
-	background-position:0 -66px;
+.x-btn-over .x-btn-left { background-position:0 -66px; }
+.x-btn-over .x-btn-right { background-position:0 -88px; }
+.x-btn-over .x-btn-center { background-position:0 -110px; }
+.x-btn-click .x-btn-left { background-position:0 -132px; }
+.x-btn-click .x-btn-right { background-position:0 -154px; }
+.x-btn-click .x-btn-center { background-position:0 -176px; }
+
+
+/* small buttons */
+.btn-small .x-btn-text, .btn-small .x-btn button {
+	color: white;
+	font-weight: normal;
+	font-size: 90%
 }
 
-.x-btn-over .x-btn-right{
-	background-position:0 -88px;
+.btn-small .x-btn-left {
+	width: 5px;
+	height: 17px;
+	background: url(html/images/btn_small.gif) no-repeat 0 0;
 }
 
-.x-btn-over .x-btn-center{
-	background-position:0 -110px;
+.btn-small .x-btn-right {
+	width: 5px;
+	height: 17px;
+	background: url(html/images/btn_small.gif) no-repeat 0 -17px;
 }
 
-.x-btn-click .x-btn-left{
-	background-position:0 -132px;
+.btn-small .x-btn-center {
+	background: url(html/images/btn_small.gif) repeat-x 0 -34px;
+	padding: 0 3px;
 }
 
-.x-btn-click .x-btn-right{
-	background-position:0 -154px;
-}
+.btn-small .x-btn-over .x-btn-left { background-position:0 -51px; }
+.btn-small .x-btn-over .x-btn-right { background-position:0 -68px; }
+.btn-small .x-btn-over .x-btn-center { background-position:0 -85px; }
+.btn-small .x-btn-click .x-btn-left { background-position:0 -102px; }
+.btn-small .x-btn-click .x-btn-right { background-position:0 -119px; }
+.btn-small .x-btn-click .x-btn-center { background-position:0 -136px; }
 
-.x-btn-click .x-btn-center{
-	background-position:0 -176px;
-}
-
-.x-btn-menu-arrow-wrap .x-btn-center button {
-    height:22px;
+.btn-small .x-btn-center .x-btn-text {
+	background-repeat: no-repeat;
+	background-position: 0pt;
+	padding-left: 10px;
 }
