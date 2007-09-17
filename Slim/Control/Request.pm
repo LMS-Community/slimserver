@@ -1953,8 +1953,11 @@ sub registerAutoExecute{
 
 		$log->info("Old friend: $cnxid - $name - $clientid");
 
+		# call old cleanup if it exists and is different from the cleanup for new request
 		if (my $cleanup = $oldrequest->autoExecuteCleanup()) {
-			eval { &{$cleanup}($oldrequest, $cnxid) };
+			if (!$cleanupFunc || $cleanupFunc != $cleanup) {
+				eval { &{$cleanup}($oldrequest, $cnxid) };
+			}
 		}
 
 		delete $subscribers{$cnxid}{$name}{$clientid};
