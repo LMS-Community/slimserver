@@ -291,6 +291,19 @@ PlayerChooser = function(){
 			playerList.setText(ev.text);
 			playerid = ev.value;
 			player = encodeURI(playerid);
+
+			// set the browser frame to use the selected player
+			if (frames.browser) {
+				browseUrl = new String(frames.browser.location.href);
+
+				var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
+
+				if (rExp.exec(browseUrl)) {
+					frames.browser.location = browseUrl.replace(rExp, '=' + playerid);
+				} else {
+					frames.browser.location = frames.browser.location.href + '?player=' + playerid;
+				}
+			}
 			
 			if (el = Ext.get('playerSettingsLink'))
 				el.setVisible(playerid ? true : false);
