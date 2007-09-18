@@ -89,9 +89,12 @@ sub handler {
 	}
 
 	$paramRef->{'titleFormatOptions'}    = hashOfPrefs('titleFormat');
-	$paramRef->{'playingDisplayOptions'} = getPlayingDisplayModes($client);
-	$paramRef->{'visualModeOptions'}     = getVisualModes($client);
-	$paramRef->{'screensavers'}          = Slim::Buttons::Common::hash_of_savers();
+	
+	if (!$client->display->isa('Slim::Display::NoDisplay')) {
+		$paramRef->{'playingDisplayOptions'} = getPlayingDisplayModes($client);
+		$paramRef->{'visualModeOptions'}     = getVisualModes($client);
+		$paramRef->{'screensavers'}          = Slim::Buttons::Common::hash_of_savers();
+	}
 
 	$paramRef->{'version'}        = $client->revision;
 	$paramRef->{'ipaddress'}      = $client->ipport;
