@@ -110,7 +110,12 @@ sub set {
 
 	if ($valid && $pref !~ /^_/) {
 
-		$log->debug(sprintf "setting %s:%s:%s to %s", $namespace, $clientid, $pref, defined $new ? $new : 'undef');
+		$log->debug( sub {
+			sprintf(
+				"setting %s:%s:%s to %s",
+				$namespace, $clientid, $pref, defined $new ? Data::Dump::dump($new) : 'undef'
+			)
+		} );
 
 		$class->{'prefs'}->{ $pref } = $new;
 		
@@ -120,7 +125,7 @@ sub set {
 
 		if ($change && (!defined $old || !defined $new || $old ne $new || ref $new)) {
 
-			$log->debug("excuting on change function");
+			$log->debug('executing on change function');
 
 			$change->($pref, $new, $class->_obj);
 		}
@@ -131,7 +136,12 @@ sub set {
 
 	} else {
 
-		$log->warn(sprintf "attempting to set %s:%s:%s to %s - invalid value", $namespace, $clientid, $pref, defined $new ? $new : 'undef');
+		$log->warn( sub {
+			sprintf(
+				"attempting to set %s:%s:%s to %s - invalid value",
+				$namespace, $clientid, $pref, defined $new ? Data::Dump::dump($new) : 'undef'
+			)
+		} );
 
 		return wantarray ? ($old, 0) : $old;
 	}
@@ -157,8 +167,11 @@ sub init {
 
 			my $value = ref $hash->{ $pref } eq 'CODE' ? $hash->{ $pref }->() : $hash->{ $pref };
 
-			$log->info("init " . $class->_root->{'namespace'} . ":" . ($class->{'clientid'} || '') . ":" . $pref .
-					   " to " . (defined $value ? $value : 'undef'));
+			$log->info( sub {
+				"init " . $class->_root->{'namespace'} . ":" 
+				. ($class->{'clientid'} || '') . ":" . $pref 
+				. " to " . (defined $value ? Data::Dump::dump($value) : 'undef')
+			} );
 
 			$class->{'prefs'}->{ $pref } = $value;
 			
@@ -180,7 +193,9 @@ sub remove {
 
 	while (my $pref  = shift) {
 
-		$log->info("removing " . $class->_root->{'namespace'} . ":" . ($class->{'clientid'} || '') . ":" . $pref);
+		$log->info( sub {
+			"removing " . $class->_root->{'namespace'} . ":" . ($class->{'clientid'} || '') . ":" . $pref
+		} );
 
 		delete $class->{'prefs'}->{ $pref };
 		
@@ -262,7 +277,11 @@ sub AUTOLOAD {
 
 	if ($optimiseAccessors) {
 
-		$log->debug("creating accessor for " . $class->_root->{'namespace'} . ":" . ($class->{'clientid'} || '') . ":" . $pref);
+		$log->debug( sub {
+			  "creating accessor for " 
+			. $class->_root->{'namespace'} . ":" 
+			. ($class->{'clientid'} || '') . ":" . $pref
+		} );
 
 		no strict 'refs';
 		*{ $AUTOLOAD } = sub { @_ == 1 ? shift->{'prefs'}->{ $pref } : shift->set($pref, shift) };
