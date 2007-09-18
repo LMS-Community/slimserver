@@ -165,6 +165,10 @@ Main = function(){
 			left.setHeight(dimensions['colHeight']);
 			left.setWidth(dimensions['colWidth']);
 
+			// IE7 wouldn't overflow without an absoulte width
+			if (Ext.isIE7)
+				Ext.get('ctrlCurrentSongInfoCollapsed').setWidth(dimensions['colWidth'] - 160);
+
 			// right column
 			right.setHeight(dimensions['colHeight'] - offset['rightpanel']);
 			Ext.get('playerControlPanel').setWidth(dimensions['colWidth'] - 15);
