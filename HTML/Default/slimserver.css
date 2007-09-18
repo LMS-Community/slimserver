@@ -73,6 +73,8 @@ div.thumbwrap {
 .searchHeader {
 	margin-top: 15px;
 	margin-bottom: 5px;
+	text-align: center;
+	border-bottom: 1px solid white; 
 }
 
 .playlistCover, .browseCover {
@@ -123,18 +125,24 @@ div.thumbwrap {
 }
 
 #livesearch {
-	height: 12pt;
-	width: 100px;
+	width: 200px;
 	font-size: 11px;
 }
 
-#searchForm {
-	margin-left: 10px;
+.titlebox #livesearch {
+	height: 12pt;
+	background: white url(html/images/search.gif) no-repeat top right;
 }
 
 form#advSearchForm.resultsPage {
 	height: 0px;
 	display: none;
+}
+
+#advSearchLink {
+	padding-left: 10px;
+	padding-top: 4px;
+	font-size: 11px;
 }
 
 .titlebox_content #livesearch {
@@ -873,14 +881,14 @@ form#advSearchForm.resultsPage {
 	background: transparent url(html/images/btn_player_toggle_exp.gif) no-repeat 0 0;
 }
 
-.x-btn-over .btn-expand-player button,
-.x-btn-over .btn-collapse-player button {
-	background-position: 0 -18;
+#ctrlExpand .x-btn-over button,
+#ctrlCollapse .x-btn-over button {
+	background-position: 0 -18px;
 }
 
-.x-btn-click .btn-expand-player button,
-.x-btn-click .btn-collapse-player button {
-	background-position: 0 -36;
+#ctrlExpand .x-btn-click button,
+#ctrlCollapse .x-btn-click button {
+	background-position: 0 -36px;
 }
 
 #ctrlBar {

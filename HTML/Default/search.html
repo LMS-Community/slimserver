@@ -1,4 +1,4 @@
-[% pagetitle = 'Search'; pageicon = 'Search' %]
+[% pagetitle = 'Search' %]
 [% homeCategory = 'MY_MUSIC' %]
 [% extJsScripts = BLOCK %]
 	<script type="text/javascript">
@@ -9,26 +9,24 @@
 
 			new Ext.Button('searchButton', {
 				text: '[% "SEARCH" | string %]',
+				icon: webroot + 'html/images/search.gif',
+				cls: 'x-btn-text-icon',
 				type: 'submit',
 				handler: function(){
 					document.forms.searchForm.submit();
 				}
 			});
 
-			new Ext.Button('advSearchButton', {
-				text: '[% "ADVANCEDSEARCH" | string %]',
-				type: 'submit',
-				handler: function(){
-					Ext.get('searchForm').setVisibilityMode(Ext.Element.DISPLAY);
-					Ext.get('searchForm').setVisible(false);
-					Ext.get('search-results').update('');
+			Ext.get('advSearchLink').on('click', function(){
+				Ext.get('searchForm').setVisibilityMode(Ext.Element.DISPLAY);
+				Ext.get('searchForm').setVisible(false);
+				Ext.get('search-results').update('');
 
-					if (el = Ext.get('browsedbList'))
-						el.update('');
+				if (el = Ext.get('browsedbList'))
+					el.update('');
 
-					if (el = Ext.get('advSearchForm'))
-						el.setVisible(true);
-				}
+				if (el = Ext.get('advSearchForm'))
+					el.setVisible(true);
 			});
 		});
 	</script>
@@ -40,9 +38,9 @@
 
 	<form id="searchForm" name="searchForm" method="GET" action="search.html">
 		<table><tr>
-			<td><input type="text" id="livesearch" name="query" size="40" value="[% query %]" autocomplete="off"/></td>
+			<td><input type="text" id="livesearch" name="query" size="50" value="[% query %]" autocomplete="off"/></td>
 			<td><span id="searchButton"></span></td>
-			<td><span id="advSearchButton"></span></td>
+			<td id="advSearchLink" class="link">[% "ADVANCEDSEARCH" | string %]</td>
 		</tr></table>
 		<input type="hidden" value="1" name="manualSearch">
 		<input type="hidden" value="[% player %]" name="player">
