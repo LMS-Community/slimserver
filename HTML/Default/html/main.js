@@ -301,7 +301,7 @@ PlayerChooser = function(){
 				if (rExp.exec(browseUrl)) {
 					frames.browser.location = browseUrl.replace(rExp, '=' + playerid);
 				} else {
-					frames.browser.location = frames.browser.location.href + '?player=' + playerid;
+					frames.browser.location = frames.browser.location.href + '&player=' + playerid;
 				}
 			}
 			
