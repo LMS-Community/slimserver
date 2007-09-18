@@ -25,7 +25,7 @@
 				[% IF item.includeArtist && item.artist && item.artist != item.noArtist; PROCESS artistsAsHTML.html itemobj = item.itemobj noby = 1; END %]
 			</div>
 		[% END %]
-		<div class="playlistControls">
+		<div class="playlistControls" style="display: none;">
 			<img onclick="Player.playerControl(['playlist', 'index', '[% item.num %]'])" src="[% webroot %]html/images/b_play.gif" width="13" height="13" alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]">
 			<img onclick="Player.playerControl(['playlist', 'delete', '[% item.num %]'])" src="[% webroot %]html/images/b_delete.gif" width="13" height="13" alt="[% "DELETE" | string %]" title="[% "DELETE" | string %]"></a>
 		</div>
