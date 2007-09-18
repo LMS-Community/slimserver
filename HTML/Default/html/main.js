@@ -293,7 +293,7 @@ PlayerChooser = function(){
 			player = encodeURI(playerid);
 
 			// set the browser frame to use the selected player
-			if (frames.browser) {
+			if (player && frames.browser) {
 				browseUrl = new String(frames.browser.location.href);
 
 				var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
