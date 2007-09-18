@@ -205,7 +205,7 @@ sub defaultMapFile {
 
 	if (!defined($defaultMapFile)) {
 		my @dirs = IRFileDirs();
-		$defaultMapFile = file($dirs[0],defaultMap() . '.map');
+		$defaultMapFile = file($dirs[0],defaultMap() . '.map')->stringify;
 	}
 
 	return $defaultMapFile;
