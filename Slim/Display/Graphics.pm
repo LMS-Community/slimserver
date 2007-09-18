@@ -679,7 +679,7 @@ sub fonts {
 		
 	# grab base for prefname depending on mode
 	my $prefname = ($client->power()) ? "activeFont" : "idleFont";
-	my $font = @{ $prefs->client($client)->get($prefname) }->[ $size ];
+	my $font = $prefs->client($client)->get($prefname)->[ $size ];
 	
 	my $fontref = Slim::Display::Lib::Fonts::gfonthash();
 
