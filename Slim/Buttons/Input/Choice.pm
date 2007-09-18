@@ -277,7 +277,7 @@ sub callCallback {
 
 	if (ref($callback) eq 'CODE') {
 
-		my @args = ($client, $valueRef ? ($$valueRef) : undef);
+		my @args = ($client, $valueRef ? ($$valueRef) : undef, $functarg);
 
 		eval { $callback->(@args) };
 
