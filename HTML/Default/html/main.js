@@ -167,7 +167,7 @@ Main = function(){
 
 			// right column
 			right.setHeight(dimensions['colHeight'] - offset['rightpanel']);
-			Ext.get('playerControlPanel').setWidth(dimensions['colWidth'] - 20);
+			Ext.get('playerControlPanel').setWidth(dimensions['colWidth'] - 15);
 
 			// playlist field
 			if (pl = Ext.get('playList')) {
@@ -445,6 +445,7 @@ Player = function(){
 		tracks: null,
 		index: null,
 		volume: null,
+		duration: null,
 		shuffle: null
 	};
 
@@ -538,8 +539,10 @@ Player = function(){
 				handler: this.ctrlPower
 			});
 
-			if (el = Ext.get('expandedPlayerPanel'))
+			if (el = Ext.get('expandedPlayerPanel')) {
 				el.setVisibilityMode(Ext.Element.DISPLAY);
+//				el.hide();
+			}
 
 			new Slim.Button('ctrlCollapse', {
 				cls: 'btn-collapse-player',
@@ -571,23 +574,30 @@ Player = function(){
 			// force 0 for current time when stopped
 			if (playerStatus.mode == 'stop') 
 				time = 0;
-			
+
 			if (! isNaN(time))
 				playTime = parseInt(time); //force integer type from results
-				
-			Ext.get('ctrlPlaytime').update(this.formatTime(playTime));
-			
-			// only increment interim value if playing
-			if (playerStatus.mode == 'play') 
-				playTime += 0.5;
 
-			if (! isNaN(totalTime)) {
-				Ext.get('ctrlTotalTime').update(' (' + this.formatTime(totalTime) + ')');
+			shortTime = this.formatTime(playTime);
+
+			Ext.get('ctrlPlaytime').update(shortTime);
+
+			if (! isNaN(playerStatus.duration)) {
+				totalTime = playerStatus.duration;
+				Ext.get('ctrlTotalTime').update('&nbsp;(' + this.formatTime(totalTime) + ')');
+
+				shortTime = '-' + this.formatTime(totalTime - playTime) + '&nbsp;(' + this.formatTime(totalTime) + ')'; 
 
 				if (totalTime > 0 && playTime >= totalTime-1)
 					this.getStatus();
 			}
-			
+
+			Ext.get('ctrlPlaytimeCollapsed').update(shortTime);
+
+			// only increment interim value if playing
+			if (playerStatus.mode == 'play') 
+				playTime += 0.5;
+
 			playTimeTimer.delay(500);
 		},
 
@@ -628,9 +638,8 @@ Player = function(){
 						}
 
 						if (result.playlist_tracks > 0) {
-							
-							Ext.get('ctrlCurrentTitle').update(
-								'<a href="' + webroot + 'songinfo.html?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser">'
+
+							currentTitle = '<a href="' + webroot + 'songinfo.html?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser">'
 								+ 
 								(result.current_title ? result.current_title : (
 									(result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
@@ -640,18 +649,22 @@ Player = function(){
 									result.playlist_loop[0].title
 								))
 								+
-								'</a>'
-							);
+								'</a>';
+
+							Ext.get('ctrlCurrentTitle').update(currentTitle);
+
 							Ext.get('ctlSongCount').update(result.playlist_tracks);
 							Ext.get('ctlPlayNum').update(result.playlist_cur_index + 1);
 
 							if (result.playlist_loop[0].artist) {
-								Ext.get('ctrlCurrentArtist').update(
-									result.playlist_loop[0].artist_id
+								currentArtist = result.playlist_loop[0].artist_id
 										? '<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=' + result.playlist_loop[0].artist_id + '&amp;level=1&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].artist + '</a>'
-										: result.playlist_loop[0].artist
-								);
+										: result.playlist_loop[0].artist;
+
+								Ext.get('ctrlCurrentArtist').update(currentArtist);
 								Ext.get('ctrlArtistTitle').show();
+
+								currentTitle += ' ' + strings['by'] + ' ' + currentArtist;
 							}
 							else {
 								Ext.get('ctrlCurrentArtist').update('');
@@ -659,16 +672,18 @@ Player = function(){
 							}
 							
 							if (result.playlist_loop[0].album) {
-								Ext.get('ctrlCurrentAlbum').update(
-									(result.playlist_loop[0].album_id
+								currentAlbum = (result.playlist_loop[0].album_id
 										? '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].album + '</a>'
 										: result.playlist_loop[0].album
 									)
 									+ (result.playlist_loop[0].year ? ' (' 
 										+ '<a href="' + webroot + 'browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=' + result.playlist_loop[0].year + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].year + '</a>' 
-									+ ')' : '')
-								);
+									+ ')' : '');
+
+								Ext.get('ctrlCurrentAlbum').update(currentAlbum);
 								Ext.get('ctrlAlbumTitle').show();
+
+								currentTitle += ' ' + strings['from'] + ' ' + currentAlbum;
 							}
 							else {
 								Ext.get('ctrlCurrentAlbum').update('');
@@ -689,7 +704,9 @@ Player = function(){
 								Ext.get('ctrlBitrate').update('');
 								Ext.get('ctrlBitrateTitle').hide();
 							}
-							
+
+							Ext.get('ctrlCurrentSongInfoCollapsed').update(currentTitle);
+
 							if (result.playlist_loop[0].id && (el = Ext.get('ctrlCurrentArt'))) {
 								coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96x96.jpg"></a>';
 								popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250xX.jpg" width="250">';
@@ -720,8 +737,6 @@ Player = function(){
 							Ext.get('ctrlCurrentAlbum').update('');
 							Ext.get('ctrlCurrentArt').update('<img src="/music/0/cover_96xX.jpg">');
 						}
-
-						this.updatePlayTime(result.time ? result.time : 0, result.duration ? result.duration : 0);
 
 						// update play/pause button
 						playEl = Ext.DomQuery.selectNode('table:first', Ext.get('ctrlTogglePlay').dom);
@@ -758,8 +773,11 @@ Player = function(){
 							tracks: result.playlist_tracks,
 							index: result.playlist_cur_index,
 							volume: result['mixer volume'],
+							duration: result['duration'],
 							shuffle: result['playlist shuffle']
 						};
+
+						this.updatePlayTime(result.time ? result.time : 0);
 					}
 					
 					else if (!result.power)

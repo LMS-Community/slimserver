@@ -63,6 +63,8 @@
 	strings['volumedown'] = "[% "VOLUME_SOFTER" | string %]";
 	strings['collapse'] = "[% "COLLAPSE" | string %]";
 	strings['expand']   = "[% "EXPAND" | string %]";
+	strings['by']       = "[% "BY" | string %]";
+	strings['from']     = "[% "FROM" | string %]";
 </script>
 
 <div class="playerbox">
@@ -133,11 +135,11 @@
 
 			<div id="collapsedPlayerPanel">
 				<div id="ctrlExpand"></div>
+				<div id="nowPlayingIcon"><img src="[% webroot %]html/images/spacer.gif" height="18" width="18"></div>
+				<div id="ctrlPlaytimeCollapsed"></div>
 				
-				<div>
-					<img src="[% webroot %]html/images/icon_nowplaying.gif">
-					all you ever wanted to know about your song...
-				</div>
+		<!-- 		<marquee id="ctrlCurrentSongInfoCollapsed" scrollamount="5" scrolldelay="100"></marquee>
+			 -->	<div id="ctrlCurrentSongInfoCollapsed" style="oveflow:hidden"></div>
 			</div>
 		</div>
 	</div>

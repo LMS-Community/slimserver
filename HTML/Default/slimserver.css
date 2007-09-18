@@ -116,6 +116,7 @@ div.thumbwrap {
 
 .homeMenuItem a,
 #crumblist a,
+#playlistToggleArtwork,
 .browseItemLink {
 	text-decoration: none;
 	font-size: 11px;
@@ -255,9 +256,41 @@ form#advSearchForm.resultsPage {
 }
 
 #collapsedPlayerPanel {
+	position: relative;
 	margin-top: 5px;
 	position: relative;
 	height: 20px;
+	font: 11px;
+}
+
+#ctrlCurrentSongInfoCollapsed {
+	padding: 3px;
+	background-color: #8C8C8C;
+	margin-top: 2px;
+	margin-right: 95px;
+	margin-left: 30px;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+#ctrlCurrentSongInfoCollapsed a {
+	text-decoration: none;
+	font-weight: bold;
+}
+
+#ctrlPlaytimeCollapsed {
+	position: absolute;
+	top: 3px;
+	right: 25px;
+}
+
+#nowPlayingIcon {
+	position: absolute;
+	left: 2px;
+	top: 1px;
+	width: 18px;
+	height: 18px;
+	background: url(html/images/icon_nowplaying.gif) no-repeat top left;
 }
 
 #ctrlExpand, #ctrlCollapse {
@@ -554,7 +587,8 @@ form#advSearchForm.resultsPage {
 }
 
 #playlistToggleArtwork {
-	text-decoration: none;
+	position: absolute;
+	top: 8px;
 }
 
 #playlistToggleArtwork img {
