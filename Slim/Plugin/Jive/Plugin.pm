@@ -61,7 +61,7 @@ sub initPlugin {
 #        C  Q  T  F
 
     Slim::Control::Request::addDispatch(['menu', '_index', '_quantity'], 
-        [1, 1, 1, \&menuQuery]);
+        [0, 1, 1, \&menuQuery]);
 	Slim::Control::Request::addDispatch(['date'],
 		[0, 1, 0, \&dateQuery]);
 	Slim::Control::Request::addDispatch(['firmwareupgrade'],
