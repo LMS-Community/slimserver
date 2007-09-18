@@ -297,6 +297,7 @@ form#advSearchForm.resultsPage {
 	position: absolute;
 	right: 0px;
 	background: url(html/images/btn_player_toggle_col.gif) no-repeat top left;
+	z-index: 9999;
 }
 
 #ctrlCurrentArt {

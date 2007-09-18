@@ -163,9 +163,9 @@ Main = function(){
 			left.setHeight(dimensions['colHeight']);
 			left.setWidth(dimensions['colWidth']);
 
-			// IE7 wouldn't overflow without an absoulte width
-			if (Ext.isIE7)
-				Ext.get('ctrlCurrentSongInfoCollapsed').setWidth(dimensions['colWidth'] - 160);
+			// IE7 wouldn't overflow without an absolute width
+			if (Ext.isIE)
+				Ext.get('ctrlCurrentSongInfoCollapsed').setWidth(dimensions['colWidth'] - 165 + (Ext.isIE7 * 5));
 
 			// right column
 			right.setHeight(dimensions['colHeight'] - offset['rightpanel']);
@@ -541,9 +541,15 @@ Player = function(){
 				handler: this.ctrlPower
 			});
 
+			// work around Safari 2 crasher: hide artwork before hiding surrounding DIV
+			if (el = Ext.get('ctrlCurrentArt')) {
+				el.setVisibilityMode(Ext.Element.DISPLAY);
+				el.hide();
+			}
+
 			if (el = Ext.get('expandedPlayerPanel')) {
 				el.setVisibilityMode(Ext.Element.DISPLAY);
-//				el.hide();
+				el.hide();
 			}
 
 			new Slim.Button('ctrlCollapse', {
@@ -556,7 +562,7 @@ Player = function(){
 
 			if (el = Ext.get('collapsedPlayerPanel')) {
 				el.setVisibilityMode(Ext.Element.DISPLAY);
-				el.hide();
+//				el.hide();
 			}
 
 			new Slim.Button('ctrlExpand', {
@@ -616,7 +622,7 @@ Player = function(){
 
 		updateStatus : function(response) {
 
-			if (response && response.responseText) {
+			if (response && response.responseText) {				
 				var responseText = Ext.util.JSON.decode(response.responseText);
 				
 				// only continue if we got a result and player
@@ -899,12 +905,25 @@ Player = function(){
 		},
 
 		collapseExpand : function(){
+			exp = Ext.get('expandedPlayerPanel');
+			art = Ext.get('ctrlCurrentArt');
+
+			// work around Safari 2 crasher: resize and hide artwork before hiding surrounding DIV
+			if (exp.isVisible() && art) {
+				art.setHeight(0);
+				art.hide();
+			}
+
 			if (el = Ext.get('collapsedPlayerPanel'))
 				el.toggle();
 
-			if (el = Ext.get('expandedPlayerPanel'))
-				el.toggle();
-				
+			exp.toggle();
+
+			if (exp.isVisible() && art) {
+				art.setHeight(96);
+				art.show();
+			}
+
 			try { Main.onResize(); }
 			catch(e) {}
 		},
