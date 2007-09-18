@@ -140,9 +140,7 @@ Main = function(){
 					offset['playlistbottom'] = 41;
 				}
 				else {
-					offset['rightpanel'] = 39;
 					offset['bottom'] = 27;
-					offset['playlistbottom'] = 30;
 				}
 			}
 			else if (Ext.isOpera) {

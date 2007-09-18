@@ -149,19 +149,24 @@ var MainMenu = function(){
 			if (panel == 'home')
 				this.expandItem(Utils.getCookie('SlimServer-homeMenuExpanded'));
 			
+			this.onResize();
 
 			return panelExists;
 		},
 
 		onResize : function(){
 			items = Ext.DomQuery.select('div.homeMenuSection');
-			contW = Ext.get('content').getWidth() - 30;
+			contW = Ext.get(document.body).getWidth() - 30;
 
 			for(var i = 0; i < items.length; i++) {
 				if (el = Ext.get(items[i].id)) {
 					el.setWidth(contW);
 				}
 			}
+
+			if (Ext.isIE && !Ext.isIE7 && (el = Ext.DomQuery.selectNode('div.inner_content')))
+				Ext.get(el).setWidth(contW+25);
+				
 		}
 	}
 }();

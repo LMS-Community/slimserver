@@ -348,23 +348,25 @@ form#advSearchForm.resultsPage {
 	margin-top: 0px;
 }
 
-.inner_top div { 
+.inner_top, .inner_top div, 
+.inner_bottom div, .inner_bottom {
 	height: 10px;
+	font-size: 0px;
+}
+
+.inner_top div { 
 	background: url(html/images/inner_top_left.gif) no-repeat top left;
 }
 
 .inner_top {
-	height: 10px;
 	background: url(html/images/inner_top_right.gif) no-repeat top right; 
 }
 
 .inner_bottom div { 
-	height: 10px;
 	background: url(html/images/inner_bottom_left.gif) no-repeat bottom left; 
 }
 
 .inner_bottom { 
-	height: 10px;
 	background: url(html/images/inner_bottom_right.gif) no-repeat bottom right; 
 }
 
@@ -395,8 +397,11 @@ form#advSearchForm.resultsPage {
 	white-space: nowrap;
 }
 
+.infoTab_top, .infoTab_top div,
 .titlebox_top, .titlebox_top div,
 .titlebox_bottom div, .titlebox_bottom, 
+.pagerbox_top, .pagerbox_top div,
+.pagerbox_bottom, .pagerbox_bottom div,
 .playerbox_top, .playerbox_top div, 
 .playerbox_bottom div, .playerbox_bottom { 
 	height: 5px;
@@ -429,22 +434,18 @@ form#advSearchForm.resultsPage {
 }
 
 .pagerbox_top div { 
-	height: 5px;
 	background: url(html/images/title_top_left.gif) no-repeat top left;
 }
 
 .pagerbox_top {
-	height: 5px;
 	background: url(html/images/title_top_right.gif) no-repeat top right; 
 }
 
 .pagerbox_bottom div { 
-	height: 5px;
 	background: url(html/images/title_bottom_left.gif) no-repeat bottom left; 
 }
 
 .pagerbox_bottom { 
-	height: 5px;
 	background: url(html/images/title_bottom_right.gif) no-repeat bottom right; 
 }
 
