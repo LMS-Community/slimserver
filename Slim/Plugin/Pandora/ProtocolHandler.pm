@@ -311,7 +311,7 @@ sub handleDirectError {
 	my ($stationId)  = $url =~ m{^pandora://([^.]+)\.mp3};
 	my $currentTrack = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
 	
-	my $url = Slim::Networking::SqueezeNetwork->url(
+	my $snURL = Slim::Networking::SqueezeNetwork->url(
 		  '/api/pandora/opml/playback?audioError?stationId=' . $stationId 
 		. '&trackId=' . $currentTrack->{trackToken}
 	);
@@ -325,7 +325,7 @@ sub handleDirectError {
 		},
 	);
 	
-	$http->get( $url );
+	$http->get( $snURL );
 	
 	# XXX: Stop after a certain number of errors in a row
 	

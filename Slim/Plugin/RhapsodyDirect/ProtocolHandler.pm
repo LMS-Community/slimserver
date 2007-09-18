@@ -575,6 +575,8 @@ sub gotTrackMetadata {
 		type    => 'WMA (Rhapsody)',
 	};
 	
+	# XXX: Clean up this metadata with a timer
+	
 	$client->pluginData( metaCache => $meta );
 }
 
