@@ -29,7 +29,7 @@
 				<span id="playlistToggleArtwork" onclick="Playlist.[% IF noPlaylistCover %]showCoverArt()[% ELSE %]hideCoverArt()[% END %];" class="link">
 					<img src="[% webroot %]html/images/spacer.gif" width="15" [% IF noPlaylistCover %]class="showCover"[% END %]/> [% "SHOW_ARTWORK" | string %]
 				</span>
-				
+
 				<span class="buttonsRight">
 					[% IF current_playlist %]<span id="currentPlaylistName" style="display:none">[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %]</span>[% END %]
 					<table><tr>

@@ -6,10 +6,10 @@ END %]
 [% pwd_list = BLOCK %]
 	/ [% "SONG_INFO" | string %] [% "FOR" | string %] <i><a href="songinfo.html?item=[% itemobj.id %]&amp;player=[% playerURI %]">[% itemobj.title | html %]</a></i>
 [% END %]
-[% PROCESS pageheader.html %] 
+[% PROCESS pageheader.html %]
 
 [% songInfoPlayLinks = BLOCK; PROCESS songInfoPlayLinks; END %]
 
-[% PROCESS songinfo_details.html artAtTop=1 %] 
+[% PROCESS songinfo_details.html artAtTop=1 %]
 
 [% PROCESS pagefooter.html %]

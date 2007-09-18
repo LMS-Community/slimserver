@@ -6,17 +6,13 @@
 	width: 97%;
 }
 
-.browsedbControls {
-	right: 25px;
-}
-
-.mouseOver .selector_bottomRight, 
-.mouseOver .selector_topLeft { 
+.mouseOver .selector_bottomRight,
+.mouseOver .selector_topLeft {
 	height: 18px;
 	bottom: 0;
 }
 
-.itemWithCover, .currentSong { 
+.itemWithCover, .currentSong {
 	height: 34px;
 }
 

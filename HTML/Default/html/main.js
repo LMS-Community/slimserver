@@ -18,7 +18,7 @@ Main = function(){
 					autoScroll: false
 				}
 			});
-			
+
 			layout.beginUpdate();
 			layout.add('north', new Ext.ContentPanel('header', {fitToFrame:true, fitContainer:true}));
 			layout.add('south', new Ext.ContentPanel('footer', {fitToFrame:true, fitContainer:true}));
@@ -27,20 +27,20 @@ Main = function(){
 			Player.init();
 
 			// TODO: these links need to go to the correct pages
-			Ext.get('helpLink').on('click', function(){ 
-				window.open(webroot + 'html/docs/quickstart.html', 'settings', 'dependent=yes,resizable=yes'); 
+			Ext.get('helpLink').on('click', function(){
+				window.open(webroot + 'html/docs/quickstart.html', 'settings', 'dependent=yes,resizable=yes');
 			});
 
-			Ext.get('settingsLink').on('click', function(){ 
-				window.open('/EN/settings/server/basic.html', 'settings', 'dependent=yes,resizable=yes'); 
+			Ext.get('settingsLink').on('click', function(){
+				window.open('/EN/settings/server/basic.html', 'settings', 'dependent=yes,resizable=yes');
 			});
 
-			Ext.get('playerSettingsLink').on('click', function(){ 
-				window.open('/EN/settings/player/basic.html?playerid=' + player, 'playersettings', 'dependent=yes,resizable=yes'); 
+			Ext.get('playerSettingsLink').on('click', function(){
+				window.open('/EN/settings/player/basic.html?playerid=' + player, 'playersettings', 'dependent=yes,resizable=yes');
 			});
 
-			Ext.get('progressInfo').on('click', function(){ 
-				window.open('progress.html?type=importer', 'dependent=yes,resizable=yes'); 
+			Ext.get('progressInfo').on('click', function(){
+				window.open('progress.html?type=importer', 'dependent=yes,resizable=yes');
 			});
 
 			PlayerChooser.init();
@@ -56,7 +56,7 @@ Main = function(){
 
 			layout.endUpdate();
 
-			Ext.get('leftcontent').dom.src = webroot + 'home.html?player=' + player; 
+			Ext.get('leftcontent').dom.src = webroot + 'home.html?player=' + player;
 
 			Ext.QuickTips.init();
 			Ext.get('loading').hide();
@@ -68,8 +68,8 @@ Main = function(){
 
 		// scan progress status updates
 		getScanStatus : function(){
-			Ext.Ajax.url = '/jsonrpc.js'; 
-			
+			Ext.Ajax.url = '/jsonrpc.js';
+
 			Ext.Ajax.request({
 				params: Ext.util.JSON.encode({
 					id: 1,
@@ -83,20 +83,20 @@ Main = function(){
 				scope: this
 			});
 		},
-		
+
 		scanUpdate : function (response){
 			if (response && response.responseText) {
 				var responseText = Ext.util.JSON.decode(response.responseText);
-				
+
 				// only continue if we got a result and player
 				if (responseText.result) {
 					var result = responseText.result;
-					
+
 					if (result.rescan) {
 						if (el = Ext.get('scanWarning'))
 							el.show();
 
-						if ((el = Ext.get('progressInfo')) && result.progresstotal) 
+						if ((el = Ext.get('progressInfo')) && result.progresstotal)
 							el.show();
 
 						if (total = Ext.get('progressTotal')) {
@@ -112,7 +112,7 @@ Main = function(){
 				}
 			}
 		},
-		
+
 		checkScanStatus : function(response){
 			if (response.result && response.result.rescan) {
 				if (el = Ext.get('newVersion'))
@@ -147,7 +147,7 @@ Main = function(){
 				offset['bottom'] = 28;
 				offset['playlistbottom'] = 37;
 			}
-				
+
 			dimensions = new Array();
 			dimensions['maxHeight'] = Ext.get(document.body).getHeight();
 			dimensions['footer'] = Ext.get('footer').getHeight();
@@ -179,7 +179,7 @@ Main = function(){
 			try { this.layout(); }
 			catch(e) {}
 		}
-	};   
+	};
 }();
 
 
@@ -201,18 +201,18 @@ PlayerChooser = function(){
 				menu: new Ext.menu.Menu()
 			});
 			playerDiscoveryTimer = new Ext.util.DelayedTask(this.update, this);
-			
+
 			this.update();
 		},
 
 		update : function(){
 			Ext.Ajax.request({
 				params: Ext.util.JSON.encode({
-					id: 1, 
-					method: "slim.request", 
-					params: [ 
+					id: 1,
+					method: "slim.request",
+					params: [
 						'',
-						[ 
+						[
 							"serverstatus",
 							0,
 							99
@@ -225,7 +225,7 @@ PlayerChooser = function(){
 				success: function(response){
 					if (response && response.responseText) {
 						var responseText = Ext.util.JSON.decode(response.responseText);
-	
+
 						// let's set the current player to the first player in the list
 						if (responseText.result && responseText.result['player count'] > 0) {
 							playerList.menu.removeAll();
@@ -269,12 +269,12 @@ PlayerChooser = function(){
 							}
 
 							if (el = Ext.get('playerSettingsLink'))
-								el.setVisible(playerid ? true : false);			
+								el.setVisible(playerid ? true : false);
 
 							// display scanning information
 							Main.checkScanStatus(responseText);
 						}
-						
+
 						else {
 							PlayerChooser.selectPlayer({
 								text: '',
@@ -288,7 +288,7 @@ PlayerChooser = function(){
 			// poll more often when there's no player, to show them up as quickly as possible
 			playerDiscoveryTimer.delay(player ? 30000 : 10000);
 		},
-		
+
 		selectPlayer: function(ev){
 			playerList.setText(ev.text);
 			playerid = ev.value;
@@ -306,10 +306,10 @@ PlayerChooser = function(){
 					frames.browser.location = frames.browser.location.href + '&player=' + playerid;
 				}
 			}
-			
+
 			if (el = Ext.get('playerSettingsLink'))
 				el.setVisible(playerid ? true : false);
-			
+
 			Playlist.resetUrl();
 			Player.getStatus();
 		}
@@ -337,14 +337,14 @@ Playlist = function(){
 			);
 		},
 
-		clear : function(){ 
-			Player.playerControl(['playlist', 'clear']); 
+		clear : function(){
+			Player.playerControl(['playlist', 'clear']);
 		},
-		
+
 		save : function(){
 			frames.browser.location = webroot + 'edit_playlist.html?player=' + player + '&saveCurrentPlaylist=1';
 		},
-		
+
 		resetUrl : function(){
 			if(el = Ext.get('playlistPanel'))
 				el.getUpdateManager().setDefaultUrl('');
@@ -376,7 +376,7 @@ Playlist = function(){
 							Ext.get(controls).hide();
 						}
 					}
-				}				
+				}
 			});
 
 
@@ -454,7 +454,7 @@ Player = function(){
 	return {
 		init : function(){
 			Ext.Ajax.method = 'POST';
-			Ext.Ajax.url = '/jsonrpc.js'; 
+			Ext.Ajax.url = '/jsonrpc.js';
 
 			new Slim.Button('ctrlPrevious', {
 				cls: 'btn-previous',
@@ -514,7 +514,7 @@ Player = function(){
 
 			if (el = Ext.get('ctrlVolume').child('img:first'))
 				el.on('click', function(ev, target) {
-					
+
 					if (el = Ext.get(target)) {
 						myStep = el.getWidth()/11;
 						myWidth = el.getWidth() - 2*myStep;
@@ -578,7 +578,7 @@ Player = function(){
 
 		updatePlayTime : function(time, totalTime){
 			// force 0 for current time when stopped
-			if (playerStatus.mode == 'stop') 
+			if (playerStatus.mode == 'stop')
 				time = 0;
 
 			if (! isNaN(time))
@@ -592,7 +592,7 @@ Player = function(){
 				totalTime = playerStatus.duration;
 				Ext.get('ctrlTotalTime').update('&nbsp;(' + this.formatTime(totalTime) + ')');
 
-				shortTime = '-' + this.formatTime(totalTime - playTime) + '&nbsp;(' + this.formatTime(totalTime) + ')'; 
+				shortTime = '-' + this.formatTime(totalTime - playTime) + '&nbsp;(' + this.formatTime(totalTime) + ')';
 
 				if (totalTime > 0 && playTime >= totalTime-1)
 					this.getStatus();
@@ -601,7 +601,7 @@ Player = function(){
 			Ext.get('ctrlPlaytimeCollapsed').update(shortTime);
 
 			// only increment interim value if playing
-			if (playerStatus.mode == 'play') 
+			if (playerStatus.mode == 'play')
 				playTime += 0.5;
 
 			playTimeTimer.delay(500);
@@ -620,9 +620,9 @@ Player = function(){
 
 		updateStatus : function(response) {
 
-			if (response && response.responseText) {				
+			if (response && response.responseText) {
 				var responseText = Ext.util.JSON.decode(response.responseText);
-				
+
 				// only continue if we got a result and player
 				if (responseText.result && responseText.result.player_connected) {
 					var result = responseText.result;
@@ -646,10 +646,10 @@ Player = function(){
 						if (result.playlist_tracks > 0) {
 
 							currentTitle = '<a href="' + webroot + 'songinfo.html?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser">'
-								+ 
+								+
 								(result.current_title ? result.current_title : (
 									(result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
-									+ 
+									+
 									(result.playlist_loop[0].tracknum ? result.playlist_loop[0].tracknum + ". " : '')
 									+
 									result.playlist_loop[0].title
@@ -676,14 +676,14 @@ Player = function(){
 								Ext.get('ctrlCurrentArtist').update('');
 								Ext.get('ctrlArtistTitle').hide();
 							}
-							
+
 							if (result.playlist_loop[0].album) {
 								currentAlbum = (result.playlist_loop[0].album_id
 										? '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].album + '</a>'
 										: result.playlist_loop[0].album
 									)
-									+ (result.playlist_loop[0].year ? ' (' 
-										+ '<a href="' + webroot + 'browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=' + result.playlist_loop[0].year + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].year + '</a>' 
+									+ (result.playlist_loop[0].year ? ' ('
+										+ '<a href="' + webroot + 'browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=' + result.playlist_loop[0].year + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].year + '</a>'
 									+ ')' : '');
 
 								Ext.get('ctrlCurrentAlbum').update(currentAlbum);
@@ -699,7 +699,7 @@ Player = function(){
 							if (result.playlist_loop[0].bitrate) {
 								Ext.get('ctrlBitrate').update(
 									result.playlist_loop[0].bitrate
-									+ (result.playlist_loop[0].type 
+									+ (result.playlist_loop[0].type
 										? ', ' + result.playlist_loop[0].type
 										: ''
 									)
@@ -716,12 +716,12 @@ Player = function(){
 							if (result.playlist_loop[0].id && (el = Ext.get('ctrlCurrentArt'))) {
 								coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96x96.jpg"></a>';
 								popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250xX.jpg" width="250">';
-								
+
 								if (result.playlist_loop[0].artwork_url) {
 									coverart = '<img src="' + result.playlist_loop[0].artwork_url + '" height="96" />';
 									popup    = '<img src="' + result.playlist_loop[0].artwork_url + ' />';
 								}
-								
+
 								el.update(coverart);
 								el = el.child('img:first');
 								Ext.QuickTips.unregister(el);
@@ -785,23 +785,23 @@ Player = function(){
 
 						this.updatePlayTime(result.time ? result.time : 0);
 					}
-					
+
 					else if (!result.power)
 						playerStatus.power = 0;
 				}
 			}
 			pollTimer.delay(5000);
 		},
-		
+
 		getUpdate : function(){
 			if (player) {
 				Ext.Ajax.request({
 					params: Ext.util.JSON.encode({
-						id: 1, 
-						method: "slim.request", 
-						params: [ 
+						id: 1,
+						method: "slim.request",
+						params: [
 							playerid,
-							[ 
+							[
 								"status",
 								"-",
 								1,
@@ -809,29 +809,29 @@ Player = function(){
 							]
 						]
 					}),
-	
+
 					failure: this.updateStatus,
 					success: this.updateStatus,
-	
+
 					scope: this
 				});
 
 				pollTimer.delay(5000);
 			}
 		},
-		
-		
+
+
 		// don't request all status info to minimize performance impact on the server
 		getStatus : function() {
 			// only poll player state if there is a player connected
 			if (player) {
 				Ext.Ajax.request({
 					params: Ext.util.JSON.encode({
-						id: 1, 
-						method: "slim.request", 
-						params: [ 
+						id: 1,
+						method: "slim.request",
+						params: [
 							playerid,
-							[ 
+							[
 								"status",
 								"-",
 								1,
@@ -839,11 +839,11 @@ Player = function(){
 							]
 						]
 					}),
-	
+
 					success: function(response){
 						if (response && response.responseText) {
 							var responseText = Ext.util.JSON.decode(response.responseText);
-							
+
 							// only continue if we got a result and player
 							if (responseText.result && responseText.result.player_connected) {
 								var result = responseText.result;
@@ -860,11 +860,11 @@ Player = function(){
 								){
 									this.getUpdate();
 								}
-	
+
 								else if (result['mixer volume'] != null  && result['mixer volume'] != playerStatus.volume) {
 									this.updateStatus(response)
 								}
-	
+
 								playerStatus.duration = result.duration;
 								this.updatePlayTime(result.time);
 							}
@@ -873,20 +873,20 @@ Player = function(){
 							Main.checkScanStatus(responseText);
 						}
 					},
-					
+
 					failure: function(){
 						playerid = '';
 						player = encodeURI(playerid);
 						PlayerChooser.update
 					},
-	
+
 					scope: this
 				});
 
 				pollTimer.delay(5000);
 			}
 		},
-		
+
 		playerControl : function(action){
 			Ext.Ajax.request({
 				params: Ext.util.JSON.encode({
@@ -957,7 +957,7 @@ Player = function(){
 				amount = d + amount;
 			this.playerControl(['mixer', 'volume', amount]);
 		},
-		
+
 		// TODO: first ask, then change
 		ctrlRepeat : function(){ this.playerControl(['playlist', 'repeat', '?']); },
 		ctrlShuffle : function(){ this.playerControl(['playlist', 'shuffle', '?']); }

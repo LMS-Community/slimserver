@@ -34,7 +34,7 @@
 				[% WRAPPER addlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]');"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]
 			[% END; title = ""; PROCESS songInfoItem %]
 		[% END; END %]
-	
+
 		[% PROCESS xmlbrowser_details.html %]
 [% END %]
 
@@ -58,7 +58,7 @@
 			</div>
 		[% END %]
 	</div>
-	
+
 	[% BLOCK favoritescontrol %]<span id="controls[% index _ (start + loop.index) %]" [% IF useAJAX %]style="display: none;"[% END %]>
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
@@ -70,24 +70,24 @@
 			[% END %]
 		[% END %]</span>
 	[% END %]
-	
+
 	[%- WRAPPER contentcontainer %]
 		[% IF image %]
 		<div>
 			<img src="[% image %]" />
 		</div>
 		[% END %]
-		
+
 		[% IF itemsHaveAudio %]
 			[%- BLOCK allcontrol -%]
 				[% WRAPPER playlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=playall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]');"[% END %]
 				[% WRAPPER addlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=addall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]');"[% END %]
 			[%- END %]
-			[%- WRAPPER contentitem leftcontrols = 'allcontrol' %]
+			[%- WRAPPER contentitem controls = 'allcontrol' %]
 				[% "ALL_SONGS" | string %]
 			[%- END %]
 		[% END %]
-		
+
 		[%- FOREACH item = items %]
 			[%- BLOCK gencontrol -%]
 				[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
@@ -98,7 +98,7 @@
 					[% PROCESS dummylink %]
 				[% END %]
 			[%- END %]
-			
+
 			[% IF item.type == 'search' %]
 				<form id="searchForm[% index _ (start + loop.index) %]" method="GET">
 					[% item.name || item.title %]
@@ -109,7 +109,7 @@
 					<input type="hidden" value="[% homeCategory %]" name="homeCategory" />
 				</form>
 			[% ELSE %]
-				[%- WRAPPER contentitem leftcontrols = 'gencontrol' rightcontrols = 'favoritescontrol' %]
+				[%- WRAPPER contentitem rightcontrols = 'favoritescontrol' controls = 'gencontrol' %]
 					[% IF item.type != 'text' %]
 					<a href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;homeCategory=[% homeCategory %]" class="browseItemLink">
 					[% END %]
@@ -126,7 +126,7 @@
 
 [%- IF hasPagebar; infoTab = BLOCK -%]
 	<div>[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]</div>
-[%- END; END -%]  
+[%- END; END -%]
 
 [% IF NOT ajaxUpdate %]</div>[% PROCESS pagefooter.html %][% END %]
 

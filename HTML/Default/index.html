@@ -28,7 +28,7 @@
 		<![endif]-->
 		<!--[if IE 7]>
 		<link href="[% webroot %]ie7.css?r=[% revision %]" type="text/css" rel="stylesheet">
-		<![endif]-->		
+		<![endif]-->
 	</head>
 
 	<body>
@@ -39,7 +39,7 @@
 			</div>
 		</div>
 		<div id="noJS">[% "SETUP_NO_JAVASCRIPT" | string %]</div>
-		
+
 		<script type="text/javascript">
 			document.getElementById('noJS').style.display = 'none';
 			document.getElementById('loading').style.display = 'block';
@@ -47,8 +47,8 @@
 
 		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
 		<script type="text/javascript" src="/html/ext/ext-all[% IF debug %]-debug[% END %].js?r=[% revision %]"></script>
-		<script type="text/javascript">[% PROCESS html/vars.js %]</script>		
-		<script type="text/javascript" src="[% webroot %]html/utils.js?r=[% revision %]"></script>		
+		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
+		<script type="text/javascript" src="[% webroot %]html/utils.js?r=[% revision %]"></script>
 
 		<script type="text/javascript" src="[% webroot %]html/main.js?r=[% revision %]"></script>
 		<script type="text/javascript">
@@ -60,7 +60,7 @@
 
 
 			Ext.EventManager.onDocumentReady(Main.init, Main, true);
-		</script>		
+		</script>
 
 		<div id="mainbody">
 
@@ -72,7 +72,7 @@
 					<span><a href="http://www.slimdevices.com" target="_blank"><img src="[% webroot %]html/images/spacer.gif" id="logitechLogo"></a></span>
 				</div>
 			</div>
-	
+
 			<div id="main">
 
 				<table width="100%">
@@ -94,7 +94,7 @@
 									</div>
 								</div>
 								<div class="inner_bottom"><div></div>
-								
+
 								</div>
 
 							</div>
@@ -126,7 +126,7 @@
 
 							[% IF newVersion %]
 								<span id="newVersion">
-									<img src="[% webroot %]html/images/info.png"/> [% newVersion %] 
+									<img src="[% webroot %]html/images/info.png"/> [% newVersion %]
 								</span>
 							[% END %]
 						</span>

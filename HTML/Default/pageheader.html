@@ -7,7 +7,7 @@
 
 		[% PROCESS standardheader.html %]
 
-		
+
 		[% IF pageHeaderScripts && NOT extJsScripts %]
 			[% pageHeaderScripts %]
 		[% ELSE %]
@@ -15,13 +15,13 @@
 			<script type="text/javascript" src="/html/ext/ext-all[% IF debug %]-debug[% END %].js?r=[% revision %]"></script>
 			<script type="text/javascript">[% PROCESS html/vars.js %]</script>
 			<script type="text/javascript" src="[% webroot %]html/utils.js?r=[% revision %]"></script>
-	
+
 			[% IF extJsScripts %]
 				<script type="text/javascript">
 					var strings = new Array();
 					strings['loading']  = '[% "LOADING" | string %]';
 				</script>
-	
+
 				[% extJsScripts %]
 			[% END %]
 		[% END %]
@@ -42,7 +42,7 @@
 		<![endif]-->
 		<!--[if IE 7]>
 		<link href="[% webroot %]ie7.css?r=[% revision %]" type="text/css" rel="stylesheet">
-		<![endif]-->		
+		<![endif]-->
 	</head>
 	<body  [% IF bodyscript && NOT extJsScripts; bodyscript; END %]>
 
@@ -61,14 +61,14 @@
 				<div class="titlebox_bottom"><div></div></div>
 				[% IF titleRight; titleRight; END %]
 			</div>
-	
+
 			<div id="crumblist">
 				[% IF pageHeaderMenu and not pwd_list;
 					pwd_list = [ pageHeaderMenu ];
 				END  -%]
 				[% IF pwd_list && pwd_list.length > 0;
 					pwd_list = [ pwd_list ];
- 				END  -%]
+				END  -%]
 				[% IF homeCategory AND pwd_list;
 					category.title = homeCategory | string;
 					category.href = "href=\"" _ webroot _ "home.html#" _ homeCategory _ "?player=$playerURI\"";

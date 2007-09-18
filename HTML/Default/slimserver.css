@@ -35,6 +35,10 @@ img.cmdLinkIcon {
 	right: 10px;
 }
 
+.browsedbRightControls {
+	right: 42px;
+}
+
 .thumbArtwork .browsedbControls {
 	position: absolute;
 	top: auto;
@@ -74,7 +78,7 @@ div.thumbwrap {
 	margin-top: 15px;
 	margin-bottom: 5px;
 	text-align: center;
-	border-bottom: 1px solid white; 
+	border-bottom: 1px solid white;
 }
 
 .playlistCover, .browseCover {
@@ -313,32 +317,32 @@ form#advSearchForm.resultsPage {
 	height: 96px;
 }
 
-#ctrlCurrentTitle, .currentTrackInfo { 
+#ctrlCurrentTitle, .currentTrackInfo {
 	overflow: hidden;
 }
 
-#ctrlCurrentTitle { 
-	font-size: 13px; 
-	font-weight: bold; 
-	padding-left: 6px; 
+#ctrlCurrentTitle {
+	font-size: 13px;
+	font-weight: bold;
+	padding-left: 6px;
 	margin-bottom: 5px;
 }
 
-#ctrlCurrentTitle a { 
+#ctrlCurrentTitle a {
 	text-decoration: none;
-	font-size: 13px; 
-	font-weight: bold; 
+	font-size: 13px;
+	font-weight: bold;
 }
 
-.currentTrackInfo { 
+.currentTrackInfo {
 	text-decoration: none;
-	font-size: 11px; 
-	padding-left: 6px; 
+	font-size: 11px;
+	padding-left: 6px;
 }
 
-.currentTrackInfo a { 
+.currentTrackInfo a {
 	text-decoration: none;
-	font-size: 11px; 
+	font-size: 11px;
 }
 
 .inner {
@@ -357,26 +361,26 @@ form#advSearchForm.resultsPage {
 	margin-top: 0px;
 }
 
-.inner_top, .inner_top div, 
+.inner_top, .inner_top div,
 .inner_bottom div, .inner_bottom {
 	height: 10px;
 	font-size: 0px;
 }
 
-.inner_top div { 
+.inner_top div {
 	background: url(html/images/inner_top_left.gif) no-repeat top left;
 }
 
 .inner_top {
-	background: url(html/images/inner_top_right.gif) no-repeat top right; 
+	background: url(html/images/inner_top_right.gif) no-repeat top right;
 }
 
-.inner_bottom div { 
-	background: url(html/images/inner_bottom_left.gif) no-repeat bottom left; 
+.inner_bottom div {
+	background: url(html/images/inner_bottom_left.gif) no-repeat bottom left;
 }
 
-.inner_bottom { 
-	background: url(html/images/inner_bottom_right.gif) no-repeat bottom right; 
+.inner_bottom {
+	background: url(html/images/inner_bottom_right.gif) no-repeat bottom right;
 }
 
 .playerbox_content, .playerbox {
@@ -408,29 +412,29 @@ form#advSearchForm.resultsPage {
 
 .infoTab_top, .infoTab_top div,
 .titlebox_top, .titlebox_top div,
-.titlebox_bottom div, .titlebox_bottom, 
+.titlebox_bottom div, .titlebox_bottom,
 .pagerbox_top, .pagerbox_top div,
 .pagerbox_bottom, .pagerbox_bottom div,
-.playerbox_top, .playerbox_top div, 
-.playerbox_bottom div, .playerbox_bottom { 
+.playerbox_top, .playerbox_top div,
+.playerbox_bottom div, .playerbox_bottom {
 	height: 5px;
 	font-size: 0px;
 }
 
-.titlebox_top div, .playerbox_top div { 
+.titlebox_top div, .playerbox_top div {
 	background: url(html/images/title_top_left.gif) no-repeat top left;
 }
 
 .titlebox_top, .playerbox_top {
-	background: url(html/images/title_top_right.gif) no-repeat top right; 
+	background: url(html/images/title_top_right.gif) no-repeat top right;
 }
 
-.titlebox_bottom div, .playerbox_bottom div { 
-	background: url(html/images/title_bottom_left.gif) no-repeat bottom left; 
+.titlebox_bottom div, .playerbox_bottom div {
+	background: url(html/images/title_bottom_left.gif) no-repeat bottom left;
 }
 
-.titlebox_bottom, .playerbox_bottom { 
-	background: url(html/images/title_bottom_right.gif) no-repeat bottom right; 
+.titlebox_bottom, .playerbox_bottom {
+	background: url(html/images/title_bottom_right.gif) no-repeat bottom right;
 }
 
 .pagerbox {
@@ -442,20 +446,20 @@ form#advSearchForm.resultsPage {
 	background: url(html/images/title_background.gif) repeat;
 }
 
-.pagerbox_top div { 
+.pagerbox_top div {
 	background: url(html/images/title_top_left.gif) no-repeat top left;
 }
 
 .pagerbox_top {
-	background: url(html/images/title_top_right.gif) no-repeat top right; 
+	background: url(html/images/title_top_right.gif) no-repeat top right;
 }
 
-.pagerbox_bottom div { 
-	background: url(html/images/title_bottom_left.gif) no-repeat bottom left; 
+.pagerbox_bottom div {
+	background: url(html/images/title_bottom_left.gif) no-repeat bottom left;
 }
 
-.pagerbox_bottom { 
-	background: url(html/images/title_bottom_right.gif) no-repeat bottom right; 
+.pagerbox_bottom {
+	background: url(html/images/title_bottom_right.gif) no-repeat bottom right;
 }
 
 #pagebar {
@@ -509,7 +513,7 @@ form#advSearchForm.resultsPage {
 #edge_top_left {
 	background: url(html/images/inner_top_left.gif) no-repeat top left;
 	left: 0;
-	top: 0;	
+	top: 0;
 }
 
 #edge_top_right {
@@ -533,7 +537,7 @@ form#advSearchForm.resultsPage {
 #library_stats {
 	text-align: center;
 	width: 100%;
-	position: absolute; 
+	position: absolute;
 	right: 0px;
 }
 
@@ -552,7 +556,7 @@ form#advSearchForm.resultsPage {
 	vertical-align: middle;
 }
 
-.infoTab_top div { 
+.infoTab_top div {
 	height: 5px;
 	font-size: 0px;
 	background: url(html/images/infotab_top_left.gif) no-repeat top left;
@@ -561,7 +565,7 @@ form#advSearchForm.resultsPage {
 .infoTab_top {
 	height: 5px;
 	font-size: 0px;
-	background: url(html/images/infotab_top_right.gif) no-repeat top right; 
+	background: url(html/images/infotab_top_right.gif) no-repeat top right;
 }
 
 #playlistPanel {
@@ -652,24 +656,24 @@ form#advSearchForm.resultsPage {
 .currentSong .selector_topRight,
 .mouseOver .selector_topRight {
 	background: #c0ccdc url(html/images/selector_top_right.gif) no-repeat top right;
-} 
+}
 
 .currentSong .selector_topLeft,
-.mouseOver .selector_topLeft { 
+.mouseOver .selector_topLeft {
 	padding-top: 7px;
-	background: transparent url(html/images/selector_top_left.gif) no-repeat top left; 
+	background: transparent url(html/images/selector_top_left.gif) no-repeat top left;
 }
 
 .currentSong .selector_bottomRight,
-.mouseOver .selector_bottomRight { 
+.mouseOver .selector_bottomRight {
 	padding: 0px;
-	background: transparent url(html/images/selector_bottom_right.gif) no-repeat bottom right; 
-} 
+	background: transparent url(html/images/selector_bottom_right.gif) no-repeat bottom right;
+}
 
 .currentSong .selector_bottomLeft,
-.mouseOver .selector_bottomLeft { 
+.mouseOver .selector_bottomLeft {
 	padding-bottom: 5px;
-	background: transparent url(html/images/selector_bottom_left.gif) no-repeat bottom left; 
+	background: transparent url(html/images/selector_bottom_left.gif) no-repeat bottom left;
 }
 
 .selectorMarker {
@@ -684,10 +688,10 @@ form#advSearchForm.resultsPage {
 }
 .selector_topLeft {
 	background: none;
-} 
-.selector_bottomRight { 
+}
+.selector_bottomRight {
 	background: none;
-} 
+}
 .selector_bottomLeft {
 	background: none;
 }
@@ -718,7 +722,7 @@ form#advSearchForm.resultsPage {
 	position: relative;
 }
 
-#songInfoPlayLinks div, #xmlInfoPlayLinks div, 
+#songInfoPlayLinks div, #xmlInfoPlayLinks div,
 .songInfoText, .songInfoTitle {
 	padding-bottom: 5px;
 }
@@ -783,33 +787,33 @@ form#advSearchForm.resultsPage {
 }
 
 .albumListGallery .x-menu-item-icon {
-    background-image: url(html/images/albumlist1.gif);
-    background-repeat: no-repeat;
+	background-image: url(html/images/albumlist1.gif);
+	background-repeat: no-repeat;
 }
 
 .albumXList .x-menu-item-icon {
-    background-image: url(html/images/albumlist0.gif);
-    background-repeat: no-repeat;
+	background-image: url(html/images/albumlist0.gif);
+	background-repeat: no-repeat;
 }
 
 .albumList .x-menu-item-icon {
-    background-image: url(html/images/albumlist2.gif);
-    background-repeat: no-repeat;
+	background-image: url(html/images/albumlist2.gif);
+	background-repeat: no-repeat;
 }
 
 .x-menu-item-checked .albumListGallery .x-menu-item-icon {
-    background-image: url(html/images/albumlist1_on.gif);
-    background-repeat: no-repeat;
+	background-image: url(html/images/albumlist1_on.gif);
+	background-repeat: no-repeat;
 }
 
 .x-menu-item-checked .albumXList .x-menu-item-icon {
-    background-image: url(html/images/albumlist0_on.gif);
-    background-repeat: no-repeat;
+	background-image: url(html/images/albumlist0_on.gif);
+	background-repeat: no-repeat;
 }
 
 .x-menu-item-checked .albumList .x-menu-item-icon {
-    background-image: url(html/images/albumlist2_on.gif);
-    background-repeat: no-repeat;
+	background-image: url(html/images/albumlist2_on.gif);
+	background-repeat: no-repeat;
 }
 
 

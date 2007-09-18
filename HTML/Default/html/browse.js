@@ -36,10 +36,10 @@ Browse = function(){
 						})
 					]
 				});
-				
+
 				if (orderByList) {
 					menu.add(
-							'-', 
+							'-',
 							'<span class="menu-title">' + strings['sort_by'] + '...</span>'
 					);
 
@@ -55,8 +55,8 @@ Browse = function(){
 						}));
 					}
 				}
-			
-			
+
+
 				new Ext.SplitButton('viewSelect', {
 					icon: webroot + 'html/images/albumlist' + viewMode  + '.gif',
 					cls: 'x-btn-icon',
@@ -72,7 +72,7 @@ Browse = function(){
 				});
 			}
 		},
-		
+
 		gotoAnchor : function(anchor){
 			if (el = Ext.get('anchor' + anchor))
 				el.scrollIntoView('browsedbList');
@@ -87,13 +87,13 @@ Browse = function(){
 			if (artwork == 1) {
 				Utils.setCookie( 'SlimServer-albumView', "1" );
 				url = url + '&artwork=1';
-			} 
-			
+			}
+
 			else if (artwork == 2) {
 				Utils.setCookie( 'SlimServer-albumView', "2" );
 				url = url + '&artwork=2';
-			} 
-			
+			}
+
 			else {
 				Utils.setCookie( 'SlimServer-albumView', "" );
 				url = url + '&artwork=0';
@@ -101,7 +101,7 @@ Browse = function(){
 
 			if (target && target[0].match(/^#/))
 				url = url + target[0];
-			
+
 			window.location.href = url;
 		},
 

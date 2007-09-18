@@ -3,42 +3,40 @@ Slim = {};
 
 // our own cookie manager doesn't prepend 'ys-' to any cookie
 Slim.CookieManager = function(config){
-    Slim.CookieManager.superclass.constructor.call(this);
+	Slim.CookieManager.superclass.constructor.call(this);
 };
 
 Ext.extend(Slim.CookieManager, Ext.state.CookieProvider, {
-    readCookies : function(){
-        var cookies = {};
-        var c = document.cookie + ";";
-        var re = /\s?(.*?)=(.*?);/g;
-    	var matches;
-    	while((matches = re.exec(c)) != null){
-            var name = matches[1];
-            var value = matches[2];
-            if(name){
-                cookies[name] = value;
-            }
-        }
-        return cookies;
-    },
+	readCookies : function(){
+		var cookies = {};
+		var c = document.cookie + ";";
+		var re = /\s?(.*?)=(.*?);/g;
+		var matches;
+		while((matches = re.exec(c)) != null){
+			var name = matches[1];
+			var value = matches[2];
+			if(name){
+				cookies[name] = value;
+			}
+		}
+		return cookies;
+	},
 
-    
-    setCookie : function(name, value){
-        document.cookie = name + "=" + value +
-           ((this.expires == null) ? "" : ("; expires=" + this.expires.toGMTString())) +
-           ((this.path == null) ? "" : ("; path=" + this.path)) +
-           ((this.domain == null) ? "" : ("; domain=" + this.domain)) +
-           ((this.secure == true) ? "; secure" : "");
-    },
+	setCookie : function(name, value){
+		document.cookie = name + "=" + value +
+		((this.expires == null) ? "" : ("; expires=" + this.expires.toGMTString())) +
+		((this.path == null) ? "" : ("; path=" + this.path)) +
+		((this.domain == null) ? "" : ("; domain=" + this.domain)) +
+		((this.secure == true) ? "; secure" : "");
+	},
 
-    
-    clearCookie : function(name){
-        document.cookie = name + "=null; expires=Thu, 01-Jan-70 00:00:01 GMT" +
-           ((this.path == null) ? "" : ("; path=" + this.path)) +
-           ((this.domain == null) ? "" : ("; domain=" + this.domain)) +
-           ((this.secure == true) ? "; secure" : "");
-    }
-});
+	clearCookie : function(name){
+		document.cookie = name + "=null; expires=Thu, 01-Jan-70 00:00:01 GMT" +
+			((this.path == null) ? "" : ("; path=" + this.path)) +
+			((this.domain == null) ? "" : ("; domain=" + this.domain)) +
+			((this.secure == true) ? "; secure" : "");
+		}
+	});
 
 
 // graphical button, defined in three element sprite for normal, mouseover, pressed
@@ -50,7 +48,7 @@ Slim.Button = function(renderTo, config){
 		'<td></td><td><button type="{1}" style="padding:0">{0}</button></td><td></td>',
 		'</tr></tbody></table>');
 
-	Slim.Button.superclass.constructor.call(this, renderTo, config);	
+	Slim.Button.superclass.constructor.call(this, renderTo, config);
 };
 
 Ext.extend(Slim.Button, Ext.Button, {
@@ -93,17 +91,18 @@ var Utils = function(){
 					el = Ext.get(target).findParent('.selectorMarker');
 					if (el = Ext.get(el)) {
 						el.replaceClass('selectorMarker', 'mouseOver');
-						
+
 						el.on('click', Utils.onSelectorClicked);
-						
-						if (controls = Ext.DomQuery.selectNode('span.browsedbControls, div.playlistControls', el.dom)) {
-							Ext.get(controls).show();
+
+						controls = Ext.DomQuery.select('span.browsedbControls, span.browsedbRightControls, div.playlistControls', el.dom);
+						for (var i = 0; i < controls.length; i++) {
+							Ext.get(controls[i]).show();
 						}
 					}
 				}
 			});
 		},
-		
+
 		unHighlight: function(){
 			// remove highlighting from the other DIVs
 			items = Ext.DomQuery.select('div.mouseOver');
@@ -113,13 +112,14 @@ var Utils = function(){
 					el.replaceClass('mouseOver', 'selectorMarker');
 					el.un('click', Utils.onSelectorClicked);
 
-					if (controls = Ext.DomQuery.selectNode('span.browsedbControls, div.playlistControls', el.dom)) {
-						Ext.get(controls).hide();
+					controls = Ext.DomQuery.select('span.browsedbControls, span.browsedbRightControls, div.playlistControls', el.dom);
+					for (var i = 0; i < controls.length; i++) {
+						Ext.get(controls[i]).hide();
 					}
 				}
 			}
 		},
-		
+
 		onSelectorClicked : function(ev, target){
 			el = Ext.get(target).child('a.browseItemLink');
 			if (el && el.dom.href) {
@@ -158,7 +158,7 @@ var Utils = function(){
 			if (el = Ext.get('songInfo')) {
 				el.setHeight(Ext.fly(document.body).getHeight() - el.getTop() - infoHeight);
 			}
-			
+
 		},
 
 		processPlaylistCommand : function(param) {
@@ -193,18 +193,18 @@ var Utils = function(){
 				validator: function(value){
 					if (value.length > 2) {
 						el = Ext.get('search-results')
-						
+
 						// don't wait for an earlier update to finish
 						um = el.getUpdateManager();
 						if (um.isUpdating())
 							um.abort();
-						
+
 						el.load(
 							{
 								url: 'search.xml?query=' + value + '&player=' + player,
 								method: 'GET',
 								timeout: 5000
-							}, 
+							},
 							{},
 							function(){
 								Utils.addBrowseMouseOver();
@@ -222,7 +222,7 @@ var Utils = function(){
 							MainMenu.showPanel('my_music');
 						}
 						catch(e){}
-						
+
 					return true;
 				}
 			});

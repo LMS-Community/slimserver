@@ -23,11 +23,11 @@ var MainMenu = function(){
 				this.showPanel('home');
 			}
 		},
-		
+
 		addUrl : function(key, value){
 			url[key] = value;
 		},
-		
+
 		doMenu : function(item){
 			switch (item) {
 				case 'MY_MUSIC':
@@ -45,7 +45,7 @@ var MainMenu = function(){
 				case 'OTHER_SERVICES':
 					this.showPanel('other_services');
 					break;
-					
+
 				default:
 					if (url[item]) {
 						cat = item.match(/:(.*)$/);
@@ -80,7 +80,7 @@ var MainMenu = function(){
 					subPanel.setVisible(true);
 					subPanel.addClass('homeMenuSection_expanded');
 				}
-				
+
 			}
 
 			Utils.addBrowseMouseOver();
@@ -109,7 +109,7 @@ var MainMenu = function(){
 			Utils.resizeContent();
 			this.onResize();
 		},
-		
+
 		collapseAll : function(){
 			items = Ext.DomQuery.select('div.homeMenuItem_expanded');
 			for(var i = 0; i < items.length; i++) {
@@ -120,7 +120,7 @@ var MainMenu = function(){
 		showPanel : function(panel){
 			panelExists = false;
 			this.collapseAll();
-			
+
 			// make plugins show up in the "Other Services" panel
 			if (panel == 'plugins')
 				panel = 'other_services';
@@ -148,7 +148,7 @@ var MainMenu = function(){
 
 			if (panel == 'home')
 				this.expandItem(Utils.getCookie('SlimServer-homeMenuExpanded'));
-			
+
 			this.onResize();
 
 			return panelExists;
@@ -166,7 +166,7 @@ var MainMenu = function(){
 
 			if (Ext.isIE && !Ext.isIE7 && (el = Ext.DomQuery.selectNode('div.inner_content')))
 				Ext.get(el).setWidth(contW+25);
-				
+
 		}
 	}
 }();

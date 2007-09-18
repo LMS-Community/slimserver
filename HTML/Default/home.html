@@ -9,7 +9,7 @@
 
 		Ext.EventManager.onDocumentReady(function(){
 			MainMenu.init();
-			
+
 			// fill array with URLs, if available
 			[%- FOREACH category = additionalLinks %]
 				[%- category = category.key %]
@@ -35,8 +35,8 @@
 
 [% IF NOT warn %]
 	[% infoTab = BLOCK %]
-		<span id="albumcount">[% album_count %]</span> [% "WITH" | string -%] 
-		<span id="songcount">[%- song_count %]</span> [% "BY" | string -%] 
+		<span id="albumcount">[% album_count %]</span> [% "WITH" | string -%]
+		<span id="songcount">[%- song_count %]</span> [% "BY" | string -%]
 		<span id="artistcount">[% artist_count %]</span>.
 	[% END %]
 [% END %]

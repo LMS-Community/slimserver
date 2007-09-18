@@ -47,7 +47,7 @@
 	</form>
 
 	[% PROCESS advanced_search.html ajaxUpdate=1 resultClass="resultsPage" %]
-	
+
 	<div id="browsedbHeader">
 		[% IF searchError %]
 			[% searchError %]
@@ -62,7 +62,7 @@
 			</div>
 		[% END %]
 	</div>
-	
+
 	<div id="search-results"></div>
 
 	[% IF browse_items.size %]
@@ -76,7 +76,7 @@
 	[% ELSIF manualSearch %]
 		[% "NO_SEARCH_RESULTS" | string %]
 	[% END %]
-	
+
 	[% IF pageinfo.totalpages && pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
 
 [% PROCESS pagefooter.html %]
