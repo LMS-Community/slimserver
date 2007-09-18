@@ -8,7 +8,7 @@
 [% END %]
 
 [% FILTER null %]
-[% homeCategory = "OTHER_SERVICES" -%]
+[% homeCategory = homeCategory || "OTHER_SERVICES" -%]
 [% IF NOT pagetitle; END %]
 [% pwd_list = [];
 	FOREACH crumb IN crumb;
