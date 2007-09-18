@@ -17,11 +17,10 @@ use base qw(Slim::Plugin::Base);
 
 use File::Spec::Functions qw(:ALL);
 use Scalar::Util qw(blessed);
-
 use Slim::Utils::Timers;
 use Slim::Utils::Prefs;
 
-my $prefs = preferences('server');
+my $prefs = preferences('plugin.snow');
 
 sub getDisplayName {
 	return 'PLUGIN_SCREENSAVER_SNOW';
@@ -90,9 +89,9 @@ our %menuParams = (
 		'stringExternRef' => 1,
 		'header'          => 'PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE',
 		'stringHeader'    => 1,
-		'onChange'        => sub { $prefs->client( $_[0] )->set('snowQuantity',$_[1]); },
+		'onChange'        => sub { $prefs->client($_[0])->set('snowQuantity',$_[1]); },
 		'onChangeArgs'    => 'CV',
-		'initialValue'    => sub { $prefs->client( $_[0] )->get('snowQuantity'); },
+		'initialValue'    => sub { $prefs->client($_[0])->get('snowQuantity'); },
 	},
 	catdir('snow','PLUGIN_SCREENSAVER_SNOW_STYLE') => {
 		'useMode'          => 'INPUT.List',
@@ -101,9 +100,9 @@ our %menuParams = (
 		'stringExternRef' => 1,
 		'header'          => 'PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE',
 		'stringHeader'    => 1,
-		'onChange'        => sub { $prefs->client( $_[0] )->set('snowStyle',$_[1]); },
+		'onChange'        => sub { $prefs->client($_[0])->set('snowStyle',$_[1]); },
 		'onChangeArgs'    => 'CV',
-		'initialValue'    => sub { $prefs->client( $_[0] )->get('snowStyle'); },
+		'initialValue'    => sub { $prefs->client($_[0])->get('snowStyle'); },
 	},
 	catdir('snow','PLUGIN_SCREENSAVER_SNOW_STYLE_OFF') => {
 		'useMode'         => 'INPUT.List',
@@ -112,9 +111,9 @@ our %menuParams = (
 		'stringExternRef' => 1,
 		'header'          => 'PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE',
 		'stringHeader'    => 1,
-		'onChange'        => sub { $prefs->client( $_[0] )->set('snowStyleOff',$_[1]); },
+		'onChange'        => sub { $prefs->client($_[0])->set('snowStyleOff',$_[1]); },
 		'onChangeArgs'    => 'CV',
-		'initialValue'    => sub { $prefs->client( $_[0] )->get('snowStyleOff'); },
+		'initialValue'    => sub { $prefs->client($_[0])->get('snowStyleOff'); },
 	},
 );
 
@@ -136,7 +135,7 @@ sub overlayFunc {
 			);
 		}
 	} else {
-		return (undef,Slim::Display::Display::symbol('rightarrow'));
+		return (undef,$client->symbols('rightarrow'));
 	}
 };
 
@@ -154,7 +153,7 @@ sub snowExitHandler {
 				
 				my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
 				
-				if ( $prefs->client($client)->get($saver) eq 'SCREENSAVER.snow') {
+				if ($prefs->client($client)->get($saver) eq 'SCREENSAVER.snow') {
 					$prefs->client($client)->set($saver,$Slim::Player::Player::defaultPrefs->{$saver});
 				} else {
 					$prefs->client($client)->set($saver, 'SCREENSAVER.snow');
@@ -169,7 +168,7 @@ sub snowExitHandler {
 				if (ref($nextParams{'initialValue'}) eq 'CODE') {
 					$value = $nextParams{'initialValue'}->($client);
 				} else {
-					$value = $prefs->client($client)->get( $nextParams{'initialValue'} );
+					$value = $prefs->client($client)->get($nextParams{'initialValue'});
 				}
 				$nextParams{'valueRef'} = \$value;
 			}
@@ -262,6 +261,8 @@ sub setScreensaverSnowMode {
 	my $client = shift;
 	$client->modeParam('modeUpdateInterval', 0.25);
 	$client->lines(\&screensaverSnowlines);
+	#take over 2nd screen on transporter
+	$client->modeParam('screen2', 'Snow');
 	
 	#$snow{$client}->{wasDoubleSize} = $client->textSize;
 	#$client->textSize(0);
@@ -332,6 +333,7 @@ sub screensaverSnowlines {
 	if($style == 1 || $style == 2) {
 		# Now Playing
 		$lines = $client->currentSongLines();
+		#$lines = $client->nowPlayingModeLines();
 		$onlyInSpaces = ($style == 1);
 	
 	} elsif($style == 3) {
@@ -352,9 +354,9 @@ sub insertChar {
 	my $sym = shift;
 	my $col = shift;
 	my $len = shift;
-	return ($col > 0 ? Slim::Display::Display::subString($line, 0, $col) : '') . 
+	return ($col > 0 ? Slim::Display::Text::subString($line, 0, $col) : '') . 
 		$sym .
-		($col < (40-$len) ? Slim::Display::Display::subString($line, $col+$len, 40 - $len - $col) : '');
+		($col < (40-$len) ? Slim::Display::Text::subString($line, $col+$len, 40 - $len - $col) : '');
 }
 
 sub loadTextCustomChars {
@@ -442,15 +444,15 @@ sub loadTextCustomChars {
 }
 
 our %flakeMap = (0 => ' ',
-	1  => Slim::Display::Display::symbol('snow00'),
-	2  => Slim::Display::Display::symbol('snow10'),
-	4  => Slim::Display::Display::symbol('snow20'),
-	5  => Slim::Display::Display::symbol('snow7'),
-	8  => Slim::Display::Display::symbol('snow01'),
-	16 => Slim::Display::Display::symbol('snow11'),
-	32 => Slim::Display::Display::symbol('snow21'),
-	33 => Slim::Display::Display::symbol('snow9'),
-	34 => Slim::Display::Display::symbol('snow8'),
+	1  => 'snow00',
+	2  => 'snow10',
+	4  => 'snow20',
+	5  => 'snow7',
+	8  => 'snow01',
+	16 => 'snow11',
+	32 => 'snow21',
+	33 => 'snow9',
+	34 => 'snow8',
 );
 		
 # SBG is 280x16, so we create a 6x16 blank and tack an empty column on in the render function
@@ -490,7 +492,7 @@ my $flakeG_6=
 	"\x00\x02";
 		
 our %flakeMapG = (
-	0 => $blankG   . $blankG,
+	0 => $blankG,#   . $blankG,
 	
 	1 => $flakeG_1,
 	2 => $flakeG_2,
@@ -653,25 +655,6 @@ our %letters = (
 	'!' => [1, [0], [], [0], [], [], [0] ],
 );
 		
-#sub drawFlake {
-#    my $bigrow = shift;
-#    my $bigcol = shift;
-#    my $torender = shift;
-#    my $onlyIfCanRender = shift;
-#    my $onlyInSpaces = shift;
-#    my $lines = shift;
-#
-#    my $row = int($bigrow / 3);
-#    my $line = "line".$row+1;
-#    my $col = int($bigcol / 2);
-#    
-#    my $sym = Slim::Display::Display::symbol('snow' . ($bigrow - $row * 3) . ($bigcol - $col * 2));
-#    
-#    if( !$onlyInSpaces || Slim::Display::Display::subString($lines->{"$line"}, $col, 1) eq ' ') {
-#		$lines->{"$line"} = insertChar($lines->{"$line"}, $sym, $col, 1);
-#    }
-#}
-
 # paint a single flake in the torender structure
 sub paintFlake {
 	my $bigrow = shift;
@@ -690,7 +673,7 @@ sub paintFlake {
 
 	my $bit = (1 << (($bigrow - $row * 3) + 3 * ($bigcol - $col * 2)));
 
-	if(! $onlyInSpaces or Slim::Display::Display::subString($lines->{$line}, $col, 1) eq ' ') {
+	if(! $onlyInSpaces or Slim::Display::Text::subString($lines->{$line}, $col, 1) eq ' ') {
 		if($torender->[$row][$col] != -1) {
 			return 0 if($onlyIfCanRender && !exists($flakeMap{($torender->[$row][$col]) | $bit}));
 			$torender->[$row][$col] |= $bit;
@@ -720,6 +703,7 @@ sub renderGraphicFlakes2 {
 	my $client = shift;
 	my $torender = shift;
 	my $lines = shift;
+	my $bits;
 	
 	my $onlyInSpaces = 0; #too tricky for for graphic displays! 
 
@@ -749,16 +733,21 @@ sub renderGraphicFlakes2 {
 		$char |= $flakeMap2[$flakeSize]{$top & 7};
 		$flakeSize = $flakeSize{"1$leftcol"} || 0;
 		$char |= $flakeMap2[$flakeSize]{64|($bottom & 7)};
-		$lines->{bits} .= $char;
+		$bits .= $char;
 		#right column
 		$char = $blank;
 		$flakeSize = $flakeSize{"0$rightcol"} || 0;
 		$char |= $flakeMap2[$flakeSize]{$top>>3};
 		$flakeSize = $flakeSize{"1$rightcol"} || 0;
 		$char |= $flakeMap2[$flakeSize]{64|($bottom>>3)};
-		$lines->{bits} .= $char;
+		$bits .= $char;
 	}
 
+	#in order to specify bits, have to use screen1
+	$lines->{screen1}->{line} = $lines->{line};
+	$lines->{screen1}->{overlay} = $lines->{overlay};
+	$lines->{screen1}->{bits} = $bits;
+	$lines->{screen2}->{bits} = $bits;
 	return $lines;
 }
 
@@ -766,6 +755,7 @@ sub renderGraphicFlakes {
 	my $client = shift;
 	my $torender = shift;
 	my $lines = shift;
+	my $bits;
 	
 	my $onlyInSpaces = 0; #too tricky for for graphic displays! 
 
@@ -782,13 +772,17 @@ sub renderGraphicFlakes {
 		$top = 0 if ($top == -1);
 		$bottom = 0 if ($bottom == -1);	
 		#left column
-		$lines->{bits} .= $blank | $flakeMapG{$top & 7} | $flakeMapG{64|($bottom & 7)};
+		$bits .= $blank | $flakeMapG{$top & 7} | $flakeMapG{64|($bottom & 7)};
 		#right column
-		$lines->{bits} .= $blank | $flakeMapG{$top>>3} | $flakeMapG{64|($bottom>>3)};
+		$bits .= $blank | $flakeMapG{$top>>3} | $flakeMapG{64|($bottom>>3)};
 		#add an empty column
-		$lines->{bits} .= "\x00\x00";
+		$bits .= "\x00\x00";
 	}
 
+	#in order to specify bits, have to use screen1
+	$lines->{screen1}->{line} = $lines->{line};
+	$lines->{screen1}->{overlay} = $lines->{overlay};
+	$lines->{screen1}->{bits} = $bits;
 	return $lines;
 }
 
@@ -811,9 +805,9 @@ sub renderCharFlakes {
 		foreach $col (0..39) {
 			my $bits = $torender->[$row][$col];
 			if($bits == -1) {
-				$newlines[$row] .= Slim::Display::Display::subString($oldlines[$row], $col, 1);
+				$newlines[$row] .= Slim::Display::Text::subString($oldlines[$row], $col, 1);
 			} elsif(exists $flakeMap{$bits}) {
-				$newlines[$row] .= $flakeMap{$bits};
+				$newlines[$row] .= $client->symbols($flakeMap{$bits});
 			} else {
 				print "No symbol for $bits\n";
 				$newlines[$row] .= '*';
@@ -821,8 +815,7 @@ sub renderCharFlakes {
 		}
 	}
 
-	$lines->{line1} = $newlines[0];
-	$lines->{line2} = $newlines[1];
+	$lines->{line} = [ $newlines[0],$newlines[1] ];
 	return $lines;
 }
 
@@ -906,6 +899,8 @@ sub letItSnow {
 		
 	# cull flakes which have left the screen
 	@{$flakes{$client}} = grep { $_->[0] < 6 && $_->[1] >= 0 && $_->[1] < 80} @{$flakes{$client}};
+	#or, use this line to let the snow pile up
+	#@{$flakes{$client}} = grep { $_->[0] < 10 && $_->[1] >= 0 && $_->[1] < 80} @{$flakes{$client}};
 		
 	for (0..5) {
 		if(rand(100) < (5,10,30,100)[$snow{$client}->{snowQuantity}]) {
@@ -916,8 +911,8 @@ sub letItSnow {
 	# pad centre lines (do we even need this any more?)
 	foreach my $i ("line1","line2") {
 		if(!$simple) {
-			if (index($lines->{$i}, Slim::Display::Display::symbol('center') ) == 0)  {
-				$lines->{$i} = substr($lines->{$i}, length(Slim::Display::Display::symbol('center')));
+			if (index($lines->{$i}, $client->symbols('center') ) == 0)  {
+				$lines->{$i} = substr($lines->{$i}, length($client->symbols('center')));
 				s/\s*$//;
 				my $centerspaces = int((40-Slim::Display::Display::lineLength($lines->{$i}))/2);
 				$lines->{$i} = (" " x $centerspaces).$lines->{$i};
@@ -925,7 +920,7 @@ sub letItSnow {
 		}
 		# this was truncating scrolling display at 40 characters
 		if ($snow{$client}->{clientType} eq 'SB1') {
-			$lines->{$i} = Slim::Display::Display::subString($lines->{$i} . (' ' x 40), 0, 40);
+			$lines->{$i} = Slim::Display::Text::subString($lines->{$i} . (' ' x 40), 0, 40);
 		}
 	}
 

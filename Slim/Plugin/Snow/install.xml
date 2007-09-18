@@ -4,12 +4,12 @@
         <id>F0D255D0-FEE8-4EE8-B244-EAF780046D2D</id>
         <name>PLUGIN_SCREENSAVER_SNOW</name>
         <module>Slim::Plugin::Snow::Plugin</module>
-        <version>1.0</version>
+        <version>1.1</version>
         <description>PLUGIN_SCREENSAVER_SNOW</description>
         <creator>Slim Devices/Logitech</creator>
 	<email>support@slimdevices.com</email>
 
-	<defaultState>disabled</defaultState>
+	<defaultState>enabled</defaultState>
         
         <homepageURL>http://www.slimdevices.com/</homepageURL>
 	<type>2</type><!-- type=extension -->
