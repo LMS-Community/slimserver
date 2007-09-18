@@ -29,10 +29,11 @@ img.cmdLinkIcon {
 	clear: left;
 }
 
-.browsedbControls, .playlistControls, .browsedbRightControls {
+.browsedbControls, .playlistControls, .browsedbRightControls, .browsedbLeftControls {
 	position: absolute;
 	top: -2px;
 	right: 10px;
+	display: none;
 }
 
 .browsedbRightControls {

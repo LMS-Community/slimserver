@@ -32,17 +32,17 @@
 	<div class="selectorMarker"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 		<div class="[% lineclass || 'browsedbListItem' %][% IF item.coverThumb && !(artwork > 0 && (levelName == 'album' || levelName == 'age')) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			[%- IF leftcontrols -%]
-				<span class="browsedbLeftControls" style="Xdisplay: none;">
+				<span class="browsedbLeftControls">
 				[%- PROCESS $leftcontrols -%]
 				</span>
 			[%- END %]
 			[%- content | indent(4) %]
 			[%- IF rightcontrols -%]
-				<span class="browsedbRightControls" style="display: none;">
+				<span class="browsedbRightControls">
 				[%- PROCESS $rightcontrols -%]
 				</span>
 			[%- END; IF controls -%]
-				<span class="browsedbControls" style="display: none;">
+				<span class="browsedbControls">
 				[%- PROCESS $controls -%]
 				</span>
 			[%- END %]
@@ -58,7 +58,7 @@
 			[%- itemImg = item.coverThumb ? "thumbnailItemImg" : "dummyItemImg" %]
 			<div class="thumbArtwork" style="width:[% item.size %]px;position:relative;">
 				<a [% PROCESS browseDbItemHRef %]>[% PROCESS $itemImg height="$item.size" %]</a>
-				<span class="browsedbControls" style="display: none;">
+				<span class="browsedbControls">
 					[%- PROCESS $controls -%]
 				</span>
 			</div>

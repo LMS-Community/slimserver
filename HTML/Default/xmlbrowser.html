@@ -59,7 +59,7 @@
 		[% END %]
 	</div>
 
-	[% BLOCK favoritescontrol %]<span id="controls[% index _ (start + loop.index) %]" [% IF useAJAX %]style="display: none;"[% END %]>
+	[%- BLOCK gencontrol -%]
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
 				href="index.html?action=favadd&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]&amp;homeCategory=[% homeCategory %]"
@@ -68,8 +68,16 @@
 			[% WRAPPER favdellink noTarget=1 %]
 				href="index.html?action=favdel&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]&amp;homeCategory=[% homeCategory %]"
 			[% END %]
-		[% END %]</span>
-	[% END %]
+		[% END %]
+
+		[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
+			[% WRAPPER playlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]');"[% END %]
+			[% WRAPPER addlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]');"[% END %]
+		[% ELSE %]
+			[% PROCESS dummylink %]
+			[% PROCESS dummylink %]
+		[% END %]
+	[%- END %]
 
 	[%- WRAPPER contentcontainer %]
 		[% IF image %]
@@ -89,16 +97,6 @@
 		[% END %]
 
 		[%- FOREACH item = items %]
-			[%- BLOCK gencontrol -%]
-				[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
-					[% WRAPPER playlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]');"[% END %]
-					[% WRAPPER addlink %]onclick="Utils.processRawCommand('index.html?[% searchquery %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]');"[% END %]
-				[% ELSE %]
-					[% PROCESS dummylink %]
-					[% PROCESS dummylink %]
-				[% END %]
-			[%- END %]
-
 			[% IF item.type == 'search' %]
 				<form id="searchForm[% index _ (start + loop.index) %]" method="GET">
 					[% item.name || item.title %]
@@ -109,7 +107,7 @@
 					<input type="hidden" value="[% homeCategory %]" name="homeCategory" />
 				</form>
 			[% ELSE %]
-				[%- WRAPPER contentitem rightcontrols = 'favoritescontrol' controls = 'gencontrol' %]
+				[%- WRAPPER contentitem controls = 'gencontrol' %]
 					[% IF item.type != 'text' %]
 					<a href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;homeCategory=[% homeCategory %]" class="browseItemLink">
 					[% END %]
