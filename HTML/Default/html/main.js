@@ -582,7 +582,7 @@ Player = function(){
 
 			Ext.get('ctrlPlaytime').update(shortTime);
 
-			if (! isNaN(playerStatus.duration)) {
+			if (! isNaN(playerStatus.duration) && playerStatus.duration > 0) {
 				totalTime = playerStatus.duration;
 				Ext.get('ctrlTotalTime').update('&nbsp;(' + this.formatTime(totalTime) + ')');
 
@@ -773,7 +773,7 @@ Player = function(){
 							tracks: result.playlist_tracks,
 							index: result.playlist_cur_index,
 							volume: result['mixer volume'],
-							duration: result['duration'],
+							duration: result['duration'] || 0,
 							shuffle: result['playlist shuffle']
 						};
 
@@ -859,7 +859,8 @@ Player = function(){
 									this.updateStatus(response)
 								}
 	
-								this.updatePlayTime(result.time, result.duration);
+								playerStatus.duration = result.duration;
+								this.updatePlayTime(result.time);
 							}
 
 							// display scanning information
