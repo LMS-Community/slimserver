@@ -541,17 +541,6 @@ Player = function(){
 				handler: this.ctrlPower
 			});
 
-			// work around Safari 2 crasher: hide artwork before hiding surrounding DIV
-			if (el = Ext.get('ctrlCurrentArt')) {
-				el.setVisibilityMode(Ext.Element.DISPLAY);
-				el.hide();
-			}
-
-			if (el = Ext.get('expandedPlayerPanel')) {
-				el.setVisibilityMode(Ext.Element.DISPLAY);
-				el.hide();
-			}
-
 			new Slim.Button('ctrlCollapse', {
 				cls: 'btn-collapse-player',
 				tooltip: strings['collapse'],
@@ -560,10 +549,19 @@ Player = function(){
 				handler: this.collapseExpand
 			});
 
-			if (el = Ext.get('collapsedPlayerPanel')) {
+			if (el = Ext.get('ctrlCurrentArt'))
 				el.setVisibilityMode(Ext.Element.DISPLAY);
-//				el.hide();
-			}
+
+			if (el = Ext.get('expandedPlayerPanel'))
+				el.setVisibilityMode(Ext.Element.DISPLAY);
+
+			if (el = Ext.get('collapsedPlayerPanel'))
+				el.setVisibilityMode(Ext.Element.DISPLAY);
+
+			// restore player expansion from cookie
+			this.collapseExpand({
+				doExpand: (Utils.getCookie('SlimServer-expandPlayerControl') == 'true')
+			});
 
 			new Slim.Button('ctrlExpand', {
 				cls: 'btn-expand-player',
@@ -904,25 +902,29 @@ Player = function(){
 			});
 		},
 
-		collapseExpand : function(){
-			exp = Ext.get('expandedPlayerPanel');
+		collapseExpand : function(ev){
+			doExpand = ev.doExpand == null ? !Utils.getCookie('SlimServer-expandPlayerControl') : ev.doExpand;
+
 			art = Ext.get('ctrlCurrentArt');
 
 			// work around Safari 2 crasher: resize and hide artwork before hiding surrounding DIV
-			if (exp.isVisible() && art) {
+			if (art && !doExpand) {
 				art.setHeight(0);
 				art.hide();
 			}
 
 			if (el = Ext.get('collapsedPlayerPanel'))
-				el.toggle();
+				el.setVisible(!doExpand);
 
-			exp.toggle();
+			if (el = Ext.get('expandedPlayerPanel'))
+				el.setVisible(doExpand);
 
-			if (exp.isVisible() && art) {
+			if (art && doExpand) {
 				art.setHeight(96);
 				art.show();
 			}
+
+			Utils.setCookie('SlimServer-expandPlayerControl', doExpand);
 
 			try { Main.onResize(); }
 			catch(e) {}
