@@ -124,7 +124,8 @@ div.thumbwrap {
 .homeMenuItem a,
 #crumblist a,
 #playlistToggleArtwork,
-.browseItemLink {
+.browseItemLink,
+.browsedbListItem a {
 	text-decoration: none;
 	font-size: 11px;
 }
@@ -161,6 +162,7 @@ form#advSearchForm.resultsPage {
 .mouseOver .browseItemDetail,
 .mouseOver .browseItemLink,
 .mouseOver .browsedbListItem,
+.mouseOver a,
 .mouseOver .homeMenuItem {
 	color: #343434;
 }
