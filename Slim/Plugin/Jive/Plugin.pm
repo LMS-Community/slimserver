@@ -343,19 +343,6 @@ sub menuQuery {
 	);
 
 
-#push @settingsMenu, {
-#	text    => Slim::Utils::Strings::string('PLAYER_SETTINGS'),
-#	actions => {
-#		go => {
-#		cmd    => ['menusettings'],
-#		player => 0,
-#		params => {
-#			menu => 'settings',
-#			},
-#		},
-#	},
-#};
-
 # is power on/off is restricted to certain players? if so, which?
 #	my $onOff = 1;
 	if ($client) {
