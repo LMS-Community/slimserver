@@ -62,8 +62,6 @@ sub initPlugin {
 
     Slim::Control::Request::addDispatch(['menu', '_index', '_quantity'], 
         [1, 1, 1, \&menuQuery]);
-    Slim::Control::Request::addDispatch(['menusettings', '_index', '_quantity'], 
-        [1, 1, 1, \&menusettingsQuery]);
 	Slim::Control::Request::addDispatch(['date'],
 		[0, 1, 0, \&dateQuery]);
 	Slim::Control::Request::addDispatch(['firmwareupgrade'],
@@ -98,6 +96,8 @@ sub menuQuery {
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
 
+	my $prefs         = preferences("server");
+	my ($settingsMenu, $settingsCount)  = playerSettingsMenu($request, $client, $index, $quantity, $prefs);
 	my @menu = (
 		{
 			text      => Slim::Utils::Strings::string('MY_MUSIC'),
@@ -335,30 +335,31 @@ sub menuQuery {
 		},
 		{
 			text    => Slim::Utils::Strings::string('SETTINGS'),
-			count     => 1,
+			count     => $settingsCount,
 			offset    => 0,
-			item_loop => [
-			{
-				text    => Slim::Utils::Strings::string('PLAYER_SETTINGS'),
-				actions => {
-					go => {
-						cmd    => ['menusettings'],
-						player => 0,
-						params => {
-							menu => 'settings',
-						},
-					},
-				},
-			},
-			],
+			item_loop => $settingsMenu,
 		},
+
 	);
-	# is power on/off is restricted to certain players? if so, which?
+
+
+#push @settingsMenu, {
+#	text    => Slim::Utils::Strings::string('PLAYER_SETTINGS'),
+#	actions => {
+#		go => {
+#		cmd    => ['menusettings'],
+#		player => 0,
+#		params => {
+#			menu => 'settings',
+#			},
+#		},
+#	},
+#};
+
+# is power on/off is restricted to certain players? if so, which?
 #	my $onOff = 1;
 	if ($client) {
 		push @menu, powerHash($client);
-		my $href = powerHash($client);
-		Data::Dump::dump($href);
 	}
 
 	my $numitems = scalar(@menu);
@@ -381,25 +382,13 @@ sub menuQuery {
 	$request->setStatusDone();
 }
 
-sub menusettingsQuery {
-	my $request = shift;
+sub playerSettingsMenu {
+	my ($request, $client, $index, $quantity, $prefs) = @_;
  
 	$log->debug("Begin Function");
  
-	if ($request->isNotQuery([['menusettings']])) {
-		$request->setStatusBadDispatch();
-		return;
-	}
-
-	# get our parameters
-	my $client        = $request->client();
-	my $index         = $request->getParam('_index');
-	my $quantity      = $request->getParam('_quantity');
-
-	my $prefs = preferences('server');
-
-	my @menu;
-	
+	my @menu = ();
+	return (\@menu, 0) unless $client;
 	
 	# always add repeat
 	my $val = Slim::Player::Playlist::repeat($client);
@@ -791,25 +780,7 @@ if (0) {
 		},
 	};
 
-	# now slice and ship
-	my $numitems = scalar(@menu);
-
-	$request->addResult("count", $numitems);
-
-	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $numitems);
-
-	if ($valid) {
-		
-		my $cnt = 0;
-		$request->addResult('offset', $start);
-
-		for my $eachmenu (@menu[$start..$end]) {			
-			$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
-			$cnt++;
-		}
-	}
-
-	$request->setStatusDone();
+	return (\@menu, scalar(@menu));
 }
 
 sub getPlayersToSyncWith() {
