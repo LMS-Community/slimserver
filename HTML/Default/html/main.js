@@ -12,7 +12,7 @@ Main = function(){
 				},
 				south: {
 					split:false,
-					initialSize: 38
+					initialSize: 40
 				},
 				center: {
 					autoScroll: false
