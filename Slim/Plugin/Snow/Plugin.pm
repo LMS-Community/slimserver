@@ -19,6 +19,9 @@ use File::Spec::Functions qw(:ALL);
 use Scalar::Util qw(blessed);
 
 use Slim::Utils::Timers;
+use Slim::Utils::Prefs;
+
+my $prefs = preferences('server');
 
 sub getDisplayName {
 	return 'PLUGIN_SCREENSAVER_SNOW';
@@ -87,9 +90,9 @@ our %menuParams = (
 		'stringExternRef' => 1,
 		'header'          => 'PLUGIN_SCREENSAVER_SNOW_QUANTITY_TITLE',
 		'stringHeader'    => 1,
-		'onChange'        => sub { $_[0]->prefSet('snowQuantity',$_[1]); },
+		'onChange'        => sub { $prefs->client( $_[0] )->set('snowQuantity',$_[1]); },
 		'onChangeArgs'    => 'CV',
-		'initialValue'    => sub { $_[0]->prefGet('snowQuantity'); },
+		'initialValue'    => sub { $prefs->client( $_[0] )->get('snowQuantity'); },
 	},
 	catdir('snow','PLUGIN_SCREENSAVER_SNOW_STYLE') => {
 		'useMode'          => 'INPUT.List',
@@ -98,9 +101,9 @@ our %menuParams = (
 		'stringExternRef' => 1,
 		'header'          => 'PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE',
 		'stringHeader'    => 1,
-		'onChange'        => sub { $_[0]->prefSet('snowStyle',$_[1]); },
+		'onChange'        => sub { $prefs->client( $_[0] )->set('snowStyle',$_[1]); },
 		'onChangeArgs'    => 'CV',
-		'initialValue'    => sub { $_[0]->prefGet('snowStyle'); },
+		'initialValue'    => sub { $prefs->client( $_[0] )->get('snowStyle'); },
 	},
 	catdir('snow','PLUGIN_SCREENSAVER_SNOW_STYLE_OFF') => {
 		'useMode'         => 'INPUT.List',
@@ -109,9 +112,9 @@ our %menuParams = (
 		'stringExternRef' => 1,
 		'header'          => 'PLUGIN_SCREENSAVER_SNOW_STYLE_TITLE',
 		'stringHeader'    => 1,
-		'onChange'        => sub { $_[0]->prefSet('snowStyleOff',$_[1]); },
+		'onChange'        => sub { $prefs->client( $_[0] )->set('snowStyleOff',$_[1]); },
 		'onChangeArgs'    => 'CV',
-		'initialValue'    => sub { $_[0]->prefGet('snowStyleOff'); },
+		'initialValue'    => sub { $prefs->client( $_[0] )->get('snowStyleOff'); },
 	},
 );
 
@@ -128,7 +131,7 @@ sub overlayFunc {
 			return (
 				undef,
 				Slim::Buttons::Common::checkBoxOverlay($client,
-					$client->prefGet($saver) eq 'SCREENSAVER.snow'
+					$prefs->client($client)->get($saver) eq 'SCREENSAVER.snow'
 				),
 			);
 		}
@@ -151,10 +154,10 @@ sub snowExitHandler {
 				
 				my $saver = Slim::Player::Source::playmode($client) eq 'play' ? 'screensaver' : 'idlesaver';
 				
-				if ($client->prefGet($saver) eq 'SCREENSAVER.snow') {
-					$client->prefSet($saver,$Slim::Player::Player::defaultPrefs->{$saver});
+				if ( $prefs->client($client)->get($saver) eq 'SCREENSAVER.snow') {
+					$prefs->client($client)->set($saver,$Slim::Player::Player::defaultPrefs->{$saver});
 				} else {
-					$client->prefSet($saver, 'SCREENSAVER.snow');
+					$prefs->client($client)->set($saver, 'SCREENSAVER.snow');
 				}
 				
 				$client->update();
@@ -166,7 +169,7 @@ sub snowExitHandler {
 				if (ref($nextParams{'initialValue'}) eq 'CODE') {
 					$value = $nextParams{'initialValue'}->($client);
 				} else {
-					$value = $client->prefGet($nextParams{'initialValue'});
+					$value = $prefs->client($client)->get( $nextParams{'initialValue'} );
 				}
 				$nextParams{'valueRef'} = \$value;
 			}
@@ -211,14 +214,14 @@ sub setMode {
 	}
 
 	# install prefs
-	$client->prefSet('snowStyle',6)
-		unless defined $client->prefGet('snowStyle');
+	$prefs->client($client)->set('snowStyle',6)
+		unless defined $prefs->client($client)->get('snowStyle');
 		
-	$client->prefSet('snowStyleOff',6)
-		unless defined $client->prefGet('snowStyleOff');
+	$prefs->client($client)->set('snowStyleOff',6)
+		unless defined $prefs->client($client)->get('snowStyleOff');
 		
-	$client->prefSet('snowQuantity',1)
-		unless defined $client->prefGet('snowQuantity');
+	$prefs->client($client)->set('snowQuantity',1)
+		unless defined $prefs->client($client)->get('snowQuantity');
 
 	$snow{$client}->{current} = $snowSettingsChoices[0] unless exists($snow{$client}->{current});
 	my %params = %{$menuParams{'snow'}};
@@ -266,13 +269,13 @@ sub setScreensaverSnowMode {
 	#check power status
 	if ($client->power()) {
 		# save time on later lookups - we know these can't change while we're active
-		$snow{$client}->{snowStyle} = $client->prefGet('snowStyle') || 6;
+		$snow{$client}->{snowStyle} = $prefs->client($client)->get('snowStyle') || 6;
 
 	} else {
-		$snow{$client}->{snowStyle} = $client->prefGet('snowStyleOff') || 6;
+		$snow{$client}->{snowStyle} = $prefs->client($client)->get('snowStyleOff') || 6;
 	}
 
-	$snow{$client}->{snowQuantity} = $client->prefGet('snowQuantity') || 1;
+	$snow{$client}->{snowQuantity} = $prefs->client($client)->get('snowQuantity') || 1;
 	if ($client->isa( "Slim::Player::Squeezebox2")) {
 
 		$snow{$client}->{clientType} = 'SB2';
