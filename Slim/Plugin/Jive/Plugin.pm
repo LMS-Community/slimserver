@@ -61,7 +61,7 @@ sub initPlugin {
 #        C  Q  T  F
 
     Slim::Control::Request::addDispatch(['menu', '_index', '_quantity'], 
-        [0, 1, 1, \&menuQuery]);
+        [1, 1, 1, \&menuQuery]);
     Slim::Control::Request::addDispatch(['menusettings', '_index', '_quantity'], 
         [1, 1, 1, \&menusettingsQuery]);
 	Slim::Control::Request::addDispatch(['date'],
@@ -94,6 +94,7 @@ sub menuQuery {
 	}
 
 	# get our parameters
+        my $client        = $request->client() || 0;
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
 
@@ -308,6 +309,7 @@ sub menuQuery {
 				},
 			},
 		},
+
 		{
 			text    => Slim::Utils::Strings::string('MUSIC_ON_DEMAND'),
 			actions => {
@@ -351,6 +353,13 @@ sub menuQuery {
 			],
 		},
 	);
+	# is power on/off is restricted to certain players? if so, which?
+#	my $onOff = 1;
+	if ($client) {
+		push @menu, powerHash($client);
+		my $href = powerHash($client);
+		Data::Dump::dump($href);
+	}
 
 	my $numitems = scalar(@menu);
 
@@ -432,7 +441,6 @@ sub menusettingsQuery {
 		],
 	};
 	
-
 	# always add shuffle
 	$val = Slim::Player::Playlist::shuffle($client);
 	push @menu, {
@@ -1141,5 +1149,35 @@ sub populateAlarmHash {
 #	Data::Dump::dump(%return);
 	return \%return;
 }
-	
+
+sub powerHash {
+	my $client = shift;
+	my $name  = $client->name();
+	my $power = $client->power();
+	my %return; 
+	my ($text, $action);
+
+	if ($power == 1) {
+		$text = sprintf(Slim::Utils::Strings::string('JIVE_TURN_PLAYER_OFF'), $name);
+		$action = 0;
+	} else {
+		$text = sprintf(Slim::Utils::Strings::string('JIVE_TURN_PLAYER_ON'), $name);
+		$action = 1;
+	}
+
+	%return = ( 
+		text    => $text,
+		actions  => {
+			do  => {
+				player => 0,
+				cmd    => ['power', $action],
+				params => {
+					menu => 'main',
+				},
+			},
+		},
+	);
+	return \%return;
+}
+
 1;

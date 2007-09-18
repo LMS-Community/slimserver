@@ -2325,9 +2325,9 @@ sub serverstatusQuery_filter {
 	my $self = shift;
 	my $request = shift;
 	
-	# we want to know about rescan and all client notifs
+	# we want to know about rescan and all client notifs, as well as power on/off
 	# FIXME: wipecache and rescan are synonyms...
-	if ($request->isCommand([['wipecache', 'rescan', 'client']])) {
+	if ($request->isCommand([['wipecache', 'rescan', 'client', 'power']])) {
 		return 1.3;
 	}
 	
@@ -2436,6 +2436,8 @@ sub serverstatusQuery {
 					'name', $eachclient->name());
 				$request->addResultLoop('players_loop', $cnt, 
 					'model', $eachclient->model());
+				$request->addResultLoop('players_loop', $cnt, 
+					'power', $eachclient->power());
 				$request->addResultLoop('players_loop', $cnt, 
 					'displaytype', $eachclient->vfdmodel())
 					unless ($eachclient->model() eq 'http');
