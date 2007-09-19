@@ -417,11 +417,13 @@ sub gotOPML {
 		}
 		
 		# For radio buttons, copy default value to all other radio items
-		if ( $item->{type} eq 'radio' && $item->{default} ) {
-			$radioDefault = $item->{default};
-		}
-		elsif ( $item->{type} eq 'radio' ) {
-			$item->{default} = $radioDefault;
+		if ( $item->{type} ) {
+			if ( $item->{type} eq 'radio' && $item->{default} ) {
+				$radioDefault = $item->{default};
+			}
+			elsif ( $item->{type} eq 'radio' ) {
+				$item->{default} = $radioDefault;
+			}
 		}
 		
 		# Wrap text if needed
