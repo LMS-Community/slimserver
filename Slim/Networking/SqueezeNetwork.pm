@@ -159,7 +159,7 @@ sub login {
 	
 	# Return if we don't have any SN login information
 	if ( !$username || !$password ) {
-		my $error = "No SN login info found for " . $client->id . ", $username";
+		my $error = $client->string('SQUEEZENETWORK_NO_LOGIN');
 		$log->info( $error );
 		return $params{ecb}->( undef, $error );
 	}

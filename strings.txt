@@ -12613,6 +12613,9 @@ SQUEEZENETWORK_NO_PLAYER_CONNECTED
 	DE	Sie können sich ohne Player nicht zum SqueezeNetwork verbinden.
 	EN	Cannot access SqueezeNetwork services without a player connected.
 
+SQUEEZENETWORK_NO_LOGIN
+	EN	A SqueezeNetwork account is required for this service. Please access Server Settings -> SqueezeNetwork with a web browser to configure.
+
 UPNP_REQUEST_FAILED
 	DE	Fehler bei der UPnP-Anforderung. Prüfen Sie den UPnP-Server.
 	EN	UPnP request failed, please check the UPnP server.
