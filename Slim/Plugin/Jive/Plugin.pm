@@ -702,47 +702,22 @@ if (0) {
 	# information, always display
 	push @menu, {
 		text      => Slim::Utils::Strings::string('INFORMATION'),
-		count     => 12,
 		offset    => 0,
-		item_loop => [
-			{
-				text    => Slim::Utils::Strings::string("INFORMATION_PLAYER_NAME") . ":",
-			},
-			{
-				text    => $client->name(),
-			},
-			{
-				text    => Slim::Utils::Strings::string("INFORMATION_PLAYER_MODEL") . ":",
-			},
-			{
-				text    => Slim::Buttons::Information::playerModel($client),
-			},
-			{
-				text    => Slim::Utils::Strings::string("INFORMATION_FIRMWARE") . ":",
-			},
-			{
-				text    => $client->revision(),
-			},
-			{
-				text    => Slim::Utils::Strings::string("INFORMATION_PLAYER_IP") . ":",
-			},
-			{
-				text    => $client->ip(),
-			},
-			{
-				text    => Slim::Utils::Strings::string("INFORMATION_PLAYER_PORT") . ":",
-			},
-			{
-				text    => $client->port(),
-			},
-			{
-				text    => Slim::Utils::Strings::string("INFORMATION_PLAYER_MAC") . ":",
-			},
-			{
-				text    => uc($client->macaddress()),
-			},
-		],
-
+		count     => 1,
+		textArea => 
+			Slim::Utils::Strings::string("INFORMATION_PLAYER_NAME_ABBR") . ": " . 
+			$client->name() . "\n\n" . 
+			Slim::Utils::Strings::string("INFORMATION_PLAYER_MODEL_ABBR") . ": " .
+			Slim::Buttons::Information::playerModel($client) . "\n\n" .
+			Slim::Utils::Strings::string("INFORMATION_FIRMWARE_ABBR") . ": " . 
+			$client->revision() . "\n\n" .
+			Slim::Utils::Strings::string("INFORMATION_PLAYER_IP_ABBR") . ": " .
+			$client->ip() . "\n\n" .
+			Slim::Utils::Strings::string("INFORMATION_PLAYER_PORT_ABBR") . ": " .
+			$client->port() . "\n\n" .
+			Slim::Utils::Strings::string("INFORMATION_PLAYER_MAC_ABBR") . ": " .
+			uc($client->macaddress()),
+		,
 	};
 
 	# player name change, always display

@@ -11884,6 +11884,9 @@ INFORMATION_PLAYER_NAME
 	SV	Spelarens namn
 	ZH_CN	播放机名字
 
+INFORMATION_PLAYER_NAME_ABBR
+	EN	Name
+
 INFORMATION_PLAYER_MODEL
 	CS	Typ přehrávače
 	DE	Player-Modell
@@ -11898,6 +11901,9 @@ INFORMATION_PLAYER_MODEL
 	NO	Spillermodell
 	SV	Modell, spelare
 	ZH_CN	播放机型号
+
+INFORMATION_PLAYER_MODEL_ABBR
+	EN	Model
 
 INFORMATION_FIRMWARE
 	CS	Verze firmvaru přehrávače
@@ -11914,6 +11920,9 @@ INFORMATION_FIRMWARE
 	SV	Mjukvaruversion ('firmware'), spelare
 	ZH_CN	播放机韧件版本
 
+INFORMATION_FIRMWARE_ABBR
+	EN	Firmware
+
 INFORMATION_PLAYER_IP
 	CS	IP adresa přehrávače
 	DE	IP-Adresse des Players
@@ -11929,6 +11938,9 @@ INFORMATION_PLAYER_IP
 	SV	Spelarens IP-adress
 	ZH_CN	播放机IP地址
 
+INFORMATION_PLAYER_IP_ABBR
+	EN	IP
+
 INFORMATION_PLAYER_PORT
 	DE	Player-Portnummer
 	EN	Player Port Number
@@ -11941,6 +11953,9 @@ INFORMATION_PLAYER_PORT
 	NO	Spillerens port
 	SV	Spelarens port
 	ZH_CN	播放机端口号
+
+INFORMATION_PLAYER_PORT_ABBR
+	EN	Port
 
 INFORMATION_PLAYER_MAC
 	CS	MAC adresa přehrávače
@@ -11956,6 +11971,9 @@ INFORMATION_PLAYER_MAC
 	NO	Spillerens MAC adresse
 	SV	Spelarens MAC-adress
 	ZH_CN	播放机MAC地址
+
+INFORMATION_PLAYER_MAC_ABBR
+	EN	MAC
 
 INFORMATION_PLAYER_SIGNAL_STRENGTH
 	CS	Sila Wi-Fi signálu
@@ -13978,3 +13996,13 @@ JIVE_TURN_PLAYER_ON
 JIVE_TURN_PLAYER_OFF
 	EN	Turn %s Off
 
+PLAYER_NAME
+	EN	Name
+
+JIVE_PLAYER_MODEL
+	EN	Model
+
+JIVE_PLAYER_FIRMWARE_VERSION
+	EN	FW Version
+
+JIVE
