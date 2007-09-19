@@ -18,6 +18,7 @@ use Slim::Buttons::Information;
 use Slim::Buttons::Synchronize;
 use Slim::Buttons::AlarmClock;
 use Slim::Player::Sync;
+use Slim::Player::Client;
 use Data::Dump;
 
 
@@ -343,9 +344,7 @@ sub menuQuery {
 	);
 
 
-# is power on/off is restricted to certain players? if so, which?
-#	my $onOff = 1;
-	if ($client) {
+	if ($client->isPlayer()) {
 		push @menu, powerHash($client);
 	}
 
@@ -377,348 +376,132 @@ sub playerSettingsMenu {
 	my @menu = ();
 	return (\@menu, 0) unless $client;
 	
+	my %strings = (
+		repeat =>	[ 'REPEAT_OFF', 'REPEAT_ONE', 'REPEAT_ALL', ],
+		shuffle =>	[ 'SHUFFLE_OFF', 'SHUFFLE_ON_SONGS', 'SHUFFLE_ON_ALBUMS', ],
+		crossfade =>	[ 'TRANSITION_NONE', 'TRANSITION_CROSSFADE', 'TRANSITION_FADE_IN', 
+					'TRANSITION_FADE_OUT', 'TRANSITION_FADE_IN_OUT', ],
+		replaygain =>	[ 'REPLAYGAIN_DISABLED', 'REPLAYGAIN_TRACK_GAIN', 
+					'REPLAYGAIN_ALBUM_GAIN', 'REPLAYGAIN_SMART_GAIN' ],
+
+		);
+	my $val;
+
 	# always add repeat
-	my $val = Slim::Player::Playlist::repeat($client);
 	push @menu, {
 		text      => Slim::Utils::Strings::string('REPEAT'),
 		count     => 3,
 		offset    => 0,
 		item_loop => [
-			{
-				text    => Slim::Utils::Strings::string("REPEAT_OFF"),
-				radio	=> ($val == 0) + 0, # 0 is added to force data type to number
-				actions => {
-					do => {
-						player => 0,
-						cmd => ['playlist', 'repeat', '0'],
-					},
-				},
-			},
-			{
-				text    => Slim::Utils::Strings::string("REPEAT_ONE"),
-				radio	=> ($val == 1) + 0, # 0 is added to force the data type to number
-				actions => {
-					do => {
-						player => 0,
-						cmd => ['playlist', 'repeat', '1'],
-					},
-				},
-			},
-			{
-				text    => Slim::Utils::Strings::string("REPEAT_ALL"),
-				radio	=> ($val == 2) + 0, # 0 is added to force the data type to number
-				actions => {
-					do => {
-						player => 0,
-						cmd => ['playlist', 'repeat', '2'],
-					},
-				},
-			},
+			repeatHash($client, $strings{'repeat'}, 0),
+			repeatHash($client, $strings{'repeat'}, 1),
+			repeatHash($client, $strings{'repeat'}, 2),
 		],
 	};
 	
 	# always add shuffle
-	$val = Slim::Player::Playlist::shuffle($client);
 	push @menu, {
 		text      => Slim::Utils::Strings::string('SHUFFLE'),
 		count     => 3,
 		offset    => 0,
 		item_loop => [
-			{
-				text    => Slim::Utils::Strings::string("SHUFFLE_OFF"),
-				radio	=> ($val == 0) + 0, # 0 is added to force the data type to number
-				actions => {
-					do => {
-						player => 0,
-						cmd => ['playlist', 'shuffle', '0'],
-					},
-				},
-			},
-			{
-				text    => Slim::Utils::Strings::string("SHUFFLE_ON_SONGS"),
-				radio	=> ($val == 1) + 0, # 0 is added to force the data type to number
-				radio	=> 1,
-				actions => {
-					do => {
-						player => 0,
-						cmd => ['playlist', 'shuffle', '1'],
-					},
-				},
-			},
-			{
-				text    => Slim::Utils::Strings::string("SHUFFLE_ON_ALBUMS"),
-				radio	=> ($val == 2) + 0, # 0 is added to force the data type to number
-				actions => {
-					do => {
-						player => 0,
-						cmd => ['playlist', 'shuffle', '2'],
-					},
-				},
-			},
+			shuffleHash($client, $strings{'shuffle'}, 0),
+			shuffleHash($client, $strings{'shuffle'}, 1),
+			shuffleHash($client, $strings{'shuffle'}, 2),
 		],
 	};
 
-# disable for now
-if (0) {
-	# always add sleep (?)
-	$val = $client->currentSleepTime();
-	my $sleeping_in = Slim::Utils::Strings::string('SLEEPING_IN');
-	my $minutes = Slim::Utils::Strings::string('MINUTES');
+	if ($client->isPlayer()) {
+		# alarm clock, display for slim proto players
+		# still need to pick up saved playlists as list items
+		# need to figure out how to handle 24h vs. 12h clock format
+	
+		# array ref with 5 elements, each of which is a hashref
+		my $day0 = populateAlarmElements($client, 0);
+	
+		my @weekDays;
+		for my $day (1..7) {
+			# @weekDays becomes an array of arrayrefs of hashrefs, one element per weekday
+			push @weekDays, populateAlarmHash($client, $day);
+		}
+	
+		my %weekDayAlarms = (
+			text      => Slim::Utils::Strings::string("ALARM_WEEKDAYS"),
+			count     => 7,
+			offset    => 0,
+			item_loop => \@weekDays,
+		);
+	
+		# one item_loop to rule them all
+		my @allAlarms = ( @$day0, \%weekDayAlarms );
+	
+		push @menu, {
+			text      => Slim::Utils::Strings::string("ALARM"),
+			count     => 6,
+			offset    => 0,
+			item_loop =>  \@allAlarms,
+		};
+	}
+
+	# sleep setting (always)
 	push @menu, {
 		text      => Slim::Utils::Strings::string('SLEEP'),
 		count     => 6,
 		offset    => 0,
 		item_loop => [
-			{
-				text    => Slim::Utils::Strings::string("NONE"),
-				radio	=> ($val == 0) + 0, # 0 is added to force the data type to number
-				actions => {
-					do => {
-						player => 0,
-						cmd => ['sleep', '0'],
-					},
-				},
-			},
-			{
-				text    => $sleeping_in . ' 15 ' . $minutes,
-				radio	=> ($val == (15*60)) + 0, # 0 is added to force the data type to number
-				actions => {
-					do => {
-						player => 0,
-						cmd => ['sleep', 15*60 ],
-					},
-				},
-			},
-			{
-				text    => $sleeping_in . ' 30 ' . $minutes,
-				radio	=> ($val == (30*60)) + 0, # 0 is added to force the data type to number
-				actions => {
-					do => {
-						player => 0,
-						cmd => ['sleep', 30*60],
-					},
-				},
-			},
-			{
-				text    => $sleeping_in . ' 45 ' . $minutes,
-				radio	=> ($val == (45*60)) + 0, # 0 is added to force the data type to number
-				actions => {
-					do => {
-						player => 0,
-						cmd => ['sleep', 45*60],
-					},
-				},
-			},
-			{
-				text    => $sleeping_in . ' 60 ' . $minutes,
-				radio	=> ($val == (60*60)) + 0, # 0 is added to force the data type to number
-				actions => {
-					do => {
-						player => 0,
-						cmd => ['sleep', 60*60],
-					},
-				},
-			},
-			{
-				text    => $sleeping_in . ' 90 ' . $minutes,
-				radio	=> ($val == (90*60)) + 0, # 0 is added to force the data type to number
-				actions => {
-					do => {
-						player => 0,
-						cmd => ['sleep', 90*60],
-					},
-				},
-			},
+			sleepInXHash($client, 0),
+			sleepInXHash($client, 15),
+			sleepInXHash($client, 30),
+			sleepInXHash($client, 45),
+			sleepInXHash($client, 60),
+			sleepInXHash($client, 90),
 		],
 	};
-}
 
-if (0) {
-	# alarm clock, always display (all platforms support alarms? softsqueeze? stream.mp3?)
-	# we need to pick up setting for alarm for all days (8 total alarms)
-	# each alarm has 4 preferences: 
-	# on/off, alarm time, alarm volume, and
-	# playlist (current playlist, random songs, random albums, random artists, list of saved playlists)
-	# need to figure out how to handle 24h vs. 12h clock format
-	# alarm fade-in is another optional setting to pick up
-
-	# array ref with 5 elements, each of which is a hashref
-	my $day0 = populateAlarmElements($client, 0);
-
-	my @weekDays;
-	for my $day (1..7) {
-		# @weekDays becomes an array of arrayrefs of hashrefs, one element per weekday
-		push @weekDays, populateAlarmHash($client, $day);
-	}
-
-	my %weekDayAlarms = (
-		text      => Slim::Utils::Strings::string("ALARM_WEEKDAYS"),
-		count     => 7,
-		offset    => 0,
-		item_loop => \@weekDays,
-	);
-
-	# one item_loop to rule them all
-	my @allAlarms = ( @$day0, \%weekDayAlarms );
-
-	push @menu, {
-		text      => Slim::Utils::Strings::string("ALARM"),
-		count     => 6,
-		offset    => 0,
-		item_loop =>  \@allAlarms,
-	};
-
-}
-
-# disable for now
-if (0) {
 	# synchronization. only if numberOfPlayers > 1
-	my $playerCount = scalar(Slim::Player::Sync::canSyncWith($client));
-	if (scalar($playerCount > 0)) {
-		my $playersToSyncWith = getPlayersToSyncWith($client);
+	my ($playersToSyncWith, $synchablePlayers) = getPlayersToSyncWith($client);
+	if ($synchablePlayers > 0) {
 		push @menu, {
 			text      => Slim::Utils::Strings::string("SYNCHRONIZE"),
-			count     => $playerCount,
+			count     => $synchablePlayers,
 			offset    => 0,
 			item_loop => $playersToSyncWith,
 		};
 	}
-}
 
-	# replay gain (volume adjustment)
-	if ($client->canDoReplayGain(0)) {
-		$val = $prefs->client($client)->get('replayGainMode');
-		push @menu, {
-			text      => Slim::Utils::Strings::string("REPLAYGAIN"),
-			count     => 4,
-			offset    => 0,
-			item_loop => [
-				{
-					text    => Slim::Utils::Strings::string("REPLAYGAIN_DISABLED"),
-					radio	=> ($val == 0) + 0, # 0 is added to force the data type to number
-					actions => {
-						do => {
-							player => 0,
-							cmd => ['replayGainMode', '0'],
-						},
-					},
-				},
-				{
-					text    => Slim::Utils::Strings::string("REPLAYGAIN_TRACK_GAIN"),
-					radio	=> ($val == 1) + 0, # 0 is added to force the data type to number
-					actions => {
-						do => {
-							player => 0,
-							cmd => ['replayGainMode', '1'],
-						},
-					},
-				},
-				{
-					text    => Slim::Utils::Strings::string("REPLAYGAIN_ALBUM_GAIN"),
-					radio	=> ($val == 2) + 0, # 0 is added to force the data type to number
-					actions => {
-						do => {
-							player => 0,
-							cmd => ['replayGainMode', '2'],
-						},
-					},
-				},
-				{
-					text    => Slim::Utils::Strings::string("REPLAYGAIN_SMART_GAIN"),
-					radio	=> ($val == 3) + 0, # 0 is added to force the data type to number
-					actions => {
-						do => {
-							player => 0,
-							cmd => ['replayGainMode', '3'],
-						},
-					},
-				},
-			],
-		};
-	}
 
 	# transition only for Sb2 and beyond
 	if ($client->isa('Slim::Player::Squeezebox2')) {
-		$val = $prefs->client($client)->get('transitionType');
 		push @menu, {
 			text      => Slim::Utils::Strings::string('SETUP_TRANSITIONTYPE'),
 			count     => 5,
 			offset    => 0,
 			item_loop => [
-				{
-					text    => Slim::Utils::Strings::string("TRANSITION_NONE"),
-					radio	=> ($val == 0) + 0, # 0 is added to force the data type to number
-					actions => {
-						do => {
-							player => 0,
-							cmd => ['playerpref', 'transitionType', '0'],
-						},
-					},
-				},
-				{
-					text    => Slim::Utils::Strings::string("TRANSITION_CROSSFADE"),
-					radio	=> ($val == 1) + 0, # 0 is added to force the data type to number
-					actions => {
-						do => {
-							player => 0,
-							cmd => ['playerpref', 'transitionType', '1'],
-						},
-					},
-				},
-				{
-					text    => Slim::Utils::Strings::string("TRANSITION_FADE_IN"),
-					radio	=> ($val == 2) + 0, # 0 is added to force the data type to number
-					actions => {
-						do => {
-							player => 0,
-							cmd => ['playerpref', 'transitionType', '2'],
-						},
-					}
-				},
-				{
-					text    => Slim::Utils::Strings::string("TRANSITION_FADE_OUT"),
-					radio	=> ($val == 3) + 0, # 0 is added to force the data type to number
-					actions => {
-						do => {
-							player => 0,
-							cmd => ['playerpref', 'transitionType', '3'],
-						},
-					},
-				},
-				{
-					text    => Slim::Utils::Strings::string("TRANSITION_FADE_IN_OUT"),
-					radio	=> ($val == 4) + 0,
-					actions => {
-						do => {
-							player => 0,
-							cmd => ['playerpref', 'transitionType', '4'],
-						},
-					},
-				},
+				transitionHash($client, $prefs, $strings{'crossfade'}, 0),
+				transitionHash($client, $prefs, $strings{'crossfade'}, 1),
+				transitionHash($client, $prefs, $strings{'crossfade'}, 2),
+				transitionHash($client, $prefs, $strings{'crossfade'}, 3),
+				transitionHash($client, $prefs, $strings{'crossfade'}, 4),
 			],
 		};
 	}
 
-	# information, always display
-	push @menu, {
-		text      => Slim::Utils::Strings::string('INFORMATION_MENU_PLAYER'),
-		offset    => 0,
-		count     => 1,
-		textArea => 
-			Slim::Utils::Strings::string("INFORMATION_PLAYER_NAME_ABBR") . ": " . 
-			$client->name() . "\n\n" . 
-			Slim::Utils::Strings::string("INFORMATION_PLAYER_MODEL_ABBR") . ": " .
-			Slim::Buttons::Information::playerModel($client) . "\n\n" .
-			Slim::Utils::Strings::string("INFORMATION_FIRMWARE_ABBR") . ": " . 
-			$client->revision() . "\n\n" .
-			Slim::Utils::Strings::string("INFORMATION_PLAYER_IP_ABBR") . ": " .
-			$client->ip() . "\n\n" .
-			Slim::Utils::Strings::string("INFORMATION_PLAYER_PORT_ABBR") . ": " .
-			$client->port() . "\n\n" .
-			Slim::Utils::Strings::string("INFORMATION_PLAYER_MAC_ABBR") . ": " .
-			uc($client->macaddress()),
-		,
-	};
+
+	# replay gain (volume adjustment)
+	if ($client->canDoReplayGain(0)) {
+		push @menu, {
+			text      => Slim::Utils::Strings::string("REPLAYGAIN"),
+			count     => 4,
+			offset    => 0,
+			item_loop => [
+				replayGainHash($client, $prefs, $strings{'replaygain'}, 0),
+				replayGainHash($client, $prefs, $strings{'replaygain'}, 1),
+				replayGainHash($client, $prefs, $strings{'replaygain'}, 2),
+				replayGainHash($client, $prefs, $strings{'replaygain'}, 3),
+				replayGainHash($client, $prefs, $strings{'replaygain'}, 4),
+			],
+		};
+	}
 
 	# player name change, always display
 	push @menu, {
@@ -742,26 +525,58 @@ if (0) {
 		},
 	};
 
+	# information, always display
+	push @menu, {
+		text      => Slim::Utils::Strings::string('INFORMATION_MENU_PLAYER'),
+		offset    => 0,
+		count     => 1,
+		textArea => 
+			Slim::Utils::Strings::string("INFORMATION_PLAYER_NAME_ABBR") . ": " . 
+			$client->name() . "\n\n" . 
+			Slim::Utils::Strings::string("INFORMATION_PLAYER_MODEL_ABBR") . ": " .
+			Slim::Buttons::Information::playerModel($client) . "\n\n" .
+			Slim::Utils::Strings::string("INFORMATION_FIRMWARE_ABBR") . ": " . 
+			$client->revision() . "\n\n" .
+			Slim::Utils::Strings::string("INFORMATION_PLAYER_IP_ABBR") . ": " .
+			$client->ip() . "\n\n" .
+			Slim::Utils::Strings::string("INFORMATION_PLAYER_PORT_ABBR") . ": " .
+			$client->port() . "\n\n" .
+			Slim::Utils::Strings::string("INFORMATION_PLAYER_MAC_ABBR") . ": " .
+			uc($client->macaddress()),
+		,
+	};
+
 	return (\@menu, scalar(@menu));
 }
 
 sub getPlayersToSyncWith() {
 	my $client = shift;
-	@{$client->syncSelections} = Slim::Player::Sync::canSyncWith($client);
-#	my @array = Slim::Player::Sync::canSyncWith($client);
-	warn @{$client->syncSelections};
-	my @return;
-	# go through available players to sync with and return a LoH with the correct values
-#	my $listRef = Slim::Buttons::Synchronize::lines;
-	for my $player (@{$client->syncSelections}) {
-		warn $player;
-		push @return, {
-			{
-				text => $player,
-			},
+	my @playerSyncList = Slim::Player::Client::clients();
+	my @return = ();
+	my $synchablePlayers = 0;
+	for my $player (@playerSyncList) {
+		# skip ourself
+		next if ($client eq $player);
+		# we only sync slimproto devices
+		next if (!$player->isPlayer());
+		my $val = Slim::Player::Sync::isSyncedWith($client, $player); 
+		$synchablePlayers++;
+		push @return, { 
+			text => $player->name(), 
+			checkbox => ($val == 1) + 0,
+			actions  => {
+				on  => {
+					player => 0,
+					cmd    => ['sync', $player->id()],
+				},
+				off => {
+					player => $player->id(),
+					cmd    => ['sync', '-'],
+				},
+			},		
 		};
 	}
-	return \@return;
+	return (\@return, $synchablePlayers);
 }
 
 sub dateQuery {
@@ -1107,6 +922,93 @@ sub powerHash {
 				params => {
 					menu => 'main',
 				},
+			},
+		},
+	);
+	return \%return;
+}
+
+sub sleepInXHash {
+	my $client = shift;
+	my $sleepTime = shift;
+	my $val = $client->currentSleepTime();
+	my $minutes = Slim::Utils::Strings::string('MINUTES');
+	my $text = $sleepTime == 0 ? 
+		Slim::Utils::Strings::string("NONE") :
+		$sleepTime . " " . $minutes;
+	my %return = ( 
+		text    => $text,
+		radio	=> ($val == ($sleepTime*60)) + 0, # 0 is added to force the data type to number
+		actions => {
+			do => {
+				player => 0,
+				cmd => ['sleep', $sleepTime*60 ],
+			},
+		},
+	);
+	return \%return;
+}
+
+sub repeatHash {
+	my ($client, $strings, $thisValue) = @_;
+	my $val = Slim::Player::Playlist::repeat($client);
+	my %return = (
+		text    => Slim::Utils::Strings::string($strings->[$thisValue]),
+		radio	=> ($val == $thisValue) + 0, # 0 is added to force data type to number
+		actions => {
+			do => {
+				player => 0,
+				cmd => ['playlist', 'repeat', "$thisValue" ],
+			},
+		},
+	);
+	return \%return;
+}
+
+sub shuffleHash {
+	my ($client, $strings, $thisValue) = @_;
+	my $val = Slim::Player::Playlist::shuffle($client);
+	my %return = (
+		text    => Slim::Utils::Strings::string($strings->[$thisValue]),
+		radio	=> ($val == $thisValue) + 0, # 0 is added to force the data type to number
+			actions => {
+				do => {
+					player => 0,
+					cmd => ['playlist', 'shuffle', "$thisValue"],
+				},
+			},
+	);
+	return \%return;
+};
+
+sub transitionHash {
+	
+	my ($client, $prefs, $strings, $thisValue) = @_;
+	my $val = $prefs->client($client)->get('transitionType');
+	my %return = (
+		text    => Slim::Utils::Strings::string($strings->[$thisValue]),
+		radio	=> ($val == $thisValue) + 0, # 0 is added to force the data type to number
+		actions => {
+			do => {
+				player => 0,
+				cmd => ['playerpref', 'transitionType', "$thisValue" ],
+			},
+		},
+	);
+	return \%return;
+}
+
+sub replayGainHash {
+	
+	my ($client, $prefs, $strings, $thisValue) = @_;
+	my $val = $prefs->client($client)->get('replayGainMode');
+	my %return = (
+		text    => Slim::Utils::Strings::string($strings->[$thisValue]),
+		radio	=> ($val == $thisValue) + 0, # 0 is added to force the data type to number
+			actions => {
+			do => {
+				player => 0,
+				cmd => ['replayGainMode', "$thisValue"],
 			},
 		},
 	);
