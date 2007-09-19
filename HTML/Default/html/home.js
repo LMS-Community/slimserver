@@ -161,16 +161,9 @@ var MainMenu = function(){
 		},
 
 		onResize : function(){
-			var items = Ext.DomQuery.select('div.homeMenuSection');
-			var contW = Ext.get(document.body).getWidth() - 30;
+			Ext.select('div.homeMenuSection').setWidth(Ext.get(document.body).getWidth() - 30);
+
 			var el;
-
-			for(var i = 0; i < items.length; i++) {
-				if (el = Ext.get(items[i].id)) {
-					el.setWidth(contW);
-				}
-			}
-
 			if (Ext.isIE && !Ext.isIE7 && (el = Ext.DomQuery.selectNode('div.inner_content')))
 				Ext.get(el).setWidth(contW+25);
 

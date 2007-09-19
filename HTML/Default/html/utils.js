@@ -91,13 +91,9 @@ var Utils = function(){
 					var el = Ext.get(target).findParent('.selectorMarker');
 					if (el = Ext.get(el)) {
 						el.replaceClass('selectorMarker', 'mouseOver');
-
 						el.on('click', Utils.onSelectorClicked);
 
-						var controls = Ext.DomQuery.select('span.browsedbControls, span.browsedbRightControls, span.browsedbLeftControls, div.playlistControls', el.dom);
-						for (var i = 0; i < controls.length; i++) {
-							Ext.get(controls[i]).show();
-						}
+						Ext.select('span.browsedbControls, span.browsedbRightControls, span.browsedbLeftControls, div.playlistControls', false, el.dom).show();
 					}
 				}
 			});
@@ -112,10 +108,7 @@ var Utils = function(){
 					el.replaceClass('mouseOver', 'selectorMarker');
 					el.un('click', Utils.onSelectorClicked);
 
-					var controls = Ext.DomQuery.select('span.browsedbControls, span.browsedbRightControls, span.browsedbLeftControls, div.playlistControls', el.dom);
-					for (var i = 0; i < controls.length; i++) {
-						Ext.get(controls[i]).hide();
-					}
+					Ext.select('span.browsedbControls, span.browsedbRightControls, span.browsedbLeftControls, div.playlistControls', false, el.dom).hide();
 				}
 			}
 		},
