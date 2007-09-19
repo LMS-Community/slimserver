@@ -28,6 +28,13 @@ sub needsClient {
 	return 1;
 }
 
+sub validFor {
+	my $class = shift;
+	my $client = shift;
+	
+	return $client->isPlayer;
+}
+
 sub prefs {
 	my ($class, $client) = @_;
 

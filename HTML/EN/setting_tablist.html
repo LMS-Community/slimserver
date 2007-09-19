@@ -1,4 +1,4 @@
-    [% IF playerid %][% links = additionalLinks.playersetup %][% ELSE %][% links = additionalLinks.setup %][% END %]
+    [% IF playerid %][% links = playersetup %][% ELSE %][% links = additionalLinks.setup %][% END %]
     [% IF links %]
       [% IF style == "list" %]<div id="setuptabs"><ul>[% END %]
       [% FOREACH link = links %]

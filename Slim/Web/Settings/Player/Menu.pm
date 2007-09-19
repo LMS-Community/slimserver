@@ -26,6 +26,13 @@ sub needsClient {
 	return 1;
 }
 
+sub validFor {
+	my $class = shift;
+	my $client = shift;
+	
+	return !$client->display->isa('Slim::Display::NoDisplay');
+}
+
 sub handler {
 	my ($class, $client, $paramRef) = @_;
 
