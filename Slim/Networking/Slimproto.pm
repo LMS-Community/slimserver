@@ -243,6 +243,8 @@ sub slimproto_close {
 	if ( my $client = $sock2client{$clientsock} ) {
 		
 		delete $heartbeat{ $client->id };
+		delete $latency{ $client };
+		delete $latencyList{ $client };
 
 		# check client not forgotten and this is the active slimproto socket for this client
 		if ( Slim::Player::Client::getClient( $client->id ) ) {
@@ -759,7 +761,7 @@ sub _stat_handler {
 }
 
 sub getLatency {
-	return $latency{shift};
+	return $latency{shift} || 0;
 }
 
 sub getPlayPointData {
