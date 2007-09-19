@@ -13,15 +13,18 @@
 		strings['switch_to_extended_list'] = '[% "SWITCH_TO_EXTENDED_LIST" | string %]';
 		strings['switch_to_gallery']       = '[% "SWITCH_TO_GALLERY" | string %]';
 		strings['sort_by']                 = '[% "SORT_BY" | string %]';
+
+		var orderByList;
 		[% IF levelName == 'album' %]
-			var orderByList = new Object();
-			orderByList['[% "ALBUM" | string %]']                = 'album.titlesort';
-			orderByList['[% "SORT_YEARALBUM" | string %]']       = 'album.year,album.titlesort';
-			orderByList['[% "SORT_YEARARTISTALBUM" | string %]'] = 'album.year,contributor.namesort,album.titlesort';
-			orderByList['[% "SORT_ARTISTALBUM" | string %]']     = 'contributor.namesort,album.titlesort';
-			orderByList['[% "SORT_ARTISTYEARALBUM" | string %]'] = 'contributor.namesort,album.year,album.titlesort';
-			orderByList['[% "SORT_GENREALBUM" | string %]']      = 'genre.namesort,album.titlesort';
-			orderByList['[% "SORT_GENREARTISTALBUM" | string %]']= 'genre.namesort,contributor.namesort,album.titlesort';
+			orderByList = {
+				'[% "ALBUM" | string %]'                : 'album.titlesort',
+				'[% "SORT_YEARALBUM" | string %]'       : 'album.year,album.titlesort',
+				'[% "SORT_YEARARTISTALBUM" | string %]' : 'album.year,contributor.namesort,album.titlesort',
+				'[% "SORT_ARTISTALBUM" | string %]'     : 'contributor.namesort,album.titlesort',
+				'[% "SORT_ARTISTYEARALBUM" | string %]' : 'contributor.namesort,album.year,album.titlesort',
+				'[% "SORT_GENREALBUM" | string %]'      : 'genre.namesort,album.titlesort',
+				'[% "SORT_GENREARTISTALBUM" | string %]': 'genre.namesort,contributor.namesort,album.titlesort'
+			}
 		[% END %]
 	</script>
 [%- END -%]
