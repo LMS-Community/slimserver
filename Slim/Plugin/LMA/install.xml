@@ -4,7 +4,7 @@
 	<id>B9145737-A509-4DD9-8DCA-A2D31D0FF1B5</id>
         <name>PLUGIN_LMA_MODULE_NAME</name>
         <module>Slim::Plugin::LMA::Plugin</module>
-        <playerMenu>RADIO</playerMenu>
+        <playerMenu>MUSIC_ON_DEMAND</playerMenu>
         <version>1.0</version>
         <description>PLUGIN_LMA_MODULE_NAME_DESC</description>
         <creator>Slim Devices/Logitech</creator>
