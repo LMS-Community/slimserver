@@ -890,6 +890,10 @@ div#albumBackground {
 	-moz-opacity: 0.75;
 }
 
+div#trackInfo {
+	padding-top: 10px;
+}
+
 .descendinfo {
 }
 
