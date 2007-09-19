@@ -3681,7 +3681,7 @@ SETUP_REPLAYGAINMODE_DESC
 
 REPLAYGAIN_DISABLED
 	DE	Normalisierung deaktivieren
-	EN	Disable Volume Adjustment
+	EN	No Volume Adjustment
 	ES	Deshabilitar ajuste de volumen
 	FR	Désactiver l'ajustement du volume
 	HE	השבתת האפשרות לכוונון עוצמת הקול
@@ -3693,7 +3693,7 @@ REPLAYGAIN_DISABLED
 
 REPLAYGAIN_TRACK_GAIN
 	DE	Titel-Normalisierung verwenden (falls möglich)
-	EN	Use Track Gain (If Present)
+	EN	Track Gain
 	ES	Usar ganancia de pista (si está presente)
 	FR	Utiliser le gain morceau si présent
 	HE	שימוש בהגברת רצועות (אם האפשרות קיימת)
@@ -3705,7 +3705,7 @@ REPLAYGAIN_TRACK_GAIN
 
 REPLAYGAIN_ALBUM_GAIN
 	DE	Album-Normalisierung verwenden (falls möglich)
-	EN	Use Album Gain (If Present)
+	EN	Album Gain
 	ES	Usar ganancia de álbum (si está presente)
 	FR	Utiliser le gain album si présent
 	HE	שימוש בהגברת אלבום (אם האפשרות קיימת)
@@ -3717,7 +3717,7 @@ REPLAYGAIN_ALBUM_GAIN
 
 REPLAYGAIN_SMART_GAIN
 	DE	'Intelligente' Normalisierung
-	EN	"Smart" Gain Selection
+	EN	"Smart" Gain 
 	ES	Selección de ganancia "inteligente"
 	FR	Utiliser le gain intelligent
 	HE	בחירת הגברה חכמה
