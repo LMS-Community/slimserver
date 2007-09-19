@@ -1,4 +1,4 @@
-<div class="[% IF item.currentsong %]currentSong[% ELSE %]selectorMarker[% END %]" id="playlistSong[% item.num %]"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+<div class="draggableSong [% IF item.currentsong %]currentSong[% ELSE %]selectorMarker[% END %]" id="playlistSong[% item.num %]"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 	<div class="browsedbListItem[% IF !noPlaylistCover %] itemWithCover[% END %]">
 		[% IF noPlaylistCover %]
 			<a href="[% webroot %]songinfo.html?item=[% item.itemobj.id %]&amp;player=[% playerURI %]" target="browser" class="browseItemLink">[% item.title | html %]</a>

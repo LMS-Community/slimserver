@@ -25,6 +25,7 @@ Main = function(){
 			layout.add('center', new Ext.ContentPanel('main', {fitToFrame:true, fitContainer:true}));
 
 			Player.init();
+			Playlist.init();
 
 			// TODO: these links need to go to the correct pages
 			Ext.get('helpLink').on('click', function(){
@@ -319,6 +320,60 @@ PlayerChooser = function(){
 
 Playlist = function(){
 	return {
+		init : function(){
+			// some initialization of the DD class used
+			Ext.dd.ScrollManager.register('playList');
+
+			Ext.override(Ext.dd.DDProxy, {
+
+				// highlight a copy of the dragged item to move with the mouse pointer
+				startDrag: function(x, y) {
+					var dragEl = Ext.get(this.getDragEl());
+					var el = Ext.get(this.getEl());
+					Utils.unHighlight();
+
+					dragEl.applyStyles({'z-index':2000});
+					dragEl.update(el.dom.innerHTML);
+					dragEl.addClass(el.dom.className + ' dd-proxy');
+				},
+
+				// disable the default behaviour which would place the dragged element
+				// we don't need to place it as it will be moved in onDragDrop
+				endDrag: function() {},
+
+				// move the item when dropped
+				onDragDrop: function(e, id) {
+					var source = Ext.get(this.getEl());
+					var target = Ext.get(id);
+			
+					if (target && source) {
+						var sourcePos = -1;
+						var targetPos = -1;
+
+						// get to know where we come from, where we've gone to
+						var items = Ext.DomQuery.select('#playList div.draggableSong');
+						for(var i = 0; i < items.length; i++) {
+							if (items[i].id == this.id)
+								sourcePos = i;
+							else if (items[i].id == id)
+								targetPos = i;
+						}
+			
+						if (sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {
+							if (sourcePos > targetPos) {
+								source.insertBefore(target);
+							}
+							else  {
+								source.insertAfter(target);
+							}
+							Player.playerControl(['playlist', 'move', sourcePos, targetPos], true);
+						}
+					}
+				}
+			});
+
+		},
+
 		load : function(url){
 			// try to reload previous page if no URL is defined
 			el = Ext.get('playlistPanel');
@@ -378,6 +433,19 @@ Playlist = function(){
 					}
 				}
 			});
+
+			// make playlist items draggable
+			Ext.dd.ScrollManager.register('playList');
+
+			var items = Ext.DomQuery.select('#playList div.draggableSong');
+			for(var i = 0; i < items.length; i++) {
+				var item = Ext.get(items[i]);
+
+				item.dd = new Ext.dd.DDProxy(items[i], 'playlist');
+				item.dd.setXConstraint(0, 0);
+				item.dd.scroll = false;
+				item.dd.scrollContainer = true;
+			}
 
 
 			Playlist.highlightCurrent();

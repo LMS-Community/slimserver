@@ -929,3 +929,11 @@ form#advSearchForm.resultsPage {
 }
 
 .disclosure_expanded { background-position: 0 -11px; }
+
+.dd-proxy {
+	color: black;
+	opacity: 0.4;
+	-moz-opacity: 0.4;
+	filter: alpha(opacity=40);
+	background-color: grey;
+}
