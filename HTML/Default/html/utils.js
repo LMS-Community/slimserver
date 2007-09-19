@@ -78,28 +78,32 @@ var Utils = function(){
 
 		},
 
-		addBrowseMouseOver: function(){
-			Ext.addBehaviors({
-				'.selectorMarker, .currentSong@mouseover': function(ev, target){
-					// return if the target is a child of the main selector
-					if (Ext.get(target).findParent('.mouseOver'))
-						return;
-
-					Utils.unHighlight();
-
-					// always highlight the main selector, not its children
-					var el = Ext.get(target).findParent('.selectorMarker');
-					if (el = Ext.get(el)) {
-						el.replaceClass('selectorMarker', 'mouseOver');
-						el.on('click', Utils.onSelectorClicked);
-
-						Ext.select('span.browsedbControls, span.browsedbRightControls, span.browsedbLeftControls, div.playlistControls', false, el.dom).show();
-					}
-				}
-			});
+		addBrowseMouseOver : function(){
+			Ext.select('div.selectorMarker, div.currentSong').on('mouseover', Utils.highlight); 
 		},
 
-		unHighlight: function(){
+		removeBrowseMouseOver : function(){
+			Ext.select('.selectorMarker, .currentSong').un('mouseover', Utils.highlight); 
+		},
+
+		highlight : function(ev, target){
+			// return if the target is a child of the main selector
+			if (Ext.get(target).findParent('.mouseOver'))
+				return;
+
+			Utils.unHighlight();
+
+			// always highlight the main selector, not its children
+			var el = Ext.get(target).findParent('.selectorMarker');
+			if (el = Ext.get(el)) {
+				el.replaceClass('selectorMarker', 'mouseOver');
+				el.on('click', Utils.onSelectorClicked);
+
+				Ext.select('span.browsedbControls, span.browsedbRightControls, span.browsedbLeftControls, div.playlistControls', false, el.dom).show();
+			}
+		},
+
+		unHighlight : function(){
 			// remove highlighting from the other DIVs
 			var items = Ext.DomQuery.select('div.mouseOver');
 			for(var i = 0; i < items.length; i++) {

@@ -383,9 +383,29 @@ Playlist = function(){
 				}
 			});
 
+			// reset highlighter when exiting the playlist
+			Ext.addBehaviors({
+				'#rightpanel div.inner@mouseover': function(ev, target){
+					if (target == this)
+						Utils.unHighlight();
+
+					var current = Ext.DomQuery.selectNode('div.currentSong');
+
+					if (!(Ext.fly(current) && Ext.fly(current).contains(target))) {
+						if (controls = Ext.DomQuery.selectNode('.currentSong div.playlistControls')) {
+							Ext.get(controls).hide();
+						}
+					}
+				}
+			});
 		},
 
 		load : function(url){
+			// unregister event handlers
+			Utils.removeBrowseMouseOver();
+			Ext.select('div.currentSong').un('mouseover', Playlist.showPlaylistControl);
+			Ext.dd.ScrollManager.unregister('playList');
+
 			// try to reload previous page if no URL is defined
 			var el = Ext.get('playlistPanel');
 
@@ -417,34 +437,18 @@ Playlist = function(){
 				el.getUpdateManager().setDefaultUrl('');
 		},
 
+		showPlaylistControl : function(ev, target){
+			var el = Ext.get(target);
+			if (el) {
+				Ext.select('div.playlistControls', false, el.dom).show();
+			}
+		},
+
 		onUpdated : function(){
 			Main.onResize();
 			Utils.addBrowseMouseOver();
 
-			var current = Ext.DomQuery.selectNode('div.currentSong');
-
-			Ext.addBehaviors({
-				'.currentSong@mouseover': function(ev, target){
-					var el = Ext.get(target);
-					if (el) {
-						if (controls = Ext.DomQuery.selectNode('div.playlistControls', el.dom)) {
-							Ext.get(controls).show();
-						}
-					}
-				},
-
-				// reset highlighter when exiting the playlist
-				'#rightpanel div.inner@mouseover': function(ev, target){
-					if (target == this)
-						Utils.unHighlight();
-
-					if (!(Ext.fly(current) && Ext.fly(current).contains(target))) {
-						if (controls = Ext.DomQuery.selectNode('.currentSong div.playlistControls')) {
-							Ext.get(controls).hide();
-						}
-					}
-				}
-			});
+			Ext.select('div.currentSong').on('mouseover', Playlist.showPlaylistControl);
 
 			// make playlist items draggable
 			Ext.dd.ScrollManager.register('playList');
