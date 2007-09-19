@@ -701,7 +701,7 @@ if (0) {
 
 	# information, always display
 	push @menu, {
-		text      => Slim::Utils::Strings::string('INFORMATION'),
+		text      => Slim::Utils::Strings::string('INFORMATION_MENU_PLAYER'),
 		offset    => 0,
 		count     => 1,
 		textArea => 
