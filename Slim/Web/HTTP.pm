@@ -556,7 +556,9 @@ sub processHTTP {
 					if ($value ne '*' && $value ne '') {
 
 						$value = Slim::Utils::Unicode::utf8on($value);
-						$value = Slim::Utils::Unicode::utf8encode_locale($value);
+						# Bug 5236 - this is breaking strings with some characters
+						# in them (eg. Hungarian) 
+						#$value = Slim::Utils::Unicode::utf8encode_locale($value);
 					}
 
 					# Ick. It sure would be nice to use
