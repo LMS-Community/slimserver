@@ -39,11 +39,13 @@ img.cmdLinkIcon {
 	right: 42px;
 }
 
-.thumbArtwork .browsedbControls {
+.thumbArtwork span.browsedbControls {
 	position: absolute;
 	top: auto;
 	bottom: 5px;
 	right: 5px;
+	padding: 2px;
+	background-color: #c4c4c4;
 }
 
 .thumbwrap {

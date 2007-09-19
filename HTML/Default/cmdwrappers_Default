@@ -30,7 +30,7 @@
 
 	[% BLOCK contentitem -%]
 	<div class="selectorMarker"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-		<div class="[% lineclass || 'browsedbListItem' %][% IF item.coverThumb && !(artwork > 0 && (levelName == 'album' || levelName == 'age')) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
+		<div class="[% lineclass || 'browsedbListItem' %][% IF (artwork == 0 && (levelName == 'album' || levelName == 'age')) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			[%- IF leftcontrols -%]
 				<span class="browsedbLeftControls" style="display: none;">
 				[%- PROCESS $leftcontrols -%]
@@ -76,9 +76,9 @@
 
 		[%- IF item.descend %]
 
-			[% IF item.coverThumb && !(artwork > 0 && (levelName == 'album' || levelName == 'age')) %]
+			[% IF (artwork == 0 && (levelName == 'album' || levelName == 'age')) %]
 				<span class="browseCover">
-					[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% PROCESS thumbnailItemImg height="50" %][% IF item.hierarchy %]</a>[% END -%]
+					[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% IF item.coverThumb; hreftype = "thumbnail"; ELSE; hreftype = "dummy"; END; PROCESS "${hreftype}ItemImg" height="50" %][% IF item.hierarchy %]</a>[% END -%]
 				</span>
 				<div class="browseItemDetail">
 					[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %] class="browseItemLink">[% END %][% item.text | html %][% IF item.hierarchy %]</a>[% END -%]
