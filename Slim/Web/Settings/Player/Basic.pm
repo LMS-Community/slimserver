@@ -90,7 +90,7 @@ sub handler {
 
 	$paramRef->{'titleFormatOptions'}    = hashOfPrefs('titleFormat');
 	
-	if (!$client->display->isa('Slim::Display::NoDisplay')) {
+	if ($client && !$client->display->isa('Slim::Display::NoDisplay')) {
 		$paramRef->{'playingDisplayOptions'} = getPlayingDisplayModes($client);
 		$paramRef->{'visualModeOptions'}     = getVisualModes($client);
 		$paramRef->{'screensavers'}          = Slim::Buttons::Common::hash_of_savers();
