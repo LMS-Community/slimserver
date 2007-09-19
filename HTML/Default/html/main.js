@@ -49,6 +49,7 @@ Main = function(){
 			Ext.EventManager.onWindowResize(this.onResize, layout);
 			Ext.EventManager.onDocumentReady(this.onResize, layout, true);
 
+			var el;
 			if (el = Ext.get('scanWarning'))
 				el.setVisibilityMode(Ext.Element.DISPLAY);
 
@@ -86,6 +87,8 @@ Main = function(){
 		},
 
 		scanUpdate : function (response){
+			var el, total;
+
 			if (response && response.responseText) {
 				var responseText = Ext.util.JSON.decode(response.responseText);
 
@@ -115,6 +118,8 @@ Main = function(){
 		},
 
 		checkScanStatus : function(response){
+			var el;
+
 			if (response.result && response.result.rescan) {
 				if (el = Ext.get('newVersion'))
 					el.hide();
@@ -130,6 +135,8 @@ Main = function(){
 
 		// resize panels, folder selectors etc.
 		onResize : function(){
+			var offset, dimensions, right, left, pl;
+
 			// some browser dependant offsets... argh...
 			offset = new Array();
 			offset['bottom'] = 30;
@@ -207,6 +214,8 @@ PlayerChooser = function(){
 		},
 
 		update : function(){
+			var el;
+
 			Ext.Ajax.request({
 				params: Ext.util.JSON.encode({
 					id: 1,
@@ -230,10 +239,10 @@ PlayerChooser = function(){
 						// let's set the current player to the first player in the list
 						if (responseText.result && responseText.result['player count'] > 0) {
 							playerList.menu.removeAll();
-							playerInList = false;
+							var playerInList = false;
 
 							for (x=0; x < responseText.result['player count']; x++) {
-								currentPlayer = false;
+								var currentPlayer = false;
 								if (responseText.result.players_loop[x].playerid == playerid) {
 									currentPlayer = true;
 									playerInList = true;
@@ -291,13 +300,15 @@ PlayerChooser = function(){
 		},
 
 		selectPlayer: function(ev){
+			var el;
+
 			playerList.setText(ev.text);
 			playerid = ev.value;
 			player = encodeURI(playerid);
 
 			// set the browser frame to use the selected player
 			if (player && frames.browser) {
-				browseUrl = new String(frames.browser.location.href);
+				var browseUrl = new String(frames.browser.location.href);
 
 				var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 
@@ -376,7 +387,7 @@ Playlist = function(){
 
 		load : function(url){
 			// try to reload previous page if no URL is defined
-			el = Ext.get('playlistPanel');
+			var el = Ext.get('playlistPanel');
 
 			if (!url)
 				url = el.getUpdateManager().defaultUrl;
@@ -401,7 +412,8 @@ Playlist = function(){
 		},
 
 		resetUrl : function(){
-			if(el = Ext.get('playlistPanel'))
+			var el = Ext.get('playlistPanel');
+			if (el)
 				el.getUpdateManager().setDefaultUrl('');
 		},
 
@@ -409,11 +421,11 @@ Playlist = function(){
 			Main.onResize();
 			Utils.addBrowseMouseOver();
 
-			current = Ext.DomQuery.selectNode('div.currentSong');
+			var current = Ext.DomQuery.selectNode('div.currentSong');
 
 			Ext.addBehaviors({
 				'.currentSong@mouseover': function(ev, target){
-					el = Ext.get(target);
+					var el = Ext.get(target);
 					if (el) {
 						if (controls = Ext.DomQuery.selectNode('div.playlistControls', el.dom)) {
 							Ext.get(controls).show();
@@ -459,7 +471,7 @@ Playlist = function(){
 
 			// playlist name is too long to be displayed
 			// try to use it as the Save button's tooltip
-			tooltip = null;
+			var tooltip = null;
 			if (el = Ext.get('currentPlaylistName'))
 				tooltip = el.dom.innerHTML;
 
@@ -475,10 +487,11 @@ Playlist = function(){
 
 		highlightCurrent : function(){
 			if (el = Ext.get('playList')) {
-				plPos = el.getScroll();
-				plView = el.getViewSize();
+				var plPos = el.getScroll();
+				var plView = el.getViewSize();
+				var el = Ext.DomQuery.selectNode('div.currentSong');
 
-				if (el = Ext.DomQuery.selectNode('div.currentSong')) {
+				if (el) {
 					el = Ext.get(el);
 					if (el.getTop() > plPos.top + plView.height
 						|| el.getBottom() < plPos.top)
@@ -580,13 +593,14 @@ Player = function(){
 				handler: this.volumeUp
 			});
 
-			if (el = Ext.get('ctrlVolume').child('img:first'))
+			var el = Ext.get('ctrlVolume').child('img:first');
+			if (el) {
 				el.on('click', function(ev, target) {
 
 					if (el = Ext.get(target)) {
-						myStep = el.getWidth()/11;
-						myWidth = el.getWidth() - 2*myStep;
-						myX = ev.getPageX() - el.getX() - (Ext.isGecko * 8) - (Ext.isSafari * 5);
+						var myStep = el.getWidth()/11;
+						var myWidth = el.getWidth() - 2*myStep;
+						var myX = ev.getPageX() - el.getX() - (Ext.isGecko * 8) - (Ext.isSafari * 5);
 
 						if (myX <= myStep + (Ext.isSafari * 3))
 							volVal = 0;
@@ -600,6 +614,7 @@ Player = function(){
 						Player.playerControl(['mixer', 'volume', volVal*10]);
 					}
 				});
+			}
 
 			new Slim.Button('ctrlPower', {
 				cls: 'btn-power',
@@ -652,11 +667,11 @@ Player = function(){
 			if (! isNaN(time))
 				playTime = parseInt(time); //force integer type from results
 
-			shortTime = this.formatTime(playTime);
+			var shortTime = this.formatTime(playTime);
 
 			Ext.get('ctrlPlaytime').update(shortTime);
 
-			if (! isNaN(playerStatus.duration) && playerStatus.duration > 0) {
+			if (!isNaN(playerStatus.duration) && playerStatus.duration > 0) {
 				totalTime = playerStatus.duration;
 				Ext.get('ctrlTotalTime').update('&nbsp;(' + this.formatTime(totalTime) + ')');
 
@@ -676,11 +691,11 @@ Player = function(){
 		},
 
 		formatTime : function(seconds){
-			hours = Math.floor(seconds / 3600);
-			minutes = Math.floor((seconds - hours*3600) / 60);
+			var hours = Math.floor(seconds / 3600);
+			var minutes = Math.floor((seconds - hours*3600) / 60);
 			seconds = Math.floor(seconds % 60);
 
-			formattedTime = (hours ? hours + ':' : '');
+			var formattedTime = (hours ? hours + ':' : '');
 			formattedTime += (minutes ? (minutes < 10 && hours ? '0' : '') + minutes : '0') + ':';
 			formattedTime += (seconds ? (seconds < 10 ? '0' : '') + seconds : '00');
 			return formattedTime;
@@ -693,7 +708,9 @@ Player = function(){
 
 				// only continue if we got a result and player
 				if (responseText.result && responseText.result.player_connected) {
+					var el, playEl, volEl;
 					var result = responseText.result;
+
 					if (result.power && result.playlist_tracks >= 0) {
 
 						// update the playlist if it's available
@@ -713,7 +730,8 @@ Player = function(){
 
 						if (result.playlist_tracks > 0) {
 
-							currentTitle = '<a href="' + webroot + 'songinfo.html?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser">'
+							var currentArtist, currentAlbum;
+							var currentTitle = '<a href="' + webroot + 'songinfo.html?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser">'
 								+
 								(result.current_title ? result.current_title : (
 									(result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
@@ -782,8 +800,8 @@ Player = function(){
 							Ext.get('ctrlCurrentSongInfoCollapsed').update(currentTitle);
 
 							if (result.playlist_loop[0].id && (el = Ext.get('ctrlCurrentArt'))) {
-								coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96x96.jpg"></a>';
-								popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250xX.jpg" width="250">';
+								var coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96x96.jpg"></a>';
+								var popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250xX.jpg" width="250">';
 
 								if (result.playlist_loop[0].artwork_url) {
 									coverart = '<img src="' + result.playlist_loop[0].artwork_url + '" height="96" />';
@@ -971,9 +989,9 @@ Player = function(){
 		},
 
 		collapseExpand : function(ev){
-			doExpand = ev.doExpand == null ? !Utils.getCookie('SlimServer-expandPlayerControl') : ev.doExpand;
+			var doExpand = ev.doExpand == null ? !Utils.getCookie('SlimServer-expandPlayerControl') : ev.doExpand;
 
-			art = Ext.get('ctrlCurrentArt');
+			var art = Ext.get('ctrlCurrentArt');
 
 			// work around Safari 2 crasher: resize and hide artwork before hiding surrounding DIV
 			if (art && !doExpand) {

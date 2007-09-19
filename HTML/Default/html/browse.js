@@ -1,8 +1,10 @@
 Browse = function(){
 	return {
 		init : function(){
+			var el;
+
 			// jump to anchor
-			anchor = document.location.href.match(/#(.*)$/)
+			var anchor = document.location.href.match(/#(.*)$/)
 			if (anchor && anchor[1]) {
 				if (el = Ext.get('anchor' + anchor[1]))
 					el.scrollIntoView('browsedbList');
@@ -10,8 +12,8 @@ Browse = function(){
 
 			// Album view selector
 			if (Ext.get('viewSelect')) {
-				viewMode = (Utils.getCookie('SlimServer-albumView') && Utils.getCookie('SlimServer-albumView').match(/[012]/) ? Utils.getCookie('SlimServer-albumView') : '0');
-				menu = new Ext.menu.Menu({
+				var viewMode = (Utils.getCookie('SlimServer-albumView') && Utils.getCookie('SlimServer-albumView').match(/[012]/) ? Utils.getCookie('SlimServer-albumView') : '0');
+				var menu = new Ext.menu.Menu({
 					items: [
 						new Ext.menu.CheckItem({
 							text: strings['switch_to_list'],
@@ -43,7 +45,7 @@ Browse = function(){
 							'<span class="menu-title">' + strings['sort_by'] + '...</span>'
 					);
 
-					sortOrder = Utils.getCookie('SlimServer-orderBy');
+					var sortOrder = Utils.getCookie('SlimServer-orderBy');
 					for (order in orderByList) {
 						menu.add(new Ext.menu.CheckItem({
 							text: order,
@@ -74,14 +76,15 @@ Browse = function(){
 		},
 
 		gotoAnchor : function(anchor){
-			if (el = Ext.get('anchor' + anchor))
+			var el = Ext.get('anchor' + anchor);
+			if (el)
 				el.scrollIntoView('browsedbList');
 		},
 
 		toggleGalleryView : function(artwork){
-			url = document.location.href;
+			var url = document.location.href;
 			url = url.replace(/&artwork=./, '');
-			target = url.match(/(#.*)$/);
+			var target = url.match(/(#.*)$/);
 			url = url.replace(/#.*$/, '');
 
 			if (artwork == 1) {

@@ -64,7 +64,7 @@ Ext.extend(Slim.Button, Ext.Button, {
 
 
 var Utils = function(){
-	cookieManager = new Slim.CookieManager({
+	var cookieManager = new Slim.CookieManager({
 		expires: new Date(new Date().getTime() + 1000*60*60*24*365)
 	});
 
@@ -88,13 +88,13 @@ var Utils = function(){
 					Utils.unHighlight();
 
 					// always highlight the main selector, not its children
-					el = Ext.get(target).findParent('.selectorMarker');
+					var el = Ext.get(target).findParent('.selectorMarker');
 					if (el = Ext.get(el)) {
 						el.replaceClass('selectorMarker', 'mouseOver');
 
 						el.on('click', Utils.onSelectorClicked);
 
-						controls = Ext.DomQuery.select('span.browsedbControls, span.browsedbRightControls, span.browsedbLeftControls, div.playlistControls', el.dom);
+						var controls = Ext.DomQuery.select('span.browsedbControls, span.browsedbRightControls, span.browsedbLeftControls, div.playlistControls', el.dom);
 						for (var i = 0; i < controls.length; i++) {
 							Ext.get(controls[i]).show();
 						}
@@ -105,14 +105,14 @@ var Utils = function(){
 
 		unHighlight: function(){
 			// remove highlighting from the other DIVs
-			items = Ext.DomQuery.select('div.mouseOver');
+			var items = Ext.DomQuery.select('div.mouseOver');
 			for(var i = 0; i < items.length; i++) {
-				el = Ext.get(items[i].id);
+				var el = Ext.get(items[i].id);
 				if (el) {
 					el.replaceClass('mouseOver', 'selectorMarker');
 					el.un('click', Utils.onSelectorClicked);
 
-					controls = Ext.DomQuery.select('span.browsedbControls, span.browsedbRightControls, span.browsedbLeftControls, div.playlistControls', el.dom);
+					var controls = Ext.DomQuery.select('span.browsedbControls, span.browsedbRightControls, span.browsedbLeftControls, div.playlistControls', el.dom);
 					for (var i = 0; i < controls.length; i++) {
 						Ext.get(controls[i]).hide();
 					}
@@ -121,7 +121,7 @@ var Utils = function(){
 		},
 
 		onSelectorClicked : function(ev, target){
-			el = Ext.get(target).child('a.browseItemLink');
+			var el = Ext.get(target).child('a.browseItemLink');
 			if (el && el.dom.href) {
 				if (el.dom.target) {
 					frames[el.dom.target].location.href = el.dom.href;
@@ -139,16 +139,14 @@ var Utils = function(){
 		},
 
 		resizeContent : function(){
-			infoHeight = 0;
+			var infoHeight = 0;
 			if (el = Ext.get('infoTab'))
 				infoHeight = el.getHeight();
 
-			el = Ext.get('content');
+			var el = Ext.get('content');
 
 			if (el && el.hasClass('scrollingPanel')) {
-
-				myHeight = Ext.fly(document.body).getHeight() - el.getTop() - infoHeight;
-
+				var myHeight = Ext.fly(document.body).getHeight() - el.getTop() - infoHeight;
 				el.setHeight(myHeight);
 			}
 
@@ -192,10 +190,10 @@ var Utils = function(){
 
 				validator: function(value){
 					if (value.length > 2) {
-						el = Ext.get('search-results')
+						var el = Ext.get('search-results')
 
 						// don't wait for an earlier update to finish
-						um = el.getUpdateManager();
+						var um = el.getUpdateManager();
 						if (um.isUpdating())
 							um.abort();
 
@@ -250,24 +248,20 @@ function refreshStatus() {
 	catch(e) {}
 }
 
-function resize(src,width)
-{
+function resize(src, width) {
 	if (!width) {
 		// special case for IE (argh)
 		if (document.all) //if IE 4+
-		{
 			width = document.body.clientWidth*0.5;
-		}
+
 		else if (document.getElementById) //else if NS6+
-		{
 			width = window.innerWidth*0.5;
-		}
+
 	}
 
 	if (src.width > width || !src.width)
-	{
 		src.width = width;
-	}
+
 }
 
 function setCookie(name, value) {

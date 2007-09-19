@@ -7,7 +7,7 @@ var MainMenu = function(){
 			Ext.EventManager.onDocumentReady(this.onResize, this, true);
 
 			// use "display:none" to hide inactive elements
-			items = Ext.DomQuery.select('div.homeMenuSection, span.overlappingCrumblist, div#livesearch, div.expandableHomeMenuItem');
+			var items = Ext.DomQuery.select('div.homeMenuSection, span.overlappingCrumblist, div#livesearch, div.expandableHomeMenuItem');
 			for(var i = 0; i < items.length; i++) {
 				if (el = Ext.get(items[i].id)) {
 					el.setVisibilityMode(Ext.Element.DISPLAY);
@@ -18,7 +18,7 @@ var MainMenu = function(){
 
 			Utils.initSearch();
 
-			anchor = document.location.href.match(/#(.*)\?/)
+			var anchor = document.location.href.match(/#(.*)\?/)
 			if (!(anchor && anchor[1] && this.showPanel(anchor[1].toLowerCase()))) {
 				this.showPanel('home');
 			}
@@ -48,7 +48,7 @@ var MainMenu = function(){
 
 				default:
 					if (url[item]) {
-						cat = item.match(/:(.*)$/);
+						var cat = item.match(/:(.*)$/);
 						location.href = url[item] + (cat && cat.length >= 2 && cat[1] != 'browse' ? '&homeCategory=' + cat[1] : '');
 					}
 					break;
@@ -56,7 +56,8 @@ var MainMenu = function(){
 		},
 
 		toggleItem : function(panel){
-			if (el = Ext.get(panel)) {
+			var el = Ext.get(panel);
+			if (el) {
 				if (el.hasClass('homeMenuItem_expanded'))
 					this.collapseItem(panel, true);
 				else
@@ -70,13 +71,16 @@ var MainMenu = function(){
 
 			Utils.setCookie('SlimServer-homeMenuExpanded', panel);
 
-			if (el = Ext.get(panel)) {
-				if (icon = el.child('img:first', true))
+			var el = Ext.get(panel);
+			if (el) {
+				var icon = el.child('img:first', true);
+				if (icon)
 					Ext.get(icon).addClass('disclosure_expanded');
 
 				el.addClass('homeMenuItem_expanded');
 
-				if ((subPanel = Ext.get(panel + '_expanded'))){
+				var subPanel = Ext.get(panel + '_expanded');
+				if (subPanel) {
 					subPanel.setVisible(true);
 					subPanel.addClass('homeMenuSection_expanded');
 				}
@@ -92,13 +96,15 @@ var MainMenu = function(){
 			if (resetState)
 				Utils.setCookie('SlimServer-homeMenuExpanded', '');
 
-			if (el = Ext.get(panel)) {
+			var el = Ext.get(panel);
+			if (el) {
 				if (icon = el.child('img:first', true))
 					Ext.get(icon).removeClass('disclosure_expanded');
 
 				el.removeClass('homeMenuItem_expanded');
 
-				if (subPanel = Ext.get(panel + '_expanded')){
+				var subPanel = Ext.get(panel + '_expanded');
+				if (subPanel){
 					subPanel.setVisible(false);
 					subPanel.removeClass('homeMenuSection_expanded');
 				}
@@ -111,21 +117,21 @@ var MainMenu = function(){
 		},
 
 		collapseAll : function(){
-			items = Ext.DomQuery.select('div.homeMenuItem_expanded');
+			var items = Ext.DomQuery.select('div.homeMenuItem_expanded');
 			for(var i = 0; i < items.length; i++) {
 				this.collapseItem(items[i].id);
 			}
 		},
 
 		showPanel : function(panel){
-			panelExists = false;
+			var panelExists = false;
 			this.collapseAll();
 
 			// make plugins show up in the "Other Services" panel
 			if (panel == 'plugins')
 				panel = 'other_services';
 
-			items = Ext.DomQuery.select('div.homeMenuSection');
+			var items = Ext.DomQuery.select('div.homeMenuSection');
 			for(var i = 0; i < items.length; i++) {
 				if (el = Ext.get(items[i].id)) {
 					el.setVisible(panel + 'Menu' == items[i].id);
@@ -155,8 +161,9 @@ var MainMenu = function(){
 		},
 
 		onResize : function(){
-			items = Ext.DomQuery.select('div.homeMenuSection');
-			contW = Ext.get(document.body).getWidth() - 30;
+			var items = Ext.DomQuery.select('div.homeMenuSection');
+			var contW = Ext.get(document.body).getWidth() - 30;
+			var el;
 
 			for(var i = 0; i < items.length; i++) {
 				if (el = Ext.get(items[i].id)) {

@@ -3,6 +3,8 @@
 [% extJsScripts = BLOCK %]
 	<script type="text/javascript">
 		Ext.EventManager.onDocumentReady(function(){
+			var el;
+
 			[% IF !browse_items.size %]
 			Utils.initSearch();
 			[% END %]
