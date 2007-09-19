@@ -37,7 +37,7 @@ our $defaultPrefs = {
 	'digitalVolumeControl' => 1,
 	'preampVolumeControl'  => 0,
 	'disabledirsets'       => [],
-	'irmap'                => \&Slim::Hardware::IR::defaultMapFile(),
+	'irmap'                => sub { Slim::Hardware::IR::defaultMapFile() },
 	'menuItem'             => [qw(
 		NOW_PLAYING
 		BROWSE_MUSIC
