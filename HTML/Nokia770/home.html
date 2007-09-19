@@ -236,71 +236,91 @@
 [% END %]
 
 [% BLOCK genre %]
+	[% IF additionalLinks.browse.BROWSE_BY_GENRE %]
 	[% INCLUDE link_head %]
 		<a href="[% webroot %][% additionalLinks.browse.BROWSE_BY_GENRE %]&player=[% playerURI %]" style="text-decoration:none">
 <img src="html/images/smaller/genre.gif" width="120" height="101" name="bild8" border="0" alt = 'genre'></a>
 	[% INCLUDE link_foot title = 'GENRES' %]
+	[% END %]
 [% END %]
 
 [% BLOCK playlists %]
+	[% IF additionalLinks.browse.SAVED_PLAYLISTS %]
 	[% INCLUDE link_head %]
 		<a href="[% webroot %][% additionalLinks.browse.SAVED_PLAYLISTS %]&player=[% playerURI %]" style="text-decoration:none">
 		<img src="html/images/smaller/playlist.gif" width="120" height="101" border="0" name="bild7" alt = 'playlist'></a>
 	[% INCLUDE link_foot title = 'PLAYLISTS' %]
+	[% END %]
 [% END %]
 
 [% BLOCK albums %]
+	[% IF additionalLinks.browse.BROWSE_BY_ALBUM %]
 	[% INCLUDE link_head %]
 		<a href="[% webroot %][% additionalLinks.browse.BROWSE_BY_ALBUM %]&player=[% playerURI %]" style="text-decoration:none">
 		<img src="html/images/smaller/album.gif" width="120" height="101" name="bild6" border="0" alt = 'album'></a>
 	[% INCLUDE link_foot title = 'ALBUMS' %]
+	[% END %]
 [% END %]
 
 [% BLOCK music_folder %]
+	[% IF additionalLinks.browse.BROWSE_MUSIC_FOLDER %]
 	[% INCLUDE link_head %]
 		<a href="[% webroot %][% additionalLinks.browse.BROWSE_MUSIC_FOLDER %]&player=[% playerURI %]" style="text-decoration:none">
 		<img src="html/images/smaller/folder.gif" width="120" height="101" name="bild1" border="0" alt = 'music folder'></a>
 	[% INCLUDE link_foot title = 'SETUP_AUDIODIR' %]
+	[% END %]
 [% END %]
 
 [% BLOCK ajax_artwork %]
+	[% IF additionalLinks.browse.BROWSE_BY_ALBUM %]
 	[% INCLUDE link_head %]
 		<a href="[% webroot %][% additionalLinks.browse.BROWSE_BY_ALBUM %]player=[% playerURI %]&artwork=2" style="text-decoration:none">
 		<img src="html/images/smaller/artwork.gif" width="120" height="101" name="bild2" border="0" alt = 'artwork'></a>
 	[% INCLUDE link_foot title = 'ONE_BY_ONE_ARTWORK' %]
+	[% END %]
 [% END %]
 
 [% BLOCK artwork %]
+	[% IF additionalLinks.browse.BROWSE_BY_ALBUM %]
 	[% INCLUDE link_head %]
 		<a href="[% webroot %][% additionalLinks.browse.BROWSE_BY_ALBUM %]artwork=1&player=[% playerURI %]" style="text-decoration:none">
 		<img src="html/images/smaller/artwork.gif" width="120" height="101" name="bild2" border="0" alt = 'artwork'></a>
 	[% INCLUDE link_foot title = 'ARTWORK' %]
+	[% END %]
 [% END %]
 
 [% BLOCK artist %]
+	[% IF additionalLinks.browse.BROWSE_BY_ARTIST %]
 	[% INCLUDE link_head %]
 		<a href="[% webroot %][% additionalLinks.browse.BROWSE_BY_ARTIST %]&player=[% playerURI %]" style="text-decoration:none">
 		<img src="html/images/smaller/artist.gif" width="120" height="101" name="bild3" border="0" alt = 'artist'></a>
 	[% INCLUDE link_foot title = 'ARTIST' %]
+	[% END %]
 [% END %]
 
 [% BLOCK new_music %]
+	[% IF additionalLinks.browse.BROWSE_NEW_MUSIC %]
 	[% INCLUDE link_head %]
 		<a href="[% webroot %][% additionalLinks.browse.BROWSE_NEW_MUSIC %]&player=[% playerURI %]" style="text-decoration:none">
 		<img src = 'html/images/smaller/new_music.gif' width="120" height="101" name = 'bild4' border = '0' alt = 'new'></a>
 	[% INCLUDE link_foot title = 'BROWSE_NEW_MUSIC' %]
+	[% END %]
 [% END %]
 
 [% BLOCK random_mix %]
+	[% IF additionalLinks.browse.PLUGIN_RANDOMPLAY %]
 	[% INCLUDE link_head %]
 			<a href="[% webroot %][% additionalLinks.browse.PLUGIN_RANDOMPLAY %]&player=[% playerURI %]" style="text-decoration:none">
 			<img src="html/images/smaller/random.gif" width="120" height="101" name="bild5" border="0" alt = 'random'></a>
 	[% INCLUDE link_foot title = 'PLUGIN_RANDOMPLAY' %]
+	[% END %]
 [% END %]
 
 [% BLOCK year %]
+	[% IF additionalLinks.browse.BROWSE_BY_YEAR %]
 	[% INCLUDE link_head %]
 			<a href="[% webroot %][% additionalLinks.browse.BROWSE_BY_YEAR %]&player=[% playerURI %]" style="text-decoration:none">
 			<img src="html/images/smaller/genre.gif" width="120" height="101" name="bild5" border="0" alt = 'by year'></a>
 	[% INCLUDE link_foot title = 'BROWSE_BY_YEAR' %]
+	[% END %]
 [% END %]
