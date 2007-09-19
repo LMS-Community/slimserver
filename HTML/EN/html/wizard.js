@@ -21,7 +21,7 @@ Wizard = function(){
 				},
 				south: {
 					split:false,
-					initialSize: 38
+					initialSize: 40
 				},
 				center: {
 					autoScroll: false
@@ -45,7 +45,7 @@ Wizard = function(){
 				});
 			}
 			else {
-				window.resizeTo(800, Ext.isIE ? 700 : 600);
+				window.resizeTo(800, 700);
 
 				folderselectors['audiodir'] = new FileSelector('audiodirselector', {
 					filter: 'foldersonly',
@@ -222,10 +222,10 @@ Wizard = function(){
 		// resize panels, folder selectors etc.
 		onResize : function(){
 			dimensions = Ext.fly(document.body).getViewSize();
-			Ext.get('mainbody').setHeight(dimensions.height-35);
-			Ext.get('maincontent').setHeight(dimensions.height-170);
+			Ext.get('mainbody').setHeight(dimensions.height-10);
+			Ext.get('maincontent').setHeight(dimensions.height-145);
 			
-			myHeight = dimensions.height - 270;
+			myHeight = dimensions.height - 245;
 			for (var i in folderselectors) {
 				if (s = folderselectors[i].id)
 					Ext.get(s).setHeight(myHeight);

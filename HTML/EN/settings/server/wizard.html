@@ -11,11 +11,10 @@
 		<style type="text/css">
 		<!--
 			html, body { background: white; }
-			body { margin: 20px; }
+			body { margin: 5px; }
 
-			#main {
-				padding-top: 10px;
-			}
+			#main { padding-top: 10px; }
+			form div { cursor: default; }
 
 			.wz_path {
 				width: 45%;
@@ -37,22 +36,22 @@
 				float: right;
 				margin-left: 30px;
 			}
-			
+
 			.wz_desc_right {
 				position: absolute;
 				left: 55%;
 				float: right;
 				width: 45%;
 			}
-			
+
 			#wz_musicsource td {
 				vertical-align: top;
 				padding-top: 5px;
 			}
-			
+
 			#wz_buttonbar {
-				float: right; 
-				margin-top:5px; 
+				float: right;
+				margin-top:5px;
 				margin-right:10px;
 			}
 
@@ -60,6 +59,8 @@
 				list-style-type: circle;
 				margin-left: 20px;
 			}
+
+			.titlebox_content { height: 20px; }
 		-->
 		</style>
 	</head>
@@ -72,7 +73,7 @@
 			</div>
 		</div>
 		<div id="noJS">[% "SETUP_NO_JAVASCRIPT" | string %]</div>
-		
+
 		<script type="text/javascript">
 			document.getElementById('noJS').style.display = 'none';
 			document.getElementById('loading').style.display = 'block';
@@ -87,7 +88,7 @@
 			var showmusicip = [% showMusicIP ? "true" : "false" %];
 			var firsttimerun = [% firstTimeRun ? "true" : "false" %];
 			var wizarddone = [% wizardDone ? "true" : "false" %];
-			
+
 			var strings = new Array();
 			strings['previous'] = "[% "SETUP_WIZARD_PREVIOUS" | string %]";
 			strings['next'] = "[% "SETUP_WIZARD_NEXT" | string %]";
@@ -114,7 +115,7 @@
 					<span><a href="http://www.slimdevices.com" target="_blank"><img src="[% webroot %]html/images/spacer.gif" id="logitechLogo"></a></span>
 				</div>
 			</div>
-	
+
 			<div id="main">
 				<div class="inner" id="mainpanel">
 					<div class="inner_top"><div></div></div>
@@ -136,7 +137,7 @@
 							</div>
 							<div class="titlebox_bottom"><div></div></div>
 						</div>
-					
+
 						<div id="wz_formpanel">
 							<div id="welcome_m" class="wz_page">
 								<div class="wz_logo"><img src="[% webroot %]html/images/squeezebox.gif"></div>
@@ -145,30 +146,30 @@
 									<div><br/>
 										[% "CHOOSE_A_LANGUAGE" | string %]
 										<select name="language" id="language">
-								
+
 										[% FOREACH option = languageoptions %]
 											<option [% IF prefs.language == option.key %]selected="selected" [% END %]value="[% option.key %]">[% option.value %]</option>
 										[%- END -%]
-										
+
 										</select>
 									</div>
 									<input name="saveLanguage" type="hidden" value="1">
 								</form>
 							</div>
-	
+
 							<form name="wizardForm" id="wizardForm" method="post" action="[% webroot %][% path %]">
 								<div id="proxy_m" class="wz_page">
 									<div>[% "SETUP_WIZARD_PROXY_DESC" | string %]</div>
 									<div>[% "SETUP_WEBPROXY_CHOOSE" | string %][% "COLON" | string %] <input type="text" name="webproxy" value="[% prefs.webproxy %]"></div>
 								</div>
-					
+
 								<div id="sqn_m" class="wz_page">
 									<div class="wz_logo">
 <!--										<img src="[% webroot %]html/images/squeezenetwork.gif"> -->
 									</div>
-									
+
 									<div>[% "SETUP_WIZARD_SQN_DESC" | string %]</div>
-					
+
 									<div><table>
 										<tr>
 											<td>[% "SETUP_SN_EMAIL" | string %][% "COLON" | string %]</td>
@@ -185,7 +186,7 @@
 									</table></div>
 									<div id="sn_result"></div>
 								</div>
-					
+
 								<div id="source_m" class="wz_page">
 									<div>[% "SETUP_WIZARD_SOURCE_DESC" | string %]</div>
 									<div><table id="wz_musicsource">
@@ -203,7 +204,7 @@
 										</tr>
 									</table></div>
 								</div>
-					
+
 								<div id="audiodir_m" class="wz_page">
 									<div class="wz_desc_right">
 										[% "SETUP_WIZARD_AUDIODIR_DESC" | string %]
@@ -215,7 +216,7 @@
 										<span id="gotoAudiodir"></span>
 									</div>
 								</div>
-					
+
 								<div id="playlistdir_m" class="wz_page">
 									<div class="wz_desc_right">
 										[% "SETUP_WIZARD_PLAYLISTDIR_DESC" | string %]
@@ -239,7 +240,7 @@
 										<span id="gotoiTunesDir"></span>
 									</div>
 								</div>
-					
+
 								<div id="musicip_m" class="wz_page">
 									<div>[% "SETUP_WIZARD_MUSICIP_DESC" | string %]</div>
 									<br/>
@@ -248,7 +249,7 @@
 									<div>[% "SETUP_WIZARD_MUSICIP_DESC2" | string %]</div>
 									<div>[% "SETUP_WIZARD_MUSICIP_DESC3" | string %]</div>
 								</div>
-					
+
 								<div id="summary_m" class="wz_page">
 									<div>[% "SETUP_WIZARD_SUMMARY_DESC" | string %]</div>
 									<br/>
@@ -262,7 +263,7 @@
 									<br/>
 									<div>[% "SETUP_WIZARD_SUMMARY_RESCAN" | string %]</div>
 								</div>
-					
+
 								[% IF firstTimeRun %]
 								<input name="firstTimeRunCompleted" type="hidden" value="1">
 								[% END %]
