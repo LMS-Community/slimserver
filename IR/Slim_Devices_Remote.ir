@@ -39,3 +39,12 @@ favorites				= 768918e7
 browse					= 7689708f
 power_on				= 76898f70
 power_off				= 76898778
+
+menu_browse_album		= 76897c83
+menu_browse_artist		= 7689748b
+menu_browse_playlists	= 76897a85
+menu_browse_music		= 7689728d
+
+menu_search_artist		= 768954ab
+menu_search_album		= 76895ca3
+menu_search_song		= 768952ad
