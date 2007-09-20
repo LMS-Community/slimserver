@@ -538,8 +538,20 @@ sub loadFonts {
 
 			$cacheOK = 0;
 		}
-
-		return if $cacheOK;
+		
+		if ( $cacheOK ) {
+			# If we loaded a cached SBG font, mark it already loaded
+			if ( exists $fonts->{'medium.1'} ) {
+				$prefs->set( 'loadFontsSqueezeboxG', 1 );
+			}
+			
+			# If we loaded a cached SB2 font, mark it already loaded
+			if ( exists $fonts->{'standard.1'} ) {
+				$prefs->set( 'loadFontsSqueezebox2', 1 );
+			}
+			
+			return;
+		}
 
 		$log->info("Font cache contains old data - reparsing fonts");
 	}
