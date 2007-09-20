@@ -103,7 +103,6 @@ sub radioTimeURL {
 		$url .= ( $url =~ /\?/ ) ? '&' : '?';
 		$url .= 'Filters=mp3,wma,real';
 	}
-	Slim::Web::HTTP::ProtectURI('plugins/RadioTime/index.html');
 	
 	return $url;
 }
@@ -117,6 +116,7 @@ sub webPages {
 	my $url   = 'plugins/RadioTime/index.html';
 	
 	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
+	Slim::Web::HTTP::protectURI('plugins/RadioTime/index.html');
 	
 	Slim::Web::HTTP::addPageFunction($url, sub {
 

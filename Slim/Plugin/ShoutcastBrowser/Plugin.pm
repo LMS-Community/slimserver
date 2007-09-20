@@ -48,7 +48,6 @@ sub setMode {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
-	Slim::Web::HTTP::ProtectURI('plugins/ShoutcastBrowser/index.html');
 
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
@@ -110,6 +109,7 @@ sub webPages {
 	my $url   = 'plugins/ShoutcastBrowser/index.html';
 
 	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
+	Slim::Web::HTTP::protectURI('plugins/ShoutcastBrowser/index.html');
 
 	Slim::Web::HTTP::addPageFunction($url => sub {
 

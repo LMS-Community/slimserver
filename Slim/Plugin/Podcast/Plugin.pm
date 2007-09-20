@@ -67,7 +67,6 @@ sub initPlugin {
 
 		$log->debug('');
 	}
-	Slim::Web::HTTP::protectURI('plugins/Podcast/index.html');
 
 	updateOPMLCache( $prefs->get('feeds') );
 }
@@ -89,7 +88,6 @@ sub setMode {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
-	Slim::Web::HTTP::ProtectURI('plugins/Podcast/index.html');
 
 	# use INPUT.Choice to display the list of feeds
 	my %params = (
@@ -134,6 +132,7 @@ sub webPages {
 	my $url   = 'plugins/Podcast/index.html';
 	
 	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
+	Slim::Web::HTTP::protectURI('plugins/Podcast/index.html');
 
 	Slim::Web::HTTP::addPageFunction(
 		$url => sub {
