@@ -356,13 +356,13 @@ Playlist = function(){
 				onDragDrop: function(e, id) {
 					var source = Ext.get(this.getEl());
 					var target = Ext.get(id);
-			
+
 					if (target && source) {
 						var sourcePos = -1;
 						var targetPos = -1;
 
 						// get to know where we come from, where we've gone to
-						var items = Ext.DomQuery.select('#playList div.draggableSong');
+						var items = Ext.query('#playList div.draggableSong');
 						for(var i = 0; i < items.length; i++) {
 							if (items[i].id == this.id)
 								sourcePos = i;
@@ -371,13 +371,26 @@ Playlist = function(){
 						}
 			
 						if (sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {
+							var plPosition, plStart, el;
+
 							if (sourcePos > targetPos) {
 								source.insertBefore(target);
+								plPosition = parseInt(target.dd.config.position) - targetPos;
+								plStart = targetPos;
 							}
 							else  {
 								source.insertAfter(target);
+								plPosition = parseInt(source.dd.config.position) - sourcePos;
+								plStart = sourcePos;
 							}
-							Player.playerControl(['playlist', 'move', sourcePos, targetPos], true);
+							Player.playerControl(['playlist', 'move', source.dd.config.position, target.dd.config.position], true);
+
+							// recalculate the item's number within the playlist
+							items = Ext.query('#playList div.draggableSong');
+							for(var i = plStart; i < items.length; i++) {
+								if (el = Ext.get(items[i]))
+									el.dd.config.position = plPosition + i;
+							}
 						}
 					}
 				}
@@ -457,7 +470,9 @@ Playlist = function(){
 			for(var i = 0; i < items.length; i++) {
 				var item = Ext.get(items[i]);
 
-				item.dd = new Ext.dd.DDProxy(items[i], 'playlist');
+				var itemNo = item.id.replace(/\D*/, '');
+
+				item.dd = new Ext.dd.DDProxy(items[i], 'playlist', {position: itemNo});
 				item.dd.setXConstraint(0, 0);
 				item.dd.scroll = false;
 				item.dd.scrollContainer = true;
@@ -504,12 +519,18 @@ Playlist = function(){
 			}
 		},
 
-		showCoverArt: function(){
+		control : function(cmd, el) {
+			el = Ext.get(el);
+			if (el.dd && el.dd.config && el.dd.config.position)
+				Player.playerControl(['playlist', cmd, el.dd.config.position])
+		},
+
+		showCoverArt : function(){
 			Utils.setCookie('SlimServer-noPlaylistCover', 0);
 			this.load();
 		},
 
-		hideCoverArt: function(){
+		hideCoverArt : function(){
 			Utils.setCookie('SlimServer-noPlaylistCover', 1);
 			this.load();
 		}

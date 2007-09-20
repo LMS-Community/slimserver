@@ -26,8 +26,8 @@
 			</div>
 		[% END %]
 		<div class="playlistControls" style="display: none;">
-			<img onclick="Player.playerControl(['playlist', 'index', '[% item.num %]'])" src="[% webroot %]html/images/b_play.gif" width="13" height="13" alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]">
-			<img onclick="Player.playerControl(['playlist', 'delete', '[% item.num %]'])" src="[% webroot %]html/images/b_delete.gif" width="13" height="13" alt="[% "DELETE" | string %]" title="[% "DELETE" | string %]"></a>
+			<img onclick="Playlist.control('index', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_play.gif" width="13" height="13" alt="[% "PLAY" | string %]" title="[% "PLAY" | string %]">
+			<img onclick="Playlist.control('delete', 'playlistSong[% item.num %]')" src="[% webroot %]html/images/b_delete.gif" width="13" height="13" alt="[% "DELETE" | string %]" title="[% "DELETE" | string %]"></a>
 		</div>
 	</div>
 </div></div></div></div></div>
