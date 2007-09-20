@@ -486,7 +486,7 @@ sub updateVisualMode {
 	my $client = shift;
 	my $value = shift;
 
-	$prefs->client($client)->get('visualMode', $value->{'value'});
+	$prefs->client($client)->set('visualMode', $value->{'value'});
 	Slim::Buttons::Common::updateScreen2Mode($client);
 };
 
