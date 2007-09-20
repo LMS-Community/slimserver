@@ -2459,6 +2459,11 @@ sub _playlistXtracksCommand_parseSearchTerms {
 
 	while (my ($key, $value) = each %{$terms}) {
 
+		# ignore anti-CSRF token
+		if ($key eq 'pageAntiCSRFToken') {
+			next;
+		}
+
 		# Bug: 4063 - don't enforce contributor.role when coming from
 		# the web UI's search.
 		if ($key eq 'contributor.role') {
