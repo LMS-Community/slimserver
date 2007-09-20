@@ -25,6 +25,7 @@ sub initPlugin {
 	Slim::Control::Request::addDispatch(['rs232', 'baud', '_rate'], [1, 0, 0, \&rs232baud]);
 	Slim::Control::Request::addDispatch(['rs232', 'tx', '_data'], [1, 0, 0, \&rs232tx]);
 	Slim::Control::Request::addDispatch(['rs232', 'rx', '_data'], [1, 0, 0, \&rs232rx]);
+	Slim::Web::HTTP::protectCommand('rs232');
 	Slim::Networking::Slimproto::addHandler('RSRX', \&rsrx);
 }
 

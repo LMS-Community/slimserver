@@ -719,6 +719,8 @@ sub setMode {
 			}
 		},
 	);
+	Slim::Web::HTTP::protectURI("randomplay_mix\.(?:htm|xml)");
+	Slim::Web::HTTP::protectURI("randomplay_settings\.(?:htm|xml)");
 
 	# if we have an active mode, temporarily add the disable option to the list.
 	if ($mixInfo{$client->masterOrSelf->id} && $mixInfo{$client->masterOrSelf->id}->{'type'}) {

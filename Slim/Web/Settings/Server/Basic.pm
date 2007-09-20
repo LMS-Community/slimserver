@@ -14,11 +14,11 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
 sub name {
-	return 'BASIC_SERVER_SETTINGS';
+	return Slim::Web::HTTP::protectName('BASIC_SERVER_SETTINGS');
 }
 
 sub page {
-	return 'settings/server/basic.html';
+	return Slim::Web::HTTP::protectURI('settings/server/basic.html');
 }
 
 sub prefs {

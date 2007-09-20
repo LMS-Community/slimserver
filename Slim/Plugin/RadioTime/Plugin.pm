@@ -54,6 +54,7 @@ sub initPlugin {
 		[1, 1, 1, \&cliQuery]);
 	$cli_next = Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
 		[0, 1, 1, \&cliRadiosQuery]);
+	Slim::Web::HTTP::protectCommand([qw|radiotime radios|]);
 }
 
 sub getDisplayName {
@@ -102,6 +103,7 @@ sub radioTimeURL {
 		$url .= ( $url =~ /\?/ ) ? '&' : '?';
 		$url .= 'Filters=mp3,wma,real';
 	}
+	Slim::Web::HTTP::ProtectURI('plugins/RadioTime/index.html');
 	
 	return $url;
 }

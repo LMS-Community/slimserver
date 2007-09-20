@@ -619,6 +619,21 @@ sub init {
 	
 ######################################################################################################################################################################
 
+    # Normal SlimServer commands can be accessed with URLs like
+    #   http://localhost:9000/status.html?p0=pause&player=00%3A00%3A00%3A00%3A00%3A00
+    # Use the protectCommand() API to prevent CSRF attacks on commands -- including commands
+    # not intended for use via the web interface!
+    #
+    # protect some commands regardless of args passed to them
+    Slim::Web::HTTP::protectCommand([qw|alarm alarms button client debug display displaynow ir pause play playlist 
+					playlistcontrol playlists stop stopserver wipecache prefset mode
+					power rate rescan sleep sync time gototime
+					mixer playerpref pref|]);
+    # protect changing setting for command + 1-arg ("?" query always allowed -- except "?" is "%3F" once escaped)
+    #Slim::Web::HTTP::protectCommand(['power', 'rate', 'rescan', 'sleep', 'sync', 'time', 'gototime'],'[^\?].*');	
+    # protect changing setting for command + 2 args, 2nd as new value ("?" query always allowed)
+    #Slim::Web::HTTP::protectCommand(['mixer', 'playerpref', 'pref'],'.*','[^\?].*');	# protect changing volume ("?" query always allowed)
+
 }
 
 # add an entry to the dispatch DB

@@ -20,11 +20,11 @@ $prefs->setValidate('num', qw(scrollRate scrollRateDouble scrollPause scrollPaus
 $prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1, 'high' => 20 }, qw(scrollPixels scrollPixelsDouble));
 
 sub name {
-	return 'DISPLAY_SETTINGS';
+	return Slim::Web::HTTP::protectName('DISPLAY_SETTINGS');
 }
 
 sub page {
-	return 'settings/player/display.html';
+	return Slim::Web::HTTP::protectURI('settings/player/display.html');
 }
 
 sub needsClient {

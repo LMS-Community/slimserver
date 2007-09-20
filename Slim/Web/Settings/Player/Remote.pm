@@ -17,11 +17,11 @@ use Slim::Utils::Strings qw(string);
 my $prefs = preferences('server');
 
 sub name {
-	return 'REMOTE_SETTINGS';
+	return Slim::Web::HTTP::protectName('REMOTE_SETTINGS');
 }
 
 sub page {
-	return 'settings/player/remote.html';
+	return Slim::Web::HTTP::protectURI('settings/player/remote.html');
 }
 
 sub needsClient {

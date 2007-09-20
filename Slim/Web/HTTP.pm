@@ -108,16 +108,7 @@ our @closeHandlers = ();
 
 our $pageBuild = Slim::Utils::PerfMon->new('Web Page Build', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
 
-our %dangerousCommands = (
-	# name of command => regexp for URI patterns that make it dangerous
-	# e.g.
-	#	\&Slim::Web::Pages::status => '\bp0=rescan\b'
-	# means inisist on CSRF protection for the status command *only*
-	# if the URL includes p0=rescan
-	\&Slim::Web::EditPlaylist::editplaylist       => '.',
-	\&Slim::Web::Pages::Status::status            => 
-		'(p0=debug|p0=pause|p0=stop|p0=play|p0=sleep|p0=playlist|p0=mixer|p0=display|p0=button|p0=rescan|(p0=(|player)pref\b.*p2=[^\?]|p2=[^\?].*p0=(|player)pref))',
-);
+our %dangerousCommands;
 
 # flag for when we are in a child process
 our $inChild;
@@ -536,6 +527,9 @@ sub processHTTP {
 
 		$params->{content} = $request->content();
 
+		# CSRF: make list of params passed by HTTP client
+		my %reqParamNames;
+
 		# XXX - unfortunately slimserver uses a query form
 		# that can have a key without a value, yet it's
 		# differnet from a key with an empty value. So we have
@@ -579,6 +573,7 @@ sub processHTTP {
 					}
 
 					$log->info("HTTP parameter $name = $value");
+					$reqParamNames{$name} = 1;
 
 				} else {
 
@@ -587,10 +582,43 @@ sub processHTTP {
 					$params->{$name} = 1;
 
 					$log->info("HTTP parameter $name = 1");
+					$reqParamNames{$name} = 1;
 				}
 			}
 		}
 
+		# for CSRF protection, get the query args in one neat string that 
+		# looks like a GET querystring value; this should handle GET and POST
+		# equally well, only looking at the data that we would act on
+		my $csrfProtectionLevel = $prefs->get('csrfProtectionLevel');
+		my $queryWithArgs;
+		my $queryToTest;
+		if ( defined($csrfProtectionLevel) && ($csrfProtectionLevel != 0) ) {
+			$queryWithArgs = Slim::Utils::Misc::unescape($request->uri());
+			# next lines are ugly hacks to remove any GET args
+			$queryWithArgs =~ s|\?.*$||;
+			$queryWithArgs .= '?';
+			foreach my $n (sort keys %reqParamNames) {
+				if ( ref($params->{$n}) eq 'ARRAY' ) {
+					foreach my $v ( @{$params->{$n}} ) {
+						$queryWithArgs .= Slim::Utils::Misc::escape($n) . '=' . Slim::Utils::Misc::escape($v) . '&';
+					}
+				} else {
+					$queryWithArgs .= Slim::Utils::Misc::escape($n) . '=' . Slim::Utils::Misc::escape($params->{$n}) . '&';
+				}
+			}
+			# scrub some harmless args
+			$queryToTest = $queryWithArgs;
+			$queryToTest =~ s/\bplayer=.*?\&//g;
+			$queryToTest =~ s/\bplayerid=.*?\&//g;
+			$queryToTest =~ s/\bajaxUpdate=\d\&//g;
+			$queryToTest =~ s/\?\?/\?/;
+		}
+
+		# Stash CSRF token in $params for use in TT templates
+		my $providedPageAntiCSRFToken = $params->{pageAntiCSRFToken};
+		# pageAntiCSRFToken is a bare token
+		$params->{pageAntiCSRFToken} = &makePageToken($request);
 
 		# Skins 
 		if ($path) {
@@ -678,21 +706,16 @@ sub processHTTP {
 
 
 		# apply CSRF protection logic to "dangerous" commands
-		foreach my $d ( keys %dangerousCommands ) {
-
-			my $dregexp = $dangerousCommands{$d};
-
-			if ($params->{"path"} && 
-				$pageFunctions{$params->{"path"}} && 
-				$pageFunctions{$params->{"path"}} eq $d && 
-				$request->uri() =~ m|$dregexp| ) {
-
-				if ( ! isRequestCSRFSafe($request,$response) ) {
-
-					$log->error("Client requested dangerous function/arguments and failed CSRF Referer/token test, sending 403 denial");
-
-					throwCSRFError($httpClient,$request,$response,$params);
-					return;
+		if ( defined($csrfProtectionLevel) && ($csrfProtectionLevel != 0) ) {
+			foreach my $dregexp ( keys %dangerousCommands ) {
+				if ($queryToTest =~ m|$dregexp| ) {
+					if ( ! isRequestCSRFSafe($request,$response,$params,$providedPageAntiCSRFToken) ) {
+	
+						$log->error("Client requested dangerous function/arguments and failed CSRF Referer/token test, sending 403 denial");
+	
+						throwCSRFError($httpClient,$request,$response,$params,$queryWithArgs);
+						return;
+					}
 				}
 			}
 		}
@@ -2747,9 +2770,32 @@ sub addTemplateDirectory {
 	push @templateDirs, $dir if (not grep({$_ eq $dir} @templateDirs));
 }
 
+# makePageToken: anti-CSRF token at the page level, e.g. token to
+# protect use of /settings/server/basic.html
+sub makePageToken {
+	my $req = shift;
+	my $secret = $prefs->get('securitySecret');
+	if ( (!defined($secret)) || ($secret !~ m|^[0-9a-f]{32}$|) ) {
+		# invalid secret!
+		# Prefs.pm should have set this!
+		$log->warn("Server unable to verify CRSF auth code due to missing or invalid securitySecret server pref");
+		return '';
+	}
+	# make hash of URI & secret
+	# BUG: for CSRF protection level "high", perhaps there should be additional data used for this
+	my $uri = Slim::Utils::Misc::unescape($req->uri());
+	# strip the querystring, if any
+	$uri =~ s/\?.*$//;
+	my $hash = Digest::MD5->new;
+	# hash based on server secret and URI
+	$hash->add($uri);
+	$hash->add($secret);
+	return $hash->hexdigest();
+}
+
 sub isCsrfAuthCodeValid {
 	
-	my $req = shift;
+	my ($req,$params,$providedPageAntiCSRFToken) = @_;
 	my $csrfProtectionLevel = $prefs->get('csrfProtectionLevel');
 
 	if (! defined($csrfProtectionLevel) ) {
@@ -2766,7 +2812,7 @@ sub isCsrfAuthCodeValid {
 	my $uri  = $req->uri();
 	my $code = $req->header("X-Slim-CSRF");
 
-	if ( (!defined($uri)) || (!defined($code)) ) {
+	if ( ! defined($uri) ) {
 		return 0;
 	}
 
@@ -2794,13 +2840,20 @@ sub isCsrfAuthCodeValid {
 	$mediumHash->add($secret);
 
 	# a "HIGH" hash is always accepted
-	return 1 if ( $code eq $highHash->hexdigest() );
+	return 1 if ( defined($code) && ($code eq $highHash->hexdigest()) );
 
 	if ( $csrfProtectionLevel == 1 ) {
 
 		# at "MEDIUM" level, we'll take the $mediumHash, too
-		return 1 if ( $code eq $mediumHash->hexdigest() );
+		return 1 if ( defined($code) && ($code eq $mediumHash->hexdigest()) );
 	}
+
+	# how about a simple page token?
+	if ( defined($providedPageAntiCSRFToken) ) {
+		if ( &makePageToken($req) eq $providedPageAntiCSRFToken ) {
+			return 1;
+		}
+	} 
 
 	# the code is no good (invalid or MEDIUM hash presented when using HIGH protection)!
 	return 0;
@@ -2809,7 +2862,7 @@ sub isCsrfAuthCodeValid {
 
 sub isRequestCSRFSafe {
 	
-	my ($request,$response,$params) = @_;
+	my ($request,$response,$params,$providedPageAntiCSRFToken) = @_;
 	my $rc = 0;
 
 	# referer test from SlimServer 5.4.0 code
@@ -2840,7 +2893,7 @@ sub isRequestCSRFSafe {
 	if ( ! $rc ) {
 
 		# need to also check if there's a valid "cauth" token
-		if ( ! isCsrfAuthCodeValid($request) ) {
+		if ( ! isCsrfAuthCodeValid($request,$params,$providedPageAntiCSRFToken) ) {
 
 			$params->{'suggestion'} = "Invalid referrer and no valid cauth code.";
 
@@ -2860,7 +2913,7 @@ sub isRequestCSRFSafe {
 
 sub makeAuthorizedURI {
 
-	my $uri = shift;
+	my ($uri,$queryWithArgs) = @_;
 	my $secret = $prefs->get('securitySecret');
 
 	if ( (!defined($secret)) || ($secret !~ m|^[0-9a-f]{32}$|) ) {
@@ -2881,6 +2934,11 @@ sub makeAuthorizedURI {
 		return 0;
 	}
 
+	# need to add query args (convert POST to a simple GET address)?
+	if ( (($uri !~ m|\?|) || ($uri =~ m|\?$|)) && ($queryWithArgs ne '') ) {
+		$uri = $queryWithArgs;
+	}
+
 	my $hash = Digest::MD5->new;
 
 	if ( $csrfProtectionLevel == 2 ) {
@@ -2896,14 +2954,14 @@ sub makeAuthorizedURI {
 
 sub throwCSRFError {
 
-	my ($httpClient,$request,$response,$params) = @_;
+	my ($httpClient,$request,$response,$params,$queryWithArgs) = @_;
 
 	# throw 403, we don't this from non-server pages
 	# unless valid "cauth" token is present
 	$params->{'suggestion'} = "Invalid Referer and no valid CSRF auth code.";
 
 	my $protoHostPort = 'http://' . $request->header('Host');
-	my $authURI = makeAuthorizedURI($request->uri());
+	my $authURI = makeAuthorizedURI($request->uri(),$queryWithArgs);
 	my $authURL = $protoHostPort . $authURI;
 
 	# add a long SGML comment so Internet Explorer displays the page
@@ -2935,6 +2993,73 @@ sub throwCSRFError {
 
 	$httpClient->send_response($response);
 	closeHTTPSocket($httpClient);	
+}
+
+# CSRF: allow code to indicate it needs protection
+#
+# The HTML template for protected actions needs to embed an anti-CSRF token. The easiest way
+# to do that is include the following once inside each <form>:
+# 	<input type="hidden" name="pageAntiCSRFToken" value="[% pageAntiCSRFToken %]">
+#
+# To protect the settings within the module that handles that page, use the "protect" APIs:
+# sub name {
+# 	return Slim::Web::HTTP::protectName('BASIC_SERVER_SETTINGS');
+# }
+# sub page {
+# 	Slim::Web::HTTP::protectURI('settings/server/basic.html');
+# }
+#
+# protectURI: takes the same string that a function's page() method returns
+sub protectURI($) {
+	my $uri = shift;
+	my $regexp = "/${uri}\\b.*\\=";
+	$dangerousCommands{$regexp} = 1;
+	return $uri;
+}
+# protectName: takes the same string that a function's name() method returns
+sub protectName($) {
+	my $name = shift;
+	my $regexp = "\\bpage=${name}\\b";
+	$dangerousCommands{$regexp} = 1;
+	return $name;
+}
+#
+# normal SlimServer commands can be accessed with URLs like
+#   http://localhost:9000/status.html?p0=pause&player=00%3A00%3A00%3A00%3A00%3A00
+# Use the protectCommand() API to prevent CSRF attacks on commands -- including commands
+# not intended for use via the web interface!
+#
+# protectCommand: takes an array of commands, e.g.
+# protectCommand('play')			# protect any command with 'play' as the first command
+# protectCommand('playlist', ['add', 'delete'])	# protect the "playlist add" and "playlist delete" commands
+# protectCommand('mixer','volume','\d{1,}');	# protect changing the volume (3rd arg has digit) but allow "?" query in 3rd pos
+sub protectCommand {
+	my @commands = @_;
+	my $regexp = '';
+	for (my $pos = 0; $pos < scalar(@commands); ++$pos) {
+		my $rePart;
+		if ( ref($commands[$pos]) eq 'ARRAY' ) {
+			$rePart = '\b(';
+			my $add = '';
+			foreach my $c ( @{$commands[$pos]} ) {
+				$rePart .= "${add}p${pos}=$c\\b";
+				$add = '|';
+			}
+			$rePart .= ')';
+		} else {
+			$rePart = "\\bp${pos}=$commands[$pos]\\b";
+		}
+		$regexp .= "${rePart}.*?";
+	}
+	$dangerousCommands{$regexp} = 1;
+}
+# protect: takes an exact regexp, in case you need more fine-grained protection
+#
+# Example querystring for server settings:
+# /status.html?audiodir=/music&language=EN&page=BASIC_SERVER_SETTINGS&playlistdir=/playlists&rescan=&rescantype=1rescan&saveSettings=Save Settings&useAJAX=1&
+sub protect($) {
+	my $regexp = shift;
+	$dangerousCommands{$regexp} = 1;
 }
 
 1;

@@ -48,6 +48,7 @@ sub setMode {
 		Slim::Buttons::Common::popMode($client);
 		return;
 	}
+	Slim::Web::HTTP::ProtectURI('plugins/ShoutcastBrowser/index.html');
 
 	# use INPUT.Choice to display the list of feeds
 	my %params = (

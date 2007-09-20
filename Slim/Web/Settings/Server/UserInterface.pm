@@ -17,11 +17,11 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('server');
 
 sub name {
-	return 'INTERFACE_SETTINGS';
+	return Slim::Web::HTTP::protectName('INTERFACE_SETTINGS');
 }
 
 sub page {
-	return 'settings/server/interface.html';
+	return Slim::Web::HTTP::protectURI('settings/server/interface.html');
 }
 
 sub prefs {

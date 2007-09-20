@@ -340,12 +340,17 @@
 <h4>CSRF Security Measures</h4>
 <p>To protect against &quot;Cross Site Request Forgery&quot; (CSRF) security threats, SlimServer applies special scrutiny to HTTP requests for functions that can make changes to your system or manipulate playlists or players. 
 This scrutiny is important to understand if you want to &quot;bookmark&quot; such a URL, or control SlimServer via the HTTP interface. 
-SlimServer requires one of two things to be true in order to allow such control-oriented URLs to be accepted:<br>
+SlimServer requires one of three things to be true in order to allow such control-oriented URLs to be accepted:<br>
 <dl>
 <dt><em>Referer request header matches SlimServer URL</em>
 <dd>SlimServer will accept an HTTP URL/command if the request includes a &quot;Referer&quot; request header that matches the &quot;Host&quot; request header. 
 If you're using a web browser and clicking on links in the web interface (for instance, the Previous/Skip/Play/Pause links on the right-hand player pane), your browser will send a Referer header that tells SlimServer it's following a link you clicked on from a SlimServer page, and the request will be accepted. 
 If you are using custom software to make the HTTP requests, simply make sure the HTTP request includes a Referer header with the same value as the URL you are requesting, and a Host header that includes the :port information (as described in <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.23">the HTTP standard</a>) and all will be fine.
+</dd>
+</dt>
+<dt><em>Submission includes form-specific token</em>
+<dd>SlimServer embeds special authorization tokens in most settings pages in the web interface. If a request includes a
+valid form authorization token, it will be processed.
 </dd>
 </dt>
 <dt><em>&quot;cauth&quot; URL parameter presented and valid</em>

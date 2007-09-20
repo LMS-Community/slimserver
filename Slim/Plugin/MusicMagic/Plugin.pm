@@ -529,6 +529,7 @@ sub mixerlink {
 		$form->{'mmmixable_not_descend'} = 1;
 	}
 
+	Slim::Web::HTTP::protectURI('plugins/MusicMagic/.*\.html');
 	# only add link if enabled and usable
 	if (canUseMusicMagic() && $prefs->get('musicmagic')) {
 

@@ -15,11 +15,11 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 
 sub name {
-	return 'MENU_SETTINGS';
+	return Slim::Web::HTTP::protectName('MENU_SETTINGS');
 }
 
 sub page {
-	return 'settings/player/menu.html';
+	return Slim::Web::HTTP::protectURI('settings/player/menu.html');
 }
 
 sub needsClient {

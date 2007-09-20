@@ -14,11 +14,11 @@ use Slim::Utils::Log;
 use Slim::Utils::PluginManager;
 
 sub name {
-	return 'PLUGINS';
+	return Slim::Web::HTTP::protectName('PLUGINS');
 }
 
 sub page {
-	return 'settings/server/plugins.html';
+	return Slim::Web::HTTP::protectURI('settings/server/plugins.html');
 }
 
 sub handler {

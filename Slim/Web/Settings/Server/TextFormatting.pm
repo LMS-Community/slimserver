@@ -15,11 +15,11 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('server');
 
 sub name {
-	return 'FORMATTING_SETTINGS';
+	return Slim::Web::HTTP::protectName('FORMATTING_SETTINGS');
 }
 
 sub page {
-	return 'settings/server/formatting.html';
+	return Slim::Web::HTTP::protectURI('settings/server/formatting.html');
 }
 
 sub prefs {

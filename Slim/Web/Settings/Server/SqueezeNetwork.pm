@@ -18,11 +18,11 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('server');
 
 sub name {
-	return 'SQUEEZENETWORK_SETTINGS';
+	return Slim::Web::HTTP::protectName('SQUEEZENETWORK_SETTINGS');
 }
 
 sub page {
-	return 'settings/server/squeezenetwork.html';
+	return Slim::Web::HTTP::protectURI('settings/server/squeezenetwork.html');
 }
 
 sub prefs {

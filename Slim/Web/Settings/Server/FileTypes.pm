@@ -17,11 +17,11 @@ use Slim::Utils::Strings qw(string);
 my $prefs = preferences('server');
 
 sub name {
-	return 'FORMATS_SETTINGS';
+	return Slim::Web::HTTP::protectName('FORMATS_SETTINGS');
 }
 
 sub page {
-	return 'settings/server/filetypes.html';
+	return Slim::Web::HTTP::protectURI('settings/server/filetypes.html');
 }
 
 sub handler {

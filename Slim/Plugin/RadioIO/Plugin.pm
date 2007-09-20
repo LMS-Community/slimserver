@@ -51,6 +51,7 @@ sub initPlugin {
 		[1, 1, 1, \&cliQuery]);
 	$cli_next=Slim::Control::Request::addDispatch(['radios', '_index', '_quantity' ],
 		[0, 1, 1, \&cliRadiosQuery]);
+	Slim::Web::HTTP::protectCommand([qw|radioio radios|]);
 }
 
 sub getDisplayName {

@@ -17,11 +17,11 @@ use Slim::Utils::Prefs;
 my $prefs = preferences('server');
 
 sub name {
-	return 'NETWORK_SETTINGS';
+	return Slim::Web::HTTP::protectName('NETWORK_SETTINGS');
 }
 
 sub page {
-	return 'settings/server/networking.html';
+	return Slim::Web::HTTP::protectURI('settings/server/networking.html');
 }
 
 sub prefs {

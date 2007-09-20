@@ -13,11 +13,11 @@ use base qw(Slim::Web::Settings);
 use Slim::Utils::Prefs;
 
 sub name {
-	return 'BEHAVIOR_SETTINGS';
+	return Slim::Web::HTTP::protectName('BEHAVIOR_SETTINGS');
 }
 
 sub page {
-	return 'settings/server/behavior.html';
+	return Slim::Web::HTTP::protectURI('settings/server/behavior.html');
 }
 
 sub prefs {

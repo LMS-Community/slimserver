@@ -14,11 +14,11 @@ use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
 
 sub name {
-	return 'DEBUGGING_SETTINGS';
+	return Slim::Web::HTTP::protectName('DEBUGGING_SETTINGS');
 }
 
 sub page {
-	return 'settings/server/debugging.html';
+	return Slim::Web::HTTP::protectURI('settings/server/debugging.html');
 }
 
 sub handler {

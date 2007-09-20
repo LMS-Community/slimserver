@@ -15,11 +15,11 @@ use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 
 sub name {
-	return 'ALARM_SETTINGS';
+	return Slim::Web::HTTP::protectName('ALARM_SETTINGS');
 }
 
 sub page {
-	return 'settings/player/alarm.html';
+	return Slim::Web::HTTP::protectURI('settings/player/alarm.html');
 }
 
 sub needsClient {

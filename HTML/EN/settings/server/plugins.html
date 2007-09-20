@@ -62,7 +62,7 @@
 							$('settingsForm').setStyle({cursor:'wait'});
 							Event.stop(e);
 							new Ajax.Request($('settingsForm').action, {
-								parameters: { useAJAX: 1, '[% name _ '.' _ (enabled ? 'disable' : 'enable') %]': 1},
+								parameters: { useAJAX: 1, '[% name _ '.' _ (enabled ? 'disable' : 'enable') %]': 1, pageAntiCSRFToken: '[% pageAntiCSRFToken %]' },
 								onSuccess: function() {
 									if ($('[% name %].toggle').name == '[% name %].enable') {
 										$('[% name %].toggle').name = '[% name %].disable';
@@ -82,7 +82,7 @@
 							$('settingsForm').setStyle({cursor:'wait'});
 							Event.stop(e);
 							new Ajax.Request($('settingsForm').action, {
-								parameters: { useAJAX: 1, '[% name %].uninstall': 1 },
+								parameters: { useAJAX: 1, '[% name %].uninstall': 1, pageAntiCSRFToken: '[% pageAntiCSRFToken %]' },
 								onSuccess: function(response) {
 									var results = parseData(response.responseText);
 									$('statusarea').update(results['warning']);
