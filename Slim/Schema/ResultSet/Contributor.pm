@@ -161,8 +161,7 @@ sub descendAlbum {
 	$rs = $rs->search_related('contributorAlbums', $cond);
 
 	# Constrain on the genre if it exists.
-	if (my $genre = $find->{'genre.id'}) {
-
+	if ((my $genre = $find->{'genre.id'}) && !preferences('server')->get('noGenreFilter')) {
 		$albumCond->{'genreTracks.genre'} = $genre;
 		$attr->{'join'} = { 'tracks' => 'genreTracks' };
 	}
