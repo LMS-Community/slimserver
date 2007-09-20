@@ -14,7 +14,7 @@
 
 		<style>
 			html, body { background: white; }
-			body { margin: 10px; }
+			body { margin: 5px; }
 		</style>
 
 		<script type="text/javascript" src="[% webroot %]html/utils.js?r=[% revision %]"></script>
@@ -127,9 +127,10 @@
 						[% "PLAYTIME" | string %][% "COLON" | string %]
 						<span id="ctrlPlaytime"></span>
 						<span id="ctrlTotalTime"></span>&nbsp;-
-						<span id="ctlPlayNum"></span>&nbsp;[% "OF" | string%]
-						<span id="ctlSongCount"></span>
+						<span id="ctrlPlayNum"></span>&nbsp;[% "OF" | string%]
+						<span id="ctrlSongCount"></span>
 					</div>
+					<div id="ctrlProgress"><img src="html/images/spacer.gif" class="progressLeft"><img src="html/images/spacer.gif" class="progressFillLeft"><img src="html/images/spacer.gif" class="progressIndicator"><img src="html/images/spacer.gif" class="progressFillRight"><img src="html/images/spacer.gif" class="progressRight"></div>
 				</div>
 			</div>
 

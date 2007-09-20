@@ -15,7 +15,6 @@ html, body, tr, tr, p, div, li, input, ul {
 body, iframe { background: url(html/images/inner_background.gif) repeat; }
 b, a { color: white; }
 input { color: black; }
-img { border: 0; }
 
 #linkedSongInfoItems a:hover,
 #ctrlCurrentTitle a:hover,
@@ -290,12 +289,79 @@ form#advSearchForm.resultsPage {
 	font: 11px;
 }
 
-#ctrlCurrentSongInfoCollapsed {
-	padding: 3px;
+#ctrlCurrentSongInfo {
+	position: relative;
+	height: 100px; 
+}
+
+#ctrlExpand .x-btn-over button,
+#ctrlCollapse .x-btn-over button {
+	background-position: 0 -18px;
+}
+
+#ctrlExpand .x-btn-click button,
+#ctrlCollapse .x-btn-click button {
+	background-position: 0 -36px;
+}
+
+#ctrlBar { width: 100%; }
+
+#ctrlVolume, #ctrlVolume img {
+	width: 81px;
+	height: 22px;
+}
+
+#ctrlVolume {
+	background-image: url(html/images/volume_levels.gif);
+}
+
+.ctrlVolume0 { background-position: 0 0; }
+.ctrlVolume1 { background-position: 0 -22px; }
+.ctrlVolume2 { background-position: 0 -44px; }
+.ctrlVolume3 { background-position: 0 -66px; }
+.ctrlVolume4 { background-position: 0 -88px; }
+.ctrlVolume5 { background-position: 0 -110px; }
+.ctrlVolume6 { background-position: 0 -132px; }
+.ctrlVolume7 { background-position: 0 -154px; }
+.ctrlVolume8 { background-position: 0 -176px; }
+.ctrlVolume9 { background-position: 0 -198px; }
+.ctrlVolume10 { background-position: 0 -220px; }
+
+#ctrlProgress {
+	margin-top: 5px;
+	margin-left: 101px;
+	height: 8px;
+	border: 1px solid #8c8c8c;
+	padding: 0;
+}
+
+#ctrlProgress img {
+	height: 6px;
+	width: 0;
+}
+
+/* to be replaced with some nice artwork */
+#ctrlProgress img.progressLeft {}
+
+.progressFillLeft {
+	margin-top: 1px;
+	height: 3px;
 	background-color: #8C8C8C;
-	margin-top: 2px;
+}
+
+#ctrlProgress img.progressIndicator {}
+.progressFillRight {}
+#ctrlProgress img.progressRight {}
+
+#ctrlCurrentSongInfoCollapsed {
+	position: relative;
+	top: 2px;
+	height: 14px;
+	padding: 1px;
 	margin-right: 95px;
 	margin-left: 30px;
+	border: 1px solid #8c8c8c;
+	background-color: #8C8C8C;
 	overflow: hidden;
 	white-space: nowrap;
 }
@@ -390,7 +456,7 @@ form#advSearchForm.resultsPage {
 }
 
 .playerbox_content {
-	margin-left: 10px;
+	margin-left: 5px;
 	margin-right: 5px;
 }
 
@@ -886,41 +952,6 @@ form#advSearchForm.resultsPage {
 .btn-expand-player button {
 	background: transparent url(html/images/btn_player_toggle_exp.gif) no-repeat 0 0;
 }
-
-#ctrlExpand .x-btn-over button,
-#ctrlCollapse .x-btn-over button {
-	background-position: 0 -18px;
-}
-
-#ctrlExpand .x-btn-click button,
-#ctrlCollapse .x-btn-click button {
-	background-position: 0 -36px;
-}
-
-#ctrlBar {
-	width: 100%;
-}
-
-#ctrlVolume, #ctrlVolume img {
-	width: 81px;
-	height: 22px;
-}
-
-#ctrlVolume {
-	background-image: url(html/images/volume_levels.gif);
-}
-
-.ctrlVolume0 { background-position: 0 0; }
-.ctrlVolume1 { background-position: 0 -22px; }
-.ctrlVolume2 { background-position: 0 -44px; }
-.ctrlVolume3 { background-position: 0 -66px; }
-.ctrlVolume4 { background-position: 0 -88px; }
-.ctrlVolume5 { background-position: 0 -110px; }
-.ctrlVolume6 { background-position: 0 -132px; }
-.ctrlVolume7 { background-position: 0 -154px; }
-.ctrlVolume8 { background-position: 0 -176px; }
-.ctrlVolume9 { background-position: 0 -198px; }
-.ctrlVolume10 { background-position: 0 -220px; }
 
 .disclosure_home {
 	width: 11px;

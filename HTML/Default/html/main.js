@@ -713,6 +713,8 @@ Player = function(){
 					this.getStatus();
 			}
 
+			this.progressBar('ctrlProgress', playTime, totalTime);
+
 			Ext.get('ctrlPlaytimeCollapsed').update(shortTime);
 
 			// only increment interim value if playing
@@ -720,6 +722,27 @@ Player = function(){
 				playTime += 0.5;
 
 			playTimeTimer.delay(500);
+		},
+
+		progressBar : function(el, time, totalTime){
+			var left, right, el;
+
+			var progress = Ext.get(el);
+			var max = progress.getWidth() - 6; // total of left/right/indicator width
+
+			// if we don't know the total play time, just put the indicator in the middle
+			if (!totalTime) {
+				left = Math.floor(max / 2);
+			}
+
+			// calculate left/right percentage
+			else {
+				left = Math.floor(time / totalTime * max);
+				left = Math.min(left, max);
+			}
+
+			Ext.get(Ext.DomQuery.selectNode('.progressFillRight', progress.dom)).setWidth(max - left);
+			Ext.get(Ext.DomQuery.selectNode('.progressFillLeft', progress.dom)).setWidth(left);
 		},
 
 		formatTime : function(seconds){
@@ -777,8 +800,8 @@ Player = function(){
 
 							Ext.get('ctrlCurrentTitle').update(currentTitle);
 
-							Ext.get('ctlSongCount').update(result.playlist_tracks);
-							Ext.get('ctlPlayNum').update(result.playlist_cur_index + 1);
+							Ext.get('ctrlSongCount').update(result.playlist_tracks);
+							Ext.get('ctrlPlayNum').update(result.playlist_cur_index + 1);
 
 							if (result.playlist_loop[0].artist) {
 								currentArtist = result.playlist_loop[0].artist_id
@@ -854,8 +877,8 @@ Player = function(){
 						// empty playlist
 						else {
 							Ext.get('ctrlCurrentTitle').update('');
-							Ext.get('ctlSongCount').update('');
-							Ext.get('ctlPlayNum').update('');
+							Ext.get('ctrlSongCount').update('');
+							Ext.get('ctrlPlayNum').update('');
 							Ext.get('ctrlBitrate').update('');
 							Ext.get('ctrlCurrentArtist').update('');
 							Ext.get('ctrlCurrentAlbum').update('');
