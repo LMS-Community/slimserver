@@ -17,23 +17,6 @@ b, a { color: white; }
 input { color: black; }
 img { border: 0; }
 
-h1 { font-size: 125%; }
-h2 { font-size: 110%; }
-
-h1, h2, h3, h4 {
-	margin-top: 10px;
-	margin-bottom: 10px;
-}
-
-p {
-	margin-top: 5px;
-	margin-bottom: 5px;
-}
-
-ul { list-style-type: disc; }
-blockquote, ul { margin-left: 40px; }
-li { margin-bottom: 5px; }
-
 #linkedSongInfoItems a:hover,
 #ctrlCurrentTitle a:hover,
 #ctrlCurrentSongInfoCollapsed a:hover,
