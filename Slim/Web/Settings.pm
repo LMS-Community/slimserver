@@ -8,6 +8,20 @@ package Slim::Web::Settings;
 # version 2.
 
 # This is a base class for all the server settings pages.
+=head1 NAME
+
+Slim::Web::Settings
+
+=head1 SYNOPSIS
+
+	use base qw(Slim::Web::Settings);
+
+=head1 DESCRIPTION
+
+L<Slim::Web::Settings> is a base class for all the server/player settings pages.
+
+=cut
+
 
 use strict;
 
@@ -16,6 +30,17 @@ use Slim::Web::HTTP;
 use Slim::Web::Pages;
 
 use Scalar::Util qw(blessed);
+
+my @playerSettingsClasses;
+
+=head1 METHODS
+
+=head2 new( )
+
+Register a new settings subclass.  Add the new page handler references to the server settings, and creates a list of registered
+player setting pages for player settings.
+
+=cut
 
 sub new {
 	my $class = shift;
@@ -29,7 +54,7 @@ sub new {
 
 		if ($class->needsClient) {
 
-			Slim::Web::Pages->addPageLinks('playersetup', { $class->name => $class->page });
+			push @playerSettingsClasses, $class;
 
 		} else {
 
@@ -38,28 +63,65 @@ sub new {
 	}
 }
 
+=head2 name( )
+
+String Token for producing the setting page name.
+
+=cut
 sub name {
 	my $class = shift;
 
 	return '';
 }
 
+=head2 page( )
+
+url for the setting page template.
+
+=cut
 sub page {
 	my $class = shift;
 
 	return '';
 }
 
+=head2 validFor( )
+
+Used for player settings to validate against the current client
+
+=cut
+sub validFor {
+	my $class = shift;
+	
+	return 1;
+}
+
+=head2 needsClient( )
+
+Setting page requies a client. Used for player settings.
+
+=cut
 sub needsClient {
 	my $class = shift;
 
 	return 0;
 }
 
+=head2 prefs( )
+
+array of prefs to be used on the template page.
+
+=cut
 sub prefs {
 	return ();
 }
 
+=head2 handler( )
+
+Basic handler for setting page template, records changed prefs and presents current prefs to the user.
+Complex handling and processing of specialised prefs should be done in the subclass handler.
+
+=cut
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
@@ -100,12 +162,28 @@ sub handler {
 
 	# Common values
 	$paramRef->{'page'} = $class->name;
+	
+	# builds playersetup hash
+	if (defined $client) {
+		my %playerSetupLinks;
+		
+		for my $settingclass (@playerSettingsClasses) {
 
+			if ($settingclass->validFor($client)) {
+
+				$playerSetupLinks{$settingclass->name} = $settingclass->page . '?';
+			}
+		}
+
+		$paramRef->{'playersetup'} = \%playerSetupLinks;
+	}
+	
 	# Needed to generate the drop down settings chooser list.
 	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
 
 	if (defined $client) {
 		$paramRef->{'playername'} = $client->name();
+		$paramRef->{'hasdisplay'} = !$client->display->isa('Slim::Display::NoDisplay');
 	}
 
 	return Slim::Web::HTTP::filltemplatefile($paramRef->{'useAJAX'} ? 'settings/ajaxSettings.txt' : $class->page, $paramRef);
