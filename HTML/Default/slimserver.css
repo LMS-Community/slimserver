@@ -354,14 +354,9 @@ form#advSearchForm.resultsPage {
 #ctrlProgress img.progressRight {}
 
 #ctrlCurrentSongInfoCollapsed {
-	position: relative;
-	top: 2px;
-	height: 14px;
-	padding: 1px;
-	margin-right: 95px;
-	margin-left: 30px;
-	border: 1px solid #8c8c8c;
+	padding: 3px;
 	background-color: #8C8C8C;
+	margin: 2px 95px 0 30px;
 	overflow: hidden;
 	white-space: nowrap;
 }
