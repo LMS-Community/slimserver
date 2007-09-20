@@ -724,11 +724,6 @@ sub gotTrackInfo {
 	# Save the media URL for use in strm
 	$client->pluginData( mediaUrl => $mediaUrl );
 	
-	if ( $ENV{SLIM_SERVICE} ) {
-		# On SN, serialize some track info for display on the website
-		Plugins::RhapsodyDirect::Plugin::serializeTrackInfo( $client, $url );
-	}
-	
 	# Allow status updates again
 	$client->suppressStatus(0);
 	
@@ -757,11 +752,6 @@ sub gotTrackInfo {
 		\&stopCallback, 
 		[['stop', 'playlist']],
 	);
-	
-	# For debugging, grab extended status info for players at the start of each Rhapsody track
-	if ( $ENV{SLIM_SERVICE} ) {
-		$client->extendedStatus();
-	}
 }
 
 sub gotTrackError {
