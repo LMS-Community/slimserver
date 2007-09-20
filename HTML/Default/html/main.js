@@ -411,6 +411,8 @@ Playlist = function(){
 					}
 				}
 			});
+
+			this.load();
 		},
 
 		load : function(url){
@@ -459,6 +461,11 @@ Playlist = function(){
 
 		onUpdated : function(){
 			Main.onResize();
+
+			// shortcut if there's no player
+			if (!Ext.get('playlistTab'))
+				return;
+			
 			Utils.addBrowseMouseOver();
 
 			Ext.select('div.currentSong').on('mouseover', Playlist.showPlaylistControl);

@@ -10,7 +10,7 @@
 		</div>
 	[% END %]
 	<div id="playList">
-		[% IF playercount == '0' %]
+		[% IF playercount < 1 %]
 			<p>[% "NO_PLAYER_DETAILS" | string %]</p>
 		[% ELSE %]
 			[% IF playlist_items %]
@@ -21,7 +21,7 @@
 		[% END %]
 	</div>
 
-	[% IF playercount != '0' %]
+	[% IF playercount > 0 %]
 	<div id="playlistTab" class="infoTab">
 		<div class="infoTab_content">
 			<div class="infoTab_top"><div></div></div>

@@ -5,14 +5,55 @@ html, body, tr.odd, tr.even {
 	overflow: hidden;
 	height: 100%;
 	color: white;
+}
+
+html, body, tr, tr, p, div, li, input, ul {
 	font-size: 11px;
 	font-family: sans-serif;
 }
 
 body, iframe { background: url(html/images/inner_background.gif) repeat; }
-b, a { color: white; font-size: 11px; }
-input { color: black; font-size: 11px; }
+b, a { color: white; }
+input { color: black; }
 img { border: 0; }
+
+h1 { font-size: 125%; }
+h2 { font-size: 110%; }
+
+h1, h2, h3, h4 {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+p {
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+ul { list-style-type: disc; }
+blockquote, ul { margin-left: 40px; }
+li { margin-bottom: 5px; }
+
+#linkedSongInfoItems a:hover,
+#ctrlCurrentTitle a:hover,
+#ctrlCurrentSongInfoCollapsed a:hover,
+a:hover, .link:hover,
+.currentTrackInfo a:hover,
+.browseItemLink:hover {
+	text-decoration: underline;
+}
+
+#linkedSongInfoItems a,
+#ctrlCurrentTitle a,
+#ctrlCurrentSongInfoCollapsed a,
+.homeMenuItem a,
+.currentTrackInfo a,
+#crumblist a,
+#playlistToggleArtwork,
+.browseItemLink,
+.browsedbListItem a {
+	text-decoration: none;
+}
 
 img.cmdLinkIcon {
 	vertical-align: bottom;
@@ -25,7 +66,6 @@ img.cmdLinkIcon {
 	position: relative;
 	margin-left: 6px;
 	padding-right: 6px;
-	font-size: 11px;
 	clear: left;
 }
 
@@ -122,23 +162,16 @@ div.thumbwrap {
 	position: relative;
 }
 
-.homeMenuItem a,
-#crumblist a,
-#playlistToggleArtwork,
-.browseItemLink,
-.browsedbListItem a {
-	text-decoration: none;
-	font-size: 11px;
-}
-
 #livesearch {
 	width: 200px;
-	font-size: 11px;
+	border: none;
 }
 
-.titlebox #livesearch {
+.titlebox_content #livesearch {
 	height: 12px;
 	background: white url(html/images/search.gif) no-repeat top right;
+	position: absolute;
+	right: 10px;
 }
 
 form#advSearchForm.resultsPage {
@@ -149,12 +182,6 @@ form#advSearchForm.resultsPage {
 #advSearchLink {
 	padding-left: 10px;
 	padding-top: 4px;
-	font-size: 11px;
-}
-
-.titlebox_content #livesearch {
-	position: absolute;
-	right: 30px;
 }
 
 .currentSong a,
@@ -257,6 +284,7 @@ form#advSearchForm.resultsPage {
 	margin-left: 20px;
 }
 
+.mouseOver, .currentSong, .selectorMarker,
 #helpLink, #settingsLink, #playerSettingsLink, .link, #songInfoHeader a {
 	cursor: pointer;
 }
@@ -287,11 +315,6 @@ form#advSearchForm.resultsPage {
 	margin-left: 30px;
 	overflow: hidden;
 	white-space: nowrap;
-}
-
-#ctrlCurrentSongInfoCollapsed a {
-	text-decoration: none;
-	font-weight: bold;
 }
 
 #ctrlPlaytimeCollapsed {
@@ -333,20 +356,12 @@ form#advSearchForm.resultsPage {
 }
 
 #ctrlCurrentTitle a {
-	text-decoration: none;
 	font-size: 13px;
 	font-weight: bold;
 }
 
 .currentTrackInfo {
-	text-decoration: none;
-	font-size: 11px;
 	padding-left: 6px;
-}
-
-.currentTrackInfo a {
-	text-decoration: none;
-	font-size: 11px;
 }
 
 .inner {
@@ -408,10 +423,13 @@ form#advSearchForm.resultsPage {
 	margin-right: 5px;
 	padding-top: 3px;
 	padding-bottom: 2px;
-	font-size: 120%;
 	font-weight: bold;
 	overflow: hidden;
 	white-space: nowrap;
+}
+
+#pagetitle {
+	font-size: 120%;
 }
 
 .infoTab_top, .infoTab_top div,
@@ -652,7 +670,6 @@ form#advSearchForm.resultsPage {
 
 /* list selector */
 .mouseOver, .currentSong {
-	cursor: pointer;
 	padding-top: 0;
 	padding-bottom: 0;
 }
@@ -681,7 +698,6 @@ form#advSearchForm.resultsPage {
 }
 
 .selectorMarker {
-	cursor: pointer;
 	padding-top: 7px;
 	padding-bottom: 5px;
 	background: none;
@@ -763,7 +779,6 @@ form#advSearchForm.resultsPage {
 
 #linkedSongInfoItems a {
 	font-weight: bold;
-	text-decoration: none;
 }
 
 #linkedSongInfoItems .songInfoTitle {

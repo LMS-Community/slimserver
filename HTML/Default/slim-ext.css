@@ -10,6 +10,10 @@
 	border: 0px none;
 }
 
+.x-form-field {
+	font-size: 11px;
+}
+
 .x-btn {
 	display: inline-table;
 }
