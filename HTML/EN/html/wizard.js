@@ -5,7 +5,7 @@ Wizard = function(){
 	var sqnValidated = false;
 	var nextBtn;
 	var windowSize = new Array(top.window.outerWidth, top.window.outerHeight);
-	
+
 	// some MSIE versions won't return a value
 	if (windowSize[0] == undefined || windowSize[1] == undefined) {
 		windowSize[0] = Ext.lib.Dom.getViewWidth() + 30;
@@ -27,15 +27,25 @@ Wizard = function(){
 					autoScroll: false
 				}
 			});
-			
+
 			layout.beginUpdate();
 			layout.add('north', new Ext.ContentPanel('header', {fitToFrame:true, fitContainer:true}));
 			layout.add('south', new Ext.ContentPanel('footer', {fitToFrame:true, fitContainer:true}));
 			layout.add('center', new Ext.ContentPanel('main', {fitToFrame:true, fitContainer:true}));
 
+			for (x = 0; x < pages.length; x++) {
+				if (el = Ext.get(pages[x] + '_h')) {
+					el.enableDisplayMode('block');
+					el.hide();
+				}
+
+				if (el = Ext.get(pages[x] + '_m')) {
+					el.enableDisplayMode('block');
+					el.hide();
+				}
+			}
+
 			if (wizarddone) {
-				Ext.get('done_h').show();
-				Ext.get('done_m').show();
 				this.nextBtn = new Ext.Button('next', {
 					text: strings['close'],
 					handler: function(){
@@ -45,6 +55,9 @@ Wizard = function(){
 				});
 			}
 			else {
+				Ext.get('done_h').hide();
+				Ext.get('done_m').hide();
+
 				window.resizeTo(800, 700);
 
 				folderselectors['audiodir'] = new FileSelector('audiodirselector', {
@@ -52,33 +65,33 @@ Wizard = function(){
 					input: 'audiodir',
 					gotoBtn: 'gotoAudiodir'
 				});
-	
+
 				folderselectors['playlistdir'] = new FileSelector('playlistdirselector', {
 					filter: 'foldersonly',
 					input: 'playlistdir',
 					gotoBtn: 'gotoPlaylistdir'
 				});
-	
+
 				folderselectors['itunes'] = new FileSelector('itunespathselector', {
 					input: 'xml_file',
 					filter: 'filetype:xml',
 					gotoBtn: 'gotoiTunesDir'
 				});
-	
+
 				new Ext.Button('previous', {
 					text: strings['previous'],
 					handler: this.onPrevious,
 					scope: this
 				});
-	
+
 				this.nextBtn = new Ext.Button('next', {
 					text: strings['next'],
 					handler: this.onNext,
 					scope: this
 				});
-	
+
 				Ext.get('language').on('change', this.onLanguageChange, this);
-	
+
 				new Ext.Button('sn_verify', {
 					text: strings['sn_verify'],
 					handler: this.verifySqnAccount,
@@ -106,14 +119,14 @@ Wizard = function(){
 			page = this.whichPage(page, -1);
 			this.flipPages();
 		},
-		
+
 		whichPage : function(oldValue, offset){
 			// launch verification in the background
 			switch (pages[oldValue]) {
 				case 'sqn' :
 					this.verifySqnAccount();
 					break;
-				
+
 				case 'summary' :
 					if (offset > 0) {
 						document.forms.wizardForm.submit();
@@ -127,9 +140,9 @@ Wizard = function(){
 					else {
 						this.nextBtn.setText(strings['next']);
 					}
-					
+
 					break;
-				
+
 				default :
 					break;
 			}
@@ -195,11 +208,11 @@ Wizard = function(){
 				if (el = Ext.get(pages[x] + '_h')) {
 					el.setVisible(page == x, false);
 				}
-		
+
 				if (el = Ext.get(pages[x] + '_m')) {
 					el.setVisible(page == x, false);
 				}
-				
+
 				// workaround for FF problem: frame would be displayed on wrong page,
 				// if class is applied in the HTML code
 				if (folderselector = folderselectors[pages[x]]) {
@@ -212,19 +225,19 @@ Wizard = function(){
 					}
 				}
 			}
-		
+
 		},
-		
+
 		onLanguageChange : function(){
 			document.forms.languageForm.submit();
 		},
-		
+
 		// resize panels, folder selectors etc.
 		onResize : function(){
 			dimensions = Ext.fly(document.body).getViewSize();
 			Ext.get('mainbody').setHeight(dimensions.height-10);
 			Ext.get('maincontent').setHeight(dimensions.height-145);
-			
+
 			myHeight = dimensions.height - 245;
 			for (var i in folderselectors) {
 				if (s = folderselectors[i].id)
@@ -237,7 +250,7 @@ Wizard = function(){
 		verifySqnAccount : function(){
 			email = Ext.get('sn_email');
 			pw = Ext.get('sn_password');
-			
+
 			if (email && pw) {
 				email = email.dom.value;
 				pw = pw.dom.value;
@@ -250,16 +263,16 @@ Wizard = function(){
 					url: '/settings/server/squeezenetwork.html',
 					params: 'sn_email=' + email + '&sn_password=' + pw + '&saveSettings=1&AJAX=1',
 					scope: this,
-	
+
 					success: function(response, options){
 						result = response.responseText.split('|');
-						
+
 						if (result[0] == '0') {
 							Ext.get('sn_result').update(result[1]);
 							Ext.get('sn_result_summary').update('(' + result[1] + ')');
 							this.sqnValidated = false;
 						}
-						else {							
+						else {
 							Ext.get('sn_result').update(strings['sn_success']);
 							Ext.get('sn_result_summary').update('');
 							this.sqnValidated = true;
@@ -268,6 +281,6 @@ Wizard = function(){
 				});
 			}
 		}
-	};   
+	};
 }();
 Ext.EventManager.onDocumentReady(Wizard.init, Wizard, true);
