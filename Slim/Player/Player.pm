@@ -69,7 +69,8 @@ our $defaultPrefs = {
 	'powerOnResume'        => 'PauseOff-NoneOn',
 	'maintainSync'         => 1,
 	'minSyncAdjust'        => 0.030,
-	'packetLatency'        => 0.002,	
+	'packetLatency'        => 0.002,
+	'startDelay'           => 0,	
 };
 
 sub new {
