@@ -3010,14 +3010,14 @@ sub throwCSRFError {
 # }
 #
 # protectURI: takes the same string that a function's page() method returns
-sub protectURI($) {
+sub protectURI {
 	my $uri = shift;
 	my $regexp = "/${uri}\\b.*\\=";
 	$dangerousCommands{$regexp} = 1;
 	return $uri;
 }
 # protectName: takes the same string that a function's name() method returns
-sub protectName($) {
+sub protectName {
 	my $name = shift;
 	my $regexp = "\\bpage=${name}\\b";
 	$dangerousCommands{$regexp} = 1;
@@ -3057,7 +3057,7 @@ sub protectCommand {
 #
 # Example querystring for server settings:
 # /status.html?audiodir=/music&language=EN&page=BASIC_SERVER_SETTINGS&playlistdir=/playlists&rescan=&rescantype=1rescan&saveSettings=Save Settings&useAJAX=1&
-sub protect($) {
+sub protect {
 	my $regexp = shift;
 	$dangerousCommands{$regexp} = 1;
 }
