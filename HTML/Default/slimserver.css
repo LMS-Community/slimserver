@@ -289,11 +289,6 @@ form#advSearchForm.resultsPage {
 	font: 11px;
 }
 
-#ctrlCurrentSongInfo {
-	position: relative;
-	height: 100px; 
-}
-
 #ctrlExpand .x-btn-over button,
 #ctrlCollapse .x-btn-over button {
 	background-position: 0 -18px;
