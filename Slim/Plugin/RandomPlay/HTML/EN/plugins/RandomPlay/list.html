@@ -37,7 +37,7 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 	<p>[% "NO_PLAYER_FOUND" | string %]</p>
 [% ELSE %]
 
-	<form action="[% webroot %]plugins/RandomPlay/settings.html" name="genreForm">
+	<form action="[% webroot %]plugins/RandomPlay/settings.html" name="genreForm" id="genreForm">
 		<input type="hidden" name="type" value="">
 		<input type="hidden" name="addOnly" value="0">
 		<input type="hidden" name="player" value="[% player %]">
