@@ -528,7 +528,7 @@ sub processHTTP {
 		$params->{content} = $request->content();
 
 		# CSRF: make list of params passed by HTTP client
-		my %reqParamNames;
+		my %csrfReqParams;
 
 		# XXX - unfortunately slimserver uses a query form
 		# that can have a key without a value, yet it's
@@ -573,7 +573,11 @@ sub processHTTP {
 					}
 
 					$log->info("HTTP parameter $name = $value");
-					$reqParamNames{$name} = 1;
+
+					my $csrfName = $name;
+					if ( $csrfName eq 'command' ) { $csrfName = 'p0'; }
+					if ( $csrfName eq 'subcommand' ) { $csrfName = 'p1'; }
+					push @{$csrfReqParams{$csrfName}}, $value;
 
 				} else {
 
@@ -582,7 +586,11 @@ sub processHTTP {
 					$params->{$name} = 1;
 
 					$log->info("HTTP parameter $name = 1");
-					$reqParamNames{$name} = 1;
+
+					my $csrfName = $name;
+					if ( $csrfName eq 'command' ) { $csrfName = 'p0'; }
+					if ( $csrfName eq 'subcommand' ) { $csrfName = 'p1'; }
+					push @{$csrfReqParams{$csrfName}}, 1;
 				}
 			}
 		}
@@ -598,14 +606,10 @@ sub processHTTP {
 			# next lines are ugly hacks to remove any GET args
 			$queryWithArgs =~ s|\?.*$||;
 			$queryWithArgs .= '?';
-			foreach my $n (sort keys %reqParamNames) {
-				if ( ref($params->{$n}) eq 'ARRAY' ) {
-					foreach my $v ( @{$params->{$n}} ) {
-						$queryWithArgs .= Slim::Utils::Misc::escape($n) . '=' . Slim::Utils::Misc::escape($v) . '&';
-					}
-				} else {
-					$queryWithArgs .= Slim::Utils::Misc::escape($n) . '=' . Slim::Utils::Misc::escape($params->{$n}) . '&';
-				}
+			foreach my $n (sort keys %csrfReqParams) {
+				foreach my $val ( @{$csrfReqParams{$n}} ) {
+					$queryWithArgs .= Slim::Utils::Misc::escape($n) . '=' . Slim::Utils::Misc::escape($val) . '&';
+                                }
 			}
 			# scrub some harmless args
 			$queryToTest = $queryWithArgs;
@@ -766,6 +770,7 @@ sub processURL {
 	# Command parameters are query parameters named p0 through pN
 	# 	For example:
 	#		http://host/status.m3u?p0=playlist&p1=jump&p2=2 
+	#		http://host/status.m3u?command=playlist&subcommand=jump&p2=2 
 	# This example jumps to the second song in the playlist and sends a playlist as the response
 	#
 	# If there are multiple players, then they are specified by the player id
@@ -2865,6 +2870,12 @@ sub isRequestCSRFSafe {
 	my ($request,$response,$params,$providedPageAntiCSRFToken) = @_;
 	my $rc = 0;
 
+	# XmlHttpRequest test for all the AJAX code in 7.x
+	if ($request->header('X-Requested-With') && ($request->header('X-Requested-With') eq 'XMLHttpRequest') ) {
+		# good enough
+		return 1;
+	}
+
 	# referer test from SlimServer 5.4.0 code
 
 	if ($request->header('Referer') && defined($request->header('Referer')) && defined($request->header('Host')) ) {
@@ -2934,22 +2945,17 @@ sub makeAuthorizedURI {
 		return 0;
 	}
 
-	# need to add query args (convert POST to a simple GET address)?
-	if ( (($uri !~ m|\?|) || ($uri =~ m|\?$|)) && ($queryWithArgs ne '') ) {
-		$uri = $queryWithArgs;
-	}
-
 	my $hash = Digest::MD5->new;
 
 	if ( $csrfProtectionLevel == 2 ) {
 
 		# different code for each different URI
-		$hash->add($uri);
+		$hash->add($queryWithArgs);
 	}
 
 	$hash->add($secret);
 
-	return $uri . ';cauth=' . $hash->hexdigest();
+	return $queryWithArgs . ';cauth=' . $hash->hexdigest();
 }
 
 sub throwCSRFError {
@@ -3026,6 +3032,7 @@ sub protectName {
 #
 # normal SlimServer commands can be accessed with URLs like
 #   http://localhost:9000/status.html?p0=pause&player=00%3A00%3A00%3A00%3A00%3A00
+#   http://localhost:9000/status.html?command=pause&player=00%3A00%3A00%3A00%3A00%3A00
 # Use the protectCommand() API to prevent CSRF attacks on commands -- including commands
 # not intended for use via the web interface!
 #

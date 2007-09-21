@@ -340,7 +340,7 @@
 <h4>CSRF Security Measures</h4>
 <p>To protect against &quot;Cross Site Request Forgery&quot; (CSRF) security threats, SlimServer applies special scrutiny to HTTP requests for functions that can make changes to your system or manipulate playlists or players. 
 This scrutiny is important to understand if you want to &quot;bookmark&quot; such a URL, or control SlimServer via the HTTP interface. 
-SlimServer requires one of three things to be true in order to allow such control-oriented URLs to be accepted:<br>
+SlimServer requires one of four things to be true in order to allow such control-oriented URLs to be accepted:<br>
 <dl>
 <dt><em>Referer request header matches SlimServer URL</em>
 <dd>SlimServer will accept an HTTP URL/command if the request includes a &quot;Referer&quot; request header that matches the &quot;Host&quot; request header. 
@@ -378,6 +378,12 @@ If you have trouble using the web interface -- for instance, some non-standard b
 If you want greater protection against CSRF attacks, you may set your csrfProtectionLevel server preference to &quot;HIGH&quot; so that each different command/URI will insist on a unique (but reusable) &quot;cauth=&quot; value.
 For instance, the &quot;cauth&quot; parameter for <code>http://10.0.1.201:9000/status.html?p0=playlist&p1=play&p2=soothing</code> would be completely different for the parameter for <code>http://10.0.1.201:9000/status.html?p0=playlist&p1=play&p2=loud-alarm</code>
 This also makes it more difficult for an attacker to trick your SlimServer into doing something you don't want.
+</dd>
+</dt>
+<dt><em>Request appears to be an AJAX/XmlHttpRequest call</em>
+<dd>Requests bearing X-Requested-With headers indicating that they are legitimate XmlHttpRequest calls will be allowed, 
+as Javascript/XmlHttpRequest security guidelines and SlimServer username/password authentication should make
+JAX/XmlHttpRequest calls safe to act on.
 </dd>
 </dt>
 </dl>
