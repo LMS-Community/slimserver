@@ -501,7 +501,7 @@ sub replaygainSettingsQuery {
 	my $val     = $prefs->client($client)->get('replayGainMode');
 	my @strings = (
 		'REPLAYGAIN_DISABLED', 'REPLAYGAIN_TRACK_GAIN', 
-		'REPLAYGAIN_ALBUM_GAIN', 'REPLAYGAIN_SMART_GAIN', 
+		'REPLAYGAIN_ALBUM_GAIN', 'REPLAYGAIN_SMART_GAIN'
 	);
 	my @menu;
 
@@ -509,7 +509,6 @@ sub replaygainSettingsQuery {
 	push @menu, replayGainHash($val, $prefs, \@strings, 1);
 	push @menu, replayGainHash($val, $prefs, \@strings, 2);
 	push @menu, replayGainHash($val, $prefs, \@strings, 3);
-	push @menu, replayGainHash($val, $prefs, \@strings, 4);
 
 	sliceAndShip($request, $client, \@menu);
 }
