@@ -358,7 +358,7 @@ form#advSearchForm.resultsPage {
 .progressFillRight {}
 #ctrlProgress img.progressRight {}
 
-#ctrlCurrentSongInfoCollapsedFrame {
+#ctrlCurrentSongInfoCollapsed {
 	padding: 3px;
 	background-color: #8C8C8C;
 	margin: 2px 95px 0 30px;
