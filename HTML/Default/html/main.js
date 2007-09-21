@@ -711,160 +711,150 @@ Player = function(){
 		},
 
 		updateStatus : function(response) {
+			if (!(response && response.responseText))
+				return;
 
-			if (response && response.responseText) {
-				var responseText = Ext.util.JSON.decode(response.responseText);
+			var responseText = Ext.util.JSON.decode(response.responseText);
 
-				// only continue if we got a result and player
-				if (responseText.result && responseText.result.player_connected) {
-					var el;
-					var result = responseText.result;
+			// only continue if we got a result and player
+			if (!(responseText.result && responseText.result.player_connected))
+				return;
 
-					// send signal to all displayed elements and buttons
-					displayElements.each(function(item){
-						item.fireEvent('dataupdate', result);
-					} );
+			var el;
+			var result = responseText.result;
 
-					if (result.power && result.playlist_tracks >= 0) {
+			// send signal to all displayed elements and buttons
+			displayElements.each(function(item){
+				item.fireEvent('dataupdate', result);
+			} );
 
-						// update the playlist if it's available
-						if (Ext.get('playList') && ((result.power && result.power != playerStatus.power) ||
-							(result.mode && result.mode != playerStatus.mode) ||
-							(result.current_title && result.current_title != playerStatus.current_title) ||
-							(result.playlist_tracks > 0 && result.playlist_loop[0].title != playerStatus.title) ||
-							(result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track) ||
-							(playerStatus.track && !result.playlist_tracks) ||
-							(result.playlist_tracks && !playerStatus.track) ||
-							(result.playlist_tracks != null && result.playlist_tracks != playerStatus.tracks) ||
-							(result.playlist_cur_index && result.playlist_cur_index != playerStatus.index) ||
-							(result['playlist shuffle'] >= 0 && result['playlist shuffle'] != playerStatus.shuffle)
-						)){
-							Playlist.load();
-						}
+			if (result.power && result.playlist_tracks >= 0) {
 
-						if (result.playlist_tracks > 0) {
+				if (this.needUpdate(result) && Ext.get('playList'))
+						Playlist.load();
 
-							var currentArtist, currentAlbum;
-							var currentTitle = '<a href="' + webroot + 'songinfo.html?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser">'
-								+
-								(result.current_title ? result.current_title : (
-									(result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
-									+
-									(result.playlist_loop[0].tracknum ? result.playlist_loop[0].tracknum + ". " : '')
-									+
-									result.playlist_loop[0].title
-								))
-								+
-								'</a>';
+				if (result.playlist_tracks > 0) {
 
-							Ext.get('ctrlCurrentTitle').update(currentTitle);
+					var currentArtist, currentAlbum;
+					var currentTitle = '<a href="' + webroot + 'songinfo.html?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser">'
+						+
+						(result.current_title ? result.current_title : (
+							(result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
+							+
+							(result.playlist_loop[0].tracknum ? result.playlist_loop[0].tracknum + ". " : '')
+							+
+							result.playlist_loop[0].title
+						))
+						+
+						'</a>';
 
-							Ext.get('ctrlSongCount').update(result.playlist_tracks);
-							Ext.get('ctrlPlayNum').update(result.playlist_cur_index + 1);
+					Ext.get('ctrlCurrentTitle').update(currentTitle);
 
-							if (result.playlist_loop[0].artist) {
-								currentArtist = result.playlist_loop[0].artist_id
-										? '<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=' + result.playlist_loop[0].artist_id + '&amp;level=1&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].artist + '</a>'
-										: result.playlist_loop[0].artist;
+					Ext.get('ctrlSongCount').update(result.playlist_tracks);
+					Ext.get('ctrlPlayNum').update(result.playlist_cur_index + 1);
 
-								Ext.get('ctrlCurrentArtist').update(currentArtist);
-								Ext.get('ctrlArtistTitle').show();
+					if (result.playlist_loop[0].artist) {
+						currentArtist = result.playlist_loop[0].artist_id
+								? '<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=' + result.playlist_loop[0].artist_id + '&amp;level=1&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].artist + '</a>'
+								: result.playlist_loop[0].artist;
 
-								currentTitle += ' ' + strings['by'] + ' ' + currentArtist;
-							}
-							else {
-								Ext.get('ctrlCurrentArtist').update('');
-								Ext.get('ctrlArtistTitle').hide();
-							}
+						Ext.get('ctrlCurrentArtist').update(currentArtist);
+						Ext.get('ctrlArtistTitle').show();
 
-							if (result.playlist_loop[0].album) {
-								currentAlbum = (result.playlist_loop[0].album_id
-										? '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].album + '</a>'
-										: result.playlist_loop[0].album
-									)
-									+ (result.playlist_loop[0].year ? ' ('
-										+ '<a href="' + webroot + 'browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=' + result.playlist_loop[0].year + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].year + '</a>'
-									+ ')' : '');
-
-								Ext.get('ctrlCurrentAlbum').update(currentAlbum);
-								Ext.get('ctrlAlbumTitle').show();
-
-								currentTitle += ' ' + strings['from'] + ' ' + currentAlbum;
-							}
-							else {
-								Ext.get('ctrlCurrentAlbum').update('');
-								Ext.get('ctrlAlbumTitle').hide();
-							}
-
-							if (result.playlist_loop[0].bitrate) {
-								Ext.get('ctrlBitrate').update(
-									result.playlist_loop[0].bitrate
-									+ (result.playlist_loop[0].type
-										? ', ' + result.playlist_loop[0].type
-										: ''
-									)
-								);
-								Ext.get('ctrlBitrateTitle').show();
-							}
-							else {
-								Ext.get('ctrlBitrate').update('');
-								Ext.get('ctrlBitrateTitle').hide();
-							}
-
-							Ext.get('ctrlCurrentSongInfoCollapsed').update(currentTitle);
-
-							if (result.playlist_loop[0].id && (el = Ext.get('ctrlCurrentArt'))) {
-								var coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96x96.jpg"></a>';
-								var popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250xX.jpg" width="250">';
-
-								if (result.playlist_loop[0].artwork_url) {
-									coverart = '<img src="' + result.playlist_loop[0].artwork_url + '" height="96" />';
-									popup    = '<img src="' + result.playlist_loop[0].artwork_url + ' />';
-								}
-
-								el.update(coverart);
-								el = el.child('img:first');
-								Ext.QuickTips.unregister(el);
-								Ext.QuickTips.register({
-									target: el,
-									text: popup,
-									minWidth: 250
-								});
-							}
-						}
-
-						// empty playlist
-						else {
-							Ext.get('ctrlCurrentTitle').update('');
-							Ext.get('ctrlSongCount').update('');
-							Ext.get('ctrlPlayNum').update('');
-							Ext.get('ctrlBitrate').update('');
-							Ext.get('ctrlCurrentArtist').update('');
-							Ext.get('ctrlCurrentAlbum').update('');
-							Ext.get('ctrlCurrentArt').update('<img src="/music/0/cover_96xX.jpg">');
-						}
-
-						playerStatus = {
-							power: result.power,
-							mode: result.mode,
-							current_title: result.current_title,
-							title: result.playlist_tracks > 0 ? result.playlist_loop[0].title : '',
-							track: result.playlist_tracks > 0 ? result.playlist_loop[0].url : '',
-							tracks: result.playlist_tracks,
-							index: result.playlist_cur_index,
-							duration: result['duration'] || 0,
-							shuffle: result['playlist shuffle']
-						};
-
-						this.updatePlayTime(result.time ? result.time : 0);
+						currentTitle += ' ' + strings['by'] + ' ' + currentArtist;
+					}
+					else {
+						Ext.get('ctrlCurrentArtist').update('');
+						Ext.get('ctrlArtistTitle').hide();
 					}
 
-					else if (!result.power) {
-						playerStatus.power = 0;
-						playTimeTimer.cancel();
+					if (result.playlist_loop[0].album) {
+						currentAlbum = (result.playlist_loop[0].album_id
+								? '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].album + '</a>'
+								: result.playlist_loop[0].album
+							)
+							+ (result.playlist_loop[0].year ? ' ('
+								+ '<a href="' + webroot + 'browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=' + result.playlist_loop[0].year + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].year + '</a>'
+							+ ')' : '');
+
+						Ext.get('ctrlCurrentAlbum').update(currentAlbum);
+						Ext.get('ctrlAlbumTitle').show();
+
+						currentTitle += ' ' + strings['from'] + ' ' + currentAlbum;
+					}
+					else {
+						Ext.get('ctrlCurrentAlbum').update('');
+						Ext.get('ctrlAlbumTitle').hide();
+					}
+
+					if (result.playlist_loop[0].bitrate) {
+						Ext.get('ctrlBitrate').update(
+							result.playlist_loop[0].bitrate
+							+ (result.playlist_loop[0].type
+								? ', ' + result.playlist_loop[0].type
+								: ''
+							)
+						);
+						Ext.get('ctrlBitrateTitle').show();
+					}
+					else {
+						Ext.get('ctrlBitrate').update('');
+						Ext.get('ctrlBitrateTitle').hide();
+					}
+
+					Ext.get('ctrlCurrentSongInfoCollapsed').update(currentTitle);
+
+					if (result.playlist_loop[0].id && (el = Ext.get('ctrlCurrentArt'))) {
+						var coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96x96.jpg"></a>';
+						var popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250xX.jpg" width="250">';
+
+						if (result.playlist_loop[0].artwork_url) {
+							coverart = '<img src="' + result.playlist_loop[0].artwork_url + '" height="96" />';
+							popup    = '<img src="' + result.playlist_loop[0].artwork_url + ' />';
+						}
+
+						el.update(coverart);
+						el = el.child('img:first');
+						Ext.QuickTips.unregister(el);
+						Ext.QuickTips.register({
+							target: el,
+							text: popup,
+							minWidth: 250
+						});
 					}
 				}
+
+				// empty playlist
+				else {
+					Ext.get('ctrlCurrentTitle').update('');
+					Ext.get('ctrlSongCount').update('');
+					Ext.get('ctrlPlayNum').update('');
+					Ext.get('ctrlBitrate').update('');
+					Ext.get('ctrlCurrentArtist').update('');
+					Ext.get('ctrlCurrentAlbum').update('');
+					Ext.get('ctrlCurrentArt').update('<img src="/music/0/cover_96xX.jpg">');
+				}
+
+				playerStatus = {
+					power: result.power,
+					mode: result.mode,
+					current_title: result.current_title,
+					title: result.playlist_tracks > 0 ? result.playlist_loop[0].title : '',
+					track: result.playlist_tracks > 0 ? result.playlist_loop[0].url : '',
+					tracks: result.playlist_tracks,
+					index: result.playlist_cur_index,
+					duration: result['duration'] || 0,
+					shuffle: result['playlist shuffle']
+				};
+
+				this.updatePlayTime(result.time ? result.time : 0);
 			}
+
+			else if (!result.power) {
+				playerStatus.power = 0;
+				playTimeTimer.cancel();
+			}
+
 			pollTimer.delay(5000);
 		},
 
@@ -922,24 +912,19 @@ Player = function(){
 							// only continue if we got a result and player
 							if (responseText.result && responseText.result.player_connected) {
 								var result = responseText.result;
-								if ((result.power && result.power != playerStatus.power) ||
-									(result.mode && result.mode != playerStatus.mode) ||
-									(result.current_title && result.current_title != playerStatus.current_title) ||
-									(result.playlist_tracks > 0 && result.playlist_loop[0].title != playerStatus.title) ||
-									(result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track) ||
-									(playerStatus.track && !result.playlist_tracks) ||
-									(result.playlist_tracks && !playerStatus.track) ||
-									(result.playlist_tracks != null && result.playlist_tracks != playerStatus.tracks) ||
-									(result.playlist_cur_index && result.playlist_cur_index != playerStatus.index) ||
-									(result['playlist shuffle'] >= 0 && result['playlist shuffle'] != playerStatus.shuffle)
-								){
-									this.getUpdate();
-								}
 
-								playerStatus.duration = result.duration;
+								// check whether we need to update our song info & playlist
+								if (this.needUpdate(result)){
+									this.getUpdate();
+
+									if (Ext.get('playList'))
+										Playlist.load();
+								}
 								
-								if (result.power)
+								if (result.power) {
+									playerStatus.duration = result.duration;
 									this.updatePlayTime(result.time);
+								}
 								else {
 									playerStatus.power = 0;
 									playTimeTimer.cancel();
@@ -947,7 +932,7 @@ Player = function(){
 
 								displayElements.each(function(item){
 									item.fireEvent('dataupdate', result);
-								} );
+								});
 							}
 
 							// display scanning information
@@ -966,6 +951,21 @@ Player = function(){
 
 				pollTimer.delay(5000);
 			}
+		},
+
+		needUpdate : function(result) {
+			var needUpdate = (result.power && (result.power != playerStatus.power));
+			needUpdate |= (result.mode != null && result.mode != playerStatus.mode);
+			needUpdate |= (result.current_title != null && result.current_title != playerStatus.current_title);
+			needUpdate |= (result.playlist_tracks > 0 && result.playlist_loop[0].title != playerStatus.title);
+			needUpdate |= (result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track);
+			needUpdate |= (result.playlist_tracks != null && !result.playlist_tracks && playerStatus.track != null);
+			needUpdate |= (result.playlist_tracks != null && !playerStatus.track);
+			needUpdate |= (result.playlist_tracks != null && result.playlist_tracks != playerStatus.tracks);
+			needUpdate |= (result.playlist_cur_index != null && result.playlist_cur_index != playerStatus.index);
+			needUpdate |= (result['playlist shuffle'] >= 0 && result['playlist shuffle'] != playerStatus.shuffle);
+
+			return needUpdate;
 		},
 
 		playerControl : function(action){
@@ -1218,6 +1218,6 @@ Slim.PowerButton = function(renderTo, config){
 		state: null
 	});
 
-	Slim.ShuffleButton.superclass.constructor.call(this, renderTo, config);
+	Slim.PowerButton.superclass.constructor.call(this, renderTo, config);
 };
 Ext.extend(Slim.PowerButton, Slim.Button);
