@@ -63,6 +63,15 @@ sub initPlugin {
 
     Slim::Control::Request::addDispatch(['menu', '_index', '_quantity'], 
         [0, 1, 1, \&menuQuery]);
+
+    Slim::Control::Request::addDispatch(['alarmsettings', '_index', '_quantity'], [1, 1, 1, \&alarmSettingsQuery]);
+    Slim::Control::Request::addDispatch(['syncsettings', '_index', '_quantity'], [1, 1, 1, \&syncSettingsQuery]);
+    Slim::Control::Request::addDispatch(['repeatsettings', '_index', '_quantity'], [1, 1, 1, \&repeatSettingsQuery]);
+    Slim::Control::Request::addDispatch(['shufflesettings', '_index', '_quantity'], [1, 1, 1, \&shuffleSettingsQuery]);
+    Slim::Control::Request::addDispatch(['sleepsettings', '_index', '_quantity'], [1, 1, 1, \&sleepSettingsQuery]);
+    Slim::Control::Request::addDispatch(['crossfadesettings', '_index', '_quantity'], [1, 1, 1, \&crossfadeSettingsQuery]);
+    Slim::Control::Request::addDispatch(['replaygainsettings', '_index', '_quantity'], [1, 1, 1, \&replaygainSettingsQuery]);
+
 	Slim::Control::Request::addDispatch(['date'],
 		[0, 1, 0, \&dateQuery]);
 	Slim::Control::Request::addDispatch(['firmwareupgrade'],
@@ -368,6 +377,165 @@ sub menuQuery {
 	$request->setStatusDone();
 }
 
+sub alarmSettingsQuery {
+
+	my $request = shift;
+	my $client = $request->client();
+
+	# alarm clock, display for slim proto players
+	# still need to pick up saved playlists as list items
+	# need to figure out how to handle 24h vs. 12h clock format
+
+	# array ref with 5 elements, each of which is a hashref
+	my $day0 = populateAlarmElements($client, 0);
+
+	my @weekDays;
+	for my $day (1..7) {
+		# @weekDays becomes an array of arrayrefs of hashrefs, one element per weekday
+		push @weekDays, populateAlarmHash($client, $day);
+	}
+
+	my %weekDayAlarms = (
+		text      => Slim::Utils::Strings::string("ALARM_WEEKDAYS"),
+		count     => 7,
+		offset    => 0,
+		item_loop => \@weekDays,
+	);
+
+	# one item_loop to rule them all
+	my @menu = ( @$day0, \%weekDayAlarms );
+
+	sliceAndShip($request, $client, \@menu);
+
+}
+
+sub syncSettingsQuery {
+
+	my $request           = shift;
+	my $client            = $request->client();
+	my $playersToSyncWith = getPlayersToSyncWith($client);
+
+	my @menu = @$playersToSyncWith;
+
+	sliceAndShip($request, $client, \@menu);
+
+}
+
+sub repeatSettingsQuery {
+
+	my $request = shift;
+	my $client  = $request->client();
+	my $val     = Slim::Player::Playlist::repeat($client);
+	my @strings = ('REPEAT_OFF', 'REPEAT_ONE', 'REPEAT_ALL',);
+	my @menu;
+
+	push @menu, repeatHash($val, \@strings, 0);
+	push @menu, repeatHash($val, \@strings, 1);
+	push @menu, repeatHash($val, \@strings, 2);
+
+	sliceAndShip($request, $client, \@menu);
+}
+
+sub shuffleSettingsQuery {
+
+	my $request = shift;
+	my $client  = $request->client();
+	my $val     = Slim::Player::Playlist::shuffle($client);
+	my @strings = (
+		'SHUFFLE_OFF', 'SHUFFLE_ON_SONGS', 'SHUFFLE_ON_ALBUMS',
+	);
+	my @menu;
+
+	push @menu, shuffleHash($val, \@strings, 0);
+	push @menu, shuffleHash($val, \@strings, 1);
+	push @menu, shuffleHash($val, \@strings, 2);
+
+	sliceAndShip($request, $client, \@menu);
+
+}
+
+sub sleepSettingsQuery {
+
+	my $request = shift;
+	my $client  = $request->client();
+	my $val     = $client->currentSleepTime();
+	my @menu;
+
+	push @menu, sleepInXHash($val, 0);
+	push @menu, sleepInXHash($val, 15);
+	push @menu, sleepInXHash($val, 30);
+	push @menu, sleepInXHash($val, 45);
+	push @menu, sleepInXHash($val, 60);
+	push @menu, sleepInXHash($val, 90);
+
+	sliceAndShip($request, $client, \@menu);
+}
+
+sub crossfadeSettingsQuery {
+
+	my $request = shift;
+	my $client  = $request->client();
+	my $prefs   = preferences("server");
+	my $val     = $prefs->client($client)->get('transitionType');
+	my @strings = (
+		'TRANSITION_NONE', 'TRANSITION_CROSSFADE', 
+		'TRANSITION_FADE_IN', 'TRANSITION_FADE_OUT', 
+		'TRANSITION_FADE_IN_OUT'
+	);
+	my @menu;
+
+	push @menu, transitionHash($val, $prefs, \@strings, 0);
+	push @menu, transitionHash($val, $prefs, \@strings, 1);
+	push @menu, transitionHash($val, $prefs, \@strings, 2);
+	push @menu, transitionHash($val, $prefs, \@strings, 3);
+	push @menu, transitionHash($val, $prefs, \@strings, 4);
+
+	sliceAndShip($request, $client, \@menu);
+
+}
+
+sub replaygainSettingsQuery {
+	my $request = shift;
+	my $client  = $request->client();
+	my $prefs   = preferences("server");
+	my $val     = $prefs->client($client)->get('replayGainMode');
+	my @strings = (
+		'REPLAYGAIN_DISABLED', 'REPLAYGAIN_TRACK_GAIN', 
+		'REPLAYGAIN_ALBUM_GAIN', 'REPLAYGAIN_SMART_GAIN', 
+	);
+	my @menu;
+
+	push @menu, replayGainHash($val, $prefs, \@strings, 0);
+	push @menu, replayGainHash($val, $prefs, \@strings, 1);
+	push @menu, replayGainHash($val, $prefs, \@strings, 2);
+	push @menu, replayGainHash($val, $prefs, \@strings, 3);
+	push @menu, replayGainHash($val, $prefs, \@strings, 4);
+
+	sliceAndShip($request, $client, \@menu);
+}
+
+
+sub sliceAndShip {
+	my ($request, $client, $menu) = @_;
+	my $numitems = scalar(@$menu);
+	my $index    = $request->getParam('_index');
+	my $quantity = $request->getParam('_quantity');
+
+	$request->addResult("count", $numitems);
+	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $numitems);
+
+	if ($valid) {
+		my $cnt = 0;
+		$request->addResult('offset', $start);
+
+		for my $eachmenu (@$menu[$start..$end]) {
+			$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
+			$cnt++;
+		}
+	}
+	$request->setStatusDone()
+}
+
 sub playerSettingsMenu {
 	my ($request, $client, $index, $quantity, $prefs) = @_;
  
@@ -388,124 +556,89 @@ sub playerSettingsMenu {
 	my $val;
 
 	# always add repeat
-	$val = Slim::Player::Playlist::repeat($client);
 	push @menu, {
-		text      => Slim::Utils::Strings::string('REPEAT'),
-		count     => 3,
-		offset    => 0,
-		item_loop => [
-			repeatHash($val, $strings{'repeat'}, 0),
-			repeatHash($val, $strings{'repeat'}, 1),
-			repeatHash($val, $strings{'repeat'}, 2),
-		],
-	};
-	
-	# always add shuffle
-	$val = Slim::Player::Playlist::shuffle($client);
-	push @menu, {
-		text      => Slim::Utils::Strings::string('SHUFFLE'),
-		count     => 3,
-		offset    => 0,
-		item_loop => [
-			shuffleHash($val, $strings{'shuffle'}, 0),
-			shuffleHash($val, $strings{'shuffle'}, 1),
-			shuffleHash($val, $strings{'shuffle'}, 2),
-		],
+		text      => Slim::Utils::Strings::string("REPEAT"),
+		actions => {
+			go => {
+				cmd    => ['repeatsettings'],
+				player => 0,
+			},
+		},
 	};
 
+	# always add shuffle
+	push @menu, {
+		text      => Slim::Utils::Strings::string("SHUFFLE"),
+		actions => {
+			go => {
+				cmd    => ['shufflesettings'],
+				player => 0,
+			},
+		},
+	};
+
+	# add alarm only if this is a slimproto player
 	if ($client->isPlayer()) {
-		# alarm clock, display for slim proto players
-		# still need to pick up saved playlists as list items
-		# need to figure out how to handle 24h vs. 12h clock format
-	
-		# array ref with 5 elements, each of which is a hashref
-		my $day0 = populateAlarmElements($client, 0);
-	
-		my @weekDays;
-		for my $day (1..7) {
-			# @weekDays becomes an array of arrayrefs of hashrefs, one element per weekday
-			push @weekDays, populateAlarmHash($client, $day);
-		}
-	
-		my %weekDayAlarms = (
-			text      => Slim::Utils::Strings::string("ALARM_WEEKDAYS"),
-			count     => 7,
-			offset    => 0,
-			item_loop => \@weekDays,
-		);
-	
-		# one item_loop to rule them all
-		my @allAlarms = ( @$day0, \%weekDayAlarms );
-	
 		push @menu, {
 			text      => Slim::Utils::Strings::string("ALARM"),
-			count     => 6,
-			offset    => 0,
-			item_loop =>  \@allAlarms,
+			actions => {
+				go => {
+					cmd    => ['alarmsettings'],
+					player => 0,
+				},
+			},
 		};
 	}
 
 	# sleep setting (always)
-	$val = $client->currentSleepTime();
 	push @menu, {
-		text      => Slim::Utils::Strings::string('SLEEP'),
-		count     => 6,
-		offset    => 0,
-		item_loop => [
-			sleepInXHash($val, 0),
-			sleepInXHash($val, 15),
-			sleepInXHash($val, 30),
-			sleepInXHash($val, 45),
-			sleepInXHash($val, 60),
-			sleepInXHash($val, 90),
-		],
-	};
+		text      => Slim::Utils::Strings::string("SLEEP"),
+		actions => {
+			go => {
+				cmd    => ['sleepsettings'],
+				player => 0,
+			},
+		},
+	};	
 
 	# synchronization. only if numberOfPlayers > 1
-	my ($playersToSyncWith, $synchablePlayers) = getPlayersToSyncWith($client);
+	my $synchablePlayers = howManyPlayersToSyncWith($client);
 	if ($synchablePlayers > 0) {
 		push @menu, {
 			text      => Slim::Utils::Strings::string("SYNCHRONIZE"),
-			count     => $synchablePlayers,
-			offset    => 0,
-			item_loop => $playersToSyncWith,
-		};
+			actions => {
+				go => {
+					cmd    => ['syncsettings'],
+					player => 0,
+				},
+			},
+		};	
 	}
-
 
 	# transition only for Sb2 and beyond
 	if ($client->isa('Slim::Player::Squeezebox2')) {
-		$val = $prefs->client($client)->get('transitionType');
 		push @menu, {
-			text      => Slim::Utils::Strings::string('SETUP_TRANSITIONTYPE'),
-			count     => 5,
-			offset    => 0,
-			item_loop => [
-				transitionHash($val, $prefs, $strings{'crossfade'}, 0),
-				transitionHash($val, $prefs, $strings{'crossfade'}, 1),
-				transitionHash($val, $prefs, $strings{'crossfade'}, 2),
-				transitionHash($val, $prefs, $strings{'crossfade'}, 3),
-				transitionHash($val, $prefs, $strings{'crossfade'}, 4),
-			],
-		};
+			text      => Slim::Utils::Strings::string("SETUP_TRANSITIONTYPE"),
+			actions => {
+				go => {
+					cmd    => ['crossfadesettings'],
+					player => 0,
+				},
+			},
+		};	
 	}
-
 
 	# replay gain (volume adjustment)
 	if ($client->canDoReplayGain(0)) {
-		$val = $prefs->client($client)->get('replayGainMode');
 		push @menu, {
 			text      => Slim::Utils::Strings::string("REPLAYGAIN"),
-			count     => 4,
-			offset    => 0,
-			item_loop => [
-				replayGainHash($val, $prefs, $strings{'replaygain'}, 0),
-				replayGainHash($val, $prefs, $strings{'replaygain'}, 1),
-				replayGainHash($val, $prefs, $strings{'replaygain'}, 2),
-				replayGainHash($val, $prefs, $strings{'replaygain'}, 3),
-				replayGainHash($val, $prefs, $strings{'replaygain'}, 4),
-			],
-		};
+			actions => {
+				go => {
+					cmd    => ['replaygainsettings'],
+					player => 0,
+				},
+			},
+		};	
 	}
 
 	# player name change, always display
@@ -534,7 +667,7 @@ sub playerSettingsMenu {
 	push @menu, {
 		text      => Slim::Utils::Strings::string('INFORMATION_MENU_PLAYER'),
 		offset    => 0,
-		count     => 1,
+		count	  => 1,
 		textArea => 
 			Slim::Utils::Strings::string("INFORMATION_PLAYER_NAME_ABBR") . ": " . 
 			$client->name() . "\n\n" . 
@@ -547,25 +680,37 @@ sub playerSettingsMenu {
 			Slim::Utils::Strings::string("INFORMATION_PLAYER_PORT_ABBR") . ": " .
 			$client->port() . "\n\n" .
 			Slim::Utils::Strings::string("INFORMATION_PLAYER_MAC_ABBR") . ": " .
-			uc($client->macaddress()),
-		,
+			uc($client->macaddress())
+			,
 	};
 
 	return (\@menu, scalar(@menu));
 }
 
-sub getPlayersToSyncWith() {
+sub howManyPlayersToSyncWith {
 	my $client = shift;
 	my @playerSyncList = Slim::Player::Client::clients();
-	my @return = ();
 	my $synchablePlayers = 0;
 	for my $player (@playerSyncList) {
 		# skip ourself
 		next if ($client eq $player);
 		# we only sync slimproto devices
 		next if (!$player->isPlayer());
-		my $val = Slim::Player::Sync::isSyncedWith($client, $player); 
 		$synchablePlayers++;
+	}
+	return $synchablePlayers;
+}
+
+sub getPlayersToSyncWith() {
+	my $client = shift;
+	my @playerSyncList = Slim::Player::Client::clients();
+	my @return = ();
+	for my $player (@playerSyncList) {
+		# skip ourself
+		next if ($client eq $player);
+		# we only sync slimproto devices
+		next if (!$player->isPlayer());
+		my $val = Slim::Player::Sync::isSyncedWith($client, $player); 
 		push @return, { 
 			text => $player->name(), 
 			checkbox => ($val == 1) + 0,
@@ -581,7 +726,7 @@ sub getPlayersToSyncWith() {
 			},		
 		};
 	}
-	return (\@return, $synchablePlayers);
+	return \@return;
 }
 
 sub dateQuery {
