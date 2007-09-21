@@ -136,13 +136,23 @@ div.thumbwrap {
 }
 
 .homeMenuSection_expanded .homeMenuItem {
-	padding-left: 12px;
+	padding-left: 17px;
 }
 
 .homeMenuItem {
 	margin-left: 6px;
 	position: relative;
+} 
+
+.homeMenuItem span { padding: 3px 0 3px; }
+
+.disclosure_home {
+	width: 14px;
+	height: 11px;
+	background: transparent url(html/images/disclosure_home.gif) no-repeat 0 0;
 }
+
+.disclosure_expanded { background-position: 0 -11px; }
 
 #livesearch {
 	width: 200px;
@@ -348,7 +358,7 @@ form#advSearchForm.resultsPage {
 .progressFillRight {}
 #ctrlProgress img.progressRight {}
 
-#ctrlCurrentSongInfoCollapsed {
+#ctrlCurrentSongInfoCollapsedFrame {
 	padding: 3px;
 	background-color: #8C8C8C;
 	margin: 2px 95px 0 30px;
@@ -942,14 +952,6 @@ form#advSearchForm.resultsPage {
 .btn-expand-player button {
 	background: transparent url(html/images/btn_player_toggle_exp.gif) no-repeat 0 0;
 }
-
-.disclosure_home {
-	width: 11px;
-	height: 11px;
-	background: transparent url(html/images/disclosure_home.gif) no-repeat 0 0;
-}
-
-.disclosure_expanded { background-position: 0 -11px; }
 
 .dd-proxy {
 	color: black;
