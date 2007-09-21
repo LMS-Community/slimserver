@@ -276,7 +276,11 @@ form#advSearchForm.resultsPage {
 	margin-left: 20px;
 }
 
-.mouseOver, .currentSong, .selectorMarker,
+.songInfoTitle, .songInfoText, #songInfoPlayLinks, #crumblist {
+	cursor: default;
+}
+
+.mouseOver, .currentSong, .selectorMarker, .cmdLinkIcon,
 #helpLink, #settingsLink, #playerSettingsLink, .link, #songInfoHeader a {
 	cursor: pointer;
 }
