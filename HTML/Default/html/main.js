@@ -927,8 +927,10 @@ Player = function(){
 						this.updatePlayTime(result.time ? result.time : 0);
 					}
 
-					else if (!result.power)
+					else if (!result.power) {
 						playerStatus.power = 0;
+						playTimeTimer.cancel();
+					}
 				}
 			}
 			pollTimer.delay(5000);
@@ -1007,7 +1009,14 @@ Player = function(){
 								}
 
 								playerStatus.duration = result.duration;
-								this.updatePlayTime(result.time);
+								
+								if (result.power)
+									this.updatePlayTime(result.time);
+								else {
+									playerStatus.power = 0;
+									playTimeTimer.cancel();
+								}
+
 							}
 
 							// display scanning information
