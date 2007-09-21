@@ -49,6 +49,10 @@ Slim.Button = function(renderTo, config){
 		'</tr></tbody></table>');
 
 	Slim.Button.superclass.constructor.call(this, renderTo, config);
+
+	if (typeof config.updateHandler == 'function') {
+		this.on('dataupdate', config.updateHandler);
+	}
 };
 
 Ext.extend(Slim.Button, Ext.Button, {
@@ -57,6 +61,24 @@ Ext.extend(Slim.Button, Ext.Button, {
 		if (this.minWidth) {
 			var btnEl = this.el.child("button:first");
 			btnEl.setWidth(this.minWidth);
+		}
+	},
+
+	setTooltip: function(tooltip){
+		if (this.tooltip == tooltip)
+			return;
+
+		this.tooltip = tooltip;
+		
+		var btnEl = this.el.child("button:first");
+
+		if(typeof this.tooltip == 'object'){
+			Ext.QuickTips.tips(Ext.apply({
+				target: btnEl.id
+			}, this.tooltip));
+		} 
+		else {
+			btnEl.dom[this.tooltipType] = this.tooltip;
 		}
 	}
 });

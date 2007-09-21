@@ -549,7 +549,7 @@ Player = function(){
 	var playTimeTimer;
 	var playTime = 0;
 	var volumeClicked = 0;
-	var btnTogglePlay;
+	var buttons = new Ext.util.MixedCollection();
 
 	var playerStatus = {
 		power: null,
@@ -577,13 +577,10 @@ Player = function(){
 				handler: this.ctrlPrevious
 			});
 
-			btnTogglePlay = new Slim.Button('ctrlTogglePlay', {
+			buttons.add(new Slim.PlayButton('ctrlTogglePlay', {
 				cls: 'btn-play',
-				tooltip: strings['play'],
-				minWidth: 51,
-				scope: this,
-				handler: this.ctrlTogglePlay
-			});
+				minWidth: 51
+			}));
 
 			new Slim.Button('ctrlNext', {
 				cls: 'btn-next',
@@ -593,21 +590,15 @@ Player = function(){
 				handler: this.ctrlNext
 			});
 
-			new Slim.Button('ctrlRepeat', {
-				cls: 'btn-repeat',
-				tooltip: strings['repeat0'],
+			buttons.add(new Slim.RepeatButton('ctrlRepeat', {
 				minWidth: 34,
-				scope: this,
-				handler: this.ctrlRepeat
-			});
+				cls: 'btn-repeat'
+			}));
 
-			new Slim.Button('ctrlShuffle', {
-				cls: 'btn-shuffle',
-				tooltip: strings['shuffle0'],
+			buttons.add(new Slim.ShuffleButton('ctrlShuffle', {
 				minWidth: 34,
-				scope: this,
-				handler: this.ctrlShuffle
-			});
+				cls: 'btn-shuffle'
+			}));
 
 			new Slim.Button('ctrlVolumeDown', {
 				cls: 'btn-volume-decrease',
@@ -763,8 +754,13 @@ Player = function(){
 
 				// only continue if we got a result and player
 				if (responseText.result && responseText.result.player_connected) {
-					var el, playEl, volEl;
+					var el, volEl;
 					var result = responseText.result;
+
+					// send signal to all buttons
+					buttons.each(function(item){
+						item.fireEvent('dataupdate', result);
+					} );
 
 					if (result.power && result.playlist_tracks >= 0) {
 
@@ -884,16 +880,6 @@ Player = function(){
 							Ext.get('ctrlCurrentAlbum').update('');
 							Ext.get('ctrlCurrentArt').update('<img src="/music/0/cover_96xX.jpg">');
 						}
-
-						// update play/pause button
-						playEl = Ext.DomQuery.selectNode('table:first', Ext.get('ctrlTogglePlay').dom);
-						playEl = Ext.get(playEl);
-						playEl.removeClass(['btn-play', 'btn-pause']);
-						playEl.addClass(result.mode=='play' ? 'btn-pause' : 'btn-play');
-
-						if (el = btnTogglePlay.getEl().child('button:first'))
-							el.dom.title = (result.mode=='play' ? strings['pause'] : strings['play']);
-						btnTogglePlay.onBlur();
 
 						// update volume button
 						if (result['mixer volume'] <= 0)
@@ -1017,6 +1003,9 @@ Player = function(){
 									playTimeTimer.cancel();
 								}
 
+								buttons.each(function(item){
+									item.fireEvent('dataupdate', result);
+								} );
 							}
 
 							// display scanning information
@@ -1083,13 +1072,6 @@ Player = function(){
 		ctrlNext : function(){ this.playerControl(['playlist', 'index', '+1']) },
 		ctrlPrevious : function(){ this.playerControl(['playlist', 'index', '-1']) },
 
-		ctrlTogglePlay : function(){
-			if (playerStatus.power == '0' || playerStatus.mode == 'stop')
-				this.playerControl(['play']);
-			else
-				this.playerControl(['pause']);
-		},
-
 		ctrlPower : function(){
 			this.playerControl(['power', (playerStatus.power == '1' ? '0' : '1')]);
 		},
@@ -1106,10 +1088,106 @@ Player = function(){
 			if (d)
 				amount = d + amount;
 			this.playerControl(['mixer', 'volume', amount]);
-		},
-
-		// TODO: first ask, then change
-		ctrlRepeat : function(){ this.playerControl(['playlist', 'repeat', '?']); },
-		ctrlShuffle : function(){ this.playerControl(['playlist', 'shuffle', '?']); }
+		}
 	}
 }();
+
+
+Slim.PlayButton = function(renderTo, config){
+	Ext.apply(config, {
+		tooltip: strings['play'],
+		scope: this,
+
+		handler: function(){
+			if (this.isPlaying) {
+				this.updateState(false);
+				Player.playerControl(['pause']);
+			}
+			else {
+				this.updateState(true);
+				Player.playerControl(['play']);
+			}
+		},
+
+		updateHandler: function(result){
+			var newState = (result.mode == 'play');
+
+			if (this.isPlaying != newState) {
+				this.updateState(newState);
+			}
+		},
+
+		updateState: function(isPlaying){
+			var playEl = Ext.get(Ext.DomQuery.selectNode('table:first', Ext.get('ctrlTogglePlay').dom));
+
+			playEl.removeClass(['btn-play', 'btn-pause']);
+			playEl.addClass(isPlaying ? 'btn-pause' : 'btn-play');
+
+			this.setTooltip(isPlaying ? strings['pause'] : strings['play']);
+			this.isPlaying = isPlaying;
+		},
+
+		isPlaying: null
+	});
+
+	Slim.PlayButton.superclass.constructor.call(this, renderTo, config);
+};
+Ext.extend(Slim.PlayButton, Slim.Button);
+
+
+Slim.RepeatButton = function(renderTo, config){
+	Ext.apply(config, {
+		tooltip: strings['repeat0'],
+		scope: this,
+
+		handler: function(){
+			var newState = (this.state + 1) % 3;
+			Player.playerControl(['playlist', 'repeat', newState]);
+			this.updateState(newState); 
+		},
+
+		updateHandler: function(result){
+			if (result['playlist repeat'] != null && this.state != result['playlist repeat']) {
+				this.updateState(result['playlist repeat']);
+			}
+		},
+
+		updateState: function(newState){
+			this.state = newState;
+			this.setTooltip(strings['repeat' + this.state]);
+		},
+
+		state: 0
+	});
+
+	Slim.RepeatButton.superclass.constructor.call(this, renderTo, config);
+};
+Ext.extend(Slim.RepeatButton, Slim.Button);
+
+
+Slim.ShuffleButton = function(renderTo, config){
+	Ext.apply(config, {
+		tooltip: strings['shuffle0'],
+		scope: this,
+
+		handler: function(){
+			Player.playerControl(['playlist', 'shuffle', (this.state + 1) % 3]); 
+		},
+
+		updateHandler: function(result){
+			if (result['playlist shuffle'] != null && this.state != result['playlist shuffle']) {
+				this.updateState(result['playlist shuffle']);
+			}
+		},
+
+		updateState: function(newState){
+			this.state = newState;
+			this.setTooltip(strings['shuffle' + this.state]);
+		},
+
+		state: 0
+	});
+
+	Slim.RepeatButton.superclass.constructor.call(this, renderTo, config);
+};
+Ext.extend(Slim.ShuffleButton, Slim.Button);
