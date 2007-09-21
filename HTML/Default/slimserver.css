@@ -943,6 +943,10 @@ form#advSearchForm.resultsPage {
 }
 
 .btn-power button {
+	background: transparent url(html/images/btn_power_on.gif) no-repeat 0 0;
+}
+
+.btn-power-off button {
 	background: transparent url(html/images/btn_power.gif) no-repeat 0 0;
 }
 

@@ -549,7 +549,7 @@ Player = function(){
 	var playTimeTimer;
 	var playTime = 0;
 	var volumeClicked = 0;
-	var buttons = new Ext.util.MixedCollection();
+	var displayElements = new Ext.util.MixedCollection();
 
 	var playerStatus = {
 		power: null,
@@ -559,7 +559,6 @@ Player = function(){
 		track: null,
 		tracks: null,
 		index: null,
-		volume: null,
 		duration: null,
 		shuffle: null
 	};
@@ -574,10 +573,10 @@ Player = function(){
 				tooltip: strings['previous'],
 				minWidth: 28,
 				scope: this,
-				handler: this.ctrlPrevious
+				handler: function(){ this.playerControl(['playlist', 'index', '-1']) }
 			});
 
-			buttons.add(new Slim.PlayButton('ctrlTogglePlay', {
+			displayElements.add(new Slim.PlayButton('ctrlTogglePlay', {
 				cls: 'btn-play',
 				minWidth: 51
 			}));
@@ -587,15 +586,15 @@ Player = function(){
 				tooltip: strings['next'],
 				minWidth: 28,
 				scope: this,
-				handler: this.ctrlNext
+				handler: function(){ this.playerControl(['playlist', 'index', '+1']) }
 			});
 
-			buttons.add(new Slim.RepeatButton('ctrlRepeat', {
+			displayElements.add(new Slim.RepeatButton('ctrlRepeat', {
 				minWidth: 34,
 				cls: 'btn-repeat'
 			}));
 
-			buttons.add(new Slim.ShuffleButton('ctrlShuffle', {
+			displayElements.add(new Slim.ShuffleButton('ctrlShuffle', {
 				minWidth: 34,
 				cls: 'btn-shuffle'
 			}));
@@ -605,47 +604,23 @@ Player = function(){
 				tooltip: strings['volumedown'],
 				minWidth: 22,
 				scope: this,
-				handler: this.volumeDown
+				handler: function(){ this.setVolume(1, '-') }
 			});
+
+			displayElements.add(new Slim.VolumeBar('ctrlVolume'));
 
 			new Slim.Button('ctrlVolumeUp', {
 				cls: 'btn-volume-increase',
 				tooltip: strings['volumeup'],
 				minWidth: 22,
 				scope: this,
-				handler: this.volumeUp
+				handler: function(){ this.setVolume(1, '+') }
 			});
 
-			var el = Ext.get('ctrlVolume').child('img:first');
-			if (el) {
-				el.on('click', function(ev, target) {
-
-					if (el = Ext.get(target)) {
-						var myStep = el.getWidth()/11;
-						var myWidth = el.getWidth() - 2*myStep;
-						var myX = ev.getPageX() - el.getX() - (Ext.isGecko * 8) - (Ext.isSafari * 5);
-
-						if (myX <= myStep + (Ext.isSafari * 3))
-							volVal = 0;
-
-						else if (myX >= el.getWidth() - myStep)
-							volVal = 10;
-
-						else
-							volVal = Math.ceil(myX / myStep) - 1;
-
-						Player.playerControl(['mixer', 'volume', volVal*10]);
-					}
-				});
-			}
-
-			new Slim.Button('ctrlPower', {
+			displayElements.add(new Slim.PowerButton('ctrlPower', {
 				cls: 'btn-power',
-				tooltip: strings['power'],
-				minWidth: 22,
-				scope: this,
-				handler: this.ctrlPower
-			});
+				minWidth: 22
+			}));
 
 			new Slim.Button('ctrlCollapse', {
 				cls: 'btn-collapse-player',
@@ -754,11 +729,11 @@ Player = function(){
 
 				// only continue if we got a result and player
 				if (responseText.result && responseText.result.player_connected) {
-					var el, volEl;
+					var el;
 					var result = responseText.result;
 
-					// send signal to all buttons
-					buttons.each(function(item){
+					// send signal to all displayed elements and buttons
+					displayElements.each(function(item){
 						item.fireEvent('dataupdate', result);
 					} );
 
@@ -881,22 +856,6 @@ Player = function(){
 							Ext.get('ctrlCurrentArt').update('<img src="/music/0/cover_96xX.jpg">');
 						}
 
-						// update volume button
-						if (result['mixer volume'] <= 0)
-							volVal = 0;
-						else if (result['mixer volume'] >= 100)
-							volVal = 11;
-						else {
-							volVal = Math.ceil(result['mixer volume'] / 9.9);
-						}
-
-						volEl = Ext.get('ctrlVolume');
-						volEl.removeClass([ 'ctrlVolume0', 'ctrlVolume1', 'ctrlVolume2', 'ctrlVolume3', 'ctrlVolume4', 'ctrlVolume5', 'ctrlVolume6', 'ctrlVolume7', 'ctrlVolume8', 'ctrlVolume9', 'ctrlVolume10' ]);
-						volEl.addClass('ctrlVolume' + String(Math.max(volVal-1, 0)));
-
-						if (volEl = volEl.child('img:first'))
-							volEl.dom.title = strings['volume'] + ' ' + parseInt(result['mixer volume']);
-
 						playerStatus = {
 							power: result.power,
 							mode: result.mode,
@@ -905,7 +864,6 @@ Player = function(){
 							track: result.playlist_tracks > 0 ? result.playlist_loop[0].url : '',
 							tracks: result.playlist_tracks,
 							index: result.playlist_cur_index,
-							volume: result['mixer volume'],
 							duration: result['duration'] || 0,
 							shuffle: result['playlist shuffle']
 						};
@@ -990,10 +948,6 @@ Player = function(){
 									this.getUpdate();
 								}
 
-								else if (result['mixer volume'] != null  && result['mixer volume'] != playerStatus.volume) {
-									this.updateStatus(response)
-								}
-
 								playerStatus.duration = result.duration;
 								
 								if (result.power)
@@ -1003,7 +957,7 @@ Player = function(){
 									playTimeTimer.cancel();
 								}
 
-								buttons.each(function(item){
+								displayElements.each(function(item){
 									item.fireEvent('dataupdate', result);
 								} );
 							}
@@ -1069,20 +1023,10 @@ Player = function(){
 			catch(e) {}
 		},
 
-		ctrlNext : function(){ this.playerControl(['playlist', 'index', '+1']) },
-		ctrlPrevious : function(){ this.playerControl(['playlist', 'index', '-1']) },
-
-		ctrlPower : function(){
-			this.playerControl(['power', (playerStatus.power == '1' ? '0' : '1')]);
-		},
-
 		openPlayerControl : function(){
 			window.open(webroot + 'status_header.html', 'playerControl', "width=500,height=165");
 		},
 
-		// values could be adjusted if not enough
-		volumeUp : function(){ this.setVolume(1, '+') },
-		volumeDown : function(){ this.setVolume(1, '-') },
 		setVolume : function(amount, d){
 			amount *= 10;
 			if (d)
@@ -1188,6 +1132,104 @@ Slim.ShuffleButton = function(renderTo, config){
 		state: 0
 	});
 
-	Slim.RepeatButton.superclass.constructor.call(this, renderTo, config);
+	Slim.ShuffleButton.superclass.constructor.call(this, renderTo, config);
 };
 Ext.extend(Slim.ShuffleButton, Slim.Button);
+
+
+Slim.VolumeBar = function(renderTo){
+	Slim.VolumeBar.superclass.constructor.call(this);
+
+	this.addEvents();
+	if (renderTo && (this.el = Ext.get(renderTo))) {
+		if (renderTo = this.el.child('img:first'))
+			Ext.get(renderTo).on('click', this.onClick, this);
+	}
+
+	this.on('dataupdate', this.update, this);
+	this.volume = 0
+};
+
+Ext.extend(Slim.VolumeBar, Ext.util.Observable, {
+	onClick: function(ev, target) {
+		var el = Ext.get(target);
+		if (el) {
+			var myStep = el.getWidth()/11;
+			var myWidth = el.getWidth() - 2*myStep;
+			var myX = ev.getPageX() - el.getX() - (Ext.isGecko * 8) - (Ext.isSafari * 5);
+
+			if (myX <= myStep + (Ext.isSafari * 3))
+				volVal = 0;
+
+			else if (myX >= el.getWidth() - myStep)
+				volVal = 10;
+
+			else
+				volVal = Math.ceil(myX / myStep) - 1;
+
+			this.updateState(volVal*10);
+			Player.playerControl(['mixer', 'volume', volVal*10]);
+		}
+	},
+
+	// update volume bar
+	update: function(result){
+		if (result['mixer volume'])
+			this.updateState(result['mixer volume']);
+	},
+
+	updateState: function(newVolume){
+		if (newVolume != this.volume) {
+			var volEl;
+			var volVal = Math.ceil(newVolume / 9.9); 
+
+			if (newVolume <= 0)
+				volVal = 0;
+			else if (newVolume >= 100)
+				volVal = 11;
+
+			this.el.removeClass([ 'ctrlVolume0', 'ctrlVolume1', 'ctrlVolume2', 'ctrlVolume3', 'ctrlVolume4', 'ctrlVolume5', 'ctrlVolume6', 'ctrlVolume7', 'ctrlVolume8', 'ctrlVolume9', 'ctrlVolume10' ]);
+			this.el.addClass('ctrlVolume' + String(Math.max(volVal-1, 0)));
+	
+			if (volEl = this.el.child('img:first'))
+				volEl.dom.title = strings['volume'] + ' ' + parseInt(newVolume);
+
+			this.volume = newVolume;
+		}
+	}
+});
+
+
+Slim.PowerButton = function(renderTo, config){
+	Ext.apply(config, {
+		tooltip: strings['power'],
+		scope: this,
+
+		handler: function(){
+			var newState = (this.state ? '0' : '1');
+			this.updateState(newState == '1');
+			Player.playerControl(['power', newState]);
+		},
+
+		updateHandler: function(result){
+			if (result['power'] != null && this.state != result['power']) {
+				this.updateState(result['power']);
+			}
+		},
+
+		updateState: function(newState){
+			this.state = newState;
+			this.setTooltip(strings['power'] + strings['colon'] + ' ' + strings[this.state ? 'on' : 'off']);
+
+			if (this.state)
+				this.el.removeClass('btn-power-off');
+			else
+				this.el.addClass('btn-power-off');
+		},
+
+		state: null
+	});
+
+	Slim.ShuffleButton.superclass.constructor.call(this, renderTo, config);
+};
+Ext.extend(Slim.PowerButton, Slim.Button);

@@ -1134,7 +1134,7 @@ POWERING_OFF
 
 POWER
 	DA	Tænd
-	DE	Netz
+	DE	Strom
 	EN	Power
 	ES	Encendido
 	FI	Virta
