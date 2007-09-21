@@ -130,7 +130,10 @@ sub set {
 			$change->($pref, $new, $class->_obj);
 		}
 
-		Slim::Control::Request::notifyFromArray(Slim::Player::Client::getClient($clientid), ['prefset', $namespace, $pref, $new]);
+		Slim::Control::Request::notifyFromArray(
+			$clientid ? Slim::Player::Client::getClient($clientid) : undef,
+			['prefset', $namespace, $pref, $new]
+		);
 
 		return wantarray ? ($new, 1) : $new;
 

@@ -50,6 +50,7 @@ use Slim::Utils::PluginManager;
 use Slim::Utils::Progress;
 use Slim::Utils::Scanner;
 use Slim::Utils::Strings qw(string);
+use Slim::Control::Request;
 
 sub main {
 
