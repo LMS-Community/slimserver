@@ -388,26 +388,28 @@ sub playerSettingsMenu {
 	my $val;
 
 	# always add repeat
+	$val = Slim::Player::Playlist::repeat($client);
 	push @menu, {
 		text      => Slim::Utils::Strings::string('REPEAT'),
 		count     => 3,
 		offset    => 0,
 		item_loop => [
-			repeatHash($client, $strings{'repeat'}, 0),
-			repeatHash($client, $strings{'repeat'}, 1),
-			repeatHash($client, $strings{'repeat'}, 2),
+			repeatHash($val, $strings{'repeat'}, 0),
+			repeatHash($val, $strings{'repeat'}, 1),
+			repeatHash($val, $strings{'repeat'}, 2),
 		],
 	};
 	
 	# always add shuffle
+	$val = Slim::Player::Playlist::shuffle($client);
 	push @menu, {
 		text      => Slim::Utils::Strings::string('SHUFFLE'),
 		count     => 3,
 		offset    => 0,
 		item_loop => [
-			shuffleHash($client, $strings{'shuffle'}, 0),
-			shuffleHash($client, $strings{'shuffle'}, 1),
-			shuffleHash($client, $strings{'shuffle'}, 2),
+			shuffleHash($val, $strings{'shuffle'}, 0),
+			shuffleHash($val, $strings{'shuffle'}, 1),
+			shuffleHash($val, $strings{'shuffle'}, 2),
 		],
 	};
 
@@ -444,17 +446,18 @@ sub playerSettingsMenu {
 	}
 
 	# sleep setting (always)
+	$val = $client->currentSleepTime();
 	push @menu, {
 		text      => Slim::Utils::Strings::string('SLEEP'),
 		count     => 6,
 		offset    => 0,
 		item_loop => [
-			sleepInXHash($client, 0),
-			sleepInXHash($client, 15),
-			sleepInXHash($client, 30),
-			sleepInXHash($client, 45),
-			sleepInXHash($client, 60),
-			sleepInXHash($client, 90),
+			sleepInXHash($val, 0),
+			sleepInXHash($val, 15),
+			sleepInXHash($val, 30),
+			sleepInXHash($val, 45),
+			sleepInXHash($val, 60),
+			sleepInXHash($val, 90),
 		],
 	};
 
@@ -472,16 +475,17 @@ sub playerSettingsMenu {
 
 	# transition only for Sb2 and beyond
 	if ($client->isa('Slim::Player::Squeezebox2')) {
+		$val = $prefs->client($client)->get('transitionType');
 		push @menu, {
 			text      => Slim::Utils::Strings::string('SETUP_TRANSITIONTYPE'),
 			count     => 5,
 			offset    => 0,
 			item_loop => [
-				transitionHash($client, $prefs, $strings{'crossfade'}, 0),
-				transitionHash($client, $prefs, $strings{'crossfade'}, 1),
-				transitionHash($client, $prefs, $strings{'crossfade'}, 2),
-				transitionHash($client, $prefs, $strings{'crossfade'}, 3),
-				transitionHash($client, $prefs, $strings{'crossfade'}, 4),
+				transitionHash($val, $prefs, $strings{'crossfade'}, 0),
+				transitionHash($val, $prefs, $strings{'crossfade'}, 1),
+				transitionHash($val, $prefs, $strings{'crossfade'}, 2),
+				transitionHash($val, $prefs, $strings{'crossfade'}, 3),
+				transitionHash($val, $prefs, $strings{'crossfade'}, 4),
 			],
 		};
 	}
@@ -489,16 +493,17 @@ sub playerSettingsMenu {
 
 	# replay gain (volume adjustment)
 	if ($client->canDoReplayGain(0)) {
+		$val = $prefs->client($client)->get('replayGainMode');
 		push @menu, {
 			text      => Slim::Utils::Strings::string("REPLAYGAIN"),
 			count     => 4,
 			offset    => 0,
 			item_loop => [
-				replayGainHash($client, $prefs, $strings{'replaygain'}, 0),
-				replayGainHash($client, $prefs, $strings{'replaygain'}, 1),
-				replayGainHash($client, $prefs, $strings{'replaygain'}, 2),
-				replayGainHash($client, $prefs, $strings{'replaygain'}, 3),
-				replayGainHash($client, $prefs, $strings{'replaygain'}, 4),
+				replayGainHash($val, $prefs, $strings{'replaygain'}, 0),
+				replayGainHash($val, $prefs, $strings{'replaygain'}, 1),
+				replayGainHash($val, $prefs, $strings{'replaygain'}, 2),
+				replayGainHash($val, $prefs, $strings{'replaygain'}, 3),
+				replayGainHash($val, $prefs, $strings{'replaygain'}, 4),
 			],
 		};
 	}
@@ -929,9 +934,7 @@ sub powerHash {
 }
 
 sub sleepInXHash {
-	my $client = shift;
-	my $sleepTime = shift;
-	my $val = $client->currentSleepTime();
+	my ($val, $sleepTime) = @_;
 	my $minutes = Slim::Utils::Strings::string('MINUTES');
 	my $text = $sleepTime == 0 ? 
 		Slim::Utils::Strings::string("NONE") :
@@ -950,8 +953,7 @@ sub sleepInXHash {
 }
 
 sub repeatHash {
-	my ($client, $strings, $thisValue) = @_;
-	my $val = Slim::Player::Playlist::repeat($client);
+	my ($val, $strings, $thisValue) = @_;
 	my %return = (
 		text    => Slim::Utils::Strings::string($strings->[$thisValue]),
 		radio	=> ($val == $thisValue) + 0, # 0 is added to force data type to number
@@ -966,8 +968,7 @@ sub repeatHash {
 }
 
 sub shuffleHash {
-	my ($client, $strings, $thisValue) = @_;
-	my $val = Slim::Player::Playlist::shuffle($client);
+	my ($val, $strings, $thisValue) = @_;
 	my %return = (
 		text    => Slim::Utils::Strings::string($strings->[$thisValue]),
 		radio	=> ($val == $thisValue) + 0, # 0 is added to force the data type to number
@@ -983,8 +984,7 @@ sub shuffleHash {
 
 sub transitionHash {
 	
-	my ($client, $prefs, $strings, $thisValue) = @_;
-	my $val = $prefs->client($client)->get('transitionType');
+	my ($val, $prefs, $strings, $thisValue) = @_;
 	my %return = (
 		text    => Slim::Utils::Strings::string($strings->[$thisValue]),
 		radio	=> ($val == $thisValue) + 0, # 0 is added to force the data type to number
@@ -1000,8 +1000,7 @@ sub transitionHash {
 
 sub replayGainHash {
 	
-	my ($client, $prefs, $strings, $thisValue) = @_;
-	my $val = $prefs->client($client)->get('replayGainMode');
+	my ($val, $prefs, $strings, $thisValue) = @_;
 	my %return = (
 		text    => Slim::Utils::Strings::string($strings->[$thisValue]),
 		radio	=> ($val == $thisValue) + 0, # 0 is added to force the data type to number
