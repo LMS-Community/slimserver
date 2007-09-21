@@ -253,6 +253,17 @@ var Utils = function(){
 
 		getCookie : function(name, failover) {
 			return cookieManager.get(name, failover);
+		},
+
+		formatTime : function(seconds){
+			var hours = Math.floor(seconds / 3600);
+			var minutes = Math.floor((seconds - hours*3600) / 60);
+			seconds = Math.floor(seconds % 60);
+
+			var formattedTime = (hours ? hours + ':' : '');
+			formattedTime += (minutes ? (minutes < 10 && hours ? '0' : '') + minutes : '0') + ':';
+			formattedTime += (seconds ? (seconds < 10 ? '0' : '') + seconds : '00');
+			return formattedTime;
 		}
 	};
 }();

@@ -548,7 +548,6 @@ Player = function(){
 	var pollTimer;
 	var playTimeTimer;
 	var playTime = 0;
-	var volumeClicked = 0;
 	var displayElements = new Ext.util.MixedCollection();
 
 	var playerStatus = {
@@ -641,7 +640,7 @@ Player = function(){
 
 			// restore player expansion from cookie
 			this.collapseExpand({
-				doExpand: (Utils.getCookie('SlimServer-expandPlayerControl') == 'true')
+				doExpand: (Utils.getCookie('SlimServer-expandPlayerControl') != 'false')
 			});
 
 			new Slim.Button('ctrlExpand', {
@@ -665,15 +664,15 @@ Player = function(){
 			if (! isNaN(time))
 				playTime = parseInt(time); //force integer type from results
 
-			var shortTime = this.formatTime(playTime);
+			var shortTime = Utils.formatTime(playTime);
 
 			Ext.get('ctrlPlaytime').update(shortTime);
 
 			if (!isNaN(playerStatus.duration) && playerStatus.duration > 0) {
 				totalTime = playerStatus.duration;
-				Ext.get('ctrlTotalTime').update('&nbsp;(' + this.formatTime(totalTime) + ')');
+				Ext.get('ctrlTotalTime').update('&nbsp;(' + Utils.formatTime(totalTime) + ')');
 
-				shortTime = '-' + this.formatTime(totalTime - playTime) + '&nbsp;(' + this.formatTime(totalTime) + ')';
+				shortTime = '-' + Utils.formatTime(totalTime - playTime) + '&nbsp;(' + Utils.formatTime(totalTime) + ')';
 
 				if (totalTime > 0 && playTime >= totalTime-1)
 					this.getStatus();
@@ -709,17 +708,6 @@ Player = function(){
 
 			Ext.get(Ext.DomQuery.selectNode('.progressFillRight', progress.dom)).setWidth(max - left);
 			Ext.get(Ext.DomQuery.selectNode('.progressFillLeft', progress.dom)).setWidth(left);
-		},
-
-		formatTime : function(seconds){
-			var hours = Math.floor(seconds / 3600);
-			var minutes = Math.floor((seconds - hours*3600) / 60);
-			seconds = Math.floor(seconds % 60);
-
-			var formattedTime = (hours ? hours + ':' : '');
-			formattedTime += (minutes ? (minutes < 10 && hours ? '0' : '') + minutes : '0') + ':';
-			formattedTime += (seconds ? (seconds < 10 ? '0' : '') + seconds : '00');
-			return formattedTime;
 		},
 
 		updateStatus : function(response) {
