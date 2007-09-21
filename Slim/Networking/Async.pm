@@ -21,6 +21,7 @@ use Net::IP;
 use Scalar::Util qw(blessed weaken);
 use Socket;
 
+use Slim::Networking::Async::Socket::HTTP;
 use Slim::Networking::Select;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
@@ -251,6 +252,13 @@ sub connect {
 	);
 
 	return;
+}
+
+# Default to an HTTP socket, it is suitable for any TCP connection
+sub new_socket {
+	my $self = shift;
+	
+	return Slim::Networking::Async::Socket::HTTP->new( @_ );
 }
 
 sub _connect_error {
