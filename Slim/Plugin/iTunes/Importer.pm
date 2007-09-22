@@ -191,7 +191,9 @@ sub doneScanning {
 
 	$lastMusicLibraryFinishTime = time();
 
-	$log->info(sprintf("Scan completed in %d seconds.", (time() - $iTunesScanStartTime)));
+	if ( $log->is_info ) {
+		$log->info(sprintf("Scan completed in %d seconds.", (time() - $iTunesScanStartTime)));
+	}
 
 	Slim::Music::Import->setLastScanTime('iTunesLastLibraryChange', $currentITunesMusicLibraryDate);
 
@@ -417,7 +419,9 @@ sub handleTrack {
 
 	} else {
 
-		$log->warn("Unknown file type " . ($curTrack->{'Kind'} || '') . " " . ($url || 'Unknown URL'));
+		if ( $log->is_warn ) {
+			$log->warn("Unknown file type " . ($curTrack->{'Kind'} || '') . " " . ($url || 'Unknown URL'));
+		}
 	}
 }
 
@@ -445,7 +449,9 @@ sub handlePlaylist {
 
 	Slim::Music::Info::updateCacheEntry($url, $cacheEntry);
 
-	$log->info("Playlist now has " . scalar @{$cacheEntry->{'LIST'}} . " items.");
+	if ( $log->is_info ) {
+		$log->info("Playlist now has " . scalar @{$cacheEntry->{'LIST'}} . " items.");
+	}
 }
 
 sub handleStartElement {
@@ -494,7 +500,9 @@ sub handleCharElement {
 
 		$class->iTunesLibraryBasePath( $class->strip_automounter($value) );
 
-		$log->info("Found the music folder: ", $class->iTunesLibraryBasePath);
+		if ( $log->is_info ) {
+			$log->info("Found the music folder: ", $class->iTunesLibraryBasePath);
+		}
 
 		return;
 	}
@@ -612,7 +620,9 @@ sub handleEndElement {
 		# iTunes 7.0 adds 'Music' as a playlist - we don't want that either.
 		if (defined $item{'TITLE'} && $item{'TITLE'} !~ /^(?:Library|Music)$/) {
 
-			$log->debug("Got a playlist array of " . scalar(@{$item{'LIST'}}) . " items.");
+			if ( $log->is_debug ) {
+				$log->debug("Got a playlist array of " . scalar(@{$item{'LIST'}}) . " items.");
+			}
 
 			$class->handlePlaylist(\%item);
 		}

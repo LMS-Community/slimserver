@@ -478,10 +478,12 @@ sub reshuffle {
 		$realsong = $songcount;
 	}
 	
-	$log->info(sprintf("Reshuffling, current song index: %d, preserve song? %s",
-		$realsong,
-		$dontpreservecurrsong ? 'no' : 'yes',
-	));
+	if ( $log->is_info ) {
+		$log->info(sprintf("Reshuffling, current song index: %d, preserve song? %s",
+			$realsong,
+			$dontpreservecurrsong ? 'no' : 'yes',
+		));
+	}
 
 	my @realqueue = ();
 	my $queue     = $client->currentsongqueue();
@@ -788,7 +790,9 @@ sub modifyPlaylistCallback {
 		# Don't save all the tracks again if we're just starting up!
 		if (!$eachclient->startupPlaylistLoading && $savePlaylist) {
 
-			$log->info("Finding client playlist for: ", $eachclient->id);
+			if ( $log->is_info ) {
+				$log->info("Finding client playlist for: ", $eachclient->id);
+			}
 
 			# Create a virtual track that is our pointer
 			# to the list of tracks that make up this playlist.

@@ -208,7 +208,9 @@ sub init {
 
 			changePos($client, $knobPos - $listIndex, $funct);
 
-			$log->debug("New listindex: ", $client->modeParam('listIndex'));
+			if ( $log->is_debug ) {
+				$log->debug("New listindex: ", $client->modeParam('listIndex'));
+			}
 		},
 
 		# call callback procedure

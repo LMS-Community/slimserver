@@ -69,7 +69,9 @@ sub read {
 		}
 	}
 
-	$log->info("Parsed " . scalar(@items) . " items from WPL");
+	if ( $log->is_info ) {
+		$log->info("Parsed " . scalar(@items) . " items from WPL");
+	}
 
 	return @items;
 }

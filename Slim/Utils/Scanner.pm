@@ -282,8 +282,10 @@ sub scanDirectory {
 	# Create a Path::Class::Dir object for later use.
 	my $topDir = dir($args->{'url'});
 
-	$log->info("About to look for files in $topDir");
-	$log->info("For files with extensions in: ", Slim::Music::Info::validTypeExtensions($args->{'types'}));
+	if ( $log->is_info ) {
+		$log->info("About to look for files in $topDir");
+		$log->info("For files with extensions in: ", Slim::Music::Info::validTypeExtensions($args->{'types'}));
+	}
 
 	my $files  = [];
 
@@ -311,7 +313,9 @@ sub scanDirectory {
 
 	} else {
 
-		$log->info(sprintf("Found %d files in %s\n", scalar @{$files}, $topDir));
+		if ( $log->is_info ) {
+			$log->info(sprintf("Found %d files in %s\n", scalar @{$files}, $topDir));
+		}
 	}
 
 	$progress->total( scalar @{$files} );
@@ -561,7 +565,9 @@ sub handleRedirect {
 	
 	if ( $request->uri =~ /^mms/ ) {
 
-		$log->debug("Server redirected to MMS URL: " . $request->uri . ", adding WMA headers");
+		if ( $log->is_debug ) {
+			$log->debug("Server redirected to MMS URL: " . $request->uri . ", adding WMA headers");
+		}
 		
 		addWMAHeaders( $request );
 	}
@@ -915,7 +921,9 @@ sub scanPlaylistURLs {
 
 			# we finally found an audio URL, so we're done
 
-			$log->debug("Found an audio URL: %s [%s]", $item->url, $item->content_type);
+			if ( $log->is_debug ) {
+				$log->debug( sprintf( "Found an audio URL: %s [%s]", $item->url, $item->content_type ) );
+			}
 			
 			# return a list with the first found audio URL at the top
 			unshift @{$foundItems}, splice @{$foundItems}, $offset, 1;
@@ -1017,7 +1025,9 @@ sub scanWMAStream {
 		return;
 	}
 	
-	$log->debug("Checking stream at " . $request->uri);
+	if ( $log->is_debug ) {
+		$log->debug("Checking stream at " . $request->uri);
+	}
 	
 	my $http = Slim::Networking::Async::HTTP->new();
 
@@ -1112,7 +1122,9 @@ sub scanWMAStreamDone {
 		}
 	}
 	
-	$log->debug("WMA header data: " . Data::Dump::dump($wma));
+	if ( $log->is_debug ) {
+		$log->debug("WMA header data: " . Data::Dump::dump($wma));
+	}
 	
 	my $streamNum = 1;
 	
@@ -1143,10 +1155,12 @@ sub scanWMAStreamDone {
 			$streamNum = $wma->stream(0)->{'streamNumber'};
 		}
 
-		$log->debug(sprintf("Will play stream #%d, bitrate: %s kbps",
-			$streamNum,
-			$bitrate ? int($bitrate / 1000) : 'unknown',
-		));
+		if ( $log->is_debug ) {
+			$log->debug(sprintf("Will play stream #%d, bitrate: %s kbps",
+				$streamNum,
+				$bitrate ? int($bitrate / 1000) : 'unknown',
+			));
+		}
 	}
 	
 	# Always cache with mms URL prefix
@@ -1185,7 +1199,9 @@ sub scanWMAStreamError {
 	# If there are other streams in foundItems, try them
 	if ( @{$foundItems} ) {
 
-		$log->debug("Trying next stream: %s", $foundItems->[0]->url);
+		if ( $log->is_debug ) {
+			$log->debug("Trying next stream: %s", $foundItems->[0]->url);
+		}
 
 		return scanWMAStream( {
 			'client'      => $args->{'client'},

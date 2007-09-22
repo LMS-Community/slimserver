@@ -47,18 +47,22 @@ sub findCallback {
 				'device' => $device,
 			};
 
-			$log->info(sprintf("New server detected: %s (%s)",
-				$device->getfriendlyname,
-				$device->getlocation,
-			));
+			if ( $log->is_info ) {
+				$log->info(sprintf("New server detected: %s (%s)",
+					$device->getfriendlyname,
+					$device->getlocation,
+				));
+			}
 		}
 		else {
 			delete $ports->{ $host };
 
-			$log->info(sprintf("Server went away: %s (%s)",
-				$device->getfriendlyname,
-				$device->getlocation,
-			));
+			if ( $log->is_info ) {
+				$log->info(sprintf("Server went away: %s (%s)",
+					$device->getfriendlyname,
+					$device->getlocation,
+				));
+			}
 		}
 	}
 	

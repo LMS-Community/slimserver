@@ -82,10 +82,12 @@ sub loadConversionTables {
 				$command =~ s/^\s*//o;
 				$command =~ s/\s*$//o;
 
-				$log->debug(
-					"input: '$inputtype' output: '$outputtype' clienttype: " .
-					"'$clienttype': clientid: '$clientid': '$command'"
-				);
+				if ( $log->is_debug ) {
+					$log->debug(
+						"input: '$inputtype' output: '$outputtype' clienttype: " .
+						"'$clienttype': clientid: '$clientid': '$command'"
+					);
+				}
 
 				next unless defined $command && $command !~ /^\s*$/;
 
@@ -108,8 +110,10 @@ sub enabledFormat {
 		return 1;
 	}
 
-	$log->debug("There are " . scalar @disabled . " disabled formats...");
-
+	if ( $log->is_debug ) {
+		$log->debug("There are " . scalar @disabled . " disabled formats...");
+	}
+	
 	for my $format (@disabled) {
 
 		$log->debug("Testing $format vs $profile");

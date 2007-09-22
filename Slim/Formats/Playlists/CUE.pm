@@ -362,7 +362,9 @@ sub read {
 		});
 	}
 
-	$log->info("    returning: " . scalar(@items) . " items");
+	if ( $log->is_info ) {
+		$log->info("    returning: " . scalar(@items) . " items");
+	}
 
 	return @items;
 }

@@ -42,7 +42,9 @@ sub read {
 
 		close($fh);
 
-		$log->info(sprintf "Imported %d items from playlist %s", scalar @results, $name);
+		if ( $log->is_info ) {
+			$log->info(sprintf "Imported %d items from playlist %s", scalar @results, $name);
+		}
 
 		return \@results;
 

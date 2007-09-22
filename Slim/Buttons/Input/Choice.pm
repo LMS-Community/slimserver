@@ -319,9 +319,11 @@ sub changePos {
 
 	my $newposition = Slim::Buttons::Common::scroll($client, $dir, scalar(@$listRef), $listIndex);
 	
-	logger('player.ui')->debug(
-		"newpos: $newposition = scroll dir:$dir listIndex: $listIndex listLen: ", scalar(@$listRef)
-	);
+	if ( logger('player.ui')->is_debug ) {
+		logger('player.ui')->debug(
+			"newpos: $newposition = scroll dir:$dir listIndex: $listIndex listLen: ", scalar(@$listRef)
+		);
+	}
 	
 	my $valueRef = $client->modeParam('valueRef');
 

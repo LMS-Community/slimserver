@@ -54,7 +54,9 @@ sub read {
 		}
 	}
 
-	$log->info("Parsed " . scalar(@items) . " items from XSPF\n");
+	if ( $log->is_info ) {
+		$log->info("Parsed " . scalar(@items) . " items from XSPF\n");
+	}
 
 	return @items;
 }

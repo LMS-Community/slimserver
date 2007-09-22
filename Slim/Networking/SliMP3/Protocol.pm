@@ -97,9 +97,11 @@ sub getUdpClient {
 			if ($revision >= 2.2)  { $id = $mac }
 			if ($deviceid != 0x01) { return undef }
 
-			$log->info("$id ($msgtype) deviceid: $deviceid revision: $revision address: ",
-				Slim::Utils::Network::paddr2ipaddress($clientpaddr)
-			);
+			if ( $log->is_info ) {
+				$log->info("$id ($msgtype) deviceid: $deviceid revision: $revision address: ",
+					Slim::Utils::Network::paddr2ipaddress($clientpaddr)
+				);
+			}
 
 			$client = Slim::Player::SLIMP3->new($id, $clientpaddr, $revision, $sock);
 

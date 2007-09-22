@@ -144,19 +144,23 @@ sub _updateSelect {
 
 			$selects->{'is_'.$type}->add($sock) if $idle;
 
-			$log->info(sprintf("fileno: [%s] Adding %s -> %s",
-				fileno($sock),
-				$type,
-				Slim::Utils::PerlRunTime::realNameForCodeRef($callback),
-			));
+			if ( $log->is_info ) {
+				$log->info(sprintf("fileno: [%s] Adding %s -> %s",
+					fileno($sock),
+					$type,
+					Slim::Utils::PerlRunTime::realNameForCodeRef($callback),
+				));
+			}
 		}
 		else {
 
-			$log->info(sprintf("fileno: [%d] Not adding %s -> %s, already exists",
-				fileno($sock),
-				$type,
-				Slim::Utils::PerlRunTime::realNameForCodeRef($callback),
-			));
+			if ( $log->is_info ) {
+				$log->info(sprintf("fileno: [%d] Not adding %s -> %s, already exists",
+					fileno($sock),
+					$type,
+					Slim::Utils::PerlRunTime::realNameForCodeRef($callback),
+				));
+			}
 		}
 
 	} else {
@@ -173,7 +177,9 @@ sub _updateSelect {
 			$selects->{'is_'.$type}->remove($sock);
 		}
 		
-		$log->info(sprintf("fileno: [%d] Removing $type", fileno($sock) || 0));
+		if ( $log->is_info ) {
+			$log->info(sprintf("fileno: [%d] Removing $type", fileno($sock) || 0));
+		}
 	}
 }
 
@@ -223,11 +229,13 @@ sub select {
 				
 				$::perfmon && (my $now = Time::HiRes::time());
 				
-				$log->info(sprintf("fileno [%s] %s, calling %s",
-					fileno($sock),
-					$type,
-					Slim::Utils::PerlRunTime::realNameForCodeRef($callback),
-				));
+				if ( $log->is_info ) {
+					$log->info(sprintf("fileno [%s] %s, calling %s",
+						fileno($sock),
+						$type,
+						Slim::Utils::PerlRunTime::realNameForCodeRef($callback),
+					));
+				}
 
 				# the socket may have passthrough arguments set
 				my $passthrough = ${*$sock}{'passthrough'} || [];
@@ -285,20 +293,26 @@ sub writeNoBlock {
 		return;
 	}
 
-	$log->info(sprintf("fileno: [%d] Wrote $segment->{'length'} bytes", fileno($socket)));
+	if ( $log->is_info ) {
+		$log->info(sprintf("fileno: [%d] Wrote $segment->{'length'} bytes", fileno($socket)));
+	}
 
 	my $sentbytes = syswrite($socket, ${$segment->{'data'}}, $segment->{'length'}, $segment->{'offset'});
 
 	if ($! == EWOULDBLOCK) {
 
-		$log->info(sprintf("fileno: [%d] Would block while sending.", fileno($socket)));
+		if ( $log->is_info ) {
+			$log->info(sprintf("fileno: [%d] Would block while sending.", fileno($socket)));
+		}
 
 		$sentbytes = 0 unless defined $sentbytes;
 	}
 
 	if (!defined($sentbytes)) {
 
-		$log->info(sprintf("fileno: [%d] Send to socket had error, aborting.", fileno($socket)));
+		if ( $log->is_info ) {
+			$log->info(sprintf("fileno: [%d] Send to socket had error, aborting.", fileno($socket)));
+		}
 
 		removeWrite($socket);
 		removeWriteNoBlockQ($socket);
@@ -308,7 +322,9 @@ sub writeNoBlock {
 	# sent incomplete message
 	if ($sentbytes < $segment->{'length'}) {
 
-		$log->info(sprintf("fileno: [%d] Incomplete message, sent only: $sentbytes", fileno($socket)));
+		if ( $log->is_info ) {
+			$log->info(sprintf("fileno: [%d] Incomplete message, sent only: $sentbytes", fileno($socket)));
+		}
 
 		$segment->{'length'} -= $sentbytes;
 		$segment->{'offset'} += $sentbytes;
@@ -350,7 +366,9 @@ sub removeWriteNoBlockQ {
 	
 	if ( exists($writeQueue{$socket}) ) {
 		
-		$log->info(sprintf("fileno: [%d] removing writeNoBlock queue", fileno($socket)));
+		if ( $log->is_info ) {
+			$log->info(sprintf("fileno: [%d] removing writeNoBlock queue", fileno($socket)));
+		}
 
 		delete($writeQueue{$socket});
 	}

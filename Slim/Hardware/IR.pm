@@ -124,7 +124,9 @@ sub idle {
 		# discard all queued IR for this client as they are potentially stale
 		forgetQueuedIR($client);
 
-		$log->info(sprintf("Discarded stale IR for client: %s", $client->id));
+		if ( $log->is_info ) {
+			$log->info(sprintf("Discarded stale IR for client: %s", $client->id));
+		}
 
 	}
 		
@@ -628,7 +630,9 @@ sub processIR {
 	if (($code !~ /(.*?)\.(up|down)$/) && ($timediff < $IRMINTIME) && ($irCodeBytes ne $client->lastircodebytes)) {
 
 		# received oddball code in middle of repeat sequence, drop it
-		$log->warn("Received $irCodeBytes while expecting " . $client->lastircodebytes . ", dropping code");
+		if ( $log->is_warn ) {
+			$log->warn("Received $irCodeBytes while expecting " . $client->lastircodebytes . ", dropping code");
+		}
 
 		return;
 	}
@@ -643,7 +647,9 @@ sub processIR {
 	$client->irtimediff($timediff);
 	$client->lastirtime($irTime);
 
-	$log->info("$irCodeBytes\t$irTime\t" . Time::HiRes::time());
+	if ( $log->is_info ) {
+		$log->info("$irCodeBytes\t$irTime\t" . Time::HiRes::time());
+	}
 
 	if ($code =~ /(.*?)\.(up|down)$/) {
 
@@ -695,12 +701,14 @@ sub processIR {
 
 		my $irCode = lookup($client, $irCodeBytes);
 
-		$log->info(sprintf("irCode = [%s] timer = [%s] timediff = [%s] last = [%s]",
-			(defined $irCode ? $irCode : 'undef'), 
-			$irTime,
-			$client->irtimediff,
-			$client->lastircode,
-		));
+		if ( $log->is_info ) {
+			$log->info(sprintf("irCode = [%s] timer = [%s] timediff = [%s] last = [%s]",
+				(defined $irCode ? $irCode : 'undef'), 
+				$irTime,
+				$client->irtimediff,
+				$client->lastircode,
+			));
+		}
 
 		if (defined $irCode) {
 
@@ -779,7 +787,9 @@ sub fireHold {
 		return;
 	}
 
-	$log->info("Hold Time Expired - irCode = [$irCode] timer = [$irTime] timediff = [" . $client->irtimediff . "] last = [$last]");
+	if ( $log->is_info ) {
+		$log->info("Hold Time Expired - irCode = [$irCode] timer = [$irTime] timediff = [" . $client->irtimediff . "] last = [$last]");
+	}
 
 	# must set lastirbutton so that button functions like 'passback' will work.
 	$client->lastirbutton($irCode);
@@ -849,12 +859,14 @@ sub repeatCode {
 
 	my $irCode = lookup($client, $irCodeBytes, 'repeat');
 
-	$log->info(sprintf("irCode = [%s] timer = [%s] timediff = [%s] last = [%s]",
-		($irCode || 'undef'),
-		($client->lastirtime || 'undef'),
-		($client->irtimediff || 'undef'),
-		($client->lastircode || 'undef'),
-	));
+	if ( $log->is_info ) {
+		$log->info(sprintf("irCode = [%s] timer = [%s] timediff = [%s] last = [%s]",
+			($irCode || 'undef'),
+			($client->lastirtime || 'undef'),
+			($client->irtimediff || 'undef'),
+			($client->lastircode || 'undef'),
+		));
+	}
 
 	if ($irCode) {
 
@@ -941,9 +953,11 @@ sub executeButton {
 		$irCode = $button;
 	}
 
-	$log->info(sprintf("Trying to execute button [%s] for irCode: [%s]",
-		$button, defined $irCode ? $irCode : 'undef',
-	));
+	if ( $log->is_info ) {
+		$log->info(sprintf("Trying to execute button [%s] for irCode: [%s]",
+			$button, defined $irCode ? $irCode : 'undef',
+		));
+	}
 
 	if (defined $irCode) {
 
@@ -970,17 +984,21 @@ sub executeButton {
 
 		no strict 'refs';
 
-		$log->info(sprintf("Executing button [%s] for irCode: [%s]",
-			$button, defined $irCode ? $irCode : 'undef',
-		));
+		if ( $log->is_info ) {
+			$log->info(sprintf("Executing button [%s] for irCode: [%s]",
+				$button, defined $irCode ? $irCode : 'undef',
+			));
+		}
 
 		&$subref($client, $irCode, $subarg);
 
 	} else {
 
-		$log->warn(sprintf("Button [%s] with irCode: [%s] not implemented in mode: [%s]",
-			$button, defined $irCode ? $irCode : 'undef', $mode,
-		));
+		if ( $log->is_warn ) {
+			$log->warn(sprintf("Button [%s] with irCode: [%s] not implemented in mode: [%s]",
+				$button, defined $irCode ? $irCode : 'undef', $mode,
+			));
+		}
 	}
 }
 

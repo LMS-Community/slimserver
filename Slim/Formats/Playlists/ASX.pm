@@ -99,7 +99,9 @@ sub read {
 		}
 	}
 
-	$log->info("parsed " . scalar(@items) . " items out of ASX");
+	if ( $log->is_info ) {
+		$log->info("parsed " . scalar(@items) . " items out of ASX");
+	}
 
 	return @items;
 }

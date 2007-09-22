@@ -246,7 +246,9 @@ sub cli_socket_accept {
 			$connections{$client_socket}{'auth'} = !$prefsServer->get('authorize');
 			$connections{$client_socket}{'terminator'} = $LF;
 
-			$log->info("Accepted connection from $connections{$client_socket}{'id'} (" . (keys %connections) . " active connections)");
+			if ( $log->is_info ) {
+				$log->info("Accepted connection from $connections{$client_socket}{'id'} (" . (keys %connections) . " active connections)");
+			}
 		} 
 		else {
 
@@ -277,7 +279,9 @@ sub client_socket_close {
 	delete($connections{$client_socket});
 	Slim::Control::Request::unregisterAutoExecute($client_socket);
 	
-	$log->info("Closed connection with $client_id (" . (keys %connections) . " active connections)");
+	if ( $log->is_info ) {
+		$log->info("Closed connection with $client_id (" . (keys %connections) . " active connections)");
+	}
 }
 
 
@@ -596,7 +600,9 @@ sub cli_process {
 
 			if ($request->isStatusError()) {
 
-				$log->error("Request [$cmd] failed with error: " . $request->getStatusText);
+				if ( $log->is_error ) {
+					$log->error("Request [$cmd] failed with error: " . $request->getStatusText);
+				}
 
 			} else {
 
@@ -630,7 +636,9 @@ sub cli_request_write {
 	my $request = shift;
 	my $client_socket = shift;
 
-	$log->debug($request->getRequestString);
+	if ( $log->is_debug ) {
+		$log->debug($request->getRequestString);
+	}
 
 	$client_socket = $request->connectionID() unless defined $client_socket;
 
@@ -902,7 +910,9 @@ sub cli_subscribe_manage {
 sub cli_subscribe_notification {
 	my $request = shift;
 
-	$log->info($request->getRequestString);
+	if ( $log->is_info ) {
+		$log->info($request->getRequestString);
+	}
 
 	# iterate over each connection, we have a single notification handler
 	# for all connections

@@ -186,7 +186,7 @@ sub power {
 
 		if (defined $sync && $sync == 0) {
 
-			if ( Slim::Player::Sync::isSynced($client) ) {
+			if ( logger('player.sync')->is_info && Slim::Player::Sync::isSynced($client) ) {
 				logger('player.sync')->info("Temporary Unsync " . $client->id);
 			}
 
@@ -725,7 +725,9 @@ sub trackJiffiesEpoch {
 	my $offset      = $timestamp - $jiffiesTime;
 	my $epoch       = $client->jiffiesEpoch || 0;
 
-	logger('network.protocol')->debug($client->id() . " trackJiffiesEpoch: epoch=$epoch, offset=$offset");
+	if ( logger('network.protocol')->is_debug ) {
+		logger('network.protocol')->debug($client->id() . " trackJiffiesEpoch: epoch=$epoch, offset=$offset");
+	}
 
 	if (   $offset < $epoch			# simply a better estimate, or
 		|| $offset - $epoch > 50	# we have had wrap-around (or first time)
@@ -754,7 +756,9 @@ sub trackJiffiesEpoch {
 			if ( $min_diff > JIFFIES_EPOCH_MAX_ADJUST ) {
 				$min_diff = JIFFIES_EPOCH_MAX_ADJUST;
 			}
-			logger('player.sync')->debug( sprintf("%s adjust jiffies epoch +%.3fs", $client->id(), $min_diff) );
+			if ( logger('player.sync')->is_debug ) {
+				logger('player.sync')->debug( sprintf("%s adjust jiffies epoch +%.3fs", $client->id(), $min_diff) );
+			}
 			$client->jiffiesEpoch($epoch += $min_diff);
 			$diff -= $min_diff;
 			@{$jiffiesOffsetList} = ();	# start tracking again

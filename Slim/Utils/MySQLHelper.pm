@@ -243,9 +243,11 @@ sub startServer {
 
 	my @commands = ($mysqld, sprintf('--defaults-file=%s', $confFile));
 
-	$log->info(sprintf("About to start MySQL as a %s with command: [%s]\n",
-		($service ? 'service' : 'process'), join(' ', @commands),
-	));
+	if ( $log->is_info ) {
+		$log->info(sprintf("About to start MySQL as a %s with command: [%s]\n",
+			($service ? 'service' : 'process'), join(' ', @commands),
+		));
+	}
 
 	if ($service && $OS eq 'win') {
 

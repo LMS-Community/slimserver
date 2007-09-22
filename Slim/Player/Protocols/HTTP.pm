@@ -216,9 +216,11 @@ sub canDirectStream {
 	# stream for all players
 	if ( Slim::Player::Sync::isSynced($client) ) {
 
-		logger('player.streaming.direct')->info(sprintf(
-			"[%s] Not direct streaming because player is synced", $client->id
-		));
+		if ( logger('player.streaming.direct')->is_info ) {
+			logger('player.streaming.direct')->info(sprintf(
+				"[%s] Not direct streaming because player is synced", $client->id
+			));
+		}
 
 		return 0;
 	}

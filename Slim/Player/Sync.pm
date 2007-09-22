@@ -48,7 +48,9 @@ sub syncname {
 				
 	my @names = map {$_->name() || $_->id()} @newbuddies;
 
-	$log->info(sprintf("syncname for %s is %s", $client->id, (join ' & ',@names)));
+	if ( $log->is_info ) {
+		$log->info(sprintf("syncname for %s is %s", $client->id, (join ' & ',@names)));
+	}
 
 	my $last = pop @names;
 
@@ -83,7 +85,9 @@ sub unsync {
 		return;
 	}
 	
-	$log->info($client->id . ": unsyncing");
+	if ( $log->is_info ) {
+		$log->info($client->id . ": unsyncing");
+	}
 
 	my $syncgroupid = $client->syncgroupid;
 	my $lastInGroup;
@@ -236,7 +240,9 @@ sub sync {
 	my $client = shift;
 	my $buddy = shift;
 	
-	$log->info($client->id .": syncing");
+	if ( $log->is_info ) {
+		$log->info($client->id .": syncing");
+	}
 
 	# we're already synced up!
 	if (isSynced($client) && isSynced($buddy) && master($client) eq master($buddy)) {
@@ -252,7 +258,7 @@ sub sync {
 		($client, $buddy) = ($buddy, $client);
 	}
 
-	if ($prefs->client($buddy)->get('silent')) {
+	if ( $log->is_warn && $prefs->client($buddy)->get('silent') ) {
 
 		$log->warn($buddy->id . " is silent and we're trying to make it a master!");
 	}
@@ -384,13 +390,17 @@ sub isSyncedWith {
 
 		if ($buddy == $i) {
 
-			$log->debug($client->id . ": is synced with " . $buddy->id);
+			if ( $log->is_debug ) {
+				$log->debug($client->id . ": is synced with " . $buddy->id);
+			}
 
 			return 1;
 		}
 	}
 
-	$log->debug($client->id . ": is NOT synced with " . $buddy->id);
+	if ( $log->is_debug ) {
+		$log->debug($client->id . ": is NOT synced with " . $buddy->id);
+	}
 
 	return 0;
 }
@@ -479,14 +489,18 @@ sub checkSync {
 			my $fullness = $client->bufferFullness();
 			my $usage = $client->usage();
 
-			$log->info($client->id . " checking buffer fullness: $fullness (threshold: $threshold)");
+			if ( $log->is_info ) {
+				$log->info($client->id . " checking buffer fullness: $fullness (threshold: $threshold)");
+			}
 
 			if 	((defined($fullness) && $fullness > $threshold) ||
 				 (defined($usage) && $usage > 0.90)) {
 
 				$client->readytosync(1);
 		
-				$log->info($client->id . " is ready to sync");
+				if ( $log->is_info ) {
+					$log->info($client->id . " is ready to sync");
+				}
 
 				my $allReady = 1;
 				my $playerStartDelay = 0;
@@ -522,7 +536,9 @@ sub checkSync {
 	}
 	elsif ($client->readytosync == -1) {
 
-		$log->info($client->id . " has run out of data, checking to see if we can push on...");
+		if ( $log->is_info ) {
+			$log->info($client->id . " has run out of data, checking to see if we can push on...");
+		}
 
 		my $allReady = 1;
 
@@ -574,17 +590,21 @@ sub checkSync {
 			next unless $prefs->client($player)->get('maintainSync');
 			my $playPoint = $player->playPoint();
 			if ( !defined $playPoint ) {
-				$log->debug($player->id() ." bailing as no playPoint");
+				if ( $log->is_debug ) {
+					$log->debug($player->id() ." bailing as no playPoint");
+				}
 				return;
 			}
 			if ($playPoint->[0] > $recentThreshold) {
 				push(@playerPlayPoints, [$player, $playPoint->[1]]);
 			}
 			else {
-				$log->debug(
-					$player->id() ." bailing as playPoint too old: ".
-					($now - $playPoint->[0]) . "s"
-				);
+				if ( $log->is_debug ) {
+					$log->debug(
+						$player->id() ." bailing as playPoint too old: ".
+						($now - $playPoint->[0]) . "s"
+					);
+				}
 				return;
 			}
 		}

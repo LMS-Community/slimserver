@@ -1013,13 +1013,15 @@ sub streamingProgressBar {
 
 		my $log = logger('player.streaming');
 		
-		if ( $duration ) {
+		if ( $log->is_info ) {
+			if ( $duration ) {
 
-			$log->info("Duration of stream set to $duration seconds");
+				$log->info("Duration of stream set to $duration seconds");
 
-		} else {
+			} else {
 
-			$log->info("Duration of stream set to $secs seconds based on length of $length and bitrate of $bitrate");
+				$log->info("Duration of stream set to $secs seconds based on length of $length and bitrate of $bitrate");
+			}
 		}
 	}
 }

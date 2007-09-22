@@ -198,7 +198,9 @@ sub artists {
 
 	} elsif (scalar @artists == 0) {
 
-		logger('database.info')->debug(sprintf("\%artists == 0 && \$self->contributor - returning: [%s]", $self->contributors));
+		if ( logger('database.info')->is_debug ) {
+			logger('database.info')->debug(sprintf("\%artists == 0 && \$self->contributor - returning: [%s]", $self->contributors));
+		}
 
 		@artists = $self->contributors;
 	}

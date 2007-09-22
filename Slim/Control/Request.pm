@@ -731,11 +731,13 @@ sub subscribe {
 	
 	$listeners{$subscriberFuncRef} = [$subscriberFuncRef, $requestsRef];
 	
-	$log->info(sprintf(
-		"Request from: %s - (%d listeners)\n",
-		Slim::Utils::PerlRunTime::realNameForCodeRef($subscriberFuncRef),
-		scalar(keys %listeners)
-	));
+	if ( $log->is_info ) {
+		$log->info(sprintf(
+			"Request from: %s - (%d listeners)\n",
+			Slim::Utils::PerlRunTime::realNameForCodeRef($subscriberFuncRef),
+			scalar(keys %listeners)
+		));
+	}
 }
 
 # remove a subscriber
@@ -744,11 +746,13 @@ sub unsubscribe {
 	
 	delete $listeners{$subscriberFuncRef};
 
-	$log->info(sprintf(
-		"Request from: %s - (%d listeners)\n",
-		Slim::Utils::PerlRunTime::realNameForCodeRef($subscriberFuncRef),
-		scalar(keys %listeners)
-	));
+	if ( $log->is_info ) {
+		$log->info(sprintf(
+			"Request from: %s - (%d listeners)\n",
+			Slim::Utils::PerlRunTime::realNameForCodeRef($subscriberFuncRef),
+			scalar(keys %listeners)
+		));
+	}
 }
 
 # notify listeners from an array, useful for notifying w/o execution
@@ -757,7 +761,9 @@ sub notifyFromArray {
 	my $client         = shift;     # client, if any, to which the query applies
 	my $requestLineRef = shift;     # reference to an array containing the query verbs
 
-	$log->info(sprintf("(%s)", join(" ", @{$requestLineRef})));
+	if ( $log->is_info ) {
+		$log->info(sprintf("(%s)", join(" ", @{$requestLineRef})));
+	}
 
 	my $request = Slim::Control::Request->new(
 		(blessed($client) ? $client->id() : undef), 
@@ -1836,7 +1842,9 @@ sub notify {
 	my $self = shift || return;
 	my $specific = shift; # specific target of notify if we have a single known target
 
-	$log->debug(sprintf("Notifying %s", $self->getRequestString()));
+	if ( $log->is_debug ) {
+		$log->debug(sprintf("Notifying %s", $self->getRequestString()));
+	}
 
 	for my $listener ($specific || keys %listeners) {
 
@@ -1857,17 +1865,21 @@ sub notify {
 
 				if ($self->isNotCommand($requestsRef)) {
 
-					$log->debug(sprintf("Don't notify %s of %s !~ %s",
-						$funcName, $self->getRequestString, __filterString($requestsRef)
-					));
+					if ( $log->is_debug ) {
+						$log->debug(sprintf("Don't notify %s of %s !~ %s",
+							$funcName, $self->getRequestString, __filterString($requestsRef)
+						));
+					}
 
 					next;
 				}
 			}
 
-			$log->debug(sprintf("Notifying %s of %s =~ %s",
-				$funcName, $self->getRequestString, __filterString($requestsRef)
-			));
+			if ( $log->is_debug ) {
+				$log->debug(sprintf("Notifying %s of %s =~ %s",
+					$funcName, $self->getRequestString, __filterString($requestsRef)
+				));
+			}
 
 			$::perfmon && (my $now = Time::HiRes::time());
 
@@ -2416,7 +2428,9 @@ sub __parse {
 		# don't complain loudly here
 		# the request will end up as invalid. If this causes a problem, the caller can complain.
 		# we do not have to 
-		$log->info("Request [" . join(' ', @{$requestLineRef}) . "]: no match in dispatchDB!");
+		if ( $log->is_info ) {
+			$log->info("Request [" . join(' ', @{$requestLineRef}) . "]: no match in dispatchDB!");
+		}
 
 		# handle the remaining params, if any...
 		# only for the benefit of CLI echoing...

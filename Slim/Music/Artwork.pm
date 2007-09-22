@@ -90,7 +90,9 @@ sub findArtwork {
 			my $album = $track->album;
 
 			if (!$progress) {
-				logger('scan.import')->info(sprintf("Album [%s] has artwork.", $album->name));
+				if ( logger('scan.import')->is_info ) {
+					logger('scan.import')->info(sprintf("Album [%s] has artwork.", $album->name));
+				}
 			}
 
 			$album->artwork($track->id);
@@ -208,8 +210,10 @@ sub _readCoverArtTags {
 		if ($body) {
 
 			my $contentType = $class->_imageContentType(\$body);
-
-			$log->info(sprintf("Found image of length [%d] bytes with type: [$contentType]", length($body)));
+			
+			if ( $log->is_info ) {
+				$log->info(sprintf("Found image of length [%d] bytes with type: [$contentType]", length($body)));
+			}
 
 			return ($body, $contentType, 1);
 		}

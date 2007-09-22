@@ -122,7 +122,9 @@ sub setValidate {
 
 	while (my $pref = shift) {
 
-		$log->isInitialized && $log->debug(sprintf "registering %s for $class->{'namespace'}:$pref", Slim::Utils::PerlRunTime::realNameForCodeRef($validator));
+		if ( $log->isInitialized && $log->is_debug ) {
+			$log->debug(sprintf "registering %s for $class->{'namespace'}:$pref", Slim::Utils::PerlRunTime::realNameForCodeRef($validator));
+		}
 
 		$class->{'validators'}->{ $pref } = $validator;
 		$class->{'validparam'}->{ $pref } = $params if $params;
@@ -145,7 +147,9 @@ sub setChange {
 
 	while (my $pref = shift) {
 
-		$log->isInitialized && $log->debug(sprintf "registering %s for $class->{'namespace'}:$pref", Slim::Utils::PerlRunTime::realNameForCodeRef($change));
+		if ( $log->isInitialized && $log->is_debug ) {
+			$log->debug(sprintf "registering %s for $class->{'namespace'}:$pref", Slim::Utils::PerlRunTime::realNameForCodeRef($change));
+		}
 
 		$class->{'onchange'}->{ $pref } = $change;
 	}

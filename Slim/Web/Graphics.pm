@@ -86,8 +86,10 @@ sub processCoverArtRequest {
 		$obj = Slim::Schema->find('Track', $trackid);
 	}
 
-	$log->info("Asking for trackid: $trackid - $image" . 
-		($requestedWidth ? (" at size " . $requestedWidth . "x" . $requestedHeight) : ""));
+	if ( $log->is_info ) {
+		$log->info("Asking for trackid: $trackid - $image" . 
+			($requestedWidth ? (" at size " . $requestedWidth . "x" . $requestedHeight) : ""));
+	}
 
 	if (blessed($obj) && $obj->can('coverArt')) {
 
@@ -132,7 +134,9 @@ sub processCoverArtRequest {
 		return ($cachedImage->{'body'}, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}, $cachedImage->{'contentType'});
 	}
 
-	$log->info("  got cover art image $contentType of ". length($imageData) . " bytes");
+	if ( $log->is_info ) {
+		$log->info("  got cover art image $contentType of ". length($imageData) . " bytes");
+	}
 
 	if ($canUseGD && $typeToMethod{$contentType}) {
 
@@ -222,8 +226,10 @@ sub processCoverArtRequest {
 				# the image needs to be processed if the sizes differ, or the image is a png
 				if ($contentType eq "image/png" || $returnedWidth != $origImage->width || $returnedHeight != $origImage->height) {
 
-					$log->info("  resizing from " . $origImage->width . "x" . $origImage->height .
-						 " to $returnedWidth x $returnedHeight using $resizeMode");
+					if ( $log->is_info ) {
+						$log->info("  resizing from " . $origImage->width . "x" . $origImage->height .
+							 " to $returnedWidth x $returnedHeight using $resizeMode");
+					}
 
 					# determine source and destination upper left corner and width / height
 					my ($sourceX, $sourceY, $sourceWidth, $sourceHeight);
@@ -284,7 +290,10 @@ sub processCoverArtRequest {
 						$contentType = 'image/jpeg';
 					}
 
-					$log->info("  outputting cover art image $contentType of ". length($newImageData) . " bytes");
+					if ( $log->is_info ) {
+						$log->info("  outputting cover art image $contentType of ". length($newImageData) . " bytes");
+					}
+					
 					$body = \$newImageData;
 
 				} else {

@@ -88,7 +88,9 @@ to handle the buffering.
 sub newStream {
 	my ($client, $paused) = @_;
 	
-	$log->info($client->id, " new stream: ", ($paused ? "paused" : ""));
+	if ( $log->is_info ) {
+		$log->info($client->id, " new stream: ", ($paused ? "paused" : ""));
+	}
 
 	if ($paused) {
 		$streamState{$client} = 'paused';
@@ -135,7 +137,9 @@ Pauses playback (but keep filling the buffer)
 sub pause {
 	my ($client, $interval) = @_;
 
-	$log->info( $client->id, " pause" . ($interval ? " for $interval" : '') );
+	if ( $log->is_info ) {
+		$log->info( $client->id, " pause" . ($interval ? " for $interval" : '') );
+	}
 	
 	if ($interval) {
 		if ($streamState{$client} ne 'play' && $streamState{$client} ne 'eof') {
@@ -186,7 +190,9 @@ Halts playback completely
 sub stop {
 	my ($client) = @_;
 
-	$log->info($client->id, " stream stop");
+	if ( $log->is_info ) {
+		$log->info($client->id, " stream stop");
+	}
 
 	if (!$streamState{$client} || $streamState{$client}  eq 'stop') {
 
@@ -210,7 +216,9 @@ sub stop {
 sub playout {
 	my ($client) = @_;
 
-	$log->info($client->id, " stream play out");
+	if ( $log->is_info ) {
+		$log->info($client->id, " stream play out");
+	}
 
 	$streamState{$client} = 'eof';
 }
@@ -225,7 +233,9 @@ take effect until it has filled sufficiently.
 sub unpause {
 	my ($client, $at) = @_;
 
-	$log->info($client->id, " unpause");
+	if ( $log->is_info ) {
+		$log->info($client->id, " unpause");
+	}
 
 	if ($streamState{$client} eq 'buffering') {
 
@@ -384,7 +394,9 @@ sub timeout {
 
 	return unless ($dataPktInFlight{$client} || $emptyPktInFlight{$client});
 
-	$log->debug($client->id, " Timeout on seq: $seq");
+	if ( $log->is_debug ) {
+		$log->debug($client->id, " Timeout on seq: $seq");
+	}
 	
 	if (($lastAck{$client} + $ACK_TIMEOUT) < Time::HiRes::time()) {
 
@@ -417,7 +429,9 @@ sub gotAck {
 
 	if (!defined($streamState{$client})) {
 
-		$log->warn($client->id, ": received a stray ack from an unknown client - ignoring.");
+		if ( $log->is_warn ) {
+			$log->warn($client->id, ": received a stray ack from an unknown client - ignoring.");
+		}
 
 		return;
 	}
@@ -568,7 +582,9 @@ sub sendNextChunk {
 	
 	if ($fullness > $BUFFER_FULL_THRESHOLD) {
 
-		$log->debug($client->id, "- $streamState - Buffer full, need to poll to see if there is space");
+		if ( $log->is_debug ) {
+			$log->debug($client->id, "- $streamState - Buffer full, need to poll to see if there is space");
+		}
 
 		# if client's buffer is full, poll it every 50ms until there's room 
 		# Note: already dealt with 'stop' case above; previous test for 'play' || 'eof' may have missed certain race conditions
@@ -640,14 +656,18 @@ sub sendNextChunk {
 
 		$streamState{$client}='play';
 
-		$log->info($client->id, " Buffer full, starting playback");
+		if ( $log->is_info ) {
+			$log->info($client->id, " Buffer full, starting playback");
+		}
 
 		$client->currentplayingsong(Slim::Player::Playlist::song($client));
 		$client->remoteStreamStartTime(time());
 
 	} elsif (($fullness < $PAUSE_THRESHOLD) && ($streamState eq 'play')) {
 
-		$log->info($client->id, " Buffer drained, pausing playback");
+		if ( $log->is_info ) {
+			$log->info($client->id, " Buffer drained, pausing playback");
+		}
 
 		$streamState{$client} = 'buffering';
 		Slim::Player::Source::outputUnderrun($client);
@@ -671,7 +691,9 @@ sub sendNextChunk {
 sub sendEmptyChunk {
 	my $client = shift;
 
-	$log->debug($client->id, ' sendEmptyChunk');
+	if ( $log->is_debug ) {
+		$log->debug($client->id, ' sendEmptyChunk');
+	}
 	
 	Slim::Utils::Timers::killOneTimer($client, \&sendEmptyChunk);
 

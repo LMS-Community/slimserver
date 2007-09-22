@@ -184,7 +184,9 @@ sub getPlaybackSession {
 	my ( $client, $data, $url, $callback ) = @_;
 	
 	# Always get a new playback session
-	$log->debug( $client->id, ' Requesting new playback session...');
+	if ( $log->is_debug ) {
+		$log->debug( $client->id, ' Requesting new playback session...');
+	}
 	
 	# Update the 'Connecting...' text
 	$client->suppressStatus(1);

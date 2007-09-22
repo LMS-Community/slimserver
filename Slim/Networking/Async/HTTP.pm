@@ -53,6 +53,7 @@ my $prefs = preferences('server');
 
 my $cookieJar = HTTP::Cookies->new(	file => catdir($prefs->get('cachedir'), 'cookies.dat'), autosave => 1 );
 
+my $log = logger('network.asynchttp');
 
 __PACKAGE__->mk_classaccessors( qw(
 	uri request response saveAs fh timeout
@@ -66,8 +67,6 @@ __PACKAGE__->mk_classaccessor( maxRedirect => 7 );
 
 sub new_socket {
 	my $self = shift;
-
-	my $log  = logger('network.asynchttp');
 	
 	if ( my $proxy = $self->use_proxy ) {
 
@@ -260,7 +259,7 @@ sub _http_error {
 	
 	$self->disconnect;
 	
-	logger('network.asynchttp')->error("Error: [$error]");
+	$log->error("Error: [$error]");
 
 	if ( my $ecb = $args->{onError} ) {
 		my $passthrough = $args->{passthrough} || [];
@@ -272,8 +271,6 @@ sub _http_read {
 	my ( $self, $args ) = @_;
 	
 	my ($code, $mess, @h) = eval { $self->socket->read_response_headers };
-
-	my $log = logger('network.asynchttp');
 	
 	if ($@) {
 
@@ -339,7 +336,9 @@ sub _http_read {
 					URI->new_abs( $location, $self->request->uri )
 				);
 				
-				$log->info(sprintf("Redirecting to %s", $self->request->uri->as_string));
+				if ( $log->is_info ) {
+					$log->info(sprintf("Redirecting to %s", $self->request->uri->as_string));
+				}
 				
 				# Does the caller want to modify redirecting URLs?
 				if ( $args->{onRedirect} ) {
@@ -395,10 +394,8 @@ sub _http_read_body {
 	Slim::Utils::Timers::killTimers( $socket, \&_http_read_timeout );
 	
 	my $result = $socket->read_entity_body( my $buf, $self->bufsize );
-	my $log    = logger('network.asynchttp');
 
-	if ($result && $log->is_debug) {
-
+	if ( $result ) {
 		$log->debug("Read body: [$result] bytes");
 	}
 	
@@ -411,7 +408,9 @@ sub _http_read_body {
 			return $self->_http_error( 'Unable to open ' . $self->saveAs . ' for writing', $args );
 		}
 		
-		$log->debug("Writing response directly to " . $self->saveAs);
+		if ( $log->is_debug ) {
+			$log->debug("Writing response directly to " . $self->saveAs);
+		}
 		
 		$self->fh( $fh );
 	}
@@ -431,7 +430,9 @@ sub _http_read_body {
 		# close and remove the socket
 		$self->disconnect;
 		
-		$log->debug(sprintf("Body read (stopped after %d bytes)", length( $self->response->content )));
+		if ( $log->is_debug ) {
+			$log->debug(sprintf("Body read (stopped after %d bytes)", length( $self->response->content )));
+		}
 		
 		if ( my $cb = $args->{onBody} ) {
 			my $passthrough = $args->{passthrough} || [];
@@ -465,7 +466,7 @@ sub _http_read_body {
 sub _http_read_timeout {
 	my ( $socket, $self, $args ) = @_;
 	
-	logger('network.asynchttp')->warn("Timed out waiting for more body data, returning what we have");
+	$log->warn("Timed out waiting for more body data, returning what we have");
 	
 	Slim::Networking::Select::removeError( $socket );
 	Slim::Networking::Select::removeRead( $socket );

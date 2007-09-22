@@ -180,8 +180,10 @@ sub gotViaHTTP {
 	my $params = $http->params();
 	my $feed;
 
-	$log->debug("Got ", $http->url);
-	$log->debug("Content type is ", $http->headers()->content_type);
+	if ( $log->is_debug ) {
+		$log->debug("Got ", $http->url);
+		$log->debug("Content type is ", $http->headers()->content_type);
+	}
 
 	# Try and turn the content we fetched into a parsed data structure.
 	if (my $parser = $params->{'params'}->{'parser'}) {
@@ -238,9 +240,11 @@ sub gotViaHTTP {
 	}
 	else {
 
-		$log->info(sprintf("Not caching parsed XML for %s, appears to be a local resource",
-			$http->url,
-		));
+		if ( $log->is_info ) {
+			$log->info(sprintf("Not caching parsed XML for %s, appears to be a local resource",
+				$http->url,
+			));
+		}
 	}
 
 	# call cb
@@ -576,7 +580,9 @@ sub openSearchResult {
 		return $ecb->( $feed->{'items'}->[0]->{'description'}, $params->{'params'} );
 	}
 	
-	$log->info(sprintf("Got opensearch results [%s]", scalar @{ $feed->{'items'} }));
+	if ( $log->is_info ) {
+		$log->info(sprintf("Got opensearch results [%s]", scalar @{ $feed->{'items'} }));
+	}
 	
 	my $cb = $params->{'cb'};
 	$cb->( $feed, $params->{'params'} );

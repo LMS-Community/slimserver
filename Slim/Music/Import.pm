@@ -545,9 +545,11 @@ sub endImporter {
 
 	if (exists $importsRunning{$importer}) { 
 
-		$log->info(sprintf("Completed %s Scan in %s seconds.",
-			$importer, int(Time::HiRes::time() - $importsRunning{$importer})
-		));
+		if ( $log->is_info ) {
+			$log->info(sprintf("Completed %s Scan in %s seconds.",
+				$importer, int(Time::HiRes::time() - $importsRunning{$importer})
+			));
+		}
 
 		delete $importsRunning{$importer};
 

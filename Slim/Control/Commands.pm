@@ -1035,7 +1035,9 @@ sub playlistXitemCommand {
 
 		$client->currentPlaylist( Slim::Utils::Misc::fixPath($path) );
 
-		$log->info("currentPlaylist:" .  Slim::Utils::Misc::fixPath($path));
+		if ( $log->is_info ) {
+			$log->info("currentPlaylist:" .  Slim::Utils::Misc::fixPath($path));
+		}
 
 		$client->currentPlaylistModified(0);
 
@@ -1044,7 +1046,9 @@ sub playlistXitemCommand {
 		$client->currentPlaylist( Slim::Utils::Misc::fixPath($path) );
 		$client->currentPlaylistModified(1);
 
-		$log->info("currentPlaylist:" .  Slim::Utils::Misc::fixPath($path));
+		if ( $log->is_info ) {
+			$log->info("currentPlaylist:" .  Slim::Utils::Misc::fixPath($path));
+		}
 
 	} else {
 
@@ -1067,7 +1071,9 @@ sub playlistXitemCommand {
 		$jumpToIndex = Slim::Formats::Playlists::M3U->readCurTrackForM3U($path);
 	}
 
-	$log->info(sprintf("jumpToIndex: %s", (defined $jumpToIndex ? $jumpToIndex : 'undef')));
+	if ( $log->is_info ) {
+		$log->info(sprintf("jumpToIndex: %s", (defined $jumpToIndex ? $jumpToIndex : 'undef')));
+	}
 
 	if ($cmd =~ /^(insert|insertlist)$/) {
 

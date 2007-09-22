@@ -240,7 +240,9 @@ sub udpstream {
 sub i2c {
 	my ($client, $data) = @_;
 
-	logger('network.protocol.slimp3')->debug(sprintf("sending [%d] bytes", length($data)));
+	if ( logger('network.protocol.slimp3')->is_debug ) {
+		logger('network.protocol.slimp3')->debug(sprintf("sending [%d] bytes", length($data)));
+	}
 
 	send($client->udpsock, '2                 '.$data, 0, $client->paddr);
 }
@@ -257,7 +259,9 @@ sub volume {
 	
 		my $level = sprintf('%05X', 0x80000 * (($volume / $client->maxVolume) ** 2));
 		
-		logger('network.protocol.slimp3')->debug($client->id() . " volume: newvolume=$newvolume volume=$volume level=$level");
+		if ( logger('network.protocol.slimp3')->is_debug ) {
+			logger('network.protocol.slimp3')->debug($client->id() . " volume: newvolume=$newvolume volume=$volume level=$level");
+		}
 		
 		$client->i2c(
 			 Slim::Hardware::mas3507d::masWrite('ll', $level)

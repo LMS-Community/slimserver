@@ -113,10 +113,12 @@ sub init {
 					playlistNowPlaying($client, 0);
 				}
 
-				logger('player.ui')->debug(
-					"funct: [$funct] old: $oldindex new: $newindex is after setting: [%s]",
-					browseplaylistindex($client)
-				);
+				if ( logger('player.ui')->is_debug ) {
+					logger('player.ui')->debug(
+						"funct: [$funct] old: $oldindex new: $newindex is after setting: [%s]",
+						browseplaylistindex($client)
+					);
+				}
 
 				if ($songcount < 2) {
 					

@@ -34,6 +34,8 @@ use HTTP::Request;
 
 our $callbackTask = Slim::Utils::PerfMon->new('Async Callback', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
 
+my $log = logger('network.asynchttp');
+
 __PACKAGE__->mk_classaccessors( qw(
 	cb ecb type url error code mess headers contentRef cachedResponse async
 ) );
@@ -99,8 +101,6 @@ sub _createHTTPRequest {
 
 	$self->type( $type );
 	$self->url( $url );
-
-	my $log = logger('network.asynchttp');
 
 	$log->debug("${type}ing $url");
 	
@@ -175,12 +175,12 @@ sub onError {
 	# If we have a cached copy of this request, we can use it
 	if ( $self->cachedResponse ) {
 
-		logger('network.asynchttp')->warn("Failed to connect to $uri, using cached copy. ($error)");
+		$log->warn("Failed to connect to $uri, using cached copy. ($error)");
 		
 		return $self->sendCachedResponse();
 	}
 	else {
-		logger('network.asynchttp')->warn("Failed to connect to $uri ($error)");
+		$log->warn("Failed to connect to $uri ($error)");
 	}
 	
 	$self->error( $error );
@@ -199,9 +199,10 @@ sub onBody {
 	
 	my $req = $http->request;
 	my $res = $http->response;
-	my $log = logger('network.asynchttp');
 	
-	$log->debug(sprintf("status for %s is %s", $self->url, $res->status_line ));
+	if ( $log->is_debug ) {
+		$log->debug(sprintf("status for %s is %s", $self->url, $res->status_line ));
+	}
 	
 	$self->code( $res->code );
 	$self->mess( $res->message );
@@ -298,7 +299,9 @@ sub onBody {
 
 						$no_cache = 1;
 
-						$log->debug(sprintf("Not caching [%s], no expiration set and missing cache headers", $self->url));
+						if ( $log->is_debug ) {
+							$log->debug(sprintf("Not caching [%s], no expiration set and missing cache headers", $self->url));
+						}
 					}
 				}
 		
@@ -311,7 +314,9 @@ sub onBody {
 					$data->{_expires} = $expires;
 					$cache->set( $self->url, $data, $expires );
 			
-					$log->info(sprintf("Caching [%s] for %d seconds", $self->url, $expires));
+					if ( $log->is_info ) {
+						$log->info(sprintf("Caching [%s] for %d seconds", $self->url, $expires));
+					}
 				}
 			}
 		}

@@ -200,7 +200,9 @@ sub check_all_clients {
 			next;
 		}
 		
-		$log->debug(sprintf("Checking if %s is still alive", $client->id));
+		if ( $log->is_debug ) {
+			$log->debug(sprintf("Checking if %s is still alive", $client->id));
+		}
 		
 		# check when we last heard a stat response from the player
 		my $last_heard = $now - $heartbeat{ $client->id };
@@ -208,10 +210,12 @@ sub check_all_clients {
 		# disconnect client if we haven't heard from it in 3 poll intervals and no time travel
 		if ( $last_heard >= $check_all_clients_time * 3 && $now - $check_time <= $check_all_clients_time ) {
 
-			$log->info(sprintf("Haven't heard from %s in %d seconds, closing connection",
-				$client->id,
-				$last_heard,
-			));
+			if ( $log->is_info ) {
+				$log->info(sprintf("Haven't heard from %s in %d seconds, closing connection",
+					$client->id,
+					$last_heard,
+				));
+			}
 
 			slimproto_close( $client->tcpsock );
 			next;
@@ -255,7 +259,9 @@ sub slimproto_close {
 			# Bug 2707, If a synced player disconnects, unsync it temporarily
 			if ( Slim::Player::Sync::isSynced($client) ) {
 
-				logger('player.sync')->info("Player disconnected, temporary unsync " . $client->id);
+				if ( logger('player.sync')->is_info ) {
+					logger('player.sync')->info("Player disconnected, temporary unsync " . $client->id);
+				}
 
 				Slim::Player::Sync::unsync($client, 1);
 			}
@@ -323,11 +329,13 @@ GETMORE:
 
 	my $bytes_remaining;
 
-	$log->debug(join(', ', 
-		"state: " . $parser_state{$s},
-		"framelen: " . $parser_framelength{$s},
-		"inbuflen: " . length($inputbuffer{$s})
-	));
+	if ( $log->is_debug ) {
+		$log->debug(join(', ', 
+			"state: " . $parser_state{$s},
+			"framelen: " . $parser_framelength{$s},
+			"inbuflen: " . length($inputbuffer{$s})
+		));
+	}
 
 	if ($parser_state{$s} eq 'OP') {
 		$bytes_remaining = 4 - length($inputbuffer{$s});
@@ -498,7 +506,10 @@ sub _ir_handler {
 	# [4]   the IR code, up to 32 bits      
 	if (length($$data_ref) != 10) {
 
-		$log->warn("bad length ". length($$data_ref) . " for IR. Ignoring");
+		if ( $log->is_warn ) {
+			$log->warn("bad length ". length($$data_ref) . " for IR. Ignoring");
+		}
+		
 		return;
 	}
 
@@ -508,14 +519,18 @@ sub _ir_handler {
 
 	Slim::Hardware::IR::enqueue($client, $irCode, $irTime);
 
-	logger('factorytest')->debug(sprintf("FACTORYTEST\tevent=ir\tmac=%s\tcode=%s", $client->id, $irCode));
+	if ( logger('factorytest')->is_debug ) {
+		logger('factorytest')->debug(sprintf("FACTORYTEST\tevent=ir\tmac=%s\tcode=%s", $client->id, $irCode));
+	}
 }
 
 sub _raw_ir_handler {
 	my $client = shift;
 	my $data_ref = shift;
 
-	$log->info("Raw IR, " . (length($$data_ref)/4)."samples");
+	if ( $log->is_info ) {
+		$log->info("Raw IR, " . (length($$data_ref)/4)."samples");
+	}
 
 	no strict 'refs';
 
@@ -531,7 +546,9 @@ sub _http_response_handler {
 	my $data_ref = shift;
 
 	# HTTP stream headers
-	$log->info("Squeezebox got HTTP response:\n$$data_ref");
+	if ( $log->is_info ) {
+		$log->info("Squeezebox got HTTP response:\n$$data_ref");
+	}
 
 	if ($client->can('directHeaders')) {
 		$client->directHeaders($$data_ref);
@@ -543,7 +560,9 @@ sub _debug_handler {
 	my $client = shift;
 	my $data_ref = shift;
 
-	logger('player.firmware')->info(sprintf("[%s] %s", $client->id, $$data_ref));
+	if ( logger('player.firmware')->is_info ) {
+		logger('player.firmware')->info(sprintf("[%s] %s", $client->id, $$data_ref));
+	}
 }
 
 sub _disco_handler {
@@ -692,9 +711,11 @@ sub _stat_handler {
 	$::perfmon && ($status{$client}->{'signal_strength'} <= 100) &&
 		$client->signalStrengthLog()->log($status{$client}->{'signal_strength'});
 	
-	logger('factorytest')->debug(sprintf("FACTORYTEST\tevent=stat\tmac=%s\tsignalstrength=%s",
-		$client->id, $status{$client}->{'signal_strength'}
-	));
+	if ( logger('factorytest')->is_debug ) {
+		logger('factorytest')->debug(sprintf("FACTORYTEST\tevent=stat\tmac=%s\tsignalstrength=%s",
+			$client->id, $status{$client}->{'signal_strength'}
+		));
+	}
 
 	if ($log->is_debug) {
 
@@ -796,7 +817,9 @@ sub _http_metadata_handler {
 	my $client = shift;
 	my $data_ref = shift;
 
-	logger('player.streaming.direct')->info("metadata (len: ". length($$data_ref) .")");
+	if ( logger('player.streaming.direct')->is_info ) {
+		logger('player.streaming.direct')->info("metadata (len: ". length($$data_ref) .")");
+	}
 
 	if ($client->can('directMetadata')) {
 		$client->directMetadata($$data_ref);
@@ -866,9 +889,11 @@ sub _hello_handler {
 		}
 	}
 
-	logger('factorytest')->debug(sprintf("FACTORYTEST\tevent=helo\tmac=%s\tdeviceid=%s\trevision=%s\ttwlan_channellist=%s",
-		$mac, $deviceid, $revision, $wlan_channellist
-	));
+	if ( logger('factorytest')->is_debug ) {
+		logger('factorytest')->debug(sprintf("FACTORYTEST\tevent=helo\tmac=%s\tdeviceid=%s\trevision=%s\ttwlan_channellist=%s",
+			$mac, $deviceid, $revision, $wlan_channellist
+		));
+	}
 
 	# sanity check on socket
 	if (!$s->peerport || !$s->peeraddr) {
@@ -983,9 +1008,11 @@ sub _hello_handler {
 
 		if (defined($oldsock) && exists($sock2client{$oldsock})) {
 		
-			$log->info("Closing previous socket to client: $id on ipport: ".
-				join(':', inet_ntoa($oldsock->peeraddr), $oldsock->peerport)
-			);
+			if ( $log->is_info ) {
+				$log->info("Closing previous socket to client: $id on ipport: ".
+					join(':', inet_ntoa($oldsock->peeraddr), $oldsock->peerport)
+				);
+			}
 
 			slimproto_close($client->tcpsock);
 		}
@@ -1082,7 +1109,9 @@ sub _knob_handler {
 		return;
 	}
 
-	$log->info(sprintf("knob position: $position (old: %s) time: $time\n", defined $oldPos ? $oldPos : 'undef'));
+	if ( $log->is_info ) {
+		$log->info(sprintf("knob position: $position (old: %s) time: $time\n", defined $oldPos ? $oldPos : 'undef'));
+	}
 
 	$client->knobPos($position);
 	$client->knobTime($time);

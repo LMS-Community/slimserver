@@ -188,7 +188,9 @@ sub scanBitrate {
 	
 	if ( my $bitrate = $ogg->info('bitrate_nominal') ) {
 
-		$log->debug("Found bitrate header: $bitrate kbps " . ( $vbr ? 'VBR' : 'CBR' ));
+		if ( $log->is_debug ) {
+			$log->debug("Found bitrate header: $bitrate kbps " . ( $vbr ? 'VBR' : 'CBR' ));
+		}
 
 		return ( $bitrate, $vbr );
 	}

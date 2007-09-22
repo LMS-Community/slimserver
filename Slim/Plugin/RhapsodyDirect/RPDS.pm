@@ -46,7 +46,9 @@ sub rpds {
 	
 	if ( !$data ) {
 		# XXX: This should never happen...
-		$log->warn( $client->id . ' No RPDS data found to send, args: ' . Data::Dump::dump($args) );
+		if ( $log->is_warn ) {
+			$log->warn( $client->id . ' No RPDS data found to send, args: ' . Data::Dump::dump($args) );
+		}
 		bt();
 		return;
 	}
@@ -67,7 +69,9 @@ sub rpds {
 		);
 	}
 	
-	$log->warn( $client->id . " RPDS packet sent: $sent" );
+	if ( $log->is_warn ) {
+		$log->warn( $client->id . " RPDS packet sent: $sent" );
+	}
 
 	# Timeout in case the player is not responding
 	Slim::Utils::Timers::setTimer(
@@ -83,7 +87,9 @@ sub rpds_timeout {
 	
 	my $sent_cmd = unpack 'c', $args->{data};
 	
-	$log->warn( $client->id . " RPDS request timed out, command: $sent_cmd");
+	if ( $log->is_warn ) {
+		$log->warn( $client->id . " RPDS request timed out, command: $sent_cmd");
+	}
 	
 	my $sent  = unpack('cC/a*', $args->{data});
 
@@ -142,7 +148,9 @@ sub rpds_handler {
 		# SOAP Fault
 		my (undef, $faultCode, $faultString ) = unpack 'cn/a*n/a*', $$data_ref;
 		
-		$log->warn( $client->id . " Received RPDS fault: $faultCode - $faultString");
+		if ( $log->is_warn ) {
+			$log->warn( $client->id . " Received RPDS fault: $faultCode - $faultString");
+		}
 		
 		if ( $ENV{SLIM_SERVICE} ) {
 			logError( $client, 'RPDS_FAULT', "$sent_cmd / $faultString" );
@@ -177,7 +185,9 @@ sub rpds_handler {
 			
 			# Retry if command was 3 to get track info
 			if ( $sent_cmd eq '3' ) {
-				$log->debug( $client->id, ' Getting a new session and retrying' );
+				if ( $log->is_debug ) {
+					$log->debug( $client->id, ' Getting a new session and retrying' );
+				}
 				retry_new_session( $client, $rpds );
 				return;
 			}
@@ -222,7 +232,9 @@ sub rpds_handler {
 			return;
 		}
 		
-		$log->warn( $client->id . " Received RPDS -2, player needs a new session");
+		if ( $log->is_warn ) {
+			$log->warn( $client->id . " Received RPDS -2, player needs a new session");
+		}
 		
 		if ( $ENV{SLIM_SERVICE} ) {
 			logError( $client, 'RPDS_NO_SESSION' );
@@ -235,7 +247,9 @@ sub rpds_handler {
 	}
 	elsif ( $got_cmd eq '-3' ) {
 		# SSL connection error
-		$log->warn( $client->id . " Received RPDS -3, SSL connection error");
+		if ( $log->is_warn ) {
+			$log->warn( $client->id . " Received RPDS -3, SSL connection error");
+		}
 		
 		if ( $ENV{SLIM_SERVICE} ) {
 			logError( $client, 'RPDS_SSL_ERROR' );
@@ -252,7 +266,9 @@ sub rpds_handler {
 		# Another SSL connection is still in progress, we need to wait and try
 		# sending the request again
 		
-		$log->warn( $client->id . " Received RPDS -4, SSL connection already in use, retrying later");
+		if ( $log->is_warn ) {
+			$log->warn( $client->id . " Received RPDS -4, SSL connection already in use, retrying later");
+		}
 		
 		if ( $ENV{SLIM_SERVICE} ) {
 			logError( $client, 'RPDS_SSL_IN_USE' );
@@ -271,7 +287,9 @@ sub rpds_handler {
 	}	
 	
 	if ( !$rpds || $got_cmd ne $sent_cmd ) {
-		$log->warn( $client->id . " Ignoring unrequested or old RPDS packet (got $got_cmd, expected $sent_cmd)" );
+		if ( $log->is_warn ) {
+			$log->warn( $client->id . " Ignoring unrequested or old RPDS packet (got $got_cmd, expected $sent_cmd)" );
+		}
 		
 		if ( $ENV{SLIM_SERVICE} ) {
 			logError( $client, 'RPDS_OLD', "got $got_cmd, ignoring" );

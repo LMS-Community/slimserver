@@ -50,7 +50,9 @@ sub serverHostname {
 	# pad it out to 17 characters total
 	$hostname .= pack('C', 0) x (17 - (length $hostname));
 
-	$log->info(" calculated $hostname length: " . length($hostname));
+	if ( $log->is_info ) {
+		$log->info(" calculated $hostname length: " . length($hostname));
+	}
 
 	return $hostname;
 }

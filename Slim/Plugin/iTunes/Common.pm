@@ -244,9 +244,11 @@ sub isMusicLibraryFileChanged {
 
 		my $scanInterval = $prefs->get('scan_interval');
 
-		$log->debug("lastiTunesChange: " . scalar localtime($lastiTunesChange));
-		$log->debug("lastScanTime    : $lastScanTime");
-		$log->debug("scanInterval    : $scanInterval");
+		if ( $log->is_debug ) {
+			$log->debug("lastiTunesChange: " . scalar localtime($lastiTunesChange));
+			$log->debug("lastScanTime    : $lastScanTime");
+			$log->debug("scanInterval    : $scanInterval");
+		}
 
 		if (!$scanInterval) {
 

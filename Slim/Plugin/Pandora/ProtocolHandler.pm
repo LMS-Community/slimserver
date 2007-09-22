@@ -156,7 +156,9 @@ sub gotNextTrack {
 	
 	if ( $@ || $track->{error} ) {
 		# We didn't get the next track to play
-		$log->warn( 'Pandora error getting next track: ' . ( $@ || $track->{error} ) );
+		if ( $log->is_warn ) {
+			$log->warn( 'Pandora error getting next track: ' . ( $@ || $track->{error} ) );
+		}
 		
 		my $url = Slim::Player::Playlist::url($client);
 

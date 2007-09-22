@@ -267,7 +267,9 @@ sub showBriefly {
 		return;
 	}
 
-	$log->debug(sub { Data::Dump::dump $parts });
+	if ( $log->is_debug ) {
+		$log->debug( Data::Dump::dump($parts) );
+	}
 
 	if (ref($args) eq 'HASH') {
 		$duration    = $args->{'duration'} || 1; # duration - default to 1 second
@@ -466,7 +468,7 @@ sub curLines {
 		} while ($sub && $sub =~ /Slim::Display|Slim::Player::Player::update|Slim::Player::Player::push/);
 
 		$log->info(sprintf "lines $source [%s($line)]", join(", ", @subs));
-		$log->debug(sub { Data::Dump::dump $parts });
+		$log->debug( Data::Dump::dump($parts) );
 	}
 
 	return $parts;

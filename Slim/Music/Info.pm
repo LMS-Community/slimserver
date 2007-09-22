@@ -797,7 +797,9 @@ sub splitTag {
 
 				if (!scalar @temp <= 1) {
 
-					$log->info("Splitting $tag by $splitOn = @temp");
+					if ( $log->is_info ) {
+						$log->info("Splitting $tag by $splitOn = @temp");
+					}
 				}
 			}
 
@@ -834,7 +836,9 @@ sub isFile {
 
 	my $stat = ((-f $fullpath && -r _) ? 1 : 0);
 
-	$log->debug(sprintf("isFile(%s) == %d", $fullpath, (1 * $stat)));
+	if ( $log->is_debug ) {
+		$log->debug(sprintf("isFile(%s) == %d", $fullpath, (1 * $stat)));
+	}
 
 	$isFile{$url} = $stat;
 

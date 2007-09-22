@@ -226,9 +226,11 @@ sub updateKnob {
 
 			$parambytes = pack "NNCcncc", $listIndex, $listLen, $knobSync, $flags, $width, $height, $backForce;
 
-			$log->debug(sprintf("Sending new knob position- listIndex: %d with knobPos: %d of %d sync: %d flags: %d",
-				$listIndex, $knobPos, $listLen, $knobSync, $flags,
-			));
+			if ( $log->is_debug ) {
+				$log->debug(sprintf("Sending new knob position- listIndex: %d with knobPos: %d of %d sync: %d flags: %d",
+					$listIndex, $knobPos, $listLen, $knobSync, $flags,
+				));
+			}
 
 		} else {
 

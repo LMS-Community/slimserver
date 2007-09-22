@@ -49,7 +49,9 @@ sub shutdown {
 	Slim::Networking::UPnP::ControlPoint->shutdown();
 	
 	while ( my ($udn, $device) = each %devices ) {
-		$log->info( sprintf( "UPnP: Removing device %s", $device->getfriendlyname ) );
+		if ( $log->is_info ) {
+			$log->info( sprintf( "UPnP: Removing device %s", $device->getfriendlyname ) );
+		}
 		
 		foundDevice( $device, 'remove' );
 	}
@@ -94,12 +96,14 @@ sub foundDevice {
 	}
 	else {
 
-		$log->info(sprintf("%s is a %s %s (%s), ignoring",
-			$device->getfriendlyname,
-			$device->getmanufacturer,
-			$device->getmodelname,
-			$device->getdevicetype,
-		));
+		if ( $log->is_info ) {
+			$log->info(sprintf("%s is a %s %s (%s), ignoring",
+				$device->getfriendlyname,
+				$device->getmanufacturer,
+				$device->getmodelname,
+				$device->getdevicetype,
+			));
+		}
 	}
 }
 
@@ -144,11 +148,14 @@ sub checkServerHealthError {
 	my $device = $http->params('device');
 	my $error  = $http->error;
 	
-	logger('network.upnp')->warn(sprintf("%s failed to respond at %s, removing. (%s)",
-		$device->getfriendlyname,
-		$device->getlocation,
-		$error,
-	));
+	
+	if ( $log->is_warn ) {
+		$log->warn(sprintf("%s failed to respond at %s, removing. (%s)",
+			$device->getfriendlyname,
+			$device->getlocation,
+			$error,
+		));
+	}
 	
 	# Remove the device from the control point
 	Slim::Networking::UPnP::ControlPoint::removeDevice( $device );
@@ -427,10 +434,12 @@ sub gotBlurbError {
 	my $http  = shift;
 	my $args  = $http->params('args');
 
-	logger('network.upnp')->error(sprintf("Error while trying to fetch blurb text at %s: %s",
-		$http->url,
-		$http->error,
-	));
+	if ( $log->is_error ) {
+		$log->error(sprintf("Error while trying to fetch blurb text at %s: %s",
+			$http->url,
+			$http->error,
+		));
+	}
 
 	my $container   = $http->params('container');
 	my $callback    = $args->{callback};

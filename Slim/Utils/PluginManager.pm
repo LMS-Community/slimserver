@@ -323,7 +323,9 @@ sub enablePlugins {
 		# Skip plugins that can't be loaded.
 		if ($manifest->{'error'} != INSTALLERROR_SUCCESS) {
 
-			$log->warn(sprintf("Couldn't load $name. Error: [%s]\n", $manifest->{'error'}));
+			if ( $log->is_warn ) {
+				$log->warn(sprintf("Couldn't load $name. Error: [%s]\n", $manifest->{'error'}));
+			}
 
 			next;
 		}

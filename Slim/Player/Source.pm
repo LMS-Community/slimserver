@@ -213,9 +213,11 @@ sub songTime {
 
 	if ($realpos < 0) {
 
-		$log->info($client->id, " Negative position calculated, we are still playing out the previous song.");
-		$log->info("Realpos $realpos calcuated from bytes received: " . 
-			$client->bytesReceived .  " minus buffer fullness: " . $client->bufferFullness);
+		if ( $log->is_info ) {
+			$log->info($client->id, " Negative position calculated, we are still playing out the previous song.");
+			$log->info("Realpos $realpos calcuated from bytes received: " . 
+				$client->bytesReceived .  " minus buffer fullness: " . $client->bufferFullness);
+		}
 
 		$realpos = 0;
 	}
@@ -318,7 +320,9 @@ sub playmode {
 	#
 	my $prevmode = $client->playmode();
 
-	$log->info($client->id, ": Switching to mode $newmode from $prevmode");
+	if ( $log->is_info ) {
+		$log->info($client->id, ": Switching to mode $newmode from $prevmode");
+	}
 
 	# don't switch modes if it's the same 
 	if ($newmode eq $prevmode && !$seekoffset) {
@@ -421,7 +425,9 @@ sub playmode {
 	# when we change modes, make sure we do it to all the synced clients.
 	foreach my $everyclient ($client, Slim::Player::Sync::syncedWith($client)) {
 
-		$log->info($everyclient->id, " New play mode: $newmode");
+		if ( $log->is_info ) {
+			$log->info($everyclient->id, " New play mode: $newmode");
+		}
 
 		next if $prefs->client($everyclient)->get('silent');
 
@@ -439,7 +445,9 @@ sub playmode {
 			
 			my $prevmode = $client->prevPlaymode() || 'play';
 			
-			$log->info($everyclient->id() . ": Resume, resetting mode: $prevmode");
+			if ( $log->is_info ) {
+				$log->info($everyclient->id() . ": Resume, resetting mode: $prevmode");
+			}
 			
 			$everyclient->playmode($prevmode);
 			
@@ -462,7 +470,9 @@ sub playmode {
 
 		if ($newmode eq "stop") {
 
-			$log->info("Stopping and clearing out old chunks for client " . $everyclient->id);
+			if ( $log->is_info ) {
+				$log->info("Stopping and clearing out old chunks for client " . $everyclient->id);
+			}
 
 			$everyclient->currentplayingsong("");
 
@@ -544,7 +554,9 @@ sub playmode {
 
 		} else {
 
-			$log->info(" Unknown play mode: ", $everyclient->playmode);
+			if ( $log->is_info ) {
+				$log->info(" Unknown play mode: ", $everyclient->playmode);
+			}
 
 			return $everyclient->playmode();
 		}
@@ -567,7 +579,9 @@ sub playmode {
 
 	}
 	
-	$log->info($client->id() . ": Current playmode: $newmode\n");
+	if ( $log->is_info ) {
+		$log->info($client->id() . ": Current playmode: $newmode\n");
+	}
 
 	# if we're doing direct streaming, we want to handle the end of the stream gracefully...
 
@@ -591,7 +605,9 @@ sub noMoreValidTracks {
 sub decoderUnderrun {
 	my $client = shift || return;
 
-	$log->info($client->id, ": Decoder underrun while this mode: ", $client->playmode);
+	if ( $log->is_info ) {
+		$log->info($client->id, ": Decoder underrun while this mode: ", $client->playmode);
+	}
 	
 	# in the case that we're starting up a digital input, 
 	# we want to defer until the output underruns, not the decoder
@@ -624,7 +640,9 @@ sub decoderUnderrun {
 	
 	# XXX: This probably breaks the async handling below
 	if ( scalar @{$queue} > 1 ) {
-		$log->info( $client->id, ': Ignoring decoder underrun, player already has 2 tracks' );
+		if ( $log->is_info ) {
+			$log->info( $client->id, ': Ignoring decoder underrun, player already has 2 tracks' );
+		}
 		
 		# Flag this situation so we know to load the next track on the next track start event
 		$client->streamAtTrackStart(1);
@@ -634,7 +652,9 @@ sub decoderUnderrun {
 	
 	# Don't advance if we are sleeping within the next 10 seconds
 	if ( $client->currentSleepTime() && $client->currentSleepTime() < 10 ) {
-		$log->info( $client->id . ": Ignoring decoder underrun, playing is sleeping" );
+		if ( $log->is_info ) {
+			$log->info( $client->id . ": Ignoring decoder underrun, playing is sleeping" );
+		}
 		return;
 	}
 	
@@ -682,11 +702,15 @@ sub underrun {
 	
 	$client->readytosync(-1);
 	
-	$log->info($client->id, ": Underrun while this mode: ", $client->playmode);
+	if ( $log->is_info ) {
+		$log->info($client->id, ": Underrun while this mode: ", $client->playmode);
+	}
 	
 	# Don't advance if we are sleeping within the next 10 seconds
 	if ( $client->currentSleepTime() && $client->currentSleepTime() < 10 ) {
-		$log->info( $client->id . ": Ignoring underrun, playing is sleeping" );
+		if ( $log->is_info ) {
+			$log->info( $client->id . ": Ignoring underrun, playing is sleeping" );
+		}
 		$client->stop();
 		return;
 	}
@@ -1076,7 +1100,9 @@ sub gototime {
 			next;
 		}
 
-		$log->info("Stopping playback for ", $everybuddy->id);
+		if ( $log->is_info ) {
+			$log->info("Stopping playback for ", $everybuddy->id);
+		}
 
 		$everybuddy->stop();
 
@@ -1099,7 +1125,9 @@ sub gototime {
 			next;
 		}
 
-		$log->info("Restarting playback for ", $everybuddy->id);
+		if ( $log->is_info ) {
+			$log->info("Restarting playback for ", $everybuddy->id);
+		}
 
 		$everybuddy->readytosync(0);
 		
@@ -1287,10 +1315,12 @@ sub gotoNext {
 		} else {
 			
 			# Reuse the connection for the next song, for SB1, HTTP streaming
-			$log->info(
-				"opening next song (old format: $oldstreamformat, ",
-				"new: $newstreamformat) current playmode: ", $client->playmode
-			);
+			if ( $log->is_info ) {
+				$log->info(
+					"opening next song (old format: $oldstreamformat, ",
+					"new: $newstreamformat) current playmode: ", $client->playmode
+				);
+			}
 			
 			streamingSongIndex($client, $nextsong);
 			return 1 if !$open;
@@ -1363,7 +1393,9 @@ sub streamingSongIndex {
 			});
 		}
 
-		$log->info("Song queue is now " . join(',', map { $_->{'index'} } @$queue));
+		if ( $log->is_info ) {
+			$log->info("Song queue is now " . join(',', map { $_->{'index'} } @$queue));
+		}
 
 		# notify parent of new queue
 		$client->sendParent( {
@@ -1430,7 +1462,9 @@ sub resetSongQueue {
 
 	push @$queue, $playingsong;
 
-	$log->info("Song queue is now " . join(',', map { $_->{'index'} } @$queue));
+	if ( $log->is_info ) {
+		$log->info("Song queue is now " . join(',', map { $_->{'index'} } @$queue));
+	}
 	
 	# update CURTRACK of a known playlist back to start
 	#my $request = Slim::Control::Request->new( (blessed($client) ? $client->id() : undef));
@@ -1500,7 +1534,9 @@ sub trackStartEvent {
 		]
 	);
 
-	$log->info("Song queue is now " . join(',', map { $_->{'index'} } @$queue));
+	if ( $log->is_info ) {
+		$log->info("Song queue is now " . join(',', map { $_->{'index'} } @$queue));
+	}
 	
 	# Bug 5103
 	# We can now start streaming the next track, if the player was already handling
@@ -2193,9 +2229,11 @@ sub readNextChunk {
 				if ($client->trickSegmentRemaining()) {
 
 					# we're in the middle of a trick segment
-					$log->debug(sprintf("Still in the middle of a trick segment: %d bytes remaining",
-						$client->trickSegmentRemaining
-					));
+					if ( $log->is_debug ) {
+						$log->debug(sprintf("Still in the middle of a trick segment: %d bytes remaining",
+							$client->trickSegmentRemaining
+						));
+					}
 
 				} else {
 
@@ -2345,10 +2383,12 @@ sub readNextChunk {
 bail:
 	if ($endofsong) {
 
-		$log->info("end of file or error on socket, opening next song, (song pos: " .
-			$client->songBytes . "(tell says: . " . systell($client->audioFilehandle).
-			"), totalbytes: " . $song->{totalbytes} . ")"
-		);
+		if ( $log->is_info ) {
+			$log->info("end of file or error on socket, opening next song, (song pos: " .
+				$client->songBytes . "(tell says: . " . systell($client->audioFilehandle).
+				"), totalbytes: " . $song->{totalbytes} . ")"
+			);
+		}
 
 		if ($client->streamBytes() == 0 && $client->reportsTrackStart()) {
 
@@ -2370,7 +2410,9 @@ bail:
 				$client->readNextChunkOk(1);
 				if (!gotoNext($client, 1)) {
 
-					$log->info($client->id, ": Can't opennext, returning no chunk.");
+					if ( $log->is_info ) {
+						$log->info($client->id, ": Can't opennext, returning no chunk.");
+					}
 				}
 			};
 			
@@ -2401,7 +2443,9 @@ bail:
 
 			if (!gotoNext($client, 1)) {
 
-				$log->info($client->id, ": Can't opennext, returning no chunk.");
+				if ( $log->is_info ) {
+					$log->info($client->id, ": Can't opennext, returning no chunk.");
+				}
 			}
 		
 			# we'll have to be called again to get a chunk from the next song.

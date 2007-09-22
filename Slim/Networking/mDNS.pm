@@ -120,7 +120,9 @@ sub startAdvertising {
 
 	open(CONF, '>', $class->confFile) or do {
 
-		$log->error(sprintf("Error: Couldn't open %s for appending!: $!", $class->confFile));
+		if ( $log->is_error ) {
+			$log->error(sprintf("Error: Couldn't open %s for appending!: $!", $class->confFile));
+		}
 		return;
 	};
 
@@ -153,9 +155,11 @@ sub startAdvertising {
 
 	$class->processObj( Proc::Background->new($command) );
 
-	$log->info(sprintf("Process is alive: [%d] with pid: [%d]",
-		$class->processObj->alive, $class->processObj->pid
-	));
+	if ( $log->is_info ) {
+		$log->info(sprintf("Process is alive: [%d] with pid: [%d]",
+			$class->processObj->alive, $class->processObj->pid
+		));
+	}
 }
 
 sub stopAdvertising {

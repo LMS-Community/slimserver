@@ -1796,7 +1796,9 @@ sub popMode {
 		}
 	}
 
-	$log->info("Popped to button mode: " . (mode($client) || 'empty!'));
+	if ( $log->is_info ) {
+		$log->info("Popped to button mode: " . (mode($client) || 'empty!'));
+	}
 
 	if ($client->display->hasScreen2) {
 

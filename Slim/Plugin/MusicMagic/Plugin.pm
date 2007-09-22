@@ -142,7 +142,9 @@ sub initPlugin {
 
 		my $content = $http->content;
 
-		$log->info($content);
+		if ( $log->is_info ) {
+			$log->info($content);
+		}
 
 		$http->close;
 
@@ -258,7 +260,9 @@ sub isMusicLibraryFileChanged {
 		'timeout' => 5,
 	}) || return 0;
 
-	$log->info("Got status: ", $http->content);
+	if ( $log->is_info ) {
+		$log->info("Got status: ", $http->content);
+	}
 
 	$http->close;
 
@@ -273,12 +277,14 @@ sub isMusicLibraryFileChanged {
 
 		my $scanInterval = $prefs->get('scan_interval');
 
-		$log->debug("MusicMagic: music library has changed!");
-		$log->debug("Details:");
-		$log->debug("\tCurrCacheID  - $fileMTime");
-		$log->debug("\tLastCacheID  - $lastMMMChange");
-		$log->debug("\tInterval     - $scanInterval");
-		$log->debug("\tLastScanTime - $lastScanTime");
+		if ( $log->is_debug ) {
+			$log->debug("MusicMagic: music library has changed!");
+			$log->debug("Details:");
+			$log->debug("\tCurrCacheID  - $fileMTime");
+			$log->debug("\tLastCacheID  - $lastMMMChange");
+			$log->debug("\tInterval     - $scanInterval");
+			$log->debug("\tLastScanTime - $lastScanTime");
+		}
 
 		if (!$scanInterval) {
 

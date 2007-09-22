@@ -65,7 +65,9 @@ sub handler {
 			}
 		}
 
-		logger('scan.scanner')->info(sprintf("Initiating scan of type: %s",join (" ",@{$rescanType})));
+		if ( logger('scan.scanner')->is_info ) {
+			logger('scan.scanner')->info(sprintf("Initiating scan of type: %s",join (" ",@{$rescanType})));
+		}
 
 		Slim::Control::Request::executeRequest(undef, $rescanType);
 	}

@@ -23,6 +23,8 @@ use Slim::Networking::Select;
 use Slim::Networking::Async::Socket::UDP;
 use Slim::Utils::Log;
 
+my $log = logger('network.upnp');
+
 # A global socket that listens for UPnP events
 our $sock;
 
@@ -105,8 +107,10 @@ sub shutdown {
 # A way for other code to remove a device
 sub removeDevice {
 	my ( $device, $callback ) = @_;
-		
-	logger('network.upnp')->debug("Device went away: " . $device->getfriendlyname);
+	
+	if ( $log->is_debug ) {
+		$log->debug("Device went away: " . $device->getfriendlyname);
+	}
 
 	if ( $callback ) {
 		$callback->( $device, 'remove' );
@@ -120,7 +124,6 @@ sub _readResult {
 	my $sock = shift;
 	
 	my $ssdp_res_msg;
-	my $log = logger('network.upnp');
 	
 	my $addr = recv( $sock, $ssdp_res_msg, 4096, 0 );
 
@@ -150,10 +153,12 @@ sub _readResult {
 		if ( my $retry = $failedDevices->{ $dev_location } ) {
 			if ( time < $retry ) {
 
-				$log->debug(sprintf("Notify from previously failed device at %s, ignoring for %s seconds",
-					$dev_location,
-					$retry - time,
-				));
+				if ( $log->is_debug ) {
+					$log->debug(sprintf("Notify from previously failed device at %s, ignoring for %s seconds",
+						$dev_location,
+						$retry - time,
+					));
+				}
 
 				return;
 			}
@@ -180,7 +185,9 @@ sub _readResult {
 					my $device = Net::UPnP::Device->new();
 					$device->setssdp( $ssdp_res_msg );
 					
-					$log->debug(sprintf("Notify from new device [%s at %s]", $USN, $dev_location));
+					if ( $log->is_debug ) {
+						$log->debug(sprintf("Notify from new device [%s at %s]", $USN, $dev_location));
+					}
 		
 					# make an async request for the device description XML document
 					_getDeviceDescription( {
@@ -245,10 +252,12 @@ sub _gotDeviceDescription {
 	# is it new?
 	if ( !$devices->{ $udn } ) {
 		
-		logger('network.upnp')->debug(sprintf("New device found: %s [%s]",
-			$device->getfriendlyname,
-			$device->getlocation,
-		));
+		if ( $log->is_debug ) {
+			$log->debug(sprintf("New device found: %s [%s]",
+				$device->getfriendlyname,
+				$device->getlocation,
+			));
+		}
 		
 		# add the device to our list of known devices
 		$devices->{ $udn } = $device;
@@ -270,7 +279,7 @@ sub _gotError {
 	# keep track of failures
 	$failedDevices->{ $args->{location} } = time + $FAILURE_RETRY_TIME;
 	
-	logger('network.upnp')->error("Error retrieving device description: $error");
+	$log->error("Error retrieving device description: $error");
 }
 
 sub _parseUSNHeader {

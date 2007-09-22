@@ -119,7 +119,9 @@ sub gotSessionError {
 	my $url      = $http->params->{url};
 	my $callback = $http->params->{callback};
 	
-	$log->error( "Error getting Live365 session ID: " . $http->error );
+	if ( $log->is_error ) {
+		$log->error( "Error getting Live365 session ID: " . $http->error );
+	}
 	
 	# Callback to scanner with unchanged URL
 	$callback->( $url );

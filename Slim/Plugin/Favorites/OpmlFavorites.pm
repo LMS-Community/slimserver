@@ -143,7 +143,9 @@ sub add {
 
 	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs (Live365)
 
-	$log->info(sprintf("url: %s title: %s type: %s parser: %s", $url, $title, $type, $parser));
+	if ( $log->is_info ) {
+		$log->info(sprintf("url: %s title: %s type: %s parser: %s", $url, $title, $type, $parser));
+	}
 
 	# if its already a favorite, don't add it again
 	if ($class->hasUrl($url)) {

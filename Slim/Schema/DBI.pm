@@ -78,7 +78,9 @@ sub removeStaleDBEntries {
 
 		if ($obj->search_related($foreign)->count == 0) {
 
-			$log->info(sprintf("DB garbage collection - removing $class: %s - no more $foreign!", $obj->name));
+			if ( $log->is_info ) {
+				$log->info(sprintf("DB garbage collection - removing $class: %s - no more $foreign!", $obj->name));
+			}
 
 			$obj->delete;
 

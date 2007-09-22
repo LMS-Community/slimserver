@@ -829,9 +829,11 @@ sub checkVersion {
 
 		if (($delta > 0) && ($delta < $prefs->get('checkVersionInterval'))) {
 
-			$log->info(sprintf("Checking version in %s seconds",
-				($lastTime + $prefs->get('checkVersionInterval') + 2 - Time::HiRes::time())
-			));
+			if ( $log->is_info ) {
+				$log->info(sprintf("Checking version in %s seconds",
+					($lastTime + $prefs->get('checkVersionInterval') + 2 - Time::HiRes::time())
+				));
+			}
 
 			Slim::Utils::Timers::setTimer(0, $lastTime + $prefs->get('checkVersionInterval') + 2, \&checkVersion);
 

@@ -132,7 +132,9 @@ my $log = logger('player.fonts');
 sub init {
 	loadFonts();
 
-	$log->info(sprintf("Trying to load GD Library for TTF support: %s", $canUseGD ? 'ok' : 'not ok!'));
+	if ( $log->is_info ) {
+		$log->info(sprintf("Trying to load GD Library for TTF support: %s", $canUseGD ? 'ok' : 'not ok!'));
+	}
 
 	if ($canUseGD) {
 

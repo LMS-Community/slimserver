@@ -257,7 +257,9 @@ sub acceptHTTP {
 
 			$connected++;
 
-			$log->info("Accepted connection $connected from $peeraddr{$httpClient}:" . $httpClient->peerport);
+			if ( $log->is_info ) {
+				$log->info("Accepted connection $connected from $peeraddr{$httpClient}:" . $httpClient->peerport);
+			}
 
 		} else {
 
@@ -368,19 +370,25 @@ sub processHTTP {
 	# socket half-closed from client
 	if (!defined $request) {
 
-		$log->info("Client at $peeraddr{$httpClient}:" . $httpClient->peerport . " disconnected. (half-closed)");
+		if ( $log->is_info ) {
+			$log->info("Client at $peeraddr{$httpClient}:" . $httpClient->peerport . " disconnected. (half-closed)");
+		}
 
 		closeHTTPSocket($httpClient);
 		return;
 	}
 	
 
-	$log->info(
-		"HTTP request: from $peeraddr{$httpClient}:" . $httpClient->peerport . " ($httpClient) for " .
-		join(' ', ($request->method(), $request->protocol(), $request->uri()))
-	);
+	if ( $log->is_info ) {
+		$log->info(
+			"HTTP request: from $peeraddr{$httpClient}:" . $httpClient->peerport . " ($httpClient) for " .
+			join(' ', ($request->method(), $request->protocol(), $request->uri()))
+		);
+	}
 
-	$log->debug("Raw request headers: [\n" . $request->as_string() . "]");
+	if ( $log->is_debug ) {
+		$log->debug("Raw request headers: [\n" . $request->as_string() . "]");
+	}
 
 	# this will hold our context and is used to fill templates
 	my $params     = {};
@@ -496,7 +504,9 @@ sub processHTTP {
 			my $plainURI = $1;
 			my $csrfAuth = $2;
 	
-			$log->info("Found CSRF auth token \"$csrfAuth\" in URI \"".$request->uri()."\", so resetting request URI to \"$plainURI\"");
+			if ( $log->is_info ) {
+				$log->info("Found CSRF auth token \"$csrfAuth\" in URI \"".$request->uri()."\", so resetting request URI to \"$plainURI\"");
+			}
 	
 			# change the URI so later code doesn't "see" the cauth part
 			$request->uri($plainURI);
@@ -675,7 +685,9 @@ sub processHTTP {
 					$params->{'suggestion'} = qq(There is no "$desiredskin")
 						. qq( skin, try ) . Slim::Utils::Prefs::homeURL() . qq( instead.);
 
-					$log->warn("Invalid skin requested: [" . join(' ', ($request->method, $request->uri)) . "]");
+					if ( $log->is_warn ) {
+						$log->warn("Invalid skin requested: [" . join(' ', ($request->method, $request->uri)) . "]");
+					}
 			
 					$response->code(RC_NOT_FOUND);
 					$response->content_type('text/html');
@@ -723,17 +735,19 @@ sub processHTTP {
 				}
 			}
 		}
-
-
-		$log->debug("Processed request headers: [\n" . $request->as_string() . "]");
-
+		
+		if ( $log->is_debug ) {
+			$log->debug("Processed request headers: [\n" . $request->as_string() . "]");
+		}
 
 		# process the command
 		processURL($httpClient, $response, $params);
 
 	} else {
 
-		$log->warn("Bad Request: [" . join(' ', ($request->method, $request->uri)) . "]");
+		if ( $log->is_warn ) {
+			$log->warn("Bad Request: [" . join(' ', ($request->method, $request->uri)) . "]");
+		}
 
 		$response->code(RC_METHOD_NOT_ALLOWED);
 		$response->header('Connection' => 'close');
@@ -751,11 +765,13 @@ sub processHTTP {
 		$log->debug("Response Headers: [\n" . $response->as_string . "]");
 	}
 
-	$log->info(
-		"End request: keepAlive: [" .
-		($keepAlives{$httpClient} || '') .
-		"] - waiting for next request for $httpClient on connection = " . ($response->header('Connection') || '') . "\n"
-	);
+	if ( $log->is_info ) {
+		$log->info(
+			"End request: keepAlive: [" .
+			($keepAlives{$httpClient} || '') .
+			"] - waiting for next request for $httpClient on connection = " . ($response->header('Connection') || '') . "\n"
+		);
+	}
 }
 
 # processURL - handles the execution of the HTTP request
@@ -791,7 +807,9 @@ sub processURL {
 		$p[2] = join '&', map $_ . '=' . $params->{$_},  keys %{$params};
 	}
 
-	$log->info("processURL Clients: " . join(" ", Slim::Player::Client::clientIPs()));
+	if ( $log->is_info ) {
+		$log->info("processURL Clients: " . join(" ", Slim::Player::Client::clientIPs()));
+	}
 
 	# explicitly specified player (for web browsers or squeezeboxen)
 	if (defined($params->{"player"})) {
@@ -1393,7 +1411,9 @@ sub childRead {
 	
 	$data = thaw($data);
 	
-	$log->info("[$$] childRead got " . Data::Dump::dump($data));
+	if ( $log->is_info ) {
+		$log->info("[$$] childRead got " . Data::Dump::dump($data));
+	}
 	
 	my $client = Slim::Player::Client::getClient( $data->{clientid} );
 	
@@ -1574,7 +1594,9 @@ sub contentHasBeenModified {
 
 			if (($ifModified >= $mtime) && ($ifModified <= $requestTime)) {
 
-				$log->info(sprintf("Content at: %s has not been modified - returning 304.", $request->uri));
+				if ( $log->is_info ) {
+					$log->info(sprintf("Content at: %s has not been modified - returning 304.", $request->uri));
+				}
 
 				$response->code(RC_NOT_MODIFIED);
 			}
@@ -1933,7 +1955,9 @@ sub parentRead {
 	
 	$data = thaw($data);
 	
-	$log->info("parentRead got: " . Data::Dump::dump($data));
+	if ( $log->is_info ) {
+		$log->info("parentRead got: " . Data::Dump::dump($data));
+	}
 	
 	if ( $data->{command} eq 'playlist' ) {
 		
@@ -1985,7 +2009,9 @@ sub sendStreamingResponse {
 			(!defined($client->streamingsocket()) || $httpClient != $client->streamingsocket())
 		) {
 
-		$log->info($client->id . " We're done streaming this socket to client");
+		if ( $log->is_info ) {
+			$log->info($client->id . " We're done streaming this socket to client");
+		}
 
 		closeStreamingSocket($httpClient);
 		return;
@@ -2075,7 +2101,9 @@ sub sendStreamingResponse {
 			# otherwise, queue up the next chunk of sound
 			if ($chunkRef && length($$chunkRef)) {
 
-				$log->info("(audio: " . length($$chunkRef) . " bytes)");
+				if ( $log->is_info ) {
+					$log->info("(audio: " . length($$chunkRef) . " bytes)");
+				}
 
 				my %segment = ( 
 					'data'   => $chunkRef,
@@ -2152,7 +2180,9 @@ sub sendStreamingResponse {
 			
 			$metaDataBytes{$httpClient} = 0;
 
-			$log->info("sending metadata of length $length: '$metastring' (" . length($message) . " bytes)");
+			if ( $log->is_info ) {
+				$log->info("sending metadata of length $length: '$metastring' (" . length($message) . " bytes)");
+			}
 
 		} elsif (defined($segment) && $metaDataBytes{$httpClient} + $segment->{'length'} > METADATAINTERVAL) {
 
@@ -2891,7 +2921,9 @@ sub isRequestCSRFSafe {
 
 		if ("$host:$port" ne $hostHeader) {
 
-			$log->warn("Invalid referer: [" . join(' ', ($request->method, $request->uri)) . "]");
+			if ( $log->is_warn ) {
+				$log->warn("Invalid referer: [" . join(' ', ($request->method, $request->uri)) . "]");
+			}
 
 		} else {
 
@@ -2908,9 +2940,11 @@ sub isRequestCSRFSafe {
 
 			$params->{'suggestion'} = "Invalid referrer and no valid cauth code.";
 
-			$log->warn("No valid CSRF auth code: [" . 
-				join(' ', ($request->method, $request->uri, $request->header('X-Slim-CSRF')))
-			. "]");
+			if ( $log->is_warn ) {
+				$log->warn("No valid CSRF auth code: [" . 
+					join(' ', ($request->method, $request->uri, $request->header('X-Slim-CSRF')))
+				. "]");
+			}
 
 		} else {
 

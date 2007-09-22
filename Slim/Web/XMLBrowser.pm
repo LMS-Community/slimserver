@@ -316,7 +316,9 @@ sub handleFeed {
 		
 		if ( @urls ) {
 
-			$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
+			if ( $log->is_info ) {
+				$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
+			}
 			
 			if ( $play ) {
 				$client->execute([ 'playlist', 'play', \@urls ]);

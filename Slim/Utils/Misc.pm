@@ -550,9 +550,11 @@ sub crackURL {
 
 	my $log = logger('os.paths');
 
-	$log->debug("Cracked: $string with [$host],[$port],[$path]");
-	$log->debug("   user: [$user]") if $user;
-	$log->debug("   pass: [$pass]") if $pass;
+	if ( $log->is_debug ) {
+		$log->debug("Cracked: $string with [$host],[$port],[$path]");
+		$log->debug("   user: [$user]") if $user;
+		$log->debug("   pass: [$pass]") if $pass;
+	}
 
 	return ($host, $port, $path, $user, $pass);
 }
@@ -918,7 +920,9 @@ sub readDirectory {
 
 	closedir(DIR);
 
-	$log->info("Directory contains " . scalar(@diritems) . " items");
+	if ( $log->is_info ) {
+		$log->info("Directory contains " . scalar(@diritems) . " items");
+	}
 
 	return sort(@diritems);
 }
@@ -983,8 +987,10 @@ sub findAndScanDirectoryTree {
 
 	if ($fsMTime != $dbMTime) {
 
-		logger('scan.scanner')->info("mtime db: $dbMTime : " . localtime($dbMTime));
-		logger('scan.scanner')->info("mtime fs: $fsMTime : " . localtime($fsMTime));
+		if ( logger('scan.scanner')->is_info ) {
+			logger('scan.scanner')->info("mtime db: $dbMTime : " . localtime($dbMTime));
+			logger('scan.scanner')->info("mtime fs: $fsMTime : " . localtime($fsMTime));
+		}
 
 		# Update the mtime in the db.
 		$topLevelObj->timestamp($fsMTime);

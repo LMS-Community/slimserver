@@ -371,7 +371,9 @@ sub exportPlaylists {
 		my $playlist = get("http://$MMSHost:$MMSport/api/getPlaylist?index=$i") || next;
 		my @songs    = split(/\n/, $playlist);
 
-		$log->info(sprintf("Got playlist %s with %d items", $playlists[$i], scalar @songs));
+		if ( $log->is_info ) {
+			$log->info(sprintf("Got playlist %s with %d items", $playlists[$i], scalar @songs));
+		}
 
 		$class->_updatePlaylist($playlists[$i], \@songs);
 	}
@@ -392,7 +394,9 @@ sub exportDuplicates {
 
 	$class->_updatePlaylist('Duplicates', \@songs);
 
-	$log->info(sprintf("Finished export (%d records)", scalar @songs));
+	if ( $log->is_info ) {
+		$log->info(sprintf("Finished export (%d records)", scalar @songs));
+	}
 }
 
 sub _updatePlaylist {

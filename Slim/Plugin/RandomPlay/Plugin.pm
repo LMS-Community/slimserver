@@ -110,7 +110,9 @@ sub initPlugin {
 sub findAndAdd {
 	my ($client, $type, $find, $limit, $idList, $addOnly) = @_;
 
-	$log->info(sprintf("Starting random selection of %s items for type: $type", defined($limit) ? $limit : 'unlimited'));
+	if ( $log->is_info ) {
+		$log->info(sprintf("Starting random selection of %s items for type: $type", defined($limit) ? $limit : 'unlimited'));
+	}
 
 	my @results;
 
@@ -194,7 +196,9 @@ sub findAndAdd {
 		}
 	}
 
-	$log->info(sprintf("Find returned %i items", scalar @results));
+	if ( $log->is_info ) {
+		$log->info(sprintf("Find returned %i items", scalar @results));
+	}
 
 	# Pull the first track off to add / play it if needed.
 	my $obj = shift @results;
@@ -206,9 +210,11 @@ sub findAndAdd {
 		return undef;
 	}
 
-	$log->info(sprintf("%s %s: %s, %d",
-		$addOnly ? 'Adding' : 'Playing', $type, $obj->name, $obj->id
-	));
+	if ( $log->is_info ) {
+		$log->info(sprintf("%s %s: %s, %d",
+			$addOnly ? 'Adding' : 'Playing', $type, $obj->name, $obj->id
+		));
+	}
 
 	# Replace the current playlist with the first item / track or add it to end
 	my $request = $client->execute([
@@ -223,7 +229,9 @@ sub findAndAdd {
 
 		if (!defined $limit || $limit > 1) {
 
-			$log->info(sprintf("Adding %i tracks to end of playlist", scalar @results));
+			if ( $log->is_info ) {
+				$log->info(sprintf("Adding %i tracks to end of playlist", scalar @results));
+			}
 
 			$request = $client->execute(['playlist', 'addtracks', 'listRef', \@results ]);
 
@@ -503,10 +511,12 @@ sub playRandom {
 
 	} else {
 
-		$log->info(sprintf(
-			"Playing %s %s mode with %i items",
-			$continuousMode ? 'continuous' : 'static', $type, Slim::Player::Playlist::count($client)
-		));
+		if ( $log->is_info ) {
+			$log->info(sprintf(
+				"Playing %s %s mode with %i items",
+				$continuousMode ? 'continuous' : 'static', $type, Slim::Player::Playlist::count($client)
+			));
+		}
 
 		#BUG 5444: store the status so that users re-visiting the random mix 
 		#will see a continuous mode state.
@@ -634,7 +644,9 @@ sub toggleGenreState {
 sub handlePlayOrAdd {
 	my ($client, $item, $add) = @_;
 
-	$log->debug(sprintf("RandomPlay: %s button pushed on type %s", $add ? 'Add' : 'Play', $item));
+	if ( $log->is_debug ) {
+		$log->debug(sprintf("RandomPlay: %s button pushed on type %s", $add ? 'Add' : 'Play', $item));
+	}
 
 	# reconstruct the list of options, adding and removing the 'disable' option where applicable
 	if ($item ne 'genreFilter') {
@@ -743,8 +755,10 @@ sub commandCallback {
 		return;
 	}
 
-	$log->debug(sprintf("Received command %s", $request->getRequestString));
-	$log->debug(sprintf("While in mode: %s, from %s", $mixInfo{$client->masterOrSelf->id}->{'type'}, $client->name));
+	if ( $log->is_debug ) {
+		$log->debug(sprintf("Received command %s", $request->getRequestString));
+		$log->debug(sprintf("While in mode: %s, from %s", $mixInfo{$client->masterOrSelf->id}->{'type'}, $client->name));
+	}
 	
 	# Bug 3696, If the last track in the playlist failed, restart play
 	if ( $request->isCommand([['playlist'], ['cant_open']]) && $client->playmode !~ /play/ ) {
@@ -778,7 +792,9 @@ sub commandCallback {
 
 		if ($songIndex && $songsToKeep && $songIndex > $songsToKeep) {
 
-			$log->info(sprintf("Stripping off %i completed track(s)", $songIndex - $songsToKeep));
+			if ( $log->is_info ) {
+				$log->info(sprintf("Stripping off %i completed track(s)", $songIndex - $songsToKeep));
+			}
 
 			# Delete tracks before this one on the playlist
 			for (my $i = 0; $i < $songIndex - $songsToKeep; $i++) {
@@ -792,7 +808,9 @@ sub commandCallback {
 
 	} elsif ($request->isCommand([['playlist'], [keys %stopcommands]])) {
 
-		$log->info(sprintf("Cyclic mode ending due to playlist: %s command", $request->getRequestString));
+		if ( $log->is_info ) {
+			$log->info(sprintf("Cyclic mode ending due to playlist: %s command", $request->getRequestString));
+		}
 
 		playRandom($client, 'disable');
 	}

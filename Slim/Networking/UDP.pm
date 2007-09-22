@@ -113,7 +113,9 @@ sub readUDP {
 
 				my ($clientport, $clientip) = sockaddr_in($clientpaddr);
 
-				$log->warn("Ignoring client: " . inet_ntoa($clientip) . ":$clientport that sent bogus message $msg");
+				if ( $log->is_warn ) {
+					$log->warn("Ignoring client: " . inet_ntoa($clientip) . ":$clientport that sent bogus message $msg");
+				}
 			}
 		}
 

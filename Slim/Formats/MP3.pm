@@ -525,7 +525,9 @@ sub scanBitrate {
 			$vbr = 1;
 		}
 		
-		$log->debug("Read average bitrate from stream: $avg " . ( $vbr ? 'VBR' : 'CBR' ));
+		if ( $log->is_debug ) {
+			$log->debug("Read average bitrate from stream: $avg " . ( $vbr ? 'VBR' : 'CBR' ));
+		}
 		
 		return ($avg * 1000, $vbr);
 	}

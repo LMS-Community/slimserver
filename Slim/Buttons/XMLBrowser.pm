@@ -1475,7 +1475,9 @@ sub _cliQuery_done {
 				
 				if ( @urls ) {
 
-					$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
+					if ( $log->is_info ) {
+						$log->info(sprintf("Playing/adding all items:\n%s", join("\n", @urls)));
+					}
 					
 					if ( $method =~ /play|load/i ) {
 						$client->execute([ 'playlist', 'play', \@urls ]);

@@ -160,10 +160,12 @@ sub parseHeaders {
 				Slim::Music::Info::setBitrate( $self->infoUrl, $self->bitrate );
 			}
 			
-			$log->info(sprintf("Bitrate for %s set to %d",
-				$self->infoUrl,
-				$self->bitrate,
-			));
+			if ( $log->is_info ) {
+				$log->info(sprintf("Bitrate for %s set to %d",
+					$self->infoUrl,
+					$self->bitrate,
+				));
+			}
 		}
 		
 		if ($header =~ /^icy-metaint:\s*(.+)$CRLF$/) {

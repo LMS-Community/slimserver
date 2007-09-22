@@ -517,7 +517,7 @@ sub maxRate {
 		return $rate;
 	}
 
-	if ($rate != 0) {
+	if ( $rate != 0 && logger('player.source')->is_debug ) {
 		logger('player.source')->debug(sprintf("Setting maxBitRate for %s to: %d", $client->name, $rate));
 	}
 	

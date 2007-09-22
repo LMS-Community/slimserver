@@ -144,7 +144,9 @@ sub checkTimers {
 
 		} else {
 
-			$log->warn("[high] no subptr: " . Data::Dump::dump($high_timer));
+			if ( $log->is_warn ) {
+				$log->warn("[high] no subptr: " . Data::Dump::dump($high_timer));
+			}
 		}
 
 		$nextHigh = $high->get_next_priority();
@@ -201,7 +203,9 @@ sub checkTimers {
 
 		} else {
 
-			$log->warn("Normal timer with no subptr: " . Data::Dump::dump($timer));
+			if ( $log->is_warn ) {
+				$log->warn("Normal timer with no subptr: " . Data::Dump::dump($timer));
+			}
 		}
 
 		$::perfmon && $timerTask->log(Time::HiRes::time() - $now, undef, $subptr);

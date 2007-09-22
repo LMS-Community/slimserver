@@ -199,7 +199,9 @@ sub descend {
 
 	my $rs = $self;
 
-	$log->debug(sprintf("\$self->result_class: [%s]", $self->result_class));
+	if ( $log->is_debug ) {
+		$log->debug(sprintf("\$self->result_class: [%s]", $self->result_class));
+	}
 
 	# Walk the hierarchy we were passed, calling into the descend$level
 	# for each, which will build up a RS to hand back to the caller.

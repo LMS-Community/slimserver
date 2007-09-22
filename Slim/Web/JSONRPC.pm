@@ -123,10 +123,10 @@ sub handleURI {
 		Slim::Web::HTTP::closeHTTPSocket($httpClient);
 		return;
 	}
-	$log->debug(sub {
-		use Data::Dumper; 
-		return "JSON parsed procedure: " . Data::Dumper::Dumper($procedure); 
-		});
+	
+	if ( $log->is_debug ) {
+		$log->debug( "JSON parsed procedure: " . Data::Dump::dump($procedure) );
+	}
 	
 	# we must have a method
 	my $method = $procedure->{'method'};
@@ -203,8 +203,10 @@ sub handleURI {
 
 	if ($@) {
 		my $funcName = Slim::Utils::PerlRunTime::realNameForCodeRef($funcPtr);
-		$log->error("While trying to run function coderef [$funcName]: [$@]");
-		$log->error(sub { return "JSON parsed procedure: " . Data::Dumper::Dumper($procedure); } );
+		if ( $log->is_error ) {
+			$log->error("While trying to run function coderef [$funcName]: [$@]");
+			$log->error( "JSON parsed procedure: " . Data::Dump::dump($procedure) );
+		}
 		Slim::Web::HTTP::closeHTTPSocket($httpClient);
 		return;
 	}
@@ -220,7 +222,9 @@ sub writeResponse {
 	my $httpClient   = $context->{'httpClient'};
 	my $httpResponse = $context->{'httpResponse'};
 
-	$log->debug(sub { return "JSON response: " . Data::Dumper::Dumper($responseRef); } );
+	if ( $log->is_debug ) {
+		$log->debug( "JSON response: " . Data::Dump::dump($responseRef) );
+	}
 	
 	# Don't waste CPU cycles if we're not connected
 	if (!$httpClient->connected()) {
@@ -259,7 +263,9 @@ sub writeResponse {
 	
 	if ($sendheaders) {
 	
-		$log->debug("Response headers: [\n" . $httpResponse->as_string . "]");
+		if ( $log->is_debug ) {
+			$log->debug("Response headers: [\n" . $httpResponse->as_string . "]");
+		}
 	}
 
 	Slim::Web::HTTP::addHTTPResponse($httpClient, $httpResponse, \$jsonResponse, $sendheaders, $xjive);
@@ -302,7 +308,9 @@ sub requestMethod {
 	# get the JSON-RPC params
 	my $reqParams = $context->{'procedure'}->{'params'};
 
-	$log->debug( sub { return "requestMethod(" . Data::Dumper::Dumper($reqParams) . ")" } );
+	if ( $log->is_debug ) {
+		$log->debug( "requestMethod(" . Data::Dump::dump($reqParams) . ")" );
+	}
 	
 	# current style : [<player>, [cmd]]
 	# proposed style: [{player:xxx, cmd:[xxx], params:{xxx}}]
@@ -350,7 +358,10 @@ sub requestMethod {
 		
 		if ($request->isStatusError()) {
 
-			$log->error("Request failed with error: " . $request->getStatusText);
+			if ( $log->is_error ) {
+				$log->error("Request failed with error: " . $request->getStatusText);
+			}
+			
 			Slim::Web::HTTP::closeHTTPSocket($context->{'httpClient'});
 			return;
 

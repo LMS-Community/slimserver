@@ -34,12 +34,13 @@ __PACKAGE__->mk_classaccessors( qw(
 # OpenDNS server to use if we can't find a working local nameserver
 my $OpenDNS = '208.67.222.222';
 
+my $log = logger('network.asynchttp');
+
 # At startup time, we need to query all available nameservers to make sure
 # we use a valid server during bgsend() calls
 sub init {
 	my $class = shift;
 
-	my $log = logger('network.asynchttp');
 	my $res = Net::DNS::Resolver->new;
 
 	$res->tcp_timeout( 10 );
@@ -119,12 +120,12 @@ sub open {
 	if ( $self->nameserver ) {
 		$resolver->nameservers( $self->nameserver );
 	}
-	
-	my $log = logger('network.asynchttp');
 
-	$log->debug(sprintf("Starting async DNS lookup for [%s] using server [%s] [timeout %d]",
-		$args->{Host}, ($resolver->nameservers)[0], $args->{Timeout},
-	));
+	if ( $log->is_debug ) {
+		$log->debug(sprintf("Starting async DNS lookup for [%s] using server [%s] [timeout %d]",
+			$args->{Host}, ($resolver->nameservers)[0], $args->{Timeout},
+		));
+	}
 	
 	my $bgsock = $resolver->bgsend( $args->{Host} );
 	
@@ -205,9 +206,11 @@ sub _dns_read {
 				
 				$args->{PeerAddr} = $addr;
 								
-				logger('network.asynchttp')->debug(sprintf(
-					"Resolved %s to [%s]", $args->{Host}, $addr,
-				));
+				if ( $log->is_debug ) {
+					$log->debug(sprintf(
+						"Resolved %s to [%s]", $args->{Host}, $addr,
+					));
+				}
 				
 				$bgsock->close;
 				undef $bgsock;
@@ -233,7 +236,7 @@ sub connect {
 	my $host = $args->{Host};
 	my $port = $args->{PeerPort};
 
-	logger('network.asynchttp')->debug("Connecting to $host:$port");
+	$log->debug("Connecting to $host:$port");
 
 	my $socket = $self->new_socket( %{$args} );
 	
@@ -267,7 +270,7 @@ sub _connect_error {
 	# Kill the timeout timer
 	Slim::Utils::Timers::killTimers( $socket, \&_connect_error );
 
-	logger('network.asynchttp')->error("Failed to connect: $!");
+	$log->error("Failed to connect: $!");
 
 	# close the socket
 	$socket->close;
@@ -297,7 +300,7 @@ sub _async_connect {
 	
 	$self->socket( $socket );
 	
-	logger('network.asynchttp')->debug("connected, ready to write request");
+	$log->debug("connected, ready to write request");
 
 	if ( my $cb = $args->{onConnect} ) {
 		my $passthrough = $args->{passthrough} || [];
@@ -327,7 +330,9 @@ sub write_async {
 		$content_ref = $content_ref->( $self );
 	}
 
-	logger('network.asynchttp')->debug("Sending: [" . $$content_ref . "]");
+	if ( $log->is_debug ) {
+		$log->debug("Sending: [" . $$content_ref . "]");
+	}
 
 	$self->socket->set( passthrough => [ $self, $args ] );
 
@@ -362,7 +367,7 @@ sub _async_error {
 	
 	$self->disconnect;
 	
-	logger('network.asynchttp')->error("Error: [$error]");
+	$log->error("Error: [$error]");
 	
 	if ( my $ecb = $args->{onError} ) {
 		my $passthrough = $args->{passthrough} || [];

@@ -116,19 +116,23 @@ sub requestString {
 			
 			if ( $client->master ) {
 
-				$log->info(sprintf("[%s] Radio mode, synced slave got playlist track from master: %s",
-					$client->id,
-					$url,
-				));
+				if ( $log->is_info ) {
+					$log->info(sprintf("[%s] Radio mode, synced slave got playlist track from master: %s",
+						$client->id,
+						$url,
+					));
+				}
 			}
 		}
 		else {
 			# If synced, only the master should request the playlist rhr file
 			if ( $client->master ) {
 
-				$log->info(sprintf("[%s] Radio mode, synced slave not requesting playlist",
-					$client->id,
-				));
+				if ( $log->is_info ) {
+					$log->info(sprintf("[%s] Radio mode, synced slave not requesting playlist",
+						$client->id,
+					));
+				}
 				
 				# XXX: This will cause a 'can't connect' error on the slave(s), but will (hopefully)
 				# connect on repeat when the master gets a playlist track.  Sometimes Rhapsody will
@@ -213,11 +217,13 @@ sub handleDirectError {
 		my $stopIn = $tracklen - $elapsed;
 		my $stopAt = time + ( $stopIn || 0 );
 		
-		$log->error(sprintf("Error: [%s] Got error %s, stopping player after current song (in %d seconds).\n",
-			$client->id,
-			$error,
-			$stopIn || 0,
-		));
+		if ( $log->is_error ) {
+			$log->error(sprintf("Error: [%s] Got error %s, stopping player after current song (in %d seconds).\n",
+				$client->id,
+				$error,
+				$stopIn || 0,
+			));
+		}
 
 		Slim::Utils::Timers::setTimer( $client, $stopAt, sub {
 			my $client = shift;

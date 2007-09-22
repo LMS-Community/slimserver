@@ -222,7 +222,9 @@ sub playlist {
 			$cacheHtml ? $page : undef,
 		]);
 
-		$log->info( sub { sprintf("Caching playlist as %s.", $cacheHtml ? 'html' : 'params') } );
+		if ( $log->is_info ) {
+			$log->info( sprintf("Caching playlist as %s.", $cacheHtml ? 'html' : 'params') );
+		}
 
 		Slim::Utils::Timers::killTimers($client, \&flushCachedHTML);
 

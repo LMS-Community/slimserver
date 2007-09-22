@@ -790,11 +790,13 @@ sub stream {
 
 	if ($client->opened()) {
 
-		$log->info(sprintf("stream called: $command paused: %s format: %s url: %s",
-			($params->{'paused'} || 'undef'), ($format || 'undef'), ($params->{'url'} || 'undef')
-		));
+		if ( $log->is_info ) {
+			$log->info(sprintf("stream called: $command paused: %s format: %s url: %s",
+				($params->{'paused'} || 'undef'), ($format || 'undef'), ($params->{'url'} || 'undef')
+			));
+		}
 
-		$log->debug(bt(1));
+		$log->debug( sub { bt(1) } );
 
 		my $autostart = 1;
 
@@ -1056,10 +1058,12 @@ sub stream {
 			return;
 		}
 
-		$log->info(sprintf(
-			"Starting with decoder with format: %s autostart: %s threshold: %s samplesize: %s samplerate: %s endian: %s channels: %s",
-			$formatbyte, $autostart, $bufferThreshold, $pcmsamplesize, $pcmsamplerate, $pcmendian, $pcmchannels,
-		));
+		if ( $log->is_info ) {
+			$log->info(sprintf(
+				"Starting with decoder with format: %s autostart: %s threshold: %s samplesize: %s samplerate: %s endian: %s channels: %s",
+				$formatbyte, $autostart, $bufferThreshold, $pcmsamplesize, $pcmsamplerate, $pcmendian, $pcmchannels,
+			));
+		}
 
 		my $flags = 0;
 		$flags |= 0x40 if $params->{reconnect};
@@ -1108,7 +1112,9 @@ sub stream {
 	
 		$frame .= $request_string;
 
-		$log->info("sending strm frame of length: " . length($frame) . " request string: [$request_string]");
+		if ( $log->is_info ) {
+			$log->info("sending strm frame of length: " . length($frame) . " request string: [$request_string]");
+		}
 
 		$client->sendFrame('strm', \$frame);
 
@@ -1199,7 +1205,9 @@ sub i2c {
 
 	if ($client->opened()) {
 
-		logger('network.protocol.slimproto')->debug("sending " . length($data) . " bytes");
+		if ( logger('network.protocol.slimproto')->is_debug ) {
+			logger('network.protocol.slimproto')->debug("sending " . length($data) . " bytes");
+		}
 
 		$client->sendFrame('i2cc', \$data);
 	}

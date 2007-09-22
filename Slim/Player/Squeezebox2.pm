@@ -353,7 +353,9 @@ sub directHeaders {
 			my $bitrate;
 			my $body;
 
-			$log->info("Processing " . scalar(@headers) . " headers");
+			if ( $log->is_info ) {
+				$log->info("Processing " . scalar(@headers) . " headers");
+			}
 
 			if ($handler && $handler->can("parseDirectHeaders")) {
 				# Could use a hash ref for header parameters
@@ -520,7 +522,9 @@ sub directBodyFrame {
 	my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
 	my $done    = 0;
 
-	$log->info("Got some body from the player, length " . length($body));
+	if ( $log->is_info ) {
+		$log->info("Got some body from the player, length " . length($body));
+	}
 	
 	if (length($body)) {
 
@@ -541,7 +545,9 @@ sub directBodyFrame {
 				my $fh = File::Temp->new();
 				$client->directBody( $fh );
 
-				$log->info("directBodyFrame: Saving to temp file: " . $fh->filename);
+				if ( $log->is_info ) {
+					$log->info("directBodyFrame: Saving to temp file: " . $fh->filename);
+				}
 			}
 			
 			$client->directBody->write( $body, length($body) );
@@ -549,7 +555,9 @@ sub directBodyFrame {
 
 	} else {
 
-		$log->info("Empty body means we should parse what we have for " . $client->directURL);
+		if ( $log->is_info ) {
+			$log->info("Empty body means we should parse what we have for " . $client->directURL);
+		}
 
 		$done = 1;
 	}
@@ -820,7 +828,9 @@ sub playerSettingsFrame {
 			$value = undef;
 		}
 
-		logger('prefs')->info(sprintf("Pref [%s] = [%s]", $pref, (defined $value ? $value : 'undef')));
+		if ( logger('prefs')->is_info ) {
+			logger('prefs')->info(sprintf("Pref [%s] = [%s]", $pref, (defined $value ? $value : 'undef')));
+		}
 
 		if (!defined $value) {
 			$client->setPlayerSetting($pref, $prefs->client($client)->get($pref));

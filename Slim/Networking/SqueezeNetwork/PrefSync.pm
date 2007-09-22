@@ -93,12 +93,18 @@ sub clientEvent {
 	# If the event was for a new client, sync down now
 	my $event = $request->getRequest(1);
 	if ( $event =~ /(?:new|reconnect)/ ) {
-		$log->debug( $client->id . ": Got client $event event, syncing prefs from SN" );
+		if ( $log->is_debug ) {
+			$log->debug( $client->id . ": Got client $event event, syncing prefs from SN" );
+		}
+		
 		syncDown($client);
 	}
 	elsif ( $event eq 'disconnect' ) {
 		# Client is gone, kill any pending syncUp event (syncDown killed above)
-		$log->debug( $client->id . ': Got client disconnect event, disabling sync' );
+		if ( $log->is_debug ) {
+			$log->debug( $client->id . ': Got client disconnect event, disabling sync' );
+		}
+		
 		Slim::Utils::Timers::killTimers( $client, \&syncUp );
 	}
 }
@@ -212,7 +218,9 @@ sub _syncDown_done {
 	
 	$client->update;
 	
-	$log->debug( 'Synced prefs from SN for player ' . $client->id );
+	if ( $log->is_debug ) {
+		$log->debug( 'Synced prefs from SN for player ' . $client->id );
+	}
 	
 	# Schedule next sync
 	Slim::Utils::Timers::setTimer( 

@@ -199,7 +199,9 @@ sub cleanup {
 			$cache->purge;
 			$cache->set('Slim::Utils::Cache-purgetime', $start, 'never');
 			$now = Time::HiRes::time();
-			$log->info(sprintf("Cache purge: $namespace - %f sec", $now - $start));
+			if ( $log->is_info ) {
+				$log->info(sprintf("Cache purge: $namespace - %f sec", $now - $start));
+			}
 		} else {
 			$log->info("Cache purge: $namespace - skipping, purged recently");
 		}

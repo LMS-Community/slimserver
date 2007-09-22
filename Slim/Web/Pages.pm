@@ -189,9 +189,11 @@ sub addLibraryStats {
 	$params->{'album_count'}  = $class->_lcPlural($counts{'album'}->distinct->count, 'ALBUM', 'ALBUMS');
 	$params->{'artist_count'} = $class->_lcPlural($counts{'contributor'}->distinct->count, 'ARTIST', 'ARTISTS');
 
-	logger('database.sql')->info(sprintf("Found %s, %s & %s", 
-		$params->{'song_count'}, $params->{'album_count'}, $params->{'artist_count'}
-	));
+	if ( logger('database.sql')->is_info ) {
+		logger('database.sql')->info(sprintf("Found %s, %s & %s", 
+			$params->{'song_count'}, $params->{'album_count'}, $params->{'artist_count'}
+		));
+	}
 }
 
 sub addPlayerList {

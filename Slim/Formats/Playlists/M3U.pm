@@ -102,7 +102,9 @@ sub read {
 		}
 	}
 
-	$log->info("Parsed " . scalar(@items) . " items in playlist");
+	if ( $log->is_info ) {
+		$log->info("Parsed " . scalar(@items) . " items in playlist");
+	}
 
 	close($file);
 
