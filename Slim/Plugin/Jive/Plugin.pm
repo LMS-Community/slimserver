@@ -353,7 +353,7 @@ sub menuQuery {
 	);
 
 
-	if ($client->isPlayer()) {
+	if ( blessed($client) && $client->isPlayer() ) {
 		push @menu, powerHash($client);
 	}
 
