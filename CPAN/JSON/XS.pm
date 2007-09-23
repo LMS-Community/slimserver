@@ -83,7 +83,7 @@ package JSON::XS;
 
 use strict;
 
-our $VERSION = '1.41';
+our $VERSION = '1.5';
 our @ISA = qw(Exporter);
 
 our @EXPORT = qw(to_json from_json);
@@ -279,6 +279,51 @@ This setting has no effect when decoding JSON texts.
 Example, space_before and indent disabled, space_after enabled:
 
    {"key": "value"}
+
+=item $json = $json->relaxed ([$enable])
+
+If C<$enable> is true (or missing), then C<decode> will accept some
+extensions to normal JSON syntax (see below). C<encode> will not be
+affected in anyway. I<Be aware that this option makes you accept invalid
+JSON texts as if they were valid!>. I suggest only to use this option to
+parse application-specific files written by humans (configuration files,
+resource files etc.)
+
+If C<$enable> is false (the default), then C<decode> will only accept
+valid JSON texts.
+
+Currently accepted extensions are:
+
+=over 4
+
+=item * list items can have an end-comma
+
+JSON I<separates> array elements and key-value pairs with commas. This
+can be annoying if you write JSON texts manually and want to be able to
+quickly append elements, so this extension accepts comma at the end of
+such items not just between them:
+
+   [
+      1,
+      2, <- this comma not normally allowed
+   ]
+   {
+      "k1": "v1",
+      "k2": "v2", <- this comma not normally allowed
+   }
+
+=item * shell-style '#'-comments
+
+Whenever JSON allows whitespace, shell-style comments are additionally
+allowed. They are terminated by the first carriage-return or line-feed
+character, after which more white-space and comments are allowed.
+
+  [
+     1, # this comment not allowed in JSON
+        # neither this one...
+  ]
+
+=back
 
 =item $json = $json->canonical ([$enable])
 
@@ -555,11 +600,23 @@ decoding is necessary.
 
 =item number
 
-A JSON number becomes either an integer or numeric (floating point)
-scalar in perl, depending on its range and any fractional parts. On the
-Perl level, there is no difference between those as Perl handles all the
-conversion details, but an integer may take slightly less memory and might
-represent more values exactly than (floating point) numbers.
+A JSON number becomes either an integer, numeric (floating point) or
+string scalar in perl, depending on its range and any fractional parts. On
+the Perl level, there is no difference between those as Perl handles all
+the conversion details, but an integer may take slightly less memory and
+might represent more values exactly than (floating point) numbers.
+
+If the number consists of digits only, JSON::XS will try to represent
+it as an integer value. If that fails, it will try to represent it as
+a numeric (floating point) value if that is possible without loss of
+precision. Otherwise it will preserve the number as a string value.
+
+Numbers containing a fractional or exponential part will always be
+represented as numeric (floating point) values, possibly at a loss of
+precision.
+
+This might create round-tripping problems as numbers might become strings,
+but as Perl is typeless there is no other way to do it.
 
 =item true, false
 
