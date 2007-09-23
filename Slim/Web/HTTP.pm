@@ -1389,6 +1389,10 @@ sub sendStreamingFile {
 	
 	$streamingFiles{$httpClient} = $fh;
 
+	# we are not a real streaming session, so we need to avoid sendStreamingResponse using the random $client stored in
+	# $peerclient as this will cause streaming to the real client $client to stop.
+	delete $peerclient{$httpClient};
+
 	addStreamingResponse($httpClient, $headers);
 }
 
