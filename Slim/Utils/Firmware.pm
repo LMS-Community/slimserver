@@ -170,14 +170,16 @@ sub init_jive {
 	}
 	else {
 		# Check for a newer jive.version, only for svn users
-		if ( $::REVISION eq 'TRUNK' ) {		
+
+		# check all the time at present as jive is updated nightly
+		#if ( $::REVISION eq 'TRUNK' ) {		
 			$log->info('Checking for a newer jive.version file...');
 			
 			if ( !download( $url, $version_file ) ) {
 				# not modified
 				$log->info("Jive version file is up to date");
 			}
-		}
+		#}
 	}
 		
 	my $version = read_file($version_file);
