@@ -63,6 +63,7 @@ Main = function(){
 			Ext.QuickTips.init();
 			Ext.get('loading').hide();
 			Ext.get('loading-mask').hide();
+			Ext.UpdateManager.showLoadIndicator = 'false';
 
 			this.onResize();
 		},
@@ -411,6 +412,10 @@ Playlist = function(){
 					}
 				}
 			});
+
+			if (el = Ext.get('playlistPanel')) {
+				el.getUpdateManager().showLoadIndicator = false;
+			}
 		},
 
 		load : function(url){
