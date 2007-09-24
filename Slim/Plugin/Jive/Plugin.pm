@@ -667,8 +667,9 @@ sub playerSettingsMenu {
 	};
 
 	# information, always display
+	my $playerInfoText = sprintf(Slim::Utils::Strings::string('INFORMATION_SPECIFIC_PLAYER'), $client->name());
 	push @menu, {
-		text      => Slim::Utils::Strings::string('INFORMATION_MENU_PLAYER'),
+		text      => $playerInfoText,
 		offset    => 0,
 		count	  => 1,
 		textArea => 

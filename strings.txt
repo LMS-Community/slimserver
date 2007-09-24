@@ -11663,6 +11663,9 @@ INFORMATION_MENU_PLAYER
 	SV	Spelar-information
 	ZH_CN	播放表信息
 
+INFORMATION_SPECIFIC_PLAYER
+	EN	%s Information
+
 INFORMATION_MENU_SERVER
 	CS	Informace serveru
 	DE	Server-Informationen
