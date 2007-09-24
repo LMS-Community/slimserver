@@ -411,8 +411,6 @@ Playlist = function(){
 					}
 				}
 			});
-
-			this.load();
 		},
 
 		load : function(url){
