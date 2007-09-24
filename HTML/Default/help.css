@@ -1,0 +1,75 @@
+html, body, tr, tr, p, div, li, input, ul, b, a {
+	font-family: sans-serif;
+	color: #666666;
+}
+
+html, body, tr, tr, p, div, li, input, ul {
+	font-size: 12px;
+}
+
+body {
+	background-image: url(html/images/help/background.gif);
+	margin: 5px;
+	height: 100%;
+	overflow: auto;
+}
+
+.inner_content {
+	background-image: url(html/images/help/background.gif);
+}
+
+h1 { font-size: 125%; }
+h2 { font-size: 110%; }
+
+h1, h2, h3, h4 {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+p {
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+ul {
+	list-style-type: disc;
+}
+
+blockquote, ul {
+	margin-left: 40px;
+}
+
+li {
+	margin-bottom: 5px;
+}
+
+#questionmark {
+	float: left;
+	margin-left: 20px;
+}
+
+#helpsection {
+	margin-top: 20px;
+}
+
+.titlebox { background: url(html/images/help/title_background.gif) repeat; }
+.titlebox_content { background: url(html/images/help/title_background.gif) repeat; }
+.titlebox_content div { color: white; }
+.titlebox_top div, .playerbox_top div { background: url(html/images/help/title_top_left.gif) no-repeat top left; }
+.titlebox_top, .playerbox_top { background: url(html/images/help/title_top_right.gif) no-repeat top right; }
+.titlebox_bottom div, .playerbox_bottom div { background: url(html/images/help/title_bottom_left.gif) no-repeat bottom left; }
+.titlebox_bottom, .playerbox_bottom { background: url(html/images/help/title_bottom_right.gif) no-repeat bottom right; }
+
+.selectorMarker, .mouseOver {
+	margin-left: 180px;
+}
+
+.mouseOver .selector_topRight { background: #9aacc4 url(html/images/help/selector_top_right.gif) no-repeat top right; }
+.mouseOver .selector_topLeft { background: transparent url(html/images/help/selector_top_left.gif) no-repeat top left; }
+.mouseOver .selector_bottomRight { background: transparent url(html/images/help/selector_bottom_right.gif) no-repeat bottom right; }
+.mouseOver .selector_bottomLeft { background: transparent url(html/images/help/selector_bottom_left.gif) no-repeat bottom left; }
+
+.browseItemLink:hover,
+.mouseOver .homeMenuItem a {
+	color: white;
+}

@@ -1,36 +1,42 @@
-[% PROCESS pageheader.html %]
-<style>
-	#content {
-		margin-left: 10px;
-	}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		[% PROCESS standardheader.html %]
 
-	h1 { font-size: 125%; }
-	h2 { font-size: 110%; }
+		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="/html/ext/ext-all[% IF debug %]-debug[% END %].js?r=[% revision %]"></script>
+		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
+		<script type="text/javascript" src="[% webroot %]html/utils.js?r=[% revision %]"></script>
 
-	h1, h2, h3, h4 {
-		margin-top: 10px;
-		margin-bottom: 10px;
-	}
+		<link rel="stylesheet" type="text/css" href="[% webroot %]help.css?r=[% revision %]" />
 
-	p, td {
-		font-family: sans-serif;
-		font-size: 12px;
-	}
+		<script type="text/javascript">
+		</script>
 
-	p {
-		margin-top: 10px;
-		margin-bottom: 5px;
-	}
+	</head>
+	<body>
+		<div class="inner_content">
 
-	ul {
-		list-style-type: disc;
-	}
+			<div class="titlebox">
+				<div class="titlebox_top"><div></div></div>
+				<div class="titlebox_content">
+					<div style="position:relative;">
+						[% pagetitle %]
+					</div>
+				</div>
+				<div class="titlebox_bottom"><div></div></div>
+				[% IF titleRight; titleRight; END %]
+			</div>
 
-	blockquote, ul {
-		margin-left: 40px;
-	}
+			<div id="crumblist">
+				[% helptitle = "HELP" | string %]
+				[% pageHeaderMenu = BLOCK %]
+					<a href="[% webroot %]home.html?page=help">[% helptitle %]</a>
+					[% IF techinfo %] > <a href="[% webroot %]html/docs/index.html?player=[% playerURI %]">[% "TECHNICAL_INFORMATION" | string %]</a>[% END %]
+				[% END; %]
+				[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
+				[%- PROCESS crumblist noHomeLink=1 IF pwd_list && (pagetitle != helptitle) %]
+			</div>
 
-	li {
-		margin-bottom: 5px;
-	}
-</style>
+			<div id="content"[% IF !dontscroll %] class="scrollingPanel"[% END %]>

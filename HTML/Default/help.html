@@ -1,0 +1,16 @@
+[% pagetitle = "HELP" | string %]
+[% PROCESS helpheader.html %]
+
+<img src="[% webroot %]html/images/help/questionmark.gif" id="questionmark">
+
+<div id="helpsection">
+[%- FOREACH link = additionalLinks.help %]
+	<div class="selectorMarker" onmouseover="Utils.highlight(this);" id="[% link.value %]"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+		<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
+			<a href="[% link.value | html %][% IF NOT link.value.match('^http') %]player=[% playerURI %][% END %]" [% IF link.value.match('^http') %]target="_new"[% END %] class="browseItemLink">[% link.key | string | html %]</a>
+		</div>
+	</div></div></div></div></div>
+[%- END %]
+</div>
+
+[% PROCESS helpfooter.html %]

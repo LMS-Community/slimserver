@@ -29,7 +29,7 @@ Main = function(){
 
 			// TODO: these links need to go to the correct pages
 			Ext.get('helpLink').on('click', function(){
-				window.open(webroot + 'html/docs/quickstart.html', 'settings', 'dependent=yes,resizable=yes');
+				window.open(webroot + 'home.html?page=help', 'settings', 'dependent=yes,resizable=yes');
 			});
 
 			Ext.get('settingsLink').on('click', function(){
