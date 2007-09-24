@@ -288,7 +288,7 @@ sub browsedb {
 	}
 
 	# Generate the 'All $noun' link based on the next level down.
-	if ($count && $count > 1 && !$rs->suppressAll) {
+	if ($count && $count > 1 && !$rs->suppressAll && $level) {
 
 		my $nextLevelRS;
 

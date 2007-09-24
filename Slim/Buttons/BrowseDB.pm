@@ -769,7 +769,7 @@ sub setMode {
 	}
 
 	# Then see if we have to add an ALL option
-	if (($descend || $search) && $count > 1 && !$rs->suppressAll) {
+	if (($descend || $search) && $count > 1 && !$rs->suppressAll && $level) {
 
 		# Use the ALL_ version of the next level down in the hirearchy
 		if ($descend) {
