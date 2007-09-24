@@ -667,17 +667,23 @@ Player = function(){
 
 			if (!isNaN(playerStatus.duration) && playerStatus.duration > 0) {
 				totalTime = playerStatus.duration;
-				Ext.get('ctrlTotalTime').update(Utils.formatTime(totalTime));
 
 				remainingTime = '-' + Utils.formatTime(totalTime - playTime); 
 				shortTime = remainingTime + '&nbsp;(' + Utils.formatTime(totalTime) + ')';
 
 				if (totalTime > 0 && playTime >= totalTime-1)
 					this.getStatus();
+
+				this.progressBar('ctrlProgress', playTime, totalTime);
+				totalTime = Utils.formatTime(totalTime) + '&nbsp;-&nbsp;';
+			}
+			else {
+				this.progressBar('ctrlProgress', playTime, 0);
+				totalTime = '';
 			}
 
+			Ext.get('ctrlTotalTime').update(totalTime);
 			Ext.get('ctrlPlaytime').update(remainingTime);
-			this.progressBar('ctrlProgress', playTime, totalTime);
 
 			Ext.get('ctrlPlaytimeCollapsed').update(shortTime);
 
@@ -696,7 +702,7 @@ Player = function(){
 
 			// if we don't know the total play time, just put the indicator in the middle
 			if (!totalTime) {
-				left = Math.floor(max / 2);
+				left = 0;
 			}
 
 			// calculate left/right percentage
