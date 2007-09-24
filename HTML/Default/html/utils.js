@@ -89,6 +89,7 @@ var Utils = function(){
 	var cookieManager = new Slim.CookieManager({
 		expires: new Date(new Date().getTime() + 1000*60*60*24*365)
 	});
+	var highlightedEl;
 
 	return {
 		init : function(){
@@ -105,27 +106,29 @@ var Utils = function(){
 			// always highlight the main selector, not its children
 			if (el != null) {
 				Utils.unHighlight();
+				highlightedEl = el;
 
-				if (!el.hasClass('currentSong'))
+				if (el.hasClass('currentSong')) {
+					el.addClass('mouseOver');
+				}
+				else {
 					el.replaceClass('selectorMarker', 'mouseOver');
+				}
 
 				el.on('click', Utils.onSelectorClicked);
-
-				Ext.select('span.browsedbControls, span.browsedbRightControls, span.browsedbLeftControls, div.playlistControls', false, el.dom).show();
 			}
 		},
 
 		unHighlight : function(){
 			// remove highlighting from the other DIVs
-			var items = Ext.DomQuery.select('div.mouseOver');
-			for(var i = 0; i < items.length; i++) {
-				var el = Ext.get(items[i].id);
-				if (el) {
-					el.replaceClass('mouseOver', 'selectorMarker');
-					el.un('click', Utils.onSelectorClicked);
-
-					Ext.select('span.browsedbControls, span.browsedbRightControls, span.browsedbLeftControls, div.playlistControls', false, el.dom).hide();
+			if (highlightedEl) {
+				if (highlightedEl.hasClass('currentSong')) {
+					highlightedEl.removeClass('mouseOver');
 				}
+				else {
+					highlightedEl.replaceClass('mouseOver', 'selectorMarker');
+				}
+				highlightedEl.un('click', Utils.onSelectorClicked);
 			}
 		},
 

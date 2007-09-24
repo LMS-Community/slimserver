@@ -52,9 +52,15 @@ img.cmdLinkIcon {
 }
 
 .browsedbControls, .playlistControls, .browsedbRightControls, .browsedbLeftControls {
+	visibility: hidden;
 	position: absolute;
 	top: -2px;
 	right: 10px;
+}
+
+.mouseOver .browsedbControls, .mouseOver .playlistControls,
+.mouseOver .browsedbRightControls, .mouseOver .browsedbLeftControls {
+	visibility: visible;
 }
 
 .nowPlayingIcon {

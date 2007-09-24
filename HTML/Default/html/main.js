@@ -401,14 +401,6 @@ Playlist = function(){
 				'#rightpanel div.inner@mouseover': function(ev, target){
 					if (target == this)
 						Utils.unHighlight();
-
-					var current = Ext.DomQuery.selectNode('div.currentSong');
-
-					if (!(Ext.fly(current) && Ext.fly(current).contains(target))) {
-						if (controls = Ext.DomQuery.selectNode('.currentSong div.playlistControls')) {
-							Ext.get(controls).hide();
-						}
-					}
 				}
 			});
 
@@ -452,21 +444,12 @@ Playlist = function(){
 				el.getUpdateManager().setDefaultUrl('');
 		},
 
-		showPlaylistControl : function(ev, target){
-			var el = Ext.get(target);
-			if (el) {
-				Ext.select('div.playlistControls', false, el.dom).show();
-			}
-		},
-
 		onUpdated : function(){
 			Main.onResize();
 
 			// shortcut if there's no player
 			if (!Ext.get('playlistTab'))
 				return;
-
-			Ext.select('div.currentSong').on('mouseover', Playlist.showPlaylistControl);
 
 			// make playlist items draggable
 			Ext.dd.ScrollManager.register('playList');
@@ -482,7 +465,6 @@ Playlist = function(){
 				item.dd.scroll = false;
 				item.dd.scrollContainer = true;
 			}
-
 
 			Playlist.highlightCurrent();
 
