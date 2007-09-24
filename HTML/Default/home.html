@@ -30,7 +30,7 @@
 	<span id="radioCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "RADIO" | string %]</span>
 	<span id="searchCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] <span class="mouseOver" onclick="MainMenu.showPanel('my_music');">[% "MY_MUSIC" | string %]</span></span>
 	<span id="music_on_demandCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "MUSIC_ON_DEMAND" | string %]</span>
-	<span id="other_servicesCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "OTHER_SERVICES" | string %]</span>
+	<span id="pluginsCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "PLUGINS" | string %]</span>
 [% END %]
 
 [% IF NOT warn %]
@@ -101,8 +101,8 @@ END %]
 	[% END %]
 
 	[% IF additionalLinks.plugins %]
-		[% PROCESS menuItem token="OTHER_SERVICES"; expandable = 0 %]
-		<div id="OTHER_SERVICES_expanded" class="expandableHomeMenuItem">[%- pluginsItems -%]</div>
+		[% PROCESS menuItem token="PLUGINS"; expandable = 0 %]
+		<div id="PLUGINS_expanded" class="expandableHomeMenuItem">[%- pluginsItems -%]</div>
 	[% END %]
 </div>
 
@@ -119,7 +119,7 @@ END %]
 	[%- music_on_demandItems -%]
 </div>
 
-<div class="homeMenuSection" id="other_servicesMenu">
+<div class="homeMenuSection" id="pluginsMenu">
 	[%- pluginsItems -%]
 </div>
 

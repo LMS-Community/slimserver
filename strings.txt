@@ -345,23 +345,6 @@ LIBRARY_CONTAINS
 	SV	Musikbiblioteket innehåller
 	ZH_CN	您的音乐库存有
 
-BROWSEMENU
-	CS	Procházet muziku
-	DA	Gennemse musik
-	DE	Durchsuchen
-	EN	Browse
-	ES	Examinar
-	FI	Selaa
-	FR	Parcourir
-	HE	עיון
-	IT	Sfoglia
-	JA	音楽をブラウズする
-	NL	Bekijken
-	NO	Bla i musikk
-	PT	Escolher Música
-	SV	Bläddra musik
-	ZH_CN	浏览音乐
-
 MUSIC
 	CS	Hudební archiv
 	DA	Musik
@@ -498,9 +481,6 @@ MY_MUSIC
 	IT	Musica
 	NL	Mijn muziek
 	NO	Min musikk
-
-OTHER_SERVICES
-	EN	Other Services
 
 GAMES
 	CS	Hry
@@ -2257,20 +2237,7 @@ SETUP_GROUP_MENUITEMS_DESC
 	ZH_CN	您可将播放机最高阶层的主页菜单加以用户化。单击以调整排序或除去该菜单项目。如要列入已被除去的菜单项目，请单击"Add"。
 
 SETUP_GROUP_PLUGINITEMS_INTRO
-	CS	Pluginy:
-	DA	Moduler:
-	DE	Plugins:
-	EN	Plugins:
-	ES	Complementos:
-	FR	Plugins:
-	HE	יישומי Plugin:
-	IT	Plugin:
-	JA	使われていないメニューアイテム:
-	NL	Plug-ins:
-	NO	Innstikk (plugins):
-	PT	Extras:
-	SV	Tillägg:
-	ZH_CN	插件程序：
+	EN	Extras:
 
 SETUP_GROUP_NONMENUITEMS_INTRO
 	CS	Neaktivní položky menu:
@@ -2588,36 +2555,12 @@ SETUP_GROUP_IRSETS_DESC
 	ZH_CN	您可选择让这个播放机对某些红外线遥控信号有所反应。如要激活某个遥控代码组，请在如下的复选框内标记。如要撤销某个遥控代码组，请清除其复选框中的标记。
 
 SETUP_GROUP_PLUGINS
-	CS	Pluginy
-	DA	Moduler
-	DE	Plugins
-	EN	Plugins
-	ES	Complementos
-	FR	Plugins
-	HE	יישומי Plugin
-	IT	Plugin
-	JA	プラグイン
-	NL	Plug-ins
-	NO	Innstikk (plugins)
-	PT	Extras
-	SV	Tillägg
-	ZH_CN	插件程序
+	EN	Extras
 
 SETUP_GROUP_PLUGINS_DESC
-	CS	SlimSever obsahuje některé zvláštní schopnosti. Tyto schopnosti mu dodávají moduly - pluginy, které můžet používat pomocí ovladače. Můžete povolit, nebo zakázat libovolně pluginy z jejich adresáře. K aktivaci/deaktivaci použijte ovládací prvek u jména pluginu. <br>Také můžete zvolit, kdy se mají pluginy načítat, zda pouze při procházení voleb Pluginy v menu, nebo při startování serveru. Defaultně je nastaveno pouze při startu. Pro uložení změn klikněte na tlačítko 'Změnit'.
-	DA	SlimServer inkluderer nogle ekstra funktioner, grupperet i moduler, som du kan anvende via din fjernbetjening. Modulerne ligger i Plugins-mappen og kan aktiveres eller deaktiveres individuelt. Aktiver moduler ved at afkrydse dem nedenfor, deaktiver moduler ved at fjerne afkrydsningen. Tryk Gem for at gemme dine ændringer.
-	DE	SlimServer enthält eine Reihe von Zusatzfunktionen, Plugins genannt, die Sie über die Fernbedienung steuern können. Sie können Plugins aus dem Plugins-Ordner aufnehmen bzw. entfernen, indem Sie das entsprechende Kontrollkästchen aktivieren bzw. deaktivieren. Sie können den Server auch so konfigurieren, dass er bei jedem Öffnen des Plugin-Menüs erneut nach Plugins sucht. Die Standardeinstellung ist 'Plugins nur beim Programmstart laden'. Klicken Sie auf 'Ändern', um die Änderungen zu speichern.
-	EN	SlimServer includes some extra features, called Plugins, that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. You may choose to have the server scan for plugins each time you navigate to the player plugins menu or the plugins settings. Default is to load on startup only.  To save your changes, click Change.
-	ES	SlimServer incluye algunas características extra, llamadas complementos, que se pueden usar con el mando a distancia. En el directorio Complementos, puede habilitar o deshabilitar complementos individuales. Para habilitar un extra, coloque una marca de verificación junto al nombre siguiente. Para deshabilitar un extra, quite la marca de verificación. Se puede hacer que el servidor busque complementos cada vez que acceda al menú de complementos del reproductor o a la configuración de complementos. La opción predeterminada es cargar sólo al iniciar. Para guardar los cambios, haga clic en Cambiar.
-	FR	Vous pouvez sélectionner des fonctionnalités supplémentaires de la platine, appelées plugins, disponibles à partir de la télécommande. Vous pouvez activer ou désactiver ces fonctionnalités à partir du dossier Plugins. Pour activer un plugin, cochez la case correspondante. Désélectionnez la case pour le désactiver. Le SlimServer peut rechercher des plugins chaque fois que vous accédez au menu des plugins de la platine ou aux réglages des plugins. Par défaut, ils sont chargés au démarrage uniquement. Cilquez sur Modifier pour enregistrer les modifications.
-	HE	SlimServer כולל מספר מאפיינים נוספים, המכונים יישומי Plugin, שניתן להשתמש בהם עם השלט-רחוק. באפשרותך לבחור אם להפעיל או להשבית יישומי Plugin מסוימים בספרייה 'יישומי Plugin'. כדי להפעיל יישום הרחבה, הצב סימן ביקורת ליד השם ברשימה שלהלן. כדי להשבית יישום הרחבה, נקה את סימן הביקורת. באפשרותך לבחור להורות לשרת לבצע סריקה לאיתור יישומי Plugin בכל פעם שאתה מנווט אל תפריט יישומי ה-Plugin או אל הגדרות יישומי ה-Plugin של הנגן. ברירת המחדל היא לטעון את היישומים בהפעלה בלבד. לשמירת השינויים, לחץ על 'שנה'.
-	IT	In SlimServer sono disponibili alcune funzioni aggiuntive, note come plugin, utilizzabili con il telecomando. Nella directory Plugin è possibile scegliere di attivare o disattivare singoli plugin. Per attivare un plugin, selezionare la casella in corrispondenza del nome riportato di seguito; per disattivarlo, deselezionarla. È possibile impostare il server in modo che esegua la ricerca dei plugin ogni volta che si accede al menu Plugin o alle impostazioni ad essi relative. Per impostazione predefinita vengono caricati solo all'avvio. Per salvare le modifiche, fare clic su Cambia.
-	JA	SlimServerには、リモートコントロールで使えるプラグインがあります。プラグインのディレクトリで選んでください。プレーヤーのプラグインメニューを見るたびに新しいプラグインをスキャンするようにも設定できます。出荷時設定はスタートアップの時だけにスキャンするようになっています。変更をセーブするには｢変更」をクリックして下さい。
-	NL	SlimServer biedt een aantal extra functies, plug-ins genaamd, die je met je afstandsbediening kunt gebruiken. Je kunt individuele plug-ins in de map Plug-ins in- of uitschakelen. Selecteer hieronder een naam om een plug-in in te schakelen. Hef de selectie op om een plug-in uit te schakelen. Je kunt de server op plug-ins laten scannen telkens wanneer je naar het plug-inmenu van de speler of de instellingen voor plug-ins gaat. Standaard wordt er alleen bij het opstarten op plug-ins gescand. Klik op 'Veranderen' om je wijzigingen op te slaan.
-	NO	SlimServer inneholder en del tilleggsfunksjoner, kalt innstikk eller plugins, som du kan benytte deg av med fjernkontrollen. Disse kan aktiveres eller deaktiveres individuelt. For å aktivere et innstikk, merk den. For å deaktivere et innstikk, fjern merket. For å lagre endringene, velg «Endre».
+	DE	SlimServer enthält eine Reihe von Extras, die Sie über die Fernbedienung steuern können. Sie können Extras aus dem Plugins-Ordner aufnehmen bzw. entfernen, indem Sie das entsprechende Kontrollkästchen aktivieren bzw. deaktivieren. Sie können den Server auch so konfigurieren, dass er bei jedem Öffnen des Extras-Menüs erneut nach Extras sucht. Die Standardeinstellung ist 'Extras nur beim Programmstart laden'. Klicken Sie auf 'Ändern', um die Änderungen zu speichern.
+	EN	SlimServer includes some extras that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. You may choose to have the server scan for extras each time you navigate to the player extras menu or the extras settings. Default is to load on startup only.  To save your changes, click Change.
 	PT	O cliente SlimServer inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
-	SV	SlimServer inkluderar tilläggs-funktioner som du kan konfigurera och/eller använda via din fjärrkontroll. Tilläggen finns i Plugins-mappen och kan aktiveras eller avaktiveras var för sig. Kryssa i rutan bredvid tillägget nedan för att aktivera ett tillägg. Ta bort krysset när du vill avaktivera ett tillägg. Spara dina ändringar genom att klicka på "Ändra".
-	ZH_CN	SlimServer设有一些称为插件程序(Plugins)的额外功能。这些功能都可通过遥控器操控。您可选择激活或撤销在Plugins目录下的各类插件程序。如要激活某个插件程序，请在其复选框中标记。如要撤销某个插件程序，请清除其复选框中的标记。您可选择是否让服务器在每当漫游到插件程序的菜单或设置时进行插件程序扫瞄。在服务器启动时装载插件程序为缺省。请点击《更动》以保存您所作的设定。
 
 SETUP_GROUP_FORMATS_CONVERSION
 	CS	Nastavení konverze formátů
@@ -4177,22 +4120,6 @@ SETUP_IRSETLIST_CHANGE
 	SV	Inställningen för %s är ändrad.
 	ZH_CN	%s设置已更改。
 
-SETUP_PLUGINLIST_OK
-	CS	Pluginy:
-	DA	Moduler:
-	DE	Plugins:
-	EN	Plugins:
-	ES	Complementos:
-	FR	Plugins:
-	HE	יישומי Plugin:
-	IT	Plugin:
-	JA	プラグイン:
-	NL	Plug-ins:
-	NO	Innstikk (plugins):
-	PT	Extras
-	SV	Tillägg:
-	ZH_CN	插件程序：
-
 SETUP_PLUGINLIST_CHANGE
 	DA	Indstillingen for %s blev ændret.
 	DE	Einstellung für %s wurde geändert.
@@ -4643,35 +4570,12 @@ SETUP_SKIN_OK
 	ZH_CN	您现在的外壳是：
 
 SETUP_PLUGINS
-	CS	Pluginy
-	DA	Moduler
-	DE	Plugins
-	EN	Plugins
-	ES	Complementos
-	FR	Plugins
-	HE	יישומי Plugin
-	IT	Plugin
-	JA	プラグイン
-	NL	Plug-ins
-	NO	Innstikk (plugins)
-	PT	Extras
-	SV	Tillägg
-	ZH_CN	插件程序
+	EN	Extras
 
 SETUP_PLUGINS_DESC
-	DA	SlimServer inkluderer nogle ekstra funktioner (Moduler), såsom spil, som du kan anvende med din fjernbetjening. Marker nedenfor om du ønsker adgang til Modul-menuen fra Slim-hovedmenuen.
-	DE	SlimServer enthält eine Reihe von Zusatzfunktionen (u.a. Spiele), die Sie über die Fernbedienung steuern können. Unten können Sie das Plugins-Menü in das Hauptmenü einfügen bzw. daraus entfernen.
-	EN	SlimServer includes some extra features, including some games, you can use with your remote. Use the menu below to add or remove the Plugins menu from your Home.
-	ES	SlimServer incluye algunas características extra, incluidos algunos juegos, que se pueden usar con el mando a distancia. Use el menú siguiente para agregar o quitar el menú Complementos de Inicio.
-	FR	Vous pouvez sélectionner des fonctionnalités supplémentaires de la platine, parmi lesquels des jeux, disponibles à partir de la télécommande. La barre de menu ci-dessous permet d'ajouter ou de supprimer le menu Plugins du menu d'accueil.
-	HE	SlimServer כולל מספר מאפיינים נוספים, לרבות מספר משחקים, שניתן להשתמש בהם עם השלט-רחוק. השתמש בתפריט שלהלן להוספה או הסרה של תפריט 'יישומי Plugin' מהתפריט הראשי.
-	IT	In SlimServer sono disponibili funzionalità aggiuntive, tra cui alcuni giochi utilizzabili con il telecomando. È possibile aggiungere o eliminare il menu Plugin dalla pagina iniziale utilizzando il menu seguente.
-	JA	SlimServerは、ゲーム等、いくつかの追加機能があります。下のメニューを使って、それらプラグインの追加・削除ができます。
-	NL	SlimServer biedt een aantal extra functies, waaronder enkele spelletjes, die je met je afstandsbediening kunt gebruiken. Gebruik het onderstaande menu om het menu Plug-ins toe te voegen aan of te verwijderen uit je Hoofdmenu.
-	NO	SlimServer inkluderer mange tillegg, f.eks noen spill, som du kan benytte deg av med din fjernkontroll. Benytt menyen nedenfor for å legge til eller ta bort Innstikk-menyen fra fin Hovedmeny.
+	DE	SlimServer enthält eine Reihe von Extras (u.a. Spiele), die Sie über die Fernbedienung steuern können. Unten können Sie das Extras-Menü in das Hauptmenü einfügen bzw. daraus entfernen.
+	EN	SlimServer includes some extras, including some games, you can use with your remote. Use the menu below to add or remove the Extras menu from your Home.
 	PT	O SlimServer inclui algumas funcionalidades extras, tais como alguns jogos, que podem ser usados com o controlo remoto. Use o menu abaixo para adicionar ou remover os menus extra do cliente.
-	SV	SlimServer inkluderar några tillägg, t.ex några spel, som du kan använda med din fjärrkontroll. Använd menyn nedan för att lägga till eller ta bort Tilläggs-menyn from din Huvudmeny.
-	ZH_CN	SlimServer拥有一些额外功能，包括一些可以使用遥控器控制的游戏。请使用如下的菜单增加或除去在主页上的插件程序菜单。
 
 SETUP_REFRESHRATE
 	CS	Interval mezi obnovením webového rozhraní
@@ -4845,19 +4749,9 @@ SETUP_THUMBSIZE_DESC
 	ZH_CN	以映像点（25-250）为单位，请选择浏览图象时缺省图象指图的大小。缺省值为100。
 
 SETUP_PLUGINS_OK
-	DA	Din menu for moduler er nu:
-	DE	Das Plugins-Menü ist:
-	EN	Your Plugins menu is now:
-	ES	El menú Complementos es:
-	FR	Votre menu Plugins:
-	HE	תפריט 'יישומי Plugin' מוגדר כ:
-	IT	Menu Plugin attuale:
-	JA	あなたのプラグイン メニューは現在:
-	NL	Je menu Plug-ins is nu:
-	NO	Din innstikksmeny er nå:
+	DE	Das Extras-Menü ist:
+	EN	Your Extras menu is now:
 	PT	O menu de extras é
-	SV	Din Tilläggsmeny är nu:
-	ZH_CN	您现在的插件程序菜单：
 
 SETUP_HTTPPORT
 	CS	Číslo portu web serveru
@@ -9309,21 +9203,13 @@ BROWSE
 	ZH_CN	浏览
 
 BROWSE_MUSIC
-	CS	Procházet archiv
-	DA	Gennemse musik
-	DE	Durchsuchen
-	EN	Browse
-	ES	Examinar
-	FI	Selaa
-	FR	Parcourir
-	HE	עיון
-	IT	Sfoglia
-	JA	曲をブラウズする
-	NL	Bekijken
-	NO	Bla i Musikk
-	PT	Escolher Música
-	SV	Bläddra Musik
-	ZH_CN	浏览音乐
+	DE	Eigene Musik
+	EN	My Music
+	ES	Mi música
+	FR	Ma musique
+	IT	Musica
+	NL	Mijn muziek
+	NO	Min musikk
 
 BROWSE_BY_GENRE
 	CS	Procházet podle žánrů
@@ -9518,29 +9404,10 @@ SYNCHRONIZED_WITH
 	ZH_CN	同步与
 
 PLAYER_PLUGINS
-	DE	Plugins
-	EN	Plugins
-	ES	Complementos
-	FR	Plugins
-	HE	יישומי Plugin
-	IT	Plugin
-	NL	Plug-ins
+	EN	Extras
 
 PLUGINS
-	CS	Pluginy
-	DA	Moduler
-	DE	Plugins
-	EN	Plugins
-	ES	Complementos
-	FR	Plugins
-	HE	יישומי Plugin
-	IT	Plugin
-	JA	プラグイン
-	NL	Plug-ins
-	NO	Plugins
-	PT	Extras
-	SV	Tillägg
-	ZH_CN	插件程序
+	EN	Extras
 
 NEXT
 	CS	Další
@@ -10529,54 +10396,19 @@ CURRENT_WEB_SKIN
 	ZH_CN	当前的网外壳：
 
 DISPLAY_PLUGINS
-	CS	Zobrazit plugin menu na SlimPlayeru:
-	DA	Viser Modul-menuen på SlimServer:
-	DE	Plugin-Menü auf dem Slim-Player anzeigen:
-	EN	Display the Plugins menu on the Slim player:
-	ES	Mostrar el menú Complementos en el reproductor Slim:
-	FI	Näytä plugin valikko soittimella:
-	FR	Afficher le menu Plugins sur la platine:
-	HE	הצגת התפריט 'יישומי Plugin' בנגן Slim:
-	IT	Visualizza il menu Plugin sul lettore Slim:
-	JA	プラグインのメニューをプレーヤーに表示する :
-	NL	Het menu Plug-ins op de SlimServer weergeven:
-	NO	Vis tilleggsmenyen på Slim spilleren:
+	DE	Extras-Menü auf dem Slim-Player anzeigen:
+	EN	Display the Extras menu on the Slim player:
 	PT	Mostrar menu de Extras no cliente Slim
-	SV	Visa tilläggs-menyn på Slim-spelaren:
-	ZH_CN	在播放机上显示插件程序菜单：
 
 SHOW_PLUGINS
-	CS	Zobrazit pluginy
-	DA	Vis moduler
-	DE	Plugins anzeigen
-	EN	Show Plugins
-	ES	Mostrar complementos
-	FR	Afficher le menu Plugins
-	HE	הצגת יישומי Plugin
-	IT	Mostra i plugin
-	JA	プラグインを表示する
-	NL	Plug-ins weergeven
-	NO	Vis Plugins
+	DE	Extras anzeigen
+	EN	Show Extras
 	PT	Mostrar Extras
-	SV	Visa tillägg
-	ZH_CN	显示插件程序
 
 NO_PLUGINS
-	CS	Žádný dostupný plugin
-	DA	Ingen moduler til rådighed.
-	DE	Keine Plugins verfügbar.
-	EN	No Plugins available.
-	ES	No hay complementos disponibles.
-	FI	Ei plugineja saatavilla
-	FR	Aucun plugin disponible.
-	HE	אין יישומי Plugin זמינים.
-	IT	Nessun plugin disponibile.
-	JA	利用可能なプラグインはありません。
-	NL	Geen plug-ins beschikbaar.
-	NO	Ingen Plugins tilgjengelig.
+	DE	Keine Extras verfügbar.
+	EN	No Extras available.
 	PT	Sem Extras
-	SV	Inga tillägg tillgängliga.
-	ZH_CN	没有插件程序可利用
 
 MUSIC_PLAYER
 	DA	Afspiller
@@ -11856,18 +11688,8 @@ INFORMATION_MENU_LIBRARY
 	ZH_CN	音乐库统计
 
 INFORMATION_MENU_MODULE
-	CS	Plugin moduly
-	DE	Plugin-Module
-	EN	Plugin Modules
-	ES	Módulos de complementos
-	FR	Plugins
-	HE	מודולי Plugin
-	IT	Moduli plugin
-	JA	プラグインモジュール
-	NL	Plug-inmodules
-	NO	Plugin moduler
-	SV	Tillägg
-	ZH_CN	插件程序模块
+	DE	Extras-Module
+	EN	Extras Modules
 
 INFORMATION_PLAYER_NAME
 	CS	Název přehrávače
@@ -13796,7 +13618,7 @@ SETUP_DEBUG_SERVER_LOG
 	EN	Server Log File
 
 SETUP_DEBUG_SERVER_LOG_DESC
-	DE	SlimServer schreibt Logs aller Server relevanten Aktivitäten (Audio Streaming, Infrarot, Plugins etc.) in folgende Datei:
+	DE	SlimServer schreibt Logs aller Server relevanten Aktivitäten (Audio Streaming, Infrarot etc.) in folgende Datei:
 	EN	SlimServer keeps a log file for all server related activities (Audio Streaming, Infrared, etc) here:
 
 SETUP_DEBUG_SCANNER_LOG
@@ -13931,7 +13753,7 @@ UNINSTALL
 	EN	Uninstall
 
 PLUGINS_CHANGED
-	DE	Die die folgenden Plugins werden beim nächsten Server-Neustart aktiviert bzw. deaktiviert:
+	DE	Die folgenden Plugins werden beim nächsten Server-Neustart aktiviert bzw. deaktiviert:
 	EN	Changes will take place at the next server restart for the following plugins:
 
 SETUP_VIEW_SCANNING

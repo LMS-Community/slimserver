@@ -42,8 +42,8 @@ var MainMenu = function(){
 					this.showPanel('music_on_demand');
 					break;
 
-				case 'OTHER_SERVICES':
-					this.showPanel('other_services');
+				case 'PLUGINS':
+					this.showPanel('plugins');
 					break;
 
 				default:
@@ -127,9 +127,9 @@ var MainMenu = function(){
 			var panelExists = false;
 			this.collapseAll();
 
-			// make plugins show up in the "Other Services" panel
+			// make plugins show up in the "Extras" panel
 			if (panel == 'plugins')
-				panel = 'other_services';
+				panel = 'plugins';
 
 			var items = Ext.DomQuery.select('div.homeMenuSection');
 			for(var i = 0; i < items.length; i++) {
