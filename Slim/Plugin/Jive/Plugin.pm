@@ -461,7 +461,11 @@ sub sleepSettingsQuery {
 	my $val     = $client->currentSleepTime();
 	my @menu;
 
-	push @menu, sleepInXHash($val, 0);
+	if ($val > 0) {
+		my $sleepString = sprintf(Slim::Utils::Strings::string('SLEEPING_IN_X_MINUTES'), $val);
+		push @menu, { text => $sleepString };
+		push @menu, sleepInXHash($val, 0);
+	}
 	push @menu, sleepInXHash($val, 15);
 	push @menu, sleepInXHash($val, 30);
 	push @menu, sleepInXHash($val, 45);
@@ -1068,9 +1072,6 @@ sub powerHash {
 			do  => {
 				player => 0,
 				cmd    => ['power', $action],
-				params => {
-					menu => 'main',
-				},
 			},
 		},
 	);
@@ -1081,7 +1082,7 @@ sub sleepInXHash {
 	my ($val, $sleepTime) = @_;
 	my $minutes = Slim::Utils::Strings::string('MINUTES');
 	my $text = $sleepTime == 0 ? 
-		Slim::Utils::Strings::string("NONE") :
+		Slim::Utils::Strings::string("SLEEP_CANCEL") :
 		$sleepTime . " " . $minutes;
 	my %return = ( 
 		text    => $text,

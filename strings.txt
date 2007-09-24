@@ -1044,6 +1044,12 @@ CANCEL_SLEEP
 	SV	Insomning avbruten
 	ZH_CN	倒数关机功能已消除
 
+SLEEP_CANCEL
+	EN	Cancel sleep
+
+SLEEPING_IN_X_MINUTES
+	EN	Sleeping in %s minutes
+
 SLEEPING_IN
 	CS	Sleep za
 	DA	Slumrefunktion om
