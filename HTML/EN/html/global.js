@@ -313,7 +313,7 @@ function popUpAlbumInfo(attributes) {
 	// here we go-- get the album track details via an ajax call
 	// pop up a list of the tracks in an inline div, including play/add buttons next to tracks
 	// add a close button for the div to hide it
-	if ($('albumPopup')) {
+	if ($('albumPopup') && attributes.match('album.id')) {
 		new Effect.Appear('albumBackground', { from: 0, to: 0.5, duration: 0.5 });
 		
 		$('albumPopup').style.border='1px solid white';
