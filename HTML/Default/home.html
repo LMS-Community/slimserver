@@ -1,3 +1,4 @@
+[% IF page == 'help'; PROCESS help.html; ELSE; %]
 [% extJsScripts = BLOCK %]
 	<script type="text/javascript" src="[% webroot %]html/home.js?r=[% revision %]"></script>
 
@@ -18,6 +19,11 @@
 				[%- END %]
 			[%- END %]
 			MainMenu.addUrl('RADIO_TUNEIN:radio', 'tunein.html?player=[% playerURI %]');
+
+			var items = Ext.DomQuery.select('div.selectorMarker');
+			for(var i = 0; i < items.length; i++) {
+				Ext.id(items[i]);
+			}
 		});
 	</script>
 [% END %]
@@ -44,7 +50,7 @@
 [% PROCESS pageheader.html noHomeLink=1 %]
 
 [% BLOCK menuItem %]
-	<div class="selectorMarker"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+	<div class="selectorMarker" onmouseover="Utils.highlight(this);"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 		<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
 			[% IF expandable %]
 				<span  onclick="MainMenu.toggleItem('[% token %]');"><img class="disclosure_home" src="[% webroot %]html/images/spacer.gif"/></span>
@@ -129,3 +135,4 @@ END %]
 </div>
 
 [% PROCESS pagefooter.html %]
+[% END %]

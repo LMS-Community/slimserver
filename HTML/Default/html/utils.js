@@ -94,31 +94,21 @@ var Utils = function(){
 		init : function(){
 			Ext.EventManager.onWindowResize(Utils.resizeContent);
 			Ext.EventManager.onDocumentReady(Utils.resizeContent);
-
-			// add highlighter class
-			this.addBrowseMouseOver();
-
 		},
 
-		addBrowseMouseOver : function(){
-			Ext.select('div.selectorMarker, div.currentSong').on('mouseover', Utils.highlight); 
-		},
-
-		removeBrowseMouseOver : function(){
-			Ext.select('.selectorMarker, .currentSong').un('mouseover', Utils.highlight); 
-		},
-
-		highlight : function(ev, target){
+		highlight : function(target){
 			// return if the target is a child of the main selector
-			if (Ext.get(target).findParent('.mouseOver'))
+			var el = Ext.get(target.id); 
+			if (el != null && el.hasClass('.mouseOver'))
 				return;
 
-			Utils.unHighlight();
-
 			// always highlight the main selector, not its children
-			var el = Ext.get(target).findParent('.selectorMarker');
-			if (el = Ext.get(el)) {
-				el.replaceClass('selectorMarker', 'mouseOver');
+			if (el != null) {
+				Utils.unHighlight();
+
+				if (!el.hasClass('currentSong'))
+					el.replaceClass('selectorMarker', 'mouseOver');
+
 				el.on('click', Utils.onSelectorClicked);
 
 				Ext.select('span.browsedbControls, span.browsedbRightControls, span.browsedbLeftControls, div.playlistControls', false, el.dom).show();

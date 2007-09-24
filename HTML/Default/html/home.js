@@ -87,8 +87,6 @@ var MainMenu = function(){
 
 			}
 
-			Utils.addBrowseMouseOver();
-
 			this.onResize();
 		},
 
@@ -109,8 +107,6 @@ var MainMenu = function(){
 					subPanel.removeClass('homeMenuSection_expanded');
 				}
 			}
-
-			Utils.addBrowseMouseOver();
 
 			Utils.resizeContent();
 			this.onResize();

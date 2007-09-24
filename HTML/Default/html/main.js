@@ -415,8 +415,6 @@ Playlist = function(){
 
 		load : function(url){
 			// unregister event handlers
-			Utils.removeBrowseMouseOver();
-			Ext.select('div.currentSong').un('mouseover', Playlist.showPlaylistControl);
 			Ext.dd.ScrollManager.unregister('playList');
 
 			// try to reload previous page if no URL is defined
@@ -463,8 +461,6 @@ Playlist = function(){
 			// shortcut if there's no player
 			if (!Ext.get('playlistTab'))
 				return;
-			
-			Utils.addBrowseMouseOver();
 
 			Ext.select('div.currentSong').on('mouseover', Playlist.showPlaylistControl);
 

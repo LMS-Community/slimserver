@@ -29,7 +29,7 @@
 
 
 	[% BLOCK contentitem -%]
-	<div class="selectorMarker"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+	<div class="selectorMarker" onmouseover="Utils.highlight(this);" id="db[% itemobj.id %]_selector"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 		<div class="[% lineclass || 'browsedbListItem' %][% IF (levelName == 'album' || levelName == 'age') && !(artwork > 0) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			[%- IF leftcontrols -%]
 				<span class="browsedbLeftControls" style="display: none;">
@@ -53,7 +53,7 @@
 
 	[% BLOCK galleryitem -%]
 	<li class="thumbwrap" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%] style="width:[% item.size + 20 %]px;">
-		<div class="selectorMarker"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft"><div class="thumbwrap">
+		<div class="selectorMarker" onmouseover="Utils.highlight(this);" id="db[% itemobj.id %]_selector"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft"><div class="thumbwrap">
 
 			[%- itemImg = item.coverThumb ? "thumbnailItemImg" : "dummyItemImg" %]
 			<div class="thumbArtwork" style="width:[% item.size %]px;position:relative;">
