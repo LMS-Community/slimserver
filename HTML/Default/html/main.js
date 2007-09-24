@@ -63,7 +63,6 @@ Main = function(){
 			Ext.QuickTips.init();
 			Ext.get('loading').hide();
 			Ext.get('loading-mask').hide();
-			Ext.UpdateManager.showLoadIndicator = 'false';
 
 			this.onResize();
 		},
