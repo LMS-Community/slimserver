@@ -51,10 +51,14 @@ img.cmdLinkIcon {
 	clear: left;
 }
 
-.browsedbControls, .playlistControls, .browsedbRightControls, .browsedbLeftControls, .nowPlayingIcon {
+.browsedbControls, .playlistControls, .browsedbRightControls, .browsedbLeftControls {
 	position: absolute;
 	top: -2px;
 	right: 10px;
+}
+
+.nowPlayingIcon {
+	visibility: visible;
 }
 
 .browsedbRightControls {
