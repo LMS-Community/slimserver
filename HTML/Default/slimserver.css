@@ -59,6 +59,7 @@ img.cmdLinkIcon {
 
 .nowPlayingIcon {
 	visibility: visible;
+	display: inline;
 }
 
 .browsedbRightControls {
