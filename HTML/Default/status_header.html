@@ -119,23 +119,30 @@
 
 				<div id="ctrlCurrentSongInfo">
 					<div id="ctrlCurrentTitle"></div>
-					<div class="currentTrackInfo" id="ctrlArtistTitle">
-						[% "ARTIST" | string %][% "COLON" | string %] <span id="ctrlCurrentArtist"></span>
+					<div id="ctrlTrackInfo">
+						<div id="ctrlArtistTitle">
+							[% "ARTIST" | string %][% "COLON" | string %] <span id="ctrlCurrentArtist"></span>
+						</div>
+						<div id="ctrlAlbumTitle">
+							[% "ALBUM" | string %][% "COLON" | string %] <span id="ctrlCurrentAlbum"></span>
+						</div>
+						<div id="ctrlBitrateTitle">
+							[% "BITRATE" | string %][% "COLON" | string %] <span id="ctrlBitrate"></span>
+						</div>
 					</div>
-					<div class="currentTrackInfo" id="ctrlAlbumTitle">
-						[% "ALBUM" | string %][% "COLON" | string %] <span id="ctrlCurrentAlbum"></span>
+					<div id="ctrlPlaytimePanel">
+						<div id="ctrlPlaytime"></div>
+						<div>
+							<div id="ctrlProgress">
+								<img src="html/images/spacer.gif" class="progressLeft"/><img src="html/images/spacer.gif" class="progressFillLeft"/><img src="html/images/spacer.gif" class="progressIndicator"/><img src="html/images/spacer.gif" class="progressFillRight"/><img src="html/images/spacer.gif" class="progressRight"/>
+							</div>
+						</div>
+						<div id="ctrlPlaytimeRight">
+							<span id="ctrlTotalTime"></span>
+							&nbsp;-
+							<span id="ctrlPlayNum"></span>&nbsp;[% "OF" | string%]&nbsp;<span id="ctrlSongCount"></span>
+						</div>
 					</div>
-					<div class="currentTrackInfo" id="ctrlBitrateTitle">
-						[% "BITRATE" | string %][% "COLON" | string %] <span id="ctrlBitrate"></span>
-					</div>
-					<div class="currentTrackInfo" id="ctrlPlayTimeTitle">
-						[% "PLAYTIME" | string %][% "COLON" | string %]
-						<span id="ctrlPlaytime"></span>
-						<span id="ctrlTotalTime"></span>&nbsp;-
-						<span id="ctrlPlayNum"></span>&nbsp;[% "OF" | string%]
-						<span id="ctrlSongCount"></span>
-					</div>
-					<div id="ctrlProgress"><img src="html/images/spacer.gif" class="progressLeft"><img src="html/images/spacer.gif" class="progressFillLeft"><img src="html/images/spacer.gif" class="progressIndicator"><img src="html/images/spacer.gif" class="progressFillRight"><img src="html/images/spacer.gif" class="progressRight"></div>
 				</div>
 			</div>
 

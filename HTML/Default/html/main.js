@@ -663,19 +663,20 @@ Player = function(){
 				playTime = parseInt(time); //force integer type from results
 
 			var shortTime = Utils.formatTime(playTime);
-
-			Ext.get('ctrlPlaytime').update(shortTime);
+			var remainingTime = shortTime;
 
 			if (!isNaN(playerStatus.duration) && playerStatus.duration > 0) {
 				totalTime = playerStatus.duration;
-				Ext.get('ctrlTotalTime').update('&nbsp;(' + Utils.formatTime(totalTime) + ')');
+				Ext.get('ctrlTotalTime').update(Utils.formatTime(totalTime));
 
-				shortTime = '-' + Utils.formatTime(totalTime - playTime) + '&nbsp;(' + Utils.formatTime(totalTime) + ')';
+				remainingTime = '-' + Utils.formatTime(totalTime - playTime); 
+				shortTime = remainingTime + '&nbsp;(' + Utils.formatTime(totalTime) + ')';
 
 				if (totalTime > 0 && playTime >= totalTime-1)
 					this.getStatus();
 			}
 
+			Ext.get('ctrlPlaytime').update(remainingTime);
 			this.progressBar('ctrlProgress', playTime, totalTime);
 
 			Ext.get('ctrlPlaytimeCollapsed').update(shortTime);

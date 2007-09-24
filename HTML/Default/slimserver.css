@@ -340,15 +340,24 @@ form#advSearchForm.resultsPage {
 .ctrlVolume9 { background-position: 0 -198px; }
 .ctrlVolume10 { background-position: 0 -220px; }
 
+#ctrlPlaytime, #ctrlPlaytimeRight {
+	position: absolute;
+	top: 0px;
+}
+
+#ctrlPlaytimeRight {
+	right: 2px;
+}
+
 #ctrlProgress {
-	margin-top: 5px;
-	margin-left: 101px;
 	height: 8px;
 	border: 1px solid #8c8c8c;
+	margin: 2px 110px 0 50px;
 	padding: 0;
 }
 
 #ctrlProgress img {
+	vertical-align: top;
 	height: 6px;
 	width: 0;
 }
@@ -401,8 +410,10 @@ form#advSearchForm.resultsPage {
 	height: 96px;
 }
 
-#ctrlCurrentTitle, .currentTrackInfo {
+#ctrlCurrentTitle, #ctrlTrackInfo, #ctrlPlaytimePanel {
 	overflow: hidden;
+	padding-left: 6px;
+	position: relative;
 }
 
 #ctrlCurrentTitle {
@@ -410,15 +421,15 @@ form#advSearchForm.resultsPage {
 	font-weight: bold;
 	padding-left: 6px;
 	margin-bottom: 5px;
+	height: 30px;
 }
+
+#ctrlTrackInfo { height: 45px; }
+#ctrlPlaytimePanel { height: 20px; }
 
 #ctrlCurrentTitle a {
 	font-size: 13px;
 	font-weight: bold;
-}
-
-.currentTrackInfo {
-	padding-left: 6px;
 }
 
 .inner {

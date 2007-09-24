@@ -2,9 +2,9 @@
 	overflow-x: hidden;
 }
 
-#ctrlBar {
-	width: 97%;
-}
+#ctrlBar { width: 97%; }
+#ctrlProgress { margin-top: 0; }
+#ctrlProgress img { vertical-align: middle; }
 
 .titlebox_content #livesearch {
 	height: 15px;
