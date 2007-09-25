@@ -1,4 +1,21 @@
-[% IF page == 'help'; PROCESS help.html; ELSE; %]
+[% IF page == 'help';
+	
+	pagetitle = "HELP" | string;
+	
+	PROCESS helpheader.html;
+	
+	WRAPPER helpTopicList;
+		"<br/><br/>";
+		FOREACH link = additionalLinks.help;
+			title = link.key | string | html;
+			href = link.value;
+			PROCESS helpTopic;
+		END;
+	END;
+	
+	PROCESS helpfooter.html;
+
+ELSE; %]
 [% extJsScripts = BLOCK %]
 	<script type="text/javascript" src="[% webroot %]html/home.js?r=[% revision %]"></script>
 

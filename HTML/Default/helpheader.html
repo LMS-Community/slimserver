@@ -10,10 +10,6 @@
 		<script type="text/javascript" src="[% webroot %]html/utils.js?r=[% revision %]"></script>
 
 		<link rel="stylesheet" type="text/css" href="[% webroot %]help.css?r=[% revision %]" />
-
-		<script type="text/javascript">
-		</script>
-
 	</head>
 	<body>
 		<div class="inner_content">
@@ -41,3 +37,17 @@
 			</div>
 
 			<div id="content"[% IF !dontscroll %] class="scrollingPanel"[% END %]>
+				[% BLOCK helpTopicList %]
+				<img src="[% webroot %]html/images/help/questionmark.gif" id="questionmark">
+				<div id="helpsection">
+					[% content -%]
+				</div>
+				[% END -%]
+				
+				[% BLOCK helpTopic %]
+					<div class="selectorMarker" onmouseover="Utils.highlight(this);" id="[% href %]"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+						<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
+							<a href="[% href %][% IF NOT url.match('^http') %]?player=[% playerURI %][% END %]" [% IF target %]target="[% target %]" [% END %][% IF href.match('^http') %]target="_new" [% END %] class="browseItemLink">[% title %]</a>
+						</div>
+					</div></div></div></div></div>
+				[% END -%]

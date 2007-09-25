@@ -328,4 +328,15 @@ END %]
 </span>
 [% END %]
 
+[% BLOCK helpTopicList %]
+<ul style="direction: ltr;">
+	[% content -%]
+</ul>
+[% END -%]
+
+[% BLOCK helpTopic %]
+	<li><a href="[% href %]"[% IF target %] target="[% target %]"[% END %]>[% title %]</a></li>
+[% END -%]
+
+
 [% END -%]

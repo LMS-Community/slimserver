@@ -2,24 +2,22 @@
 [% pagetitle = "TECHNICAL_INFORMATION" | string %]
 [% PROCESS helpheader.html %]
 
-<ul style="direction: ltr;">
-  <li><a href="artwork.html">Artwork Setup</a></li>
-  <li><a href="http.html">The SlimServer Web Interface</a></li>
-  <li><a href="cli-api.html">The SlimServer Command Line Interface</a></li>
-  <li><a href="skins.html">Skin Creation</a></li>
-  <li><a href="xml_skin.html">The XML Skin</a></li>
-  <li><a href="xpl.html">The SlimServer xPL Interface</a></li>
-  <li><a href="plugins.html">SlimServer Plugins</a></li>
-  <li><a href="buttons.html">Button Mapping</a></li>
-  <li><a href="input.html">Input Modes</a></li>
-  <li><a href="fonts.html">Font Files</a></li>
-  <li><a href="display.html">Display API</a></li>
-  <li><a href="protocol.html">The SLIMP3 Client Protocol</a></li>
-  <li><a href="slimproto.html">The Squeezebox Client Protocol</a></li>
-  <li><a href="http://www.slimdevices.com/downloads/datasheets/CU40025SCPB-U1J.pdf" target="displaypdf">Data sheet
-    for the display hardware (PDF)</a></li>
-  <li><a href="http://www.slimdevices.com/downloads/datasheets/vfd-chars.gif" target="displaychars">Character set for 
-    the display hardware (GIF)</a></li>
-</ul>
+[% WRAPPER helpTopicList %]
+	[% PROCESS helpTopic href="artwork.html" title="Artwork Setup" %]
+	[% PROCESS helpTopic href="http.html" title="The SlimServer Web Interface" %]
+	[% PROCESS helpTopic href="cli-api.html" title="The SlimServer Command Line Interface" %]
+	[% PROCESS helpTopic href="skins.html" title="Skin Creation" %]
+	[% PROCESS helpTopic href="xml_skin.html" title="The XML Skin" %]
+	[% PROCESS helpTopic href="xpl.html" title="The SlimServer xPL Interface" %]
+	[% PROCESS helpTopic href="plugins.html" title="SlimServer Plugins" %]
+	[% PROCESS helpTopic href="buttons.html" title="Button Mapping" %]
+	[% PROCESS helpTopic href="input.html" title="Input Modes" %]
+	[% PROCESS helpTopic href="fonts.html" title="Font Files" %]
+	[% PROCESS helpTopic href="display.html" title="Display API" %]
+	[% PROCESS helpTopic href="protocol.html" title="The SLIMP3 Client Protocol" %]
+	[% PROCESS helpTopic href="slimproto.html" title="The Squeezebox Client Protocol" %]
+	[% PROCESS helpTopic href="http://www.slimdevices.com/downloads/datasheets/CU40025SCPB-U1J.pdf" target="displaypdf" title="Data sheet for the display hardware (PDF)" %]
+	[% PROCESS helpTopic href="http://www.slimdevices.com/downloads/datasheets/vfd-chars.gif" target="displaychars" title="Character set for the display hardware (GIF)" %]
+[% END %]
 
 [% PROCESS helpfooter.html %]

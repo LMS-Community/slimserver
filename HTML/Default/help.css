@@ -11,7 +11,6 @@ body {
 	background-image: url(html/images/help/background.gif);
 	margin: 5px;
 	height: 100%;
-	overflow: auto;
 }
 
 .inner_content {
@@ -46,10 +45,6 @@ li {
 #questionmark {
 	float: left;
 	margin-left: 20px;
-}
-
-#helpsection {
-	margin-top: 20px;
 }
 
 .titlebox { background: url(html/images/help/title_background.gif) repeat; }
