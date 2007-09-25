@@ -507,8 +507,8 @@ form#advSearchForm.resultsPage {
 	white-space: nowrap;
 }
 
-#pagetitle {
-	font-size: 120%;
+#pagetitle, .pagetitle {
+	font-size: 13px;
 }
 
 .infoTab_top, .infoTab_top div,

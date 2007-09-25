@@ -124,7 +124,7 @@ END %]
 	[% PROCESS menuItem token="FAVORITES" category='browse' expandable = 0 singleton=1; singleton=0 %]
 
 	[% IF additionalLinks.plugins %]
-		[% PROCESS menuItem token="PLUGINS" expandable = 1; expandable = 0 %]
+		[% PROCESS menuItem token="PLUGINS" expandable = 1 category=''; expandable = 0 %]
 		<div id="PLUGINS_expanded" class="expandableHomeMenuItem">[%- pluginsItems -%]</div>
 	[% END %]
 </div>
