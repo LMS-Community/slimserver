@@ -50,7 +50,7 @@
 [% PROCESS pageheader.html noHomeLink=1 %]
 
 [% BLOCK menuItem %]
-	<div class="selectorMarker" onmouseover="Utils.highlight(this);"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+	<div class="selectorMarker[% IF singleton %] homeMenuSection_singleton[% END %]" onmouseover="Utils.highlight(this);"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 		<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
 			[% IF expandable %]
 				<span  onclick="MainMenu.toggleItem('[% token %]');"><img class="disclosure_home" src="[% webroot %]html/images/spacer.gif"/></span>
@@ -93,8 +93,6 @@ END %]
 END %]
 
 <div class="homeMenuSection" id="homeMenu">
-	[% PROCESS menuItem token="FAVORITES" category='browse' %]
-
 	[% category=''; expandable = 1; PROCESS menuItem token="MY_MUSIC" %]
 	<div id="MY_MUSIC_expanded" class="expandableHomeMenuItem">[%- my_musicItems -%]</div>
 
@@ -106,8 +104,10 @@ END %]
 		<div id="MUSIC_ON_DEMAND_expanded" class="expandableHomeMenuItem">[%- music_on_demandItems -%]</div>
 	[% END %]
 
+	[% PROCESS menuItem token="FAVORITES" category='browse' expandable = 0 singleton=1; singleton=0 %]
+
 	[% IF additionalLinks.plugins %]
-		[% PROCESS menuItem token="PLUGINS"; expandable = 0 %]
+		[% PROCESS menuItem token="PLUGINS" expandable = 1; expandable = 0 %]
 		<div id="PLUGINS_expanded" class="expandableHomeMenuItem">[%- pluginsItems -%]</div>
 	[% END %]
 </div>

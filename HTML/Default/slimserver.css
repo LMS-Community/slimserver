@@ -147,6 +147,10 @@ div.thumbwrap {
 }
 
 .homeMenuSection_expanded .homeMenuItem {
+	padding-left: 34px;
+}
+
+.homeMenuSection_singleton .homeMenuItem {
 	padding-left: 17px;
 }
 

@@ -34,6 +34,7 @@
 				[% pageHeaderMenu = BLOCK %]
 					<a href="[% webroot %]home.html?page=help">[% helptitle %]</a>
 					[% IF techinfo %] > <a href="[% webroot %]html/docs/index.html?player=[% playerURI %]">[% "TECHNICAL_INFORMATION" | string %]</a>[% END %]
+					&nbsp;> [% pagetitle %]
 				[% END; %]
 				[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
 				[%- PROCESS crumblist noHomeLink=1 IF pwd_list && (pagetitle != helptitle) %]
