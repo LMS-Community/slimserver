@@ -108,11 +108,14 @@ sub menuQuery {
 
 	my $prefs         = preferences("server");
 	my ($settingsMenu, $settingsCount)  = playerSettingsMenu($request, $client, $index, $quantity, $prefs);
+	# as a convention, make weights => 10 and <= 100; Jive items that want to be below all SS items
+	# then just need to have a weight > 100, above SS items < 10
 	my @menu = (
 		{
 			text      => Slim::Utils::Strings::string('MY_MUSIC'),
 			count     => 9,
 			offset    => 0,
+			weight    => 10,
 			item_loop => [
 			{
 				text    => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
@@ -310,6 +313,7 @@ sub menuQuery {
 		},
 		{
 			text    => Slim::Utils::Strings::string('RADIO'),
+			weight  => 20,
 			actions => {
 				go => {
 					cmd => ['radios'],
@@ -322,6 +326,7 @@ sub menuQuery {
 
 		{
 			text    => Slim::Utils::Strings::string('MUSIC_ON_DEMAND'),
+			weight  => 30,
 			actions => {
 				go => {
 					cmd => ['music_on_demand'],
@@ -333,6 +338,7 @@ sub menuQuery {
 		},
 		{
 			text    => Slim::Utils::Strings::string('FAVORITES'),
+			weight  => 40,
 			actions => {
 				go => {
 					cmd => ['favorites', 'items'],
@@ -345,6 +351,7 @@ sub menuQuery {
 		},
 		{
 			text    => Slim::Utils::Strings::string('SETTINGS'),
+			weight  => 50,
 			count     => $settingsCount,
 			offset    => 0,
 			item_loop => $settingsMenu,
@@ -1069,6 +1076,7 @@ sub powerHash {
 
 	%return = ( 
 		text    => $text,
+		weight  => 95,
 		actions  => {
 			do  => {
 				player => 0,
