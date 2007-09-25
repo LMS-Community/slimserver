@@ -1,3 +1,5 @@
+/* this stylesheet overwrites the default extjs stylesheet */
+
 .x-tree-node-leaf .x-tree-node-alwayscollapsed {
 	background-image:url(/html/ext/resources/images/default/tree/folder.gif);
 }
@@ -14,15 +16,43 @@
 	font-size: 11px;
 }
 
+
+/* drop down menu */
+.x-menu {
+	background-image: url(html/images/slim-ext/menu.gif);
+	border-color: #949494;
+}
+
+.x-menu-list {
+	border: none;
+}
+
+.x-menu-item {
+	color: #494949;
+}
+
+a.x-menu-item:hover {
+	text-decoration: none;
+}
+
+.x-menu-item-active {
+	border-color: #bfbfbf;
+	background-color: #dedede;
+}
+
+.x-menu-sep {
+	background-color: #494949;
+}
+
+/* buttons */
 .x-btn {
 	display: inline-table;
 }
 
 .x-btn-menu-arrow-wrap .x-btn-center button {
 	height:22px;
-	background-image: url(html/images/btn-arrow.gif);
+	background-image: url(html/images/slim-ext/btn-arrow.gif);
 }
-
 
 /* standard buttons */
 .x-btn-text, .x-btn button {
@@ -33,17 +63,17 @@
 .x-btn-left {
 	width: 5px;
 	height: 22px;
-	background: url(html/images/btn_generic.gif) no-repeat 0 0;
+	background: url(html/images/slim-ext/btn-generic.gif) no-repeat 0 0;
 }
 
 .x-btn-right {
 	width: 5px;
 	height: 22px;
-	background: url(html/images/btn_generic.gif) no-repeat 0 -22px;
+	background: url(html/images/slim-ext/btn-generic.gif) no-repeat 0 -22px;
 }
 
 .x-btn-center {
-	background: url(html/images/btn_generic.gif) repeat-x 0 -44px;
+	background: url(html/images/slim-ext/btn-generic.gif) repeat-x 0 -44px;
 	vertical-align: middle;
 	text-align: center;
 	padding: 0 5px;
@@ -51,13 +81,12 @@
 	white-space: nowrap;
 }
 
-.x-btn-over .x-btn-left { background-position:0 -66px; }
-.x-btn-over .x-btn-right { background-position:0 -88px; }
-.x-btn-over .x-btn-center { background-position:0 -110px; }
+.x-btn-over .x-btn-left, .x-btn-menu-active .x-btn-left { background-position:0 -66px; }
+.x-btn-over .x-btn-right, .x-btn-menu-active .x-btn-right { background-position:0 -88px; }
+.x-btn-over .x-btn-center, .x-btn-menu-active .x-btn-center { background-position:0 -110px; }
 .x-btn-click .x-btn-left { background-position:0 -132px; }
 .x-btn-click .x-btn-right { background-position:0 -154px; }
 .x-btn-click .x-btn-center { background-position:0 -176px; }
-
 
 /* small buttons */
 .btn-small .x-btn-text, .btn-small .x-btn button {
@@ -69,17 +98,17 @@
 .btn-small .x-btn-left {
 	width: 5px;
 	height: 17px;
-	background: url(html/images/btn_small.gif) no-repeat 0 0;
+	background: url(html/images/slim-ext/btn-small.gif) no-repeat 0 0;
 }
 
 .btn-small .x-btn-right {
 	width: 5px;
 	height: 17px;
-	background: url(html/images/btn_small.gif) no-repeat 0 -17px;
+	background: url(html/images/slim-ext/btn-small.gif) no-repeat 0 -17px;
 }
 
 .btn-small .x-btn-center {
-	background: url(html/images/btn_small.gif) repeat-x 0 -34px;
+	background: url(html/images/slim-ext/btn-small.gif) repeat-x 0 -34px;
 	padding: 0 3px;
 }
 
