@@ -330,6 +330,8 @@ PlayerChooser = function(){
 
 
 Playlist = function(){
+	var unHighlightTimer = new Ext.util.DelayedTask(Utils.unHighlight);
+
 	return {
 		init : function(){
 			// some initialization of the DD class used
@@ -393,14 +395,6 @@ Playlist = function(){
 							}
 						}
 					}
-				}
-			});
-
-			// reset highlighter when exiting the playlist
-			Ext.addBehaviors({
-				'#rightpanel div.inner@mouseover': function(ev, target){
-					if (target == this)
-						Utils.unHighlight();
 				}
 			});
 
@@ -489,6 +483,11 @@ Playlist = function(){
 				tooltipType: 'title',
 				handler: Playlist.save
 			});
+		},
+
+		highlight : function(target){
+			Utils.highlight(target);
+			unHighlightTimer.delay(2000);	// remove highlighter after x seconds of inactivity
 		},
 
 		highlightCurrent : function(){
