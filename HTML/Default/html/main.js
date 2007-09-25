@@ -650,22 +650,23 @@ Player = function(){
 			if (!isNaN(playerStatus.duration) && playerStatus.duration > 0) {
 				totalTime = playerStatus.duration;
 
-				remainingTime = '-' + Utils.formatTime(totalTime - playTime); 
-				shortTime = remainingTime + '&nbsp;(' + Utils.formatTime(totalTime) + ')';
-
-				if (totalTime > 0 && playTime >= totalTime-1)
+				if (totalTime > 0 && playTime >= totalTime-1) {
 					this.getStatus();
+					return;
+				}
+
+				remainingTime = '-' + Utils.formatTime(totalTime - playTime); 
+				shortTime = Utils.formatTime(playTime) + ' / ' + remainingTime;
 
 				this.progressBar('ctrlProgress', playTime, totalTime);
-				totalTime = Utils.formatTime(totalTime) + '&nbsp;-&nbsp;';
 			}
 			else {
 				this.progressBar('ctrlProgress', playTime, 0);
 				totalTime = '';
 			}
 
-			Ext.get('ctrlTotalTime').update(totalTime);
-			Ext.get('ctrlPlaytime').update(remainingTime);
+			Ext.get('ctrlPlaytime').update(Utils.formatTime(playTime));
+			Ext.get('ctrlRemainingTime').update(remainingTime + '&nbsp;-');
 
 			Ext.get('ctrlPlaytimeCollapsed').update(shortTime);
 
