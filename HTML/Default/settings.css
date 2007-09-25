@@ -1,0 +1,118 @@
+html, body, tr, tr, p, div, li, input, ul, b, a {
+	font-family: sans-serif;
+	color: #666666;
+}
+
+html, body, tr, tr, p, div, li, input, ul {
+	font-size: 12px;
+}
+
+body {
+	background: url(html/images/help/background.gif) repeat;	
+}
+
+.x-layout-panel-body {
+	background-color: #637fa6;
+}
+
+#header, #footer {
+	padding: 0 5px;
+}
+
+#header {
+	background-image: none;
+	padding-top: 5px;
+}
+
+#footer {
+	background-image: none;
+	padding-bottom: 5px;
+}
+
+#main {
+	background: url(html/images/help/background.gif) repeat;
+	margin: 0 5px;
+	padding: 0 10px; 
+}
+
+#mainbody {
+	position: relative;
+	width: 100%;
+	height: 500px;
+}
+
+.titlebox {
+	background: url(html/images/help/title_background.gif) repeat;
+}
+
+#header .titlebox {
+	margin: 5px 10px;
+}
+
+#footer .titlebox {
+	position: relative;
+	top: 10px;
+	margin: 0 10px;
+}
+
+.titlebox_content { background: url(html/images/help/title_background.gif) repeat; }
+.titlebox_content div { color: white; }
+.titlebox_top div { background: url(html/images/help/title_top_left.gif) no-repeat top left; }
+.titlebox_top { background: url(html/images/help/title_top_right.gif) no-repeat top right; }
+.titlebox_bottom div { background: url(html/images/help/title_bottom_left.gif) no-repeat bottom left; }
+.titlebox_bottom { background: url(html/images/help/title_bottom_right.gif) no-repeat bottom right; }
+
+.mainFrame {
+	background: url(html/images/help/background.gif) repeat;
+	height: 50px;
+}
+
+.mainFrame_content {
+	height: 45px;
+}
+
+.mainFrame_top div {
+	height: 5px;
+	width: 5px;
+	font-size: 0px;
+	background: url(html/images/help/top_left.gif) no-repeat top left;
+}
+
+.mainFrame_top {
+	height: 5px;
+	font-size: 0px;
+	background: url(html/images/help/top_right.gif) no-repeat top right;
+}
+
+.mainFrame_bottom div {
+	height: 5px;
+	width: 5px;
+	font-size: 0px;
+	background: url(html/images/help/bottom_left.gif) no-repeat bottom left;
+}
+
+.mainFrame_bottom {
+	height: 5px;
+	font-size: 0px;
+	background: url(html/images/help/bottom_right.gif) no-repeat bottom right;
+}
+
+.settingSection {
+	border-top: 2px solid #666666;
+	padding-top: 5px;
+	margin-bottom: 10px;
+}
+
+.settingSection select, .settingSection input
+.settingSection button, .stdedit {
+	position: relative;
+}
+
+.prefHead {
+	float: left;
+	width: 350px;
+}
+
+.groupDesc, .prefDesc {
+	display: none;
+}

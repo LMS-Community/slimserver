@@ -4,8 +4,12 @@
 	background-image:url(/html/ext/resources/images/default/tree/folder.gif);
 }
 
+.x-layout-container {
+	background-color: white;
+}
+
 .x-layout-panel-body {
-	background: #23415e;
+	background-color: #23415e;
 }
 
 .x-layout-panel {

@@ -1,0 +1,24 @@
+			[% IF versionInfo %]
+			
+				<div class="settingSection">
+			
+					<div class="groupHead">[% "INFORMATION_DIAGSTRING" | string | upper  %]</div>
+			
+					[% IF versionInfo %]
+						<p>[% versionInfo %]</p>
+					[% END %]
+			
+					[% IF newVersion %]
+						<p>[% newVersion %]</p>
+					[% END %]
+			
+				</div>
+			
+			[% END %]
+
+		</div>
+
+		</form>
+
+	</body>
+</html>

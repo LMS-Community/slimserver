@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+	<head>
+		<title>[% "SLIMSERVER" | string %]</title>
+
+		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
+		<link rel="stylesheet" type="text/css" href="[% webroot %]slim-ext.css?r=[% revision %]" />
+		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css?r=[% revision %]" />
+		<link rel="stylesheet" type="text/css" href="[% webroot %]settings.css?r=[% revision %]" />
+
+		[%- IF debug %]
+		<style>
+			.x-layout-panel-body { background: white; }
+			.x-btn-text, .x-btn button { color: black; }
+			.x-dlg .x-tabs-bottom .x-tabs-body {
+				background: white;
+				color: black;
+			}
+		</style>
+		[%- END %]
+
+		<!--[if lte IE 6]>
+		<link href="[% webroot %]ie.css?r=[% revision %]" type="text/css" rel="stylesheet">
+		<![endif]-->
+		<!--[if IE 7]>
+		<link href="[% webroot %]ie7.css?r=[% revision %]" type="text/css" rel="stylesheet">
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div id="statusarea" class="statusarea">
+			[% IF warning %]
+				[% warning %]
+			[% END %]
+		</div>
+
+		<form name="settingsForm" id="settingsForm" method="post" action="[% webroot %][% path %][% IF playerid %]?playerid=[% playerid | uri %][% END %]">
+
+		<div id="settingsRegion">
+
+			<input type=hidden value="0" name="useAJAX">
+			<input type=hidden value="[% page %]" name="page">
+			[% IF playerid %]<input type=hidden value="[% playerid %]" name="playerid">[% END %]
+			[% IF player %]<input type=hidden value="[% player %]" name="player">[% END %]
+
