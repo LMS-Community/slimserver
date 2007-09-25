@@ -1150,7 +1150,7 @@ Ext.extend(Slim.VolumeBar, Ext.util.Observable, {
 
 	// update volume bar
 	update: function(result){
-		if (result['mixer volume'])
+		if (result['mixer volume'] != null)
 			this.updateState(result['mixer volume']);
 	},
 
