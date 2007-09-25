@@ -3113,43 +3113,49 @@ sub songinfoQuery {
 							
 							$request->addResultLoop($loopname, $cnt, 'actions', $actions);
 						}
-
-						# pretty print some of the stuff...
-						# it's done all over the place for the web interface:
-						## some of it in the template!
-						## some of it in Pages::addSongInfo
-						## the rest is using pretty printing methods of track
+						else {
+							# pretty print some of the stuff...
+							# it's done all over the place for the web interface:
+							## some of it in the template!
+							## some of it in Pages::addSongInfo
+							## the rest is using pretty printing methods of track
 						
-						elsif ($key eq 'COMPILATION') {
-							$val = Slim::Utils::Strings::string('YES');
+							if ($key eq 'COMPILATION') {
+								$val = Slim::Utils::Strings::string('YES');
+							}
+							elsif ($key eq 'TYPE') {
+								$val = Slim::Utils::Strings::string($val);
+							}
+							elsif ($key eq 'LENGTH') {
+								$val = $track->duration();
+							}
+							elsif ($key eq 'ALBUMREPLAYGAIN' || $key eq 'REPLAYGAIN') {
+								$val = sprintf("%2.2f", $val) . " dB";
+							}
+							elsif ($key eq 'RATING') {
+								$val = $val / 100;
+							}
+							elsif ($key eq 'FILELENGTH') {
+								$val = Slim::Utils::Misc::delimitThousands($val) . " " . Slim::Utils::Strings::string('BYTES');
+							}
+							elsif ($key eq 'SAMPLERATE') {
+								$val = $track->prettySampleRate();
+							}
+							elsif ($key eq 'SAMPLESIZE') {
+								$val = $val . " " . Slim::Utils::Strings::string('BITS');
+							}
+							elsif ($key eq 'LOCATION') {
+								$val = $track->path();
+							}
+							elsif ( $key eq 'YEAR' && $val == 0 ||
+								$key eq 'COMMENT' && $val == 0) {
+								$val = Slim::Utils::Strings::string('NONE');
+							}
+							
+							my $style   ='itemNoAction';
+							$request->addResultLoop($loopname, $cnt, 'style', $style);
 						}
-						elsif ($key eq 'TYPE') {
-							$val = Slim::Utils::Strings::string($val);
-						}
-						elsif ($key eq 'LENGTH') {
-							$val = $track->duration();
-						}
-						elsif ($key eq 'ALBUMREPLAYGAIN' || $key eq 'REPLAYGAIN') {
-							$val = sprintf("%2.2f", $val) . " dB";
-						}
-						elsif ($key eq 'RATING') {
-							$val = $val / 100;
-						}
-						elsif ($key eq 'FILELENGTH') {
-							$val = Slim::Utils::Misc::delimitThousands($val) . " " . Slim::Utils::Strings::string('BYTES');
-						}
-						elsif ($key eq 'SAMPLERATE') {
-							$val = $track->prettySampleRate();
-						}
-						elsif ($key eq 'SAMPLESIZE') {
-							$val = $val . " " . Slim::Utils::Strings::string('BITS');
-						}
-						elsif ($key eq 'LOCATION') {
-							$val = $track->path();
-						}
-						
-						
-						$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string($key) . ":" . $val);
+						$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string($key) . ": " . $val);
 					}
 					else {
 						$request->addResultLoop($loopname, $cnt, $key, $val);

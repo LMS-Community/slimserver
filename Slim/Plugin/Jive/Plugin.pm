@@ -470,7 +470,7 @@ sub sleepSettingsQuery {
 
 	if ($val > 0) {
 		my $sleepString = sprintf(Slim::Utils::Strings::string('SLEEPING_IN_X_MINUTES'), $val);
-		push @menu, { text => $sleepString };
+		push @menu, { text => $sleepString, style => 'itemNoAction' };
 		push @menu, sleepInXHash($val, 0);
 	}
 	push @menu, sleepInXHash($val, 15);
