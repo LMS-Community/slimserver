@@ -130,6 +130,7 @@ div.thumbwrap {
 	margin: 5px;
 	height: 400px;
 	overflow: auto;
+	clear: left;
 }
 
 #searchMenu #browsedbList {
