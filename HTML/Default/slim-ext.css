@@ -44,6 +44,10 @@ a.x-menu-item:hover {
 	background-color: #494949;
 }
 
+.x-menu-item-checked .x-menu-group-item .x-menu-item-icon {
+	background-image: url(html/images/slim-ext/group-checked.gif);
+}
+
 /* buttons */
 .x-btn {
 	display: inline-table;
