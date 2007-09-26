@@ -499,8 +499,7 @@ form#advSearchForm.resultsPage {
 
 .titlebox {
 	background: url(html/images/title_background.gif) repeat;
-	margin: 5px;
-	margin-top: 10px;
+	margin: 10px 5px 0 5px;
 }
 
 .titlebox_content {
@@ -521,6 +520,8 @@ form#advSearchForm.resultsPage {
 .infoTab_top, .infoTab_top div,
 .titlebox_top, .titlebox_top div,
 .titlebox_bottom div, .titlebox_bottom,
+.titlebox_bottom_crumb div, .titlebox_bottom_crumb,
+.crumblist_bottom div, .crumblist_bottom,
 .pagerbox_top, .pagerbox_top div,
 .pagerbox_bottom, .pagerbox_bottom div,
 .playerbox_top, .playerbox_top div,
@@ -543,6 +544,14 @@ form#advSearchForm.resultsPage {
 
 .titlebox_bottom, .playerbox_bottom {
 	background: url(html/images/title_bottom_right.gif) no-repeat bottom right;
+}
+
+.titlebox_bottom_crumb div {
+	background: url(html/images/title_bottom_crumb_left.gif) no-repeat bottom left;
+}
+
+.titlebox_bottom_crumb {
+	background: url(html/images/title_bottom_crumb_right.gif) no-repeat bottom right;
 }
 
 .pagerbox {
@@ -568,6 +577,23 @@ form#advSearchForm.resultsPage {
 
 .pagerbox_bottom {
 	background: url(html/images/title_bottom_right.gif) no-repeat bottom right;
+}
+
+.crumblist {
+	margin: 0 5px 20px;
+	background: url(html/images/crumblist_background.gif) repeat;
+}
+
+.crumblist_content {
+	padding: 5px 10px 0;
+}
+
+.crumblist .crumblist_bottom div {
+	background: url(html/images/crumblist_bottom_left.gif) no-repeat bottom left;
+}
+
+.crumblist .crumblist_bottom {
+	background: url(html/images/crumblist_bottom_right.gif) no-repeat bottom right;
 }
 
 #pagebar {
@@ -732,12 +758,6 @@ form#advSearchForm.resultsPage {
 #main {
 	overflow: hidden;
 	background: #23415e;
-}
-
-#crumblist {
-	position: relative;
-	margin: 10px;
-	height: 20px;
 }
 
 #content {

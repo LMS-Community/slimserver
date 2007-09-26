@@ -148,8 +148,15 @@ var MainMenu = function(){
 			else
 				Ext.get('livesearch').setVisible(false);
 
-			if (panel == 'home')
+			if (panel == 'home') {
 				this.expandItem(Utils.getCookie('SlimServer-homeMenuExpanded'));
+				Ext.get('titleBottom').replaceClass('titlebox_bottom_crumb', 'titlebox_bottom');
+				Ext.get('crumblist').removeClass('crumblist');
+			}
+			else {
+				Ext.get('titleBottom').replaceClass('titlebox_bottom', 'titlebox_bottom_crumb');
+				Ext.get('crumblist').addClass('crumblist');
+			}
 
 			this.onResize();
 
