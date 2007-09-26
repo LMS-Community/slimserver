@@ -1003,6 +1003,8 @@ sub playItem {
 		$type = 'playlist';
 	}
 	
+	$log->debug("Playing item, action: $action, type: $type, $url");
+	
 	if ( $type =~ /audio/i ) {
 
 		my $string;
@@ -1047,6 +1049,11 @@ sub playItem {
 			for my $other ( @{$others} ) {
 				my $otherURL = $other->{'url'}  || $other->{'enclosure'}->{'url'};
 				my $title    = $other->{'name'} || $other->{'title'} || 'Unknown';
+				
+				if ( $other->{'play'} ) {
+					$otherURL        = $other->{'play'};
+					$other->{'type'} = 'audio';
+				}
 				
 				# Don't add non-audio items
 				next if !$other->{'type'} || $other->{'type'} ne 'audio';
