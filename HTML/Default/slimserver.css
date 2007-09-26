@@ -361,30 +361,39 @@ form#advSearchForm.resultsPage {
 }
 
 #ctrlProgress {
-	height: 8px;
-	border: 1px solid #8c8c8c;
+	height: 10px;
 	margin: 2px 100px 0 40px;
-	padding: 0;
+	overflow: hidden;
 }
 
 #ctrlProgress img {
-	vertical-align: top;
-	height: 6px;
-	width: 0;
+	height: 10px;
+	width: 5px;
+	background: url(html/images/progress.gif) no-repeat top left;
 }
 
 /* to be replaced with some nice artwork */
 #ctrlProgress img.progressLeft {}
 
-.progressFillLeft {
-	margin-top: 1px;
-	height: 3px;
-	background-color: #8C8C8C;
+#ctrlProgress img.progressFillLeft {
+	background-position: 0 -30px;
+	background-repeat: repeat-x; 
 }
 
-#ctrlProgress img.progressIndicator {}
-.progressFillRight {}
-#ctrlProgress img.progressRight {}
+#ctrlProgress img.progressIndicator {
+	width: 2px;
+	background-position: -3px -20px;
+}
+
+#ctrlProgress img.progressFillRight {
+	background-position: 0 -40px;
+	background-repeat: repeat-x; 
+}
+
+#ctrlProgress img.progressRight {
+	width: 4px;
+	background-position: -1px -10px;
+}
 
 #ctrlCurrentSongInfoCollapsed {
 	padding: 3px;

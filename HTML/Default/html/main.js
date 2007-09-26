@@ -681,7 +681,7 @@ Player = function(){
 			var left, right, el;
 
 			var progress = Ext.get(el);
-			var max = progress.getWidth() - 6; // total of left/right/indicator width
+			var max = progress.getWidth() - 11; // total of left/right/indicator width
 
 			// if we don't know the total play time, just put the indicator in the middle
 			if (!totalTime) {
