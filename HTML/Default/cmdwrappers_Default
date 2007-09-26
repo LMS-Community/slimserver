@@ -24,7 +24,7 @@
 			PROCESS cmdRemoteURLQuery;
 		ELSE;
 			PROCESS cmdLocalQuery;
-		END; %]&amp;player=[% playerURI %]',this.name)"
+		END; %]&amp;player=[% playerURI %]', true)"
 	[%- END %]
 
 
@@ -140,8 +140,8 @@
 
 	[% BLOCK songInfoPlayLinks %]
 		<div id="songInfoPlayLinks">
-			<div>[% WRAPPER playlink %]onclick="Utils.processRawCommand('status_header.html?command=playlist&amp;subcommand=loadtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]');"[% END %] [% "PLAY_THIS_SONG" | string %]</div>
-			<div>[% WRAPPER addlink %]onclick="Utils.processRawCommand('status_header.html?command=playlist&amp;subcommand=addtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]');"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]</div>
+			<div>[% WRAPPER playlink %]onclick="Utils.processPlaylistCommand('command=playlist&amp;subcommand=loadtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]', true);"[% END %] [% "PLAY_THIS_SONG" | string %]</div>
+			<div>[% WRAPPER addlink %]onclick="Utils.processPlaylistCommand('command=playlist&amp;subcommand=addtracks&amp;track.id=[% itemobj.id %]&amp;player=[% playerURI %]', true);"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]</div>
 		</div>
 	[% END %]
 

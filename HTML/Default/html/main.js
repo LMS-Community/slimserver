@@ -397,13 +397,9 @@ Playlist = function(){
 					}
 				}
 			});
-
-			if (el = Ext.get('playlistPanel')) {
-				el.getUpdateManager().showLoadIndicator = false;
-			}
 		},
 
-		load : function(url){
+		load : function(url, showIndicator){
 			// unregister event handlers
 			Ext.dd.ScrollManager.unregister('playList');
 
@@ -412,6 +408,9 @@ Playlist = function(){
 
 			if (!url)
 				url = el.getUpdateManager().defaultUrl;
+
+			if (showIndicator)
+				el.getUpdateManager().showLoadIndicator = true;
 
 			el.load(
 				{
@@ -422,6 +421,8 @@ Playlist = function(){
 				{},
 				this.onUpdated
 			);
+
+			el.getUpdateManager().showLoadIndicator = false;
 		},
 
 		clear : function(){

@@ -171,8 +171,15 @@ var Utils = function(){
 
 		},
 
-		processPlaylistCommand : function(param) {
-			this.processRawCommand('/status.html?' + param + 'ajaxRequest=1&force=1', true);
+		processPlaylistCommand : function(param, reload) {
+			this.processRawCommand('/status_header.html?' + param + 'ajaxRequest=1&force=1', true);
+			if (reload) {
+				try { Playlist.load(null, true); }
+				catch(e) {
+					try { parent.Playlist.load(null, true); }
+					catch(e) {}
+				}
+			}
 		},
 
 		processRawCommand : function(myUrl, updateStatus) {
