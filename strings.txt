@@ -1141,6 +1141,10 @@ COLLAPSE
 	DE	Verkleinern
 	EN	Collapse
 
+UNDOCK_PLAYER_PANEL
+	DE	Player Panel in eigenem Fenster öffnen
+	EN	Undock player panel
+
 ALARM
 	CS	Budík
 	DA	Alarm

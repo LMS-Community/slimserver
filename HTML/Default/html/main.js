@@ -570,12 +570,12 @@ Player = function(){
 
 			displayElements.add(new Slim.RepeatButton('ctrlRepeat', {
 				minWidth: 34,
-				cls: 'btn-repeat'
+				cls: 'btn-repeat-0'
 			}));
 
 			displayElements.add(new Slim.ShuffleButton('ctrlShuffle', {
 				minWidth: 34,
-				cls: 'btn-shuffle'
+				cls: 'btn-shuffle-0'
 			}));
 
 			new Slim.Button('ctrlVolumeDown', {
@@ -600,6 +600,18 @@ Player = function(){
 				cls: 'btn-power',
 				minWidth: 22
 			}));
+
+			if (Ext.get('ctrlUndock')) {
+				new Slim.Button('ctrlUndock', {
+					cls: 'btn-undock',
+					tooltip: strings['undock'],
+					minWidth: 18,
+					scope: this,
+					handler: function(){
+						window.open(webroot + 'status_header.html', 'playerControl', 'width=500,height=100,status=no,menubar=no,location=no,resizable=yes');
+					}
+				});
+			}
 
 			new Slim.Button('ctrlCollapse', {
 				cls: 'btn-collapse-player',
@@ -1001,12 +1013,38 @@ Player = function(){
 
 			Utils.setCookie('SlimServer-expandPlayerControl', doExpand);
 
+			// resize the window if in undocked mode
+			if (!Ext.get('ctrlUndock')) {
+				var width = Ext.get(document.body).getWidth() + 10;
+				var height = doExpand ? 178 : 102;
+
+				if (Ext.isGecko && Ext.isWindows) {
+					width += 6;
+					height += 15;
+				}
+				else if (Ext.isGecko && Ext.isLinux) {
+					height -= 10;
+				}
+				else if (Ext.isSafari && doExpand) {
+					height -= 10;
+				}
+				else if (Ext.isGecko && Ext.isMac) {
+					height -= 15;
+				}
+				else if (Ext.isIE7) {
+					width += 20;
+					height += 60;
+				}
+				else if (Ext.isIE) {
+					width -= 2;
+					height += 15;
+				}
+
+				window.resizeTo(width, height);
+			}
+
 			try { Main.onResize(); }
 			catch(e) {}
-		},
-
-		openPlayerControl : function(){
-			window.open(webroot + 'status_header.html', 'playerControl', "width=500,height=165");
 		},
 
 		setVolume : function(amount, d){
@@ -1081,6 +1119,7 @@ Slim.RepeatButton = function(renderTo, config){
 		updateState: function(newState){
 			this.state = newState;
 			this.setTooltip(strings['repeat' + this.state]);
+			this.setClass('btn-repeat-' + this.state);
 		},
 
 		state: 0
@@ -1109,6 +1148,7 @@ Slim.ShuffleButton = function(renderTo, config){
 		updateState: function(newState){
 			this.state = newState;
 			this.setTooltip(strings['shuffle' + this.state]);
+			this.setClass('btn-shuffle-' + this.state);
 		},
 
 		state: 0

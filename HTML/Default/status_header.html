@@ -13,7 +13,6 @@
 		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
 
 		<style>
-			html, body { background: white; }
 			body { margin: 5px; }
 		</style>
 
@@ -65,6 +64,7 @@
 	strings['volumedown'] = "[% "VOLUME_SOFTER" | string %]";
 	strings['collapse'] = "[% "COLLAPSE" | string %]";
 	strings['expand']   = "[% "EXPAND" | string %]";
+	strings['undock']   = "[% "UNDOCK_PLAYER_PANEL" | string %]";
 	strings['by']       = "[% "BY" | string %]";
 	strings['from']     = "[% "FROM" | string %]";
 	strings['on']       = "[% "ON" | string %]";
@@ -94,7 +94,7 @@
 						</table>
 					</td>
 
-					<td width="33%" align="right">
+					<td width="30%" align="right">
 						<table border="0" cellspacing="0" cellpadding="0">
 							<tr>
 								<td id="ctrlVolumeDown"></td>
@@ -106,7 +106,16 @@
 						</table>
 					</td>
 
-					<td width="17%" align="right"><span id="ctrlPower"></span></td>
+					<td width="25%" align="right">
+						<span id="ctrlPower"></span>
+					</td>
+
+					[% IF embedded %]
+					<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
+					<td align="right" valign="top">
+						<div id="ctrlUndock"></div>
+					</td>
+					[% END %]
 				</tr>
 			</table>
 

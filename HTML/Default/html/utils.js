@@ -80,6 +80,12 @@ Ext.extend(Slim.Button, Ext.Button, {
 		else {
 			btnEl.dom[this.tooltipType] = this.tooltip;
 		}
+	},
+
+	setClass: function(newClass) {
+		this.el.removeClass(this.cls);
+		this.cls = newClass
+		this.el.addClass(this.cls);
 	}
 });
 

@@ -935,8 +935,12 @@ form#advSearchForm.resultsPage {
 .btn-play, .btn-play button,
 .btn-pause, .btn-pause button,
 .btn-next, .btn-next button,
-.btn-repeat, .btn-repeat button,
-.btn-shuffle, .btn-shuffle button,
+.btn-repeat-0, .btn-repeat-0 button,
+.btn-repeat-1, .btn-repeat-1 button,
+.btn-repeat-2, .btn-repeat-2 button,
+.btn-shuffle-0, .btn-shuffle-0 button,
+.btn-shuffle-1, .btn-shuffle-1 button,
+.btn-shuffle-2, .btn-shuffle-2 button,
 .btn-volume-increase, .btn-volume-increase button,
 .btn-volume-decrease, .btn-volume-decrease button,
 .btn-power, .btn-power button {
@@ -959,12 +963,28 @@ form#advSearchForm.resultsPage {
 	background: transparent url(html/images/btn_next.gif) no-repeat 0 0;
 }
 
-.btn-repeat button {
-	background: transparent url(html/images/btn_repeat.gif) no-repeat 0 0;
+.btn-repeat-0 button {
+	background: transparent url(html/images/btn_repeat_off.gif) no-repeat 0 0;
 }
 
-.btn-shuffle button {
-	background: transparent url(html/images/btn_shuffle.gif) no-repeat 0 0;
+.btn-repeat-1 button {
+	background: transparent url(html/images/btn_repeat_song.gif) no-repeat 0 0;
+}
+
+.btn-repeat-2 button {
+	background: transparent url(html/images/btn_repeat_playlist.gif) no-repeat 0 0;
+}
+
+.btn-shuffle-0 button {
+	background: transparent url(html/images/btn_shuffle_off.gif) no-repeat 0 0;
+}
+
+.btn-shuffle-1 button {
+	background: transparent url(html/images/btn_shuffle_song.gif) no-repeat 0 0;
+}
+
+.btn-shuffle-2 button {
+	background: transparent url(html/images/btn_shuffle_album.gif) no-repeat 0 0;
 }
 
 .btn-volume-increase button {
@@ -982,6 +1002,19 @@ form#advSearchForm.resultsPage {
 .btn-power-off button {
 	background: transparent url(html/images/btn_power.gif) no-repeat 0 0;
 }
+
+#ctrlUndock, .btn-undock, .btn-undock button {
+	width: 18px;
+	height: 10px;
+}
+
+.btn-undock {
+	background: transparent url(html/images/btn_undock.gif) no-repeat 0 0;
+}
+
+#ctrlUndock .x-btn-over,
+#ctrlUndock .x-btn-click
+{ background-position: 0 -10px; }
 
 .x-btn-over button { background-position: 0 -22px; }
 .x-btn-click button { background-position: 0 -44px; }
