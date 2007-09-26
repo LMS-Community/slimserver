@@ -58,7 +58,7 @@
 			END;
 			IF homeCategory AND pwd_list;
 				category.title = homeCategory | string;
-				category.href = "href=\"" _ webroot _ "home.html#" _ homeCategory _ "?player=$playerURI\"";
+				category.href = "href=\"" _ webroot _ "home.html?page=" _ homeCategory _ "&player=$playerURI\"";
 				category.hreftype = '';
 				pwd_list.unshift(category);
 			END -%]

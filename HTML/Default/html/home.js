@@ -7,7 +7,7 @@ var MainMenu = function(){
 			Ext.EventManager.onDocumentReady(this.onResize, this, true);
 
 			// use "display:none" to hide inactive elements
-			var items = Ext.DomQuery.select('div.homeMenuSection, span.overlappingCrumblist, div#livesearch, div.expandableHomeMenuItem');
+			var items = Ext.DomQuery.select('div.homeMenuSection, div.expandableHomeMenuItem');
 			for(var i = 0; i < items.length; i++) {
 				if (el = Ext.get(items[i].id)) {
 					el.setVisibilityMode(Ext.Element.DISPLAY);
@@ -16,43 +16,10 @@ var MainMenu = function(){
 				}
 			}
 
-			Utils.initSearch();
+			this.expandItem(Utils.getCookie('SlimServer-homeMenuExpanded'));
 
-			var anchor = document.location.href.match(/#(.*)\?/)
-			if (!(anchor && anchor[1] && this.showPanel(anchor[1].toLowerCase()))) {
-				this.showPanel('home');
-			}
-		},
-
-		addUrl : function(key, value){
-			url[key] = value;
-		},
-
-		doMenu : function(item){
-			switch (item) {
-				case 'MY_MUSIC':
-					this.showPanel('my_music');
-					break;
-
-				case 'RADIO':
-					this.showPanel('radio');
-					break;
-
-				case 'MUSIC_ON_DEMAND':
-					this.showPanel('music_on_demand');
-					break;
-
-				case 'PLUGINS':
-					this.showPanel('plugins');
-					break;
-
-				default:
-					if (url[item]) {
-						var cat = item.match(/:(.*)$/);
-						location.href = url[item] + (cat && cat.length >= 2 && cat[1] != 'browse' ? '&homeCategory=' + cat[1] : '');
-					}
-					break;
-			}
+			if (Ext.get('livesearch'))
+				Utils.initSearch('livesearch', this.showSearchResults);
 		},
 
 		toggleItem : function(panel){
@@ -119,48 +86,9 @@ var MainMenu = function(){
 			}
 		},
 
-		showPanel : function(panel){
-			var panelExists = false;
-			this.collapseAll();
-
-			// make plugins show up in the "Extras" panel
-			if (panel == 'plugins')
-				panel = 'plugins';
-
-			var items = Ext.DomQuery.select('div.homeMenuSection');
-			for(var i = 0; i < items.length; i++) {
-				if (el = Ext.get(items[i].id)) {
-					el.setVisible(panel + 'Menu' == items[i].id);
-					panelExists |= (panel + 'Menu' == items[i].id);
-				}
-			}
-
-			items = Ext.DomQuery.select('span.overlappingCrumblist');
-			for(var i = 0; i < items.length; i++) {
-				if (el = Ext.get(items[i].id))
-					el.setVisible(panel + 'Crumblist' == items[i].id);
-			}
-
-			Ext.get('pagetitle').update(strings[panel] ? strings[panel] : strings['home']);
-
-			if (panel == 'my_music' || panel == 'search')
-				Ext.get('livesearch').setVisible(true);
-			else
-				Ext.get('livesearch').setVisible(false);
-
-			if (panel == 'home') {
-				this.expandItem(Utils.getCookie('SlimServer-homeMenuExpanded'));
-				Ext.get('titleBottom').replaceClass('titlebox_bottom_crumb', 'titlebox_bottom');
-				Ext.get('crumblist').removeClass('crumblist');
-			}
-			else {
-				Ext.get('titleBottom').replaceClass('titlebox_bottom', 'titlebox_bottom_crumb');
-				Ext.get('crumblist').addClass('crumblist');
-			}
-
-			this.onResize();
-
-			return panelExists;
+		showSearchResults : function(value){
+			Ext.get('my_musicMenu').setVisible(value.length <= 2);
+			Ext.get('searchMenu').setVisible(value.length > 2);
 		},
 
 		onResize : function(){

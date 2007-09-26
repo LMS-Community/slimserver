@@ -20,7 +20,9 @@ input { color: black; }
 #ctrlCurrentTitle a:hover,
 #ctrlCurrentSongInfoCollapsed a:hover,
 a:hover, .link:hover,
+#crumblist a:hover,
 .currentTrackInfo a:hover,
+.homeMenuItem a:hover,
 .browseItemLink:hover {
 	text-decoration: underline;
 }
@@ -545,6 +547,8 @@ form#advSearchForm.resultsPage {
 .titlebox_bottom, .playerbox_bottom {
 	background: url(html/images/title_bottom_right.gif) no-repeat bottom right;
 }
+
+.titlebox_bottom { margin-bottom: 20px; }
 
 .titlebox_bottom_crumb div {
 	background: url(html/images/title_bottom_crumb_left.gif) no-repeat bottom left;

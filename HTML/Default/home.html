@@ -15,141 +15,165 @@
 	
 	PROCESS helpfooter.html;
 
-ELSE; %]
-[% extJsScripts = BLOCK %]
-	<script type="text/javascript" src="[% webroot %]html/home.js?r=[% revision %]"></script>
+ELSE %]
+	[% extJsScripts = BLOCK %]
+		<script type="text/javascript" src="[% webroot %]html/home.js?r=[% revision %]"></script>
+	
+		<script type="text/javascript">
+			Ext.EventManager.onDocumentReady(function(){
+				MainMenu.init();
 
-	<script type="text/javascript">
-		strings['home']            = '[% "HOME" | string %]';
-		strings['my_music']        = '[% "MY_MUSIC" | string %]';
-		strings['radio']           = '[% "RADIO" | string %]';
-		strings['music_on_demand'] = '[% "MUSIC_ON_DEMAND" | string %]';
-
-		Ext.EventManager.onDocumentReady(function(){
-			MainMenu.init();
-
-			// fill array with URLs, if available
-			[%- FOREACH category = additionalLinks %]
-				[%- category = category.key %]
-				[%- FOREACH link = additionalLinks.$category %]
-					MainMenu.addUrl('[% link.key %]:[% category %]', '[% link.value | html %]player=[% playerURI %]');
-				[%- END %]
-			[%- END %]
-			MainMenu.addUrl('RADIO_TUNEIN:radio', 'tunein.html?player=[% playerURI %]');
-
-			var items = Ext.DomQuery.select('div.selectorMarker');
-			for(var i = 0; i < items.length; i++) {
-				Ext.id(items[i]);
-			}
-		});
-	</script>
-[% END %]
-[% pagetitle = BLOCK %]
-	<span id="pagetitle"></span>
-	<input type="text" id="livesearch"></input>
-[% END %]
-[% pwd_list = BLOCK %]
-	<span id="my_musicCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "MY_MUSIC" | string %]</span>
-	<span id="radioCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "RADIO" | string %]</span>
-	<span id="searchCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] <span class="mouseOver" onclick="MainMenu.showPanel('my_music');">[% "MY_MUSIC" | string %]</span></span>
-	<span id="music_on_demandCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "MUSIC_ON_DEMAND" | string %]</span>
-	<span id="pluginsCrumblist" class="overlappingCrumblist"><span class="mouseOver" onclick="MainMenu.showPanel('home');">[% "HOME" | string %]</span> [% crumbSeparator %] [% "PLUGINS" | string %]</span>
-[% END %]
-
-[% IF NOT warn %]
-	[% infoTab = BLOCK %]
-		<span id="albumcount">[% album_count %]</span> [% "WITH" | string -%]
-		<span id="songcount">[%- song_count %]</span> [% "BY" | string -%]
-		<span id="artistcount">[% artist_count %]</span>.
+				var items = Ext.DomQuery.select('div.selectorMarker');
+				for(var i = 0; i < items.length; i++) {
+					Ext.id(items[i]);
+				}
+			});
+		</script>
 	[% END %]
-[% END %]
 
-[% PROCESS pageheader.html noHomeLink=1 %]
+	[%
+	my_musicItems = BLOCK;
+		FOREACH link = additionalLinks.browse;
+			IF link.key != 'FAVORITES';
+				PROCESS menuItem token=link.key category='my_music';
+			ELSE;
+				favlink = link;
+			END;
+		END;
+		FOREACH link = additionalLinks.search;
+			IF link.key == 'SEARCHMUSIC';
+				PROCESS menuItem token=link.key category='my_music';
+			END;
+		END;
+	END;
+	
+	radioItems = BLOCK;
+		FOREACH link = additionalLinks.radio;
+			PROCESS menuItem token=link.key category='radio';
+		END;
+		PROCESS menuItem token='RADIO_TUNEIN' category='radio';
+	END;
 
-[% BLOCK menuItem %]
-	<div class="selectorMarker[% IF singleton %] homeMenuSection_singleton[% END %]" onmouseover="Utils.highlight(this);"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-		<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
-			[% IF expandable %]
-				<span  onclick="MainMenu.toggleItem('[% token %]');"><img class="disclosure_home" src="[% webroot %]html/images/spacer.gif"/></span>
-			[% END %]
-			[% token | string %]
+	music_on_demandItems = BLOCK;
+		FOREACH link = additionalLinks.music_on_demand;
+			PROCESS menuItem token=link.key category='mod';
+		END;
+	END;
+
+	pluginsItems = BLOCK;
+		FOREACH link = additionalLinks.plugins;
+			PROCESS menuItem token=link.key category='plugins';
+		END;
+	END;
+
+	page = page | lower;
+	%]
+
+	[% BLOCK menuItem %]
+		<div class="selectorMarker[% IF singleton %] homeMenuSection_singleton[% END %]" onmouseover="Utils.highlight(this);"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+			<div class="homeMenuItem" id="[% link.key %]">
+				[% IF expandable %]
+					<span onclick="MainMenu.toggleItem('[% link.key %]');"><img class="disclosure_home" src="[% webroot %]html/images/spacer.gif"/></span>
+				[% END %]
+				<a href="[% link.value %]&player=[% player %][% IF category; "&homeCategory=" _ category; END %]" class="browseItemLink">[% link.key | string %]</a>
+			</div>
+		</div></div></div></div></div>
+	[% END %]
+
+	[% IF page == 'my_music' %]
+		[% pagetitle = BLOCK %]
+			<span id="pagetitle">[% "MY_MUSIC" | string %]</span>
+			<input type="text" id="livesearch"></input>
+		[% END %]
+
+		[% pwd_list = BLOCK %]
+			<a href="[% webroot %]home.html?player=[% player %]">[% "HOME" | string %]</a> [% crumbSeparator %] <span class="link" onclick="MainMenu.showSearchResults('');">[% "MY_MUSIC" | string %]</span>
+		[% END %]
+
+		[% menu = BLOCK %]
+		<div class="homeMenuSection" id="my_musicMenu">
+			[%- my_musicItems -%]
 		</div>
-	</div></div></div></div></div>
-[% END %]
 
-[% my_musicItems = BLOCK;
-	FOREACH link = additionalLinks.browse;
-		IF link.key != 'FAVORITES';
-			PROCESS menuItem token=link.key category='browse';
-		END;
-	END;
-	FOREACH link = additionalLinks.search;
-		IF link.key == 'SEARCHMUSIC';
-			PROCESS menuItem token=link.key category='search';
-		END;
-	END;
-END %]
+		<div class="homeMenuSection" id="searchMenu">
+			<div id="search-results"></div>
+		</div>
+		[% END %]
 
-[% radioItems = BLOCK;
-	FOREACH link = additionalLinks.radio;
-		PROCESS menuItem token=link.key category='radio';
-	END;
-	PROCESS menuItem token='RADIO_TUNEIN' category='radio';
-END %]
+	[% ELSIF page == 'radio' %]
+		[% pagetitle = "RADIO" | string %]
+		[% pwd_list = BLOCK %]
+			<a href="[% webroot %]home.html?player=[% player %]">[% "HOME" | string %]</a> [% crumbSeparator %] [% "RADIO" | string %]
+		[% END %]
 
-[% music_on_demandItems = BLOCK;
-	FOREACH link = additionalLinks.music_on_demand;
-		PROCESS menuItem token=link.key category='music_on_demand';
-	END;
-END %]
+		[% menu = BLOCK %]
+		<div class="homeMenuSection" id="radioMenu">
+			[%- radioItems -%]
+		</div>
+		[% END %]
 
-[% pluginsItems = BLOCK;
-	FOREACH link = additionalLinks.plugins;
-		PROCESS menuItem token=link.key category='plugins';
-	END;
-END %]
+	[% ELSIF page == 'mod' %]
+		[% pagetitle = "MUSIC_ON_DEMAND" | string %]
+		[% pwd_list = BLOCK %]
+			<a href="[% webroot %]home.html?player=[% player %]">[% "HOME" | string %]</a> [% crumbSeparator %] [% "MUSIC_ON_DEMAND" | string %]
+		[% END %]
 
-<div class="homeMenuSection" id="homeMenu">
-	[% category=''; expandable = 1; PROCESS menuItem token="MY_MUSIC" %]
-	<div id="MY_MUSIC_expanded" class="expandableHomeMenuItem">[%- my_musicItems -%]</div>
+		[% menu = BLOCK %]
+		<div class="homeMenuSection" id="music_on_demandMenu">
+			[%- music_on_demandItems -%]
+		</div>
+		[% END %]
 
-	[% PROCESS menuItem token="RADIO" %]
-	<div id="RADIO_expanded" class="expandableHomeMenuItem">[%- radioItems -%]</div>
+	[% ELSIF page == 'plugins' %]
+		[% pagetitle = "PLUGINS" | string %]
+		[% pwd_list = BLOCK %]
+			<a href="[% webroot %]home.html?player=[% player %]">[% "HOME" | string %]</a> [% crumbSeparator %] [% "PLUGINS" | string %]
+		[% END %]
 
-	[% IF additionalLinks.music_on_demand %]
-		[% PROCESS menuItem token="MUSIC_ON_DEMAND" %]
-		<div id="MUSIC_ON_DEMAND_expanded" class="expandableHomeMenuItem">[%- music_on_demandItems -%]</div>
+		[% menu = BLOCK %]
+		<div class="homeMenuSection" id="pluginsMenu">
+			[%- pluginsItems -%]
+		</div>
+		[% END %]
+
+	[% ELSE %]
+		[% pagetitle = "HOME" | string %]
+		[% menu = BLOCK %]
+		<div class="homeMenuSection" id="homeMenu">
+			[% category=''; expandable = 1; PROCESS menuItem link.key="MY_MUSIC" link.value="home.html?page=my_music" %]
+			<div id="MY_MUSIC_expanded" class="expandableHomeMenuItem">[%- my_musicItems -%]</div>
+		
+			[% PROCESS menuItem link.key="RADIO" link.value="home.html?page=radio" %]
+			<div id="RADIO_expanded" class="expandableHomeMenuItem">[%- radioItems -%]</div>
+		
+			[% IF additionalLinks.music_on_demand %]
+				[% PROCESS menuItem link.key="MUSIC_ON_DEMAND" link.value="home.html?page=mod" %]
+				<div id="MUSIC_ON_DEMAND_expanded" class="expandableHomeMenuItem">[%- music_on_demandItems -%]</div>
+			[% END %]
+		
+			[% PROCESS menuItem link.key="FAVORITES" link.value=favlink.value category='my_music' expandable = 0 singleton=1; singleton=0 %]
+		
+			[% IF additionalLinks.plugins %]
+				[% PROCESS menuItem link.key="PLUGINS" link.value="home.html?page=plugins" expandable = 1 category=''; expandable = 0 %]
+				<div id="PLUGINS_expanded" class="expandableHomeMenuItem">[%- pluginsItems -%]</div>
+			[% END %]
+		</div>
+		[% END %]
+
 	[% END %]
 
-	[% PROCESS menuItem token="FAVORITES" category='browse' expandable = 0 singleton=1; singleton=0 %]
 
-	[% IF additionalLinks.plugins %]
-		[% PROCESS menuItem token="PLUGINS" expandable = 1 category=''; expandable = 0 %]
-		<div id="PLUGINS_expanded" class="expandableHomeMenuItem">[%- pluginsItems -%]</div>
+	[% PROCESS pageheader.html noHomeLink=1 %]
+
+	[% menu %]
+
+	[% IF NOT warn %]
+		[% infoTab = BLOCK %]
+			<span id="albumcount">[% album_count %]</span> [% "WITH" | string -%]
+			<span id="songcount">[%- song_count %]</span> [% "BY" | string -%]
+			<span id="artistcount">[% artist_count %]</span>.
+		[% END %]
 	[% END %]
-</div>
 
-<div class="homeMenuSection" id="my_musicMenu">
-	[%- my_musicItems -%]
-</div>
-
-
-<div class="homeMenuSection" id="radioMenu">
-	[%- radioItems -%]
-</div>
-
-<div class="homeMenuSection" id="music_on_demandMenu">
-	[%- music_on_demandItems -%]
-</div>
-
-<div class="homeMenuSection" id="pluginsMenu">
-	[%- pluginsItems -%]
-</div>
-
-
-<div class="homeMenuSection" id="searchMenu">
-	<div id="search-results"></div>
-</div>
-
-[% PROCESS pagefooter.html %]
+	[% PROCESS pagefooter.html %]
 [% END %]

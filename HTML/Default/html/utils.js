@@ -148,12 +148,6 @@ var Utils = function(){
 					location.href = el.dom.href;
 				}
 			}
-			else if (Ext.get(target).is('div.homeMenuItem')) {
-				MainMenu.doMenu(Ext.get(target).id);
-			}
-			else if (el = Ext.get(target).child('div.homeMenuItem')) {
-				MainMenu.doMenu(Ext.get(el).id);
-			}
 		},
 
 		resizeContent : function(){
@@ -208,7 +202,7 @@ var Utils = function(){
 		},
 
 
-		initSearch : function(searchField){
+		initSearch : function(searchField, callback){
 			search = new Ext.form.TextField({
 				validationDelay: 50,
 				validateOnBlur: false,
@@ -230,21 +224,17 @@ var Utils = function(){
 							},
 							{},
 							function(){
-								Utils.addBrowseMouseOver();
-								Utils.resizeContent();
-								try {
-									MainMenu.showPanel('search');
-									MainMenu.onResize();
+								if (typeof callback == 'function') { 
+									try { eval(callback(value)); }
+									catch(e){}
 								}
-								catch(e){}
 							}
 						);
 					}
-					else
-						try {
-							MainMenu.showPanel('my_music');
-						}
+					else if (typeof callback == 'function') { 
+						try { eval(callback(value)); }
 						catch(e){}
+					}
 
 					return true;
 				}
