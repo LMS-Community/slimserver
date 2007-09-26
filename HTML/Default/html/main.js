@@ -681,7 +681,7 @@ Player = function(){
 			var left, right, el;
 
 			var progress = Ext.get(el);
-			var max = progress.getWidth() - 11; // total of left/right/indicator width
+			var max = progress.getWidth() - 12; // total of left/right/indicator width
 
 			// if we don't know the total play time, just put the indicator in the middle
 			if (!totalTime) {
@@ -690,12 +690,18 @@ Player = function(){
 
 			// calculate left/right percentage
 			else {
-				left = Math.floor(time / totalTime * max);
-				left = Math.min(left, max);
+				left = Math.max(
+						Math.min(
+							Math.floor(time / totalTime * max)
+						, max)
+					, 1);
 			}
 
-			Ext.get(Ext.DomQuery.selectNode('.progressFillRight', progress.dom)).setWidth(max - left);
-			Ext.get(Ext.DomQuery.selectNode('.progressFillLeft', progress.dom)).setWidth(left);
+			// do the DOM lookups before replacing to reduce flicker
+			var remaining = Ext.get(Ext.DomQuery.selectNode('.progressFillRight', progress.dom));
+			var playtime = Ext.get(Ext.DomQuery.selectNode('.progressFillLeft', progress.dom));
+			remaining.setWidth(max - left);
+			playtime.setWidth(left);
 		},
 
 		updateStatus : function(response) {

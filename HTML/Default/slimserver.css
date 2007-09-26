@@ -361,7 +361,7 @@ form#advSearchForm.resultsPage {
 }
 
 #ctrlProgress {
-	height: 10px;
+	height: 12px;
 	margin: 2px 100px 0 40px;
 	overflow: hidden;
 }
@@ -371,9 +371,6 @@ form#advSearchForm.resultsPage {
 	width: 5px;
 	background: url(html/images/progress.gif) no-repeat top left;
 }
-
-/* to be replaced with some nice artwork */
-#ctrlProgress img.progressLeft {}
 
 #ctrlProgress img.progressFillLeft {
 	background-position: 0 -30px;
@@ -428,6 +425,7 @@ form#advSearchForm.resultsPage {
 #ctrlCurrentArt {
 	float: left;
 	height: 96px;
+	width: 96px;
 }
 
 #ctrlCurrentTitle, #ctrlTrackInfo, #ctrlPlaytimePanel {
