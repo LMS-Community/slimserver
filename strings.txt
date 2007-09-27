@@ -1699,7 +1699,7 @@ FIRMWARE_MISSING
 	ZH_CN	失误：韧件丢失
 
 FIRMWARE_MISSING_DESC
-	DE	Der Server kann zum Laden eines Firmware-Update keine Internetverbindung herstellen.
+	DE	SqueezeCenter kann zum Laden eines Firmware-Update keine Internetverbindung herstellen.
 	EN	Server can't connect to Internet to obtain firmware update.
 	ES	El servidor no se puede conectar a Internet para obtener la actualización de firmware.
 	FR	Le serveur ne peut se connecter à Internet pour obtenir une mise à jour du micrologiciel.
@@ -2182,15 +2182,15 @@ SETUP_GROUP_TCP_PARAMS
 SETUP_GROUP_TCP_PARAMS_DESC
 	CS	Tato volba nastavuje parametry protokolu TCP/IP serveru.
 	DA	Disse indstillinger påvirker hvorledes serveren håndterer TCP over netværket.
-	DE	Diese Einstellung passt die TCP/IP-Netzwerk-Einstellungen des Servers an.
-	EN	These settings adjust the parameters of the TCP/IP networking in the server.
+	DE	Diese Einstellung passt die TCP/IP-Netzwerk-Einstellungen des SqueezeCenters an.
+	EN	These settings adjust the parameters of the TCP/IP networking in the SqueezeCenter.
 	ES	Estos parámetros cambiarán las opciones de TCP/IP en el servidor.
 	FI	Seuraavat asetukset vaikuttavat palvelimen TCP/IP verkkotoimintaan.
 	FR	Ces réglages permettent d'ajuster les paramètres du réseau TCP pour le serveur.
 	HE	הגדרות אלה מכוונות את הפרמטרים של רשת TCP/IP בשרת.
 	IT	Queste impostazioni consentono di regolare i parametri di rete TCP/IP nel server.
 	JA	これらのセッティングはサーバーのTCP/IPパラメータを調節します
-	NL	Hiermee kun je de parameters van het TCP/IP-netwerk in de server aanpassen.
+	NL	Hiermee kun je de parameters van het TCP/IP-netwerk in SqueezeCenter aanpassen.
 	NO	Disse innstillingene justerer TCP-protokollen for tjeneren.
 	PT	Estas configurações ajustam os parâmetros de rede TCP do servidor.
 	SV	Detta är inställningar för nätverksprotokollet TCP.
@@ -2568,8 +2568,8 @@ SETUP_GROUP_PLUGINS
 	EN	Extras
 
 SETUP_GROUP_PLUGINS_DESC
-	DE	SqueezeCenter enthält eine Reihe von Extras, die Sie über die Fernbedienung steuern können. Sie können Extras aus dem Plugins-Ordner aufnehmen bzw. entfernen, indem Sie das entsprechende Kontrollkästchen aktivieren bzw. deaktivieren. Sie können den Server auch so konfigurieren, dass er bei jedem Öffnen des Extras-Menüs erneut nach Extras sucht. Die Standardeinstellung ist 'Extras nur beim Programmstart laden'. Klicken Sie auf 'Ändern', um die Änderungen zu speichern.
-	EN	SqueezeCenter includes some extras that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. You may choose to have the server scan for extras each time you navigate to the player extras menu or the extras settings. Default is to load on startup only.  To save your changes, click Change.
+	DE	SqueezeCenter enthält eine Reihe von Extras, die Sie über die Fernbedienung steuern können. Sie können Extras aus dem Plugins-Ordner aufnehmen bzw. entfernen, indem Sie das entsprechende Kontrollkästchen aktivieren bzw. deaktivieren. Sie können SqueezeCenter auch so konfigurieren, dass es bei jedem Öffnen des Extras-Menüs erneut nach Extras sucht. Die Standardeinstellung ist 'Extras nur beim Programmstart laden'. Klicken Sie auf 'Ändern', um die Änderungen zu speichern.
+	EN	SqueezeCenter includes some extras that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. You may choose to have SqueezeCenter scan for extras each time you navigate to the player extras menu or the extras settings. Default is to load on startup only.  To save your changes, click Change.
 	PT	O cliente SqueezeCenter inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
 
 SETUP_GROUP_FORMATS_CONVERSION
@@ -4054,14 +4054,14 @@ SETUP_GUESSFILEFORMATS_CHANGED
 
 SETUP_GROUP_GUESSFILEFORMATS_DESC
 	CS	Pro formáty souborl, které nemají smysluplné tagy, může se pokusit server nahradit tyko tagy pomocí názvu souboru a jeho cesty. Použitím stejných promněnných jako ve vobe formát skladeb je možné vytvořit předpis pro konverzi názvu souboru do jména tak aby server vytvářel pokud možno dobrou náhražku tagů. priorita se volí pořadím níže. První platný vzorec bude použit.
-	DE	Bei Dateien, die keine sinnvollen Tags enthalten, kann der Server versuchen, die Informationen aus dem Pfad und Dateinamen zu gewinnen. Mit denselben Variablen wie für das Titelformat können Sie Dateinamenskonventionen definieren, damit der Server die Tags besser erraten kann. Dies geschieht in der unten vermerkten Reihenfolge. Die erste gültige Musterübereinstimmung wird verwendet.
-	EN	For files that do not have reasonable tags, you can have the server guess at tags using the path and filename. Using the same variables as Title Format, you can create a pattern to match your file naming conventions so that the server can make a good guess at what the tags should be.  Priority goes in the order listed below.  The first valid pattern match is used.
+	DE	Bei Dateien, die keine sinnvollen Tags enthalten, kann der SqueezeCenter versuchen, die Informationen aus dem Pfad und Dateinamen zu gewinnen. Mit denselben Variablen wie für das Titelformat können Sie Dateinamenskonventionen definieren, damit SqueezeCenter die Tags besser erraten kann. Dies geschieht in der unten vermerkten Reihenfolge. Die erste gültige Musterübereinstimmung wird verwendet.
+	EN	For files that do not have reasonable tags, you can have SqueezeCenter guess at tags using the path and filename. Using the same variables as Title Format, you can create a pattern to match your file naming conventions so that the application can make a good guess at what the tags should be.  Priority goes in the order listed below.  The first valid pattern match is used.
 	ES	Para aquellos archivos que no tengan etiquetas razonables, se puede hacer que el servidor las suponga utilizando la ruta y el nombre de archivo. Utilizando las mismas variables que en Formato de título, se puede crear un patrón para que coincida con las convenciones de nomenclatura de tal forma que el servidor pueda hacer buenas suposiciones de lo que tendrían que ser las etiquetas. La prioridad se indica en la lista siguiente. Se usa la primera coincidencia con un patrón válido.
 	FR	Le SqueezeCenter peut tenter de compléter les repères ID3 manquants ou incomplets de vos fichiers musicaux à partir de leur chemin ou de leur nom de fichier. En utilisant les mêmes variables que pour le format du titre, vous pouvez spécifier des masques type afin de déterminer les repères ID3. Les masques seront testés dans l'ordre ci-dessous. Le premier masque valide est appliqué.
 	HE	עבור קבצים שלא כוללים תגים הגיוניים, באפשרותך להורות לשרת לנחש תגים באמצעות הנתיב ושם הקובץ. באמצעות משתנים אלה עבור תבנית השם, באפשרותך ליצור תבנית שתתאים למוסכמות מתן השמות לקבצים שבהן אתה משתמש כך שיהיה באפשרות השרת לבצע ניחוש מוצלח עבור התגים. העדיפות מתקיימת לפי הסדר המפורט להלן. נעשה שימוש בהתאמה הראשונה של תבנית חוקית.
 	IT	In caso di file non provvisti di tag appropriati, è possibile impostare il server in modo che individui i tag corretti in base al percorso e al nome file. Utilizzando le stesse variabili adottate per il formato titolo, è possibile creare un modello con le stesse convenzioni di denominazione del file in modo da facilitare il rilevamento dei tag appropriati tramite il server. Di seguito è indicato l'ordine di priorità adottato. Viene utilizzato il primo modello corrispondente.
 	JA	正しいタグが含まれていないファイルに関しては、サーバーが推測するよう指定できます。どのようなパターンで推測するか指定してください。
-	NL	Je kunt de server naar tags laten raden met behulp van pad en bestandsnaam voor bestanden die geen goede taginformatie hebben. Je kunt dezelfde variabelen als bij 'Titelformaat' gebruiken om een patroon te maken dat correspondeert met de gebruikte bestandsnaamconventie, zodat de server kan raden wat de tags moeten zijn. De prioriteitsvolgorde staat hieronder. Het eerste correcte patroon wordt gebruikt.
+	NL	Je kunt SqueezeCenter naar tags laten raden met behulp van pad en bestandsnaam voor bestanden die geen goede taginformatie hebben. Je kunt dezelfde variabelen als bij 'Titelformaat' gebruiken om een patroon te maken dat correspondeert met de gebruikte bestandsnaamconventie, zodat SqueezeCenter kan raden wat de tags moeten zijn. De prioriteitsvolgorde staat hieronder. Het eerste correcte patroon wordt gebruikt.
 	NO	For filer som ikke har forståelig metadata (tagger) kan serveren gjette ved å bruke fil- og kataloginformasjon. Ved å bruke samme variabler som for låt-format kan du skape et mønster som passer måten filene dine er navngitt. Listen er i prioritert rekkefølge. Det første mønster som passer blir brukt.
 	SV	För filer som inte har rimliga metadata (taggar), kan servern gissa genom att använda fil- och mappinformation. Genom att använda samma variabler som för Låt-format kan du skapa mönster som passar det sätt dina filer är namngivna. Prioritet enligt listan nedan; första mönster-träff används.
 	ZH_CN	那些没有合理标签的文件,您可以让服务器凭着使用路径和文件名为基础进行标签猜测。您可以使用和标题格式一样的变量来建立匹配您的文件命名惯例的样式，以方便服务器对标签的猜测。优先权将取决于下列的排序。第一个被匹配的样式将被接受使用。
@@ -4254,17 +4254,17 @@ SETUP_AUDIODIR_DESC
 SETUP_AUDIODIR_OK
 	CS	SqueezeCenter použije cestu k složce s hudebním archivem:
 	DA	OK, anvender:
-	DE	Der Server verwendet folgenden Pfad für Musikdateien:
-	EN	The server will use the following path to your music files:
-	ES	El servidor usará esta ruta a los archivos de música:
+	DE	SqueezeCenter verwendet folgenden Pfad für Musikdateien:
+	EN	SqueezeCenter will use the following path to your music files:
+	ES	SqueezeCenter usará esta ruta a los archivos de música:
 	FI	Palvelin käyttää seuraavaa polkua MP3 -tiedostoihisi:
-	FR	Le serveur utilisera le chemin d'accès suivant pour repérer vos fichiers MP3:
+	FR	SqueezeCenter utilisera le chemin d'accès suivant pour repérer vos fichiers MP3:
 	HE	השרת ישתמש בנתיב הבא לקובצי המוסיקה שלך:
-	IT	Il server utilizzerà il seguente percorso per i file musicali:
+	IT	SqueezeCenter utilizzerà il seguente percorso per i file musicali:
 	JA	サーバーは、以下のパスを検索します。
-	NL	De server gebruikt het volgende pad naar je muziekbestanden:
+	NL	SqueezeCenter gebruikt het volgende pad naar je muziekbestanden:
 	NO	Ok, bruker:
-	PT	O servidor irã usar a seguinte directoria para os ficheiros áudio
+	PT	SqueezeCenter irã usar a seguinte directoria para os ficheiros áudio
 	SV	Använder nu följande sökväg till dina musikfiler:
 	ZH_CN	服务器将使用这路径访问您的音乐文件：
 
@@ -4302,8 +4302,8 @@ SETUP_ARTFOLDER
 
 SETUP_ARTFOLDER_DESC
 	CS	Můžete zvolit způsob ukládání obrázků obalů alb do zvláštního adresáře. Tuto volbu aktivujete použitím názvů souborů výše. Zadejte lokaci, kam se mají obrázky obalů ukládat. I přes použití této volby bude server stále hledat obrázky alb v adresáři s hudebními soubory, pokud nenajde příslušný obrázek v zadaném adresáři obalů.
-	DE	Mit der Option 'Variable Dateinamen' können Sie alle Plattenhüllen in einem Ordner ablegen. Geben Sie hier den Speicherort der entsprechenden Dateien ein. Unabhängig von diesem Ordner sucht der Server die Plattenhülle im selben Pfad wie die entsprechende Audiodatei, falls keine Plattenhülle im Ordner für Plattenhüllen gefunden wird.
-	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, the server will still look for artwork in the same path as each audio file if no matching artwork is found in the Artwork Folder.
+	DE	Mit der Option 'Variable Dateinamen' können Sie alle Plattenhüllen in einem Ordner ablegen. Geben Sie hier den Speicherort der entsprechenden Dateien ein. Unabhängig von diesem Ordner sucht SqueezeCenter die Plattenhülle im selben Pfad wie die entsprechende Audiodatei, falls keine Plattenhülle im Ordner für Plattenhüllen gefunden wird.
+	EN	You may choose to store all your artwork in a single folder, using the variable filenames option above.  Enter the location of the Artwork files here. Regardless of this location, SqueezeCenter will still look for artwork in the same path as each audio file if no matching artwork is found in the Artwork Folder.
 	ES	Se puede optar por almacenar todo el material gráfico en una única carpeta, con la opción de nombre de archivos variables anterior. Introduzca aquí la ubicación de los archivos de material gráfico. Independientemente de esta ubicación, el servidor seguirá buscando material gráfico en la misma ruta que cada archivo de audio si no se encuentra material gráfico coincidente en la carpeta de material gráfico.
 	FI	Voit valita hakemiston, mihin kaikki kansikuvat tallennetaan, käyttäen ylläolevaa muokattua tiedoston nimeämiskäytäntöä. Palvelin etsii kuvatiedostoja myös jokaisen musiikkitiedoston hakemistosta, jos kansikuvaa ei löydy tästä hakemistosta.
 	FR	Vous pouvez choisir de stocker toutes les pochettes dans un dossier unique en utilisant les noms de fichier variables décrits plus haut. Spécifiez l'emplacement des fichiers de pochette ci-dessous. Si aucune pochette correspondante n'est trouvée à cet emplacement, le SqueezeCenter la cherchera à l'emplacement du fichier de musique.
@@ -4348,34 +4348,34 @@ SETUP_BAD_DIRECTORY
 
 SETUP_OK_USING
 	DA	OK, anvender:
-	DE	Der Server verwendet folgenden Pfad für Musikdateien:
-	EN	The server will use the following path to your music files:
-	ES	El servidor usará esta ruta a los archivos de música:
+	DE	SqueezeCenter verwendet folgenden Pfad für Musikdateien:
+	EN	SqueezeCenter will use the following path to your music files:
+	ES	SqueezeCenter usará esta ruta a los archivos de música:
 	FI	Palvelin käyttää seuraavaa polkua mp3 -tiedostoihisi:
-	FR	Le serveur utilisera le chemin d'accès suivant pour repérer vos fichiers MP3:
+	FR	SqueezeCenter utilisera le chemin d'accès suivant pour repérer vos fichiers MP3:
 	HE	השרת ישתמש בנתיב הבא לקובצי המוסיקה שלך:
-	IT	Percorso dei file musicali nel server:
+	IT	Percorso dei file musicali nel SqueezeCenter:
 	JA	サーバーは音楽ファイルを検索するのに以下のパスを使います:
-	NL	De server gebruikt het volgende pad naar je muziekbestanden:
+	NL	SqueezeCenter gebruikt het volgende pad naar je muziekbestanden:
 	NO	Ok, bruker:
-	PT	O servidor irá usar a seguinte directoria para os ficheiros de áudio
+	PT	SqueezeCenter irá usar a seguinte directoria para os ficheiros de áudio
 	SV	Använder nu följande sökväg för dina musikfiler:
 	ZH_CN	服务器将使用这路径访问您的音乐文件：
 
 SETUP_PLAYLISTDIR_OK
-	CS	Server bude nyní používat tento adresář pro ukládání playlistů:
-	DA	Serveren vil nu bruge følgende mappe til gemte playlister:
-	DE	Der Server speichert Wiedergabelisten in diesem Ordner:
-	EN	The server will now use this directory for saving playlists:
-	ES	El servidor usará este directorio para guardar listas de reproducción:
+	CS	SqueezeCenter bude nyní používat tento adresář pro ukládání playlistů:
+	DA	SqueezeCenter vil nu bruge følgende mappe til gemte playlister:
+	DE	SqueezeCenter speichert Wiedergabelisten in diesem Ordner:
+	EN	SqueezeCenter will now use this directory for saving playlists:
+	ES	SqueezeCenter usará este directorio para guardar listas de reproducción:
 	FI	Palvelin käyttää seuraavaa polkua soittolistoja varten:
-	FR	Le serveur utilisera maintenant le dossier suivant pour conserver vos listes de lecture:
+	FR	SqueezeCenter utilisera maintenant le dossier suivant pour conserver vos listes de lecture:
 	HE	השרת ישתמש בספרייה זו לשמירת רשימות השמעה:
-	IT	Directory del server per il salvataggio degli elenchi di riproduzione:
+	IT	Directory del SqueezeCenter per il salvataggio degli elenchi di riproduzione:
 	JA	サーバーは今後このフォルダーのプレイリストを使います::
-	NL	De server gebruikt deze map nu om playlists in op te slaan:
+	NL	SqueezeCenter gebruikt deze map nu om playlists in op te slaan:
 	NO	Bruker nå følgende katalog for lagrede spillelister:
-	PT	O servidor irã usar a seguinte directoria para os ficheiros de playlist
+	PT	SqueezeCenter irã usar a seguinte directoria para os ficheiros de playlist
 	SV	Använder nu följande mapp för sparade spellistor:
 	ZH_CN	服务器将使用这路径来保存您的播放表：
 
@@ -4481,20 +4481,20 @@ SETUP_PLAYLISTRESCAN
 	ZH_CN	重新扫描播放表而已。
 
 RESCANNING
-	CS	Server právě aktualizuje informace z hudebního archivu.
-	DA	Serveren genindlæser nu musikinformationerne fra din musiksamling.
-	DE	Der Server durchsucht Ihre Musiksammlung.
-	EN	The server is now rescanning your Music Library.
-	ES	El servidor está volviendo a examinar la biblioteca de música.
+	CS	SqueezeCenter právě aktualizuje informace z hudebního archivu.
+	DA	SqueezeCenter genindlæser nu musikinformationerne fra din musiksamling.
+	DE	SqueezeCenter durchsucht Ihre Musiksammlung.
+	EN	SqueezeCenter is now rescanning your Music Library.
+	ES	SqueezeCenter está volviendo a examinar la biblioteca de música.
 	FI	Palvelin lukee uudelleen musiikkikansiosi sisällön.
-	FR	Le serveur analyse maintenant la collection musicale.
+	FR	SqueezeCenter analyse maintenant la collection musicale.
 	HE	השרת מבצע סריקה חוזרת של ספריית המוסיקה שלך.
-	IT	Nuova analisi della libreria musicale in corso nel server.
+	IT	Nuova analisi della libreria musicale in corso nel SqueezeCenter.
 	JA	サーバーは音楽ライブラリーを再スキャンしています。
-	NL	De server is nu je muziekcollectie opnieuw aan het scannen.
+	NL	SqueezeCenter is nu je muziekcollectie opnieuw aan het scannen.
 	NO	Serveren søker gjennom din musikk-katalog.
-	PT	O servidor está a analisar o arquivo de músicas.
-	SV	Servern söker nu igenom ditt musikbibliotek.
+	PT	SqueezeCenter está a analisar o arquivo de músicas.
+	SV	SqueezeCenter söker nu igenom ditt musikbibliotek.
 	ZH_CN	服务器正在重新扫描您的音乐库。
 
 RESCANNING_SHORT
@@ -4603,15 +4603,15 @@ SETUP_REFRESHRATE
 
 SETUP_REFRESHRATE_DESC
 	CS	Nastavení času mezi obnovením stránky v sekundách. Jestliže hraje skladba, server nastavi obnovování dříve nebo méně než tato hodnota. (Dafaultně je nastaveno 30, minimum je 2)
-	DE	Legen Sie die Zeit zwischen Browser-Aktualisierungen in Sekunden fest. Während der Wiedergabe eines Titels legt der Server die Aktualisierung zum Ende eines Titels fest, falls dieses näher als dieser Wert liegt. (Standardwert ist 30, Minimalwert 2)
-	EN	Set the time between browser reloads in seconds.  While playing a song, the server will set the refresh near a song end if it is less than this value. (Default is 30, minimum is 2)
+	DE	Legen Sie die Zeit zwischen Browser-Aktualisierungen in Sekunden fest. Während der Wiedergabe eines Titels legt SqueezeCenter die Aktualisierung zum Ende eines Titels fest, falls dieses näher als dieser Wert liegt. (Standardwert ist 30, Minimalwert 2)
+	EN	Set the time between browser reloads in seconds.  While playing a song, SqueezeCenter will set the refresh near a song end if it is less than this value. (Default is 30, minimum is 2)
 	ES	Establezca en segundos el tiempo de espera entre las recargas del navegador. Mientras se reproduce una canción, el servidor establecerá la actualización cerca del final de una canción si es inferior a este valor. (Valor predeterminado: 30, mínimo: 2)
 	FI	Aseta selaimen uudelleenlatauksen välinen aika sekunneissa. Soitettaessa musiikkia, palvelin asettaa päivityksen kappaleen lopun lähelle, jos päivitys olisi lyhyempi kuin asetettu arvo (oletus on 30, minimi 2)
-	FR	Définissez le délai entre chaque actualisation du navigateur. Lors de la lecture d'un morceau, le serveur force l'actualisation vers la fin du morceau, si le nombre de secondes restantes est inférieur au nombre défini. La valeur par défaut est 30 et la valeur minimale 2.
+	FR	Définissez le délai entre chaque actualisation du navigateur. Lors de la lecture d'un morceau, SqueezeCenter force l'actualisation vers la fin du morceau, si le nombre de secondes restantes est inférieur au nombre défini. La valeur par défaut est 30 et la valeur minimale 2.
 	HE	הגדר את פרק הזמן בין טעינות חוזרות של הדפדפן, בשניות. במהלך השמעה של שיר, השרת יגדיר את הרענון סמוך לסוף השיר, אם הוא אינו עולה על ערך זה. (ברירת המחדל היא 30, הערך המינימלי 2)
-	IT	Imposta l'intervallo di aggiornamento del browser in secondi. Se la durata del brano è inferiore al valore impostato, il server esegue l'aggiornamento verso la fine del brano. Il valore predefinito è 30, quello minimo 2.
+	IT	Imposta l'intervallo di aggiornamento del browser in secondi. Se la durata del brano è inferiore al valore impostato, SqueezeCenter esegue l'aggiornamento verso la fine del brano. Il valore predefinito è 30, quello minimo 2.
 	JA	ブラウザーが更新する時間を秒数で入力してください。曲を再生中の場合には、曲の最後に更新します。（工場出荷時は30秒、最小は2秒）
-	NL	Stel in seconden de tijd in waarna de browser de pagina moet vernieuwen. De server zal de pagina bij het einde van een liedje vernieuwen als dit minder is dan deze waarde. (Standaardwaarde is 30, minimumwaarde is 2 seconden.)
+	NL	Stel in seconden de tijd in waarna de browser de pagina moet vernieuwen. SqueezeCenter zal de pagina bij het einde van een liedje vernieuwen als dit minder is dan deze waarde. (Standaardwaarde is 30, minimumwaarde is 2 seconden.)
 	NO	Juster tiden mellom hver oppdatering av vevgrensesninttet. Angis i sekunder, minimum 2, maksimum 30. Når en sang spilles foretas oppdatering nær slutten av sangen, selv om gjenværende tid er mindre en angitt verdi.
 	SV	Ställ in tiden mellan uppdateringar av webgränssnittet. Anges i sekunder, minimum 2, maximum 30. När en sång spelas sker refresh nära slutet på sången, om återstående tid är mindre än angivet värde.
 	ZH_CN	设置浏览器刷新的间隔时间。当播放歌曲时，如果设的值少于歌曲的长度服务器将在歌曲末端附近设置刷新。（缺省为30，极小值为2）
@@ -4700,14 +4700,14 @@ SETUP_COVERTHUMB
 
 SETUP_COVERTHUMB_DESC
 	CS	Pro procházení podle náhledů obalů, server použije stejné nastavení názvů souboru jako výše a hodnoty obsažené v ID3 tazích. Nicméně pokud sii přejete použít odlišné názvy, nebo vlastní soubory, zadejte jejich jména zde.
-	DE	Der Server sucht für Plattenhüllen-Miniaturen nach denselben Standardbilddateien wie oben sowie in den ID3-Tags. Wenn Sie jedoch die Option 'Variable Dateinamen' nutzen oder einen eigenen Dateinamen angeben möchten, geben Sie diesen hier ein.
-	EN	For artwork thumbnails, the server will search the same default image files as above, and in ID3 Tags.  However, if you wish to use the variable filename feature, or specify your own filename, enter that here.
+	DE	SqueezeCenter sucht für Plattenhüllen-Miniaturen nach denselben Standardbilddateien wie oben sowie in den ID3-Tags. Wenn Sie jedoch die Option 'Variable Dateinamen' nutzen oder einen eigenen Dateinamen angeben möchten, geben Sie diesen hier ein.
+	EN	For artwork thumbnails, SqueezeCenter will search the same default image files as above, and in ID3 Tags.  However, if you wish to use the variable filename feature, or specify your own filename, enter that here.
 	ES	Para miniaturas de material gráfico, el servidor buscará los mismos archivos predeterminados que antes y en las etiquetas ID3. Sin embargo, si desea usar la característica de nombre de archivo variable o especificar un nombre propio, introdúzcalo aquí.
 	FI	Selataksesi kansikuvia pikkukuvien avulla, palvelin hakee kuvia samoilla oletusasetuksilla kuin yllä. Jos kuitenkin haluat käyttää muokattuja kuvatiedostojen nimiä, syötä nimeämiskäytäntösi tähän.
 	FR	Pour afficher les vignettes de pochettes, le serveur recherche par défaut le même fichier image que pour les pochettes. Vous pouvez toutefois spécifier un autre fichier ici.
 	HE	עבור תמונות ממוזערות של עטיפות, השרת יבצע חיפוש באותם קובצי תמונות המוגדרים כברירת מחדל כמצוין לעיל ובתגי ID3. עם זאת, אם ברצונך להשתמש במאפיין של שמות קבצים הניתנים לשינוי, או לציין שם קובץ משלך, הזן את הפרטים בשדה זה.
-	IT	Per trovare le miniature delle copertine, il server cerca i file di immagini predefiniti indicati sopra e nei tag ID3. Se tuttavia si desidera utilizzare la funzione per il nome di file variabile o specificare un nome di file, immetterlo qui.
-	NL	Voor hoesminiaturen doorzoekt de server dezelfde standaardbeeldbestanden als hierboven, evenals ID3-tags. Als je de functie voor variabele bestandsnamen wilt gebruiken, of je eigen bestandsnaam wilt invoeren, kun je dat hier doen.
+	IT	Per trovare le miniature delle copertine, SqueezeCenter cerca i file di immagini predefiniti indicati sopra e nei tag ID3. Se tuttavia si desidera utilizzare la funzione per il nome di file variabile o specificare un nome di file, immetterlo qui.
+	NL	Voor hoesminiaturen doorzoekt SqueezeCenter dezelfde standaardbeeldbestanden als hierboven, evenals ID3-tags. Als je de functie voor variabele bestandsnamen wilt gebruiken, of je eigen bestandsnaam wilt invoeren, kun je dat hier doen.
 	NO	For miniatyrer av albumomslag, vil tjeneren søke etter de samme filnavnene som over, samt i ID3-tagger. Hvis du ønsker å bruke muligheten for variable filnavn eller spesifisere ditt eget filnavn, kan du skrive det inn her.
 	ZH_CN	在浏览图像指图方面，服务器将根据上述的缺省封面图像文件和在ID3标签内搜查。但是，如果您决定使用变量文件名功能，或运用您指定的文件名，请在此输入。
 
@@ -4889,14 +4889,14 @@ SETUP_CHECKVERSION
 SETUP_CHECKVERSION_DESC
 	CS	SqueezeCenter se může každý den automaticky připojit k www.slimdevice.com a kontrolovat, zda je dostupná akutualizace software. Pakliže ani, server zobrazi  hlášku na webovém rozhraní.
 	DA	Serveren kan automatisk forbinde til www.slimdevices.com hver dag for at checke om der er kommet en opdateret version af softwaren. Hvis der er, vises en besked i Slim-webinterfacet.
-	DE	Der Server kann automatisch jeden Tag Verbindung mit www.slimdevices.com aufnehmen und prüfen, ob eine neue Softwareversion verfügbar ist. Ist dies der Fall, wird dies in der Web-Benutzeroberfläche von SqueezeCenter gemeldet.
-	EN	The server can automatically connect to www.slimdevices.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in SqueezeCenter's web interface.
+	DE	SqueezeCenter kann automatisch jeden Tag Verbindung mit www.slimdevices.com aufnehmen und prüfen, ob eine neue Softwareversion verfügbar ist. Ist dies der Fall, wird dies in der Web-Benutzeroberfläche von SqueezeCenter gemeldet.
+	EN	SqueezeCenter can automatically connect to www.slimdevices.com every day and check to see if an updated version of the software is available.  If it is, then a message will appear in SqueezeCenter's web interface.
 	ES	El servidor se puede conectar automáticamente a www.slimdevices.com cada día y comprobar si hay disponible una versión actualizada del software. Si la hay, aparecerá un mensaje en la interfaz Web de SqueezeCenter.
 	FR	Le serveur peut se connecter tous les jours automatiquement à www.slimdevices.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Le cas échéant, un message dans l'interface Web indique qu'une nouvelle version est disponible.
 	HE	השרת יכול להתחבר באופן אוטומטי לכתובת www.slimdevices.com בכל יום ולבדוק אם קיימת גרסה מעודכנת של התוכנה. אם קיימת, תופיע הודעה בממשק האינטרנט של SqueezeCenter.
-	IT	Il server può collegarsi automaticamente al sito www.slimdevices.com ogni giorno e verificare se è disponibile una versione aggiornata del software. In caso affermativo, viene visualizzato un messaggio nell'interfaccia Web di SqueezeCenter."
+	IT	 può collegarsi automaticamente al sito www.slimdevices.com ogni giorno e verificare se è disponibile una versione aggiornata del software. In caso affermativo, viene visualizzato un messaggio nell'interfaccia Web di SqueezeCenter."
 	JA	サーバーソフトウェアは、毎日www.slimdevices.comに接続してアップデートを確認します。アップデート バージョンがある場合には、その旨メッセージが出ます。
-	NL	De server kan elke dag automatisch verbinding maken met 'www.slimdevices.com' om te kijken of er een nieuwere versie van de software beschikbaar is. Als dit zo is, verschijnt er een bericht in de SqueezeCenter-webinterface.
+	NL	SqueezeCenter kan elke dag automatisch verbinding maken met 'www.slimdevices.com' om te kijken of er een nieuwere versie van de software beschikbaar is. Als dit zo is, verschijnt er een bericht in de SqueezeCenter-webinterface.
 	NO	Tjeneren kan automatisk sjekke www.slimdevices.com hver dag etter en nyere versjon av programvaren. Om en nyere versjon finnes, blir dette meddelt i vevgrensesnittet.
 	PT	O servidor poderá ligar-se automaticamente a www.slimdevices.com todos os dias e verificar se está disponível alguma versão nova do software. Se for o caso, aparecerá uma mensagem na interface Web do Slim.
 	SV	Servern kan automatiskt koppla upp sig mot www.slimdevices.com varje dag för att kontrollera om en nyare version av mjukvaran finns tillgänglig. Om nyare version finns, kommer ett meddelande visas i web-gränssnittet.
@@ -5151,15 +5151,15 @@ SETUP_THROTTLESCAN
 
 SETUP_THROTTLESCAN_DESC
 	DA	Når serveren starter, gennemlæser den din musiksamling for at indlæse kunstner, album og anden information fra de tags der er tilknyttet dine musikfiler. På ældre systemer og Windows-PCere der anvender FAT eller FAT32 filsystemerne kan dette betyde at computeren belastes i en uacceptabel grad. Du kan ændre denne indstilling så gennemlæsningen af musiksamlingen ikke benytter så mange ressourcer.
-	DE	Wenn der Server beginnt, im Musikordner in den ID-Tags der Musik-Dateien nach Informationen zu suchen, kann das bei langsamen Systemen und Windows-PCs mit einem FAT- oder FAT32-Datensystem zu einer inakzeptablen Verlangsamung des Computers kommen. Sie können diese Einstellung ändern, damit mehr Ressourcen zur Verfügung stehen.
-	EN	When the server starts it scans your music folder to load the artist, album and other information from the tags in the files. On some slower systems and Windows PCs using FAT and FAT32 filesystems this may unacceptably slow down your computer. You can change this setting to slow down scanning and use less computer resources.
+	DE	Wenn SqueezeCenter beginnt, im Musikordner in den ID-Tags der Musik-Dateien nach Informationen zu suchen, kann das bei langsamen Systemen und Windows-PCs mit einem FAT- oder FAT32-Datensystem zu einer inakzeptablen Verlangsamung des Computers kommen. Sie können diese Einstellung ändern, damit mehr Ressourcen zur Verfügung stehen.
+	EN	When SqueezeCenter starts it scans your music folder to load the artist, album and other information from the tags in the files. On some slower systems and Windows PCs using FAT and FAT32 filesystems this may unacceptably slow down your computer. You can change this setting to slow down scanning and use less computer resources.
 	ES	Cuando el servidor se inicia, examina la carpeta de música para cargar la información de artista, álbum etc. desde las etiquetas en los archivos. En algunos sistemas lentos y equipos con Windows que usen sistemas de archivos FAT y FAT32, esto puede reducir el rendimiento del equipo a niveles inaceptables. Se puede cambiar esta opción para hacer más lento el examen y que no se usen tantos recursos del equipo.
 	FI	Kun palvelin käynnistyy, se lukee musiikkikansion läpi saadakseen mm. esittäjän ja levyn tiedot. Vanhoissa tietokoneissa, jotka käyttävät FAT/FAT32 tiedostojärjestelmää, tämä voi kestää luvattoman kauan. Tätä asetusta säätämällä voit vaikuttaa siihen, kuinka paljon aikaa operaatioon käytetään.
 	FR	Lorsqu'il démarre, le serveur analyse le dossier de musique pour mettre à jour sa base de données avec les informations sur les artistes ou les albums, à partir des repères ID3. Cette analyse peut utiliser une grande quantité de ressources système sur les ordinateurs plus lents, dotés de systèmes de fichiers FAT ou FAT32. Vous pouvez modifier ce réglage afin d'utiliser moins de ressources.
 	HE	עם הפעלת השרת, הוא סורק את תיקיית המוסיקה שלך כדי לטעון את מידע המבצעים, האלבומים ומידע נוסף מהתגים בקבצים. במערכות איטיות מסוימות ובמחשבי Windows המשתמשים במערכות הקבצים FAT ו-FAR32, הדבר עלול להאט את המחשב באופן משמעותי. באפשרותך לשנות הגדרה זו כדי להאט את הסריקה ולהשתמש בפחות משאבי מחשב.
-	IT	Quando viene avviato, il server analizza la cartella della musica per caricare l'artista, l'album e altre informazioni dai tag dei file. In alcuni sistemi più lenti e nei PC Windows che utilizzano file system FAT e FAT32 questa operazione potrebbe rallentare eccessivamente il computer. È possibile modificare questa impostazione per ridurre la velocità dell'analisi e utilizzare meno risorse del computer.
+	IT	Quando viene avviato, SqueezeCenter analizza la cartella della musica per caricare l'artista, l'album e altre informazioni dai tag dei file. In alcuni sistemi più lenti e nei PC Windows che utilizzano file system FAT e FAT32 questa operazione potrebbe rallentare eccessivamente il computer. È possibile modificare questa impostazione per ridurre la velocità dell'analisi e utilizzare meno risorse del computer.
 	JA	サーバーソフトウェアがスタートする時に、あなたの音楽フォルダーからアーチスト、アルバム等の情報をスキャンします。この場合、古いPCですと極端にPCのパフォーマンスを損ないます。以下で、PCのリソースを使いすぎない設定にして下さい。
-	NL	Wanneer de server start, wordt je muziekmap gescand om de artiest, het album en andere informatie uit de tags in de bestanden te laden. Op langzamere systemen en Windows-pcs' met FAT- of FAT32-bestandssystemen kan de computer hierdoor onacceptabel langzaam worden. Je kunt deze instelling veranderen om het scannen te vertragen zodat er minder computercapaciteit gebruikt wordt.
+	NL	Wanneer  start, wordt je muziekmap gescand om de artiest, het album en andere informatie uit de tags in de bestanden te laden. Op langzamere systemen en Windows-pcs' met FAT- of FAT32-bestandssystemen kan de computer hierdoor onacceptabel langzaam worden. Je kunt deze instelling veranderen om het scannen te vertragen zodat er minder computercapaciteit gebruikt wordt.
 	NO	Når serveren starter søker den gjennom musikk-katalogen din for å finne artistnavn, album osv fra MP3-filene. På noen tregere systemer og Windows-maskiner som bruker FAT- eller FAT32-filsystem, kan dette gjøre maskinen din veldig treg. Du kan endre denne innstillingen slik at scanningen går tregere og bruker mindre av systemets ressurser.
 	PT	O servidor, ao iniciar, pesquisa toda a pasta de músicas, indexando o nome do artista, album e outras informações, a partir das tags ID3 dos ficheiros MP3. Em computadores mais lentos ou em sistemas operativos Windows com sistemas de ficheiros FAT ou FAT32, esta operação poderá ocupar demasiados recursos. Pode usar esta opção para adicionar um tempo de espera e abrandar a operação.
 	SV	När servern startar söker den igenom din musikmapp för att hämta namn på artist, album, etc från dina MP3-filers ID3-taggar. På vissa långsammare system och Windows-operativ som använder FAT eller FAT32 filsystem kan detta göra datorn väldigt långsam. Du kan ändra denna inställning för att sakta ner genomsökningen och använda mindre av datorns resurser.
@@ -5315,14 +5315,14 @@ SETUP_PERSISTPLAYLISTS
 SETUP_PERSISTPLAYLISTS_DESC
 	CS	Server si může pamatovat poslední playlist, který byl hrán před vypnutím.
 	DA	Serveren kan bevare den sidste playliste for afpillere selvom serveren genstartes.
-	DE	Der Server kann die letzte Wiedergabeliste speichern, die beim Starten des Servers abgespielt wurde.
-	EN	The server can remember the last playlist of songs that were Now Playing when the server starts.
+	DE	SqueezeCenter kann die letzte Wiedergabeliste speichern, die beim Starten der Anwendung abgespielt wurde.
+	EN	SqueezeCenter can remember the last playlist of songs that were Now Playing when the application starts.
 	ES	Cuando se inicia el servidor, el reproductor puede recordar la última lista de reproducción de canciones que se estaba reproduciendo.
 	FR	Le serveur peut conserver le contenu de la dernière liste de lecture de la platine lorsqu'il est redémarré.
 	HE	השרת יכול לזכור את רשימת ההשמעה האחרונה של שירים שהיו מוגדרים תחת 'מושמע כעת' עם הפעלת השרת.
-	IT	All'avvio il server è in grado di ricordare l'ultimo elenco di brani riprodotti.
+	IT	All'avvio SqueezeCenter è in grado di ricordare l'ultimo elenco di brani riprodotti.
 	JA	サーバーソフトウェアは、最後に再生していたプレイリストを記憶しておくことができます。
-	NL	De server kan de laatste playlist voor 'Speelt nu' onthouden en deze laden wanneer de server start.
+	NL	SqueezeCenter kan de laatste playlist voor 'Speelt nu' onthouden en deze laden wanneer de server start.
 	NO	Tjeneren kan huske siste spilleliste med sanger som var i «Spilles nå» når tjeneren starter.
 	PT	O servidor pode manter a playlist de músicas actual quando é re-iniciado.
 	SV	Servern kan behålla innehållet i spelarnas spellistor när servern startas om. Den gör det genom att spara låtlistan efter varje ändring. Låtlistan laddas in när spelaren startar igen.
@@ -5379,14 +5379,14 @@ SETUP_RESHUFFLEONREPEAT
 SETUP_RESHUFFLEONREPEAT_DESC
 	CS	Pokud si budete přát, server může promíchat pořadí playlistu před jeho každým přehráním.
 	DA	Serveren kan lave en ny vilkårlig rækkefølge af playlisten når playlisten starter forfra ved gentagelse.
-	DE	Der Server kann nach dem kompletten Durchspielen einer zufälligen Wiedergabeliste diese erneut mischen.
-	EN	The server can reshuffle shuffled playlists after each complete pass through the list, if desired.
+	DE	SqueezeCenter kann nach dem kompletten Durchspielen einer zufälligen Wiedergabeliste diese erneut mischen.
+	EN	SqueezeCenter can reshuffle shuffled playlists after each complete pass through the list, if desired.
 	ES	El servidor puede establecer un nuevo orden aleatorio de las listas de reproducción aleatorias después de cada pase completo por la lista, si así se desea.
 	FR	Le serveur peut mélanger de nouveau la liste de lecture à chaque répétition.
 	HE	השרת יכול לסדר מחדש בסדר אקראי רשימות השמעה שכבר מסודרות בסדר אקראי לאחר כל מעבר מלא על הרשימה, אם אתה מעוניין בכך.
-	IT	Se lo si desidera, il server può riprodurre di nuovo in ordine casuale gli elenchi di riproduzione.
+	IT	Se lo si desidera,  può riprodurre di nuovo in ordine casuale gli elenchi di riproduzione.
 	JA	サーバーソフトウェアは、リピート時に、再度ランダムをかけるよう選択することができます。
-	NL	De server kan de volgorde van liedjes in een geshuffelde playlist telkens nadat de lijst afgespeeld is, opnieuw veranderen.
+	NL	SqueezeCenter kan de volgorde van liedjes in een geshuffelde playlist telkens nadat de lijst afgespeeld is, opnieuw veranderen.
 	NO	Tjeneren kan blande spillelister på nytt etter hver gjennomspilling av listen.
 	PT	O servidor pode re-misturar a lista de músicas no final dela, se necessário.
 	SV	Servern kan, om önskvärt, blanda om den slumpade låtlistan efter varje fullständig genomgång av listan.
@@ -6107,7 +6107,7 @@ SETUP_CSRFPROTECTIONLEVEL
 
 SETUP_CSRFPROTECTIONLEVEL_DESC
 	DE	Zum Schutz gegen "Cross Site Request Forgery" (CSRF)-Sicherheitsrisiken prüft SqueezeCenter HTTP-Anforderungen auf Funktionen, die das System ändern oder Wiedergabelisten oder Player beeinträchtigen können. Sie können die Schutzstufe für den Server festlegen. Der Standardwert ist 'Mittel'. Weitere Informationen finden Sie in der <a href="html/docs/http.html#csrf">Hilfe</a>.
-	EN	To protect against &quot;Cross Site Request Forgery&quot; (CSRF) security threats, SqueezeCenter applies special scrutiny to HTTP requests for functions that can make changes to your system or manipulate playlists or players.  You may choose the level of scrutiny for the server to use.  The default is Medium. <a href="html/docs/http.html#csrf">See Help Section</a> for more details.
+	EN	To protect against &quot;Cross Site Request Forgery&quot; (CSRF) security threats, SqueezeCenter applies special scrutiny to HTTP requests for functions that can make changes to your system or manipulate playlists or players.  You may choose the level of scrutiny for SqueezeCenter to use.  The default is Medium. <a href="html/docs/http.html#csrf">See Help Section</a> for more details.
 	ES	Para protegerse contra amenazas CSRF ("Cross Site Request Forgery"), SqueezeCenter aplica un análisis detallado especial a las solicitudes HTTP de funciones que puedan realizar cambios en el sistema o manipular listas de reproducción o reproductores. Se puede elegir el nivel de análisis detallado que debe usar el servidor. El valor predeterminado es Medio. <a href="html/docs/http.html#csrf">Consulte la sección de ayuda</a> pata más detalles.
 	FR	Pour se protéger contre les risques de sécurité de type "Cross Site Request Forgery" (CSRF), le SqueezeCenter applique une vérification supplémentaire aux requêtes HTTP susceptibles d'altérer le système ou de manipuler des listes de lecture ou des platines. Vous pouvez spécifier le niveau de cette vérification. La valeur par défaut est Moyenne. <a href="html/docs/http.html#csrf">Reportez-vous à l'aide</a> pour plus d'informations.
 	HE	להתגוננות מפני "זיוף בקשות מאתרים צולבים" (CSRF)‏, SqueezeCenter מחיל בדיקה קפדנית מיוחדת על בקשות HTTP עבור פונקציות שיכולות לבצע שינויים במערכת או לטפל ברשימות השמעה או בנגנים. באפשרותך לבחור את רמת הבדיקה הקפדנית שבה ישתמש השרת. ברירת המחדל היא 'בינונית'. <a href="html/docs/http.html#csrf">עיין במקטע העזרה</a> לקבלת פרטים נוספים.
@@ -6595,13 +6595,13 @@ SETUP_MDNSNAME_OK
 SETUP_MDNSNAME_DESC
 	DA	Du kan vælge at angive et Rendezvouz-navn for denne server. Lad feltet være tomt for at slå Rendezvouz-understøttelse fra. SqueezeCenter skal genstartes før denne indstilling har effekt.
 	DE	Wählen Sie für den Einsatz auf Bonjour einen Namen für den Server. Lassen Sie das Feld leer, um Bonjour-Werbung auf SqueezeCenter zu deaktivieren. Sie müssen den Server neu starten, damit diese Änderungen in Kraft treten.
-	EN	You can choose a name for this server to be used with Bonjour.  Leave this field blank to disable Bonjour advertising of SqueezeCenter.  You will need to restart the server to see the effect of these changes.
+	EN	You can choose a name for this server to be used with Bonjour.  Leave this field blank to disable Bonjour advertising of SqueezeCenter.  You will need to restart application to see the effect of these changes.
 	ES	Se puede elegir qué nombre usará este servidor con Bonjour. Deje el campo en blanco par deshabilitar anuncios de Bonjour en SqueezeCenter. Deberá reiniciar el servidor para que estos cambios entren en vigor.
 	FR	Vous pouvez choisir un nom de serveur reconnu par Bonjour. Ne renseignez pas ce champ pour désactiver la présentation Bonjour du SqueezeCenter. Vous devez redémarrer le serveur pour que les modifications prennent effet.
 	HE	באפשרותך לבחור שם עבור השרת שייעשה בו שימוש עם Bonjour. השאר שדה זה ריק כדי להשבית את הפרסום של Bonjour ב-SqueezeCenter. יהיה עליך להפעיל מחדש את השרת כדי לראות את השפעת השינויים.
 	IT	È possibile scegliere per questo server un nome da utilizzare in Bonjour. Per disattivare il riconoscimento di SqueezeCenter in Bonjour, lasciare il campo vuoto. Per rendere effettive le modifiche, è necessario riavviare il server.
 	JA	ランデブーをお使いの時に、このサーバーに名前をつけることができます。このフィールドを空欄にしますと、ランデブー機能が無効になります。この変更にはサーバーの再起動が必要となります。
-	NL	Je kunt een naam voor deze server kiezen, die gebruikt moet worden met Bonjour. Laat dit veld leeg om Bonjour-reclame op SqueezeCenter uit te schakelen. Je moet de server opnieuw opstarten om de wijzigingen door te voeren.
+	NL	Je kunt een naam voor deze server kiezen, die gebruikt moet worden met Bonjour. Laat dit veld leeg om Bonjour-reclame op SqueezeCenter uit te schakelen. Je moet SqueezeCenter opnieuw opstarten om de wijzigingen door te voeren.
 	NO	Du kan oppgi et Bonjournavn for denne serveren
 	PT	Pode escolher um nome Bonjour para este servidor
 	SV	Du kan ange ett Bonjour-namn för denna server
@@ -6659,7 +6659,7 @@ SETUP_REMOTESTREAMTIMEOUT_DESC
 	FR	Vous pouvez définir la durée maximale pendant laquelle le SqueezeCenter tentera de se connecter à une radio Internet ou à une autre source distante. Spécifiez cette durée en secondes ci-dessous.
 	HE	באפשרותך להגדיר את משך הזמן שבו SqueezeCenter ינסה להתחבר לתחנת רדיו באינטרנט או למקור אחר לפני שיפסיק. הזן את פרק הזמן, בשניות, בשדה שלהלן.
 	IT	È possibile impostare l'intervallo di tempo durante il quale SqueezeCenter tenta di connettersi a una radio Internet o a un'altra sorgente prima di abbandonare il tentativo. Immettere durata in secondi qui sotto.
-	NL	Je kunt instellen hoe lang SqueezeCenter moet proberen een verbinding te maken met een internetradiostation of andere bron, voordat de server het opgeeft. Voer hieronder de tijd in seconden in:
+	NL	Je kunt instellen hoe lang SqueezeCenter moet proberen een verbinding te maken met een internetradiostation of andere bron, voordat SqueezeCenter het opgeeft. Voer hieronder de tijd in seconden in:
 	NO	Du kan oppgi antall sekunder som SqueezeCenter skal forsøke å få kontakt med internett radiostasjonen eller andre stream kilder, før den gir opp.
 	SV	Du kan ange antal sekunder som SqueezeCenter ska försöka etablera kontakt med internetradio-station eller andra strömmande källor, innan den ger upp.
 	ZH_CN	您可以设置SqueezeCenter尝试连接到互联网电台或其它服务的时限。请在如下输入以秒为单位的时限。
@@ -6723,14 +6723,14 @@ SETUP_DATASOURCE_1
 	ZH_CN	您必须配置数据源。请启动浏览器，
 
 SETUP_DATASOURCE_2
-	DE	rufen Sie folgende URL auf und klicken Sie auf 'Server-Einstellungen'.
-	EN	go to the following URL, and click on the "Server Settings" link.
-	ES	acceda a la URL siguiente y haga clic en el vínculo "Configuración de servidor".
-	FR	accédez à l'URL suivante, puis cliquez sur Réglages du serveur.
+	DE	rufen Sie folgende URL auf und klicken Sie auf 'SqueezeCenter Einstellungen'.
+	EN	go to the following URL, and click on the "SqueezeCenter Settings" link.
+	ES	acceda a la URL siguiente y haga clic en el vínculo "Configuración de SqueezeCenter".
+	FR	accédez à l'URL suivante, puis cliquez sur Réglages du SqueezeCenter.
 	HE	עבור אל כתובת ה-URL שלהלן, ולחץ על הקישור "הגדרות שרת".
-	IT	accedere al seguente URL e fare clic sul collegamento Impostazioni server.
+	IT	accedere al seguente URL e fare clic sul collegamento Impostazioni SqueezeCenter.
 	NL	ga naar de volgende URL en klik op de koppeling Serverinstellingen.
-	ZH_CN	请到下列网址，单击"Server Settings"。
+	ZH_CN	请到下列网址，单击"SqueezeCenter Settings"。
 
 SETUP_URL_WILL_BE
 	CS	Adresa pro přístup k SqueezeCenteru je nyní:
@@ -6764,7 +6764,7 @@ SETUP_GROUPDISCS
 	ZH_CN	组合光碟
 
 SETUP_GROUPDISCS_DESC
-	CS	Můžete specifikovat, zda budou alba obsahující více disků zařazena jako samostatná (s jedním názvem) nebo jako vícedisková, každé s jedinečným názvem pro každý disk. Např. "Název alba (Disk 2 z 3)". Pokud změníte toto nastavení SlimeServer provede automaticky aktualizaci informací z Vašeho hudebního archivu.
+	CS	Můžete specifikovat, zda budou alba obsahující více disků zařazena jako samostatná (s jedním názvem) nebo jako vícedisková, každé s jedinečným názvem pro každý disk. Např. "Název alba (Disk 2 z 3)". Pokud změníte toto nastavení SqueezeCenter provede automaticky aktualizaci informací z Vašeho hudebního archivu.
 	DE	Sie können angeben, ob mehrere CDs eines Albums als ein Album (unter dem gleichen Namen) oder als getrennte Alben (z.B. 'Albumtitel (CD 1 von 2)' angezeigt werden sollen. Wenn Sie diese Einstellung ändern, wird die Musiksammlung erneut durchsucht.
 	EN	You can specify if multiple disc sets are treated as a single album (with a single name) or as multiple albums, each with a unique name per disc, for example "Album Title (Disc 2 of 3)".  Changing this setting will start a rescan of your music library.
 	ES	Se puede especificar si los conjuntos de varios discos se consideran como un sólo álbum (con un único nombre) o como varios álbumes (cada uno con un único nombre por disco), por ejemplo "Título de álbum (Disco 2 de 3)". Si se cambia esta opción, se iniciará un nuevo examen de la biblioteca de música.
@@ -9758,14 +9758,14 @@ BASIC_SERVER_SETTINGS
 
 SERVER_SETTINGS
 	CS	Nastavení serveru
-	DA	Server-indstillinger
-	DE	Server-Einstellungen
-	EN	Server Settings
-	ES	Configuración de servidor
+	DA	SqueezeCenter-indstillinger
+	DE	SqueezeCenter Einstellungen
+	EN	SqueezeCenter Settings
+	ES	Configuración de SqueezeCenter
 	FI	Palvelimen asetukset
-	FR	Réglages du serveur
+	FR	Réglages du SqueezeCenter
 	HE	הגדרות השרת
-	IT	Impostazioni server
+	IT	Impostazioni SqueezeCenter
 	JA	サーバーセッティング
 	NL	Serverinstellingen
 	NO	Tjenerinnstillinger
@@ -9792,13 +9792,13 @@ SQUEEZECENTER_SETTINGS
 
 ADDITIONAL_SERVER_SETTINGS
 	CS	Pokročilá nastavení serveru
-	DE	Weitere Server-Einstellungen
-	EN	Additional Server Settings
-	ES	Configuración adicional de servidor
+	DE	Weitere SqueezeCenter Einstellungen
+	EN	Additional SqueezeCenter Settings
+	ES	Configuración adicional de SqueezeCenter
 	FI	Lisää palvelimen asetuksia
-	FR	Réglages supplémentaires du serveur
+	FR	Réglages supplémentaires du SqueezeCenter
 	HE	הגדרות שרת נוספות
-	IT	Impostazioni aggiuntive server
+	IT	Impostazioni aggiuntive SqueezeCenter
 	JA	その他サーバーセッティング
 	NL	Extra serverinstellingen
 	NO	Ekstra tjenerinnstillinger
@@ -9934,8 +9934,8 @@ DEBUG_NETWORK_COMETD
 	EN	Cometd protocol logging
 
 SETUP_GROUP_DEBUG_DESC
-	DE	SqueezeCenter enthält eine Reihe von Debugging-Einstellungen, mit denen Sie umfangreiche Angaben über den Betrieb des Servers aufzeichnen können. Aktivieren Sie die Punkte, die protokolliert werden sollen, und klicken Sie auf 'Ändern', um das Protokollieren der entsprechenden Information zu aktivieren. <a href="/log.txt" target="log">Hier können Sie die aktuellen Protokolleinträge anzeigen</a>.
-	EN	SqueezeCenter has a number of debugging settings that can be used to record detailed information about the server & scanner operation. Each debugging category has a severity for logging. With "Debug" being the most verbose, and "Off" being the least.
+	DE	SqueezeCenter enthält eine Reihe von Debugging-Einstellungen, mit denen Sie umfangreiche Angaben über den Betrieb des SqueezeCenters aufzeichnen können. Aktivieren Sie die Punkte, die protokolliert werden sollen, und klicken Sie auf 'Ändern', um das Protokollieren der entsprechenden Information zu aktivieren. <a href="/log.txt" target="log">Hier können Sie die aktuellen Protokolleinträge anzeigen</a>.
+	EN	SqueezeCenter has a number of debugging settings that can be used to record detailed information about SqueezeCenter & scanner operation. Each debugging category has a severity for logging. With "Debug" being the most verbose, and "Off" being the least.
 	ES	SqueezeCenter tiene diversos parámetros de depuración que se pueden usar para registrar información detallada del funcionamiento del servidor. Marque los elementos que desea que se registren para mostrarlos y haga clic en Cambiar para iniciar el registro de esa información. Las entradas de registro más recientes se pueden ver <a href="/log.txt" target="log">aquí</a>.
 	FR	Le SqueezeCenter est doté d'un certain nombre de réglages de débogage pouvant enregistrer des informations détaillées sur le fonctionnement du serveur. Sélectionnez les éléments à enregistrer et cliquez sur "Modifier" pour commencer l'enregistrement des informations. Vous pouvez consulter les entrées les plus récentes <a href="/log.txt" target="log">ici</a>.
 	HE	SqueezeCenter כולל מספר הגדרות של איתור באגים שניתן להשתמש בהן לתיעוד מידע מפורט אודות הפעלת השרת. סמן את הפריטים שברצונך לתעד ביומן לצורך הצגה ולחץ על 'שנה' כדי להתחיל לתעד את המידע ביומן. <a href="/log.txt" target="log">כאן</a> באפשרותך להציג את הרשומות האחרונות שתועדו ביומן.
@@ -10280,14 +10280,14 @@ FORGET_PLAYER_DESC
 	CS	Jestliže nechcete, aby byl aktuální přehrávač nadále registrován v SqueezeCenteru, můžete ho odregistrovat.
 	DA	Hvis du ikke længere anvender denne afspiller eller afspilleren optræder to gange i listen over afspillere kan du vælge, at serveren skal glemme denne afspiller.
 	DE	Wenn Sie den Player nicht weiter verwenden möchten oder der Player doppelt vorkommt, können Sie ihn aus der Serverliste löschen.
-	EN	If you no longer are using this player or this player appears twice in your list of players, you can choose to have the server forget about this player.
+	EN	If you no longer are using this player or this player appears twice in your list of players, you can choose to have SqueezeCenter forget about this player.
 	ES	Si ya no usa este reproductor, o si aparece dos veces en la lista de reproductores, se puede indicar al servidor que se olvide de este reproductor.
 	FI	Mikäli et enää käytä soitinta tai se näkyy kahdesti listassa, voit unohtaa soittimen tällä valinnalla.
 	FR	Si vous n'utilisez plus cette platine ou si elle apparaît plus d'une fois dans la liste des platines, vous pouvez choisir de la retirer de la liste.
 	HE	אם אינך משתמש עוד בנגן זה, או אם הנגן מופיע פעמיים ברשימת הנגנים, באפשרותך לגרום לשרת להתעלם מהנגן.
 	IT	Se non si utilizza più questo lettore o se il lettore ricorre due volte nell'elenco dei lettori in uso, scegliere di ignorarlo nel server."
 	JA	このプレーヤーをもう使用していない場合、あるいは、このプレーヤーが2つリストに載っている場合、このプレーヤーを消去することができます。
-	NL	Als je deze speler niet langer gebruikt of deze speler twee keer voorkomt in de spelerlijst, kun je de server deze speler laten 'vergeten'.
+	NL	Als je deze speler niet langer gebruikt of deze speler twee keer voorkomt in de spelerlijst, kun je SqueezeCenter deze speler laten 'vergeten'.
 	NO	Om du ikke bruker denne spilleren eller om den finnes to ganger i listen over spillere, kan du be serveren glemme denne spilleren.
 	PT	Se não usar mais este cliente (nome ou IP), ou se o cliente aparecer várias vezes, pode "esquecê-lo".
 	SV	Om du inte använder denna spelare eller om denna spelare finns två gånger i din lista över spelare, så kan du välja att servern skall glömma denna spelare.
@@ -10773,13 +10773,13 @@ CLICK_HERE
 
 TO_GO_TO_SERVER_SETTINGS
 	DA	for at gå til server-indstillingerne og gøre dette nu.
-	DE	um dies in den Server-Einstellungen festzulegen.
-	EN	to go to the server settings and do this now.
-	ES	para ir a la configuración del servidor y hacerlo ahora.
+	DE	um dies in den SqueezeCenter Einstellungen festzulegen.
+	EN	to go to SqueezeCenter settings and do this now.
+	ES	para ir a la configuración del SqueezeCenter y hacerlo ahora.
 	FI	mennäksesi pavelimen asetuksiin ja heti.
-	FR	pour accéder aux réglages du serveur maintenant.
+	FR	pour accéder aux réglages du SqueezeCenter maintenant.
 	HE	למעבר מיידי להגדרות השרת.
-	IT	per accedere alle impostazioni del server ed eseguire questa operazione adesso.
+	IT	per accedere alle impostazioni del SqueezeCenter ed eseguire questa operazione adesso.
 	JA	サーバーセッティングに行くためには
 	NL	om naar de serverinstellingen te gaan en dit nu te doen.
 	NO	for å komme til serverinnstillingene og gjøre dette nå.
@@ -11645,13 +11645,13 @@ INFORMATION_SPECIFIC_PLAYER
 
 INFORMATION_MENU_SERVER
 	CS	Informace serveru
-	DE	Server-Informationen
-	EN	Server Information
-	ES	Información de servidor
+	DE	SqueezeCenter Informationen
+	EN	SqueezeCenter Information
+	ES	Información de SqueezeCenter
 	FI	Palvelimen tiedot
-	FR	Informations sur le serveur
+	FR	Informations sur le SqueezeCenter
 	HE	מידע אודות השרת
-	IT	Informazioni sul server
+	IT	Informazioni sul SqueezeCenter
 	JA	サーバー情報
 	NL	Serverinformatie
 	NO	Server informasjon
@@ -12422,7 +12422,7 @@ SQUEEZENETWORK_NO_PLAYER_CONNECTED
 	EN	Cannot access SqueezeNetwork services without a player connected.
 
 SQUEEZENETWORK_NO_LOGIN
-	EN	A SqueezeNetwork account is required for this service. Please access Server Settings -> SqueezeNetwork with a web browser to configure.
+	EN	A SqueezeNetwork account is required for this service. Please access SqueezeCenter Settings -> SqueezeNetwork with a web browser to configure.
 
 UPNP_REQUEST_FAILED
 	DE	Fehler bei der UPnP-Anforderung. Prüfen Sie den UPnP-Server.
@@ -13600,12 +13600,12 @@ DEBUG_WIZARD
 	EN	Setup Wizard activity logging
 
 SETUP_DEBUG_SERVER_LOG
-	DE	Server Logdatei
-	EN	Server Log File
+	DE	SqueezeCenter Logdatei
+	EN	SqueezeCenter Log File
 
 SETUP_DEBUG_SERVER_LOG_DESC
-	DE	SqueezeCenter schreibt Logs aller Server relevanten Aktivitäten (Audio Streaming, Infrarot etc.) in folgende Datei:
-	EN	SqueezeCenter keeps a log file for all server related activities (Audio Streaming, Infrared, etc) here:
+	DE	SqueezeCenter schreibt Logs aller relevanten Aktivitäten (Audio Streaming, Infrarot etc.) in folgende Datei:
+	EN	SqueezeCenter keeps a log file for all application related activities (Audio Streaming, Infrared, etc) here:
 
 SETUP_DEBUG_SCANNER_LOG
 	DE	Scanner Logdatei
@@ -13739,8 +13739,8 @@ UNINSTALL
 	EN	Uninstall
 
 PLUGINS_CHANGED
-	DE	Die folgenden Plugins werden beim nächsten Server-Neustart aktiviert bzw. deaktiviert:
-	EN	Changes will take place at the next server restart for the following plugins:
+	DE	Die folgenden Plugins werden beim nächsten Anwendungs-Neustart aktiviert bzw. deaktiviert:
+	EN	Changes will take place at the next application restart for the following plugins:
 
 SETUP_VIEW_SCANNING
 	DE	Durchsuchen gestartet - Fortschritt anzeigen
@@ -13755,8 +13755,8 @@ CLOSE
 	EN	Close
 
 PERSIST_DEBUG_SETTINGS
-	DE	Fehlerbehebungs-Einstellungen beim nächsten Serverstart beibehalten
-	EN	Save debugging settings for use at next server restart
+	DE	Fehlerbehebungs-Einstellungen beim nächsten Neustart beibehalten
+	EN	Save debugging settings for use at next application restart
 
 JIVE_PLAY_ALL_SONGS
 	EN	Play all songs
