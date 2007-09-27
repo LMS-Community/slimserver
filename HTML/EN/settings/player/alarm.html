@@ -1,7 +1,7 @@
 [% PROCESS settings/header.html %]
 	<div class="settingSection">
 
-		<div class="groupHead">[% "SETUP_GROUP_ALARM" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_GROUP_ALARM" | string %]</div>
 		<div class="groupDesc">[% "SETUP_GROUP_ALARM_DESC" | string %]</div>
 
 		<label for="alarmfadeseconds" class="stdlabel">[% "ALARM_FADE" | string %][% "COLON" | string %]</label>
@@ -13,7 +13,7 @@
 	[% FOREACH day = [0 ..7] %]
 	<div class="settingSection">
 
-		<div class="groupHead">[% "ALARM_DAY$day" | string | upper %]</div>
+		<div class="groupHead">[% "ALARM_DAY$day" | string %]</div>
 
 		<table><tr>
 		<td><label for="alarm[% day %]" class="stdlabel">[% "SETUP_ALARM" | string %][% "COLON" | string %]</label></td>

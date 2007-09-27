@@ -2,29 +2,29 @@
 
 	<div class="settingSection">
 
-		<div class="prefHead">[% "SETUP_WEBPROXY" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_WEBPROXY" | string %]</div>
 		<div class="prefDesc">[% "SETUP_WEBPROXY_DESC" | string %]</div>
 
 		<label for="webproxy" class="stdlabel">[% "SETUP_WEBPROXY_CHOOSE" | string %]</label>
 		<input type=text class="stdedit" name="webproxy" id="webproxy" value="[% prefs.webproxy %]" size="40">
 
-		<div class="prefHead">[% "SETUP_HTTPPORT" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_HTTPPORT" | string %]</div>
 		<div class="prefDesc">[% "SETUP_HTTPPORT_DESC" | string %]</div>
 
 		<input type=text class="stdedit" name="httpport" id="httpport" value="[% prefs.httpport %]" size="15">
 
-		<div class="prefHead">[% "SETUP_BUFFERSECS" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_BUFFERSECS" | string %]</div>
 		<div class="prefDesc">[% "SETUP_BUFFERSECS_DESC" | string %]</div>
 
 		<input type=text class="stdedit" name="bufferSecs" id="bufferSecs" value="[% prefs.bufferSecs %]" size="15">
 
-		<div class="prefHead">[% "SETUP_REMOTESTREAMTIMEOUT" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_REMOTESTREAMTIMEOUT" | string %]</div>
 		<div class="prefDesc">[% "SETUP_REMOTESTREAMTIMEOUT_DESC" | string %]</div>
 
 		<label for="remotestreamtimeout" class="stdlabel">[% "SETUP_REMOTESTREAMTIMEOUT_CHOOSE" | string %]</label>
 		<input type=text class="stdedit" name="remotestreamtimeout" id="remotestreamtimeout" value="[% prefs.remotestreamtimeout %]" size="15">
 
-		<div class="prefHead">[% "SETUP_MAXWMARATE" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_MAXWMARATE" | string %]</div>
 		<div class="prefDesc">[% "SETUP_MAXWMARATE_DESC" | string %]</div>
 
 		<select class="stdedit" name="maxWMArate" id="maxWMArate">
@@ -36,7 +36,7 @@
 
 		</select>
 		
-		<div class="prefHead">[% "SETUP_NOUPNP" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_NOUPNP" | string %]</div>
 		<div class="prefDesc">[% "SETUP_NOUPNP_DESC" | string %]</div>
 		
 		<select class="stdedit" name="noupnp" id="noupnp">
@@ -49,7 +49,7 @@
 		</select>
 
 		[% IF prefs.exists('mDNSname') %]
-		<div class="prefHead">[% "SETUP_MDNSNAME" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_MDNSNAME" | string %]</div>
 		<div class="prefDesc">[% "SETUP_MDNSNAME_DESC" | string %]</div>
 		
 		<label for="mDNSname" class="stdlabel">[% "SETUP_MDNSNAME_CHOOSE" | string %]</label>
@@ -60,7 +60,7 @@
 	[% IF prefs.exists('tcpReadMaximum') || prefs.exists('tcpWriteMaximum') || prefs.exists('udpChunkSize') %]
 	<div class="settingSection">
 
-		<div class="groupHead">[% "SETUP_GROUP_TCP_PARAMS" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_GROUP_TCP_PARAMS" | string %]</div>
 		<div class="groupDesc">[% "SETUP_GROUP_TCP_PARAMS_DESC" | string %]</div>
 				
 		<table border="0" width="100%">

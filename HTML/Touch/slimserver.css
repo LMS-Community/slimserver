@@ -524,11 +524,13 @@ div.prefHead {
         padding: 8px 6px 2px 0px;
         margin-top: 6px;
         margin-bottom: 6px;
+		text-transform: uppercase;
 }
 
 div.groupHead {
         margin-top: 6px;
         margin-bottom: 6px;
+		text-transform: uppercase;
 }
 
 div.prefDesc,.groupDesc,.groupHead {

@@ -15,7 +15,7 @@
 		[% END %]
 
 	
-		<div class="groupHead">[% 'SETUP_GROUP_BRIGHTNESS' | string | upper %]</div>
+		<div class="groupHead">[% 'SETUP_GROUP_BRIGHTNESS' | string %]</div>
 		<div class="groupDesc">[% 'SETUP_GROUP_BRIGHTNESS_DESC' | string %]</div>
 
 		<table><tr>
@@ -70,7 +70,7 @@
 	[% IF prefs.exists('activeFont') %]
 	<div class="settingSection">
 	
-		<div class="groupHead">[% "SETUP_ACTIVEFONT" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_ACTIVEFONT" | string %]</div>
 		<div class="groupDesc">[% "SETUP_ACTIVEFONT_DESC" | string %]</div>
 		
 		<table>
@@ -96,7 +96,7 @@
 	
 	<div class="settingSection">
 	
-		<div class="groupHead">[% "SETUP_IDLEFONT" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_IDLEFONT" | string %]</div>
 		<div class="groupDesc">[% "SETUP_IDLEFONT_DESC" | string %]</div>
 		
 		<table>
@@ -125,7 +125,7 @@
 	[% IF prefs.exists('doublesize') %]
 	<div class="settingSection">
 
-		<div class="groupHead">[% "SETUP_DOUBLESIZE" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_DOUBLESIZE" | string %]</div>
 		<div class="groupDesc">[% "SETUP_DOUBLESIZE_DESC" | string %]</div>
 
 		<br>
@@ -163,7 +163,7 @@
 
 	<div class="settingSection">
 
-		<div class="groupHead">[% "SETUP_LARGETEXTFONT" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_LARGETEXTFONT" | string %]</div>
 		<div class="groupDesc">[% "SETUP_LARGETEXTFONT_DESC" | string %]</div>
 
 		<br>
@@ -185,7 +185,7 @@
 	[% IF prefs.exists('scrollMode') %]
 	<div class="settingSection">
 
-		<div class="groupHead">[% "SETUP_SCROLLMODE" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_SCROLLMODE" | string %]</div>
 		<div class="groupDesc">[% "SETUP_SCROLLMODE_DESC" | string %]</div>
 
 		<select class="stdedit" name="scrollMode" id="scrollMode">
@@ -204,7 +204,7 @@
 
 	<div class="settingSection">
 
-		<div class="groupHead">[% "SETUP_SCROLLRATE" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_SCROLLRATE" | string %]</div>
 		<div class="groupDesc">[% "SETUP_SCROLLRATE_DESC" | string %]</div>
 
 		<table><tr>
@@ -224,7 +224,7 @@
 
 	<div class="settingSection">
 
-		<div class="groupHead">[% "SETUP_SCROLLPAUSE" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_SCROLLPAUSE" | string %]</div>
 		<div class="groupDesc">[% "SETUP_SCROLLPAUSE_DESC" | string %]</div>
 
 		<table><tr>
@@ -246,7 +246,7 @@
 	[% IF prefs.exists('scrollPixels') %]
 	<div class="settingSection">
 
-		<div class="groupHead">[% "SETUP_SCROLLPIXELS" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_SCROLLPIXELS" | string %]</div>
 		<div class="groupDesc">[% "SETUP_SCROLLPIXELS_DESC" | string %]</div>
 
 		<label for="scrollPixels" class="stdlabel">[% "SINGLE-LINE" | string %] [% "SETUP_SCROLLPIXELS" | string %][% "COLON" | string %]</label>

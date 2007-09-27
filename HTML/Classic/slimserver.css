@@ -343,11 +343,13 @@ div#homeMenu {
 	font-size: 9px;
 	margin-top: 6px;
 	margin-bottom: 6px;
+	text-transform: uppercase;
 }
 
 .groupHead {
 	margin-top: 6px;
 	margin-bottom: 6px;
+	text-transform: uppercase;
 }
 
 .prefDesc,.groupDesc,.groupHead {

@@ -3,7 +3,7 @@
 	[% IF prefs.exists('synchronize') %]
 	<div class="settingSection">
 
-		<div class="prefHead">[% "SETUP_SYNCHRONIZE" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_SYNCHRONIZE" | string %]</div>
 		<div class="prefDesc">[% "SETUP_SYNCHRONIZE_DESC" | string %]</div>
 
 		<select class="stdedit" name="synchronize" id="synchronize">
@@ -14,7 +14,7 @@
 		
 		</select>
 
-		<div class="prefHead">[% "SETUP_SYNCVOLUME" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_SYNCVOLUME" | string %]</div>
 		<div class="prefDesc">[% "SETUP_SYNCVOLUME_DESC" | string %]</div>
 
 		<select class="stdedit" name="syncVolume" id="syncVolume">
@@ -28,7 +28,7 @@
 		
 		</select>
 
-		<div class="prefHead">[% "SETUP_SYNCPOWER" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_SYNCPOWER" | string %]</div>
 		<div class="prefDesc">[% "SETUP_SYNCPOWER_DESC" | string %]</div>
 
 		<select class="stdedit" name="syncPower" id="syncPower">
@@ -47,7 +47,7 @@
 
 	<div class="settingSection">
 
-		<div class="prefHead">[% "SETUP_POWERONRESUME" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_POWERONRESUME" | string %]</div>
 		<div class="prefDesc">[% "SETUP_POWERONRESUME_DESC" | string %]</div>
 
 		<select class="stdedit" name="powerOnResume" id="powerOnResume">
@@ -66,7 +66,7 @@
 		</select>
 
 		[% IF prefs.exists('powerOffDac') %]
-		<div class="prefHead">[% "SETUP_POWEROFFDAC" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_POWEROFFDAC" | string %]</div>
 		<div class="prefDesc">[% "SETUP_POWEROFFDAC_DESC" | string %]</div>
 
 		<select class="stdedit" name="powerOffDac" id="powerOffDac">
@@ -82,7 +82,7 @@
 		[% END %]
 
 		[% IF prefs.exists('disableDac') %]
-		<div class="prefHead">[% "SETUP_DISABLEDAC" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_DISABLEDAC" | string %]</div>
 		<div class="prefDesc">[% "SETUP_DISABLEDAC_DESC" | string %]</div>
 
 		<select class="stdedit" name="disableDac" id="disableDac">
@@ -102,7 +102,7 @@
 	[% IF prefs.exists('transitionType') %]
 	<div class="settingSection">
 
-		<div class="prefHead">[% "SETUP_TRANSITIONTYPE" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_TRANSITIONTYPE" | string %]</div>
 		<div class="prefDesc">[% "SETUP_TRANSITIONTYPE_DESC" | string %]</div>
 
 		<select class="stdedit" name="transitionType" id="transitionType">
@@ -119,7 +119,7 @@
 		
 		</select>
 
-		<div class="prefHead">[% "SETUP_TRANSITIONDURATION" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_TRANSITIONDURATION" | string %]</div>
 		<div class="prefDesc">[% "SETUP_TRANSITIONDURATION_DESC" | string %]</div>
 
 		<input type="text" class="stdedit" name="transitionDuration" id="transitionDuration" value="[% prefs.transitionDuration %]" size="15">
@@ -130,7 +130,7 @@
 	[% IF prefs.exists('digitalVolumeControl') %]
 	<div class="settingSection">
 
-		<div class="prefHead">[% "SETUP_DIGITALVOLUMECONTROL" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_DIGITALVOLUMECONTROL" | string %]</div>
 		<div class="prefDesc">[% "SETUP_DIGITALVOLUMECONTROL_DESC" | string %]</div>
 
 		<select class="stdedit" name="digitalVolumeControl" id="digitalVolumeControl">
@@ -145,19 +145,19 @@
 		</select>
 
 		[% IF prefs.exists('preampVolumeControl') %]
-		<div class="prefHead">[% "SETUP_PREAMPVOLUMECONTROL" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_PREAMPVOLUMECONTROL" | string %]</div>
 		<div class="prefDesc">[% "SETUP_PREAMPVOLUMECONTROL_DESC" | string %]</div>
 
 		<input type="text" class="stdedit" name="preampVolumeControl" id="preampVolumeControl" value="[% prefs.preampVolumeControl %]" size="15">
 		[% END %]
 
-		<div class="prefHead">[% "SETUP_MP3SILENCEPRELUDE" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_MP3SILENCEPRELUDE" | string %]</div>
 		<div class="prefDesc">[% "SETUP_MP3SILENCEPRELUDE_DESC" | string %]</div>
 
 		<input type="text" class="stdedit" name="mp3SilencePrelude" id="mp3SilencePrelude" value="[% prefs.mp3SilencePrelude %]" size="15">
 
 		[% IF prefs.exists('digitalOutputEncoding') %]
-		<div class="prefHead">[% "SETUP_DIGITALOUTPUTENCODING" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_DIGITALOUTPUTENCODING" | string %]</div>
 		<div class="prefDesc">[% "SETUP_DIGITALOUTPUTENCODING_DESC" | string %]</div>
 
 		<select class="stdedit" name="digitalOutputEncoding" id="digitalOutputEncoding">
@@ -173,7 +173,7 @@
 		[% END %]
 
 		[% IF prefs.exists('clockSource') %]
-		<div class="prefHead">[% "SETUP_CLOCKSOURCE" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_CLOCKSOURCE" | string %]</div>
 		<div class="prefDesc">[% "SETUP_CLOCKSOURCE_DESC" | string %]</div>
 
 		<select class="stdedit" name="clockSource" id="clockSource">
@@ -193,7 +193,7 @@
 		[% END %]
 
 		[% IF prefs.exists('polarityInversion') %]
-		<div class="prefHead">[% "SETUP_POLARITYINVERSION" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_POLARITYINVERSION" | string %]</div>
 		<div class="prefDesc">[% "SETUP_POLARITYINVERSION_DESC" | string %]</div>
 
 		<select class="stdedit" name="polarityInversion" id="polarityInversion">
@@ -214,7 +214,7 @@
 	[% IF prefs.exists('wordClockOutput') %]
 	<div class="settingSection">
 
-		<div class="prefHead">[% "SETUP_WORDCLOCKOUTPUT" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_WORDCLOCKOUTPUT" | string %]</div>
 		<div class="prefDesc">[% "SETUP_WORDCLOCKOUTPUT_DESC" | string %]</div>
 
 		<select class="stdedit" name="wordClockOutput" id="wordClockOutput">
@@ -233,7 +233,7 @@
 
 	<div class="settingSection">
 
-		<div class="groupHead">[% "SETUP_MAXBITRATE" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_MAXBITRATE" | string %]</div>
 		
 		<div class="groupDesc">
 		[% IF allowNoLimit %]
@@ -260,7 +260,7 @@
 		
 		</select>
 
-		<div class="prefHead">[% "SETUP_LAMEQUALITY" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_LAMEQUALITY" | string %]</div>
 		<div class="prefDesc">[% "SETUP_LAMEQUALITY_DESC" | string %]</div>
 
 		<select class="stdedit" name="lameQuality" id="lameQuality">
@@ -279,7 +279,7 @@
 	[% IF prefs.exists('replayGainMode') %]
 	<div class="settingSection">
 
-		<div class="prefHead">[% "SETUP_REPLAYGAINMODE" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_REPLAYGAINMODE" | string %]</div>
 		<div class="prefDesc">[% "SETUP_REPLAYGAINMODE_DESC" | string %]</div>
 
 		<select class="stdedit" name="replayGainMode" id="replayGainMode">
@@ -301,7 +301,7 @@
 	[% IF prefs.exists('mp3StreamingMethod') %]
 	<div class="settingSection">
 
-		<div class="prefHead">[% "SETUP_MP3STREAMINGMETHOD" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_MP3STREAMINGMETHOD" | string %]</div>
 		<div class="prefDesc">[% "SETUP_MP3STREAMINGMETHOD_DESC" | string %]</div>
 
 		<select class="stdedit" name="mp3StreamingMethod" id="mp3StreamingMethod">

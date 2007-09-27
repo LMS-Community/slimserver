@@ -386,4 +386,6 @@ div#homeMenu {
 	font-weight: bold;
 }
 
-
+.prefHead, .groupHead {
+	text-transform: uppercase;
+}

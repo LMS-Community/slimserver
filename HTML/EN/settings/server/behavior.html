@@ -2,7 +2,7 @@
 
 	<div class="settingSection">
 
-		<div class="groupHead">[% "SETUP_COMPOSERINARTISTS" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_COMPOSERINARTISTS" | string %]</div>
 		<div class="groupDesc">[% "SETUP_COMPOSERINARTISTS_DESC" | string %]</div>
 
 		<input type=hidden name="composerInArtists" value="0" />
@@ -21,7 +21,7 @@
 	
 	<div class="settingSection">
 	
-		<div class="groupHead">[% "SETUP_VARIOUSARTISTS" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_VARIOUSARTISTS" | string %]</div>
 		<div class="prefDesc">[% "SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC" | string %]</div>
 
 		<select class="stdedit" name="variousArtistAutoIdentification" id="variousArtistAutoIdentification">
@@ -48,12 +48,12 @@
 	
 	<div class="settingSection">
 
-		<div class="prefHead">[% "SETUP_DISPLAYTEXTTIMEOUT" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_DISPLAYTEXTTIMEOUT" | string %]</div>
 		<div class="prefDesc">[% "SETUP_DISPLAYTEXTTIMEOUT_DESC" | string %]</div>
 
 		[% "SETUP_DISPLAYTEXTTIMEOUT_CHOOSE" | string %]<input type=text class="stdedit" name="displaytexttimeout" id="displaytexttimeout" value="[% prefs.displaytexttimeout %]" size="15">
 
-		<div class="prefHead">[% "SETUP_CHECKVERSION" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_CHECKVERSION" | string %]</div>
 		<div class="prefDesc">[% "SETUP_CHECKVERSION_DESC" | string %]</div>
 
 		<select class="stdedit" name="checkVersion" id="checkVersion">
@@ -63,7 +63,7 @@
 		
 		</select>
 
-		<div class="prefHead">[% "SETUP_NOGENREFILTER" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_NOGENREFILTER" | string %]</div>
 		<div class="prefDesc">[% "SETUP_NOGENREFILTER_DESC" | string %]</div>
 
 		<select class="stdedit" name="noGenreFilter" id="noGenreFilter">
@@ -73,7 +73,7 @@
 		
 		</select>
 
-		<div class="prefHead">[% "SETUP_PLAYTRACKALBUM" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_PLAYTRACKALBUM" | string %]</div>
 		<div class="prefDesc">[% "SETUP_PLAYTRACKALBUM_DESC" | string %]</div>
 
 		<select class="stdedit" name="playtrackalbum" id="playtrackalbum">
@@ -83,7 +83,7 @@
 		
 		</select>
 
-		<div class="prefHead">[% "SETUP_SEARCHSUBSTRING" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_SEARCHSUBSTRING" | string %]</div>
 		<div class="prefDesc">[% "SETUP_SEARCHSUBSTRING_DESC" | string %]</div>
 
 		<select class="stdedit" name="searchSubString" id="searchSubString">
@@ -93,22 +93,22 @@
 		
 		</select>
 
-		<div class="prefHead">[% "SETUP_IGNOREDARTICLES" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_IGNOREDARTICLES" | string %]</div>
 		<div class="prefDesc">[% "SETUP_IGNOREDARTICLES_DESC" | string %]</div>
 
 		<input type=text class="stdedit" name="ignoredarticles" id="ignoredarticles" value="[% prefs.ignoredarticles %]" size="40">
 
-		<div class="prefHead">[% "SETUP_SPLITLIST" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_SPLITLIST" | string %]</div>
 		<div class="prefDesc">[% "SETUP_SPLITLIST_DESC" | string %]</div>
 
 		<input type=text class="stdedit" name="splitList" id="splitList" value="[% prefs.splitList %]" size="40">
 
-		<div class="prefHead">[% "SETUP_BROWSEAGELIMIT" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_BROWSEAGELIMIT" | string %]</div>
 		<div class="prefDesc">[% "SETUP_BROWSEAGELIMIT_DESC" | string %]</div>
 
 		<input type=text class="stdedit" name="browseagelimit" id="browseagelimit" value="[% prefs.browseagelimit %]" size="15">
 
-		<div class="prefHead">[% "SETUP_GROUPDISCS" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_GROUPDISCS" | string %]</div>
 		<div class="prefDesc">[% "SETUP_GROUPDISCS_DESC" | string %]</div>
 
 		<select class="stdedit" name="groupdiscs" id="groupdiscs">
@@ -118,7 +118,7 @@
 		
 		</select>
 
-		<div class="prefHead">[% "SETUP_PERSISTPLAYLISTS" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_PERSISTPLAYLISTS" | string %]</div>
 		<div class="prefDesc">[% "SETUP_PERSISTPLAYLISTS_DESC" | string %]</div>
 
 		<select class="stdedit" name="persistPlaylists" id="persistPlaylists">
@@ -128,7 +128,7 @@
 		
 		</select>
 
-		<div class="prefHead">[% "SETUP_RESHUFFLEONREPEAT" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_RESHUFFLEONREPEAT" | string %]</div>
 		<div class="prefDesc">[% "SETUP_RESHUFFLEONREPEAT_DESC" | string %]</div>
 
 		<select class="stdedit" name="reshuffleOnRepeat" id="reshuffleOnRepeat">
@@ -138,7 +138,7 @@
 		
 		</select>
 
-		<div class="prefHead">[% "SETUP_SAVESHUFFLED" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_SAVESHUFFLED" | string %]</div>
 		<div class="prefDesc">[% "SETUP_SAVESHUFFLED_DESC" | string %]</div>
 
 		<select class="stdedit" name="saveShuffled" id="saveShuffled">

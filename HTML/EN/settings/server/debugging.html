@@ -2,17 +2,17 @@
 
 	<div class="settingSection">
 
-		<div class="prefHead">[% "SETUP_DEBUG_SERVER_LOG" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_DEBUG_SERVER_LOG" | string %]</div>
 		<div class="prefDesc">[% "SETUP_DEBUG_SERVER_LOG_DESC" | string %]</div>
 
 		[% debugServerLog %]
 
-		<div class="prefHead">[% "SETUP_DEBUG_SCANNER_LOG" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_DEBUG_SCANNER_LOG" | string %]</div>
 		<div class="prefDesc">[% "SETUP_DEBUG_SCANNER_LOG_DESC" | string %]</div>
 
 		[% debugScannerLog %]
 
-		<div class="prefHead">[% "DEBUGGING_SETTINGS" | string | upper %]</div>
+		<div class="prefHead">[% "DEBUGGING_SETTINGS" | string %]</div>
 		<div class="prefDesc">[% "SETUP_GROUP_DEBUG_DESC" | string %]</div>
 
 		<input name="persist" id="persist" type="checkbox" [% IF persist %] checked [% END %]> [% "PERSIST_DEBUG_SETTINGS" | string %]

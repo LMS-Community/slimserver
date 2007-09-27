@@ -64,6 +64,7 @@ div#homeMenu {
 	padding-bottom: 8px;
 	padding-top: 3px;
 	font-weight: bold;
+	text-transform: uppercase;
 }
 
 .prefDesc,.prefHead {

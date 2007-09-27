@@ -2,7 +2,7 @@
 [% IF prefs %]
 	<div class="settingSection">
 	
-		<div class="groupHead">[% "SETUP_GROUP_IRSETS" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_GROUP_IRSETS" | string %]</div>
 		<div class="groupDesc">[% "SETUP_GROUP_IRSETS_DESC" | string %]</div>
 
 		[% FOREACH option = irsetlist  %]
@@ -18,7 +18,7 @@
 	[% IF prefs.exists('irmap') %]
 	<div class="settingSection">
 
-		<div class="groupHead">[% "SETUP_IRMAP" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_IRMAP" | string %]</div>
 		<div class="groupDesc">[% "SETUP_IRMAP_DESC" | string %]</div>
 
 		<select class="stdedit" name="irmap" id="irmap">

@@ -2,7 +2,7 @@
 
 	<div class="settingSection">
 
-		<div class="prefHead">[% "SETUP_DISABLESTATISTICS" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_DISABLESTATISTICS" | string %]</div>
 		<div class="prefDesc">[% "SETUP_DISABLESTATISTICS_DESC" | string %]</div>
 
 		<select class="stdedit" name="disableStatistics" id="disableStatistics">
@@ -13,13 +13,13 @@
 		</select>
 
 		[% IF prefs.exists('forkedWeb') %]
-		<div class="prefHead">[% "SETUP_PREFSWRITEDELAY" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_PREFSWRITEDELAY" | string %]</div>
 		<div class="prefDesc">[% "SETUP_PREFSWRITEDELAY_DESC" | string %]</div>
 
 		<input type=text class="stdedit" name="prefsWriteDelay" id="prefsWriteDelay" value="[% prefs.prefsWriteDelay %]" size="15">
 		[% END %]
 
-		<div class="prefHead">[% "SETUP_SERVERPRIORITY" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_SERVERPRIORITY" | string %]</div>
 		<div class="prefDesc">[% "SETUP_SERVERPRIORITY_DESC" | string %]</div>
 		
 		<select class="stdedit" name="serverPriority" id="serverPriority">
@@ -32,7 +32,7 @@
 
 		</select>
 
-		<div class="prefHead">[% "SETUP_SCANNERPRIORITY" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_SCANNERPRIORITY" | string %]</div>
 		<div class="prefDesc">[% "SETUP_SCANNERPRIORITY_DESC" | string %]</div>
 
 		<select class="stdedit" name="scannerPriority" id="scannerPriority">
@@ -46,7 +46,7 @@
 		</select>
 
 		[% IF prefs.exists('forkedWeb') || prefs.exists('forkedStreaming') %]
-		<div class="prefHead">[% "SETUP_FORKEDWEB" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_FORKEDWEB" | string %]</div>
 		<div class="prefDesc">[% "SETUP_FORKEDWEB_DESC" | string %]</div>
 
 		<select class="stdedit" name="forkedWeb" id="forkedWeb">
@@ -56,7 +56,7 @@
 		
 		</select>
 		
-		<div class="prefHead">[% "SETUP_FORKEDSTREAMING" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_FORKEDSTREAMING" | string %]</div>
 		<div class="prefDesc">[% "SETUP_FORKEDSTREAMING_DESC" | string %]</div>
 
 		<select class="stdedit" name="forkedStreaming" id="forkedStreaming">

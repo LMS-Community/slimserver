@@ -20,7 +20,7 @@
 
 	<div class="settingSection">
 
-		<div class="prefHead">[% "SETUP_PLAYERNAME" | string | upper %]</div>
+		<div class="prefHead">[% "SETUP_PLAYERNAME" | string %]</div>
 		<div class="prefDesc">[% "SETUP_PLAYERNAME_DESC" | string %]</div>
 
 		<input type="text" class="stdedit" name="playername" id="playername" value="[% prefs.playername %]" size="20">
@@ -29,7 +29,7 @@
 
 	<div class="settingSection">
 	
-		<div class="groupHead">[% "SETUP_TITLEFORMAT" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_TITLEFORMAT" | string %]</div>
 		<div class="groupDesc">[% "SETUP_GROUP_TITLEFORMATS_DESC" | string %]</div>
 		
 		<table width="100%">
@@ -57,7 +57,7 @@
 	[% IF prefs.exists('playingDisplayModes') %]
 	<div class="settingSection">
 	
-		<div class="groupHead">[% "SETUP_PLAYINGDISPLAYMODE" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_PLAYINGDISPLAYMODE" | string %]</div>
 		<div class="groupDesc">[% "SETUP_PLAYINGDISPLAYMODE_DESC" | string %]</div>
 		
 		<table width="100%">
@@ -87,7 +87,7 @@
 	[% IF prefs.exists('visualModes') %]
 	<div class="settingSection">
 	
-		<div class="groupHead">[% "SETUP_VISUALIZERMODE" | string | upper %]</div>
+		<div class="groupHead">[% "SETUP_VISUALIZERMODE" | string %]</div>
 		<div class="groupDesc">[% "SETUP_VISUALIZERMODE_DESC" | string %]</div>
 		
 		<table width="100%">
@@ -116,7 +116,7 @@
 	[% IF prefs.exists('screensaver') %]
 	<div class="settingSection">
 	
-		<div class="groupHead">[% "SCREENSAVERS" | string | upper %]</div>
+		<div class="groupHead">[% "SCREENSAVERS" | string %]</div>
 		<div class="groupDesc">[% "SETUP_SCREENSAVER_DESC" | string %]</div>
 
 		<table>
@@ -145,7 +145,7 @@
 
 	<div class="settingSection">
 	
-		<div class="prefHead">[% "FORGET_PLAYER" | string | upper %]</div>
+		<div class="prefHead">[% "FORGET_PLAYER" | string %]</div>
 		<div class="prefDesc">[% "FORGET_PLAYER_DESC" | string %]</div>
 	
 		<p>
@@ -156,7 +156,7 @@
 			[% END %]
 		</p>
 	
-		<div class="prefHead">[% "INFORMATION_MENU_PLAYER" | string | upper %]</div>
+		<div class="prefHead">[% "INFORMATION_MENU_PLAYER" | string %]</div>
 	
 		[% IF ipaddress %]
 			<p>[% "PLAYER_IP_ADDRESS" | string %] [% ipaddress %]</p>
