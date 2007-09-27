@@ -3,7 +3,7 @@
 	<div class="settingSection">
 		<div class="settingGroup">
 			<div class="prefHead">[% "SETUP_LANGUAGE" | string %]</div>
-			<div class="prefDesc">[% "SETUP_LANGUAGE_DESC" | string %]</div>
+			<div class="prefDesc hiddenDesc">[% "SETUP_LANGUAGE_DESC" | string %]</div>
 	
 			<select class="stdedit" name="language" id="language">
 	
@@ -19,14 +19,14 @@
 	<div class="settingSection">
 		<div class="settingGroup">
 			<div class="prefHead">[% "SETUP_AUDIODIR" | string %]</div>
-			<div class="prefDesc">[% "SETUP_AUDIODIR_DESC" | string %]</div>
+			<div class="prefDesc hiddenDesc">[% "SETUP_AUDIODIR_DESC" | string %]</div>
 	
 			<input type="text" class="stdedit selectFolder" name="audiodir" id="audiodir" value="[% prefs.audiodir %]" size="40">
 		</div>
 
 		<div class="settingGroup">
 			<div class="prefHead">[% "SETUP_PLAYLISTDIR" | string %]</div>
-			<div class="prefDesc">[% "SETUP_PLAYLISTDIR_DESC" | string %]</div>
+			<div class="prefDesc hiddenDesc">[% "SETUP_PLAYLISTDIR_DESC" | string %]</div>
 	
 			<input type="text" class="stdedit selectFolder" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir %]" size="40">
 		</div>
@@ -36,7 +36,7 @@
 	
 		<div class="settingGroup">
 			<div class="prefHead">[% "SETUP_RESCAN" | string %]</div>
-			<div class="prefDesc">[% "SETUP_RESCAN_DESC" | string %]</div>
+			<div class="prefDesc hiddenDesc">[% "SETUP_RESCAN_DESC" | string %]</div>
 	
 			<select class="stdedit" name="rescantype" id="rescantype">
 	
@@ -63,7 +63,7 @@
 		[% IF prefs.exists('itunes') %]
 		<div class="settingGroup">
 			<div class="prefHead">[% "ITUNES" | string %]</div>
-			<div class="prefDesc">[% "SETUP_ITUNES_DESC" | string %]</div>
+			<div class="prefDesc hiddenDesc">[% "SETUP_ITUNES_DESC" | string %]</div>
 	
 			<select class="stdedit" name="itunes" id="itunes">
 	
@@ -77,7 +77,7 @@
 		[% IF prefs.exists('musicmagic') %]
 		<div class="settingGroup">
 			<div class="prefHead">[% "SETUP_MUSICMAGIC" | string %]</div>
-			<div class="prefDesc">[% "SETUP_MUSICMAGIC_DESC" | string %]</div>
+			<div class="prefDesc hiddenDesc">[% "SETUP_MUSICMAGIC_DESC" | string %]</div>
 	
 			<select class="stdedit" name="musicmagic" id="musicmagic">
 	

@@ -5119,8 +5119,8 @@ SETUP_DISPLAYTEXTTIMEOUT
 SETUP_DISPLAYTEXTTIMEOUT_DESC
 	CS	Pokud zadávate text, například pro vyhledávání, přehrávač se přesune po určité době na další písmeno. Zde můžete nastavit tuto prodlevu.
 	DA	Når du indtaster tekst til en søgning vil SqueezeCenter gå videre til næste bogstav efter det nedenfor angivne antal sekunder.
-	DE	Wenn Sie einen Suchtext eingeben, wechselt der Player nach einer gewissen Zeit zum nächsten Buchstaben. Sie können diese Verzögerung unten ändern.
-	EN	When you are entering text for a search, the player will move on to the next letter after some amount of time. You can change the duration of this wait below.
+	DE	Wenn Sie einen Suchtext eingeben, wechselt der Player nach einer gewissen Zeit zum nächsten Buchstaben. Sie können diese Verzögerung (in Sekunden) hier ändern.
+	EN	When you are entering text for a search, the player will move on to the next letter after some amount of time. You can change the duration (in seconds) of this wait.
 	ES	Al introducir texto para una búsqueda, el reproductor pasará a la letra siguiente después de un cierto tiempo. Se puede cambiar la duración de esta espera a continuación.
 	FI	Syöttäessäsi tekstiä hakua varten, kursori siirtyy automaattisesti eteenpäin jonkin ajan kuluttua. Voit alla olevasta valinnasta säätää odottamiseen käytettyä aikaa.
 	FR	Lorsque vous saisissez du texte pour une recherche, la platine passe la lettre suivante après un certain temps. Vous pouvez modifier la durée de ce délai ci-dessous.
@@ -5132,23 +5132,6 @@ SETUP_DISPLAYTEXTTIMEOUT_DESC
 	PT	Ao introduzir texto para uma procura, ao fim de algum tempo será seleccionado o caracter seguinte. Pode alterar a duração desta espera abaixo.
 	SV	När du matar in text för en sökning kommer spelaren automatiskt flytta till nästa teckenposition efter en liten fördröjning.<br>Här kan du ställa in tiden för denna fördröjning.
 	ZH_CN	当您通过播放机输入文字进行搜查行动时，播放机会在您输入的每一个字符后等待片刻才向下一个字符移动。您可以在这里调整该等待时间。
-
-SETUP_DISPLAYTEXTTIMEOUT_CHOOSE
-	CS	Prodleva v sekundách:
-	DA	Ventetid i sekunder:
-	DE	Wartezeit in Sekunden:
-	EN	Timeout in seconds:
-	ES	Espera en segundos:
-	FI	Viive sekunneissa:
-	FR	Délai en secondes:
-	HE	פסק זמן בשניות:
-	IT	Timeout in secondi:
-	JA	タイムアウト時間（秒）:
-	NL	Time-out in seconden:
-	NO	Ventetid i sekunder:
-	PT	Tempo de espera, em segundos
-	SV	Fördröjning i sekunder:
-	ZH_CN	暂停时间（秒）：
 
 SETUP_THROTTLESCAN
 	DA	Hastighed for gennemlæsning af musik
@@ -5532,17 +5515,8 @@ SETUP_IGNOREDARTICLES_DESC
 	SV	En lista med artiklar ("the" "les" "los"...) innan artistnamn som skall ignoreras vid sortering. Separera flera artiklar med mellanslag eller lämna detta fält tomt för att avaktivera. Ändrar du detta värde scannas din musikmapp på nytt
 
 SETUP_SPLITLIST
-	DE	Mehrere Einträge in Tags
-	EN	Multiple Items In Tags
-	ES	Elementos múltiples en etiquetas
-	FR	Eléments multiples dans les répères ID3
-	HE	פריטים מרובים בתגים
-	IT	Voci multiple nelle tag
-	JA	タグに複数のアイテム
-	NL	Meerdere items in tags
-	NO	Multiple elementer i tagger
-	SV	Flera element i taggarna
-	ZH_CN	标签内存有多个项目
+	DE	Trennzeichen für mehrere Einträge in Tags
+	EN	Separator for Multiple Items in Tags
 
 SETUP_SPLITLIST_DESC
 	DE	SqueezeCenter kann mehrere Interpreten, Albumtitel und Stilrichtungen in den Tags von Musikdateien erkennen. Findet SqueezeCenter folgende Wörter oder Zeichen in den Tags, wird für jeden Eintrag eine andere Liste erstellt. Beispiel: Wenn Sie einen Strichpunkt als Trennzeichen definieren, wird ein Titel mit dem Interpreten-Tag 'J. S. Bach;Michael Tilson Thomas' sowohl unter 'J. S. Bach' als auch 'Michael Tilson Thomas' aufgelistet. Wenn Sie diese Einstellung ändern, wird die Musiksammlung erneut durchsucht.

@@ -336,6 +336,10 @@ div#homeMenu {
 	font-size: 9px;
 }
 
+.settingGroup {
+	margin-bottom: 10px;
+}
+
 .prefHead {
 	height: 13px;
 	padding: 8px 6px 2px 0px;
