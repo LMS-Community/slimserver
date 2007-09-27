@@ -2,7 +2,7 @@ package Slim::Utils::Log;
 
 # $Id$
 
-# SqueezeCenter Copyright (c) 2001-2006 Dan Sully, Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Dan Sully, Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
