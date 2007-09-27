@@ -360,7 +360,7 @@ sub menuQuery {
 	);
 
 
-	if ( blessed($client) && $client->isPlayer() ) {
+	if ( blessed($client) && $client->isPlayer() && $client->canPowerOff() ) {
 		push @menu, powerHash($client);
 	}
 
