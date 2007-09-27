@@ -560,6 +560,7 @@ sub canDirectStream { return 0; }
 sub canLoop { return 0; }
 sub canDoReplayGain { return 0; }
 
+sub canPowerOff { return 1; }
 =head2 mixerConstant( $client, $feature, $aspect )
 
 Returns the requested aspect of a given mixer feature.
