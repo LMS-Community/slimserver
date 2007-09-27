@@ -678,7 +678,7 @@ Player = function(){
 			}
 
 			Ext.get('ctrlPlaytime').update(Utils.formatTime(playTime));
-			Ext.get('ctrlRemainingTime').update(remainingTime + '&nbsp;-');
+			Ext.get('ctrlRemainingTime').update(remainingTime);
 
 			Ext.get('ctrlPlaytimeCollapsed').update(shortTime);
 
