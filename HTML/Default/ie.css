@@ -66,3 +66,12 @@ unless there's an element around it with position:absolute? */
 #genreForm {
 	position: absolute;
 }
+
+/* settings pages... */
+.prefHelp {
+	left: -20px;
+}
+
+.prefHead {
+	left: -300px;
+}

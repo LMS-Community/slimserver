@@ -100,19 +100,31 @@ body {
 .settingSection {
 	border-top: 2px solid #666666;
 	padding-top: 5px;
+	margin-bottom: 15px;
+}
+
+.settingGroup {
+	position: relative;
+	padding-left: 300px;
 	margin-bottom: 10px;
 }
 
-.settingSection select, .settingSection input
-.settingSection button, .stdedit {
-	position: relative;
+.prefHelp {
+	position: absolute;
+	left: 270px;
+	top: 0px;
 }
 
 .prefHead {
-	float: left;
-	width: 350px;
+	position: absolute;
+	width: 300px;
+	left: 0px;
 }
 
 .groupDesc, .prefDesc {
+	margin-bottom: 5px;
+}
+
+.hiddenDesc {
 	display: none;
 }

@@ -25,7 +25,7 @@ Settings = function(){
 
 			layout.endUpdate();
 
-			Ext.get('settings').dom.src = webroot + 'settings/server/basic.html?player=' + player;
+			Ext.get('settings').dom.src = webroot + 'settings/server/security.html?player=' + player;
 
 			Ext.QuickTips.init();
 

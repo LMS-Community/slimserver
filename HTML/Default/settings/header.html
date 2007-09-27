@@ -9,6 +9,52 @@
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css?r=[% revision %]" />
 		<link rel="stylesheet" type="text/css" href="[% webroot %]settings.css?r=[% revision %]" />
 
+		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="/html/ext/ext-all[% IF debug %]-debug[% END %].js?r=[% revision %]"></script>
+		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
+
+<script>
+		Ext.EventManager.onDocumentReady(function(){
+			var items = Ext.query('div.hiddenDesc');
+			var section, descEl, desc, helpEl, title;
+
+			var tpl = new Ext.Template('<img src="' + webroot + 'html/images/search.gif" class="prefHelp">');
+			tpl.compile();
+
+			Ext.QuickTips.init();
+
+			for(var i = 0; i < items.length; i++) {
+				descEl = Ext.get(items[i]);
+
+				if (descEl)
+					section = descEl.up('div.settingGroup', 1) || Ext.get(items[i]).up('div.settingSection', 1);
+				else
+					continue;
+
+				title = section.child('div.prefHead');
+				if (title)
+					title = title.dom.innerHTML;
+
+				if (section && (desc = descEl.dom.innerHTML)) {
+					helpEl = tpl.insertAfter(descEl);
+					Ext.QuickTips.register({
+						target: helpEl,
+						text: desc,
+						title: title,
+						maxWidth: 600,
+						autoHide: false
+					});
+				}
+			}
+
+		});
+
+</script>
+
+		<style>
+			html, body, iframe { overflow: auto; }
+		</style>
+
 		[%- IF debug %]
 		<style>
 			.x-layout-panel-body { background: white; }
