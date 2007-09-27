@@ -228,11 +228,9 @@ sub moduleDisplay {
 
 	my @info = $client->string($modules->{$item});
 
-	push(@info, $client->string('INFORMATION_DISABLED')) unless $enabled{$item};
-
 	my $version = eval {
 		no strict 'refs';
-		${"Slim::Plugin::${item}::VERSION"};
+		${"${item}::VERSION"};
 	};
 
 	if ($@ || !$version) {
@@ -243,6 +241,12 @@ sub moduleDisplay {
 		$version =~ s/\s+$//;
 
 		push @info, $client->string('INFORMATION_VERSION') . ": $version";
+	}
+
+	if ($enabled{$item}) {
+		push(@info, $client->string('ENABLED'));
+	} else {
+		push(@info, $client->string('INFORMATION_DISABLED'));
 	}
 
 	return join(' ' . $client->symbols('rightarrow') . ' ', @info);
@@ -309,7 +313,10 @@ sub setMode {
 	}
 
 	unless (ref($modules)) {
-		$modules = Slim::Utils::PluginManager->installedPlugins();
+		my $plugins = Slim::Utils::PluginManager->allPlugins;
+		for my $plugin (Slim::Utils::PluginManager->installedPlugins()) {
+			$modules->{$plugin} = $plugins->{$plugin}->{'name'} ? $plugins->{$plugin}->{'name'} : $plugin;
+		}
 		$enabled{$_} = 1 for (Slim::Utils::PluginManager->enabledPlugins($client));
 		$menuParams{catdir('main','module')}{'listRef'} = module_list();
 	}
@@ -337,7 +344,7 @@ sub playerModel {
 }
 
 sub updateClientStatus {
-	my $client = shift;				
+	my $client = shift;
 
 	if (Slim::Buttons::Common::mode($client) eq 'INPUT.List' &&
 	    Slim::Buttons::Common::param($client, 'parentMode') eq 'information' &&
