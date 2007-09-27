@@ -314,9 +314,7 @@ sub setMode {
 
 	unless (ref($modules)) {
 		my $plugins = Slim::Utils::PluginManager->allPlugins;
-		for my $plugin (Slim::Utils::PluginManager->installedPlugins()) {
-			$modules->{$plugin} = $plugins->{$plugin}->{'name'} ? $plugins->{$plugin}->{'name'} : $plugin;
-		}
+		$modules->{$_} = $plugins->{$_}->{'name'}for Slim::Utils::PluginManager->installedPlugins();
 		$enabled{$_} = 1 for (Slim::Utils::PluginManager->enabledPlugins($client));
 		$menuParams{catdir('main','module')}{'listRef'} = module_list();
 	}
