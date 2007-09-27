@@ -1,6 +1,6 @@
 package Slim::Plugin::xPL::Plugin;
 
-# SlimServer Copyright (C) 2001 Logitech.
+# SqueezeCenter Copyright (C) 2001 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -11,7 +11,7 @@ package Slim::Plugin::xPL::Plugin;
 # GNU General Public License for more details.
 #
 #
-# xPL Protocol Support Plugin for SlimServer
+# xPL Protocol Support Plugin for SqueezeCenter
 # http://www.xplproject.org.uk/
 
 # $Id: Plugin.pm 10841 2006-12-03 16:57:58Z adrian $

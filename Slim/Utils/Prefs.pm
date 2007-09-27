@@ -160,7 +160,7 @@ sub init {
 		'maxWMArate'            => 9999,
 		'tcpConnectMaximum'	    => 30,             # not on web page
 		'udpChunkSize'          => 1400,           # only used for Slimp3
-		'mDNSname'              => 'SlimServer',
+		'mDNSname'              => 'SqueezeCenter',
 		# Server Settings - Performance
 		'disableStatistics'     => 0,
 		'serverPriority'        => '',
@@ -363,9 +363,9 @@ use File::Spec::Functions qw(:ALL);
 use Digest::MD5;
 
 sub makeSecuritySecret {
-	# each SlimServer installation should have a unique,
+	# each SqueezeCenter installation should have a unique,
 	# strongly random value for securitySecret. This routine
-	# will be called by the first time SlimServer is started
+	# will be called by the first time SqueezeCenter is started
 	# to "seed" the prefs file with a value for this installation
 
 	my $hash = new Digest::MD5;
@@ -439,7 +439,7 @@ sub defaultPlaylistDir {
 		# We've seen people have the defaultPlayListDir be a file. So
 		# change the path slightly to allow for that.
 		if (-f $path) {
-			$path .= 'SlimServer';
+			$path .= 'SqueezeCenter';
 		}
 
 		if (!-d $path) {

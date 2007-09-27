@@ -1,6 +1,6 @@
 package Slim::Utils::UPnPMediaServer;
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -265,7 +265,7 @@ sub gotContainer {
 				if ( $node =~ m{<res[^>]*>([^<]+)</res>} ) {
 					$url = $1;
 					
-					# If the UPnP server is running on the same PC as SlimServer, URL may be localhost
+					# If the UPnP server is running on the same PC as SqueezeCenter, URL may be localhost
 					if ( my ($host) = $url =~ /(127.0.0.1|localhost)/ ) {
 						my $realIP = Slim::Utils::IPDetect::IP();
 						$url       =~ s/$host/$realIP/;
@@ -318,7 +318,7 @@ sub gotContainer {
 							if ( $node =~ m{<res[^>]*>([^<]+)</res>} ) {
 								$url = $1;
 								
-								# If the UPnP server is running on the same PC as SlimServer, URL may be localhost
+								# If the UPnP server is running on the same PC as SqueezeCenter, URL may be localhost
 								if ( my ($host) = $url =~ /(127.0.0.1|localhost)/ ) {
 									my $realIP = Slim::Utils::IPDetect::IP();
 									$url       =~ s/$host/$realIP/;

@@ -393,13 +393,13 @@ PLUGIN_HEALTH_SLIMP3_DESC
 	NL	Dit is een SLIMP3-speler. Voor deze speler zijn geen volledige prestatiemetingen beschikbaar.
 
 PLUGIN_HEALTH_NO_PLAYER_DESC
-	DE	SlimServer kann keinen Player finden. Ist ein Player vorhanden, kann dies daran liegen, dass die Netzwerkverbindung zwischen Player und Server blockiert wird. Prüfen Sie, ob Verbindungen zum TCP- und UDP-Anschluss 3483 durch Netzwerk bzw. Server-Firewall blockiert werden.
-	EN	Slimserver cannot find a player.  If you own a player this could be due to your network blocking connection between the player and server.  Please check your network and/or server firewall does not block connection to TCP & UDP port 3483.
-	ES	SlimServer no puede encontrar un reproductor. Si existe un reproductor, puede deberse a que la red bloquee la conexión entre el reproductor y el servidor. Compruebe que la red o el servidor de seguridad no bloqueen las conexiones TCP y UDP en el puerto 3483.
-	FR	Le SlimServer ne trouve pas de platine connectée. Vérifiez que le réseau ne bloque pas la connexion entre la platine et le serveur et qu'aucun pare-feu ne bloque la connexion au port TCP et UDP 3483.
-	HE	Slimserver לא מצליח לאתר נגן. אם יש ברשותך נגן, ייתכן שהסיבה לכך היא שהרשת חוסמת את החיבור בין הנגן והשרת. ודא שחומת האש של הרשת ו/או השרת לא חוסמים את החיבור ליציאה 3483 של TCP ו-UPD.
+	DE	SqueezeCenter kann keinen Player finden. Ist ein Player vorhanden, kann dies daran liegen, dass die Netzwerkverbindung zwischen Player und Server blockiert wird. Prüfen Sie, ob Verbindungen zum TCP- und UDP-Anschluss 3483 durch Netzwerk bzw. Server-Firewall blockiert werden.
+	EN	SqueezeCenter cannot find a player.  If you own a player this could be due to your network blocking connection between the player and server.  Please check your network and/or server firewall does not block connection to TCP & UDP port 3483.
+	ES	SqueezeCenter no puede encontrar un reproductor. Si existe un reproductor, puede deberse a que la red bloquee la conexión entre el reproductor y el servidor. Compruebe que la red o el servidor de seguridad no bloqueen las conexiones TCP y UDP en el puerto 3483.
+	FR	Le SqueezeCenter ne trouve pas de platine connectée. Vérifiez que le réseau ne bloque pas la connexion entre la platine et le serveur et qu'aucun pare-feu ne bloque la connexion au port TCP et UDP 3483.
+	HE	SqueezeCenter לא מצליח לאתר נגן. אם יש ברשותך נגן, ייתכן שהסיבה לכך היא שהרשת חוסמת את החיבור בין הנגן והשרת. ודא שחומת האש של הרשת ו/או השרת לא חוסמים את החיבור ליציאה 3483 של TCP ו-UPD.
 	IT	Impossibile trovare un lettore. Se si possiede un lettore, è possibile che la rete blocchi la connessione tra il lettore e il server. Verificare che il firewall della rete e/o del server non blocchi la connessione sulla porta TCP & UDP 3483.
-	NL	SlimServer kan geen speler vinden. Als je een speler hebt, is het mogelijk dat je netwerk de verbinding tussen de speler en de server blokkeert. Controleer of je netwerk en/of serverfirewall verbinding met TCP & UDP-poort 3483 blokkeert.
+	NL	SqueezeCenter kan geen speler vinden. Als je een speler hebt, is het mogelijk dat je netwerk de verbinding tussen de speler en de server blokkeert. Controleer of je netwerk en/of serverfirewall verbinding met TCP & UDP-poort 3483 blokkeert.
 
 PLUGIN_HEALTH_RESPONSE
 	DE	Serverreaktionszeit
@@ -421,13 +421,13 @@ PLUGIN_HEALTH_RESPONSE_INTERMIT
 	NL	Af en toe slechte reactietijd
 
 PLUGIN_HEALTH_RESPONSE_INTERMIT_DESC
-	DE	Die Serverreaktionszeit ist gelegentlich länger als gewünscht. Dies kann zu Unterbrechungen bei der Wiedergabe führen, besonders bei den Playern Slimp3 und Squeezebox1. Der Grund kann eine Hintergrundbelastung des Servers oder ein Slimserver-Task, der länger als sonst braucht, sein.
-	EN	Your server response time is occasionally longer than desired.  This may cause audio dropouts, especially on Slimp3 and Squeezebox1 players.  It may be due to background load on your server or a slimserver task taking longer than normal.
-	ES	El tiempo de respuesta del servidor es ocasionalmente más alto de lo deseado. Esto puede producir descartes de audio, especialmente en reproductores Slimp3 y Squeezebox1. Puede deberse a una carga en segundo plano del servidor o a que una tarea de SlimServer requiera más tiempo del normal.
+	DE	Die Serverreaktionszeit ist gelegentlich länger als gewünscht. Dies kann zu Unterbrechungen bei der Wiedergabe führen, besonders bei den Playern Slimp3 und Squeezebox1. Der Grund kann eine Hintergrundbelastung des Servers oder ein SqueezeCenter-Task, der länger als sonst braucht, sein.
+	EN	Your server response time is occasionally longer than desired.  This may cause audio dropouts, especially on Slimp3 and Squeezebox1 players.  It may be due to background load on your server or a SqueezeCenter task taking longer than normal.
+	ES	El tiempo de respuesta del servidor es ocasionalmente más alto de lo deseado. Esto puede producir descartes de audio, especialmente en reproductores Slimp3 y Squeezebox1. Puede deberse a una carga en segundo plano del servidor o a que una tarea de SqueezeCenter requiera más tiempo del normal.
 	FR	Le temps de réponse du serveur est plus long par intermittence. Cela peut causer des coupures audio, notamment avec un SLIMP3 ou une Squeezebox1. Ce problème peut être dû à une charge élevée ou une opération complexe sur le serveur.
-	HE	זמן התגובה של השרת מתארך מדי פעם מעבר לרצוי. הדבר עלול לגרום לקיטועים בשמע, בייחוד בנגנים מסוג Slimp3 ו-Squeezebox1. ייתכן שהדבר נגרם בשל עומס ברקע בשרת או בשל פעילות של SlimServer שמתארכת יתר על המידה.
-	IT	I tempi di risposta del server di tanto in tanto sono più lunghi del previsto. Ciò può causare una riduzione dell'audio in particolar modo con lettori Slimp3 e Squeezebox1. La causa può risiedere in carichi in background del server o in attività di SlimServer che richiedono più tempo del normale.
-	NL	De serverreactietijd is soms langer dan gewenst, wat in audiohaperingen kan resulteren (vooral op SLIMP3- en Squeezebox1-spelers). Dit kan veroorzaakt worden door andere programma's die op je server draaien, of een SlimServer-taak die langer duurt dan normaal.
+	HE	זמן התגובה של השרת מתארך מדי פעם מעבר לרצוי. הדבר עלול לגרום לקיטועים בשמע, בייחוד בנגנים מסוג Slimp3 ו-Squeezebox1. ייתכן שהדבר נגרם בשל עומס ברקע בשרת או בשל פעילות של SqueezeCenter שמתארכת יתר על המידה.
+	IT	I tempi di risposta del server di tanto in tanto sono più lunghi del previsto. Ciò può causare una riduzione dell'audio in particolar modo con lettori Slimp3 e Squeezebox1. La causa può risiedere in carichi in background del server o in attività di SqueezeCenter che richiedono più tempo del normale.
+	NL	De serverreactietijd is soms langer dan gewenst, wat in audiohaperingen kan resulteren (vooral op SLIMP3- en Squeezebox1-spelers). Dit kan veroorzaakt worden door andere programma's die op je server draaien, of een SqueezeCenter-taak die langer duurt dan normaal.
 
 PLUGIN_HEALTH_RESPONSE_POOR
 	DE	Langsame Reaktion
@@ -440,13 +440,13 @@ PLUGIN_HEALTH_RESPONSE_POOR
 	NL	Slechte reactietijd
 
 PLUGIN_HEALTH_RESPONSE_POOR_DESC
-	DE	Die Reaktionszeit des Servers fällt regelmäßig unter den Normalwert. Dies kann zu Unterbrechungen bei der Wiedergabe führen, besonders bei den Playern Slimp3 und Squeezebox1. Prüfen Sie die Leistung des Servers. Ist diese in Ordnung, prüfen Sie, ob SlimServer intensive Funktionen (z.B. Durchsuchen der Musikbibliothek) ausführt oder ein Plugin Schuld ist.
-	EN	Your server response time is regularly falling below normal performance levels.  This may lead to audio dropouts, especially on Slimp3 and Squeezebox1 players.  Please check the performance of your server.  If this is OK, then check slimserver is not running intensive tasks (e.g. scanning music library) or a Plugin is not causing this.
-	ES	El tiempo de respuesta del servidor es regularmente más bajo que los niveles de rendimiento normales. Esto puede producir descartes de audio, especialmente en reproductores Slimp3 y Squeezebox1. Compruebe el rendimiento del servidor. Si es correcto, compruebe que SlimServer no esté ejecutando tareas intensivas (como examinar la biblioteca de música) o que esto no se deba a un complemento.
-	FR	Le temps de réponse du serveur est anormalement élevé, ce qui peut causer des coupures audio, notamment avec un SLIMP3 ou une Squeezebox1. Vérifiez les performances du serveur. Si celles-ci sont normales, vérifiez que le SlimServer ou qu'aucun plugin n'est pas en train d'exécuter une tâche complexe, comme l'analyse de la collection musicale.
-	HE	זמן התגובה של השרת יורד בדרך כלל אל מתחת לרמות הביצועים הרגילות. הדבר עלול לגרום לקיטועים בשמע, בייחוד בנגנים מסוג Slimp3 ו-Squeezebox1. בדוק את ביצועי השרת. אם הכל תקין, ודא שפעילויות מוגברות אינן פעילות ב-SlimServer (לדוגמה, סריקת ספריית המוסיקה) או אם יישום Plugin הוא הגורם לבעיה.
-	IT	I tempi di risposta del server scendono regolarmente al di sotto del livello di prestazioni previsto. Ciò può causare cadute dell'audio in particolar modo con lettori Slimp3 e Squeezebox1. Controllare le prestazioni del server. Se il server funziona normalmente, controllare che in SlimServer non siano in esecuzione attività che fanno un uso esteso di risorse, come la ricerca nella libreria musicale, o che il problema non sia causato da un plugin.
-	NL	De serverreactietijd is regelmatig lager dan gewenst, wat in audiohaperingen kan resulteren (vooral op SLIMP3- en Squeezebox1-spelers). Controleer de prestaties van je server. Zijn deze goed, controleer dan of SlimServer misschien intensieve taken uitvoert (zoals het scannen van de muziekcollectie). Controleer ook of alle plug-ins naar behoren functioneren.
+	DE	Die Reaktionszeit des Servers fällt regelmäßig unter den Normalwert. Dies kann zu Unterbrechungen bei der Wiedergabe führen, besonders bei den Playern Slimp3 und Squeezebox1. Prüfen Sie die Leistung des Servers. Ist diese in Ordnung, prüfen Sie, ob SqueezeCenter intensive Funktionen (z.B. Durchsuchen der Musikbibliothek) ausführt oder ein Plugin Schuld ist.
+	EN	Your server response time is regularly falling below normal performance levels.  This may lead to audio dropouts, especially on Slimp3 and Squeezebox1 players.  Please check the performance of your server.  If this is OK, then check SqueezeCenter is not running intensive tasks (e.g. scanning music library) or a Plugin is not causing this.
+	ES	El tiempo de respuesta del servidor es regularmente más bajo que los niveles de rendimiento normales. Esto puede producir descartes de audio, especialmente en reproductores Slimp3 y Squeezebox1. Compruebe el rendimiento del servidor. Si es correcto, compruebe que SqueezeCenter no esté ejecutando tareas intensivas (como examinar la biblioteca de música) o que esto no se deba a un complemento.
+	FR	Le temps de réponse du serveur est anormalement élevé, ce qui peut causer des coupures audio, notamment avec un SLIMP3 ou une Squeezebox1. Vérifiez les performances du serveur. Si celles-ci sont normales, vérifiez que le SqueezeCenter ou qu'aucun plugin n'est pas en train d'exécuter une tâche complexe, comme l'analyse de la collection musicale.
+	HE	זמן התגובה של השרת יורד בדרך כלל אל מתחת לרמות הביצועים הרגילות. הדבר עלול לגרום לקיטועים בשמע, בייחוד בנגנים מסוג Slimp3 ו-Squeezebox1. בדוק את ביצועי השרת. אם הכל תקין, ודא שפעילויות מוגברות אינן פעילות ב-SqueezeCenter (לדוגמה, סריקת ספריית המוסיקה) או אם יישום Plugin הוא הגורם לבעיה.
+	IT	I tempi di risposta del server scendono regolarmente al di sotto del livello di prestazioni previsto. Ciò può causare cadute dell'audio in particolar modo con lettori Slimp3 e Squeezebox1. Controllare le prestazioni del server. Se il server funziona normalmente, controllare che in SqueezeCenter non siano in esecuzione attività che fanno un uso esteso di risorse, come la ricerca nella libreria musicale, o che il problema non sia causato da un plugin.
+	NL	De serverreactietijd is regelmatig lager dan gewenst, wat in audiohaperingen kan resulteren (vooral op SLIMP3- en Squeezebox1-spelers). Controleer de prestaties van je server. Zijn deze goed, controleer dan of SqueezeCenter misschien intensieve taken uitvoert (zoals het scannen van de muziekcollectie). Controleer ook of alle plug-ins naar behoren functioneren.
 
 PLUGIN_HEALTH_NORMAL
 	DE	Dieser Player funktioniert normal.
@@ -669,7 +669,7 @@ PLUGIN_HEALTH_TIMERLATE_DESC
 	DE	Die Verzögerung zwischen dem geplanten Zeitpunkt eines Zeitgebertasks und der Ausführungszeit.
 	EN	The time between when a timer task was scheduled and when it is run.
 	ES	El tiempo entre la programación de una tarea de temporizador y su ejecución.
-	FR	Le SlimServer utilise un mécanisme de programmation pour déclencher certaines tâches, comme la mise à jour de l'interface utilisateur. Ce graphique montre le décalage en secondes entre le déclenchement programmé d'une tâche et son déclenchement réel. Deux tâches programmées ne pouvant s'éxécuter simultanément, il est possible que certaines tâches soient déclenchées par le serveur après un délai d'attente. Si celui-ci est trop important, la réactivité de l'interface utilisateur peut en être affectée.
+	FR	Le SqueezeCenter utilise un mécanisme de programmation pour déclencher certaines tâches, comme la mise à jour de l'interface utilisateur. Ce graphique montre le décalage en secondes entre le déclenchement programmé d'une tâche et son déclenchement réel. Deux tâches programmées ne pouvant s'éxécuter simultanément, il est possible que certaines tâches soient déclenchées par le serveur après un délai d'attente. Si celui-ci est trop important, la réactivité de l'interface utilisateur peut en être affectée.
 	HE	הזמן שחלף ממועד התזמון של פעילות קוצב-זמן ומועד הפעלתה.
 	IT	L'intervallo di tempo che passa tra il momento in cui viene pianificata un'attività del timer e il momento in cui viene eseguita.
 	NL	De tijd die is versterken tussen het punt waarop een timertaak was gepland en het punt waarop deze werd uitgevoerd.

@@ -29,10 +29,10 @@ sub main {
 
 	GetOptions('prefsfile=s' => \$prefsFile);
 
-	msg("SlimServer OSDetect init...\n");
+	msg("SqueezeCenter OSDetect init...\n");
 	Slim::Utils::OSDetect::init();
 
-	msg("SlimServer settings init...\n");
+	msg("SqueezeCenter settings init...\n");
 
 	Slim::Utils::Prefs::init();
 	Slim::Utils::Prefs::load($prefsFile);

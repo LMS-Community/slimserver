@@ -11,12 +11,12 @@
 <h2>Introduction</h2>
 
 <p>
-	The SlimServer provides a command-line interface to the
+	The SqueezeCenter provides a command-line interface to the
 	players via TCP/IP.  After starting
 	the server, commands and queries may be sent by connecting to a
 	specific TCP/IP port.  The server
 	will reply echoing the request (for commands) or by returning the
-	requested data (for queries). By default, the SlimServer will listen
+	requested data (for queries). By default, the SqueezeCenter will listen
 	for connections on TCP/IP port 9090. This format is designed for
 	ease of integration into AMX, Crestron and other automation
 	systems.
@@ -25,7 +25,7 @@
 	The end of line separator is line feed (&lt;LF&gt; ASCII decimal 10,
 	hexadecimal 0x0A). The server accepts LF, CR or 0x00 (or any combination
 	thereof) as end of line, and replies with whatever was used for the command.
-	For strings, SlimServer uses the UTF-8 charset. Some extended queries allow
+	For strings, SqueezeCenter uses the UTF-8 charset. Some extended queries allow
 	to return data in a different charset.
 </p>
 <p>
@@ -45,9 +45,9 @@
 
  
 <hr>
-<h4 id="7">Changes starting from SlimServer 7.0</h4>
+<h4 id="7">Changes starting from SqueezeCenter 7.0</h4>
 <p>
-	The following syntax changes apply to the CLI in SlimServer 7.0. <b>These 
+	The following syntax changes apply to the CLI in SqueezeCenter 7.0. <b>These 
 	changes may impact CLI clients.</b>
 </p>
 <ul>
@@ -89,7 +89,7 @@
 </ul>
 <p>
 	The following changes or new commands &amp; queries are available starting with
-	SlimServer 7.0. These changes should not have any impact on existing 
+	SqueezeCenter 7.0. These changes should not have any impact on existing 
 	clients:
 </p>
 <ul>
@@ -207,9 +207,9 @@
 	<p>
 		<code>&lt;playerid&gt;</code> is the unique identifier for the
 		player, usually (but not guaranteed to be) the MAC address of the
-		player. Some commands are global to the SlimServer and do not
+		player. Some commands are global to the SqueezeCenter and do not
 		require a <code>&lt;playerid&gt;</code>. For commands requiring it,
-		a random player will be selected by the SlimServer if the
+		a random player will be selected by the SqueezeCenter if the
 		<code>&lt;playerid&gt;</code> is omitted, and returned in the
 		server reply. <code>&lt;playerid&gt;</code> may be obtained by using
 		the &quot;player id&quot; or &quot;players&quot; queries.
@@ -217,7 +217,7 @@
 	<p>
 		<code>&lt;p0&gt;</code> through <code>&lt;pN&gt;</code> are
 		<em>positional</em> parameters. Pass a &quot;?&quot; to obtain a
-		value for that parameter in the SlimServer response (i.e. send a
+		value for that parameter in the SqueezeCenter response (i.e. send a
 		query). Details of the parameters vary for each command as described
 		below.
 	</p>
@@ -383,7 +383,7 @@
 
 <h3 id="Notes">Notes</h3>
 <ul>
-	<li>The Security settings of the SlimServer preferences apply to CLI
+	<li>The Security settings of the SqueezeCenter preferences apply to CLI
 		connections when they are established. A change in security
 		settings do not affect established connections. The connection
 		is only accepted from allowed hosts. If password protection is
@@ -392,7 +392,7 @@
 		user and/or password, or using any other command as the first
 		one, results in the server disconnecting.</li>
 <p></p>
-	<li>All SlimServer preferences apply to the CLI data. For examples, the
+	<li>All SqueezeCenter preferences apply to the CLI data. For examples, the
 		preference about composers appearing in the artists list applies to
 		the data returned by the &quot;<a href="#artists">artists</a>&quot;
 		query.</li>
@@ -414,7 +414,7 @@
 		the given song, the server returns special "no artwork" image.
 		Please refer to the <a href="artwork.html">Artwork Setup</a>
 		documentation for more details on artwork management in
-		SlimServer. Use the following URL:
+		SqueezeCenter. Use the following URL:
 		<blockquote> 
 		  	<strong><code>
 		  	http://&lt;server&gt;:&lt;port&gt;/music/&lt;track_id&gt;/cover.jpg
@@ -513,7 +513,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <ul>
 	<li>
   		<strong><a href="#GC">General</a></strong>: general management of the Command Line
-  		Interface and of the SlimServer.
+  		Interface and of the SqueezeCenter.
   	</li>
 	<li>
 		<strong><a href="#PC">Players</a></strong>: management of players.
@@ -537,8 +537,8 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</li>
 	<li>
 		<strong><a href="#PG">Plugins</a></strong>: commands and queries
-		proposed by various SlimServer plugins. These are only available if
-		the plugin is enabled in the SlimServer configuration. The query
+		proposed by various SqueezeCenter plugins. These are only available if
+		the plugin is enabled in the SqueezeCenter configuration. The query
 		&quot;<a href="#can">can</a>&quot; can be used to determine if a command
 		or query is available.
 	</li>
@@ -601,7 +601,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>
 	The &quot;login&quot; command allows the caller to authenticate itself on
-	the server, as defined in the Security pane of the SlimServer preferences.
+	the server, as defined in the Security pane of the SqueezeCenter preferences.
 	Like any other command, the user and password must be escaped. If
 	successful, the server replaces the password with 6 star characters. If
 	unsuccessful, the server disconnects. If security is off this command is
@@ -663,7 +663,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;version&quot; query returns version number of SlimServer.
+	The &quot;version&quot; query returns version number of SqueezeCenter.
 </p>
 <p>
 	Examples:
@@ -688,7 +688,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	The &quot;listen&quot; command enables to receive asynchronously internal
 	server commands (notifications) on the CLI connection. Notifications concern
-	all activity in the SlimServer, not just the activity triggered by the
+	all activity in the SqueezeCenter, not just the activity triggered by the
 	command-line.  Use 0 to clear, 1 to set, ? to query, and no parameter to
 	toggle the listen state of the command-line connection. 
 	<br>
@@ -769,7 +769,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>
 	The &quot;pref&quot; command allows the caller to set and query the 
-	SlimServer's internal preference values. The following affect the 
+	SqueezeCenter's internal preference values. The following affect the 
 	behaviour of CLI queries and commands:
 	<ul>
 		<li>
@@ -838,7 +838,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>
 	The &quot;pref validate&quot; command allows the caller to validate a 
-	SlimServer's internal preference value without setting it.
+	SqueezeCenter's internal preference value without setting it.
 </p>
 <p>
 	If you want to validate a preference from an other namespace than &quot;server&quot;
@@ -1859,7 +1859,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>
 	The &quot;playerpref&quot; command allows the caller to set and query the 
-	SlimServer's internal player-specific preferences values.
+	SqueezeCenter's internal player-specific preferences values.
 </p>
 <p>
 	If you want to query/set a preference from an other namespace than &quot;server&quot;
@@ -1895,7 +1895,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>
 	The &quot;playerpref validate&quot; command allows the caller to validate a 
-	SlimServer's internal player-specific preference value without setting it.
+	SqueezeCenter's internal player-specific preference value without setting it.
 </p>
 <p>
 	If you want to validate a preference from an other namespace than &quot;server&quot;
@@ -1996,7 +1996,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 <p>
 	The &quot;players&quot; query returns information about all 
 	&quot;players&quot; (physical players as well as streaming clients)
-	known by the SlimServer.
+	known by the SqueezeCenter.
 </p>
 <p>
 	Accepted tagged parameters:
@@ -2053,7 +2053,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			count
 		</td>
 		<td>
-			Number of players known by SlimServer. Equivalent to 
+			Number of players known by SqueezeCenter. Equivalent to 
 			&quot;<a href="#player count ?">player count ?</a>&quot;.
 		</td>
 	</tr>
@@ -2439,11 +2439,11 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;rescan&quot; command causes SlimServer to rescan the entire music 
+	The &quot;rescan&quot; command causes SqueezeCenter to rescan the entire music 
 	library, reloading the music file information. If &quot;playlists&quot; is 
 	indicated (&quot;rescan playlists&quot;), only the playlist directory is
 	rescanned. Issued with a &quot;?&quot;, &quot;rescan ?&quot; returns if the 
-	SlimServer is currently scanning. Scanning occurs when SlimServer starts and 
+	SqueezeCenter is currently scanning. Scanning occurs when SqueezeCenter starts and 
 	following &quot;rescan&quot; and 
 	&quot;<a href="#wipecache">wipecache</a>&quot; commands.
 </p>
@@ -2570,7 +2570,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;wipecache&quot; command allows the caller to have the SlimServer
+	The &quot;wipecache&quot; command allows the caller to have the SqueezeCenter
 	rescan its music library, reloading the music file information. This differs
 	from the &quot;<a href="#rescan">rescan</a>&quot; command in that it first
 	clears the tag database. During a rescan triggered by &quot;wipecache&quot;,
@@ -2941,7 +2941,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			rescan
 		</td>
 		<td>
-			Returned with value 1 if the SlimServer is still scanning the 
+			Returned with value 1 if the SqueezeCenter is still scanning the 
 			database. The results may therefore be incomplete. Not returned if 
 			no scan is in progress.
 		</td>
@@ -3136,7 +3136,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			rescan
 		</td>
 		<td>
-			Returned with value 1 if the SlimServer is still scanning the 
+			Returned with value 1 if the SqueezeCenter is still scanning the 
 			database. The results may therefore be incomplete.
 			Not returned if no scan is in progress.
 		</td>
@@ -3175,7 +3175,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&nbsp;&nbsp;album
 		</td>
 		<td>
-			Album name, including SlimServer's added &quot;(N of M)&quot; if
+			Album name, including SqueezeCenter's added &quot;(N of M)&quot; if
 			the server is set to group multi disc albums together. 
 			See tag &quot;title&quot; for the unmodified value.
 		</td>
@@ -3188,7 +3188,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			&nbsp;&nbsp;year
 		</td>
 		<td>
-			Album year. This is determined by SlimServer based on the album
+			Album year. This is determined by SqueezeCenter based on the album
 			tracks.
 		</td>
 	</tr>
@@ -3405,7 +3405,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 </p>
 <p>
 	The &quot;musicfolder&quot; query returns the content of a given music
-	folder, starting from the top level directory configured in SlimServer.
+	folder, starting from the top level directory configured in SqueezeCenter.
 </p>
 <p>
 	Accepted tagged parameters:
@@ -3433,7 +3433,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		</td>
 		<td>
 			Browses the folder identified by &quot;url&quot;. If the content
-			of &quot;url&quot; did not happen to be in the SlimServer database, it is
+			of &quot;url&quot; did not happen to be in the SqueezeCenter database, it is
 			added to it.
 			<br>
 			&quot;url&quot; has precedence over &quot;folder_id&quot; if both are
@@ -3608,7 +3608,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			rescan
 		</td>
 		<td>
-			Returned with value 1 if the SlimServer is still scanning the 
+			Returned with value 1 if the SqueezeCenter is still scanning the 
 			database. The results may therefore be incomplete. Not returned if
 			no scan is in progress.
 		</td>
@@ -3728,7 +3728,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</tr>
 	<tr>
 		<td>rescan</td>
-		<td>Returned with value 1 if the SlimServer is still scanning the database. The results may therefore be incomplete.
+		<td>Returned with value 1 if the SqueezeCenter is still scanning the database. The results may therefore be incomplete.
 		Not returned if no scan is in progress.</td>
 	</tr>
 	<tr>
@@ -4153,7 +4153,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			rescan
 		</td>
 		<td>
-			Returned with value 1 if the SlimServer is still scanning the 
+			Returned with value 1 if the SqueezeCenter is still scanning the 
 			database. The results may therefore be incomplete.
 			Not returned if no scan is in progress.
 		</td>
@@ -4580,7 +4580,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		album:All%20for%20You modificationTime:Thursday%2C%20March%201%2C%202007%2C%209:21:58%20PM 
 		type:mp3 genre_id:2 bitrate:160kbps%20VBR artist_id:3 tracknum:12 tagversion:ID3v2.3.0
 		year:1995 samplerate:44100
-		url:file:%2F%2F%2FUsers%2Ffred%2FPrograms%2FSlimServer%2FMusic%2F12%2520-%2520If%2520I%2520Had%2520You.mp3
+		url:file:%2F%2F%2FUsers%2Ffred%2FPrograms%2FSqueezeCenter%2FMusic%2F12%2520-%2520If%2520I%2520Had%2520You.mp3
 		&lt;LF&gt;&quot;
 	</p>
 </blockquote>
@@ -4598,7 +4598,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	</strong>
 </p>
 <p>
-	The &quot;titles&quot; command returns all titles known by the SlimServer.
+	The &quot;titles&quot; command returns all titles known by the SqueezeCenter.
 </p>
 <p>
 	Accepted tagged parameters:
@@ -4703,7 +4703,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			rescan
 		</td>
 		<td>
-			Returned with value 1 if the SlimServer is still scanning the
+			Returned with value 1 if the SqueezeCenter is still scanning the
 			database. The results may therefore be incomplete. Not returned if
 			no scan is in progress.
 		</td>
@@ -4835,7 +4835,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			rescan
 		</td>
 		<td>
-			Returned with value 1 if the SlimServer is still scanning the
+			Returned with value 1 if the SqueezeCenter is still scanning the
 			database. The results may therefore be incomplete. Not returned if
 			no scan is in progress.
 		</td>
@@ -5950,7 +5950,7 @@ in the saved playlists folder.</p>
 	</tr>
 	<tr>
 		<td>rescan</td>
-		<td>Returned with value 1 if the SlimServer is still scanning the 
+		<td>Returned with value 1 if the SqueezeCenter is still scanning the 
 			database. The command may therefore have missed items.
 			Not returned if no scan is in progress.</td>
 	</tr>
@@ -6104,7 +6104,7 @@ in the saved playlists folder.</p>
 			rescan
 		</td>
 		<td>
-			Returned with value 1 if SlimServer is still scanning the
+			Returned with value 1 if SqueezeCenter is still scanning the
 			database. The results may therefore be incomplete. Not returned if
 			no scan is in progress.
 		</td>
@@ -6141,7 +6141,7 @@ in the saved playlists folder.</p>
 			version
 		</td>
 		<td>
-			SlimServer version. Equivalent to
+			SqueezeCenter version. Equivalent to
 			&quot;<a href="#version ?">version ?</a>&quot;
 		</td>
 	</tr>
@@ -6150,7 +6150,7 @@ in the saved playlists folder.</p>
 			info total albums
 		</td>
 		<td>
-			Number of albums known to SlimServer. Equivalent to
+			Number of albums known to SqueezeCenter. Equivalent to
 			&quot;<a href="#info total albums ?">info total albums ?</a>&quot;
 		</td>
 	</tr>
@@ -6159,7 +6159,7 @@ in the saved playlists folder.</p>
 			info total artists
 		</td>
 		<td>
-			Number of artists known to SlimServer. Equivalent to
+			Number of artists known to SqueezeCenter. Equivalent to
 			&quot;<a href="#info total artists ?">info total artists ?</a>&quot;
 		</td>
 	</tr>
@@ -6168,7 +6168,7 @@ in the saved playlists folder.</p>
 			info total genres
 		</td>
 		<td>
-			Number of genres known to SlimServer. Equivalent to
+			Number of genres known to SqueezeCenter. Equivalent to
 			&quot;<a href="#info total genres ?">info total genres ?</a>&quot;
 		</td>
 	</tr>
@@ -6177,7 +6177,7 @@ in the saved playlists folder.</p>
 			info total songs
 		</td>
 		<td>
-			Number of songs known to SlimServer. Equivalent to
+			Number of songs known to SqueezeCenter. Equivalent to
 			&quot;<a href="#info total songs ?">info total songs ?</a>&quot;
 		</td>
 	</tr>
@@ -6204,7 +6204,7 @@ in the saved playlists folder.</p>
 			player count
 		</td>
 		<td>
-			Number of players known by SlimServer. Equivalent to 
+			Number of players known by SqueezeCenter. Equivalent to 
 			&quot;<a href="#player count ?">player count ?</a>&quot;.
 		</td>
 	</tr>
@@ -6319,9 +6319,9 @@ in the saved playlists folder.</p>
 	player, including the current playlist. Set the &lt;start&gt; parameter to
 	&quot;-&quot; to get the playlist data starting from the current song.
 	<br>
-	In this &quot;curent&quot; mode and if repeat is on, SlimServer will attempt
+	In this &quot;curent&quot; mode and if repeat is on, SqueezeCenter will attempt
 	to return &lt;itemsPerResponse&gt; elements, by repeating the playlist at
-	most once, unless shuffling is on and SlimServer is configured to re-shuffle
+	most once, unless shuffling is on and SqueezeCenter is configured to re-shuffle
 	the playlist at each loop (in which case it is impossible to predict the
 	song following the last one in the playlist until this last song has
 	finished playing).
@@ -6395,7 +6395,7 @@ in the saved playlists folder.</p>
 			change detection &quot;algorithm&quot;.
 			<br>
 			If the player is manually (through the web page) or automatically
-			deleted from SlimServer, the status query returns the &quot;error&quot;
+			deleted from SqueezeCenter, the status query returns the &quot;error&quot;
 			tag with value &quot;invalid player&quot; and the subscription is terminated.
 			<br>
 			Please note this mechanism is completely distinct from the 
@@ -6421,7 +6421,7 @@ in the saved playlists folder.</p>
 			rescan
 		</td>
 		<td>
-			Returned with value 1 if the SlimServer is still scanning the
+			Returned with value 1 if the SqueezeCenter is still scanning the
 			database. The results may therefore be incomplete. Not returned if
 			no scan is in progress.
 		</td>
@@ -6925,7 +6925,7 @@ in the saved playlists folder.</p>
 	A new client is notified using &quot;client new&quot;. 
 	&quot;client disconnect&quot; is sent when a client disconnects. Unless it 
 	reconnects (as signaled by &quot;client reconnect&quot;) before a number of
-	minutes, the client will be automatically forgotten by SlimServer (as 
+	minutes, the client will be automatically forgotten by SqueezeCenter (as 
 	indicated by command/notification 
 	&quot;<a href="#client forget">client forget</a>&quot;.)
 </p>
@@ -7020,8 +7020,8 @@ in the saved playlists folder.</p>
 	Plugins commands and queries
 </h2>
 <p>
-	The following command and queries are proposed by SlimServer plugins. The
-	plugin must be enabled in the SlimServer configuration for the commands
+	The following command and queries are proposed by SqueezeCenter plugins. The
+	plugin must be enabled in the SqueezeCenter configuration for the commands
 	and queries to be available to the CLI client. Please use query 
 	&quot;<a href="#can">can</a>&quot; to determine if the given command or
 	query is available. Query &quot;<a href="#radios">radios</a>&quot; can

@@ -5,7 +5,7 @@
 <p>Vous venez d'acheter une platine musicale Slim Devices/Logitech et nous vous en f&eacute;licitons.</p>
 <p>Ce Guide de d&eacute;marrage contient les instructions de base relatives &agrave; la configuration et &agrave; l'utilisation de la platine.</p>
 <p>Vous trouverez plus d'informations sur les derni&egrave;res fonctionnalit&eacute;s en date et une documentation d&eacute;taill&eacute;e destin&eacute;e aux d&eacute;veloppeurs sur notre site &agrave; l'adresse <a href="http://www.slimdevices.com/">http://www.slimdevices.com/</a>.</p>
-<p>Le logiciel SlimServer est le fruit d'une communaut&eacute; de d&eacute;veloppeurs Open Source du monde entier. Nous remercions sinc&egrave;rement les membres de cette communaut&eacute;, dont les contributions permettent d'am&eacute;liorer ce produit chaque jour.</p>
+<p>Le logiciel SqueezeCenter est le fruit d'une communaut&eacute; de d&eacute;veloppeurs Open Source du monde entier. Nous remercions sinc&egrave;rement les membres de cette communaut&eacute;, dont les contributions permettent d'am&eacute;liorer ce produit chaque jour.</p>
 <p>Si vous avez besoin d'aide pour installer la platine, rendez-vous sur notre site Web ou contactez-nous &agrave; l'adresse <a href="mailto:support@slimdevices.com">support@slimdevices.com</a>.</p>
 <p>Nous esp&eacute;rons que vous appr&eacute;cierez notre produit. Parlez de la Squeezebox et de Transporter autour de vous!</p>
 <h4>Connexion de la platine</h4>
@@ -35,10 +35,10 @@
 <p>Conseil: utilisez les z&eacute;ros &agrave; gauche pour sp&eacute;cifier des nombres comportant moins de trois chiffres. Par exemple, sp&eacute;cifiez 010.001.004.231 pour l'adresse 10.1.4.231. Sp&eacute;cifiez un masque de sous-r&eacute;seau, l'adresse IP de la passerelle par d&eacute;faut et l'adresse du serveur DNS, en utilisant la fl&egrave;che DROITE pour passer d'un &eacute;cran &agrave; l'autre.
 </ol>
 
-<h4>Connexion au SlimServer</h4>
+<h4>Connexion au SqueezeCenter</h4>
 <ol>
-<li>D&eacute;marrez le SlimServer, s'il n'est pas d&eacute;j&agrave; en cours d'ex&eacute;cution. La platine recherche l'ordinateur ex&eacute;cutant le SlimServer sur le r&eacute;seau local. Si vous avez d&eacute;marr&eacute; le SlimServer apr&egrave;s le d&eacute;but de la configuration, il est peut-&ecirc;tre n&eacute;cessaire de faire d&eacute;filer la liste des ordinateurs pour le trouver. 
-<li>S&eacute;lectionnez l'ordinateur &agrave; utiliser. Si vous ex&eacute;cutez le SlimServer sur plusieurs ordinateurs sur le r&eacute;seau local, vous pouvez utiliser la fl&egrave;che BAS pour s&eacute;lectionner celui &agrave; utiliser.
+<li>D&eacute;marrez le SqueezeCenter, s'il n'est pas d&eacute;j&agrave; en cours d'ex&eacute;cution. La platine recherche l'ordinateur ex&eacute;cutant le SqueezeCenter sur le r&eacute;seau local. Si vous avez d&eacute;marr&eacute; le SqueezeCenter apr&egrave;s le d&eacute;but de la configuration, il est peut-&ecirc;tre n&eacute;cessaire de faire d&eacute;filer la liste des ordinateurs pour le trouver. 
+<li>S&eacute;lectionnez l'ordinateur &agrave; utiliser. Si vous ex&eacute;cutez le SqueezeCenter sur plusieurs ordinateurs sur le r&eacute;seau local, vous pouvez utiliser la fl&egrave;che BAS pour s&eacute;lectionner celui &agrave; utiliser.
 <li>Appuyez sur la fl&egrave;che DROITE de la t&eacute;l&eacute;commande pour effectuer la connexion.
 </ol>
 

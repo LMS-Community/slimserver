@@ -2,7 +2,7 @@ package Slim::Buttons::Playlist;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -40,7 +40,7 @@ my %playlistParams = ();
 
 =head2 init( )
 
-This method registers the playlist mode with Slimserver, and defines any functions for interaction
+This method registers the playlist mode with SqueezeCenter, and defines any functions for interaction
  while a player is operating in this mode..
 
 Generally only called from L<Slim::Buttons::Common>
@@ -320,7 +320,7 @@ sub getFunctions {
 
 =head2 setMode( $client, [ $how ])
 
-setMode() is a required function for any Slimserver player mode.  This is the entry point for a mode and defines any parameters required for 
+setMode() is a required function for any SqueezeCenter player mode.  This is the entry point for a mode and defines any parameters required for 
 a clean starting point. The function may also set up the reference to the applicable lines function for the player display.
 
 Requires: $client

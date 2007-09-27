@@ -85,14 +85,14 @@ SETUP_MIX_FILTER
 	ZH_CN	MusicIP混音过滤器
 
 SETUP_MIX_FILTER_DESC
-	DE	In MusicIP können Sie Filtersätze unter einem Namen speichern. Wählen Sie hier einen dieser Sätze, der auf die MusicIP-Mixes im SlimServer angewendet werden soll.
-	EN	You can create named sets of filter conditions in MusicIP and choose from the list here to apply those filters to MusicIP Mixes in SlimServer.
-	ES	Se pueden crear conjuntos con nombre de condiciones de filtro creadas en MusicIP y se puede elegir de esta lista para aplicar esos filtros a las mezclas de MusicIP en SlimServer.
-	FR	Vous pouvez créer des jeux de conditions de filtres nommés dans MusicIP et spécifier dans la liste ici si vous souhaitez appliquer ces filtres aux mix MusicIP dans le SlimServer.
-	HE	באפשרותך ליצור ערכות בעלות שם של תנאי סינון ב-MusicIP ולבחור מהרשימה שמופיעה כאן להחיל את המסננים על מיקסים של MusicIP ב-SlimServer.
-	IT	È possibile creare in MusicIP gruppi di condizioni di filtro con nome e scegliere da questo elenco le raccolte MusicIP a cui applicare tali filtri in SlimServer.
-	NL	Je kunt benoemde sets met filtercondities maken in MusicIP. Maak vervolgens een keuze uit de lijst hier om de filtersets op MusicIP-mixes in SlimServer toe te passen.
-	ZH_CN	您可以利用MusicIP设立过滤器，并且从这表中选择应用在SlimServer内MusicIP混音的那些过滤器。
+	DE	In MusicIP können Sie Filtersätze unter einem Namen speichern. Wählen Sie hier einen dieser Sätze, der auf die MusicIP-Mixes im SqueezeCenter angewendet werden soll.
+	EN	You can create named sets of filter conditions in MusicIP and choose from the list here to apply those filters to MusicIP Mixes in SqueezeCenter.
+	ES	Se pueden crear conjuntos con nombre de condiciones de filtro creadas en MusicIP y se puede elegir de esta lista para aplicar esos filtros a las mezclas de MusicIP en SqueezeCenter.
+	FR	Vous pouvez créer des jeux de conditions de filtres nommés dans MusicIP et spécifier dans la liste ici si vous souhaitez appliquer ces filtres aux mix MusicIP dans le SqueezeCenter.
+	HE	באפשרותך ליצור ערכות בעלות שם של תנאי סינון ב-MusicIP ולבחור מהרשימה שמופיעה כאן להחיל את המסננים על מיקסים של MusicIP ב-SqueezeCenter.
+	IT	È possibile creare in MusicIP gruppi di condizioni di filtro con nome e scegliere da questo elenco le raccolte MusicIP a cui applicare tali filtri in SqueezeCenter.
+	NL	Je kunt benoemde sets met filtercondities maken in MusicIP. Maak vervolgens een keuze uit de lijst hier om de filtersets op MusicIP-mixes in SqueezeCenter toe te passen.
+	ZH_CN	您可以利用MusicIP设立过滤器，并且从这表中选择应用在SqueezeCenter内MusicIP混音的那些过滤器。
 
 SETUP_MIX_GENRE
 	DE	MusicIP-Mix: Musikstil
@@ -326,14 +326,14 @@ SETUP_MUSICMAGIC
 	ZH_CN	MusicIP
 
 SETUP_MUSICMAGIC_DESC
-	DE	SlimServer kann MusicIP als Quelle für Titel- und Stilrichtungsangaben verwenden. Außerdem können Sie Instant Mixes auf Stilrichtungs-, Interpreten und Titelebene erstellen. Aktivieren Sie das Kontrollkästchen unten, um die MusicIP-Datenbank zu importieren.
-	EN	SlimServer can use your MusicIP program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level. Check the box below to import your MusicIP Library information.
-	ES	SlimServer puede usar el programa MusicIP como origen para la información de título y de género. Además, se pueden generar mezclas instantáneas por género, artista y canción. Seleccione la casilla siguiente para importar la información de la biblioteca de MusicIP.
-	FR	Le SlimServer peut utiliser le logiciel MusicIP comme source pour les titres et les genres. Vous pouvez également générer des mix instantanés par genre, par artiste ou par morceau. Cochez la case pour importer les données de votre bibliothèque MusicIP.
-	HE	SlimServer יכול להשתמש בתוכנית MusicIP כמקור עבור מידע שמות וסגנונות. בנוסף, באפשרותך להפיק מיקסים מיידיים ברמת הסגנון, המבצע והשיר. סמן את התיבה שלהלן כדי לייבא את המידע של ספריית MusicIP.
-	IT	In SlimServer il programma MusicIP può essere utilizzato come origine delle informazioni relative al titolo e al genere musicale. È inoltre possibile generare raccolte rapide in base al genere, all'artista e ai brani. Selezionare la casella seguente per importare i dati della libreria MusicIP.
-	NL	SlimServer kan je MusicIP-programma gebruiken als bron voor titel- en genre-informatie. Ook kun je instantmixen maken op genre, artiest en liedje. Selecteer het vakje hieronder om je MusicIP-collectiegegevens te importeren.
-	ZH_CN	SlimServer可以使用您的MusicIP节目表作为标题和音乐风格信息的来源。您也能以音乐曲风、艺人和歌曲音量水平生成即时混音。单击如下的复选框以导入您的MusicIP音乐库信息。
+	DE	SqueezeCenter kann MusicIP als Quelle für Titel- und Stilrichtungsangaben verwenden. Außerdem können Sie Instant Mixes auf Stilrichtungs-, Interpreten und Titelebene erstellen. Aktivieren Sie das Kontrollkästchen unten, um die MusicIP-Datenbank zu importieren.
+	EN	SqueezeCenter can use your MusicIP program as source for title and genre information. Additionally you can generate instant mixes on genre, artist and song level. Check the box below to import your MusicIP Library information.
+	ES	SqueezeCenter puede usar el programa MusicIP como origen para la información de título y de género. Además, se pueden generar mezclas instantáneas por género, artista y canción. Seleccione la casilla siguiente para importar la información de la biblioteca de MusicIP.
+	FR	Le SqueezeCenter peut utiliser le logiciel MusicIP comme source pour les titres et les genres. Vous pouvez également générer des mix instantanés par genre, par artiste ou par morceau. Cochez la case pour importer les données de votre bibliothèque MusicIP.
+	HE	SqueezeCenter יכול להשתמש בתוכנית MusicIP כמקור עבור מידע שמות וסגנונות. בנוסף, באפשרותך להפיק מיקסים מיידיים ברמת הסגנון, המבצע והשיר. סמן את התיבה שלהלן כדי לייבא את המידע של ספריית MusicIP.
+	IT	In SqueezeCenter il programma MusicIP può essere utilizzato come origine delle informazioni relative al titolo e al genere musicale. È inoltre possibile generare raccolte rapide in base al genere, all'artista e ai brani. Selezionare la casella seguente per importare i dati della libreria MusicIP.
+	NL	SqueezeCenter kan je MusicIP-programma gebruiken als bron voor titel- en genre-informatie. Ook kun je instantmixen maken op genre, artiest en liedje. Selecteer het vakje hieronder om je MusicIP-collectiegegevens te importeren.
+	ZH_CN	SqueezeCenter可以使用您的MusicIP节目表作为标题和音乐风格信息的来源。您也能以音乐曲风、艺人和歌曲音量水平生成即时混音。单击如下的复选框以导入您的MusicIP音乐库信息。
 
 MMMMIXTYPE_TRACKS
 	CS	Číslo skladby
@@ -382,14 +382,14 @@ SETUP_MUSICMAGICSCANINTERVAL
 	ZH_CN	MusicIP刷新间隔时间
 
 SETUP_MUSICMAGICSCANINTERVAL_DESC
-	DE	Wenn sich die MusicIP-Datenbank ändert, importiert SlimServer die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die SlimServer mindestens warten soll, bevor die MusicIP-Datenbank erneut importiert wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
-	EN	When your MusicIP Database changes, SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your MusicIP Database again. A value of zero disables the reload.
-	ES	Cuando cambie la base de datos de MusicIP, SlimServer importará automáticamente la información de la biblioteca. Se puede especificar la cantidad de tiempo mínima (en segundos) que SlimServer esperará antes de volver a cargar la base de datos de MusicIP. Un valor de cero deshabilita la recarga.
-	FR	Le SlimServer importe automatiquement les informations de la base de données MusicIP lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le SlimServer actualise la base de données MusicIP. La valeur 0 désactive cette fonctionnalité.
-	HE	כאשר מסד הנתונים של MusicIP משתנה, SlimServer מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על SlimServer להמתין לפני טעינה חוזרת של מסד הנתונים של MusicIP. ערך אפס משבית את אפשרות הטעינה מחדש.
-	IT	Se si modifica il database di MusicIP, SlimServer importa automaticamente i dati della libreria. È possibile specificare per SlimServer il periodo minimo di attesa (in secondi) precedente al ricaricamento del database di MusicIP. Se si imposta il valore zero, la funzionalità viene disattivata.
-	NL	Wanneer je MusicIP-database verandert, worden de collectiegegevens automatisch door SlimServer geïmporteerd. Je kunt opgeven (in seconden) hoe lang SlimServer minimaal moet wachten alvorens je MusicIP-database te herladen. Een waarde van 0 seconden schakelt herladen uit.
-	ZH_CN	当您的MusicIP数据库改变时，SlimServer将自动地导入最新音乐库信息。您可以指定SlimServer再装您的MusicIP数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
+	DE	Wenn sich die MusicIP-Datenbank ändert, importiert SqueezeCenter die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die SqueezeCenter mindestens warten soll, bevor die MusicIP-Datenbank erneut importiert wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
+	EN	When your MusicIP Database changes, SqueezeCenter will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SqueezeCenter will wait before reloading your MusicIP Database again. A value of zero disables the reload.
+	ES	Cuando cambie la base de datos de MusicIP, SqueezeCenter importará automáticamente la información de la biblioteca. Se puede especificar la cantidad de tiempo mínima (en segundos) que SqueezeCenter esperará antes de volver a cargar la base de datos de MusicIP. Un valor de cero deshabilita la recarga.
+	FR	Le SqueezeCenter importe automatiquement les informations de la base de données MusicIP lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le SqueezeCenter actualise la base de données MusicIP. La valeur 0 désactive cette fonctionnalité.
+	HE	כאשר מסד הנתונים של MusicIP משתנה, SqueezeCenter מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על SqueezeCenter להמתין לפני טעינה חוזרת של מסד הנתונים של MusicIP. ערך אפס משבית את אפשרות הטעינה מחדש.
+	IT	Se si modifica il database di MusicIP, SqueezeCenter importa automaticamente i dati della libreria. È possibile specificare per SqueezeCenter il periodo minimo di attesa (in secondi) precedente al ricaricamento del database di MusicIP. Se si imposta il valore zero, la funzionalità viene disattivata.
+	NL	Wanneer je MusicIP-database verandert, worden de collectiegegevens automatisch door SqueezeCenter geïmporteerd. Je kunt opgeven (in seconden) hoe lang SqueezeCenter minimaal moet wachten alvorens je MusicIP-database te herladen. Een waarde van 0 seconden schakelt herladen uit.
+	ZH_CN	当您的MusicIP数据库改变时，SqueezeCenter将自动地导入最新音乐库信息。您可以指定SqueezeCenter再装您的MusicIP数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_MMSPORT
 	DE	MusicIP - HTTP-Anschluss

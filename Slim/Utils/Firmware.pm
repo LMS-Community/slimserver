@@ -1,6 +1,6 @@
 package Slim::Utils::Firmware;
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -164,7 +164,7 @@ sub init_jive {
 		$log->info('Downloading new jive.version file...');
 		
 		if ( !download( $url, $version_file ) ) {
-			logError('Unable to download jive.version file, to retry please restart SlimServer.');
+			logError('Unable to download jive.version file, to retry please restart SqueezeCenter.');
 			return;
 		}
 	}

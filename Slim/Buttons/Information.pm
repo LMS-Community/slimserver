@@ -28,10 +28,10 @@ Slim::Buttons::Information
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Information> is a SlimServer module to display player library
+L<Slim::Buttons::Information> is a SqueezeCenter module to display player library
 and module information.
 
-Displays various bits of information relating to the SlimServer,
+Displays various bits of information relating to the SqueezeCenter,
 the current player, the music library and the installed plug-in
 modules.
 

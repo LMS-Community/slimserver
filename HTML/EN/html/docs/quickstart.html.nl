@@ -5,7 +5,7 @@
 <p>Hartelijk dank voor de aanschaf van een Slim Devices/Logitech-netwerkmuziekspeler.</p>
 <p>In deze gids De beginselen staan instructies voor set-up en basisbediening van de speler.</p>
 <p>Op onze website <a href="http://www.slimdevices.com/">http://www.slimdevices.com/</a> vind je extra informatie over de nieuwste functies en gedetailleerde documentatie voor ontwikkelaars.</p>
-<p>De SlimServer-software is het product van softwareontwikkelaars wereldwijd die samenwerken in een open forum. We willen onze community hartelijk bedanken. Dankzij hun bijdragen wordt dit geweldige product continu verbeterd.</p>
+<p>De SqueezeCenter-software is het product van softwareontwikkelaars wereldwijd die samenwerken in een open forum. We willen onze community hartelijk bedanken. Dankzij hun bijdragen wordt dit geweldige product continu verbeterd.</p>
 <p>Heb je hulp nodig bij de installatie van jouw speler, ga dan naar onze website of neem contact op via <a href="mailto:support@slimdevices.com">support@slimdevices.com</a>.</p>
 <p>We hopen dat je plezier hebt van ons product. Als dit zo is, vertel dan alsjeblieft jouw vrienden over de Squeezebox en Transporter.</p>
 <h4>De speler aansluiten</h4>
@@ -35,10 +35,10 @@
 <p>Tip: Gebruik voorloopnullen voor getallen met minder dan 3 cijfers (10.1.4.231 wordt bijvoorbeeld als 010.001.004.231 ingevoerd). Voer het subnetmasker voor het netwerk in, het IP-adres voor de standaardgateway en het adres van je DNS-server. Druk op het pijltje naar rechts op de afstandsbediening om naar alle instellingen te gaan. 
 </ol>
 
-<h4>Een verbinding maken met SlimServer</h4>
+<h4>Een verbinding maken met SqueezeCenter</h4>
 <ol>
-<li>Als SlimServer nog niet actief is, start je het programma nu. De speler zoekt op je locale netwerk naar de computer waarop SlimServer actief is. Als je SlimServer hebt gestart nadat de set-up gestart is, moet je misschien scrollen om SlimServer te vinden. 
-<li>Selecteer de computer die je wilt gebruiken. Als SlimServer op meerdere computers op je locale netwerk actief is, kun je met het pijltje omlaag naar de gewenste computer scrollen.
+<li>Als SqueezeCenter nog niet actief is, start je het programma nu. De speler zoekt op je locale netwerk naar de computer waarop SqueezeCenter actief is. Als je SqueezeCenter hebt gestart nadat de set-up gestart is, moet je misschien scrollen om SqueezeCenter te vinden. 
+<li>Selecteer de computer die je wilt gebruiken. Als SqueezeCenter op meerdere computers op je locale netwerk actief is, kun je met het pijltje omlaag naar de gewenste computer scrollen.
 <li>Druk op het pijltje naar RECHTS op de afstandsbediening om een verbinding te maken.
 </ol>
 

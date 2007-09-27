@@ -1,20 +1,20 @@
 [% pageicon = 'help' %]
-[% pagetitle = 'SlimServer Web Interface' %]
+[% pagetitle = 'SqueezeCenter Web Interface' %]
 [% techinfo = '1' %]
 [% lefttoright = '1' %]
 [% PROCESS helpheader.html %]
 
 <h4>Overview</h4>
 <p>This document describes the interface to the HTTP server that's built into 
-  the SlimServer. </p>
-<p>The SlimServer provides an HTTP server that can be used to:</p>
+  the SqueezeCenter. </p>
+<p>The SqueezeCenter provides an HTTP server that can be used to:</p>
 <ol>
   <li> Browse the music library. </li>
   <li> View the status and playlist of the player.</li>
   <li> Control the player.</li>
   <li>Configure the server.</li>
 </ol>
-<p>When the SlimServer is started, it starts listening for HTTP connections 
+<p>When the SqueezeCenter is started, it starts listening for HTTP connections 
   on the default port of 9000. </p>
 <p>The HTTP server may be accessed by the user with a traditional web browser 
   to navigate around the music library and control the player. The HTTP server 
@@ -22,7 +22,7 @@
   or <i>curl</i>, for example) as a way to access and control the player via HTTP.
   The server can return XML instead of HTML for such "automation" uses (see 
   <a href="xml_skin.html">The XML Skin</a> documentation.)</p>
-<p> In the examples in this document the SlimServer is running on a computer 
+<p> In the examples in this document the SqueezeCenter is running on a computer 
   with the IP address of 10.0.1.201.</p>
 <h4>HTTP Access</h4>
 <p>To access the main page to control the player via a web browser use this URL: 
@@ -58,7 +58,7 @@
 		<p><b>Note: </b>Commands that use paths to songs or playlists can use relative paths from the root of the Music Library folder to specify songs.  For example, if the Music Library is specified as &quot;D:\mymusic&quot; and you'd like to refer to a song in that folder named &quot;foo.mp3&quot;  you can specify just &quot;foo.mp3&quot; in the command parameter.  Likewise, to refer to items in the Saved Playlist folder, you can use a prefix of  &quot;__playlists/&quot; before the path.  For example, to refer to the saved playlist &quot;bar.m3u&quot; in the Saved Playlists folder, you can specify a path of &quot;__playlists/bar.m3u&quot;.</p>
 		<h4>Commands</h4>
 <p>The following is a summary of the supported commands. Additional information
-  about the command set is available in the <a href="cli-api.html">SlimServer
+  about the command set is available in the <a href="cli-api.html">SqueezeCenter
   Command Line Interface </a>documentation.</p>
 <table border="1" cellspacing=0 cellpadding=3>
   <tr> 
@@ -338,37 +338,37 @@
 </table>
 <a name=csrf></a>
 <h4>CSRF Security Measures</h4>
-<p>To protect against &quot;Cross Site Request Forgery&quot; (CSRF) security threats, SlimServer applies special scrutiny to HTTP requests for functions that can make changes to your system or manipulate playlists or players. 
-This scrutiny is important to understand if you want to &quot;bookmark&quot; such a URL, or control SlimServer via the HTTP interface. 
-SlimServer requires one of four things to be true in order to allow such control-oriented URLs to be accepted:<br>
+<p>To protect against &quot;Cross Site Request Forgery&quot; (CSRF) security threats, SqueezeCenter applies special scrutiny to HTTP requests for functions that can make changes to your system or manipulate playlists or players. 
+This scrutiny is important to understand if you want to &quot;bookmark&quot; such a URL, or control SqueezeCenter via the HTTP interface. 
+SqueezeCenter requires one of four things to be true in order to allow such control-oriented URLs to be accepted:<br>
 <dl>
-<dt><em>Referer request header matches SlimServer URL</em>
-<dd>SlimServer will accept an HTTP URL/command if the request includes a &quot;Referer&quot; request header that matches the &quot;Host&quot; request header. 
-If you're using a web browser and clicking on links in the web interface (for instance, the Previous/Skip/Play/Pause links on the right-hand player pane), your browser will send a Referer header that tells SlimServer it's following a link you clicked on from a SlimServer page, and the request will be accepted. 
+<dt><em>Referer request header matches SqueezeCenter URL</em>
+<dd>SqueezeCenter will accept an HTTP URL/command if the request includes a &quot;Referer&quot; request header that matches the &quot;Host&quot; request header. 
+If you're using a web browser and clicking on links in the web interface (for instance, the Previous/Skip/Play/Pause links on the right-hand player pane), your browser will send a Referer header that tells SqueezeCenter it's following a link you clicked on from a SqueezeCenter page, and the request will be accepted. 
 If you are using custom software to make the HTTP requests, simply make sure the HTTP request includes a Referer header with the same value as the URL you are requesting, and a Host header that includes the :port information (as described in <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.23">the HTTP standard</a>) and all will be fine.
 </dd>
 </dt>
 <dt><em>Submission includes form-specific token</em>
-<dd>SlimServer embeds special authorization tokens in most settings pages in the web interface. If a request includes a
+<dd>SqueezeCenter embeds special authorization tokens in most settings pages in the web interface. If a request includes a
 valid form authorization token, it will be processed.
 </dd>
 </dt>
 <dt><em>&quot;cauth&quot; URL parameter presented and valid</em>
 <dd>If you're using a Bookmark/Favorite, no Referer request header is sent. 
-In such a case, SlimServer cannot tell if your request is legitimate, or your browser following an &lt;IMG&gt; tag in a hostile web page or HTML email. 
+In such a case, SqueezeCenter cannot tell if your request is legitimate, or your browser following an &lt;IMG&gt; tag in a hostile web page or HTML email. 
 In such cases, you will see a &quot;403 Forbidden&quot; error page. 
-On this page you'll see a URL similar to what you requested, but with a &quot;;cauth=&quot; parameter added to the end, e.g. when denying a bookmarked request for <code>http://10.0.1.201:9000/status.html?p0=rescan</code>, SlimServer will offer you a clickable link with a URL like <br><br>
+On this page you'll see a URL similar to what you requested, but with a &quot;;cauth=&quot; parameter added to the end, e.g. when denying a bookmarked request for <code>http://10.0.1.201:9000/status.html?p0=rescan</code>, SqueezeCenter will offer you a clickable link with a URL like <br><br>
 <code>http://10.0.1.201:9000/status.html?p0=rescan;cauth=aa2d378f7e9f18611e951e7c6b30eea8</code><br><br>
 By clicking on this link, you can execute your HTTP command. 
 If you want to bookmark a URL that gives such an error, bookmark the &quot;cauth&quot; URL displayed on the error page. 
 <!--
-When SlimServer displays such errors, it also sends a special &quot;X-Slim-Auth-URI&quot; response header to the client which contains the URI (e.g., <code>X-Slim-Auth-URI: /status.html?p0=rescan;cauth=aa2d378f7e9f18611e951e7c6b30eea8</code> that matches the URL shown in the body of the 403 error.
+When SqueezeCenter displays such errors, it also sends a special &quot;X-Slim-Auth-URI&quot; response header to the client which contains the URI (e.g., <code>X-Slim-Auth-URI: /status.html?p0=rescan;cauth=aa2d378f7e9f18611e951e7c6b30eea8</code> that matches the URL shown in the body of the 403 error.
 -->
-&quot;cauth&quot; URIs are unique for each SlimServer installation. They are based on a special &quot;securitySecret&quot; that is randomly assigned the first time you start the SlimServer software.
+&quot;cauth&quot; URIs are unique for each SqueezeCenter installation. They are based on a special &quot;securitySecret&quot; that is randomly assigned the first time you start the SqueezeCenter software.
 This allows the same URL like
 <code>http://10.0.1.201:9000/status.html?p0=rescan;cauth=aa2d378f7e9f18611e951e7c6b30eea8</code> 
-to always work on your SlimServer installation (so you can bookmark it or use it in your home automation system), but not work on another SlimServer setup.
-This unpredicatbility makes it virtually impossible for a hostile web site to trick your SlimServer into doing something you don't want.
+to always work on your SqueezeCenter installation (so you can bookmark it or use it in your home automation system), but not work on another SqueezeCenter setup.
+This unpredicatbility makes it virtually impossible for a hostile web site to trick your SqueezeCenter into doing something you don't want.
 <br><br>
 By default, the same &quot;cauth&quot; value is accepted for any URI.
 So once you note the &quot;cauth&quot; value for your system, you can use that same value with any URI/command documented here.
@@ -377,12 +377,12 @@ If you have trouble using the web interface -- for instance, some non-standard b
 <br><br>
 If you want greater protection against CSRF attacks, you may set your csrfProtectionLevel server preference to &quot;HIGH&quot; so that each different command/URI will insist on a unique (but reusable) &quot;cauth=&quot; value.
 For instance, the &quot;cauth&quot; parameter for <code>http://10.0.1.201:9000/status.html?p0=playlist&p1=play&p2=soothing</code> would be completely different for the parameter for <code>http://10.0.1.201:9000/status.html?p0=playlist&p1=play&p2=loud-alarm</code>
-This also makes it more difficult for an attacker to trick your SlimServer into doing something you don't want.
+This also makes it more difficult for an attacker to trick your SqueezeCenter into doing something you don't want.
 </dd>
 </dt>
 <dt><em>Request appears to be an AJAX/XmlHttpRequest call</em>
 <dd>Requests bearing X-Requested-With headers indicating that they are legitimate XmlHttpRequest calls will be allowed, 
-as Javascript/XmlHttpRequest security guidelines and SlimServer username/password authentication should make
+as Javascript/XmlHttpRequest security guidelines and SqueezeCenter username/password authentication should make
 JAX/XmlHttpRequest calls safe to act on.
 </dd>
 </dt>
@@ -422,7 +422,7 @@ JAX/XmlHttpRequest calls safe to act on.
 <h4>
   Player Status
 </h4>
-<p>When you use the HTTP interface to control the SlimServer (and player) to 
+<p>When you use the HTTP interface to control the SqueezeCenter (and player) to 
   obtain status the server returns a response that contains:</p>
 <ul>
   <li>A header indicating a content type</li>
@@ -473,8 +473,8 @@ JAX/XmlHttpRequest calls safe to act on.
 </table>
 
 <p>The following is an example of an HTTP status transactions.  
-The text in blue is sent from the client to the SlimServer HTTP server.  
-Text in red is returned by the SlimServer HTTP server.
+The text in blue is sent from the client to the SqueezeCenter HTTP server.  
+Text in red is returned by the SqueezeCenter HTTP server.
 </p>
 <pre><font color="#0000FF">
 GET /status.html?p0=pause&amp;p1=1 HTTP/1.0

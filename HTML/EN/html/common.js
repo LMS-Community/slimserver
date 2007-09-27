@@ -24,7 +24,7 @@ function toggleGalleryView(artwork) {
 		myString = new String(thisdoc.location.href);
 		
 		if (artwork) {
-			setCookie( 'SlimServer-albumView', "1" );
+			setCookie( 'SqueezeCenter-albumView', "1" );
 			
 			if (thisdoc.location.href.indexOf('start') == -1) {
 				thisdoc.location=thisdoc.location.href+"&artwork=1";
@@ -36,7 +36,7 @@ function toggleGalleryView(artwork) {
 			}
 		} else {
 
-			setCookie( 'SlimServer-albumView', "" );
+			setCookie( 'SqueezeCenter-albumView', "" );
 			
 			var rExp = /\&artwork=1/gi;
 			thisdoc.location=myString.replace(rExp, "");
@@ -112,7 +112,7 @@ function chooseAlbumOrderBy(value, option)
 	if (option) {
 		orderByUrl = orderByUrl + '&orderBy=' + option;
 	}
-	setCookie( 'SlimServer-orderBy', option );
+	setCookie( 'SqueezeCenter-orderBy', option );
 	window.location = orderByUrl;
 }
 
@@ -120,7 +120,7 @@ function switchPlayer(player_List) {
 	player    = escape(player_List.options[player_List.selectedIndex].value);
 	var newPlayer = "=" + player;
 	
-	//setCookie( 'SlimServer-player', player_List.options[player_List.selectedIndex].value );
+	//setCookie( 'SqueezeCenter-player', player_List.options[player_List.selectedIndex].value );
 	try {
 		// change for skins with frames
 		doc = parent.frames[browserTarget];

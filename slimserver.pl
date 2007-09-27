@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# SlimServer Copyright (C) 2001-2007 Logitech.
+# SqueezeCenter Copyright (C) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -20,8 +20,8 @@ use warnings;
 package PerlSvc;
 
 our %Config = (
-	DisplayName => 'SlimServer',
-	Description => "SlimServer Music Server",
+	DisplayName => 'SqueezeCenter',
+	Description => "SqueezeCenter Music Server",
 	ServiceName => "slimsvc",
 );
 
@@ -241,7 +241,7 @@ sub init {
 		eval "use diagnostics";
 	}
 
-	msg("SlimServer OSDetect init...\n");
+	msg("SqueezeCenter OSDetect init...\n");
 	Slim::Utils::OSDetect::init();
 
 	# open the log files
@@ -253,8 +253,8 @@ sub init {
 		'debug'   => $debug,
 	});
 
-	# initialize slimserver subsystems
-	msg("SlimServer settings init...\n");
+	# initialize SqueezeCenter subsystems
+	msg("SqueezeCenter settings init...\n");
 	initSettings();
 
 	# Redirect STDERR to the log file.
@@ -262,7 +262,7 @@ sub init {
 
 	my $log = logger('server');
 
-	$log->info("SlimServer OS Specific init...");
+	$log->info("SqueezeCenter OS Specific init...");
 
 	if (Slim::Utils::OSDetect::OS() ne 'win') {
 		$SIG{'HUP'} = \&initSettings;
@@ -282,7 +282,7 @@ sub init {
 	# background if requested
 	if (Slim::Utils::OSDetect::OS() ne 'win' && $daemon) {
 
-		$log->info("SlimServer daemonizing...");
+		$log->info("SqueezeCenter daemonizing...");
 		daemonize();
 
 	} else {
@@ -291,7 +291,7 @@ sub init {
 	}
 
 	# Change UID/GID after the pid & logfiles have been opened.
-	$log->info("SlimServer settings effective user and group if requested...");
+	$log->info("SqueezeCenter settings effective user and group if requested...");
 	changeEffectiveUserAndGroup();
 
 	# Set priority, command line overrides pref
@@ -301,32 +301,32 @@ sub init {
 		Slim::Utils::Misc::setPriority( $prefs->get('serverPriority') );
 	}
 
-	$log->info("SlimServer strings init...");
+	$log->info("SqueezeCenter strings init...");
 	Slim::Utils::Strings::init();
 
-	$log->info("SlimServer MySQL init...");
+	$log->info("SqueezeCenter MySQL init...");
 	Slim::Utils::MySQLHelper->init();
 	
 	$log->info("Firmware init...");
 	Slim::Utils::Firmware->init;
 
-	$log->info("SlimServer Info init...");
+	$log->info("SqueezeCenter Info init...");
 	Slim::Music::Info::init();
 
-	$log->info("SlimServer IR init...");
+	$log->info("SqueezeCenter IR init...");
 	Slim::Hardware::IR::init();
 
-	$log->info("SlimServer Request init...");
+	$log->info("SqueezeCenter Request init...");
 	Slim::Control::Request::init();
 	
-	$log->info("SlimServer Buttons init...");
+	$log->info("SqueezeCenter Buttons init...");
 	Slim::Buttons::Common::init();
 
-	$log->info("SlimServer Graphic Fonts init...");
+	$log->info("SqueezeCenter Graphic Fonts init...");
 	Slim::Display::Lib::Fonts::init();
 
 	if ($stdio) {
-		$log->info("SlimServer Stdio init...");
+		$log->info("SqueezeCenter Stdio init...");
 		Slim::Control::Stdio::init(\*STDIN, \*STDOUT);
 	}
 
@@ -355,7 +355,7 @@ sub init {
 		Slim::Utils::UPnPMediaServer::init();
 	}
 
-	$log->info("SlimServer HTTP init...");
+	$log->info("SqueezeCenter HTTP init...");
 	Slim::Web::HTTP::init();
 
 	$log->info("Source conversion init..");
@@ -363,11 +363,11 @@ sub init {
 
 	if (!$nosetup) {
 
-		$log->info("SlimServer Web Settings init...");
+		$log->info("SqueezeCenter Web Settings init...");
 		Slim::Web::Setup::initSetup();
 	}
 
-	$log->info("SlimServer Plugins init...");
+	$log->info("SqueezeCenter Plugins init...");
 	Slim::Utils::PluginManager->init();
 
 	# Reinitialize logging, as plugins may have been added.
@@ -376,11 +376,11 @@ sub init {
 		Slim::Utils::Log->reInit;
 	}
 
-	$log->info("SlimServer checkDataSource...");
+	$log->info("SqueezeCenter checkDataSource...");
 	checkDataSource();
 
 	# regular server has a couple more initial operations.
-	$log->info("SlimServer persist playlists...");
+	$log->info("SqueezeCenter persist playlists...");
 
 	if ($prefs->get('persistPlaylists')) {
 
@@ -391,7 +391,7 @@ sub init {
 
 	checkVersion();
 
-	$log->info("SlimServer HTTP enable...");
+	$log->info("SqueezeCenter HTTP enable...");
 	Slim::Web::HTTP::init2();
 
 	# advertise once we are ready...
@@ -401,7 +401,7 @@ sub init {
 	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
 
-	$log->info("SlimServer done init...");
+	$log->info("SqueezeCenter done init...");
 }
 
 sub main {
@@ -506,7 +506,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
     --help           => Show this usage information.
     --audiodir       => The path to a directory of your MP3 files.
     --playlistdir    => The path to a directory of your playlist files.
-    --cachedir       => Directory for SlimServer to save cached music and web data
+    --cachedir       => Directory for SqueezeCenter to save cached music and web data
     --diag           => Use diagnostics, shows more verbose errors.  Also slows down library processing considerably
     --logfile        => Specify a file for error logging.
     --noLogTimestamp => Don't add timestamp to log output
@@ -710,7 +710,7 @@ sub changeEffectiveUserAndGroup {
 	# Try starting as 'slimserver' instead.
 	if (!defined($user)) {
 		$user = 'slimserver';
-		print STDERR "Slimserver must not be run as root!  Trying user $user instead.\n";
+		print STDERR "SqueezeCenter must not be run as root!  Trying user $user instead.\n";
 	}
 
 
@@ -747,7 +747,7 @@ sub changeEffectiveUserAndGroup {
 	# Check that we're definately not trying to start as root, e.g. if
 	# we were passed '--user root' or any other used with uid 0.
 	if ($uid == 0) {
-		print STDERR "SlimServer must not be run as root! Exiting!\n";
+		print STDERR "SqueezeCenter must not be run as root! Exiting!\n";
 		die "Aborting";
 	}
 
@@ -885,14 +885,14 @@ sub forceStopServer {
 #
 sub stopServer {
 
-	logger('')->info("SlimServer shutting down.");
+	logger('')->info("SqueezeCenter shutting down.");
 	cleanup();
 	exit();
 }
 
 sub cleanup {
 
-	logger('')->info("SlimServer cleaning up.");
+	logger('')->info("SqueezeCenter cleaning up.");
 
 	# Make sure to flush anything in the database to disk.
 	if ($INC{'Slim/Schema.pm'}) {
@@ -919,7 +919,7 @@ sub cleanup {
 sub save_pid_file {
 	my $process_id = shift || $$;
 
-	logger('')->info("SlimServer saving pid file.");
+	logger('')->info("SqueezeCenter saving pid file.");
 
 	if (defined $pidfile) {
 		File::Slurp::write_file($pidfile, $process_id);

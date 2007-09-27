@@ -5,12 +5,12 @@
 [% PROCESS helpheader.html %]
 
 <h4>Overview</h4>
-<p>This document describes the XML skin, that allows the SlimServer to return
-XML instead of HTML. It is designed to enable the integration of the SlimServer with
+<p>This document describes the XML skin, that allows the SqueezeCenter to return
+XML instead of HTML. It is designed to enable the integration of the SqueezeCenter with
 third party automation tools, such as AMX/Crestron touchpanels, or other
 &quot;home grown&quot; solutions.</p>
 <p>The XML skin only changes what is returned by the Server, and not its
-interface. Please refer to <a href="http.html">The SlimServer Web Interface</a>
+interface. Please refer to <a href="http.html">The SqueezeCenter Web Interface</a>
 documentation.</p>
 <h4>Usage</h4>
 <p>Because it is of no interest to human beings, this skin is hidden from the
@@ -20,7 +20,7 @@ this general form: </p>
 <p>where <code>server</code>, <code>port</code>, <code>page</code>, and
 <code>parameter</code> must be replaced by appropriate values. For example,
 to browse the music library (in the following
-examples, the SlimServer is running on a computer with the IP address of
+examples, the SqueezeCenter is running on a computer with the IP address of
 10.0.1.201 using the default port 9000):
 </p>
 <pre>http://10.0.1.201:9000/xml/browse.xml</pre>
@@ -132,7 +132,7 @@ targetting a specific player, such as <code>replace_url</code> above.</p>
 <p><code>hitlist.xml</code> takes no parameters. <code>hitlist.xml</code> does not currently
 respect the <code>start</code> or <code>itemsPerPage</code> parameters.</p>
 <h5>Other pages parameters</h5>
-<p>Please refer to <a href="http.html">The SlimServer Web Interface</a>
+<p>Please refer to <a href="http.html">The SqueezeCenter Web Interface</a>
 documentation for parameters to the <code>status.xml</code> page. Discovering the
 parameters of the other pages is left as an exercise to the reader.</p>
 <p>PS: Seriously, the only way for a client to discover the value of parameters
@@ -141,7 +141,7 @@ is to use the XML interface to browse the library in the first place. Therefore,
 the links will have been calculated for you already in the <code>_url</code> tags!.<p>
 <h4>The DTD</h4>
 <p>The XML skin comes with a heavily commented DTD, indicated in <code>DOCTYPE</code>
-and that can be served by the SlimServer. Please refer to it for more information
+and that can be served by the SqueezeCenter. Please refer to it for more information
 on the various tags returned.</p>
 <h4>Limitations</h4>
 <p>The skin does not support:</p>

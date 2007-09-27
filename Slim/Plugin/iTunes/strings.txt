@@ -73,12 +73,12 @@ USING_ITUNES
 	EN	The server will import iTunes information.
 	ES	El servidor importará información de iTunes.
 	FI	Palvelin tuo tietoja iTunesista
-	FR	Le SlimServer importera les données iTunes.
+	FR	Le SqueezeCenter importera les données iTunes.
 	HE	השרת לא ייבא מידע iTunes.
 	IT	Il server importerà le informazioni iTunes.
 	JA	サーバーはiTunesの情報をインポートします。
 	NL	De server zal iTunes-informatie importeren.
-	SV	SlimServer kommer att importera iTunes-information.
+	SV	SqueezeCenter kommer att importera iTunes-information.
 	ZH_CN	服务器将导入iTunes信息。
 
 NOT_USING_ITUNES
@@ -86,12 +86,12 @@ NOT_USING_ITUNES
 	EN	The server will no longer import iTunes information.
 	ES	El servidor dejará de importar información de iTunes.
 	FI	Palvelin ei enää tuo tietoja iTunesista.
-	FR	Le SlimServer n'importera plus les données iTunes.
+	FR	Le SqueezeCenter n'importera plus les données iTunes.
 	HE	השרת לא ייבא עוד מידע iTunes.
 	IT	Non verranno più importate nel server le informazioni iTunes.
 	JA	サーバーはiTunesの情報をインポートしません。
 	NL	De server zal iTunes-informatie niet langer importeren.
-	SV	SlimServer kommer inte att importera iTunes-information längre.
+	SV	SqueezeCenter kommer inte att importera iTunes-information längre.
 	ZH_CN	服务器将不再导入iTunes信息。
 
 USE_ITUNES
@@ -144,25 +144,25 @@ SETUP_ITUNES_OK
 	DE	Der Server importiert die Daten aus iTunes.
 	EN	The server will import iTunes information.
 	ES	El servidor importará información de iTunes.
-	FR	Le SlimServer importera les données iTunes.
+	FR	Le SqueezeCenter importera les données iTunes.
 	HE	השרת לא ייבא מידע iTunes.
 	IT	Il server importa i dati di iTunes.
 	JA	サーバーはiTunesの情報をインポートします。
 	NL	De server zal iTunes-gegevens importeren.
-	SV	SlimServer kommer att importera iTunes-information.
+	SV	SqueezeCenter kommer att importera iTunes-information.
 	ZH_CN	服务器将导入iTunes信息。
 
 SETUP_ITUNES_DESC
-	DE	SlimServer kann die Musiksammlung und Wiedergabeliste aus iTunes nutzen. In iTunes vorgenommene Änderungen werden an den Player übertragen. Aktivieren Sie das Kontrollkästchen unten, wenn die iTunes-Musiksammlung importiert werden soll.
-	EN	SlimServer can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. Check the box below if you want to import your iTunes Music Library information.
-	ES	SlimServer puede usar la biblioteca de música y las listas de reproducción de iTunes. Cualquier cambio que se realice en iTunes se reflejará en el reproductor. Marque la casilla siguiente si desea importar la información de la biblioteca de música de iTunes.
-	FR	Le SlimServer peut utiliser votre bibliothèque et vos listes de lecture iTunes. Les modifications apportées dans iTunes sont reportées sur votre platine. Cochez la case ci-dessous pour importer les données de la bibliothèque iTunes.
-	HE	SlimServer יכול להשתמש בספריית המוסיקה וברשימות ההשמעה של iTunes. כל שינוי שתבצע ב-iTunes ייוצג בנגן. סמן את התיבה שלהלן אם ברצונך לייבא את מידע ספריית המוסיקה של iTunes.
-	IT	In SlimServer è possibile utilizzare la libreria musicale e gli elenchi di riproduzione di iTunes. Le eventuali modifiche apportate in iTunes vengono estese al lettore. Selezionare la casella seguente se si desidera importare i dati della libreria musicale di iTunes.
-	JA	SlimServerはiTunesの音楽ライブラリーとプレイリストを使用することができます。iTunesにおける変更はプレーヤーに反映されます。iTunesの音楽ライブラリー情報を利用するには、以下の項目をチェックしてください。
-	NL	SlimServer kan gebruik maken van je iTunes-muziekcollectie en -playlists. Alle veranderingen in iTunes worden ook op je speler doorgevoerd. Selecteer het vakje hieronder als je de iTunes-muziekcollectiegegevens wilt importeren.
-	SV	SlimServer kan använda ditt iTunes-bibliotek och låtlistor. Alla förändringar som görs via iTunes kommer att få genomslag i din spelare. Klicka i rutan nedan om du vill importera iTunes-informationen.
-	ZH_CN	SlimServer可以使用您的iTunes音乐库和播放表。您在iTunes所作的所有变动都会显示在您的播放机。如果要导入您的iTunes音乐库信息，请点击如下的复选框。
+	DE	SqueezeCenter kann die Musiksammlung und Wiedergabeliste aus iTunes nutzen. In iTunes vorgenommene Änderungen werden an den Player übertragen. Aktivieren Sie das Kontrollkästchen unten, wenn die iTunes-Musiksammlung importiert werden soll.
+	EN	SqueezeCenter can use your iTunes music library and playlists. Any changes that you make in iTunes will be reflected on your player. Check the box below if you want to import your iTunes Music Library information.
+	ES	SqueezeCenter puede usar la biblioteca de música y las listas de reproducción de iTunes. Cualquier cambio que se realice en iTunes se reflejará en el reproductor. Marque la casilla siguiente si desea importar la información de la biblioteca de música de iTunes.
+	FR	Le SqueezeCenter peut utiliser votre bibliothèque et vos listes de lecture iTunes. Les modifications apportées dans iTunes sont reportées sur votre platine. Cochez la case ci-dessous pour importer les données de la bibliothèque iTunes.
+	HE	SqueezeCenter יכול להשתמש בספריית המוסיקה וברשימות ההשמעה של iTunes. כל שינוי שתבצע ב-iTunes ייוצג בנגן. סמן את התיבה שלהלן אם ברצונך לייבא את מידע ספריית המוסיקה של iTunes.
+	IT	In SqueezeCenter è possibile utilizzare la libreria musicale e gli elenchi di riproduzione di iTunes. Le eventuali modifiche apportate in iTunes vengono estese al lettore. Selezionare la casella seguente se si desidera importare i dati della libreria musicale di iTunes.
+	JA	SqueezeCenterはiTunesの音楽ライブラリーとプレイリストを使用することができます。iTunesにおける変更はプレーヤーに反映されます。iTunesの音楽ライブラリー情報を利用するには、以下の項目をチェックしてください。
+	NL	SqueezeCenter kan gebruik maken van je iTunes-muziekcollectie en -playlists. Alle veranderingen in iTunes worden ook op je speler doorgevoerd. Selecteer het vakje hieronder als je de iTunes-muziekcollectiegegevens wilt importeren.
+	SV	SqueezeCenter kan använda ditt iTunes-bibliotek och låtlistor. Alla förändringar som görs via iTunes kommer att få genomslag i din spelare. Klicka i rutan nedan om du vill importera iTunes-informationen.
+	ZH_CN	SqueezeCenter可以使用您的iTunes音乐库和播放表。您在iTunes所作的所有变动都会显示在您的播放机。如果要导入您的iTunes音乐库信息，请点击如下的复选框。
 
 SETUP_ITUNESSCANINTERVAL
 	DE	iTunes-Aktualisierungsintervall
@@ -178,14 +178,14 @@ SETUP_ITUNESSCANINTERVAL
 	ZH_CN	iTunes刷新间隔时间
 
 SETUP_ITUNESSCANINTERVAL_DESC
-	DE	Wenn sich die iTunes-Musiksammlung ändert, importiert SlimServer die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die SlimServer mindestens warten soll, bevor die iTunes-Musiksammlung neu geladen wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
-	EN	When your iTunes Music Library changes SlimServer will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SlimServer will wait before reloading your iTunes Music Library again. A value of zero disables the reload.
-	ES	Cuando cambie la biblioteca de música de iTunes, SlimServer importará automáticamente la información de la biblioteca. Se puede especificar la cantidad de tiempo mínima (en segundos) que SlimServer esperará antes de volver a cargar la biblioteca de música de iTunes. Un valor de cero deshabilita la recarga.
-	FR	Le SlimServer importe automatiquement les informations de la collection musicale d'iTunes lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le SlimServer actualise la collection musicale d'iTunes. La valeur 0 désactive cette fonctionnalité.
-	HE	כאשר ספריית המוסיקה של iTunes משתנה, SlimServer מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על SlimServer להמתין לפני טעינה חוזרת של ספריית המוסיקה של iTunes. ערך אפס משבית את אפשרות הטעינה מחדש.
-	IT	Se si modifica la libreria musicale di iTunes, SlimServer importa automaticamente i nuovi dati. È possibile specificare per SlimServer il periodo minimo di attesa (in secondi) precedente al ricaricamento della libreria musicale di iTunes. Se si imposta il valore zero, la funzionalità viene disattivata.
-	NL	Wanneer je iTunes-muziekcollectie verandert, worden de collectiegegevens automatisch door SlimServer geïmporteerd. Je kunt opgeven (in seconden) hoe lang SlimServer minimaal moet wachten alvorens je iTunes-muziekcollectie te herladen. Een waarde van 0 seconden schakelt herladen uit.
-	ZH_CN	当您的iTunes音乐库改变时，SlimServer将自动地导入最新音乐库信息。您可以指定SlimServer再装您的iTunes数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
+	DE	Wenn sich die iTunes-Musiksammlung ändert, importiert SqueezeCenter die Daten automatisch erneut. Sie können die Zeit (in Sekunden) angeben, die SqueezeCenter mindestens warten soll, bevor die iTunes-Musiksammlung neu geladen wird. Wenn Sie 0 eingeben, wird diese Option deaktiviert.
+	EN	When your iTunes Music Library changes SqueezeCenter will automatically import the library information.  You can specify the minimum amount of time (in seconds) that SqueezeCenter will wait before reloading your iTunes Music Library again. A value of zero disables the reload.
+	ES	Cuando cambie la biblioteca de música de iTunes, SqueezeCenter importará automáticamente la información de la biblioteca. Se puede especificar la cantidad de tiempo mínima (en segundos) que SqueezeCenter esperará antes de volver a cargar la biblioteca de música de iTunes. Un valor de cero deshabilita la recarga.
+	FR	Le SqueezeCenter importe automatiquement les informations de la collection musicale d'iTunes lorsque vous la modifiez. Vous pouvez spécifier le délai minimal en secondes au bout duquel le SqueezeCenter actualise la collection musicale d'iTunes. La valeur 0 désactive cette fonctionnalité.
+	HE	כאשר ספריית המוסיקה של iTunes משתנה, SqueezeCenter מייבא את מידע הספרייה באופן אוטומטי. באפשרותך לציין כמות זמן מינימלית (בשניות) שבמהלכה על SqueezeCenter להמתין לפני טעינה חוזרת של ספריית המוסיקה של iTunes. ערך אפס משבית את אפשרות הטעינה מחדש.
+	IT	Se si modifica la libreria musicale di iTunes, SqueezeCenter importa automaticamente i nuovi dati. È possibile specificare per SqueezeCenter il periodo minimo di attesa (in secondi) precedente al ricaricamento della libreria musicale di iTunes. Se si imposta il valore zero, la funzionalità viene disattivata.
+	NL	Wanneer je iTunes-muziekcollectie verandert, worden de collectiegegevens automatisch door SqueezeCenter geïmporteerd. Je kunt opgeven (in seconden) hoe lang SqueezeCenter minimaal moet wachten alvorens je iTunes-muziekcollectie te herladen. Een waarde van 0 seconden schakelt herladen uit.
+	ZH_CN	当您的iTunes音乐库改变时，SqueezeCenter将自动地导入最新音乐库信息。您可以指定SqueezeCenter再装您的iTunes数据库之前极小等候时间（以秒为单位）。以零为值意味着关闭再装功能。
 
 SETUP_ITUNESSCANINTERVAL_OK
 	DE	Minimale Wartezeit für das Laden der iTunes-Musiksammlung
@@ -213,14 +213,14 @@ SETUP_ITUNES_LIBRARY_XML_PATH
 	ZH_CN	iTunes Music Library.xml地点
 
 SETUP_ITUNES_LIBRARY_XML_PATH_DESC
-	DE	Falls iTunes auf einem anderen Rechner als SlimServer ausgeführt wird, können Sie hier den expliziten Pfad zur Datei 'iTunes Music Library.xml' angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie SlimServer installiert ist.
-	EN	If you are running iTunes on a different computer than SlimServer, you may specify an explicit path to the iTunes Music Library.xml file here.  Leave this blank if you are running iTunes on the same computer as SlimServer.
-	ES	Si ejecuta iTunes en un equipo distinto al de SlimServer, puede especificar aquí una ruta explícita a la carpeta de música de iTunes. Deje en blanco si ejecuta iTunes en el mismo equipo que SlimServer.
-	FR	Si vous exécutez iTunes sur un ordinateur différent de celui avec le SlimServer, vous pouvez spécifier ici un chemin d'accès vers le fichier iTunes Music Library.xml. Ne renseignez pas ce champ si la bibliothèque iTunes se trouve sur le même ordinateur que le SlimServer.
-	HE	אם אתה מפעיל את iTunes במחשב אחר מזה שמותקן בו SlimServer, באפשרותך לציין כאן נתיב מפורש לקובץ iTunes Music Library.xml. השאר שדה זה ריק אם אתה מפעיל את iTunes באותו מחשב שבו מותקן SlimServer.
-	IT	Se si utilizza iTunes in un computer diverso da quello in cui è installato SlimServer, è possibile indicare in questo campo il percorso del file Music Library.xml di iTunes. Se iTunes e SlimServer sono installati nello stesso computer, lasciare il campo vuoto.
+	DE	Falls iTunes auf einem anderen Rechner als SqueezeCenter ausgeführt wird, können Sie hier den expliziten Pfad zur Datei 'iTunes Music Library.xml' angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie SqueezeCenter installiert ist.
+	EN	If you are running iTunes on a different computer than SqueezeCenter, you may specify an explicit path to the iTunes Music Library.xml file here.  Leave this blank if you are running iTunes on the same computer as SqueezeCenter.
+	ES	Si ejecuta iTunes en un equipo distinto al de SqueezeCenter, puede especificar aquí una ruta explícita a la carpeta de música de iTunes. Deje en blanco si ejecuta iTunes en el mismo equipo que SqueezeCenter.
+	FR	Si vous exécutez iTunes sur un ordinateur différent de celui avec le SqueezeCenter, vous pouvez spécifier ici un chemin d'accès vers le fichier iTunes Music Library.xml. Ne renseignez pas ce champ si la bibliothèque iTunes se trouve sur le même ordinateur que le SqueezeCenter.
+	HE	אם אתה מפעיל את iTunes במחשב אחר מזה שמותקן בו SqueezeCenter, באפשרותך לציין כאן נתיב מפורש לקובץ iTunes Music Library.xml. השאר שדה זה ריק אם אתה מפעיל את iTunes באותו מחשב שבו מותקן SqueezeCenter.
+	IT	Se si utilizza iTunes in un computer diverso da quello in cui è installato SqueezeCenter, è possibile indicare in questo campo il percorso del file Music Library.xml di iTunes. Se iTunes e SqueezeCenter sono installati nello stesso computer, lasciare il campo vuoto.
 	JA	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここにファイル名を含めてxmlファイルへのパスを入力してください。
-	NL	Als iTunes op een andere computer draait dan SlimServer, kun je hier een expliciet pad naar het bestand iTunes Music Library.xml opgeven. Laat dit veld leeg als iTunes op dezelfde computer als SlimServer draait.
+	NL	Als iTunes op een andere computer draait dan SqueezeCenter, kun je hier een expliciet pad naar het bestand iTunes Music Library.xml opgeven. Laat dit veld leeg als iTunes op dezelfde computer als SqueezeCenter draait.
 	SV	Om du valt att specificera läget av ditt iTunes musikbibliotek manuellt anger du läget här, inklusive hela filnamnet
 	ZH_CN	如果您选择指定iTunes音乐库的地点，请在此输入iTunes Music Library.xml文件的路径及其文件名。
 
@@ -238,14 +238,14 @@ SETUP_ITUNES_LIBRARY_MUSIC_PATH
 
 SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC
 	CS	Jestliže chete určit umístění vasí iTunes knihovny, zadejte cestu včetně jména složky, obsahující Vaši iTunes hudbu.
-	DE	Falls iTunes auf einem anderen Rechner als SlimServer ausgeführt wird, können Sie hier den vollständigen Pfad zur iTunes-Musiksammlung angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie SlimServer installiert ist.
-	EN	If you are running iTunes on a different computer than SlimServer, you may specify an explicit path to the iTunes Music folder here.  Leave this blank if you are running iTunes on the same computer as SlimServer.
-	ES	Si ejecuta iTunes en un equipo distinto al de SlimServer, puede especificar aquí una ruta explícita a la carpeta de música de iTunes. Deje en blanco si ejecuta iTunes en el mismo equipo que SlimServer.
-	FR	Si vous exécutez iTunes sur un ordinateur différent de celui avec le SlimServer, vous pouvez spécifier ici un chemin d'accès vers la bibliothèque iTunes. Ne renseignez pas ce champ si la bibliothèque iTunes se trouve sur le même ordinateur que le SlimServer.
-	HE	אם אתה מפעיל את iTunes במחשב אחר מזה שמותקן בו SlimServer, באפשרותך לציין כאן נתיב מפורש לתיקיית המוסיקה של iTunes. השאר שדה זה ריק אם אתה מפעיל את iTunes באותו מחשב שבו מותקן SlimServer.
-	IT	Se si utilizza iTunes in un computer diverso da quello in cui è installato SlimServer, è possibile indicare in questo campo il percorso della cartella Musica di iTunes. Se iTunes e SlimServer sono installati nello stesso computer, lasciare il campo vuoto.
+	DE	Falls iTunes auf einem anderen Rechner als SqueezeCenter ausgeführt wird, können Sie hier den vollständigen Pfad zur iTunes-Musiksammlung angeben. Lassen Sie das Feld leer, wenn iTunes auf demselben Rechner wie SqueezeCenter installiert ist.
+	EN	If you are running iTunes on a different computer than SqueezeCenter, you may specify an explicit path to the iTunes Music folder here.  Leave this blank if you are running iTunes on the same computer as SqueezeCenter.
+	ES	Si ejecuta iTunes en un equipo distinto al de SqueezeCenter, puede especificar aquí una ruta explícita a la carpeta de música de iTunes. Deje en blanco si ejecuta iTunes en el mismo equipo que SqueezeCenter.
+	FR	Si vous exécutez iTunes sur un ordinateur différent de celui avec le SqueezeCenter, vous pouvez spécifier ici un chemin d'accès vers la bibliothèque iTunes. Ne renseignez pas ce champ si la bibliothèque iTunes se trouve sur le même ordinateur que le SqueezeCenter.
+	HE	אם אתה מפעיל את iTunes במחשב אחר מזה שמותקן בו SqueezeCenter, באפשרותך לציין כאן נתיב מפורש לתיקיית המוסיקה של iTunes. השאר שדה זה ריק אם אתה מפעיל את iTunes באותו מחשב שבו מותקן SqueezeCenter.
+	IT	Se si utilizza iTunes in un computer diverso da quello in cui è installato SqueezeCenter, è possibile indicare in questo campo il percorso della cartella Musica di iTunes. Se iTunes e SqueezeCenter sono installati nello stesso computer, lasciare il campo vuoto.
 	JA	iTunesの音楽ライブラリーの場所を手動で指定する場合には、ここに該当フォルダーへのパスを入力してください。
-	NL	Als iTunes op een andere computer draait dan SlimServer, kun je hier een expliciet pad naar de iTunes-muziekmap opgeven. Laat dit veld leeg als iTunes op dezelfde computer als SlimServer draait.
+	NL	Als iTunes op een andere computer draait dan SqueezeCenter, kun je hier een expliciet pad naar de iTunes-muziekmap opgeven. Laat dit veld leeg als iTunes op dezelfde computer als SqueezeCenter draait.
 	SV	Om du valt att specificera iTunes anger du läget på ditt iTunes musikbibliotek här
 	ZH_CN	如果您选择指定iTunes音乐库的地点，请在此输入存有您iTunes音乐的文件夹名及其路径。
 
@@ -260,14 +260,14 @@ SETUP_IGNOREDISABLEDITUNESTRACKS
 	ZH_CN	在iTunes中未经由复选框筛选的歌曲
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_DESC
-	DE	Standardmäßig werden Titeln, die in iTunes deaktiviert sind, nicht in SlimServer angezeigt. Sie können dieses Verhalten hier ändern.
-	EN	By default, when you remove the check mark next to a song in iTunes, that song won't appear when you browse your music with SlimServer. You can change that behavior below.
-	ES	De forma predeterminada, cuando se quita la marca de verificación junto a una canción en iTunes, esa canción no aparecerá cuando se examine la música con SlimServer. Ese comportamiento se puede cambiar a continuación.
-	FR	Par défaut, lorsque vous désélectionnez un morceau dans iTunes, celui-ci ne s'affiche pas lorsque vous parcourez votre musique grâce au SlimServer. Vous pouvez modifier ce comportement ci-dessous.
-	HE	כברירת מחדל, כאשר אתה מסיר את סימן הביקורת שמוצב ליד שיר ב-iTunes, השיר לא יופיע בעת עיון בפריטי המוסיקה באמצעות SlimServer. באפשרותך לשנות את ההתנהגות בהגדרות שלהלן.
-	IT	Per impostazione predefinita, se in iTunes si deseleziona la casella in corrispondenza di un brano, tale brano non viene visualizzato quando si sfoglia la raccolta musicale con SlimServer. È possibile modificare questa impostazione di seguito.
-	NL	Wanneer je het vinkje weghaalt naast een liedje in iTunes, wordt dat liedje standaard niet weergegeven wanneer je met SlimServer door je muziek bladert. Je kunt dit hieronder veranderen.
-	ZH_CN	根据缺省规定，当您去除iTunes歌曲旁边复选框的标志，该首歌曲就不会在您浏览SlimServer的音乐时出现。您可以在如下选择是否要遵照此缺省规定。
+	DE	Standardmäßig werden Titeln, die in iTunes deaktiviert sind, nicht in SqueezeCenter angezeigt. Sie können dieses Verhalten hier ändern.
+	EN	By default, when you remove the check mark next to a song in iTunes, that song won't appear when you browse your music with SqueezeCenter. You can change that behavior below.
+	ES	De forma predeterminada, cuando se quita la marca de verificación junto a una canción en iTunes, esa canción no aparecerá cuando se examine la música con SqueezeCenter. Ese comportamiento se puede cambiar a continuación.
+	FR	Par défaut, lorsque vous désélectionnez un morceau dans iTunes, celui-ci ne s'affiche pas lorsque vous parcourez votre musique grâce au SqueezeCenter. Vous pouvez modifier ce comportement ci-dessous.
+	HE	כברירת מחדל, כאשר אתה מסיר את סימן הביקורת שמוצב ליד שיר ב-iTunes, השיר לא יופיע בעת עיון בפריטי המוסיקה באמצעות SqueezeCenter. באפשרותך לשנות את ההתנהגות בהגדרות שלהלן.
+	IT	Per impostazione predefinita, se in iTunes si deseleziona la casella in corrispondenza di un brano, tale brano non viene visualizzato quando si sfoglia la raccolta musicale con SqueezeCenter. È possibile modificare questa impostazione di seguito.
+	NL	Wanneer je het vinkje weghaalt naast een liedje in iTunes, wordt dat liedje standaard niet weergegeven wanneer je met SqueezeCenter door je muziek bladert. Je kunt dit hieronder veranderen.
+	ZH_CN	根据缺省规定，当您去除iTunes歌曲旁边复选框的标志，该首歌曲就不会在您浏览SqueezeCenter的音乐时出现。您可以在如下选择是否要遵照此缺省规定。
 
 SETUP_IGNOREDISABLEDITUNESTRACKS_1
 	DE	Alle Lieder einschließen

@@ -2,7 +2,7 @@ package Slim::Buttons::RemoteTrackInfo;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -13,7 +13,7 @@ Slim::Buttons::RemoteTrackInfo
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::RemoteTrackInfo> is a SlimServer module to create a UI for viewing information 
+L<Slim::Buttons::RemoteTrackInfo> is a SqueezeCenter module to create a UI for viewing information 
 about remote tracks.
 
 =cut

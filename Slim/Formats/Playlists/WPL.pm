@@ -2,7 +2,7 @@ package Slim::Formats::Playlists::WPL;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
@@ -79,7 +79,7 @@ sub read {
 sub write {
 	my $class   = shift;
 	my $listref = shift;
-	my $playlistname = shift || "SlimServer " . Slim::Utils::Strings::string("PLAYLIST");
+	my $playlistname = shift || "SqueezeCenter " . Slim::Utils::Strings::string("PLAYLIST");
 	my $filename = shift;
 
 	# Handles version 1.0 WPL Windows Medial Playlist files...

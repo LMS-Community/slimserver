@@ -2,7 +2,7 @@ package Slim::Buttons::Search;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -13,7 +13,7 @@ Slim::Buttons::Search
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Search> is a SlimServer module to create a UI for searching
+L<Slim::Buttons::Search> is a SqueezeCenter module to create a UI for searching
 the user track database.  Seach by ARTIST, ALBUM and SONGS is added to the home 
 menu structure as well as options for adding to the top level.  Search input uses the 
 INPUT.Text mode.

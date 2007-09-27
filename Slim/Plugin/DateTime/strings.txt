@@ -41,19 +41,19 @@ SETUP_GROUP_DATETIME_DESC
 	NL	Deze instellingen bepalen het gedrag van de datum en tijd-schermbeveiliger
 
 SETUP_GROUP_DATETIME_DEFAULTTIME
-	DE	SlimServer-Standard
-	EN	Slimserver Default
-	ES	Predeterminado de SlimServer
+	DE	SqueezeCenter-Standard
+	EN	SqueezeCenter Default
+	ES	Predeterminado de SqueezeCenter
 	FR	Défaut serveur
-	HE	ברירת המחדל של Slimserver
-	IT	Impostazioni predefinite di SlimServer
-	NL	SlimServer-standaardinstellingen
+	HE	ברירת המחדל של SqueezeCenter
+	IT	Impostazioni predefinite di SqueezeCenter
+	NL	SqueezeCenter-standaardinstellingen
 
 SETUP_GROUP_DATETIME_DEFAULTDATE
-	DE	SlimServer-Standard
-	EN	Slimserver Default
-	ES	Predeterminado de SlimServer
+	DE	SqueezeCenter-Standard
+	EN	SqueezeCenter Default
+	ES	Predeterminado de SqueezeCenter
 	FR	Défaut serveur
-	HE	ברירת המחדל של Slimserver
-	IT	Impostazioni predefinite di SlimServer
-	NL	SlimServer-standaardinstellingen
+	HE	ברירת המחדל של SqueezeCenter
+	IT	Impostazioni predefinite di SqueezeCenter
+	NL	SqueezeCenter-standaardinstellingen

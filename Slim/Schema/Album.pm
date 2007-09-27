@@ -92,7 +92,7 @@ sub title {
 	);
 }
 
-# return the raw title untainted by slimserver logic
+# return the raw title untainted by SqueezeCenter logic
 sub rawtitle {
 	my $self = shift;
 	

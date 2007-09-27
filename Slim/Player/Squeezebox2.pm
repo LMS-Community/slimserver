@@ -2,7 +2,7 @@ package Slim::Player::Squeezebox2;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -659,7 +659,7 @@ sub shouldLoop {
 	my $client     = shift;
 	my $audio_size = shift;
 
-	# XXX Not turned on yet for regular SlimServer, since we
+	# XXX Not turned on yet for regular SqueezeCenter, since we
 	# need to deal with the user:
 	# 1) Turning off the repeat flag
 	# 2) Adding a new track in playlist repeat mode

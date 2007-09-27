@@ -2,7 +2,7 @@ package Slim::Buttons::Common;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -102,7 +102,7 @@ my $prefs = preferences('server');
 =head2 init( )
 
 This method must be called before all other Slim::Buttons::* modules.  It
-initialises all other SlimServer core button modules and registers the "Now
+initialises all other SqueezeCenter core button modules and registers the "Now
 Playing" screensaver.
 
 =cut

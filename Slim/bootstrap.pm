@@ -2,7 +2,7 @@ package Slim::bootstrap;
 
 # $Id$
 #
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, version 2
 
@@ -37,7 +37,7 @@ use Symbol;
 # same, Dynaloader fails.
 #
 # The workaround is to munge @INC and eval'ing the known modules that
-# we include with SlimServer, first checking our CPAN path, then if
+# we include with SqueezeCenter, first checking our CPAN path, then if
 # there are any modules that couldn't be loaded, splicing CPAN/ out,
 # and attempting to load the system version of the module. When we are
 # done, put our CPAN/ path back in @INC.
@@ -251,8 +251,8 @@ sub tryModuleLoad {
 			# NB: More FC5 / SELinux - in case the above chcon doesn't work.
 			if ($@ =~ /cannot restore segment prot after reloc/) {
 
-				print STDERR "** SlimServer Error:\n";
-				print STDERR "** SELinux settings prevented SlimServer from starting.\n";
+				print STDERR "** SqueezeCenter Error:\n";
+				print STDERR "** SELinux settings prevented SqueezeCenter from starting.\n";
 				print STDERR "** See http://wiki.slimdevices.com/index.cgi?RPM for more information.\n\n";
 				exit;
 			}

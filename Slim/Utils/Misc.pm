@@ -2,7 +2,7 @@ package Slim::Utils::Misc;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -24,7 +24,7 @@ assert, bt, msg, msgf, watchDog, errorMsg, specified
 =head1 DESCRIPTION
 
 L<Slim::Utils::Misc> serves as a collection of miscellaneous utility 
- functions useful throughout slimserver and third party plugins.
+ functions useful throughout SqueezeCenter and third party plugins.
 
 =cut
 
@@ -185,7 +185,7 @@ sub setPriority {
 				return;
 			};
 
-			logger('server')->info("SlimServer changing process priority to $priorityClassName");
+			logger('server')->info("SqueezeCenter changing process priority to $priorityClassName");
 
 			eval { $setPriorityClass->Call($processHandle, $priorityClass) };
 
@@ -196,7 +196,7 @@ sub setPriority {
 
 	} else {
 
-		logger('server')->info("SlimServer changing process priority to $priority");
+		logger('server')->info("SqueezeCenter changing process priority to $priority");
 
 		eval { setpriority (0, 0, $priority); };
 
@@ -1035,7 +1035,7 @@ sub userAgentString {
 	my $osDetails = Slim::Utils::OSDetect::details();
 
 	# We masquerade as iTunes for radio stations that really want it.
-	$userAgentString = sprintf("iTunes/4.7.1 (%s; N; %s; %s; %s; %s) SlimServer/$::VERSION/$::REVISION",
+	$userAgentString = sprintf("iTunes/4.7.1 (%s; N; %s; %s; %s; %s) SqueezeCenter/$::VERSION/$::REVISION",
 
 		$osDetails->{'os'},
 		$osDetails->{'osName'},
@@ -1117,7 +1117,7 @@ sub assert {
 
 =head2 bt( [ $return ] )
 
-	Useful for tracking the source of a problem during the execution of slimserver.
+	Useful for tracking the source of a problem during the execution of SqueezeCenter.
 	use bt() to output in the log a list of function calls leading up to the point 
 	where bt() has been used.
 
@@ -1169,7 +1169,7 @@ sub bt {
 
 =head2 msg( $entry, [ $forceLog ], [ $suppressTimestamp ])
 
-	Outputs an entry to the slimserver log file. 
+	Outputs an entry to the SqueezeCenter log file. 
 	$entry is a string for the log.
 	optional argument $suppressTimestamp can be set to remove the event timestamp from the long entry.
 

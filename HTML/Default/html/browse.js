@@ -12,7 +12,7 @@ Browse = function(){
 
 			// Album view selector
 			if (Ext.get('viewSelect')) {
-				var viewMode = (Utils.getCookie('SlimServer-albumView') && Utils.getCookie('SlimServer-albumView').match(/[012]/) ? Utils.getCookie('SlimServer-albumView') : '0');
+				var viewMode = (Utils.getCookie('SqueezeCenter-albumView') && Utils.getCookie('SqueezeCenter-albumView').match(/[012]/) ? Utils.getCookie('SqueezeCenter-albumView') : '0');
 				var menu = new Ext.menu.Menu({
 					items: [
 						new Ext.menu.CheckItem({
@@ -45,7 +45,7 @@ Browse = function(){
 							'<span class="menu-title">' + strings['sort_by'] + '...</span>'
 					);
 
-					var sortOrder = Utils.getCookie('SlimServer-orderBy');
+					var sortOrder = Utils.getCookie('SqueezeCenter-orderBy');
 					for (order in orderByList) {
 						menu.add(new Ext.menu.CheckItem({
 							text: order,
@@ -88,17 +88,17 @@ Browse = function(){
 			url = url.replace(/#.*$/, '');
 
 			if (artwork == 1) {
-				Utils.setCookie( 'SlimServer-albumView', "1" );
+				Utils.setCookie( 'SqueezeCenter-albumView', "1" );
 				url = url + '&artwork=1';
 			}
 
 			else if (artwork == 2) {
-				Utils.setCookie( 'SlimServer-albumView', "2" );
+				Utils.setCookie( 'SqueezeCenter-albumView', "2" );
 				url = url + '&artwork=2';
 			}
 
 			else {
-				Utils.setCookie( 'SlimServer-albumView', "" );
+				Utils.setCookie( 'SqueezeCenter-albumView', "" );
 				url = url + '&artwork=0';
 			}
 
@@ -109,7 +109,7 @@ Browse = function(){
 		},
 
 		chooseAlbumOrderBy: function(option) {
-			Utils.setCookie('SlimServer-orderBy', option);
+			Utils.setCookie('SqueezeCenter-orderBy', option);
 			window.location.href = orderByUrl + (option ? '&orderBy=' + option : '') ;
 		}
 

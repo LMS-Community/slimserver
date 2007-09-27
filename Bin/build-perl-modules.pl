@@ -2,7 +2,7 @@
 
 # $Id$
 #
-# This is an installer program for perl modules which are required by SlimServer,
+# This is an installer program for perl modules which are required by SqueezeCenter,
 # but for which we can't include for every architecture and perl variant.
 #
 # The only prerequisite here is LWP, curl or wget
@@ -67,7 +67,7 @@ sub main {
 	my $version  = $Config{'version'};
 
 	print "Welcome to the Slim Devices perl module installer.\n\n";
-	print "These packages are needed for SlimServer to function.\n";
+	print "These packages are needed for SqueezeCenter to function.\n";
 	print "You will need a C compiler (gcc), make, and perl installed.\n\n";
 	print "You will need development libraries for MySQL. eg: libmysqlclient\n\n";
 	print "You will need development libraries for expat. eg: libexpat1-dev\n\n";
@@ -84,21 +84,21 @@ sub main {
 		die "Couldn't find a perl binary. Exiting.\n";
 	}
 
-	# Where does their slimserver live? Try to guess.
+	# Where does their SqueezeCenter live? Try to guess.
 	if (-f 'slimserver.pl' && -d 'CPAN/arch') {
 
 		$slimServerPath = cwd();
 
 	} else {
 
-		print "Please enter the path to your SlimServer directory (ex: /usr/local/slimserver) --> ";
+		print "Please enter the path to your SqueezeCenter directory (ex: /usr/local/slimserver) --> ";
 		chomp($slimServerPath = <STDIN>);
 	}
 
 	$slimServerPath ||= '/usr/local/slimserver';
 
 	unless (-d $slimServerPath) {
-		die "Couldn't find a valid SlimServer path. Exiting.\n";
+		die "Couldn't find a valid SqueezeCenter path. Exiting.\n";
 	}
 
 	# Let the build process use modules installed already:

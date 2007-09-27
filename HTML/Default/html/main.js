@@ -513,12 +513,12 @@ Playlist = function(){
 		},
 
 		showCoverArt : function(){
-			Utils.setCookie('SlimServer-noPlaylistCover', 0);
+			Utils.setCookie('SqueezeCenter-noPlaylistCover', 0);
 			this.load();
 		},
 
 		hideCoverArt : function(){
-			Utils.setCookie('SlimServer-noPlaylistCover', 1);
+			Utils.setCookie('SqueezeCenter-noPlaylistCover', 1);
 			this.load();
 		}
 	}
@@ -632,7 +632,7 @@ Player = function(){
 
 			// restore player expansion from cookie
 			this.collapseExpand({
-				doExpand: (Utils.getCookie('SlimServer-expandPlayerControl') != 'false')
+				doExpand: (Utils.getCookie('SqueezeCenter-expandPlayerControl') != 'false')
 			});
 
 			new Slim.Button('ctrlExpand', {
@@ -990,7 +990,7 @@ Player = function(){
 		},
 
 		collapseExpand : function(ev){
-			var doExpand = ev.doExpand == null ? !Utils.getCookie('SlimServer-expandPlayerControl') : ev.doExpand;
+			var doExpand = ev.doExpand == null ? !Utils.getCookie('SqueezeCenter-expandPlayerControl') : ev.doExpand;
 
 			var art = Ext.get('ctrlCurrentArt');
 
@@ -1011,7 +1011,7 @@ Player = function(){
 				art.show();
 			}
 
-			Utils.setCookie('SlimServer-expandPlayerControl', doExpand);
+			Utils.setCookie('SqueezeCenter-expandPlayerControl', doExpand);
 
 			// resize the window if in undocked mode
 			if (!Ext.get('ctrlUndock')) {

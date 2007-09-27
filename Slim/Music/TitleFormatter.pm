@@ -2,7 +2,7 @@ package Slim::Music::TitleFormatter;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -305,7 +305,7 @@ sub init {
 	return 1;
 }
 
-# This does not currently have any callers in the SlimServer tree.
+# This does not currently have any callers in the SqueezeCenter tree.
 sub addFormat {
 	my $format = shift;
 	my $formatSubRef = shift;

@@ -1,11 +1,11 @@
 package Slim::Plugin::InfoBrowser::Plugin;
 
-# InfoBrowser - an extensible information parser for slimserver 7.0
+# InfoBrowser - an extensible information parser for SqueezeCenter 7.0
 #
 # $Id$
 #
-# InfoBrowser provides a framework to use Slimserver's xmlbrowser to fetch remote content and convert it into a format
-# which can be displayed via the slimserver web interface, cli for jive or another cli client or via the player display.
+# InfoBrowser provides a framework to use SqueezeCenter's xmlbrowser to fetch remote content and convert it into a format
+# which can be displayed via the SqueezeCenter web interface, cli for jive or another cli client or via the player display.
 #
 # The top level menu is defined by an opml file stored in playlistdir or cachedir.  It is created dynamically from any opml
 # files found in the plugin dir (Slim/Plugin/InfoBrowser) and the Addon dir (Plugins/InfoBrowserAddons) and any of their subdirs.

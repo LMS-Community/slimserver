@@ -2,7 +2,7 @@ package Slim::Utils::OSDetect;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -48,7 +48,7 @@ my %osDetails  = ();
 
 =head2 OS( )
 
-returns a string to indicate the detected operating system currently running slimserver.
+returns a string to indicate the detected operating system currently running SqueezeCenter.
 
 =cut
 
@@ -106,7 +106,7 @@ sub init {
 
 Return OS Specific directories.
 
-Argument $dir is a string to indicate which of the slimserver directories we
+Argument $dir is a string to indicate which of the SqueezeCenter directories we
 need information for.
 
 =cut
@@ -145,7 +145,7 @@ sub dirsFor {
 
 		} elsif ($dir eq 'log') {
 
-			# If SlimServer is installed systemwide.
+			# If SqueezeCenter is installed systemwide.
 			if (-d "/Library/SlimDevices") {
 
 				mkpath("/Library/Logs/SlimServer");

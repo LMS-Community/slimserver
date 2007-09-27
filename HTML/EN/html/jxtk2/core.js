@@ -196,7 +196,7 @@ JXTK2.JSONRPC.Proxy = function(url) {
 
 			// TODO: better error handling
 			if (xmlreq.status == 404) {
-				alert("Transport Error: 404.\nAre you sure that SlimServer is running and the RPC plugin is enabled?\n\nYou can return to the Default skin at http://<server>:9000/Default/");
+				alert("Transport Error: 404.\nAre you sure that SqueezeCenter is running and the RPC plugin is enabled?\n\nYou can return to the Default skin at http://<server>:9000/Default/");
 			} else {
 				alert("Transport Error: " + xmlreq.status);
 			}

@@ -19,7 +19,7 @@ function changeThumbSize (action, albumArtDOMId, albumArtId) {
 	if ($(albumArtDOMId)) {
 		$(albumArtDOMId).src = thumbHref;
 	}
-	setCookie( 'SlimServer-thumbSize', thumbSize );
+	setCookie( 'SqueezeCenter-thumbSize', thumbSize );
 }
 
 function addItem(args) {

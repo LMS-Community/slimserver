@@ -2,7 +2,7 @@ package Slim::Buttons::Input::Time;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -31,7 +31,7 @@ Slim::Buttons::Common::pushMode($client, 'INPUT.Time', \%params);
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Input::Time> is a reusable SlimServer module to create a standard UI
+L<Slim::Buttons::Input::Time> is a reusable SqueezeCenter module to create a standard UI
 for entering Time formatted strings.  This is a slimmed down variation of Input::Text 
 with custom handling for limting characters based on the timeFormat server preference
 and typicall formatting of time strings. Callers include Sli::Buttons::AlarmCLock

@@ -2,7 +2,7 @@ package Slim::Buttons::Synchronize;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -13,7 +13,7 @@ Slim::Buttons::Synchronize
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Synchronize> is the SlimServer module to handle a player UI 
+L<Slim::Buttons::Synchronize> is the SqueezeCenter module to handle a player UI 
 for synchronizing groups of players, and reporting the current status of sync groups
 
 =cut

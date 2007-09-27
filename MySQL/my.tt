@@ -1,6 +1,6 @@
 # $Id$
 # 
-# SlimServer specific MySQL Server config.
+# SqueezeCenter specific MySQL Server config.
 
 [mysqld]
 innodb

@@ -3,7 +3,7 @@ package Slim::Utils::MemoryUsage;
 # $Id$ 
 #
 # This module is a merging of B::TerseSize and Apache::Status 
-# put together to work with SlimServer by Dan Sully
+# put together to work with SqueezeCenter by Dan Sully
 #
 # These are not the droids you're looking for.
 #

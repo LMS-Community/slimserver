@@ -1,28 +1,28 @@
 [% pageicon = 'help' %]
 [% pagetitle = 'REMOTE_STREAMING' | string %]
 [% PROCESS helpheader.html %]
-<p>The SlimServer was designed to stream mp3 files to a Slim Devices/Logitech network music player.  However, it can also stream the same files over the Internet to an MP3 software player such as Winamp and iTunes.
+<p>The SqueezeCenter was designed to stream mp3 files to a Slim Devices/Logitech network music player.  However, it can also stream the same files over the Internet to an MP3 software player such as Winamp and iTunes.
 
-<p>For the sake of discussion, the computer running the SlimServer will be called the remote machine.
+<p>For the sake of discussion, the computer running the SqueezeCenter will be called the remote machine.
 
-<p>First install and start the SlimServer software on this machine.
+<p>First install and start the SqueezeCenter software on this machine.
 Make sure it is reachable over the Internet.  If not, you will need to open port 9000 on your router.
 
 <p>Now, use the following instructions:
 <ol>
-<li>Open the stream called http://localhost:9000/stream.mp3 in your MP3 software player.  (Replace "localhost" with the IP address of the remote computer.) This will inform the SlimServer that the software player is ready to receive a stream.
+<li>Open the stream called http://localhost:9000/stream.mp3 in your MP3 software player.  (Replace "localhost" with the IP address of the remote computer.) This will inform the SqueezeCenter that the software player is ready to receive a stream.
 
-<li>Open the web interface of the SlimServer running on the remote computer by opening the web page http://localhost:9000 (Replace "localhost" with the IP address of the remote computer). You will notice a "player" corresponding to the IP address of the computer with the MP3 software player. 
+<li>Open the web interface of the SqueezeCenter running on the remote computer by opening the web page http://localhost:9000 (Replace "localhost" with the IP address of the remote computer). You will notice a "player" corresponding to the IP address of the computer with the MP3 software player. 
 
-<li>Use the left pane of the SlimServer web interface to browse and select files and playlists.  When music is selected, it will appear in the right pane of the web interface.
+<li>Use the left pane of the SqueezeCenter web interface to browse and select files and playlists.  When music is selected, it will appear in the right pane of the web interface.
 
-<li>Click on "Play" in the right pane of the SlimServer web interface to start the music. 
+<li>Click on "Play" in the right pane of the SqueezeCenter web interface to start the music. 
 
 <li>After a couple of seconds, you will hear music playing through the MP3 software player. (The delay is due to buffering in the MP3 player software.) 
 
-<li>To change the content playing, use the SlimServer on the remote machine.
+<li>To change the content playing, use the SqueezeCenter on the remote machine.
 
-<li>If you are using the SlimServer's password security, you'll need to use a slightly modified URL like this: http://username:password@localhost:9000/stream.mp3
+<li>If you are using the SqueezeCenter's password security, you'll need to use a slightly modified URL like this: http://username:password@localhost:9000/stream.mp3
 </ol>
 <p>Your music can also be streamed to a Squeezebox or Transporter network music player for listening on a stereo.  For more information about this product and FAQs, visit <a href="http://www.slimdevices.com/">www.slimdevices.com</a>.
 

@@ -16,7 +16,7 @@ var MainMenu = function(){
 				}
 			}
 
-			this.expandItem(Utils.getCookie('SlimServer-homeMenuExpanded'));
+			this.expandItem(Utils.getCookie('SqueezeCenter-homeMenuExpanded'));
 
 			if (Ext.get('livesearch'))
 				Utils.initSearch('livesearch', this.showSearchResults);
@@ -36,7 +36,7 @@ var MainMenu = function(){
 			// we only allow for one open item
 			this.collapseAll();
 
-			Utils.setCookie('SlimServer-homeMenuExpanded', panel);
+			Utils.setCookie('SqueezeCenter-homeMenuExpanded', panel);
 
 			var el = Ext.get(panel);
 			if (el) {
@@ -59,7 +59,7 @@ var MainMenu = function(){
 
 		collapseItem : function(panel, resetState){
 			if (resetState)
-				Utils.setCookie('SlimServer-homeMenuExpanded', '');
+				Utils.setCookie('SqueezeCenter-homeMenuExpanded', '');
 
 			var el = Ext.get(panel);
 			if (el) {

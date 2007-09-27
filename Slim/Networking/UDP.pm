@@ -2,7 +2,7 @@ package Slim::Networking::UDP;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -37,7 +37,7 @@ sub init {
 	) or do {
 
 		# XXX - exiting in a deep sub is kinda bad. should propagate up.
-		logger('')->logdie("FATAL: There is already another copy of the SlimServer running on this machine. ($!)");
+		logger('')->logdie("FATAL: There is already another copy of the SqueezeCenter running on this machine. ($!)");
 	};
 
 	defined(Slim::Utils::Network::blocking($udpsock, 0)) || do { 

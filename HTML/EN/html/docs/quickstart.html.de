@@ -5,7 +5,7 @@
 <p>Vielen Dank, dass Sie sich f&uuml;r einen Netzwerk-Musikplayer von Slim Devices/Logitech entschieden haben.</p>
 <p>Das Handbuch &quot;Erste Schritte&quot; enth&auml;lt Anweisungen zur Einrichtung sowie Beschreibungen der Grundfunktionen des Players.</p>
 <p>Weitere Informationen zu den Funktionen und detaillierte Dokumentation f&uuml;r Entwickler finden Sie auf unserer Website unter <a href="http://www.slimdevices.com/">http://www.slimdevices.com/</a>.</p>
-<p>Die SlimServer-Software ist das Produkt einer weltweiten Zusammenarbeit von Softwareentwicklern in einem offenen Forum. Wir sind unserer Community sehr dankbar, deren Beitr&auml;ge dieses gro&szlig;artige Produkt weiter st&auml;ndig verbessern.</p>
+<p>Die SqueezeCenter-Software ist das Produkt einer weltweiten Zusammenarbeit von Softwareentwicklern in einem offenen Forum. Wir sind unserer Community sehr dankbar, deren Beitr&auml;ge dieses gro&szlig;artige Produkt weiter st&auml;ndig verbessern.</p>
 <p>Wenn Sie Hilfe bei der Installation des Players ben&ouml;tigen, besuchen Sie unsere Website oder wenden Sie sich per E-Mail an <a href="mailto:support@slimdevices.com">support@slimdevices.com</a>.</p>
 <p>Wie hoffen, dass Sie viel Freude an unserem Produkt haben werden. Wenn es Ihnen gef&auml;llt, empfehlen Sie Squeezebox und Transporter doch auch Ihren Freunden.</p>
 <h4>Anschlie&szlig;en des Players</h4>
@@ -35,10 +35,10 @@
 <p>Tipp: Verwenden Sie f&uuml;hrende Nullen, um Zahlen mit weniger als drei Stellen anzugeben. Beispiel: 010.001.004.231 f&uuml;r 10.1.4.231. Geben Sie die Subnetzmaske des Netzwerks, die Standard-Gateway-IP-Adresse und die Adresse des DNS-Servers ein und dr&uuml;cken Sie RECHTS, um zur n&auml;chsten Eingabe zu gelangen. 
 </ol>
 
-<h4>Verbinden mit SlimServer</h4>
+<h4>Verbinden mit SqueezeCenter</h4>
 <ol>
-<li>Starten Sie SlimServer, wenn er nicht bereits ausgef&uuml;hrt wird. Der Player durchsucht das lokale Netzwerk nach dem Computer auf dem SlimServer l&auml;uft. Wenn Sie SlimServer nach dem Setup gestartet haben, m&uuml;ssen Sie evtl. einen Bildlauf durchf&uuml;hren, um ihn zu finden. 
-<li>W&auml;hlen Sie den gew&uuml;nschten Computer aus. Wenn SlimServer auf mehreren Computern im lokalen Netzwerk ausgef&uuml;hrt wird, k&ouml;nnen Sie mit NACH UNTEN und NACH OBEN den gew&uuml;nschten ausw&auml;hlen.
+<li>Starten Sie SqueezeCenter, wenn er nicht bereits ausgef&uuml;hrt wird. Der Player durchsucht das lokale Netzwerk nach dem Computer auf dem SqueezeCenter l&auml;uft. Wenn Sie SqueezeCenter nach dem Setup gestartet haben, m&uuml;ssen Sie evtl. einen Bildlauf durchf&uuml;hren, um ihn zu finden. 
+<li>W&auml;hlen Sie den gew&uuml;nschten Computer aus. Wenn SqueezeCenter auf mehreren Computern im lokalen Netzwerk ausgef&uuml;hrt wird, k&ouml;nnen Sie mit NACH UNTEN und NACH OBEN den gew&uuml;nschten ausw&auml;hlen.
 <li>Dr&uuml;cken Sie RECHTS, um die Verbindung herzustellen.
 </ol>
 

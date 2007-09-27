@@ -1,26 +1,26 @@
 [% pageicon = 'help' %]
 [% pagetitle = 'REMOTE_STREAMING' | string %] [% PROCESS helpheader.html %]
-<p>Le SlimServer a &eacute;t&eacute; con&ccedil;u pour diffuser des fichiers MP3 vers une platine Slim Devices/Logitech sur un r&eacute;seau.  Il peut &eacute;galement diffuser ces fichiers sur Internet vers un lecteur MP3 tel que Winamp ou iTunes.
+<p>Le SqueezeCenter a &eacute;t&eacute; con&ccedil;u pour diffuser des fichiers MP3 vers une platine Slim Devices/Logitech sur un r&eacute;seau.  Il peut &eacute;galement diffuser ces fichiers sur Internet vers un lecteur MP3 tel que Winamp ou iTunes.
 
-<p>Nous d&eacute;signerons l'ordinateur ex&eacute;cutant SlimServer l'ordinateur distant.
+<p>Nous d&eacute;signerons l'ordinateur ex&eacute;cutant SqueezeCenter l'ordinateur distant.
 
-<p>Installer d'abord le logiciel SlimServer sur cet ordinateur, puis ex&eacute;cutez-le. Assurez-vous qu'il a acc&egrave;s &agrave; Internet.  Si ce n'est pas le cas, vous devez ouvrir le port 9000 sur le routeur.
+<p>Installer d'abord le logiciel SqueezeCenter sur cet ordinateur, puis ex&eacute;cutez-le. Assurez-vous qu'il a acc&egrave;s &agrave; Internet.  Si ce n'est pas le cas, vous devez ouvrir le port 9000 sur le routeur.
 
 <p>Suivez ensuite les indications suivantes.
 <ol>
-<li>Dans votre logiciel de lecture MP3, ouvrez le flux http://localhost:9000/stream.mp3.  Remplacez localhost par l'adresse IP de l'ordinateur distant. Cela indique au SlimServer que le logiciel de lecture est pr&ecirc;t &agrave; recevoir un flux.
+<li>Dans votre logiciel de lecture MP3, ouvrez le flux http://localhost:9000/stream.mp3.  Remplacez localhost par l'adresse IP de l'ordinateur distant. Cela indique au SqueezeCenter que le logiciel de lecture est pr&ecirc;t &agrave; recevoir un flux.
 
-<li>Ouvrez l'interface Web du SlimServer ex&eacute;cut&eacute; sur l'ordinateur distant en ouvrant le navigateur &agrave; la page http://localhost:9000. Remplacez localhost par l'adresse IP de l'ordinateur distant. Vous pourrez apercevoir une platine correspondant &agrave; l'adresse IP de l'ordinateur dot&eacute; du logiciel de lecture MP3. 
+<li>Ouvrez l'interface Web du SqueezeCenter ex&eacute;cut&eacute; sur l'ordinateur distant en ouvrant le navigateur &agrave; la page http://localhost:9000. Remplacez localhost par l'adresse IP de l'ordinateur distant. Vous pourrez apercevoir une platine correspondant &agrave; l'adresse IP de l'ordinateur dot&eacute; du logiciel de lecture MP3. 
 
-<li>Vous pouvez utiliser le volet de gauche de l'interface Web du SlimServer pour parcourir les fichiers et les listes de lecture et effectuer vos s&eacute;lections.  Lorsque vous s&eacute;lectionnez un morceau, celui-ci s'affiche dans le volet de gauche de l'interface Web.
+<li>Vous pouvez utiliser le volet de gauche de l'interface Web du SqueezeCenter pour parcourir les fichiers et les listes de lecture et effectuer vos s&eacute;lections.  Lorsque vous s&eacute;lectionnez un morceau, celui-ci s'affiche dans le volet de gauche de l'interface Web.
 
 <li>Cliquez sur Lecture dans le voler de droite de l'interface pour lancer la lecture du morceau. 
 
 <li>Le logiciel de lecture MP3 commence &agrave; diffuser le morceau apr&egrave;s quelques secondes. Ce d&eacute;lai est d&ucirc; &agrave; la mise en tampon du morceau par le logiciel de lecture. 
 
-<li>Utilisez le SlimServer sur l'ordinateur distant pour changer de morceau.
+<li>Utilisez le SqueezeCenter sur l'ordinateur distant pour changer de morceau.
 
-<li>Si vous utilisez un mot de passe pour le SlimServer, vous devez sp&eacute;cifier une URL du type http://nom_d'utilisateur:mot_de_passe@localhost:9000/stream.mp3.
+<li>Si vous utilisez un mot de passe pour le SqueezeCenter, vous devez sp&eacute;cifier une URL du type http://nom_d'utilisateur:mot_de_passe@localhost:9000/stream.mp3.
 </ol>
 <p>Vous pouvez &eacute;galement diffuser la musique vers une Squeezebox ou un dispositif Transporter pour &eacute;couter les morceaux sur une platine st&eacute;r&eacute;o.  Pour en savoir plus sur ce produit et sur les Questions fr&eacute;quentes, rendez-vous sur <a href="http://www.slimdevices.com/">www.slimdevices.com</a>.
 

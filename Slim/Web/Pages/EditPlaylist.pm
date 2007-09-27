@@ -1,6 +1,6 @@
 package Slim::Web::Pages::EditPlaylist;
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -20,7 +20,7 @@ use Slim::Utils::Text;
 use Slim::Web::HTTP;
 
 # Subversion Change 134 says that I can blame Felix for adding this
-# "functionality" to SlimServer :)
+# "functionality" to SqueezeCenter :)
 #
 # http://svn.slimdevices.com/trunk/server/Slim/Web/EditPlaylist.pm?rev=134&view=rev
 

@@ -110,7 +110,7 @@ END %]
 		cmdimage = "b_down" -%]
 [%- END %]
 
-[%# this is the warning shown while SlimServer is still scanning -%]
+[%# this is the warning shown while SqueezeCenter is still scanning -%]
 [% BLOCK scanwarning %]
 <b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string -%]
 	[%- IF audiodir -%]

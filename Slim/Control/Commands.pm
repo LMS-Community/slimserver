@@ -2,7 +2,7 @@ package Slim::Control::Commands;
 
 # $Id: Commands.pm 5121 2005-11-09 17:07:36Z dsully $
 #
-# SlimServer Copyright (c) 2001-2006  Logitech.
+# SqueezeCenter Copyright (c) 2001-2006  Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -20,7 +20,7 @@ Slim::Control::Commands
 
 =head1 DESCRIPTION
 
-Implements most SlimServer commands and is designed to be exclusively called
+Implements most SqueezeCenter commands and is designed to be exclusively called
 through Request.pm and the mechanisms it defines.
 
 The code for the "alarm" command is heavily commented and corresponds to a

@@ -480,7 +480,7 @@ sub dbh {
 
 =head2 createDatabase( $dbh )
 
-Creates the initial SlimServer database in MySQL.
+Creates the initial SqueezeCenter database in MySQL.
 
 'CREATE DATABASE slimserver'
 
@@ -544,7 +544,7 @@ sub mysqlVersionLong {
 
 =head2 cleanup()
 
-Shut down MySQL when SlimServer is shut down.
+Shut down MySQL when SqueezeCenter is shut down.
 
 =cut
 

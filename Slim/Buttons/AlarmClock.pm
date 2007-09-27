@@ -4,7 +4,7 @@
 #
 # This code is derived from code with the following copyright message:
 #
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -16,7 +16,7 @@ Slim::Buttons::AlarmClock
 =head1 DESCRIPTION
 
 L<Slim::Buttons::AlarmClock> is a module for setting and triggering an
-alarm clock function for SlimServer..
+alarm clock function for SqueezeCenter..
 
 =cut
 
@@ -83,7 +83,7 @@ sub playlistName {
 
 =head2 init( )
 
-This method registers the alarm clock mode with Slimserver, and defines the functions for interaction
+This method registers the alarm clock mode with SqueezeCenter, and defines the functions for interaction
  while setting the alarm clock.
 
 Generally only called from L<Slim::Buttons::Common>

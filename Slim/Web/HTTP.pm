@@ -2,7 +2,7 @@ package Slim::Web::HTTP;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
@@ -418,7 +418,7 @@ sub processHTTP {
 			$response->header('Connection' => 'close');
 			$response->content_type('text/html');
 			$response->content_ref(filltemplatefile('html/errors/401.html', $params));
-			$response->www_authenticate(sprintf('Basic realm="%s"', string('SLIMSERVER')));
+			$response->www_authenticate(sprintf('Basic realm="%s"', string('SQUEEZECENTER')));
 
 			$httpClient->send_response($response);
 			closeHTTPSocket($httpClient);
@@ -540,7 +540,7 @@ sub processHTTP {
 		# CSRF: make list of params passed by HTTP client
 		my %csrfReqParams;
 
-		# XXX - unfortunately slimserver uses a query form
+		# XXX - unfortunately SqueezeCenter uses a query form
 		# that can have a key without a value, yet it's
 		# differnet from a key with an empty value. So we have
 		# to parse out like this.
@@ -859,7 +859,7 @@ sub processURL {
 	
 	# player specified from cookie
 	if ( !defined $client && $params->{'cookies'} ) {
-		if ( my $player = $params->{'cookies'}->{'SlimServer-player'} ) {
+		if ( my $player = $params->{'cookies'}->{'SqueezeCenter-player'} ) {
 			$client = Slim::Player::Client::getClient( $player->value );
 		}
 	}
@@ -934,24 +934,24 @@ sub generateHTTPResponse {
 	$params->{'noserver'} = 1   if $::noserver;
 
 	# Check for the gallery view cookie.
-	if ($params->{'cookies'}->{'SlimServer-albumView'} && 
-		$params->{'cookies'}->{'SlimServer-albumView'}->value) {
+	if ($params->{'cookies'}->{'SqueezeCenter-albumView'} && 
+		$params->{'cookies'}->{'SqueezeCenter-albumView'}->value) {
 
-		$params->{'artwork'} = $params->{'cookies'}->{'SlimServer-albumView'}->value unless defined $params->{'artwork'};
+		$params->{'artwork'} = $params->{'cookies'}->{'SqueezeCenter-albumView'}->value unless defined $params->{'artwork'};
 	}
 
 	# Check for the album order cookie.
-	if ($params->{'cookies'}->{'SlimServer-orderBy'} && 
-		$params->{'cookies'}->{'SlimServer-orderBy'}->value) {
+	if ($params->{'cookies'}->{'SqueezeCenter-orderBy'} && 
+		$params->{'cookies'}->{'SqueezeCenter-orderBy'}->value) {
 
-		$params->{'orderBy'} = $params->{'cookies'}->{'SlimServer-orderBy'}->value unless defined $params->{'orderBy'};
+		$params->{'orderBy'} = $params->{'cookies'}->{'SqueezeCenter-orderBy'}->value unless defined $params->{'orderBy'};
 	}
 
 	# Check for thumbSize cookie (for Touch, 1-by-1 artwork enlarge/shrink feature)
-	if ($params->{'cookies'}->{'SlimServer-thumbSize'} &&
-		$params->{'cookies'}->{'SlimServer-thumbSize'}->value) {
+	if ($params->{'cookies'}->{'SqueezeCenter-thumbSize'} &&
+		$params->{'cookies'}->{'SqueezeCenter-thumbSize'}->value) {
 
-			$params->{'thumbSize'} = $params->{'cookies'}->{'SlimServer-thumbSize'}->value unless defined $params->{'thumbSize'};
+			$params->{'thumbSize'} = $params->{'cookies'}->{'SqueezeCenter-thumbSize'}->value unless defined $params->{'thumbSize'};
 	}
 
 	if (Slim::Web::Graphics::serverResizesArt()) {
@@ -999,7 +999,7 @@ sub generateHTTPResponse {
 		
 		# save the player id in a cookie
 		my $cookie = CGI::Cookie->new(
-			-name    => 'SlimServer-player',
+			-name    => 'SqueezeCenter-player',
 			-value   => $params->{'player'},
 			-expires => '+1y',
 		);
@@ -1090,7 +1090,7 @@ sub generateHTTPResponse {
 		# short circuit here if it's a slim/squeezebox
 		if ($sendMetaData{$httpClient}) {
 			$response->header("icy-metaint" => METADATAINTERVAL);
-			$response->header("icy-name"    => string('WELCOME_TO_SLIMSERVER'));
+			$response->header("icy-name"    => string('WELCOME_TO_SQUEEZECENTER'));
 		}
 
 		my $headers = _stringifyHeaders($response) . $CRLF;
@@ -1650,7 +1650,7 @@ sub _stringifyHeaders {
 
 	$data .= sprintf("%s %s %s%s", $response->protocol(), $code, status_message($code) || "", $CRLF);
 
-	$data .= sprintf("Server: SlimServer (%s - %s)%s", $::VERSION, $::REVISION, $CRLF);
+	$data .= sprintf("Server: SqueezeCenter (%s - %s)%s", $::VERSION, $::REVISION, $CRLF);
 
 	$data .= $response->headers_as_string($CRLF);
 
@@ -2163,7 +2163,7 @@ sub sendStreamingResponse {
 
 			my $url = Slim::Player::Playlist::url($client);
 
-			my $title = $url ? Slim::Music::Info::getCurrentTitle($client, $url) : string('WELCOME_TO_SLIMSERVER');
+			my $title = $url ? Slim::Music::Info::getCurrentTitle($client, $url) : string('WELCOME_TO_SQUEEZECENTER');
 			$title =~ tr/'/ /;
 
 			my $metastring = "StreamTitle='" . $title . "';";
@@ -2910,7 +2910,7 @@ sub isRequestCSRFSafe {
 		return 1;
 	}
 
-	# referer test from SlimServer 5.4.0 code
+	# referer test from SqueezeCenter 5.4.0 code
 
 	if ($request->header('Referer') && defined($request->header('Referer')) && defined($request->header('Host')) ) {
 
@@ -3068,7 +3068,7 @@ sub protectName {
 	return $name;
 }
 #
-# normal SlimServer commands can be accessed with URLs like
+# normal SqueezeCenter commands can be accessed with URLs like
 #   http://localhost:9000/status.html?p0=pause&player=00%3A00%3A00%3A00%3A00%3A00
 #   http://localhost:9000/status.html?command=pause&player=00%3A00%3A00%3A00%3A00%3A00
 # Use the protectCommand() API to prevent CSRF attacks on commands -- including commands

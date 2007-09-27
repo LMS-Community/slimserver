@@ -6,7 +6,7 @@
 
   <h4>Overview</h4>
   <p>
-    The Player IR interface to the SlimServer associates human actions 
+    The Player IR interface to the SqueezeCenter associates human actions 
     (pressing a button on the remote) with functions on the server (jumping to
     the next song). There are a number of translations, or mappings between the
     human action and the server function.
@@ -31,7 +31,7 @@
   </p>
   <p>
     The mapping files, both <em>.ir</em> and <em>.map</em>, are stored in the 
-    <strong>IR</strong> subfolder of the folder where the SlimServer software was
+    <strong>IR</strong> subfolder of the folder where the SqueezeCenter software was
     installed. Included with the software are two <em>.ir</em> files:
     <em>jvc_dvd.ir</em> and <em>Slim_Devices_Remote.ir</em> which handle the codesets
     sent by the JVC DVD player (which is the codeset most commonly used by the
@@ -44,7 +44,7 @@
   <h5>Code to Button Name</h5>
   <p>
     The code to button name mapping is contained within <em>.ir</em> files located
-    in the <strong>IR</strong> subfolder of the SlimServer folder. The files
+    in the <strong>IR</strong> subfolder of the SqueezeCenter folder. The files
     consist of lines with the button name followed by an equals sign (<strong>=</strong>)
     followed by the IR code in hex (no 0x necessary). Everything after a <strong>#</strong>
     is considered a comment. Leading and trailing whitespace is ignored, as is whitespace
@@ -82,7 +82,7 @@ B# = 0000f7c6        #BAD! # also not allowed in button names
   <h5>Button Name to Function</h5>
   <p>
     The button name to function mapping is contained within <em>.map</em> files
-    located in the <strong>IR</strong> subfolder of the SlimServer folder.
+    located in the <strong>IR</strong> subfolder of the SqueezeCenter folder.
     The files consist of lines with the button name followed by an equals sign
     (<strong>=</strong>) followed by the function. Everything after a
     <strong>#</strong> is considered a comment. Leading and trailing whitespace

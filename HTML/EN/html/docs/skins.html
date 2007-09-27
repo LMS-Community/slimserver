@@ -7,9 +7,9 @@
 
   <h4>Overview</h4>
   <p>
-    The web interface to the SlimServer makes use of customizable html
+    The web interface to the SqueezeCenter makes use of customizable html
     templates collected together into a skin.  These skins reside in the
-    <strong>html</strong> subfolder of the folder where the SlimServer software was
+    <strong>html</strong> subfolder of the folder where the SqueezeCenter software was
     installed.  The skin subfolders are presented for selection in the
     additional server settings setup page based on the name of the skin
     subfolder.  The default skin is in the <strong>EN</strong> subfolder.  Each
@@ -19,7 +19,7 @@
   </p>
   <p>
     When a page not in the <strong>html</strong> subfolder of either your skin
-    or the default skin is requested, the SlimServer builds the page
+    or the default skin is requested, the SqueezeCenter builds the page
     dynamically based on the templates within the skin subfolder.  This building
     is accomplished by gathering information relevant to the requested page in a
     perl subroutine, then using that information to complete the template.
@@ -27,7 +27,7 @@
   <hr />
   <h4>Directory Structure</h4>
     
-<em>SlimServer</em> 
+<em>SqueezeCenter</em> 
 <ul>
   <li>html</li>
   <ul>
@@ -57,7 +57,7 @@
     <a href="#template-depend">Template Dependencies</a> section of this document.
   </p>
   <p>
-    SlimServer uses the freely available 
+    SqueezeCenter uses the freely available 
     <a href="http://www.template-toolkit.org/">Template Toolkit</a> version 2.13
     for its templates.  <a href="http://www.template-toolkit.org/docs/plain/index.html">
     Full documentation</a> is available at the linked web site.  Some of the simpler
@@ -149,16 +149,16 @@
   <h4><a id="template-plugin">Template Plugins</a></h4>
   <p>
     Template Toolkit supports the use of plugins to add functionality.  These
-    are different from SlimServer plugins.  There are currently no SlimServer
+    are different from SqueezeCenter plugins.  There are currently no SqueezeCenter
     specific plugins implemented.  The standard Template Toolkit plugins are
     available, except for those that require the use of other CPAN modules
-    that have not already been included with SlimServer.
+    that have not already been included with SqueezeCenter.
   </p>
 <hr />
   <h4><a id="template-filter">Template Filters</a></h4>
   <p>
     Template Toolkit makes use of perl functions called filters to perform processing
-    of text.  SlimServer includes all the standard Template Toolkit filters, plus
+    of text.  SqueezeCenter includes all the standard Template Toolkit filters, plus
     some additional ones described here.
   </p>
   <dl>
@@ -276,7 +276,7 @@
   end scratch area -->
 <hr />  <h4>Non-Template Requestable Items</h4>
   <p>
-    Certain requests made to the SlimServer HTTP server are fulfilled outside
+    Certain requests made to the SqueezeCenter HTTP server are fulfilled outside
     of the template mechanism.  Some items are generated dynamically,
     while others are served up as the file exists on the server.  The
     static item requests are satisfied by following the mechanism of
@@ -491,8 +491,8 @@
   <h4><a id="template-var">Template Variables</a></h4>
   <p>
     There are three types of variable available. The first are Template Toolkit
-    provided, the second are provided to all pages by SlimServer, and the third are
-    provided to specific pages by SlimServer.
+    provided, the second are provided to all pages by SqueezeCenter, and the third are
+    provided to specific pages by SqueezeCenter.
   </p>
   <h5>Template Toolkit variables</h5>
   <dl>
@@ -534,7 +534,7 @@
     <dt>content</dt>
     <dd>Used in wrapper templates to refer to the wrapped content</dd>
   </dl>
-  <h5>SlimServer General Variables</h5>
+  <h5>SqueezeCenter General Variables</h5>
   <dl>
     <dt>Content-Type<dt>
     <dd>The content type of the requested page, will usually be text/html.</dd>
@@ -558,7 +558,7 @@
     <dd>
       Portion of the path used to determine the virtual root. This includes the skin
       name when a skin other than the &quot;skin&quot; server preference is requested.
-      SlimServer also allows a pseudo-root of /slimserver/ to be used, which also ends
+      SqueezeCenter also allows a pseudo-root of /slimserver/ to be used, which also ends
       up in <var>webroot</var>. When creating absolute URLs <var>webroot</var> should be
       used as the root rather than simply using &quot;/&quot;.
     </dd>
@@ -621,7 +621,7 @@
             </dd>
             <dt>newVersion</dt>
             <dd>
-              Indicates the latest version of SlimServer. Not defined if the
+              Indicates the latest version of SqueezeCenter. Not defined if the
               <var>checkVersion</var> server parameter is false.
             </dd>
             <dt>nofolder</dt>
@@ -650,7 +650,7 @@
           <dl>
             <dt>forget</dt>
             <dd>
-              If this parameter is set in the HTTP request, SlimServer will delete
+              If this parameter is set in the HTTP request, SqueezeCenter will delete
               all information about the client refered to by the <var>player</var>
               parameter.
             </dd>

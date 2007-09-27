@@ -2,7 +2,7 @@ package Slim::Buttons::BrowseTree;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -13,7 +13,7 @@ Slim::Buttons::BrowseTree
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::BrowseTree> is a SlimServer module for browsing through a
+L<Slim::Buttons::BrowseTree> is a SqueezeCenter module for browsing through a
 folder structure and displaying information about music files on a Slim
 Devices Player display.
 
@@ -39,7 +39,7 @@ our $mixer;
 
 =head2 init( )
 
-When a music folder preference exists for Slimserver, init will create a menu item for Browse Music Folder and register the required mode
+When a music folder preference exists for SqueezeCenter, init will create a menu item for Browse Music Folder and register the required mode
 init() also creates the function hash for the required button handling whiel in 'browsetree' mode.
 
 =cut

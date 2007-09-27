@@ -408,7 +408,7 @@ sub _verifyPort {
 		return $url;
 	}
 	
-	# If Rhapsody is running on the same PC as SlimServer, UPnP may report in as 127.0.0.1
+	# If Rhapsody is running on the same PC as SqueezeCenter, UPnP may report in as 127.0.0.1
 	# but we need the real IP address for SBs to connect to
 	if ( $host =~ /(?:127.0.0.1|localhost)/ ) {
 		my $realIP = Slim::Utils::IPDetect::IP();

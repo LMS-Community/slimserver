@@ -5,7 +5,7 @@
 <p>Grazie per avere acquistato il lettore musicale di rete Slim Devices/Logitech.</p>
 <p>Questa guida introduttiva contiene istruzioni per la configurazione e descrive le operazioni di base eseguibili con il lettore.</p>
 <p>&Egrave; possibile consultare ulteriori informazioni sulle funzioni pi&ugrave; recenti e la documentazione dettagliata per gli sviluppatori sul sito Web <a href="http://www.slimdevices.com/">http://www.slimdevices.com/</a>.</p>
-<p>Il software SlimServer &egrave; stato realizzato da pi&ugrave; sviluppatori situati in varie parti del mondo che collaborano attraverso un forum aperto. Rivolgiamo i nostri pi&ugrave; sentiti ringraziamenti alla nostra community, i cui contributi consentono di migliorare continuamente il prodotto.</p>
+<p>Il software SqueezeCenter &egrave; stato realizzato da pi&ugrave; sviluppatori situati in varie parti del mondo che collaborano attraverso un forum aperto. Rivolgiamo i nostri pi&ugrave; sentiti ringraziamenti alla nostra community, i cui contributi consentono di migliorare continuamente il prodotto.</p>
 <p>Per assistenza nell'installazione del lettore, visitare il sito nostro Web o contattarci all'indirizzo di posta elettronica <a href="mailto:support@slimdevices.com">support@slimdevices.com</a>.</p>
 <p>Ci auguriamo che il prodotto sia di vostro gradimento. Se Squeezebox e Transporter incontrano la vostra approvazione, fateli conoscere agli amici.</p>
 <h4>Connessione al lettore</h4>
@@ -35,10 +35,10 @@
 <p>Suggerimento: utilizzare zeri iniziali per specificare gruppi di numeri con meno di tre cifre. Ad esempio, per 10.1.4.231 immettere 010.001.004.231. Immettere la subnet mask di rete, l'indirizzo IP del gateway predefinito e l'indirizzo del server DNS premendo il pulsante DESTRA al termine di ciascuna immissione per passare a quella successiva. 
 </ol>
 
-<h4>Connessione a SlimServer</h4>
+<h4>Connessione a SqueezeCenter</h4>
 <ol>
-<li>Se SlimServer non &egrave; gi&agrave; in esecuzione, avviarlo. Viene eseguita la scansione della rete locale per individuare il computer in cui &egrave; in esecuzione SlimServer. Se SlimServer &egrave; stato avviato dopo avere iniziato la configurazione, potrebbe essere necessario scorrere fra le opzioni disponibili per individuare il computer. 
-<li>Selezionare il computer che si desidera utilizzare. Se SlimServer &egrave; in esecuzione in pi&ugrave; computer della rete locale, &egrave; possibile utilizzare il pulsante GI&Ugrave; per selezionare il computer desiderato.
+<li>Se SqueezeCenter non &egrave; gi&agrave; in esecuzione, avviarlo. Viene eseguita la scansione della rete locale per individuare il computer in cui &egrave; in esecuzione SqueezeCenter. Se SqueezeCenter &egrave; stato avviato dopo avere iniziato la configurazione, potrebbe essere necessario scorrere fra le opzioni disponibili per individuare il computer. 
+<li>Selezionare il computer che si desidera utilizzare. Se SqueezeCenter &egrave; in esecuzione in pi&ugrave; computer della rete locale, &egrave; possibile utilizzare il pulsante GI&Ugrave; per selezionare il computer desiderato.
 <li>Premere il pulsante DESTRA sul telecomando per attivare la connessione.
 </ol>
 

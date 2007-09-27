@@ -2,7 +2,7 @@ package Slim::Buttons::SqueezeNetwork;
 
 # This code is derived from code with the following copyright message:
 #
-# SlimServer Copyright (C) 2006 Logitech.
+# SqueezeCenter Copyright (C) 2006 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -14,7 +14,7 @@ Slim::Buttons::SqueezeNetwork
 =head1 DESCRIPTION
 
 L<Slim::Buttons:SqueezeNetwork> is simple module to offer a UI
-for breaking a player's connection with SlimServer in order to reconnect 
+for breaking a player's connection with SqueezeCenter in order to reconnect 
 to SqueezeNetwork.
 
 =cut

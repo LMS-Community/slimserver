@@ -15,7 +15,7 @@
 	<type>2</type><!-- type=extension -->
 
 	<targetApplication>
-		<id>SlimServer</id>
+		<id>SqueezeCenter</id>
 		<minVersion>7.0a</minVersion>
 		<maxVersion>7.0+</maxVersion>
 	</targetApplication>

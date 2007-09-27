@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# SlimServer Copyright (C) 2001-2007 Logitech.
+# SqueezeCenter Copyright (C) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -145,7 +145,7 @@ sub main {
 
 	#checkDataSource();
 
-	$log->info("SlimServer done init...\n");
+	$log->info("SqueezeCenter done init...\n");
 
 	# Take the db out of autocommit mode - this makes for a much faster scan.
 	Slim::Schema->storage->dbh->{'AutoCommit'} = 0;
@@ -231,27 +231,27 @@ sub main {
 sub initializeFrameworks {
 	my $log = shift;
 
-	$log->info("SlimServer OSDetect init...");
+	$log->info("SqueezeCenter OSDetect init...");
 
 	Slim::Utils::OSDetect::init();
 
-	$log->info("SlimServer OS Specific init...");
+	$log->info("SqueezeCenter OS Specific init...");
 
-	# initialize slimserver subsystems
-	$log->info("SlimServer settings init...");
+	# initialize SqueezeCenter subsystems
+	$log->info("SqueezeCenter settings init...");
 
 	Slim::Utils::Prefs::init();
 
 	Slim::Utils::Prefs::makeCacheDir();	
 
-	$log->info("SlimServer strings init...");
+	$log->info("SqueezeCenter strings init...");
 
 	Slim::Utils::Strings::init(catdir($Bin,'strings.txt'), "EN");
 
-	# $log->info("SlimServer MySQL init...");
+	# $log->info("SqueezeCenter MySQL init...");
 	# Slim::Utils::MySQLHelper->init();
 
-	$log->info("SlimServer Info init...");
+	$log->info("SqueezeCenter Info init...");
 
 	Slim::Music::Info::init();
 }

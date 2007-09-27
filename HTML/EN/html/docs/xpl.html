@@ -1,11 +1,11 @@
 [% pageicon = 'help' %]
-[% pagetitle = 'SlimServer xPL Support' %]
+[% pagetitle = 'SqueezeCenter xPL Support' %]
 [% techinfo = '1' %]
 [% lefttoright = '1' %]
 [% PROCESS helpheader.html %]
 
 <h4>Introduction</h4>
-<p>The SlimServer software includes native support for the xPL home automation protocol.
+<p>The SqueezeCenter software includes native support for the xPL home automation protocol.
 xPL is an open standard, intended to permit the control and monitoring of devices throughout the home.
 The purpose of xPL is to provide an efficient, unified 
 mechanism for devices to communicate with each other, and with an intelligent house manager.
@@ -26,12 +26,12 @@ can be found on the <a href="http://www.xplproject.org.uk/" target="_blank">Offi
 is recommended reading for anyone who is interested in using the xPL protocol to greatest advantage.
 </p>
 
-<h4>Enabling xPL Support in SlimServer</h4>
+<h4>Enabling xPL Support in SqueezeCenter</h4>
 <p>To enable xPL support, go to Server Settings -&gt; Additional Server Settings -&gt; Network.<br>
 Scroll to the xPL section, and set xPL support to Enabled.<br>
-Click Change, then restart your SlimServer software.
+Click Change, then restart your SqueezeCenter software.
 </p>
-<p>Once enabled, each player that is connected to SlimServer (including software players) will generate an xPL heartbeat message, 
+<p>Once enabled, each player that is connected to SqueezeCenter (including software players) will generate an xPL heartbeat message, 
 alerting other nodes on the network of it's presence.
 </p>
 
@@ -41,25 +41,25 @@ on the local machine. There are many different hub implementations available for
 including Windows and Linux. See the xPL Project Site for a complete list.
 </p>
 
-<h4>Controlling SlimServer via xPL</h4>
-<p>You can control SlimServer by sending xPL messages, either to all devices, or targetted at a particular player.
+<h4>Controlling SqueezeCenter via xPL</h4>
+<p>You can control SqueezeCenter by sending xPL messages, either to all devices, or targetted at a particular player.
 There are a number of ways of sending an xPL message - see the xPL Project Site for a list of
 applications that support xPL, and for a variety of command-line tools.
 </p>
-<p>SlimServer can be controlled using four different types of xPL message.</p>
+<p>SqueezeCenter can be controlled using four different types of xPL message.</p>
 <p><a href="http://www.xplproject.org.uk/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=6&page=1" target="_blank">
-audio.basic</a> messages can be used to provide basic control of SlimServer. This includes functions common to all audio players, such as play, stop, volume etc.</p>
+audio.basic</a> messages can be used to provide basic control of SqueezeCenter. This includes functions common to all audio players, such as play, stop, volume etc.</p>
 <p><a href="http://www.xplproject.org.uk/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=32&page=1" target="_blank">
-audio.slimserv</a> messages are used to harness the more advanced features of SlimServer, performing any of the commands that can be performed
+audio.slimserv</a> messages are used to harness the more advanced features of SqueezeCenter, performing any of the commands that can be performed
 via the command-line interface.</p>
 <p><a href="http://www.xplproject.org.uk/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=13&page=1" target="_blank">
-remote.basic</a> messages are used to control SlimServer by simulating button presses on a remote control,
+remote.basic</a> messages are used to control SqueezeCenter by simulating button presses on a remote control,
 in a similar way to the &quot;button&quot; command in the command-line interface.</p>
 <p><a href="http://www.xplproject.org.uk/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=8&page=1" target="_blank">
 osd.basic</a> messages are used to display text on a players screen.</p>
 
-<h4>SlimServer Status Messages</h4>
-<p>Each player that is connected to SlimServer will send out a heartbeat message as soon as it connects,
+<h4>SqueezeCenter Status Messages</h4>
+<p>Each player that is connected to SqueezeCenter will send out a heartbeat message as soon as it connects,
 and at intervals of between 5 and 30 minutes thereafter. The heartbeat message includes
 information about the player, such as the player's mode (playing, paused or stopped),
 the name of the song that is currently playing, and the text that is

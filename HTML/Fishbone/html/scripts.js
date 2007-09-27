@@ -20,7 +20,7 @@ function loadBrowser(force) {
 
 function changePlayer(player_List) {
 	player = player_List.options[player_List.selectedIndex].value;
-	//setCookie('SlimServer-player', player);
+	//setCookie('SqueezeCenter-player', player);
 	player = escape(player);
 	
 	var newPlayer = "=" + player;
@@ -45,7 +45,7 @@ function changePlayer(player_List) {
 		parent.browser.location=browseURL.replace(playerExp, newPlayer);
 	}
 
-	//var myString = getHomeCookie('SlimServer-Browserpage');
+	//var myString = getHomeCookie('SqueezeCenter-Browserpage');
 	//if (rExp.exec(myString)) newpage = "&page=" + rExp.exec(myString)[1];
 
 	//headerURL = new String(parent.header.location.href);
@@ -143,7 +143,7 @@ function getHomeCookie(Name)
 }
 
 function getPage() {
-	var url = getHomeCookie('SlimServer-Browserpage');
+	var url = getHomeCookie('SqueezeCenter-Browserpage');
 
 	if (!url) { 
 		return "BROWSE_BY_ALBUM"; 
@@ -203,16 +203,16 @@ function toggleText(set) {
 		if (thisdiv.className == 'artworkText') {
 
 			if ((set != 1 && thisdiv.style.display ==  '') || (thisdiv.style.display == 'none') 
-					|| (set == 1 && getCookie('SlimServer-fishbone-showtext') == 1)) {
+					|| (set == 1 && getCookie('SqueezeCenter-fishbone-showtext') == 1)) {
 				
 				thisdiv.style.display = 'inline';
-				setCookie('SlimServer-fishbone-showtext',1);
+				setCookie('SqueezeCenter-fishbone-showtext',1);
 				$('showText').style.display = 'none';
 				$('hideText').style.display = 'inline';
 
 			} else {
 				thisdiv.style.display = 'none';
-				setCookie('SlimServer-fishbone-showtext',0);
+				setCookie('SqueezeCenter-fishbone-showtext',0);
 				$('hideText').style.display = 'none';
 				$('showText').style.display = 'inline';
 			}
@@ -226,7 +226,7 @@ function showSongInfo (args) {
 	var item = args[1];
 	var player = args[2];
 	
-	parent.browser.location = webroot + 'songinfo.html?item='+ item +'&player=' + getPlayer('SlimServer-player');
+	parent.browser.location = webroot + 'songinfo.html?item='+ item +'&player=' + getPlayer('SqueezeCenter-player');
 }
 
 var dcTime=250;    // doubleclick time
@@ -291,5 +291,5 @@ function doDoubleClick(which, action, args) {
 
 function doSearch(value) {
 	selectLink();
-	parent.browser.location='search.html?manualSearch=1&query=' + value + '&player' + getPlayer('SlimServer-player');
+	parent.browser.location='search.html?manualSearch=1&query=' + value + '&player' + getPlayer('SqueezeCenter-player');
 }

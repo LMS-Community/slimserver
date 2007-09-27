@@ -103,14 +103,14 @@
 			
 					if (option) {
 						if (cookie) {
-							setCookie("SlimServer-Browserpage",option);
-							//parent.header.location =  "home.html?player' + getPlayer('SlimServer-player');
+							setCookie("SqueezeCenter-Browserpage",option);
+							//parent.header.location =  "home.html?player' + getPlayer('SqueezeCenter-player');
 						}
 						
-						parent.browser.location = url + '?player' + getPlayer('SlimServer-player');
+						parent.browser.location = url + '?player' + getPlayer('SqueezeCenter-player');
 					} else {
-						setCookie("SlimServer-Browserpage","BROWSE_BY_ALBUM");
-						parent.browser.location = url + '?player' + getPlayer('SlimServer-player');
+						setCookie("SqueezeCenter-Browserpage","BROWSE_BY_ALBUM");
+						parent.browser.location = url + '?player' + getPlayer('SqueezeCenter-player');
 					}
 					
 					if (value != null) {

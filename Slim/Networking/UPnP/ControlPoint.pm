@@ -1,6 +1,6 @@
 package Slim::Networking::UPnP::ControlPoint;
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -80,7 +80,7 @@ MX: $mx
 	$sock->set( args => $args );
 	
 	# This socket will continue to live and receive events as
-	# long as SlimServer is running
+	# long as SqueezeCenter is running
 	Slim::Networking::Select::addRead( $sock, \&_readResult );
 	
 	# send the search query

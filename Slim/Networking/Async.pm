@@ -2,13 +2,13 @@ package Slim::Networking::Async;
 
 # $Id$
 
-# SlimServer Copyright (c) 2003-2006 Logitech.
+# SqueezeCenter Copyright (c) 2003-2006 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.
 
 # This is a base class for all asynchronous network operations performed
-# by SlimServer.
+# by SqueezeCenter.
 
 use strict;
 use warnings;

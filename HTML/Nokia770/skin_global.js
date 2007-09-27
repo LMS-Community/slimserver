@@ -12,7 +12,7 @@ function chooseAlbumOrderBy(value, option, artwork)
         if (option) {
                 url = url + '&orderBy=' + option;
         }
-        setCookie( 'SlimServer-orderBy', option );
+        setCookie( 'SqueezeCenter-orderBy', option );
         window.location = url;
 }
 
@@ -87,7 +87,7 @@ function toggleGalleryView(artwork) {
 	if (thisdoc.location.pathname != '') {
 		myString = new String(thisdoc.location.href);
 		if (artwork) {
-			setCookie( 'SlimServer-albumView', "1" );
+			setCookie( 'SqueezeCenter-albumView', "1" );
 			if (thisdoc.location.href.indexOf('start') == -1) {
 				thisdoc.location=thisdoc.location.href+"&artwork=1";
 			} else {
@@ -96,7 +96,7 @@ function toggleGalleryView(artwork) {
 				thisdoc.location=myString.replace(rExp, "&artwork=1&start=");
 			}
 		} else {
-			setCookie( 'SlimServer-albumView', "" );
+			setCookie( 'SqueezeCenter-albumView', "" );
 			var rExp = /\&artwork=1/gi;
 			thisdoc.location=myString.replace(rExp, "");
 		}

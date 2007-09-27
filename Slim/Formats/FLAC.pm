@@ -2,7 +2,7 @@ package Slim::Formats::FLAC;
 
 # $tagsd: FLAC.pm,v 1.5 2003/12/15 17:57:50 daniel Exp $
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -365,7 +365,7 @@ sub _getXMLTags {
 	# retrieve the xml content from the flac
 	my $xml = $flac->application($PEEM) || return 0;
 
-	# TODO: parse this using the same xml modules slimserver uses to parse iTunes
+	# TODO: parse this using the same xml modules SqueezeCenter uses to parse iTunes
 	# even better, use RDF::Simple::Parser
 
 	# grab the cuesheet and figure out which track is current

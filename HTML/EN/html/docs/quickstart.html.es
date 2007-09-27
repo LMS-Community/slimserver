@@ -5,7 +5,7 @@
 <p>Gracias por adquirir un reproductor de m&uacute;sica en red Slim Devices/Logitech.</p>
 <p>Esta gu&iacute;a de inicio r&aacute;pido incluye instrucciones de instalaci&oacute;n y funcionamiento b&aacute;sico del reproductor.</p>
 <p>Puede encontrar informaci&oacute;n adicional sobre las funciones m&aacute;s recientes, as&iacute; como documentaci&oacute;n detallada para programadores, en nuestro sitio Web: <a href="http://www.slimdevices.com/">http://www.slimdevices.com/</a>.</p>
-<p>El software de SlimServer es obra de varios programadores de software en todo el mundo que colaboran en un foro abierto. Agradecemos sinceramente a nuestra comunidad, con cuya contribuci&oacute;n contin&uacute;a mejorando este gran producto.</p>
+<p>El software de SqueezeCenter es obra de varios programadores de software en todo el mundo que colaboran en un foro abierto. Agradecemos sinceramente a nuestra comunidad, con cuya contribuci&oacute;n contin&uacute;a mejorando este gran producto.</p>
 <p>Si necesita ayuda para instalar el reproductor, visite nuestro sitio Web o env&iacute;enos un mensaje de correo electr&oacute;nico a <a href="mailto:support@slimdevices.com">support@slimdevices.com</a>.</p>
 <p>Esperamos que disfrute de nuestro producto. Si lo desea, comente a sus amistades sobre Squeezebox y Transporter.</p>
 <h4>Conectar el reproductor</h4>
@@ -35,10 +35,10 @@
 <p>Sugerencia: use ceros a la izquierda para especificar n&uacute;meros con menos de tres d&iacute;gitos, por ejemplo, 010.001.004.231 para 10.1.4.231. Introduzca la m&aacute;scara de subred para la red, la direcci&oacute;n IP de puerta de enlace predeterminada, as&iacute; como la direcci&oacute;n del servidor DNS, pulsando la flecha DERECHA del mando a distancia para desplazarse a cada una de ellas. 
 </ol>
 
-<h4>Conexi&oacute;n a SlimServer</h4>
+<h4>Conexi&oacute;n a SqueezeCenter</h4>
 <ol>
-<li>Si SlimServer no est&aacute; en ejecuci&oacute;n, in&iacute;cielo. El reproductor analizar&aacute; la red local para buscar el ordenador que ejecuta SlimServer. Si inici&oacute; SlimServer tras iniciar la configuraci&oacute;n, quiz&aacute;s deba desplazarse hasta encontrarlo. 
-<li>Seleccione el ordenador que desee utilizar. Si ejecuta SlimServer en varios ordenadores en la red local, puede usar la flecha ABAJO para desplazarse hasta el que desee utilizar.
+<li>Si SqueezeCenter no est&aacute; en ejecuci&oacute;n, in&iacute;cielo. El reproductor analizar&aacute; la red local para buscar el ordenador que ejecuta SqueezeCenter. Si inici&oacute; SqueezeCenter tras iniciar la configuraci&oacute;n, quiz&aacute;s deba desplazarse hasta encontrarlo. 
+<li>Seleccione el ordenador que desee utilizar. Si ejecuta SqueezeCenter en varios ordenadores en la red local, puede usar la flecha ABAJO para desplazarse hasta el que desee utilizar.
 <li>Pulse la flecha DERECHA del mando a distancia para la conexi&oacute;n.
 </ol>
 

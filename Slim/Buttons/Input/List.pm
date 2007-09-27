@@ -2,7 +2,7 @@ package Slim::Buttons::Input::List;
 
 # $Id$
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -38,7 +38,7 @@ Slim::Buttons::Input::List
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::Input::List> is a reusable SlimServer module, creating a 
+L<Slim::Buttons::Input::List> is a reusable SqueezeCenter module, creating a 
 generic framework UI for navigating through a List of items, with configurable
 display parameters and entry/leave points.
 

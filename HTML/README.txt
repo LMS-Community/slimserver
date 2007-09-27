@@ -1,4 +1,4 @@
-These are HTML 'skins' for SlimServer. 
+These are HTML 'skins' for SqueezeCenter. 
 
 They are written using Template Toolkit - http://www.template-toolkit.org/
 
@@ -10,7 +10,7 @@ Bagpuss:
 
 Classic:
 	Owner: SlimDevices
-	Description: This is the previous Official skin for SlimServer
+	Description: This is the previous Official skin for SqueezeCenter
 
 Dark:
 	Owner: N/A
@@ -18,7 +18,7 @@ Dark:
 
 Default:
 	Owner: SlimDevices
-	Description: This is the Official skin for SlimServer
+	Description: This is the Official skin for SqueezeCenter
 
 EN:
 	Owner: SlimDevices

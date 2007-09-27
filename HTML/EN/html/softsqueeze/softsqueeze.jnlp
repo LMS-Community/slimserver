@@ -2,7 +2,7 @@
 
 <!-- JNLP File for Softsqueeze -->
 
-<!--        ** This file is configured for the slimserver ** 			-->
+<!--        ** This file is configured for the SqueezeCenter ** 			-->
 
 <!-- To use this jnlp file from another webserver or your local file    -->
 <!-- system you must edit the 'codebase' and 'slimserver' attributes.	-->
@@ -24,7 +24,7 @@
     <offline-allowed />
     <shortcut online="false">
 	<desktop />
-	<menu submenu="SlimServer" />
+	<menu submenu="SqueezeCenter" />
     </shortcut>
   </information>
   <offline-allowed/>

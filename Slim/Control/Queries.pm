@@ -2,7 +2,7 @@ package Slim::Control::Queries;
 
 # $Id:  $
 #
-# SlimServer Copyright (c) 2001-2006  Logitech.
+# SqueezeCenter Copyright (c) 2001-2006  Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -20,7 +20,7 @@ Slim::Control::Queries
 
 =head1 DESCRIPTION
 
-L<Slim::Control::Queries> implements most SlimServer queries and is designed to 
+L<Slim::Control::Queries> implements most SqueezeCenter queries and is designed to 
  be exclusively called through Request.pm and the mechanisms it defines.
 
  Except for subscribe-able queries (such as status and serverstatus), there are no

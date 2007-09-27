@@ -1,6 +1,6 @@
 package Slim::Buttons::BrowseUPnPMediaServer;
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright (c) 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
@@ -11,7 +11,7 @@ Slim::Buttons::BrowseUPnPMediaServer
 
 =head1 DESCRIPTION
 
-L<Slim::Buttons::BrowseUPnPMediaServer> is a SlimServer module for 
+L<Slim::Buttons::BrowseUPnPMediaServer> is a SqueezeCenter module for 
 browsing services provided by UPnP servers
 
 =cut

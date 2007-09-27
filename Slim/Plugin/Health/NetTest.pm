@@ -1,4 +1,4 @@
-# Plugin for Slimserver to monitor Server and Network Health
+# Plugin for SqueezeCenter to monitor Server and Network Health
 #
 # Network Throughput Tests for Health Plugin
 # Operated via Health web page or player user interface
@@ -7,7 +7,7 @@
 
 # This code is derived from code with the following copyright message:
 #
-# SlimServer Copyright (C) 2005 Logitech.
+# SqueezeCenter Copyright (C) 2005 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.
