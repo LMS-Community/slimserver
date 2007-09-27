@@ -21,8 +21,7 @@ use strict;
 use bytes;
 use Digest::SHA1 qw(sha1_hex);
 use HTTP::Date;
-use JSON;
-use JSON::XS qw(from_json);
+use JSON::XS qw(to_json from_json);
 use Scalar::Util qw(blessed);
 use URI::Escape qw(uri_unescape);
 
@@ -36,6 +35,9 @@ use Slim::Utils::Timers;
 my $log = logger('network.cometd');
 
 my $manager = Slim::Web::Cometd::Manager->new;
+
+# requests that we need to unsubscribe from
+my %toUnsubscribe = ();
 
 use constant PROTOCOL_VERSION => '1.0';
 use constant RETRY_DELAY      => 5000;
@@ -91,7 +93,7 @@ sub handler {
 		sendResponse( 
 			$httpClient,
 			$httpResponse,
-			[ { successful => JSON::False, error => 'no bayeux message found' } ]
+			[ { successful => JSON::XS::false, error => 'no bayeux message found' } ]
 		);
 		return;
 	}
@@ -101,16 +103,20 @@ sub handler {
 		sendResponse( 
 			$httpClient,
 			$httpResponse,
-			[ { successful => JSON::False, error => "$@" } ]
+			[ { successful => JSON::XS::false, error => "$@" } ]
 		);
 		return;
 	}
 	
 	if ( ref $objs ne 'ARRAY' ) {
+		if ( $log->is_warn ) {
+			$log->warn( 'Got Cometd request that is not an array: ' . Data::Dump::dump($objs) );
+		}
+		
 		sendResponse( 
 			$httpClient,
 			$httpResponse,
-			[ { successful => JSON::False, error => 'bayeux message not an array' } ]
+			[ { successful => JSON::XS::false, error => 'bayeux message not an array' } ]
 		);
 		return;
 	}
@@ -128,22 +134,22 @@ sub handler {
 			sendResponse( 
 				$httpClient,
 				$httpResponse,
-				[ { successful => JSON::False, error => 'bayeux event not a hash' } ]
+				[ { successful => JSON::XS::false, error => 'bayeux event not a hash' } ]
 			);
 			return;
 		}
 		
 		if ( !$clid ) {
-			# specified clientId and authToken
+			# specified clientId
 			if ( $obj->{clientId} ) {
 				$clid = $obj->{clientId};
 			}
 			elsif ( $obj->{channel} eq '/meta/handshake' ) {
 				$clid = new_uuid();
-				$manager->register_clid( $clid );
+				$manager->add_client( $clid );
 			}
 			else {
-				push @errors, [ $obj->{channel}, 'clientId not supplied' ];
+				# No clientId, this is OK for sending unconnected requests
 			}
 			
 			# Register client with HTTP connection
@@ -161,9 +167,9 @@ sub handler {
 				version					 => PROTOCOL_VERSION,
 				supportedConnectionTypes => [ 'long-polling', 'streaming' ],
 				clientId				 => $clid,
-				successful				 => JSON::True,
+				successful				 => JSON::XS::true,
 				advice					 => {
-					reconnect => 'retry',     # one of "none", "retry", "handshake", "recover"
+					reconnect => 'retry',     # one of "none", "retry", "handshake"
 					interval  => RETRY_DELAY, # retry delay in ms
 				},
 			};			
@@ -176,7 +182,7 @@ sub handler {
 				push @{$events}, {
 					channel    => '/meta/connect',
 					clientId   => undef,
-					successful => JSON::False,
+					successful => JSON::XS::false,
 					timestamp  => time2str( time() ),
 					error      => 'invalid clientId',
 					advice     => {
@@ -191,44 +197,40 @@ sub handler {
 				push @{$events}, {
 					channel    => '/meta/connect',
 					clientId   => $clid,
-					successful => JSON::True,
+					successful => JSON::XS::true,
 					timestamp  => time2str( time() ),
 				};
-			
+				
 				# Add any additional pending events
 				push @{$events}, ( $manager->get_pending_events( $clid ) );
-			
+				
 				if ( $obj->{connectionType} eq 'streaming' ) {
 					# Streaming connections use chunked transfer encoding
 					$httpResponse->header( 'Transfer-Encoding' => 'chunked' );
 				
 					# Tell HTTP client our transport
 					$httpClient->transport( 'streaming' );
-				
-					# Tell the manager about the streaming connection
-					$manager->register_streaming_connection(
-						$clid, $httpClient, $httpResponse
-					);
+					
+					# register this connection with the manager
+					$manager->register_connection( $clid, $httpClient, $httpResponse );
 				}
 				else {
 					$httpClient->transport( 'polling' );
-				
-					# XXX: todo
 				}
 			}
 		}
 		elsif ( $obj->{channel} eq '/meta/reconnect' ) {
 			
 			if ( !$manager->is_valid_clid( $clid ) ) {
-				# Invalid clientId, send advice to recover
+				# Invalid clientId, send advice to re-handshake
 				
 				push @{$events}, {
 					channel    => '/meta/reconnect',
-					successful => JSON::False,
+					successful => JSON::XS::false,
 					timestamp  => time2str( time() ),
 					error      => 'invalid clientId',
 					advice     => {
-						reconnect => 'recover',
+						reconnect => 'handshake',
 						interval  => 0,
 					}
 				};
@@ -240,15 +242,15 @@ sub handler {
 				
 				push @{$events}, {
 					channel    => '/meta/reconnect',
-					successful => JSON::True,
+					successful => JSON::XS::true,
 					timestamp  => time2str( time() ),
 				};
 				
-				# Add any additional pending events
-				push @{$events}, ( $manager->get_pending_events( $clid ) );
-			
 				# Remove disconnect timer
 				Slim::Utils::Timers::killTimers( $clid, \&disconnectClient );
+				
+				# Add any additional pending events
+				push @{$events}, ( $manager->get_pending_events( $clid ) );
 				
 				if ( $obj->{connectionType} eq 'streaming' ) {
 					# Streaming connections use chunked transfer encoding
@@ -256,16 +258,12 @@ sub handler {
 				
 					# Tell HTTP client our transport
 					$httpClient->transport( 'streaming' );
-				
-					# Tell the manager about the streaming connection
-					$manager->register_streaming_connection(
-						$clid, $httpClient, $httpResponse
-					);
+					
+					# Tell the manager about the new connection
+					$manager->register_connection( $clid, $httpClient, $httpResponse );
 				}
 				else {
 					$httpClient->transport( 'polling' );
-				
-					# XXX: todo
 				}
 			}	
 		}
@@ -277,7 +275,7 @@ sub handler {
 				push @{$events}, {
 					channel    => '/meta/disconnect',
 					clientId   => undef,
-					successful => JSON::False,
+					successful => JSON::XS::false,
 					error      => 'invalid clientId',
 				};
 			}
@@ -287,7 +285,7 @@ sub handler {
 				push @{$events}, {
 					channel    => '/meta/disconnect',
 					clientId   => $clid,
-					successful => JSON::True,
+					successful => JSON::XS::true,
 					timestamp  => time2str( time() ),
 				};
 				
@@ -299,93 +297,191 @@ sub handler {
 		}
 		elsif ( $obj->{channel} eq '/meta/subscribe' ) {
 			
-			# We expect all our subscribe events to contain 'ext'
-			# values that correspond to requests
-			my $request      = $obj->{ext}->{'slim.request'};
-			my $subscription = $obj->{subscription};
-			
-			if ( $request && $subscription ) {
-				my $result = handleRequest( {
-					clid     => $clid, 
-					cmd      => $request, 
-					channel  => $obj->{channel}, 
-					id       => $subscription,
-					response => 1,
-				} );
+			if ( !$manager->is_valid_clid( $clid ) ) {
+				# Invalid clientId, send advice to re-handshake
 				
-				if ( $result->{error} ) {
-					push @errors, [ $obj->{channel}, $result->{error} ];
+				push @{$events}, {
+					channel    => '/meta/subscribe',
+					clientId   => undef,
+					successful => JSON::XS::false,
+					timestamp  => time2str( time() ),
+					error      => 'invalid clientId',
+					advice     => {
+						reconnect => 'handshake',
+						interval  => 0,
+					}
+				};
+			}
+			else {
+				my $subscriptions = $obj->{subscription};
+			
+				# a channel name or a channel pattern or an array of channel names and channel patterns.
+				if ( !ref $subscriptions ) {
+					$subscriptions = [ $subscriptions ];
 				}
-				else {
+			
+				$manager->add_channels( $clid, $subscriptions );
+			
+				for my $sub ( @{$subscriptions} ) {
 					push @{$events}, {
 						channel      => '/meta/subscribe',
 						clientId     => $clid,
-						successful   => JSON::True,
-						subscription => $subscription, # XXX: out of spec but should be sent!
-						ext          => $obj->{ext},
+						successful   => JSON::XS::true,
+						subscription => $sub,
 					};
-					
-					# If the request was not async, we can add it now
-					if ( exists $result->{data} ) {
-						push @{$events}, $result;
-					}
-
-					# Remove any pending unsubscribe requests - this is a new subscription which may replace a previous one
-					$manager->remove_unsubscribe_from( $clid, $subscription );
-				}
-			}
-			else {
-				if ( !$request ) {
-					push @errors, [ $obj->{channel}, 'slim.request ext key not found' ];
-				}
-				elsif ( !$subscription ) {
-					push @errors, [ $obj->{channel}, 'subscription key not found' ];
 				}
 			}
 		}
 		elsif ( $obj->{channel} eq '/meta/unsubscribe' ) {
-			my $subscriptions = $obj->{subscription};
 			
-			# a channel name or a channel pattern or an array of channel names and channel patterns.
-			if ( !ref $subscriptions ) {
-				$subscriptions = [ $subscriptions ];
-			}
-			
-			# We can't actually unsubscribe here because we need a request object
-			# but we can tell the manager to dump them the next time they are
-			# received
-			$manager->unsubscribe( $clid, $subscriptions );
-			
-			for my $sub ( @{$subscriptions} ) {
+			if ( !$manager->is_valid_clid( $clid ) ) {
+				# Invalid clientId, send advice to re-handshake
+				
 				push @{$events}, {
-					channel      => '/meta/unsubscribe',
-					clientId     => $clid,
-					subscription => $sub,
-					successful   => JSON::True,
+					channel    => '/meta/unsubscribe',
+					clientId   => undef,
+					successful => JSON::XS::false,
+					timestamp  => time2str( time() ),
+					error      => 'invalid clientId',
+					advice     => {
+						reconnect => 'handshake',
+						interval  => 0,
+					}
 				};
 			}
-		}			
-		elsif ( $obj->{channel} eq '/slim/request' ) {
+			else {
+				my $subscriptions = $obj->{subscription};
 			
-			# A non-subscription request
-			my $request = $obj->{data};
-			my $id      = $obj->{id} || new_uuid(); # unique id for this request
+				# a channel name or a channel pattern or an array of channel names and channel patterns.
+				if ( !ref $subscriptions ) {
+					$subscriptions = [ $subscriptions ];
+				}
 			
-			if ( $request && $id ) {
+				$manager->remove_channels( $clid, $subscriptions );
+			
+				for my $sub ( @{$subscriptions} ) {
+					push @{$events}, {
+						channel      => '/meta/unsubscribe',
+						clientId     => $clid,
+						subscription => $sub,
+						successful   => JSON::XS::true,
+					};
+				}
+			}
+		}
+		elsif ( $obj->{channel} eq '/slim/subscribe' ) {
+			# A request to execute & subscribe to some SlimServer event
+			
+			# A valid /slim/subscribe message looks like this:
+			# {
+			#   channel  => '/slim/subscribe',
+			#   id       => <unique id>,
+			#   data     => {
+			#     response => '/slim/serverstatus', # the channel all messages should be sent back on
+			#     request  => [ '', [ 'serverstatus', 0, 50, 'subscribe:60' ],
+			#     priority => <value>, # optional priority value, is passed-through with the response
+			#   }
+			
+			my $id       = $obj->{id};
+			my $request  = $obj->{data}->{request};
+			my $response = $obj->{data}->{response};
+			my $priority = $obj->{data}->{priority};
+			
+			if ( $request && $response ) {
+				# We expect the clientId to be part of the response channel
+				my ($responseClid) = $response =~ m{/([0-9a-f]{8})/};
+				
 				my $result = handleRequest( {
-					clid     => $clid, 
-					cmd      => $request,
-					channel  => $obj->{channel}, 
 					id       => $id,
-					response => ( $obj->{ext} && $obj->{ext}->{'no-response'} ) ? 0 : 1,
+					request  => $request,
+					response => $response,
+					priority => $priority,
+					clid     => $responseClid,
 				} );
 				
 				if ( $result->{error} ) {
-					push @errors, [ $obj->{channel}, $result->{error} ];
+					push @errors, [ '/slim/subscribe', $result->{error} ];
 				}
 				else {
-					# If the caller does not want a response, they will set ext->{'no-response'}
-					if ( $obj->{ext} && $obj->{ext}->{'no-response'} ) {
+					push @{$events}, {
+						channel      => '/slim/subscribe',
+						clientId     => $clid,
+						successful   => JSON::XS::true,
+						id           => $id,
+					};
+					
+					# If the request was not async, tell the manager to deliver the results to all subscribers
+					if ( exists $result->{data} ) {
+						$manager->deliver_events( $result );
+					}
+				}
+			}
+			elsif ( !$request ) {
+				push @errors, [ '/slim/subscribe', 'request data key not found' ];
+			}
+			elsif ( !$response ) {
+				push @errors, [ '/slim/subscribe', 'response data key not found' ];
+			}
+		}
+		elsif ( $obj->{channel} eq '/slim/unsubscribe' ) {
+			# A request to unsubscribe from a SlimServer event, this is not the same as /meta/unsubscribe
+			
+			# A valid /slim/unsubscribe message looks like this:
+			# {
+			#   channel  => '/slim/unsubscribe',
+			#   data     => {
+			#     unsubscribe => '/slim/serverstatus',
+			#   }
+			
+			my $unsub = $obj->{data}->{unsubscribe};
+			
+			# Add it to our list of pending unsubscribe events
+			# It will be removed the next time we get a requestCallback for it
+			$toUnsubscribe{$unsub} = 1;
+			
+			push @{$events}, {
+				channel      => '/slim/unsubscribe',
+				clientId     => $clid,
+				successful   => JSON::XS::true,
+				data         => $obj->{data},
+			};
+		}
+		elsif ( $obj->{channel} eq '/slim/request' ) {
+			# A request to execute a one-time SlimServer event
+			
+			# A valid /slim/request message looks like this:
+			# {
+			#   channel  => '/slim/request',
+			#   id       => <unique id>, (optional)
+			#   data     => {
+			#     response => '/slim/<clientId>/request',
+			#     request  => [ '', [ 'menu', 0, 100, ],
+			#     priority => <value>, # optional priority value, is passed-through with the response
+			#   }
+			
+			my $id       = $obj->{id};
+			my $request  = $obj->{data}->{request};
+			my $response = $obj->{data}->{response};
+			my $priority = $obj->{data}->{priority};
+			
+			if ( $request && $response ) {
+				# We expect the clientId to be part of the response channel
+				my ($responseClid) = $response =~ m{/([0-9a-f]{8})/};
+				
+				my $result = handleRequest( {
+					id       => $id,
+					request  => $request,
+					response => $response,
+					priority => $priority,
+					clid     => $responseClid,
+				} );
+				
+				if ( $result->{error} ) {
+					push @errors, [ '/slim/request', $result->{error} ];
+				}
+				else {
+					# If the caller does not want the response, id will be undef
+					if ( !$id ) {
 						# do nothing
 						$log->debug('Not sending response to request, caller does not want it');
 					}
@@ -394,17 +490,22 @@ sub handler {
 						push @{$events}, {
 							channel    => '/slim/request',
 							clientId   => $clid,
+							successful => JSON::XS::true,
 							id         => $id,
-							successful => JSON::True,
-							ext        => $obj->{data},
 						};
 					
-						# If the request was not async, we can add it now
+						# If the request was not async, tell the manager to deliver the results to all subscribers
 						if ( exists $result->{data} ) {
-							push @{$events}, $result;
+							$manager->deliver_events( $result );
 						}
 					}
 				}
+			}
+			elsif ( !$request ) {
+				push @errors, [ '/slim/request', 'request data key not found' ];
+			}
+			elsif ( !$response ) {
+				push @errors, [ '/slim/request', 'response data key not found' ];
 			}
 		}
 	}
@@ -415,7 +516,7 @@ sub handler {
 		for my $error ( @errors ) {
 			push @{$out}, {
 				channel    => $error->[0],
-				successful => JSON::False,
+				successful => JSON::XS::false,
 				error      => $error->[1],
 			};
 		}
@@ -441,10 +542,9 @@ sub sendResponse {
 	$httpResponse->header( 'Cache-Control' => 'no-cache' );
 	$httpResponse->header( 'Content-Type' => 'application/json' );
 	
-	$out = eval { objToJson( $out, { utf8 => 1, autoconv => 0 } ) };
-	$out = Slim::Utils::Unicode::encode('utf8', $out);
+	$out = eval { to_json($out) };
 	if ( $@ ) {
-		$out = objToJson( [ { successful => JSON::False, error => "$@" } ] );
+		$out = to_json( [ { successful => JSON::XS::false, error => "$@" } ] );
 	}
 	
 	my $sendheaders = 1; # should we send headers?
@@ -485,16 +585,16 @@ sub sendResponse {
 sub handleRequest {
 	my $params = shift;
 	
-	my $clid     = $params->{clid};
-	my $cmd      = $params->{cmd};
-	my $channel  = $params->{channel};
 	my $id       = $params->{id};
-	my $response = defined $params->{response} ? $params->{response} : 1;
+	my $cmd      = $params->{request};
+	my $response = $params->{response};
+	my $priority = $params->{priority};
+	my $clid     = $params->{clid};
 	
 	my $args = $cmd->[1];
 
 	if ( !$args || ref $args ne 'ARRAY' ) {
-		return { error => 'invalid slim.request arguments, array expected' };
+		return { error => 'invalid request arguments, array expected' };
 	}
 	
 	my $clientid;
@@ -511,11 +611,14 @@ sub handleRequest {
 		# fix the encoding and/or manage charset param
 		$request->fixEncoding;
 		
-		# remember channel, request id and client id
-		$request->source( "$channel|$id" );
-		$request->connectionID( $clid );
+		# remember the response channel, request id, and priority
+		$request->source( "$response|$id|$priority" );
 		
-		if ( $response ) {
+		# Link this request to the IP of the request
+		$request->connectionID($clid);
+		
+		# Only set a callback if the caller wants a response
+		if ( $id ) {
 			$request->autoExecuteCallback( \&requestCallback );
 		}
 		
@@ -525,61 +628,55 @@ sub handleRequest {
 			return { error => 'request failed with error: ' . $request->getStatusText };
 		}
 		
+		# If user doesn't care about the response, return nothing
+		if ( !$id ) {
+			$log->debug( "Request for $response, but caller does not care about the response" );
+			
+			return { ok => 1 };
+		}
+		
 		# handle async commands
 		if ( $request->isStatusProcessing ) {
-			if ( $response ) {
-				# Only set a callback if the caller wants a response
-				$request->callbackParameters( \&requestCallback );
+			# Only set a callback if the caller wants a response
+			$request->callbackParameters( \&requestCallback );
 			
-				$log->debug( "Request for $channel / $id is async, will callback" );
-			}
-			else {
-				$log->debug( "Request for $channel / $id is async, but caller does not care about the response" );
-			}
+			$log->debug( "Request for $response / $id is async, will callback" );
 			
 			return { ok => 1 };
 		}
 		
 		# the request was successful and is not async
-		$log->debug( "Request for $channel / $id is not async" );
-		
-		if ( $channel eq '/meta/subscribe' ) {
-			$channel = $id;
-			$id      = undef;
-		}
+		$log->debug( "Request for $response / $id is not async" );
 		
 		return {
-			channel   => $channel,
-			id        => $id,
-			data      => $request->getResults,
-			timestamp => time2str( time() ),
+			channel => $response,
+			id      => $id,
+			data    => $request->getResults,
+			ext     => {
+				priority => $priority,
+			},
 		};
 	}
 	else {
-		return { error => 'invalid slim.request: ' . $request->getStatusText };
+		return { error => 'invalid request: ' . $request->getStatusText };
 	}
 }
 
 sub requestCallback {
 	my $request = shift;
 	
-	my $clid           = $request->connectionID;
-	my ($channel, $id) = split /\|/, $request->source, 2;
+	my ($channel, $id, $priority) = split /\|/, $request->source, 3;
 	
-	$log->debug( "requestCallback got results for $clid / $channel / $id" );
-	
-	if ( $channel eq '/meta/subscribe' ) {
-		$channel = $id;
-		$id      = undef;
-	}
+	$log->debug( "requestCallback got results for $channel / $id" );
 	
 	# Do we need to unsubscribe from this request?
-	if ( $manager->should_unsubscribe_from( $clid, $channel ) ) {
-		$log->debug( "requestCallback: unsubscribing from $clid / $channel" );
+	if ( exists $toUnsubscribe{$channel} ) {
+		$log->debug( "requestCallback: unsubscribing from $channel" );
 		
-		$manager->remove_unsubscribe_from( $clid, $channel );
 		$request->removeAutoExecuteCallback();
-			
+		
+		delete $toUnsubscribe{$channel};
+		
 		return;
 	}
 	
@@ -588,41 +685,54 @@ sub requestCallback {
 		channel   => $channel,
 		id        => $id,
 		data      => $request->getResults,
-		timestamp => time2str( time() ),
+		ext       => {
+			priority => $priority,
+		},
 	} ];
 	
 	# Deliver request results via Manager
-	$manager->deliver_events( $clid, $events );
+	$manager->deliver_events( $events );
 }
 
 sub closeHandler {
 	my $httpClient = shift;
-
+	
 	# unregister connection from manager
-	my $clid = $httpClient->clid || return;
-	
-	if ( $log->is_debug ) {
-		$log->debug( "Lost connection, clid: $clid, transport: " . $httpClient->transport );
+	if ( my $clid = $httpClient->clid ) {
+		my $transport = $httpClient->transport;
+			
+		if ( $log->is_debug ) {
+			$log->debug( "Lost connection, clid: $clid, transport: " . ( $transport || 'none' ) );
+		}
+		
+		if ( $transport eq 'streaming' ) {
+			$manager->remove_connection( $clid );
+			
+			Slim::Utils::Timers::setTimer(
+				$clid,
+				Time::HiRes::time() + ( ( RETRY_DELAY / 1000 ) * 2 ),
+				\&disconnectClient,
+			);
+		}
 	}
-	
-	$manager->unregister_connection( $clid, $httpClient );
-	
-	Slim::Utils::Timers::setTimer(
-		$clid,
-		Time::HiRes::time() + ( ( RETRY_DELAY / 1000 ) * 2 ),
-		\&disconnectClient,
-	);
+	else {
+		if ( $log->is_debug ) {
+			$log->debug( "Lost connection, transport: " . ( $httpClient->transport || 'none' ) );
+		}
+	}
 }
 
 sub disconnectClient {
 	my $clid = shift;
 	
-	# Clean up only if this client has no other connections
-	if ( $manager->is_valid_clid( $clid) && !$manager->has_connections( $clid ) ) {
+	# Clean up this client's data
+	if ( $manager->is_valid_clid( $clid) ) {
 		$log->debug( "Disconnect for $clid, removing subscriptions" );
 	
-		# Remove any subscriptions for this client
+		# Remove any subscriptions for this client, 
 		Slim::Control::Request::unregisterAutoExecute( $clid );
+			
+		$log->debug("Unregistered all auto-execute requests for client $clid");
 	
 		# Remove client from manager
 		$manager->remove_client( $clid );
@@ -631,7 +741,7 @@ sub disconnectClient {
 
 # Create a new UUID
 sub new_uuid {
-	return sha1_hex( Time::HiRes::time() . $$ . Slim::Utils::Network::hostName() );
+	return substr( sha1_hex( Time::HiRes::time() . $$ . Slim::Utils::Network::hostName() ), 0, 8 );
 }
 
 1;
