@@ -702,7 +702,8 @@ sub closeHandler {
 		my $transport = $httpClient->transport;
 			
 		if ( $log->is_debug ) {
-			$log->debug( "Lost connection, clid: $clid, transport: " . ( $transport || 'none' ) );
+			my $peer = $httpClient->peerhost . ':' . $httpClient->peerport;
+			$log->debug( "Lost connection from $peer, clid: $clid, transport: " . ( $transport || 'none' ) );
 		}
 		
 		if ( $transport eq 'streaming' ) {
@@ -713,11 +714,6 @@ sub closeHandler {
 				Time::HiRes::time() + ( ( RETRY_DELAY / 1000 ) * 2 ),
 				\&disconnectClient,
 			);
-		}
-	}
-	else {
-		if ( $log->is_debug ) {
-			$log->debug( "Lost connection, transport: " . ( $httpClient->transport || 'none' ) );
 		}
 	}
 }
