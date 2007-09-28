@@ -261,7 +261,12 @@ Wizard = function(){
 
 				Ext.Ajax.request({
 					url: '/settings/server/squeezenetwork.html',
-					params: 'sn_email=' + email + '&sn_password=' + pw + '&saveSettings=1&AJAX=1',
+					params: Ext.urlEncode({
+						sn_email: email,
+						sn_password: pw,
+						saveSettings: 1,
+						AJAX: 1
+					}),
 					scope: this,
 
 					success: function(response, options){
