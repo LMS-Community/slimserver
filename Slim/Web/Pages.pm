@@ -103,6 +103,23 @@ sub addPageLinks {
 				}
 			}
 
+			if ($category eq 'radio' || $category eq 'music_on_demand') {
+				my $iconName = $path;
+				$iconName =~ s/\.\w+$//;
+				$iconName =~ s/plugins\/([^\/]+)\/.*/$1/;
+				$iconName .= ".png";
+				# let's just lowercase everything to save me the trouble at figuring out case
+				$iconName = lc($iconName);
+				# do an OS-independent check for a readable image
+				my @dirPath = qw/ HTML EN html images ServiceProviders /;
+				if (-r catfile(@dirPath, $iconName)) {
+					$additionalLinks{'icons'}->{$title}{'url'} = 'html/images/ServiceProviders/' . $iconName;
+					$additionalLinks{'icons'}->{$title}{'icon'} = $iconName;
+				} else {
+					$additionalLinks{'icons'}->{$title}{'url'} = 'html/images/radio.png';
+					$additionalLinks{'icons'}->{$title}{'icon'} = $iconName;
+				}
+			}
 			$additionalLinks{$category}->{$title} = $path . $separator;
 
 		} else {

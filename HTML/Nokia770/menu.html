@@ -8,23 +8,23 @@
 <td width="10"></td>
 
 <td>
-	<a href="[% webroot %]home.html?player=[% playerURI %]"><img src="[% webroot %]html/images/menu_home[% IF thispage == 'home' %]_active[% END %].gif" name = 'nav1' border="0" width="80" height="50" alt = 'home'></a>
+	<a href="[% webroot %]home.html?player=[% playerURI %]" title = '[% "HOME" | string %]'><img src="[% webroot %]html/images/menu_home[% IF thispage == 'home' %]_active[% END %].gif" name = 'nav1' border="0" width="80" height="50" alt = '[% "HOME" | string %]'></a>
 </td>
 
 <td>
-	<a href="[% webroot %]status.html?player=[% playerURI %]"><img src="[% webroot %]html/images/menu_status[% IF thispage == 'status' %]_active[% END %].gif" name = 'nav2' border="0" width="80" height="50" alt = 'now playing'></a>
+	<a href="[% webroot %]status.html?player=[% playerURI %]" title = '[% "NOW_PLAYING" | string %]'><img src="[% webroot %]html/images/menu_status[% IF thispage == 'status' %]_active[% END %].gif" name = 'nav2' border="0" width="80" height="50" alt = '[% "NOW_PLAYING" | string %]'></a>
 </td>
       
 <td>
-	<a href="[% webroot %]playlist.html?player=[% playerURI %]"><img src="[% webroot %]html/images/menu_playlist[% IF thispage == 'playlist' %]_active[% END %].gif" name = 'nav3' border="0" width="80" height="50" alt = 'current playlist'></a>
+	<a href="[% webroot %]playlist.html?player=[% playerURI %]" title = '[% "CURRENT_PLAYLIST" | string %]'><img src="[% webroot %]html/images/menu_playlist[% IF thispage == 'playlist' %]_active[% END %].gif" name = 'nav3' border="0" width="80" height="50" alt = '[% "CURRENT_PLAYLIST" | string %]'></a>
 </td>
       
 <td>
-	<a href="[% webroot %]home.html?browse_radio=1&amp;player=[% playerURI %]"><img src="[% webroot %]html/images/menu_radio[% IF thispage == 'radio' %]_active[% END %].gif" name = 'nav4' border="0" width="80" height="50" alt = 'radio'></a>
+	<a href="[% webroot %]home.html?browse_radio=1&amp;player=[% playerURI %]" title = '[% "RADIO" | string %] + [% "MUSIC_ON_DEMAND" | string %]'><img src="[% webroot %]html/images/menu_radio[% IF thispage == 'radio' %]_active[% END %].gif" name = 'nav4' border="0" width="80" height="50" alt = '[% "RADIO" | string %] + [% "MUSIC_ON_DEMAND" | string %]'></a>
 </td>
       
 <td>
-	<a href="[% webroot %]search.html?player=[% playerURI %]"><img src="[% webroot %]html/images/menu_search[% IF thispage == 'search' %]_active[% END %].gif" name = 'nav5' border="0" width="80" height="50" alt = 'search'></a>
+	<a href="[% webroot %]search.html?player=[% playerURI %]" title = '[% "SEARCH" | string %]'><img src="[% webroot %]html/images/menu_search[% IF thispage == 'search' %]_active[% END %].gif" name = 'nav5' border="0" width="80" height="50" alt = '[% "SEARCH" | string%]'></a>
 </td>
        
 <!-- fill in the remaining space, if any -->

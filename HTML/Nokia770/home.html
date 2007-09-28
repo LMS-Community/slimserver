@@ -44,14 +44,14 @@
 <table bgcolor="#EEEEEE" width='100%' cellspacing="0" cellpadding="0" border="0">
 	<tr>
 		<td valign="middle" class = 'headertext'>
-			[% IF browse_radio %]
-				[% "RADIO" | string %]
-			[% ELSE %]
+			[% IF thispage == 'radio' %]
+				[% "RADIO" | string %] + [% "MUSIC_ON_DEMAND" | string %]
+			[%- ELSE %]
 				[% "BROWSE" | string %] <span class = 'pagebarheadertext'>(<a href="[% webroot %]home.html?extended_browse=1&player=[% playerURI %]">[% "MORE" | string %]</a>)</span>
 			[% END %]
 		</td>
 		<td align = 'right' valign = 'bottom'>
-			[% IF browse_radio %]
+			[% IF thispage == 'radio' %]
 				[% INCLUDE tune_in_form %]
 			[% ELSE %]&nbsp;[% END %]
 		</td>
@@ -62,16 +62,18 @@
 	<tr>
 		<td height="15"></td>
 	</tr>
-	[% IF ! browse_radio %]
+	[% IF thispage != 'radio' %]
 	[% INCLUDE home_links %]
 	[% ELSE %]
-		[% FOREACH key = additionalLinks.radio.keys %]
+		[% linkHash = additionalLinks.radio %]
+		[% linkHash.import(additionalLinks.music_on_demand) %]
+		[% FOREACH key = linkHash.keys %]
 			[% UNLESS loop.index % 2 %]<tr>[% END %]
-				<td valign="middle" class = 'menutext' width = '70' align = 'right'>
-					<a href="[% webroot %][% additionalLinks.radio.$key %]player=[% playerURI %]"><img src="html/images/smaller/radio.gif" width = '70' border="0" alt = 'radio'></a>
+				<td valign="middle" class = 'menutext' align = 'right'>
+					<a href="[% webroot %][% linkHash.$key %]player=[% playerURI %]"><img src="[% webroot %][% IF additionalLinks.icons.$key %][% additionalLinks.icons.$key.url %][% ELSE %]html/images/radio.gif[% END %]" width = '75' border="0" alt = 'radio'></a>
 				</td>
 				<td valign="middle" class = 'menutext' align = 'left'>
-					<a href="[% webroot %][% additionalLinks.radio.$key %]player=[% playerURI %]">[% key | string %]</a>
+					<a href="[% webroot %][% linkHash.$key %]player=[% playerURI %]">[% key | string %]</a>
 				</td>
 			[% IF loop.index % 2 || loop.last %]</tr>[% END %]
 		[% END %]
@@ -162,7 +164,7 @@
 &nbsp;
 <p>
 [% END %]
-[% IF browse_radio %]
+[% IF thispage == 'radio' %]
 [% PROCESS pagefooter.html %]
 [% ELSE %]
 [% PROCESS pagefooter.html noBuffer = '1' %]
