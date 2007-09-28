@@ -347,7 +347,7 @@ function showTree(id, page, attributes) {
 		new Ajax.Updater( { success: "item"+id }, webroot + url + '.html', {
 			method: 'post',
 			asynchronous: true,
-			postBody: attributes + '&ajaxUpdate=1&tree=1&artwork=0&player='+player, 
+			postBody: attributes + '&ajaxUpdate=1&tree=1&player='+player, 
 			onFailure: function(t) {
 				alert('Error -- ' + t.responseText);
 				Element.hide("wait"+id);
