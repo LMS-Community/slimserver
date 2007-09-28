@@ -83,7 +83,7 @@ Browse = function(){
 
 		toggleGalleryView : function(artwork){
 			var url = document.location.href;
-			url = url.replace(/&artwork=./, '');
+			url = url.replace(/&artwork=\w*/g, '');
 			var target = url.match(/(#.*)$/);
 			url = url.replace(/#.*$/, '');
 
