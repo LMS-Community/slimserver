@@ -206,7 +206,7 @@ PlayerChooser = function(){
 					}
 					this.fireEvent('arrowclick', this, ev);
 				},
-				menu: new Ext.menu.Menu()
+				menu: new Ext.menu.Menu({shadow: Ext.isGecko && Ext.isMac ? true : 'sides'})
 			});
 			playerDiscoveryTimer = new Ext.util.DelayedTask(this.update, this);
 

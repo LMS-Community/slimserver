@@ -36,7 +36,8 @@ Browse = function(){
 							group: 'viewMode',
 							checked: viewMode == 1
 						})
-					]
+					],
+					shadow: Ext.isGecko && Ext.isMac ? true : 'sides'
 				});
 
 				if (orderByList) {
