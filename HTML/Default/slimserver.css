@@ -779,7 +779,7 @@ form#advSearchForm.resultsPage {
 }
 
 /* list selector */
-.mouseOver, .currentSong {
+.mouseOver, .currentSong, .selectorMarker {
 	padding-top: 0;
 	padding-bottom: 0;
 }
@@ -791,25 +791,20 @@ form#advSearchForm.resultsPage {
 
 .currentSong .selector_topLeft,
 .mouseOver .selector_topLeft {
-	padding-top: 7px;
 	background: transparent url(html/images/selector_top_left.gif) no-repeat top left;
 }
 
 .currentSong .selector_bottomRight,
 .mouseOver .selector_bottomRight {
-	padding: 0px;
 	background: transparent url(html/images/selector_bottom_right.gif) no-repeat bottom right;
 }
 
 .currentSong .selector_bottomLeft,
 .mouseOver .selector_bottomLeft {
-	padding-bottom: 5px;
 	background: transparent url(html/images/selector_bottom_left.gif) no-repeat bottom left;
 }
 
 .selectorMarker {
-	padding-top: 7px;
-	padding-bottom: 5px;
 	background: none;
 }
 
@@ -817,12 +812,14 @@ form#advSearchForm.resultsPage {
 	background: none;
 }
 .selector_topLeft {
+	padding-top: 7px;
 	background: none;
 }
 .selector_bottomRight {
 	background: none;
 }
 .selector_bottomLeft {
+	padding-bottom: 5px;
 	background: none;
 }
 
