@@ -82,6 +82,12 @@ img.cmdLinkIcon {
 	background-color: #c4c4c4;
 }
 
+.thumbwrap {
+	position: relative;
+	display: inline-block;
+	margin: 0px;
+}
+
 .thumbwrap li {
 	display: -moz-inline-box; /* Mozilla */
 	display: inline-block;  /* Op, Saf, IE \*/
