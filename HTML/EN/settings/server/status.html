@@ -1,0 +1,63 @@
+[% PROCESS settings/header.html %]
+
+<div class="settingSection">
+	<div class="settingGroup">
+		<div class="prefHead">[% "SERVER_STATUS" | string %]</div>
+		<div class="prefDesc">[% "SERVER_STATUS_DESC" | string %]</div>
+	</div>
+		
+	<div class="settingGroup">
+		<div class="prefHead">[% "INFORMATION_MENU_LIBRARY" | string %]</div>
+		
+			[% FOREACH item = library %]
+				[% IF item.value  %]
+				<p>[% item.key | string %][% "COLON" | string %] [% item.value %]</p>
+				[% END %]
+			[% END %]
+	</div>
+
+	<div class="settingGroup">
+		<div class="prefHead">[% "INFORMATION_MENU_SERVER" | string  %]</div>
+		[% IF server.versionInfo %]
+			<p>[% server.versionInfo %]</p>
+		[% END %]
+
+		[% IF server.INFORMATION_HOSTNAME %]
+			<p>[% "INFORMATION_HOSTNAME" | string %][% "COLON" | string %] [% server.INFORMATION_HOSTNAME %]</p>
+		[% END %]
+		
+		[% IF server.INFORMATION_SERVER_PORT %]
+			<p>[% "INFORMATION_SERVER_PORT" | string %][% "COLON" | string %] [% server.INFORMATION_SERVER_PORT %]</p>
+		[% END %]
+		
+		[% IF server.INFORMATION_CLIENTS %]
+			<p>[% "INFORMATION_CLIENTS" | string %][% "COLON" | string %] [% server.INFORMATION_CLIENTS %]</p>
+		[% END %]
+	</div>
+
+	[% IF clients %]
+	<div class="settingGroup">
+		<div class="prefHead">[% "INFORMATION_MENU_PLAYER" | string %]</div>
+		[% FOREACH client = clients %]
+		<div style="padding-bottom: 10px;">
+			[% FOREACH item = client.value %]
+				[% IF item.value  %]
+				<p>[% item.key | string %][% "COLON" | string %] [% item.value %]</p>
+				[% END %]
+			[% END %]
+		</div>
+		[% END %]
+	</div>
+	[% END %]
+	
+	[% IF controllers %]
+	<div class="settingGroup">
+		<div class="prefHead">[% "INFORMATION_MENU_CONTROLLER" | string %]</div>
+		[% FOREACH controller = controllers %]
+		[% END %]
+		
+	</div>
+	[% END %]
+</div>
+	
+[% PROCESS settings/footer.html %]

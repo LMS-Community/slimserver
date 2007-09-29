@@ -9745,6 +9745,12 @@ PLAYERIR_SETTINGS
 	SV	IR-inställningar
 	ZH_CN	红外线设置
 
+SERVER_STATUS
+	EN	SqueezeCenter Status
+
+SERVER_STATUS_DESC
+	EN	Information on all identified devices connected to SqueezeCenter
+
 BASIC_SERVER_SETTINGS
 	DE	Grundeinstellungen
 	EN	Basic Settings
