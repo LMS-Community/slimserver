@@ -54,11 +54,11 @@ sub home {
 	$params->{'newVersion'} = $::newVersion if $::newVersion;
 
 	if (!exists $Slim::Web::Pages::additionalLinks{"browse"}) {
-		$class->addPageLinks("browse", {'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=contributor,album,track&level=0"});
-		$class->addPageLinks("browse", {'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,contributor,album,track&level=0"});
-		$class->addPageLinks("browse", {'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&level=0"});
-		$class->addPageLinks("browse", {'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&level=0"});
-		$class->addPageLinks("browse", {'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&level=0"});
+		$class->addPageLinks("browse", {'BROWSE_BY_ARTIST' => "browsedb.html?hierarchy=contributor,album,track&amp;level=0"});
+		$class->addPageLinks("browse", {'BROWSE_BY_GENRE'  => "browsedb.html?hierarchy=genre,contributor,album,track&amp;level=0"});
+		$class->addPageLinks("browse", {'BROWSE_BY_ALBUM'  => "browsedb.html?hierarchy=album,track&amp;level=0"});
+		$class->addPageLinks("browse", {'BROWSE_BY_YEAR'   => "browsedb.html?hierarchy=year,album,track&amp;level=0"});
+		$class->addPageLinks("browse", {'BROWSE_NEW_MUSIC' => "browsedb.html?hierarchy=age,track&amp;level=0"});
 	}
 
 	if (!exists $Slim::Web::Pages::additionalLinks{"search"}) {
@@ -88,7 +88,7 @@ sub home {
 	# Show playlists if any exists
 	if ($prefs->get('playlistdir') || Slim::Schema->rs('Playlist')->getPlaylists->count) {
 
-		$class->addPageLinks("browse", {'SAVED_PLAYLISTS' => "browsedb.html?hierarchy=playlist,playlistTrack&level=0"});
+		$class->addPageLinks("browse", {'SAVED_PLAYLISTS' => "browsedb.html?hierarchy=playlist,playlistTrack&amp;level=0"});
 	}
 
 	# fill out the client setup choices
