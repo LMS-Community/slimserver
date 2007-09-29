@@ -279,7 +279,7 @@ sub isaSkin {
 	my $name  = shift;
 	
 	# BUG 4171: Default2 is gone, so redirect to Default.
-	if ($name =~ /^(?:Default2)$/i) {
+	if ($name =~ /^(?:ExBrowse3|Default2)$/i) {
 		$name = 'Default';
 	}
 	
@@ -309,7 +309,7 @@ sub skins {
 			next if !-d catdir($templatedir, $dir);
 
 			# BUG 4171: Disable dead Default2 skin, in case it was left lying around
-			next if $dir =~ /^(?:Default2)$/i;
+			next if $dir =~ /^(?:ExBrowse3|Default2)$/i;
 
 			logger('network.http')->info("skin entry: $dir");
 
