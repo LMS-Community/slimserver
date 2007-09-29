@@ -8,6 +8,8 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Cache;
 use Slim::Utils::Prefs;
+use File::Basename;
+use File::Spec::Functions qw(:ALL);
 
 my %typeToMethod = (
 	'image/gif'  => 'newFromGifData',
@@ -45,14 +47,36 @@ sub processCoverArtRequest {
 	my ($body, $mtime, $inode, $size, $contentType); 
 
 	# Allow the client to specify dimensions, etc.
-	$path =~ /music\/(\w+)\/(cover|thumb)(?:_(X|\d+)x(X|\d+))?(?:_([sSfFpc]))?(?:_([\da-fA-F]{6,8}))?\.jpg$/;
+	$path =~ /music\/(\w+)\//;
+	my $trackid = $1;
 
-	my $trackid             = $1;
-	my $image               = $2;
-	my $requestedWidth      = $3; # it's ok if it didn't match and we get undef
-	my $requestedHeight     = $4; # it's ok if it didn't match and we get undef
-	my $resizeMode          = $5; # stretch, pad or crop
-	my $requestedBackColour = defined($6) ? hex $6 : 0x7FFFFFFF; # bg color used when padding
+	my $imgName = File::Basename::basename($path);
+	my ($imgBasename, $dirPath, $suffix)  = File::Basename::fileparse($path, '\..*');
+	my $actualPathToImage;
+
+	# this is not cover art, but we should be able to resize it, dontcha think?
+	# need to excavate real path to the static image here
+	if ($path !~ /^music\//) {
+		$trackid = 'notCoverArt';
+		$imgBasename =~ s/([A-Za-z0-9]+)_.*/$1/;
+		$actualPathToImage = $path;
+		$actualPathToImage =~ s/$imgName/$imgBasename$suffix/;
+	}
+
+	# typical cover art request would come across as something like cover_300x300_c_000000.jpg
+	# delimiter on "fields" is an underscore '_'
+	$imgName =~ /(cover|thumb|[A-Za-z0-9]+)		# image name is first string before resizing parameters
+			(?:_(X|\d+)x(X|\d+))?	# width and height are given here, e.g. 300x300
+			(?:_([sSfFpc]))?	# resizeMode, given by a single character
+			(?:_([\da-fA-F]{6,8}))? # background color, optional
+			\.(jpg|png|gif)$		# file suffixes allowed are jpg png gif
+			/x;	
+
+	my $image               = $1;
+	my $requestedWidth      = $2; # it's ok if it didn't match and we get undef
+	my $requestedHeight     = $3; # it's ok if it didn't match and we get undef
+	my $resizeMode          = $4; # stretch, pad or crop
+	my $requestedBackColour = defined($5) ? hex $5 : 0x7FFFFFFF; # bg color used when padding
 
 	if (!defined $resizeMode) {
 		$resizeMode = '';
@@ -81,6 +105,17 @@ sub processCoverArtRequest {
 
 		$obj = Slim::Player::Playlist::song($client);
 
+	} elsif ($trackid eq 'notCoverArt') {
+
+		#($body, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}) = Slim::Web::HTTP::getStaticContent($actualPathToImage);
+		#$cachedImage->{'body'} = $body;
+		#$cachedImage->{'contentType'} = "image/" . $suffix;
+
+		($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent($actualPathToImage);
+		$contentType = "image/" . $suffix;
+		$contentType =~ s/\.//;
+		$imageData = $$body;
+		
 	} else {
 
 		$obj = Slim::Schema->find('Track', $trackid);
@@ -109,7 +144,7 @@ sub processCoverArtRequest {
 		}
 	}
 
-	unless ($cachedImage || $imageData) {
+	if ( (!$cachedImage && !$imageData) ) {
 
 		my $image = blessed($obj) && $obj->remote ? 'radio' : 'cover';
 		
