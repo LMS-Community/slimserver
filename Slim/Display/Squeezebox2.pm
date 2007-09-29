@@ -386,7 +386,9 @@ sub pushBumpAnimate {
 	$display->drawFrameBuf($render->{screen1}->{bitsref}, 0, $trans, $param);
 
 	# notify cli/jive of animation - if there is a subscriber this will grab the curDisplay
-	$display->notify("animate-$trans");
+	if ($display->notifyLevel == 2) {
+		$display->notify("animate-$trans");
+	}
 }
 
 sub clientAnimationComplete {

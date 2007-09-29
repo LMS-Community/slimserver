@@ -839,15 +839,22 @@ sub displaystatusQuery {
 
 			$request->registerAutoExecute(0, \&displaystatusQuery_filter, sub {
 				$request->client->display->widthOverride(1, undef);
+				$request->client->display->notifyLevel(0);
 				$request->client->update;
 			});
 			$request->client->display->widthOverride(1, $request->getParam('width'));
 
 		} else {
-			$request->registerAutoExecute(0, \&displaystatusQuery_filter);
+
+			$request->registerAutoExecute(0, \&displaystatusQuery_filter, sub {
+				$request->client->display->notifyLevel(0);
+			});
 		}
 
-		if ($subs ne 'showbriefly') {
+		if ($subs eq 'showbriefly') {
+			$request->client->display->notifyLevel(1);
+		} else {
+			$request->client->display->notifyLevel(2);
 			$request->client->update;
 		}
 	}

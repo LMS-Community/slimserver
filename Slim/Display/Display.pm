@@ -89,6 +89,7 @@ sub new {
 	$display->[11]= 0;        # screen2updateOK
 	$display->[12]= {};       # displayStrings - strings for this display
 	$display->[13]= [];       # widthOverride - element 1 = screen1 (undef if default for display)
+	$display->[14]= 0;        # notifyLevel [0 = notify off, 1 = showbriefly only, 2 = all]
 
 	$display->resetDisplay(); # init render cache
 
@@ -161,6 +162,10 @@ sub widthOverride {
 	my $r = shift;
 	my $s = shift || 1;
 	@_ ? ($r->[13][$s] = shift) : $r->[13][$s];
+}
+sub notifyLevel {
+	my $r = shift;
+	@_ ? ($r->[14] = shift) : $r->[14];
 }
 
 ################################################################################################
@@ -240,7 +245,9 @@ sub update {
 	$display->returnOldDisplay($render) if (!$s2periodic && $display->sbOldDisplay());
 
 	# notify cli/jive of update - if there is a subscriber this will grab the curDisplay
-	$display->notify('update');
+	if ($display->notifyLevel == 2) {
+		$display->notify('update');
+	}
 }
 
 # show text briefly and then return to original display
@@ -292,7 +299,9 @@ sub showBriefly {
 	}
 
 	# notify cli/jive of the show briefly message
-	$display->notify('showbriefly', $parts);
+	if ($display->notifyLevel >= 1) {
+		$display->notify('showbriefly', $parts);
+	}
 
 	if ($firstLine && ($display->linesPerScreen() == 1)) {
 		$parts->{line}[1] = $parts->{line}[0];
