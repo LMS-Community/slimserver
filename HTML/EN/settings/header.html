@@ -26,7 +26,7 @@
  	
 [% END %]
 
-[% IF playerid; pagetitle='PLAYER_SETTINGS' | string; ELSE; pagetitle = 'SERVER_SETTINGS' | string; END %]
+[% IF playerid && needsClient; pagetitle='PLAYER_SETTINGS' | string; ELSE; pagetitle = 'SERVER_SETTINGS' | string; END %]
 [% pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %]
 
 <div id="statusarea" class="statusarea">
@@ -44,7 +44,7 @@
 [% END %]
 	<input type=hidden value="0" name="useAJAX">
 	<input type=hidden value="[% page %]" name="page">
-	[% IF playerid %]<input type=hidden value="[% playerid %]" name="playerid">[% END %]
+	[% IF playerid && needsClient %]<input type=hidden value="[% playerid %]" name="playerid">[% END %]
 	[% IF player %]<input type=hidden value="[% player %]" name="player">[% END %]
 
 <!-- End settingsheader.html -->

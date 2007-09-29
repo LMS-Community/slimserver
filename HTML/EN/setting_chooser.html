@@ -1,6 +1,5 @@
 [% IF useTabList %]
-
-    [% IF playerid %][% links = playersetup %][% ELSE %][% links = additionalLinks.setup %][% END %]
+    [% IF playerid && needsClient%][% links = playersetup %][% ELSE %][% links = additionalLinks.setup %][% END %]
     [% IF links %]
       [% IF style == "list" %]<div id="setuptabs"><ul>[% END %]
       [% FOREACH link = links %]
@@ -26,7 +25,7 @@
 <input type="hidden" name="pageAntiCSRFToken" value="[% pageAntiCSRFToken %]">
 	<select ID="choose_setting" NAME="choose_setting" class="stdedit" style="width:17em;" onchange="chooseSettings(selectedIndex,options[selectedIndex].value)">
 		[% UNLESS setting_chooser_noHome %]<option [% IF page == "HOME" %]selected[% END %] value="HOME" label="[% "HOME" | string %]">[% "HOME" | string %]</option>[% END %]
-		[% IF playerid %][% PROCESS addSetupLinks setuplinks= playersetup %]
+		[% IF playerid && needsClient %][% PROCESS addSetupLinks setuplinks= playersetup %]
 		[% ELSE %][% PROCESS addSetupLinks  setuplinks=additionalLinks.setup %][% END %]
 	</select>
 	<input type=hidden value="[% page %]" name="page">

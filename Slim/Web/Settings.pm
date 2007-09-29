@@ -182,8 +182,9 @@ sub handler {
 	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
 
 	if (defined $client) {
-		$paramRef->{'playername'} = $client->name();
-		$paramRef->{'hasdisplay'} = !$client->display->isa('Slim::Display::NoDisplay');
+		$paramRef->{'playername'}  = $client->name();
+		$paramRef->{'needsClient'} = $class->needsClient();
+		$paramRef->{'hasdisplay'}  = !$client->display->isa('Slim::Display::NoDisplay');
 	}
 
 	return Slim::Web::HTTP::filltemplatefile($paramRef->{'useAJAX'} ? 'settings/ajaxSettings.txt' : $class->page, $paramRef);
