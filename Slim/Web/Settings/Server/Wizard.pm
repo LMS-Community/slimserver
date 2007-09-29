@@ -18,7 +18,7 @@ my $serverPrefs = preferences('server');
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'wizard',
-	'defaultLevel' => 'DEBUG',
+	'defaultLevel' => 'WARN',
 });
 
 my %prefs = (
@@ -111,8 +111,6 @@ sub handler {
 				if ($pref eq 'musicmagic' && !$paramRef->{'musicmagic'})	{
 					$paramRef->{'musicmagic'} = '0';
 				}
-
-				$log->debug("$namespace.$pref: " . $paramRef->{$pref});
 
 				preferences($namespace)->set($pref, $paramRef->{$pref});
 			}
