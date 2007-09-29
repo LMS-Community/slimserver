@@ -1,5 +1,5 @@
 [% IF useTabList %]
-    [% IF playerid && needsClient%][% links = playersetup %][% ELSE %][% links = additionalLinks.setup %][% END %]
+    [% IF playerid && needsClient %][% links = playersetup %][% ELSE %][% links = additionalLinks.setup %][% END %]
     [% IF links %]
       [% IF style == "list" %]<div id="setuptabs"><ul>[% END %]
       [% FOREACH link = links %]
