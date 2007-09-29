@@ -5475,7 +5475,7 @@ SETUP_PLAYTRACKALBUM_DESC
 	CS	Pokud vyberete jednu skladbu a stisknete PLAY na dálkovém ovladači, můžete zvolit zda se má hrát pouze tato skladba, nebo celé album obsahující tuto skladbu, nebo celý adresář, začíníjící touto skladbou.
 	DA	Når du vælger en enkelt sang og trykker PLAY, kan du vælge om kun den valgte sang skal afspilles eller om alle sange fra det album eller i den mappe skal afspilles (startende med den valgte sang).
 	DE	Wenn Sie einen Titel auswählen und PLAY drücken, können Sie hier festlegen, ob nur dieses eine oder alle Titel aus diesem Album oder Ordner wiedergegeben werden soll.
-	EN	When you select a single song and press PLAY, while browsing albums or folders, you can choose to play just that song or all the songs in that album or directory, starting with that song.
+	EN	When you select a single song and press PLAY on the remote, while browsing albums or folders, you can choose to play just that song or all the songs in that album or directory, starting with that song.
 	ES	Cuando se selecciona una sola canción y se pulsa PLAY en el mando a distancia, se puede optar por reproducir sólo esa canción o todas las canciones de ese álbum o directorio, empezando por esa canción.
 	FR	Lorsque vous choisissez un morceau et que vous appuyez sur le bouton PLAY de la télécommande, la platine peut lire uniquement ce morceau ou tous les morceaux de l'album ou du dossier en commençant par le morceau choisi.
 	HE	כאשר אתה בוחר שיר יחיד ולוחץ על PLAY (הפעלה) במהלך עיון באלבומים או תיקיות, באפשרותך לבחור להשמיע רק את אותו שיר או את כל השירים שנמצאים באותו אלבום או אותה ספרייה, החל מהשיר הנבחר.
