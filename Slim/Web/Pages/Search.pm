@@ -41,7 +41,6 @@ sub basicSearch {
 	$params->{'browse_list'}  = " ";
 	$params->{'numresults'}   = -1;
 	$params->{'browse_items'} = [];
-	$params->{'artwork'}      = 0;
 
 	# short circuit
 	if (!defined($query) || ($params->{'manualSearch'} && $query eq '')) {
@@ -357,7 +356,6 @@ sub fillInSearchResults {
 			'player'       => $params->{'player'},
 			'itemobj'      => $obj,
 			'level'        => 1,
-			'artwork'      => 0,
 			'attributes'   => sprintf('&%s.id=%d', $type, $obj->id),
 			$type          => $obj->id,
 		);
