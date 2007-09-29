@@ -220,8 +220,13 @@ sub init {
 					$container = 1;
 				}
 
+				my $playalbum = $prefs->client($client)->get('playtrackalbum');
+			
+				# if player pref for playtrack album is not set, get the old server pref.
+				if (!defined $playalbum) { $playalbum = $prefs->get('playtrackalbum'); }
+			
 				# In some cases just deal with the song individually
-				if ($addorinsert || !$container || !$prefs->client($client)->get('playtrackalbum')) {
+				if ($addorinsert || !$container || !$playalbum) {
 
 					$command = 'playtracks';
 					$command = 'addtracks'    if $addorinsert == 1;

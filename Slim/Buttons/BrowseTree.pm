@@ -115,7 +115,12 @@ sub init {
 				'overlay' => [ undef, $client->symbols('notesymbol') ]
 			});
 
-			if ($descend || !$prefs->client($client)->get('playtrackalbum') || $addorinsert || !Slim::Music::Info::isSong($currentItem)) {
+			my $playalbum = $prefs->client($client)->get('playtrackalbum');
+			
+			# if player pref for playtrack album is not set, get the old server pref.
+			if (!defined $playalbum) { $playalbum = $prefs->get('playtrackalbum'); }
+			
+			if ($descend || !$playalbum || $addorinsert || !Slim::Music::Info::isSong($currentItem)) {
 
 				$client->execute(['playlist', $command, $currentItem]);
 

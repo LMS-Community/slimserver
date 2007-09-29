@@ -139,6 +139,7 @@ sub init {
 		'browseagelimit'        => 100,
 		'groupdiscs'            => 0,
 		'persistPlaylists'      => 1,
+		'playtrackalbum'        => 1,
 		'reshuffleOnRepeat'     => 0,
 		'saveShuffled'          => 0,
 		'composerInArtists'     => 0,
