@@ -52,6 +52,7 @@ our $defaultPrefs = {
 	)],
 	'mp3SilencePrelude'    => 0,
 	'pitch'                => 100,
+	'playtrackalbum'       => 1,
 	'power'                => 1,
 	'powerOffBrightness'   => 1,
 	'powerOnBrightness'    => 4,

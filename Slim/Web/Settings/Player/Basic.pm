@@ -31,11 +31,11 @@ sub needsClient {
 sub prefs {
 	my ($class, $client) = @_;
 
-	my @prefs = qw(playername titleFormatCurr);
+	my @prefs = qw(playername);
 
-	if ($client->isPlayer) {
+	if ($client->isPlayer && !$client->display->isa('Slim::Display::NoDisplay')) {
 
-		push @prefs, qw(playingDisplayMode);
+		push @prefs, qw(titleFormatCurr playingDisplayMode playtrackalbum);
 
 		if (scalar(keys %{ Slim::Buttons::Common::hash_of_savers() }) > 0) {
 

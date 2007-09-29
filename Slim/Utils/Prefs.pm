@@ -133,7 +133,6 @@ sub init {
 		'checkVersion'          => 1,
 		'checkVersionInterval'	=> 60*60*24,
 		'noGenreFilter'         => 0,
-		'playtrackalbum'        => 1,
 		'searchSubString'       => 0,
 		'ignoredarticles'       => "The El La Los Las Le Les",
 		'splitList'             => '',

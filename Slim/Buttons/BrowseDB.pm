@@ -221,7 +221,7 @@ sub init {
 				}
 
 				# In some cases just deal with the song individually
-				if ($addorinsert || !$container || !$prefs->get('playtrackalbum')) {
+				if ($addorinsert || !$container || !$prefs->client($client)->get('playtrackalbum')) {
 
 					$command = 'playtracks';
 					$command = 'addtracks'    if $addorinsert == 1;

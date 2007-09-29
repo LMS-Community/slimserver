@@ -143,6 +143,22 @@
 
 	</div>
 
+	[% IF prefs.exists('playtrackalbum') %]
+	<div class="settingSection">
+		<div class="settingGroup">
+			<div class="prefHead">[% "SETUP_PLAYTRACKALBUM" | string %]</div>
+			<div class="prefDesc hiddenDesc">[% "SETUP_PLAYTRACKALBUM_DESC" | string %]</div>
+	
+			<select class="stdedit" name="playtrackalbum" id="playtrackalbum">
+	
+				<option [% IF NOT prefs.playtrackalbum %]selected [% END %]value="0">[% 'SETUP_PLAYTRACKALBUM_0' | string %]</option>
+				<option [% IF prefs.playtrackalbum %]selected [% END %]value="1">[% 'SETUP_PLAYTRACKALBUM_1' | string %]</option>
+			
+			</select>
+		</div>
+	</div>
+	[% END %]
+	
 	<div class="settingSection">
 	
 		<div class="prefHead">[% "FORGET_PLAYER" | string %]</div>

@@ -22,7 +22,7 @@ sub page {
 
 sub prefs {
 	return (preferences('server'),
-			qw(displaytexttimeout checkVersion noGenreFilter playtrackalbum searchSubString ignoredarticles splitList
+			qw(displaytexttimeout checkVersion noGenreFilter searchSubString ignoredarticles splitList
 			   browseagelimit groupdiscs persistPlaylists reshuffleOnRepeat saveShuffled composerInArtists conductorInArtists
 			   bandInArtists variousArtistAutoIdentification useBandAsAlbumArtist variousArtistsString)
 		   );
