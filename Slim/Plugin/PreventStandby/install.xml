@@ -12,8 +12,7 @@
 	<defaultState>enabled</defaultState>
         
         <homepageURL>http://www.slimdevices.com/</homepageURL>
-        <optionsURL>slim://PreventStandby/content/settings.html</optionsURL>
-	<type>2</type><!-- type=extension -->
+        <type>2</type><!-- type=extension -->
 
         <targetApplication>
   	        <id>SqueezeCenter</id>
