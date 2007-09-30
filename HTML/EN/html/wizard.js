@@ -288,4 +288,3 @@ Wizard = function(){
 		}
 	};
 }();
-Ext.EventManager.onDocumentReady(Wizard.init, Wizard, true);

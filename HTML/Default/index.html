@@ -57,8 +57,11 @@
 			strings['clear_playlist']  = "[% "CLEAR" | string %]";
 			strings['save']  = "[% "SAVE" | string %]";
 
-
-			Ext.EventManager.onDocumentReady(Main.init, Main, true);
+			try { Ext.EventManager.onDocumentReady(Main.init, Main, true); }
+			catch(e) {
+				document.getElementById('loading').style.display = 'none';
+				document.getElementById('noJS').style.display = 'block';
+			}
 		</script>
 
 		<div id="mainbody">

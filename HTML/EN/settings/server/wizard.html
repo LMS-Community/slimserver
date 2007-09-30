@@ -81,6 +81,8 @@
 
 		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
 		<script type="text/javascript" src="/html/ext/ext-all.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="/html/fileselector.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="/html/wizard.js?r=[% revision %]"></script>
 
 		<script type="text/javascript">
 			var showproxy = [% showProxy ? "true" : "false" %];
@@ -101,10 +103,13 @@
 			strings['summary_audiodir'] = "[% "SETUP_AUDIODIR" | string %][% "COLON" | string %]";
 			strings['summary_itunes'] = "[% "ITUNES_DESC" | string %]";
 			strings['summary_musicmagic'] = "[% "MUSICMAGIC_DESC" | string %]";
-		</script>
 
-		<script type="text/javascript" src="/html/fileselector.js?r=[% revision %]"></script>
-		<script type="text/javascript" src="/html/wizard.js?r=[% revision %]"></script>
+			try { Ext.EventManager.onDocumentReady(Wizard.init, Wizard, true); }
+			catch(e) {
+				document.getElementById('loading').style.display = 'none';
+				document.getElementById('noJS').style.display = 'block';
+			}
+		</script>
 
 		<div id="mainbody">
 
