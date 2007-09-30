@@ -175,7 +175,7 @@ sub init {
 		# Server Settings - TextFormatting
 		'longdateFormat'        => q(%A, %B |%d, %Y),
 		'shortdateFormat'       => q(%m/%d/%Y),
-		'timeFormat'            => q(|%I:%M:%S %p),
+		'timeFormat'            => q(|%I:%M %p),
 		'showArtist'            => 0,
 		'showYear'              => 0,
 		'guessFileFormats'	    => [
