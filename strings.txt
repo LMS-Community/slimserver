@@ -6843,7 +6843,7 @@ SETUP_SN_SYNC_DISABLE
 	EN	Disabled, do not keep player settings in sync.
 
 SETUP_NO_JAVASCRIPT
-	EN	In order to access SqueezeCenter, please make sure you have JavaScript enabled in your browser.
+	EN	In order to access SqueezeCenter, please make sure you are using a recent browser (Firefox, Safari, MS Internet Explorer 6, Opera 9 or later), and JavaScript is enabled in your browser. Alternatively you can use a simpler skin, such as <a href="/Classic/" style="color: blue">Classic</a> or <a href="/Handheld/" style="color: blue">Handheld</a> (optimized for small screens).
 
 SETUP_WIZARD_LANG_DESC
 	EN	If you want to change the language, select it here:
@@ -9761,6 +9761,10 @@ BASIC_SERVER_SETTINGS
 	NL	Basisinstellingen
 	SV	Grundinställningar
 	ZH_CN	基本配置
+
+ADVANCED_SETTINGS
+	DE	Erweitert
+	EN	Advanced
 
 SERVER_SETTINGS
 	CS	Nastavení serveru
