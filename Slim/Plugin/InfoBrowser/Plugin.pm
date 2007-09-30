@@ -173,13 +173,12 @@ sub _searchDirs {
 	
 	push @searchDirs, $class->_pluginDataFor('basedir');
 
-	# find location of Addons dir and add this to the path searched for opml menus and @INC
+	# find location of Addons dir and add this to the path searched for opml menus
 	my @pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
 	for my $dir (@pluginDirs) {
 		my $addonDir = catdir($dir, 'InfoBrowserAddons');
 		if (-r $addonDir) {
 			push @searchDirs, $addonDir;
-			unshift @INC, $addonDir;
 		}
 	}
 

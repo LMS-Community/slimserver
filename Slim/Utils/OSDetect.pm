@@ -182,7 +182,7 @@ sub dirsFor {
 
 		} elsif ($dir eq 'Plugins') {
 			
-			push @dirs, "/usr/share/perl5/Slim/Plugin";
+			push @dirs, "/usr/share/perl5/Slim/Plugin", "/usr/share/slimserver/Plugins";
 		
 		} elsif ($dir eq 'strings' || $dir eq 'revision') {
 
@@ -433,6 +433,12 @@ sub initDetailsForLinux {
 
 	$osDetails{'uid'}    = getpwuid($>);
 	$osDetails{'osArch'} = $Config{'myarchname'};
+
+	# package specific addition to @INC to cater for plugin locations
+	if (isDebian()) {
+
+		unshift @INC, '/usr/share/slimserver';
+	}
 }
 
 sub initDetailsForUnix {

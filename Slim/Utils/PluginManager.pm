@@ -373,8 +373,6 @@ sub enablePlugins {
 		if (-f catdir($baseDir, 'Plugin.pm')) {
 
 			$loadModule = 1;
-
-			unshift @INC, $baseDir;
 		}
 
 		# Pull in the module
