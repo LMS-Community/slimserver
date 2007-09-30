@@ -68,7 +68,7 @@ sub processCoverArtRequest {
 	$imgName =~ /(cover|thumb|[A-Za-z0-9]+)		# image name is first string before resizing parameters
 			(?:_(X|\d+)x(X|\d+))?	# width and height are given here, e.g. 300x300
 			(?:_([sSfFpc]))?	# resizeMode, given by a single character
-			(?:_([\da-fA-F]{6,8}))? # background color, optional
+			(?:_([\da-fA-F]+))? # background color, optional
 			\.(jpg|png|gif)$		# file suffixes allowed are jpg png gif
 			/x;	
 
@@ -76,7 +76,14 @@ sub processCoverArtRequest {
 	my $requestedWidth      = $2; # it's ok if it didn't match and we get undef
 	my $requestedHeight     = $3; # it's ok if it didn't match and we get undef
 	my $resizeMode          = $4; # stretch, pad or crop
-	my $requestedBackColour = defined($5) ? hex $5 : 0x7FFFFFFF; # bg color used when padding
+	my $bgColor             = defined($5) ? $5 : '000000';
+	my @bgColor             = split(//, $bgColor);
+	if (scalar(@bgColor) != 6 && scalar(@bgColor) != 8) {
+		$log->info("BG color was not defined correctly. Defaulting to 000000 (white)");
+		$bgColor = '000000';
+	}
+
+	my $requestedBackColour = hex $bgColor; # bg color used when padding
 
 	if (!defined $resizeMode) {
 		$resizeMode = '';

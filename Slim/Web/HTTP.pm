@@ -1152,7 +1152,10 @@ sub generateHTTPResponse {
 		return 0;
 
 	} elsif ($path =~ /music\/(\w+)\/(cover|thumb)/ || 
-		$path  =~ /cover|thumb|\w+_X|\d+xX|\d+/   # extend this to also include any image that gives resizing parameters
+		$path  =~ /\/\w+_(X|\d+)x(X|\d+)
+                        (?:_([sSfFpc]))?        # resizeMode, given by a single character
+                        (?:_\d)? 		# background color, optional
+			/x   # extend this to also include any image that gives resizing parameters
 		) {
 
 		($body, $mtime, $inode, $size, $contentType) = Slim::Web::Graphics::processCoverArtRequest($client, $path);
