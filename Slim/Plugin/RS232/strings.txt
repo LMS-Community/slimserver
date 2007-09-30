@@ -8,3 +8,11 @@ PLUGIN_RS232_NAME
 PLUGIN_RS232_NAME_DESC
 	DE	RS232 Unterstützung für den Transporter
 	EN	RS232 access for Transporter
+
+SETUP_CLI_OVER_RS232
+	DE	Kommandozeileninterface (CLI) über serielle Schnittstelle
+	EN	CLI interface over RS232
+
+SETUP_CLI_OVER_RS232_ENABLE
+	DE	Einschalten
+	EN	Enable

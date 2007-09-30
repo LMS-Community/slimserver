@@ -4,7 +4,7 @@
         <id>51F21801-AAF1-4FEF-A59D-799A9248DC41</id>
         <name>PLUGIN_RS232_NAME</name>
         <module>Slim::Plugin::RS232::Plugin</module>
-        <version>1.0</version>
+        <version>1.1</version>
         <description>PLUGIN_RS232_NAME_DESC</description>
         <creator>Slim Devices/Logitech</creator>
 	<email>support@slimdevices.com</email>
@@ -12,6 +12,7 @@
 	<defaultState>disabled</defaultState>
         
         <homepageURL>http://www.slimdevices.com/</homepageURL>
+	<optionsURL>plugins/RS232/settings/basic.html</optionsURL>
 	<type>2</type><!-- type=extension -->
 
         <targetApplication>
