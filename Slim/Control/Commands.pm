@@ -468,8 +468,8 @@ sub playcontrolCommand {
 		# reset rate in all cases
 		Slim::Player::Source::rate($client, 1);
 		
-		# update the display
-		$client->showBriefly($client->currentSongLines());
+		# update the display unless suppressed or made by jive/cli session
+		$client->showBriefly($client->currentSongLines()) unless (Slim::Buttons::Common::suppressStatus($client) && !$request->source);
 	}
 		
 	$request->setStatusDone();
@@ -1430,6 +1430,10 @@ sub playlistcontrolCommand {
 	# find the songs
 	my @tracks = ();
 
+	# info line and artwork to display if sucessful
+	my $info;
+	my $artwork;
+
 	# Bug: 2373 - allow the user to specify a playlist name
 	my $playlist_id = 0;
 
@@ -1454,6 +1458,19 @@ sub playlistcontrolCommand {
 		my $playlist = Slim::Schema->find('Playlist', $playlist_id);
 
 		if (blessed($playlist) && $playlist->can('tracks')) {
+
+			if ($add || $load) {
+				$client->showBriefly({ 
+					'jive' => { 
+						'type'    => 'song',
+						'text'    => $add
+							? [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $playlist->title,
+								Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST') ]
+								: [ Slim::Utils::Strings::string('JIVE_POPUP_NOW_PLAYING'), $playlist->title ],
+						'icon-id' => 0,
+					}
+				 });
+			}
 
 			$cmd .= "tracks";
 
@@ -1495,20 +1512,29 @@ sub playlistcontrolCommand {
 		
 		if (defined(my $genre_id = $request->getParam('genre_id'))) {
 			$what->{'genre.id'} = $genre_id;
+			$info    = Slim::Schema->find('Genre', $genre_id)->name;
+			$artwork = 0;
 		}
 
 		if (defined(my $artist_id = $request->getParam('artist_id'))) {
 			$what->{'contributor.id'} = $artist_id;
+			$info    = Slim::Schema->find('Contributor', $artist_id)->name;
+			$artwork = undef; # use artwork for first track found
 		}
 
 		if (defined(my $album_id = $request->getParam('album_id'))) {
 			$what->{'album.id'} = $album_id;
+			my $album = Slim::Schema->find('Album', $album_id);
+			$info    = $album->title;
+			$artwork = $album->artwork +0;
 		}
 
 		if (defined(my $year = $request->getParam('year'))) {
-
 			$what->{'year.id'} = $year;
+			$info    = $year;
+			$artwork = 0;
 		}
+
 		# Fred: form year_id DEPRECATED in 7.0
 		if (defined(my $year_id = $request->getParam('year_id'))) {
 
@@ -1522,14 +1548,18 @@ sub playlistcontrolCommand {
 	if (@tracks) {
 
 		if ($load || $add) {
+
+			$info  ||= $tracks[0]->title;
+			$artwork = defined $artwork ? $artwork : $tracks[0]->album->artwork +0;
+
 			$client->showBriefly({ 
 				'jive' => { 
 					'type'    => 'song',
 					'text'    => $add
-						? [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $tracks[0]->title,
+						? [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $info,
 							Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST') ]
-						: [ Slim::Utils::Strings::string('JIVE_POPUP_NOW_PLAYING'), $tracks[0]->title ],
-					'icon-id' => $tracks[0]->album->artwork + 0,
+						: [ Slim::Utils::Strings::string('JIVE_POPUP_NOW_PLAYING'), $info ],
+					'icon-id' => $artwork,
 				}
 			});
 		}
