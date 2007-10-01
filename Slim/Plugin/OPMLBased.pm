@@ -39,7 +39,7 @@ sub initPlugin {
 		
 	$cli_next{$class} = Slim::Control::Request::addDispatch(
 		[ $cli_menu, '_index', '_quantity' ],
-		[ 0, 1, 1, $class->cliRadiosQuery( $args{tag}, $cli_menu ) ]
+		[ 0, 1, 1, $class->cliRadiosQuery( \%args, $cli_menu ) ]
 	);
 	
 	$class->SUPER::initPlugin();
@@ -72,8 +72,9 @@ sub setMode {
 }
 
 sub cliRadiosQuery {
-	my ( $class, $tag, $cli_menu ) = @_;
-	
+	my ( $class, $args, $cli_menu ) = @_;
+	my $tag  = $args->{tag};
+	my $icon = defined($args->{'icon-id'}) ? $args->{'icon-id'} : 'html/images/radio.png';
 	return sub {
 		my $request = shift;
 
@@ -83,13 +84,14 @@ sub cliRadiosQuery {
 		# what we want the query to report about ourself
 		if (defined $menu) {
 			$data = {
-				text => Slim::Utils::Strings::string( $class->getDisplayName() ),  # nice name
-				actions => {
-					go => {
-						cmd => [ $tag, 'items' ],
-						params => {
-							menu => $tag,
-						},
+				text         => Slim::Utils::Strings::string( $class->getDisplayName() ),  # nice name
+				'icon-id'    => $icon,
+				actions      => {
+						go => {
+							cmd => [ $tag, 'items' ],
+							params => {
+								menu => $tag,
+							},
 					},
 				},
 			};

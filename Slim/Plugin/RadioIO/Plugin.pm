@@ -137,6 +137,7 @@ sub cliRadiosQuery {
 	if (defined $menu) {
 		$data = {
 			'text' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+			'icon-id' => 'html/images/radio.png',
 			'actions' => {
 				'go' => {
 					'cmd' => ['radioio', 'items'],

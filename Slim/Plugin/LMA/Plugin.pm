@@ -14,6 +14,7 @@ sub initPlugin {
 		feed => 'http://content.us.squeezenetwork.com:8080/lma/artists.opml',
 		tag  => 'lma',
 		menu => 'music_on_demand',
+		style => 'albumcurrent',
 	);
 }
 

@@ -322,6 +322,9 @@ sub menuQuery {
 					},
 				},
 			},
+			window        => {
+					menuStyle => 'album',
+			},
 		},
 
 		{
@@ -334,6 +337,9 @@ sub menuQuery {
 						menu => 'music_on_demand',
 					},
 				},
+			},
+			window        => {
+					menuStyle => 'album',
 			},
 		},
 		{

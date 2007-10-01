@@ -329,6 +329,10 @@ sub processCoverArtRequest {
 
 					if (!$transparentPngRequest) {
 						$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, $requestedBackColour);
+					} else {
+						$log->info("SET ALPHA FOR TRANSPARENT PNGs");
+						$newImage->saveAlpha(1);
+						$newImage->alphaBlending(0);
 					}
 
 					$newImage->copyResampled(
@@ -345,8 +349,6 @@ sub processCoverArtRequest {
 					# then return a png, else return a jpg
 					if ($returnedType eq "png" && GD::Image->can('png')) {
 
-						$newImage->alphaBlending(0);
-						$newImage->saveAlpha(1);
 						$newImageData = $newImage->png;
 						$contentType = 'image/png';
 
