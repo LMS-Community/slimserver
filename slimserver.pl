@@ -22,7 +22,7 @@ package PerlSvc;
 our %Config = (
 	DisplayName => 'SqueezeCenter',
 	Description => "SqueezeCenter Music Server",
-	ServiceName => "slimsvc",
+	ServiceName => "squeezesvc",
 );
 
 sub Startup {
