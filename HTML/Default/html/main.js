@@ -822,8 +822,8 @@ Player = function(){
 						var popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250xX.jpg" width="250">';
 
 						if (result.playlist_loop[0].artwork_url) {
-							coverart = '<img src="' + result.playlist_loop[0].artwork_url + '" height="96" />';
-							popup    = '<img src="' + result.playlist_loop[0].artwork_url + ' />';
+							coverart = '<img src="' + result.playlist_loop[0].artwork_url + '" height="96" width="96" />';
+							popup    = '<img src="' + result.playlist_loop[0].artwork_url + '" height="250" width="250" />';
 						}
 
 						el.update(coverart);
