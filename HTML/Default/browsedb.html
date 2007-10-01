@@ -1,4 +1,5 @@
-[%- pagetitle = BLOCK %]
+[%- pagetitle = browseby | string %]
+[%- pageHeaderInfo = BLOCK %]
 	<span>[% browseby | string %]</span>
 	[% IF levelName == 'album' || levelName == 'age'; titleRight = BLOCK %]
 	<div id="viewSelect"></div>

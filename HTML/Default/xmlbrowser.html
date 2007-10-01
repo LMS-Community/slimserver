@@ -9,7 +9,6 @@
 
 [% FILTER null %]
 [% homeCategory = homeCategory || "PLUGINS" -%]
-[% IF NOT pagetitle; END %]
 [% pwd_list = [];
 	FOREACH crumb IN crumb;
 		crumbItem = BLOCK %]

@@ -1,6 +1,7 @@
 [% IF page == 'help';
 	
 	pagetitle = "HELP" | string;
+	pageHeaderInfo = pagetitle;
 	
 	PROCESS helpheader.html;
 	
@@ -81,7 +82,8 @@ ELSE %]
 	[% END %]
 
 	[% IF page == 'my_music' %]
-		[% pagetitle = BLOCK %]
+		[% pagetitle = "MY_MUSIC" | string %]
+		[% pageHeaderInfo = BLOCK %]
 			<span id="pagetitle">[% "MY_MUSIC" | string %]</span>
 			<input type="text" id="livesearch"></input>
 		[% END %]
@@ -102,6 +104,7 @@ ELSE %]
 
 	[% ELSIF page == 'radio' %]
 		[% pagetitle = "RADIO" | string %]
+		[% pageHeaderInfo = pagetitle %]
 		[% pwd_list = BLOCK %]
 			<a href="[% webroot %]home.html?player=[% player %]">[% "HOME" | string %]</a> [% crumbSeparator %] [% "RADIO" | string %]
 		[% END %]
@@ -114,6 +117,7 @@ ELSE %]
 
 	[% ELSIF page == 'mod' %]
 		[% pagetitle = "MUSIC_ON_DEMAND" | string %]
+		[% pageHeaderInfo = pagetitle %]
 		[% pwd_list = BLOCK %]
 			<a href="[% webroot %]home.html?player=[% player %]">[% "HOME" | string %]</a> [% crumbSeparator %] [% "MUSIC_ON_DEMAND" | string %]
 		[% END %]
@@ -126,6 +130,7 @@ ELSE %]
 
 	[% ELSIF page == 'plugins' %]
 		[% pagetitle = "PLUGINS" | string %]
+		[% pageHeaderInfo = pagetitle %]
 		[% pwd_list = BLOCK %]
 			<a href="[% webroot %]home.html?player=[% player %]">[% "HOME" | string %]</a> [% crumbSeparator %] [% "PLUGINS" | string %]
 		[% END %]
@@ -138,6 +143,7 @@ ELSE %]
 
 	[% ELSE %]
 		[% pagetitle = "HOME" | string %]
+		[% pageHeaderInfo = pagetitle %]
 		[% menu = BLOCK %]
 		<div class="homeMenuSection" id="homeMenu">
 			[% category=''; PROCESS menuItem link.key="MY_MUSIC" link.value="home.html?" expandable="my_music" %]
@@ -161,7 +167,6 @@ ELSE %]
 		[% END %]
 
 	[% END %]
-
 
 	[% PROCESS pageheader.html noHomeLink=1 %]
 
