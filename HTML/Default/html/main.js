@@ -405,9 +405,14 @@ Playlist = function(){
 
 			// try to reload previous page if no URL is defined
 			var el = Ext.get('playlistPanel');
+			var um = el.getUpdateManager();
+
+			// shortcut if there's already an update pending
+			if (um.isUpdating())
+				return;
 
 			if (!url)
-				url = el.getUpdateManager().defaultUrl;
+				url = um.defaultUrl;
 
 			if (showIndicator)
 				el.getUpdateManager().showLoadIndicator = true;
@@ -422,7 +427,7 @@ Playlist = function(){
 				this.onUpdated
 			);
 
-			el.getUpdateManager().showLoadIndicator = false;
+			um.showLoadIndicator = false;
 		},
 
 		clear : function(){
@@ -539,7 +544,9 @@ Player = function(){
 		tracks: null,
 		index: null,
 		duration: null,
-		shuffle: null
+		shuffle: null,
+		timestamp: null,
+		dontUpdate: false
 	};
 
 	return {
@@ -850,7 +857,8 @@ Player = function(){
 					tracks: result.playlist_tracks,
 					index: result.playlist_cur_index,
 					duration: result['duration'] || 0,
-					shuffle: result['playlist shuffle']
+					shuffle: result['playlist shuffle'],
+					timestamp: result.playlist_timestamp
 				};
 
 				this.updatePlayTime(result.time ? result.time : 0);
@@ -922,9 +930,6 @@ Player = function(){
 								// check whether we need to update our song info & playlist
 								if (this.needUpdate(result)){
 									this.getUpdate();
-
-									if (Ext.get('playList'))
-										Playlist.load();
 								}
 								
 								if (result.power) {
@@ -959,10 +964,18 @@ Player = function(){
 			}
 		},
 
-		needUpdate : function(result) {
+		needUpdate : function(result) {				
+			// the dontUpdate flag allows us to have the timestamp check ignored for one action 
+			// used to prevent updates during d'n'd
+			if (playerStatus.dontUpdate) {
+				playerStatus.timestamp = result.playlist_timestamp;
+				playerStatus.dontUpdate = false;
+			}
+
 			var needUpdate = (result.power && (result.power != playerStatus.power));
 			needUpdate |= (result.mode != null && result.mode != playerStatus.mode);
 			needUpdate |= (result.current_title != null && result.current_title != playerStatus.current_title);
+			needUpdate |= (result.playlist_timestamp != null && result.playlist_timestamp > playerStatus.timestamp);
 			needUpdate |= (result.playlist_tracks > 0 && result.playlist_loop[0].title != playerStatus.title);
 			needUpdate |= (result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track);
 			needUpdate |= (result.playlist_tracks != null && !result.playlist_tracks && playerStatus.track != null);
@@ -974,7 +987,7 @@ Player = function(){
 			return needUpdate;
 		},
 
-		playerControl : function(action){
+		playerControl : function(action, dontUpdate){
 			Ext.Ajax.request({
 				params: Ext.util.JSON.encode({
 					id: 1,
@@ -984,7 +997,10 @@ Player = function(){
 						action
 					]
 				}),
-				success: this.getUpdate,
+				success: function(){
+					playerStatus.dontUpdate = dontUpdate;
+					this.getUpdate();
+				},
 				scope: this
 			});
 		},
