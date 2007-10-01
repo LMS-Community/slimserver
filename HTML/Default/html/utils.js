@@ -99,6 +99,12 @@ var Utils = function(){
 
 	return {
 		init : function(){
+			// make sure all selectable list items have a unique ID
+			var items = Ext.DomQuery.select('.selectorMarker');
+			for(var i = 0; i < items.length; i++) {
+				Ext.id(Ext.get(items[i]));
+			}
+
 			Ext.EventManager.onWindowResize(Utils.resizeContent);
 			Ext.EventManager.onDocumentReady(Utils.resizeContent);
 		},

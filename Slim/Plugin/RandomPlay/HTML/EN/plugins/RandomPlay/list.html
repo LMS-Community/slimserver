@@ -50,7 +50,7 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 				[% PROCESS randomLink type="$type" addOnly="0" %]
 				[% PROCESS randomLink type="$type" addOnly="1" %]
 			[% END %]
-			[%- WRAPPER contentitem controls='controls' itemobj.id = loop.count %]
+			[%- WRAPPER contentitem controls='controls' %]
 				[% 'PLUGIN_RANDOM_' _ type _ '_WEB' | string %]
 			[% END %]
 			[% odd = (not odd) %]

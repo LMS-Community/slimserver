@@ -29,7 +29,7 @@
 
 
 	[% BLOCK contentitem -%]
-	<div class="selectorMarker" onmouseover="Utils.highlight(this);" id="db[% (itemobj.id || item.name || item.title) | uri %]_selector"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+	<div class="selectorMarker" onmouseover="Utils.highlight(this);" [% IF itemobj.id %]id="db[% itemobj.id | uri %]_selector"[% END %]><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 		<div class="[% lineclass || 'browsedbListItem' %][% IF (levelName == 'album' || levelName == 'age') && !(artwork > 0) %] itemWithCover[% END %]" [%- IF anchor %]id="anchor[% anchor | uri %]"[%- END -%]>
 			[%- IF leftcontrols -%]
 				<span class="browsedbLeftControls">
