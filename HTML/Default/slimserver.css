@@ -293,7 +293,7 @@ form#advSearchForm.resultsPage {
 	margin-left: 20px;
 }
 
-.songInfoTitle, .songInfoText, #songInfoPlayLinks, #crumblist {
+.scrollingPanel, .songInfoTitle, .songInfoText, #songInfoPlayLinks, #crumblist {
 	cursor: default;
 }
 
