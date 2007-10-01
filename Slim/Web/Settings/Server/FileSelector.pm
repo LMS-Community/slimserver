@@ -68,7 +68,7 @@ sub autoCompleteHandler {
 	# a correct folder	
 	if (-d $currDir) {
 		$log->debug('regular folder: ' . $currDir);
-		@subdirs = readDirectory($currDir, qr/./);
+		@subdirs = _mapDirectories($currDir);
 	}
 
 	# something else...
@@ -82,28 +82,42 @@ sub autoCompleteHandler {
 		}
 		else {
 			(my $vol, $parent, $file) = eval { splitpath($currDir) };
+			$parent = $vol . $parent;
+			$log->debug("path elements: '$vol', '$parent', '$file'");
 		}
 
 		if ($parent && $parent ne '.' && -d $parent) {
-			@subdirs = grep /^$file/i, readDirectory($parent, qr/./);
+			$log->debug("getting subfolders for: $parent");
+			my $d = $currDir;
+			$d =~ s/\\/\\\\/g;
+			@subdirs = grep m|^$d|i, _mapDirectories($parent);
 			$currDir = $parent;
 		}
 
 		# didn't find anything useful - display a list of reasonable choices (root, drive letters)
 		if (Slim::Utils::OSDetect::OS() eq 'win' && !@subdirs) {
-			@subdirs = map { "$_:" } grep /^[^AB]/i, Win32::DriveInfo::DrivesInUse();
+			$log->debug('getting Windows drive list');
+			@subdirs = _getDriveList();
 		}
 		elsif (!@subdirs && !$parent) {
-			@subdirs = readDirectory('/', qr/./);
+			@subdirs = _mapDirectories($currDir);
 		}
 	}
 
-	@subdirs = map { catdir($currDir, $_) } @subdirs;
 	@subdirs = grep { -d } @subdirs if ($paramRef->{'foldersonly'});
 
 	$paramRef->{'folders'} = \@subdirs;
 
 	return Slim::Web::HTTP::filltemplatefile($pages->{'autocomplete'}, $paramRef);	
+}
+
+sub _getDriveList {
+	return map { "$_:" } grep /^[^AB]/i, Win32::DriveInfo::DrivesInUse();
+}
+
+sub _mapDirectories {
+	my $currDir = shift;
+	return map { catdir($currDir, $_) } readDirectory($currDir, qr/./); 
 }
 
 1;
