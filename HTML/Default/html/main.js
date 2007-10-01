@@ -786,7 +786,7 @@ Player = function(){
 								? '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].album + '</a>'
 								: result.playlist_loop[0].album
 							)
-							+ (result.playlist_loop[0].year ? ' ('
+							+ (result.playlist_loop[0].year > 0 ? ' ('
 								+ '<a href="' + webroot + 'browsedb.html?hierarchy=year,album,track&amp;level=1&amp;year.id=' + result.playlist_loop[0].year + '&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].year + '</a>'
 							+ ')' : '');
 
