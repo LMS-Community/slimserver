@@ -541,10 +541,8 @@ Player = function(){
 		current_title: null,
 		title: null,
 		track: null,
-		tracks: null,
 		index: null,
 		duration: null,
-		shuffle: null,
 		timestamp: null,
 		dontUpdate: false
 	};
@@ -854,10 +852,8 @@ Player = function(){
 					current_title: result.current_title,
 					title: result.playlist_tracks > 0 ? result.playlist_loop[0].title : '',
 					track: result.playlist_tracks > 0 ? result.playlist_loop[0].url : '',
-					tracks: result.playlist_tracks,
 					index: result.playlist_cur_index,
 					duration: result['duration'] || 0,
-					shuffle: result['playlist shuffle'],
 					timestamp: result.playlist_timestamp
 				};
 
@@ -973,16 +969,14 @@ Player = function(){
 			}
 
 			var needUpdate = (result.power && (result.power != playerStatus.power));
-			needUpdate |= (result.mode != null && result.mode != playerStatus.mode);
-			needUpdate |= (result.current_title != null && result.current_title != playerStatus.current_title);
-			needUpdate |= (result.playlist_timestamp != null && result.playlist_timestamp > playerStatus.timestamp);
-			needUpdate |= (result.playlist_tracks > 0 && result.playlist_loop[0].title != playerStatus.title);
-			needUpdate |= (result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track);
-			needUpdate |= (result.playlist_tracks != null && !result.playlist_tracks && playerStatus.track != null);
-			needUpdate |= (result.playlist_tracks != null && !playerStatus.track);
-			needUpdate |= (result.playlist_tracks != null && result.playlist_tracks != playerStatus.tracks);
-			needUpdate |= (result.playlist_cur_index != null && result.playlist_cur_index != playerStatus.index);
-			needUpdate |= (result['playlist shuffle'] >= 0 && result['playlist shuffle'] != playerStatus.shuffle);
+			needUpdate |= (result.mode != null && result.mode != playerStatus.mode);									// play/paus mode
+			needUpdate |= (result.playlist_timestamp != null && result.playlist_timestamp > playerStatus.timestamp);	// playlist: time of last change
+			needUpdate |= (result.playlist_cur_index != null && result.playlist_cur_index != playerStatus.index);		// the currently playing song's position in the playlist 
+			needUpdate |= (result.current_title != null && result.current_title != playerStatus.current_title);			// title (eg. radio stream)
+			needUpdate |= (result.playlist_tracks > 0 && result.playlist_loop[0].title != playerStatus.title);			// songtitle?
+			needUpdate |= (result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track);			// track url
+			needUpdate |= (result.playlist_tracks != null && !result.playlist_tracks && playerStatus.track != null);	// there's a player, but no song in the playlist
+			needUpdate |= (result.playlist_tracks != null && !playerStatus.track);										// track in playlist changed
 
 			return needUpdate;
 		},
