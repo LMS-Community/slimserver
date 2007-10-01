@@ -1,5 +1,5 @@
 var thumbSize = [% IF thumbSize %][% thumbSize %][% ELSE %]250[% END %];
-var thumbHrefTemplate = '/music/COVER/thumb_'+thumbSize+'x'+thumbSize+'_c_000000.jpg';
+var thumbHrefTemplate = '/music/COVER/thumb_'+thumbSize+'x'+thumbSize+'_p_ffffff.jpg';
 
 [% PROCESS html/global.js %]
 

@@ -75,21 +75,43 @@ sub processCoverArtRequest {
 	my $image               = $1;
 	my $requestedWidth      = $2; # it's ok if it didn't match and we get undef
 	my $requestedHeight     = $3; # it's ok if it didn't match and we get undef
-	my $resizeMode          = $4; # stretch, pad or crop
-	my $bgColor             = defined($5) ? $5 : '000000';
+	my $resizeMode          = $4; # fitstretch, fitsquash, pad, stretch, crop, squash, or frappe
+	my $bgColor             = defined($5) ? $5 : '';
+
+	# if the image is a png and bgColor wasn't explicitly sent, image should be transparent
+	my $transparentPngRequest = 0;
+	if ($suffix =~ /png/) { 
+		if ($bgColor eq '') {
+			$log->info('this is a transparent request');
+			$transparentPngRequest = 1;
+		}
+	} else {
+		if ($bgColor eq '') {
+			$bgColor = 'FFFFFF';
+		}
+	}
+
 	my @bgColor             = split(//, $bgColor);
-	if (scalar(@bgColor) != 6 && scalar(@bgColor) != 8) {
-		$log->info("BG color was not defined correctly. Defaulting to 000000 (white)");
-		$bgColor = '000000';
+
+	# allow for slop in the bg color request-- if the correct amount of chars weren't set, default to white
+	if ($bgColor ne '' && !$transparentPngRequest && scalar(@bgColor) != 6 && scalar(@bgColor) != 8) {
+		$log->error("BG color for $imgName was not defined correctly. Defaulting to FFFFFF (white)");
+		$bgColor = 'FFFFFF';
 	}
 
 	my $requestedBackColour = hex $bgColor; # bg color used when padding
 
 	if (!defined $resizeMode) {
-		$resizeMode = '';
+		# if both width and height are given but no resize mode, resizeMode is pad
+		if ($requestedWidth && $requestedHeight) {
+			$resizeMode = 'p';
+		# otherwise let the logic below handle it
+		} else {
+			$resizeMode = '';
+		}
 	}
 
-	# It a size is specified then default to stretch, else default to squash
+	# If a size is specified then default to stretch, else default to squash
 	if ($resizeMode eq "f") {
 		$resizeMode = "fitstretch";
 	}elsif ($resizeMode eq "F") {
@@ -185,7 +207,7 @@ sub processCoverArtRequest {
 		# If this is a thumb, a size has been given, or this is a png and the background color isn't 100% transparent
 		# then the overhead of loading the image with GD is necessary.  Otherwise, the original content
 		# can be passed straight through.
-		if ($image eq "thumb" || $requestedWidth || ($contentType eq "image/png" && ($requestedBackColour >> 24) != 0x7F)) {
+		if ($image eq "thumb" || $requestedWidth || ($contentType eq "image/png" && ($transparentPngRequest || ($requestedBackColour >> 24) != 0x7F))) {
 
 			# Bug: 3850 - new() can't auto-identify the
 			# ContentType (for things like non-JFIF JPEGs) - but
@@ -304,10 +326,11 @@ sub processCoverArtRequest {
 
 					my $newImage = GD::Image->new($returnedWidth, $returnedHeight);
 
-					$newImage->alphaBlending(0);
-					$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, $requestedBackColour);
 
-					$newImage->alphaBlending(1);
+					if (!$transparentPngRequest) {
+						$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, $requestedBackColour);
+					}
+
 					$newImage->copyResampled(
 						$origImage,
 						$destX, $destY,
@@ -322,6 +345,7 @@ sub processCoverArtRequest {
 					# then return a png, else return a jpg
 					if ($returnedType eq "png" && GD::Image->can('png')) {
 
+						$newImage->alphaBlending(0);
 						$newImage->saveAlpha(1);
 						$newImageData = $newImage->png;
 						$contentType = 'image/png';

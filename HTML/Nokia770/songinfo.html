@@ -20,7 +20,7 @@
 		<a href = "javascript:changeThumbSize('shrink', 'albumArt', '[% itemobj.id %]');">[% "SHRINK" | string %]</a> |
 		<a href = "javascript:changeThumbSize('enlarge', 'albumArt', '[% itemobj.id %]');">[% "ENLARGE" | string %]</a>
 		<a href="browsedb.html?hierarchy=album,track&level=2&album.id=[% itemobj.album.id %]&player=[% playerURI %]">
-			<img src="/music/[% itemobj.id %]/thumb_[% IF thumbSize %][% thumbSize %]x[% thumbSize %][% ELSE %]200x200[% END %]_c_000000.jpg" style="border: 1px solid black" id = 'albumArt'>
+			<img src="/music/[% itemobj.id %]/thumb_[% IF thumbSize %][% thumbSize %]x[% thumbSize %][% ELSE %]200x200[% END %]_p_ffffff.jpg" style="border: 1px solid black" id = 'albumArt'>
 		</a>
 		[% END %]
 		</td>

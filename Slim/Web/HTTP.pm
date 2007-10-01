@@ -1154,7 +1154,7 @@ sub generateHTTPResponse {
 	} elsif ($path =~ /music\/(\w+)\/(cover|thumb)/ || 
 		$path  =~ /\/\w+_(X|\d+)x(X|\d+)
                         (?:_([sSfFpc]))?        # resizeMode, given by a single character
-                        (?:_\d)? 		# background color, optional
+                        (?:_[\da-fA-F]+)? 		# background color, optional
 			/x   # extend this to also include any image that gives resizing parameters
 		) {
 
