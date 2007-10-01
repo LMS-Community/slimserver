@@ -51,7 +51,7 @@ my $prefs = preferences('server');
 
 my $OS  = Slim::Utils::OSDetect::OS();
 
-my $serviceName = 'SlimServerMySQL';
+my $serviceName = 'SqueezeMySQL';
 
 =head2 init()
 
@@ -98,8 +98,8 @@ sub init {
 
 	my $cacheDir = $prefs->get('cachedir');
 
-	$class->socketFile( catdir($cacheDir, 'slimserver-mysql.sock') ),
-	$class->pidFile(    catdir($cacheDir, 'slimserver-mysql.pid') );
+	$class->socketFile( catdir($cacheDir, 'squeezecenter-mysql.sock') ),
+	$class->pidFile(    catdir($cacheDir, 'squeezecenter-mysql.pid') );
 
 	$class->confFile( $class->createConfig($cacheDir) );
 
