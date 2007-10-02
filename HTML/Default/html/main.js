@@ -184,6 +184,8 @@ Main = function(){
 				pl.setHeight(dimensions['colHeight'] - pl.getTop() + offset['playlistbottom']);
 			}
 
+			Player.progressBar('ctrlProgress');
+
 			try { this.layout(); }
 			catch(e) {}
 		}
@@ -650,6 +652,7 @@ Player = function(){
 
 			pollTimer = new Ext.util.DelayedTask(this.getStatus, this);
 			playTimeTimer = new Ext.util.DelayedTask(this.updatePlayTime, this);
+
 			this.getStatus();
 		},
 

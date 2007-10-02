@@ -400,6 +400,7 @@ form#advSearchForm.resultsPage {
 	margin: 2px 95px 0 30px;
 	overflow: hidden;
 	white-space: nowrap;
+	height: 13px;
 }
 
 #ctrlPlaytimeCollapsed {
