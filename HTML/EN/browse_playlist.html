@@ -1,6 +1,6 @@
 [% pagetitle = "SAVED_PLAYLISTS" | string %]
 [% pageicon = 'SAVED_PLAYLISTS' %]
-[% IF NOT ajaxUpdate %][% PROCESS pageheader.html %]
+[% IF NOT ajaxUpdate %][% PROCESS pageheader.html dontscroll=1 %]
 
 	[% IF warn %]<p><b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string %] <p><hr>[% END %]
 	
