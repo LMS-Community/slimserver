@@ -15,8 +15,11 @@
 [%# set browserTarget to the name of the frame used for browser lists, if your skin uses frames %]
 [% browserTarget  = "" %]
 
-[# set this to set whether or not the skin is capable of using javascript. %]
+[%# set this to set whether or not the skin is capable of using javascript. %]
 [% useAJAX = 1 %]
+
+[%# set this for the background color to use on resized images %]
+[% bgcolor = "FFFFFF" %]
 
 [%- BLOCK cmdlink -%]
 <a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% cmdtitle | string %]</a>

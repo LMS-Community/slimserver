@@ -4,6 +4,7 @@
 [% setting_chooser_noHome = 1 %]
 [% controlGraphics  = 1 %]
 [% browserTarget  = "browser" %]
+[% bgcolor = "000000" %]
 
 [%- BLOCK cmdlink -%]
 <a [% content %] [% UNLESS noTarget %][% IF target %]target=[% target; ELSE %]target="status"[% END %][% END %]><img src="[% webroot %]html/images/[% cmdimage %].gif" height="11"

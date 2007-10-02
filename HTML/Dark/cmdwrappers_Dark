@@ -1,0 +1,3 @@
+[%- FILTER null %]
+[% bgcolor = "000000" %]
+[% END -%]
