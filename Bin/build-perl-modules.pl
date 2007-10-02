@@ -61,7 +61,7 @@ my %packageOptions = (
 );
 
 sub main {
-	my ($slimServerPath, $downloadPath, $perlBinary, @libList, $downloadUsing);
+	my ($squeezeCenterPath, $downloadPath, $perlBinary, @libList, $downloadUsing);
 
 	my $archname = $Config{'archname'};
 	my $version  = $Config{'version'};
@@ -87,28 +87,28 @@ sub main {
 	# Where does their SqueezeCenter live? Try to guess.
 	if (-f 'slimserver.pl' && -d 'CPAN/arch') {
 
-		$slimServerPath = cwd();
+		$squeezeCenterPath = cwd();
 
 	} else {
 
 		print "Please enter the path to your SqueezeCenter directory (ex: /usr/local/slimserver) --> ";
-		chomp($slimServerPath = <STDIN>);
+		chomp($squeezeCenterPath = <STDIN>);
 	}
 
-	$slimServerPath ||= '/usr/local/slimserver';
+	$squeezeCenterPath ||= '/usr/local/slimserver';
 
-	unless (-d $slimServerPath) {
+	unless (-d $squeezeCenterPath) {
 		die "Couldn't find a valid SqueezeCenter path. Exiting.\n";
 	}
 
 	# Let the build process use modules installed already:
-	$ENV{'PERL5LIB'} = "$slimServerPath/CPAN";
+	$ENV{'PERL5LIB'} = "$squeezeCenterPath/CPAN";
 
 	# Tell MakeMaker to always use the default when prompted.
 	$ENV{'PERL_MM_USE_DEFAULT'} = 1;
 
 	# This is where the binaries will end up.
-	my $cpanDest = "$slimServerPath/CPAN/arch/$version/$archname/auto";
+	my $cpanDest = "$squeezeCenterPath/CPAN/arch/$version/$archname/auto";
 
 	# Where do they want the downloads to go?
 	print "Please enter a directory to download files to --> ";
