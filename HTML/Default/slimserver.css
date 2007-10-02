@@ -843,6 +843,9 @@ form#advSearchForm.resultsPage {
 	color:#003366;
 }
 
+.loading-indicator {
+	background-image: url(html/images/loading.gif);
+}
 
 /* Song information page */
 #songInfo {
