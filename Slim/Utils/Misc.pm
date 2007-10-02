@@ -93,11 +93,11 @@ sub findbin {
 
 	$log->debug("Looking for executable: [$executable]");
 
-	# Reduce all the x86 architectures down to i386, so we only need one
-	# directory per *nix OS.
+	# Reduce all the x86 architectures down to i386, including x86_64,
+	# so we only need one directory per *nix OS. 
 	my $arch = $Config::Config{'archname'};
 
-	   $arch =~ s/^i[3456]86-([^-]+).*$/i386-$1/;
+	$arch =~ s/^(?:i[3456]86|x86_64)-([^-]+).*/i386-$1/;
 
 	my @paths = (
 		catdir($Bin, 'Bin', $arch),
