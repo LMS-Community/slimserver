@@ -41,7 +41,7 @@ Main = function(){
 			});
 
 			Ext.get('progressInfo').on('click', function(){
-				window.open('progress.html?type=importer', 'dependent=yes,resizable=yes');
+				frames.browser.location = webroot + 'progress.html?type=importer', 'dependent=yes,resizable=yes';
 			});
 
 			PlayerChooser.init();
