@@ -282,9 +282,6 @@ PlayerChooser = function(){
 
 							if (el = Ext.get('playerSettingsLink'))
 								el.setVisible(playerid ? true : false);
-
-							// display scanning information
-							Main.checkScanStatus(responseText);
 						}
 
 						else {
@@ -293,6 +290,9 @@ PlayerChooser = function(){
 								value: ''
 							});
 						}
+
+						// display scanning information
+						Main.checkScanStatus(responseText);
 					}
 				}
 			});
