@@ -816,7 +816,7 @@ Player = function(){
 					Ext.get('ctrlCurrentSongInfoCollapsed').update(currentTitle);
 
 					if (result.playlist_loop[0].id && (el = Ext.get('ctrlCurrentArt'))) {
-						var coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96x96.jpg"></a>';
+						var coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96x96_p_646664.jpg"></a>';
 						var popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250xX.jpg" width="250">';
 
 						if (result.playlist_loop[0].artwork_url) {
