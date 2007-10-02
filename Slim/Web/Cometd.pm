@@ -42,12 +42,27 @@ my %toUnsubscribe = ();
 use constant PROTOCOL_VERSION => '1.0';
 use constant RETRY_DELAY      => 5000;
 
+# indicies used for $conn in handler()
+use constant HTTP_CLIENT      => 0;
+use constant HTTP_RESPONSE    => 1;
+
 sub init {
-	Slim::Web::HTTP::addRawFunction( '/cometd', \&handler );
-	Slim::Web::HTTP::addCloseHandler( \&closeHandler );
+	Slim::Web::HTTP::addRawFunction( '/cometd', \&webHandler );
+	Slim::Web::HTTP::addCloseHandler( \&webCloseHandler );
 }
 
-sub handler {
+# Handler for CLI requests
+sub cliHandler {
+	my ( $socket, $message ) = @_;
+	
+	# Tell the CLI plugin to notify us on disconnect for this socket
+	Slim::Plugin::CLI::Plugin::addDisconnectHandler( $socket, \&cliCloseHandler );
+	
+	handler( $socket, $message );
+}
+
+# Handler for web requests
+sub webHandler {
 	my ( $httpClient, $httpResponse ) = @_;
 	
 	# make sure we're connected
@@ -89,20 +104,24 @@ sub handler {
 		$ops{message} = $params;
 	}
 	
-	if ( !$ops{message} ) {
+	handler( [ $httpClient, $httpResponse ], $ops{message} );
+}
+
+sub handler {
+	my ( $conn, $message ) = @_;
+	
+	if ( !$message ) {
 		sendResponse( 
-			$httpClient,
-			$httpResponse,
+			$conn,
 			[ { successful => JSON::XS::false, error => 'no bayeux message found' } ]
 		);
 		return;
 	}
 
-	my $objs = eval { from_json( $ops{message} ) };
+	my $objs = eval { from_json( $message ) };
 	if ( $@ ) {
 		sendResponse( 
-			$httpClient,
-			$httpResponse,
+			$conn,
 			[ { successful => JSON::XS::false, error => "$@" } ]
 		);
 		return;
@@ -114,8 +133,7 @@ sub handler {
 		}
 		
 		sendResponse( 
-			$httpClient,
-			$httpResponse,
+			$conn,
 			[ { successful => JSON::XS::false, error => 'bayeux message not an array' } ]
 		);
 		return;
@@ -132,8 +150,7 @@ sub handler {
 	for my $obj ( @{$objs} ) {		
 		if ( ref $obj ne 'HASH' ) {
 			sendResponse( 
-				$httpClient,
-				$httpResponse,
+				$conn,
 				[ { successful => JSON::XS::false, error => 'bayeux event not a hash' } ]
 			);
 			return;
@@ -154,7 +171,9 @@ sub handler {
 			
 			# Register client with HTTP connection
 			if ( $clid ) {
-				$httpClient->clid( $clid );
+				if ( ref $conn eq 'ARRAY' ) {
+					$conn->[HTTP_CLIENT]->clid( $clid );
+				}
 			}
 		}
 		
@@ -205,17 +224,23 @@ sub handler {
 				push @{$events}, ( $manager->get_pending_events( $clid ) );
 				
 				if ( $obj->{connectionType} eq 'streaming' ) {
-					# Streaming connections use chunked transfer encoding
-					$httpResponse->header( 'Transfer-Encoding' => 'chunked' );
-				
-					# Tell HTTP client our transport
-					$httpClient->transport( 'streaming' );
 					
+					if ( ref $conn eq 'ARRAY' ) {
+						# HTTP-specific connection stuff
+						# Streaming connections use chunked transfer encoding
+						$conn->[HTTP_RESPONSE]->header( 'Transfer-Encoding' => 'chunked' );
+			
+						# Tell HTTP client our transport
+						$conn->[HTTP_CLIENT]->transport( 'streaming' );
+					}
+				
 					# register this connection with the manager
-					$manager->register_connection( $clid, $httpClient, $httpResponse );
+					$manager->register_connection( $clid, $conn );
 				}
 				else {
-					$httpClient->transport( 'polling' );
+					if ( ref $conn eq 'ARRAY' ) {
+						$conn->[HTTP_CLIENT]->transport( 'polling' );
+					}
 				}
 			}
 		}
@@ -253,17 +278,21 @@ sub handler {
 				push @{$events}, ( $manager->get_pending_events( $clid ) );
 				
 				if ( $obj->{connectionType} eq 'streaming' ) {
-					# Streaming connections use chunked transfer encoding
-					$httpResponse->header( 'Transfer-Encoding' => 'chunked' );
+					if ( ref $conn eq 'ARRAY' ) {
+						# Streaming connections use chunked transfer encoding
+						$conn->[HTTP_RESPONSE]->header( 'Transfer-Encoding' => 'chunked' );
+			
+						# Tell HTTP client our transport
+						$conn->[HTTP_CLIENT]->transport( 'streaming' );
+					}
 				
-					# Tell HTTP client our transport
-					$httpClient->transport( 'streaming' );
-					
 					# Tell the manager about the new connection
-					$manager->register_connection( $clid, $httpClient, $httpResponse );
+					$manager->register_connection( $clid, $conn );
 				}
 				else {
-					$httpClient->transport( 'polling' );
+					if ( ref $conn eq 'ARRAY' ) {
+						$conn->[HTTP_CLIENT]->transport( 'polling' );
+					}
 				}
 			}	
 		}
@@ -289,8 +318,10 @@ sub handler {
 					timestamp  => time2str( time() ),
 				};
 				
-				# Close the connection after this response
-				$httpResponse->header( Connection => 'close' );
+				if ( ref $conn eq 'ARRAY' ) {
+					# Close the connection after this response
+					$conn->[HTTP_RESPONSE]->header( Connection => 'close' );
+				}
 			
 				disconnectClient( $clid );
 			}
@@ -521,19 +552,29 @@ sub handler {
 			};
 		}
 		
-		sendResponse(
-			$httpClient, $httpResponse, $out,
-		);
+		sendResponse( $conn, $out );
 		
 		return;
 	}
 	
-	sendResponse(
-		$httpClient, $httpResponse, $events,
-	);
+	sendResponse( $conn, $events );
 }
 
 sub sendResponse {
+	my ( $conn, $out ) = @_;
+	
+	if ( ref $conn eq 'ARRAY' ) {
+		sendHTTPResponse( @{$conn}, $out );
+	}
+	else {
+		# For CLI, don't send anything if there are no events
+		if ( scalar @{$out} ) {
+			sendCLIResponse( $conn, $out );
+		}
+	}
+}
+
+sub sendHTTPResponse {
 	my ( $httpClient, $httpResponse, $out ) = @_;
 	
 	$httpResponse->code( 200 );
@@ -580,6 +621,21 @@ sub sendResponse {
 	Slim::Web::HTTP::addHTTPResponse(
 		$httpClient, $httpResponse, \$out, $sendheaders, $chunked,
 	);
+}
+
+sub sendCLIResponse {
+	my ( $socket, $out ) = @_;
+	
+	$out = eval { to_json($out) };
+	if ( $@ ) {
+		$out = to_json( [ { successful => JSON::XS::false, error => "$@" } ] );
+	}
+	
+	if ( $log->is_debug ) {
+		$log->debug( "Sending Cometd CLI chunk:\n" . $out );
+	}
+	
+	Slim::Plugin::CLI::Plugin::cli_request_write( $out, $socket );
 }
 
 sub handleRequest {
@@ -694,7 +750,7 @@ sub requestCallback {
 	$manager->deliver_events( $events );
 }
 
-sub closeHandler {
+sub webCloseHandler {
 	my $httpClient = shift;
 	
 	# unregister connection from manager
@@ -714,6 +770,33 @@ sub closeHandler {
 				Time::HiRes::time() + ( ( RETRY_DELAY / 1000 ) * 2 ),
 				\&disconnectClient,
 			);
+		}
+	}
+}
+
+sub cliCloseHandler {
+	my $socket = shift;
+	
+	my $clid = $manager->clid_for_connection( $socket );
+	
+	if ( $clid ) {
+		if ( $log->is_debug ) {
+			my $peer = $socket->peerhost . ':' . $socket->peerport;
+			$log->debug( "Lost CLI connection from $peer, clid: $clid" );
+		}
+	
+		$manager->remove_connection( $clid );
+	
+		Slim::Utils::Timers::setTimer(
+			$clid,
+			Time::HiRes::time() + ( ( RETRY_DELAY / 1000 ) * 2 ),
+			\&disconnectClient,
+		);
+	}
+	else {
+		if ( $log->is_debug ) {
+			my $peer = $socket->peerhost . ':' . $socket->peerport;
+			$log->debug( "No clid found for CLI connection from $peer" );
 		}
 	}
 }

@@ -26,7 +26,7 @@ sub new {
 	tie my %channels, 'Tie::RegexpHash';
 	
 	my $self = {
-		conns    => {},         # client connections
+		conn     => {},         # client connection(s)
 		events   => {},         # clients and their pending events
 		channels => \%channels, # all channels and who is subscribed to them
 	};
@@ -36,9 +36,7 @@ sub new {
 
 # Add a new client and connection created during handshake
 sub add_client {
-	my ( $self, $clid, $httpClient, $httpResponse ) = @_;
-	
-	$self->{conns}->{$clid} = [ $httpClient, $httpResponse ];
+	my ( $self, $clid ) = @_;
 	
 	# The per-client event hash holds one pending event per channel
 	$self->{events}->{$clid} = {};
@@ -50,9 +48,9 @@ sub add_client {
 
 # Update the connection, i.e. if the client reconnected
 sub register_connection {
-	my ( $self, $clid, $httpClient, $httpResponse ) = @_;
+	my ( $self, $clid, $conn ) = @_;
 	
-	$self->{conns}->{$clid} = [ $httpClient, $httpResponse ];
+	$self->{conn}->{$clid} = $conn;
 	
 	$log->debug("register_connection: $clid");
 }
@@ -60,15 +58,29 @@ sub register_connection {
 sub remove_connection {
 	my ( $self, $clid ) = @_;
 	
-	delete $self->{conns}->{$clid};
+	delete $self->{conn}->{$clid};
 
 	$log->debug("remove_connection: $clid");
+}
+
+sub clid_for_connection {
+	my ( $self, $conn ) = @_;
+	
+	my $result;
+	
+	while ( my ($clid, $c) = each %{ $self->{conn} } ) {
+		if ( $conn eq $c ) {
+			$result = $clid;
+		}
+	}
+	
+	return $result;
 }
 
 sub remove_client {
 	my ( $self, $clid ) = @_;
 	
-	delete $self->{conns}->{$clid};
+	delete $self->{conn}->{$clid};
 	delete $self->{events}->{$clid};
 	
 	$self->remove_channels( $clid );
@@ -191,13 +203,10 @@ sub deliver_events {
 	
 	# Send everything
 	for my $clid ( @to_send ) {	
-		my $conns = $self->{conns}->{$clid};
-	
-		my $conn = $conns->[0];
-		my $res  = $conns->[1];
+		my $conn = $self->{conn}->{$clid};
 		
 		# If we have a connection to send to...
-		if ( $conn && $res ) {
+		if ( $conn ) {
 			# Add any pending events
 			push @{$events}, ( $self->get_pending_events( $clid ) );
 		
@@ -208,7 +217,7 @@ sub deliver_events {
 				);
 			}
 		
-			Slim::Web::Cometd::sendResponse( $conn, $res, $events );
+			Slim::Web::Cometd::sendResponse( $conn, $events );
 		}
 		else {
 			# queue the event for later

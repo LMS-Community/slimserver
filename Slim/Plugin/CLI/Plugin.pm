@@ -54,6 +54,8 @@ our %connections;           # hash indexed by client_sock value
                             
 our %pending;
 
+our %disconnectHandlers;
+
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.cli',
 	'defaultLevel' => 'WARN',
@@ -278,6 +280,12 @@ sub client_socket_close {
 	close $client_socket;
 	delete($connections{$client_socket});
 	Slim::Control::Request::unregisterAutoExecute($client_socket);
+	
+	# Notify anyone who wants to know about this disconnection
+	if ( my $handler = $disconnectHandlers{$client_socket} ) {
+		$handler->( $client_socket );
+		delete $disconnectHandlers{$client_socket};
+	}
 	
 	if ( $log->is_info ) {
 		$log->info("Closed connection with $client_id (" . (keys %connections) . " active connections)");
@@ -506,6 +514,12 @@ sub cli_process {
 
 	# do we close the connection after this command
 	my $exit = 0;
+	
+	# Pass-through Comet JSON requests to the Comet module
+	if ( $command =~ /^\[/ ) {
+		Slim::Web::Cometd::cliHandler( $client_socket, $command );
+		return 0;
+	}
 
 	# parse the command
 	my ($client, $arrayRef) = Slim::Control::Stdio::string_to_array($command);
@@ -635,6 +649,16 @@ sub cli_process {
 sub cli_request_write {
 	my $request = shift;
 	my $client_socket = shift;
+	
+	# Handle Comet JSON output data
+	if ( !ref $request && $request =~ /^\[/ ) {
+		client_socket_buffer(
+			$client_socket,
+			$request . $connections{$client_socket}{'terminator'}
+		);
+		
+		return;
+	}
 
 	if ( $log->is_debug ) {
 		$log->debug($request->getRequestString);
@@ -657,6 +681,12 @@ sub cli_request_write {
 	}
 }
 
+# callers can subscribe to disconnect events
+sub addDisconnectHandler {
+	my ( $socket, $callback ) = @_;
+	
+	$disconnectHandlers{$socket} = $callback;
+}
 
 ################################################################################
 # CLI commands & queries
