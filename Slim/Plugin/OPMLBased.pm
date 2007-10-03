@@ -92,7 +92,10 @@ sub cliRadiosQuery {
 							params => {
 								menu => $tag,
 							},
-					},
+						},
+				},
+				window        => {
+							titleStyle => 'album',
 				},
 			};
 		}

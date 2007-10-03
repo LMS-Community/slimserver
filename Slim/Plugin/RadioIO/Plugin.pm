@@ -136,7 +136,7 @@ sub cliRadiosQuery {
 	# what we want the query to report about ourself
 	if (defined $menu) {
 		$data = {
-			'text' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+			'text'    => Slim::Utils::Strings::string(getDisplayName()),  # nice name
 			'icon-id' => 'html/images/ServiceProviders/radioio_56x56_f.png', # f looks nicer than p right now on this one
 			'actions' => {
 				'go' => {
@@ -145,6 +145,9 @@ sub cliRadiosQuery {
 						'menu' => 'radioio',
 					},
 				},
+			},
+			window    => {
+				titleStyle => 'album',
 			},
 		};
 	}

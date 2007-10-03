@@ -89,6 +89,9 @@ sub cliRadiosQuery {
 					},
 				},
 			},
+			window    => {
+				titleStyle => 'album',
+			},
 		};
 	}
 	else {
