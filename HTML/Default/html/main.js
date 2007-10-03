@@ -201,7 +201,6 @@ PlayerChooser = function(){
 		init : function(){
 			playerList = new Ext.SplitButton('playerChooser', {
 				text: player,
-				hidden: true,
 				handler: function(ev){
 					if(this.menu && !this.menu.isVisible()){
 						this.menu.show(this.el, this.menuAlign);
@@ -270,8 +269,6 @@ PlayerChooser = function(){
 									handler: function(){ Ext.MessageBox.alert(strings['synchronize'], 'Imagine some nice looking sync dialog here...'); }
 								})
 							);
-
-							playerList.setVisible(responseText.result['player count'] > 1 ? true : false);
 
 							if (!playerInList) {
 								PlayerChooser.selectPlayer({

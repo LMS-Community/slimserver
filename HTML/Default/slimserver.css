@@ -39,6 +39,11 @@ a:hover, .link:hover,
 	text-decoration: none;
 }
 
+#playerChooser {
+	position: absolute;
+	right: 100px;
+}
+
 .x-tip h3 a {
 	color: #444444;
 	text-decoration: none;
