@@ -409,10 +409,6 @@ Playlist = function(){
 			var el = Ext.get('playlistPanel');
 			var um = el.getUpdateManager();
 
-			// shortcut if there's already an update pending
-			if (um.isUpdating())
-				return;
-
 			if (!url)
 				url = um.defaultUrl;
 
@@ -768,9 +764,22 @@ Player = function(){
 					Ext.get('ctrlPlayNum').update(result.playlist_cur_index + 1);
 
 					if (result.playlist_loop[0].artist) {
-						currentArtist = result.playlist_loop[0].artist_id
-								? '<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=' + result.playlist_loop[0].artist_id + '&amp;level=1&amp;player=' + player + '" target="browser">' + result.playlist_loop[0].artist + '</a>'
-								: result.playlist_loop[0].artist;
+						var contributors = result.playlist_loop[0].artist.split(',');
+						var ids = result.playlist_loop[0].artist_ids.split(',');
+						var artist, id;
+
+						currentArtist = '';						
+
+						for (var i = 0; i < contributors.length; i++) {
+							artist = contributors[i].replace(/^\w/, '');
+
+							if (currentArtist)
+								currentArtist += ', ';
+
+							currentArtist += ids[i]
+									? '<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=' + ids[i] + '&amp;level=1&amp;player=' + player + '" target="browser">' + contributors[i] + '</a>'
+									: contributors[i];
+						}
 
 						Ext.get('ctrlCurrentArtist').update(currentArtist);
 						Ext.get('ctrlArtistTitle').show();
@@ -883,7 +892,7 @@ Player = function(){
 								"status",
 								"-",
 								1,
-								"tags:gabehldiqtyrsuoK"
+								"tags:gAbehldiqtyrSuoK"
 							]
 						]
 					}),
