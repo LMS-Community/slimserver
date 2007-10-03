@@ -844,6 +844,15 @@ Player = function(){
 							text: popup,
 							minWidth: 250
 						});
+
+						el = Ext.get('ctrlCurrentSongInfoCollapsed');
+						Ext.QuickTips.unregister(el);
+						Ext.QuickTips.register({
+							target: el,
+							title: currentTitle,
+							text: popup,
+							minWidth: 250
+						});
 					}
 				}
 

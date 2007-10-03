@@ -39,6 +39,11 @@ a:hover, .link:hover,
 	text-decoration: none;
 }
 
+.x-tip h3 a {
+	color: #444444;
+	text-decoration: none;
+}
+
 img.cmdLinkIcon {
 	vertical-align: bottom;
 }
@@ -400,7 +405,7 @@ form#advSearchForm.resultsPage {
 	margin: 2px 95px 0 30px;
 	overflow: hidden;
 	white-space: nowrap;
-	height: 13px;
+	min-height: 13px;
 }
 
 #ctrlPlaytimeCollapsed {
