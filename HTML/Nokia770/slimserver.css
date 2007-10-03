@@ -90,6 +90,12 @@ a.playingitemtext:hover {
 	padding-left: 10px;
 }
 
+.altheadertext {
+	font-size: 14px;
+	font-weight: bold;
+	padding-left: 10px;
+}
+
 .statusbartext {
 	font-size: 14px;
 	color: #FFFFFF;

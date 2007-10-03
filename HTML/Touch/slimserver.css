@@ -94,7 +94,7 @@ a.playingitemtext:hover {
 	color: #888888;
 }
 
-.headertext {
+.altheadertext, .headertext {
 	font-size: 26px;
 	padding-left: 10px;
 }

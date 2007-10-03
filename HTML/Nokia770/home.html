@@ -43,13 +43,15 @@
 <!-- home.html -->
 <table bgcolor="#EEEEEE" width='100%' cellspacing="0" cellpadding="0" border="0">
 	<tr>
-		<td valign="middle" class = 'headertext'>
-			[% IF thispage == 'radio' %]
-				[% "RADIO" | string %] + [% "MUSIC_ON_DEMAND" | string %]
-			[%- ELSE %]
-				[% "BROWSE" | string %] <span class = 'pagebarheadertext'>(<a href="[% webroot %]home.html?extended_browse=1&player=[% playerURI %]">[% "MORE" | string %]</a>)</span>
-			[% END %]
+		[% IF thispage == 'radio' %]
+		<td valign="middle" class = 'altheadertext'>
+			[% "RADIO" | string %] + [% "MUSIC_ON_DEMAND" | string %]
 		</td>
+		[%- ELSE %]
+		<td valign="middle" class = 'headertext'>
+			[% "BROWSE" | string %] <span class = 'pagebarheadertext'>(<a href="[% webroot %]home.html?extended_browse=1&player=[% playerURI %]">[% "MORE" | string %]</a>)</span>
+		</td>
+		[% END -%]
 		<td align = 'right' valign = 'bottom'>
 			[% IF thispage == 'radio' %]
 				[% INCLUDE tune_in_form %]

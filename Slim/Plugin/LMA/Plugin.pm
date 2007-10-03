@@ -11,10 +11,11 @@ sub initPlugin {
 	my $class = shift;
 	
 	$class->SUPER::initPlugin(
-		feed => 'http://content.us.squeezenetwork.com:8080/lma/artists.opml',
-		tag  => 'lma',
-		menu => 'music_on_demand',
-		style => 'albumcurrent',
+		feed      => 'http://content.us.squeezenetwork.com:8080/lma/artists.opml',
+		tag       => 'lma',
+		'icon-id' => 'html/images/ServiceProviders/lma_56x56_p.png',
+		menu      => 'music_on_demand',
+		style     => 'albumcurrent',
 	);
 }
 
