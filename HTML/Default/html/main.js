@@ -978,8 +978,8 @@ Player = function(){
 			needUpdate |= (result.current_title != null && result.current_title != playerStatus.current_title);			// title (eg. radio stream)
 			needUpdate |= (result.playlist_tracks > 0 && result.playlist_loop[0].title != playerStatus.title);			// songtitle?
 			needUpdate |= (result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track);			// track url
-			needUpdate |= (result.playlist_tracks == 0 && playerStatus.track);											// there's a player, but no song in the playlist
-			needUpdate |= (result.playlist_tracks > 0 && !(playerStatus.track >= 0));										// track in playlist changed
+			needUpdate |= (result.playlist_tracks < 1 && playerStatus.track);											// there's a player, but no song in the playlist
+			needUpdate |= (result.playlist_tracks > 0 && !playerStatus.track);											// track in playlist changed
 
 			return needUpdate;
 		},
