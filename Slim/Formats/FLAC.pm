@@ -40,6 +40,7 @@ use Slim::Utils::Unicode;
 my %tagMapping = (
 	'TRACKNUMBER'			=> 'TRACKNUM',
 	'DISCNUMBER'			=> 'DISC',
+	'DISCTOTAL'			=> 'DISCC',
 	'URL'				=> 'URLTAG',
 	'musicbrainz_sortname'		=> 'ARTISTSORT',
 	'MUSICBRAINZ_ALBUMARTISTID'	=> 'MUSICBRAINZ_ALBUMARTIST_ID',
