@@ -33,11 +33,11 @@ Main = function(){
 			});
 
 			Ext.get('settingsLink').on('click', function(){
-				window.open('/EN/settings/server/basic.html', 'settings', 'dependent=yes,resizable=yes');
+				window.open('/Classic/settings/server/basic.html', 'settings', 'dependent=yes,resizable=yes');
 			});
 
 			Ext.get('playerSettingsLink').on('click', function(){
-				window.open('/EN/settings/player/basic.html?playerid=' + player, 'playersettings', 'dependent=yes,resizable=yes');
+				window.open('/Classic/settings/player/basic.html?playerid=' + player, 'playersettings', 'dependent=yes,resizable=yes');
 			});
 
 			Ext.get('progressInfo').on('click', function(){
