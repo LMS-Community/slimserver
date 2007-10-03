@@ -381,7 +381,7 @@ sub _finalBar {
 	my $min = int($time_taken/60) % 60;
 	my $sec = $time_taken % 60;
 
-	if ($self->{'term'}) {
+	if ( $self->{'term'} && $self->{'total'} ) {
 
 		my @chars    = (' ') x $self->{'bar_size'};
 		my $used_bar = $num_done * ($self->{'bar_size'} / $self->{'total'});
