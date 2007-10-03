@@ -78,6 +78,11 @@ img.cmdLinkIcon {
 	right: 42px;
 }
 
+.thumbArtwork {
+	height: 100px;
+	width: 100px;
+}
+
 .thumbArtwork span.browsedbControls {
 	position: absolute;
 	top: auto;
@@ -107,6 +112,7 @@ div.thumbwrap {
 .artworkText {
 	margin-top: 2px;
 	text-align: center;
+	min-height: 15px;
 }
 
 #viewSelect {
