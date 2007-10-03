@@ -276,8 +276,11 @@ Ext.EventManager.onDocumentReady(Utils.init, Utils, true);
 
 // update the status if the Player is available
 function refreshStatus() {
-	try { Player.getUpdate() }
-	catch(e) {}
+	try { Player.getUpdate(); }
+	catch(e) {
+		try { parent.Player.getUpdate(); }
+		catch(e) {}
+	}
 }
 
 function resize(src, width) {
