@@ -333,7 +333,9 @@ sub processCoverArtRequest {
 						$log->info("SET ALPHA FOR TRANSPARENT PNGs");
 						$newImage->saveAlpha(1);
 						$newImage->alphaBlending(0);
+						$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, 0x7f000000);
 					}
+
 
 					$newImage->copyResampled(
 						$origImage,
