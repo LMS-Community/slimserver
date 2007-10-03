@@ -70,9 +70,10 @@
 		[% linkHash = additionalLinks.radio %]
 		[% linkHash.import(additionalLinks.music_on_demand) %]
 		[% FOREACH key = linkHash.keys %]
+			[%- iconWidth = 80 -%]
 			[% UNLESS loop.index % 2 %]<tr>[% END %]
 				<td valign="middle" class = 'menutext' align = 'right'>
-					<a href="[% webroot %][% linkHash.$key %]player=[% playerURI %]"><img src="[% webroot %][% IF additionalLinks.icons.$key %][% additionalLinks.icons.$key.url %][% ELSE %]html/images/radio.gif[% END %]" width = '75' border="0" alt = 'radio'></a>
+					<a href="[% webroot %][% linkHash.$key %]player=[% playerURI %]"><img src="[% webroot %][% IF additionalLinks.icons.$key %][% additionalLinks.icons.$key.url.replace('.png', "_${iconWidth}x${iconWidth}_F.png") %][% ELSE %]html/images/radio.gif[% END %]" width = '[% iconWidth %]' border="0" alt = 'radio'></a>
 				</td>
 				<td valign="middle" class = 'menutext' align = 'left'>
 					<a href="[% webroot %][% linkHash.$key %]player=[% playerURI %]">[% key | string %]</a>
