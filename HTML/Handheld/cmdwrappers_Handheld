@@ -19,7 +19,7 @@
 
 [% BLOCK cmdlink -%]
 <td align="center" width="13" bgcolor="[% PROCESS oddOrEvenC %]">
-	<a [% content %]><img src="[% webroot %]html/images/[% cmdimage %].gif" align="middle" border=0 width=13 height=13 alt="[% cmdtitle | string %]" title="[% cmdtitle | string %]"></a>
+	<a [% content %]><img src="[% webroot %]html/images/[% cmdimage %]" align="middle" border=0 width=13 height=13 alt="[% cmdtitle | string %]" title="[% cmdtitle | string %]"></a>
 </td>
 [%- END %]
 
@@ -38,7 +38,7 @@
 [% BLOCK descendlink -%]
 	[% PROCESS cmdlink
 		cmdtitle = "NEXT"
-		cmdimage = "b_next" 
+		cmdimage = "b_next.gif" 
 		noTarget = 1 %]
 [%- END %]
 

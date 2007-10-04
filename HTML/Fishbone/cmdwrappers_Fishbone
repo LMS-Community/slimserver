@@ -7,7 +7,7 @@
 [% bgcolor = "000000" %]
 
 [%- BLOCK cmdlink -%]
-<a [% content %] [% UNLESS noTarget %][% IF target %]target=[% target; ELSE %]target="status"[% END %][% END %]><img src="[% webroot %]html/images/[% cmdimage %].gif" height="11"
+<a [% content %] [% UNLESS noTarget %][% IF target %]target=[% target; ELSE %]target="status"[% END %][% END %]><img src="[% webroot %]html/images/[% cmdimage %]" height="11"
 	alt='[% cmdtitle | string | ucfirst %]' 
 	title='[% cmdtitle | string | ucfirst %]' 
 	onMouseOver="self.status='[% cmdtitle | string %]';return true"></a>
@@ -20,7 +20,7 @@
 [% BLOCK infolink %]
 	[% PROCESS cmdlink
 		cmdtitle = "SONG_INFO"
-		cmdimage = "info"
+		cmdimage = "info.gif"
 		target = "browser" %]
 [% END %]
 
@@ -37,7 +37,7 @@
 [% BLOCK descendlink -%]
 	[% PROCESS cmdlink
 		cmdtitle = "NEXT"
-		cmdimage = "next" 
+		cmdimage = "next.gif" 
 		noTarget = 1 %]
 [%- END %]
 

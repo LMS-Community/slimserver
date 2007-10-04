@@ -33,28 +33,28 @@
 [% BLOCK playlink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "PLAY"
-		cmdimage = "b_play" -%]
+		cmdimage = "b_play.gif" -%]
 [%- END %]
 
 [%# this is to wrap around an href which does an add command, with a default image for skins that support it %]
 [% BLOCK addlink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "ADD_TO_PLAYLIST"
-		cmdimage = "b_add" -%]
+		cmdimage = "b_add.gif" -%]
 [%- END %]
 
 [%# this is to wrap around an href which does an add-to-favorites command, with a default image for skins that support it %]
 [% BLOCK favaddlink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "PLUGIN_FAVORITES_ADD"
-		cmdimage = "b_favorite" -%]
+		cmdimage = "b_favorite.gif" -%]
 [%- END %]
 
 [%# this is to wrap around an href which does an insert command %]
 [%- BLOCK insertlink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "NEXT"
-		cmdimage = "b_queue" -%]
+		cmdimage = "b_queue.gif" -%]
 [%- END -%]
 
 [%# this is to wrap around an href which drops down one more level when browsing multi-level lists (eg Shoutcast) %]
@@ -66,21 +66,21 @@
 [%- BLOCK removelink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "DELETE"
-		cmdimage = "b_delete" -%]
+		cmdimage = "b_delete.gif" -%]
 [%- END -%]
 
 [%# this is to wrap around an href which does a delete-from-favorites command, with default image reference %]
 [%- BLOCK favdellink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "PLUGIN_FAVORITES_REMOVE"
-		cmdimage = "b_favorite_remove" -%]
+		cmdimage = "b_favorite_remove.gif" -%]
 [%- END -%]
 
 [%# this is to wrap around an href which does a url edit command, with default image reference %]
 [%- BLOCK editlink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "EDIT"
-		cmdimage = "b_edit" -%]
+		cmdimage = "b_edit.gif" -%]
 [%- END -%]
 
 [%# this is to wrap around browse list items %]
@@ -103,14 +103,14 @@ END %]
 [% BLOCK moveuplink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "MOVEUP"
-		cmdimage = "b_up" -%]
+		cmdimage = "b_up.gif" -%]
 [%- END %]
 
 [%# this is to wrap around a link which moves something down a list %]
 [% BLOCK movedownlink -%]
 	[%- PROCESS cmdlink
 		cmdtitle = "MOVEDOWN"
-		cmdimage = "b_down" -%]
+		cmdimage = "b_down.gif" -%]
 [%- END %]
 
 [%# this is the warning shown while SqueezeCenter is still scanning -%]
