@@ -159,29 +159,26 @@ sub init_jive {
 
 		$version_file = $custom_version;
 		$JIVE_FW = $custom_image;
-	}
-	elsif ( !-e $version_file ) {
-		$log->info('Downloading new jive.version file...');
 		
-		if ( !download( $url, $version_file ) ) {
-			logError('Unable to download jive.version file, to retry please restart SqueezeCenter.');
-			return;
-		}
+		return;
 	}
-	else {
-		# Check for a newer jive.version, only for svn users
+	
+	$log->info('Downloading jive.version file...');
+	
+	downloadAsync( $version_file, \&init_jive_version_done, $version_file );
+}
 
-		# check all the time at present as jive is updated nightly
-		#if ( $::REVISION eq 'TRUNK' ) {		
-			$log->info('Checking for a newer jive.version file...');
+=head2 init_jive_version_done($version_file)
+
+Callback after the jive.version file has been downloaded.  Checks if we need
+to download a new bin file, and schedules another check for the version file
+in 1 day.
+
+=cut
+
+sub init_jive_version_done {
+	my $version_file = shift;
 			
-			if ( !download( $url, $version_file ) ) {
-				# not modified
-				$log->info("Jive version file is up to date");
-			}
-		#}
-	}
-		
 	my $version = read_file($version_file);
 	
 	# jive.version format:
@@ -189,19 +186,25 @@ sub init_jive {
 	# sdi@padbuild #24 Sat Sep 8 01:26:46 PDT 2007
 	($JIVE_VER, $JIVE_REV) = $version =~ m/^(\d+)\s(r.*)/;
 
-	if (!$JIVE_FW) {	
-		my $jive_file = catdir( $prefs->get('cachedir'), "jive_${JIVE_VER}_${JIVE_REV}.bin" );
+	my $jive_file = catdir( $prefs->get('cachedir'), "jive_${JIVE_VER}_${JIVE_REV}.bin" );
+
+	if ( !-e $jive_file ) {		
+		$log->info("Downloading Jive firmware to: $jive_file");
 	
-		if ( !-e $jive_file ) {		
-			$log->info("Downloading Jive firmware to: $jive_file");
-		
-			downloadAsync( $jive_file, \&init_jive_done, $jive_file );
-		}
-		else {
-			$log->info("Jive firmware is up to date: $jive_file");
-			$JIVE_FW = $jive_file;
-		}
+		downloadAsync( $jive_file, \&init_jive_done, $jive_file );
 	}
+	else {
+		$log->info("Jive firmware is up to date: $jive_file");
+		$JIVE_FW = $jive_file;
+	}
+	
+	# Check again for an updated jive.version in 24 hours
+	$log->debug('Scheduling next jive.version check in 24 hours');
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time() + 86400,
+		\&init_jive,
+	);
 }
 
 =head2 init_jive_done($jive_file)
@@ -437,7 +440,7 @@ sub downloadAsyncSHADone {
 		# rename the tmp file
 		rename "$file.tmp", $file or return downloadAsyncError( $http, "Unable to rename temporary $file file" );
 		
-		logWarning("Successfully downloaded and verified $file.");
+		$log->info("Successfully downloaded and verified $file.");
 		
 		if ( $cb && ref $cb eq 'CODE' ) {
 			$cb->( @{$pt} );
