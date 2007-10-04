@@ -1340,6 +1340,27 @@ sub validMacAddress {
 	return 0;
 }
 
+=head2 detectInternetExplorer ( )
+
+Returns true if the request header looks like MSIE
+
+=cut
+
+sub detectInternetExplorer {
+	my $request = shift;
+	my $return = 0; # innocent before proven guilty
+
+	if ($request->header('user-agent') && # is there a user agent available
+             $request->header('user-agent') =~ /MSIE/ &&              # does it think it's IE
+                        $request->header('user-agent') !~ /Opera/  && # make sure it's not Opera
+                        $request->header('user-agent') !~ /Linux/ &&  # make sure it's not Linux
+                        $request->header('user-agent') !~ /arm/)      # make sure it's not a Nokia tablet
+	{
+		$return = 1; # GUILTY
+	}
+	return $return;
+}
+
 =head1 SEE ALSO
 
 L<Slim::Music::Info>

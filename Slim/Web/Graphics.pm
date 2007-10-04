@@ -44,7 +44,7 @@ sub serverResizesArt {
 sub processCoverArtRequest {
 	my ($client, $path) = @_;
 
-	my ($body, $mtime, $inode, $size, $contentType); 
+	my ($body, $mtime, $inode, $size, $actualContentType); 
 
 	# Allow the client to specify dimensions, etc.
 	$path =~ /music\/(\w+)\//;
@@ -53,6 +53,9 @@ sub processCoverArtRequest {
 	my $imgName = File::Basename::basename($path);
 	my ($imgBasename, $dirPath, $suffix)  = File::Basename::fileparse($path, '\..*');
 	my $actualPathToImage;
+	my $requestedContentType = "image/" . $suffix;
+	$requestedContentType =~ s/\.//;
+	$actualContentType = $requestedContentType;
 
 	# this is not cover art, but we should be able to resize it, dontcha think?
 	# need to excavate real path to the static image here
@@ -65,11 +68,11 @@ sub processCoverArtRequest {
 
 	# typical cover art request would come across as something like cover_300x300_c_000000.jpg
 	# delimiter on "fields" is an underscore '_'
-	$imgName =~ /(cover|thumb|[A-Za-z0-9]+)		# image name is first string before resizing parameters
-			(?:_(X|\d+)x(X|\d+))?	# width and height are given here, e.g. 300x300
-			(?:_([sSfFpc]))?	# resizeMode, given by a single character
-			(?:_([\da-fA-F]+))? # background color, optional
-			\.(jpg|png|gif)$		# file suffixes allowed are jpg png gif
+	$imgName =~ /(cover|thumb|[A-Za-z0-9]+)  # image name is first string before resizing parameters
+			(?:_(X|\d+)x(X|\d+))?    # width and height are given here, e.g. 300x300
+			(?:_([sSfFpc]))?         # resizeMode, given by a single character
+			(?:_([\da-fA-F]+))?      # background color, optional
+			\.(jpg|png|gif)$         # file suffixes allowed are jpg png gif
 			/x;	
 
 	my $image               = $1;
@@ -79,11 +82,16 @@ sub processCoverArtRequest {
 	my $bgColor             = defined($5) ? $5 : '';
 
 	# if the image is a png and bgColor wasn't explicitly sent, image should be transparent
-	my $transparentPngRequest = 0;
+	my $transparentRequest = 0;
 	if ($suffix =~ /png/) { 
 		if ($bgColor eq '') {
-			$log->info('this is a transparent request');
-			$transparentPngRequest = 1;
+			$log->info('this is a transparent png request');
+			$transparentRequest = 'png';
+		}
+	} elsif ($suffix =~ /gif/) { 
+		if ($bgColor eq '') {
+			$log->info('this is a transparent gif request');
+			$transparentRequest = 'gif';
 		}
 	} else {
 		if ($bgColor eq '') {
@@ -94,7 +102,7 @@ sub processCoverArtRequest {
 	my @bgColor             = split(//, $bgColor);
 
 	# allow for slop in the bg color request-- if the correct amount of chars weren't set, default to white
-	if ($bgColor ne '' && !$transparentPngRequest && scalar(@bgColor) != 6 && scalar(@bgColor) != 8) {
+	if ($bgColor ne '' && !$transparentRequest && scalar(@bgColor) != 6 && scalar(@bgColor) != 8) {
 		$log->error("BG color for $imgName was not defined correctly. Defaulting to FFFFFF (white)");
 		$bgColor = 'FFFFFF';
 	}
@@ -136,13 +144,7 @@ sub processCoverArtRequest {
 
 	} elsif ($trackid eq 'notCoverArt') {
 
-		#($body, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}) = Slim::Web::HTTP::getStaticContent($actualPathToImage);
-		#$cachedImage->{'body'} = $body;
-		#$cachedImage->{'contentType'} = "image/" . $suffix;
-
 		($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent($actualPathToImage);
-		$contentType = "image/" . $suffix;
-		$contentType =~ s/\.//;
 		$imageData = $$body;
 		
 	} else {
@@ -157,7 +159,7 @@ sub processCoverArtRequest {
 
 	if (blessed($obj) && $obj->can('coverArt')) {
 
-		$cacheKey = join('-', $trackid, $resizeMode, $requestedWidth, $requestedHeight, $requestedBackColour);
+		$cacheKey = join('-', $trackid, $resizeMode, $requestedWidth, $requestedHeight, $requestedBackColour, $suffix);
 
 		$log->info("  artwork cache key: $cacheKey");
 
@@ -169,24 +171,29 @@ sub processCoverArtRequest {
 
 		if (!$cachedImage) {
 
-			($imageData, $contentType, $mtime) = $obj->coverArt;
+			($imageData, $actualContentType, $mtime) = $obj->coverArt;
+			if ($actualContentType eq '') {
+				$actualContentType = $requestedContentType;
+			}
+			$log->info("  The variable \$actualContentType, which attempts to understand what image type the original file is, is set to " . $actualContentType);
 		}
 	}
 
+	# if $obj->coverArt didn't send back data, then fill with a placeholder
 	if ( (!$cachedImage && !$imageData) ) {
 
 		my $image = blessed($obj) && $obj->remote ? 'radio' : 'cover';
 		
 		$log->info("  missing artwork replaced by placeholder.");
 
-		$cacheKey = "$image-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour";	
+		$cacheKey = "$image-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour-$suffix";	
 
 		$cachedImage = $cache->get($cacheKey);
 
 		unless ($cachedImage) {
 
 			($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/$image.png");
-			$contentType = "image/png";
+			$actualContentType = 'image/png';
 			$imageData = $$body;
 		}
 	}
@@ -199,15 +206,15 @@ sub processCoverArtRequest {
 	}
 
 	if ( $log->is_info ) {
-		$log->info("  got cover art image $contentType of ". length($imageData) . " bytes");
+		$log->info("  got cover art image $actualContentType of ". length($imageData) . " bytes");
 	}
 
-	if ($canUseGD && $typeToMethod{$contentType}) {
+	if ($canUseGD && $typeToMethod{$actualContentType}) {
 
 		# If this is a thumb, a size has been given, or this is a png and the background color isn't 100% transparent
 		# then the overhead of loading the image with GD is necessary.  Otherwise, the original content
 		# can be passed straight through.
-		if ($image eq "thumb" || $requestedWidth || ($contentType eq "image/png" && ($transparentPngRequest || ($requestedBackColour >> 24) != 0x7F))) {
+		if ($image eq "thumb" || $requestedWidth || ($requestedContentType eq "image/png" && ($transparentRequest eq 'png' || ($requestedBackColour >> 24) != 0x7F))) {
 
 			# Bug: 3850 - new() can't auto-identify the
 			# ContentType (for things like non-JFIF JPEGs) - but
@@ -216,7 +223,7 @@ sub processCoverArtRequest {
 
 			GD::Image->trueColor(1);
 
-			my $constructor = $typeToMethod{$contentType};
+			my $constructor = $typeToMethod{$actualContentType};
 			my $origImage   = GD::Image->$constructor($imageData);
 
 			if ($origImage) {
@@ -224,7 +231,8 @@ sub processCoverArtRequest {
 				# deterime the size and of type image to be returned
 				my $returnedWidth;
 				my $returnedHeight;
-				my ($returnedType) = $contentType =~ /\/(\w+)/;
+				my ($returnedType) = $requestedContentType =~ /\/(\w+)/;
+				$returnedType =~ s/jpg/jpeg/;
 
 				# if an X is supplied for the width (height) then the returned image's width (height)
 				# is chosen to maintain the aspect ratio of the original.  This only makes sense with 
@@ -288,7 +296,7 @@ sub processCoverArtRequest {
 				}
 
 				# the image needs to be processed if the sizes differ, or the image is a png
-				if ($contentType eq "image/png" || $returnedWidth != $origImage->width || $returnedHeight != $origImage->height) {
+				if ($requestedContentType eq "image/png" || $returnedWidth != $origImage->width || $returnedHeight != $origImage->height) {
 
 					if ( $log->is_info ) {
 						$log->info("  resizing from " . $origImage->width . "x" . $origImage->height .
@@ -326,16 +334,24 @@ sub processCoverArtRequest {
 
 					my $newImage = GD::Image->new($returnedWidth, $returnedHeight);
 
-
-					if (!$transparentPngRequest) {
-						$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, $requestedBackColour);
-					} else {
+					# PNG with 7 bit transparency
+					if ($transparentRequest eq 'png') {
 						$log->info("SET ALPHA FOR TRANSPARENT PNGs");
 						$newImage->saveAlpha(1);
 						$newImage->alphaBlending(0);
 						$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, 0x7f000000);
-					}
+					# GIF with 1-bit transparency
+					} elsif ($transparentRequest eq 'gif') {
+						$log->info("This is a gif with transparency");
+						# a transparent gif has to choose a color to be transparent, so let's pick one at random
 
+						$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, 0xaaaaaa);
+						$newImage->transparent(0xaaaaaa) or $log->warn("COULD NOT SET TRANSPARENCY");
+
+					# not transparent
+					} else {
+						$newImage->filledRectangle(0, 0, $returnedWidth, $returnedHeight, $requestedBackColour);
+					}
 
 					$newImage->copyResampled(
 						$origImage,
@@ -349,19 +365,24 @@ sub processCoverArtRequest {
 
 					# if the source image was a png and GD can output png data
 					# then return a png, else return a jpg
-					if ($returnedType eq "png" && GD::Image->can('png')) {
+					if (($returnedType eq "png" || $transparentRequest eq 'png') && GD::Image->can('png') ) {
 
 						$newImageData = $newImage->png;
-						$contentType = 'image/png';
+						$requestedContentType = 'image/png';
+
+					} elsif (($returnedType eq "gif" || $transparentRequest eq 'gif') && GD::Image->can('gif') ) {
+
+						$newImageData = $newImage->gif;
+						$requestedContentType = 'image/gif';
 
 					} else {
 
 						$newImageData = $newImage->jpeg;
-						$contentType = 'image/jpeg';
+						$requestedContentType = 'image/jpeg';
 					}
 
 					if ( $log->is_info ) {
-						$log->info("  outputting cover art image $contentType of ". length($newImageData) . " bytes");
+						$log->info("  outputting cover art image $requestedContentType of ". length($newImageData) . " bytes");
 					}
 					
 					$body = \$newImageData;
@@ -395,7 +416,7 @@ sub processCoverArtRequest {
 		my $cached = {
 			'mtime'       => $mtime,
 			'body'        => $body,
-			'contentType' => $contentType,
+			'contentType' => $requestedContentType,
 			'size'        => $size,
 		};
 
@@ -404,7 +425,7 @@ sub processCoverArtRequest {
 		$cache->set($cacheKey, $cached, "10days");
 	}
 
-	return ($body, $mtime, $inode, $size, $contentType);
+	return ($body, $mtime, $inode, $size, $requestedContentType);
 }
 
 sub getResizeCoords {
