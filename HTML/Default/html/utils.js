@@ -177,8 +177,8 @@ var Utils = function(){
 
 		},
 
-		processPlaylistCommand : function(param, reload) {
-			this.processRawCommand('/status_header.html?' + param + 'ajaxRequest=1&force=1', true);
+		processPlaylistURL : function(param, reload) {
+			this.processCommandURL('/status_header.html?' + param + 'ajaxRequest=1&force=1', true);
 			if (reload) {
 				try { Playlist.load(null, true); }
 				catch(e) {
@@ -188,7 +188,7 @@ var Utils = function(){
 			}
 		},
 
-		processRawCommand : function(myUrl, updateStatus) {
+		processCommandURL : function(myUrl, updateStatus) {
 			Ext.Ajax.request({
 				method: 'GET',
 				url: myUrl,
