@@ -8,7 +8,7 @@
 	[% resizeParam = "f" %]
 
 	[% BLOCK cmdlink -%]
-		<a [% content %] ><img src="[% webroot %]html/images/[% cmdimage %].gif" class="cmdLinkIcon" width="13" height="13" alt="[% cmdtitle | string | ucfirst %]" title="[% cmdtitle | string | ucfirst %]"/></a>
+		<a [% content %] ><img src="[% webroot %]html/images/[% cmdimage %]" class="cmdLinkIcon" width="13" height="13" alt="[% cmdtitle | string | ucfirst %]" title="[% cmdtitle | string | ucfirst %]"/></a>
 	[%- END %]
 
 
