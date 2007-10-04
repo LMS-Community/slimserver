@@ -207,7 +207,10 @@ PlayerChooser = function(){
 					}
 					this.fireEvent('arrowclick', this, ev);
 				},
-				menu: new Ext.menu.Menu({shadow: Ext.isGecko && Ext.isMac ? true : 'sides'})
+				menu: new Ext.menu.Menu({shadow: Ext.isGecko && Ext.isMac ? true : 'sides'}),
+				tooltip: strings['choose_player'],
+				arrowTooltip: strings['choose_player'],
+				tooltipType: 'title'
 			});
 			playerDiscoveryTimer = new Ext.util.DelayedTask(this.update, this);
 
@@ -237,9 +240,14 @@ PlayerChooser = function(){
 					if (response && response.responseText) {
 						var responseText = Ext.util.JSON.decode(response.responseText);
 
+						playerList.menu.removeAll();
+						playerList.menu.add(
+							'<span class="menu-title">' + strings['choose_player'] + '</span>'
+						);
+
+
 						// let's set the current player to the first player in the list
 						if (responseText.result && responseText.result['player count'] > 0) {
-							playerList.menu.removeAll();
 							var playerInList = false;
 
 							for (x=0; x < responseText.result['player count']; x++) {
@@ -266,7 +274,18 @@ PlayerChooser = function(){
 								'-',
 								new Ext.menu.Item({
 									text: strings['synchronize'] + '...',
-									handler: function(){ Ext.MessageBox.alert(strings['synchronize'], 'Imagine some nice looking sync dialog here...'); }
+									handler: function(){
+										//var msg = Ext.MessageBox.alert(strings['synchronize'], 'Imagine some nice looking sync dialog here...');
+										var dlg = new Ext.BasicDialog(strings['synchronize'], {
+											modal:true,
+											width:300,
+											height:200,
+//											shadow:true,
+											minWidth:300,
+											minHeight:200
+										});
+										dlg.shim = false;
+									}
 								})
 							);
 
@@ -282,6 +301,13 @@ PlayerChooser = function(){
 						}
 
 						else {
+							playerList.menu.add(
+								new Ext.menu.Item({
+									text: strings['no_player'] + '..',
+									handler: function(){ Ext.MessageBox.alert(strings['no_player'], strings['no_player_details']); }
+								})
+							);
+
 							PlayerChooser.selectPlayer({
 								text: '',
 								value: ''
@@ -842,7 +868,7 @@ Player = function(){
 							minWidth: 250
 						});
 
-						el = Ext.get('ctrlCurrentSongInfoCollapsed');
+						el = Ext.get('nowPlayingIcon').child('img:first');
 						Ext.QuickTips.unregister(el);
 						Ext.QuickTips.register({
 							target: el,

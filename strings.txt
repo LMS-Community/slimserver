@@ -6994,6 +6994,10 @@ CURRENT_PLAYER
 	SV	Aktuell spelare:
 	ZH_CN	当前的播放机：
 
+CHOOSE_PLAYER
+	DE	Player Auswahl
+	EN	Choose player
+
 NOW_PLAYING_ON
 	CS	Nyní hraje na serveru v
 	DA	Afspiller nu på player
@@ -12843,6 +12847,10 @@ SORT_BY
 	NL	Sorteren op
 	SV	Sortera på
 	ZH_CN	排序按
+
+ALBUM_DISPLAY_OPTIONS
+	DE	Albumansichts Einstellungen
+	EN	Albumview options
 
 SORT_ARTISTALBUM
 	DE	Interpret, Album

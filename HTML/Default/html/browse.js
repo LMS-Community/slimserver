@@ -70,7 +70,8 @@ Browse = function(){
 						}
 						this.fireEvent('arrowclick', this, ev);
 					},
-					arrowTooltip: strings['sort_by'] + '...',
+					tooltip: strings['display_options'],
+					arrowTooltip: strings['display_options'],
 					tooltipType: 'title'
 				});
 			}
