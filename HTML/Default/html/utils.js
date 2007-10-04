@@ -207,6 +207,26 @@ var Utils = function(){
 			});
 		},
 
+		processCommand : function(config){
+			Ext.Ajax.request({
+				params: Ext.util.JSON.encode({
+					id: 1,
+					method: "slim.request",
+					params: config.params
+				}),
+				success: config.success,
+				failure: config.failure,
+				scope: config.scope || this
+			});
+		},
+
+		processPlayerCommand : function(config){
+			config.params = [
+				playerid,
+				config.params
+			];
+			this.processCommand(config);
+		},
 
 		initSearch : function(searchField, callback){
 			search = new Ext.form.TextField({

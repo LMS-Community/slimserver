@@ -132,3 +132,26 @@ a.x-menu-item:hover {
 	background-position: 0pt;
 	padding-left: 10px;
 }
+
+/* dialog */
+.x-dlg .x-dlg-hd-left {
+	background: url(html/images/hd-sprite.gif) no-repeat 0 -43px;
+	padding-left: 15px;
+	height: 43px;
+}
+
+.x-dlg .x-dlg-hd-right {
+	background: url(html/images/hd-sprite.gif) no-repeat right 0;
+	padding-right: 15px;
+}
+
+.x-dlg .x-dlg-hd {
+	background: url(html/images/hd-sprite.gif) repeat-x right -86px;
+	padding-top: 15px;
+	padding-bottom: 13px;
+}
+
+.x-dlg .x-dlg-dlg-body {
+	background-image: url(html/images/dlg-bg.gif);
+	border: none;
+}

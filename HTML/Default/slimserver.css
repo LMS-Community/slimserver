@@ -44,6 +44,10 @@ a:hover, .link:hover,
 	right: 100px;
 }
 
+#syncgroup {
+	margin: 10px 0 0 30px;
+}
+
 .x-tip h3 a {
 	color: #444444;
 	text-decoration: none;

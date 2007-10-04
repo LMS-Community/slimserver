@@ -194,12 +194,12 @@ Main = function(){
 
 
 PlayerChooser = function(){
-	var playerList;
+	var playerMenu;
 	var playerDiscoveryTimer;
 
 	return {
 		init : function(){
-			playerList = new Ext.SplitButton('playerChooser', {
+			playerMenu = new Ext.SplitButton('playerChooser', {
 				text: player,
 				handler: function(ev){
 					if(this.menu && !this.menu.isVisible()){
@@ -240,8 +240,8 @@ PlayerChooser = function(){
 					if (response && response.responseText) {
 						var responseText = Ext.util.JSON.decode(response.responseText);
 
-						playerList.menu.removeAll();
-						playerList.menu.add(
+						playerMenu.menu.removeAll();
+						playerMenu.menu.add(
 							'<span class="menu-title">' + strings['choose_player'] + '</span>'
 						);
 
@@ -249,16 +249,25 @@ PlayerChooser = function(){
 						// let's set the current player to the first player in the list
 						if (responseText.result && responseText.result['player count'] > 0) {
 							var playerInList = false;
+							var playerList = new Ext.util.MixedCollection();
 
 							for (x=0; x < responseText.result['player count']; x++) {
 								var currentPlayer = false;
+
+								// mark the current player as selected
 								if (responseText.result.players_loop[x].playerid == playerid) {
 									currentPlayer = true;
 									playerInList = true;
-									playerList.setText(responseText.result.players_loop[x].name);
+									playerMenu.setText(responseText.result.players_loop[x].name);
 								}
 
-								playerList.menu.add(
+								// add the players to the list to be displayed in the synch dialog
+								playerList.add(
+									responseText.result.players_loop[x].playerid,
+									responseText.result.players_loop[x].name
+								);
+
+								playerMenu.menu.add(
 									new Ext.menu.CheckItem({
 										text: responseText.result.players_loop[x].name,
 										value: responseText.result.players_loop[x].playerid,
@@ -270,22 +279,43 @@ PlayerChooser = function(){
 								);
 							}
 
-							playerList.menu.add(
+							// if there's more than one player, add the sync option
+							var playerSelection = '<p>' + strings['synchronize_desc'] + '</p><form name="syncgroup" id="syncgroup">';
+							var tpl = new Ext.Template('<input type="checkbox" id="{id}" value="{id}">{name}<br>');
+							tpl.compile();
+
+							playerList.eachKey(function(id, name){
+								if (id && name && id != playerid)
+									playerSelection += tpl.apply({
+										name: name,
+										id: id
+									});
+							});
+							playerSelection += '</form>';
+
+							playerMenu.menu.add(
 								'-',
 								new Ext.menu.Item({
 									text: strings['synchronize'] + '...',
 									handler: function(){
-										//var msg = Ext.MessageBox.alert(strings['synchronize'], 'Imagine some nice looking sync dialog here...');
-										var dlg = new Ext.BasicDialog(strings['synchronize'], {
-											modal:true,
-											width:300,
-											height:200,
-//											shadow:true,
-											minWidth:300,
-											minHeight:200
+										var dlg = new Ext.BasicDialog('', {
+											autoCreate: true,
+											title: strings['synchronize'],
+											modal: true,
+											closable: false,
+											collapsible: false,
+											width: 500,
+											height: 200 + playerList.getCount() * 13,
+											resizeHandles: 'se'
 										});
-										dlg.shim = false;
-									}
+										dlg.addButton(strings['no_synchronization'], PlayerChooser.unsync, dlg);
+										dlg.addButton(strings['synchronize'], PlayerChooser.sync, dlg);
+										dlg.addButton(strings['close'], dlg.destroy, dlg);
+										dlg.addKeyListener(27, dlg.destroy, dlg);
+										dlg.body.update(playerSelection);	
+										dlg.show();
+									},
+									disabled: (playerList.getCount() < 2) 
 								})
 							);
 
@@ -301,10 +331,25 @@ PlayerChooser = function(){
 						}
 
 						else {
-							playerList.menu.add(
+							playerMenu.menu.add(
 								new Ext.menu.Item({
 									text: strings['no_player'] + '..',
-									handler: function(){ Ext.MessageBox.alert(strings['no_player'], strings['no_player_details']); }
+									handler: function(){
+										var dlg = new Ext.BasicDialog('', {
+											autoCreate: true,
+											title: strings['no_player'],
+											modal: true,
+											closable: false,
+											collapsible: false,
+											width: 500,
+											height: 250,
+											resizeHandles: 'se'
+										});
+										dlg.addButton(strings['close'], dlg.destroy, dlg);
+										dlg.addKeyListener(27, dlg.destroy, dlg);
+										dlg.body.update(strings['no_player_details']);
+										dlg.show();
+									}
 								})
 							);
 
@@ -327,7 +372,7 @@ PlayerChooser = function(){
 		selectPlayer: function(ev){
 			var el;
 
-			playerList.setText(ev.text);
+			playerMenu.setText(ev.text);
 			playerid = ev.value;
 			player = encodeURI(playerid);
 
@@ -349,6 +394,42 @@ PlayerChooser = function(){
 
 			Playlist.resetUrl();
 			Player.getStatus();
+		},
+
+		sync: function(){
+			var players = Ext.query('input', Ext.get('syncgroup').dom);
+
+			for(var i = 0; i < players.length; i++) {
+				Utils.processCommand({
+					action: [ 
+						players[i].checked ? playerid : players[i].id,
+						[
+							'sync',
+							players[i].checked ? players[i].id : '-'
+						]
+					]
+				});
+			}
+
+			this.destroy();
+		},
+
+		unsync: function(){
+			var players = Ext.query('input', Ext.get('syncgroup').dom);
+
+			for(var i = 0; i < players.length; i++) {
+				Utils.processCommand({
+					action: [ 
+						players[i].id,
+						[
+							'sync',
+							'-'
+						]
+					]
+				});
+			}
+
+			this.destroy();
 		}
 	}
 }();
@@ -914,24 +995,15 @@ Player = function(){
 
 		getUpdate : function(){
 			if (player) {
-				Ext.Ajax.request({
-					params: Ext.util.JSON.encode({
-						id: 1,
-						method: "slim.request",
-						params: [
-							playerid,
-							[
-								"status",
-								"-",
-								1,
-								"tags:gAbehldiqtyrSuoK"
-							]
-						]
-					}),
-
+				Utils.processPlayerCommand({
+					params: [
+						"status",
+						"-",
+						1,
+						"tags:gAbehldiqtyrSuoK"
+					],
 					failure: this.updateStatus,
 					success: this.updateStatus,
-
 					scope: this
 				});
 
@@ -1026,15 +1098,8 @@ Player = function(){
 		},
 
 		playerControl : function(action, dontUpdate){
-			Ext.Ajax.request({
-				params: Ext.util.JSON.encode({
-					id: 1,
-					method: "slim.request",
-					params: [
-						playerid,
-						action
-					]
-				}),
+			Utils.processPlayerCommand({
+				params: action,
 				success: function(){
 					playerStatus.dontUpdate = dontUpdate;
 					this.getUpdate();

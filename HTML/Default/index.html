@@ -52,10 +52,15 @@
 		<script type="text/javascript" src="[% webroot %]html/main.js?r=[% revision %]"></script>
 		<script type="text/javascript">
 			var strings = new Array();
-			strings['loading']  = "[% "LOADING" | string %]";
-			strings['synchronize']  = "[% "SYNCHRONIZE" | string %]";
-			strings['clear_playlist']  = "[% "CLEAR" | string %]";
-			strings['save']  = "[% "SAVE" | string %]";
+			strings['loading']           = "[% "LOADING" | string %]";
+			strings['synchronize']       = "[% "SYNCHRONIZE" | string %]";
+			strings['synchronize_desc']  = "[% "SETUP_SYNCHRONIZE_DESC" | string %]";
+			strings['no_synchronization']= "[% "SETUP_NO_SYNCHRONIZATION" | string %]";
+			strings['clear_playlist']    = "[% "CLEAR" | string %]";
+			strings['save']              = "[% "SAVE" | string %]";
+			strings['choose_player']     = "[% "CHOOSE_PLAYER" | string %]";
+			strings['no_player']         = "[% "NO_PLAYER_FOUND" | string %]";
+			strings['no_player_details'] = "[% "NO_PLAYER_DETAILS" | string | replace("'", '\'') | replace('"', '\"') %]";
 
 			try { Ext.EventManager.onDocumentReady(Main.init, Main, true); }
 			catch(e) {
