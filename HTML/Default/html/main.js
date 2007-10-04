@@ -70,17 +70,8 @@ Main = function(){
 
 		// scan progress status updates
 		getScanStatus : function(){
-			Ext.Ajax.url = '/jsonrpc.js';
-
-			Ext.Ajax.request({
-				params: Ext.util.JSON.encode({
-					id: 1,
-					method: "slim.request",
-					params: [
-						'',
-						['serverstatus'],
-					]
-				}),
+			Utils.processCommand({
+				params: [ '', ['serverstatus'] ],
 				success: this.scanUpdate,
 				scope: this
 			});
@@ -220,20 +211,8 @@ PlayerChooser = function(){
 		update : function(){
 			var el;
 
-			Ext.Ajax.request({
-				params: Ext.util.JSON.encode({
-					id: 1,
-					method: "slim.request",
-					params: [
-						'',
-						[
-							"serverstatus",
-							0,
-							99
-						]
-					]
-				}),
-
+			Utils.processCommand({
+				params: [ '', [ "serverstatus", 0, 99 ] ],
 				scope: this,
 
 				success: function(response){
@@ -419,13 +398,7 @@ PlayerChooser = function(){
 
 			for(var i = 0; i < players.length; i++) {
 				Utils.processCommand({
-					action: [ 
-						players[i].id,
-						[
-							'sync',
-							'-'
-						]
-					]
+					action: [ players[i].id, [ 'sync', '-' ] ]
 				});
 			}
 
@@ -651,9 +624,6 @@ Player = function(){
 
 	return {
 		init : function(){
-			Ext.Ajax.method = 'POST';
-			Ext.Ajax.url = '/jsonrpc.js';
-
 			new Slim.Button('ctrlPrevious', {
 				cls: 'btn-previous',
 				tooltip: strings['previous'],
@@ -996,12 +966,7 @@ Player = function(){
 		getUpdate : function(){
 			if (player) {
 				Utils.processPlayerCommand({
-					params: [
-						"status",
-						"-",
-						1,
-						"tags:gAbehldiqtyrSuoK"
-					],
+					params: [ "status", "-", 1, "tags:gAbehldiqtyrSuoK" ],
 					failure: this.updateStatus,
 					success: this.updateStatus,
 					scope: this
@@ -1016,20 +981,8 @@ Player = function(){
 		getStatus : function() {
 			// only poll player state if there is a player connected
 			if (player) {
-				Ext.Ajax.request({
-					params: Ext.util.JSON.encode({
-						id: 1,
-						method: "slim.request",
-						params: [
-							playerid,
-							[
-								"status",
-								"-",
-								1,
-								"tags:u"
-							]
-						]
-					}),
+				Utils.processPlayerCommand({
+					params: [ "status", "-", 1, "tags:u" ],
 
 					success: function(response){
 						if (response && response.responseText) {

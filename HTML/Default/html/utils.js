@@ -209,6 +209,8 @@ var Utils = function(){
 
 		processCommand : function(config){
 			Ext.Ajax.request({
+				url: '/jsonrpc.js',
+				method: 'POST',
 				params: Ext.util.JSON.encode({
 					id: 1,
 					method: "slim.request",
