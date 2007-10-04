@@ -138,6 +138,11 @@ div.thumbwrap {
 	top: -5px;
 }
 
+.homeMenuItem .browseCover {
+	padding-top: 0;
+	top: -7px;
+}
+
 
 #browsedbHeader {
 	margin: 5px;
@@ -157,6 +162,10 @@ div.thumbwrap {
 
 .playlistSongDetail, .browseItemDetail {
 	padding-left: 70px;
+}
+
+.smallBrowseItemDetail {
+	padding-left: 30px;
 }
 
 /* Home menu */

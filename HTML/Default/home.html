@@ -72,11 +72,29 @@ ELSE %]
 
 	[% BLOCK menuItem %]
 		<div class="selectorMarker[% IF singleton %] homeMenuSection_singleton[% END %]" onmouseover="Utils.highlight(this);"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-			<div class="homeMenuItem" id="[% link.key %]">
+			<div class="homeMenuItem[% IF (page == 'radio' || page == 'mod') && additionalLinks.icons.${link.key}.url %] itemWithCover[% END %]" id="[% link.key %]">
 				[% IF expandable %]
 					<span onclick="MainMenu.toggleItem('[% link.key %]');"><img class="disclosure_home" src="[% webroot %]html/images/spacer.gif"/></span>
-				[% END %]
-				<a href="[% link.value %]player=[% player %][% IF category; "&amp;homeCategory=" _ category; END %][% IF expandable; "&amp;page=" _ expandable; END %]" class="browseItemLink">[% link.key | string %]</a>
+				[% END; %]
+				<a href="[% link.value %]player=[% player %][% IF category; "&amp;homeCategory=" _ category; END %][% IF expandable; "&amp;page=" _ expandable; END %]" class="browseItemLink">
+					[% IF (page == 'radio' || page == 'mod') && additionalLinks.icons.${link.key}.url %]
+						<span class="browseCover">
+							<img src="[% webroot %][% additionalLinks.icons.${link.key}.url.replace('.png', "_50x50_f.png") %]" width="50" border="0" alt="[% link.key | string %]">
+						</span>
+						<div class="browseItemDetail">[% link.key | string %]</div>
+					[% ELSE %]
+						[% IF additionalLinks.icons.${link.key}.url %]
+							<span class="browseCover">
+								<img src="[% webroot %][% additionalLinks.icons.${link.key}.url.replace('.png', "_25x25_f.png") %]" width="25" border="0" alt="[% link.key | string %]">
+							</span>
+							<div class="smallBrowseItemDetail">
+						[% END %]
+						[% link.key | string %]
+						[% IF additionalLinks.icons.${link.key}.url %]
+							</div>
+						[% END %]
+					[% END %]
+				</a>
 			</div>
 		</div></div></div></div></div>
 	[% END %]
