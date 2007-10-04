@@ -851,8 +851,8 @@ Player = function(){
 					Ext.get('ctrlCurrentSongInfoCollapsed').update(currentTitle);
 
 					if (result.playlist_loop[0].id && (el = Ext.get('ctrlCurrentArt'))) {
-						var coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96x96_f.png"></a>';
-						var popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250x250_f.png" width="250">';
+						var coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96x96_f.gif"></a>';
+						var popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250x250_f.gif" width="250">';
 
 						if (result.playlist_loop[0].artwork_url) {
 							coverart = '<img src="' + result.playlist_loop[0].artwork_url + '" height="96" width="96" />';
@@ -887,7 +887,7 @@ Player = function(){
 					Ext.get('ctrlBitrate').update('');
 					Ext.get('ctrlCurrentArtist').update('');
 					Ext.get('ctrlCurrentAlbum').update('');
-					Ext.get('ctrlCurrentArt').update('<img src="/music/0/cover_96x96_f.png">');
+					Ext.get('ctrlCurrentArt').update('<img src="/music/0/cover_96x96_f.gif">');
 				}
 
 				playerStatus = {

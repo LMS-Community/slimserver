@@ -178,7 +178,7 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 [%# img tag for album thumbnail in browse artwork context %]
 [% BLOCK thumbnailItemImg -%][% IF NOT height; height = 100; END %][% IF NOT resizeParam; resizeParam = 'p'; END %]
  [% artistlist = ''; IF item.artist; itemobj=item.itemobj; artistlist = PROCESS artistsAsText.html; END %]
- [%- "<img $style src=\"/music/$item.coverThumb/cover_"; height;"x"; height; "_"; resizeParam; IF bgcolor; "_"; bgcolor; END; ".jpg\"" %][% IF NOT serverResizesArt; "height=\"";height;"\" width=\"";height;"\""; END %]
+ [%- "<img $style src=\"/music/$item.coverThumb/cover_"; height;"x"; height; "_"; resizeParam; IF bgcolor; "_"; bgcolor; END; ".gif\"" %][% IF NOT serverResizesArt; "height=\"";height;"\" width=\"";height;"\""; END %]
  [%- " alt=\"";item.text | html; artistlist | html ; IF item.year; " ($item.year)"; END; "\"" -%]
  [%- " title=\"";item.text | html; artistlist | html ; IF item.year; " ($item.year)"; END; "\"" -%]
  [%- " onLoad=\"resize(this, ";height;")\">" -%]
