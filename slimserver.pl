@@ -202,6 +202,7 @@ our (
 	$cliport,
 	$daemon,
 	$diag,
+	$help,
 	$httpaddr,
 	$lastlooptime,
 	$logfile,
@@ -559,6 +560,7 @@ sub initOptions {
 		'cliport=s'     => \$cliport,
 		'daemon'        => \$daemon,
 		'diag'          => \$diag,
+		'help'          => \$help,
 		'httpaddr=s'    => \$httpaddr,
 		'httpport=s'    => \$httpport,
 		'logfile=s'     => \$logfile,
@@ -585,6 +587,10 @@ sub initOptions {
 		'checkstrings'  => \$checkstrings,
 		'd_startup'     => \$d_startup, # Needed for Slim::bootstrap
 	)) {
+		showUsage();
+		exit(1);
+	}
+	if ($help) {
 		showUsage();
 		exit(1);
 	}
