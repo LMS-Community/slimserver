@@ -32,6 +32,8 @@ sub initPlugin {
 
 	return 1 if $class->initialized;
 
+	Slim::Plugin::iTunes::Settings->new;
+
 	if (!$class->canUseiTunesLibrary) {
 		return;
 	}
@@ -39,8 +41,6 @@ sub initPlugin {
 	Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
 
 	Slim::Music::Import->addImporter($class, { 'use' => 1 });
-
-	Slim::Plugin::iTunes::Settings->new;
 
 	$class->initialized(1);
 	$class->checker(1);

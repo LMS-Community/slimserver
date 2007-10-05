@@ -124,6 +124,8 @@ sub initPlugin {
 	$MMSport = $prefs->get('port');
 	$MMSHost = $prefs->get('host');
 
+	Slim::Plugin::MusicMagic::Settings->new;
+
 	$log->info("Testing for API on $MMSHost:$MMSport");
 
 	my $http = Slim::Player::Protocols::HTTP->new({
@@ -164,7 +166,6 @@ sub initPlugin {
 
 		Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
 
-		Slim::Plugin::MusicMagic::Settings->new;
 		Slim::Plugin::MusicMagic::ClientSettings->new;
 
 		if (scalar @{grabMoods()}) {
