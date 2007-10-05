@@ -56,7 +56,7 @@
 		<div class="selectorMarker" onmouseover="Utils.highlight(this);" id="db[% itemobj.id %]_selector"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft"><div class="thumbwrap">
 
 			[%- itemImg = item.coverThumb ? "thumbnailItemImg" : "dummyItemImg" %]
-			<div class="thumbArtwork" style="width:[% item.size %]px;position:relative;">
+			<div class="thumbArtwork" style="width:[% item.size %]px;height:[% item.size %]px;position:relative;">
 				<a [% PROCESS browseDbItemHRef %]>[% PROCESS $itemImg height="$item.size" %]</a>
 				<span class="browsedbControls">
 					[%- PROCESS $controls -%]
