@@ -828,23 +828,28 @@ form#advSearchForm.resultsPage {
 	background: transparent url(html/images/selector_bottom_left.gif) no-repeat bottom left;
 }
 
-.selectorMarker {
+.selectorMarker,
+.selector_topRight, .selector_topLeft,
+.selector_bottomRight, .selector_bottomLeft {
 	background: none;
 }
 
-.selector_topRight {
-	background: none;
-}
 .selector_topLeft {
 	padding-top: 7px;
-	background: none;
 }
-.selector_bottomRight {
-	background: none;
-}
+
 .selector_bottomLeft {
 	padding-bottom: 5px;
-	background: none;
+}
+
+.dragUp .selector_topLeft {
+	border-top: 1px white solid;
+	padding-top: 6px
+}
+
+.dragDown .selector_bottomLeft {
+	border-bottom: 1px white solid;
+	padding-bottom: 4px
 }
 
 #loading {

@@ -418,6 +418,7 @@ PlayerChooser = function(){
 
 Playlist = function(){
 	var unHighlightTimer = new Ext.util.DelayedTask(Utils.unHighlight);
+	var isDragging = false;
 
 	return {
 		init : function(){
@@ -435,11 +436,32 @@ Playlist = function(){
 					dragEl.applyStyles({'z-index':2000});
 					dragEl.update(el.dom.innerHTML);
 					dragEl.addClass(el.dom.className + ' dd-proxy');
+
+					isDragging = true;
 				},
 
 				// disable the default behaviour which would place the dragged element
 				// we don't need to place it as it will be moved in onDragDrop
 				endDrag: function() {},
+
+				onDragEnter: function(ev, id) {
+					var source = Ext.get(this.getEl());
+					var target = Ext.get(id);
+
+					if (target && source) {
+						if (target.dd.config.position < source.dd.config.position)
+							Ext.get(id).addClass('dragUp');
+						else
+							Ext.get(id).addClass('dragDown');
+
+						console.debug((target.dd.config.position < source.dd.config.position) ? 'up' : 'down');
+					}
+				},
+
+				onDragOut: function(e, id) {
+					Ext.get(id).removeClass('dragUp');
+					Ext.get(id).removeClass('dragDown');
+				},
 
 				// move the item when dropped
 				onDragDrop: function(e, id) {
@@ -449,6 +471,9 @@ Playlist = function(){
 					if (target && source) {
 						var sourcePos = -1;
 						var targetPos = -1;
+
+						target.removeClass('dragUp');
+						target.removeClass('dragDown');
 
 						// get to know where we come from, where we've gone to
 						var items = Ext.query('#playList div.draggableSong');
@@ -482,6 +507,8 @@ Playlist = function(){
 							}
 						}
 					}
+
+					isDragging = false;
 				}
 			});
 		},
@@ -574,11 +601,16 @@ Playlist = function(){
 				tooltipType: 'title',
 				handler: Playlist.save
 			});
+
+			// dragging doesn't survive a reload
+			isDragging = false;
 		},
 
 		highlight : function(target){
-			Utils.highlight(target);
-			unHighlightTimer.delay(2000);	// remove highlighter after x seconds of inactivity
+			if (!isDragging) {
+				Utils.highlight(target);
+				unHighlightTimer.delay(2000);	// remove highlighter after x seconds of inactivity
+			}
 		},
 
 		highlightCurrent : function(){
