@@ -204,7 +204,7 @@ function shrinkThumbs() {
 }
 
 function resizeThumbs() {
-	thumbHrefTemplate = '/music/COVER/thumb_'+thumbSize+'x'+thumbSize+'_p.jpg';
+	thumbHrefTemplate = '/music/COVER/thumb_'+thumbSize+'x'+thumbSize+'_p.png';
 	refreshThumbs(parsedData);
 	setCookie( 'SqueezeCenter-thumbSize', thumbSize );
 }

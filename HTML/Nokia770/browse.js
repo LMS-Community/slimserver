@@ -14,7 +14,7 @@ function changeThumbSize (action, albumArtDOMId, albumArtId) {
 		}
 		thumbSize = thumbSize + 50;
 	}
-	thumbHrefTemplate = '/music/COVER/thumb_'+thumbSize+'x'+thumbSize+'_p.jpg';
+	thumbHrefTemplate = '/music/COVER/cover_'+thumbSize+'x'+thumbSize+'_p.png';
 	var thumbHref = thumbHrefTemplate.replace('COVER', albumArtId);
 	if ($(albumArtDOMId)) {
 		$(albumArtDOMId).src = thumbHref;

@@ -5,7 +5,7 @@
 		<td width="100" valign = 'bottom'>
 		[% IF item.coverThumb %]
 			<a onClick = 'popUpAlbumInfo("[% item.itemobj.id %]", 1)'>
-			[% PROCESS thumbnailItemImg height="225" width="225" style='STYLE="border: 1px solid black"' %]</a>
+			[% PROCESS thumbnailItemImg height="225" width="225" fileSuffix = 'png' style='STYLE="border: 1px solid black"' %]</a>
 		[% ELSE %]
 			<a onClick = 'popUpAlbumInfo("[% item.itemobj.id %]", 1)'>
 			[% PROCESS dummyItemImg height="225" width="225" style='STYLE="border: 1px solid black"' %]</a>

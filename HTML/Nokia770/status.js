@@ -303,7 +303,7 @@ function refreshOtherElements(theData) {
 		if (parsedData['coverartpath'].match('cover') || parsedData['coverartpath'].match('radio')) {
 			coverPath = parsedData['coverartpath'];
 		} else {
-			coverPath = '/music/'+parsedData['coverartpath']+'/thumb_190x190_p.jpg';
+			coverPath = '/music/'+parsedData['coverartpath']+'/cover_190x190_p.png';
 		}
 		$('coverartpath').src = coverPath;
 	}
