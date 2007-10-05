@@ -903,11 +903,11 @@ Player = function(){
 
 					if (result.playlist_loop[0].id && (el = Ext.get('ctrlCurrentArt'))) {
 						var coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96x96_p.gif"></a>';
-						var popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250x250_p.jpg" width="250">';
+						var popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250xX_f.jpg" width="250">';
 
 						if (result.playlist_loop[0].artwork_url) {
 							coverart = '<img src="' + result.playlist_loop[0].artwork_url + '" height="96" width="96" />';
-							popup    = '<img src="' + result.playlist_loop[0].artwork_url + '" height="250" width="250" />';
+							popup    = '<img src="' + result.playlist_loop[0].artwork_url + '" width="250" />';
 						}
 
 						el.update(coverart);
