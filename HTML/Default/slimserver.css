@@ -344,6 +344,14 @@ form#advSearchForm.resultsPage {
 	font: 11px;
 }
 
+#ctrlExpand, #ctrlCollapse {
+	position: absolute;
+	display: block;
+	right: 0px;
+	width: 18px;
+	background: url(html/images/btn_player_toggle_col.gif) no-repeat top left;
+}
+
 #ctrlExpand .x-btn-over button,
 #ctrlCollapse .x-btn-over button {
 	background-position: 0 -18px;
@@ -420,8 +428,7 @@ form#advSearchForm.resultsPage {
 
 #ctrlCurrentSongInfoCollapsed {
 	padding: 3px;
-	background-color: #8C8C8C;
-	margin: 2px 95px 0 30px;
+	margin: 2px 70px 0 30px;
 	overflow: hidden;
 	white-space: nowrap;
 	min-height: 13px;
@@ -430,7 +437,7 @@ form#advSearchForm.resultsPage {
 #ctrlPlaytimeCollapsed {
 	position: absolute;
 	top: 3px;
-	right: 25px;
+	right: 0px;
 }
 
 #nowPlayingIcon {
@@ -440,13 +447,6 @@ form#advSearchForm.resultsPage {
 	width: 18px;
 	height: 18px;
 	background: url(html/images/icon_nowplaying.gif) no-repeat top left;
-}
-
-#ctrlExpand, #ctrlCollapse {
-	position: absolute;
-	right: 0px;
-	background: url(html/images/btn_player_toggle_col.gif) no-repeat top left;
-	z-index: 9999;
 }
 
 #ctrlCurrentArt {

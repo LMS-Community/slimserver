@@ -112,18 +112,23 @@
 						<span id="ctrlPower"></span>
 					</td>
 
-					[% IF embedded %]
 					<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
 					<td align="right" valign="top">
-						<div id="ctrlUndock"></div>
+						<table border="0" cellspacing="0" cellpadding="0">
+							<tr><td>
+								<div id="ctrlUndock" [% IF !embedded %]style="visibility:hidden"[% END %]></div>
+							</td></tr>
+							
+							<tr><td>
+								<div id="ctrlCollapse"></div>
+								<div id="ctrlExpand"></div>
+							</td></tr>
+						</table>
 					</td>
-					[% END %]
 				</tr>
 			</table>
 
 			<div id="expandedPlayerPanel">
-				<div id="ctrlCollapse"></div>
-
 				<div id="ctrlCurrentArt">
 					<img src="[% webroot %]music/0/cover_96x96_p.gif" alt="" height="96" width="96" border="0"/>
 				</div>
@@ -157,7 +162,6 @@
 			</div>
 
 			<div id="collapsedPlayerPanel">
-				<div id="ctrlExpand"></div>
 				<div id="nowPlayingIcon"><img src="[% webroot %]html/images/spacer.gif" height="18" width="18"></div>
 				<div id="ctrlPlaytimeCollapsed"></div>
 				<div id="ctrlCurrentSongInfoCollapsed"></div>

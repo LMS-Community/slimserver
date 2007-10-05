@@ -715,6 +715,12 @@ Player = function(){
 			if (el = Ext.get('collapsedPlayerPanel'))
 				el.setVisibilityMode(Ext.Element.DISPLAY);
 
+			if (el = Ext.get('ctrlExpand'))
+				el.setVisibilityMode(Ext.Element.DISPLAY);
+
+			if (el = Ext.get('ctrlCollapse'))
+				el.setVisibilityMode(Ext.Element.DISPLAY);
+
 			// restore player expansion from cookie
 			this.collapseExpand({
 				doExpand: (Utils.getCookie('SqueezeCenter-expandPlayerControl') != 'false')
@@ -1084,6 +1090,12 @@ Player = function(){
 
 			if (el = Ext.get('expandedPlayerPanel'))
 				el.setVisible(doExpand);
+
+			if (el = Ext.get('ctrlCollapse'))
+				el.setVisible(doExpand);
+
+			if (el = Ext.get('ctrlExpand'))
+				el.setVisible(!doExpand);
 
 			if (art && doExpand) {
 				art.setHeight(96);
