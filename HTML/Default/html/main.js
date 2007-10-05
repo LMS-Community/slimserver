@@ -187,6 +187,7 @@ Main = function(){
 PlayerChooser = function(){
 	var playerMenu;
 	var playerDiscoveryTimer;
+	var playerNeedsUpgrade;
 
 	return {
 		init : function(){
@@ -232,27 +233,34 @@ PlayerChooser = function(){
 
 							for (x=0; x < responseText.result['player count']; x++) {
 								var currentPlayer = false;
+								var playerInfo = responseText.result.players_loop[x];
 
 								// mark the current player as selected
-								if (responseText.result.players_loop[x].playerid == playerid) {
+								if (playerInfo.playerid == playerid) {
 									currentPlayer = true;
 									playerInList = true;
-									playerMenu.setText(responseText.result.players_loop[x].name);
+									playerMenu.setText(playerInfo.name);
+
+									// display information if the player needs a firmware upgrade
+									if (playerInfo.player_needs_upgrade || playerNeedsUpgrade) {
+										playerNeedsUpgrade = playerInfo.player_needs_upgrade; 
+										Playlist.load();
+									}
 								}
 
 								// add the players to the list to be displayed in the synch dialog
 								playerList.add(
-									responseText.result.players_loop[x].playerid,
-									responseText.result.players_loop[x].name
+									playerInfo.playerid,
+									playerInfo.name
 								);
 
 								playerMenu.menu.add(
 									new Ext.menu.CheckItem({
-										text: responseText.result.players_loop[x].name,
-										value: responseText.result.players_loop[x].playerid,
+										text: playerInfo.name,
+										value: playerInfo.playerid,
 										cls: 'playerList',
 										group: 'playerList',
-										checked: responseText.result.players_loop[x].playerid == playerid,
+										checked: playerInfo.playerid == playerid,
 										handler: PlayerChooser.selectPlayer
 									})
 								);
@@ -479,11 +487,13 @@ Playlist = function(){
 		},
 
 		load : function(url, showIndicator){
-			// unregister event handlers
-			Ext.dd.ScrollManager.unregister('playList');
-
-			// try to reload previous page if no URL is defined
 			var el = Ext.get('playlistPanel');
+
+			if (Ext.get('playList'))
+				// unregister event handlers
+				Ext.dd.ScrollManager.unregister('playList');
+	
+			// try to reload previous page if no URL is defined
 			var um = el.getUpdateManager();
 
 			if (!url)
@@ -494,7 +504,7 @@ Playlist = function(){
 
 			el.load(
 				{
-					url: url || webroot + 'playlist.html?player=' + playerid,
+					url: url || webroot + 'playlist.html?ajaxRequest=1&player=' + playerid,
 					method: 'GET',
 					disableCaching: true
 				},
@@ -812,7 +822,7 @@ Player = function(){
 				item.fireEvent('dataupdate', result);
 			} );
 
-			if (result.power && result.playlist_tracks >= 0) {
+			if ((result.power && result.playlist_tracks >= 0)) {
 
 				if (this.needUpdate(result) && Ext.get('playList'))
 						Playlist.load();

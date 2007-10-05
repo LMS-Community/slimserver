@@ -2450,6 +2450,10 @@ sub serverstatusQuery {
 					unless ($eachclient->model() eq 'http');
 				$request->addResultLoop('players_loop', $cnt, 
 					'connected', ($eachclient->connected() || 0));
+				$request->addResultLoop('players_loop', $cnt, 
+					'player_needs_upgrade', "1")
+					if ($eachclient->needsUpgrade());
+
 				for my $pref (@{$savePrefs{'player'}}) {
 					if (defined(my $value = $prefs->client($eachclient)->get($pref))) {
 						$request->addResultLoop('players_loop', $cnt, 
@@ -2610,6 +2614,10 @@ sub statusQuery {
 
 	if (Slim::Music::Import->stillScanning()) {
 		$request->addResult('rescan', "1");
+	}
+
+	if ($client->needsUpgrade()) {
+		$request->addResult('player_needs_upgrade', "1");
 	}
 	
 	# add player info...
