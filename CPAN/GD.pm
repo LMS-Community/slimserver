@@ -16,7 +16,7 @@ use GD::Polygon;
 
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS $AUTOLOAD);
 
-$VERSION = '2.30';
+$VERSION = '2.35';
 
 @ISA = qw(Exporter DynaLoader);
 # Items to export into callers namespace by default. Note: do not export
@@ -163,9 +163,10 @@ B<GD.pm> is a Perl interface to Thomas Boutell's gd graphics library
 drawings using a large number of graphics primitives, and emit the
 drawings as PNG files.
 
-GD defines the following three classes:
+GD defines the following four classes:
 
 =over 5
+
 
 =item C<GD::Image>
 
@@ -182,6 +183,14 @@ rendering.
 A simple polygon object, used for storing lists of vertices prior to
 rendering a polygon into an image.
 
+=item C<GD::Simple>
+
+A "simple" class that simplifies the GD::Image API and then adds a set
+of object-oriented drawing methods using turtle graphics, simplified
+font handling, ability to work in polar coordinates, HSV color spaces,
+and human-readable color names like "lightblue". Please see
+L<GD::Simple> for a description of these methods.
+
 =back
 
 A Simple Example:
@@ -189,7 +198,7 @@ A Simple Example:
 	#!/usr/local/bin/perl
 
 	use GD;
-	
+
 	# create a new image
 	$im = new GD::Image(100,100);
 
@@ -373,7 +382,7 @@ $truecolor argument.
 
 =item B<$image = GD::Image-E<gt>newFromGif($file)>
 
-=item B<$image = GD::Image-E<gt>newFromGif($data)>
+=item B<$image = GD::Image-E<gt>newFromGifData($data)>
 
 These methods will create an image from a GIF file.  They work just
 like newFromPng() and newFromPngData(), and will accept the same
@@ -418,7 +427,7 @@ newFromGdData, but use the new compressed GD2 image format.
 =item B<$image = GD::Image-E<gt>newFromGd2Part($file,srcX,srcY,width,height)>
 
 This class method allows you to read in just a portion of a GD2 image
-file.  In additionto a filehandle, it accepts the top-left corner and
+file.  In addition to a filehandle, it accepts the top-left corner and
 dimensions (width,height) of the region of the image to read.  For
 example:
 
@@ -502,7 +511,7 @@ A typical sequence will look like this:
   $gifdata   .= $image->gifanimend;   # finish the animated GIF
   print $gifdata;                     # write animated gif to STDOUT
 
-If you do not wish to to store the data in memory, you can print it to
+If you do not wish to store the data in memory, you can print it to
 stdout or a file.
 
 The image that you call gifanimbegin on is used to set the image size,
@@ -597,13 +606,6 @@ plus the specified alpha channel.  The alpha value may range from 0 (opaque)
 to 127 (transparent).  The C<alphaBlending> function changes the way this
 alpha channel affects the resulting image.
 
-=item B<$index = $image-E<gt>colorAllocateAlpha(reg,green,blue,alpha)>
-
-This allocates a color with the specified red, green, and blue components,
-plus the specified alpha channel.  The alpha value may range from 0 (opaque)
-to 127 (transparent).  The C<alphaBlending> function changes the way this
-alpha channel affects the resulting image.
-
 =item B<$image-E<gt>colorDeallocate(colorIndex)>
 
 This marks the color at the specified index as being ripe for
@@ -630,7 +632,7 @@ Example:
 
 This also attempts to return the color closest in the color table to the
 red green and blue components specified. It uses a Hue/White/Black 
-color representation to make the selected colour more likely to match
+color representation to make the selected color more likely to match
 human perceptions of similar colors.
 
 If no colors have yet been
@@ -659,7 +661,7 @@ color table and returns its index.
 	$rosey = $myImage->colorResolve(255,100,80);
 	warn "Everything's coming up roses.\n" if $rosey >= 0;
 
-=item B<$colorsTotal = $image-E<gt>colorsTotal)> I<object method>
+=item B<$colorsTotal = $image-E<gt>colorsTotal> I<object method>
 
 This returns the total number of colors allocated in the object.
 
@@ -840,7 +842,7 @@ setAntiAliasedDontBlend() with a second argument of 0:
 
 =head2 Drawing Commands
 
-These methods allow you to draw lines, rectangles, and elipses, as
+These methods allow you to draw lines, rectangles, and ellipses, as
 well as to perform various special operations like flood-fill.
 
 =over 4
@@ -866,7 +868,7 @@ gdStyled and gdStyledBrushed.
 
 Example:
 
-	# Draw a diagonal line using the currently defind
+	# Draw a diagonal line using the currently defined
 	# paintbrush pattern.
 	$myImage->line(0,0,150,150,gdBrushed);
 
@@ -1002,7 +1004,7 @@ bitwise OR of the following constants:
   gdNoFill        outline the arc or chord
   gdEdged         connect beginning and ending of the arc to the center
 
-gdArc and gdChord are mutally exclusive.  gdChord just connects the
+gdArc and gdChord are mutually exclusive.  gdChord just connects the
 starting and ending angles with a straight line, while gdArc produces
 a rounded edge. gdPie is a synonym for gdArc. gdNoFill indicates that
 the arc or chord should be outlined, not filled. gdEdged, used
@@ -1134,7 +1136,7 @@ This method is similar to copy() but allows you to choose different
 sizes for the source and destination rectangles.  The source and
 destination rectangle's are specified independently by (srcW,srcH) and
 (destW,destH) respectively.  copyResized() will stretch or shrink the
-image to accomodate the size requirements.
+image to accommodate the size requirements.
 
 Example:
 
@@ -1163,7 +1165,7 @@ B<				$srcX,$srcY,$width,$height,$angle)>
 Like copyResized() but the $angle argument specifies an arbitrary
 amount to rotate the image clockwise (in degrees).  In addition, $dstX
 and $dstY species the B<center> of the destination image, and not the
-topleft corner.
+top left corner.
 
 =item B<$image-E<gt>trueColorToPalette([$dither], [$colors])>
 
@@ -1237,7 +1239,7 @@ system.
 
 =item B<$image-E<gt>string($font,$x,$y,$string,$color)>
 
-This method draws a string startin at position (x,y) in the specified
+This method draws a string starting at position (x,y) in the specified
 font and color.  Your choices of fonts are gdSmallFont, gdMediumBoldFont,
 gdTinyFont, gdLargeFont and gdGiantFont.
 
@@ -1308,7 +1310,7 @@ case it doesn't do any actual drawing, but returns the bounding box
 using an inexpensive operation.  You can use this to perform layout
 operations prior to drawing.
 
-Using a negative color index will disable anti-aliasing, as described
+Using a negative color index will disable antialiasing, as described
 in the libgd manual page at
 L<http://www.boutell.com/gd/manual2.0.9.html#gdImageStringFT>.
 
@@ -1372,7 +1374,7 @@ does not work for me, but the interface is provided for completeness.
 The call signature is somewhat complex.  Here is an excerpt from the
 libgd manual page:
 
-Draws the text strings specified by top and bottom on im, curved along
+Draws the text strings specified by top and bottom on the image, curved along
 the edge of a circle of radius radius, with its center at cx and
 cy. top is written clockwise along the top; bottom is written
 counterclockwise along the bottom. textRadius determines the "height"
@@ -1430,7 +1432,7 @@ Pass a value of 1 for blending mode, and 0 for non-blending mode.
 By default, GD (libgd 2.0.2 and above) does not attempt to save full
 alpha channel information (as opposed to single-color transparency)
 when saving PNG images. (PNG is currently the only output format
-supported by gd which can accommodate alpa channel information.) This
+supported by gd which can accommodate alpha channel information.) This
 saves space in the output file. If you wish to create an image with
 alpha channel information for use with tools that support it, call
 C<saveAlpha(1)> to turn on saving of such information, and call
@@ -1460,7 +1462,7 @@ current setting.
 =item B<($width,$height) = $image-E<gt>getBounds()>
 
 This method will return a two-member list containing the width and
-height of the image.  You query but not not change the size of the
+height of the image.  You query but not change the size of the
 image once it's created.
 
 =item B<$width = $image-E<gt>width>
@@ -1471,12 +1473,12 @@ Return the width and height of the image, respectively.
 
 =item B<$is_truecolor = $image-E<gt>isTrueColor()>
 
-This method will return a boolean representing whether the image
+This method will return a Boolean representing whether the image
 is true color or not.
 
 =item B<$flag = $image1-E<gt>compare($image2)>
 
-Compare two images and return a bitmap describing the differenes
+Compare two images and return a bitmap describing the differences
 found, if any.  The return value must be logically ANDed with one or
 more constants in order to determine the differences.  The following
 constants are available:
@@ -1565,7 +1567,12 @@ a vertex that isn't already defined.
 
 Delete the specified vertex, returning its value.
 
-	($x,$y) = $poly->deletePt(1); 
+	($x,$y) = $poly->deletePt(1);
+
+
+=item B<$poly-E<gt>clear()>
+
+Delete all vertices, restoring the polygon to its initial empty state.
 
 =item B<$poly-E<gt>toPt($dx,$dy)>
 
@@ -1585,7 +1592,7 @@ Return the number of vertices in the polygon.
 
 =item B<@vertices = $poly-E<gt>vertices>
 
-Return a list of all the verticies in the polygon object.  Each member
+Return a list of all the vertices in the polygon object.  Each member
 of the list is a reference to an (x,y) array.
 
 	@vertices = $poly->vertices;
