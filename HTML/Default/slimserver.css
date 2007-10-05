@@ -1066,6 +1066,7 @@ form#advSearchForm.resultsPage {
 
 .x-btn-over button { background-position: 0 -22px; }
 .x-btn-click button { background-position: 0 -44px; }
+.x-btn-disabled button { background-position: 0 -66px; }
 
 .btn-collapse-player button {
 	background: transparent url(html/images/btn_player_toggle_col.gif) no-repeat 0 0;

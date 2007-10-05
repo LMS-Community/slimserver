@@ -3865,7 +3865,8 @@ sub _songData {
 			$remoteMeta->{Y} = $remoteMeta->{replay_gain};
 			$remoteMeta->{o} = $remoteMeta->{type};
 			$remoteMeta->{r} = $remoteMeta->{bitrate};
-			
+			$remoteMeta->{B} = $remoteMeta->{buttons};
+
 			# if we have a plugin-defined title, remove the current_title value
 			if ( $remoteMeta->{title} ) {
 				$request->addResult( 'current_title' => undef );
@@ -3958,6 +3959,7 @@ sub _songData {
                                                                             
 		  'k' => ['comment',           'COMMENT',         'comment'],                       #->comment_object
 		  'K' => [''],                                                                      # artwork URL, not in db
+		  'B' => [''],                                                                      # radio stream special buttons
 
 	);
 	
@@ -3968,6 +3970,13 @@ sub _songData {
 		if ($tag eq 'K') {
 			if ( my $meta = $remoteMeta->{$tag} ) {
 				$returnHash{artwork_url} = $meta;
+			}
+		}
+
+		# special case, button handling for remote tracks
+		if ($tag eq 'B') {
+			if ( my $meta = $remoteMeta->{$tag} ) {
+				$returnHash{buttons} = $meta;
 			}
 		}
 

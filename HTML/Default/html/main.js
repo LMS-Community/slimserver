@@ -635,13 +635,10 @@ Player = function(){
 
 	return {
 		init : function(){
-			new Slim.Button('ctrlPrevious', {
-				cls: 'btn-previous',
-				tooltip: strings['previous'],
-				minWidth: 28,
-				scope: this,
-				handler: function(){ this.playerControl(['playlist', 'index', '-1']) }
-			});
+			displayElements.add(new Slim.RewButton('ctrlPrevious', {
+ 				cls: 'btn-previous',
+				minWidth: 28
+			}));
 
 			displayElements.add(new Slim.PlayButton('ctrlTogglePlay', {
 				cls: 'btn-play',
@@ -975,7 +972,7 @@ Player = function(){
 		getUpdate : function(){
 			if (player) {
 				Utils.processPlayerCommand({
-					params: [ "status", "-", 1, "tags:gAbehldiqtyrSuoK" ],
+					params: [ "status", "-", 1, "tags:gABbehldiqtyrSuoK" ],
 					failure: this.updateStatus,
 					success: this.updateStatus,
 					scope: this
@@ -1137,6 +1134,34 @@ Player = function(){
 		}
 	}
 }();
+
+
+Slim.RewButton = function(renderTo, config){
+	Ext.apply(config, {
+		tooltip: strings['previous'],
+		scope: this,
+
+		handler: function(){
+			Player.playerControl(['playlist', 'index', '-1'])
+		},
+
+		updateHandler: function(result){
+		     if (Player.needUpdate(result)) {
+				if (result.playlist_loop && result.playlist_loop[0] && result.playlist_loop[0].buttons) {
+					try {
+						this.setDisabled(!result.playlist_loop[0].buttons.rew)
+					}
+					catch(e){}
+				}
+				else if (this.disabled)
+				     this.enable();
+			}
+		}
+	});
+
+	Slim.RewButton.superclass.constructor.call(this, renderTo, config);
+};
+Ext.extend(Slim.RewButton, Slim.Button);
 
 
 Slim.PlayButton = function(renderTo, config){
