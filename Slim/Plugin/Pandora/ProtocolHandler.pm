@@ -573,7 +573,7 @@ sub getMetadataFor {
 		type        => 'MP3 (Pandora)',
 		buttons     => {
 			# disable REW/Previous button
-			rew => false
+			rew => 0
 		}
 	};
 }
