@@ -49,14 +49,22 @@ Preferences for plugins are expected to be stored in namespaces prefixed by 'plu
 
 =head2 Each preference may be associated with:
 
+=over 4
+
 =item validation function to verify the new value for a preference before setting it
 
 =item on change callback to execute when a preference is set
 
+=back 
+
 =head2 Each namespace supports:
+
+=over 4
 
 =item migration functions to update preferences to a new version number
 (each namespace has a global and per client version number)
+
+=back
 
 =head1 METHODS
 

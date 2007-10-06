@@ -27,6 +27,8 @@ Platform correct error constants.
 
 =item * ECHILD
 
+=back
+
 =cut
 
 use strict;
