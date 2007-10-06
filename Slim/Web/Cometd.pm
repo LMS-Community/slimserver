@@ -641,10 +641,10 @@ sub sendCLIResponse {
 sub handleRequest {
 	my $params = shift;
 	
-	my $id       = $params->{id};
+	my $id       = $params->{id} || 0;
 	my $cmd      = $params->{request};
 	my $response = $params->{response};
-	my $priority = $params->{priority};
+	my $priority = $params->{priority} || '';
 	my $clid     = $params->{clid};
 	
 	my $args = $cmd->[1];
