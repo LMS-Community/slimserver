@@ -12,7 +12,7 @@
 	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
 [% END %][% END %]
 
-[% IF NOT ajaxUpdate %][% PROCESS pageheader.html %]
+[% IF NOT ajaxUpdate %][% PROCESS pageheader.html %][% END &]
 
 <div id="browsedbHeader">
 	[% IF artwork != 1 -%]
@@ -22,7 +22,6 @@
 
 	[% IF hasPagebar -%][% PROCESS pagebar %][%- END %]
 </div>
-[% END %]
 
 [%- IF artwork == 1 && (levelName == 'album' || levelName == 'age');
 		container = 'gallerycontainer';
@@ -52,11 +51,10 @@
 </div>
 [% END %]
 
-[% IF NOT ajaxUpdate %]
+
 <div id="browsedbFooter">
 	[% IF pageinfo.totalpages && pageinfo.totalpages > 1 && pageinfo.totalalphapages != 1 %][% PROCESS pagebar %][% END %]
 </div>
-
+[% IF NOT ajaxUpdate %]
 [% PROCESS pagefooter.html %]
-
 [% END %]
