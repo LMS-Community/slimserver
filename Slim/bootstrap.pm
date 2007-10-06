@@ -180,6 +180,26 @@ sub loadModules {
 	# And we're done with the trying - put our CPAN path back on @INC.
 	unshift @INC, @SlimINC;
 	
+	# Check that all of our CPAN modules are the correct minimum version
+	my $failed = check_valid_versions();
+	if ( scalar keys %{$failed} ) {
+	
+		print "The following CPAN modules were found but are too old to work with SqueezeCenter:\n";
+		
+		for my $module ( sort keys %{$failed} ) {
+			print "  $module (loaded " . $failed->{$module}->{loaded} . ", need " . $failed->{$module}->{need} . ")\n";
+		}
+		
+		print "\n";		
+		print "To fix this problem you have several options:\n";
+		print "1. Install the latest version of the module(s) using CPAN: sudo cpan Some::Module\n";
+		print "2. Update the module's package using apt-get, yum, etc.\n";
+		print "3. Run the .tar.gz version of SlimServer which includes all required CPAN modules.\n";
+		print "\n";
+		
+		exit;
+	}
+	
 	sub REAPER {
 		my $kid;
 		
@@ -296,6 +316,37 @@ sub tryModuleLoad {
 	} else {
 		return scalar @failed ? 1 : 0;
 	}
+}
+
+sub check_valid_versions {
+	my $modules;
+	my $failed = {};
+	
+	open my $fh, '<', catfile( $Bin, 'modules.conf' ) or die 'modules.conf not found';
+	do { local $/ = undef; $modules = <$fh> };
+	close $fh;
+
+	for my $line ( split /\n/, $modules ) {
+		next unless $line =~ /^\w+/;
+		chomp $line;
+		
+		my ($mod, $ver) = split /\s+/, $line;
+		
+		# Could parse the module file here using code from Module::Build,
+		# but we will be loading these later anyway, so this is easier.
+		eval "use $mod";
+		if ( !$@ ) {
+			eval { $mod->VERSION( $ver || 0 ); 1; };
+		}
+		if ( $@ ) {
+			$failed->{$mod} = {
+				loaded => $mod->VERSION || '<not found>',
+				need   => $ver,
+			};
+		}
+	}		
+	
+	return $failed;
 }
 
 sub sigint {
