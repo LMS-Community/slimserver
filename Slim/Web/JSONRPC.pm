@@ -13,8 +13,7 @@ package Slim::Web::JSONRPC;
 use strict;
 
 use HTTP::Status;
-use JSON::XS qw(from_json);
-use JSON;
+use JSON::XS qw(to_json from_json);
 use Scalar::Util qw(blessed);
 
 use Slim::Web::HTTP;
@@ -233,9 +232,7 @@ sub writeResponse {
 	}
 
 	# convert Perl object into JSON
-	# FIXME: Use JSON here and not Syck because Syck does not like tied ordered hashes...
-	my $jsonResponse = objToJson($responseRef, {utf8 => 1, autoconv=>0});
-	$jsonResponse = Slim::Utils::Unicode::encode('utf8', $jsonResponse);
+	my $jsonResponse = to_json($responseRef);
 
 	$log->info("JSON raw response: [$jsonResponse]");
 
