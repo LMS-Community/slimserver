@@ -194,7 +194,7 @@ sub loadModules {
 		print "To fix this problem you have several options:\n";
 		print "1. Install the latest version of the module(s) using CPAN: sudo cpan Some::Module\n";
 		print "2. Update the module's package using apt-get, yum, etc.\n";
-		print "3. Run the .tar.gz version of SlimServer which includes all required CPAN modules.\n";
+		print "3. Run the .tar.gz version of SqueezeCenter which includes all required CPAN modules.\n";
 		print "\n";
 		
 		exit;
