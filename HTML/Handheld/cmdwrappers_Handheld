@@ -182,22 +182,22 @@
 [% BLOCK pagebar %]
 [%- IF NOT pageinfo.alphamap; PROCESS pagebarcalc pagesperbar = 11; END %]
 <tr><td colspan="2">[% IF NOT pageinfo.alphamap %][% "PAGES" | string %][% "COLON" | string %][% END %]
-[% IF pagesstart %]  <a href="[% pageinfo.path %]?start=0&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_first.gif" alt="[% "FIRST" | string %]" width="17" height="13" align="top"></a> [% END %]
-[% IF pagesprev || pagesprev == '0' %] <a href="[% pageinfo.path %]?start=[% pagesprev %]&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_prev.gif" alt="[% "PREVIOUS" | string %]" width="13" height="13" align="top"></a> [% END %]
+[% IF pagesstart %]  <a href="[% pageinfo.path %]?start=0[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_first.gif" alt="[% "FIRST" | string %]" width="17" height="13" align="top"></a> [% END %]
+[% IF pagesprev || pagesprev == '0' %] <a href="[% pageinfo.path %]?start=[% pagesprev %][% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_prev.gif" alt="[% "PREVIOUS" | string %]" width="13" height="13" align="top"></a> [% END %]
 [%- IF pageinfo.alphamap %]
 [%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
  [%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
- <a href="[% pageinfo.path | html %]?[% pageinfo.otherparams | html %]&amp;start=[% pageinfo.alphamap.item(alphakey) %]#[% alphakey | uri %]">[% IF curpage %]<b>[% END %][% alphakey | html %][% IF curpage %]</b>[% END %]</a> 
+ <a href="[% pageinfo.path | html %]?start=[% pageinfo.alphamap.item(alphakey) %][% pageinfo.otherparams | html %]#[% alphakey | uri %]">[% IF curpage %]<b>[% END %][% alphakey | html %][% IF curpage %]</b>[% END %]</a> 
 [%- END %]
 [%- ELSE %]
 [%- FOREACH ind=[pagebarstart..pagebarend] -%]
  [%- IF ind == pageinfo.currentpage %] <b>[% ind + 1 %]</b> 
- [%- ELSE %] <a href="[% pageinfo.path  | html %]?[% pageinfo.otherparams  | html %]&amp;start=[% ind * pageinfo.itemsperpage %]">[% ind + 1 %]</a> 
+ [%- ELSE %] <a href="[% pageinfo.path  | html %]?start=[% ind * pageinfo.itemsperpage %][% pageinfo.otherparams  | html %]">[% ind + 1 %]</a> 
  [%- END %]
 [% END %]
 [%- END %]
-[% IF pagesnext %] <a href="[% pageinfo.path %]?start=[% pagesnext %]&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_next.gif" alt="[% "NEXT" | string %]" width="13" height="13" align="top"></a> [% END %]
-[% IF pagesend %] <a href="[% pageinfo.path %]?start=[% pagesend %]&amp;[% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_last.gif" alt="[% "LAST" | string %]" width="17" height="13" align="top"></a> [% END %]
+[% IF pagesnext %] <a href="[% pageinfo.path %]?start=[% pagesnext %][% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_next.gif" alt="[% "NEXT" | string %]" width="13" height="13" align="top"></a> [% END %]
+[% IF pagesend %] <a href="[% pageinfo.path %]?start=[% pagesend %][% pageinfo.otherparams | html %]"><img src="[% webroot %]html/images/b_last.gif" alt="[% "LAST" | string %]" width="17" height="13" align="top"></a> [% END %]
 [% IF NOT pageinfo.alphamap && addSummary %]&nbsp;|&nbsp;[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
 </td></tr>
 [% END %]
