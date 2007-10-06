@@ -42,7 +42,7 @@
 
 [% BLOCK removelink %]
 	[% PROCESS cmdlink
-		cmdtitle = "REMOVE_FROM_PLAYLIST"
+		cmdtitle = "DELETE"
 		cmdimage = "remove.gif" %]
 [% END %]
 
