@@ -93,7 +93,7 @@ sub setMode {
 	} else {
 
 		if (Slim::Schema->rs('Progress')->search( { 'type' => 'importer' }, { 'order_by' => 'start' } )->all) {
-			push @browseMenuChoices, 'PLUGIN_RESCAN_LAST_SCAN'
+			push @browseMenuChoices, 'SETUP_VIEW_NOT_SCANNING'
 		}
 
 		my %params = (
@@ -147,16 +147,27 @@ sub setProgressMode {
 	my %progressParams = (
 		'header'             => \&progressHeader,
 		'headerArgs'         => 'CI',
-		'headerAddCount'     => 1,
 		'listRef'            => [0],
 		'externRef'          => \&progressBar,
 		'externRefArgs'      => 'CI',
+		'overlayRef'         => \&progressOverlay,
+		'overlayRefArgs'     => 'CI',
 		'modeUpdateInterval' => 1,
 		'valueref'           => \$value,
 	);
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%progressParams);
+		
 	progressUpdate($client);
+}
+
+sub progressOverlay {
+	my $client = shift;
+	my $index  = shift;
+	
+	my $overlay = ' (' . ($index + 1) . ' ' . $client->string('OF') .' ' . scalar(@{$client->modeParam('listRef')}) . ')';
+	
+	return ($overlay,undef);
 }
 
 sub exitProgressMode {
@@ -176,9 +187,27 @@ sub progressHeader {
 	
 	if (blessed($p) && $p->name) {
 	
-		return $client->string($p->name.'_PROGRESS')
-			.' '. $client->string( $p->active ? 'RUNNING' : 'COMPLETE')
-			.($p->active ? ' ('.  $p->done.'/' . $p->total . ') ' : '' );
+		$client->unblock();
+		
+		my $line = $client->string($p->name.'_PROGRESS');
+	
+		if ($p->active) {
+
+			if ($p->total) {
+
+				$line .= " ".$client->string('RUNNING');
+				$line .= " ".($p->done.'/' . $p->total);
+			
+			} else {
+				$line .= " ".$client->string('PLUGIN_RESCAN_STARTING');
+			
+			} 
+		
+		} else {
+			$line .= " ".$client->string('COMPLETE');
+		}
+			
+		return $line;
 	} else {
 	
 		if (Slim::Music::Import->stillScanning) {
@@ -223,7 +252,7 @@ sub progressUpdate {
 	my $client = shift;
 
 	Slim::Utils::Timers::killTimers($client, \&progressUpdate);
-	
+		
 	@progress = Slim::Schema->rs('Progress')->search( { 'type' => 'importer' }, { 'order_by' => 'start' } )->all;
 	my $size = scalar @{$client->modeParam('listRef')};
 	
@@ -244,7 +273,7 @@ sub progressUpdate {
 		# Block screensaver while checking progress and still scanning
 		Slim::Hardware::IR::setLastIRTime(
 			$client,
-			Time::HiRes::time() + ($prefs->client($client)->get('screensavertimeout') * 5),
+			Time::HiRes::time() + (preferences('server')->client($client)->get('screensavertimeout') * 5),
 		);
 		
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&progressUpdate);
@@ -340,17 +369,18 @@ sub rescanExitHandler {
 						value  => '3playlist',
 					},
 				],
-				'onPlay'   => sub { $prefs->set('type', $_[1]->{'value'}); },
-				'onAdd'    => sub { $prefs->set('type', $_[1]->{'value'}); },
-				'onRight'  => sub { $prefs->set('type', $_[1]->{'value'}); },
-				'header'   => '{PLUGIN_RESCAN_TIMER_TYPE}{count}',
-				'pref'     => sub { return $prefs->get('type'); },
-				'valueRef' => \$value,
+				'onPlay'       => sub { $prefs->set('type', $_[1]->{'value'}); },
+				'onAdd'        => sub { $prefs->set('type', $_[1]->{'value'}); },
+				'onRight'      => sub { $prefs->set('type', $_[1]->{'value'}); },
+				'header'       => '{PLUGIN_RESCAN_TIMER_TYPE}{count}',
+				'pref'         => sub { return $prefs->get('type'); },
+				'initialValue' => sub { return $prefs->get('type'); },
+				'valueRef'     => \$value,
 			);
 
 			Slim::Buttons::Common::pushModeLeft($client, 'INPUT.Choice',\%params);
 
-		} elsif ($$valueref eq 'PLUGIN_RESCAN_LAST_SCAN') {
+		} elsif ($$valueref eq 'SETUP_VIEW_NOT_SCANNING') {
 		
 			Slim::Buttons::Common::pushModeLeft($client, 'scanProgress');
 		}
