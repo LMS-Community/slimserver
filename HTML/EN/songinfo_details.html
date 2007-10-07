@@ -91,7 +91,7 @@
 	[% END %]
 
 	[% IF itemobj.lyrics %] 
-		[% item = itemobj.lyrics | html; title = "LYRICS"; PROCESS songInfoItem %]
+		[% item = itemobj.lyrics | html_line_break | html_para; title = "LYRICS"; PROCESS songInfoItem %]
 	[% END %]
 
 	[% IF filelength %] 
