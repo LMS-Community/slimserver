@@ -199,7 +199,7 @@ sub progressHeader {
 				$line .= " ".($p->done.'/' . $p->total);
 			
 			} else {
-				$line .= " ".$client->string('PLUGIN_RESCAN_STARTING');
+				$line .= " ".$client->string('PLUGIN_RESCAN_PLEASE_WAIT');
 			
 			} 
 		
@@ -235,7 +235,7 @@ sub progressBar {
 				
 			my ($h0, $h1, $m0, $m1) = Slim::Utils::DateTime::timeDigits($runtime);
 
-			return $p->total . ' ' . $client->string('ITEMS') . " $h0$h1:$m0$m1".sprintf(":%02s",($runtime % 60));
+			return ($p->total || '0') . ' ' . $client->string('ITEMS') . " $h0$h1:$m0$m1".sprintf(":%02s",($runtime % 60));
 		}
 	} else {
 	

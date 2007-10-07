@@ -118,9 +118,6 @@ PLUGIN_RESCAN_TIMER_TYPE
 	IT	Tipo di analisi
 	NL	Type voor opnieuw scannen
 	
-PLUGIN_RESCAN_STARTING
-	EN	Starting...(Please wait)
-
 PLUGIN_RESCAN_PLEASE_WAIT
 	EN	Please Wait
 
