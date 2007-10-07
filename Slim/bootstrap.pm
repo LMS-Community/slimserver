@@ -20,6 +20,8 @@ use File::Spec::Functions qw(:ALL);
 use POSIX ":sys_wait_h";
 use Symbol;
 
+use Slim::Utils::OSDetect;
+
 # loadModules contains some trickery to deal with modules
 # that need to load XS code. Previously, we would check in a module
 # under CPAN/arch/$VERSION/auto/... including it's binary parts and
@@ -322,7 +324,9 @@ sub check_valid_versions {
 	my $modules;
 	my $failed = {};
 	
-	open my $fh, '<', catfile( $Bin, 'modules.conf' ) or die 'modules.conf not found';
+	my ($dir) = Slim::Utils::OSDetect::dirsFor('types');
+	
+	open my $fh, '<', catfile( $dir, 'modules.conf' ) or die 'modules.conf not found';
 	do { local $/ = undef; $modules = <$fh> };
 	close $fh;
 
