@@ -75,7 +75,7 @@ sub browsetree {
 	$params->{'pageinfo'} = Slim::Web::Pages->pageInfo({
 		'itemCount'    => $count,
 		'path'         => $params->{'path'},
-		'otherParams'  => "hierarchy=$hierarchy&player=$player",
+		'otherParams'  => "&hierarchy=$hierarchy&player=$player",
 		'start'        => $params->{'start'},
 		'perPage'      => $params->{'itemsPerPage'},
 	});

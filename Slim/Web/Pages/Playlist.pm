@@ -129,7 +129,7 @@ sub playlist {
 				'itemCount'    => $songcount,
 				'currentItem'  => Slim::Player::Source::playingSongIndex($client),
 				'path'         => $params->{'path'},
-				'otherParams'  => "player=" . Slim::Utils::Misc::escape($client->id()),
+				'otherParams'  => "&player=" . Slim::Utils::Misc::escape($client->id()),
 				'start'        => $params->{'start'},
 				'perPage'      => $params->{'itemsPerPage'},
 	});

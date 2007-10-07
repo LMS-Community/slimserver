@@ -100,7 +100,7 @@ sub gotContainer {
 	if ( defined $container->{children} ) {
 		my $items = $container->{children};
 		
-		my $otherparams = join('&',
+		my $otherparams = "&".join('&',
 			"device=$device",
 			'player=' . Slim::Utils::Misc::escape($player || ''),
 			'hierarchy=' . uri_escape($hierarchy),

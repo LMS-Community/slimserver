@@ -282,7 +282,7 @@ sub fillInSearchResults {
 	$params->{'itemsPerPage'} ||= preferences('server')->get('itemsPerPage');
 
 	# This is handed to pageInfo to generate the pagebar 1 2 3 >> links.
-	my $otherParams = 'player=' . Slim::Utils::Misc::escape($player) . 
+	my $otherParams = '&player=' . Slim::Utils::Misc::escape($player) . 
 			  ($type ?'&type='. $type : '') . 
 			  ($query ? '&query=' . Slim::Utils::Misc::escape($query) : '' ) . 
 			  '&' .

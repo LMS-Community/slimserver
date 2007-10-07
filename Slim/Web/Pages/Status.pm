@@ -44,7 +44,7 @@ sub status {
 	Slim::Web::Pages->addPlayerList($client, $params);
 
 	$params->{'refresh'} = $prefs->get('refreshRate');
-
+	
 	if (!defined($client)) {
 
 		# fixed faster rate for noclients
@@ -156,13 +156,6 @@ sub status {
 		Slim::Player::Playlist::song($client)->displayAsHTML($params);
 		
 		Slim::Web::Pages->addSongInfo($client, $params, 1);
-
-		# for current song, display the playback bitrate instead.
-		my $undermax = Slim::Player::TranscodingHelper::underMax($client,Slim::Player::Playlist::song($client));
-
-		if (defined $undermax && !$undermax) {
-			$params->{'bitrate'} = string('CONVERTED_TO')." ".Slim::Utils::Prefs::maxRate($client).string('KBPS').' ABR';
-		}
 
 		if ($prefs->get('playlistdir')) {
 			$params->{'cansave'} = 1;
