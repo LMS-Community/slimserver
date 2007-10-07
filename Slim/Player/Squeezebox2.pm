@@ -907,11 +907,9 @@ sub skipAhead {
 
 sub packetLatency {
 	my $client = shift;
-	
+	my $latency = Slim::Networking::Slimproto::getLatency($client);
 	return (
-		Slim::Networking::Slimproto::getLatency($client) / 1000
-		||
-		$client->SUPER::packetLatency()
+		defined $latency ? $latency / 1000 : $client->SUPER::packetLatency()
 	);
 }
 

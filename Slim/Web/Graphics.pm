@@ -172,7 +172,7 @@ sub processCoverArtRequest {
 		if (!$cachedImage) {
 
 			($imageData, $actualContentType, $mtime) = $obj->coverArt;
-			if ($actualContentType eq '') {
+			if (!defined $actualContentType || $actualContentType eq '') {
 				$actualContentType = $requestedContentType;
 			}
 			$log->info("  The variable \$actualContentType, which attempts to understand what image type the original file is, is set to " . $actualContentType);

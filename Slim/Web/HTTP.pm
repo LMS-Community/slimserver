@@ -2254,9 +2254,13 @@ sub sendStreamingResponse {
 		}
 
 	} else {
-
-		$log->info("Got nothing for streaming data to $peeraddr{$httpClient}");
-
+		$log->info("\$httpClient is: $httpClient");
+		if (exists $peeraddr{$httpClient}) {
+			$log->info("\$peeraddr{\$httpClient} is: $peeraddr{$httpClient}");
+			$log->info("Got nothing for streaming data to $peeraddr{$httpClient}");
+		} else {
+			$log->info("\$peeraddr{\$httpClient} is undefined");
+		}
 		return 0;
 	}
 
