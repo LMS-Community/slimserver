@@ -1,9 +1,7 @@
 [%- FILTER null %]
-[% statusroot      = 'status.html' %]
 [% noHomeLink      = 1 %]
 [% controlGraphics = 1 %]
 [% useTabList      = 1 %]
-[% useAJAX         = 1 %]
 
 [%# Default to no targets for links %]
 [% notarget        = 1 %]
@@ -42,7 +40,7 @@
 
 [% BLOCK removelink %]
 	[% PROCESS cmdlink
-		cmdtitle = "DELETE"
+		cmdtitle = "REMOVE_FROM_PLAYLIST"
 		cmdimage = "remove.gif" %]
 [% END %]
 
@@ -52,20 +50,6 @@
 		cmdimage = "song_info.gif"
 		 %]
 [% END %]
-
-[%# this is to wrap around an href which does an add-to-favorites command, with a default image for skins that support it %]
-[%- BLOCK favaddlink -%]
-	[%- PROCESS cmdlink
-		cmdtitle = "PLUGIN_FAVORITES_ADD"
-		cmdimage = "b_favorite" -%]
-[%- END -%]
-
-[%# this is to wrap around an href which does a delete-from-favorites command, with default image reference %]
-[%- BLOCK favdellink -%]
-	[%- PROCESS cmdlink
-		cmdtitle = "PLUGIN_FAVORITES_REMOVE"
-		cmdimage = "b_favorite_remove" -%]
-[%- END -%]
 
 [% BLOCK dummy %]
 <td class="[% isCurrent ? "listing2" : "listing" %]" width="11" align="center">
@@ -83,52 +67,6 @@
 [% END %]
 
 [% BLOCK homelink %][% END %]
-
-[% BLOCK moveuplink %]
-	[% PROCESS cmdlink
-		cmdtitle = "MOVEUP"
-		cmdimage = "b_up.gif" %]
-[% END %]
-
-[% BLOCK movedownlink %]
-	[% PROCESS cmdlink
-		cmdtitle = "MOVEDOWN"
-		cmdimage = "b_down.gif" %]
-[% END %]
-
-[%- BLOCK editlink -%]
-	[%- PROCESS cmdlink
-		cmdtitle = "EDIT"
-		cmdimage = "b_edit.gif" -%]
-[%- END -%]
-
-[% BLOCK scanwarning -%]
-<b>[% "NOTE" | string %]</b> [% "SCAN_WARNING" | string -%]
-	[%- IF audiodir -%]
-		[%- "SCAN_CLICK" | string; %]<a href="browsetree.html?level=0&player=[% playerURI %]">[% "HERE" | string %]</a>.
-	[%- END %]
-[% END %]
-
-[% BLOCK crumblist -%]
-[%- FOREACH item = pwd_list.list -%]
-  [%- IF not loop.first %] / [% END -%]
-  [%- PROCESS crumblistitem -%]
-[%- END -%]
-[%- END %]
-
-[% BLOCK crumblistitem -%]
- [%- IF item.title -%]
-<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% item.title %]</a>
- [%- ELSE -%]
-[% item | replace('^\s*/','') %]
- [%- END -%]
-[%- END %]
-
-[% BLOCK contentcontainer %]
-<div id="[% listid || 'browsedbList' %]">
-	[%- content | indent(4) %]
-</div>
-[%- END %]
 
 [% BLOCK contentitem -%]
 <div class="[% odd ? "odd" : "even" %]">
@@ -264,25 +202,25 @@
 
 [% BLOCK pagebar %]
 [%- IF NOT pageinfo.alphamap; PROCESS pagebarcalc pagesperbar = 11; END %]
-[% IF pagesstart %]  <a href="[% pageinfo.path %]?start=0&amp;[% pageinfo.otherparams | html %]">[% "FIRST" | string %]</a> [% END %]
-[% IF pageprev || pageprev == '0' %] <a href="[% pageinfo.path %]?start=[% pageprev %]&amp;[% pageinfo.otherparams | html %]">[% "PREVIOUS" | string %]</a> [% END %]
+[% IF pagesstart %]  <a href="[% pageinfo.path %]?start=0[% pageinfo.otherparams | html %]">[% "FIRST" | string %]</a> [% END %]
+[% IF pageprev || pageprev == '0' %] <a href="[% pageinfo.path %]?start=[% pageprev %][% pageinfo.otherparams | html %]">[% "PREVIOUS" | string %]</a> [% END %]
 
 [%- IF pageinfo.alphamap %]
 [%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
  [%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
- <a href="[% pageinfo.path | html %]?[% pageinfo.otherparams | html %]&amp;start=[% pageinfo.alphamap.item(alphakey) %]#[% alphakey | uri %]">[% IF curpage %]<b>[% END %][% alphakey | html %][% IF curpage %]</b>[% END %]</a> 
+ <a href="[% pageinfo.path | html %]?start=[% pageinfo.alphamap.item(alphakey) %][% pageinfo.otherparams | html %]#[% alphakey | uri %]">[% IF curpage %]<b>[% END %][% alphakey | html %][% IF curpage %]</b>[% END %]</a> 
 [%- END %]
 
 [%- ELSE %]
 
 [%- FOREACH ind=[pagebarstart..pagebarend] -%]
  [%- IF ind == pageinfo.currentpage %] <b>[% ind + 1 %]</b> 
- [%- ELSE %] <a href="[% pageinfo.path  | html %]?[% pageinfo.otherparams  | html %][% IF artwork == 2 %]&amp;artwork=2[% END %]&amp;start=[% ind * pageinfo.itemsperpage %]">[% ind + 1 %]</a> 
+ [%- ELSE %] <a href="[% pageinfo.path  | html %]?start=[% ind * pageinfo.itemsperpage %][% pageinfo.otherparams  | html %][% IF artwork == 2 %]&amp;artwork=2[% END %]">[% ind + 1 %]</a> 
  [%- END %]
 [% END %]
 [%- END %]
-[% IF pagenext %] <a href="[% pageinfo.path %]?start=[% pagenext %]&amp;[% pageinfo.otherparams | html %][% IF artwork == 2 %]&amp;artwork=2[% END %]">[% "NEXT" | string %]</a> [% END %]
-[% IF pagesend %] <a href="[% pageinfo.path %]?start=[% pagesend %]&amp;[% pageinfo.otherparams | html %][% IF artwork == 2 %]&amp;artwork=2[% END %]">[% "LAST" | string %]</a> [% END %]
+[% IF pagenext %] <a href="[% pageinfo.path %]?start=[% pagenext %][% pageinfo.otherparams | html %][% IF artwork == 2 %]&amp;artwork=2[% END %]">[% "NEXT" | string %]</a> [% END %]
+[% IF pagesend %] <a href="[% pageinfo.path %]?start=[% pagesend %][% pageinfo.otherparams | html %][% IF artwork == 2 %]&amp;artwork=2[% END %]">[% "LAST" | string %]</a> [% END %]
 [% END %]
 
 [% BLOCK pagebarheader %]
