@@ -154,9 +154,12 @@ sub setProgressMode {
 		'overlayRefArgs'     => 'CI',
 		'modeUpdateInterval' => 1,
 		'valueref'           => \$value,
+		'listEnd'            => 1,
 	);
 
 	Slim::Buttons::Common::pushMode($client, 'INPUT.List', \%progressParams);
+
+	$client->block();
 		
 	progressUpdate($client);
 }
@@ -187,8 +190,6 @@ sub progressHeader {
 	
 	if (blessed($p) && $p->name) {
 	
-		$client->unblock();
-		
 		my $line = $client->string($p->name.'_PROGRESS');
 	
 		if ($p->active) {
@@ -252,21 +253,28 @@ sub progressUpdate {
 	my $client = shift;
 
 	Slim::Utils::Timers::killTimers($client, \&progressUpdate);
-		
+
 	@progress = Slim::Schema->rs('Progress')->search( { 'type' => 'importer' }, { 'order_by' => 'start' } )->all;
-	my $size = scalar @{$client->modeParam('listRef')};
+
+	my $size;
 	
 	if (scalar @progress) {
-		$client->modeParam('listRef',[0..$#progress]);
-	}
 
-	#adjust the index to the last position if the new item starts while viewing the previous last item
-	if ($client->modeParam('listIndex') == $#progress -1 && $size != scalar @progress) {
-		$client->modeParam('listIndex',$#progress);
+		$client->unblock;
+
+		$size = scalar @{$client->modeParam('listRef')};
+		$client->modeParam('listRef',[0..$#progress]);
+
+		# adjust the index to the last position if we were previously viewing the last entry
+		# nb more than one entry may be added before we get called again
+		if ($client->modeParam('listEnd') && $size != scalar @progress) {
+			$client->modeParam('listIndex',$#progress);
+		}
+		$client->modeParam('listEnd', $client->modeParam('listIndex') == $#progress);
+
+		$client->update;
+		$client->updateKnob(1);
 	}
-	
-	$client->update;
-	$client->updateKnob(1);
 	
 	if ( Slim::Music::Import->stillScanning ) {
 		
@@ -277,6 +285,7 @@ sub progressUpdate {
 		);
 		
 		Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + 1, \&progressUpdate);
+
 	} else {
 		my $totaltime = 0;
 		my $count     = 0;
@@ -305,6 +314,8 @@ sub progressUpdate {
 		if ($client->modeParam('listIndex') == $#progress -1 && $size != scalar @progress) {
 			$client->modeParam('listIndex',$#progress);
 		}
+
+		$client->unblock();
 		
 		$client->update;
 		$client->updateKnob(1);
