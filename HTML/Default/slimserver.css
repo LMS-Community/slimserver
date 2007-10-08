@@ -83,6 +83,10 @@ img.cmdLinkIcon {
 	visibility: visible;
 }
 
+.dd-proxy .nowPlayingIcon {
+	visibility: hidden;
+}
+
 .browsedbRightControls {
 	right: 42px;
 }
@@ -304,7 +308,7 @@ form#advSearchForm.resultsPage {
 	margin-left: 20px;
 }
 
-.scrollingPanel, .songInfoTitle, .songInfoText, #songInfoPlayLinks, #crumblist {
+.scrollingPanel, .songInfoTitle, .songInfoText, #songInfoPlayLinks, #crumblist, #playList {
 	cursor: default;
 }
 
