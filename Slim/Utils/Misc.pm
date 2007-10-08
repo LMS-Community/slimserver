@@ -1280,8 +1280,8 @@ sub arrayDiff {
 sub shouldCacheURL {
 	my $url = shift;
 	
-	# No caching for file:// URLs
-	return 0 if Slim::Music::Info::isFileURL($url);
+	# No caching unless it's http
+	return 0 unless $url =~ /^http/i;
 	
 	# No caching for local network hosts
 	# This is determined by either:
