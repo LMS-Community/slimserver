@@ -96,8 +96,13 @@ sub loadModules {
 	}
 
 	my @SlimINC = ();
+	
+	if ( Slim::Utils::OSDetect::isDebian() ) {
+		# On Debian, our CPAN directory is located in the same dir as strings.txt
+		$libPath = Slim::Utils::OSDetect::dirsFor('strings');
+	}
 
-	if (Slim::Utils::OSDetect::isDebian() || Slim::Utils::OSDetect::isRHELorFC()) {
+	if ( Slim::Utils::OSDetect::isRHELorFC() ) {
 
 		@SlimINC = Slim::Utils::OSDetect::dirsFor('lib');
 
