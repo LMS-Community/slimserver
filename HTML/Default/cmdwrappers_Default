@@ -5,7 +5,8 @@
 	[% browserTarget = "browser" %]
 	[% useAJAX = 0 %]
 	[% crumbSeparator = "&gt;" %]
-	[% resizeParam = "f" %]
+	[% resizeParam = "p" %]
+	[% bgcolor = "" %]
 
 	[% BLOCK cmdlink -%]
 		<a [% content %] ><img src="[% webroot %]html/images/[% cmdimage %]" class="cmdLinkIcon" width="13" height="13" alt="[% cmdtitle | string | ucfirst %]" title="[% cmdtitle | string | ucfirst %]"/></a>

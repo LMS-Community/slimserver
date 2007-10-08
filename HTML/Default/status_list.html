@@ -10,7 +10,7 @@
 		[% ELSE %]
 			<span class="playlistCover">
 				[% IF item.itemobj.album.id %]<a href="[% webroot %]browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=[% item.itemobj.album.id %]&amp;player=[% playerURI %]" target="browser">[% END %]
-					<img src="/music/[% item.itemobj.id %]/cover_50x50_p.gif">
+					<img src="/music/[% item.itemobj.id %]/cover_50x50_[% resizeParam %].gif">
 				[% IF item.itemobj.album.id %]</a>[% END %]
 			</span>
 			<div class="playlistSongDetail">
