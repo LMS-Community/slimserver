@@ -135,23 +135,23 @@ a.x-menu-item:hover {
 
 /* dialog */
 .x-dlg .x-dlg-hd-left {
-	background: url(html/images/hd-sprite.gif) no-repeat 0 -43px;
+	background: url(html/images/slim-ext/hd-sprite.gif) no-repeat 0 -43px;
 	padding-left: 15px;
 	height: 43px;
 }
 
 .x-dlg .x-dlg-hd-right {
-	background: url(html/images/hd-sprite.gif) no-repeat right 0;
+	background: url(html/images/slim-ext/hd-sprite.gif) no-repeat right 0;
 	padding-right: 15px;
 }
 
 .x-dlg .x-dlg-hd {
-	background: url(html/images/hd-sprite.gif) repeat-x right -86px;
+	background: url(html/images/slim-ext/hd-sprite.gif) repeat-x right -86px;
 	padding-top: 15px;
 	padding-bottom: 13px;
 }
 
 .x-dlg .x-dlg-dlg-body {
-	background-image: url(html/images/dlg-bg.gif);
+	background-image: url(html/images/slim-ext/dlg-bg.gif);
 	border: none;
 }
