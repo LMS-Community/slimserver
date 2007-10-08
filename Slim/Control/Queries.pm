@@ -3860,6 +3860,7 @@ sub _songData {
 			$remoteMeta = $handler->getMetadataFor( $request->client, $url );
 			
 			$remoteMeta->{a} = $remoteMeta->{artist};
+			$remoteMeta->{A} = $remoteMeta->{artist};
 			$remoteMeta->{l} = $remoteMeta->{album};
 			$remoteMeta->{K} = $remoteMeta->{cover};
 			$remoteMeta->{Y} = $remoteMeta->{replay_gain};
@@ -3982,6 +3983,10 @@ sub _songData {
 
 		# special case artists (tag A and S)
 		elsif ($tag eq 'A' || $tag eq 'S') {
+			if ( my $meta = $remoteMeta->{$tag} ) {
+				$returnHash{artist} = $meta;
+				next;
+			}
 			
 			if (defined(my $submethod = $tagMap{$tag}->[3])) {
 				

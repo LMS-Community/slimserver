@@ -890,7 +890,7 @@ Player = function(){
 
 				if (result.playlist_loop[0].artist) {
 					var contributors = result.playlist_loop[0].artist.split(',');
-					var ids = result.playlist_loop[0].artist_ids.split(',');
+					var ids = result.playlist_loop[0].artist_ids ? result.playlist_loop[0].artist_ids.split(',') : new Array();
 					var artist, id;
 
 					currentArtist = '';						
