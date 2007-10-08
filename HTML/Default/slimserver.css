@@ -119,12 +119,6 @@ div.thumbwrap {
 	min-height: 15px;
 }
 
-#viewSelect {
-	position: absolute;
-	right: 20px;
-	top: 14px;
-}
-
 .searchHeader {
 	margin-top: 15px;
 	margin-bottom: 5px;
@@ -198,13 +192,6 @@ div.thumbwrap {
 #livesearch {
 	width: 200px;
 	border: none;
-}
-
-.titlebox_content #livesearch {
-	height: 12px;
-	background: white url(html/images/search.gif) no-repeat top right;
-	position: absolute;
-	right: 10px;
 }
 
 form#advSearchForm.resultsPage {
@@ -542,6 +529,19 @@ form#advSearchForm.resultsPage {
 
 #pagetitle, .pagetitle {
 	font-size: 13px;
+}
+
+#titleRight {
+	position: absolute;
+	right: 20px;
+	top: 14px;
+}
+
+.titlebox #livesearch {
+	margin-top: 2px;
+	height: 13px;
+	background: white url(html/images/search.gif) no-repeat top right;
+	font-size: 10px;
 }
 
 .infoTab_top, .infoTab_top div,

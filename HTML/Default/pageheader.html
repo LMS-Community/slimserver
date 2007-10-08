@@ -67,11 +67,11 @@
 				<div class="titlebox_top"><div></div></div>
 				<div class="titlebox_content">
 					<div style="position:relative;" class="pagetitle">
-						[% pageHeaderInfo || pagetitle %]
+						[% pagetitle %]
 					</div>
 				</div>
 				<div id="titleBottom" class="[% IF pwd_list; "titlebox_bottom_crumb"; ELSE; "titlebox_bottom"; END %]"><div></div></div>
-				[% IF titleRight; titleRight; END %]
+				[% IF titleRight %]<span id="titleRight">[% titleRight %]</span>[% END %]
 			</div>
 
 			[% IF pwd_list %]
@@ -81,6 +81,12 @@
 				</div>
 				<div class="crumblist_bottom"><div></div></div>
 			</div>
+			[% END %]
+
+			[% IF pageHeaderInfo %]
+				<div class="pageHeaderInfo">
+					[% pageHeaderInfo %]
+				</div>
 			[% END %]
 
 			<div id="content"[% IF !dontscroll %] class="scrollingPanel"[% END %]>
