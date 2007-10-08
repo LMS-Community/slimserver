@@ -64,6 +64,7 @@ ELSE %]
 		FOREACH link = additionalLinks.plugins;
 			PROCESS menuItem category='plugins';
 		END;
+		PROCESS menuItem category='plugins' link={key='SOFTSQUEEZE' value='html/softsqueeze/index.html?page=softsqueeze&'};
 	END;
 
 	page = page | lower;
