@@ -147,7 +147,14 @@ sub notifyOnRedirect {
 }
 
 sub canDirectStream {
-	my ($self, $client, $url) = @_;
+	my ( $class, $client, $url ) = @_;
+	
+	# We need to check with the base class (HTTP) to see if we
+	# are synced or if the user has set mp3StreamingMethod
+	my $base = $class->SUPER::canDirectStream( $client, $url );
+	if ( !$base ) {
+		return 0;
+	}
 
 	Slim::Utils::Timers::killTimers( $client, \&getPlaylist );
 		
