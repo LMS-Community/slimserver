@@ -188,6 +188,7 @@ PlayerChooser = function(){
 	var playerMenu;
 	var playerDiscoveryTimer;
 	var playerNeedsUpgrade;
+	var playerList = new Ext.util.MixedCollection();
 
 	return {
 		init : function(){
@@ -218,7 +219,7 @@ PlayerChooser = function(){
 
 				success: function(response){
 					if (response && response.responseText) {
-						var responseText = Ext.util.JSON.decode(response.responseText);
+						responseText = Ext.util.JSON.decode(response.responseText);
 
 						playerMenu.menu.removeAll();
 						playerMenu.menu.add(
@@ -229,7 +230,7 @@ PlayerChooser = function(){
 						// let's set the current player to the first player in the list
 						if (responseText.result && responseText.result['player count'] > 0) {
 							var playerInList = false;
-							var playerList = new Ext.util.MixedCollection();
+							playerList = new Ext.util.MixedCollection();
 
 							for (x=0; x < responseText.result['player count']; x++) {
 								var currentPlayer = false;
@@ -267,40 +268,17 @@ PlayerChooser = function(){
 							}
 
 							// if there's more than one player, add the sync option
-							var playerSelection = '<p>' + strings['synchronize_desc'] + '</p><form name="syncgroup" id="syncgroup">';
-							var tpl = new Ext.Template('<input type="checkbox" id="{id}" value="{id}">{name}<br>');
-							tpl.compile();
-
-							playerList.eachKey(function(id, name){
-								if (id && name && id != playerid)
-									playerSelection += tpl.apply({
-										name: name,
-										id: id
-									});
-							});
-							playerSelection += '</form>';
-
 							playerMenu.menu.add(
 								'-',
 								new Ext.menu.Item({
 									text: strings['synchronize'] + '...',
+									// query the currently synced players and show the dialog
 									handler: function(){
-										var dlg = new Ext.BasicDialog('', {
-											autoCreate: true,
-											title: strings['synchronize'],
-											modal: true,
-											closable: false,
-											collapsible: false,
-											width: 500,
-											height: 200 + playerList.getCount() * 13,
-											resizeHandles: 'se'
-										});
-										dlg.addButton(strings['no_synchronization'], PlayerChooser.unsync, dlg);
-										dlg.addButton(strings['synchronize'], PlayerChooser.sync, dlg);
-										dlg.addButton(strings['close'], dlg.destroy, dlg);
-										dlg.addKeyListener(27, dlg.destroy, dlg);
-										dlg.body.update(playerSelection);	
-										dlg.show();
+										Utils.processPlayerCommand({
+											params: ['sync', '?'],
+											success: PlayerChooser.showSyncDialog,
+											failure: PlayerChooser.showSyncDialog
+										});	
 									},
 									disabled: (playerList.getCount() < 2) 
 								})
@@ -383,34 +361,62 @@ PlayerChooser = function(){
 			Player.getStatus();
 		},
 
-		sync: function(){
-			var players = Ext.query('input', Ext.get('syncgroup').dom);
+		showSyncDialog: function(response){
+			var responseText = Ext.util.JSON.decode(response.responseText);
 
-			for(var i = 0; i < players.length; i++) {
-				Utils.processCommand({
-					action: [ 
-						players[i].checked ? playerid : players[i].id,
-						[
-							'sync',
-							players[i].checked ? players[i].id : '-'
-						]
-					]
-				});
+			var syncedPlayers = new Array();
+			if (responseText.result && responseText.result._sync) {
+				syncedPlayers = responseText.result._sync;
 			}
 
-			this.destroy();
+			var playerSelection = '<p>' + strings['synchronize_desc'] + '</p><form name="syncgroup" id="syncgroup">';
+			var tpl = new Ext.Template('<input type="checkbox" id="{id}" value="{id}" {checked}>&nbsp;{name}<br>');
+			tpl.compile();
+
+			// create checkboxes for other players and preselect if synced
+			playerList.eachKey(function(id, name){
+				if (id && name && id != playerid)
+					playerSelection += tpl.apply({
+						name: name,
+						id: id,
+						checked: syncedPlayers.indexOf(id) >= 0 ? 'checked' : ''
+					});
+			});
+			playerSelection += '</form>';
+
+			var dlg = new Ext.BasicDialog('', {
+				autoCreate: true,
+				title: strings['synchronize'],
+				modal: true,
+				closable: false,
+				collapsible: false,
+				width: 500,
+				height: 200 + playerList.getCount() * 13,
+				resizeHandles: 'se'
+			});
+
+			dlg.addButton(strings['execute'], function(){ PlayerChooser.sync(syncedPlayers, dlg) }, dlg);
+			dlg.addButton(strings['close'], dlg.destroy, dlg);
+			dlg.addKeyListener(27, dlg.destroy, dlg);
+
+			dlg.body.update(playerSelection);
+			dlg.show();
 		},
 
-		unsync: function(){
+		sync: function(syncedPlayers, dlg){
 			var players = Ext.query('input', Ext.get('syncgroup').dom);
 
 			for(var i = 0; i < players.length; i++) {
-				Utils.processCommand({
-					action: [ players[i].id, [ 'sync', '-' ] ]
-				});
+				// sync if not synced yet
+				if (players[i].checked && syncedPlayers.indexOf(players[i].id) < 0)
+					Utils.processCommand({ params: [ players[i].id, [ 'sync', playerid ] ] });
+
+				// unsync if no longer checked
+				else if (syncedPlayers.indexOf(players[i].id) >= 0 & !players[i].checked)
+					Utils.processCommand({ params: [ players[i].id, [ 'sync', '-' ] ] });
 			}
 
-			this.destroy();
+			dlg.destroy();
 		}
 	}
 }();
