@@ -544,6 +544,7 @@ Playlist = function(){
 
 		clear : function(){
 			Player.playerControl(['playlist', 'clear']);
+			Playlist.load();							// Bug 5709: force playlist to clear
 		},
 
 		save : function(){
