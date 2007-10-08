@@ -189,7 +189,7 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 	[% FILTER collapse %][%# collapse all whitespace and newlines into single space %]
 	<img [% style %] 
 		src=
-		"/music/[% item.coverThumb %]/cover_[% height %]x[% height %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %].[% IF fileSuffix %][% fileSuffix %][% ELSE %]gif[% END %]"
+		"/music/[% item.coverThumb %]/cover_[% height %]x[% height %]_[% resizeParam %][% IF bgcolor %]_[% bgcolor %][% END %].[% IF fileSuffix %][% fileSuffix %][% ELSIF browserType == 'IE' %]gif[% ELSE %]png[% END %]"
 	[%- IF NOT serverResizesArt %]
 		height="[% height %]" width="[% height %]"
 	[%- END %]
@@ -209,10 +209,30 @@ href="[% webroot %]browsetree.html?hierarchy=[% item.hierarchy | html %]&amp;pla
 
 [%# img tag for album thumbnail in browse artwork context %]
 [% BLOCK dummyItemImg -%]
- [% artistlist = ''; IF item.artist; itemobj=item.itemobj; artistlist = PROCESS artistsAsText.html; END %]
- [%- "<img $style src=\"/html/images/cover.png\" height=\"";height or 100;"\"" %]
- [%- " alt=\"";item.text | html; artistlist | html ; IF item.year; " ($item.year)"; END; "\"" %] 
- [%- " title=\"";item.text| html; artistlist | html ; IF item.year; " ($item.year)"; END; "\">" -%] 
+	[%- FILTER collapse %][%# collapse all whitespace and newlines into single space %]
+	[% artistlist = '' %]
+	[%- IF NOT height %][% height = 100 %][% END %]
+	[% IF item.artist %]
+		[% itemobj=item.itemobj %]
+		[% artistlist = PROCESS artistsAsText.html %]
+	[% END %]
+	<img [% style %] src="/music/0/cover_[% height %]x[% height %]_p.[% IF browserType == 'IE' %]gif[% ELSE %]png[% END %]" 
+		height="
+		[% IF height %]
+			[% height %]
+		[% ELSE %]
+			100
+		[% END %]"
+		alt="[% item.text | html %] [% artistlist | html %]
+			[% IF item.year %]
+				([% item.year %])
+			[% END %]" 
+		title="[% item.text| html %] [% artistlist | html %]
+			[% IF item.year %]
+				([% item.year %])
+			[% END %]"
+		>
+	[% END -%]
 [%- END %]
 
 [% BLOCK pagebarcalc;

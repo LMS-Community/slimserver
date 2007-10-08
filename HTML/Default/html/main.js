@@ -672,6 +672,10 @@ Player = function(){
 		player: null
 	};
 
+	var coverFileSuffix = 'png';
+	if (Ext.isIE) {
+		coverFileSuffix = 'gif';
+	}
 	return {
 		init : function(){
 			displayElements.add(new Slim.RewButton('ctrlPrevious', {
@@ -953,7 +957,8 @@ Player = function(){
 				Ext.get('ctrlCurrentSongInfoCollapsed').update(currentTitle);
 
 				if (result.playlist_loop[0].id && (el = Ext.get('ctrlCurrentArt'))) {
-					var coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96x96_p.gif"></a>';
+						
+					var coverart = '<a href="' + webroot + 'browsedb.html?hierarchy=album,track&amp;level=1&amp;album.id=' + result.playlist_loop[0].album_id + '&amp;player=' + player + '" target="browser"><img src="/music/' + result.playlist_loop[0].id + '/cover_96x96_p.' + coverFileSuffix + '"></a>';
 					var popup    = '<img src="/music/' + result.playlist_loop[0].id + '/cover_250xX_f.jpg" width="250">';
 
 					if (result.playlist_loop[0].artwork_url) {
@@ -989,7 +994,7 @@ Player = function(){
 				Ext.get('ctrlBitrate').update('');
 				Ext.get('ctrlCurrentArtist').update('');
 				Ext.get('ctrlCurrentAlbum').update('');
-				Ext.get('ctrlCurrentArt').update('<img src="/music/0/cover_96x96_f.gif">');
+				Ext.get('ctrlCurrentArt').update('<img src="/music/0/cover_96x96_p.' + coverFileSuffix + '">');
 			}
 
 			playerStatus = {

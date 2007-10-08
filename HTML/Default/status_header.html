@@ -130,7 +130,7 @@
 
 			<div id="expandedPlayerPanel">
 				<div id="ctrlCurrentArt">
-					<img src="[% webroot %]music/0/cover_96x96_p.gif" alt="" height="96" width="96" border="0"/>
+					<img src="[% webroot %]music/0/cover_96x96_p.[% IF browserType == 'IE' %]gif[% ELSE %]png[% END %]" alt="" height="96" width="96" border="0"/>
 				</div>
 
 				<div id="ctrlCurrentSongInfo">
