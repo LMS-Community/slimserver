@@ -226,6 +226,8 @@ sub gotPlaylist {
 		
 		return;
 	}
+	
+	$client->pluginData( currentTrack => $track );
 
 	my $newTitle = $track->{title};
 	
@@ -261,6 +263,8 @@ sub gotPlaylistError {
 	
 	$log->error( "Error getting current track: $error" );
 	
+	$client->pluginData( currentTrack => 0 );
+	
 	# Display the station name
 	my $title = Slim::Music::Info::getTitle($url);
 	Slim::Music::Info::setCurrentTitle( $url, $title );
@@ -272,6 +276,23 @@ sub gotPlaylistError {
 		\&getPlaylist,
 		$url,
 	);
+}
+
+sub getMetadataFor {
+	my ( $class, $client, $url, $forceCurrent ) = @_;
+	
+	my $track = $client->pluginData('currentTrack');
+	
+	return unless $track;
+	
+ 	return {
+		artist  => ( !ref $track->{artist} ? $track->{artist} : undef ),
+		album   => ( !ref $track->{album} ? $track->{album} : undef ),
+		title   => $track->{title} || $track->{desc},
+		cover   => 'html/images/ServiceProviders/live365.png',
+		type    => 'MP3 (Live365)',
+	};
+	
 }
 
 1;
