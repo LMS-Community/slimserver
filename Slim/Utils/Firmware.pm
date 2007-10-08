@@ -219,7 +219,7 @@ sub init_jive_done {
 	
 	opendir my ($dirh), $prefs->get('cachedir');
 	
-	my @files = grep { /^jive.*\.bin$/ } readdir $dirh;
+	my @files = grep { /^jive.*\.bin(\.tmp)?$/ } readdir $dirh;
 	
 	closedir $dirh;
 	
