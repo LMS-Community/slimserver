@@ -626,6 +626,10 @@ EVERYTHING
 	SV	Allt
 	ZH_CN	全部
 
+EXECUTE
+	DE	Ausführen
+	EN	Execute
+
 PLAYING
 	CS	Nyní hraje
 	DA	Afspiller
