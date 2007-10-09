@@ -26,6 +26,9 @@ sub outputAsXHTML {
 	my $player  = shift;
 	my $params  = shift;
 
+	# count overall results
+	my $resultcount = 0;
+
 	my @xml = (
 		'<?xml version="1.0" encoding="utf-8" ?>',
 		'<div id="browsedbList">',
@@ -45,7 +48,6 @@ sub outputAsXHTML {
 			${Slim::Web::HTTP::filltemplatefile("browsedbitems_list.html", $params)};
 		} @{ $params->{browse_items} };
 
-
 		if ($total && $total > MAXRESULTS) {
 			push @xml, 
 				sprintf("<div class=\"even\">\n<div class=\"browsedbListItem\"><a href=\"search.html?manualSearch=1\&amp;query=%s\&amp;type=%s\&amp;player=%s\">%s</a></div></div>\n",
@@ -53,8 +55,16 @@ sub outputAsXHTML {
 			);
 		}
 		
+		$resultcount += $total;
+		
 		$params->{browse_items} = undef;
 	}
+
+	#no results found
+	if (!$resultcount) {
+		push@xml, Slim::Utils::Strings::string("NO_SEARCH_RESULTS");
+	}
+
 
 	push @xml, "</div>\n";
 
