@@ -162,7 +162,7 @@ sub gotNextTrack {
 		
 		my $url = Slim::Player::Playlist::url($client);
 
-		setCurrentTitle( $client, $url, $client->string('PLUGIN_PANDORA_NO_TRACKS') );
+		setCurrentTitle( $client, $url, $track->{error} || $client->string('PLUGIN_PANDORA_NO_TRACKS') );
 		
 		$client->update();
 
@@ -179,12 +179,6 @@ sub gotNextTrack {
 	Slim::Control::Request::subscribe( 
 		\&playlistCallback, 
 		[['playlist'], ['repeat', 'newsong']],
-	);
-	
-	# Watch for button commands jump_fwd/jump_rew
-	Slim::Control::Request::subscribe(
-		\&buttonCallback,
-		[['button']],
 	);
 	
 	# Force repeating
@@ -334,17 +328,12 @@ sub handleDirectError {
 	$client->execute([ 'playlist', 'play', $url ]);
 }
 
-# Check if player is allowed to skip, 
-# based on nextSkipAt value from SN
+# Check if player is allowed to skip, using canSkip value from SN
 sub canSkip {
 	my $client = shift;
 	
 	if ( my $track = $client->pluginData('currentTrack') ) {
-		my $nextSkip = $track->{timediff} + $track->{nextSkipAt};
-		
-		if ( time() < $nextSkip ) {
-			return 0;
-		}
+		return $track->{canSkip};
 	}
 	
 	return 1;
@@ -363,6 +352,7 @@ sub canDoAction {
 		},
 		{
 			scroll => 1,
+			block  => 1,
 		} );
 				
 		return 0;
@@ -426,47 +416,6 @@ sub playlistCallback {
 		
 		# Remove the previous track metadata
 		$client->pluginData( prevTrack => 0 );
-	}
-}
-
-sub buttonCallback {
-	my $request = shift;
-	my $client  = $request->client();
-	my $cmd     = $request->getParam('_buttoncode');
-	
-	return unless $client && $cmd;
-	
-	# ignore if user is not using Pandora
-	my $url = Slim::Player::Playlist::url($client);
-	if ( !$url || $url !~ /^pandora/ ) {
-		# No longer playing Pandora, unsubscribe
-		Slim::Control::Request::unsubscribe( \&buttonCallback );
-		return;
-	}
-	
-	# if the user hit FWD or REW, track it as a skip
-	if ( $cmd eq 'jump_fwd' || $cmd eq 'jump_rew' ) {
-		my ($stationId) = $url =~ m{^pandora://([^.]+)\.mp3};
-		
-		my $track   = $client->pluginData('currentTrack');
-		my $trackId = $track->{trackToken};
-		
-		$log->debug( "Reporting skip for track " . $track->{songName} );
-		
-		my $skipURL = Slim::Networking::SqueezeNetwork->url(
-			"/api/pandora/playback/trackSkip?&stationId=$stationId&trackId=$trackId"
-		);
-
-		my $http = Slim::Networking::SqueezeNetwork->new(
-			sub {},
-			sub {},
-			{
-				client  => $client,
-				timeout => 35,
-			},
-		);
-
-		$http->get( $skipURL );
 	}
 }
 
