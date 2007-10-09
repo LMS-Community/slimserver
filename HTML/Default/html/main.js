@@ -890,7 +890,7 @@ Player = function(){
 				Ext.get('ctrlCurrentTitle').update(currentTitle);
 
 				Ext.get('ctrlSongCount').update(result.playlist_tracks);
-				Ext.get('ctrlPlayNum').update(result.playlist_cur_index + 1);
+				Ext.get('ctrlPlayNum').update(parseInt(result.playlist_cur_index) + 1);
 
 				if (result.playlist_loop[0].artist) {
 					var contributors = result.playlist_loop[0].artist.split(',');
