@@ -252,10 +252,7 @@ var Utils = function(){
 							},
 							{},
 							function(){
-								if (typeof callback == 'function') { 
-									try { eval(callback(value)); }
-									catch(e){}
-								}
+								Utils.init();
 							}
 						);
 					}
