@@ -99,9 +99,7 @@ sub loadModules {
 	
 	if ( Slim::Utils::OSDetect::isDebian() ) {
 		# On Debian, our CPAN directory is located in the same dir as strings.txt
-		if ( $libPath eq '/usr/sbin' ) {
-			$libPath = Slim::Utils::OSDetect::dirsFor('strings');
-		}
+		$libPath = Slim::Utils::OSDetect::dirsFor('strings');
 	}
 
 	if ( Slim::Utils::OSDetect::isRHELorFC() ) {

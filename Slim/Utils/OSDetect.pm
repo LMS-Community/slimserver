@@ -312,7 +312,7 @@ sub isDebian {
 	my $OS      = OS();
 	my $details = details();
 
-	if ($details->{'osName'} eq 'Debian' && -d '/usr/share/slimserver/Firmware') {
+	if ($details->{'osName'} eq 'Debian' && $0 eq '/usr/sbin/slimserver') {
 		return 1;
 	}
 
