@@ -2327,7 +2327,9 @@ sub newSkinTemplate {
 		}
 	}
 
-	foreach my $dir ($skin, @skinParents, $baseSkin) {
+	my %saw;
+	my @dirs = ($skin, @skinParents, $baseSkin);
+	foreach my $dir (grep(!$saw{$_}++, @dirs)) {
 
 		foreach my $rootDir (HTMLTemplateDirs()) {
 
