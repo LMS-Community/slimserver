@@ -559,17 +559,6 @@ sub playerSettingsMenu {
  
 	my @menu = ();
 	return (\@menu, 0) unless $client;
-	
-	my %strings = (
-		repeat =>	[ 'REPEAT_OFF', 'REPEAT_ONE', 'REPEAT_ALL', ],
-		shuffle =>	[ 'SHUFFLE_OFF', 'SHUFFLE_ON_SONGS', 'SHUFFLE_ON_ALBUMS', ],
-		crossfade =>	[ 'TRANSITION_NONE', 'TRANSITION_CROSSFADE', 'TRANSITION_FADE_IN', 
-					'TRANSITION_FADE_OUT', 'TRANSITION_FADE_IN_OUT', ],
-		replaygain =>	[ 'REPLAYGAIN_DISABLED', 'REPLAYGAIN_TRACK_GAIN', 
-					'REPLAYGAIN_ALBUM_GAIN', 'REPLAYGAIN_SMART_GAIN' ],
-
-		);
-	my $val;
 
 	# always add repeat
 	push @menu, {
@@ -648,11 +637,11 @@ sub playerSettingsMenu {
 	if ($client->canDoReplayGain(0)) {
 		push @menu, {
 			text      => Slim::Utils::Strings::string("REPLAYGAIN"),
-			actions => {
-				go => {
+			actions   => {
+				  go => {
 					cmd    => ['replaygainsettings'],
 					player => 0,
-				},
+				  },
 			},
 		};	
 	}
