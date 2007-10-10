@@ -111,7 +111,9 @@ sub addPageLinks {
 				# let's just lowercase everything to save me the trouble at figuring out case
 				$iconName = lc($iconName);
 				# do an OS-independent check for a readable image
-				my @dirPath = qw/ HTML EN html images ServiceProviders /;
+				my @dirPath = ( Slim::Utils::OSDetect::dirsFor('HTML') );
+				push @dirPath, qw/ EN html images ServiceProviders /;
+
 				if (-r catfile(@dirPath, $iconName)) {
 					$additionalLinks{'icons'}->{$title}{'url'} = 'html/images/ServiceProviders/' . $iconName;
 					$additionalLinks{'icons'}->{$title}{'icon'} = $iconName;
