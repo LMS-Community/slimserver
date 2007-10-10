@@ -2734,21 +2734,15 @@ sub statusQuery {
 				'go' => {
 					'cmd' => ['songinfo'],
 					'params' => {
-						'menu' => 'nowhere',
-#						'menu_play' => '1',
+						#'menu' => 'nowplaying', # first enter the nowplaying window
+						'menu' => 'nowhere', # leave this as nowhere until things work
 					},
 					'itemsParams' => 'params',
 				},
-#				'play' => {
-#					'player' => 0,
-#					'cmd' => ['playlist', 'jump'],
-#					'params' => {
-#						'cmd' => 'load',
-#					},
-#					'itemsParams' => 'params',
-#				},
 			},
 			'window' => {
+				#'menuStyle'  => 'nowplaying',
+				#'titleStyle' => 'nowplaying',
 				'titleStyle' => 'album',
 			}
 		};
@@ -2939,31 +2933,57 @@ sub songinfoQuery {
 			# generally, we go nowhere after songingo, so we get menu:nowhere...
 
 			# build the base element
+			my $go_action;
+			if ($menu eq 'nowplaying') {
+				$go_action = 
+					{ 
+						cmd  => ['songinfo'],
+						params => {
+							menu => 'nowhere',
+							itemsParams => 'params', 
+							cmd => 'load',
+							track_id => $trackId,
+					},
+				};
+			} 
 			my $base = {
-				'actions' => {
+				actions => {
+
 					# no go, we ain't going anywhere!
-					
+
 					# we play/add the current track id
-					'play' => {
-						'player' => 0,
-						'cmd' => ['playlistcontrol'],
-						'params' => {
-							'cmd' => 'load',
-							'track_id' => $trackId,
+					play => {
+						player => 0,
+						cmd => ['playlistcontrol'],
+						params => {
+							cmd => 'load',
+							track_id => $trackId,
 						},
 					},
-					'add' => {
-						'player' => 0,
-						'cmd' => ['playlistcontrol'],
-						'params' => {
-							'cmd' => 'add',
-							'track_id' => $trackId,
+					add => {
+						player => 0,
+						cmd => ['playlistcontrol'],
+						params => {
+							cmd => 'add',
+							track_id => $trackId,
 						},
 					},
 				},
+				window => {
+				},
 			};
+			if ($menu eq 'nowplaying') {
+				# this will get album and artist. may need more tags here
+				$tags = 'Al'; 
+				# actions for next step--drilling down to songinfo
+				$base->{'actions'}{'go'} = $go_action;
+				$base->{'window'}{'titleStyle'} = 'album';
+				$base->{'window'}{'icon-id'} = $trackId;
+				$log->error($base->{'actions'}{'go'});
+			} else {
+				$tags = 'AlGitCodYXyRkwfrTImvun';
+			}
 			$request->addResult('base', $base);
-			$tags = 'AlGitCodYXyRkwfrTImvun';
 		}
 
 		my $hashRef = _songData($request, $track, $tags, $menuMode);
@@ -2973,12 +2993,35 @@ sub songinfoQuery {
 		$count++ if $insertPlay;
 
 		$count += 0;
-		$request->addResult("count", $count);
 
 		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
 		if ($valid) {
+
+		# this is where we construct the nowplaying menu
+		if ($menu eq 'nowplaying' && $menuMode) {
+			$request->addResult("count", 1);
+			$request->addResult('offset', $start) if $menuMode;
+			my $cnt = 0;
+			my @vals;
+			my $loopname = 'item_loop';
+			while (my ($key, $val) = each %{$hashRef}) {
+				# catch multi-genres or artists
+				if ($key =~ /(\w+)::(\d+)/) {
+					$key = $1;
+					my $id = $val->[0] + 0;
+					$val = $val->[1];
+				}
+				push @vals, $val;
+			}
+			my $string = join ("\n", @vals);
+			$request->addResultLoop($loopname, $cnt, 'text', $string);
+			$request->addResultLoop($loopname, $cnt, 'icon-id', $trackId);
+			#$cnt++;
+		} else {
 			
+			$request->addResult("count", $count);
+
 			my $idx = 0;
 			my $cnt = 0;
 			my $loopname = $menuMode?'item_loop':'songinfo_loop';
@@ -3090,7 +3133,7 @@ sub songinfoQuery {
 									},
 								};
 								# style correctly the title that opens for the action element
-								$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'album' } );
+								$request->addResultLoop($loopname, $cnt, 'window', { 'titleStyle' => 'album', 'icon-id' => $trackId } );
 							}
 							
 							#or one of the artist role -- we don't test explicitely !!!
@@ -3179,6 +3222,7 @@ sub songinfoQuery {
 				}
 				$idx++;
  			}
+		}
 		}
 	}
 
