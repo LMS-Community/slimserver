@@ -1340,23 +1340,31 @@ sub validMacAddress {
 	return 0;
 }
 
-=head2 detectInternetExplorer ( )
+=head2 detectBrowser ( )
 
-Returns true if the request header looks like MSIE
+Attempts to figure out what the browser is by user-agent string identification
 
 =cut
 
-sub detectInternetExplorer {
-	my $request = shift;
-	my $return = 0; # innocent before proven guilty
+sub detectBrowser {
 
-	if ($request->header('user-agent') && # is there a user agent available
-             $request->header('user-agent') =~ /MSIE/ &&              # does it think it's IE
-                        $request->header('user-agent') !~ /Opera/  && # make sure it's not Opera
-                        $request->header('user-agent') !~ /Linux/ &&  # make sure it's not Linux
-                        $request->header('user-agent') !~ /arm/)      # make sure it's not a Nokia tablet
+	my $request = shift;
+	my $return = 'unknown';
+	return $return unless $request->header('user-agent');
+
+	if ($request->header('user-agent') =~ /Firefox/) {
+		$return = 'Firefox';
+	} elsif ($request->header('user-agent') =~ /Opera/) {
+		$return = 'Opera';
+	} elsif ($request->header('user-agent') =~ /Safari/) {
+		$return = 'Safari';
+	} elsif (
+	$request->header('user-agent') =~ /MSIE/   && # does it think it's IE
+        $request->header('user-agent') !~ /Opera/  && # make sure it's not Opera
+        $request->header('user-agent') !~ /Linux/  && # make sure it's not Linux
+        $request->header('user-agent') !~ /arm/)      # make sure it's not a Nokia tablet
 	{
-		$return = 1; # GUILTY
+		$return = 'IE';
 	}
 	return $return;
 }

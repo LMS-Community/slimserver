@@ -366,7 +366,6 @@ sub processHTTP {
 	$log->info("Reading request...");
 
 	my $request    = $httpClient->get_request();
-
 	# socket half-closed from client
 	if (!defined $request) {
 
@@ -392,6 +391,8 @@ sub processHTTP {
 
 	# this will hold our context and is used to fill templates
 	my $params     = {};
+	$params->{'userAgent'} = $request->header('user-agent');
+	$params->{'browserType'} = Slim::Utils::Misc::detectBrowser($request);
 
 	# this bundles up all our response headers and content
 	my $response = HTTP::Response->new();
@@ -709,10 +710,8 @@ sub processHTTP {
 		# Touch is similar in most ways and works nicely with IE
 		# BUG: 5093 make sure that Nokia Opera isn't spoofing as IE, causing incorrect redirect
 
-		my $thisLooksLikeIE = Slim::Utils::Misc::detectInternetExplorer($request);
-		if ($thisLooksLikeIE &&
-			($params->{'skinOverride'} || $prefs->get('skin')) eq 'Nokia770'
-			) 
+		if ($params->{'browserType'} eq 'IE' &&
+		($params->{'skinOverride'} || $prefs->get('skin')) eq 'Nokia770') 
 		{
 			$log->debug("Internet Explorer Detected with Nokia Skin, redirecting to Touch");
 			$params->{'skinOverride'} ='Touch';
