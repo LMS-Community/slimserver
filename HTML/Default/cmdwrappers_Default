@@ -79,7 +79,7 @@
 
 			[% IF (levelName == 'album' || levelName == 'age') && !(artwork > 0) %]
 				<span class="browseCover">
-					[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% IF item.coverThumb; hreftype = "thumbnail"; ELSE; hreftype = "dummy"; END; PROCESS "${hreftype}ItemImg" height="50" %][% IF item.hierarchy %]</a>[% END -%]
+					[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %]>[% END %][% IF item.coverThumb; hreftype = "thumbnail"; ELSE; hreftype = "dummy"; END; PROCESS "${hreftype}ItemImg" height="50"  noby=0 %][% IF item.hierarchy %]</a>[% END -%]
 				</span>
 				<div class="browseItemDetail">
 					[% IF item.hierarchy -%]<a [% PROCESS "${item.hreftype}ItemHRef" %] class="browseItemLink">[% END %][% item.text | html %][% IF item.hierarchy %]</a>[% END -%]
