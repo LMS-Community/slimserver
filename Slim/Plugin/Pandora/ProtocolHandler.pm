@@ -18,6 +18,9 @@ my $log = Slim::Utils::Log->addLogCategory({
 	'description'  => 'PLUGIN_PANDORA_MODULE_NAME',
 });
 
+# default artwork URL if an album has no art
+my $defaultArtURL = 'http://www.pandora.com/images/no_album_art.jpg';
+
 # To support remote streaming (synced players, slimp3/SB1), we need to subclass Protocols::HTTP
 sub new {
 	my $class  = shift;
@@ -516,7 +519,7 @@ sub getMetadataFor {
 		artist      => $track->{artistName},
 		album       => $track->{albumName},
 		title       => $track->{songName},
-		cover       => $track->{albumArtUrl},
+		cover       => $track->{albumArtUrl} || $defaultArtURL,
 		replay_gain => $track->{trackGain},
 		bitrate     => '128k CBR',
 		type        => 'MP3 (Pandora)',
