@@ -25,6 +25,7 @@ sub registerFavoritesClassName {
 }
 
 sub new {
+	my $class = shift;
 
 	if ($favsClassName) {
 
