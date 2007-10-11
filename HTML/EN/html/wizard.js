@@ -129,7 +129,7 @@ Wizard = function(){
 
 				case 'summary' :
 					if (offset > 0) {
-						document.forms.wizardForm.submit();
+						document.getElementById("wizardForm").submit();
 
 						if (windowSize[0] && windowSize[1]);
 							window.resizeTo(windowSize[0], windowSize[1]);
@@ -229,7 +229,7 @@ Wizard = function(){
 		},
 
 		onLanguageChange : function(){
-			document.forms.languageForm.submit();
+			document.getElementById("languageForm").submit();
 		},
 
 		// resize panels, folder selectors etc.
