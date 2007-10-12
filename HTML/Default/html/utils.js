@@ -90,7 +90,8 @@ Ext.extend(Slim.Button, Ext.Button, {
 
 	setIcon: function(newIcon) {
 		var btnEl = this.el.child("button:first");
-		btnEl.setStyle('background-image', newIcon ? 'url(' + webroot + newIcon + ')' : '');
+		if (btnEl)
+			btnEl.setStyle('background-image', newIcon ? 'url(' + webroot + newIcon + ')' : '');
 	}
 });
 
