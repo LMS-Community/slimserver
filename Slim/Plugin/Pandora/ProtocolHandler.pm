@@ -525,7 +525,23 @@ sub getMetadataFor {
 		type        => 'MP3 (Pandora)',
 		buttons     => {
 			# disable REW/Previous button
-			rew => 0
+			rew => 0,
+
+			# replace repeat with Thumbs Up
+			repeat  => {
+				cls     => 'btn-thumbs-up',
+				tooltip => Slim::Utils::Strings::string('PLUGIN_PANDORA_I_LIKE'),
+#				icon    => '...path to icon...',
+				command => [ 'pandora', 'rate', 1 ],
+			},
+
+			# replace shuffle with Thumbs Down
+			shuffle => {
+				cls     => 'btn-thumbs-down',
+				tooltip => Slim::Utils::Strings::string('PLUGIN_PANDORA_I_DONT_LIKE'),
+#				icon    => '... path to icon...',
+				command => [ 'pandora', 'rate', 0 ],
+			},
 		}
 	};
 }

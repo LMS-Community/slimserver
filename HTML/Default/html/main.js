@@ -1038,7 +1038,7 @@ Player = function(){
 			// only poll player state if there is a player connected
 			if (player) {
 				Utils.processPlayerCommand({
-					params: [ "status", "-", 1, "tags:u" ],
+					params: [ "status", "-", 1, "tags:uB" ],
 
 					success: function(response){
 						if (response && response.responseText) {
@@ -1265,18 +1265,44 @@ Ext.extend(Slim.PlayButton, Slim.Button);
 Slim.RepeatButton = function(renderTo, config){
 	Ext.apply(config, {
 		tooltip: strings['repeat0'],
+		cmd: null,
 		scope: this,
 
 		handler: function(){
-			var newState = (this.state + 1) % 3;
-			Player.playerControl(['playlist', 'repeat', newState]);
-			this.updateState(newState); 
+			if (this.cmd) {
+				Player.playerControl(this.cmd);
+			}
+
+			else {
+				var newState = (this.state + 1) % 3;
+				Player.playerControl(['playlist', 'repeat', newState]);
+				this.updateState(newState);
+			} 
 		},
 
 		updateHandler: function(result){
-			if (result['playlist repeat'] != null && this.state != result['playlist repeat']) {
-				this.updateState(result['playlist repeat']);
+			this.cmd = null;
+
+			// see whether the button should be overwritten
+			if (result.playlist_loop && result.playlist_loop[0] 
+				&& result.playlist_loop[0].buttons && result.playlist_loop[0].buttons.repeat) {
+
+				this.state = -1;
+				var btn = result.playlist_loop[0].buttons.repeat;
+
+				if (btn.cls)
+					this.setClass(btn.cls);
+
+				if (btn.tooltip)
+					this.setTooltip(btn.tooltip);
+
+				if (btn.command)
+					this.cmd = btn.command;
 			}
+
+			else if (result['playlist repeat'] != null && this.state != result['playlist repeat'])
+				this.updateState(result['playlist repeat']);
+
 		},
 
 		updateState: function(newState){
@@ -1299,13 +1325,35 @@ Slim.ShuffleButton = function(renderTo, config){
 		scope: this,
 
 		handler: function(){
-			Player.playerControl(['playlist', 'shuffle', (this.state + 1) % 3]); 
+			if (this.cmd)
+				Player.playerControl(this.cmd);
+			else
+				Player.playerControl(['playlist', 'shuffle', (this.state + 1) % 3]); 
 		},
 
 		updateHandler: function(result){
-			if (result['playlist shuffle'] != null && this.state != result['playlist shuffle']) {
-				this.updateState(result['playlist shuffle']);
+			this.cmd = null;
+
+			// see whether the button should be overwritten
+			if (result.playlist_loop && result.playlist_loop[0] 
+				&& result.playlist_loop[0].buttons && result.playlist_loop[0].buttons.shuffle) {
+
+				this.state = -1;
+				var btn = result.playlist_loop[0].buttons.shuffle;
+
+				if (btn.cls)
+					this.setClass(btn.cls);
+
+				if (btn.tooltip)
+					this.setTooltip(btn.tooltip);
+
+				if (btn.command)
+					this.cmd = btn.command;
 			}
+
+			else if (result['playlist shuffle'] != null && this.state != result['playlist shuffle'])
+				this.updateState(result['playlist shuffle']);
+
 		},
 
 		updateState: function(newState){

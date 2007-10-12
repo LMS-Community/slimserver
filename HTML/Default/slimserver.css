@@ -985,6 +985,8 @@ form#advSearchForm.resultsPage {
 .btn-play, .btn-play button,
 .btn-pause, .btn-pause button,
 .btn-next, .btn-next button,
+.btn-thumbs-up, .btn-thumbs-up button,
+.btn-thumbs-down, .btn-thumbs-down button,
 .btn-repeat-0, .btn-repeat-0 button,
 .btn-repeat-1, .btn-repeat-1 button,
 .btn-repeat-2, .btn-repeat-2 button,
@@ -1035,6 +1037,14 @@ form#advSearchForm.resultsPage {
 
 .btn-shuffle-2 button {
 	background: transparent url(html/images/btn_shuffle_album.gif) no-repeat 0 0;
+}
+
+.btn-thumbs-up button {
+	background: transparent url(html/images/btn_thumbs_up.gif) no-repeat 0 0;
+}
+
+.btn-thumbs-down button {
+	background: transparent url(html/images/btn_thumbs_down.gif) no-repeat 0 0;
 }
 
 .btn-volume-increase button {
