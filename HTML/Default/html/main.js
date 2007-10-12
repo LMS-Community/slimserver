@@ -58,7 +58,8 @@ Main = function(){
 
 			layout.endUpdate();
 
-			Ext.get('leftcontent').dom.src = webroot + 'home.html?player=' + player;
+			// load home page with "random" parameter to prevent caching issues at startup
+			Ext.get('leftcontent').dom.src = webroot + 'home.html?player=' + player + '&amp;_dc=' + (new Date().getTime());
 
 			Ext.QuickTips.init();
 			Ext.get('loading').hide();
