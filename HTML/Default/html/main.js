@@ -1110,9 +1110,15 @@ Player = function(){
 		playerControl : function(action, dontUpdate){
 			Utils.processPlayerCommand({
 				params: action,
-				success: function(){
+				success: function(response){
 					playerStatus.dontUpdate = dontUpdate;
 					this.getUpdate();
+
+					if (response && response.responseText) {
+						response = Ext.util.JSON.decode(response.responseText);
+						if (response && response.result && response.result.text)
+							Utils.msg(response.result.text);
+					}
 				},
 				scope: this
 			});
@@ -1269,38 +1275,18 @@ Slim.RepeatButton = function(renderTo, config){
 		scope: this,
 
 		handler: function(){
-			if (this.cmd) {
+			if (this.cmd)
 				Player.playerControl(this.cmd);
-			}
-
-			else {
-				var newState = (this.state + 1) % 3;
-				Player.playerControl(['playlist', 'repeat', newState]);
-				this.updateState(newState);
-			} 
+			else
+				Player.playerControl(['playlist', 'repeat', (this.state + 1) % 3]); 
 		},
 
 		updateHandler: function(result){
 			this.cmd = null;
 
 			// see whether the button should be overwritten
-			if (result.playlist_loop && result.playlist_loop[0] 
-				&& result.playlist_loop[0].buttons && result.playlist_loop[0].buttons.repeat) {
-
+			if (this.customHandler(result, 'repeat'))
 				this.state = -1;
-				var btn = result.playlist_loop[0].buttons.repeat;
-
-				if (btn.cls)
-					this.setClass(btn.cls);
-				else if (btn.icon)
-					this.setIcon(btn.icon);
-
-				if (btn.tooltip)
-					this.setTooltip(btn.tooltip);
-
-				if (btn.command)
-					this.cmd = btn.command;
-			}
 
 			else if (result['playlist repeat'] != null && this.state != result['playlist repeat'])
 				this.updateState(result['playlist repeat']);
@@ -1337,25 +1323,8 @@ Slim.ShuffleButton = function(renderTo, config){
 		updateHandler: function(result){
 			this.cmd = null;
 
-			// see whether the button should be overwritten
-			if (result.playlist_loop && result.playlist_loop[0] 
-				&& result.playlist_loop[0].buttons && result.playlist_loop[0].buttons.shuffle) {
-
+			if (this.customHandler(result, 'shuffle'))
 				this.state = -1;
-				var btn = result.playlist_loop[0].buttons.shuffle;
-
-				if (btn.cls)
-					this.setClass(btn.cls);
-				else if (btn.icon)
-					this.setIcon(btn.icon);
-
-				if (btn.tooltip)
-					this.setTooltip(btn.tooltip);
-
-				if (btn.command)
-					this.cmd = btn.command;
-			}
-
 			else if (result['playlist shuffle'] != null && this.state != result['playlist shuffle'])
 				this.updateState(result['playlist shuffle']);
 

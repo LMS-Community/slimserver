@@ -92,6 +92,30 @@ Ext.extend(Slim.Button, Ext.Button, {
 		var btnEl = this.el.child("button:first");
 		if (btnEl)
 			btnEl.setStyle('background-image', newIcon ? 'url(' + webroot + newIcon + ')' : '');
+	},
+
+	// see whether the button should be overwritten
+	customHandler: function(result, id) {
+		if (result.playlist_loop && result.playlist_loop[0] 
+			&& result.playlist_loop[0].buttons && result.playlist_loop[0].buttons[id]) {
+
+			var btn = result.playlist_loop[0].buttons[id];
+
+			if (btn.cls)
+				this.setClass(btn.cls);
+			else if (btn.icon)
+				this.setIcon(btn.icon);
+
+			if (btn.tooltip)
+				this.setTooltip(btn.tooltip);
+
+			if (btn.command)
+				this.cmd = btn.command;
+
+			return true;
+		}
+
+		return false;
 	}
 });
 
@@ -291,7 +315,15 @@ var Utils = function(){
 			formattedTime += (minutes ? (minutes < 10 && hours ? '0' : '') + minutes : '0') + ':';
 			formattedTime += (seconds ? (seconds < 10 ? '0' : '') + seconds : '00');
 			return formattedTime;
-		}
+		},
+
+		msg : function(text){
+			var info = Ext.get('footerInfoText');
+			if (info) {
+				info.update('<img src="' + webroot + 'html/images/info.png"/>&nbsp;' + text);
+				info.fadeIn().pause(2).fadeOut();
+			}
+		},
 	};
 }();
 Ext.EventManager.onDocumentReady(Utils.init, Utils, true);
