@@ -757,28 +757,21 @@ form#advSearchForm.resultsPage {
 }
 
 #playlistCommands {
-	margin-left: 10px;
-	margin-right: 10px;
+	text-align: center;
 }
 
-#playlistCommands .buttonsRight {
-	position: absolute;
-	right: 30px;
-}
-
-#playlistToggleArtwork {
-	position: absolute;
-	top: 8px;
+#playlistCommands table {
+	display: inline;
 }
 
 #playlistToggleArtwork img {
-	height: 13px;
-	background: url(html/images/checkbox_panefooter.gif) no-repeat 0 -13px;
+	height: 17px;
+	background: url(html/images/btn_toggle_playlist_artwork.gif) no-repeat 0 -34px;
 	vertical-align: bottom;
 }
 
 #playlistToggleArtwork img.showCover {
-	background: url(html/images/checkbox_panefooter.gif) no-repeat 0 0;
+	background: url(html/images/btn_toggle_playlist_artwork.gif) no-repeat 0 0;
 }
 
 #mainbody {
