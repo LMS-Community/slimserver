@@ -1358,6 +1358,8 @@ sub detectBrowser {
 		$return = 'Opera';
 	} elsif ($request->header('user-agent') =~ /Safari/) {
 		$return = 'Safari';
+	} elsif ($request->header('user-agent') =~ /MSIE 7/) {
+		$return = 'IE7';
 	} elsif (
 	$request->header('user-agent') =~ /MSIE/   && # does it think it's IE
         $request->header('user-agent') !~ /Opera/  && # make sure it's not Opera
