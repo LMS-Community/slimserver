@@ -497,7 +497,8 @@ sub artistsQuery {
 			},
 			# style correctly the window that opens for the action element
 			'window' => {
-				'menuStyle' => 'album',
+				'menuStyle'  => 'album',
+				'titleStyle' => 'mymusic',
 			}
 		};
 		if (!$prefs->get('noGenreFilter') && defined $genreID) {
@@ -977,6 +978,7 @@ sub genresQuery {
 					'itemsParams' => 'params',
 				},
 			},
+			window => { titleStyle => 'mymusic', },
 		};
 		$request->addResult('base', $base);
 		$count++ if $insertAll;
@@ -1238,6 +1240,9 @@ sub musicfolderQuery {
 					},
 					'itemsParams' => 'params',
 				},
+			},
+			window => {
+				titleStyle => 'mymusic',
 			},
 		};
 		$request->addResult('base', $base);
@@ -1862,6 +1867,9 @@ sub playlistsQuery {
 					},
 					'itemsParams' => 'params',
 				},
+			},
+			window => {
+				titleStyle => 'mymusic',
 			},
 		};
 		$request->addResult('base', $base);
@@ -2741,8 +2749,7 @@ sub statusQuery {
 				},
 			},
 			'window' => {
-				#'menuStyle'  => 'nowplaying',
-				#'titleStyle' => 'nowplaying',
+				'menuStyle'  => 'nowplaying',
 				'titleStyle' => 'album',
 			}
 		};
@@ -3602,7 +3609,8 @@ sub yearsQuery {
 				},
 			},
 			'window' => {
-				'menuStyle' => 'album'
+				menuStyle   => 'album',
+				titleStyle  => 'mymusic',
 			}
 		};
 		$request->addResult('base', $base);

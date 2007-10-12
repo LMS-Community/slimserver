@@ -116,6 +116,7 @@ sub menuQuery {
 			count     => 9,
 			offset    => 0,
 			weight    => 10,
+			window    => { titleStyle => 'mymusic', },
 			item_loop => [
 			{
 				text    => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
@@ -129,6 +130,7 @@ sub menuQuery {
 				},
 				window => {
 					menuStyle => 'album',
+					titleStyle => 'mymusic',
 				},
 			},
 			{
@@ -141,6 +143,9 @@ sub menuQuery {
 						},
 					},
 				},
+				window => {
+					titleStyle => 'mymusic',
+				},
 			},
 			{
 				text    => Slim::Utils::Strings::string('BROWSE_BY_GENRE'),
@@ -152,6 +157,9 @@ sub menuQuery {
 						},
 					},
 				},
+				window => {
+					titleStyle => 'mymusic',
+				},
 			},
 			{
 				text    => Slim::Utils::Strings::string('BROWSE_BY_YEAR'),
@@ -162,6 +170,9 @@ sub menuQuery {
 							menu => 'album',
 						},
 					},
+				},
+				window => {
+					titleStyle => 'mymusic',
 				},
 			},
 			{
@@ -177,6 +188,7 @@ sub menuQuery {
 				},
 				window => {
 					menuStyle => 'album',
+					titleStyle => 'mymusic',
 				},
 			},
 			{
@@ -189,6 +201,9 @@ sub menuQuery {
 						},
 					},
 				},
+				window => {
+					titleStyle => 'favorites',
+				},
 			},
 			{
 				text    => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
@@ -199,6 +214,9 @@ sub menuQuery {
 							menu => 'musicfolder',
 						},
 					},
+				},
+				window => {
+					titleStyle => 'mymusic',
 				},
 			},
 			{
@@ -211,11 +229,15 @@ sub menuQuery {
 						},
 					},
 				},
+				window => {
+					titleStyle => 'mymusic',
+				},
 			},
 			{
 				text      => Slim::Utils::Strings::string('SEARCH'),
 				count     => 4,
 				offset    => 0,
+				window    => { titleStyle => 'search', },
 				item_loop => [
 					{
 						text  => Slim::Utils::Strings::string('ARTISTS'),
@@ -238,6 +260,7 @@ sub menuQuery {
 						},
 						window => {
 							text => Slim::Utils::Strings::string('SEARCHFOR_ARTISTS'),
+							titleStyle => 'search',
 						},
 					},
 					{
@@ -261,6 +284,7 @@ sub menuQuery {
 						window => {
 							text => Slim::Utils::Strings::string('SEARCHFOR_ALBUMS'),
 							menuStyle => 'album',
+							titleStyle => 'search',
 						},
 					},
 					{
@@ -284,6 +308,7 @@ sub menuQuery {
 						},
 						window => {
 							'text' => Slim::Utils::Strings::string('SEARCHFOR_SONGS'),
+							titleStyle => 'search',
 						},
 					},
 					{
@@ -305,6 +330,7 @@ sub menuQuery {
 						},
 						window => {
 							text => Slim::Utils::Strings::string('SEARCHFOR_PLAYLISTS'),
+							titleStyle => 'search',
 						},
 					},
 				],
@@ -324,6 +350,7 @@ sub menuQuery {
 			},
 			window        => {
 					menuStyle => 'album',
+					titleStyle => 'internetradio',
 			},
 		},
 
@@ -340,6 +367,7 @@ sub menuQuery {
 			},
 			window        => {
 					menuStyle => 'album',
+					titleStyle => 'internetradio',
 			},
 		},
 		{
@@ -354,6 +382,9 @@ sub menuQuery {
 					},
 				},
 			},
+			window        => {
+					titleStyle => 'favorites',
+			},
 		},
 		{
 			text    => Slim::Utils::Strings::string('SETTINGS'),
@@ -361,6 +392,9 @@ sub menuQuery {
 			count     => $settingsCount,
 			offset    => 0,
 			item_loop => $settingsMenu,
+			window        => {
+					titleStyle => 'settings',
+			},
 		},
 
 	);
@@ -413,6 +447,7 @@ sub alarmSettingsQuery {
 		count     => 7,
 		offset    => 0,
 		item_loop => \@weekDays,
+		window    => { titleStyle => 'settings' },
 	);
 
 	# one item_loop to rule them all
@@ -569,6 +604,7 @@ sub playerSettingsMenu {
 				player => 0,
 			},
 		},
+		window    => { titleStyle => 'settings' },
 	};
 
 	# always add shuffle
@@ -580,6 +616,7 @@ sub playerSettingsMenu {
 				player => 0,
 			},
 		},
+		window    => { titleStyle => 'settings' },
 	};
 
 	# add alarm only if this is a slimproto player
@@ -592,6 +629,7 @@ sub playerSettingsMenu {
 					player => 0,
 				},
 			},
+		window    => { titleStyle => 'settings' },
 		};
 	}
 
@@ -604,6 +642,7 @@ sub playerSettingsMenu {
 				player => 0,
 			},
 		},
+		window    => { titleStyle => 'settings' },
 	};	
 
 	# synchronization. only if numberOfPlayers > 1
@@ -617,6 +656,7 @@ sub playerSettingsMenu {
 					player => 0,
 				},
 			},
+		window    => { titleStyle => 'settings' },
 		};	
 	}
 
@@ -630,6 +670,7 @@ sub playerSettingsMenu {
 					player => 0,
 				},
 			},
+		window    => { titleStyle => 'settings' },
 		};	
 	}
 
@@ -643,6 +684,7 @@ sub playerSettingsMenu {
 					player => 0,
 				  },
 			},
+		window    => { titleStyle => 'settings' },
 		};	
 	}
 
@@ -666,6 +708,7 @@ sub playerSettingsMenu {
 				},
 			},
 		},
+		window    => { titleStyle => 'settings' },
 	};
 
 	# information, always display
@@ -674,6 +717,7 @@ sub playerSettingsMenu {
 		text      => $playerInfoText,
 		offset    => 0,
 		count	  => 1,
+		window    => { titleStyle => 'settings' },
 		textArea => 
 			Slim::Utils::Strings::string("INFORMATION_PLAYER_NAME_ABBR") . ": " . 
 			$client->name() . "\n\n" . 
