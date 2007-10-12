@@ -323,7 +323,7 @@ var Utils = function(){
 				info.update('<img src="' + webroot + 'html/images/info.png"/>&nbsp;' + text);
 				info.fadeIn().pause(2).fadeOut();
 			}
-		},
+		}
 	};
 }();
 Ext.EventManager.onDocumentReady(Utils.init, Utils, true);
