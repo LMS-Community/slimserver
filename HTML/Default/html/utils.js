@@ -86,6 +86,11 @@ Ext.extend(Slim.Button, Ext.Button, {
 		this.el.removeClass(this.cls);
 		this.cls = newClass
 		this.el.addClass(this.cls);
+	},
+
+	setIcon: function(newIcon) {
+		var btnEl = this.el.child("button:first");
+		btnEl.setStyle('background-image', newIcon ? 'url(' + webroot + newIcon + ')' : '');
 	}
 });
 

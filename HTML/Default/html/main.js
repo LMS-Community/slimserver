@@ -1292,6 +1292,8 @@ Slim.RepeatButton = function(renderTo, config){
 
 				if (btn.cls)
 					this.setClass(btn.cls);
+				else if (btn.icon)
+					this.setIcon(btn.icon);
 
 				if (btn.tooltip)
 					this.setTooltip(btn.tooltip);
@@ -1307,6 +1309,7 @@ Slim.RepeatButton = function(renderTo, config){
 
 		updateState: function(newState){
 			this.state = newState;
+			this.setIcon('');
 			this.setTooltip(strings['repeat' + this.state]);
 			this.setClass('btn-repeat-' + this.state);
 		},
@@ -1343,6 +1346,8 @@ Slim.ShuffleButton = function(renderTo, config){
 
 				if (btn.cls)
 					this.setClass(btn.cls);
+				else if (btn.icon)
+					this.setIcon(btn.icon);
 
 				if (btn.tooltip)
 					this.setTooltip(btn.tooltip);
@@ -1358,6 +1363,7 @@ Slim.ShuffleButton = function(renderTo, config){
 
 		updateState: function(newState){
 			this.state = newState;
+			this.setIcon('');
 			this.setTooltip(strings['shuffle' + this.state]);
 			this.setClass('btn-shuffle-' + this.state);
 		},

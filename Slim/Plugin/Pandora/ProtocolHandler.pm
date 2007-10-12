@@ -529,17 +529,15 @@ sub getMetadataFor {
 
 			# replace repeat with Thumbs Up
 			repeat  => {
-				cls     => 'btn-thumbs-up',
+				icon    => 'html/images/btn_thumbs_up.gif',
 				tooltip => Slim::Utils::Strings::string('PLUGIN_PANDORA_I_LIKE'),
-#				icon    => '...path to icon...',
 				command => [ 'pandora', 'rate', 1 ],
 			},
 
 			# replace shuffle with Thumbs Down
 			shuffle => {
-				cls     => 'btn-thumbs-down',
+				icon    => 'html/images/btn_thumbs_down.gif',
 				tooltip => Slim::Utils::Strings::string('PLUGIN_PANDORA_I_DONT_LIKE'),
-#				icon    => '... path to icon...',
 				command => [ 'pandora', 'rate', 0 ],
 			},
 		}
