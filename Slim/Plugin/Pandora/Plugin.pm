@@ -32,11 +32,31 @@ sub initPlugin {
 		[0, 1, 1, \&skipTrack]);
 
 	$class->SUPER::initPlugin(
-		feed => Slim::Networking::SqueezeNetwork->url('/api/pandora/opml'),
-		tag  => 'pandora',
+		feed      => Slim::Networking::SqueezeNetwork->url('/api/pandora/opml'),
+		tag       => 'pandora',
 		'icon-id' => 'html/images/ServiceProviders/pandora_56x56_p.png',
-		menu => 'radio',
+		menu      => 'radio',
 	);
+	
+	if ( !$ENV{SLIM_SERVICE} ) {
+		# Add a function to view trackinfo in the web
+		Slim::Web::HTTP::addPageFunction( 
+			'plugins/pandora/trackinfo.html',
+			sub {
+				my $client = $_[0];
+				
+				my $url = Slim::Player::Playlist::url($client);
+				
+				Slim::Web::XMLBrowser->handleWebIndex( {
+					feed    => Slim::Plugin::Pandora::ProtocolHandler->trackInfoURL( $client, $url ),
+					path    => 'trackinfo.html',
+					title   => 'Pandora Track Info',
+					timeout => 35,
+					args    => \@_
+				} );
+			},
+		);
+	}
 }
 
 sub getDisplayName () {

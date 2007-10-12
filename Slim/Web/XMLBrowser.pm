@@ -27,6 +27,7 @@ sub handleWebIndex {
 
 	my $client    = $args->{'client'};
 	my $feed      = $args->{'feed'};
+	my $path      = $args->{'path'} || 'index.html';
 	my $title     = $args->{'title'};
 	my $search    = $args->{'search'};
 	my $expires   = $args->{'expires'};
@@ -39,6 +40,7 @@ sub handleWebIndex {
 
 		handleFeed( $feed, {
 			'url'     => $feed->{'url'},
+			'path'    => $path,
 			'title'   => $title,
 			'search'  => $search,
 			'expires' => $expires,
@@ -87,6 +89,7 @@ sub handleWebIndex {
 		{
 			'client'  => $client,
 			'url'     => $feed,
+			'path'    => $path,
 			'title'   => $title,
 			'search'  => $search,
 			'expires' => $expires,
@@ -192,6 +195,7 @@ sub handleFeed {
 				my $args = {
 					'item'         => $subFeed,
 					'url'          => $subFeed->{'url'},
+					'path'         => $params->{'path'},
 					'feedTitle'    => $subFeed->{'name'} || $subFeed->{'title'},
 					'parser'       => $subFeed->{'parser'},
 					'expires'      => $params->{'expires'},
@@ -354,13 +358,15 @@ sub handleFeed {
 			
 		$stash->{'pageinfo'} = Slim::Web::Pages->pageInfo({
 				'itemCount'   => $itemCount,
-				'path'        => 'index.html',
+				'path'        => $params->{'path'} || 'index.html',
 				'otherParams' => $otherParams,
 				'start'       => $stash->{'start'},
 				'perPage'     => $stash->{'itemsPerPage'},
 		});
 		
 		$stash->{'start'} = $stash->{'pageinfo'}{'startitem'};
+		
+		$stash->{'path'} = $params->{'path'} || 'index.html';
 
 		if ($stash->{'pageinfo'}{'totalpages'} > 1) {
 

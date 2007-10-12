@@ -523,6 +523,7 @@ sub getMetadataFor {
 		replay_gain => $track->{trackGain},
 		bitrate     => '128k CBR',
 		type        => 'MP3 (Pandora)',
+		info_link   => 'plugins/pandora/trackinfo.html',
 		buttons     => {
 			# disable REW/Previous button
 			rew => 0,

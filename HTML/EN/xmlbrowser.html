@@ -8,7 +8,7 @@
 [% pwd_list = [];
 	FOREACH crumb IN crumb;
 		crumbItem = BLOCK %]
-			<a href="index.html?[% searchquery %]player=[% playerURI %]&amp;index=[% crumb.index %]">[% crumb.name %]</a>
+			<a href="[% path %]?[% searchquery %]player=[% playerURI %]&amp;index=[% crumb.index %]">[% crumb.name %]</a>
 		[% END %]
 		[% pwd_list.push(crumbItem) %]
 	[% END %]
@@ -30,8 +30,8 @@
 [% IF streaminfo %]
 	[% IF streaminfo.item.enclosure || streaminfo.item.url %]
 	<div id="songInfoHeader">
-		[% WRAPPER playlink %]href="index.html?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "PLAY_THIS_SONG" | string %]<br />
-		[% WRAPPER addlink %]href="index.html?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]
+		[% WRAPPER playlink %]href="[% path %]?[% searchquery %]action=play&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "PLAY_THIS_SONG" | string %]<br />
+		[% WRAPPER addlink %]href="[% path %]?[% searchquery %]action=add&amp;index=[% streaminfo.index %]&amp;player=[% player | uri %]"[% END %] [% "ADD_THIS_SONG_TO_PLAYLIST" | string %]
 	</div>
 	[% END %]
 	
@@ -56,14 +56,14 @@
 	[% BLOCK favoritescontrol %]<span id="controls[% index _ (start + loop.index) %]" [% IF useAJAX %]style="display: none;"[% END %]>
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
-				[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=favadd&index=[% index _ (start + loop.index) %]&start=[% pageinfo.startitem %]')"
-				[%- ELSE       -%]href="index.html?action=favadd&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]"
+				[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('[% path %]', 'action=favadd&index=[% index _ (start + loop.index) %]&start=[% pageinfo.startitem %]')"
+				[%- ELSE       -%]href="[% path %]?action=favadd&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]"
 				[%- END -%]
 			[% END %]
 		[% ELSIF item.favorites == 2 %]
 			[% WRAPPER favdellink noTarget=1 %]
-				[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=favdel&index=[% index _ (start + loop.index) %]&start=[% pageinfo.startitem %]')"
-				[%- ELSE       -%]href="index.html?action=favdel&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]"
+				[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('[% path %]', 'action=favdel&index=[% index _ (start + loop.index) %]&start=[% pageinfo.startitem %]')"
+				[%- ELSE       -%]href="[% path %]?action=favdel&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]"
 				[%- END -%]
 			[% END %]
 		[% END %]</span>
@@ -78,8 +78,8 @@
 		
 		[% IF itemsHaveAudio %]
 			[%- BLOCK allcontrol -%]
-				[% WRAPPER playlink %]href="index.html?[% searchquery %]action=playall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]"[% END %]
-				[% WRAPPER addlink %]href="index.html?[% searchquery %]action=addall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]"[% END %]
+				[% WRAPPER playlink %]href="[% path %]?[% searchquery %]action=playall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]"[% END %]
+				[% WRAPPER addlink %]href="[% path %]?[% searchquery %]action=addall&amp;index=[% currentIndex %]&amp;player=[% player | uri %]"[% END %]
 			[%- END %]
 			[%- WRAPPER contentitem leftcontrols = 'allcontrol' %]
 				[% "ALL_SONGS" | string %]
@@ -90,8 +90,8 @@
 		[%- FOREACH item = items %]
 			[%- BLOCK gencontrol -%]
 				[% IF item.type == 'audio' || item.type == 'playlist' || item.enclosure || item.play %]
-					[% WRAPPER playlink %]href="index.html?[% searchquery %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
-					[% WRAPPER addlink %]href="index.html?[% searchquery %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
+					[% WRAPPER playlink %]href="[% path %]?[% searchquery %]action=play[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
+					[% WRAPPER addlink %]href="[% path %]?[% searchquery %]action=add[% IF item.type == 'playlist' %]all[% END %]&amp;index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]"[% END %]
 				[% ELSE %]
 					[% PROCESS dummylink %]
 					[% PROCESS dummylink %]
@@ -113,7 +113,7 @@
 				[% END %]
 				[%- WRAPPER contentitem leftcontrols = 'gencontrol' rightcontrols = 'favoritescontrol' %]
 					[% IF item.type != 'text' %]
-					<a href="index.html?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]">
+					<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]">
 					[% END %]
 					[% item.name || item.title %]
 					[% IF item.type != 'text' %]

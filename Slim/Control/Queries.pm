@@ -3911,6 +3911,7 @@ sub _songData {
 			$remoteMeta->{o} = $remoteMeta->{type};
 			$remoteMeta->{r} = $remoteMeta->{bitrate};
 			$remoteMeta->{B} = $remoteMeta->{buttons};
+			$remoteMeta->{L} = $remoteMeta->{info_link};
 
 			# if we have a plugin-defined title, remove the current_title value
 			if ( $remoteMeta->{title} ) {
@@ -4005,6 +4006,7 @@ sub _songData {
 		  'k' => ['comment',           'COMMENT',         'comment'],                       #->comment_object
 		  'K' => [''],                                                                      # artwork URL, not in db
 		  'B' => [''],                                                                      # radio stream special buttons
+		  'L' => [''],                                                                      # special trackinfo link for i.e. Pandora
 
 	);
 	
@@ -4019,9 +4021,16 @@ sub _songData {
 		}
 
 		# special case, button handling for remote tracks
-		if ($tag eq 'B') {
+		elsif ($tag eq 'B') {
 			if ( my $meta = $remoteMeta->{$tag} ) {
 				$returnHash{buttons} = $meta;
+			}
+		}
+		
+		# special case, info_link for remote tracks
+		elsif ($tag eq 'L') {
+			if ( my $meta = $remoteMeta->{$tag} ) {
+				$returnHash{info_link} = $meta;
 			}
 		}
 

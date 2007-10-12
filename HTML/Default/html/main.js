@@ -874,9 +874,11 @@ Player = function(){
 					Playlist.load();
 
 			if (result.playlist_tracks > 0) {
+				
+				var infoLink = result.playlist_loop[0].info_link || 'songinfo.html';
 
 				var currentArtist, currentAlbum;
-				var currentTitle = '<a href="' + webroot + 'songinfo.html?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser">'
+				var currentTitle = '<a href="' + webroot + infoLink + '?player=' + player + '&amp;item=' + result.playlist_loop[0].id + '" target="browser">'
 					+
 					(result.current_title ? result.current_title : (
 						(result.playlist_loop[0].disc ? result.playlist_loop[0].disc + '-' : '')
@@ -1023,7 +1025,7 @@ Player = function(){
 		getUpdate : function(){
 			if (player) {
 				Utils.processPlayerCommand({
-					params: [ "status", "-", 1, "tags:gABbehldiqtyrSuoK" ],
+					params: [ "status", "-", 1, "tags:gABbehldiqtyrSuoKL" ],
 					failure: this.updateStatus,
 					success: this.updateStatus,
 					scope: this
