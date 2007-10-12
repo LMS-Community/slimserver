@@ -9,6 +9,7 @@ use base qw(Slim::Plugin::OPMLBased);
 
 use Slim::Networking::SqueezeNetwork;
 use Slim::Plugin::Pandora::ProtocolHandler;
+use Slim::Utils::Unicode;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.pandora',
@@ -113,7 +114,7 @@ sub _rateTrackOK {
 	
 	# Parse the text out of the OPML
 	my ($text) = $http->content =~ m/text="([^"]+)/;	
-	$request->addResult( text => $text );
+	$request->addResult( text => Slim::Utils::Unicode::utf8on($text) );
 	
 	$request->setStatusDone();
 }
