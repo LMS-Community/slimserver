@@ -717,13 +717,6 @@ sub processHTTP {
 			$params->{'skinOverride'} = 'Touch';
 		}
 
-		# redirect Hebrew users to Classic instead of Default, as the latter isn't RTL capable (yet)
-		if (Slim::Utils::Strings::getLanguage() eq 'HE' &&
-		($params->{'skinOverride'} || $prefs->get('skin')) eq 'Default') 
-		{
-			$params->{'skinOverride'} = 'Classic';
-		}
-
 
 		# apply CSRF protection logic to "dangerous" commands
 		if ( defined($csrfProtectionLevel) && ($csrfProtectionLevel != 0) ) {

@@ -74,6 +74,12 @@ sub handler {
 
 	$paramRef->{'scanning'} = Slim::Music::Import->stillScanning;
 
+	# use Classic instead of Default skin if the server's language is set to Hebrew
+	if ($paramRef->{'saveSettings'} && $paramRef->{'language'} eq 'HE' && preferences('server')->get('skin') eq 'Default') {
+		preferences('server')->set('skin', 'Classic');
+		$paramRef->{'warning'} .= Slim::Utils::Strings::string("HIT_RELOAD");
+	}
+
 	my @versions = Slim::Utils::Misc::settingsDiagString();
 
 	$paramRef->{'versionInfo'} = join( "<br />\n", @versions ) . "\n";

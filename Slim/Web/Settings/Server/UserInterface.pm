@@ -33,6 +33,11 @@ sub handler {
 
 	if ($paramRef->{'saveSettings'} && $paramRef->{'skin'} ne $prefs->get('skin')) {
 
+		# use Classic instead of Default skin if the server's language is set to Hebrew
+		if ($prefs->get('language') eq 'HE' && $paramRef->{'skin'} eq 'Default') {
+			$paramRef->{'skin'} = 'Classic';
+		}
+
 		$paramRef->{'warning'} .= join(' ', string("SETUP_SKIN_OK"), $paramRef->{'skin'}, string("HIT_RELOAD"));
 
 		for my $client (Slim::Player::Client::clients()) {
