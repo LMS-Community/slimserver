@@ -683,7 +683,9 @@ sub objectForUrl {
 	}
 
 	# Create a canonical version, to make sure we only have one copy.
-	$url = URI->new($url)->canonical->as_string;
+	if ( $url =~ /^(file|http)/i ) {
+		$url = URI->new($url)->canonical->as_string;
+	}
 
 	# Pull the track object for the DB
 	my $track = $self->_retrieveTrack($url, $playlist);
@@ -2321,7 +2323,7 @@ sub _validTrackOrURL {
 	my $urlOrObj = shift;
 
 	my $track   = undef;
-	my $url     = undef ;
+	my $url     = undef;
 	my $blessed = blessed($urlOrObj);
 
 	if ($blessed && ($blessed eq 'Slim::Schema::Track' || $blessed eq 'Slim::Schema::Playlist')) {
@@ -2329,9 +2331,15 @@ sub _validTrackOrURL {
 		$track = $urlOrObj;
 		$url   = $track->url;
 
-	} elsif ($urlOrObj) {
+	}
+	elsif ( $urlOrObj && !$blessed ) {
 
-		$url   = URI->new($urlOrObj)->canonical->as_string;
+		if ( $urlOrObj =~ /^(file|http)/i ) {
+			$url = URI->new($urlOrObj)->canonical->as_string;
+		}
+		else {
+			$url = $urlOrObj;
+		}
 	}
 
 	return ($track, $url, $blessed);
