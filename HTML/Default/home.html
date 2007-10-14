@@ -184,7 +184,7 @@ ELSE %]
 
 	[% menu %]
 
-	[% IF NOT warn %]
+	[% IF NOT warn AND (album_count OR artistcount OR song_count) %]
 		[% infoTab = BLOCK %]
 			<span id="albumcount">[% album_count %]</span> [% "WITH" | string -%]
 			<span id="songcount">[%- song_count %]</span> [% "BY" | string -%]
