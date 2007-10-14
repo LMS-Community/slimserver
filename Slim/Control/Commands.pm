@@ -1431,7 +1431,7 @@ sub playlistcontrolCommand {
 	my @tracks = ();
 
 	# info line and artwork to display if sucessful
-	my $info;
+	my @info;
 	my $artwork;
 
 	# Bug: 2373 - allow the user to specify a playlist name
@@ -1462,12 +1462,11 @@ sub playlistcontrolCommand {
 			if ($add || $load) {
 				$client->showBriefly({ 
 					'jive' => { 
-						'type'    => 'song',
+						'type'    => 'popupplay',
 						'text'    => $add
 							? [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $playlist->title,
 								Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST') ]
-								: [ Slim::Utils::Strings::string('JIVE_POPUP_NOW_PLAYING'), $playlist->title ],
-						'icon-id' => 0,
+								: [ Slim::Utils::Strings::string('JIVE_POPUP_NOW_PLAYING'), $playlist->title ]
 					}
 				 });
 			}
@@ -1512,27 +1511,24 @@ sub playlistcontrolCommand {
 		
 		if (defined(my $genre_id = $request->getParam('genre_id'))) {
 			$what->{'genre.id'} = $genre_id;
-			$info    = Slim::Schema->find('Genre', $genre_id)->name;
-			$artwork = 0;
+			$info[0] = Slim::Schema->find('Genre', $genre_id)->name;
 		}
 
 		if (defined(my $artist_id = $request->getParam('artist_id'))) {
 			$what->{'contributor.id'} = $artist_id;
-			$info    = Slim::Schema->find('Contributor', $artist_id)->name;
-			$artwork = undef; # use artwork for first track found
+			$info[0] = Slim::Schema->find('Contributor', $artist_id)->name;
 		}
 
 		if (defined(my $album_id = $request->getParam('album_id'))) {
 			$what->{'album.id'} = $album_id;
 			my $album = Slim::Schema->find('Album', $album_id);
-			$info    = $album->title;
+			@info    = ( $album->title, $album->contributors->first->name );
 			$artwork = $album->artwork +0;
 		}
 
 		if (defined(my $year = $request->getParam('year'))) {
 			$what->{'year.id'} = $year;
-			$info    = $year;
-			$artwork = 0;
+			$info[0] = $year;
 		}
 
 		# Fred: form year_id DEPRECATED in 7.0
@@ -1549,16 +1545,15 @@ sub playlistcontrolCommand {
 
 		if ($load || $add) {
 
-			$info  ||= $tracks[0]->title;
-			$artwork = defined $artwork ? $artwork : $tracks[0]->album->artwork +0;
+			$info[0] ||= $tracks[0]->title;
 
 			$client->showBriefly({ 
 				'jive' => { 
-					'type'    => 'song',
+					'type'    => defined $artwork ? 'song' : 'popupplay',
 					'text'    => $add
-						? [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $info,
+						? [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $info[0],
 							Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST') ]
-						: [ Slim::Utils::Strings::string('JIVE_POPUP_NOW_PLAYING'), $info ],
+						: [ Slim::Utils::Strings::string('JIVE_POPUP_NOW_PLAYING'), @info ],
 					'icon-id' => $artwork,
 				}
 			});
