@@ -188,21 +188,28 @@ var Utils = function(){
 
 		resizeContent : function(){
 			var infoHeight = 0;
+			var footerHeight = 0;
+
 			if (el = Ext.get('infoTab'))
 				infoHeight = el.getHeight();
+
+			if (el = Ext.get('pageFooterInfo'))
+				footerHeight = el.getHeight();
+
+			var maxHeight = Ext.fly(document.body).getHeight() - infoHeight - footerHeight;
 
 			var el = Ext.get('content');
 
 			if (el && el.hasClass('scrollingPanel')) {
-				var myHeight = Ext.fly(document.body).getHeight() - el.getTop() - infoHeight;
-				el.setHeight(myHeight);
+				el.setHeight(maxHeight - el.getTop());
 			}
 
 			if (el = Ext.get('browsedbList')) {
-				el.setHeight(Ext.fly(document.body).getHeight() - el.getTop() - infoHeight);
+				el.setHeight(maxHeight - el.getTop());
 			}
+
 			if (el = Ext.get('songInfo')) {
-				el.setHeight(Ext.fly(document.body).getHeight() - el.getTop() - infoHeight);
+				el.setHeight(maxHeight - el.getTop());
 			}
 
 		},
