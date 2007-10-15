@@ -52,7 +52,7 @@ sub handler {
 		my $string = Slim::Utils::Log->descriptionForCategory($debugCategory);
 
 		push @categories, {
-			'label'   => string($string),
+			'label'   => Slim::Utils::Strings::getString($string),
 			'name'    => $debugCategory,
 			'current' => $debugCategories->{$debugCategory},
 		};
