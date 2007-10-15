@@ -50,6 +50,10 @@
 	width: 100%;
 }
 
+.homeMenuItem input {
+	height: 17px;
+}
+
 
 /* IE6 is adding a pixel wide line below an element with bottom:0 */
 .infoTab, #edge_bottom_left, #edge_bottom_right {

@@ -186,6 +186,15 @@ div.thumbwrap {
 .homeMenuItem span { padding: 3px 0 3px; }
 .homeMenuItem span.browsedbControls { padding: 0; }
 
+.homeMenuItem input,
+.homeMenuItem img.cmdLinkIcon {
+	vertical-align: top;
+}
+
+.homeMenuItem input {
+	height: 13px;
+}
+
 .disclosure_home {
 	width: 14px;
 	height: 11px;
