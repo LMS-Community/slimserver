@@ -1010,6 +1010,7 @@ Player = function(){
 				Ext.get('ctrlCurrentArtist').update('');
 				Ext.get('ctrlCurrentAlbum').update('');
 				Ext.get('ctrlCurrentArt').update('<img src="/music/0/cover_96x96_p.' + coverFileSuffix + '">');
+				Ext.get('ctrlCurrentSongInfoCollapsed').update('');
 			}
 
 			playerStatus = {
