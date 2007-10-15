@@ -86,6 +86,7 @@ sub connected {
 sub model {
 	return 'slimp3';
 }
+sub modelName { 'SLIMP3' }
 
 sub type {
 	return 'player';

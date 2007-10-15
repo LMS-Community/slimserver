@@ -39,6 +39,7 @@ sub reconnect {
 sub model {
 	return 'softsqueeze';
 }
+sub modelName { 'SoftSqueeze' }
 
 # SoftSqueeze can't handle WMA
 sub formats {

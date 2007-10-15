@@ -299,6 +299,7 @@ sub knobListPos {
 sub model {
 	return 'transporter';
 }
+sub modelName { 'Transporter' }
 
 sub hasDigitalIn {
 	return 1;

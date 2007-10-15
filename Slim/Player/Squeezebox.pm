@@ -133,6 +133,7 @@ sub connected {
 sub model {
 	return 'squeezebox';
 }
+sub modelName { 'Squeezebox' }
 
 sub ticspersec {
 	return 1000;

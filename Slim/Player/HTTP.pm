@@ -63,6 +63,7 @@ sub fade_volume		{ 1 }
 sub bufferFullness	{ 0 }
 sub formats		{ 'mp3' }
 sub model		{ 'http' }
+sub modelName	{ 'Web Client' }
 sub decoder		{ 'http' }
 sub vfd			{ undef }
 

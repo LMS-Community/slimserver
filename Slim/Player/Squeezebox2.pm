@@ -91,6 +91,7 @@ sub minPitch { 100 };
 sub model {
 	return 'squeezebox2';
 }
+sub modelName { 'Squeezebox' }
 
 # in order of preference based on whether we're connected via wired or wireless...
 sub formats {

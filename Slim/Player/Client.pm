@@ -80,7 +80,7 @@ sub new {
 	assert(!defined(getClient($id)));
 
 	# The following indexes are unused:
-	# 1, 2, 3, 8, 11, 12, 13, 16, 23, 24, 25, 26, 27, 33, 34, 53
+	# 1, 2, 3, 11, 12, 13, 16, 23, 24, 25, 26, 27, 33, 34, 53
 	# 64, 65, 66, 67, 68, 72,
 
 	$client->[0] = $id;
@@ -96,7 +96,7 @@ sub new {
 	
 	$client->[7] = undef; # startupPlaylistLoading
 
-#	$client->[8]
+	$client->[8] = _makeDefaultName($client); # defaultName
 
 	# client hardware information
 	$client->[9] = undef; # udpsock
@@ -364,12 +364,44 @@ sub name {
 
 =head2 defaultName( $client )
 
-Returns the default name for the client (IP address)
+Sets or returns the default name for the client (IP address as last resort)
 
 =cut
 
 sub defaultName {
-	return shift->ip;
+	my $r = shift;
+	@_ ? ($r->[8] = shift) : ($r->[8] || $r->ip);
+}
+
+sub _makeDefaultName {
+	my $client = shift;
+	my $modelName = $client->modelName();
+	
+	# Do we already have one of these?
+	# We cannot just assume that this is the Nth player of this type
+	# because a user may have 'forgotten' a player, creating a discrepency between
+	# the number of players known about and default names that they have.
+	#
+	# We could try to be clever and fill in the gaps but let's just settle for 
+	# making sure that the number of this new player is bigger than any we already know about.
+	# We should also ensure that it does not clash with any user-chosen name.
+	my $maxIndex = 0;
+	my $player;
+	foreach $player (clients()) {
+		if ($player->defaultName =~ /^$modelName( (\d+))?/) {
+			my $index = $2 || 1;
+			$maxIndex = $index if ($index > $maxIndex);
+		}
+	}
+	
+	NEWNAME: while (1) {
+		my $name = $modelName . ($maxIndex++ ? " $maxIndex" : '');
+		foreach $player (clients()) {
+			next NEWNAME if ($prefs->client($client)->get('playername') eq $name);
+		}
+		logger('network.protocol')->info("New client: defaultName=$name");
+		return $name;
+	}
 }
 
 =head2 debug( $client, @msg )
