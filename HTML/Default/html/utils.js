@@ -53,9 +53,14 @@ Slim.Button = function(renderTo, config){
 	if (typeof config.updateHandler == 'function') {
 		this.on('dataupdate', config.updateHandler);
 	}
+
+	// keep track of the player's power mode
+	this.on('dataupdate', function(result){ this.power = result.power; });
 };
 
 Ext.extend(Slim.Button, Ext.Button, {
+	power: 0,
+
 	render: function(renderTo) {
 		Slim.Button.superclass.render.call(this, renderTo);
 		if (this.minWidth) {

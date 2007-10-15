@@ -697,7 +697,10 @@ Player = function(){
 				tooltip: strings['next'],
 				minWidth: 28,
 				scope: this,
-				handler: function(){ this.playerControl(['playlist', 'index', '+1']) }
+				handler: function(){
+					if (playerStatus.power)
+						this.playerControl(['playlist', 'index', '+1']);
+				}
 			});
 
 			displayElements.add(new Slim.RepeatButton('ctrlRepeat', {
@@ -715,7 +718,10 @@ Player = function(){
 				tooltip: strings['volumedown'],
 				minWidth: 22,
 				scope: this,
-				handler: function(){ this.setVolume(1, '-') }
+				handler: function(){
+					if (playerStatus.power)
+						this.setVolume(1, '-');
+				}
 			});
 
 			displayElements.add(new Slim.VolumeBar('ctrlVolume'));
@@ -725,7 +731,10 @@ Player = function(){
 				tooltip: strings['volumeup'],
 				minWidth: 22,
 				scope: this,
-				handler: function(){ this.setVolume(1, '+') }
+				handler: function(){
+					if (playerStatus.power)
+						this.setVolume(1, '+');
+				}
 			});
 
 			displayElements.add(new Slim.PowerButton('ctrlPower', {
@@ -1210,11 +1219,12 @@ Slim.RewButton = function(renderTo, config){
 		scope: this,
 
 		handler: function(){
-			Player.playerControl(['playlist', 'index', '-1'])
+			if (this.power)
+				Player.playerControl(['playlist', 'index', '-1']);
 		},
 
 		updateHandler: function(result){
-		     if (Player.needUpdate(result)) {
+			if (Player.needUpdate(result)) {
 				if (result.playlist_loop && result.playlist_loop[0] && result.playlist_loop[0].buttons) {
 					try {
 						this.setDisabled(!result.playlist_loop[0].buttons.rew)
@@ -1222,7 +1232,7 @@ Slim.RewButton = function(renderTo, config){
 					catch(e){}
 				}
 				else if (this.disabled)
-				     this.enable();
+					this.enable();
 			}
 		}
 	});
@@ -1281,10 +1291,12 @@ Slim.RepeatButton = function(renderTo, config){
 		scope: this,
 
 		handler: function(){
-			if (this.cmd)
-				Player.playerControl(this.cmd);
-			else
-				Player.playerControl(['playlist', 'repeat', (this.state + 1) % 3]); 
+			if (this.power) {
+				if (this.cmd)
+					Player.playerControl(this.cmd);
+				else
+					Player.playerControl(['playlist', 'repeat', (this.state + 1) % 3]);
+			} 
 		},
 
 		updateHandler: function(result){
@@ -1320,10 +1332,12 @@ Slim.ShuffleButton = function(renderTo, config){
 		scope: this,
 
 		handler: function(){
-			if (this.cmd)
-				Player.playerControl(this.cmd);
-			else
-				Player.playerControl(['playlist', 'shuffle', (this.state + 1) % 3]); 
+			if (this.power) {
+				if (this.cmd)
+					Player.playerControl(this.cmd);
+				else
+					Player.playerControl(['playlist', 'shuffle', (this.state + 1) % 3]); 
+			}
 		},
 
 		updateHandler: function(result){
@@ -1365,7 +1379,12 @@ Slim.VolumeBar = function(renderTo){
 };
 
 Ext.extend(Slim.VolumeBar, Ext.util.Observable, {
+	power: 0,
+
 	onClick: function(ev, target) {
+		if (!this.power)
+			return;
+
 		var el = Ext.get(target);
 		if (el) {
 			var myStep = el.getWidth()/11;
@@ -1390,6 +1409,8 @@ Ext.extend(Slim.VolumeBar, Ext.util.Observable, {
 	update: function(result){
 		if (result['mixer volume'] != null)
 			this.updateState(result['mixer volume']);
+
+		this.power = result.power;
 	},
 
 	updateState: function(newVolume){
