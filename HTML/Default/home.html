@@ -98,7 +98,7 @@ ELSE %]
 
 				[% IF link.key == 'RADIO_TUNEIN' %]
 					<span class="browsedbControls">
-						<input type="text" id="tuneinurl" size="30" value="http://" onfocus="this.select();">
+						<input type="text" id="tuneinurl" class="x-form-focus" size="30" value="http://" onfocus="this.select();">
 						[% WRAPPER playlink %]onclick="Utils.processPlayerCommand({ params: ['playlist', 'play', Ext.get('tuneinurl').dom.value] });"[% END %]
 						[% WRAPPER addlink %]onclick="Utils.processPlayerCommand({ params: ['playlist', 'add', Ext.get('tuneinurl').dom.value] });"[% END %]
 					</span>					
