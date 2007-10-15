@@ -22,7 +22,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 my %prefs = (
-	'server' => ['weproxy', 'sn_email', 'sn_password', 'audiodir', 'playlistdir'],
+	'server' => ['webproxy', 'sn_email', 'sn_password', 'audiodir', 'playlistdir'],
 	'plugin.itunes' => ['itunes', 'xml_file'],
 	'plugin.musicmagic' => ['musicmagic', 'port']
 );
@@ -115,6 +115,9 @@ sub handler {
 				preferences($namespace)->set($pref, $paramRef->{$pref});
 			}
 
+			if ($log->is_debug) {
+	 			$log->debug("$namespace.$pref: " . preferences($namespace)->get($pref));
+			}
 			$paramRef->{'prefs'}->{$pref} = preferences($namespace)->get($pref);
 
 			# Cleanup the checkbox
