@@ -85,7 +85,7 @@ Browse = function(){
 
 		toggleGalleryView : function(artwork){
 			var url = document.location.href;
-			url = url.replace(/&artwork=\w*/g, '');
+			url = url.replace(/&artwork=\w*/gi, '');
 			var target = url.match(/(#.*)$/);
 			url = url.replace(/#.*$/, '');
 
@@ -111,8 +111,19 @@ Browse = function(){
 		},
 
 		chooseAlbumOrderBy: function(option) {
+			var url = document.location.href;
+			url = url.replace(/&orderBy=[\w\.,]*/ig, '');
+			var target = url.match(/(#.*)$/);
+			url = url.replace(/#.*$/, '');
+
+			if (option)
+				url = url + '&orderBy=' + option;
+
+			if (target && target[0].match(/^#/))
+				url = url + target[0];
+
 			Utils.setCookie('SqueezeCenter-orderBy', option);
-			window.location.href = orderByUrl + (option ? '&orderBy=' + option : '') ;
+			window.location.href = url;
 		}
 
 	};
