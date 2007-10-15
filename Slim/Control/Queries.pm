@@ -2749,7 +2749,7 @@ sub statusQuery {
 				},
 			},
 			'window' => {
-				'menuStyle'  => 'nowplaying',
+				#'menuStyle'  => 'nowplaying', # this is only for use if nowplaying style menu is used in params above
 				'titleStyle' => 'album',
 			}
 		};
