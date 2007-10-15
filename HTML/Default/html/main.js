@@ -194,7 +194,6 @@ PlayerChooser = function(){
 	return {
 		init : function(){
 			playerMenu = new Ext.SplitButton('playerChooser', {
-				text: playerid,
 				handler: function(ev){
 					if(this.menu && !this.menu.isVisible()){
 						this.menu.show(this.el, this.menuAlign);
