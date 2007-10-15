@@ -26,7 +26,7 @@
 		<div class="infoTab_content">
 			<div class="infoTab_top"><div></div></div>
 			<div id="playlistCommands">
-				[% IF current_playlist %]<span id="currentPlaylistName" style="display:none">[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %]</span>[% END %]
+				<span id="currentPlaylistName" style="display:none">[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %]</span>
 				<table><tr>
 					<td>
 						<span id="playlistToggleArtwork" onclick="Playlist.[% IF noPlaylistCover %]showCoverArt()[% ELSE %]hideCoverArt()[% END %];" class="link">

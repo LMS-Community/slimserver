@@ -601,14 +601,16 @@ Playlist = function(){
 			if (el = Ext.get('currentPlaylistName'))
 				tooltip = el.dom.innerHTML;
 
-			new Ext.Button('btnPlaylistSave', {
-				cls: 'btn-small',
-				text: strings['save'],
-				icon: webroot + 'html/images/icon_playlist_save.gif',
-				tooltip: tooltip,
-				tooltipType: 'title',
-				handler: Playlist.save
-			});
+			if (items.length > 0) {
+				new Ext.Button('btnPlaylistSave', {
+					cls: 'btn-small',
+					text: strings['save'],
+					icon: webroot + 'html/images/icon_playlist_save.gif',
+					tooltip: tooltip,
+					tooltipType: 'title',
+					handler: Playlist.save
+				});
+			}
 
 			// dragging doesn't survive a reload
 			isDragging = false;
