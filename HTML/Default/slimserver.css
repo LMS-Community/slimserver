@@ -184,6 +184,7 @@ div.thumbwrap {
 } 
 
 .homeMenuItem span { padding: 3px 0 3px; }
+.homeMenuItem span.browsedbControls { padding: 0; }
 
 .disclosure_home {
 	width: 14px;

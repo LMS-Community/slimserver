@@ -51,6 +51,7 @@ ELSE %]
 		FOREACH link = additionalLinks.radio;
 			PROCESS menuItem category='radio';
 		END;
+		additionalLinks.icons.RADIO_TUNEIN.url = 'html/images/ServiceProviders/tuneinurl.png';
 		PROCESS menuItem category='radio' link={key='RADIO_TUNEIN' value='tunein.html?'};
 	END;
 
@@ -69,7 +70,7 @@ ELSE %]
 	page = page | lower;
 	%]
 
-	[% BLOCK menuItem %]
+	[% BLOCK menuItem; page = page | lower %]
 		<div class="selectorMarker[% IF singleton %] homeMenuSection_singleton[% END %]" onmouseover="Utils.highlight(this);"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 			<div class="homeMenuItem[% IF (page == 'radio' || page == 'music_on_demand') && additionalLinks.icons.${link.key}.url %] itemWithCover[% END %]" id="[% link.key %]">
 				[% IF expandable %]
@@ -94,6 +95,14 @@ ELSE %]
 						[% END %]
 					[% END %]
 				</a>
+
+				[% IF link.key == 'RADIO_TUNEIN' %]
+					<span class="browsedbControls">
+						<input type="text" id="tuneinurl" size="30" value="http://" onfocus="this.select();">
+						[% WRAPPER playlink %]onclick="Utils.processPlayerCommand({ params: ['playlist', 'play', Ext.get('tuneinurl').dom.value] });"[% END %]
+						[% WRAPPER addlink %]onclick="Utils.processPlayerCommand({ params: ['playlist', 'add', Ext.get('tuneinurl').dom.value] });"[% END %]
+					</span>					
+				[% END %]
 			</div>
 		</div></div></div></div></div>
 	[% END %]

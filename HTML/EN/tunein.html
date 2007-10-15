@@ -18,7 +18,6 @@
 					document.getElementById("tune").submit();
 				}
 			});
-			new Ext.Button
 		});
 	</script>
 [% END %]
@@ -38,7 +37,7 @@
 	</script>
 [% END %]
 
-<form name="tune" method="get" action="[% webroot %]tunein.html?homeCategory=RADIO">
+<form name="tune" method="get" id="tune" action="[% webroot %]tunein.html?homeCategory=RADIO">
 	<input type="hidden" name="player" value="[% player %]">
 	[% 'RADIO_TUNEIN_RADIOURL' | string %]
 	<input type="text" class="stdedit" name="url" id="url" size="40">
