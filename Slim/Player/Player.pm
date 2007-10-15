@@ -64,13 +64,14 @@ our $defaultPrefs = {
 	'syncVolume'           => 0,
 	'treble'               => 50,
 	'volume'               => 50,
-	'syncBufferThreshold'  => 128,
+	'syncBufferThreshold'  => 4000, # 1/4s @ 128kb/s
 	'bufferThreshold'      => 255,
 	'powerOnResume'        => 'PauseOff-NoneOn',
 	'maintainSync'         => 1,
 	'minSyncAdjust'        => 0.030,
 	'packetLatency'        => 0.002,
 	'startDelay'           => 0,	
+	'playDelay'            => 0,	
 };
 
 sub new {

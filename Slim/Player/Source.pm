@@ -958,10 +958,13 @@ sub nextChunk {
 
 						# Safety check - just make sure that we are not in the process
 						# of slurping up a perhaps-infinite stream without using it.
-						# XXX: we should give up way before we have 30MB in memory!! -andy
-						if (length($$buf) > 30000000 ||
-							defined($master->frameData) && @{$master->frameData} > 150000)
+						# We assume min frame size of 72 bytes (24kb/s, 48000 samples/s)
+						# which gives us at most 45512 frames in the decode buffer (25Mb)
+						# and 355 samples in the output buffer (also 25Mb) at 1152 samples/frame
+						if (length($$buf) > 3_500_000 ||
+							defined($master->frameData) && @{$master->frameData} > 50_000)
 						{
+							log->warn('Discarding saved stream & frame data used for synchronization as appear to be collecting it but not using it');
 							resetFrameData($master);
 						}
 					} elsif ($master->streamformat() eq 'mp3' && $master->streamBytes() <= $len) {
@@ -2343,14 +2346,10 @@ sub readNextChunk {
 				} elsif ($! == EINTR) {
 
 					$log->debug("Got EINTR, will try again later.");
-
 					return undef;
-
-	                        } elsif ($! == ECHILD) {
-
-  	                                $log->debug("Got ECHILD - will try again later.");
-  	                                return undef;
-
+				} elsif ($! == ECHILD) {
+					$log->debug("Got ECHILD - will try again later.");
+					return undef;
 				} else {
 
 					$log->debug("readlen undef: ($!) " . ($! + 0));

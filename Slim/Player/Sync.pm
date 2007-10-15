@@ -512,7 +512,10 @@ sub checkSync {
 					}
 					else {
 						my $delay;
-						if ( $delay = $prefs->client($everyclient)->get('startDelay') && $delay > $playerStartDelay ) {
+						if (($delay = $prefs->client($everyclient)->get('startDelay')
+									+ $prefs->client($everyclient)->get('playDelay'))
+							 > $playerStartDelay )
+						{
 							$playerStartDelay = $delay;
 						}
 					}
@@ -526,7 +529,9 @@ sub checkSync {
 								+ ( $prefs->get('syncStartDelay') || 0.100 );
 
 					for my $everyclient (@group) {
-						$everyclient->startAt( $startAt - ( $prefs->client($everyclient)->get('startDelay') || 0) );
+						$everyclient->startAt( $startAt -
+							($prefs->client($everyclient)->get('startDelay')
+							+ $prefs->client($everyclient)->get('playDelay')));
 					}
 				}
 			}
@@ -596,7 +601,7 @@ sub checkSync {
 				return;
 			}
 			if ($playPoint->[0] > $recentThreshold) {
-				push(@playerPlayPoints, [$player, $playPoint->[1]]);
+				push(@playerPlayPoints, [$player, $playPoint->[1] + $prefs->client($player)->get('playDelay')]);
 			}
 			else {
 				if ( $log->is_debug ) {
