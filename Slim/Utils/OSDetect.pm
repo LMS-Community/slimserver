@@ -139,6 +139,8 @@ sub dirsFor {
 			#	$dir = lc($dir);
 			#}
 
+			push @dirs, "$ENV{'HOME'}/Library/Application Support/SqueezeCenter/$dir";
+			push @dirs, "/Library/Application Support/SqueezeCenter/$dir";
 			push @dirs, "$ENV{'HOME'}/Library/SlimDevices/$dir";
 			push @dirs, "/Library/SlimDevices/$dir";
 			push @dirs, catdir($Bin, $dir);
@@ -146,27 +148,33 @@ sub dirsFor {
 		} elsif ($dir eq 'log') {
 
 			# If SqueezeCenter is installed systemwide.
-			if (-d "/Library/SlimDevices") {
+			if (-d "/Library/Application Support/SqueezeCenter") {
 
-				mkpath("/Library/Logs/SlimServer");
+				mkpath("/Library/Logs/SqueezeCenter");
 
 			} else {
 
-				mkpath("$ENV{'HOME'}/Library/Logs/SlimServer");
+				mkpath("$ENV{'HOME'}/Library/Logs/SqueezeCenter");
+				
 			}
 
-			if (-d "/Library/SlimDevices") {
+			if (-d "/Library/Application Support/SqueezeCenter") {
 
-				push @dirs, "/Library/Logs/SlimServer";
+				push @dirs, "/Library/Logs/SqueezeCenter";
 
-			} elsif (-d "$ENV{'HOME'}/Library/Logs/SlimServer") {
+			} elsif (-d "$ENV{'HOME'}/Library/Logs/SqueezeCenter") {
 
-				push @dirs, "$ENV{'HOME'}/Library/Logs/SlimServer";
+				push @dirs, "$ENV{'HOME'}/Library/Logs/SqueezeCenter";
+				
 			}
 
 		} elsif ($dir eq 'cache') {
 
-			push @dirs, catdir($ENV{'HOME'}, '/Library/Caches/SlimServer');
+			push @dirs, catdir($ENV{'HOME'}, '/Library/Caches/SqueezeCenter');
+
+		} elsif ($dir eq 'prefs') {
+
+			push @dirs, catdir($ENV{'HOME'}, '/Library/Application Support/SqueezeCenter');
 
 		} else {
 
@@ -401,6 +409,7 @@ sub initDetailsForOSX {
 	for my $dir (qw(
 		Library/SlimDevices/Plugins Library/SlimDevices/Graphics Library/SlimDevices/html
 		Library/SlimDevices/IR Library/SlimDevices/bin Library/Logs/SlimServer
+		Library/Application Support/SqueezeCenter
 	)) {
 
 		mkpath("$ENV{'HOME'}/$dir");
