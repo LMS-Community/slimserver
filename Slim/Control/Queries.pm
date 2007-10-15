@@ -227,6 +227,15 @@ sub albumsQuery {
 	
 	if ($menuMode) {
 
+		# Bug 5435
+		# special hook for 'nowplaying'
+		# make $count = $quantity, which creates a new music menu that's only as big
+		# as the initial request (e.g., if command is `albums 0 100 sort:new menu:album` 
+		# then we return a count of 100 instead of the total count of all albums in SC
+		if ($sort eq 'new' && $count > $quantity) {
+			$count = $quantity;
+		}
+
 		# decide what is the next step down
 		# generally, we go to tracks after albums, so we get menu:track
 		# from the tracks we'll go to songinfo
@@ -2750,6 +2759,7 @@ sub statusQuery {
 			},
 			'window' => {
 				#'menuStyle'  => 'nowplaying', # this is only for use if nowplaying style menu is used in params above
+				#'titleStyle' => 'nowplaying',
 				'titleStyle' => 'album',
 			}
 		};
