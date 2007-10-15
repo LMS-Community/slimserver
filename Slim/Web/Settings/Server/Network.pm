@@ -36,6 +36,11 @@ sub prefs {
 	if ($Slim::Player::SLIMP3::SLIMP3Connected) {
 		push @prefs, 'udpChunkSize';
 	}
+	
+	# only show following if we have multiple players
+	if (Slim::Player::Client::clients() > 1) {
+		push @prefs, 'syncStartDelay';
+	}
 
 	return ($prefs, @prefs);
 }

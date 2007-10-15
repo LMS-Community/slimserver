@@ -34,7 +34,7 @@ sub handler {
 	my @prefs = qw(powerOnResume maxBitrate lameQuality);
 
 	if (Slim::Player::Sync::isSynced($client) || (scalar(Slim::Player::Sync::canSyncWith($client)) > 0))  {
-		push @prefs,qw(synchronize syncVolume syncPower);
+		push @prefs,qw(synchronize syncVolume syncPower syncBufferThreshold startDelay maintainSync playDelay packetLatency minSyncAdjust);
 	} 
 	
 	if ($client->hasPowerControl()) {

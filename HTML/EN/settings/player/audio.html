@@ -42,6 +42,37 @@
 		
 		</select>
 
+		<div class="prefHead">[% "SETUP_MAINTAINSYNC" | string %]</div>
+		<div class="prefDesc">[% "SETUP_MAINTAINSYNC_DESC" | string %]</div>
+		<select class="stdedit" name="maintainSync" id="maintainSync">
+		[% FOREACH option = {
+			'1' => 'SETUP_MAINTAINSYNC_ON',
+			'0' => 'SETUP_MAINTAINSYNC_OFF'
+		} %]
+			<option [% IF prefs.maintainSync == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+		[%- END -%]
+		</select>
+
+		<div class="prefHead">[% "SETUP_STARTDELAY" | string %]</div>
+		<div class="prefDesc">[% "SETUP_STARTDELAY_DESC" | string %]</div>
+		<label for="startDelay" class="stdlabel">[% "SETUP_STARTDELAY_CHOOSE" | string %]</label>
+		<input type=text class="stdedit" name="startDelay" id="startDelay" value="[% prefs.startDelay %]" size="5">
+
+		<div class="prefHead">[% "SETUP_PLAYDELAY" | string %]</div>
+		<div class="prefDesc">[% "SETUP_PLAYDELAY_DESC" | string %]</div>
+		<label for="playDelay" class="stdlabel">[% "SETUP_PLAYDELAY_CHOOSE" | string %]</label>
+		<input type=text class="stdedit" name="playDelay" id="playDelay" value="[% prefs.playDelay %]" size="5">
+
+		<div class="prefHead">[% "SETUP_MINSYNCADJUST" | string %]</div>
+		<div class="prefDesc">[% "SETUP_MINSYNCADJUST_DESC" | string %]</div>
+		<label for="minSyncAdjust" class="stdlabel">[% "SETUP_MINSYNCADJUST_CHOOSE" | string %]</label>
+		<input type=text class="stdedit" name="minSyncAdjust" id="minSyncAdjust" value="[% prefs.minSyncAdjust %]" size="5">
+
+		<div class="prefHead">[% "SETUP_PACKETLATENCY" | string %]</div>
+		<div class="prefDesc">[% "SETUP_PACKETLATENCY_DESC" | string %]</div>
+		<label for="packetLatency" class="stdlabel">[% "SETUP_PACKETLATENCY_CHOOSE" | string %]</label>
+		<input type=text class="stdedit" name="packetLatency" id="packetLatency" value="[% prefs.packetLatency %]" size="5">
+
 	</div>
 	[% END %]
 

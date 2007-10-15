@@ -3415,6 +3415,63 @@ SETUP_MAXWMARATE_DESC
 	IT	Per eseguire lo streaming di alcuni flussi WMA sono disponibili diverse velocità in bit. Per impostazione predefinita in SqueezeCenter viene utilizzato il flusso con la velocità in bit più elevata, ma se si dispone di una connessione a Internet lenta, è possibile impostare qui un valore più basso per limitare la velocità massima selezionabile per questi flussi con velocità molteplici.
 	NL	Sommige WMA-streams hebben meerdere bitsnelheden voor streaming. SqueezeCenter selecteert standaard de hoogste bitsnelheid die voor de stream beschikbaar is. Als je een langzamere internetverbinding hebt, kun je een lagere waarde instellen om de maximumsnelheid die gekozen kan worden, te beperken.
 
+SETUP_SYNCSTARTDELAY
+	EN	Synchronized Players Startup Delay
+
+SETUP_SYNCSTARTDELAY_DESC
+	EN	When multiple players are synchronized, SqueezeCenter tells each player to start the track at the same time. It needs to make sure that each player has time to receive the start command before they all start together and so it sends the start command ahead of time and the players each wait until the right moment to start. If there is excessive network congestion, which can happen particularly when there are many players on the network and with wireless networks, then the default delay of 0.1 seconds (100ms) may not be sufficient. You can change the default here if necessary.
+
+SETUP_SYNCSTARTDELAY_CHOOSE
+	EN	Synchronized startup delay (seconds):
+
+SETUP_STARTDELAY
+	EN	Player Start Delay
+
+SETUP_STARTDELAY_DESC
+	EN	A player can take a noticeable time to start playing (before you begin to hear the audio) after it processes the start command from SqueezeCenter. This can be the case when using digital outputs (depending upon the connected equipment) or with software players on some platforms. In these cases, this delay can be set here so that SqueezeCenter knows how much in advance to start this player so that the audio from all the synchronized players starts at the same time. Note: this is in addition to any ongoing "Player Audio Delay" (below).
+
+SETUP_STARTDELAY_CHOOSE
+	EN	Player start delay (seconds):
+
+SETUP_MAINTAINSYNC
+	EN	Maintain Synchronization
+
+SETUP_MAINTAINSYNC_DESC
+	EN	Even when several players start playing a track in perfect synchronization, they can drift apart over time (usualy after a few minutes). A difference of more than about 30ms (milliseconds) will be noticeable if you can hear the output from multiple players simultaneously. SqueezeCenter deals with this by continuously tracking how much each player has played and making small adjustments as necessary. You can turn this behaviour on or off.
+
+SETUP_MAINTAINSYNC_ON
+	EN	Maintain synchronization while playing
+
+SETUP_MAINTAINSYNC_OFF
+	EN	Don't maintain synchronization
+
+SETUP_PLAYDELAY
+	EN	Player Audio Delay
+
+SETUP_PLAYDELAY_DESC
+	EN	There can be a noticeable difference between how much of a track that the player reports it has played to SqueezeCentre and how much audio has been heard. This can be the case when using digital outputs (depending upon the connected equipment) or with software players on some platforms. In these cases, this delay can be set here so that SqueezeCenter can take it into account when adjusting synchronization.
+	
+SETUP_PLAYDELAY_CHOOSE
+	EN	Player audio delay (seconds):
+
+SETUP_MINSYNCADJUST
+	EN	Minimum Synchronization Adjustment
+
+SETUP_MINSYNCADJUST_DESC
+	EN	When SqueezeCentre detects that two synchronized players have got a little bit out of synchronization with each other, it makes a small adjustment, usually to the player that has got behind. You can configure the minimum size of such adjustments for this player. The larger this interval, the less frequent will be the adjustments but the more the players will be allowed to drift apart.
+
+SETUP_MINSYNCADJUST_CHOOSE
+	EN	Minimum synchronization adjustment (seconds):
+
+SETUP_PACKETLATENCY
+	EN	Network Packet Latency
+
+SETUP_PACKETLATENCY_DESC
+	EN	SqueezeCentre automatically measures the network latency between it and the player. This is important when maintaining synchronization. Occassionally these measurements can be too inconsistent to be useful, in which case you can specify a typical value here.
+
+SETUP_PACKETLATENCY_CHOOSE
+	EN	Network latency (seconds):
+
 SETUP_NOUPNP
 	DE	UPnP-Client
 	EN	UPnP Client

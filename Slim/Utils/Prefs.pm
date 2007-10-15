@@ -278,13 +278,18 @@ sub init {
 
 	# allow users to set a port below 1024 on windows which does not require admin for this
 	my $minP = Slim::Utils::OSDetect::OS() eq 'win' ? 1 : 1024;
-	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => $minP,'high'=> 65535 }, 'httpport'    );
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => $minP,'high'=>  65535 }, 'httpport'    );
 
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    3, 'high' =>    30 }, 'bufferSecs'  );
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    1, 'high' =>  4096 }, 'udpChunkSize');
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    1,                 }, 'itemsPerPage');
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    2,                 }, 'refreshRate' );
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>   25, 'high' =>   250 }, 'thumbSize'   );
+	$prefs->setValidate({ 'validator' => 'numlimit', 'low' =>    0,                 }, 'startDelay'  );
+	$prefs->setValidate({ 'validator' => 'numlimit', 'low' =>    0,                 }, 'playDelay'   );
+	$prefs->setValidate({ 'validator' => 'numlimit', 'low' =>    0, 'high' =>     1 }, 'packetLatency');
+	$prefs->setValidate({ 'validator' => 'numlimit', 'low' => 0.01, 'high' =>    10 }, 'minSyncAdjust');
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>  128,                 }, 'syncBufferThreshold');
 
 	# set on change functions
 	$prefs->setChange( \&Slim::Web::HTTP::adjustHTTPPort,                              'httpport'    );
