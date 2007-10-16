@@ -1,7 +1,0 @@
-# String file for Jive plugin
-
-PLUGIN_JIVE
-	EN	Jive Interface
-
-PLUGIN_JIVE_DESC
-	EN	Jive interface

@@ -1,4 +1,4 @@
-package Slim::Plugin::Jive::Plugin;
+package Slim::Control::Jive;
 
 # SqueezeCenter Copyright (c) 2001-2007 Sean Adams, Slim Devices Inc.
 # This program is free software; you can redistribute it and/or
@@ -6,7 +6,6 @@ package Slim::Plugin::Jive::Plugin;
 # version 2.
 
 use strict;
-use base qw(Slim::Plugin::Base);
 
 use POSIX;
 use Scalar::Util qw(blessed);
@@ -24,7 +23,7 @@ use Data::Dump;
 
 =head1 NAME
 
-Plugins::Jive::Plugin
+Slim::Control::Jive
 
 =head1 SYNOPSIS
 
@@ -33,26 +32,22 @@ CLI commands used by Jive.
 =cut
 
 my $log = Slim::Utils::Log->addLogCategory({
-	'category'     => 'plugin.jive',
+	'category'     => 'player.jive',
 	'defaultLevel' => 'WARN',
 	'description'  => getDisplayName(),
 });
 
-################################################################################
-# PLUGIN CODE
-################################################################################
+# additional top level menus registered by plugins
+my @pluginMainMenus = ();
+
 =head1 METHODS
 
-=head2 initPlugin()
-
-Plugin init.
+=head2 init()
 
 =cut
-sub initPlugin {
+sub init {
 	my $class = shift;
 
-	$class->SUPER::initPlugin();
-	
 	# register our functions
 	
 #        |requires Client
@@ -80,11 +75,11 @@ sub initPlugin {
 
 =head2 getDisplayName()
 
-Returns plugin name
+Returns name of module
 
 =cut
 sub getDisplayName {
-	return 'PLUGIN_JIVE';
+	return 'JIVE';
 }
 
 ######
@@ -399,10 +394,12 @@ sub menuQuery {
 
 	);
 
-
 	if ( blessed($client) && $client->isPlayer() && $client->canPowerOff() ) {
 		push @menu, powerHash($client);
 	}
+
+	# add menu entries registered by other plugins
+	push @menu, @pluginMainMenus;
 
 	my $numitems = scalar(@menu);
 
@@ -422,6 +419,27 @@ sub menuQuery {
 	}
 
 	$request->setStatusDone();
+}
+
+# allow a plugin to add a menu hash entry to appear at the top level of the player menu
+sub registerMainMenu {
+	my $menuHash = shift;
+
+	if (ref $menuHash eq 'HASH' && exists $menuHash->{text}) {
+		push @pluginMainMenus, $menuHash;
+	}
+}
+
+# allow a plugin to remove a previously registered menu entry - keyed by menu text
+sub removeMainMenu {
+	my $menuText = shift;
+
+	for my $i (0..$#pluginMainMenus) {
+		if ($pluginMainMenus[$i]->{text} eq $menuText) {
+			splice @pluginMainMenus, $i, 1;
+			return;
+		}
+	}
 }
 
 sub alarmSettingsQuery {

@@ -162,6 +162,7 @@ use Slim::Networking::Slimproto;
 use Slim::Networking::SimpleAsyncHTTP;
 use Slim::Utils::Firmware;
 use Slim::Utils::UPnPMediaServer;
+use Slim::Control::Jive;
 
 our @AUTHORS = (
 	'Sean Adams',
@@ -184,6 +185,7 @@ our @AUTHORS = (
 	'Max Spicer',
 	'Dan Sully',
 	'Richard Titmuss',
+	'Ben Klaas',
 );
 
 my $prefs        = preferences('server');
@@ -367,6 +369,9 @@ sub init {
 		$log->info("SqueezeCenter Web Settings init...");
 		Slim::Web::Setup::initSetup();
 	}
+
+	$log->info("SqueezeCenter Jive init...");
+	Slim::Control::Jive->init();
 
 	$log->info("SqueezeCenter Plugins init...");
 	Slim::Utils::PluginManager->init();
