@@ -5723,26 +5723,6 @@ SETUP_ENABLE_STATISTICS
 	NO	Vis statestikk for musikkbiblioteket.
 	ZH_CN	启用库存统计
 
-SETUP_PREFSWRITEDELAY
-	DE	Schreibintervall für Einstellungen
-	EN	Prefs write interval
-	ES	Intervalo de escritura de preferencias
-	FR	Intervalle de sauvegarde des préférences
-	HE	מרווח זמן לכתיבת העדפות
-	IT	Preferenze intervallo di scrittura
-	NL	Schrijfinterval voorkeuren
-	ZH_CN	参数选择纪录间隔时间
-
-SETUP_PREFSWRITEDELAY_DESC
-	DE	Diese Einstellung legt fest, wie oft die Einstellungen auf die Festplatte geschrieben werden Der Wert '0' bedeutet, dass jede Änderung sofort geschrieben wird. Bei höheren Werte werden die Änderungen gepuffert und nach der angegeben Zeit in Sekunden gleichzeitig gespeichert.
-	EN	This setting determines how often preferences are written to disk.  Set to 0 to write every change to disk, higher values batch changes and writes the preferences after the given number of seconds pass.
-	ES	Esta opción determina la frecuencia con que las preferencias se guardan en disco. Establezca en cero para escribir en disco cada cambio. Los valores más altos agrupan los cambios y las preferencias se escriben una vez transcurridos los segundos indicados.
-	FR	Ce réglage permet de déterminer l'intervalle de sauvegarde des préférences sur le disque dur. La valeur 0 signifie que toutes les modifications sont sauvegardées, et une valeur élevée détermine le nombre de secondes avant la prochaine sauvegarde des modifications.
-	HE	הגדרה זו קובעת את תדירות כתיבת ההעדפות לדיסק. הגדר ל-‏0 כדי לכתוב לדיסק כל שינוי; ערכים גבוהים יותר מאגדים שינויים וכותבים את ההעדפות לאחר מספר נתון של שניות.
-	IT	Questa impostazione determina quando vengono registrate sul disco le preferenze. Impostarla su 0 per registrare sul disco ogni cambiamento. Utilizzando valori più elevati i cambiamenti vengono memorizzati e quindi registrati dopo il numero di secondi impostato.
-	NL	Deze instelling geeft aan hoe vaak voorkeuren naar de vaste schijf geschreven moeten worden. Kies 0 om elke wijziging direct naar de vaste schijf te schrijven. Hogere waarden groeperen wijzigingen en schrijven de voorkeuren na het opgegeven aantal seconden naar de vaste schijf.
-	ZH_CN	这个设置决定了参数选择纪录到硬盘的频繁度。以0为值则表示将每一个更动即刻纪录到硬盘。较高的值则表示在该指定的秒数内累积多项更动以便到时一起纪录到硬盘上。
-
 SETUP_LONGDATEFORMAT
 	CS	Formát datumu douhý
 	DA	Langt dato-format
