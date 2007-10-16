@@ -38,7 +38,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 # additional top level menus registered by plugins
-my @pluginMainMenus = ();
+my @extrasMenu = ();
 
 =head1 METHODS
 
@@ -103,6 +103,7 @@ sub menuQuery {
 
 	my $prefs         = preferences("server");
 	my ($settingsMenu, $settingsCount)  = playerSettingsMenu($request, $client, $index, $quantity, $prefs);
+
 	# as a convention, make weights => 10 and <= 100; Jive items that want to be below all SS items
 	# then just need to have a weight > 100, above SS items < 10
 	my @menu = (
@@ -382,6 +383,15 @@ sub menuQuery {
 			},
 		},
 		{
+			text    => Slim::Utils::Strings::string('PLAYER_PLUGINS'),
+			weight  => 45,
+			count     => scalar(@extrasMenu),
+			offset    => 0,
+			item_loop => \@extrasMenu,
+			window        => {
+			},
+		},
+		{
 			text    => Slim::Utils::Strings::string('SETTINGS'),
 			weight  => 50,
 			count     => $settingsCount,
@@ -398,8 +408,6 @@ sub menuQuery {
 		push @menu, powerHash($client);
 	}
 
-	# add menu entries registered by other plugins
-	push @menu, @pluginMainMenus;
 
 	my $numitems = scalar(@menu);
 
@@ -426,7 +434,7 @@ sub registerMainMenu {
 	my $menuHash = shift;
 
 	if (ref $menuHash eq 'HASH' && exists $menuHash->{text}) {
-		push @pluginMainMenus, $menuHash;
+		push @extrasMenu, $menuHash;
 	}
 }
 
@@ -434,9 +442,9 @@ sub registerMainMenu {
 sub removeMainMenu {
 	my $menuText = shift;
 
-	for my $i (0..$#pluginMainMenus) {
-		if ($pluginMainMenus[$i]->{text} eq $menuText) {
-			splice @pluginMainMenus, $i, 1;
+	for my $i (0..$#extrasMenu) {
+		if ($extrasMenu[$i]->{text} eq $menuText) {
+			splice @extrasMenu, $i, 1;
 			return;
 		}
 	}
