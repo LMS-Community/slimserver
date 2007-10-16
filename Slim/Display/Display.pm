@@ -789,7 +789,12 @@ sub forgetDisplay {
 sub string {
 	my $strings = shift->displayStrings;
 	my $name = uc(shift);
-	return $strings->{$name} || logBacktrace("missing string $name") && '';
+	
+	if ( @_ ) {
+		return sprintf( $strings->{$name} || ( logBacktrace("missing string $name") && $name ), @_ );
+	}
+	
+	return $strings->{$name} || ( logBacktrace("missing string $name") && $name );
 }
 
 sub doubleString {
