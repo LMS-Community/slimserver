@@ -46,7 +46,26 @@ body {
 }
 
 #header .titlebox {
-	margin: 5px 10px;
+	margin: 5px 10px 0 10px;
+}
+
+#header .titlebox_bottom {
+	margin-bottom: 5px;
+}
+
+#footer .titlebox_bottom {
+	margin-bottom: 15px;
+}
+
+#basicAdvanced {
+	position: absolute;
+	right: 20px;
+	top: 16px;
+}
+
+#settingsSelector {
+	padding-bottom: 10px;
+	margin: 0 10px;
 }
 
 #footer .titlebox {
@@ -64,11 +83,6 @@ body {
 
 .mainFrame {
 	background: url(html/images/help/background.gif) repeat;
-	height: 50px;
-}
-
-.mainFrame_content {
-	height: 45px;
 }
 
 .mainFrame_top div {
@@ -116,6 +130,10 @@ body {
 }
 
 .prefHead {
+	font-weight: bold;
+}
+
+.settingGroup .prefHead {
 	position: absolute;
 	width: 300px;
 	left: 0px;

@@ -2115,6 +2115,9 @@ SOURCE
 #
 # Setup page strings
 # General strings for the setup pages
+SETUP_ACCOUNTS
+	DE	Konten
+	EN	Accounts
 
 SETUP_BAD_PAGE_SUGGEST
 	DE	Erweitern Sie die Adresse um page=SERVER_SETTINGS.

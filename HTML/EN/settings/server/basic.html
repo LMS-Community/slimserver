@@ -1,61 +1,41 @@
 [% PROCESS settings/header.html %]
 
-	<div class="settingSection">
-		<div class="settingGroup">
-			<div class="prefHead">[% "SETUP_LANGUAGE" | string %]</div>
-			<div class="prefDesc hiddenDesc">[% "SETUP_LANGUAGE_DESC" | string %]</div>
-	
-			<select class="stdedit" name="language" id="language">
-	
-			[% FOREACH option = languageoptions %]
-				<option [% IF prefs.language == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
-			[%- END -%]
-			
-			</select>
-		</div>
+	[% WRAPPER setting title="SETUP_LANGUAGE" desc="SETUP_LANGUAGE_DESC" %]
+		<select class="stdedit" name="language" id="language">
 
-	</div>
+		[% FOREACH option = languageoptions %]
+			<option [% IF prefs.language == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
+		[%- END -%]
+		
+		</select>
+	[% END %]
 
-	<div class="settingSection">
-		<div class="settingGroup">
-			<div class="prefHead">[% "SETUP_AUDIODIR" | string %]</div>
-			<div class="prefDesc hiddenDesc">[% "SETUP_AUDIODIR_DESC" | string %]</div>
-	
+	[% WRAPPER settingSection %]
+		[% WRAPPER settingGroup title="SETUP_AUDIODIR" desc="SETUP_AUDIODIR_DESC" %]
 			<input type="text" class="stdedit selectFolder" name="audiodir" id="audiodir" value="[% prefs.audiodir %]" size="40">
-		</div>
+		[% END %]
 
-		<div class="settingGroup">
-			<div class="prefHead">[% "SETUP_PLAYLISTDIR" | string %]</div>
-			<div class="prefDesc hiddenDesc">[% "SETUP_PLAYLISTDIR_DESC" | string %]</div>
-	
+		[% WRAPPER settingGroup title="SETUP_PLAYLISTDIR" desc="SETUP_PLAYLISTDIR_DESC" %]
 			<input type="text" class="stdedit selectFolder" name="playlistdir" id="playlistdir" value="[% prefs.playlistdir %]" size="40">
-		</div>
-	</div>
+		[% END %]
+	[% END %]
 
-	<div class="settingSection">
-	
-		<div class="settingGroup">
-			<div class="prefHead">[% "SETUP_RESCAN" | string %]</div>
-			<div class="prefDesc hiddenDesc">[% "SETUP_RESCAN_DESC" | string %]</div>
-	
-			<select class="stdedit" name="rescantype" id="rescantype">
-	
-			[% FOREACH option = {
-				'1rescan'   => 'SETUP_STANDARDRESCAN',
-				'2wipedb'   => 'SETUP_WIPEDB',
-				'3playlist' => 'SETUP_PLAYLISTRESCAN',
-			} %]
-				<option value="[% option.key %]">[% option.value | string %]</option>
-			[%- END -%]
-			
-			</select>
+	[% WRAPPER setting title="SETUP_RESCAN" desc="SETUP_RESCAN_DESC" %]
+		<select class="stdedit" name="rescantype" id="rescantype">
 
-			<input name="rescan" type="submit" class="stdclick" value="[% "SETUP_RESCAN_BUTTON" | string %]">
-		</div>
+		[% FOREACH option = {
+			'1rescan'   => 'SETUP_STANDARDRESCAN',
+			'2wipedb'   => 'SETUP_WIPEDB',
+			'3playlist' => 'SETUP_PLAYLISTRESCAN',
+		} %]
+			<option value="[% option.key %]">[% option.value | string %]</option>
+		[%- END -%]
+		
+		</select><br/>
 
+		<input name="rescan" type="submit" class="stdclick" value="[% "SETUP_RESCAN_BUTTON" | string %]">
 		<a href="[% webroot %]progress.html?type=importer">[% IF scanning %][% "SETUP_VIEW_SCANNING" | string %][% ELSE %][% "SETUP_VIEW_NOT_SCANNING" | string %][% END %]</a>
-
-	</div>
+	[% END %]
 
 	[% IF prefs.exists('itunes') || prefs.exists('musicmagic') %]
 	<div class="settingSection">

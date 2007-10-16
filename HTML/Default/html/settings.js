@@ -1,10 +1,12 @@
 Settings = function(){
+	var basicBtn, advBtn, header;
+
 	return {
 		init : function(){
 			var layout = new Ext.BorderLayout(document.body, {
 				north: {
 					split:false,
-					initialSize: 55
+					initialSize: 80
 				},
 				south: {
 					split:false,
@@ -16,7 +18,7 @@ Settings = function(){
 			});
 
 			layout.beginUpdate();
-			layout.add('north', new Ext.ContentPanel('header', {fitToFrame:true, fitContainer:true}));
+			layout.add('north', header = new Ext.ContentPanel('header', {fitToFrame:true, fitContainer:true}));
 			layout.add('south', new Ext.ContentPanel('footer', {fitToFrame:true, fitContainer:true}));
 			layout.add('center', new Ext.ContentPanel('main', {fitToFrame:true, fitContainer:true}));
 
@@ -24,8 +26,6 @@ Settings = function(){
 			Ext.EventManager.onDocumentReady(this.onResize, layout, true);
 
 			layout.endUpdate();
-
-			Ext.get('settings').dom.src = webroot + 'settings/server/security.html?player=' + player;
 
 			Ext.QuickTips.init();
 

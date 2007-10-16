@@ -341,5 +341,27 @@ END %]
 	<li><a href="[% href %]"[% IF target %] target="[% target %]"[% END %]>[% title %]</a></li>
 [% END -%]
 
+[% BLOCK settingSection %]
+	<div class="settingSection">
+		[% content %]
+	</div>
+[% END -%]
+
+[% BLOCK settingGroup %]
+	<div class="settingGroup">
+		[% IF title %]<div class="prefHead">[% title | getstring %]</div>[% END %]
+		[% IF desc %]<div class="prefDesc hiddenDesc">[% desc | getstring %]</div>[% END %]
+		<div class="prefs">[% content %]</div>
+	</div>
+[% END -%]
+
+[% BLOCK setting %]
+	[% WRAPPER settingSection %]
+		[% WRAPPER settingGroup %]
+			[% content %]
+		[% END -%]
+	[% END -%]	
+[% END -%]
+
 
 [% END -%]

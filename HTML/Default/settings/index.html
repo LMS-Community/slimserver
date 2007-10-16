@@ -34,9 +34,35 @@
 
 		<script type="text/javascript">
 			var strings = new Array();
-//			strings['loading']  = "[% "LOADING" | string %]";
+			strings['basic']     = "[% "BASIC_SERVER_SETTINGS" | string %]";
+			strings['player']    = "[% "PLAYER" | string %]";
+			strings['mymusic']   = "[% "MY_MUSIC" | string %]";
+			strings['itunes']    = "[% "ITUNES" | string %]";
+			strings['podcasts']  = "[% "PLUGIN_PODCAST" | string %]";
+			strings['accounts']  = "[% "SETUP_ACCOUNTS" | string %]";
+			strings['interface'] = "[% "INTERFACE_SETTINGS" | string %]";
+			strings['plugins']   = "[% "SETUP_GROUP_PLUGINS" | string %]";
+			strings['advanced']  = "[% "ADVANCED_SETTINGS" | string %]";
+
+			function showSettingsPage(page) {
+				Ext.get('settings').dom.src = webroot + page + '?player=' + player;
+			}
 
 			Ext.EventManager.onDocumentReady(Settings.init, Settings, true);
+			Ext.EventManager.onDocumentReady(function(){
+				var tp = new Ext.TabPanel('settingsSelector');
+				tp.addTab('t1', strings['basic']).on('activate', function(){ showSettingsPage('settings/server/basic.html'); });
+				tp.addTab('t2', strings['player']).on('activate', function(){ showSettingsPage('settings/player/basic.html'); });
+				tp.addTab('t3', strings['mymusic']).on('activate', function(){ showSettingsPage('settings/server/behavior.html'); });
+				tp.addTab('t4', strings['itunes']).on('activate', function(){ showSettingsPage('plugins/iTunes/settings/itunes.html'); });
+				tp.addTab('t5', strings['podcasts']).on('activate', function(){ showSettingsPage('plugins/Podcast/settings/basic.html'); });
+				tp.addTab('t6', strings['accounts']).on('activate', function(){ showSettingsPage('settings/server/accounts.html'); });
+				tp.addTab('t7', strings['interface']).on('activate', function(){ showSettingsPage('settings/server/interface.html'); });
+				tp.addTab('t8', strings['plugins']).on('activate', function(){ showSettingsPage('settings/server/plugins.html'); });
+				tp.addTab('t9', strings['advanced']).on('activate', function(){ showSettingsPage('settings/server/behavior.html'); });
+
+				tp.activate('t1');
+			});
 		</script>
 	</head>
 
@@ -53,9 +79,20 @@
 							<div class="titlebox_content">
 								<div class="pagetitle">
 									[% "SQUEEZECENTER" | string; " - "; "SETTINGS" | string  %]
+									<span id="basicAdvanced">
+										<table>
+											<tr>
+												<td id="basic"></td>
+												<td id="advanced"></td>
+											</tr>
+										</table>
+									</span>
 								</div>
 							</div>
 							<div class="titlebox_bottom"><div></div></div>
+						</div>
+						<div id="settingsSelector">
+							[%# PROCESS setting_chooser.html %]
 						</div>
 					</div>
 				</div>
@@ -63,6 +100,10 @@
 
 			<div id="main">
 				<iframe name="settings" id="settings" frameborder="0" scrolling="no"></iframe>
+			</div>
+
+			<div id="left">
+				gugus, dada
 			</div>
 
 			<div id="footer">

@@ -16,7 +16,7 @@
 	border: 0px none;
 }
 
-.x-form-field {
+.x-form-field, .x-combo-list-item {
 	font-size: 11px;
 }
 
@@ -51,6 +51,16 @@ a.x-menu-item:hover {
 .x-menu-item-checked .x-menu-group-item .x-menu-item-icon {
 	background-image: url(html/images/slim-ext/group-checked.gif);
 }
+
+/* tabs and tab panel (settings) */
+.x-layout-panel .x-tabs-wrap {
+	background-image: none;
+}
+
+.x-tabs-strip .on .x-tabs-text {
+	color: #666666;
+}
+
 
 /* buttons */
 .x-btn {
@@ -92,9 +102,9 @@ a.x-menu-item:hover {
 .x-btn-over .x-btn-left, .x-btn-menu-active .x-btn-left { background-position:0 -66px; }
 .x-btn-over .x-btn-right, .x-btn-menu-active .x-btn-right { background-position:0 -88px; }
 .x-btn-over .x-btn-center, .x-btn-menu-active .x-btn-center { background-position:0 -110px; }
-.x-btn-click .x-btn-left { background-position:0 -132px; }
-.x-btn-click .x-btn-right { background-position:0 -154px; }
-.x-btn-click .x-btn-center { background-position:0 -176px; }
+.x-btn-click .x-btn-left, .x-btn-pressed .x-btn-left  { background-position:0 -132px; }
+.x-btn-click .x-btn-right, .x-btn-pressed .x-btn-right { background-position:0 -154px; }
+.x-btn-click .x-btn-center, .x-btn-pressed .x-btn-center { background-position:0 -176px; }
 
 /* small buttons */
 .btn-small .x-btn-text, .btn-small .x-btn button {
