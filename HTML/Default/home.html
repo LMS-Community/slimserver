@@ -178,7 +178,7 @@ ELSE %]
 				<div id="MUSIC_ON_DEMAND_expanded" class="expandableHomeMenuItem">[%- music_on_demandItems -%]</div>
 			[% END %]
 		
-			[% PROCESS menuItem link.key="FAVORITES" link.value=favlink.value category='my_music' expandable=0 singleton=1; singleton=0 %]
+			[% PROCESS menuItem link.key="FAVORITES" link.value=favlink.value category='' expandable=0 singleton=1; singleton=0 %]
 		
 			[% IF additionalLinks.plugins %]
 				[% PROCESS menuItem link.key="PLUGINS" link.value="home.html?" expandable="plugins" category=''; expandable = 0 %]
