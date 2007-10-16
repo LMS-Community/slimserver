@@ -72,11 +72,12 @@ ELSE %]
 
 	[% BLOCK menuItem; page = page | lower %]
 		<div class="selectorMarker[% IF singleton %] homeMenuSection_singleton[% END %]" onmouseover="Utils.highlight(this);"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-			<div class="homeMenuItem[% IF (page == 'radio' || page == 'music_on_demand') && additionalLinks.icons.${link.key}.url %] itemWithCover[% END %]" id="[% link.key %]">
+			<div class="homeMenuItem[% IF (page == 'radio' || page == 'music_on_demand') && additionalLinks.icons.${link.key}.url %] itemWithCover[% END %]" id="[% link.key %]" [% IF expandable %]onclick="MainMenu.toggleItem('[% link.key %]');"[% END %]>
 				[% IF expandable %]
-					<span onclick="MainMenu.toggleItem('[% link.key %]');"><img class="disclosure_home" src="[% webroot %]html/images/spacer.gif"/></span>
-				[% END; %]
-				<a href="[% link.value %]player=[% player %][% IF category; "&amp;homeCategory=" _ category; END %][% IF expandable; "&amp;page=" _ expandable; END %]" class="browseItemLink">
+					<img class="disclosure_home" src="[% webroot %]html/images/spacer.gif"/>
+				[% ELSE %]
+					<a href="[% link.value %]player=[% player %][% IF category; "&amp;homeCategory=" _ category; END %][% IF expandable; "&amp;page=" _ expandable; END %]" class="browseItemLink">
+				[% END %]
 					[% IF (page == 'radio' || page == 'music_on_demand') && additionalLinks.icons.${link.key}.url %]
 						<span class="browseCover">
 							<img src="[% webroot %][% additionalLinks.icons.${link.key}.url.replace('.png', "_50x50_f.png") %]" width="50" border="0" alt="[% link.key | string %]">
@@ -94,7 +95,9 @@ ELSE %]
 							</div>
 						[% END %]
 					[% END %]
-				</a>
+				[% IF !expandable %]
+					</a>
+				[% END %]
 
 				[% IF link.key == 'RADIO_TUNEIN' %]
 					<span class="browsedbControls">
