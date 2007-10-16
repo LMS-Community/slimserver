@@ -190,7 +190,7 @@ my $prefs        = preferences('server');
 
 our $VERSION     = '7.0';
 our $REVISION    = undef;
-our $audiodir    = undef
+our $audiodir    = undef;
 our $playlistdir = undef;
 our $httpport    = undef;
 
