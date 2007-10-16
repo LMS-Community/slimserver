@@ -367,12 +367,6 @@ sub playmode {
 		$newmode = "pausenow";
 	}
 	
-	# notify parent of new playmode
-	$client->sendParent( {
-		command  => 'playmode',
-		playmode => $newmode,
-	} );
-	
 	# if we're playing, then open the new song the master.		
 	if ($newmode eq "resume") {
 
@@ -1399,12 +1393,6 @@ sub streamingSongIndex {
 		if ( $log->is_info ) {
 			$log->info("Song queue is now " . join(',', map { $_->{'index'} } @$queue));
 		}
-
-		# notify parent of new queue
-		$client->sendParent( {
-			command => 'currentsongqueue',
-			queue   => $client->currentsongqueue(),
-		} );
 	}
 
 	$song = $client->currentsongqueue()->[0];
@@ -1474,11 +1462,6 @@ sub resetSongQueue {
 	#$request->addParam('reset',1);
 
 	Slim::Player::Playlist::newSongPlaylist($client, 1);
-	
-	$client->sendParent( {
-		command => 'currentsongqueue',
-		queue   => $client->currentsongqueue(),
-	} );
 }
 
 sub markStreamingTrackAsPlayed {
@@ -1488,11 +1471,6 @@ sub markStreamingTrackAsPlayed {
 	if (defined($song)) {
 		$song->{status} = STATUS_PLAYING;
 	}
-	
-	$client->sendParent( {
-		command => 'currentsongqueue',
-		queue   => $client->currentsongqueue(),
-	} );
 }
 
 sub trackStartEvent {
@@ -1634,10 +1612,6 @@ sub resetSong {
 	$client->songStartStreamTime(0);
 	$client->bytesReceivedOffset($client->bytesReceived());
 	$client->trickSegmentRemaining(0);
-	
-	$client->sendParent( {
-		command => 'resetSong',
-	} );
 }
 
 sub errorOpening {
@@ -2089,14 +2063,6 @@ sub openSong {
 		$song->{'duration'}   = $duration;
 		$song->{'offset'}     = $offset;
 		$song->{'blockalign'} = $blockalign;
-		
-		# Notify the parent of new song queue, and start/pause times
-		$client->sendParent( {
-			command   => 'currentsongqueue',
-			queue     => $client->currentsongqueue(),
-			remoteSST => $client->remoteStreamStartTime(),
-			pauseTime => $client->pauseTime(),
-		} );
 
 		$client->streamformat($format);
 

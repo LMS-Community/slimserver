@@ -81,7 +81,7 @@ sub new {
 
 	# The following indexes are unused:
 	# 1, 2, 3, 11, 12, 13, 16, 23, 24, 25, 26, 27, 33, 34, 53
-	# 64, 65, 66, 67, 68, 72,
+	# 64, 65, 66, 67, 68, 72, 111
 
 	$client->[0] = $id;
 #	$client->[1]
@@ -213,7 +213,6 @@ sub new {
 	$client->[108] = 0; # lastDigitIndex
 	$client->[109] = 0; # lastDigitTime
 	$client->[110] = undef; # lastSong (last URL played in this play session - a play session ends when the player is stopped or a track is skipped)
-	$client->[111] = {}; # pipe sockets used for parent/child communication
 	$client->[112] = 0; # knobSync
 	$client->[113] = {}; # pendingPrefChanges
 	$client->[114] = 0; # bufferStarted, tracks when players begin buffering/rebuffering
@@ -1060,40 +1059,6 @@ sub streamingProgressBar {
 	}
 }
 
-=head2 sendParent( $client, $msg )
-
-Send an IPC message to our parent process. Used for forked streaming.
-
-=cut
-
-sub sendParent {
-	my ( $client, $msg ) = @_;
-	
-	return unless $Slim::Web::HTTP::inChild;
-	
-	if ( $client->pipes->{pw} ) {
-		$msg->{clientid} = $client->id;
-		$client->pipes->{pw}->syswrite( nfreeze( $msg ) );
-	}
-}
-
-=head2 sendChild( $client, $msg )
-
-Send an IPC message to our child process. Used for forked streaming.
-
-=cut
-
-sub sendChild {
-	my ( $client, $msg ) = @_;
-	
-	return if $Slim::Web::HTTP::inChild;
-	
-	if ( $client->pipes->{cw} ) {
-		$msg->{clientid} = $client->id;
-		$client->pipes->{cw}->syswrite( nfreeze( $msg ) );
-	}
-}
-
 =head2 id()
 
 Returns the client ID - in the form of a MAC Address.
@@ -1599,11 +1564,6 @@ sub lastDigitTime {
 sub lastSong {
 	my $r = shift;
 	@_ ? ($r->[110] = shift) : $r->[110];
-}
-
-sub pipes {
-	my $r = shift;
-	@_ ? ($r->[111] = shift) : $r->[111];
 }
 
 sub knobSync {

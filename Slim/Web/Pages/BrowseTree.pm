@@ -22,7 +22,7 @@ my $prefs = preferences('server');
 
 sub init {
 	
-	Slim::Web::HTTP::addPageFunction( qr/^browsetree\.(?:htm|xml)/, \&browsetree, 'fork' );
+	Slim::Web::HTTP::addPageFunction( qr/^browsetree\.(?:htm|xml)/, \&browsetree );
 	
 	if ($prefs->get('audiodir')) {
 		Slim::Web::Pages->addPageLinks("browse",{'BROWSE_MUSIC_FOLDER'   => "browsetree.html"});

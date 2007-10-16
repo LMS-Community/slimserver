@@ -27,7 +27,7 @@ use constant CACHE_TIME => 300;
 
 sub init {
 	
-	Slim::Web::HTTP::addPageFunction( qr/^playlist\.(?:htm|xml)/, \&playlist, 'fork' );
+	Slim::Web::HTTP::addPageFunction( qr/^playlist\.(?:htm|xml)/, \&playlist );
 }
 
 sub playlist {

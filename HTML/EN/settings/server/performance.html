@@ -12,12 +12,10 @@
 		
 		</select>
 
-		[% IF prefs.exists('forkedWeb') %]
 		<div class="prefHead">[% "SETUP_PREFSWRITEDELAY" | string %]</div>
 		<div class="prefDesc">[% "SETUP_PREFSWRITEDELAY_DESC" | string %]</div>
 
 		<input type=text class="stdedit" name="prefsWriteDelay" id="prefsWriteDelay" value="[% prefs.prefsWriteDelay %]" size="15">
-		[% END %]
 
 		<div class="prefHead">[% "SETUP_SERVERPRIORITY" | string %]</div>
 		<div class="prefDesc">[% "SETUP_SERVERPRIORITY_DESC" | string %]</div>
@@ -44,28 +42,6 @@
 		[%- END -%]
 
 		</select>
-
-		[% IF prefs.exists('forkedWeb') || prefs.exists('forkedStreaming') %]
-		<div class="prefHead">[% "SETUP_FORKEDWEB" | string %]</div>
-		<div class="prefDesc">[% "SETUP_FORKEDWEB_DESC" | string %]</div>
-
-		<select class="stdedit" name="forkedWeb" id="forkedWeb">
-
-			<option [% IF NOT prefs.forkedWeb %]selected [% END %]value="0">[% 'SETUP_FORKEDWEB_DISABLE' | getstring %]</option>
-			<option [% IF prefs.forkedWeb %]selected [% END %]value="1">[% 'SETUP_FORKEDWEB_ENABLE' | getstring %]</option>
-		
-		</select>
-		
-		<div class="prefHead">[% "SETUP_FORKEDSTREAMING" | string %]</div>
-		<div class="prefDesc">[% "SETUP_FORKEDSTREAMING_DESC" | string %]</div>
-
-		<select class="stdedit" name="forkedStreaming" id="forkedStreaming">
-
-			<option [% IF NOT prefs.forkedStreaming %]selected [% END %]value="0">[% 'SETUP_FORKEDSTREAMING_DISABLE' | getstring %]</option>
-			<option [% IF prefs.forkedStreaming %]selected [% END %]value="1">[% 'SETUP_FORKEDSTREAMING_ENABLE' | getstring %]</option>
-		
-		</select>
-		[% END %]
 
 	</div>
 

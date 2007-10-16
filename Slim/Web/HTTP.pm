@@ -93,10 +93,6 @@ our @templateDirs = ();
 our %pageFunctions = ();
 tie %pageFunctions, 'Tie::RegexpHash';
 
-# we fork the server to execute those pageFunctions
-our %forkFunctions = ();
-tie %forkFunctions, 'Tie::RegexpHash';
-
 # we bypass most of the template stuff to execute those
 our %rawFunctions = ();
 tie %rawFunctions, 'Tie::RegexpHash';
@@ -109,9 +105,6 @@ our @closeHandlers = ();
 our $pageBuild = Slim::Utils::PerfMon->new('Web Page Build', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
 
 our %dangerousCommands;
-
-# flag for when we are in a child process
-our $inChild;
 
 my $log = logger('network.http');
 
@@ -1030,24 +1023,6 @@ sub generateHTTPResponse {
 		# if we match one of the page functions as defined above,
 		# execute that, and hand it a callback to send the data.
 
-		# fork for certain read-only operations i.e. browsedb
-		if ( $forkFunctions{$path} && $^O !~ /Win32/ && $prefs->get('forkedWeb') ) {
-
-			if ( my $pid = fork ) {
-
-				$log->info("Forked $pid to handle web request for $httpClient");
-
-				closeHTTPSocket($httpClient);
-				return;
-			}
-			else {
-				$inChild = 1;
-				
-				# disable keepalive if serving from a one-time process
-				$response->header('Connection' => 'close');
-			}
-		}
-
 		$::perfmon && (my $startTime = Time::HiRes::time());
 
 		if (ref($classOrCode) eq 'CODE') {
@@ -1094,56 +1069,6 @@ sub generateHTTPResponse {
 
 		$metaDataBytes{$httpClient} = - length($headers);
 		
-		# fork for streaming
-		if ( $^O !~ /Win32/ && $prefs->get('forkedStreaming') ) {
-			
-			# This doesn't support synced players at the moment
-			if ( !Slim::Player::Sync::isSynced($client) ) {
-				
-				# create bidirectional pipes for communication
-				my ( $parent_read, $parent_write, $child_read, $child_write );
-				pipe( $parent_read, $child_write );
-				pipe( $child_read, $parent_write );
-
-				$client->pipes( {
-					pr => $parent_read,
-					pw => $parent_write,
-					cr => $child_read,
-					cw => $child_write,
-				} );
-			
-				if ( my $pid = fork ) {
-
-					$log->info("Forked $pid to handle stream");
-				
-					# close HTTP socket, child will keep it open
-					closeHTTPSocket($httpClient);
-				
-					# close parent-side pipes
-					close $client->pipes->{pr};
-					close $client->pipes->{pw};
-					
-					# watch for messages from the child
-					Slim::Networking::Select::addRead( $client->pipes->{cr}, \&childRead );
-				
-					# watch for playlist changes in parent that we need to send to child
-					Slim::Control::Request::subscribe( \&playlistCallback, [['playlist']] );
-				
-					# Set a callback to cleanup when the child dies
-					Slim::bootstrap::sigCHLDCallback( $pid, \&childTermCallback, $client );
-				
-					return;
-				}
-				else {
-					$inChild = 1;
-				
-					# close child-side pipes
-					close $client->pipes->{cr};
-					close $client->pipes->{cw};
-				}
-			}
-		}
-
 		addStreamingResponse($httpClient, $headers);
 
 		return 0;
@@ -1360,23 +1285,6 @@ sub generateHTTPResponse {
 sub sendStreamingFile {
 	my ( $httpClient, $response, $contentType, $file ) = @_;
 	
-	# fork for sending large file downloads
-	if ( $^O !~ /Win32/ && $prefs->get('forkedWeb') ) {
-
-		if ( my $pid = fork ) {
-
-			$log->info("Forked $pid to handle file download");
-
-			closeHTTPSocket($httpClient);
-			return;
-		}
-		else {
-			$inChild = 1;
-			
-			$response->header('Connection' => 'close');
-		}
-	}
-
 	# Send the file down - and hint to the browser
 	# the correct filename to save it as.
 	$response->content_type( $contentType );
@@ -1396,99 +1304,6 @@ sub sendStreamingFile {
 	delete $peerclient{$httpClient};
 
 	addStreamingResponse($httpClient, $headers);
-}
-
-sub childRead {
-	my $child = shift;
-	
-	my $bytes = sysread $child, my $data, 4096;
-	
-	if ( !$bytes ) {
-
-		# child may have died
-		$log->error('childRead had an error: ' . ( $! || 'eof' ));
-
-		Slim::Networking::Select::removeRead( $child );
-		close $child;
-		return;
-	}
-	
-	return unless $bytes;
-	
-	$data = thaw($data);
-	
-	if ( $log->is_info ) {
-		$log->info("[$$] childRead got " . Data::Dump::dump($data));
-	}
-	
-	my $client = Slim::Player::Client::getClient( $data->{clientid} );
-	
-	if ( $client ) {	
-		if ( $data->{command} eq 'playmode' ) {
-			# this allows the parent to change to playout-play/playout-stop when the child does
-			Slim::Player::Source::playmode( $client, $data->{playmode} );
-		}
-		elsif ( $data->{command} eq 'resetSong' ) {
-			Slim::Player::Source::resetSong( $client );
-		}
-		elsif ( $data->{command} eq 'refreshPlaylist' ) {
-			# XXX: not sure if this is needed
-			#Slim::Player::Playlist::refreshPlaylist( $client, $data->{index} );
-		}
-		elsif ( $data->{command} eq 'currentsongqueue' ) {
-			# This keeps the song queue and now playing info in sync with the child
-			
-			# XXX: Fix the currentsongqueue() accessor to allow proper set?
-			$client->[30] = $data->{queue};
-			
-			$client->remoteStreamStartTime( $data->{remoteSST} ) if $data->{remoteSST};
-			
-			$client->pauseTime( $data->{pauseTime} ) if $data->{pauseTime};
-		}
-		elsif ( $data->{command} eq 'setCurrentTitle' ) {
-			# set metadata read from a remote stream
-			Slim::Music::Info::setCurrentTitle( $data->{url}, $data->{title} );
-			
-			for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
-				$everybuddy->update();
-			}
-		}
-	}
-}
-
-# Watches for playlist commands to send to child process
-sub playlistCallback {
-	my $request = shift;
-	my $client  = $request->client();
-
-	return unless $client && $client->pipes->{cw};
-
-	# turn the playlist into a list of track object IDs
-	# they will be re-inflated by the client
-	my @tracks = map { $_->id } @{ Slim::Player::Playlist::playList($client) };
-	
-	# also send along the shuffleList
-	my @shuffle = @{ Slim::Player::Playlist::shuffleList($client) };
-	
-	# send the current playlist to the child as well as current
-	# repeat and shuffle settings
-	$client->sendChild( {
-		command     => 'playlist',
-		playList    => \@tracks,
-		shuffleList => \@shuffle,
-		repeat      => Slim::Player::Playlist::repeat($client),
-		shuffle     => Slim::Player::Playlist::shuffle($client),
-	} );
-}
-
-# Called when a child process exits
-sub childTermCallback {
-	my $client = shift;
-	
-	# clean up our pipes
-	Slim::Networking::Select::removeRead( $client->pipes->{cr} );
-	
-	$client->pipes( {} );
 }
 
 sub contentHasBeenModified {
@@ -1741,18 +1556,6 @@ sub addHTTPResponse {
 		}
 	}
 	
-	# Don't use select if we've forked
-	if ( $inChild ) {
-		# disable non-blocking on the socket
-		Slim::Utils::Network::blocking( $httpClient, 1 );
-
-		while ( sendResponse( $httpClient ) ) {}
-		
-		$log->info("Done sending response in child process, exiting");
-
-		exit 0;
-	}
-	
 	push @{$outbuf{$httpClient}}, {
 		'data'     => \$outbuf,
 		'offset'   => 0,
@@ -1845,11 +1648,6 @@ sub sendResponse {
 		$segment->{'offset'} += $sentbytes;
 		unshift @{$outbuf{$httpClient}}, $segment;
 		
-		if ( $inChild ) {
-			# We should never get here, since we disabled non-blocking on httpClient
-			return 1;
-		}
-
 	} else {
 		
 		$log->info("Sent $sentbytes to $peeraddr{$httpClient}:$port");
@@ -1872,10 +1670,6 @@ sub sendResponse {
 		} else {
 
 			$log->info("More segments to send to $peeraddr{$httpClient}:$port");
-			
-			if ( $inChild ) {
-				return 1;
-			}
 		}
 	}
 }
@@ -1920,71 +1714,7 @@ sub addStreamingResponse {
 		$client->paddr($newpeeraddr) if $newpeeraddr;
 	}
 	
-	if ( $inChild ) {
-		# synchronous child process, enable blocking to reduce CPU usage
-		Slim::Utils::Network::blocking( $httpClient, 1 );
-		
-		my $client = Slim::Player::Client::getClient($peerclient{$httpClient});
-		
-		# select for watching for messages from the parent process
-		my $sel = IO::Select->new();
-		$sel->add( $client->pipes->{pr} );
-		
-		while ( sendStreamingResponse( $httpClient ) ) {
-			if ( my ($pipe) = $sel->can_read(0) ) {
-				# process parent message
-				parentRead( $client, $httpClient, $pipe );
-			}					
-		}
-		
-		$log->info("Done streaming to $httpClient, exiting");
-
-		exit 0;
-	}
-	else {
-		Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse, 1);
-	}
-}
-
-sub parentRead {
-	my ( $client, $httpClient, $pipe ) = @_;
-	
-	my $bytes = sysread $pipe, my $data, 4096;
-
-	if ( !defined $bytes ) {
-		# if we can't read from our parent, something is seriously wrong
-		warn "parentRead had an error: $!\n";
-		exit 0;
-	}
-	
-	return unless $bytes;
-	
-	$data = thaw($data);
-	
-	if ( $log->is_info ) {
-		$log->info("parentRead got: " . Data::Dump::dump($data));
-	}
-	
-	if ( $data->{command} eq 'playlist' ) {
-		
-		# re-inflate playlist objects
-		my @playlist;
-		for my $id ( @{ $data->{playList} } ) {
-			push @playlist, Slim::Schema->find( Track => $id );
-			
-			# we could have a huge playlist to inflate, so just to be safe,
-			# send some streaming data after each one
-			sendStreamingResponse( $httpClient );
-		}
-		$client->[28] = \@playlist;
-		
-		# sync shuffle list
-		$client->[29] = $data->{shuffleList};
-		
-		# update repeat and shuffle settings
-		Slim::Player::Playlist::repeat( $client, $data->{repeat} );
-		Slim::Player::Playlist::shuffle( $client, $data->{shuffle} );
-	}
+	Slim::Networking::Select::addWrite($httpClient, \&sendStreamingResponse, 1);
 }
 
 sub clearOutputBuffer {
@@ -2136,14 +1866,7 @@ sub sendStreamingResponse {
 				
 				Slim::Networking::Select::removeWrite($httpClient);
 				
-				if ( $inChild && $httpClient->connected() ) {
-					my $sel = IO::Select->new();
-					$sel->add($httpClient);
-					if ( $sel->can_write() ) {
-						return 1;
-					}
-				}
-				elsif ( $httpClient->connected() ) {
+				if ( $httpClient->connected() ) {
 					Slim::Utils::Timers::setTimer($client, Time::HiRes::time() + $retry, \&tryStreamingLater,($httpClient));
 				}
 			}
@@ -2772,15 +2495,11 @@ sub checkAuthorization {
 }
 
 sub addPageFunction {
-	my ($regexp, $func, $fork) = @_;
+	my ($regexp, $func) = @_;
 
 	$log->info("Adding handler for regular expression /$regexp/");
 
 	$pageFunctions{$regexp} = $func;
-
-	if ( $fork ) {
-		$forkFunctions{$regexp} = 1;
-	}
 }
 
 # addRawFunction

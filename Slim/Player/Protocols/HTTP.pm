@@ -192,12 +192,6 @@ sub setMetadataTitle {
 	return if $newTitle eq $currentTitle;
 	
 	Slim::Music::Info::setCurrentTitle($url, $newTitle);
-	
-	$client->sendParent( {
-		command => 'setCurrentTitle',
-		url     => $url,
-		title   => $newTitle,
-	} );
 
 	for my $everybuddy ( $client, Slim::Player::Sync::syncedWith($client)) {
 		$everybuddy->update();

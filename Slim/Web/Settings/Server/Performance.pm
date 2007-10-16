@@ -21,7 +21,7 @@ sub page {
 }
 
 sub prefs {
-	return (preferences('server'), qw(disableStatistics serverPriority scannerPriority) );
+ 	return (preferences('server'), qw(disableStatistics serverPriority scannerPriority) );
 }
 
 sub handler {
