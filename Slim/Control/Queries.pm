@@ -1546,6 +1546,8 @@ sub playersQuery {
 					'displaytype', $eachclient->vfdmodel())
 					unless ($eachclient->model() eq 'http');
 				$request->addResultLoop('players_loop', $cnt, 
+					'canpoweroff', $eachclient->canPowerOff());
+				$request->addResultLoop('players_loop', $cnt, 
 					'connected', ($eachclient->connected() || 0));
 
 				for my $pref (@prefs) {
@@ -2465,6 +2467,8 @@ sub serverstatusQuery {
 				$request->addResultLoop('players_loop', $cnt, 
 					'displaytype', $eachclient->vfdmodel())
 					unless ($eachclient->model() eq 'http');
+				$request->addResultLoop('players_loop', $cnt, 
+					'canpoweroff', $eachclient->canPowerOff());
 				$request->addResultLoop('players_loop', $cnt, 
 					'connected', ($eachclient->connected() || 0));
 				$request->addResultLoop('players_loop', $cnt, 

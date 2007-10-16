@@ -375,8 +375,8 @@ sub defaultName {
 
 sub _makeDefaultName {
 	my $client = shift;
-	my $modelName = $client->modelName();
-	
+	my $modelName = $client->modelName() || $client->ip;
+
 	# Do we already have one of these?
 	# We cannot just assume that this is the Nth player of this type
 	# because a user may have 'forgotten' a player, creating a discrepency between
@@ -821,6 +821,7 @@ sub currBrightness {}
 sub linesPerScreen {}
 sub knobListPos {}
 sub setPlayerSetting {}
+sub modelName {}
 
 sub pause {
 	my $client = shift;

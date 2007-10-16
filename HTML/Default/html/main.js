@@ -230,6 +230,8 @@ PlayerChooser = function(){
 						// let's set the current player to the first player in the list
 						if (responseText.result && responseText.result['player count'] > 0) {
 							var playerInList = false;
+							var el;
+
 							playerList = new Ext.util.MixedCollection();
 
 							for (x=0; x < responseText.result['player count']; x++) {
@@ -241,6 +243,9 @@ PlayerChooser = function(){
 									currentPlayer = true;
 									playerInList = true;
 									playerMenu.setText(playerInfo.name);
+
+									if (el = Ext.get('ctrlPower'))
+										el.setVisible(playerInfo.canpoweroff);
 
 									// display information if the player needs a firmware upgrade
 									if (playerInfo.player_needs_upgrade || playerNeedsUpgrade) {
@@ -259,6 +264,7 @@ PlayerChooser = function(){
 									new Ext.menu.CheckItem({
 										text: playerInfo.name,
 										value: playerInfo.playerid,
+										canpoweroff: playerInfo.canpoweroff,
 										cls: 'playerList',
 										group: 'playerList',
 										checked: playerInfo.playerid == playerid,
@@ -287,7 +293,8 @@ PlayerChooser = function(){
 							if (!playerInList) {
 								PlayerChooser.selectPlayer({
 									text: responseText.result.players_loop[0].name,
-									value: responseText.result.players_loop[0].playerid
+									value: responseText.result.players_loop[0].playerid,
+									canpoweroff: responseText.result.players_loop[0].canpoweroff
 								});
 							}
 
@@ -320,7 +327,8 @@ PlayerChooser = function(){
 
 							PlayerChooser.selectPlayer({
 								text: '',
-								value: ''
+								value: '',
+								canpoweroff: false
 							});
 						}
 
@@ -356,6 +364,9 @@ PlayerChooser = function(){
 
 			if (el = Ext.get('playerSettingsLink'))
 				el.setVisible(playerid ? true : false);
+
+			if (ev.canpoweroff != null && (el = Ext.get('ctrlPower')))
+				el.setVisible(ev.canpoweroff);
 
 			Playlist.resetUrl();
 			Player.getStatus();
