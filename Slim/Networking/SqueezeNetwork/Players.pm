@@ -8,9 +8,11 @@ use strict;
 
 use JSON::XS qw(from_json);
 
+use Slim::Control::Request;
 use Slim::Networking::SqueezeNetwork;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
+use Slim::Utils::Network;
 use Slim::Utils::Prefs;
 use Slim::Utils::Timers;
 
@@ -26,6 +28,27 @@ my $POLL_INTERVAL = 300;
 
 sub init {
 	my $class = shift;
+	
+	fetch_players();
+	
+	# CLI command for telling a player on SN to connect to us
+	Slim::Control::Request::addDispatch(
+		['squeezenetwork', 'disconnect', '_id'],
+		[0, 1, 0, \&disconnect_player]
+	);
+}
+
+sub shutdown {
+	my $class = shift;
+	
+	$PLAYERS = [];
+	
+	Slim::Utils::Timers::killTimers( undef, \&fetch_players );
+	
+	$log->info( "SqueezeNetwork player list shutdown" );
+}
+
+sub fetch_players {
 	
 	# Get the list of players for our account that are on SN
 	my $http = Slim::Networking::SqueezeNetwork->new(
@@ -61,7 +84,7 @@ sub _players_done {
 	Slim::Utils::Timers::setTimer(
 		undef,
 		time() + $POLL_INTERVAL,
-		\&init,
+		\&fetch_players,
 	);
 }
 
@@ -82,7 +105,7 @@ sub _players_error {
 	Slim::Utils::Timers::setTimer(
 		undef,
 		time() + $retry,
-		\&init,
+		\&fetch_players,
 	);
 }
 
@@ -91,5 +114,59 @@ sub get_players {
 	
 	return wantarray ? @{$PLAYERS} : $PLAYERS;
 }
+
+sub disconnect_player {
+	my $request = shift;
+	my $id      = $request->getParam('_id') || return;
+	
+	$request->setStatusProcessing();
+	
+	# Tell an SN player to reconnect to our IP
+	my $http = Slim::Networking::SqueezeNetwork->new(
+		\&_disconnect_player_done,
+		\&_disconnect_player_error,
+		{
+			request => $request,
+		}
+	);
+	
+	my $ip = Slim::Utils::Network::serverAddr();
+	
+	$http->get( $http->url( '/api/v1/players/disconnect/' . $id . '/' . $ip ) );
+}
+
+sub _disconnect_player_done {
+	my $http    = shift;
+	my $request = $http->params('request');
+	
+	my $res = eval { from_json( $http->content ) };
+	if ( $@ || ref $res ne 'HASH' ) {
+		$http->error( $@ || 'Invalid JSON response' );
+		return _disconnect_player_error( $http );
+	}
+	
+	if ( $res->{error} ) {
+		$http->error( $res->{error} );
+		return _disconnect_player_error( $http );
+	}
+	
+	if ( $log->is_debug ) {
+		$log->debug( "Disconect SN player response: " . Data::Dump::dump( $res ) );
+	}
+	
+	$request->setStatusDone();
+}
+
+sub _disconnect_player_error {
+	my $http    = shift;
+	my $error   = $http->error;
+	my $request = $http->params('request');
+	
+	$log->error( "Disconnect SN player error: $error" );
+	
+	$request->addResult( error => $error );
+	
+	$request->setStatusDone();
+}	
 
 1;

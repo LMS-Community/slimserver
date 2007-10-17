@@ -99,6 +99,9 @@ sub shutdown {
 	
 	# Shutdown pref syncing
 	Slim::Networking::SqueezeNetwork::PrefSync->shutdown();
+	
+	# Shutdown player list fetch
+	Slim::Networking::SqueezeNetwork::Players->shutdown();
 }
 
 # Return a correct URL for SqueezeNetwork
