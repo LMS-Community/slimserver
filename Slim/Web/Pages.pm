@@ -77,7 +77,7 @@ sub _lcPlural {
 
 	# only convert to lowercase if our language does not wand uppercase (default lc)
 	my $word = ($count == 1 ? string($singular) : string($plural));
-	$word = (string('MIDWORDS_UPPER', '', 1) ? $word : lc($word));
+	$word = (string('MIDWORDS_UPPER') ? $word : lc($word));
 	return sprintf("%s %s", $count, $word);
 }
 
