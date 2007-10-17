@@ -1,58 +1,39 @@
 [% PROCESS settings/header.html %]
 
-	<div class="settingSection">
-
-		<div class="settingGroup">
-			<div class="prefHead">[% "SETUP_AUTHORIZE" | string %]</div>
-			<div class="prefDesc hiddenDesc">[% "SETUP_AUTHORIZE_DESC" | string %]</div>
-	
+	[% WRAPPER settingSection %]
+		[% WRAPPER settingGroup title="SETUP_AUTHORIZE" desc="SETUP_AUTHORIZE_DESC" %]
 			<select class="stdedit" name="authorize" id="authorize">
 	
 				<option [% IF NOT prefs.authorize %]selected [% END %]value="0">[% 'SETUP_NO_AUTHORIZE' | getstring %]</option>
 				<option [% IF prefs.authorize %]selected [% END %]value="1">[% 'SETUP_AUTHORIZE' | getstring %]</option>
 			
 			</select>
-		</div>
+		[% END %]
 
-		<div class="settingGroup">
-			<div class="prefHead">[% "SETUP_USERNAME" | string %]</div>
-	
+		[% WRAPPER settingGroup title="SETUP_USERNAME" desc="" %]
 			<input type="text" class="stdedit" name="username" id="username" value="[% prefs.username %]" size="40">
-		</div>
+		[% END %]
 
-		<div class="settingGroup">	
-			<div class="prefHead">[% "SETUP_PASSWORD" | string %]</div>
-	
+		[% WRAPPER settingGroup title="SETUP_PASSWORD" desc="" %]
 			<input type="password" class="stdedit" name="password" id="password" value="[% prefs.password %]" size="40">
-		</div>
-	
-	</div>
+		[% END %]
+	[% END %]
 
-	<div class="settingSection">
-
-		<div class="settingGroup">
-			<div class="prefHead">[% "SETUP_IPFILTER_HEAD" | string %]</div>
-			<div class="prefDesc hiddenDesc">[% "SETUP_IPFILTER_DESC" | string %]</div>
-	
+	[% WRAPPER settingSection %]
+		[% WRAPPER settingGroup title="SETUP_IPFILTER_HEAD" desc="SETUP_IPFILTER_DESC" %]
 			<select class="stdedit" name="filterHosts" id="filterHosts">
 	
 				<option [% IF NOT prefs.filterHosts %]selected [% END %]value="0">[% 'SETUP_NO_IPFILTER' | getstring %]</option>
 				<option [% IF prefs.filterHosts %]selected [% END %]value="1">[% 'SETUP_IPFILTER' | getstring %]</option>
 			
 			</select>
-		</div>
+		[% END %]
 
-		<div class="settingGroup">
-			<div class="prefHead">[% "SETUP_FILTERRULE_HEAD" | string %]</div>
-			<div class="prefDesc hiddenDesc">[% "SETUP_FILTERRULE_DESC" | string %]</div>
-	
+		[% WRAPPER settingGroup title="SETUP_FILTERRULE_HEAD" desc="SETUP_FILTERRULE_DESC" %]
 			<input type="text" class="stdedit" name="allowedHosts" id="allowedHosts" value="[% prefs.allowedHosts %]" size="40">
-		</div>
+		[% END %]
 
-		<div class="settingGroup">
-			<div class="prefHead">[% "SETUP_CSRFPROTECTIONLEVEL" | string %]</div>
-			<div class="prefDesc hiddenDesc">[% "SETUP_CSRFPROTECTIONLEVEL_DESC" | string %]</div>
-	
+		[% WRAPPER settingGroup title="SETUP_CSRFPROTECTIONLEVEL" desc="SETUP_CSRFPROTECTIONLEVEL_DESC" %]
 			<select class="stdedit" name="csrfProtectionLevel" id="csrfProtectionLevel">
 	
 				<option [% IF prefs.csrfProtectionLevel == 0 %]selected [% END %]value="0">[% 'NONE' | getstring %]</option>
@@ -60,9 +41,8 @@
 				<option [% IF prefs.csrfProtectionLevel == 2 %]selected [% END %]value="2">[% 'HIGH' | getstring %]</option>
 			
 			</select>
-		</div>
-	
-	</div>
+		[% END %]
+	[% END %]
 
 [% PROCESS settings/footer.html %]
 

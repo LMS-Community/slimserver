@@ -183,7 +183,7 @@ var Utils = function(){
 			var el = Ext.get(target).child('a.browseItemLink');
 			if (el && el.dom.href) {
 				if (el.dom.target) {
-					frames[el.dom.target].location.href = el.dom.href;
+					parent.frames[el.dom.target].location.href = el.dom.href;
 				}
 				else {
 					location.href = el.dom.href;

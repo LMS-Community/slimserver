@@ -10,21 +10,27 @@ package Slim::Web::Settings::Server::Index;
 use strict;
 use base qw(Slim::Web::Settings);
 
-#my $settings = {
-#	extras   => [],
-#	advanced =>
-#	accounts => ['SQUEEZENETWORK_SETTINGS', 'PLUGIN_RADIOTIME_MODULE_NAME', ]
-#};
-
 sub page {
 	return Slim::Web::HTTP::protectURI('settings/index.html');
 }
 
-#sub handler {
-#	my ($class, $client, $paramRef) = @_;
-#	
-#	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
-#}
+sub handler {
+	my ($class, $client, $paramRef) = @_;
+	
+	$paramRef->{firstLevelItems} = [
+		'BASIC_SERVER_SETTINGS',
+		'ITUNES',
+		'PLUGIN_PODCAST',
+		'SQUEEZENETWORK_SETTINGS',
+		'INTERFACE_SETTINGS',
+		'SETUP_GROUP_PLUGINS',
+		'SERVER_STATUS'
+	];
+	
+	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
+
+	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
+}
 
 1;
 

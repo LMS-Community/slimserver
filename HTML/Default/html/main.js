@@ -27,15 +27,15 @@ Main = function(){
 			Player.init();
 			Playlist.init();
 
-			// TODO: these links need to go to the correct pages
 			Ext.get('helpLink').on('click', function(){
 				window.open(webroot + 'home.html?page=help', 'settings', 'dependent=yes,resizable=yes');
 			});
 
 			Ext.get('settingsLink').on('click', function(){
-				window.open('/Classic/settings/server/basic.html', 'settings', 'dependent=yes,resizable=yes');
+				window.open(webroot + 'settings/index.html', 'settings', 'dependent=yes,resizable=yes');
 			});
 
+			// TODO: these links need to go to the correct pages
 			Ext.get('playerSettingsLink').on('click', function(){
 				window.open('/Classic/settings/player/basic.html?playerid=' + player, 'playersettings', 'dependent=yes,resizable=yes');
 			});

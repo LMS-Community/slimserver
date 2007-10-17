@@ -33,7 +33,7 @@
 		<div class="groupDesc">[% "SETUP_GROUP_TITLEFORMATS_DESC" | string %]</div>
 		
 		<table width="100%">
-		<tr><th>[% 'SETUP_CURRENT' | string | upper %]</th><th>&nbsp</th><th>[% 'DISPLAY_SETTINGS' | string | upper %]</th><th>&nbsp;</th></tr>
+		<tr><th>[% 'SETUP_CURRENT' | string  %]</th><th>&nbsp</th><th>[% 'DISPLAY_SETTINGS' | string  %]</th><th>&nbsp;</th></tr>
 		[% FOREACH format = prefs.titleFormat %]
 			<tr><td><input type=radio [% IF prefs.titleFormatCurr == loop.index %]checked [% END %]value="[% loop.index %]" name="titleFormatCurr"></td><td>
 			</td><td>
@@ -61,7 +61,7 @@
 		<div class="groupDesc">[% "SETUP_PLAYINGDISPLAYMODE_DESC" | string %]</div>
 		
 		<table width="100%">
-		<tr><th>[% 'SETUP_CURRENT' | string | upper %]</th><th></th><th>[% 'SETUP_FORMATS' | string | upper %]</th><th></th></tr>
+		<tr><th>[% 'SETUP_CURRENT' | string  %]</th><th></th><th>[% 'SETUP_FORMATS' | string  %]</th><th></th></tr>
 		[% FOREACH format = prefs.playingDisplayModes %]
 			<tr><td><input type=radio [% IF prefs.playingDisplayMode == loop.index %]checked [% END %]value="[% loop.index %]" name="playingDisplayMode"></td><td>
 			</td><td>
@@ -91,7 +91,7 @@
 		<div class="groupDesc">[% "SETUP_VISUALIZERMODE_DESC" | string %]</div>
 		
 		<table width="100%">
-		<tr><th>[% 'SETUP_CURRENT' | string | upper %]</th><th>[% 'DISPLAY_SETTINGS' | string | upper %]</th><th></th></tr>
+		<tr><th>[% 'SETUP_CURRENT' | string  %]</th><th>[% 'DISPLAY_SETTINGS' | string  %]</th><th></th></tr>
 		[% FOREACH format = prefs.visualModes %]
 			<tr><td><input type=radio [% IF prefs.visualMode == loop.index %]checked [% END %]value="[% loop.index %]" name="visualMode"></td><td>
 			

@@ -1,10 +1,6 @@
 [% PROCESS settings/header.html %]
 
-	<div class="settingSection">
-
-		<div class="prefHead">[% "SETUP_SKIN" | string %]</div>
-		<div class="prefDesc">[% "SETUP_SKIN_DESC" | string %]</div>
-
+	[% WRAPPER setting title="SETUP_SKIN" desc="SETUP_SKIN_DESC" %]
 		<select class="stdedit" name="skin" id="skin">
 
 		[% FOREACH option = skinoptions.keys %]
@@ -14,32 +10,27 @@
 		[%- END -%]
 		
 		</select>
+	[% END %]
 
-		<div class="prefHead">[% "SETUP_ITEMSPERPAGE" | string %]</div>
-		<div class="prefDesc">[% "SETUP_ITEMSPERPAGE_DESC" | string %]</div>
-
+	[% WRAPPER setting title="SETUP_ITEMSPERPAGE" desc="SETUP_ITEMSPERPAGE_DESC" %]
 		<input type="text" class="stdedit" name="itemsPerPage" id="itemsPerPage" value="[% prefs.itemsPerPage %]" size="15">
+	[% END %]
 
-		<div class="prefHead">[% "SETUP_REFRESHRATE" | string %]</div>
-		<div class="prefDesc">[% "SETUP_REFRESHRATE_DESC" | string %]</div>
-
+	[% WRAPPER setting title="SETUP_REFRESHRATE" desc="SETUP_REFRESHRATE_DESC" %]
 		<input type="text" class="stdedit" name="refreshRate" id="refreshRate" value="[% prefs.refreshRate %]" size="15">
+	[% END %]
 
-		<div class="prefHead">[% "SETUP_COVERART" | string %]</div>
-		<div class="prefDesc">[% "SETUP_COVERART_DESC" | string %]</div>
+	[% WRAPPER setting title="SETUP_COVERART" desc="SETUP_COVERART_DESC" %]
+		<input type="text" class="stdedit" name="coverArt" id="coverArtID" value="[% prefs.coverArt %]" size="40">
+	[% END %]
 
-		<input type="text" class="stdedit" name="coverArt" id="coverArtID" value="[% prefs.coverArt %]" size="20">
-
-		<div class="prefHead">[% "SETUP_ARTFOLDER" | string %]</div>
-		<div class="prefDesc">[% "SETUP_ARTFOLDER_DESC" | string %]</div>
-
+	[% WRAPPER setting title="SETUP_ARTFOLDER" desc="SETUP_ARTFOLDER_DESC" %]
 		<input type="text" class="stdedit selectFolder" name="artfolder" id="artfolder" value="[% prefs.artfolder %]" size="40">
+	[% END %]
 
-		<div class="prefHead">[% "SETUP_THUMBSIZE" | string %]</div>
-		<div class="prefDesc">[% "SETUP_THUMBSIZE_DESC" | string %]</div>
-
+	[% WRAPPER setting title="SETUP_THUMBSIZE" desc="SETUP_THUMBSIZE_DESC" %]
 		<input type="text" class="stdedit" name="thumbSize" id="thumbSize" value="[% prefs.thumbSize %]" size="15">
+	[% END %]
 
-	</div>
 [% PROCESS settings/footer.html %]
 

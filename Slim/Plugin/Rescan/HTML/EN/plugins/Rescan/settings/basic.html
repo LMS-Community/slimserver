@@ -1,46 +1,31 @@
 [% PROCESS settings/header.html %]
 
 	<div class="settingSection">
-		<div class="groupHead">[% "PLUGIN_RESCAN_MUSIC_LIBRARY" | string | upper %]</div>
-		<div class="groupDesc">[% "PLUGIN_RESCAN_TIMER_DESC" | string %]</div>
+		<div class="settingGroup">
+			<div class="prefHead">[% "PLUGIN_RESCAN_MUSIC_LIBRARY" | string  %]</div>
+			<div class="prefDesc">[% "PLUGIN_RESCAN_TIMER_DESC" | string %]</div>
+		</div>
+	</div>
 
-		<table border="0" cellspacing="7" cellpaddding="7">
-
-		<tr>
-			<td><label for="scheduled">[% "PLUGIN_RESCAN_TIMER_NAME" | string %]</label></td>
-			<td>
-				<select name="scheduled">
-
+	[% WRAPPER settingSection %]
+		[% WRAPPER settingGroup title="PLUGIN_RESCAN_TIMER_NAME" desc="" %]
+			<select name="scheduled">
 				<option value="1" [% IF prefs.scheduled %]selected[% END %]>[% "ON" | string %]</option>
 				<option value="0" [% IF NOT prefs.scheduled %]selected[% END %]>[% "OFF" | string %]</option>
+			</select>
+		[% END %]
 
-				</select>
-			</td>
+		[% WRAPPER settingGroup title="PLUGIN_RESCAN_TIMER_SET" desc="" %]
+			<input type="text" class="stdedit" name="time" id="time" value="[% prefs.time %]" size="10" />
+		[% END %]
 
-		</tr>
-		<tr>
-			<td><label for="time">[% "PLUGIN_RESCAN_TIMER_SET" | string %]</label></td>
-			<td>
-				<input type="text" class="stdedit" name="time" id="time" value="[% prefs.time %]" size="10" />
-			</td>
-
-		</tr>
-		<tr>
-
-			<td><label for="type">[% "PLUGIN_RESCAN_TIMER_TYPE" | string %]</label></td>
-			<td>
-				<select name="type">
-
+		[% WRAPPER settingGroup title="PLUGIN_RESCAN_TIMER_TYPE" desc="" %]
+			<select name="type">
 				<option value="1rescan" [% IF prefs.type == "1rescan" %]selected[% END %]>[% "SETUP_STANDARDRESCAN" | string %]</option>
 				<option value="2wipedb" [% IF prefs.type == "2wipedb" %]selected[% END %]>[% "SETUP_WIPEDB" | string %]</option>
 				<option value="3playlist" [% IF prefs.type == "3playlist" %]selected[% END %]>[% "SETUP_PLAYLISTRESCAN" | string %]</option>
-
-				</select>
-			</td>
-
-		</tr>
-
-		</table>
-	</div>
+			</select>
+		[% END %]
+	[% END %]
 
 [% PROCESS settings/footer.html %]

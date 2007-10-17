@@ -1,36 +1,34 @@
 [% PROCESS settings/header.html %]
 
-	<div class="settingSection">
-		<div class="prefHead">[% "PLUGIN_PODCAST" | string | upper %]</div>
-		<div class="prefDesc">[% "PODCAST_GROUP_DESC" | string %]</div>
+	[% WRAPPER setting title="PLUGIN_PODCAST" desc="PODCAST_GROUP_DESC" %]
+	[% END %]
 
-		<table border="0" cellspacing="7" cellpadding="7">
+	<table border="0" cellspacing="7" cellpadding="7">
 
-			<tr>
-			<td><label for="new_feed" class="stdlabel">[% "SETUP_PLUGIN_PODCAST_ADD_FEED" | string %]</label></td>
+		<tr>
+		<td><label for="new_feed" class="stdlabel">[% "SETUP_PLUGIN_PODCAST_ADD_FEED" | string %]</label></td>
 
-			<td><input type="text" class="stdedit" name="newfeed" value="[% newfeedval %]" size="60" /></td>
-			</tr>
+		<td><input type="text" class="stdedit" name="newfeed" value="[% newfeedval %]" size="60" /></td>
+		</tr>
 
-			<tr></tr>
-			<tr></tr>
-			<tr><td><label>[% "SETUP_PLUGIN_PODCAST_EXISTING_FEEDS" | string %]</label></td><td></td><td>[% "DELETE" | string %]</td></tr>
+		<tr></tr>
+		<tr></tr>
+		<tr><td><label>[% "SETUP_PLUGIN_PODCAST_EXISTING_FEEDS" | string %]</label></td><td></td><td>[% "DELETE" | string %]</td></tr>
 
-		[% FOREACH pref = prefs %]
+	[% FOREACH pref = prefs %]
 
-			<tr>
-			<td><label for="feeds" class="stdlabel">[% pref.1 %]</label></td>
+		<tr>
+		<td><label for="feeds" class="stdlabel">[% pref.1 %]</label></td>
 
-			<td><label for="urls"  class="stdlabel">[% pref.0 %]</label></td>
+		<td><label for="urls"  class="stdlabel">[% pref.0 %]</label></td>
 
-			<td><input name="delete" type="checkbox" value="[% pref.0 %]"></td>
+		<td><input name="delete" type="checkbox" value="[% pref.0 %]"></td>
 
-			</tr>
+		</tr>
 
-		[% END %]
+	[% END %]
 
-		</table>
-	</div>
+	</table>
 
 	<input name="reset" type="submit" class="stdclick" value="[% "SETUP_PLUGIN_PODCAST_RESET" | string %]">
 

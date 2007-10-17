@@ -1,25 +1,15 @@
 [% PROCESS settings/header.html %]
 
-	<div class="settingSection">
-		<div class="prefHead">[% "ITUNES" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_ITUNES_DESC" | string %]</div>
-
+	[% WRAPPER setting title="ITUNES" desc="SETUP_ITUNES_DESC" %]
 		<input type="checkbox" [% IF prefs.itunes %]checked [% END %] class="stdedit" name="itunes" id="itunes" />
+		<label for="itunes" class="stdlabel">[% "USE_ITUNES" | string %]</label>
+	[% END %]
 
-	</div>
-
-	<div class="settingSection">
-		<div class="prefHead">[% "SETUP_ITUNESSCANINTERVAL" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_ITUNESSCANINTERVAL_DESC" | string %]</div>
-
+	[% WRAPPER setting title="SETUP_ITUNESSCANINTERVAL" desc="SETUP_ITUNESSCANINTERVAL_DESC" %]
 		<input type="text" class="stdedit" name="scan_interval"	id="scan_interval" value="[% prefs.scan_interval %]" size="5">
-	</div>
+	[% END %]
 
-	<div class="settingSection">
-	
-		<div class="groupHead">[% "SETUP_IGNOREDISABLEDITUNESTRACKS" | string | upper %]</div>
-		<div class="groupDesc">[% "SETUP_IGNOREDISABLEDITUNESTRACKS_DESC" | string %]</div>
-
+	[% WRAPPER setting title="SETUP_IGNOREDISABLEDITUNESTRACKS" desc="SETUP_IGNOREDISABLEDITUNESTRACKS_DESC" %]
 		<select class="stdedit" name="ignore_disabled" id="rescantype">
 
 			<option value="0" [% IF NOT prefs.ignore_disabled %]selected[% END %]>
@@ -31,29 +21,20 @@
 			</option>
 
 		</select>
+	[% END %]
 
-	</div>
-
-	<div class="settingSection">
-		<div class="prefHead">[% "SETUP_ITUNES_LIBRARY_XML_PATH" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_ITUNES_LIBRARY_XML_PATH_DESC" | string %]</div>
-
+	[% WRAPPER setting title="SETUP_ITUNES_LIBRARY_XML_PATH" desc="SETUP_ITUNES_LIBRARY_XML_PATH_DESC" %]
 		<input type="text" class="stdedit selectFile" name="xml_file" id="xml_file" value="[% prefs.xml_file %]" size="40">
-	</div>
+	[% END %]
 
-	<div class="settingSection">
-		<div class="prefHead">[% "SETUP_ITUNES_LIBRARY_MUSIC_PATH" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC" | string %]</div>
-
+	[% WRAPPER setting title="SETUP_ITUNES_LIBRARY_MUSIC_PATH" desc="SETUP_ITUNES_LIBRARY_MUSIC_PATH_DESC" %]
 		<input type="text" class="stdedit selectFolder" name="music_path" id="music_path" value="[% prefs.music_path %]" size="40">
-	</div>
+	[% END %]
 
-	<div class="settingSection">
-		<div class="groupHead">[% "SETUP_ITUNESPLAYLISTFORMAT" | string | upper %]</div>
-		<div class="groupDesc">[% "SETUP_ITUNESPLAYLISTFORMAT_DESC" | string %]</div>
-
+	[% WRAPPER setting title="SETUP_ITUNESPLAYLISTFORMAT" desc="SETUP_ITUNESPLAYLISTFORMAT_DESC" %]
 		[% "SETUP_PLAYLISTPREFIX_CHOOSE" | string %]<input type="text" class="stdedit" name="playlist_prefix" id="playlist_prefix" value="[% prefs.playlist_prefix %]" size="40">
 		<br>
 		[% "SETUP_PLAYLISTSUFFIX_CHOOSE" | string %]<input type="text" class="stdedit" name="playlist_suffix" id="playlist_suffix" value="[% prefs.playlist_suffix %]" size="40">
-	</div>
+	[% END %]
+
 [% PROCESS settings/footer.html %]

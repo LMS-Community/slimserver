@@ -4,21 +4,7 @@
 
 	<!-- XXX: This will eventually have more stuff like a way to register for a new account, etc. -->
 
-	<div class="settingSection">
-
-		<div class="prefHead">[% "SETUP_SN_EMAIL" | string %]</div>
-		<div class="prefDesc">[% "SETUP_SN_EMAIL_DESC" | string %]</div>
-
-		<input type="text" class="stdedit" name="sn_email" id="sn_email" value="[% prefs.sn_email %]" size="40">
-
-		<div class="prefHead">[% "SETUP_SN_PASSWORD" | string %]</div>
-		<div class="prefDesc">[% "SETUP_SN_PASSWORD_DESC" | string %]</div>
-
-		<input type="password" class="stdedit" name="sn_password" id="sn_password" value="[% prefs.sn_password %]" size="40">
-		
-		<div class="prefHead">[% "SETUP_SN_SYNC" | string %]</div>
-		<div class="prefDesc">[% "SETUP_SN_SYNC_DESC" | string %]</div>
-		
+	[% WRAPPER setting title="SETUP_SN_SYNC" desc="SETUP_SN_SYNC_DESC" %]
 		<select class="stdedit" name="sn_sync" id="sn_sync">
 			<option [% IF prefs.sn_sync == 1 %]selected="selected" [% END %]value="1">
 				[% 'SETUP_SN_SYNC_ENABLE' | string %]
@@ -27,8 +13,15 @@
 				[% 'SETUP_SN_SYNC_DISABLE' | string %]
 			</option>
 		</select>
+	[% END %]
 
-	</div>
+	[% WRAPPER setting title="SETUP_SN_EMAIL" desc="SETUP_SN_EMAIL_DESC" %]
+		<input type="text" class="stdedit" name="sn_email" id="sn_email" value="[% prefs.sn_email %]" size="40">
+	[% END %]
+
+	[% WRAPPER setting title="SETUP_SN_PASSWORD" desc="SETUP_SN_PASSWORD_DESC" %]
+		<input type="password" class="stdedit" name="sn_password" id="sn_password" value="[% prefs.sn_password %]" size="40">
+	[% END %]
 
 [% PROCESS settings/footer.html %]
 

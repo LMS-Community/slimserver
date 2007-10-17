@@ -1,12 +1,14 @@
 [% PROCESS settings/header.html %]
 
 	<div class="settingSection">
-
-		<div class="prefHead">[% "PLUGIN_FAVORITES_PLAYLIST_EDITOR" | string | upper %]</div>
-		<div class="prefDesc">[% "PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC" | string %]</div>
-
-		<div class="prefDesc">[% "ENABLE" | string %]
-		<input name="opmleditor" type="checkbox" [% IF prefs.opmleditor %] checked [% END %]>
+		<div class="settingGroup">
+	
+			<div class="prefHead">[% "PLUGIN_FAVORITES_PLAYLIST_EDITOR" | string %]</div>
+			<div class="prefDesc">[% "PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC" | string %]</div>
+	
+			<div class="prefDesc">[% "ENABLE" | string %]
+				<input name="opmleditor" type="checkbox" [% IF prefs.opmleditor %] checked [% END %]>
+			</div>
 		</div>
 	</div>
 

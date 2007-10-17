@@ -1,3 +1,7 @@
+html {
+	overflow: auto;
+}
+
 html, body, tr, tr, p, div, li, input, ul, b, a {
 	font-family: sans-serif;
 	color: #666666;
@@ -8,7 +12,9 @@ html, body, tr, tr, p, div, li, input, ul {
 }
 
 body {
-	background: url(html/images/help/background.gif) repeat;	
+	background: url(html/images/help/background.gif) repeat;
+	position: relative;
+	overflow: auto;
 }
 
 .x-layout-panel-body {
@@ -41,6 +47,11 @@ body {
 	height: 500px;
 }
 
+#buttonbar {
+	float: right;
+	margin-right:10px;
+}
+
 .titlebox {
 	background: url(html/images/help/title_background.gif) repeat;
 }
@@ -57,10 +68,12 @@ body {
 	margin-bottom: 15px;
 }
 
-#basicAdvanced {
-	position: absolute;
-	right: 20px;
-	top: 16px;
+#footer .titlebox_content {
+	padding: 0;
+}
+
+#settingsRegion {
+	position: relative;
 }
 
 #settingsSelector {
@@ -81,7 +94,17 @@ body {
 .titlebox_bottom div { background: url(html/images/help/title_bottom_left.gif) no-repeat bottom left; }
 .titlebox_bottom { background: url(html/images/help/title_bottom_right.gif) no-repeat bottom right; }
 
-.mainFrame {
+.mouseOver .selector_topRight { background: #9aacc4 url(html/images/help/selector_top_right.gif) no-repeat top right; }
+.mouseOver .selector_topLeft { background: transparent url(html/images/help/selector_top_left.gif) no-repeat top left; }
+.mouseOver .selector_bottomRight { background: transparent url(html/images/help/selector_bottom_right.gif) no-repeat bottom right; }
+.mouseOver .selector_bottomLeft { background: transparent url(html/images/help/selector_bottom_left.gif) no-repeat bottom left; }
+
+.browseItemLink:hover,
+.mouseOver .homeMenuItem a {
+	color: white;
+}
+
+.mainFrame, iframe {
 	background: url(html/images/help/background.gif) repeat;
 }
 
@@ -117,6 +140,10 @@ body {
 	margin-bottom: 15px;
 }
 
+.settingSection p {
+	margin-bottom: 3px;
+}
+
 .settingGroup {
 	position: relative;
 	padding-left: 300px;
@@ -125,7 +152,7 @@ body {
 
 .prefHelp {
 	position: absolute;
-	left: 270px;
+	left: 280px;
 	top: 0px;
 }
 
@@ -135,7 +162,7 @@ body {
 
 .settingGroup .prefHead {
 	position: absolute;
-	width: 300px;
+	width: 285px;
 	left: 0px;
 }
 
