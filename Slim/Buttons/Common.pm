@@ -943,7 +943,7 @@ our %functions = (
 		
 		# Bug: 2151 some extra stuff to add the option to sleep after the current song.
 		# first make sure we're playing, and its a valid song.
-		my $remaining;
+		my $remaining = 0;
 
 		if (Slim::Player::Source::playingSong($client) && $client->playmode =~ /play/) { 
 
