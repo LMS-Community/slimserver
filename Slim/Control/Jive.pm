@@ -38,7 +38,9 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 # additional top level menus registered by plugins
-my @extrasMenu = ();
+my @extrasPluginMenu   = ();
+my @settingsPluginMenu = ();
+my @myMusicPluginMenu  = ();
 
 =head1 METHODS
 
@@ -103,19 +105,22 @@ sub menuQuery {
 
 	my $prefs         = preferences("server");
 	my ($settingsMenu, $settingsCount)  = playerSettingsMenu($request, $client, $index, $quantity, $prefs);
+	# cobble together player settings menu and any settings plugins
+	my @settingsMenu = ( @$settingsMenu, @settingsPluginMenu);
 
 	# as a convention, make weights => 10 and <= 100; Jive items that want to be below all SS items
 	# then just need to have a weight > 100, above SS items < 10
 	my @menu = (
 		{
 			text      => Slim::Utils::Strings::string('MY_MUSIC'),
-			count     => 9,
+			count     => 9 + scalar(@myMusicPluginMenu),
 			offset    => 0,
 			weight    => 10,
 			window    => { titleStyle => 'mymusic', },
 			item_loop => [
 			{
 				text    => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
+				weight  => 10,
 				actions => {
 					go => {
 						cmd    => ['albums'],
@@ -131,6 +136,7 @@ sub menuQuery {
 			},
 			{
 				text    => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
+				weight  => 20,
 				actions => {
 					go => {
 						cmd    => ['artists'],
@@ -145,6 +151,7 @@ sub menuQuery {
 			},
 			{
 				text    => Slim::Utils::Strings::string('BROWSE_BY_GENRE'),
+				weight  => 30,
 				actions => {
 					go => {
 						cmd    => ['genres'],
@@ -159,6 +166,7 @@ sub menuQuery {
 			},
 			{
 				text    => Slim::Utils::Strings::string('BROWSE_BY_YEAR'),
+				weight  => 40,
 				actions => {
 					go => {
 						cmd    => ['years'],
@@ -173,6 +181,7 @@ sub menuQuery {
 			},
 			{
 				text    => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'),
+				weight  => 50,
 				actions => {
 					go => {
 						cmd    => ['albums'],
@@ -189,6 +198,7 @@ sub menuQuery {
 			},
 			{
 				text    => Slim::Utils::Strings::string('FAVORITES'),
+				weight  => 60,
 				actions => {
 					go => {
 						cmd    => ['favorites', 'items'],
@@ -203,6 +213,7 @@ sub menuQuery {
 			},
 			{
 				text    => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
+				weight  => 70,
 				actions => {
 					go => {
 						cmd    => ['musicfolder'],
@@ -217,6 +228,7 @@ sub menuQuery {
 			},
 			{
 				text    => Slim::Utils::Strings::string('SAVED_PLAYLISTS'),
+				weight  => 80,
 				actions => {
 					go => {
 						cmd    => ['playlists'],
@@ -233,6 +245,7 @@ sub menuQuery {
 				text      => Slim::Utils::Strings::string('SEARCH'),
 				count     => 4,
 				offset    => 0,
+				weight    => 90,
 				window    => { titleStyle => 'search', },
 				item_loop => [
 					{
@@ -331,6 +344,7 @@ sub menuQuery {
 					},
 				],
 			},
+			@myMusicPluginMenu,
 			],
 		},
 		{
@@ -385,18 +399,18 @@ sub menuQuery {
 		{
 			text    => Slim::Utils::Strings::string('PLAYER_PLUGINS'),
 			weight  => 45,
-			count     => scalar(@extrasMenu),
+			count     => scalar(@extrasPluginMenu),
 			offset    => 0,
-			item_loop => \@extrasMenu,
+			item_loop => \@extrasPluginMenu,
 			window        => {
 			},
 		},
 		{
 			text    => Slim::Utils::Strings::string('SETTINGS'),
 			weight  => 50,
-			count     => $settingsCount,
+			count     => $settingsCount + scalar(@settingsPluginMenu),
 			offset    => 0,
-			item_loop => $settingsMenu,
+			item_loop => \@settingsMenu, 
 			window        => {
 					titleStyle => 'settings',
 			},
@@ -430,22 +444,17 @@ sub menuQuery {
 }
 
 # allow a plugin to add a menu hash entry to appear at the top level of the player menu
-sub registerMainMenu {
+sub registerPluginMenu {
 	my $menuHash = shift;
+	my $whichMenu = shift || 'extras';
 
 	if (ref $menuHash eq 'HASH' && exists $menuHash->{text}) {
-		push @extrasMenu, $menuHash;
-	}
-}
-
-# allow a plugin to remove a previously registered menu entry - keyed by menu text
-sub removeMainMenu {
-	my $menuText = shift;
-
-	for my $i (0..$#extrasMenu) {
-		if ($extrasMenu[$i]->{text} eq $menuText) {
-			splice @extrasMenu, $i, 1;
-			return;
+		if ($whichMenu eq 'extras') {
+			push @extrasPluginMenu, $menuHash;
+		} elsif ($whichMenu eq 'mymusic') {
+			push @myMusicPluginMenu, $menuHash;
+		} elsif ($whichMenu eq 'settings') {
+			push @settingsPluginMenu, $menuHash;
 		}
 	}
 }

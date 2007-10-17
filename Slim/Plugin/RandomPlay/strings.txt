@@ -243,6 +243,9 @@ PLUGIN_RANDOM_GENRE_FILTER_WEB
 	IT	Generi musicali da includere nella raccolta:
 	NL	Genres voor opname in je mix:
 
+PLUGIN_CHOOSE_GENRES
+	EN	Choose Genres
+
 PLUGIN_RANDOM_BEFORE_NUM_TRACKS
 	DE	Aktuelle Wiedergabe zeigt
 	EN	Now Playing will show

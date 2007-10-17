@@ -8461,7 +8461,7 @@ in the saved playlists folder.</p>
 		<code>
 			&lt;playerid&gt;
 			randomplay
-			&lt;tracks|albums|artists|year&gt;
+			&lt;tracks|albums|contributors|year&gt;
 		</code>
 	</strong>
 </p>
@@ -8479,6 +8479,52 @@ in the saved playlists folder.</p>
 		Response: &quot;04:20:00:12:23:45 randomplay albums&lt;LF&gt;&quot;
 	</p>
 </blockquote>
+
+<p id="randomplaygenrelist">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			randomplaygenrelist
+		</code>
+	</strong>
+</p>
+<p>
+	This returns a formatted list of genres which is for use on the Jive platform
+</p>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request:  &quot;04:20:00:12:23:45 randomplaygenrelist&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 randomplaygenrelist count%3A103 offset%3A0 actions%3AHASH(0xb804350) checkbox%3A1 text%3A80s actions%3AHASH(0xb8042a8) checkbox%3A1 text%3AAcid%20Jazz actions%3AHASH(0xb80438c) checkbox%3A1 text%3AAcoustic actions%3AHASH(0xb804494) checkbox%3A0 text%3AAdvertisement actions%3AHASH(0xb8cdcc0) checkbox%3A1 text%3AAfropop actions%3AHASH(0xb8cdf9c) checkbox%3A1 &lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<p id="randomplaychoosegenre">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			randomplaychoosegenre
+			&lt;0|1&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	Turn a particular genre on/off in random mix
+</p>
+<p>
+	Example:
+</p>
+<blockquote> 
+	<p>
+		Request:  &quot;04:20:00:12:23:45 randomplaychoosegenre Afropop 1&lt;LF&gt;&quot;
+		<br>
+		Response:  &quot;04:20:00:12:23:45 randomplaychoosegenre Afropop 1&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
 
 
 <!--#########################################################################-->

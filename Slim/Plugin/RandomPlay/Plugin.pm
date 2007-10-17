@@ -97,6 +97,10 @@ sub initPlugin {
 #        C  Q  T  F
 	Slim::Control::Request::addDispatch(['randomplay', '_mode'],
 	[1, 0, 0, \&cliRequest]);
+	Slim::Control::Request::addDispatch(['randomplaygenrelist'],
+	[1, 1, 0, \&chooseGenresMenu]);
+	Slim::Control::Request::addDispatch(['randomplaychoosegenre', '_genre', '_value'],
+	[1, 0, 0, \&chooseGenre]);
 	
 	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_TRACK','track');
 	Slim::Buttons::AlarmClock->addSpecialPlaylist('PLUGIN_RANDOM_ALBUM','album');
@@ -104,6 +108,130 @@ sub initPlugin {
 
 	# register handler for starting mix of last type on remote button press [Default is press and hold shuffle]
 	Slim::Buttons::Common::setFunction('randomPlay', \&buttonStart);
+
+	my $menu = {
+		text   => Slim::Utils::Strings::string(getDisplayName()),
+		count  => 5,
+		offset => 0,
+		weight => 15,
+		window => { titleStyle => 'mymusic' },
+		item_loop => [
+			{
+				text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_TRACK'),
+				actions => {
+					do => {
+						player => 0,
+						cmd    => [ 'randomplay', 'tracks' ],
+						params => {
+							menu => 'nowhere',
+						},
+					}
+				},
+			},
+			{
+				text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_ALBUM'),
+				actions => {
+					do => {
+						player => 0,
+						cmd    => [ 'randomplay', 'albums' ],
+						params => {
+							menu => 'nowhere',
+						},
+					}
+				},
+			},
+			{
+				text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_CONTRIBUTOR'),
+				actions => {
+					do => {
+						player => 0,
+						cmd    => [ 'randomplay', 'contributors' ],
+						params => {
+							menu => 'nowhere',
+						},
+					}
+				},
+			},
+			{
+				text    => Slim::Utils::Strings::string('PLUGIN_RANDOM_YEAR'),
+				actions => {
+					do => {
+						player => 0,
+						cmd    => [ 'randomplay', 'year' ],
+						params => {
+							menu => 'nowhere',
+						},
+					}
+				},
+			},
+			{
+				text    => Slim::Utils::Strings::string('PLUGIN_CHOOSE_GENRES'),
+				actions => {
+					go => {
+						player => 0,
+						cmd    => [ 'randomplaygenrelist' ],
+					},
+				},
+			},
+		],
+	};
+
+	Slim::Control::Jive::registerPluginMenu($menu, 'mymusic');
+}
+
+sub chooseGenre {
+	my $request   = shift;
+	my $client    = $request->client();
+	my $genre     = $request->getParam('_genre');
+	my $value     = $request->getParam('_value');
+	my $genres    = getGenres($client);
+
+	# in $genres, an enabled genre returns true for $genres->{'enabled'}
+	# so we set enabled to 0 for this genre, then
+	$genres->{$genre}->{'enabled'} = $value;
+	my @excluded = ();
+	for my $genre (keys %$genres) {
+		push @excluded, $genre if $genres->{$genre}->{'enabled'} == 0;
+	}
+	# set the exclude_genres pref to all disabled genres 
+	$prefs->set('exclude_genres', [@excluded]);
+
+	$request->setStatusDone();
+}
+
+# create the Choose Genres menu for a given player
+sub chooseGenresMenu {
+	my $request = shift;
+	my $client = $request->client();
+	my $genres = getGenres($client);	
+	my $filteredGenres = getFilteredGenres($client);
+	my @menu = ();
+	for my $genre (sort keys %$genres) {
+		my $val = $genres->{$genre}->{'enabled'};
+		push @menu, {
+			text => $genre,
+			checkbox => ($val == 1) + 0,
+                        actions  => {
+                                on  => {
+                                        player => 0,
+                                        cmd    => ['randomplaychoosegenre', $genre, 1],
+                                },
+                                off => {
+                                        player => 0,
+                                        cmd    => ['randomplaychoosegenre', $genre, 0],
+                                },
+                        },
+		};
+	}
+	my $numitems = scalar(@menu);
+	$request->addResult("count", $numitems);
+	$request->addResult("offset", 0);
+	my $cnt = 0;
+	for my $eachGenreMenu (@menu[0..$#menu]) {
+		$request->setResultLoopHash('item_loop', $cnt, $eachGenreMenu);
+		$cnt++;
+	}
+	$request->setStatusDone();
 }
 
 # Find tracks matching parameters and add them to the playlist
@@ -954,3 +1082,4 @@ sub active {
 1;
 
 __END__
+
