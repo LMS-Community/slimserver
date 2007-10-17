@@ -348,13 +348,15 @@ Return localised string for token $token, or ''.
 
 sub string {
 	my $token = uc(shift);
+
 	my $string = $defaultStrings->{$token};
-	
+	$string = logBacktrace("missing string $token") if ($token && !defined $string);
+
 	if ( @_ ) {
-		return sprintf( $string || ( logBacktrace("missing string $token") && $token ), @_ );
+		return sprintf( $string, @_ );
 	}
 	
-	return $string || ( logBacktrace("missing string $token") && $token );
+	return $string;
 }
 
 =head2 getString ( $token )
@@ -365,7 +367,15 @@ Return localised string for token $token, or token itself.
 
 sub getString {
 	my $token = shift;
-	return $defaultStrings->{uc($token)} || $token;
+
+	my $string = $defaultStrings->{uc($token)};
+	$string = $token if ($token && !defined $string);
+
+	if ( @_ ) {
+		return sprintf( $string, @_ );
+	}
+	
+	return $string;
 }
 
 =head2 stringExists ( $token )
