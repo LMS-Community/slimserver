@@ -9,6 +9,7 @@ use base qw(Slim::Networking::SimpleAsyncHTTP);
 
 use URI::Escape qw(uri_escape);
 
+use Slim::Networking::SqueezeNetwork::Players;
 use Slim::Networking::SqueezeNetwork::PrefSync;
 use Slim::Utils::IPDetect;
 use JSON::XS qw(from_json);
@@ -60,6 +61,9 @@ sub _init_done {
 	
 	# Init pref syncing
 	Slim::Networking::SqueezeNetwork::PrefSync->init();
+	
+	# Init polling for list of SN-connected players
+	Slim::Networking::SqueezeNetwork::Players->init();
 }
 
 sub _init_error {

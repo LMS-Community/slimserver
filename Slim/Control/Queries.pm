@@ -2483,7 +2483,29 @@ sub serverstatusQuery {
 				}
 					
 				$cnt++;
-			}	
+			}
+			
+			my @sn_players = Slim::Networking::SqueezeNetwork::Players->get_players();
+			
+			if ( scalar @sn_players ) {
+				my $sn_cnt = 0;
+				
+				for my $player ( @sn_players ) {
+					$request->addResultLoop(
+						'sn_players_loop', $sn_cnt, 'id', $player->{id}
+					);
+					
+					$request->addResultLoop( 
+						'sn_players_loop', $sn_cnt, 'name', $player->{name}
+					);
+					
+					$request->addResultLoop(
+						'sn_players_loop', $sn_cnt, 'playerid', $player->{mac}
+					);
+				}
+				
+				$sn_cnt++;
+			}
 		}
 	}
 	
