@@ -332,7 +332,7 @@ sub retry_new_session {
 	my $account = $client->pluginData('account');
 	
 	if ( !$account ) {
-		my $accountURL = Slim::Networking::SqueezeNetwork->url( '/api/rhapsody/account' );
+		my $accountURL = Slim::Networking::SqueezeNetwork->url( '/api/rhapsody/v1/account' );
 
 		my $http = Slim::Networking::SqueezeNetwork->new(
 			\&Slim::Plugin::RhapsodyDirect::ProtocolHandler::gotAccount,

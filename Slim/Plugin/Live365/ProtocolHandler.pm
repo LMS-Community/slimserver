@@ -63,7 +63,7 @@ sub onScan {
 	# Get the user's session ID from SN, this is so we
 	# don't have to worry about old session ID's in favorites
 	my $sessionURL = Slim::Networking::SqueezeNetwork->url(
-		'/api/live365/sessionid'
+		'/api/live365/v1/sessionid'
 	);
 
 	my $http = Slim::Networking::SqueezeNetwork->new(
@@ -189,7 +189,7 @@ sub getPlaylist {
 	my ($station) = $url =~ m{play/([^/?]+)};
 	
 	my $playlistURL = Slim::Networking::SqueezeNetwork->url(
-		'/api/live365/playlist/' . uri_escape($station),
+		'/api/live365/v1/playlist/' . uri_escape($station),
 	);
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(
@@ -261,12 +261,12 @@ sub gotPlaylistError {
 	my $client = $http->params->{client};
 	my $url    = $http->params->{url};
 	
-	$log->error( "Error getting current track: $error" );
+	$log->error( "Error getting current track: $error, will retry in 30 seconds" );
 	
 	$client->pluginData( currentTrack => 0 );
 	
 	# Display the station name
-	my $title = Slim::Music::Info::getTitle($url);
+	my $title = Slim::Music::Info::title($url);
 	Slim::Music::Info::setCurrentTitle( $url, $title );
 	
 	# Try again

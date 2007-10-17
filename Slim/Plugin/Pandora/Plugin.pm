@@ -32,7 +32,7 @@ sub initPlugin {
 		[0, 1, 1, \&skipTrack]);
 
 	$class->SUPER::initPlugin(
-		feed      => Slim::Networking::SqueezeNetwork->url('/api/pandora/opml'),
+		feed      => Slim::Networking::SqueezeNetwork->url('/api/pandora/v1/opml'),
 		tag       => 'pandora',
 		'icon-id' => 'html/images/ServiceProviders/pandora_56x56_p.png',
 		menu      => 'radio',
@@ -90,7 +90,7 @@ sub rateTrack {
 	
 	# SN URL to submit rating
 	my $ratingURL = Slim::Networking::SqueezeNetwork->url(
-		  '/api/pandora/opml/trackinfo/rate?stationId=' . $stationId 
+		  '/api/pandora/v1/opml/trackinfo/rate?stationId=' . $stationId 
 		. '&trackId=' . $currentTrack->{trackToken}
 		. '&rating=' . $rating
 	);

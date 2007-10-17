@@ -29,7 +29,7 @@ sub initPlugin {
 	);
 
 	$class->SUPER::initPlugin(
-		feed => Slim::Networking::SqueezeNetwork->url('/api/rhapsody/opml'),
+		feed => Slim::Networking::SqueezeNetwork->url('/api/rhapsody/v1/opml'),
 		tag  => 'rhapsodydirect',
 		menu => 'music_on_demand',
 		'icon-id' => 'http://localhost:9000/html/images/ServiceProviders/rhapsodydirect_56x56_p.png',

@@ -97,7 +97,7 @@ sub onCommand {
 		my $prevTrack = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
 		if ( $prevTrack && $prevTrack->{stationToken} ne $stationId ) {
 			my $snURL = Slim::Networking::SqueezeNetwork->url(
-				  '/api/pandora/playback/stationChange?stationId=' . $prevTrack->{stationToken} 
+				  '/api/pandora/v1/playback/stationChange?stationId=' . $prevTrack->{stationToken} 
 				. '&trackId=' . $prevTrack->{trackToken}
 			);
 
@@ -132,7 +132,7 @@ sub getNextTrack {
 	
 	# Talk to SN and get the next track to play
 	my $trackURL = Slim::Networking::SqueezeNetwork->url(
-		"/api/pandora/playback/getNextTrack?stationId=$stationId"
+		"/api/pandora/v1/playback/getNextTrack?stationId=$stationId"
 	);
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(
@@ -311,7 +311,7 @@ sub handleDirectError {
 	my $currentTrack = $client->pluginData('prevTrack') || $client->pluginData('currentTrack');
 	
 	my $snURL = Slim::Networking::SqueezeNetwork->url(
-		  '/api/pandora/opml/playback?audioError?stationId=' . $stationId 
+		  '/api/pandora/v1/opml/playback?audioError?stationId=' . $stationId 
 		. '&trackId=' . $currentTrack->{trackToken}
 	);
 	
@@ -450,7 +450,7 @@ sub trackInfo {
 	
 	# SN URL to fetch track info menu
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
-		  '/api/pandora/opml/trackinfo?stationId=' . $stationId 
+		  '/api/pandora/v1/opml/trackinfo?stationId=' . $stationId 
 		. '&trackId=' . $currentTrack->{trackToken}
 		. '&secs=' . $secs
 	);
@@ -483,7 +483,7 @@ sub trackInfoURL {
 	
 	# SN URL to fetch track info menu
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
-		  '/api/pandora/opml/trackinfo?stationId=' . $stationId 
+		  '/api/pandora/v1/opml/trackinfo?stationId=' . $stationId 
 		. '&trackId=' . $currentTrack->{trackToken}
 		. '&secs=' . $secs
 	);

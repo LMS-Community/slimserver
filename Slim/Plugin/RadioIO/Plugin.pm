@@ -30,7 +30,7 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('plugin.radioio');
 
-my $FEED = Slim::Networking::SqueezeNetwork->url( '/api/radioio/opml' );
+my $FEED = Slim::Networking::SqueezeNetwork->url( '/api/radioio/v1/opml' );
 my $cli_next;
 
 sub initPlugin {

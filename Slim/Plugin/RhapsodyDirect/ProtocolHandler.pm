@@ -127,7 +127,7 @@ sub onCommand {
 	my $account = $client->pluginData('account');
 	
 	if ( !$account ) {
-		my $accountURL = Slim::Networking::SqueezeNetwork->url( '/api/rhapsody/account' );
+		my $accountURL = Slim::Networking::SqueezeNetwork->url( '/api/rhapsody/v1/account' );
 		
 		my $http = Slim::Networking::SqueezeNetwork->new(
 			\&gotAccount,
@@ -532,7 +532,7 @@ sub getTrackMetadata {
 	my $trackId = $params->{trackId};
 	
 	my $trackURL = Slim::Networking::SqueezeNetwork->url(
-		"/api/rhapsody/opml/metadata/getTrack?trackId=$trackId&json=1"
+		"/api/rhapsody/v1/opml/metadata/getTrack?trackId=$trackId&json=1"
 	);
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(
@@ -597,7 +597,7 @@ sub getNextRadioTrack {
 	
 	# Talk to SN and get the next track to play
 	my $radioURL = Slim::Networking::SqueezeNetwork->url(
-		"/api/rhapsody/radio/getNextTrack?stationId=$stationId"
+		"/api/rhapsody/v1/radio/getNextTrack?stationId=$stationId"
 	);
 	
 	my $http = Slim::Networking::SqueezeNetwork->new(
@@ -935,7 +935,7 @@ sub trackInfo {
 	
 	# SN URL to fetch track info menu
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
-		'/api/rhapsody/opml/metadata/getTrack?trackId=' . $trackId
+		'/api/rhapsody/v1/opml/metadata/getTrack?trackId=' . $trackId
 	);
 	
 	if ( $track->url =~ m{rhapd://(.+)\.rdr} ) {
@@ -973,7 +973,7 @@ sub trackInfoURL {
 
 	# SN URL to fetch track info menu
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
-		'/api/rhapsody/opml/metadata/getTrack?trackId=' . $trackId
+		'/api/rhapsody/v1/opml/metadata/getTrack?trackId=' . $trackId
 	);
 
 	if ( $url =~ m{rhapd://(.+)\.rdr} ) {
