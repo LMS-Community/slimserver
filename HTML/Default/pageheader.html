@@ -18,7 +18,7 @@
 			[% IF extJsScripts %]
 				<script type="text/javascript">
 					var strings = new Array();
-					strings['loading']  = '[% "LOADING" | string %]';
+					[% PROCESS jsString id='LOADING' jsId='loading' %]
 				</script>
 
 				[% extJsScripts %]

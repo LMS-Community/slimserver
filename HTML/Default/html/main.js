@@ -228,7 +228,8 @@ PlayerChooser = function(){
 
 
 						// let's set the current player to the first player in the list
-						if (responseText.result && responseText.result['player count'] > 0) {
+						if (responseText.result && 
+							(responseText.result['player count'] > 0 || responseText.result.sn_players_loop)) {
 							var playerInList = false;
 							var el;
 
@@ -271,6 +272,27 @@ PlayerChooser = function(){
 										handler: PlayerChooser.selectPlayer
 									})
 								);
+							}
+
+							// add alist of player connected to SQN, if available
+							if (responseText.result.sn_players_loop) {
+								playerMenu.menu.add(
+									'-',
+									'<span class="menu-title">' + strings['squeezenetwork'] + '</span>'
+								);
+								
+								for (x=0; x < responseText.result.sn_players_loop.length; x++) {
+									var playerInfo = responseText.result.sn_players_loop[x];
+	
+									playerMenu.menu.add(
+										new Ext.menu.Item({
+											text: playerInfo.name,
+											value: playerInfo.id,
+											cls: 'playerList',
+											handler: PlayerChooser.switchSQNPlayer
+										})
+									);
+								}
 							}
 
 							// if there's more than one player, add the sync option
@@ -370,6 +392,18 @@ PlayerChooser = function(){
 
 			Playlist.resetUrl();
 			Player.getStatus();
+		},
+
+		switchSQNPlayer: function(ev){
+			Ext.MessageBox.confirm(
+				strings['squeezenetwork'],
+				strings['sqn_want_switch'],
+				function(btn){
+					if (btn == 'yes') {
+						Utils.processCommand({ params: ['', ['squeezenetwork', 'disconnect', ev.value ]] });
+					}
+				}
+			);
 		},
 
 		showSyncDialog: function(response){

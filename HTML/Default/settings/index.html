@@ -81,18 +81,18 @@
 
 		<script type="text/javascript">
 			var strings = new Array();
-			strings['status']    = "[% "STATUS" | string %]";
-			strings['basic']     = "[% "BASIC_SERVER_SETTINGS" | string %]";
-			strings['player']    = "[% "PLAYER" | string %]";
-			strings['mymusic']   = "[% "MY_MUSIC" | string %]";
-			strings['itunes']    = "[% "ITUNES" | string %]";
-			strings['podcasts']  = "[% "PLUGIN_PODCAST" | string %]";
-			strings['accounts']  = "[% "SETUP_ACCOUNTS" | string %]";
-			strings['interface'] = "[% "INTERFACE_SETTINGS" | string %]";
-			strings['plugins']   = "[% "SETUP_GROUP_PLUGINS" | string %]";
-			strings['advanced']  = "[% "ADVANCED_SETTINGS" | string %]";
-			strings['save']      = "[% "SAVE_SETTINGS" | string %]";
-			strings['close']     = "[% "CLOSE" | string %]";
+			[% PROCESS jsString id='STATUS' jsId='status' %]
+			[% PROCESS jsString id='BASIC_SERVER_SETTINGS' jsId='basic' %]
+			[% PROCESS jsString id='PLAYER' jsId='player' %]
+			[% PROCESS jsString id='MY_MUSIC' jsId='mymusic' %]
+			[% PROCESS jsString id='ITUNES' jsId='itunes' %]
+			[% PROCESS jsString id='PLUGIN_PODCAST' jsId='podcasts' %]
+			[% PROCESS jsString id='SETUP_ACCOUNTS' jsId='accounts' %]
+			[% PROCESS jsString id='INTERFACE_SETTINGS' jsId='interface' %]
+			[% PROCESS jsString id='SETUP_GROUP_PLUGINS' jsId='plugins' %]
+			[% PROCESS jsString id='ADVANCED_SETTINGS' jsId='advanced' %]
+			[% PROCESS jsString id='SAVE_SETTINGS' jsId='save' %]
+			[% PROCESS jsString id='CLOSE' jsId='close' %]
 
 			Ext.EventManager.onDocumentReady(Settings.init, Settings, true);
 		</script>

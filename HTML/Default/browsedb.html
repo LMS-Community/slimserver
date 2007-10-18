@@ -7,11 +7,11 @@
 	<script type="text/javascript" src="[% webroot %]html/browse.js?r=[% revision %]"></script>
 
 	<script type="text/javascript">
-		strings['switch_to_list']          = '[% "SWITCH_TO_LIST" | string %]';
-		strings['switch_to_extended_list'] = '[% "SWITCH_TO_EXTENDED_LIST" | string %]';
-		strings['switch_to_gallery']       = '[% "SWITCH_TO_GALLERY" | string %]';
-		strings['sort_by']                 = '[% "SORT_BY" | string %]';
-		strings['display_options']         = '[% "ALBUM_DISPLAY_OPTIONS" | string %]';
+		[% PROCESS jsString id='SWITCH_TO_LIST' jsId='switch_to_list' %]
+		[% PROCESS jsString id='SWITCH_TO_EXTENDED_LIST' jsId='switch_to_extended_list' %]
+		[% PROCESS jsString id='SWITCH_TO_GALLERY' jsId='switch_to_gallery' %]
+		[% PROCESS jsString id='SORT_BY' jsId='sort_by' %]
+		[% PROCESS jsString id='ALBUM_DISPLAY_OPTIONS' jsId='display_options' %]
 
 		var orderByList;
 		[% IF levelName == 'album' %]

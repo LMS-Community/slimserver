@@ -56,15 +56,17 @@
 		<script type="text/javascript" src="[% webroot %]html/main.js?r=[% revision %]"></script>
 		<script type="text/javascript">
 			var strings = new Array();
-			strings['loading']           = "[% "LOADING" | string %]";
-			strings['synchronize']       = "[% "SYNCHRONIZE" | string %]";
-			strings['synchronize_desc']  = "[% "SETUP_SYNCHRONIZE_DESC" | string %]";
-			strings['execute']           = "[% "EXECUTE" | string %]";
-			strings['clear_playlist']    = "[% "CLEAR" | string %]";
-			strings['save']              = "[% "SAVE" | string %]";
-			strings['choose_player']     = "[% "CHOOSE_PLAYER" | string %]";
-			strings['no_player']         = "[% "NO_PLAYER_FOUND" | string %]";
-			strings['no_player_details'] = "[% "NO_PLAYER_DETAILS" | string | replace("'", '\'') | replace('"', '\"') %]";
+			[% PROCESS jsString id='SQUEEZENETWORK' %]
+			[% PROCESS jsString id='SQUEEZENETWORK_WANT_SWITCH' jsId='sqn_want_switch' %]
+			[% PROCESS jsString id='LOADING' jsId='' %]
+			[% PROCESS jsString id='SYNCHRONIZE' jsId='' %]
+			[% PROCESS jsString id='SETUP_SYNCHRONIZE_DESC' jsId='synchronize_desc' %]
+			[% PROCESS jsString id='EXECUTE' jsId='' %]
+			[% PROCESS jsString id='CLEAR' jsId='clear_playlist' %]
+			[% PROCESS jsString id='SAVE' jsId='' %]
+			[% PROCESS jsString id='CHOOSE_PLAYER' jsId='' %]
+			[% PROCESS jsString id='NO_PLAYER_FOUND' jsId='no_player' %]
+			[% PROCESS jsString id='NO_PLAYER_DETAILS' jsId='' %]
 
 			try { Ext.EventManager.onDocumentReady(Main.init, Main, true); }
 			catch(e) {

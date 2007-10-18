@@ -12387,6 +12387,10 @@ SQUEEZENETWORK_SWITCHING
 	SV	Växlar till SqueezeNetwork, vänta...
 	ZH_CN	正在切换到SqueezeNetwork，请稍等。
 
+SQUEEZENETWORK_WANT_SWITCH
+	DE	Dieser Player ist derzeit mit dem SqueezeNetwork verbunden. Wollen Sie ihn zurück zum SqueezeCenter verbinden?
+	EN	This player is currentyl connected to SqueezeNetwork. Do you want it to switch back to SqueezeCenter?
+
 SQUEEZENETWORK_SB2_REQUIRED
 	DE	Diese Funktion benötigt eine neuere Squeezebox.
 	EN	Sorry, requires a newer Squeezebox.

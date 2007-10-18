@@ -144,4 +144,8 @@
 		</div>
 	[% END %]
 
+	[% BLOCK jsString %]
+		strings['[% IF jsId; jsId; ELSE; id | lower; END %]'] = "[% id | string | replace('"', '\"') %]";
+	[% END %]
+
 [% END -%]

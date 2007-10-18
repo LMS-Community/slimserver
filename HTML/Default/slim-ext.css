@@ -169,3 +169,7 @@ a.x-menu-item:hover {
 	background-image: url(html/images/slim-ext/dlg-bg.gif);
 	border: none;
 }
+
+.x-dlg .x-dlg-close {
+	background-image: none;
+}

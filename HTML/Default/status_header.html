@@ -48,29 +48,30 @@
 
 <script type="text/javascript">
 	// strings used for button tooltips
-	strings['next']     = "[% "NEXT" | string %]";
-	strings['previous'] = "[% "PREVIOUS" | string %]";
-	strings['play']     = "[% "PLAY" | string %]";
-	strings['pause']    = "[% "PAUSE" | string %]";
-	strings['shuffle0'] = "[% "SHUFFLE_OFF" | string %]";
-	strings['shuffle1'] = "[% "SHUFFLE_ON_SONGS" | string %]";
-	strings['shuffle2'] = "[% "SHUFFLE_ON_ALBUMS" | string %]";
-	strings['power']    = "[% "POWER" | string %]";
-	strings['repeat0']  = "[% "REPEAT_OFF" | string %]";
-	strings['repeat1']  = "[% "REPEAT_ONE" | string %]";
-	strings['repeat2']  = "[% "REPEAT_ALL" | string %]";
-	strings['volume']   = "[% "VOLUME" | string %][% "COLON" | string %]";
-	strings['volumeup'] = "[% "VOLUME_LOUDER" | string %]";
-	strings['volumedown'] = "[% "VOLUME_SOFTER" | string %]";
-	strings['close']    = "[% "CLOSE" | string %]";
-	strings['collapse'] = "[% "COLLAPSE" | string %]";
-	strings['expand']   = "[% "EXPAND" | string %]";
-	strings['undock']   = "[% "UNDOCK_PLAYER_PANEL" | string %]";
-	strings['by']       = "[% "BY" | string %]";
-	strings['from']     = "[% "FROM" | string %]";
-	strings['on']       = "[% "ON" | string %]";
-	strings['off']      = "[% "OFF" | string %]";
-	strings['colon']    = "[% "COLON" | string %]";
+	[% PROCESS jsString id='NEXT' jsId='next' %]
+	[% PROCESS jsString id='PREVIOUS' jsId='previous' %]
+	[% PROCESS jsString id='PLAY' jsId='play' %]
+	[% PROCESS jsString id='PAUSE' jsId='pause' %]
+	[% PROCESS jsString id='SHUFFLE_OFF' jsId='shuffle0' %]
+	[% PROCESS jsString id='SHUFFLE_ON_SONGS' jsId='shuffle1' %]
+	[% PROCESS jsString id='SHUFFLE_ON_ALBUMS' jsId='shuffle2' %]
+	[% PROCESS jsString id='POWER' jsId='power' %]
+	[% PROCESS jsString id='REPEAT_OFF' jsId='repeat0' %]
+	[% PROCESS jsString id='REPEAT_ONE' jsId='repeat1' %]
+	[% PROCESS jsString id='REPEAT_ALL' jsId='repeat2' %]
+	[% PROCESS jsString id='VOLUME' jsId='volume' %]
+	strings['volume'] += '[% "COLON" | string %]';
+	[% PROCESS jsString id='VOLUME_LOUDER' jsId='volumeup' %]
+	[% PROCESS jsString id='VOLUME_SOFTER' jsId='volumedown' %]
+	[% PROCESS jsString id='CLOSE' jsId='close' %]
+	[% PROCESS jsString id='COLLAPSE' jsId='collapse' %]
+	[% PROCESS jsString id='EXPAND' jsId='expand' %]
+	[% PROCESS jsString id='UNDOCK_PLAYER_PANEL' jsId='undock' %]
+	[% PROCESS jsString id='BY' jsId='by' %]
+	[% PROCESS jsString id='FROM' jsId='from' %]
+	[% PROCESS jsString id='ON' jsId='on' %]
+	[% PROCESS jsString id='OFF' jsId='off' %]
+	[% PROCESS jsString id='COLON' jsId='colon' %]
 	
 </script>
 
