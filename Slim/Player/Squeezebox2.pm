@@ -362,40 +362,6 @@ sub directHeaders {
 				# Could use a hash ref for header parameters
 				($title, $bitrate, $metaint, $redir, $contentType, $length, $body) = $handler->parseDirectHeaders($client, $url, @headers);
 			}
-			else {
-				# This code could move to the HTTP protocol handler
-				foreach my $header (@headers) {
-				
-					$log->info("header-ds: $header");
-		
-					if ($header =~ /^(?:ic[ey]-name|x-audiocast-name):\s*(.+)/i) {
-						
-						$title = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
-					}
-					
-					if ($header =~ /^(?:icy-br|x-audiocast-bitrate):\s*(.+)/i) {
-						$bitrate = $1 * 1000;
-					}
-				
-					if ($header =~ /^icy-metaint:\s*(.+)/) {
-						$metaint = $1;
-					}
-				
-					if ($header =~ /^Location:\s*(.*)/i) {
-						$redir = $1;
-					}
-					
-					if ($header =~ /^Content-Type:\s*(.*)/i) {
-						$contentType = $1;
-					}
-					
-					if ($header =~ /^Content-Length:\s*(.*)/i) {
-						$length = $1;
-					}
-				}
-	
-				$contentType = Slim::Music::Info::mimeToType($contentType);
-			}
 
 			# update bitrate, content-type title for this URL...
 			Slim::Music::Info::setContentType($url, $contentType) if $contentType;

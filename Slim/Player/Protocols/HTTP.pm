@@ -309,6 +309,52 @@ sub sysread {
 	return $readLength;
 }
 
+sub parseDirectHeaders {
+	my ( $class, $client, $url, @headers ) = @_;
+	
+	my ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
+	
+	foreach my $header (@headers) {
+	
+		logger('player.streaming.direct')->debug("header-ds: $header");
+
+		if ($header =~ /^(?:ic[ey]-name|x-audiocast-name):\s*(.+)/i) {
+			
+			$title = Slim::Utils::Unicode::utf8decode_guess($1, 'iso-8859-1');
+		}
+		
+		elsif ($header =~ /^(?:icy-br|x-audiocast-bitrate):\s*(.+)/i) {
+			$bitrate = $1 * 1000;
+		}
+	
+		elsif ($header =~ /^icy-metaint:\s*(.+)/) {
+			$metaint = $1;
+		}
+	
+		elsif ($header =~ /^Location:\s*(.*)/i) {
+			$redir = $1;
+		}
+		
+		elsif ($header =~ /^Content-Type:\s*(.*)/i) {
+			$contentType = $1;
+		}
+		
+		elsif ($header =~ /^Content-Length:\s*(.*)/i) {
+			$length = $1;
+		}
+		
+		# mp3tunes metadata, this is a bit of hack but creating
+		# an mp3tunes protocol handler is overkill
+		elsif ( $url =~ /mp3tunes\.com/ && $header =~ /^X-Locker-Info:\s*(.+)/i ) {
+			Slim::Plugin::MP3tunes::Plugin->setLockerInfo( $client, $url, $1 );
+		}
+	}
+
+	$contentType = Slim::Music::Info::mimeToType($contentType);
+	
+	return ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
+}
+
 sub parseDirectBody {
 	my ( $class, $client, $url, $body ) = @_;
 
@@ -369,6 +415,26 @@ sub onJump {
 	$client->showBuffering( 1 );
 
 	return $callback->();
+}
+
+sub getMetadataFor {
+	my ( $class, $client, $url, $forceCurrent ) = @_;
+	
+	if ( $url =~ /mp3tunes\.com/ ) {
+		my $meta = Slim::Plugin::MP3tunes::Plugin->getLockerInfo( $client, $url );
+		if ( $meta ) {
+			return {
+				artist   => $meta->{artist},
+				album    => $meta->{album},
+				tracknum => $meta->{tracknum},
+				title    => $meta->{title},
+				cover    => $meta->{cover},
+				type     => 'MP3tunes',
+			};
+		}
+	}
+	
+	return {};
 }
 
 1;
