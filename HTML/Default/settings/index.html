@@ -17,9 +17,9 @@
 		'INTERFACE_SETTINGS',
 		'SETUP_GROUP_PLUGINS',
 		'SERVER_STATUS',
-		'PLUGINS'
+		'PLUGINS',
+		'BEHAVIOR_SETTINGS'
 	];
-
 
 	IF playerid;
 		links = playersetup;
@@ -48,7 +48,7 @@
 		[% IF playerid %]
 			<frame src="[% webroot %]settings/player/basic.html?player=[% playerURI%]&playerid=[% playerURI %]" name="subSettings" frameborder="0" marginwidth="15">
 		[% ELSE %]
-			<frame src="[% webroot %]settings/server/behavior.html?player=[% playerURI %]" name="subSettings" frameborder="0" marginwidth="15">
+			<frame src="[% webroot %]settings/server/formatting.html?player=[% playerURI %]" name="subSettings" frameborder="0" marginwidth="15">
 		[% END %]
 	</frameset>
 [%- ELSE -%]
@@ -136,7 +136,7 @@
 			</div>
 
 			<div id="main">
-				<iframe name="settings" id="settings" frameborder="0" scrolling="no"></iframe>
+				<iframe name="settings" id="settings" frameborder="0" scrolling="auto"></iframe>
 			</div>
 
 			<div id="footer">
