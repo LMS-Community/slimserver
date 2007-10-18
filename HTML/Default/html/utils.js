@@ -55,7 +55,8 @@ Slim.Button = function(renderTo, config){
 	}
 
 	// keep track of the player's power mode
-	this.on('dataupdate', function(result){ this.power = result.power; });
+	// assume it's powered on if it's undefined (http client)
+	this.on('dataupdate', function(result){ this.power = (result.power == null) || result.power; });
 };
 
 Ext.extend(Slim.Button, Ext.Button, {

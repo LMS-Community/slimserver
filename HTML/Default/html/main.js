@@ -1024,7 +1024,8 @@ Player = function(){
 			}
 
 			playerStatus = {
-				power: result.power,
+				// if power is undefined, set it to on for http clients
+				power: (result.power == null) || result.power,
 				mode: result.mode,
 				current_title: result.current_title,
 				title: result.playlist_tracks > 0 ? result.playlist_loop[0].title : '',
@@ -1037,7 +1038,7 @@ Player = function(){
 
 			this.updatePlayTime(result.time ? result.time : 0);
 
-			if (!result.power) {
+			if ((result.power != null) && !result.power) {
 				playerStatus.power = 0;
 				playTimeTimer.cancel();
 			}
@@ -1079,7 +1080,7 @@ Player = function(){
 									this.getUpdate();
 								}
 								
-								if (result.power) {
+								if ((result.power == null) || result.power) {
 									playerStatus.duration = result.duration;
 									this.updatePlayTime(result.time);
 								}
