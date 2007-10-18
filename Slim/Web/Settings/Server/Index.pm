@@ -16,17 +16,7 @@ sub page {
 
 sub handler {
 	my ($class, $client, $paramRef) = @_;
-	
-	$paramRef->{firstLevelItems} = [
-		'BASIC_SERVER_SETTINGS',
-		'ITUNES',
-		'PLUGIN_PODCAST',
-		'SQUEEZENETWORK_SETTINGS',
-		'INTERFACE_SETTINGS',
-		'SETUP_GROUP_PLUGINS',
-		'SERVER_STATUS'
-	];
-	
+
 	$paramRef->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);

@@ -1,6 +1,16 @@
 [%- IF advanced;
 	PROCESS settings/header.html;	
 
+	firstLevelItems = [
+		'BASIC_SERVER_SETTINGS',
+		'ITUNES',
+		'PLUGIN_PODCAST',
+		'SQUEEZENETWORK_SETTINGS',
+		'INTERFACE_SETTINGS',
+		'SETUP_GROUP_PLUGINS',
+		'SERVER_STATUS'
+	];
+
 	BLOCK settingsPage %]
 		<div class="selectorMarker" onmouseover="Utils.highlight(this);" id="[% href %]"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 			<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
