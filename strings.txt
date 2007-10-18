@@ -12389,7 +12389,7 @@ SQUEEZENETWORK_SWITCHING
 
 SQUEEZENETWORK_WANT_SWITCH
 	DE	Dieser Player ist derzeit mit dem SqueezeNetwork verbunden. Wollen Sie ihn zurück zum SqueezeCenter verbinden?
-	EN	This player is currentyl connected to SqueezeNetwork. Do you want it to switch back to SqueezeCenter?
+	EN	This player is currently connected to SqueezeNetwork. Do you want it to switch back to SqueezeCenter?
 
 SQUEEZENETWORK_SB2_REQUIRED
 	DE	Diese Funktion benötigt eine neuere Squeezebox.
