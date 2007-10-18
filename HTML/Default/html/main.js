@@ -276,22 +276,31 @@ PlayerChooser = function(){
 
 							// add alist of player connected to SQN, if available
 							if (responseText.result.sn_players_loop) {
-								playerMenu.menu.add(
-									'-',
-									'<span class="menu-title">' + strings['squeezenetwork'] + '</span>'
-								);
+								var first = true;
 								
 								for (x=0; x < responseText.result.sn_players_loop.length; x++) {
 									var playerInfo = responseText.result.sn_players_loop[x];
-	
-									playerMenu.menu.add(
-										new Ext.menu.Item({
-											text: playerInfo.name,
-											value: playerInfo.id,
-											cls: 'playerList',
-											handler: PlayerChooser.switchSQNPlayer
-										})
-									);
+
+									// don't display players which are already connected to SC
+									// this is to prevent double entries right after a player has switched
+									if (! playerList.get(playerInfo.playerid)) {
+										if (first) {
+											playerMenu.menu.add(
+												'-',
+												'<span class="menu-title">' + strings['squeezenetwork'] + '</span>'
+											);
+											first = false;
+										}
+
+										playerMenu.menu.add(
+											new Ext.menu.Item({
+												text: playerInfo.name,
+												value: playerInfo.id,
+												cls: 'playerList',
+												handler: PlayerChooser.switchSQNPlayer
+											})
+										);
+									}
 								}
 							}
 
