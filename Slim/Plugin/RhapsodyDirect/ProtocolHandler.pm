@@ -169,6 +169,10 @@ sub onCommand {
 		# Clear any previous outstanding rpds queries
 		cancel_rpds($client);
 		
+		# Sometimes while changing tracks we get a 'playlist clear' after
+		# this runs, so set a flag to ignore this
+		$client->pluginData( trackStarting => 1 );
+		
 		rpds( $client, {
 			data        => pack( 'c', 6 ),
 			callback    => \&getPlaybackSession,
@@ -286,9 +290,7 @@ sub gotPlaybackSession {
 	
 	if ( !Slim::Player::Sync::isSynced($client) || Slim::Player::Sync::isMaster($client) ) {
 		getTrackMetadata( $client, {
-			trackId     => $trackId,
-			callback    => \&gotTrackMetadata,
-			passthrough => [ $client ],
+			trackId => $trackId,
 		} );
 	}
 	
@@ -455,9 +457,7 @@ sub getNextTrackInfo {
 	# If synced, only the master should do this
 	if ( !Slim::Player::Sync::isSynced($client) || Slim::Player::Sync::isMaster($client) ) {
 		getTrackMetadata( $client, {
-			trackId     => $trackId,
-			callback    => \&gotTrackMetadata,
-			passthrough => [ $client ],
+			trackId => $trackId,
 		} );
 	}
 	
@@ -754,6 +754,9 @@ sub gotTrackInfo {
 		\&stopCallback, 
 		[['stop', 'playlist']],
 	);
+	
+	# Clear the trackStarting flag
+	$client->pluginData( trackStarting => 0 );
 }
 
 sub gotTrackError {
@@ -835,7 +838,14 @@ sub stopCallback {
 
 		if ( !$url || $url !~ /^rhapd/ ) {
 			# stop listening for stop events
+			$log->debug("No longer playing Rhapsody, ignoring (URL: $url)");
 			Slim::Control::Request::unsubscribe( \&stopCallback );
+			return;
+		}
+		
+		# Ignore if a new track is already starting
+		if ( $client->pluginData('trackStarting') ) {
+			$log->debug("Player stopped ($p0 $p1) but another track was already starting, ignoring");
 			return;
 		}
 		
@@ -848,7 +858,7 @@ sub stopCallback {
 		my $songtime = Slim::Player::Source::songTime($client);
 		
 		if ( $songtime > 0 ) {	
-			$log->debug("Player stopped, logging usage info ($songtime seconds)...");
+			$log->debug("Player stopped ($p0 $p1), logging usage info ($songtime seconds)...");
 	
 			# There are different log methods for normal vs. radio play
 			my $data;
@@ -885,6 +895,9 @@ sub stopCallback {
 					passthrough => [],
 				} );
 			}
+		}
+		else {
+			$log->debug("Player stopped ($p0 $p1) but songtime was $songtime, ignoring");
 		}
 	}
 }
@@ -993,8 +1006,16 @@ sub getMetadataFor {
 		$url = $client->pluginData('radioTrackURL');
 	}
 	
-	# XXX: if metadata is not here, we should go fetch it so the next poll
-	# will include the data
+	return {} unless $url;
+	
+	# If metadata is not here, fetch it so the next poll will include the data
+	if ( !$meta->{$url} ) {
+		my ($trackId) = $url =~ /(Tra\.[^.]+)/;
+		
+		getTrackMetadata( $client, {
+			trackId => $trackId,
+		} );
+	}
 	
 	return $meta->{$url} || {};
 }
