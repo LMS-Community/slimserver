@@ -1,35 +1,22 @@
 [% PROCESS settings/header.html %]
 [% IF prefs %]
-	<div class="settingSection">
-	
-		<div class="groupHead">[% "SETUP_GROUP_IRSETS" | string %]</div>
-		<div class="groupDesc">[% "SETUP_GROUP_IRSETS_DESC" | string %]</div>
-
+	[% WRAPPER setting title="SETUP_GROUP_IRSETS" desc="SETUP_GROUP_IRSETS_DESC" %]
 		[% FOREACH option = irsetlist  %]
-	
-		<input type=hidden name="irsetlist[% loop.index %]" value="[% option.key %]" />
-		<input type=checkbox [% IF NOT prefs.disabledirsets.exists(option.key); %]checked [% END %] class="stdedit" name="irsetlist[% loop.index %]" id="irsetlist[% loop.index %]" value="0" />
-		<label for="[% option.key %]" class="stdlabel">[% option.value %]</label><br>
-
+			<input type=hidden name="irsetlist[% loop.index %]" value="[% option.key %]" />
+			<input type=checkbox [% IF NOT prefs.disabledirsets.exists(option.key); %]checked [% END %] class="stdedit" name="irsetlist[% loop.index %]" id="irsetlist[% loop.index %]" value="0" />
+			<label for="[% option.key %]" class="stdlabel">[% option.value %]</label><br>
 		[% END %]
-	
-	</div>
+	[% END %]
+
 
 	[% IF prefs.exists('irmap') %]
-	<div class="settingSection">
-
-		<div class="groupHead">[% "SETUP_IRMAP" | string %]</div>
-		<div class="groupDesc">[% "SETUP_IRMAP_DESC" | string %]</div>
-
-		<select class="stdedit" name="irmap" id="irmap">
-
-		[% FOREACH option = irmapOptions  %]
-			<option [% IF prefs.irmap == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
-		[%- END -%]
-		
-		</select>
-
-	</div>
+		[% WRAPPER setting title="SETUP_IRMAP" desc="SETUP_IRMAP_DESC" %]
+			<select class="stdedit" name="irmap" id="irmap">
+				[% FOREACH option = irmapOptions  %]
+					<option [% IF prefs.irmap == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
+				[%- END -%]
+			</select>
+		[% END %]
 	[% END %]
 [% END %]
 [% PROCESS settings/footer.html %]

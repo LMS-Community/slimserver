@@ -1,3 +1,11 @@
+[%- BLOCK settingsPage -%]
+	<div class="selectorMarker" onmouseover="Utils.highlight(this);" id="[% href %]"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+		<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
+			<a href="[% href %]" target="subSettings" class="browseItemLink">[% title %]</a>
+		</div>
+	</div></div></div></div></div>
+[%- END -%]
+
 [%- IF advanced;
 	PROCESS settings/header.html;	
 
@@ -8,18 +16,12 @@
 		'SQUEEZENETWORK_SETTINGS',
 		'INTERFACE_SETTINGS',
 		'SETUP_GROUP_PLUGINS',
-		'SERVER_STATUS'
+		'SERVER_STATUS',
+		'PLUGINS'
 	];
 
-	BLOCK settingsPage %]
-		<div class="selectorMarker" onmouseover="Utils.highlight(this);" id="[% href %]"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-			<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
-				<a href="[% href %]" target="subSettings" class="browseItemLink">[% title %]</a>
-			</div>
-		</div></div></div></div></div>
-	[% END -%]
 
-	[% IF playerid;
+	IF playerid;
 		links = playersetup;
 	ELSE;
 		links = additionalLinks.setup;
@@ -27,11 +29,11 @@
 
 	IF links;
 		FOREACH link = links;
-			IF !firstLevelItems.grep(link.key).size;
+			IF !firstLevelItems.grep("^$link.key$").size;
 				title = link.key | string | html;
 				href = link.value _ "player=" _ playerURI;
 				IF playerid;
-					href = href _ "&amp;playerid=" _ playerid;
+					href = href _ "&amp;playerid=" _ playerURI;
 				END;
 				PROCESS settingsPage;
 			END;
@@ -41,8 +43,13 @@
 	PROCESS settings/footer.html %]
 [%- ELSIF sub -%]
 	<frameset cols="250,*">
-		<frame src="[% webroot %]settings/index.html?player=[% playerid %]&[% sub %]=1" name="menu" frameborder="0">
-		<frame src="[% webroot %]settings/server/behavior.html?player=[% playerid %]" name="subSettings" frameborder="0" marginwidth="15">
+		<frame src="[% webroot %]settings/index.html?player=[% playerURI %]&[% sub %]=1[% IF playerid %]&playerid=[% playerURI; END %]" name="menu" frameborder="0">
+
+		[% IF playerid %]
+			<frame src="[% webroot %]settings/player/basic.html?player=[% playerURI%]&playerid=[% playerURI %]" name="subSettings" frameborder="0" marginwidth="15">
+		[% ELSE %]
+			<frame src="[% webroot %]settings/server/behavior.html?player=[% playerURI %]" name="subSettings" frameborder="0" marginwidth="15">
+		[% END %]
 	</frameset>
 [%- ELSE -%]
 <?xml version="1.0" encoding="UTF-8"?>

@@ -1,52 +1,39 @@
 [% PROCESS settings/header.html %]
-
-	<div class="settingSection">
-
-		<div class="prefHead">[% "SETUP_WEBPROXY" | string %]</div>
-		<div class="prefDesc">[% "SETUP_WEBPROXY_DESC" | string %]</div>
-
-		<label for="webproxy" class="stdlabel">[% "SETUP_WEBPROXY_CHOOSE" | string %]</label>
+	[% WRAPPER setting title="SETUP_WEBPROXY" desc="SETUP_WEBPROXY_DESC" %]
 		<input type=text class="stdedit" name="webproxy" id="webproxy" value="[% prefs.webproxy %]" size="40">
+	[% END %]
 
-		<div class="prefHead">[% "SETUP_HTTPPORT" | string %]</div>
-		<div class="prefDesc">[% "SETUP_HTTPPORT_DESC" | string %]</div>
-
+	[% WRAPPER setting title="SETUP_HTTPPORT" desc="SETUP_HTTPPORT_DESC" %]
 		<input type=text class="stdedit" name="httpport" id="httpport" value="[% prefs.httpport %]" size="15">
+	[% END %]
 
-		<div class="prefHead">[% "SETUP_BUFFERSECS" | string %]</div>
-		<div class="prefDesc">[% "SETUP_BUFFERSECS_DESC" | string %]</div>
-
-		<input type=text class="stdedit" name="bufferSecs" id="bufferSecs" value="[% prefs.bufferSecs %]" size="15">
-
-		<div class="prefHead">[% "SETUP_REMOTESTREAMTIMEOUT" | string %]</div>
-		<div class="prefDesc">[% "SETUP_REMOTESTREAMTIMEOUT_DESC" | string %]</div>
-
-		<label for="remotestreamtimeout" class="stdlabel">[% "SETUP_REMOTESTREAMTIMEOUT_CHOOSE" | string %]</label>
-		<input type=text class="stdedit" name="remotestreamtimeout" id="remotestreamtimeout" value="[% prefs.remotestreamtimeout %]" size="15">
-
-		<div class="prefHead">[% "SETUP_MAXWMARATE" | string %]</div>
-		<div class="prefDesc">[% "SETUP_MAXWMARATE_DESC" | string %]</div>
-
-		<select class="stdedit" name="maxWMArate" id="maxWMArate">
-
-		[% FOREACH option = ['9999', '32', '64', '96', '128', '160', '192', '256', '320'] %]
-			<option [% IF prefs.maxWMArate == option %]selected [% END %]value="[% option %]">
-				[% IF option == 9999 %][% "NO_LIMIT" | string %][% ELSE %][% option %] [% 'KBPS' | string %][% END %]</option>
-		[%- END -%]
-
-		</select>
-		
-		[% IF prefs.exists('syncStartDelay') %]
-		<div class="prefHead">[% "SETUP_SYNCSTARTDELAY" | string %]</div>
-		<div class="prefDesc">[% "SETUP_SYNCSTARTDELAY_DESC" | string %]</div>
-
-		<label for="syncStartDelay" class="stdlabel">[% "SETUP_SYNCSTARTDELAY_CHOOSE" | string %]</label>
-		<input type=text class="stdedit" name="syncStartDelay" id="syncStartDelay" value="[% prefs.syncStartDelay %]" size="15">
+	[% WRAPPER settingSection %]
+		[% WRAPPER settingGroup title="SETUP_BUFFERSECS" desc="SETUP_BUFFERSECS_DESC" %]
+			<input type=text class="stdedit" name="bufferSecs" id="bufferSecs" value="[% prefs.bufferSecs %]" size="15">
 		[% END %]
 
-		<div class="prefHead">[% "SETUP_NOUPNP" | string %]</div>
-		<div class="prefDesc">[% "SETUP_NOUPNP_DESC" | string %]</div>
-		
+		[% WRAPPER settingGroup title="SETUP_REMOTESTREAMTIMEOUT" desc="SETUP_REMOTESTREAMTIMEOUT_DESC" %]
+			<input type=text class="stdedit" name="remotestreamtimeout" id="remotestreamtimeout" value="[% prefs.remotestreamtimeout %]" size="15">
+		[% END %]
+
+		[% WRAPPER settingGroup title="SETUP_MAXWMARATE" desc="SETUP_MAXWMARATE_DESC" %]
+			<select class="stdedit" name="maxWMArate" id="maxWMArate">
+			[% FOREACH option = ['9999', '32', '64', '96', '128', '160', '192', '256', '320'] %]
+				<option [% IF prefs.maxWMArate == option %]selected [% END %]value="[% option %]">
+					[% IF option == 9999 %][% "NO_LIMIT" | string %][% ELSE %][% option %] [% 'KBPS' | string %][% END %]</option>
+			[%- END -%]
+			</select>
+		[% END %]
+
+		[% IF prefs.exists('syncStartDelay') %]
+			[% WRAPPER settingGroup title="SETUP_SYNCSTARTDELAY" desc="SETUP_SYNCSTARTDELAY_DESC" %]
+				<input type=text class="stdedit" name="syncStartDelay" id="syncStartDelay" value="[% prefs.syncStartDelay %]" size="15">
+			[% END %]
+		[% END %]
+
+	[% END %]
+
+	[% WRAPPER setting title="SETUP_NOUPNP" desc="SETUP_NOUPNP_DESC" %]
 		<select class="stdedit" name="noupnp" id="noupnp">
 			<option [% IF prefs.noupnp == 0 %]selected="selected" [% END %]value="0">
 				[% 'SETUP_UPNP_ENABLE' | string %]
@@ -55,44 +42,37 @@
 				[% 'SETUP_UPNP_DISABLE' | string %]
 			</option>
 		</select>
+	[% END %]
 
-		[% IF prefs.exists('mDNSname') %]
-		<div class="prefHead">[% "SETUP_MDNSNAME" | string %]</div>
-		<div class="prefDesc">[% "SETUP_MDNSNAME_DESC" | string %]</div>
-		
-		<label for="mDNSname" class="stdlabel">[% "SETUP_MDNSNAME_CHOOSE" | string %]</label>
-		<input type=text class="stdedit" name="mDNSname" id="mDNSname" value="[% prefs.mDNSname %]" size="20">
+
+	[% IF prefs.exists('mDNSname') %]
+		[% WRAPPER setting title="SETUP_MDNSNAME" desc="SETUP_MDNSNAME_DESC" %]
+			<input type=text class="stdedit" name="mDNSname" id="mDNSname" value="[% prefs.mDNSname %]" size="20">	
 		[% END %]
+	[% END %]
 
-	</div>
 	[% IF prefs.exists('tcpReadMaximum') || prefs.exists('tcpWriteMaximum') || prefs.exists('udpChunkSize') %]
-	<div class="settingSection">
+		[% WRAPPER settingSection %]
+			[% WRAPPER settingGroup title="SETUP_GROUP_TCP_PARAMS" desc="SETUP_GROUP_TCP_PARAMS_DESC" %][% END %]	
 
-		<div class="groupHead">[% "SETUP_GROUP_TCP_PARAMS" | string %]</div>
-		<div class="groupDesc">[% "SETUP_GROUP_TCP_PARAMS_DESC" | string %]</div>
-				
-		<table border="0" width="100%">
-		[% IF prefs.exists('tcpReadMaximum') %]
-		<tr>
-		<td><label for="tcpReadMaximum" class="stdlabel">[% "SETUP_TCPREADMAXIMUM_CHOOSE" | string %]</label></td>
-		<td><input type="text" class="stdedit" name="tcpReadMaximum" id="tcpReadMaximum" value="[% prefs.tcpReadMaximum %]" size="15"></td>
-		</tr>
+			[% IF prefs.exists('tcpReadMaximum') %]
+				[% WRAPPER settingGroup title="SETUP_TCPREADMAXIMUM_CHOOSE" desc="" %]
+					<input type="text" class="stdedit" name="tcpReadMaximum" id="tcpReadMaximum" value="[% prefs.tcpReadMaximum %]" size="15">		
+				[% END %]
+			[% END %]
+
+			[% IF prefs.exists('tcpWriteMaximum') %]
+				[% WRAPPER settingGroup title="SETUP_TCPWRITEMAXIMUM_CHOOSE" desc="" %]
+					<input type="text" class="stdedit" name="tcpWriteMaximum" id="tcpWriteMaximum" value="[% prefs.tcpWriteMaximum %]" size="15">		
+				[% END %]
+			[% END %]
+
+			[% IF prefs.exists('udpChunkSize') %]
+				[% WRAPPER settingGroup title="SETUP_UDPCHUNKSIZE_CHOOSE" desc="" %]
+					<input type="text" class="stdedit" name="udpChunkSize" id="udpChunkSize" value="[% prefs.udpChunkSize %]" size="15">
+				[% END %]
+			[% END %]
 		[% END %]
-		[% IF prefs.exists('tcpWriteMaximum') %]
-		<tr>
-		<td><label for="tcpWriteMaximum" class="stdlabel">[% "SETUP_TCPWRITEMAXIMUM_CHOOSE" | string %]</label></td>
-		<td><input type="text" class="stdedit" name="tcpWriteMaximum" id="tcpWriteMaximum" value="[% prefs.tcpWriteMaximum %]" size="15"></td>
-		</tr>
-		[% END %]
-		[% IF prefs.exists('udpChunkSize') %]
-		<tr>
-		<td><label for="udpChunkSize" class="stdlabel">[% "SETUP_UDPCHUNKSIZE_CHOOSE" | string %]</label></td>
-		<td><input type="text" class="stdedit" name="udpChunkSize" id="udpChunkSize" value="[% prefs.udpChunkSize %]" size="15"></td>
-		</tr>
-		[% END %]
-		</table>
-		
-	</div>
 	[% END %]
 
 [% PROCESS settings/footer.html %]

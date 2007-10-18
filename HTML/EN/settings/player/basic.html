@@ -18,152 +18,134 @@
 [% END %]
 [% PROCESS settings/header.html %]
 
-	<div class="settingSection">
-
-		<div class="prefHead">[% "SETUP_PLAYERNAME" | string %]</div>
-		<div class="prefDesc">[% "SETUP_PLAYERNAME_DESC" | string %]</div>
-
+	[% WRAPPER setting title="SETUP_PLAYERNAME" desc="SETUP_PLAYERNAME_DESC" %]
 		<input type="text" class="stdedit" name="playername" id="playername" value="[% prefs.playername %]" size="20">
+	[% END %]
 
-	</div>
 
-	<div class="settingSection">
-	
-		<div class="groupHead">[% "SETUP_TITLEFORMAT" | string %]</div>
-		<div class="groupDesc">[% "SETUP_GROUP_TITLEFORMATS_DESC" | string %]</div>
-		
+	[% WRAPPER setting title="SETUP_TITLEFORMAT" desc="SETUP_GROUP_TITLEFORMATS_DESC" %]
 		<table width="100%">
-		<tr><th>[% 'SETUP_CURRENT' | string  %]</th><th>&nbsp</th><th>[% 'DISPLAY_SETTINGS' | string  %]</th><th>&nbsp;</th></tr>
-		[% FOREACH format = prefs.titleFormat %]
-			<tr><td><input type=radio [% IF prefs.titleFormatCurr == loop.index %]checked [% END %]value="[% loop.index %]" name="titleFormatCurr"></td><td>
-			</td><td>
-			
-			<select class="stdedit" name="titleFormat[% loop.index %]" id="titleFormat[% loop.index %]">
-			[% num = loop.index %][% last = loop.max %]
-			[% FOREACH option = titleFormatOptions.keys.sort %]
-	
-				<option [% IF prefs.titleFormat.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% titleFormatOptions.$option %]</option>
-	
-			[%- END -%]
-			
-			</select>
-		
-			</td><td></td></tr>
-		[% END %]
+			<tr>
+				<th>[% 'SETUP_CURRENT' | string  %]</th>
+				<th>[% 'DISPLAY_SETTINGS' | string  %]</th>
+			</tr>
+			[% FOREACH format = prefs.titleFormat %]
+				<tr>
+					<td>
+						<input type=radio [% IF prefs.titleFormatCurr == loop.index %]checked [% END %]value="[% loop.index %]" name="titleFormatCurr">
+					</td>
+				
+					<td>
+						<select class="stdedit" name="titleFormat[% loop.index %]" id="titleFormat[% loop.index %]">
+						[% num = loop.index %][% last = loop.max %]
+						[% FOREACH option = titleFormatOptions.keys.sort %]
+							<option [% IF prefs.titleFormat.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% titleFormatOptions.$option %]</option>
+						[%- END -%]
+						</select>
+					</td>
+				</tr>
+			[% END %]
 		</table>
-	
-	</div>
+	[% END %]
 	
 	[% IF prefs.exists('playingDisplayModes') %]
-	<div class="settingSection">
-	
-		<div class="groupHead">[% "SETUP_PLAYINGDISPLAYMODE" | string %]</div>
-		<div class="groupDesc">[% "SETUP_PLAYINGDISPLAYMODE_DESC" | string %]</div>
-		
-		<table width="100%">
-		<tr><th>[% 'SETUP_CURRENT' | string  %]</th><th></th><th>[% 'SETUP_FORMATS' | string  %]</th><th></th></tr>
-		[% FOREACH format = prefs.playingDisplayModes %]
-			<tr><td><input type=radio [% IF prefs.playingDisplayMode == loop.index %]checked [% END %]value="[% loop.index %]" name="playingDisplayMode"></td><td>
-			</td><td>
-			
-			<select class="stdedit" name="playingDisplayModes[% loop.index %]" id="playingDisplayModes[% loop.index %]">
-			[% num = loop.index %][% last = loop.max %]
-			
-			[% FOREACH option = playingDisplayOptions.keys.nsort %]
-	
-				<option [% IF prefs.playingDisplayModes.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% playingDisplayOptions.$option %]</option>
-	
-			[%- END -%]
-			
-			</select>
-		
-			</td><td></td></tr>
+		[% WRAPPER setting title="SETUP_PLAYINGDISPLAYMODE" desc="SETUP_PLAYINGDISPLAYMODE_DESC" %]
+			<table width="100%">
+				<tr>
+					<th>[% 'SETUP_CURRENT' | string  %]</th>
+					<th>[% 'SETUP_FORMATS' | string  %]</th>
+				</tr>
+				[% FOREACH format = prefs.playingDisplayModes %]
+					<tr>
+						<td>
+							<input type=radio [% IF prefs.playingDisplayMode == loop.index %]checked [% END %]value="[% loop.index %]" name="playingDisplayMode">
+						</td>
+
+						<td>
+							<select class="stdedit" name="playingDisplayModes[% loop.index %]" id="playingDisplayModes[% loop.index %]">
+							[% num = loop.index %][% last = loop.max %]
+							[% FOREACH option = playingDisplayOptions.keys.nsort %]
+								<option [% IF prefs.playingDisplayModes.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% playingDisplayOptions.$option %]</option>
+							[%- END -%]
+							</select>
+						</td>
+					</tr>
+				[% END %]
+			</table>
 		[% END %]
-		</table>
-	
-	</div>
 	[% END %]
 
 	[% IF prefs.exists('visualModes') %]
-	<div class="settingSection">
-	
-		<div class="groupHead">[% "SETUP_VISUALIZERMODE" | string %]</div>
-		<div class="groupDesc">[% "SETUP_VISUALIZERMODE_DESC" | string %]</div>
-		
+		[% WRAPPER setting title="SETUP_VISUALIZERMODE" desc="SETUP_VISUALIZERMODE_DESC" %]
 		<table width="100%">
-		<tr><th>[% 'SETUP_CURRENT' | string  %]</th><th>[% 'DISPLAY_SETTINGS' | string  %]</th><th></th></tr>
-		[% FOREACH format = prefs.visualModes %]
-			<tr><td><input type=radio [% IF prefs.visualMode == loop.index %]checked [% END %]value="[% loop.index %]" name="visualMode"></td><td>
-			
-			<select class="stdedit" name="visualModes[% loop.index %]" id="visualModes[% loop.index %]">
-			[% num = loop.index %][% last = loop.max %]
-			
-			[% FOREACH option = visualModeOptions.keys.nsort %]
-	
-				<option [% IF prefs.visualModes.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% visualModeOptions.$option %]</option>
-	
-			[%- END -%]
-			
-			</select>
-		
-			</td><td></td></tr>
-		[% END %]
+			<tr>
+				<th>[% 'SETUP_CURRENT' | string  %]</th>
+				<th>[% 'DISPLAY_SETTINGS' | string  %]</th>
+			</tr>
+			[% FOREACH format = prefs.visualModes %]
+				<tr>
+					<td>
+						<input type=radio [% IF prefs.visualMode == loop.index %]checked [% END %]value="[% loop.index %]" name="visualMode">
+					</td>
+
+					<td>
+						<select class="stdedit" name="visualModes[% loop.index %]" id="visualModes[% loop.index %]">
+						[% num = loop.index %][% last = loop.max %]
+						[% FOREACH option = visualModeOptions.keys.nsort %]
+							<option [% IF prefs.visualModes.$num == option %]selected [% ELSIF num == last && option == '-1' %]selected [% END %]value="[% option %]">[% visualModeOptions.$option %]</option>
+						[%- END -%]
+						</select>
+					</td>
+				</tr>
+			[% END %]
 		</table>
-	
-	</div>
+		[% END %]
 	[% END %]
 
 	[% IF prefs.exists('screensaver') %]
-	<div class="settingSection">
-	
-		<div class="groupHead">[% "SCREENSAVERS" | string %]</div>
-		<div class="groupDesc">[% "SETUP_SCREENSAVER_DESC" | string %]</div>
-
-		<table>
-		[% FOREACH saver = [ 'screensaver', 'idlesaver', 'offsaver' ] %]
-		<tr>
-		<td><label for="[% saver %]" class="stdlabel">[% "SETUP_" _ saver _ "_CHOOSE" | string %]</label></td>
-		<td><select class="stdedit" name="[% saver %]" id="[% saver %]">
-
-		[% FOREACH option = screensavers %]
-
-			<option [% IF prefs.$saver == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
-
-		[%- END -%]
+		<div class="settingSection">
 		
-		</select></td>
-		</tr>
-		[% END %]
+			<div class="settingGroup">
+				<div class="prefHead">[% "SCREENSAVERS" | string %]</div>
+				<div class="prefDesc hiddenDesc">[% "SETUP_SCREENSAVER_DESC" | string %]</div>
+			</div>
+	
+			<table>
+				[% FOREACH saver = [ 'screensaver', 'idlesaver', 'offsaver' ] %]
+					<tr>
+						<td>
+							<label for="[% saver %]" class="stdlabel">[% "SETUP_" _ saver _ "_CHOOSE" | string %]</label>
+						</td>
 
-		<tr>
-		<td><label for="screensavertimeout" class="stdlabel">[% "SETUP_SCREENSAVERTIMEOUT_CHOOSE" | string %]</label></td>
-		<td><input type="text" class="stdedit" name="screensavertimeout" id="screensavertimeout" value="[% prefs.screensavertimeout %]" size="15"></td>
-		</tr>
-		</table>
-
-	</div>
+						<td>
+							<select class="stdedit" name="[% saver %]" id="[% saver %]">
+								[% FOREACH option = screensavers %]
+									<option [% IF prefs.$saver == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+								[%- END -%]
+							</select>
+						</td>
+					</tr>
+				[% END %]
+		
+				<tr>
+				<td><label for="screensavertimeout" class="stdlabel">[% "SETUP_SCREENSAVERTIMEOUT_CHOOSE" | string %]</label></td>
+				<td><input type="text" class="stdedit" name="screensavertimeout" id="screensavertimeout" value="[% prefs.screensavertimeout %]" size="15"></td>
+				</tr>
+			</table>
+	
+		</div>
+	[% END %]
 
 	[% IF prefs.exists('playtrackalbum') %]
-	<div class="settingSection">
-		<div class="settingGroup">
-			<div class="prefHead">[% "SETUP_PLAYTRACKALBUM" | string %]</div>
-			<div class="prefDesc hiddenDesc">[% "SETUP_PLAYTRACKALBUM_DESC" | string %]</div>
-	
+		[% WRAPPER setting title="SETUP_PLAYTRACKALBUM" desc="SETUP_PLAYTRACKALBUM_DESC" %]
 			<select class="stdedit" name="playtrackalbum" id="playtrackalbum">
-	
 				<option [% IF NOT prefs.playtrackalbum %]selected [% END %]value="0">[% 'SETUP_PLAYTRACKALBUM_0' | string %]</option>
 				<option [% IF prefs.playtrackalbum %]selected [% END %]value="1">[% 'SETUP_PLAYTRACKALBUM_1' | string %]</option>
-			
 			</select>
-		</div>
-	</div>
+		[% END %]
 	[% END %]
-	
-	<div class="settingSection">
-	
-		<div class="prefHead">[% "FORGET_PLAYER" | string %]</div>
-		<div class="prefDesc">[% "FORGET_PLAYER_DESC" | string %]</div>
-	
+
+	[% WRAPPER setting title="FORGET_PLAYER" desc="FORGET_PLAYER_DESC" %]
 		<p>
 			[% IF useAJAX %]
 				<a href="[% webroot %]" onClick="forgetPlayer('[% player %]');" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a>
@@ -171,9 +153,9 @@
 				<a href="[% webroot %]index.html?command=client&amp;subcommand=forget&amp;playerid=[% playerid | uri %]&amp;player=[% playerid | uri %]" target="_top">[% "FORGET_PLAYER_LINK" | string %]</a>
 			[% END %]
 		</p>
-	
-		<div class="prefHead">[% "INFORMATION_MENU_PLAYER" | string %]</div>
-	
+	[% END %]
+
+	[% WRAPPER setting title="INFORMATION_MENU_PLAYER" desc="" %]
 		[% IF ipaddress %]
 			<p>[% "PLAYER_IP_ADDRESS" | string %] [% ipaddress %]</p>
 		[% END %]
@@ -193,8 +175,6 @@
 		[% IF voltage %]
 			<p>[% "INFORMATION_PLAYER_VOLTAGE" | string %][% "COLON" | string %] [% voltage %]VAC</p>
 		[% END %] 
-	
-	</div>
-	[% END %]
+	[% END %]	
 
 [% PROCESS settings/footer.html %]

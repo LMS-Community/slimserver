@@ -1,60 +1,55 @@
 [% PROCESS settings/header.html %]
 [% nosubmit = 1 %]
 
-	<div class="settingSection">
-
-		<div class="groupHead">[% "SETUP_GROUP_MENUITEMS" | string %]</div>
-		<div class="groupDesc">[% "SETUP_GROUP_MENUITEMS_DESC" | string %]</div>
-
-		<table width="50%">
-		[% FOREACH option = menuItems %]
-			<tr>
-			<td>[% menuItemNames.$option %]</td>
-				<td><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&Action[% loop.index %]=Up">[% IF controlGraphics %]<img src="[% webroot %]html/images/b_up.gif" border=0 align="center">[% ELSE %][% "MOVEUP" | string %][% END %]</a></td>
-				<td><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&Action[% loop.index %]=Down">[% IF controlGraphics %]<img src="[% webroot %]html/images/b_down.gif" border=0 align="center">[% ELSE %][% "MOVEDOWN" | string %][% END %]</a></td>
-				<td><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&Action[% loop.index %]=Remove">[% IF controlGraphics %]<img src="[% webroot %]html/images/b_delete.gif" border=0 align="center">[% ELSE %][% "DELETE" | string %][% END %]</a></td>
-				<td><input type=checkbox class="stdedit" name="menuItemRemove[% loop.index %]" id="menuItemRemove[% loop.index %]" value="1" />
-				</tr>
-		[%- END -%]
-		</table>
-
-	<p><input name="removeItems" type="submit" class="stdclick" value="[% "DELETE" | string %]"></p>
-	</div>
-
-	<div class="settingSection">
-
-		<div class="groupDesc">[% "SETUP_GROUP_NONMENUITEMS_INTRO" | string %]</div>
-		
+	[% WRAPPER setting title="SETUP_GROUP_MENUITEMS" desc="SETUP_GROUP_MENUITEMS_DESC" %]
 		<table width="100%">
-		<input type=hidden name="nonMenuItems" value="[% nonMenuItems.keys.max %]" />
+			[% FOREACH option = menuItems %]
+				<tr>
+				<td>[% menuItemNames.$option %]</td>
+					<td><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&Action[% loop.index %]=Up">[% IF controlGraphics %]<img src="[% webroot %]html/images/b_up.gif" border=0 align="center">[% ELSE %][% "MOVEUP" | string %][% END %]</a></td>
+					<td><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&Action[% loop.index %]=Down">[% IF controlGraphics %]<img src="[% webroot %]html/images/b_down.gif" border=0 align="center">[% ELSE %][% "MOVEDOWN" | string %][% END %]</a></td>
+					<td><a href="[% webroot %][% path %]?playerid=[% playerid | uri %]&Action[% loop.index %]=Remove">[% IF controlGraphics %]<img src="[% webroot %]html/images/b_delete.gif" border=0 align="center">[% ELSE %][% "DELETE" | string %][% END %]</a></td>
+					<td><input type=checkbox class="stdedit" name="menuItemRemove[% loop.index %]" id="menuItemRemove[% loop.index %]" value="1" />
+					</tr>
+			[%- END -%]
+		</table>
+		<p><input name="removeItems" type="submit" class="stdclick" value="[% "DELETE" | string %]"></p>
+	[% END %]
+
+
+	[% WRAPPER setting title="SETUP_GROUP_NONMENUITEMS_INTRO" desc="&nbsp;" %][% END %]
+
+	<table width="100%">
 		[% FOREACH option = nonMenuItems.sort %]
 			[% IF NOT loop.index % 2 %]<tr>[% END %]
 			<td><input type=checkbox class="stdedit" name="nonMenuItemAdd[% loop.index %]" id="nonMenuItemAdd[% loop.index %]" value="[% option %]" />
 			[% nonMenuItems.$option %]</td>
 			[% IF loop.index % 2 %]</tr>[% END %]
 		[%- END -%]
-		</table>
+	</table>
 
-	<p><input name="addItems" type="submit" class="stdclick" value="[% "ADD" | string %]"></p>
-	</div>
+	<p>
+		<input name="addItems" type="submit" class="stdclick" value="[% "ADD" | string %]">
+		<input type=hidden name="nonMenuItems" value="[% nonMenuItems.keys.max %]" />
+	</p>
+
 
 	[% IF pluginsItems %]
-	<div class="settingSection">
-
-		<div class="groupDesc">[% "SETUP_GROUP_PLUGINITEMS_INTRO" | string %]</div>
+		[% WRAPPER setting title="SETUP_GROUP_PLUGINITEMS_INTRO" desc="" %][% END %]
 
 		<table width="100%">
-		<input type=hidden name="pluginItems" value="[% pluginItems.keys.max %]" />
-		[% FOREACH option = pluginItems  %]
-			[% IF NOT loop.index % 2 %]<tr>[% END %]
-			<td><input type=checkbox class="stdedit" name="pluginItemAdd[% loop.index %]" id="pluginItemAdd[% loop.index %]" value="[% option.key %]" />
-			&nbsp;[% option.value %]</td>
-			[% IF loop.index % 2 %]</tr>[% END %]
-		[%- END -%]
+			[% FOREACH option = pluginItems  %]
+				[% IF NOT loop.index % 2 %]<tr>[% END %]
+				<td><input type=checkbox class="stdedit" name="pluginItemAdd[% loop.index %]" id="pluginItemAdd[% loop.index %]" value="[% option.key %]" />
+				&nbsp;[% option.value %]</td>
+				[% IF loop.index % 2 %]</tr>[% END %]
+			[%- END -%]
 		</table>
 
-	<p><input name="addItems" type="submit" class="stdclick" value="[% "ADD" | string %]"></p>
-	</div>
+		<p>
+			<input name="addItems" type="submit" class="stdclick" value="[% "ADD" | string %]">
+			<input type=hidden name="pluginItems" value="[% pluginItems.keys.max %]" />
+		</p>
 	[% END %]
 
 [% PROCESS settings/footer.html %]
