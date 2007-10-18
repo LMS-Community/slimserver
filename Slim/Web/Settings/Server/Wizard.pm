@@ -43,7 +43,7 @@ sub new {
 			$log->error("Couldn't connect to squeezenetwork.com - do we need a proxy?\n" . $http->error);
 		}
 	);
-	$http->get('http://www.squeezenetwork.com/');
+	$http->get('http://www.squeezenetwork.com/api/v1/time');
 
 	$class->SUPER::new($class);
 }
