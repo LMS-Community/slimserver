@@ -154,6 +154,9 @@ sub _disconnect_player_done {
 		$log->debug( "Disconect SN player response: " . Data::Dump::dump( $res ) );
 	}
 	
+	# Refresh the list of players
+	fetch_players();
+	
 	$request->setStatusDone();
 }
 
