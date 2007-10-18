@@ -34,6 +34,26 @@ sub initPlugin {
 		menu => 'music_on_demand',
 		'icon-id' => 'http://localhost:9000/html/images/ServiceProviders/rhapsodydirect_56x56_p.png',
 	);
+	
+	if ( !$ENV{SLIM_SERVICE} ) {
+		# Add a function to view trackinfo in the web
+		Slim::Web::HTTP::addPageFunction( 
+			'plugins/rhapsodydirect/trackinfo.html',
+			sub {
+				my $client = $_[0];
+				
+				my $url = Slim::Player::Playlist::url($client);
+				
+				Slim::Web::XMLBrowser->handleWebIndex( {
+					feed    => Slim::Plugin::RhapsodyDirect::ProtocolHandler->trackInfoURL( $client, $url ),
+					path    => 'trackinfo.html',
+					title   => 'Rhapsody Direct Track Info',
+					timeout => 35,
+					args    => \@_
+				} );
+			},
+		);
+	}
 }
 
 sub playerMenu () {

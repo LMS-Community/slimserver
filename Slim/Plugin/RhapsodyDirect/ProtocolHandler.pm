@@ -569,12 +569,13 @@ sub gotTrackMetadata {
 	my $url  = 'rhapd://' . $params->{trackId} . '.wma';
 	
 	$meta->{$url} = {
-		artist  => $track->{displayArtistName},
-		album   => $track->{displayAlbumName},
-		title   => $track->{name},
-		cover   => $track->{albumMetadata}->{albumArt162x162Url},
-		bitrate => '128k CBR',
-		type    => 'WMA (Rhapsody)',
+		artist    => $track->{displayArtistName},
+		album     => $track->{displayAlbumName},
+		title     => $track->{name},
+		cover     => $track->{albumMetadata}->{albumArt162x162Url},
+		bitrate   => '128k CBR',
+		type      => 'WMA (Rhapsody)',
+		info_link => 'plugins/rhapsodydirect/trackinfo.html',
 	};
 	
 	# XXX: Clean up this metadata with a timer
@@ -928,32 +929,38 @@ sub displayStatus {
 	}, $time );
 }
 
-# Track Info menu
-sub trackInfo {
-	my ( $class, $client, $track ) = @_;
+# URL used for CLI trackinfo queries
+sub trackInfoURL {
+	my ( $class, $client, $url ) = @_;
 	
-	my ($url, $trackId);
+	my $stationId;
 	
-	if ( $track->url =~ /\.rdr$/ ) {
+	if ( $url =~ m{rhapd://(.+)\.rdr} ) {
 		# Radio mode, pull track ID from lastURL
 		$url = $client->pluginData('lastURL');
-	}
-	else {
-		$url = $track->url;
+		$stationId = $1;
 	}
 
-	($trackId) = $url =~ m{rhapd://(.+)\.wma};
-	
-	$log->debug( "Getting track information for $trackId" );
+	my ($trackId) = $url =~ m{rhapd://(.+)\.wma};
 	
 	# SN URL to fetch track info menu
 	my $trackInfoURL = Slim::Networking::SqueezeNetwork->url(
 		'/api/rhapsody/v1/opml/metadata/getTrack?trackId=' . $trackId
 	);
 	
-	if ( $track->url =~ m{rhapd://(.+)\.rdr} ) {
-		$trackInfoURL .= '&stationId=' . $1;
+	if ( $stationId ) {
+		$trackInfoURL .= '&stationId=' . $stationId;
 	}
+	
+	return $trackInfoURL;
+}
+
+# Track Info menu
+sub trackInfo {
+	my ( $class, $client, $track ) = @_;
+	
+	my $url          = $track->url;
+	my $trackInfoURL = $class->trackInfoURL( $client, $url );
 	
 	# let XMLBrowser handle all our display
 	my %params = (
@@ -962,6 +969,8 @@ sub trackInfo {
 		title    => Slim::Music::Info::getCurrentTitle( $client, $url ),
 		url      => $trackInfoURL,
 	);
+	
+	$log->debug( "Getting track information for $url" );
 
 	Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
 	
