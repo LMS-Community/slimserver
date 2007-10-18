@@ -310,6 +310,9 @@ sub init {
 	$log->info("SqueezeCenter MySQL init...");
 	Slim::Utils::MySQLHelper->init();
 	
+	$log->info("Async Networking init...");
+	Slim::Networking::Async->init;
+	
 	$log->info("Firmware init...");
 	Slim::Utils::Firmware->init;
 
@@ -342,9 +345,6 @@ sub init {
 	$log->info("mDNS init...");
 	Slim::Networking::mDNS->init;
 
-	$log->info("Async Networking init...");
-	Slim::Networking::Async->init;
-	
 	$log->info("Cache init...");
 	Slim::Utils::Cache->init();
 	
