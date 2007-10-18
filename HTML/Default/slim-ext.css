@@ -57,6 +57,10 @@ a.x-menu-item:hover {
 	background-image: none;
 }
 
+.x-tabs-strip .x-tabs-text {
+	font-family: sans-serif;
+}
+
 .x-tabs-strip .on .x-tabs-text {
 	color: #666666;
 }

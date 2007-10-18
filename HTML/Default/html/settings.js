@@ -29,7 +29,7 @@ Settings = function(){
 
 			Ext.QuickTips.init();
 
-			var tp = new Ext.TabPanel('settingsSelector');
+			var tp = new Ext.TabPanel('settingsTabs');
 			tp.addTab('t0', strings['status']).on('activate', function(){ Settings.showSettingsPage('settings/server/status.html'); });
 			tp.addTab('t1', strings['basic']).on('activate', function(){ Settings.showSettingsPage('settings/server/basic.html'); });
 			tp.addTab('t2', strings['player']).on('activate', function(){ Settings.showSettingsPage('settings/player/basic.html'); });
