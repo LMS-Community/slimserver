@@ -103,7 +103,10 @@ sub findLibraryFromPlist {
 			$path = Slim::Utils::Misc::pathFromFileURL($1);
 			last;
 		}
-	}
+		if (/<string>(.*iTunes%20Library.xml)<\/string>$/) {
+			$path = Slim::Utils::Misc::pathFromFileURL($1);
+			last;
+		}	}
 
 	close PLIST;
 
@@ -131,7 +134,12 @@ sub findLibraryFromRegistry {
 
 			if ($folder->QueryValueEx("My Music", $type, $value)) {
 				$path = $value . '\\iTunes\\iTunes Music Library.xml';
-				$log->info("Found 'My Music' here: $value for $path");
+				
+				if (! -r $path) {
+					$path = $value . '\\My Music\\iTunes\\iTunes Library.xml';
+				}
+				
+				$log->info("Searching 'My Music' here: $value for $path");
 			}
 
 			if ($path && -r $path) {
@@ -140,7 +148,12 @@ sub findLibraryFromRegistry {
 
 			} elsif ($folder->QueryValueEx("Personal", $type, $value)) {
 				$path = $value . '\\My Music\\iTunes\\iTunes Music Library.xml';
-				$log->info("Found 'Personal' here: $value for $path");
+				
+				if (! -r $path) {
+					$path = $value . '\\My Music\\iTunes\\iTunes Library.xml';
+				}
+				
+				$log->info("Searching 'Personal' here: $value for $path");
 			}
 		}
 	}
@@ -159,6 +172,10 @@ sub findMusicLibraryFile {
 			$explicit_xml_path =  catfile(($explicit_xml_path), 'iTunes Music Library.xml');
 		}
 			 
+		if (!-r $explicit_xml_path) {
+			$explicit_xml_path =  catfile(($explicit_xml_path), 'iTunes Library.xml');
+		}
+		
 		if (-r $explicit_xml_path) {
 			return $explicit_xml_path;
 		}
@@ -211,6 +228,11 @@ sub findMusicLibraryFile {
 	for my $dir (@searchdirs) {
 		$path = catfile(($dir), 'iTunes Music Library.xml');
 
+		if (!($path && -r $path)) {
+
+			$path = catfile(($dir), 'iTunes Library.xml');
+		}
+		
 		if ($path && -r $path) {
 
 			$log->info("Found path via directory search at: $path");
