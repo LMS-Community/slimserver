@@ -6900,7 +6900,7 @@ SETUP_WIZARD_SUMMARY_MUSICSOURCE
 	EN	Music Source
 
 SETUP_WIZARD_SUMMARY_RESCAN
-	EN	If you selected a local music source, SqueezeCenter will now start indexing your collection.<br/><br/>Have fun!
+	EN	SqueezeCenter will now start indexing your collection.<br/><br/>Have fun!
 
 SETUP_WIZARD_DONE
 	EN	SqueezeCenter Setup: Done!
