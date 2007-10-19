@@ -34,11 +34,11 @@ PLUGIN_RADIOIO_LOADING
 	NL	RadioIO wordt geladen...
 
 SETUP_GROUP_PLUGIN_RADIOIO_DESC
-	DE	Wenn Sie ein RadioIO-Konto haben, geben Sie Benutzername und Kenwort ein. <a href='http://www.radioio.com/registration.php' target='_new'>Registrierte Benutzer</a> erhalten qualitativ hochwertige Datenströme bei 128kb/s und <a href='http://www.radioio.com/membership.php' target='_new'>SoundPass-Mitglieder</a> haben Zugriff auf werbefreie Ströme.
-	EN	If you have a RadioIO account, enter your username and password. <a href='http://www.radioio.com/registration.php' target='_new'>Registered members</a> get high quality 128k streams, and <a href='http://www.radioio.com/membership.php' target='_new'>SoundPass members</a> have access to high quality, commercial-free streams.
+	DE	Wenn Sie ein RadioIO-Konto haben, geben Sie Benutzername und Kenwort ein. <a href='http://www.radioio.com/user/register' target='_new'>Registrierte Benutzer</a> erhalten qualitativ hochwertige Datenströme bei 128kb/s und <a href='http://www.radioio.com/membership.php' target='_new'>SoundPass-Mitglieder</a> haben Zugriff auf werbefreie Ströme.
+	EN	If you have a RadioIO account, enter your username and password. <a href='http://www.radioio.com/user/register' target='_new'>Registered members</a> get high quality 128k streams, and <a href='http://www.radioio.com/membership.php' target='_new'>SoundPass members</a> have access to high quality, commercial-free streams.
 	ES	Si tiene una cuenta RadioIO, introduzca su nombre de usuario y su contraseña. <a href='http://www.radioio.com/membership.php' target='_new'>Lo miembros registrados</a> obtienen secuencias de alta calidad a 128 kbps, y los <a href='http://www.radioio.com/membership.php' target='_new'>miembros de SoundPass</a> tienen acceso a secuencias de alta calidad sin anuncios.
 	FR	Si vous possédez un compte RadioIO, saisissez votre nom d'utilisateur et votre mot de passe. <a href='http://www.radioio.com/membership.php' target='_new'>Les membres enregistrés</a> bénéficient de flux haute qualité 128 Ko et <a href='http://www.radioio.com/membership.php' target='_new'>les membres de SoundPass</a> ont accès à des flux de haute qualité sans publicités.
-	HE	אם יש ברשותך חשבון RadioIO, הזן את שם המשתמש והסיסמה. <a href='http://www.radioio.com/registration.php' target='_new'>חברים רשומים</a> מקבלים זרימות באיכות גבוהה של 128k ול<a href='http://www.radioio.com/membership.php' target='_new'>חברים בעלי חשבון SoundPass</a> יש גישה לזרימות באיכות גבוהה ללא פרסומות.
+	HE	אם יש ברשותך חשבון RadioIO, הזן את שם המשתמש והסיסמה. <a href='http://www.radioio.com/user/register' target='_new'>חברים רשומים</a> מקבלים זרימות באיכות גבוהה של 128k ול<a href='http://www.radioio.com/membership.php' target='_new'>חברים בעלי חשבון SoundPass</a> יש גישה לזרימות באיכות גבוהה ללא פרסומות.
 	IT	Se si dispone di un account RadioIO, immettere il nome utente e la password. <a href='http://www.radioio.com/membership.php' target='_new'>Gli utenti registrati</a> possono ascoltare trasmissioni di alta qualità a 128 k mentre <a href='http://www.radioio.com/membership.php' target='_new'>gli utenti SoundPass</a> hanno accesso a trasmissioni di alta qualità e senza interruzioni pubblicitarie.
 	NL	Als je een RadioIO-abonnement hebt, voer je je gebruikersnaam en wachtwoord in. <a href='http://www.radioio.com/membership.php' target='_new'>Geregistreerde abonnees</a> krijgen hoogwaardige 128k audio, en <a href='http://www.radioio.com/membership.php' target='_new'>SoundPass abonnees</a> hebben toegang tot hoogwaardige audio zonder advertenties.
 
@@ -52,13 +52,13 @@ SETUP_PLUGIN_RADIOIO_USERNAME
 	NL	RadioIO-gebruikersnaam
 
 SETUP_PLUGIN_RADIOIO_USERNAME_DESC
-	DE	Ihr RadioIO-Benutzername. Melden Sie sich bei <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> an.
-	EN	Your RadioIO username, visit <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> to sign up
-	ES	Su nombre de usuario de RadioIO, visite <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> para registrarse
-	FR	Votre nom d'utilisateur RadioIO (visitez <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> pour vous inscrire):
-	HE	שם המשתמש שלך עבור RadioIO, עבור לכתובת <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> כדי להירשם
-	IT	Nome utente in RadioIO. Per eseguire la registrazione, accedere a <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a>.
-	NL	Je RadioIO-gebruikersnaam. Ga naar <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> om je aan te melden.
+	DE	Ihr RadioIO-Benutzername. Melden Sie sich bei <a href='http://www.radioio.com/user/register' target='_new'>radioio.com</a> an.
+	EN	Your RadioIO username, visit <a href='http://www.radioio.com/user/register' target='_new'>radioio.com</a> to sign up
+	ES	Su nombre de usuario de RadioIO, visite <a href='http://www.radioio.com/user/register' target='_new'>radioio.com</a> para registrarse
+	FR	Votre nom d'utilisateur RadioIO (visitez <a href='http://www.radioio.com/user/register' target='_new'>radioio.com</a> pour vous inscrire):
+	HE	שם המשתמש שלך עבור RadioIO, עבור לכתובת <a href='http://www.radioio.com/user/register' target='_new'>radioio.com</a> כדי להירשם
+	IT	Nome utente in RadioIO. Per eseguire la registrazione, accedere a <a href='http://www.radioio.com/user/register' target='_new'>radioio.com</a>.
+	NL	Je RadioIO-gebruikersnaam. Ga naar <a href='http://www.radioio.com/user/register' target='_new'>radioio.com</a> om je aan te melden.
 
 SETUP_PLUGIN_RADIOIO_PASSWORD
 	DE	RadioIO-Kennwort

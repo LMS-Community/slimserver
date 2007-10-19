@@ -1,12 +1,10 @@
 [% PROCESS settings/header.html %]
 
-	<div class="settingSection">
-		<div class="prefHead">[% "PLUGIN_RADIOTIME_MODULE_NAME" | string  %]</div>
+	[% WRAPPER setting title="PLUGIN_RADIOTIME_MODULE_NAME" desc="" %]
 		<div class="prefDesc">[% "SETUP_GROUP_PLUGIN_RADIOTIME_DESC" | string %]</div>
 		<div class="prefDesc">[% "SETUP_PLUGIN_RADIOTIME_USERNAME_DESC" | string %]</div>
 
 		<div class="prefDesc">[% "SETUP_PLUGIN_RADIOTIME_USERNAME" | string %]</div>
 		<input type="text" class="stdedit" name="username" id="username" value="[% prefs.username %]" size="40">
-	</div>
-
+	[% END %]
 [% PROCESS settings/footer.html %]

@@ -103,37 +103,25 @@
 	[% END %]
 
 	[% IF prefs.exists('screensaver') %]
-		<div class="settingSection">
-		
-			<div class="settingGroup">
-				<div class="prefHead">[% "SCREENSAVERS" | string %]</div>
-				<div class="prefDesc hiddenDesc">[% "SETUP_SCREENSAVER_DESC" | string %]</div>
-			</div>
-	
-			<table>
-				[% FOREACH saver = [ 'screensaver', 'idlesaver', 'offsaver' ] %]
-					<tr>
-						<td>
-							<label for="[% saver %]" class="stdlabel">[% "SETUP_" _ saver _ "_CHOOSE" | string %]</label>
-						</td>
 
-						<td>
-							<select class="stdedit" name="[% saver %]" id="[% saver %]">
-								[% FOREACH option = screensavers %]
-									<option [% IF prefs.$saver == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
-								[%- END -%]
-							</select>
-						</td>
-					</tr>
+		[% WRAPPER settingSection %]
+			[% desc="SETUP_SCREENSAVER_DESC" %]
+
+			[% FOREACH saver = [ 'screensaver', 'idlesaver', 'offsaver' ] %]
+				[% WRAPPER settingGroup title="SETUP_" _ saver %]
+					<select class="stdedit" name="[% saver %]" id="[% saver %]">
+						[% FOREACH option = screensavers %]
+							<option [% IF prefs.$saver == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+						[%- END -%]
+					</select>		
 				[% END %]
-		
-				<tr>
-				<td><label for="screensavertimeout" class="stdlabel">[% "SETUP_SCREENSAVERTIMEOUT_CHOOSE" | string %]</label></td>
-				<td><input type="text" class="stdedit" name="screensavertimeout" id="screensavertimeout" value="[% prefs.screensavertimeout %]" size="15"></td>
-				</tr>
-			</table>
-	
-		</div>
+				[% desc = '' %]
+			[% END %]
+
+			[% WRAPPER settingGroup title="SETUP_SCREENSAVERTIMEOUT_CHOOSE" desc="" %]
+				<input type="text" class="stdedit" name="screensavertimeout" id="screensavertimeout" value="[% prefs.screensavertimeout %]" size="15">
+			[% END %]
+		[% END %]
 	[% END %]
 
 	[% IF prefs.exists('playtrackalbum') %]

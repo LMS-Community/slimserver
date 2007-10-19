@@ -1,38 +1,36 @@
 [% PROCESS settings/header.html %]
 
-	<div class="settingSection">
+	[% WRAPPER setting title="DEBUGGING_SETTINGS" desc="SETUP_GROUP_DEBUG_DESC" %]
+		<div>
+			<input name="persist" id="persist" type="checkbox" [% IF persist %] checked [% END %]>
+			[% "PERSIST_DEBUG_SETTINGS" | string %]
+		</div>
+	[% END %]
 
-		<div class="prefHead">[% "SETUP_DEBUG_SERVER_LOG" | string %]</div>
-		<div class="prefDesc">[% "SETUP_DEBUG_SERVER_LOG_DESC" | string %]</div>
-
+	[% WRAPPER setting title="SETUP_DEBUG_SERVER_LOG" desc="SETUP_DEBUG_SERVER_LOG_DESC" %]
 		<div class="prefDesc">[% debugServerLog %]</div>
+	[% END %]
 
-		<div class="prefHead">[% "SETUP_DEBUG_SCANNER_LOG" | string %]</div>
-		<div class="prefDesc">[% "SETUP_DEBUG_SCANNER_LOG_DESC" | string %]</div>
-
+	[% WRAPPER setting title="SETUP_DEBUG_SCANNER_LOG" desc="SETUP_DEBUG_SCANNER_LOG_DESC" %]
 		<div class="prefDesc">[% debugScannerLog %]</div>
+	[% END %]
 
-		<div class="prefHead">[% "DEBUGGING_SETTINGS" | string %]</div>
-		<div class="prefDesc">[% "SETUP_GROUP_DEBUG_DESC" | string %]</div>
+	[% WRAPPER setting title="" desc="" %][% END %]
 
-		<div><input name="persist" id="persist" type="checkbox" [% IF persist %] checked [% END %]> [% "PERSIST_DEBUG_SETTINGS" | string %]</div>
+	[% FOREACH category = categories %]
 
-		[% FOREACH category = categories %]
+		<p>
+		<select class="stdedit" name="[% category.name %]" id="[% category.name %]">
 
-			<p>
-			<select class="stdedit" name="[% category.name %]" id="[% category.name %]">
+		[%- FOREACH value = logLevels -%]
+			<option [% IF value == category.current %]selected[% END %] value="[% value %]">[% "SETUP_DEBUG_LEVEL_$value" | string %]</option>
+		[%- END -%]
 
-			[%- FOREACH value = logLevels -%]
-				<option [% IF value == category.current %]selected[% END %] value="[% value %]">[% "SETUP_DEBUG_LEVEL_$value" | string %]</option>
-			[%- END -%]
+		</select>
 
-			</select>
+		<label for="[% category.name %]" class="stdlabel">([% category.name %]) - [% category.label %]</label>
+		</p>
 
-			<label for="[% category.name %]" class="stdlabel">([% category.name %]) - [% category.label %]</label>
-			</p>
-
-		[% END %]
-
-	</div>
+	[% END %]
 
 [% PROCESS settings/footer.html %]
