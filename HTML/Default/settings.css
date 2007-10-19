@@ -94,10 +94,25 @@ body {
 .titlebox_bottom div { background: url(html/images/help/title_bottom_left.gif) no-repeat bottom left; }
 .titlebox_bottom { background: url(html/images/help/title_bottom_right.gif) no-repeat bottom right; }
 
-.mouseOver .selector_topRight { background: #9aacc4 url(html/images/help/selector_top_right.gif) no-repeat top right; }
-.mouseOver .selector_topLeft { background: transparent url(html/images/help/selector_top_left.gif) no-repeat top left; }
-.mouseOver .selector_bottomRight { background: transparent url(html/images/help/selector_bottom_right.gif) no-repeat bottom right; }
-.mouseOver .selector_bottomLeft { background: transparent url(html/images/help/selector_bottom_left.gif) no-repeat bottom left; }
+.mouseOver .selector_topRight,
+.selectedItem .selector_topRight {
+	background: #9aacc4 url(html/images/help/selector_top_right.gif) no-repeat top right;
+}
+
+.mouseOver .selector_topLeft,
+.selectedItem .selector_topLeft {
+	background: transparent url(html/images/help/selector_top_left.gif) no-repeat top left;
+}
+
+.mouseOver .selector_bottomRight,
+.selectedItem .selector_bottomRight {
+	background: transparent url(html/images/help/selector_bottom_right.gif) no-repeat bottom right;
+}
+
+.mouseOver .selector_bottomLeft,
+.selectedItem .selector_bottomLeft {
+	background: transparent url(html/images/help/selector_bottom_left.gif) no-repeat bottom left;
+}
 
 .browseItemLink:hover,
 .mouseOver .homeMenuItem a {

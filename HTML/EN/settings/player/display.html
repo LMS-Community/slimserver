@@ -11,9 +11,9 @@
 		[% END %]
 
 		[% WRAPPER settingSection %]
-			[% WRAPPER settingGroup title="SETUP_GROUP_BRIGHTNESS" desc="SETUP_GROUP_BRIGHTNESS_DESC" %]&nbsp;[% END %]
+			[% desc="SETUP_GROUP_BRIGHTNESS_DESC" %]
 			
-			[% WRAPPER settingGroup title="SETUP_POWERONBRIGHTNESS_CHOOSE" desc="" %]
+			[% WRAPPER settingGroup title="SETUP_POWERONBRIGHTNESS_CHOOSE" %]
 				<select class="stdedit" name="powerOnBrightness" id="powerOnBrightness">
 					[% PROCESS brightnessoptions current = prefs.powerOnBrightness %]
 				</select>

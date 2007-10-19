@@ -1,9 +1,11 @@
 [%- BLOCK settingsPage -%]
-	<div class="selectorMarker" onmouseover="Utils.highlight(this);" id="[% href %]"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-		<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
-			<a href="[% href %]" target="subSettings" class="browseItemLink">[% title %]</a>
-		</div>
-	</div></div></div></div></div>
+	<div class="selectorMarker [% IF token == 'BASIC_PLAYER_SETTINGS' || token == 'FORMATTING_SETTINGS' %]selectedItem[% END %]" onclick="SettingsPage.onClicked(this);" onmouseover="SettingsPage.highlight(this);">
+		<div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+			<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
+				<a href="[% href %]" target="subSettings" class="browseItemLink">[% title %]</a>
+			</div>
+		</div></div></div></div>
+	</div>
 [%- END -%]
 
 [%- IF advanced;
@@ -30,6 +32,7 @@
 	IF links;
 		FOREACH link = links;
 			IF !firstLevelItems.grep("^$link.key$").size;
+				token = link.key;
 				title = link.key | string | html;
 				href = link.value _ "player=" _ playerURI;
 				IF playerid;

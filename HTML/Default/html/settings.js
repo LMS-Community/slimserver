@@ -76,6 +76,32 @@ Settings = function(){
 			Ext.get('settings').dom.src = webroot + page + (page.search(/\?/) >= 0 ? '&' : '?') + 'player=' + player;
 		},
 
+		// resize panels, folder selectors etc.
+		onResize : function(){
+			var main = Ext.get('main');
+			var settings = Ext.get('settings');
+
+			var dimensions = new Array();
+			dimensions['maxHeight'] = main.getHeight();
+			dimensions['maxWidth'] = main.getWidth() - 10;
+
+			settings.setHeight(dimensions['maxHeight']);
+			settings.setWidth(dimensions['maxWidth'] - 20);
+			main.setWidth(dimensions['maxWidth']);
+		}
+	};
+}();
+
+
+SettingsPage = function(){
+	var unHighlightTimer;
+	return {
+		init : function(){
+			this.initDescPopup();
+
+			if (Ext.isSafari)
+				Ext.get(document).setStyle('overflow', 'auto');
+		},
 
 		initDescPopup : function(){
 			var section, descEl, desc, helpEl, title;
@@ -114,21 +140,29 @@ Settings = function(){
 					}
 				}
 			}
-
 		},
 
-		// resize panels, folder selectors etc.
-		onResize : function(){
-			var main = Ext.get('main');
-			var settings = Ext.get('settings');
+		// remove sticky highlight from previously selected item
+		onClicked : function(target){
+			var el = Ext.get(target);
+			if (el && el.hasClass('mouseOver')) {
+				if (el = Ext.get(Ext.DomQuery.selectNode('div.selectedItem')))
+					el.removeClass('selectedItem');
+	
+				if (el = Ext.get(target.id))
+					el.addClass('selectedItem');
+			}
+		},
 
-			var dimensions = new Array();
-			dimensions['maxHeight'] = main.getHeight();
-			dimensions['maxWidth'] = main.getWidth() - 10;
-
-			settings.setHeight(dimensions['maxHeight']);
-			settings.setWidth(dimensions['maxWidth'] - 20);
-			main.setWidth(dimensions['maxWidth']);
+		highlight : function(target){
+			if (Utils) {
+				if (unHighlightTimer == null)
+					unHighlightTimer = new Ext.util.DelayedTask(Utils.unHighlight);
+					
+				Utils.highlight(target);
+				unHighlightTimer.delay(2000);	// remove highlighter after x seconds of inactivity
+			}
 		}
+
 	};
 }();

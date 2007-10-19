@@ -156,7 +156,7 @@ var Utils = function(){
 				Utils.unHighlight();
 				highlightedEl = el;
 
-				if (el.hasClass('currentSong')) {
+				if (el.hasClass('selectedItem')) {
 					el.addClass('mouseOver');
 				}
 				else {
@@ -170,7 +170,7 @@ var Utils = function(){
 		unHighlight : function(){
 			// remove highlighting from the other DIVs
 			if (highlightedEl) {
-				if (highlightedEl.hasClass('currentSong')) {
+				if (highlightedEl.hasClass('selectedItem')) {
 					highlightedEl.removeClass('mouseOver');
 				}
 				else {

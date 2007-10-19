@@ -219,9 +219,9 @@ form#advSearchForm.resultsPage {
 	padding-top: 4px;
 }
 
-.currentSong a,
-.currentSong .browsedbListItem,
-.currentSong .playlistSongDetail,
+.selectedItem a,
+.selectedItem .browsedbListItem,
+.selectedItem .playlistSongDetail,
 .mouseOver .browseItemDetail,
 .mouseOver .browseItemLink,
 .mouseOver .browsedbListItem,
@@ -323,7 +323,7 @@ form#advSearchForm.resultsPage {
 	cursor: default;
 }
 
-.mouseOver, .currentSong, .selectorMarker, .cmdLinkIcon,
+.mouseOver, .selectedItem, .selectorMarker, .cmdLinkIcon,
 #helpLink, #settingsLink, #playerSettingsLink, .link, #songInfoHeader a {
 	cursor: pointer;
 }
@@ -811,27 +811,27 @@ form#advSearchForm.resultsPage {
 }
 
 /* list selector */
-.mouseOver, .currentSong, .selectorMarker {
+.mouseOver, .selectedItem, .selectorMarker {
 	padding-top: 0;
 	padding-bottom: 0;
 }
 
-.currentSong .selector_topRight,
+.selectedItem .selector_topRight,
 .mouseOver .selector_topRight {
 	background: #c0ccdc url(html/images/selector_top_right.gif) no-repeat top right;
 }
 
-.currentSong .selector_topLeft,
+.selectedItem .selector_topLeft,
 .mouseOver .selector_topLeft {
 	background: transparent url(html/images/selector_top_left.gif) no-repeat top left;
 }
 
-.currentSong .selector_bottomRight,
+.selectedItem .selector_bottomRight,
 .mouseOver .selector_bottomRight {
 	background: transparent url(html/images/selector_bottom_right.gif) no-repeat bottom right;
 }
 
-.currentSong .selector_bottomLeft,
+.selectedItem .selector_bottomLeft,
 .mouseOver .selector_bottomLeft {
 	background: transparent url(html/images/selector_bottom_left.gif) no-repeat bottom left;
 }

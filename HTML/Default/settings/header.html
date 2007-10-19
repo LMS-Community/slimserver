@@ -16,11 +16,7 @@
 		<script type="text/javascript" src="[% webroot %]html/settings.js?r=[% revision %]"></script>
 
 		<script>
-			Ext.EventManager.onDocumentReady(Settings.initDescPopup, Settings, true);
-			Ext.EventManager.onDocumentReady(function(){
-				if (Ext.isSafari)
-					Ext.get(document).setStyle('overflow', 'auto');
-			});
+			Ext.EventManager.onDocumentReady(SettingsPage.init, SettingsPage, true);
 		</script>
 
 		[%- IF debug %]
