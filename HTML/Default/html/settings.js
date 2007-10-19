@@ -132,7 +132,7 @@ SettingsPage = function(){
 							text: desc,
 							title: title,
 							maxWidth: 600,
-							autoHide: false
+							autoHide: true
 						});
 					}
 					else {
