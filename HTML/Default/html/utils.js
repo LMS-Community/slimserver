@@ -204,20 +204,19 @@ var Utils = function(){
 
 			var maxHeight = Ext.fly(document.body).getHeight() - infoHeight - footerHeight;
 
-			var el = Ext.get('content');
-
-			if (el && el.hasClass('scrollingPanel')) {
-				el.setHeight(maxHeight - el.getTop());
-			}
+			var el;
 
 			if (el = Ext.get('browsedbList')) {
 				el.setHeight(maxHeight - el.getTop());
 			}
 
-			if (el = Ext.get('songInfo')) {
+			else if (el = Ext.get('songInfo')) {
 				el.setHeight(maxHeight - el.getTop());
 			}
 
+			else if ((el = Ext.get('content')) && el.hasClass('scrollingPanel')) {
+				el.setHeight(maxHeight - el.getTop());
+			}
 		},
 
 		processPlaylistURL : function(param, reload) {
