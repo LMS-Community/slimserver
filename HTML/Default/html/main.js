@@ -382,15 +382,7 @@ PlayerChooser = function(){
 
 			// set the browser frame to use the selected player
 			if (player && frames.browser) {
-				var browseUrl = new String(frames.browser.location.href);
-
-				var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
-
-				if (rExp.exec(browseUrl)) {
-					frames.browser.location = browseUrl.replace(rExp, '=' + playerid);
-				} else {
-					frames.browser.location = frames.browser.location.href + '&player=' + playerid;
-				}
+				frames.browser.location = Utils.replacePlayerIDinUrl(frames.browser.location.href, playerid);
 			}
 
 			if (el = Ext.get('playerSettingsLink'))

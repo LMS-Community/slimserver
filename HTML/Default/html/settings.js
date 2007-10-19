@@ -32,7 +32,7 @@ Settings = function(){
 			var tp = new Ext.TabPanel('settingsTabs');
 			tp.addTab('t0', strings['status']).on('activate', function(){ Settings.showSettingsPage('settings/server/status.html'); });
 			tp.addTab('t1', strings['basic']).on('activate', function(){ Settings.showSettingsPage('settings/server/basic.html'); });
-			tp.addTab('t2', strings['player']).on('activate', function(){ Settings.showSettingsPage('settings/index.html?sub=advanced&playerid=' + player); });
+			tp.addTab('t2', strings['player']).on('activate', function(){ Settings.showSettingsPage('settings/index.html?sub=player&playerid=' + player); });
 			tp.addTab('t3', strings['mymusic']).on('activate', function(){ Settings.showSettingsPage('settings/server/behavior.html'); });
 			tp.addTab('t4', strings['itunes']).on('activate', function(){ Settings.showSettingsPage('plugins/iTunes/settings/itunes.html'); });
 			tp.addTab('t5', strings['podcasts']).on('activate', function(){ Settings.showSettingsPage('plugins/Podcast/settings/basic.html'); });
@@ -89,12 +89,14 @@ Settings = function(){
 			settings.setWidth(dimensions['maxWidth'] - 20);
 			main.setWidth(dimensions['maxWidth']);
 		}
+		
 	};
 }();
 
 
 SettingsPage = function(){
 	var unHighlightTimer;
+
 	return {
 		init : function(){
 			this.initDescPopup();
@@ -160,9 +162,40 @@ SettingsPage = function(){
 					unHighlightTimer = new Ext.util.DelayedTask(Utils.unHighlight);
 					
 				Utils.highlight(target);
-				unHighlightTimer.delay(2000);	// remove highlighter after x seconds of inactivity
+				unHighlightTimer.delay(1000);	// remove highlighter after x seconds of inactivity
+			}
+		},
+
+		initPlayerList : function(){
+			var playerChooser = new Ext.SplitButton('playerSelector', {
+				handler: function(ev){
+					if(this.menu && !this.menu.isVisible()){
+						this.menu.show(this.el, this.menuAlign);
+					}
+					this.fireEvent('arrowclick', this, ev);
+				},
+				menu: new Ext.menu.Menu({shadow: Ext.isGecko && Ext.isMac ? true : 'sides'}),
+				tooltip: strings['choose_player'],
+				arrowTooltip: strings['choose_player'],
+				tooltipType: 'title'
+			});
+
+			for (x=0; x<playerList.length; x++){
+				if (playerList[x].id == playerid || playerList[x].id == player) {
+					playerChooser.setText(playerList[x].name);
+				}
+
+				playerChooser.menu.add(
+					new Ext.menu.Item({
+						text: playerList[x].name,
+						value: playerList[x].id,
+						cls: 'playerList',
+						handler: function(ev){
+							parent.location.href = Utils.replacePlayerIDinUrl(parent.location.href, ev.value);
+						}
+					})
+				);
 			}
 		}
-
 	};
 }();

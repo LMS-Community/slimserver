@@ -346,6 +346,12 @@ var Utils = function(){
 				info.update('<img src="' + webroot + 'html/images/info.png"/>&nbsp;' + text);
 				info.fadeIn().pause(2).fadeOut();
 			}
+		},
+
+		replacePlayerIDinUrl : function(url, id){
+			var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
+
+			return (rExp.exec(url) ? url.replace(rExp, '=' + id) : url + '&player=' + id);
 		}
 	};
 }();

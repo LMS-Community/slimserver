@@ -8,8 +8,8 @@
 	</div>
 [%- END -%]
 
-[%- IF advanced;
-	PROCESS settings/header.html;	
+[%- IF menu == 'advanced';
+	PROCESS settings/header.html;
 
 	firstLevelItems = [
 		'BASIC_SERVER_SETTINGS',
@@ -23,11 +23,7 @@
 		'BEHAVIOR_SETTINGS'
 	];
 
-	IF playerid;
-		links = playersetup;
-	ELSE;
-		links = additionalLinks.setup;
-	END;
+	links = additionalLinks.setup;
 
 	IF links;
 		FOREACH link = links;
@@ -44,16 +40,59 @@
 	END;
 
 	PROCESS settings/footer.html %]
+
+[%- ELSIF menu == 'player';
+	PROCESS settings/header.html;
+
+	links = playersetup;
+	USE Clients; players = Clients.get("id")
+	%]
+		<p>&nbsp;</p>
+		<div id="playerSelector"></div>
+		<p>&nbsp;</p>
+		<script type="text/javascript">
+			playerList = new Array(
+			[% FOREACH playerobj IN players -%]
+				{ id: "[% playerobj.id %]", name: "[% playerobj.name %]" }[% IF !loop.last; ','; END %]
+			[% END %]
+			);
+
+			strings = new Array();
+			[% PROCESS jsString id='CHOOSE_PLAYER' jsId='' %]
+
+			Ext.EventManager.onDocumentReady(SettingsPage.initPlayerList);
+		</script>
+	[%
+
+	IF links;
+		FOREACH link = links;
+			token = link.key;
+			title = link.key | string | html;
+			href = link.value _ "player=" _ playerURI;
+			href = href _ "&amp;playerid=" _ playerURI;
+
+			PROCESS settingsPage;
+		END;
+	END;
+
+	PROCESS settings/footer.html %]
+
+[%- ELSIF sub == 'player' && !playerid;
+	PROCESS settings/header.html %]
+	<p><br/>[% "NO_PLAYER_FOUND" | string %]</p>
+	[% PROCESS settings/footer.html %]
+
 [%- ELSIF sub -%]
 	<frameset cols="250,*">
-		<frame src="[% webroot %]settings/index.html?player=[% playerURI %]&[% sub %]=1[% IF playerid %]&playerid=[% playerURI; END %]" name="menu" frameborder="0">
+		<frame src="[% webroot %]settings/index.html?player=[% playerURI %]&menu=[% sub %][% IF playerid %]&playerid=[% playerURI; END %]" name="menu" frameborder="0">
 
-		[% IF playerid %]
+		[% IF sub == 'player' %]
 			<frame src="[% webroot %]settings/player/basic.html?player=[% playerURI%]&playerid=[% playerURI %]" name="subSettings" frameborder="0" marginwidth="15">
 		[% ELSE %]
 			<frame src="[% webroot %]settings/server/formatting.html?player=[% playerURI %]" name="subSettings" frameborder="0" marginwidth="15">
 		[% END %]
 	</frameset>
+
 [%- ELSE -%]
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
