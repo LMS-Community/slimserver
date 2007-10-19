@@ -35,11 +35,6 @@ Main = function(){
 				window.open(webroot + 'settings/index.html', 'settings', 'dependent=yes,resizable=yes');
 			});
 
-			// TODO: these links need to go to the correct pages
-			Ext.get('playerSettingsLink').on('click', function(){
-				window.open('/Classic/settings/player/basic.html?playerid=' + player, 'playersettings', 'dependent=yes,resizable=yes');
-			});
-
 			Ext.get('progressInfo').on('click', function(){
 				frames.browser.location = webroot + 'progress.html?type=importer', 'dependent=yes,resizable=yes';
 			});
@@ -328,9 +323,6 @@ PlayerChooser = function(){
 									canpoweroff: responseText.result.players_loop[0].canpoweroff
 								});
 							}
-
-							if (el = Ext.get('playerSettingsLink'))
-								el.setVisible(playerid ? true : false);
 						}
 
 						else {
@@ -384,9 +376,6 @@ PlayerChooser = function(){
 			if (player && frames.browser) {
 				frames.browser.location = Utils.replacePlayerIDinUrl(frames.browser.location.href, playerid);
 			}
-
-			if (el = Ext.get('playerSettingsLink'))
-				el.setVisible(playerid ? true : false);
 
 			if (ev.canpoweroff != null && (el = Ext.get('ctrlPower')))
 				el.setVisible(ev.canpoweroff);

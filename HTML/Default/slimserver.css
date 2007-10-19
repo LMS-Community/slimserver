@@ -319,7 +319,7 @@ form#advSearchForm.resultsPage {
 }
 
 .mouseOver, .selectedItem, .selectorMarker, .cmdLinkIcon,
-#helpLink, #settingsLink, #playerSettingsLink, .link, #songInfoHeader a {
+#helpLink, #settingsLink, .link, #songInfoHeader a {
 	cursor: pointer;
 }
 
