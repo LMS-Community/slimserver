@@ -14,7 +14,7 @@ package Slim::Networking::Async::DNS;
 use strict;
 
 use Net::DNS;
-use Scalar::Util qw(blessed weaken);
+use Scalar::Util qw(blessed);
 use Socket qw(unpack_sockaddr_in inet_ntoa);
 use Tie::Cache::LRU;
 
@@ -57,12 +57,12 @@ sub init {
 	
 	my @ns = $res->nameservers();
 	
-	# domain to check
-	my $domain = ('a'..'m')[ int(rand(13)) ] . '.root-servers.net';
-	
 	my $valid_servers = [];
 	
 	for my $ns ( @ns ) {
+		
+		# domain to check
+		my $domain = ('a'..'m')[ int(rand(13)) ] . '.root-servers.net';
 
 		$log->debug("Verifying if we can use nameserver $ns...");
 		$log->debug("  Testing lookup of $domain");
@@ -90,7 +90,7 @@ sub init {
 		logWarning("No DNS servers responded, falling back to OpenDNS.");
 	}
 	
-	# Grab the OpenDNS default nxdomain IP, so we can exclude it in results
+	# Grab the OpenDNS default nxdomain IPs, so we can exclude them from results
 	for my $ns ( @{$OpenDNS} ) {
 		$res->nameservers( $ns );
 	
@@ -100,7 +100,7 @@ sub init {
 			for my $answer ( $packet->answer ) {
 				if ( blessed($answer) && $answer->isa('Net::DNS::RR::A') ) {
 					$OpenDNS_Default->{ $answer->address } = 1;
-					$log->debug( "Found OpenDNS default nxdomain IP: " . $answer->address );
+					$log->debug( "Found an OpenDNS default nxdomain IP: " . $answer->address );
 				}
 			}
 		}
