@@ -1,6 +1,4 @@
 var MainMenu = function(){
-	var url = new Array();
-
 	return {
 		init : function(){
 			Ext.EventManager.onWindowResize(this.onResize, this);
@@ -18,8 +16,16 @@ var MainMenu = function(){
 
 			this.expandItem(Utils.getCookie('SqueezeCenter-homeMenuExpanded'));
 
-			if (Ext.get('livesearch'))
-				Utils.initSearch('livesearch', this.showSearchResults);
+			new Ext.KeyMap('search', {
+				key: Ext.EventObject.ENTER,
+				fn: function(){
+					var query = Ext.get('search').dom.value;
+
+					if (query)
+						location.href = webroot + 'search.html?manualSearch=1&livesearch=1&player=' + playerid + '&query=' + Ext.encode(query);
+				},
+				scope: this
+			});
 		},
 
 		toggleItem : function(panel){

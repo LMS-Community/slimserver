@@ -274,12 +274,22 @@ var Utils = function(){
 
 		initSearch : function(searchField, callback){
 			search = new Ext.form.TextField({
-				validationDelay: 50,
+				validationDelay: 100,
 				validateOnBlur: false,
+				selectOnFocus: true,
+				
 
 				validator: function(value){
 					if (value.length > 2) {
-						var el = Ext.get('search-results')
+						var el;
+
+						if (el = Ext.get('browsedbHeader'))
+							el.remove();
+
+						if (el = Ext.get('browsedbList'))
+							el.remove();
+
+						el = Ext.get('search-results')
 
 						// don't wait for an earlier update to finish
 						var um = el.getUpdateManager();
@@ -298,9 +308,10 @@ var Utils = function(){
 							}
 						);
 					}
-					else if (typeof callback == 'function') { 
-						try { eval(callback(value)); }
-						catch(e){}
+					else {
+						var el = Ext.get('search-results');
+						if (el)
+							el.update('');
 					}
 
 					return true;

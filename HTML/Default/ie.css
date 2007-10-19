@@ -6,11 +6,6 @@
 #ctrlProgress { margin-top: 0; }
 #ctrlProgress img { vertical-align: middle; }
 
-.titlebox_content #livesearch {
-	height: 15px;
-	right: 35px;
-}
-
 .mouseOver .selector_bottomRight,
 .mouseOver .selector_topLeft {
 	height: 18px;

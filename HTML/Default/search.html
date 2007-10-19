@@ -5,9 +5,7 @@
 		Ext.EventManager.onDocumentReady(function(){
 			var el;
 
-			[% IF !browse_items.size %]
 			Utils.initSearch();
-			[% END %]
 
 			new Ext.Button('searchButton', {
 				text: '[% "SEARCH" | string %]',
@@ -65,20 +63,18 @@
 		[% END %]
 	</div>
 
-	<div id="search-results"></div>
-
-	[% IF browse_items.size %]
-		<div id="browsedbList">
-
-			[% FOREACH item = browse_items %]
-				[% PROCESS browsedbitems_list.html %]
-			[% END %]
-
-		</div>
-	[% ELSIF manualSearch %]
-		[% "NO_SEARCH_RESULTS" | string %]
-	[% END %]
-
-	[% IF pageinfo.totalpages && pageinfo.totalpages > 1 %][% PROCESS pagebar %][% END %]
+	<div id="search-results">
+		[% IF browse_items.size %]
+			<div id="browsedbList">
+	
+				[% FOREACH item = browse_items %]
+					[% PROCESS browsedbitems_list.html %]
+				[% END %]
+	
+			</div>
+		[% ELSIF manualSearch %]
+			[% "NO_SEARCH_RESULTS" | string %]
+		[% END %]
+	</div>
 
 [% PROCESS pagefooter.html %]

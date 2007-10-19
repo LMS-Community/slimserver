@@ -204,11 +204,6 @@ div.thumbwrap {
 
 .disclosure_expanded { background-position: 0 -11px; }
 
-#livesearch {
-	width: 200px;
-	border: none;
-}
-
 form#advSearchForm.resultsPage {
 	height: 0px;
 	display: none;
@@ -558,6 +553,8 @@ form#advSearchForm.resultsPage {
 	background: white url(html/images/search.gif) no-repeat top right;
 	font-size: 10px;
 }
+
+.browsedbControls #search { background: white url(html/images/search.gif) no-repeat top right; }
 
 .infoTab_top, .infoTab_top div,
 .titlebox_top, .titlebox_top div,
