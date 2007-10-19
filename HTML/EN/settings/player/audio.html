@@ -1,77 +1,71 @@
 [% PROCESS settings/header.html %]
 
 	[% IF prefs.exists('synchronize') %]
-	<div class="settingSection">
+		[% WRAPPER settingSection %]
+			[% WRAPPER settingGroup title="SETUP_SYNCHRONIZE" desc="SETUP_SYNCHRONIZE_DESC" %]
+				<select class="stdedit" name="synchronize" id="synchronize">
+					[% FOREACH option = syncGroups %]
+						<option [% IF prefs.syncronize == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
+					[%- END -%]
+				</select>
+			[% END %]
 
-		<div class="prefHead">[% "SETUP_SYNCHRONIZE" | string %]</div>
-		<div class="prefDesc">[% "SETUP_SYNCHRONIZE_DESC" | string %]</div>
+			[% WRAPPER settingGroup title="SETUP_SYNCVOLUME" desc="SETUP_SYNCVOLUME_DESC" %]
+				<select class="stdedit" name="syncVolume" id="syncVolume">
+					[% FOREACH option = {
+						'1' => 'SETUP_SYNCVOLUME_ON',
+						'0' => 'SETUP_SYNCVOLUME_OFF'
+					} %]
+						<option [% IF prefs.syncVolume == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					[%- END -%]
+				</select>
+			[% END %]
 
-		<select class="stdedit" name="synchronize" id="synchronize">
+			[% WRAPPER settingGroup title="SETUP_SYNCPOWER" desc="SETUP_SYNCPOWER_DESC" %]
+				<select class="stdedit" name="syncPower" id="syncPower">
+					[% FOREACH option = {
+						'1' => 'SETUP_SYNCPOWER_ON',
+						'0' => 'SETUP_SYNCPOWER_OFF'
+					} %]
+						<option [% IF prefs.syncPower == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					[%- END -%]
+				</select>
+			[% END %]
 
-		[% FOREACH option = syncGroups %]
-			<option [% IF prefs.syncronize == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
-		[%- END -%]
-		
-		</select>
+			[% WRAPPER settingGroup title="SETUP_MAINTAINSYNC" desc="SETUP_MAINTAINSYNC_DESC" %]
+				<select class="stdedit" name="maintainSync" id="maintainSync">
+					[% FOREACH option = {
+						'1' => 'SETUP_MAINTAINSYNC_ON',
+						'0' => 'SETUP_MAINTAINSYNC_OFF'
+					} %]
+						<option [% IF prefs.maintainSync == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
+					[%- END -%]
+				</select>
+			[% END %]
+		[% END %]
 
-		<div class="prefHead">[% "SETUP_SYNCVOLUME" | string %]</div>
-		<div class="prefDesc">[% "SETUP_SYNCVOLUME_DESC" | string %]</div>
 
-		<select class="stdedit" name="syncVolume" id="syncVolume">
+		[% WRAPPER settingSection %]
+			[% WRAPPER settingGroup title="SETUP_STARTDELAY" desc="SETUP_STARTDELAY_DESC" %]
+				<label for="startDelay" class="stdlabel">[% "SETUP_STARTDELAY_CHOOSE" | string %]</label>
+				<input type=text class="stdedit" name="startDelay" id="startDelay" value="[% prefs.startDelay %]" size="5">
+			[% END %]
 
-		[% FOREACH option = {
-			'1' => 'SETUP_SYNCVOLUME_ON',
-			'0' => 'SETUP_SYNCVOLUME_OFF'
-		} %]
-			<option [% IF prefs.syncVolume == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
-		[%- END -%]
-		
-		</select>
+			[% WRAPPER settingGroup title="SETUP_PLAYDELAY" desc="SETUP_PLAYDELAY_DESC" %]
+				<label for="playDelay" class="stdlabel">[% "SETUP_PLAYDELAY_CHOOSE" | string %]</label>
+				<input type=text class="stdedit" name="playDelay" id="playDelay" value="[% prefs.playDelay %]" size="5">
+			[% END %]
+		[% END %]
 
-		<div class="prefHead">[% "SETUP_SYNCPOWER" | string %]</div>
-		<div class="prefDesc">[% "SETUP_SYNCPOWER_DESC" | string %]</div>
+		[% WRAPPER setting title="SETUP_MINSYNCADJUST" desc="SETUP_MINSYNCADJUST_DESC" %]
+			<label for="minSyncAdjust" class="stdlabel">[% "SETUP_MINSYNCADJUST_CHOOSE" | string %]</label>
+			<input type=text class="stdedit" name="minSyncAdjust" id="minSyncAdjust" value="[% prefs.minSyncAdjust %]" size="5">
+		[% END %]
 
-		<select class="stdedit" name="syncPower" id="syncPower">
-
-		[% FOREACH option = {
-			'1' => 'SETUP_SYNCPOWER_ON',
-			'0' => 'SETUP_SYNCPOWER_OFF'
-		} %]
-			<option [% IF prefs.syncPower == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
-		[%- END -%]
-		
-		</select>
-
-		<div class="prefHead">[% "SETUP_MAINTAINSYNC" | string %]</div>
-		<div class="prefDesc">[% "SETUP_MAINTAINSYNC_DESC" | string %]</div>
-		<select class="stdedit" name="maintainSync" id="maintainSync">
-		[% FOREACH option = {
-			'1' => 'SETUP_MAINTAINSYNC_ON',
-			'0' => 'SETUP_MAINTAINSYNC_OFF'
-		} %]
-			<option [% IF prefs.maintainSync == option.key %]selected [% END %]value="[% option.key %]">[% option.value | string %]</option>
-		[%- END -%]
-		</select>
-
-		<div class="prefHead">[% "SETUP_STARTDELAY" | string %]</div>
-		<div class="prefDesc">[% "SETUP_STARTDELAY_DESC" | string %]</div>
-		<label for="startDelay" class="stdlabel">[% "SETUP_STARTDELAY_CHOOSE" | string %]</label>
-		<input type=text class="stdedit" name="startDelay" id="startDelay" value="[% prefs.startDelay %]" size="5">
-
-		<div class="prefHead">[% "SETUP_PLAYDELAY" | string %]</div>
-		<div class="prefDesc">[% "SETUP_PLAYDELAY_DESC" | string %]</div>
-		<label for="playDelay" class="stdlabel">[% "SETUP_PLAYDELAY_CHOOSE" | string %]</label>
-		<input type=text class="stdedit" name="playDelay" id="playDelay" value="[% prefs.playDelay %]" size="5">
-
-		<div class="prefHead">[% "SETUP_MINSYNCADJUST" | string %]</div>
-		<div class="prefDesc">[% "SETUP_MINSYNCADJUST_DESC" | string %]</div>
-		<label for="minSyncAdjust" class="stdlabel">[% "SETUP_MINSYNCADJUST_CHOOSE" | string %]</label>
-		<input type=text class="stdedit" name="minSyncAdjust" id="minSyncAdjust" value="[% prefs.minSyncAdjust %]" size="5">
-
-		<div class="prefHead">[% "SETUP_PACKETLATENCY" | string %]</div>
-		<div class="prefDesc">[% "SETUP_PACKETLATENCY_DESC" | string %]</div>
-		<label for="packetLatency" class="stdlabel">[% "SETUP_PACKETLATENCY_CHOOSE" | string %]</label>
-		<input type=text class="stdedit" name="packetLatency" id="packetLatency" value="[% prefs.packetLatency %]" size="5">
+		[% WRAPPER setting title="SETUP_PACKETLATENCY" desc="SETUP_PACKETLATENCY_DESC" %]
+			<label for="packetLatency" class="stdlabel">[% "SETUP_PACKETLATENCY_CHOOSE" | string %]</label>
+			<input type=text class="stdedit" name="packetLatency" id="packetLatency" value="[% prefs.packetLatency %]" size="5">
+		[% END %]
 
 	</div>
 	[% END %]
