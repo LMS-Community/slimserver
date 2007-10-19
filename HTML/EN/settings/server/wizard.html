@@ -92,17 +92,18 @@
 			var wizarddone = [% wizardDone ? "true" : "false" %];
 
 			var strings = new Array();
-			strings['previous'] = "[% "SETUP_WIZARD_PREVIOUS" | string %]";
-			strings['next'] = "[% "SETUP_WIZARD_NEXT" | string %]";
-			strings['finish'] = "[% "SETUP_WIZARD_FINISH" | string %]";
-			strings['close'] = "[% "SETUP_WIZARD_CLOSE" | string %]";
-			strings['sn_verify'] = "[% "SETUP_WIZARD_SQN_VERIFY" | string %]";
-			strings['sn_success'] = "[% "SETUP_SN_VALID_LOGIN" | string %]";
+			[% PROCESS jsString id='SETUP_WIZARD_PREVIOUS' jsId='previous' %]
+			[% PROCESS jsString id='SETUP_WIZARD_NEXT' jsId='next' %]
+			[% PROCESS jsString id='SETUP_WIZARD_FINISH' jsId='finish' %]
+			[% PROCESS jsString id='SETUP_WIZARD_CLOSE' jsId='close' %]
+			[% PROCESS jsString id='SETUP_WIZARD_SQN_VERIFY' jsId='sn_verify' %]
+			[% PROCESS jsString id='SETUP_SN_VALID_LOGIN' jsId='sn_success' %]
 
-			strings['summary_none'] = "[% "NONE" | string %]";
-			strings['summary_audiodir'] = "[% "SETUP_AUDIODIR" | string %][% "COLON" | string %]";
-			strings['summary_itunes'] = "[% "ITUNES_DESC" | string %]";
-			strings['summary_musicmagic'] = "[% "MUSICMAGIC_DESC" | string %]";
+			[% PROCESS jsString id='NONE' jsId='summary_none' %]
+			[% PROCESS jsString id='SETUP_AUDIODIR' jsId='summary_audiodir' %]
+			strings['summary_audiodir'] += '[% "COLON" | string %]';
+			[% PROCESS jsString id='ITUNES_DESC' jsId='summary_itunes' %]
+			[% PROCESS jsString id='MUSICMAGIC_DESC' jsId='summary_musicmagic' %]
 
 			try { Ext.EventManager.onDocumentReady(Wizard.init, Wizard, true); }
 			catch(e) {

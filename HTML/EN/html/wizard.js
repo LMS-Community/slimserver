@@ -248,16 +248,19 @@ Wizard = function(){
 		},
 
 		verifySqnAccount : function(){
-			email = Ext.get('sn_email');
-			pw = Ext.get('sn_password');
+			var email = Ext.get('sn_email').dom.value;
+			var pw = Ext.get('sn_password').dom.value;
+
+			var email_summary = Ext.get('sn_email_summary');
+			var result_summary = Ext.get('sn_result_summary');
+			var resultEl = Ext.get('sn_result');
+			
+			resultEl.update('');
+			email_summary.update(strings['summary_none']);
 
 			if (email && pw) {
-				email = email.dom.value;
-				pw = pw.dom.value;
-
-				Ext.get('sn_result').update('');
-				Ext.get('sn_email_summary').update(email);
-				Ext.get('sn_result_summary').update('');
+				email_summary.update(email);
+				result_summary.update('');
 
 				Ext.Ajax.request({
 					url: '/settings/server/squeezenetwork.html',
@@ -273,13 +276,13 @@ Wizard = function(){
 						result = response.responseText.split('|');
 
 						if (result[0] == '0') {
-							Ext.get('sn_result').update(result[1]);
-							Ext.get('sn_result_summary').update('(' + result[1] + ')');
+							resultEl.update(result[1]);
+							result_summary.update('(' + result[1] + ')');
 							this.sqnValidated = false;
 						}
 						else {
-							Ext.get('sn_result').update(strings['sn_success']);
-							Ext.get('sn_result_summary').update('');
+							resultEl.update(strings['sn_success']);
+							result_summary.update('');
 							this.sqnValidated = true;
 						}
 					}
