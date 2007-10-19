@@ -33,11 +33,14 @@ ELSE %]
 
 	[%
 	my_musicItems = BLOCK;
+		orderedLinks = ['BROWSE_BY_ARTIST', 'BROWSE_BY_ALBUM', 'BROWSE_BY_GENRE', 'BROWSE_BY_YEAR', 'BROWSE_NEW_MUSIC', 'PLUGIN_RANDOMPLAY'];
+		FOREACH item = orderedLinks;
+			link = { key=item, value=additionalLinks.browse.$item };
+			PROCESS menuItem category='my_music';
+		END;
 		FOREACH link = additionalLinks.browse;
-			IF link.key != 'FAVORITES';
+			IF link.key != 'FAVORITES' && !orderedLinks.grep(link.key).size;
 				PROCESS menuItem category='my_music';
-			ELSE;
-				favlink = link;
 			END;
 		END;
 		FOREACH link = additionalLinks.search;
@@ -48,17 +51,34 @@ ELSE %]
 	END;
 	
 	radioItems = BLOCK;
-		FOREACH link = additionalLinks.radio;
+		orderedLinks = ['PLUGIN_LIVE365_MODULE_NAME', 'PLUGIN_PANDORA_MODULE_NAME', 'PLUGIN_PODCAST', 'PLUGIN_RADIOIO_MODULE_NAME', 'PLUGIN_RADIOTIME_MODULE_NAME', 'PLUGIN_SHOUTCASTBROWSER_MODULE_NAME', 'PLUGIN_PICKS_MODULE_NAME'];
+		FOREACH item = orderedLinks;
+			link.value = additionalLinks.radio.$item;
+			link.key = item;
 			PROCESS menuItem category='radio';
 		END;
+		FOREACH link = additionalLinks.radio;
+			IF !orderedLinks.grep(link.key).size;
+				PROCESS menuItem category='radio';
+			END;
+		END;
 		additionalLinks.icons.RADIO_TUNEIN.url = 'html/images/ServiceProviders/tuneinurl.png';
-		PROCESS menuItem category='radio' link={key='RADIO_TUNEIN' value='tunein.html?'};
+		PROCESS menuItem category='radio' link={ key='RADIO_TUNEIN', value='tunein.html?' };
 	END;
 
 	music_on_demandItems = BLOCK;
-		FOREACH link = additionalLinks.music_on_demand;
+		orderedLinks = ['PLUGIN_LMA_MODULE_NAME', 'PLUGIN_MP3TUNES_MODULE_NAME', 'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME'];
+		FOREACH item = orderedLinks;
+			link.value = additionalLinks.music_on_demand.$item;
+			link.key = item;
 			PROCESS menuItem category='music_on_demand';
 		END;
+		FOREACH link = additionalLinks.music_on_demand;
+			IF !orderedLinks.grep(link.key).size;
+				PROCESS menuItem category='music_on_demand';
+			END;
+		END;
+		PROCESS menuItem category='radio' link={ key='PLUGIN_PANDORA_MODULE_NAME', value=additionalLinks.radio.PLUGIN_PANDORA_MODULE_NAME };
 	END;
 
 	pluginsItems = BLOCK;
@@ -180,8 +200,8 @@ ELSE %]
 				[% PROCESS menuItem link.key="MUSIC_ON_DEMAND" link.value="home.html?" expandable="music_on_demand" %]
 				<div id="MUSIC_ON_DEMAND_expanded" class="expandableHomeMenuItem">[%- music_on_demandItems -%]</div>
 			[% END %]
-		
-			[% PROCESS menuItem link.key="FAVORITES" link.value=favlink.value category='' expandable=0 singleton=1; singleton=0 %]
+
+			[% PROCESS menuItem link = { key='FAVORITES', value=additionalLinks.browse.FAVORITES } category='' expandable=0 singleton=1; singleton=0 %]
 		
 			[% IF additionalLinks.plugins %]
 				[% PROCESS menuItem link.key="PLUGINS" link.value="home.html?" expandable="plugins" category=''; expandable = 0 %]
