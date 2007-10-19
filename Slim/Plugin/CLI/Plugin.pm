@@ -191,7 +191,10 @@ sub cli_socket_change {
 			cli_socket_open($newport);
 		}
 
-		Slim::Networking::mDNS->startAdvertising;
+		# XXX: This starts mDNS during startup, but it is already
+		# started at the end of the init phase.  Starting it here means
+		# it has to be killed and restarted after HTTP.pm adds services.
+		#Slim::Networking::mDNS->startAdvertising;
 	}
 }
 
