@@ -4252,8 +4252,8 @@ SETUP_LANGUAGE
 	ZH_CN	语言
 
 SETUP_LANGUAGE_DESC
-	DE	Beachten Sie bitte, dass die mit einem Stern * bezeichneten Sprachen nicht offizielle Übersetzungen sind, sondern durch die SqueezeCenter Community bereit gestellt werden. Sie können daher unvollständig oder mangelhaft sein. Wir freuen uns jedoch über Verbesserungsvorschläge! Senden Sie diese an <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
-	EN	Please note that the languages marked with an asterisk (*) aren't officially translated, but the result of a joint effort of some SqueezeCenter community members. These translations may be incomplete or inconsistent. Please feel free to send us any improvement to <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>! 
+	DE	Wählen Sie die Sprache für SqueezeCenter. Diejenigen, welche mit * markiert sind, werden durch die SqueezeCenter Community bereit gestellt werden. Falls damit Probleme auftreten oder Sie Verbesserungsvorschläge haben, so schreiben Sie an <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
+	EN	Choose the language that you'd like to use with SqueezeCenter.  Those marked with * were translated by the SqueezeCenter customer community.  If you find problems or would like to contribute, email <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
 
 SETUP_LANGUAGE_OK
 	CS	Aktuálně nastavenáý jezyk:
