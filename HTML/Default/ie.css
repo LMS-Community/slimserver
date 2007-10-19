@@ -17,8 +17,12 @@
 	bottom: 0;
 }
 
-.itemWithCover, .currentSong {
-	height: 34px;
+.itemWithCover {
+	height: 44px;
+}
+
+.itemWithoutCover {
+	height: 24px;
 }
 
 .thumbwrap {
