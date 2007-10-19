@@ -13444,6 +13444,9 @@ DEBUG_NETWORK_ASYNCHTTP
 	DE	Asynchrone HTTP Request Informationen
 	EN	Asynchronous Remote HTTP Request Information
 
+DEBUG_NETWORK_ASYNCDNS
+	EN	Asynchronous DNS Debugging
+
 DEBUG_NETWORK_PROTOCOL
 	DE	Alle Player Protokolle
 	EN	All Player Protocol Debugging

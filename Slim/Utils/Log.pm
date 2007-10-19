@@ -735,6 +735,7 @@ sub _defaultCategories {
 		'prefs'                      => 'WARN',
 		'factorytest'                => 'WARN',
 
+		'network.asyncdns'           => 'WARN',
 		'network.asynchttp'          => 'WARN',
 		'network.http'               => 'WARN',
 		'network.mdns'               => 'WARN',

@@ -150,6 +150,7 @@ use Slim::Player::Source;
 use Slim::Utils::Cache;
 use Slim::Utils::Scanner;
 use Slim::Utils::Scheduler;
+use Slim::Networking::Async::DNS;
 use Slim::Networking::Select;
 use Slim::Networking::SqueezeNetwork;
 use Slim::Networking::UDP;
@@ -310,8 +311,8 @@ sub init {
 	$log->info("SqueezeCenter MySQL init...");
 	Slim::Utils::MySQLHelper->init();
 	
-	$log->info("Async Networking init...");
-	Slim::Networking::Async->init;
+	$log->info("Async DNS init...");
+	Slim::Networking::Async::DNS->init;
 	
 	$log->info("Firmware init...");
 	Slim::Utils::Firmware->init;
