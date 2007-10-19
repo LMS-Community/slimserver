@@ -17,21 +17,21 @@
 # http://en.wikipedia.org/wiki/List_of_ISO_639_codes
 
 LANGUAGE_CHOICES
-	CS	Česky
-	DA	Dansk
+	CS	Česky *
+	DA	Dansk *
 	DE	Deutsch
 	EN	English
 	ES	Español
-	FI	Suomi
+	FI	Suomi *
 	FR	Français
 	HE	עברית
 	IT	Italiano
-	JA	日本語
+	JA	日本語 *
 	NL	Nederlands
-	NO	Norsk
-	PT	Português
-	SV	Svenska
-	ZH_CN	简体中文
+	NO	Norsk *
+	PT	Português *
+	SV	Svenska *
+	ZH_CN	简体中文 *
 
 LOCALE_WIN
 	CS	cz
@@ -4252,21 +4252,8 @@ SETUP_LANGUAGE
 	ZH_CN	语言
 
 SETUP_LANGUAGE_DESC
-	CS	Můžete  změnit nastavení jazyka pro SqueezeCenter.
-	DA	Du kan ændre sproget for dit Slim-system.
-	DE	Sie können die Sprache für SqueezeCenter auswählen.
-	EN	You can change the language that you'd like SqueezeCenter to use.
-	ES	Se puede cambiar el idioma que desea que use SqueezeCenter.
-	FI	Voit vaihtaa Slim soittimesi kieltä halutessasi.
-	FR	Vous pouvez modifier la langue utilisée par le SqueezeCenter.
-	HE	באפשרותך לשנות את השפה שבה ברצונך ש-SqueezeCenter ישתמש.
-	IT	È possibile impostare la lingua desiderata da utilizzare in SqueezeCenter.
-	JA	SqueezeCenterで使われる言語を変更することができます。
-	NL	Je kunt de taal die SqueezeCenter gebruikt veranderen.
-	NO	Du kan velge hvilket språk SqueezeCenter skal benytte.
-	PT	Escolha o idioma a usar pelo sistema Slim.
-	SV	Du kan ange vilket språk du vill att Slim-systemet skall använda sig av.
-	ZH_CN	您可以选择SqueezeCenter所使用的语言。
+	DE	Beachten Sie bitte, dass die mit einem Stern * bezeichneten Sprachen nicht offizielle Übersetzungen sind, sondern durch die SqueezeCenter Community bereit gestellt werden. Sie können daher unvollständig oder mangelhaft sein. Wir freuen uns jedoch über Verbesserungsvorschläge! Senden Sie diese an <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
+	EN	Please note that the languages marked with an astersik (*) aren't officially translated, but the result of a joint effort of some SqueezeCenter community members. These translations may be incomplete or inconsistent. Please feel free to send us any improvement to <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>! 
 
 SETUP_LANGUAGE_OK
 	CS	Aktuálně nastavenáý jezyk:

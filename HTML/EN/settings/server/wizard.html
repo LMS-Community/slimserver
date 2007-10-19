@@ -153,9 +153,15 @@
 										[% "CHOOSE_A_LANGUAGE" | string %]
 										<select name="language" id="language">
 
-										[% FOREACH option = languageoptions %]
-											<option [% IF prefs.language == option.key %]selected="selected" [% END %]value="[% option.key %]">[% option.value %]</option>
-										[%- END -%]
+											[% FOREACH option = languageoptions %]
+												[% IF !option.value.search('\*') %]
+													<option [% IF prefs.language == option.key %]selected="selected" [% preferredLanguage=1;END %]value="[% option.key %]">[% option.value %]</option>
+												[% END %]
+											[%- END -%]
+
+											[% IF !preferredLanguage %]
+												<option selected="selected" value="[% prefs.language %]">[% languageoptions.${prefs.language} %]</option>
+											[% END %]
 
 										</select>
 									</div>
