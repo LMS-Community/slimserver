@@ -159,6 +159,7 @@ div.thumbwrap {
 
 .playlistSongDetail, .browseItemDetail {
 	padding-left: 70px;
+	overflow: hidden;
 }
 
 .smallBrowseItemDetail {
