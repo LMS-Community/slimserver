@@ -4,9 +4,9 @@ Browse = function(){
 			var el;
 
 			// jump to anchor
-			var anchor = document.location.href.match(/#(.*)$/)
-			if (anchor && anchor[1]) {
-				if (el = Ext.get('anchor' + anchor[1]))
+			var anchor = location.hash.replace(/#/,'');
+			if (anchor) {
+				if (el = Ext.get('anchor' + anchor))
 					el.scrollIntoView('browsedbList');
 			}
 
@@ -84,46 +84,36 @@ Browse = function(){
 		},
 
 		toggleGalleryView : function(artwork){
-			var url = document.location.href;
-			url = url.replace(/&artwork=\w*/gi, '');
-			var target = url.match(/(#.*)$/);
-			url = url.replace(/#.*$/, '');
+			var params = location.search;
+			params = params.replace(/&artwork=\w*/gi, '');
 
 			if (artwork == 1) {
 				Utils.setCookie( 'SqueezeCenter-albumView', "1" );
-				url = url + '&artwork=1';
+				params += '&artwork=1';
 			}
 
 			else if (artwork == 2) {
 				Utils.setCookie( 'SqueezeCenter-albumView', "2" );
-				url = url + '&artwork=2';
+				params += '&artwork=2';
 			}
 
 			else {
 				Utils.setCookie( 'SqueezeCenter-albumView', "" );
-				url = url + '&artwork=0';
+				params += '&artwork=0';
 			}
 
-			if (target && target[0].match(/^#/))
-				url = url + target[0];
-
-			window.location.href = url;
+			location.search = params;
 		},
 
 		chooseAlbumOrderBy: function(option) {
-			var url = document.location.href;
-			url = url.replace(/&orderBy=[\w\.,]*/ig, '');
-			var target = url.match(/(#.*)$/);
-			url = url.replace(/#.*$/, '');
+			var params = location.search;
+			params = params.replace(/&orderBy=[\w\.,]*/ig, '');
 
 			if (option)
-				url = url + '&orderBy=' + option;
-
-			if (target && target[0].match(/^#/))
-				url = url + target[0];
+				params += '&orderBy=' + option;
 
 			Utils.setCookie('SqueezeCenter-orderBy', option);
-			window.location.href = url;
+			location.search = params;
 		}
 
 	};
