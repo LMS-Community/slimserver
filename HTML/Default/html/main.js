@@ -32,7 +32,7 @@ Main = function(){
 			});
 
 			Ext.get('settingsLink').on('click', function(){
-				window.open(webroot + 'settings/index.html', 'settings', 'dependent=yes,resizable=yes');
+				window.open(webroot + 'settings/index.html?player=' + player, 'settings', 'dependent=yes,resizable=yes');
 			});
 
 			Ext.get('progressInfo').on('click', function(){
