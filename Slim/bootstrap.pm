@@ -191,7 +191,7 @@ sub loadModules {
 	my $failed = check_valid_versions();
 	if ( scalar keys %{$failed} ) {
 	
-		print "The following CPAN modules were found but are too old to work with SqueezeCenter:\n";
+		print "The following CPAN modules were found but cannot work with SqueezeCenter:\n";
 		
 		for my $module ( sort keys %{$failed} ) {
 			print "  $module (loaded " . $failed->{$module}->{loaded} . ", need " . $failed->{$module}->{need} . ")\n";
@@ -348,10 +348,19 @@ sub check_valid_versions {
 			eval { $mod->VERSION( $ver || 0 ); 1; };
 		}
 		if ( $@ ) {
-			$failed->{$mod} = {
-				loaded => $mod->VERSION || '<not found>',
-				need   => $ver,
-			};
+			# If the object file is missing we'll get an error but the versions will match
+			if ( $@ =~ /Can't locate loadable object/ ) {
+				$failed->{$mod} = {
+					loaded => $mod->VERSION . ' but missing object file',
+					need   => $ver,
+				};
+			}
+			else {
+				$failed->{$mod} = {
+					loaded => $mod->VERSION || '<not found>',
+					need   => $ver,
+				};
+			}
 		}
 	}		
 	
