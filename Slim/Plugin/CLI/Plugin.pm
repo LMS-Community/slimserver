@@ -125,12 +125,6 @@ sub shutdownPlugin {
 	
 	# close the socket
 	cli_socket_close();
-
-	# If the server is exiting completely, don't do anything.
-	# Otherwise restart mDNS without the cli port.
-	if (!$exiting) {
-		Slim::Networking::mDNS->startAdvertising;
-	}
 }
 
 # plugin strings at the end of the file
@@ -162,8 +156,6 @@ sub cli_socket_open {
 		$cli_socket_port = $listenerport;
 	
 		Slim::Networking::Select::addRead($cli_socket, \&cli_socket_accept);
-	
-		Slim::Networking::mDNS->addService('_slimcli._tcp', $cli_socket_port);
 
 		$log->info("Now accepting connections on port $listenerport");
 	}
@@ -190,11 +182,6 @@ sub cli_socket_change {
 		if ($newport) {
 			cli_socket_open($newport);
 		}
-
-		# XXX: This starts mDNS during startup, but it is already
-		# started at the end of the init phase.  Starting it here means
-		# it has to be killed and restarted after HTTP.pm adds services.
-		#Slim::Networking::mDNS->startAdvertising;
 	}
 }
 
@@ -207,8 +194,6 @@ sub cli_socket_close {
 	if ($cli_socket_port) {
 
 		$log->info("Closing socket $cli_socket_port");
-	
-		Slim::Networking::mDNS->removeService('_slimcli._tcp');
 		
 		Slim::Networking::Select::addRead($cli_socket, undef);
 		$cli_socket->close();
