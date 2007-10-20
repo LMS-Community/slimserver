@@ -38,7 +38,6 @@ use Slim::Utils::Strings qw(string);
 
 my %tagMapping = (
 	'Unique file identifier'            => 'MUSICBRAINZ_ID',
-	'MUSICBRAINZ ALBUM ARTIST SORTNAME' => 'ARTISTSORT',
 	'MUSICBRAINZ ALBUM ARTIST ID'       => 'MUSICBRAINZ_ALBUMARTIST_ID',
 	'MUSICBRAINZ ALBUM ID'              => 'MUSICBRAINZ_ALBUM_ID',
 	'MUSICBRAINZ ALBUM STATUS'          => 'MUSICBRAINZ_ALBUM_STATUS',
