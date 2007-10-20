@@ -122,7 +122,7 @@ sub handler {
 
 			if (Slim::Player::Sync::isSynced($client)) {
 
-				$paramRef->{'prefs'}->{$pref} = $client->id();
+				$paramRef->{'prefs'}->{$pref} = $client->masterOrSelf->id();
 
 			} elsif ( my $syncgroupid = $prefs->client($client)->get('syncgroupid') ) {
 

@@ -5,7 +5,7 @@
 			[% WRAPPER settingGroup title="SETUP_SYNCHRONIZE" desc="SETUP_SYNCHRONIZE_DESC" %]
 				<select class="stdedit" name="synchronize" id="synchronize">
 					[% FOREACH option = syncGroups %]
-						<option [% IF prefs.syncronize == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
+						<option [% IF prefs.synchronize == option.key %]selected [% END %]value="[% option.key %]">[% option.value %]</option>
 					[%- END -%]
 				</select>
 			[% END %]
