@@ -16,6 +16,7 @@ use JSON::XS qw(from_json);
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
+use Slim::Utils::Timers;
 
 my $log   = logger('network.squeezenetwork');
 
@@ -37,7 +38,14 @@ sub init {
 		},
 	);
 	
-	$http->get( $timeURL );
+	# Any async HTTP in init must be done on a timer
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time(),
+		sub {
+			$http->get( $timeURL );
+		},
+	);
 }
 
 sub _init_done {

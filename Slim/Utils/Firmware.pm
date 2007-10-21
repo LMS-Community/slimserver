@@ -165,7 +165,15 @@ sub init_jive {
 	
 	$log->info('Downloading jive.version file...');
 	
-	downloadAsync( $version_file, \&init_jive_version_done, $version_file );
+	# Any async downloads in init must be started on a timer so they don't
+	# time out from other slow init things
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time(),
+		sub {
+			downloadAsync( $version_file, \&init_jive_version_done, $version_file );
+		},
+	);
 }
 
 =head2 init_jive_version_done($version_file)

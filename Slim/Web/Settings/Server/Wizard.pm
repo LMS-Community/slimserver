@@ -12,6 +12,7 @@ use HTTP::Status qw(RC_MOVED_TEMPORARILY);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
+use Slim::Utils::Timers;
 
 my $showProxy = 1;
 my $serverPrefs = preferences('server');
@@ -43,9 +44,17 @@ sub new {
 			$log->error("Couldn't connect to squeezenetwork.com - do we need a proxy?\n" . $http->error);
 		}
 	);
-	$http->get('http://www.squeezenetwork.com/api/v1/time');
+	
+	# Any async HTTP in init must be on a timer
+	Slim::Utils::Timers::setTimer(
+		undef,
+		time(),
+		sub {
+			$http->get('http://www.squeezenetwork.com/api/v1/time');
+		},
+	);
 
-	$class->SUPER::new($class);
+	return $class->SUPER::new($class);
 }
 
 sub page {
