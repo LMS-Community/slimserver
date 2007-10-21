@@ -86,6 +86,7 @@ our %peeraddr       = ();
 our %peerclient     = ();
 our %keepAlives     = ();
 our %skinTemplates  = ();
+our %skins          = ();
 
 our @templateDirs = ();
 
@@ -100,6 +101,9 @@ tie %rawFunctions, 'Tie::RegexpHash';
 # we call these whenever we close a connection
 our @closeHandlers = ();
 
+# raw files we serve directly outside the html directory
+our %rawFiles = ();
+my $rawFilesRegexp = qr//;
 
 
 our $pageBuild = Slim::Utils::PerfMon->new('Web Page Build', [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.5, 1, 5]);
@@ -269,27 +273,20 @@ sub acceptHTTP {
 }
 
 sub isaSkin {
-	my $name  = shift;
-	
-	# BUG 4171: Default2 is gone, so redirect to Default.
-	if ($name =~ /^(?:ExBrowse3|Default2)$/i) {
-		$name = 'Default';
-	}
-	
-	my %skins = skins();
+	my $name = uc shift;
 
-	for my $skin (keys %skins) {
-		return $skin if $name =~ /^($skin)$/i;
-	}
+	# return from hash
+	return $skins{$name} if $skins{$name};
 
-	$log->warn("Warning: No matching skin, falling back to default!");
-
-	return 'Default';
+	# otherwise reload skin hash and try again
+	%skins = skins();
+	return $skins{$name};
 }
 
 sub skins {
-	my $forUI = shift;
-	
+	# create a hash of available skins - used for skin override and by settings page
+	my $UI = shift; # return format for settings page rather than lookup cache for skins
+
 	my %skinlist = ();
 
 	for my $templatedir (HTMLTemplateDirs()) {
@@ -298,22 +295,28 @@ sub skins {
 
 			# reject CVS, html, and .svn directories as skins
 			next if $dir =~ /^(?:cvs|html|\.svn)$/i;
-			next if $forUI && $dir =~ /^x/;
+			next if $UI && $dir =~ /^x/;
 			next if !-d catdir($templatedir, $dir);
 
 			# BUG 4171: Disable dead Default2 skin, in case it was left lying around
 			next if $dir =~ /^(?:ExBrowse3|Default2)$/i;
 
-			logger('network.http')->info("skin entry: $dir");
+			$log->info("skin entry: $dir");
 
 			if ($dir eq defaultSkin()) {
-				$skinlist{$dir} = string('DEFAULT_SKIN');
+				$skinlist{ $UI ? $dir : uc $dir } = $UI ? string('DEFAULT_SKIN') : defaultSkin();
 			} elsif ($dir eq baseSkin()) {
-				$skinlist{$dir} = string('BASE_SKIN');
+				$skinlist{ $UI ? $dir : uc $dir } = $UI ? string('BASE_SKIN') : baseSkin();
 			} else {
-				$skinlist{$dir} = Slim::Utils::Misc::unescape($dir);
+				$skinlist{ $UI ? $dir : uc $dir } = Slim::Utils::Misc::unescape($dir);
 			}
 		}
+	}
+
+	# These skins are depreciated - map to Default in skin hash, don't show on settings page
+	if (!$UI) {
+		$skinlist{'DEFAULT2'}  = defaultSkin();
+		$skinlist{'EXBROWSE3'} = defaultSkin();
 	}
 
 	return %skinlist;
@@ -636,8 +639,13 @@ sub processHTTP {
 			if ($path =~ s{^/slimserver/}{/}i) {
 				$params->{'webroot'} = "/slimserver/"
 			}
-			
-			if ($path =~ m|/([a-zA-Z0-9]+)$| && isaSkin($1)) {
+
+			$path =~ s|^/+||;
+
+			if ($path =~ m{^(?:html|music|plugins|settings|firmware)/}i || $path =~ $rawFilesRegexp ) {
+				# not a skin
+
+			} elsif ($path =~ m|^([a-zA-Z0-9]+)$| && isaSkin($1)) {
 
 				$log->info("Alternate skin $1 requested, redirecting to $uri/ append a slash.");
 
@@ -650,7 +658,7 @@ sub processHTTP {
 
 				return;
 
-			} elsif ($path =~ m|^/(.+?)/.*| && $path !~ m{^/(?:html|music|plugins|settings|firmware)/}i) {
+			} elsif ($path =~ m|^(.+?)/.*|) {
 
 				my $desiredskin = $1;
 
@@ -666,7 +674,8 @@ sub processHTTP {
 					$params->{'skinOverride'} = $skinname;
 					$params->{'webroot'} = $params->{'webroot'} . "$skinname/";
 
-					$path =~ s{^/.+?/}{/};
+					$path =~ s{^.+?/}{/};
+					$path =~ s|^/+||;
 
 				} else {
 
@@ -694,11 +703,10 @@ sub processHTTP {
 				}
 			}
 
-			$path =~ s|^/+||;
 			$params->{"path"} = Slim::Utils::Misc::unescape($path);
 			$params->{"host"} = $request->header('Host');
 		} 
-
+		
 		# BUG: 4911 detect Internet Explorer and redirect if using the Nokia770 skin, as IE will not support the styles
 		# Touch is similar in most ways and works nicely with IE
 		# BUG: 5093 make sure that Nokia Opera isn't spoofing as IE, causing incorrect redirect
@@ -953,8 +961,8 @@ sub generateHTTPResponse {
 
 	# lots of people need this
 	my $contentType = $params->{'Content-Type'} = $Slim::Music::Info::types{$type};
-	
-	if ( $path =~ m{firmware/.*\.bin$} ) {
+
+	if ( $path =~ $rawFilesRegexp ) {
 		$contentType = 'application/octet-stream';
 	}
 
@@ -1171,20 +1179,36 @@ sub generateHTTPResponse {
 			}
 		}
 
-	} elsif ( $path =~ m{^firmware/.*\.bin} ) {
-		# firmware downloads over HTTP
-		my $dir  = $prefs->get('cachedir');
-		$path   =~ s{firmware/}{};		
-		my $file = catfile( $dir, $path );
-		
-		# If file doesn't exist in cache, check the Firmware dir
-		if ( !-e $file ) {
-			$dir  = Slim::Utils::OSDetect::dirsFor('Firmware');
-			$file = catfile( $dir, $path );
+	} elsif ( $path =~ $rawFilesRegexp ) {
+		# path is for download of known file outside http directory
+		my ($file, $ct);
+
+		for my $key (keys %rawFiles) {
+
+			if ( $path =~ $key ) {
+
+				my $fileinfo = $rawFiles{$key};
+				$file = ref $fileinfo->{file} eq 'CODE' ? $fileinfo->{file}->($path) : $fileinfo->{file};
+				$ct   = ref $fileinfo->{ct}   eq 'CODE' ? $fileinfo->{ct}->($path)   : $fileinfo->{ct};
+
+				if (!-e $file) { 
+					$file = undef;
+				}
+
+				last;
+			}
 		}
-		
-		if ( !-e $file ) {
+
+		if ($file) {
+			# download the file
+			$log->info("serving file: $file for path: $path");
+			sendStreamingFile( $httpClient, $response, $ct, $file );
+			return 0;
+
+		} else {
 			# 404 error
+			$log->warn("unable to find file for path: $path");
+
 			$response->content_type('text/html');
 			$response->code(RC_NOT_FOUND);
 
@@ -1198,10 +1222,7 @@ sub generateHTTPResponse {
 				$response,
 			);
 		}
-		
-		sendStreamingFile( $httpClient, $response, 'application/octet-stream', $file );
-		
-		return 0;
+			
 	} else {
 		# who knows why we're here, we just know that something ain't right
 		$$body = undef;
@@ -2535,6 +2556,43 @@ sub addTemplateDirectory {
 
 	push @templateDirs, $dir if (not grep({$_ eq $dir} @templateDirs));
 }
+
+
+# adds files for downloading via http
+# defines a regexp to match the path for downloading a static file outside the http directory
+#  $regexp is a regexp to match the request path
+#  $file is the file location or a coderef to a function to return it (will be passed the path)
+#  $ct is the mime content type, 'text' or 'binary', or a coderef to a function to return it
+sub addRawDownload {
+	my $regexp = shift || return;
+	my $file   = shift || return;
+	my $ct     = shift;
+
+	if ($ct eq 'text') {
+		$ct = 'text/plain';
+	} elsif ($ct eq 'binary' || !$ct) {
+		$ct = 'application/octet-stream';
+	}
+
+	$rawFiles{$regexp} = {
+		'file' => $file,
+		'ct'   => $ct,
+	};
+
+	my $str = join('|', keys %rawFiles);
+	$rawFilesRegexp = qr/$str/;
+}
+
+
+# remove files for downloading via http
+sub removeRawDownload {
+	my $regexp = shift;
+   
+	delete $rawFiles{$regexp};
+	my $str = join('|', keys %rawFiles);
+	$rawFilesRegexp = qr/$str/;
+}
+
 
 # makePageToken: anti-CSRF token at the page level, e.g. token to
 # protect use of /settings/server/basic.html

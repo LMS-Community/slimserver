@@ -159,6 +159,8 @@ sub init_jive {
 
 		$version_file = $custom_version;
 		$JIVE_FW = $custom_image;
+
+		Slim::Web::HTTP::addRawDownload('^firmware/.*\.bin', $custom_image, 'binary');
 		
 		return;
 	}
@@ -205,6 +207,8 @@ sub init_jive_version_done {
 		$log->info("Jive firmware is up to date: $jive_file");
 		$JIVE_FW = $jive_file;
 	}
+
+	Slim::Web::HTTP::addRawDownload('^firmware/.*\.bin', $jive_file, 'binary');
 	
 	# Check again for an updated jive.version in 24 hours
 	$log->debug('Scheduling next jive.version check in 24 hours');
