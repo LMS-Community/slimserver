@@ -887,35 +887,22 @@ sub playlistXalbumCommand {
 	my $album    = $request->getParam('_album'); #p4
 	my $title    = $request->getParam('_title'); #p5
 
-	# Pass to Schema
+	# Pass to parseSearchTerms
 	my $find     = {};
-	my @joins    = ();
-	my $attrs    = {
-		'order_by' => 'me.disc, me.tracknum, me.titlesort'
-	};
-
-	# Find the songs for the passed params
-	my $sort = 'track';
 
 	if (specified($genre)) {
 
 		$find->{'genre.name'} = _playlistXalbum_singletonRef($genre);
-
-		push @joins, { 'genreTracks' => 'genre' };
 	}
 
 	if (specified($artist)) {
 
 		$find->{'contributor.name'} = _playlistXalbum_singletonRef($artist);
-
-		push @joins, { 'contributorTracks' => 'contributor' };
 	}
 
 	if (specified($album)) {
 
 		$find->{'album.title'} = _playlistXalbum_singletonRef($album);
-
-		push @joins, 'album';
 	}
 
 	if (specified($title)) {
@@ -923,11 +910,7 @@ sub playlistXalbumCommand {
 		$find->{'me.title'} = _playlistXalbum_singletonRef($title);
 	}
 
-	if (scalar @joins) {
-		$attrs->{'join'} = \@joins;
-	}
-
-	my @results = Slim::Schema->search('Track', $find, $attrs)->distinct->all;
+	my @results = _playlistXtracksCommand_parseSearchTerms($client, $find);
 
 	$cmd =~ s/album/tracks/;
 
