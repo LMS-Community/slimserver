@@ -84,6 +84,7 @@ sub new
 	(
 	 ALB => 1, APID => 1, ART => 1, CMT => 1, COVR => 1, CPIL => 1, CPRT => 1, DAY => 1, DISK => 1, GNRE => 1, GRP => 1, NAM => 1, RTNG => 1, TMPO => 1, TOO => 1, TRKN => 1, WRT => 1,
 	 TITLE => 1, ARTIST => 1, ALBUM => 1, YEAR => 1, COMMENT => 1, GENRE => 1, TRACKNUM => 1,
+	 SONM => 1, SOAR => 1, SOAL => 1, SOAA => 1,
 	 VERSION => 1, LAYER => 1,
 	 BITRATE => 1, FREQUENCY => 1, SIZE => 1,
 	 SECS => 1, MM => 1, SS => 1, MS => 1, TIME => 1,
@@ -260,6 +261,11 @@ my %data_atoms =
      TOO  => 1,
      TRKN => 1,
      WRT  => 1,
+     # Sorting options
+     SONM => 1,
+     SOAR => 1,
+     SOAL => 1,
+     SOAA => 1,
      # Apple store
      APID => 1,
      AKID => 1,	# ???
@@ -406,6 +412,9 @@ sub parse_file
     {
 	for (my $i = 0; $i < scalar @{$tags->{MEAN}}; $i++)
 	{
+	    # strip nulls from end of data
+	    $tags->{DATA}->[$i] =~ s/\0$//;
+
 	    push @{$tags->{META}}, {
 				    MEAN => $tags->{MEAN}->[$i],
 				    NAME => $tags->{NAME}->[$i],

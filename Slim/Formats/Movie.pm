@@ -20,6 +20,9 @@ my %tagMapping = (
 	'CPIL'      => 'COMPILATION',
 	'COVR'      => 'PIC',
 	'ENCRYPTED' => 'DRM',
+	'SONM'      => 'TITLESORT',
+	'SOAR'      => 'ARTISTSORT',
+	'SOAL'      => 'ALBUMSORT',
 );
 
 if ($] > 5.007) {
@@ -69,13 +72,28 @@ sub getTag {
 				$tags->{ uc($meta->{'NAME'}) } = $meta->{'DATA'};
 			}
 
-			if ($meta->{'NAME'} eq 'iTunNORM') {
+			elsif ($meta->{'NAME'} eq 'iTunNORM') {
 
 				$tags->{'REPLAYGAIN_TRACK_GAIN'} = Slim::Utils::SoundCheck::normStringTodB($meta->{'DATA'});
 			}
+			
+			elsif ($meta->{'NAME'} eq 'MusicBrainz Track Id') {
+				
+				$tags->{'MUSICBRAINZ_ID'} = $meta->{'DATA'};
+			}
+			
+			elsif ($meta->{'NAME'} eq 'MusicBrainz Album Artist') {
+				
+				$tags->{'ALBUMARTIST'} = $meta->{'DATA'};
+			}
+			
+			elsif ($meta->{'NAME'} eq 'MusicBrainz Sortname') {
+				
+				$tags->{'ARTISTSORT'} = $meta->{'DATA'};
+			}
 		}
 	}
-
+	
 	delete $tags->{'META'};
 
 	return $tags;
