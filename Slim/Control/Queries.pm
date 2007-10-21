@@ -1070,6 +1070,26 @@ sub infoTotalQuery {
 }
 
 
+sub irenableQuery {
+	my $request = shift;
+	
+	$log->debug("Begin Function");
+
+	# check this is the correct query.
+	if ($request->isNotQuery([['irenable']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+	
+	# get the parameters
+	my $client = $request->client();
+
+	$request->addResult('_irenable', $client->irenable());
+	
+	$request->setStatusDone();
+}
+
+
 sub linesperscreenQuery {
 	my $request = shift;
 	

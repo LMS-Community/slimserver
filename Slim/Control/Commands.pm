@@ -282,6 +282,33 @@ sub irCommand {
 }
 
 
+sub irenableCommand {
+	my $request = shift;
+	
+	$log->debug("Begin Function");
+
+	# check this is the correct command.
+	if ($request->isNotCommand([['irenable']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	# get our parameters
+	my $client    = $request->client();
+	my $newenable = $request->getParam('_newvalue');
+	
+	# handle toggle
+	if (!defined $newenable) {
+
+		$newenable = $client->irenable() ? 0 : 1;
+	}
+
+	$client->irenable($newenable);
+
+	$request->setStatusDone();
+}
+
+
 sub mixerCommand {
 	my $request = shift;
 	

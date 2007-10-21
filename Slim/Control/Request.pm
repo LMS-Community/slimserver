@@ -86,6 +86,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  Y    sleep           <0..n|?>
  Y    sync            <playerindex|playerid|-|?>
  Y    mode            ?
+ Y    irenable        <0|1|?|>
  
  Y    alarms          <startindex>                <numitems>                  <tagged parameters>
  Y    signalstrength  ?
@@ -478,6 +479,8 @@ sub init {
 	addDispatch(['info',           'total',          'genres',     '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
 	addDispatch(['info',           'total',          'songs',      '?'],                               [0, 1, 0, \&Slim::Control::Queries::infoTotalQuery]);
 	addDispatch(['ir',             '_ircode',        '_time'],                                         [1, 0, 0, \&Slim::Control::Commands::irCommand]);
+	addDispatch(['irenable',       '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::irenableQuery]);
+	addDispatch(['irenable',       '_newvalue'],                                                       [1, 0, 0, \&Slim::Control::Commands::irenableCommand]);
 	addDispatch(['linesperscreen', '?'],                                                               [1, 1, 0, \&Slim::Control::Queries::linesperscreenQuery]);
 	addDispatch(['mixer',          'bass',           '?'],                                             [1, 1, 0, \&Slim::Control::Queries::mixerQuery]);
 	addDispatch(['mixer',          'bass',           '_newvalue'],                                     [1, 0, 0, \&Slim::Control::Commands::mixerCommand]);

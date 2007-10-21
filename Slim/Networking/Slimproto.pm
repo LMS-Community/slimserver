@@ -517,7 +517,7 @@ sub _ir_handler {
 	
 	$client->trackJiffiesEpoch($irTime, Time::HiRes::time());
 
-	Slim::Hardware::IR::enqueue($client, $irCode, $irTime);
+	Slim::Hardware::IR::enqueue($client, $irCode, $irTime) if $client->irenable();
 
 	if ( logger('factorytest')->is_debug ) {
 		logger('factorytest')->debug(sprintf("FACTORYTEST\tevent=ir\tmac=%s\tcode=%s", $client->id, $irCode));

@@ -139,6 +139,9 @@
 		Added the &quot;<a href="#name">name</a>&quot; query/command to get/change the player name.
 	</li>
 	<li>
+		Added the &quot;<a href="#irenable">irenable</a>&quot; query/command to enable/disable IR processing for a player.
+	</li>
+	<li>
 		Added the &quot;<a href="#displaystatus">displaystatus</a>&quot; query which allows subscription
 		to display update messages.
 	</li>
@@ -1054,6 +1057,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 	<li>
 		<strong><code><a href="#alarms">alarms</a></code></strong>
 	</li>
+	<li>
+		<strong><code><a href="#irenable">irenable</a></code></strong>
+	</li>
 </ul>
 
 <p id="player count ?">
@@ -1956,6 +1962,40 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request:  &quot;bd:a5:a9:9b:9d:df ir 768910ef 11073.575&lt;LF&gt;&quot;
 		<br>
 		Response: &quot;bd:a5:a9:9b:9d:df ir 768910ef 11073.575&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="irenable">
+	<strong>
+		<code>
+			&lt;playerid&gt;
+			irenable
+			&lt;0|1|?|&gt;
+		</code>
+	</strong>
+</p>
+<p>
+	The &quot;irenable&quot; command enables or disables IR processing for the 
+	player on or off. Use 0 to disable, 1 to enable, ? to query and no parameter 
+	to toggle IR processing of the player.
+	<br>
+	For remote streaming connections, the command does nothing and the query 
+	always returns 1.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;04:20:00:12:23:45 irenable 1&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 irenable 1&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;04:20:00:12:23:45 irenable ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;04:20:00:12:23:45 irenable 1&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 

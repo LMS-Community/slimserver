@@ -150,8 +150,7 @@ sub new {
 	$client->[50] = 0; # startirhold
 	$client->[51] = 0; # irtimediff
 	$client->[52] = 0; # irrepeattime
-
-#	$client->[53]
+	$client->[53] = 1; # irenable
 
 	$client->[54] = Time::HiRes::time(); # epochirtime
 	$client->[55] = []; # modeStack
@@ -1284,6 +1283,11 @@ sub irtimediff {
 sub irrepeattime {
 	my $r = shift;
 	@_ ? ($r->[52] = shift) : $r->[52];
+}
+
+sub irenable {
+	my $r = shift;
+	@_ ? ($r->[53] = shift) : $r->[53];
 }
 
 sub epochirtime {
