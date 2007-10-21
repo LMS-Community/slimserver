@@ -99,7 +99,7 @@ sub menuQuery {
 	}
 
 	# get our parameters
-        my $client        = $request->client() || 0;
+	my $client        = $request->client() || 0;
 	my $index         = $request->getParam('_index');
 	my $quantity      = $request->getParam('_quantity');
 
@@ -113,7 +113,7 @@ sub menuQuery {
 	my @menu = (
 		{
 			text      => Slim::Utils::Strings::string('MY_MUSIC'),
-			count     => 9 + scalar(@myMusicPluginMenu),
+			count     => 8 + scalar(@myMusicPluginMenu),
 			offset    => 0,
 			weight    => 10,
 			window    => { titleStyle => 'mymusic', },
@@ -194,21 +194,6 @@ sub menuQuery {
 				window => {
 					menuStyle => 'album',
 					titleStyle => 'mymusic',
-				},
-			},
-			{
-				text    => Slim::Utils::Strings::string('FAVORITES'),
-				weight  => 60,
-				actions => {
-					go => {
-						cmd    => ['favorites', 'items'],
-						params => {
-							menu => 'favorites',
-						},
-					},
-				},
-				window => {
-					titleStyle => 'favorites',
 				},
 			},
 			{
