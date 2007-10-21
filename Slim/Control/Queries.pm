@@ -2626,6 +2626,13 @@ sub statusQuery_filter {
 		return 3;
 	}
 
+	# give it a tad more time for muting to leave room for the fade to finish
+	# see bug 5255
+	if ($request->isCommand([['mixer'], ['muting']])) {
+
+		return 1.4;
+	}
+
 	# send everyother notif with a small delay to accomodate
 	# bursts of commands
 	return 1.3;
