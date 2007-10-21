@@ -531,14 +531,14 @@ sub artistsQuery {
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
 
-	if ($valid || $count) {
+	if ($valid) {
 
 		my $loopname = $menuMode?'item_loop':'artists_loop';
 		my $cnt = 0;
-		$request->addResult('offset', $start) if $menuMode;
-
-		my @data = $rs->slice($start, $end);
+		my @data = $rs->all;
 		
+		$request->addResult('offset', $start) if $menuMode;
+	
 		# Various artist handling. Don't do if pref is off, or if we're
 		# searching, or if we have a track
 		if ($count_va) {
@@ -550,7 +550,7 @@ sub artistsQuery {
 			($start, $end, $cnt) = _playAll($start, $end, $cnt, $request, $loopname);
 		}
 
-		for my $obj (@data) {
+		for my $obj (@data[$start..$end]) {
 
 			my $id = $obj->id();
 			$id += 0;
