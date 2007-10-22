@@ -389,3 +389,23 @@ function resize(src, width) {
 function setCookie(name, value) {
 	Utils.setCookie(name, value);
 }
+
+function ajaxRequest(myUrl, params, action) {
+	Ext.Ajax.request({
+		method: 'GET',
+		url: myUrl,
+		params: params,
+		timeout: 5000,
+		disableCaching: true,
+		callback: action
+	});
+}
+
+// request and update with new list html, requires a 'mainbody' div defined in the document
+// templates should use the ajaxUpdate param to block headers and footers.
+function ajaxUpdate(url, params) {
+	var el = Ext.get('mainbody');
+	if (el)
+		el.load(url, params + '&ajaxUpdate=1&player=' + player);
+}
+

@@ -4,6 +4,7 @@
 	[% controlGraphics = 1 %]
 	[% browserTarget = "browser" %]
 	[% useAJAX = 0 %]
+	[% useExtJS = 1 %]
 	[% crumbSeparator = "&gt;" %]
 	[% resizeParam = "p" %]
 	[% bgcolor = "" %]

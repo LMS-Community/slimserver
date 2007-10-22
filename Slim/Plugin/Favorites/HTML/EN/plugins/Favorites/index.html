@@ -50,13 +50,13 @@
 [% BLOCK favoritescontrol %]
 	[% IF entry.favorites == 1 %]
 		[% WRAPPER favaddlink noTarget=1 %]
-			[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=favadd&amp;index=[% entry.index %]')"
+			[%- IF useAJAX || useExtJS -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=favadd&amp;index=[% entry.index %]')"
 			[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=favadd&amp;index=[% entry.index %]"
 			[%- END -%]
 		[% END %]
 	[% ELSIF entry.favorites == 2 %]
 		[% WRAPPER favdellink noTarget=1 %]
-			[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=favdel&amp;index=[% entry.index %]')"
+			[%- IF useAJAX || useExtJS -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=favdel&amp;index=[% entry.index %]')"
 			[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=favdel&amp;index=[% entry.index %]"
 			[%- END -%]
 		[% END %]
@@ -77,8 +77,8 @@
 			href="[% webroot %]plugins/Favorites/index.html?action=movedown&amp;index=[% entry.index %]"
 	[%- END %][% END %]
 	[% WRAPPER removelink noTarget=1 -%]
-		[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=delete&amp;index=[% entry.index %]');"
-		[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=delete&amp;index=[% entry.index %]"
+		[%- IF useAJAX || useExtJS -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'action=delete&amp;index=[% entry.index %]');"
+		[%- ELSE                   -%]href="[% webroot %]plugins/Favorites/index.html?action=delete&amp;index=[% entry.index %]"
 		[%- END -%]
 	[%- END %]</span>
 [% END %]
@@ -86,12 +86,12 @@
 [% BLOCK playcontrols %]
 	[%- IF entry.audio -%]
 		[% WRAPPER playlink noTarget=1 -%]
-			[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxRequest('index.html', 'action=play&amp;index=[% entry.index %]', refreshStatus);"
+			[%- IF useAJAX || useExtJS -%]href="javascript:void(0);" onClick="ajaxRequest('index.html', 'action=play&amp;index=[% entry.index %]', refreshStatus);"
 			[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% entry.index %]" onClick="refreshStatus();"
 			[%- END -%]
 		[%- END %]
 		[% WRAPPER addlink noTarget=1 -%]
-			[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxRequest('index.html', 'action=add&amp;index=[% entry.index %]', refreshStatus);"
+			[%- IF useAJAX || useExtJS -%]href="javascript:void(0);" onClick="ajaxRequest('index.html', 'action=add&amp;index=[% entry.index %]', refreshStatus);"
 			[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% entry.index %]" onClick="refreshStatus();"
 			[%- END -%]
 		[%- END %]
@@ -132,6 +132,10 @@
 	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
 	<script TYPE="text/javascript" src="[% webroot %]plugins/Favorites/html/favorites.js?r=[% revision %]"></script>
 [% END %][% END %]
+
+[% IF useExtJS%][%- extJsScripts = BLOCK -%]
+	<script type="text/javascript" src="[% webroot %]plugins/Favorites/html/favorites2.js?r=[% revision %]"></script>
+[%- END -%][% END %]
 	
 [% IF NOT ajaxUpdate %][% PROCESS pageheader.html %]<div id="mainbody">[% END %]
 
@@ -168,7 +172,7 @@
 [% IF deleted %]
 	[% BLOCK favoritesdeleteditem %]<span id="favoritesdeletedcontrol" [% IF useAJAX %]style="display: none;"[% END %]>
 		[% WRAPPER removelink noTarget=1 %]
-		[%- IF useAJAX -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'forgetdelete&amp;index=[% levelindex %]');"
+		[%- IF useAJAX || useExtJS -%]href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'forgetdelete&amp;index=[% levelindex %]');"
 		[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?forgetdelete&amp;index=[% levelindex %]"
 		[%- END -%]
 		[% END %]
@@ -181,7 +185,7 @@
 		[% PROCESS dummylink %]
 		[% PROCESS dummylink %]
 
-		<a [% IF useAJAX -%]
+		<a [% IF useAJAX || useExtJS -%]
 		     href="javascript:void(0);" onClick="ajaxUpdate('index.html', 'insert&amp;index=[% levelindex %]');"
 		   [%- ELSE %]
 		     href="[% webroot %]plugins/Favorites/index.html?insert&amp;index=[% levelindex %]"
@@ -199,7 +203,7 @@
 	<form id='loadfile' name="loadfile" method="get" action="[% webroot %]plugins/Favorites/index.html" style="display: inline; width: 100%;">
 		<input type="hidden" name="index" value="[% levelindex %]">
 		<input id="loadfilename" type="text" class="stdedit" name="filename" style="width: 71%;" value="[% 'PLUGIN_FAVORITES_LOADFILE' | string %]" onClick="this.value=''">
-		[% IF useAJAX %]
+		[% IF useAJAX || useExtJS %]
 			<input type="button" class="stdclick" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_LOAD' | string %]" onclick="ajaxUpdate('index.html', 'loadfile&amp;index=[% levelindex %]&filename=' + escape($('loadfilename').value));" />
 			<input type="button" class="stdclick" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]" onclick="Element.remove('loadfile'); showElements(['defaultform']);" />
 		[% ELSE %]
@@ -214,7 +218,7 @@
 	<form name="savefile" method="get" action="[% webroot %]plugins/Favorites/index.html" style="display: inline; width: 100%;">
 		<input type="hidden" name="index" value="[% levelindex %]">
 		<input id="savefilename" type="text" class="stdedit" name="filename" style="width: 71%;" value="[% filename ? filename : 'PLUGIN_FAVORITES_SAVEFILE' | getstring %]" [% UNLESS filename %] onClick="this.value=''" [% END %]>
-		[% IF useAJAX %]
+		[% IF useAJAX || useExtJS %]
 			<input type="button" class="stdclick" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_SAVE' | string %]" onclick="ajaxUpdate('index.html', 'savefile&amp;index=[% levelindex %]&filename=' + escape($('savefilename').value));" />
 			<input type="button" class="stdclick" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]" onclick="Element.remove('savefile'); showElements(['defaultform']);" />
 		[% ELSE %]
@@ -229,7 +233,7 @@
 	<form name="importfile" method="get" action="[% webroot %]plugins/Favorites/index.html" style="display: inline; width: 100%;">
 		<input type="hidden" name="index" value="[% levelindex %]">
 		<input id="importfilename" type="text" class="stdedit" name="filename" style="width: 71%;" value="[% 'PLUGIN_FAVORITES_IMPORTFILE' | string %]" onClick="this.value=''">
-		[% IF useAJAX %]
+		[% IF useAJAX || useExtJS %]
 			<input type="button" class="stdclick" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_IMPORT' | string %]" onclick="ajaxUpdate('index.html', 'importfile&amp;index=[% levelindex %]&filename=' + escape($('importfilename').value));" />
 			<input type="button" class="stdclick" style="display: inline; width: 10%;" value="[% 'PLUGIN_FAVORITES_CANCEL' | string %]" onclick="Element.remove('importfile'); showElements(['defaultform']);" />
 		[% ELSE %]
@@ -244,7 +248,7 @@
 <div id="defaultform" [% IF editmode OR edittitle OR import OR load OR save %] style="display: none;"[% END %]>
 	<form name="buttons" method="get" action="[% webroot %]plugins/Favorites/index.html">
 		<input type="hidden" name="index" value="[% levelindex %]">
-		[% IF useAJAX %]
+		[% IF useAJAX || useExtJS %]
 			<input type="button" class="stdclick" style="display: inline;" value="[% favorites ? 'PLUGIN_FAVORITES_NEWFAVORITE' : 'PLUGIN_FAVORITES_NEWENTRY' | string %]" onclick="ajaxUpdate('index.html', 'newentry&amp;index=[% levelindex %]');">
 			<input type="button" class="stdclick" style="display: inline;" value="[% 'PLUGIN_FAVORITES_NEWFOLDER' | string %]" onclick="ajaxUpdate('index.html', 'newlevel&amp;index=[% levelindex %]');">
 			<input type="button" class="stdclick" style="display: inline;" value="[% "PLUGIN_FAVORITES_IMPORT" | string %]" onclick="ajaxUpdate('index.html', 'import&amp;index=[% levelindex %]');">
@@ -254,7 +258,7 @@
 			<input type="submit" class="stdclick" name="import" value="[% 'PLUGIN_FAVORITES_IMPORT' | string %]">
 		[% END %]
 		[% IF NOT autosave %]
-			[% IF useAJAX %]
+			[% IF useAJAX || useExtJS %]
 				<input type="button" class="stdclick" style="display: inline;" value="[% 'PLUGIN_FAVORITES_LOAD' | string %]" onclick="ajaxUpdate('index.html', 'load&amp;index=[% levelindex %]');">
 				<input type="button" class="stdclick" style="display: inline;" value="[% 'PLUGIN_FAVORITES_SAVE' | string %]" onclick="ajaxUpdate('index.html', 'save&amp;index=[% levelindex %]');">
 			[% ELSE %]
