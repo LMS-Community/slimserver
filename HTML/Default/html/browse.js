@@ -121,12 +121,3 @@ Browse = function(){
 
 Ext.EventManager.onDocumentReady(Browse.init, Browse, true);
 
-// legacy calls for shared code...
-function toggleGalleryView(artwork) {
-	Browse.toggleGalleryView(artwork)
-}
-
-function chooseAlbumOrderBy(value, option) {
-	Browse.chooseAlbumOrderBy(option);
-}
-
