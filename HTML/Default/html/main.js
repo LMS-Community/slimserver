@@ -911,10 +911,11 @@ Player = function(){
 			var el;
 			var result = responseText.result;
 
-			// send signal to all displayed elements and buttons
+			// send update signal to all displayed elements and buttons
+			// some buttons will change state depending on content (eg. pandora voting, player state etc.)
 			displayElements.each(function(item){
 				item.fireEvent('dataupdate', result);
-			} );
+			});
 
 			if (this.needUpdate(result) && Ext.get('playList'))
 					Playlist.load();
@@ -960,13 +961,11 @@ Player = function(){
 					}
 
 					Ext.get('ctrlCurrentArtist').update(currentArtist);
-					Ext.get('ctrlArtistTitle').show();
 
 					currentTitle += ' ' + strings['by'] + ' ' + currentArtist;
 				}
 				else {
 					Ext.get('ctrlCurrentArtist').update('');
-					Ext.get('ctrlArtistTitle').hide();
 				}
 
 				if (result.playlist_loop[0].album) {
@@ -979,16 +978,14 @@ Player = function(){
 						+ ')' : '');
 
 					Ext.get('ctrlCurrentAlbum').update(currentAlbum);
-					Ext.get('ctrlAlbumTitle').show();
 
 					currentTitle += ' ' + strings['from'] + ' ' + currentAlbum;
 				}
 				else {
 					Ext.get('ctrlCurrentAlbum').update('');
-					Ext.get('ctrlAlbumTitle').hide();
 				}
 
-				if (result.playlist_loop[0].bitrate) {
+				if (result.playlist_loop[0].bitrate && result.remote) {
 					Ext.get('ctrlBitrate').update(
 						result.playlist_loop[0].bitrate
 						+ (result.playlist_loop[0].type
@@ -996,11 +993,9 @@ Player = function(){
 							: ''
 						)
 					);
-					Ext.get('ctrlBitrateTitle').show();
 				}
 				else {
 					Ext.get('ctrlBitrate').update('');
-					Ext.get('ctrlBitrateTitle').hide();
 				}
 
 				Ext.get('ctrlCurrentSongInfoCollapsed').update(currentTitle);
