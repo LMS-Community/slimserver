@@ -486,9 +486,6 @@ sub idleStreams {
 	# No idle processing during startup
 	return if $inInit;
 	
-	# No idle stream processing in child web procs
-	return if $Slim::Web::HTTP::inChild;
-
 	my $select_time = 0;
 	my $check_timers = 1;
 	my $to;
