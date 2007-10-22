@@ -7073,7 +7073,7 @@ ADD_THIS_SONG_TO_PLAYLIST
 	CS	Přidat píseň do playlistu
 	DA	Tilføj denne sang til playlisten
 	DE	Diesen Titel zur Wiedergabeliste hinzufügen
-	EN	Add this song to the playlist
+	EN	Add this song
 	ES	Agregar esta canción a la lista de reproducción
 	FI	Lisää tämä kappale soittolistaan
 	FR	Ajouter ce morceau à la liste de lecture
@@ -8283,15 +8283,15 @@ ALC
 
 MOV
 	DA	Apple AAC eller film
-	DE	Apple AAC, Lossless oder Film-Datei
-	EN	Apple AAC, Lossless or Movie File
+	DE	Apple AAC oder Film-Datei
+	EN	Apple AAC or Movie File
 	ES	Archivo sin pérdidas, de película o AAC de Apple
 	FI	Apple AAC, Häviötön tai Elokuvatiedosto
-	FR	Apple AAC, Lossless ou film
-	HE	קובץ Apple AAC‏, Lossless או סרט
-	IT	File Apple AAC, Lossless o Movie
+	FR	Apple AAC ou film
+	HE	קובץ Apple AAC‏,  או סרט
+	IT	File Apple AAC o Movie
 	JA	アップルAAC、ロスレスまたはムービーファイル
-	NL	Apple AAC, verliesvrij of filmbestand
+	NL	Apple AAC of filmbestand
 	NO	Apple AAC eller film
 	PT	Apple AAC of Ficheiro Movie
 	SV	Apple AAC eller film
