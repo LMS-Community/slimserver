@@ -198,6 +198,7 @@ our $playlistdir = undef;
 our $httpport    = undef;
 
 our (
+	$inInit,
 	$cachedir,
 	$user,
 	$group,
@@ -232,6 +233,7 @@ our (
 );
 
 sub init {
+	$inInit = 1;
 
 	# initialize the process and daemonize, etc...
 	srand();
@@ -407,6 +409,8 @@ sub init {
 
 	# otherwise, get ready to loop
 	$lastlooptime = Time::HiRes::time();
+	
+	$inInit = 0;
 
 	$log->info("SqueezeCenter done init...");
 }
@@ -424,6 +428,9 @@ sub main {
 }
 
 sub idle {
+	# No idle processing during startup
+	return if $inInit;
+	
 	my ($queuedIR, $queuedNotifications);
 
 	my $now = Time::HiRes::time();
@@ -475,6 +482,9 @@ sub idle {
 
 sub idleStreams {
 	my $timeout = shift || 0;
+	
+	# No idle processing during startup
+	return if $inInit;
 	
 	# No idle stream processing in child web procs
 	return if $Slim::Web::HTTP::inChild;
