@@ -45,7 +45,7 @@ sub handler {
 			# it's allowed to be checked.
 			if ($paramRef->{$profile} ne 'DISABLED' && $disabledformats{$profile}) {
 
-				if (!Slim::Player::TranscodingHelper::checkBin($profile)) {
+				if (!Slim::Player::TranscodingHelper::checkBin($profile,'IgnorePrefs')) {
 
 					$paramRef->{'warning'} .= 
 						string('SETUP_FORMATSLIST_MISSING_BINARY') . " $@ " . string('FOR') ." $profile<br>";

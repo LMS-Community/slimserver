@@ -130,7 +130,9 @@ sub enabledFormat {
 }
 
 sub checkBin {
-	my $profile = shift;
+	my $profile            = shift;
+	my $ignoreprefsettings = shift;
+
 	my $command;
 
 	$log->debug("Checking formats for: $profile");
@@ -138,8 +140,8 @@ sub checkBin {
 	# get the command for this profile
 	$command = $commandTable{$profile};
 
-	# if the user's disabled the profile, then skip it...
-	return undef unless $command && enabledFormat($profile);
+	# if the user's disabled the profile, then skip it unless we're changing the prefs...
+	return undef unless $command && ( defined($ignoreprefsettings) || enabledFormat($profile) );
 
 	$log->debug("   enabled");
 
