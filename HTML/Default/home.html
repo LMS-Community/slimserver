@@ -138,7 +138,7 @@ ELSE %]
 		[% pagetitle = "MY_MUSIC" | string %]
 
 		[% pwd_list = BLOCK %]
-			<a href="[% webroot %]home.html?player=[% player %]">[% "HOME" | string %]</a> [% crumbSeparator %] <span class="link" onclick="MainMenu.showSearchResults('');">[% "MY_MUSIC" | string %]</span>
+			<a href="[% webroot %]home.html?player=[% player %]">[% "HOME" | string %]</a> [% crumbSeparator %] [% "MY_MUSIC" | string %]
 		[% END %]
 
 		[% menu = BLOCK %]
@@ -203,7 +203,8 @@ ELSE %]
 			[% END %]
 
 			[% PROCESS menuItem link = { key='FAVORITES', value=additionalLinks.browse.FAVORITES } category='' expandable=0 singleton=1; singleton=0 %]
-		
+			[% favorites %]
+
 			[% IF additionalLinks.plugins %]
 				[% PROCESS menuItem link.key="PLUGINS" link.value="home.html?" expandable="plugins" category=''; expandable = 0 %]
 				<div id="PLUGINS_expanded" class="expandableHomeMenuItem">[%- pluginsItems -%]</div>

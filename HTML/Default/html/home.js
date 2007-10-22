@@ -92,11 +92,6 @@ var MainMenu = function(){
 			}
 		},
 
-		showSearchResults : function(value){
-			Ext.get('my_musicMenu').setVisible(value.length <= 2);
-			Ext.get('searchMenu').setVisible(value.length > 2);
-		},
-
 		onResize : function(){
 			var contW = Ext.get(document.body).getWidth() - 30
 			Ext.select('div.homeMenuSection').setWidth(contW);
