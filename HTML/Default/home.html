@@ -20,14 +20,7 @@ ELSE %]
 		<script type="text/javascript" src="[% webroot %]html/home.js?r=[% revision %]"></script>
 	
 		<script type="text/javascript">
-			Ext.EventManager.onDocumentReady(function(){
-				MainMenu.init();
-
-				var items = Ext.DomQuery.select('div.selectorMarker');
-				for(var i = 0; i < items.length; i++) {
-					Ext.id(items[i]);
-				}
-			});
+			Ext.EventManager.onDocumentReady(MainMenu.init, MainMenu, true);
 		</script>
 	[% END %]
 
@@ -203,7 +196,6 @@ ELSE %]
 			[% END %]
 
 			[% PROCESS menuItem link = { key='FAVORITES', value=additionalLinks.browse.FAVORITES } category='' expandable=0 singleton=1; singleton=0 %]
-			[% favorites %]
 
 			[% IF additionalLinks.plugins %]
 				[% PROCESS menuItem link.key="PLUGINS" link.value="home.html?" expandable="plugins" category=''; expandable = 0 %]

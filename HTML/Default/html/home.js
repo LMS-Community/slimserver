@@ -5,6 +5,7 @@ var MainMenu = function(){
 			Ext.EventManager.onDocumentReady(this.onResize, this, true);
 
 			// use "display:none" to hide inactive elements
+			var el;
 			var items = Ext.DomQuery.select('div.homeMenuSection, div.expandableHomeMenuItem');
 			for(var i = 0; i < items.length; i++) {
 				if (el = Ext.get(items[i].id)) {
@@ -14,7 +15,19 @@ var MainMenu = function(){
 				}
 			}
 
-			this.expandItem(Utils.getCookie('SqueezeCenter-homeMenuExpanded'));
+			// collapse/expand items - collapse by default
+			items = Ext.DomQuery.select('div.expandableHomeMenuItem');
+			for(var i = 0; i < items.length; i++) {
+				if (el = Ext.get(items[i].id)) {
+					var panel = items[i].id.replace(/_expanded/, '');
+
+					if (Utils.getCookie('SqueezeCenter-expanded-' + panel) != '1')
+						this.collapseItem(panel);
+
+					else
+						this.expandItem(panel);
+				}
+			}
 
 			new Ext.KeyMap('search', {
 				key: Ext.EventObject.ENTER,
@@ -32,17 +45,14 @@ var MainMenu = function(){
 			var el = Ext.get(panel);
 			if (el) {
 				if (el.hasClass('homeMenuItem_expanded'))
-					this.collapseItem(panel, true);
+					this.collapseItem(panel);
 				else
 					this.expandItem(panel);
 			}
 		},
 
 		expandItem : function(panel){
-			// we only allow for one open item
-			this.collapseAll();
-
-			Utils.setCookie('SqueezeCenter-homeMenuExpanded', panel);
+			Utils.setCookie('SqueezeCenter-expanded-' + panel, '1');
 
 			var el = Ext.get(panel);
 			if (el) {
@@ -63,9 +73,8 @@ var MainMenu = function(){
 			this.onResize();
 		},
 
-		collapseItem : function(panel, resetState){
-			if (resetState)
-				Utils.setCookie('SqueezeCenter-homeMenuExpanded', '');
+		collapseItem : function(panel){
+			Utils.setCookie('SqueezeCenter-expanded-' + panel, '0');
 
 			var el = Ext.get(panel);
 			if (el) {
@@ -83,13 +92,6 @@ var MainMenu = function(){
 
 			Utils.resizeContent();
 			this.onResize();
-		},
-
-		collapseAll : function(){
-			var items = Ext.DomQuery.select('div.homeMenuItem_expanded');
-			for(var i = 0; i < items.length; i++) {
-				this.collapseItem(items[i].id);
-			}
 		},
 
 		onResize : function(){
