@@ -102,25 +102,25 @@ sub loadModules {
 		$libPath = Slim::Utils::OSDetect::dirsFor('strings');
 	}
 
-		# NB: The user may be on a platform who's perl reports a
-		# different x86 version than we've supplied - but it may work
-		# anyways.
-		my $arch = $Config::Config{'archname'};
-		   $arch =~ s/^i[3456]86-/i386-/;
-		   $arch =~ s/gnu-//;
+	# NB: The user may be on a platform who's perl reports a
+	# different x86 version than we've supplied - but it may work
+	# anyways.
+	my $arch = $Config::Config{'archname'};
+	   $arch =~ s/^i[3456]86-/i386-/;
+	   $arch =~ s/gnu-//;
 
-		@SlimINC = (
-			catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch),
-			catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch, 'auto'),
-			catdir($libPath,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}),
-			catdir($libPath,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}, 'auto'),
-			catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}),
-			catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}, 'auto'),
-			catdir($libPath,'CPAN','arch',$Config::Config{'archname'}),
-			catdir($libPath,'lib'), 
-			catdir($libPath,'CPAN'), 
-			$libPath,
-		);
+	@SlimINC = (
+		catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch),
+		catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $arch, 'auto'),
+		catdir($libPath,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}),
+		catdir($libPath,'CPAN','arch',(join ".", map {ord} split //, $^V), $Config::Config{'archname'}, 'auto'),
+		catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}),
+		catdir($libPath,'CPAN','arch',(join ".", map {ord} (split //, $^V)[0,1]), $Config::Config{'archname'}, 'auto'),
+		catdir($libPath,'CPAN','arch',$Config::Config{'archname'}),
+		catdir($libPath,'lib'), 
+		catdir($libPath,'CPAN'), 
+		$libPath,
+	);
 
 	$d_startup && printf("Got \@INC containing:\n%s\n\n", join("\n", @INC));
 
