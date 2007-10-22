@@ -21,6 +21,13 @@ ELSE %]
 	
 		<script type="text/javascript">
 			Ext.EventManager.onDocumentReady(MainMenu.init, MainMenu, true);
+
+			[% IF favorites %]
+			// dirty way of initializing the favorites list...
+			Ext.EventManager.onDocumentReady(function(){
+				Utils.processCommandURL('[% webroot %]plugins/Favorites/index.html?fav');
+			});
+			[% END %]
 		</script>
 	[% END %]
 
@@ -201,7 +208,7 @@ ELSE %]
 			[% IF favorites;
 				control = BLOCK; 
 					WRAPPER editlink noTarget=1;
-						'href="' _ webroot _ 'plugins/Favorites/index.html?action=edit"';
+						'href="' _ webroot _ 'plugins/Favorites/index.html?fav"';
 					END;
 				END;
 
@@ -213,16 +220,15 @@ ELSE %]
 				%]
 				<div id="FAVORITES_expanded" class="expandableHomeMenuItem">
 				[% 
-					expandable=0;
+					expandable = 0;
 					FOREACH entry = favorites;
-						entry.index = loop.index;
 						control = BLOCK;
 							IF entry.type == "audio";
 								 WRAPPER playlink noTarget=1 -%]
-									href="javascript:void(0);" onClick="Utils.processCommandURL('[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% entry.index %]&amp;player=[% player | uri %]');"
+									href="javascript:void(0);" onClick="Utils.processCommandURL('[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% loop.index %]&amp;player=[% player | uri %]');"
 								[%- END;
 								WRAPPER addlink noTarget=1 -%]
-									href="javascript:void(0);" onClick="Utils.processCommandURL('[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% entry.index %]&amp;player=[% player | uri %]');"
+									href="javascript:void(0);" onClick="Utils.processCommandURL('[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% loop.index %]&amp;player=[% player | uri %]');"
 								[%- END;
 							ELSE;
 								PROCESS dummylink;
@@ -230,10 +236,10 @@ ELSE %]
 							END;
 						END;
 	
-						PROCESS menuItem category='FAVORITES' 
+						PROCESS menuItem category='' 
 							link = {
 								key = entry.text,
-								value = webroot _ "plugins/Favorites/index.html?&amp;index=" _ entry.index _ "&amp;player=" _ playerURI
+								value = webroot _ "plugins/Favorites/index.html?&amp;index=" _ loop.index _ "&amp;player=" _ playerURI
 							};
 					END
 				%]
