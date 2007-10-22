@@ -111,6 +111,15 @@ sub home {
 		Slim::Plugin::DigitalInput::Plugin->webPages($client->hasDigitalIn);
 	}
 
+	# add favorites to first level of Default skin
+	if (($params->{'skinOverride'} || $prefs->get('skin')) eq 'Default') {
+		my $favs = Slim::Utils::Favorites->new($client);
+
+		if ($favs) {
+			$params->{'favorites'} = $favs->toplevel;
+		}
+	}
+
 	$params->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
 
 	$class->addPlayerList($client, $params);

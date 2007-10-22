@@ -34,11 +34,13 @@ ELSE %]
 		FOREACH link = additionalLinks.browse;
 			IF link.key != 'FAVORITES' && !orderedLinks.grep(link.key).size;
 				PROCESS menuItem category='my_music';
+			ELSIF link.key == 'FAVORITES';
+				useFavorites = 1;
 			END;
 		END;
 		FOREACH link = additionalLinks.search;
 			IF link.key == 'SEARCHMUSIC';
-				PROCESS menuItem category='my_music';
+				PROCESS menuItem category='my_music' control='<input type="text" id="search" class="x-form-focus" size="30">';
 			END;
 		END;
 	END;
@@ -56,6 +58,11 @@ ELSE %]
 			END;
 		END;
 		additionalLinks.icons.RADIO_TUNEIN.url = 'html/images/ServiceProviders/tuneinurl.png';
+		control = BLOCK %]
+			<input type="text" id="tuneinurl" class="x-form-focus" size="30" value="http://" onfocus="this.select();">
+			[% WRAPPER playlink %]onclick="Utils.processPlayerCommand({ params: ['playlist', 'play', Ext.get('tuneinurl').dom.value] });"[% END %]
+			[% WRAPPER addlink %]onclick="Utils.processPlayerCommand({ params: ['playlist', 'add', Ext.get('tuneinurl').dom.value] });"[% END %]
+		[% END;
 		PROCESS menuItem category='radio' link={ key='RADIO_TUNEIN', value='tunein.html?' };
 	END;
 
@@ -84,48 +91,44 @@ ELSE %]
 	%]
 
 	[% BLOCK menuItem; page = page | lower %]
-		<div class="selectorMarker[% IF singleton %] homeMenuSection_singleton[% END %]" onmouseover="Utils.highlight(this);"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-			<div class="homeMenuItem[% IF (page == 'radio' || page == 'music_on_demand') && additionalLinks.icons.${link.key}.url %] itemWithCover[% END %]" id="[% link.key %]" [% IF expandable %]onclick="MainMenu.toggleItem('[% link.key %]');"[% END %]>
-				[% IF expandable %]
-					<img class="disclosure_home" src="[% webroot %]html/images/spacer.gif"/>
-				[% ELSE %]
-					<a href="[% link.value %]player=[% player %][% IF category; "&amp;homeCategory=" _ category; END %][% IF expandable; "&amp;page=" _ expandable; END %]" class="browseItemLink">
-				[% END %]
-					[% IF (page == 'radio' || page == 'music_on_demand') && additionalLinks.icons.${link.key}.url %]
-						<span class="browseCover">
-							<img src="[% webroot %][% additionalLinks.icons.${link.key}.url.replace('.png', "_50x50_f.png") %]" width="50" border="0" alt="[% link.key | string %]">
-						</span>
-						<div class="browseItemDetail">[% link.key | string %]</div>
+		<div class="selectorMarker[% IF singleton %] homeMenuSection_singleton[% END %]" onmouseover="Utils.highlight(this [% IF expandable %], MainMenu.onSelectorClicked[% END %]);">
+			<div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+				<div class="homeMenuItem[% IF (page == 'radio' || page == 'music_on_demand') && additionalLinks.icons.${link.key}.url %] itemWithCover[% END %]" id="[% link.key %]">
+					[% IF expandable %]
+						<img class="disclosure_home" src="[% webroot %]html/images/spacer.gif"/>
 					[% ELSE %]
-						[% IF additionalLinks.icons.${link.key}.url %]
-							<span class="browseCover">
-								<img src="[% webroot %][% additionalLinks.icons.${link.key}.url.replace('.png', "_25x25_f.png") %]" width="25" border="0" alt="[% link.key | string %]">
-							</span>
-							<div class="smallBrowseItemDetail">
-						[% END %]
-						[% link.key | string %]
-						[% IF additionalLinks.icons.${link.key}.url %]
-							</div>
-						[% END %]
+						<a href="[% link.value %]player=[% player %][% IF category; "&amp;homeCategory=" _ category; END %][% IF expandable; "&amp;page=" _ expandable; END %]" class="browseItemLink">
 					[% END %]
-				[% IF !expandable %]
-					</a>
-				[% END %]
-
-				[% IF link.key == 'RADIO_TUNEIN' %]
-					<span class="browsedbControls">
-						<input type="text" id="tuneinurl" class="x-form-focus" size="30" value="http://" onfocus="this.select();">
-						[% WRAPPER playlink %]onclick="Utils.processPlayerCommand({ params: ['playlist', 'play', Ext.get('tuneinurl').dom.value] });"[% END %]
-						[% WRAPPER addlink %]onclick="Utils.processPlayerCommand({ params: ['playlist', 'add', Ext.get('tuneinurl').dom.value] });"[% END %]
-					</span>					
-				[% ELSIF link.key == 'SEARCHMUSIC' %]
-					<span class="browsedbControls">
-						<input type="text" id="search" class="x-form-focus" size="30">
-					</span>					
-				[% END %]
+						[% IF (page == 'radio' || page == 'music_on_demand') && additionalLinks.icons.${link.key}.url %]
+							<span class="browseCover">
+								<img src="[% webroot %][% additionalLinks.icons.${link.key}.url.replace('.png', "_50x50_f.png") %]" width="50" border="0" alt="[% link.key | string %]">
+							</span>
+							<div class="browseItemDetail">[% link.key | string %]</div>
+						[% ELSE %]
+							[% IF additionalLinks.icons.${link.key}.url %]
+								<span class="browseCover">
+									<img src="[% webroot %][% additionalLinks.icons.${link.key}.url.replace('.png', "_25x25_f.png") %]" width="25" border="0" alt="[% link.key | string %]">
+								</span>
+								<div class="smallBrowseItemDetail">
+							[% END %]
+							[% link.key | getstring %]
+							[% IF additionalLinks.icons.${link.key}.url %]
+								</div>
+							[% END %]
+						[% END %]
+					[% IF !expandable %]
+						</a>
+					[% END %]
+	
+					[% IF control %]
+						<span class="browsedbControls">
+							[% control %]
+						</span>					
+					[% END %]
+				</div>
 			</div>
-		</div></div></div></div></div>
-	[% END %]
+		</div></div></div></div>
+	[% control=''; END %]
 
 	[% IF page == 'my_music' %]
 		[% pagetitle = "MY_MUSIC" | string %]
@@ -195,7 +198,47 @@ ELSE %]
 				<div id="MUSIC_ON_DEMAND_expanded" class="expandableHomeMenuItem">[%- music_on_demandItems -%]</div>
 			[% END %]
 
-			[% PROCESS menuItem link = { key='FAVORITES', value=additionalLinks.browse.FAVORITES } category='' expandable=0 singleton=1; singleton=0 %]
+			[% IF favorites;
+				control = BLOCK; 
+					WRAPPER editlink noTarget=1;
+						'href="' _ webroot _ 'plugins/Favorites/index.html?action=edit"';
+					END;
+				END;
+
+				PROCESS menuItem category='FAVORITES' expandable=1 
+					link = { 
+						key = 'FAVORITES',
+						value = additionalLinks.browse.FAVORITES
+					} 
+				%]
+				<div id="FAVORITES_expanded" class="expandableHomeMenuItem">
+				[% 
+					expandable=0;
+					FOREACH entry = favorites;
+						entry.index = loop.index;
+						control = BLOCK;
+							IF entry.type == "audio";
+								 WRAPPER playlink noTarget=1 -%]
+									href="javascript:void(0);" onClick="Utils.processCommandURL('[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% entry.index %]&amp;player=[% player | uri %]');"
+								[%- END;
+								WRAPPER addlink noTarget=1 -%]
+									href="javascript:void(0);" onClick="Utils.processCommandURL('[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% entry.index %]&amp;player=[% player | uri %]');"
+								[%- END;
+							ELSE;
+								PROCESS dummylink;
+								PROCESS dummylink;
+							END;
+						END;
+	
+						PROCESS menuItem category='FAVORITES' 
+							link = {
+								key = entry.text,
+								value = webroot _ "plugins/Favorites/index.html?&amp;index=" _ entry.index _ "&amp;player=" _ playerURI
+							};
+					END
+				%]
+				</div>
+			[% END %]
 
 			[% IF additionalLinks.plugins %]
 				[% PROCESS menuItem link.key="PLUGINS" link.value="home.html?" expandable="plugins" category=''; expandable = 0 %]

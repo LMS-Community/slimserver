@@ -41,6 +41,16 @@ var MainMenu = function(){
 			});
 		},
 
+		onSelectorClicked : function(ev, target){
+			var el = Ext.get(target);
+
+			if (el.hasClass('browsedbControls'))
+				return;
+
+			if (el.hasClass('homeMenuItem') || (el = el.child('.homeMenuItem')))
+				MainMenu.toggleItem(el.id);
+		},
+
 		toggleItem : function(panel){
 			var el = Ext.get(panel);
 			if (el) {

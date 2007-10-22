@@ -145,7 +145,7 @@ var Utils = function(){
 			Ext.EventManager.onDocumentReady(Utils.resizeContent);
 		},
 
-		highlight : function(target){
+		highlight : function(target, onClickCB){
 			// return if the target is a child of the main selector
 			var el = Ext.get(target.id); 
 			if (el != null && el.hasClass('.mouseOver'))
@@ -163,7 +163,8 @@ var Utils = function(){
 					el.replaceClass('selectorMarker', 'mouseOver');
 				}
 
-				el.on('click', Utils.onSelectorClicked);
+				highlightedEl.onClickCB = onClickCB || Utils.onSelectorClicked;
+				el.on('click', highlightedEl.onClickCB);
 			}
 		},
 
@@ -176,7 +177,7 @@ var Utils = function(){
 				else {
 					highlightedEl.replaceClass('mouseOver', 'selectorMarker');
 				}
-				highlightedEl.un('click', Utils.onSelectorClicked);
+				highlightedEl.un('click', highlightedEl.onClickCB);
 			}
 		},
 
