@@ -222,28 +222,29 @@ sub dirsFor {
 
 		if ($dir =~ /^(?:Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
 
-			push @dirs, "/usr/share/slimserver/$dir";
+			push @dirs, "/usr/share/squeezecenter/$dir";
 
 		} elsif ($dir eq 'Plugins') {
 			
 			use Config;
+			push @dirs, "/usr/share/squeezecenter/Plugins";
 			push @dirs, catdir($Config{installsitelib},"Slim/Plugin");
 		
 		} elsif ($dir eq 'strings' || $dir eq 'revision') {
 
-			push @dirs, "/usr/share/slimserver";
+			push @dirs, "/usr/share/squeezecenter";
 
 		} elsif ($dir =~ /^(?:types|convert|prefs)$/) {
 
-			push @dirs, "/etc/slimserver";
+			push @dirs, "/etc/squeezecenter";
 
 		} elsif ($dir eq 'log') {
 
-			push @dirs, "/var/log/slimserver";
+			push @dirs, "/var/log/squeezecenter";
 
 		} elsif ($dir eq 'cache') {
 
-			push @dirs, "/var/cache/slimserver";
+			push @dirs, "/var/cache/squeezecenter";
 
 		} elsif ($dir eq 'MySQL') {
 
@@ -333,7 +334,7 @@ sub isRHELorFC {
 	my $OS      = OS();
 	my $details = details();
 
-	if (($details->{'osName'} eq 'Fedora Core' || $details->{'osName'} eq 'RedHat') && -d '/usr/share/slimserver/Firmware') {
+	if (($details->{'osName'} eq 'Fedora Core' || $details->{'osName'} eq 'RedHat') && -d '/usr/share/squeezecenter/Firmware') {
 		return 1;
 	}
 

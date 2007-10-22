@@ -130,6 +130,10 @@ sub launchScan {
 
 		$command  = "$Bin/scanner.exe";
 
+	} elsif (-x '/usr/sbin/squeezecenter-scanner') {
+
+		$command  = '/usr/sbin/squeezecenter-scanner';
+
 	} elsif (-x '/usr/sbin/slimserver-scanner') {
 
 		$command  = '/usr/sbin/slimserver-scanner';

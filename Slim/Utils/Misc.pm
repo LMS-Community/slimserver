@@ -103,6 +103,8 @@ sub findbin {
 		catdir($Bin, 'Bin', $arch),
 		catdir($Bin, 'Bin', $^O),
 		Slim::Utils::OSDetect::dirsFor('Bin'),
+		# Not sure if the above is needed, but add this one instead of changing it
+		catdir(Slim::Utils::OSDetect::dirsFor('Bin'), $arch),
 	);
 
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {

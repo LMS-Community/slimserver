@@ -97,16 +97,10 @@ sub loadModules {
 
 	my @SlimINC = ();
 	
-	if ( Slim::Utils::OSDetect::isDebian() ) {
-		# On Debian, our CPAN directory is located in the same dir as strings.txt
+	if (Slim::Utils::OSDetect::isDebian() || Slim::Utils::OSDetect::isRHELorFC()) {
+		# On Debian and RH, our CPAN directory is located in the same dir as strings.txt
 		$libPath = Slim::Utils::OSDetect::dirsFor('strings');
 	}
-
-	if ( Slim::Utils::OSDetect::isRHELorFC() ) {
-
-		@SlimINC = Slim::Utils::OSDetect::dirsFor('lib');
-
-	} else {
 
 		# NB: The user may be on a platform who's perl reports a
 		# different x86 version than we've supplied - but it may work
@@ -127,7 +121,6 @@ sub loadModules {
 			catdir($libPath,'CPAN'), 
 			$libPath,
 		);
-	}
 
 	$d_startup && printf("Got \@INC containing:\n%s\n\n", join("\n", @INC));
 

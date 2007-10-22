@@ -10,7 +10,7 @@
 # A compiler is obviously needed too.
 
 use strict;
-use lib qw(/usr/local/slimserver/CPAN CPAN);
+use lib qw(/usr/local/slimserver/CPAN /usr/share/squeezecenter/CPAN CPAN);
 use Config;
 use Cwd;
 use File::Basename qw(dirname basename);
