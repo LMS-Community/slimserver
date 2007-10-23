@@ -715,8 +715,15 @@ our %functions = (
 		my $buttonarg = shift;
 		my $playdisp = undef;
 
-		if (mode($client) ne 'search') {
+		# Repeat presses of 'search' will step through search menu
+		if ($client->curSelection($client->curDepth) eq 'SEARCH' && mode($client) eq 'INPUT.List') {
+
+			(Slim::Buttons::Input::List::getFunctions())->{'down'}($client);
+
+		} elsif (mode($client) ne 'search') {
+
 			Slim::Buttons::Home::jumpToMenu($client, "SEARCH");
+
 			$client->update();
 		}
 	},
@@ -727,11 +734,19 @@ our %functions = (
 		my $buttonarg = shift;
 		my $playdisp = undef;
 
-		setMode($client, 'home');
+		# Repeat presses of 'browse' will step through browse menu
+		if ($client->curDepth eq '-BROWSE_MUSIC' && mode($client) eq 'INPUT.List') {
 
-		Slim::Buttons::Home::jumpToMenu($client, "BROWSE_MUSIC");
+			(Slim::Buttons::Input::List::getFunctions())->{'down'}($client);
 
-		$client->update();
+		} else {
+
+			setMode($client, 'home');
+
+			Slim::Buttons::Home::jumpToMenu($client,"BROWSE_MUSIC");
+
+			$client->update();
+		}
 	},
 
 	'favorites' => sub  {
