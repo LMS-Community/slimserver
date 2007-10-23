@@ -1,43 +1,37 @@
 [% PROCESS settings/header.html %]
 
-<div class="settingSection">
-	<div class="settingGroup">
-		<div class="prefHead">[% "SERVER_STATUS" | string %]</div>
-		<div class="prefDesc">[% "SERVER_STATUS_DESC" | string %]</div>
-	</div>
+[% WRAPPER setting title="SERVER_STATUS" %]
+	<div class="prefDesc">[% "SERVER_STATUS_DESC" | string %]</div>
+[% END %]
 		
-	<div class="settingGroup">
-		<div class="prefHead">[% "INFORMATION_MENU_LIBRARY" | string %]</div>
+[% WRAPPER setting title="INFORMATION_MENU_LIBRARY" %]
+	[% FOREACH item = library %]
+		[% IF item.value  %]
+		<p>[% item.key | string %][% "COLON" | string %] [% item.value %]</p>
+		[% END %]
+	[% END %]
+[% END %]
 		
-			[% FOREACH item = library %]
-				[% IF item.value  %]
-				<p>[% item.key | string %][% "COLON" | string %] [% item.value %]</p>
-				[% END %]
-			[% END %]
-	</div>
+[% WRAPPER setting title="INFORMATION_MENU_SERVER" %]
+	[% IF server.versionInfo %]
+		<p>[% server.versionInfo %]</p>
+	[% END %]
 
-	<div class="settingGroup">
-		<div class="prefHead">[% "INFORMATION_MENU_SERVER" | string  %]</div>
-		[% IF server.versionInfo %]
-			<p>[% server.versionInfo %]</p>
-		[% END %]
-
-		[% IF server.INFORMATION_HOSTNAME %]
-			<p>[% "INFORMATION_HOSTNAME" | string %][% "COLON" | string %] [% server.INFORMATION_HOSTNAME %]</p>
-		[% END %]
+	[% IF server.INFORMATION_HOSTNAME %]
+		<p>[% "INFORMATION_HOSTNAME" | string %][% "COLON" | string %] [% server.INFORMATION_HOSTNAME %]</p>
+	[% END %]
+	
+	[% IF server.INFORMATION_SERVER_PORT %]
+		<p>[% "INFORMATION_SERVER_PORT" | string %][% "COLON" | string %] [% server.INFORMATION_SERVER_PORT %]</p>
+	[% END %]
+	
+	[% IF server.INFORMATION_CLIENTS %]
+		<p>[% "INFORMATION_CLIENTS" | string %][% "COLON" | string %] [% server.INFORMATION_CLIENTS %]</p>
+	[% END %]
+[% END %]
 		
-		[% IF server.INFORMATION_SERVER_PORT %]
-			<p>[% "INFORMATION_SERVER_PORT" | string %][% "COLON" | string %] [% server.INFORMATION_SERVER_PORT %]</p>
-		[% END %]
-		
-		[% IF server.INFORMATION_CLIENTS %]
-			<p>[% "INFORMATION_CLIENTS" | string %][% "COLON" | string %] [% server.INFORMATION_CLIENTS %]</p>
-		[% END %]
-	</div>
-
-	[% IF clients %]
-	<div class="settingGroup">
-		<div class="prefHead">[% "INFORMATION_MENU_PLAYER" | string %]</div>
+[% IF clients %]
+	[% WRAPPER setting title="INFORMATION_MENU_PLAYER" %]
 		[% FOREACH client = clients %]
 		<div style="padding-bottom: 10px;">
 			[% FOREACH item = client.value %]
@@ -47,17 +41,14 @@
 			[% END %]
 		</div>
 		[% END %]
-	</div>
 	[% END %]
+[% END %]
 	
-	[% IF controllers %]
-	<div class="settingGroup">
-		<div class="prefHead">[% "INFORMATION_MENU_CONTROLLER" | string %]</div>
+[% IF controllers %]
+	[% WRAPPER setting title="INFORMATION_MENU_CONTROLLER" %]
 		[% FOREACH controller = controllers %]
 		[% END %]
-		
-	</div>
 	[% END %]
-</div>
+[% END %]
 
 [% PROCESS settings/footer.html %]

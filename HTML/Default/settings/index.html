@@ -143,6 +143,9 @@
 			[% PROCESS jsString id='SAVE_SETTINGS' jsId='save' %]
 			[% PROCESS jsString id='CLOSE' jsId='close' %]
 
+			var iTunesEnabled  = '[% iTunesEnabled %]';
+			var podcastEnabled = '[% podcastEnabled %]';
+
 			Ext.EventManager.onDocumentReady(Settings.init, Settings, true);
 		</script>
 	</head>

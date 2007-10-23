@@ -30,18 +30,23 @@ Settings = function(){
 			Ext.QuickTips.init();
 
 			var tp = new Ext.TabPanel('settingsTabs');
-			tp.addTab('t0', strings['status']).on('activate', function(){ Settings.showSettingsPage('settings/server/status.html'); });
-			tp.addTab('t1', strings['basic']).on('activate', function(){ Settings.showSettingsPage('settings/server/basic.html'); });
-			tp.addTab('t2', strings['player']).on('activate', function(){ Settings.showSettingsPage('settings/index.html?sub=player&playerid=' + player); });
-			tp.addTab('t3', strings['mymusic']).on('activate', function(){ Settings.showSettingsPage('settings/server/behavior.html'); });
-			tp.addTab('t4', strings['itunes']).on('activate', function(){ Settings.showSettingsPage('plugins/iTunes/settings/itunes.html'); });
-			tp.addTab('t5', strings['podcasts']).on('activate', function(){ Settings.showSettingsPage('plugins/Podcast/settings/basic.html'); });
-			tp.addTab('t6', strings['accounts']).on('activate', function(){ Settings.showSettingsPage('settings/server/squeezenetwork.html'); });
-			tp.addTab('t7', strings['interface']).on('activate', function(){ Settings.showSettingsPage('settings/server/interface.html'); });
-			tp.addTab('t8', strings['plugins']).on('activate', function(){ Settings.showSettingsPage('settings/server/plugins.html'); });
-			tp.addTab('t9', strings['advanced']).on('activate', function(){ Settings.showSettingsPage('settings/index.html?sub=advanced'); });
+			tp.addTab('basic', strings['basic']).on('activate', function(){ Settings.showSettingsPage('settings/server/basic.html'); });
+			tp.addTab('mymusic', strings['mymusic']).on('activate', function(){ Settings.showSettingsPage('settings/server/behavior.html'); });
 
-			tp.activate('t0');
+			if (iTunesEnabled)
+				tp.addTab('itunes', strings['itunes']).on('activate', function(){ Settings.showSettingsPage('plugins/iTunes/settings/itunes.html'); });
+
+			if (podcastEnabled)
+				tp.addTab('podcasts', strings['podcasts']).on('activate', function(){ Settings.showSettingsPage('plugins/Podcast/settings/basic.html'); });
+
+			tp.addTab('accounts', strings['accounts']).on('activate', function(){ Settings.showSettingsPage('settings/server/squeezenetwork.html'); });
+			tp.addTab('interface', strings['interface']).on('activate', function(){ Settings.showSettingsPage('settings/server/interface.html'); });
+			tp.addTab('plugins', strings['plugins']).on('activate', function(){ Settings.showSettingsPage('settings/server/plugins.html'); });
+			tp.addTab('advanced', strings['advanced']).on('activate', function(){ Settings.showSettingsPage('settings/index.html?sub=advanced'); });
+			tp.addTab('player', strings['player']).on('activate', function(){ Settings.showSettingsPage('settings/index.html?sub=player&playerid=' + player); });
+			tp.addTab('status', strings['status']).on('activate', function(){ Settings.showSettingsPage('settings/server/status.html'); });
+
+			tp.activate('basic');
 
 			new Ext.Button('cancel', {
 				text: strings['close'],
