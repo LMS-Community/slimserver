@@ -189,7 +189,7 @@ our @AUTHORS = (
 	'Eric Lyons',
 	'Scott McIntyre',
 	'Robert Moser',
-	'Felix Müller'
+	'Felix Müller',
 	'Dave Nanian',
 	'Jacob Potter',
 	'Sam Saffron',
