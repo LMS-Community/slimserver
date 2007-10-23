@@ -3138,12 +3138,12 @@ sub songinfoQuery {
 					if ($menuMode) {
 						
 						# catch multi-genres or artists
+						my $actions;
 						if ($key =~ /(\w+)::(\d+)/) {
 						
 							$key = $1;
 							my $id = $val->[0] + 0;
 							$val = $val->[1];
-							my $actions;
 							
 							# genre
 							if ($key eq 'GENRE') {
@@ -3251,6 +3251,38 @@ sub songinfoQuery {
 							if ($key eq 'COMPILATION') {
 								$val = Slim::Utils::Strings::string('YES');
 							}
+
+							elsif ( $key eq 'YEAR' && $val != 0 ) {
+								my $actions = {
+									go => {
+										cmd => ["albums"],
+										itemsParams => "params",
+										params => { year => $val, menu => "track", menu_all => 1 },
+                                          },
+									'play' => {
+										player => 0,
+										itemsParams => 'params',
+										cmd => ['playlistcontrol'],
+										params => {
+											year => $val,
+											cmd => 'load',
+										},
+									},
+									'add' => {
+										player => 0,
+										itemsParams => 'params',
+										cmd => ['playlistcontrol'],
+										params => {
+											year => $val,
+											cmd => 'add',
+										},
+									},
+								};
+								# style correctly the title that opens for the action element
+								$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+								$request->addResultLoop($loopname, $cnt, 'window', { 'menuStyle' => 'album' , 'titleStyle' => 'mymusic' } );
+							}
+	
 							elsif ($key eq 'TYPE') {
 								$val = Slim::Utils::Strings::string($val);
 							}
@@ -3280,7 +3312,7 @@ sub songinfoQuery {
 								$val = Slim::Utils::Strings::string('NONE');
 							}
 							
-							my $style   ='itemNoAction';
+							my $style   = $key eq 'YEAR' ? 'item' : 'itemNoAction';
 							$request->addResultLoop($loopname, $cnt, 'style', $style);
 						}
 						$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string($key) . ": " . $val);
