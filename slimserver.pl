@@ -49,7 +49,7 @@ sub Install {
 	my($Username,$Password);
 
 	use Getopt::Long;
-	use Win32::Lanman qw(SE_SERVICE_LOGON_NAME);
+	require Win32::Lanman;
 
 	Getopt::Long::GetOptions(
 		'username=s' => \$Username,
@@ -63,7 +63,7 @@ sub Install {
 		# configure user to be used to run the server
 		if ($host && $user 
 		&& Win32::Lanman::LsaLookupNames("\\\\$host", [$user], \@infos)
-		&& Win32::Lanman::LsaAddAccountRights("\\\\$host", ${$infos[0]}{sid}, [&SE_SERVICE_LOGON_NAME])) {
+		&& Win32::Lanman::LsaAddAccountRights("\\\\$host", ${$infos[0]}{sid}, [&Win32::Lanman::SE_SERVICE_LOGON_NAME])) {
 
 			$Config{UserName} = $Username;
 			$Config{Password} = $Password;
