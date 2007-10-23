@@ -1,4 +1,6 @@
-[% IF levelName == 'album' || levelName == 'age' %]
+[% IF customViewSelect %]
+	[% customViewSelect %]
+[% ELSIF levelName == 'album' || levelName == 'age' %]
 
 <div id="viewSelect">
 
