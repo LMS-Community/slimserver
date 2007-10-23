@@ -67,7 +67,7 @@
 	[% END %]
 
 	[% IF itemobj.content_type %] 
-		[% item = itemobj.content_type | string | html; title = "TYPE"; PROCESS songInfoItem %]
+		[% item = itemobj.content_type | getstring | html; title = "TYPE"; PROCESS songInfoItem %]
 	[% END %]
 
 	[% IF itemobj.duration %] 
