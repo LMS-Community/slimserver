@@ -42,12 +42,14 @@ var MainMenu = function(){
 		},
 
 		onSelectorClicked : function(ev, target){
-			var el = Ext.get(target);
+			var target = Ext.get(target);
+			var el;
 
-			if (el.hasClass('browsedbControls'))
+			if (target.hasClass('browsedbControls'))
 				return;
 
-			if (el.hasClass('homeMenuItem') || (el = el.child('.homeMenuItem')))
+			el = target;
+			if (el.hasClass('homeMenuItem') || (el = target.child('.homeMenuItem')) || (el = target.up('div.homeMenuItem', 1)))
 				MainMenu.toggleItem(el.id);
 		},
 
