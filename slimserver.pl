@@ -49,6 +49,7 @@ sub Install {
 	my($Username,$Password);
 
 	use Getopt::Long;
+	use Win32::Lanman qw(SE_SERVICE_LOGON_NAME);
 
 	Getopt::Long::GetOptions(
 		'username=s' => \$Username,
@@ -56,8 +57,17 @@ sub Install {
 	);
 
 	if ((defined $Username) && ((defined $Password) && length($Password) != 0)) {
-		$Config{UserName} = $Username;
-		$Config{Password} = $Password;
+		my @infos;
+		my ($host, $user) = split /\\/, $Username;
+
+		# configure user to be used to run the server
+		if ($host && $user 
+		&& Win32::Lanman::LsaLookupNames("\\\\$host", [$user], \@infos)
+		&& Win32::Lanman::LsaAddAccountRights("\\\\$host", ${$infos[0]}{sid}, [&SE_SERVICE_LOGON_NAME])) {
+
+			$Config{UserName} = $Username;
+			$Config{Password} = $Password;
+		}
 	}
 }
 
@@ -172,11 +182,14 @@ our @AUTHORS = (
 	'Kevin Deane-Freeman',
 	'Andy Grundman',
 	'Amos Hayes',
+	'Michael Herger',
 	'Christopher Key',
+	'Ben Klaas',
 	'Mark Langston',
 	'Eric Lyons',
 	'Scott McIntyre',
 	'Robert Moser',
+	'Felix Müller'
 	'Dave Nanian',
 	'Jacob Potter',
 	'Sam Saffron',
@@ -185,8 +198,7 @@ our @AUTHORS = (
 	'Richard Smith',
 	'Max Spicer',
 	'Dan Sully',
-	'Richard Titmuss',
-	'Ben Klaas',
+	'Richard Titmuss'
 );
 
 my $prefs        = preferences('server');
