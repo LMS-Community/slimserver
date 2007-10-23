@@ -40,8 +40,6 @@ sub initPlugin {
 
 	Slim::Player::ProtocolHandlers->registerHandler('itunesplaylist', 0);
 
-	Slim::Music::Import->addImporter($class, { 'use' => 1 });
-
 	$class->initialized(1);
 	$class->checker(1);
 
