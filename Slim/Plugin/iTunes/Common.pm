@@ -121,40 +121,40 @@ sub findLibraryFromRegistry {
 		return;
 	}
 
-	Slim::bootstrap::tryModuleLoad('Win32::Registry');
+	Slim::bootstrap::tryModuleLoad('Win32::TieRegistry');
 
 	if (!$@) {
 
-		my $folder;
-
-		if ($::HKEY_CURRENT_USER && $::HKEY_CURRENT_USER->Open("Software\\Microsoft\\Windows"
-				."\\CurrentVersion\\Explorer\\Shell Folders",
-				$folder)) {
-			my ($type, $value);
-
-			if ($folder->QueryValueEx("My Music", $type, $value)) {
-				$path = $value . '\\iTunes\\iTunes Music Library.xml';
+		use Win32::TieRegistry( Delimiter=>"/", ArrayValues=>0 );
+		
+		if (my $folder = $Registry->{"HKEY_CURRENT_USER/Software/Microsoft/Windows"
+				."/CurrentVersion/Explorer/Shell Folders/My Music"}) {
+			
+			$path = $folder . '\\iTunes\\iTunes Music Library.xml';
 				
-				if (! -r $path) {
-					$path = $value . '\\My Music\\iTunes\\iTunes Library.xml';
-				}
-				
-				$log->info("Searching 'My Music' here: $value for $path");
+			if (! -r $path) {
+				$path = $folder . '\\My Music\\iTunes\\iTunes Library.xml';
 			}
+			
+			$log->info("Searching 'My Music' here: $folder for $path");
 
 			if ($path && -r $path) {
 
 				return $path;
 
-			} elsif ($folder->QueryValueEx("Personal", $type, $value)) {
-				$path = $value . '\\My Music\\iTunes\\iTunes Music Library.xml';
-				
-				if (! -r $path) {
-					$path = $value . '\\My Music\\iTunes\\iTunes Library.xml';
-				}
-				
-				$log->info("Searching 'Personal' here: $value for $path");
 			}
+		}
+		
+		if (my $folder = $Registry->{"HKEY_CURRENT_USER/Software/Microsoft/Windows"
+				."/CurrentVersion/Explorer/Shell Folders/Personal"}) {
+
+			$path = $folder . '\\My Music\\iTunes\\iTunes Music Library.xml';
+			
+			if (! -r $path) {
+				$path = $folder . '\\My Music\\iTunes\\iTunes Library.xml';
+			}
+			
+			$log->info("Searching 'Personal' here: $folder for $path");
 		}
 	}
 
