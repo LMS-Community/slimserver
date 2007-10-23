@@ -263,6 +263,11 @@ sub getTag {
 
 		Slim::Utils::SoundCheck::commentTagTodB($info);
 	}
+	
+	# We only want a 4-digit year
+	if ( defined $info->{'YEAR'} ) {
+		($info->{'YEAR'}) =~ s/.*(\d\d\d\d).*/$1/;
+	}
 
 	return $info;
 }
