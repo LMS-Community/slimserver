@@ -18,8 +18,17 @@ sub handler {
 	my ($class, $client, $paramRef) = @_;
 
 	$paramRef->{additionalLinks} = \%Slim::Web::Pages::additionalLinks;
-	$paramRef->{iTunesEnabled}   = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::iTunes::Plugin');
-	$paramRef->{podcastEnabled}  = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Podcast::Plugin');
+
+	my @sortedLinks = 
+		map { $_->[1] }
+		sort { $a->[0] cmp $b->[0] }
+		map { [ uc( Slim::Utils::Strings::string($_) ), $_ ] } 
+		keys %{$paramRef->{additionalLinks}->{setup}};
+
+	$paramRef->{sortedLinks} = \@sortedLinks;
+
+	$paramRef->{iTunesEnabled}  = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::iTunes::Plugin');
+	$paramRef->{podcastEnabled} = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::Podcast::Plugin');
 
 	return $class->SUPER::handler($client, $paramRef);
 }

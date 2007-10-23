@@ -5,7 +5,7 @@
 
 	<p/>
 
-	[% FOREACH plugin = plugins.keys.sort %]
+	[% FOREACH plugin = sortedPlugins %]
 
 		[% name     = plugins.$plugin.name %]
 		[% desc     = plugins.$plugin.description %]

@@ -26,11 +26,11 @@
 	links = additionalLinks.setup;
 
 	IF links;
-		FOREACH link = links;
-			IF !firstLevelItems.grep("^$link.key$").size;
-				token = link.key;
-				title = link.key | string | html;
-				href = link.value _ "player=" _ playerURI;
+		FOREACH link = sortedLinks;
+			IF !firstLevelItems.grep("^$link$").size;
+				token = link;
+				title = link | string | html;
+				href = links.$link _ "player=" _ playerURI;
 				IF playerid;
 					href = href _ "&amp;playerid=" _ playerURI;
 				END;
@@ -136,7 +136,7 @@
 			[% PROCESS jsString id='MY_MUSIC' jsId='mymusic' %]
 			[% PROCESS jsString id='ITUNES' jsId='itunes' %]
 			[% PROCESS jsString id='PLUGIN_PODCAST' jsId='podcasts' %]
-			[% PROCESS jsString id='SETUP_ACCOUNTS' jsId='accounts' %]
+			[% PROCESS jsString id='SQUEEZENETWORK_SETTINGS' jsId='accounts' %]
 			[% PROCESS jsString id='INTERFACE_SETTINGS' jsId='interface' %]
 			[% PROCESS jsString id='SETUP_GROUP_PLUGINS' jsId='plugins' %]
 			[% PROCESS jsString id='ADVANCED_SETTINGS' jsId='advanced' %]

@@ -25,14 +25,14 @@ sub handler {
 	my ($class, $client, $paramRef) = @_;
 
 	my @changed = ();
-	
+
 	my $plugins = Slim::Utils::PluginManager->allPlugins;
-	
+
 	for my $plugin (keys %{$plugins}) {
 
 		my $name   = $plugins->{$plugin}->{'name'};
 		my $module = $plugins->{$plugin}->{'module'};
-		
+
 		# XXXX - handle install / uninstall / enable / disable
 		if ($paramRef->{$name.'.disable'}) {
 			push @changed, Slim::Utils::Strings::string($name);
@@ -57,8 +57,16 @@ sub handler {
 		$paramRef->{'warning'} .= Slim::Utils::Strings::string('PLUGINS_CHANGED').'<br>'.join('<br>',@changed);
 	}
 
-	$paramRef->{'plugins'}  = $plugins;
-	$paramRef->{'nosubmit'} = 1;
+	$paramRef->{plugins}  = $plugins;
+	$paramRef->{nosubmit} = 1;
+
+	my @sortedPlugins = 
+		map { $_->[1] }
+		sort { $a->[0] cmp $b->[0] }
+		map { [ uc( Slim::Utils::Strings::string($plugins->{$_}->{name}) ), $_ ] } 
+		keys %{$plugins};
+
+	$paramRef->{sortedPlugins} = \@sortedPlugins;
 
 	return $class->SUPER::handler($client, $paramRef);
 }
