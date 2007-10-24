@@ -9,6 +9,7 @@ use strict;
 
 use POSIX;
 use Scalar::Util qw(blessed);
+use File::Spec::Functions qw(:ALL);
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -73,6 +74,10 @@ sub init {
 		[0, 1, 0, \&dateQuery]);
 	Slim::Control::Request::addDispatch(['firmwareupgrade'],
 		[0, 1, 1, \&firmwareUpgradeQuery]);
+
+	Slim::Control::Request::addDispatch(['jiveapplets'], [0, 1, 0, \&appletsQuery]);
+
+	Slim::Web::HTTP::addRawDownload('^jiveapplet/', \&appletDownloadFile, 'binary');
 }
 
 =head2 getDisplayName()
@@ -1225,6 +1230,62 @@ sub replayGainHash {
 		},
 	);
 	return \%return;
+}
+
+# return all applets included with plugins
+# assumes plugin metadata includes 'jiveapplet' element set to the name of zip file in plugin's root directory
+# the name of this file should be the name of the applet directory required on jive followed by .zip
+# e.g SlimBrowser would be:
+# <jiveapplet>SlimBrowser.zip</jiveapplet>
+
+sub appletsQuery {
+	my $request = shift;
+ 
+	$log->debug("Begin Function");
+ 
+	if ($request->isNotQuery([['jiveapplets']])) {
+		$request->setStatusBadDispatch();
+		return;
+	}
+
+	my $prefs = preferences("server");
+
+	my $plugins = Slim::Utils::PluginManager::allPlugins();
+	my $cnt = 0;
+
+	for my $key (keys %$plugins) {
+
+		my $p = $plugins->{$key};
+
+		if ($p->{'jiveapplet'} && $p->{'jiveapplet'} =~ /(\w+)\.zip$/ && -r catdir($p->{'basedir'}, $p->{'jiveapplet'})) {
+
+			$request->setResultLoopHash('item_loop', $cnt++, {
+				'applet'  => $1,
+				'name'    => Slim::Utils::Strings::getString($p->{'name'}),
+				'version' => $p->{'version'},
+				'url'     => 'http://' . Slim::Utils::Network::serverAddr() . ':' . $prefs->get('httpport') . 
+					         '/jiveapplet/' . $p->{'jiveapplet'},
+			});
+		}
+	}
+
+	$request->addResult("count", $cnt);
+
+	$request->setStatusDone();
+}
+
+# convert path to location of applet file for download
+sub appletDownloadFile {
+	my $path = shift;
+
+	my $plugins = Slim::Utils::PluginManager::allPlugins();
+	my ($name) = $path =~ /^jiveapplet\/(\w+\.zip)/;
+
+	for my $key (keys %$plugins) {
+		if ($plugins->{$key}->{'jiveapplet'} && $plugins->{$key}->{'jiveapplet'} eq $name) {
+			return catdir($plugins->{$key}->{'basedir'}, $name);
+		}
+	}
 }
 
 1;
