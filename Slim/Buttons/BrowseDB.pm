@@ -877,8 +877,8 @@ sub setMode {
 	# that are not the result of a search, assume they are sorted.
 	# sort at simple track level as well.
 
-	# Test reworked, see Bug 4437
-	if (($descend || !($levels[$level] eq 'track' || $levels[$level] eq 'playlistTrack')) && !$search) {
+	# Test reworked, see Bug 4437, Bug 5871
+	if (($descend || !($levels[$level] eq 'track' || $levels[$level] eq 'playlistTrack')) && !$search && $levels[$level] ne 'age') {
 
 		$params{'isSorted'}  = 'L';
 
