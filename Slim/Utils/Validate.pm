@@ -401,13 +401,16 @@ sub hasText {
 =cut
 
 sub password {
-	my $val = shift;
+	my $client = shift;
+	my $val    = shift;
+
 	my $currentPassword = preferences('server')->get('password');
 
 	if (defined($val) && $val ne '' && $val ne $currentPassword) {
 		srand (time());
 		my $randletter = "(int (rand (26)) + (int (rand (1) + .5) % 2 ? 65 : 97))";
 		my $salt = sprintf ("%c%c", eval $randletter, eval $randletter);
+
 		return crypt($val, $salt);
 	} else {
 		return $currentPassword;
