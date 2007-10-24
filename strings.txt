@@ -6907,6 +6907,13 @@ SETUP_WIZARD_CLOSE
 	DE	Schliessen
 	EN	Close
 
+SETUP_SELECT_FILE
+	DE	Bitte wählen Sie eine Datei
+	EN	Please select a file
+
+SETUP_SELECT_FOLDER
+	DE	Bitte wählen Sie einen Ordner
+	EN	Please select a folder
 #
 # Web interface
 #
@@ -13790,5 +13797,3 @@ JIVE_PLAYER_MODEL
 
 JIVE_PLAYER_FIRMWARE_VERSION
 	EN	FW Version
-
-JIVE

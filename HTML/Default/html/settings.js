@@ -100,11 +100,12 @@ Settings = function(){
 
 
 SettingsPage = function(){
-	var unHighlightTimer;
+	var unHighlightTimer, filesystemDlg, filesystemBrowser;
 
 	return {
 		init : function(){
 			this.initDescPopup();
+			this.initFilesystemBrowser();
 
 			if (Ext.isSafari)
 				Ext.get(document).setStyle('overflow', 'auto');
@@ -147,6 +148,74 @@ SettingsPage = function(){
 					}
 				}
 			}
+		},
+
+		initFilesystemBrowser : function(){
+			var inputEl, btnEl, filter, classes, start;
+
+			var tpl = new Ext.Template('<img src="/html/images/spacer.gif" class="filesystemBrowseBtn" onclick="SettingsPage.showFilesystemBrowser(\'{inputField}\', \'{filter}\')">');
+			tpl.compile();
+
+			// try to get the filter expression from the input fields CSS class
+			// selectFolder - only display folders
+			// selectFile   - display any filetype
+			// selectFile_X - only show files of the type X (eg. selectFile_xml -> .xml only)
+			var items = Ext.query('input.selectFolder, input[class*=selectFile]');
+			for(var i = 0; i < items.length; i++) {
+
+				if (inputEl = Ext.get(items[i])) {
+					filter = '';
+
+					if (inputEl.hasClass('selectFolder'))
+						filter = 'foldersonly'
+
+					else {
+						classes = items[i].className.split(' ');
+
+						for (var x=0; x<classes.length; x++) {
+
+							if (classes[x].search(/selectFile_/) > -1) {
+								filter = "filetype:" + classes[x].replace(/selectFile_/, '');
+								break;
+							}
+						}
+					}
+
+					btnEl = tpl.insertAfter(inputEl, {
+						inputField: inputEl.id,
+						filter: filter
+					});
+				}
+
+			}
+		},
+
+		showFilesystemBrowser : function(inputField, filter){
+			if (filesystemDlg == null) {
+				filesystemDlg = new Ext.BasicDialog('', {
+					autoCreate: true,
+					modal: true,
+					closable: false,
+					collapsible: false,
+					width: 500,
+					height: 400,
+					resizeHandles: 'se'
+				});
+
+				filesystemDlg.addButton(strings['close'], filesystemDlg.hide, filesystemDlg);
+				filesystemDlg.addKeyListener(27, filesystemDlg.hide, filesystemDlg);
+				filesystemDlg.body.setStyle('background', 'white');
+			}
+
+			filesystemDlg.body.update('<div id="filesystembrowser"></div>');
+
+			filesystemBrowser = new FileSelector('filesystembrowser', {
+				input: inputField,
+				filter: filter
+			});
+
+			filesystemDlg.setTitle(strings[filter == 'foldersonly' ? 'choose_folder' : 'choose_file']);
+			filesystemDlg.show();
 		},
 
 		// remove sticky highlight from previously selected item
@@ -204,3 +273,4 @@ SettingsPage = function(){
 		}
 	};
 }();
+

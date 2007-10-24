@@ -14,8 +14,17 @@
 		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
 		<script type="text/javascript" src="[% webroot %]html/utils.js?r=[% revision %]"></script>
 		<script type="text/javascript" src="[% webroot %]html/settings.js?r=[% revision %]"></script>
+		<script type="text/javascript" src="[% webroot %]html/fileselector.js?r=[% revision %]"></script>
 
-		<script>
+		<script type="text/javascript">
+			var strings = new Array();
+			[% PROCESS jsString id='CLOSE' jsId='close' %]
+			[% PROCESS jsString id='SETUP_SELECT_FOLDER' jsId='choose_folder' %]
+			[% PROCESS jsString id='SETUP_SELECT_FILE' jsId='choose_file' %]
+
+			// pages using the filselector may set a filter (see iTunes)
+			var fsFilter = new Array();
+
 			Ext.EventManager.onDocumentReady(SettingsPage.init, SettingsPage, true);
 		</script>
 
