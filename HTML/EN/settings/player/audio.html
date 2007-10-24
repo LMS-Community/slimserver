@@ -42,10 +42,7 @@
 					[%- END -%]
 				</select>
 			[% END %]
-		[% END %]
 
-
-		[% WRAPPER settingSection %]
 			[% WRAPPER settingGroup title="SETUP_STARTDELAY" desc="SETUP_STARTDELAY_DESC" %]
 				<label for="startDelay" class="stdlabel">[% "SETUP_STARTDELAY_CHOOSE" | string %]</label>
 				<input type=text class="stdedit" name="startDelay" id="startDelay" value="[% prefs.startDelay %]" size="5">
@@ -55,18 +52,18 @@
 				<label for="playDelay" class="stdlabel">[% "SETUP_PLAYDELAY_CHOOSE" | string %]</label>
 				<input type=text class="stdedit" name="playDelay" id="playDelay" value="[% prefs.playDelay %]" size="5">
 			[% END %]
-		[% END %]
 
-		[% WRAPPER setting title="SETUP_MINSYNCADJUST" desc="SETUP_MINSYNCADJUST_DESC" %]
-			<label for="minSyncAdjust" class="stdlabel">[% "SETUP_MINSYNCADJUST_CHOOSE" | string %]</label>
-			<input type=text class="stdedit" name="minSyncAdjust" id="minSyncAdjust" value="[% prefs.minSyncAdjust %]" size="5">
-		[% END %]
+			[% WRAPPER settingGroup title="SETUP_MINSYNCADJUST" desc="SETUP_MINSYNCADJUST_DESC" %]
+				<label for="minSyncAdjust" class="stdlabel">[% "SETUP_MINSYNCADJUST_CHOOSE" | string %]</label>
+				<input type=text class="stdedit" name="minSyncAdjust" id="minSyncAdjust" value="[% prefs.minSyncAdjust %]" size="5">
+			[% END %]
+	
+			[% WRAPPER settingGroup title="SETUP_PACKETLATENCY" desc="SETUP_PACKETLATENCY_DESC" %]
+				<label for="packetLatency" class="stdlabel">[% "SETUP_PACKETLATENCY_CHOOSE" | string %]</label>
+				<input type=text class="stdedit" name="packetLatency" id="packetLatency" value="[% prefs.packetLatency %]" size="5">
+			[% END %]
 
-		[% WRAPPER setting title="SETUP_PACKETLATENCY" desc="SETUP_PACKETLATENCY_DESC" %]
-			<label for="packetLatency" class="stdlabel">[% "SETUP_PACKETLATENCY_CHOOSE" | string %]</label>
-			<input type=text class="stdedit" name="packetLatency" id="packetLatency" value="[% prefs.packetLatency %]" size="5">
 		[% END %]
-
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_POWERONRESUME" desc="SETUP_POWERONRESUME_DESC" %]
