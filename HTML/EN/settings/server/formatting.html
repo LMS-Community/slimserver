@@ -1,68 +1,11 @@
 [% PROCESS settings/header.html %]
 
-	[% WRAPPER settingSection %]
-		[% WRAPPER settingGroup title="SETUP_LONGDATEFORMAT" desc="SETUP_LONGDATEFORMAT_DESC" %]
-			<select class="stdedit" name="longdateFormat" id="longdateFormat">
-	
-			[% FOREACH option = longdateoptions.keys %]
-	
-				<option [% IF prefs.longdateFormat == option %]selected [% END %]value="[% option %]">[% longdateoptions.$option %]</option>
-	
-			[%- END -%]
-			
-			</select>	
-		[% END %]
-
-		[% WRAPPER settingGroup title="SETUP_SHORTDATEFORMAT" desc="SETUP_SHORTDATEFORMAT_DESC" %]
-			<select class="stdedit" name="shortdateFormat" id="shortdateFormat">
-	
-			[% FOREACH option = shortdateoptions.keys %]
-	
-				<option [% IF prefs.shortdateFormat == option %]selected [% END %]value="[% option %]">[% shortdateoptions.$option %]</option>
-	
-			[%- END -%]
-			
-			</select>
-		[% END %]
-
-		[% WRAPPER settingGroup title="SETUP_TIMEFORMAT" desc="SETUP_TIMEFORMAT_DESC" %]
-			<select class="stdedit" name="timeFormat" id="timeFormat">
-	
-			[% FOREACH option = timeoptions.keys %]
-	
-				<option [% IF prefs.timeFormat == option %]selected [% END %]value="[% option %]">[% timeoptions.$option %]</option>
-	
-			[%- END -%]
-			
-			</select>
-		[% END %]
+	[% WRAPPER setting title="SETUP_COVERART" desc="SETUP_COVERART_DESC" %]
+		<input type="text" class="stdedit" name="coverArt" id="coverArtID" value="[% prefs.coverArt %]" size="40">
 	[% END %]
 
-	[% WRAPPER settingSection %]
-		[% WRAPPER settingGroup title="SETUP_SHOWARTIST" desc="SETUP_SHOWARTIST_DESC" %]
-			<select class="stdedit" name="showArtist" id="showArtist">
-	
-				<option [% IF NOT prefs.showArtist %]selected [% END %]value="0">[% 'DISABLED' | getstring %]</option>
-				<option [% IF prefs.showArtist %]selected [% END %]value="1">[% 'ENABLED' | getstring %]</option>
-			
-			</select>
-		[% END %]
-
-		[% WRAPPER settingGroup title="SETUP_SHOWYEAR" desc="SETUP_SHOWYEAR_DESC" %]
-			<select class="stdedit" name="showYear" id="showYear">
-	
-				<option [% IF NOT prefs.showYears %]selected [% END %]value="0">[% 'DISABLED' | getstring %]</option>
-				<option [% IF prefs.showYear %]selected [% END %]value="1">[% 'ENABLED' | getstring %]</option>
-			
-			</select>
-		[% END %]
-	[% END %]
-
-	[% WRAPPER setting title="SETUP_TITLEFORMAT" desc="SETUP_GROUP_TITLEFORMATS_DESC" %]
-		[% FOREACH format = prefs.titleFormat %]
-			<input type=radio [% IF prefs.titleFormatWeb == loop.index %]checked [% END %]value="[% loop.index %]" name="titleFormatWeb">
-			<input type="text" class="stdedit" name="titleFormat[% loop.index %]" id="titleFormat[% loop.index %]" value="[% format %]" size="40"><br>
-		[% END %]
+	[% WRAPPER setting title="SETUP_ARTFOLDER" desc="SETUP_ARTFOLDER_DESC" %]
+		<input type="text" class="stdedit selectFolder" name="artfolder" id="artfolder" value="[% prefs.artfolder %]" size="40">
 	[% END %]
 
 	[% WRAPPER setting title="SETUP_GUESSFILEFORMATS" desc="SETUP_GROUP_GUESSFILEFORMATS_DESC" %]

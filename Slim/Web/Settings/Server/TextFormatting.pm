@@ -23,14 +23,14 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(longdateFormat shortdateFormat timeFormat showArtist showYear titleFormatWeb) );
+	return ($prefs, qw(coverArt artfolder));
 }
 
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
 	# handle array prefs in this handler, scalar prefs in SUPER::handler
-	my @prefs = qw(guessFileFormats titleFormat);
+	my @prefs = qw(guessFileFormats);
 
 	if ($paramRef->{'saveSettings'}) {
 
@@ -46,22 +46,11 @@ sub handler {
 			$prefs->set($pref, \@array);
 		}
 
-		if ($paramRef->{'titleformatWeb'} ne $prefs->get('titleFormatWeb')) {
-
-			for my $client (Slim::Player::Client::clients()) {
-
-				$client->currentPlaylistChangeTime(Time::HiRes::time());
-			}
-		}
 	}
 
 	for my $pref (@prefs) {
 		$paramRef->{'prefs'}->{ $pref } = [ @{ $prefs->get($pref) || [] }, '' ];
 	}
-
-	$paramRef->{'longdateoptions'}  = Slim::Utils::DateTime::longDateFormats();
-	$paramRef->{'shortdateoptions'} = Slim::Utils::DateTime::shortDateFormats();
-	$paramRef->{'timeoptions'}      = Slim::Utils::DateTime::timeFormats();
 
 	return $class->SUPER::handler($client, $paramRef, $pageSetup);
 }

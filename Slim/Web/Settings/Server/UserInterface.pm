@@ -25,26 +25,64 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(skin itemsPerPage refreshRate coverArt artfolder thumbSize) );
+	return ($prefs, qw(skin itemsPerPage refreshRate thumbSize longdateFormat shortdateFormat timeFormat showArtist showYear titleFormatWeb));
+#	return ($prefs, qw(skin itemsPerPage refreshRate coverArt artfolder thumbSize));
 }
 
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup) = @_;
 
-	if ($paramRef->{'saveSettings'} && $paramRef->{'skin'} ne $prefs->get('skin')) {
+	# handle array prefs in this handler, scalar prefs in SUPER::handler
+	my @prefs = qw(titleFormat);
 
-		# use Classic instead of Default skin if the server's language is set to Hebrew
-		if ($prefs->get('language') eq 'HE' && $paramRef->{'skin'} eq 'Default') {
-			$paramRef->{'skin'} = 'Classic';
+	if ($paramRef->{'saveSettings'}) {
+
+		for my $pref (@prefs) {
+
+			my @array;
+
+			for (my $i = 0; defined $paramRef->{$pref.$i}; $i++) {
+
+				push @array, $paramRef->{$pref.$i} if $paramRef->{$pref.$i};
+			}
+
+			$prefs->set($pref, \@array);
 		}
 
-		$paramRef->{'warning'} .= join(' ', string("SETUP_SKIN_OK"), $paramRef->{'skin'}, string("HIT_RELOAD"));
+		if ($paramRef->{'titleformatWeb'} ne $prefs->get('titleFormatWeb')) {
+
+			for my $client (Slim::Player::Client::clients()) {
+
+				$client->currentPlaylistChangeTime(Time::HiRes::time());
+			}
+		}
+
+
+		if ($paramRef->{'skin'} ne $prefs->get('skin')) {
+			# use Classic instead of Default skin if the server's language is set to Hebrew
+			if ($prefs->get('language') eq 'HE' && $paramRef->{'skin'} eq 'Default') {
+	
+				$paramRef->{'skin'} = 'Classic';
+	
+			}
+	
+			$paramRef->{'warning'} .= join(' ', string("SETUP_SKIN_OK"), $paramRef->{'skin'}, string("HIT_RELOAD"));
+		}
+
 
 		for my $client (Slim::Player::Client::clients()) {
 
 			$client->currentPlaylistChangeTime(Time::HiRes::time());
 		}
 	}
+
+	for my $pref (@prefs) {
+		$paramRef->{'prefs'}->{ $pref } = [ @{ $prefs->get($pref) || [] }, '' ];
+	}
+
+	$paramRef->{'longdateoptions'}  = Slim::Utils::DateTime::longDateFormats();
+	$paramRef->{'shortdateoptions'} = Slim::Utils::DateTime::shortDateFormats();
+	$paramRef->{'timeoptions'}      = Slim::Utils::DateTime::timeFormats();
 
 	$paramRef->{'skinoptions'} = { Slim::Web::HTTP::skins(1) };
 
