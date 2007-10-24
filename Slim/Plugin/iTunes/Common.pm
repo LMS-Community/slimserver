@@ -125,9 +125,12 @@ sub findLibraryFromRegistry {
 
 	if (!$@) {
 
-		use Win32::TieRegistry( Delimiter=>"/", ArrayValues=>0 );
+		require Win32::TieRegistry;
+
+		$Win32::TieRegistry::Registry->Delimiter('/');
+		$Win32::TieRegistry::Registry->ArrayValues(0);
 		
-		if (my $folder = $Registry->{"HKEY_CURRENT_USER/Software/Microsoft/Windows"
+		if (my $folder = $Win32::TieRegistry::Registry->{"HKEY_CURRENT_USER/Software/Microsoft/Windows"
 				."/CurrentVersion/Explorer/Shell Folders/My Music"}) {
 			
 			$path = $folder . '\\iTunes\\iTunes Music Library.xml';
@@ -145,7 +148,7 @@ sub findLibraryFromRegistry {
 			}
 		}
 		
-		if (my $folder = $Registry->{"HKEY_CURRENT_USER/Software/Microsoft/Windows"
+		if (my $folder = $Win32::TieRegistry::Registry->{"HKEY_CURRENT_USER/Software/Microsoft/Windows"
 				."/CurrentVersion/Explorer/Shell Folders/Personal"}) {
 
 			$path = $folder . '\\My Music\\iTunes\\iTunes Music Library.xml';
