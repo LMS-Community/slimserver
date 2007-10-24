@@ -39,7 +39,7 @@ Settings = function(){
 			if (podcastEnabled)
 				tp.addTab('podcasts', strings['podcasts']).on('activate', function(){ Settings.showSettingsPage('plugins/Podcast/settings/basic.html'); });
 
-			tp.addTab('accounts', strings['accounts']).on('activate', function(){ Settings.showSettingsPage('settings/server/squeezenetwork.html'); });
+			tp.addTab('squeezenetwork', strings['squeezenetwork']).on('activate', function(){ Settings.showSettingsPage('settings/server/squeezenetwork.html'); });
 			tp.addTab('interface', strings['interface']).on('activate', function(){ Settings.showSettingsPage('settings/server/interface.html'); });
 			tp.addTab('plugins', strings['plugins']).on('activate', function(){ Settings.showSettingsPage('settings/server/plugins.html'); });
 			tp.addTab('advanced', strings['advanced']).on('activate', function(){ Settings.showSettingsPage('settings/index.html?sub=advanced'); });
