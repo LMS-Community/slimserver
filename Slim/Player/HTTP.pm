@@ -21,11 +21,9 @@ use Slim::Display::NoDisplay;
 sub new {
 	my ($class, $id, $paddr, $tcpsock) = @_;
 	
-	my $client = Slim::Player::Client->new($id, $paddr);
+	my $client = $class->SUPER::new($id, $paddr);
 
 	$client->streamingsocket($tcpsock);
-
-	bless $client, $class;
 
 	$client->display( Slim::Display::NoDisplay->new($client) );
 
