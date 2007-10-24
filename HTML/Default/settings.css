@@ -114,7 +114,7 @@ body {
 	background: transparent url(html/images/help/selector_bottom_left.gif) no-repeat bottom left;
 }
 
-.browseItemLink:hover,
+.mouseOver .browseItemLink:hover,
 .mouseOver .homeMenuItem a {
 	color: white;
 }
