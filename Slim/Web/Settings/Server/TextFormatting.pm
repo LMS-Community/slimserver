@@ -14,6 +14,20 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('server');
 
+$prefs->setValidate({
+	validator => sub {
+					if ($_[1] =~ /.+\.([^.]+)$/) {
+						my $suffix = $1;
+
+						return grep(/^$suffix$/, qw(jpg gif png jpeg));
+				
+					} else {
+						return 1;
+					}
+				}
+	}, 'coverArt',
+);
+
 sub name {
 	return Slim::Web::HTTP::protectName('FORMATTING_SETTINGS');
 }
