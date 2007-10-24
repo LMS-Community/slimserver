@@ -364,7 +364,7 @@ sub dir {
 L<Slim::Utils::Prefs::Base>
 L<Slim::Utils::Prefs::Namespace>
 L<Slim::Utils::Prefs::Client>
-L<Slim::Utils::Preds::OldPrefs>
+L<Slim::Utils::Prefs::OldPrefs>
 
 =cut
 
