@@ -289,16 +289,18 @@ div#topGraphicMenu2 #shuffleButtons {
 
 div#topGraphicMenu3 #playingStatus {
 	position: absolute;
-	left: 13px;
+	left: 15px;
 	top: 121px;
 }
 
 div#topGraphicMenu3 #playingSong {
 	position: absolute;
-	left: 22px;
-	top: 138px;
+	left: 15px;
+	top: 136px;
 	color: #111;
-	font-weight: bold;	
+	font-weight: bold;
+	height: 22px;
+	overflow: hidden;
 }
 
 div#topGraphicMenu3 #statusMessage {
