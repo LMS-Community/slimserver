@@ -150,7 +150,7 @@ sub songTime {
 	my $rate        = $client->rate();
 	my $songtime    = $client->songElapsedSeconds();
 	my $song     	= playingSong($client);
-	my $startStream = $song->{startOffset};
+	my $startStream = $song->{startOffset} || 0;
 	my $duration	= $song->{duration};
 	
 	if (defined($songtime)) {
@@ -1447,11 +1447,15 @@ sub markStreamingTrackAsPlayed {
 }
 
 sub trackStartEvent {
-	my $client = Slim::Player::Sync::masterOrSelf(shift) || return;
+	my $client = shift;
+	
+	# Keep client and master separate so that the playlist newsong notification
+	# uses the correct client.
+	my $master = Slim::Player::Sync::masterOrSelf($client) || return;
 
 	$log->info("Got a track starting event");
 
-	my $queue     = $client->currentsongqueue();
+	my $queue     = $master->currentsongqueue();
 	my $last_song = $queue->[-1];
 
 	while (defined($last_song) && $last_song->{status} == STATUS_PLAYING && scalar(@$queue) > 1) {
@@ -1470,17 +1474,17 @@ sub trackStartEvent {
 		$last_song->{'status'} = STATUS_PLAYING;
 	}
 
-	$client->currentPlaylistChangeTime(Time::HiRes::time());
+	$master->currentPlaylistChangeTime(Time::HiRes::time());
 
-	Slim::Player::Playlist::refreshPlaylist($client);
+	Slim::Player::Playlist::refreshPlaylist($master);
 	Slim::Control::Request::notifyFromArray($client,
 		[
 			'playlist', 
 			'newsong', 
 			Slim::Music::Info::standardTitle(
-				$client, 
+				$master, 
 				Slim::Player::Playlist::song(
-					$client,
+					$master,
 					$last_song->{'index'}
 				)
 			),
@@ -1495,11 +1499,11 @@ sub trackStartEvent {
 	# Bug 5103
 	# We can now start streaming the next track, if the player was already handling
 	# 2 tracks the last time we got a decoder underrun event
-	if ( $client->streamAtTrackStart() ) {
+	if ( $master->streamAtTrackStart() ) {
 		
-		streamNextTrack($client);
+		streamNextTrack($master);
 		
-		$client->streamAtTrackStart(0);
+		$master->streamAtTrackStart(0);
 	}
 }
 

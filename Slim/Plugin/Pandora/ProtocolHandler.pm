@@ -56,6 +56,9 @@ sub isAudioURL () { 1 }
 # Don't allow looping if the tracks are short
 sub shouldLoop () { 0 }
 
+# Source for AudioScrobbler (E = Personalised recommendation except Last.fm)
+sub audioScrobblerSource () { 'E' }
+
 sub handleError {
     my ( $error, $client ) = @_;
 
@@ -511,9 +514,18 @@ sub getCurrentTitle {
 
 # Metadata for a URL, used by CLI/JSON clients
 sub getMetadataFor {
-	my ( $class, $client, $url ) = @_;
+	my ( $class, $client, $url, $forceCurrent ) = @_;
 	
-	my $track = $client->pluginData('prevTrack') || $client->pluginData('currentTrack') || return;
+	my $track;
+	
+	if ( $forceCurrent ) {
+		$track = $client->pluginData('currentTrack');
+	}
+	else {
+		$track = $client->pluginData('prevTrack') || $client->pluginData('currentTrack')
+	}
+	
+	return unless $track;
 	
 	return {
 		artist      => $track->{artistName},

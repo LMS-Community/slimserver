@@ -1,0 +1,59 @@
+PLUGIN_AUDIOSCROBBLER_MODULE_NAME
+	EN	Last.fm Audioscrobbler
+
+SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS
+	EN	Last.fm Account(s)
+
+SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DESC
+	EN	Enter your Last.fm username and password.  Multiple accounts may be entered if you wish to submit tracks from different players to different accounts.  To delete an existing account, check the box next to it.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_NP
+	EN	Report now playing track to Last.fm.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_NP_DESC
+	EN	Enable this option to report your currently playing track to Last.fm.  This does not affect your musical profile but enables others to see what you are currently listening to.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_NP_YES
+	EN	Yes, report now playing data to Last.fm.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_NP_NO
+	EN	No, do not report now playing data to Last.fm.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING
+	EN	Submit (scrobble) all tracks played to Last.fm.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING_DESC
+	EN	Enable this option to update your Last.fm music profile with all music you have listened to.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_YES
+	EN	Yes, report tracks played to Last.fm.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_NO
+	EN	No, do not report tracks played to Last.fm.
+
+PLUGIN_AUDIOSCROBBLER_BANNED
+	EN	This version of SlimServer appears to have been banned by Last.fm, please upgrade to a newer version.
+
+PLUGIN_AUDIOSCROBBLER_BADAUTH
+	EN	Invalid Last.fm username or password.
+
+PLUGIN_AUDIOSCROBBLER_BADTIME
+	EN	Unable to handshake with Last.fm because your system clock is incorrect. Please update your clock and try again.
+
+PLUGIN_AUDIOSCROBBLER_VALID_LOGIN
+	EN	Successfully verified Last.fm username and password.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER
+	EN	Last.fm Audioscrobbler Player Settings
+
+SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DESC
+	EN	To enable Audioscrobbler for this player, select an account to use.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DISABLED
+	EN	Disabled, do not submit tracks played on this player.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_NP_DISABLED
+	EN	Warning: Report now playing is globally disabled.  To submit now playing information for this player, enable the Report Now Playing setting by going to Advanced -> Last.fm Audioscrobbler.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_SCROBBLE_DISABLED
+	EN	Warning: Submit all tracks is globally disabled.  To submit track information for this player, enable the Submit all tracks setting by going to Advanced -> Last.fm Audioscrobbler.

@@ -25,6 +25,19 @@ sub getFormatForURL { 'wma' }
 
 sub isAudioURL { 1 }
 
+# Source for AudioScrobbler
+sub audioScrobblerSource {
+	my $url = shift;
+
+	if ( $url =~ /\.rdr$/ ) {
+		# R = Non-personalised broadcast
+		return 'R';
+	}
+
+	# P = Chosen by the user
+	return 'P';
+}
+
 sub handleError {
     return Slim::Plugin::RhapsodyDirect::Plugin::handleError(@_);
 }

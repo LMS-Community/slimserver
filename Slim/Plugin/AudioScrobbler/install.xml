@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<extension>
+	<id>A6AE68BF-2C7F-437A-801B-90298DC62E73</id>
+	<name>PLUGIN_AUDIOSCROBBLER_MODULE_NAME</name>
+	<module>Slim::Plugin::AudioScrobbler::Plugin</module>
+	<version>1.0</version>
+	<description>PLUGIN_AUDIOSCROBBLER_MODULE_NAME</description>
+	<creator>Slim Devices/Logitech</creator>
+	<email>support@slimdevices.com</email>
+	<defaultState>enabled</defaultState>
+	<homepageURL>http://www.slimdevices.com/</homepageURL>
+	<type>2</type>
+	<targetApplication>
+		<id>SlimServer</id>
+		<minVersion>7.0a</minVersion>
+		<maxVersion>7.0+</maxVersion>
+	</targetApplication>
+</extension>

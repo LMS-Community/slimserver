@@ -417,6 +417,20 @@ sub onJump {
 	return $callback->();
 }
 
+# Allow mp3tunes tracks to be scrobbled
+sub audioScrobblerSource {
+	my ( $class, $url ) = @_;
+	
+	if ( $url =~ /mp3tunes\.com/ ) {
+		# Scrobble mp3tunes as 'chosen by user' content
+		return 'P';
+	}
+	 
+	# R (radio source) is not currently used as we don't
+	# support submitting radio tracks to Last.fm
+	return 'R';
+}
+
 sub getMetadataFor {
 	my ( $class, $client, $url, $forceCurrent ) = @_;
 	
