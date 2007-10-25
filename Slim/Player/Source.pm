@@ -149,91 +149,64 @@ sub songTime {
 
 	my $rate        = $client->rate();
 	my $songtime    = $client->songElapsedSeconds();
-	my $startStream = $client->songStartStreamTime();
+	my $song     	= playingSong($client);
+	my $startStream = $song->{startOffset};
+	my $duration	= $song->{duration};
 	
-	# verbose debugging
-	#$log->debug("rate: $rate -songtime: $songtime -startStream: $startStream");
+	if (defined($songtime)) {
+		$songtime = $startStream + ($songtime * $rate);
+		
+		# limit check
+		if ($songtime < 0) {
+			$songtime = 0;
+		} elsif ($duration && $songtime > $duration) {
+			$songtime = $duration;
+		}
+		
+		return $songtime;
+	}
 	
-	return $songtime+$startStream if $rate == 1 && defined($songtime);
+	#######
+	# All the remaining code is to deal with players which do not report songElapsedSeconds,
+	# specifically SliMP3s and SB1s; maybe also web clients?
 
-	# this used to check against == 1, however, we can't properly
-	# calculate duration for non-native formats (pcm, mp3) unless we treat
-	# the file as streaming. do this for all files right now.
-	if ($client->audioFilehandleIsSocket()) {
+	# This assumes that remote streaming is real-time - not always true but for the common
+	# cases when it is, this will be better than bitrate-based calculations, and we may not
+	# actually know the correct bitrate.
+	if ($client->audioFilehandleIsSocket() == 1) {
 
 		my $startTime = $client->remoteStreamStartTime();
 		my $endTime   = $client->pauseTime() || Time::HiRes::time();
 		
-		if ($startTime) {
-			return $endTime - $startTime;
-		} else {
-			return 0;
-		}
+		return ($startTime ? $endTime - $startTime : 0);
 	}
-
-	my $song     		= playingSong($client);
-	my $songLengthInBytes	= $song->{totalbytes};
-	my $duration	  	= $song->{duration};
-	my $byterate	  	= $duration ? ($songLengthInBytes / $duration) : 0;
-
-	my $bytesReceived 	= ($client->bytesReceived() || 0) - $client->bytesReceivedOffset();
-	my $fullness	  	= $client->bufferFullness() || 0;
-	my $realpos		= 0;
-	my $outputBufferSeconds = 0;
 
 	if (playingSongIndex($client) == streamingSongIndex($client)) {
-		$realpos = $bytesReceived - $fullness;
+		my $byterate	  	= ($song->{bitrate} || 0)/8 || ($duration ? ($song->{totalbytes} / $duration) : 0);
+		my $bytesReceived 	= ($client->bytesReceived() || 0) - $client->bytesReceivedOffset();
+		my $fullness	  	= $client->bufferFullness() || 0;
+		
+		$songtime = $byterate ? (($bytesReceived - $fullness) / $byterate * $rate + $startStream) : 0;
+		$log->debug("songtime=$songtime from byterate=$byterate, duration=$duration, bytesReceived=$bytesReceived, fullness=$fullness, rate=$rate, startStream=$startStream");
 
-		# XXX We use outputBufferFullness to compute the number of
-		# seconds of the current track left in the output
-		# buffer. However, we can only trust this value if we haven't
-		# yet started streaming the next track. This is bad, since the
-		# songtime we display will be pegged to the duration of the
-		# track from the time we start streaming the next song till we
-		# play out the current song. This can be fixed by adjusting
-		# the protocol to give us the remaining seconds for the
-		# currently playing track.
+	} elsif ($rate >= 1) {
+		# If we're moving forward and have started streaming the next
+		# track, the fullness metric can no longer be used to determine
+		# how far into the track we are. So say that we're done with it.
 
-		my $outputBufferFullness = $client->outputBufferFullness();
-		if (defined($outputBufferFullness)) {
-			# Default 44.1KHz output sample rate. This will be slightly
-			# off for anything that's 48Khz, but it's a guesstimate anyway.
-			$outputBufferSeconds = $outputBufferFullness /
-				(($song->{'samplerate'} || 44100) * 8) * $rate;
-		}
-	}
-	# If we're moving forward and have started streaming the next
-	# track, the fullness metric can no longer be used to determine
-	# how far into the track we are. So say that we're done with it.
-	elsif ($rate >= 1) {
-		$realpos = $songLengthInBytes;
-		$rate = 1;
-		$startStream = 0;
-	}
-
-	if ($realpos < 0) {
-
-		if ( $log->is_info ) {
-			$log->info($client->id, " Negative position calculated, we are still playing out the previous song.");
-			$log->info("Realpos $realpos calcuated from bytes received: " . 
-				$client->bytesReceived .  " minus buffer fullness: " . $client->bufferFullness);
-		}
-
-		$realpos = 0;
-	}
-
-	$songtime = $songLengthInBytes ? (($realpos / $songLengthInBytes * $duration * $rate) + $startStream - $outputBufferSeconds) : 0;
-
-	# The songtime should never be negative
-	if ($songtime < 0) {
+		$songtime = $duration || 0;
+	} else {
+		# we really don't know
 		$songtime = 0;
 	}
 
-	if ($songtime && $duration) {
-
-		0 && $log->info("[$songtime] = ($realpos(realpos) / $songLengthInBytes(size) * ",
-			"$duration(duration) * $rate(rate)) + $startStream(time offset of started stream)");
+	# limit check
+	if ($songtime < 0) {
+		$songtime = 0;
+	} elsif ($duration && $songtime > $duration) {
+		$songtime = $duration;
 	}
+	
 
 	return $songtime;
 }
@@ -1109,7 +1082,7 @@ sub gototime {
 	my $dataoffset = $song->{offset};
 
 	$client->songBytes($newoffset);
-	$client->songStartStreamTime($newtime);
+	$song->{startOffset} = $newtime;
 	$client->bytesReceivedOffset(0);
 	$client->trickSegmentRemaining(0);
 	resetFrameData($client);
@@ -1609,7 +1582,6 @@ sub resetSong {
 
 	# at the end of a song, reset the song time
 	$client->songBytes(0);
-	$client->songStartStreamTime(0);
 	$client->bytesReceivedOffset($client->bytesReceived());
 	$client->trickSegmentRemaining(0);
 }
@@ -1669,6 +1641,8 @@ sub openSong {
 	closeSong($client);
 
 	my $song     = streamingSong($client);
+	$song->{startOffset} = 0; # (logically) used to be in resetSong
+	
 	my $objOrUrl = Slim::Player::Playlist::song($client, streamingSongIndex($client)) || return undef;
 
 	# Bug: 3390 - reload the track if it's changed.

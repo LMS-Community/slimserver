@@ -80,7 +80,7 @@ sub new {
 	assert(!defined(getClient($id)));
 
 	# The following indexes are unused:
-	# 1, 2, 3, 11, 12, 13, 16, 23, 24, 25, 26, 27, 33, 34, 53
+	# 1, 2, 3, 11, 12, 13, 16, 21, 23, 24, 25, 26, 27, 33, 34, 53
 	# 64, 65, 66, 67, 68, 72, 111
 
 	$client->[0] = $id;
@@ -115,7 +115,7 @@ sub new {
 	$client->[18] = undef; # audioFilehandle
 	$client->[19] = 0; # audioFilehandleIsSocket
 	$client->[20] = []; # chunks
-	$client->[21] = 0; # songStartStreamTime
+#	$client->[21]
 	$client->[22] = 0; # remoteStreamStartTime
 
 #	$client->[23]
@@ -1154,11 +1154,6 @@ sub chunks {
 	my $i;
 	@_ ? ($i = shift) : return $r->[20];
 	@_ ? ($r->[20]->[$i] = shift) : $r->[20]->[$i];
-}
-
-sub songStartStreamTime {
-	my $r = shift;
-	@_ ? ($r->[21] = shift) : $r->[21];
 }
 
 sub remoteStreamStartTime {
