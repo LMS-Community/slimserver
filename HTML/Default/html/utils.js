@@ -416,8 +416,15 @@ function ajaxRequest(myUrl, params, action) {
 // templates should use the ajaxUpdate param to block headers and footers.
 function ajaxUpdate(url, params) {
 	var el = Ext.get('mainbody');
-	if (el)
+
+	if (el) {
+		var um = el.getUpdateManager();
+
+		if (um)
+			um.loadScripts = true;
+
 		el.load(url, params + '&ajaxUpdate=1&player=' + player);
+	}
 }
 
 // pass an array of div element ids to be hidden on the page
