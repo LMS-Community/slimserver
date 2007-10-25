@@ -475,14 +475,16 @@ sub checkSync {
 		# track.  This situation is detected if $client->songElapsedSeconds is not 0
 		if ( $client->songElapsedSeconds == 0 ) {
 			
-			my $threshold = $prefs->client($client)->get('syncBufferThreshold');
+			my $threshold = $prefs->client($client)->get('syncBufferThreshold') * 1024;
 		
-			# Threshold is 128 bytes for local tracks, but it needs to be about 20K for remote streams
+			# Threshold is usually 128 kbytes for local tracks, but it needs to be about 20K for remote streams
 			eval {
 				my $playlist = Slim::Player::Playlist::playList($client);
 				my $track = $playlist->[ Slim::Player::Source::streamingSongIndex($client) ];
 				if ( Slim::Music::Info::isRemoteURL( $track->url ) ) {
-					$threshold += 20480;
+					if ($threshold < 20480) {
+						$threshold = 20480;
+					}
 				}
 			};
 
@@ -503,7 +505,7 @@ sub checkSync {
 				}
 
 				my $allReady = 1;
-				my $playerStartDelay = 0;
+				my $playerStartDelay = 0;	# ms
 
 				for my $everyclient (@group) {
 
@@ -511,7 +513,7 @@ sub checkSync {
 						$allReady = 0;
 					}
 					else {
-						my $delay;
+						my $delay;	# ms
 						if (($delay = $prefs->client($everyclient)->get('startDelay')
 									+ $prefs->client($everyclient)->get('playDelay'))
 							 > $playerStartDelay )
@@ -525,13 +527,14 @@ sub checkSync {
 
 					$log->info("all clients ready to sync now. unpausing them.");
 					
-					my $startAt = Time::HiRes::time() + $playerStartDelay
-								+ ( $prefs->get('syncStartDelay') || 0.100 );
+					my $startAt = Time::HiRes::time() 
+						+ ($playerStartDelay + ( $prefs->get('syncStartDelay') || 100 )) / 1000;
 
 					for my $everyclient (@group) {
 						$everyclient->startAt( $startAt -
 							($prefs->client($everyclient)->get('startDelay')
-							+ $prefs->client($everyclient)->get('playDelay')));
+							+ $prefs->client($everyclient)->get('playDelay')) / 1000
+							);
 					}
 				}
 			}
@@ -601,7 +604,9 @@ sub checkSync {
 				return;
 			}
 			if ($playPoint->[0] > $recentThreshold) {
-				push(@playerPlayPoints, [$player, $playPoint->[1] + $prefs->client($player)->get('playDelay')]);
+				push(@playerPlayPoints, [$player,
+										$playPoint->[1] + $prefs->client($player)->get('playDelay')/1000]
+					);
 			}
 			else {
 				if ( $log->is_debug ) {
@@ -637,7 +642,7 @@ sub checkSync {
 			last unless $playerPlayPoints[$reference][0]->can('skipAhead');
 		}
 		my $referenceTime = $playerPlayPoints[$reference][1];
-		# my $referenceMinAdjust = $prefs->client( $playerPlayPoints[$reference][0] )->get('minSyncAdjust');
+		# my $referenceMinAdjust = $prefs->client($playerPlayPoints[$reference][0])->get('minSyncAdjust')/1000;
 
 		# tell each player that is out-of-sync with the reference to adjust
 		for ( my $i = 0; $i < @playerPlayPoints; $i++ ) {
@@ -646,7 +651,7 @@ sub checkSync {
 			my $delta = abs($playerPlayPoints[$i][1] - $referenceTime);
 			next if ($delta > MAX_DEVIATION_ADJUST
 				|| $delta < MIN_DEVIATION_ADJUST
-				|| $delta < $prefs->client($player)->get('minSyncAdjust')
+				|| $delta < $prefs->client($player)->get('minSyncAdjust')/1000
 				# || $delta < $referenceMinAdjust
 				);
 			if ($i < $reference) {

@@ -36,7 +36,7 @@ my $prefs = preferences('server');
 
 our $defaultPrefs = {
 	'replayGainMode'     => 0,
-	'minSyncAdjust'      => 0.030,
+	'minSyncAdjust'      => 30,	# ms
 };
 
 # Keep track of direct stream redirects

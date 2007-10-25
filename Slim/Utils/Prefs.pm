@@ -287,11 +287,11 @@ sub init {
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    1,                 }, 'itemsPerPage');
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    2,                 }, 'refreshRate' );
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>   25, 'high' =>   250 }, 'thumbSize'   );
-	$prefs->setValidate({ 'validator' => 'numlimit', 'low' =>    0,                 }, 'startDelay'  );
-	$prefs->setValidate({ 'validator' => 'numlimit', 'low' =>    0,                 }, 'playDelay'   );
-	$prefs->setValidate({ 'validator' => 'numlimit', 'low' =>    0, 'high' =>     1 }, 'packetLatency');
-	$prefs->setValidate({ 'validator' => 'numlimit', 'low' => 0.01, 'high' =>    10 }, 'minSyncAdjust');
-	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>  128,                 }, 'syncBufferThreshold');
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    0,                 }, 'startDelay'  );
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    0,                 }, 'playDelay'   );
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    0, 'high' =>  1000 }, 'packetLatency');
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>   10, 'high' =>  1000 }, 'minSyncAdjust');
+	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    1, 'high' =>   255 }, 'syncBufferThreshold');
 
 	# set on change functions
 	$prefs->setChange( \&Slim::Web::HTTP::adjustHTTPPort,                              'httpport'    );

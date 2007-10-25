@@ -64,14 +64,14 @@ our $defaultPrefs = {
 	'syncVolume'           => 0,
 	'treble'               => 50,
 	'volume'               => 50,
-	'syncBufferThreshold'  => 4000, # 1/4s @ 128kb/s
-	'bufferThreshold'      => 255,
+	'syncBufferThreshold'  => 4, 	# KB, 1/4s @ 128kb/s
+	'bufferThreshold'      => 255,	# KB
 	'powerOnResume'        => 'PauseOff-NoneOn',
 	'maintainSync'         => 1,
-	'minSyncAdjust'        => 0.030,
-	'packetLatency'        => 0.002,
-	'startDelay'           => 0,	
-	'playDelay'            => 0,	
+	'minSyncAdjust'        => 30,	# ms
+	'packetLatency'        => 2,	# ms
+	'startDelay'           => 0,	# ms
+	'playDelay'            => 0,	# ms
 };
 
 sub new {
@@ -709,7 +709,7 @@ sub mixerDisplay {
 
 # Intended to be overridden by sub-classes who know better
 sub packetLatency {
-	return $prefs->client(shift)->get('packetLatency');
+	return $prefs->client(shift)->get('packetLatency') / 1000;
 }
 
 use constant JIFFIES_OFFSET_TRACKING_LIST_SIZE => 10;

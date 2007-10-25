@@ -3418,10 +3418,10 @@ SETUP_SYNCSTARTDELAY
 	EN	Synchronized Players Startup Delay
 
 SETUP_SYNCSTARTDELAY_DESC
-	EN	When multiple players are synchronized, SqueezeCenter tells each player to start the track at the same time. It needs to make sure that each player has time to receive the start command before they all start together and so it sends the start command ahead of time and the players each wait until the right moment to start. If there is excessive network congestion, which can happen particularly when there are many players on the network and with wireless networks, then the default delay of 0.1 seconds (100ms) may not be sufficient. You can change the default here if necessary.
+	EN	When multiple players are synchronized, SqueezeCenter tells each player to start the track at the same time. It needs to make sure that each player has time to receive the start command before they all start together and so it sends the start command ahead of time and the players each wait until the right moment to start. If there is excessive network congestion, which can happen particularly when there are many players on the network and with wireless networks, then the default delay of 100ms may not be sufficient. You can change the default here if necessary.
 
 SETUP_SYNCSTARTDELAY_CHOOSE
-	EN	Synchronized startup delay (seconds):
+	EN	Synchronized startup delay (milliseconds):
 
 SETUP_STARTDELAY
 	EN	Player Start Delay
@@ -3430,7 +3430,7 @@ SETUP_STARTDELAY_DESC
 	EN	A player can take a noticeable time to start playing (before you begin to hear the audio) after it processes the start command from SqueezeCenter. This can be the case when using digital outputs (depending upon the connected equipment) or with software players on some platforms. In these cases, this delay can be set here so that SqueezeCenter knows how much in advance to start this player so that the audio from all the synchronized players starts at the same time. Note: this is in addition to any ongoing "Player Audio Delay" (below).
 
 SETUP_STARTDELAY_CHOOSE
-	EN	Player start delay (seconds):
+	EN	Player start delay (milliseconds):
 
 SETUP_MAINTAINSYNC
 	EN	Maintain Synchronization
@@ -3451,7 +3451,7 @@ SETUP_PLAYDELAY_DESC
 	EN	There can be a noticeable difference between how much of a track that the player reports it has played to SqueezeCentre and how much audio has been heard. This can be the case when using digital outputs (depending upon the connected equipment) or with software players on some platforms. In these cases, this delay can be set here so that SqueezeCenter can take it into account when adjusting synchronization.
 	
 SETUP_PLAYDELAY_CHOOSE
-	EN	Player audio delay (seconds):
+	EN	Player audio delay (milliseconds):
 
 SETUP_MINSYNCADJUST
 	EN	Minimum Synchronization Adjustment
@@ -3460,7 +3460,7 @@ SETUP_MINSYNCADJUST_DESC
 	EN	When SqueezeCentre detects that two synchronized players have got a little bit out of synchronization with each other, it makes a small adjustment, usually to the player that has got behind. You can configure the minimum size of such adjustments for this player. The larger this interval, the less frequent will be the adjustments but the more the players will be allowed to drift apart.
 
 SETUP_MINSYNCADJUST_CHOOSE
-	EN	Minimum synchronization adjustment (seconds):
+	EN	Minimum adjustment (milliseconds):
 
 SETUP_PACKETLATENCY
 	EN	Network Packet Latency
@@ -3469,7 +3469,7 @@ SETUP_PACKETLATENCY_DESC
 	EN	SqueezeCentre automatically measures the network latency between it and the player. This is important when maintaining synchronization. Occassionally these measurements can be too inconsistent to be useful, in which case you can specify a typical value here.
 
 SETUP_PACKETLATENCY_CHOOSE
-	EN	Network latency (seconds):
+	EN	Network latency (milliseconds):
 
 SETUP_NOUPNP
 	DE	UPnP-Client

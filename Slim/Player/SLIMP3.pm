@@ -23,7 +23,7 @@ my $prefs = preferences('server');
 our $SLIMP3Connected = 0;
 
 our $defaultPrefs = {
-	syncBufferThreshold => 15000,
+	syncBufferThreshold => 15,	# KB
 };
 
 sub new {
