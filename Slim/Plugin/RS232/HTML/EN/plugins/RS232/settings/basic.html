@@ -1,15 +1,13 @@
 [% PROCESS settings/header.html %]
 
-	<div class="settingSection">
-		<div class="groupHead">[% "PLUGIN_RS232_NAME" | string  %]</div>
+	[% WRAPPER setting title="PLUGIN_RS232_NAME" desc="" %]
 		<div class="groupDesc">[% "PLUGIN_RS232_NAME_DESC" | string %]</div>
-	</div>
+	[% END %]
 
-	<div class="settingSection">
-		<div class="prefHead">[% "SETUP_CLI_OVER_RS232" | string  %]</div>
+	[% WRAPPER setting title="SETUP_CLI_OVER_RS232" desc="" %]
 		<div class="prefDesc">[% "SETUP_CLI_OVER_RS232_ENABLE" | string %]</div>
 
 		<input type="checkbox" class="stdedit" name="clioverrs232enable" id="clioverrs232enable" value="1" [% IF prefs.clioverrs232enable == 1 %] checked [% END %] >
-	</div>
+	[% END %]
 
 [% PROCESS settings/footer.html %]

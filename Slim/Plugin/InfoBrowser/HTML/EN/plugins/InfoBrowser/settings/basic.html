@@ -1,18 +1,24 @@
 [% PROCESS settings/header.html %]
 
-	<div class="settingSection">
+	[% WRAPPER settingSection %]
+		[% WRAPPER settingGroup title="PLUGIN_INFOBROWSER" desc="" %]
+			<div class="prefDesc">[% "SETUP_PLUGIN_INFOBROWSER_DESC" | string %]</div>
+		[% END %]
 
-		<div class="prefHead">[% "PLUGIN_INFOBROWSER" | string  %]</div>
-		<div class="prefDesc">[% "SETUP_PLUGIN_INFOBROWSER_DESC" | string %]</div>
+		[% WRAPPER settingGroup title="" desc="" %]
+			<a href="[% webroot %]plugins/Favorites/index.html?new=[% opmlfile %]&autosave">[% "SETUP_PLUGIN_INFOBROWSER_EDIT" | string %]</a>
+			<div class="prefDesc">[% "SETUP_PLUGIN_INFOBROWSER_EDIT_DESC" | string %]</div>
+		[% END %]
 
-		<a href="[% webroot %]plugins/Favorites/index.html?new=[% opmlfile %]&autosave">[% "SETUP_PLUGIN_INFOBROWSER_EDIT" | string %]</a>
-		<div class="prefDesc">[% "SETUP_PLUGIN_INFOBROWSER_EDIT_DESC" | string %]</div>
+		[% WRAPPER settingGroup title="" desc="" %]
+			<a href="[% webroot %]plugins/InfoBrowser/settings/basic.html?reset=1">[% "SETUP_PLUGIN_INFOBROWSER_RESET" | string %]</a>
+			<div class="prefDesc">[% "SETUP_PLUGIN_INFOBROWSER_EDIT_DESC" | string %]</div>
+		[% END %]
 
-		<a href="[% webroot %]plugins/InfoBrowser/settings/basic.html?reset=1">[% "SETUP_PLUGIN_INFOBROWSER_RESET" | string %]</a>
-		<div class="prefDesc">[% "SETUP_PLUGIN_INFOBROWSER_RESET_DESC" | string %]</div>
+		[% WRAPPER settingGroup title="" desc="" %]
+			<div class="prefDesc">[% "SETUP_PLUGIN_INFOBROWSER_ADDONS" | string %]</div>
+		[% END %]
 
-		<div class="prefDesc">[% "SETUP_PLUGIN_INFOBROWSER_ADDONS" | string %]</div>
-
-	</div>
+	[% END %]
 
 [% PROCESS settings/footer.html %]

@@ -1,11 +1,8 @@
 [% PROCESS settings/header.html %]
 
-	<div class="settingSection">
-		<div class="settingGroup">
-			<div class="prefHead">[% "PLUGIN_RSSNEWS" | string  %]</div>
-			<div class="prefDesc">[% "SETUP_GROUP_PLUGIN_RSSNEWS_DESC" | string %]</div>
-		</div>
-	</div>
+	[% WRAPPER setting title="PLUGIN_RSSNEWS" desc="" %]
+		<div class="prefDesc">[% "SETUP_GROUP_PLUGIN_RSSNEWS_DESC" | string %]</div>
+	[% END %]
 
 	[% WRAPPER setting title="SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED" desc="SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC" %]
 		<input type="text" class="stdedit" name="items_per_feed" value="[% prefs.items_per_feed %]" size="5" />

@@ -1,11 +1,8 @@
 [% PROCESS settings/header.html %]
 
-	<div class="settingSection">
-		<div class="settingGroup">
-			<div class="prefHead">[% "PLUGIN_CLI" | string %]</div>
-			<div class="prefDesc">[% "PLUGIN_CLI_DESC" | string %]</div>
-		</div>
-	</div>
+	[% WRAPPER setting title="PLUGIN_CLI" desc="" %]
+		<div class="prefDesc">[% "PLUGIN_CLI_DESC" | string %]</div>
+	[% END %]
 
 	[% WRAPPER setting title="SETUP_CLIPORT" desc="SETUP_CLIPORT_DESC" %]
 		<input type="text" class="stdedit" name="cliport" id="cliport" value="[% prefs.cliport %]" size="5">

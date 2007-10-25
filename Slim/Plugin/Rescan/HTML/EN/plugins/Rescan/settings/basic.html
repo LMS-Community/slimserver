@@ -1,11 +1,8 @@
 [% PROCESS settings/header.html %]
 
-	<div class="settingSection">
-		<div class="settingGroup">
-			<div class="prefHead">[% "PLUGIN_RESCAN_MUSIC_LIBRARY" | string  %]</div>
-			<div class="prefDesc">[% "PLUGIN_RESCAN_TIMER_DESC" | string %]</div>
-		</div>
-	</div>
+	[% WRAPPER setting title="PLUGIN_RESCAN_MUSIC_LIBRARY" desc="" %]
+		<div class="prefDesc">[% "PLUGIN_RESCAN_TIMER_DESC" | string %]</div>
+	[% END %]
 
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="PLUGIN_RESCAN_TIMER_NAME" desc="" %]
