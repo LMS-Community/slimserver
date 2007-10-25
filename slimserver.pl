@@ -527,7 +527,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
           [--priority <priority>]
           [--prefsdir <prefspath> [--pidfile <pidfilepath>]]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
-          [--checkstrings] [--log]
+          [--checkstrings] [--logging]
 
     --help           => Show this usage information.
     --audiodir       => The path to a directory of your MP3 files.
@@ -619,7 +619,7 @@ sub initOptions {
 		exit(1);
 	}
 
-	# make --log and --debug synonyms, but prefer --log
+	# make --logging and --debug synonyms, but prefer --logging
 	$debug = $logging if ($logging);
 
 	if ($help) {
