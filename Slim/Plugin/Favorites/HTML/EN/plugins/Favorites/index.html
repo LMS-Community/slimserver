@@ -133,10 +133,6 @@
 	<script TYPE="text/javascript" src="[% webroot %]plugins/Favorites/html/favorites.js?r=[% revision %]"></script>
 [% END %][% END %]
 
-[% IF useExtJS%][%- extJsScripts = BLOCK -%]
-	<script type="text/javascript" src="[% webroot %]plugins/Favorites/html/favorites2.js?r=[% revision %]"></script>
-[%- END -%][% END %]
-	
 [% IF NOT ajaxUpdate %][% PROCESS pageheader.html %]<div id="mainbody">[% END %]
 
 [%- IF errormsg %]<p>[% errormsg %]</p>[% END -%]
