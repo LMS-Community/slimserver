@@ -365,7 +365,13 @@ sub enablePlugins {
 				if ($file =~ /\.pm$/) {
 
 					$loadModule = 1;
+					unshift @INC, catdir($baseDir, 'lib');
 
+					last;
+				}
+
+				if ($file =~ /.*Plugins$/ && -d $file) {
+					$loadModule = 1;
 					unshift @INC, catdir($baseDir, 'lib');
 
 					last;
