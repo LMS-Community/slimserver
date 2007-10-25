@@ -1,9 +1,6 @@
 [% PROCESS settings/header.html %]
 
-	<div class="settingSection">
-		<div class="prefHead">[% "SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS" | string | upper %]</div>
-		<div class="prefDesc">[% "SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DESC" | string %]</div>
-
+	[% WRAPPER setting title="SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS" desc="SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DESC" %]
 		[% FOR account IN prefs.accounts %]
 			<input type="checkbox" name="delete" value="[% account.username %]" /> [% account.username %]<br /><br />
 		[% END %]
@@ -11,12 +8,9 @@
 		<input type="text" class="stdedit" name="username" id="username" value="" size="20">
 		&nbsp;&nbsp;
 		<input type="password" class="stdedit" name="password" id="password" value="" size="20">
-	</div>
+	[% END %]
 	
-	<div class="settingSection">
-		<div class="prefHead">[% "SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_NP" | string %]</div>
-		<div class="prefDesc">[% "SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_NP_DESC" | string %]</div>
-		
+	[% WRAPPER setting title="SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_NP" desc="SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_NP_DESC" %]
 		<select class="stdedit" name="enable_now_playing" id="enable_now_playing">
 			<option [% IF prefs.enable_now_playing == 1 %]selected="selected" [% END %]value="1">
 				[% 'SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_NP_YES' | string %]
@@ -25,12 +19,9 @@
 				[% 'SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_NP_NO' | string %]
 			</option>
 		</select>
-	</div>
-	
-	<div class="settingSection">
-		<div class="prefHead">[% "SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING" | string %]</div>
-		<div class="prefDesc">[% "SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING_DESC" | string %]</div>
-	
+	[% END %]
+
+	[% WRAPPER setting title="SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING" desc="SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING_DESC" %]
 		<select class="stdedit" name="enable_scrobbling" id="enable_scrobbling">
 			<option [% IF prefs.enable_scrobbling == 1 %]selected="selected" [% END %]value="1">
 				[% 'SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_YES' | string %]
@@ -39,6 +30,6 @@
 				[% 'SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLE_NO' | string %]
 			</option>
 		</select>
-	</div>
+	[% END %]
 
 [% PROCESS settings/footer.html %]

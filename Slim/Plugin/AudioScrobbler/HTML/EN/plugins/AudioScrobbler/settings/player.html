@@ -1,9 +1,6 @@
 [% PROCESS settings/header.html %]
-	
-	<div class="settingSection">
-		<div class="groupHead">[% "SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER" | string | upper %]</div>
-		<div class="groupDesc">[% "SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DESC" | string %]</div>
-		
+
+	[% WRAPPER setting title="SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER" desc="SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DESC" %]
 		<select name="account">
 			<option value="0">[% "SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DISABLED" | string %]</option>
 		[% FOR global_account IN prefs.accounts %]
@@ -12,15 +9,14 @@
 		</select>
 		
 		[% IF !prefs.enable_now_playing %]
-		<br /><br />
-		[% "SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_NP_DISABLED" | string %]
+			<br /><br />
+			[% "SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_NP_DISABLED" | string %]
 		[% END %]
 		
 		[% IF !prefs.enable_scrobbling %]
-		<br /><br />
-		[% "SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_SCROBBLE_DISABLED" | string %]
+			<br /><br />
+			[% "SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_SCROBBLE_DISABLED" | string %]
 		[% END %]
-	
-	</div>
+	[% END %]
 	
 [% PROCESS settings/footer.html %]
