@@ -257,7 +257,7 @@ var FilesystemBrowser = function(){
 					modal: true,
 					closable: false,
 					collapsible: false,
-					width: 500,
+					width: 350,
 					height: 400,
 					resizeHandles: 'se'
 				});
