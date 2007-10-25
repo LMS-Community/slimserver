@@ -39,6 +39,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 # additional top level menus registered by plugins
+my %itemsToDelete = ();
 my @extrasPluginMenu   = ();
 my @settingsPluginMenu = ();
 my @myMusicPluginMenu  = ();
@@ -109,233 +110,27 @@ sub menuQuery {
 	my $quantity      = $request->getParam('_quantity');
 
 	my $prefs         = preferences("server");
-	my ($settingsMenu, $settingsCount)  = playerSettingsMenu($request, $client, $index, $quantity, $prefs);
-	# cobble together player settings menu and any settings plugins
-	my @settingsMenu = ( @$settingsMenu, @settingsPluginMenu);
+	my $settingsMenu  = playerSettingsMenu($request, $client, $index, $quantity, $prefs);
+	my $myMusicMenu   = myMusicMenu();
 
+	# respin @settingsMenu and @myMusicPlugin menu with delete options
+	$settingsMenu  = _removeItemsForDeletion('settings', @$settingsMenu);
+	$myMusicMenu   = _removeItemsForDeletion('mymusic' , @$myMusicMenu);
+	
+	# cobble together default menus plus plugin menus
+	my @settingsMenu = ( @$settingsMenu, @settingsPluginMenu);
+	my @myMusicMenu  = ( @$myMusicMenu, @myMusicPluginMenu);
+	
 	# as a convention, make weights => 10 and <= 100; Jive items that want to be below all SS items
 	# then just need to have a weight > 100, above SS items < 10
 	my @menu = (
 		{
 			text      => Slim::Utils::Strings::string('MY_MUSIC'),
-			count     => 8 + scalar(@myMusicPluginMenu),
+			count     => scalar(@myMusicMenu),
 			offset    => 0,
 			weight    => 10,
 			window    => { titleStyle => 'mymusic', },
-			item_loop => [
-			{
-				text    => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
-				weight  => 10,
-				actions => {
-					go => {
-						cmd    => ['albums'],
-						params => {
-							menu     => 'track',
-						},
-					},
-				},
-				window => {
-					menuStyle => 'album',
-					titleStyle => 'mymusic',
-				},
-			},
-			{
-				text    => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
-				weight  => 20,
-				actions => {
-					go => {
-						cmd    => ['artists'],
-						params => {
-							menu => 'album',
-						},
-					},
-				},
-				window => {
-					titleStyle => 'mymusic',
-				},
-			},
-			{
-				text    => Slim::Utils::Strings::string('BROWSE_BY_GENRE'),
-				weight  => 30,
-				actions => {
-					go => {
-						cmd    => ['genres'],
-						params => {
-							menu => 'artist',
-						},
-					},
-				},
-				window => {
-					titleStyle => 'mymusic',
-				},
-			},
-			{
-				text    => Slim::Utils::Strings::string('BROWSE_BY_YEAR'),
-				weight  => 40,
-				actions => {
-					go => {
-						cmd    => ['years'],
-						params => {
-							menu => 'album',
-						},
-					},
-				},
-				window => {
-					titleStyle => 'mymusic',
-				},
-			},
-			{
-				text    => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'),
-				weight  => 50,
-				actions => {
-					go => {
-						cmd    => ['albums'],
-						params => {
-							menu => 'track',
-							sort => 'new',
-						},
-					},
-				},
-				window => {
-					menuStyle => 'album',
-					titleStyle => 'mymusic',
-				},
-			},
-			{
-				text    => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
-				weight  => 70,
-				actions => {
-					go => {
-						cmd    => ['musicfolder'],
-						params => {
-							menu => 'musicfolder',
-						},
-					},
-				},
-				window => {
-					titleStyle => 'mymusic',
-				},
-			},
-			{
-				text    => Slim::Utils::Strings::string('SAVED_PLAYLISTS'),
-				weight  => 80,
-				actions => {
-					go => {
-						cmd    => ['playlists'],
-						params => {
-							menu => 'track',
-						},
-					},
-				},
-				window => {
-					titleStyle => 'mymusic',
-				},
-			},
-			{
-				text      => Slim::Utils::Strings::string('SEARCH'),
-				count     => 4,
-				offset    => 0,
-				weight    => 90,
-				window    => { titleStyle => 'search', },
-				item_loop => [
-					{
-						text  => Slim::Utils::Strings::string('ARTISTS'),
-						input => {
-							len  => 1, #bug 5318
-							help => {
-								text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
-							},
-						},
-						actions => {
-							go => {
-								cmd => ['artists'],
-								params => {
-									menu     => 'album',
-									menu_all => '1',
-									search   => '__TAGGEDINPUT__',
-									_searchType => 'artists',
-								},
-							},
-						},
-						window => {
-							text => Slim::Utils::Strings::string('SEARCHFOR_ARTISTS'),
-							titleStyle => 'search',
-						},
-					},
-					{
-						text  => Slim::Utils::Strings::string('ALBUMS'),
-						input => {
-							len => 1, #bug 5318
-							help => {
-								text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
-							},
-						},
-						actions => {
-							go => {
-								cmd => ['albums'],
-								params => {
-									menu     => 'track',
-									search   => '__TAGGEDINPUT__',
-									_searchType => 'albums',
-								},
-							},
-						},
-						window => {
-							text => Slim::Utils::Strings::string('SEARCHFOR_ALBUMS'),
-							menuStyle => 'album',
-							titleStyle => 'search',
-						},
-					},
-					{
-						text  => Slim::Utils::Strings::string('SONGS'),
-						input => {
-							len => 1, #bug 5318
-							help => {
-								text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
-							},
-						},
-						actions => {
-							go => {
-								cmd => ['tracks'],
-								params => {
-									menu     => 'track',
-									menu_all => '1',
-									search   => '__TAGGEDINPUT__',
-									_searchType => 'tracks',
-								},
-							},
-						},
-						window => {
-							'text' => Slim::Utils::Strings::string('SEARCHFOR_SONGS'),
-							titleStyle => 'search',
-						},
-					},
-					{
-						text  => Slim::Utils::Strings::string('PLAYLISTS'),
-						input => {
-							len => 1, #bug 5318
-							help => {
-								text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
-							},
-						},
-						actions => {
-							go => {
-								cmd => ['playlists'],
-								params => {
-									menu     => 'track',
-									search   => '__TAGGEDINPUT__',
-								},
-							},
-						},
-						window => {
-							text => Slim::Utils::Strings::string('SEARCHFOR_PLAYLISTS'),
-							titleStyle => 'search',
-						},
-					},
-				],
-			},
-			@myMusicPluginMenu,
-			],
+			item_loop => \@myMusicMenu,
 		},
 		{
 			text    => Slim::Utils::Strings::string('RADIO'),
@@ -353,7 +148,6 @@ sub menuQuery {
 					titleStyle => 'internetradio',
 			},
 		},
-
 		{
 			text    => Slim::Utils::Strings::string('MUSIC_ON_DEMAND'),
 			weight  => 30,
@@ -398,7 +192,7 @@ sub menuQuery {
 		{
 			text    => Slim::Utils::Strings::string('SETTINGS'),
 			weight  => 50,
-			count     => $settingsCount + scalar(@settingsPluginMenu),
+			count     => scalar(@settingsMenu),
 			offset    => 0,
 			item_loop => \@settingsMenu, 
 			window        => {
@@ -412,9 +206,9 @@ sub menuQuery {
 		push @menu, powerHash($client);
 	}
 
-
-	my $numitems = scalar(@menu);
-
+	# remove top level main menu items if specified by a plugin
+	my $menuForExport = _removeItemsForDeletion('main', @menu);
+	my $numitems = scalar(@$menuForExport);
 	$request->addResult("count", $numitems);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $numitems);
@@ -424,7 +218,7 @@ sub menuQuery {
 		my $cnt = 0;
 		$request->addResult('offset', $start);
 
-		for my $eachmenu (@menu[$start..$end]) {			
+		for my $eachmenu (@$menuForExport[$start..$end]) {			
 			$request->setResultLoopHash('item_loop', $cnt, $eachmenu);
 			$cnt++;
 		}
@@ -447,6 +241,34 @@ sub registerPluginMenu {
 			push @settingsPluginMenu, $menuHash;
 		}
 	}
+}
+
+# allow a plugin to delete a main menu from the Jive menu based on the text of the menu item
+sub deleteMenuItem {
+	my $menuText = shift;
+	my $whichMenu = shift || 'main';
+	return unless $menuText;
+	$log->warn($menuText . " in " . $whichMenu . " slated for deletion");
+	$itemsToDelete{$whichMenu}{$menuText}++;
+}
+
+sub _removeItemsForDeletion {
+	my $whichMenu = shift;
+	my @menu = @_;
+	my @purgedMenu = ();
+	for my $i (0..$#menu) {
+		my $textString = defined($menu[$i]->{text}) ? $menu[$i]->{text} : 'skip';
+		last unless (defined($menu[$i]));
+		if ($itemsToDelete{$whichMenu}{$textString}) {
+			$log->warn("REMOVING " . $textString . " FROM " . $whichMenu);
+			# only delete it once, giving the opportunity for a
+			# custom menu with the same string key to be registered via a plugin
+			$itemsToDelete{$whichMenu}{$textString} = 0;
+		} else {
+			push @purgedMenu, $menu[$i];
+		}
+	}
+	return \@purgedMenu;
 }
 
 sub alarmSettingsQuery {
@@ -759,7 +581,7 @@ sub playerSettingsMenu {
 			,
 	};
 
-	return (\@menu, scalar(@menu));
+	return \@menu;
 }
 
 sub howManyPlayersToSyncWith {
@@ -1230,6 +1052,229 @@ sub replayGainHash {
 		},
 	);
 	return \%return;
+}
+
+sub myMusicMenu {
+	my $searchMenu = searchMenu();
+	my @return = (
+			{
+				text    => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
+				weight  => 10,
+				actions => {
+					go => {
+						cmd    => ['albums'],
+						params => {
+							menu     => 'track',
+						},
+					},
+				},
+				window => {
+					menuStyle => 'album',
+					titleStyle => 'mymusic',
+				},
+			},
+			{
+				text    => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
+				weight  => 20,
+				actions => {
+					go => {
+						cmd    => ['artists'],
+						params => {
+							menu => 'album',
+						},
+					},
+				},
+				window => {
+					titleStyle => 'mymusic',
+				},
+			},
+			{
+				text    => Slim::Utils::Strings::string('BROWSE_BY_GENRE'),
+				weight  => 30,
+				actions => {
+					go => {
+						cmd    => ['genres'],
+						params => {
+							menu => 'artist',
+						},
+					},
+				},
+				window => {
+					titleStyle => 'mymusic',
+				},
+			},
+			{
+				text    => Slim::Utils::Strings::string('BROWSE_BY_YEAR'),
+				weight  => 40,
+				actions => {
+					go => {
+						cmd    => ['years'],
+						params => {
+							menu => 'album',
+						},
+					},
+				},
+				window => {
+					titleStyle => 'mymusic',
+				},
+			},
+			{
+				text    => Slim::Utils::Strings::string('BROWSE_NEW_MUSIC'),
+				weight  => 50,
+				actions => {
+					go => {
+						cmd    => ['albums'],
+						params => {
+							menu => 'track',
+							sort => 'new',
+						},
+					},
+				},
+				window => {
+					menuStyle => 'album',
+					titleStyle => 'mymusic',
+				},
+			},
+			{
+				text    => Slim::Utils::Strings::string('BROWSE_MUSIC_FOLDER'),
+				weight  => 70,
+				actions => {
+					go => {
+						cmd    => ['musicfolder'],
+						params => {
+							menu => 'musicfolder',
+						},
+					},
+				},
+				window => {
+					titleStyle => 'mymusic',
+				},
+			},
+			{
+				text    => Slim::Utils::Strings::string('SAVED_PLAYLISTS'),
+				weight  => 80,
+				actions => {
+					go => {
+						cmd    => ['playlists'],
+						params => {
+							menu => 'track',
+						},
+					},
+				},
+				window => {
+					titleStyle => 'mymusic',
+				},
+			},
+			{
+				text      => Slim::Utils::Strings::string('SEARCH'),
+				count     => scalar(@$searchMenu),
+				offset    => 0,
+				weight    => 90,
+				window    => { titleStyle => 'search', },
+				item_loop => @$searchMenu,
+			},
+		);
+	return \@return;
+}
+
+sub searchMenu {
+	my @return = (
+	{
+		text  => Slim::Utils::Strings::string('ARTISTS'),
+		input => {
+			len  => 1, #bug 5318
+			help => {
+				text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+			},
+		},
+		actions => {
+			go => {
+				cmd => ['artists'],
+				params => {
+					menu     => 'album',
+					menu_all => '1',
+					search   => '__TAGGEDINPUT__',
+					_searchType => 'artists',
+				},
+			},
+		},
+		window => {
+			text => Slim::Utils::Strings::string('SEARCHFOR_ARTISTS'),
+			titleStyle => 'search',
+		},
+	},
+	{
+		text  => Slim::Utils::Strings::string('ALBUMS'),
+		input => {
+			len => 1, #bug 5318
+			help => {
+				text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+			},
+		},
+		actions => {
+			go => {
+				cmd => ['albums'],
+				params => {
+					menu     => 'track',
+					search   => '__TAGGEDINPUT__',
+					_searchType => 'albums',
+				},
+			},
+		},
+		window => {
+			text => Slim::Utils::Strings::string('SEARCHFOR_ALBUMS'),
+			menuStyle => 'album',
+			titleStyle => 'search',
+		},
+	},
+	{
+		text  => Slim::Utils::Strings::string('SONGS'),
+		input => {
+			len => 1, #bug 5318
+			help => {
+				text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+			},
+		},
+		actions => {
+			go => {
+				cmd => ['tracks'],
+				params => {
+					menu     => 'track',
+					menu_all => '1',
+					search   => '__TAGGEDINPUT__',
+					_searchType => 'tracks',
+				},
+			},
+		},
+		window => {
+			'text' => Slim::Utils::Strings::string('SEARCHFOR_SONGS'),
+			titleStyle => 'search',
+		},
+	},
+	{
+		text  => Slim::Utils::Strings::string('PLAYLISTS'),
+		input => {
+			len => 1, #bug 5318
+			help => {
+				text => Slim::Utils::Strings::string('JIVE_SEARCHFOR_HELP')
+			},
+		},
+		actions => {
+			go => {
+				cmd => ['playlists'],
+				params => {
+					menu     => 'track',
+					search   => '__TAGGEDINPUT__',
+				},
+			},
+		},
+		window => {
+			text => Slim::Utils::Strings::string('SEARCHFOR_PLAYLISTS'),
+			titleStyle => 'search',
+		},
+	},
+	);
+	return \@return;
 }
 
 # return all applets included with plugins
