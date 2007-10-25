@@ -354,10 +354,21 @@ var Utils = function(){
 
 			return (rExp.exec(url) ? url.replace(rExp, '=' + id) : url + '&player=' + id);
 		}
+
 	};
 }();
 Ext.EventManager.onDocumentReady(Utils.init, Utils, true);
 
+
+// some prototype JS compatibility classes
+var Element = function(){
+	return {
+		remove: function(el) {
+			if (el = Ext.get(el))
+				el.remove();
+		}
+	}
+}();
 
 // some legacy scripts
 
@@ -409,3 +420,20 @@ function ajaxUpdate(url, params) {
 		el.load(url, params + '&ajaxUpdate=1&player=' + player);
 }
 
+// pass an array of div element ids to be hidden on the page
+function hideElements(elements) {
+	showElements(elements, 'none');
+}
+
+// pass an array of div element ids to be shown on the page
+function showElements(elements, style) {
+	var el;
+
+	if (!style)
+		style = 'block';
+
+	for (var i = 0; i < elements.length; i++) {
+		if (el = Ext.get(elements[i]))
+			el.setStyle('display', style);
+	}
+}
