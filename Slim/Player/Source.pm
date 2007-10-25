@@ -931,7 +931,7 @@ sub nextChunk {
 						if (length($$buf) > 3_500_000 ||
 							defined($master->frameData) && @{$master->frameData} > 50_000)
 						{
-							log->warn('Discarding saved stream & frame data used for synchronization as appear to be collecting it but not using it');
+							$log->warn('Discarding saved stream & frame data used for synchronization as appear to be collecting it but not using it');
 							resetFrameData($master);
 						}
 					} elsif ($master->streamformat() eq 'mp3' && $master->streamBytes() <= $len) {
