@@ -39,10 +39,11 @@ my $log = Slim::Utils::Log->addLogCategory({
 });
 
 # additional top level menus registered by plugins
-my %itemsToDelete = ();
+my %itemsToDelete      = ();
 my @extrasPluginMenu   = ();
 my @settingsPluginMenu = ();
 my @myMusicPluginMenu  = ();
+my @searchPluginMenu   = ();
 
 =head1 METHODS
 
@@ -233,12 +234,15 @@ sub registerPluginMenu {
 	my $whichMenu = shift || 'extras';
 
 	if (ref $menuHash eq 'HASH' && exists $menuHash->{text}) {
+		$log->info("Registering menu $menuHash->{text} to $whichMenu");
 		if ($whichMenu eq 'extras') {
 			push @extrasPluginMenu, $menuHash;
 		} elsif ($whichMenu eq 'mymusic') {
 			push @myMusicPluginMenu, $menuHash;
 		} elsif ($whichMenu eq 'settings') {
 			push @settingsPluginMenu, $menuHash;
+		} elsif ($whichMenu eq 'search') {
+			push @searchPluginMenu, $menuHash;
 		}
 	}
 }
@@ -1171,14 +1175,14 @@ sub myMusicMenu {
 				offset    => 0,
 				weight    => 90,
 				window    => { titleStyle => 'search', },
-				item_loop => @$searchMenu,
+				item_loop => $searchMenu,
 			},
 		);
 	return \@return;
 }
 
 sub searchMenu {
-	my @return = (
+	my @searchMenu = (
 	{
 		text  => Slim::Utils::Strings::string('ARTISTS'),
 		input => {
@@ -1274,7 +1278,14 @@ sub searchMenu {
 		},
 	},
 	);
-	return \@return;
+
+	# remove any items slated for deletion by a plugin
+	my $return  = _removeItemsForDeletion('search', @searchMenu);
+	# add any new items from plugins
+	@searchMenu = (@$return, @searchPluginMenu);
+
+	return \@searchMenu;
+
 }
 
 # return all applets included with plugins
