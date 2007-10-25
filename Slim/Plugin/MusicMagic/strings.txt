@@ -433,7 +433,7 @@ MUSICMAGIC_MOODS
 
 DEBUG_PLUGIN_MUSICMAGIC
 	DE	MusicIP Mix & Export
-	EN	MusicIP Mix & Export Debugging
+	EN	MusicIP Mix & Export Logging
 
 MUSICMAGIC_PROGRESS
 	DE	MusicIP Import

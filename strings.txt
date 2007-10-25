@@ -9905,8 +9905,8 @@ DEBUG_NETWORK_COMETD
 	EN	Cometd protocol logging
 
 SETUP_GROUP_DEBUG_DESC
-	DE	SqueezeCenter enthält eine Reihe von Debugging-Einstellungen, mit denen Sie umfangreiche Angaben über den Betrieb des SqueezeCenters aufzeichnen können. Aktivieren Sie die Punkte, die protokolliert werden sollen, und klicken Sie auf 'Ändern', um das Protokollieren der entsprechenden Information zu aktivieren. <a href="/log.txt" target="log">Hier können Sie die aktuellen Protokolleinträge anzeigen</a>.
-	EN	SqueezeCenter has a number of debugging settings that can be used to record detailed information about SqueezeCenter & scanner operation. Each debugging category has a severity for logging. With "Debug" being the most verbose, and "Off" being the least.
+	DE	SqueezeCenter enthält eine Reihe von Logging-Einstellungen, mit denen Sie umfangreiche Angaben über den Betrieb des SqueezeCenters aufzeichnen können. Aktivieren Sie die Punkte, die protokolliert werden sollen, und klicken Sie auf 'Ändern', um das Protokollieren der entsprechenden Information zu aktivieren. <a href="/log.txt" target="log">Hier können Sie die aktuellen Protokolleinträge anzeigen</a>.
+	EN	SqueezeCenter has a number of logging settings that can be used to record detailed information about SqueezeCenter & scanner operation. Each logging category has a severity for logging. With "Debug" being the most verbose, and "Off" being the least.
 	ES	SqueezeCenter tiene diversos parámetros de depuración que se pueden usar para registrar información detallada del funcionamiento del servidor. Marque los elementos que desea que se registren para mostrarlos y haga clic en Cambiar para iniciar el registro de esa información. Las entradas de registro más recientes se pueden ver <a href="/log.txt" target="log">aquí</a>.
 	FR	Le SqueezeCenter est doté d'un certain nombre de réglages de débogage pouvant enregistrer des informations détaillées sur le fonctionnement du serveur. Sélectionnez les éléments à enregistrer et cliquez sur "Modifier" pour commencer l'enregistrement des informations. Vous pouvez consulter les entrées les plus récentes <a href="/log.txt" target="log">ici</a>.
 	HE	SqueezeCenter כולל מספר הגדרות של איתור באגים שניתן להשתמש בהן לתיעוד מידע מפורט אודות הפעלת השרת. סמן את הפריטים שברצונך לתעד ביומן לצורך הצגה ולחץ על 'שנה' כדי להתחיל לתעד את המידע ביומן. <a href="/log.txt" target="log">כאן</a> באפשרותך להציג את הרשומות האחרונות שתועדו ביומן.
@@ -9914,20 +9914,8 @@ SETUP_GROUP_DEBUG_DESC
 	NL	SqueezeCenter heeft een aantal instellingen voor foutopsporing waarmee gedetailleerde informatie over de serverwerking verzameld kan worden. Selecteer de items die je in het logboek wilt zien, en klik op 'Veranderen' om het loggen te starten. Hier kun je de recentste logboekvermeldingen <a href="/log.txt" target="log">bekijken</a>.
 
 DEBUGGING_SETTINGS
-	CS	Krokování
-	DA	Fejlsøgning
-	DE	Fehlerbeseitigung
-	EN	Debugging
-	ES	Depuración
-	FR	Débogage
-	HE	איתור באגים
-	IT	Debug
-	JA	デバッグ
-	NL	Fouten opsporen
-	NO	Feilsøking
-	PT	Depuramento
-	SV	Felsökning
-	ZH_CN	调试
+	DE	Log-Datei
+	EN	Logging
 
 CHANGE
 	CS	Změnit
@@ -13418,7 +13406,7 @@ DEBUG_PREFS
 
 DEBUG_SERVER_SCHEDULER
 	DE	Interner Scheduler
-	EN	Internal Scheduler Debugging
+	EN	Internal Scheduler Logging
 
 DEBUG_SERVER
 	DE	Allgemeine Server Informationen
@@ -13426,7 +13414,7 @@ DEBUG_SERVER
 
 DEBUG_SERVER_SELECT
 	DE	Interner Select Loop (Fortgeschritten)
-	EN	Internal Select Loop Debugging (Advanced)
+	EN	Internal Select Loop Logging (Advanced)
 
 DEBUG_SERVER_MEMORY
 	DE	Speicherbelegung (Fortgeschritten)
@@ -13441,18 +13429,18 @@ DEBUG_NETWORK_MDNS
 
 DEBUG_NETWORK_HTTP
 	DE	Interner HTTP Server
-	EN	Internal HTTP Server Debugging
+	EN	Internal HTTP Server Logging
 
 DEBUG_NETWORK_ASYNCHTTP
 	DE	Asynchrone HTTP Request Informationen
 	EN	Asynchronous Remote HTTP Request Information
 
 DEBUG_NETWORK_ASYNCDNS
-	EN	Asynchronous DNS Debugging
+	EN	Asynchronous DNS Logging
 
 DEBUG_NETWORK_PROTOCOL
 	DE	Alle Player Protokolle
-	EN	All Player Protocol Debugging
+	EN	All Player Protocol Logging
 
 DEBUG_NETWORK_PROTOCOL_SLIMPROTO
 	DE	SlimProto (Squeezebox / Transporter) Protokol
@@ -13467,8 +13455,8 @@ DEBUG_NETWORK_UPNP
 	EN	UPnP Server & Device Information (Rhapsody)
 
 DEBUG_NETWORK_JSONRPC
-	DE	JSON-RPC API Fehlerbehebung
-	EN	JSON-RPC API Debugging
+	DE	JSON-RPC API Logging
+	EN	JSON-RPC API Logging
 
 DEBUG_FORMATS_AUDIO
 	DE	Datei Metadaten & Audio Parsing
@@ -13487,12 +13475,12 @@ DEBUG_DATABASE_MYSQL
 	EN	MySQL Initialization & Process Information
 
 DEBUG_DATABASE_SQL
-	DE	SQL Debugging (Fortgeschritten)
-	EN	SQL Debugging (Advanced)
+	DE	SQL Logging (Fortgeschritten)
+	EN	SQL Logging (Advanced)
 
 DEBUG_DATABASE_INFO
 	DE	Metadaten & Parsen
-	EN	Metadata & Parsing Debugging
+	EN	Metadata & Parsing Logging
 
 DEBUG_OS_FILES
 	DE	Informationen zu Dateisystem-Zugriffen
@@ -13504,15 +13492,15 @@ DEBUG_OS_PATHS
 
 DEBUG_CONTROL_STDIO
 	DE	Standard I/O Befehle (Fortgeschritten)
-	EN	Standard I/O Command Debugging (Advanced)
+	EN	Standard I/O Command Logging (Advanced)
 
 DEBUG_CONTROL_QUERIES
-	DE	Control Query Debugging (Fortgeschritten)
-	EN	Control Query Debugging (Advanced)
+	DE	Control Query Logging (Fortgeschritten)
+	EN	Control Query Logging (Advanced)
 
 DEBUG_CONTROL_COMMAND
 	DE	Interne Befehlsausführung (Fortgeschritten)
-	EN	Internal Command Execution Debugging (Advanced)
+	EN	Internal Command Execution Logging (Advanced)
 
 DEBUG_PLAYER_IR
 	DE	Infrarot Aktivität & Parsing
@@ -13520,7 +13508,7 @@ DEBUG_PLAYER_IR
 
 DEBUG_PLAYER_MENU
 	DE	Player Menü
-	EN	Player Menu Debugging
+	EN	Player Menu Logging
 
 DEBUG_PLAYER_UI
 	DE	Player Benutzerinterface
@@ -13544,31 +13532,31 @@ DEBUG_PLAYER_PLAYLIST
 
 DEBUG_PLAYER_STREAMING
 	DE	Streaming aller Geräte
-	EN	All Player Streaming Debugging
+	EN	All Player Streaming Logging
 
 DEBUG_PLAYER_STREAMING_DIRECT
 	DE	Player: Direct Streaming
-	EN	Player Direct Streaming Debugging
+	EN	Player Direct Streaming Logging
 
 DEBUG_PLAYER_STREAMING_REMOTE
 	DE	Player: Remote Streaming
-	EN	Player Remote Streaming Debugging
+	EN	Player Remote Streaming Logging
 
 DEBUG_PLAYER_FIRMWARE
 	DE	Player-Firmware Aktualisierung
-	EN	Player Firmware Upgrade Debugging
+	EN	Player Firmware Upgrade Logging
 
 DEBUG_PLAYER_SOURCE
 	DE	Player: Audioquelle & Konvertierung
-	EN	Player Source Audio & Conversion Debugging
+	EN	Player Source Audio & Conversion Logging
 
 DEBUG_PLAYER_SYNC
 	DE	Synchronisation mehrerer Geräte
-	EN	Multi-Player Synchronization Debugging
+	EN	Multi-Player Synchronization Logging
 
 DEBUG_SCAN
 	DE	Alle Scanner-Informationen
-	EN	All Scan Debugging
+	EN	All Scan Logging
 
 DEBUG_SCAN_SCANNER
 	DE	Musik & Wiedergabelisten Scanner
@@ -13576,7 +13564,7 @@ DEBUG_SCAN_SCANNER
 
 DEBUG_SCAN_IMPORT
 	DE	Datei & Wiedergabelisten Metadaten-Import
-	EN	File & Playlist Metadata Import Debugging
+	EN	File & Playlist Metadata Import Logging
 
 DEBUG_WIZARD
 	EN	Setup Wizard activity logging
@@ -13737,8 +13725,8 @@ CLOSE
 	EN	Close
 
 PERSIST_DEBUG_SETTINGS
-	DE	Fehlerbehebungs-Einstellungen beim nächsten Neustart beibehalten
-	EN	Save debugging settings for use at next application restart
+	DE	Log-Einstellungen beim nächsten Neustart beibehalten
+	EN	Save logging settings for use at next application restart
 
 JIVE_PLAY_ALL_SONGS
 	EN	Play all songs

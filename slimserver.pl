@@ -527,7 +527,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
           [--priority <priority>]
           [--prefsdir <prefspath> [--pidfile <pidfilepath>]]
           [--perfmon] [--perfwarn=<threshold> | --perfwarn <warn options>]
-          [--checkstrings] [--debug]
+          [--checkstrings] [--log]
 
     --help           => Show this usage information.
     --audiodir       => The path to a directory of your MP3 files.
@@ -568,7 +568,7 @@ Usage: $0 [--audiodir <dir>] [--playlistdir <dir>] [--diag] [--daemon] [--stdio]
     --perfmon        => Enable internal server performance monitoring
     --perfwarn       => Generate log messages if internal tasks take longer than specified threshold
     --checkstrings   => Enable reloading of changed string files for plugin development
-    --debug          => Enable debugging for the specified comma separated categories
+    --logging        => Enable logging for the specified comma separated categories
 
 Commands may be sent to the server through standard in and will be echoed via
 standard out.  See complete documentation for details on the command syntax.
@@ -576,6 +576,8 @@ EOF
 }
 
 sub initOptions {
+	my $logging;
+
 	$LogTimestamp = 1;
 
 	if (!GetOptions(
@@ -592,6 +594,7 @@ sub initOptions {
 		'logdir=s'      => \$logdir,
 		'logconfig=s'   => \$logconf,
 		'debug=s'       => \$debug,
+		'logging=s'     => \$logging,
 		'LogTimestamp!' => \$LogTimestamp,
 		'audiodir=s'    => \$audiodir,
 		'playlistdir=s'	=> \$playlistdir,
@@ -615,6 +618,10 @@ sub initOptions {
 		showUsage();
 		exit(1);
 	}
+
+	# make --log and --debug synonyms, but prefer --log
+	$debug = $logging if ($logging);
+
 	if ($help) {
 		showUsage();
 		exit(1);
