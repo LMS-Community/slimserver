@@ -204,7 +204,7 @@ sub _parseInstallManifest {
 		return undef;
 	}
 
-	my $pluginName = $installManifest->{'module'} || return undef;
+	my $pluginName = $installManifest->{'module'} || $installManifest->{'jiveapplet'} || return;
 
 	if (!$class->checkPluginVersion($installManifest)) {
 
@@ -319,6 +319,9 @@ sub enablePlugins {
 	for my $name (sort keys %$plugins) {
 
 		my $manifest = $plugins->{$name};
+
+		# Skip plugins with no perl module.
+		next unless $manifest->{'module'};
 
 		# Skip plugins that can't be loaded.
 		if ($manifest->{'error'} != INSTALLERROR_SUCCESS) {

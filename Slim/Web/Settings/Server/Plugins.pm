@@ -60,11 +60,17 @@ sub handler {
 	$paramRef->{plugins}  = $plugins;
 	$paramRef->{nosubmit} = 1;
 
+	# only show plugins with perl modules
+	my @keys = ();
+	for my $key (keys %$plugins) {
+		push @keys, $key if $plugins->{$key}->{module};
+	};
+
 	my @sortedPlugins = 
 		map { $_->[1] }
 		sort { $a->[0] cmp $b->[0] }
 		map { [ uc( Slim::Utils::Strings::string($plugins->{$_}->{name}) ), $_ ] } 
-		keys %{$plugins};
+		@keys;
 
 	$paramRef->{sortedPlugins} = \@sortedPlugins;
 
