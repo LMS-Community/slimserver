@@ -267,6 +267,16 @@ sub init {
 		1;
 	});
 
+	# migrate client prefs to version 2 - sync prefs changed
+	$prefs->migrateClient(2, sub {
+		my $cprefs = shift;
+		my $defaults = $Slim::Player::Player::defaultPrefs;
+		$cprefs->set( syncBufferThreshold => $defaults->{'syncBufferThreshold'}) if ($cprefs->get('syncBufferThreshold') > 255);
+		$cprefs->set( minSyncAdjust       => $defaults->{'minSyncAdjust'}      ) if ($cprefs->get('minSyncAdjust') < 1);
+		$cprefs->set( packetLatency       => $defaults->{'packetLatency'}      ) if ($cprefs->get('packetLatency') < 1);
+		1;
+	});
+
 	# initialise any new prefs
 	$prefs->init(\%defaults);
 
@@ -336,7 +346,6 @@ sub init {
 		my $client = $_[2] || return;
 		$client->display->renderCache()->{'defaultfont'} = undef;
 	}, qw(activeFont idleFont activeFont_curr idleFont_curr) );
-		
 }
 
 =head2 writeAll( )
