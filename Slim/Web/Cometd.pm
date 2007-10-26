@@ -441,6 +441,9 @@ sub handler {
 						id           => $id,
 					};
 					
+					# Remove this subscription from pending unsubscribes, if any
+					delete $toUnsubscribe{$response};
+					
 					# If the request was not async, tell the manager to deliver the results to all subscribers
 					if ( exists $result->{data} ) {
 						$manager->deliver_events( $result );
