@@ -114,11 +114,11 @@ sub init {
 	}
 	
 	if ( $cprefs->get('minSyncAdjust') < 1 ) {
-	    $cprefs->set( minSyncAdjust => $default->{minSyncAdjust} );
+	    $cprefs->set( minSyncAdjust => $defaultPrefs->{minSyncAdjust} );
     }
     
     if ( $cprefs->get('packetLatency') < 1 ) {
-        $cprefs->set( packetLatency => $default->{packetLatency} );
+        $cprefs->set( packetLatency => $defaultPrefs->{packetLatency} );
     }
 }
 
