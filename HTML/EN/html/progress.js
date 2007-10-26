@@ -54,7 +54,7 @@ function ajaxProgressUpdate(params, action) {
 	}
 
 	var myAjax = new Ajax.Request(
-	'progress.html',
+	webroot + 'progress.html',
 	{
 		method: requesttype,
 		postBody: params,

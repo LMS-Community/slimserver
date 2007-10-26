@@ -1,3 +1,17 @@
+[% pageHeaderScripts = BLOCK %]
+	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
+	<script TYPE="text/javascript">
+		timestring     = "[% 'TOTAL_TIME' | string %]";
+		progressbarlen = "[% barlen %]";
+		progresstype   = "[% type %]";
+	</script>
+	<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
+	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
+	<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
+	<script TYPE="text/javascript" src="[% webroot %]html/progress.js?r=[% revision %]"></script>
+[% END %]
+[% bodyscript = 'onload="ajaxProgressRefresh();"' %]
+
 [% extJsScripts = BLOCK %]
 	<script TYPE="text/javascript" src="[% webroot %]html/progress.js?r=[% revision %]"></script>
 	<script TYPE="text/javascript">
