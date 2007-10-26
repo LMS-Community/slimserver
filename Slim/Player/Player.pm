@@ -107,10 +107,19 @@ sub init {
 	Slim::Buttons::ScreenSaver::screenSaver($client);
 	$client->brightness($prefs->client($client)->get($client->power() ? 'powerOnBrightness' : 'powerOffBrightness'));
 	
-	# A previous version set syncBufferThreshold to 4000, we need to fix this
-	if ( $prefs->client($client)->get('syncBufferThreshold') > 255 ) {
-	    $prefs->client($client)->set( syncBufferThreshold => $defaultPrefs->{syncBufferThreshold} );
+	# Reset default sync prefs from the old sync code
+	my $cprefs = $prefs->client($client);
+	if ( $cprefs->get('syncBufferThreshold') > 255 ) {
+	    $cprefs->set( syncBufferThreshold => $defaultPrefs->{syncBufferThreshold} );
 	}
+	
+	if ( $cprefs->get('minSyncAdjust') < 1 ) {
+	    $cprefs->set( minSyncAdjust => $default->{minSyncAdjust} );
+    }
+    
+    if ( $cprefs->get('packetLatency') < 1 ) {
+        $cprefs->set( packetLatency => $default->{packetLatency} );
+    }
 }
 
 # usage	- float	buffer fullness as a percentage
