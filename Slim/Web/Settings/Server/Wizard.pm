@@ -64,31 +64,31 @@ sub page {
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup, $httpClient, $response) = @_;
 
-	$paramRef->{'languageoptions'} = Slim::Utils::Strings::languageOptions();
+	$paramRef->{languageoptions} = Slim::Utils::Strings::languageOptions();
 
 	# make sure we only enforce the wizard at the very first startup
-	if ($paramRef->{'saveSettings'}) {
+	if ($paramRef->{saveSettings}) {
 		$serverPrefs->set('wizardDone', 1);
-		$paramRef->{'wizardDone'} = 1;
-		delete $paramRef->{'firstTimeRun'};		
+		$paramRef->{wizardDone} = 1;
+		delete $paramRef->{firstTimeRun};		
 	}
 
 	if (!$serverPrefs->get('wizardDone')) {
-		$paramRef->{'firstTimeRun'} = 1;
+		$paramRef->{firstTimeRun} = 1;
 
 		# try to guess the local language setting
 		# only on non-Windows systems, as the Windows installer is setting the langugae
-		if (Slim::Utils::OSDetect::OS() ne 'win'  && !$paramRef->{'saveLanguage'}
-			&& defined $response->{'_request'}->{'_headers'}->{'accept-language'}) {
+		if (Slim::Utils::OSDetect::OS() ne 'win'  && !$paramRef->{saveLanguage}
+			&& defined $response->{_request}->{_headers}->{'accept-language'}) {
 
-			$log->debug("Accepted-Languages: " . $response->{'_request'}->{'_headers'}->{'accept-language'});
+			$log->debug("Accepted-Languages: " . $response->{_request}->{_headers}->{'accept-language'});
 
-			foreach my $language (extract_language_tags($response->{'_request'}->{'_headers'}->{'accept-language'})) {
+			foreach my $language (extract_language_tags($response->{_request}->{_headers}->{'accept-language'})) {
 				$language = uc($language);
 				$language =~ s/-/_/;  # we're using zh_cn, the header says zh-cn
 	
 				$log->debug("trying language: " . $language);
-				if (defined $paramRef->{'languageoptions'}->{$language}) {
+				if (defined $paramRef->{languageoptions}->{$language}) {
 					$serverPrefs->set('language', $language);
 					$log->info("selected language: " . $language);
 					last;
@@ -99,26 +99,26 @@ sub handler {
 	}
 	
 	# handle language separately, as it is in its own form
-	if ($paramRef->{'saveLanguage'}) {
-		$serverPrefs->set('language', $paramRef->{'language'});		
+	if ($paramRef->{saveLanguage}) {
+		$serverPrefs->set('language', $paramRef->{language});		
 	}
-	$paramRef->{'prefs'}->{'language'} = Slim::Utils::Strings::getLanguage();
+	$paramRef->{prefs}->{language} = Slim::Utils::Strings::getLanguage();
 
 	foreach my $namespace (keys %prefs) {
 		foreach my $pref (@{$prefs{$namespace}}) {
-			if ($paramRef->{'saveSettings'}) {
+			if ($paramRef->{saveSettings}) {
 				
 				# reset audiodir if it had been disabled
-				if ($pref eq 'audiodir' && !$paramRef->{'useAudiodir'})	{
-					$paramRef->{'audiodir'} = '';
+				if ($pref eq 'audiodir' && !$paramRef->{useAudiodir})	{
+					$paramRef->{audiodir} = '';
 				}
 
-				if ($pref eq 'itunes' && !$paramRef->{'itunes'})	{
-					$paramRef->{'itunes'} = '0';
+				if ($pref eq 'itunes' && !$paramRef->{itunes})	{
+					$paramRef->{itunes} = '0';
 				}
 
-				if ($pref eq 'musicmagic' && !$paramRef->{'musicmagic'})	{
-					$paramRef->{'musicmagic'} = '0';
+				if ($pref eq 'musicmagic' && !$paramRef->{musicmagic})	{
+					$paramRef->{musicmagic} = '0';
 				}
 
 				preferences($namespace)->set($pref, $paramRef->{$pref});
@@ -127,25 +127,33 @@ sub handler {
 			if ($log->is_debug) {
 	 			$log->debug("$namespace.$pref: " . preferences($namespace)->get($pref));
 			}
-			$paramRef->{'prefs'}->{$pref} = preferences($namespace)->get($pref);
+			$paramRef->{prefs}->{$pref} = preferences($namespace)->get($pref);
 
 			# Cleanup the checkbox
 			if ($pref =~ /itunes|musicmagic/) {
-				$paramRef->{'prefs'}->{$pref} = defined $paramRef->{'prefs'}->{$pref} ? $paramRef->{'prefs'}->{$pref} : 0;
+				$paramRef->{prefs}->{$pref} = defined $paramRef->{prefs}->{$pref} ? $paramRef->{prefs}->{$pref} : 0;
 			}
 		}
 	}
 
 	# if the wizard has been run for the first time, redirect to the main we page
-	if ($paramRef->{'firstTimeRunCompleted'}) {
+	if ($paramRef->{firstTimeRunCompleted}) {
 		$response->code(RC_MOVED_TEMPORARILY);
 		$response->header('Location' => '/');
 	}
 	else {
-		$paramRef->{'showProxy'} = $showProxy;
-		$paramRef->{'showiTunes'} = !Slim::Plugin::iTunes::Common->canUseiTunesLibrary();
-		$paramRef->{'showMusicIP'} = !Slim::Plugin::MusicMagic::Plugin::canUseMusicMagic();
-		$paramRef->{'serverOS'} = Slim::Utils::OSDetect::OS();
+		$paramRef->{showProxy} = $showProxy;
+		$paramRef->{showiTunes} = !Slim::Plugin::iTunes::Common->canUseiTunesLibrary();
+		$paramRef->{showMusicIP} = !Slim::Plugin::MusicMagic::Plugin::canUseMusicMagic();
+		$paramRef->{serverOS} = Slim::Utils::OSDetect::OS();
+
+		# presets for first execution:
+		# - use iTunes if available
+		# - use local path if no iTunes available
+		if (!$serverPrefs->get('wizardDone')) {
+			$paramRef->{prefs}->{iTunes} = $paramRef->{prefs}->{iTunes} || Slim::Plugin::iTunes::Common->canUseiTunesLibrary();
+			$paramRef->{prefs}->{audiodir} = $paramRef->{prefs}->{audiodir} || !$paramRef->{prefs}->{iTunes};
+		}
 	}
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
