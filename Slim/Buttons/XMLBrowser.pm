@@ -195,6 +195,9 @@ sub gotPlaylist {
 	my @urls = ();
 
 	for my $item (@{$feed->{'items'}}) {
+	    
+	    # Allow uppercase URL
+	    $item->{'url'} ||= $item->{'URL'};
 		
 		# Only add audio items in the playlist
 		if ( $item->{'play'} ) {
@@ -207,7 +210,7 @@ sub gotPlaylist {
 		push @urls, $item->{'url'};
 		Slim::Music::Info::setTitle( 
 			$item->{'url'}, 
-			$item->{'name'} || $item->{'title'}
+			$item->{'name'} || $item->{'title'} || $item->{'text'},
 		);
 		
 		# If there's a mime attribute, use it to set the content type properly
@@ -770,7 +773,7 @@ sub hasAudio {
 		return $item->{'play'};
 	}
 	elsif ( $item->{'type'} && $item->{'type'} =~ /^(?:audio|playlist)$/ ) {
-		return $item->{'playlist'} || $item->{'url'};
+		return $item->{'playlist'} || $item->{'url'} || scalar @{ $item->{outline} || [] };
 	}
 	elsif ( $item->{'enclosure'} && ( $item->{'enclosure'}->{'type'} =~ /audio/ ) ) {
 		return $item->{'enclosure'}->{'url'};
@@ -1116,6 +1119,22 @@ sub playItem {
 			
 			return $url->( $client, \&gotPlaylist, @{$pt} );
 		}
+		
+		# Playlist item may contain child items without a URL, i.e. Rhapsody's Tracks menu item
+	    elsif ( !$url && scalar @{ $item->{outline} || [] } ) {
+	        gotPlaylist( 
+	            { 
+	                items => $item->{outline},
+	            },
+	            {
+	                client => $client,
+	                action => $action,
+	                parser => $parser,
+	            },
+	        );
+	        
+	        return;
+	    }
 		
 		Slim::Formats::XML->getFeedAsync(
 			\&gotPlaylist,
