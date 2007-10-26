@@ -4,26 +4,36 @@
 	</pre>
 [%- ELSE -%]
 
-[% pagetitle = type _ "_PROGRESS" | string %]
+	[% pagetitle = type _ "_PROGRESS" | string %]
+	
+	[% pageHeaderMenu = pagetitle %]
+	
+	[% pageHeaderScripts = BLOCK %]
+		<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
+		<script TYPE="text/javascript">
+			timestring     = "[% 'TOTAL_TIME' | string %]";
+			progressbarlen = "[% barlen %]";
+			progresstype   = "[% type %]";
+		</script>
+		<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
+		<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
+		<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
+		<script TYPE="text/javascript" src="[% webroot %]html/progress.js?r=[% revision %]"></script>
+	[% END %]
 
-[% pageHeaderMenu = pagetitle %]
+	[% extJsScripts = BLOCK %]
+		<script TYPE="text/javascript">
+			timestring     = "[% 'TOTAL_TIME' | string %]";
+			progressbarlen = "[% barlen %]";
+			progresstype   = "[% type %]";
 
-[% pageHeaderScripts = BLOCK %]
-	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
-	<script TYPE="text/javascript">
-		timestring     = "[% 'TOTAL_TIME' | string %]";
-		progressbarlen = "[% barlen %]";
-		progresstype   = "[% type %]";
-	</script>
-	<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
-	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
-	<script TYPE="text/javascript" src="[% webroot %]html/common.js?r=[% revision %]"></script>
-	<script TYPE="text/javascript" src="[% webroot %]html/progress.js?r=[% revision %]"></script>
-[% END %]
+			Ext.EventManager.onDocumentReady(ScannerProgress.init, ScannerProgress, true);
+		</script>
+	[% END %]
 
-[% bodyscript = 'onload="ajaxProgressRefresh();"' %]
-
-[% PROCESS pageheader.html %]
+	[% bodyscript = 'onload="ajaxProgressRefresh();"' %]
+	
+	[% IF !ajaxUpdate; PROCESS pageheader.html; END %]
 
 	[% IF desc %]<div>[% type _ "_PROGRESS_DESC" | string %]</div>[% END %]
 
@@ -31,27 +41,31 @@
 	[% FOREACH num = [0..10] %]
 
 		<div id="progress[% num %]" style="display:none">
-		[%- WRAPPER contentitem %]
-			<span id="Name[% num %]"></span>
-			<span id="Count[% num %]">
-			(<span id="Done[% num %]"></span>
-			 [% "OF" | string %] 
-			<span id="Total[% num %]"></span>)
-			</span>
-			<span id="Active[% num %]"></span>
-			<span id="Time[% num %]"></span>
-		[% END -%]
-		[% odd = (not odd) %]
-		[%- WRAPPER contentitem lineclass='progressItem' %]
-			<span id="Bar[% num %]"></span>
-			<br>
-			<div id="Info[% num %]"></div>
-		[% END -%]
+			<div class="odd">
+				<div class="progressItem">
+					<span id="Name[% num %]"></span>
+					<span id="Count[% num %]">
+					(<span id="Done[% num %]"></span>
+					 [% "OF" | string %] 
+					<span id="Total[% num %]"></span>)
+					</span>
+					<span id="Active[% num %]"></span>
+					<span id="Time[% num %]"></span>
+				</div>
+			</div>
+
+			<div class="even">
+				<div class="progressBar">
+					<span id="Bar[% num %]"></span>
+					<br>
+					<div id="Info[% num %]"></div>
+				</div>
+			</div>
 		</div>
 		[% odd = (not odd) %]
 	[% END %]
 
 	<div id="message">[% IF message %][% message %][% END %][% IF total_time %] [% "TOTAL_TIME" | string %][% total_time %][% END %]</div>
 
-[% PROCESS pagefooter.html %]
+	[% IF !ajaxUpdate; PROCESS pagefooter.html; END %]
 [% END %]

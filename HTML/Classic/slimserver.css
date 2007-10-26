@@ -398,10 +398,14 @@ div#homeMenu {
 	width: 72%;
 }
 
-.browsedbListItem {
+.browsedbListItem, .progressItem {
 	position: relative;
 	padding: 6px;
 	padding-right: 80px;
+}
+
+.progressBar {
+	padding: 6px 0;
 }
 
 .browsedbListItemFullWidth {

@@ -28,6 +28,12 @@
 			Ext.EventManager.onDocumentReady(SettingsPage.init, SettingsPage, true);
 		</script>
 
+		[% IF pageHeaderScripts && NOT extJsScripts %]
+			[% pageHeaderScripts %]
+		[% ELSE %]
+			[% extJsScripts %]
+		[% END %]
+
 		[%- IF debug %]
 		<style>
 			.x-layout-panel-body { background: white; }

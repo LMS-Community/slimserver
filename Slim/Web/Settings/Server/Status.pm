@@ -50,7 +50,16 @@ sub handler {
 	
 	# TODO Get something useful from any Jive devices on the network.
 	#$paramRef->{controllers} = undef;
-	
+
+	# skeleton for the progress update
+#	$paramRef->{ajaxUpdate} = 1;
+#	$paramRef->{type} = 'SCANNER';
+#	$paramRef->{desc} = undef;
+	$paramRef->{progress} = ${ Slim::Web::Pages::Progress::progress($client, {
+		ajaxUpdate => 1,
+		type => 'importer'
+	}) };
+
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
 }
 

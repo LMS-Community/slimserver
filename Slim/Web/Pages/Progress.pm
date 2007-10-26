@@ -14,8 +14,8 @@ sub progress {
 	my $total_time = 0;
 	my $barLen = $params->{'barlen'} || 40;
 
-	my $bar1 = ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", { 'cell_full' => 1 })};
-	my $bar0 = ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", { 'cell_full' => 0 })};
+	my $bar1 = ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", { cell_full => 1, webroot => $params->{webroot} })};
+	my $bar0 = ${Slim::Web::HTTP::filltemplatefile("hitlist_bar.html", { cell_full => 0, webroot => $params->{webroot} })};
 
 	my $args = {};
 

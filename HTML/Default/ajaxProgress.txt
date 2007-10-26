@@ -1,0 +1,15 @@
+{
+	"scans":[
+		[% FOREACH item = progress_items %]{
+			"Name":"[% item.obj.name _ "_PROGRESS" | string %]",
+			"Done":"[% item.obj.done %]",
+			"Total":"[% item.obj.total %]",
+			"Active":"[% IF item.obj.active %][% "RUNNING" | string %][% ELSE %][% "COMPLETE" | string %][% END %]",
+			"Time":"[% item.time %]",
+			"Bar":'[% item.bar %]',
+			"Info":"[% item.obj.info | utf8decode | html %]"
+		}[% IF !loop.last; ","; END; END %]
+	],
+	"message":"[% message %]",
+	"total_time":"[% total_time %]"
+}

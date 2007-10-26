@@ -166,6 +166,10 @@ div.thumbwrap {
 	padding-left: 30px;
 }
 
+.progressItem {
+	padding-top: 5px;
+}
+
 /* Home menu */
 .homeMenuSection {
 	margin-right: 15px;

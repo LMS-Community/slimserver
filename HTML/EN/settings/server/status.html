@@ -1,3 +1,14 @@
+[% extJsScripts = BLOCK %]
+	<script TYPE="text/javascript" src="[% webroot %]html/progress.js?r=[% revision %]"></script>
+	<script TYPE="text/javascript">
+		var timestring = '';
+		progressbarlen = '40';
+		progresstype   = 'importer';
+
+		Ext.EventManager.onDocumentReady(ScannerProgress.init, ScannerProgress, true);
+	</script>
+[% END %]
+
 [% PROCESS settings/header.html %]
 
 [% WRAPPER setting title="SERVER_STATUS" %]
@@ -48,6 +59,12 @@
 	[% WRAPPER setting title="INFORMATION_MENU_CONTROLLER" %]
 		[% FOREACH controller = controllers %]
 		[% END %]
+	[% END %]
+[% END %]
+
+[% IF progress %]
+	[% WRAPPER setting title="SCANNER_PROGRESS" %]
+		[% progress %]
 	[% END %]
 [% END %]
 

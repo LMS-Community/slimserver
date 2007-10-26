@@ -360,6 +360,75 @@ var Utils = function(){
 Ext.EventManager.onDocumentReady(Utils.init, Utils, true);
 
 
+// some scripts for the scanning progress page
+var ScannerProgress = function(){
+	var progressTimer;
+
+	return {
+		init: function(){
+			progressTimer = new Ext.util.DelayedTask(this.refresh, this);
+			this.refresh();
+		},
+
+		refresh: function(){
+			Ext.Ajax.request({
+				method: 'GET',
+				url: webroot + 'progress.html',
+				params: {
+					type: progresstype,
+					barlen: progressbarlen,
+					player: playerid,
+					ajaxRequest: 1
+				},
+				timeout: 3000,
+				disableCaching: true,
+				success: this.updatePage
+			});
+			
+		},
+
+		updatePage: function(result){
+			// clean up response to have a correct JSON object
+			result = result.responseText;
+			result = result.replace(/<[\/]?pre>|\n/g, '');
+			result = Ext.decode(result);
+
+			if (result['scans']) {
+				var elems = ['Name', 'Done', 'Total', 'Active', 'Time', 'Bar', 'Info'];
+				var el, value;
+
+				var scans = result.scans
+				for (var i=0; i<scans.length; i++) {
+					if (el = Ext.get('Info'+(i-1)))
+						el.setDisplayed(false);
+
+					// only show the count if it is more than one item
+					Ext.get('Count'+i).setDisplayed(scans[i].Total ? true : false);
+					Ext.get('progress'+i).setDisplayed(scans[i].Name ? true : false);
+
+					for (var j=0; j<elems.length; j++) {
+						if (value = scans[i][elems[j]])
+							Ext.get(elems[j]+i).update(value);
+
+					}
+				}
+			}
+
+			if (result['message']) {
+				if (result['total_time'])
+					Ext.get('message').update(result.message + timestring + result.total_time);
+
+				else
+					Ext.get('message').update(result.message);
+			} 
+
+			else
+				progressTimer.delay(5000)
+		}
+	};
+}();
+
+
 // some prototype JS compatibility classes
 var Element = function(){
 	return {

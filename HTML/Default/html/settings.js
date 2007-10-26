@@ -205,4 +205,3 @@ var SettingsPage = function(){
 		}
 	};
 }();
-
