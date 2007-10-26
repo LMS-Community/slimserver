@@ -33,6 +33,7 @@
 
 			.wz_logo {
 				float: right;
+				margin-top: 20px;
 				margin-left: 30px;
 			}
 
@@ -59,8 +60,15 @@
 				margin-left: 20px;
 			}
 
+			#language {
+				position: absolute;
+				top: 0px;
+				right: 0px;
+			}
+
 			.titlebox_content { height: 20px; }
 			.titlebox_content div { font-size: 13px; }
+			a { color: yellow; }
 		-->
 		</style>
 	</head>
@@ -98,6 +106,7 @@
 			[% PROCESS jsString id='SETUP_WIZARD_CLOSE' jsId='close' %]
 			[% PROCESS jsString id='SETUP_WIZARD_SQN_VERIFY' jsId='sn_verify' %]
 			[% PROCESS jsString id='SETUP_SN_VALID_LOGIN' jsId='sn_success' %]
+			[% PROCESS jsString id='SETUP_SN_INVALID_LOGIN' jsId='sn_failure' %]
 
 			[% PROCESS jsString id='NONE' jsId='summary_none' %]
 			[% PROCESS jsString id='SETUP_AUDIODIR' jsId='summary_audiodir' %]
@@ -147,26 +156,25 @@
 						<div id="wz_formpanel">
 							<div id="welcome_m" class="wz_page">
 								<div class="wz_logo"><img src="[% webroot %]html/images/squeezebox.gif"></div>
+								<div>[% "SETUP_WIZARD_WELCOME_DESC" | string %]</div>
+
 								<form name="languageForm" id="languageForm" method="post" action="[% webroot %][% path %]">
-									<div>[% "SETUP_WIZARD_WELCOME_DESC" | string %]</div>
-									<div><br/>
-										[% "CHOOSE_A_LANGUAGE" | string %]
-										<select name="language" id="language">
+									<select name="language" id="language">
 
-											[% FOREACH option = languageoptions %]
-												[% IF !option.value.search('\*') %]
-													<option [% IF prefs.language == option.key %]selected="selected" [% preferredLanguage=1;END %]value="[% option.key %]">[% option.value %]</option>
-												[% END %]
-											[%- END -%]
-
-											[% IF !preferredLanguage %]
-												<option selected="selected" value="[% prefs.language %]">[% languageoptions.${prefs.language} %]</option>
+										[% FOREACH option = languageoptions %]
+											[% IF !option.value.search('\*') %]
+												<option [% IF prefs.language == option.key %]selected="selected" [% preferredLanguage=1;END %]value="[% option.key %]">[% option.value %]</option>
 											[% END %]
+										[%- END -%]
 
-										</select>
-									</div>
+										[% IF !preferredLanguage %]
+											<option selected="selected" value="[% prefs.language %]">[% languageoptions.${prefs.language} %]</option>
+										[% END %]
+
+									</select>
 									<input name="saveLanguage" type="hidden" value="1">
 								</form>
+
 							</div>
 
 							<form name="wizardForm" id="wizardForm" method="post" action="[% webroot %][% path %]">
@@ -176,9 +184,7 @@
 								</div>
 
 								<div id="sqn_m" class="wz_page">
-									<div class="wz_logo">
-<!--										<img src="[% webroot %]html/images/squeezenetwork.gif"> -->
-									</div>
+									<div class="wz_logo"></div>
 
 									<div>[% "SETUP_WIZARD_SQN_DESC" | string %]</div>
 

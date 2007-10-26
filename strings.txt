@@ -2203,7 +2203,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 	CS	Toto jsou formáty dostupné ve výběrech v nastavení přehrávačů. Pro vymazání formátu,  vymažte stávající formát a nahraďte jej novým, nebo nechte prízdné.  Dostupné proměnné jsou: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time)  Elementy mohou být odděleny čímkoliv (nebo ničím). Oddělovače jsou pouze použity, pokud jsou datové elementy přednastaveny.  Aktuální formát bude použit také pro zobrazení na webovém rozhraní.
 	DA	Dette er sangtitel-formaterne, der er tilgængelige både ovenfor og i afspiller-indstillingerne. Tøm indholdet i en teksboks for at fjerne formatet. For at tilføje et format indtastes tekst i den tomme tekstboks nederst. Tilgængelige elementer er: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
 	DE	Die folgenden Formate sind sowohl oben als auch auf dem Player verfügbar. Löschen Sie ein Textfeld, um das Format zu entfernen, und geben Sie ein neues in ein leeres Feld ein, um es hinzuzufügen. Folgende Datenelemente sind verfügbar: CT (Art des Inhalts), TITLE, BAND (Band/Orchester), GENRE, TRACKNUM, FS (Dateigröße), ARTIST (Interpret), ALBUM, COMMENT, YEAR, SECS (Spielzeit in Sekunden), DURATION (Minuten und Sekunden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (Name des Datenträgers), PATH, FILE, EXT (Dateinamenerweiterung), LONGDATE (Aktuelles Datum, lang), SHORTDATE (Aktuelles Datum, kurz), CURRTIME(Aktuelle Zeit). Elemente können durch beliebige (oder keine) Zeichen getrennt werden. Die Trennzeichen werden nur verwendet, wenn die Datenelemente vorhanden sind.<br> Die aktuelle Auswahl gibt das Format an, das auf den Webseiten genutzt wird.
-	EN	These are the formats available for selection both above and in the player setup. To remove a format, clear the text box, to enter a new format, place it in the empty one. Available data elements are: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
+	EN	These are the formats available for selection both in the web interface and on players. To remove a format, clear the text box, to enter a new format, place it in the empty one. Available data elements are: CT (content type), TITLE, GENRE, TRACKNUM (tracknumber as an int), FS (file size), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (total seconds), DURATION (minutes and seconds), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volume name), PATH, FILE, EXT (file extension), LONGDATE (current date, long), SHORTDATE (current date, short), CURRTIME(current time). Elements can be separated by anything (or nothing). The separators are only used if the data elements are present.<br>The Current selection is the format that will be used on the web pages.
 	ES	Éstos son los formatos disponibles para seleccionar, tanto anteriormente como en la configuración del reproductor. Para quitar un formato, borre el cuadro de texto, para introducir un formato nuevo, colóquelo en el vacío. Los elementos de datos disponibles son: CT (tipo de contenido), TITLE (título), GENRE (género), TRACKNUM (número de pista como número entero), FS (tamaño de archivo), ARTIST (artista, COMPOSER (compositor), CONDUCTOR (director), BAND (banda), ALBUM (álbum), COMMENT (comentario), YEAR (año), SECS (total de segundos), DURATION (duración en minutos y segundos), VBR_SCALE (vbr/cbr), BITRATE (velocidad de bits), TAGSIZE (tamaño de etiqueta), VOLUME (nombre de volumen), PATH (ruta), FILE (archivo), EXT (extensión de archivo), LONGDATE (fecha actual, formato largo), SHORTDATE (fecha actual, formato corto), CURRTIME (hora actual). Los elementos se pueden separar por cualquier cosa (o por nada). Los separadores sólo se usan si los elementos de datos están presentes.<br> La selección actual es el formato que se usará en la interfaz Web.
 	FI	Seuraavat kentät ovat käytössäsi sekä yllä, että soittimen asetuksissa. Poistaaksesi kentän, tyhjennä teksi laatikosta, lisätäksesi uuden kentän, syötä teksi tyhjään laatikkoon. Vaihtoehtoja ovat: CT (sisältötyyppi), TITLE, GENRE, TRACKNUM (kappaleen numero kokonaislukuna), FS (tiedoston koko), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (sekunnit), DURATION (minuutit ja sekunnit), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (äänenvoimakkuuden säätö), PATH, FILE, EXT (tiedoston pääte), LONGDATE (päiväys, pitkä esitystapa), SHORTDATE (päiväys, lyhyt esitystapa), CURRTIME(aika). Kentät voidaan erottaa toisistaan millä tahansa erottimella. Erottimia käytetään vain mikäli tietokenttiä on valittuna.<br>Tämänhetkistä valintaa tullaan käyttämään WWW-sivuilla.
 	FR	Voici les formats disponibles. Ils peuvent être choisis ci-dessus ou dans les réglages de la platine. Pour supprimer un format, effacez la zone de saisie. Les codes suivants peuvent être utilisés pour représenter des données: CT (type de contenu), TITLE (titre), GENRE, TRACKNUM (numéro de piste), FS (taille du fichier), ARTIST (artiste), ALBUM, COMMENT (commentaire), YEAR (année), SECS (durée totale en secondes), DURATION (durée en minutes et secondes), VBR_SCALE (vbr/cbr), BITRATE (débit binaire), TAGSIZE (taille des repères), VOLUME (nom du disque), PATH (chemin d'accès), FILE (fichier), EXT (extension du fichier), LONGDATE (date en cours au format long), SHORTDATE (date en cours au format court), CURRTIME (heure en cours). Ces éléments peuvent être entrecoupés de séparateurs. Les séparateurs ne sont utilisés que si des données sont présentes.<br> La sélection en cours est le format qui sera utilisé dans les documents Web.
@@ -3938,7 +3938,7 @@ SETUP_TITLEFORMAT
 	CS	Formát skladby
 	DA	Sangtitelformat
 	DE	Titelformat
-	EN	Title format
+	EN	Title Format
 	ES	Formato de título
 	FI	Otsikon muoto
 	FR	Format du titre
@@ -6771,8 +6771,7 @@ SETUP_SN_PASSWORD_DESC
 	EN	Enter the password for your SqueezeNetwork account.
 
 SETUP_SN_INVALID_LOGIN
-	DE	Ungültige SqueezeNetwork Mail-Adresse oder Passwort
-	EN	Invalid SqueezeNetwork email address or password.
+	EN	We couldn't find your account information, please re-enter your information and try again. If you don't have an account please click “<a href="http://www.squeezenetwork.com" target="_blank">I need an account</a>” to continue.
 
 SETUP_SN_VALID_LOGIN
 	EN	Connected successfully to SqueezeNetwork.
@@ -6802,7 +6801,7 @@ SETUP_WIZARD_WELCOME
 	EN	Welcome to the SqueezeCenter Setup wizard
 
 SETUP_WIZARD_WELCOME_DESC
-	EN	Thank you for buying a Logitech digital music player! We're sure you'll enjoy it a lot...<br><br>This wizard will guide you through the necessary steps to get your SqueezeCenter and music player up and running. In only a few minutes you'll be able to access your music collection as well as many internet radio stations and music services. Just follow instructions on the following few pages.<br/><br/>Have fun!
+	EN	Thank you for buying a Logitech digital music player! We're sure you'll enjoy it a lot...<br><br>This wizard will guide you through the necessary steps to get your SqueezeCenter and music player up and running. In only a few minutes you'll be able to access your music collection as well as many internet radio stations and music services. Just follow instructions on the following few pages.<br/><br/>If you haven't set up an account on SqueezeNetwork, please exit this setup assistant and go to <a href="http://www.squeezenetwork.com" target="_blank">squeezenetwork.com</a> to set up your account.<br/><br/>Have fun!
 
 SETUP_WIZARD_PROXY
 	EN	SqueezeCenter Setup: Proxy Settings
@@ -6814,7 +6813,7 @@ SETUP_WIZARD_SQN
 	EN	SqueezeCenter Setup: SqueezeNetwork Account
 
 SETUP_WIZARD_SQN_DESC
-	EN	SqueezeNetwork allows you to get the most out of your new Logitech digital music player. Some of the advanced online media services such as Rhapsody or Pandora require a SqueezeNetwork account.<br/><br/>If you haven't subscribed to SqueezeNetwork yet, please visit <a href="http://www.squeezenetwork.com" target="_blank">http://www.squeezenetwork.com</a>.<br/><br/>Please enter the email address and password used to login to your SqueezeNetwork account.
+	EN	SqueezeNetwork allows you to get the most out of your new wireless music system by giving you access to music on demand services and internet radio stations.<br/><br/>If you already have a SqueezeNetwork account please enter your information below and click the "Add" button. If you don't have a SqueezeNetwork account, please click "I need an account".
 
 SETUP_WIZARD_SQN_VERIFY
 	EN	Verify
@@ -6838,13 +6837,13 @@ SETUP_WIZARD_AUDIODIR
 	EN	SqueezeCenter Setup: Local Music Folder
 
 SETUP_WIZARD_AUDIODIR_DESC
-	EN	On the left you can select the local folder where your music collection is stored. 
+	EN	Please navigate to the folder where your music collection is stored.
 
 SETUP_WIZARD_SHARE_WIN
 	EN	<br/><br/>If you want to use a network share hosted on another computer or a NAS, you can do this by entering the UNC path to the share in the form \\yourserver\share in the text field below. Then press the > button.<br/><br/>Make sure either the music share is configured for anonymous access or make SqueezeCenter run as a user known to the fileserver hosting your music files.<br/><br/>Please note, that SqueezeCenter can't access letters mapped drive to network shares.
 
 SETUP_WIZARD_SHARE_OTHERS
-	EN	<br/><br/>If you want to use a network share hosted on another computer or a NAS, you'll need to first mount the share to your filesystem. It will then be available in the folder tree.
+	EN	<br/><br/>Please navigate to the folder where your music collection is stored.<br/><br/>If you want to access any of your music that is stored on another computer or a shared network volume, please make sure that the shared volume is mounted and available to your file system. Once the volume is available, it will appear in the selection window to the left.<br/><br/> If you know the path of the volume you wish to access you can enter it below.
 
 SETUP_WIZARD_PLAYLISTDIR
 	EN	SqueezeCenter Setup: Playlist Folder
