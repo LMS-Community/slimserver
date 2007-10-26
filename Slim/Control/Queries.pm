@@ -3051,7 +3051,8 @@ sub songinfoQuery {
 				$base->{'window'}{'icon-id'} = $trackId;
 				$log->error($base->{'actions'}{'go'});
 			} else {
-				$tags = 'AlGitCodYXyRkwfrTImvun';
+				# tags for songinfo page, ordered like SC7 Web UI
+				$tags = 'AlGyitodYfrTvun';
 			}
 			$request->addResult('base', $base);
 		}
@@ -3134,9 +3135,9 @@ sub songinfoQuery {
 			while (my ($key, $val) = each %{$hashRef}) {
 
 				if ($idx >= $start && $idx <= $end) {
-					
+
 					if ($menuMode) {
-						
+
 						# catch multi-genres or artists
 						my $actions;
 						if ($key =~ /(\w+)::(\d+)/) {
