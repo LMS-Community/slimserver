@@ -1,15 +1,15 @@
 {
-	"scans":[
+	'scans':[
 		[% FOREACH item = progress_items %]{
-			"Name":"[% item.obj.name _ "_PROGRESS" | string %]",
-			"Done":"[% item.obj.done %]",
-			"Total":"[% item.obj.total %]",
-			"Active":"[% IF item.obj.active %][% "RUNNING" | string %][% ELSE %][% "COMPLETE" | string %][% END %]",
-			"Time":"[% item.time %]",
-			"Bar":'[% item.bar %]',
-			"Info":"[% item.obj.info | utf8decode | html %]"
+			'Name':'[% item.obj.name _ "_PROGRESS" | string | replace("'", "%27") %]',
+			'Done':'[% item.obj.done | replace("'", "%27") %]',
+			'Total':'[% item.obj.total %]',
+			'Active':'[% IF item.obj.active %][% "RUNNING" | string | replace("'", "%27") %][% ELSE %][% "COMPLETE" | string | replace("'", "%27") %][% END %]',
+			'Time':'[% item.time %]',
+			'Bar':'[% item.bar %]',
+			'Info':'[% item.obj.info | utf8decode | html | replace("'", "%27") %]'
 		}[% IF !loop.last; ","; END; END %]
 	],
-	"message":"[% message %]",
-	"total_time":"[% total_time %]"
+	'message':'[% message %]',
+	'total_time':'[% total_time %]'
 }
