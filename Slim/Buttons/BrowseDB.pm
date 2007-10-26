@@ -523,9 +523,9 @@ sub browsedbItemName {
 		my $index = $client->modeParam('favorite');
 
 		if (defined $index) {
-			$item = $client->string('FAVORITES_RIGHT_TO_ADD');
-		} else {
 			$item = $client->string('FAVORITES_FAVORITE_NUM') . "$index " . $client->string('FAVORITES_RIGHT_TO_DELETE');
+		} else {
+			$item = $client->string('FAVORITES_RIGHT_TO_ADD');
 		}
 
 		return $item
