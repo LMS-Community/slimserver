@@ -217,8 +217,8 @@ sub dirsFor {
 			warn "dirsFor: Didn't find a match request: [$dir]\n";
 		}
 
-	# RedHat/Fedora specific paths.
-	} elsif (isRHELorFC()) {
+	# Red Hat/Fedora/SUSE RPM specific paths.
+	} elsif (isRHorSUSE()) {
 
 		if ($dir =~ /^(?:Firmware|Graphics|HTML|IR|MySQL|SQL|lib|Bin)$/) {
 
@@ -328,13 +328,13 @@ sub isDebian {
 	return 0;
 }
 
-sub isRHELorFC {
+sub isRHorSUSE {
 
 	# Initialize
 	my $OS      = OS();
 	my $details = details();
 
-	if (($details->{'osName'} eq 'Fedora Core' || $details->{'osName'} eq 'RedHat') && -d '/usr/share/squeezecenter/Firmware') {
+	if (($details->{'osName'} eq 'Red Hat' || $details->{'osName'} eq 'SUSE') && -d '/usr/share/squeezecenter/Firmware') {
 		return 1;
 	}
 
@@ -430,11 +430,11 @@ sub initDetailsForLinux {
 
 	} elsif (-f '/etc/redhat_release' || -f '/etc/redhat-release') {
 
-		$osDetails{'osName'} = 'RedHat';
+		$osDetails{'osName'} = 'Red Hat';
 
-	} elsif (-f '/etc/fedora-release') {
+	} elsif (-f '/etc/SuSE-release') {
 
-		$osDetails{'osName'} = 'Fedora Core';
+		$osDetails{'osName'} = 'SUSE';
 
 	} else {
 

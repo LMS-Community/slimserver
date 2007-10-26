@@ -151,7 +151,7 @@ sub createConfig {
 
 	# Because we use the system MySQL, we need to point to the right
 	# directory for the errmsg. files. Default to english.
-	if (Slim::Utils::OSDetect::isDebian() || Slim::Utils::OSDetect::isRHELorFC()) {
+	if (Slim::Utils::OSDetect::isDebian() || Slim::Utils::OSDetect::isRHorSUSE()) {
 
 		$config{'language'} = '/usr/share/mysql/english';
 	}
