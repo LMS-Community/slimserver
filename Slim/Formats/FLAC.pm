@@ -264,6 +264,7 @@ sub _addInfoTags {
 	$tags->{'SECS'}    = $flac->{'trackTotalLengthSeconds'};
 	$tags->{'OFFSET'}  = 0; # the header is an important part of the file. don't skip it
 	$tags->{'BITRATE'} = $flac->{'bitRate'};
+	$tags->{'VBR_SCALE'} = 1;
 
 	# Add the stuff that's stored in the Streaminfo Block
 	my $flacInfo = $flac->info();

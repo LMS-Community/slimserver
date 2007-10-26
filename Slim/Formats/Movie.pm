@@ -54,6 +54,7 @@ sub getTag {
 	if ($tags->{'ENCODING'} && $tags->{'ENCODING'} eq 'alac') {
 
 		$tags->{'LOSSLESS'} = 1;
+		$tags->{'VBR_SCALE'} = 1;
 	}
 
 	# Unroll the disc info.
