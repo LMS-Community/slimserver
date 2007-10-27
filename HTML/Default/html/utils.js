@@ -492,7 +492,7 @@ function ajaxUpdate(url, params) {
 		if (um)
 			um.loadScripts = true;
 
-		el.load(url, params + '&ajaxUpdate=1&player=' + player);
+		el.load(url, params + '&ajaxUpdate=1&player=' + player, Utils.init);
 	}
 }
 
