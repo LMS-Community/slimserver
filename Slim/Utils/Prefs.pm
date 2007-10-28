@@ -259,11 +259,16 @@ sub init {
 						 power mute silent volume bass treble pitch repeat shuffle currentSong
 						);
 
+		my $toMigrate;
+
 		for my $pref (@migrate) {
 			my $old = Slim::Utils::Prefs::OldPrefs->clientGet($client, $pref);
-			$clientprefs->set($pref, $old) if !$clientprefs->exists($pref) && defined $old;
+			$toMigrate->{$pref} = $old if defined $old;
 		}
 
+		# create migrated version using init as will not call the onchange callbacks
+		$clientprefs->init($toMigrate);
+		
 		1;
 	});
 

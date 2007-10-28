@@ -17,14 +17,12 @@ use Slim::Player::ProtocolHandlers;
 use Slim::Player::Transporter;
 use Slim::Utils::Prefs;
 
-sub new {
-	my $class = shift;
+sub init {
+	my $client = shift;
 
-	my $client = $class->SUPER::new(@_);
+	$client->SUPER::init(@_);
 
 	preferences('server')->client($client)->set('autobrightness', 0);
-
-	return $client;
 }
 
 sub reconnect {
