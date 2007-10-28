@@ -187,8 +187,9 @@ sub songTime {
 		my $fullness	  	= $client->bufferFullness() || 0;
 		
 		$songtime = $byterate ? (($bytesReceived - $fullness) / $byterate * $rate + $startStream) : 0;
-		$log->debug("songtime=$songtime from byterate=$byterate, duration=$duration, bytesReceived=$bytesReceived, fullness=$fullness, rate=$rate, startStream=$startStream");
-
+		if ( $log->is_debug ) {
+			$log->debug("songtime=$songtime from byterate=$byterate, duration=$duration, bytesReceived=$bytesReceived, fullness=$fullness, rate=$rate, startStream=$startStream");
+		}
 	} elsif ($rate >= 1) {
 		# If we're moving forward and have started streaming the next
 		# track, the fullness metric can no longer be used to determine
