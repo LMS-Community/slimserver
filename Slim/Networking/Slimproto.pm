@@ -24,6 +24,7 @@ use Slim::Player::Squeezebox;
 use Slim::Player::Squeezebox2;
 use Slim::Player::Transporter;
 use Slim::Player::SoftSqueeze;
+use Slim::Player::SqueezeSlave;
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Network;

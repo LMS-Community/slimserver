@@ -1,4 +1,4 @@
-package Slim::Player::Squeezebox2;
+package Slim::Player::SqueezeSlave;
 
 # $Id: Squeezebox2.pm 12808 2007-08-31 04:08:54Z andy $
 
@@ -66,7 +66,6 @@ sub reconnect {
 	my $client = shift;
 	$client->SUPER::reconnect(@_);
 
-	$client->getPlayerSetting('playername');
 }
 
 sub maxBass { 50 };
