@@ -173,6 +173,39 @@ sub getFormatForURL {
 	return DEFAULT_TYPE;
 }
 
+sub parseDirectHeaders {
+	my ( $class, $client, $url, @headers ) = @_;
+	
+	my ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
+	
+	foreach my $header (@headers) {
+	
+		logger('player.streaming.direct')->debug("header-ds: $header");
+
+		if ($header =~ /^Location:\s*(.*)/i) {
+			$redir = $1;
+		}
+		
+		elsif ($header =~ /^Content-Type:\s*(.*)/i) {
+			$contentType = $1;
+		}
+		
+		elsif ($header =~ /^Content-Length:\s*(.*)/i) {
+			$length = $1;
+		}
+		
+		# mp3tunes metadata, this is a bit of hack but creating
+		# an mp3tunes protocol handler is overkill
+		elsif ( $url =~ /mp3tunes\.com/ && $header =~ /^X-Locker-Info:\s*(.+)/i ) {
+			Slim::Plugin::MP3tunes::Plugin->setLockerInfo( $client, $url, $1 );
+		}
+	}
+
+	$contentType = Slim::Music::Info::mimeToType($contentType);
+	
+	return ($title, $bitrate, $metaint, $redir, $contentType, $length, $body);
+}
+
 sub parseMetadata {
 	my ( $client, $url, $metadata ) = @_;
 	
