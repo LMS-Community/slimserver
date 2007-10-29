@@ -26,11 +26,6 @@ Main = function(){
 
 			Player.init();
 			Playlist.init();
-
-			Ext.get('progressInfo').on('click', function(){
-				frames.browser.location = webroot + 'progress.html?type=importer', 'dependent=yes,resizable=yes';
-			});
-
 			PlayerChooser.init();
 
 			Ext.EventManager.onWindowResize(this.onResize, layout);
