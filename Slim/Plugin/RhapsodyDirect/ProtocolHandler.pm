@@ -267,7 +267,10 @@ sub gotPlaybackSession {
 	my ( $client, $data, $url, $callback ) = @_;
 	
 	# For radio mode, first get the next track ID
+	my $isRadio = 0;
 	if ( my ($stationId) = $url =~ m{rhapd://(.+)\.rdr} ) {
+		
+		$isRadio = 1;
 		
 		# Check if we've got the next track URL
 		if ( my $radioTrackURL = $client->pluginData('radioTrackURL') ) {
@@ -310,15 +313,28 @@ sub gotPlaybackSession {
 			{ trackId => $trackId },
 		);
 	}
+	
+	my @clients;
+	
+	if ( $isRadio && Slim::Player::Sync::isSynced($client) ) {
+		# in radio mode, only the master gets here, so we need to send rpds 3 to all clients
+		my $master = Slim::Player::Sync::masterOrSelf($client);
+		push @clients, $master, @{ $master->slaves };
+	}
+	else {
+		push @clients, $client;
+	}
 
-	# Get the track URL via the player
-	# When synced, all players will do this to initialize themselves for playback
-	rpds( $client, {
-		data        => pack( 'cC/a*', 3, $trackId ),
-		callback    => \&gotTrackInfo,
-		onError     => \&gotTrackError,
-		passthrough => [ $url, $callback ],
-	} );
+	for my $client ( @clients ) {
+		# Get the track URL via the player
+		# When synced, all players will do this to initialize themselves for playback
+		rpds( $client, {
+			data        => pack( 'cC/a*', 3, $trackId ),
+			callback    => \&gotTrackInfo,
+			onError     => \&gotTrackError,
+			passthrough => [ $url, $callback ],
+		} );
+	}
 }
 
 # Handle normal advances to the next track
@@ -572,6 +588,11 @@ sub getTrackMetadata {
 	
 	my $trackId = $params->{trackId};
 	
+	# Don't request if we already have it
+	my $meta = $client->pluginData('metaCache') || {};
+	my $url  = 'rhapd://' . $params->{trackId} . '.wma';
+	return if $meta->{$url};
+	
 	my $trackURL = Slim::Networking::SqueezeNetwork->url(
 		"/api/rhapsody/v1/opml/metadata/getTrack?trackId=$trackId&json=1"
 	);
@@ -618,8 +639,6 @@ sub gotTrackMetadata {
 		type      => 'WMA (Rhapsody)',
 		info_link => 'plugins/rhapsodydirect/trackinfo.html',
 	};
-	
-	# XXX: Clean up this metadata with a timer
 	
 	$client->pluginData( metaCache => $meta );
 }
@@ -953,6 +972,9 @@ sub endPlaybackSession {
 		onError     => sub {},
 		passthrough => [],
 	} );
+	
+	# Clear out the metadata cache for this client
+	$client->pluginData( metaCache => {} );
 }
 
 sub displayStatus {
