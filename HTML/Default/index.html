@@ -123,7 +123,7 @@
 				<div id="footer_content">
 					<span id="helpInfoSection">
 						<span id="helpLink">
-							<img src="[% webroot %]html/images/b_help.png"/> [% "HELP" | string %]
+							<a href="[% webroot %]home.html?page=help" target="sc_help"><img src="[% webroot %]html/images/b_help.png"/> [% "HELP" | string %]</a>
 						</span>
 
 						<span id="footerInfo">
@@ -152,7 +152,7 @@
 					<span id="settingsLinks">
 						<span id="settingsLink">
 							[% IF NOT (nosetup || noserver) %]
-								<img src="[% webroot %]html/images/b_settings.png"/> [% "SETTINGS" | string %]
+								<a href="[% webroot %]settings/index.html?player=[% player %]" target="sc_settings"><img src="[% webroot %]html/images/b_settings.png"/> [% "SETTINGS" | string %]</a>
 							[% END %]
 						</span>
 					</span>

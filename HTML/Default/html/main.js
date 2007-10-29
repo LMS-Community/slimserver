@@ -27,14 +27,6 @@ Main = function(){
 			Player.init();
 			Playlist.init();
 
-			Ext.get('helpLink').on('click', function(){
-				window.open(webroot + 'home.html?page=help', 'settings', 'dependent=yes,resizable=yes');
-			});
-
-			Ext.get('settingsLink').on('click', function(){
-				window.open(webroot + 'settings/index.html?player=' + player, 'settings', 'dependent=yes,resizable=yes,scrollbars=yes');
-			});
-
 			Ext.get('progressInfo').on('click', function(){
 				frames.browser.location = webroot + 'progress.html?type=importer', 'dependent=yes,resizable=yes';
 			});

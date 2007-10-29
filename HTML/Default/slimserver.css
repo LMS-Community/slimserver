@@ -23,7 +23,8 @@ a:hover, .link:hover,
 #crumblist a:hover,
 .currentTrackInfo a:hover,
 .homeMenuItem a:hover,
-.browseItemLink:hover {
+.browseItemLink:hover, 
+#footer_content a:hover {
 	text-decoration: underline;
 }
 
@@ -35,7 +36,8 @@ a:hover, .link:hover,
 #crumblist a,
 #playlistToggleArtwork,
 .browseItemLink,
-.browsedbListItem a {
+.browsedbListItem a, 
+#footer_content a {
 	text-decoration: none;
 }
 
