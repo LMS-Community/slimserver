@@ -59,6 +59,8 @@ sub Install {
 	if ((defined $Username) && ((defined $Password) && length($Password) != 0)) {
 		my @infos;
 		my ($host, $user) = split /\\/, $Username;
+		# use the localhost '.' by default, unless user has defined "domain\username"
+		$host ||= '.';
 
 		# configure user to be used to run the server
 		if ($host && $user 
