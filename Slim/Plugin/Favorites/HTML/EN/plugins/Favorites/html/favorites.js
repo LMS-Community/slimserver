@@ -5,7 +5,7 @@ var movefromHTML;
 var movetoHTML;
 
 // parse new order for source and target indices
-function reorderlist(order, offset, from) {
+function reorderlist(order, offset, from, session) {
 	var params;
 	
 	for (var i=0; i < order.length; i++) {
@@ -22,7 +22,7 @@ function reorderlist(order, offset, from) {
 			}
 			
 			// pull a background result of the move command
-			ajaxUpdate('index.html', "action=move&index=" + offset + from + "&to=" + i);
+			ajaxUpdate('index.html', "action=move&index=" + offset + from + "&to=" + i + "&sess=" + session);
 			
 			break;
 		}
@@ -39,7 +39,7 @@ function checkSortable(event) {
 
 // drag and dropfavorites list, scrolling window when needed.
 var activeElem = null;
-function initListSortable(element, offset) {
+function initListSortable(element, session, offset) {
 
 	if (! $(element)) {
 		return;
@@ -57,7 +57,7 @@ function initListSortable(element, offset) {
 			sortableReordered = true;
 		},
 		onUpdate: function() {
-			reorderlist(Sortable.sequence(element), offset, activeElem);
+			reorderlist(Sortable.sequence(element), offset, activeElem, session);
 		},
 		scroll: window,
 		revert: true
@@ -66,14 +66,14 @@ function initListSortable(element, offset) {
 }
 
 var editHTML = new Array();
-function edit(id) {
+function edit(id, session) {
 	var element = $('dragitem_' + id);
 	
 	// backup copy of line item in case of cancel
 	editHTML[id] = element.innerHTML;
 	
 	// pull an edit form via Ajax
-	new Ajax.Updater( { success: element }, webroot + 'plugins/Favorites/index.html?action=edit&index=' + id, {
+	new Ajax.Updater( { success: element }, webroot + 'plugins/Favorites/index.html?action=edit&index=' + id + '&sess=' + session, {
 		method: 'get',
 		asynchronous: true,
 		onFailure: function(t) {
@@ -82,7 +82,7 @@ function edit(id) {
 	} );
 }
 
-function editCancel(id, remove) {
+function editCancel(id, session, remove) {
 	var element = $('dragitem_' + id);
 	
 	element.innerHTML = editHTML[id];
@@ -92,16 +92,16 @@ function editCancel(id, remove) {
 	// handle the remove on cancel case
 	if (remove == '1') {
 		Element.remove(element);
-		ajaxRequest(webroot + 'plugins/Favorites/index.html','action=editset&index=' + id + '&cancel=1&removeoncancel=1');
+		ajaxRequest(webroot + 'plugins/Favorites/index.html','action=editset&index=' + id + '&cancel=1&removeoncancel=1&sess=' + session);
 	}
 }
 
-function editSave(id) {
+function editSave(id, session) {
 	var element = document.getElementById('dragitem_' + id);
 	
 	var newTitle = $('edit_title_' + id);
-	var params = 'action=editset&index=' + id + '&entrytitle=' + escape(newTitle.value);
-	
+	var params = 'action=editset&index=' + id + '&entrytitle=' + escape(newTitle.value) + '&sess=' + session;
+
 	if ($('edit_url_'   + id)) {
 		var newURL = escape($('edit_url_'   + id).value);
 		params     = params + '&entryurl=' + newURL
@@ -129,14 +129,14 @@ function editSave(id) {
 	});
 }
 
-function editTitle(id) {
+function editTitle(id, session) {
 	var element = $('titleheader');
 	
 	// backup copy of line item in case of cancel
 	editHTML['titleheader'] = element.innerHTML;
 	
 	// pull an edit form via Ajax
-	new Ajax.Updater( { success: element }, webroot + 'plugins/Favorites/index.html?action=edittitle&index=' + id, {
+	new Ajax.Updater( { success: element }, webroot + 'plugins/Favorites/index.html?action=edittitle&index=' + id + '&sess=' + session, {
 		method: 'get',
 		asynchronous: true,
 		onFailure: function(t) {
@@ -151,15 +151,15 @@ function cancelTitle() {
 	delete editHTML['titleheader'];
 }
 
-function saveTitle(id) {
+function saveTitle(id, session) {
 	var element = $('titleheader');
-	
+
 	if (!id) {
 		id = '';
 	}
-	
+
 	var newTitle = $('newtitle');
-	var params = 'index=' + id + '&title=' + escape(newTitle.value);
-	
+	var params = 'index=' + id + '&title=' + escape(newTitle.value) + '&sess=' + session;
+
 	ajaxUpdate('index.html',params);
 }

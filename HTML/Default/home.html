@@ -21,13 +21,6 @@ ELSE %]
 	
 		<script type="text/javascript">
 			Ext.EventManager.onDocumentReady(MainMenu.init, MainMenu, true);
-
-			[% IF favorites %]
-			// dirty way of initializing the favorites list...
-			Ext.EventManager.onDocumentReady(function(){
-				Utils.processCommandURL('[% webroot %]plugins/Favorites/index.html?fav');
-			});
-			[% END %]
 		</script>
 	[% END %]
 

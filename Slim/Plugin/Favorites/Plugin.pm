@@ -18,6 +18,8 @@ use strict;
 
 use base qw(Slim::Plugin::Base);
 
+use Tie::Cache::LRU;
+
 use Slim::Buttons::Common;
 use Slim::Web::XMLBrowser;
 use Slim::Utils::Favorites;
@@ -121,7 +123,7 @@ sub webPages {
 
 	Slim::Web::HTTP::addPageFunction('plugins/Favorites/index.html', \&indexHandler);
 
-	Slim::Web::Pages->addPageLinks('browse', { 'FAVORITES' => 'plugins/Favorites/index.html?fav' });
+	Slim::Web::Pages->addPageLinks('browse', { 'FAVORITES' => 'plugins/Favorites/index.html' });
 
 	addEditLink();
 }
@@ -132,48 +134,72 @@ sub addEditLink {
 	Slim::Web::Pages->addPageLinks('plugins', {	'PLUGIN_FAVORITES_PLAYLIST_EDITOR' => $enabled ? 'plugins/Favorites/index.html?new' : undef });
 }
 
-my $opml;    # opml hash for current editing session
-my $deleted; # any deleted sub tree which may be added back
-my $autosave;# save each change
+# support multiple edditing sessions at once - indexed by sessionId.  [Default to favorites edditting]
+my $nextSession = 2; # session id 1 = favorites
+my %sessions, 'Tie::Cache::LRU', 4;
 
 sub indexHandler {
 	my $client = shift;
 	my $params = shift;
-
-	my $edit;     # index of entry to edit if set
-	my $changed;  # opml has been changed
 
 	# Debug:
 	#for my $key (keys %$params) {
 	#	print "Key: $key, Val: ".$params->{$key}."\n";
 	#}
 
-	if ($params->{'fav'}) {
+	my $opml;     # opml hash for current editing session
+	my $deleted;  # any deleted sub tree which may be added back
+	my $autosave; # save each change
+	my $sessId;   # current editing session id
 
-		$log->info("opening favorites edditing session");
+	my $edit;     # index of entry to edit if set
+	my $changed;  # opml has been changed
 
-		$opml = Slim::Plugin::Favorites::OpmlFavorites->new($client);
+	if ($params->{'sess'} && $sessions{ $params->{'sess'} }) {
+
+		$sessId = $params->{'sess'};
+
+		$log->info("existing editing session [$sessId]");
+
+		$opml     = $sessions{ $sessId }->{'opml'};
+		$deleted  = $sessions{ $sessId }->{'deleted'};
+		$autosave = $sessions{ $sessId }->{'autosave'};
+
+	} elsif ($params->{'sess'} && $params->{'sess'} > 1 || $params->{'new'}) {
+
+		my $url   = $params->{'new'};
+
+		$sessId   = $nextSession++;
 		$deleted  = undef;
-		$autosave = 1;
-	}
-
-	if (my $url = $params->{'new'}) {
+		$autosave = $params->{'autosave'};
 
 		if (Slim::Music::Info::isURL($url)) {
 
-			$log->info("opening $url in opml edittor");
+			$log->info("new opml editting session [$sessId] - opening $url");
 
 			$opml = Slim::Plugin::Favorites::Opml->new({ 'url' => $url });
 
 		} else {
 
-			$log->info("new opml editting session");
+			$log->info("new opml editting session [$sessId]");
 
 			$opml = Slim::Plugin::Favorites::Opml->new();
 		}
 
-		$autosave = $params->{'autosave'};
-		$deleted = undef;
+		$sessions{ $sessId } = {
+			'opml'     => $opml,
+			'deleted'  => $deleted,
+			'autosave' => $autosave,
+		};
+
+	} else {
+
+		$log->info("favorites edditing session");
+
+		$opml = Slim::Plugin::Favorites::OpmlFavorites->new($client);
+		$deleted  = undef;
+		$autosave = 1;
+		$sessId   = 1;
 	}
 
 	# get the level to operate on - this is the level containing the index if action is set, otherwise the level specified by index
@@ -459,15 +485,13 @@ sub indexHandler {
 	}
 
 	# set params for page build
-	if (defined $opml) {
-		$params->{'autosave'}  = $autosave;
-		$params->{'favorites'} = !$favs;
-		$params->{'title'}     = $opml->title;
-		$params->{'filename'}  = $opml->filename;
-	}
-
-	$params->{'deleted'}  = defined $deleted ? $deleted->{'text'} : undef;
-	$params->{'editmode'} = defined $edit;
+	$params->{'sess'}      = $sessId;
+	$params->{'favorites'} = !$favs;
+	$params->{'title'}     = $opml->title;
+	$params->{'filename'}  = $opml->filename;
+	$params->{'deleted'}   = defined $deleted ? $deleted->{'text'} : undef;
+	$params->{'editmode'}  = defined $edit;
+	$params->{'autosave'}  = $autosave;
 
 	if ($opml && $opml->error) {
 		$params->{'errormsg'} = string('PLUGIN_FAVORITES_' . $opml->error) . " " . $opml->filename;
