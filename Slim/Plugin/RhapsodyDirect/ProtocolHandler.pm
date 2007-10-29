@@ -302,11 +302,15 @@ sub gotPlaybackSession {
 	# If synced, only master should do this
 	
 	if ( !Slim::Player::Sync::isSynced($client) || Slim::Player::Sync::isMaster($client) ) {
-		getTrackMetadata( $client, {
-			trackId => $trackId,
-		} );
+		Slim::Utils::Timers::killTimers( $client, \&getTrackMetadata );
+		Slim::Utils::Timers::setTimer(
+			$client,
+			time() + 2,
+			\&getTrackMetadata,
+			{ trackId => $trackId },
+		);
 	}
-	
+
 	# Get the track URL via the player
 	# When synced, all players will do this to initialize themselves for playback
 	rpds( $client, {
@@ -349,17 +353,31 @@ sub onDecoderUnderrun {
 		rpds( $client, {
 			data        => $data,
 			timeout     => 5, # Sometimes log requests fail, so we want to only wait a short time
-			callback    => \&getNextTrackInfo,
+			callback    => sub {
+				if ( Slim::Player::Sync::isSynced($client) ) {
+					$callback->();
+				}
+				else {
+					getNextTrackInfo( $client, undef, $nextURL, $callback );
+				}
+			},
 			onError     => sub {
 				# We don't really care if the logging call fails,
 				# so allow onError to work like the normal callback
-				getNextTrackInfo( $client, undef, $nextURL, $callback );
+				if ( Slim::Player::Sync::isSynced($client) ) {
+					$callback->();
+				}
+				else {
+					getNextTrackInfo( $client, undef, $nextURL, $callback );
+				}
 			},
 			passthrough => [ $nextURL, $callback ],
 		} );
 	}
 	else {
-		getNextTrackInfo( $client, undef, $nextURL, $callback );
+		if ( !Slim::Player::Sync::isSynced($client) ) {
+			getNextTrackInfo( $client, undef, $nextURL, $callback );
+		}
 	}
 }
 
@@ -469,9 +487,13 @@ sub getNextTrackInfo {
 	# Get metadata for normal tracks
 	# If synced, only the master should do this
 	if ( !Slim::Player::Sync::isSynced($client) || Slim::Player::Sync::isMaster($client) ) {
-		getTrackMetadata( $client, {
-			trackId => $trackId,
-		} );
+		Slim::Utils::Timers::killTimers( $client, \&getTrackMetadata );
+		Slim::Utils::Timers::setTimer(
+			$client,
+			time() + 2,
+			\&getTrackMetadata,
+			{ trackId => $trackId },
+		);
 	}
 	
 	my @clients;
@@ -498,7 +520,13 @@ sub getNextTrackInfo {
 # On an underrun, restart radio or skip to next track
 sub onUnderrun {
 	my ( $class, $client, $url, $callback ) = @_;
-	
+
+	if ( Slim::Player::Sync::isSynced($client) ) {
+		$log->debug("Ignoring underrun while synced");
+		$callback->();
+		return;
+	}
+
 	if ( $log->is_debug ) {
 		$log->debug( 'Underrun, stopping, playmode: ' . $client->playmode );
 	}
@@ -1005,10 +1033,16 @@ sub getMetadataFor {
 	# If metadata is not here, fetch it so the next poll will include the data
 	if ( !$meta->{$url} ) {
 		my ($trackId) = $url =~ /(Tra\.[^.]+)/;
-		
-		getTrackMetadata( $client, {
-			trackId => $trackId,
-		} );
+
+		my $master = Slim::Player::Sync::masterOrSelf($client);
+
+		Slim::Utils::Timers::killTimers( $master, \&getTrackMetadata );
+		Slim::Utils::Timers::setTimer(
+			$master,
+			time() + 2,
+			\&getTrackMetadata,
+			{ trackId => $trackId },
+		);
 	}
 	
 	return $meta->{$url} || {};

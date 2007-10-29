@@ -568,7 +568,10 @@ sub checkSync {
 
 			if ($client->playmode ne 'playout-stop') {
 
-				Slim::Player::Source::skipahead($client);
+				my $nextsong = Slim::Player::Source::nextsong($client);
+				if ( defined $nextsong ) {
+					$client->execute( [ 'playlist', 'jump', $nextsong ] );
+				}
 
 			} else {
 
