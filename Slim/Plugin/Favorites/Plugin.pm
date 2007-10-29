@@ -181,20 +181,14 @@ sub indexHandler {
 
 		} else {
 
-			$log->info("new opml editting session [$sessId]");
+			$log->info("new opml editing session [$sessId]");
 
 			$opml = Slim::Plugin::Favorites::Opml->new();
 		}
 
-		$sessions{ $sessId } = {
-			'opml'     => $opml,
-			'deleted'  => $deleted,
-			'autosave' => $autosave,
-		};
-
 	} else {
 
-		$log->info("favorites edditing session");
+		$log->info("new favorites editing session");
 
 		$opml = Slim::Plugin::Favorites::OpmlFavorites->new($client);
 		$deleted  = undef;
@@ -478,6 +472,13 @@ sub indexHandler {
 		$params->{'removeoncancel'} = 1;
 		$changed = 1;
 	}
+
+	# save session data for next call
+	$sessions{ $sessId } = {
+		'opml'     => $opml,
+		'deleted'  => $deleted,
+		'autosave' => $autosave,
+	};
 
 	# save each change if autosave set
 	if ($changed && $opml && $autosave) {
