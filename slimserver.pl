@@ -58,16 +58,24 @@ sub Install {
 
 	if ((defined $Username) && ((defined $Password) && length($Password) != 0)) {
 		my @infos;
-		my ($host, $user) = split /\\/, $Username;
+		my ($host, $user);
+
 		# use the localhost '.' by default, unless user has defined "domain\username"
-		$host ||= '.';
+		if ($Username =~ /(.+)\\(.+)/) {
+			$host = $1;
+			$user = $2;
+		}
+		else {
+			$host = '.';
+			$user = $Username;
+		}
 
 		# configure user to be used to run the server
 		if ($host && $user 
 		&& Win32::Lanman::LsaLookupNames("\\\\$host", [$user], \@infos)
 		&& Win32::Lanman::LsaAddAccountRights("\\\\$host", ${$infos[0]}{sid}, [&Win32::Lanman::SE_SERVICE_LOGON_NAME])) {
 
-			$Config{UserName} = $Username;
+			$Config{UserName} = "$host\\$user";
 			$Config{Password} = $Password;
 		}
 	}
