@@ -87,7 +87,7 @@
 	[% END %]
 		
 	[% IF comment %] 
-		[% item = comment | html; title = "COMMENT"; PROCESS songInfoItem %]
+		[% item = comment; title = "COMMENT"; PROCESS songInfoItem %]
 	[% END %]
 
 	[% IF itemobj.lyrics %] 
