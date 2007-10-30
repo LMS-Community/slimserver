@@ -106,3 +106,6 @@ PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT
 
 PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
 	EN	Invalid playback session.
+
+PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED
+	EN	Rhapsody cannot play with more than 3 players synced.  Please unsync one or more players.

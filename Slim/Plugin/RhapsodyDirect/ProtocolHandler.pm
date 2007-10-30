@@ -122,6 +122,40 @@ sub handleDirectError {
 	}
 }
 
+# Only allow 3 players synced, throw an error if more are synced
+sub tooManySynced {
+	my $client = shift;
+	
+	return unless Slim::Player::Sync::isSynced($client);
+	
+	my @clients;
+	
+	my $master = Slim::Player::Sync::masterOrSelf($client);
+	push @clients, $master, @{ $master->slaves };
+	
+	if ( scalar @clients > 3 ) {
+		$log->debug('Too many players synced, not playing');
+		
+		my $line1 = $client->string('PLUGIN_RHAPSODY_DIRECT_ERROR');
+		my $line2 = $client->string('PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED');
+		
+		# Show message on all players
+		for my $client ( @clients ) {
+			$client->showBriefly( {
+				line => [ $line1, $line2 ]
+			},
+			{
+				block  => 1,
+				scroll => 1,
+			} );
+		}
+		
+		return 1;
+	}
+	
+	return;
+}
+
 # Perform processing during play/add, before actual playback begins
 sub onCommand {
 	my ( $class, $client, $cmd, $url, $callback ) = @_;
@@ -132,6 +166,8 @@ sub onCommand {
 	if ( $cmd ne 'play' ) {
 		return $callback->();
 	}
+	
+	return if tooManySynced($client);
 	
 	# XXX: When hitting play while currently listening to another Rhapsody track,
 	# no logging is performed
@@ -399,7 +435,9 @@ sub onDecoderUnderrun {
 
 # On skip, load the next track before playback
 sub onJump {
-    my ( $class, $client, $nextURL, $callback ) = @_;
+	my ( $class, $client, $nextURL, $callback ) = @_;
+	
+	return if tooManySynced($client);
 
 	if ( $log->is_debug ) {
 		$log->debug( 'Handling command "jump", playmode: ' . $client->playmode );
