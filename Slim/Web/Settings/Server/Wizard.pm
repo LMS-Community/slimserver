@@ -151,8 +151,8 @@ sub handler {
 		# - use iTunes if available
 		# - use local path if no iTunes available
 		if (!$serverPrefs->get('wizardDone')) {
-			$paramRef->{prefs}->{iTunes} = $paramRef->{prefs}->{iTunes} || Slim::Plugin::iTunes::Common->canUseiTunesLibrary();
-			$paramRef->{prefs}->{audiodir} = $paramRef->{prefs}->{audiodir} || !$paramRef->{prefs}->{iTunes};
+			$paramRef->{prefs}->{iTunes} = $paramRef->{prefs}->{iTunes} if Slim::Plugin::iTunes::Common->canUseiTunesLibrary();
+			$paramRef->{prefs}->{audiodir} = $paramRef->{prefs}->{audiodir} if !$paramRef->{prefs}->{iTunes};
 		}
 	}
 
