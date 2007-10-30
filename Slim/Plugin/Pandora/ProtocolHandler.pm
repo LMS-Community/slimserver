@@ -194,9 +194,6 @@ sub gotNextTrack {
 	# after the next track begins buffering
 	$client->pluginData( prevTrack => $client->pluginData('currentTrack') );
 	
-	# Save the time difference between SN and SqueezeCenter
-	$track->{timediff} = $track->{now} - time();
-	
 	# Save metadata for this track, and save the previous track
 	$client->pluginData( currentTrack => $track );
 	
