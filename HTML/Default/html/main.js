@@ -633,6 +633,8 @@ Playlist = function(){
 					tooltipType: 'title',
 					handler: Playlist.save
 				});
+			} else {
+				Ext.get('playlistToggleArtwork').hide();
 			}
 
 			// dragging doesn't survive a reload
