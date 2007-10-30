@@ -187,14 +187,14 @@ sub hash_of_savers {
 
 =head2 addMode ( )
 
-Register new modes with the server. $name must be a uniqe string to identify the player mode. 
+Register new player modes with the server. $name must be a uniqe string to identify the player mode. 
 
 Optional $buttonFunctions is a reference the routine to call for accessing the reference to the button
-functions used while operating in the screensaver.  This is only required if the new mode makes use
+functions used while operating in the new button mode.  This is only required if the new mode makes use
  of any custom functions not found in this module.
 
 $setModeFunction is an optional reference to the modes setMode function call, which sets up the required
-state for the screensaver mode. This is not required if the new mode is only for display or makes use
+state for the new button mode. This is not required if the new mode is only for display or makes use
 of existing INPUT.* modes.
 
 $leaveModeFunction is an optional reference to a routine to run when exiting the player button mode.
