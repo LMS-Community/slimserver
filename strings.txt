@@ -7481,6 +7481,10 @@ SHOW_ARTWORK
 	DE	Plattenhüllen anzeigen
 	EN	Show Artwork
 
+HIDE_ARTWORK
+	DE	Plattenhüllen nicht anzeigen
+	EN	Hide Artwork
+
 VOLUME
 	CS	Hlasitost
 	DA	Volume

@@ -30,7 +30,8 @@
 				<table><tr>
 					<td>
 						<span id="playlistToggleArtwork" onclick="Playlist.[% IF noPlaylistCover %]showCoverArt()[% ELSE %]hideCoverArt()[% END %];" class="link">
-							<img src="[% webroot %]html/images/spacer.gif" width="38" [% IF noPlaylistCover %]class="showCover"[% END %] alt="[% "SHOW_ARTWORK" | string %]"/>
+							<img src="[% webroot %]html/images/spacer.gif" width="38" [% IF noPlaylistCover %]class="showCover" title="[% 'SHOW_ARTWORK' | string %]" alt="[% 'SHOW_ARTWORK' | string %]"
+							[% ELSE %] title="[% 'HIDE_ARTWORK' | string %]" alt="[% 'HIDE_ARTWORK' | string %]"[% END %]/>
 						</span>
 					</td>
 					<td><span id="btnPlaylistSave"></span></td>

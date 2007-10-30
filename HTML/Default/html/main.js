@@ -609,13 +609,6 @@ Playlist = function(){
 
 			Playlist.highlightCurrent();
 
-			new Ext.Button('btnPlaylistClear', {
-				cls: 'btn-small',
-				text: strings['clear_playlist'],
-				icon: webroot + 'html/images/icon_playlist_clear.gif',
-				handler: Playlist.clear
-			});
-
 			// playlist name is too long to be displayed
 			// try to use it as the Save button's tooltip
 			var tooltip = null;
@@ -623,6 +616,15 @@ Playlist = function(){
 				tooltip = el.dom.innerHTML;
 
 			if (items.length > 0) {
+				Ext.get('playlistToggleArtwork').show();
+
+				new Ext.Button('btnPlaylistClear', {
+					cls: 'btn-small',
+					text: strings['clear_playlist'],
+					icon: webroot + 'html/images/icon_playlist_clear.gif',
+					handler: Playlist.clear
+				});
+
 				new Ext.Button('btnPlaylistSave', {
 					cls: 'btn-small',
 					text: strings['save'],
