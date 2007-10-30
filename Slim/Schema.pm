@@ -526,7 +526,7 @@ Returns commmon searchable types - constant values: contributor, album, track.
 sub searchTypes {
 	my $class = shift;
 
-	return qw(contributor album track);
+	return qw(contributor album genre track);
 }
 
 =head2 contentType( $urlOrObj ) 

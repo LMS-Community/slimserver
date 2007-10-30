@@ -368,6 +368,10 @@ sub fillInSearchResults {
 		} elsif ($type eq 'album') {
 
 			$form{'hierarchy'} = 'album,track';
+		
+		} elsif ($type eq 'genre') {
+		
+			$form{'hierarchy'} = 'genre,contributor,album,track';
 		}
 
 		$obj->displayAsHTML(\%form, $descend);

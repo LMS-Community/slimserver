@@ -48,6 +48,8 @@ sub tracks {
 sub displayAsHTML {
 	my ($self, $form, $descend, $sort) = @_;
 
+	$form->{'text'}       = $self->name;
+
 	my $Imports = Slim::Music::Import->importers;
 
 	for my $mixer (keys %{$Imports}) {
