@@ -1495,7 +1495,12 @@ sub playerXQuery {
 				$client = $clients[$clientparam];
 			}
 		}
-		
+
+		# brute force attempt using eg. player's IP address (web clients)
+		if (!defined $client) {
+			$client = Slim::Player::Client::getClient($clientparam);
+		}
+
 		if (defined $client) {
 
 			if ($entity eq "name") {
