@@ -875,7 +875,7 @@ sub new {
 	
 	my $self = {
 		'_request'           => [],
-		'_isQuery'           => undef,
+		'_isQuery'           => 0,
 		'_clientid'          => $clientid,
 		'_needClient'        => 0,
 		'_params'            => $paramsRef,
