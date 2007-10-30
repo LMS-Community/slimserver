@@ -1,3 +1,30 @@
+[% extJsScripts = BLOCK %]
+<script type="text/javascript">
+	var Plugins = function(){
+		return {
+			toggle: function(plugin) {
+				var enable = plugin.name.match(/\.enable/);
+				Ext.get('settingsForm').setStyle({cursor: 'wait'});
+				Ext.Ajax.request({
+					url: Ext.get('settingsForm').dom.action,
+					params: 'useAJAX=1&' + plugin.name + '=1&pageAntiCSRFToken=[% pageAntiCSRFToken %]',
+					callback: function() { Ext.get('settingsForm').setStyle({cursor: 'auto'}); },
+					success: function(response) {
+						plugin.name = enable ? plugin.name.replace(/enable/, 'disable') : plugin.name.replace(/disable/, 'enable'); 
+						plugin.value = enable ? '[% "DISABLE" | string %]' : '[% "ENABLE" | string %]';
+
+						if (response.responseText) {
+							response = response.responseText.replace(/warning\|/, '');
+							Ext.get('statusarea').update(response);
+						}
+					}
+				});
+			}
+		};
+	}();
+
+</script>
+[% END %]
 [% PROCESS settings/header.html %]
 
 	<div class="prefHead">[% "SETUP_GROUP_PLUGINS" | string %]</div>
@@ -17,58 +44,20 @@
 			<!-- XXXX - need to check for pending uninstall / install -->
 			[% IF enabled %]
 
-			<input type="submit" id="[% name %].toggle" name="[% name %].disable" value="[% 'DISABLE' | string %]">
+			<input type="button" id="[% name %].toggle" name="[% name %].disable" value="[% 'DISABLE' | string %]" onClick="Plugins.toggle(this)">
 
 			[% ELSE %]
 
-			<input type="submit" id="[% name %].toggle" name="[% name %].enable" value="[% 'ENABLE' | string %]">
+			<input type="button" id="[% name %].toggle" name="[% name %].enable" value="[% 'ENABLE' | string %]" onClick="Plugins.toggle(this)">
 
 			[% END %]
 
-			<input type="submit" id="[% name %].uninstall" name="[% name %].uninstall" value="[% 'UNINSTALL' | string %]">
-
-			[% IF NOT useTabList %]
-			<script type="text/javascript">
-				new Event.observe($('[% name %].toggle'), 'click', function(e) {
-					$('settingsForm').setStyle({cursor:'wait'});
-					Event.stop(e);
-					new Ajax.Request($('settingsForm').action, {
-						parameters: { useAJAX: 1, '[% name _ '.' _ (enabled ? 'disable' : 'enable') %]': 1, pageAntiCSRFToken: '[% pageAntiCSRFToken %]' },
-						onSuccess: function() {
-							if ($('[% name %].toggle').name == '[% name %].enable') {
-								$('[% name %].toggle').name = '[% name %].disable';
-								$('[% name %].toggle').value = '[% "DISABLE" | string %]';
-							}
-							else {
-								$('[% name %].toggle').name = '[% name %].enable';
-								$('[% name %].toggle').value = '[% "ENABLE" | string %]';
-							}
-							resizeSettingsSection();
-							$('settingsForm').setStyle({cursor:'auto'});
-						}
-					});
-				});
-
-				new Event.observe($('[% name %].uninstall'), 'click', function(e) {
-					$('settingsForm').setStyle({cursor:'wait'});
-					Event.stop(e);
-					new Ajax.Request($('settingsForm').action, {
-						parameters: { useAJAX: 1, '[% name %].uninstall': 1, pageAntiCSRFToken: '[% pageAntiCSRFToken %]' },
-						onSuccess: function(response) {
-							var results = parseData(response.responseText);
-							$('statusarea').update(results['warning']);
-							resizeSettingsSection();
-							$('settingsForm').setStyle({cursor:'auto'});
-						}
-					});
-				});
-
-			</script>
-			[% END %]
-
+<!-- uninstall isn't implemented in the page handler? -->
+<!-- 		<input type="submit" id="[% name %].uninstall" name="[% name %].uninstall" value="[% 'UNINSTALL' | string %]" onClick="Plugins.uninstall(this)">
+ -->
 		[% END %]
 
 	[%- END -%]
-		
+
 [% PROCESS settings/footer.html %]
 	
