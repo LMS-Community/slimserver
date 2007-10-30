@@ -990,6 +990,9 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		<strong><code><a href="#player displaytype ?">player displaytype ?</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#canpoweroff ?">player canpoweroff ?</a></code></strong>
+	</li>
+	<li>
 		<strong><code><a href="#signalstrength ?">signalstrength ?</a></code></strong>
 	</li>
 	<li>
@@ -1223,6 +1226,37 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 		Request: &quot;player displaytype 0 ?&lt;LF&gt;&quot; or "0 player displaytype ?"
 		<br>
 		Response: &quot;player displaytype 0 noritake-katakana&lt;LF&gt;&quot;
+	</p>
+</blockquote>
+
+<br>
+<p id="canpoweroff ?">
+	<strong>
+		<code>
+			player
+			canpoweroff
+			&lt;playerindex|playerid&gt;
+			?
+		</code>
+	</strong>
+</p>
+<p>
+	Returns wether a player can be powered off or not. 
+	Current hardware players and SoftSqueeze would return 1, web clients 0.
+</p>
+<p>
+	Examples:
+</p>
+<blockquote> 
+	<p>
+		Request: &quot;player canpoweroff 04:20:00:12:23:45 ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;player canpoweroff 04:20:00:12:23:45 1&lt;LF&gt;&quot;
+	</p>
+	<p>
+		Request: &quot;player canpoweroff 192.168.0.39 ?&lt;LF&gt;&quot;
+		<br>
+		Response: &quot;player canpoweroff 192.168.0.39 0&lt;LF&gt;&quot;
 	</p>
 </blockquote>
 

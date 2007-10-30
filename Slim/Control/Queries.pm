@@ -1463,7 +1463,7 @@ sub playerXQuery {
 	$log->debug("Begin Function");
 
 	# check this is the correct query.
-	if ($request->isNotQuery([['player'], ['count', 'name', 'address', 'ip', 'id', 'model', 'displaytype']])) {
+	if ($request->isNotQuery([['player'], ['count', 'name', 'address', 'ip', 'id', 'model', 'displaytype', 'canpoweroff']])) {
 		$request->setStatusBadDispatch();
 		return;
 	}
@@ -1508,6 +1508,8 @@ sub playerXQuery {
 				$request->addResult("_$entity", $client->model());
 			} elsif ($entity eq "displaytype") {
 				$request->addResult("_$entity", $client->vfdmodel());
+			} elsif ($entity eq "canpoweroff") {
+				$request->addResult("_$entity", $client->canPowerOff());
 			}
 		}
 	}
