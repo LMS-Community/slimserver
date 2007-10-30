@@ -22,6 +22,24 @@
 			var strings = new Array();
 
 			Ext.EventManager.onDocumentReady(Player.init, Player, true);
+			Ext.EventManager.onDocumentReady(function(){
+				Utils.processCommand({
+					params: [ '', [ 'player', 'canpoweroff', playerid, '?' ] ],
+					scope: this,
+	
+					success: function(response){
+						if (response && response.responseText) {
+							response = Ext.util.JSON.decode(response.responseText);
+
+							if (response.result && response.result._canpoweroff != null) {
+								var el = Ext.get('ctrlPower');
+								if (el)
+									el.setVisible(response.result._canpoweroff);
+							}
+						}
+					}
+				});
+			});
 		</script>
 
 		<!--[if IE 6]>
