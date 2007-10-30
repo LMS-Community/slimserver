@@ -175,7 +175,7 @@ sub addSaver {
 
 =head2 hash_of_savers ( )
 
-Taking no arguments, this function returns a reference to teh current hash of screensavers. Called from settings routines
+Taking no arguments, this function returns a reference to the current hash of screensavers. Called from settings routines
 in Slim::Web::Setup and Slim::Buttons::Settings
 
 =cut
@@ -190,14 +190,14 @@ sub hash_of_savers {
 Register new modes with the server. $name must be a uniqe string to identify the player mode. 
 
 Optional $buttonFunctions is a reference the routine to call for accessing the reference to the button
-functions used while operating in the screensaver.  This is only required if the screensaver makes use
+functions used while operating in the screensaver.  This is only required if the new mode makes use
  of any custom functions not found in this module.
 
 $setModeFunction is an optional reference to the modes setMode function call, which sets up the required
-state for the screensaver mode. This is not required if the screensaver is only for display or makes use
+state for the screensaver mode. This is not required if the new mode is only for display or makes use
 of existing INPUT.* modes.
 
-$leaveModeFunction is an optional reference to a routine to run when exiting the screensaver mode.
+$leaveModeFunction is an optional reference to a routine to run when exiting the player button mode.
 
 =cut
 
