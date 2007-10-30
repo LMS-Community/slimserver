@@ -136,7 +136,7 @@ sub addEditLink {
 
 # support multiple edditing sessions at once - indexed by sessionId.  [Default to favorites edditting]
 my $nextSession = 2; # session id 1 = favorites
-my %sessions, 'Tie::Cache::LRU', 4;
+tie my %sessions, 'Tie::Cache::LRU', 4;
 
 sub indexHandler {
 	my $client = shift;
