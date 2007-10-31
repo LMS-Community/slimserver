@@ -813,10 +813,22 @@ Player = function(){
 				handler: this.collapseExpand
 			});
 
+			if (el = Ext.get('ctrlProgress'))
+				el.on('click', this.onPlaytimeClick, el);
+
 			pollTimer = new Ext.util.DelayedTask(this.getStatus, this);
 			playTimeTimer = new Ext.util.DelayedTask(this.updatePlayTime, this);
 
 			this.getStatus();
+		},
+
+		onPlaytimeClick : function(ev) {
+			if (!playerStatus.duration)
+				return;
+ 
+			var pos = Math.max(ev.xy[0] - this.getX(), 0);
+			pos = pos / Math.max(this.getWidth(), pos)
+			Player.playerControl(['time', pos * playerStatus.duration]);
 		},
 
 		updatePlayTime : function(time, totalTime){
