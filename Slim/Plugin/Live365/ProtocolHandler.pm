@@ -63,7 +63,7 @@ sub onScan {
 	# Get the user's session ID from SN, this is so we
 	# don't have to worry about old session ID's in favorites
 	my $sessionURL = Slim::Networking::SqueezeNetwork->url(
-		'/api/live365/v1/sessionid'
+		'/api/live365/v1/sessionid?url=' . uri_escape($url)
 	);
 
 	my $http = Slim::Networking::SqueezeNetwork->new(
