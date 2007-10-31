@@ -13,7 +13,7 @@ var Favorites = function(){
 					Utils.unHighlight();
 
 					dragEl.applyStyles({'z-index':2000});
-					dragEl.update(el.dom.innerHTML);
+					dragEl.update(el.child('div').dom.innerHTML);
 					dragEl.addClass(el.dom.className + ' dd-proxy');
 				},
 
@@ -74,28 +74,28 @@ var Favorites = function(){
 							}
 
 							// send the result to the page handler
-							Ext.Ajax.request({
-								method: 'GET',
-								url: 'index.html',
-								params: {
-									ajaxUpdate: 1,
-									action: 'move',
-									index: source.dd.config.position,
-									to: target.dd.config.position,
-									sess: session
-								},
-								timeout: 5000,
-								disableCaching: true
-							});
+							if (Ext.get('draglist'))
+								// unregister event handlers
+								Ext.dd.ScrollManager.unregister('draglist');
 
-							// recalculate the item's number within the playlist
-							items = Ext.query('ol#draglist li');
-							for(var i = plStart; i < items.length; i++) {
-								if (el = Ext.get(items[i]))
-									el.dd.config.position = plPosition + i;
+							var el = Ext.get('mainbody');
+						
+							if (el) {
+								Utils.unHighlight();
+								var um = el.getUpdateManager();						
+								el.load(
+									webroot + 'plugins/Favorites/index.html', 
+									{
+										action: 'move',
+										index: source.dd.config.position,
+										to: target.dd.config.position,
+										sess: session,
+										ajaxUpdate: 1,
+										player: player
+									},
+									Favorites.onUpdated
+								);
 							}
-
-							Utils.init();
 						}
 					}
 				}
@@ -112,6 +112,11 @@ var Favorites = function(){
 				item.dd.scroll = false;
 				item.dd.scrollContainer = true;
 			}
+		},
+
+		onUpdated: function(){
+			Utils.init();
+			Favorites.init();
 		}
 	}
 }();
