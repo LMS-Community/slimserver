@@ -36,37 +36,4 @@
 		<input name="rescan" type="submit" class="stdclick" value="[% "SETUP_RESCAN_BUTTON" | string %]">
 	[% END %]
 
-	[% IF prefs.exists('itunes') || prefs.exists('musicmagic') %]
-	<div class="settingSection">
-		
-		[% IF prefs.exists('itunes') %]
-		<div class="settingGroup">
-			<div class="prefHead">[% "ITUNES" | string %]</div>
-			<div class="prefDesc hiddenDesc">[% "SETUP_ITUNES_DESC" | string %]</div>
-	
-			<select class="stdedit" name="itunes" id="itunes">
-	
-				<option [% IF NOT prefs.itunes %]selected [% END %]value="0">[% 'DONT_USE_ITUNES' | getstring %]</option>
-				<option [% IF prefs.itunes %]selected [% END %]value="1">[% 'USE_ITUNES' | getstring %]</option>
-			
-			</select>
-		</div>
-		[% END %]
-
-		[% IF prefs.exists('musicmagic') %]
-		<div class="settingGroup">
-			<div class="prefHead">[% "SETUP_MUSICMAGIC" | string %]</div>
-			<div class="prefDesc hiddenDesc">[% "SETUP_MUSICMAGIC_DESC" | string %]</div>
-	
-			<select class="stdedit" name="musicmagic" id="musicmagic">
-	
-				<option [% IF NOT prefs.musicmagic %]selected [% END %]value="0">[% 'DONT_USE_MUSICMAGIC' | getstring %]</option>
-				<option [% IF prefs.musicmagic %]selected [% END %]value="1">[% 'USE_MUSICMAGIC' | getstring %]</option>
-			
-			</select>
-		</div>
-		[% END %]
-	</div>
-	[% END %]
-	
 [% PROCESS settings/footer.html %]

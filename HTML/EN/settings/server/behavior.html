@@ -28,7 +28,8 @@
 			<input type="radio" name="useBandAsAlbumArtist" value="1" [% IF prefs.useBandAsAlbumArtist %]checked[% END %]>[% 'SETUP_USEBANDASALBUMARTIST_1' | getstring %]<br/>
 		[% END %]
 
-		[% WRAPPER settingGroup title="" desc="SETUP_VARIOUSARTISTSSTRING_DESC"%]
+		[% WRAPPER settingGroup title="" desc=""%]
+			<div class="prefDesc">[% "SETUP_VARIOUSARTISTSSTRING_DESC" | string %]</div>
 			<input type=text class="stdedit" name="variousArtistsString" id="variousArtistsString" value="[% prefs.variousArtistsString %]" size="40">
 		[% END %]
 	[% END %]
