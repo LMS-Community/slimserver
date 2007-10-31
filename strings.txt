@@ -3448,7 +3448,7 @@ SETUP_PLAYDELAY
 	EN	Player Audio Delay
 
 SETUP_PLAYDELAY_DESC
-	EN	There can be a noticeable difference between how much of a track that the player reports it has played to SqueezeCentre and how much audio has been heard. This can be the case when using digital outputs (depending upon the connected equipment) or with software players on some platforms. In these cases, this delay can be set here so that SqueezeCenter can take it into account when adjusting synchronization.
+	EN	There can be a noticeable difference between how much of a track that the player reports it has played to SqueezeCenter and how much audio has been heard. This can be the case when using digital outputs (depending upon the connected equipment) or with software players on some platforms. In these cases, this delay can be set here so that SqueezeCenter can take it into account when adjusting synchronization.
 	
 SETUP_PLAYDELAY_CHOOSE
 	EN	Player audio delay (milliseconds):
@@ -3457,7 +3457,7 @@ SETUP_MINSYNCADJUST
 	EN	Minimum Synchronization Adjustment
 
 SETUP_MINSYNCADJUST_DESC
-	EN	When SqueezeCentre detects that two synchronized players have got a little bit out of synchronization with each other, it makes a small adjustment, usually to the player that has got behind. You can configure the minimum size of such adjustments for this player. The larger this interval, the less frequent will be the adjustments but the more the players will be allowed to drift apart.
+	EN	When SqueezeCenter detects that two synchronized players have got a little bit out of synchronization with each other, it makes a small adjustment, usually to the player that has got behind. You can configure the minimum size of such adjustments for this player. The larger this interval, the less frequent will be the adjustments but the more the players will be allowed to drift apart.
 
 SETUP_MINSYNCADJUST_CHOOSE
 	EN	Minimum adjustment (milliseconds):
@@ -3466,7 +3466,7 @@ SETUP_PACKETLATENCY
 	EN	Network Packet Latency
 
 SETUP_PACKETLATENCY_DESC
-	EN	SqueezeCentre automatically measures the network latency between it and the player. This is important when maintaining synchronization. Occassionally these measurements can be too inconsistent to be useful, in which case you can specify a typical value here.
+	EN	SqueezeCenter automatically measures the network latency between it and the player. This is important when maintaining synchronization. Occassionally these measurements can be too inconsistent to be useful, in which case you can specify a typical value here.
 
 SETUP_PACKETLATENCY_CHOOSE
 	EN	Network latency (milliseconds):
