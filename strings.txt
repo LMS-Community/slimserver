@@ -6825,13 +6825,13 @@ SETUP_WIZARD_SOURCE_DESC
 	EN	You have several ways to integrate your local music files with SqueezeCenter. Please select from the following list:
 
 SETUP_WIZARD_SOURCE_AUDIODIR
-	EN	<strong>Use local music.</strong> SqueezeCenter can access music files on your local computer or another computer in your network.
+	EN	<b>Use local music.</b> SqueezeCenter can access music files on your local computer or another computer in your network.
 
 SETUP_WIZARD_SOURCE_ITUNES
-	EN	<strong>Use iTunes.</strong> SqueezeCenter can access your iTunes&reg; library and playlists. Changes made in iTunes will be reflected in SqueezeCenter.
+	EN	<b>Use iTunes&reg;.</b> SqueezeCenter can access your iTunes library and playlists. Changes made in iTunes will be reflected in SqueezeCenter.
 
 SETUP_WIZARD_SOURCE_MUSICIP
-	EN	<strong>Use MusicIP&trade;.</strong> SqueezeCenter can use MusicIP as your source for title and genre information. For more information visit <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>
+	EN	<b>Use MusicIP&trade;.</b> SqueezeCenter can use MusicIP as your source for title and genre information. For more information visit <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>
 
 SETUP_WIZARD_AUDIODIR
 	EN	Local Music Folder
@@ -6840,10 +6840,10 @@ SETUP_WIZARD_AUDIODIR_DESC
 	EN	Please navigate to the folder where your music collection is stored.
 
 SETUP_WIZARD_SHARE_WIN
-	EN	<br/><br/>If you want to access any of your music stored on another computer or a shared network volume, please make sure that the shared volume is mounted and available to your file system. Once the volume is available, it will appear in the selection window to the left. If you know the path of the volume you wish to access you can enter it below.
+	EN	<br/><br/>If you want to access any of your music stored on another computer or a shared network drive, please make sure that the shared drive is mounted and available to your file system. Once the drive is available, it will appear in the selection window to the left. If you know the path of the drive you wish to access you can enter it below.
 
 SETUP_WIZARD_SHARE_OTHERS
-	EN	<br/><br/>If you want to access any of your music stored on another computer or a shared network volume, please make sure that the shared volume is mounted and available to your file system. Once the volume is available, it will appear in the selection window to the left. If you know the path of the volume you wish to access you can enter it below.
+	EN	<br/><br/>If you want to access any of your music stored on another computer or a shared network drive, please make sure that the shared drive is mounted and available to your file system. Once the drive is available, it will appear in the selection window to the left. If you know the path of the drive you wish to access you can enter it below.
 
 SETUP_WIZARD_PLAYLISTDIR
 	EN	Playlist Folder
@@ -6888,7 +6888,7 @@ SETUP_WIZARD_DONE
 	EN	SqueezeCenter Setup Done!
 
 SETUP_WIZARD_DONE_DESC
-	EN	Your settings have been saved. You're now ready to use SqueezeCenter.<br/><br/>If you selected a local music source, SqueezeCenter will now start indexing your collection. Please be patient - you'll soon have access to all of your music files.<br/><br/>You can now close this window or <a href="/">click here</a> to proceed to SqueezeCenter.
+	EN	Your settings have been saved. You're now ready to use SqueezeCenter.<br/><br/>If you selected a local music source, SqueezeCenter will now start indexing your collection. Please be patient -- you'll soon have access to all of your music files.<br/><br/>You can now close this window or <a href="/">click here</a> to proceed to SqueezeCenter.
 
 SETUP_WIZARD_NEXT
 	DE	Weiter
