@@ -3098,7 +3098,6 @@ sub songinfoQuery {
 			#$cnt++;
 		} else {
 			
-			$request->addResult("count", $count);
 
 			my $idx = 0;
 			my $cnt = 0;
@@ -3141,6 +3140,8 @@ sub songinfoQuery {
 
 			while (my ($key, $val) = each %{$hashRef}) {
 
+
+				my $suppress = 0;
 				if ($idx >= $start && $idx <= $end) {
 
 					if ($menuMode) {
@@ -3317,21 +3318,26 @@ sub songinfoQuery {
 							}
 							elsif ( $key eq 'YEAR' && $val == 0 ||
 								$key eq 'COMMENT' && $val == 0) {
-								$val = Slim::Utils::Strings::string('NONE');
+								# bug 5241, don't show YEAR or COMMENT if it's 0
+								$suppress = 1; 
+								# now there's one less in the loop
+								$count--;
 							}
 							
 							my $style   = $key eq 'YEAR' ? 'item' : 'itemNoAction';
-							$request->addResultLoop($loopname, $cnt, 'style', $style);
+							$request->addResultLoop($loopname, $cnt, 'style', $style) unless $suppress;
 						}
-						$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string($key) . ": " . $val);
+						$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string($key) . ": " . $val) unless $suppress;
 					}
 					else {
 						$request->addResultLoop($loopname, $cnt, $key, $val);
 					}
-					$cnt++;
+					$cnt++ unless $suppress;
 				}
 				$idx++;
  			}
+			# because of suppression of some items, only now can we add the count
+			$request->addResult("count", $count);
 		}
 		}
 	}
