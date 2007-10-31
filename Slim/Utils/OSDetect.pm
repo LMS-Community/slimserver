@@ -408,12 +408,13 @@ sub initDetailsForOSX {
 	$osDetails{'uid'} = getpwuid($>);
 
 	for my $dir (qw(
-		Library/Application\ Support/SqueezeCenter
-		Library/Application\ Support/SqueezeCenter/Plugins 
-		Library/Application\ Support/SqueezeCenter/Graphics
-		Library/Application\ Support/SqueezeCenter/html
-		Library/Application\ Support/SqueezeCenter/IR 
-		Library/SlimDevices/bin Library/Logs/SqueezeCenter
+		'Library/Application Support/SqueezeCenter'
+		'Library/Application Support/SqueezeCenter/Plugins' 
+		'Library/Application Support/SqueezeCenter/Graphics'
+		'Library/Application Support/SqueezeCenter/html'
+		'Library/Application Support/SqueezeCenter/IR '
+		Library/SlimDevices/bin
+		Library/Logs/SqueezeCenter
 	)) {
 
 		eval 'mkpath("$ENV{\'HOME\'}/$dir");';
