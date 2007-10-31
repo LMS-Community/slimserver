@@ -136,6 +136,14 @@
 	<script TYPE="text/javascript" src="[% webroot %]plugins/Favorites/html/favorites.js?r=[% revision %]"></script>
 [% END %][% END %]
 
+[% extJsScripts = BLOCK %]
+	<script type="text/javascript" src="[% webroot %]plugins/Favorites/html/favorites2.js?r=[% revision %]"></script>
+
+	<script type="text/javascript">
+		Ext.EventManager.onDocumentReady(function(){ Favorites.init([% sess %]); });
+	</script>
+[% END %]
+
 [% IF NOT ajaxUpdate %][% PROCESS pageheader.html dontscroll=1 %]<div id="mainbody">[% END %]
 
 [%- IF errormsg %]<p>[% errormsg %]</p>[% END -%]
