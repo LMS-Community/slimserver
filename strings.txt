@@ -6804,13 +6804,13 @@ SETUP_WIZARD_WELCOME_DESC
 	EN	Thank you for purchasing a Logitech&reg; wireless music system.<br><br>This SqueezeCenter Setup Assistant will guide you through the steps of setting up your new player. We'll start by connecting you to SqueezeNetwork&reg;, then we'll help you find and access your local music.<br/><br/>If you haven't set up an account on SqueezeNetwork, please exit this Setup Assistant and go to <a href="http://www.squeezenetwork.com" target="_blank">squeezenetwork.com</a> to create your account.
 
 SETUP_WIZARD_PROXY
-	EN	SqueezeCenter Setup: Proxy Settings
+	EN	Proxy Settings
 
 SETUP_WIZARD_PROXY_DESC
 	EN	SqueezeCenter wasn't able to connect to the web. <br/>If your network is protected by a web proxy, then you can specify the IP address and port for the proxy to use when SqueezeCenter connects to servers outside your local network.  Use the format xx.xx.xx.xx:yyyy where xx.xx.xx.xx is the IP address of the proxy, and yyyy is the port number.  Leave this field blank if you don't use a HTTP web proxy.
 
 SETUP_WIZARD_SQN
-	EN	SqueezeCenter Setup: SqueezeNetwork Account
+	EN	SqueezeNetwork Account
 
 SETUP_WIZARD_SQN_DESC
 	EN	SqueezeNetwork allows you to get the most out of your new wireless music system by giving you access to music on demand services and internet radio stations.<br/><br/>If you already have a SqueezeNetwork account please enter your information below and click the "Add" button. If you don't have a SqueezeNetwork account, please click "I need an account".
@@ -6819,7 +6819,7 @@ SETUP_WIZARD_SQN_VERIFY
 	EN	Add
 
 SETUP_WIZARD_SOURCE
-	EN	SqueezeCenter Setup: Music Source
+	EN	Music Source
 
 SETUP_WIZARD_SOURCE_DESC
 	EN	You have several ways to integrate your local music files with SqueezeCenter. Please select from the following list:
@@ -6834,7 +6834,7 @@ SETUP_WIZARD_SOURCE_MUSICIP
 	EN	<strong>Use MusicIP&trade;.</strong> SqueezeCenter can use MusicIP as your source for title and genre information. For more visit <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>
 
 SETUP_WIZARD_AUDIODIR
-	EN	SqueezeCenter Setup: Local Music Folder
+	EN	Local Music Folder
 
 SETUP_WIZARD_AUDIODIR_DESC
 	EN	Please navigate to the folder where your music collection is stored.
@@ -6846,19 +6846,19 @@ SETUP_WIZARD_SHARE_OTHERS
 	EN	<br/><br/>If you want to access any of your music stored on another computer or a shared network volume, please make sure that the shared volume is mounted and available to your file system. Once the volume is available, it will appear in the selection window to the left. If you know the path of the volume you wish to access you can enter it below.
 
 SETUP_WIZARD_PLAYLISTDIR
-	EN	SqueezeCenter Setup: Playlist Folder
+	EN	Playlist Folder
 
 SETUP_WIZARD_PLAYLISTDIR_DESC
 	EN	Please select the path to your playlist folder.
 
 SETUP_WIZARD_ITUNES
-	EN	SqueezeCenter Setup: iTunes Integration
+	EN	iTunes Integration
 
 SETUP_WIZARD_ITUNES_DESC
 	EN	SqueezeCenter wasn't able to find your iTunes library automatically. Please select your iTunes XML file.
 
 SETUP_WIZARD_MUSICIP
-	EN	SqueezeCenter Setup: MusicIP Integration
+	EN	MusicIP Integration
 
 SETUP_WIZARD_MUSICIP_DESC
 	EN	SqueezeCenter wasn't able to connect to your MusicIP Mixer. If you're using a non-standard port (default: 10002) for your MusicIP Mixer, please enter the port number in this field.
@@ -6870,7 +6870,7 @@ SETUP_WIZARD_MUSICIP_DESC3
 	EN	For more information about the MusicIP Mixer configuration and SqueezeCenter please visit <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
 
 SETUP_WIZARD_SUMMARY
-	EN	SqueezeCenter Setup: Summary
+	EN	Summary
 
 SETUP_WIZARD_SUMMARY_DESC
 	EN	You've finished setting up SqueezeCenter.
@@ -6882,10 +6882,10 @@ SETUP_WIZARD_SUMMARY_MUSICSOURCE
 	EN	Music Source
 
 SETUP_WIZARD_SUMMARY_RESCAN
-	EN	SqueezeCenter will now start indexing your collection.<br/><br/>Have fun!
+	EN	<br/><br/>
 
 SETUP_WIZARD_DONE
-	EN	SqueezeCenter Setup: Done!
+	EN	SqueezeCenter Setup Done!
 
 SETUP_WIZARD_DONE_DESC
 	EN	Your settings have been saved. You're now ready to use SqueezeCenter.<br/><br/>If you selected a local music source, SqueezeCenter will now start indexing your collection. Please be patient - you'll soon have access to all of your music files.<br/><br/>You can now close this window or <a href="/">click here</a> to proceed to SqueezeCenter.
