@@ -481,8 +481,6 @@ Playlist = function(){
 							Ext.get(id).addClass('dragUp');
 						else
 							Ext.get(id).addClass('dragDown');
-
-						console.debug((target.dd.config.position < source.dd.config.position) ? 'up' : 'down');
 					}
 				},
 
