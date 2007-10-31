@@ -36,6 +36,9 @@ my $log = logger('network.cometd');
 
 my $manager = Slim::Web::Cometd::Manager->new;
 
+# Map channels to callback closures
+my %subCallbacks = ();
+
 # requests that we need to unsubscribe from
 my %toUnsubscribe = ();
 
@@ -413,6 +416,9 @@ sub handler {
 			#     priority => <value>, # optional priority value, is passed-through with the response
 			#   }
 			
+			# If the request array doesn't contain 'subscribe:foo' the request will be treated
+			# as a normal subscription using Request::subscribe()
+			
 			my $id       = $obj->{id};
 			my $request  = $obj->{data}->{request};
 			my $response = $obj->{data}->{response};
@@ -652,6 +658,33 @@ sub handleRequest {
 	
 	my $args = $cmd->[1];
 
+	# If args doesn't contain a 'subscribe' key, treat it as a normal subscribe
+	# call and not a request + subscribe
+	my $isRequest = grep { /^subscribe:/ } @{$args};
+	
+	if ( !$isRequest ) {
+		if ( $log->is_debug ) {
+			$log->debug( 'Treating request as plain subscription: ' . Data::Dump::dump($cmd) );
+		}
+		
+		my $callback = sub {
+			my $request = shift;
+			
+			$request->source( "$response|$id|$priority" );
+			
+			requestCallback( $request );
+		};
+		
+		# Need to store this callback for use later in unsubscribe
+		$subCallbacks{ $response } = $callback;
+		
+		Slim::Control::Request::subscribe( $callback, $cmd );
+		
+		$log->debug( "Subscribed for $response, callback $callback" );
+		
+		return { ok => 1 };
+	}
+	
 	if ( !$args || ref $args ne 'ARRAY' ) {
 		return { error => 'invalid request arguments, array expected' };
 	}
@@ -729,21 +762,36 @@ sub requestCallback {
 	$log->debug( "requestCallback got results for $channel / $id" );
 	
 	# Do we need to unsubscribe from this request?
-	if ( exists $toUnsubscribe{$channel} ) {
+	if ( exists $toUnsubscribe{ $channel } ) {
 		$log->debug( "requestCallback: unsubscribing from $channel" );
 		
-		$request->removeAutoExecuteCallback();
+		if ( my $callback = delete $subCallbacks{ $channel } ) {
+			# this was a normal subscribe, so we have to call unsubscribe()
+			$log->debug( "Request::unsubscribe( $callback )" );
+			
+			Slim::Control::Request::unsubscribe( $callback );
+		}
+		else {
+			$request->removeAutoExecuteCallback();
+		}
 		
-		delete $toUnsubscribe{$channel};
+		delete $toUnsubscribe{ $channel };
 		
 		return;
+	}
+	
+	my $data = $request->getResults;
+	
+	if ( exists $subCallbacks{ $channel } ) {
+		# If the request was a normal subscribe, we need to use renderAsArray
+		$data = [ $request->renderAsArray ];
 	}
 	
 	# Construct event response
 	my $events = [ {
 		channel   => $channel,
 		id        => $id,
-		data      => $request->getResults,
+		data      => $data,
 		ext       => {
 			priority => $priority,
 		},
@@ -815,6 +863,16 @@ sub disconnectClient {
 		Slim::Control::Request::unregisterAutoExecute( $clid );
 			
 		$log->debug("Unregistered all auto-execute requests for client $clid");
+		
+		# Remove any normal subscriptions for this client
+		for my $channel ( keys %subCallbacks ) {
+			if ( $channel =~ m{/$clid/} ) {
+				my $callback = delete $subCallbacks{ $channel };
+				Slim::Control::Request::unsubscribe( $callback );
+				
+				$log->debug( "Unsubscribed from callback $callback for $channel" );
+			}
+		}
 	
 		# Remove client from manager
 		$manager->remove_client( $clid );
