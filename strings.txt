@@ -6831,7 +6831,7 @@ SETUP_WIZARD_SOURCE_ITUNES
 	EN	<strong>Use iTunes.</strong> SqueezeCenter can access your iTunes&reg; library and playlists. Changes made in iTunes will be reflected in SqueezeCenter.
 
 SETUP_WIZARD_SOURCE_MUSICIP
-	EN	<strong>Use MusicIP&trade;.</strong> SqueezeCenter can use MusicIP as your source for title and genre information. For more visit <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>
+	EN	<strong>Use MusicIP&trade;.</strong> SqueezeCenter can use MusicIP as your source for title and genre information. For more information visit <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>
 
 SETUP_WIZARD_AUDIODIR
 	EN	Local Music Folder
