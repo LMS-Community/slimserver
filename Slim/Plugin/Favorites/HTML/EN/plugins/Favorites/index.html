@@ -73,7 +73,7 @@
 		[%- ELSE       -%]href="[% webroot %]plugins/Favorites/index.html?action=edit&amp;index=[% entry.index %]&amp;sess=[% sess %]"
 		[%- END -%]
 	[%- END %]
-	[%- IF NOT useAJAX %][% WRAPPER moveuplink noTarget=1 -%]
+	[%- IF NOT (useAJAX || useExtJS) %][% WRAPPER moveuplink noTarget=1 -%]
 			href="[% webroot %]plugins/Favorites/index.html?action=moveup&amp;index=[% entry.index %]&amp;sess=[% sess %]"
 		[%- END %]
 		[% WRAPPER movedownlink noTarget=1 -%]
@@ -136,13 +136,13 @@
 	<script TYPE="text/javascript" src="[% webroot %]plugins/Favorites/html/favorites.js?r=[% revision %]"></script>
 [% END %][% END %]
 
-[% extJsScripts = BLOCK %]
+[% IF action != 'edit'; extJsScripts = BLOCK %]
 	<script type="text/javascript" src="[% webroot %]plugins/Favorites/html/favorites2.js?r=[% revision %]"></script>
 
 	<script type="text/javascript">
 		Ext.EventManager.onDocumentReady(function(){ Favorites.init([% sess %]); });
 	</script>
-[% END %]
+[% END; END %]
 
 [% IF NOT ajaxUpdate %][% PROCESS pageheader.html dontscroll=1 %]<div id="mainbody">[% END %]
 
