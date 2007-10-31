@@ -112,11 +112,13 @@
 					onMouseOut="hideElements(['controls[% index _ (start + loop.index) %]'])">
 				[% END %]
 				[%- WRAPPER contentitem leftcontrols = 'gencontrol' rightcontrols = 'favoritescontrol' %]
-					[% IF item.type != 'text' %]
+					[% IF item.weblink %]
+					<a href="[% item.weblink %]" target="_blank">
+					[% ELSIF item.type != 'text' %]
 					<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]">
 					[% END %]
 					[% item.name || item.title %]
-					[% IF item.type != 'text' %]
+					[% IF item.weblink || item.type != 'text' %]
 					</a>
 					[% END %]
 				[%- END %]

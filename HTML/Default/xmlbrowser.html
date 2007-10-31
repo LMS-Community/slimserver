@@ -107,11 +107,13 @@
 				</form>
 			[% ELSE %]
 				[%- WRAPPER contentitem controls = 'gencontrol' %]
-					[% IF item.type != 'text' %]
+					[% IF item.weblink %]
+					<a href="[% item.weblink %]" target="_blank">
+					[% ELSIF item.type != 'text' %]
 					<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;homeCategory=[% homeCategory %]" class="browseItemLink">
 					[% END %]
 					[% item.name || item.title %]
-					[% IF item.type != 'text' %]
+					[% IF item.weblink || item.type != 'text' %]
 					</a>
 					[% END %]
 				[%- END %]
