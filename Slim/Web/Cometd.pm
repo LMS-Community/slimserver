@@ -434,6 +434,7 @@ sub handler {
 					response => $response,
 					priority => $priority,
 					clid     => $responseClid,
+					type     => 'subscribe'
 				} );
 				
 				if ( $result->{error} ) {
@@ -514,6 +515,7 @@ sub handler {
 					response => $response,
 					priority => $priority,
 					clid     => $responseClid,
+					type     => 'request',
 				} );
 				
 				if ( $result->{error} ) {
@@ -656,33 +658,37 @@ sub handleRequest {
 	my $priority = $params->{priority} || '';
 	my $clid     = $params->{clid};
 	
+	my $type     = $params->{type};
+	
 	my $args = $cmd->[1];
 
-	# If args doesn't contain a 'subscribe' key, treat it as a normal subscribe
-	# call and not a request + subscribe
-	my $isRequest = grep { /^subscribe:/ } @{$args};
-	
-	if ( !$isRequest ) {
-		if ( $log->is_debug ) {
-			$log->debug( 'Treating request as plain subscription: ' . Data::Dump::dump($cmd) );
+	if ( $type eq 'subscribe' ) {
+		# If args doesn't contain a 'subscribe' key, treat it as a normal subscribe
+		# call and not a request + subscribe
+		my $isRequest = grep { /^subscribe:/ } @{$args};
+		
+		if ( !$isRequest ) {
+			if ( $log->is_debug ) {
+				$log->debug( 'Treating request as plain subscription: ' . Data::Dump::dump($cmd) );
+			}
+		
+			my $callback = sub {
+				my $request = shift;
+			
+				$request->source( "$response|$id|$priority" );
+			
+				requestCallback( $request );
+			};
+		
+			# Need to store this callback for use later in unsubscribe
+			$subCallbacks{ $response } = $callback;
+		
+			Slim::Control::Request::subscribe( $callback, $cmd );
+		
+			$log->debug( "Subscribed for $response, callback $callback" );
+		
+			return { ok => 1 };
 		}
-		
-		my $callback = sub {
-			my $request = shift;
-			
-			$request->source( "$response|$id|$priority" );
-			
-			requestCallback( $request );
-		};
-		
-		# Need to store this callback for use later in unsubscribe
-		$subCallbacks{ $response } = $callback;
-		
-		Slim::Control::Request::subscribe( $callback, $cmd );
-		
-		$log->debug( "Subscribed for $response, callback $callback" );
-		
-		return { ok => 1 };
 	}
 	
 	if ( !$args || ref $args ne 'ARRAY' ) {
