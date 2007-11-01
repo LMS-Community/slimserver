@@ -16,8 +16,8 @@
 		<div id="scanWarning" [% IF NOT warn %]style="display:none"[% END %]><b>[% "NOTE" | string %]</b> [% "HOME_SCAN_WARNING" | string %]</div>
 
 		<div id="libraryInfo" [% IF warn OR NOT (album_count OR artistcount OR song_count) %]style="display:none"[% END %]>
-			[%- "LIBRARY_CONTAINS" | string %] <span id="albumcount">[% album_count %]</span> [% "WITH" | string -%] 
-			<span id="songcount">[%- song_count %]</span> [% "BY" | string %] <span id="artistcount">[% artist_count %]</span>.
+			[%- "LIBRARY_CONTAINS" | string %]&nbsp;<span id="albumcount">[% album_count %]</span>&nbsp;[% "WITH" | string -%]
+			<span id="songcount">[%- song_count %]</span>&nbsp;[% "BY" | string %]&nbsp;<span id="artistcount">[% artist_count %]</span>.
 		</div>
 
 		<div id="newVersion">
