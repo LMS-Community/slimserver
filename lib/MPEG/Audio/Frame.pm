@@ -36,8 +36,10 @@ $mpeg25 = 1; # normally support it
 BEGIN {
 	if ($] <= 5.006){
 		require Fcntl; Fcntl->import(qw/SEEK_CUR/);
+		require Fcntl; Fcntl->import(qw/SEEK_SET/);
 	} else {
 		require POSIX; POSIX->import(qw/SEEK_CUR/);
+		require POSIX; POSIX->import(qw/SEEK_SET/);
 	}
 }
 
@@ -306,7 +308,12 @@ sub read {
 		(read $fh, $sum, 2 or return undef) == 2 or return undef;
 	}
 
-	my $bitrate	= $bitrates[$version[$hr[VERSION]]][$layer[$hr[LAYER]]][$hr[BITRATE]] || $free_bitrate or return undef;
+	my $bitrate;
+	if ( !($bitrate = $bitrates[$version[$hr[VERSION]]][$layer[$hr[LAYER]]][$hr[BITRATE]] || $free_bitrate) ) {
+		# Trying again: must have been a bad sync
+		goto OUTER;
+	}
+
 	my $sample	= $samples[$hr[VERSION]][$hr[SAMPLE]];
 
 	my $use_smaller = $hr[VERSION] == 2 || $hr[VERSION] == 0; # FIXME VERSION == 2 means no support for MPEG2 multichannel
@@ -329,6 +336,12 @@ sub read {
 		offset	=> $offset,		# the offset where the header was found in the handle, based on tell
 		crc_sum	=> $sum,		# the bytes of the network order short that is the crc sum
 	);
+	
+	if ($self->broken()) {
+		seek ($fh, $offset + 1, SEEK_SET);
+		# Bad CRC: trying again: must have been a bad sync
+		goto OUTER;
+	}
 
 	$self;
 }
