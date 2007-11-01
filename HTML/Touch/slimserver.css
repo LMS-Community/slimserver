@@ -515,8 +515,23 @@ div.settingSection .groupHead, .settingSection .prefHead {
         background-color: #c5c5c5;
         height: 15px;
         padding: 3px 3px 4px;
+	border: 1px solid black;
         font-size: 15px;
         font-weight: bold;
+	padding-left: 10px;
+}
+
+div.settingSection {
+	padding-bottom: 10px;
+}
+
+div.prefDesc {
+	padding-left: 20px;
+	padding-bottom: 10px;
+}
+
+div.prefs {
+	padding-left: 30px;
 }
 
 div.prefHead {
@@ -533,8 +548,9 @@ div.groupHead {
 		text-transform: uppercase;
 }
 
-div.prefDesc,.groupDesc,.groupHead {
+div.groupDesc, div.groupHead {
         padding-bottom: 10px;
+	padding-left: 10px;
 }
 
 .bar {
@@ -623,3 +639,4 @@ span.rowtext {
 .favoritesText {
 	font-size: 160%;
 }
+
