@@ -22,10 +22,8 @@
 		<a href="[% webroot %]html/about.html" class = 'statusbartext'>[% "ABOUT_SHORT" | string %]</a>&nbsp;|&nbsp;
 		<a href="[% webroot %]settings/server/basic.html" class = "statusbartext">[% "SERVER_SETTINGS" | string %]</a>&nbsp;|&nbsp;
 		<a class = 'statusbartext' href="[% webroot %]settings/player/basic.html?player=[% playerURI %]&playerid=[% playerURI %]">[% "PLAYER_SETTINGS" | string %]</a>
-[% IF isplayer %]
 		&nbsp;|&nbsp;
-		[% IF mode == 'off' %]<a href = "[% webroot %][% statusroot %]?p0=power&p1=1&p2=&player=[% playerURI %]&start=" class= 'statusbartext'>[% 'ON' | string %]</a>[% ELSE %]<a href = "[% webroot %][% statusroot %]?p0=power&p1=0&p2=&player=[% playerURI %]&start=" class = 'statusbartext'>[% 'OFF' | string %]</a>[% END %]
-[% END %]
+		<a href = "[% webroot %][% statusroot %]?p0=power&p1=[% IF mode == 'off' %]1[% ELSE %]0[% END %]&p2=&player=[% playerURI %]&start=" class= 'statusbartext'><img src = "[% webroot %]html/images/power.png" width = '15' height = '15'></a>
 	</td>
 	<td width = '20'>&nbsp;</td>
 	</tr>
