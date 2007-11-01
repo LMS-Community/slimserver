@@ -1422,7 +1422,19 @@ sub playlistcontrolCommand {
 			$request->setStatusBadParams();
 			return;
 		}
-		
+
+		if ($add || $load) {
+			$client->showBriefly({ 
+				'jive' => { 
+					'type'    => 'popupplay',
+					'text'    => $add
+						? [ Slim::Utils::Strings::string('JIVE_POPUP_ADDING'), $folder->title,
+							Slim::Utils::Strings::string('JIVE_POPUP_TO_PLAYLIST') ]
+						: [ Slim::Utils::Strings::string('JIVE_POPUP_NOW_PLAYING'), $folder->title ]
+				}
+			});
+		}
+
 		Slim::Control::Request::executeRequest(
 			$client, ['playlist', $cmd, $folder->url()]
 		);
