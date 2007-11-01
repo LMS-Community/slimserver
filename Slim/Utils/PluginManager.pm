@@ -315,6 +315,7 @@ sub enablePlugins {
 	my $class = shift;
 
 	my @incDirs = ();
+	my @loaded  = ();
 
 	for my $name (sort keys %$plugins) {
 
@@ -387,25 +388,15 @@ sub enablePlugins {
 		# Pull in the module
 		if ($loadModule && $module) {
 
-			Slim::bootstrap::tryModuleLoad($module);
+			if (Slim::bootstrap::tryModuleLoad($module)) {
 
-			# Initialize the plugin now that it's been loaded.
-			if ($module->can('initPlugin')) {
-
-				eval { $module->initPlugin };
-
-				if ($@) {
-
-					logWarning("Couldn't call $module->initPlugin: $@");
-
-				} else {
-
-					$manifest->{'state'} = STATE_ENABLED;
-				}
+				logWarning("Couldn't load $module");
 
 			} else {
 
-				logWarning("Couldn't load $module");
+				$manifest->{'state'} = STATE_ENABLED;
+
+				push @loaded, $module;
 			}
 		}
 
@@ -417,6 +408,26 @@ sub enablePlugins {
 			$log->debug("Adding HTML directory: [$htmlDir]");
 
 			Slim::Web::HTTP::addTemplateDirectory($htmlDir);
+		}
+	}
+
+	# Call init functions for all loaded plugins - multiple passes allows plugins to offer services to each other
+	# - plugins offering service to other plugins use preinitPlugin to init themselves and postinitPlugin to start the service
+	# - normal plugins use initPlugin and register with services offered by other plugins at this time
+
+	for my $initFunction (qw(preinitPlugin initPlugin postinitPlugin)) {
+
+		for my $module (@loaded) {
+
+			if ($module->can($initFunction)) {
+
+				eval { $module->$initFunction };
+				
+				if ($@) {
+
+					logWarning("Couldn't call $module->$initFunction: $@");
+				}
+			}
 		}
 	}
 }
