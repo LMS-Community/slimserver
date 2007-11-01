@@ -13781,10 +13781,10 @@ JIVE_POPUP_NOW_PLAYING
 	EN	Now Playing
 
 JIVE_TURN_PLAYER_ON
-	EN	Turn %s On
+	EN	Turn On %s
 
 JIVE_TURN_PLAYER_OFF
-	EN	Turn %s Off
+	EN	Turn Off %s
 
 PLAYER_NAME
 	EN	Name
