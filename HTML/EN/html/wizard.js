@@ -4,6 +4,7 @@ Wizard = function(){
 	var folderselectors = new Array();
 	var sqnValidated = false;
 	var nextBtn;
+	var prevBtn;
 	var windowSize = new Array(top.window.outerWidth, top.window.outerHeight);
 
 	// some MSIE versions won't return a value
@@ -78,10 +79,11 @@ Wizard = function(){
 					gotoBtn: 'gotoiTunesDir'
 				});
 
-				new Ext.Button('previous', {
+				this.prevBtn = new Ext.Button('previous', {
 					text: strings['previous'],
 					handler: this.onPrevious,
-					scope: this
+					scope: this,
+					hidden: true
 				});
 
 				this.nextBtn = new Ext.Button('next', {
@@ -123,6 +125,10 @@ Wizard = function(){
 		whichPage : function(oldValue, offset){
 			// launch verification in the background
 			switch (pages[oldValue]) {
+				case 'welcome' :
+					this.prevBtn.show();
+					break;
+
 				case 'sqn' :
 					this.verifySqnAccount();
 					break;
@@ -152,6 +158,10 @@ Wizard = function(){
 			else newPage = Math.min(newPage, pages.length-1);
 
 			switch (pages[newPage]) {
+				case 'welcome' :
+					this.prevBtn.hide();
+					break;
+
 				case 'proxy' :
 					if (!showproxy)
 						newPage = this.whichPage(newPage, offset);
