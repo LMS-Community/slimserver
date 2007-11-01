@@ -17,6 +17,7 @@
 
 	[% WRAPPER setting title="" desc="" %][% END %]
 
+	<div class = "prefs">
 	[% FOREACH category = categories %]
 
 		<p>
@@ -32,5 +33,6 @@
 		</p>
 
 	[% END %]
+	</div>
 
 [% PROCESS settings/footer.html %]
