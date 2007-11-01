@@ -1,3 +1,17 @@
+[% extJsScripts = BLOCK %]
+	<script TYPE="text/javascript">
+		Ext.EventManager.onDocumentReady(function(){
+			var el = Ext.get('progressLink');
+			if (el) {
+				el.dom.href='javascript:void(0);';
+				el.on('click', function(){
+					try { parent.Settings.activateTab('status'); }
+					catch(e) {}
+				})
+			}
+		});
+	</script>
+[% END %]
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="SETUP_LANGUAGE" desc="SETUP_LANGUAGE_DESC" %]
@@ -34,6 +48,7 @@
 		</select><br/>
 
 		<input name="rescan" type="submit" class="stdclick" value="[% "SETUP_RESCAN_BUTTON" | string %]">
+		<a id="progressLink" href="[% webroot %]settings/server/status.html?player=[% playerid %]">[% IF scanning %][% "SETUP_VIEW_SCANNING" | string %][% ELSE %][% "SETUP_VIEW_NOT_SCANNING" | string %][% END %]</a>
 	[% END %]
 
 [% PROCESS settings/footer.html %]

@@ -58,7 +58,7 @@ sub handler {
 		webroot    => $paramRef->{webroot}
 	}) };
 
-	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
+	return $class->SUPER::handler($client, $paramRef);
 }
 
 1;

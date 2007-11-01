@@ -1,5 +1,5 @@
 Settings = function(){
-	var basicBtn, advBtn, header;
+	var basicBtn, advBtn, header, tp;
 
 	return {
 		init : function(){
@@ -29,7 +29,7 @@ Settings = function(){
 
 			Ext.QuickTips.init();
 
-			var tp = new Ext.TabPanel('settingsTabs');
+			tp = new Ext.TabPanel('settingsTabs');
 			tp.addTab('basic', strings['basic']).on('activate', function(){ Settings.showSettingsPage('settings/server/basic.html'); });
 			tp.addTab('mymusic', strings['mymusic']).on('activate', function(){ Settings.showSettingsPage('settings/server/behavior.html'); });
 
@@ -93,8 +93,11 @@ Settings = function(){
 			settings.setHeight(dimensions['maxHeight']);
 			settings.setWidth(dimensions['maxWidth'] - 20);
 			main.setWidth(dimensions['maxWidth']);
+		},
+
+		activateTab : function(tab){
+			tp.activate(tab);
 		}
-		
 	};
 }();
 
