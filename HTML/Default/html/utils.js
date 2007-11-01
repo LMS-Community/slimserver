@@ -408,7 +408,7 @@ var ScannerProgress = function(){
 
 					for (var j=0; j<elems.length; j++) {
 						if (value = scans[i][elems[j]])
-							Ext.get(elems[j]+i).update(value);
+							Ext.get(elems[j]+i).update(decodeURIComponent(value));
 
 					}
 				}

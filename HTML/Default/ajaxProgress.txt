@@ -1,13 +1,13 @@
 {
 	'scans':[
 		[% FOREACH item = progress_items %]{
-			'Name':'[% item.obj.name _ "_PROGRESS" | string | replace("'", "%27") %]',
-			'Done':'[% item.obj.done | replace("'", "%27") %]',
+			'Name':'[% item.obj.name _ "_PROGRESS" | string  | uri | replace("'", "%27") %]',
+			'Done':'[% item.obj.done | uri | replace("'", "%27") %]',
 			'Total':'[% item.obj.total %]',
-			'Active':'[% IF item.obj.active %][% "RUNNING" | string | replace("'", "%27") %][% ELSE %][% "COMPLETE" | string | replace("'", "%27") %][% END %]',
+			'Active':'[% IF item.obj.active %][% "RUNNING" | string | replace("'", "%27") %][% ELSE %][% "COMPLETE" | string | uri | replace("'", "%27") %][% END %]',
 			'Time':'[% item.time %]',
 			'Bar':'[% item.bar %]',
-			'Info':'[% item.obj.info | utf8decode | html | replace("'", "%27") %]'
+			'Info':'[% item.obj.info | utf8decode | uri | html | replace("'", "%27") %]'
 		}[% IF !loop.last; ","; END; END %]
 	],
 	'message':'[% message %]',
