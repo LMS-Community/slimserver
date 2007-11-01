@@ -56,11 +56,11 @@ $prefs->migrate(FEED_VERSION, sub {
 });
 
 sub name {
-	return 'PLUGIN_PODCAST';
+	return Slim::Web::HTTP::protectName('PLUGIN_PODCAST');
 }
 
 sub page {
-	return 'plugins/Podcast/settings/basic.html';
+	return Slim::Web::HTTP::protectURI('plugins/Podcast/settings/basic.html');
 }
 
 sub handler {

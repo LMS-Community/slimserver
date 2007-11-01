@@ -19,11 +19,11 @@ $prefs->migrate(1, sub {
 });
 
 sub name {
-	return 'PLUGIN_XPL';
+	return Slim::Web::HTTP::protectName('PLUGIN_XPL');
 }
 
 sub page {
-	return 'plugins/xPL/settings/basic.html';
+	return Slim::Web::HTTP::protectURI('plugins/xPL/settings/basic.html');
 }
 
 sub prefs {

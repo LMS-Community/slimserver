@@ -21,11 +21,11 @@ $prefs->migrate(1, sub {
 });
 
 sub name {
-	return 'PLUGIN_RESCAN_MUSIC_LIBRARY';
+	return Slim::Web::HTTP::protectName('PLUGIN_RESCAN_MUSIC_LIBRARY');
 }
 
 sub page {
-	return 'plugins/Rescan/settings/basic.html';
+	return Slim::Web::HTTP::protectURI('plugins/Rescan/settings/basic.html');
 }
 
 sub prefs {

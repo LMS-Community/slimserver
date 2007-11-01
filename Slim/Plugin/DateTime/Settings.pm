@@ -26,11 +26,11 @@ my $dateFormats = {
 };
 
 sub name {
-	return 'PLUGIN_SCREENSAVER_DATETIME';
+	return Slim::Web::HTTP::protectName('PLUGIN_SCREENSAVER_DATETIME');
 }
 
 sub page {
-	return 'plugins/DateTime/settings/basic.html';
+	return Slim::Web::HTTP::protectURI('plugins/DateTime/settings/basic.html');
 }
 
 sub prefs {

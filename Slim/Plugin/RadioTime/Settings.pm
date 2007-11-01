@@ -17,11 +17,11 @@ $prefs->migrate(1, sub {
 });
 
 sub name {
-	return 'PLUGIN_RADIOTIME_MODULE_NAME';
+	return Slim::Web::HTTP::protectName('PLUGIN_RADIOTIME_MODULE_NAME');
 }
 
 sub page {
-	return 'plugins/RadioTime/settings/basic.html';
+	return Slim::Web::HTTP::protectURI('plugins/RadioTime/settings/basic.html');
 }
 
 sub prefs {

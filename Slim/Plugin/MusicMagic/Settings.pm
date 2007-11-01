@@ -59,11 +59,11 @@ $prefs->setChange(
 );
 
 sub name {
-	return 'MUSICMAGIC';
+	return Slim::Web::HTTP::protectName('MUSICMAGIC');
 }
 
 sub page {
-	return 'plugins/MusicMagic/settings/musicmagic.html';
+	return Slim::Web::HTTP::protectURI('plugins/MusicMagic/settings/musicmagic.html');
 }
 
 sub prefs {

@@ -20,11 +20,11 @@ $prefs->setValidate({ 'validator' => 'intlimit', 'low' => 1024, 'high' => 65535 
 $prefs->setChange(\&Slim::Plugin::CLI::Plugin::cli_socket_change, 'cliport');
 
 sub name {
-	return 'PLUGIN_CLI';
+	return Slim::Web::HTTP::protectName('PLUGIN_CLI');
 }
 
 sub page {
-	return 'plugins/CLI/settings/basic.html';
+	return Slim::Web::HTTP::protectURI('plugins/CLI/settings/basic.html');
 }
 
 sub prefs {

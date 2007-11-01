@@ -71,11 +71,11 @@ $prefs->migrate(FEED_VERSION, sub {
 });
 
 sub name {
-	return 'PLUGIN_RSSNews';
+	return Slim::Web::HTTP::protectName('PLUGIN_RSSNews');
 }
 
 sub page {
-	return 'plugins/RSSNews/settings/basic.html';
+	return Slim::Web::HTTP::protectURI('plugins/RSSNews/settings/basic.html');
 }
 
 sub prefs {

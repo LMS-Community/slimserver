@@ -25,11 +25,11 @@ sub new {
 }
 
 sub name {
-	return 'PLUGIN_INFOBROWSER';
+	return Slim::Web::HTTP::protectName('PLUGIN_INFOBROWSER');
 }
 
 sub page {
-	return 'plugins/InfoBrowser/settings/basic.html';
+	return Slim::Web::HTTP::protectURI('plugins/InfoBrowser/settings/basic.html');
 }
 
 sub handler {

@@ -17,11 +17,11 @@ my $prefs = preferences('plugin.audioscrobbler');
 my $log   = logger('plugin.audioscrobbler');
 
 sub name {
-	return 'PLUGIN_AUDIOSCROBBLER_MODULE_NAME';
+	return Slim::Web::HTTP::protectName('PLUGIN_AUDIOSCROBBLER_MODULE_NAME');
 }
 
 sub page {
-	return 'plugins/AudioScrobbler/settings/basic.html';
+	return Slim::Web::HTTP::protectURI('plugins/AudioScrobbler/settings/basic.html');
 }
 
 sub prefs {

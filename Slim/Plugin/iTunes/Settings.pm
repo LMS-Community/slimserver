@@ -48,11 +48,11 @@ $prefs->setChange(
 'itunes');
 
 sub name {
-	return 'ITUNES';
+	return Slim::Web::HTTP::protectName('ITUNES');
 }
 
 sub page {
-	return 'plugins/iTunes/settings/itunes.html';
+	return Slim::Web::HTTP::protectURI('plugins/iTunes/settings/itunes.html');
 }
 
 sub prefs {
