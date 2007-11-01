@@ -61,7 +61,8 @@ sub init {
 
 # rate can be negative for rew, zero for pause, 1 for playback and greater than one for ffwd
 sub rate {
-	my ($client, $newrate) = @_;
+	my $client  = Slim::Player::Sync::masterOrSelf(shift);
+	my $newrate = shift;
 
 	unless (defined $newrate) {
 		return $client->rate();
