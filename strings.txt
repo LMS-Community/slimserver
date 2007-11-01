@@ -2186,7 +2186,7 @@ SETUP_GROUP_TCP_PARAMS_DESC
 	CS	Tato volba nastavuje parametry protokolu TCP/IP serveru.
 	DA	Disse indstillinger påvirker hvorledes serveren håndterer TCP over netværket.
 	DE	Diese Einstellung passt die TCP/IP-Netzwerk-Einstellungen des SqueezeCenters an.
-	EN	These settings adjust the parameters of the TCP/IP networking in the SqueezeCenter.
+	EN	These settings adjust the parameters of the TCP/IP networking in SqueezeCenter.
 	ES	Estos parámetros cambiarán las opciones de TCP/IP en el servidor.
 	FI	Seuraavat asetukset vaikuttavat palvelimen TCP/IP verkkotoimintaan.
 	FR	Ces réglages permettent d'ajuster les paramètres du réseau TCP pour le serveur.
