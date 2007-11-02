@@ -440,7 +440,7 @@ sub playmode {
 		if ($newmode eq "stop") {
 
 			if ( $log->is_info ) {
-				$log->info("Stopping and clearing out old chunks for client " . $everyclient->id);
+				$log->info($everyclient->id, ": Stopping and clearing out old chunks");
 			}
 
 			$everyclient->currentplayingsong("");
@@ -746,10 +746,10 @@ sub outputUnderrun {
 
 	return unless $client->playmode() =~ /play/;
 	
-	if ( $log->is_debug ) {
+	if ( $log->is_info ) {
 		my $decoder = $client->bufferFullness();
 		my $output  = $client->outputBufferFullness();
-		$log->debug( "Output buffer underrun (decoder: $decoder / output: $output)" );
+		$log->info($client->id, ": Output buffer underrun (decoder: $decoder / output: $output)" );
 	}
 	
 	# If playing Rhapsody, underrun means getEA may be failing, so log it
@@ -1590,6 +1590,7 @@ sub resetSong {
 	$client->songBytes(0);
 	$client->bytesReceivedOffset($client->bytesReceived());
 	$client->trickSegmentRemaining(0);
+	resetFrameData($client);
 }
 
 sub errorOpening {
