@@ -36,6 +36,7 @@ sub Startup {
 
 	# added to workaround a problem with 5.8 and perlsvc.
 	# $SIG{BREAK} = sub {} if RunningAsService();
+	main::initOptions();
 	main::init();
 	
 	# here's where your startup code will go
