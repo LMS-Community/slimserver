@@ -748,7 +748,7 @@ sub outputUnderrun {
 	
 	if ( $log->is_info ) {
 		my $decoder = $client->bufferFullness();
-		my $output  = $client->outputBufferFullness();
+		my $output  = $client->outputBufferFullness() || 0;
 		$log->info($client->id, ": Output buffer underrun (decoder: $decoder / output: $output)" );
 	}
 	
