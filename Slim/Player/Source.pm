@@ -1085,6 +1085,7 @@ sub gototime {
 
 	$client->songBytes($newoffset);
 	$song->{startOffset} = $newtime;
+	$client->streamBytes(0);
 	$client->bytesReceivedOffset(0);
 	$client->trickSegmentRemaining(0);
 	resetFrameData($client);
@@ -2237,7 +2238,7 @@ sub readNextChunk {
 						}
 
 						$seekpos  = $start;
-						$seekpos += 1 if $streamClass eq 'Slim::Formats::MP3';
+						$end += 1 if $streamClass eq 'Slim::Formats::MP3';
 
 						$tricksegmentbytes = $end - $seekpos;
 					}
@@ -2537,7 +2538,7 @@ sub findTimeForOffset {
 	return unless $byteOffset;
 
 	# check if there are any frames to analyse
-	if ( length($$buffer) > 400 ) { # make it worth our while
+	if ( length($$buffer) > 1500 ) { # make it worth our while
 	
 		my $pos = 0;
 
@@ -2553,6 +2554,10 @@ sub findTimeForOffset {
 				my $tim = $frames->[-1][FRAME_TIME_OFFSET] + $seconds;
 				push @{$frames}, [$off, $tim];
 			}
+			
+			if ( $log->is_info && ($length != $nextPos - $pos) ) {
+				$log->info("recordFrameOffset: ", $nextPos - $pos - $length, " bytes skipped");
+			}
 			$pos = $nextPos;
 
 			if ( $log->is_debug ) {
@@ -2563,6 +2568,8 @@ sub findTimeForOffset {
 		if ($pos) {
 			my $newBuffer = substr $$buffer, $pos;
 			$client->initialStreamBuffer(\$newBuffer);
+		} else {
+			$log->info("recordFrameOffset: found no frames in buffer length ", length($$buffer));
 		}
 	}
 
@@ -2571,7 +2578,7 @@ sub findTimeForOffset {
 	my ($i, $j, $k) = (0, @{$frames} - 1);
 
 	# sanity check
-	unless ($byteOffset - $frames->[$i][FRAME_BYTE_OFFSET] <= $byteOffset && $byteOffset <= $frames->[$j][FRAME_BYTE_OFFSET]) {
+	unless ($frames->[$i][FRAME_BYTE_OFFSET] <= $byteOffset && $byteOffset <= $frames->[$j][FRAME_BYTE_OFFSET]) {
 		$log->debug("findTimeForOffset: byteOffset $byteOffset outside frame range: $frames->[$i][FRAME_BYTE_OFFSET] .. $frames->[$j][FRAME_BYTE_OFFSET]");
 		return;
 	}
