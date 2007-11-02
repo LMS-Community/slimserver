@@ -1,5 +1,5 @@
 Main = function(){
-	var layout;
+	var layout, homeWatchdog;
 
 	return {
 		init : function(){
@@ -40,16 +40,12 @@ Main = function(){
 
 			layout.endUpdate();
 
-			// load home page with "random" parameter to prevent caching issues at startup
-			Ext.get('leftcontent').dom.src = webroot + 'home.html?player=' + player + '&amp;_dc=' + (new Date().getTime());
-
 			Ext.QuickTips.init();
 			Ext.get('loading').hide();
 			Ext.get('loading-mask').hide();
 
 			this.onResize();
 		},
-
 
 		// scan progress status updates
 		getScanStatus : function(){
