@@ -892,7 +892,7 @@ sub nextChunk {
 		# If we see one, close the outgoing connection.
 		if (!$len) {
 
-			$log->warn("Warning: Found an empty chunk on the queue - dropping the streaming connection.");
+			$log->info("Found an empty chunk on the queue - dropping the streaming connection.");
 
 			Slim::Web::HTTP::forgetClient($client);
 
