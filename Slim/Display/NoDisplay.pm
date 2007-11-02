@@ -45,6 +45,7 @@ sub resetDisplay {}
 sub endAnimation {}
 sub vfdmodel { 'http' }
 sub linesPerScreen {}
+sub symbols {return $_[1];}
 
 =head1 SEE ALSO
 
