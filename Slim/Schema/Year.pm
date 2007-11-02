@@ -17,7 +17,7 @@ use Slim::Utils::Strings qw(string);
 	$class->add_columns('id');
 	$class->set_primary_key('id');
 
-	$class->has_many('albums' => 'Slim::Schema::Album' => 'year');
+	$class->has_many('album' => 'Slim::Schema::Album' => 'year');
 	$class->has_many('tracks' => 'Slim::Schema::Track' => 'year');
 
 	$class->resultset_class('Slim::Schema::ResultSet::Year');

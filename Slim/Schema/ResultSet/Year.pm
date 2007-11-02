@@ -36,7 +36,27 @@ sub descendAlbum {
 	my $cond = shift;
 	my $sort = shift;
 
-	return $self->search_related('albums', $cond, { 'order_by' => "concat('0', albums.titlesort), albums.disc" });
+	# Create a clean resultset
+	my $rs = $self->result_source->resultset;
+
+	# Handle sorts from the web UI.
+	$sort ||= "concat('0', album.titlesort), album.disc";
+
+	my @join;
+
+	if ($sort =~ /contributor/) {
+
+		push @join, 'contributor';
+	}
+
+	if ($sort =~ /genre/) {
+
+		push @join, { 'tracks' => { 'genreTracks' => 'genre' } };
+	}
+
+	$sort = $self->fixupSortKeys($sort);
+
+	return $self->search_related('album', $cond, { 'join' => \@join, 'order_by' => $sort });
 }
 
 1;
