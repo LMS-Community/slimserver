@@ -45,9 +45,8 @@
 			<option value="[% option.key %]">[% option.value | string %]</option>
 		[%- END -%]
 		
-		</select><br/>
-
-		<input name="rescan" type="submit" class="stdclick" value="[% "SETUP_RESCAN_BUTTON" | string %]">
+		</select>
+		<input name="rescan" type="submit" class="stdclick" value="[% "SETUP_RESCAN_BUTTON" | string %]"><br/>
 		<a id="progressLink" href="[% webroot %]settings/server/status.html?player=[% playerid %]">[% IF scanning %][% "SETUP_VIEW_SCANNING" | string %][% ELSE %][% "SETUP_VIEW_NOT_SCANNING" | string %][% END %]</a>
 	[% END %]
 

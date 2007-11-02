@@ -119,6 +119,11 @@ body {
 	color: white;
 }
 
+.selectedItem a {
+	color: white;
+	font-weight: bold;
+}
+
 .mainFrame, iframe {
 	background: url(html/images/help/background.gif) repeat;
 }
@@ -150,9 +155,8 @@ body {
 }
 
 .settingSection {
-	border-top: 2px solid #666666;
-	padding-top: 5px;
 	margin-bottom: 15px;
+	margin-top: 15px;
 }
 
 .settingSection p {
