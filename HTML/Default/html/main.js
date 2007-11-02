@@ -1,5 +1,5 @@
 Main = function(){
-	var layout, homeWatchdog;
+	var layout;
 
 	return {
 		init : function(){
