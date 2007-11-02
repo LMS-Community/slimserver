@@ -42,6 +42,10 @@
 		<p>[% server.versionInfo %]</p>
 	[% END %]
 
+	[% IF server.INFORMATION_ARCHITECTURE %]
+		<p>[% "INFORMATION_ARCHITECTURE" | string %][% "COLON" | string %] [% server.INFORMATION_ARCHITECTURE %]</p>
+	[% END %]
+
 	[% IF server.INFORMATION_HOSTNAME %]
 		<p>[% "INFORMATION_HOSTNAME" | string %][% "COLON" | string %] [% server.INFORMATION_HOSTNAME %]</p>
 	[% END %]
@@ -52,6 +56,18 @@
 	
 	[% IF server.INFORMATION_CLIENTS %]
 		<p>[% "INFORMATION_CLIENTS" | string %][% "COLON" | string %] [% server.INFORMATION_CLIENTS %]</p>
+	[% END %]
+	
+	[% IF server.INFORMATION_CACHEDIR %]
+		<p>[% "INFORMATION_CACHEDIR" | string %][% "COLON" | string %] [% server.INFORMATION_CACHEDIR %]</p>
+	[% END %]
+	
+	[% IF server.INFORMATION_PREFSDIR %]
+		<p>[% "INFORMATION_PREFSDIR" | string %][% "COLON" | string %] [% server.INFORMATION_PREFSDIR %]</p>
+	[% END %]
+	
+	[% IF server.INFORMATION_PLUGINDIRS %]
+		<p>[% "INFORMATION_PLUGINDIRS" | string %][% "COLON" | string %] [% server.INFORMATION_PLUGINDIRS %]</p>
 	[% END %]
 [% END %]
 		

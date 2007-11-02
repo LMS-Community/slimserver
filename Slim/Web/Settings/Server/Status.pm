@@ -25,12 +25,17 @@ sub handler {
 	my ($class, $client, $paramRef) = @_;
 
 	my @versions = Slim::Utils::Misc::settingsDiagString();
-
+	my $osDetails = Slim::Utils::OSDetect::details();
+	
 	$paramRef->{server}{'versionInfo'}              = join( "<br />\n", @versions ) . "\n";
+	$paramRef->{server}{'INFORMATION_ARCHITECTURE'} = $osDetails->{'osArch'} || 'unknown';
 	$paramRef->{server}{'INFORMATION_HOSTNAME'}     = Slim::Utils::Network::hostName;
 	$paramRef->{server}{'INFORMATION_SERVER_PORT'}  = preferences('server')->get('httpport');
 	$paramRef->{server}{'networkProxy'}             = preferences('server')->get('networkproxy');
 	$paramRef->{server}{'INFORMATION_CLIENTS'}      = Slim::Player::Client::clientCount;
+	$paramRef->{server}{'INFORMATION_CACHEDIR'}     = Slim::Utils::OSDetect::dirsFor('cache');
+	$paramRef->{server}{'INFORMATION_PREFSDIR'}     = Slim::Utils::OSDetect::dirsFor('prefs');
+	$paramRef->{server}{'INFORMATION_PLUGINDIRS'}   = join(",",Slim::Utils::OSDetect::dirsFor('Plugins'));
 
 	$paramRef->{library}{'INFORMATION_TRACKS'}  = Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Track', { 'me.audio' => 1 }));
 	$paramRef->{library}{'INFORMATION_ALBUMS'}  = Slim::Utils::Misc::delimitThousands(Slim::Schema->count('Album'));
