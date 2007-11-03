@@ -1,7 +1,7 @@
 [%# Page status.html %]
 [%- IF ajaxRequest -%]
 	<pre>
-	[% PROCESS ajaxRequest.txt page = 'status' %]
+	[% PROCESS ajaxRequest.txt page = 'status' %][% PROCESS ajaxStatus.txt page = 'status' %]
 	</pre>
 [%- ELSE -%]
 <!-- status.html -->
@@ -199,7 +199,7 @@
 		<tr>
 			<td class="normaltext" valign = 'top'  height = '35' nowrap>[% "GENRE" | string %][% "COLON" | string %]</td>
 			<td class = 'normaltext' valign = 'top' height = '35' nowrap>
-			<a href="http://google.com" id = 'genre_link' style="text-decoration:none">
+			<!--<a href="http://google.com" id = 'genre_link' style="text-decoration:none">-->
 			<span id = 'genre'></span>
 			</a>
 			</td>

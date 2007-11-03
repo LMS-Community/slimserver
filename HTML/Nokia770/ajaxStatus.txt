@@ -1,0 +1,8 @@
+genrehtml|[%- IF itemobj.genres %] [% genresHTML = [] -%]
+			[%- genres = item.genres || itemobj.genres -%]
+			[%- FOREACH genre = genres -%]
+				[%- genreHTMLFrag = "<a href=\"browsedb.html?hierarchy=genre,contributor,album,track&amp;level=1&amp;genre.id=$genre.id&amp;player=$playerURI\" target=\"browser\">$genre.name</a>" %]
+				[%- genresHTML.push(genreHTMLFrag) -%]
+			[%- END %]
+		[%- END -%]
+		[%- genresHTML.join(', ') -%]
