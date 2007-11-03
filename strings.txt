@@ -11769,7 +11769,7 @@ INFORMATION_PLAYER_SIGNAL_STRENGTH
 INFORMATION_CLIENTS
 	CS	Celkem přehrávačů rozpoznáno
 	DE	Anzahl erkannte Player
-	EN	Total Players Recognised
+	EN	Total Players Recognized
 	ES	Total de reproductores reconocidos
 	FI	Soittimia tunnistettu
 	FR	Platines identifiées
