@@ -148,14 +148,9 @@ function processPlayControls(param) {
 }
 
 function processCommand(param, id) {
-
 	//ajaxRequest('status_header.html', param + "&ajaxRequest=1&s="+Math.random(), null);
 	ajaxRequest('status.html', param + "&ajaxRequest=1&force=1&s="+Math.random(), function(theData) {commandResponse(theData,1)});
 	commandInProgress = true;
-	//console.log(id);
-	//getPlaylistData();
-	//doAjaxRefresh();
-	//playlistChecker();
 }
 
 function commandResponse(thedata, force) {
@@ -253,18 +248,6 @@ function refreshInfo(theData, force, curstyle) {
 	if (force != 1 && !(parsedData['songtitleid'] && $('nowplaying').style.display == 'none')) {
 		if (a == null || a[1] == parsedData['songtitleid']) {newsong = 0;}
 	}
-	//if (!parsedData['songtitleid'] && $('nowplaying').style.display == 'none' || parsedData['songtitleid']) {
-	//	if ((!parsedData['songtitleid'] && a == null) || (a != null && a[1] == parsedData['songtitleid'])) {newsong = 0;}
-	//}
-	
-	//if (force) {
-	//	newsong = force;
-	//}
-	
-	//if (newsong && !parsedData['artisthtml']) {
-		//doAjaxRefresh();
-		//return true;
-	//}
 
 	debug([newsong,parsedData['songtitleid']]);
 	var elems = ['thissongnum', 'playtextmode', 'songcount'];
@@ -474,6 +457,7 @@ function currentSong(theData) {
 				if (a == null || a[1] != parsedData['item_'+i]) {
 					debug("mismatch, must refresh");
 					refresh = 1;
+					break;
 				}
 				
 			} else {
@@ -581,23 +565,6 @@ function playlistChecker(theData) {
 	} else {
 		debug("parse current song info");
 		currentSong(theData);
-		//var prev_url = url;
-	
-		//url = 'playlist.html';
-	
-		//var args = 'player=' + getPlayer('SqueezeCenter-player') +'&ajaxRequest=1&s='+Math.random();
-		
-		//if(!isNaN(start)) {
-		//	debug('getplaylist');
-		//	getPlaylistData(start);
-		//	args = args + "&start="+start;
-		//} else if (!isNaN(playingstart)){
-		//	debug("playlist check at "+ playingstart);
-		//	args = args + "&start=" + playingstart;
-		//}
-		//debug('set current song');
-		//ajaxRequest(url, args, currentSong);
-		//url = prev_url;
 	}
 }
 
@@ -717,8 +684,6 @@ function checkPlaylistSortable(event) {
 		playlistReordered = false;
 	}
 }
-
-
 
 function deletePlaylistItem(element, start) {
 
