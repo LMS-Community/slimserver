@@ -57,6 +57,7 @@ sub init {
 		'shn' => 'Slim::Formats::Shorten',
 		'mpc' => 'Slim::Formats::Musepack',
 		'ape' => 'Slim::Formats::APE',
+		'wvp' => 'Slim::Formats::WavPack',
 
 		# Playlist types
 		'asx' => 'Slim::Formats::Playlists::ASX',

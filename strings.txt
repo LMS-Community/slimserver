@@ -8340,6 +8340,9 @@ MPC
 	IT	Musepack
 	NL	Musepack
 
+WVP
+	EN	Wavpack
+
 SHN
 	DE	Kürzen
 	EN	Shorten
