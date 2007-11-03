@@ -258,23 +258,14 @@ sub onBody {
 		if ( $self->{params}->{cache} ) {
 		
 			if ( Slim::Utils::Misc::shouldCacheURL( $self->url ) ) {
-		
-				my $cache = Slim::Utils::Cache->new();
-		
-				my $data = {
-					code    => $self->code,
-					mess    => $self->mess,
-					headers => $self->headers,
-					content => $self->content,
-					_time   => time,
-				};
-		
+
 				# By default, cached content can live for at most 1 day, this helps control the
 				# size of the cache.  We use ETag/Last Modified to check for stale data during
 				# this time.
 				my $max = 60 * 60 * 24;
 				my $expires = $self->{params}->{expires} || $max;
 				my $no_cache;
+				my $no_revalidate;
 		
 				if ( $expires >= $max ) {
 			
@@ -307,16 +298,11 @@ sub onBody {
 		
 				if ( $expires < $max ) {
 					# if we have an explicit expiration time, we can avoid revalidation
-					$data->{_no_revalidate} = 1;
+					$no_revalidate = 1;
 				}
-		
+
 				if ( !$no_cache ) {
-					$data->{_expires} = $expires;
-					$cache->set( $self->url, $data, $expires );
-			
-					if ( $log->is_info ) {
-						$log->info(sprintf("Caching [%s] for %d seconds", $self->url, $expires));
-					}
+					$self->cacheResponse( $expires, $no_revalidate );
 				}
 			}
 		}
@@ -331,6 +317,28 @@ sub onBody {
 	$::perfmon && $now && $callbackTask->log(Time::HiRes::time() - $now, undef, $self->cb);
 
 	return;
+}
+
+sub cacheResponse {
+	my ( $self, $expires, $norevalidate ) = @_;
+
+	if ( $log->is_info ) {
+		$log->info(sprintf("Caching [%s] for %d seconds", $self->url, $expires));
+	}
+
+	my $cache = Slim::Utils::Cache->new();
+	
+	my $data = {
+		code     => $self->code,
+		mess     => $self->mess,
+		headers  => $self->headers,
+		content  => $self->content,
+		_time    => time,
+		_expires => $expires,
+		_no_revalidate => $norevalidate,
+	};
+
+	$cache->set( $self->url, $data, $expires );
 }
 
 sub sendCachedResponse {

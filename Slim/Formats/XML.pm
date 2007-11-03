@@ -228,15 +228,26 @@ sub gotViaHTTP {
 		return;
 	}
 	
-	# Cache the parsed XML
+	# Cache the parsed XML or raw response
 	if ( Slim::Utils::Misc::shouldCacheURL( $http->url ) ) {
 
 		my $cache   = Slim::Utils::Cache->new();
 		my $expires = $feed->{'cachetime'} || $XML_CACHE_TIME;
 
-		$log->info("Caching parsed XML for $expires seconds");
+		if ( !$feed->{'nocache'} ) {
 
-		$cache->set( $http->url() . '_parsedXML', $feed, $expires );
+			$log->info("Caching parsed XML for $expires seconds");
+
+			$cache->set( $http->url() . '_parsedXML', $feed, $expires );
+
+		} elsif ( !$cache->get( $http->url() ) ) {
+
+			$log->info("Caching raw response for $expires seconds - not previously cached");
+
+			# Responses not previously cached by SimpleAsyncHTTP as web page did not request caching
+			# cache it now for a short time to speed up reparsing of this page
+			$http->cacheResponse( $expires );
+		}
 	}
 	else {
 
