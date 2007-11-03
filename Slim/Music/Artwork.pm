@@ -90,8 +90,8 @@ sub findArtwork {
 			my $album = $track->album;
 
 			if (!$progress) {
-				if ( logger('scan.import')->is_info ) {
-					logger('scan.import')->info(sprintf("Album [%s] has artwork.", $album->name));
+				if ( logger('scan.import')->is_debug ) {
+					logger('scan.import')->debug(sprintf("Album [%s] has artwork.", $album->name));
 				}
 			}
 
