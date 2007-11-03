@@ -377,7 +377,7 @@ sub processCoverArtRequest {
 
 					} else {
 
-						$newImageData = $newImage->jpeg;
+						$newImageData = $newImage->jpeg(90);
 						$requestedContentType = 'image/jpeg';
 					}
 
