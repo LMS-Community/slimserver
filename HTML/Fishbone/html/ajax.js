@@ -2,7 +2,7 @@ var mp = 0;
 var currentID = 0;
 var playingstart;
 var showingstart;
-var DEBUG = 1;
+var DEBUG = 0;
 var playlistReordered = false;
 var commandInProgress = false;
 
@@ -455,14 +455,12 @@ function currentSong(theData) {
 		for (var i = showingstart; i <= parsedData['last_item']; i++) {
 			
 			// make sure we have matching item counts, refresh if not.
-			var item = doc.getElementById('playlistitem' + i);
-			debug([i, item, item.className]);
-			if (item) {
+			if (item = doc.getElementById('playlistitem' + i)) {
 				
 				if (i == currentsong) {
 					item.className = "currentListItem";
 					found = parsedData['item_'+i];
-					debug("found: "+found+" "+i);
+					debug("found current: "+found);
 				} else {
 					item.className = "playListItem";
 				}
@@ -472,17 +470,19 @@ function currentSong(theData) {
 				var rExp     = new RegExp("trackid_(\\d+)","i");
 				var a = rExp.exec(myString);
 				
+				//debug(a[1], parsedData['item_'+i]);
 				if (a == null || a[1] != parsedData['item_'+i]) {
-					//debug(a[1], parsedData['item_'+i]);
+					debug("mismatch, must refresh");
 					refresh = 1;
 				}
 				
 			} else {
 				debug('missing item: must refresh');
 				refresh = 1;
+				break;
 			}
 		}
-
+		//debug("done with playlist checking, process results");
 		// refresh the playlist if we're not finding the current song
 		if (currentID != found) {
 			debug('missing current id '+currentID+': must refresh');
@@ -495,6 +495,7 @@ function currentSong(theData) {
 		}
 	}
 
+	//debug("check for refresh flag");
 	if (refresh != 0) {
 		getPlaylistData();
 	} else {
