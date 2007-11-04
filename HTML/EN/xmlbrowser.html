@@ -47,7 +47,7 @@
 [% END %]
 
 [%- odd = 1 %]
-[%- IF items -%]
+[%- IF items.size -%]
 	[% IF hasPagebar %]
 		[% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %]
 		[% PROCESS pagebar %]
