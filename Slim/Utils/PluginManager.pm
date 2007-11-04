@@ -526,7 +526,7 @@ sub enabledPlugins {
 
 	for my $plugin ($class->installedPlugins) {
 
-		if ($plugins->{$plugin}->{'state'} == STATE_ENABLED) {
+		if (defined $plugins->{$plugin}->{'state'} && $plugins->{$plugin}->{'state'} == STATE_ENABLED) {
 
 			push @found, $plugin;
 		}
