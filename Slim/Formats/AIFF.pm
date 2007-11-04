@@ -204,4 +204,26 @@ sub getTag {
 	return $tags;
 }
 
+=head2 getCoverArt( $filename )
+
+Extract and return cover image from the file.
+
+=cut
+
+sub getCoverArt {
+	my $class = shift;
+	my $file  = shift || return undef;
+
+	# Yes, Virginia, iTunes stores artwork in AIFF files like MP3.
+	my $tags = MP3::Info::get_mp3tag($file, 2) || {};
+
+	if (defined $tags->{'PIC'} && defined $tags->{'PIC'}->{'DATA'}) {
+
+		return $tags->{'PIC'}->{'DATA'};
+	}
+
+	return undef;
+}
+
+
 1;
