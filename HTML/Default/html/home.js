@@ -1,10 +1,8 @@
 var MainMenu = function(){
 	return {
 		init : function(){
-			if (Ext.isIE && !Ext.isIE7) {
-				Ext.EventManager.onWindowResize(this.onResize, this);
-				Ext.EventManager.onDocumentReady(this.onResize, this, true);
-			}
+			Ext.EventManager.onWindowResize(this.onResize, this);
+			Ext.EventManager.onDocumentReady(this.onResize, this, true);
 
 			// use "display:none" to hide inactive elements
 			var el;
