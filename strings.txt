@@ -11785,16 +11785,16 @@ INFORMATION_CLIENTS
 	ZH_CN	被认出的播放机总数
 
 INFORMATION_CACHEDIR
-	EN	Cache Folder:
+	EN	Cache Folder
 
 INFORMATION_PREFSDIR
-	EN	Preferences Folder:
+	EN	Preferences Folder
 
 INFORMATION_PLUGINDIRS
-	EN	Plugin Folders:
+	EN	Plugin Folders
 
 INFORMATION_ARCHITECTURE
-	EN	Platform Architecture:
+	EN	Platform Architecture
 
 INFORMATION_SERVER_IP
 	CS	IP adresa serveru
