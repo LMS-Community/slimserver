@@ -885,7 +885,7 @@ sub _hello_handler {
 	my $id  = $mac;
 
 	my $uuid = "not available";
-	if( $data_ref_length == 36) {
+	if ($data_ref_length == 36 && scalar @uuid > 0) {
 		$uuid = join(' ', @uuid);
 	}
 
