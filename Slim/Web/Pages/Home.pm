@@ -39,7 +39,15 @@ sub home {
 	my ($class, $client, $params, $gugus, $httpClient, $response) = @_;
 
 	my $template = $params->{"path"} =~ /home\.(htm|xml)/ ? 'home.html' : 'index.html';
-	
+
+	# allow the setup wizard to be skipped in case the user's using an old browser (eg. Safari 1.x)
+	if ($params->{skipWizard}) {
+		$prefs->set('wizardDone', 1);
+		if ($params->{skinOverride}){
+			$prefs->set('skin', $params->{skinOverride});
+		}
+	}
+
 	# redirect to the setup wizard if it has never been run before 
 	if (!$prefs->get('wizardDone')) {
 		$response->code(RC_MOVED_TEMPORARILY);

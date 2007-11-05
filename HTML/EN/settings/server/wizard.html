@@ -118,6 +118,7 @@
 			catch(e) {
 				document.getElementById('loading').style.display = 'none';
 				document.getElementById('noJS').style.display = 'block';
+				[% IF !debug %]location.href = '/classic/?skipWizard=1';[% END %]
 			}
 		</script>
 
