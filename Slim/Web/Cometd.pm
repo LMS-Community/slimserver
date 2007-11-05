@@ -682,6 +682,10 @@ sub handleRequest {
 		
 			# Need to store this callback for use later in unsubscribe
 			$subCallbacks{ $response } = $callback;
+			
+			if ( defined $cmd->[0] ) {
+				$cmd->[0] = undef;
+			}
 		
 			Slim::Control::Request::subscribe( $callback, $cmd );
 		
