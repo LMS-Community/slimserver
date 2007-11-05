@@ -1,11 +1,26 @@
+/* main layout */
+
 * html, .scrollingPanel {
 	overflow-x: hidden;
 }
 
-#ctrlBar { width: 97%; }
-#ctrlProgress { margin-top: 0; }
-#ctrlProgress img { vertical-align: middle; }
+img#background {
+	margin-top: 5px;
+}
 
+#footer_content { height: 40px; }
+
+.inner_top, .inner_bottom {
+	font-size: 0;
+	padding: 0;
+}
+
+#leftpanel .inner_bottom_right { right: -1px; }
+.inner_bottom_right, .inner_bottom_left { bottom: -1px; }
+
+/* browsing & navigation */
+.selectedItem .selector_bottomRight,
+.selectedItem .selector_topLeft,
 .mouseOver .selector_bottomRight,
 .mouseOver .selector_topLeft {
 	height: 18px;
@@ -28,65 +43,4 @@
 	display: inline;
 	height: 0;
 	he\ight: auto;
-}
-
-#COVERART .songInfoText img {
-	width: 150px;
-	height: 150px;
-}
-
-.songInfoTitle {
-	float: left;
-	width: 160px;
-	padding-bottom: 0;
-}
-
-.songInfoText {
-	display: inline-block;
-}
-
-#songInfoPlayLinks {
-	width: 100%;
-}
-
-.homeMenuItem input {
-	height: 17px;
-}
-
-
-/* IE6 is adding a pixel wide line below an element with bottom:0 */
-.infoTab, #edge_bottom_left, #edge_bottom_right {
-	bottom: -1px;
-}
-
-#playlistTab {
-	position: absolute;
-	bottom: 12px;
-}
-
-/* RandomPlay's genre form - selector bar doesn't work in IE6 
-unless there's an element around it with position:absolute? */
-#genreForm {
-	position: absolute;
-}
-
-/* settings pages... */
-.prefHelp {
-	left: -20px;
-}
-
-.prefHead {
-	left: -300px;
-}
-
-/* fixes for the settings pages */
-#footer .titlebox_content { height: 25px; }
-
-.prefHelp {
-	left: -20px;
-	top: 3px;
-}
-
-.settingGroup .prefHead {
-	left: -300px;
 }

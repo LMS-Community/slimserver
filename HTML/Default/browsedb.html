@@ -46,6 +46,7 @@
 		[%- END %]
 	</div>
 
+	[% allLinks = 'SqueezeCenter-allLinks'; allLinks = cookies.$allLinks.value %]
 	[%- IF artwork == 1 && (levelName == 'album' || levelName == 'age');
 			container = 'gallerycontainer';
 		ELSE;

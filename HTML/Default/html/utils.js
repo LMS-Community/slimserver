@@ -344,7 +344,7 @@ var Utils = function(){
 		msg : function(text){
 			var info = Ext.get('footerInfoText');
 			if (info) {
-				info.update('<img src="' + webroot + 'html/images/info.png"/>&nbsp;' + text);
+				info.update('<img src="' + webroot + 'html/images/btn_info.gif"/>&nbsp;' + text);
 				info.fadeIn().pause(2).fadeOut();
 			}
 		},

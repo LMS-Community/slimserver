@@ -47,9 +47,10 @@
 		<![endif]-->
 	</head>
 	<body  [% IF bodyscript && NOT extJsScripts; bodyscript; END %]>
-
-		<div id="edge_top_left">&nbsp;</div>
-		<div id="edge_top_right">&nbsp;</div>
+		<div id="inner_header">
+			<div class="pagetitle">[% pagetitle %]</div>
+			[% IF titleRight %]<span id="titleRight">[% titleRight %]</span>[% END %]
+		</div>
 
 		<div class="inner_content">
 
@@ -66,23 +67,9 @@
 				pwd_list.unshift(category);
 			END -%]
 
-			<div class="titlebox">
-				<div class="titlebox_top"><div></div></div>
-				<div class="titlebox_content">
-					<div style="position:relative;" class="pagetitle">
-						[% pagetitle %]
-					</div>
-				</div>
-				<div id="titleBottom" class="[% IF pwd_list; "titlebox_bottom_crumb"; ELSE; "titlebox_bottom"; END %]"><div></div></div>
-				[% IF titleRight %]<span id="titleRight">[% titleRight %]</span>[% END %]
-			</div>
-
 			[% IF pwd_list %]
 			<div id="crumblist" class="crumblist">
-				<div class="crumblist_content">
-					[%- PROCESS crumblist IF pwd_list %]
-				</div>
-				<div class="crumblist_bottom"><div></div></div>
+				[%- PROCESS crumblist IF pwd_list %]
 			</div>
 			[% END %]
 

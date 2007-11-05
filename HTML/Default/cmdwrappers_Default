@@ -111,6 +111,29 @@
 	[%- END %]
 
 
+	[% BLOCK browsecontrols %]
+		[%- header='1' width='13' height='13' -%]
+		[% IF showplayall -%]
+			[% WRAPPER playlink noTarget = 1 %]href="[% playallhref %]"[% END %]
+			[% WRAPPER addlink  noTarget = 1 %]href="[% addallhref %]"[% END %]
+		[% ELSIF showdescend && href -%]
+			[%- WRAPPER descendlink %][%- href -%][% END -%]
+			[% IF showplay -%]
+				[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
+				[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
+			[%- END %]
+		[% ELSE %]
+			[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
+			[% IF allLinks; WRAPPER insertlink %][% PROCESS cmdHRef cmdType='insert' %][% END; END %]
+			[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
+			[% IF allLinks; WRAPPER removelink %][% PROCESS cmdHRef cmdType='remove' %][% END; END %]
+			[% FOREACH mixer = mixerlinks.values.sort -%]
+				[% PROCESS $mixer %]
+			[% END %]
+		[%- END %]
+	[%- END %]
+
+
 	[%# This is to build the pagebar or alphapagebar, it should be PROCESSed %]
 	[% BLOCK pagebar %]
 		[%- IF NOT pageinfo.alphamap; PROCESS pagebarcalc pagesperbar = 15; END %]
@@ -120,7 +143,7 @@
 			[%- IF pageinfo.alphamap %]
 				[%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
 					[%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
-					[% IF curpage %]<span onclick="Browse.gotoAnchor('[% alphakey | uri %]');" style="cursor: pointer;"><b>[% alphakey | html %]</b></span>
+					[% IF curpage %]<span onclick="Browse.gotoAnchor('[% alphakey | uri %]');"><b>[% alphakey | html %]</b></span>
 					[% ELSE %]
 						<a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path | html %]?start=[% pageinfo.alphamap.item(alphakey) %][% pageinfo.otherparams | html %][% IF homeCategory %]&amp;homeCategory=[% homeCategory %][% END %]#[% alphakey | uri %][% IF useJS %]')[% END %]">[% alphakey | html %]</a>
 					[% END %]

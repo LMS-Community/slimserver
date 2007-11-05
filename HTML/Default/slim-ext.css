@@ -5,15 +5,16 @@
 }
 
 .x-layout-container {
-	background-color: white;
+	background-color: transparent;
 }
 
 .x-layout-panel-body {
-	background-color: #23415e;
+	background-color: transparent;
 }
 
 .x-layout-panel {
 	border: 0px none;
+	background-color: transparent;
 }
 
 .x-form-field, .x-combo-list-item {

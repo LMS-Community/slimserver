@@ -13,7 +13,7 @@
 		<script type="text/javascript">[% PROCESS html/vars.js %]</script>
 
 		<style>
-			body { margin: 5px; }
+			body { margin: 0; }
 		</style>
 
 		<script type="text/javascript" src="[% webroot %]html/utils.js?r=[% revision %]"></script>
@@ -93,95 +93,86 @@
 	
 </script>
 
-<div class="playerbox">
-	<div class="playerbox_top"><div></div></div>
-	<div class="playerbox_content">
-		<div style="position:relative;">
-			<table id="ctrlBar" border="0" cellspacing="0" cellpadding="0">
-				<tr>
-					<td width="50%">
-						<table border="0" cellspacing="0" cellpadding="0">
-							<tr>
-								<td id="ctrlPrevious"></td>
-								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
-								<td id="ctrlTogglePlay"></td>
-								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
-								<td id="ctrlNext"></td>
-								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
-								<td id="ctrlRepeat"></td>
-								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
-								<td id="ctrlShuffle"></td>
-							</tr>
-						</table>
-					</td>
+<div id="playerbox">
+	<div style="position:relative;">
+		<table id="ctrlBar" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+				<td width="50%">
+					<table border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td id="ctrlPrevious"></td>
+							<td id="ctrlTogglePlay"></td>
+							<td id="ctrlNext"></td>
+							<td id="ctrlRepeat"></td>
+							<td id="ctrlShuffle"></td>
+						</tr>
+					</table>
+				</td>
 
-					<td width="30%" align="right">
-						<table border="0" cellspacing="0" cellpadding="0">
-							<tr>
-								<td id="ctrlVolumeDown"></td>
-								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
-								<td id="ctrlVolume"><img src="[% webroot %]html/images/spacer.gif" alt="" border="0" /></td>
-								<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
-								<td id="ctrlVolumeUp"></td>
-							</tr>
-						</table>
-					</td>
+				<td width="30%" align="right">
+					<table border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td id="ctrlVolumeDown"></td>
+							<td id="ctrlVolume"><img src="[% webroot %]html/images/spacer.gif" alt="" border="0" /></td>
+							<td id="ctrlVolumeUp"></td>
+						</tr>
+					</table>
+				</td>
 
-					<td width="25%" align="right">
-						<span id="ctrlPower"></span>
-					</td>
+				<td width="25%" align="right">
+					<span id="ctrlPower"></span>
+				</td>
 
-					<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
-					<td align="right" valign="top">
-						<table border="0" cellspacing="0" cellpadding="0">
-							<tr><td>
-								<div id="ctrlUndock" [% IF !embedded %]style="visibility:hidden"[% END %]></div>
-							</td></tr>
-							
-							<tr><td>
-								<div id="ctrlCollapse"></div>
-								<div id="ctrlExpand"></div>
-							</td></tr>
-						</table>
-					</td>
-				</tr>
-			</table>
+				<td><img src="[% webroot %]html/images/spacer.gif" alt="" height="10" width="5" border="0" /></td>
+				<td align="right" valign="top">
+					<table border="0" cellspacing="0" cellpadding="0">
+						<tr><td>
+							<div id="ctrlUndock" [% IF !embedded %]style="visibility:hidden"[% END %]></div>
+						</td></tr>
+						
+						<tr><td>
+							<div id="ctrlCollapse"></div>
+							<div id="ctrlExpand"></div>
+						</td></tr>
+					</table>
+				</td>
+			</tr>
+		</table>
 
-			<div id="expandedPlayerPanel">
-				<div id="ctrlCurrentArt">
-					<img src="[% webroot %]music/0/cover_96x96_p.[% IF browserType == 'IE' %]gif[% ELSE %]png[% END %]" alt="" height="96" width="96" border="0"/>
-				</div>
-
-				<div id="ctrlCurrentSongInfo">
-					<div id="ctrlCurrentTitle"></div>
-					<div id="ctrlTrackInfo" class="currentTrackInfo">
-						<div id="ctrlCurrentAlbum"></div>
-						<div id="ctrlCurrentArtist"></div>
-						<div id="ctrlBitrate"></div>
-					</div>
-					<div id="ctrlPlaytimePanel">
-						<div id="ctrlPlaytime"></div>
-						<div>
-							<div id="ctrlProgress">
-								<img src="html/images/spacer.gif" class="progressLeft"/><img src="html/images/spacer.gif" class="progressFillLeft"/><img src="html/images/spacer.gif" class="progressIndicator"/><img src="html/images/spacer.gif" class="progressFillRight"/><img src="html/images/spacer.gif" class="progressRight"/>
-							</div>
-						</div>
-						<div id="ctrlPlaytimeRight">
-							<span id="ctrlRemainingTime"></span>
-							&nbsp;(<span id="ctrlPlayNum"></span>&nbsp;[% "OF" | string%]&nbsp;<span id="ctrlSongCount"></span>)
-						</div>
-					</div>
-				</div>
+		<div id="expandedPlayerPanel">
+			<div id="ctrlCurrentArt">
+				<img src="[% webroot %]music/0/cover_96x96_p.[% IF browserType == 'IE' %]gif[% ELSE %]png[% END %]" alt="" height="96" width="96" border="0"/>
 			</div>
 
-			<div id="collapsedPlayerPanel">
-				<div id="nowPlayingIcon"><img src="[% webroot %]html/images/spacer.gif" height="18" width="18"></div>
-				<div id="ctrlPlaytimeCollapsed"></div>
-				<div id="ctrlCurrentSongInfoCollapsed"></div>
+			<div id="ctrlCurrentSongInfo">
+				<div id="ctrlCurrentTitle"></div>
+				<div id="ctrlTrackInfo" class="currentTrackInfo">
+					<div id="ctrlCurrentAlbum"></div>
+					<div id="ctrlCurrentArtist"></div>
+					<div id="ctrlBitrate"></div>
+				</div>
+				<div id="ctrlPlaytimePanel">
+					<div id="ctrlPlaytime"></div>
+					<div>
+						<div id="ctrlProgress">
+							<img src="html/images/spacer.gif" class="progressLeft"/><img src="html/images/spacer.gif" class="progressFillLeft"/><img src="html/images/spacer.gif" class="progressIndicator"/><img src="html/images/spacer.gif" class="progressFillRight"/><img src="html/images/spacer.gif" class="progressRight"/>
+						</div>
+					</div>
+					<div id="ctrlPlaytimeRight">
+						<span id="ctrlRemainingTime"></span>
+						&nbsp;(<span id="ctrlPlayNum"></span>&nbsp;[% "OF" | string%]&nbsp;<span id="ctrlSongCount"></span>)
+					</div>
+				</div>
 			</div>
 		</div>
+
+		<div id="collapsedPlayerPanel">
+			<img src="[% webroot %]html/images/spacer.gif" class='left'>
+			<div id="ctrlCurrentSongInfoCollapsed"></div>
+			<div id="ctrlPlaytimeCollapsed">09:09</div>
+			<img src="[% webroot %]html/images/spacer.gif" class='right'>
+		</div>
 	</div>
-	<div class="playerbox_bottom"><div></div></div>
 </div>
 
 [% IF !embedded %]

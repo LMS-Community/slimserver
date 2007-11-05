@@ -13,8 +13,34 @@
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css?r=[% revision %]" />
 
 		<style>
-			html, body { background: white; }
+			html, body { background: #666666; }
 			body { margin: 5px; }
+
+			#loading-mask {
+				width: 120%;
+				height: 100%;
+				background-image: url(html/images/background.png);
+				position: absolute;
+				z-index: 20000;
+				left: 0;
+				top: 0;
+			}
+
+			#loading {
+				position: absolute;
+				left: 40%;
+				top: 40%;
+				text-align: center;
+				z-index: 20001;
+				display: none;
+			}
+
+			#loading .loading-indicator,
+			#noJS { color:white; }
+			
+			.loading-indicator {
+				background-image: url(html/images/loading.gif);
+			}
 
 			[% IF debug %]
 			.x-layout-panel-body { background: white; }
@@ -35,7 +61,9 @@
 	</head>
 
 	<body>
-		<div id="loading-mask" style="width:120%;height:100%;background:white;position:absolute;z-index:20000;left:0;top:0;">&#160;</div>
+		<img id="background" src="html/images/background.png" alt="Background" />
+
+		<div id="loading-mask">&#160;</div>
 		<div id="loading">
 			<div class="loading-indicator">
 				[% "LOADING_SQUEEZECENTER" | string %]
@@ -68,6 +96,8 @@
 			[% PROCESS jsString id='NO_PLAYER_FOUND' jsId='no_player' %]
 			[% PROCESS jsString id='NO_PLAYER_DETAILS' jsId='' %]
 
+			[% IF moreThanThis != "" %]Utils.setCookie( 'SqueezeCenter-allLinks', "[% moreThanThis %]" )[% END %]
+
 			try { Ext.EventManager.onDocumentReady(Main.init, Main, true); }
 			catch(e) {
 				document.getElementById('loading').style.display = 'none';
@@ -92,25 +122,41 @@
 				<table width="100%">
 					<tr>
 						<td id="leftpanel">
-							<iframe src="[% webroot %]home.html?player=[% playerid %]" name="browser" id="leftcontent" frameborder="0" scrolling="no"></iframe>
+							<div class="inner">
+								<div class="inner_top"></div>
+								<div class="inner_top_left">&nbsp;</div>
+								<div class="inner_top_right">&nbsp;</div>
+	
+								<iframe src="[% webroot %]home.html?player=[% playerid %]" name="browser" id="leftcontent" frameborder="0" scrolling="no"></iframe>
+
+								<div class="inner_bottom"></div>
+								<div class="inner_bottom_left">&nbsp;</div>
+								<div class="inner_bottom_right">&nbsp;</div>
+							</div>
 						</td>
+
+						<td id="mainSpacer">&nbsp;</td>
 
 						<td id="rightpanel">
 							<div class="inner">
-								<div class="inner_top"><div></div></div>
+								<div class="inner_top"></div>
+								<div class="inner_top_left">&nbsp;</div>
+								<div class="inner_top_right">&nbsp;</div>
+								
+
 								<div class="inner_content" id="rightcontent">
 									<div id="playerControlPanel">
 										[% PROCESS status_header.html embedded=1 %]
 									</div>
-
+	
 									<div id="playlistPanel">
 										<div id="playList"></div>
 									</div>
 								</div>
-								<div class="inner_bottom"><div></div>
 
-								</div>
-
+								<div class="inner_bottom"></div>
+								<div class="inner_bottom_left">&nbsp;</div>
+								<div class="inner_bottom_right">&nbsp;</div>
 							</div>
 						</td>
 					</tr>
@@ -123,13 +169,13 @@
 				<div id="footer_content">
 					<span id="helpInfoSection">
 						<span id="helpLink">
-							<a href="[% webroot %]home.html?page=help" target="sc_help"><img src="[% webroot %]html/images/b_help.png"/> [% "HELP" | string %]</a>
+							<a href="[% webroot %]home.html?page=help" target="sc_help"><img src="[% webroot %]html/images/btn_help.gif"/> [% "HELP" | string %]</a>
 						</span>
 
 						<span id="footerInfo">
 							<span id="scanWarning" style="display:none;">
 								<a href="[% webroot %]progress.html?type=importer" target="browser">
-									<img src="[% webroot %]html/images/info.png"/>
+									<img src="[% webroot %]html/images/btn_info.gif"/>
 									[% "RESCANNING_SHORT" | string %]
 									<span id="progressInfo" class="link" style="display:none;">
 										<span id="progressName"></span>
@@ -142,7 +188,7 @@
 
 							[% IF newVersion %]
 								<span id="newVersion">
-									<img src="[% webroot %]html/images/info.png"/> [% newVersion %]
+									<img src="[% webroot %]html/images/btn_info.gif"/> [% newVersion %]
 								</span>
 							[% END %]
 
@@ -151,12 +197,10 @@
 
 					</span>
 
-					<span id="settingsLinks">
-						<span id="settingsLink">
-							[% IF NOT (nosetup || noserver) %]
-								<a href="[% webroot %]settings/index.html?player=[% player %]" target="sc_settings"><img src="[% webroot %]html/images/b_settings.png"/> [% "SETTINGS" | string %]</a>
-							[% END %]
-						</span>
+					<span id="settingsLink">
+						[% IF NOT (nosetup || noserver) %]
+							<a href="[% webroot %]settings/index.html?player=[% player %]" target="sc_settings"><img src="[% webroot %]html/images/btn_settings.gif"/> [% "SETTINGS" | string %]</a>
+						[% END %]
 					</span>
 				</div>
 			</div>
