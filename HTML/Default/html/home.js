@@ -1,8 +1,10 @@
 var MainMenu = function(){
 	return {
 		init : function(){
-			Ext.EventManager.onWindowResize(this.onResize, this);
-			Ext.EventManager.onDocumentReady(this.onResize, this, true);
+			if (Ext.isIE && !Ext.isIE7) {
+				Ext.EventManager.onWindowResize(this.onResize, this);
+				Ext.EventManager.onDocumentReady(this.onResize, this, true);
+			}
 
 			// use "display:none" to hide inactive elements
 			var el;
@@ -107,13 +109,7 @@ var MainMenu = function(){
 		},
 
 		onResize : function(){
-/*			var contW = Ext.get(document.body).getWidth() - 30
-			Ext.select('div.homeMenuSection').setWidth(contW);
-
-			var el;
-			if (Ext.isIE && !Ext.isIE7 && (el = Ext.DomQuery.selectNode('div.inner_content')))
-				Ext.get(el).setWidth(contW+25);
-*/
+			Ext.select('div.homeMenuSection').setWidth(Ext.get(document.body).getWidth() - Ext.get('content').getMargins('lr'));
 		}
 	}
 }();

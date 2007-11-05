@@ -1417,25 +1417,20 @@ Ext.extend(Slim.VolumeBar, Ext.util.Observable, {
 
 		var el = Ext.get(target);
 		if (el) {
-			var pos = Math.max(ev.xy[0] - this.getX(), 0);
-			pos = pos / Math.max(this.getWidth(), pos)
+			var margin = 9;
 
-/*			var myStep = el.getWidth()/11;
-			var myWidth = el.getWidth() - 2*myStep;
-			var myX = ev.getPageX() - el.getX() - (Ext.isGecko * 8) - (Ext.isSafari * 5);
+			var maxWidth = el.getWidth() - 2*margin;
+			var myStep = maxWidth/11;
 
-			if (myX <= myStep + (Ext.isSafari * 3))
-				volVal = 0;
+			var myX = ev.xy[0] - el.getX() - margin - (Ext.isGecko * 5) - (Ext.isSafari * 5);
+			myX = Math.max(myX, 1);
+			myX = Math.min(myX, maxWidth);
 
-			else if (myX >= el.getWidth() - myStep)
-				volVal = 10;
-
-			else
-				volVal = Math.ceil(myX / myStep) - 1;
+			var volVal = Math.ceil(myX / myStep) - 1;
 
 			this.updateState(volVal*10);
 			Player.playerControl(['mixer', 'volume', volVal*10]);
-*/		}
+		}
 	},
 
 	// update volume bar
