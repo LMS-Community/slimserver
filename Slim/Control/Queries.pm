@@ -2204,13 +2204,13 @@ sub readDirectoryQuery {
 			@fsitems = sort { 
 				my $aa = catdir($folder, $a);
 				my $bb = catdir($folder, $b);
-		
-				if (-d $aa) {
-					if (-d $bb) { uc($a) cmp uc($b) }
+
+				if (Slim::Utils::Misc::isWinDrive($a) || -d $aa) {
+					if (Slim::Utils::Misc::isWinDrive($b) || -d $bb) { uc($a) cmp uc($b) }
 					else { -1 }
 				}
 				else {
-					if (-d $bb) { 1 }
+					if (Slim::Utils::Misc::isWinDrive($b) || -d $bb) { 1 }
 					else { uc($a) cmp uc($b) }
 				}
 			} @fsitems;
@@ -2221,7 +2221,7 @@ sub readDirectoryQuery {
 
 				$request->addResultLoop('fsitems_loop', $cnt, 'path', $path);
 				$request->addResultLoop('fsitems_loop', $cnt, 'name', $item );
-				$request->addResultLoop('fsitems_loop', $cnt, 'isfolder', -d $path || 0);
+				$request->addResultLoop('fsitems_loop', $cnt, 'isfolder', Slim::Utils::Misc::isWinDrive($path) || -d $path || 0);
 
 				$idx++;
 				$cnt++;

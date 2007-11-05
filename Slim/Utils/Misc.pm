@@ -1022,6 +1022,23 @@ sub findAndScanDirectoryTree {
 	return ($topLevelObj, $items, $count);
 }
 
+
+=head2 isWinDrive( )
+
+Return true if a given string seems to be a Windows drive letter (eg. c:\)
+No low-level check is done whether the drive actually exists.
+
+=cut
+
+sub isWinDrive {
+	my $path = shift;
+
+	return 0 if (Slim::Utils::OSDetect::OS() ne 'win' || length($path) > 3);
+
+	return $path =~ /^[a-z]{1}:[\\]?$/i;
+}
+
+
 =head2 userAgentString( )
 
 Utility functions for strings we send out to the world.
