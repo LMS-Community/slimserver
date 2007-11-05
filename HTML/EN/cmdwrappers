@@ -6,6 +6,9 @@
 [%# set noHomeLink = 1 if you want to remove the home link from the breadcrumb links at the top of any lists %]
 [% noHomeLink = 0 %]
 
+[%# the separator to be used in crumb lists %]
+[% crumbSeparator = '/' %]
+
 [%# set setting_chooser_noHome to 1 if you want the home links removed from the server/player settings pulldown menu %]
 [% setting_chooser_noHome = 0 %]
 
