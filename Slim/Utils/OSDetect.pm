@@ -477,15 +477,22 @@ sub winWritablePath {
 	# use the "Common Application Data" folder to store SqueezeCenter configuration etc.
 	# c:\documents and settings\all users\application data - on Windows 2000/XP
 	# c:\ProgramData - on Vista
-	my $swKey = $Win32::TieRegistry::Registry->{'LMachine/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/Common AppData'};
+	my $swKey = $Win32::TieRegistry::Registry->Open(
+		'LMachine/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/', 
+		{ 
+			Access => Win32::TieRegistry::KEY_READ(), 
+			Delimiter =>'/' 
+		}
+	);
 
 	if (defined $swKey) {
-		$root = catdir($swKey, 'SqueezeCenter');
+		$root = catdir($swKey->{'Common AppData'}, 'SqueezeCenter');
 	}
 	else {
 		$root = $Bin;
 	}
 
+print "$root\n";
 	$path = catdir($root, $folder);
 
 	return $path if -d $path;
