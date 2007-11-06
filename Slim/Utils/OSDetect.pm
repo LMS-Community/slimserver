@@ -483,7 +483,7 @@ sub winWritablePath {
 		$root = catdir($swKey, 'SqueezeCenter');
 	}
 	else {
-		$root = catdir(installDir(), 'server');
+		$root = $Bin;
 	}
 
 	$path = catdir($root, $folder);
