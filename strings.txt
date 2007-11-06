@@ -13017,7 +13017,7 @@ SETUP_SERVERPRIORITY
 
 SETUP_SERVERPRIORITY_DESC
 	DE	Sie können die Priorität festlegen, mit der SqueezeCenter ausgeführt wird.
-	EN	You can specify the priority that SqueezeCenter runs at.
+	EN	You can specify the priority for SqueezeCenter.
 	ES	Se puede especificar la prioridad con la que se ejecutará SqueezeCenter.
 	FR	Vous pouvez fixer le niveau de priorité du SqueezeCenter.
 	HE	באפשרותך לציין את העדיפות שבה פועל SqueezeCenter.
@@ -13039,7 +13039,7 @@ SETUP_SCANNERPRIORITY
 
 SETUP_SCANNERPRIORITY_DESC
 	DE	Sie können die Priorität festlegen, mit welcher das Durchsuchen durchgeführt wird.
-	EN	You can specify the priority that the scanning process run at.
+	EN	You can specify the priority for the scanning process.
 	ES	Se puede especificar la prioridad con la que se ejecutará el proceso de examen.
 	FR	Vous pouvez fixer le niveau de priorité du processus d'analyse.
 	HE	באפשרותך לציין את העדיפות שבה פועל תהליך הסריקה.
