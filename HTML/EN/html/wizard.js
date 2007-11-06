@@ -257,7 +257,7 @@ Wizard = function(){
 			Ext.get('mainbody').setHeight(dimensions['maxHeight']);
 			Ext.get('maincontent').setHeight(dimensions['maxHeight']-140);
 
-			var myHeight = dimensions['maxHeight'] - 220;
+			var myHeight = dimensions['maxHeight'] - 200;
 			for (var i in folderselectors) {
 				if (s = folderselectors[i].id)
 					Ext.get(s).setHeight(myHeight);
