@@ -7460,6 +7460,9 @@ NATIVE
 	EN	Native
 	NO	Naturlig
 
+SAVE_PLAYLIST
+	EN	Save playlist
+
 CLEAR_PLAYLIST
 	CS	Vyčistit playlist
 	DA	Nulstil playlisten
@@ -13771,6 +13774,9 @@ JIVE_SEARCHFOR_HELP
 JIVE_CHANGEPLAYERNAME_HELP
 	EN	Use the scroll wheel to change letters, then press the center button to select that letter. Press the center button again to change the name of your player.
 
+JIVE_SAVEPLAYLIST_HELP
+	EN	Use the scroll wheel to change letters, then press the center button to select that letter. Press the center button again to save the playlist.
+
 JIVE_ALLOWEDCHARS_WITHCAPS
 	EN	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"\'<>?-=,./~`[];0123456789
 
@@ -13809,3 +13815,6 @@ JIVE_PLAYER_MODEL
 
 JIVE_PLAYER_FIRMWARE_VERSION
 	EN	FW Version
+
+CANCEL
+	EN	Cancel
