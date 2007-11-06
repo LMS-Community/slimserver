@@ -2804,6 +2804,9 @@ sub statusQuery {
 	# give a count in menu mode no matter what
 	if ($menuMode) {
 		$songCount += 0;
+		# add two for playlist save/clear to the count if the playlist is non-empty
+		my $menuCount = $songCount?$songCount+2:0;
+		# $songCount needs to change to $menuCount on the next line when the save/clear playlist items are ready
 		$request->addResult("count", $power?$songCount:0);
 		
 		my $base = {
@@ -2882,6 +2885,11 @@ sub statusQuery {
 
 					if ($menuMode) {
 						_addJiveSong($request, $loop, $count, $current, $track);
+						# add clear and save playlist items at the bottom
+						if ( ($idx+1)  == $songCount) {
+							# playlist management items not quite ready
+							#_addJivePlaylistControls($request, $loop, $count);
+						}
 					}
 					else {
 						_addSong(	$request, $loop, $count, 
@@ -3007,7 +3015,7 @@ sub songinfoQuery {
 		if ($menuMode) {
 
 			# decide what is the next step down
-			# generally, we go nowhere after songingo, so we get menu:nowhere...
+			# generally, we go nowhere after songinfo, so we get menu:nowhere...
 
 			# build the base element
 			my $go_action;
@@ -3904,6 +3912,67 @@ sub _addSong {
 	$request->setResultLoopHash($loop, $index, $hashRef);
 }
 
+sub _addJivePlaylistControls {
+
+	my ($request, $loop, $count) = @_;
+	# clear playlist
+	my $text = Slim::Utils::Strings::string('CLEAR_PLAYLIST');
+	# add clear playlist and save playlist menu items
+	$count++;
+	my @clear_playlist = (
+		{
+			text    => Slim::Utils::Strings::string('CANCEL'),
+			actions => {
+				do => {
+					menu => 'nowhere',
+				},
+			},
+		},
+		{
+			text    => Slim::Utils::Strings::string('CLEAR_PLAYLIST'),
+			actions => {
+				do => {
+					player => 0,
+					cmd    => ['playlist', 'clear'],
+					menu   => 'nowhere',
+				},
+			},
+		},
+	);
+
+	$request->addResultLoop($loop, $count, 'text', $text);
+	$request->addResultLoop($loop, $count, 'offset', 0);
+	$request->addResultLoop($loop, $count, 'count', 2);
+	$request->addResultLoop($loop, $count, 'item_loop', \@clear_playlist);
+	$request->addResultLoop($loop, $count, 'window', { titleStyle => 'mymusic' } );
+
+	# save playlist
+	my $input = {
+		len          => 1,
+		allowedChars => Slim::Utils::Strings::string('JIVE_ALLOWEDCHARS_WITHCAPS'),
+		help         => {
+			text => Slim::Utils::Strings::string('JIVE_SAVEPLAYLIST_HELP'),
+		},
+	};
+	my $actions = {
+		do => {
+			player => 0,
+			cmd    => ['playlist', 'save'],
+			params => {
+				playlistName => '__INPUT__',
+			},
+			itemsParams => 'params',
+		},
+	};
+	$count++;
+
+	$text = Slim::Utils::Strings::string('SAVE_PLAYLIST');
+	$request->addResultLoop($loop, $count, 'text', $text);
+	$request->addResultLoop($loop, $count, 'input', $input);
+	$request->addResultLoop($loop, $count, 'actions', $actions);
+	$request->addResultLoop($loop, $count, 'window', { titleStyle => 'mymusic' } );
+
+}
 
 sub _addJiveSong {
 	my $request   = shift; # request
