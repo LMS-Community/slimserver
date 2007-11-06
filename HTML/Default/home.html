@@ -28,8 +28,10 @@ ELSE %]
 	my_musicItems = BLOCK;
 		orderedLinks = ['BROWSE_BY_ARTIST', 'BROWSE_BY_ALBUM', 'BROWSE_BY_GENRE', 'BROWSE_BY_YEAR', 'BROWSE_NEW_MUSIC', 'PLUGIN_RANDOMPLAY'];
 		FOREACH item = orderedLinks;
-			link = { key=item, value=additionalLinks.browse.$item };
-			PROCESS menuItem category='my_music';
+			IF additionalLinks.browse.exists(item);
+				link = { key=item, value=additionalLinks.browse.$item };
+				PROCESS menuItem category='my_music';
+			END;
 		END;
 		FOREACH link = additionalLinks.browse;
 			IF link.key != 'FAVORITES' && !orderedLinks.grep(link.key).size;
@@ -48,9 +50,11 @@ ELSE %]
 	radioItems = BLOCK;
 		orderedLinks = ['PLUGIN_LIVE365_MODULE_NAME', 'PLUGIN_PANDORA_MODULE_NAME', 'PLUGIN_PODCAST', 'PLUGIN_RADIOIO_MODULE_NAME', 'PLUGIN_RADIOTIME_MODULE_NAME', 'PLUGIN_SHOUTCASTBROWSER_MODULE_NAME', 'PLUGIN_PICKS_MODULE_NAME'];
 		FOREACH item = orderedLinks;
-			link.value = additionalLinks.radio.$item;
-			link.key = item;
-			PROCESS menuItem category='radio';
+			IF additionalLinks.radio.exists(item);
+				link.value = additionalLinks.radio.$item;
+				link.key = item;
+				PROCESS menuItem category='radio';
+			END;
 		END;
 		FOREACH link = additionalLinks.radio;
 			IF !orderedLinks.grep(link.key).size;
@@ -69,9 +73,11 @@ ELSE %]
 	music_on_demandItems = BLOCK;
 		orderedLinks = ['PLUGIN_LMA_MODULE_NAME', 'PLUGIN_MP3TUNES_MODULE_NAME', 'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME'];
 		FOREACH item = orderedLinks;
-			link.value = additionalLinks.music_on_demand.$item;
-			link.key = item;
-			PROCESS menuItem category='music_on_demand';
+			IF additionalLinks.music_on_demand.exists(item);
+				link.value = additionalLinks.music_on_demand.$item;
+				link.key = item;
+				PROCESS menuItem category='music_on_demand';
+			END;
 		END;
 		FOREACH link = additionalLinks.music_on_demand;
 			IF !orderedLinks.grep(link.key).size;
@@ -190,8 +196,10 @@ ELSE %]
 			[% category=''; PROCESS menuItem link.key="MY_MUSIC" link.value="home.html?" expandable="my_music" %]
 			<div id="MY_MUSIC_expanded" class="expandableHomeMenuItem">[%- my_musicItems -%]</div>
 		
-			[% PROCESS menuItem link.key="RADIO" link.value="home.html?" expandable="radio" %]
-			<div id="RADIO_expanded" class="expandableHomeMenuItem">[%- radioItems -%]</div>
+			[% IF additionalLinks.radio %]
+				[% PROCESS menuItem link.key="RADIO" link.value="home.html?" expandable="radio" %]
+				<div id="RADIO_expanded" class="expandableHomeMenuItem">[%- radioItems -%]</div>
+			[% END %]
 		
 			[% IF additionalLinks.music_on_demand %]
 				[% PROCESS menuItem link.key="MUSIC_ON_DEMAND" link.value="home.html?" expandable="music_on_demand" %]
