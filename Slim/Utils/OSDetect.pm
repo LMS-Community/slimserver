@@ -38,6 +38,7 @@ BEGIN {
 	if ($^O =~ /Win32/) {
 		require Win32;
 		require Win32::FileSecurity;
+		require Win32::TieRegistry;
 	}
 }
 
@@ -255,24 +256,26 @@ sub dirsFor {
 			warn "dirsFor: Didn't find a match request: [$dir]\n";
 		}
 
-	} elsif (isVista()) {
+	# all Windows specific stuff
+	} elsif ($OS eq 'win') {
 
-		# Windows Vista - need to store files which the server writes outside the $Bin directory
+		$Win32::TieRegistry::Registry->Delimiter('/');
+
 		if ($dir =~ /^(?:strings|revision|convert|types)$/) {
 
 			push @dirs, $Bin;
 
 		} elsif ($dir eq 'log') {
 
-			push @dirs, vistaWritablePath('Logs');
+			push @dirs, winWritablePath('Logs');
 
 		} elsif ($dir eq 'cache') {
 
-			push @dirs, vistaWritablePath('Cache');
+			push @dirs, winWritablePath('Cache');
 
 		} elsif ($dir eq 'prefs') {
 
-			push @dirs, vistaWritablePath('prefs');
+			push @dirs, winWritablePath('prefs');
 
 		} else {
 
@@ -281,7 +284,7 @@ sub dirsFor {
 
 	} else {
 
-		# Everyone else - Windows 2000/XP, and *nix.
+		# Everyone else - *nix.
 		if ($dir =~ /^(?:strings|revision|convert|types)$/) {
 
 			push @dirs, $Bin;
@@ -464,35 +467,49 @@ sub initDetailsForUnix {
 }
 
 
-# Return a path which is expected to be writable by all users on Vista without virtualisation
+# Return a path which is expected to be writable by all users on Windows without virtualisation on Vista
 # this should mean that the server always sees consistent versions of files under this path
 
-# NB on vista, if a normal user saves a file under C:\Program Files, this is virtualised and the
-# actual file is saved as \User\<username>\AppData\Local\VirtualStore\Program File\<rest of path>
-# This means that different users see different version of the same file.  We therefore try to avoid
-# this by not storing writable files under C:\Program Files...
-
-sub vistaWritablePath {
+sub winWritablePath {
 	my $folder = shift;
+	my ($root, $path);
 
-	# store files in %ALLUSERSPROFILE%\SlimServer - normally C:\ProgramData\SlimServer
-	my $root = catdir($ENV{'ALLUSERSPROFILE'}, 'SlimServer');
-	my $path = catdir($root, $folder);
+	# use the "Common Application Data" folder to store SqueezeCenter configuration etc.
+	# c:\documents and settings\all users\application data - on Windows 2000/XP
+	# c:\ProgramData - on Vista
+	my $swKey = $Win32::TieRegistry::Registry->{'LMachine/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/Common AppData'};
+
+	if (defined $swKey) {
+		$root = catdir($swKey, 'SqueezeCenter');
+	}
+	else {
+		$root = catdir(installDir(), 'server');
+	}
+
+	$path = catdir($root, $folder);
 
 	return $path if -d $path;
 
 	if (! -d $root) {
 		mkdir $root;
-		_vistaOpenPath($root);
+		_winOpenPath($root);
 	}
 
 	mkdir $path;
-	_vistaOpenPath($path);
+	_winOpenPath($path);
 
 	return $path;
 }
 
-sub _vistaOpenPath {
+# legacy call: this used to do what winWritablePath() does now
+# keep it for backwards compatibility
+sub vistaWritablePath {
+	my $folder = shift;
+	Slim::Utils::Log::logger('os.paths')->warn('Slim::Utils::OSDetect::vistaWritablePath() is a legacy call - please use winWritablePath() instead.');
+	return winWritablePath($folder);
+}
+
+sub _winOpenPath {
 	my $path = shift;
 
 	my %perms;
@@ -502,7 +519,8 @@ sub _vistaOpenPath {
 	# set file security to open for all users on system
 	# this should probably be changed to only cover locally defined users?
 	for my $uid (keys %perms) {
-		$perms{$uid} = Win32::FileSecurity::MakeMask( qw( FULL  GENERIC_ALL ) );
+Slim::Utils::Log::logger('server')->error($uid);
+		$perms{$uid} = Win32::FileSecurity::MakeMask( qw( CHANGE GENERIC_WRITE GENERIC_READ GENERIC_EXECUTE ) );
 	}
 
 	Win32::FileSecurity::Set($path, \%perms);

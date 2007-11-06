@@ -95,11 +95,11 @@ sub _oldPath {
 
 	} elsif (Slim::Utils::OSDetect::OS() eq 'win') {
 
-		if (Slim::Utils::OSDetect::isVista() && -r catdir(Slim::Utils::OSDetect::vistaWritablePath(), 'slimserver.pref')) {
+		if (Slim::Utils::OSDetect::isVista() && -r catdir(Slim::Utils::OSDetect::winWritablePath(), 'slimserver.pref')) {
 
-			$oldPrefs = catdir(Slim::Utils::OSDetect::vistaWritablePath(), 'slimserver.pref');
+			$oldPrefs = catdir(Slim::Utils::OSDetect::winWritablePath(), 'slimserver.pref');
 
-		} elsif (!Slim::Utils::OSDetect::isVista() && -r catdir($Bin, 'slimserver.pref'))  {
+		} elsif (-r catdir($Bin, 'slimserver.pref'))  {
 
 			$oldPrefs = catdir($Bin, 'slimserver.pref');
 
@@ -124,7 +124,7 @@ sub _oldPath {
 		return undef;
 	}
 
-	$log->info("using old preference file $oldPrefs for conversion");
+	$log->info("using old preference file $oldPrefs for conversion") if $oldPrefs;
 
 	return $oldPrefs;
 }
