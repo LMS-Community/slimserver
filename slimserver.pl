@@ -221,6 +221,7 @@ our $playlistdir = undef;
 our $httpport    = undef;
 
 our (
+	@argv,
 	$inInit,
 	$cachedir,
 	$user,
@@ -439,6 +440,9 @@ sub init {
 }
 
 sub main {
+	# save argv
+	@argv = @ARGV;
+	
 	# command line options
 	initOptions();
 
@@ -724,6 +728,14 @@ sub daemonize {
 	}
 
 	open STDOUT, '>>/dev/null';
+	
+	# On Leopard, GD will crash because you can't run CoreServices code in a forked child,
+	# so we have to exec as well.
+	if ( $^O =~ /darwin/ ) {
+		@argv = grep { $_ ne '--daemon' } @argv;
+		exec $^X . ' "' . $0 . '" ' . join( ' ', @argv );
+		exit;
+	}
 }
 
 sub changeEffectiveUserAndGroup {
