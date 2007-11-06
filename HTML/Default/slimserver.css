@@ -50,6 +50,14 @@ a:hover, .link:hover,
 	text-decoration: none;
 }
 
+.folderselector {
+	overflow: auto;
+	height: 300px;
+	width: 50%;
+	border: 2px inset grey;
+	background: white;
+}
+
 
 /* Main screen (outer frame) */
 #noJS {

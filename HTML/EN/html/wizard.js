@@ -22,7 +22,7 @@ Wizard = function(){
 				},
 				south: {
 					split:false,
-					initialSize: 40
+					initialSize: 16
 				},
 				center: {
 					autoScroll: false
@@ -255,9 +255,9 @@ Wizard = function(){
 			bg.setHeight(dimensions['maxHeight']);
 
 			Ext.get('mainbody').setHeight(dimensions['maxHeight']);
-			Ext.get('maincontent').setHeight(dimensions['maxHeight']-145);
+			Ext.get('maincontent').setHeight(dimensions['maxHeight']-140);
 
-			var myHeight = dimensions['maxHeight'] - 245;
+			var myHeight = dimensions['maxHeight'] - 220;
 			for (var i in folderselectors) {
 				if (s = folderselectors[i].id)
 					Ext.get(s).setHeight(myHeight);
