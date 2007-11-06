@@ -492,7 +492,6 @@ sub winWritablePath {
 		$root = $Bin;
 	}
 
-print "$root\n";
 	$path = catdir($root, $folder);
 
 	return $path if -d $path;
