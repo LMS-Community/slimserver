@@ -84,7 +84,9 @@ ELSE %]
 				PROCESS menuItem category='music_on_demand';
 			END;
 		END;
-		PROCESS menuItem category='radio' link={ key='PLUGIN_PANDORA_MODULE_NAME', value=additionalLinks.radio.PLUGIN_PANDORA_MODULE_NAME };
+		IF additionalLinks.radio.exists('PLUGIN_PANDORA_MODULE_NAME');
+			PROCESS menuItem category='radio' link={ key='PLUGIN_PANDORA_MODULE_NAME', value=additionalLinks.radio.PLUGIN_PANDORA_MODULE_NAME };
+		END;
 	END;
 
 	pluginsItems = BLOCK;
