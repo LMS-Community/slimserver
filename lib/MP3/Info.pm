@@ -2224,6 +2224,15 @@ sub _parse_ape_tag {
 
 		my $ape_header_data = substr($ape_tag_data, 0, $ape_tag_header_size, '');
 		my $ape_header      = _parse_ape_header_or_footer($ape_header_data);
+		
+		if ( defined $ape_header->{'version'} ) {
+			if ( $ape_header->{'version'} == 2000 ) {
+				$info->{'TAGVERSION'} = 'APEv2';
+			}
+			else {
+				$info->{'TAGVERSION'} = 'APEv1';
+			}
+		}
 
 		if (defined $ape_header->{'tag_items'} && $ape_header->{'tag_items'} =~ /^\d+$/) {
 
