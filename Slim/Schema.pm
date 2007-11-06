@@ -423,6 +423,32 @@ sub migrateDB {
 	return 0;
 }
 
+=head2 changeCollation ( $collation )
+
+Change the collation for tables where sorting is important.
+
+=cut
+
+sub changeCollation {
+	my ( $class, $collation ) = @_;
+	
+	my $dbh = $class->storage->dbh;
+	
+	if ( Slim::Utils::MySQLHelper->mysqlVersion($dbh) > 4.0 ) {
+		my @tables = qw(
+			albums
+			contributors
+			genres
+			tracks
+		);
+	
+		for my $table ( @tables ) {
+			$log->debug( "Changing $table to $collation" );
+			eval { $dbh->do( "ALTER TABLE $table CONVERT TO CHARACTER SET utf8 COLLATE $collation" ) };
+		}
+	}
+}
+
 =head2 rs( $class )
 
 Returns a L<DBIx::Class::ResultSet> for the specified class.

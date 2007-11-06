@@ -79,6 +79,30 @@ sub handler {
 		preferences('server')->set('skin', 'Classic');
 		$paramRef->{'warning'} .= Slim::Utils::Strings::string("HIT_RELOAD");
 	}
+	
+	# Bug 5443, Change the MySQL collation if switching to a language that doesn't work right with UTF8 collation
+	if ( $paramRef->{'saveSettings'} ) {
+		my $curLang = preferences('server')->get('language');
+		my $lang    = $paramRef->{'language'};
+		
+		if ( $lang && $lang ne $curLang ) {
+			if ( $lang eq 'CS' ) {
+				Slim::Schema->changeCollation( 'utf8_czech_ci' );
+			}
+			elsif ( $lang eq 'SV' ) {
+				Slim::Schema->changeCollation( 'utf8_swedish_ci' );
+			}
+			elsif ( $lang eq 'DA' ) {
+				Slim::Schema->changeCollation( 'utf8_danish_ci' );
+			}
+			elsif ( $lang eq 'ES' ) {
+				Slim::Schema->changeCollation( 'utf8_spanish_ci' );
+			}
+			else {
+				Slim::Schema->changeCollation( 'utf8_general_ci' );
+			}
+		}
+	}
 
 	my @versions = Slim::Utils::Misc::settingsDiagString();
 
