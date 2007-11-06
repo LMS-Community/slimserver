@@ -519,7 +519,6 @@ sub _winOpenPath {
 	# set file security to open for all users on system
 	# this should probably be changed to only cover locally defined users?
 	for my $uid (keys %perms) {
-Slim::Utils::Log::logger('server')->error($uid);
 		$perms{$uid} = Win32::FileSecurity::MakeMask( qw( CHANGE GENERIC_WRITE GENERIC_READ GENERIC_EXECUTE ) );
 	}
 
