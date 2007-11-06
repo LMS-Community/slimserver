@@ -436,7 +436,7 @@ sub pageInfo {
 
 		my $first = $results->first;
 
-		$alphamap{Slim::Utils::Unicode::utf8decode($first->get_column('letter'), 'utf-8')} = 0;
+		$alphamap{ Encode::decode('utf8', $first->get_column('letter')) } = 0;
 
 		$itemCount += $first->get_column('count');
 
@@ -447,7 +447,7 @@ sub pageInfo {
 
 			# Set offset for subsequent letter rows to current # $itemCount
 			# (*before* we add number of items for this letter to $itemCount!)
-			$alphamap{Slim::Utils::Unicode::utf8decode($letter, 'utf-8')} = $itemCount;
+			$alphamap{ Encode::decode('utf8', $letter) } = $itemCount;
 
 			$itemCount += $count;
 		}
