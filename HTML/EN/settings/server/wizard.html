@@ -10,10 +10,9 @@
 
 		<style type="text/css">
 		<!--
-			html, body { background: white; }
+			html, body { background: #666666; }
 			body { margin: 5px; }
 
-			#main { padding-top: 10px; }
 			form div { cursor: default; }
 
 			.wz_path {
@@ -22,7 +21,7 @@
 			}
 
 			#wz_formpanel {
-				margin: 10px;
+				padding: 10px;
 				position: relative;
 			}
 
@@ -50,9 +49,8 @@
 			}
 
 			#wz_buttonbar {
-				float: right;
-				margin-top:5px;
-				margin-right:10px;
+				position: absolute;
+				right: 25px;
 			}
 
 			.wz_summary_list {
@@ -66,15 +64,41 @@
 				right: 0px;
 			}
 
-			.titlebox_content { height: 20px; }
-			.titlebox_content div { font-size: 13px; }
-			a { color: yellow; }
+			#loading-mask {
+				width: 120%;
+				height: 100%;
+				background-image: url(/Default/html/images/background.png);
+				position: absolute;
+				z-index: 20000;
+				left: 0;
+				top: 0;
+			}
+
+			#loading {
+				position: absolute;
+				left: 40%;
+				top: 40%;
+				text-align: center;
+				z-index: 20001;
+				display: none;
+			}
+
+			#loading .loading-indicator,
+			#noJS { color: white; }
+			
+			.loading-indicator {
+				background-image: url(/Default/html/images/loading.gif);
+			}
+
+			a { color: green; }
 		-->
 		</style>
 	</head>
 
 	<body>
-		<div id="loading-mask" style="width:120%;height:100%;background:white;position:absolute;z-index:20000;left:0;top:0;">&#160;</div>
+		<img id="background" src="/Default/html/images/background.png" alt="Background" />
+
+		<div id="loading-mask">&#160;</div>
 		<div id="loading">
 			<div class="loading-indicator">
 				[% "LOADING_SQUEEZECENTER" | string %]
@@ -134,25 +158,26 @@
 
 			<div id="main">
 				<div class="inner" id="mainpanel">
-					<div class="inner_top"><div></div></div>
-					<div class="inner_content" id="maincontent">
+					<div class="inner_top"></div>
+					<div class="inner_top_left">&nbsp;</div>
+					<div class="inner_top_right">&nbsp;</div>
 
-						<div class="titlebox">
-							<div class="titlebox_top"><div></div></div>
-							<div class="titlebox_content">
-								<div id="welcome_h" class="wz_page">[% "SETUP_WIZARD_WELCOME" | string %]</div>
-								<div id="proxy_h" class="wz_page">[% "SETUP_WIZARD_PROXY" | string %]</div>
-								<div id="sqn_h" class="wz_page">[% "SETUP_WIZARD_SQN" | string %]</div>
-								<div id="source_h" class="wz_page">[% "SETUP_WIZARD_SOURCE" | string %]</div>
-								<div id="audiodir_h" class="wz_page">[% "SETUP_WIZARD_AUDIODIR" | string %]</div>
-								<div id="playlistdir_h" class="wz_page">[% "SETUP_WIZARD_PLAYLISTDIR" | string %]</div>
-								<div id="itunes_h" class="wz_page">[% "SETUP_WIZARD_ITUNES" | string %]</div>
-								<div id="musicip_h" class="wz_page">[% "SETUP_WIZARD_MUSICIP" | string %]</div>
-								<div id="summary_h" class="wz_page">[% "SETUP_WIZARD_SUMMARY" | string %]</div>
-								<div id="done_h" class="wz_page">[% "SETUP_WIZARD_DONE" | string %]</div>
-							</div>
-							<div class="titlebox_bottom"><div></div></div>
+					<div id="inner_header">
+						<div class="pagetitle">
+							<div id="welcome_h" class="wz_page">[% "SETUP_WIZARD_WELCOME" | string %]</div>
+							<div id="proxy_h" class="wz_page">[% "SETUP_WIZARD_PROXY" | string %]</div>
+							<div id="sqn_h" class="wz_page">[% "SETUP_WIZARD_SQN" | string %]</div>
+							<div id="source_h" class="wz_page">[% "SETUP_WIZARD_SOURCE" | string %]</div>
+							<div id="audiodir_h" class="wz_page">[% "SETUP_WIZARD_AUDIODIR" | string %]</div>
+							<div id="playlistdir_h" class="wz_page">[% "SETUP_WIZARD_PLAYLISTDIR" | string %]</div>
+							<div id="itunes_h" class="wz_page">[% "SETUP_WIZARD_ITUNES" | string %]</div>
+							<div id="musicip_h" class="wz_page">[% "SETUP_WIZARD_MUSICIP" | string %]</div>
+							<div id="summary_h" class="wz_page">[% "SETUP_WIZARD_SUMMARY" | string %]</div>
+							<div id="done_h" class="wz_page">[% "SETUP_WIZARD_DONE" | string %]</div>
 						</div>
+					</div>
+
+					<div class="inner_content" id="maincontent">
 
 						<div id="wz_formpanel">
 							<div id="welcome_m" class="wz_page">
@@ -289,22 +314,27 @@
 							<div id="done_m" class="wz_page">
 								<div>[% "SETUP_WIZARD_DONE_DESC" | string %]</div>
 							</div>
+
 						</div>
 					</div>
-					<div class="inner_bottom"><div></div></div>
+
+					<div class="inner_bottom"></div>
+					<div class="inner_bottom_left">&nbsp;</div>
+					<div class="inner_bottom_right">&nbsp;</div>
+
 				</div>
 
 			</div>
 
 			<div id="footer">
+				<table id="wz_buttonbar">
+					<tr>
+						<td><span id="previous"></span></td>
+						<td><span id="next"></span></td>
+					<tr>
+				</table>
 				<div id="footer_left"></div>
 				<div id="footer_content">
-					<table id="wz_buttonbar">
-						<tr>
-							<td><span id="previous"></span></td>
-							<td><span id="next"></span></td>
-						<tr>
-					</table>
 				</div>
 			</div>
 

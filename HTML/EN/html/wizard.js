@@ -18,7 +18,7 @@ Wizard = function(){
 			var layout = new Ext.BorderLayout('mainbody', {
 				north: {
 					split:false,
-					initialSize: 45
+					initialSize: 40
 				},
 				south: {
 					split:false,
@@ -244,11 +244,20 @@ Wizard = function(){
 
 		// resize panels, folder selectors etc.
 		onResize : function(){
-			dimensions = Ext.fly(document.body).getViewSize();
-			Ext.get('mainbody').setHeight(dimensions.height-10);
-			Ext.get('maincontent').setHeight(dimensions.height-145);
+			var body = Ext.get(document.body);
 
-			myHeight = dimensions.height - 245;
+			var dimensions = new Array();
+			dimensions['maxHeight'] = body.getHeight() - body.getMargins('tb');
+			dimensions['maxWidth'] = body.getWidth() - body.getMargins('rl')  - (Ext.isIE && !Ext.isIE7 ? body.getMargins('rl') : 0);
+
+			var bg = Ext.get('background');
+			bg.setWidth(body.getWidth() - (Ext.isIE && !Ext.isIE7 ? body.getMargins('rl') : 0));
+			bg.setHeight(dimensions['maxHeight']);
+
+			Ext.get('mainbody').setHeight(dimensions['maxHeight']);
+			Ext.get('maincontent').setHeight(dimensions['maxHeight']-145);
+
+			var myHeight = dimensions['maxHeight'] - 245;
 			for (var i in folderselectors) {
 				if (s = folderselectors[i].id)
 					Ext.get(s).setHeight(myHeight);

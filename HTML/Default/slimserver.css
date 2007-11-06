@@ -9,7 +9,7 @@ html, body {
 	background-color: #dddddd;
 }
 
-#playlistPanel { background-color: #dddddd; }
+#playlistPanel, #maincontent { background-color: #dddddd; }
 
 html, body, tr, tr, p, div, li, input, ul {
 	font-size: 11px;
@@ -163,6 +163,7 @@ img#background { position:absolute; }
 	vertical-align: top;
 }
 
+#mainpanel .inner_bottom_left,
 #leftpanel .inner_bottom_left {
 	background-image: url(html/images/inner_bottom_left_left.gif);
 }
@@ -175,6 +176,7 @@ img#background { position:absolute; }
 	background-image: url(html/images/inner_bottom_right_left.gif);
 }
 
+#mainpanel .inner_bottom_right,
 #rightpanel .inner_bottom_right {
 	background-image: url(html/images/inner_bottom_right_right.gif);
 }
