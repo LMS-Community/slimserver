@@ -446,13 +446,22 @@ sub forgetClient {
 	
 	if ($client) {
 		$client->display->forgetDisplay();
+		
+		# Clean up global variables used in various modules
+		Slim::Buttons::Common::forgetClient($client);
+		Slim::Buttons::Home::forgetClient($client);
+		Slim::Buttons::Information::forgetClient($client);
+		Slim::Buttons::Input::Choice::forgetClient($client);
+		Slim::Buttons::Playlist::forgetClient($client);
+		Slim::Buttons::Search::forgetClient($client);
 		Slim::Web::HTTP::forgetClient($client);
 		Slim::Utils::Timers::forgetTimer($client);
-		delete $clientHash{$client->id()};
+		
+		delete $clientHash{ $client->id };
 		
 		# stop watching this player
 		delete $Slim::Networking::Slimproto::heartbeat{ $client->id };
-	}	
+	}
 }
 
 sub startup {

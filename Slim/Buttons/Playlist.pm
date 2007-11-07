@@ -314,6 +314,18 @@ sub init {
 	
 }
 
+=head2 forgetClient ( $client )
+
+Clean up global hash when a client is gone
+
+=cut
+
+sub forgetClient {
+	my $client = shift;
+	
+	delete $playlistParams{ $client };
+}
+
 sub getFunctions {
 	return \%functions;
 }

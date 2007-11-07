@@ -62,6 +62,18 @@ our %browseCache = (); # remember where each client is browsing
 
 Slim::Buttons::Common::addMode('INPUT.Choice', getFunctions(), \&setMode);
 
+=head2 forgetClient ( $client )
+
+Clean up global hash when a client is gone
+
+=cut
+
+sub forgetClient {
+	my $client = shift;
+	
+	delete $browseCache{ $client };
+}
+
 # get the value the user is currently referencing.
 # item could be hash, string or code
 sub getItem {

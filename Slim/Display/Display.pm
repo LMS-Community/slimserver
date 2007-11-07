@@ -20,6 +20,8 @@ L<Slim::Display::Display>
 
 use strict;
 
+use Scalar::Util qw(weaken);
+
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Timers;
@@ -75,7 +77,7 @@ sub new {
 	my $display =[];	
 	bless $display, $class;
 
-	$display->[0] = \$client; # ref to client
+	$display->[0] = $client; # ref to client
 	$display->[1] = 0;        # updateMode [0 = normal, 1 = periodic update blocked, 2 = all updates blocked]
 	$display->[2] = 0;        # animateState
 	$display->[3] = [0, 0, 0];# scrollState - element 1 = screen1
@@ -92,6 +94,9 @@ sub new {
 	$display->[14]= 0;        # notifyLevel [0 = notify off, 1 = showbriefly only, 2 = all]
 
 	$display->resetDisplay(); # init render cache
+	
+	# Circular refs are bad
+	weaken( $display->[0] );
 
 	return $display;
 }
@@ -106,7 +111,7 @@ sub init {
 
 # Methods to access display state
 sub client {
-	return ${shift->[0]};
+	return shift->[0];
 }
 sub updateMode {
 	my $r = shift;

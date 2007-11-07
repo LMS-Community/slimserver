@@ -187,6 +187,18 @@ sub init {
 	);
 }
 
+=head2 forgetClient ( $client )
+
+Clean up global hash when a client is gone
+
+=cut
+
+sub forgetClient {
+	my $client = shift;
+	
+	delete $current{ $client };
+}
+
 sub module_list {
 	return undef unless $modules;
 	return [sort { $modules->{$a} cmp $modules->{$b} } keys %$modules];

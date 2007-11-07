@@ -32,7 +32,6 @@ my $prefs = preferences('server');
 our @defaultSettingsChoices = qw(VOLUME REPEAT SHUFFLE TITLEFORMAT TEXTSIZE SCREENSAVERS);
 
 our @settingsChoices = ();
-our %current = ();
 our %menuParams = ();
 our %functions = ();
 

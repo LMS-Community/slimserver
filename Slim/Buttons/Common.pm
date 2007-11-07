@@ -136,6 +136,18 @@ sub init {
 	$savers{'playlist'} = 'NOW_PLAYING';
 }
 
+=head2 forgetClient ( $client )
+
+Clean up global hash when a client is gone
+
+=cut
+
+sub forgetClient {
+	my $client = shift;
+	
+	delete $scrollClientHash->{ $client };
+}
+
 =head2 addSaver ( $name, [ $buttonFunctions ], [ $setModeFunction ], [ $leaveModeFunction ], $displayName )
 
 This function registers a screensaver mode.  The required $name argument should be a unique string,

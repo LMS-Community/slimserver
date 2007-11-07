@@ -29,7 +29,6 @@ use Slim::Utils::Prefs;
 # button functions for search directory
 my @defaultSearchChoices = qw(ARTISTS ALBUMS SONGS);
 
-our %current    = ();
 our %context    = ();
 our %menuParams = ();
 
@@ -102,6 +101,18 @@ sub init {
 	for my $name (sort keys %subs) {
 		Slim::Buttons::Home::addMenuOption($name,$subs{$name});
 	}
+}
+
+=head2 forgetClient ( $client )
+
+Clean up global hash when a client is gone
+
+=cut
+
+sub forgetClient {
+	my $client = shift;
+	
+	delete $context{ $client };
 }
 
 sub searchExitHandler {
