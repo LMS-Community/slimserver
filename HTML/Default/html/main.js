@@ -611,25 +611,37 @@ Playlist = function(){
 				tooltip = el.dom.innerHTML;
 
 			if (items.length > 0) {
-				Ext.get('playlistToggleArtwork').show();
+				if (Ext.get('btnPlaylistShowArtwork')) {
+					new Slim.Button('btnPlaylistShowArtwork', {
+						cls: 'btn-playlist-show-artwork',
+						tooltip: strings['show_artwork'],
+						minWidth: 56,
+						handler: Playlist.showCoverArt
+					});
+				}
 
-				new Ext.Button('btnPlaylistClear', {
-					cls: 'btn-small',
-					text: strings['clear_playlist'],
-					icon: webroot + 'html/images/icon_playlist_clear.gif',
+				if (Ext.get('btnPlaylistHideArtwork')) {
+					new Slim.Button('btnPlaylistHideArtwork', {
+						cls: 'btn-playlist-hide-artwork',
+						tooltip: strings['hide_artwork'],
+						minWidth: 56,
+						handler: Playlist.hideCoverArt
+					});
+				}
+
+				new Slim.Button('btnPlaylistClear', {
+					cls: 'btn-playlist-clear',
+					tooltip: strings['clear_playlist'],
+					minWidth: 32,
 					handler: Playlist.clear
 				});
 
-				new Ext.Button('btnPlaylistSave', {
-					cls: 'btn-small',
-					text: strings['save'],
-					icon: webroot + 'html/images/icon_playlist_save.gif',
-					tooltip: tooltip,
-					tooltipType: 'title',
+				new Slim.Button('btnPlaylistSave', {
+					cls: 'btn-playlist-save',
+					tooltip: strings['save'],
+					minWidth: 32,
 					handler: Playlist.save
 				});
-			} else {
-				Ext.get('playlistToggleArtwork').hide();
 			}
 
 			// dragging doesn't survive a reload
@@ -666,12 +678,12 @@ Playlist = function(){
 
 		showCoverArt : function(){
 			Utils.setCookie('SqueezeCenter-noPlaylistCover', 0);
-			this.load();
+			Playlist.load();
 		},
 
 		hideCoverArt : function(){
 			Utils.setCookie('SqueezeCenter-noPlaylistCover', 1);
-			this.load();
+			Playlist.load();
 		}
 	}
 }();

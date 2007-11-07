@@ -341,13 +341,52 @@ img#background { position:absolute; }
 #playlistCommands table { display: inline; }
 
 #playlistToggleArtwork img {
-	height: 17px;
-	background: url(html/images/btn_toggle_playlist_artwork.gif) no-repeat 0 -34px;
+	height: 19px;
+	width: 56px;
+	background: url(html/images/btn_toggle_playlist_artwork.gif) no-repeat 0 -38px;
 	vertical-align: bottom;
 }
 
 #playlistToggleArtwork img.showCover {
 	background: url(html/images/btn_toggle_playlist_artwork.gif) no-repeat 0 0;
+}
+
+.btn-playlist-hide-artwork, .btn-playlist-hide-artwork button,
+.btn-playlist-show-artwork, .btn-playlist-show-artwork button,
+.btn-playlist-save, .btn-playlist-save button,
+.btn-playlist-clear, .btn-playlist-clear button {
+	height: 19px;
+}
+
+.btn-playlist-show-artwork button {
+	background: transparent url(html/images/btn_toggle_playlist_artwork.gif) no-repeat 0 0;
+}
+
+.btn-playlist-hide-artwork button {
+	background: transparent url(html/images/btn_toggle_playlist_artwork.gif) no-repeat 0 -38px;
+}
+
+.btn-playlist-save button {
+	background: transparent url(html/images/btn_playlist_save.gif) no-repeat 0 0;
+}
+
+.btn-playlist-clear button {
+	background: transparent url(html/images/btn_playlist_clear.gif) no-repeat 0 0;
+}
+
+#btnPlaylistShowArtwork .x-btn-over button,
+#btnPlaylistSave .x-btn-over button,
+#btnPlaylistClear .x-btn-over button {
+	background-position: 0 -19px;
+}
+
+#btnPlaylistHideArtwork .x-btn-over button {
+	background-position: 0 -57px;
+}
+
+#btnPlaylistSave .x-btn-click button,
+#btnPlaylistClear .x-btn-click button { 
+	background-position: 0 -38px;
 }
 
 
@@ -604,11 +643,11 @@ div.thumbwrap {
 }
 
 .btn-power button {
-	background: transparent url(html/images/btn_power.gif) no-repeat 0 0;
+	background: transparent url(html/images/btn_power_on.gif) no-repeat 0 0;
 }
 
 .btn-power-off button {
-	background: transparent url(html/images/btn_power.gif) no-repeat 0 -72px;
+	background: transparent url(html/images/btn_power.gif) no-repeat 0 0;
 }
 
 #ctrlUndock, .btn-undock, .btn-undock button {
