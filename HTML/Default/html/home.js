@@ -120,7 +120,8 @@ var MainMenu = function(){
 		},
 
 		onResize : function(){
-			Ext.select('div.homeMenuSection').setWidth(Ext.get(document.body).getWidth() - Ext.get('content').getMargins('lr'));
+			var size = Ext.get('content').getViewSize();
+			Ext.select('div.homeMenuSection').setWidth(size[0]);
 		}
 	}
 }();
