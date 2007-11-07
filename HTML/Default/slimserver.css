@@ -50,6 +50,15 @@ a:hover, .link:hover,
 	text-decoration: none;
 }
 
+.scrollingPanel, .songInfoTitle, .songInfoText, #songInfoPlayLinks, #crumblist, #playList {
+	cursor: default;
+}
+
+.mouseOver, .selectedItem, .selectorMarker, .cmdLinkIcon,
+#helpLink, #settingsLink, .link, #songInfoHeader a, .songInfoText a {
+	cursor: pointer;
+}
+
 .folderselector {
 	overflow: auto;
 	height: 300px;
