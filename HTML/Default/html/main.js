@@ -948,6 +948,9 @@ Player = function(){
 
 				Ext.get('ctrlCurrentTitle').update(currentTitle);
 
+				if (el = Ext.get('ctrlPlaytimeRight'))
+					el.show();
+
 				Ext.get('ctrlSongCount').update(result.playlist_tracks);
 				Ext.get('ctrlPlayNum').update(parseInt(result.playlist_cur_index) + 1);
 
@@ -1044,7 +1047,9 @@ Player = function(){
 			else {
 				Ext.get('ctrlCurrentTitle').update('');
 				Ext.get('ctrlSongCount').update('');
-				Ext.get('ctrlPlayNum').update('');
+				if (el = Ext.get('ctrlPlaytimeRight'))
+					el.hide();
+				Ext.get('ctrlPlayNum').update();
 				Ext.get('ctrlBitrate').update('');
 				Ext.get('ctrlCurrentArtist').update('');
 				Ext.get('ctrlCurrentAlbum').update('');
