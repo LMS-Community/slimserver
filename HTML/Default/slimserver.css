@@ -140,13 +140,11 @@ img#background { position:absolute; }
 }
 
 .inner_top_left {
-	background: url(html/images/inner_top_left.gif) no-repeat top left;
 	left: 0;
 	top: 0;
 }
 
 .inner_top_right {
-	background: url(html/images/inner_top_right.gif) no-repeat top right;
 	right: 0;
 	top: 0;
 }
@@ -171,22 +169,26 @@ img#background { position:absolute; }
 	vertical-align: top;
 }
 
-#mainpanel .inner_bottom_left,
-#leftpanel .inner_bottom_left {
-	background-image: url(html/images/inner_bottom_left_left.gif);
+.inner_top_left, .inner_top_right,
+.inner_bottom_left, .inner_bottom_right {
+	background-image: url(html/images/inner_edges.gif);
 }
 
-#leftpanel .inner_bottom_right {
-	background-image: url(html/images/inner_bottom_left_right.gif);
+.inner_top_left { background-position: 0 0; }
+.inner_top_right { background-position: 0 -12px; }
+
+#leftpanel .inner_bottom_left,
+#mainpanel .inner_bottom_left {
+	background-position: 0 -24px;
 }
 
-#rightpanel .inner_bottom_left {
-	background-image: url(html/images/inner_bottom_right_left.gif);
-}
+#leftpanel .inner_bottom_right { background-position: 0 -36px; }
 
-#mainpanel .inner_bottom_right,
-#rightpanel .inner_bottom_right {
-	background-image: url(html/images/inner_bottom_right_right.gif);
+#rightpanel .inner_bottom_left { background-position: 0 -48px; }
+
+#rightpanel .inner_bottom_right,
+#mainpanel .inner_bottom_right {
+	background-position: 0 -60px;
 }
 
 #footer_content {
@@ -660,8 +662,9 @@ div.thumbwrap {
 }
 
 #ctrlUndock .x-btn-over,
-#ctrlUndock .x-btn-click
-{ background-position: 0 -10px; }
+#ctrlUndock .x-btn-click {
+	background-position: 0 -10px;
+}
 
 .x-btn-over button { background-position: 0 -22px; }
 .x-btn-click button { background-position: 0 -44px; }
