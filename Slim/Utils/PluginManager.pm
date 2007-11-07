@@ -461,8 +461,10 @@ sub _filterPlugins {
 
 	my @found = ();
 
-	while (my ($name, $manifest) = each %{$plugins}) {
+	for my $name ( keys %{$plugins} ) {
 
+		my $manifest = $plugins->{$name};
+		
 		if (defined $manifest->{$category} && $manifest->{$category} eq $opType) {
 
 			push @found, $name;
@@ -543,7 +545,7 @@ sub isEnabled {
 
 	if (defined $found{$plugin}) {
 
-		return $found{$plugin};
+		return 1;
 	}
 
 	return undef;
