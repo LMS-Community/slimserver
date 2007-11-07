@@ -111,43 +111,6 @@ a.x-menu-item:hover {
 .x-btn-click .x-btn-right, .x-btn-pressed .x-btn-right { background-position:0 -133px; }
 .x-btn-click .x-btn-center, .x-btn-pressed .x-btn-center { background-position:0 -152px; }
 
-/* small buttons */
-.btn-small .x-btn-text, .btn-small .x-btn button {
-	color: white;
-	font-weight: normal;
-	font-size: 90%
-}
-
-.btn-small .x-btn-left {
-	width: 5px;
-	height: 17px;
-	background: url(html/images/slim-ext/btn-small.gif) no-repeat 0 0;
-}
-
-.btn-small .x-btn-right {
-	width: 5px;
-	height: 17px;
-	background: url(html/images/slim-ext/btn-small.gif) no-repeat 0 -17px;
-}
-
-.btn-small .x-btn-center {
-	background: url(html/images/slim-ext/btn-small.gif) repeat-x 0 -34px;
-	padding: 0 3px;
-}
-
-.btn-small .x-btn-over .x-btn-left { background-position:0 -51px; }
-.btn-small .x-btn-over .x-btn-right { background-position:0 -68px; }
-.btn-small .x-btn-over .x-btn-center { background-position:0 -85px; }
-.btn-small .x-btn-click .x-btn-left { background-position:0 -102px; }
-.btn-small .x-btn-click .x-btn-right { background-position:0 -119px; }
-.btn-small .x-btn-click .x-btn-center { background-position:0 -136px; }
-
-.btn-small .x-btn-center .x-btn-text {
-	background-repeat: no-repeat;
-	background-position: 0pt;
-	padding-left: 10px;
-}
-
 /* dialog */
 .x-dlg .x-dlg-hd-left {
 	background: url(html/images/slim-ext/hd-sprite.gif) no-repeat 0 -43px;

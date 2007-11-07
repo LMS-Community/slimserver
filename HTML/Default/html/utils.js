@@ -283,14 +283,13 @@ var Utils = function(){
 			this.processCommand(config);
 		},
 
-		initSearch : function(searchField, callback){
+		initSearch : function(manual){
 			search = new Ext.form.TextField({
 				validationDelay: 100,
 				validateOnBlur: false,
 				selectOnFocus: true,
-				
 
-				validator: function(value){
+				validator: manual ? null : function(value){
 					if (value.length > 2) {
 						var el;
 
@@ -328,7 +327,7 @@ var Utils = function(){
 					return true;
 				}
 			});
-			search.applyTo(searchField || 'livesearch');
+			search.applyTo('livesearch');
 		},
 
 

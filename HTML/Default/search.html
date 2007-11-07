@@ -5,12 +5,12 @@
 		Ext.EventManager.onDocumentReady(function(){
 			var el;
 
-			Utils.initSearch();
+			Utils.initSearch([% IF manualSearch; 'true'; END %]);
 
 			new Ext.Button('searchButton', {
 				text: '[% "SEARCH" | string %]',
-				icon: webroot + 'html/images/search.gif',
-				cls: 'x-btn-text-icon',
+				//icon: webroot + 'html/images/search.gif',
+				//cls: 'x-btn-text-icon',
 				type: 'submit',
 				handler: function(){
 					document.getElementById("searchForm").submit();
