@@ -282,6 +282,18 @@ sub handleTrack {
 	}
 
 	if (Slim::Music::Info::isFileURL($url)) {
+		
+		if ( !$file || !-r $file ) {
+
+			$log->warn("File not found: $file");
+
+			# Tell the database to cleanup.
+			Slim::Schema->search('Track', { 'url' => $url })->delete;
+
+			delete $tracks{$id};
+			
+			return 1;
+		}
 
 		# dsully - Sun Mar 20 22:50:41 PST 2005
 		# iTunes has a last 'Date Modified' field, but
@@ -289,7 +301,7 @@ sub handleTrack {
 		# properties directly in iTunes (dumb) - the
 		# actual mtime of the file is updated however.
 
-		my $mtime = (stat($file))[9];
+		my $mtime = (stat _)[9];
 		my $ctime = str2time($curTrack->{'Date Added'});
 
 		# If the file hasn't changed since the last
@@ -306,19 +318,6 @@ sub handleTrack {
 		    Slim::Schema->count('Track', { 'url' => $url })) {
 
 			$log->debug("Not updated, skipping: $file");
-
-			return 1;
-		}
-
-		# Reuse the stat from above.
-		if (!$file || !-r _) { 
-
-			$log->warn("File not found: $file");
-
-			# Tell the database to cleanup.
-			Slim::Schema->search('Track', { 'url' => $url })->delete;
-
-			delete $tracks{$id};
 
 			return 1;
 		}
