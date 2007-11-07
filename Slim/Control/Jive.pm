@@ -549,6 +549,8 @@ sub playerSettingsMenu {
 			help         => {
 				           text => Slim::Utils::Strings::string('JIVE_CHANGEPLAYERNAME_HELP')
 			},
+			softbutton1  => Slim::Utils::Strings::string('INSERT'),
+			softbutton2  => Slim::Utils::Strings::string('DELETE'),
 		},
 		actions => {
 			do => {
