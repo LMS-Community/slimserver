@@ -301,11 +301,7 @@ PlayerChooser = function(){
 							);
 
 							if (!playerInList) {
-								PlayerChooser.selectPlayer({
-									text: responseText.result.players_loop[0].name,
-									value: responseText.result.players_loop[0].playerid,
-									canpoweroff: responseText.result.players_loop[0].canpoweroff
-								});
+								PlayerChooser.selectPlayer();
 							}
 						}
 
@@ -332,11 +328,7 @@ PlayerChooser = function(){
 								})
 							);
 
-							PlayerChooser.selectPlayer({
-								text: '',
-								value: '',
-								canpoweroff: false
-							});
+							PlayerChooser.selectPlayer();
 						}
 
 						// display scanning information
@@ -351,6 +343,15 @@ PlayerChooser = function(){
 
 		selectPlayer: function(ev){
 			var el;
+
+			// currently selected player is not available. don't change anything but the button's label
+			if (!ev) {
+				ev = {
+					text: '',
+					value: playerid,
+					canpoweroff: false
+				}
+			}
 
 			playerMenu.setText(ev.text);
 			playerid = ev.value;
