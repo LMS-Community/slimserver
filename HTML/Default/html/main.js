@@ -442,7 +442,6 @@ PlayerChooser = function(){
 
 
 Playlist = function(){
-	var unHighlightTimer = new Ext.util.DelayedTask(Utils.unHighlight);
 	var isDragging = false;
 
 	return {
@@ -651,7 +650,6 @@ Playlist = function(){
 		highlight : function(target){
 			if (!isDragging) {
 				Utils.highlight(target);
-				unHighlightTimer.delay(2000);	// remove highlighter after x seconds of inactivity
 			}
 		},
 

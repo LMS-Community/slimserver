@@ -132,6 +132,7 @@ var Utils = function(){
 		expires: new Date(new Date().getTime() + 1000*60*60*24*365)
 	});
 	var highlightedEl;
+	var unHighlightTimer;
 
 	return {
 		init : function(){
@@ -140,6 +141,9 @@ var Utils = function(){
 			for(var i = 0; i < items.length; i++) {
 				Ext.id(Ext.get(items[i]));
 			}
+
+			if (!unHighlightTimer)
+				unHighlightTimer = new Ext.util.DelayedTask(this.unHighlight);
 
 			Ext.EventManager.onWindowResize(Utils.resizeContent);
 			Ext.EventManager.onDocumentReady(Utils.resizeContent);
@@ -166,6 +170,8 @@ var Utils = function(){
 				highlightedEl.onClickCB = onClickCB || Utils.onSelectorClicked;
 				el.on('click', highlightedEl.onClickCB);
 			}
+
+			unHighlightTimer.delay(1000);	// remove highlighter after x seconds of inactivity
 		},
 
 		unHighlight : function(){
