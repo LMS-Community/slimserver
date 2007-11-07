@@ -757,6 +757,10 @@ Optional $args:
 
 A hash ref with data to populate the object.
 
+=item * id
+
+An explicit record id.
+
 =item * readTags
 
 Read metadata tags from the specified file or url.
@@ -781,6 +785,7 @@ sub newTrack {
 
 	my $url           = $args->{'url'};
 	my $attributeHash = $args->{'attributes'} || {};
+	my $id            = $args->{'id'} || 0;
 	my $playlist      = $args->{'playlist'} || 0;
 	my $source        = $playlist ? 'Playlist' : 'Track';
 
@@ -848,6 +853,11 @@ sub newTrack {
 	# Tag and rename set URL to the Amazon image path. Smack that.
 	# We don't use it anyways.
 	$columnValueHash->{'url'} = $url;
+	
+	# Use an explicit record id if it was passed as an argument.
+	if ($id) {
+		$columnValueHash->{'id'} = $id;
+	}
 
 	# Create the track - or bail. ->throw_exception will emit a backtrace.
 	my $track = Slim::Schema->resultset($source)->create($columnValueHash);
@@ -1479,17 +1489,13 @@ sub _checkValidity {
 		# clear out Contributors, Genres, etc.
 		$track->delete;
 		
+		# Add the track back into database with the same id as the record deleted.
 		$track = $self->newTrack({
+			'id'       => $oldid,
 			'url'      => $url,
 			'readTags' => 1,
 			'commit'   => 1,
 		});
-		
-		if ($oldid == $track->album->artwork) {
-			$log->debug(sprintf("  Updating album artwork id %d with %d", $oldid, $track->id));
-			$track->album->artwork($track->id);
-			$track->album->update;
-		}
 		
 	}
 
