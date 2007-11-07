@@ -859,11 +859,11 @@ sub _hello_handler {
 	# Newer player fw reports a uuid. With uuid, length is 36; without uuid, length is 20
 	my $data_ref_length = length( $$data_ref);
 	
+	my $uuid = "not available";
+
 	if( $data_ref_length == 36) {
 		(	$deviceid, $revision, 
-			$mac[0], $mac[1], $mac[2], $mac[3], $mac[4], $mac[5],
-			$uuid[0],$uuid[1],$uuid[2],$uuid[3],$uuid[4],$uuid[5],$uuid[6],$uuid[7],
-			$uuid[8],$uuid[9],$uuid[10],$uuid[11],$uuid[12],$uuid[13],$uuid[14],$uuid[15],
+			$mac[0], $mac[1], $mac[2], $mac[3], $mac[4], $mac[5], $uuid,
 			$wlan_channellist, $bytes_received_H, $bytes_received_L
 		) = unpack("CCH2H2H2H2H2H2H32nNN", $$data_ref);
 	} else {
@@ -883,11 +883,6 @@ sub _hello_handler {
 
 	my $mac = join(':', @mac);
 	my $id  = $mac;
-
-	my $uuid = "not available";
-	if ($data_ref_length == 36 && scalar @uuid > 0) {
-		$uuid = join(' ', @uuid);
-	}
 
 	if ($log->is_info) {
 
