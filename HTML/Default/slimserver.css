@@ -376,12 +376,14 @@ img#background { position:absolute; }
 	background: transparent url(html/images/btn_playlist_clear.gif) no-repeat 0 0;
 }
 
+#btnPlaylistShowArtwork .x-btn-click button,
 #btnPlaylistShowArtwork .x-btn-over button,
 #btnPlaylistSave .x-btn-over button,
 #btnPlaylistClear .x-btn-over button {
 	background-position: 0 -19px;
 }
 
+#btnPlaylistHideArtwork .x-btn-click button,
 #btnPlaylistHideArtwork .x-btn-over button {
 	background-position: 0 -57px;
 }

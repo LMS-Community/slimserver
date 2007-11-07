@@ -24,11 +24,15 @@
 	[% IF playercount > 0 %]
 	<div id="playlistTab" class="infoTab">
 		<div id="playlistCommands">
-			<span id="currentPlaylistName" style="display:none">[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %]</span>
 			<table><tr>
+				<td width="50%">&nbsp;</td>
+				[% IF current %]<td>
+					<span id="current_playlist_name">[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %]</span>
+				</td>[% END %]
 				<td><span id="[% IF noPlaylistCover; 'btnPlaylistShowArtwork'; ELSE; 'btnPlaylistHideArtwork'; END %]"></span></td>
  				<td><span id="btnPlaylistSave"></span></td>
 				<td><span id="btnPlaylistClear"></span></td>
+				<td width="50%">&nbsp;</td>
 			</tr></table>
 		</div>
 	</div>
