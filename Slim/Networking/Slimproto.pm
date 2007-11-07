@@ -980,7 +980,7 @@ sub _hello_handler {
 
 		$log->info("Forgetting client, it is not a $client_class");
 
-		Slim::Player::Client::forgetClient($client);
+		$client->forgetClient();
 
 		$client = undef;
 	}
