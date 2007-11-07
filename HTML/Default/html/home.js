@@ -29,6 +29,17 @@ var MainMenu = function(){
 				}
 			}
 
+			// don't remove the highlight automatically while we're editing a search term or similar
+			Ext.get('search').on({
+				focus: Utils.cancelUnHighlightTimer,
+				click: Utils.cancelUnHighlightTimer
+			});
+
+			Ext.get('tuneinurl').on({
+				focus: Utils.cancelUnHighlightTimer,
+				click: Utils.cancelUnHighlightTimer
+			});
+
 			new Ext.KeyMap('search', {
 				key: Ext.EventObject.ENTER,
 				fn: function(){
