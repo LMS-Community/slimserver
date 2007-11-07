@@ -498,11 +498,9 @@ sub winWritablePath {
 
 	if (! -d $root) {
 		mkdir $root;
-		_winOpenPath($root);
 	}
 
 	mkdir $path;
-	_winOpenPath($path);
 
 	return $path;
 }
@@ -513,22 +511,6 @@ sub vistaWritablePath {
 	my $folder = shift;
 	Slim::Utils::Log::logger('os.paths')->warn('Slim::Utils::OSDetect::vistaWritablePath() is a legacy call - please use winWritablePath() instead.');
 	return winWritablePath($folder);
-}
-
-sub _winOpenPath {
-	my $path = shift;
-
-	my %perms;
-
-	Win32::FileSecurity::Get($path, \%perms);
-
-	# set file security to open for all users on system
-	# this should probably be changed to only cover locally defined users?
-	for my $uid (keys %perms) {
-		$perms{$uid} = Win32::FileSecurity::MakeMask( qw( CHANGE GENERIC_WRITE GENERIC_READ GENERIC_EXECUTE ) );
-	}
-
-	Win32::FileSecurity::Set($path, \%perms);
 }
 
 1;
