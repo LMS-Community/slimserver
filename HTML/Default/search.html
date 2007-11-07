@@ -16,18 +16,6 @@
 					document.getElementById("searchForm").submit();
 				}
 			});
-
-			Ext.get('advSearchLink').on('click', function(){
-				Ext.get('searchForm').setVisibilityMode(Ext.Element.DISPLAY);
-				Ext.get('searchForm').setVisible(false);
-				Ext.get('search-results').update('');
-
-				if (el = Ext.get('browsedbList'))
-					el.update('');
-
-				if (el = Ext.get('advSearchForm'))
-					el.setVisible(true);
-			});
 		});
 	</script>
 [% END %]
@@ -40,13 +28,11 @@
 		<table><tr>
 			<td><input type="text" id="livesearch" name="query" size="50" value="[% query %]" autocomplete="off"/></td>
 			<td><span id="searchButton"></span></td>
-			<td id="advSearchLink" class="link">[% "ADVANCEDSEARCH" | string %]</td>
+			<td id="advSearchLink" class="link"><a href="[% webroot %]advanced_search.html?homeCategory=my_music&amp;player=[% playerid %]">[% "ADVANCEDSEARCH" | string %]</a></td>
 		</tr></table>
 		<input type="hidden" value="1" name="manualSearch">
 		<input type="hidden" value="[% player %]" name="player">
 	</form>
-
-	[% PROCESS advanced_search.html ajaxUpdate=1 resultClass="resultsPage" %]
 
 	<div id="browsedbHeader">
 		[% IF searchError %]
