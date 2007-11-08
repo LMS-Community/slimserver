@@ -133,7 +133,7 @@ sub advancedSearch {
 			$key    =~ s/\.op$//;
 			$newKey =~ s/\.op$//;
 
-			next unless $params->{$key};
+			next unless $params->{$key} || ($newKey eq 'year' && $params->{$key} eq '0');
 
 			# Do the same for 'op's
 			$params->{'search'}->{$newKey}->{'op'} = $params->{$key.'.op'};
@@ -155,6 +155,12 @@ sub advancedSearch {
 			# Map the type to the query
 			# This will be handed to SQL::Abstract
 			$query{$newKey} = { $op => $params->{$key} };
+
+			# don't include null/0 value years in search for earlier years
+			# http://bugs.slimdevices.com/show_bug.cgi?id=5713
+			if ($newKey eq 'year' && $op eq '<') {
+				$query{$newKey}->{'>'} = '0';
+			}
 
 			delete $params->{$key};
 
