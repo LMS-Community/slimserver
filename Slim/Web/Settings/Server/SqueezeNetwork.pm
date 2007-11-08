@@ -26,7 +26,7 @@ sub page {
 }
 
 sub prefs {
-	my @prefs = qw(sn_email sn_password sn_sync);
+	my @prefs = qw(sn_email sn_password sn_sync sn_disable_stats);
 
 	return ($prefs, @prefs);
 }

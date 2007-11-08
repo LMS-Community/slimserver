@@ -4,6 +4,14 @@
 
 	<!-- XXX: This will eventually have more stuff like a way to register for a new account, etc. -->
 
+	[% WRAPPER setting title="SETUP_SN_EMAIL" desc="SETUP_SN_EMAIL_DESC" %]
+		<input type="text" class="stdedit" name="sn_email" id="sn_email" value="[% prefs.sn_email %]" size="40">
+	[% END %]
+
+	[% WRAPPER setting title="SETUP_SN_PASSWORD" desc="SETUP_SN_PASSWORD_DESC" %]
+		<input type="password" class="stdedit" name="sn_password" id="sn_password" value="[% prefs.sn_password %]" size="40">
+	[% END %]
+	
 	[% WRAPPER setting title="SETUP_SN_SYNC" desc="SETUP_SN_SYNC_DESC" %]
 		<select class="stdedit" name="sn_sync" id="sn_sync">
 			<option [% IF prefs.sn_sync == 1 %]selected="selected" [% END %]value="1">
@@ -14,13 +22,17 @@
 			</option>
 		</select>
 	[% END %]
-
-	[% WRAPPER setting title="SETUP_SN_EMAIL" desc="SETUP_SN_EMAIL_DESC" %]
-		<input type="text" class="stdedit" name="sn_email" id="sn_email" value="[% prefs.sn_email %]" size="40">
-	[% END %]
-
-	[% WRAPPER setting title="SETUP_SN_PASSWORD" desc="SETUP_SN_PASSWORD_DESC" %]
-		<input type="password" class="stdedit" name="sn_password" id="sn_password" value="[% prefs.sn_password %]" size="40">
+	
+	[% WRAPPER setting title="SETUP_SN_REPORT_STATS" %]
+		<div>[% "SETUP_SN_REPORT_STATS_DESC" | string %]<br /><br /></div>
+		<select class="stdedit" name="sn_report_stats" id="sn_report_stats">
+			<option [% IF !prefs.sn_disable_stats %]selected="selected" [% END %]value="0">
+				[% 'SETUP_SN_REPORT_STATS_ENABLE' | string %]
+			</option>
+			<option [% IF prefs.sn_disable_stats == 1 %]selected="selected" [% END %]value="1">
+				[% 'SETUP_SN_REPORT_STATS_DISABLE' | string %]
+			</option>
+		</select>
 	[% END %]
 
 [% PROCESS settings/footer.html %]

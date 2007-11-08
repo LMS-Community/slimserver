@@ -232,6 +232,23 @@
 											<td><span id="sn_verify"></span></td>
 										</tr>
 									</table></div>
+									
+									<hr />
+									<div>
+										[% "SETUP_SN_REPORT_STATS_DESC" | string %]<br />
+										<br />
+										<select class="stdedit" name="sn_report_stats" id="sn_report_stats">
+											<option [% IF !prefs.sn_disable_stats %]selected="selected" [% END %]value="0">
+												[% 'SETUP_SN_REPORT_STATS_ENABLE' | string %]
+											</option>
+											<option [% IF prefs.sn_disable_stats == 1 %]selected="selected" [% END %]value="1">
+												[% 'SETUP_SN_REPORT_STATS_DISABLE' | string %]
+											</option>
+										</select>
+										<br />
+										<br />
+									</div>
+									
 									<div id="sn_result"></div>
 								</div>
 

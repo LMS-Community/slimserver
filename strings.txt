@@ -6791,6 +6791,18 @@ SETUP_SN_SYNC_DISABLE
 	DE	Inaktiv, Player-Einstellungen nicht synchronisieren
 	EN	Disabled, do not keep player settings in sync.
 
+SETUP_SN_REPORT_STATS
+	EN	Statistics
+
+SETUP_SN_REPORT_STATS_DESC
+	EN	To help improve SqueezeNetwork, we collect statistics on Internet radio and music service listening.  This information is collected in aggregate and is protected under our <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">privacy policy</a>.
+
+SETUP_SN_REPORT_STATS_ENABLE
+	EN	Yes, help improve SqueezeNetwork by reporting statistics.
+
+SETUP_SN_REPORT_STATS_DISABLE
+	EN	No, do not report statistics.
+
 SETUP_NO_JAVASCRIPT
 	EN	In order to access SqueezeCenter, please make sure you are using a recent browser (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 or later), and JavaScript is enabled in your browser. Alternatively you can use a simpler skin, such as <a href="/Classic/?skipWizard=1" style="color: blue">Classic</a> or <a href="/Handheld/?skipWizard=1" style="color: blue">Handheld</a> (optimized for small screens).
 
