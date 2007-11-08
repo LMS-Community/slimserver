@@ -16,7 +16,20 @@ img#background {
 }
 
 #leftpanel .inner_bottom_right { right: -1px; }
-.inner_bottom_right, .inner_bottom_left { bottom: -1px; }
+
+#leftpanel .inner_bottom_right,
+#leftpanel .inner_bottom_left {
+	bottom: -3px;
+}
+
+#rightpanel .inner_bottom_right,
+#rightpanel .inner_bottom_left {
+	bottom: 3px;
+}
+
+#infoTab, #playlistTab {
+	height: 22px;
+}
 
 /* browsing & navigation */
 .selectedItem .selector_bottomRight,
