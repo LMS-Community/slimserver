@@ -104,7 +104,7 @@ sub shutdownPlugin {
 	Slim::Utils::Timers::killTimers(0, \&checker);
 
 	# disable protocol handler?
-	Slim::Player::ProtocolHandlers->registerHandler('musicmaglaylist', 0);
+	Slim::Player::ProtocolHandlers->registerHandler('musicmagicplaylist', 0);
 
 	$initialized = 0;
 
