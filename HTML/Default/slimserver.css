@@ -290,8 +290,7 @@ img#background { position:absolute; }
 }
 
 #crumblist {
-	padding: 5px 10px;
-	height: 15px;
+	padding: 6px 10px;
 	color: #dddddd;
 	background-color: #888888;
 }
