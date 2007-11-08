@@ -668,6 +668,10 @@ sub handleRequest {
 		my $isRequest = grep { /^subscribe:/ } @{$args};
 		
 		if ( !$isRequest ) {
+			if ( defined $cmd->[0] ) {
+				$cmd->[0] = undef;
+			}
+			
 			if ( $log->is_debug ) {
 				$log->debug( 'Treating request as plain subscription: ' . Data::Dump::dump($cmd) );
 			}
@@ -683,10 +687,6 @@ sub handleRequest {
 			# Need to store this callback for use later in unsubscribe
 			$subCallbacks{ $response } = $callback;
 			
-			if ( defined $cmd->[0] ) {
-				$cmd->[0] = undef;
-			}
-		
 			Slim::Control::Request::subscribe( $callback, $cmd );
 		
 			$log->debug( "Subscribed for $response, callback $callback" );
