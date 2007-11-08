@@ -67,6 +67,17 @@ a:hover, .link:hover,
 	background: white;
 }
 
+#filesystembrowser {
+	background-color: white;
+}
+ .filesystemBrowseBtn {
+	vertical-align: bottom;
+	padding: 0 2px;
+	width: 15px;
+	height: 21px;
+	background: url(html/images/pointer.gif) no-repeat center;
+	cursor: pointer;
+}
 
 /* Main screen (outer frame) */
 #noJS {

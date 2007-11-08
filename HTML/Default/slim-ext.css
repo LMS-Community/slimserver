@@ -125,8 +125,9 @@ a.x-menu-item:hover {
 
 .x-dlg .x-dlg-hd {
 	background: url(html/images/slim-ext/hd-sprite.gif) repeat-x right -82px;
-	padding-top: 14px;
-	padding-bottom: 13px;
+	padding-top: 16px;
+	padding-bottom: 9px;
+	font-size: 110%;
 }
 
 .x-dlg .x-dlg-dlg-body {
