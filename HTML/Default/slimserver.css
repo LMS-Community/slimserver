@@ -577,6 +577,15 @@ div.thumbwrap {
 
 .browsedbControls #search { background: white url(html/images/search.gif) no-repeat top right; }
 
+form#advSearchForm.resultsPage {
+	display: none;
+}
+
+#advSearchLink {
+	padding-left: 10px;
+	padding-top: 4px;
+}
+
 /* player control */
 #playerbox {
 	padding: 0 12px 5px 12px;

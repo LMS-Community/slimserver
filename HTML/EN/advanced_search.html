@@ -1,9 +1,25 @@
+[% IF browse_items.size %]
+	[% extJsScripts = BLOCK %]
+	<script TYPE="text/javascript">
+		Ext.EventManager.onDocumentReady(function(){
+			var el = Ext.get('advLink');
+			if (el) {
+				el.dom.href='javascript:void(0);';
+				el.on('click', function(){ 
+					Ext.get('advSearchForm').show();
+					Utils.resizeContent(); 
+				})
+			}
+		});
+	</script>
+	[% END %]
+[% END %]
 [% pagetitle = 'ADVANCEDSEARCH' | string %]
 [% pageicon = 'ADVANCEDSEARCH' %]
 [% pwd_list = BLOCK %]
-<a href="advanced_search.html?player=[% playerURI %]">[% "ADVANCEDSEARCH" | string %]</a>
+<a id="advLink" href="advanced_search.html?player=[% playerURI %][% IF homeCategory %]&amp;homeCategory=[% homeCategory; END %]">[% "ADVANCEDSEARCH" | string %]</a>
 [% END %]
-[% IF NOT ajaxUpdate; PROCESS pageheader.html dontscroll=1; END %]
+[% IF NOT ajaxUpdate; PROCESS pageheader.html; END %]
 [% FILTER null %]
 [% MACRO logicalSelectionBlock BLOCK %]
 	<select name="[% name %]">
