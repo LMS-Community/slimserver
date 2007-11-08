@@ -227,7 +227,7 @@ sub _handshakeError {
 sub newsongCallback {
 	my $request = shift;
 	my $client  = $request->client() || return;
-	my $idx     = $request->getRequest(3);
+	my $idx     = $request->getParam('_p3');
 	
 	# If synced, only listen to the master
 	if ( Slim::Player::Sync::isSynced($client) ) {
