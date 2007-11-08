@@ -113,27 +113,41 @@ a.x-menu-item:hover {
 
 /* dialog */
 .x-dlg .x-dlg-hd-left {
-	background: url(html/images/slim-ext/hd-sprite.gif) no-repeat 0 -43px;
-	padding-left: 15px;
-	height: 43px;
+	background: url(html/images/slim-ext/hd-sprite.gif) no-repeat 0 0;
+	padding-left: 14px;
+	height: 41px;
 }
 
 .x-dlg .x-dlg-hd-right {
-	background: url(html/images/slim-ext/hd-sprite.gif) no-repeat right 0;
-	padding-right: 15px;
+	background: url(html/images/slim-ext/hd-sprite.gif) no-repeat right -41px;
+	padding-right: 14px;
 }
 
 .x-dlg .x-dlg-hd {
-	background: url(html/images/slim-ext/hd-sprite.gif) repeat-x right -86px;
-	padding-top: 15px;
+	background: url(html/images/slim-ext/hd-sprite.gif) repeat-x right -82px;
+	padding-top: 14px;
 	padding-bottom: 13px;
 }
 
 .x-dlg .x-dlg-dlg-body {
 	background-image: url(html/images/slim-ext/dlg-bg.gif);
 	border: none;
+	padding: 0 8px 8px 8px;
+}
+
+.x-dlg .x-dlg-bd, .x-dlg .x-dlg-ft {
+	padding: 5px;
+	background-color: white;
 }
 
 .x-dlg .x-dlg-close {
 	background-image: none;
+}
+
+.x-dlg div.x-resizable-handle-southeast {
+	bottom: 8px;
+	right: 8px;
+	background-image: url(html/images/slim-ext/se-handle.gif);
+	height: 7px;
+	width: 7px;
 }
