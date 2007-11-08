@@ -21,8 +21,14 @@
 [%# set this to set whether or not the skin is capable of using javascript. %]
 [% useAJAX = 1 %]
 
+[%# set this to set whether or not the skin is capable of using the extjs javascript library. %]
+[% useExtJS = 0 %]
+
 [%# set this for the background color to use on resized images %]
 [% bgcolor = "" %]
+
+[%# set this for the preferred style of server side resize (see Artwork Docs). Default is 'p' for 'pad'
+[% resizeParam = "p" %]
 
 [%- BLOCK cmdlink -%]
 <a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% cmdtitle | string %]</a>
@@ -230,6 +236,7 @@ END %]
 	[% ELSE %]
 		[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
 		[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
+		[% PROCESS favoritescontrol %]
 		[% FOREACH mixer = mixerlinks.values.sort -%]
 			[% PROCESS $mixer %]
 		[% END %]
