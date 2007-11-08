@@ -158,6 +158,16 @@ sub handler {
 			$paramRef->{useAudiodir} = $paramRef->{prefs}->{audiodir};			
 		}
 	}
+	
+	if ( $paramRef->{saveSettings} ) {
+		if ( defined $paramRef->{sn_disable_stats} ) {
+			Slim::Utils::Timers::setTimer(
+				$paramRef->{sn_disable_stats},
+				time() + 30,
+				\&Slim::Web::Settings::Server::SqueezeNetwork::reportStatsDisabled,
+			);
+		}
+	}
 
 	return Slim::Web::HTTP::filltemplatefile($class->page, $paramRef);
 }

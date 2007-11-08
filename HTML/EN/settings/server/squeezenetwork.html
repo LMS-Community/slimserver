@@ -25,7 +25,7 @@
 	
 	[% WRAPPER setting title="SETUP_SN_REPORT_STATS" %]
 		<div>[% "SETUP_SN_REPORT_STATS_DESC" | string %]<br /><br /></div>
-		<select class="stdedit" name="sn_report_stats" id="sn_report_stats">
+		<select class="stdedit" name="sn_disable_stats" id="sn_disable_stats">
 			<option [% IF !prefs.sn_disable_stats %]selected="selected" [% END %]value="0">
 				[% 'SETUP_SN_REPORT_STATS_ENABLE' | string %]
 			</option>

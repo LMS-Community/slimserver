@@ -7,12 +7,13 @@ package Slim::Networking::SqueezeNetwork;
 use strict;
 use base qw(Slim::Networking::SimpleAsyncHTTP);
 
+use JSON::XS qw(from_json);
 use URI::Escape qw(uri_escape);
 
 use Slim::Networking::SqueezeNetwork::Players;
 use Slim::Networking::SqueezeNetwork::PrefSync;
+use Slim::Networking::SqueezeNetwork::Stats;
 use Slim::Utils::IPDetect;
-use JSON::XS qw(from_json);
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Prefs;
@@ -72,6 +73,9 @@ sub _init_done {
 	
 	# Init polling for list of SN-connected players
 	Slim::Networking::SqueezeNetwork::Players->init();
+	
+	# Init stats
+	Slim::Networking::SqueezeNetwork::Stats->init();
 }
 
 sub _init_error {
@@ -110,6 +114,9 @@ sub shutdown {
 	
 	# Shutdown player list fetch
 	Slim::Networking::SqueezeNetwork::Players->shutdown();
+	
+	# Shutdown stats
+	Slim::Networking::SqueezeNetwork::Stats->shutdown();
 }
 
 # Return a correct URL for SqueezeNetwork
