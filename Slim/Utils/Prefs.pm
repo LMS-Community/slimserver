@@ -294,8 +294,6 @@ sub init {
 	my $minP = Slim::Utils::OSDetect::OS() eq 'win' ? 1 : 1024;
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' => $minP,'high'=>  65535 }, 'httpport'    );
 	
-	$prefs->setValidate({ 'validator' => \&Slim::Utils::Validate::password }, 'password' );
-
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    3, 'high' =>    30 }, 'bufferSecs'  );
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    1, 'high' =>  4096 }, 'udpChunkSize');
 	$prefs->setValidate({ 'validator' => 'intlimit', 'low' =>    1,                 }, 'itemsPerPage');

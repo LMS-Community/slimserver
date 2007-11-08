@@ -12,6 +12,8 @@ use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Prefs;
 
+my $prefs = preferences('server');
+
 sub name {
 	return Slim::Web::HTTP::protectName('SECURITY_SETTINGS');
 }
@@ -21,8 +23,31 @@ sub page {
 }
 
 sub prefs {
-	return (preferences('server'), qw(filterHosts allowedHosts csrfProtectionLevel authorize username password) );
+	return (preferences('server'), qw(filterHosts allowedHosts csrfProtectionLevel authorize username) );
 }
+
+sub handler {
+	my ($class, $client, $paramRef, $pageSetup) = @_;
+
+	# pre-process password to avoid saving clear text
+	if ($paramRef->{'saveSettings'} && $paramRef->{'password'}) {
+
+		my $val = $paramRef->{'password'};
+	
+		my $currentPassword = preferences('server')->get('password');
+		my $salt = substr($currentPassword, 0, 2);
+	
+		if (defined($val) && $val ne '' && crypt($val, $salt) ne $currentPassword) {
+			srand (time());
+			my $randletter = "(int (rand (26)) + (int (rand (1) + .5) % 2 ? 65 : 97))";
+			my $salt = sprintf ("%c%c", eval $randletter, eval $randletter);
+			$prefs->set('password', crypt($val, $salt));
+		}
+	}
+
+	return $class->SUPER::handler($client, $paramRef, $pageSetup);
+}
+
 
 1;
 
