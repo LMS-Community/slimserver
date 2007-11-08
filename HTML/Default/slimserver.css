@@ -6,10 +6,10 @@ html, body {
 	border: 0 none;
 	overflow: hidden;
 	height: 100%;
-	background-color: #dddddd;
+	background-color: white;
 }
 
-#playlistPanel, #maincontent { background-color: #dddddd; }
+#playlistPanel, #maincontent { background-color: white; }
 
 html, body, tr, tr, p, div, li, input, ul {
 	font-size: 11px;
@@ -533,7 +533,7 @@ div.thumbwrap {
 
 .selectedItem .selector_topRight,
 .mouseOver .selector_topRight {
-	background: #c0ccdc url(html/images/selector_top_right.gif) no-repeat top right;
+	background: #bfbfbf url(html/images/selector_top_right.gif) no-repeat top right;
 }
 
 .selectedItem .selector_topLeft,
