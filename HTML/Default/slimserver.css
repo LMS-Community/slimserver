@@ -684,8 +684,8 @@ form#advSearchForm.resultsPage {
 }
 
 #ctrlUndock, .btn-undock, .btn-undock button {
-	width: 18px;
-	height: 10px;
+	width: 16px;
+	height: 9px;
 }
 
 .btn-undock {
@@ -694,7 +694,7 @@ form#advSearchForm.resultsPage {
 
 #ctrlUndock .x-btn-over,
 #ctrlUndock .x-btn-click {
-	background-position: 0 -10px;
+	background-position: 0 -9px;
 }
 
 .x-btn-over button { background-position: 0 -22px; }

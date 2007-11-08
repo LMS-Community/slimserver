@@ -57,3 +57,5 @@ img#background {
 	height: 0;
 	he\ight: auto;
 }
+
+#ctrlUndock button { font-size: 0; }

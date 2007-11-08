@@ -777,7 +777,7 @@ Player = function(){
 				new Slim.Button('ctrlUndock', {
 					cls: 'btn-undock',
 					tooltip: strings['undock'],
-					minWidth: 18,
+					minWidth: 16,
 					scope: this,
 					handler: function(){
 						window.open(webroot + 'status_header.html', 'playerControl', 'width=500,height=100,status=no,menubar=no,location=no,resizable=yes');
