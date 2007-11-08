@@ -254,7 +254,6 @@ sub init {
 						 powerOnBrightness powerOffBrightness idleBrightness autobrightness
 						 scrollMode scrollPause scrollPauseDouble scrollRate scrollRateDouble scrollPixels scrollPixelsDouble
 						 activeFont idleFont activeFont_curr idleFont_curr doublesize offDisplaySize largeTextFont
-						 menuItem
 						 irmap disabledirsets
 						 power mute silent volume bass treble pitch repeat shuffle currentSong
 						);
