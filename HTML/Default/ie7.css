@@ -20,3 +20,8 @@
 #browsedbList, #playList {
 	position: relative;
 }
+
+#playlistTab, .infoTab {
+	height: 20px;
+	padding-top: 0;
+}
