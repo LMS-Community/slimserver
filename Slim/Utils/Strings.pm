@@ -321,7 +321,8 @@ sub storeString {
 
 	return if ($name eq 'LANGUAGE_CHOICES');
 
-	if (defined $strings->{$currentLang}->{$name} && $strings->{$currentLang}->{$name} ne $curString->{$currentLang}) {
+	if (defined $strings->{$currentLang}->{$name} && defined $curString->{$currentLang} && 
+			$strings->{$currentLang}->{$name} ne $curString->{$currentLang}) {
 		$log->warn("redefined string: $name in $file");
 	}
 
