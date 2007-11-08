@@ -696,6 +696,7 @@ Player = function(){
 	var playerStatus = {
 		power: null,
 		mode: null,
+		rate: 0,
 		current_title: null,
 		title: null,
 		track: null,
@@ -873,8 +874,8 @@ Player = function(){
 
 			Ext.get('ctrlPlaytimeCollapsed').update(shortTime);
 
-			// only increment interim value if playing
-			if (playerStatus.mode == 'play')
+			// only increment interim value if playing and not scanning (FWD/RWD)
+			if (playerStatus.mode == 'play' && parseInt(playerStatus.rate) == 1)
 				playTime += 0.5;
 
 			playTimeTimer.delay(500);
@@ -1061,6 +1062,7 @@ Player = function(){
 				// if power is undefined, set it to on for http clients
 				power: (result.power == null) || result.power,
 				mode: result.mode,
+				rate: result.rate,
 				current_title: result.current_title,
 				title: result.playlist_tracks > 0 ? result.playlist_loop[0].title : '',
 				track: result.playlist_tracks > 0 ? result.playlist_loop[0].url : '',
@@ -1155,15 +1157,16 @@ Player = function(){
 			}
 
 			var needUpdate = (result.power && (result.power != playerStatus.power));
-			needUpdate |= (playerStatus.player != playerid);															// changed player
-			needUpdate |= (result.mode != null && result.mode != playerStatus.mode);									// play/paus mode
-			needUpdate |= (result.playlist_timestamp != null && result.playlist_timestamp > playerStatus.timestamp);	// playlist: time of last change
-			needUpdate |= (result.playlist_cur_index != null && result.playlist_cur_index != playerStatus.index);		// the currently playing song's position in the playlist 
-			needUpdate |= (result.current_title != null && result.current_title != playerStatus.current_title);			// title (eg. radio stream)
-			needUpdate |= (result.playlist_tracks > 0 && result.playlist_loop[0].title != playerStatus.title);			// songtitle?
-			needUpdate |= (result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track);			// track url
-			needUpdate |= (result.playlist_tracks < 1 && playerStatus.track);											// there's a player, but no song in the playlist
-			needUpdate |= (result.playlist_tracks > 0 && !playerStatus.track);											// track in playlist changed
+			needUpdate |= (playerStatus.player != playerid);                                                           // changed player
+			needUpdate |= (result.mode != null && result.mode != playerStatus.mode);                                   // play/paus mode
+			needUpdate |= (result.playlist_timestamp != null && result.playlist_timestamp > playerStatus.timestamp);   // playlist: time of last change
+			needUpdate |= (result.playlist_cur_index != null && result.playlist_cur_index != playerStatus.index);      // the currently playing song's position in the playlist 
+			needUpdate |= (result.current_title != null && result.current_title != playerStatus.current_title);        // title (eg. radio stream)
+			needUpdate |= (result.playlist_tracks > 0 && result.playlist_loop[0].title != playerStatus.title);         // songtitle?
+			needUpdate |= (result.playlist_tracks > 0 && result.playlist_loop[0].url != playerStatus.track);           // track url
+			needUpdate |= (result.playlist_tracks < 1 && playerStatus.track);                                          // there's a player, but no song in the playlist
+			needUpdate |= (result.playlist_tracks > 0 && !playerStatus.track);                                         // track in playlist changed
+			needUpdate |= (result.rate != null && result.rate != playerStatus.rate);                                   // song is scanning (ffwd/frwd)
 
 			return needUpdate;
 		},
