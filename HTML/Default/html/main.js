@@ -707,10 +707,8 @@ Player = function(){
 		player: null
 	};
 
-	var coverFileSuffix = 'png';
-	if (Ext.isIE && ! Ext.isIE7) {
-		coverFileSuffix = 'gif';
-	}
+	var coverFileSuffix = Ext.isIE && !Ext.isIE7 ? 'gif' : 'png';
+	var contributorRoles = new Array('artist', 'composer', 'conductor', 'band', 'albumartist', 'trackartist');
 
 	return {
 		init : function(){
@@ -955,29 +953,32 @@ Player = function(){
 				Ext.get('ctrlSongCount').update(result.playlist_tracks);
 				Ext.get('ctrlPlayNum').update(parseInt(result.playlist_cur_index) + 1);
 
-				if (result.playlist_loop[0].artist) {
-					var contributors = result.playlist_loop[0].artist.split(',');
-					var ids = result.playlist_loop[0].artist_ids ? result.playlist_loop[0].artist_ids.split(',') : new Array();
-					var artist, id;
-
-					currentArtist = '';						
-
-					for (var i = 0; i < contributors.length; i++) {
-						artist = contributors[i].replace(/^\w/, '');
-
-						if (currentArtist)
-							currentArtist += ', ';
-
-						currentArtist += ids[i]
-								? '<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=' + ids[i] + '&amp;level=1&amp;player=' + player + '" target="browser">' + contributors[i] + '</a>'
-								: contributors[i];
+				for (var x = 0; x < contributorRoles.length; x++) {
+					if (result.playlist_loop[0][contributorRoles[x]]) {
+						var contributors = result.playlist_loop[0][contributorRoles[x]].split(',');
+						var ids = result.playlist_loop[0][contributorRoles[x] + '_ids'] ? result.playlist_loop[0][contributorRoles[x] + '_ids'].split(',') : new Array();
+						var artist, id;
+	
+						currentArtist = '';						
+	
+						for (var i = 0; i < contributors.length; i++) {
+							artist = contributors[i].replace(/^\w/, '');
+	
+							if (currentArtist)
+								currentArtist += ', ';
+	
+							currentArtist += ids[i]
+									? '<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=' + ids[i] + '&amp;level=1&amp;player=' + player + '" target="browser">' + contributors[i] + '</a>'
+									: contributors[i];
+						}
+	
+						Ext.get('ctrlCurrentArtist').update(currentArtist);
+	
+						currentTitle += ' ' + strings['by'] + ' ' + currentArtist;
 					}
-
-					Ext.get('ctrlCurrentArtist').update(currentArtist);
-
-					currentTitle += ' ' + strings['by'] + ' ' + currentArtist;
 				}
-				else {
+
+				if (!currentArtist) {
 					Ext.get('ctrlCurrentArtist').update('');
 				}
 
