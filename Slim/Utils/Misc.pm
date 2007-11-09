@@ -107,6 +107,10 @@ sub findbin {
 		catdir(Slim::Utils::OSDetect::dirsFor('Bin'), $arch),
 	);
 
+	if (Slim::Utils::OSDetect::isRHorSUSE()) {
+		push @paths, "/var/lib/squeezecenter/Plugins/Bin";
+	}
+
 	if (Slim::Utils::OSDetect::OS() eq 'mac') {
 		push @paths, $ENV{'HOME'} . "/Library/SlimDevices/bin/";
 		push @paths, "/Library/SlimDevices/bin/";
