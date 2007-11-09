@@ -299,17 +299,33 @@ img#background { position:absolute; }
 
 #content { position: relative; }
 
+#pagebar {
+	margin-bottom: 2px;
+	padding: 2px;
+	background-color: #bfbfbf;
+}
+
 #pagebar a:link, #pagebar a:visited,
 #pagebar a, #pagebar span, #pagebar b {
 	top: 0;
 	text-decoration: none;
-	padding: 0 2px;
-	min-width: 9px;
+	padding: 0 1px;
 	text-align: center;
+	cursor: pointer;
+}
+
+#pagebar a:link, #pagebar a:visited,
+#pagebar a {
+	padding: 0 3px;
+}
+
+#pagebar b {
+	padding: 0 2px;
 }
 
 #pagebar span, #pagebar b {
 	background-color: #888888;
+	color: white;
 }
 
 #pagebar a:hover, #pagebar span:hover, #pagebar span:hover b {
@@ -481,6 +497,12 @@ img#background { position:absolute; }
 div.thumbwrap {
 	padding-right: 10px;
 	padding-left: 10px;
+}
+
+.artworkText {
+	margin-top: 4px;
+	text-align: center;
+	min-height: 15px;
 }
 
 .albumListGallery .x-menu-item-icon {

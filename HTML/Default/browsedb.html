@@ -30,19 +30,13 @@
 [%- PROCESS pageheader.html dontscroll=1 -%]
 
 	<div id="browsedbHeader">
-		[% IF artwork != 1 -%]
+		[% IF !(artwork == 1 && (levelName == 'album' || levelName == 'age')) -%]
 			[% IF hasPagebar %][% "ITEMS" | string %] [% pageinfo.startitem + 1 %] [% "TO" | string %] [% pageinfo.enditem + 1 %] [% "OF" | string %] [% pageinfo.totalitems %][% END %]
 		[% END -%]
 		[% IF warn -%]<p>[% PROCESS scanwarning %] [%- END %]
 
 		[% IF hasPagebar -%]
-			<div class="pagerbox">
-				<div class="pagerbox_top"><div></div></div>
-				<div class="pagerbox_content">
-					[% PROCESS pagebar %]
-				</div>
-				<div class="pagerbox_bottom"><div></div></div>
-			</div>
+			[% PROCESS pagebar %]
 		[%- END %]
 	</div>
 
