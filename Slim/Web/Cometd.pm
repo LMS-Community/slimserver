@@ -668,8 +668,8 @@ sub handleRequest {
 		my $isRequest = grep { /^subscribe:/ } @{$args};
 		
 		if ( !$isRequest ) {
-			if ( defined $cmd->[0] ) {
-				$cmd->[0] = undef;
+			if ( defined $cmd->[1] ) {
+				$cmd = [ $cmd->[1] ];
 			}
 			
 			if ( $log->is_debug ) {
