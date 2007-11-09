@@ -215,7 +215,7 @@ sub new {
 	$client->[112] = 0; # knobSync
 	$client->[113] = {}; # pendingPrefChanges
 	$client->[114] = 0; # bufferStarted, tracks when players begin buffering/rebuffering
-	$client->[115] = undef; # prevPlaymode, previous play mode when paused
+	$client->[115] = undef; # resumePlaymode, previous play mode when paused
 	$client->[116] = 0; # streamAtTrackStart, Source.pm flag indicating we should start streaming the next track on a track start event
 	$client->[117] = undef; # metaTitle, current remote stream metadata title
 	$client->[118] = undef; # SN session ID
@@ -1589,7 +1589,7 @@ sub bufferStarted {
 	@_ ? ($r->[114] = shift) : $r->[114];
 }
 
-sub prevPlaymode {
+sub resumePlaymode {
 	my $r = shift;
 	@_ ? ($r->[115] = shift) : $r->[115];
 }

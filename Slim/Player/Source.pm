@@ -334,7 +334,7 @@ sub playmode {
 	
 	# When pausing, we must remember if we were in play or playout mode
 	if ( $newmode eq 'pause' ) {
-		$client->prevPlaymode($prevmode);
+		$client->resumePlaymode($prevmode);
 	}
 	
 	# This function is likely doing too much.
@@ -412,7 +412,7 @@ sub playmode {
 
 			$everyclient->resume();
 			
-			my $prevmode = $client->prevPlaymode() || 'play';
+			my $prevmode = $client->resumePlaymode() || 'play';
 			
 			if ( $log->is_info ) {
 				$log->info($everyclient->id() . ": Resume, resetting mode: $prevmode");
@@ -453,7 +453,9 @@ sub playmode {
 			resetSongQueue($everyclient);
 
 		} elsif ($newmode eq "play") {
-
+						
+			$everyclient->resumePlaymode(undef);	# Bug 5210
+			
 			$everyclient->readytosync(0);
 			if ($prefs->client($everyclient)->get('syncVolume')) {
 				$everyclient->volume($client->volume(),1);
@@ -635,7 +637,7 @@ sub streamNextTrack {
 	
 	my $playmode = $client->playmode();
 	if ( $playmode eq 'pause' ) {
-		$playmode = $client->prevPlaymode();
+		$playmode = $client->resumePlaymode();
 	}
 
 	my $skipaheadCallback = sub {
@@ -689,7 +691,7 @@ sub underrun {
 	my $underrunCallback = sub {
 		my $playmode = $client->playmode();
 		if ( $playmode eq 'pause' ) {
-			$playmode = $client->prevPlaymode();
+			$playmode = $client->resumePlaymode();
 		}
 		
 		if (Slim::Player::Sync::isSynced($client)) {
@@ -1250,7 +1252,7 @@ sub gotoNext {
 		# Determine the current playmode or if paused, the previous playmode
 		my $playmode = $client->playmode();
 		if ( $playmode eq 'pause' ) {
-			$playmode = $client->prevPlaymode();
+			$playmode = $client->resumePlaymode();
 		}
 		
 		# here's where we decide whether to start the next song in a new stream after playing out
@@ -1272,8 +1274,8 @@ sub gotoNext {
 			);
 
 			if ( $client->playmode() eq 'pause' ) {
-				# XXX: This may not work, playmode() does lots of other stuff
-				$client->prevPlaymode( 'playout-play' );
+				# This may not work, playmode() does lots of other stuff
+				$client->resumePlaymode( 'playout-play' );
 			}
 			else {
 				playmode($client, 'playout-play');
