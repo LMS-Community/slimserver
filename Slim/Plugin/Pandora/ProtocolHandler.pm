@@ -9,6 +9,7 @@ use base qw(Slim::Player::Protocols::HTTP);
 
 use JSON::XS qw(from_json);
 
+use Slim::Hardware::IR;
 use Slim::Player::Playlist;
 use Slim::Utils::Misc;
 
@@ -20,6 +21,9 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 # default artwork URL if an album has no art
 my $defaultArtURL = 'http://www.pandora.com/images/no_album_art.jpg';
+
+# max time player may be idle before stopping playback (8 hours)
+my $MAX_IDLE_TIME = 60 * 60 * 8;
 
 # To support remote streaming (synced players, slimp3/SB1), we need to subclass Protocols::HTTP
 sub new {
@@ -130,6 +134,22 @@ sub onCommand {
 
 sub getNextTrack {
 	my ( $client, $params ) = @_;
+	
+	# If idle time has been exceeded, stop playback
+	my $lastIR = Slim::Hardware::IR::lastIRTime($client);
+	if ( time() - $lastIR >= $MAX_IDLE_TIME ) {
+		$log->debug('Idle time reached, stopping playback');
+		
+		my $url = Slim::Player::Playlist::url($client);
+
+		setCurrentTitle( $client, $url, $client->string('PLUGIN_PANDORA_IDLE_STOPPING') );
+		
+		$client->update();
+
+		Slim::Player::Source::playmode( $client, 'stop' );
+		
+		return;
+	}
 	
 	my $stationId = $params->{stationId};
 	
