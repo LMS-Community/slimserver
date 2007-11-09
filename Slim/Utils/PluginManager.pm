@@ -105,7 +105,9 @@ sub init {
 	
 	# Bug 6066, Restore the original state of all plugins
 	for my $plugin ( keys %{$plugins} ) {
-		$plugins->{$plugin}->{state} = $state{$plugin};
+		if ( defined $state{$plugin} ) {
+			$plugins->{$plugin}->{state} = $state{$plugin};
+		}
 	}
 
 	$class->enablePlugins;
