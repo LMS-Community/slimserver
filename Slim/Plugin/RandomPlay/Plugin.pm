@@ -45,13 +45,24 @@ my $log          = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('plugin.randomplay');
 
-$prefs->migrate(1, sub {
-	$prefs->set('newtracks', Slim::Utils::Prefs::OldPrefs->get('plugin_random_number_of_tracks')     || 10 );
-	$prefs->set('oldtracks', Slim::Utils::Prefs::OldPrefs->get('plugin_random_number_of_old_tracks') || 0  );
-	$prefs->set('continuous',  Slim::Utils::Prefs::OldPrefs->get('plugin_random_keep_adding_tracks')   || 1  );
-	$prefs->set('exclude_genres', Slim::Utils::Prefs::OldPrefs->get('plugin_random_exclude_genres')  || [] );
+$prefs->migrate( 1, sub {
+	my $newtracks = Slim::Utils::Prefs::OldPrefs->get('plugin_random_number_of_tracks');
+	if ( !defined $newtracks ) {
+		$newtracks = 10;
+	}
+	
+	my $continuous = Slim::Utils::Prefs::OldPrefs->get('plugin_random_keep_adding_tracks');
+	if ( !defined $continuous ) {
+		$continuous = 1;
+	}
+	
+	$prefs->set( 'newtracks', $newtracks );
+	$prefs->set( 'oldtracks', Slim::Utils::Prefs::OldPrefs->get('plugin_random_number_of_old_tracks') || 0 );
+	$prefs->set( 'continuous', $continuous );
+	$prefs->set( 'exclude_genres', Slim::Utils::Prefs::OldPrefs->get('plugin_random_exclude_genres') || [] );
+	
 	1;
-});
+} );
 
 $prefs->migrateClient(1, sub {
 	my ($clientprefs, $client) = @_;
