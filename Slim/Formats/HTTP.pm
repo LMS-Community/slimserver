@@ -22,6 +22,7 @@ This is a base class for remote stream formats to pull their metadata.
 use strict;
 use base qw(Slim::Formats::RemoteStream);
 
+use HTTP::Request;
 use IO::Socket qw(:crlf);
 use MIME::Base64;
 
@@ -117,6 +118,13 @@ sub requestString {
 	} else {
 		$request .= $CRLF;
 	}
+	
+	# Bug 5858, add cookies to the request
+	my $request_object = HTTP::Request->parse($request);
+	$request_object->uri($url);
+	Slim::Networking::Async::HTTP::cookie_jar->add_cookie_header( $request_object );
+	$request_object->uri($path);
+	$request = $request_object->as_string( $CRLF );
 
 	return $request;
 }
