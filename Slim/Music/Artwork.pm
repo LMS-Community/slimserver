@@ -126,7 +126,7 @@ sub getImageContentAndType {
 		return ($content, $class->_imageContentType(\$content));
 	}
 
-	logger('artwork')->warn("Image File empty or couldn't read: $path : $! [$@]");
+	logger('artwork')->debug("Image File empty or couldn't read: $path : $! [$@]");
 
 	return undef;
 }
