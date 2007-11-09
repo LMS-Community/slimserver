@@ -49,7 +49,7 @@ my $log = Slim::Utils::Log->addLogCategory( {
 	description  => 'PLUGIN_AUDIOSCROBBLER_MODULE_NAME',
 } );
 
-use constant HANDSHAKE_URL => 'http://post.audioscrobbler.com';
+use constant HANDSHAKE_URL => 'http://post.audioscrobbler.com/';
 use constant CLIENT_ID     => 'ss7';
 use constant CLIENT_VER    => 'sc' . $::VERSION;
 

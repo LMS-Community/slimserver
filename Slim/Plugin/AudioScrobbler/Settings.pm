@@ -91,6 +91,8 @@ sub handler {
 				ecb      => sub {
 					# Callback for any errors
 					my $error = shift;
+					
+					$error = Slim::Utils::Strings::string( 'SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR', $error );
 
 					if ( $params->{AJAX} ) {
 						$params->{warning} = $error;

@@ -57,3 +57,9 @@ SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_NP_DISABLED
 
 SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_SCROBBLE_DISABLED
 	EN	Warning: Submit all tracks is globally disabled.  To submit track information for this player, enable the Submit all tracks setting by going to Advanced -> Last.fm Audioscrobbler.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_NOTE
+	EN	Note: You must also enable Audioscrobbler for each player.  Click on the Player tab and then select the Last.fm Audioscrobbler item for each player you want to scrobble.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR
+	EN	There was an error verifying your account with Last.fm. Please try again later. (%s)
