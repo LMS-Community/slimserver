@@ -30,6 +30,9 @@ my $log = logger('network.upnp');
 
 my $prefs = preferences('server');
 
+# Media server model names to ignore (i.e. Rhapsody)
+my $IGNORE_RE = qr{Rhapsody}i;
+
 sub init {
 	$log->info('UPnP: Starting up');
 	
@@ -63,7 +66,7 @@ sub foundDevice {
 	my ( $device, $event ) = @_;
 	
 	# We'll get a callback for all UPnP devices, but we only look for media servers
-	if ( $device->getdevicetype =~ /MediaServer/ ) {
+	if ( $device->getdevicetype =~ /MediaServer/ && $device->getmodelname !~ $IGNORE_RE ) {
 		my $menuName = HTML::Entities::decode( $device->getfriendlyname );
 		
 		if ( $event eq 'add' ) {
