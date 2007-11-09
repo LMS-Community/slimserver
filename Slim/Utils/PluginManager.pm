@@ -71,16 +71,9 @@ sub init {
 	my $class = shift;
 
 	my ($manifestFiles, $newest) = $class->findInstallManifests;
-
-	# parse the manifests if no cache file or it is older than newest install.xml file
-	if (!-r $class->pluginCacheFile || (stat($class->pluginCacheFile))[9] < $newest) {
-
-		$log->info("Reparsing plugin manifests - new manifest found.");
-
-		$class->readInstallManifests($manifestFiles);
-
-	} else {
-
+	
+	# Load the plugin cache file
+	if ( -r $class->pluginCacheFile ) {
 		if (!$class->loadPluginCache) {
 
 			$class->checkPluginVersions;
@@ -88,6 +81,17 @@ sub init {
 
 		# process any pending operations
 		$class->runPendingOperations;
+	}
+	
+	# Bug 6066, maintain the state of existing plugins when adding/reparsing
+	my %state = map { $_ => $plugins->{$_}->{state} } keys %{$plugins};
+	
+	# parse the manifests if cache file is older than newest install.xml file
+	if ( (stat($class->pluginCacheFile))[9] < $newest ) {
+
+		$log->info("Reparsing plugin manifests - new manifest found.");
+
+		$class->readInstallManifests($manifestFiles);
 	}
 
 	if (scalar keys %$plugins != scalar @$manifestFiles) {
@@ -97,6 +101,11 @@ sub init {
 		$plugins = {};
 
 		$class->readInstallManifests($manifestFiles);
+	}
+	
+	# Bug 6066, Restore the original state of all plugins
+	for my $plugin ( keys %{$plugins} ) {
+		$plugins->{$plugin}->{state} = $state{$plugin};
 	}
 
 	$class->enablePlugins;
