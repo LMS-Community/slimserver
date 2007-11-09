@@ -263,7 +263,7 @@ sub unpause {
 
 	} else {
 
-		$log->logBacktrace("Bogus streamstate for unpause.");
+		logBacktrace("Bogus streamstate for unpause.");
 	}
 
 	return 0;
