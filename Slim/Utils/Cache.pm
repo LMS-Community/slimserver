@@ -192,11 +192,30 @@ sub cleanup {
 	if ($namespace && $caches{$namespace}) {
 
 		my $cache = $caches{$namespace};
-		my $lastpurge = $cache->get('Slim::Utils::Cache-purgetime'); 
+		my $lastpurge = $cache->get('Slim::Utils::Cache-purgetime');
 
 		unless ($lastpurge && ($now - $lastpurge) < $PURGE_INTERVAL) {
 			my $start = $now;
-			$cache->purge;
+			
+			if ( Slim::Utils::OSDetect::OS() ne 'win' ) {
+				# Fork a child to purge the cache, as it's a slow operation
+				if ( my $pid = fork ) {
+					# parent
+				}
+				else {
+					# child
+					$cache->purge;
+					
+					# Skip END processing
+					$main::daemon = 1;
+					
+					exit;
+				}
+			}
+			else {
+				$cache->purge;
+			}
+			
 			$cache->set('Slim::Utils::Cache-purgetime', $start, 'never');
 			$now = Time::HiRes::time();
 			if ( $log->is_info ) {
