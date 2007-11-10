@@ -6804,7 +6804,7 @@ SETUP_SN_REPORT_STATS_DISABLE
 	EN	No, do not report statistics.
 
 SETUP_NO_JAVASCRIPT
-	EN	In order to access SqueezeCenter, please make sure you are using a recent browser (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 or later), and JavaScript is enabled in your browser. Alternatively you can use a simpler skin, such as <a href="/Classic/?skipWizard=1" style="color: blue">Classic</a> or <a href="/Handheld/?skipWizard=1" style="color: blue">Handheld</a> (optimized for small screens).
+	EN	In order to access SqueezeCenter, please make sure you are using a recent browser (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 or later), and JavaScript is enabled in your browser. Alternatively you can use a simpler skin, such as <a href="/Classic/?skipWizard=1">Classic</a> or <a href="/Handheld/?skipWizard=1">Handheld</a> (optimized for small screens).
 
 SETUP_WIZARD_LANG_DESC
 	EN	If you want to change the language, select it here:

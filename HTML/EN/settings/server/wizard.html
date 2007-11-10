@@ -91,13 +91,15 @@
 			}
 
 			#loading .loading-indicator,
+
+			a { color: green; }
+
 			#noJS { color: white; }
+			#noJS a, #noJS a:visited { color: yellow; }
 			
 			.loading-indicator {
 				background-image: url(/Default/html/images/loading.gif);
 			}
-
-			a { color: green; }
 		-->
 		</style>
 	</head>
@@ -149,7 +151,7 @@
 			catch(e) {
 				document.getElementById('loading').style.display = 'none';
 				document.getElementById('noJS').style.display = 'block';
-				[% IF !debug %]location.href = '/classic/?skipWizard=1';[% END %]
+				[% IF !debug %]window.setTimeout(function(){location.href = '/classic'}, 10000);[% END %]
 			}
 		</script>
 
