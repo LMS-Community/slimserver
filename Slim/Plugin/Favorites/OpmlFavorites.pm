@@ -44,7 +44,12 @@ sub new {
 sub filename {
 	my $class = shift;
 
-	my $dir = $prefsServer->get('playlistdir') || $prefsServer->get('cachedir');
+	my $dir = $prefsServer->get('playlistdir');
+
+	if (!-w $dir) {
+
+		$dir = $prefsServer->get('cachedir');
+	}
 
 	return catdir($dir, "favorites.opml");
 }

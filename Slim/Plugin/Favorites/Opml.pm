@@ -133,6 +133,10 @@ sub save {
 				$log->warn("Failed for rename $tmpfilename to $filename");
 			}
 		}
+	
+	} else {
+
+		$log->warn("Unable to write opml file $filename - directory $dir is not writable");
 	}
 
 	$class->{'error'} = 'saveerror';
