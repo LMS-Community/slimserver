@@ -49,10 +49,10 @@
 				[% IF settings %]
 
 					[% tab = '';
-					IF playersetup.$name;
-						tab = 'player';
-					ELSIF additionalLinks.setup.$name;
+					IF additionalLinks.setup.$name;
 						tab = 'advanced';
+					ELSIF playersetup.$name;
+						tab = 'player';
 					END %]
 
 					[% IF tab %]

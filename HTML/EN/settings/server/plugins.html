@@ -44,7 +44,13 @@
 
 					[% END %]
 
-					<input type="submit" id="[% name %].uninstall" name="[% name %].uninstall" value="[% 'UNINSTALL' | string %]">
+					[% IF settings AND enabled %]
+
+					<input type="button" value="[% 'SETTINGS' | string %]" onClick="location.href='[% webroot %][% settings %][% IF player %]?player=[% playerURI %]&amp;playerid=[% playerURI %][% END %]'">
+
+					[% END %]
+
+<!-- 					<input type="submit" id="[% name %].uninstall" name="[% name %].uninstall" value="[% 'UNINSTALL' | string %]"> -->
 
 					[% IF NOT useTabList %]
 					<script type="text/javascript">
