@@ -46,6 +46,21 @@
 
 			<input type="button" id="[% name %].toggle" name="[% name %].disable" value="[% 'DISABLE' | string %]" onClick="Plugins.toggle(this)">
 
+				[% IF settings %]
+
+					[% tab = '';
+					IF playersetup.$name;
+						tab = 'player';
+					ELSIF additionalLinks.setup.$name;
+						tab = 'advanced';
+					END %]
+
+					[% IF tab %]
+						<input type="button" value="[% 'SETTINGS' | string %]" onClick="top.Settings.showPlayerSetting('[% tab %]', '[% name %]')">
+					[% END %]
+
+				[% END %]
+
 			[% ELSE %]
 
 			<input type="button" id="[% name %].toggle" name="[% name %].enable" value="[% 'ENABLE' | string %]" onClick="Plugins.toggle(this)">

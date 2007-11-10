@@ -1,17 +1,4 @@
-[%- BLOCK settingsPage -%]
-	<div class="selectorMarker [% IF token == 'BASIC_PLAYER_SETTINGS' || token == 'FORMATTING_SETTINGS' %]selectedItem[% END %]" onclick="SettingsPage.onClicked(this);" onmouseover="SettingsPage.highlight(this);">
-		<div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-			<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
-				<a href="[% href %]" target="subSettings" class="browseItemLink">[% title %]</a>
-			</div>
-		</div></div></div></div>
-	</div>
-[%- END -%]
-
-[%- IF menu == 'advanced';
-	PROCESS settings/header.html;
-
-	firstLevelItems = [
+[%- 	firstLevelItems = [
 		'BASIC_SERVER_SETTINGS',
 		'ITUNES',
 		'PLUGIN_PODCAST',
@@ -22,6 +9,19 @@
 		'PLUGINS',
 		'BEHAVIOR_SETTINGS'
 	];
+
+BLOCK settingsPage -%]
+	<div class="selectorMarker [% IF token == subPage %]selectedItem[% END %]" onclick="SettingsPage.onClicked(this);" onmouseover="SettingsPage.highlight(this);">
+		<div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
+			<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
+				<a href="[% href %]" target="subSettings" class="browseItemLink">[% title %]</a>
+			</div>
+		</div></div></div></div>
+	</div>
+[%- END -%]
+
+[%- IF menu == 'advanced';
+	PROCESS settings/header.html;
 
 	links = additionalLinks.setup;
 
@@ -84,13 +84,24 @@
 
 [%- ELSIF sub -%]
 	<frameset cols="250,*">
-		<frame src="[% webroot %]settings/index.html?player=[% playerURI %]&menu=[% sub %][% IF playerid %]&playerid=[% playerURI; END %]" name="menu" frameborder="0">
+		[% IF !subPage && sub == 'player';
+			subPage = "BASIC_PLAYER_SETTINGS";
+		ELSIF !subPage;
+			subPage = "FORMATTING_SETTINGS";
+		END %]
+		<frame src="[% webroot %]settings/index.html?player=[% playerURI %]&amp;menu=[% sub %]&amp;subPage=[% subPage %][% IF playerid %]&amp;playerid=[% playerURI; END %]" name="menu" frameborder="0">
 
-		[% IF sub == 'player' %]
-			<frame src="[% webroot %]settings/player/basic.html?player=[% playerURI%]&playerid=[% playerURI %]" name="subSettings" frameborder="0" marginwidth="15">
-		[% ELSE %]
-			<frame src="[% webroot %]settings/server/formatting.html?player=[% playerURI %]" name="subSettings" frameborder="0" marginwidth="15">
-		[% END %]
+		[% IF playersetup.$subPage;
+			myPage = playersetup.$subPage;
+		ELSIF additionalLinks.setup.$subPage;
+			myPage = additionalLinks.setup.$subPage;
+		ELSIF sub == 'player';
+			myPage = webroot _ "settings/player/basic.html?player=" _ playerURI _ "&amp;playerid=" _ playerURI;
+		ELSE;
+			myPage = webroot _ "settings/server/formatting.html?player=" _ playerURI;
+		END %]
+
+		<frame src="[% myPage %]" name="subSettings" frameborder="0" marginwidth="15">
 	</frameset>
 
 [%- ELSE -%]

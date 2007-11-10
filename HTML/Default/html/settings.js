@@ -1,5 +1,18 @@
 Settings = function(){
-	var basicBtn, advBtn, header, tp;
+	var tp;
+
+	var tabLinks = {
+		BASIC_SERVER_SETTINGS: 'settings/server/basic.html',
+		BEHAVIOR_SETTINGS: 'settings/server/behavior.html',
+		ITUNES: 'plugins/iTunes/settings/itunes.html',
+		PLUGIN_PODCAST: 'plugins/Podcast/settings/basic.html',
+		SQUEEZENETWORK_SETTINGS: 'settings/server/squeezenetwork.html',
+		INTERFACE_SETTINGS: 'settings/server/interface.html',
+		SETUP_GROUP_PLUGINS: 'settings/server/plugins.html',
+		advanced: 'settings/index.html?sub=advanced',
+		player: 'settings/index.html?sub=player&playerid=' + player,
+		SERVER_STATUS: 'settings/server/status.html'
+	};
 
 	return {
 		init : function(){
@@ -18,7 +31,7 @@ Settings = function(){
 			});
 
 			layout.beginUpdate();
-			layout.add('north', header = new Ext.ContentPanel('header', {fitToFrame:true, fitContainer:true}));
+			layout.add('north', new Ext.ContentPanel('header', {fitToFrame:true, fitContainer:true}));
 			layout.add('south', new Ext.ContentPanel('footer', {fitToFrame:true, fitContainer:true}));
 			layout.add('center', new Ext.ContentPanel('main', {fitToFrame:true, fitContainer:true}));
 
@@ -30,23 +43,24 @@ Settings = function(){
 			Ext.QuickTips.init();
 
 			tp = new Ext.TabPanel('settingsTabs');
-			tp.addTab('basic', strings['basic']).on('activate', function(){ Settings.showSettingsPage('settings/server/basic.html'); });
-			tp.addTab('mymusic', strings['mymusic']).on('activate', function(){ Settings.showSettingsPage('settings/server/behavior.html'); });
+
+			tp.addTab('BASIC_SERVER_SETTINGS', strings['basic']).on('activate', Settings.showSettingsPage);
+			tp.addTab('BEHAVIOR_SETTINGS', strings['mymusic']).on('activate', Settings.showSettingsPage);
 
 			if (iTunesEnabled)
-				tp.addTab('itunes', strings['itunes']).on('activate', function(){ Settings.showSettingsPage('plugins/iTunes/settings/itunes.html'); });
+				tp.addTab('ITUNES', strings['itunes']).on('activate', Settings.showSettingsPage);
 
 			if (podcastEnabled)
-				tp.addTab('podcasts', strings['podcasts']).on('activate', function(){ Settings.showSettingsPage('plugins/Podcast/settings/basic.html'); });
+				tp.addTab('PLUGIN_PODCAST', strings['podcasts']).on('activate', Settings.showSettingsPage);
 
-			tp.addTab('squeezenetwork', strings['squeezenetwork']).on('activate', function(){ Settings.showSettingsPage('settings/server/squeezenetwork.html'); });
-			tp.addTab('interface', strings['interface']).on('activate', function(){ Settings.showSettingsPage('settings/server/interface.html'); });
-			tp.addTab('plugins', strings['plugins']).on('activate', function(){ Settings.showSettingsPage('settings/server/plugins.html'); });
-			tp.addTab('advanced', strings['advanced']).on('activate', function(){ Settings.showSettingsPage('settings/index.html?sub=advanced'); });
-			tp.addTab('player', strings['player']).on('activate', function(){ Settings.showSettingsPage('settings/index.html?sub=player&playerid=' + player); });
-			tp.addTab('status', strings['status']).on('activate', function(){ Settings.showSettingsPage('settings/server/status.html'); });
+			tp.addTab('SQUEEZENETWORK_SETTINGS', strings['squeezenetwork']).on('activate', Settings.showSettingsPage);
+			tp.addTab('INTERFACE_SETTINGS', strings['interface']).on('activate', Settings.showSettingsPage);
+			tp.addTab('SETUP_GROUP_PLUGINS', strings['plugins']).on('activate', Settings.showSettingsPage);
+			tp.addTab('advanced', strings['advanced']).on('activate', Settings.showSettingsPage);
+			tp.addTab('player', strings['player']).on('activate', Settings.showSettingsPage);
+			tp.addTab('SERVER_STATUS', strings['status']).on('activate', Settings.showSettingsPage);
 
-			tp.activate('basic');
+			tp.activate('BASIC_SERVER_SETTINGS');
 
 			new Ext.Button('cancel', {
 				text: strings['close'],
@@ -78,6 +92,11 @@ Settings = function(){
 		},
 
 		showSettingsPage : function(page) {
+			if (page && tabLinks[page])
+				page = tabLinks[page];
+			else if (typeof page == 'object' && page.el != null)
+				page = tabLinks[this.id];
+
 			Ext.get('settings').dom.src = webroot + page + (page.search(/\?/) >= 0 ? '&' : '?') + 'player=' + player;
 		},
 
@@ -97,6 +116,17 @@ Settings = function(){
 
 		activateTab : function(tab){
 			tp.activate(tab);
+		},
+
+		showPlayerSetting : function(tab, page) {
+			if (tabLinks[page])
+				tp.activate(page);
+			else {
+				var oldUrl = tabLinks[tab];
+				tabLinks[tab] = oldUrl + '&subPage=' + page;
+				tp.activate(tab);
+				tabLinks[tab] = oldUrl;
+			}			
 		}
 	};
 }();
