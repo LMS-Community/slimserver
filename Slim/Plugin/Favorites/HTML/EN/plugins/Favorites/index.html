@@ -148,7 +148,7 @@
 
 [%- IF errormsg %]<p>[% errormsg %]</p>[% END -%]
 
-[%- IF NOT autosave %][% IF edittitle %][% PROCESS titleedit %][% ELSE %]
+[%- IF NOT autosave %][% IF action == "edittitle" %][% PROCESS titleedit %][% ELSE %]
 <div id='titleheader'><h4><a [% IF useAJAX -%]
      href="javascript:void(0);" onClick="editTitle('[% index %]', '[% sess %]');"
    [%- ELSE %]
