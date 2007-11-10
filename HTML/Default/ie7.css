@@ -21,7 +21,7 @@
 	position: relative;
 }
 
-#playlistTab, .infoTab {
-	height: 20px;
+#playlistTab, #infoTab, .infoTab {
+	height: 21px;
 	padding-top: 0;
 }
