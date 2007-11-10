@@ -24,7 +24,7 @@ function changePlayer(player_List) {
 	player = escape(player);
 	
 	var newPlayer = "=" + player;
-	console.log("new player"+player);
+	//console.log("new player"+player);
 	newHref(this.document,newPlayer);
 	getPlaylistData(null,null,player);
 	

@@ -508,7 +508,10 @@ function refreshAll(theData,force) {
 		refreshPlayControls(parsedData,force);
 		refreshState(parsedData);
 		
-		if (!document.location.hash && parsedData['thissongnum']) {
+		if (!document.all) {
+		console.log('force ie refresh');
+			getPlaylistData();
+		} else if (!document.location.hash && parsedData['thissongnum']) {
 			currentSong(parsedData);
 		}
 	} else {
@@ -556,12 +559,17 @@ function getOptionData(params, action) {
 
 function playlistChecker(theData) {
 	var parsedData = fillDataHash(theData);
+
 	debug(parsedData['first_item'], parseInt(parsedData['start']), playingstart, showingstart);
+
 	if (isNaN(parsedData['first_item']) || ((parseInt(parsedData['start']) != playingstart) && (playingstart == showingstart))) {
+
 		debug("get new playlist data");
+
 		showingstart = parsedData['start'];
 		playingstart = parsedData['start'];
 		getPlaylistData(parsedData['start']);
+
 	} else {
 		debug("parse current song info");
 		currentSong(theData);
@@ -573,10 +581,16 @@ function getPlaylistData(start, params, player) {
 	var requesttype = 'get';
 	var thisplayer;
 
+	if ($('playlist_draglist')) {
+		Sortable.destroy('playlist_draglist');
+	}
+
 	if (player) {
 		thisplayer = player;
+
 	} else {
 		thisplayer = getPlayer('SqueezeCenter-player');
+
 	}
 	
 	var args = 'player='+ thisplayer +'&s='+Math.random();
@@ -586,10 +600,14 @@ function getPlaylistData(start, params, player) {
 	}
 
 	if(!isNaN(start)) {
+
 		debug("playlist page override "+start);
+
 		args = args + "&start=" + start;
 		showingstart = start;
+
 	} else if (!isNaN(showingstart)) {
+
 		if (showingstart == null) showingstart = 0;
 		debug("playlist refresh at "+showingstart);
 		args = args + "&start=" + showingstart;
@@ -611,7 +629,7 @@ function getPlaylistData(start, params, player) {
 }
 
 function playlistDone(start,req) {
-	$('playlistframe').innerHTML = req.responseText;
+	//$('playlistframe').innerHTML = req.responseText;
 	initSortable('playlist_draglist');
 }
 
@@ -646,6 +664,8 @@ function initSortable(element) {
 	if (! $(element)) {
 		return;
 	}
+	
+	Sortable.destroy(element);
 	
 	Position.includeScrollOffsets = true;
 	
