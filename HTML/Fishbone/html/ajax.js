@@ -663,11 +663,11 @@ function initSortable(element) {
 			reorderplaylist(Sortable.sequence(element), showingstart, activeElem);
 		},
 		endeffect: function() {
-			Effect.Shrink('deleteitem');
-			$('playlistStatus').style.backgroundColor = null;
+			$('deleteitem').hide()
+			//$('playlistStatus').style.backgroundColor = null;
 		},
 		starteffect: function() {
-			Effect.Grow('deleteitem');
+			$('deleteitem').show()
 			$('deleteitem').style.backgroundColor = 'maroon';
 			playlistReordered = true;
 		},
