@@ -134,7 +134,7 @@ sub addEditLink {
 	Slim::Web::Pages->addPageLinks('plugins', {	'PLUGIN_FAVORITES_PLAYLIST_EDITOR' => $enabled ? 'plugins/Favorites/index.html?new' : undef });
 }
 
-# support multiple edditing sessions at once - indexed by sessionId.  [Default to favorites edditting]
+# support multiple edditing sessions at once - indexed by sessionId.  [Default to favorites editting]
 my $nextSession = 2; # session id 1 = favorites
 tie my %sessions, 'Tie::Cache::LRU', 4;
 
@@ -199,8 +199,9 @@ sub indexHandler {
 	# get the level to operate on - this is the level containing the index if action is set, otherwise the level specified by index
 	my ($level, $indexLevel, @indexPrefix) = $opml->level($params->{'index'}, defined $params->{'action'});
 
-	if (!defined $level) {
+	if (!defined $level || $params->{'action'} =~ /^play|^add/) {
 		# favorites editor cannot follow remote links, so pass through to xmlbrowser as index does not appear to be edittable
+		# also pass through play/add to reuse xmlbrowser handling of playall etc
 		$log->info("passing through to xmlbrowser");
 
 		return Slim::Web::XMLBrowser->handleWebIndex( {
@@ -334,16 +335,6 @@ sub indexHandler {
 			splice @$level, $indexLevel - 1, 0, $entry;
 
 			$changed = 1;
-		}
-
-		if ($action =~ /^play$|^add$/ && $client) {
-
-			my $entry = $opml->entry($params->{'index'});
-			my $stream = $entry->{'URL'} || $entry->{'url'};
-			my $title  = $entry->{'text'};
-
-			Slim::Music::Info::setTitle($stream, $title);
-			$client->execute(['playlist', $action, $stream]);
 		}
 
 		if ($action eq 'editset' && defined $params->{'index'}) {
