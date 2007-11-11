@@ -730,6 +730,7 @@ sub handleSearch {
 				'url'      => $searchURL,
 				'title'    => $searchString,
 				'timeout'  => $item->{'timeout'},
+				'parser'   => $item->{'parser'},
 			);
 			
 			Slim::Buttons::Common::pushMode( $client, 'xmlbrowser', \%params );
