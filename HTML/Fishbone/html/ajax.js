@@ -479,7 +479,7 @@ function currentSong(theData) {
 	} else {
 		debug("not showing current page");
 		if (showingstart != parsedData['first_item'] && showingstart == playingstart) {
-			playlistChecker(parsedData['first_item']);
+			playlistChecker(parsedData);
 		}
 	}
 
@@ -581,7 +581,7 @@ function playlistChecker(theData) {
 }
 
 
-function getPlaylistData(start, params, player) {
+function getPlaylistData(start, params, argplayer) {
 	var requesttype = 'get';
 	var thisplayer;
 
@@ -589,8 +589,8 @@ function getPlaylistData(start, params, player) {
 		Sortable.destroy('playlist_draglist');
 	}
 
-	if (player) {
-		thisplayer = player;
+	if (argplayer) {
+		thisplayer = argplayer;
 
 	} else {
 		thisplayer = getPlayer('SqueezeCenter-player');
@@ -674,7 +674,7 @@ function initSortable(element) {
 	Position.includeScrollOffsets = true;
 	
 	var activeElem = null;
-	//<![CDATA[
+	
 	Sortable.create(element, {
 		onChange: function(item) {
 			var rexp = new RegExp("\\d+$");
@@ -698,7 +698,6 @@ function initSortable(element) {
 		scroll:'playlistframe',
 		revert: true
 	});
-	//]]>
 }
 
 // swallow click event if sortable in progress

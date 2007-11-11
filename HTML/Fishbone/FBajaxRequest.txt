@@ -13,7 +13,8 @@ cansave|[% cansave %]
 # path to cover art 
 coverartpath|
 [%- IF coverThumb -%][% coverThumb %]
-[%- ELSE -%][% webroot %]html/images/cover.png
+[%- ELSIF itemobj.isRemoteURL -%][% webroot %]html/images/radio_100x100_p.gif
+[%- ELSE -%][% webroot %]html/images/cover_100x100_p.png
 [% END %]
 
 playlistTime|[% currentPlaylistChangeTime %]
