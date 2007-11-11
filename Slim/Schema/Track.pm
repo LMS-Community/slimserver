@@ -302,12 +302,14 @@ sub coverArt {
 	}
 
 	# kick this back up to the webserver so we can set last-modified
-	if (defined $path) {
+	if (defined $path && $path ne 1) {
 
 		$self->cover($path);
 		$self->update;
 
 		$mtime = (stat($path))[9];
+	} else {
+		$mtime = 0;
 	}
 
 	# This is a hack, as Template::Stash::XS calls us in list context,

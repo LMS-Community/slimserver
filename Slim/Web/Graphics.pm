@@ -99,7 +99,7 @@ sub processCoverArtRequest {
 		}
 	}
 
-	my @bgColor             = split(//, $bgColor);
+	my @bgColor = split(//, $bgColor);
 
 	# allow for slop in the bg color request-- if the correct amount of chars weren't set, default to white
 	if ($bgColor ne '' && !$transparentRequest && scalar(@bgColor) != 6 && scalar(@bgColor) != 8) {
