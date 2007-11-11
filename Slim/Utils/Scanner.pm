@@ -658,6 +658,13 @@ sub readRemoteHeaders {
 			Slim::Music::Info::setCurrentTitle( $url, $title );
 		}
 		
+		# If the URL doesn't have a title, set the title to URL
+		if ( !Slim::Music::Info::title( $url ) ) {
+			$log->debug( "No title available for $url, displaying URL" );
+			Slim::Music::Info::setTitle( $url, $url );
+			Slim::Music::Info::setCurrentTitle( $url, $url );
+		}
+		
 		# If the audio is mp3, we can read the bitrate from the header or stream
 		if ( $type eq 'mp3' ) {
 
@@ -677,15 +684,17 @@ sub readRemoteHeaders {
 				$log->debug("Scanning mp3 stream for bitrate");
 				
 				$http->read_body( {
-					'readLimit'   => 16 * 1024,
+					'readLimit'   => 128 * 1024,
 					'onBody'      => sub {
 						my $http = shift;
 						
 						my $io = IO::String->new( $http->response->content_ref );
 						
 						my ($bitrate, $vbr) = scanBitrate( $io, 'mp3', $url );
-
-						Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
+						
+						if ( $bitrate > 0 ) {
+							Slim::Music::Info::setBitrate( $url, $bitrate, $vbr );
+						}
 					},
 				} );
 			}
