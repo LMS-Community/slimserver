@@ -50,7 +50,7 @@ sub new {
 		undef,
 		time(),
 		sub {
-			$http->get('http://www.squeezenetwork.com/api/v1/time');
+			$http->get( Slim::Networking::SqueezeNetwork->url( '/api/v1/time' ) );
 		},
 	);
 
