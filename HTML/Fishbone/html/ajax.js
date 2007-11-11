@@ -23,7 +23,10 @@ function debug() {
 function doAjaxRefresh(light) {
 	
 	//bypass if there is a control command in progress
-	if (commandInProgress) return;
+	if (commandInProgress) {
+		showElements(['commandInProgress'],'inline');
+		return;
+	}
 	
 	var args = 'player=' + getPlayer('SqueezeCenter-player') +'&ajaxRequest=1&s='+Math.random();
 	var prev_url = url;
@@ -156,6 +159,7 @@ function processCommand(param, id) {
 function commandResponse(thedata, force) {
 	commandInProgress = false;
 	refreshAll(thedata,force);
+	$('commandInProgress').hide();
 }
 
 function refreshPlayControls(theData,force) {

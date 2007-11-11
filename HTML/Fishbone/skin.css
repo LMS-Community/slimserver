@@ -452,6 +452,12 @@ A.linkbtn:link {
 	padding: 3px 8px 3px 8px;
 }
 
+#mastHead #commandInProgress {
+	display: inline; 
+	float: left; 
+	padding: 3px 8px 3px 8px;
+}
+
 #mastHead #playerlinks, #mastHead #serverlinks {
 	padding: 5px 8px 5px 8px;
 }
