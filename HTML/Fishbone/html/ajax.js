@@ -512,10 +512,7 @@ function refreshAll(theData,force) {
 		refreshPlayControls(parsedData,force);
 		refreshState(parsedData);
 		
-		if (!document.all) {
-		console.log('force ie refresh');
-			getPlaylistData();
-		} else if (!document.location.hash && parsedData['thissongnum']) {
+		if (!document.location.hash && parsedData['thissongnum']) {
 			currentSong(parsedData);
 		}
 	} else {
