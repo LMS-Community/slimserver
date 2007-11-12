@@ -173,9 +173,9 @@ sub webPages {
 	my $urlBase = 'plugins/DigitalInput';
 
 	if ($hasDigitalIn) {
-		Slim::Web::Pages->addPageLinks("browse", { 'PLUGIN_DIGITAL_INPUT' => "$urlBase/list.html" });
+		Slim::Web::Pages->addPageLinks("plugins", { 'PLUGIN_DIGITAL_INPUT' => "$urlBase/list.html" });
 	} else {
-		Slim::Web::Pages->addPageLinks("browse", { 'PLUGIN_DIGITAL_INPUT' => undef });
+		Slim::Web::Pages->addPageLinks("plugins", { 'PLUGIN_DIGITAL_INPUT' => undef });
 	}
 
 	Slim::Web::HTTP::addPageFunction("$urlBase/list.html", \&handleWebList);
