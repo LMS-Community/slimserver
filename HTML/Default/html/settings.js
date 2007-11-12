@@ -79,15 +79,10 @@ Settings = function(){
 		},
 
 		submitSettings : function() {
-			var myForm;
-			try { myForm = frames.settings.subSettings.document.forms.settingsForm; }
+			try { frames.settings.subSettings.SettingsPage.submit() }
 			catch(e){
-				try { myForm = frames.settings.document.forms.settingsForm; }
+				try { frames.settings.SettingsPage.submit() }
 				catch(e){}
-			}
-
-			if (myForm) {
-				myForm.submit();
 			}
 		},
 
@@ -134,6 +129,7 @@ Settings = function(){
 
 var SettingsPage = function(){
 	var unHighlightTimer;
+	var invalidWarning = false;
 
 	return {
 		init : function(){
@@ -144,20 +140,19 @@ var SettingsPage = function(){
 			for(var i = 0; i < items.length; i++) {
 
 				if (inputEl = Ext.get(items[i])) {
-					if (inputEl.dom.type != 'text')
+					if (inputEl.dom.type == 'submit')
 						continue;
 
 					inputEl.on('keypress', function(ev){
 						// on Mac I get 12 instead of 13 (RETURN) on Enter
 						if (ev.button == ev.RETURN || ev.button == 12) {
 							ev.stopEvent();
-							document.forms.settingsForm.submit();
+							SettingsPage.submit();
 						}
 					});
 				}
 
 			}
-
 
 			if (Ext.isSafari)
 				Ext.get(document).setStyle('overflow', 'auto');
@@ -253,6 +248,56 @@ var SettingsPage = function(){
 						}
 					})
 				);
+			}
+		},
+
+		validatePref : function(myPref, namespace) {
+			Utils.processCommand({
+				params: ['', [
+							'pref', 
+							'validate', 
+							namespace + ':' + myPref, 
+							Ext.get(myPref).dom.value
+						]],
+				success: function(response) {
+					if (response && response.responseText) {
+						response = Ext.util.JSON.decode(response.responseText);
+			
+						// if preference did not validate - highlight the field
+						if (response.result)
+							SettingsPage.highlightField(myPref, response.result.valid);
+					}
+				}
+				
+			});
+		},
+
+		submit : function(){
+			var items = Ext.query('input.invalid');
+
+			for(var i = 0; i < items.length; i++) {
+				if (inputEl = Ext.get(items[i])) {
+					SettingsPage.highlightField(inputEl.id, false);
+				}
+			}
+
+			// block first attempt to save if there are invalid values
+			if (items.length == 0 || this.invalidWarned)
+				document.forms.settingsForm.submit();
+			else
+				this.invalidWarned = true;
+		},
+
+		highlightField : function(myPref, valid){
+			var el = Ext.get(myPref);
+			
+			if (el) {
+				el.highlight(valid ? '99ff99' : 'ffcccc');
+
+				if (valid)
+					el.replaceClass('invalid', 'valid');
+				else
+					el.replaceClass('valid', 'invalid');
 			}
 		}
 	};

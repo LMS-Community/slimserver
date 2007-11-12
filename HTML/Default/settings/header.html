@@ -26,6 +26,16 @@
 			var fsFilter = new Array();
 
 			Ext.EventManager.onDocumentReady(SettingsPage.init, SettingsPage, true);
+
+			Ext.EventManager.onDocumentReady(function(){
+				var el;
+				[%- FOREACH pref = validate; IF pref.value %]
+					if (el = Ext.get('[% pref.key %]')) {
+						el.on('blur', function(){ SettingsPage.validatePref('[% pref.key %]', '[% namespace %]'); } );
+						el.addClass('canValidate');
+					}
+				[%- END; END %]
+			});
 		</script>
 
 		[% IF pageHeaderScripts && NOT extJsScripts %]
