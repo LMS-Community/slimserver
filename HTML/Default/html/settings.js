@@ -140,6 +140,25 @@ var SettingsPage = function(){
 			this.initDescPopup();
 			FilesystemBrowser.init();
 
+			var items = Ext.query('input');
+			for(var i = 0; i < items.length; i++) {
+
+				if (inputEl = Ext.get(items[i])) {
+					if (inputEl.dom.type != 'text')
+						continue;
+
+					inputEl.on('keypress', function(ev){
+						// on Mac I get 12 instead of 13 (RETURN) on Enter
+						if (ev.button == ev.RETURN || ev.button == 12) {
+							ev.stopEvent();
+							document.forms.settingsForm.submit();
+						}
+					});
+				}
+
+			}
+
+
 			if (Ext.isSafari)
 				Ext.get(document).setStyle('overflow', 'auto');
 		},
