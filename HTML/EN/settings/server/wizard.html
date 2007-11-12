@@ -221,17 +221,23 @@
 								<div id="sqn_m" class="wz_page">
 									<div class="wz_logo"></div>
 
-									<div>[% "SETUP_WIZARD_SQN_DESC" | string %]</div>
+									<div>[% "SETUP_WIZARD_SQN_DESC" | string %]<br>&nbsp;</div>
 
 									<div><table>
 										<tr>
 											<td>[% "SETUP_SN_EMAIL" | string %][% "COLON" | string %]</td>
-											<td colspan="2"><input type="text" name="sn_email" id="sn_email" value="[% prefs.sn_email %]" size="40"></td>
+											<td><input type="text" name="sn_email" id="sn_email" value="[% prefs.sn_email %]" size="40"></td>
 										</tr>
 										<tr>
 											<td>[% "SETUP_SN_PASSWORD" | string %][% "COLON" | string %]&nbsp;</td>
 											<td><input type="password" name="sn_password" id="sn_password" value="[% prefs.sn_password %]" size="40"></td>
-											<td><span id="sn_verify"></span></td>
+										</tr>
+										<tr>
+											<td colspan="2" align="right">
+												<span id="sn_verify"></span>
+												<div><a href="http://www.squeezenetwork.com/user/forgotPassword" target="SQN">[% "SETUP_SN_FORGOT_PASSWORD" | string%]</a></div>
+												<div><a href="http://www.squeezenetwork.com/" target="SQN">[% "SETUP_SN_NEED_ACCOUNT" | string%]</a></div>
+											</td>
 										</tr>
 									</table></div>
 									

@@ -6776,6 +6776,12 @@ SETUP_SN_INVALID_LOGIN
 SETUP_SN_VALID_LOGIN
 	EN	Connected successfully to SqueezeNetwork.
 
+SETUP_SN_FORGOT_PASSWORD
+	EN	I forgot my password
+
+SETUP_SN_NEED_ACCOUNT
+	EN	I need an account
+
 SETUP_SN_SYNC
 	EN	SqueezeNetwork Integration
 
