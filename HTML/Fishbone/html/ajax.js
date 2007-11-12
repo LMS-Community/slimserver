@@ -1,8 +1,8 @@
 var mp = 0;
-var currentID = 0;
+var currentID = null;
 var playingstart;
 var showingstart;
-var DEBUG = 0;
+var DEBUG = 1;
 var playlistReordered = false;
 var commandInProgress = false;
 
@@ -410,10 +410,10 @@ var first;
 function currentSong(theData) {
 	var parsedData = fillDataHash(theData);
 	
-	var doc = document;
+	//var doc = document;
 	var currentsong;
 	
-	if (parent.playlist) {doc = parent.playlist.document };
+	//if (parent.playlist) {doc = parent.playlist.document };
 	
 	if (parsedData['currentsongnum']) {
 		currentsong = parsedData['currentsongnum'];
@@ -422,7 +422,7 @@ function currentSong(theData) {
 	}
 	debug("playlist now at: "+currentsong);
 	var found = 0;
-	var refresh = 0;
+	var refresh = false;
 	
 	if (parsedData['playlistsize'] == 0 || parsedData['songcount'] == 0) {
 		// playlist is empty, should refresh
@@ -436,13 +436,14 @@ function currentSong(theData) {
 		getPlaylistData();
 		return;
 	}
-	
-	if (showingstart == parsedData['first_item'] || showingstart == playingstart) {
 
+	if (showingstart == parsedData['first_item'] || showingstart == playingstart) {
+//alert(parsedData['last_item']);
 		for (var i = showingstart; i <= parsedData['last_item']; i++) {
-			
+			//alert(i);
 			// make sure we have matching item counts, refresh if not.
-			if (item = doc.getElementById('playlistitem' + i)) {
+			if ($('playlistitem' + i)) {
+				var item = $('playlistitem'+i);
 				
 				if (i == currentsong) {
 					item.className = "currentListItem";
@@ -453,28 +454,30 @@ function currentSong(theData) {
 				}
 				
 				// Check the id's of each item, refresh if any don't match.
-				var myString = new String(doc.getElementById('playlistitem' + i).innerHTML);
+				var myString = new String($('playlistitem' + i).innerHTML);
 				var rExp     = new RegExp("trackid_(\\d+)","i");
 				var a = rExp.exec(myString);
 				
 				//debug(a[1], parsedData['item_'+i]);
 				if (a == null || a[1] != parsedData['item_'+i]) {
 					debug("mismatch, must refresh");
-					refresh = 1;
+					refresh = true;
 					break;
 				}
 				
+				myString = null;
+				
 			} else {
 				debug('missing item: must refresh');
-				refresh = 1;
+				refresh = true;
 				break;
 			}
 		}
 		//debug("done with playlist checking, process results");
 		// refresh the playlist if we're not finding the current song
 		if (currentID != found) {
-			debug('missing current id '+currentID+': must refresh');
-			refresh = 1;
+			//alert('missing current id '+currentID+': must refresh');
+			refresh = true;
 		} 
 	} else {
 		debug("not showing current page");
@@ -484,16 +487,21 @@ function currentSong(theData) {
 	}
 
 	//debug("check for refresh flag");
-	if (refresh != 0) {
+	if (refresh) {
+		//refresh = null;
+		//doc = null;
+		//alert('getplaylist');
 		getPlaylistData();
 	} else {
-		debug("current: "+ currentsong);
+		//refresh = null;
+		//debug("current: "+ currentsong);
 		if (!isNaN(currentsong)) {
-			doc.location.hash = 'playlistitem'+currentsong;
+			document.location.hash = 'playlistitem'+currentsong;
 			//console.log('scrolling');
 			//Element.scrollTo('playlistitem'+currentsong);
 		}
 	}
+	//doc = null;
 }
 
 function refreshAll(theData,force) {
@@ -586,7 +594,7 @@ function getPlaylistData(start, params, argplayer) {
 		Sortable.destroy('playlist_draglist');
 	}
 
-	if (argplayer) {
+	if (argplayer != null && argplayer != '') {
 		thisplayer = argplayer;
 
 	} else {
@@ -600,7 +608,7 @@ function getPlaylistData(start, params, argplayer) {
 		args = params + "&" + args;
 	}
 
-	if(!isNaN(start)) {
+	if(start != null && start != '') {
 
 		debug("playlist page override "+start);
 
