@@ -265,10 +265,13 @@ img#background { position:absolute; }
 
 /* inner pages (left frame) */
 #inner_header, #infoTab, #playlistTab {
-	min-height: 22px;
-	padding-bottom: 3px;
 	background-color: #252525;
 	color: #dddddd;
+}
+
+#inner_header {
+	min-height: 22px;
+	padding-bottom: 3px;
 }
 
 #titleRight {
