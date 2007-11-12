@@ -11,8 +11,8 @@ PLUGIN_FAVORITES_PLAYLIST_EDITOR
 	EN	OPML Playlist Browser & Editor
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC
-	DE	Das Favoriten Plugin erlaubt es auch, OPML basierte Wiedergabelisten auf dem Server zu durchsuchen und bearbeiten. Aktiviere die folgende Option, um diesen Modus unter "Plugins" auf dem Server Web-Interface anzuzeigen. 
-	EN	The favorites plugin will also allow you to browse opml based playlists and edit opml playlists stored on your server. Select the option below to add this mode under 'Plugins' on the server home page.
+	DE	Das Favoriten Plugin erlaubt es auch, OPML basierte Wiedergabelisten auf dem Server zu durchsuchen und bearbeiten. Aktiviere die folgende Option, um diesen Modus unter "Extras" auf dem Server Web-Interface anzuzeigen. 
+	EN	The favorites plugin will also allow you to browse opml based playlists and edit opml playlists stored on your server. Select the option below to add this mode under 'Extras' on the server home page.
 
 PLUGIN_FAVORITES_LOAD
 	DE	Laden
