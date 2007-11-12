@@ -1,4 +1,38 @@
+[% BLOCK statusInfo %]
+	[% IF pluginRandomNowPlaying != '' %]
+		[%# Reload status and playlist to reflect any new mixes %]
+		<script type="text/javascript">
+			<!--
+			refreshStatus();
+			-->
+		</script>
+
+		<p><em>
+			[% "PLUGIN_RANDOM_GENERAL_HELP" | string %]
+			[% PROCESS randomLink type="disable" addOnly="0" %]
+		</em></p>
+	[% END %]
+[% END %]
+[% IF ajaxRequest; PROCESS statusInfo; ELSE %]
 [%- pagetitle = 'PLUGIN_RANDOMPLAY' | string; pageicon = 'PLUGIN_RANDOMPLAY' -%]
+[% extJsScripts = BLOCK %]
+<script type="text/javascript">
+	var RandomPlay = function(){
+		return {
+			mix: function(type, addOnly){
+				document.genreForm.type.value = type;
+				document.genreForm.addOnly.value = addOnly;
+				Ext.get('randomStatus').load(
+					document.genreForm.action,
+					'ajaxRequest=1&' + Ext.Ajax.serializeForm('genreForm'),
+					refreshStatus,
+					true
+				);
+			}
+		}
+	}();
+</script>
+[% END %]
 [%- pwd_list = BLOCK -%]/
 	<a href="[% webroot %]plugins/RandomPlay/list.html?player=[% player | uri %]">
 		[% "PLUGIN_RANDOMPLAY" | string %]
@@ -15,11 +49,15 @@
 [%# Following block generates links that submit the form if javascript is enabled.  This allows
      users to make setting changes then click on a new mix without having to press the submit button. %]
 [% BLOCK href %]
+[% IF useExtJS %]
+href="javascript:RandomPlay.mix('[% type %]', '[% addOnly %]');"
+[% ELSE %]
 href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% player | uri %]&amp;addOnly=[% addOnly %]"
 		 onclick='document.genreForm.type.value = "[% type %]";
 							document.genreForm.addOnly.value = [% addOnly %]
 							document.genreForm.submit();
 							refreshStatus(); return false;'
+[% END %]
 [% END %]
 
 [% BLOCK randomLink %]
@@ -56,19 +94,9 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 			[% odd = (not odd) %]
 		[% END %]
 
-		[% IF pluginRandomNowPlaying != '' %]
-			[%# Reload status and playlist to reflect any new mixes %]
-			<script type="text/javascript">
-				<!--
-				refreshStatus();
-				-->
-			</script>
-
-			<p><em>
-				[% "PLUGIN_RANDOM_GENERAL_HELP" | string %]
-				[% PROCESS randomLink type="disable" addOnly="0" %]
-			</em></p>
-		[% END %]
+		<div id="randomStatus">
+		[% PROCESS statusInfo %]
+		</div>
 
 		<hr>
 
@@ -164,3 +192,4 @@ href="[% webroot %]plugins/RandomPlay/mix.html?type=[% type %]&amp;player=[% pla
 	</form>
 [% END %]
 [% PROCESS pagefooter.html %]
+[% END %]
