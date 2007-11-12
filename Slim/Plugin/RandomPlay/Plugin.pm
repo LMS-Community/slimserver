@@ -870,8 +870,6 @@ sub setMode {
 			}
 		},
 	);
-	Slim::Web::HTTP::protectURI("randomplay_mix\.(?:htm|xml)");
-	Slim::Web::HTTP::protectURI("randomplay_settings\.(?:htm|xml)");
 
 	# if we have an active mode, temporarily add the disable option to the list.
 	if ($mixInfo{$client->masterOrSelf->id} && $mixInfo{$client->masterOrSelf->id}->{'type'}) {
@@ -1019,13 +1017,17 @@ sub buttonStart {
 sub webPages {
 	my $class = shift;
 
-        my $urlBase = 'plugins/RandomPlay';
+	my $urlBase = 'plugins/RandomPlay';
 
 	Slim::Web::Pages->addPageLinks("browse", { 'PLUGIN_RANDOMPLAY' => $htmlTemplate });
 
-        Slim::Web::HTTP::addPageFunction("$urlBase/list.html", \&handleWebList);
-        Slim::Web::HTTP::addPageFunction("$urlBase/mix.html", \&handleWebMix);
-        Slim::Web::HTTP::addPageFunction("$urlBase/settings.html", \&handleWebSettings);
+	Slim::Web::HTTP::addPageFunction("$urlBase/list.html", \&handleWebList);
+	Slim::Web::HTTP::addPageFunction("$urlBase/mix.html", \&handleWebMix);
+	Slim::Web::HTTP::addPageFunction("$urlBase/settings.html", \&handleWebSettings);
+
+	Slim::Web::HTTP::protectURI("$urlBase/list.html");
+	Slim::Web::HTTP::protectURI("$urlBase/mix.html");
+	Slim::Web::HTTP::protectURI("$urlBase/settings.html");
 }
 
 # Draws the plugin's web page

@@ -113,7 +113,7 @@ sub webPages {
 	my $url   = 'plugins/ShoutcastBrowser/index.html';
 
 	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
-	Slim::Web::HTTP::protectURI('plugins/ShoutcastBrowser/index.html');
+	Slim::Web::HTTP::protectURI($url);
 
 	Slim::Web::HTTP::addPageFunction($url => sub {
 
