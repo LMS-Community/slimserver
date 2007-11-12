@@ -269,6 +269,7 @@ Wizard = function(){
 		verifySqnAccount : function(){
 			var email = Ext.get('sn_email').dom.value;
 			var pw = Ext.get('sn_password').dom.value;
+			var disable_stats = Ext.get('sn_disable_stats').dom.value;
 
 			var email_summary = Ext.get('sn_email_summary');
 			var result_summary = Ext.get('sn_result_summary');
@@ -286,6 +287,8 @@ Wizard = function(){
 					params: Ext.urlEncode({
 						sn_email: email,
 						sn_password: pw,
+						sn_disable_stats: disable_stats,
+						sn_sync: 1,
 						saveSettings: 1,
 						AJAX: 1
 					}),
