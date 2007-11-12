@@ -359,7 +359,7 @@ PlayerChooser = function(){
 
 			// set the browser frame to use the selected player
 			if (player && frames.browser) {
-				frames.browser.location = Utils.replacePlayerIDinUrl(frames.browser.location.href, playerid);
+				frames.browser.location = Utils.replacePlayerIDinUrl(frames.browser.location, playerid);
 			}
 
 			if (el = Ext.get('settingsHRef')) {

@@ -359,8 +359,18 @@ var Utils = function(){
 		},
 
 		replacePlayerIDinUrl : function(url, id){
-			var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
+			if (typeof url == 'object' && url.search != null) {
+				var args = Ext.urlDecode(url.search.replace(/^\?/, ''));
 
+				args.player = id;
+
+				if (args.playerid)
+					args.playerid = id;
+
+				return url.pathname + '?' + Ext.urlEncode(args) + url.hash;
+			}
+
+			var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
 			return (rExp.exec(url) ? url.replace(rExp, '=' + id) : url + '&player=' + id);
 		}
 
