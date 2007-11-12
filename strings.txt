@@ -717,7 +717,7 @@ ABOUT
 	EN	SqueezeCenter V.%s, written by:
 	ES	SqueezeCenter v. %s, escrito por:
 	FI	SqueezeCenter V.%s, tekijä:
-	FR	SqueezeCenter V.%s, écrit par :"
+	FR	SqueezeCenter V.%s, écrit par :
 	HE	SqueezeCenter V.%s, נוצר על-ידי:
 	IT	SqueezeCenter V.%s, scritto da:
 	JA	SqueezeCenter V.%s, 製作:
