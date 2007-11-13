@@ -37,7 +37,7 @@ sub handler {
 		my $currentPassword = preferences('server')->get('password');
 		my $salt = substr($currentPassword, 0, 2);
 	
-		if (defined($val) && $val ne '' && crypt($val, $salt) ne $currentPassword) {
+		if (defined($val) && $val ne '' && ($currentPassword eq '' || crypt($val, $salt) ne $currentPassword)) {
 			srand (time());
 			my $randletter = "(int (rand (26)) + (int (rand (1) + .5) % 2 ? 65 : 97))";
 			my $salt = sprintf ("%c%c", eval $randletter, eval $randletter);
