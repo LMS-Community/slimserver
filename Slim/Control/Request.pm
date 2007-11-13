@@ -66,6 +66,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
  N    playlists       tracks                      <startindex>                <numitems>       <tagged parameters>
  N    playlists       edit                        <tagged parameters>
  N    playlists       new                         <tagged parameters>
+ N    artwork         <tagged parameters>
 
 =head2 PLAYERS
 
@@ -593,6 +594,7 @@ sub init {
 	addDispatch(['version',        '?'],                                                               [0, 1, 0, \&Slim::Control::Queries::versionQuery]);
 	addDispatch(['wipecache'],                                                                         [0, 0, 0, \&Slim::Control::Commands::wipecacheCommand]);
 	addDispatch(['years',          '_index',         '_quantity'],                                     [0, 1, 1, \&Slim::Control::Queries::yearsQuery]);
+	addDispatch(['artwork',        '_artworkid'],                                                      [0, 0, 0, \&Slim::Control::Queries::showArtwork]);
 
 # NOTIFICATIONS
 	addDispatch(['client',         'disconnect'],                                                      [1, 0, 0, undef]);

@@ -3067,7 +3067,9 @@ sub songinfoQuery {
 				$log->error($base->{'actions'}{'go'});
 			} else {
 				# tags for songinfo page, ordered like SC7 Web UI
-				$tags = 'AlGyitodYfrTvun';
+				# j tag is '1' if artwork exists; it's put in front so it can act as a flag for "J"
+				# J tag gives icon-id for artwork
+				$tags = 'jAlGyJitodYfrTvun';
 			}
 			$request->addResult('base', $base);
 		}
@@ -3146,8 +3148,11 @@ sub songinfoQuery {
 				$end--;
 			}
 
+			my $artworkExists = 0; # artwork defaults to not being present
 			while (my ($key, $val) = each %{$hashRef}) {
-
+				if ( $key eq 'SHOW_ARTWORK' && $val > 0) {
+					$artworkExists++; # flag that artwork exists
+				}
 
 				my $suppress = 0;
 				if ($idx >= $start && $idx <= $end) {
@@ -3190,7 +3195,7 @@ sub songinfoQuery {
 									},
 								};
 							}
-							
+						
 							# album -- not multi, but _songData simulates it in menuMode so we can add our action here
 							elsif ($key eq 'ALBUM') {
 								$actions = {
@@ -3258,6 +3263,25 @@ sub songinfoQuery {
 							
 							$request->addResultLoop($loopname, $cnt, 'actions', $actions);
 						}
+						# special case: artwork, only if it exists
+						elsif ($key eq 'COVERART' && $artworkExists) {
+								$actions = {
+									'do' => {
+										'cmd' => ['artwork', $val],
+									},
+								};
+
+								$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+								$request->addResultLoop($loopname, $cnt, 'showBigArtwork', 1);
+
+								my $text = Slim::Utils::Strings::string('SHOW_ARTWORK');
+								$request->addResultLoop($loopname, $cnt, 'text', $text);
+
+								# we're going to skip to the next loop (and increment $cnt)
+								#  so we don't get the 'key: value' style menu item
+								$cnt++; next; 
+								
+						}
 						else {
 							# pretty print some of the stuff...
 							# it's done all over the place for the web interface:
@@ -3299,6 +3323,7 @@ sub songinfoQuery {
 								$request->addResultLoop($loopname, $cnt, 'actions', $actions);
 								$request->addResultLoop($loopname, $cnt, 'window', { 'menuStyle' => 'album' , 'titleStyle' => 'mymusic' } );
 							}
+						
 	
 							elsif ($key eq 'TYPE') {
 								$val = Slim::Utils::Strings::string($val);
@@ -3325,12 +3350,14 @@ sub songinfoQuery {
 								$val = $track->path();
 							}
 							elsif ( $key eq 'YEAR' && $val == 0 ||
-								$key eq 'COMMENT' && $val == 0) {
+								$key eq 'COMMENT' && $val == 0 ||
+								$key eq 'SHOW_ARTWORK' || # always suppress coverArtExists
+								$key eq 'COVERART' && !$artworkExists) {
 								# bug 5241, don't show YEAR or COMMENT if it's 0
 								$suppress = 1; 
 								# now there's one less in the loop
 								$count--;
-							}
+							} 
 							
 							my $style   = $key eq 'YEAR' ? 'item' : 'itemNoAction';
 							$request->addResultLoop($loopname, $cnt, 'style', $style) unless $suppress;
@@ -4140,7 +4167,7 @@ sub _songData {
 		  'f' => ['filesize',         'FILELENGTH',    'filesize'],         #filesize
 		#                                                                   #tag 
 		  'i' => ['disc',             'DISC',          'disc'],             #disc
-		  'j' => ['coverart',         '',              'coverArtExists'],   #cover
+		  'j' => ['coverart',         'SHOW_ARTWORK',              'coverArtExists'],   #cover
 		  'x' => ['remote',           '',              'remote'],           #remote 
 		#                                                                   #audio 
 		#                                                                   #audio_size 
@@ -4180,7 +4207,7 @@ sub _songData {
                                                                             
 		  'l' => ['album',             'ALBUM',           'album',         'title'],        #->album.title
 		  'q' => ['disccount',         '',                'album',         'discc'],        #->album.discc
-		  'J' => ["artwork_track_id",  '',                'album',         'artwork'],      #->album.artwork
+		  'J' => ["artwork_track_id",  'COVERART',                'album',         'artwork'],      #->album.artwork
 		  'C' => ['compilation',       'COMPILATION',     'album',         'compilation'],  #->album.compilation
 		  'X' => ['album_replay_gain', 'ALBUMREPLAYGAIN', 'album',         'replay_gain'],  #->album.replay_gain
                                                                             
@@ -4401,6 +4428,22 @@ sub _playAll {
 	$end--;
 	return($start, $end, $cnt);
 }
+
+# this is a silly little sub that allows jive cover art to be rendered in a large window
+sub showArtwork {
+
+	$log->debug("Begin showArtwork Function");
+	my $request = shift;
+
+	# get our parameters
+	my $id = $request->getParam('_artworkid');
+
+	$request->addResult('artworkId'  => $id);
+	$request->addResult('offset', 0);
+	$request->setStatusDone();
+
+}
+
 =head1 SEE ALSO
 
 L<Slim::Control::Request.pm>
