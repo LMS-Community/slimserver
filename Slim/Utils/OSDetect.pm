@@ -263,8 +263,6 @@ sub dirsFor {
 	# all Windows specific stuff
 	} elsif ($OS eq 'win') {
 
-		$Win32::TieRegistry::Registry->Delimiter('/');
-
 		if ($dir =~ /^(?:strings|revision|convert|types)$/) {
 
 			push @dirs, $Bin;

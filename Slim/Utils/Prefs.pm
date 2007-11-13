@@ -418,22 +418,26 @@ sub defaultAudioDir {
 
 	} elsif (Slim::Utils::OSDetect::OS() eq 'win') {
 
-		Slim::bootstrap::tryModuleLoad('Win32::Registry');
+		Slim::bootstrap::tryModuleLoad('Win32::TieRegistry');
 
 		if (!$@) {
 
-			my $folder;
+			my $swKey = $Win32::TieRegistry::Registry->Open(
+				'CUser/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/', 
+				{ 
+					Access => Win32::TieRegistry::KEY_READ(), 
+					Delimiter =>'/' 
+				}
+			);
 
-			if ($::HKEY_CURRENT_USER->Open("Software\\Microsoft\\Windows"
-				   ."\\CurrentVersion\\Explorer\\Shell Folders", $folder)) {
-
-				my ($type, $value);
-				if ($folder->QueryValueEx("My Music", $type, $value)) {
-					$path = $value;
-				} elsif ($folder->QueryValueEx("Personal", $type, $value)) {
-					$path = $value . '\\My Music';
+			if (defined $swKey) {
+				if (!($path = $swKey->{'My Music'})) {
+					if ($path = $swKey->{'Personal'}) {
+						$path = $path . '/My Music';
+					}
 				}
 			}
+
 		}
 	}
 
