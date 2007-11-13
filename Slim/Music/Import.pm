@@ -79,6 +79,11 @@ Launch the external (forked) scanning process.
 sub launchScan {
 	my ($class, $args) = @_;
 
+	if (!$prefs->get('wizardDone')) {
+		$log->info('Don\'t run the scanner before the setup wizard has been run.');
+		return 0;
+	}
+
 	# Pass along the prefsfile & logfile flags to the scanner.
 	if (defined $::prefsfile && -r $::prefsfile) {
 		$args->{"prefsfile=$::prefsfile"} = 1;

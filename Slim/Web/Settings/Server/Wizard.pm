@@ -68,9 +68,11 @@ sub handler {
 
 	# make sure we only enforce the wizard at the very first startup
 	if ($paramRef->{saveSettings}) {
+
 		$serverPrefs->set('wizardDone', 1);
 		$paramRef->{wizardDone} = 1;
 		delete $paramRef->{firstTimeRun};		
+
 	}
 
 	if (!$serverPrefs->get('wizardDone')) {
@@ -102,6 +104,7 @@ sub handler {
 	if ($paramRef->{saveLanguage}) {
 		$serverPrefs->set('language', $paramRef->{language});		
 	}
+
 	$paramRef->{prefs}->{language} = Slim::Utils::Strings::getLanguage();
 
 	foreach my $namespace (keys %prefs) {
@@ -140,7 +143,10 @@ sub handler {
 	if ($paramRef->{firstTimeRunCompleted}) {
 		$response->code(RC_MOVED_TEMPORARILY);
 		$response->header('Location' => '/');
+
+		main::checkDataSource();
 	}
+
 	else {
 		$paramRef->{showProxy} = $showProxy;
 		$paramRef->{showiTunes} = !Slim::Plugin::iTunes::Common->canUseiTunesLibrary();
