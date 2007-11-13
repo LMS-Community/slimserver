@@ -59,3 +59,16 @@ img#background {
 }
 
 #ctrlUndock button { font-size: 0; }
+
+
+/* fixes for the settings pages */
+#footer .titlebox_content { height: 25px; }
+ 	 
+.prefHelp {
+	left: -20px;
+	top: 3px;
+}
+ 	 
+.settingGroup .prefHead {
+	left: -300px;
+}
