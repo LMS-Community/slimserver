@@ -1071,6 +1071,15 @@ sub scanWMAStreamDone {
 
 		if ( scalar @{ $args->{'foundItems'} } == 1 ) {
 
+			# if $type is another audio type such as MP3, try to play it using playlist play
+			my $filetype = Slim::Music::Info::mimeToType($type);
+			if ( Slim::Music::Info::isSong( undef, $filetype ) ) {
+				$log->debug( "Stream returned non-WMA audio content-type: $type ($filetype), trying to play" );
+				$args->{'url'} =~ s/^mms/http/;
+				$args->{'client'}->execute( [ 'playlist', 'play', $args->{'url'} ] );
+				return;
+			}
+			
 			$log->debug("Stream returned non-audio content-type: $type, treating as ASX redirector");
 		
 			# Re-fetch as a playlist.
@@ -1085,6 +1094,16 @@ sub scanWMAStreamDone {
 			return;
 		}
 		else {
+			
+			# if $type is another audio type such as MP3, try to play it using playlist play
+			my $filetype = Slim::Music::Info::mimeToType($type);
+			if ( Slim::Music::Info::isSong( undef, $filetype ) ) {
+				$log->debug( "Stream returned non-WMA audio content-type: $type ($filetype), trying to play" );
+				$args->{'url'} =~ s/^mms/http/;
+				$args->{'client'}->execute( [ 'playlist', 'play', $args->{'url'} ] );
+				return;
+			}
+			
 			# Skip the stream with the bad content-type, and try the next stream
 			$log->debug("Stream returned non-audio content-type: $type, skipping to the next stream.");
 			
