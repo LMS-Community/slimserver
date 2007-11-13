@@ -76,13 +76,12 @@ a.x-menu-item:hover {
 .x-tabs-strip .x-tabs-right,
 .x-tabs-strip .on .x-tabs-left,
 .x-tabs-strip .on .x-tabs-right {
-		background-image: url(html/images/slim-ext/tab-sprite.gif);
+	background-image: url(html/images/slim-ext/tab-sprite.gif);
 }
 
 .x-tabs-strip .x-tabs-text {
 	font-family: sans-serif;
 	font-weight: normal;
-	padding-top: 2px;
 }
 
 .x-tabs-strip .x-tabs-text,
