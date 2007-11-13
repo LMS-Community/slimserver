@@ -1038,7 +1038,7 @@ Player = function(){
 						minWidth: 250
 					});
 
-/*					el = Ext.get('nowPlayingIcon').child('img:first');
+					el = Ext.get('nowPlayingIcon');
 					Ext.QuickTips.unregister(el);
 					Ext.QuickTips.register({
 						target: el,
@@ -1046,7 +1046,7 @@ Player = function(){
 						text: popup,
 						minWidth: 250
 					});
-	*/			}
+				}
 			}
 
 			// empty playlist

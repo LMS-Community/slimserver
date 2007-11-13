@@ -611,7 +611,10 @@ div.thumbwrap {
 	padding-bottom: 4px;
 }
 
-.browsedbControls #search { background: white url(html/images/search.gif) no-repeat top right; }
+.browsedbControls #search {
+	width: 185px;
+	background: white url(html/images/search.gif) no-repeat 170px -1px;
+}
 
 form#advSearchForm.resultsPage {
 	display: none;
@@ -856,9 +859,18 @@ form#advSearchForm.resultsPage {
 	background: url(html/images/track_info.gif) no-repeat 0 -32px;
 }
 
+#collapsedPlayerPanel .icon {
+	position: absolute;
+	left: 5px;
+	top: 1px;
+	width: 10px;
+	height: 15px;
+	background: transparent url(html/images/icon_nowplaying_collapsed.gif) no-repeat top left;
+}
+
 #ctrlCurrentSongInfoCollapsed {
 	vertical-align: middle;
-	margin: 0 0 0 10px;
+	margin: 0 0 0 22px;
 	overflow: hidden;
 	white-space: nowrap;
 }

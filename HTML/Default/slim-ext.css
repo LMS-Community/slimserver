@@ -21,6 +21,9 @@
 	font-size: 11px;
 }
 
+.x-form-focus, textarea.x-form-focus {
+	border-color: #008d89;
+}
 
 /* drop down menu */
 .x-menu {
@@ -54,16 +57,37 @@ a.x-menu-item:hover {
 }
 
 /* tabs and tab panel (settings) */
+.x-tabs-body, .x-tabs-wrap {
+	border-color: #666666;
+}
+
+.x-tabs-strip .on .x-tabs-inner {
+	padding-bottom:3px;
+}
+.x-tabs-strip .x-tabs-inner {
+	padding-bottom: 2px;
+}
+
 .x-layout-panel .x-tabs-wrap {
 	background-image: none;
 }
 
-.x-tabs-strip .x-tabs-text {
-	font-family: sans-serif;
+.x-tabs-strip .x-tabs-left,
+.x-tabs-strip .x-tabs-right,
+.x-tabs-strip .on .x-tabs-left,
+.x-tabs-strip .on .x-tabs-right {
+		background-image: url(html/images/slim-ext/tab-sprite.gif);
 }
 
+.x-tabs-strip .x-tabs-text {
+	font-family: sans-serif;
+	font-weight: normal;
+	padding-top: 2px;
+}
+
+.x-tabs-strip .x-tabs-text,
 .x-tabs-strip .on .x-tabs-text {
-	color: #666666;
+	color: #dedede;
 }
 
 
@@ -151,4 +175,12 @@ a.x-menu-item:hover {
 	background-image: url(html/images/slim-ext/se-handle.gif);
 	height: 7px;
 	width: 7px;
+}
+
+
+/* tool tips */
+.x-tip .x-tip-top, .x-tip .x-tip-top-left, .x-tip .x-tip-top-right, 
+.x-tip .x-tip-ft, .x-tip .x-tip-ft-left, .x-tip .x-tip-ft-right,
+.x-tip .x-tip-bd-left, .x-tip .x-tip-bd-right{
+	background-image: url(html/images/slim-ext/tip-sprite.gif);
 }
