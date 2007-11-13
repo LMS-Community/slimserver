@@ -957,17 +957,16 @@ Player = function(){
 				Ext.get('ctrlSongCount').update(result.playlist_tracks);
 				Ext.get('ctrlPlayNum').update(parseInt(result.playlist_cur_index) + 1);
 
+				currentArtist = '';						
 				for (var x = 0; x < contributorRoles.length; x++) {
 					if (result.playlist_loop[0][contributorRoles[x]]) {
 						var contributors = result.playlist_loop[0][contributorRoles[x]].split(',');
 						var ids = result.playlist_loop[0][contributorRoles[x] + '_ids'] ? result.playlist_loop[0][contributorRoles[x] + '_ids'].split(',') : new Array();
 						var artist, id;
-	
-						currentArtist = '';						
-	
+
 						for (var i = 0; i < contributors.length; i++) {
 							artist = contributors[i].replace(/^\w/, '');
-	
+
 							if (currentArtist)
 								currentArtist += ', ';
 	
@@ -975,7 +974,7 @@ Player = function(){
 									? '<a href="' + webroot + 'browsedb.html?hierarchy=contributor,album,track&amp;contributor.id=' + ids[i] + '&amp;level=1&amp;player=' + player + '" target="browser">' + contributors[i] + '</a>'
 									: contributors[i];
 						}
-	
+
 						Ext.get('ctrlCurrentArtist').update(currentArtist);
 	
 						currentTitle += ' ' + strings['by'] + ' ' + currentArtist;
