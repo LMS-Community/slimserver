@@ -803,7 +803,7 @@ Player = function(){
 					minWidth: 16,
 					scope: this,
 					handler: function(){
-						window.open(webroot + 'status_header.html', 'playerControl', 'width=500,height=100,status=no,menubar=no,location=no,resizable=yes');
+						window.open(webroot + 'status_header.html?player=' + player, 'playerControl', 'width=500,height=100,status=no,menubar=no,location=no,resizable=yes');
 					}
 				});
 			}
@@ -1240,30 +1240,21 @@ Player = function(){
 			Utils.setCookie('SqueezeCenter-expandPlayerControl', doExpand);
 
 			// resize the window if in undocked mode
-			if (!Ext.get('ctrlUndock')) {
-				var width = Ext.get(document.body).getWidth() + 10;
-				var height = doExpand ? 178 : 102;
+			if (!Ext.get('ctrlUndock').isVisible()) {
+				var width = Ext.get(document.body).getWidth();
+				var height = height = doExpand ? 190 : 100
 
-				if (Ext.isGecko && Ext.isWindows) {
-					width += 6;
-					height += 15;
-				}
-				else if (Ext.isGecko && Ext.isLinux) {
-					height -= 10;
-				}
-				else if (Ext.isSafari && doExpand) {
-					height -= 10;
-				}
-				else if (Ext.isGecko && Ext.isMac) {
-					height -= 15;
-				}
-				else if (Ext.isIE7) {
+				if (Ext.isIE7) {
 					width += 20;
 					height += 60;
 				}
-				else if (Ext.isIE) {
-					width -= 2;
-					height += 15;
+				else if (Ext.isIE || (Ext.isGecko && Ext.isWindows)) {
+					width += 8;
+					height += 20;
+				}
+				else if (Ext.isOpera && Ext.isWindows) {
+					width += 12;
+					height += 20;
 				}
 
 				window.resizeTo(width, height);

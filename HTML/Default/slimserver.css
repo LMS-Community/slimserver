@@ -373,7 +373,11 @@ img#background { position:absolute; }
 
 
 /* playlist panel (right) */
-#playlistCommands { text-align: right; margin-right: 10px; }
+#playlistCommands {
+	text-align: right;
+	margin-right: 10px;
+}
+
 #playlistCommands table { display: inline; }
 
 #btnPlaylistToggleArtwork {
