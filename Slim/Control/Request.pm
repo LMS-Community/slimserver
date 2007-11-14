@@ -317,7 +317,7 @@ my $request = Slim::Control::Request::executeRequest($client, ['stop']);
 
       my $cmd = $request->getRequestString();
 
-      msg("myCallbackFunction called for cmd $cmd\n");
+      $log->info("myCallbackFunction called for cmd $cmd\n");
  }
 
 
@@ -2171,13 +2171,13 @@ sub dump {
 		$str .= " from " . $self->source() ." ";
 	}
 
-	$str .= ' (' . $self->getStatusText() . ")\n";
+	$str .= ' (' . $self->getStatusText() . ")";
 
-	msg($str);
+	$log->info($str);
 
 	while (my ($key, $val) = each %{$self->{'_params'}}) {
 
-    		msg("   Param: [$key] = [$val]\n");
+			$log->info("   Param: [$key] = [$val]");
  	}
 
 	while (my ($key, $val) = each %{$self->{'_results'}}) {
@@ -2186,7 +2186,7 @@ sub dump {
 
 			my $count = scalar @{${$self->{'_results'}}{$key}};
 
-			msg("   Result: [$key] is loop with $count elements:\n");
+			$log->info("   Result: [$key] is loop with $count elements:");
 
 			# loop over each elements
 			for (my $i = 0; $i < $count; $i++) {
@@ -2194,12 +2194,12 @@ sub dump {
 				my $hash = ${$self->{'_results'}}{$key}->[$i];
 
 				while (my ($key2, $val2) = each %{$hash}) {
-					msg("   Result:   $i. [$key2] = [$val2]\n");
+					$log->info("   Result:   $i. [$key2] = [$val2]");
 				}	
 			}
 
 		} else {
-			msg("   Result: [$key] = [$val]\n");
+			$log->info("   Result: [$key] = [$val]");
 		}
  	}
 }
