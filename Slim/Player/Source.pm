@@ -691,7 +691,7 @@ sub underrun {
 	my $underrunCallback = sub {
 		my $playmode = $client->playmode();
 		if ( $playmode eq 'pause' ) {
-			$playmode = $client->resumePlaymode();
+			$playmode = $client->resumePlaymode() || 'play';
 		}
 		
 		if (Slim::Player::Sync::isSynced($client)) {
