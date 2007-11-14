@@ -21,7 +21,16 @@
 	position: relative;
 }
 
-#playlistTab, #infoTab, .infoTab {
+#infoTab {
+	height: 24px;
+	padding-top: 0;
+}
+
+#playlistTab {
 	height: 21px;
 	padding-top: 0;
+}
+
+#playlistCommandSpacer {
+	margin-top: 3px;
 }

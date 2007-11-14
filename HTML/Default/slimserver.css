@@ -43,7 +43,6 @@ a:hover, .link:hover,
 .homeMenuItem a,
 .currentTrackInfo a,
 #crumblist a,
-#playlistToggleArtwork,
 .browseItemLink,
 .browsedbListItem a, 
 #footer_content a {
@@ -276,16 +275,20 @@ img#background { position:absolute; }
 
 #titleRight {
 	position: absolute;
-	right: 20px;
-	top: 0px;
+	left: 10px;
+	bottom: 0px;
 }
 
 #infoTab, #playlistTab {
-	height: 15px;
+	height: 18px;
 	text-align: center;
-	padding-top: 5px;
+	padding-top: 8px;
 }
 
+#playlistTab {
+	padding-top: 5px;
+	padding-bottom: 3px;
+}
 
 .pagetitle {
 	padding-left: 10px;
@@ -378,18 +381,13 @@ img#background { position:absolute; }
 
 
 /* playlist panel (right) */
-#playlistCommands { text-align: center; }
+#playlistCommands { text-align: right; margin-right: 10px; }
 #playlistCommands table { display: inline; }
 
-#playlistToggleArtwork img {
-	height: 19px;
-	width: 56px;
-	background: url(html/images/btn_toggle_playlist_artwork.gif) no-repeat 0 -38px;
-	vertical-align: bottom;
-}
-
-#playlistToggleArtwork img.showCover {
-	background: url(html/images/btn_toggle_playlist_artwork.gif) no-repeat 0 0;
+#btnPlaylistToggleArtwork {
+	position: absolute;
+	left: 12px;
+	bottom: 12px;
 }
 
 .btn-playlist-hide-artwork, .btn-playlist-hide-artwork button,
@@ -415,16 +413,9 @@ img#background { position:absolute; }
 	background: transparent url(html/images/btn_playlist_clear.gif) no-repeat 0 0;
 }
 
-#btnPlaylistShowArtwork .x-btn-click button,
-#btnPlaylistShowArtwork .x-btn-over button,
 #btnPlaylistSave .x-btn-over button,
 #btnPlaylistClear .x-btn-over button {
 	background-position: 0 -19px;
-}
-
-#btnPlaylistHideArtwork .x-btn-click button,
-#btnPlaylistHideArtwork .x-btn-over button {
-	background-position: 0 -57px;
 }
 
 #btnPlaylistSave .x-btn-click button,

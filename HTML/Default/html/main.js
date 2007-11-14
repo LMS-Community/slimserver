@@ -615,21 +615,41 @@ Playlist = function(){
 				tooltip = el.dom.innerHTML;
 
 			if (items.length > 0) {
-				if (Ext.get('btnPlaylistShowArtwork')) {
-					new Slim.Button('btnPlaylistShowArtwork', {
-						cls: 'btn-playlist-show-artwork',
-						tooltip: strings['show_artwork'],
-						minWidth: 56,
-						handler: Playlist.showCoverArt
+				if (Ext.get('btnPlaylistToggleArtwork')) {
+					var noCover = Utils.getCookie('SqueezeCenter-noPlaylistCover') == '1';
+					var menu = new Ext.menu.Menu({
+						items: [
+							new Ext.menu.CheckItem({
+								text: strings['hide_artwork'],
+								cls: 'albumList',
+								handler: Playlist.hideCoverArt,
+								group: 'noCover',
+								checked: noCover
+							}),
+							new Ext.menu.CheckItem({
+								text: strings['show_artwork'],
+								cls: 'albumXList',
+								handler: Playlist.showCoverArt,
+								group: 'noCover',
+								checked: !noCover
+							})
+						],
+						shadow: Ext.isGecko && Ext.isMac ? true : 'sides'
 					});
-				}
 
-				if (Ext.get('btnPlaylistHideArtwork')) {
-					new Slim.Button('btnPlaylistHideArtwork', {
-						cls: 'btn-playlist-hide-artwork',
-						tooltip: strings['hide_artwork'],
-						minWidth: 56,
-						handler: Playlist.hideCoverArt
+					new Ext.SplitButton('btnPlaylistToggleArtwork', {
+						icon: webroot + 'html/images/albumlist' + (noCover ? '2' : '0')  + '.gif',
+						cls: 'x-btn-icon',
+						menu: menu,
+						handler: function(ev){
+							if(this.menu && !this.menu.isVisible()){
+								this.menu.show(this.el, this.menuAlign);
+							}
+							this.fireEvent('arrowclick', this, ev);
+						},
+						tooltip: strings['coverart'],
+						arrowTooltip: strings['coverart'],
+						tooltipType: 'title'
 					});
 				}
 

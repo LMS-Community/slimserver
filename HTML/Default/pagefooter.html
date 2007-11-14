@@ -1,7 +1,12 @@
 			</div>
 		</div>
 
-		[% IF infoTab %]<div id="infoTab" class="infoTab">[% infoTab %]</div>[% END %]
+		[% IF infoTab || titleRight %]
+			<div id="infoTab" class="infoTab">
+				[% IF titleRight %]<span id="titleRight">[% titleRight %]</span>[% END %]
+				[% IF infoTab; infoTab; END %]
+			</div>
+		[% END %]
 
 	</body>
 </html>

@@ -27,8 +27,12 @@ img#background {
 	bottom: 3px;
 }
 
-#infoTab, #playlistTab {
-	height: 22px;
+#infoTab {
+	height: 25px;
+}
+
+#btnPlaylistToggleArtwork {
+	bottom: 18px;
 }
 
 /* browsing & navigation */
