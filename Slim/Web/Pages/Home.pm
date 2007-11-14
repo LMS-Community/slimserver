@@ -132,20 +132,20 @@ sub home {
 	$params->{additionalLinkOrder} = {};
 	
 	for my $menu ( keys %Slim::Web::Pages::additionalLinks ) {
-	    my @sorted = sort {
-	        ( 
-	            ( $prefs->get("rank-$b") || 0 ) <=> 
-    		    ( $prefs->get("rank-$a") || 0 )
-    		)
-    		|| 
-    		(
-    		    lc( Slim::Buttons::Home::cmpString($client, $a) ) cmp
-    		    lc( Slim::Buttons::Home::cmpString($client, $b) )
-    		)
-    	} 
-    	keys %{ $Slim::Web::Pages::additionalLinks{ $menu } };
+		my @sorted = sort {
+			( 
+				( $prefs->get("rank-$b") || 0 ) <=> 
+				( $prefs->get("rank-$a") || 0 )
+			)
+			|| 
+			(
+				lc( Slim::Buttons::Home::cmpString($client, $a) ) cmp
+				lc( Slim::Buttons::Home::cmpString($client, $b) )
+			)
+		} 
+		keys %{ $Slim::Web::Pages::additionalLinks{ $menu } };
 
-        $params->{additionalLinkOrder}->{ $menu } = \@sorted;
+		$params->{additionalLinkOrder}->{ $menu } = \@sorted;
 	}
 	
 	$params->{additionalLinks} = \%Slim::Web::Pages::additionalLinks;
