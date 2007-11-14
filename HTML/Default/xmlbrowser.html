@@ -11,7 +11,7 @@
 [% pwd_list = [];
 	FOREACH crumb IN crumb;
 		crumbItem = BLOCK %]
-			<a href="[% path %]?[% searchquery %]player=[% playerURI %]&amp;index=[% crumb.index %]&amp;homeCategory=[% homeCategory %]">[% crumb.name %]</a>
+			<a href="[% path %]?[% searchquery %]player=[% playerURI %]&amp;index=[% crumb.index %]">[% crumb.name %]</a>
 		[% END %]
 		[% pwd_list.push(crumbItem) %]
 	[% END %]
@@ -60,11 +60,11 @@
 	[%- BLOCK gencontrol -%]
 		[% IF item.favorites == 1 %]
 			[% WRAPPER favaddlink noTarget=1 %]
-				href="[% path %]?action=favadd&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]&amp;homeCategory=[% homeCategory %]"
+				href="[% path %]?action=favadd&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]"
 			[% END %]
 		[% ELSIF item.favorites == 2 %]
 			[% WRAPPER favdellink noTarget=1 %]
-				href="[% path %]?action=favdel&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]&amp;homeCategory=[% homeCategory %]"
+				href="[% path %]?action=favdel&index=[% index _ (start + loop.index) %]&amp;start=[% pageinfo.startitem %]&amp;player=[% player | uri %]"
 			[% END %]
 		[% END %]
 
@@ -102,14 +102,13 @@
 					<input name="submit" type="submit" class="stdclick" value="[% "SEARCH" | string %]"><p>
 					<input type="hidden" value="[% player %]" name="player" />
 					<input type="hidden" value="[% index _ (start + loop.index) %]" name="index" />
-					<input type="hidden" value="[% homeCategory %]" name="homeCategory" />
 				</form>
 			[% ELSE %]
 				[%- WRAPPER contentitem controls = 'gencontrol' %]
 					[% IF item.weblink %]
 					<a href="[% item.weblink %]" target="_blank">
 					[% ELSIF item.type != 'text' %]
-					<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]&amp;homeCategory=[% homeCategory %]" class="browseItemLink">
+					<a href="[% path %]?[% searchquery %]index=[% index _ (start + loop.index) %]&amp;player=[% player | uri %]" class="browseItemLink">
 					[% END %]
 					[% item.name || item.title %]
 					[% IF item.weblink || item.type != 'text' %]

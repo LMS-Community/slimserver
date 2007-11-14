@@ -1,6 +1,5 @@
 [% pagetitle = 'RADIO_TUNEIN' | string %]
 [% pageicon = 'RADIO' %]
-[% homeCategory = 'RADIO' %]
 [% pageHeaderMenu = BLOCK %]
 	/ [% 'RADIO_TUNEIN' | string %]
 [% END %]
@@ -37,7 +36,7 @@
 	</script>
 [% END %]
 
-<form name="tune" method="get" id="tune" action="[% webroot %]tunein.html?homeCategory=RADIO">
+<form name="tune" method="get" id="tune" action="[% webroot %]tunein.html">
 	<input type="hidden" name="player" value="[% player %]">
 	[% 'RADIO_TUNEIN_RADIOURL' | string %]
 	<input type="text" class="stdedit" name="url" id="url" size="40">

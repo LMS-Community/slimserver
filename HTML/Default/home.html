@@ -30,19 +30,19 @@ ELSE %]
 		FOREACH item = orderedLinks;
 			IF additionalLinks.browse.exists(item);
 				link = { key=item, value=additionalLinks.browse.$item };
-				PROCESS menuItem category='my_music';
+				PROCESS menuItem;
 			END;
 		END;
 		FOREACH link = additionalLinks.browse;
 			IF link.key != 'FAVORITES' && !orderedLinks.grep(link.key).size;
-				PROCESS menuItem category='my_music';
+				PROCESS menuItem;
 			ELSIF link.key == 'FAVORITES';
 				useFavorites = 1;
 			END;
 		END;
 		FOREACH link = additionalLinks.search;
 			IF link.key == 'SEARCHMUSIC';
-				PROCESS menuItem category='my_music' control='<input type="text" id="search" class="x-form-focus" size="30">';
+				PROCESS menuItem control='<input type="text" id="search" class="x-form-focus" size="30">';
 			END;
 		END;
 	END;
@@ -53,12 +53,12 @@ ELSE %]
 			IF additionalLinks.radio.exists(item);
 				link.value = additionalLinks.radio.$item;
 				link.key = item;
-				PROCESS menuItem category='radio';
+				PROCESS menuItem;
 			END;
 		END;
 		FOREACH link = additionalLinks.radio;
 			IF !orderedLinks.grep(link.key).size;
-				PROCESS menuItem category='radio';
+				PROCESS menuItem;
 			END;
 		END;
 		additionalLinks.icons.RADIO_TUNEIN.url = 'html/images/ServiceProviders/tuneinurl.png';
@@ -67,7 +67,7 @@ ELSE %]
 			[% WRAPPER playlink %]onclick="Utils.processPlayerCommand({ params: ['playlist', 'play', Ext.get('tuneinurl').dom.value] });"[% END %]
 			[% WRAPPER addlink %]onclick="Utils.processPlayerCommand({ params: ['playlist', 'add', Ext.get('tuneinurl').dom.value] });"[% END %]
 		[% END;
-		PROCESS menuItem category='radio' link={ key='RADIO_TUNEIN', value='tunein.html?' };
+		PROCESS menuItem link={ key='RADIO_TUNEIN', value='tunein.html?' };
 	END;
 
 	music_on_demandItems = BLOCK;
@@ -76,22 +76,22 @@ ELSE %]
 			IF additionalLinks.music_on_demand.exists(item);
 				link.value = additionalLinks.music_on_demand.$item;
 				link.key = item;
-				PROCESS menuItem category='music_on_demand';
+				PROCESS menuItem;
 			END;
 		END;
 		FOREACH link = additionalLinks.music_on_demand;
 			IF !orderedLinks.grep(link.key).size;
-				PROCESS menuItem category='music_on_demand';
+				PROCESS menuItem;
 			END;
 		END;
 		IF additionalLinks.radio.exists('PLUGIN_PANDORA_MODULE_NAME');
-			PROCESS menuItem category='radio' link={ key='PLUGIN_PANDORA_MODULE_NAME', value=additionalLinks.radio.PLUGIN_PANDORA_MODULE_NAME };
+			PROCESS menuItem link={ key='PLUGIN_PANDORA_MODULE_NAME', value=additionalLinks.radio.PLUGIN_PANDORA_MODULE_NAME };
 		END;
 	END;
 
 	pluginsItems = BLOCK;
 		FOREACH link = additionalLinks.plugins;
-			PROCESS menuItem category='plugins';
+			PROCESS menuItem;
 		END;
 	END;
 
@@ -105,7 +105,7 @@ ELSE %]
 					[% IF expandable %]
 						<img class="disclosure_home" src="[% webroot %]html/images/spacer.gif"/>
 					[% ELSE %]
-						<a href="[% link.value %]player=[% player %][% IF category; "&amp;homeCategory=" _ category; END %][% IF expandable; "&amp;page=" _ expandable; END %]" class="browseItemLink">
+						<a href="[% link.value %]player=[% player %][% IF expandable; "&amp;page=" _ expandable; END %]" class="browseItemLink">
 					[% END %]
 						[% IF (page == 'radio' || page == 'music_on_demand') && additionalLinks.icons.${link.key}.url %]
 							<span class="browseCover">
@@ -195,7 +195,7 @@ ELSE %]
 		[% pagetitle = "HOME" | string %]
 		[% menu = BLOCK %]
 		<div class="homeMenuSection" id="homeMenu">
-			[% category=''; PROCESS menuItem link.key="MY_MUSIC" link.value="home.html?" expandable="my_music" %]
+			[% PROCESS menuItem link.key="MY_MUSIC" link.value="home.html?" expandable="my_music" %]
 			<div id="MY_MUSIC_expanded" class="expandableHomeMenuItem">[%- my_musicItems -%]</div>
 		
 			[% IF additionalLinks.radio %]
@@ -215,7 +215,7 @@ ELSE %]
 					END;
 				END;
 
-				PROCESS menuItem category='FAVORITES' expandable=1 
+				PROCESS menuItem expandable=1 
 					link = { 
 						key = 'FAVORITES',
 						value = additionalLinks.browse.FAVORITES
@@ -239,7 +239,7 @@ ELSE %]
 							END;
 						END;
 	
-						PROCESS menuItem category='' 
+						PROCESS menuItem 
 							link = {
 								key = entry.text,
 								value = webroot _ "plugins/Favorites/index.html?&amp;index=" _ loop.index _ "&amp;player=" _ playerURI
@@ -250,7 +250,7 @@ ELSE %]
 			[% END %]
 
 			[% IF additionalLinks.plugins %]
-				[% PROCESS menuItem link.key="PLUGINS" link.value="home.html?" expandable="plugins" category=''; expandable = 0 %]
+				[% PROCESS menuItem link.key="PLUGINS" link.value="home.html?" expandable="plugins"; expandable = 0 %]
 				<div id="PLUGINS_expanded" class="expandableHomeMenuItem">[%- pluginsItems -%]</div>
 			[% END %]
 		</div>

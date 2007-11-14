@@ -17,7 +17,7 @@
 [% pagetitle = 'ADVANCEDSEARCH' | string %]
 [% pageicon = 'ADVANCEDSEARCH' %]
 [% pwd_list = BLOCK %]
-<a id="advLink" href="advanced_search.html?player=[% playerURI %][% IF homeCategory %]&amp;homeCategory=[% homeCategory; END %]">[% "ADVANCEDSEARCH" | string %]</a>
+<a id="advLink" href="advanced_search.html?player=[% playerURI %]">[% "ADVANCEDSEARCH" | string %]</a>
 [% END %]
 [% IF NOT ajaxUpdate; PROCESS pageheader.html; END %]
 [% FILTER null %]
@@ -51,7 +51,6 @@
 [% END %]
 	<form action="advanced_search.html" method="GET" name="searchForm" id="advSearchForm" [% IF resultClass || browse_items.size %]class="[% resultClass || "resultsPage" %]"[% END %]><br>
 	<input type="hidden" value="[% player %]" name="player">
-	[% IF homeCategory %]<input type="hidden" value="[% homeCategory %]" name="homeCategory">[% END %]
 
 	<table class="border" border="0" cellpadding="3" cellspacing="1" width="100%">
 		<tbody>

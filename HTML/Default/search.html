@@ -1,5 +1,4 @@
 [% pagetitle = 'Search' %]
-[% homeCategory = 'MY_MUSIC' %]
 [% extJsScripts = BLOCK %]
 	<script type="text/javascript">
 		Ext.EventManager.onDocumentReady(function(){
@@ -28,7 +27,7 @@
 		<table><tr>
 			<td><input type="text" id="livesearch" name="query" size="50" value="[% query %]" autocomplete="off"/></td>
 			<td><span id="searchButton"></span></td>
-			<td id="advSearchLink" class="link"><a href="[% webroot %]advanced_search.html?homeCategory=my_music&amp;player=[% playerid %]">[% "ADVANCEDSEARCH" | string %]</a></td>
+			<td id="advSearchLink" class="link"><a href="[% webroot %]advanced_search.html?player=[% playerid %]">[% "ADVANCEDSEARCH" | string %]</a></td>
 		</tr></table>
 		<input type="hidden" value="1" name="manualSearch">
 		<input type="hidden" value="[% player %]" name="player">
