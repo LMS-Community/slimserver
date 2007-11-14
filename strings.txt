@@ -2571,7 +2571,7 @@ SETUP_GROUP_PLUGINS
 	EN	Extras
 
 SETUP_GROUP_PLUGINS_DESC
-	EN	SqueezeCenter includes some extras that you can use with your remote or in the web interface. You can choose to enable or disable individual plugins using the buttons below. 
+	EN	SqueezeCenter includes some extras that you can use with your remote or in the web interface. You can choose to enable or disable individual extras using the buttons below. 
 
 SETUP_GROUP_FORMATS_CONVERSION
 	CS	Nastavení konverze formátů
