@@ -312,6 +312,46 @@ sub details {
 	return \%osDetails;
 }
 
+
+=head2 getProxy( )
+	Try to read the system's proxy setting by evaluating environment variables,
+	registry and browser settings
+=cut
+
+sub getProxy {
+	my $proxy = '';
+
+	# on Windows read Internet Explorer's proxy setting
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
+		my $ieSettings = $Win32::TieRegistry::Registry->Open(
+			'CUser/Software/Microsoft/Windows/CurrentVersion/Internet Settings',
+			{ 
+				Access => Win32::TieRegistry::KEY_READ(), 
+				Delimiter =>'/' 
+			}
+		);
+
+		if (defined $ieSettings && $ieSettings->{'ProxyEnable'}) {
+			$proxy = $ieSettings->{'ProxyServer'};
+		}
+
+	}
+	
+	if (!$proxy) {
+		$proxy = $ENV{'http_proxy'};
+		my $proxy_port = $ENV{'http_proxy_port'};
+
+		# remove any leading "http://"
+		if($proxy) {
+			$proxy =~ s/http:\/\///i;
+			$proxy = $proxy . ":" .$proxy_port if($proxy_port);
+		}
+	}
+
+	return $proxy;
+}
+
+
 =head2 isDebian( )
 
  The Debian package has some specific differences for file locations.

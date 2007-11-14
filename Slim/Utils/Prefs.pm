@@ -161,7 +161,7 @@ sub init {
 		'disabledextensionsplaylist' => '',
 		'disabledformats'       => [],
 		# Server Settings - Networking
-		'webproxy'              => '',
+		'webproxy'              => \&Slim::Utils::OSDetect::getProxy,
 		'httpport'              => 9000,
 		'bufferSecs'            => 3,
 		'remotestreamtimeout'   => 5,
