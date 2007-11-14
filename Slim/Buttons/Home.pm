@@ -510,9 +510,11 @@ sub cmpString {
 	my $client = shift;
 	my $string = shift;
 
-	if (Slim::Utils::Strings::stringExists($string)) {
+	if ( Slim::Utils::Strings::stringExists($string) ) {
 
-		return $client->string($string);
+		return defined $client
+			? $client->string($string)
+			: Slim::Utils::Strings::string($string);
 	}
 
 	return $string;
