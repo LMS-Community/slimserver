@@ -894,10 +894,7 @@ form#advSearchForm.resultsPage {
 }
 
 #songInfoPlayLinks {
-	position: absolute;
-	bottom: 5px;
-	left: 160px;
-	z-index: 9999;
+	margin-bottom: 10px;
 }
 
 #xmlInfoPlayLinks {
@@ -919,7 +916,7 @@ form#advSearchForm.resultsPage {
 #linkedSongInfoItems {
 	top: 0px;
 	padding-left: 160px;
-	height: 150px;
+	height: 155px;
 	position: relative;
 }
 

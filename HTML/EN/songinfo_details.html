@@ -10,6 +10,8 @@
 	[% END %]
 
 	<div id="linkedSongInfoItems">
+		[% IF songInfoPlayLinks; songInfoPlayLinks; END %]
+
 		[% FOREACH role = itemobj.contributorRoles.sort %]
 	
 			[% contributors = itemobj.contributorsOfType(role) %]
@@ -51,7 +53,6 @@
 			[% PROCESS songInfoItem title = "YEAR" %]
 		[% END %]
 
-		[% IF songInfoPlayLinks; songInfoPlayLinks; END %]
 	</div>
 
 	[% IF itemobj.disc %] 
