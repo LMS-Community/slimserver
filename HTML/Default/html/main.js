@@ -1356,7 +1356,7 @@ Ext.extend(Slim.PlayButton, Slim.Button);
 
 Slim.RepeatButton = function(renderTo, config){
 	Ext.apply(config, {
-		tooltip: strings['repeat0'],
+		tooltip: strings['repeat'],
 		cmd: null,
 		scope: this,
 
@@ -1384,7 +1384,6 @@ Slim.RepeatButton = function(renderTo, config){
 		updateState: function(newState){
 			this.state = newState;
 			this.setIcon('');
-			this.setTooltip(strings['repeat' + this.state]);
 			this.setClass('btn-repeat-' + this.state);
 		},
 
@@ -1398,7 +1397,7 @@ Ext.extend(Slim.RepeatButton, Slim.Button);
 
 Slim.ShuffleButton = function(renderTo, config){
 	Ext.apply(config, {
-		tooltip: strings['shuffle0'],
+		tooltip: strings['shuffle'],
 		scope: this,
 
 		handler: function(){
@@ -1423,7 +1422,6 @@ Slim.ShuffleButton = function(renderTo, config){
 		updateState: function(newState){
 			this.state = newState;
 			this.setIcon('');
-			this.setTooltip(strings['shuffle' + this.state]);
 			this.setClass('btn-shuffle-' + this.state);
 		},
 
