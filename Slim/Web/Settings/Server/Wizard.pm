@@ -32,7 +32,6 @@ sub new {
 	my $class = shift;
 
 	# try to connect to squeezenetwork.com to test for the need of proxy settings
-	# just don't start the wizard before the request has been answered/failed
 	my $http = Slim::Networking::SimpleAsyncHTTP->new(
 		sub {
 			my $http = shift;
@@ -42,6 +41,9 @@ sub new {
 		sub {
 			my $http = shift;
 			$log->error("Couldn't connect to squeezenetwork.com - do we need a proxy?\n" . $http->error);
+		},
+		{
+			timeout => 30
 		}
 	);
 	
