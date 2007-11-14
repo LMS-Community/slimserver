@@ -22,6 +22,7 @@ use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use Slim::Utils::Prefs;
+use Slim::Player::Sync;
 
 my %stopcommands = ();
 
@@ -917,8 +918,13 @@ sub commandCallback {
 
 			if ($request->isCommand([['playlist'], ['newsong']])) {
 
-				$log->info(sprintf("New song detected ($songIndex)"));
-
+				if (Slim::Player::Sync:isSlave($client)) {
+					$log->debug(sprintf("Ignoring new song notification for slave player"));
+					return;
+				} else {
+					$log->info(sprintf("New song detected ($songIndex)"));
+				}
+				
 			} else {
 
 				$log->info(sprintf("Deletion detected (%s)", $request->getParam('_index')));
