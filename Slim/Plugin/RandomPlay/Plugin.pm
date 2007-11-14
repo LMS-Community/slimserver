@@ -918,7 +918,7 @@ sub commandCallback {
 
 			if ($request->isCommand([['playlist'], ['newsong']])) {
 
-				if (Slim::Player::Sync:isSlave($client)) {
+				if (Slim::Player::Sync::isSlave($client)) {
 					$log->debug(sprintf("Ignoring new song notification for slave player"));
 					return;
 				} else {
