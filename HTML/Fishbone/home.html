@@ -3,24 +3,27 @@
 	<FORM id="browseForm" name="browseForm" action="javascript:void(0);" target="header">
 		<SELECT NAME="browse" class="stdedit" style="width:17em;" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
 			<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
-			[% PROCESS addBrowseLinks links=additionalLinks.browse %]
-			[% IF additionalLinks.music_on_demand %]
+			[%- PROCESS addBrowseLinks links=additionalLinks.browse %]
+			[%- IF additionalLinks.music_on_demand %]
 			<OPTION value="" label="">---[% "MUSIC_ON_DEMAND" | string  %]---</option>
-			[% PROCESS addBrowseLinks links=additionalLinks.music_on_demand %]
+			[%- PROCESS addBrowseLinks links=additionalLinks.music_on_demand order=additionalLinkOrder.music_on_demand %]
+			[%- IF additionalLinks.radio.exists('PLUGIN_PANDORA_MODULE_NAME') %]
+			<OPTION value="[% 'PLUGIN_PANDORA_MODULE_NAME' %]" label="[% 'PLUGIN_PANDORA_MODULE_NAME' | getstring | html %]">[% 'PLUGIN_PANDORA_MODULE_NAME' | getstring | html %]</OPTION>
+			[%- END -%]
 			[% END %]
 			<OPTION value="" label="">---[% "SEARCH" | string %]---</OPTION>
-			[% PROCESS addBrowseLinks links=additionalLinks.search %]
+			[%- PROCESS addBrowseLinks links=additionalLinks.search order={} %]
 			<OPTION value="" label="">---[% "RADIO" | string %]---</OPTION>
-			[% PROCESS addBrowseLinks links=additionalLinks.radio %]
+			[%- PROCESS addBrowseLinks links=additionalLinks.radio order=additionalLinkOrder.radio %]
 			<OPTION value="RADIO_TUNEIN" label='[% "RADIO_TUNEIN" | string %]'>[% "RADIO_TUNEIN" | string %]</OPTION>
-			[% IF additionalLinks.plugins %]
+			[%- IF additionalLinks.plugins %]
 			<OPTION value="" label="">---[% "PLUGINS" | string %]---</OPTION>
-			[% PROCESS addBrowseLinks links=additionalLinks.plugins %]
-			[% END %]
+			[%- PROCESS addBrowseLinks links=additionalLinks.plugins order={} %]
+			[%- END %]
 			<OPTION value="STATISTICS" label="[% "STATISTICS" | string %]">[% "STATISTICS" | string %]</OPTION>
-			[% IF additionalLinks.settings %]
+			[%- IF additionalLinks.settings %]
 			<OPTION value="" label="">---[% "SETTINGS" | string %]---</OPTION>
-			[% PROCESS addBrowseLinks links=additionalLinks.settings %]
+			[%- PROCESS addBrowseLinks links=additionalLinks.settings order={} %]
 			[% END %]
 		</SELECT>
 		<input type=hidden value="[% page %]" name="page">
@@ -29,9 +32,12 @@
 	
 	[%- BLOCK addBrowseLinks -%]
 		[%- IF links -%]
-			[%- FOREACH link = links -%]
-				<OPTION value="[% link.key %]" label="[% link.key | getstring | html %]">[% link.key | getstring | html %]</OPTION>
+			[%- FOREACH item = order %]
+			<OPTION value="[% item %]" label="[% item | getstring | html %]">[% item | getstring | html %]</OPTION>
 			[%- END -%]
+			[%- FOREACH link = links; IF !order.grep(link.key).size %]
+			<OPTION value="[% link.key %]" label="[% link.key | getstring | html %]">[% link.key | getstring | html %]</OPTION>
+			[%- END; END -%]
 		[%- END -%]
 	[%- END -%]
 	
@@ -39,11 +45,11 @@
 		[%- IF links -%]
 			[%- FOREACH link = links -%]
 			[% IF link.key == "SQUEEZENETWORK_SWITCH" %][% cookie = 0 %][% END %]
-			case "[% link.key %]":
-				url = "[% link.value %]"
-				[% IF cookie %]homestring = "[% link.key | string %]"
-				cookie = [% cookie %][% END %]
-			break
+					case "[% link.key %]":
+						url = "[% link.value %]"
+						[% IF cookie %]homestring = "[% link.key | string %]"
+						cookie = [% cookie %][% END %]
+					break
 			[%- END -%]
 		[%- END -%]
 	[%- END %]
