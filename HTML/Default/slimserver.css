@@ -307,30 +307,22 @@ img#background { position:absolute; }
 #content { position: relative; }
 
 #pagebar {
-	margin-bottom: 2px;
-	padding: 2px;
+	min-height: 13px;
 	background-color: #bfbfbf;
 }
 
-#pagebar a:link, #pagebar a:visited,
-#pagebar a, #pagebar span, #pagebar b {
-	top: 0;
+#pagebar a, #pagebar span {
+	padding: 0 3px 0 0;
+	word-spacing: 0;
+}
+
+#pagebar a, #pagebar span {
 	text-decoration: none;
-	padding: 0 1px;
 	text-align: center;
 	cursor: pointer;
 }
 
-#pagebar a:link, #pagebar a:visited,
-#pagebar a {
-	padding: 0 3px;
-}
-
-#pagebar b {
-	padding: 0 2px;
-}
-
-#pagebar span, #pagebar b {
+#pagebar span {
 	background-color: #888888;
 	color: white;
 }
