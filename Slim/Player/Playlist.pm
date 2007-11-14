@@ -143,7 +143,7 @@ sub copyPlaylist {
 }
 
 sub removeTrack {
-	my $client = shift;
+	my $client = shift->masterOrSelf();
 	my $tracknum = shift;
 	
 	my $playlistIndex = ${shuffleList($client)}[$tracknum];
@@ -198,7 +198,6 @@ sub removeTrack {
 		}
 	}
 
-	$client = Slim::Player::Sync::masterOrSelf($client);
 
 	@{$client->shufflelist} = @reshuffled;
 
