@@ -2571,9 +2571,7 @@ SETUP_GROUP_PLUGINS
 	EN	Extras
 
 SETUP_GROUP_PLUGINS_DESC
-	DE	SqueezeCenter enthält eine Reihe von Extras, die Sie über die Fernbedienung steuern können. Sie können Extras aus dem Plugins-Ordner aufnehmen bzw. entfernen, indem Sie das entsprechende Kontrollkästchen aktivieren bzw. deaktivieren. Sie können SqueezeCenter auch so konfigurieren, dass es bei jedem Öffnen des Extras-Menüs erneut nach Extras sucht. Die Standardeinstellung ist 'Extras nur beim Programmstart laden'. Klicken Sie auf 'Ändern', um die Änderungen zu speichern.
-	EN	SqueezeCenter includes some extras that you can use with your remote. You can choose to enable or disable individual plugins in the Plugins directory. To enable an extra, put a check next to the name below. To disable an extra, clear the check mark. You may choose to have SqueezeCenter scan for extras each time you navigate to the player extras menu or the extras settings. Default is to load on startup only.  To save your changes, click Change.
-	PT	O cliente SqueezeCenter inclui algumas funcionalidades extras que podem ser usadas através do controlo remoto. Pode activar ou desactivar cada uma dessas opções adicionais activando a opção junto ao nome abaixo. Para desactivar, remova a opção. Para guardar, escolha "Mudar".
+	EN	SqueezeCenter includes some extras that you can use with your remote or in the web interface. You can choose to enable or disable individual plugins using the buttons below. 
 
 SETUP_GROUP_FORMATS_CONVERSION
 	CS	Nastavení konverze formátů
