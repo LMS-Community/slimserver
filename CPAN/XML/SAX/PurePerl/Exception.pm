@@ -1,4 +1,4 @@
-# $Id: Exception.pm,v 1.1 2004/07/16 12:55:14 dean Exp $
+# $Id: Exception.pm 1097 2004-07-16 12:55:19Z dean $
 
 package XML::SAX::PurePerl::Exception;
 

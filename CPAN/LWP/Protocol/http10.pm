@@ -1,5 +1,5 @@
 #
-# $Id: http10.pm,v 1.3 2003/10/23 19:11:33 uid39246 Exp $
+# $Id: http10.pm 8931 2006-08-11 16:44:43Z dsully $
 
 package LWP::Protocol::http10;
 

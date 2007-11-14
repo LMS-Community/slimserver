@@ -1,6 +1,6 @@
 package LWP::UserAgent;
 
-# $Id: UserAgent.pm,v 2.33 2004/09/16 09:28:22 gisle Exp $
+# $Id: UserAgent.pm 8931 2006-08-11 16:44:43Z dsully $
 
 use strict;
 use vars qw(@ISA $VERSION);

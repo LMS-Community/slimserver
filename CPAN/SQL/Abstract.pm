@@ -1244,7 +1244,7 @@ L<DBIx::Abstract>, L<DBI|DBI>, L<CGI::FormBuilder>, L<HTML::QuickTable>
 
 =head1 VERSION
 
-$Id: Abstract.pm,v 1.20 2005/08/18 18:41:58 nwiger Exp $
+$Id: Abstract.pm 4372 2005-09-20 06:24:00Z dsully $
 
 =head1 AUTHOR
 

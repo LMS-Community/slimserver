@@ -1,6 +1,6 @@
 package Net::DNS::Update;
 #
-# $Id$
+# $Id: Update.pm 517 2005-11-21 08:38:47Z olaf $
 #
 use strict;
 BEGIN { 

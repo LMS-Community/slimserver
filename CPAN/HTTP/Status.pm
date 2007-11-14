@@ -1,6 +1,6 @@
 package HTTP::Status;
 
-# $Id: Status.pm,v 1.28 2003/10/23 18:56:01 uid39246 Exp $
+# $Id: Status.pm 8931 2006-08-11 16:44:43Z dsully $
 
 use strict;
 require 5.002;   # becase we use prototypes

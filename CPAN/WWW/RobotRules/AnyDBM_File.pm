@@ -1,4 +1,4 @@
-# $Id: AnyDBM_File.pm,v 1.1 2004/08/10 23:08:32 dean Exp $
+# $Id: AnyDBM_File.pm 1152 2004-08-10 23:08:33Z dean $
 
 package WWW::RobotRules::AnyDBM_File;
 

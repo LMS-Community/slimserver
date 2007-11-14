@@ -1,6 +1,6 @@
 package LWP::ConnCache;
 
-# $Id: ConnCache.pm,v 1.6 2004/04/09 15:07:04 gisle Exp $
+# $Id: ConnCache.pm 8931 2006-08-11 16:44:43Z dsully $
 
 use strict;
 use vars qw($VERSION $DEBUG);

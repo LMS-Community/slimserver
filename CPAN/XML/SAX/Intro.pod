@@ -402,6 +402,6 @@ issues up.
 
 Matt Sergeant, matt@sergeant.org
 
-$Id: Intro.pod,v 1.1 2004/07/16 12:55:13 dean Exp $
+$Id: Intro.pod 1097 2004-07-16 12:55:19Z dean $
 
 =cut

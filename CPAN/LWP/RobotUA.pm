@@ -1,6 +1,6 @@
 package LWP::RobotUA;
 
-# $Id: RobotUA.pm,v 1.27 2004/04/06 13:14:37 gisle Exp $
+# $Id: RobotUA.pm 8931 2006-08-11 16:44:43Z dsully $
 
 require LWP::UserAgent;
 @ISA = qw(LWP::UserAgent);

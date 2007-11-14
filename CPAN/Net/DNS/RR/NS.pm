@@ -1,6 +1,6 @@
 package Net::DNS::RR::NS;
 #
-# $Id$
+# $Id: NS.pm 554 2006-01-19 12:51:30Z olaf $
 #
 use strict;
 BEGIN { 

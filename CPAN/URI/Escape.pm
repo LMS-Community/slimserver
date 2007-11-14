@@ -1,5 +1,5 @@
 #
-# $Id: Escape.pm,v 1.2 2004/11/28 17:55:12 dsully Exp $
+# $Id: Escape.pm 1514 2004-11-28 17:55:28Z dsully $
 #
 
 package URI::Escape;

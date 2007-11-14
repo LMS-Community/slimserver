@@ -1,6 +1,6 @@
 package Net::DNS::Select;
 #
-# $Id: Select.pm,v 1.1 2004/02/16 17:30:00 daniel Exp $
+# $Id: Select.pm 631 2004-02-16 17:30:06Z daniel $
 #
 
 use IO::Select;

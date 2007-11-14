@@ -1,6 +1,6 @@
 package HTTP::Response;
 
-# $Id: Response.pm,v 1.53 2005/12/06 13:19:09 gisle Exp $
+# $Id: Response.pm 8931 2006-08-11 16:44:43Z dsully $
 
 require HTTP::Message;
 @ISA = qw(HTTP::Message);

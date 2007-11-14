@@ -1,6 +1,6 @@
 package WWW::RobotRules;
 
-# $Id: RobotRules.pm,v 1.1 2004/08/10 23:08:32 dean Exp $
+# $Id: RobotRules.pm 1152 2004-08-10 23:08:33Z dean $
 
 $VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
 sub Version { $VERSION; }

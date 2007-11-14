@@ -1,6 +1,6 @@
 package File::Listing;
 
-# $Id: Listing.pm,v 1.1 2004/08/10 23:08:13 dean Exp $
+# $Id: Listing.pm 1152 2004-08-10 23:08:33Z dean $
 
 sub Version { $VERSION; }
 $VERSION = sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);

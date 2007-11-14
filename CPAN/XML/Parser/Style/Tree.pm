@@ -1,4 +1,4 @@
-# $Id: Tree.pm,v 1.1 2005/01/11 04:20:39 dsully Exp $
+# $Id: Tree.pm 1692 2005-01-11 04:21:17Z dsully $
 
 package XML::Parser::Style::Tree;
 $XML::Parser::Built_In_Styles{Tree} = 1;

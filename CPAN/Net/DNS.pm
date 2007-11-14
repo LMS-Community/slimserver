@@ -1,6 +1,6 @@
 package Net::DNS;
 #
-# $Id$
+# $Id: DNS.pm 8938 2006-08-12 01:31:50Z andy $
 #
 use strict;
 

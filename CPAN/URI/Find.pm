@@ -1,4 +1,4 @@
-# $Id$
+# $Id: Find.pm 8491 2006-07-18 21:23:19Z andy $
 #
 # Copyright (c) 2000 Michael G. Schwern.  All rights reserved.  This
 # program is free software; you can redistribute it and/or modify it

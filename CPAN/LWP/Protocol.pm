@@ -1,6 +1,6 @@
 package LWP::Protocol;
 
-# $Id: Protocol.pm,v 1.43 2004/11/12 13:34:10 gisle Exp $
+# $Id: Protocol.pm 8931 2006-08-11 16:44:43Z dsully $
 
 require LWP::MemberMixin;
 @ISA = qw(LWP::MemberMixin);

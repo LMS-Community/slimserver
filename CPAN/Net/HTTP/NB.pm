@@ -1,6 +1,6 @@
 package Net::HTTP::NB;
 
-# $Id: NB.pm,v 1.6 2004/11/12 16:18:11 gisle Exp $
+# $Id: NB.pm 8931 2006-08-11 16:44:43Z dsully $
 
 use strict;
 use vars qw($VERSION @ISA);

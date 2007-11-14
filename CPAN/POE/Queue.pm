@@ -1,4 +1,4 @@
-# $Id$
+# $Id: Queue.pm 9097 2006-08-22 18:32:53Z dsully $
 
 package POE::Queue;
 

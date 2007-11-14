@@ -1,6 +1,6 @@
 package Net::HTTPS;
 
-# $Id: HTTPS.pm,v 1.3 2002/12/23 18:16:29 gisle Exp $
+# $Id: HTTPS.pm 8931 2006-08-11 16:44:43Z dsully $
 
 use strict;
 use vars qw($VERSION $SSL_SOCKET_CLASS @ISA);

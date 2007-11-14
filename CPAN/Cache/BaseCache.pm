@@ -1,5 +1,5 @@
 ######################################################################
-# $Id$
+# $Id: BaseCache.pm 6973 2006-04-19 03:21:06Z andy $
 # Copyright (C) 2001-2003 DeWitt Clinton  All Rights Reserved
 #
 # Software distributed under the License is distributed on an "AS
@@ -761,7 +761,7 @@ Cache::Cache, Cache::FileCache, Cache::MemoryCache
 
 Original author: DeWitt Clinton <dewitt@unto.net>
 
-Last author:     $Author$
+Last author:     $Author: andy $
 
 Copyright (C) 2001-2003 DeWitt Clinton
 

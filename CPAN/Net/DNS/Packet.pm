@@ -1,6 +1,6 @@
 package Net::DNS::Packet;
 #
-# $Id$
+# $Id: Packet.pm 8938 2006-08-12 01:31:50Z andy $
 #
 use strict;
 

@@ -1,6 +1,6 @@
 package Net::DNS::Resolver::Win32;
 #
-# $Id$
+# $Id: Win32.pm 8938 2006-08-12 01:31:50Z andy $
 #
 
 use strict;

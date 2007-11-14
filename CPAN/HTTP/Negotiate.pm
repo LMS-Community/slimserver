@@ -1,4 +1,4 @@
-# $Id: Negotiate.pm,v 1.16 2005/12/06 13:51:46 gisle Exp $
+# $Id: Negotiate.pm 8931 2006-08-11 16:44:43Z dsully $
 #
 
 package HTTP::Negotiate;

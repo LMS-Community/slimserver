@@ -1,4 +1,4 @@
-# $Id$
+# $Id: Array.pm 6689 2006-03-24 03:07:44Z andy $
 # Copyrights and documentation are at the end.
 
 package POE::Queue::Array;

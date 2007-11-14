@@ -1,5 +1,5 @@
 #
-# $Id: LWP.pm,v 1.149 2005/12/08 12:06:22 gisle Exp $
+# $Id: LWP.pm 8931 2006-08-11 16:44:43Z dsully $
 
 package LWP;
 

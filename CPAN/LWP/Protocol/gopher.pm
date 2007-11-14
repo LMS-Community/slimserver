@@ -1,5 +1,5 @@
 #
-# $Id: gopher.pm,v 1.20 2003/10/23 19:11:33 uid39246 Exp $
+# $Id: gopher.pm 8931 2006-08-11 16:44:43Z dsully $
 
 # Implementation of the gopher protocol (RFC 1436)
 #

@@ -1,6 +1,6 @@
 package URI::Heuristic;
 
-# $Id: Heuristic.pm,v 1.1 2004/02/21 22:26:09 daniel Exp $
+# $Id: Heuristic.pm 650 2004-02-21 22:26:15Z daniel $
 
 =head1 NAME
 

@@ -7,7 +7,7 @@ require Exporter;
 *import = \&Exporter::import;
 @EXPORT_OK=qw(dump pp);
 
-$VERSION = "1.06";  # $Date$
+$VERSION = "1.06";  # $Date: 2006-05-25 16:35:32 -0400 (Thu, 25 May 2006) $
 $DEBUG = 0;
 
 use overload ();

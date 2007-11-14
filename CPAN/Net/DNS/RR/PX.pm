@@ -1,6 +1,6 @@
 package Net::DNS::RR::PX;
 #
-# $Id$
+# $Id: PX.pm 551 2005-12-22 11:10:37Z olaf $
 #
 use strict;
 BEGIN { 

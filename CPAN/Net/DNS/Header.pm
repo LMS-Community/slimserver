@@ -1,6 +1,6 @@
 package Net::DNS::Header;
 #
-# $Id$
+# $Id: Header.pm 546 2005-12-16 15:23:03Z olaf $
 #
 
 use strict;

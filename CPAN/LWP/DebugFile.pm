@@ -1,6 +1,6 @@
 package LWP::DebugFile;
 
-# $Id: DebugFile.pm,v 1.3 2003/10/23 18:56:01 uid39246 Exp $
+# $Id: DebugFile.pm 8931 2006-08-11 16:44:43Z dsully $
 
 use strict;
 use LWP::Debug ();

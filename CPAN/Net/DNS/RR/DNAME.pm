@@ -1,6 +1,6 @@
 package Net::DNS::RR::DNAME;
 #
-# $Id$
+# $Id: DNAME.pm 388 2005-06-22 10:06:05Z olaf $
 #
 use strict;
 BEGIN { 

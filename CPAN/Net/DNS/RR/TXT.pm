@@ -1,6 +1,6 @@
 package Net::DNS::RR::TXT;
 #
-# $Id$
+# $Id: TXT.pm 8938 2006-08-12 01:31:50Z andy $
 #
 use strict;
 BEGIN { 

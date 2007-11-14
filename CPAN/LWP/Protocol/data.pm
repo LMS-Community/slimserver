@@ -1,5 +1,5 @@
 #
-# $Id: data.pm,v 1.2 1998/11/19 21:45:01 aas Exp $
+# $Id: data.pm 8931 2006-08-11 16:44:43Z dsully $
 #
 # Implements access to data:-URLs as specified in RFC 2397
 

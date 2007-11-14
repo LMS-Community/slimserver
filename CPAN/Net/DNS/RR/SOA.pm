@@ -1,6 +1,6 @@
 package Net::DNS::RR::SOA;
 #
-# $Id$
+# $Id: SOA.pm 388 2005-06-22 10:06:05Z olaf $
 #
 use strict;
 BEGIN { 

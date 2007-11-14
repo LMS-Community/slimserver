@@ -1,4 +1,4 @@
-package HTTP::Date;  # $Date: 2005/12/06 11:09:25 $
+package HTTP::Date;  # $Date: 2006-08-11 12:44:43 -0400 (Fri, 11 Aug 2006) $
 
 $VERSION = sprintf("%d.%02d", q$Revision: 1.47 $ =~ /(\d+)\.(\d+)/);
 

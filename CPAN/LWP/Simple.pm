@@ -1,6 +1,6 @@
 package LWP::Simple;
 
-# $Id: Simple.pm,v 1.41 2004/05/21 09:11:55 gisle Exp $
+# $Id: Simple.pm 8931 2006-08-11 16:44:43Z dsully $
 
 use strict;
 use vars qw($ua %loop_check $FULL_LWP @EXPORT @EXPORT_OK $VERSION);

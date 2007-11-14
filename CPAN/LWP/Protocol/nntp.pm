@@ -1,5 +1,5 @@
 #
-# $Id: nntp.pm,v 1.10 2005/10/31 15:10:33 gisle Exp $
+# $Id: nntp.pm 8931 2006-08-11 16:44:43Z dsully $
 
 # Implementation of the Network News Transfer Protocol (RFC 977)
 #

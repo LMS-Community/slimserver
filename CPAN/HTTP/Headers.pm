@@ -1,6 +1,6 @@
 package HTTP::Headers;
 
-# $Id: Headers.pm,v 1.64 2005/12/08 12:11:48 gisle Exp $
+# $Id: Headers.pm 8931 2006-08-11 16:44:43Z dsully $
 
 use strict;
 use Carp ();

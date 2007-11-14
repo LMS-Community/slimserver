@@ -1,6 +1,6 @@
 package Net::DNS::Resolver;
 #
-# $Id$
+# $Id: Resolver.pm 513 2005-11-09 23:49:38Z olaf $
 #
 
 use strict;

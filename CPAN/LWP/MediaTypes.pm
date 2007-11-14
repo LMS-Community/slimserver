@@ -1,6 +1,6 @@
 package LWP::MediaTypes;
 
-# $Id: MediaTypes.pm,v 1.32 2004/11/17 11:04:09 gisle Exp $
+# $Id: MediaTypes.pm 8931 2006-08-11 16:44:43Z dsully $
 
 require Exporter;
 @ISA = qw(Exporter);

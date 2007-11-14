@@ -1,6 +1,6 @@
 package Net::DNS::RR::MX;
 #
-# $Id$
+# $Id: MX.pm 564 2006-02-20 09:34:26Z olaf $
 #
 use strict;
 BEGIN { 

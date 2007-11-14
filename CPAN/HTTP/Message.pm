@@ -1,6 +1,6 @@
 package HTTP::Message;
 
-# $Id: Message.pm,v 1.57 2005/02/18 20:29:01 gisle Exp $
+# $Id: Message.pm 8931 2006-08-11 16:44:43Z dsully $
 
 use strict;
 use vars qw($VERSION $AUTOLOAD);

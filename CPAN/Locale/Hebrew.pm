@@ -1,4 +1,4 @@
-# $File: //member/autrijus/Locale-Hebrew/Hebrew.pm $ $Author$
+# $File: //member/autrijus/Locale-Hebrew/Hebrew.pm $ $Author: dsully $
 # $Revision: #4 $ $Change: 11169 $ $DateTime: 2004/09/18 09:21:22 $
 
 package Locale::Hebrew;

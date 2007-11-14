@@ -1,4 +1,4 @@
-# $Id: http.pm,v 1.70 2005/12/08 10:28:01 gisle Exp $
+# $Id: http.pm 8931 2006-08-11 16:44:43Z dsully $
 #
 
 package LWP::Protocol::http;

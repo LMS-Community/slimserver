@@ -1,4 +1,4 @@
-# $Id: Reader.pm,v 1.1 2004/07/16 12:55:14 dean Exp $
+# $Id: Reader.pm 1097 2004-07-16 12:55:19Z dean $
 
 package XML::SAX::PurePerl::Reader;
 

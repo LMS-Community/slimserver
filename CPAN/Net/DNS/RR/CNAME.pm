@@ -1,6 +1,6 @@
 package Net::DNS::RR::CNAME;
 #
-# $Id$
+# $Id: CNAME.pm 501 2005-10-18 13:50:11Z olaf $
 #
 use strict;
 BEGIN { 

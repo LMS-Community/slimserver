@@ -1,6 +1,6 @@
 package HTTP::Daemon;
 
-# $Id: Daemon.pm,v 1.36 2004/12/11 14:13:16 gisle Exp $
+# $Id: Daemon.pm 8931 2006-08-11 16:44:43Z dsully $
 
 use strict;
 use vars qw($VERSION @ISA $PROTO $DEBUG);

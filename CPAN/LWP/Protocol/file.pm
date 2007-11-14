@@ -1,5 +1,5 @@
 #
-# $Id: file.pm,v 1.23 2004/11/15 22:53:36 gisle Exp $
+# $Id: file.pm 8931 2006-08-11 16:44:43Z dsully $
 
 package LWP::Protocol::file;
 

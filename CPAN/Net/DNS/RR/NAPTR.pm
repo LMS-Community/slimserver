@@ -1,6 +1,6 @@
 package Net::DNS::RR::NAPTR;
 #
-# $Id$
+# $Id: NAPTR.pm 8938 2006-08-12 01:31:50Z andy $
 #
 use strict;
 BEGIN { 

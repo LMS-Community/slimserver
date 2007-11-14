@@ -1,6 +1,6 @@
 package Net::DNS::RR::Unknown;
 #
-# $Id$
+# $Id: Unknown.pm 388 2005-06-22 10:06:05Z olaf $
 #
 use strict;
 BEGIN { 
