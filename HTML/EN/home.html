@@ -62,9 +62,12 @@
 <div class="homeMenuSection">
 	<div>[% "RADIO" | string | upper %]</div>
 	<ul>
-	[%- FOREACH link = additionalLinks.radio %]
-		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
+	[%- FOREACH item = additionalLinkOrder.radio %]
+		<li><a href="[% additionalLinks.radio.$item | html %]player=[% playerURI %]">[% item | getstring | html %]</a></li>
 	[%- END %]
+	[%- FOREACH link = additionalLinks.radio; IF !additionalLinkOrder.radio.grep(link.key).size %]
+		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
+	[%- END; END %]
 		<li><a href="tunein.html?player=[% playerURI %]">[% "RADIO_TUNEIN" | string | html %]</a></li>
 	</ul>	
 </div>
@@ -73,10 +76,16 @@
 <div class="homeMenuSection">
 	<div>[% "MUSIC_ON_DEMAND" | string | upper %]</div>
 	<ul>
-	[%- FOREACH link = additionalLinks.music_on_demand %]
-		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
+	[%- FOREACH item = additionalLinkOrder.music_on_demand %]
+		<li><a href="[% additionalLinks.music_on_demand.$item | html %]player=[% playerURI %]">[% item | getstring | html %]</a></li>
 	[%- END %]
-	</ul>	
+	[%- FOREACH link = additionalLinks.music_on_demand; IF !additionalLinkOrder.music_on_demand.grep(link.key).size %]
+		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
+	[%- END; END %]
+	[% IF additionalLinks.radio.exists('PLUGIN_PANDORA_MODULE_NAME') %]
+		<li><a href="[% additionalLinks.radio.PLUGIN_PANDORA_MODULE_NAME | html %]player=[% playerURI %]">[% "PLUGIN_PANDORA_MODULE_NAME" | getstring | html %]</a></li>
+	[%- END %]
+	</ul>
 </div>
 [%- END %]
 

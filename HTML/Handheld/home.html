@@ -5,12 +5,15 @@
 		[% PROCESS subtitle title=menutitle %]
 		<ul>
 		[% IF menulist %]
-		    [% FOREACH link = menulist %]
-	    		<li><a href="[% link.value %]player=[% playerURI %]">[% link.key | string %]</a></li>
+		    [% FOREACH item = orderlist %]
+	    		<li><a href="[% menulist.$item %]player=[% playerURI %]">[% item | string %]</a></li>
 	    	[% END %]
+		    [% FOREACH link = menulist; IF !orderlist.grep(link.key).size %]
+	    		<li><a href="[% link.value %]player=[% playerURI %]">[% link.key | string %]</a></li>
+	    	[% END;END %]
 		[% END %]
-		[% IF additionalmenu.text %]
-	   		<li><a href="[% additionalmenu.link %]?[% IF NOT additionalmenu.link.value.match('^http') %]player=[% playerURI %][% END %]">[% additionalmenu.text | string %]</a></li>
+		[% FOREACH link = additionalmenu %]
+	   		<li><a href="[% link.value | html %]?[% IF NOT link.value.match('^http') %]player=[% playerURI %][% END %]">[% link.key | string %]</a></li>
 		[% END %]
 		</ul>
 	[% END %]
@@ -23,14 +26,20 @@
 	[% PROCESS menu menutitle='BROWSE_MUSIC' menulist=additionalLinks.browse %]
 
 	[% IF additionalLinks.music_on_demand %]
-		[% PROCESS menu menutitle='MUSIC_ON_DEMAND' menulist=additionalLinks.music_on_demand %]
+		[% IF additionalLinks.radio.exists('PLUGIN_PANDORA_MODULE_NAME') %]
+				[% additionalmenu = {'PLUGIN_PANDORA_MODULE_NAME' => additionalLinks.radio.PLUGIN_PANDORA_MODULE_NAME } %]
+		[% END %]
+		[% PROCESS menu menutitle='MUSIC_ON_DEMAND' menulist=additionalLinks.music_on_demand orderlist=additionalLinkOrder.music_on_demand 
+		%]
 	[% END %]
 
-	[% PROCESS menu menutitle='SEARCH' menulist=additionalLinks.search %]
-	[% PROCESS menu menutitle='RADIO' menulist=additionalLinks.radio additionalmenu.link='tunein.html' additionalmenu.text='RADIO_TUNEIN' %]
+	[% PROCESS menu menutitle='SEARCH' menulist=additionalLinks.search orderlist={} additionalmenu={} %]
+	[% PROCESS menu menutitle='RADIO' menulist=additionalLinks.radio orderlist=additionalLinkOrder.radio 
+		additionalmenu = {'RADIO_TUNEIN' => 'tunein.html'}
+	-%]
 	
 	[% IF additionalLinks.plugins %]
-		[% PROCESS menu menutitle='PLUGINS' menulist=additionalLinks.plugins additionalmenu={} %]
+		[% PROCESS menu menutitle='PLUGINS' menulist=additionalLinks.plugins additionalmenu={} orderlist={} %]
 	[% END %]
 	
 	[% PROCESS menu menutitle='HELP' menulist=additionalLinks.help %]
