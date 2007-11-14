@@ -331,7 +331,7 @@ sub getProxy {
 			}
 		);
 
-		if (defined $ieSettings && $ieSettings->{'ProxyEnable'}) {
+		if (defined $ieSettings && hex($ieSettings->{'ProxyEnable'})) {
 			$proxy = $ieSettings->{'ProxyServer'};
 		}
 
