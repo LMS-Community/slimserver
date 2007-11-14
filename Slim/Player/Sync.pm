@@ -145,6 +145,9 @@ sub unsync {
 		$newmaster->streamformat($client->streamformat);
 		$client->streamformat(undef);	
 
+		$newmaster->resumePlaymode($client->resumePlaymode);
+		$client->resumePlaymode(undef);	
+
 		$master = $newmaster;
 
 	} elsif (isSlave($client)) {

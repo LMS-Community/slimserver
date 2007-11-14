@@ -334,7 +334,7 @@ sub playmode {
 	
 	# When pausing, we must remember if we were in play or playout mode
 	if ( $newmode eq 'pause' ) {
-		$client->resumePlaymode($prevmode);
+		$master->resumePlaymode($prevmode);
 	}
 	
 	# This function is likely doing too much.
@@ -412,7 +412,7 @@ sub playmode {
 
 			$everyclient->resume();
 			
-			my $prevmode = $client->resumePlaymode() || 'play';
+			my $prevmode = $master->resumePlaymode() || 'play';
 			
 			if ( $log->is_info ) {
 				$log->info($everyclient->id() . ": Resume, resetting mode: $prevmode");
@@ -637,7 +637,7 @@ sub streamNextTrack {
 	
 	my $playmode = $client->playmode();
 	if ( $playmode eq 'pause' ) {
-		$playmode = $client->resumePlaymode();
+		$playmode = $client->masterOrSelf()->resumePlaymode() || 'play';
 	}
 
 	my $skipaheadCallback = sub {
@@ -691,7 +691,7 @@ sub underrun {
 	my $underrunCallback = sub {
 		my $playmode = $client->playmode();
 		if ( $playmode eq 'pause' ) {
-			$playmode = $client->resumePlaymode() || 'play';
+			$playmode = $client->masterOrSelf()->resumePlaymode() || 'play';
 		}
 		
 		if (Slim::Player::Sync::isSynced($client)) {
@@ -1252,7 +1252,7 @@ sub gotoNext {
 		# Determine the current playmode or if paused, the previous playmode
 		my $playmode = $client->playmode();
 		if ( $playmode eq 'pause' ) {
-			$playmode = $client->resumePlaymode();
+			$playmode = $client->resumePlaymode() || 'play';
 		}
 		
 		# here's where we decide whether to start the next song in a new stream after playing out
