@@ -126,8 +126,29 @@ sub home {
 			$params->{'favorites'} = $favs->toplevel;
 		}
 	}
+	
+	# Bug 4125, sort all additionalLinks submenus properly
+	# XXX: non-Default templates will need to be updated to use this sort order
+	$params->{additionalLinkOrder} = {};
+	
+	for my $menu ( keys %Slim::Web::Pages::additionalLinks ) {
+	    my @sorted = sort {
+	        ( 
+	            ( $prefs->get("rank-$b") || 0 ) <=> 
+    		    ( $prefs->get("rank-$a") || 0 )
+    		)
+    		|| 
+    		(
+    		    lc( Slim::Buttons::Home::cmpString($client, $a) ) cmp
+    		    lc( Slim::Buttons::Home::cmpString($client, $b) )
+    		)
+    	} 
+    	keys %{ $Slim::Web::Pages::additionalLinks{ $menu } };
 
-	$params->{'additionalLinks'} = \%Slim::Web::Pages::additionalLinks;
+        $params->{additionalLinkOrder}->{ $menu } = \@sorted;
+	}
+	
+	$params->{additionalLinks} = \%Slim::Web::Pages::additionalLinks;
 
 	$class->addPlayerList($client, $params);
 	

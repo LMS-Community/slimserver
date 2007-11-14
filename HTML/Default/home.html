@@ -48,8 +48,7 @@ ELSE %]
 	END;
 	
 	radioItems = BLOCK;
-		orderedLinks = ['PLUGIN_LIVE365_MODULE_NAME', 'PLUGIN_PANDORA_MODULE_NAME', 'PLUGIN_PODCAST', 'PLUGIN_RADIOIO_MODULE_NAME', 'PLUGIN_RADIOTIME_MODULE_NAME', 'PLUGIN_SHOUTCASTBROWSER_MODULE_NAME', 'PLUGIN_PICKS_MODULE_NAME'];
-		FOREACH item = orderedLinks;
+		FOREACH item = additionalLinkOrder.radio;
 			IF additionalLinks.radio.exists(item);
 				link.value = additionalLinks.radio.$item;
 				link.key = item;
@@ -57,7 +56,7 @@ ELSE %]
 			END;
 		END;
 		FOREACH link = additionalLinks.radio;
-			IF !orderedLinks.grep(link.key).size;
+			IF !additionalLinkOrder.radio.grep(link.key).size;
 				PROCESS menuItem;
 			END;
 		END;
@@ -71,8 +70,7 @@ ELSE %]
 	END;
 
 	music_on_demandItems = BLOCK;
-		orderedLinks = ['PLUGIN_LMA_MODULE_NAME', 'PLUGIN_MP3TUNES_MODULE_NAME', 'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME'];
-		FOREACH item = orderedLinks;
+		FOREACH item = additionalLinkOrder.music_on_demand;
 			IF additionalLinks.music_on_demand.exists(item);
 				link.value = additionalLinks.music_on_demand.$item;
 				link.key = item;
@@ -80,7 +78,7 @@ ELSE %]
 			END;
 		END;
 		FOREACH link = additionalLinks.music_on_demand;
-			IF !orderedLinks.grep(link.key).size;
+			IF !additionalLinkOrder.music_on_demand.grep(link.key).size;
 				PROCESS menuItem;
 			END;
 		END;
