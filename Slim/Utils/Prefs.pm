@@ -131,6 +131,15 @@ sub init {
 		'cachedir'              => \&defaultCacheDir,
 		'securitySecret'        => \&makeSecuritySecret,
 		'ignoreDirRE'           => '',
+		# My Music menu ordering
+		'rank-BROWSE_BY_ARTIST'    => 35,
+		'rank-BROWSE_BY_ALBUM'     => 30,
+		'rank-BROWSE_BY_GENRE'     => 25,
+		'rank-BROWSE_BY_YEAR'      => 20,
+		'rank-BROWSE_NEW_MUSIC'    => 15,
+		'rank-BROWSE_MUSIC_FOLDER' => 10,
+		'rank-SAVED_PLAYLISTS'     => 5,
+		# Internet Radio menu ordering
 		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
 		# Server Settings - Basic
 		'language'              => 'EN',
