@@ -2997,7 +2997,7 @@ sub songinfoQuery {
 
 		if (defined $url && Slim::Music::Info::isSong($url)){
 
-			$track = Slim::Schema->rs('Track')->objectForUrl($url)
+			$track = Slim::Schema->rs('Track')->objectForUrl($url);
 		}
 	}
 	
@@ -4060,16 +4060,34 @@ sub _addJiveSong {
 
 	# Add trackinfo menu action for remote URLs
 	if ( $track->remote ) {
-		my $actions = {
-			go => {
-				cmd    => [ 'trackinfo', 'items' ],
-				params => {
-					menu => 'menu',
-					url  => $track->url,
+
+		# Protocol Handlers can define their own track info OPML menus
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL( $track->url );
+		my $actions;
+		# this covers things like Rhapsody, Pandora, etc.
+		# trackinfo CLI command is in Slim::Buttons::Trackinfo
+		if ( $handler && $handler->can('trackInfoURL') ) {
+        		$actions = {
+				go => {
+					cmd    => [ 'trackinfo', 'items' ],
+					params => {
+						menu => 'menu',
+						url  => $track->url,
+					},
 				},
-			},
-		};
-		
+			};
+		# this covers standard internet streams
+	        } else {
+        		$actions = {
+				go => {
+					cmd    => [ 'songinfo' ],
+					params => {
+						menu => 'menu',
+						url  => $track->url,
+					},
+				},
+			};
+		}
 		$request->addResultLoop( $loop, $count, 'actions', $actions );
 	}
 
