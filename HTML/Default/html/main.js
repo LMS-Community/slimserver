@@ -1157,8 +1157,6 @@ Player = function(){
 					},
 
 					failure: function(){
-						playerid = '';
-						player = encodeURI(playerid);
 						PlayerChooser.update();
 					},
 
