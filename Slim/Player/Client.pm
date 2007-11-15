@@ -68,7 +68,7 @@ The following object contains all the state that we keep about each player.
 
 # XXX - this is gross. Move to Class::Accessor or Object::InsideOut
 sub new {
-	my ($class, $id, $paddr) = @_;
+	my ($class, $id, $paddr, $rev, $s, $deviceid) = @_;
 	
 	# If we haven't seen this client, initialialize a new one
 	my $client = [];
@@ -80,11 +80,11 @@ sub new {
 	assert(!defined(getClient($id)));
 
 	# The following indexes are unused:
-	# 1, 2, 3, 11, 12, 13, 16, 21, 23, 24, 25, 26, 27, 33, 34, 53
+	# 2, 3, 11, 12, 13, 16, 21, 23, 24, 25, 26, 27, 33, 34, 53
 	# 64, 65, 66, 67, 68, 72, 111
 
 	$client->[0] = $id;
-#	$client->[1]
+	$client->[1] = $deviceid;
 
 #	$client->[2]
 #	$client->[3]
@@ -1103,6 +1103,10 @@ Client sends MAC address, NEC IR codes supported
 =back
 
 =cut
+
+sub deviceid {
+	shift->[1];
+}
 
 sub revision {
 	my $r = shift;

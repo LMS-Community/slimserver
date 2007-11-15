@@ -75,15 +75,12 @@ our $defaultPrefs = {
 };
 
 sub new {
-	my $class    = shift;
-	my $id       = shift;
-	my $paddr    = shift;
-	my $revision = shift;
+	my ($class, $id, $paddr, $rev, $s, $deviceid) = @_;
 
-	my $client = $class->SUPER::new($id, $paddr);
+	my $client = $class->SUPER::new($id, $paddr, $rev, $s, $deviceid);
 
 	# initialize model-specific features:
-	$client->revision($revision);
+	$client->revision($rev);
 
 	return $client;
 }

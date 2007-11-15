@@ -1,0 +1,53 @@
+PLUGIN_SLACKER_MODULE_NAME
+	EN	Slacker Radio
+
+PLUGIN_SLACKER_LOADING
+	DE	Anmelden läuft ...
+	EN	Logging in...
+	ES	Iniciando sesión...
+	FR	Connexion en cours...
+	HE	נכנס למערכת...
+	IT	Accesso in corso...
+	NL	Bezig met aanmelden...
+
+PLUGIN_SLACKER_GETTING_TRACK_DETAILS
+	EN	Fetching track details...
+
+PLUGIN_SLACKER_ERROR
+	EN	Slacker Error
+
+PLUGIN_SLACKER_SESSION_BUMPED
+	EN	You have logged in on another computer, press PLAY to restart.
+
+PLUGIN_SLACKER_NO_TRACKS
+	EN	Unable to retrieve next track, press PLAY to try again.
+
+PLUGIN_SLACKER_STREAM_FAILED
+	DE	Audio-Stream unterbrochen, nächster Titel wird aufgerufen.
+	EN	Audio stream disconnected, skipping to next track.
+	ES	Secuencia de audio desconectada; salto a pista siguiente.
+	FR	Flux audio déconnecté, lecture du morceau suivant.
+	HE	זרימת השמע התנתקה, מדלג אל הרצועה הבאה.
+	IT	Flusso audio disconnesso. Passaggio al brano seguente.
+	NL	Verbinding met audiogegevensstroom verbroken. Volgend nummer wordt geprobeerd.
+
+PLUGIN_SLACKER_SKIPS_EXCEEDED
+	DE	Kein Überspringen mehr möglich, versuchen Sie es später noch einmal.
+	EN	Hourly skip limit exceeded, you may skip again later.
+	ES	Se ha excedido el límite de omisiones por hora. Puede volver a omitir más tarde.
+	FR	Nombre limite de sauts par heure dépassé. Vous pourrez à nouveau effectuer cette action ultérieurement.
+	HE	חריגה ממכסת הדילוג בשעה, תוכל לדלג שוב בהמשך.
+	IT	Limite orario superato. Sarà possibile saltare brani solo più tardi.
+	NL	Uurlimiet voor springen overschreden. Je kunt het later opnieuw proberen.
+
+PLUGIN_SLACKER_SKIPS_EXCEEDED_STATION
+	EN	Station unavailable: hourly skip limit exceeded.  You may switch to another station or try again later.
+
+PLUGIN_SLACKER_FAVORITE_TRACK
+	EN	Mark as Slacker favorite
+
+PLUGIN_SLACKER_UNMARK_FAVORITE
+	EN	Unmark as Slacker favorite
+
+PLUGIN_SLACKER_BAN_TRACK
+	EN	Ban this track

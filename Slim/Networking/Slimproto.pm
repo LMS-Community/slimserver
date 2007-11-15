@@ -1003,7 +1003,8 @@ sub _hello_handler {
 			$id, 		# mac
 			$paddr,		# sockaddr_in
 			$revision,	# rev
-			$s		# tcp sock
+			$s,		# tcp sock
+			$deviceid,	# device ID
 		);
 
 		Slim::bootstrap::tryModuleLoad($display_class);
