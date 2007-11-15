@@ -9989,7 +9989,7 @@ PLAYER_MAC_ADDRESS
 	CS	MAC adresa pro tento přehrávač je:
 	DA	MAC-adressen for denne afspiller er:
 	DE	Die MAC-Adresse für diesen Player ist:
-	EN	The Ethernet MAC address for this player is:
+	EN	The ethernet MAC address for this player is:
 	ES	La dirección Ethernet MAC para este reproductor es:
 	FI	Soittimen MAC -osoite on:
 	FR	L'adresse MAC de cette platine est:
