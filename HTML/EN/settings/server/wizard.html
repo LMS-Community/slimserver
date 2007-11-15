@@ -100,6 +100,49 @@
 			.loading-indicator {
 				background-image: url(/Default/html/images/loading.gif);
 			}
+
+			[% IF rtl %]
+				.x-layout-panel, .x-btn,
+				.x-btn-text-icon .x-btn-center .x-btn-text{
+					direction: rtl
+				}
+				
+				.x-btn-text-icon .x-btn-center .x-btn-text{
+					background-position: 100% 2px;
+					padding-right:18px;
+					padding-left:0;
+				}
+				
+				.x-layout-panel-hd-text{
+					width:100%;
+				}
+				
+				.x-layout-panel-hd-tools{
+					left:0;
+				}
+				
+				.x-layout-tools-button{
+					float:left;
+				}
+
+				.wz_desc_right {
+					left: 0;
+				}
+
+				.x-btn-left {
+					background: url(/Default/html/images/slim-ext/btn-generic.png) no-repeat 0 -19px;
+				}
+
+				.x-btn-right {
+					background: url(/Default/html/images/slim-ext/btn-generic.png) no-repeat 0 0;
+				}
+
+.x-btn-over .x-btn-left, .x-btn-menu-active .x-btn-left { background-position:0 -76px; }
+.x-btn-over .x-btn-right, .x-btn-menu-active .x-btn-right { background-position:0 -57px; }
+.x-btn-click .x-btn-left, .x-btn-pressed .x-btn-left  { background-position:0 -133px; }
+.x-btn-click .x-btn-right, .x-btn-pressed .x-btn-right { background-position:0 -114px; }
+
+			[% END %]
 		-->
 		</style>
 	</head>

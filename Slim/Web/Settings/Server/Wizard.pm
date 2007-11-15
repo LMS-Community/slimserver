@@ -66,6 +66,9 @@ sub page {
 sub handler {
 	my ($class, $client, $paramRef, $pageSetup, $httpClient, $response) = @_;
 
+	# set right-to-left orientation for Hebrew users
+	$paramRef->{rtl} = 1 if ($serverPrefs->get('language') eq 'HE');
+
 	$paramRef->{languageoptions} = Slim::Utils::Strings::languageOptions();
 
 	# make sure we only enforce the wizard at the very first startup
