@@ -67,16 +67,28 @@
 	[% IF thispage != 'radio' %]
 	[% INCLUDE home_links %]
 	[% ELSE %]
-		[% linkHash = additionalLinks.radio %]
-		[% linkHash.import(additionalLinks.music_on_demand) %]
-		[% FOREACH key = linkHash.keys %]
+	
+		[% linkList = [] %]
+		[%- FOREACH item = additionalLinkOrder.radio %][% key = item %][% value = additionalLinks.radio.$item %]
+			[% linkList.push([key,value]) %]
+		[%- END %]
+		[%- FOREACH link = additionalLinks.radio; IF !additionalLinkOrder.radio.grep(link.key).size %][% value = link.value %][% key = link.key %]
+			[% linkList.push([key,value]) %]
+		[%- END;END %]
+		[%- FOREACH item = additionalLinkOrder.music_on_demand %][% key = item %][% value = additionalLinks.music_on_demand.$item %]
+			[% linkList.push([key,value]) %]
+		[%- END %]
+		[%- FOREACH link = additionalLinks.music_on_demand; IF !additionalLinkOrder.music_on_demand.grep(link.key).size %][% value = link.value %][% key = link.key %]
+			[% linkList.push([key,value]) %]
+		[%- END;END %]
+		[% FOREACH link = linkList %][% key = link.0 %][% value = link.1 %]
 			[%- iconWidth = 80 -%]
 			[% UNLESS loop.index % 2 %]<tr>[% END %]
 				<td valign="middle" class = 'menutext' align = 'right'>
-					<a href="[% webroot %][% linkHash.$key %]player=[% playerURI %]"><img src="[% webroot %][% IF additionalLinks.icons.$key %][% additionalLinks.icons.$key.url.replace('.png', "_${iconWidth}x${iconWidth}_F.png") %][% ELSE %]html/images/radio.gif[% END %]" width = '[% iconWidth %]' border="0" alt = 'radio'></a>
+					<a href="[% webroot %][% value %]player=[% playerURI %]"><img src="[% webroot %][% IF additionalLinks.icons.$key %][% additionalLinks.icons.$key.url.replace('.png', "_${iconWidth}x${iconWidth}_F.png") %][% ELSE %]html/images/radio.gif[% END %]" width = '[% iconWidth %]' border="0" alt = 'radio'></a>
 				</td>
 				<td valign="middle" class = 'menutext' align = 'left'>
-					<a href="[% webroot %][% linkHash.$key %]player=[% playerURI %]">[% key | string %]</a>
+					<a href="[% webroot %][% value %]player=[% playerURI %]">[% key | string %]</a>
 				</td>
 			[% IF loop.index % 2 || loop.last %]</tr>[% END %]
 		[% END %]
@@ -126,9 +138,12 @@
 <div class="homeMenuSection">
 	<div>[% "RADIO" | string | upper %]</div>
 	<ul>
-	[%- FOREACH key = additionalLinks.radio.keys %]
-		<li><a href="[% additionalLinks.radio.$key | html %]player=[% playerURI %]">[% key | string %]</a></li>
+	[%- FOREACH item = additionalLinkOrder.radio %]
+		<li><a href="[% additionalLinks.radio.$item | html %]player=[% playerURI %]">[% item | getstring | html %]</a></li>
 	[%- END %]
+	[%- FOREACH link = additionalLinks.radio; IF !additionalLinkOrder.radio.grep(link.key).size %]
+		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | string %]</a></li>
+	[%- END;END %]
 		<li><a href="tunein.html?player=[% playerURI %]">[% "RADIO_TUNEIN" | string %]</a></li>
 	</ul>	
 </div>
