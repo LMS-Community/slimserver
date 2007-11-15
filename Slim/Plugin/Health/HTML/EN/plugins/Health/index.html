@@ -1,11 +1,6 @@
 [% pagetitle = "PLUGIN_HEALTH" | string ; pageicon = 'help' %]
-[% pwd_list = []; pwd_list.0 = BLOCK %]<a href="index.html?player=[% playerURI %]">[% "PLUGIN_HEALTH" | string %]</a>[% END %]
-[% pwd_list = []; 
-  pwd_list.0 = BLOCK %]
-<a href="index.html?player=[% playerURI %]">[% "PLUGIN_HEALTH" | string %]</a>
-[% END %]
 
-[% PROCESS pageheader.html %]
+[% PROCESS helpheader.html %]
 
 [% IF refresh %]<script language="JavaScript">
 
@@ -97,4 +92,4 @@ function refresh() {
 [% END %]
 
 </td>
-[% PROCESS pagefooter.html %]
+[% PROCESS helpfooter.html %]
