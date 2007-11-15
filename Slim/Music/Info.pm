@@ -751,7 +751,7 @@ sub addDiscNumberToAlbumTitle {
 
 	my $discWord = string('DISC');
 
-	return $title if $title =~ /\b(${discWord})|(Disc)\s+\d+/i;
+	return $title if $title =~ /\b((${discWord})|(Disc))\s+\d+/i;
 
 	if (defined $discCount) {
 		# add spaces to discNum to help plain text sorting
