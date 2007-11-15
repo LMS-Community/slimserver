@@ -38,6 +38,7 @@ sub initPlugin {
 		feed => Slim::Networking::SqueezeNetwork->url('/api/slacker/v1/opml'),
 		tag  => 'slacker',
 		menu => 'radio',
+		'icon-id' => 'html/images/ServiceProviders/slacker_56x56_p.png',
 	);
 	
 	if ( !$ENV{SLIM_SERVICE} ) {
