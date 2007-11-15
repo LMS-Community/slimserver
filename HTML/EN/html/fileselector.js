@@ -213,7 +213,8 @@ var FilesystemBrowser = function(){
 		init: function(){
 			var inputEl, btnEl, filter, classes, start;
 
-			var tpl = new Ext.Template('<img src="/html/images/spacer.gif" class="filesystemBrowseBtn" onclick="FilesystemBrowser.show(\'{inputField}\', \'{filter}\')">');
+//			var tpl = new Ext.Template('<img src="/html/images/spacer.gif" class="filesystemBrowseBtn" onclick="FilesystemBrowser.show(\'{inputField}\', \'{filter}\')">');
+			var tpl = new Ext.Template('&nbsp;<input type="button" value="' + strings['browse'] + '" onclick="FilesystemBrowser.show(\'{inputField}\', \'{filter}\')">');
 			tpl.compile();
 
 			// try to get the filter expression from the input fields CSS class
@@ -246,7 +247,6 @@ var FilesystemBrowser = function(){
 						filter: filter
 					});
 				}
-
 			}
 		},
 

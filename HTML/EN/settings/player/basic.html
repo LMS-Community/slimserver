@@ -1,4 +1,4 @@
-[% pageHeaderScripts = BLOCK %]
+[% IF !useExtJS; pageHeaderScripts = BLOCK %]
 	<script TYPE="text/javascript">[% PROCESS html/vars.js %]</script>
 	<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
 	<script TYPE="text/javascript" src="[% webroot %]html/global.js?r=[% revision %]"></script>
@@ -15,7 +15,7 @@
 		function dummyCallback() {
 		}
 	</script>
-[% END %]
+[% END; END %]
 [% PROCESS settings/header.html %]
 
 	[% WRAPPER setting title="SETUP_PLAYERNAME" desc="SETUP_PLAYERNAME_DESC" %]

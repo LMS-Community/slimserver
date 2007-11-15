@@ -7,7 +7,7 @@ html, body, tr, tr, p, div, li, input, ul, b, a {
 	color: #666666;
 }
 
-html, body, tr, tr, p, div, li, input, ul {
+html, body, tr, tr, p, div, li, input, ul, .stdedit {
 	font-size: 11px;
 }
 
@@ -15,6 +15,14 @@ body {
 	background: url(html/images/help/background.gif) repeat;
 	position: relative;
 	overflow: auto;
+}
+
+input.stdedit {
+	padding: 2px;
+}
+
+select.stdedit {
+	height: 18px;
 }
 
 .x-layout-panel-body {

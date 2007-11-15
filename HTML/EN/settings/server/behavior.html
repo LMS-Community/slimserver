@@ -19,7 +19,7 @@
 
 	[% WRAPPER settingSection %]
 		[% WRAPPER settingGroup title="SETUP_VARIOUSARTISTS" desc="SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC"%]
-			<input type="radio" name="variousArtistAutoIdentification" value="0" [% IF NOT prefs.variousArtistAutoIdentification %]checked[% END %]>[% 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0' | getstring %]<br/>
+			<input type="radio" name="variousArtistAutoIdentification" value="0" [% IF NOT prefs.variousArtistAutoIdentification %]checked[% END %]>[% 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0' | getstring %]</input><br/>
 			<input type="radio" name="variousArtistAutoIdentification" value="1" [% IF prefs.variousArtistAutoIdentification %]checked[% END %]>[% 'SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1' | getstring %]
 		[% END %]
 

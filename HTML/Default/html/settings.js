@@ -45,19 +45,20 @@ Settings = function(){
 			tp = new Ext.TabPanel('settingsTabs');
 
 			tp.addTab('BASIC_SERVER_SETTINGS', strings['basic']).on('activate', Settings.showSettingsPage);
+			tp.addTab('player', strings['player']).on('activate', Settings.showSettingsPage);
 			tp.addTab('BEHAVIOR_SETTINGS', strings['mymusic']).on('activate', Settings.showSettingsPage);
+			tp.addTab('SQUEEZENETWORK_SETTINGS', strings['squeezenetwork']).on('activate', Settings.showSettingsPage);
 
 			if (iTunesEnabled)
 				tp.addTab('ITUNES', strings['itunes']).on('activate', Settings.showSettingsPage);
 
+			tp.addTab('INTERFACE_SETTINGS', strings['interface']).on('activate', Settings.showSettingsPage);
+			tp.addTab('SETUP_GROUP_PLUGINS', strings['plugins']).on('activate', Settings.showSettingsPage);
+
 			if (podcastEnabled)
 				tp.addTab('PLUGIN_PODCAST', strings['podcasts']).on('activate', Settings.showSettingsPage);
 
-			tp.addTab('SQUEEZENETWORK_SETTINGS', strings['squeezenetwork']).on('activate', Settings.showSettingsPage);
-			tp.addTab('INTERFACE_SETTINGS', strings['interface']).on('activate', Settings.showSettingsPage);
-			tp.addTab('SETUP_GROUP_PLUGINS', strings['plugins']).on('activate', Settings.showSettingsPage);
 			tp.addTab('advanced', strings['advanced']).on('activate', Settings.showSettingsPage);
-			tp.addTab('player', strings['player']).on('activate', Settings.showSettingsPage);
 			tp.addTab('SERVER_STATUS', strings['status']).on('activate', Settings.showSettingsPage);
 
 			tp.activate('BASIC_SERVER_SETTINGS');
