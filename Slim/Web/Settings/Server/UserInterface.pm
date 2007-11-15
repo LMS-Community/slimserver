@@ -26,7 +26,6 @@ sub page {
 
 sub prefs {
 	return ($prefs, qw(skin itemsPerPage refreshRate thumbSize longdateFormat shortdateFormat timeFormat showArtist showYear titleFormatWeb));
-#	return ($prefs, qw(skin itemsPerPage refreshRate coverArt artfolder thumbSize));
 }
 
 sub handler {
