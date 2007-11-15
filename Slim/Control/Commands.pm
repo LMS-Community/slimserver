@@ -2741,7 +2741,10 @@ sub _playlistXtracksCommand_parseDbItem {
 
 	# Bug 4790: we get a track object of content type 'dir' if a fileurl for a directory is passed
 	# this needs scanning so pass empty list back to playlistXitemCommand in this case
-	if (blessed($obj) && $obj->can('content_type') && $obj->content_type ne 'dir') {
+	if (blessed($obj) && (
+		$class eq 'Album' || 
+		$class eq 'Contributor' || 
+		($obj->can('content_type') && $obj->content_type ne 'dir'))) {
 
 		my $terms = sprintf('%s.id=%d', lc($class), $obj->id);
 
