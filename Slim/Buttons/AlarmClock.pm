@@ -69,7 +69,7 @@ sub weekDay {
 sub useWeekday {
 	my $client = shift;
 	my $pref = shift;
-	
+
 	return ref $prefs->client($client)->get($pref) ? weekDay($client) : undef;
 }
 
@@ -598,7 +598,7 @@ sub overlayFunc {
 			return (
 				undef,
 				Slim::Buttons::Common::checkBoxOverlay($client,
-					ref $pref ? $pref->[ useWeekday($client) ] : $pref
+					ref $pref ? $pref->[ useWeekday($client, $nextParams{'pref'}) ] : $pref
 				),
 			);
 		}
