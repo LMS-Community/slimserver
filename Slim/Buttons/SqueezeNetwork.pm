@@ -116,6 +116,11 @@ sub connectSqueezeNetwork {
 
 	if (clientIsCapable($client)) {
 		my $host = pack('N',1);  # 1 is squeezenetwork
+		
+		# XXX: For now, connect people to the SN beta server
+		my $ip = Net::IP->new('207.7.156.11');
+		$host = pack 'N', $ip->intip;
+		
 		$client->sendFrame('serv', \$host);
 
 		# TODO: ensure client actually received the message

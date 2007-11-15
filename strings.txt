@@ -12365,14 +12365,7 @@ SQUEEZENETWORK
 	ZH_CN	SqueezeNetwork
 
 SQUEEZENETWORK_CONNECT
-	DE	SqueezeNetwork
-	EN	SqueezeNetwork
-	ES	SqueezeNetwork
-	FR	SqueezeNetwork
-	HE	SqueezeNetwork
-	IT	SqueezeNetwork
-	NL	SqueezeNetwork
-	ZH_CN	SqueezeNetwork
+	EN	SqueezeNetwork Beta
 
 SQUEEZENETWORK_CONNECTING
 	DE	Verbindung zu SqueezeNetwork wird hergestellt ...
@@ -12387,15 +12380,15 @@ SQUEEZENETWORK_CONNECTING
 	ZH_CN	SqueezeNetwork连接中...
 
 SQUEEZENETWORK_SWITCH
-	DE	Zum SqueezeNetwork umschalten
-	EN	Switch to SqueezeNetwork
-	ES	Cambiar a SqueezeNetwork
-	FR	Se connecter à SqueezeNetwork
-	HE	מעבר ל-SqueezeNetwork
-	IT	Passa a SqueezeNetwork
-	NL	Wisselen naar SqueezeNetwork
-	SV	Växla till SqueezeNetwork
-	ZH_CN	切换到SqueezeNetwork
+	DE	Zum SqueezeNetwork umschalten Beta
+	EN	Switch to SqueezeNetwork Beta
+	ES	Cambiar a SqueezeNetwork Beta
+	FR	Se connecter à SqueezeNetwork Beta
+	HE	מעבר ל-SqueezeNetwork Beta
+	IT	Passa a SqueezeNetwork Beta
+	NL	Wisselen naar SqueezeNetwork Beta
+	SV	Växla till SqueezeNetwork Beta
+	ZH_CN	切换到SqueezeNetwork Beta
 
 SQUEEZENETWORK_SWITCHING
 	DE	Verbindung zum SqueezeNetwork wird hergestellt. Bitte warten ...
