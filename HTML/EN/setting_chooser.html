@@ -1,32 +1,35 @@
-[% IF useTabList %]
-    [% IF playerid && needsClient %][% links = playersetup %][% ELSE %][% links = additionalLinks.setup %][% END %]
-    [% IF links %]
-      [% IF style == "list" %]<div id="setuptabs"><ul>[% END %]
-      [% FOREACH link = links %]
-        [% IF style == "list" %]
-          <li [% IF page == link.key %] id="currtab"[% END %]>
+[%- IF playerid && needsClient %][% setuplinks = playersetup %][% ELSE %][% setuplinks = additionalLinks.setup %][% END -%]
+[%- FOREACH token = setuplinks.keys -%]
+	[% stringkeys.$token = token | string | html -%]
+[%- END -%]
+
+[%- IF useTabList %]
+    [%- IF setuplinks && stringkeys %]
+      [%- IF style == "list" %]<div id="setuptabs"><ul>[% END %]
+      [%- FOREACH stringkey = stringkeys.sort %]
+        [%- IF style == "list" %]
+          <li [% IF page == stringkey %] id="currtab"[% END %]>
         [%- ELSIF loop.index > 0%]<span class="bar">|</span>[% END %]
-          <a href="[% webroot %][% link.value %]player=[% playerURI %][% IF playerid %]&amp;playerid=[% playerid %][% END %]">[% link.key | string %]</a>[% IF style == "list" %]</li>[% END %]
-      [% END %]
-      [% IF style == "list" %]</ul></div>[% END %]
-    [% END %]
+          <a href="[% webroot %][% setuplinks.$stringkey %]player=[% playerURI %][% IF playerid %]&amp;playerid=[% playerid %][% END %]">[% stringkey | string | html %]</a>[% IF style == "list" %]</li>[% END %]
+      [%- END -%]
+      [%- IF style == "list" %]</ul></div>[% END %]
+    [%- END -%]
 
-[% ELSE %]
+[%- ELSE -%]
 
-[% BLOCK addSetupLinks %]
-	[% IF setuplinks %]
-		[% FOREACH link = setuplinks %]
-			<option [% IF page == link.key %]selected[% END %] value="[% link.key %]" label="[% link.key | string %]">[% link.key | string %]</option>
-		[% END %]
-	[% END %]
-[% END %]
+[%- BLOCK addSetupLinks -%]
+	[%- IF setuplinks -%]
+		[%- FOREACH stringkey = stringkeys.sort %]
+			<option [% IF page == stringkey %]selected[% END %] value="[% stringkey %]" label="[% stringkeys.$stringkey %]">[% stringkeys.$stringkey %]</option>
+		[%- END -%]
+	[%- END -%]
+[%- END %]
 
 <form id="setup_chooser" name="setup_chooser" method="get" action="[% webroot %]setup.html" target="header">
 <input type="hidden" name="pageAntiCSRFToken" value="[% pageAntiCSRFToken %]">
 	<select ID="choose_setting" NAME="choose_setting" class="stdedit" style="width:17em;" onchange="chooseSettings(selectedIndex,options[selectedIndex].value)">
 		[% UNLESS setting_chooser_noHome %]<option [% IF page == "HOME" %]selected[% END %] value="HOME" label="[% "HOME" | string %]">[% "HOME" | string %]</option>[% END %]
-		[% IF playerid && needsClient %][% PROCESS addSetupLinks setuplinks= playersetup %]
-		[% ELSE %][% PROCESS addSetupLinks  setuplinks=additionalLinks.setup %][% END %]
+		[% PROCESS addSetupLinks %]
 	</select>
 	<input type=hidden value="[% page %]" name="page">
 	<input type=hidden value="[% playerid | uri %]" name="playerid">
