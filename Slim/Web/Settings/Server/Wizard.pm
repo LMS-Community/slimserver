@@ -168,6 +168,14 @@ sub handler {
 	}
 	
 	if ( $paramRef->{saveSettings} ) {
+
+		if (   $paramRef->{sn_email}
+			&& $paramRef->{sn_password}
+			&& $serverPrefs->get('sn_sync')
+		) {
+			Slim::Networking::SqueezeNetwork->init();
+		}
+
 		if ( defined $paramRef->{sn_disable_stats} ) {
 			Slim::Utils::Timers::setTimer(
 				$paramRef->{sn_disable_stats},
