@@ -749,7 +749,7 @@ Player = function(){
 			new Slim.Button('ctrlNext', {
 				cls: 'btn-next',
 				tooltip: strings['next'],
-				minWidth: 28,
+				minWidth: 31,
 				scope: this,
 				handler: function(){
 					if (playerStatus.power)
