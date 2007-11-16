@@ -145,6 +145,12 @@ var Utils = function(){
 			if (!unHighlightTimer)
 				unHighlightTimer = new Ext.util.DelayedTask(this.unHighlight);
 
+			// don't remove the highlight automatically while we're editing a search term or similar
+			Ext.select('.browsedbControls input[type="text"]').on({
+				focus: Utils.cancelUnHighlightTimer,
+				click: Utils.cancelUnHighlightTimer
+			});
+
 			Ext.EventManager.onWindowResize(Utils.resizeContent);
 			Ext.EventManager.onDocumentReady(Utils.resizeContent);
 		},

@@ -42,7 +42,15 @@ ELSE %]
 		END;
 		FOREACH link = additionalLinks.search;
 			IF link.key == 'SEARCHMUSIC';
-				PROCESS menuItem control='<input type="text" id="search" class="x-form-focus" size="30">';
+				control = BLOCK %]
+					<form method="GET" action="[% webroot %]search.html">
+						<input type="hidden" name="manualSearch" value="1"/>
+						<input type="hidden" name="livesearch" value="1"/>
+						<input type="hidden" name="player" value="[% playerid %]">
+						<input type="text" name="query" id="search" class="x-form-focus searchInput" size="30">
+					</form>
+				[% END;
+				PROCESS menuItem;
 			END;
 		END;
 	END;

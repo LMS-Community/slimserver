@@ -7,6 +7,10 @@
 	[% searchquery = 'query=' _ query _ '&amp;' %]
 [% END %]
 
+[% BLOCK xmlSearchForm %]
+	<input type="text" class="x-form-focus searchInput" name="q" value=""/>
+[% END %]
+
 [% FILTER null %]
 [% pwd_list = [];
 	FOREACH crumb IN crumb;
@@ -39,8 +43,8 @@
 [% IF search %]
 	<form id="searchForm" name="searchForm" method="GET">
 		<input type="text" id="query" name="query" size="40" value="[% query %]"/>
-		<input name="submit" type="submit" class="stdclick" value="[% "SEARCH" | string %]"><p>
-		<input type="hidden" value="[% player %]" name="player">
+		<input name="submit" type="submit" class="stdclick" value="[% "SEARCH" | string %]"/>
+		<input type="hidden" value="[% player %]" name="player"/>
 	</form>
 [% END %]
 
@@ -97,11 +101,12 @@
 		[%- FOREACH item = items %]
 			[% IF item.type == 'search' %]
 				<form id="searchForm[% index _ (start + loop.index) %]" method="GET">
+				[%- WRAPPER contentitem controls = 'xmlSearchForm' %]
 					[% item.name || item.title %]
-					<input type="text" name="q" value=""/>
-					<input name="submit" type="submit" class="stdclick" value="[% "SEARCH" | string %]"><p>
 					<input type="hidden" value="[% player %]" name="player" />
 					<input type="hidden" value="[% index _ (start + loop.index) %]" name="index" />
+ 					<input type="hidden" name="submit" class="stdclick" value="[% "SEARCH" | string %]"/>
+				[%- END %]
 				</form>
 			[% ELSE %]
 				[%- WRAPPER contentitem controls = 'gencontrol' %]

@@ -28,30 +28,6 @@ var MainMenu = function(){
 						this.expandItem(panel);
 				}
 			}
-
-			// don't remove the highlight automatically while we're editing a search term or similar
-			if (el = Ext.get('search'))
-				el.on({
-					focus: Utils.cancelUnHighlightTimer,
-					click: Utils.cancelUnHighlightTimer
-				});
-
-			if (el = Ext.get('tuneinurl'))
-				el.on({
-					focus: Utils.cancelUnHighlightTimer,
-					click: Utils.cancelUnHighlightTimer
-				});
-
-			new Ext.KeyMap('search', {
-				key: Ext.EventObject.ENTER,
-				fn: function(){
-					var query = Ext.get('search').dom.value;
-
-					if (query)
-						location.href = webroot + 'search.html?manualSearch=1&livesearch=1&player=' + playerid + '&query=' + Ext.encode(query);
-				},
-				scope: this
-			});
 		},
 
 		onSelectorClicked : function(ev, target){

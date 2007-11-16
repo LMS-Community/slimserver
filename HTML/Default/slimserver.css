@@ -16,7 +16,7 @@ html, body, tr, tr, p, div, li, input, ul, .x-btn-text {
 	font-family: sans-serif;
 }
 
-b, a { color: #333333; }
+b, a, form { color: #333333; }
 
 
 /* helper classes */
@@ -354,7 +354,7 @@ img#background { position:absolute; }
 	vertical-align: top;
 }
 
-.homeMenuItem input {
+.browsedbControls input {
 	height: 13px;
 }
 
@@ -588,7 +588,7 @@ div.thumbwrap {
 	padding-bottom: 4px;
 }
 
-.browsedbControls #search {
+.browsedbControls .searchInput {
 	width: 185px;
 	background: white url(html/images/search.gif) no-repeat 170px -1px;
 }
