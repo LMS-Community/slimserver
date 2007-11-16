@@ -475,7 +475,7 @@ MUSIC_ON_DEMAND
 
 MY_MUSIC
 	DE	Eigene Musik
-	EN	Music LIbrary
+	EN	Music Library
 	ES	Mi música
 	FR	Ma musique
 	IT	Musica
