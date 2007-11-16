@@ -466,7 +466,7 @@ MUSIC_SERVICES
 
 MUSIC_ON_DEMAND
 	DE	Musik auf Abruf
-	EN	Music On Demand
+	EN	Music Services
 	ES	Música a petición
 	FR	Musique à la demande
 	IT	Musica a richiesta
@@ -475,7 +475,7 @@ MUSIC_ON_DEMAND
 
 MY_MUSIC
 	DE	Eigene Musik
-	EN	My Music
+	EN	Music LIbrary
 	ES	Mi música
 	FR	Ma musique
 	IT	Musica
@@ -6829,7 +6829,7 @@ SETUP_WIZARD_SQN
 	EN	SqueezeNetwork Account
 
 SETUP_WIZARD_SQN_DESC
-	EN	SqueezeNetwork allows you to get the most out of your new wireless music system by giving you access to music on demand services and internet radio stations.<br/><br/>If you already have a SqueezeNetwork account please enter your information below and click the "Add" button. If you don't have a SqueezeNetwork account, please click "I need an account".
+	EN	SqueezeNetwork allows you to get the most out of your new wireless music system by giving you access to music services and internet radio stations.<br/><br/>If you already have a SqueezeNetwork account please enter your information below and click the "Add" button. If you don't have a SqueezeNetwork account, please click "I need an account".
 
 SETUP_WIZARD_SQN_VERIFY
 	EN	Add
@@ -9173,7 +9173,7 @@ BROWSE
 
 BROWSE_MUSIC
 	DE	Eigene Musik
-	EN	My Music
+	EN	Music Library
 	ES	Mi música
 	FR	Ma musique
 	IT	Musica
