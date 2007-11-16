@@ -42,7 +42,7 @@ sub serverResizesArt {
 }
 
 sub processCoverArtRequest {
-	my ($client, $path) = @_;
+	my ($client, $path, $params) = @_;
 
 	my ($body, $mtime, $inode, $size, $actualContentType); 
 
@@ -144,7 +144,7 @@ sub processCoverArtRequest {
 
 	} elsif ($trackid eq 'notCoverArt') {
 
-		($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent($actualPathToImage);
+		($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent($actualPathToImage, $params);
 		$imageData = $$body;
 		
 	} else {
@@ -192,7 +192,7 @@ sub processCoverArtRequest {
 
 		unless ($cachedImage) {
 
-			($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/$image.png");
+			($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/$image.png", $params);
 			$actualContentType = 'image/png';
 			$imageData = $$body;
 		}

@@ -780,7 +780,7 @@ sub processURL {
 	my @p = ();
 	my $client = undef;
 	my $path   = $params->{"path"};
-	
+
 	# Command parameters are query parameters named p0 through pN
 	# 	For example:
 	#		http://host/status.m3u?p0=playlist&p1=jump&p2=2 
@@ -1088,7 +1088,7 @@ sub generateHTTPResponse {
 			/x   # extend this to also include any image that gives resizing parameters
 		) {
 
-		($body, $mtime, $inode, $size, $contentType) = Slim::Web::Graphics::processCoverArtRequest($client, $path);
+		($body, $mtime, $inode, $size, $contentType) = Slim::Web::Graphics::processCoverArtRequest($client, $path, $params);
 
 	} elsif ($path =~ /music\/(\d+)\/download/) {
 
