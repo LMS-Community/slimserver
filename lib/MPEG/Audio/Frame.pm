@@ -262,6 +262,7 @@ sub read_ref {
 sub read {
 	my $pkg = shift || return undef;
 	my $fh = shift || return undef;
+	my $checkNextFrame = shift;
 	
 	local $/ = "\xff"; # get readline to find 8 bits of sync.
 	
@@ -341,6 +342,21 @@ sub read {
 		seek ($fh, $offset + 1, SEEK_SET);
 		# Bad CRC: trying again: must have been a bad sync
 		goto OUTER;
+	}
+	
+	# Check that this frame is immediately followed by another valid frame header
+	if ($checkNextFrame) {
+		my $pos = $offset + $length;
+		my $nextFrame = $pkg->read($fh, 0);
+		if (!defined($nextFrame)) {
+			seek($fh, $offset + 1, SEEK_SET);
+			return undef;
+		} elsif ($nextFrame->{offset} != $pos) {
+			seek ($fh, $offset + 1, SEEK_SET);
+			# Bad CRC: trying again: must have been a bad sync
+			goto OUTER;
+		}
+		seek($fh, $pos, SEEK_SET);
 	}
 
 	$self;

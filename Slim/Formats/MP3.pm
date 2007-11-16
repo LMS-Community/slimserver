@@ -345,7 +345,7 @@ sub findFrameBoundaries {
 	seek($mpeg, $offset, SEEK_SET);
 
 	# Find the first frame.
-	my $frame1 = MPEG::Audio::Frame->read($mpeg);
+	my $frame1 = MPEG::Audio::Frame->read($mpeg, 1);
 
 	if (defined $frame1) {
 		$start = $frame1->offset;
@@ -356,7 +356,7 @@ sub findFrameBoundaries {
 
 		seek($mpeg, ($start - ($frame1->length * 1.5) + $seek), SEEK_SET);
 
-		while (my $frame2 = MPEG::Audio::Frame->read($mpeg)) {
+		while (my $frame2 = MPEG::Audio::Frame->read($mpeg, 1)) {
 
 			if (($frame2->offset + ($frame2->length * 2)) > $start + $seek) {
 
