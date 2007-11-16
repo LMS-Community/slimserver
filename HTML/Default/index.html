@@ -103,12 +103,14 @@
 
 			[% IF moreThanThis != "" %]Utils.setCookie( 'SqueezeCenter-allLinks', "[% moreThanThis %]" )[% END %]
 
-			try { Ext.EventManager.onDocumentReady(Main.init, Main, true); }
-			catch(e) {
-				document.getElementById('loading').style.display = 'none';
-				document.getElementById('noJS').style.display = 'block';
-				[% IF !debug %]window.setTimeout(function(){location.href = '/classic'}, 10000);[% END %]
-			}
+			Ext.EventManager.onDocumentReady(function(){
+				try { Main.init(); }
+				catch(e) {
+					document.getElementById('loading').style.display = 'none';
+					document.getElementById('noJS').style.display = 'block';
+					[% IF !debug %]window.setTimeout(function(){location.href = '/classic'}, 10000);[% END %]
+				}
+			});
 		</script>
 
 		<div id="mainbody">

@@ -190,12 +190,14 @@
 			[% PROCESS jsString id='ITUNES_DESC' jsId='summary_itunes' %]
 			[% PROCESS jsString id='MUSICMAGIC_DESC' jsId='summary_musicmagic' %]
 
-			try { Ext.EventManager.onDocumentReady(Wizard.init, Wizard, true); }
-			catch(e) {
-				document.getElementById('loading').style.display = 'none';
-				document.getElementById('noJS').style.display = 'block';
-				[% IF !debug %]window.setTimeout(function(){location.href = '/classic'}, 10000);[% END %]
-			}
+			Ext.EventManager.onDocumentReady(function(){
+				try { Wizard.init(); }
+				catch(e) {
+					document.getElementById('loading').style.display = 'none';
+					document.getElementById('noJS').style.display = 'block';
+					[% IF !debug %]window.setTimeout(function(){location.href = '/classic'}, 10000);[% END %]
+				}
+			});
 		</script>
 
 		<div id="mainbody">
