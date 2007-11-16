@@ -144,7 +144,7 @@ img#background { position:absolute; }
 .inner_top, .inner_bottom {
 	height: 12px;
 	margin: 0 12px;
-	background-color: #252525;
+	background-color: #404040;
 }
 
 #mainSpacer { width: 10px; }
@@ -264,7 +264,7 @@ img#background { position:absolute; }
 
 /* inner pages (left frame) */
 #inner_header, #infoTab, #playlistTab {
-	background-color: #252525;
+	background-color: #404040;
 	color: #dddddd;
 }
 
@@ -386,19 +386,9 @@ img#background { position:absolute; }
 	bottom: 12px;
 }
 
-.btn-playlist-hide-artwork, .btn-playlist-hide-artwork button,
-.btn-playlist-show-artwork, .btn-playlist-show-artwork button,
 .btn-playlist-save, .btn-playlist-save button,
 .btn-playlist-clear, .btn-playlist-clear button {
 	height: 19px;
-}
-
-.btn-playlist-show-artwork button {
-	background: transparent url(html/images/btn_toggle_playlist_artwork.gif) no-repeat 0 0;
-}
-
-.btn-playlist-hide-artwork button {
-	background: transparent url(html/images/btn_toggle_playlist_artwork.gif) no-repeat 0 -38px;
 }
 
 .btn-playlist-save button {
@@ -615,7 +605,7 @@ form#advSearchForm.resultsPage {
 /* player control */
 #playerbox {
 	padding: 0 12px 5px 12px;
-	background-color: #252525;
+	background-color: #404040;
 	color: #dddddd;
 }
 
@@ -747,6 +737,11 @@ form#advSearchForm.resultsPage {
 
 .btn-expand-player button {
 	background: transparent url(html/images/btn_player_toggle_exp.gif) no-repeat 0 0;
+}
+
+#ctrlCollapse .x-btn-over button,
+#ctrlExpand .x-btn-over button {
+	background-position: 0 -18px;
 }
 
 #ctrlPlaytime, #ctrlPlaytimeRight {
