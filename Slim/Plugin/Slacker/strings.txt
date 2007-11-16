@@ -17,7 +17,7 @@ PLUGIN_SLACKER_ERROR
 	EN	Slacker Error
 
 PLUGIN_SLACKER_SESSION_BUMPED
-	EN	You have logged in on another computer, press PLAY to restart.
+	EN	You have logged in on another device, press PLAY to restart.
 
 PLUGIN_SLACKER_NO_TRACKS
 	EN	Unable to retrieve next track, press PLAY to try again.
