@@ -677,7 +677,7 @@ sub getMetadataFor {
 	
 	# Fav icon changes if the user has already rated it up
 	# XXX: Need icons
-	my $fav_icon = $track->{trate} ? 'html/images/btn_thumbs_up.gif' : 'html/images/btn_thumbs_up.gif';
+	my $fav_icon = $track->{trate} ? 'html/images/btn_slacker_fav.gif' : 'html/images/btn_slacker_fav.gif';
 	my $fav_tip  = $track->{trate} ? 'PLUGIN_SLACKER_UNMARK_FAVORITE' : 'PLUGIN_SLACKER_FAVORITE_TRACK';
 	my $fav_cmd  = $track->{trate} ? 'U' : 'F';
 	
@@ -703,7 +703,7 @@ sub getMetadataFor {
 
 			# replace shuffle with Ban Track
 			shuffle => {
-				icon    => 'html/images/btn_thumbs_down.gif',
+				icon    => 'html/images/btn_slacker_ban.gif',
 				tooltip => Slim::Utils::Strings::string('PLUGIN_SLACKER_BAN_TRACK'),
 				command => [ 'slacker', 'rate', 'B' ],
 			},
