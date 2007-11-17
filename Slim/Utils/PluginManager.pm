@@ -60,6 +60,7 @@ use constant INSTALLERROR_INCOMPATIBLE_VERSION  => -3;
 use constant INSTALLERROR_PHONED_HOME           => -4;
 use constant INSTALLERROR_INCOMPATIBLE_PLATFORM => -5;
 use constant INSTALLERROR_BLOCKLISTED           => -6;
+use constant INSTALLERROR_NO_PLUGIN             => -7;
 
 my @pluginDirs     = Slim::Utils::OSDetect::dirsFor('Plugins');
 my @pluginRootDirs = ();
@@ -215,7 +216,16 @@ sub _parseInstallManifest {
 		return undef;
 	}
 
-	my $pluginName = $installManifest->{'module'} || $installManifest->{'jiveapplet'} || return;
+	my $pluginName = $installManifest->{'module'};
+
+	$installManifest->{'basedir'} = dirname($file);
+
+	if (!defined $pluginName && $installManifest->{'jive'}) {
+		
+		$installManifest->{'error'} = INSTALLERROR_NO_PLUGIN;
+
+		return ($file, $installManifest);
+	}
 
 	if (!$class->checkPluginVersion($installManifest)) {
 
@@ -271,7 +281,6 @@ sub _parseInstallManifest {
 	}
 
 	$installManifest->{'error'}   = INSTALLERROR_SUCCESS;
-	$installManifest->{'basedir'} = dirname($file);
 
 	if ($installManifest->{'defaultState'}) {
 

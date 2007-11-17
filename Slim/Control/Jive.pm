@@ -77,9 +77,11 @@ sub init {
 	Slim::Control::Request::addDispatch(['firmwareupgrade'],
 		[0, 1, 1, \&firmwareUpgradeQuery]);
 
-	Slim::Control::Request::addDispatch(['jiveapplets'], [0, 1, 0, \&appletsQuery]);
+	Slim::Control::Request::addDispatch(['jiveapplets'], [0, 1, 0, \&downloadQuery]);
+	Slim::Control::Request::addDispatch(['jivewallpapers'], [0, 1, 0, \&downloadQuery]);
+	Slim::Control::Request::addDispatch(['jivesounds'], [0, 1, 0, \&downloadQuery]);
 
-	Slim::Web::HTTP::addRawDownload('^jiveapplet/', \&appletDownloadFile, 'binary');
+	Slim::Web::HTTP::addRawDownload('^jive(applet|wallpaper|sound)/', \&downloadFile, 'binary');
 }
 
 =head2 getDisplayName()
@@ -1290,59 +1292,157 @@ sub searchMenu {
 
 }
 
-# return all applets included with plugins
-# assumes plugin metadata includes 'jiveapplet' element set to the name of zip file in plugin's root directory
-# the name of this file should be the name of the applet directory required on jive followed by .zip
-# e.g SlimBrowser would be:
-# <jiveapplet>SlimBrowser.zip</jiveapplet>
 
-sub appletsQuery {
+# The following allow download of applets, wallpaper and sounds from SC to jive
+# Each file to be downloaded should be available in the top level folder of a plugin and
+# the plugin install.xml file should refer to it in the following format:
+#
+# <jive>
+#    <applet>
+#       <version>0.1</version>
+#       <name>Applet1</name>
+#       <file>Applet1.zip</file>
+#    </applet>
+#    <wallpaper>
+#       <name>Wallpaper1</name>
+#       <file>Wallpaper1.png</file>
+#    </wallpaper>			
+#    <wallpaper>
+#       <name>Wallpaper2</name>
+#       <file>Wallpaper2.png</file>
+#    </wallpaper>	
+#    <sound>
+#       <name>Sound1</name>
+#       <file>Sound1.wav</file>
+#    </sound>	
+# </jive>
+
+# file types allowed for downloading to jive
+my %filetypes = (
+	applet    => qr/\.zip$/,
+	wallpaper => qr/\.(bmp|jpeg|png)$/,
+	sound     => qr/\.wav$/,
+);
+
+# Fetch downloadable file info from the plugin metadata
+sub _pluginInfo {
+	my $type = shift;
+
+	my $plugins = Slim::Utils::PluginManager::allPlugins();
+	my $ret = {};
+
+	for my $key (keys %$plugins) {
+
+		if ($plugins->{$key}->{'jive'} && $plugins->{$key}->{'jive'}->{$type}) {
+
+			my $info = $plugins->{$key}->{'jive'}->{$type};
+			my $dir  = $plugins->{$key}->{'basedir'};
+
+			if ($info->{'name'}) {
+
+				my $file = $info->{'file'};
+
+				if ( $file =~ $filetypes{$type} && -r catdir($dir, 'jive', $file) ) {
+
+					if ($ret->{$file}) {
+						$log->warn("duplicate filename for download: $file");
+					}
+
+					$ret->{$file} = {
+						'name'    => $info->{'name'},
+						'path'    => catdir($dir, 'jive', $file),
+						'file'    => $file,
+						'version' => $info->{'version'},
+					};
+
+				} else {
+					$log->warn("unable to make $key:$file available for download");
+				}
+
+			} elsif (ref $info eq 'HASH') {
+
+				for my $name (keys %$info) {
+
+					my $file = $info->{$name}->{'file'};
+
+					if ( $file =~ $filetypes{$type} && -r catdir($dir, 'jive', $file) ) {
+
+						if ($ret->{$file}) {
+							$log->warn("duplicate filename for download: $file [$key]");
+						}
+
+						$ret->{$file} = {
+							'name'    => $name,
+							'path'    => catdir($dir, 'jive', $file),
+							'file'    => $file,
+							'version' => $info->{$name}->{'version'},
+						};
+
+					} else {
+						$log->warn("unable to make $key:$file available for download");
+					}
+				}
+			}
+		}
+	}
+	
+	return $ret;
+}
+
+# return all files available for download based on query type
+sub downloadQuery {
 	my $request = shift;
  
 	$log->debug("Begin Function");
  
-	if ($request->isNotQuery([['jiveapplets']])) {
+	my ($type) = $request->getRequest(0) =~ /jive(applet|wallpaper|sound)s/;
+
+	if (!defined $type) {
 		$request->setStatusBadDispatch();
 		return;
 	}
 
 	my $prefs = preferences("server");
 
-	my $plugins = Slim::Utils::PluginManager::allPlugins();
 	my $cnt = 0;
+	my $urlBase = 'http://' . Slim::Utils::Network::serverAddr() . ':' . $prefs->get('httpport') . "/jive$type/";
 
-	for my $key (keys %$plugins) {
+	for my $val (values %{_pluginInfo($type)}) {
 
-		my $p = $plugins->{$key};
+		my $entry = {
+			$type     => $val->{'name'},
+			'name'    => Slim::Utils::Strings::getString($val->{'name'}),
+			'url'     => $urlBase . $val->{'file'},
+			'file'    => $val->{'file'},
+		};
 
-		if ($p->{'jiveapplet'} && $p->{'jiveapplet'} =~ /(\w+)\.zip$/ && -r catdir($p->{'basedir'}, $p->{'jiveapplet'})) {
-
-			$request->setResultLoopHash('item_loop', $cnt++, {
-				'applet'  => $1,
-				'name'    => Slim::Utils::Strings::getString($p->{'name'}),
-				'version' => $p->{'version'},
-				'url'     => 'http://' . Slim::Utils::Network::serverAddr() . ':' . $prefs->get('httpport') . 
-					         '/jiveapplet/' . $p->{'jiveapplet'},
-			});
+		if ($type eq 'applet') {
+			$entry->{'version'} = $val->{'version'};
 		}
-	}
+
+		$request->setResultLoopHash('item_loop', $cnt++, $entry);
+	}	
 
 	$request->addResult("count", $cnt);
 
 	$request->setStatusDone();
 }
 
-# convert path to location of applet file for download
-sub appletDownloadFile {
+# convert path to location for download
+sub downloadFile {
 	my $path = shift;
 
-	my $plugins = Slim::Utils::PluginManager::allPlugins();
-	my ($name) = $path =~ /^jiveapplet\/(\w+\.zip)/;
+	my ($type, $file) = $path =~ /^jive(applet|wallpaper|sound)\/(.*)/;
 
-	for my $key (keys %$plugins) {
-		if ($plugins->{$key}->{'jiveapplet'} && $plugins->{$key}->{'jiveapplet'} eq $name) {
-			return catdir($plugins->{$key}->{'basedir'}, $name);
-		}
+	my $info = _pluginInfo($type);
+
+	if ($info->{$file}) {
+
+		return $info->{$file}->{'path'};
+
+	} else {
+
+		$log->warn("unable to find file: $file for type: $type");
 	}
 }
 
