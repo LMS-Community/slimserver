@@ -274,7 +274,7 @@ Lists all pending timers in an easy-to-read format for debugging.
 sub listTimers {
 	my $now = Time::HiRes::time();
 
-	$log->debug(sprintf("High timers: (%d)", $high->get_item_count));
+	warn sprintf("High timers: (%d)", $high->get_item_count) . "\n";
 
 	for my $item ( $high->peek_items( sub { 1 } ) ) {
 		
@@ -287,10 +287,10 @@ sub listTimers {
 			$obj = $obj->macaddress();
 		}
 
-		$log->debug(sprintf("%50.50s %.6s %s", $obj, $diff, $name));
+		warn sprintf("%50.50s %.6s %s", $obj, $diff, $name) . "\n";
 	}
 
-	$log->debug(sprintf("Normal timers: (%d)", $normal->get_item_count));
+	warn sprintf("Normal timers: (%d)", $normal->get_item_count) . "\n";
 
 	for my $item ( $normal->peek_items( sub { 1 } ) ) {
 		
@@ -303,7 +303,7 @@ sub listTimers {
 			$obj = $obj->macaddress();
 		}
 
-		$log->debug(sprintf("%50.50s %.6s %s", $obj, $diff, $name));
+		warn sprintf("%50.50s %.6s %s", $obj, $diff, $name) . "\n";
 	}
 	
 	$d_watch_timers && setTimer( undef, time + 5, \&listTimers );
