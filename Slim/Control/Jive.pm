@@ -1294,7 +1294,7 @@ sub searchMenu {
 
 
 # The following allow download of applets, wallpaper and sounds from SC to jive
-# Each file to be downloaded should be available in the top level folder of a plugin and
+# Each file to be downloaded should be available in the 'jive' folder of a plugin and
 # the plugin install.xml file should refer to it in the following format:
 #
 # <jive>
