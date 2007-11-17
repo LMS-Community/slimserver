@@ -382,10 +382,15 @@ sub sendFrame {};
 
 sub currentSongLines {
 	my $client = shift;
-	my $suppressScreen2 = shift;
+	my $suppressScreen2 = shift; # suppress the screen2 display
+	my $suppressDisplay = shift; # suppress both displays [leaving just jive hash]
 
 	my $parts;
 	my $status;
+	my @lines = ();
+	my @overlay = ();
+	my $screen2;
+	my $jive;
 	
 	my $playmode    = Slim::Player::Source::playmode($client);
 	my $playlistlen = Slim::Player::Playlist::count($client);
@@ -394,10 +399,10 @@ sub currentSongLines {
 
 		$status = $client->string('NOTHING');
 
-		$parts = { 'line' => [ $client->string('NOW_PLAYING'), $client->string('NOTHING') ] };
+		@lines = ( $client->string('NOW_PLAYING'), $client->string('NOTHING') );
 
-		if ($client->display->showExtendedText() && !$suppressScreen2) {
-			$parts->{'screen2'} = {};
+		if ($client->display->showExtendedText() && !$suppressDisplay && !$suppressScreen2) {
+			$screen2 = {};
 		}
 
 	} else {
@@ -408,11 +413,11 @@ sub currentSongLines {
 
 			if ( $playlistlen == 1 ) {
 
-				$parts->{line}[0] = $status;
+				$lines[0] = $status;
 
 			} else {
 
-				$parts->{line}[0] = sprintf(
+				$lines[0] = sprintf(
 					$status." (%d %s %d) ",
 					Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
 				);
@@ -427,10 +432,10 @@ sub currentSongLines {
 			$status = $client->string('STOPPED');
 
 			if ( $playlistlen == 1 ) {
-				$parts->{line}[0] = $status;
+				$lines[0] = $status;
 			}
 			else {
-				$parts->{line}[0] = sprintf(
+				$lines[0] = sprintf(
 					$status." (%d %s %d) ",
 					Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
 				);
@@ -442,23 +447,23 @@ sub currentSongLines {
 
 			if (Slim::Player::Source::rate($client) != 1) {
 
-				$status = $parts->{line}[0] = $client->string('NOW_SCANNING') . ' ' . Slim::Player::Source::rate($client) . 'x';
+				$status = $lines[0] = $client->string('NOW_SCANNING') . ' ' . Slim::Player::Source::rate($client) . 'x';
 
 			} elsif (Slim::Player::Playlist::shuffle($client)) {
 
-				$parts->{line}[0] = $client->string('PLAYING_RANDOMLY');
+				$lines[0] = $client->string('PLAYING_RANDOMLY');
 
 			} else {
 
-				$parts->{line}[0] = $client->string('PLAYING');
+				$lines[0] = $client->string('PLAYING');
 			}
 			
 			if ($client->volume() < 0) {
-				$parts->{line}[0] .= " ". $client->string('LCMUTED');
+				$lines[0] .= " ". $client->string('LCMUTED');
 			}
 
 			if ( $playlistlen > 1 ) {
-				$parts->{line}[0] = $parts->{line}[0] . sprintf(
+				$lines[0] .= sprintf(
 					" (%d %s %d) ",
 					Slim::Player::Source::playingSongIndex($client) + 1, $client->string('OUT_OF'), $playlistlen
 				);
@@ -468,15 +473,15 @@ sub currentSongLines {
 		my $song = Slim::Player::Playlist::song($client);
 		my $currentTitle = Slim::Music::Info::getCurrentTitle($client, $song->url);
 
-		$parts->{line}[1] = $currentTitle;
+		$lines[1] = $currentTitle;
 
-		$parts->{overlay}[1] = $client->symbols('notesymbol');
+		$overlay[1] = $client->symbols('notesymbol');
 
 		# add in the progress bar and time...
-		$client->nowPlayingModeLines($parts, $suppressScreen2);
+		$client->nowPlayingModeLines(\@lines, \@overlay, $suppressScreen2);
 
 		# add screen2 information if required
-		if ($client->display->showExtendedText() && !$suppressScreen2) {
+		if ($client->display->showExtendedText() && !$suppressDisplay && !$suppressScreen2) {
 			
 			my ($s2line1, $s2line2);
 
@@ -495,23 +500,35 @@ sub currentSongLines {
 
 			}
 
-			$parts->{'screen2'} = {
+			$screen2 = {
 				'line' => [ $s2line1, $s2line2 ],
 			};
 		}
 
-		$parts->{'jive'} = {
+		$jive = {
 			'type'    => 'song',
 			'text'    => [ $status, $song->title ],
 			'icon-id' => $song->remote ? 0 : ($song->album->artwork || 0) + 0,
 		};
 	}
 
+	if (!$suppressDisplay) {
+
+		$parts->{'line'}    = \@lines;
+		$parts->{'overlay'} = \@overlay;
+		$parts->{'screen2'} = $screen2 if defined $screen2;
+		$parts->{'jive'}    = $jive if defined $jive;
+
+	} elsif ($suppressDisplay ne 'all') {
+
+		$parts->{'jive'} = $jive || \@lines;
+	}
+
 	return $parts;
 }
 
 sub nowPlayingModeLines {
-	my ($client, $parts, $screen2) = @_;
+	my ($client, $lines, $overlays, $screen2) = @_;
 
 	my $display = $client->display;
 
@@ -580,14 +597,14 @@ sub nowPlayingModeLines {
 	
 	if ($showBar) {
 		# show both the bar and the time
-		my $leftLength = $display->measureText($parts->{line}[0], 1);
+		my $leftLength = $display->measureText($lines->[0], 1);
 		my $barlen = $displayWidth - $leftLength - $display->measureText($overlay, 1);
 		my $bar    = $display->symbols($client->progressBar($barlen, $fractioncomplete, ($showBar < 0)));
 
 		$overlay = $bar . $songtime;
 	}
 	
-	$parts->{overlay}[0] = $overlay if defined($overlay);
+	$overlays->[0] = $overlay if defined($overlay);
 }
 
 sub textSongTime {

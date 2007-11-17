@@ -240,7 +240,7 @@ our %functions = (
 		}
 
 		$client->execute(["playlist", "jump", "+1"]);
-		$client->showBriefly($client->currentSongLines()) unless suppressStatus($client);
+		$client->showBriefly($client->currentSongLines(undef, suppressStatus($client)));
 	},
 
 	'rew' => sub  {
@@ -268,7 +268,7 @@ our %functions = (
 			$client->execute(["playlist", "jump", "+0", $noplay]);
 		}
 
-		$client->showBriefly($client->currentSongLines()) unless suppressStatus($client);
+		$client->showBriefly($client->currentSongLines(undef, suppressStatus($client)));
 	},
 
 	'jump' => sub  {
@@ -337,7 +337,7 @@ our %functions = (
 			$client->execute(["playlist", "jump", "+0", $noplay]);
 		}
 
-		$client->showBriefly($client->currentSongLines()) unless suppressStatus($client);
+		$client->showBriefly($client->currentSongLines(undef, suppressStatus($client)));
 	},
 
 	'jumpinsong' => sub {
@@ -426,7 +426,7 @@ our %functions = (
 
 		$client->execute(["pause", $wantmode]);
 
-		$client->showBriefly($client->currentSongLines()) unless suppressStatus($client);
+		$client->showBriefly($client->currentSongLines(undef, suppressStatus($client)));
 	},
 
 	'stop' => sub  {

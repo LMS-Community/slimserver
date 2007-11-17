@@ -495,8 +495,8 @@ sub playcontrolCommand {
 		# reset rate in all cases
 		Slim::Player::Source::rate($client, 1);
 		
-		# update the display unless suppressed or made by jive/cli session
-		$client->showBriefly($client->currentSongLines()) unless (Slim::Buttons::Common::suppressStatus($client) && !$request->source);
+		# update the display unless suppressed
+		$client->showBriefly($client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client)));
 	}
 		
 	$request->setStatusDone();
