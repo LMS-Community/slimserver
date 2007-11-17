@@ -72,7 +72,7 @@ sub setMode {
 				my $client = shift;
 
 				my $index = $client->modeParam('favorite');
-				if ($index) {
+				if (defined $index) {
 					return "{FAVORITES_FAVORITE_NUM}$index {FAVORITES_RIGHT_TO_DELETE}";
 				} else {
 					return "{FAVORITES_RIGHT_TO_ADD}";
@@ -84,7 +84,7 @@ sub setMode {
 				my $favorites = Slim::Utils::Favorites->new($client) || return;
 				my $index = $client->modeParam('favorite');
 
-				if ($index) {
+				if (defined $index) {
 					$favorites->deleteIndex($index);
 					$client->modeParam('favorite', undef);
 					$client->showBriefly( {
