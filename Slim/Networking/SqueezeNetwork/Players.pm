@@ -65,7 +65,7 @@ sub _players_done {
 	my $http = shift;
 	
 	my $res = eval { from_json( $http->content ) };
-	if ( $@ || ref $res ne 'HASH' ) {
+	if ( $@ || ref $res ne 'HASH' || $res->{error} ) {
 		$http->error( $@ || 'Invalid JSON response' );
 		return _players_error( $http );
 	}
