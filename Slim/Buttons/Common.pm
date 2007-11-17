@@ -445,7 +445,8 @@ our %functions = (
 			Slim::Buttons::Common::pushMode($client, 'playlist');
 
 			$client->showBriefly( {
-				'line' =>  [ $client->string('STOPPING'), "" ]
+				'line' => [ $client->string('STOPPING'), "" ],
+				'jive' => undef,	
 			}) unless suppressStatus($client);
 		}
 	},
