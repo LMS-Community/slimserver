@@ -5,18 +5,7 @@
 [% PROCESS helpheader.html %]
 <h4>Display Hash</h4>
 
-<p>The format of the display hash is updated with 6.5 to provide additional
-features.  This page describes the new 6.5 display hash and its use
-with the display api.</p>
-
-<p> 6.5 provides backwards compatibility with the 6.2 display hash for common
-functions, but to use any of the following features, the new hash must be used:</p>
-<ul>
-<li>ticker scrolling</li>
-<li>specifying fonts per display component
-<li>2 displays [for Transporter and Softsqueeze Transporter emulation]
-<li>3 line rendering on SB2/SB3/Transporter
-</ul>
+<p>The format of the display hash for 7.0 is the same as for 6.5.</p>
 
 <p>The standard 2 line display with 2 overlays is described as:</p>
 
@@ -63,7 +52,7 @@ $client->symbols():</p>
 
 <p>See $client->symbols() below for valid symbol names.</p>
 
-<p>6.5 adds support for 2 screens for use with Transporter players.
+<p>6.5 added support for 2 screens for use with Transporter players.
 The second display is described within the 'screen2' hash component.
 Screen 1 may be described at the root of the hash, or within a
 'screen1' component:<p>
@@ -221,7 +210,7 @@ mode.
 <h5>Scrolling</h5>
 
 <p>For all players, text in line[1] will scroll if it is too long to fit
-into the space to the left of overlay[1].  With 6.5 on graphic
+into the space to the left of overlay[1].  With 7.0/6.5 on graphic
 players, scrolling may also occur on line[2].  The default operation of
 scrolling for a player is set via preference 'scrollMode', but can be
 overridden by the parameter sent to update.  It is no longer
@@ -231,7 +220,7 @@ overridden by a component in the display hash.</p>
 left of overlay[1].  This is displayed without scrolling for the
 'scrollPause' interval.  Line[1] then rotates to the point when the
 start of line[1] is displayed again.  At this point the display
-pauses again before continuing the rotation.  With 6.5 scrolling may
+pauses again before continuing the rotation.  With 7.0/6.5 scrolling may
 be either right to left or left to right.  This is automatically
 selected so that Hebrew text scrolls left to right.</p>
 
@@ -248,7 +237,7 @@ display - text appears from the right edge, scrolls across the screen
 and off the left side.  It does not rotate in the manner of normal
 scrolling.</p>
 
-<p>With 6.5 ticker scrolling supports scrolling on any line of the
+<p>With 7.0/6.5 ticker scrolling supports scrolling on any line of the
 display and uses a new component of the display hash.  Items are added
 o the ticker by calling update with a display hash such as:</p>
 
@@ -299,7 +288,7 @@ called once per second:</p>
 <hr>
 <h4>Display Functions</h4>
 
-<p>As of 6.5 all display functions are methods of the display object
+<p>As of 7.0/6.5 all display functions are methods of the display object
 rather than the client object.  The display object is stored in the client
 object and is returned by $client->display().</p>
 
@@ -766,7 +755,7 @@ internally to the server and should be ignored.</p>
 <hr></hr>
 <h4>Custom Server Mode Displays</h4>
 
-<p>6.5 supports custom lines functions for the volume display and
+<p>7.0/6.5 supports custom lines functions for the volume display and
 playlist mode.  This allows a plugin to alter the built in screen
 displays for changing volume and playlist/now playing displays.</p>
 
@@ -776,7 +765,9 @@ customPlaylistLines.</p>
 
 <p>To avoid server status messages appearing on top of a custom
 screen, a plugin can also turn off the common play/stop/pause status
-messages by setting $client->suppressStatus().</p>
+messages by setting $client->suppressStatus().  Setting this to 'all'
+will suppress both display updates and popups on jive.  Setting it to
+another true value will only suppress display updates.</p>
 
 <pre>
 sub initPlugin {
