@@ -50,6 +50,8 @@ sub shutdown {
 
 sub fetch_players {
 	
+	Slim::Utils::Timers::killTimers( undef, \&fetch_players );
+	
 	# Get the list of players for our account that are on SN
 	my $http = Slim::Networking::SqueezeNetwork->new(
 		\&_players_done,
@@ -70,10 +72,16 @@ sub _players_done {
 	
 	if ( $log->is_debug ) {
 		$log->debug( "Got list of SN players: " . Data::Dump::dump( $res->{players} ) );
+		$log->debug( "Next player check in " . $res->{next_poll} . " seconds" );
 	}
-	
+		
 	# Update poll interval with advice from SN
 	$POLL_INTERVAL = $res->{next_poll};
+	
+	# Make sure poll interval isn't too small
+	if ( $POLL_INTERVAL < 300 ) {
+		$POLL_INTERVAL = 300;
+	}
 	
 	# Update player list
 	$PLAYERS = $res->{players};
