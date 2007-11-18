@@ -147,7 +147,7 @@ sub albumsQuery {
 	my $menu          = $request->getParam('menu');
 	my $insert        = $request->getParam('menu_all');
 	
-	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album'])) {
+	if ($request->paramNotOneOfIfDefined($sort, ['new', 'album', 'artflow'])) {
 		$request->setStatusBadParams();
 		return;
 	}
@@ -179,6 +179,12 @@ sub albumsQuery {
 			push @{$attr->{'join'}}, 'tracks';
 		}
 		
+		if ($sort && $sort eq 'artflow') {
+
+			$attr->{'order_by'} = Slim::Schema->resultset('Album')->fixupSortKeys('contributor.namesort,album.year,album.titlesort');
+			push @{$attr->{'join'}}, 'contributor';
+		}
+
 		if (specified($search)) {
 			$where->{'me.titlesearch'} = {'like', Slim::Utils::Text::searchStringSplit($search)};
 		}
