@@ -365,6 +365,9 @@ PlayerChooser = function(){
 			if (el = Ext.get('settingsHRef')) {
 				el.dom.href = Utils.replacePlayerIDinUrl(el.dom.href, playerid);
 			}
+			if (el = Ext.get('settingsBtn')) {
+				el.dom.href = Utils.replacePlayerIDinUrl(el.dom.href, playerid);
+			}
 
 			if (ev.canpoweroff != null && (el = Ext.get('ctrlPower')))
 				el.setVisible(ev.canpoweroff);
