@@ -13,7 +13,7 @@
 		<td>[% "NAME" | string %] <input class="stdedit" name="newname" value="[% IF newname; newname; ELSE; playlist.title; END %]" size="[% maxInputSize ? maxInputSize : 40 %]"></td>
 		<td><input class="stdclick" name="submit" type=submit value="[% "SAVE" | string %]" onclick='this.form.renamePlaylist.value=1'></td>
 		<td><input class="stdclick" type="submit" value="[% "EDIT" | string %]" onclick='this.form.editPlaylist.value=1'></td>
-		[% IF playlist.title && playlist.title != untitledString %]
+		[% IF playlist.title %]
 			<td><input class="stdclick" type="submit" value="[% "DELETE" | string %]" onclick='this.form.deletePlaylist.value=1'></td>
 		[% END %]
 		</tr><tr>
