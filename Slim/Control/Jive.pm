@@ -1407,7 +1407,7 @@ sub downloadQuery {
 	my $cnt = 0;
 	my $urlBase = 'http://' . Slim::Utils::Network::serverAddr() . ':' . $prefs->get('httpport') . "/jive$type/";
 
-	for my $val (values %{_pluginInfo($type)}) {
+	for my $val ( sort { $a->{'name'} cmp $b->{'name'} } values %{_pluginInfo($type)} ) {
 
 		my $entry = {
 			$type     => $val->{'name'},
