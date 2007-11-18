@@ -94,7 +94,7 @@ sub addPageLinks {
 
 			my $separator = '';
 
-			if (!$noquery) {
+			if (!$noquery && $category ne 'icons') {
 
 				if ($path =~ /\?/) {
 					$separator = '&';
@@ -103,28 +103,6 @@ sub addPageLinks {
 				}
 			}
 
-			if ($category eq 'radio' || $category eq 'music_on_demand') {
-				my $iconName = $path;
-				$iconName =~ s/\.\w+$//;
-				$iconName =~ s/plugins\/([^\/]+)\/.*/$1/;
-				$iconName .= ".png";
-				# let's just lowercase everything to save me the trouble at figuring out case
-				$iconName = lc($iconName);
-				
-				# do an OS-independent check for a readable image
-				for my $dir ( Slim::Utils::OSDetect::dirsFor('HTML') ) {
-					if ( -r catfile( $dir, qw/EN html images ServiceProviders/, $iconName ) ) {
-						$additionalLinks{'icons'}->{$title}{'url'} = 'html/images/ServiceProviders/' . $iconName;
-						$additionalLinks{'icons'}->{$title}{'icon'} = $iconName;
-						last;
-					}
-				}
-				
-				if ( !$additionalLinks{'icons'}->{$title}{'url'} ) {
-					$additionalLinks{'icons'}->{$title}{'url'} = 'html/images/radio.png';
-					$additionalLinks{'icons'}->{$title}{'icon'} = $iconName;
-				}
-			}
 			$additionalLinks{$category}->{$title} = $path . $separator;
 
 		} else {

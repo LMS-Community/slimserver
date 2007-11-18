@@ -116,6 +116,8 @@ sub webPages {
 	my $url   = 'plugins/RadioTime/index.html';
 	
 	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
+	Slim::Web::Pages->addPageLinks('icons', { $title => 'html/images/ServiceProviders/radiotime.png' });
+	
 	Slim::Web::HTTP::protectURI($url);
 	
 	Slim::Web::HTTP::addPageFunction($url, sub {

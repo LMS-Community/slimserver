@@ -19,6 +19,10 @@ sub initPlugin {
 		*{$class.'::'.'menu'} = sub { $args{menu} };
 	}
 	
+	if (exists $args{'icon-id'}) {
+		Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName => $args{'icon-id'} });
+	}
+	
 	my $cliQuery = sub {
 	 	my $request = shift;
 		Slim::Buttons::XMLBrowser::cliQuery( $args{tag}, $args{feed}, $request );

@@ -68,7 +68,7 @@ ELSE %]
 				PROCESS menuItem;
 			END;
 		END;
-		additionalLinks.icons.RADIO_TUNEIN.url = 'html/images/ServiceProviders/tuneinurl.png';
+		additionalLinks.icons.RADIO_TUNEIN = 'html/images/ServiceProviders/tuneinurl.png';
 		control = BLOCK %]
 			<input type="text" id="tuneinurl" class="x-form-focus" size="30" value="http://" onfocus="this.select();">
 			[% WRAPPER playlink %]onclick="Utils.processPlayerCommand({ params: ['playlist', 'play', Ext.get('tuneinurl').dom.value] });"[% END %]
@@ -107,26 +107,26 @@ ELSE %]
 	[% BLOCK menuItem; page = page | lower %]
 		<div class="selectorMarker" onmouseover="Utils.highlight(this [% IF expandable %], MainMenu.onSelectorClicked[% END %]);">
 			<div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-				<div class="homeMenuItem[% IF (page == 'radio' || page == 'music_on_demand') && additionalLinks.icons.${link.key}.url %] itemWithCover[% END %]" id="[% link.key %]">
+				<div class="homeMenuItem[% IF (page == 'radio' || page == 'music_on_demand') && additionalLinks.icons.${link.key} %] itemWithCover[% END %]" id="[% link.key %]">
 					[% IF expandable %]
 						<img class="disclosure_home" src="[% webroot %]html/images/spacer.gif"/>
 					[% ELSE %]
 						<a href="[% link.value %]player=[% player %][% IF expandable; "&amp;page=" _ expandable; END %]" class="browseItemLink">
 					[% END %]
-						[% IF (page == 'radio' || page == 'music_on_demand') && additionalLinks.icons.${link.key}.url %]
+						[% IF (page == 'radio' || page == 'music_on_demand') && additionalLinks.icons.${link.key} %]
 							<span class="browseCover">
-								<img src="[% webroot %][% additionalLinks.icons.${link.key}.url.replace('.png', "_50x50_f.png") %]" width="50" border="0" alt="[% link.key | string %]">
+								<img src="[% webroot %][% additionalLinks.icons.${link.key}.replace('.png', "_50x50_f.png") %]" width="50" border="0" alt="[% link.key | string %]">
 							</span>
 							<div class="browseItemDetail">[% link.key | string %]</div>
 						[% ELSE %]
-							[% IF additionalLinks.icons.${link.key}.url %]
+							[% IF additionalLinks.icons.${link.key} %]
 								<span class="browseCover">
-									<img src="[% webroot %][% additionalLinks.icons.${link.key}.url.replace('.png', "_25x25_f.png") %]" width="25" border="0" alt="[% link.key | string %]">
+									<img src="[% webroot %][% additionalLinks.icons.${link.key}.replace('.png', "_25x25_f.png") %]" width="25" border="0" alt="[% link.key | string %]">
 								</span>
 								<div class="smallBrowseItemDetail">
 							[% END %]
 							[% link.key | getstring %]
-							[% IF additionalLinks.icons.${link.key}.url %]
+							[% IF additionalLinks.icons.${link.key} %]
 								</div>
 							[% END %]
 						[% END %]
