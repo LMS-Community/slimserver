@@ -10,6 +10,7 @@ use strict;
 use POSIX;
 use Scalar::Util qw(blessed);
 use File::Spec::Functions qw(:ALL);
+use File::Basename;
 
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
@@ -1294,8 +1295,11 @@ sub searchMenu {
 
 
 # The following allow download of applets, wallpaper and sounds from SC to jive
-# Each file to be downloaded should be available in the 'jive' folder of a plugin and
-# the plugin install.xml file should refer to it in the following format:
+# Files may be packaged in a plugin or can be added individually via the api below.
+#
+# In the case of downloads packaged as a plugin, each downloadable file should be 
+# available in the 'jive' folder of a plugin and the plugin install.xml file should refer
+# to it in the following format:
 #
 # <jive>
 #    <applet>
@@ -1316,6 +1320,9 @@ sub searchMenu {
 #       <file>Sound1.wav</file>
 #    </sound>	
 # </jive>
+#
+# Alternatively individual wallpaper and sound files may be registered by the 
+# registerDownload and deleteDownload api calls.
 
 # file types allowed for downloading to jive
 my %filetypes = (
@@ -1324,8 +1331,69 @@ my %filetypes = (
 	sound     => qr/\.wav$/,
 );
 
-# Fetch downloadable file info from the plugin metadata
-sub _pluginInfo {
+# addditional downloads
+my %extras = (
+	wallpaper => {},
+	sound     => {},
+);
+
+=head2 registerDownload()
+
+Register a local file or url for downloading to jive as a wallpaper or sound file.
+$type : either 'wallpaper' or 'sound'
+$name : description to show on jive
+$path : fullpath for file on server or http:// url
+
+=cut
+
+sub registerDownload {
+	my $type = shift;
+	my $name = shift;
+	my $path = shift;
+
+	my $file = basename($path);
+
+	if ($type =~ /wallpaper|sound/ && $file =~ $filetypes{$type} && (-r $path || $path =~ /^http:\/\//)) {
+
+		$log->info("registering download for $type $file $path");
+
+		$extras{$type}->{$file} = {
+			'name'    => $name,
+			'path'    => $path,
+			'file'    => $file,
+		};
+
+	} else {
+		$log->warn("unable to register download for $type $file");
+	}
+}
+
+=head2 deleteDownload()
+
+Remove previously registered download entry.
+$type : either 'wallpaper' or 'sound'
+$path : fullpath for file on server or http:// url
+
+=cut
+
+sub deleteDownload {
+	my $type = shift;
+	my $path = shift;
+
+	my $file = basename($path);
+
+	if ($type =~ /wallpaper|sound/ && $extras{$type}->{$file}) {
+
+		$log->info("removing download for $type $file");
+		delete $extras{$type}->{$file};
+
+	} else {
+		$log->warn("unable remove download for $type $file");
+	}
+}
+
+# downloadable file info from the plugin instal.xml and any registered additions
+sub _downloadInfo {
 	my $type = shift;
 
 	my $plugins = Slim::Utils::PluginManager::allPlugins();
@@ -1385,7 +1453,12 @@ sub _pluginInfo {
 			}
 		}
 	}
-	
+
+	# add extra downloads as registered via api
+	for my $key (keys %{$extras{$type}}) {
+		$ret->{$key} = $extras{$type}->{$key};
+	}
+
 	return $ret;
 }
 
@@ -1407,12 +1480,14 @@ sub downloadQuery {
 	my $cnt = 0;
 	my $urlBase = 'http://' . Slim::Utils::Network::serverAddr() . ':' . $prefs->get('httpport') . "/jive$type/";
 
-	for my $val ( sort { $a->{'name'} cmp $b->{'name'} } values %{_pluginInfo($type)} ) {
+	for my $val ( sort { $a->{'name'} cmp $b->{'name'} } values %{_downloadInfo($type)} ) {
+
+		my $url = $val->{'path'} =~ /^http:\/\// ? $val->{'path'} : $urlBase . $val->{'file'};
 
 		my $entry = {
 			$type     => $val->{'name'},
 			'name'    => Slim::Utils::Strings::getString($val->{'name'}),
-			'url'     => $urlBase . $val->{'file'},
+			'url'     => $url,
 			'file'    => $val->{'file'},
 		};
 
@@ -1434,7 +1509,7 @@ sub downloadFile {
 
 	my ($type, $file) = $path =~ /^jive(applet|wallpaper|sound)\/(.*)/;
 
-	my $info = _pluginInfo($type);
+	my $info = _downloadInfo($type);
 
 	if ($info->{$file}) {
 
