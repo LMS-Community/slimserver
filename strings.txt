@@ -7477,7 +7477,18 @@ NATIVE
 	NO	Naturlig
 
 SAVE_PLAYLIST
-	EN	Save playlist
+	CS	Uložit playlist
+	DE	Wiedergabeliste speichern
+	EN	Save Playlist
+	ES	Guardar lista de reproducción
+	FR	Enregistrer la liste de lecture
+	HE	שמירת רשימת ההשמעה
+	IT	Salva elenco di riproduzione
+	JA	プレイリストを保存する
+	NL	Playlist opslaan
+	NO	Lagre spilleliste
+	SV	Lagra låtlista
+	ZH_CN	保存播放表
 
 CLEAR_PLAYLIST
 	CS	Vyčistit playlist
