@@ -194,6 +194,7 @@ sub findUrl {
 	$url =~ s/\?sessionid.+//i;	# Bug 3362, ignore sessionID's within URLs (Live365)
 
 	my $index = $class->{'urlindex'}->{ $url };
+
 	if (defined $index) {
 
 		$log->info("Match $url at index $index");

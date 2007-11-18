@@ -95,7 +95,8 @@ sub playFavorite {
 	my $button = shift;
 	my $digit  = shift;
 
-	my $entry = Slim::Plugin::Favorites::OpmlFavorites->new($client)->entry($digit);
+	# we need to deal with $digit being 1-9 or 0 meaning 10 and convert to zero based index
+	my $entry = Slim::Plugin::Favorites::OpmlFavorites->new($client)->entry($digit != 0 ? $digit - 1 : 9);
 
 	if (defined $entry && $entry->{'type'} && $entry->{'type'} eq 'audio') {
 
@@ -108,12 +109,14 @@ sub playFavorite {
 
 		$client->execute(['playlist', 'play', $url]);
 
+		$client->showBriefly($client->currentSongLines(undef, Slim::Buttons::Common::suppressStatus($client)));
+
 	} else {
 
 		$log->info("Can't play favorite number $digit - not an audio entry");
 
 		$client->showBriefly({
-			 'line' => [ sprintf($client->string('FAVORITES_NOT_DEFINED'), $digit) ],
+			 'line' => [ sprintf($client->string('FAVORITES_NOT_DEFINED'), $digit != 0 ? $digit : 10) ],
 		});
 	}
 }

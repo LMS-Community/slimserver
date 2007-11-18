@@ -12294,6 +12294,9 @@ FAVORITES_FAVORITE_NUM
 	SV	Favorit nr
 	ZH_CN	最喜爱#
 
+FAVORITES_FAVORITE
+	EN	Favorite
+
 FAVORITES_RIGHT_TO_DELETE
 	DE	(RECHTS drücken zum Löschen)
 	EN	(Go right to delete)

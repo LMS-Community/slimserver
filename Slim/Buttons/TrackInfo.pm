@@ -539,7 +539,13 @@ sub infoLine {
 		if (!defined $favIndex) {
 			$line2 = $client->string('FAVORITES_RIGHT_TO_ADD');
 		} else {
-			$line2 = $client->string('FAVORITES_FAVORITE_NUM') . "$favIndex " . $client->string('FAVORITES_RIGHT_TO_DELETE');
+			if ($favIndex =~ /^\d+$/) {
+				# existing favorite at top level - display favorite number starting at 1 (favs are zero based)
+				$line2 = $client->string('FAVORITES_FAVORITE_NUM') . ($favIndex + 1) . " " . $client->string('FAVORITES_RIGHT_TO_DELETE');
+			} else {
+				# existing favorite not at top level - don't display number
+				$line2 = $client->string('FAVORITES_FAVORITE') . " " . $client->string('FAVORITES_RIGHT_TO_DELETE');
+			}
 		}
 	}
 

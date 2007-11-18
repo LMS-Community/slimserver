@@ -73,7 +73,13 @@ sub setMode {
 
 				my $index = $client->modeParam('favorite');
 				if (defined $index) {
-					return "{FAVORITES_FAVORITE_NUM}$index {FAVORITES_RIGHT_TO_DELETE}";
+					if ($index =~ /^\d+$/) {
+						# existing favorite at top level - display favorite number starting at 1 (favs are zero based)
+						return "{FAVORITES_FAVORITE_NUM}" . ($index + 1) . " {FAVORITES_RIGHT_TO_DELETE}";
+					} else {
+						# existing favorite not at top level - don't display number
+						return "{FAVORITES_FAVORITE} {FAVORITES_RIGHT_TO_DELETE}";
+					}
 				} else {
 					return "{FAVORITES_RIGHT_TO_ADD}";
 				}
