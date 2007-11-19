@@ -121,39 +121,42 @@ Main = function(){
 				- Ext.get(Ext.DomQuery.selectNode('#leftpanel div.inner_top')).getHeight()
 				- Ext.get(Ext.DomQuery.selectNode('#leftpanel div.inner_bottom')).getHeight() - 2;
 
-			right = Ext.get('rightcontent');
-			left = Ext.get('leftcontent');
-
 			Ext.get('mainbody').setHeight(dimensions['maxHeight']);
 
 			el = Ext.get('background');
 			el.setWidth(body.getWidth() - (Ext.isIE && !Ext.isIE7 ? body.getMargins('rl') : 0));
 			el.setHeight(dimensions['maxHeight']);
 
-			// left column
-			left.setHeight(dimensions['colHeight']);
-			left.setWidth(dimensions['colWidth']);
+			right = Ext.get('rightcontent');
+			left = Ext.get('leftcontent');
 
-			// right column
-			right.setHeight(dimensions['colHeight']);
-			Ext.get('playerControlPanel').setWidth(dimensions['colWidth'] - 15);
-
-			// playlist field
-			if (pl = Ext.get('playList')) {
-				dimensions['playlist'] = dimensions['colHeight'];
-
-				if (el = Ext.get('playlistTab'))
-					dimensions['playlist'] -= el.getHeight();
-
-				if (el = Ext.get('pagebar'))
-					dimensions['playlist'] -= el.getHeight();
-
-				pl.setHeight(dimensions['playlist'] - Ext.get('playerbox').getHeight());
+			// Don't calculate columns if undocked
+			if (right && left) {
+				// left column
+				left.setHeight(dimensions['colHeight']);
+				left.setWidth(dimensions['colWidth']);
+	
+				// right column
+				right.setHeight(dimensions['colHeight']);
+				Ext.get('playerControlPanel').setWidth(dimensions['colWidth'] - 15);
+	
+				// playlist field
+				if (pl = Ext.get('playList')) {
+					dimensions['playlist'] = dimensions['colHeight'];
+	
+					if (el = Ext.get('playlistTab'))
+						dimensions['playlist'] -= el.getHeight();
+	
+					if (el = Ext.get('pagebar'))
+						dimensions['playlist'] -= el.getHeight();
+	
+					pl.setHeight(dimensions['playlist'] - Ext.get('playerbox').getHeight());
+				}
+	
+				// IE7 wouldn't overflow without an absolute width
+				if (Ext.isIE)
+					Ext.get('ctrlCurrentSongInfoCollapsed').setWidth(dimensions['colWidth'] - 165 + (Ext.isIE7 * 5));
 			}
-
-			// IE7 wouldn't overflow without an absolute width
-			if (Ext.isIE)
-				Ext.get('ctrlCurrentSongInfoCollapsed').setWidth(dimensions['colWidth'] - 165 + (Ext.isIE7 * 5));
 
 			Player.progressBar('ctrlProgress');
 
