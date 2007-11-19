@@ -35,13 +35,14 @@
 	[% END %]
 </div>
 
+<div id="settingsRegion">
+[% END %]
+
 <form name="settingsForm" id="settingsForm" method="post" action="[% webroot %][% path %][% IF playerid %]?playerid=[% playerid | uri %][% END %]">
 
 <div id="fileselectorautocomplete" class="fileselectorautocomplete" style="display:none"></div>
 <div id="fileselectorindicator" class="fileselectorindicator" style="display:none"><img src="/html/images/wait.gif"></div>
 
-<div id="settingsRegion">
-[% END %]
 	<input type=hidden value="0" name="useAJAX">
 	<input type=hidden value="[% page %]" name="page">
 	[% IF playerid && needsClient %]<input type=hidden value="[% playerid %]" name="playerid">[% END %]
