@@ -28,8 +28,6 @@ $prefs->migrate(1, sub {
 	$prefs->set('music_path',      Slim::Utils::Prefs::OldPrefs->get('itunes_library_music_path')         );
 	$prefs->set('playlist_prefix', Slim::Utils::Prefs::OldPrefs->get('iTunesplaylistprefix') || 'iTunes: ');
 	$prefs->set('playlist_suffix', Slim::Utils::Prefs::OldPrefs->get('iTunesplaylistsuffix') || ''        );
-
-	$prefs->set('itunes', 1) unless defined $prefs->get('itunes'); # default to on if not previously set
 	1;
 });
 
