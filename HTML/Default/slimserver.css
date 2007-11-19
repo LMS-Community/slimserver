@@ -907,7 +907,7 @@ form#advSearchForm.resultsPage {
 #linkedSongInfoItems {
 	top: 0px;
 	padding-left: 160px;
-	height: 155px;
+	min-height: 155px;
 	position: relative;
 }
 

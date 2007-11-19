@@ -35,6 +35,10 @@ img#background {
 	bottom: 18px;
 }
 
+#linkedSongInfoItems {
+	height: 155px;
+}
+
 /* browsing & navigation */
 .selectedItem .selector_bottomRight,
 .selectedItem .selector_topLeft,
