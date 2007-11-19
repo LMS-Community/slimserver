@@ -147,10 +147,7 @@ and custom.jive.bin in the cachedir.  If these exist then these are used in pref
 =cut
 
 sub init_jive {
-	
-	# Don't check for Jive firmware if the 'check for updated versions' pref is disabled
-	return unless $prefs->get('checkVersion');
-	
+
 	my $url = $base . '/' . $::VERSION . '/jive.version';
 		
 	my $version_file   = catdir( $prefs->get('cachedir'), 'jive.version' );
@@ -164,10 +161,16 @@ sub init_jive {
 		$version_file = $custom_version;
 		$JIVE_FW = $custom_image;
 
+		my $version = read_file($version_file);
+		($JIVE_VER, $JIVE_REV) = $version =~ m/^(\d+)\s(r.*)/;
+
 		Slim::Web::HTTP::addRawDownload('^firmware/.*\.bin', $custom_image, 'binary');
 		
 		return;
 	}
+
+	# Don't check for Jive firmware if the 'check for updated versions' pref is disabled
+	return unless $prefs->get('checkVersion');
 	
 	$log->info('Downloading jive.version file...');
 	
