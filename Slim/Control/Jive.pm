@@ -1483,7 +1483,7 @@ sub jiveFavoritesQuery {
 	};
 	$request->addResult('count', 2);
 	$request->addResult('offset', 0);
-	$request->addResultLoop('item_loop', 0, 'text', Slim::Utils::Strings::string('JIVE_ADD_TO_FAVORITES'),
+	$request->addResultLoop('item_loop', 0, 'text', Slim::Utils::Strings::string('JIVE_ADD_TO_FAVORITES'));
 	$request->addResultLoop('item_loop', 0, 'actions', $actions);
 	$request->addResultLoop('item_loop', 1, 'text', Slim::Utils::Strings::string('CANCEL'));
 
