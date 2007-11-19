@@ -475,9 +475,6 @@ sub currentSongLines {
 
 		$overlay[1] = $client->symbols('notesymbol');
 
-		# add in the progress bar and time...
-		$client->nowPlayingModeLines(\@lines, \@overlay, $suppressScreen2);
-
 		# add screen2 information if required
 		if ($client->display->showExtendedText() && !$suppressDisplay && !$suppressScreen2) {
 			
@@ -517,6 +514,9 @@ sub currentSongLines {
 		$parts->{'screen2'} = $screen2 if defined $screen2;
 		$parts->{'jive'}    = $jive if defined $jive;
 
+		# add in the progress bar and time
+		$client->nowPlayingModeLines($parts, $suppressScreen2) unless ($playlistlen < 1);
+
 	} elsif ($suppressDisplay ne 'all') {
 
 		$parts->{'jive'} = $jive || \@lines;
@@ -526,7 +526,7 @@ sub currentSongLines {
 }
 
 sub nowPlayingModeLines {
-	my ($client, $lines, $overlays, $screen2) = @_;
+	my ($client, $parts, $screen2) = @_;
 
 	my $display = $client->display;
 
@@ -595,14 +595,14 @@ sub nowPlayingModeLines {
 	
 	if ($showBar) {
 		# show both the bar and the time
-		my $leftLength = $display->measureText($lines->[0], 1);
+		my $leftLength = $display->measureText($parts->{line}[0], 1);
 		my $barlen = $displayWidth - $leftLength - $display->measureText($overlay, 1);
 		my $bar    = $display->symbols($client->progressBar($barlen, $fractioncomplete, ($showBar < 0)));
 
 		$overlay = $bar . $songtime;
 	}
 	
-	$overlays->[0] = $overlay if defined($overlay);
+	$parts->{overlay}[0] = $overlay if defined($overlay);
 }
 
 sub textSongTime {
