@@ -2,7 +2,7 @@ Wizard = function(){
 	var page = 0;
 	var pages = new Array('welcome', 'proxy', 'sqn', 'source', 'audiodir', 'playlistdir', 'itunes', 'musicip', 'summary');
 	var folderselectors = new Array();
-	var sqnValidated = false;
+	var validators;
 	var nextBtn;
 	var prevBtn;
 	var windowSize = new Array(top.window.outerWidth, top.window.outerHeight);
@@ -94,8 +94,31 @@ Wizard = function(){
 
 				Ext.get('language').on('change', this.onLanguageChange, this);
 
-				Ext.get('sn_email').on('change', function(){ Wizard.sqnValidated = false; });
-				Ext.get('sn_password').on('change', function(){ Wizard.sqnValidated = false; });
+				validators = {
+					sqn: {
+						validator: this.verifySqnAccount,
+						valid: false
+					},
+					audiodir: {
+						validator: this.verifyAudiodir,
+						valid: false
+					},
+					playlistdir: {
+						validator: this.verifyPlaylistdir,
+						valid: false
+					},
+					xml_file: {
+						validator: this.verifyiTunesXML,
+						valid: false
+					}
+				};
+
+				Ext.get('sn_email').on('change', function(){ validators.sqn.valid = false; });
+				Ext.get('sn_password').on('change', function(){ validators.sqn.valid = false; });
+				Ext.get('audiodir').on('change', function(){ validators.audiodir.valid = false; });
+				Ext.get('playlistdir').on('change', function(){ validators.playlistdir.valid = false; });
+				Ext.get('xml_file').on('change', function(){ validators.xml_file.valid = false; });
+
 			}
 
 			Ext.EventManager.onWindowResize(this.onResize, layout);
@@ -110,8 +133,15 @@ Wizard = function(){
 		},
 
 		onNext : function(){
-			page = this.whichPage(page, 1);
-			this.flipPages();
+			// launch verification in the background
+			if (validators[pages[page]] != null && !validators[pages[page]].valid) {
+				Ext.callback(validators[pages[page]].validator, Wizard);
+			}
+
+			else {
+				page = this.whichPage(page, 1);
+				this.flipPages();
+			}
 		},
 
 		onPrevious : function(){
@@ -120,17 +150,9 @@ Wizard = function(){
 		},
 
 		whichPage : function(oldValue, offset){
-			// launch verification in the background
 			switch (pages[oldValue]) {
 				case 'welcome' :
 					this.prevBtn.show();
-					break;
-
-				case 'sqn' :
-					if (offset > 0 && !this.sqnValidated) {
-						this.verifySqnAccount();
-						offset = 0;
-					}
 					break;
 
 				case 'summary' :
@@ -301,17 +323,63 @@ Wizard = function(){
 						if (result[0] == '0') {
 							resultEl.update(result[1]);
 							result_summary.update('(' + result[1] + ')');
-							this.sqnValidated = false;
+							validators.sqn.valid = false;
+							Ext.get('sn_email').highlight('ffcccc');
+							Ext.get('sn_password').highlight('ffcccc');
 						}
+
 						else {
 							resultEl.update(strings['sn_success']);
 							result_summary.update('');
-							this.sqnValidated = true;
+							validators.sqn.valid = true;
 							this.onNext();
 						}
 					}
 				});
 			}
+		},
+
+		verifyAudiodir : function(){
+			this.validatePref('server', 'audiodir');
+		},
+
+		verifyPlaylistdir : function(){
+			this.validatePref('server', 'playlistdir');
+		},
+
+		verifyiTunesXML : function(){
+			this.validatePref('itunes', 'xml_file');
+		},
+
+		validatePref : function(namespace, myPref) {
+			Ext.Ajax.request({
+				url: '/jsonrpc.js',
+				method: 'POST',
+				params: Ext.util.JSON.encode({
+					id: 1,
+					method: "slim.request",
+					params: ['', [
+								'pref', 
+								'validate', 
+								namespace + ':' + myPref, 
+								Ext.get(myPref).dom.value
+							]]
+				}),
+				success: function(response) {
+					if (response && response.responseText) {
+						response = Ext.util.JSON.decode(response.responseText);
+			
+						// if preference did not validate - highlight the field
+						if (response.result && response.result.valid) {
+							validators[myPref].valid = true;
+							Wizard.onNext();
+						}
+						else {
+							Ext.get(myPref).highlight('ffcccc');
+						}
+					}
+				}
+			});
 		}
 	};
 }();
