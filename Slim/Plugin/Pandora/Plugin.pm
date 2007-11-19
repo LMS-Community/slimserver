@@ -34,7 +34,7 @@ sub initPlugin {
 	$class->SUPER::initPlugin(
 		feed      => Slim::Networking::SqueezeNetwork->url('/api/pandora/v1/opml'),
 		tag       => 'pandora',
-		'icon-id' => 'html/images/ServiceProviders/pandora_56x56_p.png',
+		'icon-id' => 'html/images/ServiceProviders/pandora.png',
 		menu      => 'radio',
 	);
 	

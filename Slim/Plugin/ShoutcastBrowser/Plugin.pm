@@ -80,7 +80,7 @@ sub cliRadiosQuery {
 	if (defined $menu) {
 		$data = {
 			'text' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
-			'icon-id' => 'html/images/ServiceProviders/shoutcastbrowser_56x56_p.png',
+			'icon-id' => 'html/images/ServiceProviders/shoutcastbrowser.png',
 			'actions' => {
 				'go' => {
 					'cmd' => ['shoutcast', 'items'],

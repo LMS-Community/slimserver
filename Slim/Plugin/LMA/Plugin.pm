@@ -13,7 +13,7 @@ sub initPlugin {
 	$class->SUPER::initPlugin(
 		feed      => 'http://content.us.squeezenetwork.com:8080/lma/artists.opml',
 		tag       => 'lma',
-		'icon-id' => 'html/images/ServiceProviders/lma_56x56_p.png',
+		'icon-id' => 'html/images/ServiceProviders/lma.png',
 		menu      => 'music_on_demand',
 		style     => 'albumcurrent',
 	);

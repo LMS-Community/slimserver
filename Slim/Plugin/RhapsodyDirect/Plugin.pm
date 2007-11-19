@@ -32,7 +32,7 @@ sub initPlugin {
 		feed => Slim::Networking::SqueezeNetwork->url('/api/rhapsody/v1/opml'),
 		tag  => 'rhapsodydirect',
 		menu => 'music_on_demand',
-		'icon-id' => 'html/images/ServiceProviders/rhapsodydirect_56x56_p.png',
+		'icon-id' => 'html/images/ServiceProviders/rhapsodydirect.png',
 	);
 	
 	if ( !$ENV{SLIM_SERVICE} ) {
