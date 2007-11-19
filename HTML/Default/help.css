@@ -13,6 +13,10 @@ body {
 	height: 100%;
 }
 
+td, th {
+	vertical-align: top;
+}
+
 .inner_content {
 	background-image: url(html/images/help/background.gif);
 }
