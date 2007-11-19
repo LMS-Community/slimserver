@@ -419,6 +419,16 @@ sub _http_read_body {
 		# Write directly to a file
 		$self->fh->write( $buf, length $buf );
 	}
+	elsif ( $args->{onStream} ) {
+		# The caller wants a callback on every chunk of data streamed
+		my $pt   = $args->{passthrough} || [];
+		my $more = $args->{onStream}->( $self, \$buf, @{$pt} );
+		
+		# onStream callback can signal to stop the stream by returning false
+		if ( !$more ) {
+			$result = 0;
+		}
+	}
 	else {
 		# Add buffer to Response object
 		$self->response->add_content( $buf );
