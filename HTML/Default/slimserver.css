@@ -11,7 +11,7 @@ html, body {
 
 #playlistPanel, #maincontent { background-color: white; }
 
-html, body, tr, tr, p, div, li, input, ul, .x-btn-text {
+html, body, tr, tr, p, div, li, input, ul, .x-btn-text, select {
 	font-size: 11px;
 	font-family: sans-serif;
 }

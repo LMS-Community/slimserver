@@ -180,13 +180,14 @@
 			[% PROCESS jsString id='SETUP_WIZARD_NEXT' jsId='next' %]
 			[% PROCESS jsString id='SETUP_WIZARD_FINISH' jsId='finish' %]
 			[% PROCESS jsString id='SETUP_WIZARD_CLOSE' jsId='close' %]
-			[% PROCESS jsString id='SETUP_WIZARD_SQN_VERIFY' jsId='sn_verify' %]
 			[% PROCESS jsString id='SETUP_SN_VALID_LOGIN' jsId='sn_success' %]
 			[% PROCESS jsString id='SETUP_SN_INVALID_LOGIN' jsId='sn_failure' %]
 
 			[% PROCESS jsString id='NONE' jsId='summary_none' %]
 			[% PROCESS jsString id='SETUP_AUDIODIR' jsId='summary_audiodir' %]
 			strings['summary_audiodir'] += '[% "COLON" | string %]';
+			[% PROCESS jsString id='SETUP_PLAYLISTDIR' jsId='summary_playlistdir' %]
+			strings['summary_playlistdir'] += '[% "COLON" | string %]';
 			[% PROCESS jsString id='ITUNES_DESC' jsId='summary_itunes' %]
 			[% PROCESS jsString id='MUSICMAGIC_DESC' jsId='summary_musicmagic' %]
 
@@ -279,7 +280,6 @@
 										</tr>
 										<tr>
 											<td colspan="2" align="right">
-												<span id="sn_verify"></span>
 												<div><a href="http://www.squeezenetwork.com/user/forgotPassword" target="SQN">[% "SETUP_SN_FORGOT_PASSWORD" | string%]</a></div>
 												<div><a href="http://www.squeezenetwork.com/" target="SQN">[% "SETUP_SN_NEED_ACCOUNT" | string%]</a></div>
 											</td>
@@ -371,14 +371,17 @@
 								<div id="summary_m" class="wz_page">
 									<div>[% "SETUP_WIZARD_SUMMARY_DESC" | string %]</div>
 									<br/>
+
 									<div>[% "SETUP_WIZARD_SUMMARY_SQN" | string %]</div>
 									<ul class="wz_summary_list">
 										<li><span id="sn_email_summary"></span> <span id="sn_result_summary"></span></li>
 									</ul>
 									<br/>
+
 									<div>[% "SETUP_WIZARD_SUMMARY_MUSICSOURCE" | string %][% "COLON" | string %]</div>
 									<ul class="wz_summary_list" id="summary"></ul>
 									<br/>
+
 									<div>[% "SETUP_WIZARD_SUMMARY_RESCAN" | string %]</div>
 								</div>
 

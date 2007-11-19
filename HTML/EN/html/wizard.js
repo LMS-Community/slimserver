@@ -94,11 +94,8 @@ Wizard = function(){
 
 				Ext.get('language').on('change', this.onLanguageChange, this);
 
-				new Ext.Button('sn_verify', {
-					text: strings['sn_verify'],
-					handler: this.verifySqnAccount,
-					scope: this
-				});
+				Ext.get('sn_email').on('change', function(){ Wizard.sqnValidated = false; });
+				Ext.get('sn_password').on('change', function(){ Wizard.sqnValidated = false; });
 			}
 
 			Ext.EventManager.onWindowResize(this.onResize, layout);
@@ -130,7 +127,10 @@ Wizard = function(){
 					break;
 
 				case 'sqn' :
-					this.verifySqnAccount();
+					if (offset > 0 && !this.sqnValidated) {
+						this.verifySqnAccount();
+						offset = 0;
+					}
 					break;
 
 				case 'summary' :
@@ -199,6 +199,7 @@ Wizard = function(){
 					Ext.get('summary').update(
 						(!(Ext.get('useAudiodir').dom.checked || Ext.get('itunes').dom.checked || Ext.get('musicmagic').dom.checked) ? '<li>' + strings['summary_none'] + '</li>' : '') +
 						(Ext.get('useAudiodir').dom.checked ? '<li>' + strings['summary_audiodir'] + Ext.get('audiodir').dom.value + '</li>' : '') +
+						('<li>' + strings['summary_playlistdir'] + Ext.get('playlistdir').dom.value + '</li>') +
 						(Ext.get('itunes').dom.checked ? '<li>' + strings['summary_itunes'] + '</li>' : '') +
 						(Ext.get('musicmagic').dom.checked ? '<li>' + strings['summary_musicmagic'] + '</li>' : '')
 					);
@@ -306,6 +307,7 @@ Wizard = function(){
 							resultEl.update(strings['sn_success']);
 							result_summary.update('');
 							this.sqnValidated = true;
+							this.onNext();
 						}
 					}
 				});
