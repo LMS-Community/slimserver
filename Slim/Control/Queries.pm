@@ -3155,7 +3155,11 @@ sub songinfoQuery {
 			}
 
 			my $artworkExists = 0; # artwork defaults to not being present
+			my %favorites;
 			while (my ($key, $val) = each %{$hashRef}) {
+				if ($key eq 'TITLE') {
+					$favorites{'title'} = $val;
+				}
 				if ( $key eq 'SHOW_ARTWORK' && $val > 0) {
 					$artworkExists++; # flag that artwork exists
 				}
@@ -3354,6 +3358,7 @@ sub songinfoQuery {
 							}
 							elsif ($key eq 'LOCATION') {
 								$val = $track->path();
+								$favorites{'url'} = $val;
 							}
 							elsif ( $key eq 'YEAR' && $val == 0 ||
 								$key eq 'COMMENT' && $val == 0 ||
@@ -3377,8 +3382,13 @@ sub songinfoQuery {
 				}
 				$idx++;
  			}
+			# add an item for adding to favorites
+			# not done yet
+			#$count = _jiveAddToFavorites($count, $request, $loopname, \%favorites);
+			
 			# because of suppression of some items, only now can we add the count
 			$request->addResult("count", $count);
+
 		}
 		}
 	}
@@ -4105,6 +4115,28 @@ sub _addJiveSong {
 	$request->addResultLoop($loop, $count, 'params', $params);
 }
 
+
+sub _jiveAddToFavorites {
+	my ($cnt, $request, $loopname, $favorites) = @_;
+	$log->warn('MARK1' . $cnt);
+	$log->warn('MARK1' . $loopname);
+	$log->warn('MARK1' . Slim::Utils::Strings::string('JIVE_ADD_TO_FAVORITES'));
+	$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string('JIVE_ADD_TO_FAVORITES'));
+	my $actions = {
+		'go' => {
+			player => 0,
+			cmd    => [ 'jivefavorites', 'add' ],
+			params => {
+					title => $favorites->{'title'},
+					url   => 'file://' . $favorites->{'url'},
+			},
+		},
+	};
+	$request->addResultLoop($loopname, $cnt, 'actions', $actions);
+#	$request->addResultLoop($loopname, $cnt, 'actions');
+	$cnt++;
+	return($cnt);
+}
 
 sub _songData {
 	my $request   = shift; # current request object
