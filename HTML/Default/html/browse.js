@@ -6,8 +6,7 @@ Browse = function(){
 			// jump to anchor
 			var anchor = location.hash.replace(/#/,'');
 			if (anchor) {
-				if (el = Ext.get('anchor' + anchor))
-					el.scrollIntoView('browsedbList');
+				this.gotoAnchor(anchor);
 			}
 
 			// Album view selector
@@ -79,8 +78,12 @@ Browse = function(){
 
 		gotoAnchor : function(anchor){
 			var el = Ext.get('anchor' + anchor);
-			if (el)
-				el.scrollIntoView('browsedbList');
+			var pel = Ext.get('browsedbList');
+
+			if (el && pel){
+				pel.scroll('down', 10000, false);
+				el.scrollIntoView(pel);
+			}
 		},
 
 		toggleGalleryView : function(artwork){
