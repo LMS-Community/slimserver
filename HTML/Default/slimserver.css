@@ -366,6 +366,8 @@ img#background { position:absolute; }
 
 .disclosure_expanded { background-position: 0 -11px; }
 
+.expandableHomeMenuItem { display: none; }
+
 .homeMenuItem .browseCover {
 	padding-top: 0;
 	top: -7px;

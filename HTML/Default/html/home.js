@@ -9,9 +9,7 @@ var MainMenu = function(){
 			var items = Ext.DomQuery.select('div.homeMenuSection, div.expandableHomeMenuItem');
 			for(var i = 0; i < items.length; i++) {
 				if (el = Ext.get(items[i].id)) {
-					el.setVisibilityMode(Ext.Element.DISPLAY);
-					if (el.hasClass('expandableHomeMenuItem'))
-						el.setVisible(false);
+					el.enableDisplayMode('block');
 				}
 			}
 
