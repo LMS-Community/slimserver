@@ -45,7 +45,7 @@
 	<tr>
 		[% IF thispage == 'radio' %]
 		<td valign="middle" class = 'altheadertext'>
-			[% "RADIO" | string %] + [% "MUSIC_ON_DEMAND" | string %]
+			[% "RADIO" | string %] + [% "MUSIC_SERVICES" | string %]
 		</td>
 		[%- ELSE %]
 		<td valign="middle" class = 'headertext'>
@@ -75,10 +75,10 @@
 		[%- FOREACH link = additionalLinks.radio; IF !additionalLinkOrder.radio.grep(link.key).size %][% value = link.value %][% key = link.key %]
 			[% linkList.push([key,value]) %]
 		[%- END;END %]
-		[%- FOREACH item = additionalLinkOrder.music_on_demand %][% key = item %][% value = additionalLinks.music_on_demand.$item %]
+		[%- FOREACH item = additionalLinkOrder.music_services %][% key = item %][% value = additionalLinks.music_services.$item %]
 			[% linkList.push([key,value]) %]
 		[%- END %]
-		[%- FOREACH link = additionalLinks.music_on_demand; IF !additionalLinkOrder.music_on_demand.grep(link.key).size %][% value = link.value %][% key = link.key %]
+		[%- FOREACH link = additionalLinks.music_services; IF !additionalLinkOrder.music_services.grep(link.key).size %][% value = link.value %][% key = link.key %]
 			[% linkList.push([key,value]) %]
 		[%- END;END %]
 		[% FOREACH link = linkList %][% key = link.0 %][% value = link.1 %]

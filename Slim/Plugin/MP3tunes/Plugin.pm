@@ -16,12 +16,12 @@ sub initPlugin {
 		feed           => Slim::Networking::SqueezeNetwork->url('/api/mp3tunes/v1/opml'),
 		tag            => 'mp3tunes',
 		'icon-id'      => 'html/images/ServiceProviders/mp3tunes.png',
-		menu           => 'music_on_demand',
+		menu           => 'music_services',
 	);
 }
 
 sub playerMenu () {
-	return 'MUSIC_ON_DEMAND';
+	return 'MUSIC_SERVICES';
 }
 
 sub getDisplayName () {

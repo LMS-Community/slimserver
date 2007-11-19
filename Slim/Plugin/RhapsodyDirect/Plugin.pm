@@ -31,7 +31,7 @@ sub initPlugin {
 	$class->SUPER::initPlugin(
 		feed => Slim::Networking::SqueezeNetwork->url('/api/rhapsody/v1/opml'),
 		tag  => 'rhapsodydirect',
-		menu => 'music_on_demand',
+		menu => 'music_services',
 		'icon-id' => 'html/images/ServiceProviders/rhapsodydirect.png',
 	);
 	
@@ -57,7 +57,7 @@ sub initPlugin {
 }
 
 sub playerMenu () {
-	return 'MUSIC_ON_DEMAND';
+	return 'MUSIC_SERVICES';
 }
 
 sub getDisplayName () {

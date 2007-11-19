@@ -153,13 +153,13 @@ sub menuQuery {
 			},
 		},
 		{
-			text    => Slim::Utils::Strings::string('MUSIC_ON_DEMAND'),
+			text    => Slim::Utils::Strings::string('MUSIC_SERVICES'),
 			weight  => 30,
 			actions => {
 				go => {
-					cmd => ['music_on_demand'],
+					cmd => ['music_services'],
 					params => {
-						menu => 'music_on_demand',
+						menu => 'music_services',
 					},
 				},
 			},

@@ -41,14 +41,12 @@ our $defaultPrefs = {
 	'menuItem'             => [qw(
 		NOW_PLAYING
 		BROWSE_MUSIC
-		SEARCH
-		PLUGIN_RANDOMPLAY
-		FAVORITES
-		SAVED_PLAYLISTS
 		RADIO
-		MUSIC_ON_DEMAND
-		SETTINGS
+		MUSIC_SERVICES
+		FAVORITES
 		PLUGINS
+		SETTINGS
+		SQUEEZENETWORK_CONNECT
 	)],
 	'mp3SilencePrelude'    => 0,
 	'pitch'                => 100,

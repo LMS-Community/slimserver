@@ -3,7 +3,7 @@
 	<id>CE9FBA95-3EA7-4569-9167-7E2429915D22</id>
 	<name>PLUGIN_SLACKER_MODULE_NAME</name>
 	<module>Slim::Plugin::Slacker::Plugin</module>
-	<playerMenu>RADIO</playerMenu>
+	<playerMenu>MUSIC_SERVICES</playerMenu>
 	<version>1.0</version>
 	<description>PLUGIN_SLACKER_MODULE_NAME</description>
 	<creator>Slim Devices/Logitech</creator>

@@ -3,7 +3,7 @@
 	<id>C1289A9D-4576-4A35-B431-67E13C2FCE42</id>
 	<name>PLUGIN_RHAPSODY_DIRECT_MODULE_NAME</name>
 	<module>Slim::Plugin::RhapsodyDirect::Plugin</module>
-	<playerMenu>MUSIC_ON_DEMAND</playerMenu>
+	<playerMenu>MUSIC_SERVICES</playerMenu>
 	<version>1.0</version>
 	<description>PLUGIN_RHAPSODY_DIRECT_MODULE_NAME_DESC</description>
 	<creator>Slim Devices/Logitech</creator>

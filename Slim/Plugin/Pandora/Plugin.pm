@@ -35,20 +35,7 @@ sub initPlugin {
 		feed      => Slim::Networking::SqueezeNetwork->url('/api/pandora/v1/opml'),
 		tag       => 'pandora',
 		'icon-id' => 'html/images/ServiceProviders/pandora.png',
-		menu      => 'radio',
-	);
-	
-	# Also add to the MOD menu, according to
-	# http://wiki.slimdevices.com/index.cgi?UserInterfaceHierarchy
-	my $mod_menu = {
-		useMode => sub { $class->setMode(@_) },
-		header  => 'PLUGIN_PANDORA_MODULE_NAME',
-	};
-	
-	Slim::Buttons::Home::addSubMenu( 
-		'MUSIC_ON_DEMAND',
-		'PLUGIN_PANDORA_MODULE_NAME',
-		$mod_menu,
+		menu      => 'music_services',
 	);
 	
 	if ( !$ENV{SLIM_SERVICE} ) {

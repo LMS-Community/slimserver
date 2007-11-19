@@ -4,9 +4,9 @@
 		<SELECT NAME="browse" class="stdedit" style="width:17em;" onchange="chooseBrowser(selectedIndex,options[selectedIndex].value)">
 			<OPTION value="" label="">---[% "BROWSE_MUSIC" | string %]---</OPTION>
 			[%- PROCESS addBrowseLinks links=additionalLinks.browse %]
-			[%- IF additionalLinks.music_on_demand %]
-			<OPTION value="" label="">---[% "MUSIC_ON_DEMAND" | string  %]---</option>
-			[%- PROCESS addBrowseLinks links=additionalLinks.music_on_demand order=additionalLinkOrder.music_on_demand %]
+			[%- IF additionalLinks.music_services %]
+			<OPTION value="" label="">---[% "MUSIC_SERVICES" | string  %]---</option>
+			[%- PROCESS addBrowseLinks links=additionalLinks.music_services order=additionalLinkOrder.music_services %]
 			[%- IF additionalLinks.radio.exists('PLUGIN_PANDORA_MODULE_NAME') %]
 			<OPTION value="[% 'PLUGIN_PANDORA_MODULE_NAME' %]" label="[% 'PLUGIN_PANDORA_MODULE_NAME' | getstring | html %]">[% 'PLUGIN_PANDORA_MODULE_NAME' | getstring | html %]</OPTION>
 			[%- END -%]
@@ -88,7 +88,7 @@
 					switch(option)
 					{
 					[% PROCESS addCaseLinks links=additionalLinks.browse cookie=1 %]
-					[% PROCESS addCaseLinks links=additionalLinks.music_on_demand cookie=1 %]
+					[% PROCESS addCaseLinks links=additionalLinks.music_services cookie=1 %]
 					[% PROCESS addCaseLinks links=additionalLinks.radio cookie=1 %]
 					[% PROCESS addCaseLinks links=additionalLinks.search cookie=0 %]
 					[% PROCESS addCaseLinks links=additionalLinks.plugins cookie=1 %]

@@ -95,6 +95,7 @@ sub init {
 	);
 
 	for my $name (sort keys %menuParams) {
+		Slim::Buttons::Home::addSubMenu('BROWSE_MUSIC', $name, $menuParams{$name});
 		Slim::Buttons::Home::addMenuOption($name,$menuParams{$name});
 	}	
 

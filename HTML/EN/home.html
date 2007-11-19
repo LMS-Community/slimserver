@@ -72,14 +72,14 @@
 	</ul>	
 </div>
 
-[% IF additionalLinks.music_on_demand %]
+[% IF additionalLinks.music_services %]
 <div class="homeMenuSection">
-	<div>[% "MUSIC_ON_DEMAND" | string | upper %]</div>
+	<div>[% "MUSIC_SERVICES" | string | upper %]</div>
 	<ul>
-	[%- FOREACH item = additionalLinkOrder.music_on_demand %]
-		<li><a href="[% additionalLinks.music_on_demand.$item | html %]player=[% playerURI %]">[% item | getstring | html %]</a></li>
+	[%- FOREACH item = additionalLinkOrder.music_services %]
+		<li><a href="[% additionalLinks.music_services.$item | html %]player=[% playerURI %]">[% item | getstring | html %]</a></li>
 	[%- END %]
-	[%- FOREACH link = additionalLinks.music_on_demand; IF !additionalLinkOrder.music_on_demand.grep(link.key).size %]
+	[%- FOREACH link = additionalLinks.music_services; IF !additionalLinkOrder.music_services.grep(link.key).size %]
 		<li><a href="[% link.value | html %]player=[% playerURI %]">[% link.key | getstring | html %]</a></li>
 	[%- END; END %]
 	[% IF additionalLinks.radio.exists('PLUGIN_PANDORA_MODULE_NAME') %]

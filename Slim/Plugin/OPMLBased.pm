@@ -39,7 +39,7 @@ sub initPlugin {
 		[ 1, 1, 1, $cliQuery ]
 	);
 	
-	my $cli_menu = $args{menu} eq 'music_on_demand' ? 'music_on_demand' : 'radios';	
+	my $cli_menu = $args{menu} eq 'music_services' ? 'music_services' : 'radios';	
 		
 	$cli_next{$class} = Slim::Control::Request::addDispatch(
 		[ $cli_menu, '_index', '_quantity' ],

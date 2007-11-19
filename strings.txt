@@ -464,15 +464,6 @@ RADIO
 MUSIC_SERVICES
 	EN	Music Services
 
-MUSIC_ON_DEMAND
-	DE	Musik auf Abruf
-	EN	Music Services
-	ES	Música a petición
-	FR	Musique à la demande
-	IT	Musica a richiesta
-	NL	Muziek op aanvraag
-	NO	Musikk på forespørsel
-
 MY_MUSIC
 	DE	Eigene Musik
 	EN	Music Library

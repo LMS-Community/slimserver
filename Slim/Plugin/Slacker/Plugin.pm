@@ -37,7 +37,7 @@ sub initPlugin {
 	$class->SUPER::initPlugin(
 		feed => Slim::Networking::SqueezeNetwork->url('/api/slacker/v1/opml'),
 		tag  => 'slacker',
-		menu => 'radio',
+		menu => 'music_services',
 		'icon-id' => 'html/images/ServiceProviders/slacker.png',
 	);
 	

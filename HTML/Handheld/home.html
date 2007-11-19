@@ -25,11 +25,11 @@
 
 	[% PROCESS menu menutitle='BROWSE_MUSIC' menulist=additionalLinks.browse %]
 
-	[% IF additionalLinks.music_on_demand %]
+	[% IF additionalLinks.music_services %]
 		[% IF additionalLinks.radio.exists('PLUGIN_PANDORA_MODULE_NAME') %]
 				[% additionalmenu = {'PLUGIN_PANDORA_MODULE_NAME' => additionalLinks.radio.PLUGIN_PANDORA_MODULE_NAME } %]
 		[% END %]
-		[% PROCESS menu menutitle='MUSIC_ON_DEMAND' menulist=additionalLinks.music_on_demand orderlist=additionalLinkOrder.music_on_demand 
+		[% PROCESS menu menutitle='MUSIC_SERVICES' menulist=additionalLinks.music_services orderlist=additionalLinkOrder.music_services 
 		%]
 	[% END %]
 

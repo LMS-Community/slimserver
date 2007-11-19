@@ -137,10 +137,22 @@ sub init {
 		'rank-BROWSE_BY_GENRE'     => 25,
 		'rank-BROWSE_BY_YEAR'      => 20,
 		'rank-BROWSE_NEW_MUSIC'    => 15,
+		'rank-PLUGIN_RANDOMPLAY'   => 13,
 		'rank-BROWSE_MUSIC_FOLDER' => 10,
 		'rank-SAVED_PLAYLISTS'     => 5,
+		'rank-SEARCH'              => 3,
 		# Internet Radio menu ordering
-		'rank-PLUGIN_PICKS_MODULE_NAME' => 4,
+		'rank-PLUGIN_PICKS_MODULE_NAME'     => 25,
+		'rank-PLUGIN_RADIOIO_MODULE_NAME'   => 20,
+		'rank-PLUGIN_RADIOTIME_MODULE_NAME' => 15,
+		'rank-PLUGIN_LIVE365_MODULE_NAME'   => 10,
+		'rank-PLUGIN_SHOUTCAST_MODULE_NAME' => 5,
+		# Music Services menu ordering
+		'rank-PLUGIN_PANDORA_MODULE_NAME'         => 25,
+		'rank-PLUGIN_RHAPSODY_DIRECT_MODULE_NAME' => 20,
+		'rank-PLUGIN_SLACKER_MODULE_NAME'         => 15,
+		'rank-PLUGIN_MP3TUNES_MODULE_NAME'        => 10,
+		'rank-PLUGIN_LMA_MODULE_NAME'             => 5,
 		# Server Settings - Basic
 		'language'              => 'EN',
 		'audiodir'              => \&defaultAudioDir,
@@ -243,10 +255,15 @@ sub init {
 
 		1;
 	});
-
+	
 	unless (-d $path && -w $path) {
 		logError("unable to write to preferences directory $path");
 	}
+	
+	# rank of Staff Picks has changed
+	$prefs->migrate( 2, sub {
+		$prefs->set( 'rank-PLUGIN_PICKS_MODULE_NAME' => 25 );
+	} );
 
 	# migrate old preferences to new client preferences
 	$prefs->migrateClient(1, sub {
@@ -289,7 +306,19 @@ sub init {
 		$cprefs->set( packetLatency       => $defaults->{'packetLatency'}      ) if ($cprefs->get('packetLatency') < 1);
 		1;
 	});
-
+	
+	# migrate menuItem pref so everyone gets the correct menu structure
+	$prefs->migrateClient( 3, sub {
+		my ( $cprefs, $client ) = @_;
+		my $defaults = $Slim::Player::Player::defaultPrefs;
+		
+		if ( $client->hasDigitalIn ) {
+			$defaults = $Slim::Player::Transporter::defaultPrefs;
+		}
+		
+		$cprefs->set( menuItem => $defaults->{menuItem} );
+	} );
+	
 	# initialise any new prefs
 	$prefs->init(\%defaults);
 

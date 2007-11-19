@@ -77,16 +77,16 @@ ELSE %]
 		PROCESS menuItem link={ key='RADIO_TUNEIN', value='tunein.html?' };
 	END;
 
-	music_on_demandItems = BLOCK;
-		FOREACH item = additionalLinkOrder.music_on_demand;
-			IF additionalLinks.music_on_demand.exists(item);
-				link.value = additionalLinks.music_on_demand.$item;
+	music_servicesItems = BLOCK;
+		FOREACH item = additionalLinkOrder.music_services;
+			IF additionalLinks.music_services.exists(item);
+				link.value = additionalLinks.music_services.$item;
 				link.key = item;
 				PROCESS menuItem;
 			END;
 		END;
-		FOREACH link = additionalLinks.music_on_demand;
-			IF !additionalLinkOrder.music_on_demand.grep(link.key).size;
+		FOREACH link = additionalLinks.music_services;
+			IF !additionalLinkOrder.music_services.grep(link.key).size;
 				PROCESS menuItem;
 			END;
 		END;
@@ -107,13 +107,13 @@ ELSE %]
 	[% BLOCK menuItem; page = page | lower %]
 		<div class="selectorMarker" onmouseover="Utils.highlight(this [% IF expandable %], MainMenu.onSelectorClicked[% END %]);">
 			<div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-				<div class="homeMenuItem[% IF (page == 'radio' || page == 'music_on_demand') && additionalLinks.icons.${link.key} %] itemWithCover[% END %]" id="[% link.key %]">
+				<div class="homeMenuItem[% IF (page == 'radio' || page == 'music_services') && additionalLinks.icons.${link.key} %] itemWithCover[% END %]" id="[% link.key %]">
 					[% IF expandable %]
 						<img class="disclosure_home" src="[% webroot %]html/images/spacer.gif"/>
 					[% ELSE %]
 						<a href="[% link.value %]player=[% player %][% IF expandable; "&amp;page=" _ expandable; END %]" class="browseItemLink">
 					[% END %]
-						[% IF (page == 'radio' || page == 'music_on_demand') && additionalLinks.icons.${link.key} %]
+						[% IF (page == 'radio' || page == 'music_services') && additionalLinks.icons.${link.key} %]
 							<span class="browseCover">
 								<img src="[% webroot %][% additionalLinks.icons.${link.key}.replace('.png', "_50x50_f.png") %]" width="50" border="0" alt="[% link.key | string %]">
 							</span>
@@ -173,15 +173,15 @@ ELSE %]
 		</div>
 		[% END %]
 
-	[% ELSIF page == 'music_on_demand' %]
-		[% pagetitle = "MUSIC_ON_DEMAND" | string %]
+	[% ELSIF page == 'music_services' %]
+		[% pagetitle = "MUSIC_SERVICES" | string %]
 		[% pwd_list = BLOCK %]
-			<a href="[% webroot %]home.html?player=[% player %]">[% "HOME" | string %]</a> [% crumbSeparator %] [% "MUSIC_ON_DEMAND" | string %]
+			<a href="[% webroot %]home.html?player=[% player %]">[% "HOME" | string %]</a> [% crumbSeparator %] [% "MUSIC_SERVICES" | string %]
 		[% END %]
 
 		[% menu = BLOCK %]
-		<div class="homeMenuSection" id="music_on_demandMenu">
-			[%- music_on_demandItems -%]
+		<div class="homeMenuSection" id="music_servicesMenu">
+			[%- music_servicesItems -%]
 		</div>
 		[% END %]
 
@@ -209,9 +209,9 @@ ELSE %]
 				<div id="RADIO_expanded" class="expandableHomeMenuItem">[%- radioItems -%]</div>
 			[% END %]
 		
-			[% IF additionalLinks.music_on_demand %]
-				[% PROCESS menuItem link.key="MUSIC_ON_DEMAND" link.value="home.html?" expandable="music_on_demand" %]
-				<div id="MUSIC_ON_DEMAND_expanded" class="expandableHomeMenuItem">[%- music_on_demandItems -%]</div>
+			[% IF additionalLinks.music_services %]
+				[% PROCESS menuItem link.key="MUSIC_SERVICES" link.value="home.html?" expandable="music_services" %]
+				<div id="MUSIC_SERVICES_expanded" class="expandableHomeMenuItem">[%- music_servicesItems -%]</div>
 			[% END %]
 
 			[% IF favorites;

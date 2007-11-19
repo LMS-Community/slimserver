@@ -6,6 +6,7 @@
         <module>Slim::Plugin::RandomPlay::Plugin</module>
         <version>1.0</version>
         <description>PLUGIN_RANDOM_DESC</description>
+        <playerMenu>BROWSE_MUSIC</playerMenu>
         <creator>Slim Devices/Logitech</creator>
         <email>support@slimdevices.com</email>
 
