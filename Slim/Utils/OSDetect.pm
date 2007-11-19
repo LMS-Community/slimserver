@@ -177,6 +177,14 @@ sub dirsFor {
 
 			push @dirs, catdir($ENV{'HOME'}, '/Library/Application Support/SqueezeCenter');
 
+		} elsif ($dir eq 'music') {
+
+			push @dirs, catdir($ENV{'HOME'}, '/Music');
+
+		} elsif ($dir eq 'playlists') {
+
+			push @dirs, catdir($ENV{'HOME'}, '/Music/Playlists');
+
 		} else {
 
 			push @dirs, catdir($Bin, $dir);
@@ -212,6 +220,10 @@ sub dirsFor {
 		} elsif ($dir eq 'MySQL') {
 
 			# Do nothing - use the depended upon MySQL install.
+
+		} elsif ($dir =~ /^(?:music|playlists)$/) {
+
+			push @dirs, '';
 
 		} else {
 
@@ -255,6 +267,10 @@ sub dirsFor {
 
 			# Do nothing - use the depended upon MySQL install.
 
+		} elsif ($dir =~ /^(?:music|playlists)$/) {
+
+			push @dirs, '';
+
 		} else {
 
 			warn "dirsFor: Didn't find a match request: [$dir]\n";
@@ -279,6 +295,27 @@ sub dirsFor {
 
 			push @dirs, winWritablePath('prefs');
 
+		} elsif ($dir =~ /^(?:music|playlists)$/) {
+
+			my $path = '';
+			my $swKey = $Win32::TieRegistry::Registry->Open(
+				'CUser/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/', 
+				{ 
+					Access => Win32::TieRegistry::KEY_READ(), 
+					Delimiter =>'/' 
+				}
+			);
+
+			if (defined $swKey) {
+				if (!($path = $swKey->{'My Music'})) {
+					if ($path = $swKey->{'Personal'}) {
+						$path = $path . '/My Music';
+					}
+				}
+			}
+
+			push @dirs, $path;
+
 		} else {
 
 			push @dirs, catdir($Bin, $dir);
@@ -298,6 +335,10 @@ sub dirsFor {
 		} elsif ($dir eq 'cache') {
 
 			push @dirs, catdir($Bin, 'Cache');
+
+		} elsif ($dir =~ /^(?:music|playlists)$/) {
+
+			push @dirs, '';
 
 		} else {
 

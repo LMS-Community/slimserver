@@ -419,36 +419,7 @@ sub makeSecuritySecret {
 }
 
 sub defaultAudioDir {
-	my $path;
-
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-
-		$path = ($ENV{'HOME'} . '/Music');
-
-	} elsif (Slim::Utils::OSDetect::OS() eq 'win') {
-
-		Slim::bootstrap::tryModuleLoad('Win32::TieRegistry');
-
-		if (!$@) {
-
-			my $swKey = $Win32::TieRegistry::Registry->Open(
-				'CUser/Software/Microsoft/Windows/CurrentVersion/Explorer/Shell Folders/', 
-				{ 
-					Access => Win32::TieRegistry::KEY_READ(), 
-					Delimiter =>'/' 
-				}
-			);
-
-			if (defined $swKey) {
-				if (!($path = $swKey->{'My Music'})) {
-					if ($path = $swKey->{'Personal'}) {
-						$path = $path . '/My Music';
-					}
-				}
-			}
-
-		}
-	}
+	my $path = Slim::Utils::OSDetect::dirsFor('music');
 
 	if ($path && -d $path) {
 		return $path;
@@ -458,20 +429,7 @@ sub defaultAudioDir {
 }
 
 sub defaultPlaylistDir {
-	my $path;
-
-	if (Slim::Utils::OSDetect::OS() eq 'mac') {
-
-		$path = $ENV{'HOME'} . '/Music/Playlists';
-
-	} elsif (Slim::Utils::OSDetect::OS() eq 'win') {
-
-		$path = $Bin . '/Playlists';
-
-	} else {
-
-		$path = '';
-	}
+	my $path = Slim::Utils::OSDetect::dirsFor('playlists');;
 
 	if ($path) {
 
