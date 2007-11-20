@@ -7248,7 +7248,7 @@ SETUP_WIZARD_MUSICIP_DESC2
 	NL	MusicIP Mixer moet vóór SqueezeCenter worden gestart. Als je geen verbinding met MusicIP kunt maken, sluit je SqueezeCenter af, en start je MusicIP en SqueezeCenter opnieuw.
 
 SETUP_WIZARD_MUSICIP_DESC3
-	DE	Weitere Informationen zum Konfigurieren von MusicIP Mixer und SqueezeCenter finden Sie unter </a>www.musicip.com<a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">.
+	DE	Weitere Informationen zum Konfigurieren von MusicIP Mixer und SqueezeCenter finden Sie unter <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
 	EN	For more information about the MusicIP Mixer configuration and SqueezeCenter please visit <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
 	ES	Para más información sobre la configuración de MusicIP Mixer y SqueezeCenter, visite <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
 	FR	Pour en savoir plus sur la configuration de MusicIP Mixer et du SqueezeCenter, rendez-vous sur <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
