@@ -45,6 +45,7 @@ function chooseSettings(value,option)
 			onComplete: function(t) {
 				$('settingsForm').setStyle({cursor:'auto'});
 				$('statusarea').update('');
+				resizeSettingsSection();
 			}
 		} );
 		document.forms.settingsForm.action = url;
@@ -88,8 +89,13 @@ function resizeSettingsSection() {
 	var submitHeight = $('prefsSubmit').offsetHeight + 10;
 
 	if ((winHeight - parseInt(settingsTop, 10) - parseInt(submitHeight, 10)) > 0) {
-		$('settingsRegion').setStyle({
+		$('innerblock').setStyle({
 			'height': (winHeight - parseInt(settingsTop, 10) - parseInt(submitHeight, 10)) + 'px'
+		});
+	}
+	if ((winHeight - parseInt(settingsTop, 10) - parseInt(submitHeight, 10)) > 0) {
+		$('settingsRegion').setStyle({
+			'height': (winHeight - parseInt(settingsTop, 10)-10) + 'px'
 		});
 	}
 }
