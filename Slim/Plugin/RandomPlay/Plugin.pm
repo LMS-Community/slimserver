@@ -58,7 +58,7 @@ $prefs->migrate( 1, sub {
 	}
 	
 	$prefs->set( 'newtracks', $newtracks );
-	$prefs->set( 'oldtracks', Slim::Utils::Prefs::OldPrefs->get('plugin_random_number_of_old_tracks') || 0 );
+	$prefs->set( 'oldtracks', Slim::Utils::Prefs::OldPrefs->get('plugin_random_number_of_old_tracks') );
 	$prefs->set( 'continuous', $continuous );
 	$prefs->set( 'exclude_genres', Slim::Utils::Prefs::OldPrefs->get('plugin_random_exclude_genres') || [] );
 	
@@ -71,7 +71,7 @@ $prefs->migrateClient(1, sub {
 	1;
 });
 
-$prefs->setValidate('int', qw(newtracks oldtracks) );
+$prefs->setValidate('int', 'newtracks' );
 
 sub getDisplayName {
 	return 'PLUGIN_RANDOMPLAY';
@@ -931,9 +931,9 @@ sub commandCallback {
 			}
 		}
 
-		my $songsToKeep = $prefs->get('oldtracks'); # 0 = keep all
+		my $songsToKeep = $prefs->get('oldtracks');
 
-		if ($songIndex && $songsToKeep && $songIndex > $songsToKeep) {
+		if ($songIndex && $songsToKeep ne '' && $songIndex > $songsToKeep) {
 
 			if ( $log->is_info ) {
 				$log->info(sprintf("Stripping off %i completed track(s)", $songIndex - $songsToKeep));
@@ -1044,7 +1044,7 @@ sub handleWebList {
 		# Pass on the current pref values and now playing info
 		$params->{'pluginRandomGenreList'}     = getGenres($client);
 		$params->{'pluginRandomNumTracks'}     = $prefs->get('newtracks');
-		$params->{'pluginRandomNumOldTracks'}  = $prefs->get('oldtracks') || ''; # convert 0 to ''
+		$params->{'pluginRandomNumOldTracks'}  = $prefs->get('oldtracks');
 		$params->{'pluginRandomContinuousMode'}= $prefs->get('continuous');
 		$params->{'pluginRandomNowPlaying'}    = $mixInfo{$client->masterOrSelf->id}->{'type'};
 	}
@@ -1079,7 +1079,7 @@ sub handleWebSettings {
 
 	$prefs->set('exclude_genres', [keys %{$genres}]);
  	$prefs->set('newtracks', $params->{'numTracks'});
- 	$prefs->set('oldtracks', $params->{'numOldTracks'} || 0); # convert '' to 0
+ 	$prefs->set('oldtracks', $params->{'numOldTracks'});
 	$prefs->set('continuous', $params->{'continuousMode'} ? 1 : 0);
 
 	# Pass on to check if the user requested a new mix as well
@@ -1101,4 +1101,5 @@ sub active {
 1;
 
 __END__
+
 
