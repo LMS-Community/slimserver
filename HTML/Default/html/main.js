@@ -494,6 +494,7 @@ Playlist = function(){
 				onDragOut: function(e, id) {
 					Ext.get(id).removeClass('dragUp');
 					Ext.get(id).removeClass('dragDown');
+					isDragging = false;
 				},
 
 				// move the item when dropped
