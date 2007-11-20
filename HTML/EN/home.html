@@ -97,7 +97,7 @@
 		<li><a href="[% webroot %]settings/server/basic.html?player=[% playerURI %]">[% "SERVER_SETTINGS" | string %]</a></li>
 	[%- END %]
 
-	[%- USE Clients; players = Clients.get("name"); FOREACH client = players; %]
+	[%- USE Clients; players = Clients.get("name"); FOREACH client = players.reverse; %]
 		<li><a href="[% webroot %]settings/player/basic.html?player=[% playerURI %]&amp;playerid=[% client.id | uri %]">[% "PLAYER_SETTINGS" | string %][% IF client.name %] [% "FOR" | string %] [% client.name %][% END %]</a></li>
 	[%- END %]
 
