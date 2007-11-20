@@ -329,7 +329,7 @@ sub addLogCategory {
 	if (my $category = $args->{'category'}) {
 
 		$class->setLogLevelForCategory(
-			$category, ($debugLine{$category} || $args->{'defaultLevel'} || 'WARN'),
+			$category, ($debugLine{$category} || $runningConfig{"log4perl.logger.$category"} || $args->{'defaultLevel'} || 'WARN'),
 		);
 
 		if (my $desc = $args->{'description'}) {
