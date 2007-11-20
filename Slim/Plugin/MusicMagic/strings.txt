@@ -207,7 +207,7 @@ SETUP_MIX_VARIETY
 	DE	MusicIP-Mix: Vielseitigkeit
 	EN	MusicIP Mix Variety
 	ES	Variedad de mezcla de MusicIP
-	FR	Avriété du mix MusicIP
+	FR	Variété du mix MusicIP
 	HE	מגוון במיקס של MusicIP
 	IT	Varietà della raccolta MusicIP
 	NL	Variatie van MusicIP-mixen
