@@ -2612,12 +2612,7 @@ SETUP_GROUP_PLUGINS
 	NL	Extra's
 
 SETUP_GROUP_PLUGINS_DESC
-	DE	SqueezeCenter enthält eine Reihe von Extras, die Sie über die Fernbedienung steuern können. Sie können Extras aus dem Plugins-Ordner aufnehmen bzw. entfernen, indem Sie das entsprechende Kontrollkästchen aktivieren bzw. deaktivieren. Sie können SqueezeCenter auch so konfigurieren, dass es bei jedem Öffnen des Extras-Menüs erneut nach Extras sucht. Die Standardeinstellung ist 'Extras nur beim Programmstart laden'. Klicken Sie auf 'Ändern', um die Änderungen zu speichern.
 	EN	SqueezeCenter includes some extras that you can use with your remote or in the web interface. You can choose to enable or disable individual extras using the buttons below. 
-	ES	SqueezeCenter incluye elementos extra que se pueden usar con el mando a distancia o desde la interfaz Web. Puede habilitar o deshabilitar elementos extra individuales utilizando los botones siguientes.
-	FR	Le SqueezeCenter inclut certains extras à utiliser avec la télécommande ou à partir de l'interface Web. Vous pouvez activer ou désactiver des extras à l'aide des boutons ci-dessous. Pour activer un extra, cochez la case correspondante. Désélectionnez la case pour le désactiver. Le SqueezeCenter peut rechercher des extras chaque fois que vous accédez au menu des extras de la platine ou aux réglages des extras. Par défaut, ils sont chargés au démarrage uniquement. Cliquez sur Modifier pour enregistrer les modifications.
-	IT	In SqueezeCenter sono disponibili alcune risorse aggiuntive, note come plugin, utilizzabili con il telecomando. Nella directory Plugin è possibile scegliere di attivare o disattivare singoli plugin. Per attivare un plugin, selezionare la casella in corrispondenza del nome riportato di seguito; per disattivarlo, deselezionarla. È possibile impostare SqueezeCenter per eseguire la ricerca delle risorse aggiuntive ogni volta che si accede al menu Extra del lettore o alle impostazioni relative agli extra. Per impostazione predefinita il caricamento viene eseguito solo all'avvio. Per salvare le modifiche, fare clic su Cambia.
-	NL	SqueezeCenter bevat een aantal extra's die je met je afstandsbediening of via de webinterface kunt gebruiken. Met de onderstaande knoppen kun je afzonderlijke extra's in- of uitschakelen.
 
 SETUP_GROUP_FORMATS_CONVERSION
 	CS	Nastavení konverze formátů
