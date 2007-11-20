@@ -5,6 +5,10 @@
 SAVE_PLAYLIST_DESC
 	DE	Wiedergabelisten über das Player-Interface abspeichern
 	EN	Save Playlists from the Player UI
+	ES	Guardar listas de reproducción desde la interfaz del reproductor
+	FR	Enregistrer des listes de lecture à partir de l'interface de la platine
+	IT	Salva elenchi di riproduzione dall'interfaccia del lettore
+	NL	Playlists uit de speler-UI opslaan
 
 PLAYLIST_OVERWRITE
 	DE	Drücken Sie RECHTS, um die vorhandene Wiedergabeliste zu überschreiben:
@@ -89,3 +93,4 @@ NO_PLAYLIST_DIR_MORE
 	NL	Ga naar serverinstellingen om dit te corrigeren.
 	SV	Ändra serverinställningar för att korrigera detta.
 	ZH_CN	请参考服务器配置以便修正
+

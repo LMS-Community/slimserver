@@ -172,3 +172,4 @@ SETUP_XPLIR_BOTH
 	NO	Begge
 	SV	Båda
 	ZH_CN	两者皆是
+

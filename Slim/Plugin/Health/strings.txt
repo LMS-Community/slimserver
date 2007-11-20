@@ -15,6 +15,10 @@ PLUGIN_HEALTH
 PLUGIN_HEALTH_DESC
 	DE	Server- und Netzwerk-Zustand testen und überwachen
 	EN	Monitor Server & Network Health
+	ES	Supervisar estado de servidor y red
+	FR	Contrôle de l'état du serveur et du réseau
+	IT	Controlla stato del server e della rete
+	NL	Server- en netwerkstatus controleren
 
 PLUGIN_HEALTH_PERF_ENABLE
 	DE	Leistungsüberwachung aktivieren
@@ -540,13 +544,13 @@ PLUGIN_HEALTH_BT
 	NL	Terugtraceren
 
 PLUGIN_HEALTH_GRAPHS_DESC_PLAYER
-	DE	Der Server sammelt Leistungsstatistiken für diesen Player. 
+	DE	Der Server sammelt Leistungsstatistiken für diesen Player.
 	EN	The server is currently collecting performance statistics for this player.
-	ES	El servidor está recopilando estadísticas de rendimiento para este reproductor. 
-	FR	Le serveur est actuellement en train de collecter des statistiques de performance pour cette platine. 
+	ES	El servidor está recopilando estadísticas de rendimiento para este reproductor.
+	FR	Le serveur est actuellement en train de collecter des statistiques de performance pour cette platine.
 	HE	השרת מבצע איסוף של פרטים סטטיסטיים אודות ביצועי הנגן. 
-	IT	È in corso la raccolta delle statistiche relative alle prestazioni di questo lettore. 
-	NL	De server haalt op dit moment prestatiegegevens voor deze speler op. 
+	IT	È in corso la raccolta delle statistiche relative alle prestazioni di questo lettore.
+	NL	De server haalt op dit moment prestatiegegevens voor deze speler op.
 
 PLUGIN_HEALTH_GRAPHS_DESC_SERVER
 	DE	Der Server sammelt Leistungsstatistiken für verschiedene interne Serverfunktionen. Diese Diagramme sollen bei der Diagnose von Leistungsproblemen mit dem Server und dessen Plugins helfen.
@@ -594,13 +598,13 @@ PLUGIN_HEALTH_CONTROL_DESC
 	NL	Deze grafiek toont het aantal berichten die in de wachtrij staan om via de controleverbinding naar de speler verzonden te worden. Telkens wanneer er een nieuw bericht naar de speler wordt verzonden, wordt er een meting uitgevoerd. Waarden boven 1-2 wijzen op mogelijke netwerkcongestie of geven aan dat de speler losgekoppeld is.
 
 PLUGIN_HEALTH_RESPONSE_DESC
-	DE	Die Reaktionszeit des Servers (die Zeit zwischen auswählbaren Aufrufen). 
+	DE	Die Reaktionszeit des Servers (die Zeit zwischen auswählbaren Aufrufen).
 	EN	The response time of the server - the time between successive calls to select.
-	ES	El tiempo de respuesta del servidor: el tiempo entre las sucesivas llamadas para seleccionar. 
-	FR	Ce graphique montre délai en secondes nécessaire au serveur pour répondre aux instructions des platines connectées. Plus la valeur est basse, plus le serveur est réactif. Des valeurs supérieures à 1 seconde sont susceptibles d'altérer les performances audio. Les temps de réponse trop élevés peuvent être le résultat d'autres tâches ou de tâches complexes en cours d'éxécution sur le serveur. 
+	ES	El tiempo de respuesta del servidor: el tiempo entre las sucesivas llamadas para seleccionar.
+	FR	Ce graphique montre délai en secondes nécessaire au serveur pour répondre aux instructions des platines connectées. Plus la valeur est basse, plus le serveur est réactif. Des valeurs supérieures à 1 seconde sont susceptibles d'altérer les performances audio. Les temps de réponse trop élevés peuvent être le résultat d'autres tâches ou de tâches complexes en cours d'éxécution sur le serveur.
 	HE	זמן התגובה של השרת - פרק הזמן בין שיחות עוקבות לבחירה. 
-	IT	Tempo di risposta del server, ovvero il tempo intercorso tra la selezione di chiamate successive. 
-	NL	De serverreactietijd: de tijd tussen achtereenvolgende aanroepen voor selectie. 
+	IT	Tempo di risposta del server, ovvero il tempo intercorso tra la selezione di chiamate successive.
+	NL	De serverreactietijd: de tijd tussen achtereenvolgende aanroepen voor selectie.
 
 PLUGIN_HEALTH_SELECT
 	DE	Taskdauer wählen
@@ -767,7 +771,16 @@ PLUGIN_HEALTH_TEMPLATE_DESC
 PLUGIN_HEALTH_ASYNC
 	DE	Asynchrone HTTP Task Dauer
 	EN	Async HTTP Task Duration
+	ES	Duración de tarea Async HTTP
+	FR	Durée de la tâche http asynchrone
+	IT	Durata attività HTTP asincrona
+	NL	Duur van async HTTP-taak
 
 PLUGIN_HEALTH_ASYNC_DESC
 	DE	Die zur Ausführen von asynchronen HTTP Callback Funktionen benötigte Zeit.
 	EN	The length of time taken by each asynchronous http callback function.
+	ES	El tiempo requerido por cada función de devolución de llamada asincrónica.
+	FR	Durée de chaque fonction de rappel http asynchrone.
+	IT	Tempo richiesto per ciascuna funzione di richiamata http asincrona.
+	NL	De duur van elke asynchrone http-terugroepfunctie.
+

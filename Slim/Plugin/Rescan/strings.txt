@@ -16,6 +16,10 @@ PLUGIN_RESCAN_MUSIC_LIBRARY
 PLUGIN_RESCAN_MUSIC_LIBRARY_DESC
 	DE	Automatisches Durchsuchen der Musiksammlung
 	EN	Automatic Library Scanning
+	ES	Examen automático de biblioteca
+	FR	Analyse de bibliothèque automatique
+	IT	Analisi automatica della libreria in corso...
+	NL	Automatisch collectie scannen
 
 PLUGIN_RESCAN_RESCANNING
 	CS	Server právě aktualizuje informace z hudebního archivu
@@ -117,7 +121,12 @@ PLUGIN_RESCAN_TIMER_TYPE
 	HE	סוג סריקה חוזרת
 	IT	Tipo di analisi
 	NL	Type voor opnieuw scannen
-	
+
 PLUGIN_RESCAN_PLEASE_WAIT
+	DE	Bitte warten
 	EN	Please Wait
+	ES	Espere un momento
+	FR	Veuillez patienter
+	IT	Attendere
+	NL	Even wachten
 

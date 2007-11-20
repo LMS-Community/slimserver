@@ -67,3 +67,4 @@ SETUP_CLIPORT_OK
 	PT	A porta para acesso via linha de comando é
 	SV	Använder nu följande portnummer för terminalgränssnittet:
 	ZH_CN	当前正使用如下的命令行界面端口：
+

@@ -5,101 +5,208 @@
 PLUGIN_FAVORITES_DESC
 	DE	Favoriten speichern und bearbeiten
 	EN	Save and edit your favorites
+	ES	Guardar y editar favoritos
+	FR	Enregistrer et modifier les favoris
+	IT	Salva e modifica i preferiti
+	NL	Je Favorieten opslaan en bewerken
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR
 	DE	OPML Wiedergabelisten bearbeiten
 	EN	OPML Playlist Browser & Editor
+	ES	Navegador/Editor de listas de reproducción OPML
+	FR	Navigateur et éditeur de listes de lecture OPML
+	IT	Browser ed editor degli elenchi di riproduzione OPML
+	NL	OPML Playlist Browser & Editor
 
 PLUGIN_FAVORITES_PLAYLIST_EDITOR_DESC
-	DE	Das Favoriten Plugin erlaubt es auch, OPML basierte Wiedergabelisten auf dem Server zu durchsuchen und bearbeiten. Aktiviere die folgende Option, um diesen Modus unter "Extras" auf dem Server Web-Interface anzuzeigen. 
+	DE	Das Favoriten Plugin erlaubt es auch, OPML basierte Wiedergabelisten auf dem Server zu durchsuchen und bearbeiten. Aktiviere die folgende Option, um diesen Modus unter "Extras" auf dem Server Web-Interface anzuzeigen.
 	EN	The favorites plugin will also allow you to browse opml based playlists and edit opml playlists stored on your server. Select the option below to add this mode under 'Extras' on the server home page.
+	ES	El extra Favoritos le permite examinar listas basadas en opml y editar listas de ese tipo almacenadas en su servidor. Seleccione la siguiente opción para añadir este modo bajo 'Extras' en la página de inicio del servidor.
+	FR	L'extra des favoris vous permet également de parcourir les listes de lecture OPML et de modifier les listes OPML stockées sur le serveur. Sélectionnez l'option ci-dessous pour ajouter ce mode sous Extras sur la page d'accueil du serveur.
+	IT	Il plugin dei preferiti consente anche di sfogliare gli elenchi di riproduzione in formato OPML e di modificare gli elenchi di riproduzione OPML memorizzati nel server. Selezionare l'opzione sottostante per aggiungere questa modalità negli Extra nella home page del server.
+	NL	Met behulp van de extra Favorieten kun je opml-playlists die op je server zijn opgeslagen, doorkijken en bewerken. Selecteer de onderstaande optie om deze modus toe te voegen onder Extra's in het serverhoofdmenu.
 
 PLUGIN_FAVORITES_LOAD
 	DE	Laden
 	EN	Load
+	ES	Cargar
+	FR	Charger
+	IT	Carica
+	NL	Laden
 
 PLUGIN_FAVORITES_SAVE
 	DE	Speichern
 	EN	Save
+	ES	Guardar
+	FR	Enregistrer
+	IT	Salva
+	NL	Opslaan
 
 PLUGIN_FAVORITES_IMPORT
 	DE	Importieren
 	EN	Import
+	ES	Importar
+	FR	Importer
+	IT	Importa
+	NL	Importeren
 
 PLUGIN_FAVORITES_LOADFILE
 	DE	URL oder Dateiname
 	EN	URL or File Name
+	ES	URL o nombre de archivo
+	FR	URL ou nom du fichier
+	IT	URL o nome file
+	NL	URL of bestandsnaam
 
 PLUGIN_FAVORITES_SAVEFILE
 	DE	Dateiname
 	EN	File Name
+	ES	Nombre de archivo
+	FR	Nom du fichier
+	IT	Nome file
+	NL	Bestandsnaam
 
 PLUGIN_FAVORITES_IMPORTFILE
 	DE	URL oder Dateiname
 	EN	URL or File Name
+	ES	URL o nombre de archivo
+	FR	URL ou nom du fichier
+	IT	URL o nome file
+	NL	URL of bestandsnaam
 
 PLUGIN_FAVORITES_NOFILE
 	DE	Datei nicht gefunden
 	EN	File Not Found
+	ES	Archivo no encontrado
+	FR	Fichier introuvable
+	IT	File non trovato
+	NL	Bestand niet gevonden
 
 PLUGIN_FAVORITES_CANCEL
 	DE	Abbrechen
 	EN	Cancel
+	ES	Cancelar
+	FR	Annuler
+	IT	Annulla
+	NL	Annuleren
 
 PLUGIN_FAVORITES_INSERTDEL
 	DE	Gelöschten einfügen
 	EN	Insert Deleted
+	ES	Insertar eliminados
+	FR	Insérer l'élément supprimé
+	IT	Ripristina eliminato
+	NL	Verwijderde terugzetten
 
 PLUGIN_FAVORITES_LOADING
 	DE	Lade Favoriten...
 	EN	Loading Favorites...
+	ES	Cargando favoritos...
+	FR	Chargement des favoris...
+	IT	Caricamento dei preferiti in corso...
+	NL	Favorieten worden geladen...
 
 PLUGIN_FAVORITES_NEWFOLDER
 	DE	Neuer Ordner
 	EN	New Folder
+	ES	Carpeta nueva
+	FR	Nouveau dossier
+	IT	Nuova cartella
+	NL	Nieuwe map
 
 PLUGIN_FAVORITES_NEWENTRY
 	DE	Neuer Eintrag
 	EN	New Entry
+	ES	Entrada nueva
+	FR	Nouvelle entrée
+	IT	Nuova voce
+	NL	Nieuwe ingang
 
 PLUGIN_FAVORITES_NEWFAVORITE
 	DE	Neuer Favorit
 	EN	New Favorite
+	ES	Favorito nuevo
+	FR	Nouveau favori
+	IT	Nuovo preferito
+	NL	Nieuwe favoriet
 
 PLUGIN_FAVORITES_NEWURL
 	DE	Neue URL
 	EN	New URL
+	ES	URL nueva
+	FR	Nouvelle URL
+	IT	Nuovo URL
+	NL	Nieuwe URL
 
 PLUGIN_FAVORITES_LOADERROR
 	DE	Fehler beim Laden der Datei
 	EN	Error Loading File
+	ES	Error al cargar archivo
+	FR	Erreur de chargement du fichier
+	IT	Errore durante il caricamento del file
+	NL	Fout tijdens laden bestand
 
 PLUGIN_FAVORITES_REMOTELOADERROR
 	DE	Fehler beim Lesen der URL
 	EN	Error Loading URL
+	ES	Error al cargar URL
+	FR	Erreur de chargement de l'URL
+	IT	Errore durante il caricamento dell'URL
+	NL	Fout tijdens laden URL
 
 PLUGIN_FAVORITES_SAVEERROR
 	DE	Fehler beim Speichern der Datei
 	EN	Error Saving File
+	ES	Error al guardar archivo
+	FR	Erreur d'enregistrement du fichier
+	IT	Errore durante il salvataggio del file
+	NL	Fout tijdens opslaan bestand
 
 PLUGIN_FAVORITES_IMPORTERROR
 	DE	Fehler beim Import von Wiedergabelisten
 	EN	Error Importing Playlist	
+	ES	Error al importar lista de reproducción
+	FR	Erreur au cours de l'importation de la liste de lecture
+	IT	Errore durante l'importazione dell'elenco di riproduzione
+	NL	Fout tijdens importeren van playlist
 
 PLUGIN_FAVORITES_NOTITLE
 	DE	Ohne Titel
 	EN	No Title
+	ES	Sin título
+	FR	Pas de titre
+	IT	Nessun titolo
+	NL	Geen titel
 
 PLUGIN_FAVORITES_NAME
+	DE	Name
 	EN	Name
+	ES	Nombre
+	FR	Nom
+	IT	Nome
+	NL	Naam
 
 PLUGIN_FAVORITES_URL
+	DE	URL
 	EN	URL
+	ES	URL
+	FR	URL
+	IT	URL
+	NL	URL
 
 PLUGIN_FAVORITES_ADD
 	DE	Zu Favoriten hinzufügen
 	EN	Add to Favorites
+	ES	Agregar a favoritos
+	FR	Ajouter aux favoris
+	IT	Aggiungi ai preferiti
+	NL	Toevoegen aan Favorieten
 
 PLUGIN_FAVORITES_REMOVE
-	DE	Aus Favoriten entfernen 
+	DE	Aus Favoriten entfernen
 	EN	Remove from Favorites
+	ES	Quitar de Favoritos
+	FR	Supprimer des favoris
+	IT	Rimuovi dai preferiti
+	NL	Uit Favorieten verwijderen
+

@@ -1,26 +1,66 @@
 # String file for InfoBrowser
 
 PLUGIN_INFOBROWSER
+	DE	Informations-Browser
 	EN	Information Browser
+	ES	Navegador de información
+	FR	Navigateur d'informations
+	IT	Browser informazioni
+	NL	Informatiebrowser
 
 PLUGIN_INFOBROWSER_DESC
+	DE	Liest Informationen aus Internetquellen und zeigt Sie auf der Fernbedienung, dem Server oder dem Player an. Im Abschnitt 'Einstellungen' finden Sie Hinweise zu zusätzlichen Informationsquellen.
 	EN	Retrieve information from internet sources and displaying via Remote, Server or Player displays.  See the settings section for information about adding additional information sources.
+	ES	Obtener información de orígenes de Internet y mostrarla en pantallas de mando a distancia, servidor o reproductor. En la sección sobre configuración encontrará información sobre cómo agregar orígenes de información adicionales.
+	FR	Récupère des informations d'Internet et les affiche sur la télécommande, sur le serveur ou sur la platine. Reportez-vous à la section des réglages pour en savoir plus sur l'ajout de sources d'informations.
+	IT	Recupera le informazioni da fonti Internet e le visualizza nel display del telecomando, del server o del lettore. Consultare la sezione relativa alle impostazioni per istruzioni sull'aggiunta di altre fonti di informazioni.
+	NL	Haal informatie op uit internetbronnen en geef deze via de afstandsbediening, server of speler weer. Zie de instellingensectie voor informatie over het toevoegen van extra informatiebronnen.
 
 SETUP_PLUGIN_INFOBROWSER_DESC
+	DE	Mit dem Informations-Browser können Sie Informationen aus Internetquellen auf der Fernbedienung, dem Server oder dem Player anzeigen.
 	EN	Information Browser allows you to read information from internet sources on your Squeezebox remote, server or player display.
+	ES	El Navegador de información permite leer información procedente de orígenes de Internet en la pantalla de su reproductor, servidor o mando a distancia Squeezebox .
+	FR	Le Navigateur d'informations vous permet de lire des flux d'informations en provenance d'Internet directement sur la télécommande, sur le serveur ou sur la platine.
+	IT	Il browser informazioni consente di visualizzare le informazioni recuperate dalle fonti Internet nel display del telecomando Squeezebox, del server o del lettore.
+	NL	Met behulp van de Informatiebrowser kun je informatie uit internetbronnen op je Squeezebox-afstandsbediening, -server of -spelerdisplay lezen.
 
 SETUP_PLUGIN_INFOBROWSER_EDIT
+	DE	Bearbeiten
 	EN	Edit
+	ES	Editar
+	FR	Modifier
+	IT	Modifica
+	NL	Bewerken
 
 SETUP_PLUGIN_INFOBROWSER_EDIT_DESC
+	DE	Bearbeitet das Menü auf oberster Ebene im Informations-Browser . Sie können RSS-Feeds hinzufügen und Einträge verschieben bzw. löschen.
 	EN	Edit the top level Information Browser menu.  You may add RSS feeds, rearrange and delete items.
+	ES	Para editar el menú Navegador de información en el nivel superior. Puede añadir fuentes RSS y reorganizar y eliminar elementos.
+	FR	Modifier le menu de niveau supérieur du Navigateur d'informations. Vous pouvez ajouter des flux RSS et réorganiser ou supprimer les éléments.
+	IT	Modifica il menu principale del browser informazioni. È possibile aggiungere feed RSS, modificare l'ordine degli elementi o eliminarli.
+	NL	Wijzig het menu Informatiebrowser op het hoogste niveau. Je kunt RSS-kanalen toevoegen, en items opnieuw schikken of verwijderen.
 
 SETUP_PLUGIN_INFOBROWSER_RESET
+	DE	Zurücksetzen
 	EN	Reset
+	ES	Restablecer
+	FR	Réinitialiser
+	IT	Reimposta
+	NL	Opnieuw instellen
 
 SETUP_PLUGIN_INFOBROWSER_RESET_DESC
+	DE	Setzt das Menü auf oberster Ebene im Informations-Browser auf die Standard-Feeds sowie die von Ihnen installierten zusätzlichen Feeds zurück.
 	EN	Reset the top level Information Browser menu to all default feeds plus all Addon feeds you have installed.
+	ES	Restablecer todas las fuentes predeterminadas del menú Navegador de información en el nivel superior y todas las fuentes de complementos que haya instalado.
+	FR	Réinitialiser le niveau supérieur du menu du Navigateur d'informations pour rétablir les flux par défaut et les flux des modules supplémentaires installés.
+	IT	Ripristina i feed predefiniti e quelli dei componenti aggiuntivi installati nel menu principale del browser informazioni.
+	NL	Stel het menu Informatiebrowser op het hoogste niveau opnieuw in op alle standaardkanalen plus alle add-onkanalen die je hebt geïnstalleerd.
 
 SETUP_PLUGIN_INFOBROWSER_ADDONS
+	DE	Sie können weitere Informationsquellen anzeigen, indem Sie Add-ons für den Informations-Browser installieren (siehe <a href="http://wiki.slimdevices.com/index.cgi?InformationBrowser">http://wiki.slimdevices.com/index.cgi?InformationBrowser</a>).
 	EN	Other information sources may be displayed by adding Information Browser addons.  More details of Information Browser addons can be found at: <a href="http://wiki.slimdevices.com/index.cgi?InformationBrowser">http://wiki.slimdevices.com/index.cgi?InformationBrowser</a>.
+	ES	Es posible mostrar otros orígenes de información mediante complementos de Navegador de información. Encontrará más detalles sobre complementos de Navegador de información en: <a href="http://wiki.slimdevices.com/index.cgi?InformationBrowser">http://wiki.slimdevices.com/index.cgi?InformationBrowser</a>.
+	FR	Vous pouvez afficher d'autres sources d'information en ajoutant des modules supplémentaires au Navigateur d'informations. Pour en savoir plus sur ces modules, rendez-vous à l'adresse suivante: <a href="http://wiki.slimdevices.com/index.cgi?InformationBrowser">http://wiki.slimdevices.com/index.cgi?InformationBrowser</a>.
+	IT	Per visualizzare altre fonti di informazioni, è possibile integrare i componenti aggiuntivi del browser informazioni. Per ulteriori informazioni su questi componenti, visitare il sito Web: <a href="http://wiki.slimdevices.com/index.cgi?InformationBrowser">http://wiki.slimdevices.com/index.cgi?InformationBrowser</a>.
+	NL	Je kunt andere informatiebronnen weergeven door Informatiebrowser-addons toe te voegen. Meer informatie over deze add-ons is te vinden op: <a href="http://wiki.slimdevices.com/index.cgi?InformationBrowser">http://wiki.slimdevices.com/index.cgi?InformationBrowser</a>.
 

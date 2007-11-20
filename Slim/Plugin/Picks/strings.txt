@@ -3,7 +3,18 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_PICKS_MODULE_NAME
+	DE	Slim Picks
 	EN	Staff Picks
+	ES	Slim Picks
+	FR	Slim Picks
+	IT	Slim Picks
+	NL	De beste van Slim Devices
 
 PLUGIN_PICKS_MODULE_NAME_DESC
+	DE	Slim Auswahl von Internet Radio Stationen
 	EN	Staff Picks - Best of Internet Radio
+	ES	Slim Picks - Lo mejor en radio por Internet
+	FR	Slim Picks – Le meilleur des radios Internet
+	IT	Slim Picks : il meglio della radio su Internet
+	NL	De beste van Slim Devices - Internetradio
+

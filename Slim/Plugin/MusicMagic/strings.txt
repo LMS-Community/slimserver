@@ -3,11 +3,20 @@
 # $Id: strings.txt 11145 2007-01-07 00:19:08Z kdf $
 
 MUSICMAGIC
+	DE	MusicIP
 	EN	MusicIP
+	ES	MusicIP
+	FR	MusicIP
+	IT	MusicIP
+	NL	MusicIP
 
 MUSICMAGIC_DESC
 	DE	MusicIP Integration
 	EN	MusicIP integration
+	ES	Integración de MusicIP
+	FR	Intégration MusicIP
+	IT	Integrazione di MusicIP
+	NL	MusicIP-integratie
 
 SETUP_MUSICMAGICPLAYLISTFORMAT
 	DE	MusicIP-Wiedergabelistenformat
@@ -434,7 +443,16 @@ MUSICMAGIC_MOODS
 DEBUG_PLUGIN_MUSICMAGIC
 	DE	MusicIP Mix & Export
 	EN	MusicIP Mix & Export Logging
+	ES	Registro de mezclas y exportación de MusicIP
+	FR	Journalisation des mix et exportations MusicIP
+	IT	Registrazione esportazione e mix MusicIP
+	NL	Registratie van MusicIP-mix en -export
 
 MUSICMAGIC_PROGRESS
 	DE	MusicIP Import
 	EN	MusicIP Import
+	ES	Importación de MusicIP
+	FR	Importation MusicIP
+	IT	Importazione da MusicIP
+	NL	MusicIP importeren
+

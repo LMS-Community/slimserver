@@ -1,5 +1,10 @@
 PLUGIN_MP3TUNES_MODULE_NAME
+	DE	MP3tunes-Musiktruhe
 	EN	MP3tunes Music Locker
+	ES	Armario de música de MP3tunes
+	FR	Librairie musicale en ligne - MP3tunes
+	IT	Raccoglitore musicale MP3tunes
+	NL	MP3tunes-muziekkluis
 
 PLUGIN_MP3TUNES_LOADING
 	DE	Anmelden läuft ...
@@ -12,3 +17,8 @@ PLUGIN_MP3TUNES_LOADING
 PLUGIN_MP3TUNES_MODULE_NAME_DESC
 	DE	Zugriff auf den MP3tunes Music Locker gewähren. Dieses Plugin benötigt einen SqueezeNetwork Account.
 	EN	Access music from your MP3tunes Music Locker. This plugin requires a SqueezeNetwork account.
+	ES	Acceso a música en su Armario de música de MP3tunes. Este extra requiere una cuenta SqueezeNetwork.
+	FR	Accès à la musique de votre librairie musicale en ligne MP3tunes. Cet extra nécessite un compte SqueezeNetwork.
+	IT	Accesso ai brani del raccoglitore musicale MP3tunes. Questo plugin richiede un account SqueezeNetwork.
+	NL	Roep muziek vanuit je MP3tunes-muziekkluis op. Voor deze extra is een SqueezeNetwork-account vereist.
+

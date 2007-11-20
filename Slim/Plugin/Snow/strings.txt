@@ -230,3 +230,4 @@ PLUGIN_SCREENSAVER_SNOW_SORRY
 	HE	מצטערים, אין אפשרות להציג שלג בנגן זה.
 	IT	L'effetto neve non funziona con questo lettore.
 	NL	Sorry, sneeuw werkt niet met deze speler.
+

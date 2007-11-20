@@ -3,16 +3,34 @@
 # $Id: strings.txt 11037 2006-12-24 07:25:38Z mherger $
 
 PLUGIN_RS232_NAME
+	DE	RS232
 	EN	RS232
+	ES	RS232
+	FR	RS232
+	IT	RS232
+	NL	RS232
 
 PLUGIN_RS232_NAME_DESC
 	DE	RS232 Unterstützung für den Transporter
 	EN	RS232 access for Transporter
+	ES	Acceso de RS232 para Transporter
+	FR	Access RS232 pour Transporter
+	IT	Accesso RS232 per Transporter
+	NL	RS232-toegang voor Transporter
 
 SETUP_CLI_OVER_RS232
 	DE	Kommandozeileninterface (CLI) über serielle Schnittstelle
 	EN	CLI interface over RS232
+	ES	Interfaz CLI a través de RS232
+	FR	Interface de ligne de commande pour RS232
+	IT	Interfaccia CLI su RS232
+	NL	CLI-interface over RS232
 
 SETUP_CLI_OVER_RS232_ENABLE
 	DE	Einschalten
 	EN	Enable
+	ES	Habilitar
+	FR	Activer
+	IT	Attiva
+	NL	Inschakelen
+

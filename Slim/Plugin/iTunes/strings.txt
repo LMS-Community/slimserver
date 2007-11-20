@@ -3,12 +3,21 @@
 # $Id: strings.txt 11145 2007-01-07 00:19:08Z kdf $
 
 ITUNES
+	DE	iTunes
 	EN	iTunes
+	ES	iTunes
+	FR	iTunes
+	IT	iTunes
+	NL	iTunes
 	ZH_CN	iTunes
 
 ITUNES_DESC
 	DE	iTunes Integration (Musik und Wiedergabelisten)
 	EN	iTunes integration
+	ES	Integración de iTunes
+	FR	Intégration iTunes
+	IT	Integrazione di iTunes
+	NL	iTunes-integratie
 
 SETUP_ITUNESPLAYLISTFORMAT
 	CS	Formát playlistu iTunes
@@ -121,7 +130,7 @@ DONT_USE_ITUNES
 	HE	ללא שימוש ב-iTunes
 	IT	Non usare iTunes
 	JA	iTunesを使用しない
-	NL	iTunes niet gebruiken 
+	NL	iTunes niet gebruiken
 	SV	Använd inte iTunes
 	ZH_CN	不使用iTunes
 
@@ -294,12 +303,24 @@ SETUP_IGNOREDISABLEDITUNESTRACKS_0
 DEBUG_PLUGIN_ITUNES
 	DE	iTunes Synchronisation
 	EN	iTunes Synchronization Information
+	ES	Información sobre sincronización de iTunes
+	FR	Informations de synchronisation iTunes
+	IT	Informazioni sulla sincronizzazione con iTunes
+	NL	Gegevens voor iTunes-synchronisatie
 
 ITUNES_PROGRESS
 	DE	iTunes Import
 	EN	iTunes Import
+	ES	Importación de iTunes
+	FR	Importation iTunes
+	IT	Importazione da iTunes
+	NL	iTunes importeren
 
 ITUNES_PLAYLISTS_PROGRESS
 	DE	iTunes Wiedergabelisten Import
 	EN	iTunes Playlist Import
+	ES	Importación de lista de reproducción de iTunes
+	FR	Importation de liste de lecture iTunes
+	IT	Importazione degli elenchi di riproduzione iTunes
+	NL	iTunes-playlist importeren
 

@@ -14,23 +14,27 @@ PLUGIN_RADIOTIME_MODULE_NAME
 PLUGIN_RADIOTIME_MODULE_NAME_DESC
 	DE	RadioTime - Zugang zu lokalen Internet Radio Stationen
 	EN	RadioTime - Local Internet Radio
+	ES	RadioTime - Radio por Internet local
+	FR	RadioTime – Radio Internet locale
+	IT	RadioTime: radio Internet locale
+	NL	RadioTime - Lokale internetradio
 
 PLUGIN_RADIOTIME_MODULE_TITLE
-	DE	RadioTime
+	DE	radiotime
 	EN	radiotime
 	ES	radiotime
 	FR	radiotime
 	HE	radiotime
 	IT	radiotime
 	NL	radiotime
-	
+
 PLUGIN_RADIOTIME_LOADING
 	DE	RadioTime wird geladen ...
 	EN	Loading RadioTime...
-	ES	Cargando RadioTime…
+	ES	Cargando RadioTime...
 	FR	Chargement RadioTime...
 	HE	טוען את RadioTime...
-	IT	Caricamento RadioTime in corso…
+	IT	Caricamento RadioTime in corso...
 	NL	RadioTime wordt geladen...
 
 SETUP_GROUP_PLUGIN_RADIOTIME_DESC
@@ -59,3 +63,4 @@ SETUP_PLUGIN_RADIOTIME_USERNAME_DESC
 	HE	עבור לכתובת <a href='http://www.radioio.com/registration.php' target='_new'>radioio.com</a> כדי להירשם ללא תשלום. הוסף תחנות ותוכניות ל'הרדיו שלי' ולאחר מכן האזן להן בנגן Squeezebox או Transporter שברשותך.
 	IT	Per eseguire la registrazione <b>gratuita</b>, accedere a <a href='http://www.radiotime.com' target='_new'>radiotime.com</a>. È possibile aggiungere stazioni e programmi a My Radio (La mia radio) e ascoltarli su Squeezebox o Transporter.
 	NL	Ga naar <a href='http://www.radiotime.com' target='_new'>radiotime.com</a> om je <b>gratis</b> aan te melden. Voeg stations en programma's toe aan 'My Radio' en luister ernaar op je Squeezebox of Transporter.
+

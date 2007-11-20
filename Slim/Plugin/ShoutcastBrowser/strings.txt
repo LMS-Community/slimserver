@@ -8,12 +8,16 @@ PLUGIN_SHOUTCASTBROWSER_MODULE_NAME
 	ES	SHOUTcast
 	FR	SHOUTcast
 	HE	SHOUTcast
-	IT	SHOUTcast 
+	IT	SHOUTcast
 	NL	SHOUTcast
 
 PLUGIN_SHOUTCASTBROWSER_DESC
 	DE	Zugriff auf SHOUTcast Internet Radio Stationen
 	EN	Access to SHOUTcast Internet Radio.
+	ES	Acceso a radio por Internet SHOUTcast.
+	FR	Accès à des stations de radio SHOUTcast
+	IT	Accedi alla radio Internet SHOUTcast
+	NL	Toegang tot SHOUTcast-internetradio.
 
 PLUGIN_SHOUTCASTBROWSER_CONNECTING
 	DE	Verbindung zu SHOUTcast wird hergestellt ...
@@ -21,5 +25,6 @@ PLUGIN_SHOUTCASTBROWSER_CONNECTING
 	ES	Conectando a SHOUTcast...
 	FR	Connexion à SHOUTcast...
 	HE	מתחבר ל-SHOUTcast...
-	IT	Connessione a SHOUTcast in corso…
+	IT	Connessione a SHOUTcast in corso...
 	NL	Verbinding met SHOUTcast wordt gemaakt...
+

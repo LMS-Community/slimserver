@@ -1,8 +1,18 @@
 PLUGIN_RHAPSODY_DIRECT_MODULE_NAME
+	DE	Rhapsody Direct
 	EN	Rhapsody
+	ES	Rhapsody Direct
+	FR	Rhapsody Direct
+	IT	Rhapsody Direct
+	NL	Rhapsody Direct
 
 PLUGIN_RHAPSODY_DIRECT_MODULE_NAME_DESC
+	DE	Rhapsody Direct
 	EN	Rhapsody
+	ES	Rhapsody Direct
+	FR	Rhapsody Direct
+	IT	Rhapsody Direct
+	NL	Rhapsody Direct
 
 PLUGIN_RHAPSODY_DIRECT_ERROR
 	DE	Rhapsody-Fehler
@@ -103,9 +113,24 @@ PLUGIN_RHAPSODY_DIRECT_NO_NEXT_TRACK
 PLUGIN_RHAPSODY_DIRECT_ERROR_ACCOUNT
 	DE	Konnte über das SqueezeNetwork keine Account-Informationen finden.
 	EN	Unable to retrieve account details from SqueezeNetwork.
+	ES	Imposible obtener detalles de cuenta SqueezeNetwork.
+	FR	Impossible de récupérer les détails du compte de SqueezeNetwork.
+	IT	Impossibile recuperare i dettagli dell'account di SqueezeNetwork.
+	NL	Kan accountgegevens niet van SqueezeNetwork ophalen.
 
 PLUGIN_RHAPSODY_DIRECT_INVALID_SESSION
+	DE	Ungültige Wiedergabesitzung.
 	EN	Invalid playback session.
+	ES	Sesión de reproducción no válida.
+	FR	Session de lecture non valide.
+	IT	Sessione di riproduzione non valida.
+	NL	Ongeldige afspeelsessie.
 
 PLUGIN_RHAPSODY_DIRECT_TOO_MANY_SYNCED
+	DE	Rhapsody funktioniert nicht, wenn mehr als 3 Player synchronisiert sind. Heben Sie die Synchronisierung eines oder mehrerer Player auf.
 	EN	Rhapsody cannot play with more than 3 players synced.  Please unsync one or more players.
+	ES	Rhapsody no puede reproducir con más de 3 reproductores sincronizados. Debe desincronizar al menos uno de ellos.
+	FR	Rhapsody ne peut fonctionner avec plus de trois platines synchronisées. Veuillez désynchroniser au moins une platine.
+	IT	Impossibile utilizzare Rhapsody con più di tre lettori sincronizzati. Annullare la sincronizzazione di almeno un lettore.
+	NL	Rhapsody kan niet spelen wanneer er meer dan 3 spelers gesynchroniseerd zijn. Hef de synchronisatie van een of meer spelers op.
+

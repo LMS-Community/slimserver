@@ -14,6 +14,10 @@ PLUGIN_RADIOIO_MODULE_NAME
 PLUGIN_RADIOIO_MODULE_NAME_DESC
 	DE	Zugang zu RadioIO
 	EN	Access to RadioIO
+	ES	Acceso a RadioIO
+	FR	Accès à RadioIO
+	IT	Accesso a RadioIO
+	NL	Toegang tot RadioIO
 
 PLUGIN_RADIOIO_MODULE_TITLE
 	DE	radioio.com
@@ -23,14 +27,14 @@ PLUGIN_RADIOIO_MODULE_TITLE
 	HE	radioio.com
 	IT	radioio.com
 	NL	radioio.com
-	
+
 PLUGIN_RADIOIO_LOADING
 	DE	RadioIO wird geladen ...
 	EN	Loading RadioIO...
-	ES	Cargando RadioIO…
+	ES	Cargando RadioIO...
 	FR	Chargement RadioIO...
 	HE	טוען את RadioIO...
-	IT	Caricamento RadioIO in corso…
+	IT	Caricamento RadioIO in corso...
 	NL	RadioIO wordt geladen...
 
 SETUP_GROUP_PLUGIN_RADIOIO_DESC
@@ -86,3 +90,4 @@ SETUP_PLUGIN_RADIOIO_PASSWORD_CHANGED
 	HE	הסיסמה עבור RadioIO השתנתה
 	IT	La password RadioIO è stata modificata
 	NL	Je RadioIO-wachtwoord is gewijzigd
+

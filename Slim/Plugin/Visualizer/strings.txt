@@ -50,3 +50,4 @@ PLUGIN_SCREENSAVER_VISUALIZER_DEFAULT
 	HE	ברירת מחדל
 	IT	Screen saver predefinito
 	NL	Standaardschermbeveiliger
+

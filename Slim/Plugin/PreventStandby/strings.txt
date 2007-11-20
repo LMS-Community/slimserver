@@ -14,3 +14,8 @@ PLUGIN_PREVENTSTANDBY
 PLUGIN_PREVENTSTANDBY_DESC
 	DE	Standby Modus während der Musik-Wiedergabe verhindern (nur unter Windows verfügbar)
 	EN	Prevent Windows machines from going into Standby mode.
+	ES	Evitar que los equipos Windows pasen al modo de suspensión.
+	FR	Empêcher les ordinateurs Windows de se mettre en veille.
+	IT	Impedisce l'attivazione della modalità standby nei computer Windows.
+	NL	Voorkom dat Windows-machines in stand-bymodus gaan.
+

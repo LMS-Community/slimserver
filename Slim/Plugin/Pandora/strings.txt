@@ -1,8 +1,18 @@
 PLUGIN_PANDORA_MODULE_NAME
+	DE	Pandora Radio
 	EN	Pandora
+	ES	Radio Pandora
+	FR	Pandora Radio
+	IT	Radio Pandora
+	NL	Radio Pandora
 
 PLUGIN_PANDORA_MODULE_NAME_DESC
+	DE	Pandora Radio
 	EN	Pandora
+	ES	Radio Pandora
+	FR	Pandora Radio
+	IT	Radio Pandora
+	NL	Radio Pandora
 
 PLUGIN_PANDORA_PERSONALIZED_RADIO
 	DE	Benutzerdefiniertes Radio (Pandora)
@@ -608,10 +618,11 @@ PLUGIN_PANDORA_READONLY_MODE
 	NL	Pandora is in alleen-lezen modus. Probeer jouw verzoek later opnieuw.
 
 PLUGIN_PANDORA_MAINTENANCE_MODE
-	DE	Pandora ist vorübergehend aufgrund geplanter Wartungsarbeiten nicht verfügbar.  Versuchen Sie es später noch einmal und genießen Sie die Musik!
+	DE	Pandora ist vorübergehend aufgrund geplanter Wartungsarbeiten nicht verfügbar. Versuchen Sie es später noch einmal und genießen Sie die Musik!
 	EN	Pandora is temporarily down for scheduled service improvements.  Please check back soon, and enjoy the music!
 	ES	Pandora está temporalmente fuera de servicio por mejoras de servicio planificadas. Vuelva a intentarlo pronto y disfrute de la música.
-	FR	Pandora est momentanément indisponible en raison d'opérations de maintenance programmées.  Revenez bientôt, et vive la musique!
+	FR	Pandora est momentanément indisponible en raison d'opérations de maintenance programmées. Revenez bientôt, et vive la musique!
 	HE	Pandora מושבת באופן זמני לצורך שיפור מתוכנן. חזור בקרוב כדי ליהנות מהמוסיקה!
-	IT	Pandora non è temporaneamente disponibile in seguito ad attività di manutenzione periodica.  Torna presto e goditi la musica!
-	NL	Pandora is tijdelijk niet beschikbaar voor geplande serviceverbeteringen.  Probeer het straks weer, om van de muziek te genieten!
+	IT	Pandora non è temporaneamente disponibile in seguito ad attività di manutenzione periodica. Torna presto e goditi la musica!
+	NL	Pandora is tijdelijk niet beschikbaar voor geplande serviceverbeteringen. Probeer het straks weer, om van de muziek te genieten!
+

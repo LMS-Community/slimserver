@@ -99,6 +99,10 @@ CHOOSE_A_LANGUAGE
 LOADING_SQUEEZECENTER
 	DE	SqueezeCenter wird geladen...
 	EN	Loading SqueezeCenter...
+	ES	Cargando SqueezeCenter...
+	FR	Chargement du SqueezeCenter...
+	IT	Caricamento di SqueezeCenter in corso...
+	NL	SqueezeCenter wordt geladen...
 
 BASE_SKIN
 	CS	Světlý
@@ -250,14 +254,16 @@ ABOUT_SLIMDEVICES
 # Player user interface, sent by the server
 # Keep these as short as possible.
 #
+
 SLIMP3_HOME
-	DE	SLIMP3 Hauptmenü
 	DA	Hovedmenu
+	DE	SLIMP3 Hauptmenü
 	EN	SLIMP3 Home
 	ES	Inicio SLIMP3
 	FI	SLIMP3 Valikko
 	FR	Menu SLIMP3
 	HE	ברוכים המאזינים
+	IT	Pagina iniziale SLIMP3
 	JA	SLIMP3 ホーム
 	NL	SLIMP3 Hoofdmenu
 	NO	SLIMP3 Hovedmeny
@@ -462,7 +468,12 @@ RADIO
 	ZH_CN	互联网收音机
 
 MUSIC_SERVICES
+	DE	Musikdienste
 	EN	Music Services
+	ES	Servicios de música
+	FR	Music Services
+	IT	Servizi musicali
+	NL	Muziekservices
 
 MY_MUSIC
 	DE	Eigene Musik
@@ -620,6 +631,10 @@ EVERYTHING
 EXECUTE
 	DE	Ausführen
 	EN	Execute
+	ES	Ejecutar
+	FR	Exécuter
+	IT	Esegui
+	NL	Uitvoeren
 
 PLAYING
 	CS	Nyní hraje
@@ -933,7 +948,7 @@ BROWSING_MUSIC
 	FI	Selaa musiikkia...
 	FR	Parcours des morceaux...
 	HE	עיון במוסיקה...
-	IT	Ricerca musica…
+	IT	Ricerca musica...
 	JA	曲をブラウズしています...
 	NL	Bezig met bladeren door muziek...
 	NO	Blar gjennom musikk...
@@ -1040,10 +1055,20 @@ CANCEL_SLEEP
 	ZH_CN	倒数关机功能已消除
 
 SLEEP_CANCEL
+	DE	Schlafmodus abbrechen
 	EN	Cancel sleep
+	ES	Cancelar suspensión
+	FR	Annuler la mise en veille
+	IT	Annulla sospensione
+	NL	Sluimermodus annuleren
 
 SLEEPING_IN_X_MINUTES
+	DE	Schlafmodus in %s Minuten
 	EN	Sleeping in %s minutes
+	ES	Suspensión dentro de %s minutos
+	FR	Mise en veille dans %s minutes
+	IT	Sospendi fra %s minuti
+	NL	Sluimermodus over %s minuten
 
 SLEEPING_IN
 	CS	Sleep za
@@ -1103,7 +1128,7 @@ POWERING_OFF
 	EN	Going to standby...
 	ES	Pasando a modo de espera...
 	FI	Järjestelmää sammutetaan
-	FR	Mise hors tension…
+	FR	Mise hors tension...
 	HE	עובר למצב המתנה...
 	IT	Attivazione modalità standby...
 	JA	パワー オフ
@@ -1131,14 +1156,26 @@ POWER
 EXPAND
 	DE	Erweitern
 	EN	Expand
+	ES	Expandir
+	FR	Développer
+	IT	Espandi
+	NL	Uitvouwen
 
 COLLAPSE
 	DE	Verkleinern
 	EN	Collapse
+	ES	Contraer
+	FR	Réduire
+	IT	Comprimi
+	NL	Samenvouwen
 
 UNDOCK_PLAYER_PANEL
 	DE	Player Panel in eigenem Fenster öffnen
 	EN	Undock player panel
+	ES	Desacoplar panel de reproductor
+	FR	Détacher le panneau de la platine
+	IT	Disancora pannello del lettore
+	NL	Spelerpaneel ontkoppelen
 
 ALARM
 	CS	Budík
@@ -1621,6 +1658,7 @@ WELCOME_TO_SOFTSQUEEZE
 FREE_YOUR_MUSIC
 	CS	Svobodu Tvojí muzice
 	DA	Lyt til din musik!
+	DE	Befreien Sie Ihre Musik
 	EN	Free your music
 	ES	Libera tu música
 	FI	Vapauta musiikkisi
@@ -1628,6 +1666,7 @@ FREE_YOUR_MUSIC
 	HE	Free Your Music
 	IT	Libera la tua musica !
 	JA	音楽を自由に！
+	NL	Geef muziek de vrijheid
 	NO	Frigjør musikken din!
 	PT	Liberte a sua música
 	SV	Frige din musik
@@ -1711,7 +1750,7 @@ CHECKING_STREAM
 	ES	Comprobando secuencia...
 	FR	Vérification du flux...
 	HE	בודק את מצב הזרימה...
-	IT	Controllo flusso…
+	IT	Controllo flusso...
 	NL	Stream wordt gecontroleerd...
 	NO	Kontrollerer datastrøm...
 	SV	Kontrollerar dataström...
@@ -1724,7 +1763,7 @@ CONNECTING_FOR
 	EN	Connecting...
 	ES	Conectando...
 	FI	Yhdistetään soittaakseni:
-	FR	Connexion…
+	FR	Connexion...
 	HE	מתחבר...
 	IT	Connessione...
 	JA	接続しています:
@@ -1750,7 +1789,7 @@ REBUFFERING
 	DE	Puffer wird aktualisiert ...
 	EN	Rebuffering...
 	ES	Volviendo a almacenar en búfer...
-	FR	Remise en tampon…
+	FR	Remise en tampon...
 	HE	מבצע אגירה מחדש...
 	IT	Reinizializzazione buffer in corso...
 	NL	Bezig met opnieuw bufferen...
@@ -1762,7 +1801,7 @@ WAITING_TO_SYNC
 	ES	Esperando sincronización...
 	FR	Attente de la synchronisation...
 	HE	ממתין לסינכרון...
-	IT	In attesa di sincronizzazione…
+	IT	In attesa di sincronizzazione...
 	NL	Wachten op sync...
 	NO	Venter på synkronisering...
 	SV	Väntar på synkronisering...
@@ -2106,6 +2145,7 @@ SOURCE
 #
 # Setup page strings
 # General strings for the setup pages
+
 SETUP_BAD_PAGE_SUGGEST
 	DE	Erweitern Sie die Adresse um page=SERVER_SETTINGS.
 	EN	Try adding page=SERVER_SETTINGS.
@@ -2201,7 +2241,7 @@ SETUP_GROUP_TITLEFORMATS_DESC
 	HE	אלו הן התבניות הזמינות לבחירה, הן בהגדרות שלעיל והן בהגדרות הנגן. להסרת תבנית, נקה את תיבת הסימון; להזנת תבנית חדשה, הצב אותה בשדה ריק. רכיבי הנתונים הזמינים הם: סוג_תוכן, שם, סגנון, מספר_רצועה (מספר הרצועה כמספר שלם), גודל_קובץ, מבצע, מלחין, מנצח, להקה, אלבום, הערה, שנה, שניות (מספר שניות כולל), משך (דקות ושניות), שינוי_גודל_VBR‏ (vbr/cbr), קצב_סיביות, גודל_תג, אסופה (שם האסופה), נתיב, קובץ, סיומת (סיומת הקובץ), תאריך_ארוך (התאריך הנוכחי, ארוך), תאריך_קצר (התאריך הנוכחי, קצר), שעה_נוכחית. ניתן להפריד בין הרכיבים באמצעות כל דבר (או שום דבר). נעשה שימוש במפרידים רק אם רכיבי הנתונים קיימים.<br>הבחירה הנוכחית היא התבנית שבה ייעשה שימוש בדפי האינטרנט.
 	IT	Questi sono i formati selezionabili sia qui che nelle impostazioni del lettore. Per rimuovere un formato, cancellare il testo presente nella casella e immetterne uno nuovo. I dati disponibili sono: CT (tipo di contenuto), TITLE (titolo), GENRE (genere), TRACKNUM (numero di brano indicato con un numero intero), FS (dimensione file), ARTIST (artista), COMPOSER (compositore), CONDUCTOR (direttore), BAND (gruppo musicale), ALBUM, COMMENT (commento), YEAR (anno), SECS (secondi totali), DURATION (durata in minuti e secondi), VBR_SCALE (vbr/cbr), BITRATE (velocità in bit), TAGSIZE (dimensioni dell'etichetta), VOLUME (titolo del volume), PATH (percorso), FILE, EXT (estensione del file), LONGDATE (data corrente, lunga), SHORTDATE (data corrente, breve), CURRTIME (ora corrente). Per gli elementi è possibile utilizzare qualsiasi tipo di separatore o non utilizzarne nessuno. I separatori sono utilizzati solo se sono presenti elementi.<br> Il formato correntemente selezionato è quello che verrà utilizzato nelle pagine Web.
 	JA	これらは上記とプレーヤーセットアップに利用できるフォーマットです。フォーマットを削除するには、テキストボックスをクリアし、新しいフォーマットを加えるには空のテキストボックスに入れてください。利用できるデータは： CT（コンテントタイプ）、TITLE（タイトル）、GENRE（ジャンル）、TRACKNUM(トラックナンバー)、FS（ファイルサイズ）、ARTIST（アーチスト)、ALBUM（アルバム)、COMMENT（コメント)、YEAR（年）、SECS（総秒数）、DURATION（長さ)、VBR_SCALE（vbr/cbr）、BITRATE（ビットレート)、TAGSIZE（タグサイズ）、VOLUME（ボリューム名）、PATH（パス）、FILE（ファイル)、EXT（拡張子）、LONGDATE（長い日付）、SHORTDATE（短い日付)、CURRTIME（現在の時間）。各データは何で区分してもかまいません。<br>現在のフォーマット選択はウェブ上で使われているものと同じです。
-	NL	Dit zijn de formaten die geselecteerd kunnen worden, zowel hierboven als in de spelerinstellingen. Als je een formaat wilt verwijderen, wis je het tekstvakje. Wil je een formaat toevoegen, dan zet je het in een leeg vakje. Beschikbare gegevenselementen zijn: CT (inhoudstype), TITLE, GENRE, TRACKNUM (tracknummer als int), FS (bestandsgrootte), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (totaalaantal seconden), DURATION (minuten en seconden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volumenaam), PATH, FILE, EXT (bestandsextensie), LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME(huidige tijd). De elementen kunnen door alles (of niets) gescheiden geworden. De scheidingstekens worden alleen gebruikt als de gegevenselementen aanwezig zijn.<br> De huidige selectie is het formaat dat op de webpagina's gebruikt zal worden.
+	NL	Dit zijn de indelingen die in de webinterface en op spelers kunnen worden geselecteerd. Als je een indeling wilt verwijderen, wis je het tekstvak. Wil je een nieuwe indeling invoeren, dan plaats je deze in het lege tekstvak. Beschikbare gegevenselementen zijn: CT (inhoudstype), TITLE, GENRE, TRACKNUM (tracknummer als geheel getal), FS (bestandsgrootte), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT, YEAR, SECS (totaalaantal seconden), DURATION (minuten en seconden), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME (volumenaam), PATH, FILE, EXT (bestandsextensie), LONGDATE (huidige datum, lang), SHORTDATE (huidige datum, kort), CURRTIME (huidige tijd). Elementen kunnen door alles (of niets) worden gescheiden. De scheidingstekens worden alleen gebruikt als de gegevenselementen aanwezig zijn.<br>De huidige selectie is de indeling die op de webpagina's wordt gebruikt.
 	NO	Dette er formatene som er tilgjengelige både ovenfor og for selve spilleren. Tøm boksen for å fjerne et format. For å legge til et format, skriv det i en tom boks. Tilgjengelige dataelementer er CT (innholdstype), TITLE (tittel), GENRE (sjanger), TRACKNUM (spornummer), FS (filstørrelse), ARTIST, COMPOSER (komponist), CONDUCTOR (dirigent), BAND, ALBUM, COMMENT (kommentar), YEAR (år), SECS (totalt antall sekunder), DURATION (minutter og sekunder), VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE (størrelse på sporinformasjon), VOLUME (volumnavn), PATH (filsystemsti), FILE (filnavn), EXT (filetternavn), LONGDATE (dagens dato i langt format), SHORTDATE (dagens dato i kort format) og CURRTIME (klokkeslett nå). Elementer kan separeres med ethvert tegn, eller ingen. Skilletegnet vises bare om dataelementet finnes. Det valgte formatet er det som blir brukt på vevsidene.
 	PT	Aqui poderá definir o formato da descrição da música que aparece acima e no cliente. Para remover um campo, limpe a caixa do texto. Para adicionar um campo, adicione-o numa caixa vazia. Os campos disponíveis são
 	SV	Dessa är de tillgängliga formaten för webgränssnittet och själva spelaren. För att ta bort ett format, töm textboxen. För att lägga till ett nytt format, skriv i en tom textbox. Tillgängliga dataelement: CT (content type), TITLE, GENRE, TRACKNUM (spårnummer), FS (filstorlek), ARTIST, COMPOSER, CONDUCTOR, BAND, ALBUM, COMMENT(kommentar), YEAR (år), SECS (totala antalet sekunder), DURATION (minuter och sekunder, VBR_SCALE (vbr/cbr), BITRATE, TAGSIZE, VOLUME, PATH, FILE, EXT (filändelse), LONGDATE (dagens datum, långt), SHORTDATE (dagens datum, kort), CURRTIME (aktuell tid). Skiljetecken kan användas för att separera dataelementen. Ett skiljetecken kan vara vilket tecken som helst (eller inget tecken alls). Skiljetecken visas endast om dataelementet existerar. Det valda formatet är det som kommer användas på websidorna.
@@ -2241,7 +2281,12 @@ SETUP_GROUP_MENUITEMS_DESC
 	ZH_CN	您可将播放机最高阶层的主页菜单加以用户化。单击以调整排序或除去该菜单项目。如要列入已被除去的菜单项目，请单击"Add"。
 
 SETUP_GROUP_PLUGINITEMS_INTRO
+	DE	Extras:
 	EN	Extras:
+	ES	Extras:
+	FR	Extras:
+	IT	Extra:
+	NL	Extra's:
 
 SETUP_GROUP_NONMENUITEMS_INTRO
 	CS	Neaktivní položky menu:
@@ -2559,10 +2604,20 @@ SETUP_GROUP_IRSETS_DESC
 	ZH_CN	您可选择让这个播放机对某些红外线遥控信号有所反应。如要激活某个遥控代码组，请在如下的复选框内标记。如要撤销某个遥控代码组，请清除其复选框中的标记。
 
 SETUP_GROUP_PLUGINS
+	DE	Extras
 	EN	Extras
+	ES	Extras
+	FR	Extras
+	IT	Extra
+	NL	Extra's
 
 SETUP_GROUP_PLUGINS_DESC
+	DE	SqueezeCenter enthält eine Reihe von Extras, die Sie über die Fernbedienung steuern können. Sie können Extras aus dem Plugins-Ordner aufnehmen bzw. entfernen, indem Sie das entsprechende Kontrollkästchen aktivieren bzw. deaktivieren. Sie können SqueezeCenter auch so konfigurieren, dass es bei jedem Öffnen des Extras-Menüs erneut nach Extras sucht. Die Standardeinstellung ist 'Extras nur beim Programmstart laden'. Klicken Sie auf 'Ändern', um die Änderungen zu speichern.
 	EN	SqueezeCenter includes some extras that you can use with your remote or in the web interface. You can choose to enable or disable individual extras using the buttons below. 
+	ES	SqueezeCenter incluye elementos extra que se pueden usar con el mando a distancia o desde la interfaz Web. Puede habilitar o deshabilitar elementos extra individuales utilizando los botones siguientes.
+	FR	Le SqueezeCenter inclut certains extras à utiliser avec la télécommande ou à partir de l'interface Web. Vous pouvez activer ou désactiver des extras à l'aide des boutons ci-dessous. Pour activer un extra, cochez la case correspondante. Désélectionnez la case pour le désactiver. Le SqueezeCenter peut rechercher des extras chaque fois que vous accédez au menu des extras de la platine ou aux réglages des extras. Par défaut, ils sont chargés au démarrage uniquement. Cliquez sur Modifier pour enregistrer les modifications.
+	IT	In SqueezeCenter sono disponibili alcune risorse aggiuntive, note come plugin, utilizzabili con il telecomando. Nella directory Plugin è possibile scegliere di attivare o disattivare singoli plugin. Per attivare un plugin, selezionare la casella in corrispondenza del nome riportato di seguito; per disattivarlo, deselezionarla. È possibile impostare SqueezeCenter per eseguire la ricerca delle risorse aggiuntive ogni volta che si accede al menu Extra del lettore o alle impostazioni relative agli extra. Per impostazione predefinita il caricamento viene eseguito solo all'avvio. Per salvare le modifiche, fare clic su Cambia.
+	NL	SqueezeCenter bevat een aantal extra's die je met je afstandsbediening of via de webinterface kunt gebruiken. Met de onderstaande knoppen kun je afzonderlijke extra's in- of uitschakelen.
 
 SETUP_GROUP_FORMATS_CONVERSION
 	CS	Nastavení konverze formátů
@@ -2705,7 +2760,7 @@ SETUP_DISABLEDEXTENSIONSAUDIO_DESC
 SETUP_DISABLEDEXTENSIONSPLAYLIST
 	DE	Deaktivierte Wiedergabelisten-Dateinamenerweiterungen
 	EN	Disabled Playlist File Extensions
-	ES	Extensiones de archivo de lista de reproducción deshabilitadas 
+	ES	Extensiones de archivo de lista de reproducción deshabilitadas
 	FR	Types de liste de lecture ignorés
 	HE	סיומות קבצים מושבתות של רשימות השמעה
 	IT	Estensioni file di elenchi di riproduzione da ignorare
@@ -2797,10 +2852,11 @@ DECODER
 # SETUP_$prefname_OK == Introductory text for a successful change of the preference
 #
 # Player settings
+
 SETUP_PLAYERNAME
 	CS	Název přehrávače
-	DE	Player Name
 	DA	Navn på player-afspiller
+	DE	Player Name
 	EN	Player Name
 	ES	Nombre del reproductor
 	FI	Player Nimi
@@ -2986,7 +3042,7 @@ SETUP_AUTOBRIGHTNESS_OFF
 	FI	Säädä kirkkaus käsin
 	FR	Régler la luminosité manuellement
 	HE	כוונון הבהירות באופן ידני
-	IT	Regola luminosità manualmente 
+	IT	Regola luminosità manualmente
 	JA	明るさを手動調節にする
 	NL	Helderheid handmatig aanpassen
 	NO	Juster lysstyrke manuelt
@@ -3003,7 +3059,7 @@ SETUP_AUTOBRIGHTNESS_ON
 	FI	Säädä kirkkaus automaattisesti
 	FR	Régler la luminosité automatiquement
 	HE	כוונון הבהירות באופן אוטומטי
-	IT	Regola luminosità automaticamente 
+	IT	Regola luminosità automaticamente
 	JA	明るさを自動調節にする
 	NL	Helderheid automatisch aanpassen
 	NO	Juster lysstyrke automatisk
@@ -3404,61 +3460,156 @@ SETUP_MAXWMARATE_DESC
 	NL	Sommige WMA-streams hebben meerdere bitsnelheden voor streaming. SqueezeCenter selecteert standaard de hoogste bitsnelheid die voor de stream beschikbaar is. Als je een langzamere internetverbinding hebt, kun je een lagere waarde instellen om de maximumsnelheid die gekozen kan worden, te beperken.
 
 SETUP_SYNCSTARTDELAY
+	DE	Startverzögerung für synchronisierte Player
 	EN	Synchronized Players Startup Delay
+	ES	Retraso de inicio de reproductores sincronizados
+	FR	Délai de démarrage des platines synchronisées
+	IT	Ritardo avvio lettori sincronizzati
+	NL	Vertraging bij opstarten gesynchroniseerde spelers
 
 SETUP_SYNCSTARTDELAY_DESC
+	DE	Wenn mehrere Player synchronisiert sind, gibt SqueezeCenter jedem Player die Anweisung, den Titel zur gleichen Zeit zu starten. Es muss sichergestellt sein, dass jeder Player genügend Zeit hat, den Startbefehl zu empfangen, bevor die gleichzeitige Wiedergabe beginnt. Daher wird der Startbefehl vorzeitig gesendet und die Player können den richtigen Zeitpunkt abwarten. Sollte das Netzwerk überlastet sein, was vor allem auftreten kann, wenn sich viele Player im Netzwerk befinden und drahtlose Netzwerke genutzt werden, reicht die Standardverzögerung von 100 ms evtl. nicht aus. Sie können bei Bedarf den Standardwert hier ändern.
 	EN	When multiple players are synchronized, SqueezeCenter tells each player to start the track at the same time. It needs to make sure that each player has time to receive the start command before they all start together and so it sends the start command ahead of time and the players each wait until the right moment to start. If there is excessive network congestion, which can happen particularly when there are many players on the network and with wireless networks, then the default delay of 100ms may not be sufficient. You can change the default here if necessary.
+	ES	Cuando hay varios reproductores sincronizados, SqueezeCenter indica a cada uno de ellos que comience la reproducción de la pista al mismo tiempo que los otros. A fin de asegurarse de que cada reproductor tiene tiempo de recibir el comando de inicio antes de que todos los reproductores entren en acción, SqueezeCenter envía el comando de inicio por adelantado y todos los reproductores esperan hasta el momento preciso para iniciarse. Si la red está demasiado congestionada (algo especialmente probable cuando hay muchos reproductores en la red, así como en redes inalámbricas), es posible que el retraso predeterminado de 100 ms sea insuficiente. Aquí puede cambiar el valor predeterminado, si es necesario.
+	FR	Lorsque plusieurs platines sont synchronisées, le SqueezeCenter indique à chacune de démarrer la lecture du morceau en même temps. Le serveur vérifie que chaque platine dispose d'assez de temps pour recevoir la commande avant de démarrer. Il envoie donc la commande en avance et chaque platine attend le bon moment pour démarrer. Si le réseau est surchargé, comme cela peut être le cas si de nombreuses platines sont présentes et avec des réseaux sans fil, le délai de 100 ms par défaut peut ne pas être suffisant. Vous pouvez modifier la valeur par défaut si nécessaire.
+	IT	Quando più lettori sono sincronizzati, SqueezeCenter ordina a ciascun lettore di avviare la riproduzione del brano simultaneamente. A questo scopo, deve assicurarsi che ciascun lettore abbia il tempo di ricevere il comando di avvio prima dell'inizio della riproduzione, pertanto invia il comando di avvio con un certo anticipo in modo che ciascun lettore sia pronto a iniziare al momento giusto. Se il traffico di rete è eccessivo, come può succedere se sono connessi numerosi utenti in particolare nelle reti senza fili, il ritardo predefinito di 100 ms potrebbe non essere sufficiente. Se necessario, è possibile modificare questo valore predefinito.
+	NL	Wanneer meerdere spelers worden gesynchroniseerd, geeft SqueezeCenter elke speler de opdracht het nummer op hetzelfde moment te starten. SqueezeCenter moet ervoor zorgen dat elke speler genoeg tijd heeft om de startopdracht te ontvangen voordat alle spelers samen starten, en daarom wordt de startopdracht van tevoren verzonden en wacht elke speler tot het juiste moment om te starten. Als het netwerkverkeer overbelast is, wat voornamelijk kan gebeuren bij netwerken met vele spelers of bij draadloze netwerken, is de standaardvertraging van 100 milliseconden misschien niet voldoende. Je kunt de standaardvertraging hier desgewenst wijzigen.
 
 SETUP_SYNCSTARTDELAY_CHOOSE
+	DE	Startverzögerung für synchronisierte Player (Millisekunden):
 	EN	Synchronized startup delay (milliseconds):
+	ES	Retraso de inicio sincronizado (milisegundos):
+	FR	Délai du démarrage synchronisé (millisecondes):
+	IT	Ritardo avvio sincronizzato (millisecondi):
+	NL	Vertraging bij gesynchroniseerd opstarten (milliseconden):
 
 SETUP_STARTDELAY
+	DE	Startverzögerung des Players
 	EN	Player Start Delay
+	ES	Retraso de inicio de reproductor
+	FR	Délai de démarrage de la platine
+	IT	Ritardo avvio lettore
+	NL	Vertraging bij opstarten speler
 
 SETUP_STARTDELAY_DESC
+	DE	Es kann eine gewisse Zeit dauern, bis ein Player die Wiedergabe beginnt (bis Sie die Musik hören), nachdem der von SqueezeCenter empfangene Startbefehl verarbeitet wurde. Dies kann bei der Nutzung digitaler Ausgänge (abhängig vom angeschlossenen Gerät) oder bei bestimmten Software-Playern unter bestimmten Plattformen vorkommen. Sie können dann diese Verzögerung hier festlegen, damit SqueezeCenter weiß, wie bald dieser Player gestartet werden soll, damit die Wiedergabe aus allen synchronisierten Playern gleichzeitig gestartet wird. Hinweis: Diese Verzögerung gilt zusätzlich zu 'Audioverzögerung des Players' (siehe unten).
 	EN	A player can take a noticeable time to start playing (before you begin to hear the audio) after it processes the start command from SqueezeCenter. This can be the case when using digital outputs (depending upon the connected equipment) or with software players on some platforms. In these cases, this delay can be set here so that SqueezeCenter knows how much in advance to start this player so that the audio from all the synchronized players starts at the same time. Note: this is in addition to any ongoing "Player Audio Delay" (below).
+	ES	Un reproductor puede tardar en iniciar la reproducción (antes de que el usuario oiga el audio) después de procesar el comando de inicio enviado por SqueezeCenter. Éste puede ser el caso al utilizar salidas digitales (según el equipo conectado) o al utilizar ciertos reproductores por software en algunas plataformas. En estos casos, es posible especificar el retraso aquí para que SqueezeCenter sepa con cuánta antelación debe iniciar este reproductor para que el audio de todos los reproductores sincronizados se inicie al mismo tiempo. Nota: este valor es una adición a cualquier configuración de "Retraso de audio de reproductor" (abajo).
+	FR	Il est possible qu'une platine mette un certain temps à démarrer (avant d'entendre le morceau lu) après avoir reçu la commande de démarrage du serveur. Tel peut être le cas avec des sorties numériques (en fonction de l'équipement connecté) ou avec des lecteurs logiciels sur certaines plates-formes. Dans de tels cas, il est possible de régler le délai pour que le SqueezeCenter connaisse le délai en fonction duquel il doit démarrer cette platine en avance afin que l'audio de toutes les platines synchronisées démarre en même temps. Remarque: cette valeur est ajoutée à celle définie pour Délai audio de la platine (ci-dessous).
+	IT	L'avvio della riproduzione di un lettore può richiedere un intervallo considerevole (prima che venga emesso l'audio) dopo l'elaborazione del comando di avvio in SqueezeCenter. Un caso del genere può verificarsi quando si utilizzano ingressi digitali (a seconda dell'apparecchiatura collegata) o con lettori software di alcune piattaforme. In questi casi il ritardo qui impostato consente di definire con quanto anticipo SqueezeCenter deve avviare il lettore per consentire l'inizio simultaneo della riproduzione in tutti i lettori sincronizzati. Nota: questo ritardo si aggiunge a quello impostato in "Ritardo audio lettore" (sotto).
+	NL	Nadat een speler de startopdracht van SqueezeCenter heeft verwerkt, kan het een tijdje duren voordat de speler begint met afspelen (voordat je de audio hoort). Dit kan het geval zijn bij gebruik van digitale uitgangen (afhankelijk van de aangesloten apparatuur) of bij softwarespelers op sommige platforms. Deze vertraging kan dan hier worden ingesteld, zodat SqueezeCenter weet hoever van tevoren deze speler moet worden gestart om de audio uit alle gesynchroniseerde spelers tegelijk te laten beginnen. N.B. Deze optie kan ook ingesteld worden terwijl Vertraging speleraudio (hieronder) actief is.
 
 SETUP_STARTDELAY_CHOOSE
+	DE	Startverzögerung des Players (Millisekunden):
 	EN	Player start delay (milliseconds):
+	ES	Retraso de inicio de reproductor (milisegundos):
+	FR	Délai audio de la platine (millisecondes):
+	IT	Ritardo avvio lettore (millisecondi):
+	NL	Vertraging bij opstarten speler (milliseconden):
 
 SETUP_MAINTAINSYNC
+	DE	Synchronisation beibehalten
 	EN	Maintain Synchronization
+	ES	Mantener sincronización
+	FR	Conserver la synchronisation
+	IT	Mantieni la sincronizzazione
+	NL	Synchronisatie bijhouden
 
 SETUP_MAINTAINSYNC_DESC
+	DE	Auch wenn mehrere Player die Wiedergabe eines Titels gleichzeitig starten, können sie nach einer gewissen Zeit (i.d.R. nach ein paar Minuten) voneinander abweichen. Eine Differenz von mehr als 30 ms ist wahrnehmbar, wenn die Ausgabe mehrerer Player gleichzeitig gehört werden kann. SqueezeCenter prüft ständig, wie viel ein Player wiedergegeben hat und nimmt bei Bedarf Änderungen vor. Sie können dieses Verhalten aktivieren bzw. deaktivieren.
 	EN	Even when several players start playing a track in perfect synchronization, they can drift apart over time (usualy after a few minutes). A difference of more than about 30ms (milliseconds) will be noticeable if you can hear the output from multiple players simultaneously. SqueezeCenter deals with this by continuously tracking how much each player has played and making small adjustments as necessary. You can turn this behaviour on or off.
+	ES	Aunque varios reproductores empiecen a reproducir una pista perfectamente sincronizados, pueden perder la sincronización al cabo de un tiempo (a menudo es cuestión de minutos). Si hay una diferencia de más de 30 ms (milisegundos) es perceptible cuando hay salida de música a través de varios reproductores simultáneamente. SqueezeCenter intenta remediarlo mediante el seguimiento continuo de cada reproductor y la realización de los ajustes necesarios. Esta función se puede habilitar o deshabilitar.
+	FR	Même lorsque plusieurs platines commencent à lire un morceau en parfaite synchronisation, il est possible qu'elles se désynchronisent au fil du temps (après quelques minutes, en général). Une différence de plus de 30ms sera perceptible si vous pouvez entendre le son en provenance de ces platines. Le SqueezeCenter effectue le suivi des morceaux lus par chaque platine et effectue les ajustements nécessaires. Vous pouvez activer ou désactiver ce comportement.
+	IT	Anche se un brano viene inizialmente riprodotto con più lettori in perfetta sincronia, è possibile che nell'arco di alcuni minuti la riproduzione non sia più sincronizzata. Se si ha la possibilità di ascoltare un brano con più lettori contemporaneamente, sarà percepibile una differenza superiore a 30 ms (millisecondi). SqueezeCenter risolve questo problema tenendo costantemente traccia della durata di brano riprodotta e apportando le eventuali regolazioni necessarie. È possibile attivare o disattivare questa funzione.
+	NL	Zelfs wanneer verschillende spelers een nummer vanaf het begin perfect gesynchroniseerd afspelen, kunnen ze op een gegeven moment van elkaar afwijken (meestal na een paar minuten). Een verschil van meer dan 30 milliseconden is merkbaar als je de uitvoer van meerdere spelers tegelijk kunt horen. SqueezeCenter lost dit op door voortdurend bij te houden hoeveel elke speler heeft afgespeeld en waar nodig kleine aanpassingen te maken. Je kunt dit gedrag in- of uitschakelen.
 
 SETUP_MAINTAINSYNC_ON
+	DE	Synchronisation bei der Wiedergabe beibehalten
 	EN	Maintain synchronization while playing
+	ES	Mantener sincronización durante reproducción
+	FR	Conserver la synchronisation au cours de la lecture
+	IT	Mantieni la sincronizzazione durante la riproduzione
+	NL	Synchronisatie tijdens afspelen handhaven
 
 SETUP_MAINTAINSYNC_OFF
+	DE	Synchronisation nicht beibehalten
 	EN	Don't maintain synchronization
+	ES	No mantener sincronización
+	FR	Ne pas conserver la synchronisation
+	IT	Non mantenere la sincronizzazione
+	NL	Synchronisatie niet handhaven
 
 SETUP_PLAYDELAY
+	DE	Audioverzögerung des Players
 	EN	Player Audio Delay
+	ES	Retraso de audio de reproductor
+	FR	Délai audio de la platine
+	IT	Ritardo audio lettore
+	NL	Vertraging speleraudio
 
 SETUP_PLAYDELAY_DESC
+	DE	Es kann ein wahrnehmbarer Unterschied zwischen der abgelaufenen Zeit, die der Player an SqueezeCenter meldet, und der tatsächlichen Wiedergabezeit auftreten. Dies kann bei der Nutzung digitaler Ausgänge (abhängig vom angeschlossenen Gerät) oder bei bestimmten Software-Playern unter bestimmten Plattformen vorkommen. In diesen Fällen können Sie hier die Verzögerung einstellen, damit diese von SqueezeCenter beim Anpassen der Synchronisation einbezogen wird.
 	EN	There can be a noticeable difference between how much of a track that the player reports it has played to SqueezeCenter and how much audio has been heard. This can be the case when using digital outputs (depending upon the connected equipment) or with software players on some platforms. In these cases, this delay can be set here so that SqueezeCenter can take it into account when adjusting synchronization.
-	
+	ES	Puede haber una diferencia obvia entre la parte de una pista que el reproductor notifica como reproducida en SqueezeCenter y la cantidad de audio escuchada realmente. Éste puede ser el caso al utilizar salidas digitales (según el equipo conectado) o al utilizar ciertos reproductores por software en algunas plataformas. En estos casos, se puede especificar el retraso aquí, para que SqueezeCenter lo tenga en cuenta al ajustar la sincronización.
+	FR	Il peut y avoir une différence entre la durée de lecture d'un morceau écoulée indiquée par la platine et la quantité du morceau qui a effectivement été lue. Tel peut être le cas avec des sorties numériques (en fonction de l'équipement connecté) ou avec des lecteurs logiciels sur certaines plates-formes. Dans de tels cas, ce délai peut être défini ici de manière à ce que le SqueezeCenter le prenne en compte lors des ajustements de synchronisation.
+	IT	Potrebbe sussistere una differenza notevole tra l'audio segnalato come riprodotto in SqueezeCenter con il lettore e quello effettivamente ascoltato. Un caso del genere può verificarsi quando si utilizzano ingressi digitali (a seconda dell'apparecchiatura collegata) o con lettori software di alcune piattaforme. In questo caso è possibile impostare qui un ritardo che SqueezeCenter terrà in considerazione durante la regolazione della sincronizzazione.
+	NL	Er kan een merkbaar verschil zijn tussen hoeveel van een door de speler gerapporteerd nummer naar SqueezeCenter is afgespeeld en hoeveel audio is gehoord. Dit kan het geval zijn bij gebruik van digitale uitgangen (afhankelijk van de aangesloten apparatuur) of bij softwarespelers op sommige platforms. Deze vertraging kan dan hier worden ingesteld, zodat SqueezeCenter er rekening mee kan houden bij het aanpassen van de synchronisatie.
+
 SETUP_PLAYDELAY_CHOOSE
+	DE	Audioverzögerung des Players (Millisekunden):
 	EN	Player audio delay (milliseconds):
+	ES	Retraso de audio de reproductor (milisegundos):
+	FR	Délai audio de la platine (millisecondes):
+	IT	Ritardo audio lettore (millisecondi):
+	NL	Vertraging speleraudio (milliseconden):
 
 SETUP_MINSYNCADJUST
+	DE	Minimale Synchronisationsanpassung
 	EN	Minimum Synchronization Adjustment
+	ES	Ajuste mínimo de sincronización
+	FR	Ajustement minimal de synchronisation
+	IT	Regolazione minima della sincronizzazione
+	NL	Minimale synchronisatieaanpassing
 
 SETUP_MINSYNCADJUST_DESC
+	DE	Wenn SqueezeCenter erkennt, dass die Synchronisation zweier Player leicht verschoben ist, wird i.d.R. am langsameren Player eine geringfügige Anpassung vorgenommen. Sie können die minimale Anpassung für diesen Player konfigurieren. Je größer dieses Intervall ist, desto seltener werden Anpassungen vorgenommen aber desto häufiger können Abweichungen vorkommen.
 	EN	When SqueezeCenter detects that two synchronized players have got a little bit out of synchronization with each other, it makes a small adjustment, usually to the player that has got behind. You can configure the minimum size of such adjustments for this player. The larger this interval, the less frequent will be the adjustments but the more the players will be allowed to drift apart.
+	ES	Cuando SqueezeCenter detecta una leve falta de sincronización entre dos reproductores sincronizados, realiza un pequeño ajuste, por lo general en el reproductor atrasado. Puede configurar el tamaño mínimo de los ajustes para este reproductor. Cuanto más largo sea el intervalo, menos frecuente será la realización de ajustes y mayor será la desincronización posible entre los reproductores.
+	FR	Lorsque le SqueezeCenter détecte que deux platines se sont désynchronisées, il effectue des ajustements, généralement sur la platine qui a pris du retard. Bous pouvez configurer la taille minimale de ces ajustements pour cette platine. Plus l'intervalle est important, plus espacés seront les ajustements. Les retards autorisés pour les platines seront ainsi plus importants.
+	IT	Quando SqueezeCenter rileva che due lettori non sono più perfettamente sincronizzati, nella maggior parte dei casi apporta una lieve regolazione al lettore più lento. È possibile configurare le dimensioni minime di tali regolazioni nel lettore corrente. Intervalli maggiori riducono la frequenza delle regolazioni e comportano una maggiore differenza di sincronizzazione.
+	NL	Wanneer SqueezeCenter detecteert dat twee gesynchroniseerde spelers wat minder met elkaar gesynchroniseerd zijn, wordt er een kleine aanpassing gemaakt, meestal op de speler die achterloopt. Je kunt de minimumgrootte van dergelijke aanpassingen voor deze speler configureren. Hoe groter dit interval, des te minder aanpassingen worden gemaakt en des te meer spelers van elkaar kunnen afwijken.
 
 SETUP_MINSYNCADJUST_CHOOSE
+	DE	Minimale Anpassung (Millisekunden)
 	EN	Minimum adjustment (milliseconds):
+	ES	Ajuste mínimo (milisegundos):
+	FR	Ajustement minimal (millisecondes)
+	IT	Regolazione minima (millisecondi):
+	NL	Minimale aanpassing (milliseconden):
 
 SETUP_PACKETLATENCY
+	DE	Netzwerkpaket-Wartezeit
 	EN	Network Packet Latency
+	ES	Latencia de paquete de red
+	FR	Latence des paquets réseau
+	IT	Latenza pacchetto di rete
+	NL	Vertraging netwerkpakket
 
 SETUP_PACKETLATENCY_DESC
+	DE	SqueezeCenter misst automatisch die Netzwerk-Wartezeit zwischen der Anwendung und dem Player. Dies ist zum Beibehalten der Synchronisation wichtig. Wenn diese Messungen zu inkonsistent sind, empfehlen wir, hier einen typischen Wert einzugeben.
 	EN	SqueezeCenter automatically measures the network latency between it and the player. This is important when maintaining synchronization. Occassionally these measurements can be too inconsistent to be useful, in which case you can specify a typical value here.
+	ES	SqueezeCenter mide automáticamente la latencia de red entre el dispositivo y el reproductor. Esto es importante al mantener la sincronización. En ocasiones, puede que estas mediciones no sean lo suficientemente coherentes para resultar útiles; en ese caso puede especificar un valor típico aquí.
+	FR	Le SqueezeCenter mesure automatiquement la latence du réseau entre le serveur et la platine. Ces données sont importantes pour conserver la synchronisation entre les deux. Il arrive que ces mesures soient incohérentes, auquel cas vous devrez spécifier une valeur ici.
+	IT	SqueezeCenter calcola automaticamente la latenza di rete rispetto al lettore. Questo dato è fondamentale per mantenere la sincronizzazione. In alcuni casi questi calcoli producono risultati troppo disomogenei per poter essere utilizzati. Pertanto è possibile specificare un valore indicativo in questo punto.
+	NL	SqueezeCenter meet automatisch de netwerkvertraging tussen SqueezeCenter en de speler. Dit is belangrijk voor het handhaven van synchronisatie. Af en toe zijn deze metingen te inconsistent om gebruikt te kunnen worden. In dat geval kun je hier een standaardwaarde opgeven.
 
 SETUP_PACKETLATENCY_CHOOSE
+	DE	Netzwerk-Wartezeit (Millisekunden)
 	EN	Network latency (milliseconds):
+	ES	Latencia de red (milisegundos):
+	FR	Latence du réseau (millisecondes):
+	IT	Latenza di rete (millisecondi):
+	NL	Netwerkvertraging (milliseconden):
 
 SETUP_NOUPNP
 	DE	UPnP-Client
@@ -3700,7 +3851,7 @@ REPLAYGAIN_TRACK_GAIN
 	FR	Utiliser le gain morceau si présent
 	HE	שימוש בהגברת רצועות (אם האפשרות קיימת)
 	IT	Usa guadagno traccia (se presente)
-	NL	Volumeaanpassing tracks gebruiken (indien aanwezig)
+	NL	Volumeaanpassing nummers gebruiken (indien aanwezig)
 	NO	Bruk «Track gain» (om tilgjengelig)
 	SV	Använd spårets volymjustering (om tillgänglig)
 	ZH_CN	利用音轨增益（如有）
@@ -3765,13 +3916,13 @@ SETUP_MP3STREAMINGMETHOD
 	NO	Metode for MP3-strømmer
 
 SETUP_MP3STREAMINGMETHOD_DESC
-	DE	Zur Wiedergabe eines MP3-Internet-Streams kann das Streaming auf zwei verschiedene Arten durchgeführt werden.  Beim direkten Streaming erstellt der Player eine direkte Verbindung mit dem Audio-Streaming-Server, wodurch die Belastung von SqueezeCenter verringert wird und der Stream auch fortgesetzt werden kann, wenn die Verbindung zu SqueezeCenter unterbrochen wird.  Beim Streaming über einen Proxy-Server verwaltet SqueezeCenter die Verbindung und leitet die Musik an den Player weiter.  Standardmäßig wird das direkte Streaming verwendet, aber wenn Probleme mit MP3-Streams auftreten, können Sie die andere Methode versuchen.  Hinweis: Wenn zwei oder mehre Player synchron auf einem MP3-Stream zugreifen, wird immer das Streaming über einen Proxy-Server verwendet, um die Bandbreitennutzung zu reduzieren.
+	DE	Zur Wiedergabe eines MP3-Internet-Streams kann das Streaming auf zwei verschiedene Arten durchgeführt werden. Beim direkten Streaming erstellt der Player eine direkte Verbindung mit dem Audio-Streaming-Server, wodurch die Belastung von SqueezeCenter verringert wird und der Stream auch fortgesetzt werden kann, wenn die Verbindung zu SqueezeCenter unterbrochen wird. Beim Streaming über einen Proxy-Server verwaltet SqueezeCenter die Verbindung und leitet die Musik an den Player weiter. Standardmäßig wird das direkte Streaming verwendet, aber wenn Probleme mit MP3-Streams auftreten, können Sie die andere Methode versuchen. Hinweis: Wenn zwei oder mehre Player synchron auf einem MP3-Stream zugreifen, wird immer das Streaming über einen Proxy-Server verwendet, um die Bandbreitennutzung zu reduzieren.
 	EN	When playing an MP3 Internet stream, the streaming can be done in one of two ways.  Direct Streaming causes the player to make a direct connection to the audio streaming server, reducing the load on SqueezeCenter slightly and allowing the stream to continue playing if the SqueezeCenter connection is lost.  Proxied Streaming causes SqueezeCenter to handle the connection, passing the audio through to the player.  Direct Streaming is the default, but if you experience problems with MP3 streams, try changing this setting to Proxied Streaming.  Note that if two or more players are synchronized to an MP3 stream, proxied streaming is always used to reduce bandwidth usage.
-	ES	Al reproducir secuencias MP3 de Internet, el envío por secuencias puede realizarse de dos maneras. Secuencias directas hace que el reproductor establezca una conexión directa con el servidor de secuencias de audio. Esto reduce ligeramente la carga en SqueezeCenter y permite que las secuencias se sigan reproduciendo si se pierde la conexión con SqueezeCenter. Secuencias por proxy hace que SqueezeCenter gestione la conexión y que el audio pase a través del reproductor.  Secuencias directas es la opción predeterminada pero, si tiene problemas con secuencias MP3, cambie a Secuencias por proxy. Tenga en cuenta que si hay dos o más reproductores sincronizados con una secuencia MP3, se usa siempre Secuencias por proxy para reducir el uso de ancho de banda.
-	FR	Il existe deux manières de diffuser un flux MP3 sur Internet.  La diffusion directe permet à la platine de se connecter directement au serveur de diffusion audio, réduisant ainsi la charge sur le SqueezeCenter et permettant de poursuivre la lecture du flux en cas de perte de la connexion.  La diffusion par proxy permet au SqueezeCenter de gérer la connexion et de transmettre le flux audio vers la platine.  La diffusion directe est l'option sélectionnée par défaut. Si vous rencontrez des problèmes lors de la lecture des flux MP3, sélectionnez l'option de diffusion par proxy.  Notez que si plusieurs platines sont synchronisées pour utiliser un flux MP3, c'est la diffusion proxy qui est utilisée afin de réduire l'utilisation de bande passante.
+	ES	Al reproducir secuencias MP3 de Internet, el envío por secuencias puede realizarse de dos maneras. Secuencias directas hace que el reproductor establezca una conexión directa con el servidor de secuencias de audio. Esto reduce ligeramente la carga en SqueezeCenter y permite que las secuencias se sigan reproduciendo si se pierde la conexión con SqueezeCenter. Secuencias por proxy hace que SqueezeCenter gestione la conexión y que el audio pase a través del reproductor. Secuencias directas es la opción predeterminada pero, si tiene problemas con secuencias MP3, cambie a Secuencias por proxy. Tenga en cuenta que si hay dos o más reproductores sincronizados con una secuencia MP3, se usa siempre Secuencias por proxy para reducir el uso de ancho de banda.
+	FR	Il existe deux manières de diffuser un flux MP3 sur Internet. La diffusion directe permet à la platine de se connecter directement au serveur de diffusion audio, réduisant ainsi la charge sur le SqueezeCenter et permettant de poursuivre la lecture du flux en cas de perte de la connexion. La diffusion par proxy permet au SqueezeCenter de gérer la connexion et de transmettre le flux audio vers la platine. La diffusion directe est l'option sélectionnée par défaut. Si vous rencontrez des problèmes lors de la lecture des flux MP3, sélectionnez l'option de diffusion par proxy. Notez que si plusieurs platines sont synchronisées pour utiliser un flux MP3, c'est la diffusion proxy qui est utilisée afin de réduire l'utilisation de bande passante.
 	HE	בעת הפעלה של זרימת אינטרנט בתבנית MP3, ניתן להפעיל את הזרימה באחת משתי דרכים. זרימה ישירה גורמת לנגן ליצור חיבור ישיר לשרת הזרימה של השמע, לצמצום קל של העומס על SqueezeCenter וכדי לאפשר לזרימה להימשך במקרה של אובדן החיבור של SqueezeCenter. זרימה ב-Proxy גורמת ל-SqueezeCenter לטפל בחיבור, להעברת השמע לנגן. זרימה ישירה היא ברירת המחדל, אך אם אתה נתקל בבעיות עם זרימות של MP3, נסה לשנות את ההגדרה לזרימה ב-Proxy. שים לב שאם לפחות שני נגנים מסונכרנים לזרימה מסוג MP3, תמיד נעשה שימוש בזרימה ב-Proxy לצמצום השימוש ברוחב הפס.
-	IT	Quando si riproduce un flusso Internet MP3 si possono utilizzare due metodi.  Con il metodo del flusso diretto il riproduttore si collega direttamente al server di flusso audio.  Ciò consente di ridurre leggermente il carico di SqueezeCenter e di proseguire la riproduzione del flusso anche nel caso in cui la connessione con SqueezeCenter venga persa.  Con il metodo del flusso tramite proxy la gestione della connessione viene effettuata da SqueezeCenter, il quale passa l'audio al riproduttore.  Il flusso diretto è il metodo predefinito. Se tuttavia si riscontrassero problemi con i flussi MP3, provare a utilizzare il metodo del flusso tramite proxy.  Si noti che se due o più lettori sono sincronizzati su un flusso MP3, viene sempre utilizzato il metodo del flusso tramite proxy per ridurre l'utilizzo della banda.
-	NL	Het afspelen van een MP3 Internet stream kan op twee manieren.<BR>  Directe streaming: De speler maakt een directe connectie naar de audio streaming server op het Internet. Dit geeft minder belasting op je SqueezeCenter en de MP3 stream speelt door als de connectie tussen de speler en de SqueezeCenter verloren gaat. <BR>  Proxy streaming: De SqueezeCenter zorgt voor de connectie en geeft de audio stream door aan de speler.  <BR>  Directe streaming is de standaard. Probeer proxy streaming als je problemen hebt met directe streaming.  <BR>  Let op: Als je twee of meer spelers synchroniseert  wordt altijd automatisch proxy streaming ingesteld om de gebruikte bandbreedte te minimaliseren.
+	IT	Quando si riproduce un flusso Internet MP3 si possono utilizzare due metodi. Con il metodo del flusso diretto il riproduttore si collega direttamente al server di flusso audio. Ciò consente di ridurre leggermente il carico di SqueezeCenter e di proseguire la riproduzione del flusso anche nel caso in cui la connessione con SqueezeCenter venga persa. Con il metodo del flusso tramite proxy la gestione della connessione viene effettuata da SqueezeCenter, il quale passa l'audio al riproduttore. Il flusso diretto è il metodo predefinito. Se tuttavia si riscontrassero problemi con i flussi MP3, provare a utilizzare il metodo del flusso tramite proxy. Si noti che se due o più lettori sono sincronizzati su un flusso MP3, viene sempre utilizzato il metodo del flusso tramite proxy per ridurre l'utilizzo della banda.
+	NL	Het afspelen van een MP3 Internet stream kan op twee manieren.<BR> Directe streaming: De speler maakt een directe connectie naar de audio streaming server op het Internet. Dit geeft minder belasting op je SqueezeCenter en de MP3 stream speelt door als de connectie tussen de speler en de SqueezeCenter verloren gaat. <BR> Proxy streaming: De SqueezeCenter zorgt voor de connectie en geeft de audio stream door aan de speler. <BR> Directe streaming is de standaard. Probeer proxy streaming als je problemen hebt met directe streaming. <BR> Let op: Als je twee of meer spelers synchroniseert wordt altijd automatisch proxy streaming ingesteld om de gebruikte bandbreedte te minimaliseren.
 	NO	Avpilling av MP3-strømmer fra Internett kan gjøres på to måter: Direktestrøm får spilleren til å lage en direkte forbindelse til internett-tjeneren. Det gir litt mindre belastning på SqueezeCenter-maskinen og lar strømmen spilles selv om forbindelsen med denne brukes. Det er også mulig å sende strømmen gjennom SqueezeCenter, som da opptrer som en proxy. Direktestrømmer er standard, så du kan prøve å bruke SqueezeCenter som proxy hvis du opplever problemer med MP3-strømmer. Merk at hvis du synkroniserer spillere til MP3-strømmer, vil proxy alltid brukes for å redusere båndbreddebruk.
 
 MP3_STREAMING_DIRECT
@@ -4196,11 +4347,19 @@ SETUP_PLUGINLIST_CHANGE
 SETTINGS_CHANGED
 	DE	Die folgenden Einstellungen wurden geändert:
 	EN	The following settings were changed:
+	ES	Estas opciones han cambiado:
+	FR	Les réglages suivants ont été modifiés:
+	IT	Le seguenti impostazioni sono state modificate:
+	NL	De volgende instellingen zijn gewijzigd:
 	NO	Følgende innstillinger ble endret:
 
 SETUP_NO_PREFS
 	DE	Es gibt für diesen Player auf dieser Seite keine Einstellungen
 	EN	There are no settings for this player on this page
+	ES	No hay ninguna configuración para este reproductor en esta página
+	FR	Aucun réglage n'est disponible pour cette platine sur cette page.
+	IT	Nessuna impostazione disponibile per questo lettore in questa pagina
+	NL	Er zijn geen instellingen voor deze speler op deze pagina
 	NO	Det er ingen innstillinger for denne spilleren på denne siden
 
 SETUP_PASSWORD_CHANGED
@@ -4219,6 +4378,7 @@ SETUP_PASSWORD_CHANGED
 	ZH_CN	密码已更改。
 
 # Server Settings
+
 SETUP_LANGUAGE
 	CS	Jazyk
 	DA	Sprog
@@ -4239,6 +4399,10 @@ SETUP_LANGUAGE
 SETUP_LANGUAGE_DESC
 	DE	Wählen Sie die Sprache für SqueezeCenter. Diejenigen, welche mit * markiert sind, werden durch die SqueezeCenter Community bereit gestellt werden. Falls damit Probleme auftreten oder Sie Verbesserungsvorschläge haben, so schreiben Sie an <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
 	EN	Choose the language that you'd like to use with SqueezeCenter.  Those marked with * were translated by the SqueezeCenter customer community.  If you find problems or would like to contribute, email <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
+	ES	Elija el idioma que desea utilizar con SqueezeCenter. Un * significa que el idioma en cuestión ha sido traducido por la comunidad de usuarios de SqueezeCenter. Si tiene alguna consulta que realizar o desea aportar su contribución, envíe un mensaje a <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
+	FR	Sélectionnez la langue à utiliser pour le SqueezeCenter. Les langues marquées d'un astérisque (*) contiennent des traductions réalisées par la communauté des utilisateurs SqueezeCenter. Pour signaler ou un problème ou si vous souhaitez contribuer, envoyez un message électronique à l'adresse suivante: <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
+	IT	Scegliere la lingua che si desidera utilizzare con SqueezeCenter. Le versioni nelle lingue contrassegnate con un asterisco (*) sono state tradotte da utenti di SqueezeCenter. Se si individuano dei problemi o si desidera fornire un contributo, inviare un messaggio di posta elettronica a <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
+	NL	Kies de taal die je met SqueezeCenter wilt gebruiken. De talen met een sterretje (*), zijn door de klantencommunity van SqueezeCenter vertaald. Als je verbeteringen wilt voorstellen of aan vertalingen wilt bijdragen, stuur dan een e-mail naar <a href="mailto:translate@slimdevices.com">translate@slimdevices.com</a>.
 
 SETUP_LANGUAGE_OK
 	CS	Aktuálně nastavenáý jezyk:
@@ -4547,6 +4711,7 @@ RESCANNING_SHORT
 	ZH_CN	重新扫描音乐库中...
 
 # advanced server settings
+
 SETUP_MENUITEM
 	CS	Položka menu
 	DA	Menupunkt
@@ -4615,11 +4780,20 @@ SETUP_SKIN_OK
 	ZH_CN	您现在的外壳是：
 
 SETUP_PLUGINS
+	DE	Extras
 	EN	Extras
+	ES	Extras
+	FR	Extras
+	IT	Extra
+	NL	Extra's
 
 SETUP_PLUGINS_DESC
 	DE	SqueezeCenter enthält eine Reihe von Extras (u.a. Spiele), die Sie über die Fernbedienung steuern können. Unten können Sie das Extras-Menü in das Hauptmenü einfügen bzw. daraus entfernen.
 	EN	SqueezeCenter includes some extras, including some games, you can use with your remote. Use the menu below to add or remove the Extras menu from your Home.
+	ES	SqueezeCenter incluye elementos extra, incluidos algunos juegos, que se pueden usar con el mando a distancia. Use el menú siguiente para agregar o quitar el menú Extras de Inicio.
+	FR	Le SqueezeCenter inclut des extras, parmi lesquels des jeux, disponibles à partir de la télécommande. La barre de menu ci-dessous permet d'ajouter ou de supprimer le menu Extras du menu d'accueil.
+	IT	In SqueezeCenter sono disponibili alcune risorse aggiuntive, inclusi giochi, utilizzabili con il telecomando. Per aggiungere o rimuovere il menu Extra dalla home page, utilizzare il menu sottostante.
+	NL	SqueezeCenter bevat een aantal extra's, zoals games, die je met je afstandsbediening kunt gebruiken. Gebruik het onderstaande menu om het menu Extra's aan je hoofdmenu toe te voegen of ervan te verwijderen.
 	PT	O SqueezeCenter inclui algumas funcionalidades extras, tais como alguns jogos, que podem ser usados com o controlo remoto. Use o menu abaixo para adicionar ou remover os menus extra do cliente.
 
 SETUP_REFRESHRATE
@@ -4796,6 +4970,10 @@ SETUP_THUMBSIZE_DESC
 SETUP_PLUGINS_OK
 	DE	Das Extras-Menü ist:
 	EN	Your Extras menu is now:
+	ES	Menú Extras:
+	FR	Votre menu Extras:
+	IT	Il menu Extra è ora:
+	NL	Je menu Extra's is nu:
 	PT	O menu de extras é
 
 SETUP_HTTPPORT
@@ -4930,7 +5108,7 @@ SETUP_CHECKVERSION_DESC
 	ES	El servidor se puede conectar automáticamente a www.slimdevices.com cada día y comprobar si hay disponible una versión actualizada del software. Si la hay, aparecerá un mensaje en la interfaz Web de SqueezeCenter.
 	FR	Le serveur peut se connecter tous les jours automatiquement à www.slimdevices.com pour vérifier la disponibilité d'une nouvelle version du logiciel. Le cas échéant, un message dans l'interface Web indique qu'une nouvelle version est disponible.
 	HE	השרת יכול להתחבר באופן אוטומטי לכתובת www.slimdevices.com בכל יום ולבדוק אם קיימת גרסה מעודכנת של התוכנה. אם קיימת, תופיע הודעה בממשק האינטרנט של SqueezeCenter.
-	IT	 può collegarsi automaticamente al sito www.slimdevices.com ogni giorno e verificare se è disponibile una versione aggiornata del software. In caso affermativo, viene visualizzato un messaggio nell'interfaccia Web di SqueezeCenter."
+	IT	può collegarsi automaticamente al sito www.slimdevices.com ogni giorno e verificare se è disponibile una versione aggiornata del software. In caso affermativo, viene visualizzato un messaggio nell'interfaccia Web di SqueezeCenter."
 	JA	サーバーソフトウェアは、毎日www.slimdevices.comに接続してアップデートを確認します。アップデート バージョンがある場合には、その旨メッセージが出ます。
 	NL	SqueezeCenter kan elke dag automatisch verbinding maken met 'www.slimdevices.com' om te kijken of er een nieuwere versie van de software beschikbaar is. Als dit zo is, verschijnt er een bericht in de SqueezeCenter-webinterface.
 	NO	Tjeneren kan automatisk sjekke www.slimdevices.com hver dag etter en nyere versjon av programvaren. Om en nyere versjon finnes, blir dette meddelt i vevgrensesnittet.
@@ -5195,7 +5373,7 @@ SETUP_THROTTLESCAN_DESC
 	HE	עם הפעלת השרת, הוא סורק את תיקיית המוסיקה שלך כדי לטעון את מידע המבצעים, האלבומים ומידע נוסף מהתגים בקבצים. במערכות איטיות מסוימות ובמחשבי Windows המשתמשים במערכות הקבצים FAT ו-FAR32, הדבר עלול להאט את המחשב באופן משמעותי. באפשרותך לשנות הגדרה זו כדי להאט את הסריקה ולהשתמש בפחות משאבי מחשב.
 	IT	Quando viene avviato, SqueezeCenter analizza la cartella della musica per caricare l'artista, l'album e altre informazioni dai tag dei file. In alcuni sistemi più lenti e nei PC Windows che utilizzano file system FAT e FAT32 questa operazione potrebbe rallentare eccessivamente il computer. È possibile modificare questa impostazione per ridurre la velocità dell'analisi e utilizzare meno risorse del computer.
 	JA	サーバーソフトウェアがスタートする時に、あなたの音楽フォルダーからアーチスト、アルバム等の情報をスキャンします。この場合、古いPCですと極端にPCのパフォーマンスを損ないます。以下で、PCのリソースを使いすぎない設定にして下さい。
-	NL	Wanneer  start, wordt je muziekmap gescand om de artiest, het album en andere informatie uit de tags in de bestanden te laden. Op langzamere systemen en Windows-pcs' met FAT- of FAT32-bestandssystemen kan de computer hierdoor onacceptabel langzaam worden. Je kunt deze instelling veranderen om het scannen te vertragen zodat er minder computercapaciteit gebruikt wordt.
+	NL	Wanneer start, wordt je muziekmap gescand om de artiest, het album en andere informatie uit de tags in de bestanden te laden. Op langzamere systemen en Windows-pcs' met FAT- of FAT32-bestandssystemen kan de computer hierdoor onacceptabel langzaam worden. Je kunt deze instelling veranderen om het scannen te vertragen zodat er minder computercapaciteit gebruikt wordt.
 	NO	Når serveren starter søker den gjennom musikk-katalogen din for å finne artistnavn, album osv fra MP3-filene. På noen tregere systemer og Windows-maskiner som bruker FAT- eller FAT32-filsystem, kan dette gjøre maskinen din veldig treg. Du kan endre denne innstillingen slik at scanningen går tregere og bruker mindre av systemets ressurser.
 	PT	O servidor, ao iniciar, pesquisa toda a pasta de músicas, indexando o nome do artista, album e outras informações, a partir das tags ID3 dos ficheiros MP3. Em computadores mais lentos ou em sistemas operativos Windows com sistemas de ficheiros FAT ou FAT32, esta operação poderá ocupar demasiados recursos. Pode usar esta opção para adicionar um tempo de espera e abrandar a operação.
 	SV	När servern startar söker den igenom din musikmapp för att hämta namn på artist, album, etc från dina MP3-filers ID3-taggar. På vissa långsammare system och Windows-operativ som använder FAT eller FAT32 filsystem kan detta göra datorn väldigt långsam. Du kan ändra denna inställning för att sakta ner genomsökningen och använda mindre av datorns resurser.
@@ -5420,7 +5598,7 @@ SETUP_RESHUFFLEONREPEAT_DESC
 	ES	El servidor puede establecer un nuevo orden aleatorio de las listas de reproducción aleatorias después de cada pase completo por la lista, si así se desea.
 	FR	Le serveur peut mélanger de nouveau la liste de lecture à chaque répétition.
 	HE	השרת יכול לסדר מחדש בסדר אקראי רשימות השמעה שכבר מסודרות בסדר אקראי לאחר כל מעבר מלא על הרשימה, אם אתה מעוניין בכך.
-	IT	Se lo si desidera,  può riprodurre di nuovo in ordine casuale gli elenchi di riproduzione.
+	IT	Se lo si desidera, può riprodurre di nuovo in ordine casuale gli elenchi di riproduzione.
 	JA	サーバーソフトウェアは、リピート時に、再度ランダムをかけるよう選択することができます。
 	NL	SqueezeCenter kan de volgorde van liedjes in een geshuffelde playlist telkens nadat de lijst afgespeeld is, opnieuw veranderen.
 	NO	Tjeneren kan blande spillelister på nytt etter hver gjennomspilling av listen.
@@ -5553,6 +5731,10 @@ SETUP_IGNOREDARTICLES_DESC
 SETUP_SPLITLIST
 	DE	Trennzeichen für mehrere Einträge in Tags
 	EN	Separator for Multiple Items in Tags
+	ES	Separador para elementos múltiples en etiquetas
+	FR	Séparateur pour les éléments dans les tags.
+	IT	Separatore di voci multiple nei tag
+	NL	Scheidingsteken voor meerdere items in tags
 
 SETUP_SPLITLIST_DESC
 	DE	SqueezeCenter kann mehrere Interpreten, Albumtitel und Stilrichtungen in den Tags von Musikdateien erkennen. Findet SqueezeCenter folgende Wörter oder Zeichen in den Tags, wird für jeden Eintrag eine andere Liste erstellt. Beispiel: Wenn Sie einen Strichpunkt als Trennzeichen definieren, wird ein Titel mit dem Interpreten-Tag 'J. S. Bach;Michael Tilson Thomas' sowohl unter 'J. S. Bach' als auch 'Michael Tilson Thomas' aufgelistet. Wenn Sie diese Einstellung ändern, wird die Musiksammlung erneut durchsucht.
@@ -5664,7 +5846,7 @@ SETUP_DISABLESTATISTICS
 	ZH_CN	库存统计
 
 SETUP_DISABLESTATISTICS_DESC
-	DE	Beim Anzeigen der SqueezeCenter-Startseite wird die ganze Musiksammlung durchsucht, um den Bestand anzeigen zu können.  Sie können diese Funktion deaktivieren, wodurch die Zeit zum Öffnen der Web-Benutzeroberfläche verringert wird, besonders wenn die Musiksammlung sehr groß ist.
+	DE	Beim Anzeigen der SqueezeCenter-Startseite wird die ganze Musiksammlung durchsucht, um den Bestand anzeigen zu können. Sie können diese Funktion deaktivieren, wodurch die Zeit zum Öffnen der Web-Benutzeroberfläche verringert wird, besonders wenn die Musiksammlung sehr groß ist.
 	EN	When the SqueezeCenter front page comes up, it scans your music library to figure out your library statistics and displays them on the front page.  You can choose to disable this behavior, which will shorten the time it takes to initially open up the web interface, especially with a large music library.
 	ES	Cuando se muestra la pantalla inicial de SqueezeCenter, éste examina la biblioteca de música para obtener estadísticas de la biblioteca y mostrarlas en la página inicial. Se puede optar por deshabilitar este comportamiento, lo que acortará el tiempo necesario para abrir la interfaz Web, especialmente con una biblioteca de música de gran tamaño.
 	FR	Lorsque la page d'accueil du SqueezeCenter apparaît, celui-ci analyse votre collection musicale afin d'afficher des statistiques. Vous pouvez désactiver ce comportement, ce qui réduira le temps nécessaire à l'affichage de la page d'accueil, surtout si la taille de la collection est importante.
@@ -6138,7 +6320,7 @@ SETUP_FILTERRULE_HEAD
 SETUP_FILTERHOSTS
 	CS	Blokovat příchozí spojení
 	DA	Blokér indgående forbindelser
-	DE	Eingehende Verbindungen blockieren 
+	DE	Eingehende Verbindungen blockieren
 	EN	Block incoming connections
 	ES	Bloquear conexiones entrantes
 	FR	Bloquer les connexions entrantes
@@ -6184,6 +6366,7 @@ SETUP_FILTERRULE_DESC
 	ZH_CN	如果您已经启动了阻拦向内连接装置，您可以在此输入允许向内连接到SqueezeCenter的IP来源地址。<br><br>这个资料栏接受具体IP地址名单，*式的通配符，及以逗号分开的IP地址范围名单。例如:<BR><BR><B>10.1.2.2</B>将只允许10.1.2.2连接<BR><BR><B>10.1.2.*</B>将允许任何10.1.2.x的IP地址<BR><BR><B>10.1.2.2-50</B>将允许10.1.2.2-10.1.2.50范围内的IP地址连接<BR><BR>您也可以利用逗号结合多个IP地址，例如：<B>10.1.2.2,172.16.1.*，192.168.1-255</B><BR><BR>特别IP地址127.0.0.1则表示允许浏览器连接到同一台电脑上的SqueezeCenter。
 
 #miscellaneous setup strings
+
 SETUP_NEW_VALUE
 	CS	Nová hodnota pro
 	DA	Ny værdi for:
@@ -6237,11 +6420,19 @@ SETUP_BAD_VALUE
 SETTINGS_INVALIDVALUE
 	DE	"%s" ist kein gültiger Wert für %s
 	EN	Invalid value "%s" for %s
+	ES	Valor "%s" no válido para %s
+	FR	Valeur %s non valide pour %s
+	IT	Valore "%s" non valido per %s
+	NL	Ongeldige waarde %s voor %s
 
 SETUP_CHANGES_SAVED
 	DE	Änderungen wurden gespeichert.
 	EN	Changes have been saved.
-	
+	ES	Los cambios se han guardado.
+	FR	Les modifications ont été enregistrées.
+	IT	Le modifiche sono state salvate.
+	NL	Wijzigingen zijn opgeslagen.
+
 SETUP_CURRENT
 	CS	Aktuální
 	DA	Aktiv
@@ -6707,7 +6898,7 @@ SETUP_GROUPDISCS_DESC
 	DE	Sie können angeben, ob mehrere CDs eines Albums als ein Album (unter dem gleichen Namen) oder als getrennte Alben (z.B. 'Albumtitel (CD 1 von 2)' angezeigt werden sollen. Wenn Sie diese Einstellung ändern, wird die Musiksammlung erneut durchsucht.
 	EN	You can specify if multiple disc sets are treated as a single album (with a single name) or as multiple albums, each with a unique name per disc, for example "Album Title (Disc 2 of 3)".  Changing this setting will start a rescan of your music library.
 	ES	Se puede especificar si los conjuntos de varios discos se consideran como un sólo álbum (con un único nombre) o como varios álbumes (cada uno con un único nombre por disco), por ejemplo "Título de álbum (Disco 2 de 3)". Si se cambia esta opción, se iniciará un nuevo examen de la biblioteca de música.
-	FR	Vous pouvez spécifier si les coffrets de plusieurs disques seront considérés comme un seul album (avec un nom unique) ou comme plusieurs albums avec un nom un nom unique pour chaque disque, par exemple "Titre (Disque 2 sur 3)".  SI vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
+	FR	Vous pouvez spécifier si les coffrets de plusieurs disques seront considérés comme un seul album (avec un nom unique) ou comme plusieurs albums avec un nom un nom unique pour chaque disque, par exemple "Titre (Disque 2 sur 3)". SI vous modifiez ce réglage, votre dossier de musique sera à nouveau analysé.
 	HE	באפשרותך לציין אם ערכות של מספר תקליטורים יטופלו כאלבום אחד (עם שם אחד) או כאלבומים מרובים, עם שם ייחודי עבור כל תקליטור, לדוגמה, "שם אלבום (תקליטור 2 מתוך 3)". שינוי הגדרה זו יגרום להפעלת סריקה חוזרת של ספריית המוסיקה.
 	IT	È possibile specificare se considerare i cofanetti come singolo album (con un solo nome) o come più album, ciascuno con un nome univoco, ad esempio "Titolo album (disco 2 di 3)". Se si modifica questa impostazione, viene riavviata una analisi della libreria musicale.
 	JA	複数枚セットのアルバムの場合、それぞれ別の名前がついた（例えば、アルバム名（2/3））CDを１つのアルバムとみなすか、あるいは、セットでアルバムとみなすか指定できます。指定したあと再スキャンします。
@@ -6746,24 +6937,50 @@ SETUP_GROUPDISCS_1
 SETUP_SN_EMAIL
 	DE	Mail-Adresse
 	EN	Email Address
+	ES	Correo electrónico:
+	FR	Adresse électronique
+	IT	Indirizzo di posta elettronica
+	NL	E-mailadres
 
 SETUP_SN_EMAIL_DESC
 	DE	Geben Sie bitte die Mail-Adresse an, welche Sie zum Anmelden an SqueezeNetwork verwenden.
 	EN	Enter the email address used to login to your SqueezeNetwork account.
+	ES	Introduzca la dirección de correo electrónico utilizada para iniciar una sesión en su cuenta SqueezeNetwork.
+	FR	Spécifiez l'adresse électronique que vous utilisez pour vous connecter à compte SqueezeNetwork.
+	IT	Immettere l'indirizzo di porta elettronica utilizzato per accedere all'account SqueezeNetwork.
+	NL	Voer het e-mailadres in dat je gebruikt om je bij je SqueezeNetwork-account aan te melden.
 
 SETUP_SN_PASSWORD
 	DE	Passwort
 	EN	Password
+	ES	Contraseña
+	FR	Mot de passe
+	IT	Password
+	NL	Wachtwoord
 
 SETUP_SN_PASSWORD_DESC
 	DE	Geben Sie bitte das Passwort für ihren SqueezeNetwork-Zugang an.
 	EN	Enter the password for your SqueezeNetwork account.
+	ES	Escriba la contraseña de su cuenta SqueezeNetwork.
+	FR	Spécifiez le mot de passe pour votre compte SqueezeNetwork.
+	IT	Immettere la password per l'account SqueezeNetwork.
+	NL	Voer het wachtwoord voor je SqueezeNetwork-account in.
 
 SETUP_SN_INVALID_LOGIN
+	DE	Ihre Kontoangaben wurden nicht gefunden. Geben Sie sie erneut ein und versuchen Sie es noch einmal. Wenn Sie kein Konto haben, klicken Sie auf “<a href="http://www.squeezenetwork.com" target="_blank">Ich brauche ein Konto</a>”.
 	EN	We couldn't find your account information, please re-enter your information and try again. If you don't have an account please click “<a href="http://www.squeezenetwork.com" target="_blank">I need an account</a>” to continue.
+	ES	No hemos encontrado la información de su cuenta; vuelva a introducir los datos e inténtelo de nuevo. Si no tiene una cuenta, haga clic en “<a href="http://www.squeezenetwork.com" target="_blank">Necesito una cuenta</a>” para continuar.
+	FR	Informations du compte introuvables. Spécifiez vos informations à nouveau et réessayez. Si vous ne disposez pas d'un compte, cliquez sur <a href="http://www.squeezenetwork.com" target="_blank">Je souhaite créer un compte</a> pour continuer.
+	IT	Impossibile recuperare le informazioni account. Immettere nuovamente i dati e riprovare. Se non si dispone di un account, fare clic su <a href="http://www.squeezenetwork.com" target="_blank">Nuovo account</a> per continuare.
+	NL	We kunnen je accountgegevens niet vinden; voer je gegevens opnieuw in en probeer het nogmaals. Als je geen account hebt, klik dan op <a href="http://www.squeezenetwork.com" target="_blank">Ik heb een account nodig</a> om verder te gaan.
 
 SETUP_SN_VALID_LOGIN
+	DE	Verbindung mit SqueezeNetwork wurde hergestellt.
 	EN	Connected successfully to SqueezeNetwork.
+	ES	Conexión establecida con SqueezeNetwork.
+	FR	Connexion à SqueezeNetwork effectuée.
+	IT	Connessione a SqueezeNetwork completata.
+	NL	Verbinding met SqueezeNetwork geslaagd.
 
 SETUP_SN_FORGOT_PASSWORD
 	EN	I forgot my password
@@ -6772,161 +6989,389 @@ SETUP_SN_NEED_ACCOUNT
 	EN	I need an account
 
 SETUP_SN_SYNC
+	DE	SqueezeNetwork-Integration
 	EN	SqueezeNetwork Integration
+	ES	Integración de SqueezeNetwork
+	FR	Intégration SqueezeNetwork
+	IT	Integrazione di SqueezeNetwork
+	NL	SqueezeNetwork-integratie
 
 SETUP_SN_SYNC_DESC
 	DE	Standardmässig werden zahlreiche Player-Einstellungen zwischen SqueezeCenter und SqueezeNetwork synchronisiert. Hier können Sie diese Funktionalität deaktivieren.
 	EN	By default, many player settings are synchronized between SqueezeCenter and SqueezeNetwork.  To disable this feature, select the Disabled option below.
+	ES	De modo predeterminado, muchas configuraciones de reproductor se sincronizan entre SqueezeCenter y SqueezeNetwork. Para deshabilitar esta función, seleccione la opción Deshabilitado a continuación.
+	FR	Par défaut, de nombreux réglages de platine sont synchronisés entre le SqueezeCenter et SqueezeNetwork. Pour désactiver cette fonctionnalité, sélectionnez l'option appropriée ci-dessous.
+	IT	Per impostazione predefinita numerose impostazioni del lettore in SqueezeCenter e SqueezeNetwork sono sincronizzate. Per disattivare questa caratteristica, selezionare l'opzione Disattiva in basso.
+	NL	Standaard worden vele spelerinstellingen tussen SqueezeCenter en SqueezeNetwork gesynchroniseerd. Als je deze functie wilt uitschakelen, selecteer je de optie Uitgeschakeld hieronder.
 
 SETUP_SN_SYNC_ENABLE
 	DE	Aktiv, Player-Einstellungen synchronisieren
 	EN	Enabled, keep player settings in sync.
+	ES	Habilitado, mantener sincronizadas configuraciones de reproductor.
+	FR	Activé. Synchroniser les réglages de platine.
+	IT	Attiva. Mantieni sincronizzate le impostazioni del lettore.
+	NL	Ingeschakeld; spelerinstellingen gesynchroniseerd houden.
 
 SETUP_SN_SYNC_DISABLE
 	DE	Inaktiv, Player-Einstellungen nicht synchronisieren
 	EN	Disabled, do not keep player settings in sync.
+	ES	Deshabilitado, no mantener sincronizadas configuraciones de reproductor.
+	FR	Désactivé. Ne pas synchroniser les réglages de platine.
+	IT	Disattiva. Non mantenere sincronizzate le impostazioni del lettore.
+	NL	Uitgeschakeld; spelerinstellingen niet gesynchroniseerd houden.
 
 SETUP_SN_REPORT_STATS
+	DE	Statistik
 	EN	Statistics
+	ES	Estadísticas
+	FR	Statistiques
+	IT	Statistiche
+	NL	Statistieken
 
 SETUP_SN_REPORT_STATS_DESC
+	DE	Wir sammeln statistische Informationen über den Einsatz von Internetradio und -Musikdiensten. Diese Informationen werden im Ganzen gesammelt und unterliegen unseren <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">Datenschutzbestimmungen</a>.
 	EN	To help improve SqueezeNetwork, we collect statistics on Internet radio and music service listening.  This information is collected in aggregate and is protected under our <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">privacy policy</a>.
+	ES	Con el fin de mejorar SqueezeNetwork, recopilamos estadísticas sobre el uso de radio y música por Internet. Dicha información se utiliza en conjunto y está protegida según los términos de nuestra <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">política de privacidad</a>.
+	FR	Pour améliorer SqueezeNetwork, nous collectons des informations sur les radios Internet et services musicaux utilisés. Ces informations sont collectées par agrégats et restent confidentielles en vertu de notre <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">politique de confidentialité</a>.
+	IT	Al fine di migliorare SqueezeNetwork, elaboriamo statistiche sulle radio Internet e sui servizi musicali più ascoltati. Questi dati vengono raccolti collettivamente e il loro trattamento è regolato dall'<a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">informativa sulla privacy</a>.
+	NL	Teneinde SqueezeNetwork te verbeteren, verzamelen we statistieken over het luisteren naar internetradio en muziekservices. Deze informatie wordt globaal verzameld en wordt beschermd door ons <a href="http://www.logitech.com/index.cfm/footer/privacy/&cl=us,en" target="_blank">privacybeleid</a>.
 
 SETUP_SN_REPORT_STATS_ENABLE
+	DE	Ja, Statistiken melden, um SqueezeNetwork zu verbessern.
 	EN	Yes, help improve SqueezeNetwork by reporting statistics.
+	ES	Sí, notificar estadísticas para mejorar SqueezeNetwork.
+	FR	Autoriser la collecte d'informations pour contribuer à l'amélioration de SqueezeNetwork.
+	IT	Sì, autorizzo la raccolta dei dati a fini statistici per migliorare SqueezeNetwork.
+	NL	Ja, statistieken rapporteren om SqueezeNetwork te verbeteren.
 
 SETUP_SN_REPORT_STATS_DISABLE
+	DE	Nein, Statistiken nicht melden.
 	EN	No, do not report statistics.
+	ES	No notificar estadísticas.
+	FR	Ne pas autoriser la collecte d'informations.
+	IT	No, non autorizzo la raccolta dei dati a fini statistici.
+	NL	Nee, statistieken niet rapporteren.
 
 SETUP_NO_JAVASCRIPT
+	DE	Für den Zugriff auf SqueezeCenter benötigen Sie eine aktuelle Version eines Browsers (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 oder höher). Außerdem muss im Browser JavaScript aktiviert sein. Sie können auch eine einfachere Benutzeroberfläche wie <a href="/Classic/?skipWizard=1" style="color: blue">Classic</a> oder <a href="/Handheld/?skipWizard=1" style="color: blue">Handheld</a> (für kleine Bildschirme optimiert) wählen.
 	EN	In order to access SqueezeCenter, please make sure you are using a recent browser (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 or later), and JavaScript is enabled in your browser. Alternatively you can use a simpler skin, such as <a href="/Classic/?skipWizard=1">Classic</a> or <a href="/Handheld/?skipWizard=1">Handheld</a> (optimized for small screens).
+	ES	Para acceder a SqueezeCenter, debe utilizar un navegador reciente (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 o posterior) con la opción JavaScript habilitada. O puede utilizar una máscara más simple, por ejemplo una <a href="/Classic/?skipWizard=1" style="color: blue">Classic</a> o <a href="/Handheld/?skipWizard=1" style="color: blue">Handheld</a> (optimizada para pantallas pequeñas).
+	FR	Pour accéder au SqueezeCenter, utilisez un navigateur récent (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 ou version ultérieure) et activez le JavaScript pour ce navigateur. Vous pouvez également utiliser une apparence d'interface plus légère, telle que <a href="/Classic/?skipWizard=1" style="color: blue">Classic</a> ou <a href="/Handheld/?skipWizard=1" style="color: blue">Handheld</a> (optimisée pour les écrans de petite taille).
+	IT	Per accedere a SqueezeCenter, assicurarsi di utilizzare un browser recente (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 o versioni successive) e di attivare JavaScript all'interno del browser. In alternativa è possibile utilizzare un'interfaccia quale <a href="/Classic/?skipWizard=1" style="color: blue">Classic</a> o <a href="/Handheld/?skipWizard=1" style="color: blue">Handheld</a> (ottimizzata per schermi piccoli).
+	NL	Je moet een recente browser gebruiken (Firefox&reg;, Apple Safari&reg;, Microsoft&reg; Internet Explorer 6, Opera 9 of later) en JavaScript in je browser inschakelen om SqueezeCenter te kunnen oproepen. Je kunt ook een eenvoudigere skin gebruiken, zoals <a href="/Classic/?skipWizard=1" style="color: blue">Classic</a> of <a href="/Handheld/?skipWizard=1" style="color: blue">Handheld</a> (geoptimaliseerd voor kleine schermen).
 
 SETUP_WIZARD_LANG_DESC
+	DE	Hier können Sie eine andere Sprache wählen:
 	EN	If you want to change the language, select it here:
+	ES	Si quiera cambiar el idioma, seleccione aquí el deseado:
+	FR	Sélectionnez la langue ici si vous souhaitez la changer.
+	IT	Per cambiare lingua, selezionare un'opzione:
+	NL	Als je de taal wilt wijzigen, selecteer je deze hier:
 
 SETUP_WIZARD_WELCOME
+	DE	Willkommen beim Assistenten zum Einrichten von SqueezeCenter&reg;
 	EN	Welcome to the SqueezeCenter&reg; Setup Assistant
+	ES	El Asistente de configuración de SqueezeCenter&reg; le da la bienvenida
+	FR	Bienvenue dans l'assistant de configuration du SqueezeCenter&reg;
+	IT	Assistente configurazione SqueezeCenter&reg;
+	NL	Welkom bij de assistent voor SqueezeCenter&reg;-setup
 
 SETUP_WIZARD_WELCOME_DESC
+	DE	Vielen Dank, dass Sie sich für ein kabelloses Musiksystem von Logitech&reg; entschieden haben.<br><br>Der Assistent zum Einrichten von SqueezeCenter führt Sie durch die zum Einrichten des Players erforderlichen Schritte. Zuerst erstellen Sie eine Verbindung zu SqueezeNetwork&reg; und greifen dann auf Ihre lokale Musiksammlung zu.<br/><br/>Wenn Sie noch kein Konto für SqueezeNetwork haben, beenden Sie diesen Assistenten und richten Sie eines auf <a href="http://www.squeezenetwork.com" target="_blank">squeezenetwork.com</a> ein.
 	EN	Thank you for purchasing a Logitech&reg; wireless music system.<br><br>This SqueezeCenter Setup Assistant will guide you through the steps of setting up your new player. We'll start by connecting you to SqueezeNetwork&reg;, then we'll help you find and access your local music.<br/><br/>If you haven't set up an account on SqueezeNetwork, please exit this Setup Assistant and go to <a href="http://www.squeezenetwork.com" target="_blank">squeezenetwork.com</a> to create your account.
+	ES	Gracias por adquirir un sistema de música inalámbrico Logitech&reg;.<br><br>Este Asistente de configuración de SqueezeCenter le guiará en el proceso de configuración de su nuevo reproductor. Empezaremos por conectarle a SqueezeNetwork&reg; y, a continuación, le ayudaremos a encontrar y acceder a su música local.<br/><br/>Si no ha creado una cuenta en SqueezeNetwork, cierre este asistente y acceda a <a href="http://www.squeezenetwork.com" target="_blank">squeezenetwork.com</a> para crear su cuenta.
+	FR	Vous venez d'acheter un système musical sans fil Logitech&reg; et nous vous en félicitons.<br><br>Cet assistant va vous guider dans la procédure de configuration de votre nouvelle platine. Vous allez d'abord pouvoir vous connecter à SqueezeNetwork&reg;, puis rechercher et accéder à votre musique locale.<br/><br/>Si vous n'avez pas configuré de compte SqueezeNetwork, quittez l'assistant et rendez-vous sur <a href="http://www.squeezenetwork.com" target="_blank">squeezenetwork.com</a> pour créer un compte.
+	IT	Grazie per avere acquistato il sistema musicale senza fili Logitech&reg;.<br><br>L'Assistente configurazione SqueezeCenter assiste l'utente nella configurazione del nuovo lettore. Dopo avere descritto come connettersi a SqueezeNetwork&reg;, verrà illustrato come accedere alla raccolta musicale locale.<br/><br/>Se non è stato ancora configurato un account in SqueezeNetwork, uscire da questa procedura e visitare il sito Web <a href="http://www.squeezenetwork.com" target="_blank">squeezenetwork.com</a> per creare un account personale.
+	NL	Hartelijk dank voor je aankoop van een draadloos Logitech&reg;-muzieksysteem.<br><br>Deze assistent voor SqueezeCenter-setup leidt je door de stappen om je nieuwe speler in te stellen. We verbinden je eerst met SqueezeNetwork&reg;, en helpen je dan je lokale muziek te vinden en op te roepen.<br/><br/>Als je nog geen account op SqueezeNetwork hebt, sluit je deze set-upassistent en ga je naar <a href="http://www.squeezenetwork.com" target="_blank">squeezenetwork.com</a> om je account te maken.
 
 SETUP_WIZARD_PROXY
+	DE	Proxy-Einstellungen
 	EN	Proxy Settings
+	ES	Configuración de proxy
+	FR	Réglages du proxy
+	IT	Impostazioni proxy
+	NL	Proxy-instellingen
 
 SETUP_WIZARD_PROXY_DESC
+	DE	SqueezeCenter konnte keine Internetverbindung herstellen. <br/>Ist Ihr Netzwerk durch einen Web-Proxy geschützt, können Sie die IP-Adresse und den Anschluss für den Proxy angeben, den SlimServer verwenden soll, um auf Server außerhalb des lokalen Netzwerks zuzugreifen. Verwenden Sie das Format xx.xx.xx.xx:yyyy, wobei xx.xx.xx.xx die IP-Adresse des Proxy und yyyy die Anschlussnummer ist. Lassen Sie dieses Feld leer, wenn kein HTTP-Web-Proxy genutzt wird.
 	EN	SqueezeCenter wasn't able to connect to the web. <br/>If your network is protected by a web proxy, then you can specify the IP address and port for the proxy to use when SqueezeCenter connects to servers outside your local network.  Use the format xx.xx.xx.xx:yyyy where xx.xx.xx.xx is the IP address of the proxy, and yyyy is the port number.  Leave this field blank if you don't use a HTTP web proxy.
+	ES	SqueezeCenter no se ha podido conectar a la Web. <br/>Si su red está protegida por un proxy Web, puede especificar el puerto y la dirección IP que debe usar el proxy cuando SqueezeCenter se conecta a servidores que se encuentran fuera de la red local. Use el formato xx.xx.xx.xx:yyyy donde xx.xx.xx.xx es la dirección IP del proxy y donde yyyy es el número del puerto. Deje este campo en blanco si no usa un proxy Web HTTP.
+	FR	Le SqueezeCenter n'a pas pu se connecter à Internet. <br/>Si le réseau est protégé par un proxy, vous pouvez spécifier l'adresse IP et le port que ce proxy doit utiliser lorsque le SqueezeCenter se connecte à des serveurs ne se trouvant pas sur le réseau. Utilisez le format xx.xx.xx.xx:yyyy où xx.xx.xx.xx représente l'adresse IP et yyyy le numéro de port. Ne renseignez pas ce champ si vous n'utilisez pas de proxy Web.
+	IT	Impossibile connettersi al Web. <br/>Se la rete è protetta da un proxy Web, specificare l'indirizzo IP e la porta da utilizzare per il proxy quando SqueezeCenter si connette a server esterni alla rete locale. Utilizzare il formato xx.xx.xx.xx:yyyy dove xx.xx.xx.xx è l'indirizzo IP del proxy e yyyy è il numero di porta. Lasciare il campo vuoto se non si utilizza un proxy Web HTTP.
+	NL	SqueezeCenter kan geen verbinding met het web maken. <br/>Als je netwerk door een webproxy wordt beveiligd, kun je het IP-adres en de poort voor de proxy opgeven die gebruikt moeten worden wanneer SqueezeCenter een verbinding maakt met servers buiten je lokale netwerk. Gebruik de notatie xx.xx.xx.xx:yyyy waarbij xx.xx.xx.xx het IP-adres van de proxy en yyyy het poortnummer is. Laat dit veld leeg als je geen HTTP-webproxy gebruikt.
 
 SETUP_WIZARD_SQN
+	DE	SqueezeNetwork-Konto
 	EN	SqueezeNetwork Account
+	ES	Cuenta SqueezeNetwork
+	FR	Compte SqueezeNetwork
+	IT	Account SqueezeNetwork
+	NL	SqueezeNetwork-account
 
 SETUP_WIZARD_SQN_DESC
+	DE	Mit SqueezeNetwork können Sie Ihr neues kabelloses Musiksystem optimal nutzen und auf Musik-auf-Abruf-Dienste und Internetradiosender zugreifen.<br/><br/>Wenn Sie bereits ein SqueezeNetwork-Konto haben, geben Sie Ihre Daten unten ein und klicken Sie auf "Hinzufügen". Wenn Sie kein SqueezeNetwork-Konto haben, klicken Sie auf “<a href="http://www.squeezenetwork.com" target="_blank">Ich brauche ein Konto</a>”.
 	EN	SqueezeNetwork allows you to get the most out of your new wireless music system by giving you access to music services and internet radio stations.<br/><br/>If you already have a SqueezeNetwork account please enter your information below and click the "Add" button. If you don't have a SqueezeNetwork account, please click "I need an account".
+	ES	SqueezeNetwork le permite obtener el máximo de su nuevo sistema de música inalámbrico, mediante el acceso a servicios de música a petición y emisoras de radio por Internet.<br/><br/>Si ya tiene una cuenta SqueezeNetwork, introduzca la información pertinente a continuación y haga clic en el botón "Agregar". Si no tiene una cuenta SqueezeNetwork, haga clic en “Necesito una cuenta”.
+	FR	SqueezeNetwork vous permet de tirer parti de votre nouveau système musical sans fil en vous donnant accès à des services de musique à la demande et à des stations de radio Internet.<br/><br/>Si vous disposez déjà d'un compte SqueezeNetwork, spécifiez les informations requises ci-dessous et cliquez sur le bouton Ajouter. Sinon, cliquez sur Je souhaite créer un compte.
+	IT	SqueezeNetwork consente di sfruttare al massimo i nuovi sistemi musicali senza fili fornendo accesso a servizi musicali su richiesta e alle stazioni radio di Internet.<br/><br/>Se si dispone già di un account SqueezeNetwork, immettere i propri dati in basso e fare clic sul pulsante "Aggiungi". Se non si dispone di un account SqueezeNetwork, fare clic su Nuovo account.
+	NL	SqueezeNetwork geeft je toegang tot services voor muziek op aanvraag en internetradiostations, zodat je je nieuwe draadloze muzieksysteem optimaal kunt benutten.<br/><br/>Als je al een SqueezeNetwork-account hebt, voer je hieronder je gegevens in en klik je op de knop Toevoegen. Heb je nog geen SqueezeNetwork-account, dan klik je op Ik heb een account nodig.
 
 SETUP_WIZARD_SQN_VERIFY
+	DE	Hinzufügen
 	EN	Add
+	ES	Agregar
+	FR	Ajouter
+	IT	Aggiungi
+	NL	Toevoegen
 
 SETUP_WIZARD_SOURCE
+	DE	Musikquelle
 	EN	Music Source
+	ES	Origen de música
+	FR	Source musicale
+	IT	Sorgente musicale
+	NL	Muziekbron
 
 SETUP_WIZARD_SOURCE_DESC
+	DE	Es gibt mehrere Möglichkeiten, die lokalen Musikdateien in SqueezeCenter zu importieren. Wählen Sie eine aus der folgenden Liste:
 	EN	You have several ways to integrate your local music files with SqueezeCenter. Please select from the following list:
+	ES	Hay varias formas de integrar archivos de música locales con SqueezeCenter. Seleccione uno de los métodos en la lista siguiente:
+	FR	Vous pouvez intégrer vos fichiers musicaux locaux au SqueezeCenter de diverses manières. Sélectionnez une option dans la liste suivante.
+	IT	Esistono svariati modi di integrare i file musicali locali in SqueezeCenter. Selezionare quello desiderato dall'elenco seguente:
+	NL	Je kunt je lokale muziekbestanden op verschillende manieren met SqueezeCenter integreren. Selecteer een optie in de volgende lijst:
 
 SETUP_WIZARD_SOURCE_AUDIODIR
+	DE	<b>Lokale Musik verwenden.</b> SqueezeCenter kann auf Musikdateien auf dem lokalen oder einem anderen Computer im Netzwerk zugreifen.
 	EN	<b>Use local music.</b> SqueezeCenter can access music files on your local computer or another computer in your network.
+	ES	<b>Usar música local.</b> SqueezeCenter puede acceder a archivos de música en su ordenador o en otro de la misma red.
+	FR	<b>Utiliser la musique locale.</b> Le SqueezeCenter peut accéder à des fichiers musicaux se trouvant sur votre ordinateur ou sur un ordinateur en réseau.
+	IT	<b>Utilizza la musica locale.</b> SqueezeCenter consente di accedere ai file musicali memorizzati nel computer locale o in un altro computer della rete.
+	NL	<b>Lokale muziek gebruiken.</b> SqueezeCenter kan muziekbestanden op je lokale computer of een andere computer in je netwerk oproepen.
 
 SETUP_WIZARD_SOURCE_ITUNES
+	DE	<b>iTunes&reg; verwenden</b>. SqueezeCenter kann auf die Musiksammlung und Wiedergabelisten von iTunes zugreifen. In iTunes vorgenommene Änderungen werden in SqueezeCenter übernommen.
 	EN	<b>Use iTunes&reg;.</b> SqueezeCenter can access your iTunes library and playlists. Changes made in iTunes will be reflected in SqueezeCenter.
+	ES	<b>Usar iTunes&reg;.</b> SqueezeCenter puede acceder a sus listas de reproducción y a la biblioteca de iTunes. Los cambios realizados en iTunes se reflejarán en SqueezeCenter.
+	FR	<b>Utiliser iTunes&reg;.</b> Le SqueezeCenter peut accéder à la librairie et aux listes de lecture iTunes. Les modifications effectuées dans iTunes seront répercutées au SqueezeCenter.
+	IT	<b>Usa iTunes&reg;.</b> SqueezeCenter consente di accedere alla libreria e agli elenchi di riproduzione di iTunes. Le modifiche eseguite in iTunes vengono estese a SqueezeCenter.
+	NL	<b>iTunes gebruiken&reg;.</b> SqueezeCenter kan je iTunes-collectie en -playlists oproepen. Wijzigingen in iTunes worden in SqueezeCenter weerspiegeld.
 
 SETUP_WIZARD_SOURCE_MUSICIP
+	DE	<b>MusicIP verwenden&trade;</b>. SqueezeCenter kann MusicIP als Quelle für Titel- und Stilrichtungsangaben verwenden. Weitere Informationen finden Sie auf <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>.
 	EN	<b>Use MusicIP&trade;.</b> SqueezeCenter can use MusicIP as your source for title and genre information. For more information visit <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>
+	ES	<b>Usar MusicIP&trade;.</b> SqueezeCenter puede usar MusicIP como origen para la información de título y de género. Para más información, visite <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>
+	FR	<b>Utiliser MusicIP&trade;.</b> Le SqueezeCenter peut utiliser le logiciel MusicIP comme source pour les titres et les genres. Pour en savoir plus, rendez-vous sur <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>
+	IT	<b>Usa MusicIP&trade;.</b> SqueezeCenter consente di utilizzare MusicIP come fonte dei titoli e delle informazioni sul genere musicale. Per ulteriori informazioni visitare il sito Web all'indirizzo <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a>
+	NL	<b>MusicIP gebruiken&trade;.</b> SqueezeCenter kan MusicIP als je bron voor titel- en genre-informatie gebruiken. Ga naar <a href="http://www.musicip.com/" target="_blank">www.musicip.com</a> voor meer informatie.
 
 SETUP_WIZARD_AUDIODIR
+	DE	Lokaler Musikordner
 	EN	Local Music Folder
+	ES	Carpeta de música local
+	FR	Dossier de musique local
+	IT	Cartella locale Musica
+	NL	Map met lokale muziek
 
 SETUP_WIZARD_AUDIODIR_DESC
+	DE	Wählen Sie den Ordner, der Ihre Musiksammlung enthält.
 	EN	Please navigate to the folder where your music collection is stored.
+	ES	Acceda a la carpeta en la que está almacenada su colección de música.
+	FR	Accédez au dossier contenant votre collection musicale.
+	IT	Accedere alla cartella in cui è memorizzata la raccolta musicale personale.
+	NL	Navigeer naar de map waar je muziekcollectie is opgeslagen.
 
 SETUP_WIZARD_SHARE_WIN
+	DE	<br/><br/>Wenn Sie auf Musik, die auf einem anderen Computer oder einem Netzlaufwerk gespeichert ist, zugreifen möchten, vergewissern Sie sich, dass das Laufwerk im Dateisystem verfügbar ist. Verfügbare Laufwerke werden im Auswahlfenster links angezeigt. Wenn Sie den Pfad des gewünschten Laufwerks kennen, geben Sie ihn unten ein.
 	EN	<br/><br/>If you want to access any of your music stored on another computer or a shared network drive, please make sure that the shared drive is mounted and available to your file system. Once the drive is available, it will appear in the selection window to the left. If you know the path of the drive you wish to access you can enter it below.
+	ES	<br/><br/>Si desea acceder a música almacenada en otro ordenador o en una unidad de red compartida, asegúrese de que ésta está montada y disponible para su sistema de archivos. Cuando la unidad esté disponible, aparecerá en la ventana de selección de la izquierda. Si conoce la ruta de la unidad a la que quiere acceder, puede introducirla aquí.
+	FR	<br/><br/>Si vous souhaitez accéder à des morceaux stockés sur un autre ordinateur ou sur un lecteur partagé en réseau, vérifiez que le lecteur est monté et qu'il est disponible dans votre système de fichiers. Si le lecteur est disponible, il s'affiche dans la fenêtre de sélection de gauche. Si vous connaissez le chemin d'accès au lecteur, vous pouvez le spécifier ci-dessous.
+	IT	<br/><br/>Se si desidera accedere ai brani musicali memorizzati in un altro computer o in un'unità di rete condivisa, assicurarsi che l'unità condivisa sia installata e disponibile nel file system. Se l'unità è disponibile, verrà visualizzata nella parte sinistra della finestra di selezione. Immettere di seguito il percorso dell'unità a cui si desidera accedere, se disponibile.
+	NL	<br/><br/>Wil je muziek oproepen die op een andere computer of een gedeeld netwerkstation is opgeslagen, zorg er dan voor dat het gedeelde station geactiveerd en beschikbaar is voor je bestandssysteem. Zodra het station beschikbaar is, verschijnt het in het selectievenster aan de linkerkant. Als je het pad weet van het station dat je wilt oproepen, kun je dit hieronder invoeren.
 
 SETUP_WIZARD_SHARE_OTHERS
+	DE	<br/><br/>Wenn Sie auf Musik, die auf einem anderen Computer oder einem Netzwerk-Volume gespeichert ist, zugreifen möchten, vergewissern Sie sich, dass das Volume im Dateisystem verfügbar ist. Verfügbare Volumes werden im Auswahlfenster links angezeigt. Wenn Sie den Pfad des gewünschten Volume kennen, geben Sie ihn unten ein.
 	EN	<br/><br/>If you want to access any of your music stored on another computer or a shared network volume, please make sure that the shared volume is mounted and available to your file system. Once the volume is available, it will appear in the selection window to the left. If you know the path of the volume you wish to access you can enter it below.
+	ES	<br/><br/>Si desea acceder a música almacenada en otro ordenador o en un volumen de red compartido, asegúrese de que éste está montado y disponible para su sistema de archivos. Cuando el volumen esté disponible, aparecerá en la ventana de selección de la izquierda. Si conoce la ruta del volumen al que quiere acceder, puede introducirla aquí.
+	FR	<br/><br/>Si vous souhaitez accéder à des morceaux stockés sur un autre ordinateur ou sur un volume partagé en réseau, vérifiez que le volume est monté et qu'il est disponible dans votre système de fichiers. Si le volume est disponible, il s'affiche dans la fenêtre de sélection de gauche. Si vous connaissez le chemin d'accès au volume, vous pouvez le spécifier ci-dessous.
+	IT	<br/><br/>Se si desidera accedere ai brani musicali memorizzati in un altro computer o in un volume di rete condiviso, assicurarsi che il volume condiviso sia installato e disponibile nel file system. Se il volume è disponibile, viene visualizzato nella parte sinistra della finestra di selezione. Immettere di seguito il percorso del volume a cui si desidera accedere, se disponibile.
+	NL	<br/><br/>Wil je muziek oproepen die op een andere computer of een gedeeld netwerkvolume is opgeslagen, zorg er dan voor dat het gedeelde volume geactiveerd en beschikbaar is voor je bestandssysteem. Zodra het volume beschikbaar is, verschijnt het in het selectievenster aan de linkerkant. Als je het pad weet van het volume dat je wilt oproepen, kun je dit hieronder invoeren.
 
 SETUP_WIZARD_PLAYLISTDIR
+	DE	Wiedergabelisten-Ordner
 	EN	Playlist Folder
+	ES	Carpeta de listas de reproducción
+	FR	Dossier des listes de lecture
+	IT	Cartella Elenchi di riproduzione
+	NL	Playlistmap
 
 SETUP_WIZARD_PLAYLISTDIR_DESC
+	DE	Wählen Sie den Pfad zu Ihrem Wiedergabelisten-Ordner.
 	EN	Please select the path to your playlist folder.
+	ES	Seleccione la ruta de la carpeta de listas de reproducción.
+	FR	Spécifier le chemin d'accès au dossier des listes de lecture.
+	IT	Selezionare il percorso della cartella degli elenchi di riproduzione.
+	NL	Selecteer het pad naar je playlistmap.
 
 SETUP_WIZARD_ITUNES
+	DE	iTunes-Integration
 	EN	iTunes Integration
+	ES	Integración de iTunes
+	FR	Intégration iTunes
+	IT	Integrazione di iTunes
+	NL	iTunes-integratie
 
 SETUP_WIZARD_ITUNES_DESC
+	DE	SqueezeCenter konnte Ihre iTunes-Bibliothek nicht automatisch finden. Wählen Sie Ihre iTunes-XML-Datei aus.
 	EN	SqueezeCenter wasn't able to find your iTunes library automatically. Please select your iTunes XML file.
+	ES	SqueezeCenter no ha podido encontrar su biblioteca de iTunes automáticamente. Seleccione su archivo XML de iTunes.
+	FR	Le SqueezeCenter n'a pas pu trouver la bibliothèque iTunes automatiquement. Sélectionnez votre fichier XML iTunes.
+	IT	Impossibile trovare la libreria iTunes. Selezionare il file XML di iTunes.
+	NL	SqueezeCenter kan je iTunes-collectie niet automatisch vinden. Selecteer het XML-bestand van je iTunes.
 
 SETUP_WIZARD_MUSICIP
+	DE	MusicIP-Integration
 	EN	MusicIP Integration
+	ES	Integración de MusicIP
+	FR	Intégration MusicIP
+	IT	Integrazione di MusicIP
+	NL	MusicIP-integratie
 
 SETUP_WIZARD_MUSICIP_DESC
+	DE	SqueezeCenter konnte keine Verbindung zum MusicIP Mixer herstellen. Wenn Sie nicht den Standardanschluss (10002) für MusicIP Mixer verwenden, geben Sie die Anschlussnummer in dieses Feld ein.
 	EN	SqueezeCenter wasn't able to connect to your MusicIP Mixer. If you're using a non-standard port (default: 10002) for your MusicIP Mixer, please enter the port number in this field.
+	ES	SqueezeCenter no se ha podido conectar a MusicIP Mixer. Si utiliza un puerto no estándar (predeterminado: 10002) para MusicIP Mixer, introduzca el número de puerto en este campo.
+	FR	Le SqueezeCenter n'a pas pu se connecter à MusicIP Mixer. Si vous utilisez un port non standard (10002 par défaut) pour MusicIP Mixer, spécifiez-le dans ce champ.
+	IT	Impossibile connettersi alla raccolta MusicIP. Se non si utilizza una porta standard (predefinita: 10002) per la raccolta MusicIP,immettere il numero di porta in questo campo.
+	NL	SqueezeCenter kan geen verbinding met je MusicIP Mixer maken. Als je een niet-standaard poort (standaard: 10002) voor je MusicIP Mixer gebruikt, voer je in dit veld het poortnummer in.
 
 SETUP_WIZARD_MUSICIP_DESC2
+	DE	Sie müssen MusicIP vor SqueezeCenter starten. Sollte es Probleme bei der Verbindung zu MusicIP geben, beenden Sie SqueezeCenter, starten Sie MusicIP neu und starten Sie anschließend SqueezeCenter.
 	EN	MusicIP Mixer must be started before SqueezeCenter. If you have trouble connecting to MusicIP, exit SqueezeCenter, restart MusicIP, and restart SqueezeCenter.
+	ES	MusicIP Mixer debe iniciarse antes que SqueezeCenter. Si tiene problemas para establecer conexión con MusicIP, cierre SqueezeCenter, reinicie MusicIP y, a continuación, reinicie SqueezeCenter.
+	FR	MusicIP Mixer doit être démarré avant le SqueezeCenter. Si vous rencontrez des problèmes de connexion à MusicIP, quittez le SqueezeCenter, redémarrez MusicIP, puis redémarrez le SqueezeCenter.
+	IT	La raccolta MusicIP deve essere avviata prima di SqueezeCenter. In caso di problemi di connessione a MusicIP, chiudere SqueezeCenter, riavviare MusicIP, quindi riavviare SqueezeCenter.
+	NL	MusicIP Mixer moet vóór SqueezeCenter worden gestart. Als je geen verbinding met MusicIP kunt maken, sluit je SqueezeCenter af, en start je MusicIP en SqueezeCenter opnieuw.
 
 SETUP_WIZARD_MUSICIP_DESC3
+	DE	Weitere Informationen zum Konfigurieren von MusicIP Mixer und SqueezeCenter finden Sie unter </a>www.musicip.com<a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">.
 	EN	For more information about the MusicIP Mixer configuration and SqueezeCenter please visit <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
+	ES	Para más información sobre la configuración de MusicIP Mixer y SqueezeCenter, visite <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
+	FR	Pour en savoir plus sur la configuration de MusicIP Mixer et du SqueezeCenter, rendez-vous sur <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
+	IT	Per ulteriori informazioni sulla configurazione della raccolta MusicIP e su SqueezeCenter visitare il sito Web all'indirizzo <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a>.
+	NL	Ga naar <a href="http://www.musicip.com/mixer/slimserver.jsp" target="_blank">www.musicip.com</a> voor meer informatie over de MusicIP Mixer-configuratie en SqueezeCenter.
 
 SETUP_WIZARD_SUMMARY
+	DE	Zusammenfassung
 	EN	Summary
+	ES	Resumen
+	FR	Résumé
+	IT	Riepilogo
+	NL	Samenvatting
 
 SETUP_WIZARD_SUMMARY_DESC
+	DE	Das Einrichten von SqueezeCenter ist abgeschlossen.
 	EN	You've finished setting up SqueezeCenter.
+	ES	Ha completado la configuración de SqueezeCenter.
+	FR	La configuration du SqueezeCenter est terminée.
+	IT	La configurazione di SqueezeCenter è completata.
+	NL	Je bent klaar met het instellen van SqueezeCenter.
 
 SETUP_WIZARD_SUMMARY_SQN
+	DE	SqueezeNetwork-Konto:
 	EN	SqueezeNetwork Account:
+	ES	Cuenta SqueezeNetwork
+	FR	Compte SqueezeNetwork:
+	IT	Account SqueezeNetwork:
+	NL	SqueezeNetwork-account:
 
 SETUP_WIZARD_SUMMARY_MUSICSOURCE
+	DE	Musikquelle
 	EN	Music Source
+	ES	Origen de música
+	FR	Source musicale
+	IT	Sorgente musicale
+	NL	Muziekbron
 
 SETUP_WIZARD_SUMMARY_RESCAN
+	DE	<br/><br/>
 	EN	<br/><br/>
+	ES	<br/><br/>
+	FR	<br/><br/>
+	IT	<br/><br/>
+	NL	<br/><br/>
 
 SETUP_WIZARD_DONE
+	DE	SqueezeCenter wurde eingerichtet!
 	EN	SqueezeCenter Setup Done!
+	ES	Configuración de SqueezeCenter completada.
+	FR	Configuration du SqueezeCenter effectuée.
+	IT	Configurazione di SqueezeCenter completata
+	NL	Installatie van SqueezeCenter voltooid!
 
 SETUP_WIZARD_DONE_DESC
+	DE	Die Einstellungen wurden gespeichert. Sie können SqueezeCenter jetzt nutzen.<br/><br/>Wenn Sie eine lokale Musikquelle gewählt haben, beginnt SqueezeCenter mit dem Indizieren der Sammlung. Wir bitten um etwas Geduld. Sie erhalten bald Zugriff auf alle Musikdateien.<br/><br/>Sie können dieses Fenster schließen oder <a href="/">hier klicken</a>, um SqueezeCenter aufzurufen.
 	EN	Your settings have been saved. You're now ready to use SqueezeCenter.<br/><br/>If you selected a local music source, SqueezeCenter will now start indexing your collection. Please be patient &mdash; you'll soon have access to all of your music files.<br/><br/>You can now close this window or <a href="/">click here</a> to proceed to SqueezeCenter.
+	ES	La configuración se ha guardado. Ya puede empezar a utilizar SqueezeCenter.<br/><br/>Si ha seleccionado un origen de música local, SqueezeCenter iniciará la creación de un índice de su colección. Le rogamos que tenga paciencia; no tardará en tener acceso a todos sus archivos de música.<br/><br/>Ahora puede cerrar esta ventana o <a href="/">haga clic aquí</a> para pasar a SqueezeCenter.
+	FR	Vos réglages ont été enregistrés. Vous pouvez maintenant utiliser le SqueezeCenter.<br/><br/>Si vous avez sélectionné une source musicale locale, le SqueezeCenter va procéder à l'indexation de votre collection. Veuillez patienter pendant l'opération. Vous allez bientôt pouvoir accéder à vos fichiers musicaux.<br/><br/>Vous pouvez fermer cette fenêtre ou <a href="/">cliquer ici</a> pour accéder au SqueezeCenter.
+	IT	Le impostazioni sono state salvate. È ora possibile utilizzare SqueezeCenter.<br/><br/>Se è stata selezionata una sorgente musicale locale, SqueezeCenter avvierà ora l'indicizzazione della raccolta. Attendere. I file musicali saranno accessibili tra qualche istante.<br/><br/>Chiudere questa finestra o <a href="/">fare clic qui</a> per accedere a SqueezeCenter.
+	NL	Je instellingen zijn opgeslagen. Je kunt SqueezeCenter nu gebruiken.<br/><br/>Als je een lokale muziekbron hebt geselecteerd, indexeert SqueezeCenter nu je collectie. Een moment geduld &mdash; je zult binnenkort al je muziekbestanden kunnen oproepen.<br/><br/>Je kunt dit venster nu sluiten of <a href="/">hier klikken</a> om naar SqueezeCenter te gaan.
 
 SETUP_WIZARD_NEXT
 	DE	Weiter
 	EN	Next
+	ES	Siguiente
+	FR	Suivant
+	IT	Avanti
+	NL	Volgende
 
 SETUP_WIZARD_PREVIOUS
 	DE	Zurück
 	EN	Previous
+	ES	Anterior
+	FR	Précédent
+	IT	Precedente
+	NL	Vorige
 
 SETUP_WIZARD_FINISH
 	DE	Abschliessen
 	EN	Finish
+	ES	Finalizar
+	FR	Terminer
+	IT	Fine
+	NL	Voltooien
 
 SETUP_WIZARD_CLOSE
 	DE	Schliessen
 	EN	Close
+	ES	Cerrar
+	FR	Fermer
+	IT	Chiudi
+	NL	Sluiten
 
 SETUP_SELECT_FILE
 	DE	Bitte wählen Sie eine Datei
 	EN	Please select a file
+	ES	Seleccione un archivo
+	FR	Veuillez sélectionner un fichier.
+	IT	Selezionare un file
+	NL	Selecteer een bestand
 
 SETUP_SELECT_FOLDER
 	DE	Bitte wählen Sie einen Ordner
 	EN	Please select a folder
+	ES	Seleccione una carpeta
+	FR	Veuillez sélectionner un dossier.
+	IT	Selezionare una cartella
+	NL	Selecteer een map
+
 #
 # Web interface
 #
+
 PLAYER
 	CS	Přehrávač
-	DE	Player
 	DA	Afspiller
+	DE	Player
 	EN	Player
 	ES	Reproductor
 	FI	Soittimen
@@ -6960,6 +7405,10 @@ CURRENT_PLAYER
 CHOOSE_PLAYER
 	DE	Player Auswahl
 	EN	Choose player
+	ES	Elegir reproductor
+	FR	Sélectionner une platine
+	IT	Scegli lettore
+	NL	Speler kiezen
 
 NOW_PLAYING_ON
 	CS	Nyní hraje na serveru v
@@ -7465,6 +7914,10 @@ DISABLED
 NATIVE
 	DE	Nativ
 	EN	Native
+	ES	Nativo
+	FR	Natif
+	IT	Nativo
+	NL	Systeemeigen
 	NO	Naturlig
 
 SAVE_PLAYLIST
@@ -7501,10 +7954,18 @@ CLEAR_PLAYLIST
 SHOW_ARTWORK
 	DE	Plattenhüllen anzeigen
 	EN	Show Artwork
+	ES	Mostrar carátula de álbum
+	FR	Afficher les pochettes
+	IT	Mostra copertina
+	NL	Hoesafbeeldingen weergeven
 
 HIDE_ARTWORK
 	DE	Plattenhüllen nicht anzeigen
 	EN	Hide Artwork
+	ES	Ocultar carátula de álbum
+	FR	Masquer les pochettes
+	IT	Nascondi copertina
+	NL	Hoesafbeeldingen verbergen
 
 VOLUME
 	CS	Hlasitost
@@ -8278,7 +8739,7 @@ APE
 	FR	Monkey's Audio
 	HE	Monkey's Audio
 	IT	Monkey's Audio
-	NL	Monkey's audio
+	NL	Monkey's Audio
 
 MP3
 	CS	mp3
@@ -8362,7 +8823,12 @@ MPC
 	NL	Musepack
 
 WVP
+	DE	Wavpack
 	EN	Wavpack
+	ES	Wavpack
+	FR	Wavpack
+	IT	Wavpack
+	NL	Wavpack
 
 SHN
 	DE	Kürzen
@@ -8380,8 +8846,8 @@ WMA
 	ES	Windows Media
 	FR	Windows Media
 	HE	Windows Media
-	IT	Windows Media Audio
-	NL	Windows-media
+	IT	Windows Media
+	NL	Windows Media
 	NO	Windows Media Audio
 
 MMS
@@ -8696,6 +9162,10 @@ BITRATE
 PLAYTIME
 	DE	Laufzeit
 	EN	Playtime
+	ES	Tiempo de reproducción
+	FR	Durée de lecture
+	IT	Durata riproduzione
+	NL	Speeltijd
 
 BPM
 	CS	Beatů za minutu
@@ -9148,14 +9618,26 @@ GALLERY
 SWITCH_TO_GALLERY
 	DE	Grosse Plattenhüllen
 	EN	Large Artwork
+	ES	Carátula de álbum grande
+	FR	Grandes pochettes
+	IT	Copertina grande
+	NL	Grote hoesafbeeldingen
 
 SWITCH_TO_LIST
 	DE	Nur Text
 	EN	Text only
+	ES	Sólo texto
+	FR	Texte uniquement
+	IT	Solo testo
+	NL	Alleen tekst
 
 SWITCH_TO_EXTENDED_LIST
 	DE	Kleine Plattenhüllen
 	EN	Small Artwork
+	ES	Carátula de álbum pequeña
+	FR	Petites pochettes
+	IT	Copertina piccola
+	NL	Kleine hoesafbeeldingen
 
 BROWSE
 	CS	Procházet
@@ -9375,10 +9857,20 @@ SYNCHRONIZED_WITH
 	ZH_CN	同步与
 
 PLAYER_PLUGINS
+	DE	Extras
 	EN	Extras
+	ES	Extras
+	FR	Extras
+	IT	Extra
+	NL	Extra's
 
 PLUGINS
+	DE	Extras
 	EN	Extras
+	ES	Extras
+	FR	Extras
+	IT	Extra
+	NL	Extra's
 
 NEXT
 	CS	Další
@@ -9734,10 +10226,20 @@ PLAYERIR_SETTINGS
 	ZH_CN	红外线设置
 
 SERVER_STATUS
+	DE	SqueezeCenter-Status
 	EN	SqueezeCenter Status
+	ES	Estado de SqueezeCenter
+	FR	Etat du SqueezeCenter
+	IT	Stato di SqueezeCenter
+	NL	SqueezeCenter-status
 
 SERVER_STATUS_DESC
+	DE	Informationen auf allen identifizierten mit SqueezeCenter verbundenen Geräten
 	EN	Information on all identified devices connected to SqueezeCenter
+	ES	Información sobre todos los dispositivos identificados conectados a SqueezeCenter
+	FR	Informations sur tous les dispositifs identifiés connectés au SqueezeCenter
+	IT	Informazioni su tutti i dispositivi rilevati connessi a SqueezeCenter
+	NL	Informatie over alle geïdentificeerde apparaten die met SqueezeCenter verbonden zijn
 
 BASIC_SERVER_SETTINGS
 	DE	Grundeinstellungen
@@ -9753,6 +10255,10 @@ BASIC_SERVER_SETTINGS
 ADVANCED_SETTINGS
 	DE	Erweitert
 	EN	Advanced
+	ES	Avanzada
+	FR	Avancé
+	IT	Avanzate
+	NL	Geavanceerd
 
 SERVER_SETTINGS
 	CS	Nastavení serveru
@@ -9923,13 +10429,28 @@ NETWORK_SETTINGS
 	ZH_CN	网络
 
 SQUEEZENETWORK_SETTINGS
+	DE	SqueezeNetwork
 	EN	SqueezeNetwork
+	ES	SqueezeNetwork
+	FR	SqueezeNetwork
+	IT	SqueezeNetwork
+	NL	SqueezeNetwork
 
 DEBUG_NETWORK_SQUEEZENETWORK
+	DE	SqueezeNetwork
 	EN	SqueezeNetwork Logging
+	ES	Registro de SqueezeNetwork
+	FR	Journalisation de SqueezeNetwork
+	IT	Registrazione di SqueezeNetwork
+	NL	SqueezeNetwork-registratie
 
 DEBUG_NETWORK_COMETD
+	DE	Cometd-Protokoll
 	EN	Cometd protocol logging
+	ES	Registro de protocolo Cometd
+	FR	Journalisation du protocole Cometd
+	IT	Registrazione protocollo Cometd
+	NL	Registratie van Cometd-protocol
 
 SETUP_GROUP_DEBUG_DESC
 	DE	SqueezeCenter enthält eine Reihe von Logging-Einstellungen, mit denen Sie umfangreiche Angaben über den Betrieb des SqueezeCenters aufzeichnen können. Aktivieren Sie die Punkte, die protokolliert werden sollen, und klicken Sie auf 'Ändern', um das Protokollieren der entsprechenden Information zu aktivieren. <a href="/log.txt" target="log">Hier können Sie die aktuellen Protokolleinträge anzeigen</a>.
@@ -9943,6 +10464,10 @@ SETUP_GROUP_DEBUG_DESC
 DEBUGGING_SETTINGS
 	DE	Log-Datei
 	EN	Logging
+	ES	Registro
+	FR	Journalisation
+	IT	Registrazione
+	NL	Loggen
 
 CHANGE
 	CS	Změnit
@@ -10367,16 +10892,28 @@ CURRENT_WEB_SKIN
 DISPLAY_PLUGINS
 	DE	Extras-Menü auf dem Slim-Player anzeigen:
 	EN	Display the Extras menu on the Slim player:
+	ES	Mostrar el menú Extras en el reproductor Slim:
+	FR	Afficher le menu Extras sur la platine:
+	IT	Visualizza il menu Extra nel lettore Slim:
+	NL	Het menu Extra's op de Slim-speler weergeven:
 	PT	Mostrar menu de Extras no cliente Slim
 
 SHOW_PLUGINS
 	DE	Extras anzeigen
 	EN	Show Extras
+	ES	Mostrar Extras
+	FR	Afficher les extras
+	IT	Mostra extra
+	NL	Extra's weergeven
 	PT	Mostrar Extras
 
 NO_PLUGINS
 	DE	Keine Extras verfügbar.
 	EN	No Extras available.
+	ES	No hay Extras disponibles.
+	FR	Aucun extra disponible.
+	IT	Nessun extra disponibile
+	NL	Geen Extra's beschikbaar.
 	PT	Sem Extras
 
 MUSIC_PLAYER
@@ -10546,13 +11083,13 @@ NO_PLAYER_FOUND
 NO_PLAYER_DETAILS
 	CS	<p><b>Pakliže používáte Squeezebox:</b></p><li> Ujistěte se, že je Váš přehrávač připojen a že máte správně nastavená síťová nastavení. Klikněte na tlačítko 'Obnovit' jestliže je přehrávač připojen.</li>  <br>  <p><b>Pokud nepoužíváte Squeezebox:</p></b>   <li>Můžete poslouchat obsah hudebního archivu použitím SoftSqueeze - softwarové verze Squeezeboxu.</li>  <li>Můžet také použít softwarový MP3 přehrávač (jako je WinAmp, MusicJukebox, Windows Media Player, nebo iTunes)  a poslouchat Váš hudební archiv otevřením URL: http://localhost:9000/stream.mp3 v přehrávači.</li>
 	DA	Kontroller at din afspiller er sluttet til og at dens netværksindstillinger er korrekte. Tryk F5 (Refresh/Genindlæs) i din web-browser for at prøve at forbinde til afspilleren igen.
-	DE	<b>Sie besitzen Squeezebox oder Transporter:</b><ul><li>Überprüfen Sie, ob der Player korrekt angeschlossen ist und die Netzwerkeinstellungen stimmen und klicken Sie im Browser auf 'Aktualisieren', wenn der Player angeschlossen ist.</ul><p><b>Sie besitzen weder Squeezebox noch Transporter:</b><ul><li>Sie können mit <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, einer Software-Version der Squeezebox, ihre Musiksammlung anhören.<li>Mit einer Software zur Wiedergabe von MP3 (z.B. WinAmp oder iTunes) können Sie über folgende URL auf SqueezeCenter zugreifen:  http://localhost:9000/stream.mp3
+	DE	<b>Sie besitzen Squeezebox oder Transporter:</b><ul><li>Überprüfen Sie, ob der Player korrekt angeschlossen ist und die Netzwerkeinstellungen stimmen und klicken Sie im Browser auf 'Aktualisieren', wenn der Player angeschlossen ist.</ul><p><b>Sie besitzen weder Squeezebox noch Transporter:</b><ul><li>Sie können mit <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, einer Software-Version der Squeezebox, ihre Musiksammlung anhören.<li>Mit einer Software zur Wiedergabe von MP3 (z.B. WinAmp oder iTunes) können Sie über folgende URL auf SqueezeCenter zugreifen: http://localhost:9000/stream.mp3
 	EN	<b>If you own a Squeezebox or Transporter:</b><ul><li>Make sure that your player is plugged in and its networking settings are correct. Click the Refresh button once your player is connected.</ul><p><b>If you do not own a Squeezebox or Transporter:</b><ul><li>You can listen to your music library using <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, a software version of Squeezebox.<li>You can use MP3 player software (such as WinAmp or iTunes) to listen to your music library with SqueezeCenter by connecting to this URL: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
-	ES	<b>Si posee un Squeezebox o un Transporter:</b><ul><li>Asegúrese de que el reproductor está conectado y de que la configuración de red es correcta. Haga clic en el botón Actualizar cuando el reproductor esté conectado.</ul><p><b>Si no posee un Squeezebox o un Transporter:</b><ul><li>Se puede escuchar la biblioteca de música mediante<a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, una versión en software de Squeezebox.<li>Se puede usar un reproductor en software de MP3 (como WinAmp o iTunes) para escuchar la biblioteca de música con SqueezeCenter conectándose a esta URL: http://localhost:9000/stream.mp3  
+	ES	<b>Si posee un Squeezebox o un Transporter:</b><ul><li>Asegúrese de que el reproductor está conectado y de que la configuración de red es correcta. Haga clic en el botón Actualizar cuando el reproductor esté conectado.</ul><p><b>Si no posee un Squeezebox o un Transporter:</b><ul><li>Se puede escuchar la biblioteca de música mediante<a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, una versión en software de Squeezebox.<li>Se puede usar un reproductor en software de MP3 (como WinAmp o iTunes) para escuchar la biblioteca de música con SqueezeCenter conectándose a esta URL: http://localhost:9000/stream.mp3
 	FI	<td><b>Jos omistat Squeezeboxin:</b>  <ul>  <li>Varmista, että soittimesi on kytketty verkkoon ja että verkkoasetuksesi ovat oikein. Kun soittimesi on kytketty verkkoon, paina "Refresh" nappulaa</ul>  <p>  <b>Jos et omista Squeezeboxia:</b>  <ul><li>  Voit kuunnella musiikkikirjastosi sisältöä ohjelmallisella versiolla Squeezeboxista: <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>  <li>Voit myös käyttää median toistoohjelmistoja (kuten WinAmp tai iTunes) kuunnellaksesi musiikkikirjastoasi SqueezeCenterin kautta ottamalla yhteyttä osoitteeseen:<a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul> </td>
-	FR	<b>Si vous possédez une Squeezebox ou Transporter:</b><ul><li>Vérifiez que la platine est branchée et que les réglages du réseau sont corrects. Cliquez sur le bouton Actualiser une fois la platine connectée pour actualiser la page.</ul><p><b>Si vous ne possédez pas de Squeezebox ou Transporter:</b><ul><li>Vous pouvez écouter votre collection musicale à l'aide de <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, une version logicielle de la Squeezebox.<li>Vous pouvez utiliser un logiciel de lecture de MP3, tel que Winamp ou iTunes, pour écouter votre collection musicale avec le SqueezeCenter en vous connectant à l'URL suivante: http://localhost:9000/stream.mp3.  
+	FR	<b>Si vous possédez une Squeezebox ou Transporter:</b><ul><li>Vérifiez que la platine est branchée et que les réglages du réseau sont corrects. Cliquez sur le bouton Actualiser une fois la platine connectée pour actualiser la page.</ul><p><b>Si vous ne possédez pas de Squeezebox ou Transporter:</b><ul><li>Vous pouvez écouter votre collection musicale à l'aide de <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, une version logicielle de la Squeezebox.<li>Vous pouvez utiliser un logiciel de lecture de MP3, tel que Winamp ou iTunes, pour écouter votre collection musicale avec le SqueezeCenter en vous connectant à l'URL suivante: http://localhost:9000/stream.mp3.
 	HE	<b>אם יש ברשותך התקן Squeezebox או Transporter:</b><ul><li>ודא שהנגן מחובר לחשמל ושהגדרות העבודה ברשת שלו נכונות. לאחר חיבור הנגן, לחץ על הלחצן 'רענן'.</ul><p><b>אם אין ברשותך התקן Squeezebox או Transporter:</b><ul><li>באפשרותך להאזין לספריית המוסיקה שלך באמצעות <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, גרסת תוכנה של Squeezebox.<li>באפשרותך להשתמש בתוכנת נגן של קובצי MP3 (כגון WinAmp או iTunes) כדי להאזין לספריית המוסיקה באמצעות SqueezeCenter על-ידי התחברות לכתובת ה-URL הבאה: <a target="stream" href="http://localhost:9000/stream.mp3">http://localhost:9000/stream.mp3</a></ul>
-	IT	<b>e si possiede uno Squeezebox o un Transporter:</b><ul><li>Assicurarsi che il lettore sia collegato e che le relative impostazioni di rete siano corrette. Una volta collegato il lettore, fare clic sul pulsante Aggiorna.</ul><p><b>Se non si possiede uno Squeezebox o un Transporter:</b><ul><li>È possibile ascoltare la libreria musicale mediante<a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, la versione software di Squeezebox.<li>È possibile ascoltare la libreria musicale utilizzando il software del lettore MP3 (quale WinAmp o iTunes) con SqueezeCenter collegandosi al seguente URL: http://localhost:9000/stream.mp3  
+	IT	<b>e si possiede uno Squeezebox o un Transporter:</b><ul><li>Assicurarsi che il lettore sia collegato e che le relative impostazioni di rete siano corrette. Una volta collegato il lettore, fare clic sul pulsante Aggiorna.</ul><p><b>Se non si possiede uno Squeezebox o un Transporter:</b><ul><li>È possibile ascoltare la libreria musicale mediante<a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, la versione software di Squeezebox.<li>È possibile ascoltare la libreria musicale utilizzando il software del lettore MP3 (quale WinAmp o iTunes) con SqueezeCenter collegandosi al seguente URL: http://localhost:9000/stream.mp3
 	JA	プレーヤーがつながれ、ネットワークセッティングが正しいことを確認してください。「更新」を押して、プレーヤへの接続を再度試みてください。
 	NL	<b>Als je een Squeezebox of Transporter hebt:</b><ul><li>Zorg ervoor dat je speler op het netwerk is aangesloten en dat de netwerkinstellingen goed zijn Klik op de knop Vernieuwen wanneer je speler is aangesloten.</ul><p><b>Als je geen Squeezebox of Transporter hebt:</b><ul><li>Je kunt naar je muziekcollectie luisteren met <a target="_top" href="html/softsqueeze/index.html">SoftSqueeze</a>, een softwareversie van de Squeezebox.<li>Je kunt MP3-spelersoftware (zoals WinAmp of iTunes) gebruiken om met SqueezeCenter naar je muziekcollectie te luisteren. Maak hiervoor een verbinding met de volgende URL: http://localhost:9000/stream.mp3
 	NO	Sørg for spilleren din er på, koblet til og har riktige nettverksinnstillinger. Trykk på F5 (oppdater/refresh) i din webbrowser for å prøve å koble opp mot spilleren igjen.
@@ -10598,7 +11135,7 @@ PLAYER_NEEDS_UPGRADE_1
 	FI	Squeezeboxin ohjelmistopäivitys
 	FR	Mise à jour du logiciel Squeezebox
 	HE	עדכון תוכנה
-	IT	Aggiornamento software 
+	IT	Aggiornamento software
 	JA	Squeezeboxソフトウェアアップデート
 	NL	Software-update
 	NO	Programvareoppdatering av spilleren
@@ -10657,7 +11194,7 @@ UPGRADE_COMPLETE
 	FI	Ohjelmiston päivitys
 	FR	Mise à jour du micrologiciel
 	HE	עדכון קושחה
-	IT	Aggiornamento firmware 
+	IT	Aggiornamento firmware
 	JA	ファームウェアアップデート
 	NL	Firmware-update
 	NO	Programvareoppdatering avsluttet
@@ -11219,10 +11756,20 @@ TRACKSMATCHING
 	ZH_CN	歌曲标¢匹配
 
 GENREMATCHING
+	DE	Passende Stilrichtung
 	EN	Genre matching
+	ES	Género coincidente
+	FR	Correspondance de genres
+	IT	Genere corrispondente a
+	NL	Zoekresultaten voor genre
 
 GENRESMATCHING
+	DE	Passende Stilrichtungen
 	EN	Genres matching
+	ES	Géneros coincidentes
+	FR	Correspondance de genres
+	IT	Generi corrispondenti a
+	NL	Zoekresultaten voor genres
 
 MORE
 	DE	Mehr
@@ -11311,13 +11858,13 @@ RADIO_TUNEIN_NOW
 	ZH_CN	现在调谐
 
 RADIO_TUNEIN_DESC
-	DE	Falls Sie die URL eines Internet-Radiosenders bereits kennen, können Sie diese hier eingeben und auf 'Sender wählen' klicken. Sie können entweder die URL des Datenstroms (z.B. http://62) oder die Wiedergabeliste, die auf den Datenstrom zeigt (z.B. http://www.hitzradio.com/hitzradio.pls) eingeben. 
+	DE	Falls Sie die URL eines Internet-Radiosenders bereits kennen, können Sie diese hier eingeben und auf 'Sender wählen' klicken. Sie können entweder die URL des Datenstroms (z.B. http://62) oder die Wiedergabeliste, die auf den Datenstrom zeigt (z.B. http://www.hitzradio.com/hitzradio.pls) eingeben.
 	EN	If you already know the URL of the station you would like to listen to, enter it below and click on the "Tune In" button. You can enter the URL of either the radio stream itself (e.g. http://62.49.59.50:8000) or the playlist file that is pointing to the stream (e.g. http://www.hitzradio.com/hitzradio.pls).	
-	ES	Si ya conoce la URL de la emisora que desea escuchar, escríbala a continuación y haga clic en el botón "Sintonizar". Se puede introducir la URL de la propia secuencia de radio o (por ejemplo, http://62.49.59.50:8000) o el archivo de lista de reproducción que apunta a esa secuencia (por ejemplo http://www.hitzradio.com/hitzradio.pls). 
-	FR	Si vous connaissez l'URL d'une station de radio, vous pouvez la spécifier ci-dessous et cliquer sur Connecter. Vous pouvez spécifier l'URL du flux lui-même (http://62.49.59.50:8000, par exemple) ou de la liste de lecture pointant vers le flux http://www.hitzradio.com/hitzradio.pls). 
+	ES	Si ya conoce la URL de la emisora que desea escuchar, escríbala a continuación y haga clic en el botón "Sintonizar". Se puede introducir la URL de la propia secuencia de radio o (por ejemplo, http://62.49.59.50:8000) o el archivo de lista de reproducción que apunta a esa secuencia (por ejemplo http://www.hitzradio.com/hitzradio.pls).
+	FR	Si vous connaissez l'URL d'une station de radio, vous pouvez la spécifier ci-dessous et cliquer sur Connecter. Vous pouvez spécifier l'URL du flux lui-même (http://62.49.59.50:8000, par exemple) ou de la liste de lecture pointant vers le flux http://www.hitzradio.com/hitzradio.pls).
 	HE	אם ידועה לך כתובת ה-URL של התחנה שלה ברצונך להאזין, הזן אותה בשדה שלהלן ולחץ על הלחצן "התכוונן". באפשרותך להזין את כתובת ה-URL של זרימת הרדיו עצמה (לדוגמה, http://62.49.59.50:8000) או של קובץ רשימת ההשמעה שמצביע על הזרימה (לדוגמה, http://www.hitzradio.com/hitzradio.pls). 
 	IT	Se si conosce già l'URL della stazione che si vuole ascoltare, inserirlo di seguito e fare clic sul pulsante Sintonizza. È possibile inserire l'URL dello stream della radio (esempio http://62.49.59.50:8000) o del file dell'elenco di riproduzione che punta allo stream (esempio http://www.hitzradio.com/hitzradio.pls).
-	NL	Als je de URL al weet van de zender die je wilt beluisteren, kun je deze hieronder invoeren. Klik vervolgens op de knop Instellen. Je kunt de URL van de radio-stream zelf invoeren (bijv. http://62.49.59.50:8000), of van het playlistbestand dat naar de stream wijst (bijv. http://www.hitzradio.com/hitzradio.pls). 
+	NL	Als je de URL al weet van de zender die je wilt beluisteren, kun je deze hieronder invoeren. Klik vervolgens op de knop Instellen. Je kunt de URL van de radio-stream zelf invoeren (bijv. http://62.49.59.50:8000), of van het playlistbestand dat naar de stream wijst (bijv. http://www.hitzradio.com/hitzradio.pls).
 
 RADIO_TUNEIN_RADIOURL
 	DE	Radio-URL:
@@ -11459,7 +12006,7 @@ REMOTE_STREAMING
 	FI	Kaukosoitto
 	FR	Diffusion à distance
 	HE	הפעלת זרימה מרחוק
-	IT	Streaming remoto 
+	IT	Streaming remoto
 	JA	リモート ストリーミング
 	NL	Streaming op afstand
 	NO	Spillerinnstillinger
@@ -11633,7 +12180,12 @@ INFORMATION_MENU_PLAYER
 	ZH_CN	播放表信息
 
 INFORMATION_SPECIFIC_PLAYER
+	DE	Informationen zu %s
 	EN	%s Information
+	ES	Información de %s
+	FR	Informations %s
+	IT	Informazioni su %s
+	NL	%s-informatie
 
 INFORMATION_MENU_SERVER
 	CS	Informace serveru
@@ -11668,6 +12220,10 @@ INFORMATION_MENU_LIBRARY
 INFORMATION_MENU_MODULE
 	DE	Extras-Module
 	EN	Extras Modules
+	ES	Módulos de Extras
+	FR	Modules Extras
+	IT	Moduli extra
+	NL	Modules van Extra's
 
 INFORMATION_PLAYER_NAME
 	CS	Název přehrávače
@@ -11685,7 +12241,12 @@ INFORMATION_PLAYER_NAME
 	ZH_CN	播放机名字
 
 INFORMATION_PLAYER_NAME_ABBR
+	DE	Name
 	EN	Name
+	ES	Nombre
+	FR	Nom
+	IT	Nome
+	NL	Naam
 
 INFORMATION_PLAYER_MODEL
 	CS	Typ přehrávače
@@ -11703,7 +12264,12 @@ INFORMATION_PLAYER_MODEL
 	ZH_CN	播放机型号
 
 INFORMATION_PLAYER_MODEL_ABBR
+	DE	Modell
 	EN	Model
+	ES	Modelo
+	FR	Modèle
+	IT	Modello
+	NL	Model
 
 INFORMATION_FIRMWARE
 	CS	Verze firmvaru přehrávače
@@ -11721,7 +12287,12 @@ INFORMATION_FIRMWARE
 	ZH_CN	播放机韧件版本
 
 INFORMATION_FIRMWARE_ABBR
+	DE	Firmware
 	EN	Firmware
+	ES	Firmware
+	FR	Micrologiciel
+	IT	Firmware
+	NL	Firmware
 
 INFORMATION_PLAYER_IP
 	CS	IP adresa přehrávače
@@ -11739,7 +12310,12 @@ INFORMATION_PLAYER_IP
 	ZH_CN	播放机IP地址
 
 INFORMATION_PLAYER_IP_ABBR
+	DE	IP
 	EN	IP
+	ES	IP
+	FR	IP
+	IT	IP
+	NL	IP
 
 INFORMATION_PLAYER_PORT
 	DE	Player-Portnummer
@@ -11755,7 +12331,12 @@ INFORMATION_PLAYER_PORT
 	ZH_CN	播放机端口号
 
 INFORMATION_PLAYER_PORT_ABBR
+	DE	Anschluss
 	EN	Port
+	ES	Puerto
+	FR	Port
+	IT	Porta
+	NL	Poort
 
 INFORMATION_PLAYER_MAC
 	CS	MAC adresa přehrávače
@@ -11773,7 +12354,12 @@ INFORMATION_PLAYER_MAC
 	ZH_CN	播放机MAC地址
 
 INFORMATION_PLAYER_MAC_ABBR
+	DE	MAC
 	EN	MAC
+	ES	MAC
+	FR	MAC
+	IT	MAC
+	NL	MAC
 
 INFORMATION_PLAYER_SIGNAL_STRENGTH
 	CS	Sila Wi-Fi signálu
@@ -11806,16 +12392,36 @@ INFORMATION_CLIENTS
 	ZH_CN	被认出的播放机总数
 
 INFORMATION_CACHEDIR
+	DE	Zwischenspeicher-Ordner
 	EN	Cache Folder
+	ES	Carpeta de caché
+	FR	Dossier du cache
+	IT	Cartella cache
+	NL	Cachemap
 
 INFORMATION_PREFSDIR
+	DE	Ordner für Einstellungen
 	EN	Preferences Folder
+	ES	Carpeta de preferencias
+	FR	Dossier des préférences
+	IT	Cartella delle preferenze
+	NL	Voorkeurenmap
 
 INFORMATION_PLUGINDIRS
+	DE	Ordner für Extras
 	EN	Plugin Folders
+	ES	Carpetas de extras
+	FR	Dossiers Plugins
+	IT	Cartelle dei plugin
+	NL	Extramappen
 
 INFORMATION_ARCHITECTURE
+	DE	Plattformarchitektur
 	EN	Platform Architecture
+	ES	Arquitectura de plataforma
+	FR	Architecture de la plate-forme
+	IT	Architettura piattaforma
+	NL	Platformarchitectuur
 
 INFORMATION_SERVER_IP
 	CS	IP adresa serveru
@@ -12136,16 +12742,17 @@ NOT
 	ZH_CN	不
 
 # The space before the French : is there on purpose.
+
 COLON
 	CS	:
-	DE	: 
+	DE	:
 	EN	: 
-	ES	: 
-	FR	: 
+	ES	:
+	FR	 :
 	HE	: 
-	IT	: 
+	IT	:
 	JA	:
-	NL	: 
+	NL	:
 	NO	:
 	SV	: 
 	ZH_CN	：
@@ -12170,7 +12777,7 @@ SETUP_SCROLLPIXELS
 	FI	Vieritys pikseleinä
 	FR	Pixels de défilement
 	HE	פיקסלים לגלילה
-	IT	Pixel scorrimento 
+	IT	Pixel scorrimento
 	NL	Tekstlooppixels
 	NO	Rullepiksler
 	SV	Rullningspixlar
@@ -12352,10 +12959,10 @@ FAVORITES_DELETING
 	EN	Deleting favorite...
 	ES	Eliminando favorito...
 	FI	Poistan suosikkia...
-	FR	Suppression du favori…
+	FR	Suppression du favori...
 	HE	מוחק פריטים מועדפים...
 	IT	Eliminazione di avour_te...
-	NL	Favoriet wordt verwijderd…
+	NL	Favoriet wordt verwijderd...
 	SV	Raderar favoriter...
 	ZH_CN	删除最喜爱的...
 
@@ -12370,7 +12977,12 @@ SQUEEZENETWORK
 	ZH_CN	SqueezeNetwork
 
 SQUEEZENETWORK_CONNECT
+	DE	SqueezeNetwork Beta
 	EN	SqueezeNetwork Beta
+	ES	SqueezeNetwork Beta
+	FR	SqueezeNetwork Beta
+	IT	SqueezeNetwork Beta
+	NL	SqueezeNetwork Beta
 
 SQUEEZENETWORK_CONNECTING
 	DE	Verbindung zu SqueezeNetwork wird hergestellt ...
@@ -12385,7 +12997,7 @@ SQUEEZENETWORK_CONNECTING
 	ZH_CN	SqueezeNetwork连接中...
 
 SQUEEZENETWORK_SWITCH
-	DE	Zum SqueezeNetwork umschalten Beta
+	DE	Zum SqueezeNetwork Beta umschalten
 	EN	Switch to SqueezeNetwork Beta
 	ES	Cambiar a SqueezeNetwork Beta
 	FR	Se connecter à SqueezeNetwork Beta
@@ -12398,7 +13010,7 @@ SQUEEZENETWORK_SWITCH
 SQUEEZENETWORK_SWITCHING
 	DE	Verbindung zum SqueezeNetwork wird hergestellt. Bitte warten ...
 	EN	Switching to SqueezeNetwork, please wait...
-	ES	Cambiando a SqueezeNetwork, espere…
+	ES	Cambiando a SqueezeNetwork, espere...
 	FR	Connexion à SqueezeNetwork, veuillez patienter...
 	HE	עובר ל-SqueezeNetwork, אנא המתן...
 	IT	Passaggio a SqueezeNetwork. Attendere...
@@ -12409,6 +13021,10 @@ SQUEEZENETWORK_SWITCHING
 SQUEEZENETWORK_WANT_SWITCH
 	DE	Dieser Player ist derzeit mit dem SqueezeNetwork verbunden. Wollen Sie ihn zurück zum SqueezeCenter verbinden?
 	EN	This player is currently connected to SqueezeNetwork. Do you want it to switch back to SqueezeCenter?
+	ES	Este reproductor se encuentra conectado a SqueezeNetwork. ¿Desea regresar a SqueezeCenter?
+	FR	Cette platine est actuellement connectée à SqueezeNetwork. Voulez-vous revenir au SqueezeCenter?
+	IT	Il lettore è attualmente connesso a SqueezeNetwork. Ripristinare la connessione a SqueezeCenter?
+	NL	Deze speler is momenteel met SqueezeNetwork verbonden. Wil je de speler terugschakelen naar SqueezeCenter?
 
 SQUEEZENETWORK_SB2_REQUIRED
 	DE	Diese Funktion benötigt eine neuere Squeezebox.
@@ -12424,9 +13040,18 @@ SQUEEZENETWORK_SB2_REQUIRED
 SQUEEZENETWORK_NO_PLAYER_CONNECTED
 	DE	Sie können sich ohne Player nicht zum SqueezeNetwork verbinden.
 	EN	Cannot access SqueezeNetwork services without a player connected.
+	ES	No es posible acceder a servicios SqueezeNetwork sin un reproductor conectado.
+	FR	Impossible d'accéder aux services SqueezeNetwork dans platine connectée.
+	IT	Impossibile accedere ai servizi SqueezeNetwork se non è collegato un lettore.
+	NL	Zonder een verbonden speler kunnen SqueezeNetwork-services niet worden opgeroepen.
 
 SQUEEZENETWORK_NO_LOGIN
+	DE	Für diesen Dienst ist ein SqueezeNetwork-Konto erforderlich. Sie können das Konto in einem Web-Browser in den SqueezeCenter-Einstellungen unter 'SqueezeNetwork' konfigurieren.
 	EN	A SqueezeNetwork account is required for this service. Please access SqueezeCenter Settings -> SqueezeNetwork with a web browser to configure.
+	ES	Este servicio requiere una cuenta SqueezeNetwork. Acceda a Configuración de SqueezeCenter -> SqueezeNetwork a través de un navegador Web.
+	FR	Un compte SqueezeNetwork est requis pour ce service. Dans votre navigateur, rendez-vous dans Réglages du SqueezeCenter -> SqueezeNetwork pour effectuer la configuration.
+	IT	Per questo servizio è richiesto un account SqueezeNetwork. Accedere a Impostazioni SqueezeCenter -> SqueezeNetwork tramite un browser Web per la configurazione.
+	NL	Voor deze service is een SqueezeNetwork-account vereist. Ga via een webbrowser naar SqueezeCenter-instellingen -> SqueezeNetwork om te configureren.
 
 UPNP_REQUEST_FAILED
 	DE	Fehler bei der UPnP-Anforderung. Prüfen Sie den UPnP-Server.
@@ -12534,14 +13159,14 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION
 	ZH_CN	合辑
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_DESC
-	DE	Sie können Kompilationen (Alben mit mehreren Interpreten) zusammen unter 'Diverse Interpreten' aufführen oder die einzelnen Lieder unter den einzelnen Interpreten. 
+	DE	Sie können Kompilationen (Alben mit mehreren Interpreten) zusammen unter 'Diverse Interpreten' aufführen oder die einzelnen Lieder unter den einzelnen Interpreten.
 	EN	You can choose to have compilation albums appear together under "Various Artists" or have them appear under each artist in the compilation. 
-	ES	Se puede optar por hacer que los álbumes recopilatorios aparezcan juntos en "Varios artistas" o que aparezcan por cada artista de la recopilación. 
+	ES	Se puede optar por hacer que los álbumes recopilatorios aparezcan juntos en "Varios artistas" o que aparezcan por cada artista de la recopilación.
 	FI	Voit valita näkyvätkö kokoelmalevyt yksittäisten artistien alla vai "Eri Esittäjiä" otsikon alla
-	FR	Vous pouvez spécifier si les albums de compilation apparaissent ensemble sous Artistes divers ou indépendamment sous chaque nom d'artiste. 
+	FR	Vous pouvez spécifier si les albums de compilation apparaissent ensemble sous Artistes divers ou indépendamment sous chaque nom d'artiste.
 	HE	באפשרותך לבחור להציג את כל אלבומי האוסף יחדיו תחת "מבצעים שונים" או להציגם תחת כל מבצע מהאוסף. 
 	IT	È possibile elencare gli album di compilation sotto Artisti vari o mostrarli sotto ogni di artista della compilation.
-	NL	Je kunt verzamelalbums bij 'Diverse artiesten' laten weergeven of ze bij elke artiest in het verzamelalbum laten verschijnen. 
+	NL	Je kunt verzamelalbums bij 'Diverse artiesten' laten weergeven of ze bij elke artiest in het verzamelalbum laten verschijnen.
 	ZH_CN	您可以让合辑出现在"Various Artists"或让它出现在属于个别艺人中。
 
 SETUP_VARIOUSARTISTAUTOIDENTIFICATION_1
@@ -12567,14 +13192,14 @@ SETUP_VARIOUSARTISTAUTOIDENTIFICATION_0
 	ZH_CN	把合辑发表在个别艺人中
 
 SETUP_VARIOUSARTISTSSTRING_DESC
-	DE	Gruppierte Kompilationen werden standardmäßig unter 'Diverse Interpreten' angezeigt. Sie können diesen Namen unten ändern. 
+	DE	Gruppierte Kompilationen werden standardmäßig unter 'Diverse Interpreten' angezeigt. Sie können diesen Namen unten ändern.
 	EN	When compilation albums are grouped together, they appear under "Various Artists" by default.  You can change that name below. 
-	ES	Cuando se agrupan álbumes recopilatorios, aparecen de forma predeterminada en "Varios artistas". Ese nombre se puede cambiar a continuación. 
+	ES	Cuando se agrupan álbumes recopilatorios, aparecen de forma predeterminada en "Varios artistas". Ese nombre se puede cambiar a continuación.
 	FI	Kun kokoelmalevyt on ryhmitelty yhteen, ne näkyvät oletusarvoisesti "Eri Esittäiä" otsikon alla. Voit vaihtaa tämän otsikon alla
-	FR	Lorsque des albums de compilation sont regroupés, ils s'affichent par défaut sous Artistes divers. Vous pouvez modifier ce nom ci-dessous. 
+	FR	Lorsque des albums de compilation sont regroupés, ils s'affichent par défaut sous Artistes divers. Vous pouvez modifier ce nom ci-dessous.
 	HE	כאשר אלבומי אוסף מקובצים יחדיו, הם מופיעים תחת "מבצעים שונים" כברירת מחדל. באפשרותך לשנות את השם בשדה שלהלן. 
 	IT	Quando gli album di compilation sono raggruppati, appaiono sotto Artisti vari per impostazione predefinita. È possibile cambiare la denominazione qui sotto.
-	NL	Wanneer verzamelalbums bij elkaar gegroepeerd zijn, verschijnen ze standaard bij 'Diverse artiesten'. Je kunt die naam hieronder veranderen. 
+	NL	Wanneer verzamelalbums bij elkaar gegroepeerd zijn, verschijnen ze standaard bij 'Diverse artiesten'. Je kunt die naam hieronder veranderen.
 	ZH_CN	当把合辑组合在一起时，它们会出现在"Various Artists"中。您可以把这缺省名换掉。
 
 VARIOUSARTISTS
@@ -12786,7 +13411,7 @@ SETUP_LARGETEXTFONT
 	FI	Suuren tekstin kirjaisin
 	FR	Grande police
 	HE	גופן טקסט גדול
-	IT	Carattere per testo esteso 
+	IT	Carattere per testo esteso
 	NL	Groot lettertype
 	SV	Font för stor text
 	ZH_CN	大字体
@@ -12841,6 +13466,10 @@ SORT_BY
 ALBUM_DISPLAY_OPTIONS
 	DE	Albumansichts Einstellungen
 	EN	Albumview options
+	ES	Opciones de visualización de álbum
+	FR	Options d'affichage des albums
+	IT	Opzioni di visualizzazione album
+	NL	Opties voor albumweergave
 
 SORT_ARTISTALBUM
 	DE	Interpret, Album
@@ -13397,7 +14026,7 @@ LOADING_BROWSE_MUSIC_FOLDER
 	DE	Musikordner wird geladen ...
 	EN	Loading Music Folder...
 	ES	Cargando carpeta de música...
-	FR	Chargement du dossier de musique…
+	FR	Chargement du dossier de musique...
 	HE	טוען את תיקיית המוסיקה...
 	IT	Caricamento cartella Musica...
 	NL	Muziekmap wordt geladen...
@@ -13408,7 +14037,7 @@ LOADING
 	DE	Ladevorgang läuft ...
 	EN	Loading...
 	ES	Cargando...
-	FR	Chargement…
+	FR	Chargement...
 	HE	טוען...
 	IT	Caricamento...
 	NL	Bezig met laden...
@@ -13428,208 +14057,415 @@ SRC
 DEBUG_ARTWORK
 	DE	Plattenhüllen Anzeige & Suche
 	EN	Artwork Display & Matching
+	ES	Visualización y coincidencia de carátula de álbum
+	FR	Affichage et correspondance de pochettes
+	IT	Associazione e visualizzazione copertine
+	NL	Weergave en zoekresultaten voor hoesafbeeldingen
 
 DEBUG_FACTORYTEST
 	DE	Informationen während des Hardwaretests
 	EN	Information used during factory testing
+	ES	Información utilizada durante pruebas de fábrica
+	FR	Informations utilisées pour les tests usine
+	IT	Informazioni utilizzate durante il test in fabbrica
+	NL	Informatie gebruikt tijdens fabriekstesten
 
 DEBUG_FAVORITES
 	DE	Wiedergabe & Speichern von Favoriten
 	EN	Favorites Saving & Playing
+	ES	Guardar y reproducir favoritos
+	FR	Enregistrement et lecture des favoris
+	IT	Salvataggio e riproduzione dei preferiti
+	NL	Opslaan en afspelen van Favorieten
 
 DEBUG_SERVER_PLUGINS
 	DE	Plugin Informationen
 	EN	Plugin Module Loading
+	ES	Carga de módulo de extras
+	FR	Chargement du module d'extra
+	IT	Caricamento dei moduli plugin
+	NL	Laden van extramodule
 
 DEBUG_PREFS
 	DE	Einstellungen
 	EN	Preference Setting & Saving
+	ES	Guardar y configurar preferencias
+	FR	Configuration et enregistrement des préférences
+	IT	Impostazione e salvataggio delle preferenze
+	NL	Voorkeuren instellen en opslaan
 
 DEBUG_SERVER_SCHEDULER
 	DE	Interner Scheduler
 	EN	Internal Scheduler Logging
+	ES	Registro de programador interno
+	FR	Journalisation du planificateur interne
+	IT	Registrazione pianificazione interna
+	NL	Registratie van interne planner
 
 DEBUG_SERVER
 	DE	Allgemeine Server Informationen
 	EN	General Server Information
+	ES	Información de servidor general
+	FR	Informations générales du serveur
+	IT	Informazioni generali sul server
+	NL	Algemene serverinformatie
 
 DEBUG_SERVER_SELECT
 	DE	Interner Select Loop (Fortgeschritten)
 	EN	Internal Select Loop Logging (Advanced)
+	ES	Registro de selección de bucle interno (configuración avanzada)
+	FR	Journalisation de la boucle de sélection interne (avancé)
+	IT	Registrazione ciclo di selezione interno (per utenti esperti)
+	NL	Registratie van interne selectie-loop (Geavanceerd)
 
 DEBUG_SERVER_MEMORY
 	DE	Speicherbelegung (Fortgeschritten)
 	EN	Server Memory Usage (Advanced)
+	ES	Uso de memoria de servidor (configuración avanzada)
+	FR	Utilisation de la mémoire du serveur (avancé)
+	IT	Utilizzo memoria server (per utenti esperti)
+	NL	Gebruik van servergeheugen (Geavanceerd)
 
 DEBUG_SERVER_TIMERS
 	DE	Interne Timer Informationen
 	EN	Internal Timer Information
+	ES	Información de temporizador interno
+	FR	Informations sur la programmation interne
+	IT	Informazioni timer interno
+	NL	Informatie over interne timer
 
 DEBUG_NETWORK_MDNS
+	DE	Multicast DNS/Bonjour
 	EN	Multicast DNS / Bonjour
+	ES	Multicast DNS / Bonjour
+	FR	Multicast DNS / Bonjour
+	IT	Multicast DNS / Bonjour
+	NL	Multicast DNS/Bonjour
 
 DEBUG_NETWORK_HTTP
 	DE	Interner HTTP Server
 	EN	Internal HTTP Server Logging
+	ES	Registro de servidor HTTP interno
+	FR	Journalisation du serveur http interne
+	IT	Registrazione server HTTP interno
+	NL	Registratie van interne HTTP-server
 
 DEBUG_NETWORK_ASYNCHTTP
 	DE	Asynchrone HTTP Request Informationen
 	EN	Asynchronous Remote HTTP Request Information
+	ES	Información de solicitud de HTTP remoto asincrónico
+	FR	Informations de requête http distante asynchrone
+	IT	Informazioni sulle richieste HTTP remote asincrone
+	NL	Informatie over asynchroon extern HTTP-verzoek
 
 DEBUG_NETWORK_ASYNCDNS
+	DE	Asynchroner DNS
 	EN	Asynchronous DNS Logging
+	ES	Registro de DNS asincrónico
+	FR	Journalisation DNS asynchrone
+	IT	Registrazione DNS asincrona
+	NL	Registratie van asynchroon DNS
 
 DEBUG_NETWORK_PROTOCOL
 	DE	Alle Player Protokolle
 	EN	All Player Protocol Logging
+	ES	Registro de protocolo de todos los reproductores
+	FR	Journalisation du protocole de toutes les platines
+	IT	Registrazione dei protocolli di tutti i lettori
+	NL	Registratie van protocols voor alle spelers
 
 DEBUG_NETWORK_PROTOCOL_SLIMPROTO
 	DE	SlimProto (Squeezebox / Transporter) Protokol
 	EN	SlimProto (Squeezebox / Transporter) Protocol
+	ES	Protocolo SlimProto (Squeezebox / Transporter)
+	FR	Protocole SlimProto (Squeezebox / Transporter)
+	IT	Protocollo SlimProto (Squeezebox / Transporter)
+	NL	SlimProto-protocol (Squeezebox/Transporter)
 
 DEBUG_NETWORK_PROTOCOL_SLIMP3
 	DE	SliMP3 Protokol
 	EN	SliMP3 Protocol
+	ES	Protocolo SliMP3
+	FR	Protocole SliMP3
+	IT	Protocollo SliMP3
+	NL	SliMP3-protocol
 
 DEBUG_NETWORK_UPNP
 	DE	UPnP Server & Geräte Information (Rhapsody)
 	EN	UPnP Server & Device Information (Rhapsody)
+	ES	Información de dispositivo y servidor UPnP (Rhapsody)
+	FR	Informations serveur et dispositif UPnP (Rhapsody)
+	IT	Informazioni su dispositivi e server UPnP (Rhapsody)
+	NL	Informatie over UPnP-server en -apparaat (Rhapsody)
 
 DEBUG_NETWORK_JSONRPC
 	DE	JSON-RPC API Logging
 	EN	JSON-RPC API Logging
+	ES	Registro JSON-RPC API
+	FR	Journalisation API JSON-RPC
+	IT	Registrazione API JSON-RPC
+	NL	Registratie van JSON-RPC API
 
 DEBUG_FORMATS_AUDIO
 	DE	Datei Metadaten & Audio Parsing
 	EN	File Metadata & Audio Parsing Information
+	ES	Información de análisis de audio y metadatos de archivo
+	FR	Informations de métadonnées de fichier et d'analyse audio
+	IT	Informazioni sui metadati dei file e sull'analisi audio
+	NL	Informatie over audioparsering en metagegevens van bestand
 
 DEBUG_FORMATS_PLAYLISTS
 	DE	Wiedergabelisten Parsing
 	EN	Playlist Parsing Information
+	ES	Información de análisis de lista de reproducción
+	FR	Informations d'analyse de liste de lecture
+	IT	Informazioni sull'analisi degli elenchi di riproduzione
+	NL	Informatie over playlistparsering
 
 DEBUG_FORMATS_XML
 	DE	XML Parsing (Picks, Shoutcast, etc.)
 	EN	XML Parsing Information (Picks, Shoutcast, etc)
+	ES	Información de análisis de XML (Picks, Shoutcast, etc.)
+	FR	Informations d'analyse XML (Picks, Shoutcast, etc.)
+	IT	Informazioni sull'analisi XML (Picks, Shoutcast e così via)
+	NL	XML-parseringsinformatie (aanraders, Shoutcast, enz.)
 
 DEBUG_DATABASE_MYSQL
 	DE	MySQL Initialisierung & Prozess Information
 	EN	MySQL Initialization & Process Information
+	ES	Información de proceso e inicialización de MySQL
+	FR	Informations de l'initialisation et des procédures MySQL
+	IT	Informazioni sul processo e l'inizializzazione MySQL
+	NL	Initialisatie- en procesgegevens voor MySQL
 
 DEBUG_DATABASE_SQL
 	DE	SQL Logging (Fortgeschritten)
 	EN	SQL Logging (Advanced)
+	ES	Registro de SQL (configuración avanzada)
+	FR	Journalisation SQL (avancé)
+	IT	Registrazione SQL (per utenti esperti)
+	NL	SQL-logboek (Geavanceerd)
 
 DEBUG_DATABASE_INFO
 	DE	Metadaten & Parsen
 	EN	Metadata & Parsing Logging
+	ES	Registro de metadatos y análisis
+	FR	Journalisation des métadonnées et de l'analyse
+	IT	Registrazione metadati e analisi
+	NL	Registratie van metagegevens en parsering
 
 DEBUG_OS_FILES
 	DE	Informationen zu Dateisystem-Zugriffen
 	EN	Filesystem Level Information
+	ES	Información de nivel de sistema de archivos
+	FR	Informations du niveau du système de fichiers
+	IT	Informazioni a livello di file system
+	NL	Informatie over bestandssysteemniveau
 
 DEBUG_OS_PATHS
 	DE	Dateipfad-Parsing
 	EN	Filesystem Path Parsing
+	ES	Análisis de ruta de sistema de archivos
+	FR	Analyse du chemin de système de fichiers
+	IT	Analisi percorsi del file system
+	NL	Parsering bestandssysteempaden
 
 DEBUG_CONTROL_STDIO
 	DE	Standard I/O Befehle (Fortgeschritten)
 	EN	Standard I/O Command Logging (Advanced)
+	ES	Registro de comandos de E/S estándar (configuración avanzada)
+	FR	Journalisation de commande d'E/S standard (avancé)
+	IT	Registrazione comandi I/O standard (per utenti esperti)
+	NL	Registratie van standaard-I/O-opdrachten (Geavanceerd)
 
 DEBUG_CONTROL_QUERIES
 	DE	Control Query Logging (Fortgeschritten)
 	EN	Control Query Logging (Advanced)
+	ES	Registro de control de consultas (configuración avanzada)
+	FR	Journalisation des requêtes de contrôle (avancé)
+	IT	Registrazione query di controllo (per utenti esperti)
+	NL	Queryregistratie controleren (Geavanceerd)
 
 DEBUG_CONTROL_COMMAND
 	DE	Interne Befehlsausführung (Fortgeschritten)
 	EN	Internal Command Execution Logging (Advanced)
+	ES	Registro de ejecución de comandos internos (configuración avanzada)
+	FR	Journalisation d'exécution de commandes internes (avancé)
+	IT	Registrazione esecuzione comandi interni (per utenti esperti)
+	NL	Registratie van interne opdrachtuitvoering (Geavanceerd)
 
 DEBUG_PLAYER_IR
 	DE	Infrarot Aktivität & Parsing
 	EN	Infrared Activity & Map Parsing
+	ES	Análisis de mapas y actividad de infrarrojos
+	FR	Activité infrarouge et analyse de mappage
+	IT	Attività a infrarossi e analisi delle associazioni
+	NL	Infraroodactiviteit en toewijzingsparsering
 
 DEBUG_PLAYER_MENU
 	DE	Player Menü
 	EN	Player Menu Logging
+	ES	Registro de menú de reproductor
+	FR	Journalisation du menu de la platine
+	IT	Registrazione del menu del lettore
+	NL	Registratie van spelermenu
 
 DEBUG_PLAYER_UI
 	DE	Player Benutzerinterface
 	EN	Player User Interface Information
+	ES	Información de interfaz de usuario de reproductor
+	FR	Informations de l'interface utilisateur de la platine
+	IT	Informazioni sull'interfaccia utente del lettore
+	NL	Gegevens van spelerinterface
 
 DEBUG_PLAYER_DISPLAY
 	DE	Player-Anzeige
 	EN	Player Display Information 
+	ES	Información de pantalla de reproductor
+	FR	Informations de l'affichage de la platine
+	IT	Informazioni sul display del lettore
+	NL	Spelerdisplaygegevens
 
 DEBUG_PLAYER_FONTS
 	DE	Player Anzeige (Schriften & Bitmaps)
 	EN	Player Display (Font & Bitmap Information)
+	ES	Pantalla de reproductor (información de fuente y mapa de bits)
+	FR	Affichage de la platine (informations police et bitmap)
+	IT	Display del lettore (informazioni su caratteri e bitmap)
+	NL	Spelerdisplay (Lettertype- en bitmapinformatie)
 
 DEBUG_PLAYER_TEXT
 	DE	Player Anzeige (Zeichendarstellung)
 	EN	Player Display (Character Display Information)
+	ES	Pantalla de reproductor (información de visualización de caracteres)
+	FR	Affichage de la platine (informations sur l'affichage des caractères)
+	IT	Display del lettore (informazioni sulla visualizzazione dei caratteri)
+	NL	Spelerdisplay (Grafisch-displayinformatie)
 
 DEBUG_PLAYER_PLAYLIST
 	DE	Player Wiedergabelisten Informationen
 	EN	High Level Player Playlist Control Information
+	ES	Información de control de lista de reproducción de reproductor de nivel superior
+	FR	Informations de contrôle de liste de lecture de la platine de niveau supérieur
+	IT	Informazioni di controllo generali sull'elenco di riproduzione del lettore
+	NL	Bedieningsinformatie van spelerplaylists op hoofdniveau
 
 DEBUG_PLAYER_STREAMING
 	DE	Streaming aller Geräte
 	EN	All Player Streaming Logging
+	ES	Registro de envío de secuencias de todos los reproductores
+	FR	Journalisation de la diffusion de toutes les platines
+	IT	Registrazione di tutto il flusso del lettore
+	NL	Registratie van streaming voor alle spelers
 
 DEBUG_PLAYER_STREAMING_DIRECT
 	DE	Player: Direct Streaming
 	EN	Player Direct Streaming Logging
+	ES	Registro de envío de secuencias directo de reproductor
+	FR	Journalisation de la diffusion directe de la platine
+	IT	Registrazione del flusso diretto del lettore
+	NL	Registratie van directe streaming voor speler
 
 DEBUG_PLAYER_STREAMING_REMOTE
 	DE	Player: Remote Streaming
 	EN	Player Remote Streaming Logging
+	ES	Registro de envío de secuencias de mando a distancia de reproductor
+	FR	Journalisation de la diffusion à distance de la platine
+	IT	Registrazione del flusso remoto del lettore
+	NL	Registratie van streaming op afstand voor speler
 
 DEBUG_PLAYER_FIRMWARE
 	DE	Player-Firmware Aktualisierung
 	EN	Player Firmware Upgrade Logging
+	ES	Registro de actualización de firmware de reproductor
+	FR	Journalisation de la mise à niveau du micrologiciel de la platine
+	IT	Informazioni sull'aggiornamento del firmware del lettore
+	NL	Registratie van spelerfirmware-upgrade
 
 DEBUG_PLAYER_SOURCE
 	DE	Player: Audioquelle & Konvertierung
 	EN	Player Source Audio & Conversion Logging
+	ES	Registro de conversión y origen de audio de reproductor
+	FR	Journalisation de la source audio et de la conversion source de la platine
+	IT	Registrazione conversione e audio sorgente del lettore
+	NL	Registratie van bronaudio en -conversie van speler
 
 DEBUG_PLAYER_SYNC
 	DE	Synchronisation mehrerer Geräte
 	EN	Multi-Player Synchronization Logging
+	ES	Registro de sincronización de varios reproductores
+	FR	Journalisation de la synchronisation des platines multiples
+	IT	Registrazione della sincronizzazione di più lettori
+	NL	Synchronisatieregistratie van meerdere spelers
 
 DEBUG_SCAN
 	DE	Alle Scanner-Informationen
 	EN	All Scan Logging
+	ES	Registro de todos los exámenes
+	FR	Journalisation de toutes les activités d'analyse
+	IT	Registrazione di tutte le analisi
+	NL	Registratie van alle scanactiviteiten
 
 DEBUG_SCAN_SCANNER
 	DE	Musik & Wiedergabelisten Scanner
 	EN	Music & Playlist Folder Scanning
+	ES	Examen de carpetas de listas de reproducción y música
+	FR	Analyse du dossier de la musique et des listes de lecture
+	IT	Analisi cartelle Musica ed Elenchi di riproduzione
+	NL	Scannen van muziek- en playlistmappen
 
 DEBUG_SCAN_IMPORT
 	DE	Datei & Wiedergabelisten Metadaten-Import
 	EN	File & Playlist Metadata Import Logging
+	ES	Registro de importación de metadatos de lista de reproducción y archivos
+	FR	Journalisation de l'importation des métadonnées des fichiers et des listes de lecture
+	IT	Registrazione importazione metadati da file ed elenchi di riproduzione
+	NL	Importregistratie van metagegevens van bestand en playlist
 
 DEBUG_WIZARD
+	DE	Aktivitäten des Assistenten zum Einrichten
 	EN	Setup Wizard activity logging
+	ES	Registro de actividades de asistente para instalación
+	FR	Journalisation des activités de l'assistant de configuration
+	IT	Registrazione attività procedura guidata di installazione
+	NL	Registratie van installatiewizardactiviteit
 
 SETUP_DEBUG_SERVER_LOG
 	DE	SqueezeCenter Logdatei
 	EN	SqueezeCenter Log File
+	ES	Archivo de registro de SqueezeCenter
+	FR	Fichier journal du SqueezeCenter
+	IT	File di registro di SqueezeCenter
+	NL	SqueezeCenter-logboekbestand
 
 SETUP_DEBUG_SERVER_LOG_DESC
 	DE	SqueezeCenter schreibt Logs aller relevanten Aktivitäten (Audio Streaming, Infrarot etc.) in folgende Datei:
 	EN	SqueezeCenter keeps a log file for all application related activities (Audio Streaming, Infrared, etc) here:
+	ES	SqueezeCenter mantiene un archivo de registro para todas las actividades relacionadas con la aplicación (secuencias de audio, infrarrojos, etc.) aquí:
+	FR	Le SqueezeCenter conserve un fichier journal de toutes les activités liées à l'application (diffusion audio, infrarouge, etc.), à l'emplacement suivant:
+	IT	SqueezeCenter mantiene un file di registro per tutte le attività relative alle applicazioni (flusso audio, raggi infrarossi e così via) nel seguente percorso:
+	NL	SqueezeCenter bewaart hier een logboekbestand voor alle toepassingsactiviteiten (audio-streaming, infrarood, enz.):
 
 SETUP_DEBUG_SCANNER_LOG
 	DE	Scanner Logdatei
 	EN	Scanner Log File
+	ES	Archivo de registro de examen
+	FR	Fichier journal de l'analyseur
+	IT	File di registro analisi
+	NL	Logboekbestand van scanner
 
 SETUP_DEBUG_SCANNER_LOG_DESC
 	DE	SqueezeCenter schreibt Logs der Aktivitäten im Zusammenhang mit dem Scanner (Musikdateien, iTunes, MusicIP) in folgende Datei:
 	EN	SqueezeCenter keeps a log file for all scanning related activities, including iTunes & MusicIP here:
+	ES	SqueezeCenter mantiene un archivo de registro para todas las actividades de examen, incluidas las de iTunes y MusicIP aquí:
+	FR	Le SqueezeCenter conserve un fichier journal de toutes les activités d'analyse, y compris pour iTunes et MusicIP, à l'emplacement suivant:
+	IT	SqueezeCenter mantiene un file di registro per tutte le attività relative all'analisi, inclusi iTunes e MusicIP, nel seguente percorso:
+	NL	SqueezeCenter bewaart hier een logboekbestand voor alle scanactiviteiten (zoals iTunes en MusicIP):
 
 SETUP_DEBUG_LEVEL_OFF
 	CS	Vypnuto
-	DE	Aus
 	DA	Fra
+	DE	Aus
 	EN	Off
 	ES	Apagado
 	FI	Pois
@@ -13646,192 +14482,427 @@ SETUP_DEBUG_LEVEL_OFF
 SETUP_DEBUG_LEVEL_FATAL
 	DE	Fatale Fehler
 	EN	Fatal
+	ES	Grave
+	FR	Fatal
+	IT	Irreversibile
+	NL	Fataal
 
 SETUP_DEBUG_LEVEL_ERROR
 	DE	Fehler
 	EN	Error
+	ES	Error
+	FR	Erreur
+	IT	Errore
+	NL	Fout
 
 SETUP_DEBUG_LEVEL_WARN
 	DE	Warnungen
 	EN	Warn
+	ES	Advertencia
+	FR	Avertissement
+	IT	Avviso
+	NL	Waarschuwing
 
 SETUP_DEBUG_LEVEL_INFO
 	DE	Information
 	EN	Info
+	ES	Información
+	FR	Infos
+	IT	Informazioni
+	NL	Info
 
 SETUP_DEBUG_LEVEL_DEBUG
+	DE	Debuggen
 	EN	Debug
+	ES	Depuración
+	FR	Débogage
+	IT	Debug
+	NL	Debuggen
 
 SAVE_SETTINGS
 	DE	Einstellungen speichern
 	EN	Save Settings
+	ES	Guardar configuración
+	FR	Enregistrer les réglages
+	IT	Salva impostazioni
+	NL	Instellingen opslaan
 	SV	Spara inställningar
 
 SHRINK
 	DE	Kleiner
 	EN	Shrink
+	ES	Comprimir
+	FR	Réduire
+	IT	Comprimi
+	NL	Verkleinen
 	SV	Minska
 
 ENLARGE
 	DE	Grösser
 	EN	Enlarge
+	ES	Ampliar
+	FR	Agrandir
+	IT	Ingrandisci
+	NL	Vergroten
 	SV	Förstora
 
 SCANNER_PROGRESS
 	DE	Details zum Musik-Scan
 	EN	Music Scan Details
+	ES	Detalles de examen de música
+	FR	Détails de l'analyse de la musique
+	IT	Dettagli analisi musica
+	NL	Details van muziekscan
 
 DIRECTORY_PROGRESS
 	DE	Durchsuche Musik-Verzeichnis
 	EN	Directory Scan
+	ES	Examen de directorios
+	FR	Analyse du répertoire
+	IT	Analisi delle directory
+	NL	Directory scannen
 
 PLAYLIST_PROGRESS
 	DE	Suche Wiedergabelisten
 	EN	Playlist Scan
+	ES	Examen de listas de reproducción
+	FR	Analyse de liste de lecture
+	IT	Analisi elenchi di riproduzione
+	NL	Scannen van playlists
 
 MERGEVA_PROGRESS
 	DE	Gruppiere "Diverse Artisten"
 	EN	Merge Various Artists
+	ES	Fusionar varios artistas
+	FR	Fusionner les artistes divers
+	IT	Artisti vari
+	NL	Diverse artiesten samenvoegen
 
 ARTWORK_PROGRESS
 	DE	Suche Plattenhüllen
 	EN	Artwork Scan
+	ES	Examen de carátula de álbum
+	FR	Analyse de pochettes
+	IT	Analisi copertine
+	NL	Hoesafbeeldingen scannen
 
 CLEANUP1_PROGRESS
 	DE	Datenbankbereinigung 1. Durchgang
 	EN	Database Cleanup #1
+	ES	Limpieza 1 de base de datos
+	FR	Nettoyage de base de données 1
+	IT	Pulizia del database n. 1
+	NL	Opschonen van database 1
 
 CLEANUP2_PROGRESS
 	DE	Datenbankbereinigung 2. Durchgang
 	EN	Database Cleanup #2
+	ES	Limpieza 2 de base de datos
+	FR	Nettoyage de base de données 2
+	IT	Pulizia del database n. 2
+	NL	Opschonen van database 2
 
 DBOPTIMIZE_PROGRESS
 	DE	Datenbank Optimierung
 	EN	Database Optimize
+	ES	Optimización de base de datos
+	FR	Optimisation de base de données
+	IT	Ottimizzazione database
+	NL	Database optimaliseren
 
 IMPORTER_PROGRESS
 	DE	Fortschritt der Musik-Suche
 	EN	Scanning Progress
+	ES	Progreso de examen
+	FR	Progression de l'analyse
+	IT	Avanzamento analisi
+	NL	Scanvoortgang
 
 IMPORTER_PROGRESS_DESC
 	DE	Hier werden die einzelnen Fortschritte jeder Phase der Suche nach Musikdateien angezeigt.
 	EN	This page shows the progress of each phase of the scanning process.
+	ES	Esta página muestra el progreso de cada fase del proceso de examen.
+	FR	Cette page affiche la progression de chaque phase de l'analyse.
+	IT	In questa pagina è mostrato l'avanzamento di ciascuna fase del processo di analisi.
+	NL	Op deze pagina wordt de voortgang van elke fase in het scanproces weergegeven.
 
 RUNNING
 	DE	Läuft
 	EN	Running
+	ES	En ejecución
+	FR	En cours d'exécution
+	IT	In esecuzione
+	NL	Actief
 
 COMPLETE
 	DE	Beendet
 	EN	Complete
+	ES	Completado
+	FR	Terminé
+	IT	Completo
+	NL	Voltooien
 
 PROGRESS_IMPORTER_COMPLETE_DESC
 	DE	SqueezeCenter hat das Durchsuchen ihrer Musiksammlung abgeschlossen.
 	EN	SqueezeCenter has finished scanning your music collection.
+	ES	SqueezeCenter ha finalizado el examen de su colección de música.
+	FR	Le SqueezeCenter a terminé d'analyser la collection musicale.
+	IT	SqueezeCenter ha completato l'analisi della raccolta musicale.
+	NL	SqueezeCenter heeft je muziekcollectie gescand.
 
 PROGRESS_IMPORTER_NO_INFO
 	DE	Fortschritts-Informationen des letzten Scans stehen nicht zur Verfügung.
 	EN	Progress information from the previous scan is not available.
+	ES	No hay disponible ninguna información de progreso del examen previo.
+	FR	Les informations de progression de l'analyse précédente ne sont pas disponibles.
+	IT	Le informazioni di avanzamento dell'analisi precedente non sono disponibili.
+	NL	Voortgangsinformatie van de vorige scan is niet beschikbaar.
 
 TOTAL_TIME
 	DE	Laufzeit:
 	EN	Total Time:
+	ES	Tiempo total:
+	FR	Durée totale:
+	IT	Tempo totale:
+	NL	Totale tijd:
 
 ENABLE
 	DE	Aktivieren
 	EN	Enable
+	ES	Habilitar
+	FR	Activer
+	IT	Attiva
+	NL	Inschakelen
 
 DISABLE
 	DE	Deaktivieren
 	EN	Disable
+	ES	Deshabilitar
+	FR	Désactiver
+	IT	Disattiva
+	NL	Uitschakelen
 
 UNINSTALL
 	DE	Entfernen
 	EN	Uninstall
+	ES	Desinstalar
+	FR	Désinstaller
+	IT	Disinstalla
+	NL	Verwijderen
 
 PLUGINS_CHANGED
 	DE	Die folgenden Plugins werden beim nächsten Anwendungs-Neustart aktiviert bzw. deaktiviert:
 	EN	Changes will take place at the next application restart for the following plugins:
+	ES	Los cambios de estos extras entrarán en vigor la próxima vez que se inicie la aplicación:
+	FR	Les modifications pour les extras suivants seront appliquées au prochain démarrage de l'application.
+	IT	Le modifiche diventeranno effettive al successivo avvio dell'applicazione nei seguenti plugin:
+	NL	Bij de volgende herstart van de toepassing worden wijzigingen voor deze extra's doorgevoerd:
 
 SETUP_VIEW_SCANNING
 	DE	Durchsuchen gestartet - Fortschritt anzeigen
 	EN	Scanning - View Progress
+	ES	Examen - Ver progreso
+	FR	Analyse – Affichage de la progression
+	IT	Analisi - Visualizza avanzamento
+	NL	Bezig met scannen - Voortgang bekijken
 
 SETUP_VIEW_NOT_SCANNING
 	DE	Zeige Details zur vorherige Suche
 	EN	View Previous Scan Details
+	ES	Ver detalles de examen previos
+	FR	Afficher les détails de l'analyse précédente
+	IT	Visualizza dettagli analisi precedente
+	NL	Details van vorige scan bekijken
 
 CLOSE
 	DE	Schliessen
 	EN	Close
+	ES	Cerrar
+	FR	Fermer
+	IT	Chiudi
+	NL	Sluiten
 
 PERSIST_DEBUG_SETTINGS
 	DE	Log-Einstellungen beim nächsten Neustart beibehalten
 	EN	Save logging settings for use at next application restart
+	ES	Guardar configuración de registro para utilizarla en el siguiente reinicio de aplicación
+	FR	Enregistrer les réglages de journalisation pour une utilisation au prochain démarrage de l'application
+	IT	Salva e utilizza le impostazioni di registrazione al successivo avvio dell'applicazione
+	NL	Registratie-instellingen opslaan voor gebruik bij volgende herstart van toepassing
 
 JIVE_PLAY_ALL_SONGS
+	DE	Alle Titel wiedergeben
 	EN	Play all songs
+	ES	Reproducir todas las canciones
+	FR	Lire tous les morceaux
+	IT	Riproduci tutti i brani
+	NL	Alle liedjes afspelen
 
 JIVE_PLAY_ALL
+	DE	Alle wiedergeben
 	EN	Play all
+	ES	Reproducir todo
+	FR	Tout lire
+	IT	Riproduci tutto
+	NL	Alles afspelen
 
 JIVE_PLAY_THIS_SONGS
+	DE	Diesen Titel wiedergeben
 	EN	Play this song
+	ES	Reproducir esta canción
+	FR	Lire ce morceau
+	IT	Riproduci questo brano
+	NL	Dit liedje afspelen
 
 SEARCHFOR_PLAYLISTS
+	DE	Nach Wiedergabelisten suchen
 	EN	Search for playlists
-	
+	ES	Buscar listas de reproducción
+	FR	Rechercher des listes de lecture
+	IT	Cerca elenchi di riproduzione
+	NL	Naar playlists zoeken
+
 JIVE_SEARCHFOR_HELP
+	DE	Wählen Sie den gewünschten Buchstaben mit dem Rad und drücken Sie zum Bestätigen die mittlere Taste. Drücken Sie zum Starten der Suche die mittlere Taste erneut.
 	EN	Use the scroll wheel to change letters, then press the center button to select that letter. Press the center button again to start your search.
+	ES	Cambie de letra con la rueda de desplazamiento y pulse el botón central para seleccionar la letra deseada. Pulse de nuevo el botón central para iniciar la búsqueda.
 	FR	Utiliser le bidule pour choisir une lettre, plus appuyer sur le bouton central afin de la sélectionner. Appuyer à nouveau sur le bouton central pour démarrer la recherche.
+	IT	Utilizzare la rotellina per cambiare le lettere, quindi premere il pulsante centrale per selezionarle. Premere nuovamente il pulsante centrale per avviare la ricerca.
+	NL	Gebruik het scrollwiel om naar een andere letter te gaan. Druk dan op de middelste knop om die letter te selecteren. Druk nogmaals op de middelste knop om je zoekopdracht te starten.
 
 JIVE_CHANGEPLAYERNAME_HELP
+	DE	Wählen Sie den gewünschten Buchstaben mit dem Rad und drücken Sie zum Bestätigen die mittlere Taste. Drücken Sie die mittlere Ttaste erneut, um den Namen des Players zu ändern.
 	EN	Use the scroll wheel to change letters, then press the center button to select that letter. Press the center button again to change the name of your player.
+	ES	Cambie de letra con la rueda de desplazamiento y pulse el botón central para seleccionarla. Pulse de nuevo el botón central para cambiar el nombre del reproductor.
+	FR	Utilisez la molette pour changer les lettres, puis appuyez sur le bouton central pour effectuer la sélection. Appuyez à nouveau sur le bouton central pour modifier le nom de la platine.
+	IT	Utilizzare la rotellina per cambiare le lettere, quindi premere il pulsante centrale per selezionarle. Premere nuovamente il pulsante centrale per cambiare il nome del lettore.
+	NL	Gebruik het scrollwiel om naar een andere letter te gaan. Druk dan op de middelste knop om die letter te selecteren. Druk nogmaals op de middelste knop om de naam van je speler te wijzigen.
 
 JIVE_SAVEPLAYLIST_HELP
+	DE	Wählen Sie den gewünschten Buchstaben mit dem Rad und drücken Sie zum Bestätigen die mittlere Taste. Drücken Sie zum Speichern der Wiedergabeliste die mittlere Taste erneut.
 	EN	Use the scroll wheel to change letters, then press the center button to select that letter. Press the center button again to save the playlist.
+	ES	Cambie de letra con la rueda de desplazamiento y pulse el botón central para seleccionar la deseada. Pulse de nuevo el botón central para guarda la lista de reproducción.
+	FR	Utilisez la molette pour changer les lettres, puis appuyez sur le bouton central pour effectuer la sélection. Appuyez sur le bouton central à nouveau pour enregistrer la liste de lecture.
+	IT	Utilizzare la rotellina per cambiare le lettere, quindi premere il pulsante centrale per selezionarle. Premere nuovamente il pulsante centrale per salvare l'elenco di riproduzione.
+	NL	Gebruik het scrollwiel om naar een andere letter te gaan. Druk dan op de middelste knop om die letter te selecteren. Druk nogmaals op de middelste knop om de playlist op te slaan.
 
 JIVE_ALLOWEDCHARS_WITHCAPS
+	DE	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
 	EN	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{}|:\"\'<>?-=,./~`[];0123456789
+	ES	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
+	FR	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
+	IT	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
+	NL	abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
 
 JIVE_ALLOWEDCHARS_NOCAPS
+	DE	abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
 	EN	abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{}|:\"\'<>?-=,./~`[];0123456789
+	ES	abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
+	FR	abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
+	IT	abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
+	NL	abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+{} :\"\'<>?-=,./~`[];0123456789
 
 JIVE_ALARMSET_HELP
+	DE	Wählen Sie die gewünschte Ziffer mit dem Rad und drücken Sie zum Bestätigen die mittlere Taste. Drücken Sie die mittlere Taste, nachdem Sie die Weckzeit eingestellt haben.
 	EN	Use the scroll wheel to change clock digits, then press the center button to select that digit. Press the center button after time is entered to set the alarm time.
+	ES	Cambie los dígitos del reloj con la rueda de desplazamiento y pulse el botón central para seleccionar el dígito deseado. Pulse el botón central después de introducir la hora para configurar la hora de la alarma.
+	FR	Utilisez la molette pour changer les chiffres de l'horloge, puis appuyez sur le bouton central pour effectuer la sélection. Appuyez sur le bouton central une fois l'heure sélectionnée pour définir l'heure de l'alarme.
+	IT	Utilizzare la rotellina per cambiare le cifre dell'orario, quindi premere il pulsante centrale per selezionarle. Per impostare la sveglia, premere il pulsante centrale dopo avere immesso l'ora.
+	NL	Gebruik het scrollwiel om klokcijfers te wijzigen. Druk dan op de middelste knop om dat cijfer te selecteren. Nadat de tijd is ingevoerd, druk je op de middelste knop om de alarmtijd in te stellen.
 
 JIVE_POPUP_ADDING
+	DE	Einfügen läuft ...
 	EN	Adding
+	ES	Agregando
+	FR	Ajout
+	IT	Aggiunta
+	NL	Bezig met toevoegen
 
 JIVE_POPUP_REMOVING
+	DE	Entfernen läuft
 	EN	Removing
+	ES	Quitando
+	FR	Suppression
+	IT	Rimozione
+	NL	Bezig met verwijderen
 
 JIVE_POPUP_TO_PLAYLIST
+	DE	an Wiedergabeliste...
 	EN	to Playlist...
+	ES	a lista de reproducción...
+	FR	vers la liste de lecture...
+	IT	all'elenco di riproduzione in corso...
+	NL	aan playlist...
 
 JIVE_POPUP_FROM_PLAYLIST
+	DE	aus Wiedergabeliste...
 	EN	from Playlist...
+	ES	de lista de reproducción...
+	FR	à partir de la liste de lecture...
+	IT	dall'elenco di riproduzione in corso...
+	NL	uit playlist...
 
 JIVE_POPUP_NOW_PLAYING
+	DE	Aktueller Titel
 	EN	Now Playing
+	ES	Reproducción en curso
+	FR	Lecture
+	IT	Riproduzione in corso
+	NL	Speelt nu
 
 JIVE_TURN_PLAYER_ON
+	DE	%s einschalten
 	EN	Turn On %s
+	ES	Encender %s
+	FR	Activer %s
+	IT	Accendi %s
+	NL	%s aanzetten
 
 JIVE_TURN_PLAYER_OFF
+	DE	%s ausschalten
 	EN	Turn Off %s
+	ES	Apagar %s
+	FR	Désactiver %s
+	IT	Spegni %s
+	NL	%s uitzetten
 
 PLAYER_NAME
+	DE	Name
 	EN	Name
+	ES	Nombre
+	FR	Nom
+	IT	Nome
+	NL	Naam
 
 JIVE_PLAYER_MODEL
+	DE	Modell
 	EN	Model
+	ES	Modelo
+	FR	Modèle
+	IT	Modello
+	NL	Model
 
 JIVE_PLAYER_FIRMWARE_VERSION
+	DE	Firmware-Version
 	EN	FW Version
+	ES	Versión de FW
+	FR	Version FW
+	IT	Versione FW
+	NL	FW-versie
 
 CANCEL
+	DE	Abbrechen
 	EN	Cancel
+	ES	Cancelar
+	FR	Annuler
+	IT	Annulla
+	NL	Annuleren
 
 INSERT
+	DE	Einfügen
 	EN	Insert
+	ES	Insertar
+	FR	Insérer
+	IT	Inserisci
+	NL	Invoegen
+

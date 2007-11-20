@@ -14,6 +14,10 @@ PLUGIN_RSSNEWS
 PLUGIN_RSSNEWS_DESC
 	DE	Zugriff auf RSS News Feeds
 	EN	Access to RSS News Feeds
+	ES	Acceso a fuentes RSS nuevas
+	FR	Accès aux flux d'informations RSS
+	IT	Accesso ai nuovi feed RSS
+	NL	Toegang tot RSS-nieuwskanalen
 
 PLUGIN_RSSNEWS_ADD_NEW
 	DE	Neuen Feed hinzufügen -->
@@ -235,11 +239,19 @@ SETUP_PLUGIN_RSSNEWS_ITEMS_PER_FEED_DESC
 	IT	Numero massimo di argomenti visualizzati per ogni feed quando lo screen saver è attivo. Se si imposta un valore maggiore sullo screen saver viene visualizzato un numero di argomenti maggiore prima di passare al feed successivo.
 	NL	Het maximumaantal items dat per kanaal wordt weergegeven terwijl de schermbeveiliger actief is. Een hogere waarde betekent dat de schermbeveiliger meer items laat zien, voordat deze naar het volgende kanaal springt.
 
-
 SETUP_PLUGIN_RSSNEWS_EXISTING_FEEDS
 	DE	Eingetragene Feeds:
 	EN	Existing feeds:
+	ES	Fuentes existentes:
+	FR	Flux existants:
+	IT	Feed esistenti:
+	NL	Bestaande kanalen:
 
 SETUP_PLUGIN_RSSNEWS_INVALID_FEED
 	DE	Ungültiger Feed - konnte %s nicht herunterladen
 	EN	Invalid Feed - Could not connect to %s
+	ES	Fuente no válida - No se ha podido conectar a %s
+	FR	Flux incorrect. Connexion à %s impossible
+	IT	Feed non valido. Impossibile connettersi a %s
+	NL	Ongeldig kanaal - Kan geen verbinding maken met %s
+

@@ -14,6 +14,10 @@ PLUGIN_DIGITAL_INPUT
 PLUGIN_DIGITAL_INPUT_DESC
 	DE	Digitale Eingänge für den Transporter
 	EN	Digital Input for Transporter
+	ES	Entrada digital para Transporter
+	FR	Entrée numérique pour Transporter
+	IT	Ingresso digitale per Transporter
+	NL	Digitale ingang voor Transporter
 
 PLUGIN_DIGITAL_INPUT_BALANCED_AES
 	DE	Ausgeglichenes AES/EBU
@@ -59,3 +63,4 @@ PLUGIN_DIGITAL_INPUT_CHOOSE_BELOW
 	HE	בחר אחת מאפשרויות הקלט הדיגיטלי הבאות:
 	IT	Scegliere una delle seguenti opzioni di ingresso digitale:
 	NL	Kies hieronder een digitale-ingangsoptie:
+

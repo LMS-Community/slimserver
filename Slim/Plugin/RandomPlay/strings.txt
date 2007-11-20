@@ -15,6 +15,10 @@ PLUGIN_RANDOMPLAY
 PLUGIN_RANDOM_DESC
 	DE	Zufällige Wiedergabe ihrer Musiksammlung
 	EN	Jukebox For your Music
+	ES	Jukebox para su música
+	FR	Juke-box pour votre musique
+	IT	Jukebox per la raccolta musicale personale
+	NL	Jukebox voor je muziek
 
 PLUGIN_RANDOM_DISABLED
 	DE	Zufallsmix angehalten
@@ -244,7 +248,12 @@ PLUGIN_RANDOM_GENRE_FILTER_WEB
 	NL	Genres voor opname in je mix:
 
 PLUGIN_CHOOSE_GENRES
+	DE	Stilrichtungen wählen
 	EN	Choose Genres
+	ES	Elegir géneros
+	FR	Choisir des genres
+	IT	Scegli generi
+	NL	Genres kiezen
 
 PLUGIN_RANDOM_BEFORE_NUM_TRACKS
 	DE	Aktuelle Wiedergabe zeigt
@@ -302,3 +311,4 @@ PLUGIN_RANDOM_PRESS_RIGHT
 	HE	לחץ על הלחצן ימינה כדי
 	IT	Premere il pulsante DESTRA per
 	NL	RECHTS is
+

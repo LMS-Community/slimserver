@@ -14,6 +14,10 @@ PLUGIN_PODCAST
 PLUGIN_PODCAST_DESC
 	DE	Zugang zu Podcasts
 	EN	Access to Podcasts
+	ES	Acceso a Podcasts
+	FR	Accès aux podcasts
+	IT	Accesso ai podcast
+	NL	Toegang tot Podcasts
 
 PODCAST_NOTHING_TO_PLAY
 	DE	Kein Material vorhanden
@@ -81,11 +85,24 @@ SETUP_PLUGIN_PODCAST_RESET
 SETUP_PLUGIN_PODCAST_ADD_FEED
 	DE	Neuen Feed hinzufügen:
 	EN	Add a new feed:
+	ES	Agregar fuente nueva:
+	FR	Ajouter un flux
+	IT	Aggiungi nuovo feed:
+	NL	Nieuw kanaal toevoegen:
 
 SETUP_PLUGIN_PODCAST_EXISTING_FEEDS
 	DE	Eingetragene Feeds:
 	EN	Existing feeds:
+	ES	Fuentes existentes:
+	FR	Flux existants:
+	IT	Feed esistenti:
+	NL	Bestaande kanalen:
 
 SETUP_PLUGIN_PODCAST_INVALID_FEED
 	DE	Ungültiger Feed - konnte nicht zu %s verbinden
 	EN	Invalid Feed - Can't connect to %s
+	ES	Fuente no válida - No se puede conectar a %s
+	FR	Flux incorrect. Connexion à %s impossible
+	IT	Feed non valido. Impossibile connettersi a %s
+	NL	Ongeldig kanaal - Kan geen verbinding maken met %s
+
