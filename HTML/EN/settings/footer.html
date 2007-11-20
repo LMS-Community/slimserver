@@ -2,23 +2,21 @@
 
 <input type="hidden" name="pageAntiCSRFToken" value="[% pageAntiCSRFToken %]">
 
-[% IF versionInfo %]<br>
+[%- IF versionInfo -%]<br>
 
 	<div class="settingSection">
 
 		<div class="prefHead">[% "INFORMATION_DIAGSTRING" | string  %]</div>
 
-		[% IF versionInfo %]
+		[% IF versionInfo -%]
 			<p>[% versionInfo %]</p>
-		[% END %]
+		[%- END %]
 
-		[% IF newVersion %]
+		[%- IF newVersion %]
 			<p>[% newVersion %]</p>
-		[% END %]
-
+		[% END -%]
 	</div>
-
-[% END %]
+[%- END %]
 
 [%# add event handlers to all fields which have a validator %]
 <script type="text/javascript">
@@ -36,18 +34,15 @@
 	});	
 </script>
 </div>
-
-
 <div id="prefsSubmit">
-[% IF prefs || NOT playerid %]
-	[% IF NOT nosubmit %]<input name="saveSettings" id="saveSettings" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]">[% END %]
-[% END %]
+[% IF prefs || NOT playerid -%]
+	[%- IF NOT nosubmit %]<input name="saveSettings" id="saveSettings" type="submit" class="stdclick" value="[% "SAVE_SETTINGS" | string %]">[% END %]
+[%- END -%]
 </div>
-
+</div>
 </form>
-[% IF NOT ajaxUpdate %]
+[%- IF NOT ajaxUpdate -%]
 </div>
 <!-- End settingsfooter.html -->
-[% PROCESS pagefooter.html %]
-
-[% END %]
+[%- PROCESS pagefooter.html -%]
+[%- END -%]

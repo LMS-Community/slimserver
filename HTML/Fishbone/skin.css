@@ -151,7 +151,6 @@ div#pagetitle {
 	width: 99%;
 }
 
-
 .browsedbControls,.playlistControls, .browsedbRightControls {
 	position: absolute;
 	top: 0px;
@@ -238,6 +237,8 @@ div#pagetitle {
 
 .headerhr {
 	clear: left;
+	margin: 0;
+	padding: 0;
 }
 
 .thumbwrap {
@@ -280,6 +281,33 @@ div#pagetitle {
 .settingSection {
 	position: relative;
 	border-bottom:2px solid #bbb;
+}
+
+#innerSettingsBlock {
+	overflow: auto;
+	width: 100%;
+	height: 50%;
+}
+
+#settingsRegion {
+	overflow: hidden;
+	width: 100%;
+	height: auto;
+}
+
+#setup_chooser {
+	margin: 0;
+	padding: 0;
+}
+
+#settingsForm {
+	margin: 0;
+	border: 0;
+	padding: 0;
+}
+
+#statusarea {
+	border: 1px;
 }
 
 .prefHead {
@@ -360,11 +388,6 @@ TD, P, A {
 	padding: 0px;
 	margin-bottom:1pt;
 	line-height: 150%;
-}
-
-DIV {
-	line-height: 150%;
-	_height: 0%;
 }
 
 .small {

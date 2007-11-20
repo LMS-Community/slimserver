@@ -6,7 +6,6 @@
 		[%- PROCESS setting_chooser.html setting_chooser_noHome = 1 %]
 	[% END; END %]
 
-
 	[% pageHeaderScripts = BLOCK %]
 		[% pageHeaderScripts %]
 		<script type="text/javascript" src="[% webroot %]html/prototype.js?r=[% revision %]" ></script>
@@ -30,16 +29,15 @@
 [% pageicon = 'settings'; noSpacer = 1; PROCESS pageheader.html %]
 
 <div id="statusarea" class="statusarea">
-	[% IF warning %]
+	[%- IF warning %]
 		[% warning %]
-	[% END %]
+	[% END -%]
 </div>
 
 <div id="settingsRegion">
 [% END %]
-
 <form name="settingsForm" id="settingsForm" method="post" action="[% webroot %][% path %][% IF playerid %]?playerid=[% playerid | uri %][% END %]">
-<div id="innerblock">
+<div id="innerSettingsBlock">
 <div id="fileselectorautocomplete" class="fileselectorautocomplete" style="display:none"></div>
 <div id="fileselectorindicator" class="fileselectorindicator" style="display:none"><img src="/html/images/wait.gif"></div>
 

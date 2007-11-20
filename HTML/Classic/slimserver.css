@@ -342,6 +342,12 @@ div#homeMenu {
 	margin-bottom: 10px;
 }
 
+#innerSettingsBlock {
+	overflow: auto;
+	width: 100%;
+	height: 50%;
+}
+
 .prefHead {
 	height: 13px;
 	padding: 8px 6px 2px 0px;

@@ -48,7 +48,7 @@ function chooseSettings(value,option)
 				resizeSettingsSection();
 			}
 		} );
-		document.forms.settingsForm.action = url;
+		//document.forms.settingsForm.action = url;
 	}
 }
 
@@ -85,19 +85,15 @@ function resizeSettingsSection() {
 		? parseInt(window.innerHeight, 10)
 		: parseInt(document.body.offsetHeight, 10)
 	);
-	var settingsTop = Position.cumulativeOffset($('settingsRegion'))[1];
+	var settingsTop = Position.cumulativeOffset($('innerSettingsBlock'))[1];
 	var submitHeight = $('prefsSubmit').offsetHeight + 10;
 
 	if ((winHeight - parseInt(settingsTop, 10) - parseInt(submitHeight, 10)) > 0) {
-		$('innerblock').setStyle({
-			'height': (winHeight - parseInt(settingsTop, 10) - parseInt(submitHeight, 10)) + 'px'
+		$('innerSettingsBlock').setStyle({
+			'height': (winHeight - parseInt(settingsTop, 10) - parseInt(submitHeight, 10) - 10) + 'px'
 		});
 	}
-	if ((winHeight - parseInt(settingsTop, 10) - parseInt(submitHeight, 10)) > 0) {
-		$('settingsRegion').setStyle({
-			'height': (winHeight - parseInt(settingsTop, 10)-10) + 'px'
-		});
-	}
+
 }
 
 function initSettingsForm() {

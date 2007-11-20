@@ -42,22 +42,18 @@
 </head>
 <body bgcolor="#FFFFFF" style="margin: 0;" [% bodyscript %]>
 
-[% IF NOT home %]
-	[% IF newVersion %]<br>[% newVersion %]<br>[% END %]
-	[% UNLESS nodiv %]<div class="homeMenu">[% END %]
-	[% IF pagetitle %]<div class="largeAttribute" id="pagetitle">[% pagetitle %][% IF artwork && (levelName == 'album' || levelName == 'age')%] [% "GALLERY" | string %][% END %]</div>[% END %]
-	
-	[% PROCESS galleryselect.html %]
-	
+[%- IF NOT home -%]
+	[%- IF newVersion %]<br>[% newVersion %]<br>[% END -%]
+	[%- UNLESS nodiv %]<div class="homeMenu">[% END -%]
+	[%- IF pagetitle %]<div class="largeAttribute" id="pagetitle">[% pagetitle %][% IF artwork && (levelName == 'album' || levelName == 'age')%] [% "GALLERY" | string %][% END %]</div>[% END -%]
+	[%- PROCESS galleryselect.html -%]
 	<div id="pwdlist">
-		[% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
+		[%- SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
 		[%- PROCESS crumblist IF pwd_list %]
 	</div>
-	
-	[% IF artwork && (levelName == 'album' || levelName == 'age') -%]
+	[%- IF artwork && (levelName == 'album' || levelName == 'age') -%]
 		<span id="showText">(<a href="javascript:toggleText();">Show Text</a>)</span><span id="hideText">(<a href="javascript:toggleText();">Hide Text</a>)</span>
 	[%- END %]
-	<span class="pageHeaderInfo">[% pageHeaderInfo %]</span>
-	
-[% UNLESS noHR %]<hr class="headerhr">[% END %]
-[% END %]
+	[% IF pageHeaderInfo %]<span class="pageHeaderInfo">[%- pageHeaderInfo -%]</span>[% END %]
+[%- UNLESS noHR %]<hr class="headerhr">[%- END -%]
+[%- END -%]
