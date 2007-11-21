@@ -167,7 +167,7 @@ var SettingsPage = function(){
 		initDescPopup : function(){
 			var section, descEl, desc, helpEl, title;
 
-			var tpl = new Ext.Template('<img src="' + webroot + 'html/images/search.gif" class="prefHelp">');
+			var tpl = new Ext.Template('<img src="' + webroot + 'html/images/details.gif" class="prefHelp">');
 			tpl.compile();
 
 			Ext.QuickTips.init();

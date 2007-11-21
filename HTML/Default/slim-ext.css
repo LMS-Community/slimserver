@@ -62,10 +62,10 @@ a.x-menu-item:hover {
 }
 
 .x-tabs-strip .on .x-tabs-inner {
-	padding-bottom:3px;
+	padding-bottom: 6px;
 }
 .x-tabs-strip .x-tabs-inner {
-	padding-bottom: 2px;
+	padding-bottom: 5px;
 }
 
 .x-layout-panel .x-tabs-wrap {
@@ -89,6 +89,13 @@ a.x-menu-item:hover {
 	color: #dedede;
 }
 
+.x-tabs-strip .on .x-tabs-left {
+	background-position: 0 -150px;
+}
+
+.x-tabs-strip .x-tabs-left {
+	background-position: 0 -100px;
+}
 
 /* buttons */
 .x-btn {
