@@ -429,6 +429,14 @@ sub handleSubFeed {
 	my ( $feed, $params ) = @_;
 	my ( $client, $stash, $callback, $httpClient, $response ) = @{ $params->{'args'} };
 	
+	# If there's a command we need to run, run it.  This is used in various
+	# places to trigger actions from an OPML result, such as to start playing
+	# a new Pandora radio station
+	if ( $feed->{'command'} && $client ) {
+		my @p = split / /, $feed->{'command'};
+		$client->execute( \@p );
+	}
+	
 	# find insertion point for sub-feed data in the original feed
 	my $parent = $params->{'parent'};
 	my $subFeed = $parent;
