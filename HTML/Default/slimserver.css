@@ -9,7 +9,8 @@ html, body {
 	background-color: white;
 }
 
-body.singlePanel {
+body.singlePanel,
+body.main {
 	margin: 5px;
 	background: #666666;
 }
