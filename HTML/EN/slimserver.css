@@ -31,7 +31,6 @@ div#homeMenu {
 	position: relative;
 	height: auto;
 	width: auto;
-	padding-bottom: 40px;
 }
 
 #pageHeaderInfo {
@@ -54,10 +53,26 @@ div#homeMenu {
 	padding-bottom: 5px;
 }
 
-#innerblock {
+#innerSettingsBlock {
 	overflow: auto;
 	width: 100%;
 	height: 50%;
+}
+
+#settingsRegion {
+	overflow: auto;
+	width: 100%;
+	height: 90%;
+}
+
+#settingsForm {
+	margin: 0;
+	border: 0;
+	padding: 0;
+}
+
+#statusarea {
+	border: 1px;
 }
 
 .prefHead {
