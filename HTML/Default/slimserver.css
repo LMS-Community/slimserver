@@ -24,6 +24,10 @@ html, body, tr, tr, p, div, li, input, ul, .x-btn-text, select {
 
 b, a, form { color: #333333; }
 
+td, th {
+	vertical-align: top;
+}
+
 
 /* helper classes */
 .scrollingPanel {
@@ -127,16 +131,6 @@ img#background { position:absolute; }
 	height: 40px;
 	width: 144px;
 	background: url(html/images/squeezecenter.gif) no-repeat;
-}
-
-#settingsPageHeader {
-	position: absolute;
-	left: 162px;
-	top: 13px;
-	color: white;
-	font-size: 16px;
-	font-weight: bold;
-	color: white;
 }
 
 #logitechLogo {
@@ -299,7 +293,9 @@ img#background { position:absolute; }
 	padding-bottom: 3px;
 }
 
-.settings #inner_header { padding-bottom: 0; }
+.settings #inner_header {
+	padding-bottom: 0;
+}
 
 #titleRight {
 	position: absolute;
@@ -1016,4 +1012,48 @@ form#advSearchForm.resultsPage {
 
 .hiddenDesc {
 	display: none;
+}
+
+
+/* Help screen */
+#questionmark {
+	float: left;
+	margin-left: 20px;
+}
+
+#helpsection {
+	margin-left: 180px;
+}
+
+.helpsection {
+	font-size: 12px;
+}
+
+.helpsection h1 { font-size: 125%; }
+.helpsection h2 { font-size: 110%; }
+
+.helpsection h1, .helpsection h2, .helpsection h3, .helpsection h4 {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.helpsection p, .helpsection dt {
+	margin-top: 10px;
+	margin-bottom: 5px;
+}
+
+.helpsection dd {
+	margin-left: 20px;
+}
+
+.helpsection ul, .helpsection ol {
+	list-style-type: disc;
+}
+
+.helpsection blockquote, .helpsection ul {
+	margin-left: 40px;
+}
+
+.helpsection li {
+	margin-bottom: 5px;
 }

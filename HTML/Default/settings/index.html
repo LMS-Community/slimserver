@@ -117,18 +117,6 @@ BLOCK settingsPage -%]
 
 		<style>
 			html { background: #666666; }
-
-			#footer_content { padding-top: 0; }
-			#footer_left { margin-top: 0; }
-
-			[% IF debug %]
-			.x-layout-panel-body { background: white; }
-			.x-btn-text, .x-btn button { color: black; }
-			.x-dlg .x-tabs-bottom .x-tabs-body {
-				background: white;
-				color: black;
-			}
-			[% END %]
 		</style>
 
 		<!--[if lte IE 6]>
@@ -173,7 +161,7 @@ BLOCK settingsPage -%]
 			<div id="header">
 				<div id="header_left"></div>
 				<div id="header_content">
-					<span><a href="[% webroot %]"><img src="[% webroot %]html/images/spacer.gif" id="squeezeCenterLogo"></a><span id="settingsPageHeader"> - [% "SETTINGS" | string  %]</span></span>
+					<span><a href="[% webroot %]"><img src="[% webroot %]html/images/spacer.gif" id="squeezeCenterLogo"></a></span>
 					<span><a href="http://www.slimdevices.com" target="_blank"><img src="[% webroot %]html/images/spacer.gif" id="logitechLogo"></a></span>
 				</div>
 			</div>

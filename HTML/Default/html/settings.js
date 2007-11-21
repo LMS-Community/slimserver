@@ -80,9 +80,9 @@ Settings = function(){
 		},
 
 		submitSettings : function() {
-			try { frames.maincontent.subSettings.SettingsPage.submit() }
+			try { frames.settings.subSettings.SettingsPage.submit() }
 			catch(e){
-				try { frames.maincontent.SettingsPage.submit() }
+				try { frames.settings.SettingsPage.submit() }
 				catch(e){}
 			}
 		},
@@ -110,6 +110,9 @@ Settings = function(){
 
 			Ext.get('mainbody').setHeight(dimensions['maxHeight']);
 			Ext.get('maincontent').setHeight(dimensions['maxHeight']-140);
+
+			try { this.layout(); }
+			catch(e) {}
 		},
 
 		activateTab : function(tab){
