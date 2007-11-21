@@ -21,6 +21,8 @@ sub initPlugin {
 	
 	if (exists $args{'icon-id'}) {
 		Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName => $args{'icon-id'} });
+	} else {
+		Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName => 'html/images/radio.png' });
 	}
 	
 	my $cliQuery = sub {
