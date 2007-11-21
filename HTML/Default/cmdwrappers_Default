@@ -8,9 +8,10 @@
 	[% crumbSeparator = "&gt;" %]
 	[% resizeParam = "p" %]
 	[% bgcolor = "" %]
+	[% cmdLinkIconSize = 17 %]
 
 	[% BLOCK cmdlink -%]
-		<a [% content %] ><img src="[% webroot %]html/images/[% cmdimage %]" class="cmdLinkIcon" width="13" height="13" alt="[% cmdtitle | string | ucfirst %]" title="[% cmdtitle | string | ucfirst %]"/></a>
+		<a [% content %] ><img src="[% webroot %]html/images/[% cmdimage %]" class="cmdLinkIcon" width="[% cmdLinkIconSize %]" height="[% cmdLinkIconSize %]" alt="[% cmdtitle | string | ucfirst %]" title="[% cmdtitle | string | ucfirst %]"/></a>
 	[%- END %]
 
 
@@ -112,7 +113,7 @@
 
 
 	[% BLOCK browsecontrols %]
-		[%- header='1' width='13' height='13' -%]
+		[%- header='1' width=cmdLinkIconSize height=cmdLinkIconSize -%]
 		[% IF showplayall -%]
 			[% WRAPPER playlink noTarget = 1 %]href="[% playallhref %]"[% END %]
 			[% WRAPPER addlink  noTarget = 1 %]href="[% addallhref %]"[% END %]

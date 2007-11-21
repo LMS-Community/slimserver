@@ -35,6 +35,10 @@ img#background {
 	bottom: 18px;
 }
 
+.browsedbControls input {
+	padding: 0;
+}
+
 #linkedSongInfoItems {
 	height: 155px;
 }

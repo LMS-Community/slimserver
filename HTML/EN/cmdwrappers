@@ -27,8 +27,11 @@
 [%# set this for the background color to use on resized images %]
 [% bgcolor = "" %]
 
-[%# set this for the preferred style of server side resize (see Artwork Docs). Default is 'p' for 'pad'
+[%# set this for the preferred style of server side resize (see Artwork Docs). Default is 'p' for 'pad' %]
 [% resizeParam = "p" %]
+
+[%# set this parameter to the size of your cmd buttons used in browse mode, playlist etc %]
+[% cmdLinkIconSize = 13 %]
 
 [%- BLOCK cmdlink -%]
 <a [% content %] [% UNLESS noTarget %]target="status"[% END %]>[% cmdtitle | string %]</a>
@@ -223,7 +226,7 @@ END %]
 [%# These are the controls to be shown when browsing the music library %]
 [% BLOCK browsecontrols %]
 	[%- SET class = odd ? 'odd" bgcolor="#d0d0d0':'even" bgcolor="#FFFFFF' target='status' -%]
-	[%- header='1' width='13' height='13' -%]
+	[%- header='1' width=cmdLinkIconSize height=cmdLinkIconSize -%]
 	[% IF showplayall -%]
 		[% WRAPPER playlink noTarget = 1 %]href="[% playallhref %]"[% END %]
 		[% WRAPPER addlink  noTarget = 1 %]href="[% addallhref %]"[% END %]
@@ -245,7 +248,7 @@ END %]
 [%# These are the controls to be shown when browsing the music library %]
 [% BLOCK radiocontrols %]
 	[% SET class = odd ? 'odd" bgcolor="#d0d0d0':'even" bgcolor="#FFFFFF' target='status' %]
-	[% header='1' width='13' height='13' %]
+	[% header='1' width=cmdLinkIconSize height=cmdLinkIconSize %]
 	[% WRAPPER playlink %][% PROCESS cmdHRef cmdType='play' %][% END %]
 	[% WRAPPER addlink  %][% PROCESS cmdHRef cmdType='add'  %][% END %]
 [% END %]

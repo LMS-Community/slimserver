@@ -355,7 +355,8 @@ img#background { position:absolute; }
 }
 
 .browsedbControls input {
-	height: 13px;
+	height: 15px;
+	padding: 2px 2px 0;
 }
 
 .disclosure_home {
@@ -428,12 +429,12 @@ img#background { position:absolute; }
 .browsedbControls, .playlistControls, .browsedbRightControls, .browsedbLeftControls {
 	visibility: hidden;
 	position: absolute;
-	top: -2px;
+	top: -4px;
 	right: 10px;
 }
 
 .browsedbRightControls {
-	right: 42px;
+	right: 50px;
 }
 
 .playlistSongDetail, .browseItemDetail {
@@ -591,8 +592,9 @@ div.thumbwrap {
 }
 
 .browsedbControls .searchInput {
+	height: 14px;
 	width: 185px;
-	background: white url(html/images/search.gif) no-repeat 170px -1px;
+	background: white url(html/images/search.gif) no-repeat 173px 0px;
 }
 
 form#advSearchForm.resultsPage {
