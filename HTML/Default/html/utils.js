@@ -365,6 +365,9 @@ var Utils = function(){
 		},
 
 		replacePlayerIDinUrl : function(url, id){
+			if (!id)
+				return url;
+
 			if (typeof url == 'object' && url.search != null) {
 				var args = Ext.urlDecode(url.search.replace(/^\?/, ''));
 
@@ -377,6 +380,10 @@ var Utils = function(){
 			}
 
 			var rExp = /(=(\w\w(:|%3A)){5}(\w\w))|(=(\d{1,3}\.){3}\d{1,3})/gi;
+
+			if (url.search(/player=/) && ! rExp.exec(url))
+				url = url.replace(/player=/ig, '');
+
 			return (rExp.exec(url) ? url.replace(rExp, '=' + id) : url + '&player=' + id);
 		}
 
