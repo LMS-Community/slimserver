@@ -100,6 +100,8 @@ sub _players_error {
 	my $http  = shift;
 	my $error = $http->error;
 	
+	$prefs->remove('sn_session');
+	
 	# We don't want a stale list of players, so clear it out on error
 	$PLAYERS = [];
 	

@@ -115,6 +115,8 @@ sub _init_error {
 	
 	$log->error( "Unable to get list of prefs to sync with SqueezeNetwork, sync is disabled: $error" );
 	
+	$prefs->remove('sn_session');
+	
 	$can_sync = {};
 }
 
@@ -235,6 +237,8 @@ sub _syncDown_error {
 	my $error = $http->error;
 	
 	my $client = $http->params('client');
+	
+	$prefs->remove('sn_session');
 	
 	# back off if we keep getting errors
 	my $cprefs = $prefs->client($client);
@@ -366,6 +370,8 @@ sub _syncUp_error {
 	my $client = $http->params('client');
 	
 	$prefs->client($client)->set( snLastSyncUp => -1 );
+	
+	$prefs->remove('sn_session');
 	
 	$log->error( "Sync Up failed: $error" );
 }

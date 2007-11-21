@@ -7,6 +7,7 @@ package Slim::Networking::SqueezeNetwork;
 use strict;
 use base qw(Slim::Networking::SimpleAsyncHTTP);
 
+use Digest::SHA1 qw(sha1_base64);
 use JSON::XS qw(from_json);
 use URI::Escape qw(uri_escape);
 
@@ -167,16 +168,8 @@ sub login {
 	my $password = $params{password};
 	
 	if ( !$username || !$password ) {
-		# Get these directly if running on SN
-		if ( $ENV{SLIM_SERVICE} ) {
-			my $user  = $client->playerData->userid;
-			$username = $user->email;
-			$password = $user->password;
-		}
-		else {
-			$username = $prefs->get('sn_email');
-			$password = $prefs->get('sn_password');
-		}
+		$username = $prefs->get('sn_email');
+		$password = $prefs->get('sn_password');
 	}
 	
 	# Return if we don't have any SN login information
@@ -196,12 +189,16 @@ sub login {
 			Timeout => 30,
 		},
 	);
+		
+	my $time = time();
 	
 	my $url = $self->_construct_url(
 		'login',
 		{
-			username => $username,
-			password => $password,
+			v => 'sc' . $::VERSION,
+			u => $username,
+			t => $time,
+			a => sha1_base64( sha1_base64($password) . $time ),
 		},
 	);
 	
@@ -217,36 +214,47 @@ sub _createHTTPRequest {
 	
 	# Add session cookie if we have it
 	if ( my $client = $self->params('client') ) {
-
-		if ( my $sid = $client->snSession ) {
+		unshift @args, 'X-Player-MAC', $client->id;
+	}
+	
+	if ( $ENV{SLIM_SERVICE} ) {
+		# Get sid directly if running on SN
+		if ( my $client = $self->params('client') ) {
+			my $user = $client->playerData->userid;
+			my $sid  = $user->id . ':' . $user->password;
 			unshift @args, 'Cookie', 'sdi_squeezenetwork_session=' . uri_escape($sid);
-			unshift @args, 'X-Player-MAC', $client->id;	
 		}
 		else {
-			$log->info("Logging in to SqueezeNetwork to obtain session ID");
-	
-			# Login and get a session ID
-			$self->login(
-				client => $client,
-				cb     => sub {
-					if ( my $sid = $client->snSession ) {
-						unshift @args, 'Cookie', 'sdi_squeezenetwork_session=' . uri_escape($sid);
-						unshift @args, 'X-Player-MAC', $client->id;
-			
-						$log->info("Got SqueezeNetwork session ID: $sid");
-					}
-			
-					$self->SUPER::_createHTTPRequest( $type, $url, @args );
-				},
-				ecb    => sub {
-					my ( $http, $error ) = @_;
-					$self->error( $error ); 
-					$self->{ecb}->( $self, $error );
-				},
-			);
-	
-			return;
+			bt();
+			$log->error( "SN request without a client" );
 		}
+	}
+	elsif ( my $sid = $prefs->get('sn_session') ) {
+		unshift @args, 'Cookie', 'sdi_squeezenetwork_session=' . uri_escape($sid);
+	}
+	elsif ( $url !~ m{api/v1/login} ) {
+		$log->info("Logging in to SqueezeNetwork to obtain session ID");
+	
+		# Login and get a session ID
+		$self->login(
+			client => $self->params('client'),
+			cb     => sub {
+				if ( my $sid = $prefs->get('sn_session') ) {
+					unshift @args, 'Cookie', 'sdi_squeezenetwork_session=' . uri_escape($sid);
+		
+					$log->info("Got SqueezeNetwork session ID: $sid");
+				}
+		
+				$self->SUPER::_createHTTPRequest( $type, $url, @args );
+			},
+			ecb    => sub {
+				my ( $http, $error ) = @_;
+				$self->error( $error ); 
+				$self->{ecb}->( $self, $error );
+			},
+		);
+		
+		return;
 	}
 	
 	$self->SUPER::_createHTTPRequest( $type, $url, @args );
@@ -267,10 +275,10 @@ sub _login_done {
 	}
 	
 	if ( my $sid = $json->{sid}	) {
-		if ( $params->{client} ) {
-			$params->{client}->snSession( $sid );
-		}
+		$prefs->set( sn_session => $sid );
 	}
+	
+	$log->debug("Logged into SN OK");
 	
 	$params->{cb}->();
 }
@@ -280,6 +288,8 @@ sub _error {
 	my $params = $self->params('params');
 	
 	$log->error( "Unable to login to SN: $error" );
+	
+	$prefs->remove('sn_session');
 	
 	$self->error( $error );
 	

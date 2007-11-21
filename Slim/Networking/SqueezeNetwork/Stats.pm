@@ -145,6 +145,8 @@ sub _reportStats_error {
 	my $http     = shift;
 	my $error    = $http->error;
 	my $tmpqueue = $http->params('queue');
+	
+	$prefs->remove('sn_session');
 
 	$log->error( "Stats reporting failed: $error" );
 	

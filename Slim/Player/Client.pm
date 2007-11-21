@@ -81,7 +81,7 @@ sub new {
 
 	# The following indexes are unused:
 	# 2, 3, 11, 12, 13, 16, 21, 23, 24, 25, 26, 27, 33, 34, 53
-	# 64, 65, 66, 67, 68, 72, 111
+	# 64, 65, 66, 67, 68, 72, 111, 118
 
 	$client->[0] = $id;
 	$client->[1] = $deviceid;
@@ -218,7 +218,6 @@ sub new {
 	$client->[115] = undef; # resumePlaymode, previous play mode when paused
 	$client->[116] = 0; # streamAtTrackStart, Source.pm flag indicating we should start streaming the next track on a track start event
 	$client->[117] = undef; # metaTitle, current remote stream metadata title
-	$client->[118] = undef; # SN session ID
 	$client->[119] = 1; # showBuffering
 	$client->[120] = {}; # pluginData, plugin-specific state data
 	$client->[121] = 1; # readNextChunkOk (flag used when we are waiting for an async response in readNextChunk)
@@ -1606,11 +1605,6 @@ sub streamAtTrackStart {
 sub metaTitle {
 	my $r = shift;
 	@_ ? ($r->[117] = shift) : $r->[117];
-}
-
-sub snSession {
-	my $r = shift;
-	@_ ? ($r->[118] = shift) : $r->[118];
 }
 
 sub showBuffering {

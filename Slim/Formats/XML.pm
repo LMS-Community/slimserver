@@ -30,7 +30,8 @@ use Slim::Utils::Strings qw(string);
 # How long to cache parsed XML data
 our $XML_CACHE_TIME = 300;
 
-my $log = logger('formats.xml');
+my $log   = logger('formats.xml');
+my $prefs = preferences('server');
 
 # Get xml for a feed synchronously
 # Only used to support the web interface
@@ -140,7 +141,13 @@ sub getFeedAsync {
 			return;
 		}
 		
-		if ( my $sid = $params->{'client'}->snSession ) {
+		if ( $ENV{SLIM_SERVICE} ) {
+			# Get sid directly if running on SN
+			my $user = $params->{client}->playerData->userid;
+			my $sid  = $user->id . ':' . $user->password;
+			$headers{Cookie} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
+		}
+		elsif ( my $sid = $prefs->get('sn_session') ) {
 			$headers{'Cookie'} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
 			$headers{'X-Player-MAC'} = $params->{'client'}->id;
 			
@@ -153,7 +160,7 @@ sub getFeedAsync {
 			Slim::Networking::SqueezeNetwork->login(
 				client => $params->{'client'},
 				cb     => sub {
-					if ( my $sid = $params->{'client'}->snSession ) {
+					if ( my $sid = $prefs->get('sn_session') ) {
 						$headers{'Cookie'} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
 						$headers{'X-Player-MAC'} = $params->{'client'}->id;
 						
