@@ -6932,7 +6932,7 @@ SETUP_GROUPDISCS_1
 SETUP_SN_EMAIL
 	DE	Mail-Adresse
 	EN	Email Address
-	ES	Correo electrónico:
+	ES	Correo electrónico
 	FR	Adresse électronique
 	IT	Indirizzo di posta elettronica
 	NL	E-mailadres
