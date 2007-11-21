@@ -7,7 +7,6 @@
 		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slim-ext.css?r=[% revision %]" />
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css?r=[% revision %]" />
-		<link rel="stylesheet" type="text/css" href="[% webroot %]settings.css?r=[% revision %]" />
 
 		<script type="text/javascript" src="/html/ext/adapter/ext/ext-base.js?r=[% revision %]"></script>
 		<script type="text/javascript" src="/html/ext/ext-all[% IF debug %]-debug[% END %].js?r=[% revision %]"></script>
@@ -66,6 +65,7 @@
 
 	<body>
 
+		[% IF !noForm %]
 		<div id="statusarea" class="statusarea">
 			[% IF warning %]
 				[% warning %]
@@ -82,3 +82,4 @@
 			[% IF playerid %]<input type=hidden value="[% playerid %]" name="playerid">[% END %]
 			[% IF player %]<input type=hidden value="[% player %]" name="player">[% END %]
 
+		[% END %]

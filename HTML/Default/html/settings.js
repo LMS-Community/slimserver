@@ -16,14 +16,14 @@ Settings = function(){
 
 	return {
 		init : function(){
-			var layout = new Ext.BorderLayout(document.body, {
+			var layout = new Ext.BorderLayout('mainbody', {
 				north: {
 					split:false,
-					initialSize: 80
+					initialSize: 40
 				},
 				south: {
 					split:false,
-					initialSize: 65
+					initialSize: 16
 				},
 				center: {
 					autoScroll: false
@@ -80,9 +80,9 @@ Settings = function(){
 		},
 
 		submitSettings : function() {
-			try { frames.settings.subSettings.SettingsPage.submit() }
+			try { frames.maincontent.subSettings.SettingsPage.submit() }
 			catch(e){
-				try { frames.settings.SettingsPage.submit() }
+				try { frames.maincontent.SettingsPage.submit() }
 				catch(e){}
 			}
 		},
@@ -93,21 +93,23 @@ Settings = function(){
 			else if (typeof page == 'object' && page.el != null)
 				page = tabLinks[this.id];
 
-			Ext.get('settings').dom.src = webroot + page + (page.search(/\?/) >= 0 ? '&' : '?') + 'player=' + player;
+			Ext.get('maincontent').dom.src = webroot + page + (page.search(/\?/) >= 0 ? '&' : '?') + 'player=' + player;
 		},
 
 		// resize panels, folder selectors etc.
 		onResize : function(){
-			var main = Ext.get('main');
-			var settings = Ext.get('settings');
+			var body = Ext.get(document.body);
 
 			var dimensions = new Array();
-			dimensions['maxHeight'] = main.getHeight();
-			dimensions['maxWidth'] = main.getWidth() - 10;
+			dimensions['maxHeight'] = body.getHeight() - body.getMargins('tb');
+			dimensions['maxWidth'] = body.getWidth() - body.getMargins('rl')  - (Ext.isIE && !Ext.isIE7 ? body.getMargins('rl') : 0);
 
-			settings.setHeight(dimensions['maxHeight']);
-			settings.setWidth(dimensions['maxWidth'] - 20);
-			main.setWidth(dimensions['maxWidth']);
+			var bg = Ext.get('background');
+			bg.setWidth(body.getWidth() - (Ext.isIE && !Ext.isIE7 ? body.getMargins('rl') : 0));
+			bg.setHeight(dimensions['maxHeight']);
+
+			Ext.get('mainbody').setHeight(dimensions['maxHeight']);
+			Ext.get('maincontent').setHeight(dimensions['maxHeight']-140);
 		},
 
 		activateTab : function(tab){

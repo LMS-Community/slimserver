@@ -9,6 +9,11 @@ html, body {
 	background-color: white;
 }
 
+body.singlePanel {
+	margin: 5px;
+	background: #666666;
+}
+
 #playlistPanel, #maincontent { background-color: white; }
 
 html, body, tr, tr, p, div, li, input, ul, .x-btn-text, select {
@@ -78,6 +83,13 @@ a:hover, .link:hover,
 	cursor: pointer;
 }
 
+.singlePanel #buttonbar {
+	position: absolute;
+	right: 15px;
+}
+
+
+
 /* Main screen (outer frame) */
 #noJS {
 	position: absolute;
@@ -114,6 +126,16 @@ img#background { position:absolute; }
 	height: 40px;
 	width: 144px;
 	background: url(html/images/squeezecenter.gif) no-repeat;
+}
+
+#settingsPageHeader {
+	position: absolute;
+	left: 162px;
+	top: 13px;
+	color: white;
+	font-size: 16px;
+	font-weight: bold;
+	color: white;
 }
 
 #logitechLogo {
@@ -228,6 +250,9 @@ img#background { position:absolute; }
 	left: 0;
 }
 
+.singlePanel #footer_content { padding-top: 0; }
+.singlePanel #footer_left { margin-top: 0; }
+
 #helpLink img, #settingsLink img, #footerInfo img {
 	vertical-align: middle;
 }
@@ -273,6 +298,8 @@ img#background { position:absolute; }
 	padding-bottom: 3px;
 }
 
+.settings #inner_header { padding-bottom: 0; }
+
 #titleRight {
 	position: absolute;
 	left: 10px;
@@ -284,6 +311,11 @@ img#background { position:absolute; }
 	text-align: center;
 	padding-top: 6px;
 }
+
+.singlePanel #infoTab {
+	height: 25px;
+}
+
 
 #playlistTab {
 	padding-top: 3px;
@@ -944,3 +976,43 @@ form#advSearchForm.resultsPage {
 	padding-right: 12px;
 }
 
+/* settings pages */
+.settingSection {
+	padding: 0 10px;
+	margin-bottom: 15px;
+	margin-top: 15px;
+}
+
+.settingSection p {
+	margin-bottom: 3px;
+}
+
+.settingGroup {
+	position: relative;
+	padding-left: 300px;
+	margin-bottom: 10px;
+}
+
+.prefHelp {
+	position: absolute;
+	left: 280px;
+	top: 0px;
+}
+
+.prefHead {
+	font-weight: bold;
+}
+
+.settingGroup .prefHead {
+	position: absolute;
+	width: 285px;
+	left: 0px;
+}
+
+.groupDesc, .prefDesc {
+	margin-bottom: 5px;
+}
+
+.hiddenDesc {
+	display: none;
+}

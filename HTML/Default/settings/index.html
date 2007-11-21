@@ -114,18 +114,22 @@ BLOCK settingsPage -%]
 		<link rel="stylesheet" type="text/css" href="/html/ext/resources/css/ext-all.css" />
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slim-ext.css?r=[% revision %]" />
 		<link rel="stylesheet" type="text/css" href="[% webroot %]slimserver.css?r=[% revision %]" />
-		<link rel="stylesheet" type="text/css" href="[% webroot %]settings.css?r=[% revision %]" />
 
-		[%- IF debug %]
 		<style>
+			html { background: #666666; }
+
+			#footer_content { padding-top: 0; }
+			#footer_left { margin-top: 0; }
+
+			[% IF debug %]
 			.x-layout-panel-body { background: white; }
 			.x-btn-text, .x-btn button { color: black; }
 			.x-dlg .x-tabs-bottom .x-tabs-body {
 				background: white;
 				color: black;
 			}
+			[% END %]
 		</style>
-		[%- END %]
 
 		<!--[if lte IE 6]>
 		<link href="[% webroot %]ie.css?r=[% revision %]" type="text/css" rel="stylesheet">
@@ -161,59 +165,52 @@ BLOCK settingsPage -%]
 		</script>
 	</head>
 
-	<body>
+	<body class="singlePanel settings">
+		<img id="background" src="[% webroot %]html/images/background.png" alt="Background" />
 
 		<div id="mainbody">
 
 			<div id="header">
-				<div class="mainFrame">
-					<div class="mainFrame_top"><div></div></div>
-					<div class="mainFrame_content">
-						<div class="titlebox">
-							<div class="titlebox_top"><div></div></div>
-							<div class="titlebox_content">
-								<div class="pagetitle">
-									[% "SQUEEZECENTER" | string; " - "; "SETTINGS" | string  %]
-									<span id="basicAdvanced">
-										<table>
-											<tr>
-												<td id="basic"></td>
-												<td id="advanced"></td>
-											</tr>
-										</table>
-									</span>
-								</div>
-							</div>
-							<div class="titlebox_bottom"><div></div></div>
-						</div>
-						<div id="settingsTabs"></div>
-					</div>
+				<div id="header_left"></div>
+				<div id="header_content">
+					<span><a href="[% webroot %]"><img src="[% webroot %]html/images/spacer.gif" id="squeezeCenterLogo"></a><span id="settingsPageHeader"> - [% "SETTINGS" | string  %]</span></span>
+					<span><a href="http://www.slimdevices.com" target="_blank"><img src="[% webroot %]html/images/spacer.gif" id="logitechLogo"></a></span>
 				</div>
 			</div>
 
 			<div id="main">
-				<iframe name="settings" id="settings" frameborder="0" scrolling="auto"></iframe>
+				<div class="inner" id="mainpanel">
+					<div class="inner_top"></div>
+					<div class="inner_top_left">&nbsp;</div>
+					<div class="inner_top_right">&nbsp;</div>
+	
+					<div id="inner_header">
+						<div class="pagetitle">
+							<div id="settingsTabs"></div>
+						</div>
+					</div>
+
+					<iframe name="settings" width="100%" id="maincontent" frameborder="0" scrolling="auto"></iframe>
+
+					<div id="infoTab" class="buttonbar">
+						<table id="buttonbar">
+							<tr>
+								<td><span id="cancel"></span></td>
+								<td><span id="save"></span></td>
+							<tr>
+						</table>
+					</div>
+
+					<div class="inner_bottom"></div>
+					<div class="inner_bottom_left">&nbsp;</div>
+					<div class="inner_bottom_right">&nbsp;</div>
+				</div>
+
 			</div>
 
 			<div id="footer">
-				<div class="mainFrame">
-					<div class="mainFrame_content">
-						<div class="titlebox">
-							<div class="titlebox_top"><div></div></div>
-							<div class="titlebox_content">
-								<div class="pagetitle">
-									<table id="buttonbar">
-										<tr>
-											<td><span id="cancel"></span></td>
-											<td><span id="save"></span></td>
-										<tr>
-									</table>
-								</div>
-							</div>
-							<div class="titlebox_bottom"><div></div></div>
-						</div>
-					</div>
-					<div class="mainFrame_bottom"><div></div></div>
+				<div id="footer_left"></div>
+				<div id="footer_content">
 				</div>
 			</div>
 

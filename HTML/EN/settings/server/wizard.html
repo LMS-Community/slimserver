@@ -10,8 +10,7 @@
 
 		<style type="text/css">
 		<!--
-			html, body { background: #666666; }
-			body { margin: 5px; }
+			html { background: #666666; }
 
 			form div { cursor: default; }
 
@@ -48,22 +47,10 @@
 				padding-top: 5px;
 			}
 
-			#wz_buttonbar {
-				position: absolute;
-				right: 25px;
-			}
-
-			#infoTab {
-				height: 25px;
-			}
-
 			.wz_summary_list {
 				list-style-type: circle;
 				margin-left: 20px;
 			}
-
-			#footer_content { padding-top: 0; }
-			#footer_left { margin-top: 0; }
 
 			#language {
 				position: absolute;
@@ -147,7 +134,7 @@
 		</style>
 	</head>
 
-	<body>
+	<body class="singlePanel">
 		<img id="background" src="/Default/html/images/background.png" alt="Background" />
 
 		<div id="loading-mask">&#160;</div>
@@ -232,7 +219,7 @@
 						</div>
 					</div>
 
-					<div class="inner_content" id="maincontent">
+					<div id="maincontent">
 
 						<div id="wz_formpanel">
 							<div id="welcome_m" class="wz_page">
@@ -398,8 +385,8 @@
 						</div>
 					</div>
 
-					<div id="infoTab" class="wz_buttonbar">
-						<table id="wz_buttonbar">
+					<div id="infoTab" class="buttonbar">
+						<table id="buttonbar">
 							<tr>
 								<td><span id="previous"></span></td>
 								<td><span id="next"></span></td>

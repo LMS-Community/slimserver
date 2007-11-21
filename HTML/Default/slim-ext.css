@@ -58,7 +58,7 @@ a.x-menu-item:hover {
 
 /* tabs and tab panel (settings) */
 .x-tabs-body, .x-tabs-wrap {
-	border-color: #666666;
+	border-color: #404040;
 }
 
 .x-tabs-strip .on .x-tabs-inner {
