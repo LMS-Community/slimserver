@@ -477,7 +477,9 @@ Playlist = function(){
 
 				// disable the default behaviour which would place the dragged element
 				// we don't need to place it as it will be moved in onDragDrop
-				endDrag: function() {},
+				endDrag: function() {
+					isDragging = false;
+				},
 
 				onDragEnter: function(ev, id) {
 					var source = Ext.get(this.getEl());
