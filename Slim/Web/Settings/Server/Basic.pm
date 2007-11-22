@@ -103,9 +103,9 @@ sub handler {
 			}	
 
 			# Bug 5740, flush the playlist cache
-			$client->currentPlaylistModified(1);
-			$client->currentPlaylistUpdateTime(Time::HiRes::time());
-			Slim::Player::Playlist::refreshPlaylist($client);
+			for my $client (Slim::Player::Client::clients()) {
+				$client->currentPlaylistChangeTime(Time::HiRes::time());
+			}
 		}
 	}
 
