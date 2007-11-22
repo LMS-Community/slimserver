@@ -8,6 +8,10 @@ img#background {
 	margin-top: 5px;
 }
 
+.singlePanel img#background {
+	margin-top: 0;
+}
+
 #footer_content { height: 40px; }
 
 .inner_top, .inner_bottom {
@@ -15,11 +19,15 @@ img#background {
 	padding: 0;
 }
 
-#leftpanel .inner_bottom_right { right: -1px; }
+#inner_header {
+	height: 25px;
+}
 
+#mainpanel .inner_bottom_right,
+#mainpanel .inner_bottom_left,
 #leftpanel .inner_bottom_right,
 #leftpanel .inner_bottom_left {
-	bottom: -3px;
+	bottom: -2px;
 }
 
 #rightpanel .inner_bottom_right,
