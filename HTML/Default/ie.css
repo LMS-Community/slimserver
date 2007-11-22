@@ -14,6 +14,8 @@ img#background {
 
 #footer_content { height: 40px; }
 
+.singlePanel #footer_content { height: 16px; }
+
 .inner_top, .inner_bottom {
 	font-size: 0;
 	padding: 0;
@@ -82,8 +84,8 @@ img#background {
 
 
 /* fixes for the settings pages */
-#footer .titlebox_content { height: 25px; }
- 	 
+.x-layout-panel .x-tabs-body { height: 1px; }
+
 .prefHelp {
 	left: -20px;
 	top: 3px;

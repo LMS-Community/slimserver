@@ -38,6 +38,10 @@ Settings = function(){
 			Ext.EventManager.onWindowResize(this.onResize, layout);
 			Ext.EventManager.onDocumentReady(this.onResize, layout, true);
 
+			// IE6 needs two tries...
+			if (Ext.isIE && !Ext.isIE7)
+				Ext.EventManager.onDocumentReady(this.onResize, layout, true);
+
 			layout.endUpdate();
 
 			Ext.QuickTips.init();
@@ -102,7 +106,6 @@ Settings = function(){
 
 			var dimensions = new Array();
 			dimensions['maxHeight'] = body.getHeight() - body.getMargins('tb');
-			dimensions['maxWidth'] = body.getWidth() - body.getMargins('rl')  - (Ext.isIE && !Ext.isIE7 ? body.getMargins('rl') : 0);
 
 			var bg = Ext.get('background');
 			bg.setWidth(body.getWidth() - (Ext.isIE && !Ext.isIE7 ? body.getMargins('rl') : 0));
@@ -111,8 +114,7 @@ Settings = function(){
 			Ext.get('mainbody').setHeight(dimensions['maxHeight']);
 			Ext.get('maincontent').setHeight(dimensions['maxHeight']-140);
 
-			try { this.layout(); }
-			catch(e) {}
+			this.layout();
 		},
 
 		activateTab : function(tab){

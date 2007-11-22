@@ -271,7 +271,6 @@ Wizard = function(){
 
 			var dimensions = new Array();
 			dimensions['maxHeight'] = body.getHeight() - body.getMargins('tb');
-			dimensions['maxWidth'] = body.getWidth() - body.getMargins('rl')  - (Ext.isIE && !Ext.isIE7 ? body.getMargins('rl') : 0);
 
 			var bg = Ext.get('background');
 			bg.setWidth(body.getWidth());
