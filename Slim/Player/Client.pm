@@ -352,7 +352,7 @@ sub name {
 		$name = $prefs->client($client)->get('playername');
 	}
 
-	if (!defined $name) {
+	if (!defined $name || $name eq '') {
 		$name = defaultName($client);
 	}
 	
