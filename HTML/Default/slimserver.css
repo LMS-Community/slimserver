@@ -974,6 +974,14 @@ form#advSearchForm.resultsPage {
 }
 
 /* settings pages */
+body.settings {
+	overflow: auto;
+}
+
+.statusarea {
+	margin: 0 10px;
+}
+
 .settingSection {
 	padding: 0 10px;
 	margin-bottom: 15px;

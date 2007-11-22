@@ -7380,6 +7380,11 @@ PLAYER
 	SV	Spelare
 	ZH_CN	播放机
 
+PLAYERS
+	DE	Player
+	EN	Players
+	FR	Platines
+
 CURRENT_PLAYER
 	CS	Aktuální přehrávač:
 	DA	Valgt afspiller:

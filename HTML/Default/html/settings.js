@@ -10,7 +10,7 @@ Settings = function(){
 		INTERFACE_SETTINGS: 'settings/server/interface.html',
 		SETUP_GROUP_PLUGINS: 'settings/server/plugins.html',
 		advanced: 'settings/index.html?sub=advanced',
-		player: 'settings/index.html?sub=player&playerid=' + player,
+		players: 'settings/index.html?sub=player&playerid=' + player,
 		SERVER_STATUS: 'settings/server/status.html'
 	};
 
@@ -45,7 +45,7 @@ Settings = function(){
 			tp = new Ext.TabPanel('settingsTabs');
 
 			tp.addTab('BASIC_SERVER_SETTINGS', strings['basic']).on('activate', Settings.showSettingsPage);
-			tp.addTab('player', strings['player']).on('activate', Settings.showSettingsPage);
+			tp.addTab('players', strings['players']).on('activate', Settings.showSettingsPage);
 			tp.addTab('BEHAVIOR_SETTINGS', strings['mymusic']).on('activate', Settings.showSettingsPage);
 			tp.addTab('SQUEEZENETWORK_SETTINGS', strings['squeezenetwork']).on('activate', Settings.showSettingsPage);
 
