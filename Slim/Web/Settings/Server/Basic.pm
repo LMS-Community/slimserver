@@ -74,17 +74,11 @@ sub handler {
 
 	$paramRef->{'scanning'} = Slim::Music::Import->stillScanning;
 
-	# use Classic instead of Default skin if the server's language is set to Hebrew
-	if ($paramRef->{'saveSettings'} && $paramRef->{'language'} eq 'HE' && preferences('server')->get('skin') eq 'Default') {
-		preferences('server')->set('skin', 'Classic');
-		$paramRef->{'warning'} .= Slim::Utils::Strings::string("HIT_RELOAD");
-	}
-	
-	# Bug 5443, Change the MySQL collation if switching to a language that doesn't work right with UTF8 collation
 	if ( $paramRef->{'saveSettings'} ) {
 		my $curLang = preferences('server')->get('language');
 		my $lang    = $paramRef->{'language'};
-		
+
+		# Bug 5443, Change the MySQL collation if switching to a language that doesn't work right with UTF8 collation
 		if ( $lang && $lang ne $curLang ) {
 			if ( $lang eq 'CS' ) {
 				Slim::Schema->changeCollation( 'utf8_czech_ci' );
@@ -101,6 +95,17 @@ sub handler {
 			else {
 				Slim::Schema->changeCollation( 'utf8_general_ci' );
 			}
+
+			# use Classic instead of Default skin if the server's language is set to Hebrew
+			if ($lang eq 'HE' && preferences('server')->get('skin') eq 'Default') {
+				preferences('server')->set('skin', 'Classic');
+				$paramRef->{'warning'} .= Slim::Utils::Strings::string("HIT_RELOAD");
+			}	
+
+			# Bug 5740, flush the playlist cache
+			$client->currentPlaylistModified(1);
+			$client->currentPlaylistUpdateTime(Time::HiRes::time());
+			Slim::Player::Playlist::refreshPlaylist($client);
 		}
 	}
 
