@@ -146,6 +146,7 @@ sub getFeedAsync {
 			my $user = $params->{client}->playerData->userid;
 			my $sid  = $user->id . ':' . $user->password;
 			$headers{Cookie} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
+			$headers{'X-Player-MAC'} = $params->{'client'}->id;
 		}
 		elsif ( my $sid = $prefs->get('sn_session') ) {
 			$headers{'Cookie'} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
