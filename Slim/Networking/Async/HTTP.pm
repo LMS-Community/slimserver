@@ -190,7 +190,9 @@ sub add_headers {
 	$headers->init_header( 'Icy-Metadata'  => 1 );
 
 	# Add cookies
-	$cookieJar->add_cookie_header( $self->request );
+	if ( !$ENV{SLIM_SERVICE} ) {
+		$cookieJar->add_cookie_header( $self->request );
+	}
 }
 
 # allow people to access our cookie jar
@@ -308,7 +310,9 @@ sub _http_read {
 		$self->response->request( $self->request );
 
 		# Save cookies
-		$cookieJar->extract_cookies( $self->response );
+		if ( !$ENV{SLIM_SERVICE} ) {
+			$cookieJar->extract_cookies( $self->response );
+		}
 		
 		if ( $log->is_debug ) {
 
