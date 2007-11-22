@@ -301,7 +301,7 @@ Wizard = function(){
 			resultEl.update('');
 			email_summary.update(strings['summary_none']);
 
-			if (email && pw) {
+			if (email || pw) {
 				email_summary.update(email);
 				result_summary.update('');
 
@@ -336,6 +336,13 @@ Wizard = function(){
 						}
 					}
 				});
+			}
+
+			else {
+				resultEl.update(strings['sn_success']);
+				result_summary.update('');
+				validators.sqn.valid = true;
+				this.onNext();
 			}
 		},
 
