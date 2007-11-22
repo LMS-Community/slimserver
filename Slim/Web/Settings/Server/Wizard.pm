@@ -154,8 +154,8 @@ sub handler {
 
 	else {
 		$paramRef->{showProxy} = $showProxy;
-		$paramRef->{showiTunes} = !Slim::Plugin::iTunes::Common->canUseiTunesLibrary();
-		$paramRef->{showMusicIP} = !Slim::Plugin::MusicMagic::Plugin::canUseMusicMagic();
+		$paramRef->{showiTunes} = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::iTunes::Plugin') && !Slim::Plugin::iTunes::Common->canUseiTunesLibrary();
+		$paramRef->{showMusicIP} = Slim::Utils::PluginManager->isEnabled('Slim::Plugin::MusicMagic::Plugin') && !Slim::Plugin::MusicMagic::Plugin::canUseMusicMagic();
 		$paramRef->{serverOS} = Slim::Utils::OSDetect::OS();
 
 		# presets for first execution:
