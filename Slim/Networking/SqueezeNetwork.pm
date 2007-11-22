@@ -221,7 +221,7 @@ sub _createHTTPRequest {
 		# Get sid directly if running on SN
 		if ( my $client = $self->params('client') ) {
 			my $user = $client->playerData->userid;
-			my $sid  = $user->id . ':' . $user->password;
+			my $sid  = $user->sso . ':' . $user->password;
 			unshift @args, 'Cookie', 'sdi_squeezenetwork_session=' . uri_escape($sid);
 		}
 		else {

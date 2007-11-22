@@ -144,7 +144,7 @@ sub getFeedAsync {
 		if ( $ENV{SLIM_SERVICE} ) {
 			# Get sid directly if running on SN
 			my $user = $params->{client}->playerData->userid;
-			my $sid  = $user->id . ':' . $user->password;
+			my $sid  = $user->sso . ':' . $user->password;
 			$headers{Cookie} = 'sdi_squeezenetwork_session=' . uri_escape($sid);
 			$headers{'X-Player-MAC'} = $params->{'client'}->id;
 		}
