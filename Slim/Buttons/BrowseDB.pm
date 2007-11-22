@@ -813,7 +813,7 @@ sub setMode {
 
 		if (blessed($track) && $track->can('id')) {
 
-			$client->modeParam('favorite', Slim::Utils::Favorites->new($client)->findUrl($track) );
+			$client->modeParam('favorite', Slim::Utils::Favorites->new($client)->findUrl($track->url) );
 
 			push @items, 'FAVORITE';
 		}
