@@ -111,10 +111,11 @@ Settings = function(){
 			bg.setWidth(body.getWidth() - (Ext.isIE && !Ext.isIE7 ? body.getMargins('rl') : 0));
 			bg.setHeight(dimensions['maxHeight']);
 
-			Ext.get('mainbody').setHeight(dimensions['maxHeight']);
+			Ext.get('mainbody').setHeight(dimensions['maxHeight'] + Ext.isOpera * 15);
 			Ext.get('maincontent').setHeight(dimensions['maxHeight']-140);
 
-			this.layout();
+			try { this.layout(); }
+			catch(e){}
 		},
 
 		activateTab : function(tab){

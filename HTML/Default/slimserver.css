@@ -79,7 +79,8 @@ a:hover, .link:hover,
 #filesystembrowser {
 	background-color: white;
 }
- .filesystemBrowseBtn {
+
+.filesystemBrowseBtn {
 	vertical-align: bottom;
 	padding: 0 2px;
 	width: 15px;
