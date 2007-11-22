@@ -906,7 +906,7 @@ sub stream {
 				});
 
 				if ($client->model() eq 'squeezebox2' &&
-				    $track && $track->samplerate() == 96000) {
+				    $track && $track->samplerate() && $track->samplerate() == 96000) {
 			    		$outputThreshold = 20;
 				}
 			}
