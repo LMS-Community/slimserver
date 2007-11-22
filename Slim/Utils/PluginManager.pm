@@ -66,13 +66,22 @@ my @pluginDirs     = Slim::Utils::OSDetect::dirsFor('Plugins');
 my @pluginRootDirs = ();
 my $plugins        = {};
 
-my $log = logger('server.plugins');
+my $prefs = preferences('plugin.state');
+my $log   = logger('server.plugins');
 
 sub init {
 	my $class = shift;
 
 	my ($manifestFiles, $newest) = $class->findInstallManifests;
-	
+
+	if (!scalar keys %{$prefs->all}) {
+
+		$log->info("Reparsing plugin manifests - plugin states are not defined.");
+
+		$class->readInstallManifests($manifestFiles);
+		
+	}
+
 	# Load the plugin cache file
 	if ( -r $class->pluginCacheFile ) {
 		if (!$class->loadPluginCache) {
@@ -83,10 +92,7 @@ sub init {
 		# process any pending operations
 		$class->runPendingOperations;
 	}
-	
-	# Bug 6066, maintain the state of existing plugins when adding/reparsing
-	my %state = map { $_ => $plugins->{$_}->{state} } keys %{$plugins};
-	
+
 	# parse the manifests if cache file is older than newest install.xml file
 	if ( (stat($class->pluginCacheFile))[9] < $newest ) {
 
@@ -102,13 +108,6 @@ sub init {
 		$plugins = {};
 
 		$class->readInstallManifests($manifestFiles);
-	}
-	
-	# Bug 6066, Restore the original state of all plugins
-	for my $plugin ( keys %{$plugins} ) {
-		if ( defined $state{$plugin} ) {
-			$plugins->{$plugin}->{state} = $state{$plugin};
-		}
 	}
 
 	$class->enablePlugins;
@@ -282,17 +281,17 @@ sub _parseInstallManifest {
 
 	$installManifest->{'error'}   = INSTALLERROR_SUCCESS;
 
-	if ($installManifest->{'defaultState'}) {
+	if ($installManifest->{'defaultState'} && !defined $prefs->get($pluginName)) {
 
 		my $state = delete $installManifest->{'defaultState'};
 
 		if ($state eq 'disabled') {
 
-			$installManifest->{'state'} = STATE_DISABLED;
+			$prefs->set($pluginName, STATE_DISABLED);
 
 		} else {
 
-			$installManifest->{'state'} = STATE_ENABLED;
+			$prefs->set($pluginName, STATE_ENABLED);
 		}
 	}
 
@@ -354,7 +353,7 @@ sub enablePlugins {
 			next;
 		}
 
-		if (defined $manifest->{'state'} && $manifest->{'state'} eq STATE_DISABLED) {
+		if (defined $prefs->get($name) && $prefs->get($name) eq STATE_DISABLED) {
 
 			$log->warn("Skipping plugin: $name - disabled");
 
@@ -414,7 +413,7 @@ sub enablePlugins {
 
 			} else {
 
-				$manifest->{'state'} = STATE_ENABLED;
+				$prefs->set($module, STATE_ENABLED);
 
 				push @loaded, $module;
 			}
@@ -538,7 +537,7 @@ sub runPendingOperations {
 sub getPendingOperations {
 	my ($class, $opType) = @_;
 
-	return $class->_filterPlugins('state', $opType);
+	return $class->_filterPlugins('opType', $opType);
 }
 
 sub enabledPlugins {
@@ -548,7 +547,7 @@ sub enabledPlugins {
 
 	for my $plugin ($class->installedPlugins) {
 
-		if (defined $plugins->{$plugin}->{'state'} && $plugins->{$plugin}->{'state'} == STATE_ENABLED) {
+		if (defined $prefs->get($plugin) && $prefs->get($plugin) == STATE_ENABLED) {
 
 			push @found, $plugin;
 		}
@@ -584,7 +583,7 @@ sub enablePlugin {
 	if ($opType ne OP_NEEDS_ENABLE) {
 
 		$plugins->{$plugin}->{'opType'} = OP_NEEDS_ENABLE;
-		$plugins->{$plugin}->{'state'}  = STATE_ENABLED;
+		$prefs->set($plugin, STATE_ENABLED);
 	}
 }
 
@@ -601,16 +600,8 @@ sub disablePlugin {
 	if ($opType ne OP_NEEDS_DISABLE) {
 
 		$plugins->{$plugin}->{'opType'} = OP_NEEDS_DISABLE;
-		$plugins->{$plugin}->{'state'}  = STATE_DISABLED;
+		$prefs->set($plugin, STATE_DISABLED);
 	}
-}
-
-sub _setPluginState {
-	my $class  = shift;
-	my $plugin = shift;
-	my $state  = shift;
-
-
 }
 
 sub shutdownPlugins {

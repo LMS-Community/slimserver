@@ -13,7 +13,7 @@
 			[% desc     = plugins.$plugin.description %]
 			[% version  = plugins.$plugin.version %]
 			[% settings = plugins.$plugin.optionsURL %]
-			[% enabled  = plugins.$plugin.state %]
+			[% enabled  = pluginsState.$plugin %]
 
 			<table>
 			<tr onclick="Element.toggle('[% name %]-div'); return false;">

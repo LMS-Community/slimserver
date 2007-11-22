@@ -40,7 +40,7 @@
 		[% desc     = plugins.$plugin.description %]
 		[% version  = plugins.$plugin.version %]
 		[% settings = plugins.$plugin.optionsURL %]
-		[% enabled  = plugins.$plugin.state %]
+		[% enabled  = pluginState.$plugin %]
 
 		[% WRAPPER setting title=name %]
 			<!-- XXXX - need to check for pending uninstall / install -->

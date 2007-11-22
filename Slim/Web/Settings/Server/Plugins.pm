@@ -11,6 +11,7 @@ use strict;
 use base qw(Slim::Web::Settings);
 
 use Slim::Utils::Log;
+use Slim::Utils::Prefs;
 use Slim::Utils::PluginManager;
 
 sub name {
@@ -57,8 +58,9 @@ sub handler {
 		$paramRef->{'warning'} .= Slim::Utils::Strings::string('PLUGINS_CHANGED').'<br>'.join('<br>',@changed);
 	}
 
-	$paramRef->{plugins}  = $plugins;
-	$paramRef->{nosubmit} = 1;
+	$paramRef->{plugins}     = $plugins;
+	$paramRef->{pluginState} = preferences('plugin.state')->all();
+	$paramRef->{nosubmit}    = 1;
 
 	# only show plugins with perl modules
 	my @keys = ();
