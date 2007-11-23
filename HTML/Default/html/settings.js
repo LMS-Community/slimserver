@@ -48,7 +48,7 @@ Settings = function(){
 
 			tp = new Ext.TabPanel('settingsTabs');
 
-			tp.on('beforetabchange', function(tb, e, tab){
+			tp.on('beforetabchange', function(tb, ev, tab){
 				var modified = false;
 	
 				try { modified = frames.settings.subSettings.SettingsPage.isModified(); }
@@ -71,6 +71,14 @@ Settings = function(){
 						fn: function(btn, a, b){
 							if (btn == 'yes') {
 								if (!Settings.submitSettings()) {
+									// dirty hack to give Opera a second to finish the submit...
+									if (Ext.isOpera) {
+										var date = new Date();
+										var curDate = null;
+										do { curDate = new Date(); } 
+										while(curDate-date < 500);
+									}
+
 									Settings.resetModified();
 									Settings.activateTab(tab.id);
 								}
@@ -83,7 +91,7 @@ Settings = function(){
 						}
 					});
 
-					e.cancel = true;
+					ev.cancel = true;
 				}
 			});
 
@@ -364,7 +372,7 @@ var SettingsPage = function(){
 		},
 
 		isModified : function(){
-			document.forms['settingsForm'].elements[0].focus();
+//			document.forms['settingsForm'].elements[0].focus();
 			document.forms['settingsForm'].elements[0].blur();
 			return modified;
 		},

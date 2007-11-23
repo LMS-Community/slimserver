@@ -111,12 +111,8 @@ a.x-menu-item:hover {
 /* standard buttons */
 .x-btn-text, .x-btn button {
 	color: #d1d1d1;
+	font-family: sans-serif;
 	font-weight: bold;
-}
-
-.x-btn button {
-    padding-left: 5px;
-    padding-right: 5px;
 }
 
 .x-btn-left {
