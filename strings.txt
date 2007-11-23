@@ -4348,6 +4348,10 @@ SETTINGS_CHANGED
 	NL	De volgende instellingen zijn gewijzigd:
 	NO	Følgende innstillinger ble endret:
 
+SETTINGS_CHANGED_CONFIRM
+	DE	Es wurden Einstellungen geändert. Wollen Sie diese speichern?
+	EN	Some settings were changed. Do you want to save them?
+
 SETUP_NO_PREFS
 	DE	Es gibt für diesen Player auf dieser Seite keine Einstellungen
 	EN	There are no settings for this player on this page

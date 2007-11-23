@@ -48,6 +48,45 @@ Settings = function(){
 
 			tp = new Ext.TabPanel('settingsTabs');
 
+			tp.on('beforetabchange', function(tb, e, tab){
+				var modified = false;
+	
+				try { modified = frames.settings.subSettings.SettingsPage.isModified(); }
+				catch(e){
+					try { modified = frames.settings.SettingsPage.isModified(); }
+					catch(e){}
+				}
+
+				if (modified) {
+					Ext.Msg.show({
+						title: strings['settings'],
+						msg: strings['settings_changed_confirm'],
+						width: 300,
+						closable: false,
+						buttons: {
+							yes: strings['yes'],
+							no: strings['no'],
+							cancel: strings['cancel']
+						},
+						fn: function(btn, a, b){
+							if (btn == 'yes') {
+								if (!Settings.submitSettings()) {
+									Settings.resetModified();
+									Settings.activateTab(tab.id);
+								}
+							}
+
+							else if (btn == 'no') {
+								Settings.resetModified();
+								Settings.activateTab(tab.id);
+							}
+						}
+					});
+
+					e.cancel = true;
+				}
+			});
+
 			tp.addTab('BASIC_SERVER_SETTINGS', strings['basic']).on('activate', Settings.showSettingsPage);
 			tp.addTab('players', strings['players']).on('activate', Settings.showSettingsPage);
 			tp.addTab('BEHAVIOR_SETTINGS', strings['mymusic']).on('activate', Settings.showSettingsPage);
@@ -91,6 +130,14 @@ Settings = function(){
 			}
 		},
 
+		resetModified : function() {
+			try { frames.settings.subSettings.SettingsPage.resetModified(); }
+			catch(e){
+				try { modified = frames.settings.SettingsPage.resetModified(); }
+				catch(e){}
+			}
+		},
+
 		showSettingsPage : function(page) {
 			if (page && tabLinks[page])
 				page = tabLinks[page];
@@ -111,7 +158,7 @@ Settings = function(){
 			bg.setWidth(body.getWidth() - (Ext.isIE && !Ext.isIE7 ? body.getMargins('rl') : 0));
 			bg.setHeight(dimensions['maxHeight']);
 
-			Ext.get('mainbody').setHeight(dimensions['maxHeight'] + Ext.isOpera * 15);
+			Ext.get('mainbody').setHeight(dimensions['maxHeight']);
 			Ext.get('maincontent').setHeight(dimensions['maxHeight']-140);
 
 			try { this.layout(); }
@@ -138,7 +185,8 @@ Settings = function(){
 
 var SettingsPage = function(){
 	var unHighlightTimer;
-	var invalidWarning = false;
+	var invalidWarned = false;
+	var modified = false;
 
 	return {
 		init : function(){
@@ -160,8 +208,11 @@ var SettingsPage = function(){
 						}
 					});
 				}
-
 			}
+
+			Ext.select('input, textarea, select').on('change', function(ev){
+				modified = true;
+			});
 
 			if (Ext.isSafari)
 				Ext.get(document).setStyle('overflow', 'auto');
@@ -271,7 +322,7 @@ var SettingsPage = function(){
 				success: function(response) {
 					if (response && response.responseText) {
 						response = Ext.util.JSON.decode(response.responseText);
-			
+
 						// if preference did not validate - highlight the field
 						if (response.result)
 							SettingsPage.highlightField(myPref, response.result.valid);
@@ -291,10 +342,12 @@ var SettingsPage = function(){
 			}
 
 			// block first attempt to save if there are invalid values
-			if (items.length == 0 || this.invalidWarned)
+			if (items.length == 0 || invalidWarned)
 				document.forms.settingsForm.submit();
 			else
-				this.invalidWarned = true;
+				invalidWarned = true;
+
+			return invalidWarned;
 		},
 
 		highlightField : function(myPref, valid){
@@ -308,6 +361,16 @@ var SettingsPage = function(){
 				else
 					el.replaceClass('valid', 'invalid');
 			}
+		},
+
+		isModified : function(){
+			document.forms['settingsForm'].elements[0].focus();
+			document.forms['settingsForm'].elements[0].blur();
+			return modified;
+		},
+
+		resetModified : function(){
+			modified = false;
 		}
 	};
 }();
