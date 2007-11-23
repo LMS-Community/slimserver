@@ -139,8 +139,8 @@
 	[% BLOCK pagebar %]
 		[%- IF NOT pageinfo.alphamap; PROCESS pagebarcalc pagesperbar = 15; END %]
 		<div class="pagebar" id="pagebar">
-			[% IF pagesstart %]<a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=0[% pageinfo.otherparams | html %][% IF useJS %]')[% END %]"><img src="[% webroot %]html/images/b_first.gif" alt="[% "FIRST" | string %]" width="13" height="13" align="top"></a> [% END %]
-			[% IF pageprev || pageprev == '0' %] <a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=[% pageprev %][% pageinfo.otherparams | html %][% IF useJS %]')[% END %]"><img src="[% webroot %]html/images/b_previous.gif" alt="[% "PREVIOUS" | string %]" width="13" height="13" align="top"></a> [% END %]
+			[% IF pagesstart %]<a class="btn" href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=0[% pageinfo.otherparams | html %][% IF useJS %]')[% END %]"><img src="[% webroot %]html/images/b_first.gif" alt="[% "FIRST" | string %]" width="13" height="13" align="top"></a> [% END %]
+			[% IF pageprev || pageprev == '0' %]<a class="btn" href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=[% pageprev %][% pageinfo.otherparams | html %][% IF useJS %]')[% END %]"><img src="[% webroot %]html/images/b_previous.gif" alt="[% "PREVIOUS" | string %]" width="13" height="13" align="top"></a> [% END %]
 			[%- IF pageinfo.alphamap %]
 				[%- FOREACH alphakey = pageinfo.alphamap.keys.sort -%]
 					[%- curpage = (pageinfo.alphamap.item(alphakey) == pageinfo.startitem) -%]
@@ -150,14 +150,14 @@
 				[%- END %]
 			[%- ELSE %]
 				[%- FOREACH ind=[pagebarstart..pagebarend] -%]
-					[%- IF ind == pageinfo.currentpage %] [% ind + 1 %]
+					[%- IF ind == pageinfo.currentpage %]<span>&nbsp;[% ind + 1 %]</span>
 					[%- ELSE %]
-						<a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path  | html %]?start=[% ind * pageinfo.itemsperpage %][% pageinfo.otherparams  | html %][% IF useJS %]')[% END %]">[% ind + 1 %]</a>
+						<a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path  | html %]?start=[% ind * pageinfo.itemsperpage %][% pageinfo.otherparams  | html %][% IF useJS %]')[% END %]">&nbsp;[% ind + 1 %]</a>
 					[%- END %]
 				[% END %]
 			[%- END %]
-			[% IF pagenext %] <a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=[% pagenext %][% pageinfo.otherparams | html %][% IF useJS %]')[% END %]"><img src="[% webroot %]html/images/b_next.gif" alt="[% "NEXT" | string %]" width="13" height="13" align="top"></a> [% END %]
-			[% IF pagesend %] <a href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=[% pagesend %][% pageinfo.otherparams | html %][% IF useJS %]')[% END %]"><img src="[% webroot %]html/images/b_last.gif" alt="[% "LAST" | string %]" width="13" height="13" align="top"></a> [% END %]
+			[% IF pagenext %]<a class="btn" href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=[% pagenext %][% pageinfo.otherparams | html %][% IF useJS %]')[% END %]"><img src="[% webroot %]html/images/b_next.gif" alt="[% "NEXT" | string %]" width="13" height="13" align="top"></a> [% END %]
+			[% IF pagesend %]<a class="btn" href="[% IF useJS %]javascript:[% useJS %]('[% END %][% pageinfo.path %]?start=[% pagesend %][% pageinfo.otherparams | html %][% IF useJS %]')[% END %]"><img src="[% webroot %]html/images/b_last.gif" alt="[% "LAST" | string %]" width="13" height="13" align="top"></a> [% END %]
 		</div>
 	[% END %]
 
