@@ -995,13 +995,13 @@ body.settings {
 
 .settingGroup {
 	position: relative;
-	padding-left: 300px;
+	padding-left: 250px;
 	margin-bottom: 10px;
 }
 
 .prefHelp {
 	position: absolute;
-	left: 280px;
+	left: 230px;
 	top: 0px;
 }
 
@@ -1011,7 +1011,7 @@ body.settings {
 
 .settingGroup .prefHead {
 	position: absolute;
-	width: 285px;
+	width: 235px;
 	left: 0px;
 }
 
