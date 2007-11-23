@@ -98,7 +98,7 @@
 
 			[% repeatStrings = ['OFF', 'ONE', 'ALL'] %]
 
-			[% FOREACH repeatType = ['repeatoff', 'repeatone', 'repeatall'] %]
+			[% FOREACH repeatStrings %]
 
 				[% index = loop.index %]
 
@@ -108,7 +108,7 @@
 					p2         = index
 					linkString = repeatStrings.$index
 					link       = ''
-					divID      = $repeatType ? 'valueSelected' : 'valueBold'
+					divID      = (repeat == loop.index) ? 'valueSelected' : 'valueBold'
 				%]
 				[% IF index < 2 %]<span class="bar">|</span>[% END %]
 
@@ -121,7 +121,7 @@
 
 			[% shuffleStrings = ['OFF', 'SONGS', 'ALBUMS'] %]
 
-			[% FOREACH shuffleType = ['shuffleoff', 'shuffleon', 'shufflealbum'] %]
+			[% FOREACH shuffleStrings %]
 
 				[% index = loop.index %]
 
@@ -131,7 +131,7 @@
 					p2         = index
 					linkString = shuffleStrings.$index
 					link       = ''
-					divID      = $shuffleType ? 'valueSelected' : 'valueBold'
+					divID      = (shuffle == loop.index) ? 'valueSelected' : 'valueBold'
 				%]
 				[% IF index < 2 %]<span class="bar">|</span>[% END %]
  

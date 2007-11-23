@@ -70,13 +70,6 @@ sub status {
 		}
 
 		$params->{'shuffle'} = Slim::Player::Playlist::shuffle($client);
-		if (Slim::Player::Playlist::shuffle($client) == 1) {
-			$params->{'shuffleon'} = "on";
-		} elsif (Slim::Player::Playlist::shuffle($client) == 2) {
-			$params->{'shufflealbum'} = "album";
-		} else {
-			$params->{'shuffleoff'} = "off";
-		}
 	
 		$params->{'songtime'} = int(Slim::Player::Source::songTime($client));
 
@@ -86,17 +79,8 @@ sub status {
 			$params->{'durationseconds'} = $dur; 
 		}
 
-		#
 		$params->{'repeat'} = Slim::Player::Playlist::repeat($client);
-		if (!Slim::Player::Playlist::repeat($client)) {
-			$params->{'repeatoff'} = "off";
-		} elsif (Slim::Player::Playlist::repeat($client) == 1) {
-			$params->{'repeatone'} = "one";
-		} else {
-			$params->{'repeatall'} = "all";
-		}
 
-		#
 		if (Slim::Player::Source::playmode($client) eq 'play') {
 
 			$params->{'modeplay'} = "Play";

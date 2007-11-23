@@ -35,20 +35,20 @@
  			[% IF sleep %]<sleep>[% sleep | html %]</sleep>[% END %]
  		</transport>
 		<shuffle>
-			[% IF shuffleoff %]<shuffle_off/>[% END %]
-    		[% IF shuffleon %]<shuffle_songs/>[% END %]
-			[% IF shufflealbum %]<shuffle_albums/>[% END %]
-    		[% IF not shuffleoff %]<shuffle_off_url><![CDATA[[% webroot %]status.xml?p0=playlist&p1=shuffle&p2=0&player=[% playerURI %]]]></shuffle_off_url>[% END %]
-    		[% IF not shufflealbum %]<shuffle_albums_url><![CDATA[[% webroot %]status.xml?p0=playlist&p1=shuffle&p2=2&player=[% playerURI %]]]></shuffle_albums_url>[% END %]
-    		[% IF not shuffleon %]<shuffle_songs_url><![CDATA[[% webroot %]status.xml?p0=playlist&p1=shuffle&p2=1&player=[% playerURI %]]]></shuffle_songs_url>[% END %]
+			[% IF shuffle == 0 %]<shuffle_off/>[% END %]
+    		[% IF shuffle == 1 %]<shuffle_songs/>[% END %]
+			[% IF shuffle == 2 %]<shuffle_albums/>[% END %]
+    		[% IF shuffle != 0 %]<shuffle_off_url><![CDATA[[% webroot %]status.xml?p0=playlist&p1=shuffle&p2=0&player=[% playerURI %]]]></shuffle_off_url>[% END %]
+    		[% IF shuffle != 2 %]<shuffle_albums_url><![CDATA[[% webroot %]status.xml?p0=playlist&p1=shuffle&p2=2&player=[% playerURI %]]]></shuffle_albums_url>[% END %]
+    		[% IF shuffle != 1 %]<shuffle_songs_url><![CDATA[[% webroot %]status.xml?p0=playlist&p1=shuffle&p2=1&player=[% playerURI %]]]></shuffle_songs_url>[% END %]
     	</shuffle>
 		<repeat>
-			[% IF repeatone %]<repeat_one/>[% END %]
-			[% IF repeatall %]<repeat_all/>[% END %]
-			[% IF repeatoff %]<repeat_off/>[% END %]
-			[% IF not repeatone %]<repeat_one_url><![CDATA[[% webroot %]status.xml?p0=playlist&p1=repeat&p2=1&player=[% playerURI %]]]></repeat_one_url>[% END %]
-			[% IF not repeatall %]<repeat_all_url><![CDATA[[% webroot %]status.xml?p0=playlist&p1=repeat&p2=2&player=[% playerURI %]]]></repeat_all_url>[% END %]
-			[% IF not repeatoff %]<repeat_off_url><![CDATA[[% webroot %]status.xml?p0=playlist&p1=repeat&p2=0&player=[% playerURI %]]]></repeat_off_url>[% END %]
+			[% IF repeat == 1 %]<repeat_one/>[% END %]
+			[% IF repeat == 2 %]<repeat_all/>[% END %]
+			[% IF repeat == 0 %]<repeat_off/>[% END %]
+			[% IF repeat != 1 %]<repeat_one_url><![CDATA[[% webroot %]status.xml?p0=playlist&p1=repeat&p2=1&player=[% playerURI %]]]></repeat_one_url>[% END %]
+			[% IF repeat != 2 %]<repeat_all_url><![CDATA[[% webroot %]status.xml?p0=playlist&p1=repeat&p2=2&player=[% playerURI %]]]></repeat_all_url>[% END %]
+			[% IF repeat != 0 %]<repeat_off_url><![CDATA[[% webroot %]status.xml?p0=playlist&p1=repeat&p2=0&player=[% playerURI %]]]></repeat_off_url>[% END %]
 		</repeat>
 		<audio>
 		    <volume>[% volume | html %]</volume>

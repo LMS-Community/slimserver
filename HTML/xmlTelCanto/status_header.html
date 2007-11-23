@@ -32,14 +32,14 @@
  			[% IF sleep %]<sleep>[% sleep | html %]</sleep>[% END %]
  		</transport>
 		<shuffle>
-			[% IF shuffleoff %]<shuffle_off/>[% END %]
-    			[% IF shuffleon %]<shuffle_songs/>[% END %]
-			[% IF shufflealbum %]<shuffle_albums/>[% END %]
+			[% IF shuffle == 0 %]<shuffle_off/>[% END %]
+    		[% IF shuffle == 1 %]<shuffle_songs/>[% END %]
+			[% IF shuffle == 2 %]<shuffle_albums/>[% END %]
    		</shuffle>
 		<repeat>
-			[% IF repeatone %]<repeat_one/>[% END %]
-			[% IF repeatall %]<repeat_all/>[% END %]
-			[% IF repeatoff %]<repeat_off/>[% END %]
+			[% IF repeat == 1 %]<repeat_one/>[% END %]
+			[% IF repeat == 2 %]<repeat_all/>[% END %]
+			[% IF repeat == 0 %]<repeat_off/>[% END %]
 		</repeat>
 		<audio> 		
 		    <volume>[% volume | html %]</volume>
