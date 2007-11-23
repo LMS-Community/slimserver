@@ -44,15 +44,17 @@ sub handler {
 	$paramRef->{library}{'INFORMATION_TIME'}    = Slim::Buttons::Information::timeFormat(Slim::Schema->totalTime);
 
 	for my $client (Slim::Player::Client::clients()) {
-		$paramRef->{clients}{$client->id}{'INFORMATION_PLAYER_NAME_ABBR'}       = $client->name;
-		$paramRef->{clients}{$client->id}{'INFORMATION_PLAYER_MODEL_ABBR'}      = Slim::Buttons::Information::playerModel($client);
-		$paramRef->{clients}{$client->id}{'INFORMATION_FIRMWARE_ABBR'}          = $client->revision;
-		$paramRef->{clients}{$client->id}{'PLAYER_IP_ADDRESS'}                  = $client->ipport;
-		$paramRef->{clients}{$client->id}{'PLAYER_MAC_ADDRESS'}                 = $client->macaddress;
-		$paramRef->{clients}{$client->id}{'INFORMATION_PLAYER_SIGNAL_STRENGTH'} = $client->signalStrength;
-		$paramRef->{clients}{$client->id}{'INFORMATION_PLAYER_VOLTAGE'}         = $client->voltage;
+		$paramRef->{clients}{$client->id} = [
+			{ INFORMATION_PLAYER_NAME_ABBR       => $client->name },
+			{ INFORMATION_PLAYER_MODEL_ABBR      => Slim::Buttons::Information::playerModel($client) },
+			{ INFORMATION_FIRMWARE_ABBR          => $client->revision },
+			{ PLAYER_IP_ADDRESS                  => $client->ipport },
+			{ PLAYER_MAC_ADDRESS                 => $client->macaddress },
+			{ INFORMATION_PLAYER_SIGNAL_STRENGTH => $client->signalStrength },
+			{ INFORMATION_PLAYER_VOLTAGE         => $client->voltage },
+		];
 	}
-	
+
 	# TODO Get something useful from any Jive devices on the network.
 	#$paramRef->{controllers} = undef;
 

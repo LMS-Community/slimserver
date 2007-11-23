@@ -81,9 +81,9 @@
 	[% WRAPPER setting title="INFORMATION_MENU_PLAYER" %]
 		[% FOREACH client = clients %]
 		<div style="padding-bottom: 10px;">
-			[% FOREACH item = client.value %]
-				[% IF item.value  %]
-				<p>[% item.key | string %][% "COLON" | string %] [% item.value %]</p>
+			[% FOREACH item IN client.value %]
+				[% IF item.items.1  %]
+				<p>[% item.items.0 | string %][% "COLON" | string %] [% item.items.1 %]</p>
 				[% END %]
 			[% END %]
 		</div>

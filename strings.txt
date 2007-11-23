@@ -10496,38 +10496,38 @@ SERVER_IP_ADDRESS
 	NL	IP-adres van server
 
 PLAYER_IP_ADDRESS
-	CS	IP adresa tohoto přehrávače je:
-	DA	IP-adressen for denne afspiller er:
-	DE	Die IP-Adresse für diesen Player ist:
-	EN	The IP address for this player is:
-	ES	La dirección IP para este reproductor es:
-	FI	Soittimen IP -osoite on:
-	FR	L'adresse IP de cette platine est:
-	HE	כתובת ה-IP של הנגן היא:
-	IT	L'indirizzo IP del lettore è:
-	JA	このプレーヤーのIPアドレスは :
-	NL	Het IP-adres van deze speler is:
-	NO	Spillerens IP adresse er:
+	CS	IP adresa tohoto přehrávače je
+	DA	IP-adressen for denne afspiller er
+	DE	Die IP-Adresse für diesen Player ist
+	EN	The IP address for this player is
+	ES	La dirección IP para este reproductor es
+	FI	Soittimen IP -osoite on
+	FR	L'adresse IP de cette platine est
+	HE	כתובת ה-IP של הנגן היא
+	IT	L'indirizzo IP del lettore è
+	JA	このプレーヤーのIPアドレスは 
+	NL	Het IP-adres van deze speler is
+	NO	Spillerens IP adresse er
 	PT	O endereço IP deste cliente é
-	SV	Spelarens IP-adress är:
-	ZH_CN	此播放机的IP地址是：
+	SV	Spelarens IP-adress är
+	ZH_CN	此播放机的IP地址是
 
 PLAYER_MAC_ADDRESS
-	CS	MAC adresa pro tento přehrávač je:
-	DA	MAC-adressen for denne afspiller er:
-	DE	Die MAC-Adresse für diesen Player ist:
-	EN	The ethernet MAC address for this player is:
-	ES	La dirección Ethernet MAC para este reproductor es:
-	FI	Soittimen MAC -osoite on:
-	FR	L'adresse MAC de cette platine est:
-	HE	כתובת ה-MAC של האתרנט של הנגן היא:
-	IT	L'indirizzo MAC di rete di questo lettore e':
-	JA	このプレーヤーのMACアドレスは :
-	NL	Het ethernet-MAC-adres van deze speler is:
-	NO	Spillerens MAC adresse er:
+	CS	MAC adresa pro tento přehrávač je
+	DA	MAC-adressen for denne afspiller er
+	DE	Die MAC-Adresse für diesen Player ist
+	EN	The ethernet MAC address for this player is
+	ES	La dirección Ethernet MAC para este reproductor es
+	FI	Soittimen MAC -osoite on
+	FR	L'adresse MAC de cette platine est
+	HE	כתובת ה-MAC של האתרנט של הנגן היא
+	IT	L'indirizzo MAC di rete di questo lettore e'
+	JA	このプレーヤーのMACアドレスは 
+	NL	Het ethernet-MAC-adres van deze speler is
+	NO	Spillerens MAC adresse er
 	PT	O endereço MAC deste cliente é
-	SV	Spelarens MAC-adress är:
-	ZH_CN	此播放机的以太网MAC地址是：
+	SV	Spelarens MAC-adress är
+	ZH_CN	此播放机的以太网MAC地址是
 
 CHOOSE_NAME_DESCRIPTION
 	CS	Můžete dát přehrávači jméno pod kterým se bude zde zobrazovat.
