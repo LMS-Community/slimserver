@@ -320,7 +320,7 @@ sub albumsQuery {
 				
 				# we want the text to be album\nartist
 				my @artists = $eachitem->artists();
-				my $artist = $artists[0]->name();
+				my $artist = $artists[0] ? $artists[0]->name() : '';
 				my $text = $eachitem->title;
 				if (defined $artist) {
 					$text = $text . "\n" . $artist;
