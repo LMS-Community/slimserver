@@ -17,7 +17,7 @@ use Slim::Utils::Misc;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.rhapsodydirect',
-	'defaultLevel' => $ENV{RHAPSODY_DEV} ? 'DEBUG' : 'WARN',
+	'defaultLevel' => $ENV{RHAPSODY_DEV} ? 'DEBUG' : 'ERROR',
 	'description'  => 'PLUGIN_RHAPSODY_DIRECT_MODULE_NAME',
 });
 

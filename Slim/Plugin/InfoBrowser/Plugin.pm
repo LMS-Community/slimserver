@@ -48,7 +48,7 @@ use Slim::Plugin::Favorites::Opml;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.infobrowser',
-	'defaultLevel' => 'WARN',
+	'defaultLevel' => 'ERROR',
 	'description'  => getDisplayName(),
 });
 

@@ -35,7 +35,7 @@ CLI commands used by Jive.
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'player.jive',
-	'defaultLevel' => 'WARN',
+	'defaultLevel' => 'ERROR',
 	'description'  => getDisplayName(),
 });
 

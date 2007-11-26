@@ -32,7 +32,7 @@ my $timer = undef;
 # Logger object
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.preventstandby',
-	'defaultLevel' => 'WARN',
+	'defaultLevel' => 'ERROR',
 	'description'  => getDisplayName(),
 });
 

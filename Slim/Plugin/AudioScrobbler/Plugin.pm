@@ -45,7 +45,7 @@ my $prefs = preferences('plugin.audioscrobbler');
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.audioscrobbler',
-	defaultLevel => 'WARN',
+	defaultLevel => 'ERROR',
 	description  => 'PLUGIN_AUDIOSCROBBLER_MODULE_NAME',
 } );
 

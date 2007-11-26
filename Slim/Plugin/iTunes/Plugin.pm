@@ -18,7 +18,7 @@ use Slim::Utils::Prefs;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.itunes',
-	'defaultLevel' => 'WARN',
+	'defaultLevel' => 'ERROR',
 });
 
 my $prefs = preferences('plugin.itunes');

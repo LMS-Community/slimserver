@@ -13,7 +13,7 @@ use JSON::XS qw(from_json);
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.slacker',
-	defaultLevel => 'WARN',
+	defaultLevel => 'ERROR',
 	description  => 'PLUGIN_SLACKER_MODULE_NAME',
 } );
 

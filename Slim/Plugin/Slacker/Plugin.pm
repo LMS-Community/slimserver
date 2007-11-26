@@ -10,7 +10,7 @@ use Slim::Networking::SqueezeNetwork;
 
 my $log = Slim::Utils::Log->addLogCategory( {
 	category     => 'plugin.slacker',
-	defaultLevel => 'WARN',
+	defaultLevel => 'ERROR',
 	description  => 'PLUGIN_SLACKER_MODULE_NAME',
 } );
 

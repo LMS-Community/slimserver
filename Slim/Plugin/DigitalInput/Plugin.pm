@@ -21,7 +21,7 @@ my $source_name = 'source';
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.digitalinput',
-	'defaultLevel' => 'WARN',
+	'defaultLevel' => 'ERROR',
 	'description'  => getDisplayName(),
 });
 

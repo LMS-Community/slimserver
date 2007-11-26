@@ -15,7 +15,7 @@ use Slim::Utils::Strings qw(string);
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.rpc',
-	'defaultLevel' => 'WARN',
+	'defaultLevel' => 'ERROR',
 	'description'  => getDisplayName(),
 });
 

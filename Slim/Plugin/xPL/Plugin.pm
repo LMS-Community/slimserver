@@ -37,7 +37,7 @@ my $xpl_port;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.xpl',
-	'defaultLevel' => 'WARN',
+	'defaultLevel' => 'ERROR',
 	'description'  => getDisplayName(),
 });
 

@@ -19,7 +19,7 @@ my $serverPrefs = preferences('server');
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'wizard',
-	'defaultLevel' => 'WARN',
+	'defaultLevel' => 'ERROR',
 });
 
 my %prefs = (

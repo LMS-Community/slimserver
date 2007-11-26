@@ -33,7 +33,7 @@ my $OS  = Slim::Utils::OSDetect::OS();
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.musicmagic',
-	'defaultLevel' => 'WARN',
+	'defaultLevel' => 'ERROR',
 });
 
 my $prefs = preferences('plugin.musicmagic');

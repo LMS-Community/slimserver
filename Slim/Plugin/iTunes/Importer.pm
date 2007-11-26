@@ -39,7 +39,7 @@ my ($inKey, $inDict, $inValue, %item, $currentKey, $nextIsMusicFolder, $nextIsPl
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.itunes',
-	'defaultLevel' => 'WARN',
+	'defaultLevel' => 'ERROR',
 });
 
 my $prefs = preferences('plugin.itunes');

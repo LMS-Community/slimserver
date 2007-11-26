@@ -58,7 +58,7 @@ our %disconnectHandlers;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.cli',
-	'defaultLevel' => 'WARN',
+	'defaultLevel' => 'ERROR',
 	'description'  => 'PLUGIN_CLI',
 });
 

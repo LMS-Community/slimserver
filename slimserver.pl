@@ -271,7 +271,6 @@ sub init {
 		eval "use diagnostics";
 	}
 
-	msg("SqueezeCenter OSDetect init...\n");
 	Slim::Utils::OSDetect::init();
 
 	# open the log files
@@ -284,7 +283,6 @@ sub init {
 	});
 
 	# initialize SqueezeCenter subsystems
-	msg("SqueezeCenter settings init...\n");
 	initSettings();
 
 	# Redirect STDERR to the log file.

@@ -30,7 +30,7 @@ my $cli_next;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.radiotime',
-	'defaultLevel' => 'WARN',
+	'defaultLevel' => 'ERROR',
 	'description'  => getDisplayName(),
 });
 

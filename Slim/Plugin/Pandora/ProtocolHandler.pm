@@ -15,7 +15,7 @@ use Slim::Utils::Misc;
 
 my $log = Slim::Utils::Log->addLogCategory({
 	'category'     => 'plugin.pandora',
-	'defaultLevel' => $ENV{PANDORA_DEV} ? 'DEBUG' : 'WARN',
+	'defaultLevel' => $ENV{PANDORA_DEV} ? 'DEBUG' : 'ERROR',
 	'description'  => 'PLUGIN_PANDORA_MODULE_NAME',
 });
 
