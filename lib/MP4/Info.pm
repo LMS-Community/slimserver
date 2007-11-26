@@ -384,7 +384,10 @@ sub parse_file
     return $err if $err;
 
     # remaining get_mp4tag() stuff
-    $tags->{CPIL}     = 0                unless defined ($tags->{CPIL});
+
+    # Bug 5985, for consistency with MP3::Info, we don't want to set compilation to 0
+    # here but rather leave it undef
+    delete $tags->{CPIL} if ( defined $tags->{CPIL} && $tags->{CPIL} == 0 );
 
     # MP3::Info compatibility
     $tags->{TITLE}    = $tags->{NAM}     if defined ($tags->{NAM});
