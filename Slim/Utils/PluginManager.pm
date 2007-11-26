@@ -32,7 +32,6 @@ use File::Spec::Functions qw(:ALL);
 use File::Next;
 use FindBin qw($Bin);
 use Path::Class;
-use PAR;
 use XML::Simple;
 use YAML::Syck;
 
@@ -71,6 +70,11 @@ my $log   = logger('server.plugins');
 
 sub init {
 	my $class = shift;
+	
+	# Bug 6196, Delay PAR loading to init phase so any temp directories
+	# are created as the proper user
+	require PAR;
+	PAR->import;
 
 	my ($manifestFiles, $newest) = $class->findInstallManifests;
 
