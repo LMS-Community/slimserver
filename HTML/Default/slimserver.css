@@ -616,12 +616,12 @@ div.thumbwrap {
 }
 
 .dragUp .selector_topLeft {
-	border-top: 1px white solid;
+	border-top: 1px black solid;
 	padding-top: 6px;
 }
 
 .dragDown .selector_bottomLeft {
-	border-bottom: 1px white solid;
+	border-bottom: 1px black solid;
 	padding-bottom: 4px;
 }
 
