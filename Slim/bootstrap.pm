@@ -336,7 +336,7 @@ sub check_valid_versions {
 		
 		# Could parse the module file here using code from Module::Build,
 		# but we will be loading these later anyway, so this is easier.
-		eval "use $mod";
+		eval "use $mod ()";
 		if ( !$@ ) {
 			eval { $mod->VERSION( $ver || 0 ); 1; };
 		}
