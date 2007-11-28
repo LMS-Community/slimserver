@@ -980,6 +980,7 @@ form#advSearchForm.resultsPage {
 
 /* settings pages */
 body.settings {
+	position: relative;
 	overflow: auto;
 }
 
