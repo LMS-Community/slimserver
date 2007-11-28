@@ -34,3 +34,7 @@
 #playlistCommandSpacer {
 	margin-top: 3px;
 }
+
+.x-tabs-item-body {
+	height: 0;
+}
