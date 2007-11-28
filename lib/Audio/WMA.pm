@@ -317,7 +317,7 @@ sub _parseWMAHeader {
 		while (my ($k,$v) = each %{$ext->{'content'}}) {
 
 			# this gets both WM/Title and isVBR
-			next unless $v->{'name'} =~ s#^(?:WM/|is)##i || $v->{'name'} =~ /^Author/;
+			next unless $v->{'name'} =~ s#^(?:WM/|is|replay)##i || $v->{'name'} =~ /^Author/;
 
 			my $name  = uc($v->{'name'});
 			my $value = $v->{'value'} || 0;
