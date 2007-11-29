@@ -159,6 +159,10 @@ img#background { position:absolute; }
 	width: 100%;
 }
 
+.inner p {
+	margin: 5px 5px 3px;
+} 
+
 .inner_top, .inner_bottom {
 	height: 12px;
 	margin: 0 12px;

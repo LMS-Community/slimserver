@@ -105,7 +105,7 @@ ELSE %]
 	%]
 
 	[% BLOCK menuItem; page = page | lower %]
-		<div class="selectorMarker" onmouseover="Utils.highlight(this [% IF expandable %], MainMenu.onSelectorClicked[% END %]);">
+		<div class="selectorMarker [% expandable %]" onmouseover="Utils.highlight(this [% IF expandable %], MainMenu.onSelectorClicked[% END %]);">
 			<div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 				<div class="homeMenuItem[% IF (page == 'radio' || page == 'music_services') && additionalLinks.icons.${link.key} %] itemWithCover[% END %]" id="[% link.key %]">
 					[% IF expandable %]

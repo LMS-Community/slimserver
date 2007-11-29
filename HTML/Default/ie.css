@@ -37,6 +37,10 @@ img#background {
 	bottom: 3px;
 }
 
+.homeMenuSection div.my_music {
+	position: relative;
+}
+
 #infoTab {
 	height: 25px;
 }
