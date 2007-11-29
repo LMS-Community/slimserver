@@ -222,8 +222,9 @@ var SettingsPage = function(){
 				modified = true;
 			});
 
-			if (Ext.isSafari)
+			if (Ext.isSafari) {
 				Ext.get(document).setStyle('overflow', 'auto');
+			}
 		},
 
 		initDescPopup : function(){
@@ -372,8 +373,11 @@ var SettingsPage = function(){
 		},
 
 		isModified : function(){
-//			document.forms['settingsForm'].elements[0].focus();
-			document.forms['settingsForm'].elements[0].blur();
+			var fields = document.forms.settingsForm.elements;
+			for (x=0; x<fields.length; x++) {
+				document.forms['settingsForm'].elements[x].blur();
+			}
+
 			return modified;
 		},
 

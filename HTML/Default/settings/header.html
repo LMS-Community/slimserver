@@ -44,16 +44,18 @@
 			[% extJsScripts %]
 		[% END %]
 
-		[%- IF debug %]
 		<style>
+			html { overflow: auto; }
+
+		[%- IF debug %]
 			.x-layout-panel-body { background: white; }
 			.x-btn-text, .x-btn button { color: black; }
 			.x-dlg .x-tabs-bottom .x-tabs-body {
 				background: white;
 				color: black;
 			}
-		</style>
 		[%- END %]
+		</style>
 
 		<!--[if lte IE 6]>
 		<link href="[% webroot %]ie.css?r=[% revision %]" type="text/css" rel="stylesheet">
