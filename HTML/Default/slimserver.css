@@ -979,9 +979,13 @@ form#advSearchForm.resultsPage {
 }
 
 /* settings pages */
-body.settings {
+body.settings, body.settingsMenu {
 	position: relative;
 	overflow: auto;
+}
+
+body.settingsMenu {
+	margin-left: 5px;
 }
 
 .statusarea {

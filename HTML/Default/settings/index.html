@@ -21,7 +21,7 @@ BLOCK settingsPage -%]
 [%- END -%]
 
 [%- IF menu == 'advanced';
-	PROCESS settings/header.html;
+	PROCESS settings/header.html bodyClass="settingsMenu";
 
 	links = additionalLinks.setup;
 
@@ -42,7 +42,7 @@ BLOCK settingsPage -%]
 	PROCESS settings/footer.html %]
 
 [%- ELSIF menu == 'player';
-	PROCESS settings/header.html;
+	PROCESS settings/header.html bodyClass="settingsMenu";
 
 	links = playersetup;
 	USE Clients; players = Clients.get("id")
