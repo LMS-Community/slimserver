@@ -60,7 +60,10 @@ BLOCK settingsPage -%]
 			strings = new Array();
 			[% PROCESS jsString id='CHOOSE_PLAYER' jsId='' %]
 
-			Ext.EventManager.onDocumentReady(SettingsPage.initPlayerList);
+			if (Ext.isSafari)
+				SettingsPage.initPlayerList();
+			else
+				Ext.EventManager.onDocumentReady(SettingsPage.initPlayerList);
 		</script>
 	[%
 
