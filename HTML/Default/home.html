@@ -99,36 +99,26 @@ ELSE %]
 		FOREACH link = additionalLinks.plugins;
 			PROCESS menuItem;
 		END;
-	END;
+	END %]
 
-	page = page | lower;
-	%]
-
-	[% BLOCK menuItem; page = page | lower %]
+	[% BLOCK menuItem %]
 		<div class="selectorMarker [% expandable %]" onmouseover="Utils.highlight(this [% IF expandable %], MainMenu.onSelectorClicked[% END %]);">
 			<div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
-				<div class="homeMenuItem[% IF (page == 'radio' || page == 'music_services') && additionalLinks.icons.${link.key} %] itemWithCover[% END %]" id="[% link.key %]">
+				<div class="homeMenuItem" id="[% link.key %]">
 					[% IF expandable %]
 						<img class="disclosure_home" src="[% webroot %]html/images/spacer.gif"/>
 					[% ELSE %]
-						<a href="[% link.value %]player=[% player %][% IF expandable; "&amp;page=" _ expandable; END %]" class="browseItemLink">
+						<a href="[% link.value %]player=[% player %]" class="browseItemLink">
 					[% END %]
-						[% IF (page == 'radio' || page == 'music_services') && additionalLinks.icons.${link.key} %]
+						[% IF additionalLinks.icons.${link.key} %]
 							<span class="browseCover">
-								<img src="[% webroot %][% additionalLinks.icons.${link.key}.replace('.png', "_50x50_f.png") %]" width="50" border="0" alt="[% link.key | string %]">
+								<img src="[% webroot %][% additionalLinks.icons.${link.key}.replace('.png', "_25x25_f.png") %]" width="25" border="0" alt="[% link.key | string %]">
 							</span>
-							<div class="browseItemDetail">[% link.key | string %]</div>
-						[% ELSE %]
-							[% IF additionalLinks.icons.${link.key} %]
-								<span class="browseCover">
-									<img src="[% webroot %][% additionalLinks.icons.${link.key}.replace('.png', "_25x25_f.png") %]" width="25" border="0" alt="[% link.key | string %]">
-								</span>
-								<div class="smallBrowseItemDetail">
-							[% END %]
-							[% link.key | getstring %]
-							[% IF additionalLinks.icons.${link.key} %]
-								</div>
-							[% END %]
+							<div class="smallBrowseItemDetail">
+						[% END %]
+						[% link.key | getstring %]
+						[% IF additionalLinks.icons.${link.key} %]
+							</div>
 						[% END %]
 					[% IF !expandable %]
 						</a>
@@ -144,124 +134,68 @@ ELSE %]
 		</div></div></div></div>
 	[% control=''; END %]
 
-	[% IF page == 'my_music' %]
-		[% pagetitle = "MY_MUSIC" | string %]
-
-		[% pwd_list = BLOCK %]
-			<a href="[% webroot %]home.html?player=[% player %]">[% "HOME" | string %]</a> [% crumbSeparator %] [% "MY_MUSIC" | string %]
-		[% END %]
-
-		[% menu = BLOCK %]
-		<div class="homeMenuSection" id="my_musicMenu">
-			[%- my_musicItems -%]
-		</div>
-
-		<div class="homeMenuSection" id="searchMenu">
-			<div id="search-results"></div>
-		</div>
-		[% END %]
-
-	[% ELSIF page == 'radio' %]
-		[% pagetitle = "RADIO" | string %]
-		[% pwd_list = BLOCK %]
-			<a href="[% webroot %]home.html?player=[% player %]">[% "HOME" | string %]</a> [% crumbSeparator %] [% "RADIO" | string %]
-		[% END %]
-
-		[% menu = BLOCK %]
-		<div class="homeMenuSection" id="radioMenu">
-			[%- radioItems -%]
-		</div>
-		[% END %]
-
-	[% ELSIF page == 'music_services' %]
-		[% pagetitle = "MUSIC_SERVICES" | string %]
-		[% pwd_list = BLOCK %]
-			<a href="[% webroot %]home.html?player=[% player %]">[% "HOME" | string %]</a> [% crumbSeparator %] [% "MUSIC_SERVICES" | string %]
-		[% END %]
-
-		[% menu = BLOCK %]
-		<div class="homeMenuSection" id="music_servicesMenu">
-			[%- music_servicesItems -%]
-		</div>
-		[% END %]
-
-	[% ELSIF page == 'plugins' %]
-		[% pagetitle = "PLUGINS" | string %]
-		[% pwd_list = BLOCK %]
-			<a href="[% webroot %]home.html?player=[% player %]">[% "HOME" | string %]</a> [% crumbSeparator %] [% "PLUGINS" | string %]
-		[% END %]
-
-		[% menu = BLOCK %]
-		<div class="homeMenuSection" id="pluginsMenu">
-			[%- pluginsItems -%]
-		</div>
-		[% END %]
-
-	[% ELSE %]
-		[% pagetitle = "HOME" | string %]
-		[% menu = BLOCK %]
-		<div class="homeMenuSection" id="homeMenu">
-			[% PROCESS menuItem link.key="MY_MUSIC" link.value="home.html?" expandable="my_music" %]
-			<div id="MY_MUSIC_expanded" class="expandableHomeMenuItem">[%- my_musicItems -%]</div>
-		
-			[% IF additionalLinks.radio %]
-				[% PROCESS menuItem link.key="RADIO" link.value="home.html?" expandable="radio" %]
-				<div id="RADIO_expanded" class="expandableHomeMenuItem">[%- radioItems -%]</div>
-			[% END %]
-		
-			[% IF additionalLinks.music_services %]
-				[% PROCESS menuItem link.key="MUSIC_SERVICES" link.value="home.html?" expandable="music_services" %]
-				<div id="MUSIC_SERVICES_expanded" class="expandableHomeMenuItem">[%- music_servicesItems -%]</div>
-			[% END %]
-
-			[% IF favorites;
-				control = BLOCK; 
-					WRAPPER editlink noTarget=1;
-						'href="' _ webroot _ 'plugins/Favorites/index.html?fav"';
-					END;
-				END;
-
-				PROCESS menuItem expandable=1 
-					link = { 
-						key = 'FAVORITES',
-						value = additionalLinks.browse.FAVORITES
-					} 
-				%]
-				<div id="FAVORITES_expanded" class="expandableHomeMenuItem">
-				[% 
-					expandable = 0;
-					FOREACH entry = favorites;
-						control = BLOCK;
-							IF entry.type == "audio";
-								 WRAPPER playlink noTarget=1 -%]
-									href="javascript:void(0);" onClick="Utils.processCommandURL('[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% loop.index %]&amp;player=[% player | uri %]');"
-								[%- END;
-								WRAPPER addlink noTarget=1 -%]
-									href="javascript:void(0);" onClick="Utils.processCommandURL('[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% loop.index %]&amp;player=[% player | uri %]');"
-								[%- END;
-							ELSE;
-								PROCESS dummylink;
-								PROCESS dummylink;
-							END;
-						END;
+	[% pagetitle = "HOME" | string %]
+	[% menu = BLOCK %]
+	<div class="homeMenuSection" id="homeMenu">
+		[% PROCESS menuItem link.key="MY_MUSIC" link.value="home.html?" expandable="my_music" %]
+		<div id="MY_MUSIC_expanded" class="expandableHomeMenuItem">[%- my_musicItems -%]</div>
 	
-						PROCESS menuItem 
-							link = {
-								key = entry.text,
-								value = webroot _ "plugins/Favorites/index.html?&amp;index=" _ loop.index _ "&amp;player=" _ playerURI
-							};
-					END
-				%]
-				</div>
-			[% END %]
-
-			[% IF additionalLinks.plugins %]
-				[% PROCESS menuItem link.key="PLUGINS" link.value="home.html?" expandable="plugins"; expandable = 0 %]
-				<div id="PLUGINS_expanded" class="expandableHomeMenuItem">[%- pluginsItems -%]</div>
-			[% END %]
-		</div>
+		[% IF additionalLinks.radio %]
+			[% PROCESS menuItem link.key="RADIO" link.value="home.html?" expandable="radio" %]
+			<div id="RADIO_expanded" class="expandableHomeMenuItem">[%- radioItems -%]</div>
+		[% END %]
+	
+		[% IF additionalLinks.music_services %]
+			[% PROCESS menuItem link.key="MUSIC_SERVICES" link.value="home.html?" expandable="music_services" %]
+			<div id="MUSIC_SERVICES_expanded" class="expandableHomeMenuItem">[%- music_servicesItems -%]</div>
 		[% END %]
 
+		[% IF favorites;
+			control = BLOCK; 
+				WRAPPER editlink noTarget=1;
+					'href="' _ webroot _ 'plugins/Favorites/index.html?fav"';
+				END;
+			END;
+
+			PROCESS menuItem expandable=1 
+				link = { 
+					key = 'FAVORITES',
+					value = additionalLinks.browse.FAVORITES
+				} 
+			%]
+			<div id="FAVORITES_expanded" class="expandableHomeMenuItem">
+			[% 
+				expandable = 0;
+				FOREACH entry = favorites;
+					control = BLOCK;
+						IF entry.type == "audio";
+							 WRAPPER playlink noTarget=1 -%]
+								href="javascript:void(0);" onClick="Utils.processCommandURL('[% webroot %]plugins/Favorites/index.html?action=play&amp;index=[% loop.index %]&amp;player=[% player | uri %]');"
+							[%- END;
+							WRAPPER addlink noTarget=1 -%]
+								href="javascript:void(0);" onClick="Utils.processCommandURL('[% webroot %]plugins/Favorites/index.html?action=add&amp;index=[% loop.index %]&amp;player=[% player | uri %]');"
+							[%- END;
+						ELSE;
+							PROCESS dummylink;
+							PROCESS dummylink;
+						END;
+					END;
+
+					PROCESS menuItem 
+						link = {
+							key = entry.text,
+							value = webroot _ "plugins/Favorites/index.html?&amp;index=" _ loop.index _ "&amp;player=" _ playerURI
+						};
+				END
+			%]
+			</div>
+		[% END %]
+
+		[% IF additionalLinks.plugins %]
+			[% PROCESS menuItem link.key="PLUGINS" link.value="home.html?" expandable="plugins"; expandable = 0 %]
+			<div id="PLUGINS_expanded" class="expandableHomeMenuItem">[%- pluginsItems -%]</div>
+		[% END %]
+	</div>
 	[% END %]
 
 	[% PROCESS pageheader.html noHomeLink=1 %]
