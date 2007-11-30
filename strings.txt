@@ -11968,6 +11968,9 @@ GETTING_STARTED
 	SV	Komma igång
 	ZH_CN	开始
 
+COMMUNITY_FORUM
+	EN	Community Forums
+
 FAQ
 	CS	Často kladené dotazy
 	DA	Ofte stillede spørgsmål (FAQ) (Engelsk)
