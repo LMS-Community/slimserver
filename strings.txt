@@ -7331,6 +7331,14 @@ SETUP_WIZARD_PREVIOUS
 	IT	Precedente
 	NL	Vorige
 
+SETUP_WIZARD_SKIP
+	DE	Überspringen
+	EN	Skip
+	ES	Omitir
+	FR	Suivant
+	IT	Prossimo
+	NL	Overslaan
+
 SETUP_WIZARD_FINISH
 	DE	Abschliessen
 	EN	Finish

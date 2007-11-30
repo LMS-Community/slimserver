@@ -113,7 +113,9 @@ Wizard = function(){
 					}
 				};
 
+				Ext.get('sn_email').on('keyup', this.updateNextBtn, this);
 				Ext.get('sn_email').on('change', function(){ validators.sqn.valid = false; });
+				Ext.get('sn_password').on('keyup', this.updateNextBtn, this);
 				Ext.get('sn_password').on('change', function(){ validators.sqn.valid = false; });
 				Ext.get('audiodir').on('change', function(){ validators.audiodir.valid = false; });
 				Ext.get('playlistdir').on('change', function(){ validators.playlistdir.valid = false; });
@@ -149,7 +151,16 @@ Wizard = function(){
 			this.flipPages();
 		},
 
+		updateNextBtn : function(){
+			if (Ext.get('sn_email').dom.value || Ext.get('sn_password').dom.value)
+				this.nextBtn.setText(strings['next']);
+			else
+				this.nextBtn.setText(strings['skip']);			
+		},
+
 		whichPage : function(oldValue, offset){
+			this.nextBtn.setText(strings['next']);
+
 			switch (pages[oldValue]) {
 				case 'welcome' :
 					this.prevBtn.show();
@@ -164,9 +175,6 @@ Wizard = function(){
 
 						if (!firsttimerun)
 							window.open('javascript:window.close();','_self','');
-					}
-					else {
-						this.nextBtn.setText(strings['next']);
 					}
 
 					break;
@@ -187,6 +195,10 @@ Wizard = function(){
 				case 'proxy' :
 					if (!showproxy)
 						newPage = this.whichPage(newPage, offset);
+					break;
+
+				case 'sqn' :
+					this.updateNextBtn();
 					break;
 
 				case 'audiodir' :
