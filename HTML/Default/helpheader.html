@@ -3,7 +3,7 @@
 END %]
 [% helptitle = "HELP" | string %]
 [% IF !noCrumbList; pageHeaderMenu = BLOCK %]
-	[% IF techinfo %]<a href="[% webroot %]html/docs/index.html?player=[% playerURI %]">[% "TECHNICAL_INFORMATION" | string %]</a>[% END %]
+	[% IF techinfo %]<a href="[% webroot %]html/docs/index.html?player=[% playerURI %]">[% "TECHNICAL_INFORMATION" | string %]</a> &gt;[% END %]
 	[% pagetitle %]
 [% END; END %]
 [% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
@@ -19,7 +19,7 @@ END %]
 			[% BLOCK helpTopic %]
 				<div class="selectorMarker" onmouseover="Utils.highlight(this);" id="[% href %]"><div class="selector_topRight"><div class="selector_topLeft"><div class="selector_bottomRight"><div class="selector_bottomLeft">
 					<div class="homeMenuItem" id="[% token %][% IF category %]:[% category %][% END %]">
-						<a href="[% href %][% IF NOT url.match('^http') %]?player=[% playerURI %][% END %]" [% IF target %]target="[% target %]" [% END %][% IF href.match('^http') %]target="_new" [% END %] class="browseItemLink">[% title %]</a>
+						<a href="[% href %][% IF NOT url.match('^http') %]?player=[% playerURI %][% END %]" [% IF target %]target="[% target %]" [% END %][% IF href.match('^http:') %]target="_new" [% END %] class="browseItemLink">[% title %]</a>
 					</div>
 				</div></div></div></div></div>
 			[% END -%]
