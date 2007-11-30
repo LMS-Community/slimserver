@@ -298,10 +298,6 @@ img#background { position:absolute; }
 	padding-bottom: 3px;
 }
 
-.settings #inner_header {
-	padding-bottom: 0;
-}
-
 #titleRight {
 	position: absolute;
 	left: 10px;
@@ -990,6 +986,10 @@ body.settings, body.settingsMenu {
 
 body.settingsMenu {
 	margin-left: 5px;
+}
+
+.settingsFrame #inner_header {
+	padding-bottom: 0;
 }
 
 .statusarea {

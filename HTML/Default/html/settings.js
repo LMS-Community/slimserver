@@ -42,8 +42,6 @@ Settings = function(){
 			if (Ext.isIE && !Ext.isIE7)
 				Ext.EventManager.onDocumentReady(this.onResize, layout, true);
 
-			layout.endUpdate();
-
 			Ext.QuickTips.init();
 
 			tp = new Ext.TabPanel('settingsTabs');
@@ -126,6 +124,8 @@ Settings = function(){
 				handler: this.submitSettings,
 				scope: this
 			});
+
+			layout.endUpdate();
 
 			this.onResize();
 		},
