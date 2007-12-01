@@ -21,6 +21,7 @@ Base class for preference objects implementing methods which can be used on glob
 use strict;
 
 use Scalar::Util qw(blessed);
+use Storable;
 
 use Slim::Utils::Log;
 
@@ -172,7 +173,21 @@ sub init {
 
 		if (!exists $class->{'prefs'}->{ $pref }) {
 
-			my $value = ref $hash->{ $pref } eq 'CODE' ? $hash->{ $pref }->() : $hash->{ $pref };
+			my $value;
+
+			if (ref $hash->{ $pref } eq 'CODE') {
+
+				$value = $hash->{ $pref }->();
+
+			} elsif (ref $hash->{ $pref }) {
+
+				# dclone data structures to ensure each client gets its own copy
+				$value = Storable::dclone($hash->{ $pref });
+
+			} else {
+
+				$value = $hash->{ $pref };
+			}
 
 			if ( $log->is_info ) {
 				$log->info(

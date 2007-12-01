@@ -75,6 +75,7 @@ use strict;
 use Exporter::Lite;
 use File::Path qw(mkpath);
 use Getopt::Long qw(:config pass_through);
+use Storable;
 
 use Slim::Utils::Prefs::Namespace;
 use Slim::Utils::Prefs::OldPrefs;
@@ -316,7 +317,8 @@ sub init {
 			$defaults = $Slim::Player::Transporter::defaultPrefs;
 		}
 		
-		$cprefs->set( menuItem => $defaults->{menuItem} );
+		$cprefs->set( menuItem => Storable::dclone($defaults->{menuItem}) ); # clone for each client
+		1;
 	} );
 	
 	# initialise any new prefs
