@@ -298,9 +298,10 @@ sub albumsQuery {
 	}
 
 	$count += 0;
-	$request->addResult('count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+	$count-- if $insertAll && $start == 0 && $end == 1;
+	$request->addResult('count', $count);
 
 	if ($valid) {
 
@@ -533,9 +534,10 @@ sub artistsQuery {
 	}
 
 	$count += 0;
-	$request->addResult('count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+	$count-- if $insertAll && $start == 0 && $end == 1;
+	$request->addResult('count', $count);
 
 	if ($valid) {
 
@@ -1004,9 +1006,10 @@ sub genresQuery {
 	}
 
 	$count += 0;
-	$request->addResult('count', $count);
-
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+	$count-- if $insertAll && $start == 0 && $end == 1;
+	
+	$request->addResult('count', $count);
 
 	if ($valid) {
 
@@ -1289,11 +1292,12 @@ sub musicfolderQuery {
 	}
 
 	$count += 0;
-	$request->addResult('count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(
 		scalar($index), scalar($quantity), $count
 	);
+	$count-- if $insertAll && $start == 0 && $end == 1;
+	$request->addResult('count', $count);
 
 	if ($valid) {
 		
@@ -1553,9 +1557,9 @@ sub playersQuery {
 	
 	my $count = Slim::Player::Client::clientCount();
 	$count += 0;
-	$request->addResult('count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+	$request->addResult('count', $count);
 
 	if ($valid) {
 		my $idx = $start;
@@ -1800,9 +1804,9 @@ sub playlistsTracksQuery {
 		my $count = $iterator->count();
 
 		$count += 0;
-		$request->addResult("count", $count);
 		
 		my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+		$request->addResult("count", $count);
 
 		if ($valid) {
 
@@ -1928,10 +1932,11 @@ sub playlistsQuery {
 
 	
 		$count += 0;
-		$request->addResult("count", $count);
 		
 		my ($valid, $start, $end) = $request->normalize(
 			scalar($index), scalar($quantity), $count);
+		$count-- if $insertAll && $start == 0 && $end == 1;
+		$request->addResult("count", $count);
 
 		if ($valid) {
 			
@@ -3598,9 +3603,10 @@ sub titlesQuery {
 	}
 
 	$count += 0;
-	$request->addResult("count", $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+	$count-- if $insertAll && $start == 0 && $end == 1;
+	$request->addResult("count", $count);
 
 	if ($valid) {
 		
@@ -3782,9 +3788,10 @@ sub yearsQuery {
 	}
 
 	$count += 0;
-	$request->addResult('count', $count);
 
 	my ($valid, $start, $end) = $request->normalize(scalar($index), scalar($quantity), $count);
+	$count-- if $insertAll && $start == 0 && $end == 1;
+	$request->addResult('count', $count);
 
 	if ($valid) {
 
@@ -4409,7 +4416,10 @@ sub _songData {
 sub _playAll {
 	my ($start, $end, $cnt, $request, $loopname) = @_;
 	# insert first item if needed
-	if ($start == 0) {
+	if ($start == 0 && $end == 1) {
+		# one item list, so do not add a play all and just return
+		return($start, $end, $cnt);
+	} elsif ($start == 0) {
 			$request->addResultLoop($loopname, $cnt, 'text', Slim::Utils::Strings::string('JIVE_PLAY_ALL'));
 
 		# get all our params
