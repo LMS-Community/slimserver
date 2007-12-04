@@ -73,9 +73,9 @@ our $defaultPrefs = {
 };
 
 sub new {
-	my ($class, $id, $paddr, $rev, $s, $deviceid) = @_;
+	my ($class, $id, $paddr, $rev, $s, $deviceid, $uuid) = @_;
 
-	my $client = $class->SUPER::new($id, $paddr, $rev, $s, $deviceid);
+	my $client = $class->SUPER::new($id, $paddr, $rev, $s, $deviceid, $uuid);
 
 	# initialize model-specific features:
 	$client->revision($rev);

@@ -859,7 +859,7 @@ sub _hello_handler {
 	# Newer player fw reports a uuid. With uuid, length is 36; without uuid, length is 20
 	my $data_ref_length = length( $$data_ref);
 	
-	my $uuid = "not available";
+	my $uuid;
 
 	if( $data_ref_length == 36) {
 		(	$deviceid, $revision, 
@@ -891,7 +891,7 @@ sub _hello_handler {
 			"Deviceid: $deviceid",
 			"revision: $revision",
 			"mac: $mac",
-			"uuid: $uuid",
+			"uuid: " . ( $uuid || 'not available' ),
 			"bitmapped: $bitmapped",
 			"reconnect: $reconnect",
 			"wlan_channellist: $wlan_channellist",
@@ -1000,11 +1000,12 @@ sub _hello_handler {
 		$log->info("Creating new client, id: $id ipport: $ipport{$s}");
 
 		$client = $client_class->new(
-			$id, 		# mac
-			$paddr,		# sockaddr_in
-			$revision,	# rev
-			$s,		# tcp sock
-			$deviceid,	# device ID
+			$id,        # mac
+			$paddr,     # sockaddr_in
+			$revision,  # rev
+			$s,         # tcp sock
+			$deviceid,  # device ID
+			$uuid,      # UUID (if available)
 		);
 
 		Slim::bootstrap::tryModuleLoad($display_class);
