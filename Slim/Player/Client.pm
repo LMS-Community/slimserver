@@ -85,7 +85,7 @@ sub new {
 
 	$client->[0] = $id;
 	$client->[1] = $deviceid;
-	$client->[2] = $uuid,
+	$client->[2] = $uuid;
 
 #	$client->[3]
 
