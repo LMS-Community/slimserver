@@ -19,6 +19,11 @@ TABLE,TBODY {
 	margin: 0px;
 }
 
+DIV {
+	line-height: 150%;
+	_height: 0%;
+}
+
 DIV.coverart {
 	overflow: hidden;
 	float: left;
