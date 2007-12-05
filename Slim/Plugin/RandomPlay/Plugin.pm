@@ -125,7 +125,7 @@ sub initPlugin {
 		text   => Slim::Utils::Strings::string(getDisplayName()),
 		count  => 5,
 		offset => 0,
-		weight => 15,
+		weight => 60,
 		window => { titleStyle => 'mymusic' },
 		item_loop => [
 			{
@@ -356,6 +356,10 @@ sub findAndAdd {
 		));
 	}
 
+	# temporarily turn off shuffle while we add new stuff
+	my $oldshuffle = Slim::Player::Playlist::shuffle($client);
+	Slim::Player::Playlist::shuffle($client, 0);
+
 	# Replace the current playlist with the first item / track or add it to end
 	my $request = $client->execute([
 		'playlist', $addOnly ? 'addtracks' : 'loadtracks', sprintf('%s.id=%d', $type, $obj->id)
@@ -379,6 +383,7 @@ sub findAndAdd {
 		}
 	}
 
+	Slim::Player::Playlist::shuffle($client, $oldshuffle);
 	return $obj->name;
 }
 
@@ -528,8 +533,6 @@ sub playRandom {
 			$client->execute(['power', '1']);
 		}
 
-		Slim::Player::Playlist::shuffle($client, 0);
-
 		my $find = {};
 
 		# Initialize find to only include user's selected genres.  If they've deselected
@@ -648,6 +651,7 @@ sub playRandom {
 		}
 
 		$mixInfo{$client->masterOrSelf->id} = undef;
+		$client->blockShuffle = 0;
 
 	} else {
 
@@ -662,6 +666,7 @@ sub playRandom {
 		#will see a continuous mode state.
 		if ($continuousMode) {
 			$mixInfo{$client->masterOrSelf->id}->{'type'} = $type;
+			$client->blockShuffle(1);
 		}
 
 		# $startTime will only be defined if this is a new (or restarted) mix
