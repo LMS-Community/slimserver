@@ -1068,8 +1068,23 @@ sub myMusicMenu {
 	my $searchMenu = searchMenu();
 	my @return = (
 			{
-				text    => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
+				text    => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
 				weight  => 10,
+				actions => {
+					go => {
+						cmd    => ['artists'],
+						params => {
+							menu => 'album',
+						},
+					},
+				},
+				window => {
+					titleStyle => 'mymusic',
+				},
+			},
+			{
+				text    => Slim::Utils::Strings::string('BROWSE_BY_ALBUM'),
+				weight  => 20,
 				actions => {
 					go => {
 						cmd    => ['albums'],
@@ -1080,21 +1095,6 @@ sub myMusicMenu {
 				},
 				window => {
 					menuStyle => 'album',
-					titleStyle => 'mymusic',
-				},
-			},
-			{
-				text    => Slim::Utils::Strings::string('BROWSE_BY_ARTIST'),
-				weight  => 20,
-				actions => {
-					go => {
-						cmd    => ['artists'],
-						params => {
-							menu => 'album',
-						},
-					},
-				},
-				window => {
 					titleStyle => 'mymusic',
 				},
 			},
