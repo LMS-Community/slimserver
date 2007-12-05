@@ -48,7 +48,7 @@ sub handler {
 			$prefs->set($pref, \@array);
 		}
 
-		if ($paramRef->{'titleformatWeb'} ne $prefs->get('titleFormatWeb')) {
+		if ($paramRef->{'titleFormatWeb'} ne $prefs->get('titleFormatWeb')) {
 
 			for my $client (Slim::Player::Client::clients()) {
 
