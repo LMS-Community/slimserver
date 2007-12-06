@@ -147,6 +147,7 @@ sub createConfig {
 		'socket'   => $class->socketFile,
 		'pidFile'  => $class->pidFile,
 		'errorLog' => catdir($cacheDir, 'mysql-error-log.txt'),
+		'bindAddress' => $prefs->get('bindAddress'),
 	);
 
 	# Because we use the system MySQL, we need to point to the right

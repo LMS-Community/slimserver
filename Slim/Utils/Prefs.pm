@@ -126,6 +126,7 @@ sub namespaces {
 sub init {
 	my %defaults = (
 		# Server Prefs not settable from web pages
+		'bindAddress'           => '127.0.0.1',            # Default MySQL bind address
 		'dbsource'              => $DEFAULT_DBSOURCE,
 		'dbusername'            => 'slimserver',
 		'dbpassword'            => '',
