@@ -854,12 +854,10 @@ sub _hello_handler {
  
 	Slim::Utils::Timers::killOneTimer($s, \&slimproto_close);
 	
-	my ($deviceid, $revision, @mac, @uuid, $bitmapped, $reconnect, $wlan_channellist, $bytes_received_H, $bytes_received_L, $bytes_received);
+	my ($deviceid, $revision, @mac, $uuid, $bitmapped, $reconnect, $wlan_channellist, $bytes_received_H, $bytes_received_L, $bytes_received);
 
 	# Newer player fw reports a uuid. With uuid, length is 36; without uuid, length is 20
 	my $data_ref_length = length( $$data_ref);
-	
-	my $uuid;
 
 	if( $data_ref_length == 36) {
 		(	$deviceid, $revision, 
