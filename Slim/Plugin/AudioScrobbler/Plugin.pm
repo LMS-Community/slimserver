@@ -227,7 +227,6 @@ sub _handshakeError {
 sub newsongCallback {
 	my $request = shift;
 	my $client  = $request->client() || return;
-	my $idx     = $request->getParam('_p3');
 	
 	# If synced, only listen to the master
 	if ( Slim::Player::Sync::isSynced($client) ) {
@@ -242,7 +241,7 @@ sub newsongCallback {
 	
 	return unless $enable_now_playing || $enable_scrobbling;
 
-	my $url   = Slim::Player::Playlist::url( $client, $idx );
+	my $url   = Slim::Player::Playlist::url($client);
 	my $track = Slim::Schema->objectForUrl( { url => $url } );
 	
 	# If now_playing is enabled, report all new songs
