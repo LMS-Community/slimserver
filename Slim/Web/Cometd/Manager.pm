@@ -130,6 +130,10 @@ sub remove_channels {
 				if ( $clid eq $sub_clid ) {
 					delete $self->{channels}->{$channel}->{$clid};
 					
+					if ( !scalar keys %{ $self->{channels}->{$channel} } ) {
+						delete $self->{channels}->{$channel};
+					}
+					
 					$log->debug("remove_channels for $clid: $channel");
 				}
 			}
@@ -153,6 +157,10 @@ sub remove_channels {
 			for my $channel ( keys %{ $self->{channels} } ) {
 				if ( $re_sub eq $channel ) {
 					delete $self->{channels}->{$channel}->{$clid};
+					
+					if ( !scalar keys %{ $self->{channels}->{$channel} } ) {
+						delete $self->{channels}->{$channel};
+					}
 				}
 			}
 		
@@ -191,13 +199,15 @@ sub deliver_events {
 		# Find subscriber(s) to this event
 		my $channel = $event->{channel};
 		
-		# Queue up all events for all subscribers
-		# Since channels is a regexphash it will automatically match
-		# globbed channels
-		for my $clid ( keys %{ $self->{channels}->{$channel} } ) {
-			push @to_send, $clid;
+		if ( exists $self->{channels}->{$channel} ) {
+			# Queue up all events for all subscribers
+			# Since channels is a regexphash it will automatically match
+			# globbed channels
+			for my $clid ( keys %{ $self->{channels}->{$channel} } ) {
+				push @to_send, $clid;
 			
-			$log->debug("Sending event on channel $channel to $clid");
+				$log->debug("Sending event on channel $channel to $clid");
+			}
 		}
 	}
 	
