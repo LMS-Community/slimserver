@@ -651,7 +651,6 @@ sub playRandom {
 		}
 
 		$mixInfo{$client->masterOrSelf->id} = undef;
-		$client->blockShuffle = 0;
 
 	} else {
 
@@ -666,7 +665,6 @@ sub playRandom {
 		#will see a continuous mode state.
 		if ($continuousMode) {
 			$mixInfo{$client->masterOrSelf->id}->{'type'} = $type;
-			$client->blockShuffle(1);
 		}
 
 		# $startTime will only be defined if this is a new (or restarted) mix
