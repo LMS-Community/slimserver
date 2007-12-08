@@ -239,7 +239,6 @@ sub dirsFor {
 
 		} elsif ($dir eq 'Plugins') {
 			
-			use Config;
 			push @dirs, "/usr/share/squeezecenter/Plugins";
 			push @dirs, "/usr/lib/perl5/vendor_perl/Slim/Plugin";
 		
