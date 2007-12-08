@@ -22,38 +22,6 @@ SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNTS_DESC
 	IT	Immettere il nome utente e la password Last.fm. Se si desidera inviare brani da lettori diversi a più account, è possibile creare diversi account. Per eliminare un account esistente, selezionare la casella corrispondente.
 	NL	Voer je gebruikersnaam en wachtwoord voor Last.fm in. Als je nummers van verschillende spelers bij verschillende accounts wilt indienen, kun je meerdere accounts invoeren. Je verwijdert een bestaande account door het bijbehorende vakje te selecteren.
 
-SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_NP
-	DE	Aktuellen Titel an Last.fm melden
-	EN	Report now playing track to Last.fm.
-	ES	Notificar pista de reproducción en curso a Last.fm.
-	FR	Indiquer à Last.fm le morceau en cours de lecture.
-	IT	Segnala il brano in corso di riproduzione in Last.fm.
-	NL	Nummer dat nu speelt bij Last.fm melden.
-
-SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_NP_DESC
-	DE	Aktivieren Sie diese Option, um den aktuellen Titel an Last.fm zu melden. Dabei wird Ihr Musikprofil nicht verändert, aber andere können sehen, was Sie hören.
-	EN	Enable this option to report your currently playing track to Last.fm.  This does not affect your musical profile but enables others to see what you are currently listening to.
-	ES	Habilite esta opción para informar a Last.fm de la pista que está reproduciendo actualmente. Esto no afecta a su perfil musical pero permite que otros usuarios sepan qué está escuchando.
-	FR	Activez cette option si vous souhaitez indiquer à Last.fm le morceau en cours de lecture. Cette option n'affecte pas votre profil musical, mais permet aux autres utilisateurs de connaître le morceau que vous êtes en train d'écouter.
-	IT	Selezionare questa opzione se si desidera segnalare il brano in corso di riproduzione in Last.fm. Questa opzione non modifica il profilo musicale, ma consente ad altri utenti di visualizzare il titolo del brano che si sta attualmente ascoltando.
-	NL	Schakel deze optie in om het nummer dat nu speelt, bij Last.fm te melden. Dit is niet van invloed op je muziekprofiel, maar zo kunnen anderen zien waar jij op dit moment naar luistert.
-
-SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_NP_YES
-	DE	Ja, aktuellen Titel an Last.fm melden.
-	EN	Yes, report now playing data to Last.fm.
-	ES	Sí, notificar pista de reproducción en curso a Last.fm.
-	FR	Indiquer à Last.fm les données en cours de lecture.
-	IT	Sì, segnala i dati del brano in corso di riproduzione in Last.fm.
-	NL	Ja, Speelt nu-gegevens bij Last.fm melden.
-
-SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_NP_NO
-	DE	Nein, aktuellen Titel nicht an Last.fm melden.
-	EN	No, do not report now playing data to Last.fm.
-	ES	No notificar pista de reproducción en curso a Last.fm.
-	FR	Ne pas indiquer à Last.fm les données en cours de lecture.
-	IT	No, non segnalare i dati del brano in corso di un brano in Last.fm.
-	NL	Nee, Speelt nu-gegevens niet bij Last.fm melden.
-
 SETUP_PLUGIN_AUDIOSCROBBLER_ENABLE_SCROBBLING
 	DE	Alle wiedergegebene Titel an Last.fm melden (scrobble).
 	EN	Submit (scrobble) all tracks played to Last.fm.
@@ -142,14 +110,6 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_DISABLED
 	IT	Disattiva. Non inviare i brani riprodotti con questo lettore.
 	NL	Uitgeschakeld; nummers gespeeld op deze speler niet indienen.
 
-SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_NP_DISABLED
-	DE	Warnung: Das Melden des aktuellen Titels ist global deaktiviert. Wenn Sie den aktuellen Titel auf diesem Player senden möchten, aktivieren Sie unter 'Erweitert -> Last.fm Audioscrobbler' die Option 'Aktuellen Titel an Last.fm melden'.
-	EN	Warning: Report now playing is globally disabled.  To submit now playing information for this player, enable the Report Now Playing setting by going to Advanced -> Last.fm Audioscrobbler.
-	ES	Advertencia: Notificar reproducción en curso se ha deshabilitado globalmente. Para enviar información de reproducción en curso para este reproductor, habilite la opción Notificar reproducción en curso, en Avanzada -> Audioscrobbler de Last.fm.
-	FR	Avertissement: l'envoi des morceaux lus est désactivé de manière globale. Pour envoyer les informations des morceaux en cours de lecture pour cette platine, activez l'option pour indiquer le morceau en cours de lecture dans Avancé -> Last.fm Audioscrobbler.
-	IT	Avviso: la segnalazione della riproduzione in corso è stata disattivata a livello globale. Per inviare i dati dei brani in corso di riproduzione nel lettore corrente, attivare l'impostazione Segnala riproduzione in corso accessibile dalla scheda Avanzate -> Audioscrobbler Last.fm.
-	NL	Waarschuwing: Melden van Speelt nu is globaal uitgeschakeld. Als je Speelt nu-gegevens voor deze speler wilt indienen, schakel je Speelt nu melden in via Geavanceerd -> Last.fm Audioscrobbler.
-
 SETUP_PLUGIN_AUDIOSCROBBLER_WARNING_SCROBBLE_DISABLED
 	DE	Warnung: Das Senden aller Titel ist global deaktiviert. Wenn Sie Titelinformationen für diesen Player senden möchten, aktivieren Sie unter 'Erweitert -> Last.fm Audioscrobbler' die Option 'Alle Titel senden'.
 	EN	Warning: Submit all tracks is globally disabled.  To submit track information for this player, enable the Submit all tracks setting by going to Advanced -> Last.fm Audioscrobbler.
@@ -163,3 +123,9 @@ SETUP_PLUGIN_AUDIOSCROBBLER_PLAYER_NOTE
 
 SETUP_PLUGIN_AUDIOSCROBBLER_LOGIN_ERROR
 	EN	There was an error verifying your account with Last.fm. Please try again later. (%s)
+
+SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW
+	EN	Last.fm a music service that builds up your personal music profile by tracking the music you listen	to.  Based on your taste, Last.fm provides customized radio stations,	music and event recommendations, free downloads and more.  Join for	free at <a href="http://www.last.fm/join" target="_blank">www.last.fm/join</a> or find out more at <a href="http://www.last.fm/tour" target="_blank">www.last.fm/tour</a>.
+
+SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNT_NOTE
+	EN	Note: To configure your Last.fm account, click on the Advanced tab and then select the Last.fm Audioscrobbler item.

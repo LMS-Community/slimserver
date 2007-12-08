@@ -25,7 +25,7 @@ sub page {
 }
 
 sub prefs {
-	return ( $prefs, qw(accounts enable_now_playing enable_scrobbling) );
+	return ( $prefs, qw(accounts enable_scrobbling) );
 }
 
 sub handler {

@@ -31,7 +31,6 @@ sub handler {
 	
 	if ( $client ) {
 		$params->{prefs}->{accounts}           = $prefs->get('accounts') || [];
-		$params->{prefs}->{enable_now_playing} = $prefs->get('enable_now_playing');
 		$params->{prefs}->{enable_scrobbling}  = $prefs->get('enable_scrobbling');
 		
 		$params->{prefs}->{account}            = $prefs->client($client)->get('account');

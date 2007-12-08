@@ -236,92 +236,85 @@ sub newsongCallback {
 	# Check if this player has an account selected
 	return if !$prefs->client($client)->get('account');
 	
-	my $enable_now_playing = $prefs->get('enable_now_playing');
-	my $enable_scrobbling  = $prefs->get('enable_scrobbling');
-	
-	return unless $enable_now_playing || $enable_scrobbling;
+	return unless $prefs->get('enable_scrobbling');
 
 	my $url   = Slim::Player::Playlist::url($client);
 	my $track = Slim::Schema->objectForUrl( { url => $url } );
 	
-	# If now_playing is enabled, report all new songs
-	if ( $enable_now_playing ) {
-		my $queue = $prefs->client($client)->get('queue') || [];
+	# report all new songs as now playing
+	my $queue = $prefs->client($client)->get('queue') || [];
+	
+	if ( scalar @{$queue} ) {
+		# before we submit now playing, submit all queued tracks, so that
+		# a scrobbled track doesn't clobber the now playing data
+		$log->debug( 'Submitting scrobble queue before now playing track' );
 		
-		if ( scalar @{$queue} ) {
-			# before we submit now playing, submit all queued tracks, so that
-			# a scrobbled track doesn't clobber the now playing data
-			$log->debug( 'Submitting scrobble queue before now playing track' );
-			
-			submitScrobble( $client, {
-				cb => sub {
-					# delay by 1 second so we don't hit the server too fast after
-					# the submit call
-					Slim::Utils::Timers::setTimer(
-						undef,
-						time() + 1,
-						sub {
-							submitNowPlaying( $client, $track );
-						},
-					);
-				},
-			} );
-		}
-		else {
-			submitNowPlaying( $client, $track );
-		}
+		submitScrobble( $client, {
+			cb => sub {
+				# delay by 1 second so we don't hit the server too fast after
+				# the submit call
+				Slim::Utils::Timers::setTimer(
+					undef,
+					time() + 1,
+					sub {
+						submitNowPlaying( $client, $track );
+					},
+				);
+			},
+		} );
+	}
+	else {
+		submitNowPlaying( $client, $track );
 	}
 
-	# If scrobbling is enabled, determine when we need to check again
-	if ( $enable_scrobbling ) {
-		# Track must be > 30 seconds
-		if ( !$track->secs || $track->secs < 30 ) {
-			if ( $log->is_debug ) {
-				$log->debug( 'Ignoring track ' . $track->title . ', shorter than 30 seconds or unknown length' );
-			}
-			
-			return;
+	# Determine when we need to check again
+	# Track must be > 30 seconds
+	if ( !$track->secs || $track->secs < 30 ) {
+		if ( $log->is_debug ) {
+			$log->debug( 'Ignoring track ' . $track->title . ', shorter than 30 seconds or unknown length' );
 		}
 		
-		my $title = $track->title;
-		
-		if ( $track->remote ) {
-			my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
-			if ( $handler && $handler->can('getMetadataFor') ) {
-				# this plugin provides track metadata, i.e. Pandora, Rhapsody
-				my $meta = $handler->getMetadataFor( $client, $url, 'forceCurrent' );
-				$title   = $meta->{title};
-				
-				# Handler must return at least artist and title
-				unless ( $meta->{artist} && $meta->{title} ) {
-					$log->debug( "Protocol Handler didn't return an artist and title for " . $track->url . ", ignoring" );
-					return;
-				}
+		return;
+	}
 	
-				# Save the title in the track object so we can compare it in checkScrobble
-				$track->{_plugin_title} = $title;
-			}
-			else {
-				$log->debug("Ignoring remote URL $url");
+	my $title = $track->title;
+	
+	if ( $track->remote ) {
+		my $handler = Slim::Player::ProtocolHandlers->handlerForURL($url);
+		if ( $handler && $handler->can('getMetadataFor') ) {
+			# this plugin provides track metadata, i.e. Pandora, Rhapsody
+			my $meta = $handler->getMetadataFor( $client, $url, 'forceCurrent' );
+			$title   = $meta->{title};
+			
+			# Handler must return at least artist and title
+			unless ( $meta->{artist} && $meta->{title} ) {
+				$log->debug( "Protocol Handler didn't return an artist and title for " . $track->url . ", ignoring" );
 				return;
 			}
+
+			# Save the title in the track object so we can compare it in checkScrobble
+			$track->{_plugin_title} = $title;
 		}
-		
-		# We check again at half the song's length or 240 seconds, whichever comes first
-		my $checktime = $track->secs > 480 ? 240 : ( int( $track->secs / 2 ) );
-		
-		if ( $log->is_debug ) {
-			$log->debug( "New track to scrobble: $title, will check in $checktime seconds" );
+		else {
+			$log->debug("Ignoring remote URL $url");
+			return;
 		}
-		
-		Slim::Utils::Timers::setTimer(
-			$client,
-			Time::HiRes::time() + $checktime,
-			\&checkScrobble,
-			$track,
-			$checktime,
-		);
-	}			
+	}
+	
+	# We check again at half the song's length or 240 seconds, whichever comes first
+	my $checktime = $track->secs > 480 ? 240 : ( int( $track->secs / 2 ) );
+	
+	if ( $log->is_debug ) {
+		$log->debug( "New track to scrobble: $title, will check in $checktime seconds" );
+	}
+	
+	Slim::Utils::Timers::setTimer(
+		$client,
+		Time::HiRes::time() + $checktime,
+		\&checkScrobble,
+		$track,
+		$checktime,
+	);		
 }
 
 sub submitNowPlaying {
