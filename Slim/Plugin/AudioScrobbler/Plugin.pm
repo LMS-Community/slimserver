@@ -76,6 +76,83 @@ sub shutdownPlugin {
 	Slim::Control::Request::unsubscribe( \&newsongCallback );
 }
 
+# Button interface to change account or toggle scrobbling
+sub setMode {
+	my $class  = shift;
+	my $client = shift;
+	my $method = shift;
+
+	if ( $method eq 'pop' ) {
+		Slim::Buttons::Common::popMode($client);
+		return;
+	}
+	
+	my $listRef = [ 0 ];
+	
+	my $accounts = $prefs->get('accounts') || [];
+	for my $account ( @{$accounts} ) {
+		push @{$listRef}, $account->{username};
+	}
+
+	Slim::Buttons::Common::pushModeLeft( $client, 'INPUT.List', {
+
+		header         => $client->string('PLUGIN_AUDIOSCROBBLER_MODULE_NAME'),
+		headerAddCount => 1,
+		listRef        => $listRef,
+		externRef      => sub {
+			my ( $client, $account ) = @_;
+			
+			if ( !$account ) {
+				return $client->string('PLUGIN_AUDIOSCROBBLER_SCROBBLING_DISABLED');
+			}
+			
+			my $accounts = $prefs->get('accounts') || [];
+			return $client->string( 'PLUGIN_AUDIOSCROBBLER_USE_ACCOUNT', $accounts->[$account]->{username} );
+		},
+		initialValue   => sub { $prefs->client(shift)->get('account'); },
+		overlayRef     => sub {
+			my ( $client, $account ) = @_;
+			my $overlay;
+			
+			my $curAccount = $prefs->client($client)->get('account') || 0;
+
+			if ( $account eq $curAccount ) {
+				$overlay = Slim::Buttons::Common::checkBoxOverlay( $client, 1 );
+			} else {
+				$overlay = Slim::Buttons::Common::checkBoxOverlay( $client, 0 );
+			}
+			
+			return ( undef, $overlay );
+		},
+		callback      => sub { 
+			my ( $client, $exittype ) = @_;
+
+			$exittype = uc $exittype;
+
+			if ( $exittype eq 'LEFT' ) {
+
+				Slim::Buttons::Common::popModeRight($client);
+			}
+			elsif ( $exittype eq 'RIGHT' ) {
+				my $value = $client->modeParam('valueRef');
+				
+				$prefs->client($client)->set( account => $$value );
+				
+				if ( $$value eq '0' ) {
+					# Kill any timers so the current track is not scrobbled
+					Slim::Utils::Timers::killTimers( $client, \&checkScrobble );
+					Slim::Utils::Timers::killTimers( $client, \&submitScrobble ); 
+				}
+
+				$client->update();
+			}
+			else {
+				$client->bumpRight;
+			}
+		},
+	} );
+}
+
 sub clear_session {
 	my $client = shift;
 	

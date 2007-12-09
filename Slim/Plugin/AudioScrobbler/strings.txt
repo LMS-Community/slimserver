@@ -129,3 +129,9 @@ SETUP_PLUGIN_AUDIOSCROBBLER_OVERVIEW
 
 SETUP_PLUGIN_AUDIOSCROBBLER_ACCOUNT_NOTE
 	EN	Note: To configure your Last.fm account, click on the Advanced tab and then select the Last.fm Audioscrobbler item.
+
+PLUGIN_AUDIOSCROBBLER_SCROBBLING_DISABLED
+	EN	Do not scrobble this player
+
+PLUGIN_AUDIOSCROBBLER_USE_ACCOUNT
+	EN	Scrobble to account: %s
