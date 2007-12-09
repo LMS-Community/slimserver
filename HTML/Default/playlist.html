@@ -26,10 +26,11 @@
 		<div id="playlistCommands">
 			<span id="btnPlaylistToggleArtwork"></span>
 			<table id="playlistCommandSpacer"><tr>
-				<td width="100%">&nbsp;</td>
-				[% IF current %]<td>
-					<span id="current_playlist_name">[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %][% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %]</span>
-				</td>[% END %]
+				<td width="100%">
+				[% IF current_playlist %]
+					<span id="current_playlist_name">[% "CURRENT_PLAYLIST" | string %][% "COLON" | string %] [% current_playlist_name %] [% IF current_playlist_modified %]([% "MODIFIED" | string %])[% END %]</span>
+				[% END %]&nbsp;
+				</td>
  				<td><span id="btnPlaylistSave"></span></td>
 				<td><span id="btnPlaylistClear"></span></td>
 			</tr></table>
