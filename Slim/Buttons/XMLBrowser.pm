@@ -936,7 +936,7 @@ sub displayFeedDescription {
 		push @lines, {
 			'name'           => '{XML_AUDIO_ENCLOSURES}: ' . $count,
 			'value'          => $feed,
-			'overlayRef'     => [ undef, shift->symbols('notesymbol') ],
+			'overlayRef'     => [ undef, $client->symbols('notesymbol') ],
 		};
 	}
 
