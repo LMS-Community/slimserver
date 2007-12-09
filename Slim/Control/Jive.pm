@@ -448,7 +448,7 @@ sub playerSettingsMenu {
 	$log->debug("Begin Function");
  
 	my @menu = ();
-	return (\@menu, 0) unless $client;
+	return \@menu unless $client;
 
 	# always add repeat
 	push @menu, {
