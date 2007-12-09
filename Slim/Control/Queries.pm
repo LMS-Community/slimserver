@@ -40,6 +40,12 @@ use Slim::Utils::Log;
 use Slim::Utils::Unicode;
 use Slim::Utils::Prefs;
 
+{
+	if ($^O =~ /Win32/) {
+		require Win32::DriveInfo;
+	}
+}
+
 my $log = logger('control.queries');
 
 my $prefs = preferences('server');
@@ -2169,7 +2175,7 @@ sub readDirectoryQuery {
 	use File::Spec::Functions qw(catdir);
 	my @fsitems;
 	if ($folder eq '/' && Slim::Utils::OSDetect::OS() eq 'win') {
-		@fsitems = map { "$_:" } grep /^[^AB]/i, Win32::DriveInfo::DrivesInUse();
+		@fsitems = map { "$_:" } Win32::DriveInfo::DrivesInUse();
 		$folder = '';
 	}
 	else {

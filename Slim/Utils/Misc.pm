@@ -64,6 +64,7 @@ my $prefs = preferences('server');
 	if ($^O =~ /Win32/) {
 		require Win32;
 		require Win32::API;
+		require Win32::DriveInfo;
 		require Win32::File;
 		require Win32::FileOp;
 		require Win32::Process;
@@ -576,11 +577,11 @@ sub fixPathCase {
 	my $path = shift;
 	my $orig = $path;
 
-	if ($^O =~ /Win32/) {
+	#if ($^O =~ /Win32/) {
 		# XXX: Bug 2475, we can't call GetLongPathName on an 8.3 path
 		# Commenting out for now, I am not sure if this will break anything
 		#$path = Win32::GetLongPathName($path);
-	}
+	#}
 
 	# abs_path() will resolve any case sensetive filesystem issues (HFS+)
 	# But don't for the bogus path we use with embedded cue sheets.
@@ -861,6 +862,17 @@ sub readDirectory {
 	my $log      = logger('os.files');
 
 	my $ignore = $prefs->get('ignoreDirRE') || '';
+
+	if (Slim::Utils::OSDetect::OS() eq 'win') {
+		my ($volume) = splitpath($dirname);
+
+		if ($volume && !Win32::DriveInfo::IsReady($volume)) {
+			
+			$log->debug("drive [$dirname] not ready");
+
+			return @diritems;
+		}
+	}
 
 	opendir(DIR, $dirname) || do {
 
