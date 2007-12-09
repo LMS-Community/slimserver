@@ -134,18 +134,23 @@ Ext.extend(FileSelector, Ext.tree.TreePanel, {
 		// select the current setting, if available
 		input = Ext.get(this.input);
 		if (input != null && input.dom.value != null && input.dom.value != '') {
-			separator = '/';
-			if (input.dom.value.match(/^[a-z]:\\/i)){
+			var path = input.dom.value;
+			var separator = '/';
+			if (path.match(/^[a-z]:\\/i)){
 				separator = '\\';
 			}
+			// only open the first level of UNC paths (\\server\share)
+			else if (result = path.match(/^\\\\[\_\w\-]+\\[\-\_\w ]+[^\\]/))
+				path = result[0];
 
-			path = input.dom.value.split(separator);
-			prev = '';
-			target = this.pathSeparator + this.root.id;
+			path = path.split(separator);
+			var prev = '';
+			var target = this.pathSeparator + this.root.id;
 
 			// we don't need the root element on *X systems, but on Windows...
 			for (x=(path[0]=='/' ? 1 : 0); x<path.length; x++) {
 				if (path[x] == '') continue;
+
 				prev += (x==0 ? '' : separator) + path[x];
 				target += this.pathSeparator + prev;
 			}
@@ -153,7 +158,7 @@ Ext.extend(FileSelector, Ext.tree.TreePanel, {
 			this.selectPath(target, null, function(success, selNode){
 				if (!success) {
 					// if that path is a Windows share, try adding it to the tree
-					result = input.dom.value.match(/^\\\\[\_\w\-]+\\[\-\_\w ]+[^\\]/);
+					var result = input.dom.value.match(/^\\\\[\_\w\-]+\\[\-\_\w ]+[^\\]/);
 					if (result) {
 						root = this.getRootNode();
 						root.appendChild(new Ext.tree.AsyncTreeNode({
