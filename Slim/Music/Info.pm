@@ -692,7 +692,7 @@ sub fileName {
 
 		$j = Slim::Utils::Misc::pathFromFileURL($j);
 
-		if (defined $j && (splitdir($j))[1]) {
+		if (defined $j && (splitdir($j))[-1]) {
 			$j = (splitdir($j))[-1];
 		}
 
