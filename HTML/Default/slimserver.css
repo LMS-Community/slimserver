@@ -1073,6 +1073,7 @@ body.settingsMenu {
 	margin-bottom: 10px;
 }
 
+.x-dlg-bd b, .x-dlg-bd p, .x-dlg-bd ul,
 .helpsection p, .helpsection dt {
 	margin-top: 10px;
 	margin-bottom: 5px;
