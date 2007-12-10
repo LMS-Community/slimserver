@@ -23,6 +23,7 @@ my %tagMapping = (
 	'GAIN_TRACK_PEAK'    => 'REPLAYGAIN_TRACK_PEAK',
 	'GAIN_ALBUM_GAIN'    => 'REPLAYGAIN_ALBUM_GAIN',
 	'GAIN_ALBUM_PEAK'    => 'REPLAYGAIN_ALBUM_PEAK',
+	'PARTOFSET'          => 'DISC',
 );
 
 {
