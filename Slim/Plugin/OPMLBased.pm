@@ -20,10 +20,7 @@ sub initPlugin {
 	}
 	
 	if (exists $args{'icon-id'}) {
-		Slim::Web::Pages->addPageLinks("icons", {
-			$class->getDisplayName => $args{'icon-id'},
-			Slim::Utils::Strings::string($class->getDisplayName()) => $args{'icon-id'}
-		});
+		Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName => $args{'icon-id'} });
 	} else {
 		Slim::Web::Pages->addPageLinks("icons", { $class->getDisplayName => 'html/images/radio.png' });
 	}

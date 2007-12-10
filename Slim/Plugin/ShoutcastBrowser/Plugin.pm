@@ -114,10 +114,7 @@ sub webPages {
 	my $url   = 'plugins/ShoutcastBrowser/index.html';
 
 	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
-	Slim::Web::Pages->addPageLinks('icons', { 
-		$title => 'html/images/ServiceProviders/shoutcastbrowser.png',
-		string($title) => 'html/images/ServiceProviders/shoutcastbrowser.png'
-	});
+	Slim::Web::Pages->addPageLinks('icons', { $title => 'html/images/ServiceProviders/shoutcastbrowser.png' });
 	
 	Slim::Web::HTTP::protectURI($url);
 

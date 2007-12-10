@@ -132,10 +132,7 @@ sub webPages {
 	my $url   = 'plugins/Podcast/index.html';
 	
 	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
-	Slim::Web::Pages->addPageLinks('icons', {
-		string($title) => 'html/images/ServiceProviders/podcast.png',
-		$title => 'html/images/ServiceProviders/podcast.png'
-	});
+	Slim::Web::Pages->addPageLinks('icons', { $title => 'html/images/ServiceProviders/podcast.png' });
 	
 	Slim::Web::HTTP::protectURI($url);
 

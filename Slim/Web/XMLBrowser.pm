@@ -34,6 +34,7 @@ sub handleWebIndex {
 	my $timeout   = $args->{'timeout'};
 	my $asyncArgs = $args->{'args'};
 	my $item      = $args->{'item'} || {};
+	my $pageicon  = $Slim::Web::Pages::additionalLinks{icons}{$title};
 	
 	# If the feed is already XML data (Podcast List), send it to handleFeed
 	if ( ref $feed eq 'HASH' ) {
@@ -45,6 +46,7 @@ sub handleWebIndex {
 			'search'  => $search,
 			'expires' => $expires,
 			'args'    => $asyncArgs,
+			'pageicon'=> $pageicon
 		} );
 
 		return;
@@ -76,6 +78,7 @@ sub handleWebIndex {
 				'query'  => $query,
 				'title'  => $title,
 				'args'   => $asyncArgs,
+				'pageicon'=> $pageicon
 			},
 		);
 
@@ -95,6 +98,7 @@ sub handleWebIndex {
 			'expires' => $expires,
 			'timeout' => $timeout,
 			'args'    => $asyncArgs,
+			'pageicon'=> $pageicon
 		},
 	);
 
@@ -104,10 +108,9 @@ sub handleWebIndex {
 sub handleFeed {
 	my ( $feed, $params ) = @_;
 	my ( $client, $stash, $callback, $httpClient, $response ) = @{ $params->{'args'} };
-	
+
 	$stash->{'pagetitle'} = $feed->{'title'} || string($params->{'title'});
-	$stash->{'pageicon'}  = $Slim::Web::Pages::additionalLinks{icons}{$params->{'title'}}
-							|| $Slim::Web::Pages::additionalLinks{icons}{$feed->{'title'}};
+	$stash->{'pageicon'}  = $params->{pageicon};
 
 	my $template = 'xmlbrowser.html';
 	
@@ -206,6 +209,7 @@ sub handleFeed {
 					'parentURL'    => $params->{'parentURL'} || $params->{'url'},
 					'currentIndex' => \@crumbIndex,
 					'args'         => [ $client, $stash, $callback, $httpClient, $response ],
+					'pageicon'     => $params->{'pageicon'}
 				};
 				
 				if ( ref $subFeed->{'url'} eq 'CODE' ) {
@@ -417,7 +421,7 @@ sub handleError {
 	
 	my $title = string($params->{'title'});
 	$stash->{'pagetitle'} = $title;
-	$stash->{'pageicon'}  = $Slim::Web::Pages::additionalLinks{icons}{$params->{'title'}};
+	$stash->{'pageicon'}  = $params->{pageicon};
 	$stash->{'msg'} = sprintf(string('WEB_XML_ERROR'), $title, $error);
 	
 	my $output = processTemplate($template, $stash);
