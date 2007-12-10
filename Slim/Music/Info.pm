@@ -1193,7 +1193,7 @@ sub typeFromPath {
 	my $defaultType = shift || 'unk';
 
 	# Remove the anchor if we're checking the suffix.
-	my ($type, $anchorlessPath);
+	my ($type, $anchorlessPath, $filepath);
 
 	if ($fullpath && $fullpath !~ /\x00/) {
 
@@ -1227,16 +1227,20 @@ sub typeFromPath {
 		}
 	}
 
+	# Process raw path, sanity check for folders
+	if (isFileURL($fullpath)) {
+		$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
+
+	} else {
+		$filepath = $fullpath;
+	}
+
+	if ($filepath && -d $filepath) {
+		$type = 'dir';
+	}
+
 	# We didn't get a type from above - try a little harder.
 	if ((!defined($type) || $type eq 'unk') && $fullpath && $fullpath !~ /\x00/) {
-
-		my $filepath;
-
-		if (isFileURL($fullpath)) {
-			$filepath = Slim::Utils::Misc::pathFromFileURL($fullpath);
-		} else {
-			$filepath = $fullpath;
-		}
 
 		if ($filepath) {
 
@@ -1254,10 +1258,6 @@ sub typeFromPath {
 
 					$type = typeFromSuffix($anchorlessPath, $defaultType);
 				}
-
-			} elsif (-d $filepath) {
-
-				$type = 'dir';
 
 			} else {
 
