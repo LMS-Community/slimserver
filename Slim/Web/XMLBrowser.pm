@@ -106,8 +106,9 @@ sub handleFeed {
 	my ( $client, $stash, $callback, $httpClient, $response ) = @{ $params->{'args'} };
 	
 	$stash->{'pagetitle'} = $feed->{'title'} || string($params->{'title'});
-	$stash->{'pageicon'}  = $Slim::Web::Pages::additionalLinks{icons}{$params->{'title'}};
-	
+	$stash->{'pageicon'}  = $Slim::Web::Pages::additionalLinks{icons}{$params->{'title'}}
+							|| $Slim::Web::Pages::additionalLinks{icons}{$feed->{'title'}};
+
 	my $template = 'xmlbrowser.html';
 	
 	# breadcrumb
@@ -160,7 +161,7 @@ sub handleFeed {
 				'name'  => $subFeed->{'name'} || $subFeed->{'title'},
 				'index' => $crumbText,
 			};
-						
+
 			# Change type to audio if it's an action request and we have a play attribute
 			if ( $subFeed->{'play'} && $stash->{'action'} =~ /^(?:play|add)$/ ) {
 				$subFeed->{'type'} = 'audio';

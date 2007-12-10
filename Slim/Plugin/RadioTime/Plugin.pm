@@ -112,11 +112,14 @@ sub radioTimeURL {
 sub webPages {
 	my $class = shift;
 
-	my $title = 'PLUGIN_RADIOTIME_MODULE_NAME';
+	my $title = getDisplayName();
 	my $url   = 'plugins/RadioTime/index.html';
 	
 	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
-	Slim::Web::Pages->addPageLinks('icons', { $title => 'html/images/ServiceProviders/radiotime.png' });
+	Slim::Web::Pages->addPageLinks('icons', {
+		$title => 'html/images/ServiceProviders/radiotime.png',
+		string($title) => 'html/images/ServiceProviders/radiotime.png'
+	});
 	
 	Slim::Web::HTTP::protectURI($url);
 	

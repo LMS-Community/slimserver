@@ -8,6 +8,7 @@ use base qw(Slim::Plugin::Base);
 use Slim::Buttons::Common;
 use Slim::Buttons::XMLBrowser;
 use Slim::Formats::XML;
+use Slim::Utils::Strings qw( string );
 use Slim::Utils::Log;
 use Slim::Utils::Misc;
 use Slim::Web::XMLBrowser;
@@ -79,7 +80,7 @@ sub cliRadiosQuery {
 	# what we want the query to report about ourself
 	if (defined $menu) {
 		$data = {
-			'text' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+			'text' => string(getDisplayName()),  # nice name
 			'icon-id' => 'html/images/ServiceProviders/shoutcastbrowser.png',
 			'actions' => {
 				'go' => {
@@ -97,7 +98,7 @@ sub cliRadiosQuery {
 	else {
 		$data = {
 			'cmd' => 'shoutcast',                    # cmd label
-			'name' => Slim::Utils::Strings::string(getDisplayName()),  # nice name
+			'name' => string(getDisplayName()),  # nice name
 			'type' => 'xmlbrowser',              # type
 		};
 	}
@@ -113,7 +114,10 @@ sub webPages {
 	my $url   = 'plugins/ShoutcastBrowser/index.html';
 
 	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
-	Slim::Web::Pages->addPageLinks('icons', { $title => 'html/images/ServiceProviders/shoutcastbrowser.png' });
+	Slim::Web::Pages->addPageLinks('icons', { 
+		$title => 'html/images/ServiceProviders/shoutcastbrowser.png',
+		string($title) => 'html/images/ServiceProviders/shoutcastbrowser.png'
+	});
 	
 	Slim::Web::HTTP::protectURI($url);
 

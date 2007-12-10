@@ -128,11 +128,14 @@ sub setMode {
 sub webPages {
 	my $class = shift;
 
-	my $title = 'PLUGIN_PODCAST';
+	my $title = getDisplayName();
 	my $url   = 'plugins/Podcast/index.html';
 	
 	Slim::Web::Pages->addPageLinks('radio', { $title => $url });
-	Slim::Web::Pages->addPageLinks('icons', { $title => 'html/images/ServiceProviders/podcast.png' });
+	Slim::Web::Pages->addPageLinks('icons', {
+		string($title) => 'html/images/ServiceProviders/podcast.png',
+		$title => 'html/images/ServiceProviders/podcast.png'
+	});
 	
 	Slim::Web::HTTP::protectURI($url);
 
