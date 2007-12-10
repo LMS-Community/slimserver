@@ -14543,6 +14543,11 @@ SAVE_SETTINGS
 	NL	Instellingen opslaan
 	SV	Spara inställningar
 
+APPLY
+	DE	Anwenden
+	EN	Apply
+	FR	Appliquer
+
 SHRINK
 	DE	Kleiner
 	EN	Shrink

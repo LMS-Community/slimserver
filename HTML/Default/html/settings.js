@@ -120,7 +120,7 @@ Settings = function(){
 			});
 
 			new Ext.Button('save', {
-				text: strings['save'],
+				text: strings['apply'],
 				handler: this.submitSettings,
 				scope: this
 			});
