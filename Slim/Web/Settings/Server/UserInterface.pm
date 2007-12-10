@@ -64,8 +64,8 @@ sub handler {
 				$paramRef->{'skin'} = 'Classic';
 	
 			}
-	
-			$paramRef->{'warning'} .= join(' ', string("SETUP_SKIN_OK"), $paramRef->{'skin'}, string("HIT_RELOAD"));
+
+			$paramRef->{'warning'} .= '<span id="skinWarning">' . string("SETUP_SKIN_OK") . '</span>';
 		}
 
 

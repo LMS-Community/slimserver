@@ -123,6 +123,9 @@ function initSettingsForm() {
 	// resize the scrolling part of the settings page
 	new Event.observe(window, 'resize', function(){resizeSettingsSection();});
 
+	if ($('skinWarning'))
+		alert('[% "SETUP_SKIN_OK" | string %]');
+
 	resizeSettingsSection();
 };
 

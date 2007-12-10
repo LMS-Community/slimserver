@@ -154,23 +154,6 @@ DEFAULT_MAP
 	SV	Standard
 	ZH_CN	标准
 
-HIT_RELOAD
-	CS	Klikněte pro obnovení a zobrazení nového skinu.
-	DA	<a href="/" target="_top">Genindlæs denne side</a> for at opdatere layoutet.
-	DE	<a href="/" target="_top">Klicken Sie hier</a>, um die neue Skin zu aktivieren.
-	EN	<a href="/" target="_top">Click here</a> to refresh and see the new skin.
-	ES	<a href="/" target="_top">Haga clic aquí para actualizar y ver la máscara nueva.</a>
-	FI	<a href="/" target="_top">Lataa sivu uudelleen nähdäksesi uuden ulkoasun.</a>
-	FR	<a href="/" target="_top">Cliquez ici</a> pour afficher la nouvelle interface.
-	HE	<a href="/" target="_top">לחץ כאן</a> לביצוע רענון ולהצגת המעטפת החדשה.
-	IT	<a href="/" target="_top">Fare clic qui</a> per aggiornare la pagina e visualizzare la nuova interfaccia.
-	JA	<a href="/" target="_top">ここ</a>をクリックして更新し、新しいスキンを見る
-	NL	<a href="/" target="_top">Klik hier</a> om te vernieuwen en het nieuwe uiterlijk weer te geven.
-	NO	<a href="/" target="_top">Trykk her</a> for å oppdatere med nytt utseende.
-	PT	<a href="/" target="_top">Actualize esta página para activar o novo tema.</a>
-	SV	<a href="/" target="_top">Klicka här</a> för att ladda om sidan med det nya utseendet.
-	ZH_CN	<a href="/" target="_top">单击此处</a>以刷新网页并观看新设置的外壳。
-
 SERVER_VERSION
 	CS	Verze SqueezeCenteru
 	DE	SqueezeCenter-Version
@@ -4762,21 +4745,7 @@ SETUP_SKIN_DESC
 	ZH_CN	您可以从如下的选项选择一个外壳作为网界面。
 
 SETUP_SKIN_OK
-	CS	Aktuální skin je nyní:
-	DA	Det valgte layout er:
-	DE	Ihre aktuelle Skin:
-	EN	Your skin is now:
-	ES	La máscara es:
-	FI	Käyttöliittymävalintasi on:
-	FR	L'interface utilise maintenant:
-	HE	המעטפת המוגדרת היא:
-	IT	La skin corrente è:
-	JA	選択されている外観は:
-	NL	Het uiterlijk is nu:
-	NO	Det valgte utseendet er:
-	PT	O tema escolhido é
-	SV	Det nyvalda utseendet är:
-	ZH_CN	您现在的外壳是：
+	EN	To apply your changes please close the SqueezeCenter window and reload it.
 
 SETUP_PLUGINS
 	DE	Extras

@@ -99,7 +99,7 @@ sub handler {
 			# use Classic instead of Default skin if the server's language is set to Hebrew
 			if ($lang eq 'HE' && preferences('server')->get('skin') eq 'Default') {
 				preferences('server')->set('skin', 'Classic');
-				$paramRef->{'warning'} .= Slim::Utils::Strings::string("HIT_RELOAD");
+				$paramRef->{'warning'} .= '<span id="skinWarning">' . string("SETUP_SKIN_OK") . '</span>';
 			}	
 
 			# Bug 5740, flush the playlist cache

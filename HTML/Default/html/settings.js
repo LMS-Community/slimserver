@@ -222,8 +222,9 @@ var SettingsPage = function(){
 				modified = true;
 			});
 
-			if (Ext.isSafari) {
-				Ext.get(document).setStyle('overflow', 'auto');
+			var reload;
+			if (reload = Ext.get('skinWarning')) {
+				Ext.Msg.alert(strings['setup_skin'], reload.dom.innerHTML);
 			}
 		},
 
