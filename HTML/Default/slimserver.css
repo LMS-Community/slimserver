@@ -326,6 +326,20 @@ img#background { position:absolute; }
 	font-weight: bold;
 }
 
+div.pagetitleWithIcon {
+	margin-bottom: 8px;
+}
+
+.pagetitleWithIcon span {
+	position: relative;
+	top: 5px;
+}
+
+.pageicon {
+	float: left;
+	padding-right: 3px;
+}
+
 #crumblist {
 	padding: 6px 10px;
 	color: #dddddd;

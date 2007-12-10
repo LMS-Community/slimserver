@@ -106,6 +106,7 @@ sub handleFeed {
 	my ( $client, $stash, $callback, $httpClient, $response ) = @{ $params->{'args'} };
 	
 	$stash->{'pagetitle'} = $feed->{'title'} || string($params->{'title'});
+	$stash->{'pageicon'}  = $Slim::Web::Pages::additionalLinks{icons}{$params->{'title'}};
 	
 	my $template = 'xmlbrowser.html';
 	
@@ -415,6 +416,7 @@ sub handleError {
 	
 	my $title = string($params->{'title'});
 	$stash->{'pagetitle'} = $title;
+	$stash->{'pageicon'}  = $Slim::Web::Pages::additionalLinks{icons}{$params->{'title'}};
 	$stash->{'msg'} = sprintf(string('WEB_XML_ERROR'), $title, $error);
 	
 	my $output = processTemplate($template, $stash);
@@ -492,7 +494,7 @@ sub handleSubFeed {
 	handleFeed( $parent, $params );
 }
 
-sub processTemplate {	
+sub processTemplate {
 	return Slim::Web::HTTP::filltemplatefile( @_ );
 }
 

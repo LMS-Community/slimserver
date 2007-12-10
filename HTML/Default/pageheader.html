@@ -48,7 +48,13 @@
 	</head>
 	<body  [% IF bodyscript && NOT extJsScripts; bodyscript; END %]>
 		<div id="inner_header">
-			<div class="pagetitle">[% pagetitle %]</div>
+
+			<div class="pagetitle [%- IF pageicon -%]pagetitleWithIcon[% END %]">
+				[%- IF pageicon -%]
+				<img src="[% webroot %][% pageicon.replace('.png', "_25x25_f.png") %]" class="pageicon" width="25" border="0" alt="[% pagetitle %]">
+				[%- END -%]
+				<span>[% pagetitle %]</span>
+			</div>
 		</div>
 
 		<div class="inner_content">
