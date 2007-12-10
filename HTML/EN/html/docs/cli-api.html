@@ -7169,6 +7169,9 @@ in the saved playlists folder.</p>
 		<strong><code><a href="#radios">radios</a></code></strong>
 	</li>
 	<li>
+		<strong><code><a href="#radios">music_services</a></code></strong>
+	</li>
+	<li>
 		<strong><a href="#XMLBrowser">Live Music Archive, live365, MP3tunes, Pandora, Prodcasts, RadioIO, RadioTime, Rhapsody, Shoutcast, Slimdevices Picks, RSS</a></strong>
 	</li>
 	<li>
@@ -7183,7 +7186,7 @@ in the saved playlists folder.</p>
 <p id="radios">
 	<strong>
 		<code>
-			radios
+			&lt;radios|music_services&gt;
 			&lt;start&gt;
 			&lt;itemsPerResponse&gt;
 			&lt;taggedParameters&gt;
@@ -7191,9 +7194,11 @@ in the saved playlists folder.</p>
 	</strong>
 </p>
 <p>
-	The &quot;radios&quot; query returns all radio type plugins enabled in
-	the server. This command enables the client to present a top level
-	&quot;Radio&quot; menu easily, without hardcoding the plugins nor 
+	The &quot;radios&quot; and &quot;music_services&quot; queries return
+	all radio type plugins enabled in
+	the server. These commands enable the client to present a top level
+	&quot;Radio&quot; or &quot;Music Services&quot; respectively
+	menu easily, without hardcoding the plugins nor 
 	worrying about them being enabled.
 </p>
 <p>
@@ -7261,7 +7266,8 @@ in the saved playlists folder.</p>
 			Command, one of &quot;lma&quot;, &quot;live365&quot;, &quot;mp3tunes&quot;,
 			&quot;pandora&quot;, &quot;podcast&quot;, &quot;radioio&quot;, 
 			&quot;radiotime&quot;,  &quot;rhapsodydirect&quot;, &quot;shoutcast&quot;
-			or &quot;picks&quot;. Item delimiter. <br>
+			or &quot;picks&quot;, or any other, additionally installed radio or music service
+			type plugin. Item delimiter. <br>
 			This corresponds to the respective queries below.
 		</td>
 	</tr>
