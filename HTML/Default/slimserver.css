@@ -23,7 +23,7 @@ html, body, tr, tr, p, div, li, input, ul, .x-btn-text, select {
 	font-family: sans-serif;
 }
 
-b, a, form { color: #333333; }
+b, a, form { color: #a3ccc5; }
 
 td, th {
 	vertical-align: top;
@@ -630,12 +630,12 @@ div.thumbwrap {
 }
 
 .dragUp .selector_topLeft {
-	border-top: 1px black solid;
+	border-top: 1px white solid;
 	padding-top: 6px;
 }
 
 .dragDown .selector_bottomLeft {
-	border-bottom: 1px black solid;
+	border-bottom: 1px white solid;
 	padding-bottom: 4px;
 }
 
@@ -1080,8 +1080,8 @@ body.settingsMenu {
 	background: transparent url(html/images/selector_bottom_left_white.gif) no-repeat bottom left;
 }
 
-.helpsection .homeMenuItem, .helpsection .homeMenuItem a,
-.settingsMenu .homeMenuItem, .settingsMenu .homeMenuItem a {
+.helpsection b, .helpsection a, .helpsection form,
+.settings b, .settings a, .settings form {
 	color: #333333;
 }
 
