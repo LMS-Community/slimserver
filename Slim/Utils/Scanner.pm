@@ -1042,7 +1042,7 @@ sub scanWMAStream {
 
 	$http->send_request( {
 		'request'     => $request,
-		'readLimit'   => 16 * 1024,
+		'readLimit'   => 64 * 1024,
 		'onBody'      => \&scanWMAStreamDone,
 		'onError'     => \&scanWMAStreamError,
 		'passthrough' => [ $args ],
@@ -1135,6 +1135,7 @@ sub scanWMAStreamDone {
 		my $header = $http->response->content;
 		my $chunkType = unpack 'v', substr($header, 0, 2);
 		if ( $chunkType != 0x4824 ) {
+			$log->debug("WMA header does not start with 0x4824");
 			return scanWMAStreamError( $http, 'ASF_UNABLE_TO_PARSE', $args );
 		}
 	
@@ -1178,7 +1179,7 @@ sub scanWMAStreamDone {
 			}
 		}
 	
-		if ( !$bitrate ) {
+		if ( !$bitrate && ref $wma->stream(0) ) {
 			# maybe we couldn't parse bitrate information, so just use the first stream
 			$streamNum = $wma->stream(0)->{'streamNumber'};
 		}

@@ -931,6 +931,23 @@ sub stream {
 				else {
 					$pcmsamplesize = 1;
 				}
+				
+				# Bug 5631
+				# Check WMA metadata to see if this remote stream is a live stream
+				# or a normal file.  Normal file requires pcmsamplesize = 0 whereas
+				# live streams require pcmsamplesize = 1
+				my $mmsURL = $server_url;
+				$mmsURL    =~ s/^http/mms/;
+				my $cache = Slim::Utils::Cache->new;
+				my $wma   = $cache->get( 'wma_metadata_'  . $mmsURL );
+				
+				if ( $wma ) {
+					my $flags = $wma->info('flags');
+					if ( $flags->{broadcast} == 0 ) {
+						# A normal file
+						$pcmsamplesize = 0;
+					}
+				}
 
 			} else {
 
