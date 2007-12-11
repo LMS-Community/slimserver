@@ -36,7 +36,7 @@ td, th {
 	overflow-x: hidden;
 }
 
-linkedSongInfoItems a:hover,
+#linkedSongInfoItems a:hover,
 #ctrlCurrentTitle a:hover,
 #ctrlCurrentSongInfoCollapsed a:hover,
 a:hover, .link:hover,
@@ -613,6 +613,7 @@ div.thumbwrap {
 	background: transparent url(html/images/selector_bottom_left.gif) no-repeat bottom left;
 }
 
+#linkedSongInfoItems a,
 .selectorMarker, .selectorMarker a,
 .selector_topRight, .selector_topLeft,
 .selector_bottomRight, .selector_bottomLeft {
