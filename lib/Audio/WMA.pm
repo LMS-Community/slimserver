@@ -235,7 +235,7 @@ sub _parseWMAHeader {
 		# FIX: don't error out on unknown objects (they are properly
 		# skipped below), report a debug message if we get an
 		# inconsistent object size. some sanity checks
-		if ((!defined $nextObjectSize) || ($nextObjectSize > $self->{'size'})) {
+		if ((!defined $nextObjectSize) || ($self->{'size'} && $nextObjectSize > $self->{'size'})) {
 
 			if ($DEBUG) {
 				print "Inconsistent object size: $nextObjectSize\n";
