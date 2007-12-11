@@ -84,7 +84,7 @@ sub clientEvent {
 	my $request = shift;
 	my $client  = $request->client;
 	
-	if ( !$client->isa('Slim::Player::Squeezebox2') ) {
+	if ( !defined $client || !$client->isa('Slim::Player::Squeezebox2') ) {
 		return;
 	}
 	
