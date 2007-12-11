@@ -3,6 +3,14 @@
 [%- pwd_list = BLOCK -%]
 	/ [% "EDIT_PLAYLIST" | string %] / <a [% browsePlaylistHRef %]>[% playlist.title %]</a>
 [% END -%]
+[% extJsScripts = BLOCK %]
+	<script type="text/javascript" src="[% webroot %]html/editplaylist.js?r=[% revision %]"></script>
+
+	<script type="text/javascript">
+		var playlistId = [% playlist.id %];
+		Ext.EventManager.onDocumentReady(EditPlaylist.init, EditPlaylist, true);
+	</script>
+[% END %]
 [% PROCESS pageheader.html dontscroll=1 %] 
 
 [% WRAPPER contentcontainer %]

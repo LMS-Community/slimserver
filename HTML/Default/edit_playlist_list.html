@@ -1,0 +1,17 @@
+[% BLOCK editcmd %]
+		href="edit_playlist.html?player=[% playerURI %]&amp;[% cmd %]=1&amp;playlist.id=[% playlist.id %]&amp;item=[% loop.count %]"
+[% END %]
+
+[% BLOCK editcontrols %]
+	[%- IF item.isRemoteURL %][%- WRAPPER editlink noTarget=1 %]
+		[%- PROCESS editcmd cmd='edit' %]
+	[% END %][% END %]
+
+	[%- WRAPPER removelink noTarget=1 %]
+		[%- PROCESS editcmd cmd='delete' %]
+	[% END %]
+[% END %]
+
+[%- WRAPPER contentitem  controls = 'editcontrols' addClasses = 'draggableSong' %]
+	[% item.title | html %]
+[% END %]

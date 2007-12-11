@@ -519,7 +519,7 @@ Playlist = function(){
 							else if (items[i].id == id)
 								targetPos = i;
 						}
-			
+
 						if (sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {
 							var plPosition, plStart, el;
 
@@ -537,7 +537,7 @@ Playlist = function(){
 
 							// recalculate the item's number within the playlist
 							items = Ext.query('#playList div.draggableSong');
-							for(var i = plStart; i < items.length; i++) {
+							for (var i = plStart; i < items.length; i++) {
 								if (el = Ext.get(items[i]))
 									el.dd.config.position = plPosition + i;
 							}
