@@ -626,6 +626,9 @@ div.buffered {
        padding-bottom: 5px;
 }
 
+#settingsRegion {
+	padding-bottom: 100px;
+}
  
 span.buttonControls {
        padding: 8 8 8 8;

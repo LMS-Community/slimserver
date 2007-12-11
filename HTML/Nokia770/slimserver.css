@@ -233,6 +233,10 @@ div.buffered {
 	padding-bottom: 5px;
 }
 
+#settingsRegion {
+	padding-bottom: 100px;
+}
+
 div#page {
 	width: 800px;
 	z-index: -100;
