@@ -46,7 +46,7 @@
 		<link href="[% webroot %]ie7.css?r=[% revision %]" type="text/css" rel="stylesheet">
 		<![endif]-->
 	</head>
-	<body  [% IF bodyscript && NOT extJsScripts; bodyscript; END %]>
+	<body [% IF bodyscript && NOT extJsScripts; bodyscript; END %] [% IF page == 'help' %]class="helpPage"[% END %]>
 		<div id="inner_header">
 
 			[%- IF pageicon && !pageicon.search('/'); pageicon = ''; END -%]

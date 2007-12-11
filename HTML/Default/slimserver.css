@@ -6,7 +6,6 @@ html, body {
 	border: 0 none;
 	overflow: hidden;
 	height: 100%;
-	background-color: white;
 }
 
 body.singlePanel,
@@ -15,7 +14,9 @@ body.main {
 	background: #666666;
 }
 
-#playlistPanel, .inner_content, #maincontent { background-color: #3d6266; }
+#playlistPanel, .inner_content, #maincontent {
+	background-color: #3d6266;
+}
 
 html, body, tr, tr, p, div, li, input, ul, .x-btn-text, select {
 	font-size: 11px;
@@ -73,7 +74,7 @@ a:hover, .link:hover,
 	height: 300px;
 	width: 50%;
 	border: 2px inset grey;
-	background: white;
+	background-color: white;
 }
 
 #filesystembrowser {
@@ -99,7 +100,7 @@ a:hover, .link:hover,
 /* Main screen (outer frame) */
 #noJS {
 	position: absolute;
-	background: white;
+	background-color: white;
 	z-index: 20002;
 	background-image: url(html/images/background.png);
 }
@@ -994,6 +995,7 @@ form#advSearchForm.resultsPage {
 body.settings, body.settingsMenu {
 	position: relative;
 	overflow: auto;
+	background-color: white;
 }
 
 body.settingsMenu {
@@ -1048,8 +1050,44 @@ body.settingsMenu {
 	display: none;
 }
 
+/* white selectors for help/settings */
+.helpsection .mouseOver .selector_topRight,
+.helpsection .selectedItem .selector_topRight,
+.settingsMenu .selectedItem .selector_topRight,
+.settingsMenu .mouseOver .selector_topRight {
+	background: #bfbfbf url(html/images/selector_top_right_white.gif) no-repeat top right;
+}
+
+.helpsection .mouseOver .selector_topLeft,
+.helpsection .selectedItem .selector_topLeft,
+.settingsMenu .selectedItem .selector_topLeft,
+.settingsMenu .mouseOver .selector_topLeft {
+	background: transparent url(html/images/selector_top_left_white.gif) no-repeat top left;
+}
+
+.helpsection .selectedItem .selector_bottomRight,
+.helpsection .mouseOver .selector_bottomRight,
+.settingsMenu .selectedItem .selector_bottomRight,
+.settingsMenu .mouseOver .selector_bottomRight {
+	background: transparent url(html/images/selector_bottom_right_white.gif) no-repeat bottom right;
+}
+
+.helpsection .selectedItem .selector_bottomLeft,
+.helpsection .mouseOver .selector_bottomLeft,
+.settingsMenu .selectedItem .selector_bottomLeft,
+.settingsMenu .mouseOver .selector_bottomLeft {
+	background: transparent url(html/images/selector_bottom_left_white.gif) no-repeat bottom left;
+}
+
+.helpsection .homeMenuItem, .helpsection .homeMenuItem a,
+.settingsMenu .homeMenuItem, .settingsMenu .homeMenuItem a {
+	color: #333333;
+}
+
 
 /* Help screen */
+.helpPage, .helpPage .inner_content { background-color: white; }
+
 #questionmark {
 	float: left;
 	margin-left: 20px;
