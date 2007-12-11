@@ -302,7 +302,7 @@ sub parseBody {
 
 			local $^W = 0;
 
-			Audio::WMA->new($io)
+			Audio::WMA->new( $io, -s $self->directBody->filename() )
 		};
 
 		if (!$wma || $@) {

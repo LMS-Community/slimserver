@@ -27,6 +27,7 @@ my $GUID          = 16;
 sub new {
 	my $class = shift;
 	my $file  = shift;
+	my $size  = shift;
 
 	my $self  = {};
 
@@ -35,6 +36,10 @@ sub new {
 	if (ref $file) {
 		binmode $file;
 		$self->{'fileHandle'} = $file;
+		
+		if ( $size ) {
+			$self->{'size'} = $size;
+		}
 	}
 	else {
 		open(FILE, $file) or do {
@@ -235,7 +240,7 @@ sub _parseWMAHeader {
 		# FIX: don't error out on unknown objects (they are properly
 		# skipped below), report a debug message if we get an
 		# inconsistent object size. some sanity checks
-		if ((!defined $nextObjectSize) || ($self->{'size'} && $nextObjectSize > $self->{'size'})) {
+		if ((!defined $nextObjectSize) || ($nextObjectSize > $self->{'size'})) {
 
 			if ($DEBUG) {
 				print "Inconsistent object size: $nextObjectSize\n";
