@@ -31,8 +31,9 @@ sub parse {
 	my $embedded = shift || 0;
 
 	my ($filename, $currtrack);
-	my $cuesheet = {};
-	my $tracks   = {};
+	my $filesSeen = 0;
+	my $cuesheet  = {};
+	my $tracks    = {};
 
 	$log->info("baseDir: [$baseDir]");
 
@@ -94,6 +95,12 @@ sub parse {
 
 			$filename = $1;
 			$filename = Slim::Utils::Misc::fixPath($filename, $baseDir);
+			
+			# Bug 5735, skip cue sheets with multiple FILE entries
+			if ( ++$filesSeen > 1 ) {
+				$log->warn('Skipping cuesheet with multiple FILE entries');
+				return;
+			}
 
 		} elsif ($line =~ /^FILE\s+\"?(\S+)\"?/i) {
 
