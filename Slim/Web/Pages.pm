@@ -500,23 +500,25 @@ sub pageInfo {
 		# some cases of alphamap shift the start index from 0, trap this.
 		$start = $letterstarts[0] unless $args->{'start'} ;
 
-		my $newend = $end;
+		my $newend;
 
 		for my $nextend (@letterstarts) {
 
-			if ($nextend > $end && $newend == $end) {
+			# check for overflow of alpha boundary, reset end to end of next alpha
+			if ($nextend > $end && !defined($newend)) {
 				$newend = $nextend - 1;
 			}
 
-			if ($pagestarts[0] + $itemsPerPage < $nextend) {
+			if ($pagestarts[0] + $itemsPerPage - 1 < $nextend) {
 
 				# build pagestarts in descending order
 				unshift @pagestarts, $nextend;
 			}
 		}
 
-		if ($newend == $end && $itemCount > $end) {
-			$newend = $itemCount -1;
+		# if last block and still no newend found, set it to the last of the list
+		if (!defined($newend) && $itemCount > $end) {
+			$newend = $itemCount - 1;
 		}
 
 		$pageinfo{'enditem'}         = $newend;
