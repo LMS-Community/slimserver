@@ -96,11 +96,8 @@ sub parse {
 			$filename = $1;
 			$filename = Slim::Utils::Misc::fixPath($filename, $baseDir);
 			
-			# Bug 5735, skip cue sheets with multiple FILE entries
-			if ( ++$filesSeen > 1 ) {
-				$log->warn('Skipping cuesheet with multiple FILE entries');
-				return;
-			}
+			# Watch out for cue sheets with multiple FILE entries
+			$filesSeen++;
 
 		} elsif ($line =~ /^FILE\s+\"?(\S+)\"?/i) {
 
@@ -108,6 +105,8 @@ sub parse {
 			# the filenames can't have any spaces in them.
 			$filename = $1;
 			$filename = Slim::Utils::Misc::fixPath($filename, $baseDir);
+			
+			$filesSeen++;
 
 		} elsif ($line =~ /^\s*TRACK\s+(\d+)\s+AUDIO/i) {
 
@@ -149,6 +148,12 @@ sub parse {
 			# http://www.hydrogenaudio.org/forums/index.php?act=ST&f=20&t=4586
 			$tracks->{$currtrack}->{'FILENAME'} = $filename;
 		}
+	}
+	
+	# Bug 5735, skip cue sheets with multiple FILE entries
+	if ( $filesSeen > 1 ) {
+		$log->warn('Skipping cuesheet with multiple FILE entries');
+		return;
 	}
 
 	# Check to make sure that the files are actually on disk - so we don't
