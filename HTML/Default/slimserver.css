@@ -15,7 +15,7 @@ body.main {
 	background: #666666;
 }
 
-#playlistPanel, #maincontent { background-color: white; }
+#playlistPanel, .inner_content, #maincontent { background-color: #3d6266; }
 
 html, body, tr, tr, p, div, li, input, ul, .x-btn-text, select {
 	font-size: 11px;
@@ -382,7 +382,7 @@ div.pagetitleWithIcon {
 
 .scrollingPanel, #browsedbHeader, 
 .pageHeaderInfo, #pageFooterInfo {
-	margin: 2px 5px 0 5px;
+	padding: 2px 5px 0 5px;
 }
 
 
@@ -393,9 +393,6 @@ div.pagetitleWithIcon {
 	margin-left: 6px;
 	position: relative;
 } 
-
-.homeMenuItem span { padding: 3px 0 3px; }
-.homeMenuItem span.browsedbControls { padding: 0; }
 
 .homeMenuItem input,
 .homeMenuItem img.cmdLinkIcon {
@@ -597,7 +594,7 @@ div.thumbwrap {
 
 .selectedItem .selector_topRight,
 .mouseOver .selector_topRight {
-	background: #bfbfbf url(html/images/selector_top_right.gif) no-repeat top right;
+	background: #789194 url(html/images/selector_top_right.gif) no-repeat top right;
 }
 
 .selectedItem .selector_topLeft,
@@ -615,10 +612,11 @@ div.thumbwrap {
 	background: transparent url(html/images/selector_bottom_left.gif) no-repeat bottom left;
 }
 
-.selectorMarker,
+.selectorMarker, .selectorMarker a,
 .selector_topRight, .selector_topLeft,
 .selector_bottomRight, .selector_bottomLeft {
 	background: none;
+	color: #a3ccc5;
 }
 
 .selector_topLeft {
