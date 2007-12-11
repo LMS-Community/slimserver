@@ -137,7 +137,7 @@
 [% END %][% END %]
 
 [% IF action != 'edit'; extJsScripts = BLOCK %]
-	<script type="text/javascript" src="[% webroot %]plugins/Favorites/html/favorites2.js?r=[% revision %]"></script>
+	<script type="text/javascript" src="[% webroot %]plugins/Favorites/html/favorites.js?r=[% revision %]"></script>
 
 	<script type="text/javascript">
 		Ext.EventManager.onDocumentReady(function(){ Favorites.init([% sess %]); });
