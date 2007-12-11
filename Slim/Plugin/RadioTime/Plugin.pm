@@ -101,7 +101,7 @@ sub radioTimeURL {
 	# If AlienBBC is installed we can ask for Real streams too.
 	if ( exists $INC{'Plugins/Alien/Plugin.pm'} ) {
 		$url .= ( $url =~ /\?/ ) ? '&' : '?';
-		$url .= 'Filters=mp3,wma,real';
+		$url .= 'formats=mp3,wma,real';
 	}
 	
 	return $url;
