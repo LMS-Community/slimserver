@@ -216,10 +216,6 @@ sub upgradeFirmware {
 	if (defined($err)) {
 
 		logWarning("Upgrade failed: $err");
-
-	} else {
-
-		$client->forgetClient();
 	}
 }
 
