@@ -3,7 +3,7 @@
 [%- pwd_list = BLOCK -%]
 	/ [% "EDIT_PLAYLIST" | string %] / <a [% browsePlaylistHRef %]>[% playlist.title %]</a>
 [% END -%]
-[% PROCESS pageheader.html %] 
+[% PROCESS pageheader.html dontscroll=1 %] 
 
 [% WRAPPER contentcontainer %]
 	<form method="get" action="edit_playlist.html">
@@ -21,9 +21,9 @@
 		<input type=hidden name="playlist.id" value="[% playlist.id %]">
 		<input type=hidden name="player" value="[% player %]">
 	</form>
-	<p><a [% browsePlaylistHRef %]>[% "DONE_EDITING" | string %]</a>
+	<a [% browsePlaylistHRef %]>[% "DONE_EDITING" | string %]</a>
 	[% FOREACH item = items %]
-		[% PROCESS $listTemplate %]
+		[% PROCESS edit_playlist_list.html %]
 	[% END %]
 [% END %]
 [% PROCESS pagefooter.html %]

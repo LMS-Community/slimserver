@@ -97,8 +97,6 @@ sub editplaylist {
 
 	my @items   = $playlist->tracks;
 
-	# This is our display - dispatch to browsedb ?
-	$params->{'listTemplate'} = 'edit_playlist_list.html';
 	$params->{'items'}        = \@items;
 	$params->{'playlist'}     = $playlist;
 
