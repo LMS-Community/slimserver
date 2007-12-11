@@ -14,7 +14,7 @@ body.main {
 	background: #666666;
 }
 
-#playlistPanel, .inner_content, #maincontent {
+#playlistPanel, .inner_content, #maincontent, body {
 	background-color: #3d6266;
 }
 
