@@ -12,6 +12,7 @@
 	<defaultState>enabled</defaultState>
         
         <homepageURL>http://www.slimdevices.com/</homepageURL>
+	<optionsURL>plugins/DateTime/settings/basic.hrml</optionsURL>
 	<type>2</type><!-- type=extension -->
 
         <targetApplication>
