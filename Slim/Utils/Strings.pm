@@ -270,7 +270,7 @@ sub parseStrings {
 	LINE: for my $line (split('\n', $$text)) {
 
 		$ln++;
-		chomp($line);
+		$line =~ s/[\r\n]//g;
 
 		next if $line =~ /^#/;
 		next if $line !~ /\S/;
