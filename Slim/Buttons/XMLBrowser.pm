@@ -1296,7 +1296,13 @@ sub _cliQuery_done {
 			
 			$subFeed = $subFeed->{'items'}->[$i];
 
-			push @crumbIndex, $i;
+			# Add search query to crumb list
+			if ( $subFeed->{type} && $subFeed->{type} eq 'search' && $search ) {
+				push @crumbIndex, $i . '_' . $search;
+			}
+			else {
+				push @crumbIndex, $i;
+			}
 			
 			# Change URL if there is a play attribute
 			if ( $isPlaylistCmd && $subFeed->{play} ) {
@@ -1317,6 +1323,10 @@ sub _cliQuery_done {
 			# If the feed is another URL, fetch it and insert it into the
 			# current cached feed
 			if ( $subFeed->{'type'} ne 'audio' && defined $subFeed->{'url'} && !$subFeed->{'fetched'}) {
+				
+				if ( $i =~ /\d+_(.+)/ ) {
+					$search = $1;
+				}
 				
 				# Rewrite the URL if it was a search request
 				if ( $subFeed->{type} eq 'search' ) {
