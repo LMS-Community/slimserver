@@ -993,6 +993,7 @@ form#advSearchForm.resultsPage {
 body.settings, body.settingsMenu {
 	position: relative;
 	overflow: auto;
+	background-color: white;
 }
 
 body.settingsMenu {
@@ -1049,6 +1050,8 @@ body.settingsMenu {
 
 
 /* Help screen */
+.helpPage, .helpPage .inner_content { background-color: white; }
+
 #questionmark {
 	float: left;
 	margin-left: 20px;

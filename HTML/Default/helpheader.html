@@ -7,7 +7,7 @@ END %]
 	[% pagetitle %]
 [% END; END %]
 [% SET pwd_list = pageHeaderMenu IF pageHeaderMenu and not pwd_list -%]
-[% PROCESS pageheader.html %]
+[% PROCESS pageheader.html page="help" %]
 	<div class="helpsection">
 			[% BLOCK helpTopicList %]
 			<img src="[% webroot %]html/images/questionmark.gif" id="questionmark">
