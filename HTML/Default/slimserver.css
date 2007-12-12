@@ -6,24 +6,23 @@ html, body {
 	border: 0 none;
 	overflow: hidden;
 	height: 100%;
+	background-color: #eee;
 }
 
 body.singlePanel,
 body.main {
 	margin: 5px;
-	background: #666666;
+	background: #666;
 }
 
-#playlistPanel, .inner_content, #maincontent, body {
-	background-color: #3d6266;
-}
+#playlistPanel, #maincontent { background-color: #eee; }
 
 html, body, tr, tr, p, div, li, input, ul, .x-btn-text, select {
 	font-size: 11px;
 	font-family: sans-serif;
 }
 
-b, a, form { color: #a3ccc5; }
+b, a, form { color: #333333; }
 
 td, th {
 	vertical-align: top;
@@ -595,7 +594,7 @@ div.thumbwrap {
 
 .selectedItem .selector_topRight,
 .mouseOver .selector_topRight {
-	background: #789194 url(html/images/selector_top_right.gif) no-repeat top right;
+	background: #bfbfbf url(html/images/selector_top_right.gif) no-repeat top right;
 }
 
 .selectedItem .selector_topLeft,
@@ -613,12 +612,10 @@ div.thumbwrap {
 	background: transparent url(html/images/selector_bottom_left.gif) no-repeat bottom left;
 }
 
-#linkedSongInfoItems a,
-.selectorMarker, .selectorMarker a,
+.selectorMarker,
 .selector_topRight, .selector_topLeft,
 .selector_bottomRight, .selector_bottomLeft {
 	background: none;
-	color: #a3ccc5;
 }
 
 .selector_topLeft {
@@ -630,12 +627,12 @@ div.thumbwrap {
 }
 
 .dragUp .selector_topLeft {
-	border-top: 1px white solid;
+	border-top: 1px black solid;
 	padding-top: 6px;
 }
 
 .dragDown .selector_bottomLeft {
-	border-bottom: 1px white solid;
+	border-bottom: 1px black solid;
 	padding-bottom: 4px;
 }
 
@@ -996,7 +993,6 @@ form#advSearchForm.resultsPage {
 body.settings, body.settingsMenu {
 	position: relative;
 	overflow: auto;
-	background-color: white;
 }
 
 body.settingsMenu {
@@ -1051,44 +1047,8 @@ body.settingsMenu {
 	display: none;
 }
 
-/* white selectors for help/settings */
-.helpsection .mouseOver .selector_topRight,
-.helpsection .selectedItem .selector_topRight,
-.settingsMenu .selectedItem .selector_topRight,
-.settingsMenu .mouseOver .selector_topRight {
-	background: #bfbfbf url(html/images/selector_top_right_white.gif) no-repeat top right;
-}
-
-.helpsection .mouseOver .selector_topLeft,
-.helpsection .selectedItem .selector_topLeft,
-.settingsMenu .selectedItem .selector_topLeft,
-.settingsMenu .mouseOver .selector_topLeft {
-	background: transparent url(html/images/selector_top_left_white.gif) no-repeat top left;
-}
-
-.helpsection .selectedItem .selector_bottomRight,
-.helpsection .mouseOver .selector_bottomRight,
-.settingsMenu .selectedItem .selector_bottomRight,
-.settingsMenu .mouseOver .selector_bottomRight {
-	background: transparent url(html/images/selector_bottom_right_white.gif) no-repeat bottom right;
-}
-
-.helpsection .selectedItem .selector_bottomLeft,
-.helpsection .mouseOver .selector_bottomLeft,
-.settingsMenu .selectedItem .selector_bottomLeft,
-.settingsMenu .mouseOver .selector_bottomLeft {
-	background: transparent url(html/images/selector_bottom_left_white.gif) no-repeat bottom left;
-}
-
-.helpsection b, .helpsection a, .helpsection form,
-.settings b, .settings a, .settings form {
-	color: #333333;
-}
-
 
 /* Help screen */
-.helpPage, .helpPage .inner_content { background-color: white; }
-
 #questionmark {
 	float: left;
 	margin-left: 20px;
@@ -1114,6 +1074,10 @@ body.settingsMenu {
 .helpsection p, .helpsection dt {
 	margin-top: 10px;
 	margin-bottom: 5px;
+}
+
+ul.x-tree-node-ct {
+	margin: 0;
 }
 
 .helpsection dd {
