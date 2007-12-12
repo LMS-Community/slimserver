@@ -832,6 +832,23 @@ sub processURL {
 			if ($paddr) {
 				$client = Slim::Player::HTTP->new($address, $paddr, $httpClient);
 				$client->init();
+				
+				# Give the streaming player a descriptive name such as "Winamp from x.x.x.x"
+				if ( $params->{userAgent} ) {
+					my ($agent) = $params->{userAgent} =~ m{([^/]+)};
+					if ( $agent eq 'NSPlayer' ) {
+						$agent = 'Windows Media Player';
+					}
+					elsif ( $agent eq 'WinampMPEG' ) {
+						$agent = 'Winamp';
+					}
+					
+					$client->defaultName( $agent . ' ' . string('FROM') . ' ' . $address );
+				}
+				else {
+					# Just show the IP address if there's no user-agent
+					$client->defaultName( $address );
+				}
 			}
 		}
 
