@@ -2483,6 +2483,14 @@ sub closeStreamingSocket {
 
 		if (defined($client->streamingsocket) && $client->streamingsocket == $httpClient) {
 			$client->streamingsocket(undef);
+			
+			# If this was a stream.mp3 client, auto-forget it
+			# The playlist for this client will be maintained for the next
+			# time they connect
+			if ( $client->isa('Slim::Player::HTTP') ) {
+				$log->info("Forgetting stream.mp3 client on disconnect");
+				$client->forgetClient();
+			}
 		}
 	}
 
