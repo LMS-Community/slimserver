@@ -2138,7 +2138,7 @@ sub readNextChunk {
 
 	my $endofsong = undef;
 
-	if ($client->streamBytes() == 0 && $client->streamformat() eq 'mp3') {
+	if ($client->streamBytes() == 0 && $client->masterOrSelf->streamformat() eq 'mp3') {
 	
 		my $silence = 0;
 		# use the maximum silence prelude for the whole sync group...

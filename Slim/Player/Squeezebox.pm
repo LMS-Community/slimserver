@@ -1253,7 +1253,7 @@ sub sendPitch {
 	my $freqHex = sprintf('%05X', $freq);
 
 	# This only works for mp3 - only change pitch for mp3 format
-	if ($client->streamformat() && ($client->streamformat() eq 'mp3')) {
+	if ($client->masterOrSelf->streamformat() && ($client->masterOrSelf->streamformat() eq 'mp3')) {
 
 		$client->i2c(
 			Slim::Hardware::mas35x9::masWrite('OfreqControl', $freqHex).
