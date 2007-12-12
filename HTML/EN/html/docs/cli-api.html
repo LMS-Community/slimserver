@@ -4100,7 +4100,7 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			cmd
 		</td>
 		<td>
-			One of &quot;up&quot;, &quot;down&quot;, &quot;delete&quot; or 
+			One of &quot;up&quot;, &quot;down&quot;, &quot;move&quot;, &quot;delete&quot; or 
 			&quot;add&quot, in order to move up, down, delete or add a track.
 		</td>
 	</tr>
@@ -4109,8 +4109,16 @@ http://&lt;server&gt;:&lt;port&gt;/music/current/cover.jpg?player=&lt;playerid&g
 			index
 		</td>
 		<td>
-			For &quot;cmd:up&quot;, &quot;cmd:down&quot; and 
+			For &quot;cmd:up&quot;, &quot;cmd:down&quot;, &quot;cmd:move&quot; and 
 			&quot;cmd:delete&quot; the index of the track to edit.
+		</td>
+	</tr>
+	<tr>
+		<td>
+			toindex
+		</td>
+		<td>
+			For &quot;cmd:move&quot; the new index of the track to be moved.
 		</td>
 	</tr>
 	<tr>

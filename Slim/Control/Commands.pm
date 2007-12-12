@@ -1609,8 +1609,9 @@ sub playlistsEditCommand {
 	my $playlist_id = $request->getParam('playlist_id');
 	my $cmd = $request->getParam('cmd');
 	my $itemPos = $request->getParam('index');
+	my $newPos = $request->getParam('toindex');
 
-	if ($request->paramUndefinedOrNotOneOf($cmd, ['up', 'down', 'delete', 'add'])) {
+	if ($request->paramUndefinedOrNotOneOf($cmd, ['up', 'down', 'delete', 'add', 'move'])) {
 		$request->setStatusBadParams();
 		return;
 	}
@@ -1621,6 +1622,11 @@ sub playlistsEditCommand {
 	}
 
 	if (!defined($itemPos) && $cmd ne 'add') {
+		$request->setStatusBadParams();
+		return;
+	}
+
+	if (!defined($newPos) && $cmd eq 'move') {
 		$request->setStatusBadParams();
 		return;
 	}
@@ -1664,6 +1670,19 @@ sub playlistsEditCommand {
 			my $item = $items[$itemPos];
 			$items[$itemPos] = $items[$itemPos + 1];
 			$items[$itemPos + 1] = $item;
+
+			$changed = 1;
+		}
+
+	} elsif ($cmd eq 'move') {
+
+		if ($itemPos != $newPos && $itemPos < scalar(@items) && $itemPos >= 0 
+			&& $newPos < scalar(@items)	&& $newPos >= 0) {
+
+			# extract the item to be moved
+			my $item = splice @items, $itemPos, 1;
+			my @tail = splice @items, ($newPos);
+			push @items, $item, @tail;
 
 			$changed = 1;
 		}

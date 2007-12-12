@@ -60,35 +60,32 @@ EditPlaylist = function(){
 						}
 
 						if (sourcePos >= 0 && targetPos >= 0 && (sourcePos != targetPos)) {
-							var cmd, diff, el, plStart, plPosition;
+							var cmd, el, plStart, plPosition;
 
 							if (sourcePos > targetPos) {
 								source.insertBefore(target);
 								cmd = 'up';
-								diff = sourcePos - targetPos;
 								plPosition = parseInt(target.dd.config.position) - targetPos;
 								plStart = targetPos;
 							}
 							else  {
 								source.insertAfter(target);
 								cmd = 'down';
-								diff = targetPos - sourcePos;
 								plPosition = parseInt(source.dd.config.position) - sourcePos;
 								plStart = sourcePos;
 							}
 
 							// there's no command to move more then one position - have to loop
-							for (var i = 0; i<diff; i++) {
-								Utils.processCommand({
-									params: [ '', [
-										'playlists',
-										'edit',
-										'playlist_id:' + playlistId,
-										'cmd:' + cmd,
-										'index:' + (cmd == 'up' ? sourcePos-i : sourcePos+i)
-									]]
-								});
-							}
+							Utils.processCommand({
+								params: [ '', [
+									'playlists',
+									'edit',
+									'playlist_id:' + playlistId,
+									'cmd:move',
+									'index:' + sourcePos,
+									'toindex:' + targetPos
+								]]
+							});
 
 							// recalculate the item's number within the playlist
 							items = Ext.query('#browsesdbList div.draggableSong');
@@ -112,11 +109,6 @@ EditPlaylist = function(){
 				item.dd.scroll = false;
 				item.dd.scrollContainer = true;
 			}
-		},
-
-		onUpdated: function(){
-			Utils.init();
-			Playlist.init();
 		}
 	};
 }();
