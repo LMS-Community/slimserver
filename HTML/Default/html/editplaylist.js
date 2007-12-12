@@ -26,7 +26,6 @@ EditPlaylist = function(){
 					var target = Ext.get(id);
 
 					if (target && source) {
-console.debug('target: ' + target.dd.config.position + ', source: ' + source.dd.config.position);
 						if (parseInt(target.dd.config.position) < parseInt(source.dd.config.position))
 							Ext.get(id).addClass('dragUp');
 						else
