@@ -735,7 +735,10 @@ sub gotNextRadioTrack {
 		else {
 			# User was just starting a radio station
 			$client->showBriefly( {
-				line => [ string( $client, 'PLUGIN_RHAPSODY_DIRECT_ERROR' ), string( $client, 'PLUGIN_RHAPSODY_DIRECT_NO_TRACK' ) ]
+				line => [ 
+					$client->string( $client, 'PLUGIN_RHAPSODY_DIRECT_ERROR' ), 
+					$client->string( $client, 'PLUGIN_RHAPSODY_DIRECT_NO_TRACK' ),
+				],
 			},
 			{
 				scroll => 1,
