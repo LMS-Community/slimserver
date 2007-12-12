@@ -97,7 +97,7 @@ BLOCK settingsPage -%]
 		[% IF additionalLinks.setup.$subPage;
 			myPage = additionalLinks.setup.$subPage;
 		ELSIF playersetup.$subPage;
-			myPage = playersetup.$subPage;
+			myPage = playersetup.$subPage _ playerURI _ "&amp;playerid=" _ playerURI;
 		ELSIF sub == 'player';
 			myPage = webroot _ "settings/player/basic.html?player=" _ playerURI _ "&amp;playerid=" _ playerURI;
 		ELSE;
