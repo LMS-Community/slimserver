@@ -26,7 +26,8 @@ EditPlaylist = function(){
 					var target = Ext.get(id);
 
 					if (target && source) {
-						if (target.dd.config.position < source.dd.config.position)
+console.debug('target: ' + target.dd.config.position + ', source: ' + source.dd.config.position);
+						if (parseInt(target.dd.config.position) < parseInt(source.dd.config.position))
 							Ext.get(id).addClass('dragUp');
 						else
 							Ext.get(id).addClass('dragDown');
@@ -89,7 +90,7 @@ EditPlaylist = function(){
 
 							// recalculate the item's number within the playlist
 							items = Ext.query('#browsesdbList div.draggableSong');
-							for (var i = plStart; i < items.length; i++) {
+							for (var i = 0; i < items.length; i++) {
 								if (el = Ext.get(items[i]))
 									el.dd.config.position = plPosition + i;
 							}
@@ -104,7 +105,7 @@ EditPlaylist = function(){
 
 				var itemNo = item.id.replace(/\D*/, '');
 
-				item.dd = new Ext.dd.DDProxy(items[i], 'playlist', {position: itemNo});
+				item.dd = new Ext.dd.DDProxy(items[i], 'playlist', {position: i});
 				item.dd.setXConstraint(0, 0);
 				item.dd.scroll = false;
 				item.dd.scrollContainer = true;
