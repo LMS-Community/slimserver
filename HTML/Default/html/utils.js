@@ -3,7 +3,7 @@ Slim = {};
 
 // our own cookie manager doesn't prepend 'ys-' to any cookie
 Slim.CookieManager = function(config){
-	Slim.CookieManager.superclass.constructor.call(this);
+	Slim.CookieManager.superclass.constructor.call(this, config);
 };
 
 Ext.extend(Slim.CookieManager, Ext.state.CookieProvider, {
