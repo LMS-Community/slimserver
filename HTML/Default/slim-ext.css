@@ -21,6 +21,10 @@
 	font-size: 11px;
 }
 
+.ext-strict .x-form-text {
+	height: 16px;
+}
+
 .x-form-focus, textarea.x-form-focus {
 	border-color: #008d89;
 }

@@ -399,10 +399,6 @@ div.pagetitleWithIcon {
 	vertical-align: top;
 }
 
-.browsedbControls input {
-	height: 15px;
-	padding: 2px 2px 0;
-}
 
 .disclosure_home {
 	width: 14px;
@@ -636,10 +632,11 @@ div.thumbwrap {
 	padding-bottom: 4px;
 }
 
+.browsedbControls #tuneinurl, 
 .browsedbControls .searchInput {
-	height: 14px;
+	height: 15px;
 	width: 185px;
-	background: white url(html/images/search.gif) no-repeat 173px 0px;
+	vertical-align: top;
 }
 
 form#advSearchForm.resultsPage {
