@@ -1181,6 +1181,10 @@ sub playlistXitemCommand {
 
 	}
 
+	if (!$request->isStatusDone()) {
+		$request->setStatusProcessing();
+	}
+
 	$log->debug("done.");
 }
 
