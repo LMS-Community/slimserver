@@ -181,8 +181,9 @@ td.listing {
 }
 
 div#pagecontainer {
-	top: 88;
+	top: 87;
 	height: 100%;
+	height: expression((document.body.offsetHeight - 115) + "px"); 
 	overflow-y: auto;
 	width: 100%;
 	position: absolute;
