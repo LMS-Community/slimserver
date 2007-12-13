@@ -82,9 +82,9 @@ function getStatusData(params, action) {
 function ajaxRequest(thisurl,params, action) {
 	var requesttype = 'post';
 
-	if (window.XMLHttpRequest) {
-		requesttype = 'get';
-	}
+	//if (window.XMLHttpRequest) {
+	//	requesttype = 'post';
+	//}
 
 	if (!action) {
 		action = refreshNothing;
