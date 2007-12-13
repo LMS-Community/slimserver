@@ -270,6 +270,8 @@ sub parseStrings {
 	LINE: for my $line (split('\n', $$text)) {
 
 		$ln++;
+
+		# remove any remaining CR or NL chars from end of line
 		$line =~ s/[\r\n]+$//g;
 
 		next if $line =~ /^#/;
