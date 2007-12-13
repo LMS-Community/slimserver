@@ -594,7 +594,7 @@ div.thumbwrap {
 
 .selectedItem .selector_topRight,
 .mouseOver .selector_topRight {
-	background: #bfbfbf url(html/images/selector_top_right.gif) no-repeat top right;
+	background: #999 url(html/images/selector_top_right.gif) no-repeat top right;
 }
 
 .selectedItem .selector_topLeft,
