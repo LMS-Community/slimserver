@@ -2,7 +2,7 @@ package Slim::Formats::Musepack;
 
 # $tagsd: Musepack.pm,v 1.0 2004/01/27 00:00:00 daniel Exp $
 
-# SqueezeCenter Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

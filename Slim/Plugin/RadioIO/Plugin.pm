@@ -2,7 +2,7 @@ package Slim::Plugin::RadioIO::Plugin;
 
 # $Id: Plugin.pm 7196 2006-04-28 22:00:45Z andy $
 
-# SqueezeCenter Copyright (c) 2001-2007 Vidur Apparao, Logitech.
+# SqueezeCenter Copyright 2001-2007 Logitech, Vidur Apparao.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

@@ -1,7 +1,7 @@
 package Slim::Plugin::TT::Prefs;
 
 # $Id: Prefs.pm 1757 2005-01-18 21:22:50Z dsully $
-# SqueezeCenter Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 
 # version 2.

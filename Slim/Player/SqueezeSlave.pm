@@ -2,7 +2,7 @@ package Slim::Player::SqueezeSlave;
 
 # $Id: Squeezebox2.pm 12808 2007-08-31 04:08:54Z andy $
 
-# SlimServer Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

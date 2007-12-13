@@ -31,7 +31,7 @@ use B::Size ();
 use B::LexInfo ();
 use Devel::Peek ();
 use Devel::Size ();
-use Devel::Size::Report ();
+#use Devel::Size::Report ();
 use Devel::Symdump ();
 use Scalar::Util qw(blessed);
 
@@ -316,22 +316,22 @@ sub catchSTDERR {
 	open $oldout, ">&STDOUT" or die "Can't dup STDOUT: $!";
 	open $olderr, ">&STDERR" or die "Can't dup STDERR: $!";
 
-	close STDERR;
+#	close STDERR;
 	close STDOUT;
 
-	open STDERR, '>', \$out or die "Can't open STDERR: $!";
+#	open STDERR, '>', \$out or die "Can't open STDERR: $!";
 	open STDOUT, '>', \$err or die "Can't open STDOUT: $!";
 
-	select STDERR; $| = 1;
+#	select STDERR; $| = 1;
 	select STDOUT; $| = 1;
 }
 
 sub putbackSTDERR {
 	close STDOUT;
-	close STDERR;
+#	close STDERR;
 
 	open STDOUT, ">&", $oldout or die "Can't dup \$oldout: $!";
-	open STDERR, ">&", $olderr or die "Can't dup \$olderr: $!";
+#	open STDERR, ">&", $olderr or die "Can't dup \$olderr: $!";
 
 	$out = '';
 	$err = '';

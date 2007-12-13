@@ -4,7 +4,7 @@
 #
 # This code is derived from code with the following copyright message:
 #
-# SqueezeCenter Copyright (c) 2001-2007 Logitech.
+# SqueezeCenter Copyright 2001-2007 Logitech.
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License,
 # version 2.

@@ -2,7 +2,7 @@ package Slim::Buttons::XMLBrowser;
 
 # $Id$
 
-# Copyright (c) 2005-2007 Logitech.
+# Copyright 2005-2007 Logitech.
 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License, 

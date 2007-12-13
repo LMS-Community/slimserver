@@ -3,7 +3,7 @@ package Slim::Buttons::Information;
 #	$Id$
 #
 #	Author: Kevin Walsh <kevin@cursor.biz>
-#	Copyright (c) 2003 Cursor Software Limited.
+#	Copyright (c) 2003-2007 Logitech, Cursor Software Limited.
 #	All rights reserved.
 #
 #	This program is free software; you can redistribute it and/or modify
