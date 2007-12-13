@@ -37,7 +37,7 @@ our $callbackTask = Slim::Utils::PerfMon->new('Async Callback', [0.002, 0.005, 0
 my $log = logger('network.asynchttp');
 
 __PACKAGE__->mk_classaccessors( qw(
-	cb ecb type url error code mess headers contentRef cachedResponse async
+	cb ecb type url error code mess headers contentRef cacheTime cachedResponse async
 ) );
 
 BEGIN {
@@ -263,46 +263,48 @@ sub onBody {
 				# size of the cache.  We use ETag/Last Modified to check for stale data during
 				# this time.
 				my $max = 60 * 60 * 24;
-				my $expires = $self->{params}->{expires} || $max;
-				my $no_cache;
+				my $expires;
 				my $no_revalidate;
-		
-				if ( $expires >= $max ) {
-			
+				
+				if ( $self->{params}->{expires} ) {
+					# An explicit expiration time from the caller
+					$expires = $self->{params}->{expires};
+				}
+				else {			
 					# If we see max-age or an Expires header, use them
 					if ( my $cc = $res->header('Cache-Control') ) {
-						if ( $cc =~ /no-cache|must-revalidate/ ) {
-							$no_cache = 1;
-						}
-						elsif ( $cc =~ /max-age=(-?\d+)/ ) {
+						if ( $cc =~ /max-age=(-?\d+)/i ) {
 							$expires = $1;
+						}
+						elsif ( $cc =~ /no-cache|no-store|must-revalidate/i ) {
+							$expires = 0;
 						}
 					}			
 					elsif ( my $expire_date = $res->header('Expires') ) {
 						$expires = HTTP::Date::str2time($expire_date) - time;
 					}
-		
-					# If there is no ETag/Last Modified, don't cache
-					if (   $expires >= $max
-						&& !$res->last_modified
-						&& !$res->header('ETag')
-					) {
-
-						$no_cache = 1;
-
-						if ( $log->is_debug ) {
-							$log->debug(sprintf("Not caching [%s], no expiration set and missing cache headers", $self->url));
-						}
+				}
+				
+				# Don't cache for more than $max
+				if ( $expires && $expires > $max ) {
+					$expires = $max;
+				}
+				
+				$self->cacheTime( $expires );
+				
+				# Only cache if we found an expiration time
+				if ( $expires ) {
+					if ( $expires < $max ) {
+						# if we have an explicit expiration time, we can avoid revalidation
+						$no_revalidate = 1;
 					}
-				}
-		
-				if ( $expires < $max ) {
-					# if we have an explicit expiration time, we can avoid revalidation
-					$no_revalidate = 1;
-				}
 
-				if ( !$no_cache ) {
 					$self->cacheResponse( $expires, $no_revalidate );
+				}
+				else {
+					if ( $log->is_debug ) {
+						$log->debug(sprintf("Not caching [%s], no expiration set and missing cache headers", $self->url));
+					}
 				}
 			}
 		}

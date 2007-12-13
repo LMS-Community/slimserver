@@ -236,11 +236,16 @@ sub gotViaHTTP {
 		return;
 	}
 	
+	# Use the same cache time for parsed XML as we do for HTTP
+	if ( defined $http->cacheTime ) {
+		$feed->{'cachetime'} = $http->cacheTime;
+	}
+	
 	# Cache the parsed XML or raw response
 	if ( Slim::Utils::Misc::shouldCacheURL( $http->url ) ) {
 
 		my $cache   = Slim::Utils::Cache->new();
-		my $expires = $feed->{'cachetime'} || $XML_CACHE_TIME;
+		my $expires = defined( $feed->{'cachetime'} ) ? $feed->{'cachetime'} : $XML_CACHE_TIME;
 
 		if ( !$feed->{'nocache'} ) {
 

@@ -1733,7 +1733,7 @@ sub _cliQuerySubFeed_done {
 		# re-cache the parsed XML to include the sub-feed
 		if ( Slim::Utils::Misc::shouldCacheURL( $params->{'parentURL'} ) ) {
 			my $cache   = Slim::Utils::Cache->new();
-			my $expires = $feed->{'cachetime'} || $Slim::Formats::XML::XML_CACHE_TIME;
+			my $expires = defined( $feed->{'cachetime'} ) ? $feed->{'cachetime'} : $Slim::Formats::XML::XML_CACHE_TIME;
 
 			$log->info("Re-caching parsed XML for $expires seconds.");
 
