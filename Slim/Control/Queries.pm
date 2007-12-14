@@ -553,7 +553,7 @@ sub artistsQuery {
 
 		my $loopname = $menuMode?'item_loop':'artists_loop';
 		my $cnt = 0;
-		my @data = $rs->all;
+		my @data = $rs->slice($start, $end);
 		
 		$request->addResult('offset', $start) if $menuMode;
 	
@@ -568,7 +568,7 @@ sub artistsQuery {
 			($start, $end, $cnt) = _playAll($start, $end, $cnt, $request, $loopname);
 		}
 
-		for my $obj (@data[$start..$end]) {
+		for my $obj (@data) {
 
 			next if !$obj;
 			my $id = $obj->id();
