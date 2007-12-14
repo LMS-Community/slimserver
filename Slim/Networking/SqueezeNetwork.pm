@@ -214,7 +214,7 @@ sub _createHTTPRequest {
 	
 	# Add session cookie if we have it
 	if ( my $client = $self->params('client') ) {
-		unshift @args, 'X-Player-MAC', $client->id;
+		unshift @args, 'X-Player-MAC', $client->masterOrSelf->id;
 	}
 	
 	if ( $ENV{SLIM_SERVICE} ) {
