@@ -137,6 +137,35 @@ sub processCoverArtRequest {
 	}
 
 	my ($obj, $imageData, $cachedImage, $cacheKey);
+	
+	# Check for a cached resize of an album cover
+	if ( $trackid =~ /^\d+$/ ) {
+		$cacheKey = join('-', $trackid, $resizeMode, $requestedWidth, $requestedHeight, $requestedBackColour, $suffix);
+		
+		$log->info("  artwork cache key: $cacheKey");
+		
+		$cachedImage = $cache->get($cacheKey);
+		
+		my $artworkFile = $cachedImage->{'orig'};
+		
+		if ( $cachedImage && defined $artworkFile ) {
+			# Check mtime of original artwork has not changed
+			if ( $artworkFile && -r $artworkFile ) {
+				my $origMtime = (stat _)[9];
+				if ( $cachedImage->{'mtime'} != $origMtime ) {
+					$log->info( "  artwork mtime $origMtime differs from cached mtime $artworkFile" );
+					$cachedImage = undef;
+				}
+			}
+		
+			if ( $cachedImage ) {
+
+				$log->info("  returning cached artwork image.");
+
+				return ($cachedImage->{'body'}, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}, $cachedImage->{'contentType'});
+			}
+		}
+	}
 
 	if ($trackid eq "current" && defined $client) {
 
@@ -158,29 +187,15 @@ sub processCoverArtRequest {
 	}
 
 	if (blessed($obj) && $obj->can('coverArt')) {
-
-		$cacheKey = join('-', $trackid, $resizeMode, $requestedWidth, $requestedHeight, $requestedBackColour, $suffix);
-
-		$log->info("  artwork cache key: $cacheKey");
-
-		$cachedImage = $cache->get($cacheKey);
-		
-		if ($cachedImage && $cachedImage->{'mtime'} != $obj->coverArtMtime($image)) {
-			$cachedImage = undef;
+		($imageData, $actualContentType, $mtime) = $obj->coverArt;
+		if (!defined $actualContentType || $actualContentType eq '') {
+			$actualContentType = $requestedContentType;
 		}
-
-		if (!$cachedImage) {
-
-			($imageData, $actualContentType, $mtime) = $obj->coverArt;
-			if (!defined $actualContentType || $actualContentType eq '') {
-				$actualContentType = $requestedContentType;
-			}
-			$log->info("  The variable \$actualContentType, which attempts to understand what image type the original file is, is set to " . $actualContentType);
-		}
+		$log->info("  The variable \$actualContentType, which attempts to understand what image type the original file is, is set to " . $actualContentType);
 	}
 
 	# if $obj->coverArt didn't send back data, then fill with a placeholder
-	if ( (!$cachedImage && !$imageData) ) {
+	if ( !$imageData ) {
 
 		my $image = blessed($obj) && $obj->remote ? 'radio' : 'cover';
 		
@@ -189,20 +204,17 @@ sub processCoverArtRequest {
 		$cacheKey = "$image-$resizeMode-$requestedWidth-$requestedHeight-$requestedBackColour-$suffix";	
 
 		$cachedImage = $cache->get($cacheKey);
+		
+		if ( $cachedImage ) {
 
-		unless ($cachedImage) {
+			$log->info("  returning cached artwork image.");
 
-			($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/$image.png", $params);
-			$actualContentType = 'image/png';
-			$imageData = $$body;
+			return ($cachedImage->{'body'}, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}, $cachedImage->{'contentType'});
 		}
-	}
 
-	if ($cachedImage) {
-
-		$log->info("  returning cached artwork image.");
-
-		return ($cachedImage->{'body'}, $cachedImage->{'mtime'}, $inode, $cachedImage->{'size'}, $cachedImage->{'contentType'});
+		($body, $mtime, $inode, $size) = Slim::Web::HTTP::getStaticContent("html/images/$image.png", $params);
+		$actualContentType = 'image/png';
+		$imageData = $$body;
 	}
 
 	if ( $log->is_info ) {
@@ -414,6 +426,7 @@ sub processCoverArtRequest {
 	if ($cacheKey) {
 	
 		my $cached = {
+			'orig'        => blessed($obj) ? $obj->cover : 0,
 			'mtime'       => $mtime,
 			'body'        => $body,
 			'contentType' => $requestedContentType,
