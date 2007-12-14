@@ -98,3 +98,7 @@ img#background {
 .settingGroup .prefHead {
 	left: -250px;
 }
+
+.x-btn-left, .x-btn-right, .x-btn-center {
+	background-image: url(html/images/slim-ext/btn-generic-ie6.png);
+}
